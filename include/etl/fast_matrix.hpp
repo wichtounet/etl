@@ -9,6 +9,7 @@
 #define ETL_FAST_MATRIX_HPP
 
 #include "assert.hpp"
+#include "tmp.hpp"
 #include "fast_op.hpp"
 #include "fast_expr.hpp"
 

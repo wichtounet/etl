@@ -17,10 +17,9 @@
 #include <numeric>
 
 #include "assert.hpp"
-#include "utils.hpp"
+#include "tmp.hpp"
 #include "fast_op.hpp"
 #include "fast_expr.hpp"
-#include "vector.hpp"
 
 namespace etl {
 
