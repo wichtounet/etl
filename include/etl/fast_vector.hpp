@@ -73,7 +73,7 @@ public:
 
     //Allow copy from other containers
 
-    template<typename Container, enable_if_u<std::is_same<Container::value_type, T>::value> = detail::dummy>
+    template<typename Container, enable_if_u<std::is_same<typename Container::value_type, T>::value> = detail::dummy>
     fast_vector& operator=(const Container& vec){
         etl_assert(vec.size() == Rows, "Cannot copy from a vector of different size");
 
