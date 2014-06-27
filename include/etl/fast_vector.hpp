@@ -43,7 +43,7 @@ public:
         std::fill(_data.begin(), _data.end(), value);
     }
 
-    //Construct from expression
+    //Copy assignment operator
 
     fast_vector& operator=(const fast_vector& rhs){
         for(std::size_t i = 0; i < Rows; ++i){
@@ -52,6 +52,8 @@ public:
 
         return *this;
     }
+
+    //Construct from expression
 
     template<typename LE, typename Op, typename RE>
     fast_vector(binary_expr<T, LE, Op, RE>&& e){
@@ -69,17 +71,10 @@ public:
         return *this;
     }
 
-    fast_vector& operator=(const std::vector<T>& vec){
-        etl_assert(vec.size() == Rows, "Cannot copy from a vector of different size");
+    //Allow copy from other containers
 
-        for(std::size_t i = 0; i < Rows; ++i){
-            _data[i] = vec[i];
-        }
-
-        return *this;
-    }
-
-    fast_vector& operator=(const vector<T>& vec){
+    template<typename Container, enable_if_u<std::is_same<Container::value_type, T>::value> = detail::dummy>
+    fast_vector& operator=(const Container& vec){
         etl_assert(vec.size() == Rows, "Cannot copy from a vector of different size");
 
         for(std::size_t i = 0; i < Rows; ++i){
