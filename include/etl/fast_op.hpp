@@ -8,6 +8,8 @@
 #ifndef ETL_FAST_OP_HPP
 #define ETL_FAST_OP_HPP
 
+namespace etl {
+
 template<typename T>
 struct scalar {
     const T value;
@@ -73,5 +75,7 @@ struct plus_unary_op {
         return +x;
     }
 };
+
+} //end of namespace etl
 
 #endif

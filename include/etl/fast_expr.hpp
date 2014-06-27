@@ -11,6 +11,8 @@
 #include "fast_op.hpp"
 #include "tmp.hpp"
 
+namespace etl {
+
 template <typename T, typename LeftExpr, typename BinaryOp, typename RightExpr>
 class binary_expr {
 private:
@@ -162,5 +164,6 @@ auto operator*(Scalar lhs, const unary_expr<T, E, Op>& rhs) -> binary_expr<T, sc
     return {lhs, rhs};
 }
 
+} //end of namespace etl
 
 #endif

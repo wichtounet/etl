@@ -15,6 +15,8 @@
 //TODO Ensure that the binary_expr that is taken comes from a matrix
 //or least from a vector of Rows * Columns size
 
+namespace etl {
+
 template<typename T, size_t Rows, size_t Columns>
 class fast_matrix {
 public:
@@ -164,27 +166,27 @@ public:
     }
 
     T& operator()(size_t i, size_t j){
-        dll_assert(i < Rows, "Out of bounds");
-        dll_assert(j < Columns, "Out of bounds");
+        etl_assert(i < Rows, "Out of bounds");
+        etl_assert(j < Columns, "Out of bounds");
 
         return _data[i * Columns + j];
     }
 
     const T& operator()(size_t i, size_t j) const {
-        dll_assert(i < Rows, "Out of bounds");
-        dll_assert(j < Columns, "Out of bounds");
+        etl_assert(i < Rows, "Out of bounds");
+        etl_assert(j < Columns, "Out of bounds");
 
         return _data[i * Columns + j];
     }
 
     const T& operator[](size_t i) const {
-        dll_assert(i < size(), "Out of bounds");
+        etl_assert(i < size(), "Out of bounds");
 
         return _data[i];
     }
 
     T& operator[](size_t i){
-        dll_assert(i < size(), "Out of bounds");
+        etl_assert(i < size(), "Out of bounds");
 
         return _data[i];
     }
@@ -226,5 +228,7 @@ template<typename T, std::size_t Rows, std::size_t Columns>
 auto sign(const fast_matrix<T, Rows, Columns>& value) -> unary_expr<T, const fast_matrix<T, Rows, Columns>&, sign_unary_op<T>> {
     return {value};
 }
+
+} //end of namespace etl
 
 #endif

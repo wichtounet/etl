@@ -22,6 +22,8 @@
 #include "fast_expr.hpp"
 #include "vector.hpp"
 
+namespace etl {
+
 template<typename T, std::size_t Rows>
 class fast_vector {
 private:
@@ -69,7 +71,7 @@ public:
     }
 
     fast_vector& operator=(const std::vector<T>& vec){
-        dll_assert(vec.size() == Rows, "Cannot copy from a vector of different size");
+        etl_assert(vec.size() == Rows, "Cannot copy from a vector of different size");
 
         for(std::size_t i = 0; i < Rows; ++i){
             _data[i] = vec[i];
@@ -79,7 +81,7 @@ public:
     }
 
     fast_vector& operator=(const vector<T>& vec){
-        dll_assert(vec.size() == Rows, "Cannot copy from a vector of different size");
+        etl_assert(vec.size() == Rows, "Cannot copy from a vector of different size");
 
         for(std::size_t i = 0; i < Rows; ++i){
             _data[i] = vec[i];
@@ -181,25 +183,25 @@ public:
     }
 
     T& operator()(size_t i){
-        dll_assert(i < rows, "Out of bounds");
+        etl_assert(i < rows, "Out of bounds");
 
         return _data[i];
     }
 
     const T& operator()(size_t i) const {
-        dll_assert(i < rows, "Out of bounds");
+        etl_assert(i < rows, "Out of bounds");
 
         return _data[i];
     }
 
     T& operator[](size_t i){
-        dll_assert(i < rows, "Out of bounds");
+        etl_assert(i < rows, "Out of bounds");
 
         return _data[i];
     }
 
     const T& operator[](size_t i) const {
-        dll_assert(i < rows, "Out of bounds");
+        etl_assert(i < rows, "Out of bounds");
 
         return _data[i];
     }
@@ -250,5 +252,7 @@ template<typename T, std::size_t Rows>
 T sum(const fast_vector<T, Rows>& values){
     return std::accumulate(values.begin(), values.end(), static_cast<T>(0));
 }
+
+} //end of namespace etl
 
 #endif
