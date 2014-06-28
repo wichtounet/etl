@@ -15,6 +15,7 @@
 #include <array>
 #include <vector>
 #include <numeric>
+#include <initializer_list>
 
 #include "assert.hpp"
 #include "tmp.hpp"
@@ -41,6 +42,12 @@ public:
 
     fast_vector(const T& value){
         std::fill(_data.begin(), _data.end(), value);
+    }
+
+    fast_vector(std::initializer_list<T> l){
+        etl_assert(l.size() == Rows, "Cannot copy from an initializer of different size");
+
+        std::copy(l.begin(), l.end(), begin());
     }
 
     //Copy assignment operator

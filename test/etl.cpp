@@ -25,6 +25,16 @@ TEST_CASE( "fast_vector/init_2", "fast_vector::operator=(T)" ) {
     }
 }
 
+TEST_CASE( "fast_vector/init_3", "fast_vector::fast_vector(initializer_list)" ) {
+    etl::fast_vector<double, 3> test_vector = {1.0, 2.0, 3.0};
+
+    REQUIRE(test_vector.size() == 3);
+
+    REQUIRE(test_vector[0] == 1.0);
+    REQUIRE(test_vector[1] == 2.0);
+    REQUIRE(test_vector[2] == 3.0);
+}
+
 TEST_CASE( "fast_vector/mul_scalar", "fast_vector::operator*" ) {
     etl::fast_vector<double, 3> test_vector;
 
