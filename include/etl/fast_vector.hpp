@@ -141,22 +141,10 @@ public:
         return *this;
     }
 
-    //Add a scalar to each element
-    template<typename RE, enable_if_u<std::is_convertible<RE, T>::value> = detail::dummy>
-    auto operator+(RE re) const -> binary_expr<T, const fast_vector&, plus_binary_op<T>, scalar<T>> {
-        return {*this, re};
-    }
-
     //Add elements of vector together
     template<typename RE, disable_if_u<std::is_convertible<RE, T>::value> = detail::dummy>
     auto operator+(RE&& re) const -> binary_expr<T, const fast_vector&, plus_binary_op<T>, decltype(std::forward<RE>(re))> {
         return {*this, std::forward<RE>(re)};
-    }
-
-    //Remove each element by a scalar
-    template<typename RE, enable_if_u<std::is_convertible<RE, T>::value> = detail::dummy>
-    auto operator-(RE re) const -> binary_expr<T, const fast_vector&, minus_binary_op<T>, scalar<T>> {
-        return {*this, re};
     }
 
     //Sub elements of vector together
@@ -223,6 +211,26 @@ public:
         return _data.end();
     }
 };
+
+template<typename T, std::size_t Rows, typename RE, enable_if_u<std::is_convertible<RE, T>::value> = detail::dummy>
+auto operator-(const fast_vector<T, Rows>& lhs, RE rhs) -> binary_expr<T, const fast_vector<T, Rows>&, minus_binary_op<T>, scalar<T>> {
+    return {lhs, rhs};
+}
+
+template<typename T, std::size_t Rows, typename RE, enable_if_u<std::is_convertible<RE, T>::value> = detail::dummy>
+auto operator-(RE lhs, const fast_vector<T, Rows>& rhs) -> binary_expr<T, scalar<T>, minus_binary_op<T>, const fast_vector<T, Rows>&> {
+    return {lhs, rhs};
+}
+
+template<typename T, std::size_t Rows, typename RE, enable_if_u<std::is_convertible<RE, T>::value> = detail::dummy>
+auto operator+(const fast_vector<T, Rows>& lhs, RE rhs) -> binary_expr<T, const fast_vector<T, Rows>&, plus_binary_op<T>, scalar<T>> {
+    return {lhs, rhs};
+}
+
+template<typename T, std::size_t Rows, typename RE, enable_if_u<std::is_convertible<RE, T>::value> = detail::dummy>
+auto operator+(RE lhs, const fast_vector<T, Rows>& rhs) -> binary_expr<T, scalar<T>, plus_binary_op<T>, const fast_vector<T, Rows>&> {
+    return {lhs, rhs};
+}
 
 template<typename T, std::size_t Rows, typename RE, enable_if_u<std::is_convertible<RE, T>::value> = detail::dummy>
 auto operator*(const fast_vector<T, Rows>& lhs, RE rhs) -> binary_expr<T, const fast_vector<T, Rows>&, mul_binary_op<T>, scalar<T>> {
