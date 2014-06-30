@@ -78,6 +78,22 @@ public:
         return *this;
     }
 
+    template<typename E, typename Op>
+    fast_vector(unary_expr<T, E, Op>&& e){
+        for(std::size_t i = 0; i < Rows; ++i){
+            _data[i] = e[i];
+        }
+    }
+
+    template<typename E, typename Op>
+    fast_vector& operator=(unary_expr<T, E, Op>&& e){
+        for(std::size_t i = 0; i < Rows; ++i){
+            _data[i] = e[i];
+        }
+
+        return *this;
+    }
+
     //Allow copy from other containers
 
     template<typename Container, enable_if_u<std::is_same<typename Container::value_type, T>::value> = detail::dummy>
@@ -270,6 +286,11 @@ auto operator/(RE lhs, const fast_vector<T, Rows>& rhs) -> binary_expr<T, scalar
 
 template<typename T, std::size_t Rows>
 auto abs(const fast_vector<T, Rows>& value) -> unary_expr<T, const fast_vector<T, Rows>&, abs_unary_op<T>> {
+    return {value};
+}
+
+template<typename T, std::size_t Rows>
+auto log(const fast_vector<T, Rows>& value) -> unary_expr<T, const fast_vector<T, Rows>&, log_unary_op<T>> {
     return {value};
 }
 

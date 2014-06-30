@@ -63,6 +63,13 @@ struct abs_unary_op {
 };
 
 template<typename T>
+struct log_unary_op {
+    static constexpr T apply(const T& x){
+        return std::log(x);
+    }
+};
+
+template<typename T>
 struct sign_unary_op {
     static constexpr T apply(const T& x){
         return x > 0.0 ? 1.0 : x < 0.0 ? -1.0 : 0.0;
