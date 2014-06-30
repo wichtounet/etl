@@ -59,19 +59,9 @@ public:
 
     //Create more complex expressions
 
-    template<typename RE, enable_if_u<std::is_convertible<RE, T>::value> = detail::dummy>
-    auto operator+(RE re) const -> binary_expr<T, this_type const&, plus_binary_op<T>, scalar<T>> {
-        return {*this, re};
-    }
-
     template<typename RE, disable_if_u<std::is_convertible<RE, T>::value> = detail::dummy>
     auto operator+(RE&& re) const -> binary_expr<T, this_type const&, plus_binary_op<T>, decltype(std::forward<RE>(re))>{
         return {*this, std::forward<RE>(re)};
-    }
-
-    template<typename RE, enable_if_u<std::is_convertible<RE, T>::value> = detail::dummy>
-    auto operator-(RE re) const -> binary_expr<T, this_type const&, minus_binary_op<T>, scalar<T>> {
-        return {*this, re};
     }
 
     template<typename RE, disable_if_u<std::is_convertible<RE, T>::value> = detail::dummy>
@@ -84,13 +74,13 @@ public:
         return {*this, std::forward<RE>(re)};
     }
 
-    template<typename RE, enable_if_u<std::is_convertible<RE, T>::value> = detail::dummy>
-    auto operator/(RE re) const -> binary_expr<T, this_type const&, div_binary_op<T>, scalar<T>> {
-        return {*this, re};
+    template<typename RE, disable_if_u<std::is_convertible<RE, T>::value> = detail::dummy>
+    auto operator/(RE&& re) const -> binary_expr<T, this_type const&, div_binary_op<T>, decltype(std::forward<RE>(re))>{
+        return {*this, std::forward<RE>(re)};
     }
 
     template<typename RE, disable_if_u<std::is_convertible<RE, T>::value> = detail::dummy>
-    auto operator/(RE&& re) const -> binary_expr<T, this_type const&, div_binary_op<T>, decltype(std::forward<RE>(re))>{
+    auto operator%(RE&& re) const -> binary_expr<T, this_type const&, mod_binary_op<T>, decltype(std::forward<RE>(re))>{
         return {*this, std::forward<RE>(re)};
     }
 
@@ -102,12 +92,52 @@ public:
 };
 
 template <typename T, typename LE, typename Op, typename RE, typename Scalar, enable_if_u<std::is_convertible<Scalar, T>::value> = detail::dummy>
+auto operator+(const binary_expr<T, LE, Op, RE>& lhs, Scalar rhs) -> binary_expr<T, const binary_expr<T, LE, Op, RE>&, plus_binary_op<T>, scalar<T>> {
+    return {lhs, rhs};
+}
+
+template <typename T, typename LE, typename Op, typename RE, typename Scalar, enable_if_u<std::is_convertible<Scalar, T>::value> = detail::dummy>
+auto operator+(Scalar lhs, const binary_expr<T, LE, Op, RE>& rhs) -> binary_expr<T, scalar<T>, plus_binary_op<T>, const binary_expr<T, LE, Op, RE>&> {
+    return {lhs, rhs};
+}
+
+template <typename T, typename LE, typename Op, typename RE, typename Scalar, enable_if_u<std::is_convertible<Scalar, T>::value> = detail::dummy>
+auto operator-(const binary_expr<T, LE, Op, RE>& lhs, Scalar rhs) -> binary_expr<T, const binary_expr<T, LE, Op, RE>&, minus_binary_op<T>, scalar<T>> {
+    return {lhs, rhs};
+}
+
+template <typename T, typename LE, typename Op, typename RE, typename Scalar, enable_if_u<std::is_convertible<Scalar, T>::value> = detail::dummy>
+auto operator-(Scalar lhs, const binary_expr<T, LE, Op, RE>& rhs) -> binary_expr<T, scalar<T>, minus_binary_op<T>, const binary_expr<T, LE, Op, RE>&> {
+    return {lhs, rhs};
+}
+
+template <typename T, typename LE, typename Op, typename RE, typename Scalar, enable_if_u<std::is_convertible<Scalar, T>::value> = detail::dummy>
 auto operator*(const binary_expr<T, LE, Op, RE>& lhs, Scalar rhs) -> binary_expr<T, const binary_expr<T, LE, Op, RE>&, mul_binary_op<T>, scalar<T>> {
     return {lhs, rhs};
 }
 
 template <typename T, typename LE, typename Op, typename RE, typename Scalar, enable_if_u<std::is_convertible<Scalar, T>::value> = detail::dummy>
 auto operator*(Scalar lhs, const binary_expr<T, LE, Op, RE>& rhs) -> binary_expr<T, scalar<T>, mul_binary_op<T>, const binary_expr<T, LE, Op, RE>&> {
+    return {lhs, rhs};
+}
+
+template <typename T, typename LE, typename Op, typename RE, typename Scalar, enable_if_u<std::is_convertible<Scalar, T>::value> = detail::dummy>
+auto operator/(const binary_expr<T, LE, Op, RE>& lhs, Scalar rhs) -> binary_expr<T, const binary_expr<T, LE, Op, RE>&, div_binary_op<T>, scalar<T>> {
+    return {lhs, rhs};
+}
+
+template <typename T, typename LE, typename Op, typename RE, typename Scalar, enable_if_u<std::is_convertible<Scalar, T>::value> = detail::dummy>
+auto operator/(Scalar lhs, const binary_expr<T, LE, Op, RE>& rhs) -> binary_expr<T, scalar<T>, div_binary_op<T>, const binary_expr<T, LE, Op, RE>&> {
+    return {lhs, rhs};
+}
+
+template <typename T, typename LE, typename Op, typename RE, typename Scalar, enable_if_u<std::is_convertible<Scalar, T>::value> = detail::dummy>
+auto operator%(const binary_expr<T, LE, Op, RE>& lhs, Scalar rhs) -> binary_expr<T, const binary_expr<T, LE, Op, RE>&, mod_binary_op<T>, scalar<T>> {
+    return {lhs, rhs};
+}
+
+template <typename T, typename LE, typename Op, typename RE, typename Scalar, enable_if_u<std::is_convertible<Scalar, T>::value> = detail::dummy>
+auto operator%(Scalar lhs, const binary_expr<T, LE, Op, RE>& rhs) -> binary_expr<T, scalar<T>, mod_binary_op<T>, const binary_expr<T, LE, Op, RE>&> {
     return {lhs, rhs};
 }
 
