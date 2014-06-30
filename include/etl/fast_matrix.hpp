@@ -29,6 +29,10 @@ private:
     array_impl _data;
 
 public:
+    static constexpr const bool etl_marker = true;
+
+    using value_type = T;
+
     static constexpr const std::size_t rows = Rows;
     static constexpr const std::size_t columns = Columns;
 
@@ -38,6 +42,12 @@ public:
 
     fast_matrix(const T& value){
         std::fill(_data.begin(), _data.end(), value);
+    }
+
+    fast_matrix(std::initializer_list<T> l){
+        etl_assert(l.size() == size(), "Cannot copy from an initializer of different size");
+
+        std::copy(l.begin(), l.end(), begin());
     }
 
     fast_matrix& operator=(const fast_matrix& rhs){
@@ -59,6 +69,22 @@ public:
 
     template<typename LE, typename Op, typename RE>
     fast_matrix& operator=(binary_expr<T, LE, Op, RE>&& e){
+        for(std::size_t i = 0; i < size(); ++i){
+            _data[i] = e[i];
+        }
+
+        return *this;
+    }
+
+    template<typename E, typename Op>
+    fast_matrix(unary_expr<T, E, Op>&& e){
+        for(std::size_t i = 0; i < size(); ++i){
+            _data[i] = e[i];
+        }
+    }
+
+    template<typename E, typename Op>
+    fast_matrix& operator=(unary_expr<T, E, Op>&& e){
         for(std::size_t i = 0; i < size(); ++i){
             _data[i] = e[i];
         }
@@ -118,48 +144,6 @@ public:
         return *this;
     }
 
-    //Add a scalar to each element
-    template<typename RE, enable_if_u<std::is_convertible<RE, T>::value> = detail::dummy>
-    auto operator+(RE re) const -> binary_expr<T, const fast_matrix&, plus_binary_op<T>, scalar<T>> {
-        return {*this, re};
-    }
-
-    //Add elements of matrix together
-    template<typename RE, disable_if_u<std::is_convertible<RE, T>::value> = detail::dummy>
-    auto operator+(RE&& re) const -> binary_expr<T, const fast_matrix&, plus_binary_op<T>, decltype(std::forward<RE>(re))> {
-        return {*this, std::forward<RE>(re)};
-    }
-
-    //Remove each element by a scalar
-    template<typename RE, enable_if_u<std::is_convertible<RE, T>::value> = detail::dummy>
-    auto operator-(RE re) const -> binary_expr<T, const fast_matrix&, minus_binary_op<T>, scalar<T>> {
-        return {*this, re};
-    }
-
-    //Sub elements of matrix together
-    template<typename RE, disable_if_u<std::is_convertible<RE, T>::value> = detail::dummy>
-    auto operator-(RE&& re) const -> binary_expr<T, const fast_matrix&, minus_binary_op<T>, decltype(std::forward<RE>(re))> {
-        return {*this, std::forward<RE>(re)};
-    }
-
-    //Mull elements of matrix togethers
-    template<typename RE, disable_if_u<std::is_convertible<RE, T>::value> = detail::dummy>
-    auto operator*(RE&& re) const -> binary_expr<T, const fast_matrix&, mul_binary_op<T>, decltype(std::forward<RE>(re))> {
-        return {*this, std::forward<RE>(re)};
-    }
-
-    //Div each element by a scalar
-    template<typename RE, enable_if_u<std::is_convertible<RE, T>::value> = detail::dummy>
-    auto operator/(RE re) const -> binary_expr<T, const fast_matrix&, div_binary_op<T>, scalar<T>> {
-        return {*this, re};
-    }
-
-    //Div elements of matrix togethers
-    template<typename RE, disable_if_u<std::is_convertible<RE, T>::value> = detail::dummy>
-    auto operator/(RE&& re) const -> binary_expr<T, const fast_matrix&, div_binary_op<T>, decltype(std::forward<RE>(re))> {
-        return {*this, std::forward<RE>(re)};
-    }
-
     //Accessors
 
     constexpr size_t size() const {
@@ -208,27 +192,6 @@ public:
         return _data.end();
     }
 };
-
-//Mul each element by a scalar
-template<typename T, size_t Rows, size_t Columns, typename RE, enable_if_u<std::is_convertible<RE, T>::value> = detail::dummy>
-auto operator*(const fast_matrix<T, Rows, Columns>& lhs, RE rhs) -> binary_expr<T, const fast_matrix<T, Rows, Columns>&, mul_binary_op<T>, scalar<T>> {
-    return {lhs, rhs};
-}
-
-//Mul each element by a scalar
-template<typename T, size_t Rows, size_t Columns, typename RE, enable_if_u<std::is_convertible<RE, T>::value> = detail::dummy>
-auto operator*(RE lhs, const fast_matrix<T, Rows, Columns>& rhs) -> binary_expr<T, scalar<T>, mul_binary_op<T>, const fast_matrix<T, Rows, Columns>&> {
-    return {lhs, rhs};
-}
-template<typename T, std::size_t Rows, std::size_t Columns>
-auto abs(const fast_matrix<T, Rows, Columns>& value) -> unary_expr<T, const fast_matrix<T, Rows, Columns>&, abs_unary_op<T>> {
-    return {value};
-}
-
-template<typename T, std::size_t Rows, std::size_t Columns>
-auto sign(const fast_matrix<T, Rows, Columns>& value) -> unary_expr<T, const fast_matrix<T, Rows, Columns>&, sign_unary_op<T>> {
-    return {value};
-}
 
 } //end of namespace etl
 
