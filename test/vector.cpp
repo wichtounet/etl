@@ -242,3 +242,15 @@ TEST_CASE( "fast_vector/complex", "fast_vector::complex" ) {
     REQUIRE(d[1] == Approx(5.0));
     REQUIRE(d[2] == Approx(0.68627));
 }
+
+TEST_CASE( "fast_vector/complex_2", "fast_vector::complex" ) {
+    etl::fast_vector<double, 3> a = {-1.0, 2.0, 5.0};
+    etl::fast_vector<double, 3> b = {2.5, 3.0, 4.0};
+    etl::fast_vector<double, 3> c = {1.2, -3.0, 3.5};
+
+    etl::fast_vector<double, 3> d = 2.5 * ((a * b) / (log(a) * abs(c))) / (1.5 * a * sign(b) / c);
+
+    REQUIRE(d[0] == Approx(10.0));
+    REQUIRE(d[1] == Approx(5.0));
+    REQUIRE(d[2] == Approx(0.68627));
+}
