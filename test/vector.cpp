@@ -239,6 +239,16 @@ TEST_CASE( "fast_vector/unary_unary", "fast_vector::abs" ) {
     REQUIRE(d[2] == 0.0);
 }
 
+TEST_CASE( "fast_vector/unary_binary", "fast_vector::abs" ) {
+    etl::fast_vector<double, 3> a = {-1.0, 2.0, 0.0};
+
+    etl::fast_vector<double, 3> d = abs(a + a);
+
+    REQUIRE(d[0] == 2.0);
+    REQUIRE(d[1] == 4.0);
+    REQUIRE(d[2] == 0.0);
+}
+
 //}}} Unary operators test
 
 TEST_CASE( "fast_vector/complex", "fast_vector::complex" ) {
