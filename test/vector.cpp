@@ -96,10 +96,20 @@ TEST_CASE( "fast_vector/sub", "fast_vector::operator-" ) {
     REQUIRE(c[2] ==  1.0);
 }
 
-TEST_CASE( "fast_vector/mul_scalar", "fast_vector::operator*" ) {
+TEST_CASE( "fast_vector/mul_scalar_1", "fast_vector::operator*" ) {
     etl::fast_vector<double, 3> test_vector = {-1.0, 2.0, 5.0};
 
     test_vector = 2.5 * test_vector;
+
+    REQUIRE(test_vector[0] == -2.5);
+    REQUIRE(test_vector[1] ==  5.0);
+    REQUIRE(test_vector[2] == 12.5);
+}
+
+TEST_CASE( "fast_vector/mul_scalar_2", "fast_vector::operator*" ) {
+    etl::fast_vector<double, 3> test_vector = {-1.0, 2.0, 5.0};
+
+    test_vector = test_vector * 2.5;
 
     REQUIRE(test_vector[0] == -2.5);
     REQUIRE(test_vector[1] ==  5.0);
@@ -117,7 +127,7 @@ TEST_CASE( "fast_vector/mul", "fast_vector::operator*" ) {
     REQUIRE(c[2] == 20.0);
 }
 
-TEST_CASE( "fast_vector/div_scalar", "fast_vector::operator/" ) {
+TEST_CASE( "fast_vector/div_scalar_1", "fast_vector::operator/" ) {
     etl::fast_vector<double, 3> test_vector = {-1.0, 2.0, 5.0};
 
     test_vector = test_vector / 2.5;
@@ -125,6 +135,16 @@ TEST_CASE( "fast_vector/div_scalar", "fast_vector::operator/" ) {
     REQUIRE(test_vector[0] == -1.0 / 2.5);
     REQUIRE(test_vector[1] ==  2.0 / 2.5);
     REQUIRE(test_vector[2] ==  5.0 / 2.5);
+}
+
+TEST_CASE( "fast_vector/div_scalar_2", "fast_vector::operator/" ) {
+    etl::fast_vector<double, 3> test_vector = {-1.0, 2.0, 5.0};
+
+    test_vector = 2.5 / test_vector;
+
+    REQUIRE(test_vector[0] == 2.5 / -1.0);
+    REQUIRE(test_vector[1] == 2.5 /  2.0);
+    REQUIRE(test_vector[2] == 2.5 /  5.0);
 }
 
 TEST_CASE( "fast_vector/div", "fast_vector::operator/" ) {
@@ -138,7 +158,7 @@ TEST_CASE( "fast_vector/div", "fast_vector::operator/" ) {
     REQUIRE(c[2] == 5.0 / 4.0);
 }
 
-TEST_CASE( "fast_vector/mod_scalar", "fast_vector::operator%" ) {
+TEST_CASE( "fast_vector/mod_scalar_1", "fast_vector::operator%" ) {
     etl::fast_vector<int, 3> test_vector = {-1, 2, 5};
 
     test_vector = test_vector % 2;
@@ -146,6 +166,16 @@ TEST_CASE( "fast_vector/mod_scalar", "fast_vector::operator%" ) {
     REQUIRE(test_vector[0] == -1 % 2);
     REQUIRE(test_vector[1] ==  2 % 2);
     REQUIRE(test_vector[2] ==  5 % 2);
+}
+
+TEST_CASE( "fast_vector/mod_scalar_2", "fast_vector::operator%" ) {
+    etl::fast_vector<int, 3> test_vector = {-1, 2, 5};
+
+    test_vector = 2 % test_vector;
+
+    REQUIRE(test_vector[0] == 2 % -1);
+    REQUIRE(test_vector[1] == 2 %  2);
+    REQUIRE(test_vector[2] == 2 %  5);
 }
 
 TEST_CASE( "fast_vector/mod", "fast_vector::operator*" ) {
