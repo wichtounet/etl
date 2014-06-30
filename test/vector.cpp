@@ -261,6 +261,8 @@ TEST_CASE( "fast_vector/unary_binary_2", "fast_vector::abs" ) {
 
 //}}} Unary operators test
 
+//{{{ Complex tests
+
 TEST_CASE( "fast_vector/complex", "fast_vector::complex" ) {
     etl::fast_vector<double, 3> a = {-1.0, 2.0, 5.0};
     etl::fast_vector<double, 3> b = {2.5, 3.0, 4.0};
@@ -296,3 +298,5 @@ TEST_CASE( "fast_vector/complex_3", "fast_vector::complex" ) {
     REQUIRE(d[1] == Approx(0.416666));
     REQUIRE(d[2] == Approx(0.125));
 }
+
+//}}} Complex tests
