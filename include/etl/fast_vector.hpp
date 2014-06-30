@@ -263,6 +263,11 @@ auto operator/(const fast_vector<T, Rows>& lhs, RE rhs) -> binary_expr<T, const 
     return {lhs, rhs};
 }
 
+template<typename T, std::size_t Rows, typename RE, enable_if_u<std::is_convertible<RE, T>::value> = detail::dummy>
+auto operator/(RE lhs, const fast_vector<T, Rows>& rhs) -> binary_expr<T, scalar<T>, div_binary_op<T>, const fast_vector<T, Rows>&> {
+    return {lhs, rhs};
+}
+
 template<typename T, std::size_t Rows>
 auto abs(const fast_vector<T, Rows>& value) -> unary_expr<T, const fast_vector<T, Rows>&, abs_unary_op<T>> {
     return {value};
