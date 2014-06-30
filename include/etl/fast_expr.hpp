@@ -22,6 +22,10 @@ private:
     typedef binary_expr<T, LeftExpr, BinaryOp, RightExpr> this_type;
 
 public:
+    static constexpr const bool etl_marker = true;
+
+    using value_type = T;
+
     //Cannot be constructed with no args
     binary_expr() = delete;
 
@@ -57,89 +61,12 @@ public:
         return _rhs;
     }
 
-    //Create more complex expressions
-
-    template<typename RE, disable_if_u<std::is_convertible<RE, T>::value> = detail::dummy>
-    auto operator+(RE&& re) const -> binary_expr<T, this_type const&, plus_binary_op<T>, decltype(std::forward<RE>(re))>{
-        return {*this, std::forward<RE>(re)};
-    }
-
-    template<typename RE, disable_if_u<std::is_convertible<RE, T>::value> = detail::dummy>
-    auto operator-(RE&& re) const -> binary_expr<T, this_type const&, minus_binary_op<T>, decltype(std::forward<RE>(re))>{
-        return {*this, std::forward<RE>(re)};
-    }
-
-    template<typename RE, disable_if_u<std::is_convertible<RE, T>::value> = detail::dummy>
-    auto operator*(RE&& re) const -> binary_expr<T, this_type const&, mul_binary_op<T>, decltype(std::forward<RE>(re))>{
-        return {*this, std::forward<RE>(re)};
-    }
-
-    template<typename RE, disable_if_u<std::is_convertible<RE, T>::value> = detail::dummy>
-    auto operator/(RE&& re) const -> binary_expr<T, this_type const&, div_binary_op<T>, decltype(std::forward<RE>(re))>{
-        return {*this, std::forward<RE>(re)};
-    }
-
-    template<typename RE, disable_if_u<std::is_convertible<RE, T>::value> = detail::dummy>
-    auto operator%(RE&& re) const -> binary_expr<T, this_type const&, mod_binary_op<T>, decltype(std::forward<RE>(re))>{
-        return {*this, std::forward<RE>(re)};
-    }
-
     //Apply the expression
 
     decltype(auto) operator[](std::size_t i) const {
         return BinaryOp::apply(lhs()[i], rhs()[i]);
     }
 };
-
-template <typename T, typename LE, typename Op, typename RE, typename Scalar, enable_if_u<std::is_convertible<Scalar, T>::value> = detail::dummy>
-auto operator+(const binary_expr<T, LE, Op, RE>& lhs, Scalar rhs) -> binary_expr<T, const binary_expr<T, LE, Op, RE>&, plus_binary_op<T>, scalar<T>> {
-    return {lhs, rhs};
-}
-
-template <typename T, typename LE, typename Op, typename RE, typename Scalar, enable_if_u<std::is_convertible<Scalar, T>::value> = detail::dummy>
-auto operator+(Scalar lhs, const binary_expr<T, LE, Op, RE>& rhs) -> binary_expr<T, scalar<T>, plus_binary_op<T>, const binary_expr<T, LE, Op, RE>&> {
-    return {lhs, rhs};
-}
-
-template <typename T, typename LE, typename Op, typename RE, typename Scalar, enable_if_u<std::is_convertible<Scalar, T>::value> = detail::dummy>
-auto operator-(const binary_expr<T, LE, Op, RE>& lhs, Scalar rhs) -> binary_expr<T, const binary_expr<T, LE, Op, RE>&, minus_binary_op<T>, scalar<T>> {
-    return {lhs, rhs};
-}
-
-template <typename T, typename LE, typename Op, typename RE, typename Scalar, enable_if_u<std::is_convertible<Scalar, T>::value> = detail::dummy>
-auto operator-(Scalar lhs, const binary_expr<T, LE, Op, RE>& rhs) -> binary_expr<T, scalar<T>, minus_binary_op<T>, const binary_expr<T, LE, Op, RE>&> {
-    return {lhs, rhs};
-}
-
-template <typename T, typename LE, typename Op, typename RE, typename Scalar, enable_if_u<std::is_convertible<Scalar, T>::value> = detail::dummy>
-auto operator*(const binary_expr<T, LE, Op, RE>& lhs, Scalar rhs) -> binary_expr<T, const binary_expr<T, LE, Op, RE>&, mul_binary_op<T>, scalar<T>> {
-    return {lhs, rhs};
-}
-
-template <typename T, typename LE, typename Op, typename RE, typename Scalar, enable_if_u<std::is_convertible<Scalar, T>::value> = detail::dummy>
-auto operator*(Scalar lhs, const binary_expr<T, LE, Op, RE>& rhs) -> binary_expr<T, scalar<T>, mul_binary_op<T>, const binary_expr<T, LE, Op, RE>&> {
-    return {lhs, rhs};
-}
-
-template <typename T, typename LE, typename Op, typename RE, typename Scalar, enable_if_u<std::is_convertible<Scalar, T>::value> = detail::dummy>
-auto operator/(const binary_expr<T, LE, Op, RE>& lhs, Scalar rhs) -> binary_expr<T, const binary_expr<T, LE, Op, RE>&, div_binary_op<T>, scalar<T>> {
-    return {lhs, rhs};
-}
-
-template <typename T, typename LE, typename Op, typename RE, typename Scalar, enable_if_u<std::is_convertible<Scalar, T>::value> = detail::dummy>
-auto operator/(Scalar lhs, const binary_expr<T, LE, Op, RE>& rhs) -> binary_expr<T, scalar<T>, div_binary_op<T>, const binary_expr<T, LE, Op, RE>&> {
-    return {lhs, rhs};
-}
-
-template <typename T, typename LE, typename Op, typename RE, typename Scalar, enable_if_u<std::is_convertible<Scalar, T>::value> = detail::dummy>
-auto operator%(const binary_expr<T, LE, Op, RE>& lhs, Scalar rhs) -> binary_expr<T, const binary_expr<T, LE, Op, RE>&, mod_binary_op<T>, scalar<T>> {
-    return {lhs, rhs};
-}
-
-template <typename T, typename LE, typename Op, typename RE, typename Scalar, enable_if_u<std::is_convertible<Scalar, T>::value> = detail::dummy>
-auto operator%(Scalar lhs, const binary_expr<T, LE, Op, RE>& rhs) -> binary_expr<T, scalar<T>, mod_binary_op<T>, const binary_expr<T, LE, Op, RE>&> {
-    return {lhs, rhs};
-}
 
 template <typename T, typename Expr, typename UnaryOp>
 class unary_expr {
@@ -149,6 +76,10 @@ private:
     typedef unary_expr<T, Expr, UnaryOp> this_type;
 
 public:
+    static constexpr const bool etl_marker = true;
+
+    using value_type = T;
+
     //Cannot be constructed with no args
     unary_expr() = delete;
 
@@ -182,17 +113,107 @@ public:
     }
 };
 
-//Convert x * unary_expr and unary_expr * x into binary_expr
+//{{{ Build binary expressions from two ETL expressions (vector,matrix,binary,unary)
 
-template <typename T, typename E, typename Op, typename Scalar, enable_if_u<std::is_convertible<Scalar, T>::value> = detail::dummy>
-auto operator*(const unary_expr<T, E, Op>& lhs, Scalar rhs) -> binary_expr<T, const unary_expr<T, E, Op>&, mul_binary_op<T>, scalar<T>> {
+template<typename LE, typename RE, enable_if_u<and_u<is_etl_expr<LE>::value, is_etl_expr<RE>::value>::value> = detail::dummy>
+auto operator-(const LE& lhs, const RE& rhs) -> binary_expr<typename LE::value_type, const LE&, minus_binary_op<typename LE::value_type>, const RE&> {
     return {lhs, rhs};
 }
 
-template <typename T, typename E, typename Op, typename Scalar, enable_if_u<std::is_convertible<Scalar, T>::value> = detail::dummy>
-auto operator*(Scalar lhs, const unary_expr<T, E, Op>& rhs) -> binary_expr<T, scalar<T>, mul_binary_op<T>, const unary_expr<T, E, Op>&> {
+template<typename LE, typename RE, enable_if_u<and_u<is_etl_expr<LE>::value, is_etl_expr<RE>::value>::value> = detail::dummy>
+auto operator+(const LE& lhs, const RE& rhs) -> binary_expr<typename LE::value_type, const LE&, plus_binary_op<typename LE::value_type>, const RE&> {
     return {lhs, rhs};
 }
+
+template<typename LE, typename RE, enable_if_u<and_u<is_etl_expr<LE>::value, is_etl_expr<RE>::value>::value> = detail::dummy>
+auto operator*(const LE& lhs, const RE& rhs) -> binary_expr<typename LE::value_type, const LE&, mul_binary_op<typename LE::value_type>, const RE&> {
+    return {lhs, rhs};
+}
+
+template<typename LE, typename RE, enable_if_u<and_u<is_etl_expr<LE>::value, is_etl_expr<RE>::value>::value> = detail::dummy>
+auto operator/(const LE& lhs, const RE& rhs) -> binary_expr<typename LE::value_type, const LE&, div_binary_op<typename LE::value_type>, const RE&> {
+    return {lhs, rhs};
+}
+
+template<typename LE, typename RE, enable_if_u<and_u<is_etl_expr<LE>::value, is_etl_expr<RE>::value>::value> = detail::dummy>
+auto operator%(const LE& lhs, const RE& rhs) -> binary_expr<typename LE::value_type, const LE&, mod_binary_op<typename LE::value_type>, const RE&> {
+    return {lhs, rhs};
+}
+
+//}}}
+
+//{{{ Mix scalars and ETL expressions (vector,matrix,binary,unary)
+
+template<typename LE, typename RE, enable_if_u<and_u<std::is_convertible<RE, typename LE::value_type>::value, is_etl_expr<LE>::value>::value> = detail::dummy>
+auto operator-(const LE& lhs, RE rhs) -> binary_expr<typename LE::value_type, const LE&, minus_binary_op<typename LE::value_type>, scalar<typename LE::value_type>> {
+    return {lhs, rhs};
+}
+
+template<typename LE, typename RE, enable_if_u<and_u<std::is_convertible<LE, typename RE::value_type>::value, is_etl_expr<RE>::value>::value> = detail::dummy>
+auto operator-(LE lhs, const RE& rhs) -> binary_expr<typename RE::value_type, scalar<typename RE::value_type>, minus_binary_op<typename RE::value_type>, const RE&> {
+    return {lhs, rhs};
+}
+
+template<typename LE, typename RE, enable_if_u<and_u<std::is_convertible<RE, typename LE::value_type>::value, is_etl_expr<LE>::value>::value> = detail::dummy>
+auto operator+(const LE& lhs, RE rhs) -> binary_expr<typename LE::value_type, const LE&, plus_binary_op<typename LE::value_type>, scalar<typename LE::value_type>> {
+    return {lhs, rhs};
+}
+
+template<typename LE, typename RE, enable_if_u<and_u<std::is_convertible<LE, typename RE::value_type>::value, is_etl_expr<RE>::value>::value> = detail::dummy>
+auto operator+(LE lhs, const RE& rhs) -> binary_expr<typename RE::value_type, scalar<typename RE::value_type>, plus_binary_op<typename RE::value_type>, const RE&> {
+    return {lhs, rhs};
+}
+
+template<typename LE, typename RE, enable_if_u<and_u<std::is_convertible<RE, typename LE::value_type>::value, is_etl_expr<LE>::value>::value> = detail::dummy>
+auto operator*(const LE& lhs, RE rhs) -> binary_expr<typename LE::value_type, const LE&, mul_binary_op<typename LE::value_type>, scalar<typename LE::value_type>> {
+    return {lhs, rhs};
+}
+
+template<typename LE, typename RE, enable_if_u<and_u<std::is_convertible<LE, typename RE::value_type>::value, is_etl_expr<RE>::value>::value> = detail::dummy>
+auto operator*(LE lhs, const RE& rhs) -> binary_expr<typename RE::value_type, scalar<typename RE::value_type>, mul_binary_op<typename RE::value_type>, const RE&> {
+    return {lhs, rhs};
+}
+
+template<typename LE, typename RE, enable_if_u<and_u<std::is_convertible<RE, typename LE::value_type>::value, is_etl_expr<LE>::value>::value> = detail::dummy>
+auto operator/(const LE& lhs, RE rhs) -> binary_expr<typename LE::value_type, const LE&, div_binary_op<typename LE::value_type>, scalar<typename LE::value_type>> {
+    return {lhs, rhs};
+}
+
+template<typename LE, typename RE, enable_if_u<and_u<std::is_convertible<LE, typename RE::value_type>::value, is_etl_expr<RE>::value>::value> = detail::dummy>
+auto operator/(LE lhs, const RE& rhs) -> binary_expr<typename RE::value_type, scalar<typename RE::value_type>, div_binary_op<typename RE::value_type>, const RE&> {
+    return {lhs, rhs};
+}
+
+template<typename LE, typename RE, enable_if_u<and_u<std::is_convertible<RE, typename LE::value_type>::value, is_etl_expr<LE>::value>::value> = detail::dummy>
+auto operator%(const LE& lhs, RE rhs) -> binary_expr<typename LE::value_type, const LE&, mod_binary_op<typename LE::value_type>, scalar<typename LE::value_type>> {
+    return {lhs, rhs};
+}
+
+template<typename LE, typename RE, enable_if_u<and_u<std::is_convertible<LE, typename RE::value_type>::value, is_etl_expr<RE>::value>::value> = detail::dummy>
+auto operator%(LE lhs, const RE& rhs) -> binary_expr<typename RE::value_type, scalar<typename RE::value_type>, mod_binary_op<typename RE::value_type>, const RE&> {
+    return {lhs, rhs};
+}
+
+//}}}
+
+//{{{ Apply an unary expression on an ETL expression (vector,matrix,binary,unary)
+
+template<typename E, enable_if_u<is_etl_expr<E>::value> = detail::dummy>
+auto abs(const E& value) -> unary_expr<typename E::value_type, const E&, abs_unary_op<typename E::value_type>> {
+    return {value};
+}
+
+template<typename E, enable_if_u<is_etl_expr<E>::value> = detail::dummy>
+auto log(const E& value) -> unary_expr<typename E::value_type, const E&, log_unary_op<typename E::value_type>> {
+    return {value};
+}
+
+template<typename E, enable_if_u<is_etl_expr<E>::value> = detail::dummy>
+auto sign(const E& value) -> unary_expr<typename E::value_type, const E&, sign_unary_op<typename E::value_type>> {
+    return {value};
+}
+
+//}}}
 
 } //end of namespace etl
 

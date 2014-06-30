@@ -32,6 +32,8 @@ private:
 public:
     static constexpr const std::size_t rows = Rows;
 
+    static constexpr const bool etl_marker = true;
+
     typedef T value_type;
     typedef T* iterator;
     typedef const T* const_iterator;
@@ -157,36 +159,6 @@ public:
         return *this;
     }
 
-    //Add elements of vector together
-    template<typename RE, disable_if_u<std::is_convertible<RE, T>::value> = detail::dummy>
-    auto operator+(RE&& re) const -> binary_expr<T, const fast_vector&, plus_binary_op<T>, decltype(std::forward<RE>(re))> {
-        return {*this, std::forward<RE>(re)};
-    }
-
-    //Sub elements of vector together
-    template<typename RE, disable_if_u<std::is_convertible<RE, T>::value> = detail::dummy>
-    auto operator-(RE&& re) const -> binary_expr<T, const fast_vector&, minus_binary_op<T>, decltype(std::forward<RE>(re))> {
-        return {*this, std::forward<RE>(re)};
-    }
-
-    //Mul elements of vector togethers
-    template<typename RE, disable_if_u<std::is_convertible<RE, T>::value> = detail::dummy>
-    auto operator*(RE&& re) const -> binary_expr<T, const fast_vector&, mul_binary_op<T>, decltype(std::forward<RE>(re))> {
-        return {*this, std::forward<RE>(re)};
-    }
-
-    //Mod elements of vector togethers
-    template<typename RE, disable_if_u<std::is_convertible<RE, T>::value> = detail::dummy>
-    auto operator%(RE&& re) const -> binary_expr<T, const fast_vector&, mod_binary_op<T>, decltype(std::forward<RE>(re))> {
-        return {*this, std::forward<RE>(re)};
-    }
-
-    //Div elements of vector togethers
-    template<typename RE, disable_if_u<std::is_convertible<RE, T>::value> = detail::dummy>
-    auto operator/(RE&& re) const -> binary_expr<T, const fast_vector&, div_binary_op<T>, decltype(std::forward<RE>(re))> {
-        return {*this, std::forward<RE>(re)};
-    }
-
     //Accessors
 
     constexpr size_t size() const {
@@ -233,71 +205,6 @@ public:
         return _data.end();
     }
 };
-
-template<typename T, std::size_t Rows, typename RE, enable_if_u<std::is_convertible<RE, T>::value> = detail::dummy>
-auto operator-(const fast_vector<T, Rows>& lhs, RE rhs) -> binary_expr<T, const fast_vector<T, Rows>&, minus_binary_op<T>, scalar<T>> {
-    return {lhs, rhs};
-}
-
-template<typename T, std::size_t Rows, typename RE, enable_if_u<std::is_convertible<RE, T>::value> = detail::dummy>
-auto operator-(RE lhs, const fast_vector<T, Rows>& rhs) -> binary_expr<T, scalar<T>, minus_binary_op<T>, const fast_vector<T, Rows>&> {
-    return {lhs, rhs};
-}
-
-template<typename T, std::size_t Rows, typename RE, enable_if_u<std::is_convertible<RE, T>::value> = detail::dummy>
-auto operator+(const fast_vector<T, Rows>& lhs, RE rhs) -> binary_expr<T, const fast_vector<T, Rows>&, plus_binary_op<T>, scalar<T>> {
-    return {lhs, rhs};
-}
-
-template<typename T, std::size_t Rows, typename RE, enable_if_u<std::is_convertible<RE, T>::value> = detail::dummy>
-auto operator+(RE lhs, const fast_vector<T, Rows>& rhs) -> binary_expr<T, scalar<T>, plus_binary_op<T>, const fast_vector<T, Rows>&> {
-    return {lhs, rhs};
-}
-
-template<typename T, std::size_t Rows, typename RE, enable_if_u<std::is_convertible<RE, T>::value> = detail::dummy>
-auto operator*(const fast_vector<T, Rows>& lhs, RE rhs) -> binary_expr<T, const fast_vector<T, Rows>&, mul_binary_op<T>, scalar<T>> {
-    return {lhs, rhs};
-}
-
-template<typename T, std::size_t Rows, typename RE, enable_if_u<std::is_convertible<RE, T>::value> = detail::dummy>
-auto operator*(RE lhs, const fast_vector<T, Rows>& rhs) -> binary_expr<T, scalar<T>, mul_binary_op<T>, const fast_vector<T, Rows>&> {
-    return {lhs, rhs};
-}
-
-template<typename T, std::size_t Rows, typename RE, enable_if_u<std::is_convertible<RE, T>::value> = detail::dummy>
-auto operator%(const fast_vector<T, Rows>& lhs, RE rhs) -> binary_expr<T, const fast_vector<T, Rows>&, mod_binary_op<T>, scalar<T>> {
-    return {lhs, rhs};
-}
-
-template<typename T, std::size_t Rows, typename RE, enable_if_u<std::is_convertible<RE, T>::value> = detail::dummy>
-auto operator%(RE lhs, const fast_vector<T, Rows>& rhs) -> binary_expr<T, scalar<T>, mod_binary_op<T>, const fast_vector<T, Rows>&> {
-    return {lhs, rhs};
-}
-
-template<typename T, std::size_t Rows, typename RE, enable_if_u<std::is_convertible<RE, T>::value> = detail::dummy>
-auto operator/(const fast_vector<T, Rows>& lhs, RE rhs) -> binary_expr<T, const fast_vector<T, Rows>&, div_binary_op<T>, scalar<T>> {
-    return {lhs, rhs};
-}
-
-template<typename T, std::size_t Rows, typename RE, enable_if_u<std::is_convertible<RE, T>::value> = detail::dummy>
-auto operator/(RE lhs, const fast_vector<T, Rows>& rhs) -> binary_expr<T, scalar<T>, div_binary_op<T>, const fast_vector<T, Rows>&> {
-    return {lhs, rhs};
-}
-
-template<typename T, std::size_t Rows>
-auto abs(const fast_vector<T, Rows>& value) -> unary_expr<T, const fast_vector<T, Rows>&, abs_unary_op<T>> {
-    return {value};
-}
-
-template<typename T, std::size_t Rows>
-auto log(const fast_vector<T, Rows>& value) -> unary_expr<T, const fast_vector<T, Rows>&, log_unary_op<T>> {
-    return {value};
-}
-
-template<typename T, std::size_t Rows>
-auto sign(const fast_vector<T, Rows>& value) -> unary_expr<T, const fast_vector<T, Rows>&, sign_unary_op<T>> {
-    return {value};
-}
 
 template<typename T, std::size_t Rows>
 T sum(const fast_vector<T, Rows>& values){
