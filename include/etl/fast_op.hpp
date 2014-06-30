@@ -49,6 +49,13 @@ struct div_binary_op {
 };
 
 template<typename T>
+struct mod_binary_op {
+    static constexpr T apply(const T& lhs, const T& rhs){
+        return lhs % rhs;
+    }
+};
+
+template<typename T>
 struct abs_unary_op {
     static constexpr T apply(const T& x){
         return std::abs(x);
