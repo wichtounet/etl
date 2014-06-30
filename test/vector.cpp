@@ -2,6 +2,8 @@
 
 #include "etl/fast_vector.hpp"
 
+//{{{ Init tests
+
 TEST_CASE( "fast_vector/init_1", "fast_vector::fast_vector(T)" ) {
     etl::fast_vector<double, 4> test_vector(3.3);
 
@@ -33,6 +35,10 @@ TEST_CASE( "fast_vector/init_3", "fast_vector::fast_vector(initializer_list)" ) 
     REQUIRE(test_vector[1] == 2.0);
     REQUIRE(test_vector[2] == 3.0);
 }
+
+//}}} Init tests
+
+//{{{ Binary operators test
 
 TEST_CASE( "fast_vector/add_scalar_1", "fast_vector::operator+" ) {
     etl::fast_vector<double, 3> test_vector = {-1.0, 2.0, 5.5};
@@ -188,6 +194,42 @@ TEST_CASE( "fast_vector/mod", "fast_vector::operator*" ) {
     REQUIRE(c[1] == 2 % 3);
     REQUIRE(c[2] == 5 % 4);
 }
+
+//}}} Binary operator tests
+
+//{{{ Unary operator tests
+
+TEST_CASE( "fast_vector/log", "fast_vector::abs" ) {
+    etl::fast_vector<double, 3> a = {-1.0, 2.0, 5.0};
+
+    etl::fast_vector<double, 3> d = log(a);
+
+    REQUIRE(d[0] == log(-1.0));
+    REQUIRE(d[1] == log(2.0));
+    REQUIRE(d[2] == log(5.0));
+}
+
+TEST_CASE( "fast_vector/abs", "fast_vector::abs" ) {
+    etl::fast_vector<double, 3> a = {-1.0, 2.0, 0.0};
+
+    etl::fast_vector<double, 3> d = abs(a);
+
+    REQUIRE(d[0] == 1.0);
+    REQUIRE(d[1] == 2.0);
+    REQUIRE(d[2] == 0.0);
+}
+
+TEST_CASE( "fast_vector/sign", "fast_vector::abs" ) {
+    etl::fast_vector<double, 3> a = {-1.0, 2.0, 0.0};
+
+    etl::fast_vector<double, 3> d = sign(a);
+
+    REQUIRE(d[0] == -1.0);
+    REQUIRE(d[1] == 1.0);
+    REQUIRE(d[2] == 0.0);
+}
+
+//}}} Unary operators test
 
 TEST_CASE( "fast_vector/complex", "fast_vector::complex" ) {
     etl::fast_vector<double, 3> a = {-1.0, 2.0, 5.0};
