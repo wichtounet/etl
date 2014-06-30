@@ -254,7 +254,7 @@ TEST_CASE( "fast_vector/unary_binary_2", "fast_vector::abs" ) {
 
     etl::fast_vector<double, 3> d = abs(a) + a;
 
-    REQUIRE(d[0] == 2.0);
+    REQUIRE(d[0] == 0.0);
     REQUIRE(d[1] == 4.0);
     REQUIRE(d[2] == 0.0);
 }
@@ -282,7 +282,7 @@ TEST_CASE( "fast_vector/complex_2", "fast_vector::complex" ) {
 
     REQUIRE(d[0] == Approx(10.0));
     REQUIRE(d[1] == Approx(5.0));
-    REQUIRE(d[2] == Approx(0.68627));
+    REQUIRE(d[2] == Approx(5.8273));
 }
 
 TEST_CASE( "fast_vector/complex_3", "fast_vector::complex" ) {
@@ -292,7 +292,7 @@ TEST_CASE( "fast_vector/complex_3", "fast_vector::complex" ) {
 
     etl::fast_vector<double, 3> d = 2.5 / (a * b);
 
-    REQUIRE(d[0] == Approx(10.0));
-    REQUIRE(d[1] == Approx(5.0));
-    REQUIRE(d[2] == Approx(0.68627));
+    REQUIRE(d[0] == Approx(-1.0));
+    REQUIRE(d[1] == Approx(0.416666));
+    REQUIRE(d[2] == Approx(0.125));
 }
