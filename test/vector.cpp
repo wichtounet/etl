@@ -284,7 +284,7 @@ TEST_CASE( "fast_vector/sum_3", "sum" ) {
 
     auto d = sum(abs(a + a));
 
-    REQUIRE(d == 19);
+    REQUIRE(d == 23.0);
 }
 
 //}}} Reductions
