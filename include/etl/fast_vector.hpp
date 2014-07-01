@@ -206,11 +206,6 @@ public:
     }
 };
 
-template<typename T, std::size_t Rows>
-T sum(const fast_vector<T, Rows>& values){
-    return std::accumulate(values.begin(), values.end(), static_cast<T>(0));
-}
-
 } //end of namespace etl
 
 #endif

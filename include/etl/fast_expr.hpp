@@ -215,6 +215,20 @@ auto sign(const E& value) -> unary_expr<typename E::value_type, const E&, sign_u
 
 //}}}
 
+//{{{ Apply a reduction on an ETL expression (vector,matrix,binary,unary)
+
+template<typename E, enable_if_u<is_etl_expr<E>::value> = detail::dummy>
+typename E::value_type sum(const E& values){
+    return std::accumulate(values.begin(), values.end(), static_cast<typename E::value_type>(0));
+}
+
+template<typename E, enable_if_u<is_etl_expr<E>::value> = detail::dummy>
+typename E::value_type mean(const E& values){
+    return std::accumulate(values.begin(), values.end(), static_cast<typename E::value_type>(0)) / values.size();
+}
+
+//}}}
+
 } //end of namespace etl
 
 #endif
