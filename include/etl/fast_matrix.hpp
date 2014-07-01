@@ -32,6 +32,8 @@ private:
 
 public:
     static constexpr const bool etl_marker = true;
+    static constexpr const bool etl_fast = true;
+    static constexpr const std::size_t etl_size = Rows * Columns;
 
     using value_type = T;
 

@@ -13,6 +13,17 @@
 
 namespace etl {
 
+template<typename LE, typename RE, typename Enable = void>
+struct get_etl_size ;
+
+template<typename LE, typename RE>
+struct get_etl_size<LE, RE, enable_if_t<is_etl_expr<LE>::value>> 
+    : std::integral_constant<std::size_t, std::remove_reference<LE>::type::etl_size> {} ;
+
+template<typename LE, typename RE>
+struct get_etl_size<LE, RE, enable_if_t<and_u<is_etl_expr<RE>::value, not_u<is_etl_expr<LE>::value>::value>::value>> 
+    : std::integral_constant<std::size_t, std::remove_reference<RE>::type::etl_size> {};
+
 template <typename T, typename LeftExpr, typename BinaryOp, typename RightExpr>
 class binary_expr {
 private:
@@ -23,6 +34,8 @@ private:
 
 public:
     static constexpr const bool etl_marker = true;
+    static constexpr const bool etl_fast = true;
+    static constexpr const std::size_t etl_size = get_etl_size<LeftExpr, RightExpr>::value;
 
     using value_type = T;
 
@@ -54,7 +67,7 @@ public:
 
     template<typename LE = LeftExpr, disable_if_u<is_etl_expr<LE>::value> = detail::dummy>
     std::size_t size() const {
-        return _lhs.size();
+        return _rhs.size();
     }
 
     typename std::add_lvalue_reference<LeftExpr>::type lhs(){
@@ -89,6 +102,8 @@ private:
 
 public:
     static constexpr const bool etl_marker = true;
+    static constexpr const bool etl_fast = true;
+    static constexpr const std::size_t etl_size = std::remove_reference<Expr>::type::etl_size;
 
     using value_type = T;
 

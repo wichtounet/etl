@@ -33,6 +33,8 @@ public:
     static constexpr const std::size_t rows = Rows;
 
     static constexpr const bool etl_marker = true;
+    static constexpr const bool etl_fast = true;
+    static constexpr const std::size_t etl_size = Rows;
 
     typedef T value_type;
     typedef T* iterator;

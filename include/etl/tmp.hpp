@@ -37,6 +37,12 @@ struct and_u : std::false_type {};
 template <>
 struct and_u<true, true> : std::true_type {};
 
+template <bool b1>
+struct not_u : std::true_type {};
+
+template <>
+struct not_u<true> : std::false_type {};
+
 template <bool b1, bool b2>
 struct or_u : std::true_type {};
 
@@ -47,6 +53,6 @@ template<typename T, typename Enable = void>
 struct is_etl_expr : std::false_type {};
 
 template<typename T> 
-struct is_etl_expr<T, enable_if_t<T::etl_marker>> : std::true_type {};
+struct is_etl_expr<T, enable_if_t<std::remove_reference<T>::type::etl_marker>> : std::true_type {};
 
 #endif
