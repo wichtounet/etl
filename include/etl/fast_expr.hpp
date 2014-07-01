@@ -8,8 +8,6 @@
 #ifndef ETL_FAST_EXPR_HPP
 #define ETL_FAST_EXPR_HPP
 
-#include <cmath> //For unary operators
-
 #include "fast_op.hpp"
 #include "tmp.hpp"
 

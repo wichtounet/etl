@@ -8,6 +8,8 @@
 #ifndef ETL_FAST_OP_HPP
 #define ETL_FAST_OP_HPP
 
+#include <cmath> //For unary operators
+
 namespace etl {
 
 template<typename T>
