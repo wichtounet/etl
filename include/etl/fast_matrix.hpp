@@ -8,6 +8,8 @@
 #ifndef ETL_FAST_MATRIX_HPP
 #define ETL_FAST_MATRIX_HPP
 
+#include<array>
+
 #include "assert.hpp"
 #include "tmp.hpp"
 #include "fast_op.hpp"
