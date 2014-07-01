@@ -45,6 +45,18 @@ public:
 
     //Accessors
 
+    //TODO size() can be constexpr if Expr is fast_X
+
+    template<typename LE = LeftExpr, enable_if_u<is_etl_expr<LE>::value> = detail::dummy>
+    std::size_t size() const {
+        return _lhs.size();
+    }
+
+    template<typename LE = LeftExpr, disable_if_u<is_etl_expr<LE>::value> = detail::dummy>
+    std::size_t size() const {
+        return _lhs.size();
+    }
+
     typename std::add_lvalue_reference<LeftExpr>::type lhs(){
         return _lhs;
     }
@@ -97,6 +109,12 @@ public:
     unary_expr& operator=(unary_expr&&) = default;
 
     //Accessors
+
+    //TODO size() can be constexpr if Expr is fast_X
+
+    std::size_t size() const {
+        return _value.size();
+    }
 
     typename std::add_lvalue_reference<Expr>::type value(){
         return _value;
@@ -219,12 +237,18 @@ auto sign(const E& value) -> unary_expr<typename E::value_type, const E&, sign_u
 
 template<typename E, enable_if_u<is_etl_expr<E>::value> = detail::dummy>
 typename E::value_type sum(const E& values){
-    return std::accumulate(values.begin(), values.end(), static_cast<typename E::value_type>(0));
+    auto acc = static_cast<typename E::value_type>(0);
+
+    for(std::size_t i = 0; i < values.size(); ++i){
+        acc += values[i];
+    }
+
+    return acc;
 }
 
 template<typename E, enable_if_u<is_etl_expr<E>::value> = detail::dummy>
 typename E::value_type mean(const E& values){
-    return std::accumulate(values.begin(), values.end(), static_cast<typename E::value_type>(0)) / values.size();
+    return sum(values) / values.size();
 }
 
 //}}}
