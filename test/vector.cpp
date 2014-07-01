@@ -261,6 +261,34 @@ TEST_CASE( "fast_vector/unary_binary_2", "fast_vector::abs" ) {
 
 //}}} Unary operators test
 
+//{{{ Reductions
+
+TEST_CASE( "fast_vector/sum", "sum" ) {
+    etl::fast_vector<double, 3> a = {-1.0, 2.0, 8.5};
+
+    auto d = sum(a);
+
+    REQUIRE(d == 9.5);
+}
+
+TEST_CASE( "fast_vector/sum_2", "sum" ) {
+    etl::fast_vector<double, 3> a = {-1.0, 2.0, 8.5};
+
+    auto d = sum(a + a);
+
+    REQUIRE(d == 19);
+}
+
+TEST_CASE( "fast_vector/sum_3", "sum" ) {
+    etl::fast_vector<double, 3> a = {-1.0, 2.0, 8.5};
+
+    auto d = sum(abs(a + a));
+
+    REQUIRE(d == 19);
+}
+
+//}}} Reductions
+
 //{{{ Complex tests
 
 TEST_CASE( "fast_vector/complex", "fast_vector::complex" ) {
