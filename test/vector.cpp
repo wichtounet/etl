@@ -204,7 +204,7 @@ TEST_CASE( "fast_vector/log", "fast_vector::abs" ) {
 
     etl::fast_vector<double, 3> d = log(a);
 
-    REQUIRE(d[0] == log(-1.0));
+    REQUIRE(std::isnan(d[0]));
     REQUIRE(d[1] == log(2.0));
     REQUIRE(d[2] == log(5.0));
 }
@@ -304,14 +304,14 @@ TEST_CASE( "fast_vector/complex", "fast_vector::complex" ) {
 }
 
 TEST_CASE( "fast_vector/complex_2", "fast_vector::complex" ) {
-    etl::fast_vector<double, 3> a = {-1.0, 2.0, 5.0};
-    etl::fast_vector<double, 3> b = {2.5, 3.0, 4.0};
-    etl::fast_vector<double, 3> c = {1.2, -3.0, 3.5};
+    etl::fast_vector<double, 3> a = {1.1, 2.0, 5.0};
+    etl::fast_vector<double, 3> b = {2.5, -3.0, 4.0};
+    etl::fast_vector<double, 3> c = {2.2, 3.0, 3.5};
 
     etl::fast_vector<double, 3> d = 2.5 * ((a * b) / (log(a) * abs(c))) / (1.5 * a * sign(b) / c) + 2.111 / log(c);
 
-    REQUIRE(d[0] == Approx(10.0));
-    REQUIRE(d[1] == Approx(5.0));
+    REQUIRE(d[0] == Approx(46.39429));
+    REQUIRE(d[1] == Approx(9.13499));
     REQUIRE(d[2] == Approx(5.8273));
 }
 

@@ -204,7 +204,7 @@ TEST_CASE( "fast_matrix/log", "fast_matrix::abs" ) {
 
     etl::fast_matrix<double, 2, 2> d = log(a);
 
-    REQUIRE(d[0] == log(-1.0));
+    REQUIRE(std::isnan(d[0]));
     REQUIRE(d[1] == log(2.0));
     REQUIRE(d[2] == log(5.0));
 }
@@ -276,14 +276,14 @@ TEST_CASE( "fast_matrix/complex", "fast_matrix::complex" ) {
 }
 
 TEST_CASE( "fast_matrix/complex_2", "fast_matrix::complex" ) {
-    etl::fast_matrix<double, 2, 2> a = {-1.0, 2.0, 5.0, 1.0};
-    etl::fast_matrix<double, 2, 2> b = {2.5, 3.0, 4.0, 1.0};
-    etl::fast_matrix<double, 2, 2> c = {1.2, -3.0, 3.5, 1.0};
+    etl::fast_matrix<double, 2, 2> a = {1.1, 2.0, 5.0, 1.0};
+    etl::fast_matrix<double, 2, 2> b = {2.5, -3.0, 4.0, 1.0};
+    etl::fast_matrix<double, 2, 2> c = {2.2, 3.0, 3.5, 1.0};
 
     etl::fast_matrix<double, 2, 2> d = 2.5 * ((a * b) / (log(a) * abs(c))) / (1.5 * a * sign(b) / c) + 2.111 / log(c);
 
-    REQUIRE(d[0] == Approx(10.0));
-    REQUIRE(d[1] == Approx(5.0));
+    REQUIRE(d[0] == Approx(46.39429));
+    REQUIRE(d[1] == Approx(9.13499));
     REQUIRE(d[2] == Approx(5.8273));
 }
 
