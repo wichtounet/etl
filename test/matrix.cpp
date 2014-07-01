@@ -230,7 +230,7 @@ TEST_CASE( "fast_matrix/sign", "fast_matrix::abs" ) {
 }
 
 TEST_CASE( "fast_matrix/unary_unary", "fast_matrix::abs" ) {
-    etl::fast_matrix<double, 2, 2> a = {-1.0, 2.0, 0.0};
+    etl::fast_matrix<double, 2, 2> a = {-1.0, 2.0, 0.0, 3.0};
 
     etl::fast_matrix<double, 2, 2> d = abs(sign(a));
 
