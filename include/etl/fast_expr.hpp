@@ -27,6 +27,8 @@ struct get_etl_size<LE, RE, enable_if_t<and_u<is_etl_expr<RE>::value, not_u<is_e
 template <typename T, typename LeftExpr, typename BinaryOp, typename RightExpr>
 class binary_expr {
 private:
+    static_assert(or_u<is_etl_expr<LeftExpr>::value, is_etl_expr<RightExpr>::value>::value, "At least one of the binary expressions arguments must be an ETL expr");
+
     LeftExpr _lhs;
     RightExpr _rhs;
 
@@ -96,6 +98,8 @@ public:
 template <typename T, typename Expr, typename UnaryOp>
 class unary_expr {
 private:
+    static_assert(is_etl_expr<Expr>::value, "Only ETL expressions can be used in unary_expr");
+
     Expr _value;
 
     typedef unary_expr<T, Expr, UnaryOp> this_type;
@@ -125,8 +129,12 @@ public:
 
     //Accessors
 
-    //TODO size() can be constexpr if Expr is fast_X
-
+    template<typename E = Expr, enable_if_u<std::remove_reference<E>::type::etl_fast> = detail::dummy>
+    constexpr std::size_t size() const {
+        return _value.size();
+    }
+    
+    template<typename E = Expr, disable_if_u<std::remove_reference<E>::type::etl_fast> = detail::dummy>
     std::size_t size() const {
         return _value.size();
     }
