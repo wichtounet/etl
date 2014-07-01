@@ -23,7 +23,10 @@ release: release_etl_test
 debug: debug_etl_test
 
 all: release debug
+
 test: all
+	./debug/bin/etl_test
+	./release/bin/etl_test
 
 v:
 	@ echo $(CPP_FILES)
