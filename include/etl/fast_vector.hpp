@@ -208,6 +208,19 @@ public:
     }
 };
 
+template<typename T, std::size_t Rows>
+std::ostream& operator<<(std::ostream& stream, const fast_vector<T, Rows>& v){
+    stream << "[";
+    std::string comma = "";
+    for(std::size_t i = 0; i < Rows; ++i){
+        stream << comma << v(i);
+        comma = ", ";
+    }
+    stream << "]" << std::endl;
+
+    return stream;
+}
+
 } //end of namespace etl
 
 #endif

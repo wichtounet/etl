@@ -197,6 +197,21 @@ public:
     }
 };
 
+template<typename T, size_t Rows, size_t Columns>
+std::ostream& operator<<(std::ostream& stream, const fast_matrix<T, Rows, Columns>& m){
+    for(std::size_t i = 0; i < Rows; ++i){
+        stream << "[";
+        std::string comma = "";
+        for(std::size_t j = 0; j  < Columns; ++j){
+            stream << comma << m(i, j);
+            comma = ", ";
+        }
+        stream << "]" << std::endl;
+    }
+
+    return stream;
+}
+
 } //end of namespace etl
 
 #endif
