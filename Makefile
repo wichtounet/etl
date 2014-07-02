@@ -24,6 +24,12 @@ debug: debug_etl_test
 
 all: release debug
 
+debug_test: debug
+	./debug/bin/etl_test
+
+release_test: release
+	./release/bin/etl_test
+
 test: all
 	./debug/bin/etl_test
 	./release/bin/etl_test
