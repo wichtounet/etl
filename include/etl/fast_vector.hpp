@@ -54,6 +54,13 @@ public:
         std::copy(l.begin(), l.end(), begin());
     }
 
+    //Prohibit copy
+    fast_vector(const fast_vector& rhs) = delete;
+
+    //Allow move
+    fast_vector(fast_vector&& rhs) = default;
+    fast_vector& operator=(fast_vector&& rhs) = default;
+
     //Copy assignment operator
 
     fast_vector& operator=(const fast_vector& rhs){
@@ -110,13 +117,6 @@ public:
 
         return *this;
     }
-
-    //Prohibit copy
-    fast_vector(const fast_vector& rhs) = delete;
-
-    //Allow move
-    fast_vector(fast_vector&& rhs) = default;
-    fast_vector& operator=(fast_vector&& rhs) = default;
 
     //Modifiers
 

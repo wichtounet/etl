@@ -54,9 +54,31 @@ public:
         std::copy(l.begin(), l.end(), begin());
     }
 
+    //Prohibit copy
+    fast_matrix(const fast_matrix& rhs) = delete;
+
+    //Make sure
+    fast_matrix(fast_matrix&& rhs) = default;
+    fast_matrix& operator=(fast_matrix&& rhs) = default;
+
+    //Copy assignment operator
+
     fast_matrix& operator=(const fast_matrix& rhs){
         for(std::size_t i = 0; i < size(); ++i){
             _data[i] = rhs[i];
+        }
+
+        return *this;
+    }
+
+    //Allow copy from other containers
+
+    template<typename Container, enable_if_u<std::is_same<typename Container::value_type, T>::value> = detail::dummy>
+    fast_matrix& operator=(const Container& vec){
+        etl_assert(vec.size() == Rows * Columns, "Cannot copy from a vector of different size");
+
+        for(std::size_t i = 0; i < Rows * Columns; ++i){
+            _data[i] = vec[i];
         }
 
         return *this;
@@ -95,13 +117,6 @@ public:
 
         return *this;
     }
-
-    //Prohibit copy
-    fast_matrix(const fast_matrix& rhs) = delete;
-
-    //Make sure
-    fast_matrix(fast_matrix&& rhs) = default;
-    fast_matrix& operator=(fast_matrix&& rhs) = default;
 
     //Modifiers
 
