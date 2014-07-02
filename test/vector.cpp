@@ -64,7 +64,7 @@ TEST_CASE( "fast_vector/add", "fast_vector::operator+" ) {
     etl::fast_vector<double, 3> a = {-1.0, 2.0, 5.0};
     etl::fast_vector<double, 3> b = {2.5, 3.0, 4.0};
 
-    etl::fast_vector<double, 3> c = a + b;
+    etl::fast_vector<double, 3> c(a + b);
 
     REQUIRE(c[0] ==  1.5);
     REQUIRE(c[1] ==  5.0);
@@ -95,7 +95,7 @@ TEST_CASE( "fast_vector/sub", "fast_vector::operator-" ) {
     etl::fast_vector<double, 3> a = {-1.0, 2.0, 5.0};
     etl::fast_vector<double, 3> b = {2.5, 3.0, 4.0};
 
-    etl::fast_vector<double, 3> c = a - b;
+    etl::fast_vector<double, 3> c(a - b);
 
     REQUIRE(c[0] == -3.5);
     REQUIRE(c[1] == -1.0);
@@ -126,7 +126,7 @@ TEST_CASE( "fast_vector/mul", "fast_vector::operator*" ) {
     etl::fast_vector<double, 3> a = {-1.0, 2.0, 5.0};
     etl::fast_vector<double, 3> b = {2.5, 3.0, 4.0};
 
-    etl::fast_vector<double, 3> c = a * b;
+    etl::fast_vector<double, 3> c(a * b);
 
     REQUIRE(c[0] == -2.5);
     REQUIRE(c[1] ==  6.0);
@@ -157,7 +157,7 @@ TEST_CASE( "fast_vector/div", "fast_vector::operator/" ) {
     etl::fast_vector<double, 3> a = {-1.0, 2.0, 5.0};
     etl::fast_vector<double, 3> b = {2.5, 3.0, 4.0};
 
-    etl::fast_vector<double, 3> c = a / b;
+    etl::fast_vector<double, 3> c(a / b);
 
     REQUIRE(c[0] == -1.0 / 2.5);
     REQUIRE(c[1] == 2.0 / 3.0);
@@ -188,7 +188,7 @@ TEST_CASE( "fast_vector/mod", "fast_vector::operator*" ) {
     etl::fast_vector<int, 3> a = {-1, 2, 5};
     etl::fast_vector<int, 3> b = {2, 3, 4};
 
-    etl::fast_vector<int, 3> c = a % b;
+    etl::fast_vector<int, 3> c(a % b);
 
     REQUIRE(c[0] == -1 % 2);
     REQUIRE(c[1] == 2 % 3);
@@ -202,7 +202,7 @@ TEST_CASE( "fast_vector/mod", "fast_vector::operator*" ) {
 TEST_CASE( "fast_vector/log", "fast_vector::abs" ) {
     etl::fast_vector<double, 3> a = {-1.0, 2.0, 5.0};
 
-    etl::fast_vector<double, 3> d = log(a);
+    etl::fast_vector<double, 3> d(log(a));
 
     REQUIRE(std::isnan(d[0]));
     REQUIRE(d[1] == log(2.0));
@@ -212,7 +212,7 @@ TEST_CASE( "fast_vector/log", "fast_vector::abs" ) {
 TEST_CASE( "fast_vector/abs", "fast_vector::abs" ) {
     etl::fast_vector<double, 3> a = {-1.0, 2.0, 0.0};
 
-    etl::fast_vector<double, 3> d = abs(a);
+    etl::fast_vector<double, 3> d(abs(a));
 
     REQUIRE(d[0] == 1.0);
     REQUIRE(d[1] == 2.0);
@@ -222,7 +222,7 @@ TEST_CASE( "fast_vector/abs", "fast_vector::abs" ) {
 TEST_CASE( "fast_vector/sign", "fast_vector::abs" ) {
     etl::fast_vector<double, 3> a = {-1.0, 2.0, 0.0};
 
-    etl::fast_vector<double, 3> d = sign(a);
+    etl::fast_vector<double, 3> d(sign(a));
 
     REQUIRE(d[0] == -1.0);
     REQUIRE(d[1] == 1.0);
@@ -232,7 +232,7 @@ TEST_CASE( "fast_vector/sign", "fast_vector::abs" ) {
 TEST_CASE( "fast_vector/unary_unary", "fast_vector::abs" ) {
     etl::fast_vector<double, 3> a = {-1.0, 2.0, 0.0};
 
-    etl::fast_vector<double, 3> d = abs(sign(a));
+    etl::fast_vector<double, 3> d(abs(sign(a)));
 
     REQUIRE(d[0] == 1.0);
     REQUIRE(d[1] == 1.0);
@@ -242,7 +242,7 @@ TEST_CASE( "fast_vector/unary_unary", "fast_vector::abs" ) {
 TEST_CASE( "fast_vector/unary_binary_1", "fast_vector::abs" ) {
     etl::fast_vector<double, 3> a = {-1.0, 2.0, 0.0};
 
-    etl::fast_vector<double, 3> d = abs(a + a);
+    etl::fast_vector<double, 3> d(abs(a + a));
 
     REQUIRE(d[0] == 2.0);
     REQUIRE(d[1] == 4.0);
@@ -252,7 +252,7 @@ TEST_CASE( "fast_vector/unary_binary_1", "fast_vector::abs" ) {
 TEST_CASE( "fast_vector/unary_binary_2", "fast_vector::abs" ) {
     etl::fast_vector<double, 3> a = {-1.0, 2.0, 0.0};
 
-    etl::fast_vector<double, 3> d = abs(a) + a;
+    etl::fast_vector<double, 3> d(abs(a) + a);
 
     REQUIRE(d[0] == 0.0);
     REQUIRE(d[1] == 4.0);
@@ -296,7 +296,7 @@ TEST_CASE( "fast_vector/complex", "fast_vector::complex" ) {
     etl::fast_vector<double, 3> b = {2.5, 3.0, 4.0};
     etl::fast_vector<double, 3> c = {1.2, -3.0, 3.5};
 
-    etl::fast_vector<double, 3> d = 2.5 * ((a * b) / (a + c)) / (1.5 * a * b / c);
+    etl::fast_vector<double, 3> d(2.5 * ((a * b) / (a + c)) / (1.5 * a * b / c));
 
     REQUIRE(d[0] == Approx(10.0));
     REQUIRE(d[1] == Approx(5.0));
@@ -308,7 +308,7 @@ TEST_CASE( "fast_vector/complex_2", "fast_vector::complex" ) {
     etl::fast_vector<double, 3> b = {2.5, -3.0, 4.0};
     etl::fast_vector<double, 3> c = {2.2, 3.0, 3.5};
 
-    etl::fast_vector<double, 3> d = 2.5 * ((a * b) / (log(a) * abs(c))) / (1.5 * a * sign(b) / c) + 2.111 / log(c);
+    etl::fast_vector<double, 3> d(2.5 * ((a * b) / (log(a) * abs(c))) / (1.5 * a * sign(b) / c) + 2.111 / log(c));
 
     REQUIRE(d[0] == Approx(46.39429));
     REQUIRE(d[1] == Approx(9.13499));
@@ -320,7 +320,7 @@ TEST_CASE( "fast_vector/complex_3", "fast_vector::complex" ) {
     etl::fast_vector<double, 3> b = {2.5, 3.0, 4.0};
     etl::fast_vector<double, 3> c = {1.2, -3.0, 3.5};
 
-    etl::fast_vector<double, 3> d = 2.5 / (a * b);
+    etl::fast_vector<double, 3> d(2.5 / (a * b));
 
     REQUIRE(d[0] == Approx(-1.0));
     REQUIRE(d[1] == Approx(0.416666));

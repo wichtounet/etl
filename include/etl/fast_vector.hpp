@@ -40,6 +40,8 @@ public:
     typedef T* iterator;
     typedef const T* const_iterator;
 
+    //{{{ Construction
+
     fast_vector(){
         //Nothing else to init
     }
@@ -53,16 +55,35 @@ public:
 
         std::copy(l.begin(), l.end(), begin());
     }
+    
+    template<typename LE, typename Op, typename RE>
+    fast_vector(const binary_expr<T, LE, Op, RE>& e){
+        for(std::size_t i = 0; i < Rows; ++i){
+            _data[i] = e[i];
+        }
+    }
 
-    //Prohibit copy
+    template<typename E, typename Op>
+    fast_vector(const unary_expr<T, E, Op>& e){
+        for(std::size_t i = 0; i < Rows; ++i){
+            _data[i] = e[i];
+        }
+    }
+
+    //Prohibit copy and move
     fast_vector(const fast_vector& rhs) = delete;
+    fast_vector(fast_vector&& rhs) = delete;
 
-    //Allow move
-    fast_vector(fast_vector&& rhs) = default;
-    fast_vector& operator=(fast_vector&& rhs) = default;
+    //}}}
 
-    //Copy assignment operator
+    //{{{Assignment
 
+    //Set every element to the same scalar
+    void operator=(const T& value){
+        std::fill(_data.begin(), _data.end(), value);
+    }
+
+    //Copy
     fast_vector& operator=(const fast_vector& rhs){
         for(std::size_t i = 0; i < Rows; ++i){
             _data[i] = rhs[i];
@@ -71,17 +92,13 @@ public:
         return *this;
     }
 
+    //Prohibit move
+    fast_vector& operator=(fast_vector&& rhs) = delete;
+
     //Construct from expression
 
     template<typename LE, typename Op, typename RE>
-    fast_vector(binary_expr<T, LE, Op, RE>&& e){
-        for(std::size_t i = 0; i < Rows; ++i){
-            _data[i] = e[i];
-        }
-    }
-
-    template<typename LE, typename Op, typename RE>
-    fast_vector& operator=(binary_expr<T, LE, Op, RE>&& e){
+    fast_vector& operator=(const binary_expr<T, LE, Op, RE>&& e){
         for(std::size_t i = 0; i < Rows; ++i){
             _data[i] = e[i];
         }
@@ -90,14 +107,7 @@ public:
     }
 
     template<typename E, typename Op>
-    fast_vector(unary_expr<T, E, Op>&& e){
-        for(std::size_t i = 0; i < Rows; ++i){
-            _data[i] = e[i];
-        }
-    }
-
-    template<typename E, typename Op>
-    fast_vector& operator=(unary_expr<T, E, Op>&& e){
+    fast_vector& operator=(const unary_expr<T, E, Op>&& e){
         for(std::size_t i = 0; i < Rows; ++i){
             _data[i] = e[i];
         }
@@ -118,12 +128,9 @@ public:
         return *this;
     }
 
-    //Modifiers
+    //}}}
 
-    //Set every element to the same scalar
-    void operator=(const T& value){
-        std::fill(_data.begin(), _data.end(), value);
-    }
+    //{{{ Operators
 
     //Multiply each element by a scalar
     fast_vector& operator*=(const T& value){
@@ -161,7 +168,9 @@ public:
         return *this;
     }
 
-    //Accessors
+    //}}}
+
+    //{{{ Accessors
 
     constexpr size_t size() const {
         return rows;
@@ -206,6 +215,8 @@ public:
     iterator end(){
         return _data.end();
     }
+
+    //}}}
 };
 
 template<typename T, std::size_t Rows>
