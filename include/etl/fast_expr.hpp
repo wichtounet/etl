@@ -54,9 +54,9 @@ public:
     binary_expr(const binary_expr&) = delete;
     binary_expr& operator=(const binary_expr&) = delete;
 
-    //Make sure move is supported
-    binary_expr(binary_expr&&) = default;
-    binary_expr& operator=(binary_expr&&) = default;
+    //No moving
+    binary_expr(binary_expr&&) = delete;
+    binary_expr& operator=(binary_expr&&) = delete;
 
     //Accessors
 
@@ -123,9 +123,9 @@ public:
     unary_expr(const unary_expr&) = delete;
     unary_expr& operator=(const unary_expr&) = delete;
 
-    //Make sure move is supported
-    unary_expr(unary_expr&&) = default;
-    unary_expr& operator=(unary_expr&&) = default;
+    //No moving
+    unary_expr(unary_expr&&) = delete;
+    unary_expr& operator=(unary_expr&&) = delete;
 
     //Accessors
 
