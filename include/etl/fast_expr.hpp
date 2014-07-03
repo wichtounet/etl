@@ -17,11 +17,11 @@ template<typename LE, typename RE, typename Enable = void>
 struct get_etl_size ;
 
 template<typename LE, typename RE>
-struct get_etl_size<LE, RE, enable_if_t<is_etl_expr<LE>::value>> 
+struct get_etl_size<LE, RE, enable_if_t<is_etl_expr<LE>::value>>
     : std::integral_constant<std::size_t, std::remove_reference<LE>::type::etl_size> {} ;
 
 template<typename LE, typename RE>
-struct get_etl_size<LE, RE, enable_if_t<and_u<is_etl_expr<RE>::value, not_u<is_etl_expr<LE>::value>::value>::value>> 
+struct get_etl_size<LE, RE, enable_if_t<and_u<is_etl_expr<RE>::value, not_u<is_etl_expr<LE>::value>::value>::value>>
     : std::integral_constant<std::size_t, std::remove_reference<RE>::type::etl_size> {};
 
 template <typename T, typename LeftExpr, typename BinaryOp, typename RightExpr>
@@ -90,7 +90,7 @@ public:
 
     //Apply the expression
 
-    decltype(auto) operator[](std::size_t i) const {
+    auto operator[](std::size_t i) const {
         return BinaryOp::apply(lhs()[i], rhs()[i]);
     }
 };
@@ -133,7 +133,7 @@ public:
     constexpr std::size_t size() const {
         return _value.size();
     }
-    
+
     template<typename E = Expr, disable_if_u<std::remove_reference<E>::type::etl_fast> = detail::dummy>
     std::size_t size() const {
         return _value.size();
@@ -149,7 +149,7 @@ public:
 
     //Apply the expression
 
-    decltype(auto) operator[](std::size_t i) const {
+    auto operator[](std::size_t i) const {
         return UnaryOp::apply(value()[i]);
     }
 };
