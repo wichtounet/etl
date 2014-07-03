@@ -32,8 +32,6 @@ private:
     LeftExpr _lhs;
     RightExpr _rhs;
 
-    typedef binary_expr<T, LeftExpr, BinaryOp, RightExpr> this_type;
-
 public:
     static constexpr const bool etl_marker = true;
     static constexpr const bool etl_fast = true;
@@ -101,8 +99,6 @@ private:
     static_assert(is_etl_expr<Expr>::value, "Only ETL expressions can be used in unary_expr");
 
     Expr _value;
-
-    typedef unary_expr<T, Expr, UnaryOp> this_type;
 
 public:
     static constexpr const bool etl_marker = true;
