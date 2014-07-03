@@ -131,46 +131,6 @@ public:
 
     //}}}
 
-    //{{{ Operators
-
-    //Multiply each element by a scalar
-    fast_vector& operator*=(const value_type& value){
-        for(size_t i = 0; i < Rows; ++i){
-            _data[i] *= value;
-        }
-
-        return *this;
-    }
-
-    //Divide each element by a scalar
-    fast_vector& operator/=(const value_type& value){
-        for(size_t i = 0; i < Rows; ++i){
-            _data[i] /= value;
-        }
-
-        return *this;
-    }
-
-    template<typename RE>
-    fast_vector& operator+=(RE&& rhs){
-        for(size_t i = 0; i < Rows; ++i){
-            _data[i] += rhs[i];
-        }
-
-        return *this;
-    }
-
-    template<typename RE>
-    fast_vector& operator-=(RE&& rhs){
-        for(size_t i = 0; i < Rows; ++i){
-            _data[i] -= rhs[i];
-        }
-
-        return *this;
-    }
-
-    //}}}
-
     //{{{ Accessors
 
     constexpr size_t size() const {

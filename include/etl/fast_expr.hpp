@@ -218,6 +218,100 @@ auto operator%(LE lhs, const RE& rhs) -> binary_expr<typename RE::value_type, sc
 
 //}}}
 
+//{{{ Compound operators 
+
+template<typename LE, typename RE, enable_if_u<and_u<std::is_convertible<RE, typename LE::value_type>::value, is_etl_value<LE>::value>::value> = detail::dummy>
+LE& operator+=(LE& lhs, RE rhs){
+    for(std::size_t i = 0; i < lhs.size(); ++i){
+        lhs[i] += rhs;
+    }
+
+    return lhs;
+}
+
+template<typename LE, typename RE, enable_if_u<and_u<is_etl_expr<RE>::value, is_etl_value<LE>::value>::value> = detail::dummy>
+LE& operator+=(LE& lhs, const RE& rhs){
+    for(std::size_t i = 0; i < lhs.size(); ++i){
+        lhs[i] += rhs[i];
+    }
+
+    return lhs;
+}
+
+template<typename LE, typename RE, enable_if_u<and_u<std::is_convertible<RE, typename LE::value_type>::value, is_etl_value<LE>::value>::value> = detail::dummy>
+LE& operator-=(LE& lhs, RE rhs){
+    for(std::size_t i = 0; i < lhs.size(); ++i){
+        lhs[i] -= rhs;
+    }
+
+    return lhs;
+}
+
+template<typename LE, typename RE, enable_if_u<and_u<is_etl_expr<RE>::value, is_etl_value<LE>::value>::value> = detail::dummy>
+LE& operator-=(LE& lhs, const RE& rhs){
+    for(std::size_t i = 0; i < lhs.size(); ++i){
+        lhs[i] -= rhs[i];
+    }
+
+    return lhs;
+}
+
+template<typename LE, typename RE, enable_if_u<and_u<std::is_convertible<RE, typename LE::value_type>::value, is_etl_value<LE>::value>::value> = detail::dummy>
+LE& operator*=(LE& lhs, RE rhs){
+    for(std::size_t i = 0; i < lhs.size(); ++i){
+        lhs[i] *= rhs;
+    }
+
+    return lhs;
+}
+
+template<typename LE, typename RE, enable_if_u<and_u<is_etl_expr<RE>::value, is_etl_value<LE>::value>::value> = detail::dummy>
+LE& operator*=(LE& lhs, const RE& rhs){
+    for(std::size_t i = 0; i < lhs.size(); ++i){
+        lhs[i] *= rhs[i];
+    }
+
+    return lhs;
+}
+
+template<typename LE, typename RE, enable_if_u<and_u<std::is_convertible<RE, typename LE::value_type>::value, is_etl_value<LE>::value>::value> = detail::dummy>
+LE& operator/=(LE& lhs, RE rhs){
+    for(std::size_t i = 0; i < lhs.size(); ++i){
+        lhs[i] /= rhs;
+    }
+
+    return lhs;
+}
+
+template<typename LE, typename RE, enable_if_u<and_u<is_etl_expr<RE>::value, is_etl_value<LE>::value>::value> = detail::dummy>
+LE& operator/=(LE& lhs, const RE& rhs){
+    for(std::size_t i = 0; i < lhs.size(); ++i){
+        lhs[i] /= rhs[i];
+    }
+
+    return lhs;
+}
+
+template<typename LE, typename RE, enable_if_u<and_u<std::is_convertible<RE, typename LE::value_type>::value, is_etl_value<LE>::value>::value> = detail::dummy>
+LE& operator%=(LE& lhs, RE rhs){
+    for(std::size_t i = 0; i < lhs.size(); ++i){
+        lhs[i] %= rhs;
+    }
+
+    return lhs;
+}
+
+template<typename LE, typename RE, enable_if_u<and_u<is_etl_expr<RE>::value, is_etl_value<LE>::value>::value> = detail::dummy>
+LE& operator%=(LE& lhs, const RE& rhs){
+    for(std::size_t i = 0; i < lhs.size(); ++i){
+        lhs[i] %= rhs[i];
+    }
+
+    return lhs;
+}
+
+//}}}
+
 //{{{ Apply an unary expression on an ETL expression (vector,matrix,binary,unary)
 
 template<typename E, enable_if_u<is_etl_expr<E>::value> = detail::dummy>
