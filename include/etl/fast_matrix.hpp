@@ -21,24 +21,27 @@
 namespace etl {
 
 template<typename T, size_t Rows, size_t Columns>
-class fast_matrix {
+struct fast_matrix {
 public:
     typedef std::array<T, Rows * Columns> array_impl;
     typedef typename array_impl::iterator iterator;
     typedef typename array_impl::const_iterator const_iterator;
+    
+    using value_type = T;
+    
+    static constexpr const bool etl_marker = true;
+    static constexpr const bool etl_fast = true;
+    static constexpr const std::size_t etl_size = Rows * Columns;
+
+    static constexpr const std::size_t rows = Rows;
+    static constexpr const std::size_t columns = Columns;
 
 private:
     array_impl _data;
 
 public:
-    static constexpr const bool etl_marker = true;
-    static constexpr const bool etl_fast = true;
-    static constexpr const std::size_t etl_size = Rows * Columns;
 
-    using value_type = T;
-
-    static constexpr const std::size_t rows = Rows;
-    static constexpr const std::size_t columns = Columns;
+    ///{{{ Construction
 
     fast_matrix(){
         //Nothing to init
@@ -54,12 +57,27 @@ public:
         std::copy(l.begin(), l.end(), begin());
     }
 
-    //Prohibit copy
-    fast_matrix(const fast_matrix& rhs) = delete;
+    template<typename LE, typename Op, typename RE>
+    fast_matrix(binary_expr<T, LE, Op, RE>&& e){
+        for(std::size_t i = 0; i < size(); ++i){
+            _data[i] = e[i];
+        }
+    }
 
-    //Make sure
-    fast_matrix(fast_matrix&& rhs) = default;
-    fast_matrix& operator=(fast_matrix&& rhs) = default;
+    template<typename E, typename Op>
+    fast_matrix(unary_expr<T, E, Op>&& e){
+        for(std::size_t i = 0; i < size(); ++i){
+            _data[i] = e[i];
+        }
+    }
+
+    //Prohibit copy and move
+    fast_matrix(const fast_matrix& rhs) = delete;
+    fast_matrix(fast_matrix&& rhs) = delete;
+
+    //}}}
+
+    //{{{ Assignment
 
     //Copy assignment operator
 
@@ -87,26 +105,12 @@ public:
     //Construct from expression
 
     template<typename LE, typename Op, typename RE>
-    fast_matrix(binary_expr<T, LE, Op, RE>&& e){
-        for(std::size_t i = 0; i < size(); ++i){
-            _data[i] = e[i];
-        }
-    }
-
-    template<typename LE, typename Op, typename RE>
     fast_matrix& operator=(binary_expr<T, LE, Op, RE>&& e){
         for(std::size_t i = 0; i < size(); ++i){
             _data[i] = e[i];
         }
 
         return *this;
-    }
-
-    template<typename E, typename Op>
-    fast_matrix(unary_expr<T, E, Op>&& e){
-        for(std::size_t i = 0; i < size(); ++i){
-            _data[i] = e[i];
-        }
     }
 
     template<typename E, typename Op>
@@ -118,14 +122,19 @@ public:
         return *this;
     }
 
-    //Modifiers
-
     //Set the same value to each element of the matrix
     fast_matrix& operator=(const T& value){
         std::fill(_data.begin(), _data.end(), value);
 
         return *this;
     }
+
+    //Prohibit move
+    fast_matrix& operator=(fast_matrix&& rhs) = delete;
+    
+    //}}}
+
+    //{{{ Operators
 
     //Multiply each element by a scalar
     fast_matrix& operator*=(const T& value){
@@ -162,8 +171,10 @@ public:
 
         return *this;
     }
+    
+    //}}}
 
-    //Accessors
+    //{{{ Accessors
 
     constexpr size_t size() const {
         return Rows * Columns;
@@ -210,6 +221,8 @@ public:
     iterator end(){
         return _data.end();
     }
+
+    //}}}
 };
 
 template<typename T, size_t Rows, size_t Columns>

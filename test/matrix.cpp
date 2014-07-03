@@ -64,7 +64,7 @@ TEST_CASE( "fast_matrix/add", "fast_matrix::operator+" ) {
     etl::fast_matrix<double, 2, 2> a = {-1.0, 2.0, 5.0, 1.0};
     etl::fast_matrix<double, 2, 2> b = {2.5, 3.0, 4.0, 1.0};
 
-    etl::fast_matrix<double, 2, 2> c = a + b;
+    etl::fast_matrix<double, 2, 2> c(a + b);
 
     REQUIRE(c[0] ==  1.5);
     REQUIRE(c[1] ==  5.0);
@@ -95,7 +95,7 @@ TEST_CASE( "fast_matrix/sub", "fast_matrix::operator-" ) {
     etl::fast_matrix<double, 2, 2> a = {-1.0, 2.0, 5.0, 1.0};
     etl::fast_matrix<double, 2, 2> b = {2.5, 3.0, 4.0, 1.0};
 
-    etl::fast_matrix<double, 2, 2> c = a - b;
+    etl::fast_matrix<double, 2, 2> c(a - b);
 
     REQUIRE(c[0] == -3.5);
     REQUIRE(c[1] == -1.0);
@@ -126,7 +126,7 @@ TEST_CASE( "fast_matrix/mul", "fast_matrix::operator*" ) {
     etl::fast_matrix<double, 2, 2> a = {-1.0, 2.0, 5.0, 1.0};
     etl::fast_matrix<double, 2, 2> b = {2.5, 3.0, 4.0, 1.0};
 
-    etl::fast_matrix<double, 2, 2> c = a * b;
+    etl::fast_matrix<double, 2, 2> c(a * b);
 
     REQUIRE(c[0] == -2.5);
     REQUIRE(c[1] ==  6.0);
@@ -157,7 +157,7 @@ TEST_CASE( "fast_matrix/div", "fast_matrix::operator/" ) {
     etl::fast_matrix<double, 2, 2> a = {-1.0, 2.0, 5.0, 1.0};
     etl::fast_matrix<double, 2, 2> b = {2.5, 3.0, 4.0, 1.0};
 
-    etl::fast_matrix<double, 2, 2> c = a / b;
+    etl::fast_matrix<double, 2, 2> c(a / b);
 
     REQUIRE(c[0] == -1.0 / 2.5);
     REQUIRE(c[1] == 2.0 / 3.0);
@@ -188,7 +188,7 @@ TEST_CASE( "fast_matrix/mod", "fast_matrix::operator*" ) {
     etl::fast_matrix<int, 2, 2> a = {-1, 2, 5, 1};
     etl::fast_matrix<int, 2, 2> b = {2, 3, 4, 1};
 
-    etl::fast_matrix<int, 2, 2> c = a % b;
+    etl::fast_matrix<int, 2, 2> c(a % b);
 
     REQUIRE(c[0] == -1 % 2);
     REQUIRE(c[1] == 2 % 3);
@@ -202,7 +202,7 @@ TEST_CASE( "fast_matrix/mod", "fast_matrix::operator*" ) {
 TEST_CASE( "fast_matrix/log", "fast_matrix::abs" ) {
     etl::fast_matrix<double, 2, 2> a = {-1.0, 2.0, 5.0, 1.0};
 
-    etl::fast_matrix<double, 2, 2> d = log(a);
+    etl::fast_matrix<double, 2, 2> d(log(a));
 
     REQUIRE(std::isnan(d[0]));
     REQUIRE(d[1] == log(2.0));
@@ -212,7 +212,7 @@ TEST_CASE( "fast_matrix/log", "fast_matrix::abs" ) {
 TEST_CASE( "fast_matrix/abs", "fast_matrix::abs" ) {
     etl::fast_matrix<double, 2, 2> a = {-1.0, 2.0, 0.0, 1.0};
 
-    etl::fast_matrix<double, 2, 2> d = abs(a);
+    etl::fast_matrix<double, 2, 2> d(abs(a));
 
     REQUIRE(d[0] == 1.0);
     REQUIRE(d[1] == 2.0);
@@ -222,7 +222,7 @@ TEST_CASE( "fast_matrix/abs", "fast_matrix::abs" ) {
 TEST_CASE( "fast_matrix/sign", "fast_matrix::abs" ) {
     etl::fast_matrix<double, 2, 2> a = {-1.0, 2.0, 0.0, 1.0};
 
-    etl::fast_matrix<double, 2, 2> d = sign(a);
+    etl::fast_matrix<double, 2, 2> d(sign(a));
 
     REQUIRE(d[0] == -1.0);
     REQUIRE(d[1] == 1.0);
@@ -232,7 +232,7 @@ TEST_CASE( "fast_matrix/sign", "fast_matrix::abs" ) {
 TEST_CASE( "fast_matrix/unary_unary", "fast_matrix::abs" ) {
     etl::fast_matrix<double, 2, 2> a = {-1.0, 2.0, 0.0, 3.0};
 
-    etl::fast_matrix<double, 2, 2> d = abs(sign(a));
+    etl::fast_matrix<double, 2, 2> d(abs(sign(a)));
 
     REQUIRE(d[0] == 1.0);
     REQUIRE(d[1] == 1.0);
@@ -242,7 +242,7 @@ TEST_CASE( "fast_matrix/unary_unary", "fast_matrix::abs" ) {
 TEST_CASE( "fast_matrix/unary_binary_1", "fast_matrix::abs" ) {
     etl::fast_matrix<double, 2, 2> a = {-1.0, 2.0, 0.0, 1.0};
 
-    etl::fast_matrix<double, 2, 2> d = abs(a + a);
+    etl::fast_matrix<double, 2, 2> d(abs(a + a));
 
     REQUIRE(d[0] == 2.0);
     REQUIRE(d[1] == 4.0);
@@ -252,7 +252,7 @@ TEST_CASE( "fast_matrix/unary_binary_1", "fast_matrix::abs" ) {
 TEST_CASE( "fast_matrix/unary_binary_2", "fast_matrix::abs" ) {
     etl::fast_matrix<double, 2, 2> a = {-1.0, 2.0, 0.0, 1.0};
 
-    etl::fast_matrix<double, 2, 2> d = abs(a) + a;
+    etl::fast_matrix<double, 2, 2> d(abs(a) + a);
 
     REQUIRE(d[0] == 0.0);
     REQUIRE(d[1] == 4.0);
@@ -268,7 +268,7 @@ TEST_CASE( "fast_matrix/complex", "fast_matrix::complex" ) {
     etl::fast_matrix<double, 2, 2> b = {2.5, 3.0, 4.0, 1.0};
     etl::fast_matrix<double, 2, 2> c = {1.2, -3.0, 3.5, 1.0};
 
-    etl::fast_matrix<double, 2, 2> d = 2.5 * ((a * b) / (a + c)) / (1.5 * a * b / c);
+    etl::fast_matrix<double, 2, 2> d(2.5 * ((a * b) / (a + c)) / (1.5 * a * b / c));
 
     REQUIRE(d[0] == Approx(10.0));
     REQUIRE(d[1] == Approx(5.0));
@@ -280,7 +280,7 @@ TEST_CASE( "fast_matrix/complex_2", "fast_matrix::complex" ) {
     etl::fast_matrix<double, 2, 2> b = {2.5, -3.0, 4.0, 1.0};
     etl::fast_matrix<double, 2, 2> c = {2.2, 3.0, 3.5, 1.0};
 
-    etl::fast_matrix<double, 2, 2> d = 2.5 * ((a * b) / (log(a) * abs(c))) / (1.5 * a * sign(b) / c) + 2.111 / log(c);
+    etl::fast_matrix<double, 2, 2> d(2.5 * ((a * b) / (log(a) * abs(c))) / (1.5 * a * sign(b) / c) + 2.111 / log(c));
 
     REQUIRE(d[0] == Approx(46.39429));
     REQUIRE(d[1] == Approx(9.13499));
@@ -292,7 +292,7 @@ TEST_CASE( "fast_matrix/complex_3", "fast_matrix::complex" ) {
     etl::fast_matrix<double, 2, 2> b = {2.5, 3.0, 4.0, 1.0};
     etl::fast_matrix<double, 2, 2> c = {1.2, -3.0, 3.5, 1.0};
 
-    etl::fast_matrix<double, 2, 2> d = 2.5 / (a * b);
+    etl::fast_matrix<double, 2, 2> d(2.5 / (a * b));
 
     REQUIRE(d[0] == Approx(-1.0));
     REQUIRE(d[1] == Approx(0.416666));

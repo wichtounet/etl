@@ -25,20 +25,24 @@
 namespace etl {
 
 template<typename T, std::size_t Rows>
-class fast_vector {
-private:
-    std::array<T, Rows> _data;
-
+struct fast_vector {
 public:
+    typedef std::array<T, Rows> array_impl;
+    typedef typename array_impl::iterator iterator;
+    typedef typename array_impl::const_iterator const_iterator;
+
+    using value_type = T;
+
     static constexpr const std::size_t rows = Rows;
 
     static constexpr const bool etl_marker = true;
     static constexpr const bool etl_fast = true;
     static constexpr const std::size_t etl_size = Rows;
 
-    typedef T value_type;
-    typedef T* iterator;
-    typedef const T* const_iterator;
+private:
+    std::array<T, Rows> _data;
+
+public:
 
     //{{{ Construction
 
