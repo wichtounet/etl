@@ -221,9 +221,9 @@ TEST_CASE( "fast_vector/div_scalar_3", "fast_vector::operator/=" ) {
 
     test_vector /= 2.5;
 
-    REQUIRE(test_vector[0] == 2.5 / -1.0);
-    REQUIRE(test_vector[1] == 2.5 /  2.0);
-    REQUIRE(test_vector[2] == 2.5 /  5.0);
+    REQUIRE(test_vector[0] == -1.0 / 2.5);
+    REQUIRE(test_vector[1] == 2.0 / 2.5);
+    REQUIRE(test_vector[2] == 5.0 / 2.5);
 }
 
 TEST_CASE( "fast_vector/div_1", "fast_vector::operator/"){
@@ -273,9 +273,9 @@ TEST_CASE( "fast_vector/mod_scalar_3", "fast_vector::operator%=" ) {
 
     test_vector %= 2;
 
-    REQUIRE(test_vector[0] == 2 % -1);
-    REQUIRE(test_vector[1] == 2 %  2);
-    REQUIRE(test_vector[2] == 2 %  5);
+    REQUIRE(test_vector[0] == -1 % 2);
+    REQUIRE(test_vector[1] ==  2 % 2);
+    REQUIRE(test_vector[2] ==  5 % 2);
 }
 
 TEST_CASE( "fast_vector/mod_1", "fast_vector::operator%" ) {

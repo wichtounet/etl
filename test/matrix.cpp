@@ -222,9 +222,9 @@ TEST_CASE( "fast_matrix/div_scalar_3", "fast_matrix::operator/=" ) {
 
     test_matrix /= 2.5;
 
-    REQUIRE(test_matrix[0] == 2.5 / -1.0);
-    REQUIRE(test_matrix[1] == 2.5 /  2.0);
-    REQUIRE(test_matrix[2] == 2.5 /  5.0);
+    REQUIRE(test_matrix[0] == -1.0 / 2.5);
+    REQUIRE(test_matrix[1] ==  2.0 / 2.5);
+    REQUIRE(test_matrix[2] ==  5.0 / 2.5);
 }
 
 TEST_CASE( "fast_matrix/div_1", "fast_matrix::operator/" ) {
@@ -274,9 +274,9 @@ TEST_CASE( "fast_matrix/mod_scalar_3", "fast_matrix::operator%=" ) {
 
     test_matrix %= 2;
 
-    REQUIRE(test_matrix[0] == 2 % -1);
-    REQUIRE(test_matrix[1] == 2 %  2);
-    REQUIRE(test_matrix[2] == 2 %  5);
+    REQUIRE(test_matrix[0] == -1 % 2);
+    REQUIRE(test_matrix[1] ==  2 % 2);
+    REQUIRE(test_matrix[2] ==  5 % 2);
 }
 
 TEST_CASE( "fast_matrix/mod_1", "fast_matrix::operator%" ) {
