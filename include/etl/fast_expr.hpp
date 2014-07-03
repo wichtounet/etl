@@ -75,7 +75,7 @@ public:
 
     //Apply the expression
 
-    decltype(auto) operator[](std::size_t i) const {
+    auto operator[](std::size_t i) const {
         return BinaryOp::apply(lhs()[i], rhs()[i]);
     }
 };
@@ -130,7 +130,7 @@ public:
 
     //Apply the expression
 
-    decltype(auto) operator[](std::size_t i) const {
+    auto operator[](std::size_t i) const {
         return UnaryOp::apply(value()[i]);
     }
 };
