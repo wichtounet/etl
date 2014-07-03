@@ -27,11 +27,10 @@ namespace etl {
 template<typename T, std::size_t Rows>
 struct fast_vector {
 public:
-    typedef std::array<T, Rows> array_impl;
-    typedef typename array_impl::iterator iterator;
-    typedef typename array_impl::const_iterator const_iterator;
-
-    using value_type = T;
+    using       value_type = T;
+    using       array_impl = std::array<value_type, Rows>;
+    using         iterator = typename array_impl::iterator;
+    using   const_iterator = typename array_impl::const_iterator;
 
     static constexpr const std::size_t rows = Rows;
 
@@ -40,7 +39,7 @@ public:
     static constexpr const std::size_t etl_size = Rows;
 
 private:
-    std::array<T, Rows> _data;
+    array_impl _data;
 
 public:
 
@@ -50,25 +49,25 @@ public:
         //Nothing else to init
     }
 
-    fast_vector(const T& value){
+    fast_vector(const value_type& value){
         std::fill(_data.begin(), _data.end(), value);
     }
 
-    fast_vector(std::initializer_list<T> l){
+    fast_vector(std::initializer_list<value_type> l){
         etl_assert(l.size() == Rows, "Cannot copy from an initializer of different size");
 
         std::copy(l.begin(), l.end(), begin());
     }
     
     template<typename LE, typename Op, typename RE>
-    fast_vector(const binary_expr<T, LE, Op, RE>& e){
+    fast_vector(const binary_expr<value_type, LE, Op, RE>& e){
         for(std::size_t i = 0; i < Rows; ++i){
             _data[i] = e[i];
         }
     }
 
     template<typename E, typename Op>
-    fast_vector(const unary_expr<T, E, Op>& e){
+    fast_vector(const unary_expr<value_type, E, Op>& e){
         for(std::size_t i = 0; i < Rows; ++i){
             _data[i] = e[i];
         }
@@ -83,7 +82,7 @@ public:
     //{{{Assignment
 
     //Set every element to the same scalar
-    void operator=(const T& value){
+    void operator=(const value_type& value){
         std::fill(_data.begin(), _data.end(), value);
     }
 
@@ -102,7 +101,7 @@ public:
     //Construct from expression
 
     template<typename LE, typename Op, typename RE>
-    fast_vector& operator=(const binary_expr<T, LE, Op, RE>&& e){
+    fast_vector& operator=(const binary_expr<value_type, LE, Op, RE>&& e){
         for(std::size_t i = 0; i < Rows; ++i){
             _data[i] = e[i];
         }
@@ -111,7 +110,7 @@ public:
     }
 
     template<typename E, typename Op>
-    fast_vector& operator=(const unary_expr<T, E, Op>&& e){
+    fast_vector& operator=(const unary_expr<value_type, E, Op>&& e){
         for(std::size_t i = 0; i < Rows; ++i){
             _data[i] = e[i];
         }
@@ -121,7 +120,7 @@ public:
 
     //Allow copy from other containers
 
-    template<typename Container, enable_if_u<std::is_same<typename Container::value_type, T>::value> = detail::dummy>
+    template<typename Container, enable_if_u<std::is_same<typename Container::value_type, value_type>::value> = detail::dummy>
     fast_vector& operator=(const Container& vec){
         etl_assert(vec.size() == Rows, "Cannot copy from a vector of different size");
 
@@ -137,7 +136,7 @@ public:
     //{{{ Operators
 
     //Multiply each element by a scalar
-    fast_vector& operator*=(const T& value){
+    fast_vector& operator*=(const value_type& value){
         for(size_t i = 0; i < Rows; ++i){
             _data[i] *= value;
         }
@@ -146,7 +145,7 @@ public:
     }
 
     //Divide each element by a scalar
-    fast_vector& operator/=(const T& value){
+    fast_vector& operator/=(const value_type& value){
         for(size_t i = 0; i < Rows; ++i){
             _data[i] /= value;
         }
@@ -180,25 +179,25 @@ public:
         return rows;
     }
 
-    T& operator()(size_t i){
+    value_type& operator()(size_t i){
         etl_assert(i < rows, "Out of bounds");
 
         return _data[i];
     }
 
-    const T& operator()(size_t i) const {
+    const value_type& operator()(size_t i) const {
         etl_assert(i < rows, "Out of bounds");
 
         return _data[i];
     }
 
-    T& operator[](size_t i){
+    value_type& operator[](size_t i){
         etl_assert(i < rows, "Out of bounds");
 
         return _data[i];
     }
 
-    const T& operator[](size_t i) const {
+    const value_type& operator[](size_t i) const {
         etl_assert(i < rows, "Out of bounds");
 
         return _data[i];
