@@ -184,6 +184,7 @@ public:
 
 template<typename T, size_t Rows, size_t Columns>
 std::ostream& operator<<(std::ostream& stream, const fast_matrix<T, Rows, Columns>& m){
+    stream << "[" << std::endl;
     for(std::size_t i = 0; i < Rows; ++i){
         stream << "[";
         std::string comma = "";
@@ -193,6 +194,7 @@ std::ostream& operator<<(std::ostream& stream, const fast_matrix<T, Rows, Column
         }
         stream << "]" << std::endl;
     }
+    stream << "]" << std::endl;
 
     return stream;
 }
