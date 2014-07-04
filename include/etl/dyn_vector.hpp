@@ -29,10 +29,10 @@ namespace etl {
 template<typename T>
 struct dyn_vector {
 public:
-    using       value_type = T;
+    using         value_type = T;
     using       storage_impl = std::vector<value_type>;
-    using         iterator = typename storage_impl::iterator;
-    using   const_iterator = typename storage_impl::const_iterator;
+    using           iterator = typename storage_impl::iterator;
+    using     const_iterator = typename storage_impl::const_iterator;
 
 private:
     storage_impl _data;

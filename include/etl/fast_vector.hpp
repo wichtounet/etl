@@ -27,17 +27,17 @@ namespace etl {
 template<typename T, std::size_t Rows>
 struct fast_vector {
 public:
-    using       value_type = T;
-    using       array_impl = std::array<value_type, Rows>;
-    using         iterator = typename array_impl::iterator;
-    using   const_iterator = typename array_impl::const_iterator;
+    using         value_type = T;
+    using       storage_impl = std::array<value_type, Rows>;
+    using           iterator = typename storage_impl::iterator;
+    using     const_iterator = typename storage_impl::const_iterator;
 
     static constexpr const std::size_t rows = Rows;
 
     static constexpr const std::size_t etl_size = Rows;
 
 private:
-    array_impl _data;
+    storage_impl _data;
 
 public:
 

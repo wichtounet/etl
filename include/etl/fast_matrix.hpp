@@ -23,10 +23,10 @@ namespace etl {
 template<typename T, size_t Rows, size_t Columns>
 struct fast_matrix {
 public:
-    using     value_type = T;
-    using     array_impl = std::array<value_type, Rows * Columns>;
-    using       iterator = typename array_impl::iterator;
-    using const_iterator = typename array_impl::const_iterator;
+    using       value_type = T;
+    using     storage_impl = std::array<value_type, Rows * Columns>;
+    using         iterator = typename storage_impl::iterator;
+    using   const_iterator = typename storage_impl::const_iterator;
 
     static constexpr const std::size_t etl_size = Rows * Columns;
 
@@ -34,7 +34,7 @@ public:
     static constexpr const std::size_t columns = Columns;
 
 private:
-    array_impl _data;
+    storage_impl _data;
 
 public:
 
