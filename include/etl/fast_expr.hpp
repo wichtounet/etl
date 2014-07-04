@@ -16,7 +16,11 @@ namespace etl {
 template <typename T, typename LeftExpr, typename BinaryOp, typename RightExpr>
 class binary_expr {
 private:
-    static_assert(or_u<is_etl_expr<LeftExpr>::value, is_etl_expr<RightExpr>::value>::value, "At least one of the binary expressions arguments must be an ETL expr");
+    static_assert(or_u<
+        and_u<is_etl_expr<LeftExpr>::value, std::is_same<RightExpr, scalar<T>>::value>::value,
+        and_u<is_etl_expr<RightExpr>::value, std::is_same<LeftExpr, scalar<T>>::value>::value,
+        and_u<is_etl_expr<LeftExpr>::value, is_etl_expr<RightExpr>::value>::value>::value,
+        "One argument must be an ETL expression and the other one convertible to T");
 
     LeftExpr _lhs;
     RightExpr _rhs;
