@@ -51,14 +51,20 @@ public:
     }
 
     template<typename LE, typename Op, typename RE>
-    dyn_matrix(binary_expr<value_type, LE, Op, RE>&& e){ //TODO Init
+    dyn_matrix(binary_expr<value_type, LE, Op, RE>&& e) : 
+            _data(etl_traits<binary_expr<value_type, LE, Op, RE>>::rows(e) * etl_traits<binary_expr<value_type, LE, Op, RE>>::columns(e)), 
+            _rows(etl_traits<binary_expr<value_type, LE, Op, RE>>::rows(e)), 
+            _columns(etl_traits<binary_expr<value_type, LE, Op, RE>>::columns(e)) {
         for(std::size_t i = 0; i < size(); ++i){
             _data[i] = e[i];
         }
     }
 
     template<typename E, typename Op>
-    dyn_matrix(unary_expr<value_type, E, Op>&& e){//TODO Init
+    dyn_matrix(unary_expr<value_type, E, Op>&& e) : 
+            _data(etl_traits<unary_expr<value_type, E, Op>>::rows(e) * etl_traits<unary_expr<value_type, E, Op>>::columns(e)),
+            _rows(etl_traits<unary_expr<value_type, E, Op>>::rows(e)),
+            _columns(etl_traits<unary_expr<value_type, E, Op>>::columns(e)){
         for(std::size_t i = 0; i < size(); ++i){
             _data[i] = e[i];
         }
