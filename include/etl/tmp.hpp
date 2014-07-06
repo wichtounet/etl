@@ -120,13 +120,21 @@ struct is_etl_expr : std::integral_constant<bool, or_u<
        is_unary_expr<T>::value, is_binary_expr<T>::value
     >::value> {};
 
-template<typename T, typename Enable = void> 
-struct is_etl_fast : 
+template<typename T, typename Enable = void>
+struct is_etl_fast :
     std::integral_constant<bool, or_u<is_fast_vector<T>::value, is_fast_matrix<T>::value>::value> {};
 
-template<typename T, typename Enable = void> 
-struct is_etl_value : 
+template<typename T, typename Enable = void>
+struct is_etl_value :
     std::integral_constant<bool, or_u<is_fast_vector<T>::value, is_fast_matrix<T>::value, is_dyn_vector<T>::value, is_dyn_matrix<T>::value>::value> {};
+
+template<typename T, typename Enable = void>
+struct is_etl_vector :
+    std::integral_constant<bool, or_u<is_fast_vector<T>::value, is_vector<T>::value>::value> {};
+
+template<typename T, typename Enable = void>
+struct is_etl_matrix :
+    std::integral_constant<bool, or_u<is_fast_matrix<T>::value, is_matrix<T>::value>::value> {};
 
 template<typename LE, typename RE, typename Enable = void>
 struct get_etl_size ;
