@@ -49,11 +49,11 @@ struct and_u : std::false_type {};
 template<>
 struct and_u<true, true, true, true> : std::true_type {};
 
-template<bool b1, bool b2, bool b3 = false, bool b4 = false>
+template<bool b1, bool b2, bool b3 = false, bool b4 = false, bool b5 = false, bool b6 = false>
 struct or_u : std::true_type {};
 
 template<>
-struct or_u<false, false, false, false> : std::false_type {};
+struct or_u<false, false, false, false, false, false> : std::false_type {};
 
 template<template<typename...> class TT, typename T>
 struct is_specialization_of : std::false_type {};
@@ -78,6 +78,12 @@ namespace etl {
 template<typename T, std::size_t Rows>
 struct fast_vector;
 
+template<typename T>
+struct dyn_vector;
+
+template<typename T>
+struct dyn_matrix;
+
 template<typename T, size_t Rows, size_t Columns>
 struct fast_matrix;
 
@@ -96,6 +102,12 @@ template<typename T>
 struct is_fast_matrix : std::integral_constant<bool, is_3<etl::fast_matrix, remove_cv_t<remove_reference_t<T>>>::value> {};
 
 template<typename T>
+struct is_dyn_vector : std::integral_constant<bool, is_specialization_of<etl::dyn_vector, remove_cv_t<remove_reference_t<T>>>::value> {};
+
+template<typename T>
+struct is_dyn_matrix : std::integral_constant<bool, is_specialization_of<etl::dyn_matrix, remove_cv_t<remove_reference_t<T>>>::value> {};
+
+template<typename T>
 struct is_unary_expr : std::integral_constant<bool, is_specialization_of<etl::unary_expr, remove_cv_t<remove_reference_t<T>>>::value> {};
 
 template<typename T>
@@ -104,6 +116,7 @@ struct is_binary_expr : std::integral_constant<bool, is_specialization_of<etl::b
 template<typename T, typename Enable = void> 
 struct is_etl_expr : std::integral_constant<bool, or_u<
        is_fast_vector<T>::value, is_fast_matrix<T>::value,
+       is_dyn_vector<T>::value, is_dyn_matrix<T>::value,
        is_unary_expr<T>::value, is_binary_expr<T>::value
     >::value> {};
 
@@ -113,7 +126,7 @@ struct is_etl_fast :
 
 template<typename T, typename Enable = void> 
 struct is_etl_value : 
-    std::integral_constant<bool, or_u<is_fast_vector<T>::value, is_fast_matrix<T>::value>::value> {};
+    std::integral_constant<bool, or_u<is_fast_vector<T>::value, is_fast_matrix<T>::value, is_dyn_vector<T>::value, is_dyn_matrix<T>::value>::value> {};
 
 template<typename LE, typename RE, typename Enable = void>
 struct get_etl_size ;

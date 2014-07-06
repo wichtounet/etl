@@ -26,7 +26,7 @@ private:
     RightExpr _rhs;
 
 public:
-    static constexpr const std::size_t etl_size = get_etl_size<LeftExpr, RightExpr>::value;
+    //static constexpr const std::size_t etl_size = get_etl_size<LeftExpr, RightExpr>::value;
 
     using value_type = T;
 
@@ -92,7 +92,7 @@ private:
     Expr _value;
 
 public:
-    static constexpr const std::size_t etl_size = remove_reference_t<Expr>::etl_size;
+    //static constexpr const std::size_t etl_size = remove_reference_t<Expr>::etl_size;
 
     using value_type = T;
 
