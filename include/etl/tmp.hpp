@@ -271,4 +271,19 @@ struct etl_traits<etl::binary_expr<T, LeftExpr, BinaryOp, RightExpr>, enable_if_
     }
 };
 
+template<typename E>
+std::size_t size(const E& v){
+    return etl_traits<E>::size(v);
+}
+
+template<typename E>
+std::size_t columns(const E& v){
+    return etl_traits<E>::columns(v);
+}
+
+template<typename E>
+std::size_t rows(const E& v){
+    return etl_traits<E>::rows(v);
+}
+
 #endif

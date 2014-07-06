@@ -49,18 +49,6 @@ public:
 
     //Accessors
 
-    //TODO size() can be constexpr if Expr is fast_X
-
-    template<typename LE = LeftExpr, enable_if_u<is_etl_expr<LE>::value> = detail::dummy>
-    std::size_t size() const {
-        return _lhs.size();
-    }
-
-    template<typename LE = LeftExpr, disable_if_u<is_etl_expr<LE>::value> = detail::dummy>
-    std::size_t size() const {
-        return _rhs.size();
-    }
-
     typename std::add_lvalue_reference<LeftExpr>::type lhs(){
         return _lhs;
     }
@@ -113,16 +101,6 @@ public:
     unary_expr& operator=(unary_expr&&) = delete;
 
     //Accessors
-
-    template<typename E = Expr, enable_if_u<is_etl_fast<E>::value> = detail::dummy>
-    constexpr std::size_t size() const {
-        return _value.size();
-    }
-    
-    template<typename E = Expr, disable_if_u<is_etl_fast<E>::value> = detail::dummy>
-    std::size_t size() const {
-        return _value.size();
-    }
 
     typename std::add_lvalue_reference<Expr>::type value(){
         return _value;
@@ -341,7 +319,7 @@ template<typename E, enable_if_u<is_etl_expr<E>::value> = detail::dummy>
 typename E::value_type sum(const E& values){
     auto acc = static_cast<typename E::value_type>(0);
 
-    for(std::size_t i = 0; i < values.size(); ++i){
+    for(std::size_t i = 0; i < size(values); ++i){
         acc += values[i];
     }
 
@@ -350,7 +328,7 @@ typename E::value_type sum(const E& values){
 
 template<typename E, enable_if_u<is_etl_expr<E>::value> = detail::dummy>
 typename E::value_type mean(const E& values){
-    return sum(values) / values.size();
+    return sum(values) / size(values);
 }
 
 //}}}

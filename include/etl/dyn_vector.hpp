@@ -54,16 +54,16 @@ public:
     dyn_vector(std::initializer_list<value_type> l) : _data(l), rows(l.size()){
         //Nothing else to init
     }
-    
+
     template<typename LE, typename Op, typename RE>
-    dyn_vector(const binary_expr<value_type, LE, Op, RE>& e) : _data(e.size()), rows(e.size()) {
+    dyn_vector(const binary_expr<value_type, LE, Op, RE>& e) : _data(::size(e)), rows(::size(e)) {
         for(std::size_t i = 0; i < size(); ++i){
             _data[i] = e[i];
         }
     }
 
     template<typename E, typename Op>
-    dyn_vector(const unary_expr<value_type, E, Op>& e) : _data(e.size()), rows(e.size()) {
+    dyn_vector(const unary_expr<value_type, E, Op>& e) : _data(::size(e)), rows(::size(e)) {
         for(std::size_t i = 0; i < size(); ++i){
             _data[i] = e[i];
         }
@@ -100,7 +100,7 @@ public:
 
     template<typename LE, typename Op, typename RE>
     dyn_vector& operator=(const binary_expr<value_type, LE, Op, RE>&& e){
-        etl_assert(size() == e.size(), "Can only copy from expr of same size");
+        etl_assert(size() == ::size(e), "Can only copy from expr of same size");
 
         for(std::size_t i = 0; i < size(); ++i){
             _data[i] = e[i];
@@ -111,7 +111,7 @@ public:
 
     template<typename E, typename Op>
     dyn_vector& operator=(const unary_expr<value_type, E, Op>&& e){
-        etl_assert(size() == e.size(), "Can only copy from expr of same size");
+        etl_assert(size() == ::size(e), "Can only copy from expr of same size");
 
         for(std::size_t i = 0; i < size(); ++i){
             _data[i] = e[i];
