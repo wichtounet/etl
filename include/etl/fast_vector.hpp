@@ -32,8 +32,6 @@ public:
     using           iterator = typename storage_impl::iterator;
     using     const_iterator = typename storage_impl::const_iterator;
 
-    static constexpr const std::size_t rows = Rows;
-
     static constexpr const std::size_t etl_size = Rows;
 
 private:
@@ -134,29 +132,33 @@ public:
     //{{{ Accessors
 
     constexpr size_t size() const {
-        return rows;
+        return Rows;
+    }
+    
+    constexpr size_t rows() const {
+        return Rows;
     }
 
     value_type& operator()(size_t i){
-        etl_assert(i < rows, "Out of bounds");
+        etl_assert(i < Rows, "Out of bounds");
 
         return _data[i];
     }
 
     const value_type& operator()(size_t i) const {
-        etl_assert(i < rows, "Out of bounds");
+        etl_assert(i < Rows, "Out of bounds");
 
         return _data[i];
     }
 
     value_type& operator[](size_t i){
-        etl_assert(i < rows, "Out of bounds");
+        etl_assert(i < Rows, "Out of bounds");
 
         return _data[i];
     }
 
     const value_type& operator[](size_t i) const {
-        etl_assert(i < rows, "Out of bounds");
+        etl_assert(i < Rows, "Out of bounds");
 
         return _data[i];
     }

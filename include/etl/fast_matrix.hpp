@@ -30,9 +30,6 @@ public:
 
     static constexpr const std::size_t etl_size = Rows * Columns;
 
-    static constexpr const std::size_t rows = Rows;
-    static constexpr const std::size_t columns = Columns;
-
 private:
     storage_impl _data;
 
@@ -132,6 +129,14 @@ public:
     //}}}
 
     //{{{ Accessors
+    
+    constexpr size_t rows() const {
+        return Rows;
+    }
+    
+    constexpr size_t columns() const {
+        return Columns;
+    }
 
     constexpr size_t size() const {
         return Rows * Columns;
