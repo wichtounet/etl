@@ -54,7 +54,7 @@ TEST_CASE( "convolution_1d/dyn_full_1", "convolution_1d_full" ) {
 
     etl::dyn_vector<double> a({1.0, 2.0, 3.0});
     etl::dyn_vector<double> b({0.0, 1.0, 0.5});
-    etl::dyn_vector<double> c;
+    etl::dyn_vector<double> c(5);
 
     etl::convolve_1d_full(a, b, c);
 
