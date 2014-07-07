@@ -51,7 +51,7 @@ public:
     }
 
     template<typename LE, typename Op, typename RE>
-    dyn_matrix(binary_expr<value_type, LE, Op, RE>&& e) : 
+    dyn_matrix(const binary_expr<value_type, LE, Op, RE>& e) : 
             _data(::rows(e) * ::columns(e)), 
             _rows(::rows(e)), 
             _columns(::columns(e)) {
@@ -61,7 +61,7 @@ public:
     }
 
     template<typename E, typename Op>
-    dyn_matrix(unary_expr<value_type, E, Op>&& e) : 
+    dyn_matrix(const unary_expr<value_type, E, Op>& e) : 
             _data(::rows(e) * ::columns(e)),
             _rows(::rows(e)),
             _columns(::columns(e)){

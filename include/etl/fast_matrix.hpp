@@ -52,14 +52,14 @@ public:
     }
 
     template<typename LE, typename Op, typename RE>
-    fast_matrix(binary_expr<value_type, LE, Op, RE>&& e){
+    fast_matrix(const binary_expr<value_type, LE, Op, RE>& e){
         for(std::size_t i = 0; i < size(); ++i){
             _data[i] = e[i];
         }
     }
 
     template<typename E, typename Op>
-    fast_matrix(unary_expr<value_type, E, Op>&& e){
+    fast_matrix(const unary_expr<value_type, E, Op>& e){
         for(std::size_t i = 0; i < size(); ++i){
             _data[i] = e[i];
         }
