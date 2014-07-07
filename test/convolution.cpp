@@ -2,6 +2,8 @@
 
 #include "etl/fast_vector.hpp"
 #include "etl/fast_matrix.hpp"
+#include "etl/dyn_vector.hpp"
+#include "etl/dyn_matrix.hpp"
 #include "etl/convolution.hpp"
 
 //{{{ convolution_1d_full
@@ -30,6 +32,46 @@ TEST_CASE( "convolution_1d/full_2", "convolution_1d_full" ) {
     etl::fast_vector<double, 5> a = {1.0, 2.0, 3.0, 4.0, 5.0};
     etl::fast_vector<double, 3> b = {0.5, 1.0, 1.5};
     etl::fast_vector<double, 7> c;
+
+    etl::convolve_1d_full(a, b, c);
+
+    REQUIRE(c[0] == Approx(0.5));
+    REQUIRE(c[1] == Approx(2.0));
+    REQUIRE(c[2] == Approx(5.0));
+    REQUIRE(c[3] == Approx(8.0));
+    REQUIRE(c[4] == Approx(11.0));
+    REQUIRE(c[5] == Approx(11.0));
+    REQUIRE(c[6] == Approx(7.5));
+}
+
+//}}}
+
+//{{{ convolution_1d_full_dyn
+
+TEST_CASE( "convolution_1d/dyn_full_1", "convolution_1d_full" ) {
+    //>>> numpy.convolve([1,2,3],[0,1,0.5],'full')
+    //array([ 0. ,  1. ,  2.5,  4. ,  1.5])
+
+    etl::dyn_vector<double> a({1.0, 2.0, 3.0});
+    etl::dyn_vector<double> b({0.0, 1.0, 0.5});
+    etl::dyn_vector<double> c;
+
+    etl::convolve_1d_full(a, b, c);
+
+    REQUIRE(c[0] == Approx(0.0));
+    REQUIRE(c[1] == Approx(1.0));
+    REQUIRE(c[2] == Approx(2.5));
+    REQUIRE(c[3] == Approx(4.0));
+    REQUIRE(c[4] == Approx(1.5));
+}
+
+TEST_CASE( "convolution_1d/dyn_full_2", "convolution_1d_full" ) {
+    //>>> numpy.convolve([1,2,3,4,5],[0.5,1,1.5],'full')
+    //array([  0.5,   2. ,   5. ,   8. ,  11. ,  11. ,   7.5])
+
+    etl::dyn_vector<double> a({1.0, 2.0, 3.0, 4.0, 5.0});
+    etl::dyn_vector<double> b({0.5, 1.0, 1.5});
+    etl::dyn_vector<double> c(7);
 
     etl::convolve_1d_full(a, b, c);
 
@@ -317,6 +359,56 @@ TEST_CASE( "convolution_2d/valid_3", "convolution_2d_valid" ) {
     etl::fast_matrix<double, 2, 2> a = {1.0, 2.0, 3.0, 2.0};
     etl::fast_matrix<double, 2, 2> b = {2.0, 1.0, 0.5, 0.5};
     etl::fast_matrix<double, 1, 1> c;
+
+    etl::convolve_2d_valid(a, b, c);
+
+    REQUIRE(c(0,0) == 8.5);
+}
+
+//}}}
+
+//{{{ convolution_2d_valid_dyn
+
+TEST_CASE( "convolution_2d/dyn_valid_1", "convolution_2d_valid" ) {
+    //>>> scipy.signal.convolve2d([[1,2,3],[0,1,1],[3,2,1]],[[2,0],[0.5,0.5]],'valid')
+    //array([[ 3.5,  4.5],
+    //       [ 4.5,  3. ]])
+
+    etl::dyn_matrix<double> a(3,3,{1.0, 2.0, 3.0, 0.0, 1.0, 1.0, 3.0, 2.0, 1.0});
+    etl::dyn_matrix<double> b(2,2,{2.0, 0.0, 0.5, 0.5});
+    etl::dyn_matrix<double> c(2,2);
+
+    etl::convolve_2d_valid(a, b, c);
+
+    REQUIRE(c(0,0) == 3.5);
+    REQUIRE(c(0,1) == 4.5);
+
+    REQUIRE(c(1,0) == 4.5);
+    REQUIRE(c(1,1) == 3.0);
+}
+
+TEST_CASE( "convolution_2d/dyn_valid_2", "convolution_2d_valid" ) {
+    //>>> scipy.signal.convolve2d([[1,2],[0,1],[3,2]],[[2,0],[0.5,0.5]],'valid')
+    //array([[ 3.5],
+    //       [ 4.5]])
+
+    etl::dyn_matrix<double> a(3,2,{1.0, 2.0, 0.0, 1.0, 3.0, 2.0});
+    etl::dyn_matrix<double> b(2,2,{2.0, 0.0, 0.5, 0.5});
+    etl::dyn_matrix<double> c(2,1);
+
+    etl::convolve_2d_valid(a, b, c);
+
+    REQUIRE(c(0,0) == 3.5);
+    REQUIRE(c(1,0) == 4.5);
+}
+
+TEST_CASE( "convolution_2d/dyn_valid_3", "convolution_2d_valid" ) {
+    //scipy.signal.convolve2d([[1,2],[3,2]],[[2,1.0],[0.5,0.5]],'valid')
+    //array([[ 8.5]])
+
+    etl::dyn_matrix<double> a(2,2,{1.0, 2.0, 3.0, 2.0});
+    etl::dyn_matrix<double> b(2,2,{2.0, 1.0, 0.5, 0.5});
+    etl::dyn_matrix<double> c(1,1);
 
     etl::convolve_2d_valid(a, b, c);
 
