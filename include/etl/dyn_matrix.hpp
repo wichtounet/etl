@@ -70,9 +70,11 @@ public:
         }
     }
 
-    //Prohibit copy and move
+    //Prohibit copy 
     dyn_matrix(const dyn_matrix& rhs) = delete;
-    dyn_matrix(dyn_matrix&& rhs) = delete;
+
+    //Default move
+    dyn_matrix(dyn_matrix&& rhs) = default;
 
     //}}}
 
@@ -128,17 +130,17 @@ public:
         return *this;
     }
 
-    //Prohibit move
-    dyn_matrix& operator=(dyn_matrix&& rhs) = delete;
-    
+    //Default move
+    dyn_matrix& operator=(dyn_matrix&& rhs) = default;
+
     //}}}
 
     //{{{ Accessors
-    
+
     size_t rows() const {
         return _rows;
     }
-    
+
     size_t columns() const {
         return _columns;
     }

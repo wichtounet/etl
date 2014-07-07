@@ -69,9 +69,11 @@ public:
         }
     }
 
-    //Prohibit copy and move
+    //Prohibit copy 
     dyn_vector(const dyn_vector& rhs) = delete;
-    dyn_vector(dyn_vector&& rhs) = delete;
+
+    //Move is possible
+    dyn_vector(dyn_vector&& rhs) = default;
 
     //}}}
 
@@ -93,8 +95,8 @@ public:
         return *this;
     }
 
-    //Prohibit move
-    dyn_vector& operator=(dyn_vector&& rhs) = delete;
+    //Move is possible
+    dyn_vector& operator=(dyn_vector&& rhs) = default;
 
     //Construct from expression
 
