@@ -86,6 +86,46 @@ TEST_CASE( "convolution_1d/dyn_full_2", "convolution_1d_full" ) {
 
 //}}}
 
+//{{{ convolution_1d_full_expr
+
+TEST_CASE( "convolution_1d/expr_full_1", "convolution_1d_full" ) {
+    //>>> numpy.convolve([1,2,3],[0,1,0.5],'full')
+    //array([ 0. ,  1. ,  2.5,  4. ,  1.5])
+
+    etl::dyn_vector<double> a({1.0, 2.0, 3.0});
+    etl::dyn_vector<double> b({0.0, 1.0, 0.5});
+    etl::dyn_vector<double> c(5);
+
+    etl::convolve_1d_full(a + b - b, abs(b), c);
+
+    REQUIRE(c[0] == Approx(0.0));
+    REQUIRE(c[1] == Approx(1.0));
+    REQUIRE(c[2] == Approx(2.5));
+    REQUIRE(c[3] == Approx(4.0));
+    REQUIRE(c[4] == Approx(1.5));
+}
+
+TEST_CASE( "convolution_1d/expr_full_2", "convolution_1d_full" ) {
+    //>>> numpy.convolve([1,2,3,4,5],[0.5,1,1.5],'full')
+    //array([  0.5,   2. ,   5. ,   8. ,  11. ,  11. ,   7.5])
+
+    etl::dyn_vector<double> a({1.0, 2.0, 3.0, 4.0, 5.0});
+    etl::dyn_vector<double> b({0.5, 1.0, 1.5});
+    etl::dyn_vector<double> c(7);
+
+    etl::convolve_1d_full(a + a - a, b + b - b, c);
+
+    REQUIRE(c[0] == Approx(0.5));
+    REQUIRE(c[1] == Approx(2.0));
+    REQUIRE(c[2] == Approx(5.0));
+    REQUIRE(c[3] == Approx(8.0));
+    REQUIRE(c[4] == Approx(11.0));
+    REQUIRE(c[5] == Approx(11.0));
+    REQUIRE(c[6] == Approx(7.5));
+}
+
+//}}}
+
 //{{{ convolution_1d_same
 
 TEST_CASE( "convolution_1d/same_1", "convolution_1d_same" ) {
