@@ -22,6 +22,8 @@ private:
         and_u<is_etl_expr<LeftExpr>::value, is_etl_expr<RightExpr>::value>::value>::value,
         "One argument must be an ETL expression and the other one convertible to T");
 
+    using this_type = binary_expr<T, LeftExpr, BinaryOp, RightExpr>;
+
     LeftExpr _lhs;
     RightExpr _rhs;
 
@@ -65,8 +67,20 @@ public:
 
     //Apply the expression
 
-    auto operator[](std::size_t i) const {
+    //TODO The three next functions should be auto return type
+    //However, clang++ and g++ do not support that with -g
+
+    T operator[](std::size_t i) const {
         return BinaryOp::apply(lhs()[i], rhs()[i]);
+    }
+
+    T operator()(std::size_t i) const {
+        return BinaryOp::apply(lhs()[i], rhs()[i]);
+    }
+
+    template<typename TT = this_type>
+    enable_if_t<etl_traits<TT>::is_matrix, T> operator()(std::size_t i, std::size_t j) const {
+        return BinaryOp::apply(lhs()(i,j), rhs()(i,j));
     }
 };
 
@@ -74,6 +88,8 @@ template <typename T, typename Expr, typename UnaryOp>
 class unary_expr {
 private:
     static_assert(is_etl_expr<Expr>::value, "Only ETL expressions can be used in unary_expr");
+
+    using this_type = unary_expr<T, Expr, UnaryOp>;
 
     Expr _value;
 
@@ -108,8 +124,20 @@ public:
 
     //Apply the expression
 
-    auto operator[](std::size_t i) const {
+    //TODO The three next functions should be auto return type
+    //However, clang++ and g++ do not support that with -g
+
+    T operator[](std::size_t i) const {
         return UnaryOp::apply(value()[i]);
+    }
+ 
+    T operator()(std::size_t i) const {
+        return UnaryOp::apply(value()[i]);
+    }
+
+    template<typename TT = this_type>
+    enable_if_t<etl_traits<TT>::is_matrix, T> operator()(std::size_t i, std::size_t j) const {
+        return UnaryOp::apply(value()(i,j));
     }
 };
 
