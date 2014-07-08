@@ -24,12 +24,6 @@ struct dyn_matrix;
 template<typename T, size_t Rows, size_t Columns>
 struct fast_matrix;
 
-template <typename T, typename Expr, typename UnaryOp>
-class unary_expr;
-
-template <typename T, typename LeftExpr, typename BinaryOp, typename RightExpr>
-class binary_expr;
-
 //TODO Implement it for fast_XXX
 
 template<typename T, typename Enable = void>
