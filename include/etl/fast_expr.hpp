@@ -341,7 +341,7 @@ auto sign(const E& value) -> unary_expr<typename E::value_type, const E&, sign_u
 
 template<typename E, enable_if_u<is_etl_expr<E>::value> = detail::dummy>
 typename E::value_type sum(const E& values){
-    auto acc = static_cast<typename E::value_type>(0);
+    typename E::value_type acc(0);
 
     for(std::size_t i = 0; i < size(values); ++i){
         acc += values[i];
