@@ -9,6 +9,7 @@
 #define ETL_FAST_MATRIX_HPP
 
 #include<array>
+#include<string>
 
 #include "assert.hpp"
 #include "tmp.hpp"
@@ -225,6 +226,21 @@ std::ostream& operator<<(std::ostream& stream, const fast_matrix<T, Rows, Column
     }
 
     return stream;
+}
+
+template<typename T, size_t Rows, size_t Columns>
+std::string to_octave(const fast_matrix<T, Rows, Columns>& mat){
+    std::string v = "[";
+    for(std::size_t i = 0; i < Rows; ++i){
+        std::string comma = "";
+        for(std::size_t j = 0; j  < Columns; ++j){
+            v += comma + std::to_string(mat(i, j));
+            comma = ", ";
+        }
+        v += ";";
+    }
+    v += "]";
+    return v;
 }
 
 } //end of namespace etl
