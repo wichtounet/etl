@@ -9,7 +9,6 @@
 #define ETL_FAST_VECTOR_HPP
 
 #include <cstddef>
-#include<string>
 #include <type_traits>
 #include <utility>
 #include <algorithm>
@@ -182,31 +181,6 @@ public:
 
     //}}}
 };
-
-template<typename T, std::size_t Rows>
-std::ostream& operator<<(std::ostream& stream, const fast_vector<T, Rows>& v){
-    stream << "[";
-    std::string comma = "";
-    for(std::size_t i = 0; i < Rows; ++i){
-        stream << comma << v(i);
-        comma = ", ";
-    }
-    stream << "]" << std::endl;
-
-    return stream;
-}
-
-template<typename T, std::size_t Rows>
-std::string to_octave(const fast_vector<T, Rows>& vec){
-    std::string v = "[";
-    std::string comma = "";
-    for(std::size_t i = 0; i < Rows; ++i){
-        v += comma + std::to_string(vec(i));
-        comma = ",";
-    }
-    v += "]";
-    return v;
-}
 
 } //end of namespace etl
 

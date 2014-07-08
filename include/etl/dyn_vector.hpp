@@ -186,19 +186,6 @@ public:
     //}}}
 };
 
-template<typename T>
-std::ostream& operator<<(std::ostream& stream, const dyn_vector<T>& values){
-    stream << "[";
-    std::string comma = "";
-    for(auto& v : values){
-        stream << comma << v;
-        comma = ", ";
-    }
-    stream << "]" << std::endl;
-
-    return stream;
-}
-
 } //end of namespace etl
 
 #endif

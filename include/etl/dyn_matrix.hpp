@@ -194,23 +194,6 @@ public:
     //}}}
 };
 
-template<typename T>
-std::ostream& operator<<(std::ostream& stream, const dyn_matrix<T>& m){
-    stream << "[" << std::endl;
-    for(std::size_t i = 0; i < m.rows(); ++i){
-        stream << "[";
-        std::string comma = "";
-        for(std::size_t j = 0; j  < m.columns(); ++j){
-            stream << comma << m(i, j);
-            comma = ", ";
-        }
-        stream << "]" << std::endl;
-    }
-    stream << "]" << std::endl;
-
-    return stream;
-}
-
 } //end of namespace etl
 
 #endif

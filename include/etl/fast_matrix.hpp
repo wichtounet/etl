@@ -188,38 +188,6 @@ public:
     //}}}
 };
 
-template<typename T, size_t Rows, size_t Columns>
-std::ostream& operator<<(std::ostream& stream, const fast_matrix<T, Rows, Columns>& m){
-    stream << "[" << std::endl;
-    for(std::size_t i = 0; i < Rows; ++i){
-        stream << "[";
-        std::string comma = "";
-        for(std::size_t j = 0; j  < Columns; ++j){
-            stream << comma << m(i, j);
-            comma = ", ";
-        }
-        stream << "]" << std::endl;
-    }
-    stream << "]" << std::endl;
-
-    return stream;
-}
-
-template<typename T, size_t Rows, size_t Columns>
-std::string to_octave(const fast_matrix<T, Rows, Columns>& mat){
-    std::string v = "[";
-    for(std::size_t i = 0; i < Rows; ++i){
-        std::string comma = "";
-        for(std::size_t j = 0; j  < Columns; ++j){
-            v += comma + std::to_string(mat(i, j));
-            comma = ", ";
-        }
-        v += ";";
-    }
-    v += "]";
-    return v;
-}
-
 } //end of namespace etl
 
 #endif
