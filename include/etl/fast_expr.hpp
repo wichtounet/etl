@@ -343,6 +343,11 @@ auto vflip(const E& value) -> unary_expr<typename E::value_type, vflip_transform
     return {value};
 }
 
+template<typename E, enable_if_u<is_etl_expr<E>::value> = detail::dummy>
+auto fflip(const E& value) -> unary_expr<typename E::value_type, fflip_transformer<E>, identity_unary_op<typename E::value_type>> {
+    return {value};
+}
+
 //}}}
 
 //{{{ Apply a reduction on an ETL expression (vector,matrix,binary,unary)

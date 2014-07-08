@@ -73,6 +73,27 @@ struct vflip_transformer {
 };
 
 template<typename T>
+struct fflip_transformer {
+    using sub_type = T;
+
+    const T& sub;
+
+    fflip_transformer(const T& vec) : sub(vec) {}
+
+    typename T::value_type operator[](std::size_t i) const {
+        return sub[i];
+    }
+
+    typename T::value_type operator()(std::size_t i) const {
+        return sub(i);
+    }
+
+    typename T::value_type operator()(std::size_t i, std::size_t j) const {
+        return sub(rows(sub) - 1 - i, columns(sub) - 1 - j);
+    }
+};
+
+template<typename T>
 struct plus_binary_op {
     static constexpr T apply(const T& lhs, const T& rhs){
         return lhs + rhs;

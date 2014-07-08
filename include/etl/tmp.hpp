@@ -99,6 +99,9 @@ struct hflip_transformer;
 template<typename T>
 struct vflip_transformer;
 
+template<typename T>
+struct fflip_transformer;
+
 };
 
 template<typename T>
@@ -122,7 +125,8 @@ struct is_binary_expr : std::integral_constant<bool, is_specialization_of<etl::b
 template<typename T>
 struct is_transformer_expr : std::integral_constant<bool, or_u<
             is_specialization_of<etl::hflip_transformer, remove_cv_t<remove_reference_t<T>>>::value, 
-            is_specialization_of<etl::vflip_transformer, remove_cv_t<remove_reference_t<T>>>::value>::value> {};
+            is_specialization_of<etl::vflip_transformer, remove_cv_t<remove_reference_t<T>>>::value, 
+            is_specialization_of<etl::fflip_transformer, remove_cv_t<remove_reference_t<T>>>::value>::value> {};
 
 template<typename T, typename Enable = void> 
 struct is_etl_expr : std::integral_constant<bool, or_u<
