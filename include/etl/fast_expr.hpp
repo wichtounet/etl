@@ -13,32 +13,21 @@
 
 namespace etl {
 
-template<typename LE, typename RE, typename Enable = void>
-struct get_etl_size ;
-
-template<typename LE, typename RE>
-struct get_etl_size<LE, RE, enable_if_t<is_etl_expr<LE>::value>>
-    : std::integral_constant<std::size_t, std::remove_reference<LE>::type::etl_size> {} ;
-
-template<typename LE, typename RE>
-struct get_etl_size<LE, RE, enable_if_t<and_u<is_etl_expr<RE>::value, not_u<is_etl_expr<LE>::value>::value>::value>>
-    : std::integral_constant<std::size_t, std::remove_reference<RE>::type::etl_size> {};
-
 template <typename T, typename LeftExpr, typename BinaryOp, typename RightExpr>
 class binary_expr {
 private:
-    static_assert(or_u<is_etl_expr<LeftExpr>::value, is_etl_expr<RightExpr>::value>::value, "At least one of the binary expressions arguments must be an ETL expr");
+    static_assert(or_u<
+        and_u<is_etl_expr<LeftExpr>::value, std::is_same<RightExpr, scalar<T>>::value>::value,
+        and_u<is_etl_expr<RightExpr>::value, std::is_same<LeftExpr, scalar<T>>::value>::value,
+        and_u<is_etl_expr<LeftExpr>::value, is_etl_expr<RightExpr>::value>::value>::value,
+        "One argument must be an ETL expression and the other one convertible to T");
+
+    using this_type = binary_expr<T, LeftExpr, BinaryOp, RightExpr>;
 
     LeftExpr _lhs;
     RightExpr _rhs;
 
-    typedef binary_expr<T, LeftExpr, BinaryOp, RightExpr> this_type;
-
 public:
-    static constexpr const bool etl_marker = true;
-    static constexpr const bool etl_fast = true;
-    static constexpr const std::size_t etl_size = get_etl_size<LeftExpr, RightExpr>::value;
-
     using value_type = T;
 
     //Cannot be constructed with no args
@@ -60,18 +49,6 @@ public:
 
     //Accessors
 
-    //TODO size() can be constexpr if Expr is fast_X
-
-    template<typename LE = LeftExpr, enable_if_u<is_etl_expr<LE>::value> = detail::dummy>
-    std::size_t size() const {
-        return _lhs.size();
-    }
-
-    template<typename LE = LeftExpr, disable_if_u<is_etl_expr<LE>::value> = detail::dummy>
-    std::size_t size() const {
-        return _rhs.size();
-    }
-
     typename std::add_lvalue_reference<LeftExpr>::type lhs(){
         return _lhs;
     }
@@ -90,8 +67,20 @@ public:
 
     //Apply the expression
 
-    auto operator[](std::size_t i) const {
+    //TODO The three next functions should be auto return type
+    //However, clang++ and g++ do not support that with -g
+
+    T operator[](std::size_t i) const {
         return BinaryOp::apply(lhs()[i], rhs()[i]);
+    }
+
+    T operator()(std::size_t i) const {
+        return BinaryOp::apply(lhs()[i], rhs()[i]);
+    }
+
+    template<typename TT = this_type>
+    enable_if_t<etl_traits<TT>::is_matrix, T> operator()(std::size_t i, std::size_t j) const {
+        return BinaryOp::apply(lhs()(i,j), rhs()(i,j));
     }
 };
 
@@ -100,15 +89,11 @@ class unary_expr {
 private:
     static_assert(is_etl_expr<Expr>::value, "Only ETL expressions can be used in unary_expr");
 
+    using this_type = unary_expr<T, Expr, UnaryOp>;
+
     Expr _value;
 
-    typedef unary_expr<T, Expr, UnaryOp> this_type;
-
 public:
-    static constexpr const bool etl_marker = true;
-    static constexpr const bool etl_fast = true;
-    static constexpr const std::size_t etl_size = std::remove_reference<Expr>::type::etl_size;
-
     using value_type = T;
 
     //Cannot be constructed with no args
@@ -129,16 +114,6 @@ public:
 
     //Accessors
 
-    template<typename E = Expr, enable_if_u<std::remove_reference<E>::type::etl_fast> = detail::dummy>
-    constexpr std::size_t size() const {
-        return _value.size();
-    }
-
-    template<typename E = Expr, disable_if_u<std::remove_reference<E>::type::etl_fast> = detail::dummy>
-    std::size_t size() const {
-        return _value.size();
-    }
-
     typename std::add_lvalue_reference<Expr>::type value(){
         return _value;
     }
@@ -149,8 +124,20 @@ public:
 
     //Apply the expression
 
-    auto operator[](std::size_t i) const {
+    //TODO The three next functions should be auto return type
+    //However, clang++ and g++ do not support that with -g
+
+    T operator[](std::size_t i) const {
         return UnaryOp::apply(value()[i]);
+    }
+ 
+    T operator()(std::size_t i) const {
+        return UnaryOp::apply(value()[i]);
+    }
+
+    template<typename TT = this_type>
+    enable_if_t<etl_traits<TT>::is_matrix, T> operator()(std::size_t i, std::size_t j) const {
+        return UnaryOp::apply(value()(i,j));
     }
 };
 
@@ -237,6 +224,100 @@ auto operator%(LE lhs, const RE& rhs) -> binary_expr<typename RE::value_type, sc
 
 //}}}
 
+//{{{ Compound operators 
+
+template<typename LE, typename RE, enable_if_u<and_u<std::is_convertible<RE, typename LE::value_type>::value, is_etl_value<LE>::value>::value> = detail::dummy>
+LE& operator+=(LE& lhs, RE rhs){
+    for(std::size_t i = 0; i < lhs.size(); ++i){
+        lhs[i] += rhs;
+    }
+
+    return lhs;
+}
+
+template<typename LE, typename RE, enable_if_u<and_u<is_etl_expr<RE>::value, is_etl_value<LE>::value>::value> = detail::dummy>
+LE& operator+=(LE& lhs, const RE& rhs){
+    for(std::size_t i = 0; i < lhs.size(); ++i){
+        lhs[i] += rhs[i];
+    }
+
+    return lhs;
+}
+
+template<typename LE, typename RE, enable_if_u<and_u<std::is_convertible<RE, typename LE::value_type>::value, is_etl_value<LE>::value>::value> = detail::dummy>
+LE& operator-=(LE& lhs, RE rhs){
+    for(std::size_t i = 0; i < lhs.size(); ++i){
+        lhs[i] -= rhs;
+    }
+
+    return lhs;
+}
+
+template<typename LE, typename RE, enable_if_u<and_u<is_etl_expr<RE>::value, is_etl_value<LE>::value>::value> = detail::dummy>
+LE& operator-=(LE& lhs, const RE& rhs){
+    for(std::size_t i = 0; i < lhs.size(); ++i){
+        lhs[i] -= rhs[i];
+    }
+
+    return lhs;
+}
+
+template<typename LE, typename RE, enable_if_u<and_u<std::is_convertible<RE, typename LE::value_type>::value, is_etl_value<LE>::value>::value> = detail::dummy>
+LE& operator*=(LE& lhs, RE rhs){
+    for(std::size_t i = 0; i < lhs.size(); ++i){
+        lhs[i] *= rhs;
+    }
+
+    return lhs;
+}
+
+template<typename LE, typename RE, enable_if_u<and_u<is_etl_expr<RE>::value, is_etl_value<LE>::value>::value> = detail::dummy>
+LE& operator*=(LE& lhs, const RE& rhs){
+    for(std::size_t i = 0; i < lhs.size(); ++i){
+        lhs[i] *= rhs[i];
+    }
+
+    return lhs;
+}
+
+template<typename LE, typename RE, enable_if_u<and_u<std::is_convertible<RE, typename LE::value_type>::value, is_etl_value<LE>::value>::value> = detail::dummy>
+LE& operator/=(LE& lhs, RE rhs){
+    for(std::size_t i = 0; i < lhs.size(); ++i){
+        lhs[i] /= rhs;
+    }
+
+    return lhs;
+}
+
+template<typename LE, typename RE, enable_if_u<and_u<is_etl_expr<RE>::value, is_etl_value<LE>::value>::value> = detail::dummy>
+LE& operator/=(LE& lhs, const RE& rhs){
+    for(std::size_t i = 0; i < lhs.size(); ++i){
+        lhs[i] /= rhs[i];
+    }
+
+    return lhs;
+}
+
+template<typename LE, typename RE, enable_if_u<and_u<std::is_convertible<RE, typename LE::value_type>::value, is_etl_value<LE>::value>::value> = detail::dummy>
+LE& operator%=(LE& lhs, RE rhs){
+    for(std::size_t i = 0; i < lhs.size(); ++i){
+        lhs[i] %= rhs;
+    }
+
+    return lhs;
+}
+
+template<typename LE, typename RE, enable_if_u<and_u<is_etl_expr<RE>::value, is_etl_value<LE>::value>::value> = detail::dummy>
+LE& operator%=(LE& lhs, const RE& rhs){
+    for(std::size_t i = 0; i < lhs.size(); ++i){
+        lhs[i] %= rhs[i];
+    }
+
+    return lhs;
+}
+
+//}}}
+
 //{{{ Apply an unary expression on an ETL expression (vector,matrix,binary,unary)
 
 template<typename E, enable_if_u<is_etl_expr<E>::value> = detail::dummy>
@@ -262,7 +343,7 @@ template<typename E, enable_if_u<is_etl_expr<E>::value> = detail::dummy>
 typename E::value_type sum(const E& values){
     auto acc = static_cast<typename E::value_type>(0);
 
-    for(std::size_t i = 0; i < values.size(); ++i){
+    for(std::size_t i = 0; i < size(values); ++i){
         acc += values[i];
     }
 
@@ -271,7 +352,7 @@ typename E::value_type sum(const E& values){
 
 template<typename E, enable_if_u<is_etl_expr<E>::value> = detail::dummy>
 typename E::value_type mean(const E& values){
-    return sum(values) / values.size();
+    return sum(values) / size(values);
 }
 
 //}}}

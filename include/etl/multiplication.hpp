@@ -18,18 +18,14 @@ namespace etl {
 template<typename A, typename B, typename C>
 static void mmul(const A& a, const B& b, C& c){
     static_assert(is_etl_expr<A>::value && is_etl_expr<B>::value && is_etl_expr<C>::value, "Matrix multiplication only supported for ETL expressions");
-    static_assert(A::columns == B::rows, "The central dimensions of the multiplied matrices must be the same");
-    static_assert(C::rows == A::rows && C::columns == B::columns, "The output matrix is not of the good dimension");
-
-    int n = A::columns;
-    int m = A::rows;
-    int p = B::columns;
+    //static_assert(A::columns == B::rows, "The central dimensions of the multiplied matrices must be the same");
+    //static_assert(C::rows == A::rows && C::columns == B::columns, "The output matrix is not of the good dimension");
 
     c = 0;
 
-    for(int i = 0; i < m; i++){
-        for(int j = 0; j < p; j++){
-            for(int k = 0; k < n; k++){
+    for(std::size_t i = 0; i < rows(a); i++){
+        for(std::size_t j = 0; j < columns(b); j++){
+            for(std::size_t k = 0; k < columns(a); k++){
                 c(i,j) += a(i,k) * b(k,j);
             }
         }

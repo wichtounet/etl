@@ -5,11 +5,10 @@
 //  http://opensource.org/licenses/MIT)
 //=======================================================================
 
-#ifndef ETL_FAST_MATRIX_HPP
-#define ETL_FAST_MATRIX_HPP
+#ifndef ETL_DYN_MATRIX_HPP
+#define ETL_DYN_MATRIX_HPP
 
 #include<array>
-#include<string>
 
 #include "assert.hpp"
 #include "tmp.hpp"
@@ -21,54 +20,61 @@
 
 namespace etl {
 
-template<typename T, size_t Rows, size_t Columns>
-struct fast_matrix {
+template<typename T>
+struct dyn_matrix {
 public:
     using       value_type = T;
-    using     storage_impl = std::array<value_type, Rows * Columns>;
+    using     storage_impl = std::vector<value_type>;
     using         iterator = typename storage_impl::iterator;
     using   const_iterator = typename storage_impl::const_iterator;
 
-    static constexpr const std::size_t etl_size = Rows * Columns;
-
 private:
     storage_impl _data;
+    std::size_t _rows;
+    std::size_t _columns;
 
 public:
-
     ///{{{ Construction
 
-    fast_matrix(){
+    dyn_matrix(std::size_t rows, std::size_t columns) : _data(rows * columns), _rows(rows), _columns(columns) {
         //Nothing to init
     }
 
-    fast_matrix(const value_type& value){
+    dyn_matrix(std::size_t rows, std::size_t columns, const value_type& value) : _data(rows * columns), _rows(rows), _columns(columns) {
         std::fill(_data.begin(), _data.end(), value);
     }
 
-    fast_matrix(std::initializer_list<value_type> l){
+    dyn_matrix(std::size_t rows, std::size_t columns, std::initializer_list<value_type> l) : _data(rows * columns), _rows(rows), _columns(columns) {
         etl_assert(l.size() == size(), "Cannot copy from an initializer of different size");
 
         std::copy(l.begin(), l.end(), begin());
     }
 
     template<typename LE, typename Op, typename RE>
-    fast_matrix(const binary_expr<value_type, LE, Op, RE>& e){
+    dyn_matrix(const binary_expr<value_type, LE, Op, RE>& e) : 
+            _data(::rows(e) * ::columns(e)), 
+            _rows(::rows(e)), 
+            _columns(::columns(e)) {
         for(std::size_t i = 0; i < size(); ++i){
             _data[i] = e[i];
         }
     }
 
     template<typename E, typename Op>
-    fast_matrix(const unary_expr<value_type, E, Op>& e){
+    dyn_matrix(const unary_expr<value_type, E, Op>& e) : 
+            _data(::rows(e) * ::columns(e)),
+            _rows(::rows(e)),
+            _columns(::columns(e)){
         for(std::size_t i = 0; i < size(); ++i){
             _data[i] = e[i];
         }
     }
 
-    //Prohibit copy and move
-    fast_matrix(const fast_matrix& rhs) = delete;
-    fast_matrix(fast_matrix&& rhs) = delete;
+    //Prohibit copy 
+    dyn_matrix(const dyn_matrix& rhs) = delete;
+
+    //Default move
+    dyn_matrix(dyn_matrix&& rhs) = default;
 
     //}}}
 
@@ -76,7 +82,7 @@ public:
 
     //Copy assignment operator
 
-    fast_matrix& operator=(const fast_matrix& rhs){
+    dyn_matrix& operator=(const dyn_matrix& rhs){
         for(std::size_t i = 0; i < size(); ++i){
             _data[i] = rhs[i];
         }
@@ -87,10 +93,10 @@ public:
     //Allow copy from other containers
 
     template<typename Container, enable_if_u<std::is_same<typename Container::value_type, value_type>::value> = detail::dummy>
-    fast_matrix& operator=(const Container& vec){
-        etl_assert(vec.size() == Rows * Columns, "Cannot copy from a vector of different size");
+    dyn_matrix& operator=(const Container& vec){
+        etl_assert(vec.size() == _rows * _columns, "Cannot copy from a vector of different size");
 
-        for(std::size_t i = 0; i < Rows * Columns; ++i){
+        for(std::size_t i = 0; i < _rows * _columns; ++i){
             _data[i] = vec[i];
         }
 
@@ -100,7 +106,7 @@ public:
     //Construct from expression
 
     template<typename LE, typename Op, typename RE>
-    fast_matrix& operator=(binary_expr<value_type, LE, Op, RE>&& e){
+    dyn_matrix& operator=(binary_expr<value_type, LE, Op, RE>&& e){
         for(std::size_t i = 0; i < size(); ++i){
             _data[i] = e[i];
         }
@@ -109,7 +115,7 @@ public:
     }
 
     template<typename E, typename Op>
-    fast_matrix& operator=(unary_expr<value_type, E, Op>&& e){
+    dyn_matrix& operator=(unary_expr<value_type, E, Op>&& e){
         for(std::size_t i = 0; i < size(); ++i){
             _data[i] = e[i];
         }
@@ -118,43 +124,43 @@ public:
     }
 
     //Set the same value to each element of the matrix
-    fast_matrix& operator=(const value_type& value){
+    dyn_matrix& operator=(const value_type& value){
         std::fill(_data.begin(), _data.end(), value);
 
         return *this;
     }
 
-    //Prohibit move
-    fast_matrix& operator=(fast_matrix&& rhs) = delete;
-    
+    //Default move
+    dyn_matrix& operator=(dyn_matrix&& rhs) = default;
+
     //}}}
 
     //{{{ Accessors
-    
-    constexpr size_t rows() const {
-        return Rows;
+
+    size_t rows() const {
+        return _rows;
     }
-    
-    constexpr size_t columns() const {
-        return Columns;
+
+    size_t columns() const {
+        return _columns;
     }
 
     constexpr size_t size() const {
-        return Rows * Columns;
+        return _rows * _columns;
     }
 
     value_type& operator()(size_t i, size_t j){
-        etl_assert(i < Rows, "Out of bounds");
-        etl_assert(j < Columns, "Out of bounds");
+        etl_assert(i < _rows, "Out of bounds");
+        etl_assert(j < _columns, "Out of bounds");
 
-        return _data[i * Columns + j];
+        return _data[i * _columns + j];
     }
 
     const value_type& operator()(size_t i, size_t j) const {
-        etl_assert(i < Rows, "Out of bounds");
-        etl_assert(j < Columns, "Out of bounds");
+        etl_assert(i < _rows, "Out of bounds");
+        etl_assert(j < _columns, "Out of bounds");
 
-        return _data[i * Columns + j];
+        return _data[i * _columns + j];
     }
 
     const value_type& operator[](size_t i) const {
@@ -188,13 +194,13 @@ public:
     //}}}
 };
 
-template<typename T, size_t Rows, size_t Columns>
-std::ostream& operator<<(std::ostream& stream, const fast_matrix<T, Rows, Columns>& m){
+template<typename T>
+std::ostream& operator<<(std::ostream& stream, const dyn_matrix<T>& m){
     stream << "[" << std::endl;
-    for(std::size_t i = 0; i < Rows; ++i){
+    for(std::size_t i = 0; i < m.rows(); ++i){
         stream << "[";
         std::string comma = "";
-        for(std::size_t j = 0; j  < Columns; ++j){
+        for(std::size_t j = 0; j  < m.columns(); ++j){
             stream << comma << m(i, j);
             comma = ", ";
         }
@@ -203,21 +209,6 @@ std::ostream& operator<<(std::ostream& stream, const fast_matrix<T, Rows, Column
     stream << "]" << std::endl;
 
     return stream;
-}
-
-template<typename T, size_t Rows, size_t Columns>
-std::string to_octave(const fast_matrix<T, Rows, Columns>& mat){
-    std::string v = "[";
-    for(std::size_t i = 0; i < Rows; ++i){
-        std::string comma = "";
-        for(std::size_t j = 0; j  < Columns; ++j){
-            v += comma + std::to_string(mat(i, j));
-            comma = ", ";
-        }
-        v += ";";
-    }
-    v += "]";
-    return v;
 }
 
 } //end of namespace etl

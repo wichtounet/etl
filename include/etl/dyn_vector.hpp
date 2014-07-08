@@ -5,11 +5,10 @@
 //  http://opensource.org/licenses/MIT)
 //=======================================================================
 
-#ifndef ETL_FAST_VECTOR_HPP
-#define ETL_FAST_VECTOR_HPP
+#ifndef ETL_DYN_VECTOR_HPP
+#define ETL_DYN_VECTOR_HPP
 
 #include <cstddef>
-#include<string>
 #include <type_traits>
 #include <utility>
 #include <algorithm>
@@ -25,54 +24,56 @@
 
 namespace etl {
 
-template<typename T, std::size_t Rows>
-struct fast_vector {
+//TODO Make it moveable
+
+template<typename T>
+struct dyn_vector {
 public:
     using         value_type = T;
-    using       storage_impl = std::array<value_type, Rows>;
+    using       storage_impl = std::vector<value_type>;
     using           iterator = typename storage_impl::iterator;
     using     const_iterator = typename storage_impl::const_iterator;
 
-    static constexpr const std::size_t etl_size = Rows;
-
 private:
     storage_impl _data;
+    std::size_t rows;
 
 public:
 
     //{{{ Construction
 
-    fast_vector(){
+    dyn_vector(std::size_t rows) : _data(rows), rows(rows) {
         //Nothing else to init
     }
 
-    fast_vector(const value_type& value){
-        std::fill(_data.begin(), _data.end(), value);
+    dyn_vector(std::size_t rows, const value_type& value) : _data(rows, value), rows(rows) {
+        //Nothing else to init
     }
 
-    fast_vector(std::initializer_list<value_type> l){
-        etl_assert(l.size() == Rows, "Cannot copy from an initializer of different size");
-
-        std::copy(l.begin(), l.end(), begin());
+    //TODO Probably a better way in order to move elements
+    dyn_vector(std::initializer_list<value_type> l) : _data(l), rows(l.size()){
+        //Nothing else to init
     }
 
     template<typename LE, typename Op, typename RE>
-    fast_vector(const binary_expr<value_type, LE, Op, RE>& e){
-        for(std::size_t i = 0; i < Rows; ++i){
+    dyn_vector(const binary_expr<value_type, LE, Op, RE>& e) : _data(::size(e)), rows(::size(e)) {
+        for(std::size_t i = 0; i < size(); ++i){
             _data[i] = e[i];
         }
     }
 
     template<typename E, typename Op>
-    fast_vector(const unary_expr<value_type, E, Op>& e){
-        for(std::size_t i = 0; i < Rows; ++i){
+    dyn_vector(const unary_expr<value_type, E, Op>& e) : _data(::size(e)), rows(::size(e)) {
+        for(std::size_t i = 0; i < size(); ++i){
             _data[i] = e[i];
         }
     }
 
-    //Prohibit copy and move
-    fast_vector(const fast_vector& rhs) = delete;
-    fast_vector(fast_vector&& rhs) = delete;
+    //Prohibit copy 
+    dyn_vector(const dyn_vector& rhs) = delete;
+
+    //Move is possible
+    dyn_vector(dyn_vector&& rhs) = default;
 
     //}}}
 
@@ -84,22 +85,26 @@ public:
     }
 
     //Copy
-    fast_vector& operator=(const fast_vector& rhs){
-        for(std::size_t i = 0; i < Rows; ++i){
+    dyn_vector& operator=(const dyn_vector& rhs){
+        etl_assert(size() == rhs.size(), "Can only copy from vector of same size");
+
+        for(std::size_t i = 0; i < size(); ++i){
             _data[i] = rhs[i];
         }
 
         return *this;
     }
 
-    //Prohibit move
-    fast_vector& operator=(fast_vector&& rhs) = delete;
+    //Move is possible
+    dyn_vector& operator=(dyn_vector&& rhs) = default;
 
     //Construct from expression
 
     template<typename LE, typename Op, typename RE>
-    fast_vector& operator=(const binary_expr<value_type, LE, Op, RE>&& e){
-        for(std::size_t i = 0; i < Rows; ++i){
+    dyn_vector& operator=(const binary_expr<value_type, LE, Op, RE>&& e){
+        etl_assert(size() == ::size(e), "Can only copy from expr of same size");
+
+        for(std::size_t i = 0; i < size(); ++i){
             _data[i] = e[i];
         }
 
@@ -107,8 +112,10 @@ public:
     }
 
     template<typename E, typename Op>
-    fast_vector& operator=(const unary_expr<value_type, E, Op>&& e){
-        for(std::size_t i = 0; i < Rows; ++i){
+    dyn_vector& operator=(const unary_expr<value_type, E, Op>&& e){
+        etl_assert(size() == ::size(e), "Can only copy from expr of same size");
+
+        for(std::size_t i = 0; i < size(); ++i){
             _data[i] = e[i];
         }
 
@@ -118,10 +125,10 @@ public:
     //Allow copy from other containers
 
     template<typename Container, enable_if_u<std::is_same<typename Container::value_type, value_type>::value> = detail::dummy>
-    fast_vector& operator=(const Container& vec){
-        etl_assert(vec.size() == Rows, "Cannot copy from a vector of different size");
+    dyn_vector& operator=(const Container& vec){
+        etl_assert(vec.size() == size(), "Cannot copy from a vector of different size");
 
-        for(std::size_t i = 0; i < Rows; ++i){
+        for(std::size_t i = 0; i < size(); ++i){
             _data[i] = vec[i];
         }
 
@@ -132,34 +139,30 @@ public:
 
     //{{{ Accessors
 
-    constexpr size_t size() const {
-        return Rows;
-    }
-    
-    constexpr size_t rows() const {
-        return Rows;
+    size_t size() const {
+        return rows;
     }
 
     value_type& operator()(size_t i){
-        etl_assert(i < Rows, "Out of bounds");
+        etl_assert(i < rows, "Out of bounds");
 
         return _data[i];
     }
 
     const value_type& operator()(size_t i) const {
-        etl_assert(i < Rows, "Out of bounds");
+        etl_assert(i < rows, "Out of bounds");
 
         return _data[i];
     }
 
     value_type& operator[](size_t i){
-        etl_assert(i < Rows, "Out of bounds");
+        etl_assert(i < rows, "Out of bounds");
 
         return _data[i];
     }
 
     const value_type& operator[](size_t i) const {
-        etl_assert(i < Rows, "Out of bounds");
+        etl_assert(i < rows, "Out of bounds");
 
         return _data[i];
     }
@@ -183,29 +186,17 @@ public:
     //}}}
 };
 
-template<typename T, std::size_t Rows>
-std::ostream& operator<<(std::ostream& stream, const fast_vector<T, Rows>& v){
+template<typename T>
+std::ostream& operator<<(std::ostream& stream, const dyn_vector<T>& values){
     stream << "[";
     std::string comma = "";
-    for(std::size_t i = 0; i < Rows; ++i){
-        stream << comma << v(i);
+    for(auto& v : values){
+        stream << comma << v;
         comma = ", ";
     }
     stream << "]" << std::endl;
 
     return stream;
-}
-
-template<typename T, std::size_t Rows>
-std::string to_octave(const fast_vector<T, Rows>& vec){
-    std::string v = "[";
-    std::string comma = "";
-    for(std::size_t i = 0; i < Rows; ++i){
-        v += comma + std::to_string(vec(i));
-        comma = ",";
-    }
-    v += "]";
-    return v;
 }
 
 } //end of namespace etl
