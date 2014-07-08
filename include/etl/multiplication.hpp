@@ -16,7 +16,7 @@
 namespace etl {
 
 template<typename A, typename B, typename C>
-static void mmul(const A& a, const B& b, C& c){
+static C& mmul(const A& a, const B& b, C& c){
     static_assert(is_etl_expr<A>::value && is_etl_expr<B>::value && is_etl_expr<C>::value, "Matrix multiplication only supported for ETL expressions");
     //static_assert(A::columns == B::rows, "The central dimensions of the multiplied matrices must be the same");
     //static_assert(C::rows == A::rows && C::columns == B::columns, "The output matrix is not of the good dimension");
@@ -30,6 +30,8 @@ static void mmul(const A& a, const B& b, C& c){
             }
         }
     }
+    
+    return c;
 }
 
 } //end of namespace etl
