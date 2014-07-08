@@ -36,7 +36,7 @@ public:
 
 private:
     storage_impl _data;
-    std::size_t rows;
+    const std::size_t rows;
 
 public:
 

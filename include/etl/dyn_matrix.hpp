@@ -30,8 +30,8 @@ public:
 
 private:
     storage_impl _data;
-    std::size_t _rows;
-    std::size_t _columns;
+    const std::size_t _rows;
+    const std::size_t _columns;
 
 public:
     ///{{{ Construction
@@ -55,8 +55,10 @@ public:
             _data(::rows(e) * ::columns(e)), 
             _rows(::rows(e)), 
             _columns(::columns(e)) {
-        for(std::size_t i = 0; i < size(); ++i){
-            _data[i] = e[i];
+        for(std::size_t i = 0; i < rows(); ++i){
+            for(std::size_t j = 0; j < columns(); ++j){
+                _data[i * columns() + j] = e(i,j);
+            }
         }
     }
 
@@ -65,8 +67,10 @@ public:
             _data(::rows(e) * ::columns(e)),
             _rows(::rows(e)),
             _columns(::columns(e)){
-        for(std::size_t i = 0; i < size(); ++i){
-            _data[i] = e[i];
+        for(std::size_t i = 0; i < rows(); ++i){
+            for(std::size_t j = 0; j < columns(); ++j){
+                _data[i * columns() + j] = e(i,j);
+            }
         }
     }
 

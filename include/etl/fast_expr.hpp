@@ -321,9 +321,7 @@ LE& operator%=(LE& lhs, const RE& rhs){
 //{{{ Apply an unary expression on an ETL expression (vector,matrix,binary,unary)
 
 template<typename E, enable_if_u<is_etl_expr<E>::value> = detail::dummy>
-auto abs(const E& value) -> unary_expr<typename E::value_type, const E&, abs_unary_op<typename E::value_type>> {
-    return {value};
-}
+auto abs(const E& value) -> unary_expr<typename E::value_type, const E&, abs_unary_op<typename E::value_type>> { return {value}; }
 
 template<typename E, enable_if_u<is_etl_expr<E>::value> = detail::dummy>
 auto log(const E& value) -> unary_expr<typename E::value_type, const E&, log_unary_op<typename E::value_type>> {
@@ -332,6 +330,21 @@ auto log(const E& value) -> unary_expr<typename E::value_type, const E&, log_una
 
 template<typename E, enable_if_u<is_etl_expr<E>::value> = detail::dummy>
 auto sign(const E& value) -> unary_expr<typename E::value_type, const E&, sign_unary_op<typename E::value_type>> {
+    return {value};
+}
+
+template<typename E, enable_if_u<etl_traits<E>::is_vector> = detail::dummy>
+auto hflip(const E& value) -> unary_expr<typename E::value_type, hflip_vector<E>, identity_unary_op<typename E::value_type>> {
+    return {value};
+}
+
+template<typename E, enable_if_u<etl_traits<E>::is_matrix> = detail::dummy>
+auto hflip(const E& value) -> unary_expr<typename E::value_type, hflip_matrix<E>, identity_unary_op<typename E::value_type>> {
+    return {value};
+}
+
+template<typename E, enable_if_u<etl_traits<E>::is_vector> = detail::dummy>
+auto vflip(const E& value) -> unary_expr<typename E::value_type, vflip_vector<E>, identity_unary_op<typename E::value_type>> {
     return {value};
 }
 

@@ -20,6 +20,53 @@ struct scalar {
     constexpr const T operator[](std::size_t) const {
         return value;
     }
+
+    constexpr const T operator()(std::size_t) const {
+        return value;
+    }
+
+    constexpr const T operator()(std::size_t, std::size_t) const {
+        return value;
+    }
+};
+
+template<typename T>
+struct hflip_vector {
+    using sub_type = T;
+
+    const T& sub;
+
+    hflip_vector(const T& vec) : sub(vec) {}
+
+    typename T::value_type operator[](std::size_t i) const {
+        return sub[size(sub) - 1 - i];
+    }
+};
+
+template<typename T>
+struct hflip_matrix {
+    using sub_type = T;
+
+    const T& sub;
+
+    hflip_matrix(const T& vec) : sub(vec) {}
+
+    typename T::value_type operator()(std::size_t i, std::size_t j) const {
+        return sub(i, columns(sub) - 1 - j);
+    }
+};
+
+template<typename T>
+struct vflip_vector {
+    using sub_type = T;
+
+    const T& sub;
+
+    vflip_vector(const T& vec) : sub(vec) {}
+
+    typename T::value_type operator[](std::size_t i) const {
+        return sub[i];
+    }
 };
 
 template<typename T>
@@ -89,6 +136,13 @@ template<typename T>
 struct plus_unary_op {
     static constexpr T apply(const T& x){
         return +x;
+    }
+};
+
+template<typename T>
+struct identity_unary_op {
+    static constexpr T apply(const T& x){
+        return x;
     }
 };
 
