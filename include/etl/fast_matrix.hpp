@@ -105,8 +105,10 @@ public:
 
     template<typename LE, typename Op, typename RE>
     fast_matrix& operator=(binary_expr<value_type, LE, Op, RE>&& e){
-        for(std::size_t i = 0; i < size(); ++i){
-            _data[i] = e[i];
+        for(std::size_t i = 0; i < Rows; ++i){
+            for(std::size_t j = 0; j < Columns; ++j){
+                _data[i * Columns + j] = e(i,j);
+            }
         }
 
         return *this;
@@ -114,8 +116,10 @@ public:
 
     template<typename E, typename Op>
     fast_matrix& operator=(unary_expr<value_type, E, Op>&& e){
-        for(std::size_t i = 0; i < size(); ++i){
-            _data[i] = e[i];
+        for(std::size_t i = 0; i < Rows; ++i){
+            for(std::size_t j = 0; j < Columns; ++j){
+                _data[i * Columns + j] = e(i,j);
+            }
         }
 
         return *this;

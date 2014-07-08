@@ -111,8 +111,10 @@ public:
 
     template<typename LE, typename Op, typename RE>
     dyn_matrix& operator=(binary_expr<value_type, LE, Op, RE>&& e){
-        for(std::size_t i = 0; i < size(); ++i){
-            _data[i] = e[i];
+        for(std::size_t i = 0; i < rows(); ++i){
+            for(std::size_t j = 0; j < columns(); ++j){
+                _data[i * columns() + j] = e(i,j);
+            }
         }
 
         return *this;
@@ -120,8 +122,10 @@ public:
 
     template<typename E, typename Op>
     dyn_matrix& operator=(unary_expr<value_type, E, Op>&& e){
-        for(std::size_t i = 0; i < size(); ++i){
-            _data[i] = e[i];
+        for(std::size_t i = 0; i < rows(); ++i){
+            for(std::size_t j = 0; j < columns(); ++j){
+                _data[i * columns() + j] = e(i,j);
+            }
         }
 
         return *this;
