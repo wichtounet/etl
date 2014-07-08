@@ -94,10 +94,7 @@ template <typename T, typename LeftExpr, typename BinaryOp, typename RightExpr>
 class binary_expr;
 
 template<typename T>
-struct hflip_vector;
-
-template<typename T>
-struct hflip_matrix;
+struct hflip_transformer;
 
 template<typename T>
 struct vflip_vector;
@@ -124,8 +121,7 @@ struct is_binary_expr : std::integral_constant<bool, is_specialization_of<etl::b
 
 template<typename T>
 struct is_transformer_expr : std::integral_constant<bool, or_u<
-            is_specialization_of<etl::hflip_vector, remove_cv_t<remove_reference_t<T>>>::value, 
-            is_specialization_of<etl::hflip_matrix, remove_cv_t<remove_reference_t<T>>>::value, 
+            is_specialization_of<etl::hflip_transformer, remove_cv_t<remove_reference_t<T>>>::value, 
             is_specialization_of<etl::vflip_vector, remove_cv_t<remove_reference_t<T>>>::value>::value> {};
 
 template<typename T, typename Enable = void> 

@@ -31,25 +31,20 @@ struct scalar {
 };
 
 template<typename T>
-struct hflip_vector {
+struct hflip_transformer {
     using sub_type = T;
 
     const T& sub;
 
-    hflip_vector(const T& vec) : sub(vec) {}
+    hflip_transformer(const T& vec) : sub(vec) {}
 
     typename T::value_type operator[](std::size_t i) const {
         return sub[size(sub) - 1 - i];
     }
-};
-
-template<typename T>
-struct hflip_matrix {
-    using sub_type = T;
-
-    const T& sub;
-
-    hflip_matrix(const T& vec) : sub(vec) {}
+    
+    typename T::value_type operator()(std::size_t i) const {
+        return sub[size(sub) - 1 - i];
+    }
 
     typename T::value_type operator()(std::size_t i, std::size_t j) const {
         return sub(i, columns(sub) - 1 - j);

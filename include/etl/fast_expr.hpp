@@ -333,13 +333,8 @@ auto sign(const E& value) -> unary_expr<typename E::value_type, const E&, sign_u
     return {value};
 }
 
-template<typename E, enable_if_u<etl_traits<E>::is_vector> = detail::dummy>
-auto hflip(const E& value) -> unary_expr<typename E::value_type, hflip_vector<E>, identity_unary_op<typename E::value_type>> {
-    return {value};
-}
-
-template<typename E, enable_if_u<etl_traits<E>::is_matrix> = detail::dummy>
-auto hflip(const E& value) -> unary_expr<typename E::value_type, hflip_matrix<E>, identity_unary_op<typename E::value_type>> {
+template<typename E, enable_if_u<is_etl_expr<E>::value> = detail::dummy>
+auto hflip(const E& value) -> unary_expr<typename E::value_type, hflip_transformer<E>, identity_unary_op<typename E::value_type>> {
     return {value};
 }
 
