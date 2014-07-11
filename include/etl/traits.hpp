@@ -325,4 +325,16 @@ constexpr std::size_t rows(const E&){
     return etl_traits<E>::rows();
 }
 
+template<typename LE, typename RE, disable_if_u<and_u<is_etl_expr<LE>::value, is_etl_expr<RE>::value, etl_traits<LE>::is_fast, etl_traits<RE>::is_fast>::value> = detail::dummy>
+void ensure_same_size(const LE& lhs, const RE& rhs){
+    etl_assert(size(lhs) == size(rhs), "Cannot perform element-wise operations on collections of different size");
+    etl_unused(lhs);
+    etl_unused(rhs);
+}
+
+template<typename LE, typename RE, enable_if_u<and_u<is_etl_expr<LE>::value, is_etl_expr<RE>::value, etl_traits<LE>::is_fast, etl_traits<RE>::is_fast>::value> = detail::dummy>
+void ensure_same_size(const LE&, const RE&){
+    static_assert(etl_traits<LE>::size() == etl_traits<RE>::size(), "Cannot perform element-wise operations on collections of different size");
+}
+
 #endif
