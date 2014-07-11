@@ -9,7 +9,7 @@
 #define ETL_FAST_EXPR_HPP
 
 #include "fast_op.hpp"
-#include "tmp.hpp"
+#include "traits.hpp"
 
 namespace etl {
 
@@ -130,7 +130,7 @@ public:
     T operator[](std::size_t i) const {
         return UnaryOp::apply(value()[i]);
     }
- 
+
     T operator()(std::size_t i) const {
         return UnaryOp::apply(value()[i]);
     }
@@ -224,7 +224,7 @@ auto operator%(LE lhs, const RE& rhs) -> binary_expr<typename RE::value_type, sc
 
 //}}}
 
-//{{{ Compound operators 
+//{{{ Compound operators
 
 template<typename LE, typename RE, enable_if_u<and_u<std::is_arithmetic<RE>::value, is_etl_value<LE>::value>::value> = detail::dummy>
 LE& operator+=(LE& lhs, RE rhs){

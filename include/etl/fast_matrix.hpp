@@ -12,7 +12,7 @@
 #include<string>
 
 #include "assert.hpp"
-#include "tmp.hpp"
+#include "traits.hpp"
 #include "fast_op.hpp"
 #include "fast_expr.hpp"
 
@@ -52,6 +52,14 @@ public:
         std::copy(l.begin(), l.end(), begin());
     }
 
+    fast_matrix(const fast_matrix& rhs){
+        std::copy(rhs.begin(), rhs.end(), begin());
+    }
+
+    fast_matrix(fast_matrix&& rhs){
+        std::copy(rhs.begin(), rhs.end(), begin());
+    }
+
     template<typename LE, typename Op, typename RE>
     fast_matrix(const binary_expr<value_type, LE, Op, RE>& e){
         for(std::size_t i = 0; i < Rows; ++i){
@@ -69,10 +77,6 @@ public:
             }
         }
     }
-
-    //Prohibit copy and move
-    fast_matrix(const fast_matrix& rhs) = delete;
-    fast_matrix(fast_matrix&& rhs) = delete;
 
     //}}}
 
@@ -134,21 +138,21 @@ public:
 
     //Prohibit move
     fast_matrix& operator=(fast_matrix&& rhs) = delete;
-    
+
     //}}}
 
     //{{{ Accessors
-    
-    constexpr size_t rows() const {
-        return Rows;
-    }
-    
-    constexpr size_t columns() const {
-        return Columns;
+
+    static constexpr size_t size(){
+        return Rows * Columns;
     }
 
-    constexpr size_t size() const {
-        return Rows * Columns;
+    static constexpr size_t rows(){
+        return Rows;
+    }
+
+    static constexpr size_t columns(){
+        return Columns;
     }
 
     value_type& operator()(size_t i, size_t j){

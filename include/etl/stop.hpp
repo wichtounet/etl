@@ -12,42 +12,24 @@
 
 namespace etl {
 
-template<typename T, std::size_t Rows>
-struct fast_vector;
+template<typename T, enable_if_u<and_u<is_etl_expr<T>::value, not_u<etl_traits<T>::is_value>::value, not_u<etl_traits<T>::is_fast>::value, etl_traits<T>::is_vector>::value> = detail::dummy>
+dyn_vector<typename T::value_type> s(const T& value){
+    return {value};
+}
 
-template<typename T>
-struct dyn_vector;
+template<typename T, enable_if_u<and_u<is_etl_expr<T>::value, not_u<etl_traits<T>::is_value>::value, not_u<etl_traits<T>::is_fast>::value, etl_traits<T>::is_matrix>::value> = detail::dummy>
+dyn_matrix<typename T::value_type> s(const T& value){
+    return {value};
+}
 
-template<typename T>
-struct dyn_matrix;
-
-template<typename T, size_t Rows, size_t Columns>
-struct fast_matrix;
-
-//TODO Implement it for fast_XXX
-
-template<typename T, typename Enable = void>
-struct stop;
-
-template <typename T, typename Expr, typename UnaryOp>
-struct stop <unary_expr<T, Expr, UnaryOp>, enable_if_t<etl_traits<unary_expr<T, Expr, UnaryOp>>::is_vector>> {
-    template<typename TT>
-    static dyn_vector<T> s(TT&& value){
-        return {std::forward<TT>(value)};
-    }
-};
-
-template <typename T, typename Expr, typename UnaryOp>
-struct stop <unary_expr<T, Expr, UnaryOp>, enable_if_t<etl_traits<unary_expr<T, Expr, UnaryOp>>::is_matrix>> {
-    template<typename TT>
-    static dyn_matrix<T> s(TT&& value){
-        return {std::forward<TT>(value)};
-    }
-};
-
-template<typename T>
+template<typename T, enable_if_u<and_u<is_etl_expr<T>::value, not_u<etl_traits<T>::is_value>::value, etl_traits<T>::is_fast, etl_traits<T>::is_vector>::value> = detail::dummy>
 auto s(const T& value){
-    return stop<T>::s(value);
+    return fast_vector<typename T::value_type, etl_traits<T>::size()>(value);
+}
+
+template<typename T, enable_if_u<and_u<is_etl_expr<T>::value, not_u<etl_traits<T>::is_value>::value, etl_traits<T>::is_fast, etl_traits<T>::is_matrix>::value> = detail::dummy>
+auto s(const T& value){
+    return fast_matrix<typename T::value_type, etl_traits<T>::rows(), etl_traits<T>::columns()>(value);
 }
 
 } //end of namespace etl
