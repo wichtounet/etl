@@ -103,17 +103,33 @@ struct etl_traits<T, enable_if_t<is_etl_value<T>::value>> {
     static constexpr const bool is_fast = or_u<is_fast_vector<T>::value, is_fast_matrix<T>::value>::value;
     static constexpr const bool is_value = true;
 
+    template<bool B = is_fast, disable_if_u<B> = detail::dummy>
     static std::size_t size(const T& v){
         return v.size();
     }
 
-    template<bool B = is_matrix, enable_if_u<B> = detail::dummy>
+    template<bool B = is_fast, enable_if_u<B> = detail::dummy>
+    static constexpr std::size_t size(const T& v){
+        return v.size();
+    }
+
+    template<bool B = is_matrix, enable_if_u<and_u<B, not_u<is_fast>::value>::value> = detail::dummy>
     static std::size_t rows(const T& v){
         return v.rows();
     }
 
-    template<bool B = is_matrix, enable_if_u<B> = detail::dummy>
+    template<bool B = is_matrix, enable_if_u<and_u<B, not_u<is_fast>::value>::value> = detail::dummy>
     static std::size_t columns(const T& v){
+        return v.columns();
+    }
+
+    template<bool B = is_matrix, enable_if_u<and_u<B, is_fast>::value> = detail::dummy>
+    static constexpr std::size_t rows(const T& v){
+        return v.rows();
+    }
+
+    template<bool B = is_matrix, enable_if_u<and_u<B, is_fast>::value> = detail::dummy>
+    static constexpr std::size_t columns(const T& v){
         return v.columns();
     }
 };
@@ -220,18 +236,33 @@ struct etl_traits<T, enable_if_t<is_transformer_expr<T>::value>> {
     }
 };
 
-template<typename E>
+template<typename E, enable_if_u<not_u<etl_traits<E>::is_fast>::value> = detail::dummy>
 std::size_t size(const E& v){
     return etl_traits<E>::size(v);
 }
 
-template<typename E>
+template<typename E, enable_if_u<etl_traits<E>::is_fast> = detail::dummy>
+constexpr std::size_t size(const E& v){
+    return etl_traits<E>::size(v);
+}
+
+template<typename E, enable_if_u<not_u<etl_traits<E>::is_fast>::value> = detail::dummy>
 std::size_t columns(const E& v){
     return etl_traits<E>::columns(v);
 }
 
-template<typename E>
+template<typename E, enable_if_u<etl_traits<E>::is_fast> = detail::dummy>
+constexpr std::size_t columns(const E& v){
+    return etl_traits<E>::columns(v);
+}
+
+template<typename E, enable_if_u<not_u<etl_traits<E>::is_fast>::value> = detail::dummy>
 std::size_t rows(const E& v){
+    return etl_traits<E>::rows(v);
+}
+
+template<typename E, enable_if_u<etl_traits<E>::is_fast> = detail::dummy>
+constexpr std::size_t rows(const E& v){
     return etl_traits<E>::rows(v);
 }
 
