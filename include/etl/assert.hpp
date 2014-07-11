@@ -10,6 +10,10 @@
 
 #include <iostream>
 
+#ifdef ETL_ASSERT_EXCEPTION
+#include <stdexcept>
+#endif
+
 #include "likely.hpp"
 
 #define etl_unused(x) ((void)x)
@@ -34,10 +38,20 @@
 
 #else
 
+#ifdef ETL_ASSERT_EXCEPTION
+
+#define etl_assert(condition, message) if(likely(condition)) \
+    ((void)0); \
+    else throw std::runtime_error("Assertion failed");
+
+#else
+
 #define etl_assert(condition, message) (likely(condition) \
     ? ((void)0) \
     : ::etl::assertion::detail::assertion_failed_msg(#condition, message, \
     __PRETTY_FUNCTION__, __FILE__, __LINE__))
+
+#endif
 
 #if defined __clang__
 
