@@ -18,7 +18,7 @@
 #include <initializer_list>
 
 #include "assert.hpp"
-#include "tmp.hpp"
+#include "traits.hpp"
 #include "fast_op.hpp"
 #include "fast_expr.hpp"
 
@@ -134,7 +134,7 @@ public:
     constexpr size_t size() const {
         return Rows;
     }
-    
+
     constexpr size_t rows() const {
         return Rows;
     }

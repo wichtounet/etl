@@ -12,7 +12,7 @@
 #include<string>
 
 #include "assert.hpp"
-#include "tmp.hpp"
+#include "traits.hpp"
 #include "fast_op.hpp"
 #include "fast_expr.hpp"
 
@@ -134,15 +134,15 @@ public:
 
     //Prohibit move
     fast_matrix& operator=(fast_matrix&& rhs) = delete;
-    
+
     //}}}
 
     //{{{ Accessors
-    
+
     constexpr size_t rows() const {
         return Rows;
     }
-    
+
     constexpr size_t columns() const {
         return Columns;
     }
