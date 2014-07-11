@@ -145,26 +145,36 @@ public:
 
 template<typename LE, typename RE, enable_if_u<and_u<is_etl_expr<LE>::value, is_etl_expr<RE>::value>::value> = detail::dummy>
 auto operator-(const LE& lhs, const RE& rhs) -> binary_expr<typename LE::value_type, const LE&, minus_binary_op<typename LE::value_type>, const RE&> {
+    ensure_same_size(lhs, rhs);
+
     return {lhs, rhs};
 }
 
 template<typename LE, typename RE, enable_if_u<and_u<is_etl_expr<LE>::value, is_etl_expr<RE>::value>::value> = detail::dummy>
 auto operator+(const LE& lhs, const RE& rhs) -> binary_expr<typename LE::value_type, const LE&, plus_binary_op<typename LE::value_type>, const RE&> {
+    ensure_same_size(lhs, rhs);
+
     return {lhs, rhs};
 }
 
 template<typename LE, typename RE, enable_if_u<and_u<is_etl_expr<LE>::value, is_etl_expr<RE>::value>::value> = detail::dummy>
 auto operator*(const LE& lhs, const RE& rhs) -> binary_expr<typename LE::value_type, const LE&, mul_binary_op<typename LE::value_type>, const RE&> {
+    ensure_same_size(lhs, rhs);
+
     return {lhs, rhs};
 }
 
 template<typename LE, typename RE, enable_if_u<and_u<is_etl_expr<LE>::value, is_etl_expr<RE>::value>::value> = detail::dummy>
 auto operator/(const LE& lhs, const RE& rhs) -> binary_expr<typename LE::value_type, const LE&, div_binary_op<typename LE::value_type>, const RE&> {
+    ensure_same_size(lhs, rhs);
+
     return {lhs, rhs};
 }
 
 template<typename LE, typename RE, enable_if_u<and_u<is_etl_expr<LE>::value, is_etl_expr<RE>::value>::value> = detail::dummy>
 auto operator%(const LE& lhs, const RE& rhs) -> binary_expr<typename LE::value_type, const LE&, mod_binary_op<typename LE::value_type>, const RE&> {
+    ensure_same_size(lhs, rhs);
+
     return {lhs, rhs};
 }
 
@@ -237,6 +247,8 @@ LE& operator+=(LE& lhs, RE rhs){
 
 template<typename LE, typename RE, enable_if_u<and_u<is_etl_expr<RE>::value, is_etl_value<LE>::value>::value> = detail::dummy>
 LE& operator+=(LE& lhs, const RE& rhs){
+    ensure_same_size(lhs, rhs);
+
     for(std::size_t i = 0; i < lhs.size(); ++i){
         lhs[i] += rhs[i];
     }
@@ -255,6 +267,8 @@ LE& operator-=(LE& lhs, RE rhs){
 
 template<typename LE, typename RE, enable_if_u<and_u<is_etl_expr<RE>::value, is_etl_value<LE>::value>::value> = detail::dummy>
 LE& operator-=(LE& lhs, const RE& rhs){
+    ensure_same_size(lhs, rhs);
+
     for(std::size_t i = 0; i < lhs.size(); ++i){
         lhs[i] -= rhs[i];
     }
@@ -273,6 +287,8 @@ LE& operator*=(LE& lhs, RE rhs){
 
 template<typename LE, typename RE, enable_if_u<and_u<is_etl_expr<RE>::value, is_etl_value<LE>::value>::value> = detail::dummy>
 LE& operator*=(LE& lhs, const RE& rhs){
+    ensure_same_size(lhs, rhs);
+
     for(std::size_t i = 0; i < lhs.size(); ++i){
         lhs[i] *= rhs[i];
     }
@@ -291,6 +307,8 @@ LE& operator/=(LE& lhs, RE rhs){
 
 template<typename LE, typename RE, enable_if_u<and_u<is_etl_expr<RE>::value, is_etl_value<LE>::value>::value> = detail::dummy>
 LE& operator/=(LE& lhs, const RE& rhs){
+    ensure_same_size(lhs, rhs);
+
     for(std::size_t i = 0; i < lhs.size(); ++i){
         lhs[i] /= rhs[i];
     }
@@ -309,6 +327,8 @@ LE& operator%=(LE& lhs, RE rhs){
 
 template<typename LE, typename RE, enable_if_u<and_u<is_etl_expr<RE>::value, is_etl_value<LE>::value>::value> = detail::dummy>
 LE& operator%=(LE& lhs, const RE& rhs){
+    ensure_same_size(lhs, rhs);
+
     for(std::size_t i = 0; i < lhs.size(); ++i){
         lhs[i] %= rhs[i];
     }
