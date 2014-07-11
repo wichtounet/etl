@@ -131,11 +131,11 @@ public:
 
     //{{{ Accessors
 
-    constexpr size_t size() const {
+    static constexpr size_t size(){
         return Rows;
     }
 
-    constexpr size_t rows() const {
+    static constexpr size_t rows(){
         return Rows;
     }
 

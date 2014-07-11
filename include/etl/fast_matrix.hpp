@@ -139,16 +139,16 @@ public:
 
     //{{{ Accessors
 
-    constexpr size_t rows() const {
+    static constexpr size_t size(){
+        return Rows * Columns;
+    }
+
+    static constexpr size_t rows(){
         return Rows;
     }
 
-    constexpr size_t columns() const {
+    static constexpr size_t columns(){
         return Columns;
-    }
-
-    constexpr size_t size() const {
-        return Rows * Columns;
     }
 
     value_type& operator()(size_t i, size_t j){
