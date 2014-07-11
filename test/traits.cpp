@@ -118,3 +118,38 @@ TEST_CASE( "etl_traits/unary_fast_mat", "etl_traits<unary<fast_mat>>" ) {
     REQUIRE(rows_2 == 3);
     REQUIRE(columns_2 == 2);
 }
+
+TEST_CASE( "etl_traits/binary_fast_mat", "etl_traits<binary<fast_mat, fast_mat>>" ) {
+    using mat_type = etl::fast_matrix<double, 3, 2>;
+    mat_type test_matrix(3.3);
+
+    using expr_type = decltype(test_matrix + test_matrix);
+    expr_type expr(test_matrix, test_matrix);
+
+    REQUIRE(etl_traits<expr_type>::size(expr) == 6);
+    REQUIRE(size(test_matrix) == 6);
+    REQUIRE(etl_traits<expr_type>::rows(expr) == 3);
+    REQUIRE(rows(test_matrix) == 3);
+    REQUIRE(etl_traits<expr_type>::columns(expr) == 2);
+    REQUIRE(columns(test_matrix) == 2);
+    REQUIRE(etl_traits<expr_type>::is_matrix);
+    REQUIRE(!etl_traits<expr_type>::is_value);
+    REQUIRE(etl_traits<expr_type>::is_fast);
+    REQUIRE(!etl_traits<expr_type>::is_vector);
+
+    constexpr const auto size_1 = etl_traits<expr_type>::size();
+    constexpr const auto rows_1 = etl_traits<expr_type>::rows();
+    constexpr const auto columns_1 = etl_traits<expr_type>::columns();
+
+    REQUIRE(size_1 == 6);
+    REQUIRE(rows_1 == 3);
+    REQUIRE(columns_1 == 2);
+
+    constexpr const auto size_2 = size(expr);
+    constexpr const auto rows_2 = rows(expr);
+    constexpr const auto columns_2 = columns(expr);
+
+    REQUIRE(size_2 == 6);
+    REQUIRE(rows_2 == 3);
+    REQUIRE(columns_2 == 2);
+}
