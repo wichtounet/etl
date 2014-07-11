@@ -8,7 +8,7 @@
 #ifndef ETL_DYN_MATRIX_HPP
 #define ETL_DYN_MATRIX_HPP
 
-#include<array>
+#include<vector>
 
 #include "assert.hpp"
 #include "tmp.hpp"
