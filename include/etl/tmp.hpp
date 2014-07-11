@@ -124,11 +124,11 @@ struct is_binary_expr : std::integral_constant<bool, is_specialization_of<etl::b
 
 template<typename T>
 struct is_transformer_expr : std::integral_constant<bool, or_u<
-            is_specialization_of<etl::hflip_transformer, remove_cv_t<remove_reference_t<T>>>::value, 
-            is_specialization_of<etl::vflip_transformer, remove_cv_t<remove_reference_t<T>>>::value, 
+            is_specialization_of<etl::hflip_transformer, remove_cv_t<remove_reference_t<T>>>::value,
+            is_specialization_of<etl::vflip_transformer, remove_cv_t<remove_reference_t<T>>>::value,
             is_specialization_of<etl::fflip_transformer, remove_cv_t<remove_reference_t<T>>>::value>::value> {};
 
-template<typename T, typename Enable = void> 
+template<typename T, typename Enable = void>
 struct is_etl_expr : std::integral_constant<bool, or_u<
        is_fast_vector<T>::value, is_fast_matrix<T>::value,
        is_dyn_vector<T>::value, is_dyn_matrix<T>::value,
@@ -143,134 +143,112 @@ struct is_etl_value :
 template<typename T, typename Enable = void>
 struct etl_traits;
 
+/*!
+ * \brief Specialization for value structures (fast_vector, dyn_vector,
+ * fast_matrix, dyn_matrix).
+ */
 template<typename T>
-struct etl_traits<T, enable_if_t<or_u<is_fast_vector<T>::value, is_dyn_vector<T>::value>::value>> {
-    static constexpr const bool is_vector = true;
-    static constexpr const bool is_matrix = false;
-    static constexpr const bool is_fast = is_fast_vector<T>::value;
+struct etl_traits<T, enable_if_t<is_etl_value<T>::value>> {
+    static constexpr const bool is_vector = or_u<is_dyn_vector<T>::value, is_fast_vector<T>::value>::value;
+    static constexpr const bool is_matrix = or_u<is_dyn_matrix<T>::value, is_fast_matrix<T>::value>::value;
+    static constexpr const bool is_fast = or_u<is_fast_vector<T>::value, is_fast_matrix<T>::value>::value;
     static constexpr const bool is_value = true;
 
     static std::size_t size(const T& v){
-        return v.size(); 
-    }
-};
-
-template<typename T>
-struct etl_traits<T, enable_if_t<or_u<is_fast_matrix<T>::value, is_dyn_matrix<T>::value>::value>> {
-    static constexpr const bool is_vector = false;
-    static constexpr const bool is_matrix = true;
-    static constexpr const bool is_fast = is_fast_matrix<T>::value;
-    static constexpr const bool is_value = true;
-
-    static std::size_t size(const T& v){
-        return v.size(); 
+        return v.size();
     }
 
+    template<bool B = is_matrix, enable_if_u<B> = detail::dummy>
     static std::size_t rows(const T& v){
-        return v.rows(); 
+        return v.rows();
     }
 
+    template<bool B = is_matrix, enable_if_u<B> = detail::dummy>
     static std::size_t columns(const T& v){
-        return v.columns(); 
+        return v.columns();
     }
 };
 
+/*!
+ * \brief Specialization unary_expr
+ */
 template <typename T, typename Expr, typename UnaryOp>
-struct etl_traits<etl::unary_expr<T, Expr, UnaryOp>, enable_if_t<etl_traits<remove_cv_t<remove_reference_t<Expr>>>::is_vector>> {
-    static constexpr const bool is_vector = true;
-    static constexpr const bool is_matrix = false;
+struct etl_traits<etl::unary_expr<T, Expr, UnaryOp>> {
+    static constexpr const bool is_vector = etl_traits<remove_cv_t<remove_reference_t<Expr>>>::is_vector;
+    static constexpr const bool is_matrix = etl_traits<remove_cv_t<remove_reference_t<Expr>>>::is_matrix;
     static constexpr const bool is_fast = etl_traits<remove_cv_t<remove_reference_t<Expr>>>::is_fast;
     static constexpr const bool is_value = false;
 
     static std::size_t size(const etl::unary_expr<T, Expr, UnaryOp>& v){
-        return etl_traits<remove_cv_t<remove_reference_t<Expr>>>::size(v.value()); 
-    }
-};
-
-template <typename T, typename Expr, typename UnaryOp>
-struct etl_traits<etl::unary_expr<T, Expr, UnaryOp>, enable_if_t<etl_traits<remove_cv_t<remove_reference_t<Expr>>>::is_matrix>> {
-    static constexpr const bool is_vector = false;
-    static constexpr const bool is_matrix = true;
-    static constexpr const bool is_fast = etl_traits<remove_cv_t<remove_reference_t<Expr>>>::is_fast;
-    static constexpr const bool is_value = false;
-
-    static std::size_t size(const etl::unary_expr<T, Expr, UnaryOp>& v){
-        return etl_traits<remove_cv_t<remove_reference_t<Expr>>>::size(v.value()); 
+        return etl_traits<remove_cv_t<remove_reference_t<Expr>>>::size(v.value());
     }
 
+    template<bool B = is_matrix, enable_if_u<B> = detail::dummy>
     static std::size_t rows(const etl::unary_expr<T, Expr, UnaryOp>& v){
-        return etl_traits<remove_cv_t<remove_reference_t<Expr>>>::rows(v.value()); 
+        return etl_traits<remove_cv_t<remove_reference_t<Expr>>>::rows(v.value());
     }
 
+    template<bool B = is_matrix, enable_if_u<B> = detail::dummy>
     static std::size_t columns(const etl::unary_expr<T, Expr, UnaryOp>& v){
-        return etl_traits<remove_cv_t<remove_reference_t<Expr>>>::columns(v.value()); 
+        return etl_traits<remove_cv_t<remove_reference_t<Expr>>>::columns(v.value());
     }
 };
 
+/*!
+ * \brief Specialization for binary_expr when the type is decided by the left
+ * expression.
+ */
 template <typename T, typename LeftExpr, typename BinaryOp, typename RightExpr>
-struct etl_traits<etl::binary_expr<T, LeftExpr, BinaryOp, RightExpr>, enable_if_t<and_u<is_etl_expr<LeftExpr>::value, etl_traits<remove_cv_t<remove_reference_t<LeftExpr>>>::is_vector>::value>> {
-    static constexpr const bool is_vector = true;
-    static constexpr const bool is_matrix = false;
+struct etl_traits<etl::binary_expr<T, LeftExpr, BinaryOp, RightExpr>, enable_if_t<is_etl_expr<LeftExpr>::value>> {
+    static constexpr const bool is_vector = etl_traits<remove_cv_t<remove_reference_t<LeftExpr>>>::is_vector;
+    static constexpr const bool is_matrix = etl_traits<remove_cv_t<remove_reference_t<LeftExpr>>>::is_matrix;
     static constexpr const bool is_fast = etl_traits<remove_cv_t<remove_reference_t<LeftExpr>>>::is_fast;
     static constexpr const bool is_value = false;
 
     static std::size_t size(const etl::binary_expr<T, LeftExpr, BinaryOp, RightExpr>& v){
-        return etl_traits<remove_cv_t<remove_reference_t<LeftExpr>>>::size(v.lhs()); 
+        return etl_traits<remove_cv_t<remove_reference_t<LeftExpr>>>::size(v.lhs());
+    }
+
+    template<bool B = is_matrix, enable_if_u<B> = detail::dummy>
+    static std::size_t rows(const etl::binary_expr<T, LeftExpr, BinaryOp, RightExpr>& v){
+        return etl_traits<remove_cv_t<remove_reference_t<LeftExpr>>>::rows(v.lhs());
+    }
+
+    template<bool B = is_matrix, enable_if_u<B> = detail::dummy>
+    static std::size_t columns(const etl::binary_expr<T, LeftExpr, BinaryOp, RightExpr>& v){
+        return etl_traits<remove_cv_t<remove_reference_t<LeftExpr>>>::columns(v.lhs());
     }
 };
 
+/*!
+ * \brief Specialization for binary_expr when the type is decided by the right
+ * expression.
+ */
 template <typename T, typename LeftExpr, typename BinaryOp, typename RightExpr>
-struct etl_traits<etl::binary_expr<T, LeftExpr, BinaryOp, RightExpr>, enable_if_t<and_u<not_u<is_etl_expr<LeftExpr>::value>::value, is_etl_expr<RightExpr>::value, etl_traits<remove_cv_t<remove_reference_t<RightExpr>>>::is_vector>::value>> {
-    static constexpr const bool is_vector = true;
-    static constexpr const bool is_matrix = false;
+struct etl_traits<etl::binary_expr<T, LeftExpr, BinaryOp, RightExpr>, enable_if_t<and_u<not_u<is_etl_expr<LeftExpr>::value>::value, is_etl_expr<RightExpr>::value>::value>> {
+    static constexpr const bool is_vector = etl_traits<remove_cv_t<remove_reference_t<RightExpr>>>::is_vector;
+    static constexpr const bool is_matrix = etl_traits<remove_cv_t<remove_reference_t<RightExpr>>>::is_matrix;
     static constexpr const bool is_fast = etl_traits<remove_cv_t<remove_reference_t<RightExpr>>>::is_fast;
     static constexpr const bool is_value = false;
 
     static std::size_t size(const etl::binary_expr<T, LeftExpr, BinaryOp, RightExpr>& v){
-        return etl_traits<remove_cv_t<remove_reference_t<RightExpr>>>::size(v.rhs()); 
-    }
-};
-
-template <typename T, typename LeftExpr, typename BinaryOp, typename RightExpr>
-struct etl_traits<etl::binary_expr<T, LeftExpr, BinaryOp, RightExpr>, enable_if_t<and_u<is_etl_expr<LeftExpr>::value, etl_traits<remove_cv_t<remove_reference_t<LeftExpr>>>::is_matrix>::value>> {
-    static constexpr const bool is_vector = false;
-    static constexpr const bool is_matrix = true;
-    static constexpr const bool is_fast = etl_traits<remove_cv_t<remove_reference_t<LeftExpr>>>::is_fast;
-    static constexpr const bool is_value = false;
-
-    static std::size_t size(const etl::binary_expr<T, LeftExpr, BinaryOp, RightExpr>& v){
-        return etl_traits<remove_cv_t<remove_reference_t<LeftExpr>>>::size(v.lhs()); 
+        return etl_traits<remove_cv_t<remove_reference_t<RightExpr>>>::size(v.rhs());
     }
 
+    template<bool B = is_matrix, enable_if_u<B> = detail::dummy>
     static std::size_t rows(const etl::binary_expr<T, LeftExpr, BinaryOp, RightExpr>& v){
-        return etl_traits<remove_cv_t<remove_reference_t<LeftExpr>>>::rows(v.lhs()); 
+        return etl_traits<remove_cv_t<remove_reference_t<RightExpr>>>::rows(v.rhs());
     }
 
+    template<bool B = is_matrix, enable_if_u<B> = detail::dummy>
     static std::size_t columns(const etl::binary_expr<T, LeftExpr, BinaryOp, RightExpr>& v){
-        return etl_traits<remove_cv_t<remove_reference_t<LeftExpr>>>::columns(v.lhs()); 
+        return etl_traits<remove_cv_t<remove_reference_t<RightExpr>>>::columns(v.rhs());
     }
 };
 
-template <typename T, typename LeftExpr, typename BinaryOp, typename RightExpr>
-struct etl_traits<etl::binary_expr<T, LeftExpr, BinaryOp, RightExpr>, enable_if_t<and_u<not_u<is_etl_expr<LeftExpr>::value>::value, is_etl_expr<RightExpr>::value, etl_traits<remove_cv_t<remove_reference_t<RightExpr>>>::is_matrix>::value>> {
-    static constexpr const bool is_vector = false;
-    static constexpr const bool is_matrix = true;
-    static constexpr const bool is_fast = etl_traits<remove_cv_t<remove_reference_t<RightExpr>>>::is_fast;
-    static constexpr const bool is_value = false;
-
-    static std::size_t size(const etl::binary_expr<T, LeftExpr, BinaryOp, RightExpr>& v){
-        return etl_traits<remove_cv_t<remove_reference_t<RightExpr>>>::size(v.rhs()); 
-    }
-
-    static std::size_t rows(const etl::binary_expr<T, LeftExpr, BinaryOp, RightExpr>& v){
-        return etl_traits<remove_cv_t<remove_reference_t<RightExpr>>>::rows(v.rhs()); 
-    }
-
-    static std::size_t columns(const etl::binary_expr<T, LeftExpr, BinaryOp, RightExpr>& v){
-        return etl_traits<remove_cv_t<remove_reference_t<RightExpr>>>::columns(v.rhs()); 
-    }
-};
-
+/*!
+ * \brief Specialization for transformers
+ */
 template <typename T>
 struct etl_traits<T, enable_if_t<is_transformer_expr<T>::value>> {
     static constexpr const bool is_vector = etl_traits<typename T::sub_type>::is_vector;
@@ -279,17 +257,17 @@ struct etl_traits<T, enable_if_t<is_transformer_expr<T>::value>> {
     static constexpr const bool is_value = false;
 
     static std::size_t size(const T& v){
-        return etl_traits<typename T::sub_type>::size(v.sub); 
+        return etl_traits<typename T::sub_type>::size(v.sub);
     }
-    
+
     template<typename TT = typename T::sub_type, enable_if_u<etl_traits<TT>::is_matrix> = detail::dummy>
     static std::size_t rows(const T& v){
-        return etl_traits<typename T::sub_type>::rows(v.sub); 
+        return etl_traits<typename T::sub_type>::rows(v.sub);
     }
 
     template<typename TT = typename T::sub_type, enable_if_u<etl_traits<TT>::is_matrix> = detail::dummy>
     static std::size_t columns(const T& v){
-        return etl_traits<typename T::sub_type>::columns(v.sub); 
+        return etl_traits<typename T::sub_type>::columns(v.sub);
     }
 };
 
