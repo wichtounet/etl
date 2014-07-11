@@ -12,6 +12,8 @@
 
 #include "likely.hpp"
 
+#define etl_unused(x) ((void)x)
+
 #ifdef NDEBUG
 
 #define etl_assert(condition, message) ((void)0)
