@@ -55,6 +55,14 @@ public:
         std::copy(l.begin(), l.end(), begin());
     }
 
+    fast_vector(const fast_vector& rhs){
+        std::copy(rhs.begin(), rhs.end(), begin());
+    }
+
+    fast_vector(fast_vector&& rhs){
+        std::copy(rhs.begin(), rhs.end(), begin());
+    }
+
     template<typename LE, typename Op, typename RE>
     fast_vector(const binary_expr<value_type, LE, Op, RE>& e){
         for(std::size_t i = 0; i < Rows; ++i){
@@ -68,10 +76,6 @@ public:
             _data[i] = e[i];
         }
     }
-
-    //Prohibit copy and move
-    fast_vector(const fast_vector& rhs) = delete;
-    fast_vector(fast_vector&& rhs) = delete;
 
     //}}}
 

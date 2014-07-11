@@ -31,17 +31,27 @@ struct stop;
 
 template <typename T, typename Expr, typename UnaryOp>
 struct stop <unary_expr<T, Expr, UnaryOp>, enable_if_t<etl_traits<unary_expr<T, Expr, UnaryOp>>::is_vector>> {
-    template<typename TT>
+    template<typename TT, typename T2 = Expr, disable_if_u<etl_traits<T2>::is_fast> = detail::dummy>
     static dyn_vector<T> s(TT&& value){
         return {std::forward<TT>(value)};
+    }
+
+    template<typename TT, typename T2 = remove_cv_t<remove_reference_t<Expr>>, enable_if_u<etl_traits<T2>::is_fast> = detail::dummy>
+    static auto s(TT&& value){
+        return fast_vector<T, etl_traits<T2>::size()>(std::forward<TT>(value));
     }
 };
 
 template <typename T, typename Expr, typename UnaryOp>
 struct stop <unary_expr<T, Expr, UnaryOp>, enable_if_t<etl_traits<unary_expr<T, Expr, UnaryOp>>::is_matrix>> {
-    template<typename TT>
+    template<typename TT, typename T2 = Expr, disable_if_u<etl_traits<T2>::is_fast> = detail::dummy>
     static dyn_matrix<T> s(TT&& value){
         return {std::forward<TT>(value)};
+    }
+
+    template<typename TT, typename T2 = remove_cv_t<remove_reference_t<Expr>>, enable_if_u<etl_traits<T2>::is_fast> = detail::dummy>
+    static auto s(TT&& value){
+        return fast_matrix<T, etl_traits<Expr>::rows(), etl_traits<Expr>::columns()>(std::forward<TT>(value));
     }
 };
 

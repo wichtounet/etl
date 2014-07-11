@@ -52,6 +52,14 @@ public:
         std::copy(l.begin(), l.end(), begin());
     }
 
+    fast_matrix(const fast_matrix& rhs){
+        std::copy(rhs.begin(), rhs.end(), begin());
+    }
+
+    fast_matrix(fast_matrix&& rhs){
+        std::copy(rhs.begin(), rhs.end(), begin());
+    }
+
     template<typename LE, typename Op, typename RE>
     fast_matrix(const binary_expr<value_type, LE, Op, RE>& e){
         for(std::size_t i = 0; i < Rows; ++i){
@@ -69,10 +77,6 @@ public:
             }
         }
     }
-
-    //Prohibit copy and move
-    fast_matrix(const fast_matrix& rhs) = delete;
-    fast_matrix(fast_matrix&& rhs) = delete;
 
     //}}}
 
