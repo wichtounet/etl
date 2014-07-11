@@ -114,3 +114,74 @@ TEST_CASE( "stop/fast_matrix_2", "stop<binary<fast_mat>>" ) {
         REQUIRE(r[i] == 6.6);
     }
 }
+
+TEST_CASE( "stop/dyn_vector_1", "stop<unary<dyn_vec>>" ) {
+    using mat_type = etl::dyn_vector<double>;
+    mat_type test_vector(4, 3.3);
+
+    auto r = s(log(test_vector));
+
+    using type = remove_reference_t<remove_cv_t<decltype(r)>>;
+
+    REQUIRE(r.size() == 4);
+    REQUIRE(etl_traits<type>::size(r) == 4);
+    REQUIRE(size(r) == 4);
+    REQUIRE(etl_traits<type>::is_vector);
+    REQUIRE(etl_traits<type>::is_value);
+    REQUIRE(!etl_traits<type>::is_fast);
+    REQUIRE(!etl_traits<type>::is_matrix);
+
+    for(std::size_t i = 0; i < r.size(); ++i){
+        REQUIRE(r[i] == log(3.3));
+    }
+}
+
+TEST_CASE( "stop/dyn_matrix_1", "stop<unary<dyn_mat>>" ) {
+    using mat_type = etl::dyn_matrix<double>;
+    mat_type test_matrix(3, 2, 3.3);
+
+    auto r = s(log(test_matrix));
+
+    using type = remove_reference_t<remove_cv_t<decltype(r)>>;
+
+    REQUIRE(r.size() == 6);
+    REQUIRE(etl_traits<type>::size(r) == 6);
+    REQUIRE(size(r) == 6);
+    REQUIRE(etl_traits<type>::rows(r) == 3);
+    REQUIRE(rows(r) == 3);
+    REQUIRE(etl_traits<type>::columns(r) == 2);
+    REQUIRE(columns(r) == 2);
+    REQUIRE(etl_traits<type>::is_matrix);
+    REQUIRE(etl_traits<type>::is_value);
+    REQUIRE(!etl_traits<type>::is_fast);
+    REQUIRE(!etl_traits<type>::is_vector);
+
+    for(std::size_t i = 0; i < r.size(); ++i){
+        REQUIRE(r[i] == log(3.3));
+    }
+}
+
+TEST_CASE( "stop/dyn_matrix_2", "stop<binary<dyn_mat>>" ) {
+    using mat_type = etl::dyn_matrix<double>;
+    mat_type test_matrix(3, 2, 3.3);
+
+    auto r = s(test_matrix + test_matrix);
+
+    using type = remove_reference_t<remove_cv_t<decltype(r)>>;
+
+    REQUIRE(r.size() == 6);
+    REQUIRE(etl_traits<type>::size(r) == 6);
+    REQUIRE(size(r) == 6);
+    REQUIRE(etl_traits<type>::rows(r) == 3);
+    REQUIRE(rows(r) == 3);
+    REQUIRE(etl_traits<type>::columns(r) == 2);
+    REQUIRE(columns(r) == 2);
+    REQUIRE(etl_traits<type>::is_matrix);
+    REQUIRE(etl_traits<type>::is_value);
+    REQUIRE(!etl_traits<type>::is_fast);
+    REQUIRE(!etl_traits<type>::is_vector);
+
+    for(std::size_t i = 0; i < r.size(); ++i){
+        REQUIRE(r[i] == 6.6);
+    }
+}
