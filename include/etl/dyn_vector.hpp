@@ -24,8 +24,6 @@
 
 namespace etl {
 
-//TODO Make it moveable
-
 template<typename T>
 struct dyn_vector {
 public:
@@ -69,7 +67,7 @@ public:
         }
     }
 
-    //Prohibit copy 
+    //Prohibit copy
     dyn_vector(const dyn_vector& rhs) = delete;
 
     //Move is possible
@@ -86,7 +84,7 @@ public:
 
     //Copy
     dyn_vector& operator=(const dyn_vector& rhs){
-        etl_assert(size() == rhs.size(), "Can only copy from vector of same size");
+        ensure_same_size(*this, rhs);
 
         for(std::size_t i = 0; i < size(); ++i){
             _data[i] = rhs[i];
@@ -102,7 +100,7 @@ public:
 
     template<typename LE, typename Op, typename RE>
     dyn_vector& operator=(const binary_expr<value_type, LE, Op, RE>&& e){
-        etl_assert(size() == ::size(e), "Can only copy from expr of same size");
+        ensure_same_size(*this, e);
 
         for(std::size_t i = 0; i < size(); ++i){
             _data[i] = e[i];
@@ -113,7 +111,7 @@ public:
 
     template<typename E, typename Op>
     dyn_vector& operator=(const unary_expr<value_type, E, Op>&& e){
-        etl_assert(size() == ::size(e), "Can only copy from expr of same size");
+        ensure_same_size(*this, e);
 
         for(std::size_t i = 0; i < size(); ++i){
             _data[i] = e[i];
