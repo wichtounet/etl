@@ -16,12 +16,13 @@ RELEASE_D_FILES=$(CPP_FILES:%.cpp=release/%.cpp.d)
 $(eval $(call folder_compile,))
 $(eval $(call test_folder_compile,))
 
-$(eval $(call add_executable,test_asm,test.cpp))
+$(eval $(call add_executable,test_asm_1,test.cpp))
+$(eval $(call add_executable,test_asm_2,test_dim.cpp))
 $(eval $(call add_test_executable,etl_test,$(TEST_FILES)))
 
 $(eval $(call add_executable_set,etl_test,etl_test))
 
-test_asm: release/bin/test_asm
+test_asm: release/bin/test_asm_1 release/bin/test_asm_2
 
 release: release_etl_test
 debug: debug_etl_test
