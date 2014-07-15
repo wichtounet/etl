@@ -93,6 +93,34 @@ struct fflip_transformer {
     }
 };
 
+template<typename T, std::size_t D>
+struct dim_view {
+    static_assert(D > 0 || D < 3, "Invalid dimension");
+
+    using sub_type = T;
+
+    const T& sub;
+    const std::size_t i;
+
+    dim_view(const T& vec, std::size_t i) : sub(vec), i(i) {}
+
+    typename T::value_type operator[](std::size_t j) const {
+        if(D == 1){
+            return sub(i, j);
+        } else if(D == 2){
+            return sub(j, i);
+        }
+    }
+
+    typename T::value_type operator()(std::size_t j) const {
+        if(D == 1){
+            return sub(i, j);
+        } else if(D == 2){
+            return sub(j, i);
+        }
+    }
+};
+
 template<typename T>
 struct plus_binary_op {
     static constexpr T apply(const T& lhs, const T& rhs){

@@ -1,0 +1,41 @@
+#include "catch.hpp"
+
+#include "etl/fast_matrix.hpp"
+#include "etl/fast_vector.hpp"
+
+TEST_CASE( "dim/fast_matrix_1", "dim<1>" ) {
+    etl::fast_matrix<double, 2, 3> a({1.0, -2.0, 4.0, 3.0, 0.5, -0.1});
+    etl::fast_vector<double, 3> b(etl::dim<1>(a, 0));
+    etl::fast_vector<double, 3> c(etl::dim<1>(a, 1));
+
+    REQUIRE(etl_traits<remove_cv_t<remove_reference_t<decltype(b)>>>::is_fast);
+    REQUIRE(etl_traits<remove_cv_t<remove_reference_t<decltype(c)>>>::is_fast);
+
+    REQUIRE(b[0] == 1.0);
+    REQUIRE(b[1] == -2.0);
+    REQUIRE(b[2] == 4.0);
+
+    REQUIRE(c[0] == 3.0);
+    REQUIRE(c[1] == 0.5);
+    REQUIRE(c[2] == -0.1);
+}
+
+TEST_CASE( "dim/fast_matrix_2", "dim<2>" ) {
+    etl::fast_matrix<double, 2, 3> a({1.0, -2.0, 4.0, 3.0, 0.5, -0.1});
+    etl::fast_vector<double, 2> b(etl::dim<2>(a, 0));
+    etl::fast_vector<double, 2> c(etl::dim<2>(a, 1));
+    etl::fast_vector<double, 2> d(etl::dim<2>(a, 2));
+
+    REQUIRE(etl_traits<remove_cv_t<remove_reference_t<decltype(b)>>>::is_fast);
+    REQUIRE(etl_traits<remove_cv_t<remove_reference_t<decltype(c)>>>::is_fast);
+    REQUIRE(etl_traits<remove_cv_t<remove_reference_t<decltype(d)>>>::is_fast);
+
+    REQUIRE(b[0] == 1.0);
+    REQUIRE(b[1] == 3.0);
+
+    REQUIRE(c[0] == -2.0);
+    REQUIRE(c[1] == 0.5);
+
+    REQUIRE(d[0] == 4.0);
+    REQUIRE(d[1] == -0.1);
+}

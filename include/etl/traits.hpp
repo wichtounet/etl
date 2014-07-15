@@ -51,6 +51,9 @@ struct vflip_transformer;
 template<typename T>
 struct fflip_transformer;
 
+template<typename T, std::size_t D>
+struct dim_view;
+
 };
 
 template<typename T>
@@ -77,12 +80,15 @@ struct is_transformer_expr : std::integral_constant<bool, or_u<
             is_specialization_of<etl::vflip_transformer, remove_cv_t<remove_reference_t<T>>>::value,
             is_specialization_of<etl::fflip_transformer, remove_cv_t<remove_reference_t<T>>>::value>::value> {};
 
+template<typename T>
+struct is_view : std::integral_constant<bool, is_2<etl::dim_view, remove_cv_t<remove_reference_t<T>>>::value> {};
+
 template<typename T, typename Enable = void>
 struct is_etl_expr : std::integral_constant<bool, or_u<
        is_fast_vector<T>::value, is_fast_matrix<T>::value,
        is_dyn_vector<T>::value, is_dyn_matrix<T>::value,
        is_unary_expr<T>::value, is_binary_expr<T>::value,
-       is_transformer_expr<T>::value
+       is_transformer_expr<T>::value, is_view<T>::value
     >::value> {};
 
 template<typename T, typename Enable = void>
@@ -292,6 +298,34 @@ struct etl_traits<T, enable_if_t<is_transformer_expr<T>::value>> {
     template<bool B = is_matrix, enable_if_u<and_u<B, is_fast>::value> = detail::dummy>
     static constexpr std::size_t columns(){
         return etl_traits<remove_cv_t<remove_reference_t<typename T::sub_type>>>::columns();
+    }
+};
+
+/*!
+ * \brief Specialization for dim_view
+ */
+template <typename T, std::size_t D>
+struct etl_traits<etl::dim_view<T, D>> {
+    static constexpr const bool is_vector = true;
+    static constexpr const bool is_matrix = false;
+    static constexpr const bool is_fast = etl_traits<T>::is_fast;
+    static constexpr const bool is_value = false;
+
+    static std::size_t size(const etl::dim_view<T, D>& v){
+        if(D == 1){
+            return etl_traits<T>::columns(v.sub);
+        } else if (D == 2){
+            return etl_traits<T>::rows(v.sub);
+        }
+    }
+
+    template<bool B = is_fast, enable_if_u<B> = detail::dummy>
+    static constexpr std::size_t size(){
+        if(D == 1){
+            return etl_traits<T>::columns();
+        } else if (D == 2){
+            return etl_traits<T>::rows();
+        }
     }
 };
 
