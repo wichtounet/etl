@@ -373,6 +373,16 @@ auto dim(const E& value, std::size_t i) -> unary_expr<typename E::value_type, di
     return {{value, i}};
 }
 
+template<typename E, enable_if_u<is_etl_expr<E>::value> = detail::dummy>
+auto row(const E& value, std::size_t i) -> unary_expr<typename E::value_type, dim_view<E, 1>, identity_unary_op<typename E::value_type>> {
+    return {{value, i}};
+}
+
+template<typename E, enable_if_u<is_etl_expr<E>::value> = detail::dummy>
+auto col(const E& value, std::size_t i) -> unary_expr<typename E::value_type, dim_view<E, 2>, identity_unary_op<typename E::value_type>> {
+    return {{value, i}};
+}
+
 //}}}
 
 //{{{ Apply a reduction on an ETL expression (vector,matrix,binary,unary)
