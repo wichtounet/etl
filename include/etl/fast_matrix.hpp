@@ -16,9 +16,6 @@
 #include "fast_op.hpp"
 #include "fast_expr.hpp"
 
-//TODO Ensure that the binary_expr that is taken comes from a matrix
-//or least from a vector of Rows * Columns size
-
 namespace etl {
 
 template<typename T, size_t Rows, size_t Columns>
@@ -62,6 +59,8 @@ public:
 
     template<typename LE, typename Op, typename RE>
     fast_matrix(const binary_expr<value_type, LE, Op, RE>& e){
+        ensure_same_size(*this, e);
+
         for(std::size_t i = 0; i < Rows; ++i){
             for(std::size_t j = 0; j < Columns; ++j){
                 _data[i * Columns + j] = e(i,j);
@@ -71,6 +70,8 @@ public:
 
     template<typename E, typename Op>
     fast_matrix(const unary_expr<value_type, E, Op>& e){
+        ensure_same_size(*this, e);
+
         for(std::size_t i = 0; i < Rows; ++i){
             for(std::size_t j = 0; j < Columns; ++j){
                 _data[i * Columns + j] = e(i,j);
@@ -96,8 +97,6 @@ public:
 
     template<typename Container, enable_if_u<std::is_same<typename Container::value_type, value_type>::value> = detail::dummy>
     fast_matrix& operator=(const Container& vec){
-        etl_assert(vec.size() == Rows * Columns, "Cannot copy from a vector of different size");
-
         for(std::size_t i = 0; i < Rows * Columns; ++i){
             _data[i] = vec[i];
         }
@@ -109,6 +108,8 @@ public:
 
     template<typename LE, typename Op, typename RE>
     fast_matrix& operator=(binary_expr<value_type, LE, Op, RE>&& e){
+        ensure_same_size(*this, e);
+
         for(std::size_t i = 0; i < Rows; ++i){
             for(std::size_t j = 0; j < Columns; ++j){
                 _data[i * Columns + j] = e(i,j);
@@ -120,6 +121,8 @@ public:
 
     template<typename E, typename Op>
     fast_matrix& operator=(unary_expr<value_type, E, Op>&& e){
+        ensure_same_size(*this, e);
+
         for(std::size_t i = 0; i < Rows; ++i){
             for(std::size_t j = 0; j < Columns; ++j){
                 _data[i * Columns + j] = e(i,j);

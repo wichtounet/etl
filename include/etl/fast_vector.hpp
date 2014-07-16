@@ -65,6 +65,8 @@ public:
 
     template<typename LE, typename Op, typename RE>
     fast_vector(const binary_expr<value_type, LE, Op, RE>& e){
+        ensure_same_size(*this, e);
+
         for(std::size_t i = 0; i < Rows; ++i){
             _data[i] = e[i];
         }
@@ -72,6 +74,8 @@ public:
 
     template<typename E, typename Op>
     fast_vector(const unary_expr<value_type, E, Op>& e){
+        ensure_same_size(*this, e);
+
         for(std::size_t i = 0; i < Rows; ++i){
             _data[i] = e[i];
         }
@@ -102,6 +106,8 @@ public:
 
     template<typename LE, typename Op, typename RE>
     fast_vector& operator=(const binary_expr<value_type, LE, Op, RE>&& e){
+        ensure_same_size(*this, e);
+
         for(std::size_t i = 0; i < Rows; ++i){
             _data[i] = e[i];
         }
@@ -111,6 +117,8 @@ public:
 
     template<typename E, typename Op>
     fast_vector& operator=(const unary_expr<value_type, E, Op>&& e){
+        ensure_same_size(*this, e);
+
         for(std::size_t i = 0; i < Rows; ++i){
             _data[i] = e[i];
         }
@@ -122,8 +130,6 @@ public:
 
     template<typename Container, enable_if_u<std::is_same<typename Container::value_type, value_type>::value> = detail::dummy>
     fast_vector& operator=(const Container& vec){
-        etl_assert(vec.size() == Rows, "Cannot copy from a vector of different size");
-
         for(std::size_t i = 0; i < Rows; ++i){
             _data[i] = vec[i];
         }

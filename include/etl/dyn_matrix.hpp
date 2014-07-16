@@ -15,9 +15,6 @@
 #include "fast_op.hpp"
 #include "fast_expr.hpp"
 
-//TODO Ensure that the binary_expr that is taken comes from a matrix
-//or least from a vector of Rows * Columns size
-
 namespace etl {
 
 template<typename T>
@@ -51,9 +48,9 @@ public:
     }
 
     template<typename LE, typename Op, typename RE>
-    dyn_matrix(const binary_expr<value_type, LE, Op, RE>& e) : 
-            _data(::rows(e) * ::columns(e)), 
-            _rows(::rows(e)), 
+    dyn_matrix(const binary_expr<value_type, LE, Op, RE>& e) :
+            _data(::rows(e) * ::columns(e)),
+            _rows(::rows(e)),
             _columns(::columns(e)) {
         for(std::size_t i = 0; i < rows(); ++i){
             for(std::size_t j = 0; j < columns(); ++j){
@@ -63,7 +60,7 @@ public:
     }
 
     template<typename E, typename Op>
-    dyn_matrix(const unary_expr<value_type, E, Op>& e) : 
+    dyn_matrix(const unary_expr<value_type, E, Op>& e) :
             _data(::rows(e) * ::columns(e)),
             _rows(::rows(e)),
             _columns(::columns(e)){
@@ -74,7 +71,7 @@ public:
         }
     }
 
-    //Prohibit copy 
+    //Prohibit copy
     dyn_matrix(const dyn_matrix& rhs) = delete;
 
     //Default move
@@ -87,6 +84,8 @@ public:
     //Copy assignment operator
 
     dyn_matrix& operator=(const dyn_matrix& rhs){
+        ensure_same_size(*this, rhs);
+
         for(std::size_t i = 0; i < size(); ++i){
             _data[i] = rhs[i];
         }
@@ -111,6 +110,8 @@ public:
 
     template<typename LE, typename Op, typename RE>
     dyn_matrix& operator=(binary_expr<value_type, LE, Op, RE>&& e){
+        ensure_same_size(*this, e);
+
         for(std::size_t i = 0; i < rows(); ++i){
             for(std::size_t j = 0; j < columns(); ++j){
                 _data[i * columns() + j] = e(i,j);
@@ -122,6 +123,8 @@ public:
 
     template<typename E, typename Op>
     dyn_matrix& operator=(unary_expr<value_type, E, Op>&& e){
+        ensure_same_size(*this, e);
+
         for(std::size_t i = 0; i < rows(); ++i){
             for(std::size_t j = 0; j < columns(); ++j){
                 _data[i * columns() + j] = e(i,j);
