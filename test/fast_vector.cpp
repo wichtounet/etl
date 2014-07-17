@@ -392,6 +392,24 @@ TEST_CASE( "fast_vector/sum_3", "sum" ) {
     REQUIRE(d == 23.0);
 }
 
+TEST_CASE( "fast_vector/dot_1", "sum" ) {
+    etl::fast_vector<double, 3> a = {-1.0, 2.0, 8.5};
+    etl::fast_vector<double, 3> b = {2.0, 3.0, 2.0};
+
+    auto d = dot(a, b);
+
+    REQUIRE(d == 21.0);
+}
+
+TEST_CASE( "fast_vector/dot_2", "sum" ) {
+    etl::fast_vector<double, 3> a = {-1.0, 2.0, 8.5};
+    etl::fast_vector<double, 3> b = {2.0, 3.0, 2.0};
+
+    auto d = dot(a, -1 * b);
+
+    REQUIRE(d == -21.0);
+}
+
 //}}} Reductions
 
 //{{{ Complex tests

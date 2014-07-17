@@ -387,6 +387,11 @@ auto col(const E& value, std::size_t i) -> unary_expr<typename E::value_type, di
 
 //{{{ Apply a reduction on an ETL expression (vector,matrix,binary,unary)
 
+template<typename LE, typename RE, enable_if_u<and_u<is_etl_expr<LE>::value, is_etl_expr<RE>::value>::value> = detail::dummy>
+typename LE::value_type dot(const LE& lhs, const RE& rhs){
+    return sum(lhs * rhs);
+}
+
 template<typename E, enable_if_u<is_etl_expr<E>::value> = detail::dummy>
 typename E::value_type sum(const E& values){
     typename E::value_type acc(0);
