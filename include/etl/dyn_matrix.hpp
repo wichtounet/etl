@@ -49,9 +49,9 @@ public:
 
     template<typename LE, typename Op, typename RE>
     dyn_matrix(const binary_expr<value_type, LE, Op, RE>& e) :
-            _data(::rows(e) * ::columns(e)),
-            _rows(::rows(e)),
-            _columns(::columns(e)) {
+            _data(etl::rows(e) * etl::columns(e)),
+            _rows(etl::rows(e)),
+            _columns(etl::columns(e)) {
         for(std::size_t i = 0; i < rows(); ++i){
             for(std::size_t j = 0; j < columns(); ++j){
                 _data[i * columns() + j] = e(i,j);
@@ -61,9 +61,9 @@ public:
 
     template<typename E, typename Op>
     dyn_matrix(const unary_expr<value_type, E, Op>& e) :
-            _data(::rows(e) * ::columns(e)),
-            _rows(::rows(e)),
-            _columns(::columns(e)){
+            _data(etl::rows(e) * etl::columns(e)),
+            _rows(etl::rows(e)),
+            _columns(etl::columns(e)){
         for(std::size_t i = 0; i < rows(); ++i){
             for(std::size_t j = 0; j < columns(); ++j){
                 _data[i * columns() + j] = e(i,j);

@@ -54,14 +54,14 @@ public:
     }
 
     template<typename LE, typename Op, typename RE>
-    dyn_vector(const binary_expr<value_type, LE, Op, RE>& e) : _data(::size(e)), rows(::size(e)) {
+    dyn_vector(const binary_expr<value_type, LE, Op, RE>& e) : _data(etl::size(e)), rows(etl::size(e)) {
         for(std::size_t i = 0; i < size(); ++i){
             _data[i] = e[i];
         }
     }
 
     template<typename E, typename Op>
-    dyn_vector(const unary_expr<value_type, E, Op>& e) : _data(::size(e)), rows(::size(e)) {
+    dyn_vector(const unary_expr<value_type, E, Op>& e) : _data(etl::size(e)), rows(etl::size(e)) {
         for(std::size_t i = 0; i < size(); ++i){
             _data[i] = e[i];
         }

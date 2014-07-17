@@ -10,18 +10,6 @@
 
 #include "tmp.hpp"
 
-template<template<typename, std::size_t> class TT, typename T>
-struct is_2 : std::false_type { };
-
-template<template<typename, std::size_t> class TT, typename V1, std::size_t R>
-struct is_2<TT, TT<V1, R>> : std::true_type { };
-
-template<template<typename, std::size_t, std::size_t> class TT, typename T>
-struct is_3 : std::false_type { };
-
-template<template<typename, std::size_t, std::size_t> class TT, typename V1, std::size_t R1, std::size_t R2>
-struct is_3<TT, TT<V1, R1, R2>> : std::true_type { };
-
 namespace etl {
 
 template<typename T, std::size_t Rows>
@@ -54,7 +42,17 @@ struct fflip_transformer;
 template<typename T, std::size_t D>
 struct dim_view;
 
-};
+template<template<typename, std::size_t> class TT, typename T>
+struct is_2 : std::false_type { };
+
+template<template<typename, std::size_t> class TT, typename V1, std::size_t R>
+struct is_2<TT, TT<V1, R>> : std::true_type { };
+
+template<template<typename, std::size_t, std::size_t> class TT, typename T>
+struct is_3 : std::false_type { };
+
+template<template<typename, std::size_t, std::size_t> class TT, typename V1, std::size_t R1, std::size_t R2>
+struct is_3<TT, TT<V1, R1, R2>> : std::true_type { };
 
 template<typename T>
 struct is_fast_vector : std::integral_constant<bool, is_2<etl::fast_vector, remove_cv_t<remove_reference_t<T>>>::value> {};
@@ -370,5 +368,7 @@ template<typename LE, typename RE, enable_if_u<and_u<is_etl_expr<LE>::value, is_
 void ensure_same_size(const LE&, const RE&){
     static_assert(etl_traits<LE>::size() == etl_traits<RE>::size(), "Cannot perform element-wise operations on collections of different size");
 }
+
+} //end of namespace etl
 
 #endif
