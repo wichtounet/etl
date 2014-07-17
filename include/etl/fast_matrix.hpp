@@ -39,7 +39,8 @@ public:
         //Nothing to init
     }
 
-    explicit fast_matrix(const value_type& value){
+    template<typename VT, enable_if_u<or_u<std::is_convertible<VT, value_type>::value, std::is_assignable<T&, VT>::value>::value> = detail::dummy>
+    explicit fast_matrix(const VT& value){
         std::fill(_data.begin(), _data.end(), value);
     }
 
