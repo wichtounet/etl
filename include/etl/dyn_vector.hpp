@@ -37,7 +37,6 @@ private:
     const std::size_t rows;
 
 public:
-
     //{{{ Construction
 
     explicit dyn_vector(std::size_t rows) : _data(rows), rows(rows) {
@@ -50,6 +49,10 @@ public:
 
     //TODO Probably a better way in order to move elements
     dyn_vector(std::initializer_list<value_type> l) : _data(l), rows(l.size()){
+        //Nothing else to init
+    }
+
+    explicit dyn_vector(const dyn_vector& rhs) : _data(rhs._data), rows(rhs.rows){
         //Nothing else to init
     }
 
@@ -73,9 +76,6 @@ public:
     explicit dyn_vector(const Container& vec) : _data(vec.size()), rows(vec.size()) {
         std::copy(vec.begin(), vec.end(), begin());
     }
-
-    //Prohibit copy
-    dyn_vector(const dyn_vector& rhs) = delete;
 
     //Move is possible
     dyn_vector(dyn_vector&& rhs) = default;

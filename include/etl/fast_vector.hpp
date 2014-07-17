@@ -56,7 +56,7 @@ public:
         std::copy(l.begin(), l.end(), begin());
     }
 
-    fast_vector(const fast_vector& rhs){
+    explicit fast_vector(const fast_vector& rhs){
         std::copy(rhs.begin(), rhs.end(), begin());
     }
 

@@ -33,6 +33,10 @@ private:
 public:
     ///{{{ Construction
 
+    explicit dyn_matrix(const dyn_matrix& rhs) : _data(rhs._data), _rows(rhs._rows), _columns(rhs._columns) {
+        //Nothing to init
+    }
+
     dyn_matrix(std::size_t rows, std::size_t columns) : _data(rows * columns), _rows(rows), _columns(columns) {
         //Nothing to init
     }
@@ -70,9 +74,6 @@ public:
             }
         }
     }
-
-    //Prohibit copy
-    dyn_matrix(const dyn_matrix& rhs) = delete;
 
     //Default move
     dyn_matrix(dyn_matrix&& rhs) = default;

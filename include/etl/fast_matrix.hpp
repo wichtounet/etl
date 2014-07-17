@@ -50,7 +50,7 @@ public:
         std::copy(l.begin(), l.end(), begin());
     }
 
-    fast_matrix(const fast_matrix& rhs){
+    explicit fast_matrix(const fast_matrix& rhs){
         std::copy(rhs.begin(), rhs.end(), begin());
     }
 
