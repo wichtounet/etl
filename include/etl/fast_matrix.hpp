@@ -39,7 +39,7 @@ public:
         //Nothing to init
     }
 
-    fast_matrix(const value_type& value){
+    explicit fast_matrix(const value_type& value){
         std::fill(_data.begin(), _data.end(), value);
     }
 

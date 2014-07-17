@@ -45,7 +45,7 @@ public:
         //Nothing else to init
     }
 
-    fast_vector(const value_type& value){
+    explicit fast_vector(const value_type& value){
         std::fill(_data.begin(), _data.end(), value);
     }
 

@@ -40,7 +40,7 @@ public:
 
     //{{{ Construction
 
-    dyn_vector(std::size_t rows) : _data(rows), rows(rows) {
+    explicit dyn_vector(std::size_t rows) : _data(rows), rows(rows) {
         //Nothing else to init
     }
 
