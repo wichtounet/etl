@@ -52,10 +52,6 @@ public:
     dyn_vector(std::initializer_list<value_type> l) : _data(l), rows(l.size()){
         //Nothing else to init
     }
-    
-    explicit dyn_vector(const std::vector<value_type>& v) : _data(v), rows(v.size()){
-        //Nothing else to init
-    }
 
     template<typename LE, typename Op, typename RE>
     dyn_vector(const binary_expr<value_type, LE, Op, RE>& e) : _data(::size(e)), rows(::size(e)) {
@@ -69,6 +65,13 @@ public:
         for(std::size_t i = 0; i < size(); ++i){
             _data[i] = e[i];
         }
+    }
+
+    //Allow copy from other containers
+
+    template<typename Container, enable_if_u<std::is_same<typename Container::value_type, value_type>::value> = detail::dummy>
+    explicit dyn_vector(const Container& vec) : _data(vec.size()), rows(vec.size()) {
+        std::copy(vec.begin(), vec.end(), begin());
     }
 
     //Prohibit copy
