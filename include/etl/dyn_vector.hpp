@@ -52,6 +52,10 @@ public:
     dyn_vector(std::initializer_list<value_type> l) : _data(l), rows(l.size()){
         //Nothing else to init
     }
+    
+    explicit dyn_vector(const std::vector<value_type>& v) : _data(v), rows(v.size()){
+        //Nothing else to init
+    }
 
     template<typename LE, typename Op, typename RE>
     dyn_vector(const binary_expr<value_type, LE, Op, RE>& e) : _data(::size(e)), rows(::size(e)) {
