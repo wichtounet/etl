@@ -133,7 +133,8 @@ public:
     }
 
     //Set the same value to each element of the matrix
-    fast_matrix& operator=(const value_type& value){
+    template<typename VT, enable_if_u<or_u<std::is_convertible<VT, value_type>::value, std::is_assignable<T&, VT>::value>::value> = detail::dummy>
+    fast_matrix& operator=(const VT& value){
         std::fill(_data.begin(), _data.end(), value);
 
         return *this;
