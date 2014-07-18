@@ -364,6 +364,11 @@ auto softplus(const E& value) -> unary_expr<typename E::value_type, const E&, so
 }
 
 template<typename E, enable_if_u<is_etl_expr<E>::value> = detail::dummy>
+auto bernoulli(const E& value) -> unary_expr<typename E::value_type, const E&, bernoulli_unary_op<typename E::value_type>> {
+    return {value};
+}
+
+template<typename E, enable_if_u<is_etl_expr<E>::value> = detail::dummy>
 auto hflip(const E& value) -> unary_expr<typename E::value_type, hflip_transformer<E>, identity_unary_op<typename E::value_type>> {
     return {value};
 }
