@@ -8,6 +8,10 @@
 #ifndef ETL_FAST_OP_HPP
 #define ETL_FAST_OP_HPP
 
+#include <random>
+#include <functional>
+#include <ctime>
+
 #include "math.hpp"
 
 namespace etl {
@@ -232,6 +236,17 @@ template<typename T>
 struct identity_unary_op {
     static constexpr T apply(const T& x){
         return x;
+    }
+};
+
+template<typename T>
+struct bernoulli_unary_op {
+    static T apply(const T& x){
+        static std::default_random_engine rand_engine(std::time(nullptr));
+        static std::uniform_real_distribution<double> normal_distribution(0.0, 1.0);
+        static auto normal_generator = std::bind(normal_distribution, rand_engine);
+
+        return x > normal_generator() ? 1.0 : 0.0;
     }
 };
 
