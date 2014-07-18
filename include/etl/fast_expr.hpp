@@ -383,6 +383,12 @@ auto col(const E& value, std::size_t i) -> unary_expr<typename E::value_type, di
     return {{value, i}};
 }
 
+template<std::size_t Rows, std::size_t Columns, typename E, enable_if_u<is_etl_expr<E>::value> = detail::dummy>
+auto reshape(const E& value) -> unary_expr<typename E::value_type, fast_matrix_view<E, Rows, Columns>, identity_unary_op<typename E::value_type>> {
+    //TODO Ensure sizes
+    return {value};
+}
+
 //}}}
 
 //{{{ Apply a reduction on an ETL expression (vector,matrix,binary,unary)

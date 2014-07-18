@@ -12,6 +12,8 @@
 #include "etl/dyn_matrix.hpp"
 #include "etl/dyn_vector.hpp"
 
+///{{{ Dim
+
 TEST_CASE( "dim/fast_matrix_1", "dim<1>" ) {
     etl::fast_matrix<double, 2, 3> a({1.0, -2.0, 4.0, 3.0, 0.5, -0.1});
     etl::fast_vector<double, 3> b(etl::dim<1>(a, 0));
@@ -132,3 +134,67 @@ TEST_CASE( "dim/mix", "dim" ) {
     REQUIRE(c[1] == Approx(0.1));
     REQUIRE(c[2] == Approx(-0.03));
 }
+
+///}}}
+
+//{{{ reshape
+
+TEST_CASE( "reshape/fast_vector_1", "reshape<2,2>" ) {
+    etl::fast_vector<double, 4> a({1,2,3,4});
+    etl::fast_matrix<double, 2, 2> b(etl::reshape<2,2>(a));
+
+    REQUIRE(b(0,0) == 1.0);
+    REQUIRE(b(0,1) == 2.0);
+
+    REQUIRE(b(1,0) == 3.0);
+    REQUIRE(b(1,1) == 4.0);
+}
+
+TEST_CASE( "reshape/fast_vector_2", "reshape<2,3>" ) {
+    etl::fast_vector<double, 6> a({1,2,3,4,5,6});
+    etl::fast_matrix<double, 2, 3> b(etl::reshape<2,3>(a));
+
+    REQUIRE(b(0,0) == 1.0);
+    REQUIRE(b(0,1) == 2.0);
+    REQUIRE(b(0,2) == 3.0);
+
+    REQUIRE(b(1,0) == 4.0);
+    REQUIRE(b(1,1) == 5.0);
+    REQUIRE(b(1,2) == 6.0);
+}
+
+TEST_CASE( "reshape/traits", "traits<reshape<2,3>>" ) {
+    etl::fast_vector<double, 6> a({1,2,3,4,5,6});
+
+    using expr_type = decltype(etl::reshape<2,3>(a));
+    expr_type expr(a);
+
+    REQUIRE(etl::etl_traits<expr_type>::size(expr) == 6);
+    REQUIRE(etl::size(expr) == 6);
+    REQUIRE(etl::etl_traits<expr_type>::rows(expr) == 2);
+    REQUIRE(etl::rows(expr) == 2);
+    REQUIRE(etl::etl_traits<expr_type>::columns(expr) == 3);
+    REQUIRE(etl::columns(expr) == 3);
+    REQUIRE(etl::etl_traits<expr_type>::is_matrix);
+    REQUIRE(!etl::etl_traits<expr_type>::is_value);
+    REQUIRE(etl::etl_traits<expr_type>::is_fast);
+    REQUIRE(!etl::etl_traits<expr_type>::is_vector);
+
+    constexpr const auto size_1 = etl::etl_traits<expr_type>::size();
+    constexpr const auto rows_1 = etl::etl_traits<expr_type>::rows();
+    constexpr const auto columns_1 = etl::etl_traits<expr_type>::columns();
+
+    REQUIRE(size_1 == 6);
+    REQUIRE(rows_1 == 2);
+    REQUIRE(columns_1 == 3);
+
+    constexpr const auto size_2 = etl::size(expr);
+    constexpr const auto rows_2 = etl::rows(expr);
+    constexpr const auto columns_2 = etl::columns(expr);
+
+    REQUIRE(size_2 == 6);
+    REQUIRE(rows_2 == 2);
+    REQUIRE(columns_2 == 3);
+}
+
+//}}}

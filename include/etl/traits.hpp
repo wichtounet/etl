@@ -24,6 +24,9 @@ struct dyn_matrix;
 template<typename T, size_t Rows, size_t Columns>
 struct fast_matrix;
 
+template<typename T, size_t Rows, size_t Columns>
+struct fast_matrix_view;
+
 template <typename T, typename Expr, typename UnaryOp>
 class unary_expr;
 
@@ -79,7 +82,10 @@ struct is_transformer_expr : std::integral_constant<bool, or_u<
             is_specialization_of<etl::fflip_transformer, remove_cv_t<remove_reference_t<T>>>::value>::value> {};
 
 template<typename T>
-struct is_view : std::integral_constant<bool, is_2<etl::dim_view, remove_cv_t<remove_reference_t<T>>>::value> {};
+struct is_view : std::integral_constant<bool, or_u<
+            is_2<etl::dim_view, remove_cv_t<remove_reference_t<T>>>::value,
+            is_3<etl::fast_matrix_view, remove_cv_t<remove_reference_t<T>>>::value
+            >::value> {};
 
 template<typename T, typename Enable = void>
 struct is_etl_expr : std::integral_constant<bool, or_u<
@@ -324,6 +330,41 @@ struct etl_traits<etl::dim_view<T, D>> {
         } else if (D == 2){
             return etl_traits<T>::rows();
         }
+    }
+};
+
+/*!
+ * \brief Specialization for fast_matrix_view.
+ */
+template<typename T, std::size_t Rows, std::size_t Columns>
+struct etl_traits<etl::fast_matrix_view<T, Rows, Columns>> {
+    static constexpr const bool is_vector = false;
+    static constexpr const bool is_matrix = true;
+    static constexpr const bool is_fast = true;
+    static constexpr const bool is_value = false;
+
+    static constexpr std::size_t size(const etl::fast_matrix_view<T, Rows, Columns>&){
+        return Rows * Columns;
+    }
+
+    static constexpr std::size_t size(){
+        return Rows * Columns;
+    }
+
+    static constexpr std::size_t columns(const etl::fast_matrix_view<T, Rows, Columns>&){
+        return Columns;
+    }
+
+    static constexpr std::size_t columns(){
+        return Columns;
+    }
+
+    static constexpr std::size_t rows(const etl::fast_matrix_view<T, Rows, Columns>&){
+        return Rows;
+    }
+
+    static constexpr std::size_t rows(){
+        return Rows;
     }
 };
 

@@ -121,6 +121,29 @@ struct dim_view {
     }
 };
 
+template<typename T, std::size_t Rows, std::size_t Columns>
+struct fast_matrix_view {
+    static_assert(Rows > 0 && Columns > 0 , "Invalid dimensions");
+
+    using value_type = typename T::value_type;
+
+    const T& sub;
+
+    fast_matrix_view(const T& sub) : sub(sub) {}
+
+    value_type operator[](std::size_t j) const {
+        return sub(j);
+    }
+
+    value_type operator()(std::size_t j) const {
+        return sub(j);
+    }
+
+    value_type operator()(std::size_t i, std::size_t j) const {
+        return sub(i * Columns + j);
+    }
+};
+
 template<typename T>
 struct plus_binary_op {
     static constexpr T apply(const T& lhs, const T& rhs){
