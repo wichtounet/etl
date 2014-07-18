@@ -198,6 +198,13 @@ struct log_unary_op {
 };
 
 template<typename T>
+struct exp_unary_op {
+    static constexpr T apply(const T& x){
+        return std::exp(x);
+    }
+};
+
+template<typename T>
 struct sign_unary_op {
     static constexpr T apply(const T& x){
         return sign(x);

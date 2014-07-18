@@ -341,10 +341,17 @@ LE& operator%=(LE& lhs, const RE& rhs){
 //{{{ Apply an unary expression on an ETL expression (vector,matrix,binary,unary)
 
 template<typename E, enable_if_u<is_etl_expr<E>::value> = detail::dummy>
-auto abs(const E& value) -> unary_expr<typename E::value_type, const E&, abs_unary_op<typename E::value_type>> { return {value}; }
+auto abs(const E& value) -> unary_expr<typename E::value_type, const E&, abs_unary_op<typename E::value_type>> {
+    return {value};
+}
 
 template<typename E, enable_if_u<is_etl_expr<E>::value> = detail::dummy>
 auto log(const E& value) -> unary_expr<typename E::value_type, const E&, log_unary_op<typename E::value_type>> {
+    return {value};
+}
+
+template<typename E, enable_if_u<is_etl_expr<E>::value> = detail::dummy>
+auto exp(const E& value) -> unary_expr<typename E::value_type, const E&, exp_unary_op<typename E::value_type>> {
     return {value};
 }
 
