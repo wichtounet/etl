@@ -8,7 +8,7 @@
 #ifndef ETL_FAST_OP_HPP
 #define ETL_FAST_OP_HPP
 
-#include <cmath> //For unary operators
+#include "math.hpp"
 
 namespace etl {
 
@@ -196,7 +196,21 @@ struct log_unary_op {
 template<typename T>
 struct sign_unary_op {
     static constexpr T apply(const T& x){
-        return x > 0.0 ? 1.0 : x < 0.0 ? -1.0 : 0.0;
+        return sign(x);
+    }
+};
+
+template<typename T>
+struct sigmoid_unary_op {
+    static constexpr T apply(const T& x){
+        return logistic_sigmoid(x);
+    }
+};
+
+template<typename T>
+struct softplus_unary_op {
+    static constexpr T apply(const T& x){
+        return softplus(x);
     }
 };
 
