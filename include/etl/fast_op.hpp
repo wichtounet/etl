@@ -257,6 +257,20 @@ struct bernoulli_unary_op {
     }
 };
 
+template<typename T, typename E>
+struct max_binary_op {
+    static constexpr T apply(const T& x, E value){
+        return std::max(x, value);
+    }
+};
+
+template<typename T, typename E>
+struct min_binary_op {
+    static constexpr T apply(const T& x, E value){
+        return std::min(x, value);
+    }
+};
+
 } //end of namespace etl
 
 #endif

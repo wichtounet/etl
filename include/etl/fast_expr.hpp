@@ -345,6 +345,16 @@ auto abs(const E& value) -> unary_expr<typename E::value_type, const E&, abs_una
     return {value};
 }
 
+template<typename E, typename T, enable_if_u<and_u<is_etl_expr<E>::value, std::is_arithmetic<T>::value>::value> = detail::dummy>
+auto max(const E& value, T v) -> binary_expr<typename E::value_type, const E&, max_binary_op<typename E::value_type, T>, scalar<T>> {
+    return {value, v};
+}
+
+template<typename E, typename T, enable_if_u<and_u<is_etl_expr<E>::value, std::is_arithmetic<T>::value>::value> = detail::dummy>
+auto min(const E& value, T v) -> binary_expr<typename E::value_type, const E&, min_binary_op<typename E::value_type, T>, scalar<T>> {
+    return {value, v};
+}
+
 template<typename E, enable_if_u<is_etl_expr<E>::value> = detail::dummy>
 auto log(const E& value) -> unary_expr<typename E::value_type, const E&, log_unary_op<typename E::value_type>> {
     return {value};
