@@ -99,11 +99,11 @@ TEST_CASE( "etl_traits/unary_fast_mat", "etl_traits<unary<fast_mat>>" ) {
     expr_type expr(test_matrix);
 
     REQUIRE(etl::etl_traits<expr_type>::size(expr) == 6);
-    REQUIRE(etl::size(test_matrix) == 6);
+    REQUIRE(etl::size(expr) == 6);
     REQUIRE(etl::etl_traits<expr_type>::rows(expr) == 3);
-    REQUIRE(etl::rows(test_matrix) == 3);
+    REQUIRE(etl::rows(expr) == 3);
     REQUIRE(etl::etl_traits<expr_type>::columns(expr) == 2);
-    REQUIRE(etl::columns(test_matrix) == 2);
+    REQUIRE(etl::columns(expr) == 2);
     REQUIRE(etl::etl_traits<expr_type>::is_matrix);
     REQUIRE(!etl::etl_traits<expr_type>::is_value);
     REQUIRE(etl::etl_traits<expr_type>::is_fast);
@@ -134,11 +134,11 @@ TEST_CASE( "etl_traits/binary_fast_mat", "etl_traits<binary<fast_mat, fast_mat>>
     expr_type expr(test_matrix, test_matrix);
 
     REQUIRE(etl::etl_traits<expr_type>::size(expr) == 6);
-    REQUIRE(etl::size(test_matrix) == 6);
+    REQUIRE(etl::size(expr) == 6);
     REQUIRE(etl::etl_traits<expr_type>::rows(expr) == 3);
-    REQUIRE(etl::rows(test_matrix) == 3);
+    REQUIRE(etl::rows(expr) == 3);
     REQUIRE(etl::etl_traits<expr_type>::columns(expr) == 2);
-    REQUIRE(etl::columns(test_matrix) == 2);
+    REQUIRE(etl::columns(expr) == 2);
     REQUIRE(etl::etl_traits<expr_type>::is_matrix);
     REQUIRE(!etl::etl_traits<expr_type>::is_value);
     REQUIRE(etl::etl_traits<expr_type>::is_fast);
