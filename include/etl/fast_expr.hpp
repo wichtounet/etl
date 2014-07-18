@@ -361,6 +361,21 @@ auto log(const E& value) -> unary_expr<typename E::value_type, const E&, log_una
 }
 
 template<typename E, enable_if_u<is_etl_expr<E>::value> = detail::dummy>
+auto noise(const E& value) -> unary_expr<typename E::value_type, const E&, noise_unary_op<typename E::value_type>> {
+    return {value};
+}
+
+template<typename E, enable_if_u<is_etl_expr<E>::value> = detail::dummy>
+auto logistic_noise(const E& value) -> unary_expr<typename E::value_type, const E&, logistic_noise_unary_op<typename E::value_type>> {
+    return {value};
+}
+
+template<typename E, typename T, enable_if_u<and_u<is_etl_expr<E>::value, std::is_arithmetic<T>::value>::value> = detail::dummy>
+auto ranged_noise(const E& value, T v) -> binary_expr<typename E::value_type, const E&, ranged_noise_binary_op<typename E::value_type, T>, scalar<T>> {
+    return {value, v};
+}
+
+template<typename E, enable_if_u<is_etl_expr<E>::value> = detail::dummy>
 auto exp(const E& value) -> unary_expr<typename E::value_type, const E&, exp_unary_op<typename E::value_type>> {
     return {value};
 }

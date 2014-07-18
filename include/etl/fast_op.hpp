@@ -257,6 +257,44 @@ struct bernoulli_unary_op {
     }
 };
 
+template<typename T>
+struct noise_unary_op {
+    static T apply(const T& x){
+        static std::default_random_engine rand_engine(std::time(nullptr));
+        static std::uniform_real_distribution<double> normal_distribution(0.0, 1.0);
+        static auto noise = std::bind(normal_distribution, rand_engine);
+
+        return x + noise();
+    }
+};
+
+template<typename T>
+struct logistic_noise_unary_op {
+    static T apply(const T& x){
+        static std::default_random_engine rand_engine(std::time(nullptr));
+
+        std::normal_distribution<double> noise_distribution(0.0, logistic_sigmoid(x));
+        auto noise = std::bind(noise_distribution, rand_engine);
+
+        return x + noise();
+    }
+};
+
+template<typename T, typename E>
+struct ranged_noise_binary_op {
+    static T apply(const T& x, E value){
+        static std::default_random_engine rand_engine(std::time(nullptr));
+        static std::uniform_real_distribution<double> normal_distribution(0.0, 1.0);
+        static auto noise = std::bind(normal_distribution, rand_engine);
+
+        if(x == 0.0 || x == value){
+            return x;
+        } else {
+            return x + noise();
+        }
+    }
+};
+
 template<typename T, typename E>
 struct max_binary_op {
     static constexpr T apply(const T& x, E value){
