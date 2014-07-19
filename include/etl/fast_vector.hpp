@@ -65,7 +65,7 @@ public:
     }
 
     template<typename LE, typename Op, typename RE>
-    fast_vector(const binary_expr<value_type, LE, Op, RE>& e){
+    explicit fast_vector(const binary_expr<value_type, LE, Op, RE>& e){
         ensure_same_size(*this, e);
 
         for(std::size_t i = 0; i < Rows; ++i){
@@ -74,7 +74,7 @@ public:
     }
 
     template<typename E, typename Op>
-    fast_vector(const unary_expr<value_type, E, Op>& e){
+    explicit fast_vector(const unary_expr<value_type, E, Op>& e){
         ensure_same_size(*this, e);
 
         for(std::size_t i = 0; i < Rows; ++i){

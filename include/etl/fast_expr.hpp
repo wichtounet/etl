@@ -184,52 +184,48 @@ auto operator%(const LE& lhs, const RE& rhs) -> binary_expr<typename LE::value_t
 
 template<typename LE, typename RE, enable_if_u<and_u<std::is_convertible<RE, typename LE::value_type>::value, is_etl_expr<LE>::value>::value> = detail::dummy>
 auto operator-(const LE& lhs, RE rhs) -> binary_expr<typename LE::value_type, const LE&, minus_binary_op<typename LE::value_type>, scalar<typename LE::value_type>> {
-    return {lhs, rhs};
+    return {lhs, scalar<typename LE::value_type>(rhs)};
 }
 
 template<typename LE, typename RE, enable_if_u<and_u<std::is_convertible<LE, typename RE::value_type>::value, is_etl_expr<RE>::value>::value> = detail::dummy>
 auto operator-(LE lhs, const RE& rhs) -> binary_expr<typename RE::value_type, scalar<typename RE::value_type>, minus_binary_op<typename RE::value_type>, const RE&> {
-    return {lhs, rhs};
+    return {scalar<typename RE::value_type>(lhs), rhs};
 }
 
 template<typename LE, typename RE, enable_if_u<and_u<std::is_convertible<RE, typename LE::value_type>::value, is_etl_expr<LE>::value>::value> = detail::dummy>
 auto operator+(const LE& lhs, RE rhs) -> binary_expr<typename LE::value_type, const LE&, plus_binary_op<typename LE::value_type>, scalar<typename LE::value_type>> {
-    return {lhs, rhs};
+    return {lhs, scalar<typename LE::value_type>(rhs)};
 }
 
 template<typename LE, typename RE, enable_if_u<and_u<std::is_convertible<LE, typename RE::value_type>::value, is_etl_expr<RE>::value>::value> = detail::dummy>
 auto operator+(LE lhs, const RE& rhs) -> binary_expr<typename RE::value_type, scalar<typename RE::value_type>, plus_binary_op<typename RE::value_type>, const RE&> {
-    return {lhs, rhs};
+    return {scalar<typename RE::value_type>(lhs), rhs};
 }
 
 template<typename LE, typename RE, enable_if_u<and_u<std::is_convertible<RE, typename LE::value_type>::value, is_etl_expr<LE>::value>::value> = detail::dummy>
 auto operator*(const LE& lhs, RE rhs) -> binary_expr<typename LE::value_type, const LE&, mul_binary_op<typename LE::value_type>, scalar<typename LE::value_type>> {
-    return {lhs, rhs};
+    return {lhs, scalar<typename LE::value_type>(rhs)};
 }
-
-template<typename LE, typename RE, enable_if_u<and_u<std::is_convertible<LE, typename RE::value_type>::value, is_etl_expr<RE>::value>::value> = detail::dummy>
-auto operator*(LE lhs, const RE& rhs) -> binary_expr<typename RE::value_type, scalar<typename RE::value_type>, mul_binary_op<typename RE::value_type>, const RE&> {
-    return {lhs, rhs};
-}
+template<typename LE, typename RE, enable_if_u<and_u<std::is_convertible<LE, typename RE::value_type>::value, is_etl_expr<RE>::value>::value> = detail::dummy> auto operator*(LE lhs, const RE& rhs) -> binary_expr<typename RE::value_type, scalar<typename RE::value_type>, mul_binary_op<typename RE::value_type>, const RE&> { return {scalar<typename RE::value_type>(lhs), rhs}; }
 
 template<typename LE, typename RE, enable_if_u<and_u<std::is_convertible<RE, typename LE::value_type>::value, is_etl_expr<LE>::value>::value> = detail::dummy>
 auto operator/(const LE& lhs, RE rhs) -> binary_expr<typename LE::value_type, const LE&, div_binary_op<typename LE::value_type>, scalar<typename LE::value_type>> {
-    return {lhs, rhs};
+    return {lhs, scalar<typename LE::value_type>(rhs)};
 }
 
 template<typename LE, typename RE, enable_if_u<and_u<std::is_convertible<LE, typename RE::value_type>::value, is_etl_expr<RE>::value>::value> = detail::dummy>
 auto operator/(LE lhs, const RE& rhs) -> binary_expr<typename RE::value_type, scalar<typename RE::value_type>, div_binary_op<typename RE::value_type>, const RE&> {
-    return {lhs, rhs};
+    return {scalar<typename RE::value_type>(lhs), rhs};
 }
 
 template<typename LE, typename RE, enable_if_u<and_u<std::is_convertible<RE, typename LE::value_type>::value, is_etl_expr<LE>::value>::value> = detail::dummy>
 auto operator%(const LE& lhs, RE rhs) -> binary_expr<typename LE::value_type, const LE&, mod_binary_op<typename LE::value_type>, scalar<typename LE::value_type>> {
-    return {lhs, rhs};
+    return {lhs, scalar<typename LE::value_type>(rhs)};
 }
 
 template<typename LE, typename RE, enable_if_u<and_u<std::is_convertible<LE, typename RE::value_type>::value, is_etl_expr<RE>::value>::value> = detail::dummy>
 auto operator%(LE lhs, const RE& rhs) -> binary_expr<typename RE::value_type, scalar<typename RE::value_type>, mod_binary_op<typename RE::value_type>, const RE&> {
-    return {lhs, rhs};
+    return {scalar<typename RE::value_type>(lhs), rhs};
 }
 
 //}}}
@@ -347,12 +343,12 @@ auto abs(const E& value) -> unary_expr<typename E::value_type, const E&, abs_una
 
 template<typename E, typename T, enable_if_u<and_u<is_etl_expr<E>::value, std::is_arithmetic<T>::value>::value> = detail::dummy>
 auto max(const E& value, T v) -> binary_expr<typename E::value_type, const E&, max_binary_op<typename E::value_type, T>, scalar<T>> {
-    return {value, v};
+    return {value, scalar<T>(v)};
 }
 
 template<typename E, typename T, enable_if_u<and_u<is_etl_expr<E>::value, std::is_arithmetic<T>::value>::value> = detail::dummy>
 auto min(const E& value, T v) -> binary_expr<typename E::value_type, const E&, min_binary_op<typename E::value_type, T>, scalar<T>> {
-    return {value, v};
+    return {value, scalar<T>(v)};
 }
 
 template<typename E, enable_if_u<is_etl_expr<E>::value> = detail::dummy>
@@ -372,7 +368,7 @@ auto logistic_noise(const E& value) -> unary_expr<typename E::value_type, const 
 
 template<typename E, typename T, enable_if_u<and_u<is_etl_expr<E>::value, std::is_arithmetic<T>::value>::value> = detail::dummy>
 auto ranged_noise(const E& value, T v) -> binary_expr<typename E::value_type, const E&, ranged_noise_binary_op<typename E::value_type, T>, scalar<T>> {
-    return {value, v};
+    return {value, scalar<T>(v)};
 }
 
 template<typename E, enable_if_u<is_etl_expr<E>::value> = detail::dummy>
@@ -402,17 +398,17 @@ auto bernoulli(const E& value) -> unary_expr<typename E::value_type, const E&, b
 
 template<typename E, enable_if_u<is_etl_expr<E>::value> = detail::dummy>
 auto hflip(const E& value) -> unary_expr<typename E::value_type, hflip_transformer<E>, identity_unary_op<typename E::value_type>> {
-    return {value};
+    return {hflip_transformer<E>(value)};
 }
 
 template<typename E, enable_if_u<is_etl_expr<E>::value> = detail::dummy>
 auto vflip(const E& value) -> unary_expr<typename E::value_type, vflip_transformer<E>, identity_unary_op<typename E::value_type>> {
-    return {value};
+    return {vflip_transformer<E>(value)};
 }
 
 template<typename E, enable_if_u<is_etl_expr<E>::value> = detail::dummy>
 auto fflip(const E& value) -> unary_expr<typename E::value_type, fflip_transformer<E>, identity_unary_op<typename E::value_type>> {
-    return {value};
+    return {fflip_transformer<E>(value)};
 }
 
 template<std::size_t D, typename E, enable_if_u<is_etl_expr<E>::value> = detail::dummy>
@@ -433,7 +429,7 @@ auto col(const E& value, std::size_t i) -> unary_expr<typename E::value_type, di
 template<std::size_t Rows, std::size_t Columns, typename E, enable_if_u<is_etl_expr<E>::value> = detail::dummy>
 auto reshape(const E& value) -> unary_expr<typename E::value_type, fast_matrix_view<E, Rows, Columns>, identity_unary_op<typename E::value_type>> {
     //TODO Ensure sizes
-    return {value};
+    return {fast_matrix_view<E, Rows, Columns>(value)};
 }
 
 //}}}

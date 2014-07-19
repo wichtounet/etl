@@ -19,7 +19,8 @@ namespace etl {
 template<typename T>
 struct scalar {
     const T value;
-    constexpr scalar(T v) : value(v) {}
+
+    explicit constexpr scalar(T v) : value(v) {}
 
     constexpr const T operator[](std::size_t) const {
         return value;
@@ -40,7 +41,7 @@ struct hflip_transformer {
 
     const T& sub;
 
-    hflip_transformer(const T& vec) : sub(vec) {}
+    explicit hflip_transformer(const T& vec) : sub(vec) {}
 
     typename T::value_type operator[](std::size_t i) const {
         return sub[size(sub) - 1 - i];
@@ -61,7 +62,7 @@ struct vflip_transformer {
 
     const T& sub;
 
-    vflip_transformer(const T& vec) : sub(vec) {}
+    explicit vflip_transformer(const T& vec) : sub(vec) {}
 
     typename T::value_type operator[](std::size_t i) const {
         return sub[i];
@@ -82,7 +83,7 @@ struct fflip_transformer {
 
     const T& sub;
 
-    fflip_transformer(const T& vec) : sub(vec) {}
+    explicit fflip_transformer(const T& vec) : sub(vec) {}
 
     typename T::value_type operator[](std::size_t i) const {
         return sub[i];
@@ -133,7 +134,7 @@ struct fast_matrix_view {
 
     const T& sub;
 
-    fast_matrix_view(const T& sub) : sub(sub) {}
+    explicit fast_matrix_view(const T& sub) : sub(sub) {}
 
     value_type operator[](std::size_t j) const {
         return sub(j);

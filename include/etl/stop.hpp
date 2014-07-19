@@ -13,13 +13,13 @@
 namespace etl {
 
 template<typename T, enable_if_u<and_u<is_etl_expr<T>::value, not_u<etl_traits<T>::is_value>::value, not_u<etl_traits<T>::is_fast>::value, etl_traits<T>::is_vector>::value> = detail::dummy>
-dyn_vector<typename T::value_type> s(const T& value){
-    return {value};
+auto s(const T& value){
+    return dyn_vector<typename T::value_type>(value);
 }
 
 template<typename T, enable_if_u<and_u<is_etl_expr<T>::value, not_u<etl_traits<T>::is_value>::value, not_u<etl_traits<T>::is_fast>::value, etl_traits<T>::is_matrix>::value> = detail::dummy>
-dyn_matrix<typename T::value_type> s(const T& value){
-    return {value};
+auto s(const T& value){
+    return dyn_matrix<typename T::value_type>(value);
 }
 
 template<typename T, enable_if_u<and_u<is_etl_expr<T>::value, not_u<etl_traits<T>::is_value>::value, etl_traits<T>::is_fast, etl_traits<T>::is_vector>::value> = detail::dummy>
