@@ -150,6 +150,29 @@ struct fast_matrix_view {
 };
 
 template<typename T>
+struct dyn_matrix_view {
+    using value_type = typename T::value_type;
+
+    const T& sub;
+    std::size_t rows;
+    std::size_t columns;
+
+    dyn_matrix_view(const T& sub, std::size_t rows, std::size_t columns) : sub(sub), rows(rows), columns(columns) {}
+
+    value_type operator[](std::size_t j) const {
+        return sub(j);
+    }
+
+    value_type operator()(std::size_t j) const {
+        return sub(j);
+    }
+
+    value_type operator()(std::size_t i, std::size_t j) const {
+        return sub(i * columns + j);
+    }
+};
+
+template<typename T>
 struct plus_binary_op {
     static constexpr T apply(const T& lhs, const T& rhs){
         return lhs + rhs;

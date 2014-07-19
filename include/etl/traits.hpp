@@ -27,6 +27,9 @@ struct fast_matrix;
 template<typename T, size_t Rows, size_t Columns>
 struct fast_matrix_view;
 
+template<typename T>
+struct dyn_matrix_view;
+
 template <typename T, typename Expr, typename UnaryOp>
 class unary_expr;
 
@@ -84,7 +87,8 @@ struct is_transformer_expr : std::integral_constant<bool, or_u<
 template<typename T>
 struct is_view : std::integral_constant<bool, or_u<
             is_2<etl::dim_view, remove_cv_t<remove_reference_t<T>>>::value,
-            is_3<etl::fast_matrix_view, remove_cv_t<remove_reference_t<T>>>::value
+            is_3<etl::fast_matrix_view, remove_cv_t<remove_reference_t<T>>>::value,
+            is_specialization_of<etl::dyn_matrix_view, remove_cv_t<remove_reference_t<T>>>::value
             >::value> {};
 
 template<typename T, typename Enable = void>
@@ -365,6 +369,29 @@ struct etl_traits<etl::fast_matrix_view<T, Rows, Columns>> {
 
     static constexpr std::size_t rows(){
         return Rows;
+    }
+};
+
+/*!
+ * \brief Specialization for dyn_matrix_view.
+ */
+template<typename T>
+struct etl_traits<etl::dyn_matrix_view<T>> {
+    static constexpr const bool is_vector = false;
+    static constexpr const bool is_matrix = true;
+    static constexpr const bool is_fast = false;
+    static constexpr const bool is_value = false;
+
+    static std::size_t size(const etl::dyn_matrix_view<T>& v){
+        return v.rows * v.columns;
+    }
+
+    static std::size_t columns(const etl::dyn_matrix_view<T>& v){
+        return v.columns;
+    }
+
+    static std::size_t rows(const etl::dyn_matrix_view<T>& v){
+        return v.rows;
     }
 };
 
