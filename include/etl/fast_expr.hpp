@@ -411,6 +411,11 @@ auto fflip(const E& value) -> unary_expr<typename E::value_type, fflip_transform
     return {fflip_transformer<E>(value)};
 }
 
+template<typename E, enable_if_u<is_etl_expr<E>::value> = detail::dummy>
+auto transpose(const E& value) -> unary_expr<typename E::value_type, transpose_transformer<E>, identity_unary_op<typename E::value_type>> {
+    return {transpose_transformer<E>(value)};
+}
+
 template<std::size_t D, typename E, enable_if_u<is_etl_expr<E>::value> = detail::dummy>
 auto dim(const E& value, std::size_t i) -> unary_expr<typename E::value_type, dim_view<E, D>, identity_unary_op<typename E::value_type>> {
     return {{value, i}};

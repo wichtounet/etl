@@ -45,6 +45,9 @@ struct vflip_transformer;
 template<typename T>
 struct fflip_transformer;
 
+template<typename T>
+struct transpose_transformer;
+
 template<typename T, std::size_t D>
 struct dim_view;
 
@@ -80,6 +83,7 @@ struct is_binary_expr : std::integral_constant<bool, is_specialization_of<etl::b
 
 template<typename T>
 struct is_transformer_expr : std::integral_constant<bool, or_u<
+            is_specialization_of<etl::transpose_transformer, remove_cv_t<remove_reference_t<T>>>::value,
             is_specialization_of<etl::hflip_transformer, remove_cv_t<remove_reference_t<T>>>::value,
             is_specialization_of<etl::vflip_transformer, remove_cv_t<remove_reference_t<T>>>::value,
             is_specialization_of<etl::fflip_transformer, remove_cv_t<remove_reference_t<T>>>::value>::value> {};
@@ -270,10 +274,50 @@ struct etl_traits<etl::binary_expr<T, LeftExpr, BinaryOp, RightExpr>, enable_if_
 };
 
 /*!
+ * \brief Specialization for tranpose_transformer
+ */
+template <typename T>
+struct etl_traits<transpose_transformer<T>> {
+    static constexpr const bool is_vector = etl_traits<T>::is_vector;
+    static constexpr const bool is_matrix = etl_traits<T>::is_matrix;
+    static constexpr const bool is_fast = etl_traits<T>::is_fast;
+    static constexpr const bool is_value = false;
+
+    static std::size_t size(const transpose_transformer<T>& v){
+        return etl_traits<T>::size(v.sub);
+    }
+
+    template<typename TT = T, enable_if_u<etl_traits<TT>::is_matrix> = detail::dummy>
+    static std::size_t rows(const transpose_transformer<T>& v){
+        return etl_traits<T>::columns(v.sub);
+    }
+
+    template<typename TT = T, enable_if_u<etl_traits<TT>::is_matrix> = detail::dummy>
+    static std::size_t columns(const transpose_transformer<T>& v){
+        return etl_traits<T>::rows(v.sub);
+    }
+
+    template<bool B = is_fast, enable_if_u<B> = detail::dummy>
+    static constexpr std::size_t size(){
+        return etl_traits<T>::size();
+    }
+
+    template<bool B = is_matrix, enable_if_u<and_u<B, is_fast>::value> = detail::dummy>
+    static constexpr std::size_t rows(){
+        return etl_traits<T>::columns();
+    }
+
+    template<bool B = is_matrix, enable_if_u<and_u<B, is_fast>::value> = detail::dummy>
+    static constexpr std::size_t columns(){
+        return etl_traits<T>::rows();
+    }
+};
+
+/*!
  * \brief Specialization for transformers
  */
 template <typename T>
-struct etl_traits<T, enable_if_t<is_transformer_expr<T>::value>> {
+struct etl_traits<T, enable_if_t<and_u<is_transformer_expr<T>::value, not_u<is_specialization_of<etl::transpose_transformer, T>::value>::value>::value>> {
     static constexpr const bool is_vector = etl_traits<typename T::sub_type>::is_vector;
     static constexpr const bool is_matrix = etl_traits<typename T::sub_type>::is_matrix;
     static constexpr const bool is_fast = etl_traits<typename T::sub_type>::is_fast;

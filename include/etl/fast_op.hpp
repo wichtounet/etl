@@ -98,6 +98,27 @@ struct fflip_transformer {
     }
 };
 
+template<typename T>
+struct transpose_transformer {
+    using sub_type = T;
+
+    const T& sub;
+
+    explicit transpose_transformer(const T& vec) : sub(vec) {}
+
+    typename T::value_type operator[](std::size_t i) const {
+        return sub[i];
+    }
+
+    typename T::value_type operator()(std::size_t i) const {
+        return sub(i);
+    }
+
+    typename T::value_type operator()(std::size_t i, std::size_t j) const {
+        return sub(j, i);
+    }
+};
+
 template<typename T, std::size_t D>
 struct dim_view {
     static_assert(D > 0 || D < 3, "Invalid dimension");
