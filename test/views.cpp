@@ -197,4 +197,46 @@ TEST_CASE( "reshape/traits", "traits<reshape<2,3>>" ) {
     REQUIRE(columns_2 == 3);
 }
 
+TEST_CASE( "reshape/dyn_vector_1", "reshape(2,2)" ) {
+    etl::dyn_vector<double> a({1,2,3,4});
+    etl::dyn_matrix<double> b(etl::reshape(a,2,2));
+
+    REQUIRE(b(0,0) == 1.0);
+    REQUIRE(b(0,1) == 2.0);
+
+    REQUIRE(b(1,0) == 3.0);
+    REQUIRE(b(1,1) == 4.0);
+}
+
+TEST_CASE( "reshape/dyn_vector_2", "reshape(2,3)" ) {
+    etl::dyn_vector<double> a({1,2,3,4,5,6});
+    etl::dyn_matrix<double> b(etl::reshape(a,2,3));
+
+    REQUIRE(b(0,0) == 1.0);
+    REQUIRE(b(0,1) == 2.0);
+    REQUIRE(b(0,2) == 3.0);
+
+    REQUIRE(b(1,0) == 4.0);
+    REQUIRE(b(1,1) == 5.0);
+    REQUIRE(b(1,2) == 6.0);
+}
+
+TEST_CASE( "reshape/dyn_traits", "traits<reshape<2,3>>" ) {
+    etl::dyn_vector<double> a({1,2,3,4,5,6});
+
+    using expr_type = decltype(etl::reshape(a,2,3));
+    expr_type expr((etl::dyn_matrix_view<etl::dyn_vector<double>>(a,2,3)));
+
+    REQUIRE(etl::etl_traits<expr_type>::size(expr) == 6);
+    REQUIRE(etl::size(expr) == 6);
+    REQUIRE(etl::etl_traits<expr_type>::rows(expr) == 2);
+    REQUIRE(etl::rows(expr) == 2);
+    REQUIRE(etl::etl_traits<expr_type>::columns(expr) == 3);
+    REQUIRE(etl::columns(expr) == 3);
+    REQUIRE(etl::etl_traits<expr_type>::is_matrix);
+    REQUIRE(!etl::etl_traits<expr_type>::is_value);
+    REQUIRE(!etl::etl_traits<expr_type>::is_fast);
+    REQUIRE(!etl::etl_traits<expr_type>::is_vector);
+}
+
 //}}}
