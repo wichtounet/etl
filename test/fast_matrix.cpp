@@ -383,6 +383,17 @@ TEST_CASE( "fast_matrix/sigmoid", "fast_matrix::sigmoid" ) {
     REQUIRE(d[3] == etl::logistic_sigmoid(1.0));
 }
 
+TEST_CASE( "fast_matrix/exp", "fast_matrix::exp" ) {
+    etl::fast_matrix<double, 2, 2> a = {-1.0, 2.0, 0.0, 1.0};
+
+    etl::fast_matrix<double, 2, 2> d(exp(a));
+
+    REQUIRE(d[0] == std::exp(-1.0));
+    REQUIRE(d[1] == std::exp(2.0));
+    REQUIRE(d[2] == std::exp(0.0));
+    REQUIRE(d[3] == std::exp(1.0));
+}
+
 //}}} Unary operators test
 
 //{{{ Complex tests

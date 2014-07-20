@@ -384,6 +384,16 @@ TEST_CASE( "dyn_vector/sigmoid", "dyn_vector::sigmoid" ) {
     REQUIRE(d[2] == etl::logistic_sigmoid(0.0));
 }
 
+TEST_CASE( "dyn_vector/exp", "dyn_vector::exp" ) {
+    etl::dyn_vector<double> a = {-1.0, 2.0, 0.0};
+
+    etl::dyn_vector<double> d(etl::exp(a));
+
+    REQUIRE(d[0] == std::exp(-1.0));
+    REQUIRE(d[1] == std::exp(2.0));
+    REQUIRE(d[2] == std::exp(0.0));
+}
+
 //}}} Unary operators test
 
 //{{{ Reductions
