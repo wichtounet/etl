@@ -384,6 +384,16 @@ TEST_CASE( "dyn_vector/sigmoid", "dyn_vector::sigmoid" ) {
     REQUIRE(d[2] == etl::logistic_sigmoid(0.0));
 }
 
+TEST_CASE( "dyn_vector/softplus", "dyn_vector::softplus" ) {
+    etl::dyn_vector<double> a = {-1.0, 2.0, 0.0};
+
+    etl::dyn_vector<double> d(etl::softplus(a));
+
+    REQUIRE(d[0] == etl::softplus(-1.0));
+    REQUIRE(d[1] == etl::softplus(2.0));
+    REQUIRE(d[2] == etl::softplus(0.0));
+}
+
 TEST_CASE( "dyn_vector/exp", "dyn_vector::exp" ) {
     etl::dyn_vector<double> a = {-1.0, 2.0, 0.0};
 

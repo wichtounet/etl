@@ -381,6 +381,16 @@ TEST_CASE( "fast_vector/sigmoid", "fast_vector::sigmoid" ) {
     REQUIRE(d[2] == etl::logistic_sigmoid(0.0));
 }
 
+TEST_CASE( "fast_vector/softplus", "fast_vector::softplus" ) {
+    etl::fast_vector<double, 3> a = {-1.0, 2.0, 0.0};
+
+    etl::fast_vector<double, 3> d(etl::softplus(a));
+
+    REQUIRE(d[0] == etl::softplus(-1.0));
+    REQUIRE(d[1] == etl::softplus(2.0));
+    REQUIRE(d[2] == etl::softplus(0.0));
+}
+
 TEST_CASE( "fast_vector/exp", "fast_vector::exp" ) {
     etl::fast_vector<double, 3> a = {-1.0, 2.0, 0.0};
 
