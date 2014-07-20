@@ -421,6 +421,20 @@ TEST_CASE( "fast_vector/min", "fast_vector::min" ) {
     REQUIRE(d[2] == 0.0);
 }
 
+constexpr bool binary(double a){
+    return a == 0.0 || a == 1.0;
+}
+
+TEST_CASE( "fast_vector/bernoulli", "fast_vector::bernoulli" ) {
+    etl::fast_vector<double, 3> a = {-1.0, 0.3, 0.7};
+
+    etl::fast_vector<double, 3> d(etl::bernoulli(a));
+
+    REQUIRE(binary(d[0]));
+    REQUIRE(binary(d[1]));
+    REQUIRE(binary(d[2]));
+}
+
 //}}} Unary operators test
 
 //{{{ Reductions

@@ -433,6 +433,21 @@ TEST_CASE( "dyn_matrix/min", "dyn_matrix::min" ) {
     REQUIRE(d[3] == 1.0);
 }
 
+constexpr bool binary(double a){
+    return a == 0.0 || a == 1.0;
+}
+
+TEST_CASE( "dyn_matrix/bernoulli", "dyn_matrix::bernoulli" ) {
+    etl::dyn_matrix<double> a(2,2,{-1.0, 2.0, 0.0, 1.0});
+
+    etl::dyn_matrix<double> d(etl::bernoulli(a));
+
+    REQUIRE(binary(d[0]));
+    REQUIRE(binary(d[1]));
+    REQUIRE(binary(d[2]));
+    REQUIRE(binary(d[3]));
+}
+
 //}}} Unary operators test
 
 //{{{ Complex tests

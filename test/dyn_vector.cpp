@@ -424,6 +424,20 @@ TEST_CASE( "dyn_vector/min", "dyn_vector::min" ) {
     REQUIRE(d[2] == 0.0);
 }
 
+constexpr bool binary(double a){
+    return a == 0.0 || a == 1.0;
+}
+
+TEST_CASE( "dyn_vector/bernoulli", "dyn_vector::bernoulli" ) {
+    etl::dyn_vector<double> a = {-1.0, 2.0, 0.0};
+
+    etl::dyn_vector<double> d(etl::bernoulli(a));
+
+    REQUIRE(binary(d[0]));
+    REQUIRE(binary(d[1]));
+    REQUIRE(binary(d[2]));
+}
+
 
 //}}} Unary operators test
 
