@@ -404,6 +404,27 @@ TEST_CASE( "dyn_vector/exp", "dyn_vector::exp" ) {
     REQUIRE(d[2] == std::exp(0.0));
 }
 
+TEST_CASE( "dyn_vector/max", "dyn_vector::max" ) {
+    etl::dyn_vector<double> a = {-1.0, 2.0, 0.0};
+
+    etl::dyn_vector<double> d(etl::max(a,1.0));
+
+    REQUIRE(d[0] == 1.0);
+    REQUIRE(d[1] == 2.0);
+    REQUIRE(d[2] == 1.0);
+}
+
+TEST_CASE( "dyn_vector/min", "dyn_vector::min" ) {
+    etl::dyn_vector<double> a = {-1.0, 2.0, 0.0};
+
+    etl::dyn_vector<double> d(etl::min(a,1.0));
+
+    REQUIRE(d[0] == -1.0);
+    REQUIRE(d[1] == 1.0);
+    REQUIRE(d[2] == 0.0);
+}
+
+
 //}}} Unary operators test
 
 //{{{ Reductions

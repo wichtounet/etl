@@ -376,7 +376,6 @@ TEST_CASE( "dyn_matrix/unary_binary_2", "dyn_matrix::abs" ) {
     REQUIRE(d[0] == 0.0);
     REQUIRE(d[1] == 4.0);
     REQUIRE(d[2] == 0.0);
-
 }
 
 TEST_CASE( "dyn_matrix/sigmoid", "dyn_matrix::sigmoid" ) {
@@ -410,6 +409,28 @@ TEST_CASE( "dyn_matrix/exp", "dyn_matrix::exp" ) {
     REQUIRE(d[1] == std::exp(2.0));
     REQUIRE(d[2] == std::exp(0.0));
     REQUIRE(d[3] == std::exp(1.0));
+}
+
+TEST_CASE( "dyn_matrix/max", "dyn_matrix::max" ) {
+    etl::dyn_matrix<double> a(2,2,{-1.0, 2.0, 0.0, 1.0});
+
+    etl::dyn_matrix<double> d(etl::max(a, 1.0));
+
+    REQUIRE(d[0] == 1.0);
+    REQUIRE(d[1] == 2.0);
+    REQUIRE(d[2] == 1.0);
+    REQUIRE(d[3] == 1.0);
+}
+
+TEST_CASE( "dyn_matrix/min", "dyn_matrix::min" ) {
+    etl::dyn_matrix<double> a(2,2,{-1.0, 2.0, 0.0, 1.0});
+
+    etl::dyn_matrix<double> d(etl::min(a, 1.0));
+
+    REQUIRE(d[0] == -1.0);
+    REQUIRE(d[1] == 1.0);
+    REQUIRE(d[2] == 0.0);
+    REQUIRE(d[3] == 1.0);
 }
 
 //}}} Unary operators test

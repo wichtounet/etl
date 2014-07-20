@@ -401,6 +401,26 @@ TEST_CASE( "fast_vector/exp", "fast_vector::exp" ) {
     REQUIRE(d[2] == std::exp(0.0));
 }
 
+TEST_CASE( "fast_vector/max", "fast_vector::max" ) {
+    etl::fast_vector<double, 3> a = {-1.0, 2.0, 0.0};
+
+    etl::fast_vector<double, 3> d(etl::max(a, 1.0));
+
+    REQUIRE(d[0] == 1.0);
+    REQUIRE(d[1] == 2.0);
+    REQUIRE(d[2] == 1.0);
+}
+
+TEST_CASE( "fast_vector/min", "fast_vector::min" ) {
+    etl::fast_vector<double, 3> a = {-1.0, 2.0, 0.0};
+
+    etl::fast_vector<double, 3> d(etl::min(a, 1.0));
+
+    REQUIRE(d[0] == -1.0);
+    REQUIRE(d[1] == 1.0);
+    REQUIRE(d[2] == 0.0);
+}
+
 //}}} Unary operators test
 
 //{{{ Reductions
