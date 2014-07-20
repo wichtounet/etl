@@ -374,6 +374,16 @@ TEST_CASE( "dyn_vector/unary_binary_2", "dyn_vector::abs" ) {
     REQUIRE(d[2] == 0.0);
 }
 
+TEST_CASE( "dyn_vector/sigmoid", "dyn_vector::sigmoid" ) {
+    etl::dyn_vector<double> a = {-1.0, 2.0, 0.0};
+
+    etl::dyn_vector<double> d(etl::sigmoid(a));
+
+    REQUIRE(d[0] == etl::logistic_sigmoid(-1.0));
+    REQUIRE(d[1] == etl::logistic_sigmoid(2.0));
+    REQUIRE(d[2] == etl::logistic_sigmoid(0.0));
+}
+
 //}}} Unary operators test
 
 //{{{ Reductions

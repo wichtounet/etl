@@ -376,7 +376,20 @@ TEST_CASE( "dyn_matrix/unary_binary_2", "dyn_matrix::abs" ) {
     REQUIRE(d[0] == 0.0);
     REQUIRE(d[1] == 4.0);
     REQUIRE(d[2] == 0.0);
+
 }
+
+TEST_CASE( "dyn_matrix/sigmoid", "dyn_matrix::sigmoid" ) {
+    etl::dyn_matrix<double> a(2,2,{-1.0, 2.0, 0.0, 1.0});
+
+    etl::dyn_matrix<double> d(etl::sigmoid(a));
+
+    REQUIRE(d[0] == etl::logistic_sigmoid(-1.0));
+    REQUIRE(d[1] == etl::logistic_sigmoid(2.0));
+    REQUIRE(d[2] == etl::logistic_sigmoid(0.0));
+    REQUIRE(d[3] == etl::logistic_sigmoid(1.0));
+}
+
 
 //}}} Unary operators test
 

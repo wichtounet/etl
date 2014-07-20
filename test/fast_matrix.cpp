@@ -372,6 +372,17 @@ TEST_CASE( "fast_matrix/unary_binary_2", "fast_matrix::abs" ) {
     REQUIRE(d[2] == 0.0);
 }
 
+TEST_CASE( "fast_matrix/sigmoid", "fast_matrix::sigmoid" ) {
+    etl::fast_matrix<double, 2, 2> a = {-1.0, 2.0, 0.0, 1.0};
+
+    etl::fast_matrix<double, 2, 2> d(sigmoid(a));
+
+    REQUIRE(d[0] == etl::logistic_sigmoid(-1.0));
+    REQUIRE(d[1] == etl::logistic_sigmoid(2.0));
+    REQUIRE(d[2] == etl::logistic_sigmoid(0.0));
+    REQUIRE(d[3] == etl::logistic_sigmoid(1.0));
+}
+
 //}}} Unary operators test
 
 //{{{ Complex tests
