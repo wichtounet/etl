@@ -63,7 +63,8 @@ Available operators:
 * max/min
 * sigmoid
 * noise: Add standard normal noise to each element
-* logistic_noise: Add normal noise of mean zero and variance sigmoid(x) to each element
+* logistic_noise: Add normal noise of mean zero and variance sigmoid(x) to each
+  element
 * exp
 * softplus
 * bernoulli
@@ -72,16 +73,21 @@ Several transformations are also available:
 
 * hflip: Flip the vector or the matrix horizontally
 * vflip: Flip the vector or the matrix vertically
-* fflip: Flip the vector or the matrix horizontally and verticaly. It is the equivalent of hflip(vflip(x))
-* dim/row/col: Return a vector representing a sub part of a matrix (a row or a col)
+* fflip: Flip the vector or the matrix horizontally and verticaly. It is the
+  equivalent of hflip(vflip(x))
+* dim/row/col: Return a vector representing a sub part of a matrix (a row or a
+  col)
 * reshape: Interpet a vector as a matrix
 
 Lazy evaluation
 ***************
 
-All binary and unary operations are applied lazily, only when they are assigned to a concrete vector or matrix class. 
+All binary and unary operations are applied lazily, only when they are assigned
+to a concrete vector or matrix class. 
 
-The expression can be evaluated using the :code:`s(x)` function that returns a concrete class (fast_vector,fast_matrix,dyn_vector,dyn_matrix) based on the expression. 
+The expression can be evaluated using the :code:`s(x)` function that returns a
+concrete class (fast_vector,fast_matrix,dyn_vector,dyn_matrix) based on the
+expression. 
 
 Reduction
 *********
@@ -110,4 +116,5 @@ efficient.
 License
 -------
 
-This library is distributed under the terms of the MIT license, see `LICENSE` file for details.
+This library is distributed under the terms of the MIT license, see `LICENSE`
+file for details.
