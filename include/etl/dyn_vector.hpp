@@ -188,7 +188,6 @@ public:
     }
 
     storage_impl&& release(){
-        rows = 0;
         return std::move(_data);
     }
 
