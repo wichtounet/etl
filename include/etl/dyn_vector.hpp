@@ -75,8 +75,7 @@ public:
     template<typename Container, enable_if_u<std::is_same<typename Container::value_type, value_type>::value> = detail::dummy>
     explicit dyn_vector(const Container& vec) : _data(vec.size()), rows(vec.size()) {
         std::copy(vec.begin(), vec.end(), begin());
-    }
-
+    } 
     //Move is possible
     dyn_vector(dyn_vector&& rhs) = default;
 
@@ -186,6 +185,11 @@ public:
 
     iterator end(){
         return _data.end();
+    }
+
+    storage_impl&& release(){
+        rows = 0;
+        return std::move(_data);
     }
 
     //}}}
