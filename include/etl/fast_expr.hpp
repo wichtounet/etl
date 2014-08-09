@@ -39,12 +39,18 @@ public:
         //Nothing else to init
     }
 
-    //No copying
-    binary_expr(const binary_expr&) = delete;
-    binary_expr& operator=(const binary_expr&) = delete;
+    //Copy an expression
+    binary_expr(const binary_expr& e) : _lhs(e._lhs), _rhs(e._rhs) {
+        //Nothing else to init
+    }
 
-    //No moving
-    binary_expr(binary_expr&&) = delete;
+    //Move an expression
+    binary_expr(binary_expr&& e) : _lhs(e._lhs), _rhs(e._rhs) {
+        //Nothing else to init
+    }
+
+    //Expressions are invariant
+    binary_expr& operator=(const binary_expr&) = delete;
     binary_expr& operator=(binary_expr&&) = delete;
 
     //Accessors
@@ -104,12 +110,16 @@ public:
         //Nothing else to init
     }
 
-    //No copying
-    unary_expr(const unary_expr&) = delete;
-    unary_expr& operator=(const unary_expr&) = delete;
+    unary_expr(const unary_expr& e) : _value(e._value) {
+        //Nothing else to init
+    }
 
-    //No moving
-    unary_expr(unary_expr&&) = delete;
+    unary_expr(unary_expr&& e) : _value(e._value) {
+        //Nothing else to init
+    }
+
+    //Expression are invariant
+    unary_expr& operator=(const unary_expr&) = delete;
     unary_expr& operator=(unary_expr&&) = delete;
 
     //Accessors
