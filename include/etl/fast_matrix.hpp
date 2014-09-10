@@ -18,6 +18,160 @@
 
 namespace etl {
 
+namespace matrix_detail {
+
+template<size_t F, size_t... Dims>
+struct matrix_size  : std::integral_constant<std::size_t, F * matrix_size<Dims...>::value> {};
+
+template<size_t F>
+struct matrix_size<F> : std::integral_constant<std::size_t, F> {};
+
+template<size_t S, size_t I, size_t F, size_t... Dims>
+struct matrix_dimension {
+    template<size_t S2, size_t I2, typename Enable = void>
+    struct matrix_dimension_int : std::integral_constant<std::size_t, matrix_dimension<S, I+1, Dims...>::value> {};
+
+    template<size_t S2, size_t I2>
+    struct matrix_dimension_int<S2, I2, enable_if_t<S2 == I2>> : std::integral_constant<std::size_t, F> {};
+
+    static constexpr const std::size_t value = matrix_dimension_int<S, I>::value;
+};
+
+template<typename M, size_t I, size_t Stop, typename S1, typename... S>
+struct matrix_index {
+    template<size_t I2, typename Enable = void>
+    struct matrix_index_int {
+        static size_t compute(S1 first, S... args){
+            etl_assert(first < M::template dim<I2>(), "Out of bounds");
+
+            //TODO Need to accumulate the sizes
+            return M::template dim<I>() * first + matrix_index<M, I+1, Stop, S...>::compute(args...);
+        }
+    };
+
+    template<size_t I2>
+    struct matrix_index_int<I2, enable_if_t<I2 == Stop>> {
+        static size_t compute(S1 first){
+            etl_assert(first < M::template dim<I2>(), "Out of bounds");
+
+            return first;
+        }
+    };
+
+    static size_t compute(S1 first, S... args){
+        return matrix_index_int<I>::compute(first, args...);
+    }
+};
+
+} //end of namespace detail
+
+template<typename T, size_t... Dims>
+struct big_matrix {
+    static_assert(sizeof...(Dims) > 1, "At least two dimension must be specified");
+
+public:
+    static constexpr const std::size_t etl_size = matrix_detail::matrix_size<Dims...>::value;
+
+    using       value_type = T;
+    using     storage_impl = std::array<value_type, etl_size>;
+    using         iterator = typename storage_impl::iterator;
+    using   const_iterator = typename storage_impl::const_iterator;
+    using        this_type = big_matrix<T, Dims...>;
+
+private:
+    storage_impl _data;
+
+    template<typename... S>
+    value_type& access(S... args){
+        return _data[matrix_detail::matrix_index<this_type, 0, sizeof...(Dims) - 1, S...>::compute(args...)];
+    }
+
+public:
+
+
+
+    //{{{ Accessors
+
+    static constexpr size_t size(){
+        return etl_size;
+    }
+
+    static constexpr size_t rows(){
+        return dim<0>();
+    }
+
+    static constexpr size_t columns(){
+        return dim<1>();
+    }
+
+    template<size_t D>
+    static constexpr size_t dim(){
+        return matrix_detail::matrix_dimension<D, 0, Dims...>::value;
+    }
+
+    //TODO Would probably be useful to have dim(size_t i)
+    
+    //TODO Find a way to prefer simple implementation instead of variadic one
+    //for two indices
+
+    value_type& operator()(size_t i, size_t j){
+        etl_assert(i < rows(), "Out of bounds");
+        etl_assert(j < columns(), "Out of bounds");
+
+        std::cout << "Simple" << std::endl;
+
+        return _data[i * columns() + j];
+    }
+
+    const value_type& operator()(size_t i, size_t j) const {
+        etl_assert(i < rows(), "Out of bounds");
+        etl_assert(j < columns(), "Out of bounds");
+
+        std::cout << "Simple" << std::endl;
+
+        return _data[i * columns() + j];
+    }
+
+    template<typename... S>
+    value_type& operator()(S... args){
+        static_assert(sizeof...(S) == sizeof...(Dims), "Invalid number of parameters");
+        //TODO static_assert to ensure that each T is size_t or convertible to
+        //size_t
+
+        return access(static_cast<size_t>(args)...);
+    }
+
+    const value_type& operator[](size_t i) const {
+        etl_assert(i < size(), "Out of bounds");
+
+        return _data[i];
+    }
+
+    value_type& operator[](size_t i){
+        etl_assert(i < size(), "Out of bounds");
+
+        return _data[i];
+    }
+
+    const_iterator begin() const {
+        return _data.begin();
+    }
+
+    const_iterator end() const {
+        return _data.end();
+    }
+
+    iterator begin(){
+        return _data.begin();
+    }
+
+    iterator end(){
+        return _data.end();
+    }
+
+    //}}}
+};
+
 template<typename T, size_t Rows, size_t Columns>
 struct fast_matrix {
 public:

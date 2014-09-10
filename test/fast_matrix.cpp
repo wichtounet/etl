@@ -11,6 +11,20 @@
 
 //{{{ Init tests
 
+TEST_CASE( "big_matrix/init_1", "fast_matrix::fast_matrix(T)" ) {
+    etl::big_matrix<double,  4, 5> test_matrix;
+
+    REQUIRE(test_matrix.size() == 60);
+    REQUIRE(test_matrix.rows() == 3);
+    REQUIRE(test_matrix.columns() == 4);
+
+    std::cout << test_matrix(2,3) << std::endl;
+
+    //for(std::size_t i = 0; i < test_matrix.size(); ++i){
+        //REQUIRE(test_matrix[i] == 3.3);
+    //}
+}
+
 TEST_CASE( "fast_matrix/init_1", "fast_matrix::fast_matrix(T)" ) {
     etl::fast_matrix<double, 2, 2> test_matrix(3.3);
 
