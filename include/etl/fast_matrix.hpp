@@ -137,14 +137,10 @@ public:
 
     template<typename LE, typename Op, typename RE>
     explicit fast_matrix(const binary_expr<value_type, LE, Op, RE>& e){
-        //TODO This will only support 2D Expressions
-
         ensure_same_size(*this, e);
 
-        for(std::size_t i = 0; i < dim<0>(); ++i){
-            for(std::size_t j = 0; j < dim<1>(); ++j){
-                _data[index(i,j)] = e(i,j);
-            }
+        for(std::size_t i = 0; i < size(); ++i){
+            _data[i] = e[i];
         }
     }
 
@@ -188,10 +184,8 @@ public:
     fast_matrix& operator=(binary_expr<value_type, LE, Op, RE>&& e){
         ensure_same_size(*this, e);
 
-        for(std::size_t i = 0; i < dim<0>(); ++i){
-            for(std::size_t j = 0; j < dim<1>(); ++j){
-                _data[index(i,j)] = e(i,j);
-            }
+        for(std::size_t i = 0; i < size(); ++i){
+            _data[i] = e[i];
         }
 
         return *this;

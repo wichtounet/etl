@@ -132,18 +132,17 @@ TEST_CASE( "fast_matrix/add_2", "fast_matrix::operator+=" ) {
     REQUIRE(a[2] ==  9.0);
 }
 
-//TODO Make this work
-//TEST_CASE( "fast_matrix/add_3", "fast_matrix::operator+" ) {
-    //etl::fast_matrix<double, 2, 2, 2> a = {-1.0, 2.0, 5.0, 1.0, 1.0, 1.0, 1.0, 1.0};
-    //etl::fast_matrix<double, 2, 2, 2> b = {2.5, 3.0, 4.0, 1.0, 1.0, 1.0, 1.0, 1.0};
+TEST_CASE( "fast_matrix/add_3", "fast_matrix::operator+" ) {
+    etl::fast_matrix<double, 2, 2, 2> a = {-1.0, 2.0, 5.0, 1.0, 1.0, 1.0, 1.0, 1.0};
+    etl::fast_matrix<double, 2, 2, 2> b = {2.5, 3.0, 4.0, 1.0, 1.0, 1.0, 1.0, 1.0};
 
-    //etl::fast_matrix<double, 2, 2, 2> c(a + b);
+    etl::fast_matrix<double, 2, 2, 2> c(a + b);
 
-    //REQUIRE(c[0] ==  1.5);
-    //REQUIRE(c[1] ==  5.0);
-    //REQUIRE(c[2] ==  9.0);
-    //REQUIRE(c[7] ==  2.0);
-//}
+    REQUIRE(c[0] ==  1.5);
+    REQUIRE(c[1] ==  5.0);
+    REQUIRE(c[2] ==  9.0);
+    REQUIRE(c[7] ==  2.0);
+}
 
 TEST_CASE( "fast_matrix/add_4", "fast_matrix::operator+=" ) {
     etl::fast_matrix<double, 2, 2, 2> a = {-1.0, 2.0, 5.0, 1.0, 1.0, 1.0, 1.0, 1.0};
