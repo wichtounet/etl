@@ -13,11 +13,13 @@ TEST_FILES=$(CPP_FILES:test/%=%)
 DEBUG_D_FILES=$(CPP_FILES:%.cpp=debug/%.cpp.d)
 RELEASE_D_FILES=$(CPP_FILES:%.cpp=release/%.cpp.d)
 
-$(eval $(call folder_compile,))
+$(eval $(call folder_compile,workbench))
 $(eval $(call test_folder_compile,))
 
-$(eval $(call add_executable,test_asm_1,test.cpp))
-$(eval $(call add_executable,test_asm_2,test_dim.cpp))
+# Create executables
+$(eval $(call add_executable,test_asm_1,workbench/test.cpp))
+$(eval $(call add_executable,test_asm_2,workbench/test_dim.cpp))
+$(eval $(call add_executable,benchmark,workbench/benchmark.cpp))
 $(eval $(call add_test_executable,etl_test,$(TEST_FILES)))
 
 $(eval $(call add_executable_set,etl_test,etl_test))
@@ -38,6 +40,9 @@ release_test: release
 test: all
 	./debug/bin/etl_test
 	./release/bin/etl_test
+
+benchmark: release/bin/benchmark
+	./release/bin/benchmark
 
 v:
 	@ echo $(CPP_FILES)
