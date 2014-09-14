@@ -501,17 +501,17 @@ auto reshape(const E& value, std::size_t rows, std::size_t columns) -> unary_exp
 //{{{ Apply a special expression that can change order of elements
 
 template<typename E, enable_if_u<is_etl_expr<E>::value> = detail::dummy>
-auto hflip(const E& value) -> unary_expr<typename E::value_type, hflip_transformer<E>, identity_unary_op<typename E::value_type>> {
+auto hflip(const E& value) -> transform_expr<typename E::value_type, hflip_transformer<E>> {
     return {hflip_transformer<E>(value)};
 }
 
 template<typename E, enable_if_u<is_etl_expr<E>::value> = detail::dummy>
-auto vflip(const E& value) -> unary_expr<typename E::value_type, vflip_transformer<E>, identity_unary_op<typename E::value_type>> {
+auto vflip(const E& value) -> transform_expr<typename E::value_type, vflip_transformer<E>> {
     return {vflip_transformer<E>(value)};
 }
 
 template<typename E, enable_if_u<is_etl_expr<E>::value> = detail::dummy>
-auto fflip(const E& value) -> unary_expr<typename E::value_type, fflip_transformer<E>, identity_unary_op<typename E::value_type>> {
+auto fflip(const E& value) -> transform_expr<typename E::value_type, fflip_transformer<E>> {
     return {fflip_transformer<E>(value)};
 }
 

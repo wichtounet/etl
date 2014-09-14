@@ -70,12 +70,20 @@ public:
         }
     }
 
+    template<typename E>
+    explicit dyn_vector(const transform_expr<value_type, E>& e) : _data(etl::size(e)), rows(etl::size(e)) {
+        for(std::size_t i = 0; i < size(); ++i){
+            _data[i] = e[i];
+        }
+    }
+
     //Allow copy from other containers
 
     template<typename Container, enable_if_u<std::is_same<typename Container::value_type, value_type>::value> = detail::dummy>
     explicit dyn_vector(const Container& vec) : _data(vec.size()), rows(vec.size()) {
         std::copy(vec.begin(), vec.end(), begin());
     } 
+
     //Move is possible
     dyn_vector(dyn_vector&& rhs) = default;
 
@@ -117,6 +125,17 @@ public:
 
     template<typename E, typename Op>
     dyn_vector& operator=(const unary_expr<value_type, E, Op>&& e){
+        ensure_same_size(*this, e);
+
+        for(std::size_t i = 0; i < size(); ++i){
+            _data[i] = e[i];
+        }
+
+        return *this;
+    }
+
+    template<typename E>
+    dyn_vector& operator=(const transform_expr<value_type, E>&& e){
         ensure_same_size(*this, e);
 
         for(std::size_t i = 0; i < size(); ++i){

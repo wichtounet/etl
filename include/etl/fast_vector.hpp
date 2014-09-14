@@ -81,6 +81,15 @@ public:
             _data[i] = e[i];
         }
     }
+    
+    template<typename E>
+    explicit fast_vector(const transform_expr<value_type, E>& e){
+        ensure_same_size(*this, e);
+
+        for(std::size_t i = 0; i < Rows; ++i){
+            _data[i] = e[i];
+        }
+    }
 
     //}}}
 
@@ -121,6 +130,17 @@ public:
 
     template<typename E, typename Op>
     fast_vector& operator=(const unary_expr<value_type, E, Op>&& e){
+        ensure_same_size(*this, e);
+
+        for(std::size_t i = 0; i < Rows; ++i){
+            _data[i] = e[i];
+        }
+
+        return *this;
+    }
+
+    template<typename E>
+    fast_vector& operator=(const transform_expr<value_type, E>&& e){
         ensure_same_size(*this, e);
 
         for(std::size_t i = 0; i < Rows; ++i){
