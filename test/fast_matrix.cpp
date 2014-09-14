@@ -11,20 +11,6 @@
 
 //{{{ Init tests
 
-TEST_CASE( "big_matrix/init_1", "fast_matrix::fast_matrix(T)" ) {
-    etl::big_matrix<double,  4, 5> test_matrix;
-
-    REQUIRE(test_matrix.size() == 60);
-    REQUIRE(test_matrix.rows() == 3);
-    REQUIRE(test_matrix.columns() == 4);
-
-    std::cout << test_matrix(2,3) << std::endl;
-
-    //for(std::size_t i = 0; i < test_matrix.size(); ++i){
-        //REQUIRE(test_matrix[i] == 3.3);
-    //}
-}
-
 TEST_CASE( "fast_matrix/init_1", "fast_matrix::fast_matrix(T)" ) {
     etl::fast_matrix<double, 2, 2> test_matrix(3.3);
 
@@ -55,6 +41,28 @@ TEST_CASE( "fast_matrix/init_3", "fast_matrix::fast_matrix(initializer_list)" ) 
     REQUIRE(test_matrix[0] == 1.0);
     REQUIRE(test_matrix[1] == 3.0);
     REQUIRE(test_matrix[2] == 5.0);
+}
+
+TEST_CASE( "fast_matrix/init_4", "fast_matrix::fast_matrix(T)" ) {
+    etl::fast_matrix<double, 2, 3, 4> test_matrix(3.3);
+
+    REQUIRE(test_matrix.size() == 24);
+
+    for(std::size_t i = 0; i < test_matrix.size(); ++i){
+        REQUIRE(test_matrix[i] == 3.3);
+    }
+}
+
+TEST_CASE( "fast_matrix/init_5", "fast_matrix::operator=(T)" ) {
+    etl::fast_matrix<double, 2, 3, 4> test_matrix;
+
+    test_matrix = 3.3;
+
+    REQUIRE(test_matrix.size() == 24);
+
+    for(std::size_t i = 0; i < test_matrix.size(); ++i){
+        REQUIRE(test_matrix[i] == 3.3);
+    }
 }
 
 //}}} Init tests
@@ -91,6 +99,17 @@ TEST_CASE( "fast_matrix/add_scalar_3", "fast_matrix::operator+=" ) {
     REQUIRE(test_matrix[2] == 6.5);
 }
 
+TEST_CASE( "fast_matrix/add_scalar_4", "fast_matrix::operator+=" ) {
+    etl::fast_matrix<double, 2, 2, 2> test_matrix = {-1.0, 2.0, 5.5, 1.0, 1.0, 1.0, 1.0, 1.0};
+
+    test_matrix += 1.0;
+
+    REQUIRE(test_matrix[0] == 0.0);
+    REQUIRE(test_matrix[1] == 3.0);
+    REQUIRE(test_matrix[2] == 6.5);
+    REQUIRE(test_matrix[7] == 2.0);
+}
+
 TEST_CASE( "fast_matrix/add_1", "fast_matrix::operator+" ) {
     etl::fast_matrix<double, 2, 2> a = {-1.0, 2.0, 5.0, 1.0};
     etl::fast_matrix<double, 2, 2> b = {2.5, 3.0, 4.0, 1.0};
@@ -111,6 +130,31 @@ TEST_CASE( "fast_matrix/add_2", "fast_matrix::operator+=" ) {
     REQUIRE(a[0] ==  1.5);
     REQUIRE(a[1] ==  5.0);
     REQUIRE(a[2] ==  9.0);
+}
+
+//TODO Make this work
+//TEST_CASE( "fast_matrix/add_3", "fast_matrix::operator+" ) {
+    //etl::fast_matrix<double, 2, 2, 2> a = {-1.0, 2.0, 5.0, 1.0, 1.0, 1.0, 1.0, 1.0};
+    //etl::fast_matrix<double, 2, 2, 2> b = {2.5, 3.0, 4.0, 1.0, 1.0, 1.0, 1.0, 1.0};
+
+    //etl::fast_matrix<double, 2, 2, 2> c(a + b);
+
+    //REQUIRE(c[0] ==  1.5);
+    //REQUIRE(c[1] ==  5.0);
+    //REQUIRE(c[2] ==  9.0);
+    //REQUIRE(c[7] ==  2.0);
+//}
+
+TEST_CASE( "fast_matrix/add_4", "fast_matrix::operator+=" ) {
+    etl::fast_matrix<double, 2, 2, 2> a = {-1.0, 2.0, 5.0, 1.0, 1.0, 1.0, 1.0, 1.0};
+    etl::fast_matrix<double, 2, 2, 2> b = {2.5, 3.0, 4.0, 1.0, 1.0, 1.0, 1.0, 1.0};
+
+    a += b;
+
+    REQUIRE(a[0] ==  1.5);
+    REQUIRE(a[1] ==  5.0);
+    REQUIRE(a[2] ==  9.0);
+    REQUIRE(a[7] ==  2.0);
 }
 
 TEST_CASE( "fast_matrix/sub_scalar_1", "fast_matrix::operator+" ) {
