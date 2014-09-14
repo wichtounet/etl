@@ -227,7 +227,7 @@ public:
         return dim<0>();
     }
 
-    static constexpr size_t columns(){
+    static constexpr enable_if_t<(sizeof...(Dims) > 1), std::size_t> columns(){
         return dim<1>();
     }
 
