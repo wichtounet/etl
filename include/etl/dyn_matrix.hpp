@@ -74,6 +74,18 @@ public:
             }
         }
     }
+    
+    template<typename E>
+    explicit dyn_matrix(const transform_expr<value_type, E>& e) :
+            _data(etl::rows(e) * etl::columns(e)),
+            _rows(etl::rows(e)),
+            _columns(etl::columns(e)){
+        for(std::size_t i = 0; i < rows(); ++i){
+            for(std::size_t j = 0; j < columns(); ++j){
+                _data[i * columns() + j] = e(i,j);
+            }
+        }
+    }
 
     //Default move
     dyn_matrix(dyn_matrix&& rhs) = default;
@@ -124,6 +136,19 @@ public:
 
     template<typename E, typename Op>
     dyn_matrix& operator=(unary_expr<value_type, E, Op>&& e){
+        ensure_same_size(*this, e);
+
+        for(std::size_t i = 0; i < rows(); ++i){
+            for(std::size_t j = 0; j < columns(); ++j){
+                _data[i * columns() + j] = e(i,j);
+            }
+        }
+
+        return *this;
+    }
+
+    template<typename E>
+    dyn_matrix& operator=(transform_expr<value_type, E>&& e){
         ensure_same_size(*this, e);
 
         for(std::size_t i = 0; i < rows(); ++i){

@@ -49,11 +49,11 @@ struct and_u : std::false_type {};
 template<>
 struct and_u<true, true, true, true> : std::true_type {};
 
-template<bool b1, bool b2, bool b3 = false, bool b4 = false, bool b5 = false, bool b6 = false, bool b7 = false, bool b8 = false>
+template<bool b1, bool b2, bool b3 = false, bool b4 = false, bool b5 = false, bool b6 = false, bool b7 = false, bool b8 = false, bool b9 = false>
 struct or_u : std::true_type {};
 
 template<>
-struct or_u<false, false, false, false, false, false, false, false> : std::false_type {};
+struct or_u<false, false, false, false, false, false, false, false, false> : std::false_type {};
 
 template<template<typename...> class TT, typename T>
 struct is_specialization_of : std::false_type {};

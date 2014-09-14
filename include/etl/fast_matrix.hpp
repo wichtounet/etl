@@ -157,6 +157,19 @@ public:
         }
     }
 
+    template<typename E>
+    explicit fast_matrix(const transform_expr<value_type, E>& e){
+        //TODO This will only support 2D Expressions
+
+        ensure_same_size(*this, e);
+
+        for(std::size_t i = 0; i < dim<0>(); ++i){
+            for(std::size_t j = 0; j < dim<1>(); ++j){
+                _data[index(i,j)] = e(i,j);
+            }
+        }
+    }
+
     //}}}
 
     //{{{ Assignment
@@ -193,6 +206,19 @@ public:
 
     template<typename E, typename Op>
     fast_matrix& operator=(unary_expr<value_type, E, Op>&& e){
+        ensure_same_size(*this, e);
+
+        for(std::size_t i = 0; i < dim<0>(); ++i){
+            for(std::size_t j = 0; j < dim<1>(); ++j){
+                _data[index(i,j)] = e(i,j);
+            }
+        }
+
+        return *this;
+    }
+
+    template<typename E>
+    fast_matrix& operator=(transform_expr<value_type, E>&& e){
         ensure_same_size(*this, e);
 
         for(std::size_t i = 0; i < dim<0>(); ++i){

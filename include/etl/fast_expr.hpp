@@ -151,6 +151,67 @@ public:
     }
 };
 
+template <typename T, typename Expr>
+class transform_expr {
+private:
+    static_assert(is_etl_expr<Expr>::value, "Only ETL expressions can be used in transform_expr");
+
+    using this_type = transform_expr<T, Expr>;
+
+    Expr _value;
+
+public:
+    using value_type = T;
+
+    //Cannot be constructed with no args
+    transform_expr() = delete;
+
+    //Construct a new expression
+    transform_expr(Expr l) : _value(std::forward<Expr>(l)){
+        //Nothing else to init
+    }
+
+    transform_expr(const transform_expr& e) : _value(e._value) {
+        //Nothing else to init
+    }
+
+    transform_expr(transform_expr&& e) : _value(e._value) {
+        //Nothing else to init
+    }
+
+    //Expression are invariant
+    transform_expr& operator=(const transform_expr&) = delete;
+    transform_expr& operator=(transform_expr&&) = delete;
+
+    //Accessors
+
+    typename std::add_lvalue_reference<Expr>::type value(){
+        return _value;
+    }
+
+    typename std::add_lvalue_reference<typename std::add_const<Expr>::type>::type value() const {
+        return _value;
+    }
+
+    //Apply the expression
+
+    //TODO The three next functions should be auto return type
+    //However, clang++ and g++ do not support that with -g
+
+    T operator[](std::size_t i) const {
+        return value()[i];
+    }
+
+    T operator()(std::size_t i) const {
+        return value()[i];
+    }
+
+    template<typename TT = this_type>
+    enable_if_t<etl_traits<TT>::is_matrix, T> operator()(std::size_t i, std::size_t j) const {
+        return value()(i,j);
+    }
+};
+
 //{{{ Build binary expressions from two ETL expressions (vector,matrix,binary,unary)
 
 template<typename LE, typename RE, enable_if_u<and_u<is_etl_expr<LE>::value, is_etl_expr<RE>::value>::value> = detail::dummy>
@@ -406,26 +467,6 @@ auto bernoulli(const E& value) -> unary_expr<typename E::value_type, const E&, b
     return {value};
 }
 
-template<typename E, enable_if_u<is_etl_expr<E>::value> = detail::dummy>
-auto hflip(const E& value) -> unary_expr<typename E::value_type, hflip_transformer<E>, identity_unary_op<typename E::value_type>> {
-    return {hflip_transformer<E>(value)};
-}
-
-template<typename E, enable_if_u<is_etl_expr<E>::value> = detail::dummy>
-auto vflip(const E& value) -> unary_expr<typename E::value_type, vflip_transformer<E>, identity_unary_op<typename E::value_type>> {
-    return {vflip_transformer<E>(value)};
-}
-
-template<typename E, enable_if_u<is_etl_expr<E>::value> = detail::dummy>
-auto fflip(const E& value) -> unary_expr<typename E::value_type, fflip_transformer<E>, identity_unary_op<typename E::value_type>> {
-    return {fflip_transformer<E>(value)};
-}
-
-template<typename E, enable_if_u<is_etl_expr<E>::value> = detail::dummy>
-auto transpose(const E& value) -> unary_expr<typename E::value_type, transpose_transformer<E>, identity_unary_op<typename E::value_type>> {
-    return {transpose_transformer<E>(value)};
-}
-
 template<std::size_t D, typename E, enable_if_u<is_etl_expr<E>::value> = detail::dummy>
 auto dim(const E& value, std::size_t i) -> unary_expr<typename E::value_type, dim_view<E, D>, identity_unary_op<typename E::value_type>> {
     return {{value, i}};
@@ -453,6 +494,30 @@ auto reshape(const E& value, std::size_t rows, std::size_t columns) -> unary_exp
     etl_assert(etl_traits<E>::size(value) == rows * columns, "Invalid size for reshape");
 
     return {dyn_matrix_view<E>(value, rows, columns)};
+}
+
+//}}}
+
+//{{{ Apply a special expression that can change order of elements
+
+template<typename E, enable_if_u<is_etl_expr<E>::value> = detail::dummy>
+auto hflip(const E& value) -> unary_expr<typename E::value_type, hflip_transformer<E>, identity_unary_op<typename E::value_type>> {
+    return {hflip_transformer<E>(value)};
+}
+
+template<typename E, enable_if_u<is_etl_expr<E>::value> = detail::dummy>
+auto vflip(const E& value) -> unary_expr<typename E::value_type, vflip_transformer<E>, identity_unary_op<typename E::value_type>> {
+    return {vflip_transformer<E>(value)};
+}
+
+template<typename E, enable_if_u<is_etl_expr<E>::value> = detail::dummy>
+auto fflip(const E& value) -> unary_expr<typename E::value_type, fflip_transformer<E>, identity_unary_op<typename E::value_type>> {
+    return {fflip_transformer<E>(value)};
+}
+
+template<typename E, enable_if_u<is_etl_expr<E>::value> = detail::dummy>
+auto transpose(const E& value) -> transform_expr<typename E::value_type, transpose_transformer<E>> {
+    return {transpose_transformer<E>(value)};
 }
 
 //}}}
