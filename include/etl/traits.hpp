@@ -21,7 +21,7 @@ struct dyn_vector;
 template<typename T>
 struct dyn_matrix;
 
-template<typename T, size_t Rows, size_t Columns>
+template<typename T, size_t... Dims>
 struct fast_matrix;
 
 template<typename T, size_t Rows, size_t Columns>
@@ -63,11 +63,17 @@ struct is_3 : std::false_type { };
 template<template<typename, std::size_t, std::size_t> class TT, typename V1, std::size_t R1, std::size_t R2>
 struct is_3<TT, TT<V1, R1, R2>> : std::true_type { };
 
+template<template<typename, std::size_t...> class TT, typename T>
+struct is_var : std::false_type { };
+
+template<template<typename, std::size_t...> class TT, typename V1, std::size_t... R>
+struct is_var<TT, TT<V1, R...>> : std::true_type { };
+
 template<typename T>
 struct is_fast_vector : std::integral_constant<bool, is_2<etl::fast_vector, remove_cv_t<remove_reference_t<T>>>::value> {};
 
 template<typename T>
-struct is_fast_matrix : std::integral_constant<bool, is_3<etl::fast_matrix, remove_cv_t<remove_reference_t<T>>>::value> {};
+struct is_fast_matrix : std::integral_constant<bool, is_var<etl::fast_matrix, remove_cv_t<remove_reference_t<T>>>::value> {};
 
 template<typename T>
 struct is_dyn_vector : std::integral_constant<bool, is_specialization_of<etl::dyn_vector, remove_cv_t<remove_reference_t<T>>>::value> {};

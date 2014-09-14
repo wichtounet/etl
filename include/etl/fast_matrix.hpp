@@ -26,6 +26,18 @@ struct matrix_size  : std::integral_constant<std::size_t, F * matrix_size<Dims..
 template<size_t F>
 struct matrix_size<F> : std::integral_constant<std::size_t, F> {};
 
+template<typename M, size_t I, typename Enable = void>
+struct matrix_subsize  : std::integral_constant<std::size_t, M::template dim<M::dimensions - 1 - I>() * matrix_subsize<M, I+1>::value> {};
+
+template<typename M, size_t I>
+struct matrix_subsize<M, I, enable_if_t<I == M::dimensions - 1>> : std::integral_constant<std::size_t, 1> {};
+
+template<typename F, typename... S>
+struct valid_sizes  : std::integral_constant<bool, and_u<valid_sizes<F>::value, valid_sizes<S...>::value>::value> {};
+
+template<typename F>
+struct valid_sizes<F> : std::integral_constant<bool, std::is_convertible<F, std::size_t>::value> {};
+
 template<size_t S, size_t I, size_t F, size_t... Dims>
 struct matrix_dimension {
     template<size_t S2, size_t I2, typename Enable = void>
@@ -44,8 +56,7 @@ struct matrix_index {
         static size_t compute(S1 first, S... args){
             etl_assert(first < M::template dim<I2>(), "Out of bounds");
 
-            //TODO Need to accumulate the sizes
-            return M::template dim<I>() * first + matrix_index<M, I+1, Stop, S...>::compute(args...);
+            return matrix_subsize<M, I>::value * first + matrix_index<M, I+1, Stop, S...>::compute(args...);
         }
     };
 
@@ -66,124 +77,36 @@ struct matrix_index {
 } //end of namespace detail
 
 template<typename T, size_t... Dims>
-struct big_matrix {
+struct fast_matrix {
     static_assert(sizeof...(Dims) > 1, "At least two dimension must be specified");
 
 public:
+    static constexpr const std::size_t dimensions = sizeof...(Dims);
     static constexpr const std::size_t etl_size = matrix_detail::matrix_size<Dims...>::value;
 
     using       value_type = T;
     using     storage_impl = std::array<value_type, etl_size>;
     using         iterator = typename storage_impl::iterator;
     using   const_iterator = typename storage_impl::const_iterator;
-    using        this_type = big_matrix<T, Dims...>;
+    using        this_type = fast_matrix<T, Dims...>;
 
 private:
     storage_impl _data;
+
+    template<typename... S>
+    static constexpr std::size_t index(S... args){
+        return matrix_detail::matrix_index<this_type, 0, dimensions - 1, S...>::compute(args...);
+    }
 
     template<typename... S>
     value_type& access(S... args){
-        return _data[matrix_detail::matrix_index<this_type, 0, sizeof...(Dims) - 1, S...>::compute(args...)];
-    }
-
-public:
-
-
-
-    //{{{ Accessors
-
-    static constexpr size_t size(){
-        return etl_size;
-    }
-
-    static constexpr size_t rows(){
-        return dim<0>();
-    }
-
-    static constexpr size_t columns(){
-        return dim<1>();
-    }
-
-    template<size_t D>
-    static constexpr size_t dim(){
-        return matrix_detail::matrix_dimension<D, 0, Dims...>::value;
-    }
-
-    //TODO Would probably be useful to have dim(size_t i)
-    
-    //TODO Find a way to prefer simple implementation instead of variadic one
-    //for two indices
-
-    value_type& operator()(size_t i, size_t j){
-        etl_assert(i < rows(), "Out of bounds");
-        etl_assert(j < columns(), "Out of bounds");
-
-        std::cout << "Simple" << std::endl;
-
-        return _data[i * columns() + j];
-    }
-
-    const value_type& operator()(size_t i, size_t j) const {
-        etl_assert(i < rows(), "Out of bounds");
-        etl_assert(j < columns(), "Out of bounds");
-
-        std::cout << "Simple" << std::endl;
-
-        return _data[i * columns() + j];
+        return _data[index(args...)];
     }
 
     template<typename... S>
-    value_type& operator()(S... args){
-        static_assert(sizeof...(S) == sizeof...(Dims), "Invalid number of parameters");
-        //TODO static_assert to ensure that each T is size_t or convertible to
-        //size_t
-
-        return access(static_cast<size_t>(args)...);
+    const value_type& access(S... args) const {
+        return _data[index(args...)];
     }
-
-    const value_type& operator[](size_t i) const {
-        etl_assert(i < size(), "Out of bounds");
-
-        return _data[i];
-    }
-
-    value_type& operator[](size_t i){
-        etl_assert(i < size(), "Out of bounds");
-
-        return _data[i];
-    }
-
-    const_iterator begin() const {
-        return _data.begin();
-    }
-
-    const_iterator end() const {
-        return _data.end();
-    }
-
-    iterator begin(){
-        return _data.begin();
-    }
-
-    iterator end(){
-        return _data.end();
-    }
-
-    //}}}
-};
-
-template<typename T, size_t Rows, size_t Columns>
-struct fast_matrix {
-public:
-    using       value_type = T;
-    using     storage_impl = std::array<value_type, Rows * Columns>;
-    using         iterator = typename storage_impl::iterator;
-    using   const_iterator = typename storage_impl::const_iterator;
-
-    static constexpr const std::size_t etl_size = Rows * Columns;
-
-private:
-    storage_impl _data;
 
 public:
 
@@ -214,22 +137,26 @@ public:
 
     template<typename LE, typename Op, typename RE>
     explicit fast_matrix(const binary_expr<value_type, LE, Op, RE>& e){
+        //TODO This will only support 2D Expressions
+
         ensure_same_size(*this, e);
 
-        for(std::size_t i = 0; i < Rows; ++i){
-            for(std::size_t j = 0; j < Columns; ++j){
-                _data[i * Columns + j] = e(i,j);
+        for(std::size_t i = 0; i < dim<0>(); ++i){
+            for(std::size_t j = 0; j < dim<1>(); ++j){
+                _data[index(i,j)] = e(i,j);
             }
         }
     }
 
     template<typename E, typename Op>
     explicit fast_matrix(const unary_expr<value_type, E, Op>& e){
+        //TODO This will only support 2D Expressions
+
         ensure_same_size(*this, e);
 
-        for(std::size_t i = 0; i < Rows; ++i){
-            for(std::size_t j = 0; j < Columns; ++j){
-                _data[i * Columns + j] = e(i,j);
+        for(std::size_t i = 0; i < dim<0>(); ++i){
+            for(std::size_t j = 0; j < dim<1>(); ++j){
+                _data[index(i,j)] = e(i,j);
             }
         }
     }
@@ -241,9 +168,7 @@ public:
     //Copy assignment operator
 
     fast_matrix& operator=(const fast_matrix& rhs){
-        for(std::size_t i = 0; i < size(); ++i){
-            _data[i] = rhs[i];
-        }
+        std::copy(rhs.begin(), rhs.end(), begin());
 
         return *this;
     }
@@ -252,9 +177,7 @@ public:
 
     template<typename Container, enable_if_u<std::is_same<typename Container::value_type, value_type>::value> = detail::dummy>
     fast_matrix& operator=(const Container& vec){
-        for(std::size_t i = 0; i < Rows * Columns; ++i){
-            _data[i] = vec[i];
-        }
+        std::copy(vec.begin(), vec.end(), begin());
 
         return *this;
     }
@@ -265,9 +188,9 @@ public:
     fast_matrix& operator=(binary_expr<value_type, LE, Op, RE>&& e){
         ensure_same_size(*this, e);
 
-        for(std::size_t i = 0; i < Rows; ++i){
-            for(std::size_t j = 0; j < Columns; ++j){
-                _data[i * Columns + j] = e(i,j);
+        for(std::size_t i = 0; i < dim<0>(); ++i){
+            for(std::size_t j = 0; j < dim<1>(); ++j){
+                _data[index(i,j)] = e(i,j);
             }
         }
 
@@ -278,9 +201,9 @@ public:
     fast_matrix& operator=(unary_expr<value_type, E, Op>&& e){
         ensure_same_size(*this, e);
 
-        for(std::size_t i = 0; i < Rows; ++i){
-            for(std::size_t j = 0; j < Columns; ++j){
-                _data[i * Columns + j] = e(i,j);
+        for(std::size_t i = 0; i < dim<0>(); ++i){
+            for(std::size_t j = 0; j < dim<1>(); ++j){
+                _data[index(i,j)] = e(i,j);
             }
         }
 
@@ -303,29 +226,38 @@ public:
     //{{{ Accessors
 
     static constexpr size_t size(){
-        return Rows * Columns;
+        return etl_size;
     }
 
     static constexpr size_t rows(){
-        return Rows;
+        return dim<0>();
     }
 
     static constexpr size_t columns(){
-        return Columns;
+        return dim<1>();
     }
 
-    value_type& operator()(size_t i, size_t j){
-        etl_assert(i < Rows, "Out of bounds");
-        etl_assert(j < Columns, "Out of bounds");
-
-        return _data[i * Columns + j];
+    template<size_t D>
+    static constexpr size_t dim(){
+        return matrix_detail::matrix_dimension<D, 0, Dims...>::value;
     }
 
-    const value_type& operator()(size_t i, size_t j) const {
-        etl_assert(i < Rows, "Out of bounds");
-        etl_assert(j < Columns, "Out of bounds");
+    //TODO Would probably be useful to have dim(size_t i)
 
-        return _data[i * Columns + j];
+    template<typename... S>
+    value_type& operator()(S... args){
+        static_assert(sizeof...(S) == sizeof...(Dims), "Invalid number of parameters");
+        static_assert(matrix_detail::valid_sizes<S...>::value, "Invalid size types");
+
+        return access(static_cast<size_t>(args)...);
+    }
+
+    template<typename... S>
+    const value_type& operator()(S... args) const {
+        static_assert(sizeof...(S) == sizeof...(Dims), "Invalid number of parameters");
+        static_assert(matrix_detail::valid_sizes<S...>::value, "Invalid size types");
+
+        return access(static_cast<size_t>(args)...);
     }
 
     const value_type& operator[](size_t i) const {
