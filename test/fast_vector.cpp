@@ -512,7 +512,6 @@ TEST_CASE( "fast_vector/complex_2", "fast_vector::complex" ) {
 TEST_CASE( "fast_vector/complex_3", "fast_vector::complex" ) {
     etl::fast_vector<double, 3> a = {-1.0, 2.0, 5.0};
     etl::fast_vector<double, 3> b = {2.5, 3.0, 4.0};
-    etl::fast_vector<double, 3> c = {1.2, -3.0, 3.5};
 
     etl::fast_vector<double, 3> d(2.5 / (a * b));
 
