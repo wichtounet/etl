@@ -428,7 +428,12 @@ auto log(const E& value) -> unary_expr<typename E::value_type, const E&, log_una
 }
 
 template<typename E, enable_if_u<is_etl_expr<E>::value> = detail::dummy>
-auto noise(const E& value) -> unary_expr<typename E::value_type, const E&, noise_unary_op<typename E::value_type>> {
+auto uniform_noise(const E& value) -> unary_expr<typename E::value_type, const E&, uniform_noise_unary_op<typename E::value_type>> {
+    return {value};
+}
+
+template<typename E, enable_if_u<is_etl_expr<E>::value> = detail::dummy>
+auto normal_noise(const E& value) -> unary_expr<typename E::value_type, const E&, normal_noise_unary_op<typename E::value_type>> {
     return {value};
 }
 

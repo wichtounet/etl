@@ -303,10 +303,21 @@ struct bernoulli_unary_op {
 };
 
 template<typename T>
-struct noise_unary_op {
+struct uniform_noise_unary_op {
     static T apply(const T& x){
         static std::default_random_engine rand_engine(std::time(nullptr));
-        static std::uniform_real_distribution<double> normal_distribution(0.0, 1.0);
+        static std::uniform_real_distribution<double> real_distribution(0.0, 1.0);
+        static auto noise = std::bind(real_distribution, rand_engine);
+
+        return x + noise();
+    }
+};
+
+template<typename T>
+struct normal_noise_unary_op {
+    static T apply(const T& x){
+        static std::default_random_engine rand_engine(std::time(nullptr));
+        static std::normal_distribution<double> normal_distribution(0.0, 1.0);
         static auto noise = std::bind(normal_distribution, rand_engine);
 
         return x + noise();
@@ -329,7 +340,7 @@ template<typename T, typename E>
 struct ranged_noise_binary_op {
     static T apply(const T& x, E value){
         static std::default_random_engine rand_engine(std::time(nullptr));
-        static std::uniform_real_distribution<double> normal_distribution(0.0, 1.0);
+        static std::normal_distribution<double> normal_distribution(0.0, 1.0);
         static auto noise = std::bind(normal_distribution, rand_engine);
 
         if(x == 0.0 || x == value){
