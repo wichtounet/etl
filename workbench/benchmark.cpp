@@ -44,7 +44,9 @@ void randomize(T1& container, TT&... containers){
 std::string duration_str(std::size_t duration_us){
     double duration = duration_us;
 
-    if(duration > 1000){
+    if(duration > 1000 * 1000){
+        return std::to_string(duration / 1000.0 / 1000.0) + "s";
+    } else if(duration > 1000){
         return std::to_string(duration / 1000.0) + "ms";
     } else {
         return std::to_string(duration_us) + "us";
@@ -103,8 +105,12 @@ int main(){
         double_matrix_f = 3.5 * double_matrix_d + etl::sigmoid(1.0 + double_matrix_e);
     }, double_matrix_d, double_matrix_e);
 
-    measure("fast_matrix_full_convolve(256,128)", "15s", [](){
+    measure("fast_matrix_full_convolve(128,128)", "25s", [](){
         etl::convolve_2d_full(double_conv_a, double_conv_b, double_conv_c);
+    }, double_conv_a, double_conv_b);
+
+    measure("fast_matrix_valid_convolve(128,128)", "40s", [](){
+        etl::convolve_2d_valid(double_conv_a, double_conv_b, double_conv_c);
     }, double_conv_a, double_conv_b);
 
     return 0;
