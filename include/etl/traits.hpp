@@ -426,11 +426,7 @@ struct etl_traits<etl::dim_view<T, D>> {
 
     template<bool B = is_fast, enable_if_u<B> = detail::dummy>
     static constexpr std::size_t size(){
-        if(D == 1){
-            return etl_traits<T>::columns();
-        } else if (D == 2){
-            return etl_traits<T>::rows();
-        }
+        return D == 1 ? etl_traits<T>::columns() : etl_traits<T>::rows();
     }
 };
 
