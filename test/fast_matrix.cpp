@@ -540,7 +540,6 @@ TEST_CASE( "fast_matrix/complex_2", "fast_matrix::complex" ) {
 TEST_CASE( "fast_matrix/complex_3", "fast_matrix::complex" ) {
     etl::fast_matrix<double, 2, 2> a = {-1.0, 2.0, 5.0, 1.0};
     etl::fast_matrix<double, 2, 2> b = {2.5, 3.0, 4.0, 1.0};
-    etl::fast_matrix<double, 2, 2> c = {1.2, -3.0, 3.5, 1.0};
 
     etl::fast_matrix<double, 2, 2> d(2.5 / (a * b));
 
