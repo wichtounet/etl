@@ -11,6 +11,7 @@
 
 #include "etl/fast_vector.hpp"
 #include "etl/fast_matrix.hpp"
+#include "etl/convolution.hpp"
 
 typedef std::chrono::high_resolution_clock timer_clock;
 typedef std::chrono::milliseconds milliseconds;
@@ -85,18 +86,26 @@ etl::fast_matrix<double, 256, 128> double_matrix_d;
 etl::fast_matrix<double, 256, 128> double_matrix_e;
 etl::fast_matrix<double, 256, 128> double_matrix_f;
 
+etl::fast_matrix<double, 128, 128> double_conv_a;
+etl::fast_matrix<double, 32, 32> double_conv_b;
+etl::fast_matrix<double, 159, 159> double_conv_c;
+
 int main(){
     measure("fast_vector_simple(4096)", "72ms", [](){
         double_vector_c = 3.5 * double_vector_a + etl::sigmoid(1.0 + double_vector_b);
     }, double_vector_a, double_vector_b);
-    
+
     measure("fast_matrix_simple(16,256)(4096)", "72ms", [](){
         double_matrix_c = 3.5 * double_matrix_a + etl::sigmoid(1.0 + double_matrix_b);
     }, double_matrix_a, double_matrix_b);
-    
+
     measure("fast_matrix_simple(256,128)", "580ms", [](){
         double_matrix_f = 3.5 * double_matrix_d + etl::sigmoid(1.0 + double_matrix_e);
     }, double_matrix_d, double_matrix_e);
+
+    measure("fast_matrix_full_convolve(256,128)", "15s", [](){
+        etl::convolve_2d_full(double_conv_a, double_conv_b, double_conv_c);
+    }, double_conv_a, double_conv_b);
 
     return 0;
 }
