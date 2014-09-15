@@ -548,4 +548,19 @@ TEST_CASE( "fast_matrix/complex_3", "fast_matrix::complex" ) {
     REQUIRE(d[2] == Approx(0.125));
 }
 
+TEST_CASE( "fast_matrix/complex_4", "fast_matrix::complex" ) {
+    etl::fast_matrix<double, 2, 2, 2> a = {1.1, 2.0, 5.0, 1.0, 1.1, 2.0, 5.0, 1.0};
+    etl::fast_matrix<double, 2, 2, 2> b = {2.5, -3.0, 4.0, 1.0, 2.5, -3.0, 4.0, 1.0};
+    etl::fast_matrix<double, 2, 2, 2> c = {2.2, 3.0, 3.5, 1.0, 2.2, 3.0, 3.5, 1.0};
+
+    etl::fast_matrix<double, 2, 2, 2> d(2.5 * ((a * b) / (log(a) * abs(c))) / (1.5 * a * sign(b) / c) + 2.111 / log(c));
+
+    REQUIRE(d[0] == Approx(46.39429));
+    REQUIRE(d[1] == Approx(9.13499));
+    REQUIRE(d[2] == Approx(5.8273));
+    REQUIRE(d[4] == Approx(46.39429));
+    REQUIRE(d[5] == Approx(9.13499));
+    REQUIRE(d[6] == Approx(5.8273));
+}
+
 //}}} Complex tests
