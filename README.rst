@@ -113,6 +113,22 @@ you pass a + b to a matrix multiplication, an addition will be run
 each time an element is accessed, therefore, it is not often
 efficient. 
 
+Building
+--------
+
+This library is completely header-only, there is no need to build it.
+
+The folder **include** must be included with the **-I** option. 
+
+However, this library makes extensive use of C++11 and C++14,
+therefore, a recent compiler is necessary to use it.  This library
+has only been tested on CLang 3.4 and g++ 4.9.1. Moreover, this has
+never been tested on Windows. 
+
+If you have problems compiling this library, I'd be glad to help,
+but I do not guarantee that this will work on every compiler. I
+strongly expect it to not build under Visual Studio.
+
 License
 -------
 
