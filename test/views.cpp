@@ -252,4 +252,15 @@ TEST_CASE( "fast_matrix/sub_view_1", "fast_matrix::sub" ) {
     REQUIRE(etl::sub(a, 1)(0, 1) == 2.0);
 }
 
+TEST_CASE( "fast_matrix/sub_view_2", "fast_matrix::sub" ) {
+    etl::fast_matrix<double, 2, 2, 2> a = {1.1, 2.0, 5.0, 1.0, 1.1, 2.0, 5.0, 1.0};
+
+    REQUIRE(etl::sub(etl::sub(a, 0), 0)(0) == 1.1);
+    REQUIRE(etl::sub(etl::sub(a, 0), 0)(1) == 2.0);
+    REQUIRE(etl::sub(etl::sub(a, 0), 1)(0) == 5.0);
+    REQUIRE(etl::sub(etl::sub(a, 0), 1)(1) == 2.0);
+    REQUIRE(etl::sub(etl::sub(a, 1), 0)(0) == 1.1);
+    REQUIRE(etl::sub(etl::sub(a, 1), 0)(1) == 2.0);
+}
+
 //}}}
