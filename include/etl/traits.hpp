@@ -156,6 +156,8 @@ struct etl_traits<T, enable_if_t<is_etl_value<T>::value>> {
         return v.dim(d);
     }
 
+    //TODO Add dimensions traits function
+
     template<bool B = is_fast, enable_if_u<B> = detail::dummy>
     static constexpr std::size_t size(){
         return T::size();
