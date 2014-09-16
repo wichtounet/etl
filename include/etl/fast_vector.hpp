@@ -173,6 +173,13 @@ public:
         return Rows;
     }
 
+    template<size_t D>
+    static constexpr size_t dim(){
+        static_assert(D == 0, "Invalid dimension");
+
+        return Rows;
+    }
+
     value_type& operator()(size_t i){
         etl_assert(i < Rows, "Out of bounds");
 

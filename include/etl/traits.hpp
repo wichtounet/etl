@@ -152,6 +152,10 @@ struct etl_traits<T, enable_if_t<is_etl_value<T>::value>> {
         return v.columns();
     }
 
+    static std::size_t dim(const T& v, std::size_t d){
+        return v.dim(d);
+    }
+
     template<bool B = is_fast, enable_if_u<B> = detail::dummy>
     static constexpr std::size_t size(){
         return T::size();
@@ -166,6 +170,11 @@ struct etl_traits<T, enable_if_t<is_etl_value<T>::value>> {
     static constexpr std::size_t columns(){
         return T::columns();
     }
+
+    template<std::size_t D>
+    static constexpr std::size_t dim(){
+        return T::template dim<D>();
+    }
 };
 
 /*!
@@ -173,38 +182,50 @@ struct etl_traits<T, enable_if_t<is_etl_value<T>::value>> {
  */
 template <typename T, typename Expr, typename UnaryOp>
 struct etl_traits<etl::unary_expr<T, Expr, UnaryOp>> {
-    static constexpr const bool is_vector = etl_traits<remove_cv_t<remove_reference_t<Expr>>>::is_vector;
-    static constexpr const bool is_matrix = etl_traits<remove_cv_t<remove_reference_t<Expr>>>::is_matrix;
-    static constexpr const bool is_fast = etl_traits<remove_cv_t<remove_reference_t<Expr>>>::is_fast;
+    using expr_t = etl::unary_expr<T, Expr, UnaryOp>;
+    using sub_expr_t = remove_cv_t<remove_reference_t<Expr>>;
+
+    static constexpr const bool is_vector = etl_traits<sub_expr_t>::is_vector;
+    static constexpr const bool is_matrix = etl_traits<sub_expr_t>::is_matrix;
+    static constexpr const bool is_fast = etl_traits<sub_expr_t>::is_fast;
     static constexpr const bool is_value = false;
 
-    static std::size_t size(const etl::unary_expr<T, Expr, UnaryOp>& v){
-        return etl_traits<remove_cv_t<remove_reference_t<Expr>>>::size(v.value());
+    static std::size_t size(const expr_t& v){
+        return etl_traits<sub_expr_t>::size(v.value());
     }
 
     template<bool B = is_matrix, enable_if_u<B> = detail::dummy>
-    static std::size_t rows(const etl::unary_expr<T, Expr, UnaryOp>& v){
-        return etl_traits<remove_cv_t<remove_reference_t<Expr>>>::rows(v.value());
+    static std::size_t rows(const expr_t& v){
+        return etl_traits<sub_expr_t>::rows(v.value());
     }
 
     template<bool B = is_matrix, enable_if_u<B> = detail::dummy>
-    static std::size_t columns(const etl::unary_expr<T, Expr, UnaryOp>& v){
-        return etl_traits<remove_cv_t<remove_reference_t<Expr>>>::columns(v.value());
+    static std::size_t columns(const expr_t& v){
+        return etl_traits<sub_expr_t>::columns(v.value());
+    }
+
+    static std::size_t dim(const expr_t& v, std::size_t d){
+        return etl_traits<sub_expr_t>::dim(v.value(), d);
     }
 
     template<bool B = is_fast, enable_if_u<B> = detail::dummy>
     static constexpr std::size_t size(){
-        return etl_traits<remove_cv_t<remove_reference_t<Expr>>>::size();
+        return etl_traits<sub_expr_t>::size();
     }
 
     template<bool B = is_matrix, enable_if_u<and_u<B, is_fast>::value> = detail::dummy>
     static constexpr std::size_t rows(){
-        return etl_traits<remove_cv_t<remove_reference_t<Expr>>>::rows();
+        return etl_traits<sub_expr_t>::rows();
     }
 
     template<bool B = is_matrix, enable_if_u<and_u<B, is_fast>::value> = detail::dummy>
     static constexpr std::size_t columns(){
-        return etl_traits<remove_cv_t<remove_reference_t<Expr>>>::columns();
+        return etl_traits<sub_expr_t>::columns();
+    }
+
+    template<std::size_t D>
+    static constexpr std::size_t dim(){
+        return etl_traits<sub_expr_t>::template dim<D>();
     }
 };
 
@@ -213,38 +234,50 @@ struct etl_traits<etl::unary_expr<T, Expr, UnaryOp>> {
  */
 template <typename T, typename Expr>
 struct etl_traits<etl::transform_expr<T, Expr>> {
-    static constexpr const bool is_vector = etl_traits<remove_cv_t<remove_reference_t<Expr>>>::is_vector;
-    static constexpr const bool is_matrix = etl_traits<remove_cv_t<remove_reference_t<Expr>>>::is_matrix;
-    static constexpr const bool is_fast = etl_traits<remove_cv_t<remove_reference_t<Expr>>>::is_fast;
+    using expr_t = etl::transform_expr<T, Expr>;
+    using sub_expr_t = remove_cv_t<remove_reference_t<Expr>>;
+
+    static constexpr const bool is_vector = etl_traits<sub_expr_t>::is_vector;
+    static constexpr const bool is_matrix = etl_traits<sub_expr_t>::is_matrix;
+    static constexpr const bool is_fast = etl_traits<sub_expr_t>::is_fast;
     static constexpr const bool is_value = false;
 
-    static std::size_t size(const etl::transform_expr<T, Expr>& v){
-        return etl_traits<remove_cv_t<remove_reference_t<Expr>>>::size(v.value());
+    static std::size_t size(const expr_t& v){
+        return etl_traits<sub_expr_t>::size(v.value());
     }
 
     template<bool B = is_matrix, enable_if_u<B> = detail::dummy>
-    static std::size_t rows(const etl::transform_expr<T, Expr>& v){
-        return etl_traits<remove_cv_t<remove_reference_t<Expr>>>::rows(v.value());
+    static std::size_t rows(const expr_t& v){
+        return etl_traits<sub_expr_t>::rows(v.value());
     }
 
     template<bool B = is_matrix, enable_if_u<B> = detail::dummy>
-    static std::size_t columns(const etl::transform_expr<T, Expr>& v){
-        return etl_traits<remove_cv_t<remove_reference_t<Expr>>>::columns(v.value());
+    static std::size_t columns(const expr_t& v){
+        return etl_traits<sub_expr_t>::columns(v.value());
+    }
+
+    static std::size_t dim(const expr_t& v, std::size_t d){
+        return etl_traits<sub_expr_t>::dim(v.value(), d);
     }
 
     template<bool B = is_fast, enable_if_u<B> = detail::dummy>
     static constexpr std::size_t size(){
-        return etl_traits<remove_cv_t<remove_reference_t<Expr>>>::size();
+        return etl_traits<sub_expr_t>::size();
     }
 
     template<bool B = is_matrix, enable_if_u<and_u<B, is_fast>::value> = detail::dummy>
     static constexpr std::size_t rows(){
-        return etl_traits<remove_cv_t<remove_reference_t<Expr>>>::rows();
+        return etl_traits<sub_expr_t>::rows();
     }
 
     template<bool B = is_matrix, enable_if_u<and_u<B, is_fast>::value> = detail::dummy>
     static constexpr std::size_t columns(){
-        return etl_traits<remove_cv_t<remove_reference_t<Expr>>>::columns();
+        return etl_traits<sub_expr_t>::columns();
+    }
+
+    template<std::size_t D>
+    static constexpr std::size_t dim(){
+        return etl_traits<sub_expr_t>::template dim<D>();
     }
 };
 
@@ -254,38 +287,50 @@ struct etl_traits<etl::transform_expr<T, Expr>> {
  */
 template <typename T, typename LeftExpr, typename BinaryOp, typename RightExpr>
 struct etl_traits<etl::binary_expr<T, LeftExpr, BinaryOp, RightExpr>, enable_if_t<is_etl_expr<LeftExpr>::value>> {
-    static constexpr const bool is_vector = etl_traits<remove_cv_t<remove_reference_t<LeftExpr>>>::is_vector;
-    static constexpr const bool is_matrix = etl_traits<remove_cv_t<remove_reference_t<LeftExpr>>>::is_matrix;
-    static constexpr const bool is_fast = etl_traits<remove_cv_t<remove_reference_t<LeftExpr>>>::is_fast;
+    using expr_t = etl::binary_expr<T, LeftExpr, BinaryOp, RightExpr>;
+    using sub_expr_t = remove_cv_t<remove_reference_t<LeftExpr>>;
+
+    static constexpr const bool is_vector = etl_traits<sub_expr_t>::is_vector;
+    static constexpr const bool is_matrix = etl_traits<sub_expr_t>::is_matrix;
+    static constexpr const bool is_fast = etl_traits<sub_expr_t>::is_fast;
     static constexpr const bool is_value = false;
 
-    static std::size_t size(const etl::binary_expr<T, LeftExpr, BinaryOp, RightExpr>& v){
-        return etl_traits<remove_cv_t<remove_reference_t<LeftExpr>>>::size(v.lhs());
+    static std::size_t size(const expr_t& v){
+        return etl_traits<sub_expr_t>::size(v.lhs());
     }
 
     template<bool B = is_matrix, enable_if_u<B> = detail::dummy>
-    static std::size_t rows(const etl::binary_expr<T, LeftExpr, BinaryOp, RightExpr>& v){
-        return etl_traits<remove_cv_t<remove_reference_t<LeftExpr>>>::rows(v.lhs());
+    static std::size_t rows(const expr_t& v){
+        return etl_traits<sub_expr_t>::rows(v.lhs());
     }
 
     template<bool B = is_matrix, enable_if_u<B> = detail::dummy>
-    static std::size_t columns(const etl::binary_expr<T, LeftExpr, BinaryOp, RightExpr>& v){
-        return etl_traits<remove_cv_t<remove_reference_t<LeftExpr>>>::columns(v.lhs());
+    static std::size_t columns(const expr_t& v){
+        return etl_traits<sub_expr_t>::columns(v.lhs());
+    }
+
+    static std::size_t dim(const expr_t& v, std::size_t d){
+        return etl_traits<sub_expr_t>::dim(v.lhs(), d);
     }
 
     template<bool B = is_fast, enable_if_u<B> = detail::dummy>
     static constexpr std::size_t size(){
-        return etl_traits<remove_cv_t<remove_reference_t<LeftExpr>>>::size();
+        return etl_traits<sub_expr_t>::size();
     }
 
     template<bool B = is_matrix, enable_if_u<and_u<B, is_fast>::value> = detail::dummy>
     static constexpr std::size_t rows(){
-        return etl_traits<remove_cv_t<remove_reference_t<LeftExpr>>>::rows();
+        return etl_traits<sub_expr_t>::rows();
     }
 
     template<bool B = is_matrix, enable_if_u<and_u<B, is_fast>::value> = detail::dummy>
     static constexpr std::size_t columns(){
-        return etl_traits<remove_cv_t<remove_reference_t<LeftExpr>>>::columns();
+        return etl_traits<sub_expr_t>::columns();
+    }
+
+    template<std::size_t D>
+    static constexpr std::size_t dim(){
+        return etl_traits<sub_expr_t>::template dim<D>();
     }
 };
 
@@ -295,38 +340,50 @@ struct etl_traits<etl::binary_expr<T, LeftExpr, BinaryOp, RightExpr>, enable_if_
  */
 template <typename T, typename LeftExpr, typename BinaryOp, typename RightExpr>
 struct etl_traits<etl::binary_expr<T, LeftExpr, BinaryOp, RightExpr>, enable_if_t<and_u<not_u<is_etl_expr<LeftExpr>::value>::value, is_etl_expr<RightExpr>::value>::value>> {
-    static constexpr const bool is_vector = etl_traits<remove_cv_t<remove_reference_t<RightExpr>>>::is_vector;
-    static constexpr const bool is_matrix = etl_traits<remove_cv_t<remove_reference_t<RightExpr>>>::is_matrix;
-    static constexpr const bool is_fast = etl_traits<remove_cv_t<remove_reference_t<RightExpr>>>::is_fast;
+    using expr_t = etl::binary_expr<T, LeftExpr, BinaryOp, RightExpr>;
+    using sub_expr_t = remove_cv_t<remove_reference_t<RightExpr>>;
+
+    static constexpr const bool is_vector = etl_traits<sub_expr_t>::is_vector;
+    static constexpr const bool is_matrix = etl_traits<sub_expr_t>::is_matrix;
+    static constexpr const bool is_fast = etl_traits<sub_expr_t>::is_fast;
     static constexpr const bool is_value = false;
 
-    static std::size_t size(const etl::binary_expr<T, LeftExpr, BinaryOp, RightExpr>& v){
-        return etl_traits<remove_cv_t<remove_reference_t<RightExpr>>>::size(v.rhs());
+    static std::size_t size(const expr_t& v){
+        return etl_traits<sub_expr_t>::size(v.rhs());
     }
 
     template<bool B = is_matrix, enable_if_u<B> = detail::dummy>
-    static std::size_t rows(const etl::binary_expr<T, LeftExpr, BinaryOp, RightExpr>& v){
-        return etl_traits<remove_cv_t<remove_reference_t<RightExpr>>>::rows(v.rhs());
+    static std::size_t rows(const expr_t& v){
+        return etl_traits<sub_expr_t>::rows(v.rhs());
     }
 
     template<bool B = is_matrix, enable_if_u<B> = detail::dummy>
-    static std::size_t columns(const etl::binary_expr<T, LeftExpr, BinaryOp, RightExpr>& v){
-        return etl_traits<remove_cv_t<remove_reference_t<RightExpr>>>::columns(v.rhs());
+    static std::size_t columns(const expr_t& v){
+        return etl_traits<sub_expr_t>::columns(v.rhs());
+    }
+
+    static std::size_t dim(const expr_t& v, std::size_t d){
+        return etl_traits<sub_expr_t>::dim(v.rhs(), d);
     }
 
     template<bool B = is_fast, enable_if_u<B> = detail::dummy>
     static constexpr std::size_t size(){
-        return etl_traits<remove_cv_t<remove_reference_t<RightExpr>>>::size();
+        return etl_traits<sub_expr_t>::size();
     }
 
     template<bool B = is_matrix, enable_if_u<and_u<B, is_fast>::value> = detail::dummy>
     static constexpr std::size_t rows(){
-        return etl_traits<remove_cv_t<remove_reference_t<RightExpr>>>::rows();
+        return etl_traits<sub_expr_t>::rows();
     }
 
     template<bool B = is_matrix, enable_if_u<and_u<B, is_fast>::value> = detail::dummy>
     static constexpr std::size_t columns(){
-        return etl_traits<remove_cv_t<remove_reference_t<RightExpr>>>::columns();
+        return etl_traits<sub_expr_t>::columns();
+    }
+
+    template<std::size_t D>
+    static constexpr std::size_t dim(){
+        return etl_traits<sub_expr_t>::template dim<D>();
     }
 };
 
@@ -335,38 +392,50 @@ struct etl_traits<etl::binary_expr<T, LeftExpr, BinaryOp, RightExpr>, enable_if_
  */
 template <typename T>
 struct etl_traits<transpose_transformer<T>> {
-    static constexpr const bool is_vector = etl_traits<T>::is_vector;
-    static constexpr const bool is_matrix = etl_traits<T>::is_matrix;
-    static constexpr const bool is_fast = etl_traits<T>::is_fast;
+    using expr_t = etl::transpose_transformer<T>;
+    using sub_expr_t = remove_cv_t<remove_reference_t<T>>;
+
+    static constexpr const bool is_vector = etl_traits<sub_expr_t>::is_vector;
+    static constexpr const bool is_matrix = etl_traits<sub_expr_t>::is_matrix;
+    static constexpr const bool is_fast = etl_traits<sub_expr_t>::is_fast;
     static constexpr const bool is_value = false;
 
-    static std::size_t size(const transpose_transformer<T>& v){
-        return etl_traits<T>::size(v.sub);
+    static std::size_t size(const expr_t& v){
+        return etl_traits<sub_expr_t>::size(v.sub);
     }
 
-    template<typename TT = T, enable_if_u<etl_traits<TT>::is_matrix> = detail::dummy>
-    static std::size_t rows(const transpose_transformer<T>& v){
-        return etl_traits<T>::columns(v.sub);
+    template<bool B = is_matrix, enable_if_u<B> = detail::dummy>
+    static std::size_t rows(const expr_t& v){
+        return etl_traits<sub_expr_t>::columns(v.sub);
     }
 
-    template<typename TT = T, enable_if_u<etl_traits<TT>::is_matrix> = detail::dummy>
-    static std::size_t columns(const transpose_transformer<T>& v){
-        return etl_traits<T>::rows(v.sub);
+    template<bool B = is_matrix, enable_if_u<B> = detail::dummy>
+    static std::size_t columns(const expr_t& v){
+        return etl_traits<sub_expr_t>::rows(v.sub);
+    }
+
+    static std::size_t dim(const expr_t& v, std::size_t d){
+        return etl_traits<sub_expr_t>::dim(v.sub, 1-d);
     }
 
     template<bool B = is_fast, enable_if_u<B> = detail::dummy>
     static constexpr std::size_t size(){
-        return etl_traits<T>::size();
+        return etl_traits<sub_expr_t>::size();
     }
 
     template<bool B = is_matrix, enable_if_u<and_u<B, is_fast>::value> = detail::dummy>
     static constexpr std::size_t rows(){
-        return etl_traits<T>::columns();
+        return etl_traits<sub_expr_t>::columns();
     }
 
     template<bool B = is_matrix, enable_if_u<and_u<B, is_fast>::value> = detail::dummy>
     static constexpr std::size_t columns(){
-        return etl_traits<T>::rows();
+        return etl_traits<sub_expr_t>::rows();
+    }
+
+    template<std::size_t D>
+    static constexpr std::size_t dim(){
+        return etl_traits<sub_expr_t>::template dim<1-D>();
     }
 };
 
@@ -375,38 +444,50 @@ struct etl_traits<transpose_transformer<T>> {
  */
 template <typename T>
 struct etl_traits<T, enable_if_t<and_u<is_transformer_expr<T>::value, not_u<is_specialization_of<etl::transpose_transformer, T>::value>::value>::value>> {
-    static constexpr const bool is_vector = etl_traits<typename T::sub_type>::is_vector;
-    static constexpr const bool is_matrix = etl_traits<typename T::sub_type>::is_matrix;
-    static constexpr const bool is_fast = etl_traits<typename T::sub_type>::is_fast;
+    using expr_t = T;
+    using sub_expr_t = typename T::sub_type;
+
+    static constexpr const bool is_vector = etl_traits<sub_expr_t>::is_vector;
+    static constexpr const bool is_matrix = etl_traits<sub_expr_t>::is_matrix;
+    static constexpr const bool is_fast = etl_traits<sub_expr_t>::is_fast;
     static constexpr const bool is_value = false;
 
-    static std::size_t size(const T& v){
-        return etl_traits<typename T::sub_type>::size(v.sub);
+    static std::size_t size(const expr_t& v){
+        return etl_traits<sub_expr_t>::size(v.sub);
     }
 
-    template<typename TT = typename T::sub_type, enable_if_u<etl_traits<TT>::is_matrix> = detail::dummy>
-    static std::size_t rows(const T& v){
-        return etl_traits<typename T::sub_type>::rows(v.sub);
+    template<bool B = is_matrix, enable_if_u<B> = detail::dummy>
+    static std::size_t rows(const expr_t& v){
+        return etl_traits<sub_expr_t>::rows(v.sub);
     }
 
-    template<typename TT = typename T::sub_type, enable_if_u<etl_traits<TT>::is_matrix> = detail::dummy>
-    static std::size_t columns(const T& v){
-        return etl_traits<typename T::sub_type>::columns(v.sub);
+    template<bool B = is_matrix, enable_if_u<B> = detail::dummy>
+    static std::size_t columns(const expr_t& v){
+        return etl_traits<sub_expr_t>::columns(v.sub);
+    }
+
+    static std::size_t dim(const expr_t& v, std::size_t d){
+        return etl_traits<sub_expr_t>::dim(v.sub, d);
     }
 
     template<bool B = is_fast, enable_if_u<B> = detail::dummy>
     static constexpr std::size_t size(){
-        return etl_traits<remove_cv_t<remove_reference_t<typename T::sub_type>>>::size();
+        return etl_traits<sub_expr_t>::size();
     }
 
     template<bool B = is_matrix, enable_if_u<and_u<B, is_fast>::value> = detail::dummy>
     static constexpr std::size_t rows(){
-        return etl_traits<remove_cv_t<remove_reference_t<typename T::sub_type>>>::rows();
+        return etl_traits<sub_expr_t>::rows();
     }
 
     template<bool B = is_matrix, enable_if_u<and_u<B, is_fast>::value> = detail::dummy>
     static constexpr std::size_t columns(){
-        return etl_traits<remove_cv_t<remove_reference_t<typename T::sub_type>>>::columns();
+        return etl_traits<sub_expr_t>::columns();
+    }
+
+    template<std::size_t D>
+    static constexpr std::size_t dim(){
+        return etl_traits<sub_expr_t>::template dim<D>();
     }
 };
 
@@ -415,22 +496,39 @@ struct etl_traits<T, enable_if_t<and_u<is_transformer_expr<T>::value, not_u<is_s
  */
 template <typename T, std::size_t D>
 struct etl_traits<etl::dim_view<T, D>> {
+    using expr_t = etl::dim_view<T, D>;
+    using sub_expr_t = remove_cv_t<remove_reference_t<T>>;
+
     static constexpr const bool is_vector = true;
     static constexpr const bool is_matrix = false;
-    static constexpr const bool is_fast = etl_traits<T>::is_fast;
+    static constexpr const bool is_fast = etl_traits<sub_expr_t>::is_fast;
     static constexpr const bool is_value = false;
 
-    static std::size_t size(const etl::dim_view<T, D>& v){
+    static std::size_t size(const expr_t& v){
         if(D == 1){
-            return etl_traits<T>::columns(v.sub);
+            return etl_traits<sub_expr_t>::columns(v.sub);
         } else if (D == 2){
-            return etl_traits<T>::rows(v.sub);
+            return etl_traits<sub_expr_t>::rows(v.sub);
         }
+    }
+
+    static std::size_t dim(const expr_t& v, std::size_t d){
+        etl_assert(d == 0, "Invalid dimension");
+        etl_unused(d);
+
+        return size(v);
     }
 
     template<bool B = is_fast, enable_if_u<B> = detail::dummy>
     static constexpr std::size_t size(){
-        return D == 1 ? etl_traits<T>::columns() : etl_traits<T>::rows();
+        return D == 1 ? etl_traits<sub_expr_t>::columns() : etl_traits<sub_expr_t>::rows();
+    }
+
+    template<std::size_t D2>
+    static constexpr std::size_t dim(){
+        static_assert(D2 == 0, "Invalid dimension");
+
+        return size();
     }
 };
 
@@ -459,33 +557,45 @@ struct etl_traits<etl::sub_view<T>> {
  */
 template<typename T, std::size_t Rows, std::size_t Columns>
 struct etl_traits<etl::fast_matrix_view<T, Rows, Columns>> {
+    using expr_t = etl::fast_matrix_view<T, Rows, Columns>;
+    using sub_expr_t = remove_cv_t<remove_reference_t<T>>;
+
     static constexpr const bool is_vector = false;
     static constexpr const bool is_matrix = true;
     static constexpr const bool is_fast = true;
     static constexpr const bool is_value = false;
 
-    static constexpr std::size_t size(const etl::fast_matrix_view<T, Rows, Columns>&){
+    static constexpr std::size_t size(const expr_t&){
         return Rows * Columns;
+    }
+
+    static constexpr std::size_t columns(const expr_t&){
+        return Columns;
+    }
+
+    static constexpr std::size_t rows(const expr_t&){
+        return Rows;
+    }
+
+    static std::size_t dim(const expr_t&, std::size_t d){
+        return d == 1 ? Rows : Columns;
     }
 
     static constexpr std::size_t size(){
         return Rows * Columns;
     }
 
-    static constexpr std::size_t columns(const etl::fast_matrix_view<T, Rows, Columns>&){
-        return Columns;
-    }
-
     static constexpr std::size_t columns(){
         return Columns;
     }
 
-    static constexpr std::size_t rows(const etl::fast_matrix_view<T, Rows, Columns>&){
+    static constexpr std::size_t rows(){
         return Rows;
     }
 
-    static constexpr std::size_t rows(){
-        return Rows;
+    template<std::size_t D>
+    static constexpr std::size_t dim(){
+        return D == 0 ? Rows : Columns;
     }
 };
 
@@ -494,21 +604,28 @@ struct etl_traits<etl::fast_matrix_view<T, Rows, Columns>> {
  */
 template<typename T>
 struct etl_traits<etl::dyn_matrix_view<T>> {
+    using expr_t = etl::dyn_matrix_view<T>;
+    using sub_expr_t = remove_cv_t<remove_reference_t<T>>;
+
     static constexpr const bool is_vector = false;
     static constexpr const bool is_matrix = true;
     static constexpr const bool is_fast = false;
     static constexpr const bool is_value = false;
 
-    static std::size_t size(const etl::dyn_matrix_view<T>& v){
+    static std::size_t size(const expr_t& v){
         return v.rows * v.columns;
     }
 
-    static std::size_t columns(const etl::dyn_matrix_view<T>& v){
+    static std::size_t columns(const expr_t& v){
         return v.columns;
     }
 
-    static std::size_t rows(const etl::dyn_matrix_view<T>& v){
+    static std::size_t rows(const expr_t& v){
         return v.rows;
+    }
+
+    static std::size_t dim(const expr_t& v, std::size_t d){
+        return d == 0 ? v.rows : v.columns;
     }
 };
 
