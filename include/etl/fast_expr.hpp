@@ -142,7 +142,7 @@ public:
     }
 
     T operator()(std::size_t i) const {
-        return UnaryOp::apply(value()[i]);
+        return UnaryOp::apply(value()(i));
     }
 
     template<typename TT = this_type>
