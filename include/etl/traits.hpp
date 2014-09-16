@@ -537,18 +537,30 @@ struct etl_traits<etl::dim_view<T, D>> {
  */
 template <typename T>
 struct etl_traits<etl::sub_view<T>> {
+    using expr_t = etl::sub_view<T>;
+    using sub_expr_t = remove_cv_t<remove_reference_t<T>>;
+
     static constexpr const bool is_vector = false;
     static constexpr const bool is_matrix = true;
-    static constexpr const bool is_fast = etl_traits<T>::is_fast;
+    static constexpr const bool is_fast = etl_traits<sub_expr_t>::is_fast;
     static constexpr const bool is_value = false;
 
-    static std::size_t size(const etl::sub_view<T>& v){
-        return etl_traits<T>::size(v.parent) / T::template dim<0>();
+    static std::size_t size(const expr_t& v){
+        return etl_traits<sub_expr_t>::size(v.parent) / sub_expr_t::template dim<0>();
+    }
+
+    static std::size_t dim(const expr_t& v, std::size_t d){
+        return etl_traits<sub_expr_t>::dim(v.parent, d + 1);
     }
 
     template<bool B = is_fast, enable_if_u<B> = detail::dummy>
     static constexpr std::size_t size(){
-        return etl_traits<T>::size() / T::template dim<0>();
+        return etl_traits<sub_expr_t>::size() / sub_expr_t::template dim<0>();
+    }
+
+    template<std::size_t D>
+    static constexpr std::size_t dim(){
+        return etl_traits<sub_expr_t>::template dim<D+1>();
     }
 };
 
