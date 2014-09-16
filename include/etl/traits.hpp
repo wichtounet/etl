@@ -54,6 +54,9 @@ struct transpose_transformer;
 template<typename T, std::size_t D>
 struct dim_view;
 
+template<typename T>
+struct sub_view;
+
 template<template<typename, std::size_t> class TT, typename T>
 struct is_2 : std::false_type { };
 
@@ -104,7 +107,8 @@ template<typename T>
 struct is_view : std::integral_constant<bool, or_u<
             is_2<etl::dim_view, remove_cv_t<remove_reference_t<T>>>::value,
             is_3<etl::fast_matrix_view, remove_cv_t<remove_reference_t<T>>>::value,
-            is_specialization_of<etl::dyn_matrix_view, remove_cv_t<remove_reference_t<T>>>::value
+            is_specialization_of<etl::dyn_matrix_view, remove_cv_t<remove_reference_t<T>>>::value,
+            is_specialization_of<etl::sub_view, remove_cv_t<remove_reference_t<T>>>::value
             >::value> {};
 
 template<typename T, typename Enable = void>
@@ -427,6 +431,26 @@ struct etl_traits<etl::dim_view<T, D>> {
     template<bool B = is_fast, enable_if_u<B> = detail::dummy>
     static constexpr std::size_t size(){
         return D == 1 ? etl_traits<T>::columns() : etl_traits<T>::rows();
+    }
+};
+
+/*!
+ * \brief Specialization for sub_view
+ */
+template <typename T>
+struct etl_traits<etl::sub_view<T>> {
+    static constexpr const bool is_vector = false;
+    static constexpr const bool is_matrix = true;
+    static constexpr const bool is_fast = etl_traits<T>::is_fast;
+    static constexpr const bool is_value = false;
+
+    static std::size_t size(const etl::sub_view<T>& v){
+        return etl_traits<T>::size(v.parent) / T::template dim<0>();
+    }
+
+    template<bool B = is_fast, enable_if_u<B> = detail::dummy>
+    static constexpr std::size_t size(){
+        return etl_traits<T>::size() / T::template dim<0>();
     }
 };
 

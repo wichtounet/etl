@@ -147,6 +147,21 @@ struct dim_view {
     }
 };
 
+template<typename T>
+struct sub_view {
+    using parent_type = T;
+
+    const T& parent;
+    const std::size_t i;
+
+    sub_view(const T& parent, std::size_t i) : parent(parent), i(i) {}
+
+    template<typename... S>
+    typename T::value_type operator()(S... args) const {
+        return parent(i, static_cast<size_t>(args)...);
+    }
+};
+
 template<typename T, std::size_t Rows, std::size_t Columns>
 struct fast_matrix_view {
     static_assert(Rows > 0 && Columns > 0 , "Invalid dimensions");

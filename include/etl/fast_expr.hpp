@@ -487,6 +487,12 @@ auto col(const E& value, std::size_t i) -> unary_expr<typename E::value_type, di
     return {{value, i}};
 }
 
+template<typename E, enable_if_u<is_etl_expr<E>::value> = detail::dummy>
+auto sub(const E& value, std::size_t i) -> unary_expr<typename E::value_type, sub_view<E>, identity_unary_op<typename E::value_type>> {
+    //TODO Static assert that the matrix is at least 3 (2 later) dimensions
+    return {{value, i}};
+}
+
 template<std::size_t Rows, std::size_t Columns, typename E, enable_if_u<is_etl_expr<E>::value> = detail::dummy>
 auto reshape(const E& value) -> unary_expr<typename E::value_type, fast_matrix_view<E, Rows, Columns>, identity_unary_op<typename E::value_type>> {
     etl_assert(etl_traits<E>::size(value) == Rows * Columns, "Invalid size for reshape");
