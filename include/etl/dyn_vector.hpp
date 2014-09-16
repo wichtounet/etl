@@ -34,44 +34,44 @@ public:
 
 private:
     storage_impl _data;
-    const std::size_t rows;
+    const std::size_t _rows;
 
 public:
     //{{{ Construction
 
-    explicit dyn_vector(std::size_t rows) : _data(rows), rows(rows) {
+    explicit dyn_vector(std::size_t rows) : _data(rows), _rows(rows) {
         //Nothing else to init
     }
 
-    dyn_vector(std::size_t rows, const value_type& value) : _data(rows, value), rows(rows) {
+    dyn_vector(std::size_t rows, const value_type& value) : _data(rows, value), _rows(rows) {
         //Nothing else to init
     }
 
     //TODO Probably a better way in order to move elements
-    dyn_vector(std::initializer_list<value_type> l) : _data(l), rows(l.size()){
+    dyn_vector(std::initializer_list<value_type> l) : _data(l), _rows(l.size()){
         //Nothing else to init
     }
 
-    explicit dyn_vector(const dyn_vector& rhs) : _data(rhs._data), rows(rhs.rows){
+    explicit dyn_vector(const dyn_vector& rhs) : _data(rhs._data), _rows(rhs.rows){
         //Nothing else to init
     }
 
     template<typename LE, typename Op, typename RE>
-    explicit dyn_vector(const binary_expr<value_type, LE, Op, RE>& e) : _data(etl::size(e)), rows(etl::size(e)) {
+    explicit dyn_vector(const binary_expr<value_type, LE, Op, RE>& e) : _data(etl::size(e)), _rows(etl::size(e)) {
         for(std::size_t i = 0; i < size(); ++i){
             _data[i] = e[i];
         }
     }
 
     template<typename E, typename Op>
-    explicit dyn_vector(const unary_expr<value_type, E, Op>& e) : _data(etl::size(e)), rows(etl::size(e)) {
+    explicit dyn_vector(const unary_expr<value_type, E, Op>& e) : _data(etl::size(e)), _rows(etl::size(e)) {
         for(std::size_t i = 0; i < size(); ++i){
             _data[i] = e[i];
         }
     }
 
     template<typename E>
-    explicit dyn_vector(const transform_expr<value_type, E>& e) : _data(etl::size(e)), rows(etl::size(e)) {
+    explicit dyn_vector(const transform_expr<value_type, E>& e) : _data(etl::size(e)), _rows(etl::size(e)) {
         for(std::size_t i = 0; i < size(); ++i){
             _data[i] = e[i];
         }
@@ -80,7 +80,7 @@ public:
     //Allow copy from other containers
 
     template<typename Container, enable_if_u<std::is_same<typename Container::value_type, value_type>::value> = detail::dummy>
-    explicit dyn_vector(const Container& vec) : _data(vec.size()), rows(vec.size()) {
+    explicit dyn_vector(const Container& vec) : _data(vec.size()), _rows(vec.size()) {
         std::copy(vec.begin(), vec.end(), begin());
     } 
 
@@ -163,29 +163,40 @@ public:
     //{{{ Accessors
 
     size_t size() const {
-        return rows;
+        return _rows;
+    }
+
+    size_t rows() const {
+        return _rows;
+    }
+
+    size_t dim(std::size_t d) const {
+        etl_assert(d == 0, "Invalid dimension");
+        etl_unused(d);
+
+        return _rows;
     }
 
     value_type& operator()(size_t i){
-        etl_assert(i < rows, "Out of bounds");
+        etl_assert(i < _rows, "Out of bounds");
 
         return _data[i];
     }
 
     const value_type& operator()(size_t i) const {
-        etl_assert(i < rows, "Out of bounds");
+        etl_assert(i < _rows, "Out of bounds");
 
         return _data[i];
     }
 
     value_type& operator[](size_t i){
-        etl_assert(i < rows, "Out of bounds");
+        etl_assert(i < _rows, "Out of bounds");
 
         return _data[i];
     }
 
     const value_type& operator[](size_t i) const {
-        etl_assert(i < rows, "Out of bounds");
+        etl_assert(i < _rows, "Out of bounds");
 
         return _data[i];
     }
