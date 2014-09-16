@@ -157,7 +157,7 @@ struct sub_view {
     sub_view(const T& parent, std::size_t i) : parent(parent), i(i) {}
 
     typename T::value_type operator[](std::size_t j) const {
-        return parent(i, j);
+        return parent.sub_linear(i, j);
     }
 
     template<typename... S>
