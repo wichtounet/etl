@@ -546,7 +546,7 @@ struct etl_traits<etl::sub_view<T>> {
     static constexpr const bool is_value = false;
 
     static std::size_t size(const expr_t& v){
-        return etl_traits<sub_expr_t>::size(v.parent) / sub_expr_t::template dim<0>();
+        return etl_traits<sub_expr_t>::size(v.parent) / etl_traits<sub_expr_t>::template dim<0>();
     }
 
     static std::size_t dim(const expr_t& v, std::size_t d){
@@ -555,7 +555,7 @@ struct etl_traits<etl::sub_view<T>> {
 
     template<bool B = is_fast, enable_if_u<B> = detail::dummy>
     static constexpr std::size_t size(){
-        return etl_traits<sub_expr_t>::size() / sub_expr_t::template dim<0>();
+        return etl_traits<sub_expr_t>::size() / etl_traits<sub_expr_t>::template dim<0>();
     }
 
     template<std::size_t D>
