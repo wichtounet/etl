@@ -55,6 +55,12 @@ TEST_CASE( "to_string/fast_matrix", "to_string" ) {
     REQUIRE(to_string(test_matrix) == "[[1.000000,-2.000000]\n[3.000000,0.500000]\n[0.000000,-1.000000]]");
 }
 
+TEST_CASE( "to_string/fast_matrix_3d", "to_string" ) {
+    etl::fast_matrix<double, 2, 3, 2> test_matrix({1.0, -2.0, 3.0, 0.5, 0.0, -1, 1.0, -2.0, 3.0, 0.5, 0.0, -1});
+
+    REQUIRE(to_string(test_matrix) == "[[[1.000000,-2.000000]\n[3.000000,0.500000]\n[0.000000,-1.000000]];[[1.000000,-2.000000]\n[3.000000,0.500000]\n[0.000000,-1.000000]]]");
+}
+
 TEST_CASE( "to_string/dyn_vector", "to_string" ) {
     etl::dyn_vector<double> test_vector({1.0, -2.0, 3.0});
 
