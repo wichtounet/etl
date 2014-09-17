@@ -9,6 +9,7 @@
 #define ETL_TRAITS_HPP
 
 #include "tmp.hpp"
+#include "assert.hpp"
 
 namespace etl {
 

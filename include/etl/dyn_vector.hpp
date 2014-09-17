@@ -52,7 +52,7 @@ public:
         //Nothing else to init
     }
 
-    explicit dyn_vector(const dyn_vector& rhs) : _data(rhs._data), _rows(rhs.rows){
+    explicit dyn_vector(const dyn_vector& rhs) : _data(rhs._data), _rows(rhs._rows){
         //Nothing else to init
     }
 
@@ -82,7 +82,7 @@ public:
     template<typename Container, enable_if_u<std::is_same<typename Container::value_type, value_type>::value> = detail::dummy>
     explicit dyn_vector(const Container& vec) : _data(vec.size()), _rows(vec.size()) {
         std::copy(vec.begin(), vec.end(), begin());
-    } 
+    }
 
     //Move is possible
     dyn_vector(dyn_vector&& rhs) = default;
