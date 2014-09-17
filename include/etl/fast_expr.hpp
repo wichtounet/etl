@@ -550,6 +550,28 @@ typename E::value_type mean(const E& values){
     return sum(values) / size(values);
 }
 
+template<typename E, enable_if_u<is_etl_expr<E>::value> = detail::dummy>
+typename E::value_type max(const E& values){
+    typename E::value_type m = std::numeric_limits<typename E::value_type>::min();
+
+    for(auto& v : values){
+        m = std::max(m, v);
+    }
+
+    return m;
+}
+
+template<typename E, enable_if_u<is_etl_expr<E>::value> = detail::dummy>
+typename E::value_type min(const E& values){
+    typename E::value_type m = std::numeric_limits<typename E::value_type>::max();
+
+    for(auto& v : values){
+        m = std::min(m, v);
+    }
+
+    return m;
+}
+
 //}}}
 
 } //end of namespace etl
