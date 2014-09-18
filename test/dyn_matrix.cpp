@@ -23,6 +23,10 @@ TEST_CASE( "big_dyn_matrix/init_1", "dyn_matrix::dyn_matrix(T)" ) {
     REQUIRE(b.rows() == 3);
     REQUIRE(b.columns() == 2);
     REQUIRE(b.size() == 6);
+    REQUIRE(b[0] == 1);
+    REQUIRE(b[1] == 2);
+
+    //TODO Test constructor with init_flag
 }
 
 TEST_CASE( "dyn_matrix/init_1", "dyn_matrix::dyn_matrix(T)" ) {
