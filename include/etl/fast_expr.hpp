@@ -142,7 +142,7 @@ public:
     }
 
     T operator()(std::size_t i) const {
-        return UnaryOp::apply(value()[i]);
+        return UnaryOp::apply(value()(i));
     }
 
     template<typename TT = this_type>
@@ -487,6 +487,12 @@ auto col(const E& value, std::size_t i) -> unary_expr<typename E::value_type, di
     return {{value, i}};
 }
 
+template<typename E, enable_if_u<is_etl_expr<E>::value> = detail::dummy>
+auto sub(const E& value, std::size_t i) -> unary_expr<typename E::value_type, sub_view<E>, identity_unary_op<typename E::value_type>> {
+    //TODO Static assert that the matrix is at least 3 (2 later) dimensions
+    return {{value, i}};
+}
+
 template<std::size_t Rows, std::size_t Columns, typename E, enable_if_u<is_etl_expr<E>::value> = detail::dummy>
 auto reshape(const E& value) -> unary_expr<typename E::value_type, fast_matrix_view<E, Rows, Columns>, identity_unary_op<typename E::value_type>> {
     etl_assert(etl_traits<E>::size(value) == Rows * Columns, "Invalid size for reshape");
@@ -548,6 +554,28 @@ typename E::value_type sum(const E& values){
 template<typename E, enable_if_u<is_etl_expr<E>::value> = detail::dummy>
 typename E::value_type mean(const E& values){
     return sum(values) / size(values);
+}
+
+template<typename E, enable_if_u<is_etl_expr<E>::value> = detail::dummy>
+typename E::value_type max(const E& values){
+    typename E::value_type m = std::numeric_limits<typename E::value_type>::min();
+
+    for(auto& v : values){
+        m = std::max(m, v);
+    }
+
+    return m;
+}
+
+template<typename E, enable_if_u<is_etl_expr<E>::value> = detail::dummy>
+typename E::value_type min(const E& values){
+    typename E::value_type m = std::numeric_limits<typename E::value_type>::max();
+
+    for(auto& v : values){
+        m = std::min(m, v);
+    }
+
+    return m;
 }
 
 //}}}

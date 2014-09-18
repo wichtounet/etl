@@ -27,10 +27,10 @@ template<size_t F>
 struct matrix_size<F> : std::integral_constant<std::size_t, F> {};
 
 template<typename M, size_t I, typename Enable = void>
-struct matrix_subsize  : std::integral_constant<std::size_t, M::template dim<M::dimensions - 1 - I>() * matrix_subsize<M, I+1>::value> {};
+struct matrix_subsize  : std::integral_constant<std::size_t, M::template dim<M::n_dimensions - 1 - I>() * matrix_subsize<M, I+1>::value> {};
 
 template<typename M, size_t I>
-struct matrix_subsize<M, I, enable_if_t<I == M::dimensions - 1>> : std::integral_constant<std::size_t, 1> {};
+struct matrix_subsize<M, I, enable_if_t<I == M::n_dimensions - 1>> : std::integral_constant<std::size_t, 1> {};
 
 template<typename F, typename... S>
 struct valid_sizes  : std::integral_constant<bool, and_u<valid_sizes<F>::value, valid_sizes<S...>::value>::value> {};
@@ -81,7 +81,7 @@ struct fast_matrix {
     static_assert(sizeof...(Dims) > 1, "At least two dimension must be specified");
 
 public:
-    static constexpr const std::size_t dimensions = sizeof...(Dims);
+    static constexpr const std::size_t n_dimensions = sizeof...(Dims);
     static constexpr const std::size_t etl_size = matrix_detail::matrix_size<Dims...>::value;
 
     using       value_type = T;
@@ -95,7 +95,7 @@ private:
 
     template<typename... S>
     static constexpr std::size_t index(S... args){
-        return matrix_detail::matrix_index<this_type, 0, dimensions - 1, S...>::compute(args...);
+        return matrix_detail::matrix_index<this_type, 0, n_dimensions - 1, S...>::compute(args...);
     }
 
     template<typename... S>
@@ -251,6 +251,10 @@ public:
 
     static constexpr enable_if_t<(sizeof...(Dims) > 1), std::size_t> columns(){
         return dim<1>();
+    }
+
+    static constexpr size_t dimensions(){
+        return n_dimensions;
     }
 
     template<size_t D>

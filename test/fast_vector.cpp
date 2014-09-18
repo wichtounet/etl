@@ -481,6 +481,22 @@ TEST_CASE( "fast_vector/dot_2", "sum" ) {
     REQUIRE(d == -21.0);
 }
 
+TEST_CASE( "fast_vector/min_reduc", "min" ) {
+    etl::fast_vector<double, 3> a = {-1.0, 2.0, 8.5};
+
+    auto d = min(a);
+
+    REQUIRE(d == -1.0);
+}
+
+TEST_CASE( "fast_vector/max_reduc", "max" ) {
+    etl::fast_vector<double, 3> a = {-1.0, 2.0, 8.5};
+
+    auto d = max(a);
+
+    REQUIRE(d == 8.5);
+}
+
 //}}} Reductions
 
 //{{{ Complex tests

@@ -7,6 +7,10 @@ include make-utils/cpp-utils.mk
 
 CXX_FLAGS += -ICatch/include -Werror
 
+ifeq ($(CXX),clang++)
+CXX_FLAGS += -stdlib=libc++
+endif
+
 CPP_FILES=$(wildcard test/*.cpp)
 TEST_FILES=$(CPP_FILES:test/%=%)
 

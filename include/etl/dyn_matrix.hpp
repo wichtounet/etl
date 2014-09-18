@@ -74,7 +74,7 @@ public:
             }
         }
     }
-    
+
     template<typename E>
     explicit dyn_matrix(const transform_expr<value_type, E>& e) :
             _data(etl::rows(e) * etl::columns(e)),
@@ -174,6 +174,10 @@ public:
 
     //{{{ Accessors
 
+    size_t size() const {
+        return _rows * _columns;
+    }
+
     size_t rows() const {
         return _rows;
     }
@@ -182,8 +186,14 @@ public:
         return _columns;
     }
 
-    constexpr size_t size() const {
-        return _rows * _columns;
+    size_t dimensions() const {
+        return 2;
+    }
+
+    size_t dim(std::size_t d) const {
+        etl_assert(d == 0 || d == 1, "Invalid dimension");
+
+        return d == 0 ? _rows : _columns;
     }
 
     value_type& operator()(size_t i, size_t j){

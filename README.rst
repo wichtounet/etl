@@ -1,13 +1,14 @@
 Expression Templates Library (ETL)
 ==================================
 
-ETL is a small header only library for c++ that provides vector and
+ETL is a header only library for cC+ that provides vector and
 matrix classes with support for Expression Templates to perform very
 efficient operations on them. 
 
-At this time, the library support statically sized matrix and vector
-with all element-wise operations implemented. It also supports 1D
-and 2D convolution and matrix multiplication (naive algorithm). 
+At this time, the library support compile-time sized matrix and vector
+and runtime-sized matrix and vector with all element-wise operations 
+implemented. It also supports 1D and 2D convolution and matrix 
+multiplication (naive algorithm). 
 
 Usage
 -----
@@ -28,7 +29,7 @@ Several structures are available:
 * fast_matrix<T, Rows,Columns>: A matrix of size Rows x Columns with
   elements of type T. This must be used when you know the size of
   the matrix at compile-time. 
-* dyn_vector<T>: A matrix with element of type T. The size of the
+* dyn_matrix<T>: A matrix with element of type T. The size of the
   matrix can be set at runtime. 
 
 Element-wise operations

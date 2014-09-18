@@ -489,3 +489,47 @@ TEST_CASE( "dyn_matrix/complex_3", "dyn_matrix::complex" ) {
 }
 
 //}}} Complex tests
+
+//{{{ Reductions
+
+TEST_CASE( "dny_matrix/sum", "sum" ) {
+    etl::dyn_matrix<double> a(3, 1, {-1.0, 2.0, 8.5});
+
+    auto d = sum(a);
+
+    REQUIRE(d == 9.5);
+}
+
+TEST_CASE( "dyn_matrix/sum_2", "sum" ) {
+    etl::dyn_matrix<double> a(3, 1, {-1.0, 2.0, 8.5});
+
+    auto d = sum(a + a);
+
+    REQUIRE(d == 19);
+}
+
+TEST_CASE( "dyn_matrix/sum_3", "sum" ) {
+    etl::dyn_matrix<double> a(3, 1, {-1.0, 2.0, 8.5});
+
+    auto d = sum(abs(a + a));
+
+    REQUIRE(d == 23.0);
+}
+
+TEST_CASE( "dyn_matrix/min_reduc", "min" ) {
+    etl::dyn_matrix<double> a(3, 1, {-1.0, 2.0, 8.5});
+
+    auto d = min(a);
+
+    REQUIRE(d == -1.0);
+}
+
+TEST_CASE( "dyn_matrix/max_reduc", "max" ) {
+    etl::dyn_matrix<double> a(3, 1, {-1.0, 2.0, 8.5});
+
+    auto d = max(a);
+
+    REQUIRE(d == 8.5);
+}
+
+//}}} Reductions
