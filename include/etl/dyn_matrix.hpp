@@ -109,7 +109,7 @@ private:
     dimension_storage_impl _dimensions;
 
 public:
-    ///{{{ Construction
+    //{{{ Construction
 
     explicit big_dyn_matrix(const big_dyn_matrix& rhs) : _size(rhs._size), _data(rhs._data), _dimensions(rhs._dimensions) {
         //Nothing to init
@@ -207,12 +207,12 @@ public:
         //}
     //}
 
-    ////Default move
-    //dyn_matrix(dyn_matrix&& rhs) = default;
+    //Default move
+    big_dyn_matrix(big_dyn_matrix&& rhs) = default;
 
-    ////}}}
+    //}}}
 
-    ////{{{ Assignment
+    //{{{ Assignment
 
     ////Copy assignment operator
 
@@ -280,15 +280,15 @@ public:
         //return *this;
     //}
 
-    ////Set the same value to each element of the matrix
-    //dyn_matrix& operator=(const value_type& value){
-        //std::fill(_data.begin(), _data.end(), value);
+    //Set the same value to each element of the matrix
+    big_dyn_matrix& operator=(const value_type& value){
+        std::fill(_data.begin(), _data.end(), value);
 
-        //return *this;
-    //}
+        return *this;
+    }
 
-    ////Default move
-    //dyn_matrix& operator=(dyn_matrix&& rhs) = default;
+    //Default move
+    big_dyn_matrix& operator=(big_dyn_matrix&& rhs) = default;
 
     //}}}
 
