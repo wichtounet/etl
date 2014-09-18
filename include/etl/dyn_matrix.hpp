@@ -49,6 +49,11 @@ auto nth_value(T1&& /*t*/, T&&... args) ->
     return std::forward<return_type>(nth_value<I - 1>((std::forward<T>(args))...));
 }
 
+template<typename... T>
+auto last_value(T&&... args){
+    return nth_value<sizeof...(T) - 1>(args...);
+}
+
 inline std::size_t size(std::size_t first){
     return first;
 }
@@ -70,6 +75,8 @@ inline std::vector<std::size_t> sizes(const index_sequence<I...>& /*i*/, const T
 
 } // end of namespace dyn_detail
 
+enum class init_flag_t { DUMMY };
+constexpr const init_flag_t init_flag = init_flag_t::DUMMY;
 
 template<typename T>
 struct big_dyn_matrix {
@@ -111,6 +118,19 @@ public:
             _size(dyn_detail::size(make_index_sequence<(sizeof...(S)-1)>(), sizes...)), 
             _data(_size), 
             _dimensions(dyn_detail::sizes(make_index_sequence<(sizeof...(S)-1)>(), sizes...)) {
+        //Nothing to init
+    }
+
+    //Sizes followed by an init flag followed by the value
+    template<typename... S, enable_if_u<
+        and_u<
+            (sizeof...(S) > 2),
+            std::is_same<init_flag_t, typename dyn_detail::nth_type<sizeof...(S) - 2, S...>::type>::value
+        >::value> = detail::dummy>
+    big_dyn_matrix(S... sizes) : 
+            _size(dyn_detail::size(make_index_sequence<(sizeof...(S)-2)>(), sizes...)), 
+            _data(_size, dyn_detail::last_value(sizes...)), 
+            _dimensions(dyn_detail::sizes(make_index_sequence<(sizeof...(S)-2)>(), sizes...)) {
         //Nothing to init
     }
 
