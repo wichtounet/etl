@@ -27,7 +27,7 @@ template<size_t F>
 struct matrix_size<F> : std::integral_constant<std::size_t, F> {};
 
 template<typename M, size_t I, typename Enable = void>
-struct matrix_subsize  : std::integral_constant<std::size_t, M::template dim<M::n_dimensions - 1 - I>() * matrix_subsize<M, I+1>::value> {};
+struct matrix_subsize  : std::integral_constant<std::size_t, M::template dim<I+1>() * matrix_subsize<M, I+1>::value> {};
 
 template<typename M, size_t I>
 struct matrix_subsize<M, I, enable_if_t<I == M::n_dimensions - 1>> : std::integral_constant<std::size_t, 1> {};
