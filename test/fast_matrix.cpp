@@ -67,6 +67,24 @@ TEST_CASE( "fast_matrix/init_5", "fast_matrix::operator=(T)" ) {
 
 //}}} Init tests
 
+TEST_CASE( "fast_matrix/access", "fast_matrix::operator()" ) {
+    etl::fast_matrix<double, 2, 3, 2> test_matrix({1.0, -2.0, 3.0, 0.5, 0.0, -1, 1.0, -2.0, 3.0, 0.5, 0.0, -1});
+
+    REQUIRE(test_matrix(0, 0, 0) == 1.0);
+    REQUIRE(test_matrix(0, 0, 1) == -2.0);
+    REQUIRE(test_matrix(0, 1, 0) == 3.0);
+    REQUIRE(test_matrix(0, 1, 1) == 0.5);
+    REQUIRE(test_matrix(0, 2, 0) == 0.0);
+    REQUIRE(test_matrix(0, 2, 1) == -1);
+
+    REQUIRE(test_matrix(1, 0, 0) == 1.0);
+    REQUIRE(test_matrix(1, 0, 1) == -2.0);
+    REQUIRE(test_matrix(1, 1, 0) == 3.0);
+    REQUIRE(test_matrix(1, 1, 1) == 0.5);
+    REQUIRE(test_matrix(1, 2, 0) == 0.0);
+    REQUIRE(test_matrix(1, 2, 1) == -1);
+}
+
 //{{{ Binary operators test
 
 TEST_CASE( "fast_matrix/add_scalar_1", "fast_matrix::operator+" ) {
