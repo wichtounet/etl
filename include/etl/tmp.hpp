@@ -67,4 +67,55 @@ struct all_convertible_to  : std::integral_constant<bool, and_u<all_convertible_
 template<typename V, typename F>
 struct all_convertible_to<V, F> : std::integral_constant<bool, std::is_convertible<F, V>::value> {};
 
+//Variadic manipulations utilities
+
+template<std::size_t N, typename... T>
+struct nth_type {
+    using type = typename std::tuple_element<N, std::tuple<T...>>::type;
+};
+
+template<typename... T>
+struct first_type {
+    using type = typename nth_type<0, T...>::type;
+};
+
+template<typename... T>
+struct last_type {
+    using type = typename nth_type<sizeof...(T)-1, T...>::type;
+};
+
+template<int I, typename T1, typename... T, enable_if_u<(I == 0)> = detail::dummy>
+auto nth_value(T1&& t, T&&... /*args*/) -> decltype(std::forward<T1>(t)) {
+    return std::forward<T1>(t);
+}
+
+template<int I, typename T1, typename... T, enable_if_u<(I > 0)> = detail::dummy>
+auto nth_value(T1&& /*t*/, T&&... args) 
+        -> decltype(std::forward<typename nth_type<I, T1, T...>::type>(std::declval<typename nth_type<I, T1, T...>::type>())){
+    using return_type = typename nth_type<I, T1, T...>::type;
+    return std::forward<return_type>(nth_value<I - 1>((std::forward<T>(args))...));
+}
+
+template<typename... T>
+auto last_value(T&&... args){
+    return nth_value<sizeof...(T) - 1>(args...);
+}
+
+template<std::size_t I, std::size_t S, typename F, typename... T>
+struct is_homogeneous_helper {
+    template<std::size_t I1, std::size_t S1, typename Enable = void>
+    struct helper_int : std::integral_constant<bool, and_u<std::is_same<F, typename nth_type<I1, T...>::type>::value, is_homogeneous_helper<I1+1, S1, F, T...>::value>::value> {};
+
+    template<std::size_t I1, std::size_t S1>
+    struct helper_int<I1, S1, enable_if_t<I1 == S1>> : std::integral_constant<bool, std::is_same<F, typename nth_type<I1, T...>::type>::value> {};
+
+    static constexpr const auto value = helper_int<I, S>::value;
+};
+
+template<typename F, typename... T>
+struct is_sub_homogeneous : std::integral_constant<bool, is_homogeneous_helper<0, sizeof...(T)-2, F, T...>::value> {};
+
+template<typename F, typename... T>
+struct is_homogeneous : std::integral_constant<bool, is_homogeneous_helper<0, sizeof...(T)-1, F, T...>::value> {};
+
 #endif

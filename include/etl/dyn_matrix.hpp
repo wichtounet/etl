@@ -21,38 +21,6 @@ namespace etl {
 
 namespace dyn_detail {
 
-template<std::size_t N, typename... T>
-struct nth_type {
-    using type = typename std::tuple_element<N, std::tuple<T...>>::type;
-};
-
-template<typename... T>
-struct first_type {
-    using type = typename nth_type<0, T...>::type;
-};
-
-template<typename... T>
-struct last_type {
-    using type = typename nth_type<sizeof...(T)-1, T...>::type;
-};
-
-template<int I, typename T1, typename... T, enable_if_u<(I == 0)> = detail::dummy>
-auto nth_value(T1&& t, T&&... /*args*/) -> decltype(std::forward<T1>(t)) {
-    return std::forward<T1>(t);
-}
-
-template<int I, typename T1, typename... T, enable_if_u<(I > 0)> = detail::dummy>
-auto nth_value(T1&& /*t*/, T&&... args) 
-        -> decltype(std::forward<typename nth_type<I, T1, T...>::type>(std::declval<typename nth_type<I, T1, T...>::type>())){
-    using return_type = typename nth_type<I, T1, T...>::type;
-    return std::forward<return_type>(nth_value<I - 1>((std::forward<T>(args))...));
-}
-
-template<typename... T>
-auto last_value(T&&... args){
-    return nth_value<sizeof...(T) - 1>(args...);
-}
-
 inline std::size_t size(std::size_t first){
     return first;
 }
@@ -71,23 +39,6 @@ template<std::size_t... I, typename... T>
 inline std::vector<std::size_t> sizes(const index_sequence<I...>& /*i*/, const T&... args){
     return {static_cast<std::size_t>(nth_value<I>(args...))...};
 }
-
-template<std::size_t I, std::size_t S, typename F, typename... T>
-struct is_homogeneous_helper {
-    template<std::size_t I1, std::size_t S1, typename Enable = void>
-    struct helper_int : std::integral_constant<bool, and_u<std::is_same<F, typename nth_type<I1, T...>::type>::value, is_homogeneous_helper<I1+1, S1, F, T...>::value>::value> {};
-
-    template<std::size_t I1, std::size_t S1>
-    struct helper_int<I1, S1, enable_if_t<I1 == S1>> : std::integral_constant<bool, std::is_same<F, typename nth_type<I1, T...>::type>::value> {};
-
-    static constexpr const auto value = helper_int<I, S>::value;
-};
-
-template<typename F, typename... T>
-struct is_sub_homogeneous : std::integral_constant<bool, is_homogeneous_helper<0, sizeof...(T)-2, F, T...>::value> {};
-
-template<typename F, typename... T>
-struct is_homogeneous : std::integral_constant<bool, is_homogeneous_helper<0, sizeof...(T)-1, F, T...>::value> {};
 
 } // end of namespace dyn_detail
 
@@ -120,7 +71,7 @@ public:
         and_u<
             (sizeof...(S) > 0), 
             all_convertible_to<std::size_t, S...>::value,
-            dyn_detail::is_homogeneous<typename dyn_detail::first_type<S...>::type, S...>::value
+            is_homogeneous<typename first_type<S...>::type, S...>::value
         >::value> = detail::dummy>
     big_dyn_matrix(S... sizes) : 
             _size(dyn_detail::size(sizes...)), 
@@ -133,11 +84,11 @@ public:
     template<typename... S, enable_if_u<
         and_u<
             (sizeof...(S) > 1),
-            is_specialization_of<std::initializer_list, typename dyn_detail::last_type<S...>::type>::value
+            is_specialization_of<std::initializer_list, typename last_type<S...>::type>::value
         >::value> = detail::dummy>
     big_dyn_matrix(S... sizes) : 
             _size(dyn_detail::size(make_index_sequence<(sizeof...(S)-1)>(), sizes...)), 
-            _data(dyn_detail::last_value(sizes...)), 
+            _data(last_value(sizes...)), 
             _dimensions(dyn_detail::sizes(make_index_sequence<(sizeof...(S)-1)>(), sizes...)) {
         //Nothing to init
     }
@@ -146,14 +97,14 @@ public:
     template<typename... S, enable_if_u<
         and_u<
             (sizeof...(S) > 1),
-            std::is_convertible<std::size_t, typename dyn_detail::first_type<S...>::type>::value,                                       //The first type must be convertible to size_t
-            dyn_detail::is_sub_homogeneous<typename dyn_detail::first_type<S...>::type, S...>::value,                                   //The first N-1 types must homegeneous
-            std::is_same<value_type, typename dyn_detail::last_type<S...>::type>::value,                                                //The last type must be exactly value_type
-            not_u<std::is_same<typename dyn_detail::first_type<S...>::type, typename dyn_detail::last_type<S...>::type>::value>::value  //The first and last types must be different
+            std::is_convertible<std::size_t, typename first_type<S...>::type>::value,                           //The first type must be convertible to size_t
+            is_sub_homogeneous<typename first_type<S...>::type, S...>::value,                                   //The first N-1 types must homegeneous
+            std::is_same<value_type, typename last_type<S...>::type>::value,                                    //The last type must be exactly value_type
+            not_u<std::is_same<typename first_type<S...>::type, typename last_type<S...>::type>::value>::value  //The first and last types must be different
         >::value> = detail::dummy>
     big_dyn_matrix(S... sizes) : 
             _size(dyn_detail::size(make_index_sequence<(sizeof...(S)-1)>(), sizes...)), 
-            _data(_size, dyn_detail::last_value(sizes...)), 
+            _data(_size, last_value(sizes...)), 
             _dimensions(dyn_detail::sizes(make_index_sequence<(sizeof...(S)-1)>(), sizes...)) {
         //Nothing to init
     }
@@ -162,11 +113,11 @@ public:
     template<typename... S, enable_if_u<
         and_u<
             (sizeof...(S) > 2),
-            std::is_same<init_flag_t, typename dyn_detail::nth_type<sizeof...(S) - 2, S...>::type>::value
+            std::is_same<init_flag_t, typename nth_type<sizeof...(S) - 2, S...>::type>::value
         >::value> = detail::dummy>
     big_dyn_matrix(S... sizes) : 
             _size(dyn_detail::size(make_index_sequence<(sizeof...(S)-2)>(), sizes...)), 
-            _data(_size, dyn_detail::last_value(sizes...)), 
+            _data(_size, last_value(sizes...)), 
             _dimensions(dyn_detail::sizes(make_index_sequence<(sizeof...(S)-2)>(), sizes...)) {
         //Nothing to init
     }
