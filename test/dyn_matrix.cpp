@@ -11,6 +11,10 @@
 
 //{{{ Init tests
 
+TEST_CASE( "big_dyn_matrix/init_1", "dyn_matrix::dyn_matrix(T)" ) {
+    etl::big_dyn_matrix<double> test_matrix(3, 2, 4, 5);
+}
+
 TEST_CASE( "dyn_matrix/init_1", "dyn_matrix::dyn_matrix(T)" ) {
     etl::dyn_matrix<double> test_matrix(3, 2, 3.3);
 

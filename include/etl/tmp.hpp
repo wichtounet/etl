@@ -61,4 +61,10 @@ struct is_specialization_of : std::false_type {};
 template<template<typename...> class TT, typename... Args>
 struct is_specialization_of<TT, TT<Args...>> : std::true_type {};
 
+template<typename V, typename F, typename... S>
+struct all_convertible_to  : std::integral_constant<bool, and_u<all_convertible_to<V, F>::value, all_convertible_to<V, S...>::value>::value> {};
+
+template<typename V, typename F>
+struct all_convertible_to<V, F> : std::integral_constant<bool, std::is_convertible<F, V>::value> {};
+
 #endif

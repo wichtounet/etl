@@ -32,12 +32,6 @@ struct matrix_subsize  : std::integral_constant<std::size_t, M::template dim<I+1
 template<typename M, size_t I>
 struct matrix_subsize<M, I, enable_if_t<I == M::n_dimensions - 1>> : std::integral_constant<std::size_t, 1> {};
 
-template<typename F, typename... S>
-struct valid_sizes  : std::integral_constant<bool, and_u<valid_sizes<F>::value, valid_sizes<S...>::value>::value> {};
-
-template<typename F>
-struct valid_sizes<F> : std::integral_constant<bool, std::is_convertible<F, std::size_t>::value> {};
-
 template<size_t S, size_t I, size_t F, size_t... Dims>
 struct matrix_dimension {
     template<size_t S2, size_t I2, typename Enable = void>
@@ -267,7 +261,7 @@ public:
     template<typename... S>
     value_type& operator()(S... args){
         static_assert(sizeof...(S) == sizeof...(Dims), "Invalid number of parameters");
-        static_assert(matrix_detail::valid_sizes<S...>::value, "Invalid size types");
+        static_assert(all_convertible_to<std::size_t, S...>::value, "Invalid size types");
 
         return access(static_cast<size_t>(args)...);
     }
@@ -275,7 +269,7 @@ public:
     template<typename... S>
     const value_type& operator()(S... args) const {
         static_assert(sizeof...(S) == sizeof...(Dims), "Invalid number of parameters");
-        static_assert(matrix_detail::valid_sizes<S...>::value, "Invalid size types");
+        static_assert(all_convertible_to<std::size_t, S...>::value, "Invalid size types");
 
         return access(static_cast<size_t>(args)...);
     }
