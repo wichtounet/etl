@@ -11,6 +11,8 @@
 
 #include "etl/fast_vector.hpp"
 #include "etl/fast_matrix.hpp"
+#include "etl/dyn_vector.hpp"
+#include "etl/dyn_matrix.hpp"
 #include "etl/convolution.hpp"
 #include "etl/multiplication.hpp"
 
@@ -71,55 +73,150 @@ void measure(const std::string& title, const std::string& reference, Functor&& f
         duration_acc += duration.count();
     }
 
-    std::cout << title << " took " << duration_str(duration_acc) << " (reference: " << reference << ")" << std::endl;
+    std::cout << title << " took " << duration_str(duration_acc) << " (reference: " << reference << ")\n";
+}
+
+template<std::size_t D>
+void bench_fast_vector_simple(const std::string& reference){
+    etl::fast_vector<double, D> a;
+    etl::fast_vector<double, D> b;
+    etl::fast_vector<double, D> c;
+
+    measure("fast_vector_simple(" + std::to_string(D) + ")", reference, [&a, &b, &c](){
+        c = 3.5 * a + etl::sigmoid(1.0 + b);
+    }, a, b);
+}
+
+void bench_dyn_vector_simple(std::size_t d, const std::string& reference){
+    etl::dyn_vector<double> a(d);
+    etl::dyn_vector<double> b(d);
+    etl::dyn_vector<double> c(d);
+
+    measure("dyn_vector_simple(" + std::to_string(d) + ")", reference, [&a, &b, &c](){
+        c = 3.5 * a + etl::sigmoid(1.0 + b);
+    }, a, b);
+}
+
+template<std::size_t D1, std::size_t D2>
+void bench_fast_matrix_simple(const std::string& reference){
+    etl::fast_matrix<double, D1, D2> a;
+    etl::fast_matrix<double, D1, D2> b;
+    etl::fast_matrix<double, D1, D2> c;
+
+    measure("fast_matrix_simple(" + std::to_string(D1) + "," + std::to_string(D2) + ")(" + std::to_string(D1 * D2) + ")", reference,
+        [&a, &b, &c](){c = 3.5 * a + etl::sigmoid(1.0 + b);}
+        , a, b);
+}
+
+void bench_dyn_matrix_simple(std::size_t d1, std::size_t d2, const std::string& reference){
+    etl::dyn_matrix<double> a(d1, d2);
+    etl::dyn_matrix<double> b(d1, d2);
+    etl::dyn_matrix<double> c(d1, d2);
+
+    measure("dyn_matrix_simple(" + std::to_string(d1) + "," + std::to_string(d2) + ")(" + std::to_string(d1 * d2) + ")", reference,
+        [&a, &b, &c](){c = 3.5 * a + etl::sigmoid(1.0 + b);}
+        , a, b);
+}
+
+template<std::size_t D1, std::size_t D2>
+void bench_fast_full_convolution(const std::string& reference){
+    etl::fast_matrix<double, D1, D1> a;
+    etl::fast_matrix<double, D2, D2> b;
+    etl::fast_matrix<double, D1+D2-1, D1+D2-1> c;
+
+    measure("fast_full_convolution(" + std::to_string(D1) + "," + std::to_string(D2) + ")", reference,
+        [&a, &b, &c](){etl::convolve_2d_full(a, b, c);}
+        , a, b);
+}
+
+void bench_dyn_full_convolution(std::size_t d1, std::size_t d2, const std::string& reference){
+    etl::dyn_matrix<double> a(d1, d1);
+    etl::dyn_matrix<double> b(d2, d2);
+    etl::dyn_matrix<double> c(d1+d2-1, d1+d2-1);
+
+    measure("dyn_full_convolution(" + std::to_string(d1) + "," + std::to_string(d2) + ")", reference,
+        [&a, &b, &c](){etl::convolve_2d_full(a, b, c);}
+        , a, b);
+}
+
+template<std::size_t D1, std::size_t D2>
+void bench_fast_valid_convolution(const std::string& reference){
+    etl::fast_matrix<double, D1, D1> a;
+    etl::fast_matrix<double, D2, D2> b;
+    etl::fast_matrix<double, D1-D2+1, D1-D2+1> c;
+
+    measure("fast_valid_convolution(" + std::to_string(D1) + "," + std::to_string(D2) + ")", reference,
+        [&a, &b, &c](){etl::convolve_2d_valid(a, b, c);}
+        , a, b);
+}
+
+void bench_dyn_valid_convolution(std::size_t d1, std::size_t d2, const std::string& reference){
+    etl::dyn_matrix<double> a(d1, d1);
+    etl::dyn_matrix<double> b(d2, d2);
+    etl::dyn_matrix<double> c(d1-d2+1, d1-d2+1);
+
+    measure("dyn_valid_convolution(" + std::to_string(d1) + "," + std::to_string(d2) + ")", reference,
+        [&a, &b, &c](){etl::convolve_2d_valid(a, b, c);}
+        , a, b);
+}
+
+template<std::size_t D1, std::size_t D2>
+void bench_fast_mmul(const std::string& reference){
+    etl::fast_matrix<double, D1, D2> a;
+    etl::fast_matrix<double, D2, D1> b;
+    etl::fast_matrix<double, D1, D1> c;
+
+    measure("fast_mmul(" + std::to_string(D1) + "," + std::to_string(D2) + ")", reference,
+        [&a, &b, &c](){etl::mmul(a, b, c);}
+        , a, b);
+}
+
+void bench_dyn_mmul(std::size_t d1, std::size_t d2, const std::string& reference){
+    etl::dyn_matrix<double> a(d1, d2);
+    etl::dyn_matrix<double> b(d2, d1);
+    etl::dyn_matrix<double> c(d1, d1);
+
+    measure("dyn_mmul(" + std::to_string(d1) + "," + std::to_string(d2) + ")", reference,
+        [&a, &b, &c](){etl::mmul(a, b, c);}
+        , a, b);
+}
+
+void bench_stack(){
+    std::cout << "Start benchmarking...\n";
+    std::cout << "... all structures are on stack\n\n";
+
+    bench_fast_vector_simple<4096>("TODOms");
+    bench_fast_vector_simple<16384>("TODOms");
+    bench_dyn_vector_simple(4096, "TODOms");
+    bench_dyn_vector_simple(16384, "TODOms");
+
+    bench_fast_matrix_simple<16, 256>("TODOms");
+    bench_fast_matrix_simple<256, 128>("TODOms");
+    bench_dyn_matrix_simple(16, 256, "TODOms");
+    bench_dyn_matrix_simple(256, 128, "TODOms");
+
+    bench_fast_full_convolution<64, 32>("TODOms");
+    bench_fast_full_convolution<128, 32>("TODOms");
+    bench_dyn_full_convolution(64, 32, "TODOms");
+    bench_dyn_full_convolution(128, 32, "TODOms");
+
+    bench_fast_valid_convolution<64, 32>("TODOms");
+    bench_fast_valid_convolution<128, 32>("TODOms");
+    bench_dyn_valid_convolution(64, 32, "TODOms");
+    bench_dyn_valid_convolution(128, 32, "TODOms");
+
+    bench_fast_mmul<64, 32>("TODOms");
+    bench_fast_mmul<128, 64>("TODOms");
+    bench_fast_mmul<256, 128>("TODOms");
+    bench_dyn_mmul(64, 32, "TODOms");
+    bench_dyn_mmul(128, 64, "TODOms");
+    bench_dyn_mmul(256, 128, "TODOms");
 }
 
 } //end of anonymous namespace
 
-etl::fast_vector<double, 4096> double_vector_a;
-etl::fast_vector<double, 4096> double_vector_b;
-etl::fast_vector<double, 4096> double_vector_c;
-
-etl::fast_matrix<double, 16, 256> double_matrix_a;
-etl::fast_matrix<double, 16, 256> double_matrix_b;
-etl::fast_matrix<double, 16, 256> double_matrix_c;
-
-etl::fast_matrix<double, 256, 128> double_matrix_d;
-etl::fast_matrix<double, 256, 128> double_matrix_e;
-etl::fast_matrix<double, 256, 128> double_matrix_f;
-
-etl::fast_matrix<double, 128, 128> double_conv_a;
-etl::fast_matrix<double, 32, 32> double_conv_b;
-etl::fast_matrix<double, 159, 159> double_conv_c;
-
-etl::fast_matrix<double, 256, 128> double_mmul_a;
-etl::fast_matrix<double, 128, 256> double_mmul_b;
-etl::fast_matrix<double, 256, 256> double_mmul_c;
-
 int main(){
-    measure("fast_vector_simple(4096)", "72ms", [](){
-        double_vector_c = 3.5 * double_vector_a + etl::sigmoid(1.0 + double_vector_b);
-    }, double_vector_a, double_vector_b);
-
-    measure("fast_matrix_simple(16,256)(4096)", "72ms", [](){
-        double_matrix_c = 3.5 * double_matrix_a + etl::sigmoid(1.0 + double_matrix_b);
-    }, double_matrix_a, double_matrix_b);
-
-    measure("fast_matrix_simple(256,128)", "580ms", [](){
-        double_matrix_f = 3.5 * double_matrix_d + etl::sigmoid(1.0 + double_matrix_e);
-    }, double_matrix_d, double_matrix_e);
-
-    measure("fast_matrix_full_convolve(128,128)", "15s", [](){
-        etl::convolve_2d_full(double_conv_a, double_conv_b, double_conv_c);
-    }, double_conv_a, double_conv_b);
-
-    measure("fast_matrix_valid_convolve(128,128)", "22s", [](){
-        etl::convolve_2d_valid(double_conv_a, double_conv_b, double_conv_c);
-    }, double_conv_a, double_conv_b);
-
-    measure("fast_matrix_mmul(256,256)", "9.5s", [](){
-        etl::mmul(double_mmul_a, double_mmul_b, double_mmul_c);
-    }, double_mmul_a, double_mmul_b);
+    bench_stack();
 
     return 0;
 }
