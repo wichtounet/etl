@@ -12,7 +12,17 @@
 //{{{ Init tests
 
 TEST_CASE( "big_dyn_matrix/init_1", "dyn_matrix::dyn_matrix(T)" ) {
-    etl::big_dyn_matrix<double> test_matrix(3, 2, 4, 5);
+    etl::big_dyn_matrix<double> a(3, 2, 4, 5);
+
+    REQUIRE(a.rows() == 3);
+    REQUIRE(a.columns() == 2);
+    REQUIRE(a.size() == 120);
+
+    etl::big_dyn_matrix<double> b(3, 2, std::initializer_list<double>({1,2,3,4,5,6}));
+
+    REQUIRE(b.rows() == 3);
+    REQUIRE(b.columns() == 2);
+    REQUIRE(b.size() == 6);
 }
 
 TEST_CASE( "dyn_matrix/init_1", "dyn_matrix::dyn_matrix(T)" ) {

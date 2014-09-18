@@ -15,19 +15,11 @@
 #include "tmp.hpp"
 #include "fast_op.hpp"
 #include "fast_expr.hpp"
+#include "integer_sequence.hpp"
 
 namespace etl {
 
 namespace dyn_detail {
-
-inline std::size_t size(std::size_t first){
-    return first;
-}
-
-template<typename... T>
-inline std::size_t size(std::size_t first, T... args){
-    return first * size(args...);
-}
 
 template<std::size_t N, typename... T>
 struct nth_type {
@@ -38,6 +30,43 @@ template<typename... T>
 struct last_type {
     using type = typename nth_type<sizeof...(T)-1, T...>::type;
 };
+
+template<int I, typename T1, typename... T>
+auto nth_value(T1&& t, T&&... /*args*/) -> typename std::enable_if<(I == 0), decltype(std::forward<T1>(t))>::type{
+    return std::forward<T1>(t);
+}
+
+// Induction step
+template<int I, typename T1, typename... T>
+auto nth_value(T1&& /*t*/, T&&... args) ->
+    typename std::enable_if<(I > 0), decltype(
+        std::forward<typename nth_type<I, T1, T...>::type>(
+            std::declval<typename nth_type<I, T1, T...>::type>()
+            )
+        )>::type
+{
+    using return_type = typename nth_type<I, T1, T...>::type;
+    return std::forward<return_type>(nth_value<I - 1>((std::forward<T>(args))...));
+}
+
+inline std::size_t size(std::size_t first){
+    return first;
+}
+
+template<typename... T>
+inline std::size_t size(std::size_t first, T... args){
+    return first * size(args...);
+}
+
+template<std::size_t... I, typename... T>
+inline std::size_t size(const index_sequence<I...>& /*i*/, const T&... args){
+    return size((nth_value<I>(args...))...);
+}
+
+template<std::size_t... I, typename... T>
+inline std::vector<std::size_t> sizes(const index_sequence<I...>& /*i*/, const T&... args){
+    return {static_cast<std::size_t>(nth_value<I>(args...))...};
+}
 
 } // end of namespace dyn_detail
 
@@ -64,20 +93,25 @@ public:
     }
 
     //Normal constructor with only sizes
-    template<typename... S, enable_if_u<(sizeof...(S) > 0)> = detail::dummy>
-    big_dyn_matrix(S... sizes) : _size(dyn_detail::size(sizes...)), _data(_size), _dimensions({static_cast<std::size_t>(sizes)...}) {
-        static_assert(all_convertible_to<std::size_t, S...>::value, "Invalid sizes");
+    template<typename... S, enable_if_u<and_u<(sizeof...(S) > 0), all_convertible_to<std::size_t, S...>::value>::value> = detail::dummy>
+    big_dyn_matrix(S... sizes) : 
+            _size(dyn_detail::size(sizes...)), 
+            _data(_size), 
+            _dimensions({static_cast<std::size_t>(sizes)...}) {
+        //Nothing to init
     }
 
     //Sizes followed by an initializer list
     template<typename... S, enable_if_u<
         and_u<
-            (sizeof...(S) > 0),
+            (sizeof...(S) > 1),
             is_specialization_of<std::initializer_list, typename dyn_detail::last_type<S...>::type>::value
         >::value> = detail::dummy>
-    big_dyn_matrix(S... sizes) : _size(dyn_detail::size(sizes...)), _data(_size), _dimensions({static_cast<std::size_t>(sizes)...}) {
-        //TODO Get only the S-1 sizes and extract the initializer list
-        //static_assert(all_convertible_to<std::size_t, S...>::value, "Invalid sizes");
+    big_dyn_matrix(S... sizes) : 
+            _size(dyn_detail::size(make_index_sequence<(sizeof...(S)-1)>(), sizes...)), 
+            _data(_size), 
+            _dimensions(dyn_detail::sizes(make_index_sequence<(sizeof...(S)-1)>(), sizes...)) {
+        //Nothing to init
     }
 
     //template<typename... S>
