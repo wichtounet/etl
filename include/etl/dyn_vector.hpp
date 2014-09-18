@@ -170,6 +170,10 @@ public:
         return _rows;
     }
 
+    size_t dimensions() const {
+        return 1;
+    }
+
     size_t dim(std::size_t d) const {
         etl_assert(d == 0, "Invalid dimension");
         etl_unused(d);

@@ -33,6 +33,7 @@ public:
     using     const_iterator = typename storage_impl::const_iterator;
 
     static constexpr const std::size_t etl_size = Rows;
+    static constexpr const std::size_t n_dimensions = 1;
 
 private:
     storage_impl _data;
@@ -81,7 +82,7 @@ public:
             _data[i] = e[i];
         }
     }
-    
+
     template<typename E>
     explicit fast_vector(const transform_expr<value_type, E>& e){
         ensure_same_size(*this, e);
@@ -178,6 +179,10 @@ public:
         static_assert(D == 0, "Invalid dimension");
 
         return Rows;
+    }
+
+    static constexpr size_t dimensions(){
+        return 1;
     }
 
     value_type& operator()(size_t i){

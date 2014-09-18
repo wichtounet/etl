@@ -142,7 +142,7 @@ public:
     }
 
     T operator()(std::size_t i) const {
-        return UnaryOp::apply(value()[i]);
+        return UnaryOp::apply(value()(i));
     }
 
     template<typename TT = this_type>
@@ -484,6 +484,12 @@ auto row(const E& value, std::size_t i) -> unary_expr<typename E::value_type, di
 
 template<typename E, enable_if_u<is_etl_expr<E>::value> = detail::dummy>
 auto col(const E& value, std::size_t i) -> unary_expr<typename E::value_type, dim_view<E, 2>, identity_unary_op<typename E::value_type>> {
+    return {{value, i}};
+}
+
+template<typename E, enable_if_u<is_etl_expr<E>::value> = detail::dummy>
+auto sub(const E& value, std::size_t i) -> unary_expr<typename E::value_type, sub_view<E>, identity_unary_op<typename E::value_type>> {
+    //TODO Static assert that the matrix is at least 3 (2 later) dimensions
     return {{value, i}};
 }
 
