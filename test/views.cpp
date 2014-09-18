@@ -281,4 +281,13 @@ TEST_CASE( "fast_matrix/sub_view_4", "fast_matrix::sub" ) {
     REQUIRE(b(1) == 2.0);
 }
 
+TEST_CASE( "fast_matrix/sub_view_5", "fast_matrix::sub" ) {
+    etl::fast_matrix<double, 2, 2, 2> a = {1.1, 2.0, 5.0, 1.0, 1.1, 2.0, 5.0, 1.0};
+
+    etl::fast_vector<double, 2> b(2.0 * etl::sub(2.0 * etl::sub(a, 1), 0));
+
+    REQUIRE(b(0) == 4.4);
+    REQUIRE(b(1) == 8.0);
+}
+
 //}}}
