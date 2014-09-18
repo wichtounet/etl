@@ -36,7 +36,7 @@ std::string to_octave(const T& vec){
     return v;
 }
 
-template<typename T, enable_if_u<etl_traits<T>::is_matrix> = detail::dummy>
+template<typename T, enable_if_u<and_u<etl_traits<T>::is_matrix, not_u<etl_traits<T>::is_fast>::value>::value> = detail::dummy>
 std::string to_string(const T& m){
     std::string v = "[";
     for(std::size_t i = 0; i < rows(m); ++i){
@@ -48,6 +48,39 @@ std::string to_string(const T& m){
         }
         v += "]";
         if(i < rows(m) - 1){
+            v += "\n";
+        }
+    }
+    v += "]";
+    return v;
+}
+
+template<typename T, enable_if_u<and_u<etl_traits<T>::is_matrix, etl_traits<T>::is_fast, (etl_traits<T>::dimensions() > 2)>::value> = detail::dummy>
+std::string to_string(const T& m){
+    std::string v = "[";
+    for(std::size_t i = 0; i < etl_traits<T>::template dim<0>(); ++i){
+        v += to_string(sub(m, i));
+
+        if(i < etl_traits<T>::template dim<0>() - 1){
+            v += "\n";
+        }
+    }
+    v += "]";
+    return v;
+}
+
+template<typename T, enable_if_u<and_u<etl_traits<T>::is_matrix, etl_traits<T>::is_fast, etl_traits<T>::dimensions() == 2>::value> = detail::dummy>
+std::string to_string(const T& m){
+    std::string v = "[";
+    for(std::size_t i = 0; i < etl_traits<T>::template dim<0>(); ++i){
+        v += "[";
+        std::string comma = "";
+        for(std::size_t j = 0; j  < etl_traits<T>::template dim<1>(); ++j){
+            v += comma + std::to_string(m(i, j));
+            comma = ",";
+        }
+        v += "]";
+        if(i < etl_traits<T>::template dim<0>() - 1){
             v += "\n";
         }
     }
