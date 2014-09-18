@@ -116,7 +116,7 @@ public:
         >::value> = detail::dummy>
     big_dyn_matrix(S... sizes) : 
             _size(dyn_detail::size(make_index_sequence<(sizeof...(S)-1)>(), sizes...)), 
-            _data(_size), 
+            _data(dyn_detail::last_value(sizes...)), 
             _dimensions(dyn_detail::sizes(make_index_sequence<(sizeof...(S)-1)>(), sizes...)) {
         //Nothing to init
     }
