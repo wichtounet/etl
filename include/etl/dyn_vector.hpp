@@ -82,7 +82,7 @@ public:
     template<typename Container, enable_if_u<std::is_same<typename Container::value_type, value_type>::value> = detail::dummy>
     explicit dyn_vector(const Container& vec) : _data(vec.size()), _rows(vec.size()) {
         std::copy(vec.begin(), vec.end(), begin());
-    } 
+    }
 
     //Move is possible
     dyn_vector(dyn_vector&& rhs) = default;
@@ -168,6 +168,10 @@ public:
 
     size_t rows() const {
         return _rows;
+    }
+
+    size_t dimensions() const {
+        return 1;
     }
 
     size_t dim(std::size_t d) const {

@@ -74,7 +74,7 @@ public:
             }
         }
     }
-    
+
     template<typename E>
     explicit dyn_matrix(const transform_expr<value_type, E>& e) :
             _data(etl::rows(e) * etl::columns(e)),
@@ -184,6 +184,10 @@ public:
 
     size_t columns() const {
         return _columns;
+    }
+
+    size_t dimensions() const {
+        return 2;
     }
 
     size_t dim(std::size_t d) const {

@@ -156,9 +156,8 @@ struct etl_traits<T, enable_if_t<is_etl_value<T>::value>> {
         return v.dim(d);
     }
 
-    static std::size_t dimensions(const T& /*v*/){
-        //TODO Make dyn_matrix higher dimensional
-        return is_matrix ? 2 : 1;
+    static std::size_t dimensions(const T& v){
+        return v.dimensions();
     }
 
     template<bool B = is_fast, enable_if_u<B> = detail::dummy>
@@ -185,7 +184,7 @@ struct etl_traits<T, enable_if_t<is_etl_value<T>::value>> {
 
     template<bool B = is_fast, enable_if_u<B> = detail::dummy>
     static constexpr std::size_t dimensions(){
-        return T::dimensions;
+        return T::n_dimensions;
     }
 };
 
