@@ -43,11 +43,11 @@ struct not_u : std::true_type {};
 template<>
 struct not_u<true> : std::false_type {};
 
-template<bool b1, bool b2, bool b3 = true, bool b4 = true>
+template<bool b1, bool b2, bool b3 = true, bool b4 = true, bool b5 = true, bool b6 = true>
 struct and_u : std::false_type {};
 
 template<>
-struct and_u<true, true, true, true> : std::true_type {};
+struct and_u<true, true, true, true, true, true> : std::true_type {};
 
 template<bool b1, bool b2, bool b3 = false, bool b4 = false, bool b5 = false, bool b6 = false, bool b7 = false, bool b8 = false, bool b9 = false>
 struct or_u : std::true_type {};
