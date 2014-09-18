@@ -658,6 +658,12 @@ std::size_t rows(const E& v){
     return etl_traits<E>::rows(v);
 }
 
+template<typename E, enable_if_u<not_u<etl_traits<E>::is_fast>::value> = detail::dummy>
+std::size_t subsize(const E& v){
+    //TODO Assert
+    return etl_traits<E>::size(v) / etl_traits<E>::dim(v, 0);
+}
+
 template<typename E, enable_if_u<etl_traits<E>::is_fast> = detail::dummy>
 constexpr std::size_t size(const E&){
     return etl_traits<E>::size();
@@ -671,6 +677,12 @@ constexpr std::size_t columns(const E&){
 template<typename E, enable_if_u<etl_traits<E>::is_fast> = detail::dummy>
 constexpr std::size_t rows(const E&){
     return etl_traits<E>::rows();
+}
+
+template<typename E, enable_if_u<etl_traits<E>::is_fast> = detail::dummy>
+constexpr std::size_t subsize(const E&){
+    //TODO Assert
+    return etl_traits<E>::size() / etl_traits<E>::template dim<0>();
 }
 
 template<typename LE, typename RE, disable_if_u<and_u<is_etl_expr<LE>::value, is_etl_expr<RE>::value, etl_traits<LE>::is_fast, etl_traits<RE>::is_fast>::value> = detail::dummy>

@@ -260,18 +260,6 @@ public:
 
     //TODO Would probably be useful to have dim(size_t i)
 
-    value_type& sub_linear(std::size_t i, std::size_t j){
-        //TODO Validate i and j
-
-        return _data[matrix_detail::matrix_subsize<this_type, 0>::value * i + j];
-    }
-    
-    const value_type& sub_linear(std::size_t i, std::size_t j) const {
-        //TODO Validate i and j
-
-        return _data[matrix_detail::matrix_subsize<this_type, 0>::value * i + j];
-    }
-
     template<typename... S>
     value_type& operator()(S... args){
         static_assert(sizeof...(S) == sizeof...(Dims), "Invalid number of parameters");
