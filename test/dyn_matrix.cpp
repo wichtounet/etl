@@ -26,7 +26,21 @@ TEST_CASE( "big_dyn_matrix/init_1", "dyn_matrix::dyn_matrix(T)" ) {
     REQUIRE(b[0] == 1);
     REQUIRE(b[1] == 2);
 
-    //TODO Test constructor with init_flag
+    etl::big_dyn_matrix<double> c(3, 2, etl::init_flag, 3.3);
+
+    REQUIRE(c.rows() == 3);
+    REQUIRE(c.columns() == 2);
+    REQUIRE(c.size() == 6);
+    REQUIRE(c[0] == 3.3);
+    REQUIRE(c[1] == 3.3);
+
+    etl::big_dyn_matrix<double> d(3, 2, 3.3);
+
+    REQUIRE(d.rows() == 3);
+    REQUIRE(d.columns() == 2);
+    REQUIRE(d.size() == 6);
+    REQUIRE(d[0] == 3.3);
+    REQUIRE(d[1] == 3.3);
 }
 
 TEST_CASE( "dyn_matrix/init_1", "dyn_matrix::dyn_matrix(T)" ) {
