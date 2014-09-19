@@ -359,8 +359,8 @@ TEST_CASE( "dyn_matrix/sub_view_5", "dyn_matrix::sub" ) {
 TEST_CASE( "dyn_matrix/sub_view_6", "dyn_matrix::sub" ) {
     etl::dyn_matrix<double> test_matrix(2, 3, 2, etl::values(1.0, -2.0, 3.0, 0.5, 0.0, -1, 1.0, -2.0, 3.0, 0.5, 0.0, -1));
 
-    //REQUIRE(sub(test_matrix, 0)(0, 0) == 1.0);
-    //REQUIRE(sub(test_matrix, 0)(0, 1) == -2.0);
+    REQUIRE(sub(test_matrix, 0)(0, 0) == 1.0);
+    REQUIRE(sub(test_matrix, 0)(0, 1) == -2.0);
     REQUIRE(sub(test_matrix, 0)(1, 0) == 3.0);
     REQUIRE(sub(test_matrix, 0)(1, 1) == 0.5);
     REQUIRE(sub(test_matrix, 0)(2, 0) == 0.0);
