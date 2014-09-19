@@ -8,17 +8,19 @@
 #ifndef ETL_TMP_HPP
 #define ETL_TMP_HPP
 
-template<bool B, class T = void>
-using enable_if_t = typename std::enable_if<B,T>::type;
-
-template<bool B, class T = void>
-using disable_if_t = typename std::enable_if<!B, T>::type;
-
 template<typename T>
 using remove_reference_t = typename std::remove_reference<T>::type;
 
 template<typename T>
 using remove_cv_t = typename std::remove_cv<T>::type;
+
+//enable_if utilities
+
+template<bool B, class T = void>
+using enable_if_t = typename std::enable_if<B,T>::type;
+
+template<bool B, class T = void>
+using disable_if_t = typename std::enable_if<!B, T>::type;
 
 namespace detail {
 
@@ -36,6 +38,8 @@ using enable_if_u = typename std::enable_if<B, detail::enabler_t>::type;
 
 template<bool B>
 using disable_if_u = typename std::enable_if<!B, detail::enabler_t>::type;
+
+//Other TMP Utilities
 
 template<bool b1>
 struct not_u : std::true_type {};
