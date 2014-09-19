@@ -171,9 +171,7 @@ TEST_CASE( "reshape/traits", "traits<reshape<2,3>>" ) {
 
     REQUIRE(etl::etl_traits<expr_type>::size(expr) == 6);
     REQUIRE(etl::size(expr) == 6);
-    REQUIRE(etl::etl_traits<expr_type>::rows(expr) == 2);
     REQUIRE(etl::rows(expr) == 2);
-    REQUIRE(etl::etl_traits<expr_type>::columns(expr) == 3);
     REQUIRE(etl::columns(expr) == 3);
     REQUIRE(etl::etl_traits<expr_type>::is_matrix);
     REQUIRE(!etl::etl_traits<expr_type>::is_value);
@@ -181,12 +179,8 @@ TEST_CASE( "reshape/traits", "traits<reshape<2,3>>" ) {
     REQUIRE(!etl::etl_traits<expr_type>::is_vector);
 
     constexpr const auto size_1 = etl::etl_traits<expr_type>::size();
-    constexpr const auto rows_1 = etl::etl_traits<expr_type>::rows();
-    constexpr const auto columns_1 = etl::etl_traits<expr_type>::columns();
 
     REQUIRE(size_1 == 6);
-    REQUIRE(rows_1 == 2);
-    REQUIRE(columns_1 == 3);
 
     constexpr const auto size_2 = etl::size(expr);
     constexpr const auto rows_2 = etl::rows(expr);
@@ -229,9 +223,7 @@ TEST_CASE( "reshape/dyn_traits", "traits<reshape<2,3>>" ) {
 
     REQUIRE(etl::etl_traits<expr_type>::size(expr) == 6);
     REQUIRE(etl::size(expr) == 6);
-    REQUIRE(etl::etl_traits<expr_type>::rows(expr) == 2);
     REQUIRE(etl::rows(expr) == 2);
-    REQUIRE(etl::etl_traits<expr_type>::columns(expr) == 3);
     REQUIRE(etl::columns(expr) == 3);
     REQUIRE(etl::etl_traits<expr_type>::is_matrix);
     REQUIRE(!etl::etl_traits<expr_type>::is_value);

@@ -29,7 +29,7 @@ auto s(const T& value){
 
 template<typename T, enable_if_u<and_u<is_etl_expr<T>::value, not_u<etl_traits<T>::is_value>::value, etl_traits<T>::is_fast, etl_traits<T>::is_matrix>::value> = detail::dummy>
 auto s(const T& value){
-    return fast_matrix<typename T::value_type, etl_traits<T>::rows(), etl_traits<T>::columns()>(value);
+    return fast_matrix<typename T::value_type, etl_traits<T>::template dim<0>(), etl_traits<T>::template dim<1>()>(value);
 }
 
 } //end of namespace etl
