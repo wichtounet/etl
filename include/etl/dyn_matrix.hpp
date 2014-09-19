@@ -15,7 +15,6 @@
 #include "tmp.hpp"
 #include "fast_op.hpp"
 #include "fast_expr.hpp"
-#include "integer_sequence.hpp"
 
 namespace etl {
 
@@ -286,9 +285,33 @@ public:
     const value_type& operator()(size_t i, size_t j) const {
         etl_assert(i < dim(0), "Out of bounds");
         etl_assert(j < dim(1), "Out of bounds");
-        etl_assert(_dimensions.size() == 2, "Invalid number of parameters");
+        etl_assert(dimensions() == 2, "Invalid number of parameters");
 
         return _data[i * dim(1) + j];
+    }
+
+    template<typename... S, enable_if_u<
+        and_u<
+            (sizeof...(S) > 2),
+            all_convertible_to<std::size_t, S...>::value
+        >::value> = detail::dummy>
+    value_type& operator()(S... sizes){
+        //Note: Version with sizes moved to a std::array and accessed with
+        //standard loop may be faster, but need some stack space (relevant ?)
+
+        etl_assert(sizeof...(S) == dimensions(), "Invalid number of parameters");
+
+        auto subsize = size() / dim(0);
+        std::size_t index = 0;
+        std::size_t i = 0;
+
+        for_each_in(
+            [&subsize, &index, &i, this](std::size_t s){
+                index += subsize * s;
+                subsize /= dim(++i);
+            }, sizes...);
+
+        return _data[index];
     }
 
     const value_type& operator[](size_t i) const {
