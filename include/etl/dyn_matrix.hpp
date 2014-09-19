@@ -69,13 +69,13 @@ public:
     //Normal constructor with only sizes
     template<typename... S, enable_if_u<
         and_u<
-            (sizeof...(S) > 0), 
+            (sizeof...(S) > 0),
             all_convertible_to<std::size_t, S...>::value,
             is_homogeneous<typename first_type<S...>::type, S...>::value
         >::value> = detail::dummy>
-    big_dyn_matrix(S... sizes) : 
-            _size(dyn_detail::size(sizes...)), 
-            _data(_size), 
+    big_dyn_matrix(S... sizes) :
+            _size(dyn_detail::size(sizes...)),
+            _data(_size),
             _dimensions({static_cast<std::size_t>(sizes)...}) {
         //Nothing to init
     }
@@ -86,9 +86,9 @@ public:
             (sizeof...(S) > 1),
             is_specialization_of<std::initializer_list, typename last_type<S...>::type>::value
         >::value> = detail::dummy>
-    big_dyn_matrix(S... sizes) : 
-            _size(dyn_detail::size(make_index_sequence<(sizeof...(S)-1)>(), sizes...)), 
-            _data(last_value(sizes...)), 
+    big_dyn_matrix(S... sizes) :
+            _size(dyn_detail::size(make_index_sequence<(sizeof...(S)-1)>(), sizes...)),
+            _data(last_value(sizes...)),
             _dimensions(dyn_detail::sizes(make_index_sequence<(sizeof...(S)-1)>(), sizes...)) {
         //Nothing to init
     }
@@ -102,9 +102,9 @@ public:
             std::is_same<value_type, typename last_type<S...>::type>::value,                                    //The last type must be exactly value_type
             not_u<std::is_same<typename first_type<S...>::type, typename last_type<S...>::type>::value>::value  //The first and last types must be different
         >::value> = detail::dummy>
-    big_dyn_matrix(S... sizes) : 
-            _size(dyn_detail::size(make_index_sequence<(sizeof...(S)-1)>(), sizes...)), 
-            _data(_size, last_value(sizes...)), 
+    big_dyn_matrix(S... sizes) :
+            _size(dyn_detail::size(make_index_sequence<(sizeof...(S)-1)>(), sizes...)),
+            _data(_size, last_value(sizes...)),
             _dimensions(dyn_detail::sizes(make_index_sequence<(sizeof...(S)-1)>(), sizes...)) {
         //Nothing to init
     }
@@ -115,48 +115,59 @@ public:
             (sizeof...(S) > 2),
             std::is_same<init_flag_t, typename nth_type<sizeof...(S) - 2, S...>::type>::value
         >::value> = detail::dummy>
-    big_dyn_matrix(S... sizes) : 
-            _size(dyn_detail::size(make_index_sequence<(sizeof...(S)-2)>(), sizes...)), 
-            _data(_size, last_value(sizes...)), 
+    big_dyn_matrix(S... sizes) :
+            _size(dyn_detail::size(make_index_sequence<(sizeof...(S)-2)>(), sizes...)),
+            _data(_size, last_value(sizes...)),
             _dimensions(dyn_detail::sizes(make_index_sequence<(sizeof...(S)-2)>(), sizes...)) {
         //Nothing to init
     }
 
-    //template<typename LE, typename Op, typename RE>
-    //explicit dyn_matrix(const binary_expr<value_type, LE, Op, RE>& e) :
-            //_data(etl::rows(e) * etl::columns(e)),
-            //_rows(etl::rows(e)),
-            //_columns(etl::columns(e)) {
-        //for(std::size_t i = 0; i < rows(); ++i){
-            //for(std::size_t j = 0; j < columns(); ++j){
-                //_data[i * columns() + j] = e(i,j);
-            //}
-        //}
-    //}
+    template<typename LE, typename Op, typename RE>
+    explicit big_dyn_matrix(const binary_expr<value_type, LE, Op, RE>& e) :
+            _size(etl::size(e)),
+            _data(_size),
+            _dimensions(etl::dimensions(e)) {
 
-    //template<typename E, typename Op>
-    //explicit dyn_matrix(const unary_expr<value_type, E, Op>& e) :
-            //_data(etl::rows(e) * etl::columns(e)),
-            //_rows(etl::rows(e)),
-            //_columns(etl::columns(e)){
-        //for(std::size_t i = 0; i < rows(); ++i){
-            //for(std::size_t j = 0; j < columns(); ++j){
-                //_data[i * columns() + j] = e(i,j);
-            //}
-        //}
-    //}
+        for(std::size_t d = 0; d < etl::dimensions(e); ++d){
+            _dimensions[d] = etl::dim(e, d);
+        }
 
-    //template<typename E>
-    //explicit dyn_matrix(const transform_expr<value_type, E>& e) :
-            //_data(etl::rows(e) * etl::columns(e)),
-            //_rows(etl::rows(e)),
-            //_columns(etl::columns(e)){
-        //for(std::size_t i = 0; i < rows(); ++i){
-            //for(std::size_t j = 0; j < columns(); ++j){
-                //_data[i * columns() + j] = e(i,j);
-            //}
-        //}
-    //}
+        for(std::size_t i = 0; i < size(); ++i){
+            _data[i] = e[i];
+        }
+    }
+
+    template<typename E, typename Op>
+    explicit big_dyn_matrix(const unary_expr<value_type, E, Op>& e) :
+            _size(etl::size(e)),
+            _data(_size),
+            _dimensions(etl::dimensions(e)) {
+
+        for(std::size_t d = 0; d < etl::dimensions(e); ++d){
+            _dimensions[d] = etl::dim(e, d);
+        }
+
+        for(std::size_t i = 0; i < size(); ++i){
+            _data[i] = e[i];
+        }
+    }
+
+    template<typename E>
+    explicit big_dyn_matrix(const transform_expr<value_type, E>& e) :
+            _size(etl::size(e)),
+            _data(_size),
+            _dimensions(etl::dimensions(e)) {
+
+        for(std::size_t d = 0; d < etl::dimensions(e); ++d){
+            _dimensions[d] = etl::dim(e, d);
+        }
+
+        for(std::size_t i = 0; i < rows(); ++i){
+            for(std::size_t j = 0; j < columns(); ++j){
+                _data[i * columns() + j] = e(i,j);
+            }
+        }
+    }
 
     //Default move
     big_dyn_matrix(big_dyn_matrix&& rhs) = default;
@@ -165,71 +176,67 @@ public:
 
     //{{{ Assignment
 
-    ////Copy assignment operator
+    //Copy assignment operator
 
-    //dyn_matrix& operator=(const dyn_matrix& rhs){
-        //ensure_same_size(*this, rhs);
+    big_dyn_matrix& operator=(const big_dyn_matrix& rhs){
+        ensure_same_size(*this, rhs);
 
-        //for(std::size_t i = 0; i < size(); ++i){
-            //_data[i] = rhs[i];
-        //}
+        for(std::size_t i = 0; i < size(); ++i){
+            _data[i] = rhs[i];
+        }
 
-        //return *this;
-    //}
+        return *this;
+    }
 
-    ////Allow copy from other containers
+    //Allow copy from other containers
 
-    //template<typename Container, enable_if_u<std::is_same<typename Container::value_type, value_type>::value> = detail::dummy>
-    //dyn_matrix& operator=(const Container& vec){
-        //etl_assert(vec.size() == _rows * _columns, "Cannot copy from a vector of different size");
+    template<typename Container, enable_if_u<std::is_same<typename Container::value_type, value_type>::value> = detail::dummy>
+    big_dyn_matrix& operator=(const Container& vec){
+        etl_assert(vec.size() == size(), "Cannot copy from a vector of different size");
 
-        //for(std::size_t i = 0; i < _rows * _columns; ++i){
-            //_data[i] = vec[i];
-        //}
+        for(std::size_t i = 0; i < size(); ++i){
+            _data[i] = vec[i];
+        }
 
-        //return *this;
-    //}
+        return *this;
+    }
 
-    ////Construct from expression
+    //Construct from expression
 
-    //template<typename LE, typename Op, typename RE>
-    //dyn_matrix& operator=(binary_expr<value_type, LE, Op, RE>&& e){
-        //ensure_same_size(*this, e);
+    template<typename LE, typename Op, typename RE>
+    big_dyn_matrix& operator=(binary_expr<value_type, LE, Op, RE>&& e){
+        ensure_same_size(*this, e);
 
-        //for(std::size_t i = 0; i < rows(); ++i){
-            //for(std::size_t j = 0; j < columns(); ++j){
-                //_data[i * columns() + j] = e(i,j);
-            //}
-        //}
+        for(std::size_t i = 0; i < size(); ++i){
+            _data[i] = e[i];
+        }
 
-        //return *this;
-    //}
+        return *this;
+    }
 
-    //template<typename E, typename Op>
-    //dyn_matrix& operator=(unary_expr<value_type, E, Op>&& e){
-        //ensure_same_size(*this, e);
+    template<typename E, typename Op>
+    big_dyn_matrix& operator=(unary_expr<value_type, E, Op>&& e){
+        ensure_same_size(*this, e);
 
-        //for(std::size_t i = 0; i < rows(); ++i){
-            //for(std::size_t j = 0; j < columns(); ++j){
-                //_data[i * columns() + j] = e(i,j);
-            //}
-        //}
+        for(std::size_t i = 0; i < size(); ++i){
+            _data[i] = e[i];
+        }
 
-        //return *this;
-    //}
+        return *this;
+    }
 
-    //template<typename E>
-    //dyn_matrix& operator=(transform_expr<value_type, E>&& e){
-        //ensure_same_size(*this, e);
+    template<typename E>
+    big_dyn_matrix& operator=(transform_expr<value_type, E>&& e){
+        ensure_same_size(*this, e);
 
-        //for(std::size_t i = 0; i < rows(); ++i){
-            //for(std::size_t j = 0; j < columns(); ++j){
-                //_data[i * columns() + j] = e(i,j);
-            //}
-        //}
+        for(std::size_t i = 0; i < rows(); ++i){
+            for(std::size_t j = 0; j < columns(); ++j){
+                _data[i * columns() + j] = e(i,j);
+            }
+        }
 
-        //return *this;
-    //}
+        return *this;
+    }
 
     //Set the same value to each element of the matrix
     big_dyn_matrix& operator=(const value_type& value){
@@ -268,19 +275,21 @@ public:
         return _dimensions[d];
     }
 
-    //value_type& operator()(size_t i, size_t j){
-        //etl_assert(i < _rows, "Out of bounds");
-        //etl_assert(j < _columns, "Out of bounds");
+    value_type& operator()(size_t i, size_t j){
+        etl_assert(i < dim(0), "Out of bounds");
+        etl_assert(j < dim(1), "Out of bounds");
+        etl_assert(_dimensions.size() == 2, "Invalid number of parameters");
 
-        //return _data[i * _columns + j];
-    //}
+        return _data[i * dim(1) + j];
+    }
 
-    //const value_type& operator()(size_t i, size_t j) const {
-        //etl_assert(i < _rows, "Out of bounds");
-        //etl_assert(j < _columns, "Out of bounds");
+    const value_type& operator()(size_t i, size_t j) const {
+        etl_assert(i < dim(0), "Out of bounds");
+        etl_assert(j < dim(1), "Out of bounds");
+        etl_assert(_dimensions.size() == 2, "Invalid number of parameters");
 
-        //return _data[i * _columns + j];
-    //}
+        return _data[i * dim(1) + j];
+    }
 
     const value_type& operator[](size_t i) const {
         etl_assert(i < size(), "Out of bounds");
