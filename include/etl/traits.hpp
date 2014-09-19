@@ -790,6 +790,21 @@ constexpr std::size_t dimensions(const E&){
     return etl_traits<E>::dimensions();
 }
 
+template<std::size_t D, typename E, disable_if_u<etl_traits<E>::is_fast> = detail::dummy>
+constexpr std::size_t dim(const E& e){
+    return etl_traits<E>::dim(e, D);
+}
+
+template<typename E, disable_if_u<etl_traits<E>::is_fast> = detail::dummy>
+constexpr std::size_t dim(const E& e, std::size_t d){
+    return etl_traits<E>::dim(e, d);
+}
+
+template<std::size_t D, typename E, enable_if_u<etl_traits<E>::is_fast> = detail::dummy>
+constexpr std::size_t dim(const E&){
+    return etl_traits<E>::template dim<D>();
+}
+
 template<typename LE, typename RE, disable_if_u<and_u<is_etl_expr<LE>::value, is_etl_expr<RE>::value, etl_traits<LE>::is_fast, etl_traits<RE>::is_fast>::value> = detail::dummy>
 void ensure_same_size(const LE& lhs, const RE& rhs){
     etl_assert(size(lhs) == size(rhs), "Cannot perform element-wise operations on collections of different size");
