@@ -25,7 +25,7 @@ TEST_CASE( "transpose/fast_matrix_1", "transpose" ) {
 }
 
 TEST_CASE( "transpose/dyn_matrix_1", "transpose" ) {
-    etl::dyn_matrix<double> a(3, 2, {1.0, -2.0, 3.0, 0.5, 0.0, -1});
+    etl::dyn_matrix<double> a(3, 2, std::initializer_list<double>({1.0, -2.0, 3.0, 0.5, 0.0, -1}));
     etl::dyn_matrix<double> b(transpose(a));
 
     REQUIRE(b(0,0) == 1.0);
@@ -49,7 +49,7 @@ TEST_CASE( "transpose/fast_matrix_2", "transpose" ) {
 }
 
 TEST_CASE( "transpose/dyn_matrix_2", "transpose" ) {
-    etl::dyn_matrix<double> a(2, 3, {1.0, -2.0, 3.0, 0.5, 0.0, -1});
+    etl::dyn_matrix<double> a(2, 3, std::initializer_list<double>({1.0, -2.0, 3.0, 0.5, 0.0, -1}));
     etl::dyn_matrix<double> b(transpose(a));
 
     REQUIRE(b(0,0) == 1.0);

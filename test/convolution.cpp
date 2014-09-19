@@ -421,8 +421,8 @@ TEST_CASE( "convolution_2d/dyn_valid_1", "convolution_2d_valid" ) {
     //array([[ 3.5,  4.5],
     //       [ 4.5,  3. ]])
 
-    etl::dyn_matrix<double> a(3,3,{1.0, 2.0, 3.0, 0.0, 1.0, 1.0, 3.0, 2.0, 1.0});
-    etl::dyn_matrix<double> b(2,2,{2.0, 0.0, 0.5, 0.5});
+    etl::dyn_matrix<double> a(3,3, std::initializer_list<double>({1.0, 2.0, 3.0, 0.0, 1.0, 1.0, 3.0, 2.0, 1.0}));
+    etl::dyn_matrix<double> b(2,2, std::initializer_list<double>({2.0, 0.0, 0.5, 0.5}));
     etl::dyn_matrix<double> c(2,2);
 
     etl::convolve_2d_valid(a, b, c);
@@ -439,8 +439,8 @@ TEST_CASE( "convolution_2d/dyn_valid_2", "convolution_2d_valid" ) {
     //array([[ 3.5],
     //       [ 4.5]])
 
-    etl::dyn_matrix<double> a(3,2,{1.0, 2.0, 0.0, 1.0, 3.0, 2.0});
-    etl::dyn_matrix<double> b(2,2,{2.0, 0.0, 0.5, 0.5});
+    etl::dyn_matrix<double> a(3,2,std::initializer_list<double>({1.0, 2.0, 0.0, 1.0, 3.0, 2.0}));
+    etl::dyn_matrix<double> b(2,2,std::initializer_list<double>({2.0, 0.0, 0.5, 0.5}));
     etl::dyn_matrix<double> c(2,1);
 
     etl::convolve_2d_valid(a, b, c);
@@ -453,8 +453,8 @@ TEST_CASE( "convolution_2d/dyn_valid_3", "convolution_2d_valid" ) {
     //scipy.signal.convolve2d([[1,2],[3,2]],[[2,1.0],[0.5,0.5]],'valid')
     //array([[ 8.5]])
 
-    etl::dyn_matrix<double> a(2,2,{1.0, 2.0, 3.0, 2.0});
-    etl::dyn_matrix<double> b(2,2,{2.0, 1.0, 0.5, 0.5});
+    etl::dyn_matrix<double> a(2,2,std::initializer_list<double>({1.0, 2.0, 3.0, 2.0}));
+    etl::dyn_matrix<double> b(2,2,std::initializer_list<double>({2.0, 1.0, 0.5, 0.5}));
     etl::dyn_matrix<double> c(1,1);
 
     etl::convolve_2d_valid(a, b, c);

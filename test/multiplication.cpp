@@ -44,8 +44,8 @@ TEST_CASE( "multiplication/mmul2", "mmul" ) {
 }
 
 TEST_CASE( "multiplication/dyn_mmul", "mmul" ) {
-    etl::dyn_matrix<double> a(3,3,{1,2,3,4,5,6,7,8,9});
-    etl::dyn_matrix<double> b(3,3,{7,8,9,9,10,11,11,12,13});
+    etl::dyn_matrix<double> a(3,3, std::initializer_list<double>({1,2,3,4,5,6,7,8,9}));
+    etl::dyn_matrix<double> b(3,3, std::initializer_list<double>({7,8,9,9,10,11,11,12,13}));
     etl::dyn_matrix<double> c(3,3);
 
     etl::mmul(a, b, c);
@@ -62,8 +62,8 @@ TEST_CASE( "multiplication/dyn_mmul", "mmul" ) {
 }
 
 TEST_CASE( "multiplication/expr_mmul_1", "mmul" ) {
-    etl::dyn_matrix<double> a(3,3,{1,2,3,4,5,6,7,8,9});
-    etl::dyn_matrix<double> b(3,3,{7,8,9,9,10,11,11,12,13});
+    etl::dyn_matrix<double> a(3,3, std::initializer_list<double>({1,2,3,4,5,6,7,8,9}));
+    etl::dyn_matrix<double> b(3,3, std::initializer_list<double>({7,8,9,9,10,11,11,12,13}));
     etl::dyn_matrix<double> c(3,3);
 
     etl::mmul(a + b - b, a + b - a, c);
@@ -80,8 +80,8 @@ TEST_CASE( "multiplication/expr_mmul_1", "mmul" ) {
 }
 
 TEST_CASE( "multiplication/expr_mmul_2", "mmul" ) {
-    etl::dyn_matrix<double> a(3,3,{1,2,3,4,5,6,7,8,9});
-    etl::dyn_matrix<double> b(3,3,{7,8,9,9,10,11,11,12,13});
+    etl::dyn_matrix<double> a(3,3, std::initializer_list<double>({1,2,3,4,5,6,7,8,9}));
+    etl::dyn_matrix<double> b(3,3, std::initializer_list<double>({7,8,9,9,10,11,11,12,13}));
     etl::dyn_matrix<double> c(3,3);
 
     etl::mmul(abs(a), abs(b), c);
@@ -98,8 +98,8 @@ TEST_CASE( "multiplication/expr_mmul_2", "mmul" ) {
 }
 
 TEST_CASE( "multiplication/stop_mmul_1", "mmul" ) {
-    etl::dyn_matrix<double> a(3,3,{1,2,3,4,5,6,7,8,9});
-    etl::dyn_matrix<double> b(3,3,{7,8,9,9,10,11,11,12,13});
+    etl::dyn_matrix<double> a(3,3, std::initializer_list<double>({1,2,3,4,5,6,7,8,9}));
+    etl::dyn_matrix<double> b(3,3, std::initializer_list<double>({7,8,9,9,10,11,11,12,13}));
     etl::dyn_matrix<double> c(3,3);
 
     etl::mmul(s(abs(a)), s(abs(b)), c);

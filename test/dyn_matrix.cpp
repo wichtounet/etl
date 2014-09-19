@@ -11,14 +11,14 @@
 
 //{{{ Init tests
 
-TEST_CASE( "big_dyn_matrix/init_1", "dyn_matrix::dyn_matrix(T)" ) {
-    etl::big_dyn_matrix<double> a(3, 2, 4, 5);
+TEST_CASE( "dyn_matrix/init_5", "dyn_matrix::dyn_matrix(T)" ) {
+    etl::dyn_matrix<double> a(3, 2, 4, 5);
 
     REQUIRE(a.rows() == 3);
     REQUIRE(a.columns() == 2);
     REQUIRE(a.size() == 120);
 
-    etl::big_dyn_matrix<double> b(3, 2, std::initializer_list<double>({1,2,3,4,5,6}));
+    etl::dyn_matrix<double> b(3, 2, std::initializer_list<double>({1,2,3,4,5,6}));
 
     REQUIRE(b.rows() == 3);
     REQUIRE(b.columns() == 2);
@@ -26,7 +26,7 @@ TEST_CASE( "big_dyn_matrix/init_1", "dyn_matrix::dyn_matrix(T)" ) {
     REQUIRE(b[0] == 1);
     REQUIRE(b[1] == 2);
 
-    etl::big_dyn_matrix<double> c(3, 2, etl::init_flag, 3.3);
+    etl::dyn_matrix<double> c(3, 2, etl::init_flag, 3.3);
 
     REQUIRE(c.rows() == 3);
     REQUIRE(c.columns() == 2);
@@ -34,7 +34,7 @@ TEST_CASE( "big_dyn_matrix/init_1", "dyn_matrix::dyn_matrix(T)" ) {
     REQUIRE(c[0] == 3.3);
     REQUIRE(c[1] == 3.3);
 
-    etl::big_dyn_matrix<double> d(3, 2, 3.3);
+    etl::dyn_matrix<double> d(3, 2, 3.3);
 
     REQUIRE(d.rows() == 3);
     REQUIRE(d.columns() == 2);
@@ -70,7 +70,7 @@ TEST_CASE( "dyn_matrix/init_2", "dyn_matrix::operator=(T)" ) {
 }
 
 TEST_CASE( "dyn_matrix/init_3", "dyn_matrix::dyn_matrix(initializer_list)" ) {
-    etl::dyn_matrix<double> test_matrix(3,2,{1.0, 3.0, 5.0, 2.0, 3.0, 4.0});
+    etl::dyn_matrix<double> test_matrix(3,2, std::initializer_list<double>({1.0, 3.0, 5.0, 2.0, 3.0, 4.0}));
 
     REQUIRE(test_matrix.rows() == 3);
     REQUIRE(test_matrix.columns() == 2);
@@ -86,7 +86,7 @@ TEST_CASE( "dyn_matrix/init_3", "dyn_matrix::dyn_matrix(initializer_list)" ) {
 //{{{ Binary operators test
 
 TEST_CASE( "dyn_matrix/add_scalar_1", "dyn_matrix::operator+" ) {
-    etl::dyn_matrix<double> test_matrix(2,2,{-1.0, 2.0, 5.5, 1.0});
+    etl::dyn_matrix<double> test_matrix(2,2, std::initializer_list<double>({-1.0, 2.0, 5.5, 1.0}));
 
     test_matrix = 1.0 + test_matrix;
 
@@ -96,7 +96,7 @@ TEST_CASE( "dyn_matrix/add_scalar_1", "dyn_matrix::operator+" ) {
 }
 
 TEST_CASE( "dyn_matrix/add_scalar_2", "dyn_matrix::operator+" ) {
-    etl::dyn_matrix<double> test_matrix(2,2,{-1.0, 2.0, 5.5, 1.0});
+    etl::dyn_matrix<double> test_matrix(2,2, std::initializer_list<double>({-1.0, 2.0, 5.5, 1.0}));
 
     test_matrix = test_matrix + 1.0;
 
@@ -106,7 +106,7 @@ TEST_CASE( "dyn_matrix/add_scalar_2", "dyn_matrix::operator+" ) {
 }
 
 TEST_CASE( "dyn_matrix/add_scalar_3", "dyn_matrix::operator+=" ) {
-    etl::dyn_matrix<double> test_matrix(2,2,{-1.0, 2.0, 5.5, 1.0});
+    etl::dyn_matrix<double> test_matrix(2,2, std::initializer_list<double>({-1.0, 2.0, 5.5, 1.0}));
 
     test_matrix += 1.0;
 
@@ -116,8 +116,8 @@ TEST_CASE( "dyn_matrix/add_scalar_3", "dyn_matrix::operator+=" ) {
 }
 
 TEST_CASE( "dyn_matrix/add_1", "dyn_matrix::operator+" ) {
-    etl::dyn_matrix<double> a(2,2,{-1.0, 2.0, 5.0, 1.0});
-    etl::dyn_matrix<double> b(2,2,{2.5, 3.0, 4.0, 1.0});
+    etl::dyn_matrix<double> a(2,2, std::initializer_list<double>({-1.0, 2.0, 5.0, 1.0}));
+    etl::dyn_matrix<double> b(2,2, std::initializer_list<double>({2.5, 3.0, 4.0, 1.0}));
 
     etl::dyn_matrix<double> c(a + b);
 
@@ -127,8 +127,8 @@ TEST_CASE( "dyn_matrix/add_1", "dyn_matrix::operator+" ) {
 }
 
 TEST_CASE( "dyn_matrix/add_2", "dyn_matrix::operator+=" ) {
-    etl::dyn_matrix<double> a(2,2,{-1.0, 2.0, 5.0, 1.0});
-    etl::dyn_matrix<double> b(2,2,{2.5, 3.0, 4.0, 1.0});
+    etl::dyn_matrix<double> a(2,2, std::initializer_list<double>({-1.0, 2.0, 5.0, 1.0}));
+    etl::dyn_matrix<double> b(2,2, std::initializer_list<double>({2.5, 3.0, 4.0, 1.0}));
 
     a += b;
 
@@ -138,7 +138,7 @@ TEST_CASE( "dyn_matrix/add_2", "dyn_matrix::operator+=" ) {
 }
 
 TEST_CASE( "dyn_matrix/sub_scalar_1", "dyn_matrix::operator+" ) {
-    etl::dyn_matrix<double> test_matrix(2,2,{-1.0, 2.0, 5.5, 1.0});
+    etl::dyn_matrix<double> test_matrix(2,2, std::initializer_list<double>({-1.0, 2.0, 5.5, 1.0}));
 
     test_matrix = 1.0 - test_matrix;
 
@@ -148,7 +148,7 @@ TEST_CASE( "dyn_matrix/sub_scalar_1", "dyn_matrix::operator+" ) {
 }
 
 TEST_CASE( "dyn_matrix/sub_scalar_2", "dyn_matrix::operator+" ) {
-    etl::dyn_matrix<double> test_matrix(2,2,{-1.0, 2.0, 5.5, 1.0});
+    etl::dyn_matrix<double> test_matrix(2,2, std::initializer_list<double>({-1.0, 2.0, 5.5, 1.0}));
 
     test_matrix = test_matrix - 1.0;
 
@@ -158,7 +158,7 @@ TEST_CASE( "dyn_matrix/sub_scalar_2", "dyn_matrix::operator+" ) {
 }
 
 TEST_CASE( "dyn_matrix/sub_scalar_3", "dyn_matrix::operator+=" ) {
-    etl::dyn_matrix<double> test_matrix(2,2,{-1.0, 2.0, 5.5, 1.0});
+    etl::dyn_matrix<double> test_matrix(2,2, std::initializer_list<double>({-1.0, 2.0, 5.5, 1.0}));
 
     test_matrix -= 1.0;
 
@@ -168,8 +168,8 @@ TEST_CASE( "dyn_matrix/sub_scalar_3", "dyn_matrix::operator+=" ) {
 }
 
 TEST_CASE( "dyn_matrix/sub_1", "dyn_matrix::operator-" ) {
-    etl::dyn_matrix<double> a(2,2,{-1.0, 2.0, 5.0, 1.0});
-    etl::dyn_matrix<double> b(2,2,{2.5, 3.0, 4.0, 1.0});
+    etl::dyn_matrix<double> a(2,2, std::initializer_list<double>({-1.0, 2.0, 5.0, 1.0}));
+    etl::dyn_matrix<double> b(2,2, std::initializer_list<double>({2.5, 3.0, 4.0, 1.0}));
 
     etl::dyn_matrix<double> c(a - b);
 
@@ -179,8 +179,8 @@ TEST_CASE( "dyn_matrix/sub_1", "dyn_matrix::operator-" ) {
 }
 
 TEST_CASE( "dyn_matrix/sub_2", "dyn_matrix::operator-=" ) {
-    etl::dyn_matrix<double> a(2,2,{-1.0, 2.0, 5.0, 1.0});
-    etl::dyn_matrix<double> b(2,2,{2.5, 3.0, 4.0, 1.0});
+    etl::dyn_matrix<double> a(2,2, std::initializer_list<double>({-1.0, 2.0, 5.0, 1.0}));
+    etl::dyn_matrix<double> b(2,2, std::initializer_list<double>({2.5, 3.0, 4.0, 1.0}));
 
     a -= b;
 
@@ -190,7 +190,7 @@ TEST_CASE( "dyn_matrix/sub_2", "dyn_matrix::operator-=" ) {
 }
 
 TEST_CASE( "dyn_matrix/mul_scalar_1", "dyn_matrix::operator*" ) {
-    etl::dyn_matrix<double> test_matrix(2,2,{-1.0, 2.0, 5.0, 1.0});
+    etl::dyn_matrix<double> test_matrix(2,2, std::initializer_list<double>({-1.0, 2.0, 5.0, 1.0}));
 
     test_matrix = 2.5 * test_matrix;
 
@@ -200,7 +200,7 @@ TEST_CASE( "dyn_matrix/mul_scalar_1", "dyn_matrix::operator*" ) {
 }
 
 TEST_CASE( "dyn_matrix/mul_scalar_2", "dyn_matrix::operator*" ) {
-    etl::dyn_matrix<double> test_matrix(2,2,{-1.0, 2.0, 5.0, 1.0});
+    etl::dyn_matrix<double> test_matrix(2,2, std::initializer_list<double>({-1.0, 2.0, 5.0, 1.0}));
 
     test_matrix = test_matrix * 2.5;
 
@@ -211,7 +211,7 @@ TEST_CASE( "dyn_matrix/mul_scalar_2", "dyn_matrix::operator*" ) {
 }
 
 TEST_CASE( "dyn_matrix/mul_scalar_3", "dyn_matrix::operator*=" ) {
-    etl::dyn_matrix<double> test_matrix(2,2,{-1.0, 2.0, 5.0, 1.0});
+    etl::dyn_matrix<double> test_matrix(2,2, std::initializer_list<double>({-1.0, 2.0, 5.0, 1.0}));
 
     test_matrix *= 2.5;
 
@@ -221,8 +221,8 @@ TEST_CASE( "dyn_matrix/mul_scalar_3", "dyn_matrix::operator*=" ) {
 }
 
 TEST_CASE( "dyn_matrix/mul_1", "dyn_matrix::operator*" ) {
-    etl::dyn_matrix<double> a(2,2,{-1.0, 2.0, 5.0, 1.0});
-    etl::dyn_matrix<double> b(2,2,{2.5, 3.0, 4.0, 1.0});
+    etl::dyn_matrix<double> a(2,2, std::initializer_list<double>({-1.0, 2.0, 5.0, 1.0}));
+    etl::dyn_matrix<double> b(2,2, std::initializer_list<double>({2.5, 3.0, 4.0, 1.0}));
 
     etl::dyn_matrix<double> c(a * b);
 
@@ -232,8 +232,8 @@ TEST_CASE( "dyn_matrix/mul_1", "dyn_matrix::operator*" ) {
 }
 
 TEST_CASE( "dyn_matrix/mul_2", "dyn_matrix::operator*=" ) {
-    etl::dyn_matrix<double> a(2,2,{-1.0, 2.0, 5.0, 1.0});
-    etl::dyn_matrix<double> b(2,2,{2.5, 3.0, 4.0, 1.0});
+    etl::dyn_matrix<double> a(2,2, std::initializer_list<double>({-1.0, 2.0, 5.0, 1.0}));
+    etl::dyn_matrix<double> b(2,2, std::initializer_list<double>({2.5, 3.0, 4.0, 1.0}));
 
     a *= b;
 
@@ -243,7 +243,7 @@ TEST_CASE( "dyn_matrix/mul_2", "dyn_matrix::operator*=" ) {
 }
 
 TEST_CASE( "dyn_matrix/div_scalar_1", "dyn_matrix::operator/" ) {
-    etl::dyn_matrix<double> test_matrix(2,2,{-1.0, 2.0, 5.0, 1.0});
+    etl::dyn_matrix<double> test_matrix(2,2, std::initializer_list<double>({-1.0, 2.0, 5.0, 1.0}));
 
     test_matrix = test_matrix / 2.5;
 
@@ -253,7 +253,7 @@ TEST_CASE( "dyn_matrix/div_scalar_1", "dyn_matrix::operator/" ) {
 }
 
 TEST_CASE( "dyn_matrix/div_scalar_2", "dyn_matrix::operator/" ) {
-    etl::dyn_matrix<double> test_matrix(2,2,{-1.0, 2.0, 5.0, 1.0});
+    etl::dyn_matrix<double> test_matrix(2,2, std::initializer_list<double>({-1.0, 2.0, 5.0, 1.0}));
 
     test_matrix = 2.5 / test_matrix;
 
@@ -263,7 +263,7 @@ TEST_CASE( "dyn_matrix/div_scalar_2", "dyn_matrix::operator/" ) {
 }
 
 TEST_CASE( "dyn_matrix/div_scalar_3", "dyn_matrix::operator/=" ) {
-    etl::dyn_matrix<double> test_matrix(2,2,{-1.0, 2.0, 5.0, 1.0});
+    etl::dyn_matrix<double> test_matrix(2,2, std::initializer_list<double>({-1.0, 2.0, 5.0, 1.0}));
 
     test_matrix /= 2.5;
 
@@ -273,8 +273,8 @@ TEST_CASE( "dyn_matrix/div_scalar_3", "dyn_matrix::operator/=" ) {
 }
 
 TEST_CASE( "dyn_matrix/div_1", "dyn_matrix::operator/" ) {
-    etl::dyn_matrix<double> a(2,2,{-1.0, 2.0, 5.0, 1.0});
-    etl::dyn_matrix<double> b(2,2,{2.5, 3.0, 4.0, 1.0});
+    etl::dyn_matrix<double> a(2,2, std::initializer_list<double>({-1.0, 2.0, 5.0, 1.0}));
+    etl::dyn_matrix<double> b(2,2, std::initializer_list<double>({2.5, 3.0, 4.0, 1.0}));
 
     etl::dyn_matrix<double> c(a / b);
 
@@ -284,8 +284,8 @@ TEST_CASE( "dyn_matrix/div_1", "dyn_matrix::operator/" ) {
 }
 
 TEST_CASE( "dyn_matrix/div_2", "dyn_matrix::operator/" ) {
-    etl::dyn_matrix<double> a(2,2,{-1.0, 2.0, 5.0, 1.0});
-    etl::dyn_matrix<double> b(2,2,{2.5, 3.0, 4.0, 1.0});
+    etl::dyn_matrix<double> a(2,2, std::initializer_list<double>({-1.0, 2.0, 5.0, 1.0}));
+    etl::dyn_matrix<double> b(2,2, std::initializer_list<double>({2.5, 3.0, 4.0, 1.0}));
 
     a /= b;
 
@@ -295,7 +295,7 @@ TEST_CASE( "dyn_matrix/div_2", "dyn_matrix::operator/" ) {
 }
 
 TEST_CASE( "dyn_matrix/mod_scalar_1", "dyn_matrix::operator%" ) {
-    etl::dyn_matrix<int> test_matrix(2,2,{-1, 2, 5, 1});
+    etl::dyn_matrix<int> test_matrix(2,2, std::initializer_list<int>({-1, 2, 5, 1}));
 
     test_matrix = test_matrix % 2;
 
@@ -305,7 +305,7 @@ TEST_CASE( "dyn_matrix/mod_scalar_1", "dyn_matrix::operator%" ) {
 }
 
 TEST_CASE( "dyn_matrix/mod_scalar_2", "dyn_matrix::operator%" ) {
-    etl::dyn_matrix<int> test_matrix(2,2,{-1, 2, 5, 1});
+    etl::dyn_matrix<int> test_matrix(2,2, std::initializer_list<int>({-1, 2, 5, 1}));
 
     test_matrix = 2 % test_matrix;
 
@@ -315,7 +315,7 @@ TEST_CASE( "dyn_matrix/mod_scalar_2", "dyn_matrix::operator%" ) {
 }
 
 TEST_CASE( "dyn_matrix/mod_scalar_3", "dyn_matrix::operator%=" ) {
-    etl::dyn_matrix<int> test_matrix(2,2,{-1, 2, 5, 1});
+    etl::dyn_matrix<int> test_matrix(2,2, std::initializer_list<int>({-1, 2, 5, 1}));
 
     test_matrix %= 2;
 
@@ -325,8 +325,8 @@ TEST_CASE( "dyn_matrix/mod_scalar_3", "dyn_matrix::operator%=" ) {
 }
 
 TEST_CASE( "dyn_matrix/mod_1", "dyn_matrix::operator%" ) {
-    etl::dyn_matrix<int> a(2,2,{-1, 2, 5, 1});
-    etl::dyn_matrix<int> b(2,2,{2, 3, 4, 1});
+    etl::dyn_matrix<int> a(2,2, std::initializer_list<int>({-1, 2, 5, 1}));
+    etl::dyn_matrix<int> b(2,2, std::initializer_list<int>({2, 3, 4, 1}));
 
     etl::dyn_matrix<int> c(a % b);
 
@@ -336,8 +336,8 @@ TEST_CASE( "dyn_matrix/mod_1", "dyn_matrix::operator%" ) {
 }
 
 TEST_CASE( "dyn_matrix/mod_2", "dyn_matrix::operator%=" ) {
-    etl::dyn_matrix<int> a(2,2,{-1, 2, 5, 1});
-    etl::dyn_matrix<int> b(2,2,{2, 3, 4, 1});
+    etl::dyn_matrix<int> a(2,2, std::initializer_list<int>({-1, 2, 5, 1}));
+    etl::dyn_matrix<int> b(2,2, std::initializer_list<int>({2, 3, 4, 1}));
 
     a %= b;
 
@@ -351,7 +351,7 @@ TEST_CASE( "dyn_matrix/mod_2", "dyn_matrix::operator%=" ) {
 //{{{ Unary operator tests
 
 TEST_CASE( "dyn_matrix/log", "dyn_matrix::abs" ) {
-    etl::dyn_matrix<double> a(2,2,{-1.0, 2.0, 5.0, 1.0});
+    etl::dyn_matrix<double> a(2,2, std::initializer_list<double>({-1.0, 2.0, 5.0, 1.0}));
 
     etl::dyn_matrix<double> d(log(a));
 
@@ -361,7 +361,7 @@ TEST_CASE( "dyn_matrix/log", "dyn_matrix::abs" ) {
 }
 
 TEST_CASE( "dyn_matrix/abs", "dyn_matrix::abs" ) {
-    etl::dyn_matrix<double> a(2,2,{-1.0, 2.0, 0.0, 1.0});
+    etl::dyn_matrix<double> a(2,2, std::initializer_list<double>({-1.0, 2.0, 0.0, 1.0}));
 
     etl::dyn_matrix<double> d(abs(a));
 
@@ -371,7 +371,7 @@ TEST_CASE( "dyn_matrix/abs", "dyn_matrix::abs" ) {
 }
 
 TEST_CASE( "dyn_matrix/sign", "dyn_matrix::abs" ) {
-    etl::dyn_matrix<double> a(2,2,{-1.0, 2.0, 0.0, 1.0});
+    etl::dyn_matrix<double> a(2,2, std::initializer_list<double>({-1.0, 2.0, 0.0, 1.0}));
 
     etl::dyn_matrix<double> d(sign(a));
 
@@ -381,7 +381,7 @@ TEST_CASE( "dyn_matrix/sign", "dyn_matrix::abs" ) {
 }
 
 TEST_CASE( "dyn_matrix/unary_unary", "dyn_matrix::abs" ) {
-    etl::dyn_matrix<double> a(2,2,{-1.0, 2.0, 0.0, 3.0});
+    etl::dyn_matrix<double> a(2,2, std::initializer_list<double>({-1.0, 2.0, 0.0, 3.0}));
 
     etl::dyn_matrix<double> d(abs(sign(a)));
 
@@ -391,7 +391,7 @@ TEST_CASE( "dyn_matrix/unary_unary", "dyn_matrix::abs" ) {
 }
 
 TEST_CASE( "dyn_matrix/unary_binary_1", "dyn_matrix::abs" ) {
-    etl::dyn_matrix<double> a(2,2,{-1.0, 2.0, 0.0, 1.0});
+    etl::dyn_matrix<double> a(2,2, std::initializer_list<double>({-1.0, 2.0, 0.0, 1.0}));
 
     etl::dyn_matrix<double> d(abs(a + a));
 
@@ -401,7 +401,7 @@ TEST_CASE( "dyn_matrix/unary_binary_1", "dyn_matrix::abs" ) {
 }
 
 TEST_CASE( "dyn_matrix/unary_binary_2", "dyn_matrix::abs" ) {
-    etl::dyn_matrix<double> a(2,2,{-1.0, 2.0, 0.0, 1.0});
+    etl::dyn_matrix<double> a(2,2, std::initializer_list<double>({-1.0, 2.0, 0.0, 1.0}));
 
     etl::dyn_matrix<double> d(abs(a) + a);
 
@@ -411,7 +411,7 @@ TEST_CASE( "dyn_matrix/unary_binary_2", "dyn_matrix::abs" ) {
 }
 
 TEST_CASE( "dyn_matrix/sigmoid", "dyn_matrix::sigmoid" ) {
-    etl::dyn_matrix<double> a(2,2,{-1.0, 2.0, 0.0, 1.0});
+    etl::dyn_matrix<double> a(2,2, std::initializer_list<double>({-1.0, 2.0, 0.0, 1.0}));
 
     etl::dyn_matrix<double> d(etl::sigmoid(a));
 
@@ -422,7 +422,7 @@ TEST_CASE( "dyn_matrix/sigmoid", "dyn_matrix::sigmoid" ) {
 }
 
 TEST_CASE( "dyn_matrix/softplus", "dyn_matrix::softplus" ) {
-    etl::dyn_matrix<double> a(2,2,{-1.0, 2.0, 0.0, 1.0});
+    etl::dyn_matrix<double> a(2,2, std::initializer_list<double>({-1.0, 2.0, 0.0, 1.0}));
 
     etl::dyn_matrix<double> d(etl::softplus(a));
 
@@ -433,7 +433,7 @@ TEST_CASE( "dyn_matrix/softplus", "dyn_matrix::softplus" ) {
 }
 
 TEST_CASE( "dyn_matrix/exp", "dyn_matrix::exp" ) {
-    etl::dyn_matrix<double> a(2,2,{-1.0, 2.0, 0.0, 1.0});
+    etl::dyn_matrix<double> a(2,2, std::initializer_list<double>({-1.0, 2.0, 0.0, 1.0}));
 
     etl::dyn_matrix<double> d(etl::exp(a));
 
@@ -444,7 +444,7 @@ TEST_CASE( "dyn_matrix/exp", "dyn_matrix::exp" ) {
 }
 
 TEST_CASE( "dyn_matrix/max", "dyn_matrix::max" ) {
-    etl::dyn_matrix<double> a(2,2,{-1.0, 2.0, 0.0, 1.0});
+    etl::dyn_matrix<double> a(2,2, std::initializer_list<double>({-1.0, 2.0, 0.0, 1.0}));
 
     etl::dyn_matrix<double> d(etl::max(a, 1.0));
 
@@ -455,7 +455,7 @@ TEST_CASE( "dyn_matrix/max", "dyn_matrix::max" ) {
 }
 
 TEST_CASE( "dyn_matrix/min", "dyn_matrix::min" ) {
-    etl::dyn_matrix<double> a(2,2,{-1.0, 2.0, 0.0, 1.0});
+    etl::dyn_matrix<double> a(2,2, std::initializer_list<double>({-1.0, 2.0, 0.0, 1.0}));
 
     etl::dyn_matrix<double> d(etl::min(a, 1.0));
 
@@ -470,7 +470,7 @@ constexpr bool binary(double a){
 }
 
 TEST_CASE( "dyn_matrix/bernoulli", "dyn_matrix::bernoulli" ) {
-    etl::dyn_matrix<double> a(2,2,{-1.0, 2.0, 0.0, 1.0});
+    etl::dyn_matrix<double> a(2,2, std::initializer_list<double>({-1.0, 2.0, 0.0, 1.0}));
 
     etl::dyn_matrix<double> d(etl::bernoulli(a));
 
@@ -485,9 +485,9 @@ TEST_CASE( "dyn_matrix/bernoulli", "dyn_matrix::bernoulli" ) {
 //{{{ Complex tests
 
 TEST_CASE( "dyn_matrix/complex", "dyn_matrix::complex" ) {
-    etl::dyn_matrix<double> a(2,2,{-1.0, 2.0, 5.0, 1.0});
-    etl::dyn_matrix<double> b(2,2,{2.5, 3.0, 4.0, 1.0});
-    etl::dyn_matrix<double> c(2,2,{1.2, -3.0, 3.5, 1.0});
+    etl::dyn_matrix<double> a(2,2, std::initializer_list<double>({-1.0, 2.0, 5.0, 1.0}));
+    etl::dyn_matrix<double> b(2,2, std::initializer_list<double>({2.5, 3.0, 4.0, 1.0}));
+    etl::dyn_matrix<double> c(2,2, std::initializer_list<double>({1.2, -3.0, 3.5, 1.0}));
 
     etl::dyn_matrix<double> d(2.5 * ((a * b) / (a + c)) / (1.5 * a * b / c));
 
@@ -497,9 +497,9 @@ TEST_CASE( "dyn_matrix/complex", "dyn_matrix::complex" ) {
 }
 
 TEST_CASE( "dyn_matrix/complex_2", "dyn_matrix::complex" ) {
-    etl::dyn_matrix<double> a(2,2,{1.1, 2.0, 5.0, 1.0});
-    etl::dyn_matrix<double> b(2,2,{2.5, -3.0, 4.0, 1.0});
-    etl::dyn_matrix<double> c(2,2,{2.2, 3.0, 3.5, 1.0});
+    etl::dyn_matrix<double> a(2,2, std::initializer_list<double>({1.1, 2.0, 5.0, 1.0}));
+    etl::dyn_matrix<double> b(2,2, std::initializer_list<double>({2.5, -3.0, 4.0, 1.0}));
+    etl::dyn_matrix<double> c(2,2, std::initializer_list<double>({2.2, 3.0, 3.5, 1.0}));
 
     etl::dyn_matrix<double> d(2.5 * ((a * b) / (log(a) * abs(c))) / (1.5 * a * sign(b) / c) + 2.111 / log(c));
 
@@ -509,9 +509,9 @@ TEST_CASE( "dyn_matrix/complex_2", "dyn_matrix::complex" ) {
 }
 
 TEST_CASE( "dyn_matrix/complex_3", "dyn_matrix::complex" ) {
-    etl::dyn_matrix<double> a(2,2,{-1.0, 2.0, 5.0, 1.0});
-    etl::dyn_matrix<double> b(2,2,{2.5, 3.0, 4.0, 1.0});
-    etl::dyn_matrix<double> c(2,2,{1.2, -3.0, 3.5, 1.0});
+    etl::dyn_matrix<double> a(2,2, std::initializer_list<double>({-1.0, 2.0, 5.0, 1.0}));
+    etl::dyn_matrix<double> b(2,2, std::initializer_list<double>({2.5, 3.0, 4.0, 1.0}));
+    etl::dyn_matrix<double> c(2,2, std::initializer_list<double>({1.2, -3.0, 3.5, 1.0}));
 
     etl::dyn_matrix<double> d(2.5 / (a * b));
 
@@ -525,7 +525,7 @@ TEST_CASE( "dyn_matrix/complex_3", "dyn_matrix::complex" ) {
 //{{{ Reductions
 
 TEST_CASE( "dny_matrix/sum", "sum" ) {
-    etl::dyn_matrix<double> a(3, 1, {-1.0, 2.0, 8.5});
+    etl::dyn_matrix<double> a(3, 1, std::initializer_list<double>({-1.0, 2.0, 8.5}));
 
     auto d = sum(a);
 
@@ -533,7 +533,7 @@ TEST_CASE( "dny_matrix/sum", "sum" ) {
 }
 
 TEST_CASE( "dyn_matrix/sum_2", "sum" ) {
-    etl::dyn_matrix<double> a(3, 1, {-1.0, 2.0, 8.5});
+    etl::dyn_matrix<double> a(3, 1, std::initializer_list<double>({-1.0, 2.0, 8.5}));
 
     auto d = sum(a + a);
 
@@ -541,7 +541,7 @@ TEST_CASE( "dyn_matrix/sum_2", "sum" ) {
 }
 
 TEST_CASE( "dyn_matrix/sum_3", "sum" ) {
-    etl::dyn_matrix<double> a(3, 1, {-1.0, 2.0, 8.5});
+    etl::dyn_matrix<double> a(3, 1, std::initializer_list<double>({-1.0, 2.0, 8.5}));
 
     auto d = sum(abs(a + a));
 
@@ -549,7 +549,7 @@ TEST_CASE( "dyn_matrix/sum_3", "sum" ) {
 }
 
 TEST_CASE( "dyn_matrix/min_reduc", "min" ) {
-    etl::dyn_matrix<double> a(3, 1, {-1.0, 2.0, 8.5});
+    etl::dyn_matrix<double> a(3, 1, std::initializer_list<double>({-1.0, 2.0, 8.5}));
 
     auto d = min(a);
 
@@ -557,7 +557,7 @@ TEST_CASE( "dyn_matrix/min_reduc", "min" ) {
 }
 
 TEST_CASE( "dyn_matrix/max_reduc", "max" ) {
-    etl::dyn_matrix<double> a(3, 1, {-1.0, 2.0, 8.5});
+    etl::dyn_matrix<double> a(3, 1, std::initializer_list<double>({-1.0, 2.0, 8.5}));
 
     auto d = max(a);
 

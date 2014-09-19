@@ -46,7 +46,7 @@ TEST_CASE( "hflip/fast_matrix", "hflip" ) {
 }
 
 TEST_CASE( "hflip/dyn_matrix", "hflip" ) {
-    etl::dyn_matrix<double> a(3,2,{1.0, -2.0, 3.0, 0.5, 0.0, -1});
+    etl::dyn_matrix<double> a(3,2, std::initializer_list<double>({1.0, -2.0, 3.0, 0.5, 0.0, -1}));
     etl::dyn_matrix<double> b(hflip(a));
 
     REQUIRE(b(0,0) == -2.0);
@@ -92,7 +92,7 @@ TEST_CASE( "vflip/fast_matrix", "vflip" ) {
 }
 
 TEST_CASE( "vflip/dyn_matrix", "vflip" ) {
-    etl::dyn_matrix<double> a(3,2,{1.0, -2.0, 3.0, 0.5, 0.0, -1});
+    etl::dyn_matrix<double> a(3,2, std::initializer_list<double>({1.0, -2.0, 3.0, 0.5, 0.0, -1}));
     etl::dyn_matrix<double> b(vflip(a));
 
     REQUIRE(b(0,0) == 0.0);
@@ -138,7 +138,7 @@ TEST_CASE( "fflip/fast_matrix", "fflip" ) {
 }
 
 TEST_CASE( "fflip/dyn_matrix", "fflip" ) {
-    etl::dyn_matrix<double> a(3,2,{1.0, -2.0, 3.0, 0.5, 0.0, -1});
+    etl::dyn_matrix<double> a(3,2, std::initializer_list<double>({1.0, -2.0, 3.0, 0.5, 0.0, -1}));
     etl::dyn_matrix<double> b(fflip(a));
 
     REQUIRE(b(0,0) == -1.0);

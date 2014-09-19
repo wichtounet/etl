@@ -89,7 +89,7 @@ TEST_CASE( "dim/fast_matrix_4", "col" ) {
 }
 
 TEST_CASE( "dim/dyn_matrix_1", "dim<1>" ) {
-    etl::dyn_matrix<double> a(2, 3, {1.0, -2.0, 4.0, 3.0, 0.5, -0.1});
+    etl::dyn_matrix<double> a(2, 3, std::initializer_list<double>({1.0, -2.0, 4.0, 3.0, 0.5, -0.1}));
     etl::dyn_vector<double> b(etl::dim<1>(a, 0));
     etl::dyn_vector<double> c(etl::dim<1>(a, 1));
 
@@ -106,7 +106,7 @@ TEST_CASE( "dim/dyn_matrix_1", "dim<1>" ) {
 }
 
 TEST_CASE( "dim/dyn_matrix_2", "dim<2>" ) {
-    etl::dyn_matrix<double> a(2, 3, {1.0, -2.0, 4.0, 3.0, 0.5, -0.1});
+    etl::dyn_matrix<double> a(2, 3, std::initializer_list<double>({1.0, -2.0, 4.0, 3.0, 0.5, -0.1}));
     etl::dyn_vector<double> b(etl::dim<2>(a, 0));
     etl::dyn_vector<double> c(etl::dim<2>(a, 1));
     etl::dyn_vector<double> d(etl::dim<2>(a, 2));
