@@ -95,6 +95,30 @@ TEST_CASE( "dyn_matrix/init_6", "dyn_matrix::dyn_matrix(T)" ) {
     REQUIRE(b(0,1) == 2);
 }
 
+TEST_CASE( "dyn_matrix/init_7", "dyn_matrix::dyn_matrix(T)" ) {
+    etl::dyn_matrix<double> b(2, 2, 2, 2, etl::values(1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16));
+
+    REQUIRE(b.rows() == 2);
+    REQUIRE(b.columns() == 2);
+    REQUIRE(b.size() == 16);
+    REQUIRE(b(0,0,0,0) == 1);
+    REQUIRE(b(0,0,0,1) == 2);
+    REQUIRE(b(0,0,1,0) == 3);
+    REQUIRE(b(0,0,1,1) == 4);
+    REQUIRE(b(0,1,0,0) == 5);
+    REQUIRE(b(0,1,0,1) == 6);
+    REQUIRE(b(0,1,1,0) == 7);
+    REQUIRE(b(0,1,1,1) == 8);
+    REQUIRE(b(1,0,0,0) == 9);
+    REQUIRE(b(1,0,0,1) == 10);
+    REQUIRE(b(1,0,1,0) == 11);
+    REQUIRE(b(1,0,1,1) == 12);
+    REQUIRE(b(1,1,0,0) == 13);
+    REQUIRE(b(1,1,0,1) == 14);
+    REQUIRE(b(1,1,1,0) == 15);
+    REQUIRE(b(1,1,1,1) == 16);
+}
+
 //}}} Init tests
 
 //{{{ Binary operators test
