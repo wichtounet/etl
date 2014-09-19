@@ -73,10 +73,7 @@ public:
 
     //Apply the expression
 
-    //TODO The three next functions should be auto return type
-    //However, clang++ and g++ do not support that with -g
-
-    T operator[](std::size_t i) const {
+    value_type operator[](std::size_t i) const {
         return BinaryOp::apply(lhs()[i], rhs()[i]);
     }
 
@@ -132,9 +129,6 @@ public:
     }
 
     //Apply the expression
-
-    //TODO The three next functions should be auto return type
-    //However, clang++ and g++ do not support that with -g
 
     value_type operator[](std::size_t i) const {
         return UnaryOp::apply(value()[i]);
@@ -192,9 +186,6 @@ public:
     }
 
     //Apply the expression
-
-    //TODO The three next functions should be auto return type
-    //However, clang++ and g++ do not support that with -g
 
     value_type operator[](std::size_t i) const {
         return value()[i];
@@ -486,7 +477,7 @@ auto col(const E& value, std::size_t i) -> unary_expr<typename E::value_type, di
 
 template<typename E, enable_if_u<is_etl_expr<E>::value> = detail::dummy>
 auto sub(const E& value, std::size_t i) -> unary_expr<typename E::value_type, sub_view<E>, identity_unary_op<typename E::value_type>> {
-    //TODO Static assert that the matrix is at least 3 (2 later) dimensions
+    static_assert(etl_traits<E>::dimensions() > 1, "Cannot use sub on vector");
     return {{value, i}};
 }
 
