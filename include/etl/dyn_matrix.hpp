@@ -332,14 +332,14 @@ public:
         //Note: Version with sizes moved to a std::array and accessed with
         //standard loop may be faster, but need some stack space (relevant ?)
 
-        auto subsize = size() / dim(0);
+        auto subsize = size();
         std::size_t index = 0;
         std::size_t i = 0;
 
         for_each_in(
             [&subsize, &index, &i, this](std::size_t s){
-                index += subsize * s;
                 subsize /= dim(i++);
+                index += subsize * s;
             }, sizes...);
 
         return index;
