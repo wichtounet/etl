@@ -104,7 +104,7 @@ public:
     //Normal constructor with only sizes
     template<typename... S, enable_if_u<
         and_u<
-            (sizeof...(S) > 0),
+            (sizeof...(S) == D),
             all_convertible_to<std::size_t, S...>::value,
             is_homogeneous<typename first_type<S...>::type, S...>::value
         >::value> = detail::dummy>
@@ -118,7 +118,7 @@ public:
     //Sizes followed by an initializer list
     template<typename... S, enable_if_u<
         and_u<
-            (sizeof...(S) > 1),
+            (sizeof...(S) == D + 1),
             is_specialization_of<std::initializer_list, typename last_type<S...>::type>::value
         >::value> = detail::dummy>
     dyn_matrix(S... sizes) :
@@ -131,7 +131,7 @@ public:
     //Sizes followed by a values_t
     template<typename... S, enable_if_u<
         and_u<
-            (sizeof...(S) > 1),
+            (sizeof...(S) == D + 1),
             is_specialization_of<values_t, typename last_type<S...>::type>::value
         >::value> = detail::dummy>
     dyn_matrix(S... sizes) :
@@ -144,7 +144,7 @@ public:
     //Sizes followed by a value
     template<typename... S, enable_if_u<
         and_u<
-            (sizeof...(S) > 1),
+            (sizeof...(S) == D + 1),
             std::is_convertible<std::size_t, typename first_type<S...>::type>::value,   //The first type must be convertible to size_t
             is_sub_homogeneous<S...>::value,                                            //The first N-1 types must homegeneous
             std::is_same<value_type, typename last_type<S...>::type>::value             //The last type must be exactly value_type
@@ -301,7 +301,7 @@ public:
     }
 
     size_t columns() const {
-        etl_assert(n_dimensions > 1, "columns() only valid for 2D+ matrices");
+        static_assert(n_dimensions > 1, "columns() only valid for 2D+ matrices");
         return _dimensions[1];
     }
 
@@ -324,7 +324,7 @@ public:
 
     const value_type& operator()(size_t i) const {
         etl_assert(i < dim(0), "Out of bounds");
-        etl_assert(dimensions() == 1, "Invalid number of parameters");
+        static_assert(n_dimensions == 1, "Invalid number of parameters");
 
         return _data[i];
     }
@@ -332,7 +332,7 @@ public:
     value_type& operator()(size_t i, size_t j){
         etl_assert(i < dim(0), "Out of bounds");
         etl_assert(j < dim(1), "Out of bounds");
-        etl_assert(n_dimensions == 2, "Invalid number of parameters");
+        static_assert(n_dimensions == 2, "Invalid number of parameters");
 
         return _data[i * dim(1) + j];
     }
@@ -340,7 +340,7 @@ public:
     const value_type& operator()(size_t i, size_t j) const {
         etl_assert(i < dim(0), "Out of bounds");
         etl_assert(j < dim(1), "Out of bounds");
-        etl_assert(dimensions() == 2, "Invalid number of parameters");
+        static_assert(dimensions() == 2, "Invalid number of parameters");
 
         return _data[i * dim(1) + j];
     }
@@ -369,7 +369,7 @@ public:
             all_convertible_to<std::size_t, S...>::value
         >::value> = detail::dummy>
     const value_type& operator()(S... sizes) const {
-        etl_assert(sizeof...(S) == dimensions(), "Invalid number of parameters");
+        static_assert(sizeof...(S) == n_dimensions, "Invalid number of parameters");
 
         return _data[index(sizes...)];
     }
@@ -380,7 +380,7 @@ public:
             all_convertible_to<std::size_t, S...>::value
         >::value> = detail::dummy>
     value_type& operator()(S... sizes){
-        etl_assert(sizeof...(S) == dimensions(), "Invalid number of parameters");
+        static_assert(sizeof...(S) == n_dimensions, "Invalid number of parameters");
 
         return _data[index(sizes...)];
     }
