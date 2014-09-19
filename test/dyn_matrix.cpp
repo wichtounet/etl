@@ -58,6 +58,7 @@ TEST_CASE( "dyn_matrix/init_5", "dyn_matrix::dyn_matrix(T)" ) {
     REQUIRE(a.columns() == 2);
     REQUIRE(a.size() == 120);
     REQUIRE(a(0,0,0,0) == 3.4);
+    REQUIRE(a(1,1,1,1) == 3.4);
 
     etl::dyn_matrix<double> b(3, 2, std::initializer_list<double>({1,2,3,4,5,6}));
 
