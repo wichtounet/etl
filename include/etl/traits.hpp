@@ -16,9 +16,6 @@ namespace etl {
 template<typename T, std::size_t Rows>
 struct fast_vector;
 
-template<typename T>
-struct dyn_vector;
-
 template<typename T, std::size_t D>
 struct dyn_matrix;
 
@@ -83,9 +80,6 @@ template<typename T>
 struct is_fast_matrix : std::integral_constant<bool, is_var<etl::fast_matrix, remove_cv_t<remove_reference_t<T>>>::value> {};
 
 template<typename T>
-struct is_dyn_vector : std::integral_constant<bool, is_specialization_of<etl::dyn_vector, remove_cv_t<remove_reference_t<T>>>::value> {};
-
-template<typename T>
 struct is_dyn_matrix : std::integral_constant<bool, is_2<etl::dyn_matrix, remove_cv_t<remove_reference_t<T>>>::value> {};
 
 template<typename T>
@@ -115,7 +109,7 @@ struct is_view : std::integral_constant<bool, or_u<
 template<typename T, typename Enable = void>
 struct is_etl_expr : std::integral_constant<bool, or_u<
        is_fast_vector<T>::value, is_fast_matrix<T>::value,
-       is_dyn_vector<T>::value, is_dyn_matrix<T>::value,
+       is_dyn_matrix<T>::value,
        is_unary_expr<T>::value, is_binary_expr<T>::value,
        is_transform_expr<T>::value,
        is_transformer_expr<T>::value, is_view<T>::value
@@ -123,7 +117,7 @@ struct is_etl_expr : std::integral_constant<bool, or_u<
 
 template<typename T, typename Enable = void>
 struct is_etl_value :
-    std::integral_constant<bool, or_u<is_fast_vector<T>::value, is_fast_matrix<T>::value, is_dyn_vector<T>::value, is_dyn_matrix<T>::value>::value> {};
+    std::integral_constant<bool, or_u<is_fast_vector<T>::value, is_fast_matrix<T>::value, is_dyn_matrix<T>::value>::value> {};
 
 template<typename T, typename Enable = void>
 struct etl_traits;

@@ -55,6 +55,13 @@ template<typename S1, typename S2, typename S3, typename... S>
 struct is_init_constructor<S1, S2, S3, S...> :
     std::integral_constant<bool, std::is_same<init_flag_t, typename nth_type<1+sizeof...(S), S1, S2, S3, S...>::type>::value> {};
 
+template<typename... S>
+struct is_initializer_list_constructor : std::integral_constant<bool, false> {};
+
+template<typename S1, typename S2, typename... S>
+struct is_initializer_list_constructor<S1, S2, S...> :
+    std::integral_constant<bool, is_specialization_of<std::initializer_list, typename last_type<S1, S2, S...>::type>::value> {};
+
 inline std::size_t size(std::size_t first){
     return first;
 }
@@ -101,6 +108,15 @@ public:
         //Nothing to init
     }
 
+    //Sizes followed by an initializer list
+    dyn_matrix(std::initializer_list<value_type> list) :
+            _size(list.size()),
+            _data(list),
+            _dimensions({{list.size()}}) {
+        static_assert(n_dimensions == 1, "This constructor can only be used for 1D matrix");
+        //Nothing to init
+    }
+
     //Normal constructor with only sizes
     template<typename... S, enable_if_u<
         and_u<
@@ -116,43 +132,39 @@ public:
     }
 
     //Sizes followed by an initializer list
-    template<typename... S, enable_if_u<
-        and_u<
-            (sizeof...(S) == D + 1),
-            is_specialization_of<std::initializer_list, typename last_type<S...>::type>::value
-        >::value> = detail::dummy>
+    template<typename... S, enable_if_u<dyn_detail::is_initializer_list_constructor<S...>::value> = detail::dummy>
     dyn_matrix(S... sizes) :
             _size(dyn_detail::size(make_index_sequence<(sizeof...(S)-1)>(), sizes...)),
             _data(last_value(sizes...)),
             _dimensions(dyn_detail::sizes(make_index_sequence<(sizeof...(S)-1)>(), sizes...)) {
-        //Nothing to init
+        static_assert(sizeof...(S) == D + 1, "Invalid number of dimensions");
     }
 
     //Sizes followed by a values_t
-    template<typename... S, enable_if_u<
+    template<typename S1, typename... S, enable_if_u<
         and_u<
-            (sizeof...(S) == D + 1),
-            is_specialization_of<values_t, typename last_type<S...>::type>::value
+            (sizeof...(S) == D),
+            is_specialization_of<values_t, typename last_type<S1, S...>::type>::value
         >::value> = detail::dummy>
-    dyn_matrix(S... sizes) :
-            _size(dyn_detail::size(make_index_sequence<(sizeof...(S)-1)>(), sizes...)),
-            _data(last_value(sizes...).template list<value_type>()),
-            _dimensions(dyn_detail::sizes(make_index_sequence<(sizeof...(S)-1)>(), sizes...)) {
+    dyn_matrix(S1 s1, S... sizes) :
+            _size(dyn_detail::size(make_index_sequence<(sizeof...(S))>(), s1, sizes...)),
+            _data(last_value(s1, sizes...).template list<value_type>()),
+            _dimensions(dyn_detail::sizes(make_index_sequence<(sizeof...(S))>(), s1, sizes...)) {
         //Nothing to init
     }
 
     //Sizes followed by a value
-    template<typename... S, enable_if_u<
+    template<typename S1, typename... S, enable_if_u<
         and_u<
-            (sizeof...(S) == D + 1),
-            std::is_convertible<std::size_t, typename first_type<S...>::type>::value,   //The first type must be convertible to size_t
-            is_sub_homogeneous<S...>::value,                                            //The first N-1 types must homegeneous
-            std::is_same<value_type, typename last_type<S...>::type>::value             //The last type must be exactly value_type
+            (sizeof...(S) == D),
+            std::is_convertible<std::size_t, typename first_type<S1, S...>::type>::value,   //The first type must be convertible to size_t
+            is_sub_homogeneous<S1, S...>::value,                                            //The first N-1 types must homegeneous
+            std::is_same<value_type, typename last_type<S1, S...>::type>::value             //The last type must be exactly value_type
         >::value> = detail::dummy>
-    dyn_matrix(S... sizes) :
-            _size(dyn_detail::size(make_index_sequence<(sizeof...(S)-1)>(), sizes...)),
-            _data(_size, last_value(sizes...)),
-            _dimensions(dyn_detail::sizes(make_index_sequence<(sizeof...(S)-1)>(), sizes...)) {
+    dyn_matrix(S1 s1, S... sizes) :
+            _size(dyn_detail::size(make_index_sequence<(sizeof...(S))>(), s1, sizes...)),
+            _data(_size, last_value(s1, sizes...)),
+            _dimensions(dyn_detail::sizes(make_index_sequence<(sizeof...(S))>(), s1, sizes...)) {
         //Nothing to init
     }
 
@@ -162,6 +174,8 @@ public:
             _size(dyn_detail::size(make_index_sequence<(sizeof...(S)-2)>(), sizes...)),
             _data(_size, last_value(sizes...)),
             _dimensions(dyn_detail::sizes(make_index_sequence<(sizeof...(S)-2)>(), sizes...)) {
+        static_assert(sizeof...(S) == D + 2, "Invalid number of dimensions");
+
         //Nothing to init
     }
 
