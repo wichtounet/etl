@@ -72,7 +72,7 @@ struct matrix_index {
 
 template<typename T, size_t... Dims>
 struct fast_matrix {
-    static_assert(sizeof...(Dims) > 1, "At least two dimension must be specified");
+    static_assert(sizeof...(Dims) > 0, "At least one dimension must be specified");
 
 public:
     static constexpr const std::size_t n_dimensions = sizeof...(Dims);
@@ -243,7 +243,9 @@ public:
         return dim<0>();
     }
 
-    static constexpr enable_if_t<(sizeof...(Dims) > 1), std::size_t> columns(){
+    static constexpr std::size_t columns(){
+        static_assert(n_dimensions > 1, "columns() can only be used on 2D+ matrices");
+
         return dim<1>();
     }
 
