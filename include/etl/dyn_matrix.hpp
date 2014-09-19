@@ -342,7 +342,7 @@ public:
                 subsize /= dim(i++);
             }, sizes...);
 
-        return _data[index];
+        return index;
     }
 
     template<typename... S, enable_if_u<
