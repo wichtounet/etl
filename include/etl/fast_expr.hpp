@@ -80,13 +80,12 @@ public:
         return BinaryOp::apply(lhs()[i], rhs()[i]);
     }
 
-    T operator()(std::size_t i) const {
-        return BinaryOp::apply(lhs()[i], rhs()[i]);
-    }
+    template<typename... S>
+    value_type operator()(S... args) const {
+        static_assert(sizeof...(S) == etl_traits<this_type>::dimensions(), "Invalid number of parameters");
+        static_assert(all_convertible_to<std::size_t, S...>::value, "Invalid size types");
 
-    template<typename TT = this_type>
-    enable_if_t<etl_traits<TT>::is_matrix, T> operator()(std::size_t i, std::size_t j) const {
-        return BinaryOp::apply(lhs()(i,j), rhs()(i,j));
+        return BinaryOp::apply(lhs()(args...), rhs()(args...));
     }
 };
 
@@ -137,17 +136,16 @@ public:
     //TODO The three next functions should be auto return type
     //However, clang++ and g++ do not support that with -g
 
-    T operator[](std::size_t i) const {
+    value_type operator[](std::size_t i) const {
         return UnaryOp::apply(value()[i]);
     }
 
-    T operator()(std::size_t i) const {
-        return UnaryOp::apply(value()(i));
-    }
+    template<typename... S>
+    value_type operator()(S... args) const {
+        static_assert(sizeof...(S) == etl_traits<this_type>::dimensions(), "Invalid number of parameters");
+        static_assert(all_convertible_to<std::size_t, S...>::value, "Invalid size types");
 
-    template<typename TT = this_type>
-    enable_if_t<etl_traits<TT>::is_matrix, T> operator()(std::size_t i, std::size_t j) const {
-        return UnaryOp::apply(value()(i,j));
+        return UnaryOp::apply(value()(args...));
     }
 };
 
@@ -198,17 +196,16 @@ public:
     //TODO The three next functions should be auto return type
     //However, clang++ and g++ do not support that with -g
 
-    T operator[](std::size_t i) const {
+    value_type operator[](std::size_t i) const {
         return value()[i];
     }
 
-    T operator()(std::size_t i) const {
-        return value()[i];
-    }
+    template<typename... S>
+    value_type operator()(S... args) const {
+        static_assert(sizeof...(S) == etl_traits<this_type>::dimensions(), "Invalid number of parameters");
+        static_assert(all_convertible_to<std::size_t, S...>::value, "Invalid size types");
 
-    template<typename TT = this_type>
-    enable_if_t<etl_traits<TT>::is_matrix, T> operator()(std::size_t i, std::size_t j) const {
-        return value()(i,j);
+        return value()(args...);
     }
 };
 
