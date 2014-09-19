@@ -11,38 +11,6 @@
 
 //{{{ Init tests
 
-TEST_CASE( "dyn_matrix/init_5", "dyn_matrix::dyn_matrix(T)" ) {
-    etl::dyn_matrix<double> a(3, 2, 4, 5);
-
-    REQUIRE(a.rows() == 3);
-    REQUIRE(a.columns() == 2);
-    REQUIRE(a.size() == 120);
-
-    etl::dyn_matrix<double> b(3, 2, std::initializer_list<double>({1,2,3,4,5,6}));
-
-    REQUIRE(b.rows() == 3);
-    REQUIRE(b.columns() == 2);
-    REQUIRE(b.size() == 6);
-    REQUIRE(b[0] == 1);
-    REQUIRE(b[1] == 2);
-
-    etl::dyn_matrix<double> c(3, 2, etl::init_flag, 3.3);
-
-    REQUIRE(c.rows() == 3);
-    REQUIRE(c.columns() == 2);
-    REQUIRE(c.size() == 6);
-    REQUIRE(c[0] == 3.3);
-    REQUIRE(c[1] == 3.3);
-
-    etl::dyn_matrix<double> d(3, 2, 3.3);
-
-    REQUIRE(d.rows() == 3);
-    REQUIRE(d.columns() == 2);
-    REQUIRE(d.size() == 6);
-    REQUIRE(d[0] == 3.3);
-    REQUIRE(d[1] == 3.3);
-}
-
 TEST_CASE( "dyn_matrix/init_1", "dyn_matrix::dyn_matrix(T)" ) {
     etl::dyn_matrix<double> test_matrix(3, 2, 3.3);
 
@@ -79,6 +47,38 @@ TEST_CASE( "dyn_matrix/init_3", "dyn_matrix::dyn_matrix(initializer_list)" ) {
     REQUIRE(test_matrix[0] == 1.0);
     REQUIRE(test_matrix[1] == 3.0);
     REQUIRE(test_matrix[2] == 5.0);
+}
+
+TEST_CASE( "dyn_matrix/init_5", "dyn_matrix::dyn_matrix(T)" ) {
+    etl::dyn_matrix<double> a(3, 2, 4, 5);
+
+    REQUIRE(a.rows() == 3);
+    REQUIRE(a.columns() == 2);
+    REQUIRE(a.size() == 120);
+
+    etl::dyn_matrix<double> b(3, 2, std::initializer_list<double>({1,2,3,4,5,6}));
+
+    REQUIRE(b.rows() == 3);
+    REQUIRE(b.columns() == 2);
+    REQUIRE(b.size() == 6);
+    REQUIRE(b[0] == 1);
+    REQUIRE(b[1] == 2);
+
+    etl::dyn_matrix<double> c(3, 2, etl::init_flag, 3.3);
+
+    REQUIRE(c.rows() == 3);
+    REQUIRE(c.columns() == 2);
+    REQUIRE(c.size() == 6);
+    REQUIRE(c[0] == 3.3);
+    REQUIRE(c[1] == 3.3);
+
+    etl::dyn_matrix<double> d(3, 2, 3.3);
+
+    REQUIRE(d.rows() == 3);
+    REQUIRE(d.columns() == 2);
+    REQUIRE(d.size() == 6);
+    REQUIRE(d[0] == 3.3);
+    REQUIRE(d[1] == 3.3);
 }
 
 //}}} Init tests
