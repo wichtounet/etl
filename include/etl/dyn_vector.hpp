@@ -27,6 +27,8 @@ namespace etl {
 template<typename T>
 struct dyn_vector {
 public:
+    static constexpr const std::size_t n_dimensions = 1;
+
     using         value_type = T;
     using       storage_impl = std::vector<value_type>;
     using           iterator = typename storage_impl::iterator;

@@ -50,7 +50,7 @@ TEST_CASE( "dyn_matrix/init_3", "dyn_matrix::dyn_matrix(initializer_list)" ) {
 }
 
 TEST_CASE( "dyn_matrix/init_5", "dyn_matrix::dyn_matrix(T)" ) {
-    etl::dyn_matrix<double> a(3, 2, 4, 5);
+    etl::dyn_matrix<double,4> a(3, 2, 4, 5);
 
     a = 3.4;
 
@@ -96,7 +96,7 @@ TEST_CASE( "dyn_matrix/init_6", "dyn_matrix::dyn_matrix(T)" ) {
 }
 
 TEST_CASE( "dyn_matrix/init_7", "dyn_matrix::dyn_matrix(T)" ) {
-    etl::dyn_matrix<double> b(2, 2, 2, 2, etl::values(1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16));
+    etl::dyn_matrix<double, 4> b(2, 2, 2, 2, etl::values(1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16));
 
     REQUIRE(b.rows() == 2);
     REQUIRE(b.columns() == 2);
@@ -120,7 +120,7 @@ TEST_CASE( "dyn_matrix/init_7", "dyn_matrix::dyn_matrix(T)" ) {
 }
 
 TEST_CASE( "dyn_matrix/init_8", "dyn_matrix::dyn_matrix(T)" ) {
-    etl::dyn_matrix<double> test_matrix(6, 3.3);
+    etl::dyn_matrix<double, 1> test_matrix(6, 3.3);
 
     REQUIRE(test_matrix.rows() == 6);
     REQUIRE(test_matrix.size() == 6);

@@ -20,7 +20,7 @@ template<typename T,
     > = detail::dummy>
 auto s(const T& value){
     //Sizes will be directly propagated
-    return dyn_matrix<typename T::value_type>(value);
+    return dyn_matrix<typename T::value_type, etl_traits<T>::dimensions()>(value);
 }
 
 template<typename M, typename Sequence>

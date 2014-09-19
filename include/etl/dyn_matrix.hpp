@@ -8,13 +8,17 @@
 #ifndef ETL_old_matrix_HPP
 #define ETL_old_matrix_HPP
 
-#include<vector>
-#include<tuple>
+#include<vector> //To store the data
+#include<array>  //To store the dimensions
+#include<tuple>  //For TMP stuff
 
 #include "assert.hpp"
 #include "tmp.hpp"
 #include "fast_op.hpp"
 #include "fast_expr.hpp"
+
+//TODO Some assertions can be transformer to static_assert
+//TODO The dimensions will always be constexpr
 
 namespace etl {
 
@@ -66,18 +70,22 @@ inline std::size_t size(const index_sequence<I...>& /*i*/, const T&... args){
 }
 
 template<std::size_t... I, typename... T>
-inline std::vector<std::size_t> sizes(const index_sequence<I...>& /*i*/, const T&... args){
-    return {static_cast<std::size_t>(nth_value<I>(args...))...};
+inline std::array<std::size_t, sizeof...(I)> sizes(const index_sequence<I...>& /*i*/, const T&... args){
+    return {{static_cast<std::size_t>(nth_value<I>(args...))...}};
 }
 
 } // end of namespace dyn_detail
 
-template<typename T>
+template<typename T, std::size_t D = 2>
 struct dyn_matrix {
+    static_assert(D > 0, "A matrix must have a least 1 dimension");
+
 public:
+    static constexpr const std::size_t n_dimensions = D;
+
     using                value_type = T;
     using              storage_impl = std::vector<value_type>;
-    using    dimension_storage_impl = std::vector<std::size_t>;
+    using    dimension_storage_impl = std::array<std::size_t, n_dimensions>;
     using                  iterator = typename storage_impl::iterator;
     using            const_iterator = typename storage_impl::const_iterator;
 
@@ -103,7 +111,7 @@ public:
     dyn_matrix(S... sizes) :
             _size(dyn_detail::size(sizes...)),
             _data(_size),
-            _dimensions({static_cast<std::size_t>(sizes)...}) {
+            _dimensions{{static_cast<std::size_t>(sizes)...}} {
         //Nothing to init
     }
 
@@ -160,8 +168,7 @@ public:
     template<typename LE, typename Op, typename RE>
     explicit dyn_matrix(const binary_expr<value_type, LE, Op, RE>& e) :
             _size(etl::size(e)),
-            _data(_size),
-            _dimensions(etl::dimensions(e)) {
+            _data(_size) {
 
         for(std::size_t d = 0; d < etl::dimensions(e); ++d){
             _dimensions[d] = etl::dim(e, d);
@@ -175,8 +182,7 @@ public:
     template<typename E, typename Op>
     explicit dyn_matrix(const unary_expr<value_type, E, Op>& e) :
             _size(etl::size(e)),
-            _data(_size),
-            _dimensions(etl::dimensions(e)) {
+            _data(_size) {
 
         for(std::size_t d = 0; d < etl::dimensions(e); ++d){
             _dimensions[d] = etl::dim(e, d);
@@ -190,8 +196,7 @@ public:
     template<typename E>
     explicit dyn_matrix(const transform_expr<value_type, E>& e) :
             _size(etl::size(e)),
-            _data(_size),
-            _dimensions(etl::dimensions(e)) {
+            _data(_size) {
 
         for(std::size_t d = 0; d < etl::dimensions(e); ++d){
             _dimensions[d] = etl::dim(e, d);
@@ -296,23 +301,23 @@ public:
     }
 
     size_t columns() const {
-        etl_assert(_dimensions.size() > 1, "columns() only valid for 2D+ matrices");
+        etl_assert(n_dimensions > 1, "columns() only valid for 2D+ matrices");
         return _dimensions[1];
     }
 
-    size_t dimensions() const {
-        return _dimensions.size();
+    static constexpr size_t dimensions(){
+        return n_dimensions;
     }
 
     size_t dim(std::size_t d) const {
-        etl_assert(d < _dimensions.size(), "Invalid dimension");
+        etl_assert(d < n_dimensions, "Invalid dimension");
 
         return _dimensions[d];
     }
 
     value_type& operator()(size_t i){
         etl_assert(i < dim(0), "Out of bounds");
-        etl_assert(_dimensions.size() == 1, "Invalid number of parameters");
+        etl_assert(n_dimensions == 1, "Invalid number of parameters");
 
         return _data[i];
     }
@@ -327,7 +332,7 @@ public:
     value_type& operator()(size_t i, size_t j){
         etl_assert(i < dim(0), "Out of bounds");
         etl_assert(j < dim(1), "Out of bounds");
-        etl_assert(_dimensions.size() == 2, "Invalid number of parameters");
+        etl_assert(n_dimensions == 2, "Invalid number of parameters");
 
         return _data[i * dim(1) + j];
     }
