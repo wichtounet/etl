@@ -33,9 +33,6 @@ struct or_u<false, false, false, false, false, false, false, false, false> : std
 //enable_if utilities
 
 template<bool B, class T = void>
-using enable_if_t = typename std::enable_if<B,T>::type;
-
-template<bool B, class T = void>
 using disable_if_t = typename std::enable_if<!B, T>::type;
 
 namespace detail {
@@ -119,7 +116,7 @@ struct is_homogeneous_helper {
     struct helper_int : std::integral_constant<bool, and_u<std::is_same<F, typename nth_type<I1, T...>::type>::value, is_homogeneous_helper<I1+1, S1, F, T...>::value>::value> {};
 
     template<std::size_t I1, std::size_t S1>
-    struct helper_int<I1, S1, enable_if_t<I1 == S1>> : std::integral_constant<bool, std::is_same<F, typename nth_type<I1, T...>::type>::value> {};
+    struct helper_int<I1, S1, std::enable_if_t<I1 == S1>> : std::integral_constant<bool, std::is_same<F, typename nth_type<I1, T...>::type>::value> {};
 
     static constexpr const auto value = helper_int<I, S>::value;
 };

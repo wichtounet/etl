@@ -120,7 +120,7 @@ struct etl_traits;
  * \brief Specialization for value structures (fast_vector, fast_matrix)
  */
 template<typename T>
-struct etl_traits<T, enable_if_t<is_etl_value<T>::value>> {
+struct etl_traits<T, std::enable_if_t<is_etl_value<T>::value>> {
     static constexpr const bool is_fast = is_fast_matrix<T>::value;
     static constexpr const bool is_value = true;
 
@@ -222,7 +222,7 @@ struct etl_traits<etl::transform_expr<T, Expr>> {
  * expression.
  */
 template <typename T, typename LeftExpr, typename BinaryOp, typename RightExpr>
-struct etl_traits<etl::binary_expr<T, LeftExpr, BinaryOp, RightExpr>, enable_if_t<is_etl_expr<LeftExpr>::value>> {
+struct etl_traits<etl::binary_expr<T, LeftExpr, BinaryOp, RightExpr>, std::enable_if_t<is_etl_expr<LeftExpr>::value>> {
     using expr_t = etl::binary_expr<T, LeftExpr, BinaryOp, RightExpr>;
     using sub_expr_t = std::remove_cv_t<std::remove_reference_t<LeftExpr>>;
 
@@ -257,7 +257,7 @@ struct etl_traits<etl::binary_expr<T, LeftExpr, BinaryOp, RightExpr>, enable_if_
  * expression.
  */
 template <typename T, typename LeftExpr, typename BinaryOp, typename RightExpr>
-struct etl_traits<etl::binary_expr<T, LeftExpr, BinaryOp, RightExpr>, enable_if_t<and_u<not_u<is_etl_expr<LeftExpr>::value>::value, is_etl_expr<RightExpr>::value>::value>> {
+struct etl_traits<etl::binary_expr<T, LeftExpr, BinaryOp, RightExpr>, std::enable_if_t<and_u<not_u<is_etl_expr<LeftExpr>::value>::value, is_etl_expr<RightExpr>::value>::value>> {
     using expr_t = etl::binary_expr<T, LeftExpr, BinaryOp, RightExpr>;
     using sub_expr_t = std::remove_cv_t<std::remove_reference_t<RightExpr>>;
 
@@ -325,7 +325,7 @@ struct etl_traits<transpose_transformer<T>> {
  * \brief Specialization for transformers
  */
 template <typename T>
-struct etl_traits<T, enable_if_t<and_u<is_transformer_expr<T>::value, not_u<is_specialization_of<etl::transpose_transformer, T>::value>::value>::value>> {
+struct etl_traits<T, std::enable_if_t<and_u<is_transformer_expr<T>::value, not_u<is_specialization_of<etl::transpose_transformer, T>::value>::value>::value>> {
     using expr_t = T;
     using sub_expr_t = typename T::sub_type;
 

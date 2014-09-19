@@ -30,7 +30,7 @@ template<typename M, size_t I, typename Enable = void>
 struct matrix_subsize  : std::integral_constant<std::size_t, M::template dim<I+1>() * matrix_subsize<M, I+1>::value> {};
 
 template<typename M, size_t I>
-struct matrix_subsize<M, I, enable_if_t<I == M::n_dimensions - 1>> : std::integral_constant<std::size_t, 1> {};
+struct matrix_subsize<M, I, std::enable_if_t<I == M::n_dimensions - 1>> : std::integral_constant<std::size_t, 1> {};
 
 template<size_t S, size_t I, size_t F, size_t... Dims>
 struct matrix_dimension {
@@ -38,7 +38,7 @@ struct matrix_dimension {
     struct matrix_dimension_int : std::integral_constant<std::size_t, matrix_dimension<S, I+1, Dims...>::value> {};
 
     template<size_t S2, size_t I2>
-    struct matrix_dimension_int<S2, I2, enable_if_t<S2 == I2>> : std::integral_constant<std::size_t, F> {};
+    struct matrix_dimension_int<S2, I2, std::enable_if_t<S2 == I2>> : std::integral_constant<std::size_t, F> {};
 
     static constexpr const std::size_t value = matrix_dimension_int<S, I>::value;
 };
@@ -55,7 +55,7 @@ struct matrix_index {
     };
 
     template<size_t I2>
-    struct matrix_index_int<I2, enable_if_t<I2 == Stop>> {
+    struct matrix_index_int<I2, std::enable_if_t<I2 == Stop>> {
         static size_t compute(S1 first){
             etl_assert(first < M::template dim<I2>(), "Out of bounds");
 
