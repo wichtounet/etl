@@ -16,6 +16,26 @@ using remove_reference_t = typename std::remove_reference<T>::type;
 template<typename T>
 using remove_cv_t = typename std::remove_cv<T>::type;
 
+//Logic operators for TMP
+
+template<bool b1>
+struct not_u : std::true_type {};
+
+template<>
+struct not_u<true> : std::false_type {};
+
+template<bool b1, bool b2, bool b3 = true, bool b4 = true, bool b5 = true, bool b6 = true>
+struct and_u : std::false_type {};
+
+template<>
+struct and_u<true, true, true, true, true, true> : std::true_type {};
+
+template<bool b1, bool b2, bool b3 = false, bool b4 = false, bool b5 = false, bool b6 = false, bool b7 = false, bool b8 = false, bool b9 = false>
+struct or_u : std::true_type {};
+
+template<>
+struct or_u<false, false, false, false, false, false, false, false, false> : std::false_type {};
+
 //enable_if utilities
 
 template<bool B, class T = void>
@@ -39,27 +59,15 @@ template<bool B>
 using enable_if_u = typename std::enable_if<B, detail::enabler_t>::type;
 
 template<bool B>
-using disable_if_u = typename std::enable_if<!B, detail::enabler_t>::type;
+using disable_if_u = typename std::enable_if<not_u<B>::value, detail::enabler_t>::type;
+
+template<bool... B>
+using enable_if_all_u = typename std::enable_if<and_u<B...>::value, detail::enabler_t>::type;
+
+template<bool... B>
+using disable_if_all_u = typename std::enable_if<not_u<and_u<B...>::value>::value, detail::enabler_t>::type;
 
 //Other TMP Utilities
-
-template<bool b1>
-struct not_u : std::true_type {};
-
-template<>
-struct not_u<true> : std::false_type {};
-
-template<bool b1, bool b2, bool b3 = true, bool b4 = true, bool b5 = true, bool b6 = true>
-struct and_u : std::false_type {};
-
-template<>
-struct and_u<true, true, true, true, true, true> : std::true_type {};
-
-template<bool b1, bool b2, bool b3 = false, bool b4 = false, bool b5 = false, bool b6 = false, bool b7 = false, bool b8 = false, bool b9 = false>
-struct or_u : std::true_type {};
-
-template<>
-struct or_u<false, false, false, false, false, false, false, false, false> : std::false_type {};
 
 template<template<typename...> class TT, typename T>
 struct is_specialization_of : std::false_type {};
