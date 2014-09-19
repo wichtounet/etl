@@ -123,8 +123,7 @@ template<typename T, typename Enable = void>
 struct etl_traits;
 
 /*!
- * \brief Specialization for value structures (fast_vector, dyn_vector,
- * fast_matrix, dyn_matrix).
+ * \brief Specialization for value structures (fast_vector, fast_matrix)
  */
 template<typename T>
 struct etl_traits<T, enable_if_t<is_etl_value<T>::value>> {
