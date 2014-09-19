@@ -119,6 +119,18 @@ TEST_CASE( "dyn_matrix/init_7", "dyn_matrix::dyn_matrix(T)" ) {
     REQUIRE(b(1,1,1,1) == 16);
 }
 
+TEST_CASE( "dyn_matrix/init_8", "dyn_matrix::dyn_matrix(T)" ) {
+    etl::dyn_matrix<double> test_matrix(6, 3.3);
+
+    REQUIRE(test_matrix.rows() == 6);
+    REQUIRE(test_matrix.size() == 6);
+
+    for(std::size_t i = 0; i < test_matrix.size(); ++i){
+        REQUIRE(test_matrix[i] == 3.3);
+        REQUIRE(test_matrix(i) == 3.3);
+    }
+}
+
 //}}} Init tests
 
 //{{{ Binary operators test
