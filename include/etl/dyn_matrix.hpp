@@ -290,16 +290,10 @@ public:
         return _data[i * dim(1) + j];
     }
 
-    template<typename... S, enable_if_u<
-        and_u<
-            (sizeof...(S) > 2),
-            all_convertible_to<std::size_t, S...>::value
-        >::value> = detail::dummy>
-    value_type& operator()(S... sizes){
+    template<typename... S, enable_if_u<(sizeof...(S) > 0)> = detail::dummy>
+    std::size_t index(S... sizes) const {
         //Note: Version with sizes moved to a std::array and accessed with
         //standard loop may be faster, but need some stack space (relevant ?)
-
-        etl_assert(sizeof...(S) == dimensions(), "Invalid number of parameters");
 
         auto subsize = size() / dim(0);
         std::size_t index = 0;
@@ -312,6 +306,28 @@ public:
             }, sizes...);
 
         return _data[index];
+    }
+
+    template<typename... S, enable_if_u<
+        and_u<
+            (sizeof...(S) > 2),
+            all_convertible_to<std::size_t, S...>::value
+        >::value> = detail::dummy>
+    const value_type& operator()(S... sizes) const {
+        etl_assert(sizeof...(S) == dimensions(), "Invalid number of parameters");
+
+        return _data[index(sizes...)];
+    }
+
+    template<typename... S, enable_if_u<
+        and_u<
+            (sizeof...(S) > 2),
+            all_convertible_to<std::size_t, S...>::value
+        >::value> = detail::dummy>
+    value_type& operator()(S... sizes){
+        etl_assert(sizeof...(S) == dimensions(), "Invalid number of parameters");
+
+        return _data[index(sizes...)];
     }
 
     const value_type& operator[](size_t i) const {
