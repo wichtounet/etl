@@ -23,26 +23,22 @@ auto s(const T& value){
     return dyn_matrix<typename T::value_type>(value);
 }
 
-template<typename T,
-    enable_if_all_u<
-        is_etl_expr<T>::value,
-        not_u<etl_traits<T>::is_value>::value,
-        etl_traits<T>::is_fast,
-        etl_traits<T>::is_vector
-    > = detail::dummy>
-auto s(const T& value){
-    return fast_matrix<typename T::value_type, etl_traits<T>::size()>(value);
-}
+template<typename M, typename Sequence>
+struct build_matrix_type;
+
+template<typename M, std::size_t... I>
+struct build_matrix_type<M, index_sequence<I...>> {
+    using type = fast_matrix<typename M::value_type, etl_traits<M>::template dim<I>()...>;
+};
 
 template<typename T,
     enable_if_all_u<
         is_etl_expr<T>::value,
         not_u<etl_traits<T>::is_value>::value,
-        etl_traits<T>::is_fast,
-        etl_traits<T>::is_matrix
+        etl_traits<T>::is_fast
     > = detail::dummy>
 auto s(const T& value){
-    return fast_matrix<typename T::value_type, etl_traits<T>::template dim<0>(), etl_traits<T>::template dim<1>()>(value);
+    return typename build_matrix_type<T, make_index_sequence<etl_traits<T>::dimensions()>>::type(value);
 }
 
 } //end of namespace etl
