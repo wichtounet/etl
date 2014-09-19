@@ -61,12 +61,6 @@ struct is_specialization_of : std::false_type {};
 template<template<typename...> class TT, typename... Args>
 struct is_specialization_of<TT, TT<Args...>> : std::true_type {};
 
-template<typename V, typename F, typename... S>
-struct all_convertible_to  : std::integral_constant<bool, and_u<all_convertible_to<V, F>::value, all_convertible_to<V, S...>::value>::value> {};
-
-template<typename V, typename F>
-struct all_convertible_to<V, F> : std::integral_constant<bool, std::is_convertible<F, V>::value> {};
-
 //Variadic manipulations utilities
 
 template<std::size_t N, typename... T>
@@ -90,16 +84,26 @@ auto nth_value(T1&& t, T&&... /*args*/) -> decltype(std::forward<T1>(t)) {
 }
 
 template<int I, typename T1, typename... T, enable_if_u<(I > 0)> = detail::dummy>
-auto nth_value(T1&& /*t*/, T&&... args) 
+auto nth_value(T1&& /*t*/, T&&... args)
         -> decltype(std::forward<typename nth_type<I, T1, T...>::type>(std::declval<typename nth_type<I, T1, T...>::type>())){
-    using return_type = typename nth_type<I, T1, T...>::type;
-    return std::forward<return_type>(nth_value<I - 1>((std::forward<T>(args))...));
+    return std::forward<typename nth_type<I, T1, T...>::type>(nth_value<I - 1>((std::forward<T>(args))...));
 }
 
 template<typename... T>
 auto last_value(T&&... args){
-    return nth_value<sizeof...(T) - 1>(args...);
+    return std::forward<typename last_type<T...>::type>(nth_value<sizeof...(T) - 1>(args...));
 }
+
+template<typename... T>
+auto first_value(T&&... args){
+    return std::forward<typename first_type<T...>::type>(nth_value<0>(args...));
+}
+
+template<typename V, typename F, typename... S>
+struct all_convertible_to  : std::integral_constant<bool, and_u<all_convertible_to<V, F>::value, all_convertible_to<V, S...>::value>::value> {};
+
+template<typename V, typename F>
+struct all_convertible_to<V, F> : std::integral_constant<bool, std::is_convertible<F, V>::value> {};
 
 template<std::size_t I, std::size_t S, typename F, typename... T>
 struct is_homogeneous_helper {
