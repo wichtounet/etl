@@ -141,7 +141,7 @@ template<typename T1, typename T2, typename T3, typename... T>
 struct is_sub_homogeneous<T1, T2, T3, T...> : std::integral_constant<bool,
     and_u<
         std::is_same<T1, T2>::value,
-        is_sub_homogeneous<T3, T...>::value
+        is_sub_homogeneous<T2, T3, T...>::value
     >::value> {};
 
 template<typename F, std::size_t I1, std::size_t... I, typename... T, enable_if_u<(sizeof...(I) == 0)> = detail::dummy>

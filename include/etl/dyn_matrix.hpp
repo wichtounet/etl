@@ -137,10 +137,9 @@ public:
     template<typename... S, enable_if_u<
         and_u<
             (sizeof...(S) > 1),
-            std::is_convertible<std::size_t, typename first_type<S...>::type>::value,                           //The first type must be convertible to size_t
-            is_sub_homogeneous<typename first_type<S...>::type, S...>::value,                                   //The first N-1 types must homegeneous
-            std::is_same<value_type, typename last_type<S...>::type>::value,                                    //The last type must be exactly value_type
-            not_u<std::is_same<typename first_type<S...>::type, typename last_type<S...>::type>::value>::value  //The first and last types must be different
+            std::is_convertible<std::size_t, typename first_type<S...>::type>::value,   //The first type must be convertible to size_t
+            is_sub_homogeneous<S...>::value,                                            //The first N-1 types must homegeneous
+            std::is_same<value_type, typename last_type<S...>::type>::value             //The last type must be exactly value_type
         >::value> = detail::dummy>
     dyn_matrix(S... sizes) :
             _size(dyn_detail::size(make_index_sequence<(sizeof...(S)-1)>(), sizes...)),
