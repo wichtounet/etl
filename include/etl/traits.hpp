@@ -621,7 +621,7 @@ struct etl_traits<etl::sub_view<T>> {
     static constexpr const bool is_value = false;
 
     static std::size_t size(const expr_t& v){
-        return etl_traits<sub_expr_t>::size(v.parent) / etl_traits<sub_expr_t>::template dim<0>();
+        return etl_traits<sub_expr_t>::size(v.parent) / etl_traits<sub_expr_t>::dim(v.parent, 0);
     }
 
     static std::size_t dim(const expr_t& v, std::size_t d){
