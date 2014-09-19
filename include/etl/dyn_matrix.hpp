@@ -21,6 +21,27 @@ namespace etl {
 enum class init_flag_t { DUMMY };
 constexpr const init_flag_t init_flag = init_flag_t::DUMMY;
 
+template<typename... V>
+struct values_t {
+    const std::tuple<V...> values;
+    values_t(V... v) : values(v...) {};
+
+    template<typename T, std::size_t... I>
+    std::vector<T> list_sub(const index_sequence<I...>& /*i*/) const {
+        return {static_cast<T>(std::get<I>(values))...};
+    }
+
+    template<typename T>
+    std::vector<T> list() const {
+        return list_sub<T>(make_index_sequence<sizeof...(V)>());
+    }
+};
+
+template<typename... V>
+values_t<V...> values(V... v){
+    return {v...};
+}
+
 namespace dyn_detail {
 
 template<typename... S>
@@ -95,6 +116,19 @@ public:
     dyn_matrix(S... sizes) :
             _size(dyn_detail::size(make_index_sequence<(sizeof...(S)-1)>(), sizes...)),
             _data(last_value(sizes...)),
+            _dimensions(dyn_detail::sizes(make_index_sequence<(sizeof...(S)-1)>(), sizes...)) {
+        //Nothing to init
+    }
+
+    //Sizes followed by a values_t
+    template<typename... S, enable_if_u<
+        and_u<
+            (sizeof...(S) > 1),
+            is_specialization_of<values_t, typename last_type<S...>::type>::value
+        >::value> = detail::dummy>
+    dyn_matrix(S... sizes) :
+            _size(dyn_detail::size(make_index_sequence<(sizeof...(S)-1)>(), sizes...)),
+            _data(last_value(sizes...).template list<value_type>()),
             _dimensions(dyn_detail::sizes(make_index_sequence<(sizeof...(S)-1)>(), sizes...)) {
         //Nothing to init
     }

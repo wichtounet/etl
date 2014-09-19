@@ -52,9 +52,12 @@ TEST_CASE( "dyn_matrix/init_3", "dyn_matrix::dyn_matrix(initializer_list)" ) {
 TEST_CASE( "dyn_matrix/init_5", "dyn_matrix::dyn_matrix(T)" ) {
     etl::dyn_matrix<double> a(3, 2, 4, 5);
 
+    a = 3.4;
+
     REQUIRE(a.rows() == 3);
     REQUIRE(a.columns() == 2);
     REQUIRE(a.size() == 120);
+    REQUIRE(a(0,0,0,0) == 3.4);
 
     etl::dyn_matrix<double> b(3, 2, std::initializer_list<double>({1,2,3,4,5,6}));
 
@@ -79,6 +82,16 @@ TEST_CASE( "dyn_matrix/init_5", "dyn_matrix::dyn_matrix(T)" ) {
     REQUIRE(d.size() == 6);
     REQUIRE(d[0] == 3.3);
     REQUIRE(d[1] == 3.3);
+}
+
+TEST_CASE( "dyn_matrix/init_6", "dyn_matrix::dyn_matrix(T)" ) {
+    etl::dyn_matrix<double> b(3, 2, etl::values(1,2,3,4,5,6));
+
+    REQUIRE(b.rows() == 3);
+    REQUIRE(b.columns() == 2);
+    REQUIRE(b.size() == 6);
+    REQUIRE(b(0,0) == 1);
+    REQUIRE(b(0,1) == 2);
 }
 
 //}}} Init tests
