@@ -308,4 +308,34 @@ TEST_CASE( "fast_matrix/sub_view_6", "fast_matrix::sub" ) {
     REQUIRE(sub(test_matrix, 1)(2, 1) == -1);
 }
 
+TEST_CASE( "dyn_matrix/sub_view_1", "dyn_matrix::sub" ) {
+    etl::dyn_matrix<double> a(2,2,2, etl::values(1.1, 2.0, 5.0, 1.0, 1.1, 2.0, 5.0, 1.0));
+
+    REQUIRE(a(0, 0, 0) == 1.1);
+    REQUIRE(etl::sub(a, 0)(0, 0) == 1.1);
+    REQUIRE(etl::sub(a, 0)(0, 1) == 2.0);
+    REQUIRE(etl::sub(a, 1)(0, 0) == 1.1);
+    REQUIRE(etl::sub(a, 1)(0, 1) == 2.0);
+}
+
+TEST_CASE( "dyn_matrix/sub_view_2", "dyn_matrix::sub" ) {
+    etl::dyn_matrix<double> a(2,2,2, etl::values(1.1, 2.0, 5.0, 1.0, 1.1, 2.0, 5.0, 1.0));
+
+    REQUIRE(etl::sub(etl::sub(a, 0), 0)(0) == 1.1);
+    REQUIRE(etl::sub(etl::sub(a, 0), 0)(1) == 2.0);
+    REQUIRE(etl::sub(etl::sub(a, 0), 1)(0) == 5.0);
+    REQUIRE(etl::sub(etl::sub(a, 0), 1)(1) == 1.0);
+    REQUIRE(etl::sub(etl::sub(a, 1), 0)(0) == 1.1);
+    REQUIRE(etl::sub(etl::sub(a, 1), 0)(1) == 2.0);
+}
+
+TEST_CASE( "dyn_matrix/sub_view_3", "dyn_matrix::sub" ) {
+    etl::dyn_matrix<double> a(2,2,2, etl::values(1.1, 2.0, 5.0, 1.0, 1.1, 2.0, 5.0, 1.0));
+
+    etl::dyn_matrix<double> b(etl::sub(a, 1));
+
+    REQUIRE(b(0, 0) == 1.1);
+    REQUIRE(b(0, 1) == 2.0);
+}
+
 //}}}
