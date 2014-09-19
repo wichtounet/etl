@@ -65,6 +65,17 @@ TEST_CASE( "fast_matrix/init_5", "fast_matrix::operator=(T)" ) {
     }
 }
 
+TEST_CASE( "fast_matrix/init_6", "fast_matrix::operator=(T)" ) {
+    etl::fast_matrix<double, 5> test_matrix(3.3);
+
+    REQUIRE(test_matrix.size() == 5);
+
+    for(std::size_t i = 0; i < test_matrix.size(); ++i){
+        REQUIRE(test_matrix[i] == 3.3);
+        REQUIRE(test_matrix(i) == 3.3);
+    }
+}
+
 //}}} Init tests
 
 TEST_CASE( "fast_matrix/access", "fast_matrix::operator()" ) {
