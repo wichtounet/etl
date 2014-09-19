@@ -24,10 +24,8 @@ TEST_CASE( "stop/fast_vector_1", "stop<unary<fast_vec>>" ) {
     REQUIRE(r.size() == 4);
     REQUIRE(etl::etl_traits<type>::size(r) == 4);
     REQUIRE(etl::size(r) == 4);
-    REQUIRE(etl::etl_traits<type>::is_vector);
     REQUIRE(etl::etl_traits<type>::is_value);
     REQUIRE(etl::etl_traits<type>::is_fast);
-    REQUIRE(!etl::etl_traits<type>::is_matrix);
 
     constexpr const auto size_1 = etl::etl_traits<type>::size();
     REQUIRE(size_1 == 4);
@@ -37,6 +35,7 @@ TEST_CASE( "stop/fast_vector_1", "stop<unary<fast_vec>>" ) {
 
     for(std::size_t i = 0; i < r.size(); ++i){
         REQUIRE(r[i] == log(3.3));
+        REQUIRE(r(i) == log(3.3));
     }
 }
 
@@ -121,13 +120,12 @@ TEST_CASE( "stop/dyn_vector_1", "stop<unary<dyn_vec>>" ) {
     REQUIRE(r.size() == 4);
     REQUIRE(etl::etl_traits<type>::size(r) == 4);
     REQUIRE(etl::size(r) == 4);
-    REQUIRE(etl::etl_traits<type>::is_vector);
     REQUIRE(etl::etl_traits<type>::is_value);
     REQUIRE(!etl::etl_traits<type>::is_fast);
-    REQUIRE(!etl::etl_traits<type>::is_matrix);
 
     for(std::size_t i = 0; i < r.size(); ++i){
         REQUIRE(r[i] == log(3.3));
+        REQUIRE(r(i) == log(3.3));
     }
 }
 
