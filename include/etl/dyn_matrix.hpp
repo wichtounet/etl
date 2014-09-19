@@ -339,7 +339,7 @@ public:
         for_each_in(
             [&subsize, &index, &i, this](std::size_t s){
                 index += subsize * s;
-                subsize /= dim(++i);
+                subsize /= dim(i++);
             }, sizes...);
 
         return _data[index];

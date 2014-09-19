@@ -125,10 +125,6 @@ struct is_homogeneous_helper {
 template<typename F, typename... T>
 struct is_homogeneous : std::integral_constant<bool, is_homogeneous_helper<0, sizeof...(T)-1, F, T...>::value> {};
 
-
-
-
-
 template<typename... T>
 struct is_sub_homogeneous;
 
@@ -143,21 +139,17 @@ struct is_sub_homogeneous<T1, T2> : std::integral_constant<bool, not_u<std::is_s
 
 template<typename T1, typename T2, typename T3, typename... T>
 struct is_sub_homogeneous<T1, T2, T3, T...> : std::integral_constant<bool,
-	and_u<
-		std::is_same<T1, T2>::value,
-		is_sub_homogeneous<T3, T...>::value
-	>::value> {};
+    and_u<
+        std::is_same<T1, T2>::value,
+        is_sub_homogeneous<T3, T...>::value
+    >::value> {};
 
-
-
-
-
-template<typename F, unsigned I1, unsigned... I, typename... T, enable_if_u<(sizeof...(I) == 0)> = detail::dummy>
+template<typename F, std::size_t I1, std::size_t... I, typename... T, enable_if_u<(sizeof...(I) == 0)> = detail::dummy>
 void for_each_in_subset(F&& f, const index_sequence<I1, I...>& /*i*/, T&&... args){
     f(std::forward<typename nth_type<I1, T...>::type>(nth_value<I1>(args...)));
 }
 
-template<typename F, unsigned I1, unsigned... I, typename... T, enable_if_u<(sizeof...(I) > 0)> = detail::dummy>
+template<typename F, std::size_t I1, std::size_t... I, typename... T, enable_if_u<(sizeof...(I) > 0)> = detail::dummy>
 void for_each_in_subset(F&& f, const index_sequence<I1, I...>& /*i*/, T&&... args){
     f(std::forward<typename nth_type<I1, T...>::type>(nth_value<I1>(args...)));
     for_each_in_subset(f, index_sequence<I...>(), std::forward<T>(args)...);
@@ -167,12 +159,5 @@ template<typename F, typename... T>
 void for_each_in(F&& f, T&&... args){
     for_each_in_subset(f, make_index_sequence<sizeof...(T)>(), std::forward<T>(args)...);
 }
-
-
-
-
-
-
-
 
 #endif
