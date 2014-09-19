@@ -152,6 +152,8 @@ struct is_sub_homogeneous<T1, T2, T3, T...> : std::integral_constant<bool,
         is_sub_homogeneous<T2, T3, T...>::value
     >::value> {};
 
+//TODO Try to pass the index_sequence as a type, not a parameter
+
 template<typename F, std::size_t I1, std::size_t... I, typename... T, enable_if_u<(sizeof...(I) == 0)> = detail::dummy>
 void for_each_in_subset(F&& f, const index_sequence<I1, I...>& /*i*/, T&&... args){
     f(std::forward<typename nth_type<I1, T...>::type>(nth_value<I1>(args...)));
