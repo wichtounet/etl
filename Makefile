@@ -30,8 +30,8 @@ $(eval $(call add_executable_set,etl_test,etl_test))
 
 test_asm: release/bin/test_asm_1 release/bin/test_asm_2
 
-release: release_etl_test
-debug: debug_etl_test
+release: release_etl_test release/bin/benchmark
+debug: debug_etl_test debug/bin/benchmark
 
 all: release debug
 
