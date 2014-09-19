@@ -207,7 +207,21 @@ public:
         }
     }
 
-    template<typename E>
+    template<typename E, enable_if_u<etl_traits<transform_expr<value_type, E>>::dimensions() == 1> = detail::dummy>
+    explicit dyn_matrix(const transform_expr<value_type, E>& e) :
+            _size(etl::size(e)),
+            _data(_size) {
+
+        for(std::size_t d = 0; d < etl::dimensions(e); ++d){
+            _dimensions[d] = etl::dim(e, d);
+        }
+
+        for(std::size_t i = 0; i < rows(); ++i){
+            _data[i] = e(i);
+        }
+    }
+
+    template<typename E, enable_if_u<etl_traits<transform_expr<value_type, E>>::dimensions() == 2> = detail::dummy>
     explicit dyn_matrix(const transform_expr<value_type, E>& e) :
             _size(etl::size(e)),
             _data(_size) {

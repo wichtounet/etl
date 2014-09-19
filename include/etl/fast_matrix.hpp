@@ -147,7 +147,18 @@ public:
         }
     }
 
-    template<typename E>
+    template<typename E, enable_if_u<etl_traits<transform_expr<value_type, E>>::dimensions() == 1> = detail::dummy>
+    explicit fast_matrix(const transform_expr<value_type, E>& e){
+        static_assert(n_dimensions == 1, "Transform expressions are only 1D-valid for now");
+
+        ensure_same_size(*this, e);
+
+        for(std::size_t i = 0; i < dim<0>(); ++i){
+            _data[index(i)] = e(i);
+        }
+    }
+
+    template<typename E, enable_if_u<etl_traits<transform_expr<value_type, E>>::dimensions() == 2> = detail::dummy>
     explicit fast_matrix(const transform_expr<value_type, E>& e){
         static_assert(n_dimensions == 2, "Transform expressions are only 2D-valid for now");
 
