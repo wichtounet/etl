@@ -71,33 +71,33 @@ template<template<typename, std::size_t...> class TT, typename V1, std::size_t..
 struct is_var<TT, TT<V1, R...>> : std::true_type { };
 
 template<typename T>
-struct is_fast_matrix : std::integral_constant<bool, is_var<etl::fast_matrix, remove_cv_t<remove_reference_t<T>>>::value> {};
+struct is_fast_matrix : std::integral_constant<bool, is_var<etl::fast_matrix, std::remove_cv_t<std::remove_reference_t<T>>>::value> {};
 
 template<typename T>
-struct is_dyn_matrix : std::integral_constant<bool, is_2<etl::dyn_matrix, remove_cv_t<remove_reference_t<T>>>::value> {};
+struct is_dyn_matrix : std::integral_constant<bool, is_2<etl::dyn_matrix, std::remove_cv_t<std::remove_reference_t<T>>>::value> {};
 
 template<typename T>
-struct is_unary_expr : std::integral_constant<bool, is_specialization_of<etl::unary_expr, remove_cv_t<remove_reference_t<T>>>::value> {};
+struct is_unary_expr : std::integral_constant<bool, is_specialization_of<etl::unary_expr, std::remove_cv_t<std::remove_reference_t<T>>>::value> {};
 
 template<typename T>
-struct is_transform_expr : std::integral_constant<bool, is_specialization_of<etl::transform_expr, remove_cv_t<remove_reference_t<T>>>::value> {};
+struct is_transform_expr : std::integral_constant<bool, is_specialization_of<etl::transform_expr, std::remove_cv_t<std::remove_reference_t<T>>>::value> {};
 
 template<typename T>
-struct is_binary_expr : std::integral_constant<bool, is_specialization_of<etl::binary_expr, remove_cv_t<remove_reference_t<T>>>::value> {};
+struct is_binary_expr : std::integral_constant<bool, is_specialization_of<etl::binary_expr, std::remove_cv_t<std::remove_reference_t<T>>>::value> {};
 
 template<typename T>
 struct is_transformer_expr : std::integral_constant<bool, or_u<
-            is_specialization_of<etl::transpose_transformer, remove_cv_t<remove_reference_t<T>>>::value,
-            is_specialization_of<etl::hflip_transformer, remove_cv_t<remove_reference_t<T>>>::value,
-            is_specialization_of<etl::vflip_transformer, remove_cv_t<remove_reference_t<T>>>::value,
-            is_specialization_of<etl::fflip_transformer, remove_cv_t<remove_reference_t<T>>>::value>::value> {};
+            is_specialization_of<etl::transpose_transformer, std::remove_cv_t<std::remove_reference_t<T>>>::value,
+            is_specialization_of<etl::hflip_transformer, std::remove_cv_t<std::remove_reference_t<T>>>::value,
+            is_specialization_of<etl::vflip_transformer, std::remove_cv_t<std::remove_reference_t<T>>>::value,
+            is_specialization_of<etl::fflip_transformer, std::remove_cv_t<std::remove_reference_t<T>>>::value>::value> {};
 
 template<typename T>
 struct is_view : std::integral_constant<bool, or_u<
-            is_2<etl::dim_view, remove_cv_t<remove_reference_t<T>>>::value,
-            is_3<etl::fast_matrix_view, remove_cv_t<remove_reference_t<T>>>::value,
-            is_specialization_of<etl::dyn_matrix_view, remove_cv_t<remove_reference_t<T>>>::value,
-            is_specialization_of<etl::sub_view, remove_cv_t<remove_reference_t<T>>>::value
+            is_2<etl::dim_view, std::remove_cv_t<std::remove_reference_t<T>>>::value,
+            is_3<etl::fast_matrix_view, std::remove_cv_t<std::remove_reference_t<T>>>::value,
+            is_specialization_of<etl::dyn_matrix_view, std::remove_cv_t<std::remove_reference_t<T>>>::value,
+            is_specialization_of<etl::sub_view, std::remove_cv_t<std::remove_reference_t<T>>>::value
             >::value> {};
 
 template<typename T, typename Enable = void>
@@ -155,7 +155,7 @@ struct etl_traits<T, enable_if_t<is_etl_value<T>::value>> {
 template <typename T, typename Expr, typename UnaryOp>
 struct etl_traits<etl::unary_expr<T, Expr, UnaryOp>> {
     using expr_t = etl::unary_expr<T, Expr, UnaryOp>;
-    using sub_expr_t = remove_cv_t<remove_reference_t<Expr>>;
+    using sub_expr_t = std::remove_cv_t<std::remove_reference_t<Expr>>;
 
     static constexpr const bool is_fast = etl_traits<sub_expr_t>::is_fast;
     static constexpr const bool is_value = false;
@@ -189,7 +189,7 @@ struct etl_traits<etl::unary_expr<T, Expr, UnaryOp>> {
 template <typename T, typename Expr>
 struct etl_traits<etl::transform_expr<T, Expr>> {
     using expr_t = etl::transform_expr<T, Expr>;
-    using sub_expr_t = remove_cv_t<remove_reference_t<Expr>>;
+    using sub_expr_t = std::remove_cv_t<std::remove_reference_t<Expr>>;
 
     static constexpr const bool is_fast = etl_traits<sub_expr_t>::is_fast;
     static constexpr const bool is_value = false;
@@ -224,7 +224,7 @@ struct etl_traits<etl::transform_expr<T, Expr>> {
 template <typename T, typename LeftExpr, typename BinaryOp, typename RightExpr>
 struct etl_traits<etl::binary_expr<T, LeftExpr, BinaryOp, RightExpr>, enable_if_t<is_etl_expr<LeftExpr>::value>> {
     using expr_t = etl::binary_expr<T, LeftExpr, BinaryOp, RightExpr>;
-    using sub_expr_t = remove_cv_t<remove_reference_t<LeftExpr>>;
+    using sub_expr_t = std::remove_cv_t<std::remove_reference_t<LeftExpr>>;
 
     static constexpr const bool is_fast = etl_traits<sub_expr_t>::is_fast;
     static constexpr const bool is_value = false;
@@ -259,7 +259,7 @@ struct etl_traits<etl::binary_expr<T, LeftExpr, BinaryOp, RightExpr>, enable_if_
 template <typename T, typename LeftExpr, typename BinaryOp, typename RightExpr>
 struct etl_traits<etl::binary_expr<T, LeftExpr, BinaryOp, RightExpr>, enable_if_t<and_u<not_u<is_etl_expr<LeftExpr>::value>::value, is_etl_expr<RightExpr>::value>::value>> {
     using expr_t = etl::binary_expr<T, LeftExpr, BinaryOp, RightExpr>;
-    using sub_expr_t = remove_cv_t<remove_reference_t<RightExpr>>;
+    using sub_expr_t = std::remove_cv_t<std::remove_reference_t<RightExpr>>;
 
     static constexpr const bool is_fast = etl_traits<sub_expr_t>::is_fast;
     static constexpr const bool is_value = false;
@@ -293,7 +293,7 @@ struct etl_traits<etl::binary_expr<T, LeftExpr, BinaryOp, RightExpr>, enable_if_
 template <typename T>
 struct etl_traits<transpose_transformer<T>> {
     using expr_t = etl::transpose_transformer<T>;
-    using sub_expr_t = remove_cv_t<remove_reference_t<T>>;
+    using sub_expr_t = std::remove_cv_t<std::remove_reference_t<T>>;
 
     static constexpr const bool is_fast = etl_traits<sub_expr_t>::is_fast;
     static constexpr const bool is_value = false;
@@ -361,7 +361,7 @@ struct etl_traits<T, enable_if_t<and_u<is_transformer_expr<T>::value, not_u<is_s
 template <typename T, std::size_t D>
 struct etl_traits<etl::dim_view<T, D>> {
     using expr_t = etl::dim_view<T, D>;
-    using sub_expr_t = remove_cv_t<remove_reference_t<T>>;
+    using sub_expr_t = std::remove_cv_t<std::remove_reference_t<T>>;
 
     static constexpr const bool is_fast = etl_traits<sub_expr_t>::is_fast;
     static constexpr const bool is_value = false;
@@ -404,7 +404,7 @@ struct etl_traits<etl::dim_view<T, D>> {
 template <typename T>
 struct etl_traits<etl::sub_view<T>> {
     using expr_t = etl::sub_view<T>;
-    using sub_expr_t = remove_cv_t<remove_reference_t<T>>;
+    using sub_expr_t = std::remove_cv_t<std::remove_reference_t<T>>;
 
     static constexpr const bool is_fast = etl_traits<sub_expr_t>::is_fast;
     static constexpr const bool is_value = false;
@@ -438,7 +438,7 @@ struct etl_traits<etl::sub_view<T>> {
 template<typename T, std::size_t Rows, std::size_t Columns>
 struct etl_traits<etl::fast_matrix_view<T, Rows, Columns>> {
     using expr_t = etl::fast_matrix_view<T, Rows, Columns>;
-    using sub_expr_t = remove_cv_t<remove_reference_t<T>>;
+    using sub_expr_t = std::remove_cv_t<std::remove_reference_t<T>>;
 
     static constexpr const bool is_fast = true;
     static constexpr const bool is_value = false;
@@ -471,7 +471,7 @@ struct etl_traits<etl::fast_matrix_view<T, Rows, Columns>> {
 template<typename T>
 struct etl_traits<etl::dyn_matrix_view<T>> {
     using expr_t = etl::dyn_matrix_view<T>;
-    using sub_expr_t = remove_cv_t<remove_reference_t<T>>;
+    using sub_expr_t = std::remove_cv_t<std::remove_reference_t<T>>;
 
     static constexpr const bool is_fast = false;
     static constexpr const bool is_value = false;

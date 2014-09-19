@@ -10,12 +10,6 @@
 
 #include "integer_sequence.hpp"
 
-template<typename T>
-using remove_reference_t = typename std::remove_reference<T>::type;
-
-template<typename T>
-using remove_cv_t = typename std::remove_cv<T>::type;
-
 //Logic operators for TMP
 
 template<bool b1>

@@ -19,8 +19,8 @@ TEST_CASE( "dim/fast_matrix_1", "dim<1>" ) {
     etl::fast_vector<double, 3> b(etl::dim<1>(a, 0));
     etl::fast_vector<double, 3> c(etl::dim<1>(a, 1));
 
-    REQUIRE(etl::etl_traits<remove_cv_t<remove_reference_t<decltype(b)>>>::is_fast);
-    REQUIRE(etl::etl_traits<remove_cv_t<remove_reference_t<decltype(c)>>>::is_fast);
+    REQUIRE(etl::etl_traits<std::remove_cv_t<std::remove_reference_t<decltype(b)>>>::is_fast);
+    REQUIRE(etl::etl_traits<std::remove_cv_t<std::remove_reference_t<decltype(c)>>>::is_fast);
 
     REQUIRE(b[0] == 1.0);
     REQUIRE(b[1] == -2.0);
@@ -37,9 +37,9 @@ TEST_CASE( "dim/fast_matrix_2", "dim<2>" ) {
     etl::fast_vector<double, 2> c(etl::dim<2>(a, 1));
     etl::fast_vector<double, 2> d(etl::dim<2>(a, 2));
 
-    REQUIRE(etl::etl_traits<remove_cv_t<remove_reference_t<decltype(b)>>>::is_fast);
-    REQUIRE(etl::etl_traits<remove_cv_t<remove_reference_t<decltype(c)>>>::is_fast);
-    REQUIRE(etl::etl_traits<remove_cv_t<remove_reference_t<decltype(d)>>>::is_fast);
+    REQUIRE(etl::etl_traits<std::remove_cv_t<std::remove_reference_t<decltype(b)>>>::is_fast);
+    REQUIRE(etl::etl_traits<std::remove_cv_t<std::remove_reference_t<decltype(c)>>>::is_fast);
+    REQUIRE(etl::etl_traits<std::remove_cv_t<std::remove_reference_t<decltype(d)>>>::is_fast);
 
     REQUIRE(b[0] == 1.0);
     REQUIRE(b[1] == 3.0);
@@ -56,8 +56,8 @@ TEST_CASE( "dim/fast_matrix_3", "row" ) {
     etl::fast_vector<double, 3> b(etl::row(a, 0));
     etl::fast_vector<double, 3> c(etl::row(a, 1));
 
-    REQUIRE(etl::etl_traits<remove_cv_t<remove_reference_t<decltype(b)>>>::is_fast);
-    REQUIRE(etl::etl_traits<remove_cv_t<remove_reference_t<decltype(c)>>>::is_fast);
+    REQUIRE(etl::etl_traits<std::remove_cv_t<std::remove_reference_t<decltype(b)>>>::is_fast);
+    REQUIRE(etl::etl_traits<std::remove_cv_t<std::remove_reference_t<decltype(c)>>>::is_fast);
 
     REQUIRE(b[0] == 1.0);
     REQUIRE(b[1] == -2.0);
@@ -74,9 +74,9 @@ TEST_CASE( "dim/fast_matrix_4", "col" ) {
     etl::fast_vector<double, 2> c(etl::col(a, 1));
     etl::fast_vector<double, 2> d(etl::col(a, 2));
 
-    REQUIRE(etl::etl_traits<remove_cv_t<remove_reference_t<decltype(b)>>>::is_fast);
-    REQUIRE(etl::etl_traits<remove_cv_t<remove_reference_t<decltype(c)>>>::is_fast);
-    REQUIRE(etl::etl_traits<remove_cv_t<remove_reference_t<decltype(d)>>>::is_fast);
+    REQUIRE(etl::etl_traits<std::remove_cv_t<std::remove_reference_t<decltype(b)>>>::is_fast);
+    REQUIRE(etl::etl_traits<std::remove_cv_t<std::remove_reference_t<decltype(c)>>>::is_fast);
+    REQUIRE(etl::etl_traits<std::remove_cv_t<std::remove_reference_t<decltype(d)>>>::is_fast);
 
     REQUIRE(b[0] == 1.0);
     REQUIRE(b[1] == 3.0);
@@ -93,8 +93,8 @@ TEST_CASE( "dim/dyn_matrix_1", "dim<1>" ) {
     etl::dyn_vector<double> b(etl::dim<1>(a, 0));
     etl::dyn_vector<double> c(etl::dim<1>(a, 1));
 
-    REQUIRE(!etl::etl_traits<remove_cv_t<remove_reference_t<decltype(b)>>>::is_fast);
-    REQUIRE(!etl::etl_traits<remove_cv_t<remove_reference_t<decltype(c)>>>::is_fast);
+    REQUIRE(!etl::etl_traits<std::remove_cv_t<std::remove_reference_t<decltype(b)>>>::is_fast);
+    REQUIRE(!etl::etl_traits<std::remove_cv_t<std::remove_reference_t<decltype(c)>>>::is_fast);
 
     REQUIRE(b[0] == 1.0);
     REQUIRE(b[1] == -2.0);
@@ -111,9 +111,9 @@ TEST_CASE( "dim/dyn_matrix_2", "dim<2>" ) {
     etl::dyn_vector<double> c(etl::dim<2>(a, 1));
     etl::dyn_vector<double> d(etl::dim<2>(a, 2));
 
-    REQUIRE(!etl::etl_traits<remove_cv_t<remove_reference_t<decltype(b)>>>::is_fast);
-    REQUIRE(!etl::etl_traits<remove_cv_t<remove_reference_t<decltype(c)>>>::is_fast);
-    REQUIRE(!etl::etl_traits<remove_cv_t<remove_reference_t<decltype(d)>>>::is_fast);
+    REQUIRE(!etl::etl_traits<std::remove_cv_t<std::remove_reference_t<decltype(b)>>>::is_fast);
+    REQUIRE(!etl::etl_traits<std::remove_cv_t<std::remove_reference_t<decltype(c)>>>::is_fast);
+    REQUIRE(!etl::etl_traits<std::remove_cv_t<std::remove_reference_t<decltype(d)>>>::is_fast);
 
     REQUIRE(b[0] == 1.0);
     REQUIRE(b[1] == 3.0);

@@ -19,7 +19,7 @@ TEST_CASE( "stop/fast_vector_1", "stop<unary<fast_vec>>" ) {
 
     auto r = s(log(test_vector));
 
-    using type = remove_reference_t<remove_cv_t<decltype(r)>>;
+    using type = std::remove_reference_t<std::remove_cv_t<decltype(r)>>;
 
     REQUIRE(r.size() == 4);
     REQUIRE(etl::etl_traits<type>::size(r) == 4);
@@ -45,7 +45,7 @@ TEST_CASE( "stop/fast_matrix_1", "stop<unary<fast_mat>>" ) {
 
     auto r = s(log(test_matrix));
 
-    using type = remove_reference_t<remove_cv_t<decltype(r)>>;
+    using type = std::remove_reference_t<std::remove_cv_t<decltype(r)>>;
 
     REQUIRE(r.size() == 6);
     REQUIRE(etl::etl_traits<type>::size(r) == 6);
@@ -78,7 +78,7 @@ TEST_CASE( "stop/fast_matrix_2", "stop<binary<fast_mat>>" ) {
 
     auto r = s(test_matrix + test_matrix);
 
-    using type = remove_reference_t<remove_cv_t<decltype(r)>>;
+    using type = std::remove_reference_t<std::remove_cv_t<decltype(r)>>;
 
     REQUIRE(r.size() == 6);
     REQUIRE(etl::etl_traits<type>::size(r) == 6);
@@ -111,7 +111,7 @@ TEST_CASE( "stop/dyn_vector_1", "stop<unary<dyn_vec>>" ) {
 
     auto r = s(log(test_vector));
 
-    using type = remove_reference_t<remove_cv_t<decltype(r)>>;
+    using type = std::remove_reference_t<std::remove_cv_t<decltype(r)>>;
 
     REQUIRE(r.size() == 4);
     REQUIRE(etl::etl_traits<type>::size(r) == 4);
@@ -131,7 +131,7 @@ TEST_CASE( "stop/dyn_matrix_1", "stop<unary<dyn_mat>>" ) {
 
     auto r = s(log(test_matrix));
 
-    using type = remove_reference_t<remove_cv_t<decltype(r)>>;
+    using type = std::remove_reference_t<std::remove_cv_t<decltype(r)>>;
 
     REQUIRE(r.size() == 6);
     REQUIRE(etl::etl_traits<type>::size(r) == 6);
@@ -152,7 +152,7 @@ TEST_CASE( "stop/dyn_matrix_2", "stop<binary<dyn_mat>>" ) {
 
     auto r = s(test_matrix + test_matrix);
 
-    using type = remove_reference_t<remove_cv_t<decltype(r)>>;
+    using type = std::remove_reference_t<std::remove_cv_t<decltype(r)>>;
 
     REQUIRE(r.size() == 6);
     REQUIRE(etl::etl_traits<type>::size(r) == 6);
