@@ -310,6 +310,20 @@ public:
         return _dimensions[d];
     }
 
+    value_type& operator()(size_t i){
+        etl_assert(i < dim(0), "Out of bounds");
+        etl_assert(_dimensions.size() == 1, "Invalid number of parameters");
+
+        return _data[i];
+    }
+
+    const value_type& operator()(size_t i) const {
+        etl_assert(i < dim(0), "Out of bounds");
+        etl_assert(dimensions() == 1, "Invalid number of parameters");
+
+        return _data[i];
+    }
+
     value_type& operator()(size_t i, size_t j){
         etl_assert(i < dim(0), "Out of bounds");
         etl_assert(j < dim(1), "Out of bounds");
