@@ -52,10 +52,8 @@ TEST_CASE( "stop/fast_matrix_1", "stop<unary<fast_mat>>" ) {
     REQUIRE(etl::size(r) == 6);
     REQUIRE(etl::rows(r) == 3);
     REQUIRE(etl::columns(r) == 2);
-    REQUIRE(etl::etl_traits<type>::is_matrix);
     REQUIRE(etl::etl_traits<type>::is_value);
     REQUIRE(etl::etl_traits<type>::is_fast);
-    REQUIRE(!etl::etl_traits<type>::is_vector);
 
     constexpr const auto size_1 = etl::etl_traits<type>::size();
 
@@ -87,10 +85,8 @@ TEST_CASE( "stop/fast_matrix_2", "stop<binary<fast_mat>>" ) {
     REQUIRE(etl::size(r) == 6);
     REQUIRE(etl::rows(r) == 3);
     REQUIRE(etl::columns(r) == 2);
-    REQUIRE(etl::etl_traits<type>::is_matrix);
     REQUIRE(etl::etl_traits<type>::is_value);
     REQUIRE(etl::etl_traits<type>::is_fast);
-    REQUIRE(!etl::etl_traits<type>::is_vector);
 
     constexpr const auto size_1 = etl::etl_traits<type>::size();
 
@@ -142,10 +138,8 @@ TEST_CASE( "stop/dyn_matrix_1", "stop<unary<dyn_mat>>" ) {
     REQUIRE(etl::size(r) == 6);
     REQUIRE(etl::rows(r) == 3);
     REQUIRE(etl::columns(r) == 2);
-    REQUIRE(etl::etl_traits<type>::is_matrix);
     REQUIRE(etl::etl_traits<type>::is_value);
     REQUIRE(!etl::etl_traits<type>::is_fast);
-    REQUIRE(!etl::etl_traits<type>::is_vector);
 
     for(std::size_t i = 0; i < r.size(); ++i){
         REQUIRE(r[i] == log(3.3));
@@ -165,10 +159,8 @@ TEST_CASE( "stop/dyn_matrix_2", "stop<binary<dyn_mat>>" ) {
     REQUIRE(etl::size(r) == 6);
     REQUIRE(etl::rows(r) == 3);
     REQUIRE(etl::columns(r) == 2);
-    REQUIRE(etl::etl_traits<type>::is_matrix);
     REQUIRE(etl::etl_traits<type>::is_value);
     REQUIRE(!etl::etl_traits<type>::is_fast);
-    REQUIRE(!etl::etl_traits<type>::is_vector);
 
     for(std::size_t i = 0; i < r.size(); ++i){
         REQUIRE(r[i] == 6.6);

@@ -134,8 +134,6 @@ struct etl_traits;
  */
 template<typename T>
 struct etl_traits<T, enable_if_t<is_etl_value<T>::value>> {
-    static constexpr const bool is_vector = or_u<is_dyn_vector<T>::value, is_fast_vector<T>::value>::value;
-    static constexpr const bool is_matrix = or_u<is_dyn_matrix<T>::value, is_fast_matrix<T>::value>::value;
     static constexpr const bool is_fast = or_u<is_fast_vector<T>::value, is_fast_matrix<T>::value>::value;
     static constexpr const bool is_value = true;
 
@@ -172,8 +170,6 @@ struct etl_traits<etl::unary_expr<T, Expr, UnaryOp>> {
     using expr_t = etl::unary_expr<T, Expr, UnaryOp>;
     using sub_expr_t = remove_cv_t<remove_reference_t<Expr>>;
 
-    static constexpr const bool is_vector = etl_traits<sub_expr_t>::is_vector;
-    static constexpr const bool is_matrix = etl_traits<sub_expr_t>::is_matrix;
     static constexpr const bool is_fast = etl_traits<sub_expr_t>::is_fast;
     static constexpr const bool is_value = false;
 
@@ -208,8 +204,6 @@ struct etl_traits<etl::transform_expr<T, Expr>> {
     using expr_t = etl::transform_expr<T, Expr>;
     using sub_expr_t = remove_cv_t<remove_reference_t<Expr>>;
 
-    static constexpr const bool is_vector = etl_traits<sub_expr_t>::is_vector;
-    static constexpr const bool is_matrix = etl_traits<sub_expr_t>::is_matrix;
     static constexpr const bool is_fast = etl_traits<sub_expr_t>::is_fast;
     static constexpr const bool is_value = false;
 
@@ -245,8 +239,6 @@ struct etl_traits<etl::binary_expr<T, LeftExpr, BinaryOp, RightExpr>, enable_if_
     using expr_t = etl::binary_expr<T, LeftExpr, BinaryOp, RightExpr>;
     using sub_expr_t = remove_cv_t<remove_reference_t<LeftExpr>>;
 
-    static constexpr const bool is_vector = etl_traits<sub_expr_t>::is_vector;
-    static constexpr const bool is_matrix = etl_traits<sub_expr_t>::is_matrix;
     static constexpr const bool is_fast = etl_traits<sub_expr_t>::is_fast;
     static constexpr const bool is_value = false;
 
@@ -282,8 +274,6 @@ struct etl_traits<etl::binary_expr<T, LeftExpr, BinaryOp, RightExpr>, enable_if_
     using expr_t = etl::binary_expr<T, LeftExpr, BinaryOp, RightExpr>;
     using sub_expr_t = remove_cv_t<remove_reference_t<RightExpr>>;
 
-    static constexpr const bool is_vector = etl_traits<sub_expr_t>::is_vector;
-    static constexpr const bool is_matrix = etl_traits<sub_expr_t>::is_matrix;
     static constexpr const bool is_fast = etl_traits<sub_expr_t>::is_fast;
     static constexpr const bool is_value = false;
 
@@ -318,8 +308,6 @@ struct etl_traits<transpose_transformer<T>> {
     using expr_t = etl::transpose_transformer<T>;
     using sub_expr_t = remove_cv_t<remove_reference_t<T>>;
 
-    static constexpr const bool is_vector = etl_traits<sub_expr_t>::is_vector;
-    static constexpr const bool is_matrix = etl_traits<sub_expr_t>::is_matrix;
     static constexpr const bool is_fast = etl_traits<sub_expr_t>::is_fast;
     static constexpr const bool is_value = false;
 
@@ -354,8 +342,6 @@ struct etl_traits<T, enable_if_t<and_u<is_transformer_expr<T>::value, not_u<is_s
     using expr_t = T;
     using sub_expr_t = typename T::sub_type;
 
-    static constexpr const bool is_vector = etl_traits<sub_expr_t>::is_vector;
-    static constexpr const bool is_matrix = etl_traits<sub_expr_t>::is_matrix;
     static constexpr const bool is_fast = etl_traits<sub_expr_t>::is_fast;
     static constexpr const bool is_value = false;
 
@@ -390,8 +376,6 @@ struct etl_traits<etl::dim_view<T, D>> {
     using expr_t = etl::dim_view<T, D>;
     using sub_expr_t = remove_cv_t<remove_reference_t<T>>;
 
-    static constexpr const bool is_vector = true;
-    static constexpr const bool is_matrix = false;
     static constexpr const bool is_fast = etl_traits<sub_expr_t>::is_fast;
     static constexpr const bool is_value = false;
 
@@ -435,8 +419,6 @@ struct etl_traits<etl::sub_view<T>> {
     using expr_t = etl::sub_view<T>;
     using sub_expr_t = remove_cv_t<remove_reference_t<T>>;
 
-    static constexpr const bool is_vector = false;
-    static constexpr const bool is_matrix = true;
     static constexpr const bool is_fast = etl_traits<sub_expr_t>::is_fast;
     static constexpr const bool is_value = false;
 
@@ -471,8 +453,6 @@ struct etl_traits<etl::fast_matrix_view<T, Rows, Columns>> {
     using expr_t = etl::fast_matrix_view<T, Rows, Columns>;
     using sub_expr_t = remove_cv_t<remove_reference_t<T>>;
 
-    static constexpr const bool is_vector = false;
-    static constexpr const bool is_matrix = true;
     static constexpr const bool is_fast = true;
     static constexpr const bool is_value = false;
 
@@ -506,8 +486,6 @@ struct etl_traits<etl::dyn_matrix_view<T>> {
     using expr_t = etl::dyn_matrix_view<T>;
     using sub_expr_t = remove_cv_t<remove_reference_t<T>>;
 
-    static constexpr const bool is_vector = false;
-    static constexpr const bool is_matrix = true;
     static constexpr const bool is_fast = false;
     static constexpr const bool is_value = false;
 

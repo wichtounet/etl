@@ -20,10 +20,8 @@ TEST_CASE( "etl_traits/fast_vector_1", "etl_traits<fast_vector>" ) {
     REQUIRE(etl::etl_traits<type>::size(test_vector) == 4);
     REQUIRE(etl::etl_traits<type>::dimensions() == 1);
     REQUIRE(etl::size(test_vector) == 4);
-    REQUIRE(etl::etl_traits<type>::is_vector);
     REQUIRE(etl::etl_traits<type>::is_value);
     REQUIRE(etl::etl_traits<type>::is_fast);
-    REQUIRE(!etl::etl_traits<type>::is_matrix);
 
     constexpr const auto size_1 = etl::etl_traits<type>::size();
     REQUIRE(size_1 == 4);
@@ -51,10 +49,8 @@ TEST_CASE( "etl_traits/fast_matrix_1", "etl_traits<fast_matrix>" ) {
     REQUIRE(etl::columns(test_matrix) == 2);
     REQUIRE(etl::etl_traits<type>::dimensions() == 2);
     REQUIRE(etl::dimensions(test_matrix) == 2);
-    REQUIRE(etl::etl_traits<type>::is_matrix);
     REQUIRE(etl::etl_traits<type>::is_value);
     REQUIRE(etl::etl_traits<type>::is_fast);
-    REQUIRE(!etl::etl_traits<type>::is_vector);
 
     constexpr const auto size_1 = etl::etl_traits<type>::size();
     constexpr const auto dim_1 = etl::etl_traits<type>::dimensions();
@@ -89,10 +85,8 @@ TEST_CASE( "etl_traits/fast_matrix_2", "etl_traits<fast_matrix>" ) {
     REQUIRE(etl::columns(test_matrix) == 2);
     REQUIRE(etl::etl_traits<type>::dimensions() == 4);
     REQUIRE(etl::dimensions(test_matrix) == 4);
-    REQUIRE(etl::etl_traits<type>::is_matrix);
     REQUIRE(etl::etl_traits<type>::is_value);
     REQUIRE(etl::etl_traits<type>::is_fast);
-    REQUIRE(!etl::etl_traits<type>::is_vector);
 
     constexpr const auto size_1 = etl::etl_traits<type>::size();
     constexpr const auto dim_1 = etl::etl_traits<type>::dimensions();
@@ -130,10 +124,8 @@ TEST_CASE( "etl_traits/dyn_vector_1", "etl_traits<dyn_vector>" ) {
     REQUIRE(etl::etl_traits<type>::dim(test_vector, 0) == 4);
     REQUIRE(etl::etl_traits<type>::dimensions() == 1);
     REQUIRE(etl::dimensions(test_vector) == 1);
-    REQUIRE(etl::etl_traits<type>::is_vector);
     REQUIRE(etl::etl_traits<type>::is_value);
     REQUIRE(!etl::etl_traits<type>::is_fast);
-    REQUIRE(!etl::etl_traits<type>::is_matrix);
 }
 
 TEST_CASE( "etl_traits/dyn_matrix_1", "etl_traits<dyn_matrix>" ) {
@@ -148,10 +140,8 @@ TEST_CASE( "etl_traits/dyn_matrix_1", "etl_traits<dyn_matrix>" ) {
     REQUIRE(etl::dimensions(test_matrix) == 2);
     REQUIRE(etl::etl_traits<type>::dim(test_matrix, 0) == 3);
     REQUIRE(etl::etl_traits<type>::dim(test_matrix, 1) == 2);
-    REQUIRE(etl::etl_traits<type>::is_matrix);
     REQUIRE(etl::etl_traits<type>::is_value);
     REQUIRE(!etl::etl_traits<type>::is_fast);
-    REQUIRE(!etl::etl_traits<type>::is_vector);
 }
 
 TEST_CASE( "etl_traits/unary_dyn_mat", "etl_traits<unary<dyn_mat>>" ) {
@@ -169,10 +159,8 @@ TEST_CASE( "etl_traits/unary_dyn_mat", "etl_traits<unary<dyn_mat>>" ) {
     REQUIRE(etl::etl_traits<expr_type>::dim(expr, 1) == 2);
     REQUIRE(etl::etl_traits<expr_type>::dimensions() == 2);
     REQUIRE(etl::dimensions(expr) == 2);
-    REQUIRE(etl::etl_traits<expr_type>::is_matrix);
     REQUIRE(!etl::etl_traits<expr_type>::is_value);
     REQUIRE(!etl::etl_traits<expr_type>::is_fast);
-    REQUIRE(!etl::etl_traits<expr_type>::is_vector);
 }
 
 TEST_CASE( "etl_traits/binary_dyn_mat", "etl_traits<binary<dyn_mat, dyn_mat>>" ) {
@@ -190,10 +178,8 @@ TEST_CASE( "etl_traits/binary_dyn_mat", "etl_traits<binary<dyn_mat, dyn_mat>>" )
     REQUIRE(etl::dimensions(expr) == 2);
     REQUIRE(etl::etl_traits<expr_type>::dim(expr, 0) == 3);
     REQUIRE(etl::etl_traits<expr_type>::dim(expr, 1) == 2);
-    REQUIRE(etl::etl_traits<expr_type>::is_matrix);
     REQUIRE(!etl::etl_traits<expr_type>::is_value);
     REQUIRE(!etl::etl_traits<expr_type>::is_fast);
-    REQUIRE(!etl::etl_traits<expr_type>::is_vector);
 }
 
 TEST_CASE( "etl_traits/unary_fast_mat", "etl_traits<unary<fast_mat>>" ) {
@@ -209,10 +195,8 @@ TEST_CASE( "etl_traits/unary_fast_mat", "etl_traits<unary<fast_mat>>" ) {
     REQUIRE(etl::columns(expr) == 2);
     REQUIRE(etl::etl_traits<expr_type>::dimensions() == 2);
     REQUIRE(etl::dimensions(expr) == 2);
-    REQUIRE(etl::etl_traits<expr_type>::is_matrix);
     REQUIRE(!etl::etl_traits<expr_type>::is_value);
     REQUIRE(etl::etl_traits<expr_type>::is_fast);
-    REQUIRE(!etl::etl_traits<expr_type>::is_vector);
 
     constexpr const auto size_1 = etl::etl_traits<expr_type>::size();
     constexpr const auto dim_1 = etl::etl_traits<expr_type>::dimensions();
@@ -250,10 +234,8 @@ TEST_CASE( "etl_traits/binary_fast_mat", "etl_traits<binary<fast_mat, fast_mat>>
     REQUIRE(etl::columns(expr) == 2);
     REQUIRE(etl::etl_traits<expr_type>::dimensions() == 2);
     REQUIRE(etl::dimensions(expr) == 2);
-    REQUIRE(etl::etl_traits<expr_type>::is_matrix);
     REQUIRE(!etl::etl_traits<expr_type>::is_value);
     REQUIRE(etl::etl_traits<expr_type>::is_fast);
-    REQUIRE(!etl::etl_traits<expr_type>::is_vector);
 
     constexpr const auto size_1 = etl::etl_traits<expr_type>::size();
     constexpr const auto dim_1 = etl::etl_traits<expr_type>::dimensions();

@@ -173,10 +173,8 @@ TEST_CASE( "reshape/traits", "traits<reshape<2,3>>" ) {
     REQUIRE(etl::size(expr) == 6);
     REQUIRE(etl::rows(expr) == 2);
     REQUIRE(etl::columns(expr) == 3);
-    REQUIRE(etl::etl_traits<expr_type>::is_matrix);
     REQUIRE(!etl::etl_traits<expr_type>::is_value);
     REQUIRE(etl::etl_traits<expr_type>::is_fast);
-    REQUIRE(!etl::etl_traits<expr_type>::is_vector);
 
     constexpr const auto size_1 = etl::etl_traits<expr_type>::size();
 
@@ -225,10 +223,8 @@ TEST_CASE( "reshape/dyn_traits", "traits<reshape<2,3>>" ) {
     REQUIRE(etl::size(expr) == 6);
     REQUIRE(etl::rows(expr) == 2);
     REQUIRE(etl::columns(expr) == 3);
-    REQUIRE(etl::etl_traits<expr_type>::is_matrix);
     REQUIRE(!etl::etl_traits<expr_type>::is_value);
     REQUIRE(!etl::etl_traits<expr_type>::is_fast);
-    REQUIRE(!etl::etl_traits<expr_type>::is_vector);
 }
 
 //}}}
