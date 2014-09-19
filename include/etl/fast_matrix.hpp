@@ -149,7 +149,7 @@ public:
 
     template<typename E>
     explicit fast_matrix(const transform_expr<value_type, E>& e){
-        //TODO This will only support 2D Expressions
+        static_assert(n_dimensions == 2, "Transform expressions are only 2D-valid for now");
 
         ensure_same_size(*this, e);
 
