@@ -8,6 +8,8 @@
 #ifndef ETL_TMP_HPP
 #define ETL_TMP_HPP
 
+#include "integer_sequence.hpp"
+
 template<typename T>
 using remove_reference_t = typename std::remove_reference<T>::type;
 
@@ -125,5 +127,28 @@ struct is_sub_homogeneous : std::integral_constant<bool, is_homogeneous_helper<0
 
 template<typename F, typename... T>
 struct is_homogeneous : std::integral_constant<bool, is_homogeneous_helper<0, sizeof...(T)-1, F, T...>::value> {};
+
+template<typename F, unsigned I1, unsigned... I, typename... T, enable_if_u<(sizeof...(I) == 0)> = detail::dummy>
+void for_each_in_subset(F&& f, const index_sequence<I1, I...>& /*i*/, T&&... args){
+    f(std::forward<typename nth_type<I1, T...>::type>(nth_value<I1>(args...)));
+}
+
+template<typename F, unsigned I1, unsigned... I, typename... T, enable_if_u<(sizeof...(I) > 0)> = detail::dummy>
+void for_each_in_subset(F&& f, const index_sequence<I1, I...>& /*i*/, T&&... args){
+    f(std::forward<typename nth_type<I1, T...>::type>(nth_value<I1>(args...)));
+    for_each_in_subset(f, index_sequence<I...>(), std::forward<T>(args)...);
+}
+
+template<typename F, typename... T>
+void for_each_in(F&& f, T&&... args){
+    for_each_in_subset(f, make_index_sequence<sizeof...(T)>(), std::forward<T>(args)...);
+}
+
+
+
+
+
+
+
 
 #endif
