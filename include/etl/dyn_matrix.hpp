@@ -292,13 +292,24 @@ public:
         return *this;
     }
 
-    template<typename E>
+    template<typename E, enable_if_u<etl_traits<transform_expr<value_type, E>>::dimensions() == 1> = detail::dummy>
+    dyn_matrix& operator=(transform_expr<value_type, E>&& e){
+        ensure_same_size(*this, e);
+
+        for(std::size_t i = 0; i < rows(); ++i){
+            _data[index(i)] = e(i);
+        }
+
+        return *this;
+    }
+
+    template<typename E, enable_if_u<etl_traits<transform_expr<value_type, E>>::dimensions() == 2> = detail::dummy>
     dyn_matrix& operator=(transform_expr<value_type, E>&& e){
         ensure_same_size(*this, e);
 
         for(std::size_t i = 0; i < rows(); ++i){
             for(std::size_t j = 0; j < columns(); ++j){
-                _data[i * columns() + j] = e(i,j);
+                _data[index(i,j)] = e(i,j);
             }
         }
 

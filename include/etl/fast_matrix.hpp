@@ -216,10 +216,19 @@ public:
         return *this;
     }
 
-    template<typename E>
+    template<typename E, enable_if_u<etl_traits<transform_expr<value_type, E>>::dimensions() == 1> = detail::dummy>
     fast_matrix& operator=(transform_expr<value_type, E>&& e){
-        //TODO This will only support 2D Expressions
+        ensure_same_size(*this, e);
 
+        for(std::size_t i = 0; i < dim<0>(); ++i){
+            _data[index(i)] = e(i);
+        }
+
+        return *this;
+    }
+
+    template<typename E, enable_if_u<etl_traits<transform_expr<value_type, E>>::dimensions() == 2> = detail::dummy>
+    fast_matrix& operator=(transform_expr<value_type, E>&& e){
         ensure_same_size(*this, e);
 
         for(std::size_t i = 0; i < dim<0>(); ++i){
