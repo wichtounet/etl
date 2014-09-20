@@ -27,7 +27,7 @@ template<typename M, typename Sequence>
 struct build_matrix_type;
 
 template<typename M, std::size_t... I>
-struct build_matrix_type<M, index_sequence<I...>> {
+struct build_matrix_type<M, std::index_sequence<I...>> {
     using type = fast_matrix<typename M::value_type, etl_traits<M>::template dim<I>()...>;
 };
 
@@ -38,7 +38,7 @@ template<typename T,
         etl_traits<T>::is_fast
     > = detail::dummy>
 auto s(const T& value){
-    return typename build_matrix_type<T, make_index_sequence<etl_traits<T>::dimensions()>>::type(value);
+    return typename build_matrix_type<T, std::make_index_sequence<etl_traits<T>::dimensions()>>::type(value);
 }
 
 } //end of namespace etl

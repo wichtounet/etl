@@ -8,7 +8,7 @@
 #ifndef ETL_TMP_HPP
 #define ETL_TMP_HPP
 
-#include "integer_sequence.hpp"
+#include <utility> //For index_sequence 
 
 //Logic operators for TMP
 
@@ -146,19 +146,19 @@ struct is_sub_homogeneous<T1, T2, T3, T...> : std::integral_constant<bool,
 //TODO Try to pass the index_sequence as a type, not a parameter
 
 template<typename F, std::size_t I1, std::size_t... I, typename... T, enable_if_u<(sizeof...(I) == 0)> = detail::dummy>
-void for_each_in_subset(F&& f, const index_sequence<I1, I...>& /*i*/, T&&... args){
+void for_each_in_subset(F&& f, const std::index_sequence<I1, I...>& /*i*/, T&&... args){
     f(std::forward<typename nth_type<I1, T...>::type>(nth_value<I1>(args...)));
 }
 
 template<typename F, std::size_t I1, std::size_t... I, typename... T, enable_if_u<(sizeof...(I) > 0)> = detail::dummy>
-void for_each_in_subset(F&& f, const index_sequence<I1, I...>& /*i*/, T&&... args){
+void for_each_in_subset(F&& f, const std::index_sequence<I1, I...>& /*i*/, T&&... args){
     f(std::forward<typename nth_type<I1, T...>::type>(nth_value<I1>(args...)));
-    for_each_in_subset(f, index_sequence<I...>(), std::forward<T>(args)...);
+    for_each_in_subset(f, std::index_sequence<I...>(), std::forward<T>(args)...);
 }
 
 template<typename F, typename... T>
 void for_each_in(F&& f, T&&... args){
-    for_each_in_subset(f, make_index_sequence<sizeof...(T)>(), std::forward<T>(args)...);
+    for_each_in_subset(f, std::make_index_sequence<sizeof...(T)>(), std::forward<T>(args)...);
 }
 
 #endif
