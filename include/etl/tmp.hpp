@@ -9,6 +9,7 @@
 #define ETL_TMP_HPP
 
 #include <utility> //For index_sequence 
+#include <tuple>  //For TMP stuff
 
 //Logic operators for TMP
 
