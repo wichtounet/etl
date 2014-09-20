@@ -16,6 +16,8 @@
 
 namespace etl {
 
+using random_engine = std::mt19937_64;
+
 template<typename T>
 struct scalar {
     const T value;
@@ -313,7 +315,7 @@ struct identity_unary_op {
 template<typename T>
 struct bernoulli_unary_op {
     static T apply(const T& x){
-        static std::default_random_engine rand_engine(std::time(nullptr));
+        static random_engine rand_engine(std::time(nullptr));
         static std::uniform_real_distribution<double> normal_distribution(0.0, 1.0);
         static auto normal_generator = std::bind(normal_distribution, rand_engine);
 
@@ -324,7 +326,7 @@ struct bernoulli_unary_op {
 template<typename T>
 struct uniform_noise_unary_op {
     static T apply(const T& x){
-        static std::default_random_engine rand_engine(std::time(nullptr));
+        static random_engine rand_engine(std::time(nullptr));
         static std::uniform_real_distribution<double> real_distribution(0.0, 1.0);
         static auto noise = std::bind(real_distribution, rand_engine);
 
@@ -335,7 +337,7 @@ struct uniform_noise_unary_op {
 template<typename T>
 struct normal_noise_unary_op {
     static T apply(const T& x){
-        static std::default_random_engine rand_engine(std::time(nullptr));
+        static random_engine rand_engine(std::time(nullptr));
         static std::normal_distribution<double> normal_distribution(0.0, 1.0);
         static auto noise = std::bind(normal_distribution, rand_engine);
 
@@ -346,7 +348,7 @@ struct normal_noise_unary_op {
 template<typename T>
 struct logistic_noise_unary_op {
     static T apply(const T& x){
-        static std::default_random_engine rand_engine(std::time(nullptr));
+        static random_engine rand_engine(std::time(nullptr));
 
         std::normal_distribution<double> noise_distribution(0.0, logistic_sigmoid(x));
         auto noise = std::bind(noise_distribution, rand_engine);
@@ -358,7 +360,7 @@ struct logistic_noise_unary_op {
 template<typename T, typename E>
 struct ranged_noise_binary_op {
     static T apply(const T& x, E value){
-        static std::default_random_engine rand_engine(std::time(nullptr));
+        static random_engine rand_engine(std::time(nullptr));
         static std::normal_distribution<double> normal_distribution(0.0, 1.0);
         static auto noise = std::bind(normal_distribution, rand_engine);
 
