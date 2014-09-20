@@ -17,9 +17,6 @@
 #include "fast_op.hpp"
 #include "fast_expr.hpp"
 
-//TODO Some assertions can be transformer to static_assert
-//TODO The dimensions will always be constexpr
-
 namespace etl {
 
 enum class init_flag_t { DUMMY };
