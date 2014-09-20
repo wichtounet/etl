@@ -501,13 +501,13 @@ std::size_t rows(const E& v){
 
 template<typename E, enable_if_u<not_u<etl_traits<E>::is_fast>::value> = detail::dummy>
 std::size_t columns(const E& v){
-    etl_assert(etl_traits<E>::dimensions() > 1, "columns() can only be used on 2D+ matrices");
+    static_assert(etl_traits<E>::dimensions() > 1, "columns() can only be used on 2D+ matrices");
     return etl_traits<E>::dim(v, 1);
 }
 
 template<typename E, enable_if_u<not_u<etl_traits<E>::is_fast>::value> = detail::dummy>
 std::size_t subsize(const E& v){
-    //TODO Assert
+    static_assert(etl_traits<E>::dimensions() > 1, "Only 2D+ matrices have a subsize");
     return etl_traits<E>::size(v) / etl_traits<E>::dim(v, 0);
 }
 
@@ -530,7 +530,7 @@ constexpr std::size_t columns(const E&){
 
 template<typename E, enable_if_u<etl_traits<E>::is_fast> = detail::dummy>
 constexpr std::size_t subsize(const E&){
-    //TODO Assert
+    static_assert(etl_traits<E>::dimensions() > 1, "Only 2D+ matrices have a subsize");
     return etl_traits<E>::size() / etl_traits<E>::template dim<0>();
 }
 
