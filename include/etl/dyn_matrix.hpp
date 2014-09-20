@@ -8,9 +8,9 @@
 #ifndef ETL_old_matrix_HPP
 #define ETL_old_matrix_HPP
 
-#include<vector> //To store the data
-#include<array>  //To store the dimensions
-#include<tuple>  //For TMP stuff
+#include <vector> //To store the data
+#include <array>  //To store the dimensions
+#include <tuple>  //For TMP stuff
 
 #include "assert.hpp"
 #include "tmp.hpp"
