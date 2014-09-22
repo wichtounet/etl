@@ -103,7 +103,7 @@ private:
 public:
     //{{{ Construction
 
-    explicit dyn_matrix(const dyn_matrix& rhs) : _size(rhs._size), _data(rhs._data), _dimensions(rhs._dimensions) {
+    dyn_matrix(const dyn_matrix& rhs) : _size(rhs._size), _data(rhs._data), _dimensions(rhs._dimensions) {
         //Nothing to init
     }
 
