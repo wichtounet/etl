@@ -529,8 +529,17 @@ TEST_CASE( "dyn_vector/complex_3", "dyn_vector::complex" ) {
 
 //{{{ Complex content
 
-TEST_CASE( "dyn_vector/complex_content_1", "dyn_vector<dyn_matrix>" ) {
+TEST_CASE( "dyn_vector/complex_content_1", "dyn_vector<dyn_matrix>>" ) {
     etl::dyn_vector<etl::dyn_matrix<double>> a(11, etl::dyn_matrix<double>(3,3));
+
+    //It is enough for this test to compile
+    REQUIRE(true);
+}
+
+TEST_CASE( "dyn_vector/complex_content_2", "vector<dyn_vector<dyn_matrix>>>" ) {
+    std::vector<etl::dyn_vector<etl::dyn_matrix<double>>> a;
+
+    a.emplace_back(11, etl::dyn_matrix<double>(3,3));
 
     //It is enough for this test to compile
     REQUIRE(true);
