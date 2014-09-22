@@ -236,6 +236,15 @@ public:
         }
     }
 
+    template<typename Container, enable_if_u<std::is_convertible<typename Container::value_type, value_type>::value> = detail::dummy>
+    dyn_matrix(const Container& vec) : _size(vec.size()), _data(_size) {
+        static_assert(D == 1, "Only 1D matrix can be constructed from containers");
+
+        for(std::size_t i = 0; i < size(); ++i){
+            _data[i] = vec[i];
+        }
+    }
+
     //Default move
     dyn_matrix(dyn_matrix&& rhs) = default;
 
@@ -257,7 +266,7 @@ public:
 
     //Allow copy from other containers
 
-    template<typename Container, enable_if_u<std::is_same<typename Container::value_type, value_type>::value> = detail::dummy>
+    template<typename Container, enable_if_u<std::is_convertible<typename Container::value_type, value_type>::value> = detail::dummy>
     dyn_matrix& operator=(const Container& vec){
         etl_assert(vec.size() == size(), "Cannot copy from a vector of different size");
 
