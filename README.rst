@@ -21,16 +21,19 @@ Data structures
 
 Several structures are available: 
 
-* fast_vector<T, Rows>: A vector of size Rows with elements of type
-  T. This must be used when you know the size of the vector at
-  compile-time. 
-* dyn_vector<T>: A vector with element of type T. The size of the
-  vector can be set at runtime. 
-* fast_matrix<T, Rows,Columns>: A matrix of size Rows x Columns with
-  elements of type T. This must be used when you know the size of
-  the matrix at compile-time. 
-* dyn_matrix<T>: A matrix with element of type T. The size of the
-  matrix can be set at runtime. 
+* fast_matrix<T, Dim...>: A matrix of variadic size with elements of type T.
+  This must be used when you know the size of the vector at compile-time. The
+  number of dimensions can be anything. 
+* dyn_matrix<T, D>: A matrix with element of type T. The size of the
+  matrix can be set at runtime.  The matrix can have D dimensions.
+
+There also exists typedefs for vectors: 
+
+* fast_vector<T, Rows>
+* dyn_vector<T>
+
+You have to keep in mind that fast_matrix directly store its values inside it,
+therefore, it can be very large and should rarely be stored on the stack. 
 
 Element-wise operations
 ***********************
@@ -76,6 +79,8 @@ Several transformations are also available:
 * vflip: Flip the vector or the matrix vertically
 * fflip: Flip the vector or the matrix horizontally and verticaly. It is the
   equivalent of hflip(vflip(x))
+* sub: Return a sub part of the matrix. The first dimension is forced to a
+  special value. It works with matrices of any dimension. 
 * dim/row/col: Return a vector representing a sub part of a matrix (a row or a
   col)
 * reshape: Interpet a vector as a matrix
@@ -87,8 +92,7 @@ All binary and unary operations are applied lazily, only when they are assigned
 to a concrete vector or matrix class. 
 
 The expression can be evaluated using the :code:`s(x)` function that returns a
-concrete class (fast_vector,fast_matrix,dyn_vector,dyn_matrix) based on the
-expression. 
+concrete class (fast_matrix or dyn_matrix) based on the expression.
 
 Reduction
 *********
