@@ -3,44 +3,44 @@ Expression Templates Library (ETL)
 
 ETL is a header only library for cC+ that provides vector and
 matrix classes with support for Expression Templates to perform very
-efficient operations on them. 
+efficient operations on them.
 
 At this time, the library support compile-time sized matrix and vector
-and runtime-sized matrix and vector with all element-wise operations 
-implemented. It also supports 1D and 2D convolution and matrix 
-multiplication (naive algorithm). 
+and runtime-sized matrix and vector with all element-wise operations
+implemented. It also supports 1D and 2D convolution and matrix
+multiplication (naive algorithm).
 
 Usage
 -----
 
 The library is header-only and does not need to be built it at all,
-you just have to include its header files. 
+you just have to include its header files.
 
 Data structures
 ***************
 
-Several structures are available: 
+Several structures are available:
 
 * fast_matrix<T, Dim...>: A matrix of variadic size with elements of type T.
   This must be used when you know the size of the vector at compile-time. The
-  number of dimensions can be anything. 
+  number of dimensions can be anything.
 * dyn_matrix<T, D>: A matrix with element of type T. The size of the
   matrix can be set at runtime.  The matrix can have D dimensions.
 
-There also exists typedefs for vectors: 
+There also exists typedefs for vectors:
 
 * fast_vector<T, Rows>
 * dyn_vector<T>
 
 You have to keep in mind that fast_matrix directly store its values inside it,
-therefore, it can be very large and should rarely be stored on the stack. 
+therefore, it can be very large and should rarely be stored on the stack.
 
 Element-wise operations
 ***********************
 
 Classic element-wise operations can be done on vector and matrix as
 if it was done on scalars. Matrices and vectors can also be
-added,subtracted,divided, ... by scalars. 
+added,subtracted,divided, ... by scalars.
 
 .. code:: cpp
 
@@ -51,15 +51,15 @@ added,subtracted,divided, ... by scalars.
 
 
 All the operations are only executed once the expression is
-evaluated to construct the dyn_vector. 
+evaluated to construct the dyn_vector.
 
 Unary operators
 ***************
 
 Several unary operators are available. Each operation is performed
-on every element of the vector or the matrix. 
+on every element of the vector or the matrix.
 
-Available operators: 
+Available operators:
 
 * log
 * abs
@@ -80,7 +80,7 @@ Several transformations are also available:
 * fflip: Flip the vector or the matrix horizontally and verticaly. It is the
   equivalent of hflip(vflip(x))
 * sub: Return a sub part of the matrix. The first dimension is forced to a
-  special value. It works with matrices of any dimension. 
+  special value. It works with matrices of any dimension.
 * dim/row/col: Return a vector representing a sub part of a matrix (a row or a
   col)
 * reshape: Interpet a vector as a matrix
@@ -89,7 +89,7 @@ Lazy evaluation
 ***************
 
 All binary and unary operations are applied lazily, only when they are assigned
-to a concrete vector or matrix class. 
+to a concrete vector or matrix class.
 
 The expression can be evaluated using the :code:`s(x)` function that returns a
 concrete class (fast_matrix or dyn_matrix) based on the expression.
@@ -107,28 +107,47 @@ Functions
 *********
 
 The header *convolution.hpp* provides several convolution operations
-both in 1D (vector) and 2D (matrix). 
+both in 1D (vector) and 2D (matrix).
 
 The header *mutiplication.hpp* provides the matrix multiplication
-operation. 
+operation.
 
 It is possible to pass an expression rather than an data structure
 to functions. Keep in mind that expression are lazy, therefore if
 you pass a + b to a matrix multiplication, an addition will be run
 each time an element is accessed, therefore, it is not often
-efficient. 
+efficient.
+
+Why compile-time sizes ?
+************************
+
+Some people have asked me why I bothered at all to create the fast_matrix
+template, where all the dimensions are fixed at compile-time. There are several
+reasons for that:
+
+ * It improves data locality since the data can be directly stored inside the
+   structure and not with one level of indirection to the heap
+ * It makes vectorization easier for the compiler. All the sizes and therefore
+   the number of iterations of the lopp are known at compile-time, which is a
+   really great information for the compiler who can optimize each loop very
+   well and doesn't have to rely on estimating the number of iterations.
+ * Better diagnostics. It makes all the errors come at compile-time. If you try
+   to add two matrices of different sizes, the error won't come at runtime, but
+   at compile-time, which makes it much better.
+ * I knew the sizes of the matrices I was working for at compile-time
+ * It is more fun to implement. Yes, I love templates and TMP :)
 
 Building
 --------
 
 This library is completely header-only, there is no need to build it.
 
-The folder **include** must be included with the **-I** option. 
+The folder **include** must be included with the **-I** option.
 
 However, this library makes extensive use of C++11 and C++14,
 therefore, a recent compiler is necessary to use it.  This library
 has only been tested on CLang 3.4 and g++ 4.9.1. Moreover, this has
-never been tested on Windows. 
+never been tested on Windows.
 
 If you have problems compiling this library, I'd be glad to help,
 but I do not guarantee that this will work on every compiler. I
