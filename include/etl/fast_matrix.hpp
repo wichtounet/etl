@@ -11,7 +11,8 @@
 #include<array>
 #include<string>
 
-#include "assert.hpp"
+#include "cpp_utils/assert.hpp"
+
 #include "traits.hpp"
 #include "fast_op.hpp"
 #include "fast_expr.hpp"
@@ -48,7 +49,7 @@ struct matrix_index {
     template<size_t I2, typename Enable = void>
     struct matrix_index_int {
         static size_t compute(S1 first, S... args){
-            etl_assert(first < M::template dim<I2>(), "Out of bounds");
+            cpp_assert(first < M::template dim<I2>(), "Out of bounds");
 
             return matrix_subsize<M, I>::value * first + matrix_index<M, I+1, Stop, S...>::compute(args...);
         }
@@ -57,7 +58,7 @@ struct matrix_index {
     template<size_t I2>
     struct matrix_index_int<I2, std::enable_if_t<I2 == Stop>> {
         static size_t compute(S1 first){
-            etl_assert(first < M::template dim<I2>(), "Out of bounds");
+            cpp_assert(first < M::template dim<I2>(), "Out of bounds");
 
             return first;
         }
@@ -116,7 +117,7 @@ public:
     }
 
     fast_matrix(std::initializer_list<value_type> l){
-        etl_assert(l.size() == size(), "Cannot copy from an initializer of different size");
+        cpp_assert(l.size() == size(), "Cannot copy from an initializer of different size");
 
         std::copy(l.begin(), l.end(), begin());
     }
@@ -297,13 +298,13 @@ public:
     }
 
     const value_type& operator[](size_t i) const {
-        etl_assert(i < size(), "Out of bounds");
+        cpp_assert(i < size(), "Out of bounds");
 
         return _data[i];
     }
 
     value_type& operator[](size_t i){
-        etl_assert(i < size(), "Out of bounds");
+        cpp_assert(i < size(), "Out of bounds");
 
         return _data[i];
     }

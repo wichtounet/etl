@@ -10,7 +10,6 @@
 
 #include <algorithm>
 
-#include "assert.hpp"
 #include "tmp.hpp"
 
 namespace etl {

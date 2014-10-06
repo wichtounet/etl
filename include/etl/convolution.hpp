@@ -10,7 +10,8 @@
 
 #include <algorithm>
 
-#include "assert.hpp"
+#include "cpp_utils/assert.hpp"
+
 #include "tmp.hpp"
 
 namespace etl {
@@ -19,7 +20,7 @@ template<typename I, typename K, typename C>
 static C& convolve_1d_full(const I& input, const K& kernel, C& conv){
     static_assert(is_etl_expr<I>::value && is_etl_expr<K>::value && is_etl_expr<C>::value, "Convolution only supported for ETL expressions");
     //static_assert(C::etl_size == I::etl_size + K::etl_size - 1, "Invalid output vector size");
-    etl_assert(size(conv) == size(input) + size(kernel) - 1, "Invalid output vector size");
+    cpp_assert(size(conv) == size(input) + size(kernel) - 1, "Invalid output vector size");
 
     for(std::size_t i = 0; i < size(conv); ++i) {
         const auto lo = i >= size(kernel) - 1 ? i - (size(kernel) - 1) : 0;

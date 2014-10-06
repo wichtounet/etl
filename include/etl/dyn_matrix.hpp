@@ -12,7 +12,8 @@
 #include <array>  //To store the dimensions
 #include <tuple>  //For TMP stuff
 
-#include "assert.hpp"
+#include "cpp_utils/assert.hpp"
+
 #include "tmp.hpp"
 #include "fast_op.hpp"
 #include "fast_expr.hpp"
@@ -268,7 +269,7 @@ public:
 
     template<typename Container, enable_if_u<std::is_convertible<typename Container::value_type, value_type>::value> = detail::dummy>
     dyn_matrix& operator=(const Container& vec){
-        etl_assert(vec.size() == size(), "Cannot copy from a vector of different size");
+        cpp_assert(vec.size() == size(), "Cannot copy from a vector of different size");
 
         for(std::size_t i = 0; i < size(); ++i){
             _data[i] = vec[i];
@@ -357,36 +358,36 @@ public:
     }
 
     size_t dim(std::size_t d) const {
-        etl_assert(d < n_dimensions, "Invalid dimension");
+        cpp_assert(d < n_dimensions, "Invalid dimension");
 
         return _dimensions[d];
     }
 
     value_type& operator()(size_t i){
-        etl_assert(i < dim(0), "Out of bounds");
-        etl_assert(n_dimensions == 1, "Invalid number of parameters");
+        cpp_assert(i < dim(0), "Out of bounds");
+        cpp_assert(n_dimensions == 1, "Invalid number of parameters");
 
         return _data[i];
     }
 
     const value_type& operator()(size_t i) const {
-        etl_assert(i < dim(0), "Out of bounds");
+        cpp_assert(i < dim(0), "Out of bounds");
         static_assert(n_dimensions == 1, "Invalid number of parameters");
 
         return _data[i];
     }
 
     value_type& operator()(size_t i, size_t j){
-        etl_assert(i < dim(0), "Out of bounds");
-        etl_assert(j < dim(1), "Out of bounds");
+        cpp_assert(i < dim(0), "Out of bounds");
+        cpp_assert(j < dim(1), "Out of bounds");
         static_assert(n_dimensions == 2, "Invalid number of parameters");
 
         return _data[i * dim(1) + j];
     }
 
     const value_type& operator()(size_t i, size_t j) const {
-        etl_assert(i < dim(0), "Out of bounds");
-        etl_assert(j < dim(1), "Out of bounds");
+        cpp_assert(i < dim(0), "Out of bounds");
+        cpp_assert(j < dim(1), "Out of bounds");
         static_assert(dimensions() == 2, "Invalid number of parameters");
 
         return _data[i * dim(1) + j];
@@ -433,13 +434,13 @@ public:
     }
 
     const value_type& operator[](size_t i) const {
-        etl_assert(i < size(), "Out of bounds");
+        cpp_assert(i < size(), "Out of bounds");
 
         return _data[i];
     }
 
     value_type& operator[](size_t i){
-        etl_assert(i < size(), "Out of bounds");
+        cpp_assert(i < size(), "Out of bounds");
 
         return _data[i];
     }

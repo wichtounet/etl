@@ -8,8 +8,9 @@
 #ifndef ETL_TRAITS_HPP
 #define ETL_TRAITS_HPP
 
+#include "cpp_utils/assert.hpp"
+
 #include "tmp.hpp"
-#include "assert.hpp"
 
 namespace etl {
 
@@ -375,8 +376,8 @@ struct etl_traits<etl::dim_view<T, D>> {
     }
 
     static std::size_t dim(const expr_t& v, std::size_t d){
-        etl_assert(d == 0, "Invalid dimension");
-        etl_unused(d);
+        cpp_assert(d == 0, "Invalid dimension");
+        cpp_unused(d);
 
         return size(v);
     }
@@ -556,9 +557,9 @@ constexpr std::size_t dim(const E&){
 
 template<typename LE, typename RE, disable_if_u<and_u<is_etl_expr<LE>::value, is_etl_expr<RE>::value, etl_traits<LE>::is_fast, etl_traits<RE>::is_fast>::value> = detail::dummy>
 void ensure_same_size(const LE& lhs, const RE& rhs){
-    etl_assert(size(lhs) == size(rhs), "Cannot perform element-wise operations on collections of different size");
-    etl_unused(lhs);
-    etl_unused(rhs);
+    cpp_assert(size(lhs) == size(rhs), "Cannot perform element-wise operations on collections of different size");
+    cpp_unused(lhs);
+    cpp_unused(rhs);
 }
 
 template<typename LE, typename RE, enable_if_u<and_u<is_etl_expr<LE>::value, is_etl_expr<RE>::value, etl_traits<LE>::is_fast, etl_traits<RE>::is_fast>::value> = detail::dummy>
