@@ -460,4 +460,40 @@ TEST_CASE( "lvalue/fast_matrix_4", "lvalue col" ) {
     REQUIRE(d(1) == -7.5);
 }
 
+TEST_CASE( "lvalue/fast_matrix_5", "lvalue const col" ) {
+    etl::fast_matrix<double, 2, 3> a({1.0, -2.0, 4.0, 3.0, 0.5, -0.1});
+
+    const auto& ref = a;
+
+    auto b = etl::col(ref, 0);
+    auto c = etl::col(ref, 1);
+    auto d = etl::col(ref, 2);
+
+    REQUIRE(b[0] == 1.0);
+    REQUIRE(b[1] == 3.0);
+
+    REQUIRE(c[0] == -2.0);
+    REQUIRE(c[1] == 0.5);
+
+    REQUIRE(d[0] == 4.0);
+    REQUIRE(d[1] == -0.1);
+}
+
+TEST_CASE( "lvalue/fast_matrix_6", "lvalue const dim<1>" ) {
+    etl::fast_matrix<double, 2, 3> a({1.0, -2.0, 4.0, 3.0, 0.5, -0.1});
+
+    const auto& ref = a;
+
+    auto b = etl::dim<1>(ref, 0);
+    auto c = etl::dim<1>(ref, 1);
+
+    REQUIRE(b[0] == 1.0);
+    REQUIRE(b[1] == -2.0);
+    REQUIRE(b[2] == 4.0);
+
+    REQUIRE(c[0] == 3.0);
+    REQUIRE(c[1] == 0.5);
+    REQUIRE(c[2] == -0.1);
+}
+
 ///}}}
