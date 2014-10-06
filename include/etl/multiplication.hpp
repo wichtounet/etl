@@ -10,8 +10,6 @@
 
 #include <algorithm>
 
-#include "tmp.hpp"
-
 namespace etl {
 
 template<typename A, typename B, typename C>

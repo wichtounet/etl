@@ -111,7 +111,7 @@ public:
         //Nothing to init
     }
 
-    template<typename VT, enable_if_u<or_u<std::is_convertible<VT, value_type>::value, std::is_assignable<T&, VT>::value>::value> = detail::dummy>
+    template<typename VT, cpp::enable_if_u<cpp::or_u<std::is_convertible<VT, value_type>::value, std::is_assignable<T&, VT>::value>::value> = cpp::detail::dummy>
     explicit fast_matrix(const VT& value){
         std::fill(_data.begin(), _data.end(), value);
     }
@@ -148,7 +148,7 @@ public:
         }
     }
 
-    template<typename E, enable_if_u<etl_traits<transform_expr<value_type, E>>::dimensions() == 1> = detail::dummy>
+    template<typename E, cpp::enable_if_u<etl_traits<transform_expr<value_type, E>>::dimensions() == 1> = cpp::detail::dummy>
     explicit fast_matrix(const transform_expr<value_type, E>& e){
         static_assert(n_dimensions == 1, "Transform expressions are only 1D-valid for now");
 
@@ -159,7 +159,7 @@ public:
         }
     }
 
-    template<typename E, enable_if_u<etl_traits<transform_expr<value_type, E>>::dimensions() == 2> = detail::dummy>
+    template<typename E, cpp::enable_if_u<etl_traits<transform_expr<value_type, E>>::dimensions() == 2> = cpp::detail::dummy>
     explicit fast_matrix(const transform_expr<value_type, E>& e){
         static_assert(n_dimensions == 2, "Transform expressions are only 2D-valid for now");
 
@@ -186,7 +186,7 @@ public:
 
     //Allow copy from other containers
 
-    template<typename Container, enable_if_u<std::is_same<typename Container::value_type, value_type>::value> = detail::dummy>
+    template<typename Container, cpp::enable_if_u<std::is_same<typename Container::value_type, value_type>::value> = cpp::detail::dummy>
     fast_matrix& operator=(const Container& vec){
         std::copy(vec.begin(), vec.end(), begin());
 
@@ -217,7 +217,7 @@ public:
         return *this;
     }
 
-    template<typename E, enable_if_u<etl_traits<transform_expr<value_type, E>>::dimensions() == 1> = detail::dummy>
+    template<typename E, cpp::enable_if_u<etl_traits<transform_expr<value_type, E>>::dimensions() == 1> = cpp::detail::dummy>
     fast_matrix& operator=(transform_expr<value_type, E>&& e){
         ensure_same_size(*this, e);
 
@@ -228,7 +228,7 @@ public:
         return *this;
     }
 
-    template<typename E, enable_if_u<etl_traits<transform_expr<value_type, E>>::dimensions() == 2> = detail::dummy>
+    template<typename E, cpp::enable_if_u<etl_traits<transform_expr<value_type, E>>::dimensions() == 2> = cpp::detail::dummy>
     fast_matrix& operator=(transform_expr<value_type, E>&& e){
         ensure_same_size(*this, e);
 
@@ -242,7 +242,7 @@ public:
     }
 
     //Set the same value to each element of the matrix
-    template<typename VT, enable_if_u<or_u<std::is_convertible<VT, value_type>::value, std::is_assignable<T&, VT>::value>::value> = detail::dummy>
+    template<typename VT, cpp::enable_if_u<cpp::or_u<std::is_convertible<VT, value_type>::value, std::is_assignable<T&, VT>::value>::value> = cpp::detail::dummy>
     fast_matrix& operator=(const VT& value){
         std::fill(_data.begin(), _data.end(), value);
 
@@ -284,7 +284,7 @@ public:
     template<typename... S>
     value_type& operator()(S... args){
         static_assert(sizeof...(S) == sizeof...(Dims), "Invalid number of parameters");
-        static_assert(all_convertible_to<std::size_t, S...>::value, "Invalid size types");
+        static_assert(cpp::all_convertible_to<std::size_t, S...>::value, "Invalid size types");
 
         return access(static_cast<size_t>(args)...);
     }
@@ -292,7 +292,7 @@ public:
     template<typename... S>
     const value_type& operator()(S... args) const {
         static_assert(sizeof...(S) == sizeof...(Dims), "Invalid number of parameters");
-        static_assert(all_convertible_to<std::size_t, S...>::value, "Invalid size types");
+        static_assert(cpp::all_convertible_to<std::size_t, S...>::value, "Invalid size types");
 
         return access(static_cast<size_t>(args)...);
     }

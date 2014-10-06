@@ -9,8 +9,7 @@
 #define ETL_TRAITS_HPP
 
 #include "cpp_utils/assert.hpp"
-
-#include "tmp.hpp"
+#include "cpp_utils/tmp.hpp"
 
 namespace etl {
 
@@ -78,31 +77,31 @@ template<typename T>
 struct is_dyn_matrix : std::integral_constant<bool, is_2<etl::dyn_matrix, std::decay_t<T>>::value> {};
 
 template<typename T>
-struct is_unary_expr : std::integral_constant<bool, is_specialization_of<etl::unary_expr, std::decay_t<T>>::value> {};
+struct is_unary_expr : std::integral_constant<bool, cpp::is_specialization_of<etl::unary_expr, std::decay_t<T>>::value> {};
 
 template<typename T>
-struct is_transform_expr : std::integral_constant<bool, is_specialization_of<etl::transform_expr, std::decay_t<T>>::value> {};
+struct is_transform_expr : std::integral_constant<bool, cpp::is_specialization_of<etl::transform_expr, std::decay_t<T>>::value> {};
 
 template<typename T>
-struct is_binary_expr : std::integral_constant<bool, is_specialization_of<etl::binary_expr, std::decay_t<T>>::value> {};
+struct is_binary_expr : std::integral_constant<bool, cpp::is_specialization_of<etl::binary_expr, std::decay_t<T>>::value> {};
 
 template<typename T>
-struct is_transformer_expr : std::integral_constant<bool, or_u<
-            is_specialization_of<etl::transpose_transformer, std::decay_t<T>>::value,
-            is_specialization_of<etl::hflip_transformer, std::decay_t<T>>::value,
-            is_specialization_of<etl::vflip_transformer, std::decay_t<T>>::value,
-            is_specialization_of<etl::fflip_transformer, std::decay_t<T>>::value>::value> {};
+struct is_transformer_expr : std::integral_constant<bool, cpp::or_u<
+            cpp::is_specialization_of<etl::transpose_transformer, std::decay_t<T>>::value,
+            cpp::is_specialization_of<etl::hflip_transformer, std::decay_t<T>>::value,
+            cpp::is_specialization_of<etl::vflip_transformer, std::decay_t<T>>::value,
+            cpp::is_specialization_of<etl::fflip_transformer, std::decay_t<T>>::value>::value> {};
 
 template<typename T>
-struct is_view : std::integral_constant<bool, or_u<
+struct is_view : std::integral_constant<bool, cpp::or_u<
             is_2<etl::dim_view, std::decay_t<T>>::value,
             is_3<etl::fast_matrix_view, std::decay_t<T>>::value,
-            is_specialization_of<etl::dyn_matrix_view, std::decay_t<T>>::value,
-            is_specialization_of<etl::sub_view, std::decay_t<T>>::value
+            cpp::is_specialization_of<etl::dyn_matrix_view, std::decay_t<T>>::value,
+            cpp::is_specialization_of<etl::sub_view, std::decay_t<T>>::value
             >::value> {};
 
 template<typename T, typename Enable = void>
-struct is_etl_expr : std::integral_constant<bool, or_u<
+struct is_etl_expr : std::integral_constant<bool, cpp::or_u<
        is_fast_matrix<T>::value,
        is_dyn_matrix<T>::value,
        is_unary_expr<T>::value, is_binary_expr<T>::value,
@@ -112,7 +111,7 @@ struct is_etl_expr : std::integral_constant<bool, or_u<
 
 template<typename T, typename Enable = void>
 struct is_etl_value :
-    std::integral_constant<bool, or_u<is_fast_matrix<T>::value, is_dyn_matrix<T>::value>::value> {};
+    std::integral_constant<bool, cpp::or_u<is_fast_matrix<T>::value, is_dyn_matrix<T>::value>::value> {};
 
 template<typename T, typename Enable = void>
 struct etl_traits;
@@ -133,7 +132,7 @@ struct etl_traits<T, std::enable_if_t<is_etl_value<T>::value>> {
         return v.dim(d);
     }
 
-    template<bool B = is_fast, enable_if_u<B> = detail::dummy>
+    template<bool B = is_fast, cpp::enable_if_u<B> = cpp::detail::dummy>
     static constexpr std::size_t size(){
         return T::size();
     }
@@ -169,7 +168,7 @@ struct etl_traits<etl::unary_expr<T, Expr, UnaryOp>> {
         return etl_traits<sub_expr_t>::dim(v.value(), d);
     }
 
-    template<bool B = is_fast, enable_if_u<B> = detail::dummy>
+    template<bool B = is_fast, cpp::enable_if_u<B> = cpp::detail::dummy>
     static constexpr std::size_t size(){
         return etl_traits<sub_expr_t>::size();
     }
@@ -203,7 +202,7 @@ struct etl_traits<etl::transform_expr<T, Expr>> {
         return etl_traits<sub_expr_t>::dim(v.value(), d);
     }
 
-    template<bool B = is_fast, enable_if_u<B> = detail::dummy>
+    template<bool B = is_fast, cpp::enable_if_u<B> = cpp::detail::dummy>
     static constexpr std::size_t size(){
         return etl_traits<sub_expr_t>::size();
     }
@@ -238,7 +237,7 @@ struct etl_traits<etl::binary_expr<T, LeftExpr, BinaryOp, RightExpr>, std::enabl
         return etl_traits<sub_expr_t>::dim(v.lhs(), d);
     }
 
-    template<bool B = is_fast, enable_if_u<B> = detail::dummy>
+    template<bool B = is_fast, cpp::enable_if_u<B> = cpp::detail::dummy>
     static constexpr std::size_t size(){
         return etl_traits<sub_expr_t>::size();
     }
@@ -258,7 +257,7 @@ struct etl_traits<etl::binary_expr<T, LeftExpr, BinaryOp, RightExpr>, std::enabl
  * expression.
  */
 template <typename T, typename LeftExpr, typename BinaryOp, typename RightExpr>
-struct etl_traits<etl::binary_expr<T, LeftExpr, BinaryOp, RightExpr>, std::enable_if_t<and_u<not_u<is_etl_expr<LeftExpr>::value>::value, is_etl_expr<RightExpr>::value>::value>> {
+struct etl_traits<etl::binary_expr<T, LeftExpr, BinaryOp, RightExpr>, std::enable_if_t<cpp::and_u<cpp::not_u<is_etl_expr<LeftExpr>::value>::value, is_etl_expr<RightExpr>::value>::value>> {
     using expr_t = etl::binary_expr<T, LeftExpr, BinaryOp, RightExpr>;
     using sub_expr_t = std::decay_t<RightExpr>;
 
@@ -273,7 +272,7 @@ struct etl_traits<etl::binary_expr<T, LeftExpr, BinaryOp, RightExpr>, std::enabl
         return etl_traits<sub_expr_t>::dim(v.rhs(), d);
     }
 
-    template<bool B = is_fast, enable_if_u<B> = detail::dummy>
+    template<bool B = is_fast, cpp::enable_if_u<B> = cpp::detail::dummy>
     static constexpr std::size_t size(){
         return etl_traits<sub_expr_t>::size();
     }
@@ -307,7 +306,7 @@ struct etl_traits<transpose_transformer<T>> {
         return etl_traits<sub_expr_t>::dim(v.sub, 1-d);
     }
 
-    template<bool B = is_fast, enable_if_u<B> = detail::dummy>
+    template<bool B = is_fast, cpp::enable_if_u<B> = cpp::detail::dummy>
     static constexpr std::size_t size(){
         return etl_traits<sub_expr_t>::size();
     }
@@ -326,7 +325,7 @@ struct etl_traits<transpose_transformer<T>> {
  * \brief Specialization for transformers
  */
 template <typename T>
-struct etl_traits<T, std::enable_if_t<and_u<is_transformer_expr<T>::value, not_u<is_specialization_of<etl::transpose_transformer, T>::value>::value>::value>> {
+struct etl_traits<T, std::enable_if_t<cpp::and_u<is_transformer_expr<T>::value, cpp::not_u<cpp::is_specialization_of<etl::transpose_transformer, T>::value>::value>::value>> {
     using expr_t = T;
     using sub_expr_t = typename T::sub_type;
 
@@ -341,7 +340,7 @@ struct etl_traits<T, std::enable_if_t<and_u<is_transformer_expr<T>::value, not_u
         return etl_traits<sub_expr_t>::dim(v.sub, d);
     }
 
-    template<bool B = is_fast, enable_if_u<B> = detail::dummy>
+    template<bool B = is_fast, cpp::enable_if_u<B> = cpp::detail::dummy>
     static constexpr std::size_t size(){
         return etl_traits<sub_expr_t>::size();
     }
@@ -382,7 +381,7 @@ struct etl_traits<etl::dim_view<T, D>> {
         return size(v);
     }
 
-    template<bool B = is_fast, enable_if_u<B> = detail::dummy>
+    template<bool B = is_fast, cpp::enable_if_u<B> = cpp::detail::dummy>
     static constexpr std::size_t size(){
         return D == 1 ? etl_traits<sub_expr_t>::template dim<1>() : etl_traits<sub_expr_t>::template dim<0>();
     }
@@ -418,7 +417,7 @@ struct etl_traits<etl::sub_view<T>> {
         return etl_traits<sub_expr_t>::dim(v.parent, d + 1);
     }
 
-    template<bool B = is_fast, enable_if_u<B> = detail::dummy>
+    template<bool B = is_fast, cpp::enable_if_u<B> = cpp::detail::dummy>
     static constexpr std::size_t size(){
         return etl_traits<sub_expr_t>::size() / etl_traits<sub_expr_t>::template dim<0>();
     }
@@ -490,46 +489,46 @@ struct etl_traits<etl::dyn_matrix_view<T>> {
     }
 };
 
-template<typename E, enable_if_u<not_u<etl_traits<E>::is_fast>::value> = detail::dummy>
+template<typename E, cpp::enable_if_u<cpp::not_u<etl_traits<E>::is_fast>::value> = cpp::detail::dummy>
 std::size_t size(const E& v){
     return etl_traits<E>::size(v);
 }
 
-template<typename E, enable_if_u<not_u<etl_traits<E>::is_fast>::value> = detail::dummy>
+template<typename E, cpp::enable_if_u<cpp::not_u<etl_traits<E>::is_fast>::value> = cpp::detail::dummy>
 std::size_t rows(const E& v){
     return etl_traits<E>::dim(v, 0);
 }
 
-template<typename E, enable_if_u<not_u<etl_traits<E>::is_fast>::value> = detail::dummy>
+template<typename E, cpp::enable_if_u<cpp::not_u<etl_traits<E>::is_fast>::value> = cpp::detail::dummy>
 std::size_t columns(const E& v){
     static_assert(etl_traits<E>::dimensions() > 1, "columns() can only be used on 2D+ matrices");
     return etl_traits<E>::dim(v, 1);
 }
 
-template<typename E, enable_if_u<not_u<etl_traits<E>::is_fast>::value> = detail::dummy>
+template<typename E, cpp::enable_if_u<cpp::not_u<etl_traits<E>::is_fast>::value> = cpp::detail::dummy>
 std::size_t subsize(const E& v){
     static_assert(etl_traits<E>::dimensions() > 1, "Only 2D+ matrices have a subsize");
     return etl_traits<E>::size(v) / etl_traits<E>::dim(v, 0);
 }
 
-template<typename E, enable_if_u<etl_traits<E>::is_fast> = detail::dummy>
+template<typename E, cpp::enable_if_u<etl_traits<E>::is_fast> = cpp::detail::dummy>
 constexpr std::size_t size(const E&){
     return etl_traits<E>::size();
 }
 
-template<typename E, enable_if_u<etl_traits<E>::is_fast> = detail::dummy>
+template<typename E, cpp::enable_if_u<etl_traits<E>::is_fast> = cpp::detail::dummy>
 constexpr std::size_t rows(const E&){
     return etl_traits<E>::template dim<0>();
 }
 
-template<typename E, enable_if_u<etl_traits<E>::is_fast> = detail::dummy>
+template<typename E, cpp::enable_if_u<etl_traits<E>::is_fast> = cpp::detail::dummy>
 constexpr std::size_t columns(const E&){
     static_assert(etl_traits<E>::dimensions() > 1, "columns() can only be used on 2D+ matrices");
 
     return etl_traits<E>::template dim<1>();
 }
 
-template<typename E, enable_if_u<etl_traits<E>::is_fast> = detail::dummy>
+template<typename E, cpp::enable_if_u<etl_traits<E>::is_fast> = cpp::detail::dummy>
 constexpr std::size_t subsize(const E&){
     static_assert(etl_traits<E>::dimensions() > 1, "Only 2D+ matrices have a subsize");
     return etl_traits<E>::size() / etl_traits<E>::template dim<0>();
@@ -540,29 +539,29 @@ constexpr std::size_t dimensions(const E&){
     return etl_traits<E>::dimensions();
 }
 
-template<std::size_t D, typename E, disable_if_u<etl_traits<E>::is_fast> = detail::dummy>
+template<std::size_t D, typename E, cpp::disable_if_u<etl_traits<E>::is_fast> = cpp::detail::dummy>
 constexpr std::size_t dim(const E& e){
     return etl_traits<E>::dim(e, D);
 }
 
-template<typename E, disable_if_u<etl_traits<E>::is_fast> = detail::dummy>
+template<typename E, cpp::disable_if_u<etl_traits<E>::is_fast> = cpp::detail::dummy>
 constexpr std::size_t dim(const E& e, std::size_t d){
     return etl_traits<E>::dim(e, d);
 }
 
-template<std::size_t D, typename E, enable_if_u<etl_traits<E>::is_fast> = detail::dummy>
+template<std::size_t D, typename E, cpp::enable_if_u<etl_traits<E>::is_fast> = cpp::detail::dummy>
 constexpr std::size_t dim(const E&){
     return etl_traits<E>::template dim<D>();
 }
 
-template<typename LE, typename RE, disable_if_u<and_u<is_etl_expr<LE>::value, is_etl_expr<RE>::value, etl_traits<LE>::is_fast, etl_traits<RE>::is_fast>::value> = detail::dummy>
+template<typename LE, typename RE, cpp::disable_if_u<cpp::and_u<is_etl_expr<LE>::value, is_etl_expr<RE>::value, etl_traits<LE>::is_fast, etl_traits<RE>::is_fast>::value> = cpp::detail::dummy>
 void ensure_same_size(const LE& lhs, const RE& rhs){
     cpp_assert(size(lhs) == size(rhs), "Cannot perform element-wise operations on collections of different size");
     cpp_unused(lhs);
     cpp_unused(rhs);
 }
 
-template<typename LE, typename RE, enable_if_u<and_u<is_etl_expr<LE>::value, is_etl_expr<RE>::value, etl_traits<LE>::is_fast, etl_traits<RE>::is_fast>::value> = detail::dummy>
+template<typename LE, typename RE, cpp::enable_if_u<cpp::and_u<is_etl_expr<LE>::value, is_etl_expr<RE>::value, etl_traits<LE>::is_fast, etl_traits<RE>::is_fast>::value> = cpp::detail::dummy>
 void ensure_same_size(const LE&, const RE&){
     static_assert(etl_traits<LE>::size() == etl_traits<RE>::size(), "Cannot perform element-wise operations on collections of different size");
 }

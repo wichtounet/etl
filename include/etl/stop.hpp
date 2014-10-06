@@ -8,16 +8,16 @@
 #ifndef ETL_STOP_HPP
 #define ETL_STOP_HPP
 
-#include "tmp.hpp"
+#include "cpp_utils/tmp.hpp"
 
 namespace etl {
 
 template<typename T,
-    enable_if_all_u<
+    cpp::enable_if_all_u<
         is_etl_expr<T>::value,
-        not_u<etl_traits<T>::is_value>::value,
-        not_u<etl_traits<T>::is_fast>::value
-    > = detail::dummy>
+        cpp::not_u<etl_traits<T>::is_value>::value,
+        cpp::not_u<etl_traits<T>::is_fast>::value
+    > = cpp::detail::dummy>
 auto s(const T& value){
     //Sizes will be directly propagated
     return dyn_matrix<typename T::value_type, etl_traits<T>::dimensions()>(value);
@@ -32,11 +32,11 @@ struct build_matrix_type<M, std::index_sequence<I...>> {
 };
 
 template<typename T,
-    enable_if_all_u<
+    cpp::enable_if_all_u<
         is_etl_expr<T>::value,
-        not_u<etl_traits<T>::is_value>::value,
+        cpp::not_u<etl_traits<T>::is_value>::value,
         etl_traits<T>::is_fast
-    > = detail::dummy>
+    > = cpp::detail::dummy>
 auto s(const T& value){
     return typename build_matrix_type<T, std::make_index_sequence<etl_traits<T>::dimensions()>>::type(value);
 }

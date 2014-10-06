@@ -10,21 +10,21 @@
 
 #include <cmath>
 
-#include "tmp.hpp"
+#include "cpp_utils/tmp.hpp"
 
 namespace etl {
 
-template<typename W, enable_if_u<std::is_arithmetic<W>::value> = detail::dummy>
+template<typename W, cpp::enable_if_u<std::is_arithmetic<W>::value> = cpp::detail::dummy>
 inline constexpr W logistic_sigmoid(W x){
     return 1.0 / (1.0 + std::exp(-x));
 }
 
-template<typename W, enable_if_u<std::is_arithmetic<W>::value> = detail::dummy>
+template<typename W, cpp::enable_if_u<std::is_arithmetic<W>::value> = cpp::detail::dummy>
 inline constexpr W softplus(W x){
     return std::log(1.0 + std::exp(x));
 }
 
-template<typename W, enable_if_u<std::is_arithmetic<W>::value> = detail::dummy>
+template<typename W, cpp::enable_if_u<std::is_arithmetic<W>::value> = cpp::detail::dummy>
 inline constexpr double sign(W v){
     return v == 0 ? 0 : (v > 0 ? 1 : -1);
 }
