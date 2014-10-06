@@ -153,7 +153,7 @@ struct dim_view {
             return sub(j, i);
         }
     }
-    
+
     return_type operator[](std::size_t j){
         if(D == 1){
             return sub(i, j);
