@@ -209,9 +209,17 @@ public:
     const_return_type operator[](std::size_t i) const {
         return value()[i];
     }
+    
+    template<typename... S>
+    return_type operator()(S... args){
+        static_assert(sizeof...(S) == etl_traits<this_type>::dimensions(), "Invalid number of parameters");
+        static_assert(cpp::all_convertible_to<std::size_t, S...>::value, "Invalid size types");
+
+        return value()(args...);
+    }
 
     template<typename... S>
-    value_type operator()(S... args) const {
+    const_return_type operator()(S... args) const {
         static_assert(sizeof...(S) == etl_traits<this_type>::dimensions(), "Invalid number of parameters");
         static_assert(cpp::all_convertible_to<std::size_t, S...>::value, "Invalid size types");
 
