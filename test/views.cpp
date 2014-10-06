@@ -413,7 +413,7 @@ TEST_CASE( "lvalue/fast_matrix_2", "lvalue col" ) {
     REQUIRE(d[1] == -7.5);
 }
 
-TEST_CASE( "lvalue/fast_matrix_1", "lvalue dim<1>" ) {
+TEST_CASE( "lvalue/fast_matrix_3", "lvalue dim<1>" ) {
     etl::fast_matrix<double, 2, 3> a({1.0, -2.0, 4.0, 3.0, 0.5, -0.1});
     auto b = etl::dim<1>(a, 0);
     auto c = etl::dim<1>(a, 1);
@@ -435,7 +435,7 @@ TEST_CASE( "lvalue/fast_matrix_1", "lvalue dim<1>" ) {
     REQUIRE(c(2) == -10.0);
 }
 
-TEST_CASE( "lvalue/fast_matrix_2", "lvalue col" ) {
+TEST_CASE( "lvalue/fast_matrix_4", "lvalue col" ) {
     etl::fast_matrix<double, 2, 3> a({1.0, -2.0, 4.0, 3.0, 0.5, -0.1});
     auto b = etl::col(a, 0);
     auto c = etl::col(a, 1);
