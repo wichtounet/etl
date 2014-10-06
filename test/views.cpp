@@ -363,3 +363,29 @@ TEST_CASE( "dyn_matrix/sub_view_6", "dyn_matrix::sub" ) {
 }
 
 //}}}
+
+///{{{ lvalue access
+
+TEST_CASE( "lvalue/fast_matrix_1", "lvalue dim<1>" ) {
+    etl::fast_matrix<double, 2, 3> a({1.0, -2.0, 4.0, 3.0, 0.5, -0.1});
+    auto b = etl::dim<1>(a, 0);
+    auto c = etl::dim<1>(a, 1);
+
+    b[0] = 3.0;
+    b[1] = -5.0;
+    b[2] = 10.0;
+
+    REQUIRE(b[0] == 3.0);
+    REQUIRE(b[1] == -5.0);
+    REQUIRE(b[2] == 10.0);
+
+    c[0] = -3.0;
+    c[1] = 5.0;
+    c[2] = -10.0;
+
+    REQUIRE(c[0] == -3.0);
+    REQUIRE(c[1] == 5.0);
+    REQUIRE(c[2] == -10.0);
+}
+
+///}}}

@@ -90,6 +90,9 @@ public:
 
 template <typename T, typename Expr, typename UnaryOp>
 class unary_expr {
+public:
+    using value_type = T;
+
 private:
     static_assert(is_etl_expr<Expr>::value, "Only ETL expressions can be used in unary_expr");
 
@@ -98,8 +101,6 @@ private:
     Expr _value;
 
 public:
-    using value_type = T;
-
     //Cannot be constructed with no args
     unary_expr() = delete;
 
@@ -157,6 +158,18 @@ private:
 public:
     using value_type = T;
 
+    //TODO If const lvalue-ref, return value_type
+
+    using return_type = typename std::conditional<
+        std::is_lvalue_reference<decltype(_value[0])>::value,
+        value_type&,
+        value_type>::type;
+
+    using const_return_type = typename std::conditional<
+        std::is_lvalue_reference<decltype(_value[0])>::value,
+        const value_type&,
+        value_type>::type;
+
     //Cannot be constructed with no args
     unary_expr() = delete;
 
@@ -188,8 +201,12 @@ public:
     }
 
     //Apply the expression
+    
+    return_type operator[](std::size_t i){
+        return value()[i];
+    }
 
-    value_type operator[](std::size_t i) const {
+    const_return_type operator[](std::size_t i) const {
         return value()[i];
     }
 
@@ -519,18 +536,20 @@ auto bernoulli(const E& value) -> unary_expr<typename E::value_type, const E&, b
     return {value};
 }
 
+//TODO Make sure dim/col/row can be used on const types
+
 template<std::size_t D, typename E, cpp::enable_if_u<is_etl_expr<E>::value> = cpp::detail::dummy>
-auto dim(const E& value, std::size_t i) -> unary_expr<typename E::value_type, dim_view<E, D>, identity_op> {
+auto dim(E& value, std::size_t i) -> unary_expr<typename E::value_type, dim_view<E, D>, identity_op> {
     return {{value, i}};
 }
 
 template<typename E, cpp::enable_if_u<is_etl_expr<E>::value> = cpp::detail::dummy>
-auto row(const E& value, std::size_t i) -> unary_expr<typename E::value_type, dim_view<E, 1>, identity_op> {
+auto row(E& value, std::size_t i) -> unary_expr<typename E::value_type, dim_view<E, 1>, identity_op> {
     return {{value, i}};
 }
 
 template<typename E, cpp::enable_if_u<is_etl_expr<E>::value> = cpp::detail::dummy>
-auto col(const E& value, std::size_t i) -> unary_expr<typename E::value_type, dim_view<E, 2>, identity_op> {
+auto col(E& value, std::size_t i) -> unary_expr<typename E::value_type, dim_view<E, 2>, identity_op> {
     return {{value, i}};
 }
 

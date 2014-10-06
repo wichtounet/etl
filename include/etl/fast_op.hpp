@@ -126,13 +126,22 @@ struct dim_view {
     static_assert(D > 0 || D < 3, "Invalid dimension");
 
     using sub_type = T;
+    using value_type = typename T::value_type;
 
-    const T& sub;
+    T& sub;
     const std::size_t i;
 
-    dim_view(const T& vec, std::size_t i) : sub(vec), i(i) {}
+    dim_view(T& sub, std::size_t i) : sub(sub), i(i) {}
 
-    typename T::value_type operator[](std::size_t j) const {
+    const value_type& operator[](std::size_t j) const {
+        if(D == 1){
+            return sub(i, j);
+        } else if(D == 2){
+            return sub(j, i);
+        }
+    }
+    
+    value_type& operator[](std::size_t j){
         if(D == 1){
             return sub(i, j);
         } else if(D == 2){
@@ -140,7 +149,15 @@ struct dim_view {
         }
     }
 
-    typename T::value_type operator()(std::size_t j) const {
+    const value_type& operator()(std::size_t j) const {
+        if(D == 1){
+            return sub(i, j);
+        } else if(D == 2){
+            return sub(j, i);
+        }
+    }
+
+    value_type& operator()(std::size_t j){
         if(D == 1){
             return sub(i, j);
         } else if(D == 2){
