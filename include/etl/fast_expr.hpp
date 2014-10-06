@@ -158,10 +158,11 @@ private:
 public:
     using value_type = T;
 
-    //TODO If const lvalue-ref, return value_type
-
     using return_type = typename std::conditional<
-        std::is_lvalue_reference<decltype(_value[0])>::value,
+        cpp::and_u<
+            std::is_lvalue_reference<decltype(_value[0])>::value,
+            cpp::not_u<std::is_const<decltype(_value[0])>::value>::value
+        >::value,
         value_type&,
         value_type>::type;
 
@@ -201,7 +202,7 @@ public:
     }
 
     //Apply the expression
-    
+
     return_type operator[](std::size_t i){
         return value()[i];
     }
@@ -543,8 +544,6 @@ template<typename E, cpp::enable_if_u<is_etl_expr<E>::value> = cpp::detail::dumm
 auto bernoulli(const E& value) -> unary_expr<typename E::value_type, const E&, bernoulli_unary_op<typename E::value_type>> {
     return {value};
 }
-
-//TODO Make sure dim/col/row can be used on const types
 
 template<std::size_t D, typename E, cpp::enable_if_u<is_etl_expr<E>::value> = cpp::detail::dummy>
 auto dim(E& value, std::size_t i) -> unary_expr<typename E::value_type, dim_view<E, D>, identity_op> {

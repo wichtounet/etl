@@ -131,9 +131,22 @@ struct dim_view {
     T& sub;
     const std::size_t i;
 
+    using return_type = typename std::conditional<
+        cpp::and_u<
+            std::is_lvalue_reference<decltype(sub(0,0))>::value,
+            cpp::not_u<std::is_const<T>::value>::value
+        >::value,
+        value_type&,
+        value_type>::type;
+
+    using const_return_type = typename std::conditional<
+        std::is_lvalue_reference<decltype(sub(0,0))>::value,
+        const value_type&,
+        value_type>::type;
+
     dim_view(T& sub, std::size_t i) : sub(sub), i(i) {}
 
-    const value_type& operator[](std::size_t j) const {
+    const_return_type operator[](std::size_t j) const {
         if(D == 1){
             return sub(i, j);
         } else if(D == 2){
@@ -141,7 +154,7 @@ struct dim_view {
         }
     }
     
-    value_type& operator[](std::size_t j){
+    return_type operator[](std::size_t j){
         if(D == 1){
             return sub(i, j);
         } else if(D == 2){
@@ -149,7 +162,7 @@ struct dim_view {
         }
     }
 
-    const value_type& operator()(std::size_t j) const {
+    const_return_type operator()(std::size_t j) const {
         if(D == 1){
             return sub(i, j);
         } else if(D == 2){
@@ -157,7 +170,7 @@ struct dim_view {
         }
     }
 
-    value_type& operator()(std::size_t j){
+    return_type operator()(std::size_t j){
         if(D == 1){
             return sub(i, j);
         } else if(D == 2){
