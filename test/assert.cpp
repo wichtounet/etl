@@ -8,7 +8,7 @@
 #include "catch.hpp"
 
 #undef NDEBUG
-#define ETL_ASSERT_EXCEPTION
+#define CPP_UTILS_ASSERT_EXCEPTION
 
 #include "etl/dyn_vector.hpp"
 
