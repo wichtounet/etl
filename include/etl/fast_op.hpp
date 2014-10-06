@@ -306,13 +306,6 @@ struct plus_unary_op {
 };
 
 template<typename T>
-struct identity_unary_op {
-    static constexpr T apply(const T& x){
-        return x;
-    }
-};
-
-template<typename T>
 struct bernoulli_unary_op {
     static T apply(const T& x){
         static random_engine rand_engine(std::time(nullptr));

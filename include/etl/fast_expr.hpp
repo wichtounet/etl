@@ -13,6 +13,8 @@
 
 namespace etl {
 
+struct identity_op;
+
 template <typename T, typename LeftExpr, typename BinaryOp, typename RightExpr>
 class binary_expr {
 private:
@@ -140,6 +142,63 @@ public:
         static_assert(cpp::all_convertible_to<std::size_t, S...>::value, "Invalid size types");
 
         return UnaryOp::apply(value()(args...));
+    }
+};
+
+template <typename T, typename Expr>
+class unary_expr<T, Expr, identity_op> {
+private:
+    static_assert(is_etl_expr<Expr>::value, "Only ETL expressions can be used in unary_expr");
+
+    using this_type = unary_expr<T, Expr, identity_op>;
+
+    Expr _value;
+
+public:
+    using value_type = T;
+
+    //Cannot be constructed with no args
+    unary_expr() = delete;
+
+    //Construct a new expression
+    unary_expr(Expr l) : _value(std::forward<Expr>(l)){
+        //Nothing else to init
+    }
+
+    unary_expr(const unary_expr& e) : _value(e._value) {
+        //Nothing else to init
+    }
+
+    unary_expr(unary_expr&& e) : _value(e._value) {
+        //Nothing else to init
+    }
+
+    //Expression are invariant
+    unary_expr& operator=(const unary_expr&) = delete;
+    unary_expr& operator=(unary_expr&&) = delete;
+
+    //Accessors
+
+    typename std::add_lvalue_reference<Expr>::type value(){
+        return _value;
+    }
+
+    typename std::add_lvalue_reference<typename std::add_const<Expr>::type>::type value() const {
+        return _value;
+    }
+
+    //Apply the expression
+
+    value_type operator[](std::size_t i) const {
+        return value()[i];
+    }
+
+    template<typename... S>
+    value_type operator()(S... args) const {
+        static_assert(sizeof...(S) == etl_traits<this_type>::dimensions(), "Invalid number of parameters");
+        static_assert(cpp::all_convertible_to<std::size_t, S...>::value, "Invalid size types");
+
+        return value()(args...);
     }
 };
 
@@ -461,35 +520,35 @@ auto bernoulli(const E& value) -> unary_expr<typename E::value_type, const E&, b
 }
 
 template<std::size_t D, typename E, cpp::enable_if_u<is_etl_expr<E>::value> = cpp::detail::dummy>
-auto dim(const E& value, std::size_t i) -> unary_expr<typename E::value_type, dim_view<E, D>, identity_unary_op<typename E::value_type>> {
+auto dim(const E& value, std::size_t i) -> unary_expr<typename E::value_type, dim_view<E, D>, identity_op> {
     return {{value, i}};
 }
 
 template<typename E, cpp::enable_if_u<is_etl_expr<E>::value> = cpp::detail::dummy>
-auto row(const E& value, std::size_t i) -> unary_expr<typename E::value_type, dim_view<E, 1>, identity_unary_op<typename E::value_type>> {
+auto row(const E& value, std::size_t i) -> unary_expr<typename E::value_type, dim_view<E, 1>, identity_op> {
     return {{value, i}};
 }
 
 template<typename E, cpp::enable_if_u<is_etl_expr<E>::value> = cpp::detail::dummy>
-auto col(const E& value, std::size_t i) -> unary_expr<typename E::value_type, dim_view<E, 2>, identity_unary_op<typename E::value_type>> {
+auto col(const E& value, std::size_t i) -> unary_expr<typename E::value_type, dim_view<E, 2>, identity_op> {
     return {{value, i}};
 }
 
 template<typename E, cpp::enable_if_u<is_etl_expr<E>::value> = cpp::detail::dummy>
-auto sub(const E& value, std::size_t i) -> unary_expr<typename E::value_type, sub_view<E>, identity_unary_op<typename E::value_type>> {
+auto sub(const E& value, std::size_t i) -> unary_expr<typename E::value_type, sub_view<E>, identity_op> {
     static_assert(etl_traits<E>::dimensions() > 1, "Cannot use sub on vector");
     return {{value, i}};
 }
 
 template<std::size_t Rows, std::size_t Columns, typename E, cpp::enable_if_u<is_etl_expr<E>::value> = cpp::detail::dummy>
-auto reshape(const E& value) -> unary_expr<typename E::value_type, fast_matrix_view<E, Rows, Columns>, identity_unary_op<typename E::value_type>> {
+auto reshape(const E& value) -> unary_expr<typename E::value_type, fast_matrix_view<E, Rows, Columns>, identity_op> {
     cpp_assert(etl_traits<E>::size(value) == Rows * Columns, "Invalid size for reshape");
 
     return {fast_matrix_view<E, Rows, Columns>(value)};
 }
 
 template<typename E, cpp::enable_if_u<is_etl_expr<E>::value> = cpp::detail::dummy>
-auto reshape(const E& value, std::size_t rows, std::size_t columns) -> unary_expr<typename E::value_type, dyn_matrix_view<E>, identity_unary_op<typename E::value_type>> {
+auto reshape(const E& value, std::size_t rows, std::size_t columns) -> unary_expr<typename E::value_type, dyn_matrix_view<E>, identity_op> {
     cpp_assert(etl_traits<E>::size(value) == rows * columns, "Invalid size for reshape");
 
     return {dyn_matrix_view<E>(value, rows, columns)};
