@@ -202,44 +202,96 @@ template<typename T, std::size_t Rows, std::size_t Columns>
 struct fast_matrix_view {
     static_assert(Rows > 0 && Columns > 0 , "Invalid dimensions");
 
+    using sub_tyoe = T;
     using value_type = typename T::value_type;
 
-    const T& sub;
+    T& sub;
 
-    explicit fast_matrix_view(const T& sub) : sub(sub) {}
+    using return_type = typename std::conditional<
+        cpp::and_u<
+            std::is_lvalue_reference<decltype(sub(0))>::value,
+            cpp::not_u<std::is_const<T>::value>::value
+        >::value,
+        value_type&,
+        value_type>::type;
 
-    value_type operator[](std::size_t j) const {
+    using const_return_type = typename std::conditional<
+        std::is_lvalue_reference<decltype(sub(0))>::value,
+        const value_type&,
+        value_type>::type;
+
+    explicit fast_matrix_view(T& sub) : sub(sub) {}
+
+    const_return_type operator[](std::size_t j) const {
         return sub(j);
     }
 
-    value_type operator()(std::size_t j) const {
+    const_return_type operator()(std::size_t j) const {
         return sub(j);
     }
 
-    value_type operator()(std::size_t i, std::size_t j) const {
+    const_return_type operator()(std::size_t i, std::size_t j) const {
+        return sub(i * Columns + j);
+    }
+
+    return_type operator[](std::size_t j){
+        return sub(j);
+    }
+
+    return_type operator()(std::size_t j){
+        return sub(j);
+    }
+
+    return_type operator()(std::size_t i, std::size_t j){
         return sub(i * Columns + j);
     }
 };
 
 template<typename T>
 struct dyn_matrix_view {
+    using sub_type = T;
     using value_type = typename T::value_type;
 
-    const T& sub;
+    T& sub;
     std::size_t rows;
     std::size_t columns;
 
+    using return_type = typename std::conditional<
+        cpp::and_u<
+            std::is_lvalue_reference<decltype(sub(0))>::value,
+            cpp::not_u<std::is_const<T>::value>::value
+        >::value,
+        value_type&,
+        value_type>::type;
+
+    using const_return_type = typename std::conditional<
+        std::is_lvalue_reference<decltype(sub(0))>::value,
+        const value_type&,
+        value_type>::type;
+
     dyn_matrix_view(const T& sub, std::size_t rows, std::size_t columns) : sub(sub), rows(rows), columns(columns) {}
 
-    value_type operator[](std::size_t j) const {
+    const_return_type operator[](std::size_t j) const {
         return sub(j);
     }
 
-    value_type operator()(std::size_t j) const {
+    const_return_type operator()(std::size_t j) const {
         return sub(j);
     }
 
-    value_type operator()(std::size_t i, std::size_t j) const {
+    const_return_type operator()(std::size_t i, std::size_t j) const {
+        return sub(i * columns + j);
+    }
+
+    return_type operator[](std::size_t j){
+        return sub(j);
+    }
+
+    return_type operator()(std::size_t j){
+        return sub(j);
+    }
+
+    return_type operator()(std::size_t i, std::size_t j){
         return sub(i * columns + j);
     }
 };

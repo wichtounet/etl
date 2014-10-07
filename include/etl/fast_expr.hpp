@@ -567,14 +567,14 @@ auto sub(const E& value, std::size_t i) -> unary_expr<typename E::value_type, su
 }
 
 template<std::size_t Rows, std::size_t Columns, typename E, cpp::enable_if_u<is_etl_expr<E>::value> = cpp::detail::dummy>
-auto reshape(const E& value) -> unary_expr<typename E::value_type, fast_matrix_view<E, Rows, Columns>, identity_op> {
+auto reshape(E& value) -> unary_expr<typename E::value_type, fast_matrix_view<E, Rows, Columns>, identity_op> {
     cpp_assert(etl_traits<E>::size(value) == Rows * Columns, "Invalid size for reshape");
 
     return {fast_matrix_view<E, Rows, Columns>(value)};
 }
 
 template<typename E, cpp::enable_if_u<is_etl_expr<E>::value> = cpp::detail::dummy>
-auto reshape(const E& value, std::size_t rows, std::size_t columns) -> unary_expr<typename E::value_type, dyn_matrix_view<E>, identity_op> {
+auto reshape(E& value, std::size_t rows, std::size_t columns) -> unary_expr<typename E::value_type, dyn_matrix_view<E>, identity_op> {
     cpp_assert(etl_traits<E>::size(value) == rows * columns, "Invalid size for reshape");
 
     return {dyn_matrix_view<E>(value, rows, columns)};
