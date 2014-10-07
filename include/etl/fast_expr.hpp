@@ -545,6 +545,11 @@ auto bernoulli(const E& value) -> unary_expr<typename E::value_type, const E&, b
     return {value};
 }
 
+//}}}
+
+//{{{ Views that returns lvalues
+
+
 template<std::size_t D, typename E, cpp::enable_if_u<is_etl_expr<E>::value> = cpp::detail::dummy>
 auto dim(E& value, std::size_t i) -> unary_expr<typename E::value_type, dim_view<E, D>, identity_op> {
     return {{value, i}};
