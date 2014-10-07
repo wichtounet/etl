@@ -549,9 +549,13 @@ auto bernoulli(const E& value) -> unary_expr<typename E::value_type, const E&, b
 
 //{{{ Views that returns lvalues
 
-
 template<std::size_t D, typename E, cpp::enable_if_u<is_etl_expr<E>::value> = cpp::detail::dummy>
 auto dim(E& value, std::size_t i) -> unary_expr<typename E::value_type, dim_view<E, D>, identity_op> {
+    return {{value, i}};
+}
+
+template<std::size_t D, typename E, cpp::enable_if_u<is_etl_expr<E>::value> = cpp::detail::dummy>
+auto dim(const E& value, std::size_t i) -> unary_expr<typename E::value_type, dim_view<const E, D>, identity_op> {
     return {{value, i}};
 }
 
@@ -561,7 +565,17 @@ auto row(E& value, std::size_t i) -> unary_expr<typename E::value_type, dim_view
 }
 
 template<typename E, cpp::enable_if_u<is_etl_expr<E>::value> = cpp::detail::dummy>
+auto row(const E& value, std::size_t i) -> unary_expr<typename E::value_type, dim_view<const E, 1>, identity_op> {
+    return {{value, i}};
+}
+
+template<typename E, cpp::enable_if_u<is_etl_expr<E>::value> = cpp::detail::dummy>
 auto col(E& value, std::size_t i) -> unary_expr<typename E::value_type, dim_view<E, 2>, identity_op> {
+    return {{value, i}};
+}
+
+template<typename E, cpp::enable_if_u<is_etl_expr<E>::value> = cpp::detail::dummy>
+auto col(const E& value, std::size_t i) -> unary_expr<typename E::value_type, dim_view<const E, 2>, identity_op> {
     return {{value, i}};
 }
 
@@ -586,6 +600,20 @@ auto reshape(E& value) -> unary_expr<typename E::value_type, fast_matrix_view<E,
 
 template<typename E, cpp::enable_if_u<is_etl_expr<E>::value> = cpp::detail::dummy>
 auto reshape(E& value, std::size_t rows, std::size_t columns) -> unary_expr<typename E::value_type, dyn_matrix_view<E>, identity_op> {
+    cpp_assert(etl_traits<std::decay_t<E>>::size(value) == rows * columns, "Invalid size for reshape");
+
+    return {dyn_matrix_view<E>(value, rows, columns)};
+}
+
+template<std::size_t Rows, std::size_t Columns, typename E, cpp::enable_if_u<is_etl_expr<E>::value> = cpp::detail::dummy>
+auto reshape(const E& value) -> unary_expr<typename E::value_type, fast_matrix_view<const E, Rows, Columns>, identity_op> {
+    cpp_assert(etl_traits<std::decay_t<E>>::size(value) == Rows * Columns, "Invalid size for reshape");
+
+    return {fast_matrix_view<E, Rows, Columns>(value)};
+}
+
+template<typename E, cpp::enable_if_u<is_etl_expr<E>::value> = cpp::detail::dummy>
+auto reshape(const E& value, std::size_t rows, std::size_t columns) -> unary_expr<typename E::value_type, dyn_matrix_view<const E>, identity_op> {
     cpp_assert(etl_traits<std::decay_t<E>>::size(value) == rows * columns, "Invalid size for reshape");
 
     return {dyn_matrix_view<E>(value, rows, columns)};
