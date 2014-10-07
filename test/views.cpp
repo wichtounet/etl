@@ -526,4 +526,164 @@ TEST_CASE( "lvalue/fast_matrix_8", "lvalue sub" ) {
     REQUIRE(etl::sub(a, 1)(0, 1) == 5.2);
 }
 
+TEST_CASE( "lvalue/dyn_matrix_1", "lvalue dim<1>" ) {
+    etl::dyn_matrix<double> a(2, 3, etl::values(1.0, -2.0, 4.0, 3.0, 0.5, -0.1));
+    auto b = etl::dim<1>(a, 0);
+    auto c = etl::dim<1>(a, 1);
+
+    b[0] = 3.0;
+    b[1] = -5.0;
+    b[2] = 10.0;
+
+    REQUIRE(b[0] == 3.0);
+    REQUIRE(b[1] == -5.0);
+    REQUIRE(b[2] == 10.0);
+
+    c[0] = -3.0;
+    c[1] = 5.0;
+    c[2] = -10.0;
+
+    REQUIRE(c[0] == -3.0);
+    REQUIRE(c[1] == 5.0);
+    REQUIRE(c[2] == -10.0);
+}
+
+TEST_CASE( "lvalue/dyn_matrix_2", "lvalue col" ) {
+    etl::dyn_matrix<double> a(2, 3, etl::values(1.0, -2.0, 4.0, 3.0, 0.5, -0.1));
+    auto b = etl::col(a, 0);
+    auto c = etl::col(a, 1);
+    auto d = etl::col(a, 2);
+
+    b[0] = 3.0;
+    b[1] = 2.5;
+
+    REQUIRE(b[0] == 3.0);
+    REQUIRE(b[1] == 2.5);
+
+    c[0] = -3.0;
+    c[1] = -2.5;
+
+    REQUIRE(c[0] == -3.0);
+    REQUIRE(c[1] == -2.5);
+
+    d[0] = -5.0;
+    d[1] = -7.5;
+
+    REQUIRE(d[0] == -5.0);
+    REQUIRE(d[1] == -7.5);
+}
+
+TEST_CASE( "lvalue/dyn_matrix_3", "lvalue dim<1>" ) {
+    etl::dyn_matrix<double> a(2,3, etl::values(1.0, -2.0, 4.0, 3.0, 0.5, -0.1));
+    auto b = etl::dim<1>(a, 0);
+    auto c = etl::dim<1>(a, 1);
+
+    b(0) = 3.0;
+    b(1) = -5.0;
+    b(2) = 10.0;
+
+    REQUIRE(b(0) == 3.0);
+    REQUIRE(b(1) == -5.0);
+    REQUIRE(b(2) == 10.0);
+
+    c(0) = -3.0;
+    c(1) = 5.0;
+    c(2) = -10.0;
+
+    REQUIRE(c(0) == -3.0);
+    REQUIRE(c(1) == 5.0);
+    REQUIRE(c(2) == -10.0);
+}
+
+TEST_CASE( "lvalue/dyn_matrix_4", "lvalue col" ) {
+    etl::dyn_matrix<double> a(2, 3, etl::values(1.0, -2.0, 4.0, 3.0, 0.5, -0.1));
+    auto b = etl::col(a, 0);
+    auto c = etl::col(a, 1);
+    auto d = etl::col(a, 2);
+
+    b(0) = 3.0;
+    b(1) = 2.5;
+
+    REQUIRE(b(0) == 3.0);
+    REQUIRE(b(1) == 2.5);
+
+    c(0) = -3.0;
+    c(1) = -2.5;
+
+    REQUIRE(c(0) == -3.0);
+    REQUIRE(c(1) == -2.5);
+
+    d(0) = -5.0;
+    d(1) = -7.5;
+
+    REQUIRE(d(0) == -5.0);
+    REQUIRE(d(1) == -7.5);
+}
+
+TEST_CASE( "lvalue/dyn_matrix_5", "lvalue const col" ) {
+    etl::dyn_matrix<double> a(2,3, etl::values(1.0, -2.0, 4.0, 3.0, 0.5, -0.1));
+
+    const auto& ref = a;
+
+    auto b = etl::col(ref, 0);
+    auto c = etl::col(ref, 1);
+    auto d = etl::col(ref, 2);
+
+    REQUIRE(b[0] == 1.0);
+    REQUIRE(b[1] == 3.0);
+
+    REQUIRE(c[0] == -2.0);
+    REQUIRE(c[1] == 0.5);
+
+    REQUIRE(d[0] == 4.0);
+    REQUIRE(d[1] == -0.1);
+}
+
+TEST_CASE( "lvalue/dyn_matrix_6", "lvalue const dim<1>" ) {
+    etl::dyn_matrix<double> a(2,3, etl::values(1.0, -2.0, 4.0, 3.0, 0.5, -0.1));
+
+    const auto& ref = a;
+
+    auto b = etl::dim<1>(ref, 0);
+    auto c = etl::dim<1>(ref, 1);
+
+    REQUIRE(b[0] == 1.0);
+    REQUIRE(b[1] == -2.0);
+    REQUIRE(b[2] == 4.0);
+
+    REQUIRE(c[0] == 3.0);
+    REQUIRE(c[1] == 0.5);
+    REQUIRE(c[2] == -0.1);
+}
+
+TEST_CASE( "lvalue/dyn_matrix_7", "lvalue reshape" ) {
+    etl::dyn_vector<double> a(4, etl::values(1,2,3,4));
+    auto b = etl::reshape(a,2,2);
+
+    b(0,0) = 32.0;
+    b(0,1) = 23.0;
+    b(1,0) = 11.0;
+    b(1,1) = 12.0;
+
+    REQUIRE(b(0,0) == 32.0);
+    REQUIRE(b(0,1) == 23.0);
+
+    REQUIRE(b(1,0) == 11.0);
+    REQUIRE(b(1,1) == 12.0);
+}
+
+TEST_CASE( "lvalue/dyn_matrix_8", "lvalue sub" ) {
+    etl::dyn_matrix<double, 3> a(2,2,2, etl::values(1.1, 2.0, 5.0, 1.0, 1.1, 2.0, 5.0, 1.0));
+
+    etl::sub(a, 0)(0,0) = 2.2;
+    etl::sub(a, 0)(0,1) = 3.2;
+    etl::sub(a, 1)(0,0) = 4.2;
+    etl::sub(a, 1)(0,1) = 5.2;
+
+    REQUIRE(etl::sub(a, 0)(0, 0) == 2.2);
+    REQUIRE(etl::sub(a, 0)(0, 1) == 3.2);
+    REQUIRE(etl::sub(a, 1)(0, 0) == 4.2);
+    REQUIRE(etl::sub(a, 1)(0, 1) == 5.2);
+}
+
 ///}}}
