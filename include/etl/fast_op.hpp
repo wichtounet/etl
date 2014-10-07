@@ -182,18 +182,41 @@ struct dim_view {
 template<typename T>
 struct sub_view {
     using parent_type = T;
+    using value_type = typename T::value_type;
 
-    const T& parent;
+    T& parent;
     const std::size_t i;
 
-    sub_view(const T& parent, std::size_t i) : parent(parent), i(i) {}
+    using return_type = typename std::conditional<
+        cpp::and_u<
+            std::is_lvalue_reference<decltype(parent[0])>::value,
+            cpp::not_u<std::is_const<T>::value>::value
+        >::value,
+        value_type&,
+        value_type>::type;
 
-    typename T::value_type operator[](std::size_t j) const {
+    using const_return_type = typename std::conditional<
+        std::is_lvalue_reference<decltype(parent[0])>::value,
+        const value_type&,
+        value_type>::type;
+
+    sub_view(T& parent, std::size_t i) : parent(parent), i(i) {}
+
+    const_return_type operator[](std::size_t j) const {
         return parent[i * subsize(parent) + j];
     }
 
     template<typename... S>
-    typename T::value_type operator()(S... args) const {
+    const_return_type operator()(S... args) const {
+        return parent(i, static_cast<size_t>(args)...);
+    }
+
+    return_type operator[](std::size_t j){
+        return parent[i * subsize(parent) + j];
+    }
+
+    template<typename... S>
+    return_type operator()(S... args){
         return parent(i, static_cast<size_t>(args)...);
     }
 };
@@ -269,7 +292,7 @@ struct dyn_matrix_view {
         const value_type&,
         value_type>::type;
 
-    dyn_matrix_view(const T& sub, std::size_t rows, std::size_t columns) : sub(sub), rows(rows), columns(columns) {}
+    dyn_matrix_view(T& sub, std::size_t rows, std::size_t columns) : sub(sub), rows(rows), columns(columns) {}
 
     const_return_type operator[](std::size_t j) const {
         return sub(j);
