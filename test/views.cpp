@@ -496,4 +496,34 @@ TEST_CASE( "lvalue/fast_matrix_6", "lvalue const dim<1>" ) {
     REQUIRE(c[2] == -0.1);
 }
 
+TEST_CASE( "lvalue/fast_matrix_7", "lvalue reshape" ) {
+    etl::fast_vector<double, 4> a({1,2,3,4});
+    auto b = etl::reshape<2,2>(a);
+
+    b(0,0) = 32.0;
+    b(0,1) = 23.0;
+    b(1,0) = 11.0;
+    b(1,1) = 12.0;
+
+    REQUIRE(b(0,0) == 32.0);
+    REQUIRE(b(0,1) == 23.0);
+
+    REQUIRE(b(1,0) == 11.0);
+    REQUIRE(b(1,1) == 12.0);
+}
+
+TEST_CASE( "lvalue/fast_matrix_8", "lvalue sub" ) {
+    etl::fast_matrix<double, 2, 2, 2> a = {1.1, 2.0, 5.0, 1.0, 1.1, 2.0, 5.0, 1.0};
+
+    etl::sub(a, 0)(0,0) = 2.2;
+    etl::sub(a, 0)(0,1) = 3.2;
+    etl::sub(a, 1)(0,0) = 4.2;
+    etl::sub(a, 1)(0,1) = 5.2;
+
+    REQUIRE(etl::sub(a, 0)(0, 0) == 2.2);
+    REQUIRE(etl::sub(a, 0)(0, 1) == 3.2);
+    REQUIRE(etl::sub(a, 1)(0, 0) == 4.2);
+    REQUIRE(etl::sub(a, 1)(0, 1) == 5.2);
+}
+
 ///}}}
