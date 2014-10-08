@@ -52,12 +52,12 @@ TEST_CASE( "sequence/fast_matrix_2", "generator" ) {
 
     b = 0.1 * etl::sequence_generator();
 
-    REQUIRE(b(0,0) == 0.0);
-    REQUIRE(b(0,1) == 0.1);
-    REQUIRE(b(1,0) == 0.2);
-    REQUIRE(b(1,1) == 0.3);
-    REQUIRE(b(2,0) == 0.4);
-    REQUIRE(b(2,1) == 0.5);
+    REQUIRE(b(0,0) == Approx(0.0));
+    REQUIRE(b(0,1) == Approx(0.1));
+    REQUIRE(b(1,0) == Approx(0.2));
+    REQUIRE(b(1,1) == Approx(0.3));
+    REQUIRE(b(2,0) == Approx(0.4));
+    REQUIRE(b(2,1) == Approx(0.5));
 }
 
 TEST_CASE( "sequence/dyn_vector_1", "generator" ) {
