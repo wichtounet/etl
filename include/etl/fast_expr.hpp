@@ -181,18 +181,17 @@ public:
         //Nothing else to init
     }
 
-    unary_expr(unary_expr&& e) : _value(e._value) {
+    unary_expr(unary_expr&& e) : _value(std::move(e._value)) {
         //Nothing else to init
     }
 
-    //Expression are invariant
-    unary_expr& operator=(const unary_expr&) = delete;
-    unary_expr& operator=(unary_expr&&) = delete;
+    //Assign expressions to the unary expr
 
-    template<bool B = non_const_return_ref, cpp::enable_if_u<B> = cpp::detail::dummy>
-    unary_expr& operator=(const value_type& e){
+    unary_expr& operator=(const unary_expr& e){
+        ensure_same_size(*this, e);
+
         for(std::size_t i = 0; i < size(*this); ++i){
-            (*this)[i] = e;
+            (*this)[i] = e[i];
         }
 
         return *this;
@@ -204,6 +203,15 @@ public:
 
         for(std::size_t i = 0; i < size(*this); ++i){
             (*this)[i] = e[i];
+        }
+
+        return *this;
+    }
+
+    template<bool B = non_const_return_ref, cpp::enable_if_u<B> = cpp::detail::dummy>
+    unary_expr& operator=(const value_type& e){
+        for(std::size_t i = 0; i < size(*this); ++i){
+            (*this)[i] = e;
         }
 
         return *this;
