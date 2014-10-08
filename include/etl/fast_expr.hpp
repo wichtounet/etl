@@ -755,6 +755,11 @@ auto normal_generator() -> generator_expr<normal_generator_op<T>> {
     return {};
 }
 
+template<typename T = double>
+auto sequence_generator(T current = 0) -> generator_expr<sequence_generator_op<T>> {
+    return {current};
+}
+
 //}}}
 
 } //end of namespace etl

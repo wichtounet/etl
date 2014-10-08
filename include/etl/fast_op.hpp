@@ -489,12 +489,25 @@ struct normal_generator_op {
     using value_type = T;
 
     random_engine rand_engine;
-    std::uniform_real_distribution<value_type> normal_distribution;
+    std::normal_distribution<value_type> normal_distribution;
 
     normal_generator_op() : rand_engine(std::time(nullptr)), normal_distribution(0.0, 1.0) {}
 
     value_type operator()(){
         return normal_distribution(rand_engine);
+    }
+};
+
+template<typename T = double>
+struct sequence_generator_op {
+    using value_type = T;
+
+    value_type current = 0;
+
+    sequence_generator_op(value_type start = 0) : current(start) {}
+
+    value_type operator()(){
+        return current++;
     }
 };
 
