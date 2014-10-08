@@ -314,7 +314,7 @@ public:
 template <typename Generator>
 class generator_expr {
 private:
-    Generator generator;
+    mutable Generator generator;
 
 public:
     using value_type = typename Generator::value_type;

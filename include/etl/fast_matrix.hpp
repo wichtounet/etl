@@ -241,6 +241,15 @@ public:
         return *this;
     }
 
+    template<typename Generator>
+    fast_matrix& operator=(generator_expr<Generator>&& e){
+        for(std::size_t i = 0; i < size(); ++i){
+            _data[i] = e[i];
+        }
+
+        return *this;
+    }
+
     //Set the same value to each element of the matrix
     template<typename VT, cpp::enable_if_u<cpp::or_u<std::is_convertible<VT, value_type>::value, std::is_assignable<T&, VT>::value>::value> = cpp::detail::dummy>
     fast_matrix& operator=(const VT& value){

@@ -302,6 +302,15 @@ public:
         return *this;
     }
 
+    template<typename Generator>
+    dyn_matrix& operator=(generator_expr<Generator>&& e){
+        for(std::size_t i = 0; i < size(); ++i){
+            _data[i] = e[i];
+        }
+
+        return *this;
+    }
+
     template<typename E, cpp::enable_if_u<etl_traits<transform_expr<value_type, E>>::dimensions() == 1> = cpp::detail::dummy>
     dyn_matrix& operator=(transform_expr<value_type, E>&& e){
         ensure_same_size(*this, e);
