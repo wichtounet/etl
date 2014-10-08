@@ -52,12 +52,27 @@ TEST_CASE( "sequence/fast_matrix_2", "generator" ) {
 
     b = 0.1 * etl::sequence_generator();
 
+    REQUIRE(etl::etl_traits<std::decay_t<decltype(0.1 * etl::sequence_generator())>>::is_generator);
+
     REQUIRE(b(0,0) == Approx(0.0));
     REQUIRE(b(0,1) == Approx(0.1));
     REQUIRE(b(1,0) == Approx(0.2));
     REQUIRE(b(1,1) == Approx(0.3));
     REQUIRE(b(2,0) == Approx(0.4));
     REQUIRE(b(2,1) == Approx(0.5));
+}
+
+TEST_CASE( "sequence/fast_matrix_3", "generator" ) {
+    etl::fast_matrix<double, 3,2> b(1.0);
+
+    b = 0.1 * etl::sequence_generator() + b;
+
+    REQUIRE(b(0,0) == Approx(1.0));
+    REQUIRE(b(0,1) == Approx(1.1));
+    REQUIRE(b(1,0) == Approx(1.2));
+    REQUIRE(b(1,1) == Approx(1.3));
+    REQUIRE(b(2,0) == Approx(1.4));
+    REQUIRE(b(2,1) == Approx(1.5));
 }
 
 TEST_CASE( "sequence/dyn_vector_1", "generator" ) {
