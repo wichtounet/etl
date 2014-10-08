@@ -34,6 +34,9 @@ class transform_expr;
 template <typename T, typename LeftExpr, typename BinaryOp, typename RightExpr>
 class binary_expr;
 
+template <typename Generator>
+class generator_expr;
+
 template<typename T>
 struct hflip_transformer;
 
@@ -51,6 +54,9 @@ struct dim_view;
 
 template<typename T>
 struct sub_view;
+
+template<typename T>
+struct scalar;
 
 template<template<typename, std::size_t> class TT, typename T>
 struct is_2 : std::false_type { };
@@ -86,6 +92,9 @@ template<typename T>
 struct is_binary_expr : std::integral_constant<bool, cpp::is_specialization_of<etl::binary_expr, std::decay_t<T>>::value> {};
 
 template<typename T>
+struct is_generator_expr : std::integral_constant<bool, cpp::is_specialization_of<etl::generator_expr, std::decay_t<T>>::value> {};
+
+template<typename T>
 struct is_transformer_expr : std::integral_constant<bool, cpp::or_u<
             cpp::is_specialization_of<etl::transpose_transformer, std::decay_t<T>>::value,
             cpp::is_specialization_of<etl::hflip_transformer, std::decay_t<T>>::value,
@@ -105,7 +114,7 @@ struct is_etl_expr : std::integral_constant<bool, cpp::or_u<
        is_fast_matrix<T>::value,
        is_dyn_matrix<T>::value,
        is_unary_expr<T>::value, is_binary_expr<T>::value,
-       is_transform_expr<T>::value,
+       is_transform_expr<T>::value, is_generator_expr<T>::value,
        is_transformer_expr<T>::value, is_view<T>::value
     >::value> {};
 
@@ -123,6 +132,7 @@ template<typename T>
 struct etl_traits<T, std::enable_if_t<is_etl_value<T>::value>> {
     static constexpr const bool is_fast = is_fast_matrix<T>::value;
     static constexpr const bool is_value = true;
+    static constexpr const bool is_generator = false;
 
     static std::size_t size(const T& v){
         return v.size();
@@ -159,6 +169,7 @@ struct etl_traits<etl::unary_expr<T, Expr, UnaryOp>> {
 
     static constexpr const bool is_fast = etl_traits<sub_expr_t>::is_fast;
     static constexpr const bool is_value = false;
+    static constexpr const bool is_generator = etl_traits<sub_expr_t>::is_generator;
 
     static std::size_t size(const expr_t& v){
         return etl_traits<sub_expr_t>::size(v.value());
@@ -193,6 +204,7 @@ struct etl_traits<etl::transform_expr<T, Expr>> {
 
     static constexpr const bool is_fast = etl_traits<sub_expr_t>::is_fast;
     static constexpr const bool is_value = false;
+    static constexpr const bool is_generator = etl_traits<sub_expr_t>::is_generator;
 
     static std::size_t size(const expr_t& v){
         return etl_traits<sub_expr_t>::size(v.value());
@@ -218,16 +230,41 @@ struct etl_traits<etl::transform_expr<T, Expr>> {
 };
 
 /*!
+ * \brief Specialization generator_expr
+ */
+template <typename Generator>
+struct etl_traits<etl::generator_expr<Generator>> {
+    static constexpr const bool is_fast = true;
+    static constexpr const bool is_value = false;
+    static constexpr const bool is_generator = true;
+};
+
+/*!
+ * \brief Specialization scalar
+ */
+template <typename T>
+struct etl_traits<etl::scalar<T>> {
+    static constexpr const bool is_fast = true;
+    static constexpr const bool is_value = false;
+    static constexpr const bool is_generator = true;
+};
+
+/*!
  * \brief Specialization for binary_expr when the type is decided by the left
  * expression.
  */
 template <typename T, typename LeftExpr, typename BinaryOp, typename RightExpr>
 struct etl_traits<etl::binary_expr<T, LeftExpr, BinaryOp, RightExpr>, std::enable_if_t<is_etl_expr<LeftExpr>::value>> {
     using expr_t = etl::binary_expr<T, LeftExpr, BinaryOp, RightExpr>;
-    using sub_expr_t = std::decay_t<LeftExpr>;
+    using left_expr_t = std::decay_t<LeftExpr>;
+    using right_expr_t = std::decay_t<RightExpr>;
+    using sub_expr_t = left_expr_t;
 
     static constexpr const bool is_fast = etl_traits<sub_expr_t>::is_fast;
     static constexpr const bool is_value = false;
+    static constexpr const bool is_generator = cpp::and_u<
+            etl_traits<left_expr_t>::is_generator,
+            etl_traits<right_expr_t>::is_generator>::value;
 
     static std::size_t size(const expr_t& v){
         return etl_traits<sub_expr_t>::size(v.lhs());
@@ -259,10 +296,15 @@ struct etl_traits<etl::binary_expr<T, LeftExpr, BinaryOp, RightExpr>, std::enabl
 template <typename T, typename LeftExpr, typename BinaryOp, typename RightExpr>
 struct etl_traits<etl::binary_expr<T, LeftExpr, BinaryOp, RightExpr>, std::enable_if_t<cpp::and_u<cpp::not_u<is_etl_expr<LeftExpr>::value>::value, is_etl_expr<RightExpr>::value>::value>> {
     using expr_t = etl::binary_expr<T, LeftExpr, BinaryOp, RightExpr>;
+    using left_expr_t = std::decay_t<LeftExpr>;
+    using right_expr_t = std::decay_t<RightExpr>;
     using sub_expr_t = std::decay_t<RightExpr>;
 
     static constexpr const bool is_fast = etl_traits<sub_expr_t>::is_fast;
     static constexpr const bool is_value = false;
+    static constexpr const bool is_generator = cpp::and_u<
+            etl_traits<left_expr_t>::is_generator,
+            etl_traits<right_expr_t>::is_generator>::value;
 
     static std::size_t size(const expr_t& v){
         return etl_traits<sub_expr_t>::size(v.rhs());
@@ -297,6 +339,7 @@ struct etl_traits<transpose_transformer<T>> {
 
     static constexpr const bool is_fast = etl_traits<sub_expr_t>::is_fast;
     static constexpr const bool is_value = false;
+    static constexpr const bool is_generator = false;
 
     static std::size_t size(const expr_t& v){
         return etl_traits<sub_expr_t>::size(v.sub);
@@ -331,6 +374,7 @@ struct etl_traits<T, std::enable_if_t<cpp::and_u<is_transformer_expr<T>::value, 
 
     static constexpr const bool is_fast = etl_traits<sub_expr_t>::is_fast;
     static constexpr const bool is_value = false;
+    static constexpr const bool is_generator = false;
 
     static std::size_t size(const expr_t& v){
         return etl_traits<sub_expr_t>::size(v.sub);
@@ -365,6 +409,7 @@ struct etl_traits<etl::dim_view<T, D>> {
 
     static constexpr const bool is_fast = etl_traits<sub_expr_t>::is_fast;
     static constexpr const bool is_value = false;
+    static constexpr const bool is_generator = false;
 
     static std::size_t size(const expr_t& v){
         if(D == 1){
@@ -408,6 +453,7 @@ struct etl_traits<etl::sub_view<T>> {
 
     static constexpr const bool is_fast = etl_traits<sub_expr_t>::is_fast;
     static constexpr const bool is_value = false;
+    static constexpr const bool is_generator = false;
 
     static std::size_t size(const expr_t& v){
         return etl_traits<sub_expr_t>::size(v.parent) / etl_traits<sub_expr_t>::dim(v.parent, 0);
@@ -442,6 +488,7 @@ struct etl_traits<etl::fast_matrix_view<T, Rows, Columns>> {
 
     static constexpr const bool is_fast = true;
     static constexpr const bool is_value = false;
+    static constexpr const bool is_generator = false;
 
     static constexpr std::size_t size(const expr_t&){
         return Rows * Columns;
@@ -475,6 +522,7 @@ struct etl_traits<etl::dyn_matrix_view<T>> {
 
     static constexpr const bool is_fast = false;
     static constexpr const bool is_value = false;
+    static constexpr const bool is_generator = false;
 
     static std::size_t size(const expr_t& v){
         return v.rows * v.columns;
@@ -554,14 +602,27 @@ constexpr std::size_t dim(const E&){
     return etl_traits<E>::template dim<D>();
 }
 
-template<typename LE, typename RE, cpp::disable_if_u<cpp::and_u<is_etl_expr<LE>::value, is_etl_expr<RE>::value, etl_traits<LE>::is_fast, etl_traits<RE>::is_fast>::value> = cpp::detail::dummy>
+template<typename LE, typename RE, cpp::enable_if_u<cpp::or_u<etl_traits<LE>::is_generator, etl_traits<RE>::is_generator>::value> = cpp::detail::dummy>
+void ensure_same_size(const LE&, const RE&){
+    //Nothing to test, generators are of infinite size
+}
+
+template<typename LE, typename RE, cpp::disable_if_u<
+        cpp::or_u<
+            cpp::and_u<
+                cpp::not_u<cpp::or_u<etl_traits<LE>::is_generator, etl_traits<RE>::is_generator>::value>::value,
+                cpp::and_u<is_etl_expr<LE>::value, is_etl_expr<RE>::value, etl_traits<LE>::is_fast, etl_traits<RE>::is_fast>::value
+            >::value,
+            cpp::or_u<etl_traits<LE>::is_generator, etl_traits<RE>::is_generator>::value
+        >::value
+    > = cpp::detail::dummy>
 void ensure_same_size(const LE& lhs, const RE& rhs){
     cpp_assert(size(lhs) == size(rhs), "Cannot perform element-wise operations on collections of different size");
     cpp_unused(lhs);
     cpp_unused(rhs);
 }
 
-template<typename LE, typename RE, cpp::enable_if_u<cpp::and_u<is_etl_expr<LE>::value, is_etl_expr<RE>::value, etl_traits<LE>::is_fast, etl_traits<RE>::is_fast>::value> = cpp::detail::dummy>
+template<typename LE, typename RE, cpp::enable_if_all_u<cpp::not_u<cpp::or_u<etl_traits<LE>::is_generator, etl_traits<RE>::is_generator>::value>::value, is_etl_expr<LE>::value, is_etl_expr<RE>::value, etl_traits<LE>::is_fast, etl_traits<RE>::is_fast> = cpp::detail::dummy>
 void ensure_same_size(const LE&, const RE&){
     static_assert(etl_traits<LE>::size() == etl_traits<RE>::size(), "Cannot perform element-wise operations on collections of different size");
 }
