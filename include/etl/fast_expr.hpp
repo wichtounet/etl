@@ -155,21 +155,19 @@ private:
 
     Expr _value;
 
-public:
-    using value_type = T;
-
-    using return_type = typename std::conditional<
+    static constexpr const bool non_const_return_ref = 
         cpp::and_u<
             std::is_lvalue_reference<decltype(_value[0])>::value,
             cpp::not_u<std::is_const<decltype(_value[0])>::value>::value
-        >::value,
-        value_type&,
-        value_type>::type;
+        >::value;
+    
+    static constexpr const bool const_return_ref = 
+        std::is_lvalue_reference<decltype(_value[0])>::value;
 
-    using const_return_type = typename std::conditional<
-        std::is_lvalue_reference<decltype(_value[0])>::value,
-        const value_type&,
-        value_type>::type;
+public:
+    using value_type = T;
+    using return_type = typename std::conditional<non_const_return_ref, value_type&, value_type>::type;
+    using const_return_type = typename std::conditional<const_return_ref, const value_type&, value_type>::type;
 
     //Cannot be constructed with no args
     unary_expr() = delete;
@@ -190,6 +188,26 @@ public:
     //Expression are invariant
     unary_expr& operator=(const unary_expr&) = delete;
     unary_expr& operator=(unary_expr&&) = delete;
+
+    template<bool B = non_const_return_ref, cpp::enable_if_u<B> = cpp::detail::dummy>
+    unary_expr& operator=(const value_type& e){
+        for(std::size_t i = 0; i < size(*this); ++i){
+            (*this)[i] = e;
+        }
+
+        return *this;
+    }
+
+    template<typename E, cpp::enable_if_u<cpp::and_u<non_const_return_ref, is_etl_expr<std::decay_t<E>>::value>::value> = cpp::detail::dummy>
+    unary_expr& operator=(const E& e){
+        ensure_same_size(*this, e);
+
+        for(std::size_t i = 0; i < size(*this); ++i){
+            (*this)[i] = e[i];
+        }
+
+        return *this;
+    }
 
     //Accessors
 
