@@ -47,6 +47,19 @@ TEST_CASE( "sequence/fast_matrix_1", "generator" ) {
     REQUIRE(b(2,1) == 5.0);
 }
 
+TEST_CASE( "sequence/fast_matrix_2", "generator" ) {
+    etl::fast_matrix<double, 3,2> b;
+
+    b = 0.1 * etl::sequence_generator();
+
+    REQUIRE(b(0,0) == 0.0);
+    REQUIRE(b(0,1) == 0.1);
+    REQUIRE(b(1,0) == 0.2);
+    REQUIRE(b(1,1) == 0.3);
+    REQUIRE(b(2,0) == 0.4);
+    REQUIRE(b(2,1) == 0.5);
+}
+
 TEST_CASE( "sequence/dyn_vector_1", "generator" ) {
     etl::dyn_vector<double> b(3);
 
