@@ -11,6 +11,7 @@
 #include "etl/fast_vector.hpp"
 #include "etl/dyn_matrix.hpp"
 #include "etl/dyn_vector.hpp"
+#include "etl/multiplication.hpp"
 
 ///{{{ Dim
 
@@ -684,6 +685,20 @@ TEST_CASE( "lvalue/dyn_matrix_8", "lvalue sub" ) {
     REQUIRE(etl::sub(a, 0)(0, 1) == 3.2);
     REQUIRE(etl::sub(a, 1)(0, 0) == 4.2);
     REQUIRE(etl::sub(a, 1)(0, 1) == 5.2);
+}
+
+TEST_CASE( "lvalue/mmul1", "lvalue sub mmul" ) {
+    etl::fast_matrix<double, 2, 2, 3> a = {1,2,3,4,5,6,1,2,3,4,5,6};
+    etl::fast_matrix<double, 2, 3, 2> b = {7,8,9,10,11,12,7,8,9,10,11,12};
+    etl::fast_matrix<double, 2, 2, 2> c;
+
+    auto s = etl::sub(c,0);
+    etl::mmul(etl::sub(a,0), etl::sub(b,0), s);
+
+    REQUIRE(c(0,0,0) == 58);
+    REQUIRE(c(0,0,1) == 64);
+    REQUIRE(c(0,1,0) == 139);
+    REQUIRE(c(0,1,1) == 154);
 }
 
 ///}}}
