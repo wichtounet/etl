@@ -311,6 +311,36 @@ public:
     }
 };
 
+template <typename Generator>
+class generator_expr {
+private:
+    Generator generator;
+
+public:
+    using value_type = typename Generator::value_type;
+
+    template<typename... Args>
+    generator_expr(Args... args) : generator(std::forward<Args>(args)...) {}
+
+    generator_expr(generator_expr&& e) : generator(std::move(e.generator)) {
+        //Nothing else to init
+    }
+
+    //Expression are invariant
+    generator_expr& operator=(const generator_expr&) = delete;
+    generator_expr& operator=(generator_expr&&) = delete;
+
+    //Apply the expression
+
+    value_type operator[](std::size_t) const {
+        return generator();
+    }
+
+    value_type operator()() const {
+        return generator();
+    }
+};
+
 //{{{ Build binary expressions from two ETL expressions (vector,matrix,binary,unary)
 
 template<typename LE, typename RE, cpp::enable_if_u<cpp::and_u<is_etl_expr<LE>::value, is_etl_expr<RE>::value>::value> = cpp::detail::dummy>
@@ -714,6 +744,15 @@ typename E::value_type min(const E& values){
     }
 
     return m;
+}
+
+//}}}
+
+//{{{ Generate data
+
+template<typename T = double>
+auto normal_generator() -> generator_expr<normal_generator_op<T>> {
+    return {};
 }
 
 //}}}

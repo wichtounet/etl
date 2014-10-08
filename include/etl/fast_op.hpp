@@ -484,6 +484,20 @@ struct min_binary_op {
     }
 };
 
+template<typename T = double>
+struct normal_generator_op {
+    using value_type = T;
+
+    random_engine rand_engine;
+    std::uniform_real_distribution<value_type> normal_distribution;
+
+    normal_generator_op() : rand_engine(std::time(nullptr)), normal_distribution(0.0, 1.0) {}
+
+    value_type operator()(){
+        return normal_distribution(rand_engine);
+    }
+};
+
 } //end of namespace etl
 
 #endif
