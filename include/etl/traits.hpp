@@ -250,15 +250,17 @@ struct etl_traits<etl::scalar<T>> {
 };
 
 /*!
- * \brief Specialization for binary_expr when the type is decided by the left
- * expression.
+ * \brief Specialization for binary_expr. 
  */
 template <typename T, typename LeftExpr, typename BinaryOp, typename RightExpr>
-struct etl_traits<etl::binary_expr<T, LeftExpr, BinaryOp, RightExpr>, std::enable_if_t<is_etl_expr<LeftExpr>::value>> {
+struct etl_traits<etl::binary_expr<T, LeftExpr, BinaryOp, RightExpr>> {
     using expr_t = etl::binary_expr<T, LeftExpr, BinaryOp, RightExpr>;
     using left_expr_t = std::decay_t<LeftExpr>;
     using right_expr_t = std::decay_t<RightExpr>;
-    using sub_expr_t = left_expr_t;
+
+    static constexpr const bool left_directed = cpp::not_u<etl_traits<left_expr_t>::is_generator>::value;
+
+    using sub_expr_t = std::conditional_t<left_directed, left_expr_t, right_expr_t>;
 
     static constexpr const bool is_fast = etl_traits<sub_expr_t>::is_fast;
     static constexpr const bool is_value = false;
@@ -266,52 +268,22 @@ struct etl_traits<etl::binary_expr<T, LeftExpr, BinaryOp, RightExpr>, std::enabl
             etl_traits<left_expr_t>::is_generator,
             etl_traits<right_expr_t>::is_generator>::value;
 
+    template<bool B = left_directed, cpp::enable_if_u<B> = cpp::detail::dummy>
+    static constexpr auto& get(const expr_t& v){
+        return v.lhs();
+    }
+
+    template<bool B = left_directed, cpp::disable_if_u<B> = cpp::detail::dummy>
+    static constexpr auto& get(const expr_t& v){
+        return v.rhs();
+    }
+
     static std::size_t size(const expr_t& v){
-        return etl_traits<sub_expr_t>::size(v.lhs());
+        return etl_traits<sub_expr_t>::size(get(v));
     }
 
     static std::size_t dim(const expr_t& v, std::size_t d){
-        return etl_traits<sub_expr_t>::dim(v.lhs(), d);
-    }
-
-    template<bool B = is_fast, cpp::enable_if_u<B> = cpp::detail::dummy>
-    static constexpr std::size_t size(){
-        return etl_traits<sub_expr_t>::size();
-    }
-
-    template<std::size_t D>
-    static constexpr std::size_t dim(){
-        return etl_traits<sub_expr_t>::template dim<D>();
-    }
-
-    static constexpr std::size_t dimensions(){
-        return etl_traits<sub_expr_t>::dimensions();
-    }
-};
-
-/*!
- * \brief Specialization for binary_expr when the type is decided by the right
- * expression.
- */
-template <typename T, typename LeftExpr, typename BinaryOp, typename RightExpr>
-struct etl_traits<etl::binary_expr<T, LeftExpr, BinaryOp, RightExpr>, std::enable_if_t<cpp::and_u<cpp::not_u<is_etl_expr<LeftExpr>::value>::value, is_etl_expr<RightExpr>::value>::value>> {
-    using expr_t = etl::binary_expr<T, LeftExpr, BinaryOp, RightExpr>;
-    using left_expr_t = std::decay_t<LeftExpr>;
-    using right_expr_t = std::decay_t<RightExpr>;
-    using sub_expr_t = std::decay_t<RightExpr>;
-
-    static constexpr const bool is_fast = etl_traits<sub_expr_t>::is_fast;
-    static constexpr const bool is_value = false;
-    static constexpr const bool is_generator = cpp::and_u<
-            etl_traits<left_expr_t>::is_generator,
-            etl_traits<right_expr_t>::is_generator>::value;
-
-    static std::size_t size(const expr_t& v){
-        return etl_traits<sub_expr_t>::size(v.rhs());
-    }
-
-    static std::size_t dim(const expr_t& v, std::size_t d){
-        return etl_traits<sub_expr_t>::dim(v.rhs(), d);
+        return etl_traits<sub_expr_t>::dim(get(v), d);
     }
 
     template<bool B = is_fast, cpp::enable_if_u<B> = cpp::detail::dummy>
