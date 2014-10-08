@@ -94,6 +94,9 @@ to a concrete vector or matrix class.
 The expression can be evaluated using the :code:`s(x)` function that returns a
 concrete class (fast_matrix or dyn_matrix) based on the expression.
 
+Multiplication, convolution and all reductions are not lazily
+evaluated. 
+
 Reduction
 *********
 
@@ -117,6 +120,21 @@ to functions. Keep in mind that expression are lazy, therefore if
 you pass a + b to a matrix multiplication, an addition will be run
 each time an element is accessed, therefore, it is not often
 efficient.
+
+Generators
+**********
+
+It is also possible to generate sequences of data and perform
+operations on them. 
+
+For now, two generators are available: 
+
+* normal_generator: Generates real numbers distributed on a normal
+  distribution
+* sequence_generator(c=0): Generates numbers in sequence from c
+
+All sequences are considered to have infinite size, therefore, they
+can be used to initialize or modify any containers or expressions. 
 
 Why compile-time sizes ?
 ************************
