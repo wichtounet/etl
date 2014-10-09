@@ -181,7 +181,7 @@ public:
         //Nothing else to init
     }
 
-    unary_expr(unary_expr&& e) : _value(std::move(e._value)) {
+    unary_expr(unary_expr&& e) : _value(e._value) {
         //Nothing else to init
     }
 
@@ -594,6 +594,16 @@ auto sigmoid(const E& value) -> unary_expr<typename E::value_type, const E&, sig
 template<typename E, cpp::enable_if_u<is_etl_expr<E>::value> = cpp::detail::dummy>
 auto softplus(const E& value) -> unary_expr<typename E::value_type, const E&, softplus_unary_op<typename E::value_type>> {
     return {value};
+}
+
+template<typename E, cpp::enable_if_u<is_etl_expr<E>::value> = cpp::detail::dummy>
+auto softmax(const E& e){
+    auto s = sum(exp(e));
+
+    using ue = unary_expr<typename E::value_type, const E&, exp_unary_op<typename E::value_type>>;
+    using st = scalar<typename E::value_type>;
+
+    return binary_expr<typename E::value_type, ue, div_binary_op<typename E::value_type>, st>(ue(e), st(s));
 }
 
 template<typename E, cpp::enable_if_u<is_etl_expr<E>::value> = cpp::detail::dummy>

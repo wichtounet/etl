@@ -381,6 +381,30 @@ TEST_CASE( "fast_vector/sigmoid", "fast_vector::sigmoid" ) {
     REQUIRE(d[2] == etl::logistic_sigmoid(0.0));
 }
 
+TEST_CASE( "fast_vector/softmax_1", "fast_vector::softmax" ) {
+    etl::fast_vector<double, 3> a = {1.0, 2.0, 3.0};
+
+    etl::fast_vector<double, 3> d(etl::softmax(a));
+
+    auto sum = std::exp(1.0) + std::exp(2.0) + std::exp(3.0);
+
+    REQUIRE(d[0] == std::exp(1.0) / sum);
+    REQUIRE(d[1] == std::exp(2.0) / sum);
+    REQUIRE(d[2] == std::exp(3.0) / sum);
+}
+
+TEST_CASE( "fast_vector/softmax_2", "fast_vector::softmax" ) {
+    etl::fast_vector<double, 3> a = {-1.0, 4.0, 5.0};
+
+    etl::fast_vector<double, 3> d(etl::softmax(a));
+
+    auto sum = std::exp(-1.0) + std::exp(4.0) + std::exp(5.0);
+
+    REQUIRE(d[0] == std::exp(-1.0) / sum);
+    REQUIRE(d[1] == std::exp(4.0) / sum);
+    REQUIRE(d[2] == std::exp(5.0) / sum);
+}
+
 TEST_CASE( "fast_vector/softplus", "fast_vector::softplus" ) {
     etl::fast_vector<double, 3> a = {-1.0, 2.0, 0.0};
 
