@@ -601,6 +601,8 @@ auto softmax(const E& e){
     //Unfortunately, it is not possible to directly return exp(e) / sum(exp(e))
     //because the binary_expr would hold a reference to an object whose lifetime
     //is not longer than this function, therefore running into UB
+    //it is necessary to ensure that the UE is stored by value and therefore
+    //copied
     //It would be good to enhance the system to support deep copying when
     //necessray
 
