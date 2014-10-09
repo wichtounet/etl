@@ -197,7 +197,7 @@ public:
         return *this;
     }
 
-    template<typename E, cpp::enable_if_u<cpp::and_u<non_const_return_ref, is_etl_expr<std::decay_t<E>>::value>::value> = cpp::detail::dummy>
+    template<typename E, cpp::enable_if_all_u<non_const_return_ref, is_etl_expr<std::decay_t<E>>::value> = cpp::detail::dummy>
     unary_expr& operator=(const E& e){
         ensure_same_size(*this, e);
 
@@ -343,35 +343,35 @@ public:
 
 //{{{ Build binary expressions from two ETL expressions (vector,matrix,binary,unary)
 
-template<typename LE, typename RE, cpp::enable_if_u<cpp::and_u<is_etl_expr<LE>::value, is_etl_expr<RE>::value>::value> = cpp::detail::dummy>
+template<typename LE, typename RE, cpp::enable_if_all_u<is_etl_expr<LE>::value, is_etl_expr<RE>::value> = cpp::detail::dummy>
 auto operator-(const LE& lhs, const RE& rhs) -> binary_expr<typename LE::value_type, const LE&, minus_binary_op<typename LE::value_type>, const RE&> {
     ensure_same_size(lhs, rhs);
 
     return {lhs, rhs};
 }
 
-template<typename LE, typename RE, cpp::enable_if_u<cpp::and_u<is_etl_expr<LE>::value, is_etl_expr<RE>::value>::value> = cpp::detail::dummy>
+template<typename LE, typename RE, cpp::enable_if_all_u<is_etl_expr<LE>::value, is_etl_expr<RE>::value> = cpp::detail::dummy>
 auto operator+(const LE& lhs, const RE& rhs) -> binary_expr<typename LE::value_type, const LE&, plus_binary_op<typename LE::value_type>, const RE&> {
     ensure_same_size(lhs, rhs);
 
     return {lhs, rhs};
 }
 
-template<typename LE, typename RE, cpp::enable_if_u<cpp::and_u<is_etl_expr<LE>::value, is_etl_expr<RE>::value>::value> = cpp::detail::dummy>
+template<typename LE, typename RE, cpp::enable_if_all_u<is_etl_expr<LE>::value, is_etl_expr<RE>::value> = cpp::detail::dummy>
 auto operator*(const LE& lhs, const RE& rhs) -> binary_expr<typename LE::value_type, const LE&, mul_binary_op<typename LE::value_type>, const RE&> {
     ensure_same_size(lhs, rhs);
 
     return {lhs, rhs};
 }
 
-template<typename LE, typename RE, cpp::enable_if_u<cpp::and_u<is_etl_expr<LE>::value, is_etl_expr<RE>::value>::value> = cpp::detail::dummy>
+template<typename LE, typename RE, cpp::enable_if_all_u<is_etl_expr<LE>::value, is_etl_expr<RE>::value> = cpp::detail::dummy>
 auto operator/(const LE& lhs, const RE& rhs) -> binary_expr<typename LE::value_type, const LE&, div_binary_op<typename LE::value_type>, const RE&> {
     ensure_same_size(lhs, rhs);
 
     return {lhs, rhs};
 }
 
-template<typename LE, typename RE, cpp::enable_if_u<cpp::and_u<is_etl_expr<LE>::value, is_etl_expr<RE>::value>::value> = cpp::detail::dummy>
+template<typename LE, typename RE, cpp::enable_if_all_u<is_etl_expr<LE>::value, is_etl_expr<RE>::value> = cpp::detail::dummy>
 auto operator%(const LE& lhs, const RE& rhs) -> binary_expr<typename LE::value_type, const LE&, mod_binary_op<typename LE::value_type>, const RE&> {
     ensure_same_size(lhs, rhs);
 
@@ -382,48 +382,48 @@ auto operator%(const LE& lhs, const RE& rhs) -> binary_expr<typename LE::value_t
 
 //{{{ Mix scalars and ETL expressions (vector,matrix,binary,unary)
 
-template<typename LE, typename RE, cpp::enable_if_u<cpp::and_u<std::is_convertible<RE, typename LE::value_type>::value, is_etl_expr<LE>::value>::value> = cpp::detail::dummy>
+template<typename LE, typename RE, cpp::enable_if_all_u<std::is_convertible<RE, typename LE::value_type>::value, is_etl_expr<LE>::value> = cpp::detail::dummy>
 auto operator-(const LE& lhs, RE rhs) -> binary_expr<typename LE::value_type, const LE&, minus_binary_op<typename LE::value_type>, scalar<typename LE::value_type>> {
     return {lhs, scalar<typename LE::value_type>(rhs)};
 }
 
-template<typename LE, typename RE, cpp::enable_if_u<cpp::and_u<std::is_convertible<LE, typename RE::value_type>::value, is_etl_expr<RE>::value>::value> = cpp::detail::dummy>
+template<typename LE, typename RE, cpp::enable_if_all_u<std::is_convertible<LE, typename RE::value_type>::value, is_etl_expr<RE>::value> = cpp::detail::dummy>
 auto operator-(LE lhs, const RE& rhs) -> binary_expr<typename RE::value_type, scalar<typename RE::value_type>, minus_binary_op<typename RE::value_type>, const RE&> {
     return {scalar<typename RE::value_type>(lhs), rhs};
 }
 
-template<typename LE, typename RE, cpp::enable_if_u<cpp::and_u<std::is_convertible<RE, typename LE::value_type>::value, is_etl_expr<LE>::value>::value> = cpp::detail::dummy>
+template<typename LE, typename RE, cpp::enable_if_all_u<std::is_convertible<RE, typename LE::value_type>::value, is_etl_expr<LE>::value> = cpp::detail::dummy>
 auto operator+(const LE& lhs, RE rhs) -> binary_expr<typename LE::value_type, const LE&, plus_binary_op<typename LE::value_type>, scalar<typename LE::value_type>> {
     return {lhs, scalar<typename LE::value_type>(rhs)};
 }
 
-template<typename LE, typename RE, cpp::enable_if_u<cpp::and_u<std::is_convertible<LE, typename RE::value_type>::value, is_etl_expr<RE>::value>::value> = cpp::detail::dummy>
+template<typename LE, typename RE, cpp::enable_if_all_u<std::is_convertible<LE, typename RE::value_type>::value, is_etl_expr<RE>::value> = cpp::detail::dummy>
 auto operator+(LE lhs, const RE& rhs) -> binary_expr<typename RE::value_type, scalar<typename RE::value_type>, plus_binary_op<typename RE::value_type>, const RE&> {
     return {scalar<typename RE::value_type>(lhs), rhs};
 }
 
-template<typename LE, typename RE, cpp::enable_if_u<cpp::and_u<std::is_convertible<RE, typename LE::value_type>::value, is_etl_expr<LE>::value>::value> = cpp::detail::dummy>
+template<typename LE, typename RE, cpp::enable_if_all_u<std::is_convertible<RE, typename LE::value_type>::value, is_etl_expr<LE>::value> = cpp::detail::dummy>
 auto operator*(const LE& lhs, RE rhs) -> binary_expr<typename LE::value_type, const LE&, mul_binary_op<typename LE::value_type>, scalar<typename LE::value_type>> {
     return {lhs, scalar<typename LE::value_type>(rhs)};
 }
-template<typename LE, typename RE, cpp::enable_if_u<cpp::and_u<std::is_convertible<LE, typename RE::value_type>::value, is_etl_expr<RE>::value>::value> = cpp::detail::dummy> auto operator*(LE lhs, const RE& rhs) -> binary_expr<typename RE::value_type, scalar<typename RE::value_type>, mul_binary_op<typename RE::value_type>, const RE&> { return {scalar<typename RE::value_type>(lhs), rhs}; }
+template<typename LE, typename RE, cpp::enable_if_all_u<std::is_convertible<LE, typename RE::value_type>::value, is_etl_expr<RE>::value> = cpp::detail::dummy> auto operator*(LE lhs, const RE& rhs) -> binary_expr<typename RE::value_type, scalar<typename RE::value_type>, mul_binary_op<typename RE::value_type>, const RE&> { return {scalar<typename RE::value_type>(lhs), rhs}; }
 
-template<typename LE, typename RE, cpp::enable_if_u<cpp::and_u<std::is_convertible<RE, typename LE::value_type>::value, is_etl_expr<LE>::value>::value> = cpp::detail::dummy>
+template<typename LE, typename RE, cpp::enable_if_all_u<std::is_convertible<RE, typename LE::value_type>::value, is_etl_expr<LE>::value> = cpp::detail::dummy>
 auto operator/(const LE& lhs, RE rhs) -> binary_expr<typename LE::value_type, const LE&, div_binary_op<typename LE::value_type>, scalar<typename LE::value_type>> {
     return {lhs, scalar<typename LE::value_type>(rhs)};
 }
 
-template<typename LE, typename RE, cpp::enable_if_u<cpp::and_u<std::is_convertible<LE, typename RE::value_type>::value, is_etl_expr<RE>::value>::value> = cpp::detail::dummy>
+template<typename LE, typename RE, cpp::enable_if_all_u<std::is_convertible<LE, typename RE::value_type>::value, is_etl_expr<RE>::value> = cpp::detail::dummy>
 auto operator/(LE lhs, const RE& rhs) -> binary_expr<typename RE::value_type, scalar<typename RE::value_type>, div_binary_op<typename RE::value_type>, const RE&> {
     return {scalar<typename RE::value_type>(lhs), rhs};
 }
 
-template<typename LE, typename RE, cpp::enable_if_u<cpp::and_u<std::is_convertible<RE, typename LE::value_type>::value, is_etl_expr<LE>::value>::value> = cpp::detail::dummy>
+template<typename LE, typename RE, cpp::enable_if_all_u<std::is_convertible<RE, typename LE::value_type>::value, is_etl_expr<LE>::value> = cpp::detail::dummy>
 auto operator%(const LE& lhs, RE rhs) -> binary_expr<typename LE::value_type, const LE&, mod_binary_op<typename LE::value_type>, scalar<typename LE::value_type>> {
     return {lhs, scalar<typename LE::value_type>(rhs)};
 }
 
-template<typename LE, typename RE, cpp::enable_if_u<cpp::and_u<std::is_convertible<LE, typename RE::value_type>::value, is_etl_expr<RE>::value>::value> = cpp::detail::dummy>
+template<typename LE, typename RE, cpp::enable_if_all_u<std::is_convertible<LE, typename RE::value_type>::value, is_etl_expr<RE>::value> = cpp::detail::dummy>
 auto operator%(LE lhs, const RE& rhs) -> binary_expr<typename RE::value_type, scalar<typename RE::value_type>, mod_binary_op<typename RE::value_type>, const RE&> {
     return {scalar<typename RE::value_type>(lhs), rhs};
 }
@@ -432,7 +432,7 @@ auto operator%(LE lhs, const RE& rhs) -> binary_expr<typename RE::value_type, sc
 
 //{{{ Compound operators
 
-template<typename LE, typename RE, cpp::enable_if_u<cpp::and_u<std::is_arithmetic<RE>::value, is_etl_value<LE>::value>::value> = cpp::detail::dummy>
+template<typename LE, typename RE, cpp::enable_if_all_u<std::is_arithmetic<RE>::value, is_etl_value<LE>::value> = cpp::detail::dummy>
 LE& operator+=(LE& lhs, RE rhs){
     for(std::size_t i = 0; i < lhs.size(); ++i){
         lhs[i] += rhs;
@@ -441,7 +441,7 @@ LE& operator+=(LE& lhs, RE rhs){
     return lhs;
 }
 
-template<typename LE, typename RE, cpp::enable_if_u<cpp::and_u<is_etl_expr<RE>::value, is_etl_value<LE>::value>::value> = cpp::detail::dummy>
+template<typename LE, typename RE, cpp::enable_if_all_u<is_etl_expr<RE>::value, is_etl_value<LE>::value> = cpp::detail::dummy>
 LE& operator+=(LE& lhs, const RE& rhs){
     ensure_same_size(lhs, rhs);
 
@@ -452,7 +452,7 @@ LE& operator+=(LE& lhs, const RE& rhs){
     return lhs;
 }
 
-template<typename LE, typename RE, cpp::enable_if_u<cpp::and_u<std::is_arithmetic<RE>::value, is_etl_value<LE>::value>::value> = cpp::detail::dummy>
+template<typename LE, typename RE, cpp::enable_if_all_u<std::is_arithmetic<RE>::value, is_etl_value<LE>::value> = cpp::detail::dummy>
 LE& operator-=(LE& lhs, RE rhs){
     for(std::size_t i = 0; i < lhs.size(); ++i){
         lhs[i] -= rhs;
@@ -461,7 +461,7 @@ LE& operator-=(LE& lhs, RE rhs){
     return lhs;
 }
 
-template<typename LE, typename RE, cpp::enable_if_u<cpp::and_u<is_etl_expr<RE>::value, is_etl_value<LE>::value>::value> = cpp::detail::dummy>
+template<typename LE, typename RE, cpp::enable_if_all_u<is_etl_expr<RE>::value, is_etl_value<LE>::value> = cpp::detail::dummy>
 LE& operator-=(LE& lhs, const RE& rhs){
     ensure_same_size(lhs, rhs);
 
@@ -472,7 +472,7 @@ LE& operator-=(LE& lhs, const RE& rhs){
     return lhs;
 }
 
-template<typename LE, typename RE, cpp::enable_if_u<cpp::and_u<std::is_arithmetic<RE>::value, is_etl_value<LE>::value>::value> = cpp::detail::dummy>
+template<typename LE, typename RE, cpp::enable_if_all_u<std::is_arithmetic<RE>::value, is_etl_value<LE>::value> = cpp::detail::dummy>
 LE& operator*=(LE& lhs, RE rhs){
     for(std::size_t i = 0; i < lhs.size(); ++i){
         lhs[i] *= rhs;
@@ -481,7 +481,7 @@ LE& operator*=(LE& lhs, RE rhs){
     return lhs;
 }
 
-template<typename LE, typename RE, cpp::enable_if_u<cpp::and_u<is_etl_expr<RE>::value, is_etl_value<LE>::value>::value> = cpp::detail::dummy>
+template<typename LE, typename RE, cpp::enable_if_all_u<is_etl_expr<RE>::value, is_etl_value<LE>::value> = cpp::detail::dummy>
 LE& operator*=(LE& lhs, const RE& rhs){
     ensure_same_size(lhs, rhs);
 
@@ -492,7 +492,7 @@ LE& operator*=(LE& lhs, const RE& rhs){
     return lhs;
 }
 
-template<typename LE, typename RE, cpp::enable_if_u<cpp::and_u<std::is_arithmetic<RE>::value, is_etl_value<LE>::value>::value> = cpp::detail::dummy>
+template<typename LE, typename RE, cpp::enable_if_all_u<std::is_arithmetic<RE>::value, is_etl_value<LE>::value> = cpp::detail::dummy>
 LE& operator/=(LE& lhs, RE rhs){
     for(std::size_t i = 0; i < lhs.size(); ++i){
         lhs[i] /= rhs;
@@ -501,7 +501,7 @@ LE& operator/=(LE& lhs, RE rhs){
     return lhs;
 }
 
-template<typename LE, typename RE, cpp::enable_if_u<cpp::and_u<is_etl_expr<RE>::value, is_etl_value<LE>::value>::value> = cpp::detail::dummy>
+template<typename LE, typename RE, cpp::enable_if_all_u<is_etl_expr<RE>::value, is_etl_value<LE>::value> = cpp::detail::dummy>
 LE& operator/=(LE& lhs, const RE& rhs){
     ensure_same_size(lhs, rhs);
 
@@ -512,7 +512,7 @@ LE& operator/=(LE& lhs, const RE& rhs){
     return lhs;
 }
 
-template<typename LE, typename RE, cpp::enable_if_u<cpp::and_u<std::is_arithmetic<RE>::value, is_etl_value<LE>::value>::value> = cpp::detail::dummy>
+template<typename LE, typename RE, cpp::enable_if_all_u<std::is_arithmetic<RE>::value, is_etl_value<LE>::value> = cpp::detail::dummy>
 LE& operator%=(LE& lhs, RE rhs){
     for(std::size_t i = 0; i < lhs.size(); ++i){
         lhs[i] %= rhs;
@@ -521,7 +521,7 @@ LE& operator%=(LE& lhs, RE rhs){
     return lhs;
 }
 
-template<typename LE, typename RE, cpp::enable_if_u<cpp::and_u<is_etl_expr<RE>::value, is_etl_value<LE>::value>::value> = cpp::detail::dummy>
+template<typename LE, typename RE, cpp::enable_if_all_u<is_etl_expr<RE>::value, is_etl_value<LE>::value> = cpp::detail::dummy>
 LE& operator%=(LE& lhs, const RE& rhs){
     ensure_same_size(lhs, rhs);
 
@@ -541,17 +541,17 @@ auto abs(const E& value) -> unary_expr<typename E::value_type, const E&, abs_una
     return {value};
 }
 
-template<typename E, typename T, cpp::enable_if_u<cpp::and_u<is_etl_expr<E>::value, std::is_arithmetic<T>::value>::value> = cpp::detail::dummy>
+template<typename E, typename T, cpp::enable_if_all_u<is_etl_expr<E>::value, std::is_arithmetic<T>::value> = cpp::detail::dummy>
 auto max(const E& value, T v) -> binary_expr<typename E::value_type, const E&, max_binary_op<typename E::value_type, T>, scalar<T>> {
     return {value, scalar<T>(v)};
 }
 
-template<typename E, typename T, cpp::enable_if_u<cpp::and_u<is_etl_expr<E>::value, std::is_arithmetic<T>::value>::value> = cpp::detail::dummy>
+template<typename E, typename T, cpp::enable_if_all_u<is_etl_expr<E>::value, std::is_arithmetic<T>::value> = cpp::detail::dummy>
 auto min(const E& value, T v) -> binary_expr<typename E::value_type, const E&, min_binary_op<typename E::value_type, T>, scalar<T>> {
     return {value, scalar<T>(v)};
 }
 
-template<typename E, typename T, cpp::enable_if_u<cpp::and_u<is_etl_expr<E>::value, std::is_arithmetic<T>::value>::value> = cpp::detail::dummy>
+template<typename E, typename T, cpp::enable_if_all_u<is_etl_expr<E>::value, std::is_arithmetic<T>::value> = cpp::detail::dummy>
 auto one_if(const E& value, T v) -> binary_expr<typename E::value_type, const E&, one_if_binary_op<typename E::value_type, T>, scalar<T>> {
     return {value, scalar<T>(v)};
 }
@@ -581,7 +581,7 @@ auto logistic_noise(const E& value) -> unary_expr<typename E::value_type, const 
     return {value};
 }
 
-template<typename E, typename T, cpp::enable_if_u<cpp::and_u<is_etl_expr<E>::value, std::is_arithmetic<T>::value>::value> = cpp::detail::dummy>
+template<typename E, typename T, cpp::enable_if_all_u<is_etl_expr<E>::value, std::is_arithmetic<T>::value> = cpp::detail::dummy>
 auto ranged_noise(const E& value, T v) -> binary_expr<typename E::value_type, const E&, ranged_noise_binary_op<typename E::value_type, T>, scalar<T>> {
     return {value, scalar<T>(v)};
 }
@@ -731,7 +731,7 @@ auto transpose(const E& value) -> transform_expr<typename E::value_type, transpo
 
 //{{{ Apply a reduction on an ETL expression (vector,matrix,binary,unary)
 
-template<typename LE, typename RE, cpp::enable_if_u<cpp::and_u<is_etl_expr<LE>::value, is_etl_expr<RE>::value>::value> = cpp::detail::dummy>
+template<typename LE, typename RE, cpp::enable_if_all_u<is_etl_expr<LE>::value, is_etl_expr<RE>::value> = cpp::detail::dummy>
 typename LE::value_type dot(const LE& lhs, const RE& rhs){
     return sum(lhs * rhs);
 }
