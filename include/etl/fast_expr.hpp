@@ -557,6 +557,11 @@ auto one_if(const E& value, T v) -> binary_expr<typename E::value_type, const E&
 }
 
 template<typename E, cpp::enable_if_u<is_etl_expr<E>::value> = cpp::detail::dummy>
+auto one_if_max(const E& value) -> binary_expr<typename E::value_type, const E&, one_if_binary_op<typename E::value_type, typename E::value_type>, scalar<typename E::value_type>> {
+    return {value, scalar<typename E::value_type>(max(value))};
+}
+
+template<typename E, cpp::enable_if_u<is_etl_expr<E>::value> = cpp::detail::dummy>
 auto log(const E& value) -> unary_expr<typename E::value_type, const E&, log_unary_op<typename E::value_type>> {
     return {value};
 }

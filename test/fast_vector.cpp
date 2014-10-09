@@ -455,6 +455,18 @@ TEST_CASE( "fast_vector/one_if", "fast_vector::one_if" ) {
     REQUIRE(d[2] == 1.0);
 }
 
+TEST_CASE( "fast_vector/one_if_max", "fast_vector::one_if_max" ) {
+    etl::fast_vector<double, 5> a = {-1.0, 2.0, 0.0, 3.0, -4};
+
+    etl::fast_vector<double, 5> d(etl::one_if_max(a));
+
+    REQUIRE(d[0] == 0.0);
+    REQUIRE(d[1] == 0.0);
+    REQUIRE(d[2] == 0.0);
+    REQUIRE(d[3] == 1.0);
+    REQUIRE(d[4] == 0.0);
+}
+
 constexpr bool binary(double a){
     return a == 0.0 || a == 1.0;
 }
