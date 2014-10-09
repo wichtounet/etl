@@ -481,7 +481,7 @@ TEST_CASE( "fast_vector/dot_2", "sum" ) {
     REQUIRE(d == -21.0);
 }
 
-TEST_CASE( "fast_vector/min_reduc", "min" ) {
+TEST_CASE( "fast_vector/min_reduc_1", "min" ) {
     etl::fast_vector<double, 3> a = {-1.0, 2.0, 8.5};
 
     auto d = min(a);
@@ -489,12 +489,36 @@ TEST_CASE( "fast_vector/min_reduc", "min" ) {
     REQUIRE(d == -1.0);
 }
 
-TEST_CASE( "fast_vector/max_reduc", "max" ) {
+TEST_CASE( "fast_vector/max_reduc_1", "max" ) {
     etl::fast_vector<double, 3> a = {-1.0, 2.0, 8.5};
 
     auto d = max(a);
 
     REQUIRE(d == 8.5);
+}
+
+TEST_CASE( "fast_vector/min_reduc_2", "min" ) {
+    etl::fast_vector<double, 3> a = {-1.0, 2.0, 8.5};
+
+    auto& d = min(a);
+
+    REQUIRE(d == -1.0);
+
+    d = 3.3;
+
+    REQUIRE(d == 3.3);
+}
+
+TEST_CASE( "fast_vector/max_reduc_2", "max" ) {
+    etl::fast_vector<double, 3> a = {-1.0, 2.0, 8.5};
+
+    auto& d = max(a);
+
+    REQUIRE(d == 8.5);
+
+    d = 3.2;
+
+    REQUIRE(d == 3.2);
 }
 
 //}}} Reductions
