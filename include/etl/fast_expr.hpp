@@ -725,25 +725,29 @@ typename E::value_type mean(const E& values){
 }
 
 template<typename E, cpp::enable_if_u<is_etl_expr<E>::value> = cpp::detail::dummy>
-typename E::value_type max(const E& values){
-    typename E::value_type m = std::numeric_limits<typename E::value_type>::min();
+typename std::conditional<std::is_const<E>::value, const typename E::value_type&, typename E::value_type&>::type max(E& values){
+    std::size_t m = 0;
 
-    for(auto& v : values){
-        m = std::max(m, v);
+    for(std::size_t i = 1; i < size(values); ++i){
+        if(values[i] > values[m]){
+            m = i;
+        }
     }
 
-    return m;
+    return values[m];
 }
 
 template<typename E, cpp::enable_if_u<is_etl_expr<E>::value> = cpp::detail::dummy>
-typename E::value_type min(const E& values){
-    typename E::value_type m = std::numeric_limits<typename E::value_type>::max();
+typename std::conditional<std::is_const<E>::value, const typename E::value_type&, typename E::value_type&>::type min(E& values){
+    std::size_t m = 0;
 
-    for(auto& v : values){
-        m = std::min(m, v);
+    for(std::size_t i = 1; i < size(values); ++i){
+        if(values[i] < values[m]){
+            m = i;
+        }
     }
 
-    return m;
+    return values[m];
 }
 
 //}}}
