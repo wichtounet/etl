@@ -155,13 +155,13 @@ private:
 
     Expr _value;
 
-    static constexpr const bool non_const_return_ref = 
+    static constexpr const bool non_const_return_ref =
         cpp::and_u<
             std::is_lvalue_reference<decltype(_value[0])>::value,
             cpp::not_u<std::is_const<decltype(_value[0])>::value>::value
         >::value;
-    
-    static constexpr const bool const_return_ref = 
+
+    static constexpr const bool const_return_ref =
         std::is_lvalue_reference<decltype(_value[0])>::value;
 
 public:
@@ -236,7 +236,7 @@ public:
     const_return_type operator[](std::size_t i) const {
         return value()[i];
     }
-    
+
     template<typename... S>
     return_type operator()(S... args){
         static_assert(sizeof...(S) == etl_traits<this_type>::dimensions(), "Invalid number of parameters");
@@ -665,14 +665,14 @@ template<std::size_t Rows, std::size_t Columns, typename E, cpp::enable_if_u<is_
 auto reshape(const E& value) -> unary_expr<typename E::value_type, fast_matrix_view<const E, Rows, Columns>, identity_op> {
     cpp_assert(etl_traits<std::decay_t<E>>::size(value) == Rows * Columns, "Invalid size for reshape");
 
-    return {fast_matrix_view<E, Rows, Columns>(value)};
+    return {fast_matrix_view<const E, Rows, Columns>(value)};
 }
 
 template<typename E, cpp::enable_if_u<is_etl_expr<E>::value> = cpp::detail::dummy>
 auto reshape(const E& value, std::size_t rows, std::size_t columns) -> unary_expr<typename E::value_type, dyn_matrix_view<const E>, identity_op> {
     cpp_assert(etl_traits<std::decay_t<E>>::size(value) == rows * columns, "Invalid size for reshape");
 
-    return {dyn_matrix_view<E>(value, rows, columns)};
+    return {dyn_matrix_view<const E>(value, rows, columns)};
 }
 
 //}}}
