@@ -484,6 +484,13 @@ struct min_binary_op {
     }
 };
 
+template<typename T, typename E>
+struct one_if_binary_op {
+    static constexpr T apply(const T& x, E value){
+        return 1.0 ? x == value : 0.0;
+    }
+};
+
 template<typename T = double>
 struct normal_generator_op {
     using value_type = T;

@@ -551,6 +551,11 @@ auto min(const E& value, T v) -> binary_expr<typename E::value_type, const E&, m
     return {value, scalar<T>(v)};
 }
 
+template<typename E, typename T, cpp::enable_if_u<cpp::and_u<is_etl_expr<E>::value, std::is_arithmetic<T>::value>::value> = cpp::detail::dummy>
+auto one_if(const E& value, T v) -> binary_expr<typename E::value_type, const E&, one_if_binary_op<typename E::value_type, T>, scalar<T>> {
+    return {value, scalar<T>(v)};
+}
+
 template<typename E, cpp::enable_if_u<is_etl_expr<E>::value> = cpp::detail::dummy>
 auto log(const E& value) -> unary_expr<typename E::value_type, const E&, log_unary_op<typename E::value_type>> {
     return {value};

@@ -445,6 +445,16 @@ TEST_CASE( "fast_vector/min", "fast_vector::min" ) {
     REQUIRE(d[2] == 0.0);
 }
 
+TEST_CASE( "fast_vector/one_if", "fast_vector::one_if" ) {
+    etl::fast_vector<double, 3> a = {-1.0, 2.0, 0.0};
+
+    etl::fast_vector<double, 3> d(etl::one_if(a, 0.0));
+
+    REQUIRE(d[0] == 0.0);
+    REQUIRE(d[1] == 0.0);
+    REQUIRE(d[2] == 1.0);
+}
+
 constexpr bool binary(double a){
     return a == 0.0 || a == 1.0;
 }
