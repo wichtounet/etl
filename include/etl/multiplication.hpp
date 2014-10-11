@@ -52,8 +52,24 @@ static C& mmul(const A& a, const B& b, C& c){
             }
         }
     }
-    
+
     return c;
+}
+
+template<typename A, typename B, typename C, cpp::enable_if_all_u<
+    etl_traits<A>::is_fast, etl_traits<B>::is_fast, etl_traits<C>::is_fast,
+    etl_traits<A>::dimensions() == 1, etl_traits<B>::dimensions() == 2
+> = cpp::detail::dummy>
+static C& auto_vmmul(const A& a, const B& b, C& c){
+    return mmul(reshape<1, etl_traits<B>::template dim<0>()>(a), b, c);
+}
+
+template<typename A, typename B, typename C, cpp::enable_if_all_u<
+    etl_traits<A>::is_fast, etl_traits<B>::is_fast, etl_traits<C>::is_fast,
+    etl_traits<A>::dimensions() == 2, etl_traits<B>::dimensions() == 1
+> = cpp::detail::dummy>
+static C& auto_vmmul(const A& a, const B& b, C& c){
+    return mmul(a, reshape<etl_traits<A>::template dim<1>(),1>(b), c);
 }
 
 } //end of namespace etl
