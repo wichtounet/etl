@@ -78,6 +78,39 @@ TEST_CASE( "multiplication/auto_vmmul_3", "auto_vmmul" ) {
     REQUIRE(c(0,1) == 100);
 }
 
+TEST_CASE( "multiplication/auto_vmmul_4", "auto_vmmul" ) {
+    etl::dyn_matrix<double> a(2,3, etl::values(1,2,3,4,5,6));
+    etl::dyn_vector<double> b(3, etl::values(7,8,9));
+    etl::dyn_matrix<double> c(2,1);
+
+    etl::auto_vmmul(a, b, c);
+
+    REQUIRE(c(0,0) == 50);
+    REQUIRE(c(1,0) == 122);
+}
+
+TEST_CASE( "multiplication/auto_vmmul_5", "auto_vmmul" ) {
+    etl::dyn_matrix<double> a(2, 5, etl::values(1,2,3,4,5,6,7,8,9,10));
+    etl::dyn_vector<double> b(5, etl::values(7,8,9,10,11));
+    etl::dyn_matrix<double> c(2, 1);
+
+    etl::auto_vmmul(a, b, c);
+
+    REQUIRE(c(0,0) == 145);
+    REQUIRE(c(1,0) == 370);
+}
+
+TEST_CASE( "multiplication/auto_vmmul_6", "auto_vmmul" ) {
+    etl::dyn_matrix<double> a(3, 2, etl::values(1,2,3,4,5,6));
+    etl::dyn_vector<double> b(3, etl::values(7,8,9));
+    etl::dyn_matrix<double> c(1, 2);
+
+    etl::auto_vmmul(b, a, c);
+
+    REQUIRE(c(0,0) == 76);
+    REQUIRE(c(0,1) == 100);
+}
+
 TEST_CASE( "multiplication/dyn_mmul", "mmul" ) {
     etl::dyn_matrix<double> a(3,3, std::initializer_list<double>({1,2,3,4,5,6,7,8,9}));
     etl::dyn_matrix<double> b(3,3, std::initializer_list<double>({7,8,9,9,10,11,11,12,13}));
