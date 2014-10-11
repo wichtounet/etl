@@ -78,7 +78,7 @@ template<typename A, typename B, typename C, cpp::enable_if_all_u<
     cpp::not_u<etl_traits<A>::is_fast>::value
 > = cpp::detail::dummy>
 static C& auto_vmmul(const A& a, const B& b, C& c){
-    return mmul(reshape(a, 1, dim(b, 0)), b, c);
+    return mmul(reshape(a, 1, dim<0>(b)), b, c);
 }
 
 template<typename A, typename B, typename C, cpp::enable_if_all_u<
@@ -87,7 +87,7 @@ template<typename A, typename B, typename C, cpp::enable_if_all_u<
     cpp::not_u<etl_traits<B>::is_fast>::value
 > = cpp::detail::dummy>
 static C& auto_vmmul(const A& a, const B& b, C& c){
-    return mmul(a, reshape(b, dim(a,1), 1), c);
+    return mmul(a, reshape(b, dim<1>(a), 1), c);
 }
 
 template<typename A, typename B, typename C, cpp::enable_if_all_u<
