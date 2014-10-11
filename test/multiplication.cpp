@@ -8,7 +8,9 @@
 #include "catch.hpp"
 
 #include "etl/fast_matrix.hpp"
+#include "etl/fast_vector.hpp"
 #include "etl/dyn_matrix.hpp"
+#include "etl/dyn_vector.hpp"
 #include "etl/multiplication.hpp"
 #include "etl/stop.hpp"
 
@@ -41,6 +43,39 @@ TEST_CASE( "multiplication/mmul2", "mmul" ) {
     REQUIRE(c(2,0) == 220);
     REQUIRE(c(2,1) == 244);
     REQUIRE(c(2,2) == 268);
+}
+
+TEST_CASE( "multiplication/auto_vmmul_1", "auto_vmmul" ) {
+    etl::fast_matrix<double, 2, 3> a = {1,2,3,4,5,6};
+    etl::fast_vector<double, 3> b = {7,8,9};
+    etl::fast_matrix<double, 2, 1> c;
+
+    etl::auto_vmmul(a, b, c);
+
+    REQUIRE(c(0,0) == 50);
+    REQUIRE(c(1,0) == 122);
+}
+
+TEST_CASE( "multiplication/auto_vmmul_2", "auto_vmmul" ) {
+    etl::fast_matrix<double, 2, 5> a = {1,2,3,4,5,6,7,8,9,10};
+    etl::fast_vector<double, 5> b = {7,8,9,10,11};
+    etl::fast_matrix<double, 2, 1> c;
+
+    etl::auto_vmmul(a, b, c);
+
+    REQUIRE(c(0,0) == 145);
+    REQUIRE(c(1,0) == 370);
+}
+
+TEST_CASE( "multiplication/auto_vmmul_3", "auto_vmmul" ) {
+    etl::fast_matrix<double, 3, 2> a = {1,2,3,4,5,6};
+    etl::fast_vector<double, 3> b = {7,8,9};
+    etl::fast_matrix<double, 1, 2> c;
+
+    etl::auto_vmmul(b, a, c);
+
+    REQUIRE(c(0,0) == 76);
+    REQUIRE(c(0,1) == 100);
 }
 
 TEST_CASE( "multiplication/dyn_mmul", "mmul" ) {
