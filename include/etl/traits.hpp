@@ -574,19 +574,17 @@ constexpr std::size_t dim(const E&){
     return etl_traits<E>::template dim<D>();
 }
 
-template<typename LE, typename RE, cpp::enable_if_u<cpp::or_u<etl_traits<LE>::is_generator, etl_traits<RE>::is_generator>::value> = cpp::detail::dummy>
+template<typename LE, typename RE, cpp::enable_if_one_u<etl_traits<LE>::is_generator, etl_traits<RE>::is_generator> = cpp::detail::dummy>
 void ensure_same_size(const LE&, const RE&){
     //Nothing to test, generators are of infinite size
 }
 
-template<typename LE, typename RE, cpp::disable_if_u<
-        cpp::or_u<
-            cpp::and_u<
-                cpp::not_u<cpp::or_u<etl_traits<LE>::is_generator, etl_traits<RE>::is_generator>::value>::value,
-                cpp::and_u<is_etl_expr<LE>::value, is_etl_expr<RE>::value, etl_traits<LE>::is_fast, etl_traits<RE>::is_fast>::value
-            >::value,
-            cpp::or_u<etl_traits<LE>::is_generator, etl_traits<RE>::is_generator>::value
-        >::value
+template<typename LE, typename RE, cpp::disable_if_one_u<
+        cpp::and_u<
+            cpp::not_u<cpp::or_u<etl_traits<LE>::is_generator, etl_traits<RE>::is_generator>::value>::value,
+            cpp::and_u<is_etl_expr<LE>::value, is_etl_expr<RE>::value, etl_traits<LE>::is_fast, etl_traits<RE>::is_fast>::value
+        >::value,
+        cpp::or_u<etl_traits<LE>::is_generator, etl_traits<RE>::is_generator>::value
     > = cpp::detail::dummy>
 void ensure_same_size(const LE& lhs, const RE& rhs){
     cpp_assert(size(lhs) == size(rhs), "Cannot perform element-wise operations on collections of different size");
