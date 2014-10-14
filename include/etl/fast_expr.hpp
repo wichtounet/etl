@@ -13,6 +13,15 @@
 
 namespace etl {
 
+template<typename E, typename Enable = void>
+struct sub_size_compare;
+
+template<typename E>
+struct sub_size_compare<E, std::enable_if_t<etl_traits<E>::is_generator>> : std::integral_constant<std::size_t, std::numeric_limits<std::size_t>::max()> {};
+
+template<typename E>
+struct sub_size_compare<E, cpp::disable_if_t<etl_traits<E>::is_generator>> : std::integral_constant<std::size_t, etl_traits<E>::dimensions()> {};
+
 struct identity_op;
 
 template <typename T, typename LeftExpr, typename BinaryOp, typename RightExpr>
@@ -28,7 +37,7 @@ private:
 
     LeftExpr _lhs;
     RightExpr _rhs;
-
+ 
 public:
     using value_type = T;
 
@@ -80,8 +89,7 @@ public:
     }
 
     template<typename... S>
-    value_type operator()(S... args) const {
-        static_assert(sizeof...(S) == etl_traits<this_type>::dimensions(), "Invalid number of parameters");
+    std::enable_if_t<sizeof...(S) == sub_size_compare<this_type>::value, value_type> operator()(S... args) const {
         static_assert(cpp::all_convertible_to<std::size_t, S...>::value, "Invalid size types");
 
         return BinaryOp::apply(lhs()(args...), rhs()(args...));
@@ -99,7 +107,7 @@ private:
     using this_type = unary_expr<T, Expr, UnaryOp>;
 
     Expr _value;
-
+ 
 public:
     //Cannot be constructed with no args
     unary_expr() = delete;
@@ -138,8 +146,7 @@ public:
     }
 
     template<typename... S>
-    value_type operator()(S... args) const {
-        static_assert(sizeof...(S) == etl_traits<this_type>::dimensions(), "Invalid number of parameters");
+    std::enable_if_t<sizeof...(S) == sub_size_compare<this_type>::value, value_type> operator()(S... args) const {
         static_assert(cpp::all_convertible_to<std::size_t, S...>::value, "Invalid size types");
 
         return UnaryOp::apply(value()(args...));
@@ -163,7 +170,7 @@ private:
 
     static constexpr const bool const_return_ref =
         std::is_lvalue_reference<decltype(_value[0])>::value;
-
+ 
 public:
     using value_type = T;
     using return_type = typename std::conditional<non_const_return_ref, value_type&, value_type>::type;
@@ -237,17 +244,25 @@ public:
         return value()[i];
     }
 
+    template<bool B = (sub_size_compare<this_type>::value > 1), cpp::enable_if_u<B> = cpp::detail::dummy>
+    auto operator()(std::size_t i){
+        return sub(*this, i);
+    }
+
+    template<bool B = (sub_size_compare<this_type>::value > 1), cpp::enable_if_u<B> = cpp::detail::dummy>
+    auto operator()(std::size_t i) const {
+        return sub(*this, i);
+    }
+
     template<typename... S>
-    return_type operator()(S... args){
-        static_assert(sizeof...(S) == etl_traits<this_type>::dimensions(), "Invalid number of parameters");
+    std::enable_if_t<sizeof...(S) == sub_size_compare<this_type>::value, return_type> operator()(S... args){
         static_assert(cpp::all_convertible_to<std::size_t, S...>::value, "Invalid size types");
 
         return value()(args...);
     }
 
     template<typename... S>
-    const_return_type operator()(S... args) const {
-        static_assert(sizeof...(S) == etl_traits<this_type>::dimensions(), "Invalid number of parameters");
+    std::enable_if_t<sizeof...(S) == sub_size_compare<this_type>::value, const_return_type> operator()(S... args) const {
         static_assert(cpp::all_convertible_to<std::size_t, S...>::value, "Invalid size types");
 
         return value()(args...);
@@ -262,7 +277,7 @@ private:
     using this_type = transform_expr<T, Expr>;
 
     Expr _value;
-
+ 
 public:
     using value_type = T;
 
@@ -303,8 +318,7 @@ public:
     }
 
     template<typename... S>
-    value_type operator()(S... args) const {
-        static_assert(sizeof...(S) == etl_traits<this_type>::dimensions(), "Invalid number of parameters");
+    std::enable_if_t<sizeof...(S) == sub_size_compare<this_type>::value, value_type> operator()(S... args) const {
         static_assert(cpp::all_convertible_to<std::size_t, S...>::value, "Invalid size types");
 
         return value()(args...);
