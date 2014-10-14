@@ -13,15 +13,6 @@
 
 namespace etl {
 
-template<typename E, typename Enable = void>
-struct sub_size_compare;
-
-template<typename E>
-struct sub_size_compare<E, std::enable_if_t<etl_traits<E>::is_generator>> : std::integral_constant<std::size_t, std::numeric_limits<std::size_t>::max()> {};
-
-template<typename E>
-struct sub_size_compare<E, cpp::disable_if_t<etl_traits<E>::is_generator>> : std::integral_constant<std::size_t, etl_traits<E>::dimensions()> {};
-
 struct identity_op;
 
 template <typename T, typename LeftExpr, typename BinaryOp, typename RightExpr>
