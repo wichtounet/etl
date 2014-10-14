@@ -40,20 +40,21 @@ struct scalar {
 template<typename T>
 struct hflip_transformer {
     using sub_type = T;
+    using value_type = typename std::decay_t<T>::value_type;
 
-    const T& sub;
+    sub_type sub;
 
-    explicit hflip_transformer(const T& vec) : sub(vec) {}
+    explicit hflip_transformer(sub_type vec) : sub(vec) {}
 
-    typename T::value_type operator[](std::size_t i) const {
+    value_type operator[](std::size_t i) const {
         return sub[size(sub) - 1 - i];
     }
 
-    typename T::value_type operator()(std::size_t i) const {
+    value_type operator()(std::size_t i) const {
         return sub(size(sub) - 1 - i);
     }
 
-    typename T::value_type operator()(std::size_t i, std::size_t j) const {
+    value_type operator()(std::size_t i, std::size_t j) const {
         return sub(i, columns(sub) - 1 - j);
     }
 };
@@ -61,20 +62,21 @@ struct hflip_transformer {
 template<typename T>
 struct vflip_transformer {
     using sub_type = T;
+    using value_type = typename std::decay_t<T>::value_type;
 
-    const T& sub;
+    sub_type sub;
 
-    explicit vflip_transformer(const T& vec) : sub(vec) {}
+    explicit vflip_transformer(sub_type vec) : sub(vec) {}
 
-    typename T::value_type operator[](std::size_t i) const {
+    value_type operator[](std::size_t i) const {
         return sub[i];
     }
 
-    typename T::value_type operator()(std::size_t i) const {
+    value_type operator()(std::size_t i) const {
         return sub(i);
     }
 
-    typename T::value_type operator()(std::size_t i, std::size_t j) const {
+    value_type operator()(std::size_t i, std::size_t j) const {
         return sub(rows(sub) - 1 - i, j);
     }
 };
@@ -82,20 +84,21 @@ struct vflip_transformer {
 template<typename T>
 struct fflip_transformer {
     using sub_type = T;
+    using value_type = typename std::decay_t<T>::value_type;
 
-    const T& sub;
+    sub_type sub;
 
-    explicit fflip_transformer(const T& vec) : sub(vec) {}
+    explicit fflip_transformer(sub_type vec) : sub(vec) {}
 
-    typename T::value_type operator[](std::size_t i) const {
+    value_type operator[](std::size_t i) const {
         return sub[i];
     }
 
-    typename T::value_type operator()(std::size_t i) const {
+    value_type operator()(std::size_t i) const {
         return sub(i);
     }
 
-    typename T::value_type operator()(std::size_t i, std::size_t j) const {
+    value_type operator()(std::size_t i, std::size_t j) const {
         return sub(rows(sub) - 1 - i, columns(sub) - 1 - j);
     }
 };
@@ -103,20 +106,21 @@ struct fflip_transformer {
 template<typename T>
 struct transpose_transformer {
     using sub_type = T;
+    using value_type = typename std::decay_t<T>::value_type;
 
-    const T& sub;
+    sub_type sub;
 
-    explicit transpose_transformer(const T& vec) : sub(vec) {}
+    explicit transpose_transformer(sub_type vec) : sub(vec) {}
 
-    typename T::value_type operator[](std::size_t i) const {
+    value_type operator[](std::size_t i) const {
         return sub[i];
     }
 
-    typename T::value_type operator()(std::size_t i) const {
+    value_type operator()(std::size_t i) const {
         return sub(i);
     }
 
-    typename T::value_type operator()(std::size_t i, std::size_t j) const {
+    value_type operator()(std::size_t i, std::size_t j) const {
         return sub(j, i);
     }
 };
@@ -126,25 +130,31 @@ struct dim_view {
     static_assert(D > 0 || D < 3, "Invalid dimension");
 
     using sub_type = T;
-    using value_type = typename T::value_type;
+    using value_type = typename std::decay_t<T>::value_type;
 
-    T& sub;
+    sub_type sub;
     const std::size_t i;
 
-    using return_type = typename std::conditional<
-        cpp::and_u<
-            std::is_lvalue_reference<decltype(sub(0,0))>::value,
-            cpp::not_u<std::is_const<T>::value>::value
-        >::value,
-        value_type&,
-        value_type>::type;
+    using return_type = typename 
+        std::conditional<
+            std::is_const<std::remove_reference_t<decltype(sub(0,0))>>::value,
+            const value_type&,
+            typename std::conditional<
+                cpp::and_u<
+                    std::is_lvalue_reference<decltype(sub(0,0))>::value,
+                    cpp::not_u<std::is_const<T>::value>::value
+                >::value,
+                value_type&,
+                value_type
+            >::type
+        >::type;
 
     using const_return_type = typename std::conditional<
         std::is_lvalue_reference<decltype(sub(0,0))>::value,
         const value_type&,
         value_type>::type;
 
-    dim_view(T& sub, std::size_t i) : sub(sub), i(i) {}
+    dim_view(sub_type sub, std::size_t i) : sub(sub), i(i) {}
 
     const_return_type operator[](std::size_t j) const {
         if(D == 1){
@@ -182,25 +192,31 @@ struct dim_view {
 template<typename T>
 struct sub_view {
     using parent_type = T;
-    using value_type = typename T::value_type;
+    using value_type = typename std::decay_t<T>::value_type;
 
-    T& parent;
+    parent_type parent;
     const std::size_t i;
 
-    using return_type = typename std::conditional<
-        cpp::and_u<
-            std::is_lvalue_reference<decltype(parent[0])>::value,
-            cpp::not_u<std::is_const<T>::value>::value
-        >::value,
-        value_type&,
-        value_type>::type;
+    using return_type = typename 
+        std::conditional<
+            std::is_const<std::remove_reference_t<decltype(parent[0])>>::value,
+            const value_type&,
+            typename std::conditional<
+                cpp::and_u<
+                    std::is_lvalue_reference<decltype(parent[0])>::value,
+                    cpp::not_u<std::is_const<T>::value>::value
+                >::value,
+                value_type&,
+                value_type
+            >::type
+        >::type;
 
     using const_return_type = typename std::conditional<
         std::is_lvalue_reference<decltype(parent[0])>::value,
         const value_type&,
         value_type>::type;
 
-    sub_view(T& parent, std::size_t i) : parent(parent), i(i) {}
+    sub_view(parent_type parent, std::size_t i) : parent(parent), i(i) {}
 
     const_return_type operator[](std::size_t j) const {
         return parent[i * subsize(parent) + j];
@@ -225,25 +241,31 @@ template<typename T, std::size_t Rows, std::size_t Columns>
 struct fast_matrix_view {
     static_assert(Rows > 0 && Columns > 0 , "Invalid dimensions");
 
-    using sub_tyoe = T;
-    using value_type = typename T::value_type;
+    using sub_type = T;
+    using value_type = typename std::decay_t<T>::value_type;
 
-    T& sub;
+    sub_type sub;
 
-    using return_type = typename std::conditional<
-        cpp::and_u<
-            std::is_lvalue_reference<decltype(sub(0))>::value,
-            cpp::not_u<std::is_const<T>::value>::value
-        >::value,
-        value_type&,
-        value_type>::type;
+    using return_type = typename 
+        std::conditional<
+            std::is_const<std::remove_reference_t<decltype(sub(0))>>::value,
+            const value_type&,
+            typename std::conditional<
+                cpp::and_u<
+                    std::is_lvalue_reference<decltype(sub(0))>::value,
+                    cpp::not_u<std::is_const<T>::value>::value
+                >::value,
+                value_type&,
+                value_type
+            >::type
+        >::type;
 
     using const_return_type = typename std::conditional<
         std::is_lvalue_reference<decltype(sub(0))>::value,
         const value_type&,
         value_type>::type;
 
-    explicit fast_matrix_view(T& sub) : sub(sub) {}
+    explicit fast_matrix_view(sub_type sub) : sub(sub) {}
 
     const_return_type operator[](std::size_t j) const {
         return sub(j);
@@ -273,26 +295,32 @@ struct fast_matrix_view {
 template<typename T>
 struct dyn_matrix_view {
     using sub_type = T;
-    using value_type = typename T::value_type;
+    using value_type = typename std::decay_t<T>::value_type;
 
-    T& sub;
+    sub_type sub;
     std::size_t rows;
     std::size_t columns;
 
-    using return_type = typename std::conditional<
-        cpp::and_u<
-            std::is_lvalue_reference<decltype(sub(0))>::value,
-            cpp::not_u<std::is_const<T>::value>::value
-        >::value,
-        value_type&,
-        value_type>::type;
+    using return_type = typename 
+        std::conditional<
+            std::is_const<std::remove_reference_t<decltype(sub(0))>>::value,
+            const value_type&,
+            typename std::conditional<
+                cpp::and_u<
+                    std::is_lvalue_reference<decltype(sub(0))>::value,
+                    cpp::not_u<std::is_const<T>::value>::value
+                >::value,
+                value_type&,
+                value_type
+            >::type
+        >::type;
 
     using const_return_type = typename std::conditional<
         std::is_lvalue_reference<decltype(sub(0))>::value,
         const value_type&,
         value_type>::type;
 
-    dyn_matrix_view(T& sub, std::size_t rows, std::size_t columns) : sub(sub), rows(rows), columns(columns) {}
+    dyn_matrix_view(sub_type sub, std::size_t rows, std::size_t columns) : sub(sub), rows(rows), columns(columns) {}
 
     const_return_type operator[](std::size_t j) const {
         return sub(j);

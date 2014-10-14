@@ -342,7 +342,7 @@ struct etl_traits<transpose_transformer<T>> {
 template <typename T>
 struct etl_traits<T, std::enable_if_t<cpp::and_u<is_transformer_expr<T>::value, cpp::not_u<cpp::is_specialization_of<etl::transpose_transformer, T>::value>::value>::value>> {
     using expr_t = T;
-    using sub_expr_t = typename T::sub_type;
+    using sub_expr_t = std::decay_t<typename T::sub_type>;
 
     static constexpr const bool is_fast = etl_traits<sub_expr_t>::is_fast;
     static constexpr const bool is_value = false;

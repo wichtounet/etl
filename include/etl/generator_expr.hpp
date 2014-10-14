@@ -26,6 +26,10 @@ public:
 
     template<typename... Args>
     generator_expr(Args... args) : generator(std::forward<Args>(args)...) {}
+    
+    generator_expr(const generator_expr& e) : generator(e.generator) {
+        //Nothing else to init
+    }
 
     generator_expr(generator_expr&& e) : generator(std::move(e.generator)) {
         //Nothing else to init

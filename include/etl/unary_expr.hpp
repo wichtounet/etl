@@ -83,7 +83,7 @@ private:
     static constexpr const bool non_const_return_ref =
         cpp::and_u<
             std::is_lvalue_reference<decltype(_value[0])>::value,
-            cpp::not_u<std::is_const<decltype(_value[0])>::value>::value
+            cpp::not_u<std::is_const<std::remove_reference_t<decltype(_value[0])>>::value>::value
         >::value;
 
     static constexpr const bool const_return_ref =
