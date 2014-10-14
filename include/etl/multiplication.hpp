@@ -17,9 +17,9 @@ namespace detail {
 template<typename A, typename B, typename C, cpp::disable_if_all_u<etl_traits<A>::is_fast, etl_traits<B>::is_fast, etl_traits<C>::is_fast> = cpp::detail::dummy>
 void check_mmul_sizes(const A& a, const B& b, C& c){
     cpp_assert(
-            dim(a,1) == dim(b,0)          //interior dimensions
-        &&  dim(a,0) == dim(c,0)          //exterior dimension 1
-        &&  dim(b,1) == dim(c,1),         //exterior dimension 2
+            dim<1>(a) == dim<0>(b)          //interior dimensions
+        &&  dim<0>(a) == dim<0>(c)          //exterior dimension 1
+        &&  dim<1>(b) == dim<1>(c),         //exterior dimension 2
         "Invalid sizes for multiplication");
     cpp_unused(a);
     cpp_unused(b);
