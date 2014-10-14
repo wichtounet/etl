@@ -363,6 +363,62 @@ TEST_CASE( "dyn_matrix/sub_view_6", "dyn_matrix::sub" ) {
     REQUIRE(sub(test_matrix, 1)(2, 1) == -1);
 }
 
+TEST_CASE( "fast_matrix/sub_min_1", "fast_matrix::sub::min" ) {
+    etl::fast_matrix<double, 2, 2, 2> a = {1.1, 2.0, 5.0, 1.0, 1.1, 2.0, 5.0, 1.0};
+
+    REQUIRE(etl::max(etl::sub(a, 0)) == 5.0);
+    REQUIRE(etl::min(etl::sub(a, 0)) == 1.0);
+
+    auto m1 = etl::max(etl::sub(a,0));
+    auto m2 = etl::min(etl::sub(a,0));
+
+    REQUIRE(m1 == 5.0);
+    REQUIRE(m2 == 1.0);
+}
+
+TEST_CASE( "fast_matrix/sub_min_2", "fast_matrix::sub::min" ) {
+    etl::fast_matrix<double, 2, 2, 2> b = {1.1, 2.0, 5.0, 1.0, 1.1, 2.0, 5.0, 1.0};
+
+    auto const& a = b;
+
+    REQUIRE(etl::max(etl::sub(a, 0)) == 5.0);
+    REQUIRE(etl::min(etl::sub(a, 0)) == 1.0);
+
+    auto m1 = etl::max(etl::sub(a,0));
+    auto m2 = etl::min(etl::sub(a,0));
+
+    REQUIRE(m1 == 5.0);
+    REQUIRE(m2 == 1.0);
+}
+
+TEST_CASE( "fast_matrix/sub_min_3", "fast_matrix::sub::min" ) {
+    etl::fast_matrix<double, 2, 2, 2> a = {1.1, 2.0, 5.0, 1.0, 1.1, 2.0, 5.0, 1.0};
+
+    REQUIRE(etl::max(a) == 5.0);
+    REQUIRE(etl::min(a) == 1.0);
+
+    auto& m1 = etl::max(a);
+    auto& m2 = etl::min(a);
+
+    REQUIRE(m1 == 5.0);
+    REQUIRE(m2 == 1.0);
+}
+
+TEST_CASE( "fast_matrix/sub_min_4", "fast_matrix::sub::min" ) {
+    etl::fast_matrix<double, 2, 2, 2> b = {1.1, 2.0, 5.0, 1.0, 1.1, 2.0, 5.0, 1.0};
+
+    auto const& a = b;
+
+    REQUIRE(etl::max(a) == 5.0);
+    REQUIRE(etl::min(a) == 1.0);
+
+    auto& m1 = etl::max(a);
+    auto& m2 = etl::min(a);
+
+    REQUIRE(m1 == 5.0);
+    REQUIRE(m2 == 1.0);
+}
+
 //}}}
 
 ///{{{ lvalue access
@@ -691,7 +747,7 @@ TEST_CASE( "lvalue/mmul1", "lvalue sub mmul" ) {
     etl::fast_matrix<double, 2, 2, 3> a = {1,2,3,4,5,6,1,2,3,4,5,6};
     etl::fast_matrix<double, 2, 3, 2> b = {7,8,9,10,11,12,7,8,9,10,11,12};
     etl::fast_matrix<double, 2, 2, 2> c;
-    
+
     auto s = etl::sub(c,0);
 
     static_assert(etl::is_etl_expr<decltype(s)>::value, "");
