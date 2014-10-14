@@ -82,7 +82,11 @@ template<typename LE, typename RE, cpp::enable_if_all_u<std::is_convertible<RE, 
 auto operator*(const LE& lhs, RE rhs) -> binary_expr<typename LE::value_type, const LE&, mul_binary_op<typename LE::value_type>, scalar<typename LE::value_type>> {
     return {lhs, scalar<typename LE::value_type>(rhs)};
 }
-template<typename LE, typename RE, cpp::enable_if_all_u<std::is_convertible<LE, typename RE::value_type>::value, is_etl_expr<RE>::value> = cpp::detail::dummy> auto operator*(LE lhs, const RE& rhs) -> binary_expr<typename RE::value_type, scalar<typename RE::value_type>, mul_binary_op<typename RE::value_type>, const RE&> { return {scalar<typename RE::value_type>(lhs), rhs}; }
+
+template<typename LE, typename RE, cpp::enable_if_all_u<std::is_convertible<LE, typename RE::value_type>::value, is_etl_expr<RE>::value> = cpp::detail::dummy> 
+auto operator*(LE lhs, const RE& rhs) -> binary_expr<typename RE::value_type, scalar<typename RE::value_type>, mul_binary_op<typename RE::value_type>, const RE&> { 
+    return {scalar<typename RE::value_type>(lhs), rhs}; 
+}
 
 template<typename LE, typename RE, cpp::enable_if_all_u<std::is_convertible<RE, typename LE::value_type>::value, is_etl_expr<LE>::value> = cpp::detail::dummy>
 auto operator/(const LE& lhs, RE rhs) -> binary_expr<typename LE::value_type, const LE&, div_binary_op<typename LE::value_type>, scalar<typename LE::value_type>> {
