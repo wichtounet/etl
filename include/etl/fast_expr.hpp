@@ -752,13 +752,25 @@ typename E::value_type mean(const E& values){
     return sum(values) / size(values);
 }
 
+template<typename E>
+struct value_return_type {
+using type =
+    typename std::conditional<
+        std::is_reference<E>::value,
+        typename std::conditional<
+            std::is_const<std::remove_reference_t<E>>::value,
+            const typename std::decay_t<E>::value_type&,
+            typename std::decay_t<E>::value_type&
+        >::type,
+        typename std::decay_t<E>::value_type
+    >::type;
+};
+
+template<typename E>
+using value_return_t = typename value_return_type<E>::type;
+
 template<typename E, cpp::enable_if_u<is_etl_expr<std::decay_t<E>>::value> = cpp::detail::dummy>
-typename std::conditional<
-    std::is_const<std::remove_reference_t<E>>::value,
-    const typename std::decay_t<E>::value_type&,
-    typename std::decay_t<E>::value_type&
->::type
-max(E&& values){
+value_return_t<E> max(E&& values){
     std::size_t m = 0;
 
     for(std::size_t i = 1; i < size(values); ++i){
@@ -771,12 +783,7 @@ max(E&& values){
 }
 
 template<typename E, cpp::enable_if_u<is_etl_expr<std::decay_t<E>>::value> = cpp::detail::dummy>
-typename std::conditional<
-    std::is_const<std::remove_reference_t<E>>::value,
-    const typename std::decay_t<E>::value_type&,
-    typename std::decay_t<E>::value_type&
->::type
-min(E&& values){
+value_return_t<E> min(E&& values){
     std::size_t m = 0;
 
     for(std::size_t i = 1; i < size(values); ++i){
