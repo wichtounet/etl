@@ -291,7 +291,7 @@ public:
     //TODO Would probably be useful to have dim(size_t i)
 
     template<typename... S>
-    value_type& operator()(S... args){
+    std::enable_if_t<sizeof...(S) == sizeof...(Dims), value_type&> operator()(S... args){
         static_assert(sizeof...(S) == sizeof...(Dims), "Invalid number of parameters");
         static_assert(cpp::all_convertible_to<std::size_t, S...>::value, "Invalid size types");
 
@@ -299,7 +299,7 @@ public:
     }
 
     template<typename... S>
-    const value_type& operator()(S... args) const {
+    std::enable_if_t<sizeof...(S) == sizeof...(Dims), const value_type&> operator()(S... args) const {
         static_assert(sizeof...(S) == sizeof...(Dims), "Invalid number of parameters");
         static_assert(cpp::all_convertible_to<std::size_t, S...>::value, "Invalid size types");
 
