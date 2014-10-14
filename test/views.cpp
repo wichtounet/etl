@@ -422,6 +422,28 @@ TEST_CASE( "dyn_matrix/sub_view_6", "dyn_matrix::sub" ) {
     REQUIRE(sub(test_matrix, 1)(2, 1) == -1);
 }
 
+TEST_CASE( "fast_matrix/sub_compound_1", "fast_matrix::sub" ) {
+    etl::fast_matrix<double, 2, 2, 2> a = {1.1, 2.0, 5.0, 1.0, 1.1, 2.0, 5.0, 1.0};
+
+    a(0) += 5.0;
+
+    REQUIRE(a(0, 0, 0) == 6.1);
+    REQUIRE(a(0, 0, 1) == 7.0);
+    REQUIRE(a(1, 0, 0) == 1.1);
+    REQUIRE(a(1, 0, 1) == 2.0);
+}
+
+TEST_CASE( "fast_matrix/sub_compound_2", "fast_matrix::sub" ) {
+    etl::fast_matrix<double, 2, 2, 2> a = {1.1, 2.0, 5.0, 1.0, 1.1, 2.0, 5.0, 1.0};
+
+    a(0) += a(1) * 2.0;
+
+    REQUIRE(a(0, 0, 0) == Approx(3.3));
+    REQUIRE(a(0, 0, 1) == Approx(6.0));
+    REQUIRE(a(1, 0, 0) == 1.1);
+    REQUIRE(a(1, 0, 1) == 2.0);
+}
+
 TEST_CASE( "fast_matrix/sub_min_1", "fast_matrix::sub::min" ) {
     etl::fast_matrix<double, 2, 2, 2> a = {1.1, 2.0, 5.0, 1.0, 1.1, 2.0, 5.0, 1.0};
 
