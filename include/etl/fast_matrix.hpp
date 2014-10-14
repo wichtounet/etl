@@ -124,12 +124,10 @@ public:
 
     explicit fast_matrix(const fast_matrix& rhs){
         std::copy(rhs.begin(), rhs.end(), begin());
-        std::cout << "1.Heavy.C" << std::endl;
     }
 
     fast_matrix(fast_matrix&& rhs){
         std::copy(rhs.begin(), rhs.end(), begin());
-        std::cout << "1.Heavy.M" << std::endl;
     }
 
     template<typename LE, typename Op, typename RE>

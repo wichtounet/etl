@@ -106,7 +106,6 @@ public:
 
     dyn_matrix(const dyn_matrix& rhs) : _size(rhs._size), _data(rhs._data), _dimensions(rhs._dimensions) {
         //Nothing to init
-        std::cout << "2.Heavy.C" << std::endl;
     }
 
     //Sizes followed by an initializer list
