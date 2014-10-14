@@ -290,9 +290,18 @@ public:
 
     //TODO Would probably be useful to have dim(size_t i)
 
+    template<bool B = (n_dimensions > 1), cpp::enable_if_u<B> = cpp::detail::dummy>
+    auto operator()(std::size_t i){
+        return sub(*this, i);
+    }
+
+    template<bool B = (n_dimensions > 1), cpp::enable_if_u<B> = cpp::detail::dummy>
+    auto operator()(std::size_t i) const {
+        return sub(*this, i);
+    }
+
     template<typename... S>
     std::enable_if_t<sizeof...(S) == sizeof...(Dims), value_type&> operator()(S... args){
-        static_assert(sizeof...(S) == sizeof...(Dims), "Invalid number of parameters");
         static_assert(cpp::all_convertible_to<std::size_t, S...>::value, "Invalid size types");
 
         return access(static_cast<size_t>(args)...);
@@ -300,7 +309,6 @@ public:
 
     template<typename... S>
     std::enable_if_t<sizeof...(S) == sizeof...(Dims), const value_type&> operator()(S... args) const {
-        static_assert(sizeof...(S) == sizeof...(Dims), "Invalid number of parameters");
         static_assert(cpp::all_convertible_to<std::size_t, S...>::value, "Invalid size types");
 
         return access(static_cast<size_t>(args)...);

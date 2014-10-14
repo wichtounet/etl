@@ -372,32 +372,42 @@ public:
         return _dimensions[d];
     }
 
+    template<bool B = (n_dimensions > 1), cpp::enable_if_u<B> = cpp::detail::dummy>
+    auto operator()(std::size_t i){
+        return sub(*this, i);
+    }
+
+    template<bool B = (n_dimensions > 1), cpp::enable_if_u<B> = cpp::detail::dummy>
+    auto operator()(std::size_t i) const {
+        return sub(*this, i);
+    }
+
+    template<bool B = n_dimensions == 1, cpp::enable_if_u<B> = cpp::detail::dummy>
     value_type& operator()(size_t i){
         cpp_assert(i < dim(0), "Out of bounds");
-        cpp_assert(n_dimensions == 1, "Invalid number of parameters");
 
         return _data[i];
     }
 
+    template<bool B = n_dimensions == 1, cpp::enable_if_u<B> = cpp::detail::dummy>
     const value_type& operator()(size_t i) const {
         cpp_assert(i < dim(0), "Out of bounds");
-        static_assert(n_dimensions == 1, "Invalid number of parameters");
 
         return _data[i];
     }
 
+    template<bool B = n_dimensions == 2, cpp::enable_if_u<B> = cpp::detail::dummy>
     value_type& operator()(size_t i, size_t j){
         cpp_assert(i < dim(0), "Out of bounds");
         cpp_assert(j < dim(1), "Out of bounds");
-        static_assert(n_dimensions == 2, "Invalid number of parameters");
 
         return _data[i * dim(1) + j];
     }
 
+    template<bool B = n_dimensions == 2, cpp::enable_if_u<B> = cpp::detail::dummy>
     const value_type& operator()(size_t i, size_t j) const {
         cpp_assert(i < dim(0), "Out of bounds");
         cpp_assert(j < dim(1), "Out of bounds");
-        static_assert(dimensions() == 2, "Invalid number of parameters");
 
         return _data[i * dim(1) + j];
     }
@@ -420,22 +430,20 @@ public:
         return index;
     }
 
-    template<typename... S, cpp::enable_if_u<
-        cpp::and_u<
-            (sizeof...(S) > 2),
+    template<typename... S, cpp::enable_if_all_u<
+            (sizeof...(S) == n_dimensions),
             cpp::all_convertible_to<std::size_t, S...>::value
-        >::value> = cpp::detail::dummy>
+        > = cpp::detail::dummy>
     const value_type& operator()(S... sizes) const {
         static_assert(sizeof...(S) == n_dimensions, "Invalid number of parameters");
 
         return _data[index(sizes...)];
     }
 
-    template<typename... S, cpp::enable_if_u<
-        cpp::and_u<
-            (sizeof...(S) > 2),
+    template<typename... S, cpp::enable_if_all_u<
+            (sizeof...(S) == n_dimensions),
             cpp::all_convertible_to<std::size_t, S...>::value
-        >::value> = cpp::detail::dummy>
+        > = cpp::detail::dummy>
     value_type& operator()(S... sizes){
         static_assert(sizeof...(S) == n_dimensions, "Invalid number of parameters");
 
