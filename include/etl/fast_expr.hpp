@@ -112,100 +112,109 @@ auto operator%(LE lhs, const RE& rhs) -> binary_expr<typename RE::value_type, sc
 
 //{{{ Compound operators
 
-template<typename LE, typename RE, cpp::enable_if_all_u<std::is_arithmetic<RE>::value, is_etl_value<LE>::value> = cpp::detail::dummy>
-LE& operator+=(LE& lhs, RE rhs){
-    for(std::size_t i = 0; i < lhs.size(); ++i){
+template<typename T, typename Enable = void>
+struct is_etl_assignable : std::false_type {};
+
+template<typename T>
+struct is_etl_assignable<T, std::enable_if_t<is_etl_value<T>::value>> : std::true_type {};
+
+template <typename T, typename Expr>
+struct is_etl_assignable<unary_expr<T, Expr, identity_op>> : std::true_type {};
+
+template<typename LE, typename RE, cpp::enable_if_all_u<std::is_arithmetic<RE>::value, is_etl_assignable<LE>::value> = cpp::detail::dummy>
+LE& operator+=(LE&& lhs, RE rhs){
+    for(std::size_t i = 0; i < size(lhs); ++i){
         lhs[i] += rhs;
     }
 
     return lhs;
 }
 
-template<typename LE, typename RE, cpp::enable_if_all_u<is_etl_expr<RE>::value, is_etl_value<LE>::value> = cpp::detail::dummy>
-LE& operator+=(LE& lhs, const RE& rhs){
+template<typename LE, typename RE, cpp::enable_if_all_u<is_etl_expr<RE>::value, is_etl_assignable<LE>::value> = cpp::detail::dummy>
+LE& operator+=(LE&& lhs, const RE& rhs){
     ensure_same_size(lhs, rhs);
 
-    for(std::size_t i = 0; i < lhs.size(); ++i){
+    for(std::size_t i = 0; i < size(lhs); ++i){
         lhs[i] += rhs[i];
     }
 
     return lhs;
 }
 
-template<typename LE, typename RE, cpp::enable_if_all_u<std::is_arithmetic<RE>::value, is_etl_value<LE>::value> = cpp::detail::dummy>
-LE& operator-=(LE& lhs, RE rhs){
-    for(std::size_t i = 0; i < lhs.size(); ++i){
+template<typename LE, typename RE, cpp::enable_if_all_u<std::is_arithmetic<RE>::value, is_etl_assignable<LE>::value> = cpp::detail::dummy>
+LE& operator-=(LE&& lhs, RE rhs){
+    for(std::size_t i = 0; i < size(lhs); ++i){
         lhs[i] -= rhs;
     }
 
     return lhs;
 }
 
-template<typename LE, typename RE, cpp::enable_if_all_u<is_etl_expr<RE>::value, is_etl_value<LE>::value> = cpp::detail::dummy>
-LE& operator-=(LE& lhs, const RE& rhs){
+template<typename LE, typename RE, cpp::enable_if_all_u<is_etl_expr<RE>::value, is_etl_assignable<LE>::value> = cpp::detail::dummy>
+LE& operator-=(LE&& lhs, const RE& rhs){
     ensure_same_size(lhs, rhs);
 
-    for(std::size_t i = 0; i < lhs.size(); ++i){
+    for(std::size_t i = 0; i < size(lhs); ++i){
         lhs[i] -= rhs[i];
     }
 
     return lhs;
 }
 
-template<typename LE, typename RE, cpp::enable_if_all_u<std::is_arithmetic<RE>::value, is_etl_value<LE>::value> = cpp::detail::dummy>
-LE& operator*=(LE& lhs, RE rhs){
-    for(std::size_t i = 0; i < lhs.size(); ++i){
+template<typename LE, typename RE, cpp::enable_if_all_u<std::is_arithmetic<RE>::value, is_etl_assignable<LE>::value> = cpp::detail::dummy>
+LE& operator*=(LE&& lhs, RE rhs){
+    for(std::size_t i = 0; i < size(lhs); ++i){
         lhs[i] *= rhs;
     }
 
     return lhs;
 }
 
-template<typename LE, typename RE, cpp::enable_if_all_u<is_etl_expr<RE>::value, is_etl_value<LE>::value> = cpp::detail::dummy>
-LE& operator*=(LE& lhs, const RE& rhs){
+template<typename LE, typename RE, cpp::enable_if_all_u<is_etl_expr<RE>::value, is_etl_assignable<LE>::value> = cpp::detail::dummy>
+LE& operator*=(LE&& lhs, const RE& rhs){
     ensure_same_size(lhs, rhs);
 
-    for(std::size_t i = 0; i < lhs.size(); ++i){
+    for(std::size_t i = 0; i < size(lhs); ++i){
         lhs[i] *= rhs[i];
     }
 
     return lhs;
 }
 
-template<typename LE, typename RE, cpp::enable_if_all_u<std::is_arithmetic<RE>::value, is_etl_value<LE>::value> = cpp::detail::dummy>
-LE& operator/=(LE& lhs, RE rhs){
-    for(std::size_t i = 0; i < lhs.size(); ++i){
+template<typename LE, typename RE, cpp::enable_if_all_u<std::is_arithmetic<RE>::value, is_etl_assignable<LE>::value> = cpp::detail::dummy>
+LE& operator/=(LE&& lhs, RE rhs){
+    for(std::size_t i = 0; i < size(lhs); ++i){
         lhs[i] /= rhs;
     }
 
     return lhs;
 }
 
-template<typename LE, typename RE, cpp::enable_if_all_u<is_etl_expr<RE>::value, is_etl_value<LE>::value> = cpp::detail::dummy>
-LE& operator/=(LE& lhs, const RE& rhs){
+template<typename LE, typename RE, cpp::enable_if_all_u<is_etl_expr<RE>::value, is_etl_assignable<LE>::value> = cpp::detail::dummy>
+LE& operator/=(LE&& lhs, const RE& rhs){
     ensure_same_size(lhs, rhs);
 
-    for(std::size_t i = 0; i < lhs.size(); ++i){
+    for(std::size_t i = 0; i < size(lhs); ++i){
         lhs[i] /= rhs[i];
     }
 
     return lhs;
 }
 
-template<typename LE, typename RE, cpp::enable_if_all_u<std::is_arithmetic<RE>::value, is_etl_value<LE>::value> = cpp::detail::dummy>
-LE& operator%=(LE& lhs, RE rhs){
-    for(std::size_t i = 0; i < lhs.size(); ++i){
+template<typename LE, typename RE, cpp::enable_if_all_u<std::is_arithmetic<RE>::value, is_etl_assignable<LE>::value> = cpp::detail::dummy>
+LE& operator%=(LE&& lhs, RE rhs){
+    for(std::size_t i = 0; i < size(lhs); ++i){
         lhs[i] %= rhs;
     }
 
     return lhs;
 }
 
-template<typename LE, typename RE, cpp::enable_if_all_u<is_etl_expr<RE>::value, is_etl_value<LE>::value> = cpp::detail::dummy>
-LE& operator%=(LE& lhs, const RE& rhs){
+template<typename LE, typename RE, cpp::enable_if_all_u<is_etl_expr<RE>::value, is_etl_assignable<LE>::value> = cpp::detail::dummy>
+LE& operator%=(LE&& lhs, const RE& rhs){
     ensure_same_size(lhs, rhs);
 
-    for(std::size_t i = 0; i < lhs.size(); ++i){
+    for(std::size_t i = 0; i < size(lhs); ++i){
         lhs[i] %= rhs[i];
     }
 
