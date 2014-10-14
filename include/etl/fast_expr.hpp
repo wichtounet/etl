@@ -330,20 +330,7 @@ auto softplus(E&& value) -> unary_helper_t<E, softplus_unary_op> {
 
 template<typename E, cpp::enable_if_u<is_etl_expr<E>::value> = cpp::detail::dummy>
 auto softmax(const E& e){
-    //Unfortunately, it is not possible to directly return exp(e) / sum(exp(e))
-    //because the binary_expr would hold a reference to an object whose lifetime
-    //is not longer than this function, therefore running into UB
-    //it is necessary to ensure that the UE is stored by value and therefore
-    //copied
-    //It would be good to enhance the system to support deep copying when
-    //necessray
-
-    auto s = sum(exp(e));
-
-    using ue = unary_expr<typename E::value_type, const E&, exp_unary_op<typename E::value_type>>;
-    using st = scalar<typename E::value_type>;
-
-    return binary_expr<typename E::value_type, ue, div_binary_op<typename E::value_type>, st>(ue(e), st(s));
+    return exp(e) / sum(exp(e));
 }
 
 template<typename E, cpp::enable_if_u<is_etl_expr<E>::value> = cpp::detail::dummy>
