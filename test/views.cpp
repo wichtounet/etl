@@ -232,6 +232,65 @@ TEST_CASE( "reshape/dyn_traits", "traits<reshape<2,3>>" ) {
 
 //{{{ sub
 
+TEST_CASE( "fast_matrix/sub_view_1_1", "fast_matrix::sub" ) {
+    etl::fast_matrix<double, 2, 2, 2> a = {1.1, 2.0, 5.0, 1.0, 1.1, 2.0, 5.0, 1.0};
+
+    REQUIRE(a(0)(0, 0) == 1.1);
+    REQUIRE(a(0)(0, 1) == 2.0);
+    REQUIRE(a(1)(0, 0) == 1.1);
+    REQUIRE(a(1)(0, 1) == 2.0);
+}
+
+TEST_CASE( "fast_matrix/sub_view_1_2", "fast_matrix::sub" ) {
+    etl::fast_matrix<double, 2, 2, 2> a = {1.1, 2.0, 5.0, 1.0, 1.1, 2.0, 5.0, 1.0};
+
+    REQUIRE(a(0)(0)(0) == 1.1);
+    REQUIRE(a(0)(0)(1) == 2.0);
+    REQUIRE(a(0)(1)(0) == 5.0);
+    REQUIRE(a(0)(1)(1) == 1.0);
+    REQUIRE(a(1)(0)(0) == 1.1);
+    REQUIRE(a(1)(0)(1) == 2.0);
+}
+
+TEST_CASE( "fast_matrix/sub_view_1_3", "fast_matrix::sub" ) {
+    etl::fast_matrix<double, 2, 2, 2> a = {1.1, 2.0, 5.0, 1.0, 1.1, 2.0, 5.0, 1.0};
+
+    etl::fast_matrix<double, 2, 2> b(a(1));
+
+    REQUIRE(b(0, 0) == 1.1);
+    REQUIRE(b(0, 1) == 2.0);
+}
+
+TEST_CASE( "dyn_matrix/sub_view_1_1", "dyn_matrix::sub" ) {
+    etl::dyn_matrix<double, 3> a(2,2,2, etl::values(1.1, 2.0, 5.0, 1.0, 1.1, 2.0, 5.0, 1.0));
+
+    REQUIRE(a(0, 0, 0) == 1.1);
+    REQUIRE(a(0)(0, 0) == 1.1);
+    REQUIRE(a(0)(0, 1) == 2.0);
+    REQUIRE(a(1)(0, 0) == 1.1);
+    REQUIRE(a(1)(0, 1) == 2.0);
+}
+
+TEST_CASE( "dyn_matrix/sub_view_1_2", "dyn_matrix::sub" ) {
+    etl::dyn_matrix<double, 3> a(2,2,2, etl::values(1.1, 2.0, 5.0, 1.0, 1.1, 2.0, 5.0, 1.0));
+
+    REQUIRE(a(0)(0)(0) == 1.1);
+    REQUIRE(a(0)(0)(1) == 2.0);
+    REQUIRE(a(0)(1)(0) == 5.0);
+    REQUIRE(a(0)(1)(1) == 1.0);
+    REQUIRE(a(1)(0)(0) == 1.1);
+    REQUIRE(a(1)(0)(1) == 2.0);
+}
+
+TEST_CASE( "dyn_matrix/sub_view_1_3", "dyn_matrix::sub" ) {
+    etl::dyn_matrix<double, 3> a(2,2,2, etl::values(1.1, 2.0, 5.0, 1.0, 1.1, 2.0, 5.0, 1.0));
+
+    etl::dyn_matrix<double> b(a(1));
+
+    REQUIRE(b(0, 0) == 1.1);
+    REQUIRE(b(0, 1) == 2.0);
+}
+
 TEST_CASE( "fast_matrix/sub_view_1", "fast_matrix::sub" ) {
     etl::fast_matrix<double, 2, 2, 2> a = {1.1, 2.0, 5.0, 1.0, 1.1, 2.0, 5.0, 1.0};
 
