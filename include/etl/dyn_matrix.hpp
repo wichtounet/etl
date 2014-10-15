@@ -168,6 +168,25 @@ public:
         //Nothing to init
     }
 
+    //Sizes followed by a generator_expr
+    template<typename S1, typename... S, cpp::enable_if_u<
+        cpp::and_u<
+            (sizeof...(S) == D),
+            std::is_convertible<std::size_t, typename cpp::first_type<S1, S...>::type>::value,   //The first type must be convertible to size_t
+            cpp::is_sub_homogeneous<S1, S...>::value,                                            //The first N-1 types must homegeneous
+            cpp::is_specialization_of<generator_expr, typename cpp::last_type<S1, S...>::type>::value     //The last type must be a generator expr
+        >::value> = cpp::detail::dummy>
+    dyn_matrix(S1 s1, S... sizes) :
+            _size(dyn_detail::size(std::make_index_sequence<(sizeof...(S))>(), s1, sizes...)),
+            _data(_size),
+            _dimensions(dyn_detail::sizes(std::make_index_sequence<(sizeof...(S))>(), s1, sizes...)) {
+        const auto& e = cpp::last_value(sizes...);
+
+        for(std::size_t i = 0; i < size(); ++i){
+            _data[i] = e[i];
+        }
+    }
+
     //Sizes followed by an init flag followed by the value
     template<typename... S, cpp::enable_if_u<dyn_detail::is_init_constructor<S...>::value> = cpp::detail::dummy>
     dyn_matrix(S... sizes) :

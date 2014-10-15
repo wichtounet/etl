@@ -148,6 +148,13 @@ public:
         }
     }
 
+    template<typename Generator>
+    explicit fast_matrix(generator_expr<Generator>&& e){
+        for(std::size_t i = 0; i < size(); ++i){
+            _data[i] = e[i];
+        }
+    }
+
     template<typename E, cpp::enable_if_u<etl_traits<transform_expr<value_type, E>>::dimensions() == 1> = cpp::detail::dummy>
     explicit fast_matrix(const transform_expr<value_type, E>& e){
         static_assert(n_dimensions == 1, "Transform expressions are only 1D-valid for now");
