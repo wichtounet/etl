@@ -398,6 +398,17 @@ TEST_CASE( "fast_matrix/mod_2", "fast_matrix::operator%=" ) {
 
 //{{{ Unary operator tests
 
+TEST_CASE( "fast_matrix/minus_1", "fast_matrix::minus" ) {
+    etl::fast_matrix<double, 2, 2> a = {-1.0, 2.0, 5.0, 1.0};
+
+    etl::fast_matrix<double, 2, 2> d(-a);
+
+    REQUIRE(d(0,0) == 1.0);
+    REQUIRE(d(0,1) == -2.0);
+    REQUIRE(d(1,0) == -5.0);
+    REQUIRE(d(1,1) == -1.0);
+}
+
 TEST_CASE( "fast_matrix/log_1", "fast_matrix::log" ) {
     etl::fast_matrix<double, 2, 2> a = {-1.0, 2.0, 5.0, 1.0};
 
