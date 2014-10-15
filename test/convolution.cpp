@@ -463,3 +463,106 @@ TEST_CASE( "convolution_2d/dyn_valid_3", "convolution_2d_valid" ) {
 }
 
 //}}}
+
+//{{{ convolution_subs
+
+TEST_CASE( "convolution_1d/sub_1", "convolution_1d_full_sub" ) {
+    etl::fast_matrix<double, 1, 3> a = {1.0, 2.0, 3.0};
+    etl::fast_matrix<double, 1, 3> b = {0.0, 1.0, 0.5};
+    etl::fast_matrix<double, 1, 5> c;
+
+    etl::convolve_1d_full(a(0), b(0), c(0));
+
+    REQUIRE(c[0] == Approx(0.0));
+    REQUIRE(c[1] == Approx(1.0));
+    REQUIRE(c[2] == Approx(2.5));
+    REQUIRE(c[3] == Approx(4.0));
+    REQUIRE(c[4] == Approx(1.5));
+}
+
+TEST_CASE( "convolution_1d/sub_2", "convolution_1d_same" ) {
+    etl::fast_matrix<double, 1, 3> a = {1.0, 2.0, 3.0};
+    etl::fast_matrix<double, 1, 3> b = {0.0, 1.0, 0.5};
+    etl::fast_matrix<double, 1, 3> c;
+
+    etl::convolve_1d_same(a(0), b(0), c(0));
+
+    REQUIRE(c[0] == Approx(1.0));
+    REQUIRE(c[1] == Approx(2.5));
+    REQUIRE(c[2] == Approx(4.0));
+}
+
+TEST_CASE( "convolution_1d/sub_3", "convolution_1d_valid" ) {
+    etl::fast_matrix<double, 1, 3> a = {1.0, 2.0, 3.0};
+    etl::fast_matrix<double, 1, 3> b = {0.0, 1.0, 0.5};
+    etl::fast_matrix<double, 1, 1> c;
+
+    etl::convolve_1d_valid(a(0), b(0), c(0));
+
+    REQUIRE(c[0] == 2.5);
+}
+
+TEST_CASE( "convolution_2d/sub_1", "convolution_2d_full" ) {
+    etl::fast_matrix<double, 1, 3, 3> a = {1.0, 2.0, 3.0, 0.0, 1.0, 1.0, 3.0, 2.0, 1.0};
+    etl::fast_matrix<double, 1, 2, 2> b = {2.0, 0.0, 0.5, 0.5};
+    etl::fast_matrix<double, 1, 4, 4> c;
+
+    etl::convolve_2d_full(a(0), b(0), c(0));
+
+    REQUIRE(c(0,0,0) == 2.0);
+    REQUIRE(c(0,0,1) == 4.0);
+    REQUIRE(c(0,0,2) == 6.0);
+    REQUIRE(c(0,0,3) == 0.0);
+
+    REQUIRE(c(0,1,0) == 0.5);
+    REQUIRE(c(0,1,1) == 3.5);
+    REQUIRE(c(0,1,2) == 4.5);
+    REQUIRE(c(0,1,3) == 1.5);
+
+    REQUIRE(c(0,2,0) == 6.0);
+    REQUIRE(c(0,2,1) == 4.5);
+    REQUIRE(c(0,2,2) == 3.0);
+    REQUIRE(c(0,2,3) == 0.5);
+
+    REQUIRE(c(0,3,0) == 1.5);
+    REQUIRE(c(0,3,1) == 2.5);
+    REQUIRE(c(0,3,2) == 1.5);
+    REQUIRE(c(0,3,3) == 0.5);
+}
+
+TEST_CASE( "convolution_2d/sub_2", "convolution_2d_same" ) {
+    etl::fast_matrix<double, 1, 3, 3> a = {1.0, 2.0, 3.0, 0.0, 1.0, 1.0, 3.0, 2.0, 1.0};
+    etl::fast_matrix<double, 1, 2, 2> b = {2.0, 0.0, 0.5, 0.5};
+    etl::fast_matrix<double, 1, 3, 3> c;
+
+    etl::convolve_2d_same(a(0), b(0), c(0));
+
+    REQUIRE(c(0,0,0) == 3.5);
+    REQUIRE(c(0,0,1) == 4.5);
+    REQUIRE(c(0,0,2) == 1.5);
+
+    REQUIRE(c(0,1,0) == 4.5);
+    REQUIRE(c(0,1,1) == 3.0);
+    REQUIRE(c(0,1,2) == 0.5);
+
+    REQUIRE(c(0,2,0) == 2.5);
+    REQUIRE(c(0,2,1) == 1.5);
+    REQUIRE(c(0,2,2) == 0.5);
+}
+
+TEST_CASE( "convolution_2d/sub_3", "convolution_2d_valid" ) {
+    etl::fast_matrix<double, 1, 3, 3> a = {1.0, 2.0, 3.0, 0.0, 1.0, 1.0, 3.0, 2.0, 1.0};
+    etl::fast_matrix<double, 1, 2, 2> b = {2.0, 0.0, 0.5, 0.5};
+    etl::fast_matrix<double, 1, 2, 2> c;
+
+    etl::convolve_2d_valid(a(0), b(0), c(0));
+
+    REQUIRE(c(0,0,0) == 3.5);
+    REQUIRE(c(0,0,1) == 4.5);
+
+    REQUIRE(c(0,1,0) == 4.5);
+    REQUIRE(c(0,1,1) == 3.0);
+}
+
+
+//}}}
