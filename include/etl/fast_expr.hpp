@@ -250,8 +250,11 @@ LE& operator%=(LE&& lhs, const RE& rhs){
 
 //{{{ Apply an unary expression on an ETL expression (vector,matrix,binary,unary)
 
+template<typename E>
+using value_t = typename std::decay_t<E>::value_type;
+
 template<typename E, template<typename> class OP>
-using unary_helper_t = unary_expr<typename std::decay_t<E>::value_type, typename build_type<E>::type, OP<typename std::decay_t<E>::value_type>>;
+using unary_helper_t = unary_expr<value_t<E>, typename build_type<E>::type, OP<value_t<E>>>;
 
 template<typename E, cpp::enable_if_u<is_etl_expr<std::decay_t<E>>::value> = cpp::detail::dummy>
 auto abs(E&& value) -> unary_helper_t<E, abs_unary_op> {
@@ -259,17 +262,17 @@ auto abs(E&& value) -> unary_helper_t<E, abs_unary_op> {
 }
 
 template<typename E, typename T, cpp::enable_if_all_u<is_etl_expr<E>::value, std::is_arithmetic<T>::value> = cpp::detail::dummy>
-auto max(E&& value, T v) -> typename left_binary_helper_op<E, scalar<T>, max_binary_op<typename std::decay_t<E>::value_type, T>>::type {
+auto max(E&& value, T v) -> typename left_binary_helper_op<E, scalar<T>, max_binary_op<value_t<E>, T>>::type {
     return {value, scalar<T>(v)};
 }
 
 template<typename E, typename T, cpp::enable_if_all_u<is_etl_expr<E>::value, std::is_arithmetic<T>::value> = cpp::detail::dummy>
-auto min(E&& value, T v) -> typename left_binary_helper_op<E, scalar<T>, min_binary_op<typename std::decay_t<E>::value_type, T>>::type {
+auto min(E&& value, T v) -> typename left_binary_helper_op<E, scalar<T>, min_binary_op<value_t<E>, T>>::type {
     return {value, scalar<T>(v)};
 }
 
 template<typename E, typename T, cpp::enable_if_all_u<is_etl_expr<E>::value, std::is_arithmetic<T>::value> = cpp::detail::dummy>
-auto one_if(E&& value, T v) -> typename left_binary_helper_op<E, scalar<T>, one_if_binary_op<typename std::decay_t<E>::value_type, T>>::type {
+auto one_if(E&& value, T v) -> typename left_binary_helper_op<E, scalar<T>, one_if_binary_op<value_t<E>, T>>::type {
     return {value, scalar<T>(v)};
 }
 
@@ -299,7 +302,7 @@ auto logistic_noise(E&& value) -> unary_helper_t<E, logistic_noise_unary_op> {
 }
 
 template<typename E, typename T, cpp::enable_if_all_u<is_etl_expr<E>::value, std::is_arithmetic<T>::value> = cpp::detail::dummy>
-auto ranged_noise(E&& value, T v) -> typename left_binary_helper_op<E, scalar<T>, ranged_noise_binary_op<typename std::decay_t<E>::value_type, T>>::type {
+auto ranged_noise(E&& value, T v) -> typename left_binary_helper_op<E, scalar<T>, ranged_noise_binary_op<value_t<E>, T>>::type {
     return {value, scalar<T>(v)};
 }
 
