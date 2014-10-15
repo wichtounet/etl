@@ -12,7 +12,7 @@
 #include "traits.hpp"
 #include "binary_expr.hpp"
 #include "unary_expr.hpp"
-#include "transform_expr.hpp"
+#include "unstable_transform_expr.hpp"
 #include "generator_expr.hpp"
 
 namespace etl {
@@ -48,7 +48,7 @@ template<typename E, typename OP>
 using identity_helper = unary_expr<value_t<E>, OP, identity_op>;
 
 template<typename E, template<typename> class OP>
-using transform_helper = transform_expr<value_t<E>, OP<build_type<E>>>;
+using transform_helper = unstable_transform_expr<value_t<E>, OP<build_type<E>>>;
 
 //{{{ Build binary expressions from two ETL expressions (vector,matrix,binary,unary)
 

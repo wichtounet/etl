@@ -226,8 +226,8 @@ public:
         }
     }
 
-    template<typename E, cpp::enable_if_u<etl_traits<transform_expr<value_type, E>>::dimensions() == 1> = cpp::detail::dummy>
-    explicit dyn_matrix(const transform_expr<value_type, E>& e) :
+    template<typename E, cpp::enable_if_u<etl_traits<unstable_transform_expr<value_type, E>>::dimensions() == 1> = cpp::detail::dummy>
+    explicit dyn_matrix(const unstable_transform_expr<value_type, E>& e) :
             _size(etl::size(e)),
             _data(_size) {
 
@@ -240,8 +240,8 @@ public:
         }
     }
 
-    template<typename E, cpp::enable_if_u<etl_traits<transform_expr<value_type, E>>::dimensions() == 2> = cpp::detail::dummy>
-    explicit dyn_matrix(const transform_expr<value_type, E>& e) :
+    template<typename E, cpp::enable_if_u<etl_traits<unstable_transform_expr<value_type, E>>::dimensions() == 2> = cpp::detail::dummy>
+    explicit dyn_matrix(const unstable_transform_expr<value_type, E>& e) :
             _size(etl::size(e)),
             _data(_size) {
 
@@ -330,8 +330,8 @@ public:
         return *this;
     }
 
-    template<typename E, cpp::enable_if_u<etl_traits<transform_expr<value_type, E>>::dimensions() == 1> = cpp::detail::dummy>
-    dyn_matrix& operator=(transform_expr<value_type, E>&& e){
+    template<typename E, cpp::enable_if_u<etl_traits<unstable_transform_expr<value_type, E>>::dimensions() == 1> = cpp::detail::dummy>
+    dyn_matrix& operator=(unstable_transform_expr<value_type, E>&& e){
         ensure_same_size(*this, e);
 
         for(std::size_t i = 0; i < rows(); ++i){
@@ -341,8 +341,8 @@ public:
         return *this;
     }
 
-    template<typename E, cpp::enable_if_u<etl_traits<transform_expr<value_type, E>>::dimensions() == 2> = cpp::detail::dummy>
-    dyn_matrix& operator=(transform_expr<value_type, E>&& e){
+    template<typename E, cpp::enable_if_u<etl_traits<unstable_transform_expr<value_type, E>>::dimensions() == 2> = cpp::detail::dummy>
+    dyn_matrix& operator=(unstable_transform_expr<value_type, E>&& e){
         ensure_same_size(*this, e);
 
         for(std::size_t i = 0; i < rows(); ++i){

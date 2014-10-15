@@ -29,7 +29,7 @@ template <typename T, typename Expr, typename UnaryOp>
 class unary_expr;
 
 template <typename T, typename Expr>
-class transform_expr;
+class unstable_transform_expr;
 
 template <typename T, typename LeftExpr, typename BinaryOp, typename RightExpr>
 class binary_expr;
@@ -86,7 +86,7 @@ template<typename T>
 struct is_unary_expr : std::integral_constant<bool, cpp::is_specialization_of<etl::unary_expr, std::decay_t<T>>::value> {};
 
 template<typename T>
-struct is_transform_expr : std::integral_constant<bool, cpp::is_specialization_of<etl::transform_expr, std::decay_t<T>>::value> {};
+struct is_unstable_transform_expr : std::integral_constant<bool, cpp::is_specialization_of<etl::unstable_transform_expr, std::decay_t<T>>::value> {};
 
 template<typename T>
 struct is_binary_expr : std::integral_constant<bool, cpp::is_specialization_of<etl::binary_expr, std::decay_t<T>>::value> {};
@@ -114,7 +114,7 @@ struct is_etl_expr : std::integral_constant<bool, cpp::or_u<
        is_fast_matrix<T>::value,
        is_dyn_matrix<T>::value,
        is_unary_expr<T>::value, is_binary_expr<T>::value,
-       is_transform_expr<T>::value, is_generator_expr<T>::value,
+       is_unstable_transform_expr<T>::value, is_generator_expr<T>::value,
        is_transformer<T>::value, is_view<T>::value
     >::value> {};
 
@@ -195,11 +195,11 @@ struct etl_traits<etl::unary_expr<T, Expr, UnaryOp>> {
 };
 
 /*!
- * \brief Specialization transform_expr
+ * \brief Specialization unstable_transform_expr
  */
 template <typename T, typename Expr>
-struct etl_traits<etl::transform_expr<T, Expr>> {
-    using expr_t = etl::transform_expr<T, Expr>;
+struct etl_traits<etl::unstable_transform_expr<T, Expr>> {
+    using expr_t = etl::unstable_transform_expr<T, Expr>;
     using sub_expr_t = std::decay_t<Expr>;
 
     static constexpr const bool is_fast = etl_traits<sub_expr_t>::is_fast;

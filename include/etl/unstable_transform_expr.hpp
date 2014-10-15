@@ -5,19 +5,19 @@
 //  http://opensource.org/licenses/MIT)
 //=======================================================================
 
-#ifndef ETL_TRANSFORM_EXPR_HPP
-#define ETL_TRANSFORM_EXPR_HPP
+#ifndef ETL_UNSTABLE_TRANSFORM_EXPR_HPP
+#define ETL_UNSTABLE_TRANSFORM_EXPR_HPP
 
 #include "traits.hpp"
 
 namespace etl {
 
 template <typename T, typename Expr>
-class transform_expr {
+class unstable_transform_expr {
 private:
-    static_assert(is_etl_expr<Expr>::value, "Only ETL expressions can be used in transform_expr");
+    static_assert(is_etl_expr<Expr>::value, "Only ETL expressions can be used in unstable_transform_expr");
 
-    using this_type = transform_expr<T, Expr>;
+    using this_type = unstable_transform_expr<T, Expr>;
 
     Expr _value;
  
@@ -25,24 +25,24 @@ public:
     using value_type = T;
 
     //Cannot be constructed with no args
-    transform_expr() = delete;
+    unstable_transform_expr() = delete;
 
     //Construct a new expression
-    transform_expr(Expr l) : _value(std::forward<Expr>(l)){
+    unstable_transform_expr(Expr l) : _value(std::forward<Expr>(l)){
         //Nothing else to init
     }
 
-    transform_expr(const transform_expr& e) : _value(e._value) {
+    unstable_transform_expr(const unstable_transform_expr& e) : _value(e._value) {
         //Nothing else to init
     }
 
-    transform_expr(transform_expr&& e) : _value(e._value) {
+    unstable_transform_expr(unstable_transform_expr&& e) : _value(e._value) {
         //Nothing else to init
     }
 
     //Expression are invariant
-    transform_expr& operator=(const transform_expr&) = delete;
-    transform_expr& operator=(transform_expr&&) = delete;
+    unstable_transform_expr& operator=(const unstable_transform_expr&) = delete;
+    unstable_transform_expr& operator=(unstable_transform_expr&&) = delete;
 
     //Accessors
 
