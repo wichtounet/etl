@@ -432,15 +432,13 @@ typename E::value_type mean(const E& values){
 template<typename E>
 struct value_return_type {
 using type =
-    typename std::conditional<
+    std::conditional_t<
         std::is_reference<E>::value,
-        typename std::conditional<
+        std::conditional_t<
             std::is_const<std::remove_reference_t<E>>::value,
             const value_t<E>&,
-            value_t<E>&
-        >::type,
-        value_t<E>
-    >::type;
+            value_t<E>&>,
+        value_t<E>>;
 };
 
 template<typename E>

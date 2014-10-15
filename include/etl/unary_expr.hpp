@@ -25,7 +25,7 @@ private:
     using this_type = unary_expr<T, Expr, UnaryOp>;
 
     Expr _value;
- 
+
 public:
     //Cannot be constructed with no args
     unary_expr() = delete;
@@ -88,11 +88,11 @@ private:
 
     static constexpr const bool const_return_ref =
         std::is_lvalue_reference<decltype(_value[0])>::value;
- 
+
 public:
     using value_type = T;
-    using return_type = typename std::conditional<non_const_return_ref, value_type&, value_type>::type;
-    using const_return_type = typename std::conditional<const_return_ref, const value_type&, value_type>::type;
+    using return_type = std::conditional_t<non_const_return_ref, value_type&, value_type>;
+    using const_return_type = std::conditional_t<const_return_ref, const value_type&, value_type>;
 
     //Cannot be constructed with no args
     unary_expr() = delete;

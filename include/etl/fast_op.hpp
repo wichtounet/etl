@@ -125,34 +125,37 @@ struct transpose_transformer {
     }
 };
 
+template<typename T, typename S>
+using return_helper =
+    std::conditional_t<
+        std::is_const<std::remove_reference_t<S>>::value,
+        const typename std::decay_t<T>::value_type&,
+        std::conditional_t<
+            cpp::and_u<
+                std::is_lvalue_reference<S>::value,
+                cpp::not_u<std::is_const<T>::value>::value
+            >::value,
+            typename std::decay_t<T>::value_type&,
+            typename std::decay_t<T>::value_type>>;
+
+template<typename T, typename S>
+using const_return_helper = std::conditional_t<
+        std::is_lvalue_reference<S>::value,
+        const typename std::decay_t<T>::value_type&,
+        typename std::decay_t<T>::value_type>;
+
 template<typename T, std::size_t D>
 struct dim_view {
     static_assert(D > 0 || D < 3, "Invalid dimension");
 
     using sub_type = T;
-    using value_type = typename std::decay_t<T>::value_type;
+    using value_type = typename std::decay_t<sub_type>::value_type;
 
     sub_type sub;
     const std::size_t i;
 
-    using return_type = typename 
-        std::conditional<
-            std::is_const<std::remove_reference_t<decltype(sub(0,0))>>::value,
-            const value_type&,
-            typename std::conditional<
-                cpp::and_u<
-                    std::is_lvalue_reference<decltype(sub(0,0))>::value,
-                    cpp::not_u<std::is_const<T>::value>::value
-                >::value,
-                value_type&,
-                value_type
-            >::type
-        >::type;
-
-    using const_return_type = typename std::conditional<
-        std::is_lvalue_reference<decltype(sub(0,0))>::value,
-        const value_type&,
-        value_type>::type;
+    using return_type = return_helper<sub_type, decltype(sub(0,0))>;
+    using const_return_type = const_return_helper<sub_type, decltype(sub(0,0))>;
 
     dim_view(sub_type sub, std::size_t i) : sub(sub), i(i) {}
 
@@ -192,29 +195,13 @@ struct dim_view {
 template<typename T>
 struct sub_view {
     using parent_type = T;
-    using value_type = typename std::decay_t<T>::value_type;
+    using value_type = typename std::decay_t<parent_type>::value_type;
 
     parent_type parent;
     const std::size_t i;
 
-    using return_type = typename 
-        std::conditional<
-            std::is_const<std::remove_reference_t<decltype(parent[0])>>::value,
-            const value_type&,
-            typename std::conditional<
-                cpp::and_u<
-                    std::is_lvalue_reference<decltype(parent[0])>::value,
-                    cpp::not_u<std::is_const<T>::value>::value
-                >::value,
-                value_type&,
-                value_type
-            >::type
-        >::type;
-
-    using const_return_type = typename std::conditional<
-        std::is_lvalue_reference<decltype(parent[0])>::value,
-        const value_type&,
-        value_type>::type;
+    using return_type = return_helper<parent_type, decltype(parent[0])>;
+    using const_return_type = const_return_helper<parent_type, decltype(parent[0])>;
 
     sub_view(parent_type parent, std::size_t i) : parent(parent), i(i) {}
 
@@ -242,28 +229,12 @@ struct fast_matrix_view {
     static_assert(Rows > 0 && Columns > 0 , "Invalid dimensions");
 
     using sub_type = T;
-    using value_type = typename std::decay_t<T>::value_type;
+    using value_type = typename std::decay_t<sub_type>::value_type;
 
     sub_type sub;
 
-    using return_type = typename 
-        std::conditional<
-            std::is_const<std::remove_reference_t<decltype(sub(0))>>::value,
-            const value_type&,
-            typename std::conditional<
-                cpp::and_u<
-                    std::is_lvalue_reference<decltype(sub(0))>::value,
-                    cpp::not_u<std::is_const<T>::value>::value
-                >::value,
-                value_type&,
-                value_type
-            >::type
-        >::type;
-
-    using const_return_type = typename std::conditional<
-        std::is_lvalue_reference<decltype(sub(0))>::value,
-        const value_type&,
-        value_type>::type;
+    using return_type = return_helper<sub_type, decltype(sub(0))>;
+    using const_return_type = const_return_helper<sub_type, decltype(sub(0))>;
 
     explicit fast_matrix_view(sub_type sub) : sub(sub) {}
 
@@ -295,30 +266,14 @@ struct fast_matrix_view {
 template<typename T>
 struct dyn_matrix_view {
     using sub_type = T;
-    using value_type = typename std::decay_t<T>::value_type;
+    using value_type = typename std::decay_t<sub_type>::value_type;
 
     sub_type sub;
     std::size_t rows;
     std::size_t columns;
 
-    using return_type = typename 
-        std::conditional<
-            std::is_const<std::remove_reference_t<decltype(sub(0))>>::value,
-            const value_type&,
-            typename std::conditional<
-                cpp::and_u<
-                    std::is_lvalue_reference<decltype(sub(0))>::value,
-                    cpp::not_u<std::is_const<T>::value>::value
-                >::value,
-                value_type&,
-                value_type
-            >::type
-        >::type;
-
-    using const_return_type = typename std::conditional<
-        std::is_lvalue_reference<decltype(sub(0))>::value,
-        const value_type&,
-        value_type>::type;
+    using return_type = return_helper<sub_type, decltype(sub(0))>;
+    using const_return_type = const_return_helper<sub_type, decltype(sub(0))>;
 
     dyn_matrix_view(sub_type sub, std::size_t rows, std::size_t columns) : sub(sub), rows(rows), columns(columns) {}
 
