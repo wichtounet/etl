@@ -47,10 +47,6 @@ struct hflip_transformer {
 
     explicit hflip_transformer(sub_type vec) : sub(vec) {}
 
-    value_type operator[](std::size_t i) const {
-        return sub[size(sub) - 1 - i];
-    }
-
     value_type operator()(std::size_t i) const {
         return sub(size(sub) - 1 - i);
     }
@@ -68,10 +64,6 @@ struct vflip_transformer {
     sub_type sub;
 
     explicit vflip_transformer(sub_type vec) : sub(vec) {}
-
-    value_type operator[](std::size_t i) const {
-        return sub[i];
-    }
 
     value_type operator()(std::size_t i) const {
         return sub(i);
@@ -91,10 +83,6 @@ struct fflip_transformer {
 
     explicit fflip_transformer(sub_type vec) : sub(vec) {}
 
-    value_type operator[](std::size_t i) const {
-        return sub[i];
-    }
-
     value_type operator()(std::size_t i) const {
         return sub(i);
     }
@@ -112,10 +100,6 @@ struct transpose_transformer {
     sub_type sub;
 
     explicit transpose_transformer(sub_type vec) : sub(vec) {}
-
-    value_type operator[](std::size_t i) const {
-        return sub[i];
-    }
 
     value_type operator()(std::size_t i) const {
         return sub(i);
