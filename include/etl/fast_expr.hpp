@@ -251,12 +251,7 @@ LE& operator%=(LE&& lhs, const RE& rhs){
 //{{{ Apply an unary expression on an ETL expression (vector,matrix,binary,unary)
 
 template<typename E, template<typename> class OP>
-struct unary_helper {
-    using type = unary_expr<typename std::decay_t<E>::value_type, typename build_type<E>::type, OP<typename std::decay_t<E>::value_type>>;
-};
-
-template<typename E, template<typename> class OP>
-using unary_helper_t = typename unary_helper<E, OP>::type;
+using unary_helper_t = unary_expr<typename std::decay_t<E>::value_type, typename build_type<E>::type, OP<typename std::decay_t<E>::value_type>>;
 
 template<typename E, cpp::enable_if_u<is_etl_expr<std::decay_t<E>>::value> = cpp::detail::dummy>
 auto abs(E&& value) -> unary_helper_t<E, abs_unary_op> {
