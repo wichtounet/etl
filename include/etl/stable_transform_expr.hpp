@@ -9,7 +9,6 @@
 #define ETL_STABLE_TRANSFORM_EXPR_HPP
 
 #include "traits.hpp"
-#include "transform_expr.hpp"
 
 namespace etl {
 
@@ -24,6 +23,7 @@ private:
  
 public:
     using value_type = T;
+    using expr_type = Expr;
 
     //Cannot be constructed with no args
     stable_transform_expr() = delete;

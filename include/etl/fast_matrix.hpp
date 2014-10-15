@@ -148,6 +148,15 @@ public:
         }
     }
 
+    template<typename Expr>
+    explicit fast_matrix(const stable_transform_expr<value_type, Expr>& e){
+        ensure_same_size(*this, e);
+
+        for(std::size_t i = 0; i < size(); ++i){
+            _data[i] = e[i];
+        }
+    }
+
     template<typename Generator>
     explicit fast_matrix(generator_expr<Generator>&& e){
         for(std::size_t i = 0; i < size(); ++i){
@@ -215,6 +224,17 @@ public:
 
     template<typename E, typename Op>
     fast_matrix& operator=(unary_expr<value_type, E, Op>&& e){
+        ensure_same_size(*this, e);
+
+        for(std::size_t i = 0; i < size(); ++i){
+            _data[i] = e[i];
+        }
+
+        return *this;
+    }
+
+    template<typename Expr>
+    fast_matrix& operator=(stable_transform_expr<value_type, Expr>&& e){
         ensure_same_size(*this, e);
 
         for(std::size_t i = 0; i < size(); ++i){

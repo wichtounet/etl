@@ -31,6 +31,9 @@ class unary_expr;
 template <typename T, typename Expr>
 class unstable_transform_expr;
 
+template <typename T, typename Expr>
+class stable_transform_expr;
+
 template <typename T, typename LeftExpr, typename BinaryOp, typename RightExpr>
 class binary_expr;
 
@@ -48,6 +51,9 @@ struct fflip_transformer;
 
 template<typename T>
 struct transpose_transformer;
+
+template<typename T, std::size_t D>
+struct rep_transformer;
 
 template<typename T, std::size_t D>
 struct dim_view;
@@ -89,6 +95,9 @@ template<typename T>
 struct is_unstable_transform_expr : std::integral_constant<bool, cpp::is_specialization_of<etl::unstable_transform_expr, std::decay_t<T>>::value> {};
 
 template<typename T>
+struct is_stable_transform_expr : std::integral_constant<bool, cpp::is_specialization_of<etl::stable_transform_expr, std::decay_t<T>>::value> {};
+
+template<typename T>
 struct is_binary_expr : std::integral_constant<bool, cpp::is_specialization_of<etl::binary_expr, std::decay_t<T>>::value> {};
 
 template<typename T>
@@ -99,7 +108,9 @@ struct is_transformer : std::integral_constant<bool, cpp::or_u<
             cpp::is_specialization_of<etl::transpose_transformer, std::decay_t<T>>::value,
             cpp::is_specialization_of<etl::hflip_transformer, std::decay_t<T>>::value,
             cpp::is_specialization_of<etl::vflip_transformer, std::decay_t<T>>::value,
-            cpp::is_specialization_of<etl::fflip_transformer, std::decay_t<T>>::value>::value> {};
+            cpp::is_specialization_of<etl::fflip_transformer, std::decay_t<T>>::value,
+            is_2<etl::rep_transformer, std::decay_t<T>>::value
+        >::value> {};
 
 template<typename T>
 struct is_view : std::integral_constant<bool, cpp::or_u<
@@ -114,7 +125,9 @@ struct is_etl_expr : std::integral_constant<bool, cpp::or_u<
        is_fast_matrix<T>::value,
        is_dyn_matrix<T>::value,
        is_unary_expr<T>::value, is_binary_expr<T>::value,
-       is_unstable_transform_expr<T>::value, is_generator_expr<T>::value,
+       is_unstable_transform_expr<T>::value, 
+       is_stable_transform_expr<T>::value, 
+       is_generator_expr<T>::value,
        is_transformer<T>::value, is_view<T>::value
     >::value> {};
 
@@ -195,12 +208,12 @@ struct etl_traits<etl::unary_expr<T, Expr, UnaryOp>> {
 };
 
 /*!
- * \brief Specialization unstable_transform_expr
+ * \brief Specialization (un)stable_transform_expr
  */
-template <typename T, typename Expr>
-struct etl_traits<etl::unstable_transform_expr<T, Expr>> {
-    using expr_t = etl::unstable_transform_expr<T, Expr>;
-    using sub_expr_t = std::decay_t<Expr>;
+template <typename T>
+struct etl_traits<T, std::enable_if_t<cpp::or_u<is_unstable_transform_expr<T>::value, is_stable_transform_expr<T>::value>::value>> {
+    using expr_t = std::decay_t<T>;
+    using sub_expr_t = std::decay_t<typename expr_t::expr_type>;
 
     static constexpr const bool is_fast = etl_traits<sub_expr_t>::is_fast;
     static constexpr const bool is_value = false;
@@ -337,10 +350,48 @@ struct etl_traits<transpose_transformer<T>> {
 };
 
 /*!
+ * \brief Specialization for tranpose_transformer
+ */
+template <typename T, std::size_t D>
+struct etl_traits<rep_transformer<T, D>> {
+    using expr_t = etl::rep_transformer<T, D>;
+    using sub_expr_t = std::decay_t<T>;
+
+    static constexpr const bool is_fast = etl_traits<sub_expr_t>::is_fast;
+    static constexpr const bool is_value = false;
+    static constexpr const bool is_generator = false;
+
+    static std::size_t size(const expr_t& v){
+        return D * etl_traits<sub_expr_t>::size(v.sub);
+    }
+
+    static std::size_t dim(const expr_t& v, std::size_t d){
+        return d == 0 ? etl_traits<sub_expr_t>::dim(v.sub, 0) : D;
+    }
+
+    template<bool B = is_fast, cpp::enable_if_u<B> = cpp::detail::dummy>
+    static constexpr std::size_t size(){
+        return D * etl_traits<sub_expr_t>::size();
+    }
+
+    template<std::size_t D2>
+    static constexpr std::size_t dim(){
+        return D2 == 0 ? etl_traits<sub_expr_t>::template dim<0>() : D;
+    }
+
+    static constexpr std::size_t dimensions(){
+        return 1 + etl_traits<sub_expr_t>::dimensions();
+    }
+};
+
+/*!
  * \brief Specialization for transformers
  */
 template <typename T>
-struct etl_traits<T, std::enable_if_t<cpp::and_u<is_transformer<T>::value, cpp::not_u<cpp::is_specialization_of<etl::transpose_transformer, T>::value>::value>::value>> {
+struct etl_traits<T, std::enable_if_t<cpp::and_u<
+        is_transformer<T>::value, 
+        cpp::not_u<is_2<etl::rep_transformer, std::decay_t<T>>::value>::value, 
+        cpp::not_u<cpp::is_specialization_of<etl::transpose_transformer, std::decay_t<T>>::value>::value>::value>> {
     using expr_t = T;
     using sub_expr_t = std::decay_t<typename T::sub_type>;
 

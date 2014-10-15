@@ -23,6 +23,7 @@ private:
  
 public:
     using value_type = T;
+    using expr_type = Expr;
 
     //Cannot be constructed with no args
     unstable_transform_expr() = delete;

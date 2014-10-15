@@ -13,6 +13,7 @@
 #include "binary_expr.hpp"
 #include "unary_expr.hpp"
 #include "unstable_transform_expr.hpp"
+#include "stable_transform_expr.hpp"
 #include "generator_expr.hpp"
 
 namespace etl {
@@ -48,7 +49,10 @@ template<typename E, typename OP>
 using identity_helper = unary_expr<value_t<E>, OP, identity_op>;
 
 template<typename E, template<typename> class OP>
-using transform_helper = unstable_transform_expr<value_t<E>, OP<build_type<E>>>;
+using unstable_transform_helper = unstable_transform_expr<value_t<E>, OP<build_type<E>>>;
+
+template<typename E, template<typename> class OP>
+using stable_transform_helper = stable_transform_expr<value_t<E>, OP<build_type<E>>>;
 
 //{{{ Build binary expressions from two ETL expressions (vector,matrix,binary,unary)
 
@@ -384,25 +388,34 @@ auto reshape(E&& value, std::size_t rows, std::size_t columns) -> identity_helpe
 
 //}}}
 
+//{{{ Apply a stable transformation
+
+template<std::size_t D, typename E, cpp::enable_if_u<is_etl_expr<E>::value> = cpp::detail::dummy>
+auto rep(const E& value) -> stable_transform_expr<value_t<E>, rep_transformer<build_type<E>, D>> {
+    return {rep_transformer<build_type<E>, D>(value)};
+}
+
+//}}}
+
 //{{{ Apply a special expression that can change order of elements
 
 template<typename E, cpp::enable_if_u<is_etl_expr<E>::value> = cpp::detail::dummy>
-auto hflip(const E& value) -> transform_helper<E, hflip_transformer> {
+auto hflip(const E& value) -> unstable_transform_helper<E, hflip_transformer> {
     return {hflip_transformer<build_type<E>>(value)};
 }
 
 template<typename E, cpp::enable_if_u<is_etl_expr<E>::value> = cpp::detail::dummy>
-auto vflip(const E& value) -> transform_helper<E, vflip_transformer> {
+auto vflip(const E& value) -> unstable_transform_helper<E, vflip_transformer> {
     return {vflip_transformer<build_type<E>>(value)};
 }
 
 template<typename E, cpp::enable_if_u<is_etl_expr<E>::value> = cpp::detail::dummy>
-auto fflip(const E& value) -> transform_helper<E, fflip_transformer> {
+auto fflip(const E& value) -> unstable_transform_helper<E, fflip_transformer> {
     return {fflip_transformer<build_type<E>>(value)};
 }
 
 template<typename E, cpp::enable_if_u<is_etl_expr<E>::value> = cpp::detail::dummy>
-auto transpose(const E& value) -> transform_helper<E, transpose_transformer> {
+auto transpose(const E& value) -> unstable_transform_helper<E, transpose_transformer> {
     return {transpose_transformer<build_type<E>>(value)};
 }
 

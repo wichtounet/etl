@@ -38,6 +38,25 @@ struct scalar {
     }
 };
 
+template<typename T, std::size_t D>
+struct rep_transformer {
+    using sub_type = T;
+    using value_type = value_t<T>;
+
+    sub_type sub;
+
+    explicit rep_transformer(sub_type vec) : sub(vec) {}
+
+    value_type operator[](std::size_t i) const {
+        return sub(i / D);
+    }
+
+    template<typename... Sizes>
+    value_type operator()(std::size_t i, Sizes... /*sizes*/) const {
+        return sub(i);
+    }
+};
+
 template<typename T>
 struct hflip_transformer {
     using sub_type = T;
