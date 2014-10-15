@@ -16,7 +16,7 @@
 namespace etl {
 
 template<typename I, typename K, typename C>
-static C& convolve_1d_full(const I& input, const K& kernel, C& conv){
+static C& convolve_1d_full(const I& input, const K& kernel, C&& conv){
     static_assert(is_etl_expr<I>::value && is_etl_expr<K>::value && is_etl_expr<C>::value, "Convolution only supported for ETL expressions");
     //static_assert(C::etl_size == I::etl_size + K::etl_size - 1, "Invalid output vector size");
     cpp_assert(size(conv) == size(input) + size(kernel) - 1, "Invalid output vector size");
@@ -38,7 +38,7 @@ static C& convolve_1d_full(const I& input, const K& kernel, C& conv){
 }
 
 template<typename I, typename K, typename C>
-static C& convolve_1d_same(const I& input, const K& kernel, C& conv){
+static C& convolve_1d_same(const I& input, const K& kernel, C&& conv){
     static_assert(is_etl_expr<I>::value && is_etl_expr<K>::value && is_etl_expr<C>::value, "Convolution only supported for ETL expressions");
     //static_assert(C::etl_size == I::etl_size, "Invalid output vector size");
 
@@ -59,7 +59,7 @@ static C& convolve_1d_same(const I& input, const K& kernel, C& conv){
 }
 
 template<typename I, typename K, typename C>
-static C& convolve_1d_valid(const I& input, const K& kernel, C& conv){
+static C& convolve_1d_valid(const I& input, const K& kernel, C&& conv){
     static_assert(is_etl_expr<I>::value && is_etl_expr<K>::value && is_etl_expr<C>::value, "Convolution only supported for ETL expressions");
     //static_assert(C::etl_size == I::etl_size - K::etl_size + 1, "Invalid output vector size");
 
@@ -77,7 +77,7 @@ static C& convolve_1d_valid(const I& input, const K& kernel, C& conv){
 }
 
 template<typename I, typename K, typename C>
-static C& convolve_2d_full(const I& input, const K& kernel, C& conv){
+static C& convolve_2d_full(const I& input, const K& kernel, C&& conv){
     static_assert(is_etl_expr<I>::value && is_etl_expr<K>::value && is_etl_expr<C>::value, "Convolution only supported for ETL expressions");
 
     for(std::size_t i = 0 ; i < rows(conv) ; ++i){
@@ -104,7 +104,7 @@ static C& convolve_2d_full(const I& input, const K& kernel, C& conv){
 }
 
 template<typename I, typename K, typename C>
-static C& convolve_2d_same(const I& input, const K& kernel, C& conv){
+static C& convolve_2d_same(const I& input, const K& kernel, C&& conv){
     static_assert(is_etl_expr<I>::value && is_etl_expr<K>::value && is_etl_expr<C>::value, "Convolution only supported for ETL expressions");
 
     for(std::size_t i = 0 ; i < rows(conv); ++i){
@@ -131,7 +131,7 @@ static C& convolve_2d_same(const I& input, const K& kernel, C& conv){
 }
 
 template<typename I, typename K, typename C>
-static C& convolve_2d_valid(const I& input, const K& kernel, C& conv){
+static C& convolve_2d_valid(const I& input, const K& kernel, C&& conv){
     static_assert(is_etl_expr<I>::value && is_etl_expr<K>::value && is_etl_expr<C>::value, "Convolution only supported for ETL expressions");
 
     for(std::size_t i = 0 ; i < rows(conv) ; ++i){
