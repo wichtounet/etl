@@ -7,7 +7,7 @@ include make-utils/cpp-utils.mk
 
 CXX_FLAGS += -ICatch/include -Werror
 
-ifeq ($(CXX),clang++)
+ifneq (,$(findstring clang,$(CXX)))
 CXX_FLAGS += -stdlib=libc++
 endif
 
