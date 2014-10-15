@@ -17,63 +17,74 @@
 
 namespace etl {
 
-template<typename T, typename Enable = void>
-struct build_type {
-    using type = std::decay_t<T>;
-};
+template<typename E>
+using value_t = typename std::decay_t<E>::value_type;
 
 template<typename T>
-struct build_type<T, std::enable_if_t<is_etl_value<std::decay_t<T>>::value>> {
-    using type = const std::decay_t<T>&;
-};
+using build_type = std::conditional_t<
+    is_etl_value<T>::value,
+    const std::decay_t<T>&,
+    std::decay_t<T>>;
+
+template<typename T>
+using build_identity_type = std::conditional_t<
+    is_etl_value<T>::value,
+    std::conditional_t<
+        std::is_const<std::remove_reference_t<T>>::value,
+        const std::decay_t<T>&,
+        std::decay_t<T>&>,
+    std::decay_t<T>>;
+
+template<typename LE, typename RE, template<typename> class OP>
+using left_binary_helper = binary_expr<value_t<LE>, build_type<LE>, OP<value_t<LE>>, build_type<RE>>;
+
+template<typename LE, typename RE, typename OP>
+using left_binary_helper_op = binary_expr<value_t<LE>, build_type<LE>, OP, build_type<RE>>;
+
+template<typename LE, typename RE, template<typename> class OP>
+using right_binary_helper = binary_expr<value_t<RE>, build_type<LE>, OP<value_t<RE>>, build_type<RE>>;
+
+template<typename E, template<typename> class OP>
+using unary_helper = unary_expr<value_t<E>, build_type<E>, OP<value_t<E>>>;
+
+template<typename E, typename OP>
+using identity_helper = unary_expr<value_t<E>, OP, identity_op>;
+
+template<typename E, template<typename> class OP>
+using transform_helper = transform_expr<value_t<E>, OP<build_type<E>>>;
 
 //{{{ Build binary expressions from two ETL expressions (vector,matrix,binary,unary)
 
-template<typename LE, typename RE, template<typename> class OP>
-struct left_binary_helper {
-    using type = binary_expr<typename std::decay_t<LE>::value_type, typename build_type<LE>::type, OP<typename std::decay_t<LE>::value_type>, typename build_type<RE>::type>;
-};
-
-template<typename LE, typename RE, typename OP>
-struct left_binary_helper_op {
-    using type = binary_expr<typename std::decay_t<LE>::value_type, typename build_type<LE>::type, OP, typename build_type<RE>::type>;
-};
-
-template<typename LE, typename RE, template<typename> class OP>
-struct right_binary_helper {
-    using type = binary_expr<typename std::decay_t<RE>::value_type, typename build_type<LE>::type, OP<typename std::decay_t<RE>::value_type>, typename build_type<RE>::type>;
-};
-
 template<typename LE, typename RE, cpp::enable_if_all_u<is_etl_expr<LE>::value, is_etl_expr<RE>::value> = cpp::detail::dummy>
-auto operator-(LE&& lhs, RE&& rhs) -> typename left_binary_helper<LE, RE, minus_binary_op>::type {
+auto operator-(LE&& lhs, RE&& rhs) -> left_binary_helper<LE, RE, minus_binary_op> {
     ensure_same_size(lhs, rhs);
 
     return {lhs, rhs};
 }
 
 template<typename LE, typename RE, cpp::enable_if_all_u<is_etl_expr<LE>::value, is_etl_expr<RE>::value> = cpp::detail::dummy>
-auto operator+(LE&& lhs, RE&& rhs) -> typename left_binary_helper<LE, RE, plus_binary_op>::type {
+auto operator+(LE&& lhs, RE&& rhs) -> left_binary_helper<LE, RE, plus_binary_op> {
     ensure_same_size(lhs, rhs);
 
     return {lhs, rhs};
 }
 
 template<typename LE, typename RE, cpp::enable_if_all_u<is_etl_expr<LE>::value, is_etl_expr<RE>::value> = cpp::detail::dummy>
-auto operator*(LE&& lhs, RE&& rhs) -> typename left_binary_helper<LE, RE, mul_binary_op>::type {
+auto operator*(LE&& lhs, RE&& rhs) -> left_binary_helper<LE, RE, mul_binary_op> {
     ensure_same_size(lhs, rhs);
 
     return {lhs, rhs};
 }
 
 template<typename LE, typename RE, cpp::enable_if_all_u<is_etl_expr<LE>::value, is_etl_expr<RE>::value> = cpp::detail::dummy>
-auto operator/(LE&& lhs, RE&& rhs) -> typename left_binary_helper<LE, RE, div_binary_op>::type {
+auto operator/(LE&& lhs, RE&& rhs) -> left_binary_helper<LE, RE, div_binary_op> {
     ensure_same_size(lhs, rhs);
 
     return {lhs, rhs};
 }
 
 template<typename LE, typename RE, cpp::enable_if_all_u<is_etl_expr<LE>::value, is_etl_expr<RE>::value> = cpp::detail::dummy>
-auto operator%(LE&& lhs, RE&& rhs) -> typename left_binary_helper<LE, RE, mod_binary_op>::type {
+auto operator%(LE&& lhs, RE&& rhs) -> left_binary_helper<LE, RE, mod_binary_op> {
     ensure_same_size(lhs, rhs);
 
     return {lhs, rhs};
@@ -83,54 +94,54 @@ auto operator%(LE&& lhs, RE&& rhs) -> typename left_binary_helper<LE, RE, mod_bi
 
 //{{{ Mix scalars and ETL expressions (vector,matrix,binary,unary)
 
-template<typename LE, typename RE, typename T = typename std::decay_t<LE>::value_type, cpp::enable_if_all_u<std::is_convertible<RE, T>::value, is_etl_expr<std::decay_t<LE>>::value> = cpp::detail::dummy>
-auto operator-(LE&& lhs, RE rhs) -> typename left_binary_helper<LE, scalar<T>, minus_binary_op>::type {
-    return {lhs, scalar<T>(rhs)};
+template<typename LE, typename RE, cpp::enable_if_all_u<std::is_convertible<RE, value_t<LE>>::value, is_etl_expr<LE>::value> = cpp::detail::dummy>
+auto operator-(LE&& lhs, RE rhs) -> left_binary_helper<LE, scalar<value_t<LE>>, minus_binary_op> {
+    return {lhs, scalar<value_t<LE>>(rhs)};
 }
 
-template<typename LE, typename RE, typename T = typename std::decay_t<RE>::value_type, cpp::enable_if_all_u<std::is_convertible<LE, T>::value, is_etl_expr<std::decay_t<RE>>::value> = cpp::detail::dummy>
-auto operator-(LE lhs, RE&& rhs) -> typename right_binary_helper<scalar<T>, RE, minus_binary_op>::type {
-    return {scalar<T>(lhs), rhs};
+template<typename LE, typename RE, cpp::enable_if_all_u<std::is_convertible<LE, value_t<RE>>::value, is_etl_expr<RE>::value> = cpp::detail::dummy>
+auto operator-(LE lhs, RE&& rhs) -> right_binary_helper<scalar<value_t<RE>>, RE, minus_binary_op> {
+    return {scalar<value_t<RE>>(lhs), rhs};
 }
 
-template<typename LE, typename RE, typename T = typename std::decay_t<LE>::value_type, cpp::enable_if_all_u<std::is_convertible<RE, T>::value, is_etl_expr<std::decay_t<LE>>::value> = cpp::detail::dummy>
-auto operator+(LE&& lhs, RE rhs) -> typename left_binary_helper<LE, scalar<T>, plus_binary_op>::type {
-    return {lhs, scalar<T>(rhs)};
+template<typename LE, typename RE, cpp::enable_if_all_u<std::is_convertible<RE, value_t<LE>>::value, is_etl_expr<LE>::value> = cpp::detail::dummy>
+auto operator+(LE&& lhs, RE rhs) -> left_binary_helper<LE, scalar<value_t<LE>>, plus_binary_op> {
+    return {lhs, scalar<value_t<LE>>(rhs)};
 }
 
-template<typename LE, typename RE, typename T = typename std::decay_t<RE>::value_type, cpp::enable_if_all_u<std::is_convertible<LE, T>::value, is_etl_expr<std::decay_t<RE>>::value> = cpp::detail::dummy>
-auto operator+(LE lhs, RE&& rhs) -> typename right_binary_helper<scalar<T>, RE, plus_binary_op>::type {
-    return {scalar<T>(lhs), rhs};
+template<typename LE, typename RE, cpp::enable_if_all_u<std::is_convertible<LE, value_t<RE>>::value, is_etl_expr<RE>::value> = cpp::detail::dummy>
+auto operator+(LE lhs, RE&& rhs) -> right_binary_helper<scalar<value_t<RE>>, RE, plus_binary_op> {
+    return {scalar<value_t<RE>>(lhs), rhs};
 }
 
-template<typename LE, typename RE, typename T = typename std::decay_t<LE>::value_type, cpp::enable_if_all_u<std::is_convertible<RE, T>::value, is_etl_expr<std::decay_t<LE>>::value> = cpp::detail::dummy>
-auto operator*(LE&& lhs, RE rhs) -> typename left_binary_helper<LE, scalar<T>, mul_binary_op>::type {
-    return {lhs, scalar<T>(rhs)};
+template<typename LE, typename RE, cpp::enable_if_all_u<std::is_convertible<RE, value_t<LE>>::value, is_etl_expr<LE>::value> = cpp::detail::dummy>
+auto operator*(LE&& lhs, RE rhs) -> left_binary_helper<LE, scalar<value_t<LE>>, mul_binary_op> {
+    return {lhs, scalar<value_t<LE>>(rhs)};
 }
 
-template<typename LE, typename RE, typename T = typename std::decay_t<RE>::value_type, cpp::enable_if_all_u<std::is_convertible<LE, T>::value, is_etl_expr<std::decay_t<RE>>::value> = cpp::detail::dummy>
-auto operator*(LE lhs, RE&& rhs) -> typename right_binary_helper<scalar<T>, RE, mul_binary_op>::type {
-    return {scalar<T>(lhs), rhs};
+template<typename LE, typename RE, cpp::enable_if_all_u<std::is_convertible<LE, value_t<RE>>::value, is_etl_expr<RE>::value> = cpp::detail::dummy>
+auto operator*(LE lhs, RE&& rhs) -> right_binary_helper<scalar<value_t<RE>>, RE, mul_binary_op> {
+    return {scalar<value_t<RE>>(lhs), rhs};
 }
 
-template<typename LE, typename RE, typename T = typename std::decay_t<LE>::value_type, cpp::enable_if_all_u<std::is_convertible<RE, T>::value, is_etl_expr<std::decay_t<LE>>::value> = cpp::detail::dummy>
-auto operator/(LE&& lhs, RE rhs) -> typename left_binary_helper<LE, scalar<T>, div_binary_op>::type {
-    return {lhs, scalar<T>(rhs)};
+template<typename LE, typename RE, cpp::enable_if_all_u<std::is_convertible<RE, value_t<LE>>::value, is_etl_expr<LE>::value> = cpp::detail::dummy>
+auto operator/(LE&& lhs, RE rhs) -> left_binary_helper<LE, scalar<value_t<LE>>, div_binary_op> {
+    return {lhs, scalar<value_t<LE>>(rhs)};
 }
 
-template<typename LE, typename RE, typename T = typename std::decay_t<RE>::value_type, cpp::enable_if_all_u<std::is_convertible<LE, T>::value, is_etl_expr<std::decay_t<RE>>::value> = cpp::detail::dummy>
-auto operator/(LE lhs, RE&& rhs) -> typename right_binary_helper<scalar<T>, RE, div_binary_op>::type {
-    return {scalar<T>(lhs), rhs};
+template<typename LE, typename RE, cpp::enable_if_all_u<std::is_convertible<LE, value_t<RE>>::value, is_etl_expr<RE>::value> = cpp::detail::dummy>
+auto operator/(LE lhs, RE&& rhs) -> right_binary_helper<scalar<value_t<RE>>, RE, div_binary_op> {
+    return {scalar<value_t<RE>>(lhs), rhs};
 }
 
-template<typename LE, typename RE, typename T = typename std::decay_t<LE>::value_type, cpp::enable_if_all_u<std::is_convertible<RE, T>::value, is_etl_expr<std::decay_t<LE>>::value> = cpp::detail::dummy>
-auto operator%(LE&& lhs, RE rhs) -> typename left_binary_helper<LE, scalar<T>, mod_binary_op>::type {
-    return {lhs, scalar<T>(rhs)};
+template<typename LE, typename RE, cpp::enable_if_all_u<std::is_convertible<RE, value_t<LE>>::value, is_etl_expr<LE>::value> = cpp::detail::dummy>
+auto operator%(LE&& lhs, RE rhs) -> left_binary_helper<LE, scalar<value_t<LE>>, mod_binary_op> {
+    return {lhs, scalar<value_t<LE>>(rhs)};
 }
 
-template<typename LE, typename RE, typename T = typename std::decay_t<RE>::value_type, cpp::enable_if_all_u<std::is_convertible<LE, T>::value, is_etl_expr<std::decay_t<RE>>::value> = cpp::detail::dummy>
-auto operator%(LE lhs, RE&& rhs) -> typename right_binary_helper<scalar<T>, RE, mod_binary_op>::type {
-    return {scalar<T>(lhs), rhs};
+template<typename LE, typename RE, cpp::enable_if_all_u<std::is_convertible<LE, value_t<RE>>::value, is_etl_expr<RE>::value> = cpp::detail::dummy>
+auto operator%(LE lhs, RE&& rhs) -> right_binary_helper<scalar<value_t<RE>>, RE, mod_binary_op> {
+    return {scalar<value_t<RE>>(lhs), rhs};
 }
 
 //}}}
@@ -250,79 +261,73 @@ LE& operator%=(LE&& lhs, const RE& rhs){
 
 //{{{ Apply an unary expression on an ETL expression (vector,matrix,binary,unary)
 
-template<typename E>
-using value_t = typename std::decay_t<E>::value_type;
-
-template<typename E, template<typename> class OP>
-using unary_helper_t = unary_expr<value_t<E>, typename build_type<E>::type, OP<value_t<E>>>;
-
 template<typename E, cpp::enable_if_u<is_etl_expr<std::decay_t<E>>::value> = cpp::detail::dummy>
-auto abs(E&& value) -> unary_helper_t<E, abs_unary_op> {
+auto abs(E&& value) -> unary_helper<E, abs_unary_op> {
     return {value};
 }
 
 template<typename E, typename T, cpp::enable_if_all_u<is_etl_expr<E>::value, std::is_arithmetic<T>::value> = cpp::detail::dummy>
-auto max(E&& value, T v) -> typename left_binary_helper_op<E, scalar<T>, max_binary_op<value_t<E>, T>>::type {
+auto max(E&& value, T v) -> left_binary_helper_op<E, scalar<T>, max_binary_op<value_t<E>, T>> {
     return {value, scalar<T>(v)};
 }
 
 template<typename E, typename T, cpp::enable_if_all_u<is_etl_expr<E>::value, std::is_arithmetic<T>::value> = cpp::detail::dummy>
-auto min(E&& value, T v) -> typename left_binary_helper_op<E, scalar<T>, min_binary_op<value_t<E>, T>>::type {
+auto min(E&& value, T v) -> left_binary_helper_op<E, scalar<T>, min_binary_op<value_t<E>, T>> {
     return {value, scalar<T>(v)};
 }
 
 template<typename E, typename T, cpp::enable_if_all_u<is_etl_expr<E>::value, std::is_arithmetic<T>::value> = cpp::detail::dummy>
-auto one_if(E&& value, T v) -> typename left_binary_helper_op<E, scalar<T>, one_if_binary_op<value_t<E>, T>>::type {
+auto one_if(E&& value, T v) -> left_binary_helper_op<E, scalar<T>, one_if_binary_op<value_t<E>, T>> {
     return {value, scalar<T>(v)};
 }
 
-template<typename E, typename T = typename std::decay_t<E>::value_type, cpp::enable_if_u<is_etl_expr<E>::value> = cpp::detail::dummy>
-auto one_if_max(E&& value) -> typename left_binary_helper_op<E, scalar<T>, one_if_binary_op<T, T>>::type {
-    return {value, scalar<T>(max(value))};
+template<typename E, cpp::enable_if_u<is_etl_expr<E>::value> = cpp::detail::dummy>
+auto one_if_max(E&& value) -> left_binary_helper_op<E, scalar<value_t<E>>, one_if_binary_op<value_t<E>, value_t<E>>> {
+    return {value, scalar<value_t<E>>(max(value))};
 }
 
 template<typename E, cpp::enable_if_u<is_etl_expr<E>::value> = cpp::detail::dummy>
-auto log(E&& value) -> unary_helper_t<E, log_unary_op> {
+auto log(E&& value) -> unary_helper<E, log_unary_op> {
     return {value};
 }
 
 template<typename E, cpp::enable_if_u<is_etl_expr<E>::value> = cpp::detail::dummy>
-auto uniform_noise(E&& value) -> unary_helper_t<E, uniform_noise_unary_op> {
+auto uniform_noise(E&& value) -> unary_helper<E, uniform_noise_unary_op> {
     return {value};
 }
 
 template<typename E, cpp::enable_if_u<is_etl_expr<E>::value> = cpp::detail::dummy>
-auto normal_noise(E&& value) -> unary_helper_t<E, normal_noise_unary_op> {
+auto normal_noise(E&& value) -> unary_helper<E, normal_noise_unary_op> {
     return {value};
 }
 
 template<typename E, cpp::enable_if_u<is_etl_expr<E>::value> = cpp::detail::dummy>
-auto logistic_noise(E&& value) -> unary_helper_t<E, logistic_noise_unary_op> {
+auto logistic_noise(E&& value) -> unary_helper<E, logistic_noise_unary_op> {
     return {value};
 }
 
 template<typename E, typename T, cpp::enable_if_all_u<is_etl_expr<E>::value, std::is_arithmetic<T>::value> = cpp::detail::dummy>
-auto ranged_noise(E&& value, T v) -> typename left_binary_helper_op<E, scalar<T>, ranged_noise_binary_op<value_t<E>, T>>::type {
+auto ranged_noise(E&& value, T v) -> left_binary_helper_op<E, scalar<T>, ranged_noise_binary_op<value_t<E>, T>> {
     return {value, scalar<T>(v)};
 }
 
 template<typename E, cpp::enable_if_u<is_etl_expr<E>::value> = cpp::detail::dummy>
-auto exp(E&& value) -> unary_helper_t<E, exp_unary_op> {
+auto exp(E&& value) -> unary_helper<E, exp_unary_op> {
     return {value};
 }
 
 template<typename E, cpp::enable_if_u<is_etl_expr<E>::value> = cpp::detail::dummy>
-auto sign(E&& value) -> unary_helper_t<E, sign_unary_op> {
+auto sign(E&& value) -> unary_helper<E, sign_unary_op> {
     return {value};
 }
 
 template<typename E, cpp::enable_if_u<is_etl_expr<E>::value> = cpp::detail::dummy>
-auto sigmoid(E&& value) -> unary_helper_t<E, sigmoid_unary_op> {
+auto sigmoid(E&& value) -> unary_helper<E, sigmoid_unary_op> {
     return {value};
 }
 
 template<typename E, cpp::enable_if_u<is_etl_expr<E>::value> = cpp::detail::dummy>
-auto softplus(E&& value) -> unary_helper_t<E, softplus_unary_op> {
+auto softplus(E&& value) -> unary_helper<E, softplus_unary_op> {
     return {value};
 }
 
@@ -332,7 +337,7 @@ auto softmax(const E& e){
 }
 
 template<typename E, cpp::enable_if_u<is_etl_expr<E>::value> = cpp::detail::dummy>
-auto bernoulli(const E& value) -> unary_helper_t<E, bernoulli_unary_op> {
+auto bernoulli(const E& value) -> unary_helper<E, bernoulli_unary_op> {
     return {value};
 }
 
@@ -340,53 +345,36 @@ auto bernoulli(const E& value) -> unary_helper_t<E, bernoulli_unary_op> {
 
 //{{{ Views that returns lvalues
 
-template<typename E, typename OP>
-using identity_helper = unary_expr<typename std::decay_t<E>::value_type, OP, identity_op>;
-
-template<typename T, typename Enable = void>
-struct build_identity_type {
-    using type = std::decay_t<T>;
-};
-
-template<typename T>
-struct build_identity_type<T, std::enable_if_t<is_etl_value<std::decay_t<T>>::value>> {
-    using type = std::conditional_t<
-            std::is_const<std::remove_reference_t<T>>::value,
-            const std::decay_t<T>&,
-            std::decay_t<T>&
-        >;
-};
-
 template<std::size_t D, typename E, cpp::enable_if_u<is_etl_expr<E>::value> = cpp::detail::dummy>
-auto dim(E&& value, std::size_t i) -> identity_helper<E, dim_view<typename build_identity_type<E>::type, D>> {
+auto dim(E&& value, std::size_t i) -> identity_helper<E, dim_view<build_identity_type<E>, D>> {
     return {{value, i}};
 }
 
 template<typename E, cpp::enable_if_u<is_etl_expr<E>::value> = cpp::detail::dummy>
-auto row(E&& value, std::size_t i) -> identity_helper<E, dim_view<typename build_identity_type<E>::type, 1>> {
+auto row(E&& value, std::size_t i) -> identity_helper<E, dim_view<build_identity_type<E>, 1>> {
     return {{value, i}};
 }
 
 template<typename E, cpp::enable_if_u<is_etl_expr<E>::value> = cpp::detail::dummy>
-auto col(E&& value, std::size_t i) -> identity_helper<E, dim_view<typename build_identity_type<E>::type, 2>> {
+auto col(E&& value, std::size_t i) -> identity_helper<E, dim_view<build_identity_type<E>, 2>> {
     return {{value, i}};
 }
 
 template<typename E, cpp::enable_if_u<is_etl_expr<E>::value> = cpp::detail::dummy>
-auto sub(E&& value, std::size_t i) -> identity_helper<E, sub_view<typename build_identity_type<E>::type>> {
+auto sub(E&& value, std::size_t i) -> identity_helper<E, sub_view<build_identity_type<E>>> {
     static_assert(etl_traits<std::decay_t<E>>::dimensions() > 1, "Cannot use sub on vector");
     return {{value, i}};
 }
 
 template<std::size_t Rows, std::size_t Columns, typename E, cpp::enable_if_u<is_etl_expr<E>::value> = cpp::detail::dummy>
-auto reshape(E&& value) -> identity_helper<E, fast_matrix_view<typename build_identity_type<E>::type, Rows, Columns>> {
+auto reshape(E&& value) -> identity_helper<E, fast_matrix_view<build_identity_type<E>, Rows, Columns>> {
     cpp_assert(etl_traits<std::decay_t<E>>::size(value) == Rows * Columns, "Invalid size for reshape");
 
-    return {fast_matrix_view<typename build_identity_type<E>::type, Rows, Columns>(value)};
+    return {fast_matrix_view<build_identity_type<E>, Rows, Columns>(value)};
 }
 
 template<typename E, cpp::enable_if_u<is_etl_expr<E>::value> = cpp::detail::dummy>
-auto reshape(E&& value, std::size_t rows, std::size_t columns) -> identity_helper<E, dyn_matrix_view<typename build_identity_type<E>::type>> {
+auto reshape(E&& value, std::size_t rows, std::size_t columns) -> identity_helper<E, dyn_matrix_view<build_identity_type<E>>> {
     cpp_assert(etl_traits<std::decay_t<E>>::size(value) == rows * columns, "Invalid size for reshape");
 
     return {dyn_matrix_view<E>(value, rows, columns)};
@@ -396,27 +384,24 @@ auto reshape(E&& value, std::size_t rows, std::size_t columns) -> identity_helpe
 
 //{{{ Apply a special expression that can change order of elements
 
-template<typename E, template<typename> class OP>
-using transform_helper = transform_expr<typename std::decay_t<E>::value_type, OP<typename build_type<E>::type>>;
-
 template<typename E, cpp::enable_if_u<is_etl_expr<E>::value> = cpp::detail::dummy>
 auto hflip(const E& value) -> transform_helper<E, hflip_transformer> {
-    return {hflip_transformer<typename build_type<E>::type>(value)};
+    return {hflip_transformer<build_type<E>>(value)};
 }
 
 template<typename E, cpp::enable_if_u<is_etl_expr<E>::value> = cpp::detail::dummy>
 auto vflip(const E& value) -> transform_helper<E, vflip_transformer> {
-    return {vflip_transformer<typename build_type<E>::type>(value)};
+    return {vflip_transformer<build_type<E>>(value)};
 }
 
 template<typename E, cpp::enable_if_u<is_etl_expr<E>::value> = cpp::detail::dummy>
 auto fflip(const E& value) -> transform_helper<E, fflip_transformer> {
-    return {fflip_transformer<typename build_type<E>::type>(value)};
+    return {fflip_transformer<build_type<E>>(value)};
 }
 
 template<typename E, cpp::enable_if_u<is_etl_expr<E>::value> = cpp::detail::dummy>
 auto transpose(const E& value) -> transform_helper<E, transpose_transformer> {
-    return {transpose_transformer<typename build_type<E>::type>(value)};
+    return {transpose_transformer<build_type<E>>(value)};
 }
 
 //}}}
@@ -451,10 +436,10 @@ using type =
         std::is_reference<E>::value,
         typename std::conditional<
             std::is_const<std::remove_reference_t<E>>::value,
-            const typename std::decay_t<E>::value_type&,
-            typename std::decay_t<E>::value_type&
+            const value_t<E>&,
+            value_t<E>&
         >::type,
-        typename std::decay_t<E>::value_type
+        value_t<E>
     >::type;
 };
 
