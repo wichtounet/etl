@@ -108,6 +108,17 @@ void bench_fast_matrix_simple(const std::string& reference){
         , a, b);
 }
 
+template<std::size_t D1, std::size_t D2>
+void bench_fast_matrix_sigmoid(const std::string& reference){
+    etl::fast_matrix<double, D1, D2> a;
+    etl::fast_matrix<double, D1, D2> b;
+    etl::fast_matrix<double, D1, D2> c;
+
+    measure("fast_matrix_sigmoid(" + std::to_string(D1) + "," + std::to_string(D2) + ")(" + std::to_string(D1 * D2) + ")", reference,
+        [&a, &b, &c](){c = etl::sigmoid(1.0 + b);}
+        , a, b);
+}
+
 void bench_dyn_matrix_simple(std::size_t d1, std::size_t d2, const std::string& reference){
     etl::dyn_matrix<double> a(d1, d2);
     etl::dyn_matrix<double> b(d1, d2);
@@ -184,6 +195,8 @@ void bench_dyn_mmul(std::size_t d1, std::size_t d2, const std::string& reference
 void bench_stack(){
     std::cout << "Start benchmarking...\n";
     std::cout << "... all structures are on stack\n\n";
+
+    bench_fast_matrix_sigmoid<256, 128>("TODOms");
 
     bench_fast_vector_simple<4096>("TODOms");
     bench_fast_vector_simple<16384>("TODOms");
