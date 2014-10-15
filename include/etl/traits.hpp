@@ -250,7 +250,7 @@ struct etl_traits<etl::scalar<T>> {
 };
 
 /*!
- * \brief Specialization for binary_expr. 
+ * \brief Specialization for binary_expr.
  */
 template <typename T, typename LeftExpr, typename BinaryOp, typename RightExpr>
 struct etl_traits<etl::binary_expr<T, LeftExpr, BinaryOp, RightExpr>> {
@@ -605,6 +605,9 @@ struct sub_size_compare<E, std::enable_if_t<etl_traits<E>::is_generator>> : std:
 
 template<typename E>
 struct sub_size_compare<E, cpp::disable_if_t<etl_traits<E>::is_generator>> : std::integral_constant<std::size_t, etl_traits<E>::dimensions()> {};
+
+template<typename E>
+using value_t = typename std::decay_t<E>::value_type;
 
 } //end of namespace etl
 

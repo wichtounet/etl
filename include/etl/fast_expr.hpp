@@ -17,9 +17,6 @@
 
 namespace etl {
 
-template<typename E>
-using value_t = typename std::decay_t<E>::value_type;
-
 template<typename T>
 using build_type = std::conditional_t<
     is_etl_value<T>::value,

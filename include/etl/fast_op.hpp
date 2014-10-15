@@ -13,6 +13,7 @@
 #include <ctime>
 
 #include "math.hpp"
+#include "traits.hpp"
 
 namespace etl {
 
@@ -40,7 +41,7 @@ struct scalar {
 template<typename T>
 struct hflip_transformer {
     using sub_type = T;
-    using value_type = typename std::decay_t<T>::value_type;
+    using value_type = value_t<T>;
 
     sub_type sub;
 
@@ -62,7 +63,7 @@ struct hflip_transformer {
 template<typename T>
 struct vflip_transformer {
     using sub_type = T;
-    using value_type = typename std::decay_t<T>::value_type;
+    using value_type = value_t<T>;
 
     sub_type sub;
 
@@ -84,7 +85,7 @@ struct vflip_transformer {
 template<typename T>
 struct fflip_transformer {
     using sub_type = T;
-    using value_type = typename std::decay_t<T>::value_type;
+    using value_type = value_t<T>;
 
     sub_type sub;
 
@@ -106,7 +107,7 @@ struct fflip_transformer {
 template<typename T>
 struct transpose_transformer {
     using sub_type = T;
-    using value_type = typename std::decay_t<T>::value_type;
+    using value_type = value_t<T>;
 
     sub_type sub;
 
@@ -129,27 +130,27 @@ template<typename T, typename S>
 using return_helper =
     std::conditional_t<
         std::is_const<std::remove_reference_t<S>>::value,
-        const typename std::decay_t<T>::value_type&,
+        const value_t<T>&,
         std::conditional_t<
             cpp::and_u<
                 std::is_lvalue_reference<S>::value,
                 cpp::not_u<std::is_const<T>::value>::value
             >::value,
-            typename std::decay_t<T>::value_type&,
-            typename std::decay_t<T>::value_type>>;
+            value_t<T>&,
+            value_t<T>>>;
 
 template<typename T, typename S>
 using const_return_helper = std::conditional_t<
         std::is_lvalue_reference<S>::value,
-        const typename std::decay_t<T>::value_type&,
-        typename std::decay_t<T>::value_type>;
+        const value_t<T>&,
+        value_t<T>>;
 
 template<typename T, std::size_t D>
 struct dim_view {
     static_assert(D > 0 || D < 3, "Invalid dimension");
 
     using sub_type = T;
-    using value_type = typename std::decay_t<sub_type>::value_type;
+    using value_type = value_t<sub_type>;
 
     sub_type sub;
     const std::size_t i;
@@ -195,7 +196,7 @@ struct dim_view {
 template<typename T>
 struct sub_view {
     using parent_type = T;
-    using value_type = typename std::decay_t<parent_type>::value_type;
+    using value_type = value_t<parent_type>;
 
     parent_type parent;
     const std::size_t i;
@@ -229,7 +230,7 @@ struct fast_matrix_view {
     static_assert(Rows > 0 && Columns > 0 , "Invalid dimensions");
 
     using sub_type = T;
-    using value_type = typename std::decay_t<sub_type>::value_type;
+    using value_type = value_t<sub_type>;
 
     sub_type sub;
 
@@ -266,7 +267,7 @@ struct fast_matrix_view {
 template<typename T>
 struct dyn_matrix_view {
     using sub_type = T;
-    using value_type = typename std::decay_t<sub_type>::value_type;
+    using value_type = value_t<sub_type>;
 
     sub_type sub;
     std::size_t rows;

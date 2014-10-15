@@ -122,7 +122,7 @@ public:
         return *this;
     }
 
-    template<typename E, cpp::enable_if_all_u<non_const_return_ref, is_etl_expr<std::decay_t<E>>::value> = cpp::detail::dummy>
+    template<typename E, cpp::enable_if_all_u<non_const_return_ref, is_etl_expr<E>::value> = cpp::detail::dummy>
     unary_expr& operator=(const E& e){
         ensure_same_size(*this, e);
 
