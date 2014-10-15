@@ -324,17 +324,17 @@ auto sign(E&& value) -> unary_helper<E, sign_unary_op> {
 }
 
 template<typename E, cpp::enable_if_u<is_etl_expr<E>::value> = cpp::detail::dummy>
-auto sigmoid(E&& value) -> unary_helper<E, sigmoid_unary_op> {
-    return {value};
+auto sigmoid(E&& value){
+    return 1.0 / (1.0 + exp(-value));
 }
 
 template<typename E, cpp::enable_if_u<is_etl_expr<E>::value> = cpp::detail::dummy>
-auto softplus(E&& value) -> unary_helper<E, softplus_unary_op> {
-    return {value};
+auto softplus(E&& value){
+    return log(1.0 + exp(value));
 }
 
 template<typename E, cpp::enable_if_u<is_etl_expr<E>::value> = cpp::detail::dummy>
-auto softmax(const E& e){
+auto softmax(E&& e){
     return exp(e) / sum(exp(e));
 }
 
