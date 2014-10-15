@@ -95,7 +95,7 @@ template<typename T>
 struct is_generator_expr : std::integral_constant<bool, cpp::is_specialization_of<etl::generator_expr, std::decay_t<T>>::value> {};
 
 template<typename T>
-struct is_transformer_expr : std::integral_constant<bool, cpp::or_u<
+struct is_transformer : std::integral_constant<bool, cpp::or_u<
             cpp::is_specialization_of<etl::transpose_transformer, std::decay_t<T>>::value,
             cpp::is_specialization_of<etl::hflip_transformer, std::decay_t<T>>::value,
             cpp::is_specialization_of<etl::vflip_transformer, std::decay_t<T>>::value,
@@ -115,7 +115,7 @@ struct is_etl_expr : std::integral_constant<bool, cpp::or_u<
        is_dyn_matrix<T>::value,
        is_unary_expr<T>::value, is_binary_expr<T>::value,
        is_transform_expr<T>::value, is_generator_expr<T>::value,
-       is_transformer_expr<T>::value, is_view<T>::value
+       is_transformer<T>::value, is_view<T>::value
     >::value> {};
 
 template<typename T, typename Enable = void>
@@ -340,7 +340,7 @@ struct etl_traits<transpose_transformer<T>> {
  * \brief Specialization for transformers
  */
 template <typename T>
-struct etl_traits<T, std::enable_if_t<cpp::and_u<is_transformer_expr<T>::value, cpp::not_u<cpp::is_specialization_of<etl::transpose_transformer, T>::value>::value>::value>> {
+struct etl_traits<T, std::enable_if_t<cpp::and_u<is_transformer<T>::value, cpp::not_u<cpp::is_specialization_of<etl::transpose_transformer, T>::value>::value>::value>> {
     using expr_t = T;
     using sub_expr_t = std::decay_t<typename T::sub_type>;
 
