@@ -304,7 +304,7 @@ auto logistic_noise(E&& value) -> unary_helper_t<E, logistic_noise_unary_op> {
 }
 
 template<typename E, typename T, cpp::enable_if_all_u<is_etl_expr<E>::value, std::is_arithmetic<T>::value> = cpp::detail::dummy>
-auto ranged_noise(E&& value, T v) -> typename left_binary_helper_op<E, scalar<T>, ranged_noise_binary_op<typename E::value_type, T>>::type {
+auto ranged_noise(E&& value, T v) -> typename left_binary_helper_op<E, scalar<T>, ranged_noise_binary_op<typename std::decay_t<E>::value_type, T>>::type {
     return {value, scalar<T>(v)};
 }
 
