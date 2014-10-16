@@ -347,8 +347,8 @@ public:
     dyn_matrix& operator=(stable_transform_expr<value_type, E>&& e){
         ensure_same_size(*this, e);
 
-        for(std::size_t i = 0; i < rows(); ++i){
-            _data[index(i)] = e(i);
+        for(std::size_t i = 0; i < size(); ++i){
+            _data[i] = e[i];
         }
 
         return *this;
