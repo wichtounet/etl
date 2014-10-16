@@ -62,7 +62,7 @@ struct is_transformer : std::integral_constant<bool, cpp::or_u<
             cpp::is_specialization_of<etl::transpose_transformer, std::decay_t<T>>::value,
             cpp::is_specialization_of<etl::sum_transformer, std::decay_t<T>>::value,
             cpp::is_specialization_of<etl::mean_transformer, std::decay_t<T>>::value,
-            is_2<etl::rep_transformer, std::decay_t<T>>::value
+            is_var<etl::rep_transformer, std::decay_t<T>>::value
         >::value> {};
 
 template<typename T>
@@ -305,9 +305,9 @@ struct etl_traits<transpose_transformer<T>> {
 /*!
  * \brief Specialization for rep_transformer
  */
-template <typename T, std::size_t D>
-struct etl_traits<rep_transformer<T, D>> {
-    using expr_t = etl::rep_transformer<T, D>;
+template <typename T, std::size_t... D>
+struct etl_traits<rep_transformer<T, D...>> {
+    using expr_t = etl::rep_transformer<T, D...>;
     using sub_expr_t = std::decay_t<T>;
 
     static constexpr const bool is_fast = etl_traits<sub_expr_t>::is_fast;
@@ -315,25 +315,25 @@ struct etl_traits<rep_transformer<T, D>> {
     static constexpr const bool is_generator = false;
 
     static std::size_t size(const expr_t& v){
-        return D * etl_traits<sub_expr_t>::size(v.sub);
+        return mul_all<D...>::value * etl_traits<sub_expr_t>::size(v.sub);
     }
 
     static std::size_t dim(const expr_t& v, std::size_t d){
-        return d == 0 ? etl_traits<sub_expr_t>::dim(v.sub, 0) : D;
+        return d == 0 ? etl_traits<sub_expr_t>::dim(v.sub, 0) : nth_size<0,0,D...>::value;
     }
 
     template<bool B = is_fast, cpp::enable_if_u<B> = cpp::detail::dummy>
     static constexpr std::size_t size(){
-        return D * etl_traits<sub_expr_t>::size();
+        return mul_all<D...>::value * etl_traits<sub_expr_t>::size();
     }
 
     template<std::size_t D2>
     static constexpr std::size_t dim(){
-        return D2 == 0 ? etl_traits<sub_expr_t>::template dim<0>() : D;
+        return D2 == 0 ? etl_traits<sub_expr_t>::template dim<0>() : nth_size<D2-1,0,D...>::value;
     }
 
     static constexpr std::size_t dimensions(){
-        return 1 + etl_traits<sub_expr_t>::dimensions();
+        return sizeof...(D) + etl_traits<sub_expr_t>::dimensions();
     }
 };
 

@@ -382,10 +382,10 @@ auto reshape(E&& value, std::size_t rows, std::size_t columns) -> identity_helpe
 
 //{{{ Apply a stable transformation
 
-template<std::size_t D, typename E, cpp::enable_if_u<is_etl_expr<E>::value> = cpp::detail::dummy>
-auto rep(E&& value) -> stable_transform_expr<value_t<E>, rep_transformer<build_type<E>, D>> {
+template<std::size_t D1, std::size_t... D, typename E, cpp::enable_if_u<is_etl_expr<E>::value> = cpp::detail::dummy>
+auto rep(E&& value) -> stable_transform_expr<value_t<E>, rep_transformer<build_type<E>, D1, D...>> {
     static_assert(etl_traits<std::decay_t<E>>::dimensions() == 1, "Can only use rep on vector");
-    return {rep_transformer<build_type<E>, D>(value)};
+    return {rep_transformer<build_type<E>, D1, D...>(value)};
 }
 
 template<typename E, cpp::enable_if_u<is_etl_expr<E>::value> = cpp::detail::dummy>

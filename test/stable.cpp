@@ -43,6 +43,43 @@ TEST_CASE( "rep/fast_matrix_2", "rep" ) {
     REQUIRE(b(2,2) == 3.0);
 }
 
+TEST_CASE( "rep/fast_matrix_3", "rep" ) {
+    etl::fast_matrix<double, 3> a({1.0, -2.0, 3.0});
+    etl::fast_matrix<double, 3, 3, 2> b;
+
+    b = etl::rep<3, 2>(a);
+
+    REQUIRE(b(0,0,0) == 1.0);
+    REQUIRE(b(0,0,1) == 1.0);
+    REQUIRE(b(0,1,0) == 1.0);
+    REQUIRE(b(0,1,1) == 1.0);
+    REQUIRE(b(0,2,0) == 1.0);
+    REQUIRE(b(0,2,1) == 1.0);
+    REQUIRE(b(1,0,0) == -2.0);
+    REQUIRE(b(1,0,1) == -2.0);
+    REQUIRE(b(1,1,0) == -2.0);
+    REQUIRE(b(1,1,1) == -2.0);
+    REQUIRE(b(1,2,0) == -2.0);
+    REQUIRE(b(1,2,1) == -2.0);
+    REQUIRE(b(2,0,0) == 3.0);
+    REQUIRE(b(2,0,1) == 3.0);
+    REQUIRE(b(2,1,0) == 3.0);
+    REQUIRE(b(2,1,1) == 3.0);
+    REQUIRE(b(2,2,0) == 3.0);
+    REQUIRE(b(2,2,1) == 3.0);
+}
+
+TEST_CASE( "rep/fast_matrix_4", "rep" ) {
+    etl::fast_matrix<double, 1> a({1.0});
+    etl::fast_matrix<double, 1, 3, 2, 5, 7> b;
+
+    b = etl::rep<3, 2, 5, 7>(a);
+
+    for(auto v : b){
+        REQUIRE(v == 1.0);
+    }
+}
+
 //TODO Add The equivalent for dyn_versions
 
 //}}}
