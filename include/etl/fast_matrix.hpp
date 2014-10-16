@@ -13,17 +13,12 @@
 
 #include "cpp_utils/assert.hpp"
 
+#include "tmp.hpp"
 #include "traits_fwd.hpp"
 
 namespace etl {
 
 namespace matrix_detail {
-
-template<size_t F, size_t... Dims>
-struct matrix_size  : std::integral_constant<std::size_t, F * matrix_size<Dims...>::value> {};
-
-template<size_t F>
-struct matrix_size<F> : std::integral_constant<std::size_t, F> {};
 
 template<typename M, size_t I, typename Enable = void>
 struct matrix_subsize  : std::integral_constant<std::size_t, M::template dim<I+1>() * matrix_subsize<M, I+1>::value> {};
@@ -75,7 +70,7 @@ struct fast_matrix {
 
 public:
     static constexpr const std::size_t n_dimensions = sizeof...(Dims);
-    static constexpr const std::size_t etl_size = matrix_detail::matrix_size<Dims...>::value;
+    static constexpr const std::size_t etl_size = mul_all<Dims...>::value;
 
     using       value_type = T;
     using     storage_impl = std::array<value_type, etl_size>;
