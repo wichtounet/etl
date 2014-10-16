@@ -55,6 +55,9 @@ struct transpose_transformer;
 template<typename T, std::size_t D>
 struct rep_transformer;
 
+template<typename T>
+struct sum_transformer;
+
 template<typename T, std::size_t D>
 struct dim_view;
 
@@ -105,10 +108,11 @@ struct is_generator_expr : std::integral_constant<bool, cpp::is_specialization_o
 
 template<typename T>
 struct is_transformer : std::integral_constant<bool, cpp::or_u<
-            cpp::is_specialization_of<etl::transpose_transformer, std::decay_t<T>>::value,
             cpp::is_specialization_of<etl::hflip_transformer, std::decay_t<T>>::value,
             cpp::is_specialization_of<etl::vflip_transformer, std::decay_t<T>>::value,
             cpp::is_specialization_of<etl::fflip_transformer, std::decay_t<T>>::value,
+            cpp::is_specialization_of<etl::transpose_transformer, std::decay_t<T>>::value,
+            cpp::is_specialization_of<etl::sum_transformer, std::decay_t<T>>::value,
             is_2<etl::rep_transformer, std::decay_t<T>>::value
         >::value> {};
 
@@ -350,7 +354,7 @@ struct etl_traits<transpose_transformer<T>> {
 };
 
 /*!
- * \brief Specialization for tranpose_transformer
+ * \brief Specialization for rep_transformer
  */
 template <typename T, std::size_t D>
 struct etl_traits<rep_transformer<T, D>> {
@@ -381,6 +385,41 @@ struct etl_traits<rep_transformer<T, D>> {
 
     static constexpr std::size_t dimensions(){
         return 1 + etl_traits<sub_expr_t>::dimensions();
+    }
+};
+
+/*!
+ * \brief Specialization for sum_transformer
+ */
+template <typename T>
+struct etl_traits<sum_transformer<T>> {
+    using expr_t = etl::sum_transformer<T>;
+    using sub_expr_t = std::decay_t<T>;
+
+    static constexpr const bool is_fast = etl_traits<sub_expr_t>::is_fast;
+    static constexpr const bool is_value = false;
+    static constexpr const bool is_generator = false;
+
+    static std::size_t size(const expr_t& v){
+        return dim<0>(v.sub);
+    }
+
+    static std::size_t dim(const expr_t& v, std::size_t){
+        return dim<0>(v.sub);
+    }
+
+    template<bool B = is_fast, cpp::enable_if_u<B> = cpp::detail::dummy>
+    static constexpr std::size_t size(){
+        return etl_traits<sub_expr_t>::template dim<0>();
+    }
+
+    template<std::size_t D>
+    static constexpr std::size_t dim(){
+        return etl_traits<sub_expr_t>::template dim<0>();
+    }
+
+    static constexpr std::size_t dimensions(){
+        return 1;
     }
 };
 

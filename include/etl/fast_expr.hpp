@@ -399,8 +399,13 @@ auto reshape(E&& value, std::size_t rows, std::size_t columns) -> identity_helpe
 //{{{ Apply a stable transformation
 
 template<std::size_t D, typename E, cpp::enable_if_u<is_etl_expr<E>::value> = cpp::detail::dummy>
-auto rep(const E& value) -> stable_transform_expr<value_t<E>, rep_transformer<build_type<E>, D>> {
+auto rep(E&& value) -> stable_transform_expr<value_t<E>, rep_transformer<build_type<E>, D>> {
     return {rep_transformer<build_type<E>, D>(value)};
+}
+
+template<typename E, cpp::enable_if_u<is_etl_expr<E>::value> = cpp::detail::dummy>
+auto sum_r(E&& value) -> stable_transform_helper<E, sum_transformer> {
+    return {sum_transformer<build_type<E>>(value)};
 }
 
 //}}}

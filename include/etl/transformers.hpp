@@ -34,6 +34,24 @@ struct rep_transformer {
 };
 
 template<typename T>
+struct sum_transformer {
+    using sub_type = T;
+    using value_type = value_t<T>;
+
+    sub_type sub;
+
+    explicit sum_transformer(sub_type vec) : sub(vec) {}
+
+    value_type operator[](std::size_t i) const {
+        return sum(sub(i));
+    }
+
+    value_type operator()(std::size_t i) const {
+        return sum(sub(i));
+    }
+};
+
+template<typename T>
 struct hflip_transformer {
     using sub_type = T;
     using value_type = value_t<T>;
