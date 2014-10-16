@@ -13,6 +13,8 @@
 
 namespace etl {
 
+//TODO This list is ugly as hell
+
 template<typename T, std::size_t D>
 struct dyn_matrix;
 
