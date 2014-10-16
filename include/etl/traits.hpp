@@ -58,6 +58,9 @@ struct rep_transformer;
 template<typename T>
 struct sum_transformer;
 
+template<typename T>
+struct mean_transformer;
+
 template<typename T, std::size_t D>
 struct dim_view;
 
@@ -113,6 +116,7 @@ struct is_transformer : std::integral_constant<bool, cpp::or_u<
             cpp::is_specialization_of<etl::fflip_transformer, std::decay_t<T>>::value,
             cpp::is_specialization_of<etl::transpose_transformer, std::decay_t<T>>::value,
             cpp::is_specialization_of<etl::sum_transformer, std::decay_t<T>>::value,
+            cpp::is_specialization_of<etl::mean_transformer, std::decay_t<T>>::value,
             is_2<etl::rep_transformer, std::decay_t<T>>::value
         >::value> {};
 
@@ -389,12 +393,15 @@ struct etl_traits<rep_transformer<T, D>> {
 };
 
 /*!
- * \brief Specialization for sum_transformer
+ * \brief Specialization for (sum-mean)_transformer
  */
 template <typename T>
-struct etl_traits<sum_transformer<T>> {
-    using expr_t = etl::sum_transformer<T>;
-    using sub_expr_t = std::decay_t<T>;
+struct etl_traits<T, std::enable_if_t<cpp::or_u<
+            cpp::is_specialization_of<etl::sum_transformer, std::decay_t<T>>::value,
+            cpp::is_specialization_of<etl::mean_transformer, std::decay_t<T>>::value
+        >::value>> {
+    using expr_t = T;
+    using sub_expr_t = std::decay_t<typename std::decay_t<T>::sub_type>;
 
     static constexpr const bool is_fast = etl_traits<sub_expr_t>::is_fast;
     static constexpr const bool is_value = false;

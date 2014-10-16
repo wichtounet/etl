@@ -52,6 +52,24 @@ struct sum_transformer {
 };
 
 template<typename T>
+struct mean_transformer {
+    using sub_type = T;
+    using value_type = value_t<T>;
+
+    sub_type sub;
+
+    explicit mean_transformer(sub_type vec) : sub(vec) {}
+
+    value_type operator[](std::size_t i) const {
+        return mean(sub(i));
+    }
+
+    value_type operator()(std::size_t i) const {
+        return mean(sub(i));
+    }
+};
+
+template<typename T>
 struct hflip_transformer {
     using sub_type = T;
     using value_type = value_t<T>;

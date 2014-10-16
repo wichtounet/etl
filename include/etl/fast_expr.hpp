@@ -408,6 +408,11 @@ auto sum_r(E&& value) -> stable_transform_helper<E, sum_transformer> {
     return {sum_transformer<build_type<E>>(value)};
 }
 
+template<typename E, cpp::enable_if_u<is_etl_expr<E>::value> = cpp::detail::dummy>
+auto mean_r(E&& value) -> stable_transform_helper<E, mean_transformer> {
+    return {mean_transformer<build_type<E>>(value)};
+}
+
 //}}}
 
 //{{{ Apply a special expression that can change order of elements

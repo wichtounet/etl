@@ -95,3 +95,49 @@ TEST_CASE( "sum_r/fast_matrix_4", "sum_r" ) {
 }
 
 //}}}
+
+//{{{ Tests for sum_r
+
+TEST_CASE( "mean_r/fast_matrix_1", "mean_r" ) {
+    etl::fast_matrix<double, 3, 4> a({1,2,3,4,0,0,1,1,4,5,6,7});
+    etl::fast_matrix<double, 3> b(etl::mean_r(a));
+
+    REQUIRE(b(0) == 2.5);
+    REQUIRE(b(1) == 0.5);
+    REQUIRE(b(2) == 5.5);
+}
+
+TEST_CASE( "mean_r/fast_matrix_2", "mean_r" ) {
+    etl::fast_matrix<double, 3, 4> a({1,2,3,4,0,0,1,1,4,5,6,7});
+    etl::fast_matrix<double, 3> b;
+
+    b = etl::mean_r(a);
+
+    REQUIRE(b(0) == 2.5);
+    REQUIRE(b(1) == 0.5);
+    REQUIRE(b(2) == 5.5);
+}
+
+TEST_CASE( "mean_r/fast_matrix_3", "mean_r" ) {
+    etl::fast_matrix<double, 3, 4> a({1,2,3,4,0,0,1,1,4,5,6,7});
+    etl::fast_matrix<double, 3> b;
+
+    b = etl::mean_r(a) * 2.5;
+
+    REQUIRE(b(0) == 6.25);
+    REQUIRE(b(1) == 1.25);
+    REQUIRE(b(2) == 13.75);
+}
+
+TEST_CASE( "mean_r/fast_matrix_4", "mean_r" ) {
+    etl::fast_matrix<double, 3, 4> a({1,2,3,4,0,0,1,1,4,5,6,7});
+    etl::fast_matrix<double, 3> b;
+
+    b = (etl::mean_r(a) - etl::mean_r(a)) + 2.5;
+
+    REQUIRE(b(0) == 2.5);
+    REQUIRE(b(1) == 2.5);
+    REQUIRE(b(2) == 2.5);
+}
+
+//}}}
