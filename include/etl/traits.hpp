@@ -353,11 +353,11 @@ struct etl_traits<T, std::enable_if_t<cpp::or_u<
     static constexpr const bool is_generator = false;
 
     static std::size_t size(const expr_t& v){
-        return dim<0>(v.sub);
+        return etl::dim<0>(v.sub);
     }
 
     static std::size_t dim(const expr_t& v, std::size_t){
-        return dim<0>(v.sub);
+        return etl::dim<0>(v.sub);
     }
 
     template<bool B = is_fast, cpp::enable_if_u<B> = cpp::detail::dummy>

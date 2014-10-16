@@ -174,4 +174,24 @@ TEST_CASE( "mean_r/fast_matrix_4", "mean_r" ) {
     REQUIRE(b(2) == 2.5);
 }
 
+TEST_CASE( "mean_r/dyn_matrix_1", "mean_r" ) {
+    etl::dyn_matrix<double> a(3,4, etl::values(1,2,3,4,0,0,1,1,4,5,6,7));
+    etl::dyn_vector<double> b(etl::mean_r(a));
+
+    REQUIRE(b(0) == 2.5);
+    REQUIRE(b(1) == 0.5);
+    REQUIRE(b(2) == 5.5);
+}
+
+TEST_CASE( "mean_r/dyn_matrix_2", "mean_r" ) {
+    etl::dyn_matrix<double> a(3,4, etl::values(1,2,3,4,0,0,1,1,4,5,6,7));
+    etl::dyn_vector<double> b(3);
+
+    b = etl::mean_r(a);
+
+    REQUIRE(b(0) == 2.5);
+    REQUIRE(b(1) == 0.5);
+    REQUIRE(b(2) == 5.5);
+}
+
 //}}}
