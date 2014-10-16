@@ -12,6 +12,8 @@
 #include "etl/dyn_vector.hpp"
 #include "etl/dyn_matrix.hpp"
 
+//{{{ Tests for rep
+
 TEST_CASE( "rep/fast_matrix_1", "rep" ) {
     etl::fast_matrix<double, 3> a({1.0, -2.0, 3.0});
     etl::fast_matrix<double, 3, 3> b(etl::rep<3>(a));
@@ -43,3 +45,7 @@ TEST_CASE( "rep/fast_matrix_2", "rep" ) {
     REQUIRE(b(2,1) == 3.0);
     REQUIRE(b(2,2) == 3.0);
 }
+
+//TODO Add The equivalent for dyn_versions
+
+//}}}
