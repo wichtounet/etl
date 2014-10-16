@@ -26,17 +26,6 @@ struct matrix_subsize  : std::integral_constant<std::size_t, M::template dim<I+1
 template<typename M, size_t I>
 struct matrix_subsize<M, I, std::enable_if_t<I == M::n_dimensions - 1>> : std::integral_constant<std::size_t, 1> {};
 
-template<size_t S, size_t I, size_t F, size_t... Dims>
-struct matrix_dimension {
-    template<size_t S2, size_t I2, typename Enable = void>
-    struct matrix_dimension_int : std::integral_constant<std::size_t, matrix_dimension<S, I+1, Dims...>::value> {};
-
-    template<size_t S2, size_t I2>
-    struct matrix_dimension_int<S2, I2, std::enable_if_t<S2 == I2>> : std::integral_constant<std::size_t, F> {};
-
-    static constexpr const std::size_t value = matrix_dimension_int<S, I>::value;
-};
-
 template<typename M, size_t I, size_t Stop, typename S1, typename... S>
 struct matrix_index {
     template<size_t I2, typename Enable = void>
@@ -305,7 +294,7 @@ public:
 
     template<size_t D>
     static constexpr size_t dim(){
-        return matrix_detail::matrix_dimension<D, 0, Dims...>::value;
+        return nth_size<D, 0, Dims...>::value;
     }
 
     //TODO Would probably be useful to have dim(size_t i)
