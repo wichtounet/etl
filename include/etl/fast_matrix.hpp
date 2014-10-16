@@ -14,7 +14,6 @@
 #include "cpp_utils/assert.hpp"
 
 #include "traits.hpp"
-#include "fast_op.hpp"
 #include "fast_expr.hpp"
 
 namespace etl {

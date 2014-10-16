@@ -8,8 +8,16 @@
 #ifndef ETL_FAST_EXPR_HPP
 #define ETL_FAST_EXPR_HPP
 
-#include "fast_op.hpp"
 #include "traits.hpp"
+
+// The operators
+#include "generators.hpp"
+#include "transformers.hpp"
+#include "views.hpp"
+#include "unary_op.hpp"
+#include "binary_op.hpp"
+
+// The expressions
 #include "binary_expr.hpp"
 #include "unary_expr.hpp"
 #include "unstable_transform_expr.hpp"

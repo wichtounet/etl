@@ -8,7 +8,6 @@
 #ifndef ETL_GENERATOR_EXPR_HPP
 #define ETL_GENERATOR_EXPR_HPP
 
-#include "fast_op.hpp"
 #include "traits.hpp"
 
 namespace etl {
@@ -23,7 +22,7 @@ public:
 
     template<typename... Args>
     generator_expr(Args... args) : generator(std::forward<Args>(args)...) {}
-    
+
     generator_expr(const generator_expr& e) : generator(e.generator) {
         //Nothing else to init
     }
