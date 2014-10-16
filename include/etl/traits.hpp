@@ -319,6 +319,7 @@ struct etl_traits<rep_transformer<T, D...>> {
     }
 
     static std::size_t dim(const expr_t& v, std::size_t d){
+        static_assert(sizeof...(D) == 1, "dim(d) is uninmplemented for rep<T, D1, D...>");
         return d == 0 ? etl_traits<sub_expr_t>::dim(v.sub, 0) : nth_size<0,0,D...>::value;
     }
 

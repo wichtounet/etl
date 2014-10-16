@@ -80,7 +80,74 @@ TEST_CASE( "rep/fast_matrix_4", "rep" ) {
     }
 }
 
-//TODO Add The equivalent for dyn_versions
+TEST_CASE( "rep/dyn_matrix_1", "rep" ) {
+    etl::dyn_vector<double> a(3, etl::values(1.0, -2.0, 3.0));
+    etl::dyn_matrix<double> b(etl::rep<3>(a));
+
+    REQUIRE(b(0,0) == 1.0);
+    REQUIRE(b(0,1) == 1.0);
+    REQUIRE(b(0,2) == 1.0);
+    REQUIRE(b(1,0) == -2.0);
+    REQUIRE(b(1,1) == -2.0);
+    REQUIRE(b(1,2) == -2.0);
+    REQUIRE(b(2,0) == 3.0);
+    REQUIRE(b(2,1) == 3.0);
+    REQUIRE(b(2,2) == 3.0);
+}
+
+TEST_CASE( "rep/dyn_matrix_2", "rep" ) {
+    etl::dyn_vector<double> a(3, etl::values(1.0, -2.0, 3.0));
+    etl::dyn_matrix<double> b(3,3);
+
+    b = etl::rep<3>(a);
+
+    REQUIRE(b(0,0) == 1.0);
+    REQUIRE(b(0,1) == 1.0);
+    REQUIRE(b(0,2) == 1.0);
+    REQUIRE(b(1,0) == -2.0);
+    REQUIRE(b(1,1) == -2.0);
+    REQUIRE(b(1,2) == -2.0);
+    REQUIRE(b(2,0) == 3.0);
+    REQUIRE(b(2,1) == 3.0);
+    REQUIRE(b(2,2) == 3.0);
+}
+
+TEST_CASE( "rep/dyn_matrix_3", "rep" ) {
+    etl::dyn_vector<double> a(3, etl::values(1.0, -2.0, 3.0));
+    etl::dyn_matrix<double, 3> b(3,3,2);
+
+    b = etl::rep<3, 2>(a);
+
+    REQUIRE(b(0,0,0) == 1.0);
+    REQUIRE(b(0,0,1) == 1.0);
+    REQUIRE(b(0,1,0) == 1.0);
+    REQUIRE(b(0,1,1) == 1.0);
+    REQUIRE(b(0,2,0) == 1.0);
+    REQUIRE(b(0,2,1) == 1.0);
+    REQUIRE(b(1,0,0) == -2.0);
+    REQUIRE(b(1,0,1) == -2.0);
+    REQUIRE(b(1,1,0) == -2.0);
+    REQUIRE(b(1,1,1) == -2.0);
+    REQUIRE(b(1,2,0) == -2.0);
+    REQUIRE(b(1,2,1) == -2.0);
+    REQUIRE(b(2,0,0) == 3.0);
+    REQUIRE(b(2,0,1) == 3.0);
+    REQUIRE(b(2,1,0) == 3.0);
+    REQUIRE(b(2,1,1) == 3.0);
+    REQUIRE(b(2,2,0) == 3.0);
+    REQUIRE(b(2,2,1) == 3.0);
+}
+
+TEST_CASE( "rep/dyn_matrix_4", "rep" ) {
+    etl::dyn_vector<double> a(1, 1.0);
+    etl::dyn_matrix<double, 5> b(1, 3, 2, 5, 7);
+
+    b = etl::rep<3, 2, 5, 7>(a);
+
+    for(auto v : b){
+        REQUIRE(v == 1.0);
+    }
+}
 
 //}}}
 
