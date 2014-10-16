@@ -125,8 +125,8 @@ struct is_etl_expr : std::integral_constant<bool, cpp::or_u<
        is_fast_matrix<T>::value,
        is_dyn_matrix<T>::value,
        is_unary_expr<T>::value, is_binary_expr<T>::value,
-       is_unstable_transform_expr<T>::value, 
-       is_stable_transform_expr<T>::value, 
+       is_unstable_transform_expr<T>::value,
+       is_stable_transform_expr<T>::value,
        is_generator_expr<T>::value,
        is_transformer<T>::value, is_view<T>::value
     >::value> {};
@@ -385,13 +385,14 @@ struct etl_traits<rep_transformer<T, D>> {
 };
 
 /*!
- * \brief Specialization for transformers
+ * \brief Specialization for flipping transformers
  */
 template <typename T>
-struct etl_traits<T, std::enable_if_t<cpp::and_u<
-        is_transformer<T>::value, 
-        cpp::not_u<is_2<etl::rep_transformer, std::decay_t<T>>::value>::value, 
-        cpp::not_u<cpp::is_specialization_of<etl::transpose_transformer, std::decay_t<T>>::value>::value>::value>> {
+struct etl_traits<T, std::enable_if_t<cpp::or_u<
+            cpp::is_specialization_of<etl::hflip_transformer, std::decay_t<T>>::value,
+            cpp::is_specialization_of<etl::vflip_transformer, std::decay_t<T>>::value,
+            cpp::is_specialization_of<etl::fflip_transformer, std::decay_t<T>>::value
+        >::value>> {
     using expr_t = T;
     using sub_expr_t = std::decay_t<typename T::sub_type>;
 
