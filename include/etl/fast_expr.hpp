@@ -384,16 +384,19 @@ auto reshape(E&& value, std::size_t rows, std::size_t columns) -> identity_helpe
 
 template<std::size_t D, typename E, cpp::enable_if_u<is_etl_expr<E>::value> = cpp::detail::dummy>
 auto rep(E&& value) -> stable_transform_expr<value_t<E>, rep_transformer<build_type<E>, D>> {
+    static_assert(etl_traits<std::decay_t<E>>::dimensions() == 1, "Can only use rep on vector");
     return {rep_transformer<build_type<E>, D>(value)};
 }
 
 template<typename E, cpp::enable_if_u<is_etl_expr<E>::value> = cpp::detail::dummy>
 auto sum_r(E&& value) -> stable_transform_helper<E, sum_transformer> {
+    static_assert(etl_traits<std::decay_t<E>>::dimensions() > 1, "Can only use sum_r on matrix");
     return {sum_transformer<build_type<E>>(value)};
 }
 
 template<typename E, cpp::enable_if_u<is_etl_expr<E>::value> = cpp::detail::dummy>
 auto mean_r(E&& value) -> stable_transform_helper<E, mean_transformer> {
+    static_assert(etl_traits<std::decay_t<E>>::dimensions() > 1, "Can only use sum_r on matrix");
     return {mean_transformer<build_type<E>>(value)};
 }
 
