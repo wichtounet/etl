@@ -16,6 +16,13 @@ Usage
 The library is header-only and does not need to be built it at all,
 you just have to include its header files.
 
+Here are the header that can be included:
+
+* etl.hpp: Should always be included, provide the basic features
+* multiplication.hpp: Include if you want matrix multiplication
+* convolution: Include if you want 1D/2D convolution
+* print.hpp: Include if you want to print elements
+
 Data structures
 ***************
 
@@ -95,7 +102,7 @@ The expression can be evaluated using the :code:`s(x)` function that returns a
 concrete class (fast_matrix or dyn_matrix) based on the expression.
 
 Multiplication, convolution and all reductions are not lazily
-evaluated. 
+evaluated.
 
 Reduction
 *********
@@ -125,16 +132,16 @@ Generators
 **********
 
 It is also possible to generate sequences of data and perform
-operations on them. 
+operations on them.
 
-For now, two generators are available: 
+For now, two generators are available:
 
 * normal_generator: Generates real numbers distributed on a normal
   distribution
 * sequence_generator(c=0): Generates numbers in sequence from c
 
 All sequences are considered to have infinite size, therefore, they
-can be used to initialize or modify any containers or expressions. 
+can be used to initialize or modify any containers or expressions.
 
 Why compile-time sizes ?
 ************************
