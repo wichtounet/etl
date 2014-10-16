@@ -7,8 +7,7 @@
 
 #include "catch.hpp"
 
-#include "etl/fast_vector.hpp"
-#include "etl/fast_matrix.hpp"
+#include "etl/etl.hpp"
 
 TEST_CASE( "deep_assign/vec<mat>", "deep_assign" ) {
     etl::fast_vector<etl::fast_matrix<double, 2, 3>, 2> a;

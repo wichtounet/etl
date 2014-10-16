@@ -13,8 +13,7 @@
 
 #include "cpp_utils/assert.hpp"
 
-#include "traits.hpp"
-#include "fast_expr.hpp"
+#include "traits_fwd.hpp"
 
 namespace etl {
 

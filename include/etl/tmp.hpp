@@ -5,13 +5,13 @@
 //  http://opensource.org/licenses/MIT)
 //=======================================================================
 
-#ifndef ETL_FAST_VECTOR_HPP
-#define ETL_FAST_VECTOR_HPP
+#ifndef ETL_TMP_HPP
+#define ETL_TMP_HPP
 
 namespace etl {
 
-template<typename T, std::size_t Rows>
-using fast_vector = fast_matrix<T, Rows>;
+template<typename E>
+using value_t = typename std::decay_t<E>::value_type;
 
 } //end of namespace etl
 

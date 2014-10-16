@@ -7,11 +7,7 @@
 
 #include "catch.hpp"
 
-#include "etl/fast_vector.hpp"
-#include "etl/fast_matrix.hpp"
-#include "etl/dyn_vector.hpp"
-#include "etl/dyn_matrix.hpp"
-#include "etl/print.hpp"
+#include "etl/etl.hpp"
 
 //TODO Restore the feature on vectors
 

@@ -7,7 +7,7 @@
 
 #include "catch.hpp"
 
-#include "etl/dyn_matrix.hpp"
+#include "etl/etl.hpp"
 
 //{{{ Init tests
 

@@ -7,10 +7,7 @@
 
 #include "catch.hpp"
 
-#include "etl/fast_vector.hpp"
-#include "etl/fast_matrix.hpp"
-#include "etl/dyn_vector.hpp"
-#include "etl/dyn_matrix.hpp"
+#include "etl/etl.hpp"
 #include "etl/stop.hpp"
 
 TEST_CASE( "stop/fast_vector_1", "stop<unary<fast_vec>>" ) {

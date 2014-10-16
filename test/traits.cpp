@@ -7,11 +7,7 @@
 
 #include "catch.hpp"
 
-#include "etl/fast_vector.hpp"
-#include "etl/fast_matrix.hpp"
-#include "etl/dyn_vector.hpp"
-#include "etl/dyn_matrix.hpp"
-#include "etl/traits.hpp"
+#include "etl/etl.hpp"
 
 TEST_CASE( "etl_traits/fast_vector_1", "etl_traits<fast_vector>" ) {
     using type = etl::fast_vector<double, 4>;

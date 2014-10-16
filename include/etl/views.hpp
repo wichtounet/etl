@@ -8,7 +8,8 @@
 #ifndef ETL_VIEWS_HPP
 #define ETL_VIEWS_HPP
 
-#include "traits.hpp"
+#include "cpp_utils/tmp.hpp"
+#include "tmp.hpp"
 
 namespace etl {
 

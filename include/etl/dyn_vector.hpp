@@ -8,8 +8,6 @@
 #ifndef ETL_DYN_VECTOR_HPP
 #define ETL_DYN_VECTOR_HPP
 
-#include "dyn_matrix.hpp"
-
 namespace etl {
 
 template<typename T>

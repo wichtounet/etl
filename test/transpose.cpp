@@ -7,10 +7,7 @@
 
 #include "catch.hpp"
 
-#include "etl/fast_vector.hpp"
-#include "etl/fast_matrix.hpp"
-#include "etl/dyn_vector.hpp"
-#include "etl/dyn_matrix.hpp"
+#include "etl/etl.hpp"
 
 TEST_CASE( "transpose/fast_matrix_1", "transpose" ) {
     etl::fast_matrix<double, 3, 2> a({1.0, -2.0, 3.0, 0.5, 0.0, -1});

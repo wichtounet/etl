@@ -7,7 +7,7 @@
 
 #include "catch.hpp"
 
-#include "etl/fast_vector.hpp"
+#include "etl/etl.hpp"
 
 //{{{ Init tests
 

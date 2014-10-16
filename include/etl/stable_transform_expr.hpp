@@ -8,7 +8,7 @@
 #ifndef ETL_STABLE_TRANSFORM_EXPR_HPP
 #define ETL_STABLE_TRANSFORM_EXPR_HPP
 
-#include "traits.hpp"
+#include "traits_fwd.hpp"
 
 namespace etl {
 
@@ -20,7 +20,7 @@ private:
     using this_type = stable_transform_expr<T, Expr>;
 
     Expr _value;
- 
+
 public:
     using value_type = T;
     using expr_type = Expr;

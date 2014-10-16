@@ -8,8 +8,6 @@
 #ifndef ETL_GENERATOR_EXPR_HPP
 #define ETL_GENERATOR_EXPR_HPP
 
-#include "traits.hpp"
-
 namespace etl {
 
 template <typename Generator>

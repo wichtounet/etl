@@ -8,7 +8,7 @@
 #ifndef ETL_UNARY_EXPR_HPP
 #define ETL_UNARY_EXPR_HPP
 
-#include "traits.hpp"
+#include "traits_fwd.hpp"
 
 namespace etl {
 

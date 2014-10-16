@@ -8,7 +8,7 @@
 #ifndef ETL_BINARY_EXPR_HPP
 #define ETL_BINARY_EXPR_HPP
 
-#include "traits.hpp"
+#include "traits_fwd.hpp"
 
 namespace etl {
 
@@ -25,7 +25,7 @@ private:
 
     LeftExpr _lhs;
     RightExpr _rhs;
- 
+
 public:
     using value_type = T;
 

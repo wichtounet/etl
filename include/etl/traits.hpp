@@ -11,66 +11,9 @@
 #include "cpp_utils/assert.hpp"
 #include "cpp_utils/tmp.hpp"
 
+#include "traits_fwd.hpp" //To avoid nasty errors
+
 namespace etl {
-
-//TODO This list is ugly as hell
-
-template<typename T, std::size_t D>
-struct dyn_matrix;
-
-template<typename T, size_t... Dims>
-struct fast_matrix;
-
-template<typename T, size_t Rows, size_t Columns>
-struct fast_matrix_view;
-
-template<typename T>
-struct dyn_matrix_view;
-
-template <typename T, typename Expr, typename UnaryOp>
-class unary_expr;
-
-template <typename T, typename Expr>
-class unstable_transform_expr;
-
-template <typename T, typename Expr>
-class stable_transform_expr;
-
-template <typename T, typename LeftExpr, typename BinaryOp, typename RightExpr>
-class binary_expr;
-
-template <typename Generator>
-class generator_expr;
-
-template<typename T>
-struct hflip_transformer;
-
-template<typename T>
-struct vflip_transformer;
-
-template<typename T>
-struct fflip_transformer;
-
-template<typename T>
-struct transpose_transformer;
-
-template<typename T, std::size_t D>
-struct rep_transformer;
-
-template<typename T>
-struct sum_transformer;
-
-template<typename T>
-struct mean_transformer;
-
-template<typename T, std::size_t D>
-struct dim_view;
-
-template<typename T>
-struct sub_view;
-
-template<typename T>
-struct scalar;
 
 template<template<typename, std::size_t> class TT, typename T>
 struct is_2 : std::false_type { };
@@ -130,7 +73,7 @@ struct is_view : std::integral_constant<bool, cpp::or_u<
             cpp::is_specialization_of<etl::sub_view, std::decay_t<T>>::value
             >::value> {};
 
-template<typename T, typename Enable = void>
+template<typename T, typename Enable>
 struct is_etl_expr : std::integral_constant<bool, cpp::or_u<
        is_fast_matrix<T>::value,
        is_dyn_matrix<T>::value,
@@ -145,7 +88,7 @@ template<typename T, typename Enable = void>
 struct is_etl_value :
     std::integral_constant<bool, cpp::or_u<is_fast_matrix<T>::value, is_dyn_matrix<T>::value>::value> {};
 
-template<typename T, typename Enable = void>
+template<typename T, typename Enable>
 struct etl_traits;
 
 /*!
@@ -609,7 +552,7 @@ struct etl_traits<etl::dyn_matrix_view<T>> {
     }
 };
 
-template<typename E, cpp::enable_if_u<cpp::not_u<etl_traits<E>::is_fast>::value> = cpp::detail::dummy>
+template<typename E, cpp::enable_if_u<cpp::not_u<etl_traits<E>::is_fast>::value>>
 std::size_t size(const E& v){
     return etl_traits<E>::size(v);
 }
@@ -631,7 +574,7 @@ std::size_t subsize(const E& v){
     return etl_traits<E>::size(v) / etl_traits<E>::dim(v, 0);
 }
 
-template<typename E, cpp::enable_if_u<etl_traits<E>::is_fast> = cpp::detail::dummy>
+template<typename E, cpp::enable_if_u<etl_traits<E>::is_fast>>
 constexpr std::size_t size(const E&){
     return etl_traits<E>::size();
 }
@@ -659,17 +602,17 @@ constexpr std::size_t dimensions(const E&){
     return etl_traits<E>::dimensions();
 }
 
-template<std::size_t D, typename E, cpp::disable_if_u<etl_traits<E>::is_fast> = cpp::detail::dummy>
+template<std::size_t D, typename E, cpp::disable_if_u<etl_traits<E>::is_fast>>
 constexpr std::size_t dim(const E& e){
     return etl_traits<E>::dim(e, D);
 }
 
-template<typename E, cpp::disable_if_u<etl_traits<E>::is_fast> = cpp::detail::dummy>
+template<typename E, cpp::disable_if_u<etl_traits<E>::is_fast>>
 constexpr std::size_t dim(const E& e, std::size_t d){
     return etl_traits<E>::dim(e, d);
 }
 
-template<std::size_t D, typename E, cpp::enable_if_u<etl_traits<E>::is_fast> = cpp::detail::dummy>
+template<std::size_t D, typename E, cpp::enable_if_u<etl_traits<E>::is_fast>>
 constexpr std::size_t dim(const E&){
     return etl_traits<E>::template dim<D>();
 }
@@ -697,7 +640,7 @@ void ensure_same_size(const LE&, const RE&){
     static_assert(etl_traits<LE>::size() == etl_traits<RE>::size(), "Cannot perform element-wise operations on collections of different size");
 }
 
-template<typename E, typename Enable = void>
+template<typename E, typename Enable>
 struct sub_size_compare;
 
 template<typename E>

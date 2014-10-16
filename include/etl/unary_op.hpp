@@ -13,7 +13,6 @@
 #include <ctime>
 
 #include "math.hpp"
-#include "traits.hpp"
 
 namespace etl {
 
