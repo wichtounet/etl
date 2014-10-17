@@ -139,6 +139,58 @@ struct transpose_transformer {
     }
 };
 
+//max pool is not really a transformer, but the implemented version needs
+//access to the position to be computed and therefore does not provide an
+//operator[] which makes it unstable.
+
+template<typename T, std::size_t C1, std::size_t C2>
+struct p_max_pool_transformer {
+    using sub_type = T;
+    using value_type = value_t<T>;
+
+    sub_type sub;
+
+    explicit p_max_pool_transformer(sub_type vec) : sub(vec) {}
+
+    value_type pool(std::size_t i, std::size_t j) const {
+        value_type p = 0;
+
+        auto start_ii = (i / C1) * C1;
+        auto start_jj = (j / C2) * C2;
+
+        for(std::size_t ii = start_ii; ii < start_ii + C1; ++ii){
+            for(std::size_t jj  = start_jj; jj < start_jj + C2; ++jj){
+                p += std::exp(sub(ii, jj));
+            }
+        }
+
+        return p;
+    }
+
+    value_type pool(std::size_t k, std::size_t i, std::size_t j) const {
+        value_type p = 0;
+
+        auto start_ii = (i / C1) * C1;
+        auto start_jj = (j / C2) * C2;
+
+        for(std::size_t ii = start_ii; ii < start_ii + C1; ++ii){
+            for(std::size_t jj  = start_jj; jj < start_jj + C2; ++jj){
+                p += std::exp(sub(k, ii, jj));
+            }
+        }
+
+        return p;
+    }
+
+    value_type operator()(std::size_t i, std::size_t j) const {
+        return std::exp(sub(i, j)) / (1.0 + pool(i, j));
+    }
+
+    value_type operator()(std::size_t k, std::size_t i, std::size_t j) const {
+        return std::exp(sub(k, i, j)) / (1.0 + pool(k, i, j));
+    }
+};
+
 } //end of namespace etl
 
 #endif

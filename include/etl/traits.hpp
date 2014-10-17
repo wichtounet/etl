@@ -62,7 +62,8 @@ struct is_transformer : std::integral_constant<bool, cpp::or_u<
             cpp::is_specialization_of<etl::transpose_transformer, std::decay_t<T>>::value,
             cpp::is_specialization_of<etl::sum_transformer, std::decay_t<T>>::value,
             cpp::is_specialization_of<etl::mean_transformer, std::decay_t<T>>::value,
-            is_var<etl::rep_transformer, std::decay_t<T>>::value
+            is_var<etl::rep_transformer, std::decay_t<T>>::value,
+            is_3<etl::p_max_pool_transformer, std::decay_t<T>>::value
         >::value> {};
 
 template<typename T>
@@ -383,7 +384,8 @@ template <typename T>
 struct etl_traits<T, std::enable_if_t<cpp::or_u<
             cpp::is_specialization_of<etl::hflip_transformer, std::decay_t<T>>::value,
             cpp::is_specialization_of<etl::vflip_transformer, std::decay_t<T>>::value,
-            cpp::is_specialization_of<etl::fflip_transformer, std::decay_t<T>>::value
+            cpp::is_specialization_of<etl::fflip_transformer, std::decay_t<T>>::value,
+            is_3<etl::p_max_pool_transformer, std::decay_t<T>>::value
         >::value>> {
     using expr_t = T;
     using sub_expr_t = std::decay_t<typename T::sub_type>;
