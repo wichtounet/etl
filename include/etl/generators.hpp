@@ -10,6 +10,8 @@
 
 #include <random>
 
+#include "cpp_utils/tmp.hpp"
+
 namespace etl {
 
 using random_engine = std::mt19937_64;
@@ -24,11 +26,10 @@ struct scalar {
         return value;
     }
 
-    constexpr const T operator()(std::size_t) const {
-        return value;
-    }
+    template<typename... S>
+    T operator()(S... /*args*/) const {
+        static_assert(cpp::all_convertible_to<std::size_t, S...>::value, "Invalid size types");
 
-    constexpr const T operator()(std::size_t, std::size_t) const {
         return value;
     }
 };
