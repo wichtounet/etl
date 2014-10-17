@@ -109,7 +109,6 @@ TEST_CASE( "p_max_pool_4", "p_max_pool_3d" ) {
     CHECK(b(1, 2, 1) == Approx(0.02948));
     CHECK(b(1, 2, 2) == Approx(0.01085));
     CHECK(b(1, 2, 3) == Approx(0.00089));
-
 }
 
 //}}}
