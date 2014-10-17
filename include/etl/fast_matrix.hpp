@@ -170,6 +170,21 @@ public:
         }
     }
 
+    template<typename E, cpp::enable_if_u<etl_traits<unstable_transform_expr<value_type, E>>::dimensions() == 3> = cpp::detail::dummy>
+    explicit fast_matrix(const unstable_transform_expr<value_type, E>& e){
+        static_assert(n_dimensions == 3, "Transform expressions are only 3D-valid for now");
+
+        ensure_same_size(*this, e);
+
+        for(std::size_t i = 0; i < dim<0>(); ++i){
+            for(std::size_t j = 0; j < dim<1>(); ++j){
+                for(std::size_t k = 0; k < dim<2>(); ++k){
+                    _data[index(i,j,k)] = e(i,j,k);
+                }
+            }
+        }
+    }
+
     //}}}
 
     //{{{ Assignment
@@ -244,6 +259,21 @@ public:
         for(std::size_t i = 0; i < dim<0>(); ++i){
             for(std::size_t j = 0; j < dim<1>(); ++j){
                 _data[index(i,j)] = e(i,j);
+            }
+        }
+
+        return *this;
+    }
+
+    template<typename E, cpp::enable_if_u<etl_traits<unstable_transform_expr<value_type, E>>::dimensions() == 3> = cpp::detail::dummy>
+    fast_matrix& operator=(unstable_transform_expr<value_type, E>&& e){
+        ensure_same_size(*this, e);
+
+        for(std::size_t i = 0; i < dim<0>(); ++i){
+            for(std::size_t j = 0; j < dim<1>(); ++j){
+                for(std::size_t k = 0; k < dim<2>(); ++k){
+                    _data[index(i,j,k)] = e(i,j,k);
+                }
             }
         }
 

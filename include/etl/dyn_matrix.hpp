@@ -264,7 +264,25 @@ public:
 
         for(std::size_t i = 0; i < rows(); ++i){
             for(std::size_t j = 0; j < columns(); ++j){
-                _data[i * columns() + j] = e(i,j);
+                _data[index(i,j)] = e(i,j);
+            }
+        }
+    }
+
+    template<typename E, cpp::enable_if_u<etl_traits<unstable_transform_expr<value_type, E>>::dimensions() == 3> = cpp::detail::dummy>
+    explicit dyn_matrix(const unstable_transform_expr<value_type, E>& e) :
+            _size(etl::size(e)),
+            _data(_size) {
+
+        for(std::size_t d = 0; d < etl::dimensions(e); ++d){
+            _dimensions[d] = etl::dim(e, d);
+        }
+
+        for(std::size_t i = 0; i < dim(0); ++i){
+            for(std::size_t j = 0; j < dim(1); ++j){
+                for(std::size_t k = 0; k < dim(2); ++k){
+                    _data[index(i,j,k)] = e(i,j,k);
+                }
             }
         }
     }
@@ -372,6 +390,21 @@ public:
         for(std::size_t i = 0; i < rows(); ++i){
             for(std::size_t j = 0; j < columns(); ++j){
                 _data[index(i,j)] = e(i,j);
+            }
+        }
+
+        return *this;
+    }
+
+    template<typename E, cpp::enable_if_u<etl_traits<unstable_transform_expr<value_type, E>>::dimensions() == 3> = cpp::detail::dummy>
+    dyn_matrix& operator=(unstable_transform_expr<value_type, E>&& e){
+        ensure_same_size(*this, e);
+
+        for(std::size_t i = 0; i < dim(0); ++i){
+            for(std::size_t j = 0; j < dim(1); ++j){
+                for(std::size_t k = 0; k < dim(2); ++k){
+                    _data[index(i,j,k)] = e(i,j,k);
+                }
             }
         }
 
