@@ -20,40 +20,40 @@ namespace etl {
 
 namespace matrix_detail {
 
-template<typename M, size_t I, typename Enable = void>
+template<typename M, std::size_t I, typename Enable = void>
 struct matrix_subsize  : std::integral_constant<std::size_t, M::template dim<I+1>() * matrix_subsize<M, I+1>::value> {};
 
-template<typename M, size_t I>
+template<typename M, std::size_t I>
 struct matrix_subsize<M, I, std::enable_if_t<I == M::n_dimensions - 1>> : std::integral_constant<std::size_t, 1> {};
 
-template<typename M, size_t I, size_t Stop, typename S1, typename... S>
+template<typename M, std::size_t I, std::size_t Stop, typename S1, typename... S>
 struct matrix_index {
-    template<size_t I2, typename Enable = void>
+    template<std::size_t I2, typename Enable = void>
     struct matrix_index_int {
-        static size_t compute(S1 first, S... args){
+        static std::size_t compute(S1 first, S... args){
             cpp_assert(first < M::template dim<I2>(), "Out of bounds");
 
             return matrix_subsize<M, I>::value * first + matrix_index<M, I+1, Stop, S...>::compute(args...);
         }
     };
 
-    template<size_t I2>
+    template<std::size_t I2>
     struct matrix_index_int<I2, std::enable_if_t<I2 == Stop>> {
-        static size_t compute(S1 first){
+        static std::size_t compute(S1 first){
             cpp_assert(first < M::template dim<I2>(), "Out of bounds");
 
             return first;
         }
     };
 
-    static size_t compute(S1 first, S... args){
+    static std::size_t compute(S1 first, S... args){
         return matrix_index_int<I>::compute(first, args...);
     }
 };
 
 } //end of namespace detail
 
-template<typename T, size_t... Dims>
+template<typename T, std::size_t... Dims>
 struct fast_matrix {
     static_assert(sizeof...(Dims) > 0, "At least one dimension must be specified");
 
@@ -304,11 +304,11 @@ public:
 
     //{{{ Accessors
 
-    static constexpr size_t size(){
+    static constexpr std::size_t size(){
         return etl_size;
     }
 
-    static constexpr size_t rows(){
+    static constexpr std::size_t rows(){
         return dim<0>();
     }
 
@@ -318,16 +318,16 @@ public:
         return dim<1>();
     }
 
-    static constexpr size_t dimensions(){
+    static constexpr std::size_t dimensions(){
         return n_dimensions;
     }
 
-    template<size_t D>
-    static constexpr size_t dim(){
+    template<std::size_t D>
+    static constexpr std::size_t dim(){
         return nth_size<D, 0, Dims...>::value;
     }
 
-    //TODO Would probably be useful to have dim(size_t i)
+    //TODO Would probably be useful to have dim(std::size_t i)
 
     template<bool B = (n_dimensions > 1), cpp::enable_if_u<B> = cpp::detail::dummy>
     auto operator()(std::size_t i){
@@ -343,23 +343,23 @@ public:
     std::enable_if_t<sizeof...(S) == sizeof...(Dims), value_type&> operator()(S... args){
         static_assert(cpp::all_convertible_to<std::size_t, S...>::value, "Invalid size types");
 
-        return access(static_cast<size_t>(args)...);
+        return access(static_cast<std::size_t>(args)...);
     }
 
     template<typename... S>
     std::enable_if_t<sizeof...(S) == sizeof...(Dims), const value_type&> operator()(S... args) const {
         static_assert(cpp::all_convertible_to<std::size_t, S...>::value, "Invalid size types");
 
-        return access(static_cast<size_t>(args)...);
+        return access(static_cast<std::size_t>(args)...);
     }
 
-    const value_type& operator[](size_t i) const {
+    const value_type& operator[](std::size_t i) const {
         cpp_assert(i < size(), "Out of bounds");
 
         return _data[i];
     }
 
-    value_type& operator[](size_t i){
+    value_type& operator[](std::size_t i){
         cpp_assert(i < size(), "Out of bounds");
 
         return _data[i];

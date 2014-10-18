@@ -99,7 +99,7 @@ struct sub_view {
 
     template<typename... S>
     const_return_type operator()(S... args) const {
-        return parent(i, static_cast<size_t>(args)...);
+        return parent(i, static_cast<std::size_t>(args)...);
     }
 
     return_type operator[](std::size_t j){
@@ -108,7 +108,7 @@ struct sub_view {
 
     template<typename... S>
     return_type operator()(S... args){
-        return parent(i, static_cast<size_t>(args)...);
+        return parent(i, static_cast<std::size_t>(args)...);
     }
 };
 

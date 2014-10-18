@@ -425,24 +425,24 @@ public:
 
     //{{{ Accessors
 
-    size_t size() const {
+    std::size_t size() const {
         return _size;
     }
 
-    size_t rows() const {
+    std::size_t rows() const {
         return _dimensions[0];
     }
 
-    size_t columns() const {
+    std::size_t columns() const {
         static_assert(n_dimensions > 1, "columns() only valid for 2D+ matrices");
         return _dimensions[1];
     }
 
-    static constexpr size_t dimensions(){
+    static constexpr std::size_t dimensions(){
         return n_dimensions;
     }
 
-    size_t dim(std::size_t d) const {
+    std::size_t dim(std::size_t d) const {
         cpp_assert(d < n_dimensions, "Invalid dimension");
 
         return _dimensions[d];
@@ -459,21 +459,21 @@ public:
     }
 
     template<bool B = n_dimensions == 1, cpp::enable_if_u<B> = cpp::detail::dummy>
-    value_type& operator()(size_t i){
+    value_type& operator()(std::size_t i){
         cpp_assert(i < dim(0), "Out of bounds");
 
         return _data[i];
     }
 
     template<bool B = n_dimensions == 1, cpp::enable_if_u<B> = cpp::detail::dummy>
-    const value_type& operator()(size_t i) const {
+    const value_type& operator()(std::size_t i) const {
         cpp_assert(i < dim(0), "Out of bounds");
 
         return _data[i];
     }
 
     template<bool B = n_dimensions == 2, cpp::enable_if_u<B> = cpp::detail::dummy>
-    value_type& operator()(size_t i, size_t j){
+    value_type& operator()(std::size_t i, std::size_t j){
         cpp_assert(i < dim(0), "Out of bounds");
         cpp_assert(j < dim(1), "Out of bounds");
 
@@ -481,7 +481,7 @@ public:
     }
 
     template<bool B = n_dimensions == 2, cpp::enable_if_u<B> = cpp::detail::dummy>
-    const value_type& operator()(size_t i, size_t j) const {
+    const value_type& operator()(std::size_t i, std::size_t j) const {
         cpp_assert(i < dim(0), "Out of bounds");
         cpp_assert(j < dim(1), "Out of bounds");
 
@@ -526,13 +526,13 @@ public:
         return _data[index(sizes...)];
     }
 
-    const value_type& operator[](size_t i) const {
+    const value_type& operator[](std::size_t i) const {
         cpp_assert(i < size(), "Out of bounds");
 
         return _data[i];
     }
 
-    value_type& operator[](size_t i){
+    value_type& operator[](std::size_t i){
         cpp_assert(i < size(), "Out of bounds");
 
         return _data[i];
