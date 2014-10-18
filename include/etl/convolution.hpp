@@ -17,6 +17,8 @@ namespace etl {
 
 template<std::size_t T, typename I, typename K, typename C, cpp::disable_if_all_u<etl_traits<I>::is_fast, etl_traits<K>::is_fast, etl_traits<C>::is_fast> = cpp::detail::dummy>
 void check_conv_1d_sizes(const I& input, const K& kernel, const C& conv){
+    static_assert(etl_traits<I>::dimensions() == 1 && etl_traits<K>::dimensions() == 1 && etl_traits<C>::dimensions() == 1, "Invalid dimensions for 1D convolution");
+
     if(T == 1){
         cpp_assert(dim<0>(conv) == dim<0>(input) + dim<0>(kernel) - 1, "Invalid sizes for 'full' convolution");
     } else if(T == 2){
@@ -24,6 +26,7 @@ void check_conv_1d_sizes(const I& input, const K& kernel, const C& conv){
     } else if(T == 3){
         cpp_assert(dim<0>(conv) == dim<0>(input) - dim<0>(kernel) + 1, "Invalid sizes for 'valid' convolution");
     }
+
     cpp_unused(input);
     cpp_unused(kernel);
     cpp_unused(conv);
@@ -31,6 +34,8 @@ void check_conv_1d_sizes(const I& input, const K& kernel, const C& conv){
 
 template<std::size_t T, typename I, typename K, typename C, cpp::enable_if_all_u<etl_traits<I>::is_fast, etl_traits<K>::is_fast, etl_traits<C>::is_fast> = cpp::detail::dummy>
 void check_conv_1d_sizes(const I&, const K&, const C&){
+    static_assert(etl_traits<I>::dimensions() == 1 && etl_traits<K>::dimensions() == 1 && etl_traits<C>::dimensions() == 1, "Invalid dimensions for 1D convolution");
+
     static_assert(
         T != 1 || etl_traits<C>::template dim<0>() == etl_traits<I>::template dim<0>() + etl_traits<K>::template dim<0>() - 1,
         "Invalid sizes for 'full'convolution");
@@ -44,6 +49,8 @@ void check_conv_1d_sizes(const I&, const K&, const C&){
 
 template<std::size_t T, typename I, typename K, typename C, cpp::disable_if_all_u<etl_traits<I>::is_fast, etl_traits<K>::is_fast, etl_traits<C>::is_fast> = cpp::detail::dummy>
 void check_conv_2d_sizes(const I& input, const K& kernel, const C& conv){
+    static_assert(etl_traits<I>::dimensions() == 2 && etl_traits<K>::dimensions() == 2 && etl_traits<C>::dimensions() == 2, "Invalid dimensions for 2D convolution");
+
     if(T == 1){
         cpp_assert(
                 dim<0>(conv) == dim<0>(input) + dim<0>(kernel) - 1
@@ -57,6 +64,7 @@ void check_conv_2d_sizes(const I& input, const K& kernel, const C& conv){
             &&  dim<1>(conv) == dim<1>(input) - dim<1>(kernel) + 1,
             "Invalid sizes for 'valid' convolution");
     }
+
     cpp_unused(input);
     cpp_unused(kernel);
     cpp_unused(conv);
@@ -64,6 +72,8 @@ void check_conv_2d_sizes(const I& input, const K& kernel, const C& conv){
 
 template<std::size_t T, typename I, typename K, typename C, cpp::enable_if_all_u<etl_traits<I>::is_fast, etl_traits<K>::is_fast, etl_traits<C>::is_fast> = cpp::detail::dummy>
 void check_conv_2d_sizes(const I&, const K&, const C&){
+    static_assert(etl_traits<I>::dimensions() == 2 && etl_traits<K>::dimensions() == 2 && etl_traits<C>::dimensions() == 2, "Invalid dimensions for 2D convolution");
+
     static_assert(
         T != 1 || (
                 etl_traits<C>::template dim<0>() == etl_traits<I>::template dim<0>() + etl_traits<K>::template dim<0>() - 1
