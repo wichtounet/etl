@@ -40,7 +40,8 @@ There also exists typedefs for vectors:
 * dyn_vector<T>
 
 You have to keep in mind that fast_matrix directly store its values inside it,
-therefore, it can be very large and should rarely be stored on the stack.
+therefore, it can be very large and should rarely be stored on the stack. Moreover, 
+that also makes it very expensive to move and copy. 
 
 Element-wise operations
 ***********************
