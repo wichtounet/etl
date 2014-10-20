@@ -339,6 +339,11 @@ auto bernoulli(const E& value) -> unary_helper<E, bernoulli_unary_op> {
     return {value};
 }
 
+template<typename E, cpp::enable_if_u<is_etl_expr<E>::value> = cpp::detail::dummy>
+auto r_bernoulli(const E& value) -> unary_helper<E, reverse_bernoulli_unary_op> {
+    return {value};
+}
+
 //}}}
 
 //{{{ Views that returns lvalues
