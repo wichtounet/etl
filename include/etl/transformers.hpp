@@ -181,13 +181,41 @@ struct p_max_pool_transformer {
 
         return p;
     }
+};
+
+template<typename T, std::size_t C1, std::size_t C2>
+struct p_max_pool_h_transformer : p_max_pool_transformer<T, C1, C2> {
+    using base_type = p_max_pool_transformer<T, C1, C2>;
+    using sub_type = typename base_type::sub_type;
+    using value_type = typename base_type::value_type;
+
+    using base_type::sub;
+
+    explicit p_max_pool_h_transformer(sub_type vec) : base_type(vec) {}
 
     value_type operator()(std::size_t i, std::size_t j) const {
-        return std::exp(sub(i, j)) / (1.0 + pool(i, j));
+        return std::exp(sub(i, j)) / (1.0 + base_type::pool(i, j));
     }
 
     value_type operator()(std::size_t k, std::size_t i, std::size_t j) const {
-        return std::exp(sub(k, i, j)) / (1.0 + pool(k, i, j));
+        return std::exp(sub(k, i, j)) / (1.0 + base_type::pool(k, i, j));
+    }
+};
+
+template<typename T, std::size_t C1, std::size_t C2>
+struct p_max_pool_p_transformer : p_max_pool_transformer<T, C1, C2> {
+    using base_type = p_max_pool_transformer<T, C1, C2>;
+    using sub_type = typename base_type::sub_type;
+    using value_type = typename base_type::value_type;
+
+    explicit p_max_pool_p_transformer(sub_type vec) : base_type(vec) {}
+
+    value_type operator()(std::size_t i, std::size_t j) const {
+        return 1.0 / (1.0 + base_type::pool(i * C1, j * C2));
+    }
+
+    value_type operator()(std::size_t k, std::size_t i, std::size_t j) const {
+        return 1.0 / (1.0 + base_type::pool(k, i * C1, j * C2));
     }
 };
 

@@ -63,7 +63,8 @@ struct is_transformer : std::integral_constant<bool, cpp::or_u<
             cpp::is_specialization_of<etl::sum_transformer, std::decay_t<T>>::value,
             cpp::is_specialization_of<etl::mean_transformer, std::decay_t<T>>::value,
             is_var<etl::rep_transformer, std::decay_t<T>>::value,
-            is_3<etl::p_max_pool_transformer, std::decay_t<T>>::value
+            is_3<etl::p_max_pool_h_transformer, std::decay_t<T>>::value,
+            is_3<etl::p_max_pool_p_transformer, std::decay_t<T>>::value
         >::value> {};
 
 template<typename T>
@@ -377,6 +378,47 @@ struct etl_traits<T, std::enable_if_t<cpp::or_u<
     }
 };
 
+template<typename T, std::size_t C1, std::size_t C2>
+struct etl_traits<p_max_pool_p_transformer<T, C1, C2>> {
+    using expr_t = p_max_pool_p_transformer<T, C1, C2>;
+    using sub_expr_t = std::decay_t<T>;
+
+    static constexpr const bool is_fast = etl_traits<sub_expr_t>::is_fast;
+    static constexpr const bool is_value = false;
+    static constexpr const bool is_generator = false;
+
+    static std::size_t size(const expr_t& v){
+        return etl_traits<sub_expr_t>::size(v.sub) / (C1 * C2);
+    }
+
+    static std::size_t dim(const expr_t& v, std::size_t d){
+        if(d == dimensions() - 1){
+            return etl_traits<sub_expr_t>::dim(v.sub, d) / C2;
+        } else if(d == dimensions() - 2){
+            return etl_traits<sub_expr_t>::dim(v.sub, d) / C1;
+        } else {
+            return etl_traits<sub_expr_t>::dim(v.sub, d);
+        }
+    }
+
+    template<bool B = is_fast, cpp::enable_if_u<B> = cpp::detail::dummy>
+    static constexpr std::size_t size(){
+        return etl_traits<sub_expr_t>::size() / (C1 * C2);
+    }
+
+    template<std::size_t D>
+    static constexpr std::size_t dim(){
+        return
+                D == dimensions() - 1 ? etl_traits<sub_expr_t>::template dim<D>() / C2
+            :   D == dimensions() - 2 ? etl_traits<sub_expr_t>::template dim<D>() / C1
+            :                           etl_traits<sub_expr_t>::template dim<D>();
+    }
+
+    static constexpr std::size_t dimensions(){
+        return etl_traits<sub_expr_t>::dimensions();
+    }
+};
+
 /*!
  * \brief Specialization for flipping transformers
  */
@@ -385,7 +427,7 @@ struct etl_traits<T, std::enable_if_t<cpp::or_u<
             cpp::is_specialization_of<etl::hflip_transformer, std::decay_t<T>>::value,
             cpp::is_specialization_of<etl::vflip_transformer, std::decay_t<T>>::value,
             cpp::is_specialization_of<etl::fflip_transformer, std::decay_t<T>>::value,
-            is_3<etl::p_max_pool_transformer, std::decay_t<T>>::value
+            is_3<etl::p_max_pool_h_transformer, std::decay_t<T>>::value
         >::value>> {
     using expr_t = T;
     using sub_expr_t = std::decay_t<typename T::sub_type>;
