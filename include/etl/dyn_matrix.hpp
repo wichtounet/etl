@@ -505,6 +505,7 @@ public:
     }
 
     template<typename... S, cpp::enable_if_all_u<
+            (n_dimensions > 2),
             (sizeof...(S) == n_dimensions),
             cpp::all_convertible_to<std::size_t, S...>::value
         > = cpp::detail::dummy>
@@ -515,6 +516,7 @@ public:
     }
 
     template<typename... S, cpp::enable_if_all_u<
+            (n_dimensions > 2),
             (sizeof...(S) == n_dimensions),
             cpp::all_convertible_to<std::size_t, S...>::value
         > = cpp::detail::dummy>
