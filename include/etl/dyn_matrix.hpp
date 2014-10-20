@@ -19,8 +19,6 @@
 
 namespace etl {
 
-//TODO Try to pass the index_sequence as a type, not a parameter
-
 enum class init_flag_t { DUMMY };
 constexpr const init_flag_t init_flag = init_flag_t::DUMMY;
 
