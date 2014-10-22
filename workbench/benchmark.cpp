@@ -62,7 +62,7 @@ void measure(const std::string& title, const std::string& reference, Functor&& f
 
     std::size_t duration_acc = 0;
 
-    for(std::size_t i = 0; i < 1000; ++i){
+    for(std::size_t i = 0; i < 100; ++i){
         randomize(references...);
         auto start_time = timer_clock::now();
         functor();
@@ -200,6 +200,16 @@ void bench_dyn_mmul(std::size_t d1, std::size_t d2, const std::string& reference
         , a, b);
 }
 
+void bench_dyn_strassen_mmul(std::size_t d1, std::size_t d2, const std::string& reference){
+    etl::dyn_matrix<double> a(d1, d2);
+    etl::dyn_matrix<double> b(d2, d1);
+    etl::dyn_matrix<double> c(d1, d1);
+
+    measure("dyn_strassen_mmul(" + std::to_string(d1) + "," + std::to_string(d2) + ")", reference,
+        [&a, &b, &c](){etl::strassen_mmul(a, b, c);}
+        , a, b);
+}
+
 void bench_stack(){
     std::cout << "Start benchmarking...\n";
     std::cout << "... all structures are on stack\n\n";
@@ -235,6 +245,13 @@ void bench_stack(){
     bench_dyn_mmul(64, 32, "TODOms");
     bench_dyn_mmul(128, 64, "TODOms");
     bench_dyn_mmul(256, 128, "TODOms");
+
+    bench_dyn_strassen_mmul(16, 16, "TODOms");
+    bench_dyn_strassen_mmul(32, 32, "TODOms");
+    bench_dyn_strassen_mmul(64, 32, "TODOms");
+    bench_dyn_strassen_mmul(64, 64, "TODOms");
+    bench_dyn_strassen_mmul(128, 64, "TODOms");
+    bench_dyn_strassen_mmul(256, 128, "TODOms");
 }
 
 } //end of anonymous namespace
