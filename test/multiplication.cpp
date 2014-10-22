@@ -11,6 +11,8 @@
 #include "etl/multiplication.hpp"
 #include "etl/stop.hpp"
 
+//{{{ mmul
+
 TEST_CASE( "multiplication/mmul1", "mmul" ) {
     etl::fast_matrix<double, 2, 3> a = {1,2,3,4,5,6};
     etl::fast_matrix<double, 3, 2> b = {7,8,9,10,11,12};
@@ -179,3 +181,87 @@ TEST_CASE( "multiplication/stop_mmul_1", "mmul" ) {
     REQUIRE(c(2,1) == 244);
     REQUIRE(c(2,2) == 268);
 }
+
+TEST_CASE( "multiplication/mmul5", "mmul" ) {
+    etl::dyn_matrix<double> a(4,4, etl::values(1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16));
+    etl::dyn_matrix<double> b(4,4, etl::values(1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16));
+    etl::dyn_matrix<double> c(4,4);
+
+    etl::mmul(a, b, c);
+
+    REQUIRE(c(0,0) == 90);
+    REQUIRE(c(0,1) == 100);
+    REQUIRE(c(1,0) == 202);
+    REQUIRE(c(1,1) == 228);
+    REQUIRE(c(2,0) == 314);
+    REQUIRE(c(2,1) == 356);
+    REQUIRE(c(3,0) == 426);
+    REQUIRE(c(3,1) == 484);
+}
+
+TEST_CASE( "multiplication/mmul6", "mmul" ) {
+    etl::dyn_matrix<double> a(2,2, etl::values(1,2,3,4,5,6,7,8));
+    etl::dyn_matrix<double> b(2,2, etl::values(1,2,3,4,5,6,7,8));
+    etl::dyn_matrix<double> c(2,2);
+
+    etl::mmul(a, b, c);
+
+    REQUIRE(c(0,0) == 7);
+    REQUIRE(c(0,1) == 10);
+    REQUIRE(c(1,0) == 15);
+    REQUIRE(c(1,1) == 22);
+}
+
+//}}}
+
+//{{{ Strassen mmul
+
+TEST_CASE( "multiplication/strassen_mmul_1", "strassen_mmul" ) {
+    etl::dyn_matrix<double> a(4,4, etl::values(1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16));
+    etl::dyn_matrix<double> b(4,4, etl::values(1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16));
+    etl::dyn_matrix<double> c(4,4);
+
+    etl::strassen_mmul(a, b, c);
+
+    REQUIRE(c(0,0) == 90);
+    REQUIRE(c(0,1) == 100);
+    REQUIRE(c(1,0) == 202);
+    REQUIRE(c(1,1) == 228);
+    REQUIRE(c(2,0) == 314);
+    REQUIRE(c(2,1) == 356);
+    REQUIRE(c(3,0) == 426);
+    REQUIRE(c(3,1) == 484);
+}
+
+TEST_CASE( "multiplication/strassen_mmul_2", "strassen_mmul" ) {
+    etl::dyn_matrix<double> a(2,2, etl::values(1,2,3,4,5,6,7,8));
+    etl::dyn_matrix<double> b(2,2, etl::values(1,2,3,4,5,6,7,8));
+    etl::dyn_matrix<double> c(2,2);
+
+    etl::strassen_mmul(a, b, c);
+
+    REQUIRE(c(0,0) == 7);
+    REQUIRE(c(0,1) == 10);
+    REQUIRE(c(1,0) == 15);
+    REQUIRE(c(1,1) == 22);
+}
+
+TEST_CASE( "multiplication/strassen_mmul3", "strassen_mmul" ) {
+    etl::dyn_matrix<double> a(3,3,etl::values(1,2,3,4,5,6,7,8,9));
+    etl::dyn_matrix<double> b(3,3,etl::values(7,8,9,9,10,11,11,12,13));
+    etl::dyn_matrix<double> c(3,3);
+
+    etl::strassen_mmul(a, b, c);
+
+    REQUIRE(c(0,0) == 58);
+    REQUIRE(c(0,1) == 64);
+    REQUIRE(c(0,2) == 70);
+    REQUIRE(c(1,0) == 139);
+    REQUIRE(c(1,1) == 154);
+    REQUIRE(c(1,2) == 169);
+    REQUIRE(c(2,0) == 220);
+    REQUIRE(c(2,1) == 244);
+    REQUIRE(c(2,2) == 268);
+}
+
+//}}}
