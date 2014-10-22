@@ -549,6 +549,17 @@ TEST_CASE( "fast_matrix/bernoulli", "fast_matrix::bernoulli" ) {
     REQUIRE(binary(d[3]));
 }
 
+TEST_CASE( "fast_matrix/r_bernoulli", "fast_matrix::r_bernoulli" ) {
+    etl::fast_matrix<double, 2, 2> a = {-1.0, 2.0, 0.0, 1.0};
+
+    etl::fast_matrix<double, 2, 2> d(etl::r_bernoulli(a));
+
+    REQUIRE(binary(d[0]));
+    REQUIRE(binary(d[1]));
+    REQUIRE(binary(d[2]));
+    REQUIRE(binary(d[3]));
+}
+
 //}}} Unary operators test
 
 //{{{ Complex tests

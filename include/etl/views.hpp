@@ -127,7 +127,7 @@ struct fast_matrix_view {
     explicit fast_matrix_view(sub_type sub) : sub(sub) {}
 
     const_return_type operator[](std::size_t j) const {
-        return sub(j);
+        return sub[j];
     }
 
     const_return_type operator()(std::size_t j) const {
@@ -135,11 +135,11 @@ struct fast_matrix_view {
     }
 
     const_return_type operator()(std::size_t i, std::size_t j) const {
-        return sub(i * Columns + j);
+        return sub[i * Columns + j];
     }
 
     return_type operator[](std::size_t j){
-        return sub(j);
+        return sub[j];
     }
 
     return_type operator()(std::size_t j){
@@ -147,7 +147,7 @@ struct fast_matrix_view {
     }
 
     return_type operator()(std::size_t i, std::size_t j){
-        return sub(i * Columns + j);
+        return sub[i * Columns + j];
     }
 };
 

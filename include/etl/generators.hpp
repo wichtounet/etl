@@ -8,6 +8,7 @@
 #ifndef ETL_GENERATORS_HPP
 #define ETL_GENERATORS_HPP
 
+#include <chrono> //for std::time
 #include <random>
 
 #include "cpp_utils/tmp.hpp"

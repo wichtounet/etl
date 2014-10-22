@@ -19,8 +19,6 @@
 
 namespace etl {
 
-//TODO Try to pass the index_sequence as a type, not a parameter
-
 enum class init_flag_t { DUMMY };
 constexpr const init_flag_t init_flag = init_flag_t::DUMMY;
 
@@ -507,6 +505,7 @@ public:
     }
 
     template<typename... S, cpp::enable_if_all_u<
+            (n_dimensions > 2),
             (sizeof...(S) == n_dimensions),
             cpp::all_convertible_to<std::size_t, S...>::value
         > = cpp::detail::dummy>
@@ -517,6 +516,7 @@ public:
     }
 
     template<typename... S, cpp::enable_if_all_u<
+            (n_dimensions > 2),
             (sizeof...(S) == n_dimensions),
             cpp::all_convertible_to<std::size_t, S...>::value
         > = cpp::detail::dummy>

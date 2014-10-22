@@ -86,6 +86,17 @@ struct bernoulli_unary_op {
 };
 
 template<typename T>
+struct reverse_bernoulli_unary_op {
+    static T apply(const T& x){
+        static random_engine rand_engine(std::time(nullptr));
+        static std::uniform_real_distribution<double> normal_distribution(0.0, 1.0);
+        static auto normal_generator = std::bind(normal_distribution, rand_engine);
+
+        return x > normal_generator() ? 0.0 : 1.0;
+    }
+};
+
+template<typename T>
 struct uniform_noise_unary_op {
     static T apply(const T& x){
         static random_engine rand_engine(std::time(nullptr));

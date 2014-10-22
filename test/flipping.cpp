@@ -9,8 +9,6 @@
 
 #include "etl/etl.hpp"
 
-//TODO Restore the feature on vectors
-
 //{{{ hflip
 
 TEST_CASE( "hflip/fast_vector", "hflip" ) {
