@@ -82,11 +82,6 @@ static void strassen_mmul_r(const A& a, const B& b, C& c){
         etl::dyn_matrix<type> b21(new_n, new_n);
         etl::dyn_matrix<type> b22(new_n, new_n);
 
-        etl::dyn_matrix<type> c11(new_n, new_n);
-        etl::dyn_matrix<type> c12(new_n, new_n);
-        etl::dyn_matrix<type> c21(new_n, new_n);
-        etl::dyn_matrix<type> c22(new_n, new_n);
- 
         etl::dyn_matrix<type> p1(new_n, new_n);
         etl::dyn_matrix<type> p2(new_n, new_n);
         etl::dyn_matrix<type> p3(new_n, new_n);
@@ -117,10 +112,10 @@ static void strassen_mmul_r(const A& a, const B& b, C& c){
         strassen_mmul_r(a21 - a11, b11 + b12, p6);
         strassen_mmul_r(a12 - a22, b21 + b22, p7);
 
-        c12 = p3 + p5;
-        c11 = p1 + p4 + p7 - p5;
-        c21 = p2 + p4;
-        c22 = p1 + p3 + p6 - p2;
+        auto c11 = p1 + p4 + p7 - p5;
+        auto c22 = p1 + p3 + p6 - p2;
+        auto c12 = p3 + p5;
+        auto c21 = p2 + p4;
 
         for (std::size_t i = 0; i < new_n ; i++) {
             for (std::size_t j = 0 ; j < new_n ; j++) {
