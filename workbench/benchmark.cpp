@@ -29,6 +29,7 @@ void randomize_double(T& container){
         v = generator();
     }
 }
+
 template<typename T1>
 void randomize(T1& container){
     randomize_double(container);
