@@ -264,4 +264,17 @@ TEST_CASE( "multiplication/strassen_mmul3", "strassen_mmul" ) {
     REQUIRE(c(2,2) == 268);
 }
 
+TEST_CASE( "multiplication/strassen_mmul4", "mmul" ) {
+    etl::dyn_matrix<double> a(2,3, etl::values(1,2,3,4,5,6));
+    etl::dyn_matrix<double> b(3,2, etl::values(7,8,9,10,11,12));
+    etl::dyn_matrix<double> c(2,2);
+
+    etl::strassen_mmul(a, b, c);
+
+    REQUIRE(c(0,0) == 58);
+    REQUIRE(c(0,1) == 64);
+    REQUIRE(c(1,0) == 139);
+    REQUIRE(c(1,1) == 154);
+}
+
 //}}}
