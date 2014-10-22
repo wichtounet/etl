@@ -162,7 +162,7 @@ static C& strassen_mmul(const A& a, const B& b, C& c){
 
     //For now, assume matrices are of size 2^nx2^n
 
-    auto n = std::max(dim<0>(a), dim<1>(b));
+    auto n = std::max(dim<0>(a), std::max(dim<1>(a), dim<1>(b)));
     auto m = nextPowerOfTwo(n);
 
     if(dim<0>(a) == m && dim<0>(b) == m && dim<1>(a) == m && dim<1>(b) == m){
@@ -174,17 +174,22 @@ static C& strassen_mmul(const A& a, const B& b, C& c){
         etl::dyn_matrix<type> b_prep(m, m, static_cast<type>(0));
         etl::dyn_matrix<type> c_prep(m, m, static_cast<type>(0));
 
-        for(std::size_t i=0; i<n; i++) {
-            for (std::size_t j=0; j<n; j++) {
+        for(std::size_t i=0; i< dim<0>(a); i++) {
+            for (std::size_t j=0; j<dim<1>(a); j++) {
                 a_prep(i,j) = a(i,j);
+            }
+        }
+
+        for(std::size_t i=0; i< dim<0>(b); i++) {
+            for (std::size_t j=0; j<dim<1>(b); j++) {
                 b_prep(i,j) = b(i,j);
             }
         }
 
         strassen_mmul_r(a_prep, b_prep, c_prep);
 
-        for(std::size_t i=0; i<n; i++) {
-            for (std::size_t j=0; j<n; j++) {
+        for(std::size_t i=0; i< dim<0>(c); i++) {
+            for (std::size_t j=0; j<dim<1>(c); j++) {
                 c(i,j) = c_prep(i,j);
             }
         }
