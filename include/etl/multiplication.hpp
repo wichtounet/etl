@@ -104,30 +104,30 @@ static void strassen_mmul_r(const A& a, const B& b, C& c){
                 a12(i,j) = a(i,j + new_n);
                 a21(i,j) = a(i + new_n,j);
                 a22(i,j) = a(i + new_n,j + new_n);
- 
+
                 b11(i,j) = b(i,j);
                 b12(i,j) = b(i,j + new_n);
                 b21(i,j) = b(i + new_n,j);
                 b22(i,j) = b(i + new_n,j + new_n);
             }
         }
- 
+
         a_result = a11 + a22;
         b_result = b11 + b22;
         strassen_mmul_r(a_result, b_result, p1);
- 
+
         a_result = a21 + a22;
         strassen_mmul_r(a_result, b11, p2);
- 
+
         b_result = b12 - b22;
         strassen_mmul_r(a11, b_result, p3);
- 
+
         b_result = b21 - b11;
         strassen_mmul_r(a22, b_result, p4);
- 
+
         a_result = a11 + a12;
         strassen_mmul_r(a_result, b22, p5);
- 
+
         a_result = a21 - a11;
         b_result = b11 + b12;
         strassen_mmul_r(a_result, b_result, p6);
@@ -135,12 +135,12 @@ static void strassen_mmul_r(const A& a, const B& b, C& c){
         a_result = a12 - a22;
         b_result = b21 + b22;
         strassen_mmul_r(a_result, b_result, p7);
- 
+
         c12 = p3 + p5;
         c11 = p1 + p4 + p7 - p5;
         c21 = p2 + p4;
         c22 = p1 + p3 + p6 - p2;
- 
+
         for (std::size_t i = 0; i < new_n ; i++) {
             for (std::size_t j = 0 ; j < new_n ; j++) {
                 c(i,j) = c11(i,j);
