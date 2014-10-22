@@ -92,6 +92,76 @@ static void strassen_mmul_r(const A& a, const B& b, C& c){
         c(0,1) = p3 + p5;
         c(1,0) = p6 + p4;
         c(1,1) = p1 + p3 + p7 - p6;
+    } else if(n == 4){
+        //This is entirely done on stack
+
+        auto new_n = n / 2;
+
+        etl::fast_matrix<type, 2, 2> a11;
+        etl::fast_matrix<type, 2, 2> a12;
+        etl::fast_matrix<type, 2, 2> a21;
+        etl::fast_matrix<type, 2, 2> a22;
+
+        etl::fast_matrix<type, 2, 2> b11;
+        etl::fast_matrix<type, 2, 2> b12;
+        etl::fast_matrix<type, 2, 2> b21;
+        etl::fast_matrix<type, 2, 2> b22;
+
+        etl::fast_matrix<type, 2, 2> p1;
+        etl::fast_matrix<type, 2, 2> p2;
+        etl::fast_matrix<type, 2, 2> p3;
+        etl::fast_matrix<type, 2, 2> p4;
+        etl::fast_matrix<type, 2, 2> p5;
+
+        for (std::size_t i = 0; i < new_n; i++) {
+            for (std::size_t j = 0; j < new_n; j++) {
+                a11(i,j) = a(i,j);
+                a12(i,j) = a(i,j + new_n);
+                a21(i,j) = a(i + new_n,j);
+                a22(i,j) = a(i + new_n,j + new_n);
+
+                b11(i,j) = b(i,j);
+                b12(i,j) = b(i,j + new_n);
+                b21(i,j) = b(i + new_n,j);
+                b22(i,j) = b(i + new_n,j + new_n);
+            }
+        }
+
+        strassen_mmul_r(a11 + a22, b11 + b22, p1);
+        strassen_mmul_r(a12 - a22, b21 + b22, p2);
+        strassen_mmul_r(a22, b21 - b11, p4);
+        strassen_mmul_r(a11 + a12, b22, p5);
+
+        auto c11 = p1 + p4 + p2 - p5;
+
+        for (std::size_t i = 0; i < new_n ; i++) {
+            for (std::size_t j = 0 ; j < new_n ; j++) {
+                c(i,j) = c11(i,j);
+            }
+        }
+
+        strassen_mmul_r(a11, b12 - b22, p3);
+
+        auto c12 = p3 + p5;
+
+        for (std::size_t i = 0; i < new_n ; i++) {
+            for (std::size_t j = 0 ; j < new_n ; j++) {
+                c(i,j + new_n) = c12(i,j);
+            }
+        }
+
+        strassen_mmul_r(a21 + a22, b11, p2);
+        strassen_mmul_r(a21 - a11, b11 + b12, p5);
+
+        auto c21 = p2 + p4;
+        auto c22 = p1 + p3 + p5 - p2;
+
+        for (std::size_t i = 0; i < new_n ; i++) {
+            for (std::size_t j = 0 ; j < new_n ; j++) {
+                c(i + new_n,j) = c21(i,j);
+                c(i + new_n,j + new_n) = c22(i,j);
+            }
+        }
     } else {
         auto new_n = n / 2;
 
