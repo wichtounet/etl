@@ -69,6 +69,29 @@ static void strassen_mmul_r(const A& a, const B& b, C& c){
     //1x1 matrix mul
     if (n == 1) {
         c(0,0) = a(0,0) * b(0,0);
+    } else if(n == 2){
+        auto a11 = a(0,0);
+        auto a12 = a(0,1);
+        auto a21 = a(1,0);
+        auto a22 = a(1,1);
+
+        auto b11 = b(0,0);
+        auto b12 = b(0,1);
+        auto b21 = b(1,0);
+        auto b22 = b(1,1);
+
+        auto p1 = (a11 + a22) * (b11 + b22);
+        auto p2 = (a12 - a22) * (b21 + b22);
+        auto p3 = a11 * (b12 - b22);
+        auto p4 = a22 * (b21 - b11);
+        auto p5 = (a11 + a12) * b22;
+        auto p6 = (a21 + a22) * b11;
+        auto p7 = (a21 - a11) * (b11 + b12);
+
+        c(0,0) = p1 + p4 + p2 - p5;
+        c(0,1) = p3 + p5;
+        c(1,0) = p6 + p4;
+        c(1,1) = p1 + p3 + p7 - p6;
     } else {
         auto new_n = n / 2;
 
