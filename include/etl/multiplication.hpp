@@ -56,6 +56,143 @@ static C& mmul(const A& a, const B& b, C& c){
     return c;
 }
 
+inline std::size_t nextPowerOfTwo(std::size_t n) {
+    return std::pow(2, static_cast<std::size_t>(std::ceil(std::log2(n))));
+}
+
+template<typename A, typename B, typename C>
+static void strassen_mmul_r(const A& a, const B& b, C& c){
+    using type = typename A::value_type;
+
+    auto n = dim<0>(a);
+
+    //1x1 matrix mul
+    if (n == 1) {
+        c(0,0) = a(0,0) * b(0,0);
+    } else {
+        auto new_n = n / 2;
+
+        etl::dyn_matrix<type> a11(new_n, new_n);
+        etl::dyn_matrix<type> a12(new_n, new_n);
+        etl::dyn_matrix<type> a21(new_n, new_n);
+        etl::dyn_matrix<type> a22(new_n, new_n);
+
+        etl::dyn_matrix<type> b11(new_n, new_n);
+        etl::dyn_matrix<type> b12(new_n, new_n);
+        etl::dyn_matrix<type> b21(new_n, new_n);
+        etl::dyn_matrix<type> b22(new_n, new_n);
+
+        etl::dyn_matrix<type> c11(new_n, new_n);
+        etl::dyn_matrix<type> c12(new_n, new_n);
+        etl::dyn_matrix<type> c21(new_n, new_n);
+        etl::dyn_matrix<type> c22(new_n, new_n);
+ 
+        etl::dyn_matrix<type> p1(new_n, new_n);
+        etl::dyn_matrix<type> p2(new_n, new_n);
+        etl::dyn_matrix<type> p3(new_n, new_n);
+        etl::dyn_matrix<type> p4(new_n, new_n);
+        etl::dyn_matrix<type> p5(new_n, new_n);
+        etl::dyn_matrix<type> p6(new_n, new_n);
+        etl::dyn_matrix<type> p7(new_n, new_n);
+
+        etl::dyn_matrix<type> a_result(new_n, new_n);
+        etl::dyn_matrix<type> b_result(new_n, new_n);
+
+        for (std::size_t i = 0; i < new_n; i++) {
+            for (std::size_t j = 0; j < new_n; j++) {
+                a11(i,j) = a(i,j);
+                a12(i,j) = a(i,j + new_n);
+                a21(i,j) = a(i + new_n,j);
+                a22(i,j) = a(i + new_n,j + new_n);
+ 
+                b11(i,j) = b(i,j);
+                b12(i,j) = b(i,j + new_n);
+                b21(i,j) = b(i + new_n,j);
+                b22(i,j) = b(i + new_n,j + new_n);
+            }
+        }
+ 
+        a_result = a11 + a22;
+        b_result = b11 + b22;
+        strassen_mmul_r(a_result, b_result, p1);
+ 
+        a_result = a21 + a22;
+        strassen_mmul_r(a_result, b11, p2);
+ 
+        b_result = b12 - b22;
+        strassen_mmul_r(a11, b_result, p3);
+ 
+        b_result = b21 - b11;
+        strassen_mmul_r(a22, b_result, p4);
+ 
+        a_result = a11 + a12;
+        strassen_mmul_r(a_result, b22, p5);
+ 
+        a_result = a21 - a11;
+        b_result = b11 + b12;
+        strassen_mmul_r(a_result, b_result, p6);
+
+        a_result = a12 - a22;
+        b_result = b21 + b22;
+        strassen_mmul_r(a_result, b_result, p7);
+ 
+        c12 = p3 + p5;
+        c11 = p1 + p4 + p7 - p5;
+        c21 = p2 + p4;
+        c22 = p1 + p3 + p6 - p2;
+ 
+        for (std::size_t i = 0; i < new_n ; i++) {
+            for (std::size_t j = 0 ; j < new_n ; j++) {
+                c(i,j) = c11(i,j);
+                c(i,j + new_n) = c12(i,j);
+                c(i + new_n,j) = c21(i,j);
+                c(i + new_n,j + new_n) = c22(i,j);
+            }
+        }
+    }
+}
+
+template<typename A, typename B, typename C>
+static C& strassen_mmul(const A& a, const B& b, C& c){
+    static_assert(is_etl_expr<A>::value && is_etl_expr<B>::value && is_etl_expr<C>::value, "Matrix multiplication only supported for ETL expressions");
+    static_assert(etl_traits<A>::dimensions() == 2 && etl_traits<B>::dimensions() == 2 && etl_traits<C>::dimensions() == 2, "Matrix multiplication only works in 2D");
+    detail::check_mmul_sizes(a,b,c);
+
+    c = 0;
+
+    //For now, assume matrices are of size 2^nx2^n
+
+    auto n = std::max(dim<0>(a), dim<1>(b));
+    auto m = nextPowerOfTwo(n);
+
+    if(dim<0>(a) == m && dim<0>(b) == m && dim<1>(a) == m && dim<1>(b) == m){
+        strassen_mmul_r(a, b, c);
+    } else {
+        using type = typename A::value_type;
+
+        etl::dyn_matrix<type> a_prep(m, m, static_cast<type>(0));
+        etl::dyn_matrix<type> b_prep(m, m, static_cast<type>(0));
+        etl::dyn_matrix<type> c_prep(m, m, static_cast<type>(0));
+
+        for(std::size_t i=0; i<n; i++) {
+            for (std::size_t j=0; j<n; j++) {
+                a_prep(i,j) = a(i,j);
+                b_prep(i,j) = b(i,j);
+            }
+        }
+
+        strassen_mmul_r(a_prep, b_prep, c_prep);
+
+        for(std::size_t i=0; i<n; i++) {
+            for (std::size_t j=0; j<n; j++) {
+                c(i,j) = c_prep(i,j);
+            }
+        }
+    }
+
+    return c;
+}
+
 template<typename A, typename B, typename C, cpp::enable_if_all_u<
     etl_traits<A>::is_fast, etl_traits<B>::is_fast, etl_traits<C>::is_fast,
     etl_traits<A>::dimensions() == 1, etl_traits<B>::dimensions() == 2
