@@ -8,7 +8,7 @@ efficient operations on them.
 At this time, the library support compile-time sized matrix and vector
 and runtime-sized matrix and vector with all element-wise operations
 implemented. It also supports 1D and 2D convolution and matrix
-multiplication (naive algorithm).
+multiplication (naive algorithm and strassen).
 
 Usage
 -----
@@ -120,7 +120,8 @@ The header *convolution.hpp* provides several convolution operations
 both in 1D (vector) and 2D (matrix).
 
 The header *mutiplication.hpp* provides the matrix multiplication
-operation.
+operation. mmul is the naive algorithm (ijk), which strassen_mmul implements
+Strassen algorithm. 
 
 It is possible to pass an expression rather than an data structure
 to functions. Keep in mind that expression are lazy, therefore if
