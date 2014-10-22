@@ -87,8 +87,6 @@ static void strassen_mmul_r(const A& a, const B& b, C& c){
         etl::dyn_matrix<type> p3(new_n, new_n);
         etl::dyn_matrix<type> p4(new_n, new_n);
         etl::dyn_matrix<type> p5(new_n, new_n);
-        etl::dyn_matrix<type> p6(new_n, new_n);
-        etl::dyn_matrix<type> p7(new_n, new_n);
 
         for (std::size_t i = 0; i < new_n; i++) {
             for (std::size_t j = 0; j < new_n; j++) {
@@ -105,22 +103,36 @@ static void strassen_mmul_r(const A& a, const B& b, C& c){
         }
 
         strassen_mmul_r(a11 + a22, b11 + b22, p1);
-        strassen_mmul_r(a21 + a22, b11, p2);
-        strassen_mmul_r(a11, b12 - b22, p3);
+        strassen_mmul_r(a12 - a22, b21 + b22, p2);
         strassen_mmul_r(a22, b21 - b11, p4);
         strassen_mmul_r(a11 + a12, b22, p5);
-        strassen_mmul_r(a21 - a11, b11 + b12, p6);
-        strassen_mmul_r(a12 - a22, b21 + b22, p7);
 
-        auto c11 = p1 + p4 + p7 - p5;
-        auto c22 = p1 + p3 + p6 - p2;
-        auto c12 = p3 + p5;
-        auto c21 = p2 + p4;
+        auto c11 = p1 + p4 + p2 - p5;
 
         for (std::size_t i = 0; i < new_n ; i++) {
             for (std::size_t j = 0 ; j < new_n ; j++) {
                 c(i,j) = c11(i,j);
+            }
+        }
+
+        strassen_mmul_r(a11, b12 - b22, p3);
+
+        auto c12 = p3 + p5;
+
+        for (std::size_t i = 0; i < new_n ; i++) {
+            for (std::size_t j = 0 ; j < new_n ; j++) {
                 c(i,j + new_n) = c12(i,j);
+            }
+        }
+
+        strassen_mmul_r(a21 + a22, b11, p2);
+        strassen_mmul_r(a21 - a11, b11 + b12, p5);
+
+        auto c21 = p2 + p4;
+        auto c22 = p1 + p3 + p5 - p2;
+
+        for (std::size_t i = 0; i < new_n ; i++) {
+            for (std::size_t j = 0 ; j < new_n ; j++) {
                 c(i + new_n,j) = c21(i,j);
                 c(i + new_n,j + new_n) = c22(i,j);
             }
