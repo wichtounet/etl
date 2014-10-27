@@ -697,6 +697,9 @@ struct sub_size_compare<E, cpp::disable_if_t<etl_traits<E>::is_generator>> : std
 template<typename E>
 using value_t = typename std::decay_t<E>::value_type;
 
+template<typename E>
+using decay_traits = etl_traits<std::decay_t<E>>;
+
 } //end of namespace etl
 
 #endif
