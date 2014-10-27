@@ -7,6 +7,8 @@
 
 #include "catch.hpp"
 
+#include <vector>
+
 #include "etl/etl.hpp"
 #include "etl/multiplication.hpp"
 
@@ -819,6 +821,56 @@ TEST_CASE( "lvalue/dyn_matrix_8", "lvalue sub" ) {
     REQUIRE(etl::sub(a, 0)(0, 1) == 3.2);
     REQUIRE(etl::sub(a, 1)(0, 0) == 4.2);
     REQUIRE(etl::sub(a, 1)(0, 1) == 5.2);
+}
+
+TEST_CASE( "lvalue/dyn_matrix_9", "lvalue sub" ) {
+    etl::dyn_matrix<double, 3> a(2,2,2, etl::values(1.1, 2.0, 5.0, 1.0, 1.1, 2.0, 5.0, 1.0));
+
+    a(0) = 0.0;
+
+    REQUIRE(a(0, 0, 0) == 0.0);
+    REQUIRE(a(0, 0, 1) == 0.0);
+    REQUIRE(a(0, 1, 0) == 0.0);
+    REQUIRE(a(0, 1, 1) == 0.0);
+    REQUIRE(a(1, 0, 0) == 1.1);
+}
+
+TEST_CASE( "lvalue/dyn_matrix_10", "lvalue sub" ) {
+    etl::dyn_matrix<double, 3> a(2,2,2, etl::values(0.1, 3.0, 15.0, 2.0, 1.1, 2.0, 5.0, 1.0));
+
+    a(0) = a(1);
+
+    REQUIRE(a(0, 0, 0) == 1.1);
+    REQUIRE(a(0, 0, 1) == 2.0);
+    REQUIRE(a(0, 1, 0) == 5.0);
+    REQUIRE(a(0, 1, 1) == 1.0);
+    REQUIRE(a(1, 0, 0) == 1.1);
+}
+
+TEST_CASE( "lvalue/dyn_matrix_11", "lvalue sub" ) {
+    etl::dyn_matrix<double, 3> a(2,2,2, etl::values(0.1, 3.0, 15.0, 2.0, 1.1, 2.0, 5.0, 1.0));
+
+    a(0) = 2.0 * a(0);
+
+    REQUIRE(a(0, 0, 0) == 0.2);
+    REQUIRE(a(0, 0, 1) == 6.0);
+    REQUIRE(a(0, 1, 0) == 30.0);
+    REQUIRE(a(0, 1, 1) == 4.0);
+    REQUIRE(a(1, 0, 0) == 1.1);
+}
+
+TEST_CASE( "lvalue/dyn_matrix_12", "lvalue sub" ) {
+    etl::dyn_matrix<double, 3> a(2,2,2, etl::values(0.1, 3.0, 15.0, 2.0, 1.1, 2.0, 5.0, 1.0));
+
+    std::vector<double> test({1.0,2.0,3.0,4.0});
+
+    a(0) = test;
+
+    REQUIRE(a(0, 0, 0) == 1.0);
+    REQUIRE(a(0, 0, 1) == 2.0);
+    REQUIRE(a(0, 1, 0) == 3.0);
+    REQUIRE(a(0, 1, 1) == 4.0);
+    REQUIRE(a(1, 0, 0) == 1.1);
 }
 
 TEST_CASE( "lvalue/mmul1", "lvalue sub mmul" ) {
