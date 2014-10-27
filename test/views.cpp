@@ -897,4 +897,24 @@ TEST_CASE( "lvalue/mmul1", "lvalue sub mmul" ) {
     REQUIRE(c(1,1,1) == 154);
 }
 
+TEST_CASE( "lvalue/mmul2", "lvalue sub mmul" ) {
+    etl::fast_matrix<double, 2, 2, 3> a = {1,2,3,4,5,6,1,2,3,4,5,6};
+    etl::fast_matrix<double, 2, 3, 2> b = {7,8,9,10,11,12,7,8,9,10,11,12};
+    etl::fast_matrix<double, 2, 2, 2> c;
+
+    etl::mmul(etl::sub(a,0), etl::sub(b,0), etl::sub(c,0));
+
+    REQUIRE(c(0,0,0) == 58);
+    REQUIRE(c(0,0,1) == 64);
+    REQUIRE(c(0,1,0) == 139);
+    REQUIRE(c(0,1,1) == 154);
+
+    etl::sub(c,1) = etl::sub(c, 0);
+
+    REQUIRE(c(1,0,0) == 58);
+    REQUIRE(c(1,0,1) == 64);
+    REQUIRE(c(1,1,0) == 139);
+    REQUIRE(c(1,1,1) == 154);
+}
+
 ///}}}
