@@ -8,6 +8,8 @@
 #ifndef ETL_UNARY_EXPR_HPP
 #define ETL_UNARY_EXPR_HPP
 
+#include "cpp_utils/assert.hpp"
+
 #include "traits_fwd.hpp"
 
 namespace etl {
@@ -137,6 +139,17 @@ public:
     unary_expr& operator=(const value_type& e){
         for(std::size_t i = 0; i < size(*this); ++i){
             (*this)[i] = e;
+        }
+
+        return *this;
+    }
+
+    template<typename Container, cpp::enable_if_all_u<cpp::not_u<is_etl_expr<Container>::value>::value, std::is_convertible<typename Container::value_type, value_type>::value> = cpp::detail::dummy>
+    unary_expr& operator=(const Container& vec){
+        cpp_assert(vec.size() == size(*this), "Cannot copy from a vector of different size");
+
+        for(std::size_t i = 0; i < size(*this); ++i){
+            (*this)[i] = vec[i];
         }
 
         return *this;
