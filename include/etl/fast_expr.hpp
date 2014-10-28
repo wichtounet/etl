@@ -380,7 +380,7 @@ template<typename E, cpp::enable_if_u<is_etl_expr<E>::value> = cpp::detail::dumm
 auto reshape(E&& value, std::size_t rows, std::size_t columns) -> identity_helper<E, dyn_matrix_view<build_identity_type<E>>> {
     cpp_assert(etl_traits<std::decay_t<E>>::size(value) == rows * columns, "Invalid size for reshape");
 
-    return {dyn_matrix_view<E>(value, rows, columns)};
+    return {dyn_matrix_view<build_identity_type<E>>(value, rows, columns)};
 }
 
 //}}}
