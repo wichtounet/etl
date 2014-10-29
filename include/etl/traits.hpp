@@ -398,25 +398,25 @@ struct etl_traits<T, std::enable_if_t<cpp::or_u<
     static constexpr const bool is_generator = false;
 
     static std::size_t size(const expr_t& v){
-        return etl::dim<1>(v.sub);
+        return etl::size(v.sub) / etl::dim<0>(v.sub);
     }
 
-    static std::size_t dim(const expr_t& v, std::size_t){
-        return etl::dim<1>(v.sub);
+    static std::size_t dim(const expr_t& v, std::size_t d){
+        return etl::dim(v.sub, d + 1);
     }
 
     template<bool B = is_fast, cpp::enable_if_u<B> = cpp::detail::dummy>
     static constexpr std::size_t size(){
-        return etl_traits<sub_expr_t>::template dim<1>();
+        return etl_traits<sub_expr_t>::size() / etl_traits<sub_expr_t>::template dim<0>();
     }
 
     template<std::size_t D>
     static constexpr std::size_t dim(){
-        return etl_traits<sub_expr_t>::template dim<1>();
+        return etl_traits<sub_expr_t>::template dim<D + 1>();
     }
 
     static constexpr std::size_t dimensions(){
-        return 1;
+        return etl_traits<sub_expr_t>::dimensions() - 1;
     }
 };
 

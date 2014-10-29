@@ -9,6 +9,7 @@
 #define ETL_TRANSFORMERS_HPP
 
 #include "tmp.hpp"
+#include "traits_fwd.hpp"
 
 namespace etl {
 
@@ -96,12 +97,25 @@ struct mean_l_transformer {
 
     explicit mean_l_transformer(sub_type vec) : sub(vec) {}
 
-    value_type operator[](std::size_t i) const {
-        return mean(col(sub, i));
+    value_type operator[](std::size_t j) const {
+        value_type m = 0.0;
+
+        for(std::size_t i = 0; i < dim<0>(sub); ++i){
+            m += sub[j + i * (size(sub) / dim<0>(sub))];
+        }
+
+        return m / dim<0>(sub);
     }
 
-    value_type operator()(std::size_t i) const {
-        return mean(col(sub, i));
+    template<typename... Sizes>
+    value_type operator()(std::size_t j, Sizes... sizes) const {
+        value_type m = 0.0;
+
+        for(std::size_t i = 0; i < dim<0>(sub); ++i){
+            m += sub(i, j, sizes...);
+        }
+
+        return m / dim<0>(sub);
     }
 };
 

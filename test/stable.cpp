@@ -288,7 +288,7 @@ TEST_CASE( "mean_r/dyn_matrix_2", "mean_r" ) {
 //{{{ Tests for mean_l
 
 TEST_CASE( "mean_l/fast_matrix_1", "mean_l" ) {
-    etl::fast_matrix<double, 3, 4> a({1,2,3,4,0,0,1,1,4,5,6,7});
+    etl::fast_matrix<double, 3, 4> a({1,2,3,4, 0,0,1,1, 4,5,6,7});
     etl::fast_matrix<double, 4> b(etl::mean_l(a));
 
     REQUIRE(b(0) == Approx(1.666666));
@@ -327,6 +327,33 @@ TEST_CASE( "mean_l/fast_matrix_4", "mean_l" ) {
     REQUIRE(b(0) == 2.5);
     REQUIRE(b(1) == 2.5);
     REQUIRE(b(2) == 2.5);
+}
+
+TEST_CASE( "mean_l/fast_matrix_5", "mean_l" ) {
+    etl::fast_matrix<double, 3, 4, 1> a({1,2,3,4,0,0,1,1,4,5,6,7});
+    etl::fast_matrix<double, 4, 1> b;
+
+    b = etl::mean_l(a);
+
+    REQUIRE(b(0,0) == Approx(1.666666));
+    REQUIRE(b(1,0) == Approx(2.333333));
+    REQUIRE(b(2,0) == Approx(3.333333));
+}
+
+TEST_CASE( "mean_l/fast_matrix_6", "mean_l" ) {
+    etl::fast_matrix<double, 3, 4, 2> a({1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24});
+    etl::fast_matrix<double, 4, 2> b;
+
+    b = etl::mean_l(a);
+
+    REQUIRE(b(0,0) == Approx(9.0));
+    REQUIRE(b(0,1) == Approx(10.0));
+    REQUIRE(b(1,0) == Approx(11.0));
+    REQUIRE(b(1,1) == Approx(12.0));
+    REQUIRE(b(2,0) == Approx(13.0));
+    REQUIRE(b(2,1) == Approx(14.0));
+    REQUIRE(b(3,0) == Approx(15.0));
+    REQUIRE(b(3,1) == Approx(16.0));
 }
 
 TEST_CASE( "mean_l/dyn_matrix_1", "mean_l" ) {
