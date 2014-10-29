@@ -371,14 +371,14 @@ auto sub(E&& value, std::size_t i) -> identity_helper<E, sub_view<build_identity
 
 template<std::size_t Rows, std::size_t Columns, typename E, cpp::enable_if_u<is_etl_expr<E>::value> = cpp::detail::dummy>
 auto reshape(E&& value) -> identity_helper<E, fast_matrix_view<build_identity_type<E>, Rows, Columns>> {
-    cpp_assert(etl_traits<std::decay_t<E>>::size(value) == Rows * Columns, "Invalid size for reshape");
+    cpp_assert(size(value) == Rows * Columns, "Invalid size for reshape");
 
     return {fast_matrix_view<build_identity_type<E>, Rows, Columns>(value)};
 }
 
 template<typename E, cpp::enable_if_u<is_etl_expr<E>::value> = cpp::detail::dummy>
 auto reshape(E&& value, std::size_t rows, std::size_t columns) -> identity_helper<E, dyn_matrix_view<build_identity_type<E>>> {
-    cpp_assert(etl_traits<std::decay_t<E>>::size(value) == rows * columns, "Invalid size for reshape");
+    cpp_assert(size(value) == rows * columns, "Invalid size for reshape");
 
     return {dyn_matrix_view<build_identity_type<E>>(value, rows, columns)};
 }
