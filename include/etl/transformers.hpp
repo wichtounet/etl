@@ -32,13 +32,13 @@ struct rep_transformer {
 };
 
 template<typename T>
-struct sum_transformer {
+struct sum_r_transformer {
     using sub_type = T;
     using value_type = value_t<T>;
 
     sub_type sub;
 
-    explicit sum_transformer(sub_type vec) : sub(vec) {}
+    explicit sum_r_transformer(sub_type vec) : sub(vec) {}
 
     value_type operator[](std::size_t i) const {
         return sum(sub(i));
@@ -50,13 +50,13 @@ struct sum_transformer {
 };
 
 template<typename T>
-struct mean_transformer {
+struct mean_r_transformer {
     using sub_type = T;
     using value_type = value_t<T>;
 
     sub_type sub;
 
-    explicit mean_transformer(sub_type vec) : sub(vec) {}
+    explicit mean_r_transformer(sub_type vec) : sub(vec) {}
 
     value_type operator[](std::size_t i) const {
         return mean(sub(i));
@@ -64,6 +64,42 @@ struct mean_transformer {
 
     value_type operator()(std::size_t i) const {
         return mean(sub(i));
+    }
+};
+
+template<typename T>
+struct sum_l_transformer {
+    using sub_type = T;
+    using value_type = value_t<T>;
+
+    sub_type sub;
+
+    explicit sum_l_transformer(sub_type vec) : sub(vec) {}
+
+    value_type operator[](std::size_t i) const {
+        return sum(col(sub,i));
+    }
+
+    value_type operator()(std::size_t i) const {
+        return sum(col(sub,i));
+    }
+};
+
+template<typename T>
+struct mean_l_transformer {
+    using sub_type = T;
+    using value_type = value_t<T>;
+
+    sub_type sub;
+
+    explicit mean_l_transformer(sub_type vec) : sub(vec) {}
+
+    value_type operator[](std::size_t i) const {
+        return mean(col(sub, i));
+    }
+
+    value_type operator()(std::size_t i) const {
+        return mean(col(sub, i));
     }
 };
 

@@ -197,7 +197,7 @@ TEST_CASE( "sum_r/fast_matrix_4", "sum_r" ) {
 
 //}}}
 
-//{{{ Tests for sum_r
+//{{{ Tests for mean_r
 
 TEST_CASE( "mean_r/fast_matrix_1", "mean_r" ) {
     etl::fast_matrix<double, 3, 4> a({1,2,3,4,0,0,1,1,4,5,6,7});
@@ -259,6 +259,72 @@ TEST_CASE( "mean_r/dyn_matrix_2", "mean_r" ) {
     REQUIRE(b(0) == 2.5);
     REQUIRE(b(1) == 0.5);
     REQUIRE(b(2) == 5.5);
+}
+
+//}}}
+
+//{{{ Tests for mean_l
+
+TEST_CASE( "mean_l/fast_matrix_1", "mean_l" ) {
+    etl::fast_matrix<double, 3, 4> a({1,2,3,4,0,0,1,1,4,5,6,7});
+    etl::fast_matrix<double, 4> b(etl::mean_l(a));
+
+    REQUIRE(b(0) == Approx(1.666666));
+    REQUIRE(b(1) == Approx(2.333333));
+    REQUIRE(b(2) == Approx(3.333333));
+}
+
+TEST_CASE( "mean_l/fast_matrix_2", "mean_l" ) {
+    etl::fast_matrix<double, 3, 4> a({1,2,3,4,0,0,1,1,4,5,6,7});
+    etl::fast_matrix<double, 4> b;
+
+    b = etl::mean_l(a);
+
+    REQUIRE(b(0) == Approx(1.666666));
+    REQUIRE(b(1) == Approx(2.333333));
+    REQUIRE(b(2) == Approx(3.333333));
+}
+
+TEST_CASE( "mean_l/fast_matrix_3", "mean_l" ) {
+    etl::fast_matrix<double, 3, 4> a({1,2,3,4,0,0,1,1,4,5,6,7});
+    etl::fast_matrix<double, 4> b;
+
+    b = etl::mean_l(a) * 2.5;
+
+    REQUIRE(b(0) == Approx(4.1666666));
+    REQUIRE(b(1) == Approx(5.8333333));
+    REQUIRE(b(2) == Approx(8.333333));
+}
+
+TEST_CASE( "mean_l/fast_matrix_4", "mean_l" ) {
+    etl::fast_matrix<double, 3, 4> a({1,2,3,4,0,0,1,1,4,5,6,7});
+    etl::fast_matrix<double, 4> b;
+
+    b = (etl::mean_l(a) - etl::mean_l(a)) + 2.5;
+
+    REQUIRE(b(0) == 2.5);
+    REQUIRE(b(1) == 2.5);
+    REQUIRE(b(2) == 2.5);
+}
+
+TEST_CASE( "mean_l/dyn_matrix_1", "mean_l" ) {
+    etl::dyn_matrix<double> a(3,4, etl::values(1,2,3,4,0,0,1,1,4,5,6,7));
+    etl::dyn_vector<double> b(etl::mean_l(a));
+
+    REQUIRE(b(0) == Approx(1.666666));
+    REQUIRE(b(1) == Approx(2.333333));
+    REQUIRE(b(2) == Approx(3.333333));
+}
+
+TEST_CASE( "mean_l/dyn_matrix_2", "mean_l" ) {
+    etl::dyn_matrix<double> a(3,4, etl::values(1,2,3,4,0,0,1,1,4,5,6,7));
+    etl::dyn_vector<double> b(4);
+
+    b = etl::mean_l(a);
+
+    REQUIRE(b(0) == Approx(1.666666));
+    REQUIRE(b(1) == Approx(2.333333));
+    REQUIRE(b(2) == Approx(3.333333));
 }
 
 //}}}
