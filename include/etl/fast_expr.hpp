@@ -431,7 +431,8 @@ auto fflip(const E& value) -> unstable_transform_helper<E, fflip_transformer> {
 }
 
 template<typename E, cpp::enable_if_u<is_etl_expr<E>::value> = cpp::detail::dummy>
-auto transpose(const E& value) -> unstable_transform_helper<E, transpose_transformer> {
+auto transpose(const E& value) -> stable_transform_helper<E, transpose_transformer> {
+    static_assert(decay_traits<E>::dimensions() <= 2, "Transpose not defined for matrix > 2D");
     return {transpose_transformer<build_type<E>>(value)};
 }
 

@@ -182,6 +182,14 @@ struct transpose_transformer {
 
     explicit transpose_transformer(sub_type vec) : sub(vec) {}
 
+    value_type operator[](std::size_t i) const {
+        if(dimensions(sub) == 1){
+            return sub[i];
+        } else {
+            return sub[(i % dim<0>(sub)) * dim<1>(sub) + (i / dim<0>(sub))];
+        }
+    }
+
     value_type operator()(std::size_t i) const {
         return sub(i);
     }
