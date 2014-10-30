@@ -78,10 +78,10 @@ template<typename T>
 struct bernoulli_unary_op {
     static T apply(const T& x){
         static random_engine rand_engine(std::time(nullptr));
-        static std::uniform_real_distribution<double> normal_distribution(0.0, 1.0);
-        static auto normal_generator = std::bind(normal_distribution, rand_engine);
+        static std::uniform_real_distribution<double> distribution(0.0, 1.0);
+        static auto generator = std::bind(distribution, rand_engine);
 
-        return x > normal_generator() ? 1.0 : 0.0;
+        return x > generator() ? 1.0 : 0.0;
     }
 };
 
@@ -89,10 +89,10 @@ template<typename T>
 struct reverse_bernoulli_unary_op {
     static T apply(const T& x){
         static random_engine rand_engine(std::time(nullptr));
-        static std::uniform_real_distribution<double> normal_distribution(0.0, 1.0);
-        static auto normal_generator = std::bind(normal_distribution, rand_engine);
+        static std::uniform_real_distribution<double> distribution(0.0, 1.0);
+        static auto generator = std::bind(distribution, rand_engine);
 
-        return x > normal_generator() ? 0.0 : 1.0;
+        return x > generator() ? 0.0 : 1.0;
     }
 };
 
