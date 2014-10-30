@@ -9,6 +9,7 @@
 #define ETL_STABLE_TRANSFORM_EXPR_HPP
 
 #include "traits_fwd.hpp"
+#include "iterator.hpp"
 
 namespace etl {
 
@@ -66,6 +67,14 @@ public:
         static_assert(cpp::all_convertible_to<std::size_t, S...>::value, "Invalid size types");
 
         return value()(args...);
+    }
+
+    iterator<const this_type> begin() const {
+        return {*this, 0};
+    }
+
+    iterator<const this_type> end() const {
+        return {*this, size(*this)};
     }
 };
 

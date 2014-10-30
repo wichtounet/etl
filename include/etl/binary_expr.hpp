@@ -9,6 +9,7 @@
 #define ETL_BINARY_EXPR_HPP
 
 #include "traits_fwd.hpp"
+#include "iterator.hpp"
 
 namespace etl {
 
@@ -81,6 +82,14 @@ public:
         static_assert(cpp::all_convertible_to<std::size_t, S...>::value, "Invalid size types");
 
         return BinaryOp::apply(lhs()(args...), rhs()(args...));
+    }
+
+    iterator<const this_type> begin() const {
+        return {*this, 0};
+    }
+
+    iterator<const this_type> end() const {
+        return {*this, size(*this)};
     }
 };
 

@@ -9,8 +9,8 @@
 #define ETL_UNARY_EXPR_HPP
 
 #include "cpp_utils/assert.hpp"
-
 #include "traits_fwd.hpp"
+#include "iterator.hpp"
 
 namespace etl {
 
@@ -70,6 +70,14 @@ public:
         static_assert(cpp::all_convertible_to<std::size_t, S...>::value, "Invalid size types");
 
         return UnaryOp::apply(value()(args...));
+    }
+
+    iterator<const this_type> begin() const {
+        return {*this, 0};
+    }
+
+    iterator<const this_type> end() const {
+        return {*this, size(*this)};
     }
 };
 
@@ -197,6 +205,22 @@ public:
         static_assert(cpp::all_convertible_to<std::size_t, S...>::value, "Invalid size types");
 
         return value()(args...);
+    }
+
+    iterator<this_type, non_const_return_ref, false> begin(){
+        return {*this, 0};
+    }
+
+    iterator<this_type, non_const_return_ref, false> end(){
+        return {*this, size(*this)};
+    }
+
+    iterator<const this_type, true> begin() const {
+        return {*this, 0};
+    }
+
+    iterator<const this_type, true> end() const {
+        return {*this, size(*this)};
     }
 };
 
