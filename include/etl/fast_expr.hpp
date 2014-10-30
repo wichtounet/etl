@@ -265,18 +265,18 @@ auto abs(E&& value) -> unary_helper<E, abs_unary_op> {
 }
 
 template<typename E, typename T, cpp::enable_if_all_u<is_etl_expr<E>::value, std::is_arithmetic<T>::value> = cpp::detail::dummy>
-auto max(E&& value, T v) -> left_binary_helper_op<E, scalar<T>, max_binary_op<value_t<E>, T>> {
-    return {value, scalar<T>(v)};
+auto max(E&& value, T v) -> left_binary_helper_op<E, scalar<value_t<E>>, max_binary_op<value_t<E>, value_t<E>>> {
+    return {value, scalar<value_t<E>>(v)};
 }
 
 template<typename E, typename T, cpp::enable_if_all_u<is_etl_expr<E>::value, std::is_arithmetic<T>::value> = cpp::detail::dummy>
-auto min(E&& value, T v) -> left_binary_helper_op<E, scalar<T>, min_binary_op<value_t<E>, T>> {
-    return {value, scalar<T>(v)};
+auto min(E&& value, T v) -> left_binary_helper_op<E, scalar<value_t<E>>, min_binary_op<value_t<E>, value_t<E>>> {
+    return {value, scalar<value_t<E>>(v)};
 }
 
 template<typename E, typename T, cpp::enable_if_all_u<is_etl_expr<E>::value, std::is_arithmetic<T>::value> = cpp::detail::dummy>
-auto one_if(E&& value, T v) -> left_binary_helper_op<E, scalar<T>, one_if_binary_op<value_t<E>, T>> {
-    return {value, scalar<T>(v)};
+auto one_if(E&& value, T v) -> left_binary_helper_op<E, scalar<value_t<E>>, one_if_binary_op<value_t<E>, value_t<E>>> {
+    return {value, scalar<value_t<E>>(v)};
 }
 
 template<typename E, cpp::enable_if_u<is_etl_expr<E>::value> = cpp::detail::dummy>
@@ -305,8 +305,8 @@ auto logistic_noise(E&& value) -> unary_helper<E, logistic_noise_unary_op> {
 }
 
 template<typename E, typename T, cpp::enable_if_all_u<is_etl_expr<E>::value, std::is_arithmetic<T>::value> = cpp::detail::dummy>
-auto ranged_noise(E&& value, T v) -> left_binary_helper_op<E, scalar<T>, ranged_noise_binary_op<value_t<E>, T>> {
-    return {value, scalar<T>(v)};
+auto ranged_noise(E&& value, T v) -> left_binary_helper_op<E, scalar<value_t<E>>, ranged_noise_binary_op<value_t<E>, value_t<E>>> {
+    return {value, scalar<value_t<E>>(v)};
 }
 
 template<typename E, cpp::enable_if_u<is_etl_expr<E>::value> = cpp::detail::dummy>
