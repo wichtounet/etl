@@ -90,6 +90,15 @@ struct is_etl_expr : std::integral_constant<bool, cpp::or_u<
        is_transformer<T>::value, is_view<T>::value
     >::value> {};
 
+template<typename T, typename Enable>
+struct is_copy_expr : std::integral_constant<bool, cpp::or_u<
+       is_fast_matrix<T>::value,
+       is_dyn_matrix<T>::value,
+       is_unary_expr<T>::value,
+       is_binary_expr<T>::value,
+       is_stable_transform_expr<T>::value
+    >::value> {};
+
 template<typename T, typename Enable = void>
 struct is_etl_value :
     std::integral_constant<bool, cpp::or_u<is_fast_matrix<T>::value, is_dyn_matrix<T>::value>::value> {};
