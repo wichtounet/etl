@@ -195,52 +195,11 @@ public:
         //Nothing to init
     }
 
-    template<typename T2, cpp::enable_if_u<std::is_convertible<T2, T>::value> = cpp::detail::dummy>
-    dyn_matrix(const dyn_matrix<T2, D>& e) :
-            _size(etl::size(e)), _data(_size)
-    {
-        for(std::size_t d = 0; d < etl::dimensions(e); ++d){
-            _dimensions[d] = etl::dim(e, d);
-        }
-
-        for(std::size_t i = 0; i < size(); ++i){
-            _data[i] = e[i];
-        }
-    }
-
-    template<typename LE, typename Op, typename RE>
-    explicit dyn_matrix(const binary_expr<value_type, LE, Op, RE>& e) :
-            _size(etl::size(e)),
-            _data(_size)
-    {
-        for(std::size_t d = 0; d < etl::dimensions(e); ++d){
-            _dimensions[d] = etl::dim(e, d);
-        }
-
-        for(std::size_t i = 0; i < size(); ++i){
-            _data[i] = e[i];
-        }
-    }
-
-    template<typename E, typename Op>
-    explicit dyn_matrix(const unary_expr<value_type, E, Op>& e) :
-            _size(etl::size(e)),
-            _data(_size)
-    {
-        for(std::size_t d = 0; d < etl::dimensions(e); ++d){
-            _dimensions[d] = etl::dim(e, d);
-        }
-
-        for(std::size_t i = 0; i < size(); ++i){
-            _data[i] = e[i];
-        }
-    }
-
-    template<typename Expr>
-    explicit dyn_matrix(const stable_transform_expr<value_type, Expr>& e) :
-            _size(etl::size(e)),
-            _data(_size) {
-
+    template<typename E, cpp::enable_if_all_u<
+        std::is_convertible<typename E::value_type, value_type>::value,
+        is_copy_expr<E>::value
+    > = cpp::detail::dummy>
+    dyn_matrix(const E& e) :_size(etl::size(e)), _data(_size){
         for(std::size_t d = 0; d < etl::dimensions(e); ++d){
             _dimensions[d] = etl::dim(e, d);
         }
@@ -329,37 +288,13 @@ public:
         return *this;
     }
 
-    //Allow copy from other containers
-
-    template<typename Container, cpp::enable_if_all_u<
-        cpp::not_u<is_etl_expr<Container>::value>::value,
-        std::is_convertible<typename Container::value_type, value_type>::value
-    > = cpp::detail::dummy>
-    dyn_matrix& operator=(const Container& vec){
-        cpp_assert(vec.size() == size(), "Cannot copy from a vector of different size");
-
-        for(std::size_t i = 0; i < size(); ++i){
-            _data[i] = vec[i];
-        }
-
-        return *this;
-    }
-
     //Construct from expression
 
-    template<typename LE, typename Op, typename RE>
-    dyn_matrix& operator=(binary_expr<value_type, LE, Op, RE>&& e){
-        ensure_same_size(*this, e);
-
-        for(std::size_t i = 0; i < size(); ++i){
-            _data[i] = e[i];
-        }
-
-        return *this;
-    }
-
-    template<typename E, typename Op>
-    dyn_matrix& operator=(unary_expr<value_type, E, Op>&& e){
+    template<typename E, cpp::enable_if_all_u<
+        std::is_convertible<typename E::value_type, value_type>::value,
+        is_copy_expr<E>::value
+    > = cpp::detail::dummy>
+    dyn_matrix& operator=(E&& e){
         ensure_same_size(*this, e);
 
         for(std::size_t i = 0; i < size(); ++i){
@@ -371,17 +306,6 @@ public:
 
     template<typename Generator>
     dyn_matrix& operator=(generator_expr<Generator>&& e){
-        for(std::size_t i = 0; i < size(); ++i){
-            _data[i] = e[i];
-        }
-
-        return *this;
-    }
-
-    template<typename E>
-    dyn_matrix& operator=(stable_transform_expr<value_type, E>&& e){
-        ensure_same_size(*this, e);
-
         for(std::size_t i = 0; i < size(); ++i){
             _data[i] = e[i];
         }
@@ -423,6 +347,22 @@ public:
                     _data[index(i,j,k)] = e(i,j,k);
                 }
             }
+        }
+
+        return *this;
+    }
+
+    //Allow copy from other containers
+
+    template<typename Container, cpp::enable_if_all_u<
+        cpp::not_u<is_etl_expr<Container>::value>::value,
+        std::is_convertible<typename Container::value_type, value_type>::value
+    > = cpp::detail::dummy>
+    dyn_matrix& operator=(const Container& vec){
+        cpp_assert(vec.size() == size(), "Cannot copy from a vector of different size");
+
+        for(std::size_t i = 0; i < size(); ++i){
+            _data[i] = vec[i];
         }
 
         return *this;
