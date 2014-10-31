@@ -315,7 +315,10 @@ public:
 
     //Allow copy from other containers
 
-    template<typename Container, cpp::enable_if_u<std::is_convertible<typename Container::value_type, value_type>::value> = cpp::detail::dummy>
+    template<typename Container, cpp::enable_if_all_u<
+        cpp::not_u<is_etl_expr<Container>::value>::value,
+        std::is_convertible<typename Container::value_type, value_type>::value
+    > = cpp::detail::dummy>
     dyn_matrix& operator=(const Container& vec){
         cpp_assert(vec.size() == size(), "Cannot copy from a vector of different size");
 
