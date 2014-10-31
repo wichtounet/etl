@@ -9,12 +9,16 @@
 #define ETL_UNARY_EXPR_HPP
 
 #include "cpp_utils/assert.hpp"
+
 #include "traits_fwd.hpp"
 #include "iterator.hpp"
 
 namespace etl {
 
 struct identity_op;
+
+template <typename T, typename Expr>
+class unstable_transform_expr;
 
 template <typename T, typename Expr, typename UnaryOp>
 class unary_expr {
@@ -132,12 +136,51 @@ public:
         return *this;
     }
 
-    template<typename E, cpp::enable_if_all_u<non_const_return_ref, is_etl_expr<E>::value> = cpp::detail::dummy>
+    template<typename E, cpp::enable_if_all_u<non_const_return_ref, is_copy_expr<E>::value> = cpp::detail::dummy>
     unary_expr& operator=(const E& e){
         ensure_same_size(*this, e);
 
         for(std::size_t i = 0; i < size(*this); ++i){
             (*this)[i] = e[i];
+        }
+
+        return *this;
+    }
+
+    template<typename E, cpp::enable_if_u<etl_traits<unstable_transform_expr<value_type, E>>::dimensions() == 1> = cpp::detail::dummy>
+    unary_expr& operator=(unstable_transform_expr<value_type, E>&& e){
+        ensure_same_size(*this, e);
+
+        for(std::size_t i = 0; i < etl::template dim<0>(*this); ++i){
+            (*this)(i) = e(i);
+        }
+
+        return *this;
+    }
+
+    template<typename E, cpp::enable_if_u<etl_traits<unstable_transform_expr<value_type, E>>::dimensions() == 2> = cpp::detail::dummy>
+    unary_expr& operator=(unstable_transform_expr<value_type, E>&& e){
+        ensure_same_size(*this, e);
+
+        for(std::size_t i = 0; i < etl::template dim<0>(*this); ++i){
+            for(std::size_t j = 0; j < etl::template dim<1>(*this); ++j){
+                (*this)(i,j) = e(i,j);
+            }
+        }
+
+        return *this;
+    }
+
+    template<typename E, cpp::enable_if_u<etl_traits<unstable_transform_expr<value_type, E>>::dimensions() == 3> = cpp::detail::dummy>
+    unary_expr& operator=(unstable_transform_expr<value_type, E>&& e){
+        ensure_same_size(*this, e);
+
+        for(std::size_t i = 0; i < etl::template dim<0>(*this); ++i){
+            for(std::size_t j = 0; j < etl::template dim<1>(*this); ++j){
+                for(std::size_t k = 0; k < etl::template dim<2>(*this); ++k){
+                    (*this)(i,j,k) = e(i,j,k);
+                }
+            }
         }
 
         return *this;
