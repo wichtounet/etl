@@ -5,8 +5,8 @@
 //  http://opensource.org/licenses/MIT)
 //=======================================================================
 
-#ifndef ETL_old_matrix_HPP
-#define ETL_old_matrix_HPP
+#ifndef ETL_DYN_MATRIX_HPP
+#define ETL_DYN_MATRIX_HPP
 
 #include <vector> //To store the data
 #include <array>  //To store the dimensions
