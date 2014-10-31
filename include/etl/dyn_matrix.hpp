@@ -105,11 +105,6 @@ public:
         //Nothing to init
     }
 
-    template<typename T2, cpp::enable_if_u<std::is_convertible<T2, T>::value> = cpp::detail::dummy>
-    dyn_matrix(const dyn_matrix<T2, D>& rhs) : _size(rhs._size), _data(rhs._data.begin(), rhs._data.end()), _dimensions(rhs._dimensions) {
-        //Nothing to init
-    }
-
     //Sizes followed by an initializer list
     dyn_matrix(std::initializer_list<value_type> list) :
             _size(list.size()),
@@ -200,11 +195,24 @@ public:
         //Nothing to init
     }
 
+    template<typename T2, cpp::enable_if_u<std::is_convertible<T2, T>::value> = cpp::detail::dummy>
+    dyn_matrix(const dyn_matrix<T2, D>& e) :
+            _size(etl::size(e)), _data(_size)
+    {
+        for(std::size_t d = 0; d < etl::dimensions(e); ++d){
+            _dimensions[d] = etl::dim(e, d);
+        }
+
+        for(std::size_t i = 0; i < size(); ++i){
+            _data[i] = e[i];
+        }
+    }
+
     template<typename LE, typename Op, typename RE>
     explicit dyn_matrix(const binary_expr<value_type, LE, Op, RE>& e) :
             _size(etl::size(e)),
-            _data(_size) {
-
+            _data(_size)
+    {
         for(std::size_t d = 0; d < etl::dimensions(e); ++d){
             _dimensions[d] = etl::dim(e, d);
         }
@@ -217,8 +225,8 @@ public:
     template<typename E, typename Op>
     explicit dyn_matrix(const unary_expr<value_type, E, Op>& e) :
             _size(etl::size(e)),
-            _data(_size) {
-
+            _data(_size)
+    {
         for(std::size_t d = 0; d < etl::dimensions(e); ++d){
             _dimensions[d] = etl::dim(e, d);
         }
