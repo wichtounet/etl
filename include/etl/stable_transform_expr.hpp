@@ -69,6 +69,16 @@ public:
         return value()(args...);
     }
 
+    template<bool B = (sub_size_compare<this_type>::value > 1), cpp::enable_if_u<B> = cpp::detail::dummy>
+    auto operator()(std::size_t i){
+        return sub(*this, i);
+    }
+
+    template<bool B = (sub_size_compare<this_type>::value > 1), cpp::enable_if_u<B> = cpp::detail::dummy>
+    auto operator()(std::size_t i) const {
+        return sub(*this, i);
+    }
+
     iterator<const this_type> begin() const {
         return {*this, 0};
     }
