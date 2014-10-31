@@ -105,6 +105,11 @@ public:
         //Nothing to init
     }
 
+    template<typename T2, cpp::enable_if_u<std::is_convertible<T2, T>::value> = cpp::detail::dummy>
+    dyn_matrix(const dyn_matrix<T2, D>& rhs) : _size(rhs._size), _data(rhs._data.begin(), rhs._data.end()), _dimensions(rhs._dimensions) {
+        //Nothing to init
+    }
+
     //Sizes followed by an initializer list
     dyn_matrix(std::initializer_list<value_type> list) :
             _size(list.size()),
