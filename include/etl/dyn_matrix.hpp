@@ -285,7 +285,10 @@ public:
         }
     }
 
-    template<typename Container, cpp::enable_if_u<std::is_convertible<typename Container::value_type, value_type>::value> = cpp::detail::dummy>
+    template<typename Container, cpp::enable_if_all_u<
+        cpp::not_u<is_etl_expr<Container>::value>::value,
+        std::is_convertible<typename Container::value_type, value_type
+    >::value> = cpp::detail::dummy>
     dyn_matrix(const Container& vec) : _size(vec.size()), _data(_size) {
         static_assert(D == 1, "Only 1D matrix can be constructed from containers");
 
