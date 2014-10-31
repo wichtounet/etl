@@ -112,26 +112,11 @@ public:
         std::copy(rhs.begin(), rhs.end(), begin());
     }
 
-    template<typename LE, typename Op, typename RE>
-    explicit fast_matrix(const binary_expr<value_type, LE, Op, RE>& e){
-        ensure_same_size(*this, e);
-
-        for(std::size_t i = 0; i < size(); ++i){
-            _data[i] = e[i];
-        }
-    }
-
-    template<typename E, typename Op>
-    explicit fast_matrix(const unary_expr<value_type, E, Op>& e){
-        ensure_same_size(*this, e);
-
-        for(std::size_t i = 0; i < size(); ++i){
-            _data[i] = e[i];
-        }
-    }
-
-    template<typename Expr>
-    explicit fast_matrix(const stable_transform_expr<value_type, Expr>& e){
+    template<typename E, cpp::enable_if_all_u<
+        std::is_convertible<typename E::value_type, value_type>::value,
+        is_copy_expr<E>::value
+    > = cpp::detail::dummy>
+    explicit fast_matrix(const E& e){
         ensure_same_size(*this, e);
 
         for(std::size_t i = 0; i < size(); ++i){
@@ -208,8 +193,11 @@ public:
 
     //Construct from expression
 
-    template<typename LE, typename Op, typename RE>
-    fast_matrix& operator=(binary_expr<value_type, LE, Op, RE>&& e){
+    template<typename E, cpp::enable_if_all_u<
+        std::is_convertible<typename E::value_type, value_type>::value,
+        is_copy_expr<E>::value
+    > = cpp::detail::dummy>
+    fast_matrix& operator=(E&& e){
         ensure_same_size(*this, e);
 
         for(std::size_t i = 0; i < size(); ++i){
@@ -219,21 +207,8 @@ public:
         return *this;
     }
 
-    template<typename E, typename Op>
-    fast_matrix& operator=(unary_expr<value_type, E, Op>&& e){
-        ensure_same_size(*this, e);
-
-        for(std::size_t i = 0; i < size(); ++i){
-            _data[i] = e[i];
-        }
-
-        return *this;
-    }
-
-    template<typename Expr>
-    fast_matrix& operator=(stable_transform_expr<value_type, Expr>&& e){
-        ensure_same_size(*this, e);
-
+    template<typename Generator>
+    fast_matrix& operator=(generator_expr<Generator>&& e){
         for(std::size_t i = 0; i < size(); ++i){
             _data[i] = e[i];
         }
@@ -275,15 +250,6 @@ public:
                     _data[index(i,j,k)] = e(i,j,k);
                 }
             }
-        }
-
-        return *this;
-    }
-
-    template<typename Generator>
-    fast_matrix& operator=(generator_expr<Generator>&& e){
-        for(std::size_t i = 0; i < size(); ++i){
-            _data[i] = e[i];
         }
 
         return *this;
