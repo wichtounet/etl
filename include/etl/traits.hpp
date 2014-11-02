@@ -66,7 +66,7 @@ struct is_transformer : std::integral_constant<bool, cpp::or_u<
                 cpp::is_specialization_of<etl::mean_r_transformer, std::decay_t<T>>::value,
                 cpp::is_specialization_of<etl::mean_l_transformer, std::decay_t<T>>::value
             >::value,
-            is_var<etl::rep_transformer, std::decay_t<T>>::value,
+            is_var<etl::rep_r_transformer, std::decay_t<T>>::value,
             is_3<etl::p_max_pool_h_transformer, std::decay_t<T>>::value,
             is_3<etl::p_max_pool_p_transformer, std::decay_t<T>>::value
         >::value> {};
@@ -318,11 +318,11 @@ struct etl_traits<transpose_transformer<T>> {
 };
 
 /*!
- * \brief Specialization for rep_transformer
+ * \brief Specialization for rep_r_transformer
  */
 template <typename T, std::size_t... D>
-struct etl_traits<rep_transformer<T, D...>> {
-    using expr_t = etl::rep_transformer<T, D...>;
+struct etl_traits<rep_r_transformer<T, D...>> {
+    using expr_t = etl::rep_r_transformer<T, D...>;
     using sub_expr_t = std::decay_t<T>;
 
     static constexpr const bool is_fast = etl_traits<sub_expr_t>::is_fast;
