@@ -519,3 +519,16 @@ TEST_CASE( "mean_l/dyn_matrix_2", "mean_l" ) {
 }
 
 //}}}
+
+//{{{ Tests for sum_l
+
+TEST_CASE( "sum_l/fast_matrix_1", "sum_l" ) {
+    etl::fast_matrix<double, 3, 4> a({1,2,3,4, 0,0,1,1, 4,5,6,7});
+    etl::fast_matrix<double, 4> b(etl::sum_l(a));
+
+    REQUIRE(b(0) == Approx(5.0));
+    REQUIRE(b(1) == Approx(7.0));
+    REQUIRE(b(2) == Approx(10.0));
+}
+
+//}}}
