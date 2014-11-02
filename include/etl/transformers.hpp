@@ -164,6 +164,14 @@ struct fflip_transformer {
 
     explicit fflip_transformer(sub_type vec) : sub(vec) {}
 
+    value_type operator[](std::size_t i) const {
+        if(dimensions(sub) == 1){
+            return sub[i];
+        } else {
+            return sub[size(sub) - i - 1];
+        }
+    }
+
     value_type operator()(std::size_t i) const {
         return sub(i);
     }

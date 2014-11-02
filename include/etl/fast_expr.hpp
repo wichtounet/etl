@@ -428,7 +428,7 @@ auto vflip(const E& value) -> unstable_transform_helper<E, vflip_transformer> {
 }
 
 template<typename E, cpp::enable_if_u<is_etl_expr<E>::value> = cpp::detail::dummy>
-auto fflip(const E& value) -> unstable_transform_helper<E, fflip_transformer> {
+auto fflip(const E& value) -> stable_transform_helper<E, fflip_transformer> {
     static_assert(etl_traits<std::decay_t<E>>::dimensions() <= 2, "Can only use flips on 1D/2D");
     return {fflip_transformer<build_type<E>>(value)};
 }
