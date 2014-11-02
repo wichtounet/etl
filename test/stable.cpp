@@ -9,7 +9,7 @@
 
 #include "etl/etl.hpp"
 
-//{{{ Tests for rep
+//{{{ Tests for rep_r
 
 TEST_CASE( "rep/fast_matrix_1", "rep" ) {
     etl::fast_matrix<double, 3> a({1.0, -2.0, 3.0});
@@ -143,6 +143,148 @@ TEST_CASE( "rep/dyn_matrix_4", "rep" ) {
     etl::dyn_matrix<double, 5> b(1, 3, 2, 5, 7);
 
     b = etl::rep<3, 2, 5, 7>(a);
+
+    for(auto v : b){
+        REQUIRE(v == 1.0);
+    }
+}
+
+//}}}
+
+//{{{ Tests for rep_l
+
+TEST_CASE( "rep_l/fast_matrix_1", "rep" ) {
+    etl::fast_matrix<double, 3> a({1.0, -2.0, 3.0});
+    etl::fast_matrix<double, 3, 3> b(etl::rep_l<3>(a));
+
+    REQUIRE(b(0,0) == 1.0);
+    REQUIRE(b(0,1) == -2.0);
+    REQUIRE(b(0,2) == 3.0);
+    REQUIRE(b(1,0) == 1.0);
+    REQUIRE(b(1,1) == -2.0);
+    REQUIRE(b(1,2) == 3.0);
+    REQUIRE(b(2,0) == 1.0);
+    REQUIRE(b(2,1) == -2.0);
+    REQUIRE(b(2,2) == 3.0);
+}
+
+TEST_CASE( "rep_l/fast_matrix_2", "rep" ) {
+    etl::fast_matrix<double, 3> a({1.0, -2.0, 3.0});
+    etl::fast_matrix<double, 3, 3> b;
+
+    b = etl::rep_l<3>(a);
+
+    REQUIRE(b(0,0) == 1.0);
+    REQUIRE(b(0,1) == -2.0);
+    REQUIRE(b(0,2) == 3.0);
+    REQUIRE(b(1,0) == 1.0);
+    REQUIRE(b(1,1) == -2.0);
+    REQUIRE(b(1,2) == 3.0);
+    REQUIRE(b(2,0) == 1.0);
+    REQUIRE(b(2,1) == -2.0);
+    REQUIRE(b(2,2) == 3.0);
+}
+
+TEST_CASE( "rep_l/fast_matrix_3", "rep" ) {
+    etl::fast_matrix<double, 3> a({1.0, -2.0, 3.0});
+    etl::fast_matrix<double, 3, 2, 3> b;
+
+    b = etl::rep_l<3, 2>(a);
+
+    REQUIRE(b(0,0,0) == 1.0);
+    REQUIRE(b(0,0,1) == -2.0);
+    REQUIRE(b(0,0,2) == 3.0);
+    REQUIRE(b(0,1,0) == 1.0);
+    REQUIRE(b(0,1,1) == -2.0);
+    REQUIRE(b(0,1,2) == 3.0);
+    REQUIRE(b(1,0,0) == 1.0);
+    REQUIRE(b(1,0,1) == -2.0);
+    REQUIRE(b(1,0,2) == 3.0);
+    REQUIRE(b(1,1,0) == 1.0);
+    REQUIRE(b(1,1,1) == -2.0);
+    REQUIRE(b(1,1,2) == 3.0);
+    REQUIRE(b(2,0,0) == 1.0);
+    REQUIRE(b(2,0,1) == -2.0);
+    REQUIRE(b(2,0,2) == 3.0);
+    REQUIRE(b(2,1,0) == 1.0);
+    REQUIRE(b(2,1,1) == -2.0);
+    REQUIRE(b(2,1,2) == 3.0);
+}
+
+TEST_CASE( "rep_l/fast_matrix_4", "rep" ) {
+    etl::fast_matrix<double, 1> a({1.0});
+    etl::fast_matrix<double, 3, 2, 5, 7, 1> b;
+
+    b = etl::rep_l<3, 2, 5, 7>(a);
+
+    for(auto v : b){
+        REQUIRE(v == 1.0);
+    }
+}
+
+TEST_CASE( "rep_l/dyn_matrix_1", "rep" ) {
+    etl::dyn_vector<double> a(3, etl::values(1.0, -2.0, 3.0));
+    etl::dyn_matrix<double> b(etl::rep_l<3>(a));
+
+    REQUIRE(b(0,0) == 1.0);
+    REQUIRE(b(0,1) == -2.0);
+    REQUIRE(b(0,2) == 3.0);
+    REQUIRE(b(1,0) == 1.0);
+    REQUIRE(b(1,1) == -2.0);
+    REQUIRE(b(1,2) == 3.0);
+    REQUIRE(b(2,0) == 1.0);
+    REQUIRE(b(2,1) == -2.0);
+    REQUIRE(b(2,2) == 3.0);
+}
+
+TEST_CASE( "rep_l/dyn_matrix_2", "rep" ) {
+    etl::dyn_vector<double> a(3, etl::values(1.0, -2.0, 3.0));
+    etl::dyn_matrix<double> b(3,3);
+
+    b = etl::rep_l<3>(a);
+
+    REQUIRE(b(0,0) == 1.0);
+    REQUIRE(b(0,1) == -2.0);
+    REQUIRE(b(0,2) == 3.0);
+    REQUIRE(b(1,0) == 1.0);
+    REQUIRE(b(1,1) == -2.0);
+    REQUIRE(b(1,2) == 3.0);
+    REQUIRE(b(2,0) == 1.0);
+    REQUIRE(b(2,1) == -2.0);
+    REQUIRE(b(2,2) == 3.0);
+}
+
+TEST_CASE( "rep_l/dyn_matrix_3", "rep" ) {
+    etl::dyn_vector<double> a(3, etl::values(1.0, -2.0, 3.0));
+    etl::dyn_matrix<double, 3> b(3,2,3);
+
+    b = etl::rep_l<3, 2>(a);
+
+    REQUIRE(b(0,0,0) == 1.0);
+    REQUIRE(b(0,0,1) == -2.0);
+    REQUIRE(b(0,0,2) == 3.0);
+    REQUIRE(b(0,1,0) == 1.0);
+    REQUIRE(b(0,1,1) == -2.0);
+    REQUIRE(b(0,1,2) == 3.0);
+    REQUIRE(b(1,0,0) == 1.0);
+    REQUIRE(b(1,0,1) == -2.0);
+    REQUIRE(b(1,0,2) == 3.0);
+    REQUIRE(b(1,1,0) == 1.0);
+    REQUIRE(b(1,1,1) == -2.0);
+    REQUIRE(b(1,1,2) == 3.0);
+    REQUIRE(b(2,0,0) == 1.0);
+    REQUIRE(b(2,0,1) == -2.0);
+    REQUIRE(b(2,0,2) == 3.0);
+    REQUIRE(b(2,1,0) == 1.0);
+    REQUIRE(b(2,1,1) == -2.0);
+    REQUIRE(b(2,1,2) == 3.0);
+}
+
+TEST_CASE( "rep_l/dyn_matrix_4", "rep" ) {
+    etl::dyn_vector<double> a(1, 1.0);
+    etl::dyn_matrix<double, 5> b(3, 2, 5, 7, 1);
+
+    b = etl::rep_l<3, 2, 5, 7>(a);
 
     for(auto v : b){
         REQUIRE(v == 1.0);

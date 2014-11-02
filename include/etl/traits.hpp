@@ -67,6 +67,7 @@ struct is_transformer : std::integral_constant<bool, cpp::or_u<
                 cpp::is_specialization_of<etl::mean_l_transformer, std::decay_t<T>>::value
             >::value,
             is_var<etl::rep_r_transformer, std::decay_t<T>>::value,
+            is_var<etl::rep_l_transformer, std::decay_t<T>>::value,
             is_3<etl::p_max_pool_h_transformer, std::decay_t<T>>::value,
             is_3<etl::p_max_pool_p_transformer, std::decay_t<T>>::value
         >::value> {};
@@ -346,6 +347,42 @@ struct etl_traits<rep_r_transformer<T, D...>> {
     template<std::size_t D2>
     static constexpr std::size_t dim(){
         return D2 == 0 ? etl_traits<sub_expr_t>::template dim<0>() : nth_size<D2-1,0,D...>::value;
+    }
+
+    static constexpr std::size_t dimensions(){
+        return sizeof...(D) + etl_traits<sub_expr_t>::dimensions();
+    }
+};
+
+/*!
+ * \brief Specialization for rep_l_transformer
+ */
+template <typename T, std::size_t... D>
+struct etl_traits<rep_l_transformer<T, D...>> {
+    using expr_t = etl::rep_l_transformer<T, D...>;
+    using sub_expr_t = std::decay_t<T>;
+
+    static constexpr const bool is_fast = etl_traits<sub_expr_t>::is_fast;
+    static constexpr const bool is_value = false;
+    static constexpr const bool is_generator = false;
+
+    static std::size_t size(const expr_t& v){
+        return mul_all<D...>::value * etl_traits<sub_expr_t>::size(v.sub);
+    }
+
+    static std::size_t dim(const expr_t& v, std::size_t d){
+        static_assert(sizeof...(D) == 1, "dim(d) is uninmplemented for rep<T, D1, D...>");
+        return d == dimensions() - 1 ? etl_traits<sub_expr_t>::dim(v.sub, 0) : nth_size<0,0,D...>::value;
+    }
+
+    template<bool B = is_fast, cpp::enable_if_u<B> = cpp::detail::dummy>
+    static constexpr std::size_t size(){
+        return mul_all<D...>::value * etl_traits<sub_expr_t>::size();
+    }
+
+    template<std::size_t D2>
+    static constexpr std::size_t dim(){
+        return D2 == dimensions() - 1 ? etl_traits<sub_expr_t>::template dim<0>() : nth_size<D2,0,D...>::value;
     }
 
     static constexpr std::size_t dimensions(){

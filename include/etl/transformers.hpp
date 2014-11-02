@@ -32,6 +32,25 @@ struct rep_r_transformer {
     }
 };
 
+template<typename T, std::size_t... D>
+struct rep_l_transformer {
+    using sub_type = T;
+    using value_type = value_t<T>;
+
+    sub_type sub;
+
+    explicit rep_l_transformer(sub_type vec) : sub(vec) {}
+
+    value_type operator[](std::size_t i) const {
+        return sub(i % size(sub));
+    }
+
+    template<typename... Sizes>
+    value_type operator()(Sizes... sizes) const {
+        return sub(cpp::last_value(sizes...));
+    }
+};
+
 template<typename T>
 struct sum_r_transformer {
     using sub_type = T;
