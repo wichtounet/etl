@@ -380,6 +380,13 @@ public:
 
     //}}}
 
+    void swap(dyn_matrix& other){
+        cpp_assert(other.size() == size(), "Cannot swap from a dyn_matrix of different size");
+
+        std::swap(_data, other._data);
+        std::swap(_dimensions, other._dimensions);
+    }
+
     //{{{ Accessors
 
     std::size_t size() const {
@@ -515,6 +522,11 @@ public:
 
     //}}}
 };
+
+template<typename T, std::size_t D>
+void swap(dyn_matrix<T, D>& lhs, dyn_matrix<T, D>& rhs){
+    lhs.swap(rhs);
+}
 
 } //end of namespace etl
 
