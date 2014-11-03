@@ -184,7 +184,7 @@ public:
 
     //Allow copy from other containers
 
-    template<typename Container, cpp::enable_if_u<std::is_same<typename Container::value_type, value_type>::value> = cpp::detail::dummy>
+    template<typename Container, cpp::enable_if_u<std::is_convertible<typename Container::value_type, value_type>::value> = cpp::detail::dummy>
     fast_matrix& operator=(const Container& vec){
         std::copy(vec.begin(), vec.end(), begin());
 
