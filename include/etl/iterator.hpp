@@ -22,11 +22,11 @@ private:
 
 public:
     using base_iterator_t = std::iterator<std::random_access_iterator_tag, value_t<Expr>>;
-    using value_t = value_t<Expr>;
+    using value_type = value_t<Expr>;
     using reference_t = std::conditional_t<Ref,
-          std::conditional_t<Const, const value_t&, value_t&>,
-          value_t>;
-    using pointer_t = std::conditional_t<Const, const value_t*, value_t*>;
+          std::conditional_t<Const, const value_type&, value_type&>,
+          value_type>;
+    using pointer_t = std::conditional_t<Const, const value_type*, value_type*>;
     using difference_t = typename base_iterator_t::difference_type;
 
     iterator(Expr& expr, std::size_t i) : expr(&expr), i(i) {}
