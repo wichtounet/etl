@@ -83,6 +83,13 @@ struct min_binary_op {
 };
 
 template<typename T, typename E>
+struct pow_binary_op {
+    static constexpr T apply(const T& x, E value){
+        return std::pow(x, value);
+    }
+};
+
+template<typename T, typename E>
 struct one_if_binary_op {
     static constexpr T apply(const T& x, E value){
         return 1.0 ? x == value : 0.0;
