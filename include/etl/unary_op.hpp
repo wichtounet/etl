@@ -33,6 +33,13 @@ struct log_unary_op {
 };
 
 template<typename T>
+struct sqrt_unary_op {
+    static constexpr T apply(const T& x){
+        return std::sqrt(x);
+    }
+};
+
+template<typename T>
 struct exp_unary_op {
     static constexpr T apply(const T& x){
         return std::exp(x);

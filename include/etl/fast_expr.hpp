@@ -285,6 +285,11 @@ auto one_if_max(E&& value) -> left_binary_helper_op<E, scalar<value_t<E>>, one_i
 }
 
 template<typename E, cpp::enable_if_u<is_etl_expr<E>::value> = cpp::detail::dummy>
+auto sqrt(E&& value) -> unary_helper<E, sqrt_unary_op> {
+    return {value};
+}
+
+template<typename E, cpp::enable_if_u<is_etl_expr<E>::value> = cpp::detail::dummy>
 auto log(E&& value) -> unary_helper<E, log_unary_op> {
     return {value};
 }
