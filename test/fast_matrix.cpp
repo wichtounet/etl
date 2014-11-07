@@ -566,6 +566,26 @@ TEST_CASE( "fast_matrix/min", "fast_matrix::min" ) {
     REQUIRE(d[3] == 1.0);
 }
 
+TEST_CASE( "fast_matrix/pow_1", "fast_matrix::pow_1" ) {
+    etl::fast_matrix<double, 2, 2> a = {-1.0, 2.0, 0.0, 1.0};
+    etl::fast_matrix<double, 2, 2> d(pow(a, 2));
+
+    REQUIRE(d[0] == 1.0);
+    REQUIRE(d[1] == 4.0);
+    REQUIRE(d[2] == 0.0);
+    REQUIRE(d[3] == 1.0);
+}
+
+TEST_CASE( "fast_matrix/pow_2", "fast_matrix::pow_1" ) {
+    etl::fast_matrix<double, 2, 2> a = {-1.0, 2.0, 0.0, 1.0};
+    etl::fast_matrix<double, 2, 2> d(pow(a*a+1.0, 2));
+
+    REQUIRE(d[0] == 4.0);
+    REQUIRE(d[1] == 25.0);
+    REQUIRE(d[2] == 1.0);
+    REQUIRE(d[3] == 4.0);
+}
+
 constexpr bool binary(double a){
     return a == 0.0 || a == 1.0;
 }
