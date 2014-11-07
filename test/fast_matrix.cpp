@@ -1,6 +1,5 @@
 //=======================================================================
-// Copyright (c) 2014 Baptiste Wicht
-// Distributed under the terms of the MIT License.
+// Copyright (c) 2014 Baptiste Wicht // Distributed under the terms of the MIT License.
 // (See accompanying file LICENSE or copy at
 //  http://opensource.org/licenses/MIT)
 //=======================================================================
@@ -427,6 +426,39 @@ TEST_CASE( "fast_matrix/log_2", "fast_matrix::log" ) {
     REQUIRE(std::isnan(d[0]));
     REQUIRE(d[1] == log(2.0));
     REQUIRE(d[2] == log(5.0));
+}
+
+TEST_CASE( "fast_matrix/sqrt_1", "fast_matrix::sqrt" ) {
+    etl::fast_matrix<double, 2, 2> a = {-1.0, 2.0, 5.0, 1.0};
+
+    etl::fast_matrix<double, 2, 2> d(sqrt(a));
+
+    REQUIRE(std::isnan(d[0]));
+    REQUIRE(d[1] == std::sqrt(2.0));
+    REQUIRE(d[2] == std::sqrt(5.0));
+    REQUIRE(d[3] == std::sqrt(1.0));
+}
+
+TEST_CASE( "fast_matrix/sqrt_2", "fast_matrix::sqrt" ) {
+    etl::fast_matrix<double, 2, 2, 1> a = {-1.0, 2.0, 5.0, 1.0};
+
+    etl::fast_matrix<double, 2, 2, 1> d(sqrt(a));
+
+    REQUIRE(std::isnan(d[0]));
+    REQUIRE(d[1] == std::sqrt(2.0));
+    REQUIRE(d[2] == std::sqrt(5.0));
+    REQUIRE(d[3] == std::sqrt(1.0));
+}
+
+TEST_CASE( "fast_matrix/sqrt_3", "fast_matrix::sqrt" ) {
+    etl::fast_matrix<double, 2, 2, 1> a = {-1.0, 2.0, 5.0, 1.0};
+
+    etl::fast_matrix<double, 2, 2, 1> d(sqrt(a*a));
+
+    REQUIRE(d[0] == std::sqrt(1.0));
+    REQUIRE(d[1] == std::sqrt(4.0));
+    REQUIRE(d[2] == std::sqrt(25.0));
+    REQUIRE(d[3] == std::sqrt(1.0));
 }
 
 TEST_CASE( "fast_matrix/abs", "fast_matrix::abs" ) {
