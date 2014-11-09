@@ -685,6 +685,9 @@ struct etl_traits<etl::dyn_matrix_view<T>> {
     }
 };
 
+template<typename E>
+using decay_traits = etl_traits<std::decay_t<E>>;
+
 template<typename E, cpp::enable_if_u<cpp::not_u<etl_traits<E>::is_fast>::value>>
 std::size_t size(const E& v){
     return etl_traits<E>::size(v);
@@ -735,6 +738,11 @@ constexpr std::size_t dimensions(const E&){
     return etl_traits<E>::dimensions();
 }
 
+template<typename E>
+constexpr std::size_t dimensions(){
+    return decay_traits<E>::dimensions();
+}
+
 template<std::size_t D, typename E, cpp::disable_if_u<etl_traits<E>::is_fast>>
 constexpr std::size_t dim(const E& e){
     return etl_traits<E>::dim(e, D);
@@ -748,6 +756,11 @@ constexpr std::size_t dim(const E& e, std::size_t d){
 template<std::size_t D, typename E, cpp::enable_if_u<etl_traits<E>::is_fast>>
 constexpr std::size_t dim(const E&){
     return etl_traits<E>::template dim<D>();
+}
+
+template<std::size_t D, typename E>
+constexpr std::size_t dim(){
+    return decay_traits<E>::template dim<D>();
 }
 
 template<typename LE, typename RE, cpp::enable_if_one_u<etl_traits<LE>::is_generator, etl_traits<RE>::is_generator> = cpp::detail::dummy>
@@ -781,9 +794,6 @@ struct sub_size_compare<E, std::enable_if_t<etl_traits<E>::is_generator>> : std:
 
 template<typename E>
 struct sub_size_compare<E, cpp::disable_if_t<etl_traits<E>::is_generator>> : std::integral_constant<std::size_t, etl_traits<E>::dimensions()> {};
-
-template<typename E>
-using decay_traits = etl_traits<std::decay_t<E>>;
 
 } //end of namespace etl
 
