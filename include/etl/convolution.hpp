@@ -92,7 +92,7 @@ void check_conv_2d_sizes(const I&, const K&, const C&){
 }
 
 template<typename I, typename K, typename C>
-static C& convolve_1d_full(const I& input, const K& kernel, C&& conv){
+C& convolve_1d_full(const I& input, const K& kernel, C&& conv){
     static_assert(is_etl_expr<I>::value && is_etl_expr<K>::value && is_etl_expr<C>::value, "Convolution only supported for ETL expressions");
     check_conv_1d_sizes<1>(input, kernel, conv);
 
@@ -113,7 +113,7 @@ static C& convolve_1d_full(const I& input, const K& kernel, C&& conv){
 }
 
 template<typename I, typename K, typename C>
-static C& convolve_1d_same(const I& input, const K& kernel, C&& conv){
+C& convolve_1d_same(const I& input, const K& kernel, C&& conv){
     static_assert(is_etl_expr<I>::value && is_etl_expr<K>::value && is_etl_expr<C>::value, "Convolution only supported for ETL expressions");
     check_conv_1d_sizes<2>(input, kernel, conv);
 
@@ -134,7 +134,7 @@ static C& convolve_1d_same(const I& input, const K& kernel, C&& conv){
 }
 
 template<typename I, typename K, typename C>
-static C& convolve_1d_valid(const I& input, const K& kernel, C&& conv){
+C& convolve_1d_valid(const I& input, const K& kernel, C&& conv){
     static_assert(is_etl_expr<I>::value && is_etl_expr<K>::value && is_etl_expr<C>::value, "Convolution only supported for ETL expressions");
     check_conv_1d_sizes<3>(input, kernel, conv);
 
@@ -152,7 +152,7 @@ static C& convolve_1d_valid(const I& input, const K& kernel, C&& conv){
 }
 
 template<typename I, typename K, typename C>
-static C& convolve_2d_full(const I& input, const K& kernel, C&& conv){
+C& convolve_2d_full(const I& input, const K& kernel, C&& conv){
     static_assert(is_etl_expr<I>::value && is_etl_expr<K>::value && is_etl_expr<C>::value, "Convolution only supported for ETL expressions");
     check_conv_2d_sizes<1>(input, kernel, conv);
 
@@ -180,7 +180,7 @@ static C& convolve_2d_full(const I& input, const K& kernel, C&& conv){
 }
 
 template<typename I, typename K, typename C>
-static C& convolve_2d_same(const I& input, const K& kernel, C&& conv){
+C& convolve_2d_same(const I& input, const K& kernel, C&& conv){
     static_assert(is_etl_expr<I>::value && is_etl_expr<K>::value && is_etl_expr<C>::value, "Convolution only supported for ETL expressions");
     check_conv_2d_sizes<2>(input, kernel, conv);
 
@@ -208,7 +208,7 @@ static C& convolve_2d_same(const I& input, const K& kernel, C&& conv){
 }
 
 template<typename I, typename K, typename C>
-static C& convolve_2d_valid(const I& input, const K& kernel, C&& conv){
+C& convolve_2d_valid(const I& input, const K& kernel, C&& conv){
     static_assert(is_etl_expr<I>::value && is_etl_expr<K>::value && is_etl_expr<C>::value, "Convolution only supported for ETL expressions");
     check_conv_2d_sizes<3>(input, kernel, conv);
 
@@ -224,6 +224,78 @@ static C& convolve_2d_valid(const I& input, const K& kernel, C&& conv){
 
             conv(i,j) = temp;
         }
+    }
+
+    return conv;
+}
+
+template<typename I, typename K, typename C, cpp::enable_if_u<etl_traits<I>::dimensions() == 3> = cpp::detail::dummy>
+C& convolve_deep_valid(const I& input, const K& kernel, C&& conv){
+    static_assert(dimensions<I>() == dimensions<K>() && dimensions<I>()== dimensions<C>(), "Deep convolution parameters need to have the same number of dimensions");
+    static_assert(dim<0, I>() == dim<0, K>() && dim<0, I>() == dim<0, C>(), "Deep convolution parameters need to have the same first dimension");
+
+    for(std::size_t i = 0; i < dim<0>(input); ++i){
+        convolve_2d_valid(input(i), kernel(i), conv(i));
+    }
+
+    return conv;
+}
+
+template<typename I, typename K, typename C, cpp::enable_if_u<(etl_traits<I>::dimensions() > 3)> = cpp::detail::dummy>
+C& convolve_deep_valid(const I& input, const K& kernel, C&& conv){
+    static_assert(dimensions<I>() == dimensions<K>() && dimensions<I>()== dimensions<C>(), "Deep convolution parameters need to have the same number of dimensions");
+    static_assert(dim<0, I>() == dim<0, K>() && dim<0, I>() == dim<0, C>(), "Deep convolution parameters need to have the same first dimension");
+
+    for(std::size_t i = 0; i < dim<0>(input); ++i){
+        convolve_deep_valid(input(i), kernel(i), conv(i));
+    }
+
+    return conv;
+}
+
+template<typename I, typename K, typename C, cpp::enable_if_u<etl_traits<I>::dimensions() == 3> = cpp::detail::dummy>
+C& convolve_deep_full(const I& input, const K& kernel, C&& conv){
+    static_assert(dimensions<I>() == dimensions<K>() && dimensions<I>()== dimensions<C>(), "Deep convolution parameters need to have the same number of dimensions");
+    static_assert(dim<0, I>() == dim<0, K>() && dim<0, I>() == dim<0, C>(), "Deep convolution parameters need to have the same first dimension");
+
+    for(std::size_t i = 0; i < dim<0>(input); ++i){
+        convolve_2d_full(input(i), kernel(i), conv(i));
+    }
+
+    return conv;
+}
+
+template<typename I, typename K, typename C, cpp::enable_if_u<(etl_traits<I>::dimensions() > 3)> = cpp::detail::dummy>
+C& convolve_deep_full(const I& input, const K& kernel, C&& conv){
+    static_assert(dimensions<I>() == dimensions<K>() && dimensions<I>()== dimensions<C>(), "Deep convolution parameters need to have the same number of dimensions");
+    static_assert(dim<0, I>() == dim<0, K>() && dim<0, I>() == dim<0, C>(), "Deep convolution parameters need to have the same first dimension");
+
+    for(std::size_t i = 0; i < dim<0>(input); ++i){
+        convolve_deep_full(input(i), kernel(i), conv(i));
+    }
+
+    return conv;
+}
+
+template<typename I, typename K, typename C, cpp::enable_if_u<etl_traits<I>::dimensions() == 3> = cpp::detail::dummy>
+C& convolve_deep_same(const I& input, const K& kernel, C&& conv){
+    static_assert(dimensions<I>() == dimensions<K>() && dimensions<I>()== dimensions<C>(), "Deep convolution parameters need to have the same number of dimensions");
+    static_assert(dim<0, I>() == dim<0, K>() && dim<0, I>() == dim<0, C>(), "Deep convolution parameters need to have the same first dimension");
+
+    for(std::size_t i = 0; i < dim<0>(input); ++i){
+        convolve_2d_same(input(i), kernel(i), conv(i));
+    }
+
+    return conv;
+}
+
+template<typename I, typename K, typename C, cpp::enable_if_u<(etl_traits<I>::dimensions() > 3)> = cpp::detail::dummy>
+C& convolve_deep_same(const I& input, const K& kernel, C&& conv){
+    static_assert(dimensions<I>() == dimensions<K>() && dimensions<I>()== dimensions<C>(), "Deep convolution parameters need to have the same number of dimensions");
+    static_assert(dim<0, I>() == dim<0, K>() && dim<0, I>() == dim<0, C>(), "Deep convolution parameters need to have the same first dimension");
+
+    for(std::size_t i = 0; i < dim<0>(input); ++i){
+        convolve_deep_same(input(i), kernel(i), conv(i));
     }
 
     return conv;
