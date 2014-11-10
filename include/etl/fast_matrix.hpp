@@ -132,8 +132,6 @@ public:
         cpp_assert(vec.size() == size(), "Cannnot copy from a container of another size");
 
         std::copy(vec.begin(), vec.end(), begin());
-
-        return *this;
     }
 
     template<typename Generator>
