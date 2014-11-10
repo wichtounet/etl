@@ -124,6 +124,18 @@ public:
         }
     }
 
+    template<typename Container, cpp::enable_if_all_u<
+        std::is_convertible<typename Container::value_type, value_type>::value,
+        cpp::not_u<is_copy_expr<Container>::value>::value
+    > = cpp::detail::dummy>
+    explicit fast_matrix(const Container& vec){
+        cpp_assert(vec.size() == size(), "Cannnot copy from a container of another size");
+
+        std::copy(vec.begin(), vec.end(), begin());
+
+        return *this;
+    }
+
     template<typename Generator>
     explicit fast_matrix(generator_expr<Generator>&& e){
         for(std::size_t i = 0; i < size(); ++i){
@@ -169,6 +181,7 @@ public:
             }
         }
     }
+
 
     //}}}
 
