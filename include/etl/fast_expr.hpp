@@ -444,13 +444,13 @@ auto mean_l(E&& value) -> stable_transform_helper<E, mean_l_transformer> {
 //{{{ Apply a special expression that can change order of elements
 
 template<typename E, cpp::enable_if_u<is_etl_expr<E>::value> = cpp::detail::dummy>
-auto hflip(const E& value) -> unstable_transform_helper<E, hflip_transformer> {
+auto hflip(const E& value) -> stable_transform_helper<E, hflip_transformer> {
     static_assert(etl_traits<std::decay_t<E>>::dimensions() <= 2, "Can only use flips on 1D/2D");
     return {hflip_transformer<build_type<E>>(value)};
 }
 
 template<typename E, cpp::enable_if_u<is_etl_expr<E>::value> = cpp::detail::dummy>
-auto vflip(const E& value) -> unstable_transform_helper<E, vflip_transformer> {
+auto vflip(const E& value) -> stable_transform_helper<E, vflip_transformer> {
     static_assert(etl_traits<std::decay_t<E>>::dimensions() <= 2, "Can only use flips on 1D/2D");
     return {vflip_transformer<build_type<E>>(value)};
 }

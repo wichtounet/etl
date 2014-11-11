@@ -147,6 +147,20 @@ struct hflip_transformer {
 
     explicit hflip_transformer(sub_type vec) : sub(vec) {}
 
+    static constexpr const auto matrix = etl_traits<std::decay_t<sub_type>>::dimensions() == 2;
+
+    template<bool C = matrix, cpp::disable_if_u<C> = cpp::detail::dummy>
+    value_type operator[](std::size_t i) const {
+        return sub[size(sub) - i - 1];
+    }
+
+    template<bool C = matrix, cpp::enable_if_u<C> = cpp::detail::dummy>
+    value_type operator[](std::size_t i) const {
+        auto i_i = i / dim<1>(sub);
+        auto i_j = i % dim<1>(sub);
+        return sub[i_i * dim<1>(sub) + (dim<1>(sub) - 1 - i_j)];
+    }
+
     value_type operator()(std::size_t i) const {
         return sub(size(sub) - 1 - i);
     }
@@ -164,6 +178,20 @@ struct vflip_transformer {
     sub_type sub;
 
     explicit vflip_transformer(sub_type vec) : sub(vec) {}
+
+    static constexpr const auto matrix = etl_traits<std::decay_t<sub_type>>::dimensions() == 2;
+
+    template<bool C = matrix, cpp::disable_if_u<C> = cpp::detail::dummy>
+    value_type operator[](std::size_t i) const {
+        return sub[i];
+    }
+
+    template<bool C = matrix, cpp::enable_if_u<C> = cpp::detail::dummy>
+    value_type operator[](std::size_t i) const {
+        auto i_i = i / dim<1>(sub);
+        auto i_j = i % dim<1>(sub);
+        return sub[(dim<0>(sub) - 1 - i_i) * dim<1>(sub) + i_j];
+    }
 
     value_type operator()(std::size_t i) const {
         return sub(i);
