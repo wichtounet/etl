@@ -256,10 +256,6 @@ struct transpose_transformer {
     }
 };
 
-//max pool is not really a transformer, but the implemented version needs
-//access to the position to be computed and therefore does not provide an
-//operator[] which makes it unstable.
-
 template<typename T, std::size_t C1, std::size_t C2>
 struct p_max_pool_transformer {
     using sub_type = T;
