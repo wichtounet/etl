@@ -43,9 +43,6 @@ template<typename T>
 struct is_unary_expr : std::integral_constant<bool, cpp::is_specialization_of<etl::unary_expr, std::decay_t<T>>::value> {};
 
 template<typename T>
-struct is_unstable_transform_expr : std::integral_constant<bool, cpp::is_specialization_of<etl::unstable_transform_expr, std::decay_t<T>>::value> {};
-
-template<typename T>
 struct is_stable_transform_expr : std::integral_constant<bool, cpp::is_specialization_of<etl::stable_transform_expr, std::decay_t<T>>::value> {};
 
 template<typename T>
@@ -85,7 +82,6 @@ struct is_etl_expr : std::integral_constant<bool, cpp::or_u<
        is_fast_matrix<T>::value,
        is_dyn_matrix<T>::value,
        is_unary_expr<T>::value, is_binary_expr<T>::value,
-       is_unstable_transform_expr<T>::value,
        is_stable_transform_expr<T>::value,
        is_generator_expr<T>::value,
        is_transformer<T>::value, is_view<T>::value
@@ -180,7 +176,7 @@ struct etl_traits<etl::unary_expr<T, Expr, UnaryOp>> {
  * \brief Specialization (un)stable_transform_expr
  */
 template <typename T>
-struct etl_traits<T, std::enable_if_t<cpp::or_u<is_unstable_transform_expr<T>::value, is_stable_transform_expr<T>::value>::value>> {
+struct etl_traits<T, std::enable_if_t<is_stable_transform_expr<T>::value>> {
     using expr_t = std::decay_t<T>;
     using sub_expr_t = std::decay_t<typename expr_t::expr_type>;
 
