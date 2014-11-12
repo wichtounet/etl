@@ -41,9 +41,6 @@ template<typename E, typename OP>
 using identity_helper = unary_expr<value_t<E>, OP, identity_op>;
 
 template<typename E, template<typename> class OP>
-using unstable_transform_helper = unstable_transform_expr<value_t<E>, OP<build_type<E>>>;
-
-template<typename E, template<typename> class OP>
 using stable_transform_helper = stable_transform_expr<value_t<E>, OP<build_type<E>>>;
 
 //{{{ Build binary expressions from two ETL expressions (vector,matrix,binary,unary)
