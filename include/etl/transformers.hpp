@@ -8,6 +8,8 @@
 #ifndef ETL_TRANSFORMERS_HPP
 #define ETL_TRANSFORMERS_HPP
 
+#include <iostream>
+
 #include "tmp.hpp"
 #include "traits_fwd.hpp"
 
@@ -306,7 +308,26 @@ struct p_max_pool_h_transformer : p_max_pool_transformer<T, C1, C2> {
 
     using base_type::sub;
 
+    static constexpr const auto d2d = etl_traits<std::decay_t<sub_type>>::dimensions() == 2;
+
     explicit p_max_pool_h_transformer(sub_type vec) : base_type(vec) {}
+
+    template<bool C = d2d, cpp::enable_if_u<C> = cpp::detail::dummy>
+    value_type operator[](std::size_t i) const {
+        auto i_i = i / dim<1>(sub);
+        auto i_j = i % dim<1>(sub);
+        return (*this)(i_i, i_j);
+    }
+
+    template<bool C = d2d, cpp::disable_if_u<C> = cpp::detail::dummy>
+    value_type operator[](std::size_t i) const {
+        auto i_i = i / (dim<1>(sub) * dim<2>(sub));
+        auto i_ij = i % (dim<1>(sub) * dim<2>(sub));
+        auto i_j = i_ij / dim<2>(sub);
+        auto i_k = i_ij % dim<2>(sub);
+
+        return (*this)(i_i, i_j, i_k);
+    }
 
     value_type operator()(std::size_t i, std::size_t j) const {
         return std::exp(sub(i, j)) / (1.0 + base_type::pool(i, j));
@@ -323,7 +344,28 @@ struct p_max_pool_p_transformer : p_max_pool_transformer<T, C1, C2> {
     using sub_type = typename base_type::sub_type;
     using value_type = typename base_type::value_type;
 
+    using base_type::sub;
+
+    static constexpr const auto d2d = etl_traits<std::decay_t<sub_type>>::dimensions() == 2;
+
     explicit p_max_pool_p_transformer(sub_type vec) : base_type(vec) {}
+
+    template<bool C = d2d, cpp::enable_if_u<C> = cpp::detail::dummy>
+    value_type operator[](std::size_t i) const {
+        auto i_i = i / (dim<1>(sub) / C2);
+        auto i_j = i % (dim<1>(sub)/ C2);
+        return (*this)(i_i, i_j);
+    }
+
+    template<bool C = d2d, cpp::disable_if_u<C> = cpp::detail::dummy>
+    value_type operator[](std::size_t i) const {
+        auto i_i = i / ((dim<1>(sub) / C1) * (dim<2>(sub) / C2));
+        auto i_ij = i % ((dim<1>(sub) / C1)* (dim<2>(sub) / C2));
+        auto i_j = i_ij / (dim<2>(sub) / C2);
+        auto i_k = i_ij % (dim<2>(sub) / C2);
+
+        return (*this)(i_i, i_j, i_k);
+    }
 
     value_type operator()(std::size_t i, std::size_t j) const {
         return 1.0 / (1.0 + base_type::pool(i * C1, j * C2));
