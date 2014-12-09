@@ -43,6 +43,9 @@ using identity_helper = unary_expr<value_t<E>, OP, identity_op>;
 template<typename E, template<typename> class OP>
 using stable_transform_helper = stable_transform_expr<value_t<E>, OP<build_type<E>>>;
 
+template<typename LE, typename RE, template<typename,typename> class OP>
+using stable_transform_binary_helper = stable_transform_expr<value_t<LE>, OP<build_type<LE>, build_type<RE>>>;
+
 //{{{ Build binary expressions from two ETL expressions (vector,matrix,binary,unary)
 
 template<typename LE, typename RE, cpp::enable_if_all_u<is_etl_expr<LE>::value, is_etl_expr<RE>::value> = cpp::detail::dummy>

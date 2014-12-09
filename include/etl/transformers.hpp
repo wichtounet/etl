@@ -256,6 +256,34 @@ struct transpose_transformer {
     }
 };
 
+template<typename L, typename R>
+struct mmul_transformer {
+    using left_type = L;
+    using right_type = R;
+    using value_type = value_t<L>;
+
+    left_type left;
+    right_type right;
+
+    mmul_transformer(left_type left ,right_type right) : left(left), right(right) {}
+
+    value_type operator[](std::size_t i) const {
+        auto i_i = i / dim<0>(left);
+        auto i_j = i % dim<1>(right);
+        return (*this)(i_i, i_j);
+    }
+
+    value_type operator()(std::size_t i, std::size_t j) const {
+        value_type c = 0;
+
+        for(std::size_t k = 0; k < columns(left); k++){
+            c += left(i,k) * right(k,j);
+        }
+
+        return c;
+    }
+};
+
 template<typename T, std::size_t C1, std::size_t C2>
 struct p_max_pool_transformer {
     using sub_type = T;
