@@ -167,49 +167,6 @@ public:
         }
     }
 
-    template<typename E, cpp::enable_if_u<etl_traits<unstable_transform_expr<value_type, E>>::dimensions() == 1> = cpp::detail::dummy>
-    explicit fast_matrix_impl(const unstable_transform_expr<value_type, E>& e){
-        static_assert(n_dimensions == 1, "Transform expressions are only 1D-valid for now");
-        init();
-
-        ensure_same_size(*this, e);
-
-        for(std::size_t i = 0; i < dim<0>(); ++i){
-            _data[index(i)] = e(i);
-        }
-    }
-
-    template<typename E, cpp::enable_if_u<etl_traits<unstable_transform_expr<value_type, E>>::dimensions() == 2> = cpp::detail::dummy>
-    explicit fast_matrix_impl(const unstable_transform_expr<value_type, E>& e){
-        static_assert(n_dimensions == 2, "Transform expressions are only 2D-valid for now");
-        init();
-
-        ensure_same_size(*this, e);
-
-        for(std::size_t i = 0; i < dim<0>(); ++i){
-            for(std::size_t j = 0; j < dim<1>(); ++j){
-                _data[index(i,j)] = e(i,j);
-            }
-        }
-    }
-
-    template<typename E, cpp::enable_if_u<etl_traits<unstable_transform_expr<value_type, E>>::dimensions() == 3> = cpp::detail::dummy>
-    explicit fast_matrix_impl(const unstable_transform_expr<value_type, E>& e){
-        init();
-        static_assert(n_dimensions == 3, "Transform expressions are only 3D-valid for now");
-
-        ensure_same_size(*this, e);
-
-        for(std::size_t i = 0; i < dim<0>(); ++i){
-            for(std::size_t j = 0; j < dim<1>(); ++j){
-                for(std::size_t k = 0; k < dim<2>(); ++k){
-                    _data[index(i,j,k)] = e(i,j,k);
-                }
-            }
-        }
-    }
-
-
     //}}}
 
     //{{{ Assignment
@@ -251,45 +208,6 @@ public:
     fast_matrix_impl& operator=(generator_expr<Generator>&& e){
         for(std::size_t i = 0; i < size(); ++i){
             _data[i] = e[i];
-        }
-
-        return *this;
-    }
-
-    template<typename E, cpp::enable_if_u<etl_traits<unstable_transform_expr<value_type, E>>::dimensions() == 1> = cpp::detail::dummy>
-    fast_matrix_impl& operator=(unstable_transform_expr<value_type, E>&& e){
-        ensure_same_size(*this, e);
-
-        for(std::size_t i = 0; i < dim<0>(); ++i){
-            _data[index(i)] = e(i);
-        }
-
-        return *this;
-    }
-
-    template<typename E, cpp::enable_if_u<etl_traits<unstable_transform_expr<value_type, E>>::dimensions() == 2> = cpp::detail::dummy>
-    fast_matrix_impl& operator=(unstable_transform_expr<value_type, E>&& e){
-        ensure_same_size(*this, e);
-
-        for(std::size_t i = 0; i < dim<0>(); ++i){
-            for(std::size_t j = 0; j < dim<1>(); ++j){
-                _data[index(i,j)] = e(i,j);
-            }
-        }
-
-        return *this;
-    }
-
-    template<typename E, cpp::enable_if_u<etl_traits<unstable_transform_expr<value_type, E>>::dimensions() == 3> = cpp::detail::dummy>
-    fast_matrix_impl& operator=(unstable_transform_expr<value_type, E>&& e){
-        ensure_same_size(*this, e);
-
-        for(std::size_t i = 0; i < dim<0>(); ++i){
-            for(std::size_t j = 0; j < dim<1>(); ++j){
-                for(std::size_t k = 0; k < dim<2>(); ++k){
-                    _data[index(i,j,k)] = e(i,j,k);
-                }
-            }
         }
 
         return *this;
