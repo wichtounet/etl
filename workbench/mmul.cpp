@@ -97,6 +97,17 @@ void bench_standard(const std::string& reference){
     }, a, b);
 }
 
+template<std::size_t D1, std::size_t D2, std::size_t D3>
+void bench_new(const std::string& reference){
+    etl::fast_matrix<double, D1, D2> a;
+    etl::fast_matrix<double, D2, D3> b;
+    etl::fast_matrix<double, D1, D3> c;
+
+    measure("new(" + std::to_string(D1) + "," + std::to_string(D2) + "," + std::to_string(D3)  + ")", reference, [&a, &b, &c](){
+        c = etl::mmul(a,b);
+    }, a, b);
+}
+
 void bench_stack(){
     std::cout << "Start mmul benchmarking...\n";
     std::cout << "... all structures are on stack\n\n";
@@ -114,6 +125,13 @@ void bench_stack(){
     bench_standard<128, 128, 128>("TODOms");
     bench_standard<256, 256, 256>("TODOms");
     bench_standard<64, 256, 32>("TODOms");
+
+    bench_new<16, 16, 16>("TODOms");
+    bench_new<32, 32, 32>("TODOms");
+    bench_new<64, 64, 64>("TODOms");
+    bench_new<128, 128, 128>("TODOms");
+    bench_new<256, 256, 256>("TODOms");
+    bench_new<64, 256, 32>("TODOms");
 }
 
 } //end of anonymous namespace

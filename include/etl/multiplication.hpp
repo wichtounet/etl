@@ -56,6 +56,24 @@ static C& mmul(A&& a, B&& b, C&& c){
     return c;
 }
 
+template<typename A, typename B, cpp::enable_if_all_u<decay_traits<A>::is_fast, decay_traits<B>::is_fast> = cpp::detail::dummy>
+static auto mmul(A&& a, B&& b){
+    fast_dyn_matrix<typename std::decay_t<A>::value_type, decay_traits<A>::template dim<0>(), decay_traits<B>::template dim<1>()> c;
+
+    mmul(a,b,c);
+
+    return c;
+}
+
+template<typename A, typename B, cpp::disable_if_all_u<decay_traits<A>::is_fast, decay_traits<B>::is_fast> = cpp::detail::dummy>
+static auto mmul(A&& a, B&& b){
+    dyn_matrix<value_t<A>> c(dim(a, 0), dim(b, 1));
+
+    mmul(a,b,c);
+
+    return c;
+}
+
 inline std::size_t nextPowerOfTwo(std::size_t n) {
     return std::pow(2, static_cast<std::size_t>(std::ceil(std::log2(n))));
 }
