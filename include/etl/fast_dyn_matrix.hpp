@@ -5,17 +5,17 @@
 //  http://opensource.org/licenses/MIT)
 //=======================================================================
 
-#ifndef ETL_FAST_MATRIX_HPP
-#define ETL_FAST_MATRIX_HPP
+#ifndef ETL_FAST_DYN_MATRIX_HPP
+#define ETL_FAST_DYN_MATRIX_HPP
 
-#include<array>
+#include<vector>
 
 #include "fast.hpp"
 
 namespace etl {
 
 template<typename T, std::size_t... Dims>
-using fast_matrix = fast_matrix_impl<T, std::array<T, mul_all<Dims...>::value>, Dims...>;
+using fast_dyn_matrix = fast_matrix_impl<T, std::vector<T>, Dims...>;
 
 } //end of namespace etl
 
