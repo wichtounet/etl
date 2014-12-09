@@ -277,6 +277,19 @@ TEST_CASE( "multiplication/mmul_2_4", "mmul" ) {
     REQUIRE(c(1,1) == 22);
 }
 
+TEST_CASE( "multiplication/mmul_2_5", "mmul" ) {
+    etl::fast_matrix<double, 2, 3> a = {1,2,3,4,5,6};
+    etl::fast_matrix<double, 3, 2> b = {7,8,9,10,11,12};
+
+    auto c = etl::mmul(a, b);
+
+    REQUIRE(c(0,0) == 58);
+    REQUIRE(c(0,1) == 64);
+    REQUIRE(c(1,0) == 139);
+    REQUIRE(c(1,1) == 154);
+}
+
+
 //}}}
 
 //{{{ Strassen mmul
