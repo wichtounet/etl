@@ -69,6 +69,7 @@ struct is_transformer : std::integral_constant<bool, cpp::or_u<
                 cpp::is_specialization_of<etl::mean_r_transformer, std::decay_t<T>>::value,
                 cpp::is_specialization_of<etl::mean_l_transformer, std::decay_t<T>>::value
             >::value,
+            cpp::is_specialization_of<etl::mmul_transformer, std::decay_t<T>>::value,
             is_var<etl::rep_r_transformer, std::decay_t<T>>::value,
             is_var<etl::rep_l_transformer, std::decay_t<T>>::value,
             is_3<etl::p_max_pool_h_transformer, std::decay_t<T>>::value,
@@ -317,6 +318,50 @@ struct etl_traits<transpose_transformer<T>> {
 
     static constexpr std::size_t dimensions(){
         return etl_traits<sub_expr_t>::dimensions();
+    }
+};
+
+/*!
+ * \brief Specialization for mmul_transformer
+ */
+template <typename LE, typename RE>
+struct etl_traits<mmul_transformer<LE, RE>> {
+    using expr_t = etl::mmul_transformer<LE, RE>;
+    using left_expr_t = std::decay_t<LE>;
+    using right_expr_t = std::decay_t<RE>;
+
+    static constexpr const bool is_fast = etl_traits<left_expr_t>::is_fast && etl_traits<right_expr_t>::is_fast;
+    static constexpr const bool is_value = false;
+    static constexpr const bool is_generator = false;
+
+    static std::size_t size(const expr_t& v){
+        return dim(v, 0) * dim(v, 1);
+    }
+
+    static std::size_t dim(const expr_t& v, std::size_t d){
+        if(d == 0){
+            return etl::dim(v.left, 0);
+        } else {
+            cpp_assert(d == 1, "Only 2D mmul are supported");
+
+            return etl::dim(v.right, 1);
+        }
+    }
+
+    template<bool B = is_fast, cpp::enable_if_u<B> = cpp::detail::dummy>
+    static constexpr std::size_t size(){
+        return etl_traits<left_expr_t>::template dim<0>() * etl_traits<right_expr_t>::template dim<1>();
+    }
+
+    template<std::size_t D>
+    static constexpr std::size_t dim(){
+        static_assert(D < 2, "Only 2D mmul are supported");
+
+        return D == 0 ? etl_traits<left_expr_t>::template dim<0>() : etl_traits<right_expr_t>::template dim<1>();
+    }
+
+    static constexpr std::size_t dimensions(){
+        return 2;
     }
 };
 
