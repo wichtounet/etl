@@ -510,12 +510,18 @@ template<typename E>
 struct value_return_type {
 using type =
     std::conditional_t<
-        std::is_reference<E>::value,
+        decay_traits<E>::is_value,
         std::conditional_t<
-            std::is_const<std::remove_reference_t<E>>::value,
-            const value_t<E>&,
-            value_t<E>&>,
-        value_t<E>>;
+            std::is_lvalue_reference<E>::value,
+            std::conditional_t<
+                std::is_const<std::remove_reference_t<E>>::value,
+                const value_t<E>&,
+                value_t<E>&
+            >,
+            value_t<E>
+        >,
+        value_t<E>
+    >;
 };
 
 template<typename E>
