@@ -108,30 +108,73 @@ void bench_new(const std::string& reference){
     }, a, b);
 }
 
+
+template<std::size_t D1, std::size_t D2, std::size_t D3>
+void bench_strassen_direct(const std::string& reference){
+    etl::fast_matrix<double, D1, D2> a;
+    etl::fast_matrix<double, D2, D3> b;
+    etl::fast_matrix<double, D1, D3> c;
+
+    measure("strassen_direct(" + std::to_string(D1) + "," + std::to_string(D2) + "," + std::to_string(D3)  + ")", reference, [&a, &b, &c](){
+        etl::strassen_mmul(a,b,c);
+    }, a, b);
+}
+template<std::size_t D1, std::size_t D2, std::size_t D3>
+double bench_lazy(const std::string& reference){
+    etl::fast_matrix<double, D1, D2> a(0.0);
+    etl::fast_matrix<double, D2, D3> b(0.0);
+    etl::fast_matrix<double, D1, D3> c(0.0);
+
+    double count = 0;
+    measure("lazy(" + std::to_string(D1) + "," + std::to_string(D2) + "," + std::to_string(D3)  + ")", reference, [&a, &b, &c, &count](){
+        c = etl::lazy_mmul(a,b);
+        count += c(3,3);
+    }, a, b);
+
+    //std::cout << count << std::endl;
+    return count;
+}
+
 void bench_stack(){
     std::cout << "Start mmul benchmarking...\n";
     std::cout << "... all structures are on stack\n\n";
 
-    bench_direct<16, 16, 16>("TODOms");
-    bench_direct<32, 32, 32>("TODOms");
-    bench_direct<64, 64, 64>("TODOms");
-    bench_direct<128, 128, 128>("TODOms");
-    bench_direct<256, 256, 256>("TODOms");
-    bench_direct<64, 256, 32>("TODOms");
+    bench_direct<16, 16, 16>("frigg:400us");
+    bench_direct<32, 32, 32>("frigg:3ms");
+    bench_direct<64, 64, 64>("frigg:24.3ms");
+    bench_direct<64, 256, 32>("frigg:48.1ms");
+    bench_direct<128, 128, 128>("frigg:205ms");
+    bench_direct<256, 256, 256>("frigg:2.6s");
 
-    bench_standard<16, 16, 16>("TODOms");
-    bench_standard<32, 32, 32>("TODOms");
-    bench_standard<64, 64, 64>("TODOms");
-    bench_standard<128, 128, 128>("TODOms");
-    bench_standard<256, 256, 256>("TODOms");
-    bench_standard<64, 256, 32>("TODOms");
+    bench_standard<16, 16, 16>("frigg:400us");
+    bench_standard<32, 32, 32>("frigg:3ms");
+    bench_standard<64, 64, 64>("frigg:24.4ms");
+    bench_standard<64, 256, 32>("frigg:47ms");
+    bench_standard<128, 128, 128>("frigg:205ms");
+    bench_standard<256, 256, 256>("frigg:2.6s");
 
-    bench_new<16, 16, 16>("TODOms");
-    bench_new<32, 32, 32>("TODOms");
-    bench_new<64, 64, 64>("TODOms");
-    bench_new<128, 128, 128>("TODOms");
-    bench_new<256, 256, 256>("TODOms");
-    bench_new<64, 256, 32>("TODOms");
+    bench_new<16, 16, 16>("frigg:402us");
+    bench_new<32, 32, 32>("frigg:3.1ms");
+    bench_new<64, 64, 64>("frigg:28ms");
+    bench_new<64, 256, 32>("frigg:50ms");
+    bench_new<128, 128, 128>("frigg:212ms");
+    bench_new<256, 256, 256>("frigg:2.6s");
+
+    bench_strassen_direct<16, 16, 16>("frigg:1.6ms");
+    bench_strassen_direct<32, 32, 32>("frigg:11ms");
+    bench_strassen_direct<64, 64, 64>("frigg:80ms");
+    bench_strassen_direct<64, 256, 32>("frigg:4s");
+    bench_strassen_direct<128, 128, 128>("frigg:600ms");
+    bench_strassen_direct<256, 256, 256>("frigg:4s");
+
+    double count = 0;
+    count += bench_lazy<16, 16, 16>("frigg:400us");
+    count += bench_lazy<32, 32, 32>("frigg:3ms");
+    count += bench_lazy<64, 64, 64>("frigg:26ms");
+    count += bench_lazy<64, 256, 32>("frigg:55ms");
+    count += bench_lazy<128, 128, 128>("frigg:222ms");
+    count += bench_lazy<256, 256, 256>("frigg:2.68s");
+    std::cout << count << std::endl;
 }
 
 } //end of anonymous namespace
