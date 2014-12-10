@@ -11,7 +11,7 @@
 namespace etl {
 
 template <typename Generator>
-class generator_expr {
+class generator_expr final {
 private:
     mutable Generator generator;
 

@@ -14,7 +14,7 @@
 namespace etl {
 
 template <typename T, typename Expr>
-class stable_transform_expr {
+class stable_transform_expr final {
 private:
     static_assert(is_etl_expr<Expr>::value, "Only ETL expressions can be used in stable_transform_expr");
 

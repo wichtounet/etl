@@ -62,7 +62,7 @@ struct is_vector<std::vector<N>> : std::true_type { };
 } //end of namespace detail
 
 template<typename T, typename ST, std::size_t... Dims>
-struct fast_matrix_impl {
+struct fast_matrix_impl final {
     static_assert(sizeof...(Dims) > 0, "At least one dimension must be specified");
 
 public:

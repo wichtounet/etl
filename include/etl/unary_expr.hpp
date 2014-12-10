@@ -18,7 +18,7 @@ namespace etl {
 struct identity_op;
 
 template <typename T, typename Expr, typename UnaryOp>
-class unary_expr {
+class unary_expr final  {
 public:
     using value_type = T;
 

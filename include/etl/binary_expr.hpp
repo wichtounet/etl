@@ -14,7 +14,7 @@
 namespace etl {
 
 template <typename T, typename LeftExpr, typename BinaryOp, typename RightExpr>
-class binary_expr {
+class binary_expr final {
 private:
     static_assert(cpp::or_u<
         cpp::and_u<is_etl_expr<LeftExpr>::value, std::is_same<RightExpr, scalar<T>>::value>::value,

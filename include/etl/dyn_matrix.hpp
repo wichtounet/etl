@@ -81,7 +81,7 @@ inline std::array<std::size_t, sizeof...(I)> sizes(const std::index_sequence<I..
 } // end of namespace dyn_detail
 
 template<typename T, std::size_t D = 2>
-struct dyn_matrix {
+struct dyn_matrix final {
     static_assert(D > 0, "A matrix must have a least 1 dimension");
 
 public:
