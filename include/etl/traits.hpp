@@ -39,50 +39,48 @@ struct is_var_2 : std::false_type { };
 template<template<typename, typename, std::size_t...> class TT, typename V1, typename V2, std::size_t... R>
 struct is_var_2<TT, TT<V1, V2, R...>> : std::true_type { };
 
-template<typename T>
-struct is_fast_matrix : std::integral_constant<bool, is_var_2<etl::fast_matrix_impl, std::decay_t<T>>::value> {};
+template<typename T, typename DT = std::decay_t<T>>
+using is_fast_matrix = is_var_2<etl::fast_matrix_impl, std::decay_t<T>>;
 
-template<typename T>
-struct is_dyn_matrix : std::integral_constant<bool, is_2<etl::dyn_matrix, std::decay_t<T>>::value> {};
+template<typename T, typename DT = std::decay_t<T>>
+using is_dyn_matrix = is_2<etl::dyn_matrix, std::decay_t<T>>;
 
-template<typename T>
-struct is_unary_expr : std::integral_constant<bool, cpp::is_specialization_of<etl::unary_expr, std::decay_t<T>>::value> {};
+template<typename T, typename DT = std::decay_t<T>>
+using is_unary_expr = cpp::is_specialization_of<etl::unary_expr, DT>;
 
-template<typename T>
-struct is_stable_transform_expr : std::integral_constant<bool, cpp::is_specialization_of<etl::stable_transform_expr, std::decay_t<T>>::value> {};
+template<typename T, typename DT = std::decay_t<T>>
+using is_binary_expr = cpp::is_specialization_of<etl::binary_expr, DT>;
 
-template<typename T>
-struct is_binary_expr : std::integral_constant<bool, cpp::is_specialization_of<etl::binary_expr, std::decay_t<T>>::value> {};
+template<typename T, typename DT = std::decay_t<T>>
+using is_generator_expr = cpp::is_specialization_of<etl::generator_expr, DT>;
 
-template<typename T>
-struct is_generator_expr : std::integral_constant<bool, cpp::is_specialization_of<etl::generator_expr, std::decay_t<T>>::value> {};
+template<typename T, typename DT = std::decay_t<T>>
+using is_stable_transform_expr = cpp::is_specialization_of<etl::stable_transform_expr, DT>;
 
-template<typename T>
+template<typename T, typename DT = std::decay_t<T>>
 struct is_transformer : std::integral_constant<bool, cpp::or_u<
-            cpp::or_u<
-                cpp::is_specialization_of<etl::hflip_transformer, std::decay_t<T>>::value,
-                cpp::is_specialization_of<etl::vflip_transformer, std::decay_t<T>>::value,
-                cpp::is_specialization_of<etl::fflip_transformer, std::decay_t<T>>::value,
-                cpp::is_specialization_of<etl::transpose_transformer, std::decay_t<T>>::value,
-                cpp::is_specialization_of<etl::sum_r_transformer, std::decay_t<T>>::value,
-                cpp::is_specialization_of<etl::sum_l_transformer, std::decay_t<T>>::value,
-                cpp::is_specialization_of<etl::mean_r_transformer, std::decay_t<T>>::value,
-                cpp::is_specialization_of<etl::mean_l_transformer, std::decay_t<T>>::value
-            >::value,
-            cpp::is_specialization_of<etl::mmul_transformer, std::decay_t<T>>::value,
-            is_var<etl::rep_r_transformer, std::decay_t<T>>::value,
-            is_var<etl::rep_l_transformer, std::decay_t<T>>::value,
-            is_3<etl::p_max_pool_h_transformer, std::decay_t<T>>::value,
-            is_3<etl::p_max_pool_p_transformer, std::decay_t<T>>::value
-        >::value> {};
+        cpp::is_specialization_of<etl::hflip_transformer, DT>::value,
+        cpp::is_specialization_of<etl::vflip_transformer, DT>::value,
+        cpp::is_specialization_of<etl::fflip_transformer, DT>::value,
+        cpp::is_specialization_of<etl::transpose_transformer, DT>::value,
+        cpp::is_specialization_of<etl::sum_r_transformer, DT>::value,
+        cpp::is_specialization_of<etl::sum_l_transformer, DT>::value,
+        cpp::is_specialization_of<etl::mean_r_transformer, DT>::value,
+        cpp::is_specialization_of<etl::mean_l_transformer, DT>::value,
+        cpp::is_specialization_of<etl::mmul_transformer, DT>::value,
+        is_var<etl::rep_r_transformer, DT>::value,
+        is_var<etl::rep_l_transformer, DT>::value,
+        is_3<etl::p_max_pool_h_transformer, DT>::value,
+        is_3<etl::p_max_pool_p_transformer, DT>::value
+    >::value> {};
 
 template<typename T>
 struct is_view : std::integral_constant<bool, cpp::or_u<
-            is_2<etl::dim_view, std::decay_t<T>>::value,
-            is_3<etl::fast_matrix_view, std::decay_t<T>>::value,
-            cpp::is_specialization_of<etl::dyn_matrix_view, std::decay_t<T>>::value,
-            cpp::is_specialization_of<etl::sub_view, std::decay_t<T>>::value
-            >::value> {};
+        is_2<etl::dim_view, std::decay_t<T>>::value,
+        is_3<etl::fast_matrix_view, std::decay_t<T>>::value,
+        cpp::is_specialization_of<etl::dyn_matrix_view, std::decay_t<T>>::value,
+        cpp::is_specialization_of<etl::sub_view, std::decay_t<T>>::value
+    >::value> {};
 
 template<typename T, typename Enable>
 struct is_etl_expr : std::integral_constant<bool, cpp::or_u<
@@ -104,8 +102,10 @@ struct is_copy_expr : std::integral_constant<bool, cpp::or_u<
     >::value> {};
 
 template<typename T, typename Enable = void>
-struct is_etl_value :
-    std::integral_constant<bool, cpp::or_u<is_fast_matrix<T>::value, is_dyn_matrix<T>::value>::value> {};
+struct is_etl_value : std::integral_constant<bool, cpp::or_u<
+        is_fast_matrix<T>::value,
+        is_dyn_matrix<T>::value
+    >::value> {};
 
 template<typename T, typename Enable>
 struct etl_traits;
