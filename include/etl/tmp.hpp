@@ -14,13 +14,13 @@ template<typename E>
 using value_t = typename std::decay_t<E>::value_type;
 
 template<std::size_t F, std::size_t... Dims>
-struct mul_all  : std::integral_constant<std::size_t, F * mul_all<Dims...>::value> {};
+struct mul_all final : std::integral_constant<std::size_t, F * mul_all<Dims...>::value> {};
 
 template<std::size_t F>
-struct mul_all<F> : std::integral_constant<std::size_t, F> {};
+struct mul_all<F> final : std::integral_constant<std::size_t, F> {};
 
 template<std::size_t S, std::size_t I, std::size_t F, std::size_t... Dims>
-struct nth_size {
+struct nth_size final {
     template<std::size_t S2, std::size_t I2, typename Enable = void>
     struct nth_size_int : std::integral_constant<std::size_t, nth_size<S, I+1, Dims...>::value> {};
 

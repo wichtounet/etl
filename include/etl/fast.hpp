@@ -51,7 +51,7 @@ struct matrix_index {
 };
 
 template <typename N>
-struct is_vector :std::false_type { };
+struct is_vector : std::false_type { };
 
 template <typename N, typename A>
 struct is_vector<std::vector<N, A>> : std::true_type { };
@@ -228,26 +228,26 @@ public:
 
     //{{{ Accessors
 
-    static constexpr std::size_t size(){
+    static constexpr std::size_t size() noexcept {
         return etl_size;
     }
 
-    static constexpr std::size_t rows(){
+    static constexpr std::size_t rows() noexcept {
         return dim<0>();
     }
 
-    static constexpr std::size_t columns(){
+    static constexpr std::size_t columns() noexcept {
         static_assert(n_dimensions > 1, "columns() can only be used on 2D+ matrices");
 
         return dim<1>();
     }
 
-    static constexpr std::size_t dimensions(){
+    static constexpr std::size_t dimensions() noexcept {
         return n_dimensions;
     }
 
     template<std::size_t D>
-    static constexpr std::size_t dim(){
+    static constexpr std::size_t dim() noexcept {
         return nth_size<D, 0, Dims...>::value;
     }
 
@@ -289,19 +289,19 @@ public:
         return _data[i];
     }
 
-    const_iterator begin() const {
+    const_iterator begin() const noexcept {
         return _data.begin();
     }
 
-    const_iterator end() const {
+    const_iterator end() const noexcept {
         return _data.end();
     }
 
-    iterator begin(){
+    iterator begin() noexcept {
         return _data.begin();
     }
 
-    iterator end(){
+    iterator end() noexcept {
         return _data.end();
     }
 
