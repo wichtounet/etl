@@ -58,54 +58,54 @@ template<typename T, typename DT = std::decay_t<T>>
 using is_stable_transform_expr = cpp::is_specialization_of<etl::stable_transform_expr, DT>;
 
 template<typename T, typename DT = std::decay_t<T>>
-struct is_transformer : std::integral_constant<bool, cpp::or_u<
-        cpp::is_specialization_of<etl::hflip_transformer, DT>::value,
-        cpp::is_specialization_of<etl::vflip_transformer, DT>::value,
-        cpp::is_specialization_of<etl::fflip_transformer, DT>::value,
-        cpp::is_specialization_of<etl::transpose_transformer, DT>::value,
-        cpp::is_specialization_of<etl::sum_r_transformer, DT>::value,
-        cpp::is_specialization_of<etl::sum_l_transformer, DT>::value,
-        cpp::is_specialization_of<etl::mean_r_transformer, DT>::value,
-        cpp::is_specialization_of<etl::mean_l_transformer, DT>::value,
-        cpp::is_specialization_of<etl::mmul_transformer, DT>::value,
-        is_var<etl::rep_r_transformer, DT>::value,
-        is_var<etl::rep_l_transformer, DT>::value,
-        is_3<etl::p_max_pool_h_transformer, DT>::value,
-        is_3<etl::p_max_pool_p_transformer, DT>::value
-    >::value> {};
+struct is_transformer : cpp::bool_constant_c<cpp::or_c<
+        cpp::is_specialization_of<etl::hflip_transformer, DT>,
+        cpp::is_specialization_of<etl::vflip_transformer, DT>,
+        cpp::is_specialization_of<etl::fflip_transformer, DT>,
+        cpp::is_specialization_of<etl::transpose_transformer, DT>,
+        cpp::is_specialization_of<etl::sum_r_transformer, DT>,
+        cpp::is_specialization_of<etl::sum_l_transformer, DT>,
+        cpp::is_specialization_of<etl::mean_r_transformer, DT>,
+        cpp::is_specialization_of<etl::mean_l_transformer, DT>,
+        cpp::is_specialization_of<etl::mmul_transformer, DT>,
+        is_var<etl::rep_r_transformer, DT>,
+        is_var<etl::rep_l_transformer, DT>,
+        is_3<etl::p_max_pool_h_transformer, DT>,
+        is_3<etl::p_max_pool_p_transformer, DT>
+    >> {};
 
 template<typename T>
-struct is_view : std::integral_constant<bool, cpp::or_u<
-        is_2<etl::dim_view, std::decay_t<T>>::value,
-        is_3<etl::fast_matrix_view, std::decay_t<T>>::value,
-        cpp::is_specialization_of<etl::dyn_matrix_view, std::decay_t<T>>::value,
-        cpp::is_specialization_of<etl::sub_view, std::decay_t<T>>::value
-    >::value> {};
+struct is_view : cpp::bool_constant_c<cpp::or_c<
+        is_2<etl::dim_view, std::decay_t<T>>,
+        is_3<etl::fast_matrix_view, std::decay_t<T>>,
+        cpp::is_specialization_of<etl::dyn_matrix_view, std::decay_t<T>>,
+        cpp::is_specialization_of<etl::sub_view, std::decay_t<T>>
+    >> {};
 
 template<typename T, typename Enable>
-struct is_etl_expr : std::integral_constant<bool, cpp::or_u<
-       is_fast_matrix<T>::value,
-       is_dyn_matrix<T>::value,
-       is_unary_expr<T>::value, is_binary_expr<T>::value,
-       is_stable_transform_expr<T>::value,
-       is_generator_expr<T>::value,
-       is_transformer<T>::value, is_view<T>::value
-    >::value> {};
+struct is_etl_expr : cpp::bool_constant_c<cpp::or_c<
+       is_fast_matrix<T>,
+       is_dyn_matrix<T>,
+       is_unary_expr<T>, is_binary_expr<T>,
+       is_stable_transform_expr<T>,
+       is_generator_expr<T>,
+       is_transformer<T>, is_view<T>
+    >> {};
 
 template<typename T, typename Enable>
-struct is_copy_expr : std::integral_constant<bool, cpp::or_u<
-       is_fast_matrix<T>::value,
-       is_dyn_matrix<T>::value,
-       is_unary_expr<T>::value,
-       is_binary_expr<T>::value,
-       is_stable_transform_expr<T>::value
-    >::value> {};
+struct is_copy_expr : cpp::bool_constant_c<cpp::or_c<
+       is_fast_matrix<T>,
+       is_dyn_matrix<T>,
+       is_unary_expr<T>,
+       is_binary_expr<T>,
+       is_stable_transform_expr<T>
+    >> {};
 
 template<typename T, typename Enable = void>
-struct is_etl_value : std::integral_constant<bool, cpp::or_u<
-        is_fast_matrix<T>::value,
-        is_dyn_matrix<T>::value
-    >::value> {};
+struct is_etl_value : cpp::bool_constant_c<bool, cpp::or_c<
+        is_fast_matrix<T>,
+        is_dyn_matrix<T>
+    >> {};
 
 template<typename T, typename Enable>
 struct etl_traits;
@@ -441,9 +441,9 @@ struct etl_traits<rep_l_transformer<T, D...>> {
  * \brief Specialization for (sum-mean)_r_transformer
  */
 template <typename T>
-struct etl_traits<T, std::enable_if_t<cpp::or_u<
-            cpp::is_specialization_of<etl::sum_r_transformer, std::decay_t<T>>::value,
-            cpp::is_specialization_of<etl::mean_r_transformer, std::decay_t<T>>::value
+struct etl_traits<T, std::enable_if_t<cpp::or_c<
+            cpp::is_specialization_of<etl::sum_r_transformer, std::decay_t<T>>,
+            cpp::is_specialization_of<etl::mean_r_transformer, std::decay_t<T>>
         >::value>> {
     using expr_t = T;
     using sub_expr_t = std::decay_t<typename std::decay_t<T>::sub_type>;
@@ -479,9 +479,9 @@ struct etl_traits<T, std::enable_if_t<cpp::or_u<
  * \brief Specialization for (sum-mean)_r_transformer
  */
 template <typename T>
-struct etl_traits<T, std::enable_if_t<cpp::or_u<
-            cpp::is_specialization_of<etl::sum_l_transformer, std::decay_t<T>>::value,
-            cpp::is_specialization_of<etl::mean_l_transformer, std::decay_t<T>>::value
+struct etl_traits<T, std::enable_if_t<cpp::or_c<
+            cpp::is_specialization_of<etl::sum_l_transformer, std::decay_t<T>>,
+            cpp::is_specialization_of<etl::mean_l_transformer, std::decay_t<T>>
         >::value>> {
     using expr_t = T;
     using sub_expr_t = std::decay_t<typename std::decay_t<T>::sub_type>;
@@ -558,11 +558,11 @@ struct etl_traits<p_max_pool_p_transformer<T, C1, C2>> {
  * \brief Specialization for flipping transformers
  */
 template <typename T>
-struct etl_traits<T, std::enable_if_t<cpp::or_u<
-            cpp::is_specialization_of<etl::hflip_transformer, std::decay_t<T>>::value,
-            cpp::is_specialization_of<etl::vflip_transformer, std::decay_t<T>>::value,
-            cpp::is_specialization_of<etl::fflip_transformer, std::decay_t<T>>::value,
-            is_3<etl::p_max_pool_h_transformer, std::decay_t<T>>::value
+struct etl_traits<T, std::enable_if_t<cpp::or_c<
+            cpp::is_specialization_of<etl::hflip_transformer, std::decay_t<T>>,
+            cpp::is_specialization_of<etl::vflip_transformer, std::decay_t<T>>,
+            cpp::is_specialization_of<etl::fflip_transformer, std::decay_t<T>>,
+            is_3<etl::p_max_pool_h_transformer, std::decay_t<T>>
         >::value>> {
     using expr_t = T;
     using sub_expr_t = std::decay_t<typename T::sub_type>;
@@ -735,92 +735,93 @@ struct etl_traits<etl::dyn_matrix_view<T>> {
 template<typename E>
 using decay_traits = etl_traits<std::decay_t<E>>;
 
-template<typename E, cpp::enable_if_u<cpp::not_u<etl_traits<E>::is_fast>::value>>
+//Warning: default template parameters for size and dim are already defined in traits_fwd.hpp
+
+template<typename E>
+constexpr std::size_t dimensions(const E&) noexcept {
+    return etl_traits<E>::dimensions();
+}
+
+template<typename E>
+constexpr std::size_t dimensions() noexcept {
+    return decay_traits<E>::dimensions();
+}
+
+template<typename E, cpp::disable_if_u<etl_traits<E>::is_fast>>
 std::size_t size(const E& v){
     return etl_traits<E>::size(v);
 }
 
-template<typename E, cpp::enable_if_u<cpp::not_u<etl_traits<E>::is_fast>::value> = cpp::detail::dummy>
+template<typename E, cpp::enable_if_u<etl_traits<E>::is_fast>>
+constexpr std::size_t size(const E&) noexcept {
+    return etl_traits<E>::size();
+}
+
+template<typename E, cpp::disable_if_u<etl_traits<E>::is_fast> = cpp::detail::dummy>
 std::size_t rows(const E& v){
     return etl_traits<E>::dim(v, 0);
 }
 
-template<typename E, cpp::enable_if_u<cpp::not_u<etl_traits<E>::is_fast>::value> = cpp::detail::dummy>
+template<typename E, cpp::enable_if_u<etl_traits<E>::is_fast> = cpp::detail::dummy>
+constexpr std::size_t rows(const E&) noexcept {
+    return etl_traits<E>::template dim<0>();
+}
+
+template<typename E, cpp::disable_if_u<etl_traits<E>::is_fast> = cpp::detail::dummy>
 std::size_t columns(const E& v){
     static_assert(etl_traits<E>::dimensions() > 1, "columns() can only be used on 2D+ matrices");
     return etl_traits<E>::dim(v, 1);
 }
 
-template<typename E, cpp::enable_if_u<cpp::not_u<etl_traits<E>::is_fast>::value> = cpp::detail::dummy>
+template<typename E, cpp::enable_if_u<etl_traits<E>::is_fast> = cpp::detail::dummy>
+constexpr std::size_t columns(const E&) noexcept {
+    static_assert(etl_traits<E>::dimensions() > 1, "columns() can only be used on 2D+ matrices");
+    return etl_traits<E>::template dim<1>();
+}
+
+template<typename E, cpp::disable_if_u<etl_traits<E>::is_fast> = cpp::detail::dummy>
 std::size_t subsize(const E& v){
     static_assert(etl_traits<E>::dimensions() > 1, "Only 2D+ matrices have a subsize");
     return etl_traits<E>::size(v) / etl_traits<E>::dim(v, 0);
 }
 
-template<typename E, cpp::enable_if_u<etl_traits<E>::is_fast>>
-constexpr std::size_t size(const E&){
-    return etl_traits<E>::size();
-}
-
 template<typename E, cpp::enable_if_u<etl_traits<E>::is_fast> = cpp::detail::dummy>
-constexpr std::size_t rows(const E&){
-    return etl_traits<E>::template dim<0>();
-}
-
-template<typename E, cpp::enable_if_u<etl_traits<E>::is_fast> = cpp::detail::dummy>
-constexpr std::size_t columns(const E&){
-    static_assert(etl_traits<E>::dimensions() > 1, "columns() can only be used on 2D+ matrices");
-
-    return etl_traits<E>::template dim<1>();
-}
-
-template<typename E, cpp::enable_if_u<etl_traits<E>::is_fast> = cpp::detail::dummy>
-constexpr std::size_t subsize(const E&){
+constexpr std::size_t subsize(const E&) noexcept {
     static_assert(etl_traits<E>::dimensions() > 1, "Only 2D+ matrices have a subsize");
     return etl_traits<E>::size() / etl_traits<E>::template dim<0>();
 }
 
-template<typename E>
-constexpr std::size_t dimensions(const E&){
-    return etl_traits<E>::dimensions();
-}
-
-template<typename E>
-constexpr std::size_t dimensions(){
-    return decay_traits<E>::dimensions();
-}
-
 template<std::size_t D, typename E, cpp::disable_if_u<etl_traits<E>::is_fast>>
-constexpr std::size_t dim(const E& e){
+std::size_t dim(const E& e){
     return etl_traits<E>::dim(e, D);
 }
 
 template<typename E, cpp::disable_if_u<etl_traits<E>::is_fast>>
-constexpr std::size_t dim(const E& e, std::size_t d){
+std::size_t dim(const E& e, std::size_t d){
     return etl_traits<E>::dim(e, d);
 }
 
 template<std::size_t D, typename E, cpp::enable_if_u<etl_traits<E>::is_fast>>
-constexpr std::size_t dim(const E&){
+constexpr std::size_t dim(const E&) noexcept {
     return etl_traits<E>::template dim<D>();
 }
 
-template<std::size_t D, typename E>
-constexpr std::size_t dim(){
+template<std::size_t D, typename E, cpp::enable_if_u<etl_traits<E>::is_fast>>
+constexpr std::size_t dim() noexcept {
     return decay_traits<E>::template dim<D>();
 }
 
 template<typename LE, typename RE, cpp::enable_if_one_u<etl_traits<LE>::is_generator, etl_traits<RE>::is_generator> = cpp::detail::dummy>
-void ensure_same_size(const LE&, const RE&){
+void ensure_same_size(const LE&, const RE&) noexcept {
     //Nothing to test, generators are of infinite size
 }
 
-template<typename LE, typename RE, cpp::disable_if_one_u<
-        cpp::and_u<
-            cpp::not_u<cpp::or_u<etl_traits<LE>::is_generator, etl_traits<RE>::is_generator>::value>::value,
-            cpp::and_u<is_etl_expr<LE>::value, is_etl_expr<RE>::value, etl_traits<LE>::is_fast, etl_traits<RE>::is_fast>::value
-        >::value,
-        cpp::or_u<etl_traits<LE>::is_generator, etl_traits<RE>::is_generator>::value
+template<typename LE, typename RE, cpp::disable_if_one_c<
+        cpp::and_c<
+            cpp::not_u<cpp::or_u<etl_traits<LE>::is_generator, etl_traits<RE>::is_generator>::value>,
+            cpp::and_u<is_etl_expr<LE>::value, is_etl_expr<RE>::value, etl_traits<LE>::is_fast, etl_traits<RE>::is_fast>
+        >,
+        cpp::or_u<etl_traits<LE>::is_generator, etl_traits<RE>::is_generator>
     > = cpp::detail::dummy>
 void ensure_same_size(const LE& lhs, const RE& rhs){
     cpp_assert(size(lhs) == size(rhs), "Cannot perform element-wise operations on collections of different size");

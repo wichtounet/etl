@@ -52,11 +52,11 @@ public:
 
     //Accessors
 
-    typename std::add_lvalue_reference<Expr>::type value(){
+    std::add_lvalue_reference_t<Expr> value() noexcept {
         return _value;
     }
 
-    typename std::add_lvalue_reference<typename std::add_const<Expr>::type>::type value() const {
+    cpp::add_const_lvalue_t<Expr> value() const noexcept {
         return _value;
     }
 
@@ -73,11 +73,11 @@ public:
         return UnaryOp::apply(value()(args...));
     }
 
-    iterator<const this_type> begin() const {
+    iterator<const this_type> begin() const noexcept {
         return {*this, 0};
     }
 
-    iterator<const this_type> end() const {
+    iterator<const this_type> end() const noexcept {
         return {*this, size(*this)};
     }
 };
@@ -92,9 +92,9 @@ private:
     Expr _value;
 
     static constexpr const bool non_const_return_ref =
-        cpp::and_u<
-            std::is_lvalue_reference<decltype(_value[0])>::value,
-            cpp::not_u<std::is_const<std::remove_reference_t<decltype(_value[0])>>::value>::value
+        cpp::and_c<
+            std::is_lvalue_reference<decltype(_value[0])>,
+            cpp::not_c<std::is_const<std::remove_reference_t<decltype(_value[0])>>>
         >::value;
 
     static constexpr const bool const_return_ref =
@@ -153,7 +153,7 @@ public:
         return *this;
     }
 
-    template<typename Container, cpp::enable_if_all_u<cpp::not_u<is_etl_expr<Container>::value>::value, std::is_convertible<typename Container::value_type, value_type>::value> = cpp::detail::dummy>
+    template<typename Container, cpp::enable_if_all_c<cpp::not_c<is_etl_expr<Container>>, std::is_convertible<typename Container::value_type, value_type>> = cpp::detail::dummy>
     unary_expr& operator=(const Container& vec){
         cpp_assert(vec.size() == size(*this), "Cannot copy from a vector of different size");
 
@@ -166,11 +166,11 @@ public:
 
     //Accessors
 
-    typename std::add_lvalue_reference<Expr>::type value(){
+    std::add_lvalue_reference_t<Expr> value() noexcept {
         return _value;
     }
 
-    typename std::add_lvalue_reference<typename std::add_const<Expr>::type>::type value() const {
+    cpp::add_const_lvalue_t<Expr> value() const noexcept {
         return _value;
     }
 
@@ -208,19 +208,19 @@ public:
         return value()(args...);
     }
 
-    iterator<this_type, non_const_return_ref, false> begin(){
+    iterator<this_type, non_const_return_ref, false> begin() noexcept {
         return {*this, 0};
     }
 
-    iterator<this_type, non_const_return_ref, false> end(){
+    iterator<this_type, non_const_return_ref, false> end() noexcept {
         return {*this, size(*this)};
     }
 
-    iterator<const this_type, true> begin() const {
+    iterator<const this_type, true> begin() const noexcept {
         return {*this, 0};
     }
 
-    iterator<const this_type, true> end() const {
+    iterator<const this_type, true> end() const noexcept {
         return {*this, size(*this)};
     }
 };

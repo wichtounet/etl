@@ -20,7 +20,7 @@ using random_engine = std::mt19937_64;
 
 template<typename T>
 struct abs_unary_op {
-    static constexpr T apply(const T& x){
+    static constexpr T apply(const T& x) noexcept {
         return std::abs(x);
     }
 };
@@ -48,7 +48,7 @@ struct exp_unary_op {
 
 template<typename T>
 struct sign_unary_op {
-    static constexpr T apply(const T& x){
+    static constexpr T apply(const T& x) noexcept {
         return sign(x);
     }
 };
@@ -69,14 +69,14 @@ struct softplus_unary_op {
 
 template<typename T>
 struct minus_unary_op {
-    static constexpr T apply(const T& x){
+    static constexpr T apply(const T& x) noexcept {
         return -x;
     }
 };
 
 template<typename T>
 struct plus_unary_op {
-    static constexpr T apply(const T& x){
+    static constexpr T apply(const T& x) noexcept {
         return +x;
     }
 };

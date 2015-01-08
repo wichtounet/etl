@@ -25,7 +25,7 @@ inline constexpr W softplus(W x){
 }
 
 template<typename W, cpp::enable_if_u<std::is_arithmetic<W>::value> = cpp::detail::dummy>
-inline constexpr double sign(W v){
+inline constexpr double sign(W v) noexcept {
     return v == 0 ? 0 : (v > 0 ? 1 : -1);
 }
 

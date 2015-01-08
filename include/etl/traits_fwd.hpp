@@ -22,23 +22,26 @@ struct sub_size_compare;
 template<typename T, typename Enable = void>
 struct etl_traits;
 
-template<typename E, cpp::enable_if_u<cpp::not_u<etl_traits<E>::is_fast>::value> = cpp::detail::dummy>
+template<typename E>
+constexpr std::size_t dimensions(const E&) noexcept;
+
+template<typename E, cpp::disable_if_u<etl_traits<E>::is_fast> = cpp::detail::dummy>
 std::size_t size(const E& v);
 
 template<typename E, cpp::enable_if_u<etl_traits<E>::is_fast> = cpp::detail::dummy>
-constexpr std::size_t size(const E&);
-
-template<typename E>
-constexpr std::size_t dimensions(const E&);
-
-template<std::size_t D, typename E, cpp::disable_if_u<etl_traits<E>::is_fast> = cpp::detail::dummy>
-constexpr std::size_t dim(const E& e);
+constexpr std::size_t size(const E&) noexcept;
 
 template<typename E, cpp::disable_if_u<etl_traits<E>::is_fast> = cpp::detail::dummy>
-constexpr std::size_t dim(const E& e, std::size_t d);
+std::size_t dim(const E& e, std::size_t d);
+
+template<std::size_t D, typename E, cpp::disable_if_u<etl_traits<E>::is_fast> = cpp::detail::dummy>
+std::size_t dim(const E& e);
 
 template<std::size_t D, typename E, cpp::enable_if_u<etl_traits<E>::is_fast> = cpp::detail::dummy>
-constexpr std::size_t dim(const E&);
+constexpr std::size_t dim(const E&) noexcept;
+
+template<std::size_t D, typename E, cpp::enable_if_u<etl_traits<E>::is_fast> = cpp::detail::dummy>
+constexpr std::size_t dim() noexcept;
 
 } //end of namespace etl
 

@@ -48,11 +48,11 @@ public:
 
     //Accessors
 
-    typename std::add_lvalue_reference<Expr>::type value(){
+    std::add_lvalue_reference_t<Expr> value() noexcept {
         return _value;
     }
 
-    typename std::add_lvalue_reference<typename std::add_const<Expr>::type>::type value() const {
+    cpp::add_const_lvalue_t<Expr> value() const noexcept {
         return _value;
     }
 
@@ -79,11 +79,11 @@ public:
         return sub(*this, i);
     }
 
-    iterator<const this_type> begin() const {
+    iterator<const this_type> begin() const noexcept {
         return {*this, 0};
     }
 
-    iterator<const this_type> end() const {
+    iterator<const this_type> end() const noexcept {
         return {*this, size(*this)};
     }
 };

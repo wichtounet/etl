@@ -97,12 +97,12 @@ public:
 
     ///{{{ Construction
 
-    template<typename S = ST, cpp::enable_if_u<matrix_detail::is_vector<S>::value> = cpp::detail::dummy>
+    template<typename S = ST, cpp::enable_if_c<matrix_detail::is_vector<S>> = cpp::detail::dummy>
     void init(){
         _data.resize(etl_size);
     }
 
-    template<typename S = ST, cpp::disable_if_u<matrix_detail::is_vector<S>::value> = cpp::detail::dummy>
+    template<typename S = ST, cpp::disable_if_c<matrix_detail::is_vector<S>> = cpp::detail::dummy>
     void init(){
         //Nothing to init
     }
@@ -111,7 +111,7 @@ public:
         init();
     }
 
-    template<typename VT, cpp::enable_if_u<cpp::or_u<std::is_convertible<VT, value_type>::value, std::is_assignable<T&, VT>::value>::value> = cpp::detail::dummy>
+    template<typename VT, cpp::enable_if_one_c<std::is_convertible<VT, value_type>, std::is_assignable<T&, VT>> = cpp::detail::dummy>
     explicit fast_matrix_impl(const VT& value){
         init();
         std::fill(_data.begin(), _data.end(), value);
@@ -135,10 +135,7 @@ public:
         std::copy(rhs.begin(), rhs.end(), begin());
     }
 
-    template<typename E, cpp::enable_if_all_u<
-        std::is_convertible<typename E::value_type, value_type>::value,
-        is_copy_expr<E>::value
-    > = cpp::detail::dummy>
+    template<typename E, cpp::enable_if_all_c<std::is_convertible<typename E::value_type, value_type>, is_copy_expr<E>> = cpp::detail::dummy>
     explicit fast_matrix_impl(const E& e){
         init();
         ensure_same_size(*this, e);
@@ -148,9 +145,9 @@ public:
         }
     }
 
-    template<typename Container, cpp::enable_if_all_u<
-        std::is_convertible<typename Container::value_type, value_type>::value,
-        cpp::not_u<is_copy_expr<Container>::value>::value
+    template<typename Container, cpp::enable_if_all_c<
+        std::is_convertible<typename Container::value_type, value_type>,
+        cpp::not_c<is_copy_expr<Container>>
     > = cpp::detail::dummy>
     explicit fast_matrix_impl(const Container& vec){
         init();
@@ -181,7 +178,7 @@ public:
 
     //Allow copy from other containers
 
-    template<typename Container, cpp::enable_if_u<std::is_convertible<typename Container::value_type, value_type>::value> = cpp::detail::dummy>
+    template<typename Container, cpp::enable_if_c<std::is_convertible<typename Container::value_type, value_type>> = cpp::detail::dummy>
     fast_matrix_impl& operator=(const Container& vec){
         std::copy(vec.begin(), vec.end(), begin());
 
@@ -190,10 +187,7 @@ public:
 
     //Construct from expression
 
-    template<typename E, cpp::enable_if_all_u<
-        std::is_convertible<typename E::value_type, value_type>::value,
-        is_copy_expr<E>::value
-    > = cpp::detail::dummy>
+    template<typename E, cpp::enable_if_all_c<std::is_convertible<typename E::value_type, value_type>, is_copy_expr<E>> = cpp::detail::dummy>
     fast_matrix_impl& operator=(E&& e){
         ensure_same_size(*this, e);
 
@@ -214,7 +208,7 @@ public:
     }
 
     //Set the same value to each element of the matrix
-    template<typename VT, cpp::enable_if_u<cpp::or_u<std::is_convertible<VT, value_type>::value, std::is_assignable<T&, VT>::value>::value> = cpp::detail::dummy>
+    template<typename VT, cpp::enable_if_one_c<std::is_convertible<VT, value_type>, std::is_assignable<T&, VT>> = cpp::detail::dummy>
     fast_matrix_impl& operator=(const VT& value){
         std::fill(_data.begin(), _data.end(), value);
 
