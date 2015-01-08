@@ -49,6 +49,9 @@ test: all
 benchmark: release/bin/benchmark
 	./release/bin/benchmark
 
+cppcheck:
+	cppcheck -I include/ --platform=unix64 --suppress=missingIncludeSystem --enable=all --std=c++11 workbench/*.cpp include/etl/*.hpp
+
 v:
 	@ echo $(CPP_FILES)
 	@ echo $(TEST_FILES)
