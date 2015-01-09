@@ -102,7 +102,7 @@ struct is_copy_expr : cpp::bool_constant_c<cpp::or_c<
     >> {};
 
 template<typename T, typename Enable = void>
-struct is_etl_value : cpp::bool_constant_c<bool, cpp::or_c<
+struct is_etl_value : cpp::bool_constant_c<cpp::or_c<
         is_fast_matrix<T>,
         is_dyn_matrix<T>
     >> {};
