@@ -302,51 +302,51 @@ public:
         return _size;
     }
 
-    std::size_t rows() const {
+    std::size_t rows() const noexcept {
         return _dimensions[0];
     }
 
-    std::size_t columns() const {
+    std::size_t columns() const noexcept {
         static_assert(n_dimensions > 1, "columns() only valid for 2D+ matrices");
         return _dimensions[1];
     }
 
-    static constexpr std::size_t dimensions(){
+    static constexpr std::size_t dimensions() noexcept {
         return n_dimensions;
     }
 
-    std::size_t dim(std::size_t d) const {
+    std::size_t dim(std::size_t d) const  noexcept {
         cpp_assert(d < n_dimensions, "Invalid dimension");
 
         return _dimensions[d];
     }
 
     template<bool B = (n_dimensions > 1), cpp::enable_if_u<B> = cpp::detail::dummy>
-    auto operator()(std::size_t i){
+    auto operator()(std::size_t i) noexcept {
         return sub(*this, i);
     }
 
     template<bool B = (n_dimensions > 1), cpp::enable_if_u<B> = cpp::detail::dummy>
-    auto operator()(std::size_t i) const {
+    auto operator()(std::size_t i) const noexcept {
         return sub(*this, i);
     }
 
     template<bool B = n_dimensions == 1, cpp::enable_if_u<B> = cpp::detail::dummy>
-    value_type& operator()(std::size_t i){
+    value_type& operator()(std::size_t i) noexcept {
         cpp_assert(i < dim(0), "Out of bounds");
 
         return _data[i];
     }
 
     template<bool B = n_dimensions == 1, cpp::enable_if_u<B> = cpp::detail::dummy>
-    const value_type& operator()(std::size_t i) const {
+    const value_type& operator()(std::size_t i) const noexcept {
         cpp_assert(i < dim(0), "Out of bounds");
 
         return _data[i];
     }
 
     template<bool B = n_dimensions == 2, cpp::enable_if_u<B> = cpp::detail::dummy>
-    value_type& operator()(std::size_t i, std::size_t j){
+    value_type& operator()(std::size_t i, std::size_t j) noexcept {
         cpp_assert(i < dim(0), "Out of bounds");
         cpp_assert(j < dim(1), "Out of bounds");
 
@@ -354,7 +354,7 @@ public:
     }
 
     template<bool B = n_dimensions == 2, cpp::enable_if_u<B> = cpp::detail::dummy>
-    const value_type& operator()(std::size_t i, std::size_t j) const {
+    const value_type& operator()(std::size_t i, std::size_t j) const noexcept {
         cpp_assert(i < dim(0), "Out of bounds");
         cpp_assert(j < dim(1), "Out of bounds");
 
@@ -362,7 +362,7 @@ public:
     }
 
     template<typename... S, cpp::enable_if_u<(sizeof...(S) > 0)> = cpp::detail::dummy>
-    std::size_t index(S... sizes) const {
+    std::size_t index(S... sizes) const noexcept {
         //Note: Version with sizes moved to a std::array and accessed with
         //standard loop may be faster, but need some stack space (relevant ?)
 
@@ -384,7 +384,7 @@ public:
             (sizeof...(S) == n_dimensions),
             cpp::all_convertible_to<std::size_t, S...>::value
         > = cpp::detail::dummy>
-    const value_type& operator()(S... sizes) const {
+    const value_type& operator()(S... sizes) const noexcept {
         static_assert(sizeof...(S) == n_dimensions, "Invalid number of parameters");
 
         return _data[index(sizes...)];
@@ -395,37 +395,37 @@ public:
             (sizeof...(S) == n_dimensions),
             cpp::all_convertible_to<std::size_t, S...>::value
         > = cpp::detail::dummy>
-    value_type& operator()(S... sizes){
+    value_type& operator()(S... sizes) noexcept {
         static_assert(sizeof...(S) == n_dimensions, "Invalid number of parameters");
 
         return _data[index(sizes...)];
     }
 
-    const value_type& operator[](std::size_t i) const {
+    const value_type& operator[](std::size_t i) const noexcept {
         cpp_assert(i < size(), "Out of bounds");
 
         return _data[i];
     }
 
-    value_type& operator[](std::size_t i){
+    value_type& operator[](std::size_t i) noexcept {
         cpp_assert(i < size(), "Out of bounds");
 
         return _data[i];
     }
 
-    const_iterator begin() const {
+    const_iterator begin() const noexcept(noexcept(_data.begin())) {
         return _data.begin();
     }
 
-    const_iterator end() const {
+    const_iterator end() const noexcept(noexcept(_data.end())) {
         return _data.end();
     }
 
-    iterator begin(){
+    iterator begin() noexcept(noexcept(_data.begin())) {
         return _data.begin();
     }
 
-    iterator end(){
+    iterator end() noexcept(noexcept(_data.end())) {
         return _data.end();
     }
 

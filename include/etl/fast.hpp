@@ -68,6 +68,7 @@ struct fast_matrix_impl final {
 public:
     static constexpr const std::size_t n_dimensions = sizeof...(Dims);
     static constexpr const std::size_t etl_size = mul_all<Dims...>::value;
+    static constexpr const bool array_impl = !matrix_detail::is_vector<ST>::value;
 
     using       value_type = T;
     using     storage_impl = ST;
@@ -103,11 +104,11 @@ public:
     }
 
     template<typename S = ST, cpp::disable_if_c<matrix_detail::is_vector<S>> = cpp::detail::dummy>
-    void init(){
+    void init() noexcept {
         //Nothing to init
     }
 
-    fast_matrix_impl(){
+    fast_matrix_impl() noexcept(array_impl) {
         init();
     }
 
@@ -125,13 +126,18 @@ public:
         std::copy(l.begin(), l.end(), begin());
     }
 
-    explicit fast_matrix_impl(const fast_matrix_impl& rhs){
+    fast_matrix_impl(const fast_matrix_impl& rhs) noexcept(array_impl) {
         init();
         std::copy(rhs.begin(), rhs.end(), begin());
     }
 
-    fast_matrix_impl(fast_matrix_impl&& rhs){
-        init();
+    template<typename S = ST, cpp::enable_if_c<matrix_detail::is_vector<S>> = cpp::detail::dummy>
+    fast_matrix_impl(fast_matrix_impl&& rhs) noexcept {
+        _data = std::move(rhs._data);
+    }
+
+    template<typename S = ST, cpp::disable_if_c<matrix_detail::is_vector<S>> = cpp::detail::dummy>
+    explicit fast_matrix_impl(fast_matrix_impl&& rhs) noexcept {
         std::copy(rhs.begin(), rhs.end(), begin());
     }
 
@@ -170,7 +176,7 @@ public:
 
     //Copy assignment operator
 
-    fast_matrix_impl& operator=(const fast_matrix_impl& rhs){
+    fast_matrix_impl& operator=(const fast_matrix_impl& rhs) noexcept {
         std::copy(rhs.begin(), rhs.end(), begin());
 
         return *this;
@@ -179,7 +185,7 @@ public:
     //Allow copy from other containers
 
     template<typename Container, cpp::enable_if_c<std::is_convertible<typename Container::value_type, value_type>> = cpp::detail::dummy>
-    fast_matrix_impl& operator=(const Container& vec){
+    fast_matrix_impl& operator=(const Container& vec) noexcept {
         std::copy(vec.begin(), vec.end(), begin());
 
         return *this;
@@ -209,7 +215,7 @@ public:
 
     //Set the same value to each element of the matrix
     template<typename VT, cpp::enable_if_one_c<std::is_convertible<VT, value_type>, std::is_assignable<T&, VT>> = cpp::detail::dummy>
-    fast_matrix_impl& operator=(const VT& value){
+    fast_matrix_impl& operator=(const VT& value) noexcept {
         std::fill(_data.begin(), _data.end(), value);
 
         return *this;
@@ -248,36 +254,36 @@ public:
     //TODO Would probably be useful to have dim(std::size_t i)
 
     template<bool B = (n_dimensions > 1), cpp::enable_if_u<B> = cpp::detail::dummy>
-    auto operator()(std::size_t i){
+    auto operator()(std::size_t i) noexcept {
         return sub(*this, i);
     }
 
     template<bool B = (n_dimensions > 1), cpp::enable_if_u<B> = cpp::detail::dummy>
-    auto operator()(std::size_t i) const {
+    auto operator()(std::size_t i) const noexcept {
         return sub(*this, i);
     }
 
     template<typename... S>
-    std::enable_if_t<sizeof...(S) == sizeof...(Dims), value_type&> operator()(S... args){
+    std::enable_if_t<sizeof...(S) == sizeof...(Dims), value_type&> operator()(S... args) noexcept {
         static_assert(cpp::all_convertible_to<std::size_t, S...>::value, "Invalid size types");
 
         return access(static_cast<std::size_t>(args)...);
     }
 
     template<typename... S>
-    std::enable_if_t<sizeof...(S) == sizeof...(Dims), const value_type&> operator()(S... args) const {
+    std::enable_if_t<sizeof...(S) == sizeof...(Dims), const value_type&> operator()(S... args) const noexcept {
         static_assert(cpp::all_convertible_to<std::size_t, S...>::value, "Invalid size types");
 
         return access(static_cast<std::size_t>(args)...);
     }
 
-    const value_type& operator[](std::size_t i) const {
+    const value_type& operator[](std::size_t i) const noexcept {
         cpp_assert(i < size(), "Out of bounds");
 
         return _data[i];
     }
 
-    value_type& operator[](std::size_t i){
+    value_type& operator[](std::size_t i) noexcept {
         cpp_assert(i < size(), "Out of bounds");
 
         return _data[i];
