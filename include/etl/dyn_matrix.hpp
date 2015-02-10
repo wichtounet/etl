@@ -209,7 +209,7 @@ public:
         cpp::not_c<is_etl_expr<Container>>,
         std::is_convertible<typename Container::value_type, value_type>
     > = cpp::detail::dummy>
-    dyn_matrix(const Container& vec) : _size(vec.size()), _data(_size) {
+    dyn_matrix(const Container& vec) : _size(vec.size()), _data(_size), _dimensions{{_size}} {
         static_assert(D == 1, "Only 1D matrix can be constructed from containers");
 
         for(std::size_t i = 0; i < size(); ++i){
