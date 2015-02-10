@@ -226,6 +226,11 @@ public:
 
     //}}}
 
+    void swap(fast_matrix_impl& other){
+        using std::swap;
+        swap(_data, other._data);
+    }
+
     //{{{ Accessors
 
     static constexpr std::size_t size() noexcept {
@@ -315,6 +320,11 @@ public:
 
     //}}}
 };
+
+template<typename T, typename ST, std::size_t... Dims>
+void swap(fast_matrix_impl<T, ST, Dims...>& lhs, fast_matrix_impl<T, ST, Dims...>& rhs){
+    lhs.swap(rhs);
+}
 
 } //end of namespace etl
 
