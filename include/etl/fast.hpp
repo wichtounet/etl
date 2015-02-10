@@ -289,20 +289,28 @@ public:
         return _data[i];
     }
 
-    const_iterator begin() const noexcept {
+    iterator begin() noexcept(noexcept(_data.begin())) {
         return _data.begin();
     }
 
-    const_iterator end() const noexcept {
+    iterator end() noexcept(noexcept(_data.end())) {
         return _data.end();
     }
 
-    iterator begin() noexcept {
-        return _data.begin();
+    const_iterator begin() const noexcept(noexcept(_data.cbegin())) {
+        return _data.cbegin();
     }
 
-    iterator end() noexcept {
-        return _data.end();
+    const_iterator end() const noexcept(noexcept(_data.end())) {
+        return _data.cend();
+    }
+
+    const_iterator cbegin() const noexcept(noexcept(_data.cbegin())) {
+        return _data.cbegin();
+    }
+
+    const_iterator cend() const noexcept(noexcept(_data.end())) {
+        return _data.cend();
     }
 
     //}}}
