@@ -109,7 +109,7 @@ public:
     dyn_matrix(std::initializer_list<value_type> list) :
             _size(list.size()),
             _data(list),
-            _dimensions({{list.size()}}) {
+            _dimensions{{list.size()}} {
         static_assert(n_dimensions == 1, "This constructor can only be used for 1D matrix");
         //Nothing to init
     }
@@ -195,7 +195,7 @@ public:
         std::is_convertible<typename E::value_type, value_type>,
         is_copy_expr<E>
     > = cpp::detail::dummy>
-    dyn_matrix(const E& e) :_size(etl::size(e)), _data(_size){
+    dyn_matrix(const E& e) :_size(etl::size(e)), _data(_size) {
         for(std::size_t d = 0; d < etl::dimensions(e); ++d){
             _dimensions[d] = etl::dim(e, d);
         }
