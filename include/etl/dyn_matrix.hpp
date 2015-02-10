@@ -292,8 +292,9 @@ public:
     void swap(dyn_matrix& other){
         cpp_assert(other.size() == size(), "Cannot swap from a dyn_matrix of different size");
 
-        std::swap(_data, other._data);
-        std::swap(_dimensions, other._dimensions);
+        using std::swap;
+        swap(_data, other._data);
+        swap(_dimensions, other._dimensions);
     }
 
     //{{{ Accessors
