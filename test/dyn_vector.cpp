@@ -546,3 +546,19 @@ TEST_CASE( "dyn_vector/complex_content_2", "vector<dyn_vector<dyn_matrix>>>" ) {
 }
 
 //}}} Complex content
+
+TEST_CASE( "dyn_vector/swap_1", "dyn_vector::swap" ) {
+    etl::dyn_vector<double> a = {-1.0, 2.0, 5.0};
+    etl::dyn_vector<double> b = {2.5, 3.0, 4.0};
+
+    using std::swap;
+    swap(a, b);
+
+    REQUIRE(a[0] == 2.5);
+    REQUIRE(a[1] == 3.0);
+    REQUIRE(a[2] == 4.0);
+
+    REQUIRE(b[0] == -1.0);
+    REQUIRE(b[1] == 2.0);
+    REQUIRE(b[2] == 5.0);
+}

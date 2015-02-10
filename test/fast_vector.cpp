@@ -607,3 +607,19 @@ TEST_CASE( "fast_vector/complex_3", "fast_vector::complex" ) {
 }
 
 //}}} Complex tests
+
+TEST_CASE( "fast_vector/swap_1", "fast_vector::swap" ) {
+    etl::fast_vector<double, 3> a = {-1.0, 2.0, 5.0};
+    etl::fast_vector<double, 3> b = {2.5, 3.0, 4.0};
+
+    using std::swap;
+    swap(a, b);
+
+    REQUIRE(a[0] == 2.5);
+    REQUIRE(a[1] == 3.0);
+    REQUIRE(a[2] == 4.0);
+
+    REQUIRE(b[0] == -1.0);
+    REQUIRE(b[1] == 2.0);
+    REQUIRE(b[2] == 5.0);
+}
