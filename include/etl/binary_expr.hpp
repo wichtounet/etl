@@ -83,12 +83,12 @@ public:
         return BinaryOp::apply(lhs()(args...), rhs()(args...));
     }
 
-    template<bool B = (sub_size_compare<this_type>::value > 1), cpp_enable_if(B)>
+    template<cpp_enable_if_cst(sub_size_compare<this_type>::value > 1)>
     auto operator()(std::size_t i){
         return sub(*this, i);
     }
 
-    template<bool B = (sub_size_compare<this_type>::value > 1), cpp_enable_if(B)>
+    template<cpp_enable_if_cst(sub_size_compare<this_type>::value > 1)>
     auto operator()(std::size_t i) const {
         return sub(*this, i);
     }
