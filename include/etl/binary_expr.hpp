@@ -76,19 +76,19 @@ public:
         return BinaryOp::apply(lhs()[i], rhs()[i]);
     }
 
-    template<typename... S>
-    std::enable_if_t<sizeof...(S) == sub_size_compare<this_type>::value, value_type> operator()(S... args) const {
+    template<typename... S, cpp_enable_if(sizeof...(S) == sub_size_compare<this_type>::value)>
+    value_type operator()(S... args) const {
         static_assert(cpp::all_convertible_to<std::size_t, S...>::value, "Invalid size types");
 
         return BinaryOp::apply(lhs()(args...), rhs()(args...));
     }
 
-    template<bool B = (sub_size_compare<this_type>::value > 1), cpp::enable_if_u<B> = cpp::detail::dummy>
+    template<bool B = (sub_size_compare<this_type>::value > 1), cpp_enable_if(B)>
     auto operator()(std::size_t i){
         return sub(*this, i);
     }
 
-    template<bool B = (sub_size_compare<this_type>::value > 1), cpp::enable_if_u<B> = cpp::detail::dummy>
+    template<bool B = (sub_size_compare<this_type>::value > 1), cpp_enable_if(B)>
     auto operator()(std::size_t i) const {
         return sub(*this, i);
     }
