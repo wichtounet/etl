@@ -5,7 +5,7 @@ default: release
 include make-utils/flags.mk
 include make-utils/cpp-utils.mk
 
-CXX_FLAGS += -ICatch/include -Werror
+CXX_FLAGS += -Ilib/include -ICatch/include -Werror
 
 ifneq (,$(findstring clang,$(CXX)))
 CXX_FLAGS += -stdlib=libc++
