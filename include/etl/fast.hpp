@@ -256,6 +256,10 @@ public:
         return nth_size<D, 0, Dims...>::value;
     }
 
+    bool is_finite() const noexcept(noexcept(this->begin())) {
+        return std::find_if(begin(), end(), [](auto& v){return !std::isfinite(v);}) == _data.end();
+    }
+
     //TODO Would probably be useful to have dim(std::size_t i)
 
     template<bool B = (n_dimensions > 1), cpp::enable_if_u<B> = cpp::detail::dummy>

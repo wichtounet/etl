@@ -615,3 +615,25 @@ TEST_CASE( "dyn_matrix/max_reduc", "max" ) {
 }
 
 //}}} Reductions
+
+//{{{ is_finite tests
+
+TEST_CASE( "dyn_matrix/is_finite_1", "dyn_matrix::is_finite" ) {
+    etl::dyn_matrix<double> a(2,2, std::initializer_list<double>({-1.0, 2.0, 5.0, 1.0}));
+
+    REQUIRE(a.is_finite());
+}
+
+TEST_CASE( "dyn_matrix/is_finite_2", "dyn_matrix::is_finite" ) {
+    etl::dyn_matrix<double> a(2,2, std::initializer_list<double>({-1.0, NAN, 5.0, 1.0}));
+
+    REQUIRE(a.is_finite() == false);
+}
+
+TEST_CASE( "dyn_matrix/is_finite_3", "dyn_matrix::is_finite" ) {
+    etl::dyn_matrix<double> a(2,2, std::initializer_list<double>({-1.0, 1.0, INFINITY, 1.0}));
+
+    REQUIRE(a.is_finite() == false);
+}
+
+//}}} is_finite tests

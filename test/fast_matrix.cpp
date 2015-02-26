@@ -4,6 +4,8 @@
 //  http://opensource.org/licenses/MIT)
 //=======================================================================
 
+#include <cmath>
+
 #include "catch.hpp"
 
 #include "etl/etl.hpp"
@@ -667,3 +669,25 @@ TEST_CASE( "fast_matrix/complex_4", "fast_matrix::complex" ) {
 }
 
 //}}} Complex tests
+
+//{{{ is_finite tests
+
+TEST_CASE( "fast_matrix/is_finite_1", "fast_matrix::is_finite" ) {
+    etl::fast_matrix<double, 2, 2> a = {-1.0, 2.0, 5.0, 1.0};
+
+    REQUIRE(a.is_finite());
+}
+
+TEST_CASE( "fast_matrix/is_finite_2", "fast_matrix::is_finite" ) {
+    etl::fast_matrix<double, 2, 2> a = {-1.0, NAN, 5.0, 1.0};
+
+    REQUIRE(a.is_finite() == false);
+}
+
+TEST_CASE( "fast_matrix/is_finite_3", "fast_matrix::is_finite" ) {
+    etl::fast_matrix<double, 2, 2> a = {-1.0, 1.0, INFINITY, 1.0};
+
+    REQUIRE(a.is_finite() == false);
+}
+
+//}}} is_finite tests
