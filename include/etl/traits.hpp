@@ -843,6 +843,14 @@ struct sub_size_compare<E, std::enable_if_t<etl_traits<E>::is_generator>> : std:
 template<typename E>
 struct sub_size_compare<E, cpp::disable_if_t<etl_traits<E>::is_generator>> : std::integral_constant<std::size_t, etl_traits<E>::dimensions()> {};
 
+template<typename E>
+bool is_finite(const E& expr){
+    using std::begin;
+    using std::end;
+
+    return std::find_if(begin(expr), end(expr), [](auto& v){return !std::isfinite(v);}) == end(expr);
+}
+
 } //end of namespace etl
 
 #endif

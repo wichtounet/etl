@@ -636,4 +636,22 @@ TEST_CASE( "dyn_matrix/is_finite_3", "dyn_matrix::is_finite" ) {
     REQUIRE(a.is_finite() == false);
 }
 
+TEST_CASE( "dyn_matrix/is_finite_4", "dyn_matrix::is_finite" ) {
+    etl::dyn_matrix<double> a(2,2, std::initializer_list<double>({-1.0, 2.0, 5.0, 1.0}));
+
+    REQUIRE(etl::is_finite(a));
+}
+
+TEST_CASE( "dyn_matrix/is_finite_5", "dyn_matrix::is_finite" ) {
+    etl::dyn_matrix<double> a(2,2, std::initializer_list<double>({-1.0, NAN, 5.0, 1.0}));
+
+    REQUIRE(etl::is_finite(a) == false);
+}
+
+TEST_CASE( "dyn_matrix/is_finite_6", "dyn_matrix::is_finite" ) {
+    etl::dyn_matrix<double> a(2,2, std::initializer_list<double>({-1.0, 1.0, INFINITY, 1.0}));
+
+    REQUIRE(etl::is_finite(a) == false);
+}
+
 //}}} is_finite tests

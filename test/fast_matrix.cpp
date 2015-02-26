@@ -690,4 +690,22 @@ TEST_CASE( "fast_matrix/is_finite_3", "fast_matrix::is_finite" ) {
     REQUIRE(a.is_finite() == false);
 }
 
+TEST_CASE( "fast_matrix/is_finite_4", "fast_matrix::is_finite" ) {
+    etl::fast_matrix<double, 2, 2> a = {-1.0, 2.0, 5.0, 1.0};
+
+    REQUIRE(etl::is_finite(a));
+}
+
+TEST_CASE( "fast_matrix/is_finite_5", "fast_matrix::is_finite" ) {
+    etl::fast_matrix<double, 2, 2> a = {-1.0, NAN, 5.0, 1.0};
+
+    REQUIRE(etl::is_finite(a) == false);
+}
+
+TEST_CASE( "fast_matrix/is_finite_6", "fast_matrix::is_finite" ) {
+    etl::fast_matrix<double, 2, 2> a = {-1.0, 1.0, INFINITY, 1.0};
+
+    REQUIRE(etl::is_finite(a) == false);
+}
+
 //}}} is_finite tests
