@@ -323,7 +323,7 @@ public:
     }
 
     bool is_finite() const noexcept(noexcept(this->begin())) {
-        return std::find_if(begin(), end(), [](auto& v){return !std::isfinite(v);}) == _data.end();
+        return std::find_if(begin(), end(), [](auto& v){return !std::isfinite(v);}) == end();
     }
 
     template<bool B = (n_dimensions > 1), cpp::enable_if_u<B> = cpp::detail::dummy>

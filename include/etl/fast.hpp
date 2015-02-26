@@ -257,7 +257,7 @@ public:
     }
 
     bool is_finite() const noexcept(noexcept(this->begin())) {
-        return std::find_if(begin(), end(), [](auto& v){return !std::isfinite(v);}) == _data.end();
+        return std::find_if(begin(), end(), [](auto& v){return !std::isfinite(v);}) == end();
     }
 
     //TODO Would probably be useful to have dim(std::size_t i)
