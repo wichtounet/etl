@@ -10,16 +10,18 @@
 
 #include<string>
 
+#include "cpp_utils/tmp.hpp"
+
 #include "traits.hpp"
 
 namespace etl {
 
-template<typename T, cpp::enable_if_u<etl_traits<T>::is_value> = cpp::detail::dummy>
+template<typename T, cpp_enable_if(is_etl_expr<T>::value)>
 std::ostream& operator<<(std::ostream& stream, const T& v){
     return stream << to_string(v);
 }
 
-template<typename T, cpp::enable_if_u<(etl_traits<T>::dimensions() > 1)> = cpp::detail::dummy>
+template<typename T, cpp_enable_if((etl_traits<T>::dimensions() > 1))>
 std::string to_string(const T& m){
     std::string v = "[";
     for(std::size_t i = 0; i < etl::dim<0>(m); ++i){
@@ -33,12 +35,12 @@ std::string to_string(const T& m){
     return v;
 }
 
-template<typename T, cpp::enable_if_u<etl_traits<T>::dimensions() == 1> = cpp::detail::dummy>
+template<typename T, cpp_enable_if(etl_traits<T>::dimensions() == 1)>
 std::string to_string(const T& m){
     return to_octave(m);
 }
 
-template<bool Sub = false, typename T, cpp::enable_if_u<(etl_traits<T>::dimensions() > 1)> = cpp::detail::dummy>
+template<bool Sub = false, typename T, cpp_enable_if((etl_traits<T>::dimensions() > 1))>
 std::string to_octave(const T& m){
     std::string v;
     if(!Sub){
@@ -60,7 +62,7 @@ std::string to_octave(const T& m){
     return v;
 }
 
-template<bool Sub = false, typename T, cpp::enable_if_u<etl_traits<T>::dimensions() == 1> = cpp::detail::dummy>
+template<bool Sub = false, typename T, cpp_enable_if(etl_traits<T>::dimensions() == 1)>
 std::string to_octave(const T& m){
     std::string v;
     if(!Sub){
