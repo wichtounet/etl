@@ -32,18 +32,20 @@ $(eval $(call add_executable_set,etl_test,etl_test))
 test_asm: release/bin/test_asm_1 release/bin/test_asm_2
 
 release: release_etl_test release/bin/benchmark
+release_debug: release_debug_etl_test release_debug/bin/benchmark
 debug: debug_etl_test debug/bin/benchmark
 
-all: release debug
+all: release release_debug debug
 
 debug_test: debug
 	./debug/bin/etl_test
 
-release_test: release
-	./release/bin/etl_test
+release_debug_test: release_debug
+	./release_debug/bin/etl_test
 
 test: all
 	./debug/bin/etl_test
+	./release_debug/bin/etl_test
 	./release/bin/etl_test
 
 benchmark: release/bin/benchmark
@@ -52,13 +54,7 @@ benchmark: release/bin/benchmark
 cppcheck:
 	cppcheck -I include/ --platform=unix64 --suppress=missingIncludeSystem --enable=all --std=c++11 workbench/*.cpp include/etl/*.hpp
 
-v:
-	@ echo $(CPP_FILES)
-	@ echo $(TEST_FILES)
-
-clean:
-	rm -rf release/
-	rm -rf debug/
+clean: base_clean
 
 -include $(DEBUG_D_FILES)
 -include $(RELEASE_D_FILES)
