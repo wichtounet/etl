@@ -8,6 +8,8 @@
 #ifndef ETL_BINARY_EXPR_HPP
 #define ETL_BINARY_EXPR_HPP
 
+#include <ostream>
+
 #include "traits_fwd.hpp"
 #include "iterator.hpp"
 
@@ -101,6 +103,11 @@ public:
         return {*this, size(*this)};
     }
 };
+
+template <typename T, typename LeftExpr, typename BinaryOp, typename RightExpr>
+std::ostream& operator<<(std::ostream& os, const binary_expr<T, LeftExpr, BinaryOp, RightExpr>& expr){
+    return os << "(" << expr.lhs() << ' ' << BinaryOp::desc() << ' ' << expr.rhs() << ")";
+}
 
 } //end of namespace etl
 

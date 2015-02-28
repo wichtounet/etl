@@ -23,12 +23,20 @@ struct abs_unary_op {
     static constexpr T apply(const T& x) noexcept {
         return std::abs(x);
     }
+
+    static std::string desc() noexcept {
+        return "abs";
+    }
 };
 
 template<typename T>
 struct log_unary_op {
     static constexpr T apply(const T& x){
         return std::log(x);
+    }
+
+    static std::string desc() noexcept {
+        return "log";
     }
 };
 
@@ -37,12 +45,20 @@ struct sqrt_unary_op {
     static constexpr T apply(const T& x){
         return std::sqrt(x);
     }
+
+    static std::string desc() noexcept {
+        return "sqrt";
+    }
 };
 
 template<typename T>
 struct exp_unary_op {
     static constexpr T apply(const T& x){
         return std::exp(x);
+    }
+
+    static std::string desc() noexcept {
+        return "exp";
     }
 };
 
@@ -51,12 +67,20 @@ struct sign_unary_op {
     static constexpr T apply(const T& x) noexcept {
         return sign(x);
     }
+
+    static std::string desc() noexcept {
+        return "sign";
+    }
 };
 
 template<typename T>
 struct sigmoid_unary_op {
     static constexpr T apply(const T& x){
         return logistic_sigmoid(x);
+    }
+
+    static std::string desc() noexcept {
+        return "sigmoid";
     }
 };
 
@@ -65,6 +89,10 @@ struct softplus_unary_op {
     static constexpr T apply(const T& x){
         return softplus(x);
     }
+
+    static std::string desc() noexcept {
+        return "softplus";
+    }
 };
 
 template<typename T>
@@ -72,12 +100,20 @@ struct minus_unary_op {
     static constexpr T apply(const T& x) noexcept {
         return -x;
     }
+
+    static std::string desc() noexcept {
+        return "-";
+    }
 };
 
 template<typename T>
 struct plus_unary_op {
     static constexpr T apply(const T& x) noexcept {
         return +x;
+    }
+
+    static std::string desc() noexcept {
+        return "+";
     }
 };
 
@@ -90,6 +126,10 @@ struct bernoulli_unary_op {
 
         return x > generator() ? 1.0 : 0.0;
     }
+
+    static std::string desc() noexcept {
+        return "bernoulli";
+    }
 };
 
 template<typename T>
@@ -100,6 +140,10 @@ struct reverse_bernoulli_unary_op {
         static auto generator = std::bind(distribution, rand_engine);
 
         return x > generator() ? 0.0 : 1.0;
+    }
+
+    static std::string desc() noexcept {
+        return "bernoulli_reverse";
     }
 };
 
@@ -112,6 +156,10 @@ struct uniform_noise_unary_op {
 
         return x + noise();
     }
+
+    static std::string desc() noexcept {
+        return "uniform_noise";
+    }
 };
 
 template<typename T>
@@ -122,6 +170,10 @@ struct normal_noise_unary_op {
         static auto noise = std::bind(normal_distribution, rand_engine);
 
         return x + noise();
+    }
+
+    static std::string desc() noexcept {
+        return "normal_noise";
     }
 };
 
@@ -134,6 +186,10 @@ struct logistic_noise_unary_op {
         auto noise = std::bind(noise_distribution, rand_engine);
 
         return x + noise();
+    }
+
+    static std::string desc() noexcept {
+        return "logistic_noise";
     }
 };
 

@@ -23,12 +23,20 @@ struct plus_binary_op {
     static constexpr T apply(const T& lhs, const T& rhs) noexcept {
         return lhs + rhs;
     }
+
+    static std::string desc() noexcept {
+        return "+";
+    }
 };
 
 template<typename T>
 struct minus_binary_op {
     static constexpr T apply(const T& lhs, const T& rhs) noexcept {
         return lhs - rhs;
+    }
+
+    static std::string desc() noexcept {
+        return "-";
     }
 };
 
@@ -37,6 +45,10 @@ struct mul_binary_op {
     static constexpr T apply(const T& lhs, const T& rhs) noexcept {
         return lhs * rhs;
     }
+
+    static std::string desc() noexcept {
+        return "*";
+    }
 };
 
 template<typename T>
@@ -44,12 +56,20 @@ struct div_binary_op {
     static constexpr T apply(const T& lhs, const T& rhs) noexcept {
         return lhs / rhs;
     }
+
+    static std::string desc() noexcept {
+        return "/";
+    }
 };
 
 template<typename T>
 struct mod_binary_op {
     static constexpr T apply(const T& lhs, const T& rhs) noexcept {
         return lhs % rhs;
+    }
+
+    static std::string desc() noexcept {
+        return "%";
     }
 };
 
@@ -66,12 +86,20 @@ struct ranged_noise_binary_op {
             return x + noise();
         }
     }
+
+    static std::string desc() noexcept {
+        return " ranger_noise ";
+    }
 };
 
 template<typename T, typename E>
 struct max_binary_op {
     static constexpr T apply(const T& x, E value) noexcept {
         return std::max(x, value);
+    }
+
+    static std::string desc() noexcept {
+        return " max ";
     }
 };
 
@@ -80,6 +108,10 @@ struct min_binary_op {
     static constexpr T apply(const T& x, E value) noexcept {
         return std::min(x, value);
     }
+
+    static std::string desc() noexcept {
+        return " min ";
+    }
 };
 
 template<typename T, typename E>
@@ -87,12 +119,20 @@ struct pow_binary_op {
     static constexpr T apply(const T& x, E value) noexcept {
         return std::pow(x, value);
     }
+
+    static std::string desc() noexcept {
+        return " pow ";
+    }
 };
 
 template<typename T, typename E>
 struct one_if_binary_op {
     static constexpr T apply(const T& x, E value) noexcept {
         return 1.0 ? x == value : 0.0;
+    }
+
+    static std::string desc() noexcept {
+        return " one_if ";
     }
 };
 
