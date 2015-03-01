@@ -106,7 +106,11 @@ public:
 
 template <typename T, typename LeftExpr, typename BinaryOp, typename RightExpr>
 std::ostream& operator<<(std::ostream& os, const binary_expr<T, LeftExpr, BinaryOp, RightExpr>& expr){
-    return os << "(" << expr.lhs() << ' ' << BinaryOp::desc() << ' ' << expr.rhs() << ")";
+    if(simple_operator<BinaryOp>::value){
+        return os << "(" << expr.lhs() << ' ' << BinaryOp::desc() << ' ' << expr.rhs() << ")";
+    } else {
+        return os << BinaryOp::desc() << "(" << expr.lhs() << ", " << expr.rhs() << ")";
+    }
 }
 
 } //end of namespace etl

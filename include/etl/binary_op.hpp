@@ -19,6 +19,9 @@ namespace etl {
 using random_engine = std::mt19937_64;
 
 template<typename T>
+struct simple_operator : std::true_type {};
+
+template<typename T>
 struct plus_binary_op {
     static constexpr T apply(const T& lhs, const T& rhs) noexcept {
         return lhs + rhs;
@@ -88,7 +91,7 @@ struct ranged_noise_binary_op {
     }
 
     static std::string desc() noexcept {
-        return " ranger_noise ";
+        return "ranged_noise";
     }
 };
 
@@ -99,7 +102,7 @@ struct max_binary_op {
     }
 
     static std::string desc() noexcept {
-        return " max ";
+        return "max";
     }
 };
 
@@ -110,7 +113,7 @@ struct min_binary_op {
     }
 
     static std::string desc() noexcept {
-        return " min ";
+        return "min";
     }
 };
 
@@ -121,7 +124,7 @@ struct pow_binary_op {
     }
 
     static std::string desc() noexcept {
-        return " pow ";
+        return "pow";
     }
 };
 
@@ -132,9 +135,25 @@ struct one_if_binary_op {
     }
 
     static std::string desc() noexcept {
-        return " one_if ";
+        return "one_if";
     }
 };
+
+template<typename T, typename E>
+struct simple_operator<ranged_noise_binary_op<T, E>> : std::false_type {};
+
+template<typename T, typename E>
+struct simple_operator<max_binary_op<T, E>> : std::false_type {};
+
+template<typename T, typename E>
+struct simple_operator<min_binary_op<T, E>> : std::false_type {};
+
+template<typename T, typename E>
+struct simple_operator<pow_binary_op<T, E>> : std::false_type {};
+
+template<typename T, typename E>
+struct simple_operator<one_if_binary_op<T, E>> : std::false_type {};
+
 
 } //end of namespace etl
 
