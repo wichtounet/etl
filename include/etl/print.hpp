@@ -16,11 +16,6 @@
 
 namespace etl {
 
-template<typename T, cpp_enable_if(is_etl_expr<T>::value)>
-std::ostream& operator<<(std::ostream& stream, const T& v){
-    return stream << to_string(v);
-}
-
 template<typename T, cpp_enable_if((etl_traits<T>::dimensions() > 1))>
 std::string to_string(const T& m){
     std::string v = "[";

@@ -19,9 +19,16 @@ namespace etl {
 using random_engine = std::mt19937_64;
 
 template<typename T>
+struct simple_operator : std::true_type {};
+
+template<typename T>
 struct plus_binary_op {
     static constexpr T apply(const T& lhs, const T& rhs) noexcept {
         return lhs + rhs;
+    }
+
+    static std::string desc() noexcept {
+        return "+";
     }
 };
 
@@ -30,12 +37,20 @@ struct minus_binary_op {
     static constexpr T apply(const T& lhs, const T& rhs) noexcept {
         return lhs - rhs;
     }
+
+    static std::string desc() noexcept {
+        return "-";
+    }
 };
 
 template<typename T>
 struct mul_binary_op {
     static constexpr T apply(const T& lhs, const T& rhs) noexcept {
         return lhs * rhs;
+    }
+
+    static std::string desc() noexcept {
+        return "*";
     }
 };
 
@@ -44,12 +59,20 @@ struct div_binary_op {
     static constexpr T apply(const T& lhs, const T& rhs) noexcept {
         return lhs / rhs;
     }
+
+    static std::string desc() noexcept {
+        return "/";
+    }
 };
 
 template<typename T>
 struct mod_binary_op {
     static constexpr T apply(const T& lhs, const T& rhs) noexcept {
         return lhs % rhs;
+    }
+
+    static std::string desc() noexcept {
+        return "%";
     }
 };
 
@@ -66,12 +89,20 @@ struct ranged_noise_binary_op {
             return x + noise();
         }
     }
+
+    static std::string desc() noexcept {
+        return "ranged_noise";
+    }
 };
 
 template<typename T, typename E>
 struct max_binary_op {
     static constexpr T apply(const T& x, E value) noexcept {
         return std::max(x, value);
+    }
+
+    static std::string desc() noexcept {
+        return "max";
     }
 };
 
@@ -80,12 +111,20 @@ struct min_binary_op {
     static constexpr T apply(const T& x, E value) noexcept {
         return std::min(x, value);
     }
+
+    static std::string desc() noexcept {
+        return "min";
+    }
 };
 
 template<typename T, typename E>
 struct pow_binary_op {
     static constexpr T apply(const T& x, E value) noexcept {
         return std::pow(x, value);
+    }
+
+    static std::string desc() noexcept {
+        return "pow";
     }
 };
 
@@ -94,7 +133,27 @@ struct one_if_binary_op {
     static constexpr T apply(const T& x, E value) noexcept {
         return 1.0 ? x == value : 0.0;
     }
+
+    static std::string desc() noexcept {
+        return "one_if";
+    }
 };
+
+template<typename T, typename E>
+struct simple_operator<ranged_noise_binary_op<T, E>> : std::false_type {};
+
+template<typename T, typename E>
+struct simple_operator<max_binary_op<T, E>> : std::false_type {};
+
+template<typename T, typename E>
+struct simple_operator<min_binary_op<T, E>> : std::false_type {};
+
+template<typename T, typename E>
+struct simple_operator<pow_binary_op<T, E>> : std::false_type {};
+
+template<typename T, typename E>
+struct simple_operator<one_if_binary_op<T, E>> : std::false_type {};
+
 
 } //end of namespace etl
 

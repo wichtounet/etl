@@ -331,6 +331,15 @@ void swap(fast_matrix_impl<T, ST, Dims...>& lhs, fast_matrix_impl<T, ST, Dims...
     lhs.swap(rhs);
 }
 
+template<typename T, typename ST, std::size_t... Dims>
+std::ostream& operator<<(std::ostream& os, const fast_matrix_impl<T, ST, Dims...>& ){
+    if(sizeof...(Dims) == 1){
+        return os << "V[" << concat_sizes(Dims...) << "]";
+    } else {
+        return os << "M[" << concat_sizes(Dims...) << "]";
+    }
+}
+
 } //end of namespace etl
 
 #endif

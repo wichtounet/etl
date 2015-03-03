@@ -31,6 +31,19 @@ struct nth_size final {
 };
 
 
+template<typename... Dims>
+std::string concat_sizes(Dims... sizes){
+    std::array<std::size_t, sizeof...(Dims)> tmp{{sizes...}};
+    std::string result;
+    std::string sep;
+    for(auto& v : tmp){
+        result += sep;
+        result += std::to_string(v);
+        sep = ",";
+    }
+    return result;
+}
+
 } //end of namespace etl
 
 #endif

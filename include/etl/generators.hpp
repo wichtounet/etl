@@ -62,6 +62,11 @@ struct sequence_generator_op {
     }
 };
 
+template<typename T>
+std::ostream& operator<<(std::ostream& os, const scalar<T>& s){
+    return os << s.value;
+}
+
 } //end of namespace etl
 
 #endif
