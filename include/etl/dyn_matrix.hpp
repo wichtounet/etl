@@ -16,6 +16,7 @@
 #include "cpp_utils/tmp.hpp"
 
 #include "traits_fwd.hpp"
+#include "compat.hpp"
 
 namespace etl {
 
@@ -322,7 +323,7 @@ public:
         return _dimensions[d];
     }
 
-    bool is_finite() const noexcept(noexcept(this->begin())) {
+    bool is_finite() const noexcept_this(noexcept(this->begin())) {
         return std::find_if(begin(), end(), [](auto& v){return !std::isfinite(v);}) == end();
     }
 

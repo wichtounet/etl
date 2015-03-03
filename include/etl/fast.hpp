@@ -14,6 +14,7 @@
 
 #include "tmp.hpp"
 #include "traits_fwd.hpp"
+#include "compat.hpp"
 
 namespace etl {
 
@@ -256,7 +257,7 @@ public:
         return nth_size<D, 0, Dims...>::value;
     }
 
-    bool is_finite() const noexcept(noexcept(this->begin())) {
+    bool is_finite() const noexcept_this(noexcept(this->begin())) {
         return std::find_if(begin(), end(), [](auto& v){return !std::isfinite(v);}) == end();
     }
 
