@@ -8,15 +8,16 @@
 #ifndef ETL_DYN_MATRIX_HPP
 #define ETL_DYN_MATRIX_HPP
 
-#include <vector> //To store the data
-#include <array>  //To store the dimensions
-#include <tuple>  //For TMP stuff
+#include <vector>       //To store the data
+#include <array>        //To store the dimensions
+#include <tuple>        //For TMP stuff
+#include <algorithm>    //For std::find_if
 
 #include "cpp_utils/assert.hpp"
 #include "cpp_utils/tmp.hpp"
 
-#include "traits_fwd.hpp"
-#include "compat.hpp"
+#include "traits_fwd.hpp"   //forward declaration of the traits
+#include "compat.hpp"       //To make it work with g++
 
 namespace etl {
 

@@ -8,13 +8,13 @@
 #ifndef ETL_FAST_HPP
 #define ETL_FAST_HPP
 
-#include<string>
+#include <algorithm>    //For std::find_if
 
 #include "cpp_utils/assert.hpp"
 
 #include "tmp.hpp"
-#include "traits_fwd.hpp"
-#include "compat.hpp"
+#include "traits_fwd.hpp"   //forward declaration of the traits
+#include "compat.hpp"       //To make it work with g++
 
 namespace etl {
 
