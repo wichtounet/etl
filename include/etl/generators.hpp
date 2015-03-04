@@ -53,9 +53,10 @@ template<typename T = double>
 struct sequence_generator_op {
     using value_type = T;
 
-    value_type current = 0;
+    const value_type start;
+    value_type current;
 
-    sequence_generator_op(value_type start = 0) : current(start) {}
+    sequence_generator_op(value_type start = 0) : start(start), current(start) {}
 
     value_type operator()(){
         return current++;
@@ -65,6 +66,16 @@ struct sequence_generator_op {
 template<typename T>
 std::ostream& operator<<(std::ostream& os, const scalar<T>& s){
     return os << s.value;
+}
+
+template<typename T>
+std::ostream& operator<<(std::ostream& os, const sequence_generator_op<T>& s){
+    return os << "[" << s.start << ",...]";
+}
+
+template<typename T>
+std::ostream& operator<<(std::ostream& os, const normal_generator_op<T>&){
+    return os << "N(0,1)";
 }
 
 } //end of namespace etl

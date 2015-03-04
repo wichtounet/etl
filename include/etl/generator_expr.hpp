@@ -42,7 +42,16 @@ public:
     value_type operator()() const {
         return generator();
     }
+
+    const Generator& get_generator() const {
+        return generator;
+    }
 };
+
+template <typename Generator>
+std::ostream& operator<<(std::ostream& os, const generator_expr<Generator>& expr){
+    return os << expr.get_generator();
+}
 
 } //end of namespace etl
 
