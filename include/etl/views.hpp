@@ -190,6 +190,26 @@ struct dyn_matrix_view {
     }
 };
 
+template<typename T, std::size_t D>
+std::ostream& operator<<(std::ostream& os, const dim_view<T, D>& v){
+    return os << "dim[" << D << "](" << v.sub << ", " << v.i << ")";
+}
+
+template<typename T>
+std::ostream& operator<<(std::ostream& os, const sub_view<T>& v){
+    return os << "sub(" << v.parent << ", " << v.i << ")";
+}
+
+template<typename T, std::size_t Rows, std::size_t Columns>
+std::ostream& operator<<(std::ostream& os, const fast_matrix_view<T, Rows, Columns>& v){
+    return os << "reshape[" << Rows << "," << Columns << "](" << v.sub << ")";
+}
+
+template<typename T>
+std::ostream& operator<<(std::ostream& os, const dyn_matrix_view<T>& v){
+    return os << "reshape[" << v.rows << "," << v.columns << "](" << v.sub << ")";
+}
+
 } //end of namespace etl
 
 #endif
