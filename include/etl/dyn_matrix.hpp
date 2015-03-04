@@ -452,6 +452,21 @@ void swap(dyn_matrix<T, D>& lhs, dyn_matrix<T, D>& rhs){
     lhs.swap(rhs);
 }
 
+template<typename T, std::size_t D>
+std::ostream& operator<<(std::ostream& os, const dyn_matrix<T, D>& mat){
+    if(D == 1){
+        return os << "V[" << mat.size() << "]";
+    } else {
+        os << "M[" << mat.dim(0);
+
+        for(std::size_t i = 1; i < D; ++i){
+            os << "," << mat.dim(i);
+        }
+
+        return os << "]";
+    }
+}
+
 } //end of namespace etl
 
 #endif
