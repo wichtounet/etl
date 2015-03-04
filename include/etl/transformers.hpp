@@ -400,6 +400,71 @@ struct p_max_pool_p_transformer : p_max_pool_transformer<T, C1, C2> {
     }
 };
 
+template<typename T, std::size_t... D>
+std::ostream& operator<<(std::ostream& os, const rep_r_transformer<T, D...>& transformer){
+    return os << "rep_r[" << concat_sizes(D...) << "](" << transformer.sub << ")";
+}
+
+template<typename T, std::size_t... D>
+std::ostream& operator<<(std::ostream& os, const rep_l_transformer<T, D...>& transformer){
+    return os << "rep_l[" << concat_sizes(D...) << "](" << transformer.sub << ")";
+}
+
+template<typename T>
+std::ostream& operator<<(std::ostream& os, const sum_r_transformer<T>& transformer){
+    return os << "sum_r(" << transformer.sub << ")";
+}
+
+template<typename T>
+std::ostream& operator<<(std::ostream& os, const mean_r_transformer<T>& transformer){
+    return os << "mean_r(" << transformer.sub << ")";
+}
+
+template<typename T>
+std::ostream& operator<<(std::ostream& os, const sum_l_transformer<T>& transformer){
+    return os << "sum_l(" << transformer.sub << ")";
+}
+
+template<typename T>
+std::ostream& operator<<(std::ostream& os, const mean_l_transformer<T>& transformer){
+    return os << "mean_l(" << transformer.sub << ")";
+}
+
+template<typename T>
+std::ostream& operator<<(std::ostream& os, const hflip_transformer<T>& transformer){
+    return os << "hflip(" << transformer.sub << ")";
+}
+
+template<typename T>
+std::ostream& operator<<(std::ostream& os, const vflip_transformer<T>& transformer){
+    return os << "vflip(" << transformer.sub << ")";
+}
+
+template<typename T>
+std::ostream& operator<<(std::ostream& os, const fflip_transformer<T>& transformer){
+    return os << "fflip(" << transformer.sub << ")";
+}
+
+template<typename T>
+std::ostream& operator<<(std::ostream& os, const transpose_transformer<T>& transformer){
+    return os << "T(" << transformer.sub << ")";
+}
+
+template<typename L, typename R>
+std::ostream& operator<<(std::ostream& os, const mmul_transformer<L,R>& transformer){
+    return os << "mmul(" << transformer.left << "," << transformer.right << ")";
+}
+
+template<typename T, std::size_t C1, std::size_t C2>
+std::ostream& operator<<(std::ostream& os, const p_max_pool_h_transformer<T, C1, C2>& transformer){
+    return os << "p_mp_h[" << concat_sizes(C1,C2) << "](" << transformer.sub << ")";
+}
+
+template<typename T, std::size_t C1, std::size_t C2>
+std::ostream& operator<<(std::ostream& os, const p_max_pool_p_transformer<T, C1, C2>& transformer){
+    return os << "p_mp_p[" << concat_sizes(C1,C2) << "](" << transformer.sub << ")";
+}
+
 } //end of namespace etl
 
 #endif
