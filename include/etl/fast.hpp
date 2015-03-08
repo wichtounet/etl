@@ -8,12 +8,13 @@
 #ifndef ETL_FAST_HPP
 #define ETL_FAST_HPP
 
-#include<string>
+#include <algorithm>    //For std::find_if
 
 #include "cpp_utils/assert.hpp"
 
 #include "tmp.hpp"
-#include "traits_fwd.hpp"
+#include "traits_fwd.hpp"   //forward declaration of the traits
+#include "compat.hpp"       //To make it work with g++
 
 namespace etl {
 
@@ -256,7 +257,7 @@ public:
         return nth_size<D, 0, Dims...>::value;
     }
 
-    bool is_finite() const noexcept(noexcept(this->begin())) {
+    bool is_finite() const noexcept_this(noexcept(this->begin())) {
         return std::find_if(begin(), end(), [](auto& v){return !std::isfinite(v);}) == end();
     }
 

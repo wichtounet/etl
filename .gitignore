@@ -1,3 +1,5 @@
 debug
 release
 release_debug
+perf.data
+perf.data.old

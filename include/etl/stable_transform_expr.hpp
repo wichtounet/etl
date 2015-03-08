@@ -88,6 +88,11 @@ public:
     }
 };
 
+template <typename T, typename Expr>
+std::ostream& operator<<(std::ostream& os, const stable_transform_expr<T, Expr>& expr){
+    return os << expr.value();
+}
+
 //}}}
 
 } //end of namespace etl

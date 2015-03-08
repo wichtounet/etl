@@ -225,6 +225,11 @@ public:
     }
 };
 
+template <typename T, typename Expr>
+std::ostream& operator<<(std::ostream& os, const unary_expr<T, Expr, identity_op>& expr){
+    return os << expr.value();
+}
+
 template <typename T, typename Expr, typename UnaryOp>
 std::ostream& operator<<(std::ostream& os, const unary_expr<T, Expr, UnaryOp>& expr){
     return os << UnaryOp::desc() << '(' << expr.value() << ')';

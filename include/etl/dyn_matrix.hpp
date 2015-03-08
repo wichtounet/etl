@@ -8,14 +8,16 @@
 #ifndef ETL_DYN_MATRIX_HPP
 #define ETL_DYN_MATRIX_HPP
 
-#include <vector> //To store the data
-#include <array>  //To store the dimensions
-#include <tuple>  //For TMP stuff
+#include <vector>       //To store the data
+#include <array>        //To store the dimensions
+#include <tuple>        //For TMP stuff
+#include <algorithm>    //For std::find_if
 
 #include "cpp_utils/assert.hpp"
 #include "cpp_utils/tmp.hpp"
 
-#include "traits_fwd.hpp"
+#include "traits_fwd.hpp"   //forward declaration of the traits
+#include "compat.hpp"       //To make it work with g++
 
 namespace etl {
 
@@ -322,7 +324,7 @@ public:
         return _dimensions[d];
     }
 
-    bool is_finite() const noexcept(noexcept(this->begin())) {
+    bool is_finite() const noexcept_this(noexcept(this->begin())) {
         return std::find_if(begin(), end(), [](auto& v){return !std::isfinite(v);}) == end();
     }
 
@@ -448,6 +450,21 @@ public:
 template<typename T, std::size_t D>
 void swap(dyn_matrix<T, D>& lhs, dyn_matrix<T, D>& rhs){
     lhs.swap(rhs);
+}
+
+template<typename T, std::size_t D>
+std::ostream& operator<<(std::ostream& os, const dyn_matrix<T, D>& mat){
+    if(D == 1){
+        return os << "V[" << mat.size() << "]";
+    } else {
+        os << "M[" << mat.dim(0);
+
+        for(std::size_t i = 1; i < D; ++i){
+            os << "," << mat.dim(i);
+        }
+
+        return os << "]";
+    }
 }
 
 } //end of namespace etl
