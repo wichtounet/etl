@@ -36,17 +36,20 @@ void check_mmul_sizes(const A&, const B&, C&){
 }
 
 template<typename A, typename B, typename C, typename Enable = void>
-void mmul_impl(A&& a, B&& b, C&& c){
-    c = 0;
+struct mmul_impl {
+    static void apply(A&& a, B&& b, C&& c){
+        c = 0;
 
-    for(std::size_t i = 0; i < rows(a); i++){
-        for(std::size_t k = 0; k < columns(a); k++){
-            for(std::size_t j = 0; j < columns(b); j++){
-                c(i,j) += a(i,k) * b(k,j);
+        for(std::size_t i = 0; i < rows(a); i++){
+            for(std::size_t k = 0; k < columns(a); k++){
+                for(std::size_t j = 0; j < columns(b); j++){
+                    c(i,j) += a(i,k) * b(k,j);
+                }
             }
         }
     }
-}
+};
+
 
 } //end of namespace detail
 
@@ -56,7 +59,7 @@ C& mmul(A&& a, B&& b, C&& c){
     static_assert(decay_traits<A>::dimensions() == 2 && decay_traits<B>::dimensions() == 2 && decay_traits<C>::dimensions() == 2, "Matrix multiplication only works in 2D");
     detail::check_mmul_sizes(a,b,c);
 
-    detail::mmul_impl(a, b, c);
+    detail::mmul_impl<A,B,C>::apply(std::forward<A>(a), std::forward<B>(b), std::forward<C>(c));
 
     return c;
 }
