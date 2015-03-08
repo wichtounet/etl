@@ -68,6 +68,13 @@ struct is_blas_sgemm : cpp::bool_constant_c<cpp::and_c<
     >> {};
 
 template<typename A, typename B, typename C>
+struct mmul_impl<A, B, C, std::enable_if_t<is_blas_dgemm<A,B,C>::value>> {
+    static void apply(A&& a, B&& b, C&& c){
+        blas_dgemm(std::forward<A>(a), std::forward<B>(b), std::forward<C>(c));
+    }
+};
+
+template<typename A, typename B, typename C>
 struct mmul_impl<A, B, C, std::enable_if_t<is_blas_sgemm<A,B,C>::value>> {
     static void apply(A&& a, B&& b, C&& c){
         blas_sgemm(std::forward<A>(a), std::forward<B>(b), std::forward<C>(c));
