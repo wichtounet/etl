@@ -10,6 +10,9 @@
 
 #include <algorithm>
 
+#include "config.hpp"
+#include "cblas.hpp"
+
 namespace etl {
 
 namespace detail {
@@ -50,6 +53,26 @@ struct mmul_impl {
     }
 };
 
+template<typename A, typename B, typename C>
+struct is_blas_dgemm : cpp::bool_constant_c<cpp::and_c<
+          is_cblas_enabled
+        , is_double_precision<A>, is_double_precision<B>, is_double_precision<C>
+        , has_direct_access<A>, has_direct_access<B>, has_direct_access<C>
+    >> {};
+
+template<typename A, typename B, typename C>
+struct is_blas_sgemm : cpp::bool_constant_c<cpp::and_c<
+          is_cblas_enabled
+        , is_single_precision<A>, is_single_precision<B>, is_single_precision<C>
+        , has_direct_access<A>, has_direct_access<B>, has_direct_access<C>
+    >> {};
+
+template<typename A, typename B, typename C>
+struct mmul_impl<A, B, C, std::enable_if_t<is_blas_sgemm<A,B,C>::value>> {
+    static void apply(A&& a, B&& b, C&& c){
+        blas_sgemm(std::forward<A>(a), std::forward<B>(b), std::forward<C>(c));
+    }
+};
 
 } //end of namespace detail
 
