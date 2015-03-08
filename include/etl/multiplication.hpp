@@ -35,14 +35,8 @@ void check_mmul_sizes(const A&, const B&, C&){
         "Invalid sizes for multiplication");
 }
 
-} //end of namespace detail
-
-template<typename A, typename B, typename C>
-C& mmul(A&& a, B&& b, C&& c){
-    static_assert(is_etl_expr<A>::value && is_etl_expr<B>::value && is_etl_expr<C>::value, "Matrix multiplication only supported for ETL expressions");
-    static_assert(decay_traits<A>::dimensions() == 2 && decay_traits<B>::dimensions() == 2 && decay_traits<C>::dimensions() == 2, "Matrix multiplication only works in 2D");
-    detail::check_mmul_sizes(a,b,c);
-
+template<typename A, typename B, typename C, typename Enable = void>
+void mmul_impl(A&& a, B&& b, C&& c){
     c = 0;
 
     for(std::size_t i = 0; i < rows(a); i++){
@@ -52,6 +46,17 @@ C& mmul(A&& a, B&& b, C&& c){
             }
         }
     }
+}
+
+} //end of namespace detail
+
+template<typename A, typename B, typename C>
+C& mmul(A&& a, B&& b, C&& c){
+    static_assert(is_etl_expr<A>::value && is_etl_expr<B>::value && is_etl_expr<C>::value, "Matrix multiplication only supported for ETL expressions");
+    static_assert(decay_traits<A>::dimensions() == 2 && decay_traits<B>::dimensions() == 2 && decay_traits<C>::dimensions() == 2, "Matrix multiplication only works in 2D");
+    detail::check_mmul_sizes(a,b,c);
+
+    detail::mmul_impl(a, b, c);
 
     return c;
 }
