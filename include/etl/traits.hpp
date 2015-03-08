@@ -107,6 +107,11 @@ struct is_etl_value : cpp::bool_constant_c<cpp::or_c<
         is_dyn_matrix<T>
     >> {};
 
+template<typename T>
+struct has_direct_access : cpp::bool_constant_c<cpp::or_c<
+        is_etl_value<T>
+    >> {};
+
 template<typename T, typename Enable>
 struct etl_traits;
 

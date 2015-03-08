@@ -445,6 +445,26 @@ public:
     }
 
     //}}}
+
+    //{{{ Direct memory access
+
+    value_type* memory_start() noexcept {
+        return &_data[0];
+    }
+
+    const value_type* memory_start() const noexcept {
+        return &_data[0];
+    }
+
+    value_type* memory_end() noexcept {
+        return &_data[size()];
+    }
+
+    const value_type* memory_end() const noexcept {
+        return &_data[size()];
+    }
+
+    //}}}
 };
 
 template<typename T, std::size_t D>
