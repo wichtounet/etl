@@ -11,6 +11,11 @@ ifneq (,$(findstring clang,$(CXX)))
 CXX_FLAGS += -stdlib=libc++
 endif
 
+ifneq (,$(ETL_BLAS))
+CXX_FLAGS += -DETL_BLAS_MODE
+LD_FLAGS += -lcblas -lblas
+endif
+
 CPP_FILES=$(wildcard test/*.cpp)
 TEST_FILES=$(CPP_FILES:test/%=%)
 
