@@ -116,8 +116,7 @@ template<typename T>
 struct is_single_precision : cpp::bool_constant_c<std::is_same<typename std::decay_t<T>::value_type, float>> {};
 
 template<typename T>
-struct is_double_precision : cpp::bool_constant_c<std::is_same<typename std::decay_t<T>::value_type, float>> {};
-
+struct is_double_precision : cpp::bool_constant_c<std::is_same<typename std::decay_t<T>::value_type, double>> {};
 
 template<typename T, typename Enable>
 struct etl_traits;
