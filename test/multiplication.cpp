@@ -432,3 +432,41 @@ TEST_CASE( "multiplication/strassen_mmul4", "mmul" ) {
 }
 
 //}}}
+
+//{{{ Expressions
+
+TEST_CASE( "multiplication/expression_1", "expression" ) {
+    etl::dyn_matrix<double> a(4,4, etl::values(1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16));
+    etl::dyn_matrix<double> b(4,4, etl::values(1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16));
+    etl::dyn_matrix<double> c(4,4);
+
+    c = 2.0 * mmul(a,b) + mmul(a, b) / 1.1;
+
+    REQUIRE(c(0,0) == Approx((2.0 + 1.0 / 1.1) * 90));
+    REQUIRE(c(0,1) == Approx((2.0 + 1.0 / 1.1) * 100));
+    REQUIRE(c(1,0) == Approx((2.0 + 1.0 / 1.1) * 202));
+    REQUIRE(c(1,1) == Approx((2.0 + 1.0 / 1.1) * 228));
+    REQUIRE(c(2,0) == Approx((2.0 + 1.0 / 1.1) * 314));
+    REQUIRE(c(2,1) == Approx((2.0 + 1.0 / 1.1) * 356));
+    REQUIRE(c(3,0) == Approx((2.0 + 1.0 / 1.1) * 426));
+    REQUIRE(c(3,1) == Approx((2.0 + 1.0 / 1.1) * 484));
+}
+
+TEST_CASE( "multiplication/expression_2", "expression" ) {
+    etl::dyn_matrix<double> a(4,4, etl::values(1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16));
+    etl::dyn_matrix<double> b(4,4, etl::values(1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16));
+    etl::dyn_matrix<double> c(4,4);
+
+    c = 2.0 * lazy_mmul(a,b) + lazy_mmul(a, b) / 1.1;
+
+    REQUIRE(c(0,0) == Approx((2.0 + 1.0 / 1.1) * 90));
+    REQUIRE(c(0,1) == Approx((2.0 + 1.0 / 1.1) * 100));
+    REQUIRE(c(1,0) == Approx((2.0 + 1.0 / 1.1) * 202));
+    REQUIRE(c(1,1) == Approx((2.0 + 1.0 / 1.1) * 228));
+    REQUIRE(c(2,0) == Approx((2.0 + 1.0 / 1.1) * 314));
+    REQUIRE(c(2,1) == Approx((2.0 + 1.0 / 1.1) * 356));
+    REQUIRE(c(3,0) == Approx((2.0 + 1.0 / 1.1) * 426));
+    REQUIRE(c(3,1) == Approx((2.0 + 1.0 / 1.1) * 484));
+}
+
+//}}}
