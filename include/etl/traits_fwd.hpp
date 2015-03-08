@@ -10,10 +10,10 @@
 
 namespace etl {
 
-template<typename T, typename Enable = void>
+template<typename T>
 struct is_etl_expr;
 
-template<typename T, typename Enable = void>
+template<typename T>
 struct is_copy_expr;
 
 template<typename E, typename Enable = void>

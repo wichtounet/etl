@@ -82,7 +82,7 @@ struct is_view : cpp::bool_constant_c<cpp::or_c<
         cpp::is_specialization_of<etl::sub_view, std::decay_t<T>>
     >> {};
 
-template<typename T, typename Enable>
+template<typename T>
 struct is_etl_expr : cpp::bool_constant_c<cpp::or_c<
        is_fast_matrix<T>,
        is_dyn_matrix<T>,
@@ -92,7 +92,7 @@ struct is_etl_expr : cpp::bool_constant_c<cpp::or_c<
        is_transformer<T>, is_view<T>
     >> {};
 
-template<typename T, typename Enable>
+template<typename T>
 struct is_copy_expr : cpp::bool_constant_c<cpp::or_c<
        is_fast_matrix<T>,
        is_dyn_matrix<T>,
@@ -101,7 +101,7 @@ struct is_copy_expr : cpp::bool_constant_c<cpp::or_c<
        is_stable_transform_expr<T>
     >> {};
 
-template<typename T, typename Enable = void>
+template<typename T>
 struct is_etl_value : cpp::bool_constant_c<cpp::or_c<
         is_fast_matrix<T>,
         is_dyn_matrix<T>
