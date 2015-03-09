@@ -12,6 +12,7 @@
 
 #include "config.hpp"
 #include "cblas.hpp"
+#include "dgemm.hpp"
 
 namespace etl {
 
@@ -50,6 +51,20 @@ struct mmul_impl {
                 }
             }
         }
+    }
+};
+
+template<typename A, typename B, typename C>
+struct is_fast_dgemm : cpp::bool_constant_c<cpp::and_c<
+          cpp::not_c<is_cblas_enabled>
+        , is_double_precision<A>, is_double_precision<B>, is_double_precision<C>
+        , has_direct_access<A>, has_direct_access<B>, has_direct_access<C>
+    >> {};
+
+template<typename A, typename B, typename C>
+struct mmul_impl<A, B, C, std::enable_if_t<is_fast_dgemm<A,B,C>::value>> {
+    static void apply(A&& a, B&& b, C&& c){
+        fast_dgemm(std::forward<A>(a), std::forward<B>(b), std::forward<C>(c));
     }
 };
 
