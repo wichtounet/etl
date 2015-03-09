@@ -42,21 +42,19 @@ void pack_MRxk(std::size_t k, const D* A, std::size_t a_row_stride, std::size_t 
 
 template<typename D>
 void pack_A(std::size_t mc, std::size_t kc, const D* A, std::size_t a_row_stride, std::size_t a_col_stride, D* buffer){
-    auto mp  = mc / MR;
-    auto _mr = mc % MR;
-
-    for (std::size_t i=0; i<mp; ++i) {
+    for (std::size_t i=0; i < mc / MR; ++i) {
         pack_MRxk(kc, A, a_row_stride, a_col_stride, buffer);
         buffer += kc*MR;
         A += MR*a_row_stride;
     }
 
-    if (_mr>0) {
+    auto mr = mc % MR;
+    if (mr>0) {
         for (std::size_t j=0; j<kc; ++j) {
-            for (std::size_t i=0; i<_mr; ++i) {
+            for (std::size_t i=0; i<mr; ++i) {
                 buffer[i] = A[i*a_row_stride];
             }
-            std::fill(buffer + _mr, buffer + _mr + MR, 0.0);
+            std::fill(buffer + mr, buffer + mr + MR, 0.0);
             buffer += MR;
             A += a_col_stride;
         }
@@ -76,21 +74,19 @@ void pack_kxNR(std::size_t k, const D* B, std::size_t b_row_stride, std::size_t 
 
 template<typename D>
 void pack_B(std::size_t kc, std::size_t nc, const D* B, std::size_t b_row_stride, std::size_t b_col_stride, D* buffer){
-    auto np  = nc / NR;
-    auto _nr = nc % NR;
-
-    for (std::size_t j=0; j<np; ++j) {
+    for (std::size_t j=0; j<nc / NR; ++j) {
         pack_kxNR(kc, B, b_row_stride, b_col_stride, buffer);
         buffer += kc*NR;
         B += NR*b_col_stride;
     }
 
-    if (_nr>0) {
+    auto nr = nc % NR;
+    if (nr>0) {
         for (std::size_t i=0; i<kc; ++i) {
-            for (std::size_t j=0; j<_nr; ++j) {
+            for (std::size_t j=0; j<nr; ++j) {
                 buffer[j] = B[j*b_col_stride];
             }
-            std::fill(buffer + _nr, buffer + _nr + NR, 0.0);
+            std::fill(buffer + nr, buffer + nr + NR, 0.0);
             buffer += NR;
             B += b_row_stride;
         }
