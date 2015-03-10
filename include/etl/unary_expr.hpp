@@ -8,6 +8,8 @@
 #ifndef ETL_UNARY_EXPR_HPP
 #define ETL_UNARY_EXPR_HPP
 
+#include <iostream>     //For stream support
+
 #include "cpp_utils/assert.hpp"
 
 #include "traits_fwd.hpp"

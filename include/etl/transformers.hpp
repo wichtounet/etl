@@ -8,7 +8,7 @@
 #ifndef ETL_TRANSFORMERS_HPP
 #define ETL_TRANSFORMERS_HPP
 
-#include <iostream>
+#include <iostream> //For stream support
 
 #include "tmp.hpp"
 #include "traits_fwd.hpp"

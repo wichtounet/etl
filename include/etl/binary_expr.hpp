@@ -8,6 +8,8 @@
 #ifndef ETL_BINARY_EXPR_HPP
 #define ETL_BINARY_EXPR_HPP
 
+#include <iostream>     //For stream support
+
 #include <ostream>
 
 #include "traits_fwd.hpp"

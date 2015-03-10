@@ -8,6 +8,8 @@
 #ifndef ETL_GENERATOR_EXPR_HPP
 #define ETL_GENERATOR_EXPR_HPP
 
+#include <iostream> //For stream support
+
 namespace etl {
 
 template <typename Generator>

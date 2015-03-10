@@ -9,6 +9,7 @@
 #define ETL_FAST_HPP
 
 #include <algorithm>    //For std::find_if
+#include <iostream>     //For stream support
 
 #include "cpp_utils/assert.hpp"
 

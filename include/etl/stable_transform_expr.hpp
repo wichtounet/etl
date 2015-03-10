@@ -8,6 +8,8 @@
 #ifndef ETL_STABLE_TRANSFORM_EXPR_HPP
 #define ETL_STABLE_TRANSFORM_EXPR_HPP
 
+#include <iostream>     //For stream support
+
 #include "traits_fwd.hpp"
 #include "iterator.hpp"
 

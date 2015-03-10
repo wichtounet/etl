@@ -8,6 +8,8 @@
 #ifndef ETL_VIEWS_HPP
 #define ETL_VIEWS_HPP
 
+#include <iostream>     //For stream support
+
 #include "cpp_utils/tmp.hpp"
 #include "tmp.hpp"
 

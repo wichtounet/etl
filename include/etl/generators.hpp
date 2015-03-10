@@ -9,6 +9,7 @@
 #define ETL_GENERATORS_HPP
 
 #include <chrono> //for std::time
+#include <iostream> //For stream support
 #include <random>
 
 #include "cpp_utils/tmp.hpp"
