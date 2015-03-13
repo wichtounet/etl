@@ -36,4 +36,7 @@
 // The expressions building
 #include "fast_expr.hpp"
 
+// to_string support
+#include "print.hpp"
+
 #endif
