@@ -12,6 +12,7 @@
 #include "generators.hpp"
 #include "transformers.hpp"
 #include "views.hpp"
+#include "virtual_views.hpp"
 #include "unary_op.hpp"
 #include "binary_op.hpp"
 

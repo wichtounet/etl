@@ -18,6 +18,7 @@
 namespace etl {
 
 struct identity_op;
+struct virtual_op;
 
 template <typename T, typename Expr, typename UnaryOp>
 class unary_expr final  {
@@ -223,6 +224,93 @@ public:
     }
 
     iterator<const this_type, true> end() const noexcept {
+        return {*this, size(*this)};
+    }
+};
+
+template <typename T, typename Expr>
+class unary_expr<T, Expr, virtual_op> {
+private:
+    using this_type = unary_expr<T, Expr, virtual_op>;
+
+    Expr _value;
+
+public:
+    using value_type = T;
+
+    //Cannot be constructed with no args
+    unary_expr() = delete;
+
+    //Construct a new expression
+    unary_expr(Expr l) : _value(std::forward<Expr>(l)){
+        //Nothing else to init
+    }
+
+    unary_expr(const unary_expr& e) : _value(e._value) {
+        //Nothing else to init
+    }
+
+    unary_expr(unary_expr&& e) : _value(e._value) {
+        //Nothing else to init
+    }
+
+    //Accessors
+
+    std::add_lvalue_reference_t<Expr> value() noexcept {
+        return _value;
+    }
+
+    cpp::add_const_lvalue_t<Expr> value() const noexcept {
+        return _value;
+    }
+
+    //Apply the expression
+
+    value_type operator[](std::size_t i){
+        return value()[i];
+    }
+
+    value_type operator[](std::size_t i) const {
+        return value()[i];
+    }
+
+    template<bool B = (sub_size_compare<this_type>::value > 1), cpp::enable_if_u<B> = cpp::detail::dummy>
+    value_type operator()(std::size_t i){
+        return sub(*this, i);
+    }
+
+    template<bool B = (sub_size_compare<this_type>::value > 1), cpp::enable_if_u<B> = cpp::detail::dummy>
+    value_type operator()(std::size_t i) const {
+        return sub(*this, i);
+    }
+
+    template<typename... S>
+    std::enable_if_t<sizeof...(S) == sub_size_compare<this_type>::value, value_type> operator()(S... args){
+        static_assert(cpp::all_convertible_to<std::size_t, S...>::value, "Invalid size types");
+
+        return value()(args...);
+    }
+
+    template<typename... S>
+    std::enable_if_t<sizeof...(S) == sub_size_compare<this_type>::value, value_type> operator()(S... args) const {
+        static_assert(cpp::all_convertible_to<std::size_t, S...>::value, "Invalid size types");
+
+        return value()(args...);
+    }
+
+    iterator<this_type, false, false> begin() noexcept {
+        return {*this, 0};
+    }
+
+    iterator<this_type, false, false> end() noexcept {
+        return {*this, size(*this)};
+    }
+
+    iterator<const this_type, false, false> begin() const noexcept {
+        return {*this, 0};
+    }
+
+    iterator<const this_type, false, false> end() const noexcept {
         return {*this, size(*this)};
     }
 };

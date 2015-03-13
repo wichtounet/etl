@@ -40,6 +40,9 @@ using unary_helper = unary_expr<value_t<E>, build_type<E>, OP<value_t<E>>>;
 template<typename E, typename OP>
 using identity_helper = unary_expr<value_t<E>, OP, identity_op>;
 
+template<typename E, typename OP>
+using virtual_helper = unary_expr<E, OP, virtual_op>;
+
 template<typename E, template<typename> class OP>
 using stable_transform_helper = stable_transform_expr<value_t<E>, OP<build_type<E>>>;
 
@@ -394,6 +397,16 @@ auto reshape(E&& value, std::size_t rows, std::size_t columns) -> identity_helpe
 }
 
 //}}}
+
+//{{{ Virtual Views that returns rvalues
+
+template<typename D = double>
+auto magic(std::size_t i) -> virtual_helper<D, magic_view<D>> {
+    return {{i}};
+}
+
+//}}}
+
 
 //{{{ Apply a stable transformation
 
