@@ -133,17 +133,17 @@ public:
         std::copy(rhs.begin(), rhs.end(), begin());
     }
 
-    template<typename S = ST, cpp::enable_if_c<matrix_detail::is_vector<S>> = cpp::detail::dummy>
+    template<cpp_enable_if_cst(matrix_detail::is_vector<ST>::value)>
     fast_matrix_impl(fast_matrix_impl&& rhs) noexcept {
         _data = std::move(rhs._data);
     }
 
-    template<typename S = ST, cpp::disable_if_c<matrix_detail::is_vector<S>> = cpp::detail::dummy>
+    template<cpp_disable_if_cst(matrix_detail::is_vector<ST>::value)>
     explicit fast_matrix_impl(fast_matrix_impl&& rhs) noexcept {
         std::copy(rhs.begin(), rhs.end(), begin());
     }
 
-    template<typename E, cpp::enable_if_all_c<std::is_convertible<typename E::value_type, value_type>, is_copy_expr<E>> = cpp::detail::dummy>
+    template<typename E, cpp_enable_if(std::is_convertible<typename E::value_type, value_type>::value, is_copy_expr<E>::value)>
     explicit fast_matrix_impl(const E& e){
         init();
         ensure_same_size(*this, e);
@@ -153,10 +153,10 @@ public:
         }
     }
 
-    template<typename Container, cpp::enable_if_all_c<
-        std::is_convertible<typename Container::value_type, value_type>,
-        cpp::not_c<is_copy_expr<Container>>
-    > = cpp::detail::dummy>
+    template<typename Container, cpp_enable_if(
+            std::is_convertible<typename Container::value_type, value_type>::value,
+            cpp::not_c<is_copy_expr<Container>>::value
+        )>
     explicit fast_matrix_impl(const Container& vec){
         init();
         cpp_assert(vec.size() == size(), "Cannnot copy from a container of another size");
