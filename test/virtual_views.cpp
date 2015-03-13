@@ -19,6 +19,16 @@ TEST_CASE( "magic/dyn_matrix_1", "magic(1)" ) {
 
     REQUIRE(etl::decay_traits<decltype(m)>::is_fast == false);
     REQUIRE(etl::decay_traits<decltype(m)>::size(m) == 1);
+    REQUIRE((std::is_same<decltype(m)::value_type, double>::value));
+    REQUIRE(etl::is_copy_expr<decltype(m)>::value);
+    REQUIRE(etl::is_etl_expr<decltype(m)>::value);
+
+    REQUIRE(etl::decay_traits<decltype(etl::magic(1))>::is_fast == false);
+    REQUIRE(etl::decay_traits<decltype(etl::magic(1))>::size(etl::magic(1)) == 1);
+    REQUIRE((std::is_same<decltype(etl::magic(1))::value_type, double>::value));
+    REQUIRE(etl::is_copy_expr<decltype(etl::magic(1))>::value);
+    REQUIRE(etl::is_etl_expr<decltype(etl::magic(1))>::value);
+
     REQUIRE(etl::size(m) == 1);
 
     REQUIRE(m[0] == 1);
