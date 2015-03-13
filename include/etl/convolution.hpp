@@ -13,6 +13,8 @@
 #include "cpp_utils/assert.hpp"
 #include "cpp_utils/tmp.hpp"
 
+#include <immintrin.h>
+
 namespace etl {
 
 template<std::size_t T, typename I, typename K, typename C, cpp::disable_if_all_u<etl_traits<I>::is_fast, etl_traits<K>::is_fast, etl_traits<C>::is_fast> = cpp::detail::dummy>
@@ -133,20 +135,129 @@ C& convolve_1d_same(const I& input, const K& kernel, C&& conv){
     return conv;
 }
 
+namespace detail {
+
+template<typename I, typename K, typename C, typename Enable = void>
+struct conv1_valid_impl {
+    static void apply(const I& input, const K& kernel, C&& conv){
+        for(std::size_t j = 0 ; j < size(conv) ; ++j){
+            double temp = 0.0;
+
+            for(std::size_t l = j ; l <= j + size(kernel) - 1; ++l){
+                temp += input[l] * kernel[j + size(kernel) - 1 - l];
+            }
+
+            conv[j] = temp;
+        }
+    }
+};
+
+#ifdef ETL_EXPERIMENTAL
+
+#ifdef __SSE3__
+
+template<typename I, typename K, typename C>
+struct is_fast_dconv : cpp::bool_constant_c<cpp::and_c<
+          is_double_precision<I>, is_double_precision<K>, is_double_precision<C>
+        , has_direct_access<I>, has_direct_access<K>, has_direct_access<C>
+    >> {};
+
+template<typename I, typename K, typename C>
+struct is_fast_sconv : cpp::bool_constant_c<cpp::and_c<
+          is_single_precision<I>, is_single_precision<K>, is_single_precision<C>
+        , has_direct_access<I>, has_direct_access<K>, has_direct_access<C>
+    >> {};
+
+template<typename I, typename K, typename C>
+struct conv1_valid_impl<I, K, C, std::enable_if_t<is_fast_dconv<I,K,C>::value>> {
+    static void apply(const I& input, const K& kernel, C&& conv){
+        __m128* kernel_reverse = new __m128[kernel.size()];
+
+        auto out = conv.memory_start();
+        auto in = input.memory_start();
+        auto k = kernel.memory_start();
+
+        for(int i=0; i< kernel.size(); i++){
+            kernel_reverse[i] = _mm_load1_pd(k + kernel.size() - i - 1);
+        }
+
+        register __m128 tmp1;
+        register __m128 tmp2;
+        register __m128 res;
+
+        for(std::size_t i=0; i<input.size()-kernel.size(); i+=2){
+            res = _mm_setzero_pd();
+
+            for(std::size_t k=0; k<kernel.size(); k++){
+                tmp1 = _mm_loadu_pd(in + i + k);
+                tmp2 = _mm_mul_pd(kernel_reverse[k], tmp1);
+                res = _mm_add_pd(res, tmp2);
+            }
+
+            _mm_storeu_pd(out+i, res);
+        }
+
+        auto i = input.size() - kernel.size();
+        conv[i] = 0.0;
+        for(int k=0; k<kernel.size(); k++){
+            conv[i] += input[i+k] * kernel[kernel.size() - k - 1];
+        }
+
+        delete[] kernel_reverse;
+    }
+};
+
+template<typename I, typename K, typename C>
+struct conv1_valid_impl<I, K, C, std::enable_if_t<is_fast_sconv<I,K,C>::value>> {
+    static void apply(const I& input, const K& kernel, C&& conv){
+        __m128* kernel_reverse = new __m128[kernel.size()];
+
+        auto out = conv.memory_start();
+        auto in = input.memory_start();
+        auto k = kernel.memory_start();
+
+        for(std::size_t i=0; i< kernel.size(); i++){
+            kernel_reverse[i] = _mm_load1_ps(k + kernel.size() - i - 1);
+        }
+
+        register __m128 tmp1;
+        register __m128 tmp2;
+        register __m128 res;
+
+        for(std::size_t i=0; i<input.size()-kernel.size(); i+=4){
+            res = _mm_setzero_ps();
+
+            for(std::size_t k=0; k<kernel.size(); k++){
+                tmp1 = _mm_loadu_ps(in + i + k);
+                tmp2 = _mm_mul_ps(kernel_reverse[k], tmp1);
+                res = _mm_add_ps(res, tmp2);
+            }
+
+            _mm_storeu_ps(out+i, res);
+        }
+
+        auto i = input.size() - kernel.size();
+        conv[i] = 0.0;
+        for(int k=0; k<kernel.size(); k++){
+            conv[i] += input[i+k] * kernel[kernel.size() - k - 1];
+        }
+
+        delete[] kernel_reverse;
+    }
+};
+
+#endif //ETL_EXPERIMENTAL
+
+#endif //__SSE3__
+
+} //end of namespace detail
+
 template<typename I, typename K, typename C>
 C& convolve_1d_valid(const I& input, const K& kernel, C&& conv){
     static_assert(is_etl_expr<I>::value && is_etl_expr<K>::value && is_etl_expr<C>::value, "Convolution only supported for ETL expressions");
     check_conv_1d_sizes<3>(input, kernel, conv);
 
-    for(std::size_t j = 0 ; j < size(conv) ; ++j){
-        double temp = 0.0;
-
-        for(std::size_t l = j ; l <= j + size(kernel) - 1; ++l){
-            temp += input[l] * kernel[j + size(kernel) - 1 - l];
-        }
-
-        conv[j] = temp;
-    }
+    detail::conv1_valid_impl<I,K,C>::apply(input, kernel, std::forward<C>(conv));
 
     return conv;
 }
