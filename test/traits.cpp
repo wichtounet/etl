@@ -255,3 +255,17 @@ TEST_CASE( "etl_traits/binary_fast_mat", "etl_traits<binary<fast_mat, fast_mat>>
     REQUIRE(rows_3 == 3);
     REQUIRE(columns_3 == 2);
 }
+
+TEST_CASE( "etl_traits/direct_acess", "has_direct_access" ) {
+    using expr_1 = etl::fast_matrix<double, 3, 2>;
+    using expr_2 = etl::dyn_matrix<double, 3>;
+
+    REQUIRE(etl::has_direct_access<expr_1>::value);
+    REQUIRE(etl::has_direct_access<expr_2>::value);
+
+    using expr_3 = decltype(etl::fast_matrix<double, 3, 2>() + etl::fast_matrix<double, 3, 2>());
+    using expr_4 = decltype(etl::abs(etl::fast_matrix<double, 3, 2>()));
+
+    REQUIRE(!etl::has_direct_access<expr_3>::value);
+    REQUIRE(!etl::has_direct_access<expr_4>::value);
+}
