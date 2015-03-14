@@ -69,3 +69,23 @@ TEST_CASE( "direct_access/sub_view", "direct_access" ) {
 
     REQUIRE(it == end);
 }
+
+TEST_CASE( "direct_access/reshape", "direct_access" ) {
+    etl::dyn_matrix<double, 2> test_matrix{etl::magic(6)};
+
+    auto v = etl::reshape<3,12>(test_matrix);
+
+    auto it = v.memory_start();
+    auto end = v.memory_end();
+
+    REQUIRE(std::is_pointer<decltype(it)>::value);
+    REQUIRE(std::is_pointer<decltype(end)>::value);
+
+    for(std::size_t i = 0; i < etl::size(v); ++i){
+        REQUIRE(v[i] == *it);
+        REQUIRE(it != end);
+        ++it;
+    }
+
+    REQUIRE(it == end);
+}

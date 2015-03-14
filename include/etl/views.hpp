@@ -176,6 +176,30 @@ struct fast_matrix_view {
     return_type operator()(std::size_t i, std::size_t j){
         return sub[i * Columns + j];
     }
+
+    //{{{ Direct memory access
+
+    template<cpp_enable_if_cst(has_direct_access<sub_type>::value)>
+    value_type* memory_start() noexcept {
+        return sub.memory_start();
+    }
+
+    template<cpp_enable_if_cst(has_direct_access<sub_type>::value)>
+    const value_type* memory_start() const noexcept {
+        return sub.memory_start();
+    }
+
+    template<cpp_enable_if_cst(has_direct_access<sub_type>::value)>
+    value_type* memory_end() noexcept {
+        return sub.memory_end();
+    }
+
+    template<cpp_enable_if_cst(has_direct_access<sub_type>::value)>
+    const value_type* memory_end() const noexcept {
+        return sub.memory_end();
+    }
+
+    //}}}
 };
 
 template<typename T>
