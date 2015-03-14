@@ -269,8 +269,7 @@ TEST_CASE( "etl_traits/direct_acess", "has_direct_access" ) {
     REQUIRE(!etl::has_direct_access<expr_3>::value);
     REQUIRE(!etl::has_direct_access<expr_4>::value);
 
-    etl::fast_matrix<double, 3, 2> a;
-    auto expr_5 = a(1);
+    using expr_5 = decltype(etl::fast_matrix<double, 3, 2>()(1));
 
-    REQUIRE(etl::has_direct_access<decltype(expr_5)>::value);
+    REQUIRE(etl::has_direct_access<expr_5>::value);
 }
