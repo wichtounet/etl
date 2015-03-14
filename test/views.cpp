@@ -227,6 +227,21 @@ TEST_CASE( "reshape/dyn_traits", "traits<reshape<2,3>>" ) {
     REQUIRE(!etl::etl_traits<expr_type>::is_fast);
 }
 
+TEST_CASE( "reshape/expr", "reshape(a+b)" ) {
+    etl::dyn_vector<double> a({1,2,3,4,5,6});
+    etl::dyn_vector<double> b({1,2,3,4,5,6});
+
+    etl::dyn_matrix<double> c(etl::reshape(a+b,2,3));
+
+    REQUIRE(c(0,0) == 2.0);
+    REQUIRE(c(0,1) == 4.0);
+    REQUIRE(c(0,2) == 6.0);
+
+    REQUIRE(c(1,0) == 8.0);
+    REQUIRE(c(1,1) == 10.0);
+    REQUIRE(c(1,2) == 12.0);
+}
+
 //}}}
 
 //{{{ sub
