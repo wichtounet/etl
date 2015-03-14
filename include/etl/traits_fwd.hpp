@@ -22,6 +22,9 @@ struct sub_size_compare;
 template<typename T, typename Enable = void>
 struct etl_traits;
 
+template<typename T>
+struct has_direct_access;
+
 template<typename E>
 constexpr std::size_t dimensions(const E&) noexcept;
 

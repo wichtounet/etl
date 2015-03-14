@@ -226,6 +226,30 @@ public:
     iterator<const this_type, true> end() const noexcept {
         return {*this, size(*this)};
     }
+    
+    //{{{ Direct memory access
+
+    template<cpp_enable_if_cst(has_direct_access<Expr>::value)>
+    auto memory_start() noexcept {
+        return value().memory_start();
+    }
+
+    template<cpp_enable_if_cst(has_direct_access<Expr>::value)>
+    const value_type* memory_start() const noexcept {
+        return value().memory_start();
+    }
+
+    template<cpp_enable_if_cst(has_direct_access<Expr>::value)>
+    value_type* memory_end() noexcept {
+        return value().memory_end();
+    }
+
+    template<cpp_enable_if_cst(has_direct_access<Expr>::value)>
+    const value_type* memory_end() const noexcept {
+        return value().memory_end();
+    }
+
+    //}}}
 };
 
 template <typename T, typename Expr>

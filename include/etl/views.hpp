@@ -12,6 +12,7 @@
 
 #include "cpp_utils/tmp.hpp"
 #include "tmp.hpp"
+#include "traits_fwd.hpp"
 
 namespace etl {
 
@@ -112,6 +113,30 @@ struct sub_view {
     return_type operator()(S... args){
         return parent(i, static_cast<std::size_t>(args)...);
     }
+
+    //{{{ Direct memory access
+
+    template<cpp_enable_if_cst(has_direct_access<parent_type>::value)>
+    value_type* memory_start() noexcept {
+        return parent.memory_start() + i * subsize(parent);
+    }
+
+    template<cpp_enable_if_cst(has_direct_access<parent_type>::value)>
+    const value_type* memory_start() const noexcept {
+        return parent.memory_start() + i * subsize(parent);
+    }
+
+    template<cpp_enable_if_cst(has_direct_access<parent_type>::value)>
+    value_type* memory_end() noexcept {
+        return parent.memory_start() + (i + 1) * subsize(parent);
+    }
+
+    template<cpp_enable_if_cst(has_direct_access<parent_type>::value)>
+    const value_type* memory_end() const noexcept {
+        return parent.memory_start() + (i + 1) * subsize(parent);
+    }
+
+    //}}}
 };
 
 template<typename T, std::size_t Rows, std::size_t Columns>

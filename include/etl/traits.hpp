@@ -110,8 +110,22 @@ struct is_etl_value : cpp::bool_constant_c<cpp::or_c<
     >> {};
 
 template<typename T>
+struct is_direct_sub_view : std::false_type {};
+
+template<typename T>
+struct is_direct_sub_view<sub_view<T>> : cpp::bool_constant_c<has_direct_access<T>> {};
+
+template<typename T>
+struct is_direct_identity_view : std::false_type {};
+
+template<typename T, typename V>
+struct is_direct_identity_view<etl::unary_expr<T, V, identity_op>> : cpp::bool_constant_c<has_direct_access<V>> {};
+
+template<typename T>
 struct has_direct_access : cpp::bool_constant_c<cpp::or_c<
-        is_etl_value<T>
+          is_etl_value<T>
+        , is_direct_identity_view<T>
+        , is_direct_sub_view<T>
     >> {};
 
 template<typename T>
