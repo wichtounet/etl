@@ -11,8 +11,8 @@
 #include <algorithm>
 
 #include "config.hpp"
-#include "cblas.hpp"
 #include "dgemm.hpp"
+#include "cblas.hpp"
 
 namespace etl {
 

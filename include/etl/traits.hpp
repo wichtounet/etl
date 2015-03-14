@@ -80,7 +80,8 @@ struct is_view : cpp::bool_constant_c<cpp::or_c<
         is_3<etl::fast_matrix_view, std::decay_t<T>>,
         cpp::is_specialization_of<etl::dyn_matrix_view, std::decay_t<T>>,
         cpp::is_specialization_of<etl::sub_view, std::decay_t<T>>,
-        cpp::is_specialization_of<etl::magic_view, std::decay_t<T>>
+        cpp::is_specialization_of<etl::magic_view, std::decay_t<T>>,
+        is_2<etl::fast_magic_view, std::decay_t<T>>
     >> {};
 
 template<typename T>
@@ -758,6 +759,36 @@ struct etl_traits<etl::magic_view<V>> {
 
     static std::size_t dim(const expr_t& v, std::size_t){
         return v.n;
+    }
+
+    static constexpr std::size_t dimensions(){
+        return 2;
+    }
+};
+
+template<std::size_t N, typename V>
+struct etl_traits<etl::fast_magic_view<V, N>> {
+    using expr_t = etl::fast_magic_view<V, N>;
+
+    static constexpr const bool is_fast = true;
+    static constexpr const bool is_value = false;
+    static constexpr const bool is_generator = false;
+
+    static constexpr std::size_t size(){
+        return N * N;
+    }
+
+    static std::size_t size(const expr_t&){
+        return N * N;
+    }
+
+    template<std::size_t D>
+    static constexpr std::size_t dim(){
+        return N;
+    }
+
+    static std::size_t dim(const expr_t&, std::size_t){
+        return N;
     }
 
     static constexpr std::size_t dimensions(){

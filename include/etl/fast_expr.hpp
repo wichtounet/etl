@@ -405,6 +405,11 @@ auto magic(std::size_t i) -> virtual_helper<D, magic_view<D>> {
     return {{i}};
 }
 
+template<std::size_t N, typename D = double>
+auto magic() -> virtual_helper<D, fast_magic_view<D, N>> {
+    return {{}};
+}
+
 //}}}
 
 
