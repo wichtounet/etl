@@ -81,6 +81,30 @@ struct dim_view {
             return sub(j, i);
         }
     }
+
+    //{{{ Direct memory access
+
+    template<cpp_enable_if_cst(has_direct_access<sub_type>::value && D == 1)>
+    value_type* memory_start() noexcept {
+        return sub.memory_start() + i * subsize(sub);
+    }
+
+    template<cpp_enable_if_cst(has_direct_access<sub_type>::value && D == 1)>
+    const value_type* memory_start() const noexcept {
+        return sub.memory_start() + i * subsize(sub);
+    }
+
+    template<cpp_enable_if_cst(has_direct_access<sub_type>::value && D == 1)>
+    value_type* memory_end() noexcept {
+        return sub.memory_start() + (i + 1) * subsize(sub);
+    }
+
+    template<cpp_enable_if_cst(has_direct_access<sub_type>::value && D == 1)>
+    const value_type* memory_end() const noexcept {
+        return sub.memory_start() + (i + 1) * subsize(sub);
+    }
+
+    //}}}
 };
 
 template<typename T>
