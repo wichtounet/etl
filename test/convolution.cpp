@@ -533,6 +533,38 @@ TEST_CASE( "convolution_2d/full_6", "convolution_2d_full" ) {
     REQUIRE(c(3, 3) == 10305);
 }
 
+TEST_CASE( "convolution_2d/full_7", "convolution_2d_full" ) {
+    etl::fast_matrix<double, 2, 6> a = {1,2,3,4,5,6,7,8,9,10,11,12};
+    etl::fast_matrix<double, 2, 2> b = {1,2,3,4};
+    etl::fast_matrix<double, 3, 7> c;
+
+    etl::convolve_2d_full(a, b, c);
+
+    REQUIRE(c(0, 0) == 1);
+    REQUIRE(c(0, 1) == 4);
+    REQUIRE(c(0, 2) == 7);
+    REQUIRE(c(0, 3) == 10);
+    REQUIRE(c(0, 4) == 13);
+    REQUIRE(c(0, 5) == 16);
+    REQUIRE(c(0, 6) == 12);
+
+    REQUIRE(c(1, 0) == 10);
+    REQUIRE(c(1, 1) == 32);
+    REQUIRE(c(1, 2) == 42);
+    REQUIRE(c(1, 3) == 52);
+    REQUIRE(c(1, 4) == 62);
+    REQUIRE(c(1, 5) == 72);
+    REQUIRE(c(1, 6) == 48);
+
+    REQUIRE(c(2, 0) == 21);
+    REQUIRE(c(2, 1) == 52);
+    REQUIRE(c(2, 2) == 59);
+    REQUIRE(c(2, 3) == 66);
+    REQUIRE(c(2, 4) == 73);
+    REQUIRE(c(2, 5) == 80);
+    REQUIRE(c(2, 6) == 48);
+}
+
 //}}}
 
 //{{{ convolution_2d_same
@@ -664,6 +696,28 @@ TEST_CASE( "convolution_2d/same_6", "convolution_2d_same" ) {
     REQUIRE(c(3, 3) == 9658);
 }
 
+TEST_CASE( "convolution_2d/same_7", "convolution_2d_same" ) {
+    etl::fast_matrix<double, 2, 6> a = {1,2,3,4,5,6,7,8,9,10,11,12};
+    etl::fast_matrix<double, 2, 2> b = {1,2,3,4};
+    etl::fast_matrix<double, 2, 6> c;
+
+    etl::convolve_2d_same(a, b, c);
+
+    REQUIRE(c(0, 0) == 32);
+    REQUIRE(c(0, 1) == 42);
+    REQUIRE(c(0, 2) == 52);
+    REQUIRE(c(0, 3) == 62);
+    REQUIRE(c(0, 4) == 72);
+    REQUIRE(c(0, 5) == 48);
+
+    REQUIRE(c(1, 0) == 52);
+    REQUIRE(c(1, 1) == 59);
+    REQUIRE(c(1, 2) == 66);
+    REQUIRE(c(1, 3) == 73);
+    REQUIRE(c(1, 4) == 80);
+    REQUIRE(c(1, 5) == 48);
+}
+
 //}}}
 
 //{{{ convolution_2d_valid
@@ -763,6 +817,20 @@ TEST_CASE( "convolution_2d/valid_6", "convolution_2d_valid" ) {
     REQUIRE(c(3, 1) == 9613);
     REQUIRE(c(3, 2) == 9312);
     REQUIRE(c(3, 3) == 5832);
+}
+
+TEST_CASE( "convolution_2d/valid_7", "convolution_2d_valid" ) {
+    etl::fast_matrix<double, 2, 6> a = {1,2,3,4,5,6,7,8,9,10,11,12};
+    etl::fast_matrix<double, 2, 2> b = {1,2,3,4};
+    etl::fast_matrix<double, 1, 5> c;
+
+    etl::convolve_2d_valid(a, b, c);
+
+    REQUIRE(c(0, 0) == 32);
+    REQUIRE(c(0, 1) == 42);
+    REQUIRE(c(0, 2) == 52);
+    REQUIRE(c(0, 3) == 62);
+    REQUIRE(c(0, 4) == 72);
 }
 
 //}}}
