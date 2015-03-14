@@ -122,6 +122,12 @@ template<typename T, std::size_t R, std::size_t C>
 struct is_direct_fast_matrix_view<fast_matrix_view<T, R, C>> : cpp::bool_constant_c<has_direct_access<T>> {};
 
 template<typename T>
+struct is_direct_dyn_matrix_view : std::false_type {};
+
+template<typename T>
+struct is_direct_dyn_matrix_view<dyn_matrix_view<T>> : cpp::bool_constant_c<has_direct_access<T>> {};
+
+template<typename T>
 struct is_direct_identity_view : std::false_type {};
 
 template<typename T, typename V>
@@ -133,6 +139,7 @@ struct has_direct_access : cpp::bool_constant_c<cpp::or_c<
         , is_direct_identity_view<T>
         , is_direct_sub_view<T>
         , is_direct_fast_matrix_view<T>
+        , is_direct_dyn_matrix_view<T>
     >> {};
 
 template<typename T>

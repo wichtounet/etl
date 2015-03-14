@@ -217,7 +217,7 @@ struct dyn_matrix_view {
     dyn_matrix_view(sub_type sub, std::size_t rows, std::size_t columns) : sub(sub), rows(rows), columns(columns) {}
 
     const_return_type operator[](std::size_t j) const {
-        return sub(j);
+        return sub[j];
     }
 
     const_return_type operator()(std::size_t j) const {
@@ -229,7 +229,7 @@ struct dyn_matrix_view {
     }
 
     return_type operator[](std::size_t j){
-        return sub(j);
+        return sub[j];
     }
 
     return_type operator()(std::size_t j){
@@ -239,6 +239,30 @@ struct dyn_matrix_view {
     return_type operator()(std::size_t i, std::size_t j){
         return sub(i * columns + j);
     }
+
+    //{{{ Direct memory access
+
+    template<cpp_enable_if_cst(has_direct_access<sub_type>::value)>
+    value_type* memory_start() noexcept {
+        return sub.memory_start();
+    }
+
+    template<cpp_enable_if_cst(has_direct_access<sub_type>::value)>
+    const value_type* memory_start() const noexcept {
+        return sub.memory_start();
+    }
+
+    template<cpp_enable_if_cst(has_direct_access<sub_type>::value)>
+    value_type* memory_end() noexcept {
+        return sub.memory_end();
+    }
+
+    template<cpp_enable_if_cst(has_direct_access<sub_type>::value)>
+    const value_type* memory_end() const noexcept {
+        return sub.memory_end();
+    }
+
+    //}}}
 };
 
 template<typename T, std::size_t D>
