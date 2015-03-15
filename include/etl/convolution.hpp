@@ -152,7 +152,7 @@ struct conv1_valid_impl {
     }
 };
 
-#ifdef ETL_EXPERIMENTAL
+#ifdef ETL_VECTORIZE
 
 #ifdef __SSE3__
 
@@ -246,9 +246,9 @@ struct conv1_valid_impl<I, K, C, std::enable_if_t<is_fast_sconv<I,K,C>::value>> 
     }
 };
 
-#endif //ETL_EXPERIMENTAL
-
 #endif //__SSE3__
+
+#endif //ETL_VECTORIZE
 
 } //end of namespace detail
 
