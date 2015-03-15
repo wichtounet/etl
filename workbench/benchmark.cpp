@@ -344,13 +344,15 @@ void bench_stack(){
     bench_dyn_mmul(64, 32, "TODOms");
     bench_dyn_mmul(128, 64, "TODOms");
     bench_dyn_mmul(256, 128, "TODOms");
+    bench_dyn_mmul(512, 256, "TODOms");
 
     bench_fast_mmul_s<2*64, 2*32>("TODOms");
     bench_fast_mmul_s<2*128, 2*64>("TODOms");
     bench_fast_mmul_s<2*256, 2*128>("TODOms");
-    bench_dyn_mmul_s(2*64, 2*32, "TODOms");
-    bench_dyn_mmul_s(2*128, 2*64, "TODOms");
-    bench_dyn_mmul_s(2*256, 2*128, "TODOms");
+    bench_dyn_mmul_s(64, 32, "TODOms");
+    bench_dyn_mmul_s(128, 64, "TODOms");
+    bench_dyn_mmul_s(256, 128, "TODOms");
+    bench_dyn_mmul_s(512, 256, "TODOms");
 
     bench_dyn_strassen_mmul(16, 16, "TODOms");
     bench_dyn_strassen_mmul(32, 32, "TODOms");
