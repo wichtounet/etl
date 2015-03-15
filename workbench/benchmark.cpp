@@ -263,6 +263,27 @@ void bench_dyn_mmul(std::size_t d1, std::size_t d2, const std::string& reference
         , a, b);
 }
 
+template<std::size_t D1, std::size_t D2>
+void bench_fast_mmul_s(const std::string& reference){
+    etl::fast_matrix<float, D1, D2> a;
+    etl::fast_matrix<float, D2, D1> b;
+    etl::fast_matrix<float, D1, D1> c;
+
+    measure("fast_mmul_s(" + std::to_string(D1) + "," + std::to_string(D2) + ")", reference,
+        [&a, &b, &c](){etl::mmul(a, b, c);}
+        , a, b);
+}
+
+void bench_dyn_mmul_s(std::size_t d1, std::size_t d2, const std::string& reference){
+    etl::dyn_matrix<float> a(d1, d2);
+    etl::dyn_matrix<float> b(d2, d1);
+    etl::dyn_matrix<float> c(d1, d1);
+
+    measure("dyn_mmul_s(" + std::to_string(d1) + "," + std::to_string(d2) + ")", reference,
+        [&a, &b, &c](){etl::mmul(a, b, c);}
+        , a, b);
+}
+
 void bench_dyn_strassen_mmul(std::size_t d1, std::size_t d2, const std::string& reference){
     etl::dyn_matrix<double> a(d1, d2);
     etl::dyn_matrix<double> b(d2, d1);
@@ -323,6 +344,13 @@ void bench_stack(){
     bench_dyn_mmul(64, 32, "TODOms");
     bench_dyn_mmul(128, 64, "TODOms");
     bench_dyn_mmul(256, 128, "TODOms");
+
+    bench_fast_mmul_s<2*64, 2*32>("TODOms");
+    bench_fast_mmul_s<2*128, 2*64>("TODOms");
+    bench_fast_mmul_s<2*256, 2*128>("TODOms");
+    bench_dyn_mmul_s(2*64, 2*32, "TODOms");
+    bench_dyn_mmul_s(2*128, 2*64, "TODOms");
+    bench_dyn_mmul_s(2*256, 2*128, "TODOms");
 
     bench_dyn_strassen_mmul(16, 16, "TODOms");
     bench_dyn_strassen_mmul(32, 32, "TODOms");
