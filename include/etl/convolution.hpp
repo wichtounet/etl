@@ -171,24 +171,24 @@ struct is_fast_sconv : cpp::bool_constant_c<cpp::and_c<
 template<typename I, typename K, typename C>
 struct conv1_valid_impl<I, K, C, std::enable_if_t<is_fast_dconv<I,K,C>::value>> {
     static void apply(const I& input, const K& kernel, C&& conv){
-        __m128* kernel_reverse = new __m128[kernel.size()];
+        __m128* kernel_reverse = new __m128[etl::size(kernel)];
 
         auto out = conv.memory_start();
         auto in = input.memory_start();
         auto k = kernel.memory_start();
 
-        for(int i=0; i< kernel.size(); i++){
-            kernel_reverse[i] = _mm_load1_pd(k + kernel.size() - i - 1);
+        for(std::size_t i=0; i< etl::size(kernel); i++){
+            kernel_reverse[i] = _mm_load1_pd(k + etl::size(kernel) - i - 1);
         }
 
-        register __m128 tmp1;
-        register __m128 tmp2;
-        register __m128 res;
+        __m128 tmp1;
+        __m128 tmp2;
+        __m128 res;
 
-        for(std::size_t i=0; i<input.size()-kernel.size(); i+=2){
+        for(std::size_t i=0; i<size(input)-etl::size(kernel); i+=2){
             res = _mm_setzero_pd();
 
-            for(std::size_t k=0; k<kernel.size(); k++){
+            for(std::size_t k=0; k< size(kernel); k++){
                 tmp1 = _mm_loadu_pd(in + i + k);
                 tmp2 = _mm_mul_pd(kernel_reverse[k], tmp1);
                 res = _mm_add_pd(res, tmp2);
@@ -197,10 +197,10 @@ struct conv1_valid_impl<I, K, C, std::enable_if_t<is_fast_dconv<I,K,C>::value>> 
             _mm_storeu_pd(out+i, res);
         }
 
-        auto i = input.size() - kernel.size();
+        auto i = size(input) - size(kernel);
         conv[i] = 0.0;
-        for(int k=0; k<kernel.size(); k++){
-            conv[i] += input[i+k] * kernel[kernel.size() - k - 1];
+        for(std::size_t k=0; k<etl::size(kernel); k++){
+            conv[i] += input[i+k] * kernel[size(kernel) - k - 1];
         }
 
         delete[] kernel_reverse;
@@ -210,24 +210,24 @@ struct conv1_valid_impl<I, K, C, std::enable_if_t<is_fast_dconv<I,K,C>::value>> 
 template<typename I, typename K, typename C>
 struct conv1_valid_impl<I, K, C, std::enable_if_t<is_fast_sconv<I,K,C>::value>> {
     static void apply(const I& input, const K& kernel, C&& conv){
-        __m128* kernel_reverse = new __m128[kernel.size()];
+        __m128* kernel_reverse = new __m128[etl::size(kernel)];
 
         auto out = conv.memory_start();
         auto in = input.memory_start();
         auto k = kernel.memory_start();
 
-        for(std::size_t i=0; i< kernel.size(); i++){
-            kernel_reverse[i] = _mm_load1_ps(k + kernel.size() - i - 1);
+        for(std::size_t i=0; i< etl::size(kernel); i++){
+            kernel_reverse[i] = _mm_load1_ps(k + etl::size(kernel) - i - 1);
         }
 
-        register __m128 tmp1;
-        register __m128 tmp2;
-        register __m128 res;
+        __m128 tmp1;
+        __m128 tmp2;
+        __m128 res;
 
-        for(std::size_t i=0; i<input.size()-kernel.size(); i+=4){
+        for(std::size_t i=0; i<size(input)-etl::size(kernel); i+=2){
             res = _mm_setzero_ps();
 
-            for(std::size_t k=0; k<kernel.size(); k++){
+            for(std::size_t k=0; k<size(kernel); k++){
                 tmp1 = _mm_loadu_ps(in + i + k);
                 tmp2 = _mm_mul_ps(kernel_reverse[k], tmp1);
                 res = _mm_add_ps(res, tmp2);
@@ -236,10 +236,10 @@ struct conv1_valid_impl<I, K, C, std::enable_if_t<is_fast_sconv<I,K,C>::value>> 
             _mm_storeu_ps(out+i, res);
         }
 
-        auto i = input.size() - kernel.size();
+        auto i = size(input) - size(kernel);
         conv[i] = 0.0;
-        for(int k=0; k<kernel.size(); k++){
-            conv[i] += input[i+k] * kernel[kernel.size() - k - 1];
+        for(std::size_t k=0; k< size(kernel); k++){
+            conv[i] += input[i+k] * kernel[size(kernel) - k - 1];
         }
 
         delete[] kernel_reverse;
