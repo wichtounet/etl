@@ -10,6 +10,16 @@
 #ifndef ETL_DGEMM_HPP
 #define ETL_DGEMM_HPP
 
+#ifdef ETL_VECTORIZE
+#ifdef __SSE3__
+#define DGEMM_SSE
+#endif //__SSE3__
+#endif //ETL_VECTORIZE
+
+#ifdef DGEMM_SSE
+#include <immintrin.h>
+#endif
+
 #include "cpp_utils/likely.hpp"
 
 namespace etl {
@@ -93,6 +103,118 @@ void pack_B(std::size_t kc, std::size_t nc, const D* B, std::size_t b_row_stride
     }
 }
 
+#ifdef DGEMM_SSE
+
+template<typename D>
+void dgemm_micro_kernel(std::size_t kc, D alpha, const D* A, const D* B, D beta, D* C, std::size_t c_row_stride, std::size_t c_col_stride){
+    D AB[MR*NR] __attribute__ ((aligned (16)));
+
+    __m128 tmp0 = _mm_load_pd(A);
+    __m128 tmp1 = _mm_load_pd(A+2);
+    __m128 tmp2 = _mm_load_pd(B);
+    __m128 tmp3;
+    __m128 tmp4;
+    __m128 tmp5;
+    __m128 tmp6;
+    __m128 tmp7;
+
+    __m128 ab_00_11 = _mm_setzero_pd(); 
+    __m128 ab_20_31 = _mm_setzero_pd();
+    __m128 ab_01_10 = _mm_setzero_pd(); 
+    __m128 ab_21_30 = _mm_setzero_pd();
+    __m128 ab_02_13 = _mm_setzero_pd(); 
+    __m128 ab_22_33 = _mm_setzero_pd();
+    __m128 ab_03_12 = _mm_setzero_pd(); 
+    __m128 ab_23_32 = _mm_setzero_pd();
+
+    for (std::size_t l=0; l<kc; ++l) {
+        tmp3 = _mm_load_pd(B+2);
+
+        tmp4 = _mm_shuffle_pd(tmp2, tmp2, _MM_SHUFFLE2(0, 1));
+        tmp5 = _mm_shuffle_pd(tmp3, tmp3, _MM_SHUFFLE2(0, 1));
+
+        tmp6 = tmp2;
+        tmp2 = _mm_mul_pd(tmp2, tmp0);
+        tmp6 = _mm_mul_pd(tmp6, tmp1);
+        ab_00_11 = _mm_add_pd(ab_00_11, tmp2);
+        ab_20_31 = _mm_add_pd(ab_20_31, tmp6);
+
+        tmp7 = tmp4;
+        tmp4 = _mm_mul_pd(tmp4, tmp0);
+        tmp7 = _mm_mul_pd(tmp7, tmp1);
+        ab_01_10 = _mm_add_pd(ab_01_10, tmp4);
+        ab_21_30 = _mm_add_pd(ab_21_30, tmp7);
+
+        tmp2 = _mm_load_pd(B+4);                                // (6)
+        tmp6 = tmp3;
+        tmp3 = _mm_mul_pd(tmp3, tmp0);
+        tmp6 = _mm_mul_pd(tmp6, tmp1);
+        ab_02_13 = _mm_add_pd(ab_02_13, tmp3);
+        ab_22_33 = _mm_add_pd(ab_22_33, tmp6);
+
+        tmp7 = tmp5;
+        tmp5 = _mm_mul_pd(tmp5, tmp0);
+        tmp0 = _mm_load_pd(A+4);                                // (4)
+        tmp7 = _mm_mul_pd(tmp7, tmp1);
+        tmp1 = _mm_load_pd(A+6);                                // (5)
+        ab_03_12 = _mm_add_pd(ab_03_12, tmp5);
+        ab_23_32 = _mm_add_pd(ab_23_32, tmp7);
+
+        A += 4;
+        B += 4;
+    }
+
+    _mm_storel_pd(&AB[0+0*4], ab_00_11);
+    _mm_storeh_pd(&AB[1+0*4], ab_01_10);
+    _mm_storel_pd(&AB[2+0*4], ab_20_31);
+    _mm_storeh_pd(&AB[3+0*4], ab_21_30);
+
+    _mm_storel_pd(&AB[0+1*4], ab_01_10);
+    _mm_storeh_pd(&AB[1+1*4], ab_00_11);
+    _mm_storel_pd(&AB[2+1*4], ab_21_30);
+    _mm_storeh_pd(&AB[3+1*4], ab_20_31);
+
+    _mm_storel_pd(&AB[0+2*4], ab_02_13);
+    _mm_storeh_pd(&AB[1+2*4], ab_03_12);
+    _mm_storel_pd(&AB[2+2*4], ab_22_33);
+    _mm_storeh_pd(&AB[3+2*4], ab_23_32);
+
+    _mm_storel_pd(&AB[0+3*4], ab_03_12);
+    _mm_storeh_pd(&AB[1+3*4], ab_02_13);
+    _mm_storel_pd(&AB[2+3*4], ab_23_32);
+    _mm_storeh_pd(&AB[3+3*4], ab_22_33);
+
+    if (cpp_likely(beta==0.0)) {
+        for (std::size_t j=0; j<NR; ++j) {
+            for (std::size_t i=0; i<MR; ++i) {
+                C[i*c_row_stride+j*c_col_stride] = 0.0;
+            }
+        }
+    } else if (beta!=1.0) {
+        for (std::size_t j=0; j<NR; ++j) {
+            for (std::size_t i=0; i<MR; ++i) {
+                C[i*c_row_stride+j*c_col_stride] *= beta;
+            }
+        }
+    }
+
+    if (cpp_likely(alpha==1.0)) {
+        for (std::size_t j=0; j<NR; ++j) {
+            for (std::size_t i=0; i<MR; ++i) {
+                C[i*c_row_stride+j*c_col_stride] += AB[i+j*MR];
+            }
+        }
+    } else {
+        for (std::size_t j=0; j<NR; ++j) {
+            for (std::size_t i=0; i<MR; ++i) {
+                C[i*c_row_stride+j*c_col_stride] += alpha*AB[i+j*MR];
+            }
+        }
+    }
+}
+
+#else //!DGEMM_SSE
+
 template<typename D>
 void dgemm_micro_kernel(std::size_t kc, D alpha, const D* A, const D* B, D beta, D* C, std::size_t c_row_stride, std::size_t c_col_stride){
     D AB[MR*NR];
@@ -137,6 +259,8 @@ void dgemm_micro_kernel(std::size_t kc, D alpha, const D* A, const D* B, D beta,
         }
     }
 }
+
+#endif
 
 template<typename D>
 void dgeaxpy(std::size_t m, std::size_t n, D alpha, const D  *X, std::size_t incRowX, std::size_t incColX, D* Y, std::size_t incRowY, std::size_t incColY){
