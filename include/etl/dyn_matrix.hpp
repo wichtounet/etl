@@ -108,7 +108,7 @@ public:
         //Nothing to init
     }
 
-    //Sizes followed by an initializer list
+    //Initializer-list construction for vector
     dyn_matrix(std::initializer_list<value_type> list) :
             _size(list.size()),
             _data(list),
@@ -156,7 +156,10 @@ public:
             (sizeof...(S) == D),
             std::is_convertible<std::size_t, typename cpp::first_type<S1, S...>::type>::value,   //The first type must be convertible to size_t
             cpp::is_sub_homogeneous<S1, S...>::value,                                            //The first N-1 types must homegeneous
-            std::is_same<value_type, typename cpp::last_type<S1, S...>::type>::value             //The last type must be exactly value_type
+            (std::is_arithmetic<typename cpp::last_type<S1, S...>::type>::value
+                ? std::is_convertible<value_type, typename cpp::last_type<S1, S...>::type>::value      //The last type must be convertible to value_type
+                : std::is_same<value_type, typename cpp::last_type<S1, S...>::type>::value             //The last type must be exactly value_type
+            )
         > = cpp::detail::dummy>
     dyn_matrix(S1 s1, S... sizes) :
             _size(dyn_detail::size(std::make_index_sequence<(sizeof...(S))>(), s1, sizes...)),

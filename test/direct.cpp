@@ -7,14 +7,15 @@
 #include <cmath>
 
 #include "catch.hpp"
+#include "template_test.hpp"
 
 #include "etl/etl.hpp"
 
-TEST_CASE( "direct_access/traits", "has_direct_access" ) {
-    etl::fast_matrix<double, 3, 2> a;
+TEMPLATE_TEST_CASE_2( "direct_access/traits", "has_direct_access", Z, double, float) {
+    etl::fast_matrix<Z, 3, 2> a;
 
-    using expr_1 = etl::fast_matrix<double, 3, 2>;
-    using expr_2 = etl::dyn_matrix<double, 3>;
+    using expr_1 = etl::fast_matrix<Z, 3, 2>;
+    using expr_2 = etl::dyn_matrix<Z, 3>;
 
     REQUIRE(etl::has_direct_access<expr_1>::value);
     REQUIRE(etl::has_direct_access<expr_2>::value);
@@ -40,8 +41,8 @@ TEST_CASE( "direct_access/traits", "has_direct_access" ) {
     REQUIRE(etl::has_direct_access<expr_10>::value);
 }
 
-TEST_CASE( "direct_access/fast_matrix", "direct_access" ) {
-    etl::fast_matrix<double, 5, 5> test_matrix{etl::magic<5>()};
+TEMPLATE_TEST_CASE_2( "direct_access/fast_matrix", "direct_access", Z, double, float) {
+    etl::fast_matrix<Z, 5, 5> test_matrix{etl::magic<5>()};
 
     REQUIRE(test_matrix.size() == 25);
 
@@ -60,8 +61,8 @@ TEST_CASE( "direct_access/fast_matrix", "direct_access" ) {
     REQUIRE(it == end);
 }
 
-TEST_CASE( "direct_access/dyn_matrix", "direct_access" ) {
-    etl::dyn_matrix<double, 2> test_matrix{etl::magic(5)};
+TEMPLATE_TEST_CASE_2( "direct_access/dyn_matrix", "direct_access", Z, double, float) {
+    etl::dyn_matrix<Z, 2> test_matrix{etl::magic(5)};
 
     REQUIRE(test_matrix.size() == 25);
 
@@ -80,8 +81,8 @@ TEST_CASE( "direct_access/dyn_matrix", "direct_access" ) {
     REQUIRE(it == end);
 }
 
-TEST_CASE( "direct_access/sub_view", "direct_access" ) {
-    etl::dyn_matrix<double, 2> test_matrix{etl::magic(5)};
+TEMPLATE_TEST_CASE_2( "direct_access/sub_view", "direct_access", Z, double, float) {
+    etl::dyn_matrix<Z, 2> test_matrix{etl::magic(5)};
 
     auto v = test_matrix(1);
 
@@ -100,8 +101,8 @@ TEST_CASE( "direct_access/sub_view", "direct_access" ) {
     REQUIRE(it == end);
 }
 
-TEST_CASE( "direct_access/reshape", "direct_access" ) {
-    etl::dyn_matrix<double, 2> test_matrix{etl::magic(6)};
+TEMPLATE_TEST_CASE_2( "direct_access/reshape", "direct_access", Z, double, float) {
+    etl::dyn_matrix<Z, 2> test_matrix{etl::magic(6)};
 
     auto v = etl::reshape<3,12>(test_matrix);
 
@@ -120,8 +121,8 @@ TEST_CASE( "direct_access/reshape", "direct_access" ) {
     REQUIRE(it == end);
 }
 
-TEST_CASE( "direct_access/reshape_dyn", "direct_access" ) {
-    etl::dyn_matrix<double, 2> test_matrix{etl::magic(6)};
+TEMPLATE_TEST_CASE_2( "direct_access/reshape_dyn", "direct_access", Z, double, float) {
+    etl::dyn_matrix<Z, 2> test_matrix{etl::magic(6)};
 
     auto v = etl::reshape(test_matrix, 3, 12);
 
@@ -140,8 +141,8 @@ TEST_CASE( "direct_access/reshape_dyn", "direct_access" ) {
     REQUIRE(it == end);
 }
 
-TEST_CASE( "direct_access/dim_view", "direct_access" ) {
-    etl::dyn_matrix<double, 2> test_matrix{etl::magic(6)};
+TEMPLATE_TEST_CASE_2( "direct_access/dim_view", "direct_access", Z, double, float) {
+    etl::dyn_matrix<Z, 2> test_matrix{etl::magic(6)};
 
     auto v = row(test_matrix, 2);
 
