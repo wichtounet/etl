@@ -6,6 +6,7 @@
 //=======================================================================
 
 #include "catch.hpp"
+#include "template_test.hpp"
 
 #include "etl/etl.hpp"
 #include "etl/convolution.hpp"
@@ -14,10 +15,10 @@
 
 //{{{ convolution_1d_full
 
-TEST_CASE( "convolution_1d/full_1", "convolution_1d_full" ) {
-    etl::fast_vector<double, 3> a = {1.0, 2.0, 3.0};
-    etl::fast_vector<double, 3> b = {0.0, 1.0, 0.5};
-    etl::fast_vector<double, 5> c;
+TEMPLATE_TEST_CASE_2( "convolution_1d/full_1", "convolution_1d_full", Z, float, double) {
+    etl::fast_vector<Z, 3> a = {1.0, 2.0, 3.0};
+    etl::fast_vector<Z, 3> b = {0.0, 1.0, 0.5};
+    etl::fast_vector<Z, 5> c;
 
     etl::convolve_1d_full(a, b, c);
 
@@ -28,10 +29,10 @@ TEST_CASE( "convolution_1d/full_1", "convolution_1d_full" ) {
     REQUIRE(c[4] == Approx(1.5));
 }
 
-TEST_CASE( "convolution_1d/full_2", "convolution_1d_full" ) {
-    etl::fast_vector<double, 5> a = {1.0, 2.0, 3.0, 4.0, 5.0};
-    etl::fast_vector<double, 3> b = {0.5, 1.0, 1.5};
-    etl::fast_vector<double, 7> c;
+TEMPLATE_TEST_CASE_2( "convolution_1d/full_2", "convolution_1d_full", Z, float, double ) {
+    etl::fast_vector<Z, 5> a = {1.0, 2.0, 3.0, 4.0, 5.0};
+    etl::fast_vector<Z, 3> b = {0.5, 1.0, 1.5};
+    etl::fast_vector<Z, 7> c;
 
     etl::convolve_1d_full(a, b, c);
 
@@ -44,10 +45,10 @@ TEST_CASE( "convolution_1d/full_2", "convolution_1d_full" ) {
     REQUIRE(c[6] == Approx(7.5));
 }
 
-TEST_CASE( "convolution_1d/full_3", "convolution_1d_full" ) {
-    etl::fast_vector<double, 9> a(etl::magic(3));
-    etl::fast_vector<double, 4> b(etl::magic(2));
-    etl::fast_vector<double, 12> c;
+TEMPLATE_TEST_CASE_2( "convolution_1d/full_3", "convolution_1d_full", Z, float, double) {
+    etl::fast_vector<Z, 9> a(etl::magic<Z>(3));
+    etl::fast_vector<Z, 4> b(etl::magic<Z>(2));
+    etl::fast_vector<Z, 12> c;
 
     etl::convolve_1d_full(a, b, c);
 
