@@ -6,6 +6,7 @@
 //=======================================================================
 
 #include "catch.hpp"
+#include "template_test.hpp"
 
 #include "etl/etl.hpp"
 #include "etl/multiplication.hpp"
@@ -13,7 +14,7 @@
 
 //{{{ mmul
 
-TEST_CASE( "multiplication/mmul1", "mmul" ) {
+TEMPLATE_TEST_CASE_2( "multiplication/mmul1", "mmul", Z, double, float) {
     etl::fast_matrix<double, 2, 3> a = {1,2,3,4,5,6};
     etl::fast_matrix<double, 3, 2> b = {7,8,9,10,11,12};
     etl::fast_matrix<double, 2, 2> c;
@@ -26,7 +27,7 @@ TEST_CASE( "multiplication/mmul1", "mmul" ) {
     REQUIRE(c(1,1) == 154);
 }
 
-TEST_CASE( "multiplication/mmul2", "mmul" ) {
+TEMPLATE_TEST_CASE_2( "multiplication/mmul2", "mmul", Z, double, float) {
     etl::fast_matrix<double, 3, 3> a = {1,2,3,4,5,6,7,8,9};
     etl::fast_matrix<double, 3, 3> b = {7,8,9,9,10,11,11,12,13};
     etl::fast_matrix<double, 3, 3> c;
@@ -44,7 +45,7 @@ TEST_CASE( "multiplication/mmul2", "mmul" ) {
     REQUIRE(c(2,2) == 268);
 }
 
-TEST_CASE( "multiplication/auto_vmmul_1", "auto_vmmul" ) {
+TEMPLATE_TEST_CASE_2( "multiplication/auto_vmmul_1", "auto_vmmul", Z, double, float) {
     etl::fast_matrix<double, 2, 3> a = {1,2,3,4,5,6};
     etl::fast_vector<double, 3> b = {7,8,9};
     etl::fast_matrix<double, 2, 1> c;
@@ -55,7 +56,7 @@ TEST_CASE( "multiplication/auto_vmmul_1", "auto_vmmul" ) {
     REQUIRE(c(1,0) == 122);
 }
 
-TEST_CASE( "multiplication/auto_vmmul_2", "auto_vmmul" ) {
+TEMPLATE_TEST_CASE_2( "multiplication/auto_vmmul_2", "auto_vmmul", Z, double, float) {
     etl::fast_matrix<double, 2, 5> a = {1,2,3,4,5,6,7,8,9,10};
     etl::fast_vector<double, 5> b = {7,8,9,10,11};
     etl::fast_matrix<double, 2, 1> c;
@@ -66,7 +67,7 @@ TEST_CASE( "multiplication/auto_vmmul_2", "auto_vmmul" ) {
     REQUIRE(c(1,0) == 370);
 }
 
-TEST_CASE( "multiplication/auto_vmmul_3", "auto_vmmul" ) {
+TEMPLATE_TEST_CASE_2( "multiplication/auto_vmmul_3", "auto_vmmul", Z, double, float) {
     etl::fast_matrix<double, 3, 2> a = {1,2,3,4,5,6};
     etl::fast_vector<double, 3> b = {7,8,9};
     etl::fast_matrix<double, 1, 2> c;
@@ -77,7 +78,7 @@ TEST_CASE( "multiplication/auto_vmmul_3", "auto_vmmul" ) {
     REQUIRE(c(0,1) == 100);
 }
 
-TEST_CASE( "multiplication/auto_vmmul_4", "auto_vmmul" ) {
+TEMPLATE_TEST_CASE_2( "multiplication/auto_vmmul_4", "auto_vmmul", Z, double, float) {
     etl::dyn_matrix<double> a(2,3, etl::values(1,2,3,4,5,6));
     etl::dyn_vector<double> b(3, etl::values(7,8,9));
     etl::dyn_matrix<double> c(2,1);
@@ -88,7 +89,7 @@ TEST_CASE( "multiplication/auto_vmmul_4", "auto_vmmul" ) {
     REQUIRE(c(1,0) == 122);
 }
 
-TEST_CASE( "multiplication/auto_vmmul_5", "auto_vmmul" ) {
+TEMPLATE_TEST_CASE_2( "multiplication/auto_vmmul_5", "auto_vmmul", Z, double, float) {
     etl::dyn_matrix<double> a(2, 5, etl::values(1,2,3,4,5,6,7,8,9,10));
     etl::dyn_vector<double> b(5, etl::values(7,8,9,10,11));
     etl::dyn_matrix<double> c(2, 1);
@@ -99,7 +100,7 @@ TEST_CASE( "multiplication/auto_vmmul_5", "auto_vmmul" ) {
     REQUIRE(c(1,0) == 370);
 }
 
-TEST_CASE( "multiplication/auto_vmmul_6", "auto_vmmul" ) {
+TEMPLATE_TEST_CASE_2( "multiplication/auto_vmmul_6", "auto_vmmul", Z, double, float) {
     etl::dyn_matrix<double> a(3, 2, etl::values(1,2,3,4,5,6));
     etl::dyn_vector<double> b(3, etl::values(7,8,9));
     etl::dyn_matrix<double> c(1, 2);
@@ -110,7 +111,7 @@ TEST_CASE( "multiplication/auto_vmmul_6", "auto_vmmul" ) {
     REQUIRE(c(0,1) == 100);
 }
 
-TEST_CASE( "multiplication/dyn_mmul", "mmul" ) {
+TEMPLATE_TEST_CASE_2( "multiplication/dyn_mmul", "mmul", Z, double, float) {
     etl::dyn_matrix<double> a(3,3, std::initializer_list<double>({1,2,3,4,5,6,7,8,9}));
     etl::dyn_matrix<double> b(3,3, std::initializer_list<double>({7,8,9,9,10,11,11,12,13}));
     etl::dyn_matrix<double> c(3,3);
@@ -128,7 +129,7 @@ TEST_CASE( "multiplication/dyn_mmul", "mmul" ) {
     REQUIRE(c(2,2) == 268);
 }
 
-TEST_CASE( "multiplication/expr_mmul_1", "mmul" ) {
+TEMPLATE_TEST_CASE_2( "multiplication/expr_mmul_1", "mmul", Z, double, float) {
     etl::dyn_matrix<double> a(3,3, std::initializer_list<double>({1,2,3,4,5,6,7,8,9}));
     etl::dyn_matrix<double> b(3,3, std::initializer_list<double>({7,8,9,9,10,11,11,12,13}));
     etl::dyn_matrix<double> c(3,3);
@@ -146,7 +147,7 @@ TEST_CASE( "multiplication/expr_mmul_1", "mmul" ) {
     REQUIRE(c(2,2) == 268);
 }
 
-TEST_CASE( "multiplication/expr_mmul_2", "mmul" ) {
+TEMPLATE_TEST_CASE_2( "multiplication/expr_mmul_2", "mmul", Z, double, float) {
     etl::dyn_matrix<double> a(3,3, std::initializer_list<double>({1,2,3,4,5,6,7,8,9}));
     etl::dyn_matrix<double> b(3,3, std::initializer_list<double>({7,8,9,9,10,11,11,12,13}));
     etl::dyn_matrix<double> c(3,3);
@@ -164,7 +165,7 @@ TEST_CASE( "multiplication/expr_mmul_2", "mmul" ) {
     REQUIRE(c(2,2) == 268);
 }
 
-TEST_CASE( "multiplication/stop_mmul_1", "mmul" ) {
+TEMPLATE_TEST_CASE_2( "multiplication/stop_mmul_1", "mmul", Z, double, float) {
     etl::dyn_matrix<double> a(3,3, std::initializer_list<double>({1,2,3,4,5,6,7,8,9}));
     etl::dyn_matrix<double> b(3,3, std::initializer_list<double>({7,8,9,9,10,11,11,12,13}));
     etl::dyn_matrix<double> c(3,3);
@@ -182,7 +183,7 @@ TEST_CASE( "multiplication/stop_mmul_1", "mmul" ) {
     REQUIRE(c(2,2) == 268);
 }
 
-TEST_CASE( "multiplication/mmul5", "mmul" ) {
+TEMPLATE_TEST_CASE_2( "multiplication/mmul5", "mmul", Z, double, float) {
     etl::dyn_matrix<double> a(4,4, etl::values(1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16));
     etl::dyn_matrix<double> b(4,4, etl::values(1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16));
     etl::dyn_matrix<double> c(4,4);
@@ -199,7 +200,7 @@ TEST_CASE( "multiplication/mmul5", "mmul" ) {
     REQUIRE(c(3,1) == 484);
 }
 
-TEST_CASE( "multiplication/mmul6", "mmul" ) {
+TEMPLATE_TEST_CASE_2( "multiplication/mmul6", "mmul", Z, double, float) {
     etl::dyn_matrix<double> a(2,2, etl::values(1,2,3,4,5,6,7,8));
     etl::dyn_matrix<double> b(2,2, etl::values(1,2,3,4,5,6,7,8));
     etl::dyn_matrix<double> c(2,2);
@@ -216,7 +217,7 @@ TEST_CASE( "multiplication/mmul6", "mmul" ) {
 
 //{{{ mmul_2
 
-TEST_CASE( "multiplication/mmul_2_1", "mmul" ) {
+TEMPLATE_TEST_CASE_2( "multiplication/mmul_2_1", "mmul", Z, double, float) {
     etl::fast_matrix<double, 2, 3> a = {1,2,3,4,5,6};
     etl::fast_matrix<double, 3, 2> b = {7,8,9,10,11,12};
     etl::fast_matrix<double, 2, 2> c;
@@ -229,7 +230,7 @@ TEST_CASE( "multiplication/mmul_2_1", "mmul" ) {
     REQUIRE(c(1,1) == 154);
 }
 
-TEST_CASE( "multiplication/mmul_2_2", "mmul" ) {
+TEMPLATE_TEST_CASE_2( "multiplication/mmul_2_2", "mmul", Z, double, float) {
     etl::fast_matrix<double, 3, 3> a = {1,2,3,4,5,6,7,8,9};
     etl::fast_matrix<double, 3, 3> b = {7,8,9,9,10,11,11,12,13};
     etl::fast_matrix<double, 3, 3> c;
@@ -247,7 +248,7 @@ TEST_CASE( "multiplication/mmul_2_2", "mmul" ) {
     REQUIRE(c(2,2) == 268);
 }
 
-TEST_CASE( "multiplication/mmul_2_3", "mmul" ) {
+TEMPLATE_TEST_CASE_2( "multiplication/mmul_2_3", "mmul", Z, double, float) {
     etl::dyn_matrix<double> a(4,4, etl::values(1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16));
     etl::dyn_matrix<double> b(4,4, etl::values(1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16));
     etl::dyn_matrix<double> c(4,4);
@@ -264,7 +265,7 @@ TEST_CASE( "multiplication/mmul_2_3", "mmul" ) {
     REQUIRE(c(3,1) == 484);
 }
 
-TEST_CASE( "multiplication/mmul_2_4", "mmul" ) {
+TEMPLATE_TEST_CASE_2( "multiplication/mmul_2_4", "mmul", Z, double, float) {
     etl::dyn_matrix<double> a(2,2, etl::values(1,2,3,4,5,6,7,8));
     etl::dyn_matrix<double> b(2,2, etl::values(1,2,3,4,5,6,7,8));
     etl::dyn_matrix<double> c(2,2);
@@ -277,7 +278,7 @@ TEST_CASE( "multiplication/mmul_2_4", "mmul" ) {
     REQUIRE(c(1,1) == 22);
 }
 
-TEST_CASE( "multiplication/mmul_2_5", "mmul" ) {
+TEMPLATE_TEST_CASE_2( "multiplication/mmul_2_5", "mmul", Z, double, float) {
     etl::fast_matrix<double, 2, 3> a = {1,2,3,4,5,6};
     etl::fast_matrix<double, 3, 2> b = {7,8,9,10,11,12};
 
@@ -293,7 +294,7 @@ TEST_CASE( "multiplication/mmul_2_5", "mmul" ) {
 
 //{{{ mmul_2
 
-TEST_CASE( "multiplication/lazy_mmul_1", "mmul" ) {
+TEMPLATE_TEST_CASE_2( "multiplication/lazy_mmul_1", "mmul", Z, double, float) {
     etl::fast_matrix<double, 2, 3> a = {1,2,3,4,5,6};
     etl::fast_matrix<double, 3, 2> b = {7,8,9,10,11,12};
     etl::fast_matrix<double, 2, 2> c;
@@ -306,7 +307,7 @@ TEST_CASE( "multiplication/lazy_mmul_1", "mmul" ) {
     REQUIRE(c(1,1) == 154);
 }
 
-TEST_CASE( "multiplication/lazy_mmul_2", "mmul" ) {
+TEMPLATE_TEST_CASE_2( "multiplication/lazy_mmul_2", "mmul", Z, double, float) {
     etl::fast_matrix<double, 3, 3> a = {1,2,3,4,5,6,7,8,9};
     etl::fast_matrix<double, 3, 3> b = {7,8,9,9,10,11,11,12,13};
     etl::fast_matrix<double, 3, 3> c;
@@ -324,7 +325,7 @@ TEST_CASE( "multiplication/lazy_mmul_2", "mmul" ) {
     REQUIRE(c(2,2) == 268);
 }
 
-TEST_CASE( "multiplication/lazy_mmul_3", "mmul" ) {
+TEMPLATE_TEST_CASE_2( "multiplication/lazy_mmul_3", "mmul", Z, double, float) {
     etl::dyn_matrix<double> a(4,4, etl::values(1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16));
     etl::dyn_matrix<double> b(4,4, etl::values(1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16));
     etl::dyn_matrix<double> c(4,4);
@@ -341,7 +342,7 @@ TEST_CASE( "multiplication/lazy_mmul_3", "mmul" ) {
     REQUIRE(c(3,1) == 484);
 }
 
-TEST_CASE( "multiplication/lazy_mmul_4", "mmul" ) {
+TEMPLATE_TEST_CASE_2( "multiplication/lazy_mmul_4", "mmul", Z, double, float) {
     etl::dyn_matrix<double> a(2,2, etl::values(1,2,3,4,5,6,7,8));
     etl::dyn_matrix<double> b(2,2, etl::values(1,2,3,4,5,6,7,8));
     etl::dyn_matrix<double> c(2,2);
@@ -354,7 +355,7 @@ TEST_CASE( "multiplication/lazy_mmul_4", "mmul" ) {
     REQUIRE(c(1,1) == 22);
 }
 
-TEST_CASE( "multiplication/lazy_mmul_5", "mmul" ) {
+TEMPLATE_TEST_CASE_2( "multiplication/lazy_mmul_5", "mmul", Z, double, float) {
     etl::fast_matrix<double, 2, 3> a = {1,2,3,4,5,6};
     etl::fast_matrix<double, 3, 2> b = {7,8,9,10,11,12};
 
@@ -370,7 +371,7 @@ TEST_CASE( "multiplication/lazy_mmul_5", "mmul" ) {
 
 //{{{ Strassen mmul
 
-TEST_CASE( "multiplication/strassen_mmul_1", "strassen_mmul" ) {
+TEMPLATE_TEST_CASE_2( "multiplication/strassen_mmul_1", "strassen_mmul", Z, double, float) {
     etl::dyn_matrix<double> a(4,4, etl::values(1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16));
     etl::dyn_matrix<double> b(4,4, etl::values(1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16));
     etl::dyn_matrix<double> c(4,4);
@@ -387,7 +388,7 @@ TEST_CASE( "multiplication/strassen_mmul_1", "strassen_mmul" ) {
     REQUIRE(c(3,1) == 484);
 }
 
-TEST_CASE( "multiplication/strassen_mmul_2", "strassen_mmul" ) {
+TEMPLATE_TEST_CASE_2( "multiplication/strassen_mmul_2", "strassen_mmul", Z, double, float) {
     etl::dyn_matrix<double> a(2,2, etl::values(1,2,3,4,5,6,7,8));
     etl::dyn_matrix<double> b(2,2, etl::values(1,2,3,4,5,6,7,8));
     etl::dyn_matrix<double> c(2,2);
@@ -400,7 +401,7 @@ TEST_CASE( "multiplication/strassen_mmul_2", "strassen_mmul" ) {
     REQUIRE(c(1,1) == 22);
 }
 
-TEST_CASE( "multiplication/strassen_mmul3", "strassen_mmul" ) {
+TEMPLATE_TEST_CASE_2( "multiplication/strassen_mmul3", "strassen_mmul", Z, double, float) {
     etl::dyn_matrix<double> a(3,3,etl::values(1,2,3,4,5,6,7,8,9));
     etl::dyn_matrix<double> b(3,3,etl::values(7,8,9,9,10,11,11,12,13));
     etl::dyn_matrix<double> c(3,3);
@@ -418,7 +419,7 @@ TEST_CASE( "multiplication/strassen_mmul3", "strassen_mmul" ) {
     REQUIRE(c(2,2) == 268);
 }
 
-TEST_CASE( "multiplication/strassen_mmul4", "mmul" ) {
+TEMPLATE_TEST_CASE_2( "multiplication/strassen_mmul4", "mmul", Z, double, float) {
     etl::dyn_matrix<double> a(2,3, etl::values(1,2,3,4,5,6));
     etl::dyn_matrix<double> b(3,2, etl::values(7,8,9,10,11,12));
     etl::dyn_matrix<double> c(2,2);
@@ -435,7 +436,7 @@ TEST_CASE( "multiplication/strassen_mmul4", "mmul" ) {
 
 //{{{ Expressions
 
-TEST_CASE( "multiplication/expression_1", "expression" ) {
+TEMPLATE_TEST_CASE_2( "multiplication/expression_1", "expression", Z, double, float) {
     etl::dyn_matrix<double> a(4,4, etl::values(1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16));
     etl::dyn_matrix<double> b(4,4, etl::values(1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16));
     etl::dyn_matrix<double> c(4,4);
@@ -452,7 +453,7 @@ TEST_CASE( "multiplication/expression_1", "expression" ) {
     REQUIRE(c(3,1) == Approx((2.0 + 1.0 / 1.1) * 484));
 }
 
-TEST_CASE( "multiplication/expression_2", "expression" ) {
+TEMPLATE_TEST_CASE_2( "multiplication/expression_2", "expression", Z, double, float) {
     etl::dyn_matrix<double> a(4,4, etl::values(1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16));
     etl::dyn_matrix<double> b(4,4, etl::values(1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16));
     etl::dyn_matrix<double> c(4,4);
