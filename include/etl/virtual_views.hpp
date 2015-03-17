@@ -18,7 +18,7 @@ namespace etl {
 namespace detail {
 
 template<typename V>
-constexpr V compute(std::size_t n, std::size_t i, std::size_t j){
+V compute(std::size_t n, std::size_t i, std::size_t j){
     if(n == 1){
         return 1;
     } else if(n == 2){
