@@ -74,6 +74,7 @@ TEMPLATE_TEST_CASE_2( "fast_matrix/init_6", "fast_matrix::operator=(T)", Z, floa
 
     for(std::size_t i = 0; i < test_matrix.size(); ++i){
         REQUIRE(test_matrix[i] == Z(3.3));
+        REQUIRE(test_matrix(i) == Z(3.3));
     }
 }
 
