@@ -94,26 +94,22 @@ void dconv1_valid(const I& input, const K& kernel, C&& conv){
     dconv1_valid_micro_kernel(input.memory_start(), size(input), kernel.memory_start(), size(kernel), conv.memory_start());
 }
 
-template<typename I, typename K, typename C>
-void sconv1_valid(const I& input, const K& kernel, C&& conv){
-    __m128* kernel_reverse = new __m128[etl::size(kernel)];
+inline void sconv1_valid_micro_kernel(const float* in, const std::size_t n, const float* kernel, std::size_t m, float* out){
+    __m128* kernel_reverse = new __m128[m];
 
-    auto out = conv.memory_start();
-    auto in = input.memory_start();
-    auto k = kernel.memory_start();
-
-    for(std::size_t i=0; i< etl::size(kernel); i++){
-        kernel_reverse[i] = _mm_load1_ps(k + etl::size(kernel) - i - 1);
+    for(std::size_t i=0; i< m; i++){
+        kernel_reverse[i] = _mm_load1_ps(kernel + m - i - 1);
     }
 
     __m128 tmp1;
     __m128 tmp2;
     __m128 res;
 
-    for(std::size_t i=0; i<size(input)-etl::size(kernel); i+=2){
+    //TODO: This is not correct since we should iterate by 4
+    for(std::size_t i=0; i<n-m; i+=2){
         res = _mm_setzero_ps();
 
-        for(std::size_t k=0; k<size(kernel); k++){
+        for(std::size_t k=0; k<m; k++){
             tmp1 = _mm_loadu_ps(in + i + k);
             tmp2 = _mm_mul_ps(kernel_reverse[k], tmp1);
             res = _mm_add_ps(res, tmp2);
@@ -122,13 +118,18 @@ void sconv1_valid(const I& input, const K& kernel, C&& conv){
         _mm_storeu_ps(out+i, res);
     }
 
-    auto i = size(input) - size(kernel);
+    auto i = n - m;
     out[i] = 0.0;
-    for(std::size_t k=0; k< size(kernel); k++){
-        out[i] += input[i+k] * kernel[size(kernel) - k - 1];
+    for(std::size_t k=0; k< m; k++){
+        out[i] += in[i+k] * kernel[m - k - 1];
     }
 
     delete[] kernel_reverse;
+}
+
+template<typename I, typename K, typename C>
+void sconv1_valid(const I& input, const K& kernel, C&& conv){
+    sconv1_valid_micro_kernel(input.memory_start(), size(input), kernel.memory_start(), size(kernel), conv.memory_start());
 }
 
 } //end of namespace std
