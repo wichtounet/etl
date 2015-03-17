@@ -49,9 +49,9 @@ void dconv1_valid(const I& input, const K& kernel, C&& conv){
     }
 
     auto i = size(input) - size(kernel);
-    conv[i] = 0.0;
+    out[i] = 0.0;
     for(std::size_t k=0; k<etl::size(kernel); k++){
-        conv[i] += input[i+k] * kernel[size(kernel) - k - 1];
+        out[i] += input[i+k] * kernel[size(kernel) - k - 1];
     }
 
     delete[] kernel_reverse;
@@ -86,9 +86,9 @@ void sconv1_valid(const I& input, const K& kernel, C&& conv){
     }
 
     auto i = size(input) - size(kernel);
-    conv[i] = 0.0;
+    out[i] = 0.0;
     for(std::size_t k=0; k< size(kernel); k++){
-        conv[i] += input[i+k] * kernel[size(kernel) - k - 1];
+        out[i] += input[i+k] * kernel[size(kernel) - k - 1];
     }
 
     delete[] kernel_reverse;
