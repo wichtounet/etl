@@ -16,17 +16,17 @@ namespace etl {
 
 template<typename W, cpp::enable_if_u<std::is_arithmetic<W>::value> = cpp::detail::dummy>
 inline constexpr W logistic_sigmoid(W x){
-    return 1.0 / (1.0 + std::exp(-x));
+    return W(1.0) / (W(1.0) + std::exp(-x));
 }
 
 template<typename W, cpp::enable_if_u<std::is_arithmetic<W>::value> = cpp::detail::dummy>
 inline constexpr W softplus(W x){
-    return std::log(1.0 + std::exp(x));
+    return std::log(W(1.0) + std::exp(x));
 }
 
 template<typename W, cpp::enable_if_u<std::is_arithmetic<W>::value> = cpp::detail::dummy>
 inline constexpr double sign(W v) noexcept {
-    return v == 0 ? 0 : (v > 0 ? 1 : -1);
+    return v == W(0) ? W(0) : (v > W(0) ? W(1) : W(-1));
 }
 
 
