@@ -69,7 +69,7 @@ struct conv2_valid_impl {
     }
 };
 
-#ifdef ETL_VECTORIZE
+//#ifdef ETL_VECTORIZE
 #ifdef __SSE3__
 
 template<typename I, typename K, typename C>
@@ -87,7 +87,7 @@ struct conv1_valid_impl<I, K, C, std::enable_if_t<c_is_single_precision<I,K,C>::
 };
 
 #endif //__SSE3__
-#endif //ETL_VECTORIZE
+//#endif //ETL_VECTORIZE
 
 } //end of namespace detail
 
