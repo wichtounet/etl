@@ -6,27 +6,28 @@
 //=======================================================================
 
 #include "catch.hpp"
+#include "template_test.hpp"
 
 #include "etl/etl.hpp"
 
-TEST_CASE( "iterable/fast_matrix", "iterable" ) {
-    etl::fast_matrix<double, 2, 2> test_matrix(5.5);
+TEMPLATE_TEST_CASE_2( "iterable/fast_matrix", "iterable", Z, float, double ) {
+    etl::fast_matrix<Z, 2, 2> test_matrix(5.5);
 
     for(auto& v : test_matrix){
         REQUIRE(v == 5.5);
     }
 }
 
-TEST_CASE( "iterable/dyn_matrix", "iterable" ) {
-    etl::dyn_matrix<double> test_matrix(2,2,5.5);
+TEMPLATE_TEST_CASE_2( "iterable/dyn_matrix", "iterable", Z, float, double ) {
+    etl::dyn_matrix<Z> test_matrix(2,2,5.5);
 
     for(auto& v : test_matrix){
         REQUIRE(v == 5.5);
     }
 }
 
-TEST_CASE( "iterable/binary_expr", "iterable" ) {
-    etl::fast_matrix<double, 2, 2> a(5.5);
+TEMPLATE_TEST_CASE_2( "iterable/binary_expr", "iterable", Z, float, double ) {
+    etl::fast_matrix<Z, 2, 2> a(5.5);
 
     auto expr = a + a;
 
@@ -35,8 +36,8 @@ TEST_CASE( "iterable/binary_expr", "iterable" ) {
     }
 }
 
-TEST_CASE( "iterable/unary_expr", "iterable" ) {
-    etl::fast_matrix<double, 2, 2> a(5.5);
+TEMPLATE_TEST_CASE_2( "iterable/unary_expr", "iterable", Z, float, double ) {
+    etl::fast_matrix<Z, 2, 2> a(5.5);
 
     auto expr = -a;
 
@@ -45,8 +46,8 @@ TEST_CASE( "iterable/unary_expr", "iterable" ) {
     }
 }
 
-TEST_CASE( "iterable/identity", "iterable" ) {
-    etl::fast_matrix<double, 2, 2> a(5.5);
+TEMPLATE_TEST_CASE_2( "iterable/identity", "iterable", Z, float, double ) {
+    etl::fast_matrix<Z, 2, 2> a(5.5);
 
     auto expr = a(0);
 
@@ -55,8 +56,8 @@ TEST_CASE( "iterable/identity", "iterable" ) {
     }
 }
 
-TEST_CASE( "iterable/identity_2", "iterable" ) {
-    etl::fast_matrix<double, 2, 2> a(5.5);
+TEMPLATE_TEST_CASE_2( "iterable/identity_2", "iterable", Z, float, double ) {
+    etl::fast_matrix<Z, 2, 2> a(5.5);
 
     auto expr = sub(a + a, 0);
 
@@ -65,8 +66,8 @@ TEST_CASE( "iterable/identity_2", "iterable" ) {
     }
 }
 
-TEST_CASE( "iterable/stable_transform_expr", "iterable" ) {
-    etl::fast_matrix<double, 2, 2> a(5.5);
+TEMPLATE_TEST_CASE_2( "iterable/stable_transform_expr", "iterable", Z, float, double ) {
+    etl::fast_matrix<Z, 2, 2> a(5.5);
 
     auto expr = mean_l(a);
 
@@ -75,8 +76,8 @@ TEST_CASE( "iterable/stable_transform_expr", "iterable" ) {
     }
 }
 
-TEST_CASE( "iterator/binary_expr", "iterator" ) {
-    etl::fast_matrix<double, 2, 2> a({1,2,3,4});
+TEMPLATE_TEST_CASE_2( "iterator/binary_expr", "iterator", Z, float, double ) {
+    etl::fast_matrix<Z, 2, 2> a({1,2,3,4});
 
     auto expr = a + a;
 
@@ -115,8 +116,8 @@ TEST_CASE( "iterator/binary_expr", "iterator" ) {
     REQUIRE(std::accumulate(std::begin(expr), std::end(expr), 0.0) == 20.0);
 }
 
-TEST_CASE( "iterator/const identity", "iterator" ) {
-    etl::fast_matrix<double, 2, 4> a({1,2,3,4,1,2,3,4});
+TEMPLATE_TEST_CASE_2( "iterator/const identity", "iterator", Z, float, double ) {
+    etl::fast_matrix<Z, 2, 4> a({1,2,3,4,1,2,3,4});
 
     const auto expr = a(0);
 
@@ -159,8 +160,8 @@ TEST_CASE( "iterator/const identity", "iterator" ) {
     REQUIRE(std::accumulate(std::begin(expr), std::end(expr), 0.0) == 10.0);
 }
 
-TEST_CASE( "iterator/identity", "iterator" ) {
-    etl::fast_matrix<double, 2, 4> a({1,2,3,4,1,2,3,4});
+TEMPLATE_TEST_CASE_2( "iterator/identity", "iterator", Z, float, double ) {
+    etl::fast_matrix<Z, 2, 4> a({1,2,3,4,1,2,3,4});
 
     auto expr = a(0);
 

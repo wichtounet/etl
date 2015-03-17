@@ -6,11 +6,12 @@
 //=======================================================================
 
 #include "catch.hpp"
+#include "template_test.hpp"
 
 #include "etl/etl.hpp"
 
-TEST_CASE( "deep_assign/vec<mat>", "deep_assign" ) {
-    etl::fast_vector<etl::fast_matrix<double, 2, 3>, 2> a;
+TEMPLATE_TEST_CASE_2( "deep_assign/vec<mat>", "deep_assign", Z, float, double ) {
+    etl::fast_vector<etl::fast_matrix<Z, 2, 3>, 2> a;
 
     a = 0.0;
 
@@ -21,8 +22,8 @@ TEST_CASE( "deep_assign/vec<mat>", "deep_assign" ) {
     }
 }
 
-TEST_CASE( "deep_assign/mat<vec>", "deep_assign" ) {
-    etl::fast_matrix<etl::fast_vector<double, 2>, 2, 3> a;
+TEMPLATE_TEST_CASE_2( "deep_assign/mat<vec>", "deep_assign", Z, float, double ) {
+    etl::fast_matrix<etl::fast_vector<Z, 2>, 2, 3> a;
 
     a = 0.0;
 
@@ -33,8 +34,8 @@ TEST_CASE( "deep_assign/mat<vec>", "deep_assign" ) {
     }
 }
 
-TEST_CASE( "deep_assign/mat<mat>", "deep_assign" ) {
-    etl::fast_matrix<etl::fast_matrix<double, 2, 3>, 2, 3> a;
+TEMPLATE_TEST_CASE_2( "deep_assign/mat<mat>", "deep_assign", Z, float, double ) {
+    etl::fast_matrix<etl::fast_matrix<Z, 2, 3>, 2, 3> a;
 
     a = 0.0;
 

@@ -9,6 +9,9 @@
 
 #include "etl/etl.hpp"
 
+//For some reasons, these tests fail to compile in template mode
+//TODO: Fix that
+
 TEST_CASE( "etl_traits/fast_vector_1", "etl_traits<fast_vector>" ) {
     using type = etl::fast_vector<double, 4>;
     type test_vector(3.3);

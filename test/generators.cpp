@@ -6,13 +6,14 @@
 //=======================================================================
 
 #include "catch.hpp"
+#include "template_test.hpp"
 
 #include "etl/etl.hpp"
 
 ///{{{ sequence_generator
 
-TEST_CASE( "sequence/fast_vector_1", "generator" ) {
-    etl::fast_vector<double, 3> b;
+TEMPLATE_TEST_CASE_2( "sequence/fast_vector_1", "generator", Z, float, double ) {
+    etl::fast_vector<Z, 3> b;
 
     b = etl::sequence_generator();
 
@@ -21,8 +22,8 @@ TEST_CASE( "sequence/fast_vector_1", "generator" ) {
     REQUIRE(b[2] == 2.0);
 }
 
-TEST_CASE( "sequence/fast_vector_2", "generator" ) {
-    etl::fast_vector<double, 3> b;
+TEMPLATE_TEST_CASE_2( "sequence/fast_vector_2", "generator", Z, float, double ) {
+    etl::fast_vector<Z, 3> b;
 
     b = etl::sequence_generator(99);
 
@@ -31,16 +32,16 @@ TEST_CASE( "sequence/fast_vector_2", "generator" ) {
     REQUIRE(b[2] == 101.0);
 }
 
-TEST_CASE( "sequence/fast_vector_3", "generator" ) {
-    etl::fast_vector<double, 3> b(etl::sequence_generator(99));
+TEMPLATE_TEST_CASE_2( "sequence/fast_vector_3", "generator", Z, float, double ) {
+    etl::fast_vector<Z, 3> b(etl::sequence_generator(99));
 
     REQUIRE(b[0] == 99.0);
     REQUIRE(b[1] == 100.0);
     REQUIRE(b[2] == 101.0);
 }
 
-TEST_CASE( "sequence/fast_matrix_1", "generator" ) {
-    etl::fast_matrix<double, 3,2> b;
+TEMPLATE_TEST_CASE_2( "sequence/fast_matrix_1", "generator", Z, float, double ) {
+    etl::fast_matrix<Z, 3,2> b;
 
     b = etl::sequence_generator();
 
@@ -52,8 +53,8 @@ TEST_CASE( "sequence/fast_matrix_1", "generator" ) {
     REQUIRE(b(2,1) == 5.0);
 }
 
-TEST_CASE( "sequence/fast_matrix_2", "generator" ) {
-    etl::fast_matrix<double, 3,2> b;
+TEMPLATE_TEST_CASE_2( "sequence/fast_matrix_2", "generator", Z, float, double ) {
+    etl::fast_matrix<Z, 3,2> b;
 
     b = 0.1 * etl::sequence_generator();
 
@@ -67,8 +68,8 @@ TEST_CASE( "sequence/fast_matrix_2", "generator" ) {
     REQUIRE(b(2,1) == Approx(0.5));
 }
 
-TEST_CASE( "sequence/fast_matrix_3", "generator" ) {
-    etl::fast_matrix<double, 3,2> b(1.0);
+TEMPLATE_TEST_CASE_2( "sequence/fast_matrix_3", "generator", Z, float, double ) {
+    etl::fast_matrix<Z, 3,2> b(1.0);
 
     b = 0.1 * etl::sequence_generator() + b;
 
@@ -80,8 +81,8 @@ TEST_CASE( "sequence/fast_matrix_3", "generator" ) {
     REQUIRE(b(2,1) == Approx(1.5));
 }
 
-TEST_CASE( "sequence/dyn_vector_1", "generator" ) {
-    etl::dyn_vector<double> b(3);
+TEMPLATE_TEST_CASE_2( "sequence/dyn_vector_1", "generator", Z, float, double ) {
+    etl::dyn_vector<Z> b(3);
 
     b = etl::sequence_generator();
 
@@ -90,16 +91,16 @@ TEST_CASE( "sequence/dyn_vector_1", "generator" ) {
     REQUIRE(b[2] == 2.0);
 }
 
-TEST_CASE( "sequence/dyn_vector_2", "generator" ) {
-    etl::dyn_vector<double> b(3, etl::sequence_generator());
+TEMPLATE_TEST_CASE_2( "sequence/dyn_vector_2", "generator", Z, float, double ) {
+    etl::dyn_vector<Z> b(3, etl::sequence_generator());
 
     REQUIRE(b[0] == 0.0);
     REQUIRE(b[1] == 1.0);
     REQUIRE(b[2] == 2.0);
 }
 
-TEST_CASE( "sequence/dyn_matrix_1", "generator" ) {
-    etl::dyn_matrix<double> b(3,2);
+TEMPLATE_TEST_CASE_2( "sequence/dyn_matrix_1", "generator", Z, float, double ) {
+    etl::dyn_matrix<Z> b(3,2);
 
     b = etl::sequence_generator();
 
@@ -115,32 +116,28 @@ TEST_CASE( "sequence/dyn_matrix_1", "generator" ) {
 
 ///{{{ normal_generator
 
-TEST_CASE( "normal/fast_vector_1", "generator" ) {
-    etl::fast_vector<double, 3> b;
+//Simply ensures that it compiles
+
+TEMPLATE_TEST_CASE_2( "normal/fast_vector_1", "generator", Z, float, double ) {
+    etl::fast_vector<Z, 3> b;
 
     b = etl::normal_generator();
 }
 
-TEST_CASE( "normal/fast_vector_2", "generator" ) {
-    etl::fast_vector<double, 3> b;
+TEMPLATE_TEST_CASE_2( "normal/fast_matrix_1", "generator", Z, float, double ) {
+    etl::fast_matrix<Z, 3, 2> b;
 
     b = etl::normal_generator();
 }
 
-TEST_CASE( "normal/fast_matrix_1", "generator" ) {
-    etl::fast_matrix<double, 3,2> b;
+TEMPLATE_TEST_CASE_2( "normal/dyn_vector_1", "generator", Z, float, double ) {
+    etl::dyn_vector<Z> b(3);
 
     b = etl::normal_generator();
 }
 
-TEST_CASE( "normal/dyn_vector_1", "generator" ) {
-    etl::dyn_vector<double> b(3);
-
-    b = etl::normal_generator();
-}
-
-TEST_CASE( "normal/dyn_matrix_1", "generator" ) {
-    etl::dyn_matrix<double> b(3,2);
+TEMPLATE_TEST_CASE_2( "normal/dyn_matrix_1", "generator", Z, float, double ) {
+    etl::dyn_matrix<Z> b(3,2);
 
     b = etl::normal_generator();
 }

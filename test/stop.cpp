@@ -6,12 +6,13 @@
 //=======================================================================
 
 #include "catch.hpp"
+#include "template_test.hpp"
 
 #include "etl/etl.hpp"
 #include "etl/stop.hpp"
 
-TEST_CASE( "stop/fast_vector_1", "stop<unary<fast_vec>>" ) {
-    using mat_type = etl::fast_vector<double, 4>;
+TEMPLATE_TEST_CASE_2( "stop/fast_vector_1", "stop<unary<fast_vec>>", Z, float, double ) {
+    using mat_type = etl::fast_vector<Z, 4>;
     mat_type test_vector(3.3);
 
     auto r = s(log(test_vector));
@@ -31,13 +32,13 @@ TEST_CASE( "stop/fast_vector_1", "stop<unary<fast_vec>>" ) {
     REQUIRE(size_2 == 4);
 
     for(std::size_t i = 0; i < r.size(); ++i){
-        REQUIRE(r[i] == log(3.3));
-        REQUIRE(r(i) == log(3.3));
+        REQUIRE(r[i] == std::log(Z(3.3)));
+        REQUIRE(r(i) == std::log(Z(3.3)));
     }
 }
 
-TEST_CASE( "stop/fast_matrix_1", "stop<unary<fast_mat>>" ) {
-    using mat_type = etl::fast_matrix<double, 3, 2>;
+TEMPLATE_TEST_CASE_2( "stop/fast_matrix_1", "stop<unary<fast_mat>>", Z, float, double ) {
+    using mat_type = etl::fast_matrix<Z, 3, 2>;
     mat_type test_matrix(3.3);
 
     auto r = s(log(test_matrix));
@@ -65,12 +66,12 @@ TEST_CASE( "stop/fast_matrix_1", "stop<unary<fast_mat>>" ) {
     REQUIRE(columns_2 == 2);
 
     for(std::size_t i = 0; i < r.size(); ++i){
-        REQUIRE(r[i] == log(3.3));
+        REQUIRE(r[i] == std::log(Z(3.3)));
     }
 }
 
-TEST_CASE( "stop/fast_matrix_2", "stop<binary<fast_mat>>" ) {
-    using mat_type = etl::fast_matrix<double, 3, 2>;
+TEMPLATE_TEST_CASE_2( "stop/fast_matrix_2", "stop<binary<fast_mat>>", Z, float, double ) {
+    using mat_type = etl::fast_matrix<Z, 3, 2>;
     mat_type test_matrix(3.3);
 
     auto r = s(test_matrix + test_matrix);
@@ -98,12 +99,12 @@ TEST_CASE( "stop/fast_matrix_2", "stop<binary<fast_mat>>" ) {
     REQUIRE(columns_2 == 2);
 
     for(std::size_t i = 0; i < r.size(); ++i){
-        REQUIRE(r[i] == 6.6);
+        REQUIRE(r[i] == Z(6.6));
     }
 }
 
-TEST_CASE( "stop/dyn_vector_1", "stop<unary<dyn_vec>>" ) {
-    using mat_type = etl::dyn_vector<double>;
+TEMPLATE_TEST_CASE_2( "stop/dyn_vector_1", "stop<unary<dyn_vec>>", Z, float, double ) {
+    using mat_type = etl::dyn_vector<Z>;
     mat_type test_vector(4, 3.3);
 
     auto r = s(log(test_vector));
@@ -117,13 +118,13 @@ TEST_CASE( "stop/dyn_vector_1", "stop<unary<dyn_vec>>" ) {
     REQUIRE(!etl::etl_traits<type>::is_fast);
 
     for(std::size_t i = 0; i < r.size(); ++i){
-        REQUIRE(r[i] == log(3.3));
-        REQUIRE(r(i) == log(3.3));
+        REQUIRE(r[i] == std::log(Z(3.3)));
+        REQUIRE(r(i) == std::log(Z(3.3)));
     }
 }
 
-TEST_CASE( "stop/dyn_matrix_1", "stop<unary<dyn_mat>>" ) {
-    using mat_type = etl::dyn_matrix<double>;
+TEMPLATE_TEST_CASE_2( "stop/dyn_matrix_1", "stop<unary<dyn_mat>>", Z, float, double ) {
+    using mat_type = etl::dyn_matrix<Z>;
     mat_type test_matrix(3, 2, 3.3);
 
     auto r = s(log(test_matrix));
@@ -139,12 +140,12 @@ TEST_CASE( "stop/dyn_matrix_1", "stop<unary<dyn_mat>>" ) {
     REQUIRE(!etl::etl_traits<type>::is_fast);
 
     for(std::size_t i = 0; i < r.size(); ++i){
-        REQUIRE(r[i] == log(3.3));
+        REQUIRE(r[i] == std::log(Z(3.3)));
     }
 }
 
-TEST_CASE( "stop/dyn_matrix_2", "stop<binary<dyn_mat>>" ) {
-    using mat_type = etl::dyn_matrix<double>;
+TEMPLATE_TEST_CASE_2( "stop/dyn_matrix_2", "stop<binary<dyn_mat>>", Z, float, double ) {
+    using mat_type = etl::dyn_matrix<Z>;
     mat_type test_matrix(3, 2, 3.3);
 
     auto r = s(test_matrix + test_matrix);
@@ -160,6 +161,6 @@ TEST_CASE( "stop/dyn_matrix_2", "stop<binary<dyn_mat>>" ) {
     REQUIRE(!etl::etl_traits<type>::is_fast);
 
     for(std::size_t i = 0; i < r.size(); ++i){
-        REQUIRE(r[i] == 6.6);
+        REQUIRE(r[i] == Z(6.6));
     }
 }
