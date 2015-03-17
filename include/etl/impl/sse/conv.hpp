@@ -23,6 +23,8 @@ namespace sse {
 inline void dconv1_valid_micro_kernel(const double* in, const std::size_t n, const double* kernel, std::size_t m, double* out){
     __m128* kernel_reverse = new __m128[m];
 
+    //Reverse the kernel
+
     for(std::size_t i=0; i< m; i++){
         kernel_reverse[i] = _mm_load1_pd(kernel + m - i - 1);
     }
@@ -30,6 +32,8 @@ inline void dconv1_valid_micro_kernel(const double* in, const std::size_t n, con
     __m128 tmp1;
     __m128 tmp2;
     __m128 res;
+
+    //Compute the convolution, 2 doubles at a time
 
     for(std::size_t i=0; i<n - m; i+=2){
         res = _mm_setzero_pd();
@@ -43,11 +47,16 @@ inline void dconv1_valid_micro_kernel(const double* in, const std::size_t n, con
         _mm_storeu_pd(out+i, res);
     }
 
-    auto i = n - m;
-    out[i] = 0.0;
-    for(std::size_t k=0; k<m; k++){
-        out[i] += in[i+k] * kernel[m - k - 1];
-    }
+    //If the number of operations is not even, the last case must be
+    //computed separatly
+
+    if((n - m + 1) % 2 != 0){
+        auto i = n - m;
+        out[i] = 0.0;
+        for(std::size_t k=0; k<m; k++){
+            out[i] += in[i+k] * kernel[m - k - 1];
+        }
+    } 
 
     delete[] kernel_reverse;
 }
@@ -57,35 +66,34 @@ void dconv1_same(const I& input, const K& kernel, C&& conv){
     std::size_t left = (size(kernel) - 1) / 2;
     std::size_t right = size(kernel) / 2;
 
+    auto out = conv.memory_start();
+    auto in = input.memory_start();
+    auto k = kernel.memory_start();
+
     //Left invalid part
     for(std::size_t j = 0 ; j < left ; ++j){
-        int l_lo = std::max<int>(0, j - (size(kernel) - 1) / 2);
-        int l_hi = std::min<int>(size(input)- 1, j + size(kernel) / 2);
-
         double temp = 0.0;
 
-        for(std::size_t l = l_lo ; l <= static_cast<std::size_t>(l_hi); ++l){
-            temp += input(l) * kernel(j - l + size(kernel) / 2);
+        for(std::size_t l = 0 ; l <= j + right; ++l){
+            temp += in[l] * k[j - l + right];
         }
 
-        conv(j) = temp;
+        out[j] = temp;
     }
 
     //Central part is a 'valid' convolution
-    dconv1_valid_micro_kernel(input.memory_start(), size(input), kernel.memory_start(), size(kernel), conv.memory_start() + left);
+    dconv1_valid_micro_kernel(in, size(input), kernel.memory_start(), size(kernel), out + left);
 
     //Right invalid part
     for(std::size_t j = size(conv) - right ; j < size(conv); ++j){
-        int l_lo = std::max<int>(0, j - (size(kernel) - 1) / 2);
-        int l_hi = std::min<int>(size(input)- 1, j + size(kernel) / 2);
-
         double temp = 0.0;
 
-        for(std::size_t l = l_lo ; l <= static_cast<std::size_t>(l_hi); ++l){
-            temp += input(l) * kernel(j - l + size(kernel) / 2);
+        std::size_t hi = std::min<int>(size(input) - 1, j + right);
+        for(std::size_t l = j - left ; l <= hi; ++l){
+            temp += in[l] * k[j - l + size(kernel) / 2];
         }
 
-        conv(j) = temp;
+        out[j] = temp;
     }
 }
 
@@ -97,6 +105,8 @@ void dconv1_valid(const I& input, const K& kernel, C&& conv){
 inline void sconv1_valid_micro_kernel(const float* in, const std::size_t n, const float* kernel, std::size_t m, float* out){
     __m128* kernel_reverse = new __m128[m];
 
+    //Reverse the kernel
+
     for(std::size_t i=0; i< m; i++){
         kernel_reverse[i] = _mm_load1_ps(kernel + m - i - 1);
     }
@@ -105,8 +115,9 @@ inline void sconv1_valid_micro_kernel(const float* in, const std::size_t n, cons
     __m128 tmp2;
     __m128 res;
 
-    //TODO: This is not correct since we should iterate by 4
-    for(std::size_t i=0; i<n-m; i+=2){
+    //Compute the convolution 4 floats at a time
+
+    for(std::size_t i=0; i< 4 * ((n - m) / 4); i += 4){
         res = _mm_setzero_ps();
 
         for(std::size_t k=0; k<m; k++){
@@ -118,10 +129,13 @@ inline void sconv1_valid_micro_kernel(const float* in, const std::size_t n, cons
         _mm_storeu_ps(out+i, res);
     }
 
-    auto i = n - m;
-    out[i] = 0.0;
-    for(std::size_t k=0; k< m; k++){
-        out[i] += in[i+k] * kernel[m - k - 1];
+    //Complete the last outputs which are not vectorized
+
+    for(std::size_t i = (n - m + 1) - (n - m + 1) % 4; i < n - m + 1; ++i){
+        out[i] = 0.0;
+        for(std::size_t k=0; k< m; k++){
+            out[i] += in[i+k] * kernel[m - k - 1];
+        }
     }
 
     delete[] kernel_reverse;
