@@ -21,7 +21,7 @@ namespace impl {
 namespace sse {
 
 template<typename I, typename K, typename C>
-void sconv1_valid(const I& input, const K& kernel, C&& conv){
+void dconv1_valid(const I& input, const K& kernel, C&& conv){
     __m128* kernel_reverse = new __m128[etl::size(kernel)];
 
     auto out = conv.memory_start();
@@ -58,7 +58,7 @@ void sconv1_valid(const I& input, const K& kernel, C&& conv){
 }
 
 template<typename I, typename K, typename C>
-void dconv1_valid(const I& input, const K& kernel, C&& conv){
+void sconv1_valid(const I& input, const K& kernel, C&& conv){
     __m128* kernel_reverse = new __m128[etl::size(kernel)];
 
     auto out = conv.memory_start();
