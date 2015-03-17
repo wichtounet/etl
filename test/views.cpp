@@ -103,7 +103,7 @@ TEMPLATE_TEST_CASE_2( "dim/dyn_matrix_1", "dim<1>", Z, float, double ) {
 
     REQUIRE(c[0] == 3.0);
     REQUIRE(c[1] == 0.5);
-    REQUIRE(c[2] == -0.1);
+    REQUIRE(c[2] == Z(-0.1));
 }
 
 TEMPLATE_TEST_CASE_2( "dim/dyn_matrix_2", "dim<2>", Z, float, double ) {

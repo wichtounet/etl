@@ -18,8 +18,8 @@ TEMPLATE_TEST_CASE_2( "dyn_vector/init_1", "dyn_vector::dyn_vector(T)", Z, doubl
     REQUIRE(test_vector.size() == 4);
 
     for(std::size_t i = 0; i < test_vector.size(); ++i){
-        REQUIRE(test_vector[i] == 3.3);
-        REQUIRE(test_vector(i) == 3.3);
+        REQUIRE(test_vector[i] == Z(3.3));
+        REQUIRE(test_vector(i) == Z(3.3));
     }
 }
 

@@ -17,7 +17,7 @@ TEMPLATE_TEST_CASE_2( "fast_dyn_matrix/init_1", "fast_dyn_matrix::fast_dyn_matri
     REQUIRE(test_matrix.size() == 4);
 
     for(std::size_t i = 0; i < test_matrix.size(); ++i){
-        REQUIRE(test_matrix[i] == 3.3);
+        REQUIRE(test_matrix[i] == Z(3.3));
     }
 }
 

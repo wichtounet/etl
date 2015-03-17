@@ -318,8 +318,8 @@ TEMPLATE_TEST_CASE_2( "fast_vector/log", "fast_vector::abs", Z, float, double ) 
     etl::fast_vector<Z, 3> d(log(a));
 
     REQUIRE(std::isnan(d[0]));
-    REQUIRE(d[1] == log(2.0));
-    REQUIRE(d[2] == log(5.0));
+    REQUIRE(d[1] == std::log(Z(2.0)));
+    REQUIRE(d[2] == std::log(Z(5.0)));
 }
 
 TEMPLATE_TEST_CASE_2( "fast_vector/abs", "fast_vector::abs", Z, float, double ) {
