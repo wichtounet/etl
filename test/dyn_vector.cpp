@@ -31,8 +31,8 @@ TEMPLATE_TEST_CASE_2( "dyn_vector/init_2", "dyn_vector::operator=(T)", Z, double
     REQUIRE(test_vector.size() == 4);
 
     for(std::size_t i = 0; i < test_vector.size(); ++i){
-        REQUIRE(test_vector[i] == 3.3);
-        REQUIRE(test_vector(i) == 3.3);
+        REQUIRE(test_vector[i] == Z(3.3));
+        REQUIRE(test_vector(i) == Z(3.3));
     }
 }
 
@@ -210,11 +210,11 @@ TEMPLATE_TEST_CASE_2( "dyn_vector/mul_2", "dyn_vector::operator*=", Z, double, f
 TEMPLATE_TEST_CASE_2( "dyn_vector/div_scalar_1", "dyn_vector::operator/", Z, double, float) {
     etl::dyn_vector<Z> test_vector = {-1.0, 2.0, 5.0};
 
-    test_vector = test_vector / 2.5;
+    test_vector = test_vector / Z(2.5);
 
-    REQUIRE(test_vector[0] == -1.0 / 2.5);
-    REQUIRE(test_vector[1] ==  2.0 / 2.5);
-    REQUIRE(test_vector[2] ==  5.0 / 2.5);
+    REQUIRE(test_vector[0] == Z(-1.0 / 2.5));
+    REQUIRE(test_vector[1] == Z(2.0 / 2.5));
+    REQUIRE(test_vector[2] == Z(5.0 / 2.5));
 }
 
 TEMPLATE_TEST_CASE_2( "dyn_vector/div_scalar_2", "dyn_vector::operator/", Z, double, float) {
@@ -230,11 +230,11 @@ TEMPLATE_TEST_CASE_2( "dyn_vector/div_scalar_2", "dyn_vector::operator/", Z, dou
 TEMPLATE_TEST_CASE_2( "dyn_vector/div_scalar_3", "dyn_vector::operator/=", Z, double, float) {
     etl::dyn_vector<Z> test_vector = {-1.0, 2.0, 5.0};
 
-    test_vector /= 2.5;
+    test_vector /= Z(2.5);
 
-    REQUIRE(test_vector[0] == -1.0 / 2.5);
-    REQUIRE(test_vector[1] == 2.0 / 2.5);
-    REQUIRE(test_vector[2] == 5.0 / 2.5);
+    REQUIRE(test_vector[0] == Z(-1.0 / 2.5));
+    REQUIRE(test_vector[1] == Z(2.0 / 2.5));
+    REQUIRE(test_vector[2] == Z(5.0 / 2.5));
 }
 
 TEMPLATE_TEST_CASE_2( "dyn_vector/div_1", "dyn_vector::operator/", Z, double, float){
@@ -243,9 +243,9 @@ TEMPLATE_TEST_CASE_2( "dyn_vector/div_1", "dyn_vector::operator/", Z, double, fl
 
     etl::dyn_vector<Z> c(a / b);
 
-    REQUIRE(c[0] == -1.0 / 2.5);
-    REQUIRE(c[1] == 2.0 / 3.0);
-    REQUIRE(c[2] == 5.0 / 4.0);
+    REQUIRE(c[0] == Z(-1.0 / 2.5));
+    REQUIRE(c[1] == Z(2.0 / 3.0));
+    REQUIRE(c[2] == Z(5.0 / 4.0));
 }
 
 TEMPLATE_TEST_CASE_2( "dyn_vector/div_2", "dyn_vector::operator/=", Z, double, float){
@@ -254,9 +254,9 @@ TEMPLATE_TEST_CASE_2( "dyn_vector/div_2", "dyn_vector::operator/=", Z, double, f
 
     a /= b;
 
-    REQUIRE(a[0] == -1.0 / 2.5);
-    REQUIRE(a[1] == 2.0 / 3.0);
-    REQUIRE(a[2] == 5.0 / 4.0);
+    REQUIRE(a[0] == Z(-1.0 / 2.5));
+    REQUIRE(a[1] == Z(2.0 / 3.0));
+    REQUIRE(a[2] == Z(5.0 / 4.0));
 }
 
 TEMPLATE_TEST_CASE_2( "dyn_vector/mod_scalar_1", "dyn_vector::operator%", Z, double, float) {
@@ -321,8 +321,8 @@ TEMPLATE_TEST_CASE_2( "dyn_vector/log", "dyn_vector::abs", Z, double, float) {
     etl::dyn_vector<Z> d(log(a));
 
     REQUIRE(std::isnan(d[0]));
-    REQUIRE(d[1] == log(2.0));
-    REQUIRE(d[2] == log(5.0));
+    REQUIRE(d[1] == std::log(Z(2.0)));
+    REQUIRE(d[2] == std::log(Z(5.0)));
 }
 
 TEMPLATE_TEST_CASE_2( "dyn_vector/abs", "dyn_vector::abs", Z, double, float) {
@@ -380,9 +380,9 @@ TEMPLATE_TEST_CASE_2( "dyn_vector/sigmoid", "dyn_vector::sigmoid", Z, double, fl
 
     etl::dyn_vector<Z> d(etl::sigmoid(a));
 
-    REQUIRE(d[0] == etl::logistic_sigmoid(-1.0));
-    REQUIRE(d[1] == etl::logistic_sigmoid(2.0));
-    REQUIRE(d[2] == etl::logistic_sigmoid(0.0));
+    REQUIRE(d[0] == etl::logistic_sigmoid(Z(-1.0)));
+    REQUIRE(d[1] == etl::logistic_sigmoid(Z(2.0)));
+    REQUIRE(d[2] == etl::logistic_sigmoid(Z(0.0)));
 }
 
 TEMPLATE_TEST_CASE_2( "dyn_vector/softplus", "dyn_vector::softplus", Z, double, float) {
@@ -390,9 +390,9 @@ TEMPLATE_TEST_CASE_2( "dyn_vector/softplus", "dyn_vector::softplus", Z, double, 
 
     etl::dyn_vector<Z> d(etl::softplus(a));
 
-    REQUIRE(d[0] == etl::softplus(-1.0));
-    REQUIRE(d[1] == etl::softplus(2.0));
-    REQUIRE(d[2] == etl::softplus(0.0));
+    REQUIRE(d[0] == etl::softplus(Z(-1.0)));
+    REQUIRE(d[1] == etl::softplus(Z(2.0)));
+    REQUIRE(d[2] == etl::softplus(Z(0.0)));
 }
 
 TEMPLATE_TEST_CASE_2( "dyn_vector/exp", "dyn_vector::exp", Z, double, float) {
@@ -400,9 +400,9 @@ TEMPLATE_TEST_CASE_2( "dyn_vector/exp", "dyn_vector::exp", Z, double, float) {
 
     etl::dyn_vector<Z> d(etl::exp(a));
 
-    REQUIRE(d[0] == std::exp(-1.0));
-    REQUIRE(d[1] == std::exp(2.0));
-    REQUIRE(d[2] == std::exp(0.0));
+    REQUIRE(d[0] == std::exp(Z(-1.0)));
+    REQUIRE(d[1] == std::exp(Z(2.0)));
+    REQUIRE(d[2] == std::exp(Z(0.0)));
 }
 
 TEMPLATE_TEST_CASE_2( "dyn_vector/max", "dyn_vector::max", Z, double, float) {

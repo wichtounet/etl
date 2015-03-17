@@ -34,7 +34,7 @@ TEMPLATE_TEST_CASE_2( "dyn_matrix/init_2", "dyn_matrix::operator=(T)", Z, double
     REQUIRE(test_matrix.size() == 6);
 
     for(std::size_t i = 0; i < test_matrix.size(); ++i){
-        REQUIRE(test_matrix[i] == 3.3);
+        REQUIRE(test_matrix[i] == Approx(3.3));
     }
 }
 
@@ -58,8 +58,8 @@ TEMPLATE_TEST_CASE_2( "dyn_matrix/init_5", "dyn_matrix::dyn_matrix(T)", Z, doubl
     REQUIRE(a.rows() == 3);
     REQUIRE(a.columns() == 2);
     REQUIRE(a.size() == 120);
-    REQUIRE(a(0,0,0,0) == 3.4);
-    REQUIRE(a(1,1,1,1) == 3.4);
+    REQUIRE(a(0,0,0,0) == Approx(3.4));
+    REQUIRE(a(1,1,1,1) == Approx(3.4));
 
     etl::dyn_matrix<Z> b(3, 2, std::initializer_list<Z>({1,2,3,4,5,6}));
 
@@ -69,21 +69,21 @@ TEMPLATE_TEST_CASE_2( "dyn_matrix/init_5", "dyn_matrix::dyn_matrix(T)", Z, doubl
     REQUIRE(b[0] == 1);
     REQUIRE(b[1] == 2);
 
-    etl::dyn_matrix<Z> c(3, 2, etl::init_flag, 3.3);
+    etl::dyn_matrix<Z> c(3, 2, etl::init_flag, Z(3.3));
 
     REQUIRE(c.rows() == 3);
     REQUIRE(c.columns() == 2);
     REQUIRE(c.size() == 6);
-    REQUIRE(c[0] == 3.3);
-    REQUIRE(c[1] == 3.3);
+    REQUIRE(c[0] == Z(3.3));
+    REQUIRE(c[1] == Z(3.3));
 
-    etl::dyn_matrix<Z> d(3, 2, 3.3);
+    etl::dyn_matrix<Z> d(3, 2, Z(3.3));
 
     REQUIRE(d.rows() == 3);
     REQUIRE(d.columns() == 2);
     REQUIRE(d.size() == 6);
-    REQUIRE(d[0] == 3.3);
-    REQUIRE(d[1] == 3.3);
+    REQUIRE(d[0] == Z(3.3));
+    REQUIRE(d[1] == Z(3.3));
 }
 
 TEMPLATE_TEST_CASE_2( "dyn_matrix/init_6", "dyn_matrix::dyn_matrix(T)", Z, double, float) {
@@ -121,14 +121,14 @@ TEMPLATE_TEST_CASE_2( "dyn_matrix/init_7", "dyn_matrix::dyn_matrix(T)", Z, doubl
 }
 
 TEMPLATE_TEST_CASE_2( "dyn_matrix/init_8", "dyn_matrix::dyn_matrix(T)", Z, double, float) {
-    etl::dyn_matrix<Z, 1> test_matrix(6, 3.3);
+    etl::dyn_matrix<Z, 1> test_matrix(6, Z(3.3));
 
     REQUIRE(test_matrix.rows() == 6);
     REQUIRE(test_matrix.size() == 6);
 
     for(std::size_t i = 0; i < test_matrix.size(); ++i){
-        REQUIRE(test_matrix[i] == 3.3);
-        REQUIRE(test_matrix(i) == 3.3);
+        REQUIRE(test_matrix[i] == Z(3.3));
+        REQUIRE(test_matrix(i) == Z(3.3));
     }
 }
 
@@ -298,9 +298,9 @@ TEMPLATE_TEST_CASE_2( "dyn_matrix/div_scalar_1", "dyn_matrix::operator/", Z, dou
 
     test_matrix = test_matrix / 2.5;
 
-    REQUIRE(test_matrix[0] == -1.0 / 2.5);
-    REQUIRE(test_matrix[1] ==  2.0 / 2.5);
-    REQUIRE(test_matrix[2] ==  5.0 / 2.5);
+    REQUIRE(test_matrix[0] == Approx(-1.0 / 2.5));
+    REQUIRE(test_matrix[1] == Approx(2.0 / 2.5));
+    REQUIRE(test_matrix[2] == Approx(5.0 / 2.5));
 }
 
 TEMPLATE_TEST_CASE_2( "dyn_matrix/div_scalar_2", "dyn_matrix::operator/", Z, double, float) {
@@ -308,9 +308,9 @@ TEMPLATE_TEST_CASE_2( "dyn_matrix/div_scalar_2", "dyn_matrix::operator/", Z, dou
 
     test_matrix = 2.5 / test_matrix;
 
-    REQUIRE(test_matrix[0] == 2.5 / -1.0);
-    REQUIRE(test_matrix[1] == 2.5 /  2.0);
-    REQUIRE(test_matrix[2] == 2.5 /  5.0);
+    REQUIRE(test_matrix[0] == Approx(2.5 / -1.0));
+    REQUIRE(test_matrix[1] == Approx(2.5 /  2.0));
+    REQUIRE(test_matrix[2] == Approx(2.5 /  5.0));
 }
 
 TEMPLATE_TEST_CASE_2( "dyn_matrix/div_scalar_3", "dyn_matrix::operator/=", Z, double, float) {
@@ -318,9 +318,9 @@ TEMPLATE_TEST_CASE_2( "dyn_matrix/div_scalar_3", "dyn_matrix::operator/=", Z, do
 
     test_matrix /= 2.5;
 
-    REQUIRE(test_matrix[0] == -1.0 / 2.5);
-    REQUIRE(test_matrix[1] ==  2.0 / 2.5);
-    REQUIRE(test_matrix[2] ==  5.0 / 2.5);
+    REQUIRE(test_matrix[0] == Approx(-1.0 / 2.5));
+    REQUIRE(test_matrix[1] == Approx(2.0 / 2.5));
+    REQUIRE(test_matrix[2] == Approx(5.0 / 2.5));
 }
 
 TEMPLATE_TEST_CASE_2( "dyn_matrix/div_1", "dyn_matrix::operator/", Z, double, float) {
@@ -329,9 +329,9 @@ TEMPLATE_TEST_CASE_2( "dyn_matrix/div_1", "dyn_matrix::operator/", Z, double, fl
 
     etl::dyn_matrix<Z> c(a / b);
 
-    REQUIRE(c[0] == -1.0 / 2.5);
-    REQUIRE(c[1] == 2.0 / 3.0);
-    REQUIRE(c[2] == 5.0 / 4.0);
+    REQUIRE(c[0] == Approx(-1.0 / 2.5));
+    REQUIRE(c[1] == Approx(2.0 / 3.0));
+    REQUIRE(c[2] == Approx(5.0 / 4.0));
 }
 
 TEMPLATE_TEST_CASE_2( "dyn_matrix/div_2", "dyn_matrix::operator/", Z, double, float) {
@@ -340,22 +340,22 @@ TEMPLATE_TEST_CASE_2( "dyn_matrix/div_2", "dyn_matrix::operator/", Z, double, fl
 
     a /= b;
 
-    REQUIRE(a[0] == -1.0 / 2.5);
-    REQUIRE(a[1] == 2.0 / 3.0);
-    REQUIRE(a[2] == 5.0 / 4.0);
+    REQUIRE(a[0] == Approx(-1.0 / 2.5));
+    REQUIRE(a[1] == Approx(2.0 / 3.0));
+    REQUIRE(a[2] == Approx(5.0 / 4.0));
 }
 
-TEMPLATE_TEST_CASE_2( "dyn_matrix/mod_scalar_1", "dyn_matrix::operator%", Z, double, float) {
+TEST_CASE( "dyn_matrix/mod_scalar_1", "dyn_matrix::operator%") {
     etl::dyn_matrix<int> test_matrix(2,2, std::initializer_list<int>({-1, 2, 5, 1}));
 
     test_matrix = test_matrix % 2;
 
     REQUIRE(test_matrix[0] == -1 % 2);
-    REQUIRE(test_matrix[1] ==  2 % 2);
-    REQUIRE(test_matrix[2] ==  5 % 2);
+    REQUIRE(test_matrix[1] == 2 % 2);
+    REQUIRE(test_matrix[2] == 5 % 2);
 }
 
-TEMPLATE_TEST_CASE_2( "dyn_matrix/mod_scalar_2", "dyn_matrix::operator%", Z, double, float) {
+TEST_CASE( "dyn_matrix/mod_scalar_2", "dyn_matrix::operator%") {
     etl::dyn_matrix<int> test_matrix(2,2, std::initializer_list<int>({-1, 2, 5, 1}));
 
     test_matrix = 2 % test_matrix;
@@ -365,7 +365,7 @@ TEMPLATE_TEST_CASE_2( "dyn_matrix/mod_scalar_2", "dyn_matrix::operator%", Z, dou
     REQUIRE(test_matrix[2] == 2 %  5);
 }
 
-TEMPLATE_TEST_CASE_2( "dyn_matrix/mod_scalar_3", "dyn_matrix::operator%=", Z, double, float) {
+TEST_CASE( "dyn_matrix/mod_scalar_3", "dyn_matrix::operator%=") {
     etl::dyn_matrix<int> test_matrix(2,2, std::initializer_list<int>({-1, 2, 5, 1}));
 
     test_matrix %= 2;
@@ -375,7 +375,7 @@ TEMPLATE_TEST_CASE_2( "dyn_matrix/mod_scalar_3", "dyn_matrix::operator%=", Z, do
     REQUIRE(test_matrix[2] ==  5 % 2);
 }
 
-TEMPLATE_TEST_CASE_2( "dyn_matrix/mod_1", "dyn_matrix::operator%", Z, double, float) {
+TEST_CASE( "dyn_matrix/mod_1", "dyn_matrix::operator%") {
     etl::dyn_matrix<int> a(2,2, std::initializer_list<int>({-1, 2, 5, 1}));
     etl::dyn_matrix<int> b(2,2, std::initializer_list<int>({2, 3, 4, 1}));
 
@@ -386,7 +386,7 @@ TEMPLATE_TEST_CASE_2( "dyn_matrix/mod_1", "dyn_matrix::operator%", Z, double, fl
     REQUIRE(c[2] == 5 % 4);
 }
 
-TEMPLATE_TEST_CASE_2( "dyn_matrix/mod_2", "dyn_matrix::operator%=", Z, double, float) {
+TEST_CASE( "dyn_matrix/mod_2", "dyn_matrix::operator%=") {
     etl::dyn_matrix<int> a(2,2, std::initializer_list<int>({-1, 2, 5, 1}));
     etl::dyn_matrix<int> b(2,2, std::initializer_list<int>({2, 3, 4, 1}));
 
@@ -407,8 +407,8 @@ TEMPLATE_TEST_CASE_2( "dyn_matrix/log", "dyn_matrix::abs", Z, double, float) {
     etl::dyn_matrix<Z> d(log(a));
 
     REQUIRE(std::isnan(d[0]));
-    REQUIRE(d[1] == log(2.0));
-    REQUIRE(d[2] == log(5.0));
+    REQUIRE(d[1] == Approx(std::log(2.0)));
+    REQUIRE(d[2] == Approx(std::log(5.0)));
 }
 
 TEMPLATE_TEST_CASE_2( "dyn_matrix/abs", "dyn_matrix::abs", Z, double, float) {
@@ -416,9 +416,9 @@ TEMPLATE_TEST_CASE_2( "dyn_matrix/abs", "dyn_matrix::abs", Z, double, float) {
 
     etl::dyn_matrix<Z> d(abs(a));
 
-    REQUIRE(d[0] == 1.0);
-    REQUIRE(d[1] == 2.0);
-    REQUIRE(d[2] == 0.0);
+    REQUIRE(d[0] == Z(1.0));
+    REQUIRE(d[1] == Z(2.0));
+    REQUIRE(d[2] == Z(0.0));
 }
 
 TEMPLATE_TEST_CASE_2( "dyn_matrix/sign", "dyn_matrix::abs", Z, double, float) {
@@ -466,10 +466,10 @@ TEMPLATE_TEST_CASE_2( "dyn_matrix/sigmoid", "dyn_matrix::sigmoid", Z, double, fl
 
     etl::dyn_matrix<Z> d(etl::sigmoid(a));
 
-    REQUIRE(d[0] == etl::logistic_sigmoid(-1.0));
-    REQUIRE(d[1] == etl::logistic_sigmoid(2.0));
-    REQUIRE(d[2] == etl::logistic_sigmoid(0.0));
-    REQUIRE(d[3] == etl::logistic_sigmoid(1.0));
+    REQUIRE(d[0] == Approx(etl::logistic_sigmoid(Z(-1.0))));
+    REQUIRE(d[1] == Approx(etl::logistic_sigmoid(Z(2.0))));
+    REQUIRE(d[2] == Approx(etl::logistic_sigmoid(Z(0.0))));
+    REQUIRE(d[3] == Approx(etl::logistic_sigmoid(Z(1.0))));
 }
 
 TEMPLATE_TEST_CASE_2( "dyn_matrix/softplus", "dyn_matrix::softplus", Z, double, float) {
@@ -477,10 +477,10 @@ TEMPLATE_TEST_CASE_2( "dyn_matrix/softplus", "dyn_matrix::softplus", Z, double, 
 
     etl::dyn_matrix<Z> d(etl::softplus(a));
 
-    REQUIRE(d[0] == etl::softplus(-1.0));
-    REQUIRE(d[1] == etl::softplus(2.0));
-    REQUIRE(d[2] == etl::softplus(0.0));
-    REQUIRE(d[3] == etl::softplus(1.0));
+    REQUIRE(d[0] == Approx(etl::softplus(Z(-1.0))));
+    REQUIRE(d[1] == Approx(etl::softplus(Z(2.0))));
+    REQUIRE(d[2] == Approx(etl::softplus(Z(0.0))));
+    REQUIRE(d[3] == Approx(etl::softplus(Z(1.0))));
 }
 
 TEMPLATE_TEST_CASE_2( "dyn_matrix/exp", "dyn_matrix::exp", Z, double, float) {
@@ -488,10 +488,10 @@ TEMPLATE_TEST_CASE_2( "dyn_matrix/exp", "dyn_matrix::exp", Z, double, float) {
 
     etl::dyn_matrix<Z> d(etl::exp(a));
 
-    REQUIRE(d[0] == std::exp(-1.0));
-    REQUIRE(d[1] == std::exp(2.0));
-    REQUIRE(d[2] == std::exp(0.0));
-    REQUIRE(d[3] == std::exp(1.0));
+    REQUIRE(d[0] == std::exp(Z(-1.0)));
+    REQUIRE(d[1] == std::exp(Z(2.0)));
+    REQUIRE(d[2] == std::exp(Z(0.0)));
+    REQUIRE(d[3] == std::exp(Z(1.0)));
 }
 
 TEMPLATE_TEST_CASE_2( "dyn_matrix/max", "dyn_matrix::max", Z, double, float) {
