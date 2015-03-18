@@ -113,8 +113,8 @@ void conv2_valid(const I& input, const K& kernel, C&& conv){
         for(std::size_t j = 0 ; j < columns(conv) ; ++j){
             double temp = 0.0;
 
-            for(std::size_t k = i ; k <= i + rows(kernel)-1; ++k){
-                for(std::size_t l = j ; l <= j + columns(kernel)-1 ; ++l){
+            for(std::size_t k = i ; k < i + rows(kernel); ++k){
+                for(std::size_t l = j ; l < j + columns(kernel); ++l){
                     temp += input(k,l) * kernel((i+rows(kernel)-1-k), (j+columns(kernel)-1-l));
                 }
             }
