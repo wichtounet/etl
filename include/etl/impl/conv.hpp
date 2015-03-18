@@ -94,6 +94,13 @@ struct conv1_valid_impl<I, K, C, std::enable_if_t<c_is_double_precision<I,K,C>::
 };
 
 template<typename I, typename K, typename C>
+struct conv2_valid_impl<I, K, C, std::enable_if_t<c_is_double_precision<I,K,C>::value && c_is_dma<I,K,C>::value>> {
+    static void apply(const I& input, const K& kernel, C&& conv){
+        impl::sse::dconv2_valid(input, kernel, conv);
+    }
+};
+
+template<typename I, typename K, typename C>
 struct conv1_full_impl<I, K, C, std::enable_if_t<c_is_single_precision<I,K,C>::value && c_is_dma<I,K,C>::value>> {
     static void apply(const I& input, const K& kernel, C&& conv){
         impl::sse::sconv1_full(input, kernel, conv);
@@ -104,13 +111,6 @@ template<typename I, typename K, typename C>
 struct conv1_same_impl<I, K, C, std::enable_if_t<c_is_single_precision<I,K,C>::value && c_is_dma<I,K,C>::value>> {
     static void apply(const I& input, const K& kernel, C&& conv){
         impl::sse::sconv1_same(input, kernel, conv);
-    }
-};
-
-template<typename I, typename K, typename C>
-struct conv1_valid_impl<I, K, C, std::enable_if_t<c_is_single_precision<I,K,C>::value && c_is_dma<I,K,C>::value>> {
-    static void apply(const I& input, const K& kernel, C&& conv){
-        impl::sse::sconv1_valid(input, kernel, conv);
     }
 };
 

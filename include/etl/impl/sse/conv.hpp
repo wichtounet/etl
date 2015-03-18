@@ -248,6 +248,58 @@ void sconv1_valid(const I& input, const K& kernel, C&& conv){
     sconv1_valid_micro_kernel(input.memory_start(), size(input), kernel.memory_start(), size(kernel), conv.memory_start());
 }
 
+template<typename I, typename K, typename C>
+void dconv2_valid(const I& input, const K& kernel_r, C&& conv){
+    auto out = conv.memory_start();
+    auto in = input.memory_start();
+    auto kernel = kernel_r.memory_start();
+
+    auto n2 = etl::columns(input);
+
+    auto m1 = etl::rows(kernel_r);
+    auto m2 = etl::columns(kernel_r);
+
+    auto c1 = etl::rows(conv);
+    auto c2 = etl::columns(conv);
+
+    __m128d tmp1;
+    __m128d tmp2;
+    __m128d tmp3;
+    __m128d tmp4;
+    __m128d res;
+
+    double tmp_res[2] __attribute__ ((aligned (16)));
+
+    for(std::size_t i = 0 ; i < c1 ; ++i){
+        for(std::size_t j = 0 ; j < c2 ; ++j){
+            res = _mm_setzero_pd();
+
+            for(std::size_t k = i ; k < i + m1; ++k){
+                for(std::size_t l = j; l < j + m2 - 1; l += 2){
+                    tmp1 = _mm_loadu_pd(in + k * n2 + l);
+                    tmp2 = _mm_loadu_pd(kernel + ((i+m1-1-k) * m2 + (j+m2-1-(l+1))));
+                    tmp3 = _mm_shuffle_pd(tmp2, tmp2, _MM_SHUFFLE2(0, 1));
+                    tmp4 = _mm_mul_pd(tmp3, tmp1);
+                    res = _mm_add_pd(res, tmp4);
+                }
+            }
+
+            _mm_store_pd(tmp_res, res);
+
+            double temp = 0.0;
+
+            if(m2 % 2 != 0){
+                for(std::size_t k = i ; k < i + m1; ++k){
+                    auto l = j + m2 - 1;
+                    temp += in[k * n2 + l] * kernel[(i+m1-1-k) * m2 + (j+m2-1-l)];
+                }
+            }
+
+            out[i * c2 + j] = temp + tmp_res[0] + tmp_res[1];
+        }
+    }
+}
+
 } //end of namespace std
 } //end of namespace impl
 } //end of namespace etl
