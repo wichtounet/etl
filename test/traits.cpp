@@ -6,14 +6,12 @@
 //=======================================================================
 
 #include "catch.hpp"
+#include "template_test.hpp"
 
 #include "etl/etl.hpp"
 
-//For some reasons, these tests fail to compile in template mode
-//TODO: Fix that
-
-TEST_CASE( "etl_traits/fast_vector_1", "etl_traits<fast_vector>" ) {
-    using type = etl::fast_vector<double, 4>;
+TEMPLATE_TEST_CASE_2( "etl_traits/fast_vector_1", "etl_traits<fast_vector>", ZZZ, double, float ) {
+    using type = etl::fast_vector<ZZZ, 4>;
     type test_vector(3.3);
 
     REQUIRE(etl::etl_traits<type>::size(test_vector) == 4);
@@ -28,7 +26,7 @@ TEST_CASE( "etl_traits/fast_vector_1", "etl_traits<fast_vector>" ) {
     constexpr const auto size_2 = etl::size(test_vector);
     REQUIRE(size_2 == 4);
 
-    constexpr const auto size_3 = etl::etl_traits<type>::dim<0>();
+    constexpr const auto size_3 = etl::etl_traits<type>::template dim<0>();
     REQUIRE(size_3 == 4);
 
     constexpr const auto size_4 = etl::etl_traits<type>::dimensions();
@@ -38,8 +36,8 @@ TEST_CASE( "etl_traits/fast_vector_1", "etl_traits<fast_vector>" ) {
     REQUIRE(size_5 == 1);
 }
 
-TEST_CASE( "etl_traits/fast_matrix_1", "etl_traits<fast_matrix>" ) {
-    using type = etl::fast_matrix<double, 3, 2>;
+TEMPLATE_TEST_CASE_2( "etl_traits/fast_matrix_1", "etl_traits<fast_matrix>", Z, float, double ) {
+    using type = etl::fast_matrix<Z, 3, 2>;
     type test_matrix(3.3);
 
     REQUIRE(etl::etl_traits<type>::size(test_matrix) == 6);
@@ -67,15 +65,15 @@ TEST_CASE( "etl_traits/fast_matrix_1", "etl_traits<fast_matrix>" ) {
     REQUIRE(columns_2 == 2);
     REQUIRE(dim_2 == 2);
 
-    constexpr const auto rows_3 = etl::etl_traits<type>::dim<0>();
-    constexpr const auto columns_3 = etl::etl_traits<type>::dim<1>();
+    constexpr const auto rows_3 = etl::etl_traits<type>::template dim<0>();
+    constexpr const auto columns_3 = etl::etl_traits<type>::template dim<1>();
 
     REQUIRE(rows_3 == 3);
     REQUIRE(columns_3 == 2);
 }
 
-TEST_CASE( "etl_traits/fast_matrix_2", "etl_traits<fast_matrix>" ) {
-    using type = etl::fast_matrix<double, 3, 2, 4, 1>;
+TEMPLATE_TEST_CASE_2( "etl_traits/fast_matrix_2", "etl_traits<fast_matrix>", Z, float, double ) {
+    using type = etl::fast_matrix<Z, 3, 2, 4, 1>;
     type test_matrix(3.3);
 
     REQUIRE(etl::etl_traits<type>::size(test_matrix) == 24);
@@ -103,10 +101,10 @@ TEST_CASE( "etl_traits/fast_matrix_2", "etl_traits<fast_matrix>" ) {
     REQUIRE(columns_2 == 2);
     REQUIRE(dim_2 == 4);
 
-    constexpr const auto rows_3 = etl::etl_traits<type>::dim<0>();
-    constexpr const auto columns_3 = etl::etl_traits<type>::dim<1>();
-    constexpr const auto dim_2_3 = etl::etl_traits<type>::dim<2>();
-    constexpr const auto dim_3_3 = etl::etl_traits<type>::dim<3>();
+    constexpr const auto rows_3 = etl::etl_traits<type>::template dim<0>();
+    constexpr const auto columns_3 = etl::etl_traits<type>::template dim<1>();
+    constexpr const auto dim_2_3 = etl::etl_traits<type>::template dim<2>();
+    constexpr const auto dim_3_3 = etl::etl_traits<type>::template dim<3>();
 
     REQUIRE(rows_3 == 3);
     REQUIRE(columns_3 == 2);
@@ -114,8 +112,8 @@ TEST_CASE( "etl_traits/fast_matrix_2", "etl_traits<fast_matrix>" ) {
     REQUIRE(dim_3_3 == 1);
 }
 
-TEST_CASE( "etl_traits/dyn_vector_1", "etl_traits<dyn_vector>" ) {
-    using type = etl::dyn_vector<double>;
+TEMPLATE_TEST_CASE_2( "etl_traits/dyn_vector_1", "etl_traits<dyn_vector>", Z, float, double ) {
+    using type = etl::dyn_vector<Z>;
     type test_vector(4, 3.3);
 
     REQUIRE(etl::etl_traits<type>::size(test_vector) == 4);
@@ -127,8 +125,8 @@ TEST_CASE( "etl_traits/dyn_vector_1", "etl_traits<dyn_vector>" ) {
     REQUIRE(!etl::etl_traits<type>::is_fast);
 }
 
-TEST_CASE( "etl_traits/dyn_matrix_1", "etl_traits<dyn_matrix>" ) {
-    using type = etl::dyn_matrix<double>;
+TEMPLATE_TEST_CASE_2( "etl_traits/dyn_matrix_1", "etl_traits<dyn_matrix>", Z, float, double ) {
+    using type = etl::dyn_matrix<Z>;
     type test_matrix(3, 2, 3.3);
 
     REQUIRE(etl::etl_traits<type>::size(test_matrix) == 6);
@@ -143,8 +141,8 @@ TEST_CASE( "etl_traits/dyn_matrix_1", "etl_traits<dyn_matrix>" ) {
     REQUIRE(!etl::etl_traits<type>::is_fast);
 }
 
-TEST_CASE( "etl_traits/unary_dyn_mat", "etl_traits<unary<dyn_mat>>" ) {
-    using mat_type = etl::dyn_matrix<double>;
+TEMPLATE_TEST_CASE_2( "etl_traits/unary_dyn_mat", "etl_traits<unary<dyn_mat>>", Z, float, double ) {
+    using mat_type = etl::dyn_matrix<Z>;
     mat_type test_matrix(3, 2, 3.3);
 
     using expr_type = decltype(log(test_matrix));
@@ -162,8 +160,8 @@ TEST_CASE( "etl_traits/unary_dyn_mat", "etl_traits<unary<dyn_mat>>" ) {
     REQUIRE(!etl::etl_traits<expr_type>::is_fast);
 }
 
-TEST_CASE( "etl_traits/binary_dyn_mat", "etl_traits<binary<dyn_mat, dyn_mat>>" ) {
-    using mat_type = etl::dyn_matrix<double>;
+TEMPLATE_TEST_CASE_2( "etl_traits/binary_dyn_mat", "etl_traits<binary<dyn_mat, dyn_mat>>", Z, float, double ) {
+    using mat_type = etl::dyn_matrix<Z>;
     mat_type test_matrix(3, 2, 3.3);
 
     using expr_type = decltype(test_matrix + test_matrix);
@@ -181,8 +179,8 @@ TEST_CASE( "etl_traits/binary_dyn_mat", "etl_traits<binary<dyn_mat, dyn_mat>>" )
     REQUIRE(!etl::etl_traits<expr_type>::is_fast);
 }
 
-TEST_CASE( "etl_traits/unary_fast_mat", "etl_traits<unary<fast_mat>>" ) {
-    using mat_type = etl::fast_matrix<double, 3, 2>;
+TEMPLATE_TEST_CASE_2( "etl_traits/unary_fast_mat", "etl_traits<unary<fast_mat>>", Z, float, double ) {
+    using mat_type = etl::fast_matrix<Z, 3, 2>;
     mat_type test_matrix(3.3);
 
     using expr_type = decltype(log(test_matrix));
@@ -213,15 +211,15 @@ TEST_CASE( "etl_traits/unary_fast_mat", "etl_traits<unary<fast_mat>>" ) {
     REQUIRE(columns_2 == 2);
     REQUIRE(dim_2 == 2);
 
-    constexpr const auto rows_3 = etl::etl_traits<expr_type>::dim<0>();
-    constexpr const auto columns_3 = etl::etl_traits<expr_type>::dim<1>();
+    constexpr const auto rows_3 = etl::etl_traits<expr_type>::template dim<0>();
+    constexpr const auto columns_3 = etl::etl_traits<expr_type>::template dim<1>();
 
     REQUIRE(rows_3 == 3);
     REQUIRE(columns_3 == 2);
 }
 
-TEST_CASE( "etl_traits/binary_fast_mat", "etl_traits<binary<fast_mat, fast_mat>>" ) {
-    using mat_type = etl::fast_matrix<double, 3, 2>;
+TEMPLATE_TEST_CASE_2( "etl_traits/binary_fast_mat", "etl_traits<binary<fast_mat, fast_mat>>", Z, float, double ) {
+    using mat_type = etl::fast_matrix<Z, 3, 2>;
     mat_type test_matrix(3.3);
 
     using expr_type = decltype(test_matrix + test_matrix);
@@ -252,8 +250,8 @@ TEST_CASE( "etl_traits/binary_fast_mat", "etl_traits<binary<fast_mat, fast_mat>>
     REQUIRE(columns_2 == 2);
     REQUIRE(dim_2 == 2);
 
-    constexpr const auto rows_3 = etl::etl_traits<expr_type>::dim<0>();
-    constexpr const auto columns_3 = etl::etl_traits<expr_type>::dim<1>();
+    constexpr const auto rows_3 = etl::etl_traits<expr_type>::template dim<0>();
+    constexpr const auto columns_3 = etl::etl_traits<expr_type>::template dim<1>();
 
     REQUIRE(rows_3 == 3);
     REQUIRE(columns_3 == 2);
