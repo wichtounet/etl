@@ -120,23 +120,23 @@ void gemm_micro_kernel(std::size_t kc, D alpha, const double* A, const double* B
 
     double AB[MR*NR] __attribute__ ((aligned (16)));
 
-    __m128 tmp0 = _mm_load_pd(A);
-    __m128 tmp1 = _mm_load_pd(A+2);
-    __m128 tmp2 = _mm_load_pd(B);
-    __m128 tmp3;
-    __m128 tmp4;
-    __m128 tmp5;
-    __m128 tmp6;
-    __m128 tmp7;
+    __m128d tmp0 = _mm_load_pd(A);
+    __m128d tmp1 = _mm_load_pd(A+2);
+    __m128d tmp2 = _mm_load_pd(B);
+    __m128d tmp3;
+    __m128d tmp4;
+    __m128d tmp5;
+    __m128d tmp6;
+    __m128d tmp7;
 
-    __m128 ab_00_11 = _mm_setzero_pd(); 
-    __m128 ab_20_31 = _mm_setzero_pd();
-    __m128 ab_01_10 = _mm_setzero_pd(); 
-    __m128 ab_21_30 = _mm_setzero_pd();
-    __m128 ab_02_13 = _mm_setzero_pd(); 
-    __m128 ab_22_33 = _mm_setzero_pd();
-    __m128 ab_03_12 = _mm_setzero_pd(); 
-    __m128 ab_23_32 = _mm_setzero_pd();
+    __m128d ab_00_11 = _mm_setzero_pd();
+    __m128d ab_20_31 = _mm_setzero_pd();
+    __m128d ab_01_10 = _mm_setzero_pd();
+    __m128d ab_21_30 = _mm_setzero_pd();
+    __m128d ab_02_13 = _mm_setzero_pd();
+    __m128d ab_22_33 = _mm_setzero_pd();
+    __m128d ab_03_12 = _mm_setzero_pd();
+    __m128d ab_23_32 = _mm_setzero_pd();
 
     for (std::size_t l=0; l<kc; ++l) {
         tmp3 = _mm_load_pd(B+2);
@@ -381,7 +381,7 @@ void gemm_nn(std::size_t m, std::size_t n, std::size_t k, D alpha, const D* A, s
                 gemm_macro_kernel(mc, nc, kc, alpha, _beta, &C[i*MC*c_row_stride+j*NC*c_col_stride], c_row_stride, c_col_stride, _A, _B, _C);
             }
         }
-    } 
+    }
 
     delete[] _A;
     delete[] _B;

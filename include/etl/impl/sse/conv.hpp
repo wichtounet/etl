@@ -21,7 +21,7 @@ namespace impl {
 namespace sse {
 
 inline void dconv1_valid_micro_kernel(const double* in, const std::size_t n, const double* kernel, std::size_t m, double* out){
-    __m128* kernel_reverse = new __m128[m];
+    __m128d* kernel_reverse = new __m128d[m];
 
     //Reverse the kernel
 
@@ -29,9 +29,9 @@ inline void dconv1_valid_micro_kernel(const double* in, const std::size_t n, con
         kernel_reverse[i] = _mm_load1_pd(kernel + m - i - 1);
     }
 
-    __m128 tmp1;
-    __m128 tmp2;
-    __m128 res;
+    __m128d tmp1;
+    __m128d tmp2;
+    __m128d res;
 
     //Compute the convolution, 2 doubles at a time
 
