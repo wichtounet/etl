@@ -96,6 +96,61 @@ void right_same_kernel(const T* in, const std::size_t n, const T* kernel, std::s
     }
 }
 
+template<typename T>
+void left_full_kernel(const T* in, const std::size_t n, const T* kernel, std::size_t m, T* out){
+    std::size_t left = m - 1;
+
+    //Left invalid part
+    for(std::size_t i = 0; i < left; ++i) {
+        const auto hi = i < n - 1 ? i : n - 1;
+
+        T temp = 0.0;
+
+        for(std::size_t j = 0; j <= hi; ++j) {
+            temp += in[j] * kernel[i - j];
+        }
+
+        out[i] = temp;
+    }
+}
+
+template<typename T>
+void right_full_kernel(const T* in, const std::size_t n, const T* kernel, std::size_t m, T* out){
+    std::size_t right = m - 1;
+
+    auto c = n + m - 1;
+
+    //Right invalid part
+    for(std::size_t i = c - right; i < c; ++i) {
+        const auto lo = i >= m - 1 ? i - (m - 1) : 0;
+        const auto hi = i < n - 1 ? i : n - 1;
+
+        T temp = 0.0;
+
+        for(std::size_t j = lo; j <= hi; ++j) {
+            temp += in[j] * kernel[i - j];
+        }
+
+        out[i] = temp;
+    }
+}
+
+template<typename I, typename K, typename C>
+void dconv1_full(const I& input, const K& kernel, C&& conv){
+    std::size_t left = size(kernel) - 1;
+
+    auto out = conv.memory_start();
+    auto in = input.memory_start();
+    auto k = kernel.memory_start();
+
+    //Process not-'valid' parts of the convolution (left and right)
+    left_full_kernel(in, size(input), k, size(kernel), out);
+    right_full_kernel(in, size(input), k, size(kernel), out);
+
+    //Central part is a 'valid' convolution
+    dconv1_valid_micro_kernel(in, size(input), k, size(kernel), out + left);
+}
+
 template<typename I, typename K, typename C>
 void dconv1_same(const I& input, const K& kernel, C&& conv){
     std::size_t left = (size(kernel) - 1) / 2;
@@ -154,6 +209,22 @@ inline void sconv1_valid_micro_kernel(const float* in, const std::size_t n, cons
     }
 
     delete[] kernel_reverse;
+}
+
+template<typename I, typename K, typename C>
+void sconv1_full(const I& input, const K& kernel, C&& conv){
+    std::size_t left = size(kernel) - 1;
+
+    auto out = conv.memory_start();
+    auto in = input.memory_start();
+    auto k = kernel.memory_start();
+
+    //Process not-'valid' parts of the convolution (left and right)
+    left_full_kernel(in, size(input), k, size(kernel), out);
+    right_full_kernel(in, size(input), k, size(kernel), out);
+
+    //Central part is a 'valid' convolution
+    sconv1_valid_micro_kernel(in, size(input), k, size(kernel), out + left);
 }
 
 template<typename I, typename K, typename C>
