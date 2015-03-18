@@ -32,8 +32,8 @@ TEMPLATE_TEST_CASE_2( "stop/fast_vector_1", "stop<unary<fast_vec>>", Z, float, d
     REQUIRE(size_2 == 4);
 
     for(std::size_t i = 0; i < r.size(); ++i){
-        REQUIRE(r[i] == std::log(Z(3.3)));
-        REQUIRE(r(i) == std::log(Z(3.3)));
+        REQUIRE(r[i] == Approx(std::log(Z(3.3))));
+        REQUIRE(r(i) == Approx(std::log(Z(3.3))));
     }
 }
 
@@ -66,7 +66,7 @@ TEMPLATE_TEST_CASE_2( "stop/fast_matrix_1", "stop<unary<fast_mat>>", Z, float, d
     REQUIRE(columns_2 == 2);
 
     for(std::size_t i = 0; i < r.size(); ++i){
-        REQUIRE(r[i] == std::log(Z(3.3)));
+        REQUIRE(r[i] == Approx(std::log(Z(3.3))));
     }
 }
 
@@ -118,8 +118,8 @@ TEMPLATE_TEST_CASE_2( "stop/dyn_vector_1", "stop<unary<dyn_vec>>", Z, float, dou
     REQUIRE(!etl::etl_traits<type>::is_fast);
 
     for(std::size_t i = 0; i < r.size(); ++i){
-        REQUIRE(r[i] == std::log(Z(3.3)));
-        REQUIRE(r(i) == std::log(Z(3.3)));
+        REQUIRE(r[i] == Approx(std::log(Z(3.3))));
+        REQUIRE(r(i) == Approx(std::log(Z(3.3))));
     }
 }
 
@@ -140,7 +140,7 @@ TEMPLATE_TEST_CASE_2( "stop/dyn_matrix_1", "stop<unary<dyn_mat>>", Z, float, dou
     REQUIRE(!etl::etl_traits<type>::is_fast);
 
     for(std::size_t i = 0; i < r.size(); ++i){
-        REQUIRE(r[i] == std::log(Z(3.3)));
+        REQUIRE(r[i] == Approx(std::log(Z(3.3))));
     }
 }
 
