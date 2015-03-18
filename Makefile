@@ -11,6 +11,10 @@ ifneq (,$(findstring clang,$(CXX)))
 CXX_FLAGS += -stdlib=libc++
 endif
 
+ifneq (,$(findstring c++-analyzer,$(CXX)))
+CXX_FLAGS += -stdlib=libc++
+endif
+
 ifneq (,$(ETL_BLAS))
 CXX_FLAGS += -DETL_BLAS_MODE
 LD_FLAGS += -lcblas -lblas

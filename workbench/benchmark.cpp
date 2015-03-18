@@ -13,6 +13,12 @@
 #include "etl/convolution.hpp"
 #include "etl/multiplication.hpp"
 
+#ifdef ETL_VECTORIZE
+#ifdef __SSE3__
+#define TEST_SSE
+#endif
+#endif
+
 typedef std::chrono::high_resolution_clock timer_clock;
 typedef std::chrono::milliseconds milliseconds;
 typedef std::chrono::microseconds microseconds;
@@ -151,9 +157,11 @@ void bench_fast_full_convolution_1d(const std::string& reference){
         [&a, &b, &c](){etl::impl::standard::conv1_full(a, b, c);}
         , a, b);
 
+#ifdef TEST_SSE
     measure("fast_full_convolution_1d(sse)(" + std::to_string(D1) + "," + std::to_string(D2) + ")", reference,
         [&a, &b, &c](){etl::impl::sse::dconv1_full(a, b, c);}
         , a, b);
+#endif
 }
 
 void bench_dyn_full_convolution_1d(std::size_t d1, std::size_t d2, const std::string& reference){
@@ -169,9 +177,11 @@ void bench_dyn_full_convolution_1d(std::size_t d1, std::size_t d2, const std::st
         [&a, &b, &c](){etl::impl::standard::conv1_full(a, b, c);}
         , a, b);
 
+#ifdef TEST_SSE
     measure("dyn_full_convolution_1d(sse)(" + std::to_string(d1) + "," + std::to_string(d2) + ")", reference,
         [&a, &b, &c](){etl::impl::sse::dconv1_full(a, b, c);}
         , a, b);
+#endif
 }
 
 template<std::size_t D1, std::size_t D2>
@@ -188,9 +198,11 @@ void bench_fast_valid_convolution_1d_d(const std::string& reference){
         [&a, &b, &c](){etl::impl::standard::conv1_valid(a, b, c);}
         , a, b);
 
+#ifdef TEST_SSE
     measure("fast_valid_convolution_1d_d(sse)(" + std::to_string(D1) + "," + std::to_string(D2) + ")", reference,
         [&a, &b, &c](){etl::impl::sse::dconv1_valid(a, b, c);}
         , a, b);
+#endif
 }
 
 void bench_dyn_valid_convolution_1d_d(std::size_t d1, std::size_t d2, const std::string& reference){
@@ -206,9 +218,11 @@ void bench_dyn_valid_convolution_1d_d(std::size_t d1, std::size_t d2, const std:
         [&a, &b, &c](){etl::impl::standard::conv1_valid(a, b, c);}
         , a, b);
 
+#ifdef TEST_SSE
     measure("dyn_valid_convolution_1d_d(sse)(" + std::to_string(d1) + "," + std::to_string(d2) + ")", reference,
         [&a, &b, &c](){etl::impl::sse::dconv1_valid(a, b, c);}
         , a, b);
+#endif
 }
 
 template<std::size_t D1, std::size_t D2>
@@ -225,9 +239,11 @@ void bench_fast_valid_convolution_1d_s(const std::string& reference){
         [&a, &b, &c](){etl::impl::standard::conv1_valid(a, b, c);}
         , a, b);
 
+#ifdef TEST_SSE
     measure("fast_valid_convolution_1d_s(sse)(" + std::to_string(D1) + "," + std::to_string(D2) + ")", reference,
         [&a, &b, &c](){etl::impl::sse::sconv1_valid(a, b, c);}
         , a, b);
+#endif
 }
 
 void bench_dyn_valid_convolution_1d_s(std::size_t d1, std::size_t d2, const std::string& reference){
@@ -243,9 +259,11 @@ void bench_dyn_valid_convolution_1d_s(std::size_t d1, std::size_t d2, const std:
         [&a, &b, &c](){etl::impl::standard::conv1_valid(a, b, c);}
         , a, b);
 
+#ifdef TEST_SSE
     measure("dyn_valid_convolution_1d_s(std)(" + std::to_string(d1) + "," + std::to_string(d2) + ")", reference,
         [&a, &b, &c](){etl::impl::sse::sconv1_valid(a, b, c);}
         , a, b);
+#endif
 }
 
 template<std::size_t D1, std::size_t D2>
@@ -275,9 +293,19 @@ void bench_fast_valid_convolution(const std::string& reference){
     etl::fast_matrix<double, D2, D2> b;
     etl::fast_matrix<double, D1-D2+1, D1-D2+1> c;
 
-    measure("fast_valid_convolution(" + std::to_string(D1) + "," + std::to_string(D2) + ")", reference,
+    measure("fast_valid_convolution(default)(" + std::to_string(D1) + "," + std::to_string(D2) + ")", reference,
         [&a, &b, &c](){etl::convolve_2d_valid(a, b, c);}
         , a, b);
+
+    measure("fast_valid_convolution(std)(" + std::to_string(D1) + "," + std::to_string(D2) + ")", reference,
+        [&a, &b, &c](){etl::impl::standard::conv2_valid(a, b, c);}
+        , a, b);
+
+#ifdef TEST_SSE
+    measure("fast_valid_convolution(sse)(" + std::to_string(D1) + "," + std::to_string(D2) + ")", reference,
+        [&a, &b, &c](){etl::impl::sse::dconv2_valid(a, b, c);}
+        , a, b);
+#endif
 }
 
 void bench_dyn_valid_convolution(std::size_t d1, std::size_t d2, const std::string& reference){
@@ -285,9 +313,19 @@ void bench_dyn_valid_convolution(std::size_t d1, std::size_t d2, const std::stri
     etl::dyn_matrix<double> b(d2, d2);
     etl::dyn_matrix<double> c(d1-d2+1, d1-d2+1);
 
-    measure("dyn_valid_convolution(" + std::to_string(d1) + "," + std::to_string(d2) + ")", reference,
+    measure("dyn_valid_convolution(default)(" + std::to_string(d1) + "," + std::to_string(d2) + ")", reference,
         [&a, &b, &c](){etl::convolve_2d_valid(a, b, c);}
         , a, b);
+
+    measure("dyn_valid_convolution(std)(" + std::to_string(d1) + "," + std::to_string(d2) + ")", reference,
+        [&a, &b, &c](){etl::impl::standard::conv2_valid(a, b, c);}
+        , a, b);
+
+#ifdef TEST_SSE
+    measure("dyn_valid_convolution(sse)(" + std::to_string(d1) + "," + std::to_string(d2) + ")", reference,
+        [&a, &b, &c](){etl::impl::sse::dconv2_valid(a, b, c);}
+        , a, b);
+#endif
 }
 
 template<std::size_t D1, std::size_t D2>
