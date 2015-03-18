@@ -248,19 +248,9 @@ void sconv1_valid(const I& input, const K& kernel, C&& conv){
     sconv1_valid_micro_kernel(input.memory_start(), size(input), kernel.memory_start(), size(kernel), conv.memory_start());
 }
 
-template<typename I, typename K, typename C>
-void dconv2_valid(const I& input, const K& kernel_r, C&& conv){
-    auto out = conv.memory_start();
-    auto in = input.memory_start();
-    auto kernel = kernel_r.memory_start();
-
-    auto n2 = etl::columns(input);
-
-    auto m1 = etl::rows(kernel_r);
-    auto m2 = etl::columns(kernel_r);
-
-    auto c1 = etl::rows(conv);
-    auto c2 = etl::columns(conv);
+inline void dconv2_valid_micro_kernel(const double* in, std::size_t n1, std::size_t n2, const double* kernel, std::size_t m1, std::size_t m2, double* out){
+    auto c1 = n1 - m1 + 1;
+    auto c2 = n2 - m2 + 1;
 
     __m128d tmp1;
     __m128d tmp2;
@@ -298,6 +288,14 @@ void dconv2_valid(const I& input, const K& kernel_r, C&& conv){
             out[i * c2 + j] = temp + tmp_res[0] + tmp_res[1];
         }
     }
+}
+
+template<typename I, typename K, typename C>
+void dconv2_valid(const I& input, const K& kernel, C&& conv){
+    dconv2_valid_micro_kernel(
+        input.memory_start(), etl::rows(input), etl::columns(input),
+        kernel.memory_start(), etl::rows(kernel), etl::columns(kernel),
+        conv.memory_start());
 }
 
 } //end of namespace std
