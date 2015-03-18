@@ -332,8 +332,11 @@ auto sign(E&& value) -> unary_helper<E, sign_unary_op> {
     return {value};
 }
 
+//Note: Use of decltype here should not be necessary, but g++ does
+//not like it without it for some reason
+
 template<typename E, cpp::enable_if_u<is_etl_expr<E>::value> = cpp::detail::dummy>
-auto sigmoid(E&& value){
+auto sigmoid(E&& value) -> decltype(1.0 / (1.0 + exp(-value))) {
     return 1.0 / (1.0 + exp(-value));
 }
 
