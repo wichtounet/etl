@@ -28,13 +28,13 @@ TEST_FILES=$(CPP_FILES:test/%=%)
 DEBUG_D_FILES=$(CPP_FILES:%.cpp=debug/%.cpp.d)
 RELEASE_D_FILES=$(CPP_FILES:%.cpp=release/%.cpp.d)
 
-$(eval $(call folder_compile,workbench))
+$(eval $(call folder_compile,workbench,-Wno-error))
 $(eval $(call test_folder_compile,))
 
 # Create executables
 $(eval $(call add_executable,test_asm_1,workbench/test.cpp))
 $(eval $(call add_executable,test_asm_2,workbench/test_dim.cpp))
-$(eval $(call add_executable,benchmark,workbench/benchmark.cpp,-Wnoerror))
+$(eval $(call add_executable,benchmark,workbench/benchmark.cpp))
 $(eval $(call add_executable,mmul,workbench/mmul.cpp))
 $(eval $(call add_test_executable,etl_test,$(TEST_FILES)))
 
