@@ -298,6 +298,61 @@ void dconv2_valid(const I& input, const K& kernel, C&& conv){
         conv.memory_start());
 }
 
+inline void dconv2_same_micro_kernel(const double* in, std::size_t n1, std::size_t n2, const double* kernel, std::size_t m1, std::size_t m2, double* out){
+    auto c1 = n1;
+    auto c2 = n2;
+
+    __m128d tmp1;
+    __m128d tmp2;
+    __m128d tmp3;
+    __m128d tmp4;
+    __m128d res;
+
+    double tmp_res[2] __attribute__ ((aligned (16)));
+
+    for(std::size_t i = 0 ; i < c1; ++i){
+        std::size_t k_lo = std::max<int>(0, i - (m1-1)/2);
+        std::size_t k_hi = std::min<int>(n1 - 1, i + m1/2);
+
+        for(std::size_t j = 0 ; j < c2; ++j){
+            std::size_t l_lo = std::max<int>(0, j - (m2-1)/2);
+            std::size_t l_hi = std::min<int>(n2 - 1, j + m2/2);
+
+            res = _mm_setzero_pd();
+
+            for(std::size_t k = k_lo ; k <= k_hi ; ++k){
+                for(std::size_t l = l_lo ; l + 1 <= l_hi; l += 2){
+                    tmp1 = _mm_loadu_pd(in + k * n2 + l);
+                    tmp2 = _mm_loadu_pd(kernel + (i-k+m1/2) * m2 +(j-(l+1)+m2/2));
+                    tmp3 = _mm_shuffle_pd(tmp2, tmp2, _MM_SHUFFLE2(0, 1));
+                    tmp4 = _mm_mul_pd(tmp3, tmp1);
+                    res = _mm_add_pd(res, tmp4);
+                }
+            }
+
+            _mm_store_pd(tmp_res, res);
+
+            double temp = 0.0;
+
+            if((l_hi - l_lo + 1) % 2 != 0){
+                for(std::size_t k = k_lo ; k <= k_hi ; ++k){
+                    temp += in[k * n2 + l_hi] * kernel[(i-k+m1/2) * m2 +(j-l_hi+m2/2)];
+                }
+            }
+
+            out[i * c2 + j] = temp + tmp_res[0] + tmp_res[1];
+        }
+    }
+}
+
+template<typename I, typename K, typename C>
+void dconv2_same(const I& input, const K& kernel, C&& conv){
+    dconv2_same_micro_kernel(
+        input.memory_start(), etl::rows(input), etl::columns(input),
+        kernel.memory_start(), etl::rows(kernel), etl::columns(kernel),
+        conv.memory_start());
+}
+
 } //end of namespace std
 } //end of namespace impl
 } //end of namespace etl

@@ -288,6 +288,47 @@ void bench_dyn_full_convolution(std::size_t d1, std::size_t d2, const std::strin
 }
 
 template<std::size_t D1, std::size_t D2>
+void bench_fast_same_convolution(const std::string& reference){
+    etl::fast_matrix<double, D1, D1> a;
+    etl::fast_matrix<double, D2, D2> b;
+    etl::fast_matrix<double, D1, D1> c;
+
+    measure("fast_same_convolution(default)(" + std::to_string(D1) + "," + std::to_string(D2) + ")", reference,
+        [&a, &b, &c](){etl::convolve_2d_same(a, b, c);}
+        , a, b);
+
+    measure("fast_same_convolution(std)(" + std::to_string(D1) + "," + std::to_string(D2) + ")", reference,
+        [&a, &b, &c](){etl::impl::standard::conv2_same(a, b, c);}
+        , a, b);
+
+#ifdef TEST_SSE
+    measure("fast_same_convolution(sse)(" + std::to_string(D1) + "," + std::to_string(D2) + ")", reference,
+        [&a, &b, &c](){etl::impl::sse::dconv2_same(a, b, c);}
+        , a, b);
+#endif
+}
+
+void bench_dyn_same_convolution(std::size_t d1, std::size_t d2, const std::string& reference){
+    etl::dyn_matrix<double> a(d1, d1);
+    etl::dyn_matrix<double> b(d2, d2);
+    etl::dyn_matrix<double> c(d1, d1);
+
+    measure("dyn_same_convolution(default)(" + std::to_string(d1) + "," + std::to_string(d2) + ")", reference,
+        [&a, &b, &c](){etl::convolve_2d_same(a, b, c);}
+        , a, b);
+
+    measure("dyn_same_convolution(std)(" + std::to_string(d1) + "," + std::to_string(d2) + ")", reference,
+        [&a, &b, &c](){etl::impl::standard::conv2_same(a, b, c);}
+        , a, b);
+
+#ifdef TEST_SSE
+    measure("dyn_same_convolution(sse)(" + std::to_string(d1) + "," + std::to_string(d2) + ")", reference,
+        [&a, &b, &c](){etl::impl::sse::dconv2_same(a, b, c);}
+        , a, b);
+#endif
+}
+
+template<std::size_t D1, std::size_t D2>
 void bench_fast_valid_convolution(const std::string& reference){
     etl::fast_matrix<double, D1, D1> a;
     etl::fast_matrix<double, D2, D2> b;
@@ -418,6 +459,11 @@ void bench_stack(){
     bench_fast_full_convolution<128, 32>("TODOms");
     bench_dyn_full_convolution(64, 32, "TODOms");
     bench_dyn_full_convolution(128, 32, "TODOms");
+
+    bench_fast_same_convolution<64, 32>("TODOms");
+    bench_fast_same_convolution<128, 32>("TODOms");
+    bench_dyn_same_convolution(64, 32, "TODOms");
+    bench_dyn_same_convolution(128, 32, "TODOms");
 
     bench_fast_valid_convolution<64, 32>("TODOms");
     bench_fast_valid_convolution<128, 32>("TODOms");
