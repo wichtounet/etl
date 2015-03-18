@@ -20,6 +20,8 @@ CXX_FLAGS += -DETL_BLAS_MODE
 LD_FLAGS += -lcblas -lblas
 endif
 
+CXX_FLAGS += -DETL_VECTORIZE
+
 CPP_FILES=$(wildcard test/*.cpp)
 TEST_FILES=$(CPP_FILES:test/%=%)
 
@@ -32,7 +34,7 @@ $(eval $(call test_folder_compile,))
 # Create executables
 $(eval $(call add_executable,test_asm_1,workbench/test.cpp))
 $(eval $(call add_executable,test_asm_2,workbench/test_dim.cpp))
-$(eval $(call add_executable,benchmark,workbench/benchmark.cpp))
+$(eval $(call add_executable,benchmark,workbench/benchmark.cpp,-Wnoerror))
 $(eval $(call add_executable,mmul,workbench/mmul.cpp))
 $(eval $(call add_test_executable,etl_test,$(TEST_FILES)))
 
