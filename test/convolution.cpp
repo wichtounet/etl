@@ -834,6 +834,34 @@ TEMPLATE_TEST_CASE_2( "convolution_2d/valid_7", "convolution_2d_valid", Z, float
     REQUIRE(c(0, 4) == 72);
 }
 
+TEMPLATE_TEST_CASE_2( "convolution_2d/valid_8", "convolution_2d_valid", Z, float, double ) {
+    etl::fast_matrix<Z, 33, 33> a(etl::magic(33));
+    etl::fast_matrix<Z, 9, 9> b(etl::magic(9));
+    etl::fast_matrix<Z, 25, 25> c;
+
+    etl::convolve_2d_valid(a, b, c);
+
+    REQUIRE(c(0, 0) == 2735136);
+    REQUIRE(c(0, 1) == 2726136);
+    REQUIRE(c(0, 2) == 2620215);
+    REQUIRE(c(0, 3) == 2394504);
+
+    REQUIRE(c(1, 0) == 2722815);
+    REQUIRE(c(1, 1) == 2616894);
+    REQUIRE(c(1, 2) == 2391183);
+    REQUIRE(c(1, 3) == 2473659);
+
+    REQUIRE(c(2, 0) == 2613573);
+    REQUIRE(c(2, 1) == 2387862);
+    REQUIRE(c(2, 2) == 2470338);
+    REQUIRE(c(2, 3) == 2493546);
+
+    REQUIRE(c(3, 0) == 2384541);
+    REQUIRE(c(3, 1) == 2467017);
+    REQUIRE(c(3, 2) == 2491776);
+    REQUIRE(c(3, 3) == 2432517);
+}
+
 //}}}
 
 //{{{ convolution_2d_valid_dyn
