@@ -413,11 +413,11 @@ inline void sconv2_valid_micro_kernel(const float* in, std::size_t n1, std::size
     auto c1 = n1 - m1 + 1;
     auto c2 = n2 - m2 + 1;
 
-    __m128d tmp1;
-    __m128d tmp2;
-    __m128d tmp3;
-    __m128d tmp4;
-    __m128d res;
+    __m128 tmp1;
+    __m128 tmp2;
+    __m128 tmp3;
+    __m128 tmp4;
+    __m128 res;
 
     float tmp_res[4] __attribute__ ((aligned (16)));
 
@@ -465,11 +465,11 @@ inline void sconv2_same_micro_kernel(const float* in, std::size_t n1, std::size_
     auto c1 = n1;
     auto c2 = n2;
 
-    __m128d tmp1;
-    __m128d tmp2;
-    __m128d tmp3;
-    __m128d tmp4;
-    __m128d res;
+    __m128 tmp1;
+    __m128 tmp2;
+    __m128 tmp3;
+    __m128 tmp4;
+    __m128 res;
 
     float tmp_res[4] __attribute__ ((aligned (16)));
 
@@ -523,11 +523,11 @@ inline void sconv2_full_micro_kernel(const float* in, std::size_t n1, std::size_
     auto c1 = n1 + m1 - 1;
     auto c2 = n2 + m2 - 1;
     
-    __m128d tmp1;
-    __m128d tmp2;
-    __m128d tmp3;
-    __m128d tmp4;
-    __m128d res;
+    __m128 tmp1;
+    __m128 tmp2;
+    __m128 tmp3;
+    __m128 tmp4;
+    __m128 res;
 
     float tmp_res[4] __attribute__ ((aligned (16)));
 
