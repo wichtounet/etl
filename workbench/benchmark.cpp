@@ -60,7 +60,7 @@ std::string duration_str(std::size_t duration_us){
 }
 
 template<typename Functor, typename... T>
-void measure(const std::string& title, const std::string& reference, Functor&& functor, T&... references){
+std::size_t measure_only(Functor&& functor, T&... references){
     for(std::size_t i = 0; i < 100; ++i){
         randomize(references...);
         functor();
@@ -77,7 +77,55 @@ void measure(const std::string& title, const std::string& reference, Functor&& f
         duration_acc += duration.count();
     }
 
+    return duration_acc;
+}
+
+template<typename Functor, typename... T>
+std::size_t measure_only_safe(Functor&& functor, T&... references){
+    for(std::size_t i = 0; i < 100; ++i){
+        randomize(references...);
+        functor(i);
+    }
+
+    std::size_t duration_acc = 0;
+
+    for(std::size_t i = 0; i < 100; ++i){
+        randomize(references...);
+        auto start_time = timer_clock::now();
+        functor(start_time);
+        auto end_time = timer_clock::now();
+        auto duration = std::chrono::duration_cast<microseconds>(end_time - start_time);
+        duration_acc += duration.count();
+    }
+
+    return duration_acc;
+}
+
+template<typename Functor, typename... T>
+void measure(const std::string& title, const std::string& reference, Functor&& functor, T&... references){
+    auto duration_acc = measure_only(std::forward<Functor>(functor), references...);
     std::cout << title << " took " << duration_str(duration_acc) << " (reference: " << reference << ")\n";
+}
+
+template<bool Enable = true>
+struct sub_measure {
+    template<typename Functor, typename... T>
+    static void measure_sub(const std::string& title, Functor&& functor, T&... references){
+        auto duration_acc = measure_only_safe(std::forward<Functor>(functor), references...);
+
+        std::cout << "\t" << title << std::string(20 - title.size(), ' ') << duration_str(duration_acc) << std::endl;
+    }
+};
+
+template<>
+struct sub_measure<false> {
+    template<typename Functor, typename... T>
+    static void measure_sub(const std::string& , Functor&& , T&... ){}
+};
+
+template<bool Enable = true, typename Functor, typename... T>
+void measure_sub(const std::string& title, Functor&& functor, T&... references){
+    sub_measure<Enable>::measure_sub(title, std::forward<Functor>(functor), references...);
 }
 
 template<std::size_t D>
@@ -143,45 +191,59 @@ void bench_dyn_matrix_sigmoid(std::size_t d1, std::size_t d2, const std::string&
         , a, b);
 }
 
+template<typename A, typename B, typename C>
+void measure_full_convolution_1d(A& a, B& b, C& c){
+    measure_sub("default", [&a, &b, &c](auto& z){etl::convolve_1d_full(a, b, c);} , a, b);
+
+    measure_sub("std", [&a, &b, &c](auto& z){etl::impl::standard::conv1_full(a, b, c);} , a, b);
+
+    constexpr const bool F = std::is_same<float, typename A::value_type>::value;
+
+#ifdef TEST_SSE
+    if(F){
+        measure_sub<F>("sse", [&a, &b, &c](auto& z){etl::impl::sse::sconv1_full(a, b, c);} , a, b);
+    } else {
+        measure_sub<!F>("sse", [&a, &b, &c](auto& z){etl::impl::sse::dconv1_full(a, b, c);} , a, b);
+    }
+#endif
+}
+
 template<std::size_t D1, std::size_t D2>
-void bench_fast_full_convolution_1d(const std::string& reference){
+void bench_fast_full_convolution_1d_d(){
     etl::fast_matrix<double, D1> a;
     etl::fast_matrix<double, D2> b;
     etl::fast_matrix<double, D1+D2-1> c;
 
-    measure("fast_full_convolution_1d(default)(" + std::to_string(D1) + "," + std::to_string(D2) + ")", reference,
-        [&a, &b, &c](){etl::convolve_1d_full(a, b, c);}
-        , a, b);
-
-    measure("fast_full_convolution_1d(std)(" + std::to_string(D1) + "," + std::to_string(D2) + ")", reference,
-        [&a, &b, &c](){etl::impl::standard::conv1_full(a, b, c);}
-        , a, b);
-
-#ifdef TEST_SSE
-    measure("fast_full_convolution_1d(sse)(" + std::to_string(D1) + "," + std::to_string(D2) + ")", reference,
-        [&a, &b, &c](){etl::impl::sse::dconv1_full(a, b, c);}
-        , a, b);
-#endif
+    std::cout << "fast_full_convolution_1d_d" << "(" << D1 << "," << D2 << ")" << std::endl;
+    measure_full_convolution_1d(a, b, c);
 }
 
-void bench_dyn_full_convolution_1d(std::size_t d1, std::size_t d2, const std::string& reference){
+void bench_dyn_full_convolution_1d_d(std::size_t d1, std::size_t d2){
     etl::dyn_matrix<double,1> a(d1);
     etl::dyn_matrix<double,1> b(d2);
     etl::dyn_matrix<double,1> c(d1+d2-1);
 
-    measure("dyn_full_convolution_1d(default)(" + std::to_string(d1) + "," + std::to_string(d2) + ")", reference,
-        [&a, &b, &c](){etl::convolve_1d_full(a, b, c);}
-        , a, b);
+    std::cout << "dyn_full_convolution_1d_d" << "(" << d1 << "," << d2 << ")" << std::endl;
+    measure_full_convolution_1d(a, b, c);
+}
 
-    measure("dyn_full_convolution_1d(std)(" + std::to_string(d1) + "," + std::to_string(d2) + ")", reference,
-        [&a, &b, &c](){etl::impl::standard::conv1_full(a, b, c);}
-        , a, b);
+template<std::size_t D1, std::size_t D2>
+void bench_fast_full_convolution_1d_s(){
+    etl::fast_matrix<float, D1> a;
+    etl::fast_matrix<float, D2> b;
+    etl::fast_matrix<float, D1+D2-1> c;
 
-#ifdef TEST_SSE
-    measure("dyn_full_convolution_1d(sse)(" + std::to_string(d1) + "," + std::to_string(d2) + ")", reference,
-        [&a, &b, &c](){etl::impl::sse::dconv1_full(a, b, c);}
-        , a, b);
-#endif
+    std::cout << "fast_full_convolution_1d_s" << "(" << D1 << "," << D2 << ")" << std::endl;
+    measure_full_convolution_1d(a, b, c);
+}
+
+void bench_dyn_full_convolution_1d_s(std::size_t d1, std::size_t d2){
+    etl::dyn_matrix<float,1> a(d1);
+    etl::dyn_matrix<float,1> b(d2);
+    etl::dyn_matrix<float,1> c(d1+d2-1);
+
+    std::cout << "dyn_full_convolution_1d_s" << "(" << d1 << "," << d2 << ")" << std::endl;
+    measure_full_convolution_1d(a, b, c);
 }
 
 template<std::size_t D1, std::size_t D2>
@@ -470,10 +532,15 @@ void bench_stack(){
     bench_dyn_valid_convolution_1d_s(2*1024, 2*64, "TODOms");
     bench_dyn_valid_convolution_1d_s(2*2048, 2*64, "TODOms");
 
-    bench_fast_full_convolution_1d<2*1024, 2*64>("TODOms");
-    bench_fast_full_convolution_1d<2*2048, 2*128>("TODOms");
-    bench_dyn_full_convolution_1d(2*1024, 2*64, "TODOms");
-    bench_dyn_full_convolution_1d(2*2048, 2*64, "TODOms");
+    bench_fast_full_convolution_1d_d<2*1024, 2*64>();
+    bench_fast_full_convolution_1d_d<2*2048, 2*128>();
+    bench_dyn_full_convolution_1d_d(2*1024, 2*64);
+    bench_dyn_full_convolution_1d_d(2*2048, 2*64);
+    
+    bench_fast_full_convolution_1d_s<2*1024, 2*64>();
+    bench_fast_full_convolution_1d_s<2*2048, 2*128>();
+    bench_dyn_full_convolution_1d_s(2*1024, 2*64);
+    bench_dyn_full_convolution_1d_s(2*2048, 2*64);
 
     bench_fast_full_convolution_2d_d<64, 32>("TODOms");
     bench_fast_full_convolution_2d_d<128, 32>("TODOms");
