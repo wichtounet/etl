@@ -20,11 +20,11 @@ template<typename I, typename K, typename C>
 void conv1_full(const I& input, const K& kernel, C&& conv){
     for(std::size_t i = 0; i < size(conv); ++i) {
         const auto lo = i >= size(kernel) - 1 ? i - (size(kernel) - 1) : 0;
-        const auto hi = i < size(input) - 1 ? i : size(input) - 1;
+        const auto hi = (i < size(input) - 1 ? i : size(input) - 1) + 1;
 
-        double temp = 0.0;
+        typename I::value_type temp = 0.0;
 
-        for(std::size_t j = lo; j <= hi; ++j) {
+        for(std::size_t j = lo; j < hi; ++j) {
             temp += input[j] * kernel[i - j];
         }
 
@@ -35,25 +35,25 @@ void conv1_full(const I& input, const K& kernel, C&& conv){
 template<typename I, typename K, typename C>
 void conv1_same(const I& input, const K& kernel, C&& conv){
     for(std::size_t j = 0 ; j < size(conv) ; ++j){
-        int l_lo = std::max<int>(0, j - (size(kernel) - 1) / 2);
-        int l_hi = std::min<int>(size(input)- 1, j + size(kernel) / 2);
+        std::size_t l_lo = std::max<int>(0, j - (size(kernel) - 1) / 2);
+        std::size_t l_hi = std::min<int>(size(input)- 1, j + size(kernel) / 2) + 1;
 
-        double temp = 0.0;
+        typename I::value_type temp = 0.0;
 
-        for(std::size_t l = l_lo ; l <= static_cast<std::size_t>(l_hi); ++l){
+        for(std::size_t l = l_lo ; l < l_hi; ++l){
             temp += input(l) * kernel(j - l + size(kernel) / 2);
         }
 
-        conv(0 + j) = temp;
+        conv[j] = temp;
     }
 }
 
 template<typename I, typename K, typename C>
 void conv1_valid(const I& input, const K& kernel, C&& conv){
     for(std::size_t j = 0 ; j < size(conv) ; ++j){
-        double temp = 0.0;
+        typename I::value_type temp = 0.0;
 
-        for(std::size_t l = j ; l <= j + size(kernel) - 1; ++l){
+        for(std::size_t l = j ; l < j + size(kernel); ++l){
             temp += input[l] * kernel[j + size(kernel) - 1 - l];
         }
 
@@ -65,16 +65,16 @@ template<typename I, typename K, typename C>
 void conv2_full(const I& input, const K& kernel, C&& conv){
     for(std::size_t i = 0 ; i < rows(conv) ; ++i){
         auto k_lo = std::max<int>(0, i - rows(kernel) + 1);
-        auto k_hi = std::min(rows(input) - 1, i);
+        auto k_hi = std::min(rows(input) - 1, i) + 1;
 
         for(std::size_t j = 0 ; j < columns(conv) ; ++j){
             auto l_lo = std::max<int>(0, j - columns(kernel) + 1);
-            auto l_hi = std::min(columns(input) - 1 ,j);
+            auto l_hi = std::min(columns(input) - 1 , j) + 1;
 
-            double temp = 0.0;
+            typename I::value_type temp = 0.0;
 
-            for(std::size_t k = k_lo ; k <= k_hi ; ++k){
-                for(std::size_t l = l_lo ; l <= l_hi ; ++l){
+            for(std::size_t k = k_lo ; k < k_hi ; ++k){
+                for(std::size_t l = l_lo ; l < l_hi ; ++l){
                     temp += input(k,l) * kernel(i - k, j - l);
                 }
             }
@@ -87,17 +87,17 @@ void conv2_full(const I& input, const K& kernel, C&& conv){
 template<typename I, typename K, typename C>
 void conv2_same(const I& input, const K& kernel, C&& conv){
     for(std::size_t i = 0 ; i < rows(conv); ++i){
-        auto k_lo = std::max<int>(0, i - (rows(kernel)-1)/2);
-        auto k_hi = std::min<int>(rows(input) - 1, i + rows(kernel)/2);
+        std::size_t k_lo = std::max<int>(0, i - (rows(kernel)-1)/2);
+        std::size_t k_hi = std::min<int>(rows(input) - 1, i + rows(kernel)/2) + 1;
 
         for(std::size_t j = 0 ; j < columns(conv); ++j){
-            auto l_lo = std::max<int>(0, j - (columns(kernel)-1)/2);
-            auto l_hi = std::min<int>(columns(input) - 1, j + columns(kernel)/2);
+            std::size_t l_lo = std::max<int>(0, j - (columns(kernel)-1)/2);
+            std::size_t l_hi = std::min<int>(columns(input) - 1, j + columns(kernel)/2) + 1;
 
-            double temp = 0.0;
+            typename I::value_type temp = 0.0;
 
-            for(int k = k_lo ; k <= k_hi ; ++k){
-                for(std::size_t l = l_lo ; l <= static_cast<std::size_t>(l_hi); ++l){
+            for(std::size_t k = k_lo ; k < k_hi ; ++k){
+                for(std::size_t l = l_lo ; l < l_hi; ++l){
                     temp += input(k, l) * kernel(i-k+rows(kernel)/2, j-l+columns(kernel)/2);
                 }
             }
@@ -111,7 +111,7 @@ template<typename I, typename K, typename C>
 void conv2_valid(const I& input, const K& kernel, C&& conv){
     for(std::size_t i = 0 ; i < rows(conv) ; ++i){
         for(std::size_t j = 0 ; j < columns(conv) ; ++j){
-            double temp = 0.0;
+            typename I::value_type temp = 0.0;
 
             for(std::size_t k = i ; k < i + rows(kernel); ++k){
                 for(std::size_t l = j ; l < j + columns(kernel); ++l){
