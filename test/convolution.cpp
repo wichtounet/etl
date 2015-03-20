@@ -566,6 +566,34 @@ TEMPLATE_TEST_CASE_2( "convolution_2d/full_7", "convolution_2d_full", Z, float, 
     REQUIRE(c(2, 6) == 48);
 }
 
+TEMPLATE_TEST_CASE_2( "convolution_2d/full_8", "convolution_2d_full", Z, float, double ) {
+    etl::fast_matrix<Z, 33, 33> a(etl::magic(33));
+    etl::fast_matrix<Z, 9, 9> b(etl::magic(9));
+    etl::fast_matrix<Z, 41, 41> c;
+
+    etl::convolve_2d_full(a, b, c);
+
+    CHECK(c(0, 0) == 26461);
+    CHECK(c(0, 1) == 60760);
+    CHECK(c(0, 2) == 103282);
+    CHECK(c(0, 3) == 154412);
+
+    CHECK(c(1, 0) == 60150);
+    CHECK(c(1, 1) == 136700);
+    CHECK(c(1, 2) == 230420);
+    CHECK(c(1, 3) == 296477);
+
+    CHECK(c(2, 0) == 101407);
+    CHECK(c(2, 1) == 228500);
+    CHECK(c(2, 2) == 336831);
+    CHECK(c(2, 3) == 416899);
+
+    CHECK(c(3, 0) == 150572);
+    CHECK(c(3, 1) == 291237);
+    CHECK(c(3, 2) == 417946);
+    CHECK(c(3, 3) == 516210);
+}
+
 //}}}
 
 //{{{ convolution_2d_same
@@ -718,6 +746,35 @@ TEMPLATE_TEST_CASE_2( "convolution_2d/same_7", "convolution_2d_same", Z, float, 
     REQUIRE(c(1, 4) == 80);
     REQUIRE(c(1, 5) == 48);
 }
+
+TEMPLATE_TEST_CASE_2( "convolution_2d/same_8", "convolution_2d_same", Z, float, double ) {
+    etl::fast_matrix<Z, 33, 33> a(etl::magic(33));
+    etl::fast_matrix<Z, 9, 9> b(etl::magic(9));
+    etl::fast_matrix<Z, 33, 33> c;
+
+    etl::convolve_2d_same(a, b, c);
+
+    CHECK(c(0, 0) == 676494);
+    CHECK(c(0, 1) == 806569);
+    CHECK(c(0, 2) == 976949);
+    CHECK(c(0, 3) == 1179119);
+
+    CHECK(c(1, 0) == 808354);
+    CHECK(c(1, 1) == 984480);
+    CHECK(c(1, 2) == 1206077);
+    CHECK(c(1, 3) == 1469155);
+
+    CHECK(c(2, 0) == 971394);
+    CHECK(c(2, 1) == 1202744);
+    CHECK(c(2, 2) == 1485149);
+    CHECK(c(2, 3) == 1773847);
+
+    CHECK(c(3, 0) == 1173020);
+    CHECK(c(3, 1) == 1464355);
+    CHECK(c(3, 2) == 1771896);
+    CHECK(c(3, 3) == 2091280);
+}
+
 
 //}}}
 
