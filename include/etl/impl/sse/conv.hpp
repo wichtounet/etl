@@ -265,7 +265,7 @@ inline void dconv2_valid_micro_kernel(const double* in, std::size_t n1, std::siz
             res = _mm_setzero_pd();
 
             for(std::size_t k = i ; k < i + m1; ++k){
-                for(std::size_t l = j; l < j + m2 - 1; l += 2){
+                for(std::size_t l = j; l + 1 < j + m2; l += 2){
                     tmp1 = _mm_loadu_pd(in + k * n2 + l);
                     tmp2 = _mm_loadu_pd(kernel + ((i+m1-1-k) * m2 + (j+m2-1-(l+1))));
                     tmp3 = _mm_shuffle_pd(tmp2, tmp2, _MM_SHUFFLE2(0, 1));
