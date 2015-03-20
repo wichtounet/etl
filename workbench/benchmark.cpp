@@ -267,103 +267,123 @@ void bench_dyn_valid_convolution_1d_s(std::size_t d1, std::size_t d2, const std:
 }
 
 template<std::size_t D1, std::size_t D2>
-void bench_fast_full_convolution(const std::string& reference){
+void bench_fast_full_convolution_2d_d(const std::string& reference){
     etl::fast_matrix<double, D1, D1> a;
     etl::fast_matrix<double, D2, D2> b;
     etl::fast_matrix<double, D1+D2-1, D1+D2-1> c;
 
-    measure("fast_full_convolution(" + std::to_string(D1) + "," + std::to_string(D2) + ")", reference,
+    measure("fast_full_convolution_2d_d(default)(" + std::to_string(D1) + "," + std::to_string(D2) + ")", reference,
         [&a, &b, &c](){etl::convolve_2d_full(a, b, c);}
         , a, b);
+    
+    measure("fast_full_convolution_2d_d(std)(" + std::to_string(D1) + "," + std::to_string(D2) + ")", reference,
+        [&a, &b, &c](){etl::impl::standard::conv2_full(a, b, c);}
+        , a, b);
+
+#ifdef TEST_SSE
+    measure("fast_full_convolution_2d_d(sse)(" + std::to_string(D1) + "," + std::to_string(D2) + ")", reference,
+        [&a, &b, &c](){etl::impl::sse::dconv2_full(a, b, c);}
+        , a, b);
+#endif
 }
 
-void bench_dyn_full_convolution(std::size_t d1, std::size_t d2, const std::string& reference){
+void bench_dyn_full_convolution_2d_d(std::size_t d1, std::size_t d2, const std::string& reference){
     etl::dyn_matrix<double> a(d1, d1);
     etl::dyn_matrix<double> b(d2, d2);
     etl::dyn_matrix<double> c(d1+d2-1, d1+d2-1);
 
-    measure("dyn_full_convolution(" + std::to_string(d1) + "," + std::to_string(d2) + ")", reference,
+    measure("dyn_full_convolution_2d_d(default)(" + std::to_string(d1) + "," + std::to_string(d2) + ")", reference,
         [&a, &b, &c](){etl::convolve_2d_full(a, b, c);}
         , a, b);
+
+    measure("dyn_full_convolution_2d_d(std)(" + std::to_string(d1) + "," + std::to_string(d2) + ")", reference,
+        [&a, &b, &c](){etl::impl::standard::conv2_full(a, b, c);}
+        , a, b);
+
+#ifdef TEST_SSE
+    measure("dyn_full_convolution_2d_d(sse)(" + std::to_string(d1) + "," + std::to_string(d2) + ")", reference,
+        [&a, &b, &c](){etl::impl::sse::dconv2_full(a, b, c);}
+        , a, b);
+#endif
 }
 
 template<std::size_t D1, std::size_t D2>
-void bench_fast_same_convolution(const std::string& reference){
+void bench_fast_same_convolution_2d_d(const std::string& reference){
     etl::fast_matrix<double, D1, D1> a;
     etl::fast_matrix<double, D2, D2> b;
     etl::fast_matrix<double, D1, D1> c;
 
-    measure("fast_same_convolution(default)(" + std::to_string(D1) + "," + std::to_string(D2) + ")", reference,
+    measure("fast_same_convolution_2d_d(default)(" + std::to_string(D1) + "," + std::to_string(D2) + ")", reference,
         [&a, &b, &c](){etl::convolve_2d_same(a, b, c);}
         , a, b);
 
-    measure("fast_same_convolution(std)(" + std::to_string(D1) + "," + std::to_string(D2) + ")", reference,
+    measure("fast_same_convolution_2d_d(std)(" + std::to_string(D1) + "," + std::to_string(D2) + ")", reference,
         [&a, &b, &c](){etl::impl::standard::conv2_same(a, b, c);}
         , a, b);
 
 #ifdef TEST_SSE
-    measure("fast_same_convolution(sse)(" + std::to_string(D1) + "," + std::to_string(D2) + ")", reference,
+    measure("fast_same_convolution_2d_d(sse)(" + std::to_string(D1) + "," + std::to_string(D2) + ")", reference,
         [&a, &b, &c](){etl::impl::sse::dconv2_same(a, b, c);}
         , a, b);
 #endif
 }
 
-void bench_dyn_same_convolution(std::size_t d1, std::size_t d2, const std::string& reference){
+void bench_dyn_same_convolution_2d_d(std::size_t d1, std::size_t d2, const std::string& reference){
     etl::dyn_matrix<double> a(d1, d1);
     etl::dyn_matrix<double> b(d2, d2);
     etl::dyn_matrix<double> c(d1, d1);
 
-    measure("dyn_same_convolution(default)(" + std::to_string(d1) + "," + std::to_string(d2) + ")", reference,
+    measure("dyn_same_convolution_2d_d(default)(" + std::to_string(d1) + "," + std::to_string(d2) + ")", reference,
         [&a, &b, &c](){etl::convolve_2d_same(a, b, c);}
         , a, b);
 
-    measure("dyn_same_convolution(std)(" + std::to_string(d1) + "," + std::to_string(d2) + ")", reference,
+    measure("dyn_same_convolution_2d_d(std)(" + std::to_string(d1) + "," + std::to_string(d2) + ")", reference,
         [&a, &b, &c](){etl::impl::standard::conv2_same(a, b, c);}
         , a, b);
 
 #ifdef TEST_SSE
-    measure("dyn_same_convolution(sse)(" + std::to_string(d1) + "," + std::to_string(d2) + ")", reference,
+    measure("dyn_same_convolution_2d_d(sse)(" + std::to_string(d1) + "," + std::to_string(d2) + ")", reference,
         [&a, &b, &c](){etl::impl::sse::dconv2_same(a, b, c);}
         , a, b);
 #endif
 }
 
 template<std::size_t D1, std::size_t D2>
-void bench_fast_valid_convolution(const std::string& reference){
+void bench_fast_valid_convolution_2d_d(const std::string& reference){
     etl::fast_matrix<double, D1, D1> a;
     etl::fast_matrix<double, D2, D2> b;
     etl::fast_matrix<double, D1-D2+1, D1-D2+1> c;
 
-    measure("fast_valid_convolution(default)(" + std::to_string(D1) + "," + std::to_string(D2) + ")", reference,
+    measure("fast_valid_convolution_2d_d(default)(" + std::to_string(D1) + "," + std::to_string(D2) + ")", reference,
         [&a, &b, &c](){etl::convolve_2d_valid(a, b, c);}
         , a, b);
 
-    measure("fast_valid_convolution(std)(" + std::to_string(D1) + "," + std::to_string(D2) + ")", reference,
+    measure("fast_valid_convolution_2d_d(std)(" + std::to_string(D1) + "," + std::to_string(D2) + ")", reference,
         [&a, &b, &c](){etl::impl::standard::conv2_valid(a, b, c);}
         , a, b);
 
 #ifdef TEST_SSE
-    measure("fast_valid_convolution(sse)(" + std::to_string(D1) + "," + std::to_string(D2) + ")", reference,
+    measure("fast_valid_convolution_2d_d(sse)(" + std::to_string(D1) + "," + std::to_string(D2) + ")", reference,
         [&a, &b, &c](){etl::impl::sse::dconv2_valid(a, b, c);}
         , a, b);
 #endif
 }
 
-void bench_dyn_valid_convolution(std::size_t d1, std::size_t d2, const std::string& reference){
+void bench_dyn_valid_convolution_2d_d(std::size_t d1, std::size_t d2, const std::string& reference){
     etl::dyn_matrix<double> a(d1, d1);
     etl::dyn_matrix<double> b(d2, d2);
     etl::dyn_matrix<double> c(d1-d2+1, d1-d2+1);
 
-    measure("dyn_valid_convolution(default)(" + std::to_string(d1) + "," + std::to_string(d2) + ")", reference,
+    measure("dyn_valid_convolution_2d_d(default)(" + std::to_string(d1) + "," + std::to_string(d2) + ")", reference,
         [&a, &b, &c](){etl::convolve_2d_valid(a, b, c);}
         , a, b);
 
-    measure("dyn_valid_convolution(std)(" + std::to_string(d1) + "," + std::to_string(d2) + ")", reference,
+    measure("dyn_valid_convolution_2d_d(std)(" + std::to_string(d1) + "," + std::to_string(d2) + ")", reference,
         [&a, &b, &c](){etl::impl::standard::conv2_valid(a, b, c);}
         , a, b);
 
 #ifdef TEST_SSE
-    measure("dyn_valid_convolution(sse)(" + std::to_string(d1) + "," + std::to_string(d2) + ")", reference,
+    measure("dyn_valid_convolution_2d_d(sse)(" + std::to_string(d1) + "," + std::to_string(d2) + ")", reference,
         [&a, &b, &c](){etl::impl::sse::dconv2_valid(a, b, c);}
         , a, b);
 #endif
@@ -455,20 +475,20 @@ void bench_stack(){
     bench_dyn_full_convolution_1d(2*1024, 2*64, "TODOms");
     bench_dyn_full_convolution_1d(2*2048, 2*64, "TODOms");
 
-    bench_fast_full_convolution<64, 32>("TODOms");
-    bench_fast_full_convolution<128, 32>("TODOms");
-    bench_dyn_full_convolution(64, 32, "TODOms");
-    bench_dyn_full_convolution(128, 32, "TODOms");
+    bench_fast_full_convolution_2d_d<64, 32>("TODOms");
+    bench_fast_full_convolution_2d_d<128, 32>("TODOms");
+    bench_dyn_full_convolution_2d_d(64, 32, "TODOms");
+    bench_dyn_full_convolution_2d_d(128, 32, "TODOms");
 
-    bench_fast_same_convolution<64, 32>("TODOms");
-    bench_fast_same_convolution<128, 32>("TODOms");
-    bench_dyn_same_convolution(64, 32, "TODOms");
-    bench_dyn_same_convolution(128, 32, "TODOms");
+    bench_fast_same_convolution_2d_d<64, 32>("TODOms");
+    bench_fast_same_convolution_2d_d<128, 32>("TODOms");
+    bench_dyn_same_convolution_2d_d(64, 32, "TODOms");
+    bench_dyn_same_convolution_2d_d(128, 32, "TODOms");
 
-    bench_fast_valid_convolution<64, 32>("TODOms");
-    bench_fast_valid_convolution<128, 32>("TODOms");
-    bench_dyn_valid_convolution(64, 32, "TODOms");
-    bench_dyn_valid_convolution(128, 32, "TODOms");
+    bench_fast_valid_convolution_2d_d<64, 32>("TODOms");
+    bench_fast_valid_convolution_2d_d<128, 32>("TODOms");
+    bench_dyn_valid_convolution_2d_d(64, 32, "TODOms");
+    bench_dyn_valid_convolution_2d_d(128, 32, "TODOms");
 
     bench_fast_mmul<64, 32>("TODOms");
     bench_fast_mmul<128, 64>("TODOms");
