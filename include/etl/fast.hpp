@@ -14,6 +14,7 @@
 #include "cpp_utils/assert.hpp"
 
 #include "tmp.hpp"
+#include "evaluator.hpp"
 #include "traits_fwd.hpp"   //forward declaration of the traits
 #include "compat.hpp"       //To make it work with g++
 
@@ -147,10 +148,7 @@ public:
     explicit fast_matrix_impl(const E& e){
         init();
         ensure_same_size(*this, e);
-
-        for(std::size_t i = 0; i < size(); ++i){
-            _data[i] = e[i];
-        }
+        evaluate(e, *this);
     }
 
     template<typename Container, cpp_enable_if(
@@ -167,9 +165,7 @@ public:
     template<typename Generator>
     explicit fast_matrix_impl(generator_expr<Generator>&& e){
         init();
-        for(std::size_t i = 0; i < size(); ++i){
-            _data[i] = e[i];
-        }
+        evaluate(e, *this);
     }
 
     //}}}
@@ -199,18 +195,14 @@ public:
     fast_matrix_impl& operator=(E&& e){
         ensure_same_size(*this, e);
 
-        for(std::size_t i = 0; i < size(); ++i){
-            _data[i] = e[i];
-        }
+        evaluate(e, *this);
 
         return *this;
     }
 
     template<typename Generator>
     fast_matrix_impl& operator=(generator_expr<Generator>&& e){
-        for(std::size_t i = 0; i < size(); ++i){
-            _data[i] = e[i];
-        }
+        evaluate(e, *this);
 
         return *this;
     }

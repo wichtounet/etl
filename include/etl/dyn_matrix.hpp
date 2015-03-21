@@ -17,6 +17,7 @@
 #include "cpp_utils/assert.hpp"
 #include "cpp_utils/tmp.hpp"
 
+#include "evaluator.hpp"
 #include "traits_fwd.hpp"   //forward declaration of the traits
 #include "compat.hpp"       //To make it work with g++
 
@@ -181,9 +182,7 @@ public:
             _dimensions(dyn_detail::sizes(std::make_index_sequence<(sizeof...(S))>(), s1, sizes...)) {
         const auto& e = cpp::last_value(sizes...);
 
-        for(std::size_t i = 0; i < size(); ++i){
-            _data[i] = e[i];
-        }
+        evaluate(e, *this);
     }
 
     //Sizes followed by an init flag followed by the value
@@ -206,9 +205,7 @@ public:
             _dimensions[d] = etl::dim(e, d);
         }
 
-        for(std::size_t i = 0; i < size(); ++i){
-            _data[i] = e[i];
-        }
+        evaluate(e, *this);
     }
 
     template<typename Container, cpp::enable_if_all_c<
@@ -251,18 +248,14 @@ public:
     dyn_matrix& operator=(E&& e){
         ensure_same_size(*this, e);
 
-        for(std::size_t i = 0; i < size(); ++i){
-            _data[i] = e[i];
-        }
+        evaluate(e, *this);
 
         return *this;
     }
 
     template<typename Generator>
     dyn_matrix& operator=(generator_expr<Generator>&& e){
-        for(std::size_t i = 0; i < size(); ++i){
-            _data[i] = e[i];
-        }
+        evaluate(e, *this);
 
         return *this;
     }

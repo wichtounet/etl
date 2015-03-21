@@ -128,22 +128,14 @@ public:
 
     unary_expr& operator=(const unary_expr& e){
         ensure_same_size(*this, e);
-
-        for(std::size_t i = 0; i < size(*this); ++i){
-            (*this)[i] = e[i];
-        }
-
+        evaluate(e, *this);
         return *this;
     }
 
     template<typename E, cpp::enable_if_all_u<non_const_return_ref, is_copy_expr<E>::value> = cpp::detail::dummy>
     unary_expr& operator=(const E& e){
         ensure_same_size(*this, e);
-
-        for(std::size_t i = 0; i < size(*this); ++i){
-            (*this)[i] = e[i];
-        }
-
+        evaluate(e, *this);
         return *this;
     }
 
