@@ -33,9 +33,11 @@ inline void dconv1_valid_micro_kernel(const double* in, const std::size_t n, con
     __m128d tmp2;
     __m128d res;
 
+    auto c = n - m + 1;
+
     //Compute the convolution, 2 doubles at a time
 
-    for(std::size_t i=0; i<n - m; i+=2){
+    for(std::size_t i=0; i + 1 < c; i+=2){
         res = _mm_setzero_pd();
 
         for(std::size_t k=0; k< m; k++){
@@ -50,8 +52,8 @@ inline void dconv1_valid_micro_kernel(const double* in, const std::size_t n, con
     //If the number of operations is not even, the last case must be
     //computed separatly
 
-    if((n - m + 1) % 2 != 0){
-        auto i = n - m;
+    if(c % 2 != 0){
+        auto i = c - c % 2;
         out[i] = 0.0;
         for(std::size_t k=0; k<m; k++){
             out[i] += in[i+k] * kernel[m - k - 1];
@@ -185,9 +187,11 @@ inline void sconv1_valid_micro_kernel(const float* in, const std::size_t n, cons
     __m128 tmp2;
     __m128 res;
 
+    auto c = n - m + 1;
+
     //Compute the convolution 4 floats at a time
 
-    for(std::size_t i=0; i< 4 * ((n - m) / 4); i += 4){
+    for(std::size_t i=0; i + 3 < c; i += 4){
         res = _mm_setzero_ps();
 
         for(std::size_t k=0; k<m; k++){
@@ -201,10 +205,13 @@ inline void sconv1_valid_micro_kernel(const float* in, const std::size_t n, cons
 
     //Complete the last outputs which are not vectorized
 
-    for(std::size_t i = (n - m + 1) - (n - m + 1) % 4; i < n - m + 1; ++i){
-        out[i] = 0.0;
-        for(std::size_t k=0; k< m; k++){
-            out[i] += in[i+k] * kernel[m - k - 1];
+    if(c % 4 != 0){
+        auto rem = c % 4;
+        for(std::size_t i = c - rem; i < c; ++i){
+            out[i] = 0.0;
+            for(std::size_t k=0; k< m; k++){
+                out[i] += in[i+k] * kernel[m - k - 1];
+            }
         }
     }
 
