@@ -5,6 +5,14 @@
 //  http://opensource.org/licenses/MIT)
 //=======================================================================
 
+/*
+ * AVX implementation of 1D and 2D convolutions
+ *
+ * Ideas: 
+ *  * the tmp_res vectors could be avoided by using hadd instructions
+ *  * 1D convolution with no memory allocation could probably be worked out
+ */
+
 #ifndef ETL_IMPL_AVX_CONVOLUTION_HPP
 #define ETL_IMPL_AVX_CONVOLUTION_HPP
 
@@ -40,6 +48,22 @@ T* mm256_malloc(size_t size){
 template<typename T>
 void mm256_free(T* p){
     free((reinterpret_cast<void**>(p))[-1]);
+}
+
+inline __m256d mm256_reverse_pd(__m256d m1){
+#ifdef __AVX2__
+    return _mm256_permute4x64_pd(m1, 0b00011011);
+#else
+    __m256d tmp;
+    tmp = _mm256_permute2f128_pd(m1, m1, 1);
+    return _mm256_permute_pd(tmp, 5);
+#endif
+}
+
+inline __m256 mm256_reverse_ps(__m256 m1){
+    __m256 tmp;
+    tmp = _mm256_permute2f128_ps(m1, m1, 33);
+    return _mm256_permute_ps(tmp, 27);
 }
 
 inline void dconv1_valid_micro_kernel(const double* in, const std::size_t n, const double* kernel, std::size_t m, double* out){
@@ -203,22 +227,6 @@ void sconv1_same(const I& input, const K& kernel, C&& conv){
 template<typename I, typename K, typename C>
 void sconv1_valid(const I& input, const K& kernel, C&& conv){
     sconv1_valid_micro_kernel(input.memory_start(), size(input), kernel.memory_start(), size(kernel), conv.memory_start());
-}
-
-inline __m256d mm256_reverse_pd(__m256d m1){
-#ifdef __AVX2__
-    return _mm256_permute4x64_pd(m1, 0b00011011);
-#else
-    __m256d tmp;
-    tmp = _mm256_permute2f128_pd(m1, m1, 1);
-    return _mm256_permute_pd(tmp, 5);
-#endif
-}
-
-inline __m256 mm256_reverse_ps(__m256 m1){
-    __m256 tmp;
-    tmp = _mm256_permute2f128_ps(m1, m1, 33);
-    return _mm256_permute_ps(tmp, 27);
 }
 
 inline void dconv2_valid_micro_kernel(const double* in, std::size_t n1, std::size_t n2, const double* kernel, std::size_t m1, std::size_t m2, double* out){

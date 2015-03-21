@@ -4,6 +4,13 @@
 // (See accompanying file LICENSE or copy at
 //  http://opensource.org/licenses/MIT)
 //=======================================================================
+/*
+ * SSE implementation of 1D and 2D convolutions
+ *
+ * Ideas: 
+ *  * the tmp_res vectors could be avoided by using hadd instructions
+ *  * 1D convolution with no memory allocation could probably be worked out (needs to be benchmarked)
+ */
 
 #ifndef ETL_IMPL_SSE_CONVOLUTION_HPP
 #define ETL_IMPL_SSE_CONVOLUTION_HPP
