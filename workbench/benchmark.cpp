@@ -380,6 +380,11 @@ void measure_full_convolution_2d(A& a, B& b, C& c){
     measure_sub<F>("sse", [&a, &b, &c](auto&){etl::impl::sse::sconv2_full(a, b, c);} , a, b);
     measure_sub<!F>("sse", [&a, &b, &c](auto&){etl::impl::sse::dconv2_full(a, b, c);} , a, b);
 #endif
+
+#ifdef TEST_AVX
+    measure_sub<F>("avx", [&a, &b, &c](auto&){etl::impl::avx::sconv2_full(a, b, c);} , a, b);
+    measure_sub<!F>("avx", [&a, &b, &c](auto&){etl::impl::avx::dconv2_full(a, b, c);} , a, b);
+#endif
 }
 
 template<std::size_t D1, std::size_t D2>
@@ -432,6 +437,11 @@ void measure_same_convolution_2d(A& a, B& b, C& c){
     measure_sub<F>("sse", [&a, &b, &c](auto&){etl::impl::sse::sconv2_same(a, b, c);} , a, b);
     measure_sub<!F>("sse", [&a, &b, &c](auto&){etl::impl::sse::dconv2_same(a, b, c);} , a, b);
 #endif
+
+#ifdef TEST_AVX
+    measure_sub<F>("avx", [&a, &b, &c](auto&){etl::impl::avx::sconv2_same(a, b, c);} , a, b);
+    measure_sub<!F>("avx", [&a, &b, &c](auto&){etl::impl::avx::dconv2_same(a, b, c);} , a, b);
+#endif
 }
 
 template<std::size_t D1, std::size_t D2>
@@ -483,6 +493,11 @@ void measure_valid_convolution_2d(A& a, B& b, C& c){
 #ifdef TEST_SSE
     measure_sub<F>("sse", [&a, &b, &c](auto&){etl::impl::sse::sconv2_valid(a, b, c);} , a, b);
     measure_sub<!F>("sse", [&a, &b, &c](auto&){etl::impl::sse::dconv2_valid(a, b, c);} , a, b);
+#endif
+
+#ifdef TEST_AVX
+    measure_sub<F>("avx", [&a, &b, &c](auto&){etl::impl::avx::sconv2_valid(a, b, c);} , a, b);
+    measure_sub<!F>("avx", [&a, &b, &c](auto&){etl::impl::avx::dconv2_valid(a, b, c);} , a, b);
 #endif
 }
 
