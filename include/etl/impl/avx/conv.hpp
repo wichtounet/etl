@@ -205,6 +205,22 @@ void sconv1_valid(const I& input, const K& kernel, C&& conv){
     sconv1_valid_micro_kernel(input.memory_start(), size(input), kernel.memory_start(), size(kernel), conv.memory_start());
 }
 
+inline __m256d mm256_reverse_pd(__m256d m1){
+#ifdef __AVX2__
+    return _mm256_permute4x64_pd(m1, 0b00011011);
+#else
+    __m256d tmp;
+    tmp = _mm256_permute2f128_pd(m1, m1, 1);
+    return _mm256_permute_pd(tmp, 5);
+#endif
+}
+
+inline __m256 mm256_reverse_ps(__m256 m1){
+    __m256 tmp;
+    tmp = _mm256_permute2f128_ps(m1, m1, 33);
+    return _mm256_permute_ps(tmp, 27);
+}
+
 inline void dconv2_valid_micro_kernel(const double* in, std::size_t n1, std::size_t n2, const double* kernel, std::size_t m1, std::size_t m2, double* out){
     auto c1 = n1 - m1 + 1;
     auto c2 = n2 - m2 + 1;
@@ -225,8 +241,7 @@ inline void dconv2_valid_micro_kernel(const double* in, std::size_t n1, std::siz
                 for(std::size_t l = j; l + 3 < j + m2; l += 4){
                     tmp1 = _mm256_loadu_pd(in + k * n2 + l);
                     tmp2 = _mm256_loadu_pd(kernel + ((i+m1-1-k) * m2 + (j+m2-1-(l+3))));
-                    tmp3 = _mm256_permute2f128_pd(tmp2,tmp2, 1);
-                    tmp3 = _mm256_permute_pd(tmp3,5);
+                    tmp3 = mm256_reverse_pd(tmp2);
                     tmp4 = _mm256_mul_pd(tmp3, tmp1);
                     res = _mm256_add_pd(res, tmp4);
                 }
@@ -284,8 +299,7 @@ inline void dconv2_same_micro_kernel(const double* in, std::size_t n1, std::size
                 for(std::size_t l = l_lo ; l + 3 < l_hi; l += 4){
                     tmp1 = _mm256_loadu_pd(in + k * n2 + l);
                     tmp2 = _mm256_loadu_pd(kernel + (i-k+m1/2) * m2 +(j-(l+3)+m2/2));
-                    tmp3 = _mm256_permute2f128_pd(tmp2,tmp2, 1);
-                    tmp3 = _mm256_permute_pd(tmp3,5);
+                    tmp3 = mm256_reverse_pd(tmp2);
                     tmp4 = _mm256_mul_pd(tmp3, tmp1);
                     res = _mm256_add_pd(res, tmp4);
                 }
@@ -343,8 +357,7 @@ inline void dconv2_full_micro_kernel(const double* in, std::size_t n1, std::size
                 for(std::size_t l = l_lo; l + 3 < l_hi ; l += 4){
                     tmp1 = _mm256_loadu_pd(in + k * n2 + l);
                     tmp2 = _mm256_loadu_pd(kernel + (i - k) * m2 + (j - (l+3)));
-                    tmp3 = _mm256_permute2f128_pd(tmp2,tmp2, 1);
-                    tmp3 = _mm256_permute_pd(tmp3,5);
+                    tmp3 = mm256_reverse_pd(tmp2);
                     tmp4 = _mm256_mul_pd(tmp3, tmp1);
                     res = _mm256_add_pd(res, tmp4);
                 }
@@ -396,8 +409,7 @@ inline void sconv2_valid_micro_kernel(const float* in, std::size_t n1, std::size
                 for(std::size_t l = j ; l + 7 < j + m2; l += 8){
                     tmp1 = _mm256_loadu_ps(in + k * n2 + l);
                     tmp2 = _mm256_loadu_ps(kernel + (i+m1-1-k) * m2 + (j+m2-1-(l+7)));
-                    tmp3 = _mm256_permute2f128_ps(tmp2,tmp2, 33);
-                    tmp3 = _mm256_permute_ps(tmp3, 27);
+                    tmp3 = mm256_reverse_ps(tmp2);
                     tmp4 = _mm256_mul_ps(tmp3, tmp1);
                     res = _mm256_add_ps(res, tmp4);
                 }
@@ -455,8 +467,7 @@ inline void sconv2_same_micro_kernel(const float* in, std::size_t n1, std::size_
                 for(std::size_t l = l_lo ; l + 7 < l_hi; l += 8){
                     tmp1 = _mm256_loadu_ps(in + k * n2 + l);
                     tmp2 = _mm256_loadu_ps(kernel + (i-k+m1/2) * m2 + (j-(l+7)+m2/2));
-                    tmp3 = _mm256_permute2f128_ps(tmp2,tmp2, 33);
-                    tmp3 = _mm256_permute_ps(tmp3, 27);
+                    tmp3 = mm256_reverse_ps(tmp2);
                     tmp4 = _mm256_mul_ps(tmp3, tmp1);
                     res = _mm256_add_ps(res, tmp4);
                 }
@@ -514,8 +525,7 @@ inline void sconv2_full_micro_kernel(const float* in, std::size_t n1, std::size_
                 for(std::size_t l = l_lo ; l + 7 < l_hi; l += 8){
                     tmp1 = _mm256_loadu_ps(in + k * n2 + l);
                     tmp2 = _mm256_loadu_ps(kernel + (i - k) * m2 + (j - (l+7)));
-                    tmp3 = _mm256_permute2f128_ps(tmp2,tmp2, 33);
-                    tmp3 = _mm256_permute_ps(tmp3, 27);
+                    tmp3 = mm256_reverse_ps(tmp2);
                     tmp4 = _mm256_mul_ps(tmp3, tmp1);
                     res = _mm256_add_ps(res, tmp4);
                 }
