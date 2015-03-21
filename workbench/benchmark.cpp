@@ -17,6 +17,9 @@
 #ifdef __SSE3__
 #define TEST_SSE
 #endif
+#ifdef __AVX__
+#define TEST_AVX
+#endif
 #endif
 
 typedef std::chrono::high_resolution_clock timer_clock;
@@ -59,8 +62,8 @@ std::string duration_str(std::size_t duration_us){
     }
 }
 
-constexpr const std::size_t WARM = 1;
-constexpr const std::size_t MEASURE = 1;
+constexpr const std::size_t WARM = 25;
+constexpr const std::size_t MEASURE = 100;
 
 template<typename Functor, typename... T>
 std::size_t measure_only(Functor&& functor, T&... references){
@@ -206,6 +209,11 @@ void measure_full_convolution_1d(A& a, B& b, C& c){
     measure_sub<F>("sse", [&a, &b, &c](auto&){etl::impl::sse::sconv1_full(a, b, c);} , a, b);
     measure_sub<!F>("sse", [&a, &b, &c](auto&){etl::impl::sse::dconv1_full(a, b, c);} , a, b);
 #endif
+
+#ifdef TEST_AVX
+    measure_sub<F>("avx", [&a, &b, &c](auto&){etl::impl::avx::sconv1_full(a, b, c);} , a, b);
+    measure_sub<!F>("avx", [&a, &b, &c](auto&){etl::impl::avx::dconv1_full(a, b, c);} , a, b);
+#endif
 }
 
 template<std::size_t D1, std::size_t D2>
@@ -258,6 +266,11 @@ void measure_same_convolution_1d(A& a, B& b, C& c){
     measure_sub<F>("sse", [&a, &b, &c](auto&){etl::impl::sse::sconv1_same(a, b, c);} , a, b);
     measure_sub<!F>("sse", [&a, &b, &c](auto&){etl::impl::sse::dconv1_same(a, b, c);} , a, b);
 #endif
+
+#ifdef TEST_AVX
+    measure_sub<F>("avx", [&a, &b, &c](auto&){etl::impl::avx::sconv1_same(a, b, c);} , a, b);
+    measure_sub<!F>("avx", [&a, &b, &c](auto&){etl::impl::avx::dconv1_same(a, b, c);} , a, b);
+#endif
 }
 
 template<std::size_t D1, std::size_t D2>
@@ -309,6 +322,11 @@ void measure_valid_convolution_1d(A& a, B& b, C& c){
 #ifdef TEST_SSE
     measure_sub<F>("sse", [&a, &b, &c](auto&){etl::impl::sse::sconv1_valid(a, b, c);} , a, b);
     measure_sub<!F>("sse", [&a, &b, &c](auto&){etl::impl::sse::dconv1_valid(a, b, c);} , a, b);
+#endif
+
+#ifdef TEST_AVX
+    measure_sub<F>("avx", [&a, &b, &c](auto&){etl::impl::avx::sconv1_valid(a, b, c);} , a, b);
+    measure_sub<!F>("avx", [&a, &b, &c](auto&){etl::impl::avx::dconv1_valid(a, b, c);} , a, b);
 #endif
 }
 
