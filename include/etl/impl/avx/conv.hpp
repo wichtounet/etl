@@ -23,7 +23,7 @@
 
 #include <immintrin.h>
 
-#include "allocator.hpp"
+#include "../../allocator.hpp"
 #include "../common/conv.hpp"
 
 namespace etl {
