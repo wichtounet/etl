@@ -19,9 +19,10 @@
 
 #ifdef __SSE3__
 
-#include "../common/conv.hpp"
-
 #include <immintrin.h>
+
+#include "../../allocator.hpp"
+#include "../common/conv.hpp"
 
 namespace etl {
 
@@ -30,7 +31,7 @@ namespace impl {
 namespace sse {
 
 inline void dconv1_valid_micro_kernel(const double* in, const std::size_t n, const double* kernel, std::size_t m, double* out){
-    __m128d* kernel_reverse = new __m128d[m];
+    auto kernel_reverse = allocate<__m128d>(m);
 
     //Reverse the kernel
 
@@ -69,7 +70,7 @@ inline void dconv1_valid_micro_kernel(const double* in, const std::size_t n, con
         }
     }
 
-    delete[] kernel_reverse;
+    release(kernel_reverse);
 }
 
 template<typename I, typename K, typename C>
@@ -110,7 +111,7 @@ void dconv1_valid(const I& input, const K& kernel, C&& conv){
 }
 
 inline void sconv1_valid_micro_kernel(const float* in, const std::size_t n, const float* kernel, std::size_t m, float* out){
-    __m128* kernel_reverse = new __m128[m];
+    auto kernel_reverse = allocate<__m128>(m);
 
     //Reverse the kernel
 
@@ -150,7 +151,7 @@ inline void sconv1_valid_micro_kernel(const float* in, const std::size_t n, cons
         }
     }
 
-    delete[] kernel_reverse;
+    release(kernel_reverse);
 }
 
 template<typename I, typename K, typename C>

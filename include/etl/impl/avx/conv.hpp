@@ -21,35 +21,16 @@
 
 #ifdef __AVX__
 
-#include "../common/conv.hpp"
-
 #include <immintrin.h>
+
+#include "allocator.hpp"
+#include "../common/conv.hpp"
 
 namespace etl {
 
 namespace impl {
 
 namespace avx {
-
-template<typename T>
-T* mm256_malloc(size_t size){
-    auto required_bytes = sizeof(T) * size;
-    auto offset = 31 + sizeof(uintptr_t);
-    auto orig = malloc(required_bytes + offset);
-
-    if(!orig){
-        return nullptr;
-    }
-
-    auto aligned = reinterpret_cast<void**>((reinterpret_cast<size_t>(orig) + offset) & ~31);
-    aligned[-1] = orig;
-    return reinterpret_cast<T*>(aligned);
-}
-
-template<typename T>
-void mm256_free(T* p){
-    free((reinterpret_cast<void**>(p))[-1]);
-}
 
 inline __m256d mm256_reverse_pd(__m256d m1){
 #ifdef __AVX2__
@@ -68,7 +49,7 @@ inline __m256 mm256_reverse_ps(__m256 m1){
 }
 
 inline void dconv1_valid_micro_kernel(const double* in, const std::size_t n, const double* kernel, std::size_t m, double* out){
-    __m256d* kernel_reverse = mm256_malloc<__m256d>(m);
+    auto* kernel_reverse = aligned_allocate<__m256d>(m);
 
     //Reverse the kernel
 
@@ -109,11 +90,11 @@ inline void dconv1_valid_micro_kernel(const double* in, const std::size_t n, con
         }
     }
 
-    mm256_free(kernel_reverse);
+    aligned_release(kernel_reverse);
 }
 
 inline void sconv1_valid_micro_kernel(const float* in, const std::size_t n, const float* kernel, std::size_t m, float* out){
-    __m256* kernel_reverse = mm256_malloc<__m256>(m);
+    auto* kernel_reverse = aligned_allocate<__m256d>(m);
 
     //Reverse the kernel
 
@@ -153,7 +134,7 @@ inline void sconv1_valid_micro_kernel(const float* in, const std::size_t n, cons
         }
     }
 
-    mm256_free(kernel_reverse);
+    aligned_release(kernel_reverse);
 }
 
 template<typename I, typename K, typename C>

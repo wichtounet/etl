@@ -22,6 +22,8 @@
 
 #include "cpp_utils/likely.hpp"
 
+#include "allocator.hpp"
+
 namespace etl {
 
 namespace gemm_detail {
@@ -352,9 +354,9 @@ void gemm_nn(std::size_t m, std::size_t n, std::size_t k, D alpha, const D* A, s
     constexpr const auto MR = gemm_config<D>::MR;
     constexpr const auto NR = gemm_config<D>::NR;
 
-    double* _A = new double[MC*KC];
-    double* _B = new double[KC*NC];
-    D* _C = new D[MR*NR];
+    auto* _A = allocate<double>(MC * KC);
+    auto* _B = allocate<double>(KC * NC);
+    auto* _C = allocate<D>(MR * NR);
 
     auto mb = (m+MC-1) / MC;
     auto nb = (n+NC-1) / NC;
@@ -383,9 +385,9 @@ void gemm_nn(std::size_t m, std::size_t n, std::size_t k, D alpha, const D* A, s
         }
     }
 
-    delete[] _A;
-    delete[] _B;
-    delete[] _C;
+    release(_A);
+    release(_B);
+    release(_C);
 }
 
 } //end of namespace gemm_detail
