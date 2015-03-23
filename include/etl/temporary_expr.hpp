@@ -33,7 +33,7 @@ private:
     BExpr _b;
     result_type* result_ptr = nullptr;
     bool temporary = true;
-    bool evaluated = false;
+    mutable bool evaluated = false;
 
 public:
     //Cannot be constructed with no args
@@ -115,7 +115,7 @@ public:
         return {*this, size(*this)};
     }
 
-    void evaluate(){
+    void evaluate() const {
         if(!evaluated){
             Op::apply(a(), b(), *result_ptr);
             evaluated = true;
@@ -139,6 +139,11 @@ public:
 
 private:
     result_type& result() const {
+        //Note: This is necessary to allow direct to the expression wihout passing by the evaluator
+        if(cpp_unlikely(!evaluated)){
+            evaluate();
+        }
+
         return *result_ptr;
     }
 };

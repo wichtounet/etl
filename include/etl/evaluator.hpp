@@ -14,10 +14,38 @@ namespace etl {
 
 namespace detail {
 
+//TODO Disable completely the visitor if there are no temporary_expr in the tree (use TMP)
+
 struct temporary_allocator_static_visitor {
     template <typename T, typename Expr, typename UnaryOp>
-    void operator()(const etl::unary_expr<T, Expr, UnaryOp>& v) const {
+    void operator()(etl::unary_expr<T, Expr, UnaryOp>& v) const {
         (*this)(v.value());
+    }
+
+    template <typename T, typename Expr>
+    void operator()(etl::stable_transform_expr<T, Expr>& v) const {
+        (*this)(v.value());
+    }
+
+    template <typename T, typename LeftExpr, typename BinaryOp, typename RightExpr>
+    void operator()(etl::binary_expr<T, LeftExpr, BinaryOp, RightExpr>& v) const {
+        (*this)(v.lhs());
+        (*this)(v.rhs());
+    }
+
+    template <typename T, typename AExpr, typename BExpr, typename Op>
+    void operator()(etl::temporary_binary_expr<T, AExpr, BExpr, Op>& v) const {
+        v.allocate_temporary();
+
+        (*this)(v.a());
+        (*this)(v.b());
+    }
+
+    //TODO Handle transformers and views
+
+    template<typename T>
+    void operator()(T&) const {
+        //fallback
     }
 };
 

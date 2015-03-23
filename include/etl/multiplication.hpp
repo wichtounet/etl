@@ -134,7 +134,7 @@ struct mmul_expr {
 
     template<typename A, typename B, cpp::disable_if_all_u<decay_traits<A>::is_fast, decay_traits<B>::is_fast> = cpp::detail::dummy>
     static result_type<A,B>* allocate(A&& a, B&& b){
-        return new result_type<A, B>(dim(a, 0), dim(b, 1));
+        return new result_type<A, B>(decay_traits<A>::dim(a, 0), decay_traits<B>::dim(b, 1));
     }
 
     template<typename A, typename B, typename C>
