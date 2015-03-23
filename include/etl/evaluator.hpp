@@ -12,13 +12,36 @@
 
 namespace etl {
 
+namespace detail {
+
+struct temporary_allocator_static_visitor {
+    template <typename T, typename Expr, typename UnaryOp>
+    void operator()(const etl::unary_expr<T, Expr, UnaryOp>& v) const {
+        (*this)(v.value());
+    }
+};
+
+} //end of namespace detail
+
 template<typename Expr, typename Result>
 struct standard_evaluator {
-    template<typename E = Expr, typename R = Result>
-    static void evaluate(Expr&& expr, Result&& result){
+    template<typename E, typename R, cpp_disable_if(cpp::is_specialization_of<etl::temporary_binary_expr, std::decay_t<E>>::value)>
+    static void evaluate(E&& expr, R&& result){
+        detail::temporary_allocator_static_visitor visitor;
+        visitor(expr);
+
         for(std::size_t i = 0; i < etl::size(result); ++i){
             result[i] = expr[i];
         }
+    }
+
+    template<typename E, typename R, cpp_enable_if(cpp::is_specialization_of<etl::temporary_binary_expr, std::decay_t<E>>::value)>
+    static void evaluate(E&& expr, R&& result){
+        detail::temporary_allocator_static_visitor visitor;
+        visitor(expr.a());
+        visitor(expr.b());
+
+        expr.direct_evaluate(result);
     }
 };
 

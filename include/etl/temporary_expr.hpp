@@ -122,6 +122,11 @@ public:
         }
     }
 
+    template<typename Result>
+    void direct_evaluate(Result&& result){
+        Op::apply(a(), b(), std::forward<Result>(result));
+    }
+
     void allocate_temporary(){
         result_ptr = Op::allocate(_a, _b);
         temporary = true;

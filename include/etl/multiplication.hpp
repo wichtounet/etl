@@ -128,17 +128,17 @@ struct mmul_expr {
     using result_type = typename result_type_builder<A, B>::type;
 
     template<typename A, typename B, cpp::enable_if_all_u<decay_traits<A>::is_fast, decay_traits<B>::is_fast> = cpp::detail::dummy>
-    result_type<A,B>* mmul(A&&, B&&){
+    static result_type<A,B>* mmul(A&&, B&&){
         return new result_type<A, B>();
     }
 
     template<typename A, typename B, cpp::disable_if_all_u<decay_traits<A>::is_fast, decay_traits<B>::is_fast> = cpp::detail::dummy>
-    result_type<A,B>* allocate(A&& a, B&& b){
+    static result_type<A,B>* allocate(A&& a, B&& b){
         return new result_type<A, B>(dim(a, 0), dim(b, 1));
     }
 
     template<typename A, typename B, typename C>
-    void mmul(A&& a, B&& b, C&& c){
+    static void apply(A&& a, B&& b, C&& c){
         static_assert(is_etl_expr<A>::value && is_etl_expr<B>::value && is_etl_expr<C>::value, "Matrix multiplication only supported for ETL expressions");
         static_assert(decay_traits<A>::dimensions() == 2 && decay_traits<B>::dimensions() == 2 && decay_traits<C>::dimensions() == 2, "Matrix multiplication only works in 2D");
         detail::check_mmul_sizes(a,b,c);
