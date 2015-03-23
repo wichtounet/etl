@@ -112,6 +112,73 @@ struct mmul_impl<A, B, C, std::enable_if_t<is_blas_sgemm<A,B,C>::value>> {
 
 } //end of namespace detail
 
+template<typename T>
+struct mmul_expr {
+    template<typename A, typename B, class Enable = void>
+    struct result_type_builder {
+        using type = dyn_matrix<value_t<A>>;
+    };
+
+    template<typename A, typename B>
+    struct result_type_builder<A, B, std::enable_if_t<decay_traits<A>::is_fast && decay_traits<B>::is_fast>> {
+        using type = fast_dyn_matrix<typename std::decay_t<A>::value_type, decay_traits<A>::template dim<0>(), decay_traits<B>::template dim<1>()>;
+    };
+
+    template<typename A, typename B>
+    using result_type = typename result_type_builder<A, B>::type;
+
+    template<typename A, typename B, cpp::enable_if_all_u<decay_traits<A>::is_fast, decay_traits<B>::is_fast> = cpp::detail::dummy>
+    result_type<A,B>* mmul(A&&, B&&){
+        return new result_type<A, B>();
+    }
+
+    template<typename A, typename B, cpp::disable_if_all_u<decay_traits<A>::is_fast, decay_traits<B>::is_fast> = cpp::detail::dummy>
+    result_type<A,B>* allocate(A&& a, B&& b){
+        return new result_type<A, B>(dim(a, 0), dim(b, 1));
+    }
+
+    template<typename A, typename B, typename C>
+    void mmul(A&& a, B&& b, C&& c){
+        static_assert(is_etl_expr<A>::value && is_etl_expr<B>::value && is_etl_expr<C>::value, "Matrix multiplication only supported for ETL expressions");
+        static_assert(decay_traits<A>::dimensions() == 2 && decay_traits<B>::dimensions() == 2 && decay_traits<C>::dimensions() == 2, "Matrix multiplication only works in 2D");
+        detail::check_mmul_sizes(a,b,c);
+
+        detail::mmul_impl<A,B,C>::apply(std::forward<A>(a), std::forward<B>(b), std::forward<C>(c));
+    }
+
+    static std::string desc() noexcept {
+        return "mmul";
+    }
+
+    template<typename A, typename B>
+    static std::size_t size(const A& a, const B& b){
+        return decay_traits<A>::dim(a, 0) * decay_traits<B>::dim(b, 1);
+    }
+
+    template<typename A, typename B>
+    static std::size_t dim(const A& a, const B& b, std::size_t d){
+        if(d == 0){
+            return decay_traits<A>::dim(a, 0);
+        } else {
+            return decay_traits<B>::dim(b, 1);
+        }
+    }
+
+    template<typename A, typename B>
+    static constexpr std::size_t size(){
+        return etl_traits<A>::template dim<0>() * etl_traits<B>::template dim<1>();
+    }
+
+    template<typename A, typename B, std::size_t D>
+    static constexpr std::size_t dim(){
+        return D == 0 ? etl_traits<A>::template dim<0>() : etl_traits<B>::template dim<1>();
+    }
+
+    static constexpr std::size_t dimensions(){
+        return 2;
+    }
+};
+
 template<typename A, typename B, typename C>
 C& mmul(A&& a, B&& b, C&& c){
     static_assert(is_etl_expr<A>::value && is_etl_expr<B>::value && is_etl_expr<C>::value, "Matrix multiplication only supported for ETL expressions");
@@ -119,24 +186,6 @@ C& mmul(A&& a, B&& b, C&& c){
     detail::check_mmul_sizes(a,b,c);
 
     detail::mmul_impl<A,B,C>::apply(std::forward<A>(a), std::forward<B>(b), std::forward<C>(c));
-
-    return c;
-}
-
-template<typename A, typename B, cpp::enable_if_all_u<decay_traits<A>::is_fast, decay_traits<B>::is_fast> = cpp::detail::dummy>
-auto mmul(A&& a, B&& b){
-    fast_dyn_matrix<typename std::decay_t<A>::value_type, decay_traits<A>::template dim<0>(), decay_traits<B>::template dim<1>()> c;
-
-    mmul(a,b,c);
-
-    return c;
-}
-
-template<typename A, typename B, cpp::disable_if_all_u<decay_traits<A>::is_fast, decay_traits<B>::is_fast> = cpp::detail::dummy>
-auto mmul(A&& a, B&& b){
-    dyn_matrix<value_t<A>> c(dim(a, 0), dim(b, 1));
-
-    mmul(a,b,c);
 
     return c;
 }

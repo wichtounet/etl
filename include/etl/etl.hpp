@@ -21,6 +21,7 @@
 #include "unary_expr.hpp"
 #include "stable_transform_expr.hpp"
 #include "generator_expr.hpp"
+#include "temporary_expr.hpp"
 
 // The value classes
 #include "etl/fast_matrix.hpp"
@@ -38,5 +39,8 @@
 
 // to_string support
 #include "print.hpp"
+
+// The complex operators
+#include "multiplication.hpp"
 
 #endif

@@ -58,6 +58,9 @@ template<typename T, typename DT = std::decay_t<T>>
 using is_stable_transform_expr = cpp::is_specialization_of<etl::stable_transform_expr, DT>;
 
 template<typename T, typename DT = std::decay_t<T>>
+using is_temporary_binary_expr = cpp::is_specialization_of<etl::temporary_binary_expr, DT>;
+
+template<typename T, typename DT = std::decay_t<T>>
 struct is_transformer : cpp::bool_constant_c<cpp::or_c<
         cpp::is_specialization_of<etl::hflip_transformer, DT>,
         cpp::is_specialization_of<etl::vflip_transformer, DT>,
@@ -88,7 +91,9 @@ template<typename T>
 struct is_etl_expr : cpp::bool_constant_c<cpp::or_c<
        is_fast_matrix<T>,
        is_dyn_matrix<T>,
-       is_unary_expr<T>, is_binary_expr<T>,
+       is_unary_expr<T>, 
+       is_binary_expr<T>,
+       is_temporary_binary_expr<T>,
        is_stable_transform_expr<T>,
        is_generator_expr<T>,
        is_transformer<T>, is_view<T>
@@ -100,6 +105,7 @@ struct is_copy_expr : cpp::bool_constant_c<cpp::or_c<
        is_dyn_matrix<T>,
        is_unary_expr<T>,
        is_binary_expr<T>,
+       is_temporary_binary_expr<T>,
        is_stable_transform_expr<T>
     >> {};
 
@@ -482,6 +488,42 @@ struct etl_traits<rep_l_transformer<T, D...>> {
 
     static constexpr std::size_t dimensions(){
         return sizeof...(D) + etl_traits<sub_expr_t>::dimensions();
+    }
+};
+
+/*!
+ * \brief Specialization for temporary_binary_expr.
+ */
+template <typename T, typename A, typename B, typename Op>
+struct etl_traits<etl::temporary_binary_expr<T, A, B, Op>> {
+    using expr_t = etl::temporary_binary_expr<T, A, B, Op>;
+    using a_t = std::decay_t<A>;
+    using b_t = std::decay_t<B>;
+
+    static constexpr const bool is_fast = etl_traits<a_t>::is_fast && etl_traits<b_t>::is_fast;
+    static constexpr const bool is_value = false;
+    static constexpr const bool is_generator = false;
+
+    static std::size_t size(const expr_t& v){
+        return Op::size(v.a(), v.b());
+    }
+
+    static std::size_t dim(const expr_t& v, std::size_t d){
+        return Op::dim(v.a(), v.b(), d);
+    }
+
+    template<cpp_enable_if_cst(is_fast)>
+    static constexpr std::size_t size(){
+        return Op::template size<a_t, b_t>();
+    }
+
+    template<std::size_t D>
+    static constexpr std::size_t dim(){
+        return Op::template dim<a_t, b_t, D>();
+    }
+
+    static constexpr std::size_t dimensions(){
+        return Op::dimensions();
     }
 };
 

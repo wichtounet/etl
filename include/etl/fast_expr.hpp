@@ -49,6 +49,9 @@ using stable_transform_helper = stable_transform_expr<value_t<E>, OP<build_type<
 template<typename LE, typename RE, template<typename,typename> class OP>
 using stable_transform_binary_helper = stable_transform_expr<value_t<LE>, OP<build_type<LE>, build_type<RE>>>;
 
+template<typename A, typename B, template<typename> class OP>
+using temporary_binary_helper = temporary_binary_expr<value_t<A>, build_type<A>, build_type<B>, OP<value_t<A>>>;
+
 //{{{ Build binary expressions from two ETL expressions (vector,matrix,binary,unary)
 
 template<typename LE, typename RE, cpp::enable_if_all_u<is_etl_expr<LE>::value, is_etl_expr<RE>::value> = cpp::detail::dummy>
@@ -500,6 +503,18 @@ auto p_max_pool_p(E&& value) -> stable_transform_expr<value_t<E>, p_max_pool_p_t
     static_assert(etl_traits<std::decay_t<E>>::dimensions() == 2 || etl_traits<std::decay_t<E>>::dimensions() == 3,
         "Max pool is only implemented for 2D and 3D");
     return {p_max_pool_p_transformer<build_type<E>, C1, C2>(value)};
+}
+
+//}}}
+
+//{{{ Apply an expression that evaluate not lazily
+
+template<typename T>
+struct mmul_expr;
+
+template<typename A, typename B, cpp::enable_if_all_u<is_etl_expr<A>::value, is_etl_expr<B>::value> = cpp::detail::dummy>
+auto mmul(A&& a, B&& b) -> temporary_binary_helper<A, B, mmul_expr> {
+    return {a, b};
 }
 
 //}}}
