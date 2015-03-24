@@ -10,6 +10,9 @@
 
 #include <iostream> //For stream support
 
+#include "cpp_utils/assert.hpp"
+#include "cpp_utils/tmp.hpp"
+
 #include "tmp.hpp"
 #include "traits_fwd.hpp"
 
@@ -265,7 +268,25 @@ struct mmul_transformer {
     left_type left;
     right_type right;
 
-    mmul_transformer(left_type left ,right_type right) : left(left), right(right) {}
+    template<typename A, typename B, cpp::disable_if_all_u<etl_traits<A>::is_fast, etl_traits<B>::is_fast> = cpp::detail::dummy>
+    void check_mmul_sizes(const A& a, const B& b){
+        cpp_assert(
+                dim<1>(a) == dim<0>(b)          //interior dimensions
+            , "Invalid sizes for multiplication");
+        cpp_unused(a);
+        cpp_unused(b);
+    }
+
+    template<typename A, typename B, cpp::enable_if_all_u<etl_traits<A>::is_fast, etl_traits<B>::is_fast> = cpp::detail::dummy>
+    void check_mmul_sizes(const A&, const B&){
+        static_assert(
+                etl_traits<A>::template dim<1>() == etl_traits<B>::template dim<0>()          //interior dimensions
+            , "Invalid sizes for multiplication");
+    }
+
+    mmul_transformer(left_type left, right_type right) : left(left), right(right) {
+        check_mmul_sizes(left, right);
+    }
 
     value_type operator[](std::size_t i) const {
         auto i_i = i / dim<0>(left);

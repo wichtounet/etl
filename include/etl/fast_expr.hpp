@@ -512,9 +512,20 @@ auto p_max_pool_p(E&& value) -> stable_transform_expr<value_t<E>, p_max_pool_p_t
 template<typename T>
 struct mmul_expr;
 
-template<typename A, typename B, cpp::enable_if_all_u<is_etl_expr<A>::value, is_etl_expr<B>::value> = cpp::detail::dummy>
+template<typename A, typename B>
 auto mmul(A&& a, B&& b) -> temporary_binary_helper<A, B, mmul_expr> {
+    static_assert(is_etl_expr<A>::value && is_etl_expr<B>::value, "Matrix multiplication only supported for ETL expressions");
+    static_assert(decay_traits<A>::dimensions() == 2 && decay_traits<B>::dimensions() == 2, "Matrix multiplication only works in 2D");
+
     return {a, b};
+}
+
+template<typename A, typename B>
+auto lazy_mmul(A&& a, B&& b) -> stable_transform_binary_helper<A, B, mmul_transformer> {
+    static_assert(is_etl_expr<A>::value && is_etl_expr<B>::value, "Matrix multiplication only supported for ETL expressions");
+    static_assert(decay_traits<A>::dimensions() == 2 && decay_traits<B>::dimensions() == 2, "Matrix multiplication only works in 2D");
+
+    return {mmul_transformer<build_type<A>, build_type<B>>(a, b)};
 }
 
 //}}}

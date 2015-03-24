@@ -190,12 +190,6 @@ C& mmul(A&& a, B&& b, C&& c){
     return c;
 }
 
-template<typename LE, typename RE, cpp::enable_if_all_u<is_etl_expr<LE>::value, is_etl_expr<RE>::value> = cpp::detail::dummy>
-auto lazy_mmul(LE&& lhs, RE&& rhs) -> stable_transform_binary_helper<LE, RE, mmul_transformer> {
-    //TODO Check matrices sizes
-    return {mmul_transformer<build_type<LE>, build_type<RE>>(lhs, rhs)};
-}
-
 inline std::size_t nextPowerOfTwo(std::size_t n) {
     return std::pow(2, static_cast<std::size_t>(std::ceil(std::log2(n))));
 }
