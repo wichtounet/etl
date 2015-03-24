@@ -19,7 +19,7 @@ TEMPLATE_TEST_CASE_2( "multiplication/mmul1", "mmul", Z, double, float) {
     etl::fast_matrix<Z, 3, 2> b = {7,8,9,10,11,12};
     etl::fast_matrix<Z, 2, 2> c;
 
-    etl::mmul(a, b, c);
+    c = etl::mmul(a, b);
 
     REQUIRE(c(0,0) == 58);
     REQUIRE(c(0,1) == 64);
@@ -32,7 +32,24 @@ TEMPLATE_TEST_CASE_2( "multiplication/mmul2", "mmul", Z, double, float) {
     etl::fast_matrix<Z, 3, 3> b = {7,8,9,9,10,11,11,12,13};
     etl::fast_matrix<Z, 3, 3> c;
 
-    etl::mmul(a, b, c);
+    c = etl::mmul(a, b, c);
+
+    REQUIRE(c(0,0) == 58);
+    REQUIRE(c(0,1) == 64);
+    REQUIRE(c(0,2) == 70);
+    REQUIRE(c(1,0) == 139);
+    REQUIRE(c(1,1) == 154);
+    REQUIRE(c(1,2) == 169);
+    REQUIRE(c(2,0) == 220);
+    REQUIRE(c(2,1) == 244);
+    REQUIRE(c(2,2) == 268);
+}
+
+TEMPLATE_TEST_CASE_2( "multiplication/mmul3", "mmul", Z, double, float) {
+    etl::fast_matrix<Z, 3, 3> a = {1,2,3,4,5,6,7,8,9};
+    etl::fast_matrix<Z, 3, 3> b = {7,8,9,9,10,11,11,12,13};
+
+    auto c = etl::mmul(a, b);
 
     REQUIRE(c(0,0) == 58);
     REQUIRE(c(0,1) == 64);
@@ -50,7 +67,7 @@ TEMPLATE_TEST_CASE_2( "multiplication/auto_vmmul_1", "auto_vmmul", Z, double, fl
     etl::fast_vector<Z, 3> b = {7,8,9};
     etl::fast_matrix<Z, 2, 1> c;
 
-    etl::auto_vmmul(a, b, c);
+    c = etl::auto_vmmul(a, b, c);
 
     REQUIRE(c(0,0) == 50);
     REQUIRE(c(1,0) == 122);
@@ -61,7 +78,7 @@ TEMPLATE_TEST_CASE_2( "multiplication/auto_vmmul_2", "auto_vmmul", Z, double, fl
     etl::fast_vector<Z, 5> b = {7,8,9,10,11};
     etl::fast_matrix<Z, 2, 1> c;
 
-    etl::auto_vmmul(a, b, c);
+    c = etl::auto_vmmul(a, b);
 
     REQUIRE(c(0,0) == 145);
     REQUIRE(c(1,0) == 370);
@@ -72,7 +89,7 @@ TEMPLATE_TEST_CASE_2( "multiplication/auto_vmmul_3", "auto_vmmul", Z, double, fl
     etl::fast_vector<Z, 3> b = {7,8,9};
     etl::fast_matrix<Z, 1, 2> c;
 
-    etl::auto_vmmul(b, a, c);
+    etl::force(etl::auto_vmmul(b, a, c));
 
     REQUIRE(c(0,0) == 76);
     REQUIRE(c(0,1) == 100);
@@ -83,7 +100,7 @@ TEMPLATE_TEST_CASE_2( "multiplication/auto_vmmul_4", "auto_vmmul", Z, double, fl
     etl::dyn_vector<Z> b(3, etl::values(7,8,9));
     etl::dyn_matrix<Z> c(2,1);
 
-    etl::auto_vmmul(a, b, c);
+    etl::force(etl::auto_vmmul(a, b, c));
 
     REQUIRE(c(0,0) == 50);
     REQUIRE(c(1,0) == 122);
@@ -94,7 +111,7 @@ TEMPLATE_TEST_CASE_2( "multiplication/auto_vmmul_5", "auto_vmmul", Z, double, fl
     etl::dyn_vector<Z> b(5, etl::values(7,8,9,10,11));
     etl::dyn_matrix<Z> c(2, 1);
 
-    etl::auto_vmmul(a, b, c);
+    etl::force(etl::auto_vmmul(a, b, c));
 
     REQUIRE(c(0,0) == 145);
     REQUIRE(c(1,0) == 370);
@@ -105,7 +122,7 @@ TEMPLATE_TEST_CASE_2( "multiplication/auto_vmmul_6", "auto_vmmul", Z, double, fl
     etl::dyn_vector<Z> b(3, etl::values(7,8,9));
     etl::dyn_matrix<Z> c(1, 2);
 
-    etl::auto_vmmul(b, a, c);
+    etl::force(etl::auto_vmmul(b, a, c));
 
     REQUIRE(c(0,0) == 76);
     REQUIRE(c(0,1) == 100);
@@ -116,7 +133,7 @@ TEMPLATE_TEST_CASE_2( "multiplication/dyn_mmul", "mmul", Z, double, float) {
     etl::dyn_matrix<Z> b(3,3, std::initializer_list<Z>({7,8,9,9,10,11,11,12,13}));
     etl::dyn_matrix<Z> c(3,3);
 
-    etl::mmul(a, b, c);
+    c = etl::mmul(a, b);
 
     REQUIRE(c(0,0) == 58);
     REQUIRE(c(0,1) == 64);
@@ -134,7 +151,7 @@ TEMPLATE_TEST_CASE_2( "multiplication/expr_mmul_1", "mmul", Z, double, float) {
     etl::dyn_matrix<Z> b(3,3, std::initializer_list<Z>({7,8,9,9,10,11,11,12,13}));
     etl::dyn_matrix<Z> c(3,3);
 
-    etl::mmul(a + b - b, a + b - a, c);
+    etl::force(etl::mmul(a + b - b, a + b - a, c));
 
     REQUIRE(c(0,0) == 58);
     REQUIRE(c(0,1) == 64);
@@ -152,7 +169,7 @@ TEMPLATE_TEST_CASE_2( "multiplication/expr_mmul_2", "mmul", Z, double, float) {
     etl::dyn_matrix<Z> b(3,3, std::initializer_list<Z>({7,8,9,9,10,11,11,12,13}));
     etl::dyn_matrix<Z> c(3,3);
 
-    etl::mmul(abs(a), abs(b), c);
+    etl::force(etl::mmul(abs(a), abs(b), c));
 
     REQUIRE(c(0,0) == 58);
     REQUIRE(c(0,1) == 64);
@@ -170,7 +187,7 @@ TEMPLATE_TEST_CASE_2( "multiplication/stop_mmul_1", "mmul", Z, double, float) {
     etl::dyn_matrix<Z> b(3,3, std::initializer_list<Z>({7,8,9,9,10,11,11,12,13}));
     etl::dyn_matrix<Z> c(3,3);
 
-    etl::mmul(s(abs(a)), s(abs(b)), c);
+    c = etl::mmul(s(abs(a)), s(abs(b)));
 
     REQUIRE(c(0,0) == 58);
     REQUIRE(c(0,1) == 64);
@@ -187,8 +204,9 @@ TEMPLATE_TEST_CASE_2( "multiplication/mmul5", "mmul", Z, double, float) {
     etl::dyn_matrix<Z> a(4,4, etl::values(1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16));
     etl::dyn_matrix<Z> b(4,4, etl::values(1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16));
     etl::dyn_matrix<Z> c(4,4);
+    etl::dyn_matrix<Z> d(4,4);
 
-    etl::mmul(a, b, c);
+    d = etl::mmul(a, b, c);
 
     REQUIRE(c(0,0) == 90);
     REQUIRE(c(0,1) == 100);
@@ -205,7 +223,7 @@ TEMPLATE_TEST_CASE_2( "multiplication/mmul6", "mmul", Z, double, float) {
     etl::dyn_matrix<Z> b(2,2, etl::values(1,2,3,4,5,6,7,8));
     etl::dyn_matrix<Z> c(2,2);
 
-    etl::mmul(a, b, c);
+    etl::force(etl::mmul(a, b, c));
 
     REQUIRE(c(0,0) == 7);
     REQUIRE(c(0,1) == 10);

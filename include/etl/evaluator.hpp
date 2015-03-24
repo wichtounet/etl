@@ -71,11 +71,25 @@ struct standard_evaluator {
 
         expr.direct_evaluate(result);
     }
+
+    template<typename E, cpp_enable_if(cpp::is_specialization_of<etl::temporary_binary_expr, std::decay_t<E>>::value)>
+    static void evaluate(E&& expr){
+        detail::temporary_allocator_static_visitor visitor;
+        visitor(expr.a());
+        visitor(expr.b());
+
+        expr.evaluate();
+    }
 };
 
 template<typename Expr, typename Result>
 void evaluate(Expr&& expr, Result&& result){
     standard_evaluator<Expr, Result>::evaluate(std::forward<Expr>(expr), std::forward<Result>(result));
+}
+
+template<typename Expr>
+void force(Expr&& expr){
+    standard_evaluator<Expr, void>::evaluate(std::forward<Expr>(expr));
 }
 
 } //end of namespace etl

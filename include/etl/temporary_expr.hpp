@@ -28,7 +28,7 @@ template <typename T, typename AExpr, typename BExpr, typename Op, typename Forc
 class temporary_binary_expr final {
 public:
     using value_type = T;
-    using result_type = typename Op::template result_type<AExpr, BExpr>;
+    using result_type = Forced;
 
 private:
     static_assert(cpp::and_c<is_etl_expr<AExpr>, is_etl_expr<BExpr>>::value,
@@ -38,7 +38,7 @@ private:
 
     AExpr _a;
     BExpr _b;
-    Forced&& _c;
+    Forced _c;
     mutable bool evaluated = false;
 
 public:
@@ -46,7 +46,7 @@ public:
     temporary_binary_expr() = delete;
 
     //Construct a new expression
-    temporary_binary_expr(AExpr a, BExpr b, Forced&& c) : _a(a), _b(b), _c(c) {
+    temporary_binary_expr(AExpr a, BExpr b, Forced c) : _a(a), _b(b), _c(c) {
         //Nothing else to init
     }
 
@@ -88,12 +88,12 @@ public:
 
     //Apply the expression
 
-    value_type operator[](std::size_t i) const {
+    value_type operator[](std::size_t i){
         return result()[i];
     }
 
     template<typename... S, cpp_enable_if(sizeof...(S) == sub_size_compare<this_type>::value)>
-    value_type operator()(S... args) const {
+    value_type operator()(S... args){
         static_assert(cpp::all_convertible_to<std::size_t, S...>::value, "Invalid size types");
 
         return result()(args...);
@@ -104,20 +104,15 @@ public:
         return sub(*this, i);
     }
 
-    template<cpp_enable_if_cst(sub_size_compare<this_type>::value > 1)>
-    auto operator()(std::size_t i) const {
-        return sub(*this, i);
-    }
-
-    iterator<const this_type> begin() const noexcept {
+    iterator<this_type> begin() const noexcept {
         return {*this, 0};
     }
 
-    iterator<const this_type> end() const noexcept {
+    iterator<this_type> end() const noexcept {
         return {*this, size(*this)};
     }
 
-    void evaluate() const {
+    void evaluate(){
         if(!evaluated){
             Op::apply(a(), b(), _c);
             evaluated = true;
@@ -125,7 +120,7 @@ public:
     }
 
     template<typename Result>
-    void direct_evaluate(Result&& r) const {
+    void direct_evaluate(Result&& r){
         evaluate();
 
         r = result();
@@ -136,7 +131,7 @@ public:
     }
 
 private:
-    result_type& result() const {
+    result_type& result(){
         //Note: This is necessary to allow direct to the expression wihout passing by the evaluator
         if(cpp_unlikely(!evaluated)){
             evaluate();

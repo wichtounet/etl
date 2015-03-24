@@ -179,16 +179,16 @@ struct mmul_expr {
     }
 };
 
-template<typename A, typename B, typename C>
-C& mmul(A&& a, B&& b, C&& c){
-    static_assert(is_etl_expr<A>::value && is_etl_expr<B>::value && is_etl_expr<C>::value, "Matrix multiplication only supported for ETL expressions");
-    static_assert(decay_traits<A>::dimensions() == 2 && decay_traits<B>::dimensions() == 2 && decay_traits<C>::dimensions() == 2, "Matrix multiplication only works in 2D");
-    detail::check_mmul_sizes(a,b,c);
+//template<typename A, typename B, typename C>
+//C& mmul(A&& a, B&& b, C&& c){
+    //static_assert(is_etl_expr<A>::value && is_etl_expr<B>::value && is_etl_expr<C>::value, "Matrix multiplication only supported for ETL expressions");
+    //static_assert(decay_traits<A>::dimensions() == 2 && decay_traits<B>::dimensions() == 2 && decay_traits<C>::dimensions() == 2, "Matrix multiplication only works in 2D");
+    //detail::check_mmul_sizes(a,b,c);
 
-    detail::mmul_impl<A,B,C>::apply(std::forward<A>(a), std::forward<B>(b), std::forward<C>(c));
+    //detail::mmul_impl<A,B,C>::apply(std::forward<A>(a), std::forward<B>(b), std::forward<C>(c));
 
-    return c;
-}
+    //return c;
+//}
 
 inline std::size_t nextPowerOfTwo(std::size_t n) {
     return std::pow(2, static_cast<std::size_t>(std::ceil(std::log2(n))));
@@ -411,58 +411,6 @@ C& strassen_mmul(const A& a, const B& b, C& c){
     }
 
     return c;
-}
-
-template<typename A, typename B, typename C, cpp::enable_if_all_u<
-    decay_traits<A>::is_fast, decay_traits<B>::is_fast, decay_traits<C>::is_fast,
-    decay_traits<A>::dimensions() == 1, decay_traits<B>::dimensions() == 2
-> = cpp::detail::dummy>
-C& auto_vmmul(A&& a, B&& b, C& c){
-    return mmul(reshape<1, decay_traits<B>::template dim<0>()>(a), b, c);
-}
-
-template<typename A, typename B, typename C, cpp::enable_if_all_u<
-    decay_traits<A>::is_fast, decay_traits<B>::is_fast, decay_traits<C>::is_fast,
-    decay_traits<A>::dimensions() == 2, decay_traits<B>::dimensions() == 1
-> = cpp::detail::dummy>
-C& auto_vmmul(A&& a, B&& b, C& c){
-    return mmul(a, reshape<decay_traits<A>::template dim<1>(),1>(b), c);
-}
-
-template<typename A, typename B, typename C, cpp::enable_if_all_u<
-    cpp::or_u<!decay_traits<A>::is_fast, !decay_traits<B>::is_fast, !decay_traits<C>::is_fast>::value,
-    decay_traits<A>::dimensions() == 1, decay_traits<B>::dimensions() == 2,
-    cpp::not_u<decay_traits<A>::is_fast>::value
-> = cpp::detail::dummy>
-C& auto_vmmul(A&& a, B&& b, C& c){
-    return mmul(reshape(a, 1, dim<0>(b)), b, c);
-}
-
-template<typename A, typename B, typename C, cpp::enable_if_all_u<
-    cpp::or_u<!decay_traits<A>::is_fast, !decay_traits<B>::is_fast, !decay_traits<C>::is_fast>::value,
-    decay_traits<A>::dimensions() == 2, decay_traits<B>::dimensions() == 1,
-    cpp::not_u<decay_traits<B>::is_fast>::value
-> = cpp::detail::dummy>
-C& auto_vmmul(A&& a, B&& b, C& c){
-    return mmul(a, reshape(b, dim<1>(a), 1), c);
-}
-
-template<typename A, typename B, typename C, cpp::enable_if_all_u<
-    cpp::or_u<!decay_traits<A>::is_fast, !decay_traits<B>::is_fast, !decay_traits<C>::is_fast>::value,
-    decay_traits<A>::dimensions() == 1, decay_traits<B>::dimensions() == 2,
-    decay_traits<A>::is_fast
-> = cpp::detail::dummy>
-C& auto_vmmul(A&& a, B&& b, C& c){
-    return mmul(reshape<1, decay_traits<B>::template dim<0>()>(a), b, c);
-}
-
-template<typename A, typename B, typename C, cpp::enable_if_all_u<
-    cpp::or_u<!decay_traits<A>::is_fast, !decay_traits<B>::is_fast, !decay_traits<C>::is_fast>::value,
-    decay_traits<A>::dimensions() == 2, decay_traits<B>::dimensions() == 1,
-    decay_traits<B>::is_fast
-> = cpp::detail::dummy>
-C& auto_vmmul(A&& a, B&& b, C& c){
-    return mmul(a, reshape<decay_traits<A>::template dim<1>(),1>(b), c);
 }
 
 } //end of namespace etl
