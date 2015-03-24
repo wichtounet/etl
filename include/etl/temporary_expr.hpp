@@ -17,9 +17,14 @@
 
 namespace etl {
 
+//TODO Ideally, the evaluate() function should be called by the evaluator, but that means that direct access to the 
+//expression without passing by the evaluator is not possible => Add macro to ensure this behavior
+
+//TODO Rewrite with TMP instead of two classes
+
 //TODO Review constness of this class
 
-template <typename T, typename AExpr, typename BExpr, typename Op>
+template <typename T, typename AExpr, typename BExpr, typename Op, typename Forced>
 class temporary_binary_expr final {
 public:
     using value_type = T;
@@ -29,7 +34,131 @@ private:
     static_assert(cpp::and_c<is_etl_expr<AExpr>, is_etl_expr<BExpr>>::value,
         "Both arguments must be ETL expr");
 
-    using this_type = temporary_binary_expr<T, AExpr, BExpr, Op>;
+    using this_type = temporary_binary_expr<T, AExpr, BExpr, Op, Forced>;
+
+    AExpr _a;
+    BExpr _b;
+    Forced&& _c;
+    mutable bool evaluated = false;
+
+public:
+    //Cannot be constructed with no args
+    temporary_binary_expr() = delete;
+
+    //Construct a new expression
+    temporary_binary_expr(AExpr a, BExpr b, Forced&& c) : _a(a), _b(b), _c(c) {
+        //Nothing else to init
+    }
+
+    //Copy an expression
+    temporary_binary_expr(const temporary_binary_expr& e) : _a(e._a), _b(e._b), _c(e._c) {
+        //Nothing else to init
+    }
+
+    //Move an expression
+    temporary_binary_expr(temporary_binary_expr&& e) : _a(e._a), _b(e._b), _c(e._c) {
+        //Nothing else to init
+    }
+
+    //Expressions are invariant
+    temporary_binary_expr& operator=(const temporary_binary_expr&) = delete;
+    temporary_binary_expr& operator=(temporary_binary_expr&&) = delete;
+
+    //Accessors
+
+    constexpr bool is_forced() const {
+        return true;
+    }
+
+    std::add_lvalue_reference_t<AExpr> a(){
+        return _a;
+    }
+
+    cpp::add_const_lvalue_t<AExpr> a() const {
+        return _a;
+    }
+
+    std::add_lvalue_reference_t<BExpr> b(){
+        return _b;
+    }
+
+    cpp::add_const_lvalue_t<BExpr> b() const {
+        return _b;
+    }
+
+    //Apply the expression
+
+    value_type operator[](std::size_t i) const {
+        return result()[i];
+    }
+
+    template<typename... S, cpp_enable_if(sizeof...(S) == sub_size_compare<this_type>::value)>
+    value_type operator()(S... args) const {
+        static_assert(cpp::all_convertible_to<std::size_t, S...>::value, "Invalid size types");
+
+        return result()(args...);
+    }
+
+    template<cpp_enable_if_cst(sub_size_compare<this_type>::value > 1)>
+    auto operator()(std::size_t i){
+        return sub(*this, i);
+    }
+
+    template<cpp_enable_if_cst(sub_size_compare<this_type>::value > 1)>
+    auto operator()(std::size_t i) const {
+        return sub(*this, i);
+    }
+
+    iterator<const this_type> begin() const noexcept {
+        return {*this, 0};
+    }
+
+    iterator<const this_type> end() const noexcept {
+        return {*this, size(*this)};
+    }
+
+    void evaluate() const {
+        if(!evaluated){
+            Op::apply(a(), b(), _c);
+            evaluated = true;
+        }
+    }
+
+    template<typename Result>
+    void direct_evaluate(Result&& r) const {
+        evaluate();
+
+        r = result();
+    }
+
+    void allocate_temporary() const {
+        //NOP
+    }
+
+private:
+    result_type& result() const {
+        //Note: This is necessary to allow direct to the expression wihout passing by the evaluator
+        if(cpp_unlikely(!evaluated)){
+            evaluate();
+        }
+
+        return _c;
+    }
+};
+
+//Specialization with no forced result
+
+template <typename T, typename AExpr, typename BExpr, typename Op>
+class temporary_binary_expr<T, AExpr, BExpr, Op, void> final {
+public:
+    using value_type = T;
+    using result_type = typename Op::template result_type<AExpr, BExpr>;
+
+private:
+    static_assert(cpp::and_c<is_etl_expr<AExpr>, is_etl_expr<BExpr>>::value,
+        "Both arguments must be ETL expr");
+
+    using this_type = temporary_binary_expr<T, AExpr, BExpr, Op, void>;
 
     AExpr _a;
     BExpr _b;
@@ -84,6 +213,10 @@ public:
 
     cpp::add_const_lvalue_t<BExpr> b() const {
         return _b;
+    }
+
+    constexpr bool is_forced() const {
+        return false;
     }
 
     //Apply the expression
@@ -155,8 +288,8 @@ private:
     }
 };
 
-template <typename T, typename AExpr, typename BExpr, typename Op>
-std::ostream& operator<<(std::ostream& os, const temporary_binary_expr<T, AExpr, BExpr, Op>& expr){
+template <typename T, typename AExpr, typename BExpr, typename Op, typename Forced>
+std::ostream& operator<<(std::ostream& os, const temporary_binary_expr<T, AExpr, BExpr, Op, Forced>& expr){
     return os << Op::desc() << "(" << expr.a() << ", " << expr.b() << ")";
 }
 

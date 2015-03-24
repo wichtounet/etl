@@ -50,7 +50,7 @@ template<typename LE, typename RE, template<typename,typename> class OP>
 using stable_transform_binary_helper = stable_transform_expr<value_t<LE>, OP<build_type<LE>, build_type<RE>>>;
 
 template<typename A, typename B, template<typename> class OP>
-using temporary_binary_helper = temporary_binary_expr<value_t<A>, build_type<A>, build_type<B>, OP<value_t<A>>>;
+using temporary_binary_helper = temporary_binary_expr<value_t<A>, build_type<A>, build_type<B>, OP<value_t<A>>, void>;
 
 //{{{ Build binary expressions from two ETL expressions (vector,matrix,binary,unary)
 

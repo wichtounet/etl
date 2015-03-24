@@ -491,12 +491,14 @@ struct etl_traits<rep_l_transformer<T, D...>> {
     }
 };
 
+//TODO Optimization when forced is not void
+
 /*!
  * \brief Specialization for temporary_binary_expr.
  */
-template <typename T, typename A, typename B, typename Op>
-struct etl_traits<etl::temporary_binary_expr<T, A, B, Op>> {
-    using expr_t = etl::temporary_binary_expr<T, A, B, Op>;
+template <typename T, typename A, typename B, typename Op, typename Forced>
+struct etl_traits<etl::temporary_binary_expr<T, A, B, Op, Forced>> {
+    using expr_t = etl::temporary_binary_expr<T, A, B, Op, Forced>;
     using a_t = std::decay_t<A>;
     using b_t = std::decay_t<B>;
 

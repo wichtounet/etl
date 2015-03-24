@@ -33,8 +33,8 @@ struct temporary_allocator_static_visitor {
         (*this)(v.rhs());
     }
 
-    template <typename T, typename AExpr, typename BExpr, typename Op>
-    void operator()(etl::temporary_binary_expr<T, AExpr, BExpr, Op>& v) const {
+    template <typename T, typename AExpr, typename BExpr, typename Op, typename Forced>
+    void operator()(etl::temporary_binary_expr<T, AExpr, BExpr, Op, Forced>& v) const {
         v.allocate_temporary();
 
         (*this)(v.a());
