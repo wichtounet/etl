@@ -17,6 +17,8 @@
 
 namespace etl {
 
+//TODO Review constness of this class
+
 template <typename T, typename AExpr, typename BExpr, typename Op>
 class temporary_binary_expr final {
 public:
@@ -31,8 +33,8 @@ private:
 
     AExpr _a;
     BExpr _b;
-    result_type* result_ptr = nullptr;
-    bool temporary = true;
+    mutable result_type* result_ptr = nullptr;
+    mutable bool temporary = true;
     mutable bool evaluated = false;
 
 public:
@@ -117,22 +119,27 @@ public:
 
     void evaluate() const {
         if(!evaluated){
+            //Note: This is necessary to allow direct to the expression wihout passing by the evaluator
+            if(cpp_unlikely(!result_ptr)){
+                allocate_temporary();
+            }
+
             Op::apply(a(), b(), *result_ptr);
             evaluated = true;
         }
     }
 
     template<typename Result>
-    void direct_evaluate(Result&& result){
+    void direct_evaluate(Result&& result) const {
         Op::apply(a(), b(), std::forward<Result>(result));
     }
 
-    void allocate_temporary(){
+    void allocate_temporary() const {
         result_ptr = Op::allocate(_a, _b);
         temporary = true;
     }
 
-    void give_result(result_type* r){
+    void give_result(result_type* r) const {
         result_ptr = r;
         temporary = false;
     }
