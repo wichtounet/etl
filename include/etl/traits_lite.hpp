@@ -4,7 +4,6 @@
 // (See accompanying file LICENSE or copy at
 //  http://opensource.org/licenses/MIT)
 //=======================================================================
-
 #ifndef ETL_TRAITS_LITE_HPP
 #define ETL_TRAITS_LITE_HPP
 
@@ -50,6 +49,15 @@ struct is_single_precision : cpp::bool_constant_c<std::is_same<typename std::dec
 
 template<typename T>
 struct is_double_precision : cpp::bool_constant_c<std::is_same<typename std::decay_t<T>::value_type, double>> {};
+
+template<typename A, typename B, typename C>
+struct is_single_precision_3;
+
+template<typename A, typename B, typename C>
+struct is_double_precision_3;
+
+template<typename A, typename B, typename C>
+struct is_dma_3;
 
 template<typename E>
 using decay_traits = etl_traits<std::decay_t<E>>;

@@ -5,10 +5,10 @@
 //  http://opensource.org/licenses/MIT)
 //=======================================================================
 
-#ifndef ETL_CBLAS_HPP
-#define ETL_CBLAS_HPP
+#ifndef ETL_IMPL_BLAS_GEMM_HPP
+#define ETL_IMPL_BLAS_GEMM_HPP
 
-#include "config.hpp"
+#include "../../config.hpp"
 
 #ifdef ETL_BLAS_MODE
 
@@ -21,12 +21,14 @@ extern "C"
 
 namespace etl {
 
-namespace detail {
+namespace impl {
+
+namespace blas {
 
 #ifdef ETL_BLAS_MODE
 
 template<typename A, typename B, typename C>
-void blas_dgemm(A&& a, B&& b, C&& c){
+void dgemm(A&& a, B&& b, C&& c){
     cblas_dgemm(
         CblasRowMajor, CblasNoTrans, CblasNoTrans, 
         etl::rows(a), etl::columns(b), etl::columns(a),
@@ -39,7 +41,7 @@ void blas_dgemm(A&& a, B&& b, C&& c){
 };
 
 template<typename A, typename B, typename C>
-void blas_sgemm(A&& a, B&& b, C&& c){
+void sgemm(A&& a, B&& b, C&& c){
     cblas_sgemm(
         CblasRowMajor, CblasNoTrans, CblasNoTrans, 
         etl::rows(a), etl::columns(b), etl::columns(a),
@@ -54,14 +56,16 @@ void blas_sgemm(A&& a, B&& b, C&& c){
 #else
 
 template<typename A, typename B, typename C>
-void blas_dgemm(A&& a, B&& b, C&& c);
+void dgemm(A&& a, B&& b, C&& c);
 
 template<typename A, typename B, typename C>
-void blas_sgemm(A&& a, B&& b, C&& c);
+void sgemm(A&& a, B&& b, C&& c);
 
 #endif
 
-} //end of namespace detail
+} //end of namespace blas
+
+} //end of namespace impl
 
 } //end of namespace etl
 

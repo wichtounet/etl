@@ -31,8 +31,8 @@
 #include "etl/fast_dyn_matrix.hpp"
 #include "etl/fast_dyn_vector.hpp"
 
-// The complex operators
-#include "multiplication.hpp"
+// The complex expressions
+#include "mmul_expr.hpp"
 
 // The traits
 #include "traits.hpp"

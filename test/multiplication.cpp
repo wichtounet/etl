@@ -9,7 +9,6 @@
 #include "template_test.hpp"
 
 #include "etl/etl.hpp"
-#include "etl/multiplication.hpp"
 #include "etl/stop.hpp"
 
 //{{{ mmul

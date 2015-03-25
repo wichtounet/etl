@@ -11,7 +11,6 @@
 
 #include "etl/etl.hpp"
 #include "etl/convolution.hpp"
-#include "etl/multiplication.hpp"
 
 #ifdef ETL_VECTORIZE
 #ifdef __SSE3__

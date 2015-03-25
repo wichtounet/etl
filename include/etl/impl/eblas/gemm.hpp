@@ -7,8 +7,8 @@
 
 //Highly inspired from the "GEMM: From Pure C to SSE Optimized Micro Kernels" course
 
-#ifndef ETL_DGEMM_HPP
-#define ETL_DGEMM_HPP
+#ifndef ETL_IMPL_EBLAS_GEMM_HPP
+#define ETL_IMPL_EBLAS_GEMM_HPP
 
 #ifdef ETL_VECTORIZE
 #ifdef __SSE3__
@@ -22,7 +22,7 @@
 
 #include "cpp_utils/likely.hpp"
 
-#include "allocator.hpp"
+#include "../../allocator.hpp"
 
 namespace etl {
 

@@ -11,7 +11,6 @@
 #include <vector>
 
 #include "etl/etl.hpp"
-#include "etl/multiplication.hpp"
 
 ///{{{ Dim
 
