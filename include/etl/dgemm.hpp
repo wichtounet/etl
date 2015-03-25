@@ -395,7 +395,7 @@ void gemm_nn(std::size_t m, std::size_t n, std::size_t k, D alpha, const D* A, s
 template<typename A, typename B, typename C>
 void fast_dgemm(A&& a, B&& b, C&& c){
     gemm_detail::gemm_nn(
-        etl::rows(a), etl::columns(b), etl::columns(a),
+        etl::dim<0>(a), etl::dim<1>(b), etl::dim<1>(a),
         1.0,
         a.memory_start(), etl::dim<1>(a), 1,
         b.memory_start(), etl::dim<1>(b), 1,
@@ -407,7 +407,7 @@ void fast_dgemm(A&& a, B&& b, C&& c){
 template<typename A, typename B, typename C>
 void fast_sgemm(A&& a, B&& b, C&& c){
     gemm_detail::gemm_nn(
-        etl::rows(a), etl::columns(b), etl::columns(a),
+        etl::dim<0>(a), etl::dim<1>(b), etl::dim<1>(a),
         1.0f,
         a.memory_start(), etl::dim<1>(a), 1,
         b.memory_start(), etl::dim<1>(b), 1,

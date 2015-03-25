@@ -31,6 +31,9 @@
 #include "etl/fast_dyn_matrix.hpp"
 #include "etl/fast_dyn_vector.hpp"
 
+// The complex operators
+#include "multiplication.hpp"
+
 // The traits
 #include "traits.hpp"
 
@@ -39,8 +42,5 @@
 
 // to_string support
 #include "print.hpp"
-
-// The complex operators
-#include "multiplication.hpp"
 
 #endif

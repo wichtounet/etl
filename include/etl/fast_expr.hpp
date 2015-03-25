@@ -512,9 +512,6 @@ auto p_max_pool_p(E&& value) -> stable_transform_expr<value_t<E>, p_max_pool_p_t
 
 //{{{ Apply an expression that evaluate not lazily
 
-template<typename T>
-struct mmul_expr;
-
 template<typename A, typename B>
 auto mmul(A&& a, B&& b) -> temporary_binary_helper<A, B, mmul_expr> {
     static_assert(is_etl_expr<A>::value && is_etl_expr<B>::value, "Matrix multiplication only supported for ETL expressions");
@@ -641,6 +638,22 @@ template<typename A, typename B, cpp::enable_if_all_u<
 > = cpp::detail::dummy>
 auto auto_vmmul(A&& a, B&& b){
     return mmul(a, reshape<decay_traits<A>::template dim<1>(),1>(b));
+}
+
+template<typename A, typename B>
+auto strassen_mmul(A&& a, B&& b) -> temporary_binary_helper<A, B, strassen_mmul_expr> {
+    static_assert(is_etl_expr<A>::value && is_etl_expr<B>::value, "Matrix multiplication only supported for ETL expressions");
+    static_assert(decay_traits<A>::dimensions() == 2 && decay_traits<B>::dimensions() == 2, "Matrix multiplication only works in 2D");
+
+    return {a, b};
+}
+
+template<typename A, typename B, typename C>
+auto strassen_mmul(A&& a, B&& b, C&& c) -> forced_temporary_binary_helper<A, B, C, strassen_mmul_expr> {
+    static_assert(is_etl_expr<A>::value && is_etl_expr<B>::value && is_etl_expr<C>::value, "Matrix multiplication only supported for ETL expressions");
+    static_assert(decay_traits<A>::dimensions() == 2 && decay_traits<B>::dimensions() == 2 && decay_traits<C>::dimensions() == 2, "Matrix multiplication only works in 2D");
+
+    return {a, b, c};
 }
 
 //}}}

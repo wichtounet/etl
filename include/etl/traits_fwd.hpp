@@ -12,7 +12,6 @@ namespace etl {
 
 template<typename T>
 struct is_etl_expr;
-
 template<typename T>
 struct is_copy_expr;
 
@@ -45,6 +44,15 @@ constexpr std::size_t dim(const E&) noexcept;
 
 template<std::size_t D, typename E, cpp::enable_if_u<etl_traits<E>::is_fast> = cpp::detail::dummy>
 constexpr std::size_t dim() noexcept;
+
+template<typename T>
+struct is_single_precision;
+
+template<typename T>
+struct is_double_precision;
+
+template<typename E>
+using decay_traits = etl_traits<std::decay_t<E>>;
 
 } //end of namespace etl
 

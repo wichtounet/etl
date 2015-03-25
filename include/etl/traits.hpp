@@ -875,9 +875,6 @@ struct etl_traits<etl::fast_magic_view<V, N>> {
     }
 };
 
-template<typename E>
-using decay_traits = etl_traits<std::decay_t<E>>;
-
 //Warning: default template parameters for size and dim are already defined in traits_fwd.hpp
 
 template<typename E>
