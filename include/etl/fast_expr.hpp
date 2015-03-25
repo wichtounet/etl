@@ -744,6 +744,13 @@ auto sequence_generator(T current = 0) -> generator_expr<sequence_generator_op<T
 
 //}}}
 
+//Force evaluation of an expression
+
+template<typename Expr>
+void operator*(Expr&& expr){
+    return force(std::forward<Expr>(expr));
+}
+
 } //end of namespace etl
 
 #endif
