@@ -394,7 +394,7 @@ TEMPLATE_TEST_CASE_2( "multiplication/strassen_mmul_1", "strassen_mmul", Z, doub
     etl::dyn_matrix<Z> b(4,4, etl::values(1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16));
     etl::dyn_matrix<Z> c(4,4);
 
-    etl::strassen_mmul(a, b, c);
+    *etl::strassen_mmul(a, b, c);
 
     REQUIRE(c(0,0) == 90);
     REQUIRE(c(0,1) == 100);
@@ -411,7 +411,7 @@ TEMPLATE_TEST_CASE_2( "multiplication/strassen_mmul_2", "strassen_mmul", Z, doub
     etl::dyn_matrix<Z> b(2,2, etl::values(1,2,3,4,5,6,7,8));
     etl::dyn_matrix<Z> c(2,2);
 
-    etl::strassen_mmul(a, b, c);
+    *etl::strassen_mmul(a, b, c);
 
     REQUIRE(c(0,0) == 7);
     REQUIRE(c(0,1) == 10);
@@ -424,7 +424,7 @@ TEMPLATE_TEST_CASE_2( "multiplication/strassen_mmul3", "strassen_mmul", Z, doubl
     etl::dyn_matrix<Z> b(3,3,etl::values(7,8,9,9,10,11,11,12,13));
     etl::dyn_matrix<Z> c(3,3);
 
-    etl::strassen_mmul(a, b, c);
+    *etl::strassen_mmul(a, b, c);
 
     REQUIRE(c(0,0) == 58);
     REQUIRE(c(0,1) == 64);
@@ -442,7 +442,7 @@ TEMPLATE_TEST_CASE_2( "multiplication/strassen_mmul4", "mmul", Z, double, float)
     etl::dyn_matrix<Z> b(3,2, etl::values(7,8,9,10,11,12));
     etl::dyn_matrix<Z> c(2,2);
 
-    etl::strassen_mmul(a, b, c);
+    *etl::strassen_mmul(a, b, c);
 
     REQUIRE(c(0,0) == 58);
     REQUIRE(c(0,1) == 64);
