@@ -857,16 +857,6 @@ struct etl_traits<etl::fast_magic_view<V, N>> {
 
 //Warning: default template parameters for size and dim are already defined in traits_fwd.hpp
 
-template<typename E>
-constexpr std::size_t dimensions(const E&) noexcept {
-    return etl_traits<E>::dimensions();
-}
-
-template<typename E>
-constexpr std::size_t dimensions() noexcept {
-    return decay_traits<E>::dimensions();
-}
-
 template<typename E, cpp::disable_if_u<etl_traits<E>::is_fast>>
 std::size_t size(const E& v){
     return etl_traits<E>::size(v);
@@ -875,28 +865,6 @@ std::size_t size(const E& v){
 template<typename E, cpp::enable_if_u<etl_traits<E>::is_fast>>
 constexpr std::size_t size(const E&) noexcept {
     return etl_traits<E>::size();
-}
-
-template<typename E, cpp::disable_if_u<etl_traits<E>::is_fast> = cpp::detail::dummy>
-std::size_t rows(const E& v){
-    return etl_traits<E>::dim(v, 0);
-}
-
-template<typename E, cpp::enable_if_u<etl_traits<E>::is_fast> = cpp::detail::dummy>
-constexpr std::size_t rows(const E&) noexcept {
-    return etl_traits<E>::template dim<0>();
-}
-
-template<typename E, cpp::disable_if_u<etl_traits<E>::is_fast> = cpp::detail::dummy>
-std::size_t columns(const E& v){
-    static_assert(etl_traits<E>::dimensions() > 1, "columns() can only be used on 2D+ matrices");
-    return etl_traits<E>::dim(v, 1);
-}
-
-template<typename E, cpp::enable_if_u<etl_traits<E>::is_fast> = cpp::detail::dummy>
-constexpr std::size_t columns(const E&) noexcept {
-    static_assert(etl_traits<E>::dimensions() > 1, "columns() can only be used on 2D+ matrices");
-    return etl_traits<E>::template dim<1>();
 }
 
 template<typename E, cpp::disable_if_u<etl_traits<E>::is_fast> = cpp::detail::dummy>

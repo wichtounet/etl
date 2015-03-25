@@ -4,6 +4,7 @@
 // (See accompanying file LICENSE or copy at
 //  http://opensource.org/licenses/MIT)
 //=======================================================================
+
 #ifndef ETL_TRAITS_LITE_HPP
 #define ETL_TRAITS_LITE_HPP
 
@@ -22,9 +23,6 @@ struct etl_traits;
 
 template<typename T>
 struct has_direct_access;
-
-template<typename E>
-constexpr std::size_t dimensions(const E&) noexcept;
 
 template<typename E, cpp::disable_if_u<etl_traits<E>::is_fast> = cpp::detail::dummy>
 std::size_t size(const E& v);
@@ -61,6 +59,38 @@ struct is_dma_3;
 
 template<typename E>
 using decay_traits = etl_traits<std::decay_t<E>>;
+
+template<typename E>
+constexpr std::size_t dimensions(const E&) noexcept {
+    return etl_traits<E>::dimensions();
+}
+
+template<typename E>
+constexpr std::size_t dimensions() noexcept {
+    return decay_traits<E>::dimensions();
+}
+
+template<typename E, cpp::disable_if_u<etl_traits<E>::is_fast> = cpp::detail::dummy>
+std::size_t rows(const E& v){
+    return etl_traits<E>::dim(v, 0);
+}
+
+template<typename E, cpp::enable_if_u<etl_traits<E>::is_fast> = cpp::detail::dummy>
+constexpr std::size_t rows(const E&) noexcept {
+    return etl_traits<E>::template dim<0>();
+}
+
+template<typename E, cpp::disable_if_u<etl_traits<E>::is_fast> = cpp::detail::dummy>
+std::size_t columns(const E& v){
+    static_assert(etl_traits<E>::dimensions() > 1, "columns() can only be used on 2D+ matrices");
+    return etl_traits<E>::dim(v, 1);
+}
+
+template<typename E, cpp::enable_if_u<etl_traits<E>::is_fast> = cpp::detail::dummy>
+constexpr std::size_t columns(const E&) noexcept {
+    static_assert(etl_traits<E>::dimensions() > 1, "columns() can only be used on 2D+ matrices");
+    return etl_traits<E>::template dim<1>();
+}
 
 } //end of namespace etl
 
