@@ -5,8 +5,8 @@
 //  http://opensource.org/licenses/MIT)
 //=======================================================================
 
-#ifndef ETL_CONVOLUTION_HPP
-#define ETL_CONVOLUTION_HPP
+#ifndef ETL_CONVOLUTION_EXPR_HPP
+#define ETL_CONVOLUTION_EXPR_HPP
 
 #include <algorithm>
 
@@ -60,18 +60,18 @@ void check_conv_1d_sizes(const I&, const K&, const C&){
         "Invalid sizes for 'valid'convolution");
 }
 
-template<std::size_t T, typename I, typename K, typename C, cpp::disable_if_all_u<etl_traits<I>::is_fast, etl_traits<K>::is_fast, etl_traits<C>::is_fast> = cpp::detail::dummy>
+template<conv_type TT, typename I, typename K, typename C, cpp::disable_if_all_u<etl_traits<I>::is_fast, etl_traits<K>::is_fast, etl_traits<C>::is_fast> = cpp::detail::dummy>
 void check_conv_2d_sizes(const I& input, const K& kernel, const C& conv){
     static_assert(etl_traits<I>::dimensions() == 2 && etl_traits<K>::dimensions() == 2 && etl_traits<C>::dimensions() == 2, "Invalid dimensions for 2D convolution");
 
-    if(T == 1){
+    if(TT == conv_type::FULL){
         cpp_assert(
                 dim<0>(conv) == dim<0>(input) + dim<0>(kernel) - 1
             &&  dim<1>(conv) == dim<1>(input) + dim<1>(kernel) - 1,
-            "Invalid sizes for 'valid' convolution");
-    } else if(T == 2){
+            "Invalid sizes for 'full' convolution");
+    } else if(TT == conv_type::SAME){
         cpp_assert(dim<0>(conv) == dim<0>(input) && dim<1>(conv) == dim<1>(input), "Invalid sizes for 'same' convolution");
-    } else if(T == 3){
+    } else if(TT == conv_type::VALID){
         cpp_assert(
                 dim<0>(conv) == dim<0>(input) - dim<0>(kernel) + 1
             &&  dim<1>(conv) == dim<1>(input) - dim<1>(kernel) + 1,
@@ -83,22 +83,22 @@ void check_conv_2d_sizes(const I& input, const K& kernel, const C& conv){
     cpp_unused(conv);
 }
 
-template<std::size_t T, typename I, typename K, typename C, cpp::enable_if_all_u<etl_traits<I>::is_fast, etl_traits<K>::is_fast, etl_traits<C>::is_fast> = cpp::detail::dummy>
+template<conv_type TT, typename I, typename K, typename C, cpp::enable_if_all_u<etl_traits<I>::is_fast, etl_traits<K>::is_fast, etl_traits<C>::is_fast> = cpp::detail::dummy>
 void check_conv_2d_sizes(const I&, const K&, const C&){
     static_assert(etl_traits<I>::dimensions() == 2 && etl_traits<K>::dimensions() == 2 && etl_traits<C>::dimensions() == 2, "Invalid dimensions for 2D convolution");
 
     static_assert(
-        T != 1 || (
+        TT != conv_type::FULL || (
                 etl_traits<C>::template dim<0>() == etl_traits<I>::template dim<0>() + etl_traits<K>::template dim<0>() - 1
             &&  etl_traits<C>::template dim<1>() == etl_traits<I>::template dim<1>() + etl_traits<K>::template dim<1>() - 1),
         "Invalid sizes for 'full'convolution");
     static_assert(
-        T != 2 || (
+        TT != conv_type::SAME || (
                 etl_traits<C>::template dim<0>() == etl_traits<I>::template dim<0>()
             &&  etl_traits<C>::template dim<1>() == etl_traits<I>::template dim<1>()),
         "Invalid sizes for 'same'convolution");
     static_assert(
-        T != 3 || (
+        TT != conv_type::VALID || (
                 etl_traits<C>::template dim<0>() == etl_traits<I>::template dim<0>() - etl_traits<K>::template dim<0>() + 1
             &&  etl_traits<C>::template dim<1>() == etl_traits<I>::template dim<1>() - etl_traits<K>::template dim<1>() + 1),
         "Invalid sizes for 'valid'convolution");
@@ -106,18 +106,19 @@ void check_conv_2d_sizes(const I&, const K&, const C&){
 
 } //end of namespace detail
 
-template<typename T, conv_type TT, template<typename...> class Impl>
+//D1 = 1D
+template<typename T, bool D1, conv_type TT, template<typename...> class Impl>
 struct basic_conv1_expr {
-    using this_type = basic_conv1_expr<T, TT, Impl>;
+    using this_type = basic_conv1_expr<T, D1, TT, Impl>;
 
     template<typename A, typename B, std::size_t D>
     static constexpr std::size_t dim(){
         if(TT == conv_type::VALID){
-            return decay_traits<A>::template dim<0>() - decay_traits<B>::template dim<0>() + 1;
+            return decay_traits<A>::template dim<D>() - decay_traits<B>::template dim<D>() + 1;
         } else if(TT == conv_type::SAME){
-            return decay_traits<A>::template dim<0>();
+            return decay_traits<A>::template dim<D>();
         } else {
-            return decay_traits<A>::template dim<0>() + decay_traits<B>::template dim<0>() - 1;
+            return decay_traits<A>::template dim<D>() + decay_traits<B>::template dim<D>() - 1;
         }
     }
 
@@ -144,11 +145,21 @@ struct basic_conv1_expr {
         return new result_type<A, B>(this_type::dim(a, b, 0));
     }
 
+    template<typename A, typename B, typename C, cpp_enable_if_cst(D1)>
+    static void check(const A& a, const B& b, const C& c){
+        detail::check_conv_1d_sizes<TT>(a, b, c);
+    }
+    
+    template<typename A, typename B, typename C, cpp_disable_if_cst(D1)>
+    static void check(const A& a, const B& b, const C& c){
+        detail::check_conv_1d_sizes<TT>(a, b, c);
+    }
+
     template<typename A, typename B, typename C>
     static void apply(A&& a, B&& b, C&& c){
         static_assert(is_etl_expr<A>::value && is_etl_expr<B>::value && is_etl_expr<C>::value, "Convolution only supported for ETL expressions");
 
-        detail::check_conv_1d_sizes<TT>(a, b, c);
+        check(a, b, c);
 
         Impl<A,B,C>::apply(std::forward<A>(a), std::forward<B>(b), std::forward<C>(c));
     }
@@ -165,45 +176,52 @@ struct basic_conv1_expr {
 
     template<typename A, typename B>
     static std::size_t size(const A& a, const B& b){
-        return this_type::dim(a, b, 0);
-    }
-
-    template<typename A, typename B>
-    static std::size_t dim(const A& a, const B& b, std::size_t){
-        if(TT == conv_type::VALID){
-            return etl_traits<A>::dim(a, 0) - etl_traits<B>::dim(b, 0) + 1;
-        } else if(TT == conv_type::SAME){
-            return etl_traits<A>::dim(a, 0);
+        if(D1){
+            return this_type::dim(a, b, 0);
         } else {
-            return etl_traits<A>::dim(a, 0) + etl_traits<B>::dim(b, 0) + 1;
+            return this_type::dim(a, b, 0) * this_type::dim(a, b, 1);
         }
     }
 
     template<typename A, typename B>
+    static std::size_t dim(const A& a, const B& b, std::size_t d){
+        if(TT == conv_type::VALID){
+            return etl_traits<A>::dim(a, d) - etl_traits<B>::dim(b, d) + 1;
+        } else if(TT == conv_type::SAME){
+            return etl_traits<A>::dim(a, d);
+        } else {
+            return etl_traits<A>::dim(a, d) + etl_traits<B>::dim(b, d) + 1;
+        }
+    }
+
+    template<typename A, typename B, cpp_enable_if_cst(D1)>
     static constexpr std::size_t size(){
         return this_type::dim<A, B, 0>();
     }
 
+    template<typename A, typename B, cpp_disable_if_cst(D1)>
+    static constexpr std::size_t size(){
+        return this_type::dim<A, B, 0>() * this_type::dim<A, B, 1>();
+    }
+
     static constexpr std::size_t dimensions(){
-        return 1;
+        return D1 ? 1 : 2;
     }
 };
 
 template<typename T>
-using conv1_valid_expr = basic_conv1_expr<T, conv_type::VALID, detail::conv1_valid_impl>;
+using conv1_valid_expr = basic_conv1_expr<T, true, conv_type::VALID, detail::conv1_valid_impl>;
 
 template<typename T>
-using conv1_same_expr = basic_conv1_expr<T, conv_type::SAME, detail::conv1_same_impl>;
+using conv1_same_expr = basic_conv1_expr<T, true, conv_type::SAME, detail::conv1_same_impl>;
 
 template<typename T>
-using conv1_full_expr = basic_conv1_expr<T, conv_type::FULL, detail::conv1_full_impl>;
+using conv1_full_expr = basic_conv1_expr<T, true, conv_type::FULL, detail::conv1_full_impl>;
 
 //2D convolutions
 
 template<typename I, typename K, typename C>
 C& convolve_2d_full(const I& input, const K& kernel, C&& conv){
-    static_assert(is_etl_expr<I>::value && is_etl_expr<K>::value && is_etl_expr<C>::value, "Convolution only supported for ETL expressions");
-    detail::check_conv_2d_sizes<1>(input, kernel, conv);
 
     detail::conv2_full_impl<I,K,C>::apply(input, kernel, std::forward<C>(conv));
 
@@ -212,8 +230,6 @@ C& convolve_2d_full(const I& input, const K& kernel, C&& conv){
 
 template<typename I, typename K, typename C>
 C& convolve_2d_same(const I& input, const K& kernel, C&& conv){
-    static_assert(is_etl_expr<I>::value && is_etl_expr<K>::value && is_etl_expr<C>::value, "Convolution only supported for ETL expressions");
-    detail::check_conv_2d_sizes<2>(input, kernel, conv);
 
     detail::conv2_same_impl<I,K,C>::apply(input, kernel, std::forward<C>(conv));
 
@@ -222,8 +238,6 @@ C& convolve_2d_same(const I& input, const K& kernel, C&& conv){
 
 template<typename I, typename K, typename C>
 C& convolve_2d_valid(const I& input, const K& kernel, C&& conv){
-    static_assert(is_etl_expr<I>::value && is_etl_expr<K>::value && is_etl_expr<C>::value, "Convolution only supported for ETL expressions");
-    detail::check_conv_2d_sizes<3>(input, kernel, conv);
 
     detail::conv2_valid_impl<I,K,C>::apply(input, kernel, std::forward<C>(conv));
 

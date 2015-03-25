@@ -10,7 +10,6 @@
 #include <random>
 
 #include "etl/etl.hpp"
-#include "etl/convolution.hpp"
 
 #ifdef ETL_VECTORIZE
 #ifdef __SSE3__
@@ -198,7 +197,7 @@ void bench_dyn_matrix_sigmoid(std::size_t d1, std::size_t d2, const std::string&
 
 template<typename A, typename B, typename C>
 void measure_full_convolution_1d(A& a, B& b, C& c){
-    measure_sub("default", [&a, &b, &c](auto&){etl::convolve_1d_full(a, b, c);} , a, b);
+    measure_sub("default", [&a, &b, &c](auto&){c = etl::conv_1d_full(a, b);} , a, b);
 
     measure_sub("std", [&a, &b, &c](auto&){etl::impl::standard::conv1_full(a, b, c);} , a, b);
 
@@ -255,7 +254,7 @@ void bench_dyn_full_convolution_1d_s(std::size_t d1, std::size_t d2){
 
 template<typename A, typename B, typename C>
 void measure_same_convolution_1d(A& a, B& b, C& c){
-    measure_sub("default", [&a, &b, &c](auto&){etl::convolve_1d_same(a, b, c);} , a, b);
+    measure_sub("default", [&a, &b, &c](auto&){c = etl::conv_1d_same(a, b);} , a, b);
 
     measure_sub("std", [&a, &b, &c](auto&){etl::impl::standard::conv1_same(a, b, c);} , a, b);
 
@@ -312,7 +311,7 @@ void bench_dyn_same_convolution_1d_s(std::size_t d1, std::size_t d2){
 
 template<typename A, typename B, typename C>
 void measure_valid_convolution_1d(A& a, B& b, C& c){
-    measure_sub("default", [&a, &b, &c](auto&){etl::convolve_1d_valid(a, b, c);} , a, b);
+    measure_sub("default", [&a, &b, &c](auto&){c = etl::conv_1d_valid(a, b);} , a, b);
 
     measure_sub("std", [&a, &b, &c](auto&){etl::impl::standard::conv1_valid(a, b, c);} , a, b);
 

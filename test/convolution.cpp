@@ -9,7 +9,6 @@
 #include "template_test.hpp"
 
 #include "etl/etl.hpp"
-#include "etl/convolution.hpp"
 
 //Note: The results of the tests have been validated with one of (octave/matlab/matlab)
 
