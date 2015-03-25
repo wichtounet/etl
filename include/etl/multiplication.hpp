@@ -14,7 +14,7 @@
 #include "dgemm.hpp"
 #include "cblas.hpp"
 
-#include "traits_fwd.hpp"
+#include "traits_lite.hpp"
 
 namespace etl {
 

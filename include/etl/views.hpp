@@ -12,7 +12,7 @@
 
 #include "cpp_utils/tmp.hpp"
 #include "tmp.hpp"
-#include "traits_fwd.hpp"
+#include "traits_lite.hpp"
 
 namespace etl {
 

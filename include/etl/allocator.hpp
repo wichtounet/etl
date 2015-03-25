@@ -8,7 +8,7 @@
 #ifndef ETL_ALLOCATOR_HPP
 #define ETL_ALLOCATOR_HPP
 
-#include "traits_fwd.hpp"   //forward declaration of the traits
+#include "traits_lite.hpp"   //forward declaration of the traits
 
 namespace etl {
 

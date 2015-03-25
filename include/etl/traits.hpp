@@ -11,33 +11,10 @@
 #include "cpp_utils/assert.hpp"
 #include "cpp_utils/tmp.hpp"
 
-#include "traits_fwd.hpp" //To avoid nasty errors
+#include "tmp.hpp"          //Some TMP stuff
+#include "traits_lite.hpp"  //To avoid nasty errors
 
 namespace etl {
-
-template<template<typename, std::size_t> class TT, typename T>
-struct is_2 : std::false_type { };
-
-template<template<typename, std::size_t> class TT, typename V1, std::size_t R>
-struct is_2<TT, TT<V1, R>> : std::true_type { };
-
-template<template<typename, std::size_t, std::size_t> class TT, typename T>
-struct is_3 : std::false_type { };
-
-template<template<typename, std::size_t, std::size_t> class TT, typename V1, std::size_t R1, std::size_t R2>
-struct is_3<TT, TT<V1, R1, R2>> : std::true_type { };
-
-template<template<typename, std::size_t...> class TT, typename T>
-struct is_var : std::false_type { };
-
-template<template<typename, std::size_t...> class TT, typename V1, std::size_t... R>
-struct is_var<TT, TT<V1, R...>> : std::true_type { };
-
-template<template<typename, typename, std::size_t...> class TT, typename T>
-struct is_var_2 : std::false_type { };
-
-template<template<typename, typename, std::size_t...> class TT, typename V1, typename V2, std::size_t... R>
-struct is_var_2<TT, TT<V1, V2, R...>> : std::true_type { };
 
 template<typename T, typename DT = std::decay_t<T>>
 using is_fast_matrix = is_var_2<etl::fast_matrix_impl, std::decay_t<T>>;
@@ -154,12 +131,6 @@ struct has_direct_access : cpp::bool_constant_c<cpp::or_c<
         , is_direct_fast_matrix_view<T>
         , is_direct_dyn_matrix_view<T>
     >> {};
-
-template<typename T>
-struct is_single_precision : cpp::bool_constant_c<std::is_same<typename std::decay_t<T>::value_type, float>> {};
-
-template<typename T>
-struct is_double_precision : cpp::bool_constant_c<std::is_same<typename std::decay_t<T>::value_type, double>> {};
 
 template<typename T, typename Enable>
 struct etl_traits;

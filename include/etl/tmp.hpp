@@ -10,6 +10,30 @@
 
 namespace etl {
 
+template<template<typename, std::size_t> class TT, typename T>
+struct is_2 : std::false_type { };
+
+template<template<typename, std::size_t> class TT, typename V1, std::size_t R>
+struct is_2<TT, TT<V1, R>> : std::true_type { };
+
+template<template<typename, std::size_t, std::size_t> class TT, typename T>
+struct is_3 : std::false_type { };
+
+template<template<typename, std::size_t, std::size_t> class TT, typename V1, std::size_t R1, std::size_t R2>
+struct is_3<TT, TT<V1, R1, R2>> : std::true_type { };
+
+template<template<typename, std::size_t...> class TT, typename T>
+struct is_var : std::false_type { };
+
+template<template<typename, std::size_t...> class TT, typename V1, std::size_t... R>
+struct is_var<TT, TT<V1, R...>> : std::true_type { };
+
+template<template<typename, typename, std::size_t...> class TT, typename T>
+struct is_var_2 : std::false_type { };
+
+template<template<typename, typename, std::size_t...> class TT, typename V1, typename V2, std::size_t... R>
+struct is_var_2<TT, TT<V1, V2, R...>> : std::true_type { };
+
 template<typename E>
 using value_t = typename std::decay_t<E>::value_type;
 

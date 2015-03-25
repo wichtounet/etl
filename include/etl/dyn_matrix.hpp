@@ -18,7 +18,7 @@
 #include "cpp_utils/tmp.hpp"
 
 #include "evaluator.hpp"
-#include "traits_fwd.hpp"   //forward declaration of the traits
+#include "traits_lite.hpp"   //forward declaration of the traits
 #include "compat.hpp"       //To make it work with g++
 
 namespace etl {

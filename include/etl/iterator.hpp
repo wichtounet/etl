@@ -10,7 +10,7 @@
 
 #include <iterator>
 
-#include "traits_fwd.hpp"
+#include "traits_lite.hpp"
 
 namespace etl {
 

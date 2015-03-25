@@ -8,7 +8,7 @@
 #ifndef ETL_EVALUATOR_HPP
 #define ETL_EVALUATOR_HPP
 
-#include "traits_fwd.hpp"   //forward declaration of the traits
+#include "traits_lite.hpp"   //forward declaration of the traits
 
 namespace etl {
 

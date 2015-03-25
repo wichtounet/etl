@@ -5,8 +5,8 @@
 //  http://opensource.org/licenses/MIT)
 //=======================================================================
 
-#ifndef ETL_TRAITS_FWD_HPP
-#define ETL_TRAITS_FWD_HPP
+#ifndef ETL_TRAITS_LITE_HPP
+#define ETL_TRAITS_LITE_HPP
 
 namespace etl {
 
@@ -46,10 +46,10 @@ template<std::size_t D, typename E, cpp::enable_if_u<etl_traits<E>::is_fast> = c
 constexpr std::size_t dim() noexcept;
 
 template<typename T>
-struct is_single_precision;
+struct is_single_precision : cpp::bool_constant_c<std::is_same<typename std::decay_t<T>::value_type, float>> {};
 
 template<typename T>
-struct is_double_precision;
+struct is_double_precision : cpp::bool_constant_c<std::is_same<typename std::decay_t<T>::value_type, double>> {};
 
 template<typename E>
 using decay_traits = etl_traits<std::decay_t<E>>;

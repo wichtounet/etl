@@ -12,7 +12,7 @@
 
 #include <ostream>
 
-#include "traits_fwd.hpp"
+#include "traits_lite.hpp"
 #include "iterator.hpp"
 
 namespace etl {
