@@ -285,6 +285,10 @@ void strassen_mmul_r(const A& a, const B& b, C& c){
     }
 }
 
+inline std::size_t nextPowerOfTwo(std::size_t n) {
+    return std::pow(2, static_cast<std::size_t>(std::ceil(std::log2(n))));
+}
+
 template<typename A, typename B, typename C>
 void strassen_mmul(const A& a, const B& b, C& c){
     static_assert(is_etl_expr<A>::value && is_etl_expr<B>::value && is_etl_expr<C>::value, "Matrix multiplication only supported for ETL expressions");
@@ -327,10 +331,6 @@ void strassen_mmul(const A& a, const B& b, C& c){
             }
         }
     }
-}
-
-inline std::size_t nextPowerOfTwo(std::size_t n) {
-    return std::pow(2, static_cast<std::size_t>(std::ceil(std::log2(n))));
 }
 
 template<typename A, typename B, typename C>
