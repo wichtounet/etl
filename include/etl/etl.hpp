@@ -33,6 +33,7 @@
 
 // The complex expressions
 #include "mmul_expr.hpp"
+#include "convolution.hpp"
 
 // The traits
 #include "traits.hpp"

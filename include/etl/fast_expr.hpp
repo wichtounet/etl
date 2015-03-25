@@ -510,7 +510,7 @@ auto p_max_pool_p(E&& value) -> stable_transform_expr<value_t<E>, p_max_pool_p_t
 
 //}}}
 
-//{{{ Apply an expression that evaluate not lazily
+//{{{ mmul expressions
 
 template<typename A, typename B>
 auto mmul(A&& a, B&& b) -> temporary_binary_helper<A, B, mmul_expr> {
@@ -652,6 +652,52 @@ template<typename A, typename B, typename C>
 auto strassen_mmul(A&& a, B&& b, C&& c) -> forced_temporary_binary_helper<A, B, C, strassen_mmul_expr> {
     static_assert(is_etl_expr<A>::value && is_etl_expr<B>::value && is_etl_expr<C>::value, "Matrix multiplication only supported for ETL expressions");
     static_assert(decay_traits<A>::dimensions() == 2 && decay_traits<B>::dimensions() == 2 && decay_traits<C>::dimensions() == 2, "Matrix multiplication only works in 2D");
+
+    return {a, b, c};
+}
+
+//}}}
+
+//{{{ Convolution expressions
+
+template<typename A, typename B>
+auto conv_1d_valid(A&& a, B&& b) -> temporary_binary_helper<A, B, conv1_valid_expr> {
+    static_assert(is_etl_expr<A>::value && is_etl_expr<B>::value, "Convolution only supported for ETL expressions");
+
+    return {a, b};
+}
+
+template<typename A, typename B, typename C>
+auto conv_1d_valid(A&& a, B&& b, C&& c) -> forced_temporary_binary_helper<A, B, C, conv1_valid_expr> {
+    static_assert(is_etl_expr<A>::value && is_etl_expr<B>::value && is_etl_expr<C>::value, "Convolution only supported for ETL expressions");
+
+    return {a, b, c};
+}
+
+template<typename A, typename B>
+auto conv_1d_same(A&& a, B&& b) -> temporary_binary_helper<A, B, conv1_same_expr> {
+    static_assert(is_etl_expr<A>::value && is_etl_expr<B>::value, "Convolution only supported for ETL expressions");
+
+    return {a, b};
+}
+
+template<typename A, typename B, typename C>
+auto conv_1d_same(A&& a, B&& b, C&& c) -> forced_temporary_binary_helper<A, B, C, conv1_same_expr> {
+    static_assert(is_etl_expr<A>::value && is_etl_expr<B>::value && is_etl_expr<C>::value, "Convolution only supported for ETL expressions");
+
+    return {a, b, c};
+}
+
+template<typename A, typename B>
+auto conv_1d_full(A&& a, B&& b) -> temporary_binary_helper<A, B, conv1_full_expr> {
+    static_assert(is_etl_expr<A>::value && is_etl_expr<B>::value, "Convolution only supported for ETL expressions");
+
+    return {a, b};
+}
+
+template<typename A, typename B, typename C>
+auto conv_1d_full(A&& a, B&& b, C&& c) -> forced_temporary_binary_helper<A, B, C, conv1_full_expr> {
+    static_assert(is_etl_expr<A>::value && is_etl_expr<B>::value && is_etl_expr<C>::value, "Convolution only supported for ETL expressions");
 
     return {a, b, c};
 }
