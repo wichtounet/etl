@@ -152,7 +152,7 @@ struct basic_conv1_expr {
     
     template<typename A, typename B, typename C, cpp_disable_if_cst(D1)>
     static void check(const A& a, const B& b, const C& c){
-        detail::check_conv_1d_sizes<TT>(a, b, c);
+        detail::check_conv_2d_sizes<TT>(a, b, c);
     }
 
     template<typename A, typename B, typename C>
@@ -209,6 +209,8 @@ struct basic_conv1_expr {
     }
 };
 
+//1D convolution
+
 template<typename T>
 using conv1_valid_expr = basic_conv1_expr<T, true, conv_type::VALID, detail::conv1_valid_impl>;
 
@@ -220,29 +222,14 @@ using conv1_full_expr = basic_conv1_expr<T, true, conv_type::FULL, detail::conv1
 
 //2D convolutions
 
-template<typename I, typename K, typename C>
-C& convolve_2d_full(const I& input, const K& kernel, C&& conv){
+template<typename T>
+using conv2_valid_expr = basic_conv1_expr<T, false, conv_type::VALID, detail::conv2_valid_impl>;
 
-    detail::conv2_full_impl<I,K,C>::apply(input, kernel, std::forward<C>(conv));
+template<typename T>
+using conv2_same_expr = basic_conv1_expr<T, false, conv_type::SAME, detail::conv2_same_impl>;
 
-    return conv;
-}
-
-template<typename I, typename K, typename C>
-C& convolve_2d_same(const I& input, const K& kernel, C&& conv){
-
-    detail::conv2_same_impl<I,K,C>::apply(input, kernel, std::forward<C>(conv));
-
-    return conv;
-}
-
-template<typename I, typename K, typename C>
-C& convolve_2d_valid(const I& input, const K& kernel, C&& conv){
-
-    detail::conv2_valid_impl<I,K,C>::apply(input, kernel, std::forward<C>(conv));
-
-    return conv;
-}
+template<typename T>
+using conv2_full_expr = basic_conv1_expr<T, false, conv_type::FULL, detail::conv2_full_impl>;
 
 //Deep convolutions
 
@@ -252,7 +239,7 @@ C& convolve_deep_full(const I& input, const K& kernel, C&& conv){
     static_assert(dim<0, I>() == dim<0, K>() && dim<0, I>() == dim<0, C>(), "Deep convolution parameters need to have the same first dimension");
 
     for(std::size_t i = 0; i < dim<0>(input); ++i){
-        convolve_2d_full(input(i), kernel(i), conv(i));
+        conv(i)  = conv_2d_full(input(i), kernel(i));
     }
 
     return conv;
@@ -276,7 +263,7 @@ C& convolve_deep_same(const I& input, const K& kernel, C&& conv){
     static_assert(dim<0, I>() == dim<0, K>() && dim<0, I>() == dim<0, C>(), "Deep convolution parameters need to have the same first dimension");
 
     for(std::size_t i = 0; i < dim<0>(input); ++i){
-        convolve_2d_same(input(i), kernel(i), conv(i));
+        conv(i) = conv_2d_same(input(i), kernel(i));
     }
 
     return conv;
@@ -300,7 +287,7 @@ C& convolve_deep_valid(const I& input, const K& kernel, C&& conv){
     static_assert(dim<0, I>() == dim<0, K>() && dim<0, I>() == dim<0, C>(), "Deep convolution parameters need to have the same first dimension");
 
     for(std::size_t i = 0; i < dim<0>(input); ++i){
-        convolve_2d_valid(input(i), kernel(i), conv(i));
+        conv(i) = conv_2d_valid(input(i), kernel(i));
     }
 
     return conv;

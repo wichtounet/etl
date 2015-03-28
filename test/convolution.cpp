@@ -382,7 +382,7 @@ TEMPLATE_TEST_CASE_2( "convolution_2d/full_1", "convolution_2d_full", Z, float, 
     etl::fast_matrix<Z, 2, 2> b = {2.0, 0.0, 0.5, 0.5};
     etl::fast_matrix<Z, 4, 4> c;
 
-    etl::convolve_2d_full(a, b, c);
+    *etl::conv_2d_full(a, b, c);
 
     REQUIRE(c(0,0) == 2.0);
     REQUIRE(c(0,1) == 4.0);
@@ -410,7 +410,7 @@ TEMPLATE_TEST_CASE_2( "convolution_2d/full_2", "convolution_2d_full", Z, float, 
     etl::fast_matrix<Z, 2, 2> b = {2.0, 0.0, 0.5, 0.5};
     etl::fast_matrix<Z, 4, 3> c;
 
-    etl::convolve_2d_full(a, b, c);
+    *etl::conv_2d_full(a, b, c);
 
     REQUIRE(c(0,0) == 2.0);
     REQUIRE(c(0,1) == 4.0);
@@ -434,7 +434,7 @@ TEMPLATE_TEST_CASE_2( "convolution_2d/full_3", "convolution_2d_full", Z, float, 
     etl::fast_matrix<Z, 2, 2> b = {2.0, 1.0, 0.5, 0.5};
     etl::fast_matrix<Z, 3, 3> c;
 
-    etl::convolve_2d_full(a, b, c);
+    *etl::conv_2d_full(a, b, c);
 
     REQUIRE(c(0,0) == 2.0);
     REQUIRE(c(0,1) == 5.0);
@@ -454,7 +454,7 @@ TEMPLATE_TEST_CASE_2( "convolution_2d/full_4", "convolution_2d_full", Z, float, 
     etl::fast_matrix<Z, 2, 2> b(etl::magic(2));
     etl::fast_matrix<Z, 4, 4> c;
 
-    etl::convolve_2d_full(a, b, c);
+    etl::force(etl::conv_2d_full(a, b, c));
 
     REQUIRE(c(0, 0) == 8);
     REQUIRE(c(0, 1) == 25);
@@ -482,7 +482,7 @@ TEMPLATE_TEST_CASE_2( "convolution_2d/full_5", "convolution_2d_full", Z, float, 
     etl::fast_matrix<Z, 3, 3> b(etl::magic(3));
     etl::fast_matrix<Z, 7, 7> c;
 
-    etl::convolve_2d_full(a, b, c);
+    *etl::conv_2d_full(a, b, c);
 
     REQUIRE(c(0, 0) == 136);
     REQUIRE(c(0, 1) == 209);
@@ -510,7 +510,7 @@ TEMPLATE_TEST_CASE_2( "convolution_2d/full_6", "convolution_2d_full", Z, float, 
     etl::fast_matrix<Z, 3, 3> b(etl::magic(3));
     etl::fast_matrix<Z, 19, 19> c;
 
-    etl::convolve_2d_full(a, b, c);
+    *etl::conv_2d_full(a, b, c);
 
     REQUIRE(c(0, 0) == 1240);
     REQUIRE(c(0, 1) == 1547);
@@ -538,7 +538,7 @@ TEMPLATE_TEST_CASE_2( "convolution_2d/full_7", "convolution_2d_full", Z, float, 
     etl::fast_matrix<Z, 2, 2> b = {1,2,3,4};
     etl::fast_matrix<Z, 3, 7> c;
 
-    etl::convolve_2d_full(a, b, c);
+    *etl::conv_2d_full(a, b, c);
 
     REQUIRE(c(0, 0) == 1);
     REQUIRE(c(0, 1) == 4);
@@ -570,7 +570,7 @@ TEMPLATE_TEST_CASE_2( "convolution_2d/full_8", "convolution_2d_full", Z, float, 
     etl::fast_matrix<Z, 9, 9> b(etl::magic(9));
     etl::fast_matrix<Z, 41, 41> c;
 
-    etl::convolve_2d_full(a, b, c);
+    *etl::conv_2d_full(a, b, c);
 
     CHECK(c(0, 0) == 26461);
     CHECK(c(0, 1) == 60760);
@@ -602,7 +602,7 @@ TEMPLATE_TEST_CASE_2( "convolution_2d/same_1", "convolution_2d_same", Z, float, 
     etl::fast_matrix<Z, 2, 2> b = {2.0, 0.0, 0.5, 0.5};
     etl::fast_matrix<Z, 3, 3> c;
 
-    etl::convolve_2d_same(a, b, c);
+    *etl::conv_2d_same(a, b, c);
 
     REQUIRE(c(0,0) == 3.5);
     REQUIRE(c(0,1) == 4.5);
@@ -622,7 +622,7 @@ TEMPLATE_TEST_CASE_2( "convolution_2d/same_2", "convolution_2d_same", Z, float, 
     etl::fast_matrix<Z, 2, 2> b = {2.0, 0.0, 0.5, 0.5};
     etl::fast_matrix<Z, 3, 2> c;
 
-    etl::convolve_2d_same(a, b, c);
+    *etl::conv_2d_same(a, b, c);
 
     REQUIRE(c(0,0) == 3.5);
     REQUIRE(c(0,1) == 1.0);
@@ -639,7 +639,7 @@ TEMPLATE_TEST_CASE_2( "convolution_2d/same_3", "convolution_2d_same", Z, float, 
     etl::fast_matrix<Z, 2, 2> b = {2.0, 1.0, 0.5, 0.5};
     etl::fast_matrix<Z, 2, 2> c;
 
-    etl::convolve_2d_same(a, b, c);
+    *etl::conv_2d_same(a, b, c);
 
     REQUIRE(c(0,0) == 8.5);
     REQUIRE(c(0,1) == 3.0);
@@ -653,7 +653,7 @@ TEMPLATE_TEST_CASE_2( "convolution_2d/same_4", "convolution_2d_same", Z, float, 
     etl::fast_matrix<Z, 2, 2> b(etl::magic(2));
     etl::fast_matrix<Z, 3, 3> c;
 
-    etl::convolve_2d_same(a, b, c);
+    *etl::conv_2d_same(a, b, c);
 
     REQUIRE(c(0, 0) == 34);
     REQUIRE(c(0, 1) == 48);
@@ -673,7 +673,7 @@ TEMPLATE_TEST_CASE_2( "convolution_2d/same_5", "convolution_2d_same", Z, float, 
     etl::fast_matrix<Z, 3, 3> b(etl::magic(3));
     etl::fast_matrix<Z, 5, 5> c;
 
-    etl::convolve_2d_same(a, b, c);
+    *etl::conv_2d_same(a, b, c);
 
     REQUIRE(c(0, 0) == 220);
     REQUIRE(c(0, 1) == 441);
@@ -701,7 +701,7 @@ TEMPLATE_TEST_CASE_2( "convolution_2d/same_6", "convolution_2d_same", Z, float, 
     etl::fast_matrix<Z, 3, 3> b(etl::magic(3));
     etl::fast_matrix<Z, 17, 17> c;
 
-    etl::convolve_2d_same(a, b, c);
+    *etl::conv_2d_same(a, b, c);
 
     REQUIRE(c(0, 0) == 3006);
     REQUIRE(c(0, 1) == 5452);
@@ -729,7 +729,7 @@ TEMPLATE_TEST_CASE_2( "convolution_2d/same_7", "convolution_2d_same", Z, float, 
     etl::fast_matrix<Z, 2, 2> b = {1,2,3,4};
     etl::fast_matrix<Z, 2, 6> c;
 
-    etl::convolve_2d_same(a, b, c);
+    *etl::conv_2d_same(a, b, c);
 
     REQUIRE(c(0, 0) == 32);
     REQUIRE(c(0, 1) == 42);
@@ -751,7 +751,7 @@ TEMPLATE_TEST_CASE_2( "convolution_2d/same_8", "convolution_2d_same", Z, float, 
     etl::fast_matrix<Z, 9, 9> b(etl::magic(9));
     etl::fast_matrix<Z, 33, 33> c;
 
-    etl::convolve_2d_same(a, b, c);
+    *etl::conv_2d_same(a, b, c);
 
     CHECK(c(0, 0) == 676494);
     CHECK(c(0, 1) == 806569);
@@ -784,7 +784,7 @@ TEMPLATE_TEST_CASE_2( "convolution_2d/valid_1", "convolution_2d_valid", Z, float
     etl::fast_matrix<Z, 2, 2> b = {2.0, 0.0, 0.5, 0.5};
     etl::fast_matrix<Z, 2, 2> c;
 
-    etl::convolve_2d_valid(a, b, c);
+    *etl::conv_2d_valid(a, b, c);
 
     REQUIRE(c(0,0) == 3.5);
     REQUIRE(c(0,1) == 4.5);
@@ -798,7 +798,7 @@ TEMPLATE_TEST_CASE_2( "convolution_2d/valid_2", "convolution_2d_valid", Z, float
     etl::fast_matrix<Z, 2, 2> b = {2.0, 0.0, 0.5, 0.5};
     etl::fast_matrix<Z, 2, 1> c;
 
-    etl::convolve_2d_valid(a, b, c);
+    *etl::conv_2d_valid(a, b, c);
 
     REQUIRE(c(0,0) == 3.5);
     REQUIRE(c(1,0) == 4.5);
@@ -809,7 +809,7 @@ TEMPLATE_TEST_CASE_2( "convolution_2d/valid_3", "convolution_2d_valid", Z, float
     etl::fast_matrix<Z, 2, 2> b = {2.0, 1.0, 0.5, 0.5};
     etl::fast_matrix<Z, 1, 1> c;
 
-    etl::convolve_2d_valid(a, b, c);
+    *etl::conv_2d_valid(a, b, c);
 
     REQUIRE(c(0,0) == 8.5);
 }
@@ -819,7 +819,7 @@ TEMPLATE_TEST_CASE_2( "convolution_2d/valid_4", "convolution_2d_valid", Z, float
     etl::fast_matrix<Z, 2, 2> b(etl::magic(2));
     etl::fast_matrix<Z, 2, 2> c;
 
-    etl::convolve_2d_valid(a, b, c);
+    etl::force(etl::conv_2d_valid(a, b, c));
 
     REQUIRE(c(0, 0) == 34);
     REQUIRE(c(0, 1) == 48);
@@ -833,7 +833,7 @@ TEMPLATE_TEST_CASE_2( "convolution_2d/valid_5", "convolution_2d_valid", Z, float
     etl::fast_matrix<Z, 3, 3> b(etl::magic(3));
     etl::fast_matrix<Z, 3, 3> c;
 
-    etl::convolve_2d_valid(a, b, c);
+    *etl::conv_2d_valid(a, b, c);
 
     REQUIRE(c(0, 0) == 595);
     REQUIRE(c(0, 1) == 410);
@@ -853,7 +853,7 @@ TEMPLATE_TEST_CASE_2( "convolution_2d/valid_6", "convolution_2d_valid", Z, float
     etl::fast_matrix<Z, 3, 3> b(etl::magic(3));
     etl::fast_matrix<Z, 15, 15> c;
 
-    etl::convolve_2d_valid(a, b, c);
+    *etl::conv_2d_valid(a, b, c);
 
     REQUIRE(c(0, 0) == 8640);
     REQUIRE(c(0, 1) == 9495);
@@ -881,7 +881,7 @@ TEMPLATE_TEST_CASE_2( "convolution_2d/valid_7", "convolution_2d_valid", Z, float
     etl::fast_matrix<Z, 2, 2> b = {1,2,3,4};
     etl::fast_matrix<Z, 1, 5> c;
 
-    etl::convolve_2d_valid(a, b, c);
+    *etl::conv_2d_valid(a, b, c);
 
     REQUIRE(c(0, 0) == 32);
     REQUIRE(c(0, 1) == 42);
@@ -895,7 +895,7 @@ TEMPLATE_TEST_CASE_2( "convolution_2d/valid_8", "convolution_2d_valid", Z, float
     etl::fast_matrix<Z, 9, 9> b(etl::magic(9));
     etl::fast_matrix<Z, 25, 25> c;
 
-    etl::convolve_2d_valid(a, b, c);
+    *etl::conv_2d_valid(a, b, c);
 
     REQUIRE(c(0, 0) == 2735136);
     REQUIRE(c(0, 1) == 2726136);
@@ -927,7 +927,7 @@ TEMPLATE_TEST_CASE_2( "convolution_2d/dyn_valid_1", "convolution_2d_valid", Z, f
     etl::dyn_matrix<Z> b(2,2, std::initializer_list<Z>({2.0, 0.0, 0.5, 0.5}));
     etl::dyn_matrix<Z> c(2,2);
 
-    etl::convolve_2d_valid(a, b, c);
+    *etl::conv_2d_valid(a, b, c);
 
     REQUIRE(c(0,0) == 3.5);
     REQUIRE(c(0,1) == 4.5);
@@ -941,7 +941,7 @@ TEMPLATE_TEST_CASE_2( "convolution_2d/dyn_valid_2", "convolution_2d_valid", Z, f
     etl::dyn_matrix<Z> b(2,2,std::initializer_list<Z>({2.0, 0.0, 0.5, 0.5}));
     etl::dyn_matrix<Z> c(2,1);
 
-    etl::convolve_2d_valid(a, b, c);
+    *etl::conv_2d_valid(a, b, c);
 
     REQUIRE(c(0,0) == 3.5);
     REQUIRE(c(1,0) == 4.5);
@@ -952,7 +952,7 @@ TEMPLATE_TEST_CASE_2( "convolution_2d/dyn_valid_3", "convolution_2d_valid", Z, f
     etl::dyn_matrix<Z> b(2,2,std::initializer_list<Z>({2.0, 1.0, 0.5, 0.5}));
     etl::dyn_matrix<Z> c(1,1);
 
-    etl::convolve_2d_valid(a, b, c);
+    *etl::conv_2d_valid(a, b, c);
 
     REQUIRE(c(0,0) == 8.5);
 }
@@ -1002,7 +1002,7 @@ TEMPLATE_TEST_CASE_2( "convolution_2d/sub_1", "convolution_2d_full", Z, float, d
     etl::fast_matrix<Z, 1, 2, 2> b = {2.0, 0.0, 0.5, 0.5};
     etl::fast_matrix<Z, 1, 4, 4> c;
 
-    etl::convolve_2d_full(a(0), b(0), c(0));
+    *etl::conv_2d_full(a(0), b(0), c(0));
 
     REQUIRE(c(0,0,0) == 2.0);
     REQUIRE(c(0,0,1) == 4.0);
@@ -1030,7 +1030,7 @@ TEMPLATE_TEST_CASE_2( "convolution_2d/sub_2", "convolution_2d_same", Z, float, d
     etl::fast_matrix<Z, 1, 2, 2> b = {2.0, 0.0, 0.5, 0.5};
     etl::fast_matrix<Z, 1, 3, 3> c;
 
-    etl::convolve_2d_same(a(0), b(0), c(0));
+    *etl::conv_2d_same(a(0), b(0), c(0));
 
     REQUIRE(c(0,0,0) == 3.5);
     REQUIRE(c(0,0,1) == 4.5);
@@ -1050,7 +1050,7 @@ TEMPLATE_TEST_CASE_2( "convolution_2d/sub_3", "convolution_2d_valid", Z, float, 
     etl::fast_matrix<Z, 1, 2, 2> b = {2.0, 0.0, 0.5, 0.5};
     etl::fast_matrix<Z, 1, 2, 2> c;
 
-    etl::convolve_2d_valid(a(0), b(0), c(0));
+    *etl::conv_2d_valid(a(0), b(0), c(0));
 
     REQUIRE(c(0,0,0) == 3.5);
     REQUIRE(c(0,0,1) == 4.5);

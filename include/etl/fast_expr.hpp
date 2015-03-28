@@ -702,6 +702,48 @@ auto conv_1d_full(A&& a, B&& b, C&& c) -> forced_temporary_binary_helper<A, B, C
     return {a, b, c};
 }
 
+template<typename A, typename B>
+auto conv_2d_valid(A&& a, B&& b) -> temporary_binary_helper<A, B, conv2_valid_expr> {
+    static_assert(is_etl_expr<A>::value && is_etl_expr<B>::value, "Convolution only supported for ETL expressions");
+
+    return {a, b};
+}
+
+template<typename A, typename B, typename C>
+auto conv_2d_valid(A&& a, B&& b, C&& c) -> forced_temporary_binary_helper<A, B, C, conv2_valid_expr> {
+    static_assert(is_etl_expr<A>::value && is_etl_expr<B>::value && is_etl_expr<C>::value, "Convolution only supported for ETL expressions");
+
+    return {a, b, c};
+}
+
+template<typename A, typename B>
+auto conv_2d_same(A&& a, B&& b) -> temporary_binary_helper<A, B, conv2_same_expr> {
+    static_assert(is_etl_expr<A>::value && is_etl_expr<B>::value, "Convolution only supported for ETL expressions");
+
+    return {a, b};
+}
+
+template<typename A, typename B, typename C>
+auto conv_2d_same(A&& a, B&& b, C&& c) -> forced_temporary_binary_helper<A, B, C, conv2_same_expr> {
+    static_assert(is_etl_expr<A>::value && is_etl_expr<B>::value && is_etl_expr<C>::value, "Convolution only supported for ETL expressions");
+
+    return {a, b, c};
+}
+
+template<typename A, typename B>
+auto conv_2d_full(A&& a, B&& b) -> temporary_binary_helper<A, B, conv2_full_expr> {
+    static_assert(is_etl_expr<A>::value && is_etl_expr<B>::value, "Convolution only supported for ETL expressions");
+
+    return {a, b};
+}
+
+template<typename A, typename B, typename C>
+auto conv_2d_full(A&& a, B&& b, C&& c) -> forced_temporary_binary_helper<A, B, C, conv2_full_expr> {
+    static_assert(is_etl_expr<A>::value && is_etl_expr<B>::value && is_etl_expr<C>::value, "Convolution only supported for ETL expressions");
+
+    return {a, b, c};
+}
+
 //}}}
 
 //{{{ Apply a reduction on an ETL expression (vector,matrix,binary,unary)
