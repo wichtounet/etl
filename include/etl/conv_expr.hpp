@@ -106,19 +106,18 @@ void check_conv_2d_sizes(const I&, const K&, const C&){
 
 } //end of namespace detail
 
-//D1 = 1D
-template<typename T, bool D1, conv_type TT, template<typename...> class Impl>
+template<typename T, std::size_t D, conv_type TT, template<typename...> class Impl>
 struct basic_conv1_expr {
-    using this_type = basic_conv1_expr<T, D1, TT, Impl>;
+    using this_type = basic_conv1_expr<T, D, TT, Impl>;
 
-    template<typename A, typename B, std::size_t D>
+    template<typename A, typename B, std::size_t DD>
     static constexpr std::size_t dim(){
         if(TT == conv_type::VALID){
-            return decay_traits<A>::template dim<D>() - decay_traits<B>::template dim<D>() + 1;
+            return decay_traits<A>::template dim<DD>() - decay_traits<B>::template dim<DD>() + 1;
         } else if(TT == conv_type::SAME){
-            return decay_traits<A>::template dim<D>();
+            return decay_traits<A>::template dim<DD>();
         } else {
-            return decay_traits<A>::template dim<D>() + decay_traits<B>::template dim<D>() - 1;
+            return decay_traits<A>::template dim<DD>() + decay_traits<B>::template dim<DD>() - 1;
         }
     }
 
@@ -145,12 +144,12 @@ struct basic_conv1_expr {
         return new result_type<A, B>(this_type::dim(a, b, 0));
     }
 
-    template<typename A, typename B, typename C, cpp_enable_if_cst(D1)>
+    template<typename A, typename B, typename C, cpp_enable_if_cst(D == 1)>
     static void check(const A& a, const B& b, const C& c){
         detail::check_conv_1d_sizes<TT>(a, b, c);
     }
     
-    template<typename A, typename B, typename C, cpp_disable_if_cst(D1)>
+    template<typename A, typename B, typename C, cpp_disable_if_cst(D == 1)>
     static void check(const A& a, const B& b, const C& c){
         detail::check_conv_2d_sizes<TT>(a, b, c);
     }
@@ -176,7 +175,7 @@ struct basic_conv1_expr {
 
     template<typename A, typename B>
     static std::size_t size(const A& a, const B& b){
-        if(D1){
+        if(D == 1){
             return this_type::dim(a, b, 0);
         } else {
             return this_type::dim(a, b, 0) * this_type::dim(a, b, 1);
@@ -194,42 +193,42 @@ struct basic_conv1_expr {
         }
     }
 
-    template<typename A, typename B, cpp_enable_if_cst(D1)>
+    template<typename A, typename B, cpp_enable_if_cst(D == 1)>
     static constexpr std::size_t size(){
         return this_type::dim<A, B, 0>();
     }
 
-    template<typename A, typename B, cpp_disable_if_cst(D1)>
+    template<typename A, typename B, cpp_disable_if_cst(D == 1)>
     static constexpr std::size_t size(){
         return this_type::dim<A, B, 0>() * this_type::dim<A, B, 1>();
     }
 
     static constexpr std::size_t dimensions(){
-        return D1 ? 1 : 2;
+        return D;
     }
 };
 
 //1D convolution
 
 template<typename T>
-using conv1_valid_expr = basic_conv1_expr<T, true, conv_type::VALID, detail::conv1_valid_impl>;
+using conv1_valid_expr = basic_conv1_expr<T, 1, conv_type::VALID, detail::conv1_valid_impl>;
 
 template<typename T>
-using conv1_same_expr = basic_conv1_expr<T, true, conv_type::SAME, detail::conv1_same_impl>;
+using conv1_same_expr = basic_conv1_expr<T, 1, conv_type::SAME, detail::conv1_same_impl>;
 
 template<typename T>
-using conv1_full_expr = basic_conv1_expr<T, true, conv_type::FULL, detail::conv1_full_impl>;
+using conv1_full_expr = basic_conv1_expr<T, 1, conv_type::FULL, detail::conv1_full_impl>;
 
 //2D convolutions
 
 template<typename T>
-using conv2_valid_expr = basic_conv1_expr<T, false, conv_type::VALID, detail::conv2_valid_impl>;
+using conv2_valid_expr = basic_conv1_expr<T, 2, conv_type::VALID, detail::conv2_valid_impl>;
 
 template<typename T>
-using conv2_same_expr = basic_conv1_expr<T, false, conv_type::SAME, detail::conv2_same_impl>;
+using conv2_same_expr = basic_conv1_expr<T, 2, conv_type::SAME, detail::conv2_same_impl>;
 
 template<typename T>
-using conv2_full_expr = basic_conv1_expr<T, false, conv_type::FULL, detail::conv2_full_impl>;
+using conv2_full_expr = basic_conv1_expr<T, 2, conv_type::FULL, detail::conv2_full_impl>;
 
 //Deep convolutions
 
