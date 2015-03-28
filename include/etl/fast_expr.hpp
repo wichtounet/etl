@@ -55,6 +55,12 @@ using temporary_binary_helper = temporary_binary_expr<value_t<A>, build_type<A>,
 template<typename A, typename B, typename C, template<typename> class OP>
 using forced_temporary_binary_helper = temporary_binary_expr<value_t<A>, build_type<A>, build_type<B>, OP<value_t<A>>, build_identity_type<C>>;
 
+template<typename A, typename B, template<typename, std::size_t> class OP, std::size_t D>
+using dim_temporary_binary_helper = temporary_binary_expr<value_t<A>, build_type<A>, build_type<B>, OP<value_t<A>, D>, void>;
+
+template<typename A, typename B, typename C, template<typename, std::size_t> class OP, std::size_t D>
+using dim_forced_temporary_binary_helper = temporary_binary_expr<value_t<A>, build_type<A>, build_type<B>, OP<value_t<A>, D>, build_identity_type<C>>;
+
 //{{{ Build binary expressions from two ETL expressions (vector,matrix,binary,unary)
 
 template<typename LE, typename RE, cpp::enable_if_all_u<is_etl_expr<LE>::value, is_etl_expr<RE>::value> = cpp::detail::dummy>
@@ -739,6 +745,48 @@ auto conv_2d_full(A&& a, B&& b) -> temporary_binary_helper<A, B, conv2_full_expr
 
 template<typename A, typename B, typename C>
 auto conv_2d_full(A&& a, B&& b, C&& c) -> forced_temporary_binary_helper<A, B, C, conv2_full_expr> {
+    static_assert(is_etl_expr<A>::value && is_etl_expr<B>::value && is_etl_expr<C>::value, "Convolution only supported for ETL expressions");
+
+    return {a, b, c};
+}
+
+template<typename A, typename B>
+auto conv_deep_valid(A&& a, B&& b) -> dim_temporary_binary_helper<A, B, conv_deep_valid_expr, decay_traits<A>::dimensions()> {
+    static_assert(is_etl_expr<A>::value && is_etl_expr<B>::value, "Convolution only supported for ETL expressions");
+
+    return {a, b};
+}
+
+template<typename A, typename B, typename C>
+auto conv_deep_valid(A&& a, B&& b, C&& c) -> dim_forced_temporary_binary_helper<A, B, C, conv_deep_valid_expr, decay_traits<A>::dimensions()> {
+    static_assert(is_etl_expr<A>::value && is_etl_expr<B>::value && is_etl_expr<C>::value, "Convolution only supported for ETL expressions");
+
+    return {a, b, c};
+}
+
+template<typename A, typename B>
+auto conv_deep_same(A&& a, B&& b) -> dim_temporary_binary_helper<A, B, conv_deep_same_expr, decay_traits<A>::dimensions()> {
+    static_assert(is_etl_expr<A>::value && is_etl_expr<B>::value, "Convolution only supported for ETL expressions");
+
+    return {a, b};
+}
+
+template<typename A, typename B, typename C>
+auto conv_deep_same(A&& a, B&& b, C&& c) -> dim_forced_temporary_binary_helper<A, B, C, conv_deep_same_expr, decay_traits<A>::dimensions()> {
+    static_assert(is_etl_expr<A>::value && is_etl_expr<B>::value && is_etl_expr<C>::value, "Convolution only supported for ETL expressions");
+
+    return {a, b, c};
+}
+
+template<typename A, typename B>
+auto conv_deep_full(A&& a, B&& b) -> dim_temporary_binary_helper<A, B, conv_deep_full_expr, decay_traits<A>::dimensions()> {
+    static_assert(is_etl_expr<A>::value && is_etl_expr<B>::value, "Convolution only supported for ETL expressions");
+
+    return {a, b};
+}
+
+template<typename A, typename B, typename C>
+auto conv_deep_full(A&& a, B&& b, C&& c) -> dim_forced_temporary_binary_helper<A, B, C, conv_deep_full_expr, decay_traits<A>::dimensions()> {
     static_assert(is_etl_expr<A>::value && is_etl_expr<B>::value && is_etl_expr<C>::value, "Convolution only supported for ETL expressions");
 
     return {a, b, c};

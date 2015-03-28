@@ -17,6 +17,12 @@
 
 namespace etl {
 
+enum class conv_type {
+    VALID,
+    SAME,
+    FULL
+};
+
 namespace detail {
 
 template<typename I, typename K, typename C>
@@ -69,6 +75,46 @@ struct conv2_valid_impl {
         impl::standard::conv2_valid(input, kernel, conv);
     }
 };
+
+template<conv_type TT, typename I, typename K, typename C, typename Enable = void>
+struct conv_deep_impl {
+    template<cpp_enable_if_cst(decay_traits<I>::dimensions() == 3 && TT == conv_type::FULL)>
+    static void apply(const I& input, const K& kernel, C&& conv){
+        for(std::size_t i = 0; i < dim<0>(input); ++i){
+            conv(i) = conv_2d_full(input(i), kernel(i)/*, conv(i)*/);
+        }
+    }
+
+    template<cpp_enable_if_cst(decay_traits<I>::dimensions() == 3 && TT == conv_type::SAME)>
+    static void apply(const I& input, const K& kernel, C&& conv){
+        for(std::size_t i = 0; i < dim<0>(input); ++i){
+            conv(i) = conv_2d_same(input(i), kernel(i)/*, conv(i)*/);
+        }
+    }
+
+    template<cpp_enable_if_cst(decay_traits<I>::dimensions() == 3 && TT == conv_type::VALID)>
+    static void apply(const I& input, const K& kernel, C&& conv){
+        for(std::size_t i = 0; i < dim<0>(input); ++i){
+            conv(i) = conv_2d_valid(input(i), kernel(i)/*, conv(i)*/);
+        }
+    }
+
+    template<cpp_enable_if_cst((decay_traits<I>::dimensions() > 3))>
+    static void apply(const I& input, const K& kernel, C&& conv){
+        for(std::size_t i = 0; i < dim<0>(input); ++i){
+            conv_deep_impl<TT, decltype(input(i)), decltype(kernel(i)), decltype(conv(i))>::apply(input(i), kernel(i), conv(i));
+        }
+    }
+};
+
+template<typename I, typename K, typename C>
+using conv_deep_valid_impl = conv_deep_impl<conv_type::VALID, I, K, C>;
+
+template<typename I, typename K, typename C>
+using conv_deep_same_impl = conv_deep_impl<conv_type::SAME, I, K, C>;
+
+template<typename I, typename K, typename C>
+using conv_deep_full_impl = conv_deep_impl<conv_type::FULL, I, K, C>;
 
 #ifdef ETL_VECTORIZE
 

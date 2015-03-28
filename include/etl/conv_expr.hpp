@@ -20,12 +20,6 @@
 
 namespace etl {
 
-enum class conv_type {
-    VALID,
-    SAME,
-    FULL
-};
-
 namespace detail {
 
 template<conv_type TT, typename I, typename K, typename C, cpp::disable_if_all_u<etl_traits<I>::is_fast, etl_traits<K>::is_fast, etl_traits<C>::is_fast> = cpp::detail::dummy>
@@ -104,6 +98,54 @@ void check_conv_2d_sizes(const I&, const K&, const C&){
         "Invalid sizes for 'valid'convolution");
 }
 
+template<conv_type TT, typename I, typename K, typename C, cpp_enable_if(etl_traits<I>::dimensions() == 3 && etl_traits<I>::is_fast && etl_traits<K>::is_fast && etl_traits<C>::is_fast)>
+void check_conv_deep_sizes(const I& i, const K& k, const C& c){
+    static_assert(etl_traits<I>::dimensions() == 3 && etl_traits<K>::dimensions() == 3 && etl_traits<C>::dimensions() == 3, "Invalid dimensions for 3D convolution");
+
+    static_assert(
+            decay_traits<I>::template dim<0>() == decay_traits<K>::template dim<0>()
+        &&  decay_traits<K>::template dim<0>() == decay_traits<C>::template dim<0>(),
+        "Deep convolution parameters need to have the same first dimension");
+
+    detail::check_conv_2d_sizes<TT>(i(0), k(0), c(0));
+}
+
+template<conv_type TT, typename I, typename K, typename C, cpp_enable_if((etl_traits<I>::dimensions() > 3) && etl_traits<I>::is_fast && etl_traits<K>::is_fast && etl_traits<C>::is_fast)>
+void check_conv_deep_sizes(const I& i, const K& k, const C& c){
+    static_assert(etl_traits<I>::dimensions() == etl_traits<K>::dimensions() && etl_traits<K>::dimensions() == etl_traits<C>::dimensions(), "Invalid dimensions for 3D convolution");
+
+    static_assert(
+            decay_traits<I>::template dim<0>() == decay_traits<K>::template dim<0>()
+        &&  decay_traits<K>::template dim<0>() == decay_traits<C>::template dim<0>(),
+        "Deep convolution parameters need to have the same first dimension");
+
+    detail::check_conv_deep_sizes<TT>(i(0), k(0), c(0));
+}
+
+template<conv_type TT, typename I, typename K, typename C, cpp_enable_if(etl_traits<I>::dimensions() == 3 && (!etl_traits<I>::is_fast || !etl_traits<K>::is_fast || !etl_traits<C>::is_fast))>
+void check_conv_deep_sizes(const I& i, const K& k, const C& c){
+    static_assert(etl_traits<I>::dimensions() == 3 && etl_traits<K>::dimensions() == 3 && etl_traits<C>::dimensions() == 3, "Invalid dimensions for 3D convolution");
+
+    cpp_assert(
+            decay_traits<I>::dim(i, 0) == decay_traits<K>::dim(k, 0)
+        &&  decay_traits<K>::dim(k, 0) == decay_traits<C>::dim(c, 0),
+        "Deep convolution parameters need to have the same first dimension");
+
+    detail::check_conv_2d_sizes<TT>(i(0), k(0), c(0));
+}
+
+template<conv_type TT, typename I, typename K, typename C, cpp_enable_if((etl_traits<I>::dimensions() > 3) && (!etl_traits<I>::is_fast || !etl_traits<K>::is_fast || !etl_traits<C>::is_fast))>
+void check_conv_deep_sizes(const I& i, const K& k, const C& c){
+    static_assert(etl_traits<I>::dimensions() == etl_traits<K>::dimensions() && etl_traits<K>::dimensions() == etl_traits<C>::dimensions(), "Invalid dimensions for 3D convolution");
+
+    cpp_assert(
+            decay_traits<I>::dim(i, 0) == decay_traits<K>::dim(k, 0)
+        &&  decay_traits<K>::dim(k, 0) == decay_traits<C>::dim(c, 0),
+        "Deep convolution parameters need to have the same first dimension");
+
+    detail::check_conv_deep_sizes<TT>(i(0), k(0), c(0));
+}
+
 } //end of namespace detail
 
 template<typename T, std::size_t D, conv_type TT, template<typename...> class Impl>
@@ -112,12 +154,16 @@ struct basic_conv1_expr {
 
     template<typename A, typename B, std::size_t DD>
     static constexpr std::size_t dim(){
-        if(TT == conv_type::VALID){
-            return decay_traits<A>::template dim<DD>() - decay_traits<B>::template dim<DD>() + 1;
-        } else if(TT == conv_type::SAME){
+        if(D > 2 && DD < (D - 2)){
             return decay_traits<A>::template dim<DD>();
         } else {
-            return decay_traits<A>::template dim<DD>() + decay_traits<B>::template dim<DD>() - 1;
+            if(TT == conv_type::VALID){
+                return decay_traits<A>::template dim<DD>() - decay_traits<B>::template dim<DD>() + 1;
+            } else if(TT == conv_type::SAME){
+                return decay_traits<A>::template dim<DD>();
+            } else {
+                return decay_traits<A>::template dim<DD>() + decay_traits<B>::template dim<DD>() - 1;
+            }
         }
     }
 
@@ -148,10 +194,15 @@ struct basic_conv1_expr {
     static void check(const A& a, const B& b, const C& c){
         detail::check_conv_1d_sizes<TT>(a, b, c);
     }
-    
+
     template<typename A, typename B, typename C, cpp_enable_if_cst(D == 2)>
     static void check(const A& a, const B& b, const C& c){
         detail::check_conv_2d_sizes<TT>(a, b, c);
+    }
+
+    template<typename A, typename B, typename C, cpp_enable_if_cst(D > 2)>
+    static void check(const A& a, const B& b, const C& c){
+        detail::check_conv_deep_sizes<TT>(a, b, c);
     }
 
     template<typename A, typename B, typename C>
@@ -174,33 +225,43 @@ struct basic_conv1_expr {
     }
 
     template<typename A, typename B>
-    static std::size_t size(const A& a, const B& b){
-        if(D == 1){
-            return this_type::dim(a, b, 0);
+    static std::size_t dim(const A& a, const B& b, std::size_t d){
+        if(D > 2 && d < (D - 2)){
+            return etl_traits<A>::dim(a, d);
         } else {
-            return this_type::dim(a, b, 0) * this_type::dim(a, b, 1);
+            if(TT == conv_type::VALID){
+                return etl_traits<A>::dim(a, d) - etl_traits<B>::dim(b, d) + 1;
+            } else if(TT == conv_type::SAME){
+                return etl_traits<A>::dim(a, d);
+            } else {
+                return etl_traits<A>::dim(a, d) + etl_traits<B>::dim(b, d) + 1;
+            }
         }
     }
 
     template<typename A, typename B>
-    static std::size_t dim(const A& a, const B& b, std::size_t d){
-        if(TT == conv_type::VALID){
-            return etl_traits<A>::dim(a, d) - etl_traits<B>::dim(b, d) + 1;
-        } else if(TT == conv_type::SAME){
-            return etl_traits<A>::dim(a, d);
-        } else {
-            return etl_traits<A>::dim(a, d) + etl_traits<B>::dim(b, d) + 1;
+    static std::size_t size(const A& a, const B& b){
+        if(D > 2){
+            std::size_t acc = 1;
+            for(std::size_t i = 0; i < D; ++i){
+                acc *= this_type::dim(a, b, i);
+            }
+            return acc;
+        } else if(D == 1){
+            return this_type::dim(a, b, 0);
+        } else if(D == 2){
+            return this_type::dim(a, b, 0) * this_type::dim(a, b, 1);
         }
     }
 
-    template<typename A, typename B, cpp_enable_if_cst(D == 1)>
-    static constexpr std::size_t size(){
-        return this_type::dim<A, B, 0>();
+    template<typename A, typename B, std::size_t... I>
+    static constexpr std::size_t size_mul(const std::index_sequence<I...>& ){
+        return mul_all<this_type::dim<A, B, I>()...>::value;
     }
 
-    template<typename A, typename B, cpp_enable_if_cst(D == 2)>
+    template<typename A, typename B>
     static constexpr std::size_t size(){
-        return this_type::dim<A, B, 0>() * this_type::dim<A, B, 1>();
+        return size_mul<A, B>(std::make_index_sequence<D>());
     }
 
     static constexpr std::size_t dimensions(){
@@ -229,6 +290,17 @@ using conv2_same_expr = basic_conv1_expr<T, 2, conv_type::SAME, detail::conv2_sa
 
 template<typename T>
 using conv2_full_expr = basic_conv1_expr<T, 2, conv_type::FULL, detail::conv2_full_impl>;
+
+//>2D convolutions
+
+template<typename T, std::size_t D>
+using conv_deep_valid_expr = basic_conv1_expr<T, D, conv_type::VALID, detail::conv_deep_valid_impl>;
+
+template<typename T, std::size_t D>
+using conv_deep_same_expr = basic_conv1_expr<T, D, conv_type::SAME, detail::conv_deep_same_impl>;
+
+template<typename T, std::size_t D>
+using conv_deep_full_expr = basic_conv1_expr<T, D, conv_type::FULL, detail::conv_deep_full_impl>;
 
 //Deep convolutions
 
