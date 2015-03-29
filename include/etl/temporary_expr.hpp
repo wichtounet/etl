@@ -123,7 +123,10 @@ public:
     void direct_evaluate(Result&& r){
         evaluate();
 
-        r = result();
+        //TODO Normally, this should not be necessary
+        if(&r != &result()){
+            r = result();
+        }
     }
 
     void allocate_temporary() const {
@@ -132,11 +135,6 @@ public:
 
 private:
     result_type& result(){
-        //Note: This is necessary to allow direct to the expression wihout passing by the evaluator
-        if(cpp_unlikely(!evaluated)){
-            evaluate();
-        }
-
         return _c;
     }
 };
@@ -149,7 +147,7 @@ public:
     using value_type = T;
     using result_type = typename Op::template result_type<AExpr, BExpr>;
 
-private:
+//private:
     static_assert(cpp::and_c<is_etl_expr<AExpr>, is_etl_expr<BExpr>>::value,
         "Both arguments must be ETL expr");
 
@@ -171,13 +169,15 @@ public:
     }
 
     //Copy an expression
-    temporary_binary_expr(const temporary_binary_expr& e) : _a(e._a), _b(e._b) {
+    temporary_binary_expr(const temporary_binary_expr& e) : _a(e._a), _b(e._b), result_ptr(e.result_ptr), temporary(e.temporary), evaluated(e.evaluated) {
         //Nothing else to init
     }
 
     //Move an expression
-    temporary_binary_expr(temporary_binary_expr&& e) : _a(e._a), _b(e._b) {
-        //Nothing else to init
+    temporary_binary_expr(temporary_binary_expr&& e) : _a(e._a), _b(e._b), result_ptr(e.result_ptr), temporary(e.temporary), evaluated(e.evaluated) {
+        e.temporary = false;
+        e.evaluated = false;
+        e.result_ptr = nullptr;
     }
 
     //Expressions are invariant
@@ -247,11 +247,6 @@ public:
 
     void evaluate() const {
         if(!evaluated){
-            //Note: This is necessary to allow direct to the expression wihout passing by the evaluator
-            if(cpp_unlikely(!result_ptr)){
-                allocate_temporary();
-            }
-
             Op::apply(a(), b(), *result_ptr);
             evaluated = true;
         }
@@ -274,11 +269,6 @@ public:
 
 private:
     result_type& result() const {
-        //Note: This is necessary to allow direct to the expression wihout passing by the evaluator
-        if(cpp_unlikely(!evaluated)){
-            evaluate();
-        }
-
         return *result_ptr;
     }
 };
