@@ -48,7 +48,7 @@ TEMPLATE_TEST_CASE_2( "multiplication/mmul3", "mmul", Z, double, float) {
     etl::fast_matrix<Z, 3, 3> a = {1,2,3,4,5,6,7,8,9};
     etl::fast_matrix<Z, 3, 3> b = {7,8,9,9,10,11,11,12,13};
 
-    auto c = etl::mmul(a, b);
+    auto c = *etl::mmul(a, b);
 
     REQUIRE(c(0,0) == 58);
     REQUIRE(c(0,1) == 64);
@@ -299,7 +299,7 @@ TEMPLATE_TEST_CASE_2( "multiplication/mmul_2_5", "mmul", Z, double, float) {
     etl::fast_matrix<Z, 2, 3> a = {1,2,3,4,5,6};
     etl::fast_matrix<Z, 3, 2> b = {7,8,9,10,11,12};
 
-    auto c = etl::mmul(a, b);
+    auto c = *etl::mmul(a, b);
 
     REQUIRE(c(0,0) == 58);
     REQUIRE(c(0,1) == 64);
