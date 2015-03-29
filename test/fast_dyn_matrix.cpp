@@ -218,7 +218,7 @@ TEMPLATE_TEST_CASE_2( "fast_dyn_matrix/special_2", "", Z, float, double ) {
 
     a = b;
 
-    REQUIRE(a.size() == 4);
+    REQUIRE(a.size() == 12);
 
     for(std::size_t i = 0; i < a.size(); ++i){
         REQUIRE(a[i] == Z(4.4));
