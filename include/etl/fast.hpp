@@ -174,9 +174,26 @@ public:
 
     //Copy assignment operator
 
+    template<cpp_enable_if_cst(matrix_detail::is_vector<ST>::value)>
     fast_matrix_impl& operator=(const fast_matrix_impl& rhs) noexcept {
-        std::copy(rhs.begin(), rhs.end(), begin());
+        if(this != &rhs){
+            _data = rhs._data;
+        }
+        return *this;
+    }
 
+    template<cpp_disable_if_cst(matrix_detail::is_vector<ST>::value)>
+    fast_matrix_impl& operator=(const fast_matrix_impl& rhs) noexcept {
+        if(this != &rhs){
+            std::copy(rhs.begin(), rhs.end(), begin());
+        }
+        return *this;
+    }
+
+    template<std::size_t... SDims>
+    fast_matrix_impl& operator=(const fast_matrix_impl<T, ST, SDims...>& rhs) noexcept {
+        ensure_same_size(*this, rhs);
+        _data = rhs._data;
         return *this;
     }
 
@@ -216,6 +233,16 @@ public:
     }
 
     //Prohibit move
+
+    template<cpp_enable_if_cst(matrix_detail::is_vector<ST>::value)>
+    fast_matrix_impl& operator=(fast_matrix_impl&& rhs){
+        if(this != &rhs){
+            _data = std::move(rhs._data);
+        }
+        return *this;
+    }
+
+    template<cpp_disable_if_cst(matrix_detail::is_vector<ST>::value)>
     fast_matrix_impl& operator=(fast_matrix_impl&& rhs) = delete;
 
     //}}}
