@@ -190,3 +190,45 @@ TEMPLATE_TEST_CASE_2( "fast_dyn_matrix/complex", "fast_dyn_matrix::complex", Z, 
 }
 
 //}}} Complex tests
+
+TEMPLATE_TEST_CASE_2( "fast_dyn_matrix/special_1", "", Z, float, double ) {
+    etl::fast_dyn_matrix<Z, 2, 2> a(3.3);
+    etl::fast_matrix<Z, 2, 2> b(4.4);
+
+    a = b;
+
+    REQUIRE(a.size() == 4);
+
+    for(std::size_t i = 0; i < a.size(); ++i){
+        REQUIRE(a[i] == Z(4.4));
+    }
+
+    a = 3.3;
+
+    b = a;
+
+    for(std::size_t i = 0; i < a.size(); ++i){
+        REQUIRE(b[i] == Z(3.3));
+    }
+}
+
+TEMPLATE_TEST_CASE_2( "fast_dyn_matrix/special_2", "", Z, float, double ) {
+    etl::fast_dyn_matrix<Z, 4, 3> a(3.3);
+    etl::fast_matrix<Z, 2, 6> b(4.4);
+
+    a = b;
+
+    REQUIRE(a.size() == 4);
+
+    for(std::size_t i = 0; i < a.size(); ++i){
+        REQUIRE(a[i] == Z(4.4));
+    }
+
+    a = 3.3;
+
+    b = a;
+
+    for(std::size_t i = 0; i < b.size(); ++i){
+        REQUIRE(b[i] == Z(3.3));
+    }
+}
