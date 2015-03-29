@@ -75,8 +75,7 @@ struct standard_evaluator {
     template<typename E, cpp_enable_if(cpp::is_specialization_of<etl::temporary_binary_expr, std::decay_t<E>>::value)>
     static void evaluate(E&& expr){
         detail::temporary_allocator_static_visitor visitor;
-        visitor(expr.a());
-        visitor(expr.b());
+        visitor(expr);
 
         expr.evaluate();
     }
