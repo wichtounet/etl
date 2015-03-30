@@ -155,8 +155,7 @@ private:
 
     AExpr _a;
     BExpr _b;
-    mutable result_type* result_ptr = nullptr;
-    mutable bool temporary = true;
+    mutable std::shared_ptr<result_type> result_ptr;
     mutable bool evaluated = false;
 
 public:
@@ -169,13 +168,12 @@ public:
     }
 
     //Copy an expression
-    temporary_binary_expr(const temporary_binary_expr& e) : _a(e._a), _b(e._b), result_ptr(e.result_ptr), temporary(e.temporary), evaluated(e.evaluated) {
+    temporary_binary_expr(const temporary_binary_expr& e) : _a(e._a), _b(e._b), result_ptr(e.result_ptr), evaluated(e.evaluated) {
         //Nothing else to init
     }
 
     //Move an expression
-    temporary_binary_expr(temporary_binary_expr&& e) : _a(e._a), _b(e._b), result_ptr(e.result_ptr), temporary(e.temporary), evaluated(e.evaluated) {
-        e.temporary = false;
+    temporary_binary_expr(temporary_binary_expr&& e) : _a(e._a), _b(e._b), result_ptr(e.result_ptr), evaluated(e.evaluated) {
         e.evaluated = false;
         e.result_ptr = nullptr;
     }
@@ -183,14 +181,6 @@ public:
     //Expressions are invariant
     temporary_binary_expr& operator=(const temporary_binary_expr&) = delete;
     temporary_binary_expr& operator=(temporary_binary_expr&&) = delete;
-
-    ~temporary_binary_expr(){
-        if(temporary){
-            if(result_ptr){
-                delete result_ptr;
-            }
-        }
-    }
 
     //Accessors
 
@@ -258,13 +248,9 @@ public:
     }
 
     void allocate_temporary() const {
-        result_ptr = Op::allocate(_a, _b);
-        temporary = true;
-    }
-
-    void give_result(result_type* r) const {
-        result_ptr = r;
-        temporary = false;
+        if(!result_ptr){
+            result_ptr.reset(Op::allocate(_a, _b));
+        }
     }
 
 private:
