@@ -212,6 +212,8 @@ void measure_full_convolution_1d(A& a, B& b, C& c){
     measure_sub<F>("avx", [&a, &b, &c](auto&){etl::impl::avx::sconv1_full(a, b, c);} , a, b);
     measure_sub<!F>("avx", [&a, &b, &c](auto&){etl::impl::avx::dconv1_full(a, b, c);} , a, b);
 #endif
+
+    cpp_unused(F);
 }
 
 template<std::size_t D1, std::size_t D2>
@@ -269,6 +271,8 @@ void measure_same_convolution_1d(A& a, B& b, C& c){
     measure_sub<F>("avx", [&a, &b, &c](auto&){etl::impl::avx::sconv1_same(a, b, c);} , a, b);
     measure_sub<!F>("avx", [&a, &b, &c](auto&){etl::impl::avx::dconv1_same(a, b, c);} , a, b);
 #endif
+
+    cpp_unused(F);
 }
 
 template<std::size_t D1, std::size_t D2>
@@ -326,6 +330,8 @@ void measure_valid_convolution_1d(A& a, B& b, C& c){
     measure_sub<F>("avx", [&a, &b, &c](auto&){etl::impl::avx::sconv1_valid(a, b, c);} , a, b);
     measure_sub<!F>("avx", [&a, &b, &c](auto&){etl::impl::avx::dconv1_valid(a, b, c);} , a, b);
 #endif
+
+    cpp_unused(F);
 }
 
 template<std::size_t D1, std::size_t D2>
@@ -383,6 +389,8 @@ void measure_full_convolution_2d(A& a, B& b, C& c){
     measure_sub<F>("avx", [&a, &b, &c](auto&){etl::impl::avx::sconv2_full(a, b, c);} , a, b);
     measure_sub<!F>("avx", [&a, &b, &c](auto&){etl::impl::avx::dconv2_full(a, b, c);} , a, b);
 #endif
+
+    cpp_unused(F);
 }
 
 template<std::size_t D1, std::size_t D2>
@@ -440,6 +448,8 @@ void measure_same_convolution_2d(A& a, B& b, C& c){
     measure_sub<F>("avx", [&a, &b, &c](auto&){etl::impl::avx::sconv2_same(a, b, c);} , a, b);
     measure_sub<!F>("avx", [&a, &b, &c](auto&){etl::impl::avx::dconv2_same(a, b, c);} , a, b);
 #endif
+
+    cpp_unused(F);
 }
 
 template<std::size_t D1, std::size_t D2>
@@ -497,6 +507,8 @@ void measure_valid_convolution_2d(A& a, B& b, C& c){
     measure_sub<F>("avx", [&a, &b, &c](auto&){etl::impl::avx::sconv2_valid(a, b, c);} , a, b);
     measure_sub<!F>("avx", [&a, &b, &c](auto&){etl::impl::avx::dconv2_valid(a, b, c);} , a, b);
 #endif
+
+    cpp_unused(F);
 }
 
 template<std::size_t D1, std::size_t D2>
