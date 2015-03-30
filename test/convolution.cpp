@@ -1198,3 +1198,24 @@ TEMPLATE_TEST_CASE_2( "convmtx/convmtx_2", "convmtx", Z, float, double ) {
     REQUIRE(c(3, 4) == 2);
     REQUIRE(c(3, 5) == 3);
 }
+
+TEMPLATE_TEST_CASE_2( "convmtx/convmtx_3", "convmtx conv", Z, float, double ) {
+    etl::fast_vector<Z, 5> a = {1.0, 2.0, 3.0, 4.0, 5.0};
+    etl::fast_vector<Z, 3> k = {1.0, 2.0, 3.0};
+    etl::fast_matrix<Z, 3, 7> c;
+
+    etl::fast_matrix<Z, 1, 7> c1;
+    etl::fast_matrix<Z, 7> c2;
+
+    c = convmtx(a, 3);
+
+    c1 = auto_vmmul(k, c);
+    c2 = conv_1d_full(a, k);
+
+    std::cout << to_string(c1) << std::endl;
+    std::cout << to_string(c2) << std::endl;
+
+    for(std::size_t i = 0; i < c1.size(); ++i){
+        REQUIRE(c1[i] == c2[i]);
+    }
+}
