@@ -154,17 +154,11 @@ struct basic_conv1_expr {
 
     template<typename A, typename B, std::size_t DD>
     static constexpr std::size_t dim(){
-        if(D > 2 && DD < (D - 2)){
-            return decay_traits<A>::template dim<DD>();
-        } else {
-            if(TT == conv_type::VALID){
-                return decay_traits<A>::template dim<DD>() - decay_traits<B>::template dim<DD>() + 1;
-            } else if(TT == conv_type::SAME){
-                return decay_traits<A>::template dim<DD>();
-            } else {
-                return decay_traits<A>::template dim<DD>() + decay_traits<B>::template dim<DD>() - 1;
-            }
-        }
+        return
+                (D > 2 && DD < (D - 2)) ? decay_traits<A>::template dim<DD>()
+            :   TT == conv_type::VALID  ? decay_traits<A>::template dim<DD>() - decay_traits<B>::template dim<DD>() + 1
+            :   TT == conv_type::SAME   ? decay_traits<A>::template dim<DD>()
+            :                             decay_traits<A>::template dim<DD>() + decay_traits<B>::template dim<DD>() - 1;
     }
 
     template<typename A, typename B, class Enable = void>
