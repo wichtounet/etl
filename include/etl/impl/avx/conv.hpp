@@ -8,7 +8,7 @@
 /*
  * AVX implementation of 1D and 2D convolutions
  *
- * Ideas: 
+ * Ideas:
  *  * the tmp_res vectors could be avoided by using hadd instructions
  *  * 1D convolution with no memory allocation could probably be worked out (needs to be benchmarked)
  *  * Probably some other AVX2 instructions that could improve performances
@@ -94,7 +94,7 @@ inline void dconv1_valid_micro_kernel(const double* in, const std::size_t n, con
 }
 
 inline void sconv1_valid_micro_kernel(const float* in, const std::size_t n, const float* kernel, std::size_t m, float* out){
-    auto* kernel_reverse = aligned_allocate<__m256d>(m);
+    auto* kernel_reverse = aligned_allocate<__m256>(m);
 
     //Reverse the kernel
 
@@ -319,7 +319,7 @@ void dconv2_same(const I& input, const K& kernel, C&& conv){
         input.memory_start(), etl::rows(input), etl::columns(input),
         kernel.memory_start(), etl::rows(kernel), etl::columns(kernel),
         conv.memory_start());
-} 
+}
 
 inline void dconv2_full_micro_kernel(const double* in, std::size_t n1, std::size_t n2, const double* kernel, std::size_t m1, std::size_t m2, double* out){
     auto c1 = n1 + m1 - 1;
@@ -492,7 +492,7 @@ void sconv2_same(const I& input, const K& kernel, C&& conv){
 inline void sconv2_full_micro_kernel(const float* in, std::size_t n1, std::size_t n2, const float* kernel, std::size_t m1, std::size_t m2, float* out){
     auto c1 = n1 + m1 - 1;
     auto c2 = n2 + m2 - 1;
-    
+
     __m256 tmp1;
     __m256 tmp2;
     __m256 tmp3;
