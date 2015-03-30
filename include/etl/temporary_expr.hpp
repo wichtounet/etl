@@ -9,8 +9,8 @@
 #define ETL_TEMPORARY_BINARY_EXPR_HPP
 
 #include <iostream>     //For stream support
-
 #include <ostream>
+#include <memory>       //For shared_ptr
 
 #include "traits_lite.hpp"
 #include "iterator.hpp"
