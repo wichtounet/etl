@@ -20,6 +20,16 @@ struct is_cblas_enabled : std::false_type {};
 
 #endif
 
+#ifdef ETL_CONV2_MMUL
+
+struct is_conv_mmul_enabled : std::true_type {};
+
+#else
+
+struct is_conv_mmul_enabled : std::false_type {};
+
+#endif
+
 } //end of namespace etl
 
 #endif
