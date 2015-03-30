@@ -48,6 +48,7 @@ struct is_transformer : cpp::bool_constant_c<cpp::or_c<
         cpp::is_specialization_of<etl::mean_r_transformer, DT>,
         cpp::is_specialization_of<etl::mean_l_transformer, DT>,
         cpp::is_specialization_of<etl::mmul_transformer, DT>,
+        cpp::is_specialization_of<etl::dyn_convmtx_transformer, DT>,
         is_var<etl::rep_r_transformer, DT>,
         is_var<etl::rep_l_transformer, DT>,
         is_3<etl::p_max_pool_h_transformer, DT>,
@@ -68,7 +69,7 @@ template<typename T>
 struct is_etl_expr : cpp::bool_constant_c<cpp::or_c<
        is_fast_matrix<T>,
        is_dyn_matrix<T>,
-       is_unary_expr<T>, 
+       is_unary_expr<T>,
        is_binary_expr<T>,
        is_temporary_binary_expr<T>,
        is_stable_transform_expr<T>,
@@ -392,6 +393,37 @@ struct etl_traits<mmul_transformer<LE, RE>> {
         static_assert(D < 2, "Only 2D mmul are supported");
 
         return D == 0 ? etl_traits<left_expr_t>::template dim<0>() : etl_traits<right_expr_t>::template dim<1>();
+    }
+
+    static constexpr std::size_t dimensions(){
+        return 2;
+    }
+};
+
+/*!
+ * \brief Specialization for dyn_convmtx_transformer
+ */
+template <typename E>
+struct etl_traits<dyn_convmtx_transformer<E>> {
+    using expr_t = etl::dyn_convmtx_transformer<E>;
+    using sub_expr_t = std::decay_t<E>;
+
+    static constexpr const bool is_fast = false;
+    static constexpr const bool is_value = false;
+    static constexpr const bool is_generator = false;
+
+    static std::size_t size(const expr_t& v){
+        return v.h * (etl::size(v.sub) + v.h - 1);
+    }
+
+    static std::size_t dim(const expr_t& v, std::size_t d){
+        if(d == 0){
+            return v.h;
+        } else {
+            cpp_assert(d == 1, "Only 2D mmul are supported");
+
+            return etl::size(v.sub) + v.h - 1;
+        }
     }
 
     static constexpr std::size_t dimensions(){

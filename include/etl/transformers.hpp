@@ -305,6 +305,35 @@ struct mmul_transformer {
     }
 };
 
+template<typename T>
+struct dyn_convmtx_transformer {
+    using sub_type = T;
+    using value_type = value_t<sub_type>;
+
+    static_assert(decay_traits<T>::dimensions() == 1, "convmtx can only be applied on vectors");
+
+    sub_type sub;
+    std::size_t h;
+
+    dyn_convmtx_transformer(sub_type sub, std::size_t h) : sub(sub), h(h) {}
+
+    value_type operator[](std::size_t i) const {
+        auto i_i = i / (etl::size(sub) + h - 1);
+        auto i_j = i % (etl::size(sub) + h - 1);
+        return (*this)(i_i, i_j);
+    }
+
+    value_type operator()(std::size_t i, std::size_t j) const {
+        if(j < i){
+            return 0;
+        } else if(j >= etl::size(sub) + i){
+            return 0;
+        } else {
+            return sub(j - i);
+        }
+    }
+};
+
 template<typename T, std::size_t C1, std::size_t C2>
 struct p_max_pool_transformer {
     using sub_type = T;

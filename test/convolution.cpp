@@ -1128,3 +1128,73 @@ TEMPLATE_TEST_CASE_2( "convolution_4d/full_1", "convolution_deep_full", Z, float
 }
 
 //}}}
+
+
+TEMPLATE_TEST_CASE_2( "convmtx/convmtx_1", "convmtx", Z, float, double ) {
+    etl::fast_vector<Z, 3> a = {1.0, 2.0, 3.0};
+
+    auto c = convmtx(a, 4);
+
+    REQUIRE(c(0, 0) == 1);
+    REQUIRE(c(0, 1) == 2);
+    REQUIRE(c(0, 2) == 3);
+    REQUIRE(c(0, 3) == 0);
+    REQUIRE(c(0, 4) == 0);
+    REQUIRE(c(0, 5) == 0);
+
+    REQUIRE(c(1, 0) == 0);
+    REQUIRE(c(1, 1) == 1);
+    REQUIRE(c(1, 2) == 2);
+    REQUIRE(c(1, 3) == 3);
+    REQUIRE(c(1, 4) == 0);
+    REQUIRE(c(1, 5) == 0);
+
+    REQUIRE(c(2, 0) == 0);
+    REQUIRE(c(2, 1) == 0);
+    REQUIRE(c(2, 2) == 1);
+    REQUIRE(c(2, 3) == 2);
+    REQUIRE(c(2, 4) == 3);
+    REQUIRE(c(2, 5) == 0);
+
+    REQUIRE(c(3, 0) == 0);
+    REQUIRE(c(3, 1) == 0);
+    REQUIRE(c(3, 2) == 0);
+    REQUIRE(c(3, 3) == 1);
+    REQUIRE(c(3, 4) == 2);
+    REQUIRE(c(3, 5) == 3);
+}
+
+TEMPLATE_TEST_CASE_2( "convmtx/convmtx_2", "convmtx", Z, float, double ) {
+    etl::fast_vector<Z, 3> a = {1.0, 2.0, 3.0};
+    etl::fast_matrix<Z, 4, 6> c;
+
+    c = convmtx(a, 4);
+
+    REQUIRE(c(0, 0) == 1);
+    REQUIRE(c(0, 1) == 2);
+    REQUIRE(c(0, 2) == 3);
+    REQUIRE(c(0, 3) == 0);
+    REQUIRE(c(0, 4) == 0);
+    REQUIRE(c(0, 5) == 0);
+
+    REQUIRE(c(1, 0) == 0);
+    REQUIRE(c(1, 1) == 1);
+    REQUIRE(c(1, 2) == 2);
+    REQUIRE(c(1, 3) == 3);
+    REQUIRE(c(1, 4) == 0);
+    REQUIRE(c(1, 5) == 0);
+
+    REQUIRE(c(2, 0) == 0);
+    REQUIRE(c(2, 1) == 0);
+    REQUIRE(c(2, 2) == 1);
+    REQUIRE(c(2, 3) == 2);
+    REQUIRE(c(2, 4) == 3);
+    REQUIRE(c(2, 5) == 0);
+
+    REQUIRE(c(3, 0) == 0);
+    REQUIRE(c(3, 1) == 0);
+    REQUIRE(c(3, 2) == 0);
+    REQUIRE(c(3, 3) == 1);
+    REQUIRE(c(3, 4) == 2);
+    REQUIRE(c(3, 5) == 3);
+}

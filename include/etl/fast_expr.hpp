@@ -514,6 +514,14 @@ auto p_max_pool_p(E&& value) -> stable_transform_expr<value_t<E>, p_max_pool_p_t
     return {p_max_pool_p_transformer<build_type<E>, C1, C2>(value)};
 }
 
+template<typename A>
+auto convmtx(A&& a, std::size_t h) -> stable_transform_helper<A, dyn_convmtx_transformer> {
+    static_assert(is_etl_expr<A>::value, "Convolution matrices only supported for ETL expressions");
+    static_assert(decay_traits<A>::dimensions() == 1, "Convolutional matrix only works in 1D");
+
+    return {dyn_convmtx_transformer<build_type<A>>(a, h)};
+}
+
 //}}}
 
 //{{{ mmul expressions
@@ -595,7 +603,7 @@ auto auto_vmmul(A&& a, B&& b, C& c){
 }
 
 template<typename A, typename B, cpp::enable_if_all_u<
-    decay_traits<A>::is_fast, decay_traits<B>::is_fast, 
+    decay_traits<A>::is_fast, decay_traits<B>::is_fast,
     decay_traits<A>::dimensions() == 1, decay_traits<B>::dimensions() == 2
 > = cpp::detail::dummy>
 auto auto_vmmul(A&& a, B&& b){
@@ -603,7 +611,7 @@ auto auto_vmmul(A&& a, B&& b){
 }
 
 template<typename A, typename B, cpp::enable_if_all_u<
-    decay_traits<A>::is_fast, decay_traits<B>::is_fast, 
+    decay_traits<A>::is_fast, decay_traits<B>::is_fast,
     decay_traits<A>::dimensions() == 2, decay_traits<B>::dimensions() == 1
 > = cpp::detail::dummy>
 auto auto_vmmul(A&& a, B&& b){
