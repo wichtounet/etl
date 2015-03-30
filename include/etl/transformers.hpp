@@ -325,9 +325,9 @@ struct dyn_convmtx_transformer {
 
     value_type operator()(std::size_t i, std::size_t j) const {
         if(j < i){
-            return 0;
+            return value_type(0);
         } else if(j >= etl::size(sub) + i){
-            return 0;
+            return value_type(0);
         } else {
             return sub(j - i);
         }
