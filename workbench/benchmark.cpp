@@ -368,7 +368,7 @@ void bench_dyn_valid_convolution_1d_s(std::size_t d1, std::size_t d2){
 
 template<typename A, typename B, typename C>
 void measure_full_convolution_2d(A& a, B& b, C& c){
-    measure_sub("default", [&a, &b, &c](auto&){etl::convolve_2d_full(a, b, c);} , a, b);
+    measure_sub("default", [&a, &b, &c](auto&){c = etl::conv_2d_full(a, b);} , a, b);
 
     measure_sub("std", [&a, &b, &c](auto&){etl::impl::standard::conv2_full(a, b, c);} , a, b);
 
@@ -425,7 +425,7 @@ void bench_dyn_full_convolution_2d_s(std::size_t d1, std::size_t d2){
 
 template<typename A, typename B, typename C>
 void measure_same_convolution_2d(A& a, B& b, C& c){
-    measure_sub("default", [&a, &b, &c](auto&){etl::convolve_2d_same(a, b, c);} , a, b);
+    measure_sub("default", [&a, &b, &c](auto&){c = etl::conv_2d_same(a, b);} , a, b);
 
     measure_sub("std", [&a, &b, &c](auto&){etl::impl::standard::conv2_same(a, b, c);} , a, b);
 
@@ -482,7 +482,7 @@ void bench_dyn_same_convolution_2d_s(std::size_t d1, std::size_t d2){
 
 template<typename A, typename B, typename C>
 void measure_valid_convolution_2d(A& a, B& b, C& c){
-    measure_sub("default", [&a, &b, &c](auto&){etl::convolve_2d_valid(a, b, c);} , a, b);
+    measure_sub("default", [&a, &b, &c](auto&){c = etl::conv_2d_valid(a, b);} , a, b);
 
     measure_sub("std", [&a, &b, &c](auto&){etl::impl::standard::conv2_valid(a, b, c);} , a, b);
 
@@ -617,12 +617,12 @@ void bench_stack(){
     bench_fast_valid_convolution_1d_s<2*2048, 2*128>();
     bench_dyn_valid_convolution_1d_s(2*1024, 2*64);
     bench_dyn_valid_convolution_1d_s(2*2048, 2*64);
-    
+
     bench_fast_same_convolution_1d_d<2*1024, 2*64>();
     bench_fast_same_convolution_1d_d<2*2048, 2*128>();
     bench_dyn_same_convolution_1d_d(2*1024, 2*64);
     bench_dyn_same_convolution_1d_d(2*2048, 2*64);
-    
+
     bench_fast_same_convolution_1d_s<2*1024, 2*64>();
     bench_fast_same_convolution_1d_s<2*2048, 2*128>();
     bench_dyn_same_convolution_1d_s(2*1024, 2*64);
@@ -632,7 +632,7 @@ void bench_stack(){
     bench_fast_full_convolution_1d_d<2*2048, 2*128>();
     bench_dyn_full_convolution_1d_d(2*1024, 2*64);
     bench_dyn_full_convolution_1d_d(2*2048, 2*64);
-    
+
     bench_fast_full_convolution_1d_s<2*1024, 2*64>();
     bench_fast_full_convolution_1d_s<2*2048, 2*128>();
     bench_dyn_full_convolution_1d_s(2*1024, 2*64);
@@ -647,12 +647,12 @@ void bench_stack(){
     bench_fast_valid_convolution_2d_s<128, 32>();
     bench_dyn_valid_convolution_2d_s(64, 32);
     bench_dyn_valid_convolution_2d_s(128, 32);
-    
+
     bench_fast_same_convolution_2d_d<64, 32>();
     bench_fast_same_convolution_2d_d<128, 32>();
     bench_dyn_same_convolution_2d_d(64, 32);
     bench_dyn_same_convolution_2d_d(128, 32);
-    
+
     bench_fast_same_convolution_2d_s<64, 32>();
     bench_fast_same_convolution_2d_s<128, 32>();
     bench_dyn_same_convolution_2d_s(64, 32);
@@ -662,7 +662,7 @@ void bench_stack(){
     bench_fast_full_convolution_2d_d<128, 32>();
     bench_dyn_full_convolution_2d_d(64, 32);
     bench_dyn_full_convolution_2d_d(128, 32);
-    
+
     bench_fast_full_convolution_2d_s<64, 32>();
     bench_fast_full_convolution_2d_s<128, 32>();
     bench_dyn_full_convolution_2d_s(64, 32);
