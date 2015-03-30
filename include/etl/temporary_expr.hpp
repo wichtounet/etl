@@ -17,7 +17,7 @@
 
 namespace etl {
 
-//TODO Ideally, the evaluate() function should be called by the evaluator, but that means that direct access to the 
+//TODO Ideally, the evaluate() function should be called by the evaluator, but that means that direct access to the
 //expression without passing by the evaluator is not possible => Add macro to ensure this behavior
 
 //TODO Rewrite with TMP instead of two classes
@@ -147,7 +147,7 @@ public:
     using value_type = T;
     using result_type = typename Op::template result_type<AExpr, BExpr>;
 
-//private:
+private:
     static_assert(cpp::and_c<is_etl_expr<AExpr>, is_etl_expr<BExpr>>::value,
         "Both arguments must be ETL expr");
 
