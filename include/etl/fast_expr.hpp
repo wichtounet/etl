@@ -522,6 +522,14 @@ auto convmtx(A&& a, std::size_t h) -> stable_transform_helper<A, dyn_convmtx_tra
     return {dyn_convmtx_transformer<build_type<A>>(a, h)};
 }
 
+template<typename A>
+auto convmtx2(A&& a, std::size_t k1, std::size_t k2) -> stable_transform_helper<A, dyn_convmtx2_transformer> {
+    static_assert(is_etl_expr<A>::value, "Convolution matrices only supported for ETL expressions");
+    static_assert(decay_traits<A>::dimensions() == 2, "Convolutional matrix only works in 2D");
+
+    return {dyn_convmtx2_transformer<build_type<A>>(a, k1, k2)};
+}
+
 //}}}
 
 //{{{ mmul expressions

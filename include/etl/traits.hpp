@@ -49,6 +49,7 @@ struct is_transformer : cpp::bool_constant_c<cpp::or_c<
         cpp::is_specialization_of<etl::mean_l_transformer, DT>,
         cpp::is_specialization_of<etl::mmul_transformer, DT>,
         cpp::is_specialization_of<etl::dyn_convmtx_transformer, DT>,
+        cpp::is_specialization_of<etl::dyn_convmtx2_transformer, DT>,
         is_var<etl::rep_r_transformer, DT>,
         is_var<etl::rep_l_transformer, DT>,
         is_3<etl::p_max_pool_h_transformer, DT>,
@@ -420,9 +421,38 @@ struct etl_traits<dyn_convmtx_transformer<E>> {
         if(d == 0){
             return v.h;
         } else {
-            cpp_assert(d == 1, "Only 2D mmul are supported");
-
             return etl::size(v.sub) + v.h - 1;
+        }
+    }
+
+    static constexpr std::size_t dimensions(){
+        return 2;
+    }
+};
+
+/*!
+ * \brief Specialization for dyn_convmtx2_transformer
+ */
+template <typename E>
+struct etl_traits<dyn_convmtx2_transformer<E>> {
+    using expr_t = etl::dyn_convmtx2_transformer<E>;
+    using sub_expr_t = std::decay_t<E>;
+
+    static constexpr const bool is_fast = false;
+    static constexpr const bool is_value = false;
+    static constexpr const bool is_generator = false;
+
+    static std::size_t size(const expr_t& v){
+        auto c_height = (etl::dim<0>(v.sub) + v.k1 - 1) * (etl::dim<1>(v.sub) + v.k2 - 1);
+        auto c_width = v.k1 * v.k2;
+        return c_height * c_width;
+    }
+
+    static std::size_t dim(const expr_t& v, std::size_t d){
+        if(d == 0){
+            return (etl::dim<0>(v.sub) + v.k1 - 1) * (etl::dim<1>(v.sub) + v.k2 - 1);
+        } else {
+            return v.k1 * v.k2;
         }
     }
 

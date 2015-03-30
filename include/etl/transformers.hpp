@@ -290,7 +290,7 @@ struct mmul_transformer {
 
     value_type operator[](std::size_t i) const {
         auto i_i = i / dim<0>(left);
-        auto i_j = i % dim<1>(right);
+        auto i_j = i % dim<0>(right);
         return (*this)(i_i, i_j);
     }
 
@@ -330,6 +330,58 @@ struct dyn_convmtx_transformer {
             return value_type(0);
         } else {
             return sub(j - i);
+        }
+    }
+};
+
+template<typename T>
+struct dyn_convmtx2_transformer {
+    using sub_type = T;
+    using value_type = value_t<sub_type>;
+
+    static_assert(decay_traits<T>::dimensions() == 2, "convmtx2 can only be applied on matrices");
+
+    sub_type sub;
+    const std::size_t k1;
+    const std::size_t k2;
+    std::size_t i1;
+    std::size_t i2;
+    std::size_t inner_paddings;
+    std::size_t inner_padding;
+
+    dyn_convmtx2_transformer(sub_type sub, std::size_t k1, std::size_t k2) : sub(sub), k1(k1), k2(k2) {
+        i1 = etl::dim<0>(sub);
+        i2 = etl::dim<1>(sub);
+
+        auto c_height = (i1 + k1 - 1) * (i2 + k2 - 1);
+        auto c_width = k1 * k2;
+
+        auto max_fill = c_height - ((i1 + k1 - 1) * ((c_width - 1) / k1) + (c_width - 1) % k1);
+        inner_paddings = max_fill - (i1 * i2);
+        inner_padding = inner_paddings / (i2 - 1);
+    }
+
+    value_type operator[](std::size_t i) const {
+        auto i_i = i / (k1 * k2);
+        auto i_j = i % (k1 * k2);
+        return (*this)(i_i, i_j);
+    }
+
+    value_type operator()(std::size_t i, std::size_t j) const {
+        auto top_padding = (i1 + k1 - 1) * (j / k1) + j % k1;
+
+        if(i < top_padding || i >= top_padding + (i1 * i2) + inner_paddings){
+            return value_type(0);
+        } else {
+            auto inner = i - top_padding;
+            auto col = inner % (i1 + inner_padding);
+            auto block = inner / (i1 + inner_padding);
+
+            if(col >= i1){
+                return value_type(0);
+            } else {
+                return sub(col, block);
+            }
         }
     }
 };
