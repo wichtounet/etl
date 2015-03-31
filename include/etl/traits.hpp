@@ -824,7 +824,7 @@ struct etl_traits<etl::fast_matrix_view<T, Rows, Columns>> {
     }
 
     static std::size_t dim(const expr_t&, std::size_t d){
-        return d == 1 ? Rows : Columns;
+        return d == 0 ? Rows : Columns;
     }
 
     static constexpr std::size_t size(){
