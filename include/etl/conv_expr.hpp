@@ -243,7 +243,7 @@ struct basic_conv1_expr {
             return acc;
         } else if(D == 1){
             return this_type::dim(a, b, 0);
-        } else if(D == 2){
+        } else { //D == 2
             return this_type::dim(a, b, 0) * this_type::dim(a, b, 1);
         }
     }
