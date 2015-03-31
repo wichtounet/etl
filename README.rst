@@ -40,8 +40,8 @@ There also exists typedefs for vectors:
 * dyn_vector<T>
 
 You have to keep in mind that fast_matrix directly store its values inside it,
-therefore, it can be very large and should rarely be stored on the stack. Moreover, 
-that also makes it very expensive to move and copy. 
+therefore, it can be very large and should rarely be stored on the stack. Moreover,
+that also makes it very expensive to move and copy.
 
 Element-wise operations
 ***********************
@@ -122,7 +122,7 @@ both in 1D (vector) and 2D (matrix).
 
 The header *mutiplication.hpp* provides the matrix multiplication
 operation. mmul is the naive algorithm (ijk), which strassen_mmul implements
-Strassen algorithm. 
+Strassen algorithm.
 
 It is possible to pass an expression rather than an data structure
 to functions. Keep in mind that expression are lazy, therefore if
@@ -170,13 +170,17 @@ Building
 This library is completely header-only, there is no need to build it.
 
 However, this library makes extensive use of C++11 and C++14,
-therefore, a recent compiler is necessary to use it.  This library
-has only been tested on CLang 3.4 and g++ 4.9.1. Moreover, this has
-never been tested on Windows.
+therefore, a recent compiler is necessary to use it. This library is
+tested on the following compilers:
+ * CLang 3.4 and greater
+ * GCC 4.9.1 and greater
+ * icc 15.0.2 and greater
+
+The library has never been tested on Windows.
 
 The folder **include** must be included with the **-I** option.
 
-There are no link-time dependencies. 
+There are no link-time dependencies.
 
 If you have problems compiling this library, I'd be glad to help,
 but I do not guarantee that this will work on every compiler. I
