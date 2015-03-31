@@ -8,3 +8,6 @@
 [submodule "lib/include/cpp_utils"]
 	path = lib/include/cpp_utils
 	url = https://github.com/wichtounet/cpp_utils.git
+[submodule "wiki"]
+	path = wiki
+	url = https://github.com/wichtounet/etl.wiki.git
