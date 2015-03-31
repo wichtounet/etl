@@ -199,6 +199,8 @@ void bench_dyn_matrix_sigmoid(std::size_t d1, std::size_t d2, const std::string&
         , a, b);
 }
 
+#ifndef __INTEL_COMPILER
+
 template<typename A, typename B, typename C>
 void measure_full_convolution_1d(A& a, B& b, C& c){
     measure_sub("default", [&a, &b, &c](auto&){c = etl::conv_1d_full(a, b);} , a, b);
@@ -612,6 +614,8 @@ void bench_dyn_mmul_s(std::size_t d1, std::size_t d2){
     measure_mmul(a, b, c);
 }
 
+#endif //__INTEL_COMPILER
+
 void bench_stack(){
     std::cout << "Start benchmarking...\n";
     std::cout << "... all structures are on stack\n\n";
@@ -631,6 +635,7 @@ void bench_stack(){
     bench_dyn_matrix_simple(16, 256, "TODOms");
     bench_dyn_matrix_simple(256, 128, "TODOms");
 
+#ifndef __INTEL_COMPILER
     bench_fast_valid_convolution_1d_d<1024, 64>();
     bench_fast_valid_convolution_1d_d<2048, 128>();
     bench_dyn_valid_convolution_1d_d(1024, 64);
@@ -706,6 +711,7 @@ void bench_stack(){
     bench_dyn_mmul_s(128, 64);
     bench_dyn_mmul_s(256, 128);
     bench_dyn_mmul_s(512, 256);
+#endif //__INTEL_COMPILER
 }
 
 } //end of anonymous namespace
