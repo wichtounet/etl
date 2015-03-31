@@ -563,8 +563,8 @@ void measure_mmul(A& a, B& b, C& c){
 
     constexpr const bool F = std::is_same<float, typename A::value_type>::value;
 
-    measure_sub<F>("eblas", [&a, &b, &c](auto&){etl::fast_sgemm(a, b, c);} , a, b);
-    measure_sub<!F>("eblas", [&a, &b, &c](auto&){etl::fast_dgemm(a, b, c);} , a, b);
+    measure_sub<F>("eblas", [&a, &b, &c](auto&){etl::impl::eblas::fast_sgemm(a, b, c);} , a, b);
+    measure_sub<!F>("eblas", [&a, &b, &c](auto&){etl::impl::eblas::fast_dgemm(a, b, c);} , a, b);
 
 #ifdef TEST_BLAS
     measure_sub<F>("blas", [&a, &b, &c](auto&){etl::impl::blas::sgemm(a, b, c);} , a, b);

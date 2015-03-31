@@ -26,7 +26,9 @@
 
 namespace etl {
 
-namespace gemm_detail {
+namespace impl {
+
+namespace eblas {
 
 template<typename T>
 struct gemm_config {
@@ -390,11 +392,9 @@ void gemm_nn(std::size_t m, std::size_t n, std::size_t k, D alpha, const D* A, s
     release(_C);
 }
 
-} //end of namespace gemm_detail
-
 template<typename A, typename B, typename C>
 void fast_dgemm(A&& a, B&& b, C&& c){
-    gemm_detail::gemm_nn(
+    gemm_nn(
         etl::dim<0>(a), etl::dim<1>(b), etl::dim<1>(a),
         1.0,
         a.memory_start(), etl::dim<1>(a), 1,
@@ -406,7 +406,7 @@ void fast_dgemm(A&& a, B&& b, C&& c){
 
 template<typename A, typename B, typename C>
 void fast_sgemm(A&& a, B&& b, C&& c){
-    gemm_detail::gemm_nn(
+    gemm_nn(
         etl::dim<0>(a), etl::dim<1>(b), etl::dim<1>(a),
         1.0f,
         a.memory_start(), etl::dim<1>(a), 1,
@@ -415,6 +415,10 @@ void fast_sgemm(A&& a, B&& b, C&& c){
         c.memory_start(), etl::dim<1>(c), 1
     );
 };
+
+} //end of namespace eblas
+
+} //end of namespace impl
 
 } //end of namespace etl
 

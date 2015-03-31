@@ -38,14 +38,14 @@ struct is_fast_sgemm : cpp::bool_constant_c<cpp::and_c<cpp::not_c<is_cblas_enabl
 template<typename A, typename B, typename C>
 struct mmul_impl<A, B, C, std::enable_if_t<is_fast_dgemm<A,B,C>::value>> {
     static void apply(A&& a, B&& b, C&& c){
-        fast_dgemm(std::forward<A>(a), std::forward<B>(b), std::forward<C>(c));
+        etl::impl::eblas::fast_dgemm(std::forward<A>(a), std::forward<B>(b), std::forward<C>(c));
     }
 };
 
 template<typename A, typename B, typename C>
 struct mmul_impl<A, B, C, std::enable_if_t<is_fast_sgemm<A,B,C>::value>> {
     static void apply(A&& a, B&& b, C&& c){
-        fast_sgemm(std::forward<A>(a), std::forward<B>(b), std::forward<C>(c));
+        etl::impl::eblas::fast_sgemm(std::forward<A>(a), std::forward<B>(b), std::forward<C>(c));
     }
 };
 
