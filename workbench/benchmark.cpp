@@ -549,15 +549,30 @@ void bench_dyn_valid_convolution_2d_s(std::size_t d1, std::size_t d2){
     measure_valid_convolution_2d(a, b, c);
 }
 
+template<typename A, typename B, typename C>
+void measure_mmul(A& a, B& b, C& c){
+    measure_sub("default", [&a, &b, &c](auto&){c = etl::mmul(a, b);} , a, b);
+
+    measure_sub("std", [&a, &b, &c](auto&){etl::impl::standard::mmul(a, b, c);} , a, b);
+
+    measure_sub("lazy", [&a, &b, &c](auto&){c = etl::lazy_mmul(a, b);} , a, b);
+
+    constexpr const bool F = std::is_same<float, typename A::value_type>::value;
+
+    measure_sub<F>("eblas", [&a, &b, &c](auto&){etl::fast_sgemm(a, b, c);} , a, b);
+    measure_sub<!F>("eblas", [&a, &b, &c](auto&){etl::fast_dgemm(a, b, c);} , a, b);
+
+    measure_sub("strassen", [&a, &b, &c](auto&){*etl::strassen_mmul(a, b, c);} , a, b);
+}
+
 template<std::size_t D1, std::size_t D2>
 void bench_fast_mmul(const std::string& reference){
     etl::fast_matrix<double, D1, D2> a;
     etl::fast_matrix<double, D2, D1> b;
     etl::fast_matrix<double, D1, D1> c;
 
-    measure("fast_mmul(" + std::to_string(D1) + "," + std::to_string(D2) + ")", reference,
-        [&a, &b, &c](){etl::mmul(a, b, c);}
-        , a, b);
+    std::cout << "fast_mmul_d" << "(" << D1 << "," << D2 << ")" << std::endl;
+    measure_mmul(a, b, c);
 }
 
 void bench_dyn_mmul(std::size_t d1, std::size_t d2, const std::string& reference){
@@ -565,9 +580,8 @@ void bench_dyn_mmul(std::size_t d1, std::size_t d2, const std::string& reference
     etl::dyn_matrix<double> b(d2, d1);
     etl::dyn_matrix<double> c(d1, d1);
 
-    measure("dyn_mmul(" + std::to_string(d1) + "," + std::to_string(d2) + ")", reference,
-        [&a, &b, &c](){etl::mmul(a, b, c);}
-        , a, b);
+    std::cout << "dyn_mmul_d" << "(" << d1 << "," << d2 << ")" << std::endl;
+    measure_mmul(a, b, c);
 }
 
 template<std::size_t D1, std::size_t D2>
@@ -576,9 +590,8 @@ void bench_fast_mmul_s(const std::string& reference){
     etl::fast_matrix<float, D2, D1> b;
     etl::fast_matrix<float, D1, D1> c;
 
-    measure("fast_mmul_s(" + std::to_string(D1) + "," + std::to_string(D2) + ")", reference,
-        [&a, &b, &c](){etl::mmul(a, b, c);}
-        , a, b);
+    std::cout << "fast_mmul_s" << "(" << D1 << "," << D2 << ")" << std::endl;
+    measure_mmul(a, b, c);
 }
 
 void bench_dyn_mmul_s(std::size_t d1, std::size_t d2, const std::string& reference){
@@ -586,99 +599,88 @@ void bench_dyn_mmul_s(std::size_t d1, std::size_t d2, const std::string& referen
     etl::dyn_matrix<float> b(d2, d1);
     etl::dyn_matrix<float> c(d1, d1);
 
-    measure("dyn_mmul_s(" + std::to_string(d1) + "," + std::to_string(d2) + ")", reference,
-        [&a, &b, &c](){etl::mmul(a, b, c);}
-        , a, b);
-}
-
-void bench_dyn_strassen_mmul(std::size_t d1, std::size_t d2, const std::string& reference){
-    etl::dyn_matrix<double> a(d1, d2);
-    etl::dyn_matrix<double> b(d2, d1);
-    etl::dyn_matrix<double> c(d1, d1);
-
-    measure("dyn_strassen_mmul(" + std::to_string(d1) + "," + std::to_string(d2) + ")", reference,
-        [&a, &b, &c](){etl::strassen_mmul(a, b, c);}
-        , a, b);
+    std::cout << "dyn_mmul_s" << "(" << d1 << "," << d2 << ")" << std::endl;
+    measure_mmul(a, b, c);
 }
 
 void bench_stack(){
     std::cout << "Start benchmarking...\n";
     std::cout << "... all structures are on stack\n\n";
 
-    bench_fast_matrix_sigmoid<16, 256>("TODOms");
-    bench_fast_matrix_sigmoid<256, 128>("TODOms");
-    bench_dyn_matrix_sigmoid(16, 256, "TODOms");
-    bench_dyn_matrix_sigmoid(256, 128, "TODOms");
+    //bench_fast_matrix_sigmoid<16, 256>("TODOms");
+    //bench_fast_matrix_sigmoid<256, 128>("TODOms");
+    //bench_dyn_matrix_sigmoid(16, 256, "TODOms");
+    //bench_dyn_matrix_sigmoid(256, 128, "TODOms");
 
-    bench_fast_vector_simple<4096>("TODOms");
-    bench_fast_vector_simple<16384>("TODOms");
-    bench_dyn_vector_simple(4096, "TODOms");
-    bench_dyn_vector_simple(16384, "TODOms");
+    //bench_fast_vector_simple<4096>("TODOms");
+    //bench_fast_vector_simple<16384>("TODOms");
+    //bench_dyn_vector_simple(4096, "TODOms");
+    //bench_dyn_vector_simple(16384, "TODOms");
 
-    bench_fast_matrix_simple<16, 256>("TODOms");
-    bench_fast_matrix_simple<256, 128>("TODOms");
-    bench_dyn_matrix_simple(16, 256, "TODOms");
-    bench_dyn_matrix_simple(256, 128, "TODOms");
+    //bench_fast_matrix_simple<16, 256>("TODOms");
+    //bench_fast_matrix_simple<256, 128>("TODOms");
+    //bench_dyn_matrix_simple(16, 256, "TODOms");
+    //bench_dyn_matrix_simple(256, 128, "TODOms");
 
-    bench_fast_valid_convolution_1d_d<1024, 64>();
-    bench_fast_valid_convolution_1d_d<2048, 128>();
-    bench_dyn_valid_convolution_1d_d(1024, 64);
-    bench_dyn_valid_convolution_1d_d(2048, 64);
+    //bench_fast_valid_convolution_1d_d<1024, 64>();
+    //bench_fast_valid_convolution_1d_d<2048, 128>();
+    //bench_dyn_valid_convolution_1d_d(1024, 64);
+    //bench_dyn_valid_convolution_1d_d(2048, 64);
 
-    bench_fast_valid_convolution_1d_s<2*1024, 2*64>();
-    bench_fast_valid_convolution_1d_s<2*2048, 2*128>();
-    bench_dyn_valid_convolution_1d_s(2*1024, 2*64);
-    bench_dyn_valid_convolution_1d_s(2*2048, 2*64);
+    //bench_fast_valid_convolution_1d_s<2*1024, 2*64>();
+    //bench_fast_valid_convolution_1d_s<2*2048, 2*128>();
+    //bench_dyn_valid_convolution_1d_s(2*1024, 2*64);
+    //bench_dyn_valid_convolution_1d_s(2*2048, 2*64);
 
-    bench_fast_same_convolution_1d_d<2*1024, 2*64>();
-    bench_fast_same_convolution_1d_d<2*2048, 2*128>();
-    bench_dyn_same_convolution_1d_d(2*1024, 2*64);
-    bench_dyn_same_convolution_1d_d(2*2048, 2*64);
+    //bench_fast_same_convolution_1d_d<2*1024, 2*64>();
+    //bench_fast_same_convolution_1d_d<2*2048, 2*128>();
+    //bench_dyn_same_convolution_1d_d(2*1024, 2*64);
+    //bench_dyn_same_convolution_1d_d(2*2048, 2*64);
 
-    bench_fast_same_convolution_1d_s<2*1024, 2*64>();
-    bench_fast_same_convolution_1d_s<2*2048, 2*128>();
-    bench_dyn_same_convolution_1d_s(2*1024, 2*64);
-    bench_dyn_same_convolution_1d_s(2*2048, 2*64);
+    //bench_fast_same_convolution_1d_s<2*1024, 2*64>();
+    //bench_fast_same_convolution_1d_s<2*2048, 2*128>();
+    //bench_dyn_same_convolution_1d_s(2*1024, 2*64);
+    //bench_dyn_same_convolution_1d_s(2*2048, 2*64);
 
-    bench_fast_full_convolution_1d_d<2*1024, 2*64>();
-    bench_fast_full_convolution_1d_d<2*2048, 2*128>();
-    bench_dyn_full_convolution_1d_d(2*1024, 2*64);
-    bench_dyn_full_convolution_1d_d(2*2048, 2*64);
+    //bench_fast_full_convolution_1d_d<2*1024, 2*64>();
+    //bench_fast_full_convolution_1d_d<2*2048, 2*128>();
+    //bench_dyn_full_convolution_1d_d(2*1024, 2*64);
+    //bench_dyn_full_convolution_1d_d(2*2048, 2*64);
 
-    bench_fast_full_convolution_1d_s<2*1024, 2*64>();
-    bench_fast_full_convolution_1d_s<2*2048, 2*128>();
-    bench_dyn_full_convolution_1d_s(2*1024, 2*64);
-    bench_dyn_full_convolution_1d_s(2*2048, 2*64);
+    //bench_fast_full_convolution_1d_s<2*1024, 2*64>();
+    //bench_fast_full_convolution_1d_s<2*2048, 2*128>();
+    //bench_dyn_full_convolution_1d_s(2*1024, 2*64);
+    //bench_dyn_full_convolution_1d_s(2*2048, 2*64);
 
-    bench_fast_valid_convolution_2d_d<64, 32>();
-    bench_fast_valid_convolution_2d_d<128, 32>();
-    bench_dyn_valid_convolution_2d_d(64, 32);
-    bench_dyn_valid_convolution_2d_d(128, 32);
+    //bench_fast_valid_convolution_2d_d<64, 32>();
+    //bench_fast_valid_convolution_2d_d<128, 32>();
+    //bench_dyn_valid_convolution_2d_d(64, 32);
+    //bench_dyn_valid_convolution_2d_d(128, 32);
 
-    bench_fast_valid_convolution_2d_s<64, 32>();
-    bench_fast_valid_convolution_2d_s<128, 32>();
-    bench_dyn_valid_convolution_2d_s(64, 32);
-    bench_dyn_valid_convolution_2d_s(128, 32);
+    //bench_fast_valid_convolution_2d_s<64, 32>();
+    //bench_fast_valid_convolution_2d_s<128, 32>();
+    //bench_dyn_valid_convolution_2d_s(64, 32);
+    //bench_dyn_valid_convolution_2d_s(128, 32);
 
-    bench_fast_same_convolution_2d_d<64, 32>();
-    bench_fast_same_convolution_2d_d<128, 32>();
-    bench_dyn_same_convolution_2d_d(64, 32);
-    bench_dyn_same_convolution_2d_d(128, 32);
+    //bench_fast_same_convolution_2d_d<64, 32>();
+    //bench_fast_same_convolution_2d_d<128, 32>();
+    //bench_dyn_same_convolution_2d_d(64, 32);
+    //bench_dyn_same_convolution_2d_d(128, 32);
 
-    bench_fast_same_convolution_2d_s<64, 32>();
-    bench_fast_same_convolution_2d_s<128, 32>();
-    bench_dyn_same_convolution_2d_s(64, 32);
-    bench_dyn_same_convolution_2d_s(128, 32);
+    //bench_fast_same_convolution_2d_s<64, 32>();
+    //bench_fast_same_convolution_2d_s<128, 32>();
+    //bench_dyn_same_convolution_2d_s(64, 32);
+    //bench_dyn_same_convolution_2d_s(128, 32);
 
-    bench_fast_full_convolution_2d_d<64, 32>();
-    bench_fast_full_convolution_2d_d<128, 32>();
-    bench_dyn_full_convolution_2d_d(64, 32);
-    bench_dyn_full_convolution_2d_d(128, 32);
+    //bench_fast_full_convolution_2d_d<64, 32>();
+    //bench_fast_full_convolution_2d_d<128, 32>();
+    //bench_dyn_full_convolution_2d_d(64, 32);
+    //bench_dyn_full_convolution_2d_d(128, 32);
 
-    bench_fast_full_convolution_2d_s<64, 32>();
-    bench_fast_full_convolution_2d_s<128, 32>();
-    bench_dyn_full_convolution_2d_s(64, 32);
-    bench_dyn_full_convolution_2d_s(128, 32);
+    //bench_fast_full_convolution_2d_s<64, 32>();
+    //bench_fast_full_convolution_2d_s<128, 32>();
+    //bench_dyn_full_convolution_2d_s(64, 32);
+    //bench_dyn_full_convolution_2d_s(128, 32);
 
     bench_fast_mmul<64, 32>("TODOms");
     bench_fast_mmul<128, 64>("TODOms");
@@ -695,13 +697,6 @@ void bench_stack(){
     bench_dyn_mmul_s(128, 64, "TODOms");
     bench_dyn_mmul_s(256, 128, "TODOms");
     bench_dyn_mmul_s(512, 256, "TODOms");
-
-    bench_dyn_strassen_mmul(16, 16, "TODOms");
-    bench_dyn_strassen_mmul(32, 32, "TODOms");
-    bench_dyn_strassen_mmul(64, 32, "TODOms");
-    bench_dyn_strassen_mmul(64, 64, "TODOms");
-    bench_dyn_strassen_mmul(128, 64, "TODOms");
-    bench_dyn_strassen_mmul(256, 128, "TODOms");
 }
 
 } //end of anonymous namespace
