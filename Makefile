@@ -20,6 +20,14 @@ CXX_FLAGS += -DETL_BLAS_MODE $(shell pkg-config --cflags cblas)
 LD_FLAGS += $(shell pkg-config --libs cblas)
 endif
 
+ifneq (,$(findstring clang,$(CXX)))
+DEBUG_FLAGS=-fprofile-arcs -ftest-coverage
+endif
+
+ifneq (,$(findstring g++,$(CXX)))
+DEBUG_FLAGS=--coverage
+endif
+
 CXX_FLAGS += -DETL_VECTORIZE
 
 CPP_FILES=$(wildcard test/*.cpp)
@@ -65,7 +73,16 @@ benchmark: release/bin/benchmark
 cppcheck:
 	cppcheck -I include/ --platform=unix64 --suppress=missingIncludeSystem --enable=all --std=c++11 workbench/*.cpp include/etl/*.hpp
 
+coverage: debug_test
+	lcov -b . --directory debug/test --capture --output-file debug/bin/app.info
+	@ mkdir -p reports/coverage
+	genhtml --output-directory reports/coverage debug/bin/app.info
+
+coverage_view: coverage
+	firefox reports/coverage/index.html
+
 clean: base_clean
+	rm -rf reports
 
 -include $(DEBUG_D_FILES)
 -include $(RELEASE_D_FILES)
