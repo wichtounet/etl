@@ -72,7 +72,7 @@ struct basic_mmul_expr {
         static_assert(decay_traits<A>::dimensions() == 2 && decay_traits<B>::dimensions() == 2 && decay_traits<C>::dimensions() == 2, "Matrix multiplication only works in 2D");
         detail::check_mmul_sizes(a,b,c);
 
-        Impl<A,B,C>::apply(std::forward<A>(a), std::forward<B>(b), std::forward<C>(c));
+        Impl<A,B,C,void>::apply(std::forward<A>(a), std::forward<B>(b), std::forward<C>(c));
     }
 
     static std::string desc() noexcept {

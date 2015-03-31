@@ -743,7 +743,7 @@ struct etl_traits<etl::dim_view<T, D>> {
     static std::size_t size(const expr_t& v){
         if(D == 1){
             return etl_traits<sub_expr_t>::dim(v.sub, 1);
-        } else if (D == 2){
+        } else {
             return etl_traits<sub_expr_t>::dim(v.sub, 0);
         }
     }
@@ -995,10 +995,21 @@ struct sub_size_compare<E, cpp::disable_if_t<etl_traits<E>::is_generator>> : std
 
 template<typename E>
 bool is_finite(const E& expr){
+#ifdef __INTEL_COMPILER
+    bool finite = true;
+    for(auto& v : expr){
+        if(!std::isfinite(v)){
+            finite = false;
+            break;
+        }
+    }
+    return finite;
+#else
     using std::begin;
     using std::end;
 
     return std::find_if(begin(expr), end(expr), [](auto& v){return !std::isfinite(v);}) == end(expr);
+#endif
 }
 
 } //end of namespace etl

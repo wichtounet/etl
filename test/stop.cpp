@@ -90,9 +90,9 @@ TEMPLATE_TEST_CASE_2( "stop/fast_matrix_2", "stop<binary<fast_mat>>", Z, float, 
 
     REQUIRE(size_1 == 6);
 
-    constexpr const auto size_2 = size(r);
-    constexpr const auto rows_2 = rows(r);
-    constexpr const auto columns_2 = columns(r);
+    constexpr const auto size_2 = etl::size(r);
+    constexpr const auto rows_2 = etl::rows(r);
+    constexpr const auto columns_2 = etl::columns(r);
 
     REQUIRE(size_2 == 6);
     REQUIRE(rows_2 == 3);

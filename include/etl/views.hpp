@@ -37,7 +37,7 @@ using const_return_helper = std::conditional_t<
 
 template<typename T, std::size_t D>
 struct dim_view {
-    static_assert(D > 0 || D < 3, "Invalid dimension");
+    static_assert(D == 1 || D == 2, "Invalid dimension");
 
     using sub_type = T;
     using value_type = value_t<sub_type>;
@@ -53,7 +53,7 @@ struct dim_view {
     const_return_type operator[](std::size_t j) const {
         if(D == 1){
             return sub(i, j);
-        } else if(D == 2){
+        } else { //D == 2
             return sub(j, i);
         }
     }
@@ -61,7 +61,7 @@ struct dim_view {
     return_type operator[](std::size_t j){
         if(D == 1){
             return sub(i, j);
-        } else if(D == 2){
+        } else { //D == 2
             return sub(j, i);
         }
     }
@@ -69,7 +69,7 @@ struct dim_view {
     const_return_type operator()(std::size_t j) const {
         if(D == 1){
             return sub(i, j);
-        } else if(D == 2){
+        } else { //D == 2
             return sub(j, i);
         }
     }
@@ -77,7 +77,7 @@ struct dim_view {
     return_type operator()(std::size_t j){
         if(D == 1){
             return sub(i, j);
-        } else if(D == 2){
+        } else { //D == 2
             return sub(j, i);
         }
     }

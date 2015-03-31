@@ -563,7 +563,7 @@ template<typename A, typename B, typename C, cpp::enable_if_all_u<
     decay_traits<A>::dimensions() == 1, decay_traits<B>::dimensions() == 2
 > = cpp::detail::dummy>
 auto auto_vmmul(A&& a, B&& b, C& c){
-    return mmul(reshape<1, decay_traits<B>::template dim<0>()>(a), b, c);
+    return mmul(reshape<1, (decay_traits<B>::template dim<0>())>(a), b, c);
 }
 
 template<typename A, typename B, typename C, cpp::enable_if_all_u<
@@ -571,7 +571,7 @@ template<typename A, typename B, typename C, cpp::enable_if_all_u<
     decay_traits<A>::dimensions() == 2, decay_traits<B>::dimensions() == 1
 > = cpp::detail::dummy>
 auto auto_vmmul(A&& a, B&& b, C& c){
-    return mmul(a, reshape<decay_traits<A>::template dim<1>(),1>(b), c);
+    return mmul(a, reshape<(decay_traits<A>::template dim<1>()),1>(b), c);
 }
 
 template<typename A, typename B, typename C, cpp::enable_if_all_u<
@@ -623,7 +623,7 @@ template<typename A, typename B, cpp::enable_if_all_u<
     decay_traits<A>::dimensions() == 2, decay_traits<B>::dimensions() == 1
 > = cpp::detail::dummy>
 auto auto_vmmul(A&& a, B&& b){
-    return mmul(a, reshape<decay_traits<A>::template dim<1>(),1>(b));
+    return mmul(a, reshape<(decay_traits<A>::template dim<1>()),1>(b));
 }
 
 template<typename A, typename B, cpp::enable_if_all_u<

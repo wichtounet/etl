@@ -69,7 +69,7 @@ struct mmul_impl<A, B, C, std::enable_if_t<is_blas_sgemm<A,B,C>::value>> {
     }
 };
 
-template<typename A, typename B, typename C>
+template<typename A, typename B, typename C, typename Enable = void>
 struct strassen_mmul_impl {
     static void apply(A&& a, B&& b, C&& c){
         etl::impl::standard::strassen_mmul(std::forward<A>(a), std::forward<B>(b), std::forward<C>(c));
