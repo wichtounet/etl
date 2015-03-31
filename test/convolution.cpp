@@ -1305,7 +1305,7 @@ TEMPLATE_TEST_CASE_2( "convmtx2/convmtx2_4", "convmtx conv", Z, double, float ) 
     etl::dyn_matrix<Z> C(convmtx2(I, 2, 2));
 
     etl::dyn_matrix<Z> c1(etl::conv_2d_full(I, K));
-    etl::dyn_matrix<Z> c2(etl::mmul(C, etl::reshape<4, 1>(K)));
+    etl::dyn_matrix<Z> c2(etl::mmul(C, etl::reshape<25, 1>(K)));
 
     for(std::size_t i = 0; i < c1.size(); ++i){
         REQUIRE(c1[i] == c2[i]);
