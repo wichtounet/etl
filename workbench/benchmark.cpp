@@ -34,6 +34,14 @@ typedef std::chrono::microseconds microseconds;
 
 namespace {
 
+#define TER_FUNCTOR(name, ...) \
+template<typename A, typename B, typename C> \
+struct name { \
+    static void apply(A& a, B& b, C& c){ \
+        (__VA_ARGS__); \
+    } \
+}
+
 template<typename T>
 void randomize_double(T& container){
     static std::default_random_engine rand_engine(std::time(nullptr));
@@ -153,7 +161,7 @@ struct sub_measure_ter {
 template<template <typename, typename, typename> class Functor>
 struct sub_measure_ter<Functor, false> {
     template<typename A, typename B, typename C>
-    static void measure_sub(const std::string& , A& a, B& b, C& c){}
+    static void measure_sub(const std::string& , A&, B&, C&){}
 };
 
 template<template<typename, typename, typename> class Functor, bool Enable = true, typename A, typename B, typename C>
@@ -224,24 +232,28 @@ void bench_dyn_matrix_sigmoid(std::size_t d1, std::size_t d2, const std::string&
         , a, b);
 }
 
-#ifndef __INTEL_COMPILER
+TER_FUNCTOR(default_conv_1d_full, c = etl::conv_1d_full(a, b));
+TER_FUNCTOR(std_conv_1d_full, etl::impl::standard::conv1_full(a, b, c));
+TER_FUNCTOR(sse_sconv_1d_full, etl::impl::sse::sconv1_full(a, b, c));
+TER_FUNCTOR(sse_dconv_1d_full, etl::impl::sse::dconv1_full(a, b, c));
+TER_FUNCTOR(avx_sconv_1d_full, etl::impl::avx::sconv1_full(a, b, c));
+TER_FUNCTOR(avx_dconv_1d_full, etl::impl::avx::dconv1_full(a, b, c));
 
 template<typename A, typename B, typename C>
 void measure_full_convolution_1d(A& a, B& b, C& c){
-    measure_sub("default", [&a, &b, &c](auto&){c = etl::conv_1d_full(a, b);} , a, b);
-
-    measure_sub("std", [&a, &b, &c](auto&){etl::impl::standard::conv1_full(a, b, c);} , a, b);
+    measure_sub_ter<default_conv_1d_full>("default", a, b, c);
+    measure_sub_ter<std_conv_1d_full>("std", a, b, c);
 
     constexpr const bool F = std::is_same<float, typename A::value_type>::value;
 
 #ifdef TEST_SSE
-    measure_sub<F>("sse", [&a, &b, &c](auto&){etl::impl::sse::sconv1_full(a, b, c);} , a, b);
-    measure_sub<!F>("sse", [&a, &b, &c](auto&){etl::impl::sse::dconv1_full(a, b, c);} , a, b);
+    measure_sub_ter<sse_sconv_1d_full, F>("sse", a, b, c);
+    measure_sub_ter<sse_dconv_1d_full, !F>("sse", a, b, c);
 #endif
 
 #ifdef TEST_AVX
-    measure_sub<F>("avx", [&a, &b, &c](auto&){etl::impl::avx::sconv1_full(a, b, c);} , a, b);
-    measure_sub<!F>("avx", [&a, &b, &c](auto&){etl::impl::avx::dconv1_full(a, b, c);} , a, b);
+    measure_sub_ter<avx_sconv_1d_full, F>("avx", a, b, c);
+    measure_sub_ter<avx_dconv_1d_full, !F>("avx", a, b, c);
 #endif
 
     cpp_unused(F);
@@ -285,22 +297,28 @@ void bench_dyn_full_convolution_1d_s(std::size_t d1, std::size_t d2){
     measure_full_convolution_1d(a, b, c);
 }
 
+TER_FUNCTOR(default_conv_1d_same, c = etl::conv_1d_same(a, b));
+TER_FUNCTOR(std_conv_1d_same, etl::impl::standard::conv1_same(a, b, c));
+TER_FUNCTOR(sse_sconv_1d_same, etl::impl::sse::sconv1_same(a, b, c));
+TER_FUNCTOR(sse_dconv_1d_same, etl::impl::sse::dconv1_same(a, b, c));
+TER_FUNCTOR(avx_sconv_1d_same, etl::impl::avx::sconv1_same(a, b, c));
+TER_FUNCTOR(avx_dconv_1d_same, etl::impl::avx::dconv1_same(a, b, c));
+
 template<typename A, typename B, typename C>
 void measure_same_convolution_1d(A& a, B& b, C& c){
-    measure_sub("default", [&a, &b, &c](auto&){c = etl::conv_1d_same(a, b);} , a, b);
-
-    measure_sub("std", [&a, &b, &c](auto&){etl::impl::standard::conv1_same(a, b, c);} , a, b);
+    measure_sub_ter<default_conv_1d_same>("default", a, b, c);
+    measure_sub_ter<std_conv_1d_same>("std", a, b, c);
 
     constexpr const bool F = std::is_same<float, typename A::value_type>::value;
 
 #ifdef TEST_SSE
-    measure_sub<F>("sse", [&a, &b, &c](auto&){etl::impl::sse::sconv1_same(a, b, c);} , a, b);
-    measure_sub<!F>("sse", [&a, &b, &c](auto&){etl::impl::sse::dconv1_same(a, b, c);} , a, b);
+    measure_sub_ter<sse_sconv_1d_same, F>("sse", a, b, c);
+    measure_sub_ter<sse_dconv_1d_same, !F>("sse", a, b, c);
 #endif
 
 #ifdef TEST_AVX
-    measure_sub<F>("avx", [&a, &b, &c](auto&){etl::impl::avx::sconv1_same(a, b, c);} , a, b);
-    measure_sub<!F>("avx", [&a, &b, &c](auto&){etl::impl::avx::dconv1_same(a, b, c);} , a, b);
+    measure_sub_ter<avx_sconv_1d_same, F>("avx", a, b, c);
+    measure_sub_ter<avx_dconv_1d_same, !F>("avx", a, b, c);
 #endif
 
     cpp_unused(F);
@@ -344,22 +362,28 @@ void bench_dyn_same_convolution_1d_s(std::size_t d1, std::size_t d2){
     measure_same_convolution_1d(a, b, c);
 }
 
+TER_FUNCTOR(default_conv_1d_valid, c = etl::conv_1d_valid(a, b));
+TER_FUNCTOR(std_conv_1d_valid, etl::impl::standard::conv1_valid(a, b, c));
+TER_FUNCTOR(sse_sconv_1d_valid, etl::impl::sse::sconv1_valid(a, b, c));
+TER_FUNCTOR(sse_dconv_1d_valid, etl::impl::sse::dconv1_valid(a, b, c));
+TER_FUNCTOR(avx_sconv_1d_valid, etl::impl::avx::sconv1_valid(a, b, c));
+TER_FUNCTOR(avx_dconv_1d_valid, etl::impl::avx::dconv1_valid(a, b, c));
+
 template<typename A, typename B, typename C>
 void measure_valid_convolution_1d(A& a, B& b, C& c){
-    measure_sub("default", [&a, &b, &c](auto&){c = etl::conv_1d_valid(a, b);} , a, b);
-
-    measure_sub("std", [&a, &b, &c](auto&){etl::impl::standard::conv1_valid(a, b, c);} , a, b);
+    measure_sub_ter<default_conv_1d_valid>("default", a, b, c);
+    measure_sub_ter<std_conv_1d_valid>("std", a, b, c);
 
     constexpr const bool F = std::is_same<float, typename A::value_type>::value;
 
 #ifdef TEST_SSE
-    measure_sub<F>("sse", [&a, &b, &c](auto&){etl::impl::sse::sconv1_valid(a, b, c);} , a, b);
-    measure_sub<!F>("sse", [&a, &b, &c](auto&){etl::impl::sse::dconv1_valid(a, b, c);} , a, b);
+    measure_sub_ter<sse_sconv_1d_valid, F>("sse", a, b, c);
+    measure_sub_ter<sse_dconv_1d_valid, !F>("sse", a, b, c);
 #endif
 
 #ifdef TEST_AVX
-    measure_sub<F>("avx", [&a, &b, &c](auto&){etl::impl::avx::sconv1_valid(a, b, c);} , a, b);
-    measure_sub<!F>("avx", [&a, &b, &c](auto&){etl::impl::avx::dconv1_valid(a, b, c);} , a, b);
+    measure_sub_ter<avx_sconv_1d_valid, F>("avx", a, b, c);
+    measure_sub_ter<avx_dconv_1d_valid, !F>("avx", a, b, c);
 #endif
 
     cpp_unused(F);
@@ -403,22 +427,28 @@ void bench_dyn_valid_convolution_1d_s(std::size_t d1, std::size_t d2){
     measure_valid_convolution_1d(a, b, c);
 }
 
+TER_FUNCTOR(default_conv_2d_full, c = etl::conv_2d_full(a, b));
+TER_FUNCTOR(std_conv_2d_full, etl::impl::standard::conv2_full(a, b, c));
+TER_FUNCTOR(sse_sconv_2d_full, etl::impl::sse::sconv2_full(a, b, c));
+TER_FUNCTOR(sse_dconv_2d_full, etl::impl::sse::dconv2_full(a, b, c));
+TER_FUNCTOR(avx_sconv_2d_full, etl::impl::avx::sconv2_full(a, b, c));
+TER_FUNCTOR(avx_dconv_2d_full, etl::impl::avx::dconv2_full(a, b, c));
+
 template<typename A, typename B, typename C>
 void measure_full_convolution_2d(A& a, B& b, C& c){
-    measure_sub("default", [&a, &b, &c](auto&){c = etl::conv_2d_full(a, b);} , a, b);
-
-    measure_sub("std", [&a, &b, &c](auto&){etl::impl::standard::conv2_full(a, b, c);} , a, b);
+    measure_sub_ter<default_conv_2d_full>("default", a, b, c);
+    measure_sub_ter<std_conv_2d_full>("std", a, b, c);
 
     constexpr const bool F = std::is_same<float, typename A::value_type>::value;
 
 #ifdef TEST_SSE
-    measure_sub<F>("sse", [&a, &b, &c](auto&){etl::impl::sse::sconv2_full(a, b, c);} , a, b);
-    measure_sub<!F>("sse", [&a, &b, &c](auto&){etl::impl::sse::dconv2_full(a, b, c);} , a, b);
+    measure_sub_ter<sse_sconv_2d_full, F>("sse", a, b, c);
+    measure_sub_ter<sse_dconv_2d_full, !F>("sse", a, b, c);
 #endif
 
 #ifdef TEST_AVX
-    measure_sub<F>("avx", [&a, &b, &c](auto&){etl::impl::avx::sconv2_full(a, b, c);} , a, b);
-    measure_sub<!F>("avx", [&a, &b, &c](auto&){etl::impl::avx::dconv2_full(a, b, c);} , a, b);
+    measure_sub_ter<avx_sconv_2d_full, F>("avx", a, b, c);
+    measure_sub_ter<avx_dconv_2d_full, !F>("avx", a, b, c);
 #endif
 
     cpp_unused(F);
@@ -462,22 +492,28 @@ void bench_dyn_full_convolution_2d_s(std::size_t d1, std::size_t d2){
     measure_full_convolution_2d(a, b, c);
 }
 
+TER_FUNCTOR(default_conv_2d_same, c = etl::conv_2d_same(a, b));
+TER_FUNCTOR(std_conv_2d_same, etl::impl::standard::conv2_same(a, b, c));
+TER_FUNCTOR(sse_sconv_2d_same, etl::impl::sse::sconv2_same(a, b, c));
+TER_FUNCTOR(sse_dconv_2d_same, etl::impl::sse::dconv2_same(a, b, c));
+TER_FUNCTOR(avx_sconv_2d_same, etl::impl::avx::sconv2_same(a, b, c));
+TER_FUNCTOR(avx_dconv_2d_same, etl::impl::avx::dconv2_same(a, b, c));
+
 template<typename A, typename B, typename C>
 void measure_same_convolution_2d(A& a, B& b, C& c){
-    measure_sub("default", [&a, &b, &c](auto&){c = etl::conv_2d_same(a, b);} , a, b);
-
-    measure_sub("std", [&a, &b, &c](auto&){etl::impl::standard::conv2_same(a, b, c);} , a, b);
+    measure_sub_ter<default_conv_2d_same>("default", a, b, c);
+    measure_sub_ter<std_conv_2d_same>("std", a, b, c);
 
     constexpr const bool F = std::is_same<float, typename A::value_type>::value;
 
 #ifdef TEST_SSE
-    measure_sub<F>("sse", [&a, &b, &c](auto&){etl::impl::sse::sconv2_same(a, b, c);} , a, b);
-    measure_sub<!F>("sse", [&a, &b, &c](auto&){etl::impl::sse::dconv2_same(a, b, c);} , a, b);
+    measure_sub_ter<sse_sconv_2d_same, F>("sse", a, b, c);
+    measure_sub_ter<sse_dconv_2d_same, !F>("sse", a, b, c);
 #endif
 
 #ifdef TEST_AVX
-    measure_sub<F>("avx", [&a, &b, &c](auto&){etl::impl::avx::sconv2_same(a, b, c);} , a, b);
-    measure_sub<!F>("avx", [&a, &b, &c](auto&){etl::impl::avx::dconv2_same(a, b, c);} , a, b);
+    measure_sub_ter<avx_sconv_2d_same, F>("avx", a, b, c);
+    measure_sub_ter<avx_dconv_2d_same, !F>("avx", a, b, c);
 #endif
 
     cpp_unused(F);
@@ -521,22 +557,28 @@ void bench_dyn_same_convolution_2d_s(std::size_t d1, std::size_t d2){
     measure_same_convolution_2d(a, b, c);
 }
 
+TER_FUNCTOR(default_conv_2d_valid, c = etl::conv_2d_valid(a, b));
+TER_FUNCTOR(std_conv_2d_valid, etl::impl::standard::conv2_valid(a, b, c));
+TER_FUNCTOR(sse_sconv_2d_valid, etl::impl::sse::sconv2_valid(a, b, c));
+TER_FUNCTOR(sse_dconv_2d_valid, etl::impl::sse::dconv2_valid(a, b, c));
+TER_FUNCTOR(avx_sconv_2d_valid, etl::impl::avx::sconv2_valid(a, b, c));
+TER_FUNCTOR(avx_dconv_2d_valid, etl::impl::avx::dconv2_valid(a, b, c));
+
 template<typename A, typename B, typename C>
 void measure_valid_convolution_2d(A& a, B& b, C& c){
-    measure_sub("default", [&a, &b, &c](auto&){c = etl::conv_2d_valid(a, b);} , a, b);
-
-    measure_sub("std", [&a, &b, &c](auto&){etl::impl::standard::conv2_valid(a, b, c);} , a, b);
+    measure_sub_ter<default_conv_2d_valid>("default", a, b, c);
+    measure_sub_ter<std_conv_2d_valid>("std", a, b, c);
 
     constexpr const bool F = std::is_same<float, typename A::value_type>::value;
 
 #ifdef TEST_SSE
-    measure_sub<F>("sse", [&a, &b, &c](auto&){etl::impl::sse::sconv2_valid(a, b, c);} , a, b);
-    measure_sub<!F>("sse", [&a, &b, &c](auto&){etl::impl::sse::dconv2_valid(a, b, c);} , a, b);
+    measure_sub_ter<sse_sconv_2d_valid, F>("sse", a, b, c);
+    measure_sub_ter<sse_dconv_2d_valid, !F>("sse", a, b, c);
 #endif
 
 #ifdef TEST_AVX
-    measure_sub<F>("avx", [&a, &b, &c](auto&){etl::impl::avx::sconv2_valid(a, b, c);} , a, b);
-    measure_sub<!F>("avx", [&a, &b, &c](auto&){etl::impl::avx::dconv2_valid(a, b, c);} , a, b);
+    measure_sub_ter<avx_sconv_2d_valid, F>("avx", a, b, c);
+    measure_sub_ter<avx_dconv_2d_valid, !F>("avx", a, b, c);
 #endif
 
     cpp_unused(F);
@@ -578,16 +620,6 @@ void bench_dyn_valid_convolution_2d_s(std::size_t d1, std::size_t d2){
 
     std::cout << "dyn_valid_convolution_2d_s" << "(" << d1 << "," << d2 << ")" << std::endl;
     measure_valid_convolution_2d(a, b, c);
-}
-
-#endif //__INTEL_COMPILER
-
-#define TER_FUNCTOR(name, ...) \
-template<typename A, typename B, typename C> \
-struct name { \
-    static void apply(A& a, B& b, C& c){ \
-        (__VA_ARGS__); \
-    } \
 }
 
 TER_FUNCTOR(default_mmul, c = etl::mmul(a, b));
@@ -658,8 +690,6 @@ void bench_dyn_mmul_s(std::size_t d1, std::size_t d2){
     measure_mmul(a, b, c);
 }
 
-//#endif //__INTEL_COMPILER
-
 void bench_stack(){
     std::cout << "Start benchmarking...\n";
     std::cout << "... all structures are on stack\n\n";
@@ -679,7 +709,6 @@ void bench_stack(){
     bench_dyn_matrix_simple(16, 256, "TODOms");
     bench_dyn_matrix_simple(256, 128, "TODOms");
 
-#ifndef __INTEL_COMPILER
     bench_fast_valid_convolution_1d_d<1024, 64>();
     bench_fast_valid_convolution_1d_d<2048, 128>();
     bench_dyn_valid_convolution_1d_d(1024, 64);
@@ -739,8 +768,6 @@ void bench_stack(){
     bench_fast_full_convolution_2d_s<128, 32>();
     bench_dyn_full_convolution_2d_s(64, 32);
     bench_dyn_full_convolution_2d_s(128, 32);
-
-#endif //__INTEL_COMPILER
 
     bench_fast_mmul<64, 32>();
     bench_fast_mmul<128, 64>();
