@@ -84,22 +84,22 @@ struct dim_view {
 
     //{{{ Direct memory access
 
-    template<cpp_enable_if_cst(has_direct_access<sub_type>::value && D == 1)>
+    template<typename ST = T, std::size_t SD = D, cpp_enable_if(has_direct_access<ST>::value && SD == 1)>
     value_type* memory_start() noexcept {
         return sub.memory_start() + i * subsize(sub);
     }
 
-    template<cpp_enable_if_cst(has_direct_access<sub_type>::value && D == 1)>
+    template<typename ST = T, std::size_t SD = D, cpp_enable_if(has_direct_access<ST>::value && SD == 1)>
     const value_type* memory_start() const noexcept {
         return sub.memory_start() + i * subsize(sub);
     }
 
-    template<cpp_enable_if_cst(has_direct_access<sub_type>::value && D == 1)>
+    template<typename ST = T, std::size_t SD = D, cpp_enable_if(has_direct_access<ST>::value && SD == 1)>
     value_type* memory_end() noexcept {
         return sub.memory_start() + (i + 1) * subsize(sub);
     }
 
-    template<cpp_enable_if_cst(has_direct_access<sub_type>::value && D == 1)>
+    template<typename ST = T, std::size_t SD = D, cpp_enable_if(has_direct_access<ST>::value && SD == 1)>
     const value_type* memory_end() const noexcept {
         return sub.memory_start() + (i + 1) * subsize(sub);
     }
@@ -140,22 +140,22 @@ struct sub_view {
 
     //{{{ Direct memory access
 
-    template<cpp_enable_if_cst(has_direct_access<parent_type>::value)>
+    template<typename ST = T, cpp_enable_if(has_direct_access<ST>::value)>
     value_type* memory_start() noexcept {
         return parent.memory_start() + i * subsize(parent);
     }
 
-    template<cpp_enable_if_cst(has_direct_access<parent_type>::value)>
+    template<typename ST = T, cpp_enable_if(has_direct_access<ST>::value)>
     const value_type* memory_start() const noexcept {
         return parent.memory_start() + i * subsize(parent);
     }
 
-    template<cpp_enable_if_cst(has_direct_access<parent_type>::value)>
+    template<typename ST = T, cpp_enable_if(has_direct_access<ST>::value)>
     value_type* memory_end() noexcept {
         return parent.memory_start() + (i + 1) * subsize(parent);
     }
 
-    template<cpp_enable_if_cst(has_direct_access<parent_type>::value)>
+    template<typename ST = T, cpp_enable_if(has_direct_access<ST>::value)>
     const value_type* memory_end() const noexcept {
         return parent.memory_start() + (i + 1) * subsize(parent);
     }
@@ -203,22 +203,22 @@ struct fast_matrix_view {
 
     //{{{ Direct memory access
 
-    template<cpp_enable_if_cst(has_direct_access<sub_type>::value)>
+    template<typename SS = T, cpp_enable_if(has_direct_access<SS>::value)>
     value_type* memory_start() noexcept {
         return sub.memory_start();
     }
 
-    template<cpp_enable_if_cst(has_direct_access<sub_type>::value)>
+    template<typename SS = T, cpp_enable_if(has_direct_access<SS>::value)>
     const value_type* memory_start() const noexcept {
         return sub.memory_start();
     }
 
-    template<cpp_enable_if_cst(has_direct_access<sub_type>::value)>
+    template<typename SS = T, cpp_enable_if(has_direct_access<SS>::value)>
     value_type* memory_end() noexcept {
         return sub.memory_end();
     }
 
-    template<cpp_enable_if_cst(has_direct_access<sub_type>::value)>
+    template<typename SS = T, cpp_enable_if(has_direct_access<SS>::value)>
     const value_type* memory_end() const noexcept {
         return sub.memory_end();
     }
@@ -266,22 +266,22 @@ struct dyn_matrix_view {
 
     //{{{ Direct memory access
 
-    template<cpp_enable_if_cst(has_direct_access<sub_type>::value)>
+    template<typename SS = T, cpp_enable_if(has_direct_access<SS>::value)>
     value_type* memory_start() noexcept {
         return sub.memory_start();
     }
 
-    template<cpp_enable_if_cst(has_direct_access<sub_type>::value)>
+    template<typename SS = T, cpp_enable_if(has_direct_access<SS>::value)>
     const value_type* memory_start() const noexcept {
         return sub.memory_start();
     }
 
-    template<cpp_enable_if_cst(has_direct_access<sub_type>::value)>
+    template<typename SS = T, cpp_enable_if(has_direct_access<SS>::value)>
     value_type* memory_end() noexcept {
         return sub.memory_end();
     }
 
-    template<cpp_enable_if_cst(has_direct_access<sub_type>::value)>
+    template<typename SS = T, cpp_enable_if(has_direct_access<SS>::value)>
     const value_type* memory_end() const noexcept {
         return sub.memory_end();
     }

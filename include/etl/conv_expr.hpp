@@ -184,17 +184,17 @@ struct basic_conv1_expr {
         return new result_type<A, B>(this_type::dim(a, b, 0));
     }
 
-    template<typename A, typename B, typename C, cpp_enable_if_cst(D == 1)>
+    template<typename A, typename B, typename C, std::size_t D2 = D, cpp_enable_if(D2 == 1)>
     static void check(const A& a, const B& b, const C& c){
         detail::check_conv_1d_sizes<TT>(a, b, c);
     }
 
-    template<typename A, typename B, typename C, cpp_enable_if_cst(D == 2)>
+    template<typename A, typename B, typename C, std::size_t D2 = D, cpp_enable_if(D2 == 2)>
     static void check(const A& a, const B& b, const C& c){
         detail::check_conv_2d_sizes<TT>(a, b, c);
     }
 
-    template<typename A, typename B, typename C, cpp_enable_if_cst(D > 2)>
+    template<typename A, typename B, typename C, std::size_t D2 = D, cpp_enable_if((D2 > 2))>
     static void check(const A& a, const B& b, const C& c){
         detail::check_conv_deep_sizes<TT>(a, b, c);
     }

@@ -134,12 +134,12 @@ public:
         std::copy(rhs.begin(), rhs.end(), begin());
     }
 
-    template<cpp_enable_if_cst(matrix_detail::is_vector<ST>::value)>
+    template<typename SST = ST, cpp_enable_if(matrix_detail::is_vector<SST>::value)>
     fast_matrix_impl(fast_matrix_impl&& rhs) noexcept {
         _data = std::move(rhs._data);
     }
 
-    template<cpp_disable_if_cst(matrix_detail::is_vector<ST>::value)>
+    template<typename SST = ST, cpp_disable_if(matrix_detail::is_vector<SST>::value)>
     explicit fast_matrix_impl(fast_matrix_impl&& rhs) noexcept {
         std::copy(rhs.begin(), rhs.end(), begin());
     }
@@ -174,7 +174,7 @@ public:
 
     //Copy assignment operator
 
-    template<cpp_enable_if_cst(matrix_detail::is_vector<ST>::value)>
+    template<typename SST = ST, cpp_enable_if(matrix_detail::is_vector<SST>::value)>
     fast_matrix_impl& operator=(const fast_matrix_impl& rhs) noexcept {
         if(this != &rhs){
             _data = rhs._data;
@@ -182,7 +182,7 @@ public:
         return *this;
     }
 
-    template<cpp_disable_if_cst(matrix_detail::is_vector<ST>::value)>
+    template<typename SST = ST, cpp_disable_if(matrix_detail::is_vector<SST>::value)>
     fast_matrix_impl& operator=(const fast_matrix_impl& rhs) noexcept {
         if(this != &rhs){
             std::copy(rhs.begin(), rhs.end(), begin());
@@ -234,7 +234,7 @@ public:
 
     //Prohibit move
 
-    template<cpp_enable_if_cst(matrix_detail::is_vector<ST>::value)>
+    template<typename SST = ST, cpp_enable_if(matrix_detail::is_vector<SST>::value)>
     fast_matrix_impl& operator=(fast_matrix_impl&& rhs){
         if(this != &rhs){
             _data = std::move(rhs._data);
@@ -242,7 +242,7 @@ public:
         return *this;
     }
 
-    template<cpp_disable_if_cst(matrix_detail::is_vector<ST>::value)>
+    template<typename SST = ST, cpp_disable_if(matrix_detail::is_vector<SST>::value)>
     fast_matrix_impl& operator=(fast_matrix_impl&& rhs) = delete;
 
     //}}}

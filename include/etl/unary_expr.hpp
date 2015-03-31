@@ -218,25 +218,25 @@ public:
     iterator<const this_type, true> end() const noexcept {
         return {*this, size(*this)};
     }
-    
+
     //{{{ Direct memory access
 
-    template<cpp_enable_if_cst(has_direct_access<Expr>::value)>
+    template<typename SS = Expr, cpp_enable_if(has_direct_access<SS>::value)>
     auto memory_start() noexcept {
         return value().memory_start();
     }
 
-    template<cpp_enable_if_cst(has_direct_access<Expr>::value)>
+    template<typename SS = Expr, cpp_enable_if(has_direct_access<SS>::value)>
     const value_type* memory_start() const noexcept {
         return value().memory_start();
     }
 
-    template<cpp_enable_if_cst(has_direct_access<Expr>::value)>
+    template<typename SS = Expr, cpp_enable_if(has_direct_access<SS>::value)>
     value_type* memory_end() noexcept {
         return value().memory_end();
     }
 
-    template<cpp_enable_if_cst(has_direct_access<Expr>::value)>
+    template<typename SS = Expr, cpp_enable_if(has_direct_access<SS>::value)>
     const value_type* memory_end() const noexcept {
         return value().memory_end();
     }

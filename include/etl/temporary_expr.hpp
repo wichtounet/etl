@@ -99,7 +99,7 @@ public:
         return result()(args...);
     }
 
-    template<cpp_enable_if_cst(sub_size_compare<this_type>::value > 1)>
+    template<typename ST = T, typename A = AExpr, typename B = BExpr, typename O = Op, typename F = Forced, cpp_enable_if((sub_size_compare<temporary_binary_expr<ST, A, B, O, F>>::value > 1))>
     auto operator()(std::size_t i){
         return sub(*this, i);
     }
@@ -217,12 +217,14 @@ public:
         return result()(args...);
     }
 
-    template<cpp_enable_if_cst(sub_size_compare<this_type>::value > 1)>
+    //TODO Simplify these two SFINAE functions
+
+    template<typename ST = T, typename A = AExpr, typename B = BExpr, typename O = Op, cpp_enable_if((sub_size_compare<temporary_binary_expr<ST, A, B, O, void>>::value > 1))>
     auto operator()(std::size_t i){
         return sub(*this, i);
     }
 
-    template<cpp_enable_if_cst(sub_size_compare<this_type>::value > 1)>
+    template<typename ST = T, typename A = AExpr, typename B = BExpr, typename O = Op, cpp_enable_if((sub_size_compare<temporary_binary_expr<ST, A, B, O, void>>::value > 1))>
     auto operator()(std::size_t i) const {
         return sub(*this, i);
     }

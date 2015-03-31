@@ -556,7 +556,7 @@ struct etl_traits<etl::temporary_binary_expr<T, A, B, Op, Forced>> {
         return Op::dim(v.a(), v.b(), d);
     }
 
-    template<cpp_enable_if_cst(is_fast)>
+    template<bool BB = is_fast, cpp_enable_if(BB)>
     static constexpr std::size_t size(){
         return Op::template size<a_t, b_t>();
     }
