@@ -24,6 +24,10 @@
 #define TEST_BLAS
 #endif
 
+#ifdef ETL_BENCH_STRASSEN
+#define TEST_STRASSEN
+#endif
+
 typedef std::chrono::high_resolution_clock timer_clock;
 typedef std::chrono::milliseconds milliseconds;
 typedef std::chrono::microseconds microseconds;
@@ -100,7 +104,7 @@ std::size_t measure_only_safe(Functor&& functor, T&... references){
     for(std::size_t i = 0; i < MEASURE; ++i){
         randomize(references...);
         auto start_time = timer_clock::now();
-        functor(start_time);
+        functor(i);
         auto end_time = timer_clock::now();
         auto duration = std::chrono::duration_cast<microseconds>(end_time - start_time);
         duration_acc += duration.count();
@@ -134,6 +138,27 @@ struct sub_measure<false> {
 template<bool Enable = true, typename Functor, typename... T>
 void measure_sub(const std::string& title, Functor&& functor, T&... references){
     sub_measure<Enable>::measure_sub(title, std::forward<Functor>(functor), references...);
+}
+
+template<template <typename, typename, typename> class Functor, bool Enable = true>
+struct sub_measure_ter {
+    template<typename A, typename B, typename C>
+    static void measure_sub(const std::string& title, A& a, B& b, C& c){
+        std::size_t duration_acc = measure_only_safe([&a, &b, &c](int){Functor<A, B, C>::apply(a, b, c);}, a, b);
+
+        std::cout << "\t" << title << std::string(20 - title.size(), ' ') << duration_str(duration_acc) << std::endl;
+    }
+};
+
+template<template <typename, typename, typename> class Functor>
+struct sub_measure_ter<Functor, false> {
+    template<typename A, typename B, typename C>
+    static void measure_sub(const std::string& , A& a, B& b, C& c){}
+};
+
+template<template<typename, typename, typename> class Functor, bool Enable = true, typename A, typename B, typename C>
+void measure_sub_ter(const std::string& title, A& a, B& b, C& c){
+    sub_measure_ter<Functor, Enable>::measure_sub(title, a, b, c);
 }
 
 template<std::size_t D>
@@ -555,25 +580,44 @@ void bench_dyn_valid_convolution_2d_s(std::size_t d1, std::size_t d2){
     measure_valid_convolution_2d(a, b, c);
 }
 
+#endif //__INTEL_COMPILER
+
+#define TER_FUNCTOR(name, ...) \
+template<typename A, typename B, typename C> \
+struct name { \
+    static void apply(A& a, B& b, C& c){ \
+        (__VA_ARGS__); \
+    } \
+}
+
+TER_FUNCTOR(default_mmul, c = etl::mmul(a, b));
+TER_FUNCTOR(std_mmul, etl::impl::standard::mmul(a, b, c));
+TER_FUNCTOR(lazy_mmul, c = etl::lazy_mmul(a, b));
+TER_FUNCTOR(eblas_mmul_s, etl::impl::eblas::fast_sgemm(a, b, c));
+TER_FUNCTOR(eblas_mmul_d, etl::impl::eblas::fast_dgemm(a, b, c));
+TER_FUNCTOR(blas_mmul_s, etl::impl::blas::sgemm(a, b, c));
+TER_FUNCTOR(blas_mmul_d, etl::impl::blas::dgemm(a, b, c));
+TER_FUNCTOR(strassen_mmul, c = etl::strassen_mmul(a, b));
+
 template<typename A, typename B, typename C>
 void measure_mmul(A& a, B& b, C& c){
-    measure_sub("default", [&a, &b, &c](auto&){c = etl::mmul(a, b);} , a, b);
-
-    measure_sub("std", [&a, &b, &c](auto&){etl::impl::standard::mmul(a, b, c);} , a, b);
-
-    measure_sub("lazy", [&a, &b, &c](auto&){c = etl::lazy_mmul(a, b);} , a, b);
+    measure_sub_ter<default_mmul>("default", a, b, c);
+    measure_sub_ter<std_mmul>("std", a, b, c);
+    measure_sub_ter<lazy_mmul>("lazy", a, b, c);
 
     constexpr const bool F = std::is_same<float, typename A::value_type>::value;
 
-    measure_sub<F>("eblas", [&a, &b, &c](auto&){etl::impl::eblas::fast_sgemm(a, b, c);} , a, b);
-    measure_sub<!F>("eblas", [&a, &b, &c](auto&){etl::impl::eblas::fast_dgemm(a, b, c);} , a, b);
+    measure_sub_ter<eblas_mmul_s, F>("eblas", a, b, c);
+    measure_sub_ter<eblas_mmul_d, !F>("eblas", a, b, c);
 
 #ifdef TEST_BLAS
-    measure_sub<F>("blas", [&a, &b, &c](auto&){etl::impl::blas::sgemm(a, b, c);} , a, b);
-    measure_sub<!F>("blas", [&a, &b, &c](auto&){etl::impl::blas::dgemm(a, b, c);} , a, b);
+    measure_sub_ter<blas_mmul_s, F>("blas", a, b, c);
+    measure_sub_ter<blas_mmul_d, !F>("blas", a, b, c);
 #endif
 
-    measure_sub("strassen", [&a, &b, &c](auto&){*etl::strassen_mmul(a, b, c);} , a, b);
+#ifdef TEST_STRASSEN
+    measure_sub_ter<strassen_mmul>("strassen", a, b, c);
+#endif
 }
 
 template<std::size_t D1, std::size_t D2>
@@ -614,7 +658,7 @@ void bench_dyn_mmul_s(std::size_t d1, std::size_t d2){
     measure_mmul(a, b, c);
 }
 
-#endif //__INTEL_COMPILER
+//#endif //__INTEL_COMPILER
 
 void bench_stack(){
     std::cout << "Start benchmarking...\n";
@@ -696,6 +740,8 @@ void bench_stack(){
     bench_dyn_full_convolution_2d_s(64, 32);
     bench_dyn_full_convolution_2d_s(128, 32);
 
+#endif //__INTEL_COMPILER
+
     bench_fast_mmul<64, 32>();
     bench_fast_mmul<128, 64>();
     bench_fast_mmul<256, 128>();
@@ -711,7 +757,6 @@ void bench_stack(){
     bench_dyn_mmul_s(128, 64);
     bench_dyn_mmul_s(256, 128);
     bench_dyn_mmul_s(512, 256);
-#endif //__INTEL_COMPILER
 }
 
 } //end of anonymous namespace
