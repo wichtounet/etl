@@ -20,6 +20,10 @@
 #endif
 #endif
 
+#ifdef ETL_BLAS_MODE
+#define TEST_BLAS
+#endif
+
 typedef std::chrono::high_resolution_clock timer_clock;
 typedef std::chrono::milliseconds milliseconds;
 typedef std::chrono::microseconds microseconds;
@@ -561,6 +565,11 @@ void measure_mmul(A& a, B& b, C& c){
 
     measure_sub<F>("eblas", [&a, &b, &c](auto&){etl::fast_sgemm(a, b, c);} , a, b);
     measure_sub<!F>("eblas", [&a, &b, &c](auto&){etl::fast_dgemm(a, b, c);} , a, b);
+
+#ifdef TEST_BLAS
+    measure_sub<F>("blas", [&a, &b, &c](auto&){etl::impl::blas::sgemm(a, b, c);} , a, b);
+    measure_sub<!F>("blas", [&a, &b, &c](auto&){etl::impl::blas::dgemm(a, b, c);} , a, b);
+#endif
 
     measure_sub("strassen", [&a, &b, &c](auto&){*etl::strassen_mmul(a, b, c);} , a, b);
 }

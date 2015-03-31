@@ -16,8 +16,8 @@ CXX_FLAGS += -stdlib=libc++
 endif
 
 ifneq (,$(ETL_BLAS))
-CXX_FLAGS += -DETL_BLAS_MODE
-LD_FLAGS += -lcblas -lblas
+CXX_FLAGS += -DETL_BLAS_MODE $(shell pkg-config --cflags cblas)
+LD_FLAGS += $(shell pkg-config --libs cblas)
 endif
 
 CXX_FLAGS += -DETL_VECTORIZE
