@@ -278,7 +278,18 @@ public:
     }
 
     bool is_finite() const noexcept_this(noexcept(this->begin())) {
+#ifdef __INTEL_COMPILER
+        bool finite = true;
+        for(auto& v : *this){
+            if(!std::isfinite(v)){
+                finite = false;
+                break;
+            }
+        }
+        return finite;
+#else
         return std::find_if(begin(), end(), [](auto& v){return !std::isfinite(v);}) == end();
+#endif
     }
 
     //TODO Would probably be useful to have dim(std::size_t i)

@@ -322,7 +322,18 @@ public:
     }
 
     bool is_finite() const noexcept_this(noexcept(this->begin())) {
+#ifdef __INTEL_COMPILER
+        bool finite = true;
+        for(auto& v : *this){
+            if(!std::isfinite(v)){
+                finite = false;
+                break;
+            }
+        }
+        return finite;
+#else
         return std::find_if(begin(), end(), [](auto& v){return !std::isfinite(v);}) == end();
+#endif
     }
 
     template<bool B = (n_dimensions > 1), cpp::enable_if_u<B> = cpp::detail::dummy>
