@@ -228,7 +228,7 @@ struct basic_conv1_expr {
             } else if(TT == conv_type::SAME){
                 return etl_traits<A>::dim(a, d);
             } else {
-                return etl_traits<A>::dim(a, d) + etl_traits<B>::dim(b, d) + 1;
+                return etl_traits<A>::dim(a, d) + etl_traits<B>::dim(b, d) - 1;
             }
         }
     }
