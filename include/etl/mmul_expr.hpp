@@ -63,7 +63,7 @@ struct basic_mmul_expr {
 
     template<typename A, typename B, cpp_disable_if(decay_traits<A>::is_fast && decay_traits<B>::is_fast)>
     static result_type<A,B>* allocate(A&& a, B&& b){
-        return new result_type<A, B>(decay_traits<A>::dim(a, 0), decay_traits<B>::dim(b, 1));
+        return new result_type<A, B>(etl::dim<0>(a), etl::dim<1>(b));
     }
 
     template<typename A, typename B, typename C>
@@ -81,15 +81,15 @@ struct basic_mmul_expr {
 
     template<typename A, typename B>
     static std::size_t size(const A& a, const B& b){
-        return decay_traits<A>::dim(a, 0) * decay_traits<B>::dim(b, 1);
+        return etl::dim<0>(a) * etl::dim<1>(b);
     }
 
     template<typename A, typename B>
     static std::size_t dim(const A& a, const B& b, std::size_t d){
         if(d == 0){
-            return decay_traits<A>::dim(a, 0);
+            return etl::dim<0>(a);
         } else {
-            return decay_traits<B>::dim(b, 1);
+            return etl::dim<1>(b);
         }
     }
 
