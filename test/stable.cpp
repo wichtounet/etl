@@ -467,9 +467,9 @@ TEMPLATE_TEST_CASE_2( "mean_l/fast_matrix_4", "mean_l", Z, float, double ) {
 
     b = (etl::mean_l(a) - etl::mean_l(a)) + 2.5;
 
-    REQUIRE(b(0) == 2.5);
-    REQUIRE(b(1) == 2.5);
-    REQUIRE(b(2) == 2.5);
+    REQUIRE(b(0) == Approx(Z(2.5)));
+    REQUIRE(b(1) == Approx(Z(2.5)));
+    REQUIRE(b(2) == Approx(Z(2.5)));
 }
 
 TEMPLATE_TEST_CASE_2( "mean_l/fast_matrix_5", "mean_l", Z, float, double ) {
