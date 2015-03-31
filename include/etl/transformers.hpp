@@ -289,8 +289,8 @@ struct mmul_transformer {
     }
 
     value_type operator[](std::size_t i) const {
-        auto i_i = i / dim<0>(left);
-        auto i_j = i % dim<0>(right);
+        auto i_i = i / dim<1>(right);
+        auto i_j = i % dim<1>(right);
         return (*this)(i_i, i_j);
     }
 
