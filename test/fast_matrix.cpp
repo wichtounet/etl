@@ -297,9 +297,9 @@ TEMPLATE_TEST_CASE_2( "fast_matrix/div_scalar_1", "fast_matrix::operator/", Z, f
 
     test_matrix = test_matrix / 2.5;
 
-    REQUIRE(test_matrix[0] == Z(-1.0 / 2.5));
-    REQUIRE(test_matrix[1] == Z( 2.0 / 2.5));
-    REQUIRE(test_matrix[2] == Z( 5.0 / 2.5));
+    REQUIRE(test_matrix[0] == Approx(-1.0 / 2.5));
+    REQUIRE(test_matrix[1] == Approx( 2.0 / 2.5));
+    REQUIRE(test_matrix[2] == Approx( 5.0 / 2.5));
 }
 
 TEMPLATE_TEST_CASE_2( "fast_matrix/div_scalar_2", "fast_matrix::operator/", Z, float, double ) {
@@ -307,9 +307,9 @@ TEMPLATE_TEST_CASE_2( "fast_matrix/div_scalar_2", "fast_matrix::operator/", Z, f
 
     test_matrix = 2.5 / test_matrix;
 
-    REQUIRE(test_matrix[0] == Z(2.5 / -1.0));
-    REQUIRE(test_matrix[1] == Z(2.5 /  2.0));
-    REQUIRE(test_matrix[2] == Z(2.5 /  5.0));
+    REQUIRE(test_matrix[0] == Approx(2.5 / -1.0));
+    REQUIRE(test_matrix[1] == Approx(2.5 /  2.0));
+    REQUIRE(test_matrix[2] == Approx(2.5 /  5.0));
 }
 
 TEMPLATE_TEST_CASE_2( "fast_matrix/div_scalar_3", "fast_matrix::operator/=", Z, float, double ) {
@@ -317,9 +317,9 @@ TEMPLATE_TEST_CASE_2( "fast_matrix/div_scalar_3", "fast_matrix::operator/=", Z, 
 
     test_matrix /= 2.5;
 
-    REQUIRE(test_matrix[0] == Z(-1.0 / 2.5));
-    REQUIRE(test_matrix[1] ==  Z(2.0 / 2.5));
-    REQUIRE(test_matrix[2] ==  Z(5.0 / 2.5));
+    REQUIRE(test_matrix[0] == Approx(-1.0 / 2.5));
+    REQUIRE(test_matrix[1] == Approx(2.0 / 2.5));
+    REQUIRE(test_matrix[2] == Approx(5.0 / 2.5));
 }
 
 TEMPLATE_TEST_CASE_2( "fast_matrix/div_1", "fast_matrix::operator/", Z, float, double ) {
@@ -328,9 +328,9 @@ TEMPLATE_TEST_CASE_2( "fast_matrix/div_1", "fast_matrix::operator/", Z, float, d
 
     etl::fast_matrix<Z, 2, 2> c(a / b);
 
-    REQUIRE(c[0] == Z(-1.0 / 2.5));
-    REQUIRE(c[1] == Z(2.0 / 3.0));
-    REQUIRE(c[2] == Z(5.0 / 4.0));
+    REQUIRE(c[0] == Approx(-1.0 / 2.5));
+    REQUIRE(c[1] == Approx(2.0 / 3.0));
+    REQUIRE(c[2] == Approx(5.0 / 4.0));
 }
 
 TEMPLATE_TEST_CASE_2( "fast_matrix/div_2", "fast_matrix::operator/", Z, float, double ) {
@@ -339,9 +339,9 @@ TEMPLATE_TEST_CASE_2( "fast_matrix/div_2", "fast_matrix::operator/", Z, float, d
 
     a /= b;
 
-    REQUIRE(a[0] == Z(-1.0 / 2.5));
-    REQUIRE(a[1] == Z(2.0 / 3.0));
-    REQUIRE(a[2] == Z(5.0 / 4.0));
+    REQUIRE(a[0] == Approx(-1.0 / 2.5));
+    REQUIRE(a[1] == Approx(2.0 / 3.0));
+    REQUIRE(a[2] == Approx(5.0 / 4.0));
 }
 
 TEST_CASE( "fast_matrix/mod_scalar_1", "fast_matrix::operator%") {
@@ -437,9 +437,9 @@ TEMPLATE_TEST_CASE_2( "fast_matrix/sqrt_1", "fast_matrix::sqrt", Z, float, doubl
     etl::fast_matrix<Z, 2, 2> d(sqrt(a));
 
     REQUIRE(std::isnan(d[0]));
-    REQUIRE(d[1] == std::sqrt(Z(2.0)));
-    REQUIRE(d[2] == std::sqrt(Z(5.0)));
-    REQUIRE(d[3] == std::sqrt(Z(1.0)));
+    REQUIRE(d[1] == Approx(std::sqrt(Z(2.0))));
+    REQUIRE(d[2] == Approx(std::sqrt(Z(5.0))));
+    REQUIRE(d[3] == Approx(std::sqrt(Z(1.0))));
 }
 
 TEMPLATE_TEST_CASE_2( "fast_matrix/sqrt_2", "fast_matrix::sqrt", Z, float, double ) {
@@ -448,9 +448,9 @@ TEMPLATE_TEST_CASE_2( "fast_matrix/sqrt_2", "fast_matrix::sqrt", Z, float, doubl
     etl::fast_matrix<Z, 2, 2, 1> d(sqrt(a));
 
     REQUIRE(std::isnan(d[0]));
-    REQUIRE(d[1] == std::sqrt(Z(2.0)));
-    REQUIRE(d[2] == std::sqrt(Z(5.0)));
-    REQUIRE(d[3] == std::sqrt(Z(1.0)));
+    REQUIRE(d[1] == Approx(std::sqrt(Z(2.0))));
+    REQUIRE(d[2] == Approx(std::sqrt(Z(5.0))));
+    REQUIRE(d[3] == Approx(std::sqrt(Z(1.0))));
 }
 
 TEMPLATE_TEST_CASE_2( "fast_matrix/sqrt_3", "fast_matrix::sqrt", Z, float, double ) {
@@ -458,10 +458,10 @@ TEMPLATE_TEST_CASE_2( "fast_matrix/sqrt_3", "fast_matrix::sqrt", Z, float, doubl
 
     etl::fast_matrix<Z, 2, 2, 1> d(sqrt(a*a));
 
-    REQUIRE(d[0] == std::sqrt(Z(1.0)));
-    REQUIRE(d[1] == std::sqrt(Z(4.0)));
-    REQUIRE(d[2] == std::sqrt(Z(25.0)));
-    REQUIRE(d[3] == std::sqrt(Z(1.0)));
+    REQUIRE(d[0] == Approx(std::sqrt(Z(1.0))));
+    REQUIRE(d[1] == Approx(std::sqrt(Z(4.0))));
+    REQUIRE(d[2] == Approx(std::sqrt(Z(25.0))));
+    REQUIRE(d[3] == Approx(std::sqrt(Z(1.0))));
 }
 
 TEMPLATE_TEST_CASE_2( "fast_matrix/abs", "fast_matrix::abs", Z, float, double ) {
@@ -519,10 +519,10 @@ TEMPLATE_TEST_CASE_2( "fast_matrix/sigmoid", "fast_matrix::sigmoid", Z, float, d
 
     etl::fast_matrix<Z, 2, 2> d(sigmoid(a));
 
-    REQUIRE(d[0] == etl::logistic_sigmoid(Z(-1.0)));
-    REQUIRE(d[1] == etl::logistic_sigmoid(Z(2.0)));
-    REQUIRE(d[2] == etl::logistic_sigmoid(Z(0.0)));
-    REQUIRE(d[3] == etl::logistic_sigmoid(Z(1.0)));
+    REQUIRE(d[0] == Approx(etl::logistic_sigmoid(Z(-1.0))));
+    REQUIRE(d[1] == Approx(etl::logistic_sigmoid(Z(2.0))));
+    REQUIRE(d[2] == Approx(etl::logistic_sigmoid(Z(0.0))));
+    REQUIRE(d[3] == Approx(etl::logistic_sigmoid(Z(1.0))));
 }
 
 TEMPLATE_TEST_CASE_2( "fast_matrix/softplus", "fast_matrix::softplus", Z, float, double ) {
@@ -530,10 +530,10 @@ TEMPLATE_TEST_CASE_2( "fast_matrix/softplus", "fast_matrix::softplus", Z, float,
 
     etl::fast_matrix<Z, 2, 2> d(softplus(a));
 
-    REQUIRE(d[0] == etl::softplus(Z(-1.0)));
-    REQUIRE(d[1] == etl::softplus(Z(2.0)));
-    REQUIRE(d[2] == etl::softplus(Z(0.0)));
-    REQUIRE(d[3] == etl::softplus(Z(1.0)));
+    REQUIRE(d[0] == Approx(etl::softplus(Z(-1.0))));
+    REQUIRE(d[1] == Approx(etl::softplus(Z(2.0))));
+    REQUIRE(d[2] == Approx(etl::softplus(Z(0.0))));
+    REQUIRE(d[3] == Approx(etl::softplus(Z(1.0))));
 }
 
 TEMPLATE_TEST_CASE_2( "fast_matrix/exp", "fast_matrix::exp", Z, float, double ) {
@@ -541,10 +541,10 @@ TEMPLATE_TEST_CASE_2( "fast_matrix/exp", "fast_matrix::exp", Z, float, double ) 
 
     etl::fast_matrix<Z, 2, 2> d(exp(a));
 
-    REQUIRE(d[0] == std::exp(Z(-1.0)));
-    REQUIRE(d[1] == std::exp(Z(2.0)));
-    REQUIRE(d[2] == std::exp(Z(0.0)));
-    REQUIRE(d[3] == std::exp(Z(1.0)));
+    REQUIRE(d[0] == Approx(std::exp(Z(-1.0))));
+    REQUIRE(d[1] == Approx(std::exp(Z(2.0))));
+    REQUIRE(d[2] == Approx(std::exp(Z(0.0))));
+    REQUIRE(d[3] == Approx(std::exp(Z(1.0))));
 }
 
 TEMPLATE_TEST_CASE_2( "fast_matrix/max", "fast_matrix::max", Z, float, double ) {
