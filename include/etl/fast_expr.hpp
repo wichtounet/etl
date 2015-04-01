@@ -85,6 +85,13 @@ auto operator*(LE&& lhs, RE&& rhs) -> left_binary_helper<LE, RE, mul_binary_op> 
 }
 
 template<typename LE, typename RE, cpp::enable_if_all_u<is_etl_expr<LE>::value, is_etl_expr<RE>::value> = cpp::detail::dummy>
+auto operator>>(LE&& lhs, RE&& rhs) -> left_binary_helper<LE, RE, mul_binary_op> {
+    ensure_same_size(lhs, rhs);
+
+    return {lhs, rhs};
+}
+
+template<typename LE, typename RE, cpp::enable_if_all_u<is_etl_expr<LE>::value, is_etl_expr<RE>::value> = cpp::detail::dummy>
 auto operator/(LE&& lhs, RE&& rhs) -> left_binary_helper<LE, RE, div_binary_op> {
     ensure_same_size(lhs, rhs);
 

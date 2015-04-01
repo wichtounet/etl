@@ -204,6 +204,17 @@ TEMPLATE_TEST_CASE_2( "fast_vector/mul_2", "fast_vector::operator*=", Z, float, 
     REQUIRE(a[2] == 20.0);
 }
 
+TEMPLATE_TEST_CASE_2( "fast_vector/mul_3", "fast_vector::operator*", Z, float, double ) {
+    etl::fast_vector<Z, 3> a = {-1.0, 2.0, 5.0};
+    etl::fast_vector<Z, 3> b = {2.5, 3.0, 4.0};
+
+    etl::fast_vector<Z, 3> c(a >> b);
+
+    REQUIRE(c[0] == -2.5);
+    REQUIRE(c[1] ==  6.0);
+    REQUIRE(c[2] == 20.0);
+}
+
 TEMPLATE_TEST_CASE_2( "fast_vector/div_scalar_1", "fast_vector::operator/", Z, float, double ) {
     etl::fast_vector<Z, 3> test_vector = {-1.0, 2.0, 5.0};
 
