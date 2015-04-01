@@ -248,8 +248,25 @@ public:
     //}}}
 
     void swap(fast_matrix_impl& other){
+        //TODO Ensure dimensions...
         using std::swap;
         swap(_data, other._data);
+    }
+
+    template<typename E, cpp::enable_if_all_c<std::is_convertible<value_t<E>, value_type>, is_etl_expr<E>> = cpp::detail::dummy>
+    fast_matrix_impl& scale(E&& e){
+        ensure_same_size(*this, e);
+
+        *this *= e;
+
+        return *this;
+    }
+
+    template<typename E, cpp_enable_if(std::is_convertible<E, value_type>::value)>
+    fast_matrix_impl& scale(E&& e){
+        *this *= e;
+
+        return *this;
     }
 
     //{{{ Accessors

@@ -289,11 +289,28 @@ public:
     //}}}
 
     void swap(dyn_matrix& other){
+        //TODO This should be relaxed...
         cpp_assert(other.size() == size(), "Cannot swap from a dyn_matrix of different size");
 
         using std::swap;
         swap(_data, other._data);
         swap(_dimensions, other._dimensions);
+    }
+
+    template<typename E, cpp::enable_if_all_c<std::is_convertible<value_t<E>, value_type>, is_etl_expr<E>> = cpp::detail::dummy>
+    dyn_matrix& scale(E&& e){
+        ensure_same_size(*this, e);
+
+        *this *= e;
+
+        return *this;
+    }
+
+    template<typename E, cpp_enable_if(std::is_convertible<E, value_type>::value)>
+    dyn_matrix& scale(E&& e){
+        *this *= e;
+
+        return *this;
     }
 
     //{{{ Accessors

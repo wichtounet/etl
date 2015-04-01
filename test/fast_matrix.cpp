@@ -710,3 +710,53 @@ TEMPLATE_TEST_CASE_2( "fast_matrix/is_finite_6", "fast_matrix::is_finite", Z, fl
 }
 
 //}}} is_finite tests
+
+//{{{ is_finite tests
+
+TEMPLATE_TEST_CASE_2( "fast_matrix/scale_1", "", Z, float, double ) {
+    etl::fast_matrix<Z, 2, 2> a = {-1.0, 2.0, 5.0, 1.0};
+
+    a *= 2.5;
+
+    REQUIRE(a[0] == -2.5);
+    REQUIRE(a[1] ==  5.0);
+    REQUIRE(a[2] == 12.5);
+    REQUIRE(a[3] == 2.5);
+}
+
+TEMPLATE_TEST_CASE_2( "fast_matrix/scale_2", "", Z, float, double ) {
+    etl::fast_matrix<Z, 2, 2> a = {-1.0, 2.0, 5.0, 1.0};
+    etl::fast_matrix<Z, 2, 2> b = {2.5, 2.0, 3.0, -1.2};
+
+    a *= b;
+
+    REQUIRE(a[0] == Z(-2.5));
+    REQUIRE(a[1] == Z( 4.0));
+    REQUIRE(a[2] == Z(15.0));
+    REQUIRE(a[3] == Z(-1.2));
+}
+
+TEMPLATE_TEST_CASE_2( "fast_matrix/scale_3", "", Z, float, double ) {
+    etl::fast_matrix<Z, 2, 2> a = {-1.0, 2.0, 5.0, 1.0};
+    etl::fast_matrix<Z, 2, 2> b = {2.5, 2.0, 3.0, -1.2};
+
+    a.scale(b);
+
+    REQUIRE(a[0] == Z(-2.5));
+    REQUIRE(a[1] == Z( 4.0));
+    REQUIRE(a[2] == Z(15.0));
+    REQUIRE(a[3] == Z(-1.2));
+}
+
+TEMPLATE_TEST_CASE_2( "fast_matrix/scale_4", "", Z, float, double ) {
+    etl::fast_matrix<Z, 2, 2> a = {-1.0, 2.0, 5.0, 1.0};
+
+    a.scale(2.5);
+
+    REQUIRE(a[0] == -2.5);
+    REQUIRE(a[1] ==  5.0);
+    REQUIRE(a[2] == 12.5);
+    REQUIRE(a[3] == 2.5);
+}
+
+//}}} scale tests
