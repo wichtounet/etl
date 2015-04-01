@@ -17,7 +17,7 @@ namespace impl {
 namespace standard {
 
 template<typename A, typename B, typename C>
-static void mmul(A&& a, B&& b, C&& c){
+static void mm_mul(A&& a, B&& b, C&& c){
     c = 0;
 
     for(std::size_t i = 0; i < rows(a); i++){

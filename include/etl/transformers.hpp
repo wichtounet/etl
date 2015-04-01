@@ -260,7 +260,7 @@ struct transpose_transformer {
 };
 
 template<typename L, typename R>
-struct mmul_transformer {
+struct mm_mul_transformer {
     using left_type = L;
     using right_type = R;
     using value_type = value_t<L>;
@@ -284,7 +284,7 @@ struct mmul_transformer {
             , "Invalid sizes for multiplication");
     }
 
-    mmul_transformer(left_type left, right_type right) : left(left), right(right) {
+    mm_mul_transformer(left_type left, right_type right) : left(left), right(right) {
         check_mmul_sizes(left, right);
     }
 
@@ -553,8 +553,8 @@ std::ostream& operator<<(std::ostream& os, const transpose_transformer<T>& trans
 }
 
 template<typename L, typename R>
-std::ostream& operator<<(std::ostream& os, const mmul_transformer<L,R>& transformer){
-    return os << "mmul(" << transformer.left << "," << transformer.right << ")";
+std::ostream& operator<<(std::ostream& os, const mm_mul_transformer<L,R>& transformer){
+    return os << "mm_mul(" << transformer.left << "," << transformer.right << ")";
 }
 
 template<typename T, std::size_t C1, std::size_t C2>

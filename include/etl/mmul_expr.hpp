@@ -19,7 +19,7 @@ namespace etl {
 namespace detail {
 
 template<typename A, typename B, typename C, cpp::disable_if_all_u<etl_traits<A>::is_fast, etl_traits<B>::is_fast, etl_traits<C>::is_fast> = cpp::detail::dummy>
-void check_mmul_sizes(const A& a, const B& b, C& c){
+void check_mm_mul_sizes(const A& a, const B& b, C& c){
     cpp_assert(
             dim<1>(a) == dim<0>(b)          //interior dimensions
         &&  dim<0>(a) == dim<0>(c)          //exterior dimension 1
@@ -31,7 +31,7 @@ void check_mmul_sizes(const A& a, const B& b, C& c){
 }
 
 template<typename A, typename B, typename C, cpp::enable_if_all_u<etl_traits<A>::is_fast, etl_traits<B>::is_fast, etl_traits<C>::is_fast> = cpp::detail::dummy>
-void check_mmul_sizes(const A&, const B&, C&){
+void check_mm_mul_sizes(const A&, const B&, C&){
     static_assert(
             etl_traits<A>::template dim<1>() == etl_traits<B>::template dim<0>()          //interior dimensions
         &&  etl_traits<A>::template dim<0>() == etl_traits<C>::template dim<0>()          //exterior dimension 1
@@ -42,7 +42,7 @@ void check_mmul_sizes(const A&, const B&, C&){
 } //end of namespace detail
 
 template<typename T, template<typename...> class Impl>
-struct basic_mmul_expr {
+struct basic_mm_mul_expr {
     template<typename A, typename B, class Enable = void>
     struct result_type_builder {
         using type = dyn_matrix<value_t<A>>;
@@ -70,13 +70,13 @@ struct basic_mmul_expr {
     static void apply(A&& a, B&& b, C&& c){
         static_assert(is_etl_expr<A>::value && is_etl_expr<B>::value && is_etl_expr<C>::value, "Matrix multiplication only supported for ETL expressions");
         static_assert(decay_traits<A>::dimensions() == 2 && decay_traits<B>::dimensions() == 2 && decay_traits<C>::dimensions() == 2, "Matrix multiplication only works in 2D");
-        detail::check_mmul_sizes(a,b,c);
+        detail::check_mm_mul_sizes(a,b,c);
 
         Impl<A,B,C,void>::apply(std::forward<A>(a), std::forward<B>(b), std::forward<C>(c));
     }
 
     static std::string desc() noexcept {
-        return "mmul";
+        return "mm_mul";
     }
 
     template<typename A, typename B>
@@ -109,10 +109,10 @@ struct basic_mmul_expr {
 };
 
 template<typename T>
-using mmul_expr = basic_mmul_expr<T, detail::mmul_impl>;
+using mm_mul_expr = basic_mm_mul_expr<T, detail::mm_mul_impl>;
 
 template<typename T>
-using strassen_mmul_expr = basic_mmul_expr<T, detail::strassen_mmul_impl>;
+using strassen_mm_mul_expr = basic_mm_mul_expr<T, detail::strassen_mm_mul_impl>;
 
 } //end of namespace etl
 

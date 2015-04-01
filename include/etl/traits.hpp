@@ -47,7 +47,7 @@ struct is_transformer : cpp::bool_constant_c<cpp::or_c<
         cpp::is_specialization_of<etl::sum_l_transformer, DT>,
         cpp::is_specialization_of<etl::mean_r_transformer, DT>,
         cpp::is_specialization_of<etl::mean_l_transformer, DT>,
-        cpp::is_specialization_of<etl::mmul_transformer, DT>,
+        cpp::is_specialization_of<etl::mm_mul_transformer, DT>,
         cpp::is_specialization_of<etl::dyn_convmtx_transformer, DT>,
         cpp::is_specialization_of<etl::dyn_convmtx2_transformer, DT>,
         is_var<etl::rep_r_transformer, DT>,
@@ -358,11 +358,11 @@ struct etl_traits<transpose_transformer<T>> {
 };
 
 /*!
- * \brief Specialization for mmul_transformer
+ * \brief Specialization for mm_mul_transformer
  */
 template <typename LE, typename RE>
-struct etl_traits<mmul_transformer<LE, RE>> {
-    using expr_t = etl::mmul_transformer<LE, RE>;
+struct etl_traits<mm_mul_transformer<LE, RE>> {
+    using expr_t = etl::mm_mul_transformer<LE, RE>;
     using left_expr_t = std::decay_t<LE>;
     using right_expr_t = std::decay_t<RE>;
 

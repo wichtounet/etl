@@ -23,9 +23,9 @@ namespace etl {
 namespace detail {
 
 template<typename A, typename B, typename C, typename Enable = void>
-struct mmul_impl {
+struct mm_mul_impl {
     static void apply(A&& a, B&& b, C&& c){
-        etl::impl::standard::mmul(std::forward<A>(a), std::forward<B>(b), std::forward<C>(c));
+        etl::impl::standard::mm_mul(std::forward<A>(a), std::forward<B>(b), std::forward<C>(c));
     }
 };
 
@@ -36,14 +36,14 @@ template<typename A, typename B, typename C>
 struct is_fast_sgemm : cpp::bool_constant_c<cpp::and_c<cpp::not_c<is_cblas_enabled>, is_single_precision_3<A, B, C>, is_dma_3<A, B, C>>> {};
 
 template<typename A, typename B, typename C>
-struct mmul_impl<A, B, C, std::enable_if_t<is_fast_dgemm<A,B,C>::value>> {
+struct mm_mul_impl<A, B, C, std::enable_if_t<is_fast_dgemm<A,B,C>::value>> {
     static void apply(A&& a, B&& b, C&& c){
         etl::impl::eblas::fast_dgemm(std::forward<A>(a), std::forward<B>(b), std::forward<C>(c));
     }
 };
 
 template<typename A, typename B, typename C>
-struct mmul_impl<A, B, C, std::enable_if_t<is_fast_sgemm<A,B,C>::value>> {
+struct mm_mul_impl<A, B, C, std::enable_if_t<is_fast_sgemm<A,B,C>::value>> {
     static void apply(A&& a, B&& b, C&& c){
         etl::impl::eblas::fast_sgemm(std::forward<A>(a), std::forward<B>(b), std::forward<C>(c));
     }
@@ -56,23 +56,23 @@ template<typename A, typename B, typename C>
 struct is_blas_sgemm : cpp::bool_constant_c<cpp::and_c<is_cblas_enabled, is_single_precision_3<A, B, C>, is_dma_3<A, B, C>>> {};
 
 template<typename A, typename B, typename C>
-struct mmul_impl<A, B, C, std::enable_if_t<is_blas_dgemm<A,B,C>::value>> {
+struct mm_mul_impl<A, B, C, std::enable_if_t<is_blas_dgemm<A,B,C>::value>> {
     static void apply(A&& a, B&& b, C&& c){
         etl::impl::blas::dgemm(std::forward<A>(a), std::forward<B>(b), std::forward<C>(c));
     }
 };
 
 template<typename A, typename B, typename C>
-struct mmul_impl<A, B, C, std::enable_if_t<is_blas_sgemm<A,B,C>::value>> {
+struct mm_mul_impl<A, B, C, std::enable_if_t<is_blas_sgemm<A,B,C>::value>> {
     static void apply(A&& a, B&& b, C&& c){
         etl::impl::blas::sgemm(std::forward<A>(a), std::forward<B>(b), std::forward<C>(c));
     }
 };
 
 template<typename A, typename B, typename C, typename Enable = void>
-struct strassen_mmul_impl {
+struct strassen_mm_mul_impl {
     static void apply(A&& a, B&& b, C&& c){
-        etl::impl::standard::strassen_mmul(std::forward<A>(a), std::forward<B>(b), std::forward<C>(c));
+        etl::impl::standard::strassen_mm_mul(std::forward<A>(a), std::forward<B>(b), std::forward<C>(c));
     }
 };
 

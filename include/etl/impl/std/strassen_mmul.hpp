@@ -19,7 +19,7 @@ namespace impl {
 namespace standard {
 
 template<typename A, typename B, typename C>
-void strassen_mmul_r(const A& a, const B& b, C& c){
+void strassen_mm_mul_r(const A& a, const B& b, C& c){
     using type = typename A::value_type;
 
     auto n = dim<0>(a);
@@ -85,10 +85,10 @@ void strassen_mmul_r(const A& a, const B& b, C& c){
             }
         }
 
-        strassen_mmul_r(a11 + a22, b11 + b22, p1);
-        strassen_mmul_r(a12 - a22, b21 + b22, p2);
-        strassen_mmul_r(a22, b21 - b11, p4);
-        strassen_mmul_r(a11 + a12, b22, p5);
+        strassen_mm_mul_r(a11 + a22, b11 + b22, p1);
+        strassen_mm_mul_r(a12 - a22, b21 + b22, p2);
+        strassen_mm_mul_r(a22, b21 - b11, p4);
+        strassen_mm_mul_r(a11 + a12, b22, p5);
 
         auto c11 = p1 + p4 + p2 - p5;
 
@@ -98,7 +98,7 @@ void strassen_mmul_r(const A& a, const B& b, C& c){
             }
         }
 
-        strassen_mmul_r(a11, b12 - b22, p3);
+        strassen_mm_mul_r(a11, b12 - b22, p3);
 
         auto c12 = p3 + p5;
 
@@ -108,8 +108,8 @@ void strassen_mmul_r(const A& a, const B& b, C& c){
             }
         }
 
-        strassen_mmul_r(a21 + a22, b11, p2);
-        strassen_mmul_r(a21 - a11, b11 + b12, p5);
+        strassen_mm_mul_r(a21 + a22, b11, p2);
+        strassen_mm_mul_r(a21 - a11, b11 + b12, p5);
 
         auto c21 = p2 + p4;
         auto c22 = p1 + p3 + p5 - p2;
@@ -153,10 +153,10 @@ void strassen_mmul_r(const A& a, const B& b, C& c){
             }
         }
 
-        strassen_mmul_r(a11 + a22, b11 + b22, p1);
-        strassen_mmul_r(a12 - a22, b21 + b22, p2);
-        strassen_mmul_r(a22, b21 - b11, p4);
-        strassen_mmul_r(a11 + a12, b22, p5);
+        strassen_mm_mul_r(a11 + a22, b11 + b22, p1);
+        strassen_mm_mul_r(a12 - a22, b21 + b22, p2);
+        strassen_mm_mul_r(a22, b21 - b11, p4);
+        strassen_mm_mul_r(a11 + a12, b22, p5);
 
         auto c11 = p1 + p4 + p2 - p5;
 
@@ -166,7 +166,7 @@ void strassen_mmul_r(const A& a, const B& b, C& c){
             }
         }
 
-        strassen_mmul_r(a11, b12 - b22, p3);
+        strassen_mm_mul_r(a11, b12 - b22, p3);
 
         auto c12 = p3 + p5;
 
@@ -176,8 +176,8 @@ void strassen_mmul_r(const A& a, const B& b, C& c){
             }
         }
 
-        strassen_mmul_r(a21 + a22, b11, p2);
-        strassen_mmul_r(a21 - a11, b11 + b12, p5);
+        strassen_mm_mul_r(a21 + a22, b11, p2);
+        strassen_mm_mul_r(a21 - a11, b11 + b12, p5);
 
         auto c21 = p2 + p4;
         auto c22 = p1 + p3 + p5 - p2;
@@ -196,7 +196,7 @@ inline std::size_t nextPowerOfTwo(std::size_t n) {
 }
 
 template<typename A, typename B, typename C>
-void strassen_mmul(const A& a, const B& b, C& c){
+void strassen_mm_mul(const A& a, const B& b, C& c){
     c = 0;
 
     //For now, assume matrices are of size 2^nx2^n
@@ -205,7 +205,7 @@ void strassen_mmul(const A& a, const B& b, C& c){
     auto m = nextPowerOfTwo(n);
 
     if(dim<0>(a) == m && dim<0>(b) == m && dim<1>(a) == m && dim<1>(b) == m){
-        strassen_mmul_r(a, b, c);
+        strassen_mm_mul_r(a, b, c);
     } else {
         using type = typename A::value_type;
 
@@ -225,7 +225,7 @@ void strassen_mmul(const A& a, const B& b, C& c){
             }
         }
 
-        strassen_mmul_r(a_prep, b_prep, c_prep);
+        strassen_mm_mul_r(a_prep, b_prep, c_prep);
 
         for(std::size_t i=0; i< dim<0>(c); i++) {
             for (std::size_t j=0; j<dim<1>(c); j++) {
