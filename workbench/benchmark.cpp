@@ -42,6 +42,18 @@ struct name { \
     } \
 }
 
+#ifdef TEST_SSE
+#define TER_FUNCTOR_SSE(name, ...) TER_FUNCTOR(name, __VA_ARGS__)
+#else
+#define TER_FUNCTOR_SSE(name, ...)
+#endif
+
+#ifdef TEST_AVX
+#define TER_FUNCTOR_AVX(name, ...) TER_FUNCTOR(name, __VA_ARGS__)
+#else
+#define TER_FUNCTOR_AVX(name, ...)
+#endif
+
 template<typename T>
 void randomize_double(T& container){
     static std::default_random_engine rand_engine(std::time(nullptr));
@@ -234,10 +246,10 @@ void bench_dyn_matrix_sigmoid(std::size_t d1, std::size_t d2, const std::string&
 
 TER_FUNCTOR(default_conv_1d_full, c = etl::conv_1d_full(a, b));
 TER_FUNCTOR(std_conv_1d_full, etl::impl::standard::conv1_full(a, b, c));
-TER_FUNCTOR(sse_sconv_1d_full, etl::impl::sse::sconv1_full(a, b, c));
-TER_FUNCTOR(sse_dconv_1d_full, etl::impl::sse::dconv1_full(a, b, c));
-TER_FUNCTOR(avx_sconv_1d_full, etl::impl::avx::sconv1_full(a, b, c));
-TER_FUNCTOR(avx_dconv_1d_full, etl::impl::avx::dconv1_full(a, b, c));
+TER_FUNCTOR_SSE(sse_sconv_1d_full, etl::impl::sse::sconv1_full(a, b, c));
+TER_FUNCTOR_SSE(sse_dconv_1d_full, etl::impl::sse::dconv1_full(a, b, c));
+TER_FUNCTOR_AVX(avx_sconv_1d_full, etl::impl::avx::sconv1_full(a, b, c));
+TER_FUNCTOR_AVX(avx_dconv_1d_full, etl::impl::avx::dconv1_full(a, b, c));
 
 template<typename A, typename B, typename C>
 void measure_full_convolution_1d(A& a, B& b, C& c){
@@ -299,10 +311,10 @@ void bench_dyn_full_convolution_1d_s(std::size_t d1, std::size_t d2){
 
 TER_FUNCTOR(default_conv_1d_same, c = etl::conv_1d_same(a, b));
 TER_FUNCTOR(std_conv_1d_same, etl::impl::standard::conv1_same(a, b, c));
-TER_FUNCTOR(sse_sconv_1d_same, etl::impl::sse::sconv1_same(a, b, c));
-TER_FUNCTOR(sse_dconv_1d_same, etl::impl::sse::dconv1_same(a, b, c));
-TER_FUNCTOR(avx_sconv_1d_same, etl::impl::avx::sconv1_same(a, b, c));
-TER_FUNCTOR(avx_dconv_1d_same, etl::impl::avx::dconv1_same(a, b, c));
+TER_FUNCTOR_SSE(sse_sconv_1d_same, etl::impl::sse::sconv1_same(a, b, c));
+TER_FUNCTOR_SSE(sse_dconv_1d_same, etl::impl::sse::dconv1_same(a, b, c));
+TER_FUNCTOR_AVX(avx_sconv_1d_same, etl::impl::avx::sconv1_same(a, b, c));
+TER_FUNCTOR_AVX(avx_dconv_1d_same, etl::impl::avx::dconv1_same(a, b, c));
 
 template<typename A, typename B, typename C>
 void measure_same_convolution_1d(A& a, B& b, C& c){
@@ -364,10 +376,10 @@ void bench_dyn_same_convolution_1d_s(std::size_t d1, std::size_t d2){
 
 TER_FUNCTOR(default_conv_1d_valid, c = etl::conv_1d_valid(a, b));
 TER_FUNCTOR(std_conv_1d_valid, etl::impl::standard::conv1_valid(a, b, c));
-TER_FUNCTOR(sse_sconv_1d_valid, etl::impl::sse::sconv1_valid(a, b, c));
-TER_FUNCTOR(sse_dconv_1d_valid, etl::impl::sse::dconv1_valid(a, b, c));
-TER_FUNCTOR(avx_sconv_1d_valid, etl::impl::avx::sconv1_valid(a, b, c));
-TER_FUNCTOR(avx_dconv_1d_valid, etl::impl::avx::dconv1_valid(a, b, c));
+TER_FUNCTOR_SSE(sse_sconv_1d_valid, etl::impl::sse::sconv1_valid(a, b, c));
+TER_FUNCTOR_SSE(sse_dconv_1d_valid, etl::impl::sse::dconv1_valid(a, b, c));
+TER_FUNCTOR_AVX(avx_sconv_1d_valid, etl::impl::avx::sconv1_valid(a, b, c));
+TER_FUNCTOR_AVX(avx_dconv_1d_valid, etl::impl::avx::dconv1_valid(a, b, c));
 
 template<typename A, typename B, typename C>
 void measure_valid_convolution_1d(A& a, B& b, C& c){
@@ -429,10 +441,10 @@ void bench_dyn_valid_convolution_1d_s(std::size_t d1, std::size_t d2){
 
 TER_FUNCTOR(default_conv_2d_full, c = etl::conv_2d_full(a, b));
 TER_FUNCTOR(std_conv_2d_full, etl::impl::standard::conv2_full(a, b, c));
-TER_FUNCTOR(sse_sconv_2d_full, etl::impl::sse::sconv2_full(a, b, c));
-TER_FUNCTOR(sse_dconv_2d_full, etl::impl::sse::dconv2_full(a, b, c));
-TER_FUNCTOR(avx_sconv_2d_full, etl::impl::avx::sconv2_full(a, b, c));
-TER_FUNCTOR(avx_dconv_2d_full, etl::impl::avx::dconv2_full(a, b, c));
+TER_FUNCTOR_SSE(sse_sconv_2d_full, etl::impl::sse::sconv2_full(a, b, c));
+TER_FUNCTOR_SSE(sse_dconv_2d_full, etl::impl::sse::dconv2_full(a, b, c));
+TER_FUNCTOR_AVX(avx_sconv_2d_full, etl::impl::avx::sconv2_full(a, b, c));
+TER_FUNCTOR_AVX(avx_dconv_2d_full, etl::impl::avx::dconv2_full(a, b, c));
 
 template<typename A, typename B, typename C>
 void measure_full_convolution_2d(A& a, B& b, C& c){
@@ -494,10 +506,10 @@ void bench_dyn_full_convolution_2d_s(std::size_t d1, std::size_t d2){
 
 TER_FUNCTOR(default_conv_2d_same, c = etl::conv_2d_same(a, b));
 TER_FUNCTOR(std_conv_2d_same, etl::impl::standard::conv2_same(a, b, c));
-TER_FUNCTOR(sse_sconv_2d_same, etl::impl::sse::sconv2_same(a, b, c));
-TER_FUNCTOR(sse_dconv_2d_same, etl::impl::sse::dconv2_same(a, b, c));
-TER_FUNCTOR(avx_sconv_2d_same, etl::impl::avx::sconv2_same(a, b, c));
-TER_FUNCTOR(avx_dconv_2d_same, etl::impl::avx::dconv2_same(a, b, c));
+TER_FUNCTOR_SSE(sse_sconv_2d_same, etl::impl::sse::sconv2_same(a, b, c));
+TER_FUNCTOR_SSE(sse_dconv_2d_same, etl::impl::sse::dconv2_same(a, b, c));
+TER_FUNCTOR_AVX(avx_sconv_2d_same, etl::impl::avx::sconv2_same(a, b, c));
+TER_FUNCTOR_AVX(avx_dconv_2d_same, etl::impl::avx::dconv2_same(a, b, c));
 
 template<typename A, typename B, typename C>
 void measure_same_convolution_2d(A& a, B& b, C& c){
@@ -559,10 +571,10 @@ void bench_dyn_same_convolution_2d_s(std::size_t d1, std::size_t d2){
 
 TER_FUNCTOR(default_conv_2d_valid, c = etl::conv_2d_valid(a, b));
 TER_FUNCTOR(std_conv_2d_valid, etl::impl::standard::conv2_valid(a, b, c));
-TER_FUNCTOR(sse_sconv_2d_valid, etl::impl::sse::sconv2_valid(a, b, c));
-TER_FUNCTOR(sse_dconv_2d_valid, etl::impl::sse::dconv2_valid(a, b, c));
-TER_FUNCTOR(avx_sconv_2d_valid, etl::impl::avx::sconv2_valid(a, b, c));
-TER_FUNCTOR(avx_dconv_2d_valid, etl::impl::avx::dconv2_valid(a, b, c));
+TER_FUNCTOR_SSE(sse_sconv_2d_valid, etl::impl::sse::sconv2_valid(a, b, c));
+TER_FUNCTOR_SSE(sse_dconv_2d_valid, etl::impl::sse::dconv2_valid(a, b, c));
+TER_FUNCTOR_AVX(avx_sconv_2d_valid, etl::impl::avx::sconv2_valid(a, b, c));
+TER_FUNCTOR_AVX(avx_dconv_2d_valid, etl::impl::avx::dconv2_valid(a, b, c));
 
 template<typename A, typename B, typename C>
 void measure_valid_convolution_2d(A& a, B& b, C& c){
@@ -623,7 +635,7 @@ void bench_dyn_valid_convolution_2d_s(std::size_t d1, std::size_t d2){
 }
 
 TER_FUNCTOR(default_mmul, c = etl::mmul(a, b));
-TER_FUNCTOR(std_mmul, etl::impl::standard::mmul(a, b, c));
+TER_FUNCTOR(std_mmul, etl::impl::standard::mm_mul(a, b, c));
 TER_FUNCTOR(lazy_mmul, c = etl::lazy_mmul(a, b));
 TER_FUNCTOR(eblas_mmul_s, etl::impl::eblas::fast_sgemm(a, b, c));
 TER_FUNCTOR(eblas_mmul_d, etl::impl::eblas::fast_dgemm(a, b, c));
