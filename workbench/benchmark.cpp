@@ -246,6 +246,7 @@ void bench_dyn_matrix_sigmoid(std::size_t d1, std::size_t d2, const std::string&
 
 TER_FUNCTOR(default_conv_1d_full, c = etl::conv_1d_full(a, b));
 TER_FUNCTOR(std_conv_1d_full, etl::impl::standard::conv1_full(a, b, c));
+TER_FUNCTOR(mmul_conv_1d_full, etl::impl::reduc::conv1_full(a, b, c));
 TER_FUNCTOR_SSE(sse_sconv_1d_full, etl::impl::sse::sconv1_full(a, b, c));
 TER_FUNCTOR_SSE(sse_dconv_1d_full, etl::impl::sse::dconv1_full(a, b, c));
 TER_FUNCTOR_AVX(avx_sconv_1d_full, etl::impl::avx::sconv1_full(a, b, c));
@@ -267,6 +268,8 @@ void measure_full_convolution_1d(A& a, B& b, C& c){
     measure_sub_ter<avx_sconv_1d_full, F>("avx", a, b, c);
     measure_sub_ter<avx_dconv_1d_full, !F>("avx", a, b, c);
 #endif
+
+    measure_sub_ter<mmul_conv_1d_full>("mmul", a, b, c);
 
     cpp_unused(F);
 }

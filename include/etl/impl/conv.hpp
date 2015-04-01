@@ -14,6 +14,7 @@
 #include "std/conv.hpp"
 #include "sse/conv.hpp"
 #include "avx/conv.hpp"
+#include "reduc/conv_mmul.hpp"
 
 namespace etl {
 

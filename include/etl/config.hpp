@@ -20,13 +20,23 @@ struct is_cblas_enabled : std::false_type {};
 
 #endif
 
-#ifdef ETL_CONV2_MMUL
+#ifdef ETL_CONV1_MMUL
 
-struct is_conv_mmul_enabled : std::true_type {};
+struct is_conv1_mmul_enabled : std::true_type {};
 
 #else
 
-struct is_conv_mmul_enabled : std::false_type {};
+struct is_conv1_mmul_enabled : std::false_type {};
+
+#endif
+
+#ifdef ETL_CONV2_MMUL
+
+struct is_conv2_mmul_enabled : std::true_type {};
+
+#else
+
+struct is_conv2_mmul_enabled : std::false_type {};
 
 #endif
 
