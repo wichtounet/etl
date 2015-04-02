@@ -21,12 +21,14 @@ LD_FLAGS += $(shell pkg-config --libs cblas)
 endif
 
 ifneq (,$(findstring clang,$(CXX)))
-DEBUG_FLAGS=-fprofile-arcs -ftest-coverage
+DEBUG_FLAGS += -fprofile-arcs -ftest-coverage
 endif
 
 ifneq (,$(findstring g++,$(CXX)))
-DEBUG_FLAGS=--coverage
+DEBUG_FLAGS += --coverage
 endif
+
+#DEBUG_FLAGS=-fsanitize=address -fsanitize=undefined
 
 CXX_FLAGS += -DETL_VECTORIZE
 
