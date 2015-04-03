@@ -40,11 +40,41 @@ struct temporary_allocator_static_visitor {
         (*this)(v.b());
     }
 
-    //TODO Handle transformers and views
+    template<typename T, cpp_enable_if(etl::is_view<T>::value)>
+    void operator()(T& view) const {
+        (*this)(view.value());
+    }
 
-    template<typename T>
-    void operator()(T&) const {
-        //fallback
+    template<typename L, typename R>
+    void operator()(mm_mul_transformer<L,R>& transformer) const {
+        (*this)(transformer.lhs());
+        (*this)(transformer.rhs());
+    }
+
+    template<typename T, cpp_enable_if(etl::is_transformer<T>::value)>
+    void operator()(T& transformer) const {
+        (*this)(transformer.value());
+    }
+    
+    template <typename Generator>
+    void operator()(const generator_expr<Generator>&) const {
+        //Leaf
+    }
+
+
+    template<typename T, cpp_enable_if(etl::is_magic_view<T>::value)>
+    void operator()(const T&) const {
+        //Leaf
+    }
+
+    template<typename T, cpp_enable_if(etl::is_etl_value<T>::value)>
+    void operator()(const T&) const {
+        //Leaf
+    }
+
+    template <typename T>
+    void operator()(const etl::scalar<T>&) const {
+        //Leaf
     }
 };
 
@@ -74,11 +104,40 @@ struct evaluator_static_visitor {
         v.evaluate();
     }
 
-    //TODO Handle transformers and views
+    template<typename T, cpp_enable_if(etl::is_view<T>::value)>
+    void operator()(T& view) const {
+        (*this)(view.value());
+    }
 
-    template<typename T>
-    void operator()(T&) const {
-        //fallback
+    template<typename L, typename R>
+    void operator()(mm_mul_transformer<L,R>& transformer) const {
+        (*this)(transformer.lhs());
+        (*this)(transformer.rhs());
+    }
+
+    template<typename T, cpp_enable_if(etl::is_transformer<T>::value)>
+    void operator()(T& transformer) const {
+        (*this)(transformer.value());
+    }
+
+    template <typename Generator>
+    void operator()(const generator_expr<Generator>&) const {
+        //Leaf
+    }
+
+    template<typename T, cpp_enable_if(etl::is_magic_view<T>::value)>
+    void operator()(const T&) const {
+        //Leaf
+    }
+
+    template<typename T, cpp_enable_if(etl::is_etl_value<T>::value)>
+    void operator()(const T&) const {
+        //Leaf
+    }
+
+    template <typename T>
+    void operator()(const etl::scalar<T>&) const {
+        //Leaf
     }
 };
 
