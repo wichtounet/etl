@@ -14,20 +14,6 @@
 
 //{{{ convolution_1d_full
 
-TEMPLATE_TEST_CASE_2( "convolution_1d/full_10000", "convolution_1d_full", Z, float, double) {
-    //TODO etl::fast_vector<Z, 3> a = {1.0, 2.0, 3.0};
-    //TODO etl::fast_vector<Z, 3> b = {0.0, 1.0, 0.5};
-    etl::fast_vector<Z, 5> c;
-
-    //TODO etl::impl::reduc::conv1_full(a, b, c);
-
-    REQUIRE(c[0] == Approx(0.0));
-    REQUIRE(c[1] == Approx(1.0));
-    REQUIRE(c[2] == Approx(2.5));
-    REQUIRE(c[3] == Approx(4.0));
-    REQUIRE(c[4] == Approx(1.5));
-}
-
 TEMPLATE_TEST_CASE_2( "convolution_1d/full_1", "convolution_1d_full", Z, float, double) {
     etl::fast_vector<Z, 3> a = {1.0, 2.0, 3.0};
     etl::fast_vector<Z, 3> b = {0.0, 1.0, 0.5};
@@ -129,6 +115,20 @@ TEMPLATE_TEST_CASE_2( "convolution_1d/full_5", "convolution_1d_full", Z, float, 
     REQUIRE(c[14] == 5121);
     REQUIRE(c[15] == 3222);
     REQUIRE(c[16] == 3465);
+}
+
+TEMPLATE_TEST_CASE_2( "convolution_1d/full_6", "reduc_conv1_full", Z, float, double) {
+    etl::fast_vector<Z, 3> a = {1.0, 2.0, 3.0};
+    etl::fast_vector<Z, 3> b = {0.0, 1.0, 0.5};
+    etl::fast_vector<Z, 5> c;
+
+    etl::impl::reduc::conv1_full(a, b, c);
+
+    REQUIRE(c[0] == Approx(0.0));
+    REQUIRE(c[1] == Approx(1.0));
+    REQUIRE(c[2] == Approx(2.5));
+    REQUIRE(c[3] == Approx(4.0));
+    REQUIRE(c[4] == Approx(1.5));
 }
 
 //}}}
