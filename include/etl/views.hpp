@@ -257,11 +257,11 @@ struct dyn_matrix_view {
     }
 
     const_return_type operator()(std::size_t j) const {
-        return sub(j);
+        return sub[j];
     }
 
     const_return_type operator()(std::size_t i, std::size_t j) const {
-        return sub(i * columns + j);
+        return sub[i * columns + j];
     }
 
     return_type operator[](std::size_t j){
@@ -269,11 +269,11 @@ struct dyn_matrix_view {
     }
 
     return_type operator()(std::size_t j){
-        return sub(j);
+        return sub[j];
     }
 
     return_type operator()(std::size_t i, std::size_t j){
-        return sub(i * columns + j);
+        return sub[i * columns + j];
     }
     
     sub_type& value(){
