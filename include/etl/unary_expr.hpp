@@ -126,16 +126,10 @@ public:
 
     //Assign expressions to the unary expr
 
-    unary_expr& operator=(const unary_expr& e){
-        ensure_same_size(*this, e);
-        evaluate(e, *this);
-        return *this;
-    }
-
     template<typename E, cpp::enable_if_all_u<non_const_return_ref, is_copy_expr<E>::value> = cpp::detail::dummy>
-    unary_expr& operator=(const E& e){
+    unary_expr& operator=(E&& e){
         ensure_same_size(*this, e);
-        evaluate(e, *this);
+        evaluate(std::forward<E>(e), *this);
         return *this;
     }
 

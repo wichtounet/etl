@@ -145,10 +145,10 @@ public:
     }
 
     template<typename E, cpp_enable_if(std::is_convertible<typename E::value_type, value_type>::value, is_copy_expr<E>::value)>
-    explicit fast_matrix_impl(const E& e){
+    explicit fast_matrix_impl(E&& e){
         init();
         ensure_same_size(*this, e);
-        evaluate(e, *this);
+        evaluate(std::forward<E>(e), *this);
     }
 
     template<typename Container, cpp_enable_if(

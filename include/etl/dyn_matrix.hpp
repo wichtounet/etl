@@ -200,12 +200,12 @@ public:
         std::is_convertible<typename E::value_type, value_type>,
         is_copy_expr<E>
     > = cpp::detail::dummy>
-    dyn_matrix(const E& e) :_size(etl::size(e)), _data(_size) {
+    dyn_matrix(E&& e) :_size(etl::size(e)), _data(_size) {
         for(std::size_t d = 0; d < etl::dimensions(e); ++d){
             _dimensions[d] = etl::dim(e, d);
         }
 
-        evaluate(e, *this);
+        evaluate(std::forward<E>(e), *this);
     }
 
     template<typename Container, cpp::enable_if_all_c<
