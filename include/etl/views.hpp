@@ -82,6 +82,10 @@ struct dim_view {
         }
     }
 
+    sub_type& value(){
+        return sub;
+    }
+
     //{{{ Direct memory access
 
     template<typename ST = T, std::size_t SD = D, cpp_enable_if(has_direct_access<ST>::value && SD == 1)>
@@ -136,6 +140,10 @@ struct sub_view {
     template<typename... S>
     return_type operator()(S... args){
         return parent(i, static_cast<std::size_t>(args)...);
+    }
+
+    parent_type& value(){
+        return parent;
     }
 
     //{{{ Direct memory access
@@ -200,6 +208,10 @@ struct fast_matrix_view {
     return_type operator()(std::size_t i, std::size_t j){
         return sub[i * Columns + j];
     }
+    
+    sub_type& value(){
+        return sub;
+    }
 
     //{{{ Direct memory access
 
@@ -262,6 +274,10 @@ struct dyn_matrix_view {
 
     return_type operator()(std::size_t i, std::size_t j){
         return sub(i * columns + j);
+    }
+    
+    sub_type& value(){
+        return sub;
     }
 
     //{{{ Direct memory access

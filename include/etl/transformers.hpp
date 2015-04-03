@@ -35,6 +35,10 @@ struct rep_r_transformer {
     value_type operator()(std::size_t i, Sizes... /*sizes*/) const {
         return sub(i);
     }
+
+    sub_type& value(){
+        return sub;
+    }
 };
 
 template<typename T, std::size_t... D>
@@ -53,6 +57,10 @@ struct rep_l_transformer {
     template<typename... Sizes>
     value_type operator()(Sizes... sizes) const {
         return sub(cpp::last_value(sizes...));
+    }
+
+    sub_type& value(){
+        return sub;
     }
 };
 
@@ -73,6 +81,10 @@ struct sum_r_transformer {
     value_type operator()(std::size_t i, Sizes... /*sizes*/) const {
         return sum(sub(i));
     }
+
+    sub_type& value(){
+        return sub;
+    }
 };
 
 template<typename T>
@@ -92,6 +104,10 @@ struct mean_r_transformer {
     value_type operator()(std::size_t i, Sizes... /*sizes*/) const {
         return mean(sub(i));
     }
+
+    sub_type& value(){
+        return sub;
+    }
 };
 
 template<typename T>
@@ -109,6 +125,10 @@ struct sum_l_transformer {
 
     value_type operator()(std::size_t i) const {
         return sum(col(sub,i));
+    }
+
+    sub_type& value(){
+        return sub;
     }
 };
 
@@ -140,6 +160,10 @@ struct mean_l_transformer {
         }
 
         return m / dim<0>(sub);
+    }
+
+    sub_type& value(){
+        return sub;
     }
 };
 
@@ -173,6 +197,10 @@ struct hflip_transformer {
     value_type operator()(std::size_t i, std::size_t j) const {
         return sub(i, columns(sub) - 1 - j);
     }
+
+    sub_type& value(){
+        return sub;
+    }
 };
 
 template<typename T>
@@ -205,6 +233,10 @@ struct vflip_transformer {
     value_type operator()(std::size_t i, std::size_t j) const {
         return sub(rows(sub) - 1 - i, j);
     }
+
+    sub_type& value(){
+        return sub;
+    }
 };
 
 template<typename T>
@@ -231,6 +263,10 @@ struct fflip_transformer {
     value_type operator()(std::size_t i, std::size_t j) const {
         return sub(rows(sub) - 1 - i, columns(sub) - 1 - j);
     }
+
+    sub_type& value(){
+        return sub;
+    }
 };
 
 template<typename T>
@@ -256,6 +292,10 @@ struct transpose_transformer {
 
     value_type operator()(std::size_t i, std::size_t j) const {
         return sub(j, i);
+    }
+
+    sub_type& value(){
+        return sub;
     }
 };
 
@@ -303,6 +343,14 @@ struct mm_mul_transformer {
 
         return c;
     }
+
+    left_type& lhs(){
+        return left;
+    }
+
+    right_type& rhs(){
+        return right;
+    }
 };
 
 template<typename T>
@@ -331,6 +379,10 @@ struct dyn_convmtx_transformer {
         } else {
             return sub(j - i);
         }
+    }
+
+    sub_type& value(){
+        return sub;
     }
 };
 
@@ -384,6 +436,10 @@ struct dyn_convmtx2_transformer {
             }
         }
     }
+
+    sub_type& value(){
+        return sub;
+    }
 };
 
 template<typename T, std::size_t C1, std::size_t C2>
@@ -424,6 +480,10 @@ struct p_max_pool_transformer {
 
         return p;
     }
+
+    sub_type& value(){
+        return sub;
+    }
 };
 
 template<typename T, std::size_t C1, std::size_t C2>
@@ -462,6 +522,10 @@ struct p_max_pool_h_transformer : p_max_pool_transformer<T, C1, C2> {
     value_type operator()(std::size_t k, std::size_t i, std::size_t j) const {
         return std::exp(sub(k, i, j)) / (1.0 + base_type::pool(k, i, j));
     }
+
+    sub_type& value(){
+        return sub;
+    }
 };
 
 template<typename T, std::size_t C1, std::size_t C2>
@@ -499,6 +563,10 @@ struct p_max_pool_p_transformer : p_max_pool_transformer<T, C1, C2> {
 
     value_type operator()(std::size_t k, std::size_t i, std::size_t j) const {
         return 1.0 / (1.0 + base_type::pool(k, i * C1, j * C2));
+    }
+
+    sub_type& value(){
+        return sub;
     }
 };
 
