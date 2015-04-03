@@ -18,9 +18,9 @@ template<typename T,
         cpp::not_u<etl_traits<T>::is_value>::value,
         cpp::not_u<etl_traits<T>::is_fast>::value
     > = cpp::detail::dummy>
-auto s(const T& value){
+auto s(T&& value){
     //Sizes will be directly propagated
-    return dyn_matrix<typename T::value_type, etl_traits<T>::dimensions()>(value);
+    return dyn_matrix<typename T::value_type, etl_traits<T>::dimensions()>(std::forward<T>(value));
 }
 
 template<typename M, typename Sequence>
@@ -37,8 +37,8 @@ template<typename T,
         cpp::not_u<etl_traits<T>::is_value>::value,
         etl_traits<T>::is_fast
     > = cpp::detail::dummy>
-auto s(const T& value){
-    return typename build_matrix_type<T, std::make_index_sequence<etl_traits<T>::dimensions()>>::type(value);
+auto s(T&& value){
+    return typename build_matrix_type<T, std::make_index_sequence<etl_traits<T>::dimensions()>>::type(std::forward<T>(value));
 }
 
 } //end of namespace etl
