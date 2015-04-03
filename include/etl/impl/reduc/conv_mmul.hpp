@@ -33,7 +33,9 @@ void conv2_full(const I& input, const K& kernel, C&& conv){
         mmul(
             convmtx2(input, etl::dim<0>(kernel), etl::dim<1>(kernel)),
             reshape(transpose(kernel), etl::size(kernel), 1)
-        )));
+        ), 
+        etl::dim<0>(input) + etl::dim<0>(kernel) - 1, etl::dim<1>(input) + etl::dim<1>(kernel) - 1)
+    );
 }
 
 } //end of namespace standard
