@@ -37,7 +37,7 @@ using is_stable_transform_expr = cpp::is_specialization_of<etl::stable_transform
 template<typename T, typename DT = std::decay_t<T>>
 using is_temporary_binary_expr = cpp::is_specialization_of<etl::temporary_binary_expr, DT>;
 
-template<typename T, typename DT = std::decay_t<T>>
+template<typename T, typename DT>
 struct is_transformer : cpp::bool_constant_c<cpp::or_c<
         cpp::is_specialization_of<etl::hflip_transformer, DT>,
         cpp::is_specialization_of<etl::vflip_transformer, DT>,
@@ -56,14 +56,18 @@ struct is_transformer : cpp::bool_constant_c<cpp::or_c<
         is_3<etl::p_max_pool_p_transformer, DT>
     >> {};
 
-template<typename T>
+template<typename T, typename DT>
 struct is_view : cpp::bool_constant_c<cpp::or_c<
-        is_2<etl::dim_view, std::decay_t<T>>,
-        is_3<etl::fast_matrix_view, std::decay_t<T>>,
-        cpp::is_specialization_of<etl::dyn_matrix_view, std::decay_t<T>>,
-        cpp::is_specialization_of<etl::sub_view, std::decay_t<T>>,
-        cpp::is_specialization_of<etl::magic_view, std::decay_t<T>>,
-        is_2<etl::fast_magic_view, std::decay_t<T>>
+        is_2<etl::dim_view, DT>,
+        is_3<etl::fast_matrix_view, DT>,
+        cpp::is_specialization_of<etl::dyn_matrix_view, DT>,
+        cpp::is_specialization_of<etl::sub_view, DT>
+    >> {};
+
+template<typename T, typename DT>
+struct is_magic_view : cpp::bool_constant_c<cpp::or_c<
+        cpp::is_specialization_of<etl::magic_view, DT>,
+        is_2<etl::fast_magic_view, DT>
     >> {};
 
 template<typename T>
@@ -75,7 +79,8 @@ struct is_etl_expr : cpp::bool_constant_c<cpp::or_c<
        is_temporary_binary_expr<T>,
        is_stable_transform_expr<T>,
        is_generator_expr<T>,
-       is_transformer<T>, is_view<T>
+       is_transformer<T>, is_view<T>,
+       is_transformer<T>, is_magic_view<T>
     >> {};
 
 template<typename T>

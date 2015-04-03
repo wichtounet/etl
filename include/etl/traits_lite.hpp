@@ -12,8 +12,21 @@ namespace etl {
 
 template<typename T>
 struct is_etl_expr;
+
 template<typename T>
 struct is_copy_expr;
+
+template<typename T, typename DT = std::decay_t<T>>
+struct is_view;
+
+template<typename T, typename DT = std::decay_t<T>>
+struct is_magic_view;
+
+template<typename T, typename DT = std::decay_t<T>>
+struct is_transformer;
+
+template<typename T>
+struct is_etl_value;
 
 template<typename E, typename Enable = void>
 struct sub_size_compare;
