@@ -11,14 +11,16 @@
 #include "etl/etl.hpp"
 #include "etl/stop.hpp"
 
+#include "mmul_test.hpp"
+
 //{{{ mmul
 
-TEMPLATE_TEST_CASE_2( "multiplication/mmul1", "mmul", Z, double, float) {
-    etl::fast_matrix<Z, 2, 3> a = {1,2,3,4,5,6};
-    etl::fast_matrix<Z, 3, 2> b = {7,8,9,10,11,12};
-    etl::fast_matrix<Z, 2, 2> c;
+MMUL_TEST_CASE( "multiplication/mmul1", "mmul") {
+    etl::fast_matrix<T, 2, 3> a = {1,2,3,4,5,6};
+    etl::fast_matrix<T, 3, 2> b = {7,8,9,10,11,12};
+    etl::fast_matrix<T, 2, 2> c;
 
-    c = etl::mmul(a, b);
+    Impl::apply(a, b, c);
 
     REQUIRE(c(0,0) == 58);
     REQUIRE(c(0,1) == 64);
