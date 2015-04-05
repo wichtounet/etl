@@ -28,12 +28,12 @@ MMUL_TEST_CASE( "multiplication/mmul1", "mmul") {
     REQUIRE(c(1,1) == 154);
 }
 
-TEMPLATE_TEST_CASE_2( "multiplication/mmul2", "mmul", Z, double, float) {
-    etl::fast_matrix<Z, 3, 3> a = {1,2,3,4,5,6,7,8,9};
-    etl::fast_matrix<Z, 3, 3> b = {7,8,9,9,10,11,11,12,13};
-    etl::fast_matrix<Z, 3, 3> c;
+MMUL_TEST_CASE( "multiplication/mmul2", "mmul") {
+    etl::fast_matrix<T, 3, 3> a = {1,2,3,4,5,6,7,8,9};
+    etl::fast_matrix<T, 3, 3> b = {7,8,9,9,10,11,11,12,13};
+    etl::fast_matrix<T, 3, 3> c;
 
-    c = etl::mmul(a, b, c);
+    Impl::apply(a, b, c);
 
     REQUIRE(c(0,0) == 58);
     REQUIRE(c(0,1) == 64);
@@ -46,7 +46,8 @@ TEMPLATE_TEST_CASE_2( "multiplication/mmul2", "mmul", Z, double, float) {
     REQUIRE(c(2,2) == 268);
 }
 
-TEMPLATE_TEST_CASE_2( "multiplication/mmul3", "mmul", Z, double, float) {
+//Test using expressions directly
+TEMPLATE_TEST_CASE_2( "multiplication/expression", "expression mmul", Z, double, float) {
     etl::fast_matrix<Z, 3, 3> a = {1,2,3,4,5,6,7,8,9};
     etl::fast_matrix<Z, 3, 3> b = {7,8,9,9,10,11,11,12,13};
 
