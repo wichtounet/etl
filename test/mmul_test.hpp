@@ -14,12 +14,14 @@ struct name {                                                   \
 };
 
 MMUL_FUNCTOR( default_mmul, c = etl::mmul(a, b) )
+MMUL_FUNCTOR( lazy_mmul, c = etl::lazy_mmul(a, b) )
 MMUL_FUNCTOR( strassen_mmul, c = etl::strassen_mmul(a, b) )
 MMUL_FUNCTOR( std_mmul, etl::impl::standard::mm_mul(a, b, c) )
 MMUL_FUNCTOR( eblas_mmul_float, etl::impl::eblas::fast_sgemm(a, b, c) )
 MMUL_FUNCTOR( eblas_mmul_double, etl::impl::eblas::fast_dgemm(a, b, c) )
 
 #define MMUL_TEST_CASE_SECTION_DEFAULT   MMUL_TEST_CASE_SECTIONS( default_mmul, default_mmul )
+#define MMUL_TEST_CASE_SECTION_LAZY      MMUL_TEST_CASE_SECTIONS( lazy_mmul, lazy_mmul )
 #define MMUL_TEST_CASE_SECTION_STD       MMUL_TEST_CASE_SECTIONS( std_mmul, std_mmul )
 #define MMUL_TEST_CASE_SECTION_STRASSEN  MMUL_TEST_CASE_SECTIONS( strassen_mmul, strassen_mmul )
 #define MMUL_TEST_CASE_SECTION_EBLAS     MMUL_TEST_CASE_SECTIONS( eblas_mmul_float, eblas_mmul_double )
@@ -56,6 +58,7 @@ MMUL_FUNCTOR( blas_mmul_double, etl::impl::blas::dgemm(a, b, c) )
     { \
         MMUL_TEST_CASE_SECTION_DEFAULT \
         MMUL_TEST_CASE_SECTION_STD \
+        MMUL_TEST_CASE_SECTION_LAZY \
         MMUL_TEST_CASE_SECTION_STRASSEN \
         MMUL_TEST_CASE_SECTION_BLAS \
         MMUL_TEST_CASE_SECTION_EBLAS \
