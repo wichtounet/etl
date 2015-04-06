@@ -144,7 +144,7 @@ public:
         std::copy(rhs.begin(), rhs.end(), begin());
     }
 
-    template<typename E, cpp_enable_if(std::is_convertible<typename E::value_type, value_type>::value, is_copy_expr<E>::value)>
+    template<typename E, cpp_enable_if(std::is_convertible<value_t<E>, value_type>::value, is_copy_expr<E>::value)>
     explicit fast_matrix_impl(E&& e){
         init();
         ensure_same_size(*this, e);
@@ -212,7 +212,7 @@ public:
     fast_matrix_impl& operator=(E&& e){
         ensure_same_size(*this, e);
 
-        evaluate(e, *this);
+        evaluate(std::forward<E>(e), *this);
 
         return *this;
     }
