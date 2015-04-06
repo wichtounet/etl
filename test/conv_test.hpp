@@ -5,6 +5,15 @@
 //  http://opensource.org/licenses/MIT)
 //=======================================================================
 
+#ifdef ETL_VECTORIZE
+#ifdef __SSE3__
+#define TEST_SSE
+#endif
+#ifdef __AVX__
+#define TEST_AVX
+#endif
+#endif
+
 #define CONV_FUNCTOR( name, ...)                                \
 struct name {                                                   \
     template<typename A, typename B, typename C>                \
@@ -29,8 +38,7 @@ CONV_FUNCTOR( reduc_conv2_full, etl::impl::reduc::conv2_full(a, b, c) )
 #define CONV2_FULL_TEST_CASE_SECTION_STD       CONV_TEST_CASE_SECTIONS( std_conv2_full, std_conv2_full )
 #define CONV2_FULL_TEST_CASE_SECTION_REDUC     CONV_TEST_CASE_SECTIONS( reduc_conv2_full, reduc_conv2_full )
 
-#ifdef ETL_VECTORIZE
-#ifdef __SSE3__
+#ifdef TEST_SSE
 MMUL_FUNCTOR( sse_conv1_full_float, etl::impl::sse::sconv1_full(a, b, c) )
 MMUL_FUNCTOR( sse_conv1_full_double, etl::impl::sse::dconv1_full(a, b, c) )
 
@@ -39,9 +47,12 @@ MMUL_FUNCTOR( sse_conv2_full_double, etl::impl::sse::dconv2_full(a, b, c) )
 
 #define CONV1_FULL_TEST_CASE_SECTION_SSE   CONV_TEST_CASE_SECTIONS( sse_sconv1_full, sse_dconv1_full )
 #define CONV2_FULL_TEST_CASE_SECTION_SSE   CONV_TEST_CASE_SECTIONS( sse_sconv2_full, sse_dconv2_full )
+#else
+#define CONV1_FULL_TEST_CASE_SECTION_SSE
+#define CONV2_FULL_TEST_CASE_SECTION_SSE
 #endif
 
-#ifdef __AVX__
+#ifdef TEST_AVX
 MMUL_FUNCTOR( avx_conv1_full_float, etl::impl::avx::sconv1_full(a, b, c) )
 MMUL_FUNCTOR( avx_conv1_full_double, etl::impl::avx::dconv1_full(a, b, c) )
 
@@ -50,7 +61,9 @@ MMUL_FUNCTOR( avx_conv2_full_double, etl::impl::avx::dconv2_full(a, b, c) )
 
 #define CONV1_FULL_TEST_CASE_SECTION_AVX   CONV_TEST_CASE_SECTIONS( avx_sconv1_full, avx_dconv1_full )
 #define CONV2_FULL_TEST_CASE_SECTION_AVX   CONV_TEST_CASE_SECTIONS( avx_sconv2_full, avx_dconv2_full )
-#endif
+#else
+#define CONV1_FULL_TEST_CASE_SECTION_AVX
+#define CONV2_FULL_TEST_CASE_SECTION_AVX
 #endif
 
 #define CONV_TEST_CASE_DECL( name, description ) \
