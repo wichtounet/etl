@@ -119,11 +119,11 @@ public:
     }
 
     //Normal constructor with only sizes
-    template<typename... S, cpp::enable_if_all_u<
+    template<typename... S, cpp_enable_if(
             (sizeof...(S) == D),
             cpp::all_convertible_to<std::size_t, S...>::value,
             cpp::is_homogeneous<typename cpp::first_type<S...>::type, S...>::value
-        > = cpp::detail::dummy>
+        )>
     dyn_matrix(S... sizes) :
             _size(dyn_detail::size(sizes...)),
             _data(_size),
@@ -132,7 +132,7 @@ public:
     }
 
     //Sizes followed by an initializer list
-    template<typename... S, cpp::enable_if_u<dyn_detail::is_initializer_list_constructor<S...>::value> = cpp::detail::dummy>
+    template<typename... S, cpp_enable_if(dyn_detail::is_initializer_list_constructor<S...>::value)>
     dyn_matrix(S... sizes) :
             _size(dyn_detail::size(std::make_index_sequence<(sizeof...(S)-1)>(), sizes...)),
             _data(cpp::last_value(sizes...)),
@@ -141,10 +141,10 @@ public:
     }
 
     //Sizes followed by a values_t
-    template<typename S1, typename... S, cpp::enable_if_all_u<
+    template<typename S1, typename... S, cpp_enable_if(
             (sizeof...(S) == D),
             cpp::is_specialization_of<values_t, typename cpp::last_type<S1, S...>::type>::value
-        > = cpp::detail::dummy>
+        )>
     dyn_matrix(S1 s1, S... sizes) :
             _size(dyn_detail::size(std::make_index_sequence<(sizeof...(S))>(), s1, sizes...)),
             _data(cpp::last_value(s1, sizes...).template list<value_type>()),
@@ -153,7 +153,7 @@ public:
     }
 
     //Sizes followed by a value
-    template<typename S1, typename... S, cpp::enable_if_all_u<
+    template<typename S1, typename... S, cpp_enable_if(
             (sizeof...(S) == D),
             std::is_convertible<std::size_t, typename cpp::first_type<S1, S...>::type>::value,   //The first type must be convertible to size_t
             cpp::is_sub_homogeneous<S1, S...>::value,                                            //The first N-1 types must homegeneous
@@ -161,7 +161,7 @@ public:
                 ? std::is_convertible<value_type, typename cpp::last_type<S1, S...>::type>::value      //The last type must be convertible to value_type
                 : std::is_same<value_type, typename cpp::last_type<S1, S...>::type>::value             //The last type must be exactly value_type
             )
-        > = cpp::detail::dummy>
+        )>
     dyn_matrix(S1 s1, S... sizes) :
             _size(dyn_detail::size(std::make_index_sequence<(sizeof...(S))>(), s1, sizes...)),
             _data(_size, cpp::last_value(s1, sizes...)),
@@ -170,12 +170,12 @@ public:
     }
 
     //Sizes followed by a generator_expr
-    template<typename S1, typename... S, cpp::enable_if_all_u<
+    template<typename S1, typename... S, cpp_enable_if(
             (sizeof...(S) == D),
             std::is_convertible<std::size_t, typename cpp::first_type<S1, S...>::type>::value,   //The first type must be convertible to size_t
             cpp::is_sub_homogeneous<S1, S...>::value,                                            //The first N-1 types must homegeneous
             cpp::is_specialization_of<generator_expr, typename cpp::last_type<S1, S...>::type>::value     //The last type must be a generator expr
-        > = cpp::detail::dummy>
+        )>
     dyn_matrix(S1 s1, S... sizes) :
             _size(dyn_detail::size(std::make_index_sequence<(sizeof...(S))>(), s1, sizes...)),
             _data(_size),
@@ -186,7 +186,7 @@ public:
     }
 
     //Sizes followed by an init flag followed by the value
-    template<typename... S, cpp::enable_if_c<dyn_detail::is_init_constructor<S...>> = cpp::detail::dummy>
+    template<typename... S, cpp_enable_if(dyn_detail::is_init_constructor<S...>::value)>
     dyn_matrix(S... sizes) :
             _size(dyn_detail::size(std::make_index_sequence<(sizeof...(S)-2)>(), sizes...)),
             _data(_size, cpp::last_value(sizes...)),
@@ -196,10 +196,10 @@ public:
         //Nothing to init
     }
 
-    template<typename E, cpp::enable_if_all_c<
-        std::is_convertible<typename E::value_type, value_type>,
-        is_copy_expr<E>
-    > = cpp::detail::dummy>
+    template<typename E, cpp_enable_if(
+        std::is_convertible<value_t<E>, value_type>::value,
+        is_copy_expr<E>::value
+    )>
     dyn_matrix(E&& e) :_size(etl::size(e)), _data(_size) {
         for(std::size_t d = 0; d < etl::dimensions(e); ++d){
             _dimensions[d] = etl::dim(e, d);
@@ -208,10 +208,10 @@ public:
         evaluate(std::forward<E>(e), *this);
     }
 
-    template<typename Container, cpp::enable_if_all_c<
-        cpp::not_c<is_etl_expr<Container>>,
-        std::is_convertible<typename Container::value_type, value_type>
-    > = cpp::detail::dummy>
+    template<typename Container, cpp_enable_if(
+        cpp::not_c<is_etl_expr<Container>>::value,
+        std::is_convertible<typename Container::value_type, value_type>::value
+    )>
     dyn_matrix(const Container& vec) : _size(vec.size()), _data(_size), _dimensions{{_size}} {
         static_assert(D == 1, "Only 1D matrix can be constructed from containers");
 
