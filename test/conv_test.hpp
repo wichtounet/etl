@@ -63,30 +63,30 @@ CONV_FUNCTOR( std_conv2_valid, etl::impl::standard::conv2_valid(a, b, c) )
 #define CONV2_VALID_TEST_CASE_SECTION_STD      CONV_TEST_CASE_SECTIONS( std_conv2_valid, std_conv2_valid )
 
 #ifdef TEST_SSE
-MMUL_FUNCTOR( sse_conv1_full_float, etl::impl::sse::sconv1_full(a, b, c) )
-MMUL_FUNCTOR( sse_conv1_full_double, etl::impl::sse::dconv1_full(a, b, c) )
+CONV_FUNCTOR( sse_conv1_full_float, etl::impl::sse::sconv1_full(a, b, c) )
+CONV_FUNCTOR( sse_conv1_full_double, etl::impl::sse::dconv1_full(a, b, c) )
 
-MMUL_FUNCTOR( sse_conv1_same_float, etl::impl::sse::sconv1_same(a, b, c) )
-MMUL_FUNCTOR( sse_conv1_same_double, etl::impl::sse::dconv1_same(a, b, c) )
+CONV_FUNCTOR( sse_conv1_same_float, etl::impl::sse::sconv1_same(a, b, c) )
+CONV_FUNCTOR( sse_conv1_same_double, etl::impl::sse::dconv1_same(a, b, c) )
 
-MMUL_FUNCTOR( sse_conv1_valid_float, etl::impl::sse::sconv1_valid(a, b, c) )
-MMUL_FUNCTOR( sse_conv1_valid_double, etl::impl::sse::dconv1_valid(a, b, c) )
+CONV_FUNCTOR( sse_conv1_valid_float, etl::impl::sse::sconv1_valid(a, b, c) )
+CONV_FUNCTOR( sse_conv1_valid_double, etl::impl::sse::dconv1_valid(a, b, c) )
 
-MMUL_FUNCTOR( sse_conv2_full_float, etl::impl::sse::sconv2_full(a, b, c) )
-MMUL_FUNCTOR( sse_conv2_full_double, etl::impl::sse::dconv2_full(a, b, c) )
+CONV_FUNCTOR( sse_conv2_full_float, etl::impl::sse::sconv2_full(a, b, c) )
+CONV_FUNCTOR( sse_conv2_full_double, etl::impl::sse::dconv2_full(a, b, c) )
 
-MMUL_FUNCTOR( sse_conv2_same_float, etl::impl::sse::sconv2_same(a, b, c) )
-MMUL_FUNCTOR( sse_conv2_same_double, etl::impl::sse::dconv2_same(a, b, c) )
+CONV_FUNCTOR( sse_conv2_same_float, etl::impl::sse::sconv2_same(a, b, c) )
+CONV_FUNCTOR( sse_conv2_same_double, etl::impl::sse::dconv2_same(a, b, c) )
 
-MMUL_FUNCTOR( sse_conv2_valid_float, etl::impl::sse::sconv2_valid(a, b, c) )
-MMUL_FUNCTOR( sse_conv2_valid_double, etl::impl::sse::dconv2_valid(a, b, c) )
+CONV_FUNCTOR( sse_conv2_valid_float, etl::impl::sse::sconv2_valid(a, b, c) )
+CONV_FUNCTOR( sse_conv2_valid_double, etl::impl::sse::dconv2_valid(a, b, c) )
 
-#define CONV1_FULL_TEST_CASE_SECTION_SSE   CONV_TEST_CASE_SECTIONS( sse_sconv1_full, sse_dconv1_full )
-#define CONV1_SAME_TEST_CASE_SECTION_SSE   CONV_TEST_CASE_SECTIONS( sse_sconv1_same, sse_dconv1_same )
-#define CONV1_VALID_TEST_CASE_SECTION_SSE  CONV_TEST_CASE_SECTIONS( sse_sconv1_valid, sse_dconv1_valid )
-#define CONV2_FULL_TEST_CASE_SECTION_SSE   CONV_TEST_CASE_SECTIONS( sse_sconv2_full, sse_dconv2_full )
-#define CONV2_SAME_TEST_CASE_SECTION_SSE   CONV_TEST_CASE_SECTIONS( sse_sconv2_same, sse_dconv2_same )
-#define CONV2_VALID_TEST_CASE_SECTION_SSE  CONV_TEST_CASE_SECTIONS( sse_sconv2_valid, sse_dconv2_valid )
+#define CONV1_FULL_TEST_CASE_SECTION_SSE   CONV_TEST_CASE_SECTIONS( sse_conv1_full_float, sse_conv1_full_double )
+#define CONV1_SAME_TEST_CASE_SECTION_SSE   CONV_TEST_CASE_SECTIONS( sse_conv1_same_float, sse_conv1_same_double )
+#define CONV1_VALID_TEST_CASE_SECTION_SSE  CONV_TEST_CASE_SECTIONS( sse_conv1_valid_float, sse_conv1_valid_double )
+#define CONV2_FULL_TEST_CASE_SECTION_SSE   CONV_TEST_CASE_SECTIONS( sse_conv2_full_float, sse_conv2_full_double )
+#define CONV2_SAME_TEST_CASE_SECTION_SSE   CONV_TEST_CASE_SECTIONS( sse_conv2_same_float, sse_conv2_same_double )
+#define CONV2_VALID_TEST_CASE_SECTION_SSE  CONV_TEST_CASE_SECTIONS( sse_conv2_valid_float, sse_conv2_valid_double )
 #else
 #define CONV1_FULL_TEST_CASE_SECTION_SSE
 #define CONV1_SAME_TEST_CASE_SECTION_SSE
@@ -97,29 +97,29 @@ MMUL_FUNCTOR( sse_conv2_valid_double, etl::impl::sse::dconv2_valid(a, b, c) )
 #endif
 
 #ifdef TEST_AVX
-MMUL_FUNCTOR( avx_conv1_full_float, etl::impl::avx::sconv1_full(a, b, c) )
-MMUL_FUNCTOR( avx_conv1_full_double, etl::impl::avx::dconv1_full(a, b, c) )
+CONV_FUNCTOR( avx_conv1_full_float, etl::impl::avx::sconv1_full(a, b, c) )
+CONV_FUNCTOR( avx_conv1_full_double, etl::impl::avx::dconv1_full(a, b, c) )
 
-MMUL_FUNCTOR( avx_conv1_same_float, etl::impl::avx::sconv1_same(a, b, c) )
-MMUL_FUNCTOR( avx_conv1_same_double, etl::impl::avx::dconv1_same(a, b, c) )
+CONV_FUNCTOR( avx_conv1_same_float, etl::impl::avx::sconv1_same(a, b, c) )
+CONV_FUNCTOR( avx_conv1_same_double, etl::impl::avx::dconv1_same(a, b, c) )
 
-MMUL_FUNCTOR( avx_conv1_valid_float, etl::impl::avx::sconv1_valid(a, b, c) )
-MMUL_FUNCTOR( avx_conv1_valid_double, etl::impl::avx::dconv1_valid(a, b, c) )
+CONV_FUNCTOR( avx_conv1_valid_float, etl::impl::avx::sconv1_valid(a, b, c) )
+CONV_FUNCTOR( avx_conv1_valid_double, etl::impl::avx::dconv1_valid(a, b, c) )
 
-MMUL_FUNCTOR( avx_conv2_full_float, etl::impl::avx::sconv2_full(a, b, c) )
-MMUL_FUNCTOR( avx_conv2_full_double, etl::impl::avx::dconv2_full(a, b, c) )
-MMUL_FUNCTOR( avx_conv2_same_float, etl::impl::avx::sconv2_same(a, b, c) )
-MMUL_FUNCTOR( avx_conv2_same_double, etl::impl::avx::dconv2_same(a, b, c) )
+CONV_FUNCTOR( avx_conv2_full_float, etl::impl::avx::sconv2_full(a, b, c) )
+CONV_FUNCTOR( avx_conv2_full_double, etl::impl::avx::dconv2_full(a, b, c) )
+CONV_FUNCTOR( avx_conv2_same_float, etl::impl::avx::sconv2_same(a, b, c) )
+CONV_FUNCTOR( avx_conv2_same_double, etl::impl::avx::dconv2_same(a, b, c) )
 
-MMUL_FUNCTOR( avx_conv2_valid_float, etl::impl::avx::sconv2_valid(a, b, c) )
-MMUL_FUNCTOR( avx_conv2_valid_double, etl::impl::avx::dconv2_valid(a, b, c) )
+CONV_FUNCTOR( avx_conv2_valid_float, etl::impl::avx::sconv2_valid(a, b, c) )
+CONV_FUNCTOR( avx_conv2_valid_double, etl::impl::avx::dconv2_valid(a, b, c) )
 
-#define CONV1_FULL_TEST_CASE_SECTION_AVX   CONV_TEST_CASE_SECTIONS( avx_sconv1_full, avx_dconv1_full )
-#define CONV1_SAME_TEST_CASE_SECTION_AVX   CONV_TEST_CASE_SECTIONS( avx_sconv1_same, avx_dconv1_same )
-#define CONV1_VALID_TEST_CASE_SECTION_AVX  CONV_TEST_CASE_SECTIONS( avx_sconv1_valid, avx_dconv1_valid )
-#define CONV2_FULL_TEST_CASE_SECTION_AVX   CONV_TEST_CASE_SECTIONS( avx_sconv2_full, avx_dconv2_full )
-#define CONV2_SAME_TEST_CASE_SECTION_AVX   CONV_TEST_CASE_SECTIONS( avx_sconv2_same, avx_dconv2_same )
-#define CONV2_VALID_TEST_CASE_SECTION_AVX  CONV_TEST_CASE_SECTIONS( avx_sconv2_valid, avx_dconv2_valid )
+#define CONV1_FULL_TEST_CASE_SECTION_AVX   CONV_TEST_CASE_SECTIONS( avx_conv1_full_float, avx_conv1_full_double )
+#define CONV1_SAME_TEST_CASE_SECTION_AVX   CONV_TEST_CASE_SECTIONS( avx_conv1_same_float, avx_conv1_same_double )
+#define CONV1_VALID_TEST_CASE_SECTION_AVX  CONV_TEST_CASE_SECTIONS( avx_conv1_valid_float, avx_conv1_valid_double )
+#define CONV2_FULL_TEST_CASE_SECTION_AVX   CONV_TEST_CASE_SECTIONS( avx_conv2_full_float, avx_conv2_full_double )
+#define CONV2_SAME_TEST_CASE_SECTION_AVX   CONV_TEST_CASE_SECTIONS( avx_conv2_same_float, avx_conv2_same_double )
+#define CONV2_VALID_TEST_CASE_SECTION_AVX  CONV_TEST_CASE_SECTIONS( avx_conv2_valid_float, avx_conv2_valid_double )
 #else
 #define CONV1_FULL_TEST_CASE_SECTION_AVX
 #define CONV1_SAME_TEST_CASE_SECTION_AVX
