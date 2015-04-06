@@ -444,6 +444,7 @@ void bench_dyn_valid_convolution_1d_s(std::size_t d1, std::size_t d2){
 
 TER_FUNCTOR(default_conv_2d_full, c = etl::conv_2d_full(a, b));
 TER_FUNCTOR(std_conv_2d_full, etl::impl::standard::conv2_full(a, b, c));
+TER_FUNCTOR(mmul_conv_2d_full, etl::impl::reduc::conv2_full(a, b, c));
 TER_FUNCTOR_SSE(sse_sconv_2d_full, etl::impl::sse::sconv2_full(a, b, c));
 TER_FUNCTOR_SSE(sse_dconv_2d_full, etl::impl::sse::dconv2_full(a, b, c));
 TER_FUNCTOR_AVX(avx_sconv_2d_full, etl::impl::avx::sconv2_full(a, b, c));
@@ -465,6 +466,8 @@ void measure_full_convolution_2d(A& a, B& b, C& c){
     measure_sub_ter<avx_sconv_2d_full, F>("avx", a, b, c);
     measure_sub_ter<avx_dconv_2d_full, !F>("avx", a, b, c);
 #endif
+
+    measure_sub_ter<mmul_conv_2d_full>("mmul", a, b, c);
 
     cpp_unused(F);
 }
