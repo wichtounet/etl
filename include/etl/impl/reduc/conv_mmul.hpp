@@ -21,7 +21,7 @@ void conv1_full(const I& input, const K& kernel, C&& conv){
     conv = row(
         mmul(
             reshape(kernel, 1, dim<0>(kernel)),
-            convmtx(input, 3)
+            convmtx(input, dim<0>(kernel))
         )
         , 0
     );
