@@ -17,18 +17,17 @@ CONV_FUNCTOR( default_conv1_full, c = etl::conv_1d_full(a, b) )
 CONV_FUNCTOR( std_conv1_full, etl::impl::standard::conv1_full(a, b, c) )
 CONV_FUNCTOR( reduc_conv1_full, etl::impl::reduc::conv1_full(a, b, c) )
 
-//MMUL_FUNCTOR( lazy_mmul, c = etl::lazy_mmul(a, b) )
-//MMUL_FUNCTOR( strassen_mmul, c = etl::strassen_mmul(a, b) )
-//MMUL_FUNCTOR( eblas_mmul_float, etl::impl::eblas::fast_sgemm(a, b, c) )
-//MMUL_FUNCTOR( eblas_mmul_double, etl::impl::eblas::fast_dgemm(a, b, c) )
+CONV_FUNCTOR( default_conv2_full, c = etl::conv_2d_full(a, b) )
+CONV_FUNCTOR( std_conv2_full, etl::impl::standard::conv2_full(a, b, c) )
+CONV_FUNCTOR( reduc_conv2_full, etl::impl::reduc::conv2_full(a, b, c) )
 
 #define CONV1_FULL_TEST_CASE_SECTION_DEFAULT   CONV_TEST_CASE_SECTIONS( default_conv1_full, default_conv1_full )
 #define CONV1_FULL_TEST_CASE_SECTION_STD       CONV_TEST_CASE_SECTIONS( std_conv1_full, std_conv1_full )
 #define CONV1_FULL_TEST_CASE_SECTION_REDUC     CONV_TEST_CASE_SECTIONS( reduc_conv1_full, reduc_conv1_full )
 
-//#define MMUL_TEST_CASE_SECTION_LAZY      MMUL_TEST_CASE_SECTIONS( lazy_mmul, lazy_mmul )
-//#define MMUL_TEST_CASE_SECTION_STRASSEN  MMUL_TEST_CASE_SECTIONS( strassen_mmul, strassen_mmul )
-//#define MMUL_TEST_CASE_SECTION_EBLAS     MMUL_TEST_CASE_SECTIONS( eblas_mmul_float, eblas_mmul_double )
+#define CONV2_FULL_TEST_CASE_SECTION_DEFAULT   CONV_TEST_CASE_SECTIONS( default_conv2_full, default_conv2_full )
+#define CONV2_FULL_TEST_CASE_SECTION_STD       CONV_TEST_CASE_SECTIONS( std_conv2_full, std_conv2_full )
+#define CONV2_FULL_TEST_CASE_SECTION_REDUC     CONV_TEST_CASE_SECTIONS( reduc_conv2_full, reduc_conv2_full )
 
 //#ifdef ETL_BLAS_MODE
 //MMUL_FUNCTOR( blas_mmul_float, etl::impl::blas::sgemm(a, b, c) )
@@ -44,7 +43,7 @@ CONV_FUNCTOR( reduc_conv1_full, etl::impl::reduc::conv1_full(a, b, c) )
     TEST_CASE( name, description )
 
 #define CONV_TEST_CASE_SECTION( Tn, Impln) \
-        SECTION( #Tn #Impln ) \
+        SECTION( #Tn "_" #Impln ) \
         { \
             INTERNAL_CATCH_UNIQUE_NAME( ____C_A_T_C_H____T_E_M_P_L_A_TE____T_E_S_T____ )<Tn, Impln>(); \
         }
@@ -63,5 +62,14 @@ CONV_FUNCTOR( reduc_conv1_full, etl::impl::reduc::conv1_full(a, b, c) )
         CONV1_FULL_TEST_CASE_SECTION_DEFAULT \
         CONV1_FULL_TEST_CASE_SECTION_STD \
         CONV1_FULL_TEST_CASE_SECTION_REDUC \
+    } \
+    CONV_TEST_CASE_DEFN
+
+#define CONV2_FULL_TEST_CASE( name, description ) \
+    CONV_TEST_CASE_DECL( name, description ) \
+    { \
+        CONV2_FULL_TEST_CASE_SECTION_DEFAULT \
+        CONV2_FULL_TEST_CASE_SECTION_STD \
+        CONV2_FULL_TEST_CASE_SECTION_REDUC \
     } \
     CONV_TEST_CASE_DEFN
