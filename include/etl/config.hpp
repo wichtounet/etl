@@ -10,6 +10,16 @@
 
 namespace etl {
 
+#ifdef ETL_NO_TEMPORARY
+
+struct create_temporary : std::false_type {};
+
+#else
+
+struct create_temporary : std::true_type {};
+
+#endif
+
 #ifdef ETL_BLAS_MODE
 
 struct is_cblas_enabled : std::true_type {};
