@@ -389,12 +389,12 @@ TEMPLATE_TEST_CASE_2( "convolution_1d/valid_5", "convolution_1d_valid", Z, float
 
 //{{{ convolution_2d_full
 
-TEMPLATE_TEST_CASE_2( "convolution_2d/full_1", "convolution_2d_full", Z, float, double ) {
-    etl::fast_matrix<Z, 3, 3> a = {1.0, 2.0, 3.0, 0.0, 1.0, 1.0, 3.0, 2.0, 1.0};
-    etl::fast_matrix<Z, 2, 2> b = {2.0, 0.0, 0.5, 0.5};
-    etl::fast_matrix<Z, 4, 4> c;
+CONV2_FULL_TEST_CASE( "convolution_2d/full_1", "convolution_2d_full" ) {
+    etl::fast_matrix<T, 3, 3> a = {1.0, 2.0, 3.0, 0.0, 1.0, 1.0, 3.0, 2.0, 1.0};
+    etl::fast_matrix<T, 2, 2> b = {2.0, 0.0, 0.5, 0.5};
+    etl::fast_matrix<T, 4, 4> c;
 
-    *etl::conv_2d_full(a, b, c);
+    Impl::apply(a, b, c);
 
     REQUIRE(c(0,0) == 2.0);
     REQUIRE(c(0,1) == 4.0);
@@ -417,12 +417,12 @@ TEMPLATE_TEST_CASE_2( "convolution_2d/full_1", "convolution_2d_full", Z, float, 
     REQUIRE(c(3,3) == 0.5);
 }
 
-TEMPLATE_TEST_CASE_2( "convolution_2d/full_2", "convolution_2d_full", Z, float, double ) {
-    etl::fast_matrix<Z, 3, 2> a = {1.0, 2.0, 0.0, 1.0, 3.0, 2.0};
-    etl::fast_matrix<Z, 2, 2> b = {2.0, 0.0, 0.5, 0.5};
-    etl::fast_matrix<Z, 4, 3> c;
+CONV2_FULL_TEST_CASE( "convolution_2d/full_2", "convolution_2d_full" ) {
+    etl::fast_matrix<T, 3, 2> a = {1.0, 2.0, 0.0, 1.0, 3.0, 2.0};
+    etl::fast_matrix<T, 2, 2> b = {2.0, 0.0, 0.5, 0.5};
+    etl::fast_matrix<T, 4, 3> c;
 
-    *etl::conv_2d_full(a, b, c);
+    Impl::apply(a, b, c);
 
     REQUIRE(c(0,0) == 2.0);
     REQUIRE(c(0,1) == 4.0);
@@ -441,12 +441,12 @@ TEMPLATE_TEST_CASE_2( "convolution_2d/full_2", "convolution_2d_full", Z, float, 
     REQUIRE(c(3,2) == 1.0);
 }
 
-TEMPLATE_TEST_CASE_2( "convolution_2d/full_3", "convolution_2d_full", Z, float, double ) {
-    etl::fast_matrix<Z, 2, 2> a = {1.0, 2.0, 3.0, 2.0};
-    etl::fast_matrix<Z, 2, 2> b = {2.0, 1.0, 0.5, 0.5};
-    etl::fast_matrix<Z, 3, 3> c;
+CONV2_FULL_TEST_CASE( "convolution_2d/full_3", "convolution_2d_full" ) {
+    etl::fast_matrix<T, 2, 2> a = {1.0, 2.0, 3.0, 2.0};
+    etl::fast_matrix<T, 2, 2> b = {2.0, 1.0, 0.5, 0.5};
+    etl::fast_matrix<T, 3, 3> c;
 
-    *etl::conv_2d_full(a, b, c);
+    Impl::apply(a, b, c);
 
     REQUIRE(c(0,0) == 2.0);
     REQUIRE(c(0,1) == 5.0);
@@ -461,12 +461,12 @@ TEMPLATE_TEST_CASE_2( "convolution_2d/full_3", "convolution_2d_full", Z, float, 
     REQUIRE(c(2,2) == 1.0);
 }
 
-TEMPLATE_TEST_CASE_2( "convolution_2d/full_4", "convolution_2d_full", Z, float, double ) {
-    etl::fast_matrix<Z, 3, 3> a(etl::magic(3));
-    etl::fast_matrix<Z, 2, 2> b(etl::magic(2));
-    etl::fast_matrix<Z, 4, 4> c;
+CONV2_FULL_TEST_CASE( "convolution_2d/full_4", "convolution_2d_full" ) {
+    etl::fast_matrix<T, 3, 3> a(etl::magic(3));
+    etl::fast_matrix<T, 2, 2> b(etl::magic(2));
+    etl::fast_matrix<T, 4, 4> c;
 
-    etl::force(etl::conv_2d_full(a, b, c));
+    Impl::apply(a, b, c);
 
     REQUIRE(c(0, 0) == 8);
     REQUIRE(c(0, 1) == 25);
@@ -489,12 +489,12 @@ TEMPLATE_TEST_CASE_2( "convolution_2d/full_4", "convolution_2d_full", Z, float, 
     REQUIRE(c(3, 3) == 4);
 }
 
-TEMPLATE_TEST_CASE_2( "convolution_2d/full_5", "convolution_2d_full", Z, float, double ) {
-    etl::fast_matrix<Z, 5, 5> a(etl::magic(5));
-    etl::fast_matrix<Z, 3, 3> b(etl::magic(3));
-    etl::fast_matrix<Z, 7, 7> c;
+CONV2_FULL_TEST_CASE( "convolution_2d/full_5", "convolution_2d_full" ) {
+    etl::fast_matrix<T, 5, 5> a(etl::magic(5));
+    etl::fast_matrix<T, 3, 3> b(etl::magic(3));
+    etl::fast_matrix<T, 7, 7> c;
 
-    *etl::conv_2d_full(a, b, c);
+    Impl::apply(a, b, c);
 
     REQUIRE(c(0, 0) == 136);
     REQUIRE(c(0, 1) == 209);
@@ -517,12 +517,12 @@ TEMPLATE_TEST_CASE_2( "convolution_2d/full_5", "convolution_2d_full", Z, float, 
     REQUIRE(c(3, 3) == 555);
 }
 
-TEMPLATE_TEST_CASE_2( "convolution_2d/full_6", "convolution_2d_full", Z, float, double ) {
-    etl::fast_matrix<Z, 17, 17> a(etl::magic(17));
-    etl::fast_matrix<Z, 3, 3> b(etl::magic(3));
-    etl::fast_matrix<Z, 19, 19> c;
+CONV2_FULL_TEST_CASE( "convolution_2d/full_6", "convolution_2d_full" ) {
+    etl::fast_matrix<T, 17, 17> a(etl::magic(17));
+    etl::fast_matrix<T, 3, 3> b(etl::magic(3));
+    etl::fast_matrix<T, 19, 19> c;
 
-    *etl::conv_2d_full(a, b, c);
+    Impl::apply(a, b, c);
 
     REQUIRE(c(0, 0) == 1240);
     REQUIRE(c(0, 1) == 1547);
@@ -545,12 +545,12 @@ TEMPLATE_TEST_CASE_2( "convolution_2d/full_6", "convolution_2d_full", Z, float, 
     REQUIRE(c(3, 3) == 10305);
 }
 
-TEMPLATE_TEST_CASE_2( "convolution_2d/full_7", "convolution_2d_full", Z, float, double ) {
-    etl::fast_matrix<Z, 2, 6> a = {1,2,3,4,5,6,7,8,9,10,11,12};
-    etl::fast_matrix<Z, 2, 2> b = {1,2,3,4};
-    etl::fast_matrix<Z, 3, 7> c;
+CONV2_FULL_TEST_CASE( "convolution_2d/full_7", "convolution_2d_full" ) {
+    etl::fast_matrix<T, 2, 6> a = {1,2,3,4,5,6,7,8,9,10,11,12};
+    etl::fast_matrix<T, 2, 2> b = {1,2,3,4};
+    etl::fast_matrix<T, 3, 7> c;
 
-    *etl::conv_2d_full(a, b, c);
+    Impl::apply(a, b, c);
 
     REQUIRE(c(0, 0) == 1);
     REQUIRE(c(0, 1) == 4);
@@ -577,12 +577,12 @@ TEMPLATE_TEST_CASE_2( "convolution_2d/full_7", "convolution_2d_full", Z, float, 
     REQUIRE(c(2, 6) == 48);
 }
 
-TEMPLATE_TEST_CASE_2( "convolution_2d/full_8", "convolution_2d_full", Z, float, double ) {
-    etl::fast_matrix<Z, 33, 33> a(etl::magic(33));
-    etl::fast_matrix<Z, 9, 9> b(etl::magic(9));
-    etl::fast_matrix<Z, 41, 41> c;
+CONV2_FULL_TEST_CASE( "convolution_2d/full_8", "convolution_2d_full" ) {
+    etl::fast_matrix<T, 33, 33> a(etl::magic(33));
+    etl::fast_matrix<T, 9, 9> b(etl::magic(9));
+    etl::fast_matrix<T, 41, 41> c;
 
-    *etl::conv_2d_full(a, b, c);
+    Impl::apply(a, b, c);
 
     CHECK(c(0, 0) == 26461);
     CHECK(c(0, 1) == 60760);
@@ -603,22 +603,6 @@ TEMPLATE_TEST_CASE_2( "convolution_2d/full_8", "convolution_2d_full", Z, float, 
     CHECK(c(3, 1) == 291237);
     CHECK(c(3, 2) == 417946);
     CHECK(c(3, 3) == 516210);
-}
-
-TEMPLATE_TEST_CASE_2( "convolution_2d/full_9", "convmtx conv", Z, float, double ) {
-    etl::fast_vector<Z, 5> a = {1.0, 2.0, 3.0, 4.0, 5.0};
-    etl::fast_vector<Z, 3> k = {1.0, 2.0, 3.0};
-
-    etl::fast_matrix<Z, 7> c;
-    c = conv_1d_full(a, k);
-
-    REQUIRE(c(0) == Z(1.0));
-    REQUIRE(c(1) == Z(4.0));
-    REQUIRE(c(2) == Z(10.0));
-    REQUIRE(c(3) == Z(16.0));
-    REQUIRE(c(4) == Z(22.0));
-    REQUIRE(c(5) == Z(22.0));
-    REQUIRE(c(6) == Z(15.0));
 }
 
 //}}}
