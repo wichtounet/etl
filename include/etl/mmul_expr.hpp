@@ -13,6 +13,7 @@
 #include "impl/mmul.hpp"
 
 #include "traits_lite.hpp"
+#include "temporary.hpp"
 
 namespace etl {
 
@@ -72,7 +73,10 @@ struct basic_mm_mul_expr {
         static_assert(decay_traits<A>::dimensions() == 2 && decay_traits<B>::dimensions() == 2 && decay_traits<C>::dimensions() == 2, "Matrix multiplication only works in 2D");
         detail::check_mm_mul_sizes(a,b,c);
 
-        Impl<A,B,C,void>::apply(std::forward<A>(a), std::forward<B>(b), std::forward<C>(c));
+        Impl<decltype(make_temporary(std::forward<A>(a))), decltype(make_temporary(std::forward<B>(b))), C,void>::apply(
+            make_temporary(std::forward<A>(a)),
+            make_temporary(std::forward<B>(b)),
+            std::forward<C>(c));
     }
 
     static std::string desc() noexcept {
