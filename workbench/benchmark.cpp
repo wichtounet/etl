@@ -134,9 +134,9 @@ std::size_t measure_only_safe(Functor&& functor, T&... references){
 }
 
 template<typename Functor, typename... T>
-void measure(const std::string& title, const std::string& reference, Functor&& functor, T&... references){
+void measure(const std::string& title, Functor&& functor, T&... references){
     auto duration_acc = measure_only(std::forward<Functor>(functor), references...);
-    std::cout << title << " took " << duration_str(duration_acc) << " (reference: " << reference << ")\n";
+    std::cout << title << " took " << duration_str(duration_acc) << "\n";
 }
 
 template<bool Enable = true>
@@ -182,64 +182,64 @@ void measure_sub_ter(const std::string& title, A& a, B& b, C& c){
 }
 
 template<std::size_t D>
-void bench_fast_vector_simple(const std::string& reference){
+void bench_fast_vector_simple(){
     etl::fast_vector<double, D> a;
     etl::fast_vector<double, D> b;
     etl::fast_vector<double, D> c;
 
-    measure("fast_vector_simple(" + std::to_string(D) + ")", reference, [&a, &b, &c](){
+    measure("fast_vector_simple(" + std::to_string(D) + ")", [&a, &b, &c](){
         c = 3.5 * a + etl::sigmoid(1.0 + b);
     }, a, b);
 }
 
-void bench_dyn_vector_simple(std::size_t d, const std::string& reference){
+void bench_dyn_vector_simple(std::size_t d){
     etl::dyn_vector<double> a(d);
     etl::dyn_vector<double> b(d);
     etl::dyn_vector<double> c(d);
 
-    measure("dyn_vector_simple(" + std::to_string(d) + ")", reference, [&a, &b, &c](){
+    measure("dyn_vector_simple(" + std::to_string(d) + ")", [&a, &b, &c](){
         c = 3.5 * a + etl::sigmoid(1.0 + b);
     }, a, b);
 }
 
 template<std::size_t D1, std::size_t D2>
-void bench_fast_matrix_simple(const std::string& reference){
+void bench_fast_matrix_simple(){
     etl::fast_matrix<double, D1, D2> a;
     etl::fast_matrix<double, D1, D2> b;
     etl::fast_matrix<double, D1, D2> c;
 
-    measure("fast_matrix_simple(" + std::to_string(D1) + "," + std::to_string(D2) + ")(" + std::to_string(D1 * D2) + ")", reference,
+    measure("fast_matrix_simple(" + std::to_string(D1) + "," + std::to_string(D2) + ")(" + std::to_string(D1 * D2) + ")", 
         [&a, &b, &c](){c = 3.5 * a + etl::sigmoid(1.0 + b);}
         , a, b);
 }
 
 template<std::size_t D1, std::size_t D2>
-void bench_fast_matrix_sigmoid(const std::string& reference){
+void bench_fast_matrix_sigmoid(){
     etl::fast_matrix<double, D1, D2> a;
     etl::fast_matrix<double, D1, D2> b;
     etl::fast_matrix<double, D1, D2> c;
 
-    measure("fast_matrix_sigmoid(" + std::to_string(D1) + "," + std::to_string(D2) + ")(" + std::to_string(D1 * D2) + ")", reference,
+    measure("fast_matrix_sigmoid(" + std::to_string(D1) + "," + std::to_string(D2) + ")(" + std::to_string(D1 * D2) + ")", 
         [&a, &b, &c](){c = etl::sigmoid(1.0 + b);}
         , a, b);
 }
 
-void bench_dyn_matrix_simple(std::size_t d1, std::size_t d2, const std::string& reference){
+void bench_dyn_matrix_simple(std::size_t d1, std::size_t d2){
     etl::dyn_matrix<double> a(d1, d2);
     etl::dyn_matrix<double> b(d1, d2);
     etl::dyn_matrix<double> c(d1, d2);
 
-    measure("dyn_matrix_simple(" + std::to_string(d1) + "," + std::to_string(d2) + ")(" + std::to_string(d1 * d2) + ")", reference,
+    measure("dyn_matrix_simple(" + std::to_string(d1) + "," + std::to_string(d2) + ")(" + std::to_string(d1 * d2) + ")", 
         [&a, &b, &c](){c = 3.5 * a + etl::sigmoid(1.0 + b);}
         , a, b);
 }
 
-void bench_dyn_matrix_sigmoid(std::size_t d1, std::size_t d2, const std::string& reference){
+void bench_dyn_matrix_sigmoid(std::size_t d1, std::size_t d2){
     etl::dyn_matrix<double> a(d1, d2);
     etl::dyn_matrix<double> b(d1, d2);
     etl::dyn_matrix<double> c(d1, d2);
 
-    measure("dyn_matrix_sigmoid(" + std::to_string(d1) + "," + std::to_string(d2) + ")(" + std::to_string(d1 * d2) + ")", reference,
+    measure("dyn_matrix_sigmoid(" + std::to_string(d1) + "," + std::to_string(d2) + ")(" + std::to_string(d1 * d2) + ")", 
         [&a, &b, &c](){c = etl::sigmoid(1.0 + b);}
         , a, b);
 }
@@ -708,24 +708,24 @@ void bench_dyn_mmul_s(std::size_t d1, std::size_t d2){
     measure_mmul(a, b, c);
 }
 
-void bench_stack(){
+void bench_standard(){
     std::cout << "Start benchmarking...\n";
     std::cout << "... all structures are on stack\n\n";
 
-    bench_fast_matrix_sigmoid<16, 256>("TODOms");
-    bench_fast_matrix_sigmoid<256, 128>("TODOms");
-    bench_dyn_matrix_sigmoid(16, 256, "TODOms");
-    bench_dyn_matrix_sigmoid(256, 128, "TODOms");
+    bench_fast_matrix_sigmoid<16, 256>();
+    bench_fast_matrix_sigmoid<256, 128>();
+    bench_dyn_matrix_sigmoid(16, 256);
+    bench_dyn_matrix_sigmoid(256, 128);
 
-    bench_fast_vector_simple<4096>("TODOms");
-    bench_fast_vector_simple<16384>("TODOms");
-    bench_dyn_vector_simple(4096, "TODOms");
-    bench_dyn_vector_simple(16384, "TODOms");
+    bench_fast_vector_simple<4096>();
+    bench_fast_vector_simple<16384>();
+    bench_dyn_vector_simple(4096);
+    bench_dyn_vector_simple(16384);
 
-    bench_fast_matrix_simple<16, 256>("TODOms");
-    bench_fast_matrix_simple<256, 128>("TODOms");
-    bench_dyn_matrix_simple(16, 256, "TODOms");
-    bench_dyn_matrix_simple(256, 128, "TODOms");
+    bench_fast_matrix_simple<16, 256>();
+    bench_fast_matrix_simple<256, 128>();
+    bench_dyn_matrix_simple(16, 256);
+    bench_dyn_matrix_simple(256, 128);
 
     bench_fast_valid_convolution_1d_d<1024, 64>();
     bench_fast_valid_convolution_1d_d<2048, 128>();
@@ -804,10 +804,49 @@ void bench_stack(){
     bench_dyn_mmul_s(512, 256);
 }
 
+
+void bench_smart_1(std::size_t d){
+    etl::dyn_matrix<double> A(d, d);
+    etl::dyn_matrix<double> B(d, d);
+    etl::dyn_matrix<double> C(d, d);
+    etl::dyn_matrix<double> result(d, d);
+
+    measure("A * (B + C) (" + std::to_string(d) + "x" + std::to_string(d) + ")", [&A, &B, &C, &result](){
+        result = etl::mmul(A, (B + C));
+    }, A, B, C);
+}
+
+void bench_smart(){
+    std::cout << "Start Smart benchmarking...\n";
+
+    bench_smart_1(50);
+    bench_smart_1(100);
+    bench_smart_1(250);
+    bench_smart_1(500);
+}
+
 } //end of anonymous namespace
 
-int main(){
-    bench_stack();
+int main(int argc, char* argv[]){
+    std::vector<std::string> args;
+
+    for(int i = 1; i < argc; ++i){
+        args.emplace_back(argv[i]);
+    }
+
+    bool smart = false;
+
+    for(auto& arg : args){
+        if(arg == "smart"){
+            smart = true;
+        } 
+    }
+
+    if(smart){
+        bench_smart();
+    } else {
+        bench_standard();
+    }
 
     return 0;
 }
