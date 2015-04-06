@@ -114,7 +114,7 @@ public:
 
     void evaluate(){
         if(!evaluated){
-            Op::apply(a(), b(), _c);
+            Op::apply(_a, _b, _c);
             evaluated = true;
         }
     }
@@ -237,16 +237,16 @@ public:
         return {*this, size(*this)};
     }
 
-    void evaluate() const {
+    void evaluate(){
         if(!evaluated){
-            Op::apply(a(), b(), *result_ptr);
+            Op::apply(_a, _b, *result_ptr);
             evaluated = true;
         }
     }
 
     template<typename Result>
-    void direct_evaluate(Result&& result) const {
-        Op::apply(a(), b(), std::forward<Result>(result));
+    void direct_evaluate(Result&& result){
+        Op::apply(_a, _b, std::forward<Result>(result));
     }
 
     void allocate_temporary() const {
