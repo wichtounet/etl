@@ -29,13 +29,29 @@ CONV_FUNCTOR( reduc_conv2_full, etl::impl::reduc::conv2_full(a, b, c) )
 #define CONV2_FULL_TEST_CASE_SECTION_STD       CONV_TEST_CASE_SECTIONS( std_conv2_full, std_conv2_full )
 #define CONV2_FULL_TEST_CASE_SECTION_REDUC     CONV_TEST_CASE_SECTIONS( reduc_conv2_full, reduc_conv2_full )
 
-//#ifdef ETL_BLAS_MODE
-//MMUL_FUNCTOR( blas_mmul_float, etl::impl::blas::sgemm(a, b, c) )
-//MMUL_FUNCTOR( blas_mmul_double, etl::impl::blas::dgemm(a, b, c) )
-//#define MMUL_TEST_CASE_SECTION_BLAS  MMUL_TEST_CASE_SECTIONS( blas_mmul_float, blas_mmul_double )
-//#else
-//#define MMUL_TEST_CASE_SECTION_BLAS
-//#endif
+#ifdef ETL_VECTORIZE
+#ifdef __SSE3__
+MMUL_FUNCTOR( sse_conv1_full_float, etl::impl::sse::sconv1_full(a, b, c) )
+MMUL_FUNCTOR( sse_conv1_full_double, etl::impl::sse::dconv1_full(a, b, c) )
+
+MMUL_FUNCTOR( sse_conv2_full_float, etl::impl::sse::sconv2_full(a, b, c) )
+MMUL_FUNCTOR( sse_conv2_full_double, etl::impl::sse::dconv2_full(a, b, c) )
+
+#define CONV1_FULL_TEST_CASE_SECTION_SSE   CONV_TEST_CASE_SECTIONS( sse_sconv1_full, sse_dconv1_full )
+#define CONV2_FULL_TEST_CASE_SECTION_SSE   CONV_TEST_CASE_SECTIONS( sse_sconv2_full, sse_dconv2_full )
+#endif
+
+#ifdef __AVX__
+MMUL_FUNCTOR( avx_conv1_full_float, etl::impl::avx::sconv1_full(a, b, c) )
+MMUL_FUNCTOR( avx_conv1_full_double, etl::impl::avx::dconv1_full(a, b, c) )
+
+MMUL_FUNCTOR( avx_conv2_full_float, etl::impl::avx::sconv2_full(a, b, c) )
+MMUL_FUNCTOR( avx_conv2_full_double, etl::impl::avx::dconv2_full(a, b, c) )
+
+#define CONV1_FULL_TEST_CASE_SECTION_AVX   CONV_TEST_CASE_SECTIONS( avx_sconv1_full, avx_dconv1_full )
+#define CONV2_FULL_TEST_CASE_SECTION_AVX   CONV_TEST_CASE_SECTIONS( avx_sconv2_full, avx_dconv2_full )
+#endif
+#endif
 
 #define CONV_TEST_CASE_DECL( name, description ) \
     template<typename T, typename Impl> \
@@ -62,6 +78,8 @@ CONV_FUNCTOR( reduc_conv2_full, etl::impl::reduc::conv2_full(a, b, c) )
         CONV1_FULL_TEST_CASE_SECTION_DEFAULT \
         CONV1_FULL_TEST_CASE_SECTION_STD \
         CONV1_FULL_TEST_CASE_SECTION_REDUC \
+        CONV1_FULL_TEST_CASE_SECTION_SSE \
+        CONV1_FULL_TEST_CASE_SECTION_AVX \
     } \
     CONV_TEST_CASE_DEFN
 
@@ -71,5 +89,7 @@ CONV_FUNCTOR( reduc_conv2_full, etl::impl::reduc::conv2_full(a, b, c) )
         CONV2_FULL_TEST_CASE_SECTION_DEFAULT \
         CONV2_FULL_TEST_CASE_SECTION_STD \
         CONV2_FULL_TEST_CASE_SECTION_REDUC \
+        CONV2_FULL_TEST_CASE_SECTION_SSE \
+        CONV2_FULL_TEST_CASE_SECTION_AVX \
     } \
     CONV_TEST_CASE_DEFN
