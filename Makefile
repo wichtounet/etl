@@ -20,12 +20,14 @@ CXX_FLAGS += -DETL_BLAS_MODE $(shell pkg-config --cflags cblas)
 LD_FLAGS += $(shell pkg-config --libs cblas)
 endif
 
+# Enable coverage if not disabled by the user
+ifeq (,$(ETL_NO_COVERAGE))
 ifneq (,$(findstring clang,$(CXX)))
 DEBUG_FLAGS += -fprofile-arcs -ftest-coverage
 endif
-
 ifneq (,$(findstring g++,$(CXX)))
 DEBUG_FLAGS += --coverage
+endif
 endif
 
 #DEBUG_FLAGS=-fsanitize=address -fsanitize=undefined
