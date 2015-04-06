@@ -94,6 +94,20 @@ MMUL_TEST_CASE( "multiplication/mm_mul_5", "mmul") {
     REQUIRE(c(2,2) == 268);
 }
 
+MMUL_TEST_CASE( "multiplication/mm_mul_6", "mmul") {
+    etl::fast_matrix<T, 19, 19> a(etl::magic(19));
+    etl::fast_matrix<T, 19, 19> b(etl::magic(19));
+    etl::fast_matrix<T, 19, 19> c;
+
+    Impl::apply(a, b, c);
+
+    REQUIRE(c(0,0) == 828343);
+    REQUIRE(c(1,1) == 825360);
+    REQUIRE(c(2,2) == 826253);
+    REQUIRE(c(3,3) == 824524);
+    REQUIRE(c(18,18) == 828343);
+}
+
 //}}}
 
 //{{{ Matrix vector and vector matrix multiplications
