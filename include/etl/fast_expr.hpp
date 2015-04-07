@@ -8,6 +8,8 @@
 #ifndef ETL_FAST_EXPR_HPP
 #define ETL_FAST_EXPR_HPP
 
+#include "config.hpp"
+
 namespace etl {
 
 template<typename T>
@@ -77,15 +79,22 @@ auto operator+(LE&& lhs, RE&& rhs) -> left_binary_helper<LE, RE, plus_binary_op>
     return {lhs, rhs};
 }
 
-template<typename LE, typename RE, cpp::enable_if_all_u<is_etl_expr<LE>::value, is_etl_expr<RE>::value> = cpp::detail::dummy>
+template<typename LE, typename RE, cpp::enable_if_all_u<is_etl_expr<LE>::value, is_etl_expr<RE>::value, is_element_wise_mul_default::value> = cpp::detail::dummy>
 auto operator*(LE&& lhs, RE&& rhs) -> left_binary_helper<LE, RE, mul_binary_op> {
     ensure_same_size(lhs, rhs);
 
     return {lhs, rhs};
 }
 
-template<typename LE, typename RE, cpp::enable_if_all_u<is_etl_expr<LE>::value, is_etl_expr<RE>::value> = cpp::detail::dummy>
+template<typename LE, typename RE, cpp_enable_if(is_etl_expr<LE>::value && is_etl_expr<RE>::value)>
 auto operator>>(LE&& lhs, RE&& rhs) -> left_binary_helper<LE, RE, mul_binary_op> {
+    ensure_same_size(lhs, rhs);
+
+    return {lhs, rhs};
+}
+
+template<typename LE, typename RE, cpp_enable_if(is_etl_expr<LE>::value && is_etl_expr<RE>::value)>
+auto scale(LE&& lhs, RE&& rhs) -> left_binary_helper<LE, RE, mul_binary_op> {
     ensure_same_size(lhs, rhs);
 
     return {lhs, rhs};
@@ -223,6 +232,26 @@ LE& operator*=(LE&& lhs, RE rhs){
 
 template<typename LE, typename RE, cpp::enable_if_all_u<is_etl_expr<RE>::value, is_etl_assignable<LE>::value> = cpp::detail::dummy>
 LE& operator*=(LE&& lhs, const RE& rhs){
+    ensure_same_size(lhs, rhs);
+
+    for(std::size_t i = 0; i < size(lhs); ++i){
+        lhs[i] *= rhs[i];
+    }
+
+    return lhs;
+}
+
+template<typename LE, typename RE, cpp::enable_if_all_u<std::is_arithmetic<RE>::value, is_etl_assignable<LE>::value> = cpp::detail::dummy>
+LE& operator>>=(LE&& lhs, RE rhs){
+    for(std::size_t i = 0; i < size(lhs); ++i){
+        lhs[i] *= rhs;
+    }
+
+    return lhs;
+}
+
+template<typename LE, typename RE, cpp::enable_if_all_u<is_etl_expr<RE>::value, is_etl_assignable<LE>::value> = cpp::detail::dummy>
+LE& operator>>=(LE&& lhs, const RE& rhs){
     ensure_same_size(lhs, rhs);
 
     for(std::size_t i = 0; i < size(lhs); ++i){
