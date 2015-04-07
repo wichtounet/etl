@@ -128,7 +128,7 @@ TEMPLATE_TEST_CASE_2( "dim/dyn_matrix_2", "dim<2>", Z, float, double ) {
 TEMPLATE_TEST_CASE_2( "dim/mix", "dim", Z, float, double ) {
     etl::fast_matrix<Z, 2, 3> a({1.0, -2.0, 4.0, 3.0, 0.5, -0.1});
     etl::fast_vector<Z, 3> b({0.1, 0.2, 0.3});
-    etl::fast_vector<Z, 3> c(b * row(a,1));
+    etl::fast_vector<Z, 3> c(b >> row(a,1));
 
     REQUIRE(c[0] == Approx(0.3));
     REQUIRE(c[1] == Approx(0.1));
