@@ -29,6 +29,28 @@ static void mm_mul(A&& a, B&& b, C&& c){
     }
 }
 
+template<typename A, typename B, typename C>
+static void vm_mul(A&& a, B&& b, C&& c){
+    c = 0;
+
+    for(std::size_t k = 0; k < etl::dim<0>(a); k++){
+        for(std::size_t j = 0; j < columns(b); j++){
+            c(j) += a(k) * b(k,j);
+        }
+    }
+}
+
+template<typename A, typename B, typename C>
+static void mv_mul(A&& a, B&& b, C&& c){
+    c = 0;
+
+    for(std::size_t i = 0; i < rows(a); i++){
+        for(std::size_t k = 0; k < columns(a); k++){
+            c(i) += a(i,k) * b(k);
+        }
+    }
+}
+
 } //end of namespace standard
 
 } //end of namespace impl

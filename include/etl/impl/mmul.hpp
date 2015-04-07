@@ -76,6 +76,20 @@ struct strassen_mm_mul_impl {
     }
 };
 
+template<typename A, typename B, typename C, typename Enable = void>
+struct vm_mul_impl {
+    static void apply(A&& a, B&& b, C&& c){
+        etl::impl::standard::vm_mul(std::forward<A>(a), std::forward<B>(b), std::forward<C>(c));
+    }
+};
+
+template<typename A, typename B, typename C, typename Enable = void>
+struct mv_mul_impl {
+    static void apply(A&& a, B&& b, C&& c){
+        etl::impl::standard::mv_mul(std::forward<A>(a), std::forward<B>(b), std::forward<C>(c));
+    }
+};
+
 } //end of namespace detail
 
 } //end of namespace etl

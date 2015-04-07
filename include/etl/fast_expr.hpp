@@ -566,107 +566,31 @@ auto lazy_mmul(A&& a, B&& b) -> stable_transform_binary_helper<A, B, mm_mul_tran
 }
 
 template<typename A, typename B, typename C, cpp::enable_if_all_u<
-    decay_traits<A>::is_fast, decay_traits<B>::is_fast, decay_traits<C>::is_fast,
     decay_traits<A>::dimensions() == 1, decay_traits<B>::dimensions() == 2
 > = cpp::detail::dummy>
-auto mmul(A&& a, B&& b, C& c){
-    return mmul(reshape<1, (decay_traits<B>::template dim<0>())>(a), b, c);
+auto mmul(A&& a, B&& b, C& c) -> forced_temporary_binary_helper<A, B, C, vm_mul_expr> {
+    return {a, b, c};
 }
 
 template<typename A, typename B, typename C, cpp::enable_if_all_u<
-    decay_traits<A>::is_fast, decay_traits<B>::is_fast, decay_traits<C>::is_fast,
     decay_traits<A>::dimensions() == 2, decay_traits<B>::dimensions() == 1
 > = cpp::detail::dummy>
-auto mmul(A&& a, B&& b, C& c){
-    return mmul(a, reshape<(decay_traits<A>::template dim<1>()),1>(b), c);
-}
-
-template<typename A, typename B, typename C, cpp::enable_if_all_u<
-    cpp::or_u<!decay_traits<A>::is_fast, !decay_traits<B>::is_fast, !decay_traits<C>::is_fast>::value,
-    decay_traits<A>::dimensions() == 1, decay_traits<B>::dimensions() == 2,
-    cpp::not_u<decay_traits<A>::is_fast>::value
-> = cpp::detail::dummy>
-auto mmul(A&& a, B&& b, C& c){
-    return mmul(reshape(a, 1, dim<0>(b)), b, c);
-}
-
-template<typename A, typename B, typename C, cpp::enable_if_all_u<
-    cpp::or_u<!decay_traits<A>::is_fast, !decay_traits<B>::is_fast, !decay_traits<C>::is_fast>::value,
-    decay_traits<A>::dimensions() == 2, decay_traits<B>::dimensions() == 1,
-    cpp::not_u<decay_traits<B>::is_fast>::value
-> = cpp::detail::dummy>
-auto mmul(A&& a, B&& b, C& c){
-    return mmul(a, reshape(b, dim<1>(a), 1), c);
-}
-
-template<typename A, typename B, typename C, cpp::enable_if_all_u<
-    cpp::or_u<!decay_traits<A>::is_fast, !decay_traits<B>::is_fast, !decay_traits<C>::is_fast>::value,
-    decay_traits<A>::dimensions() == 1, decay_traits<B>::dimensions() == 2,
-    decay_traits<A>::is_fast
-> = cpp::detail::dummy>
-auto mmul(A&& a, B&& b, C& c){
-    return mmul(reshape<1, (decay_traits<B>::template dim<0>())>(a), b, c);
-}
-
-template<typename A, typename B, typename C, cpp::enable_if_all_u<
-    cpp::or_u<!decay_traits<A>::is_fast, !decay_traits<B>::is_fast, !decay_traits<C>::is_fast>::value,
-    decay_traits<A>::dimensions() == 2, decay_traits<B>::dimensions() == 1,
-    decay_traits<B>::is_fast
-> = cpp::detail::dummy>
-auto mmul(A&& a, B&& b, C& c){
-    return mmul(a, reshape<(decay_traits<A>::template dim<1>()),1>(b), c);
+auto mmul(A&& a, B&& b, C& c) -> forced_temporary_binary_helper<A, B, C, mv_mul_expr> {
+    return {a, b, c};
 }
 
 template<typename A, typename B, cpp::enable_if_all_u<
-    decay_traits<A>::is_fast, decay_traits<B>::is_fast,
     decay_traits<A>::dimensions() == 1, decay_traits<B>::dimensions() == 2
 > = cpp::detail::dummy>
-auto mmul(A&& a, B&& b){
-    return mmul(reshape<1, (decay_traits<B>::template dim<0>())>(a), b);
+auto mmul(A&& a, B&& b) -> temporary_binary_helper<A, B, vm_mul_expr> {
+    return {a, b};
 }
 
 template<typename A, typename B, cpp::enable_if_all_u<
-    decay_traits<A>::is_fast, decay_traits<B>::is_fast,
     decay_traits<A>::dimensions() == 2, decay_traits<B>::dimensions() == 1
 > = cpp::detail::dummy>
-auto mmul(A&& a, B&& b){
-    return mmul(a, reshape<(decay_traits<A>::template dim<1>()),1>(b));
-}
-
-template<typename A, typename B, cpp::enable_if_all_u<
-    cpp::or_u<!decay_traits<A>::is_fast, !decay_traits<B>::is_fast>::value,
-    decay_traits<A>::dimensions() == 1, decay_traits<B>::dimensions() == 2,
-    cpp::not_u<decay_traits<A>::is_fast>::value
-> = cpp::detail::dummy>
-auto mmul(A&& a, B&& b){
-    return mmul(reshape(a, 1, dim<0>(b)), b);
-}
-
-template<typename A, typename B, cpp::enable_if_all_u<
-    cpp::or_u<!decay_traits<A>::is_fast, !decay_traits<B>::is_fast>::value,
-    decay_traits<A>::dimensions() == 2, decay_traits<B>::dimensions() == 1,
-    cpp::not_u<decay_traits<B>::is_fast>::value
-> = cpp::detail::dummy>
-auto mmul(A&& a, B&& b){
-    return mmul(a, reshape(b, dim<1>(a), 1));
-}
-
-template<typename A, typename B, cpp::enable_if_all_u<
-    cpp::or_u<!decay_traits<A>::is_fast, !decay_traits<B>::is_fast>::value,
-    decay_traits<A>::dimensions() == 1, decay_traits<B>::dimensions() == 2,
-    decay_traits<A>::is_fast
-> = cpp::detail::dummy>
-auto mmul(A&& a, B&& b){
-    return mmul(reshape<1, (decay_traits<B>::template dim<0>())>(a), b);
-}
-
-template<typename A, typename B, cpp::enable_if_all_u<
-    cpp::or_u<!decay_traits<A>::is_fast, !decay_traits<B>::is_fast>::value,
-    decay_traits<A>::dimensions() == 2, decay_traits<B>::dimensions() == 1,
-    decay_traits<B>::is_fast
-> = cpp::detail::dummy>
-auto mmul(A&& a, B&& b){
-    return mmul(a, reshape<(decay_traits<A>::template dim<1>()),1>(b));
+auto mmul(A&& a, B&& b) -> temporary_binary_helper<A, B, mv_mul_expr> {
+    return {a, b};
 }
 
 template<typename A, typename B>
