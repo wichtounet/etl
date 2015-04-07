@@ -50,6 +50,16 @@ struct is_conv2_mmul_enabled : std::false_type {};
 
 #endif
 
+#ifdef ETL_ELEMENT_WISE_MULTIPLICATION
+
+struct is_element_wise_mul_default : std::true_type {};
+
+#else
+
+struct is_element_wise_mul_default : std::false_type {};
+
+#endif
+
 } //end of namespace etl
 
 #endif
