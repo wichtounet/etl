@@ -132,6 +132,7 @@ struct is_direct_identity_view<etl::unary_expr<T, V, identity_op>> : cpp::bool_c
 template<typename T>
 struct has_direct_access : cpp::bool_constant_c<cpp::or_c<
           is_etl_value<T>
+        , is_temporary_binary_expr<T>
         , is_direct_identity_view<T>
         , is_direct_sub_view<T>
         , is_direct_dim_view<T>

@@ -133,8 +133,32 @@ public:
         //NOP
     }
 
+    //{{{ Direct memory access
+
+    value_type* memory_start() noexcept {
+        return result().memory_start();
+    }
+
+    const value_type* memory_start() const noexcept {
+        return result().memory_start();
+    }
+
+    value_type* memory_end() noexcept {
+        return result().memory_end();
+    }
+
+    const value_type* memory_end() const noexcept {
+        return result().memory_end();
+    }
+
+    //}}}
+
 private:
     result_type& result(){
+        return _c;
+    }
+
+    const result_type& result() const {
         return _c;
     }
 };
@@ -255,8 +279,32 @@ public:
         }
     }
 
+    //{{{ Direct memory access
+
+    value_type* memory_start() noexcept {
+        return result().memory_start();
+    }
+
+    const value_type* memory_start() const noexcept {
+        return result().memory_start();
+    }
+
+    value_type* memory_end() noexcept {
+        return result().memory_end();
+    }
+
+    const value_type* memory_end() const noexcept {
+        return result().memory_end();
+    }
+
+    //}}}
+
 private:
-    result_type& result() const {
+    result_type& result(){
+        return *result_ptr;
+    }
+
+    const result_type& result() const {
         return *result_ptr;
     }
 };
