@@ -208,7 +208,7 @@ void bench_fast_matrix_simple(){
     etl::fast_matrix<double, D1, D2> b;
     etl::fast_matrix<double, D1, D2> c;
 
-    measure("fast_matrix_simple(" + std::to_string(D1) + "," + std::to_string(D2) + ")(" + std::to_string(D1 * D2) + ")", 
+    measure("fast_matrix_simple(" + std::to_string(D1) + "," + std::to_string(D2) + ")(" + std::to_string(D1 * D2) + ")",
         [&a, &b, &c](){c = 3.5 * a + etl::sigmoid(1.0 + b);}
         , a, b);
 }
@@ -219,7 +219,7 @@ void bench_fast_matrix_sigmoid(){
     etl::fast_matrix<double, D1, D2> b;
     etl::fast_matrix<double, D1, D2> c;
 
-    measure("fast_matrix_sigmoid(" + std::to_string(D1) + "," + std::to_string(D2) + ")(" + std::to_string(D1 * D2) + ")", 
+    measure("fast_matrix_sigmoid(" + std::to_string(D1) + "," + std::to_string(D2) + ")(" + std::to_string(D1 * D2) + ")",
         [&a, &b, &c](){c = etl::sigmoid(1.0 + b);}
         , a, b);
 }
@@ -229,7 +229,7 @@ void bench_dyn_matrix_simple(std::size_t d1, std::size_t d2){
     etl::dyn_matrix<double> b(d1, d2);
     etl::dyn_matrix<double> c(d1, d2);
 
-    measure("dyn_matrix_simple(" + std::to_string(d1) + "," + std::to_string(d2) + ")(" + std::to_string(d1 * d2) + ")", 
+    measure("dyn_matrix_simple(" + std::to_string(d1) + "," + std::to_string(d2) + ")(" + std::to_string(d1 * d2) + ")",
         [&a, &b, &c](){c = 3.5 * a + etl::sigmoid(1.0 + b);}
         , a, b);
 }
@@ -239,7 +239,7 @@ void bench_dyn_matrix_sigmoid(std::size_t d1, std::size_t d2){
     etl::dyn_matrix<double> b(d1, d2);
     etl::dyn_matrix<double> c(d1, d2);
 
-    measure("dyn_matrix_sigmoid(" + std::to_string(d1) + "," + std::to_string(d2) + ")(" + std::to_string(d1 * d2) + ")", 
+    measure("dyn_matrix_sigmoid(" + std::to_string(d1) + "," + std::to_string(d2) + ")(" + std::to_string(d1 * d2) + ")",
         [&a, &b, &c](){c = etl::sigmoid(1.0 + b);}
         , a, b);
 }
@@ -640,14 +640,14 @@ void bench_dyn_valid_convolution_2d_s(std::size_t d1, std::size_t d2){
     measure_valid_convolution_2d(a, b, c);
 }
 
-TER_FUNCTOR(default_mmul, c = etl::mmul(a, b));
+TER_FUNCTOR(default_mmul, c = etl::mul(a, b));
 TER_FUNCTOR(std_mmul, etl::impl::standard::mm_mul(a, b, c));
-TER_FUNCTOR(lazy_mmul, c = etl::lazy_mmul(a, b));
+TER_FUNCTOR(lazy_mmul, c = etl::lazy_mul(a, b));
 TER_FUNCTOR(eblas_mmul_s, etl::impl::eblas::fast_sgemm(a, b, c));
 TER_FUNCTOR(eblas_mmul_d, etl::impl::eblas::fast_dgemm(a, b, c));
 TER_FUNCTOR(blas_mmul_s, etl::impl::blas::sgemm(a, b, c));
 TER_FUNCTOR(blas_mmul_d, etl::impl::blas::dgemm(a, b, c));
-TER_FUNCTOR(strassen_mmul, c = etl::strassen_mmul(a, b));
+TER_FUNCTOR(strassen_mmul, c = etl::strassen_mul(a, b));
 
 template<typename A, typename B, typename C>
 void measure_mmul(A& a, B& b, C& c){
@@ -812,8 +812,20 @@ void bench_smart_1(std::size_t d){
     etl::dyn_matrix<double> result(d, d);
 
     measure("A * (B + C) (" + std::to_string(d) + "x" + std::to_string(d) + ")", [&A, &B, &C, &result](){
-        result = etl::mmul(A, (B + C));
+        result = A * (B + C);
     }, A, B, C);
+}
+
+void bench_smart_2(std::size_t dd){
+    etl::dyn_matrix<double> A(dd, dd);
+    etl::dyn_vector<double> b(dd);
+    etl::dyn_vector<double> c(dd);
+    etl::dyn_vector<double> d(dd);
+    etl::dyn_vector<double> result(dd);
+
+    measure("A * (b + c + d) (" + std::to_string(dd) + "x" + std::to_string(dd) + ")", [&A, &b, &c, &d, &result](){
+        result = A * (b + c + d);
+    }, A, b, c, d);
 }
 
 void bench_smart(){
@@ -823,6 +835,11 @@ void bench_smart(){
     bench_smart_1(100);
     bench_smart_1(250);
     bench_smart_1(500);
+
+    bench_smart_2(50);
+    bench_smart_2(100);
+    bench_smart_2(250);
+    bench_smart_2(500);
 }
 
 } //end of anonymous namespace
@@ -839,7 +856,7 @@ int main(int argc, char* argv[]){
     for(auto& arg : args){
         if(arg == "smart"){
             smart = true;
-        } 
+        }
     }
 
     if(smart){
