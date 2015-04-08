@@ -244,6 +244,15 @@ void bench_dyn_matrix_sigmoid(std::size_t d1, std::size_t d2){
         , a, b);
 }
 
+void bench_dyn_convmtx2(std::size_t d1, std::size_t d2){
+    etl::dyn_matrix<double> a(d1, d1);
+    etl::dyn_matrix<double> b((d1 + d2 - 1)*(d1 + d2 - 1), d2 * d2);
+
+    measure("convmtx2(" + std::to_string(d1) + "x" + std::to_string(d1) + "," + std::to_string(d2) + "," + std::to_string(d2) + ")",
+        [&a, &b, d2](){b = etl::convmtx2(b, d2, d2);}
+        , a);
+}
+
 TER_FUNCTOR(default_conv_1d_full, c = etl::conv_1d_full(a, b));
 TER_FUNCTOR(std_conv_1d_full, etl::impl::standard::conv1_full(a, b, c));
 TER_FUNCTOR(mmul_conv_1d_full, etl::impl::reduc::conv1_full(a, b, c));
@@ -726,6 +735,12 @@ void bench_standard(){
     bench_fast_matrix_simple<256, 128>();
     bench_dyn_matrix_simple(16, 256);
     bench_dyn_matrix_simple(256, 128);
+
+    bench_dyn_convmtx2(16, 4);
+    bench_dyn_convmtx2(32, 4);
+    bench_dyn_convmtx2(32, 8);
+    bench_dyn_convmtx2(32, 16);
+    bench_dyn_convmtx2(64, 32);
 
     bench_fast_valid_convolution_1d_d<1024, 64>();
     bench_fast_valid_convolution_1d_d<2048, 128>();
