@@ -897,7 +897,7 @@ TEMPLATE_TEST_CASE_2( "lvalue/mmul1", "lvalue sub mmul", Z, float, double ) {
 
     static_assert(etl::is_etl_expr<decltype(s)>::value, "");
 
-    etl::force(etl::mmul(etl::sub(a,0), etl::sub(b,0), s));
+    etl::force(etl::mul(etl::sub(a,0), etl::sub(b,0), s));
 
     REQUIRE(c(0,0,0) == 58);
     REQUIRE(c(0,0,1) == 64);
@@ -917,7 +917,7 @@ TEMPLATE_TEST_CASE_2( "lvalue/mmul2", "lvalue sub mmul", Z, float, double ) {
     etl::fast_matrix<Z, 2, 3, 2> b = {7,8,9,10,11,12,7,8,9,10,11,12};
     etl::fast_matrix<Z, 2, 2, 2> c;
 
-    etl::force(etl::mmul(etl::sub(a,0), etl::sub(b,0), etl::sub(c,0)));
+    etl::force(etl::mul(etl::sub(a,0), etl::sub(b,0), etl::sub(c,0)));
 
     REQUIRE(c(0,0,0) == 58);
     REQUIRE(c(0,0,1) == 64);

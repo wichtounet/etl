@@ -13,9 +13,9 @@ struct name {                                                   \
     }                                                           \
 };
 
-MMUL_FUNCTOR( default_mmul, c = etl::mmul(a, b) )
-MMUL_FUNCTOR( lazy_mmul, c = etl::lazy_mmul(a, b) )
-MMUL_FUNCTOR( strassen_mmul, c = etl::strassen_mmul(a, b) )
+MMUL_FUNCTOR( default_mmul, c = etl::mul(a, b) )
+MMUL_FUNCTOR( lazy_mmul, c = etl::lazy_mul(a, b) )
+MMUL_FUNCTOR( strassen_mmul, c = etl::strassen_mul(a, b) )
 MMUL_FUNCTOR( std_mmul, etl::impl::standard::mm_mul(a, b, c) )
 MMUL_FUNCTOR( eblas_mmul_float, etl::impl::eblas::fast_sgemm(a, b, c) )
 MMUL_FUNCTOR( eblas_mmul_double, etl::impl::eblas::fast_dgemm(a, b, c) )

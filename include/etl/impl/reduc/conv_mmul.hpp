@@ -19,7 +19,7 @@ namespace reduc {
 template<typename I, typename K, typename C>
 void conv1_full(const I& input, const K& kernel, C&& conv){
     conv = row(
-        mmul(
+        mul(
             reshape(kernel, 1, dim<0>(kernel)),
             convmtx(input, dim<0>(kernel))
         )
@@ -30,10 +30,10 @@ void conv1_full(const I& input, const K& kernel, C&& conv){
 template<typename I, typename K, typename C>
 void conv2_full(const I& input, const K& kernel, C&& conv){
     conv = transpose(reshape(
-        mmul(
+        mul(
             convmtx2(input, etl::dim<0>(kernel), etl::dim<1>(kernel)),
             reshape(transpose(kernel), etl::size(kernel), 1)
-        ), 
+        ),
         etl::dim<1>(input) + etl::dim<1>(kernel) - 1, etl::dim<0>(input) + etl::dim<0>(kernel) - 1)
     );
 }

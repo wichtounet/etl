@@ -117,7 +117,7 @@ TEMPLATE_TEST_CASE_2( "multiplication/auto_vmmul_1", "auto_vmmul", Z, double, fl
     etl::fast_vector<Z, 3> b = {7,8,9};
     etl::fast_matrix<Z, 2> c;
 
-    c = etl::mmul(a, b, c);
+    c = etl::mul(a, b, c);
 
     REQUIRE(c(0) == 50);
     REQUIRE(c(1) == 122);
@@ -128,7 +128,7 @@ TEMPLATE_TEST_CASE_2( "multiplication/auto_vmmul_2", "auto_vmmul", Z, double, fl
     etl::fast_vector<Z, 5> b = {7,8,9,10,11};
     etl::fast_matrix<Z, 2> c;
 
-    c = etl::mmul(a, b);
+    c = etl::mul(a, b);
 
     REQUIRE(c(0) == 145);
     REQUIRE(c(1) == 370);
@@ -139,7 +139,7 @@ TEMPLATE_TEST_CASE_2( "multiplication/auto_vmmul_3", "auto_vmmul", Z, double, fl
     etl::fast_vector<Z, 3> b = {7,8,9};
     etl::fast_matrix<Z, 2> c;
 
-    etl::force(etl::mmul(b, a, c));
+    etl::force(etl::mul(b, a, c));
 
     REQUIRE(c(0) == 76);
     REQUIRE(c(1) == 100);
@@ -150,7 +150,7 @@ TEMPLATE_TEST_CASE_2( "multiplication/auto_vmmul_4", "auto_vmmul", Z, double, fl
     etl::dyn_vector<Z> b(3, etl::values(7,8,9));
     etl::dyn_vector<Z> c(2);
 
-    etl::force(etl::mmul(a, b, c));
+    etl::force(etl::mul(a, b, c));
 
     REQUIRE(c(0) == 50);
     REQUIRE(c(1) == 122);
@@ -161,7 +161,7 @@ TEMPLATE_TEST_CASE_2( "multiplication/auto_vmmul_5", "auto_vmmul", Z, double, fl
     etl::dyn_vector<Z> b(5, etl::values(7,8,9,10,11));
     etl::dyn_vector<Z> c(2);
 
-    etl::force(etl::mmul(a, b, c));
+    etl::force(etl::mul(a, b, c));
 
     REQUIRE(c(0) == 145);
     REQUIRE(c(1) == 370);
@@ -172,7 +172,7 @@ TEMPLATE_TEST_CASE_2( "multiplication/auto_vmmul_6", "auto_vmmul", Z, double, fl
     etl::dyn_vector<Z> b(3, etl::values(7,8,9));
     etl::dyn_vector<Z> c(2);
 
-    etl::force(etl::mmul(b, a, c));
+    etl::force(etl::mul(b, a, c));
 
     REQUIRE(c(0) == 76);
     REQUIRE(c(1) == 100);
@@ -185,7 +185,7 @@ TEMPLATE_TEST_CASE_2( "multiplication/expression", "expression mmul", Z, double,
     etl::fast_matrix<Z, 3, 3> a = {1,2,3,4,5,6,7,8,9};
     etl::fast_matrix<Z, 3, 3> b = {7,8,9,9,10,11,11,12,13};
 
-    auto c = *etl::mmul(a, b);
+    auto c = *etl::mul(a, b);
 
     REQUIRE(c(0,0) == 58);
     REQUIRE(c(0,1) == 64);
@@ -203,7 +203,7 @@ TEMPLATE_TEST_CASE_2( "multiplication/expr_mmul_1", "mmul", Z, double, float) {
     etl::dyn_matrix<Z> b(3,3, std::initializer_list<Z>({7,8,9,9,10,11,11,12,13}));
     etl::dyn_matrix<Z> c(3,3);
 
-    etl::force(etl::mmul(a + b - b, a + b - a, c));
+    etl::force(etl::mul(a + b - b, a + b - a, c));
 
     REQUIRE(c(0,0) == 58);
     REQUIRE(c(0,1) == 64);
@@ -221,7 +221,7 @@ TEMPLATE_TEST_CASE_2( "multiplication/expr_mmul_2", "mmul", Z, double, float) {
     etl::dyn_matrix<Z> b(3,3, std::initializer_list<Z>({7,8,9,9,10,11,11,12,13}));
     etl::dyn_matrix<Z> c(3,3);
 
-    etl::force(etl::mmul(abs(a), abs(b), c));
+    etl::force(etl::mul(abs(a), abs(b), c));
 
     REQUIRE(c(0,0) == 58);
     REQUIRE(c(0,1) == 64);
@@ -239,7 +239,7 @@ TEMPLATE_TEST_CASE_2( "multiplication/stop_mmul_1", "mmul", Z, double, float) {
     etl::dyn_matrix<Z> b(3,3, std::initializer_list<Z>({7,8,9,9,10,11,11,12,13}));
     etl::dyn_matrix<Z> c(3,3);
 
-    c = etl::mmul(s(abs(a)), s(abs(b)));
+    c = etl::mul(s(abs(a)), s(abs(b)));
 
     REQUIRE(c(0,0) == 58);
     REQUIRE(c(0,1) == 64);
@@ -261,7 +261,7 @@ TEMPLATE_TEST_CASE_2( "multiplication/expression_1", "expression", Z, double, fl
     etl::dyn_matrix<Z> b(4,4, etl::values(1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16));
     etl::dyn_matrix<Z> c(4,4);
 
-    c = 2.0 * mmul(a,b) + mmul(a, b) / 1.1;
+    c = 2.0 * mul(a,b) + mul(a, b) / 1.1;
 
     REQUIRE(c(0,0) == Approx((2.0 + 1.0 / 1.1) * 90));
     REQUIRE(c(0,1) == Approx((2.0 + 1.0 / 1.1) * 100));
@@ -278,7 +278,7 @@ TEMPLATE_TEST_CASE_2( "multiplication/expression_2", "expression", Z, double, fl
     etl::dyn_matrix<Z> b(4,4, etl::values(1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16));
     etl::dyn_matrix<Z> c(4,4);
 
-    c = 2.0 * etl::lazy_mmul(a,b) + etl::lazy_mmul(a, b) / 1.1;
+    c = 2.0 * etl::lazy_mul(a,b) + etl::lazy_mul(a, b) / 1.1;
 
     REQUIRE(c(0,0) == Approx((2.0 + 1.0 / 1.1) * 90));
     REQUIRE(c(0,1) == Approx((2.0 + 1.0 / 1.1) * 100));

@@ -1270,7 +1270,7 @@ TEMPLATE_TEST_CASE_2( "convmtx2/convmtx2_3", "convmtx conv", Z, double, float ) 
     etl::fast_matrix<Z, 4*4, 4> C(convmtx2(I, 2, 2));
 
     etl::fast_matrix<Z, 4, 4> c1(etl::conv_2d_full(I, K));
-    etl::fast_matrix<Z, 16, 1> c2(etl::mmul(C, etl::reshape<4, 1>(etl::transpose(K))));
+    etl::fast_matrix<Z, 16, 1> c2(etl::mul(C, etl::reshape<4, 1>(etl::transpose(K))));
     etl::fast_matrix<Z, 4, 4> c3(etl::transpose(etl::reshape<4, 4>(c2)));
 
     for(std::size_t i = 0; i < c1.size(); ++i){
@@ -1285,7 +1285,7 @@ TEMPLATE_TEST_CASE_2( "convmtx2/convmtx2_4", "convmtx conv", Z, double, float ) 
     etl::dyn_matrix<Z> C(convmtx2(I, 5, 5));
 
     etl::dyn_matrix<Z> c1(etl::conv_2d_full(I, K));
-    etl::dyn_matrix<Z> c2(etl::mmul(C, etl::reshape<25, 1>(etl::transpose(K))));
+    etl::dyn_matrix<Z> c2(etl::mul(C, etl::reshape<25, 1>(etl::transpose(K))));
     etl::dyn_matrix<Z> c3(etl::transpose(etl::reshape(c2, 11, 11)));
 
     for(std::size_t i = 0; i < c1.size(); ++i){
