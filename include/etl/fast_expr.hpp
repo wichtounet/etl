@@ -774,7 +774,7 @@ auto conv_deep_full(A&& a, B&& b, C&& c) -> dim_forced_temporary_binary_helper<A
 
 template<typename LE, typename RE, cpp::enable_if_all_u<is_etl_expr<LE>::value, is_etl_expr<RE>::value> = cpp::detail::dummy>
 typename LE::value_type dot(const LE& lhs, const RE& rhs){
-    return sum(lhs * rhs);
+    return sum(scale(lhs, rhs));
 }
 
 template<typename E, cpp::enable_if_u<is_etl_expr<E>::value> = cpp::detail::dummy>

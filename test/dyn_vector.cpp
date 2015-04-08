@@ -189,7 +189,7 @@ TEMPLATE_TEST_CASE_2( "dyn_vector/mul_1", "dyn_vector::operator*", Z, double, fl
     etl::dyn_vector<Z> a = {-1.0, 2.0, 5.0};
     etl::dyn_vector<Z> b = {2.5, 3.0, 4.0};
 
-    etl::dyn_vector<Z> c(a * b);
+    etl::dyn_vector<Z> c(a >> b);
 
     REQUIRE(c[0] == -2.5);
     REQUIRE(c[1] ==  6.0);
@@ -495,7 +495,7 @@ TEMPLATE_TEST_CASE_2( "dyn_vector/complex", "dyn_vector::complex", Z, double, fl
     etl::dyn_vector<Z> b = {2.5, 3.0, 4.0};
     etl::dyn_vector<Z> c = {1.2, -3.0, 3.5};
 
-    etl::dyn_vector<Z> d(2.5 * ((a * b) / (a + c)) / (1.5 * a * b / c));
+    etl::dyn_vector<Z> d(2.5 * ((a >> b) / (a + c)) / (1.5 * scale(a, b) / c));
 
     REQUIRE(d[0] == Approx(10.0));
     REQUIRE(d[1] == Approx(5.0));
@@ -507,7 +507,7 @@ TEMPLATE_TEST_CASE_2( "dyn_vector/complex_2", "dyn_vector::complex", Z, double, 
     etl::dyn_vector<Z> b = {2.5, -3.0, 4.0};
     etl::dyn_vector<Z> c = {2.2, 3.0, 3.5};
 
-    etl::dyn_vector<Z> d(2.5 * ((a * b) / (log(a) * abs(c))) / (1.5 * a * sign(b) / c) + 2.111 / log(c));
+    etl::dyn_vector<Z> d(2.5 * ((a >> b) / (log(a) >> abs(c))) / (1.5 * scale(a, sign(b)) / c) + 2.111 / log(c));
 
     REQUIRE(d[0] == Approx(46.39429));
     REQUIRE(d[1] == Approx(9.13499));
@@ -519,7 +519,7 @@ TEMPLATE_TEST_CASE_2( "dyn_vector/complex_3", "dyn_vector::complex", Z, double, 
     etl::dyn_vector<Z> b = {2.5, 3.0, 4.0};
     etl::dyn_vector<Z> c = {1.2, -3.0, 3.5};
 
-    etl::dyn_vector<Z> d(2.5 / (a * b));
+    etl::dyn_vector<Z> d(2.5 / (a >> b));
 
     REQUIRE(d[0] == Approx(-1.0));
     REQUIRE(d[1] == Approx(0.416666));

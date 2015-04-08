@@ -274,7 +274,7 @@ TEMPLATE_TEST_CASE_2( "fast_matrix/mul_1", "fast_matrix::operator*", Z, float, d
     etl::fast_matrix<Z, 2, 2> a = {-1.0, 2.0, 5.0, 1.0};
     etl::fast_matrix<Z, 2, 2> b = {2.5, 3.0, 4.0, 1.0};
 
-    etl::fast_matrix<Z, 2, 2> c(a * b);
+    etl::fast_matrix<Z, 2, 2> c(scale(a,b));
 
     REQUIRE(c[0] == -2.5);
     REQUIRE(c[1] ==  6.0);
@@ -456,7 +456,7 @@ TEMPLATE_TEST_CASE_2( "fast_matrix/sqrt_2", "fast_matrix::sqrt", Z, float, doubl
 TEMPLATE_TEST_CASE_2( "fast_matrix/sqrt_3", "fast_matrix::sqrt", Z, float, double ) {
     etl::fast_matrix<Z, 2, 2, 1> a = {-1.0, 2.0, 5.0, 1.0};
 
-    etl::fast_matrix<Z, 2, 2, 1> d(sqrt(a*a));
+    etl::fast_matrix<Z, 2, 2, 1> d(sqrt(a>>a));
 
     REQUIRE(d[0] == Approx(std::sqrt(Z(1.0))));
     REQUIRE(d[1] == Approx(std::sqrt(Z(4.0))));
@@ -581,7 +581,7 @@ TEMPLATE_TEST_CASE_2( "fast_matrix/pow_1", "fast_matrix::pow_1", Z, float, doubl
 
 TEMPLATE_TEST_CASE_2( "fast_matrix/pow_2", "fast_matrix::pow_1", Z, float, double ) {
     etl::fast_matrix<Z, 2, 2> a = {-1.0, 2.0, 0.0, 1.0};
-    etl::fast_matrix<Z, 2, 2> d(pow(a*a+1.0, 2));
+    etl::fast_matrix<Z, 2, 2> d(pow((a >> a)+1.0, 2));
 
     REQUIRE(d[0] == 4.0);
     REQUIRE(d[1] == 25.0);
@@ -624,7 +624,7 @@ TEMPLATE_TEST_CASE_2( "fast_matrix/complex", "fast_matrix::complex", Z, float, d
     etl::fast_matrix<Z, 2, 2> b = {2.5, 3.0, 4.0, 1.0};
     etl::fast_matrix<Z, 2, 2> c = {1.2, -3.0, 3.5, 1.0};
 
-    etl::fast_matrix<Z, 2, 2> d(2.5 * ((a * b) / (a + c)) / (1.5 * a * b / c));
+    etl::fast_matrix<Z, 2, 2> d(2.5 * ((a >> b) / (a + c)) / (1.5 * (a >> b) / c));
 
     REQUIRE(d[0] == Approx(10.0));
     REQUIRE(d[1] == Approx(5.0));
@@ -636,7 +636,7 @@ TEMPLATE_TEST_CASE_2( "fast_matrix/complex_2", "fast_matrix::complex", Z, float,
     etl::fast_matrix<Z, 2, 2> b = {2.5, -3.0, 4.0, 1.0};
     etl::fast_matrix<Z, 2, 2> c = {2.2, 3.0, 3.5, 1.0};
 
-    etl::fast_matrix<Z, 2, 2> d(2.5 * ((a * b) / (log(a) * abs(c))) / (1.5 * a * sign(b) / c) + 2.111 / log(c));
+    etl::fast_matrix<Z, 2, 2> d(2.5 * ((a >> b) / (log(a) >> abs(c))) / (1.5 * scale(a, sign(b)) / c) + 2.111 / log(c));
 
     REQUIRE(d[0] == Approx(46.39429));
     REQUIRE(d[1] == Approx(9.13499));
@@ -647,7 +647,7 @@ TEMPLATE_TEST_CASE_2( "fast_matrix/complex_3", "fast_matrix::complex", Z, float,
     etl::fast_matrix<Z, 2, 2> a = {-1.0, 2.0, 5.0, 1.0};
     etl::fast_matrix<Z, 2, 2> b = {2.5, 3.0, 4.0, 1.0};
 
-    etl::fast_matrix<Z, 2, 2> d(2.5 / (a * b));
+    etl::fast_matrix<Z, 2, 2> d(2.5 / (a >> b));
 
     REQUIRE(d[0] == Approx(-1.0));
     REQUIRE(d[1] == Approx(0.416666));
@@ -659,7 +659,7 @@ TEMPLATE_TEST_CASE_2( "fast_matrix/complex_4", "fast_matrix::complex", Z, float,
     etl::fast_matrix<Z, 2, 2, 2> b = {2.5, -3.0, 4.0, 1.0, 2.5, -3.0, 4.0, 1.0};
     etl::fast_matrix<Z, 2, 2, 2> c = {2.2, 3.0, 3.5, 1.0, 2.2, 3.0, 3.5, 1.0};
 
-    etl::fast_matrix<Z, 2, 2, 2> d(2.5 * ((a * b) / (log(a) * abs(c))) / (1.5 * a * sign(b) / c) + 2.111 / log(c));
+    etl::fast_matrix<Z, 2, 2, 2> d(2.5 * ((a >> b) / (log(a) >> abs(c))) / (1.5 * scale(a, sign(b)) / c) + 2.111 / log(c));
 
     REQUIRE(d[0] == Approx(46.39429));
     REQUIRE(d[1] == Approx(9.13499));

@@ -182,7 +182,7 @@ TEMPLATE_TEST_CASE_2( "fast_dyn_matrix/complex", "fast_dyn_matrix::complex", Z, 
     etl::fast_dyn_matrix<Z, 2, 2> b = {2.5, 3.0, 4.0, 1.0};
     etl::fast_dyn_matrix<Z, 2, 2> c = {1.2, -3.0, 3.5, 1.0};
 
-    etl::fast_dyn_matrix<Z, 2, 2> d(2.5 * ((a * b) / (a + c)) / (1.5 * a * b / c));
+    etl::fast_dyn_matrix<Z, 2, 2> d(2.5 * ((a >> b) / (a + c)) / (1.5 * scale(a, b) / c));
 
     REQUIRE(d[0] == Approx(10.0));
     REQUIRE(d[1] == Approx(5.0));

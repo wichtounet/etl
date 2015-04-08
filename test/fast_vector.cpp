@@ -186,7 +186,7 @@ TEMPLATE_TEST_CASE_2( "fast_vector/mul_1", "fast_vector::operator*", Z, float, d
     etl::fast_vector<Z, 3> a = {-1.0, 2.0, 5.0};
     etl::fast_vector<Z, 3> b = {2.5, 3.0, 4.0};
 
-    etl::fast_vector<Z, 3> c(a * b);
+    etl::fast_vector<Z, 3> c(a >> b);
 
     REQUIRE(c[0] == -2.5);
     REQUIRE(c[1] ==  6.0);
@@ -588,7 +588,7 @@ TEMPLATE_TEST_CASE_2( "fast_vector/complex", "fast_vector::complex", Z, float, d
     etl::fast_vector<Z, 3> b = {2.5, 3.0, 4.0};
     etl::fast_vector<Z, 3> c = {1.2, -3.0, 3.5};
 
-    etl::fast_vector<Z, 3> d(2.5 * ((a * b) / (a + c)) / (1.5 * a * b / c));
+    etl::fast_vector<Z, 3> d(2.5 * ((a >> b) / (a + c)) / ((1.5 * a >> b) / c));
 
     REQUIRE(d[0] == Approx(10.0));
     REQUIRE(d[1] == Approx(5.0));
@@ -600,7 +600,7 @@ TEMPLATE_TEST_CASE_2( "fast_vector/complex_2", "fast_vector::complex", Z, float,
     etl::fast_vector<Z, 3> b = {2.5, -3.0, 4.0};
     etl::fast_vector<Z, 3> c = {2.2, 3.0, 3.5};
 
-    etl::fast_vector<Z, 3> d(2.5 * ((a * b) / (log(a) * abs(c))) / (1.5 * a * sign(b) / c) + 2.111 / log(c));
+    etl::fast_vector<Z, 3> d(2.5 * ((a >> b) / (log(a) >> abs(c))) / ((1.5 * a >> sign(b)) / c) + 2.111 / log(c));
 
     REQUIRE(d[0] == Approx(46.39429));
     REQUIRE(d[1] == Approx(9.13499));
@@ -611,7 +611,7 @@ TEMPLATE_TEST_CASE_2( "fast_vector/complex_3", "fast_vector::complex", Z, float,
     etl::fast_vector<Z, 3> a = {-1.0, 2.0, 5.0};
     etl::fast_vector<Z, 3> b = {2.5, 3.0, 4.0};
 
-    etl::fast_vector<Z, 3> d(2.5 / (a * b));
+    etl::fast_vector<Z, 3> d(2.5 / (a >> b));
 
     REQUIRE(d[0] == Approx(-1.0));
     REQUIRE(d[1] == Approx(0.416666));
