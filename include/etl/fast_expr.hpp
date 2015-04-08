@@ -570,6 +570,31 @@ auto convmtx2(A&& a, std::size_t k1, std::size_t k2) -> stable_transform_helper<
 
 //{{{ mul expressions
 
+template<typename A, typename B,
+    cpp_enable_if(decay_traits<A>::dimensions() == 2 && decay_traits<B>::dimensions() == 2 && !is_element_wise_mul_default::value)>
+auto operator*(A&& a, B&& b) -> temporary_binary_helper<A, B, mm_mul_expr> {
+    static_assert(is_etl_expr<A>::value && is_etl_expr<B>::value, "Matrix multiplication only supported for ETL expressions");
+    static_assert(decay_traits<A>::dimensions() == 2 && decay_traits<B>::dimensions() == 2, "Matrix multiplication only works in 2D");
+
+    return {a, b};
+}
+
+template<typename A, typename B, cpp::enable_if_all_u<
+    decay_traits<A>::dimensions() == 1, decay_traits<B>::dimensions() == 2,
+    !is_element_wise_mul_default::value
+> = cpp::detail::dummy>
+auto operator*(A&& a, B&& b) -> temporary_binary_helper<A, B, vm_mul_expr> {
+    return {a, b};
+}
+
+template<typename A, typename B, cpp::enable_if_all_u<
+    decay_traits<A>::dimensions() == 2, decay_traits<B>::dimensions() == 1,
+    !is_element_wise_mul_default::value
+> = cpp::detail::dummy>
+auto operator*(A&& a, B&& b) -> temporary_binary_helper<A, B, mv_mul_expr> {
+    return {a, b};
+}
+
 template<typename A, typename B, cpp_enable_if(decay_traits<A>::dimensions() == 2 && decay_traits<B>::dimensions() == 2)>
 auto mul(A&& a, B&& b) -> temporary_binary_helper<A, B, mm_mul_expr> {
     static_assert(is_etl_expr<A>::value && is_etl_expr<B>::value, "Matrix multiplication only supported for ETL expressions");
