@@ -897,6 +897,65 @@ void bench_rbm_visible(std::size_t n_v, std::size_t n_h){
     }, c, h, w);
 }
 
+void bench_conv_rbm_hidden(std::size_t NC, std::size_t K, std::size_t NV, std::size_t NH){
+    auto NW = NV - NH + 1;
+
+    etl::dyn_matrix<double, 4> w(NC, K, NW, NW);
+    etl::dyn_vector<double> b(K);
+    etl::dyn_vector<double> c(NC);
+
+    etl::dyn_matrix<double, 3> v(NC, NV, NV);
+    etl::dyn_matrix<double, 3> h(K, NH, NH);
+
+    etl::dyn_matrix<double, 4> v_cv(2UL, K, NH, NH);
+    etl::dyn_matrix<double, 3> h_cv(2UL, NV, NV);
+
+    measure("CRBM Hidden Activation (" + std::to_string(NC) + "x" + std::to_string(NV) + "^2 -> " +
+        std::to_string(K) + "x" + std::to_string(NH) + "^2)",
+        [&](){
+            v_cv(1) = 0;
+
+            for(std::size_t channel = 0; channel < NC; ++channel){
+                for(size_t k = 0; k < K; ++k){
+                    v_cv(0)(k) = conv_2d_valid(v(channel), fflip(w(channel)(k)));
+                }
+
+                v_cv(1) += v_cv(0);
+            }
+
+            h = etl::sigmoid(etl::rep(b, NH, NH) + v_cv(1));
+    }, b, v, w);
+}
+
+void bench_conv_rbm_visible(std::size_t NC, std::size_t K, std::size_t NV, std::size_t NH){
+    auto NW = NV - NH + 1;
+
+    etl::dyn_matrix<double, 4> w(NC, K, NW, NW);
+    etl::dyn_vector<double> b(K);
+    etl::dyn_vector<double> c(NC);
+
+    etl::dyn_matrix<double, 3> v(NC, NV, NV);
+    etl::dyn_matrix<double, 3> h(K, NH, NH);
+
+    etl::dyn_matrix<double, 4> v_cv(2UL, K, NH, NH);
+    etl::dyn_matrix<double, 3> h_cv(2UL, NV, NV);
+
+    measure("CRBM Visible Activation (" + std::to_string(NC) + "x" + std::to_string(NV) + "^2 -> " +
+        std::to_string(K) + "x" + std::to_string(NH) + "^2)",
+        [&](){
+            for(std::size_t channel = 0; channel < NC; ++channel){
+                h_cv(1) = 0.0;
+
+                for(std::size_t k = 0; k < K; ++k){
+                    h_cv(0) = conv_2d_full(h(k), w(channel)(k));
+                    h_cv(1) += h_cv(0);
+                }
+
+                v(channel) = sigmoid(c(channel) + h_cv(1));
+            }
+    }, c, h, w);
+}
+
 void bench_dll(){
     std::cout << "Start DLL benchmarking...\n";
 
@@ -911,6 +970,20 @@ void bench_dll(){
     bench_rbm_visible(500, 200);
     bench_rbm_visible(500, 2000);
     bench_rbm_visible(1000, 1000);
+
+    bench_conv_rbm_hidden(1, 10, 10, 7);
+    bench_conv_rbm_hidden(1, 10, 30, 7);
+    bench_conv_rbm_hidden(1, 40, 30, 7);
+    bench_conv_rbm_hidden(3, 10, 30, 7);
+    bench_conv_rbm_hidden(3, 40, 30, 7);
+    bench_conv_rbm_hidden(3, 40, 30, 14);
+
+    bench_conv_rbm_visible(1, 10, 10, 7);
+    bench_conv_rbm_visible(1, 10, 30, 7);
+    bench_conv_rbm_visible(1, 40, 30, 7);
+    bench_conv_rbm_visible(3, 10, 30, 7);
+    bench_conv_rbm_visible(3, 40, 30, 7);
+    bench_conv_rbm_visible(3, 40, 30, 14);
 }
 
 } //end of anonymous namespace
