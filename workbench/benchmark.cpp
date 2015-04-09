@@ -881,7 +881,6 @@ void bench_rbm_hidden(std::size_t n_v, std::size_t n_h){
 
     measure("RBM Hidden Activation (" + std::to_string(n_v) + "->" + std::to_string(n_h) + ")", [&](){
         h = etl::sigmoid(b + etl::mul(v, w, t));
-
     }, b, v, w);
 }
 
