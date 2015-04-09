@@ -149,8 +149,8 @@ void check_conv_deep_sizes(const I& i, const K& k, const C& c){
 } //end of namespace detail
 
 template<typename T, std::size_t D, conv_type TT, template<typename...> class Impl>
-struct basic_conv1_expr {
-    using this_type = basic_conv1_expr<T, D, TT, Impl>;
+struct basic_conv_expr {
+    using this_type = basic_conv_expr<T, D, TT, Impl>;
 
     template<typename A, typename B, std::size_t DD>
     static constexpr std::size_t dim(){
@@ -266,35 +266,35 @@ struct basic_conv1_expr {
 //1D convolution
 
 template<typename T>
-using conv1_valid_expr = basic_conv1_expr<T, 1, conv_type::VALID, detail::conv1_valid_impl>;
+using conv1_valid_expr = basic_conv_expr<T, 1, conv_type::VALID, detail::conv1_valid_impl>;
 
 template<typename T>
-using conv1_same_expr = basic_conv1_expr<T, 1, conv_type::SAME, detail::conv1_same_impl>;
+using conv1_same_expr = basic_conv_expr<T, 1, conv_type::SAME, detail::conv1_same_impl>;
 
 template<typename T>
-using conv1_full_expr = basic_conv1_expr<T, 1, conv_type::FULL, detail::conv1_full_impl>;
+using conv1_full_expr = basic_conv_expr<T, 1, conv_type::FULL, detail::conv1_full_impl>;
 
 //2D convolutions
 
 template<typename T>
-using conv2_valid_expr = basic_conv1_expr<T, 2, conv_type::VALID, detail::conv2_valid_impl>;
+using conv2_valid_expr = basic_conv_expr<T, 2, conv_type::VALID, detail::conv2_valid_impl>;
 
 template<typename T>
-using conv2_same_expr = basic_conv1_expr<T, 2, conv_type::SAME, detail::conv2_same_impl>;
+using conv2_same_expr = basic_conv_expr<T, 2, conv_type::SAME, detail::conv2_same_impl>;
 
 template<typename T>
-using conv2_full_expr = basic_conv1_expr<T, 2, conv_type::FULL, detail::conv2_full_impl>;
+using conv2_full_expr = basic_conv_expr<T, 2, conv_type::FULL, detail::conv2_full_impl>;
 
 //>2D convolutions
 
 template<typename T, std::size_t D>
-using conv_deep_valid_expr = basic_conv1_expr<T, D, conv_type::VALID, detail::conv_deep_valid_impl>;
+using conv_deep_valid_expr = basic_conv_expr<T, D, conv_type::VALID, detail::conv_deep_valid_impl>;
 
 template<typename T, std::size_t D>
-using conv_deep_same_expr = basic_conv1_expr<T, D, conv_type::SAME, detail::conv_deep_same_impl>;
+using conv_deep_same_expr = basic_conv_expr<T, D, conv_type::SAME, detail::conv_deep_same_impl>;
 
 template<typename T, std::size_t D>
-using conv_deep_full_expr = basic_conv1_expr<T, D, conv_type::FULL, detail::conv_deep_full_impl>;
+using conv_deep_full_expr = basic_conv_expr<T, D, conv_type::FULL, detail::conv_deep_full_impl>;
 
 //Deep convolutions
 
