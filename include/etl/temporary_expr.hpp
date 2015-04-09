@@ -92,6 +92,10 @@ public:
         return result()[i];
     }
 
+    value_type operator[](std::size_t i) const {
+        return result()[i];
+    }
+
     template<typename... S, cpp_enable_if(sizeof...(S) == sub_size_compare<this_type>::value)>
     value_type operator()(S... args){
         static_assert(cpp::all_convertible_to<std::size_t, S...>::value, "Invalid size types");
