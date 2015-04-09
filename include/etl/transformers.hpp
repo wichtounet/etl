@@ -442,6 +442,37 @@ struct dyn_convmtx2_transformer {
     }
 };
 
+template<typename A, typename M>
+void convmtx2_direct(M& m, A&& sub, std::size_t k1, std::size_t k2){
+    const auto i1 = etl::dim<0>(sub);
+    const auto i2 = etl::dim<1>(sub);
+
+    const auto c_height = (i1 + k1 - 1) * (i2 + k2 - 1);
+    const auto c_width = k1 * k2;
+
+    const auto max_fill = c_height - ((i1 + k1 - 1) * ((c_width - 1) / k1) + (c_width - 1) % k1);
+    const auto inner_paddings = max_fill - (i1 * i2);
+    const auto inner_padding = inner_paddings / (i2 - 1);
+
+    m = 0;
+
+    for(std::size_t j = 0; j < c_width; ++j){
+        auto top_padding = (i1 + k1 - 1) * (j / k1) + j % k1;
+        auto bottom_padding = top_padding + (i1 * i2) + inner_paddings;
+
+        for(std::size_t i = top_padding; i < bottom_padding; ++i){
+            auto inner = i - top_padding;
+            auto block = inner / (i1 + inner_padding);
+            auto col = inner % (i1 + inner_padding);
+
+            if(col < i1){
+                m(i, j) = sub(col, block);
+            }
+        }
+    }
+}
+
+
 template<typename T, std::size_t C1, std::size_t C2>
 struct p_max_pool_transformer {
     using sub_type = T;

@@ -249,7 +249,16 @@ void bench_dyn_convmtx2(std::size_t d1, std::size_t d2){
     etl::dyn_matrix<double> b((d1 + d2 - 1)*(d1 + d2 - 1), d2 * d2);
 
     measure("convmtx2(" + std::to_string(d1) + "x" + std::to_string(d1) + "," + std::to_string(d2) + "," + std::to_string(d2) + ")",
-        [&a, &b, d2](){b = etl::convmtx2(b, d2, d2);}
+        [&a, &b, d2](){b = etl::convmtx2(a, d2, d2);}
+        , a);
+}
+
+void bench_dyn_convmtx2_2(std::size_t d1, std::size_t d2){
+    etl::dyn_matrix<double> a(d1, d1);
+    etl::dyn_matrix<double> b((d1 + d2 - 1)*(d1 + d2 - 1), d2 * d2);
+
+    measure("convmtx2_direct(" + std::to_string(d1) + "x" + std::to_string(d1) + "," + std::to_string(d2) + "," + std::to_string(d2) + ")",
+        [&a, &b, d2](){etl::convmtx2_direct(b, a, d2, d2);}
         , a);
 }
 
@@ -741,6 +750,12 @@ void bench_standard(){
     bench_dyn_convmtx2(32, 8);
     bench_dyn_convmtx2(32, 16);
     bench_dyn_convmtx2(64, 32);
+
+    bench_dyn_convmtx2_2(16, 4);
+    bench_dyn_convmtx2_2(32, 4);
+    bench_dyn_convmtx2_2(32, 8);
+    bench_dyn_convmtx2_2(32, 16);
+    bench_dyn_convmtx2_2(64, 32);
 
     bench_fast_valid_convolution_1d_d<1024, 64>();
     bench_fast_valid_convolution_1d_d<2048, 128>();
