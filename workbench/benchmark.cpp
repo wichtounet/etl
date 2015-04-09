@@ -868,6 +868,18 @@ void bench_smart_2(std::size_t dd){
     }, A, b, c, d);
 }
 
+void bench_smart_3(std::size_t dd){
+    etl::dyn_vector<double> a(dd);
+    etl::dyn_matrix<double> A(dd,dd);
+    etl::dyn_matrix<double> B(dd,dd);
+    etl::dyn_matrix<double> C(dd,dd);
+    etl::dyn_vector<double> result(dd);
+
+    measure("a * (A + B - C) (" + std::to_string(dd) + "x" + std::to_string(dd) + ")", [&](){
+        result = a * (A + B + C);
+    }, a, A, B, C);
+}
+
 void bench_smart(){
     std::cout << "Start Smart benchmarking...\n";
 
@@ -887,6 +899,11 @@ void bench_smart(){
     bench_smart_1(100);
     bench_smart_1(250);
     bench_smart_1(500);
+
+    bench_smart_3(50);
+    bench_smart_3(100);
+    bench_smart_3(250);
+    bench_smart_3(500);
 }
 
 void bench_rbm_hidden(std::size_t n_v, std::size_t n_h){
