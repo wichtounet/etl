@@ -872,6 +872,47 @@ void bench_smart(){
     bench_smart_2(500);
 }
 
+void bench_rbm_hidden(std::size_t n_v, std::size_t n_h){
+    etl::dyn_vector<double> v(n_v);
+    etl::dyn_vector<double> h(n_h);
+    etl::dyn_vector<double> b(n_h);
+    etl::dyn_vector<double> t(n_h);
+    etl::dyn_matrix<double> w(n_v, n_h);
+
+    measure("RBM Hidden Activation (" + std::to_string(n_v) + "->" + std::to_string(n_h) + ")", [&](){
+        h = etl::sigmoid(b + etl::mul(v, w, t));
+
+    }, b, v, w);
+}
+
+void bench_rbm_visible(std::size_t n_v, std::size_t n_h){
+    etl::dyn_vector<double> v(n_v);
+    etl::dyn_vector<double> h(n_h);
+    etl::dyn_vector<double> c(n_v);
+    etl::dyn_vector<double> t(n_v);
+    etl::dyn_matrix<double> w(n_v, n_h);
+
+    measure("RBM Visible Activation (" + std::to_string(n_v) + "->" + std::to_string(n_h) + ")", [&](){
+        v = etl::sigmoid(c + etl::mul(w, h, t));
+    }, c, h, w);
+}
+
+void bench_dll(){
+    std::cout << "Start DLL benchmarking...\n";
+
+    bench_rbm_hidden(100, 100);
+    bench_rbm_hidden(200, 200);
+    bench_rbm_hidden(500, 200);
+    bench_rbm_hidden(500, 2000);
+    bench_rbm_hidden(1000, 1000);
+
+    bench_rbm_visible(100, 100);
+    bench_rbm_visible(200, 200);
+    bench_rbm_visible(500, 200);
+    bench_rbm_visible(500, 2000);
+    bench_rbm_visible(1000, 1000);
+}
+
 } //end of anonymous namespace
 
 int main(int argc, char* argv[]){
@@ -882,15 +923,20 @@ int main(int argc, char* argv[]){
     }
 
     bool smart = false;
+    bool dll = false;
 
     for(auto& arg : args){
         if(arg == "smart"){
             smart = true;
+        } else if(arg == "dll"){
+            dll = true;
         }
     }
 
     if(smart){
         bench_smart();
+    } else if(dll){
+        bench_dll();
     } else {
         bench_standard();
     }
