@@ -466,19 +466,19 @@ auto magic() -> virtual_helper<D, fast_magic_view<D, N>> {
 
 //{{{ Apply a stable transformation
 
-template<std::size_t D1, std::size_t... D, typename E, cpp::enable_if_u<is_etl_expr<E>::value> = cpp::detail::dummy>
+template<std::size_t D1, std::size_t... D, typename E, cpp_enable_if(is_etl_expr<E>::value)>
 auto rep(E&& value) -> stable_transform_expr<value_t<E>, rep_r_transformer<build_type<E>, D1, D...>> {
     static_assert(etl_traits<std::decay_t<E>>::dimensions() == 1, "Can only use rep on vector");
     return {rep_r_transformer<build_type<E>, D1, D...>(value)};
 }
 
-template<std::size_t D1, std::size_t... D, typename E, cpp::enable_if_u<is_etl_expr<E>::value> = cpp::detail::dummy>
+template<std::size_t D1, std::size_t... D, typename E, cpp_enable_if(is_etl_expr<E>::value)>
 auto rep_r(E&& value) -> stable_transform_expr<value_t<E>, rep_r_transformer<build_type<E>, D1, D...>> {
     static_assert(etl_traits<std::decay_t<E>>::dimensions() == 1, "Can only use rep on vector");
     return {rep_r_transformer<build_type<E>, D1, D...>(value)};
 }
 
-template<std::size_t D1, std::size_t... D, typename E, cpp::enable_if_u<is_etl_expr<E>::value> = cpp::detail::dummy>
+template<std::size_t D1, std::size_t... D, typename E, cpp_enable_if(is_etl_expr<E>::value)>
 auto rep_l(E&& value) -> stable_transform_expr<value_t<E>, rep_l_transformer<build_type<E>, D1, D...>> {
     static_assert(etl_traits<std::decay_t<E>>::dimensions() == 1, "Can only use rep on vector");
     return {rep_l_transformer<build_type<E>, D1, D...>(value)};
