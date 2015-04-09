@@ -256,3 +256,59 @@ TEMPLATE_TEST_CASE_2( "etl_traits/binary_fast_mat", "etl_traits<binary<fast_mat,
     REQUIRE(rows_3 == 3);
     REQUIRE(columns_3 == 2);
 }
+
+TEMPLATE_TEST_CASE_2( "etl_traits/has_direct_access", "has_direct_access", Z, float, double ) {
+    using mat_type_1 = etl::fast_matrix<Z, 3, 2, 4, 5>;
+    mat_type_1 a(3.3);
+
+    using mat_type_2 = etl::dyn_matrix<Z, 4>;
+    mat_type_2 b(3, 2, 4, 5);
+
+    //Values have direct access
+    REQUIRE(etl::has_direct_access<mat_type_1>::value);
+    REQUIRE(etl::has_direct_access<mat_type_2>::value);
+
+    //The type should always be decayed
+    REQUIRE(etl::has_direct_access<const mat_type_1&&>::value);
+    REQUIRE(etl::has_direct_access<const mat_type_2&&>::value);
+
+    //Values have direct access
+    REQUIRE(etl::has_direct_access<decltype(a)>::value);
+    REQUIRE(etl::has_direct_access<decltype(b)>::value);
+
+    //Sub have direct access
+    REQUIRE(etl::has_direct_access<decltype(a(1))>::value);
+    REQUIRE(etl::has_direct_access<decltype(b(2))>::value);
+
+    //Sub have direct access
+    REQUIRE(etl::has_direct_access<decltype(a(0)(1))>::value);
+    REQUIRE(etl::has_direct_access<decltype(b(1)(2))>::value);
+
+    //Sub have direct access
+    REQUIRE(etl::has_direct_access<decltype(a(0)(1)(3))>::value);
+    REQUIRE(etl::has_direct_access<decltype(b(1)(2)(0))>::value);
+
+    //Identity unary have direct access
+    REQUIRE(etl::has_direct_access<decltype(etl::reshape<40, 30>(a))>::value);
+    REQUIRE(etl::has_direct_access<decltype(etl::reshape(b, 30, 40))>::value);
+
+    //Temporary binary expressions have direct access
+    REQUIRE(etl::has_direct_access<decltype(a(0)(0) * a(0)(0))>::value);
+    REQUIRE(etl::has_direct_access<decltype(b(0)(0) * b(0)(0))>::value);
+
+    //Mixes should have direct access even as deep as possible
+    REQUIRE(etl::has_direct_access<decltype(etl::reshape<5, 2>(etl::reshape<2, 10>(a(0)(0) * a(0)(0))(1))(0))>::value);
+    REQUIRE(etl::has_direct_access<decltype(etl::reshape<5, 2>(etl::reshape<2, 10>(b(0)(0) * b(0)(0))(1))(0))>::value);
+
+    //Binary do not have direct access
+    REQUIRE(!etl::has_direct_access<decltype(a+b)>::value);
+    REQUIRE(!etl::has_direct_access<decltype(b+b)>::value);
+
+    //Unary do not have direct access
+    REQUIRE(!etl::has_direct_access<decltype(abs(a))>::value);
+    REQUIRE(!etl::has_direct_access<decltype(abs(b))>::value);
+}
+
+//TODO More tests for has_direct_access
+
+//TODO Tests for make_temporary
