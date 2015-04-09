@@ -309,6 +309,6 @@ TEMPLATE_TEST_CASE_2( "etl_traits/has_direct_access", "has_direct_access", Z, fl
     REQUIRE(!etl::has_direct_access<decltype(abs(b))>::value);
 }
 
-//TODO More tests for has_direct_access
+//TODO Tests for single_precision and double_precision
 
 //TODO Tests for make_temporary
