@@ -82,7 +82,7 @@ void sgemv(A&& a, B&& b, C&& c){
 template<typename A, typename B, typename C>
 void dgevm(A&& a, B&& b, C&& c){
     cblas_dgemv(
-        CblasRowMajor, CblasNoTrans,
+        CblasRowMajor, CblasTrans,
         etl::rows(b), etl::columns(b),
         1.0,
         b.memory_start(), etl::dim<1>(b),
