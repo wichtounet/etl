@@ -484,6 +484,24 @@ auto rep_l(E&& value) -> stable_transform_expr<value_t<E>, rep_l_transformer<bui
     return {rep_l_transformer<build_type<E>, D1, D...>(value)};
 }
 
+template<typename... D, typename E, cpp_enable_if(is_etl_expr<E>::value && cpp::all_convertible_to<std::size_t, std::size_t, D...>::value)>
+auto rep(E&& value, std::size_t d1, D... d) -> stable_transform_expr<value_t<E>, dyn_rep_r_transformer<build_type<E>, 1 + sizeof...(D)>> {
+    static_assert(etl_traits<std::decay_t<E>>::dimensions() == 1, "Can only use rep on vector");
+    return {dyn_rep_r_transformer<build_type<E>, 1 + sizeof...(D)>(value, {{d1, static_cast<std::size_t>(d)...}})};
+}
+
+template<typename... D, typename E, cpp_enable_if(is_etl_expr<E>::value && cpp::all_convertible_to<std::size_t, std::size_t, D...>::value)>
+auto rep_r(E&& value, std::size_t d1, D... d) -> stable_transform_expr<value_t<E>, dyn_rep_r_transformer<build_type<E>, 1 + sizeof...(D)>> {
+    static_assert(etl_traits<std::decay_t<E>>::dimensions() == 1, "Can only use rep on vector");
+    return {dyn_rep_r_transformer<build_type<E>, 1 + sizeof...(D)>(value, {{d1, static_cast<std::size_t>(d)...}})};
+}
+
+template<typename... D, typename E, cpp_enable_if(is_etl_expr<E>::value && cpp::all_convertible_to<std::size_t, std::size_t, D...>::value)>
+auto rep_l(E&& value, std::size_t d1, D... d) -> stable_transform_expr<value_t<E>, dyn_rep_l_transformer<build_type<E>, 1 + sizeof...(D)>> {
+    static_assert(etl_traits<std::decay_t<E>>::dimensions() == 1, "Can only use rep on vector");
+    return {dyn_rep_l_transformer<build_type<E>, 1 + sizeof...(D)>(value, {{d1, static_cast<std::size_t>(d)...}})};
+}
+
 template<typename E, cpp::enable_if_u<is_etl_expr<E>::value> = cpp::detail::dummy>
 auto sum_r(E&& value) -> stable_transform_helper<E, sum_r_transformer> {
     static_assert(etl_traits<std::decay_t<E>>::dimensions() > 1, "Can only use sum_r on matrix");

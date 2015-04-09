@@ -64,6 +64,60 @@ struct rep_l_transformer {
     }
 };
 
+template<typename T, std::size_t D>
+struct dyn_rep_r_transformer {
+    using sub_type = T;
+    using value_type = value_t<T>;
+
+    sub_type sub;
+    std::array<std::size_t, D> reps;
+    std::size_t m;
+
+    dyn_rep_r_transformer(sub_type vec, std::array<std::size_t, D> reps_a) : sub(vec), reps(reps_a) {
+        m = std::accumulate(reps.begin(), reps.end(), 1UL, [](auto& a, auto& b){ return a * b; });
+    }
+
+    value_type operator[](std::size_t i) const {
+        return sub(i / m);
+    }
+
+    template<typename... Sizes>
+    value_type operator()(std::size_t i, Sizes... /*sizes*/) const {
+        return sub(i);
+    }
+
+    sub_type& value(){
+        return sub;
+    }
+};
+
+template<typename T, std::size_t D>
+struct dyn_rep_l_transformer {
+    using sub_type = T;
+    using value_type = value_t<T>;
+
+    sub_type sub;
+    std::array<std::size_t, D> reps;
+    std::size_t m;
+
+    dyn_rep_l_transformer(sub_type vec, std::array<std::size_t, D> reps_a) : sub(vec), reps(reps_a) {
+        m = std::accumulate(reps.begin(), reps.end(), 1UL, [](auto& a, auto& b){ return a * b; });
+    }
+
+    value_type operator[](std::size_t i) const {
+        return sub(i % size(sub));
+    }
+
+    template<typename... Sizes>
+    value_type operator()(Sizes... sizes) const {
+        return sub(cpp::last_value(sizes...));
+    }
+
+    sub_type& value(){
+        return sub;
+    }
+};
+
 template<typename T>
 struct sum_r_transformer {
     using sub_type = T;

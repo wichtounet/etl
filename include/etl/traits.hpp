@@ -52,6 +52,8 @@ struct is_transformer : cpp::bool_constant_c<cpp::or_c<
         cpp::is_specialization_of<etl::dyn_convmtx2_transformer, DT>,
         is_var<etl::rep_r_transformer, DT>,
         is_var<etl::rep_l_transformer, DT>,
+        is_2<etl::dyn_rep_r_transformer, DT>,
+        is_2<etl::dyn_rep_l_transformer, DT>,
         is_3<etl::p_max_pool_h_transformer, DT>,
         is_3<etl::p_max_pool_p_transformer, DT>
     >> {};
@@ -536,6 +538,56 @@ struct etl_traits<rep_l_transformer<T, D...>> {
 
     static constexpr std::size_t dimensions(){
         return sizeof...(D) + etl_traits<sub_expr_t>::dimensions();
+    }
+};
+
+/*!
+ * \brief Specialization for dyn_rep_r_transformer
+ */
+template <typename T, std::size_t D>
+struct etl_traits<dyn_rep_r_transformer<T, D>> {
+    using expr_t = etl::dyn_rep_r_transformer<T, D>;
+    using sub_expr_t = std::decay_t<T>;
+
+    static constexpr const bool is_fast = false;
+    static constexpr const bool is_value = false;
+    static constexpr const bool is_generator = false;
+
+    static std::size_t size(const expr_t& v){
+        return v.m * etl_traits<sub_expr_t>::size(v.sub);
+    }
+
+    static std::size_t dim(const expr_t& v, std::size_t d){
+        return d == 0 ? etl_traits<sub_expr_t>::dim(v.sub, 0) : v.reps[d-1];
+    }
+
+    static constexpr std::size_t dimensions(){
+        return D + etl_traits<sub_expr_t>::dimensions();
+    }
+};
+
+/*!
+ * \brief Specialization for dyn_rep_l_transformer
+ */
+template <typename T, std::size_t D>
+struct etl_traits<dyn_rep_l_transformer<T, D>> {
+    using expr_t = etl::dyn_rep_l_transformer<T, D>;
+    using sub_expr_t = std::decay_t<T>;
+
+    static constexpr const bool is_fast = false;
+    static constexpr const bool is_value = false;
+    static constexpr const bool is_generator = false;
+
+    static std::size_t size(const expr_t& v){
+        return v.m * etl_traits<sub_expr_t>::size(v.sub);
+    }
+
+    static std::size_t dim(const expr_t& v, std::size_t d){
+        return d == dimensions() - 1 ? etl_traits<sub_expr_t>::dim(v.sub, 0) : v.reps[d];
+    }
+
+    static constexpr std::size_t dimensions(){
+        return D + etl_traits<sub_expr_t>::dimensions();
     }
 };
 
