@@ -30,7 +30,7 @@ namespace blas {
 template<typename A, typename B, typename C>
 void dgemm(A&& a, B&& b, C&& c){
     cblas_dgemm(
-        CblasRowMajor, CblasNoTrans, CblasNoTrans, 
+        CblasRowMajor, CblasNoTrans, CblasNoTrans,
         etl::rows(a), etl::columns(b), etl::columns(a),
         1.0,
         a.memory_start(), etl::dim<1>(a),
@@ -43,13 +43,39 @@ void dgemm(A&& a, B&& b, C&& c){
 template<typename A, typename B, typename C>
 void sgemm(A&& a, B&& b, C&& c){
     cblas_sgemm(
-        CblasRowMajor, CblasNoTrans, CblasNoTrans, 
+        CblasRowMajor, CblasNoTrans, CblasNoTrans,
         etl::rows(a), etl::columns(b), etl::columns(a),
         1.0,
         a.memory_start(), etl::dim<1>(a),
         b.memory_start(), etl::dim<1>(b),
         0.0,
         c.memory_start(), etl::dim<1>(c)
+    );
+};
+
+template<typename A, typename B, typename C>
+void dgemv(A&& a, B&& b, C&& c){
+    cblas_dgemv(
+        CblasRowMajor, CblasNoTrans,
+        etl::rows(a), etl::columns(a),
+        1.0,
+        a.memory_start(), etl::dim<1>(a),
+        b.memory_start(), 1,
+        0.0,
+        c.memory_start(), 1
+    );
+};
+
+template<typename A, typename B, typename C>
+void sgemv(A&& a, B&& b, C&& c){
+    cblas_sgemv(
+        CblasRowMajor, CblasNoTrans,
+        etl::rows(a), etl::columns(a),
+        1.0,
+        a.memory_start(), etl::dim<1>(a),
+        b.memory_start(), 1,
+        0.0,
+        c.memory_start(), 1
     );
 };
 
@@ -60,6 +86,12 @@ void dgemm(A&& a, B&& b, C&& c);
 
 template<typename A, typename B, typename C>
 void sgemm(A&& a, B&& b, C&& c);
+
+template<typename A, typename B, typename C>
+void dgemv(A&& a, B&& b, C&& c);
+
+template<typename A, typename B, typename C>
+void sgemv(A&& a, B&& b, C&& c);
 
 #endif
 
