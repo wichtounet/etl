@@ -79,6 +79,32 @@ void sgemv(A&& a, B&& b, C&& c){
     );
 };
 
+template<typename A, typename B, typename C>
+void dgevm(A&& a, B&& b, C&& c){
+    cblas_dgemv(
+        CblasRowMajor, CblasNoTrans,
+        etl::rows(b), etl::columns(b),
+        1.0,
+        b.memory_start(), etl::dim<1>(b),
+        a.memory_start(), 1,
+        0.0,
+        c.memory_start(), 1
+    );
+};
+
+template<typename A, typename B, typename C>
+void sgevm(A&& a, B&& b, C&& c){
+    cblas_sgemv(
+        CblasRowMajor, CblasTrans,
+        etl::rows(b), etl::columns(b),
+        1.0,
+        b.memory_start(), etl::dim<1>(b),
+        a.memory_start(), 1,
+        0.0,
+        c.memory_start(), 1
+    );
+};
+
 #else
 
 template<typename A, typename B, typename C>
@@ -92,6 +118,12 @@ void dgemv(A&& a, B&& b, C&& c);
 
 template<typename A, typename B, typename C>
 void sgemv(A&& a, B&& b, C&& c);
+
+template<typename A, typename B, typename C>
+void dgevm(A&& a, B&& b, C&& c);
+
+template<typename A, typename B, typename C>
+void sgevm(A&& a, B&& b, C&& c);
 
 #endif
 

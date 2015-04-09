@@ -83,6 +83,20 @@ struct vm_mul_impl {
     }
 };
 
+template<typename A, typename B, typename C>
+struct vm_mul_impl<A, B, C, std::enable_if_t<is_blas_dgemm<A,B,C>::value>> {
+    static void apply(A&& a, B&& b, C&& c){
+        etl::impl::blas::dgevm(std::forward<A>(a), std::forward<B>(b), std::forward<C>(c));
+    }
+};
+
+template<typename A, typename B, typename C>
+struct vm_mul_impl<A, B, C, std::enable_if_t<is_blas_sgemm<A,B,C>::value>> {
+    static void apply(A&& a, B&& b, C&& c){
+        etl::impl::blas::sgevm(std::forward<A>(a), std::forward<B>(b), std::forward<C>(c));
+    }
+};
+
 template<typename A, typename B, typename C, typename Enable = void>
 struct mv_mul_impl {
     static void apply(A&& a, B&& b, C&& c){
