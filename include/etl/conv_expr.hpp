@@ -205,7 +205,14 @@ struct basic_conv_expr {
 
         check(a, b, c);
 
-        Impl<A,B,C,void>::apply(std::forward<A>(a), std::forward<B>(b), std::forward<C>(c));
+        if(D == 1 || D == 2){
+            Impl<decltype(make_temporary(std::forward<A>(a))), decltype(make_temporary(std::forward<B>(b))), C, void>::apply(
+                make_temporary(std::forward<A>(a)),
+                make_temporary(std::forward<B>(b)),
+                std::forward<C>(c));
+        } else {
+            Impl<A,B,C,void>::apply(std::forward<A>(a), std::forward<B>(b), std::forward<C>(c));
+        }
     }
 
     static std::string desc() noexcept {
