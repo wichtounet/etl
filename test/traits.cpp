@@ -353,4 +353,37 @@ TEMPLATE_TEST_CASE_2( "etl_traits/precision", "is_X_precision", Z, float, double
     REQUIRE(correct_type<Z>(log(b)));
 }
 
-//TODO Tests for make_temporary
+TEMPLATE_TEST_CASE_2( "etl_traits/temporary", "make_temporary", Z, float, double ) {
+    using mat_type_1 = etl::fast_matrix<Z, 3, 2, 4, 5>;
+    mat_type_1 a(3.3);
+
+    using mat_type_2 = etl::dyn_matrix<Z, 4>;
+    mat_type_2 b(3, 2, 4, 5);
+
+    REQUIRE((std::is_same<mat_type_1, std::decay_t<decltype(make_temporary(a))>>::value));
+    REQUIRE((std::is_same<mat_type_2, std::decay_t<decltype(make_temporary(b))>>::value));
+
+    REQUIRE((std::is_same<decltype(a(0)), std::decay_t<decltype(make_temporary(a(1)))>>::value));
+    REQUIRE((std::is_same<decltype(b(1)), std::decay_t<decltype(make_temporary(b(0)))>>::value));
+
+    REQUIRE((std::is_same<decltype(a(1)(0)), std::decay_t<decltype(make_temporary(a(1)(1)))>>::value));
+    REQUIRE((std::is_same<decltype(b(1)(1)), std::decay_t<decltype(make_temporary(b(0)(1)))>>::value));
+
+    REQUIRE((!std::is_same<decltype(a+a), std::decay_t<decltype(make_temporary(a+a))>>::value));
+    REQUIRE((!std::is_same<decltype(b+b), std::decay_t<decltype(make_temporary(b+b))>>::value));
+    REQUIRE((!std::is_same<decltype(a+b), std::decay_t<decltype(make_temporary(a+b))>>::value));
+
+    //make_temporary should not affect an ETL value
+    REQUIRE(a.memory_start() == make_temporary(a).memory_start());
+    REQUIRE(b.memory_start() == make_temporary(b).memory_start());
+
+    //make_temporary should not affect a sub view
+    REQUIRE(a(0).memory_start() == make_temporary(a(0)).memory_start());
+    REQUIRE(b(0).memory_start() == make_temporary(b(0)).memory_start());
+
+    const auto& c = a(0);
+    const auto& d = b(1);
+
+    REQUIRE(c.memory_start() == make_temporary(c).memory_start());
+    REQUIRE(d.memory_start() == make_temporary(d).memory_start());
+}
