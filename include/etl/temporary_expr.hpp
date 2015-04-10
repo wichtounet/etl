@@ -27,8 +27,10 @@ namespace etl {
 template <typename T, typename AExpr, typename BExpr, typename Op, typename Forced>
 class temporary_binary_expr final {
 public:
-    using value_type = T;
-    using result_type = Forced;
+    using        value_type = T;
+    using       result_type = Forced;
+    using       memory_type = value_type*;
+    using const_memory_type = const value_type*;
 
 private:
     static_assert(cpp::and_c<is_etl_expr<AExpr>, is_etl_expr<BExpr>>::value,
@@ -139,19 +141,19 @@ public:
 
     //{{{ Direct memory access
 
-    value_type* memory_start() noexcept {
+    memory_type memory_start() noexcept {
         return result().memory_start();
     }
 
-    const value_type* memory_start() const noexcept {
+    const_memory_type memory_start() const noexcept {
         return result().memory_start();
     }
 
-    value_type* memory_end() noexcept {
+    memory_type memory_end() noexcept {
         return result().memory_end();
     }
 
-    const value_type* memory_end() const noexcept {
+    const_memory_type memory_end() const noexcept {
         return result().memory_end();
     }
 
@@ -172,8 +174,10 @@ private:
 template <typename T, typename AExpr, typename BExpr, typename Op>
 class temporary_binary_expr<T, AExpr, BExpr, Op, void> final {
 public:
-    using value_type = T;
-    using result_type = typename Op::template result_type<AExpr, BExpr>;
+    using        value_type = T;
+    using       result_type = typename Op::template result_type<AExpr, BExpr>;
+    using       memory_type = value_type*;
+    using const_memory_type = const value_type*;
 
 private:
     static_assert(cpp::and_c<is_etl_expr<AExpr>, is_etl_expr<BExpr>>::value,
@@ -285,19 +289,19 @@ public:
 
     //{{{ Direct memory access
 
-    value_type* memory_start() noexcept {
+    memory_type memory_start() noexcept {
         return result().memory_start();
     }
 
-    const value_type* memory_start() const noexcept {
+    const_memory_type memory_start() const noexcept {
         return result().memory_start();
     }
 
-    value_type* memory_end() noexcept {
+    memory_type memory_end() noexcept {
         return result().memory_end();
     }
 
-    const value_type* memory_end() const noexcept {
+    const_memory_type memory_end() const noexcept {
         return result().memory_end();
     }
 

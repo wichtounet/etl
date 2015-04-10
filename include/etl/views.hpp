@@ -37,15 +37,16 @@ using const_return_helper = std::conditional_t<
 
 template<typename T, std::size_t D>
 struct dim_view {
-    static_assert(D == 1 || D == 2, "Invalid dimension");
-
-    using sub_type = T;
-    using value_type = value_t<sub_type>;
-
-    sub_type sub;
+    T sub;
     const std::size_t i;
 
-    using return_type = return_helper<sub_type, decltype(sub(0,0))>;
+    static_assert(D == 1 || D == 2, "Invalid dimension");
+
+    using          sub_type = T;
+    using        value_type = value_t<sub_type>;
+    using       memory_type = memory_t<sub_type>;
+    using const_memory_type = std::add_const_t<memory_t<sub_type>>;
+    using       return_type = return_helper<sub_type, decltype(sub(0,0))>;
     using const_return_type = const_return_helper<sub_type, decltype(sub(0,0))>;
 
     dim_view(sub_type sub, std::size_t i) : sub(sub), i(i) {}
@@ -89,22 +90,22 @@ struct dim_view {
     //{{{ Direct memory access
 
     template<typename ST = T, std::size_t SD = D, cpp_enable_if(has_direct_access<ST>::value && SD == 1)>
-    value_type* memory_start() noexcept {
+    memory_type memory_start() noexcept {
         return sub.memory_start() + i * subsize(sub);
     }
 
     template<typename ST = T, std::size_t SD = D, cpp_enable_if(has_direct_access<ST>::value && SD == 1)>
-    const value_type* memory_start() const noexcept {
+    const_memory_type memory_start() const noexcept {
         return sub.memory_start() + i * subsize(sub);
     }
 
     template<typename ST = T, std::size_t SD = D, cpp_enable_if(has_direct_access<ST>::value && SD == 1)>
-    value_type* memory_end() noexcept {
+    memory_type memory_end() noexcept {
         return sub.memory_start() + (i + 1) * subsize(sub);
     }
 
     template<typename ST = T, std::size_t SD = D, cpp_enable_if(has_direct_access<ST>::value && SD == 1)>
-    const value_type* memory_end() const noexcept {
+    const_memory_type memory_end() const noexcept {
         return sub.memory_start() + (i + 1) * subsize(sub);
     }
 
@@ -113,13 +114,14 @@ struct dim_view {
 
 template<typename T>
 struct sub_view {
-    using parent_type = T;
-    using value_type = value_t<parent_type>;
-
-    parent_type parent;
+    T parent;
     const std::size_t i;
 
-    using return_type = return_helper<parent_type, decltype(parent[0])>;
+    using       parent_type = T;
+    using        value_type = value_t<parent_type>;
+    using       memory_type = memory_t<parent_type>;
+    using const_memory_type = std::add_const_t<memory_t<parent_type>>;
+    using       return_type = return_helper<parent_type, decltype(parent[0])>;
     using const_return_type = const_return_helper<parent_type, decltype(parent[0])>;
 
     sub_view(parent_type parent, std::size_t i) : parent(parent), i(i) {}
@@ -149,22 +151,22 @@ struct sub_view {
     //{{{ Direct memory access
 
     template<typename ST = T, cpp_enable_if(has_direct_access<ST>::value)>
-    value_type* memory_start() noexcept {
+    memory_type memory_start() noexcept {
         return parent.memory_start() + i * subsize(parent);
     }
 
     template<typename ST = T, cpp_enable_if(has_direct_access<ST>::value)>
-    const value_type* memory_start() const noexcept {
+    const_memory_type memory_start() const noexcept {
         return parent.memory_start() + i * subsize(parent);
     }
 
     template<typename ST = T, cpp_enable_if(has_direct_access<ST>::value)>
-    value_type* memory_end() noexcept {
+    memory_type memory_end() noexcept {
         return parent.memory_start() + (i + 1) * subsize(parent);
     }
 
     template<typename ST = T, cpp_enable_if(has_direct_access<ST>::value)>
-    const value_type* memory_end() const noexcept {
+    const_memory_type memory_end() const noexcept {
         return parent.memory_start() + (i + 1) * subsize(parent);
     }
 
@@ -173,14 +175,15 @@ struct sub_view {
 
 template<typename T, std::size_t Rows, std::size_t Columns>
 struct fast_matrix_view {
+    T sub;
+
     static_assert(Rows > 0 && Columns > 0 , "Invalid dimensions");
 
-    using sub_type = T;
-    using value_type = value_t<sub_type>;
-
-    sub_type sub;
-
-    using return_type = return_helper<sub_type, decltype(sub(0))>;
+    using          sub_type = T;
+    using        value_type = value_t<sub_type>;
+    using       memory_type = memory_t<sub_type>;
+    using const_memory_type = std::add_const_t<memory_t<sub_type>>;
+    using       return_type = return_helper<sub_type, decltype(sub(0))>;
     using const_return_type = const_return_helper<sub_type, decltype(sub(0))>;
 
     explicit fast_matrix_view(sub_type sub) : sub(sub) {}
@@ -208,7 +211,7 @@ struct fast_matrix_view {
     return_type operator()(std::size_t i, std::size_t j){
         return sub[i * Columns + j];
     }
-    
+
     sub_type& value(){
         return sub;
     }
@@ -216,22 +219,22 @@ struct fast_matrix_view {
     //{{{ Direct memory access
 
     template<typename SS = T, cpp_enable_if(has_direct_access<SS>::value)>
-    value_type* memory_start() noexcept {
+    memory_type memory_start() noexcept {
         return sub.memory_start();
     }
 
     template<typename SS = T, cpp_enable_if(has_direct_access<SS>::value)>
-    const value_type* memory_start() const noexcept {
+    const_memory_type memory_start() const noexcept {
         return sub.memory_start();
     }
 
     template<typename SS = T, cpp_enable_if(has_direct_access<SS>::value)>
-    value_type* memory_end() noexcept {
+    memory_type memory_end() noexcept {
         return sub.memory_end();
     }
 
     template<typename SS = T, cpp_enable_if(has_direct_access<SS>::value)>
-    const value_type* memory_end() const noexcept {
+    const_memory_type memory_end() const noexcept {
         return sub.memory_end();
     }
 
@@ -240,14 +243,15 @@ struct fast_matrix_view {
 
 template<typename T>
 struct dyn_matrix_view {
-    using sub_type = T;
-    using value_type = value_t<sub_type>;
-
-    sub_type sub;
+    T sub;
     std::size_t rows;
     std::size_t columns;
 
-    using return_type = return_helper<sub_type, decltype(sub(0))>;
+    using          sub_type = T;
+    using        value_type = value_t<sub_type>;
+    using       memory_type = memory_t<sub_type>;
+    using const_memory_type = std::add_const_t<memory_t<sub_type>>;
+    using       return_type = return_helper<sub_type, decltype(sub(0))>;
     using const_return_type = const_return_helper<sub_type, decltype(sub(0))>;
 
     dyn_matrix_view(sub_type sub, std::size_t rows, std::size_t columns) : sub(sub), rows(rows), columns(columns) {}
@@ -275,7 +279,7 @@ struct dyn_matrix_view {
     return_type operator()(std::size_t i, std::size_t j){
         return sub[i * columns + j];
     }
-    
+
     sub_type& value(){
         return sub;
     }
@@ -283,22 +287,22 @@ struct dyn_matrix_view {
     //{{{ Direct memory access
 
     template<typename SS = T, cpp_enable_if(has_direct_access<SS>::value)>
-    value_type* memory_start() noexcept {
+    memory_type memory_start() noexcept {
         return sub.memory_start();
     }
 
     template<typename SS = T, cpp_enable_if(has_direct_access<SS>::value)>
-    const value_type* memory_start() const noexcept {
+    const_memory_type memory_start() const noexcept {
         return sub.memory_start();
     }
 
     template<typename SS = T, cpp_enable_if(has_direct_access<SS>::value)>
-    value_type* memory_end() noexcept {
+    memory_type memory_end() noexcept {
         return sub.memory_end();
     }
 
     template<typename SS = T, cpp_enable_if(has_direct_access<SS>::value)>
-    const value_type* memory_end() const noexcept {
+    const_memory_type memory_end() const noexcept {
         return sub.memory_end();
     }
 

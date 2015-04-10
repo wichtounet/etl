@@ -131,15 +131,15 @@ struct is_direct_identity_view : std::false_type {};
 template<typename T, typename V>
 struct is_direct_identity_view<etl::unary_expr<T, V, identity_op>> : cpp::bool_constant_c<has_direct_access<V>> {};
 
-template<typename T>
+template<typename T, typename DT>
 struct has_direct_access : cpp::bool_constant_c<cpp::or_c<
-          is_etl_value<T>
-        , is_temporary_binary_expr<T>
-        , is_direct_identity_view<T>
-        , is_direct_sub_view<T>
-        , is_direct_dim_view<T>
-        , is_direct_fast_matrix_view<T>
-        , is_direct_dyn_matrix_view<T>
+          is_etl_value<DT>
+        , is_temporary_binary_expr<DT>
+        , is_direct_identity_view<DT>
+        , is_direct_sub_view<DT>
+        , is_direct_dim_view<DT>
+        , is_direct_fast_matrix_view<DT>
+        , is_direct_dyn_matrix_view<DT>
     >> {};
 
 template<typename A, typename B, typename C>

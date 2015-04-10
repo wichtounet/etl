@@ -37,6 +37,13 @@ struct is_var_2<TT, TT<V1, V2, R...>> : std::true_type { };
 template<typename E>
 using value_t = typename std::decay_t<E>::value_type;
 
+template<typename S>
+using memory_t = std::conditional_t<
+    std::is_const<std::remove_reference_t<S>>::value,
+    typename std::decay_t<S>::const_memory_type,
+    typename std::decay_t<S>::memory_type
+>;
+
 template<std::size_t F, std::size_t... Dims>
 struct mul_all final : std::integral_constant<std::size_t, F * mul_all<Dims...>::value> {};
 

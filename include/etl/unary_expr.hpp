@@ -23,7 +23,9 @@ struct virtual_op;
 template <typename T, typename Expr, typename UnaryOp>
 class unary_expr final  {
 public:
-    using value_type = T;
+    using        value_type = T;
+    using       memory_type = void;
+    using const_memory_type = void;
 
 private:
     static_assert(is_etl_expr<Expr>::value, "Only ETL expressions can be used in unary_expr");
@@ -104,8 +106,10 @@ private:
         std::is_lvalue_reference<decltype(_value[0])>::value;
 
 public:
-    using value_type = T;
-    using return_type = std::conditional_t<non_const_return_ref, value_type&, value_type>;
+    using        value_type = T;
+    using       memory_type = memory_t<Expr>;
+    using const_memory_type = std::add_const_t<memory_t<Expr>>;
+    using       return_type = std::conditional_t<non_const_return_ref, value_type&, value_type>;
     using const_return_type = std::conditional_t<const_return_ref, const value_type&, value_type>;
 
     //Cannot be constructed with no args
@@ -216,22 +220,22 @@ public:
     //{{{ Direct memory access
 
     template<typename SS = Expr, cpp_enable_if(has_direct_access<SS>::value)>
-    auto memory_start() noexcept {
+    memory_type memory_start() noexcept {
         return value().memory_start();
     }
 
     template<typename SS = Expr, cpp_enable_if(has_direct_access<SS>::value)>
-    const value_type* memory_start() const noexcept {
+    const_memory_type memory_start() const noexcept {
         return value().memory_start();
     }
 
     template<typename SS = Expr, cpp_enable_if(has_direct_access<SS>::value)>
-    value_type* memory_end() noexcept {
+    memory_type memory_end() noexcept {
         return value().memory_end();
     }
 
     template<typename SS = Expr, cpp_enable_if(has_direct_access<SS>::value)>
-    const value_type* memory_end() const noexcept {
+    const_memory_type memory_end() const noexcept {
         return value().memory_end();
     }
 
@@ -246,7 +250,9 @@ private:
     Expr _value;
 
 public:
-    using value_type = T;
+    using        value_type = T;
+    using       memory_type = void;
+    using const_memory_type = void;
 
     //Cannot be constructed with no args
     unary_expr() = delete;

@@ -96,6 +96,8 @@ public:
     using    dimension_storage_impl = std::array<std::size_t, n_dimensions>;
     using                  iterator = typename storage_impl::iterator;
     using            const_iterator = typename storage_impl::const_iterator;
+    using               memory_type = value_type*;
+    using         const_memory_type = const value_type*;
 
 private:
     const std::size_t _size;
@@ -473,19 +475,19 @@ public:
 
     //{{{ Direct memory access
 
-    value_type* memory_start() noexcept {
+    memory_type memory_start() noexcept {
         return &_data[0];
     }
 
-    const value_type* memory_start() const noexcept {
+    const_memory_type memory_start() const noexcept {
         return &_data[0];
     }
 
-    value_type* memory_end() noexcept {
+    memory_type memory_end() noexcept {
         return &_data[size()];
     }
 
-    const value_type* memory_end() const noexcept {
+    const_memory_type memory_end() const noexcept {
         return &_data[size()];
     }
 

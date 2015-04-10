@@ -34,7 +34,7 @@ struct sub_size_compare;
 template<typename T, typename Enable = void>
 struct etl_traits;
 
-template<typename T>
+template<typename T, typename DT = std::decay_t<T>>
 struct has_direct_access;
 
 template<typename E, cpp::disable_if_u<etl_traits<E>::is_fast> = cpp::detail::dummy>

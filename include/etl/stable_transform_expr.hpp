@@ -25,8 +25,10 @@ private:
     Expr _value;
 
 public:
-    using value_type = T;
-    using expr_type = Expr;
+    using        value_type = T;
+    using         expr_type = Expr;
+    using       memory_type = void;
+    using const_memory_type = void;
 
     //Cannot be constructed with no args
     stable_transform_expr() = delete;

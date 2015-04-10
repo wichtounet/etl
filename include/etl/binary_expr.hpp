@@ -32,7 +32,9 @@ private:
     RightExpr _rhs;
 
 public:
-    using value_type = T;
+    using        value_type = T;
+    using       memory_type = void;
+    using const_memory_type = void;
 
     //Cannot be constructed with no args
     binary_expr() = delete;
