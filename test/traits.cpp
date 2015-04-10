@@ -289,8 +289,8 @@ TEMPLATE_TEST_CASE_2( "etl_traits/has_direct_access", "has_direct_access", Z, fl
     REQUIRE(etl::has_direct_access<decltype(b(1)(2)(0))>::value);
 
     //Identity unary have direct access
-    REQUIRE(etl::has_direct_access<decltype(etl::reshape<40, 30>(a))>::value);
-    REQUIRE(etl::has_direct_access<decltype(etl::reshape(b, 30, 40))>::value);
+    REQUIRE(etl::has_direct_access<decltype(etl::reshape<4, 30>(a))>::value);
+    REQUIRE(etl::has_direct_access<decltype(etl::reshape(b, 3, 40))>::value);
 
     //Temporary binary expressions have direct access
     REQUIRE(etl::has_direct_access<decltype(a(0)(0) * a(0)(0))>::value);
@@ -309,6 +309,48 @@ TEMPLATE_TEST_CASE_2( "etl_traits/has_direct_access", "has_direct_access", Z, fl
     REQUIRE(!etl::has_direct_access<decltype(abs(b))>::value);
 }
 
-//TODO Tests for single_precision and double_precision
+template<typename Z, typename E>
+bool correct_type(E&& /*e*/){
+    if(std::is_same<Z, double>::value){
+        return etl::is_double_precision<E>::value;
+    } else if(std::is_same<Z, float>::value){
+        return etl::is_single_precision<E>::value;
+    }
+}
+
+TEMPLATE_TEST_CASE_2( "etl_traits/precision", "is_X_precision", Z, float, double ) {
+    using mat_type_1 = etl::fast_matrix<Z, 3, 2, 4, 5>;
+    mat_type_1 a(3.3);
+
+    using mat_type_2 = etl::dyn_matrix<Z, 4>;
+    mat_type_2 b(3, 2, 4, 5);
+
+    REQUIRE(correct_type<Z>(a));
+    REQUIRE(correct_type<Z>(b));
+
+    REQUIRE(correct_type<Z>(a(1)));
+    REQUIRE(correct_type<Z>(b(2)));
+
+    REQUIRE(correct_type<Z>(a(0)(1)));
+    REQUIRE(correct_type<Z>(b(2)(0)));
+
+    REQUIRE(correct_type<Z>(etl::reshape<4, 30>(a)));
+    REQUIRE(correct_type<Z>(etl::reshape(b, 3, 40)));
+
+    REQUIRE(correct_type<Z>(a(0)(0) * a(0)(0)));
+    REQUIRE(correct_type<Z>(b(0)(0) * b(0)(0)));
+
+    REQUIRE(correct_type<Z>(etl::reshape<5, 2>(etl::reshape<2, 10>(a(0)(0) * a(0)(0))(1))(0)));
+    REQUIRE(correct_type<Z>(etl::reshape<5, 2>(etl::reshape<2, 10>(b(0)(0) * b(0)(0))(1))(0)));
+
+    REQUIRE(correct_type<Z>(a+b));
+    REQUIRE(correct_type<Z>(b+a));
+
+    REQUIRE(correct_type<Z>(1.0 + a));
+    REQUIRE(correct_type<Z>(b / 1.1));
+
+    REQUIRE(correct_type<Z>(abs(a)));
+    REQUIRE(correct_type<Z>(log(b)));
+}
 
 //TODO Tests for make_temporary
