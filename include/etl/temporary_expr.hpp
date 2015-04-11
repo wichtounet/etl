@@ -17,8 +17,6 @@
 
 namespace etl {
 
-//TODO Rewrite with TMP instead of two classes
-
 //TODO Review constness of this class
 
 template <typename T, typename AExpr, typename BExpr, typename Op, typename Forced>
