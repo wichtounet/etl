@@ -532,6 +532,22 @@ TEMPLATE_TEST_CASE_2( "sum_l/fast_matrix_1", "sum_l", Z, float, double ) {
     REQUIRE(b(2) == Approx(10.0));
 }
 
+TEMPLATE_TEST_CASE_2( "sum_l/fast_matrix_6", "sum_l", Z, float, double ) {
+    etl::fast_matrix<Z, 3, 4, 2> a({1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24});
+    etl::fast_matrix<Z, 4, 2> b;
+
+    b = etl::sum_l(a);
+
+    REQUIRE(b(0,0) == Approx(27.0));
+    REQUIRE(b(0,1) == Approx(30.0));
+    REQUIRE(b(1,0) == Approx(33.0));
+    REQUIRE(b(1,1) == Approx(36.0));
+    REQUIRE(b(2,0) == Approx(39.0));
+    REQUIRE(b(2,1) == Approx(42.0));
+    REQUIRE(b(3,0) == Approx(45.0));
+    REQUIRE(b(3,1) == Approx(48.0));
+}
+
 //}}}
 
 //{{{ Tests for dyn_rep_r
