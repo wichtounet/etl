@@ -509,6 +509,8 @@ struct dyn_convmtx2_transformer {
     }
 };
 
+//TODO Make a temporary_expr out of this
+
 template<typename A, typename M>
 void convmtx2_direct(M& m, A&& sub, std::size_t k1, std::size_t k2){
     const auto i1 = etl::dim<0>(sub);
@@ -534,6 +536,31 @@ void convmtx2_direct(M& m, A&& sub, std::size_t k1, std::size_t k2){
 
             if(col < i1){
                 m(i, j) = sub(col, block);
+            }
+        }
+    }
+}
+
+//TODO Adapt this to an expression
+
+template<typename A, typename M>
+void im2col_direct(M& m, A&& sub, std::size_t k1, std::size_t k2){
+    const auto i1 = etl::dim<0>(sub);
+    const auto i2 = etl::dim<1>(sub);
+
+    const auto m_height = k1 * k2;
+    const auto m_width = (i1 - k1 + 1) * (i2 - k2 + 1);
+
+    std::size_t s_i = 0;
+    std::size_t s_j = 0;
+
+    for(std::size_t b = 0; b < m_width; ++b){
+        auto s_i = b % (i1 - k1 + 1);
+        auto s_j = b / (i1 - k1 + 1);
+
+        for(std::size_t b_i = 0; b_i < k1; ++b_i){
+            for(std::size_t b_j = 0; b_j < k2; ++b_j){
+                m(b_j * k1 + b_i, b) = sub(s_i + b_i, s_j + b_j);
             }
         }
     }
