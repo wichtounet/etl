@@ -1012,6 +1012,7 @@ void bench_dll(){
     bench_conv_rbm_hidden(3, 10, 30, 7);
     bench_conv_rbm_hidden(3, 40, 30, 7);
     bench_conv_rbm_hidden(3, 40, 30, 14);
+    bench_conv_rbm_hidden(40, 40, 30, 16);
 
     bench_conv_rbm_visible(1, 10, 10, 7);
     bench_conv_rbm_visible(1, 10, 30, 7);
@@ -1019,6 +1020,7 @@ void bench_dll(){
     bench_conv_rbm_visible(3, 10, 30, 7);
     bench_conv_rbm_visible(3, 40, 30, 7);
     bench_conv_rbm_visible(3, 40, 30, 14);
+    bench_conv_rbm_visible(40, 40, 30, 16);
 }
 
 } //end of anonymous namespace
