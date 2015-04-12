@@ -548,11 +548,7 @@ void im2col_direct(M& m, A&& sub, std::size_t k1, std::size_t k2){
     const auto i1 = etl::dim<0>(sub);
     const auto i2 = etl::dim<1>(sub);
 
-    const auto m_height = k1 * k2;
     const auto m_width = (i1 - k1 + 1) * (i2 - k2 + 1);
-
-    std::size_t s_i = 0;
-    std::size_t s_j = 0;
 
     for(std::size_t b = 0; b < m_width; ++b){
         auto s_i = b % (i1 - k1 + 1);
@@ -573,14 +569,10 @@ void im2col_direct(M& m, A&& sub, std::size_t k1, std::size_t k2){
     const auto i1 = etl::dim<0>(sub);
     const auto i2 = etl::dim<1>(sub);
 
-    const auto m_height = k1 * k2;
     const auto m_width = (i1 - k1 + 1) * (i2 - k2 + 1);
 
     const auto mm = m.memory_start();
     const auto ss = sub.memory_start();
-
-    std::size_t s_i = 0;
-    std::size_t s_j = 0;
 
     for(std::size_t b = 0; b < m_width; ++b){
         auto s_i = b % (i1 - k1 + 1);
