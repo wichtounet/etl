@@ -811,6 +811,56 @@ auto conv_deep_full(A&& a, B&& b, C&& c) -> dim_forced_temporary_binary_helper<A
     return {a, b, c};
 }
 
+//Special convolutions
+
+//TODO This should be adapted to an expression
+//
+//TODO For now this only works with square kernels
+
+template<typename A, typename B, typename C>
+void conv_2d_valid_multi(A&& input, B&& kernels, C&& features){
+    //TODO Validate inputs
+
+    //TODO This version of the implementation should only be used if very fast MMUL is available
+
+    const auto v1 = etl::dim<0>(input);
+    const auto v2 = etl::dim<1>(input);
+    const auto k1 = etl::dim<1>(kernels);
+    const auto k2 = etl::dim<2>(kernels);
+
+    etl::dyn_matrix<value_t<A>, 2> input_col(k1 * k2, (v1 - k1 + 1) * (v2 - k2 + 1));
+
+    conv_2d_valid_multi(std::forward<A>(input), std::forward<B>(kernels), std::forward<C>(features), input_col);
+}
+
+template<typename A, typename B, typename C, typename D>
+void conv_2d_valid_multi(A&& input, B&& kernels, C&& features, D&& input_col){
+    //TODO Validate inputs
+
+    const auto k1 = etl::dim<1>(kernels);
+    const auto k2 = etl::dim<2>(kernels);
+
+    //TODO This version of the implementation should only be used if very fast MMUL is available
+
+    im2col_direct(input_col, input, k1, k2);
+
+    etl::dyn_matrix<value_t<B>, 3> prepared_k(etl::dim<0>(kernels), k1, k2);
+
+    for(std::size_t i = 0; i < etl::dim<0>(kernels); ++i){
+        prepared_k(i) = fflip(transpose(kernels(i)));
+    }
+
+    *mul(
+        etl::reshape(prepared_k, etl::dim<0>(kernels), k1 * k2), 
+        input_col, 
+        etl::reshape(features, etl::dim<0>(features), etl::dim<1>(features) * etl::dim<2>(features)));
+
+    //Standard version in case of slow MMUL
+    //for(size_t k = 0; k < K; ++k){
+        //v_cv(0)(k) = conv_2d_valid(v(channel), w_t(channel)(k));
+    //}
+}
+
 //}}}
 
 //{{{ Apply a reduction on an ETL expression (vector,matrix,binary,unary)
