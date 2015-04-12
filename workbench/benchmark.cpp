@@ -28,7 +28,7 @@
 #define TEST_STRASSEN
 #endif
 
-typedef std::chrono::high_resolution_clock timer_clock;
+typedef std::chrono::steady_clock timer_clock;
 typedef std::chrono::milliseconds milliseconds;
 typedef std::chrono::microseconds microseconds;
 
@@ -934,10 +934,12 @@ void bench_conv_rbm_hidden(std::size_t NC, std::size_t K, std::size_t NV, std::s
     auto NW = NV - NH + 1;
 
     etl::dyn_matrix<double, 4> w(NC, K, NW, NW);
+    etl::dyn_matrix<double, 4> w_t(NC, K, NW, NW);
     etl::dyn_vector<double> b(K);
     etl::dyn_vector<double> c(NC);
 
     etl::dyn_matrix<double, 3> v(NC, NV, NV);
+    etl::dyn_matrix<double, 2> v_t(NW * NW, (NV - NW + 1) * (NV - NW + 1));
     etl::dyn_matrix<double, 3> h(K, NH, NH);
 
     etl::dyn_matrix<double, 4> v_cv(2UL, K, NH, NH);
@@ -950,8 +952,12 @@ void bench_conv_rbm_hidden(std::size_t NC, std::size_t K, std::size_t NV, std::s
 
             for(std::size_t channel = 0; channel < NC; ++channel){
                 for(size_t k = 0; k < K; ++k){
-                    v_cv(0)(k) = conv_2d_valid(v(channel), fflip(w(channel)(k)));
+                    w_t(channel)(k) = fflip(w(channel)(k));
                 }
+            }
+
+            for(std::size_t channel = 0; channel < NC; ++channel){
+                conv_2d_valid_multi(v(channel), w_t(channel), v_cv(0), v_t);
 
                 v_cv(1) += v_cv(0);
             }
@@ -970,21 +976,17 @@ void bench_conv_rbm_visible(std::size_t NC, std::size_t K, std::size_t NV, std::
     etl::dyn_matrix<double, 3> v(NC, NV, NV);
     etl::dyn_matrix<double, 3> h(K, NH, NH);
 
-    etl::dyn_matrix<double, 4> v_cv(2UL, K, NH, NH);
-    etl::dyn_matrix<double, 3> h_cv(2UL, NV, NV);
+    etl::dyn_matrix<double, 3> h_cv(K, NV, NV);
 
     measure("CRBM Visible Activation (" + std::to_string(NC) + "x" + std::to_string(NV) + "^2 -> " +
         std::to_string(K) + "x" + std::to_string(NH) + "^2)",
         [&](){
             for(std::size_t channel = 0; channel < NC; ++channel){
-                h_cv(1) = 0.0;
-
                 for(std::size_t k = 0; k < K; ++k){
-                    h_cv(0) = conv_2d_full(h(k), w(channel)(k));
-                    h_cv(1) += h_cv(0);
+                    h_cv(k) = conv_2d_full(h(k), w(channel)(k));
                 }
 
-                v(channel) = sigmoid(c(channel) + h_cv(1));
+                v(channel) = sigmoid(c(channel) + sum_l(h_cv));
             }
     }, c, h, w);
 }
