@@ -67,6 +67,9 @@ debug_test: debug
 release_debug_test: release_debug
 	./release_debug/bin/etl_test
 
+release_test: release
+	./release/bin/etl_test
+
 test: all
 	./debug/bin/etl_test
 	./release_debug/bin/etl_test
