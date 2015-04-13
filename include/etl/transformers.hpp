@@ -74,7 +74,7 @@ struct dyn_rep_r_transformer {
     std::size_t m;
 
     dyn_rep_r_transformer(sub_type vec, std::array<std::size_t, D> reps_a) : sub(vec), reps(reps_a) {
-        m = std::accumulate(reps.begin(), reps.end(), 1UL, [](auto& a, auto& b){ return a * b; });
+        m = std::accumulate(reps.begin(), reps.end(), 1UL, [](std::size_t a, std::size_t b){ return a * b; });
     }
 
     value_type operator[](std::size_t i) const {
@@ -101,7 +101,7 @@ struct dyn_rep_l_transformer {
     std::size_t m;
 
     dyn_rep_l_transformer(sub_type vec, std::array<std::size_t, D> reps_a) : sub(vec), reps(reps_a) {
-        m = std::accumulate(reps.begin(), reps.end(), 1UL, [](auto& a, auto& b){ return a * b; });
+        m = std::accumulate(reps.begin(), reps.end(), 1UL, [](std::size_t a, std::size_t b){ return a * b; });
     }
 
     value_type operator[](std::size_t i) const {
