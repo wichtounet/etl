@@ -24,9 +24,10 @@ endif
 ifeq (,$(ETL_NO_COVERAGE))
 ifneq (,$(findstring clang,$(CXX)))
 DEBUG_FLAGS += -fprofile-arcs -ftest-coverage
-endif
+else
 ifneq (,$(findstring g++,$(CXX)))
 DEBUG_FLAGS += --coverage
+endif
 endif
 endif
 
