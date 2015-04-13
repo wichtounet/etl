@@ -837,6 +837,21 @@ template<typename A, typename B, typename C, typename D>
 void conv_2d_valid_multi(A&& input, B&& kernels, C&& features, D&& input_col){
     //TODO Validate inputs
 
+    //TODO This version of the implementation should only be used if very fast MMUL is available
+
+    etl::dyn_matrix<value_t<B>, 3> prepared_k(etl::dim<0>(kernels), etl::dim<1>(kernels), etl::dim<2>(kernels));
+
+    for(std::size_t i = 0; i < etl::dim<0>(kernels); ++i){
+        prepared_k(i) = transpose(fflip(kernels(i)));
+    }
+
+    conv_2d_valid_multi_prepared(std::forward<A>(input), prepared_k, std::forward<C>(features), std::forward<D>(input_col));
+}
+
+template<typename A, typename B, typename C, typename D>
+void conv_2d_valid_multi_prepared(A&& input, B&& kernels, C&& features, D&& input_col){
+    //TODO Validate inputs
+
     const auto K  = etl::dim<0>(kernels);
     const auto k1 = etl::dim<1>(kernels);
     const auto k2 = etl::dim<2>(kernels);
@@ -845,16 +860,10 @@ void conv_2d_valid_multi(A&& input, B&& kernels, C&& features, D&& input_col){
 
     im2col_direct(input_col, input, k1, k2);
 
-    etl::dyn_matrix<value_t<B>, 3> prepared_k(etl::dim<0>(kernels), k1, k2);
-
-    for(std::size_t i = 0; i < etl::dim<0>(kernels); ++i){
-        prepared_k(i) = fflip(transpose(kernels(i)));
-    }
-
     *mul(
-        etl::reshape(prepared_k, etl::dim<0>(kernels), k1 * k2),
+        etl::reshape(kernels, K, k1 * k2),
         input_col,
-        etl::reshape(features, etl::dim<0>(features), etl::dim<1>(features) * etl::dim<2>(features)));
+        etl::reshape(features, K, etl::dim<1>(features) * etl::dim<2>(features)));
 
     for(std::size_t k = 0; k < K; ++k){
         //TODO This should not be implemented here
@@ -871,7 +880,6 @@ void conv_2d_valid_multi(A&& input, B&& kernels, C&& features, D&& input_col){
         //features(k) = transpose(features(k));
         //because of aliasing
     }
-
 
     //Standard version in case of slow MMUL
     //for(size_t k = 0; k < K; ++k){
