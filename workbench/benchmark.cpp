@@ -936,14 +936,17 @@ void bench_conv_rbm_hidden(std::size_t NC, std::size_t K, std::size_t NV, std::s
     etl::dyn_matrix<double, 4> w(NC, K, NW, NW);
     etl::dyn_matrix<double, 4> w_t(NC, K, NW, NW);
     etl::dyn_vector<double> b(K);
-    etl::dyn_vector<double> c(NC);
 
     etl::dyn_matrix<double, 3> v(NC, NV, NV);
-    etl::dyn_matrix<double, 2> v_t(NW * NW, (NV - NW + 1) * (NV - NW + 1));
     etl::dyn_matrix<double, 3> h(K, NH, NH);
 
     etl::dyn_matrix<double, 4> v_cv(2UL, K, NH, NH);
     etl::dyn_matrix<double, 3> h_cv(2UL, NV, NV);
+
+    //Small optimizations
+    // 1. Some time can be saved by keeping one matrix for the im2col result and pass it to conv_2d_valid_multi
+    // 2. fflip is already done in conv_2d_multi and fflip(fflip(A)) = A, therefore only tranpose is necessary.
+    // This means calling the _prepared version of conv_2d_valid_multi
 
     measure("CRBM Hidden Activation (" + std::to_string(NC) + "x" + std::to_string(NV) + "^2 -> " +
         std::to_string(K) + "x" + std::to_string(NH) + "^2)",
@@ -957,7 +960,7 @@ void bench_conv_rbm_hidden(std::size_t NC, std::size_t K, std::size_t NV, std::s
             }
 
             for(std::size_t channel = 0; channel < NC; ++channel){
-                conv_2d_valid_multi(v(channel), w_t(channel), v_cv(0), v_t);
+                conv_2d_valid_multi(v(channel), w_t(channel), v_cv(0));
 
                 v_cv(1) += v_cv(0);
             }
