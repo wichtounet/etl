@@ -837,6 +837,7 @@ template<typename A, typename B, typename C, typename D>
 void conv_2d_valid_multi(A&& input, B&& kernels, C&& features, D&& input_col){
     //TODO Validate inputs
 
+    const auto K  = etl::dim<0>(kernels);
     const auto k1 = etl::dim<1>(kernels);
     const auto k2 = etl::dim<2>(kernels);
 
@@ -851,9 +852,26 @@ void conv_2d_valid_multi(A&& input, B&& kernels, C&& features, D&& input_col){
     }
 
     *mul(
-        etl::reshape(prepared_k, etl::dim<0>(kernels), k1 * k2), 
-        input_col, 
+        etl::reshape(prepared_k, etl::dim<0>(kernels), k1 * k2),
+        input_col,
         etl::reshape(features, etl::dim<0>(features), etl::dim<1>(features) * etl::dim<2>(features)));
+
+    for(std::size_t k = 0; k < K; ++k){
+        //TODO This should not be implemented here
+        //TODO This should be optimized as in place matrix transposition
+        for (std::size_t i = 0; i < etl::dim<1>(features); i++){
+            for (std::size_t j = i + 1; j < etl::dim<2>(features); j++){
+                auto temp = features(k, i, j);
+                features(k, i, j) = features(k, j, i);
+                features(k, j, i) = temp;
+            }
+        }
+
+        //Cannot do:
+        //features(k) = transpose(features(k));
+        //because of aliasing
+    }
+
 
     //Standard version in case of slow MMUL
     //for(size_t k = 0; k < K; ++k){
