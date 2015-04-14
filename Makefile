@@ -5,6 +5,8 @@ default: release
 include make-utils/flags.mk
 include make-utils/cpp-utils.mk
 
+WARNINGS_FLAGS += -pedantic
+
 CXX_FLAGS += -Ilib/include -ICatch/include -Werror
 
 ifneq (,$(findstring clang,$(CXX)))
