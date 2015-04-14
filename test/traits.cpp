@@ -313,7 +313,7 @@ template<typename Z, typename E>
 bool correct_type(E&& /*e*/){
     if(std::is_same<Z, double>::value){
         return etl::is_double_precision<E>::value;
-    } else if(std::is_same<Z, float>::value){
+    } else { //if(std::is_same<Z, float>::value){
         return etl::is_single_precision<E>::value;
     }
 }
