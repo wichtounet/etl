@@ -1053,21 +1053,10 @@ struct sub_size_compare<E, cpp::disable_if_t<etl_traits<E>::is_generator>> : std
 
 template<typename E>
 bool is_finite(const E& expr){
-#ifdef __INTEL_COMPILER
-    bool finite = true;
-    for(auto& v : expr){
-        if(!std::isfinite(v)){
-            finite = false;
-            break;
-        }
-    }
-    return finite;
-#else
     using std::begin;
     using std::end;
 
-    return std::find_if(begin(expr), end(expr), [](auto& v){return !std::isfinite(v);}) == end(expr);
-#endif
+    return std::all_of(begin(expr), end(expr), static_cast<bool(*)(value_t<E>)>(std::isfinite));
 }
 
 } //end of namespace etl
