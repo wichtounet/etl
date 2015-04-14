@@ -402,7 +402,7 @@ void fast_dgemm(A&& a, B&& b, C&& c){
         0.0,
         c.memory_start(), etl::dim<1>(c), 1
     );
-};
+}
 
 template<typename A, typename B, typename C>
 void fast_sgemm(A&& a, B&& b, C&& c){
@@ -414,7 +414,7 @@ void fast_sgemm(A&& a, B&& b, C&& c){
         0.0f,
         c.memory_start(), etl::dim<1>(c), 1
     );
-};
+}
 
 } //end of namespace eblas
 
