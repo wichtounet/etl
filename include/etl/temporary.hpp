@@ -14,17 +14,6 @@
 
 namespace etl {
 
-template<typename E, cpp_enable_if(has_direct_access<E>::value || !create_temporary::value)>
-decltype(auto) make_temporary(E&& expr){
-    return std::forward<E>(expr);
-}
-
-template<typename E, cpp_enable_if(!has_direct_access<E>::value && create_temporary::value && !decay_traits<E>::is_fast)>
-decltype(auto) make_temporary(E&& expr){
-    //Sizes will be directly propagated
-    return dyn_matrix<value_t<E>, decay_traits<E>::dimensions()>{std::forward<E>(expr)};
-}
-
 template<typename E, typename Sequence>
 struct build_fast_dyn_matrix_type;
 
@@ -33,9 +22,25 @@ struct build_fast_dyn_matrix_type<E, std::index_sequence<I...>> {
     using type = fast_dyn_matrix<value_t<E>, decay_traits<E>::template dim<I>()...>;
 };
 
-template<typename E, cpp_enable_if(!has_direct_access<E>::value && create_temporary::value && decay_traits<E>::is_fast)>
-decltype(auto) make_temporary(E&& expr){
+template<typename E, cpp_enable_if(decay_traits<E>::is_fast)>
+decltype(auto) force_temporary(E&& expr){
     return typename build_fast_dyn_matrix_type<E, std::make_index_sequence<decay_traits<E>::dimensions()>>::type{std::forward<E>(expr)};
+}
+
+template<typename E, cpp_disable_if(decay_traits<E>::is_fast)>
+decltype(auto) force_temporary(E&& expr){
+    //Sizes will be directly propagated
+    return dyn_matrix<value_t<E>, decay_traits<E>::dimensions()>{std::forward<E>(expr)};
+}
+
+template<typename E, cpp_enable_if(has_direct_access<E>::value || !create_temporary::value)>
+decltype(auto) make_temporary(E&& expr){
+    return std::forward<E>(expr);
+}
+
+template<typename E, cpp_disable_if(has_direct_access<E>::value || !create_temporary::value)>
+decltype(auto) make_temporary(E&& expr){
+    return force_temporary(std::forward<E>(expr));
 }
 
 } //end of namespace etl
