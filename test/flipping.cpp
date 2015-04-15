@@ -147,3 +147,84 @@ TEMPLATE_TEST_CASE_2( "fflip/dyn_matrix", "fflip", Z, float, double ) {
 }
 
 //}}}
+
+//{{{ fflip_inplace
+
+TEMPLATE_TEST_CASE_2( "fflip_inplace/1", "[fflip][fast][vector][inplace]", Z, float, double ) {
+    etl::fast_vector<Z, 3> a({1.0, -2.0, 3.0});
+
+    fflip_inplace(a);
+
+    REQUIRE(a[0] == 1.0);
+    REQUIRE(a[1] == -2.0);
+    REQUIRE(a[2] == 3.0);
+}
+
+TEMPLATE_TEST_CASE_2( "fflip_inplace/2", "[fflip][dyn][vector][inplace]", Z, float, double ) {
+    etl::dyn_vector<Z> a({1.0, -2.0, 3.0});
+
+    fflip_inplace(a);
+
+    REQUIRE(a[0] == 1.0);
+    REQUIRE(a[1] == -2.0);
+    REQUIRE(a[2] == 3.0);
+}
+
+TEMPLATE_TEST_CASE_2( "fflip_inplace/3", "[fflip][fast][matrix][inplace]", Z, float, double ) {
+    etl::fast_matrix<Z, 3, 2> a({1.0, -2.0, 3.0, 0.5, 0.0, -1});
+
+    fflip_inplace(a);
+
+    REQUIRE(a(0,0) == -1.0);
+    REQUIRE(a(0,1) == 0.0);
+    REQUIRE(a(1,0) == 0.5);
+    REQUIRE(a(1,1) == 3.0);
+    REQUIRE(a(2,0) == -2.0);
+    REQUIRE(a(2,1) == 1.0);
+}
+
+TEMPLATE_TEST_CASE_2( "fflip_inplace/4", "[fflip][dyn][matrix][inplace]", Z, float, double ) {
+    etl::dyn_matrix<Z> a(3,2, std::initializer_list<Z>({1.0, -2.0, 3.0, 0.5, 0.0, -1}));
+
+    fflip_inplace(a);
+
+    REQUIRE(a(0,0) == -1.0);
+    REQUIRE(a(0,1) == 0.0);
+    REQUIRE(a(1,0) == 0.5);
+    REQUIRE(a(1,1) == 3.0);
+    REQUIRE(a(2,0) == -2.0);
+    REQUIRE(a(2,1) == 1.0);
+}
+
+TEMPLATE_TEST_CASE_2( "fflip_inplace/5", "[fflip][sub][fast][matrix][inplace]", Z, float, double ) {
+    etl::fast_matrix<Z, 2, 3, 2> a({1.0, -2.0, 3.0, 0.5, 0.0, -1, 1.0, -2.0, 3.0, 0.5, 0.0, -1});
+
+    fflip_inplace(a(1));
+
+    REQUIRE(a(0,0,0) == 1.0);
+    REQUIRE(a(0,0,1) == -2.0);
+    REQUIRE(a(0,1,0) == 3.0);
+    REQUIRE(a(0,1,1) == 0.5);
+    REQUIRE(a(0,2,0) == 0.0);
+    REQUIRE(a(0,2,1) == -1.0);
+
+    REQUIRE(a(1, 0,0) == -1.0);
+    REQUIRE(a(1, 0,1) == 0.0);
+    REQUIRE(a(1, 1,0) == 0.5);
+    REQUIRE(a(1, 1,1) == 3.0);
+    REQUIRE(a(1, 2,0) == -2.0);
+    REQUIRE(a(1, 2,1) == 1.0);
+}
+
+TEMPLATE_TEST_CASE_2( "fflip_inplace/6", "[fflip][fast][matrix][inplace]", Z, float, double ) {
+    etl::fast_matrix<Z, 31, 31> a(etl::magic<Z>(31));
+    etl::fast_matrix<Z, 31, 31> b(etl::fflip(a));
+
+    fflip_inplace(a);
+
+    for(std::size_t i = 0; i < etl::size(a); ++i){
+        REQUIRE(a[0] == b[0]);
+    }
+}
+
+//}}}
