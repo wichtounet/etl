@@ -806,3 +806,27 @@ TEMPLATE_TEST_CASE_2( "fast_matrix/swap_2", "", Z, float, double ) {
 }
 
 //}}} swap tests
+
+//{{{ comparisons operators
+
+TEMPLATE_TEST_CASE_2( "fast_matrix/operator==/1", "[fast][matrix]", Z, float, double ) {
+    etl::fast_matrix<Z, 3, 2> a = {-1.0, 2.0, 5.0, 1.0, 1.1, 1.9};
+    etl::fast_matrix<Z, 3, 2> b = {1.0, 3.3, 4.4, 9, 10.1, -1.1};
+
+    REQUIRE(a == a);
+    REQUIRE(b == b);
+    REQUIRE(a != b);
+    REQUIRE(b != a);
+}
+
+TEMPLATE_TEST_CASE_2( "fast_matrix/operator==/2", "[fast][matrix]", Z, float, double ) {
+    etl::fast_matrix<Z, 2, 3> a = {-1.0, 2.0, 5.0, 1.0, 1.1, 1.9};
+    etl::fast_matrix<Z, 3, 2> b = {-1.0, 2.0, 5.0, 1.0, 1.1, 1.9};
+
+    REQUIRE(a == a);
+    REQUIRE(b == b);
+    REQUIRE(a != b);
+    REQUIRE(b != a);
+}
+
+//}}} swap tests

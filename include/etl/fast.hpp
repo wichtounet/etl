@@ -383,6 +383,20 @@ public:
     }
 
     //}}}
+
+    template<typename T2, typename ST2, std::size_t... Dims2>
+    bool operator==(const fast_matrix_impl<T2, ST2, Dims2...>& rhs){
+        if(!sequence_equal<std::index_sequence<Dims...>, std::index_sequence<Dims2...>>::value){
+            return false;
+        }
+
+        return std::equal(begin(), end(), rhs.begin());
+    }
+
+    template<typename T2, typename ST2, std::size_t... Dims2>
+    bool operator!=(const fast_matrix_impl<T2, ST2, Dims2...>& rhs){
+        return !(*this == rhs);
+    }
 };
 
 template<typename T, typename ST, std::size_t... Dims>
