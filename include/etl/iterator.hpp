@@ -98,6 +98,23 @@ public:
     bool operator!=(const iterator& other) const {
         return !(*this == other);
     }
+
+    bool operator>(const iterator& other) const {
+        return i > other.i;
+    }
+
+    bool operator>=(const iterator& other) const {
+        return i >= other.i;
+    }
+
+    bool operator<(const iterator& other) const {
+        return i < other.i;
+    }
+
+    bool operator<=(const iterator& other) const {
+        return i <= other.i;
+
+    }
 };
 
 } //end of namespace etl
