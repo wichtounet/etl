@@ -64,12 +64,16 @@ struct nth_size final {
 template<typename S1, typename S2, typename Enable = void>
 struct sequence_equal;
 
+template<>
+struct sequence_equal<std::index_sequence<>, std::index_sequence<>> : std::true_type {};
+
+template<std::size_t... I1, std::size_t... I2>
+struct sequence_equal<std::index_sequence<I1...>, std::index_sequence<I2...>,
+    std::enable_if_t<sizeof...(I1) != sizeof...(I2)>> : std::false_type {};
+
 template<std::size_t I, std::size_t... I1, std::size_t... I2>
 struct sequence_equal<std::index_sequence<I, I1...>, std::index_sequence<I, I2...>,
     std::enable_if_t<sizeof...(I1) == sizeof...(I2)>> : cpp::bool_constant<sequence_equal<std::index_sequence<I1...>, std::index_sequence<I2...>>::value> {};
-
-template<>
-struct sequence_equal<std::index_sequence<>, std::index_sequence<>> : std::true_type {};
 
 template<std::size_t I11, std::size_t I21, std::size_t... I1, std::size_t... I2>
 struct sequence_equal<std::index_sequence<I11, I1...>, std::index_sequence<I21, I2...>,
