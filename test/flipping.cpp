@@ -222,9 +222,7 @@ TEMPLATE_TEST_CASE_2( "fflip_inplace/6", "[fflip][fast][matrix][inplace]", Z, fl
 
     fflip_inplace(a);
 
-    for(std::size_t i = 0; i < etl::size(a); ++i){
-        REQUIRE(a[0] == b[0]);
-    }
+    REQUIRE(a == b);
 }
 
 //}}}
