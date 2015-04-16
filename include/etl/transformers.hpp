@@ -541,6 +541,36 @@ void convmtx2_direct(M& m, A&& sub, std::size_t k1, std::size_t k2){
     }
 }
 
+template<typename A, typename M>
+void convmtx2_direct_t(M& m, A&& sub, std::size_t k1, std::size_t k2){
+    const auto i1 = etl::dim<0>(sub);
+    const auto i2 = etl::dim<1>(sub);
+
+    const auto c_height = (i1 + k1 - 1) * (i2 + k2 - 1);
+    const auto c_width = k1 * k2;
+
+    const auto max_fill = c_height - ((i1 + k1 - 1) * ((c_width - 1) / k1) + (c_width - 1) % k1);
+    const auto inner_paddings = max_fill - (i1 * i2);
+    const auto inner_padding = inner_paddings / (i2 - 1);
+
+    auto* __restrict mm = m.memory_start();
+    auto* __restrict ss = sub.memory_start();
+
+    std::fill(mm, mm + etl::size(m), 0.0);
+
+    for(std::size_t j = 0; j < c_width; ++j){
+        std::size_t big_i = (i1 + k1 - 1) * (j / k1) + j % k1;
+
+        for(std::size_t ii = 0; ii < etl::dim<1>(sub); ++ii){
+            for(std::size_t jj = 0; jj < etl::dim<0>(sub); ++jj){
+                mm[j * c_width + big_i] = ss[jj * i2 + ii];
+                ++big_i;
+            }
+            big_i += inner_padding;
+        }
+    }
+}
+
 //TODO Adapt this to an expression
 
 template<typename A, typename M, cpp_disable_if(has_direct_access<A>::value && has_direct_access<M>::value)>
