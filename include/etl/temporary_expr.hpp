@@ -14,14 +14,14 @@
 
 #include "traits_lite.hpp"
 #include "iterator.hpp"
+#include "comparable.hpp"
 
 namespace etl {
 
 //TODO Review constness of this class
 
 template <typename T, typename AExpr, typename BExpr, typename Op, typename Forced>
-class temporary_binary_expr final {
-public:
+struct temporary_binary_expr final : comparable<temporary_binary_expr<T, AExpr, BExpr, Op, Forced>> {
     using        value_type = T;
     using       result_type = Forced;
     using       memory_type = value_type*;
@@ -167,8 +167,7 @@ private:
 //Specialization with no forced result
 
 template <typename T, typename AExpr, typename BExpr, typename Op>
-class temporary_binary_expr<T, AExpr, BExpr, Op, void> final {
-public:
+struct temporary_binary_expr<T, AExpr, BExpr, Op, void> final : comparable<temporary_binary_expr<T, AExpr, BExpr, Op, void>> {
     using        value_type = T;
     using       result_type = typename Op::template result_type<AExpr, BExpr>;
     using       memory_type = value_type*;

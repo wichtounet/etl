@@ -21,6 +21,7 @@
 #include "traits_lite.hpp"          //forward declaration of the traits
 #include "compat.hpp"               //To make it work with g++
 #include "inplace_assignable.hpp"
+#include "comparable.hpp"
 
 namespace etl {
 
@@ -86,7 +87,7 @@ inline std::array<std::size_t, sizeof...(I)> sizes(const std::index_sequence<I..
 } // end of namespace dyn_detail
 
 template<typename T, std::size_t D>
-struct dyn_matrix final : inplace_assignable<dyn_matrix<T, D>> {
+struct dyn_matrix final : inplace_assignable<dyn_matrix<T, D>>, comparable<dyn_matrix<T, D>> {
     static_assert(D > 0, "A matrix must have a least 1 dimension");
 
 public:

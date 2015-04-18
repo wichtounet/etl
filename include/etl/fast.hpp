@@ -18,6 +18,7 @@
 #include "traits_lite.hpp"          //forward declaration of the traits
 #include "compat.hpp"               //To make it work with g++
 #include "inplace_assignable.hpp"
+#include "comparable.hpp"
 
 namespace etl {
 
@@ -66,7 +67,7 @@ struct is_vector<std::vector<N>> : std::true_type { };
 } //end of namespace detail
 
 template<typename T, typename ST, std::size_t... Dims>
-struct fast_matrix_impl final : inplace_assignable<fast_matrix_impl<T, ST, Dims...>> {
+struct fast_matrix_impl final : inplace_assignable<fast_matrix_impl<T, ST, Dims...>>, comparable<fast_matrix_impl<T, ST, Dims...>> {
     static_assert(sizeof...(Dims) > 0, "At least one dimension must be specified");
 
 public:
@@ -397,20 +398,6 @@ public:
     }
 
     //}}}
-
-    template<typename T2, typename ST2, std::size_t... Dims2>
-    bool operator==(const fast_matrix_impl<T2, ST2, Dims2...>& rhs){
-        if(!sequence_equal<std::index_sequence<Dims...>, std::index_sequence<Dims2...>>::value){
-            return false;
-        }
-
-        return std::equal(begin(), end(), rhs.begin());
-    }
-
-    template<typename T2, typename ST2, std::size_t... Dims2>
-    bool operator!=(const fast_matrix_impl<T2, ST2, Dims2...>& rhs){
-        return !(*this == rhs);
-    }
 };
 
 template<typename T, typename ST, std::size_t... Dims>
