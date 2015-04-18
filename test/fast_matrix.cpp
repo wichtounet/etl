@@ -840,4 +840,4 @@ TEMPLATE_TEST_CASE_2( "fast_matrix/operator==/2", "[fast][matrix]", Z, float, do
     REQUIRE(b != a);
 }
 
-//}}} swap tests
+//}}}

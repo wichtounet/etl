@@ -38,6 +38,22 @@ struct inplace_assignable {
 
         return as_derived();
     }
+
+    derived_t& transpose_inplace(){
+        static_assert(etl_traits<derived_t>::dimensions() == 2, "Only 2D matrix can be transposed");
+        cpp_assert(etl::dim<0>(as_derived()) == etl::dim<1>(as_derived()), "Only square matrices can be tranposed inplace");
+
+        const auto N = etl::dim<0>(as_derived());
+
+        for(std::size_t i = 0; i < N - 1; ++i){
+            for(std::size_t j = i + 1; j < N; ++j){
+                using std::swap;
+                swap(as_derived()(i, j), as_derived()(j, i));
+            }
+        }
+
+        return as_derived();
+    }
 };
 
 } //end of namespace etl
