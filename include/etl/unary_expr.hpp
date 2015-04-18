@@ -14,6 +14,7 @@
 
 #include "traits_lite.hpp"
 #include "iterator.hpp"
+#include "inplace_assignable.hpp"
 
 namespace etl {
 
@@ -21,12 +22,7 @@ struct identity_op;
 struct virtual_op;
 
 template <typename T, typename Expr, typename UnaryOp>
-class unary_expr final  {
-public:
-    using        value_type = T;
-    using       memory_type = void;
-    using const_memory_type = void;
-
+struct unary_expr final  {
 private:
     static_assert(is_etl_expr<Expr>::value, "Only ETL expressions can be used in unary_expr");
 
@@ -35,6 +31,10 @@ private:
     Expr _value;
 
 public:
+    using        value_type = T;
+    using       memory_type = void;
+    using const_memory_type = void;
+
     //Cannot be constructed with no args
     unary_expr() = delete;
 
@@ -88,7 +88,7 @@ public:
 };
 
 template <typename T, typename Expr>
-class unary_expr<T, Expr, identity_op> {
+struct unary_expr<T, Expr, identity_op> : inplace_assignable<unary_expr<T, Expr, identity_op>> {
 private:
     static_assert(is_etl_expr<Expr>::value, "Only ETL expressions can be used in unary_expr");
 
@@ -243,7 +243,7 @@ public:
 };
 
 template <typename T, typename Expr>
-class unary_expr<T, Expr, virtual_op> {
+struct unary_expr<T, Expr, virtual_op> {
 private:
     using this_type = unary_expr<T, Expr, virtual_op>;
 

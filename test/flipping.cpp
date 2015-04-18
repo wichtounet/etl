@@ -199,7 +199,7 @@ TEMPLATE_TEST_CASE_2( "fflip_inplace/4", "[fflip][dyn][matrix][inplace]", Z, flo
 TEMPLATE_TEST_CASE_2( "fflip_inplace/5", "[fflip][sub][fast][matrix][inplace]", Z, float, double ) {
     etl::fast_matrix<Z, 2, 3, 2> a({1.0, -2.0, 3.0, 0.5, 0.0, -1, 1.0, -2.0, 3.0, 0.5, 0.0, -1});
 
-    fflip_inplace(a(1));
+    a(1).fflip_inplace();
 
     REQUIRE(a(0,0,0) == 1.0);
     REQUIRE(a(0,0,1) == -2.0);
