@@ -273,6 +273,16 @@ public:
         return *this;
     }
 
+    fast_matrix_impl& fflip_inplace(){
+        static_assert(n_dimensions <= 2, "Impossible to fflip a matrix of D > 2");
+
+        if(n_dimensions == 2){
+            std::reverse(begin(), end());
+        }
+
+        return *this;
+    }
+
     //}}}
 
     //{{{ Operations returning expressions

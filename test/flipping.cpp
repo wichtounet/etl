@@ -153,7 +153,7 @@ TEMPLATE_TEST_CASE_2( "fflip/dyn_matrix", "fflip", Z, float, double ) {
 TEMPLATE_TEST_CASE_2( "fflip_inplace/1", "[fflip][fast][vector][inplace]", Z, float, double ) {
     etl::fast_vector<Z, 3> a({1.0, -2.0, 3.0});
 
-    fflip_inplace(a);
+    a.fflip_inplace();
 
     REQUIRE(a[0] == 1.0);
     REQUIRE(a[1] == -2.0);
@@ -163,7 +163,7 @@ TEMPLATE_TEST_CASE_2( "fflip_inplace/1", "[fflip][fast][vector][inplace]", Z, fl
 TEMPLATE_TEST_CASE_2( "fflip_inplace/2", "[fflip][dyn][vector][inplace]", Z, float, double ) {
     etl::dyn_vector<Z> a({1.0, -2.0, 3.0});
 
-    fflip_inplace(a);
+    a.fflip_inplace();
 
     REQUIRE(a[0] == 1.0);
     REQUIRE(a[1] == -2.0);
@@ -173,7 +173,7 @@ TEMPLATE_TEST_CASE_2( "fflip_inplace/2", "[fflip][dyn][vector][inplace]", Z, flo
 TEMPLATE_TEST_CASE_2( "fflip_inplace/3", "[fflip][fast][matrix][inplace]", Z, float, double ) {
     etl::fast_matrix<Z, 3, 2> a({1.0, -2.0, 3.0, 0.5, 0.0, -1});
 
-    fflip_inplace(a);
+    a.fflip_inplace();
 
     REQUIRE(a(0,0) == -1.0);
     REQUIRE(a(0,1) == 0.0);
@@ -186,7 +186,7 @@ TEMPLATE_TEST_CASE_2( "fflip_inplace/3", "[fflip][fast][matrix][inplace]", Z, fl
 TEMPLATE_TEST_CASE_2( "fflip_inplace/4", "[fflip][dyn][matrix][inplace]", Z, float, double ) {
     etl::dyn_matrix<Z> a(3,2, std::initializer_list<Z>({1.0, -2.0, 3.0, 0.5, 0.0, -1}));
 
-    fflip_inplace(a);
+    a.fflip_inplace();
 
     REQUIRE(a(0,0) == -1.0);
     REQUIRE(a(0,1) == 0.0);

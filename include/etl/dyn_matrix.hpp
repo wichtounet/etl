@@ -317,6 +317,16 @@ public:
         return *this;
     }
 
+    dyn_matrix& fflip_inplace(){
+        static_assert(n_dimensions <= 2, "Impossible to fflip a matrix of D > 2");
+
+        if(n_dimensions == 2){
+            std::reverse(begin(), end());
+        }
+
+        return *this;
+    }
+
     //}}}
 
     //{{{ In place operations
