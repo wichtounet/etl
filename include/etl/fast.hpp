@@ -249,6 +249,8 @@ public:
 
     //}}}
 
+    //{{{ In place operations
+
     void swap(fast_matrix_impl& other){
         //TODO Ensure dimensions...
         using std::swap;
@@ -270,6 +272,22 @@ public:
 
         return *this;
     }
+
+    //}}}
+
+    //{{{ Operations returning expressions
+
+    template<typename E, cpp::enable_if_all_c<std::is_convertible<value_t<E>, value_type>, is_etl_expr<E>> = cpp::detail::dummy>
+    decltype(auto) scale(E&& e){
+        return etl::scale(*this, e);
+    }
+
+    template<typename E, cpp_enable_if(std::is_convertible<E, value_type>::value)>
+    decltype(auto) scale(E&& e){
+        return etl::scale(*this, e);
+    }
+
+    //}}}
 
     //{{{ Accessors
 

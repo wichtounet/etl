@@ -23,6 +23,31 @@
 #include "generator_expr.hpp"
 #include "temporary_expr.hpp"
 
+namespace etl {
+
+template<typename T, typename ST, std::size_t... Dims>
+struct fast_matrix_impl;
+
+template<typename T, std::size_t... Dims>
+using fast_matrix = fast_matrix_impl<T, std::array<T, mul_all<Dims...>::value>, Dims...>;
+
+template<typename T, std::size_t... Dims>
+using fast_dyn_matrix = fast_matrix_impl<T, std::vector<T>, Dims...>;
+
+template<typename T, std::size_t D = 2>
+struct dyn_matrix;
+
+template<typename T>
+using dyn_vector = dyn_matrix<T, 1>;
+
+}
+
+// The complex expressions
+#include "mmul_expr.hpp"
+#include "conv_expr.hpp"
+
+#include "fast_expr.hpp"
+
 // The value classes
 #include "etl/fast_matrix.hpp"
 #include "etl/fast_vector.hpp"
@@ -30,10 +55,6 @@
 #include "etl/dyn_vector.hpp"
 #include "etl/fast_dyn_matrix.hpp"
 #include "etl/fast_dyn_vector.hpp"
-
-// The complex expressions
-#include "mmul_expr.hpp"
-#include "conv_expr.hpp"
 
 // The traits
 #include "traits.hpp"

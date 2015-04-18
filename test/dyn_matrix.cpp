@@ -293,6 +293,17 @@ TEMPLATE_TEST_CASE_2( "dyn_matrix/mul_2", "dyn_matrix::operator*=", Z, double, f
     REQUIRE(a[2] == 20.0);
 }
 
+TEMPLATE_TEST_CASE_2( "dyn_matrix/mul_3", "dyn_matrix::operator*", Z, double, float) {
+    etl::dyn_matrix<Z> a(2,2, std::initializer_list<Z>({-1.0, 2.0, 5.0, 1.0}));
+    etl::dyn_matrix<Z> b(2,2, std::initializer_list<Z>({2.5, 3.0, 4.0, 1.0}));
+
+    etl::dyn_matrix<Z> c(a.scale(b));
+
+    REQUIRE(c[0] == -2.5);
+    REQUIRE(c[1] ==  6.0);
+    REQUIRE(c[2] == 20.0);
+}
+
 TEMPLATE_TEST_CASE_2( "dyn_matrix/div_scalar_1", "dyn_matrix::operator/", Z, double, float) {
     etl::dyn_matrix<Z> test_matrix(2,2, std::initializer_list<Z>({-1.0, 2.0, 5.0, 1.0}));
 

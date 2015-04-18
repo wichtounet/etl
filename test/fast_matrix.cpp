@@ -292,6 +292,17 @@ TEMPLATE_TEST_CASE_2( "fast_matrix/mul_2", "fast_matrix::operator*=", Z, float, 
     REQUIRE(a[2] == 20.0);
 }
 
+TEMPLATE_TEST_CASE_2( "fast_matrix/mul_3", "fast_matrix::operator*", Z, float, double ) {
+    etl::fast_matrix<Z, 2, 2> a = {-1.0, 2.0, 5.0, 1.0};
+    etl::fast_matrix<Z, 2, 2> b = {2.5, 3.0, 4.0, 1.0};
+
+    etl::fast_matrix<Z, 2, 2> c(a.scale(b));
+
+    REQUIRE(c[0] == -2.5);
+    REQUIRE(c[1] ==  6.0);
+    REQUIRE(c[2] == 20.0);
+}
+
 TEMPLATE_TEST_CASE_2( "fast_matrix/div_scalar_1", "fast_matrix::operator/", Z, float, double ) {
     etl::fast_matrix<Z, 2, 2> test_matrix = {-1.0, 2.0, 5.0, 1.0};
 

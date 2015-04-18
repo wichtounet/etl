@@ -84,7 +84,7 @@ inline std::array<std::size_t, sizeof...(I)> sizes(const std::index_sequence<I..
 
 } // end of namespace dyn_detail
 
-template<typename T, std::size_t D = 2>
+template<typename T, std::size_t D>
 struct dyn_matrix final {
     static_assert(D > 0, "A matrix must have a least 1 dimension");
 
@@ -290,6 +290,8 @@ public:
 
     //}}}
 
+    //{{{ In place operations
+
     void swap(dyn_matrix& other){
         //TODO This should be relaxed...
         cpp_assert(other.size() == size(), "Cannot swap from a dyn_matrix of different size");
@@ -298,8 +300,6 @@ public:
         swap(_data, other._data);
         swap(_dimensions, other._dimensions);
     }
-
-    //{{{ In place operations
 
     template<typename E, cpp::enable_if_all_c<std::is_convertible<value_t<E>, value_type>, is_etl_expr<E>> = cpp::detail::dummy>
     dyn_matrix& scale_inplace(E&& e){
@@ -315,6 +315,20 @@ public:
         *this *= e;
 
         return *this;
+    }
+
+    //}}}
+
+    //{{{ In place operations
+
+    template<typename E, cpp::enable_if_all_c<std::is_convertible<value_t<E>, value_type>, is_etl_expr<E>> = cpp::detail::dummy>
+    decltype(auto) scale(E&& e){
+        return etl::scale(*this, e);
+    }
+
+    template<typename E, cpp_enable_if(std::is_convertible<E, value_type>::value)>
+    decltype(auto) scale(E&& e){
+        return etl::scale(*this, e);
     }
 
     //}}}
