@@ -321,14 +321,21 @@ public:
 
     //{{{ In place operations
 
-    template<typename E, cpp::enable_if_all_c<std::is_convertible<value_t<E>, value_type>, is_etl_expr<E>> = cpp::detail::dummy>
-    decltype(auto) scale(E&& e){
-        return etl::scale(*this, e);
+    template<typename E>
+    auto scale(E&& e) -> decltype(etl::scale(*this, std::forward<E>(e))) {
+        return etl::scale(*this, std::forward<E>(e));
     }
 
-    template<typename E, cpp_enable_if(std::is_convertible<E, value_type>::value)>
-    decltype(auto) scale(E&& e){
-        return etl::scale(*this, e);
+    auto fflip() -> decltype(etl::fflip(*this)) {
+        return etl::fflip(*this);
+    }
+
+    auto hflip() -> decltype(etl::hflip(*this)) {
+        return etl::hflip(*this);
+    }
+
+    auto vflip() -> decltype(etl::vflip(*this)) {
+        return etl::vflip(*this);
     }
 
     //}}}
