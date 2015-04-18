@@ -12,14 +12,15 @@
 #include <array>        //To store the dimensions
 #include <tuple>        //For TMP stuff
 #include <algorithm>    //For std::find_if
-#include <iostream> //For stream support
+#include <iostream>     //For stream support
 
 #include "cpp_utils/assert.hpp"
 #include "cpp_utils/tmp.hpp"
 
 #include "evaluator.hpp"
-#include "traits_lite.hpp"   //forward declaration of the traits
-#include "compat.hpp"       //To make it work with g++
+#include "traits_lite.hpp"          //forward declaration of the traits
+#include "compat.hpp"               //To make it work with g++
+#include "inplace_assignable.hpp"
 
 namespace etl {
 
@@ -85,7 +86,7 @@ inline std::array<std::size_t, sizeof...(I)> sizes(const std::index_sequence<I..
 } // end of namespace dyn_detail
 
 template<typename T, std::size_t D>
-struct dyn_matrix final {
+struct dyn_matrix final : inplace_assignable<dyn_matrix<T, D>> {
     static_assert(D > 0, "A matrix must have a least 1 dimension");
 
 public:
@@ -290,7 +291,7 @@ public:
 
     //}}}
 
-    //{{{ In place operations
+    //{{{ Swap operations
 
     void swap(dyn_matrix& other){
         //TODO This should be relaxed...
@@ -299,32 +300,6 @@ public:
         using std::swap;
         swap(_data, other._data);
         swap(_dimensions, other._dimensions);
-    }
-
-    template<typename E, cpp::enable_if_all_c<std::is_convertible<value_t<E>, value_type>, is_etl_expr<E>> = cpp::detail::dummy>
-    dyn_matrix& scale_inplace(E&& e){
-        ensure_same_size(*this, e);
-
-        *this *= e;
-
-        return *this;
-    }
-
-    template<typename E, cpp_enable_if(std::is_convertible<E, value_type>::value)>
-    dyn_matrix& scale_inplace(E&& e){
-        *this *= e;
-
-        return *this;
-    }
-
-    dyn_matrix& fflip_inplace(){
-        static_assert(n_dimensions <= 2, "Impossible to fflip a matrix of D > 2");
-
-        if(n_dimensions == 2){
-            std::reverse(begin(), end());
-        }
-
-        return *this;
     }
 
     //}}}

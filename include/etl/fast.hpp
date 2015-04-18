@@ -15,8 +15,9 @@
 
 #include "tmp.hpp"
 #include "evaluator.hpp"
-#include "traits_lite.hpp"   //forward declaration of the traits
-#include "compat.hpp"       //To make it work with g++
+#include "traits_lite.hpp"          //forward declaration of the traits
+#include "compat.hpp"               //To make it work with g++
+#include "inplace_assignable.hpp"
 
 namespace etl {
 
@@ -65,7 +66,7 @@ struct is_vector<std::vector<N>> : std::true_type { };
 } //end of namespace detail
 
 template<typename T, typename ST, std::size_t... Dims>
-struct fast_matrix_impl final {
+struct fast_matrix_impl final : inplace_assignable<fast_matrix_impl<T, ST, Dims...>> {
     static_assert(sizeof...(Dims) > 0, "At least one dimension must be specified");
 
 public:
@@ -249,38 +250,12 @@ public:
 
     //}}}
 
-    //{{{ In place operations
+    //{{{ Swap operations
 
     void swap(fast_matrix_impl& other){
         //TODO Ensure dimensions...
         using std::swap;
         swap(_data, other._data);
-    }
-
-    template<typename E, cpp::enable_if_all_c<std::is_convertible<value_t<E>, value_type>, is_etl_expr<E>> = cpp::detail::dummy>
-    fast_matrix_impl& scale_inplace(E&& e){
-        ensure_same_size(*this, e);
-
-        *this *= e;
-
-        return *this;
-    }
-
-    template<typename E, cpp_enable_if(std::is_convertible<E, value_type>::value)>
-    fast_matrix_impl& scale_inplace(E&& e){
-        *this *= e;
-
-        return *this;
-    }
-
-    fast_matrix_impl& fflip_inplace(){
-        static_assert(n_dimensions <= 2, "Impossible to fflip a matrix of D > 2");
-
-        if(n_dimensions == 2){
-            std::reverse(begin(), end());
-        }
-
-        return *this;
     }
 
     //}}}
