@@ -686,7 +686,7 @@ TEMPLATE_TEST_CASE_2( "dyn_matrix/scale_3", "", Z, float, double ) {
     etl::dyn_matrix<Z> a(2, 2, etl::values(-1.0, 2.0, 5.0, 1.0));
     etl::dyn_matrix<Z> b(2, 2, etl::values(2.5, 2.0, 3.0, -1.2));
 
-    a.scale(b);
+    a.scale_inplace(b);
 
     REQUIRE(a[0] == Z(-2.5));
     REQUIRE(a[1] == Z( 4.0));
@@ -697,7 +697,7 @@ TEMPLATE_TEST_CASE_2( "dyn_matrix/scale_3", "", Z, float, double ) {
 TEMPLATE_TEST_CASE_2( "dyn_matrix/scale_4", "", Z, float, double ) {
     etl::dyn_matrix<Z> a(2, 2, etl::values(-1.0, 2.0, 5.0, 1.0));
 
-    a.scale(2.5);
+    a.scale_inplace(2.5);
 
     REQUIRE(a[0] == -2.5);
     REQUIRE(a[1] ==  5.0);

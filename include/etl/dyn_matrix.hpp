@@ -299,8 +299,10 @@ public:
         swap(_dimensions, other._dimensions);
     }
 
+    //{{{ In place operations
+
     template<typename E, cpp::enable_if_all_c<std::is_convertible<value_t<E>, value_type>, is_etl_expr<E>> = cpp::detail::dummy>
-    dyn_matrix& scale(E&& e){
+    dyn_matrix& scale_inplace(E&& e){
         ensure_same_size(*this, e);
 
         *this *= e;
@@ -309,11 +311,13 @@ public:
     }
 
     template<typename E, cpp_enable_if(std::is_convertible<E, value_type>::value)>
-    dyn_matrix& scale(E&& e){
+    dyn_matrix& scale_inplace(E&& e){
         *this *= e;
 
         return *this;
     }
+
+    //}}}
 
     //{{{ Accessors
 

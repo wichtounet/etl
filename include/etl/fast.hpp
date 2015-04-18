@@ -256,7 +256,7 @@ public:
     }
 
     template<typename E, cpp::enable_if_all_c<std::is_convertible<value_t<E>, value_type>, is_etl_expr<E>> = cpp::detail::dummy>
-    fast_matrix_impl& scale(E&& e){
+    fast_matrix_impl& scale_inplace(E&& e){
         ensure_same_size(*this, e);
 
         *this *= e;
@@ -265,7 +265,7 @@ public:
     }
 
     template<typename E, cpp_enable_if(std::is_convertible<E, value_type>::value)>
-    fast_matrix_impl& scale(E&& e){
+    fast_matrix_impl& scale_inplace(E&& e){
         *this *= e;
 
         return *this;

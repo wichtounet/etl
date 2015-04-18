@@ -740,7 +740,7 @@ TEMPLATE_TEST_CASE_2( "fast_matrix/scale_3", "", Z, float, double ) {
     etl::fast_matrix<Z, 2, 2> a = {-1.0, 2.0, 5.0, 1.0};
     etl::fast_matrix<Z, 2, 2> b = {2.5, 2.0, 3.0, -1.2};
 
-    a.scale(b);
+    a.scale_inplace(b);
 
     REQUIRE(a[0] == Z(-2.5));
     REQUIRE(a[1] == Z( 4.0));
@@ -751,7 +751,7 @@ TEMPLATE_TEST_CASE_2( "fast_matrix/scale_3", "", Z, float, double ) {
 TEMPLATE_TEST_CASE_2( "fast_matrix/scale_4", "", Z, float, double ) {
     etl::fast_matrix<Z, 2, 2> a = {-1.0, 2.0, 5.0, 1.0};
 
-    a.scale(2.5);
+    a.scale_inplace(2.5);
 
     REQUIRE(a[0] == -2.5);
     REQUIRE(a[1] ==  5.0);
