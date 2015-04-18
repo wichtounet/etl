@@ -338,6 +338,10 @@ public:
         return etl::vflip(*this);
     }
 
+    auto transpose() -> decltype(etl::transpose(*this)) {
+        return etl::transpose(*this);
+    }
+
     //}}}
 
     //{{{ Accessors
