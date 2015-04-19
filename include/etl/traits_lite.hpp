@@ -74,10 +74,10 @@ template<typename A, typename B, typename C>
 struct is_double_precision_3 : cpp::bool_constant_c<cpp::and_c<is_double_precision<A>, is_double_precision<B>, is_double_precision<C>>> {};
 
 template<typename A, typename B>
-struct is_dma_2;
+struct is_dma_2 : cpp::bool_constant_c<cpp::and_c<has_direct_access<A>, has_direct_access<B>>> {};
 
 template<typename A, typename B, typename C>
-struct is_dma_3;
+struct is_dma_3 : cpp::bool_constant_c<cpp::and_c<has_direct_access<A>, has_direct_access<B>, has_direct_access<C>>> {};
 
 template<typename E>
 using decay_traits = etl_traits<std::decay_t<E>>;

@@ -142,12 +142,6 @@ struct has_direct_access : cpp::bool_constant_c<cpp::or_c<
         , is_direct_dyn_matrix_view<DT>
     >> {};
 
-template<typename A, typename B>
-struct is_dma_2 : cpp::bool_constant_c<cpp::and_c<has_direct_access<A>, has_direct_access<B>>> {};
-
-template<typename A, typename B, typename C>
-struct is_dma_3 : cpp::bool_constant_c<cpp::and_c<has_direct_access<A>, has_direct_access<B>, has_direct_access<C>>> {};
-
 template<typename T, typename Enable>
 struct etl_traits;
 
