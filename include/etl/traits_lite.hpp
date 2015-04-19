@@ -61,11 +61,20 @@ struct is_single_precision : cpp::bool_constant_c<std::is_same<typename std::dec
 template<typename T>
 struct is_double_precision : cpp::bool_constant_c<std::is_same<typename std::decay_t<T>::value_type, double>> {};
 
-template<typename A, typename B, typename C>
-struct is_single_precision_3;
+template<typename A, typename B>
+struct is_single_precision_2 : cpp::bool_constant_c<cpp::and_c<is_single_precision<A>, is_single_precision<B>>> {};
+
+template<typename A, typename B>
+struct is_double_precision_2 : cpp::bool_constant_c<cpp::and_c<is_double_precision<A>, is_double_precision<B>>> {};
 
 template<typename A, typename B, typename C>
-struct is_double_precision_3;
+struct is_single_precision_3 : cpp::bool_constant_c<cpp::and_c<is_single_precision<A>, is_single_precision<B>, is_single_precision<C>>> {};
+
+template<typename A, typename B, typename C>
+struct is_double_precision_3 : cpp::bool_constant_c<cpp::and_c<is_double_precision<A>, is_double_precision<B>, is_double_precision<C>>> {};
+
+template<typename A, typename B>
+struct is_dma_2;
 
 template<typename A, typename B, typename C>
 struct is_dma_3;
