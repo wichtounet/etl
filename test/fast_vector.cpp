@@ -521,24 +521,6 @@ TEMPLATE_TEST_CASE_2( "fast_vector/sum_3", "sum", Z, float, double ) {
     REQUIRE(d == 23.0);
 }
 
-TEMPLATE_TEST_CASE_2( "fast_vector/dot_1", "sum", Z, float, double ) {
-    etl::fast_vector<Z, 3> a = {-1.0, 2.0, 8.5};
-    etl::fast_vector<Z, 3> b = {2.0, 3.0, 2.0};
-
-    auto d = dot(a, b);
-
-    REQUIRE(d == 21.0);
-}
-
-TEMPLATE_TEST_CASE_2( "fast_vector/dot_2", "sum", Z, float, double ) {
-    etl::fast_vector<Z, 3> a = {-1.0, 2.0, 8.5};
-    etl::fast_vector<Z, 3> b = {2.0, 3.0, 2.0};
-
-    auto d = dot(a, -1 * b);
-
-    REQUIRE(d == -21.0);
-}
-
 TEMPLATE_TEST_CASE_2( "fast_vector/min_reduc_1", "min", Z, float, double ) {
     etl::fast_vector<Z, 3> a = {-1.0, 2.0, 8.5};
 
@@ -635,3 +617,85 @@ TEMPLATE_TEST_CASE_2( "fast_vector/swap_1", "fast_vector::swap", Z, float, doubl
     REQUIRE(b[1] == 2.0);
     REQUIRE(b[2] == 5.0);
 }
+
+//{{{ dot
+
+TEMPLATE_TEST_CASE_2( "fast_vector/dot_1", "sum", Z, float, double ) {
+    etl::fast_vector<Z, 3> a = {-1.0, 2.0, 8.5};
+    etl::fast_vector<Z, 3> b = {2.0, 3.0, 2.0};
+
+    auto d = dot(a, b);
+
+    REQUIRE(d == 21.0);
+}
+
+TEMPLATE_TEST_CASE_2( "fast_vector/dot_2", "sum", Z, float, double ) {
+    etl::fast_vector<Z, 3> a = {-1.0, 2.0, 8.5};
+    etl::fast_vector<Z, 3> b = {2.0, 3.0, 2.0};
+
+    auto d = dot(a, -1 * b);
+
+    REQUIRE(d == -21.0);
+}
+
+//}}}
+
+//{{{ outer product
+
+TEMPLATE_TEST_CASE_2( "fast_vector/outer_1", "sum", Z, float, double ) {
+    etl::fast_vector<Z, 3> a = {1.0, 2.0, 3.0};
+    etl::fast_vector<Z, 3> b = {4.0, 5.0, 6.0};
+    etl::fast_matrix<Z, 3, 3> c;
+
+    c = outer(a, b);
+
+    REQUIRE(c(0,0) == 4.0);
+    REQUIRE(c(0,1) == 5.0);
+    REQUIRE(c(0,2) == 6.0);
+    
+    REQUIRE(c(1,0) == 8.0);
+    REQUIRE(c(1,1) == 10.0);
+    REQUIRE(c(1,2) == 12.0);
+
+    REQUIRE(c(2,0) == 12.0);
+    REQUIRE(c(2,1) == 15.0);
+    REQUIRE(c(2,2) == 18.0);
+}
+
+TEMPLATE_TEST_CASE_2( "fast_vector/outer_2", "sum", Z, float, double ) {
+    etl::fast_vector<Z, 2> a = {1.0, 2.0};
+    etl::fast_vector<Z, 4> b = {2.0, 3.0, 4.0, 5.0};
+    etl::fast_matrix<Z, 2, 4> c;
+
+    c = outer(a, b);
+
+    REQUIRE(c(0,0) == 2);
+    REQUIRE(c(0,1) == 3);
+    REQUIRE(c(0,2) == 4);
+    REQUIRE(c(0,3) == 5);
+
+    REQUIRE(c(1,0) == 4);
+    REQUIRE(c(1,1) == 6);
+    REQUIRE(c(1,2) == 8);
+    REQUIRE(c(1,3) == 10);
+}
+
+TEMPLATE_TEST_CASE_2( "fast_vector/outer_3", "sum", Z, float, double ) {
+    etl::fast_vector<Z, 2> a = {1.0, 2.0};
+    etl::dyn_vector<Z> b(4, etl::values(2.0, 3.0, 4.0, 5.0));
+    etl::fast_matrix<Z, 2, 4> c;
+
+    c = outer(a, b);
+
+    REQUIRE(c(0,0) == 2);
+    REQUIRE(c(0,1) == 3);
+    REQUIRE(c(0,2) == 4);
+    REQUIRE(c(0,3) == 5);
+
+    REQUIRE(c(1,0) == 4);
+    REQUIRE(c(1,1) == 6);
+    REQUIRE(c(1,2) == 8);
+    REQUIRE(c(1,3) == 10);
+}
+
+//}}}

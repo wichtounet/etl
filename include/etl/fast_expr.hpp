@@ -684,6 +684,16 @@ auto strassen_mul(A&& a, B&& b, C&& c) -> forced_temporary_binary_helper<A, B, C
     return {a, b, c};
 }
 
+template<typename A, typename B>
+auto outer(A&& a, B&& b) -> temporary_binary_helper<A, B, outer_product_expr> {
+    return {std::forward<A>(a), std::forward<B>(b)};
+}
+
+template<typename A, typename B, typename C>
+auto outer(A&& a, B&& b, C&& c) -> forced_temporary_binary_helper<A, B, C, outer_product_expr> {
+    return {std::forward<A>(a), std::forward<B>(b), std::forward<C>(c)};
+}
+
 //}}}
 
 //{{{ Convolution expressions
