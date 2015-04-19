@@ -10,6 +10,9 @@
 
 #include "config.hpp"
 
+//Include implementations
+#include "impl/dot.hpp"
+
 namespace etl {
 
 template<typename T>
@@ -891,9 +894,9 @@ void conv_2d_valid_multi_prepared(A&& input, B&& kernels, C&& features, D&& inpu
 
 //{{{ Apply a reduction on an ETL expression (vector,matrix,binary,unary)
 
-template<typename LE, typename RE, cpp::enable_if_all_u<is_etl_expr<LE>::value, is_etl_expr<RE>::value> = cpp::detail::dummy>
-typename LE::value_type dot(const LE& lhs, const RE& rhs){
-    return sum(scale(lhs, rhs));
+template<typename A, typename B, cpp::enable_if_all_u<is_etl_expr<A>::value, is_etl_expr<B>::value> = cpp::detail::dummy>
+value_t<A> dot(const A& a, const B& b){
+    return detail::dot_impl<A, B>::apply(a, b);
 }
 
 template<typename E, cpp::enable_if_u<is_etl_expr<E>::value> = cpp::detail::dummy>
