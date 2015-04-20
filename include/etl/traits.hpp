@@ -1042,17 +1042,6 @@ struct sub_size_compare<E, std::enable_if_t<etl_traits<E>::is_generator>> : std:
 template<typename E>
 struct sub_size_compare<E, cpp::disable_if_t<etl_traits<E>::is_generator>> : std::integral_constant<std::size_t, etl_traits<E>::dimensions()> {};
 
-//TODO These two functions are not traits, should be moved somewhere
-//else
-
-template<typename E>
-bool is_finite(const E& expr){
-    using std::begin;
-    using std::end;
-
-    return std::all_of(begin(expr), end(expr), static_cast<bool(*)(value_t<E>)>(std::isfinite));
-}
-
 } //end of namespace etl
 
 #endif

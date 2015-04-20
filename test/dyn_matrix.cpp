@@ -639,31 +639,13 @@ TEMPLATE_TEST_CASE_2( "dyn_matrix/is_finite_1", "dyn_matrix::is_finite", Z, doub
 TEMPLATE_TEST_CASE_2( "dyn_matrix/is_finite_2", "dyn_matrix::is_finite", Z, double, float) {
     etl::dyn_matrix<Z> a(2,2, std::initializer_list<Z>({-1.0, NAN, 5.0, 1.0}));
 
-    REQUIRE(a.is_finite() == false);
+    REQUIRE(!a.is_finite());
 }
 
 TEMPLATE_TEST_CASE_2( "dyn_matrix/is_finite_3", "dyn_matrix::is_finite", Z, double, float) {
     etl::dyn_matrix<Z> a(2,2, std::initializer_list<Z>({-1.0, 1.0, INFINITY, 1.0}));
 
-    REQUIRE(a.is_finite() == false);
-}
-
-TEMPLATE_TEST_CASE_2( "dyn_matrix/is_finite_4", "dyn_matrix::is_finite", Z, double, float) {
-    etl::dyn_matrix<Z> a(2,2, std::initializer_list<Z>({-1.0, 2.0, 5.0, 1.0}));
-
-    REQUIRE(etl::is_finite(a));
-}
-
-TEMPLATE_TEST_CASE_2( "dyn_matrix/is_finite_5", "dyn_matrix::is_finite", Z, double, float) {
-    etl::dyn_matrix<Z> a(2,2, std::initializer_list<Z>({-1.0, NAN, 5.0, 1.0}));
-
-    REQUIRE(etl::is_finite(a) == false);
-}
-
-TEMPLATE_TEST_CASE_2( "dyn_matrix/is_finite_6", "dyn_matrix::is_finite", Z, double, float) {
-    etl::dyn_matrix<Z> a(2,2, std::initializer_list<Z>({-1.0, 1.0, INFINITY, 1.0}));
-
-    REQUIRE(etl::is_finite(a) == false);
+    REQUIRE(!a.is_finite());
 }
 
 //}}} is_finite tests

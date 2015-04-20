@@ -17,8 +17,10 @@
 #include "evaluator.hpp"
 #include "traits_lite.hpp"          //forward declaration of the traits
 #include "compat.hpp"               //To make it work with g++
+
 #include "inplace_assignable.hpp"
 #include "comparable.hpp"
+#include "iterable.hpp"
 
 namespace etl {
 
@@ -67,7 +69,7 @@ struct is_vector<std::vector<N>> : std::true_type { };
 } //end of namespace detail
 
 template<typename T, typename ST, std::size_t... Dims>
-struct fast_matrix_impl final : inplace_assignable<fast_matrix_impl<T, ST, Dims...>>, comparable<fast_matrix_impl<T, ST, Dims...>> {
+struct fast_matrix_impl final : inplace_assignable<fast_matrix_impl<T, ST, Dims...>>, comparable<fast_matrix_impl<T, ST, Dims...>>, iterable<fast_matrix_impl<T, ST, Dims...>> {
     static_assert(sizeof...(Dims) > 0, "At least one dimension must be specified");
 
 public:
@@ -309,10 +311,6 @@ public:
     template<std::size_t D>
     static constexpr std::size_t dim() noexcept {
         return nth_size<D, 0, Dims...>::value;
-    }
-
-    bool is_finite() const noexcept_this(noexcept(this->begin())) {
-        return std::all_of(begin(), end(), static_cast<bool(*)(value_type)>(std::isfinite));
     }
 
     //TODO Would probably be useful to have dim(std::size_t i)

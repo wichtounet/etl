@@ -14,12 +14,14 @@
 
 #include "traits_lite.hpp"
 #include "iterator.hpp"
+
 #include "comparable.hpp"
+#include "iterable.hpp"
 
 namespace etl {
 
 template <typename T, typename LeftExpr, typename BinaryOp, typename RightExpr>
-struct binary_expr final : comparable<binary_expr<T, LeftExpr, BinaryOp, RightExpr>> {
+struct binary_expr final : comparable<binary_expr<T, LeftExpr, BinaryOp, RightExpr>>, iterable<binary_expr<T, LeftExpr, BinaryOp, RightExpr>>  {
 private:
     static_assert(cpp::or_c<
         cpp::and_c<is_etl_expr<LeftExpr>, std::is_same<RightExpr, scalar<T>>>,

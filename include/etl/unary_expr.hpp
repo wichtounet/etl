@@ -15,7 +15,9 @@
 #include "traits_lite.hpp"
 #include "iterator.hpp"
 #include "inplace_assignable.hpp"
+
 #include "comparable.hpp"
+#include "iterable.hpp"
 
 namespace etl {
 
@@ -23,7 +25,7 @@ struct identity_op;
 struct virtual_op;
 
 template <typename T, typename Expr, typename UnaryOp>
-struct unary_expr final : comparable<unary_expr<T, Expr, UnaryOp>> {
+struct unary_expr final : comparable<unary_expr<T, Expr, UnaryOp>>, iterable<unary_expr<T, Expr, UnaryOp>> {
 private:
     static_assert(is_etl_expr<Expr>::value, "Only ETL expressions can be used in unary_expr");
 
@@ -89,7 +91,7 @@ public:
 };
 
 template <typename T, typename Expr>
-struct unary_expr<T, Expr, identity_op> : inplace_assignable<unary_expr<T, Expr, identity_op>>, comparable<unary_expr<T, Expr, identity_op>> {
+struct unary_expr<T, Expr, identity_op> : inplace_assignable<unary_expr<T, Expr, identity_op>>, comparable<unary_expr<T, Expr, identity_op>>, iterable<unary_expr<T, Expr, identity_op>>  {
 private:
     static_assert(is_etl_expr<Expr>::value, "Only ETL expressions can be used in unary_expr");
 
@@ -244,7 +246,7 @@ public:
 };
 
 template <typename T, typename Expr>
-struct unary_expr<T, Expr, virtual_op> : comparable<unary_expr<T, Expr, virtual_op>> {
+struct unary_expr<T, Expr, virtual_op> : comparable<unary_expr<T, Expr, virtual_op>>, iterable<unary_expr<T, Expr, virtual_op>>  {
 private:
     using this_type = unary_expr<T, Expr, virtual_op>;
 

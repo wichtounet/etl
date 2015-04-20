@@ -12,14 +12,16 @@
 
 #include "traits_lite.hpp"
 #include "iterator.hpp"
+
 #include "comparable.hpp"
+#include "iterable.hpp"
 
 namespace etl {
 
 //TODO Check if this could not be merged with unary_expr
 
 template <typename T, typename Expr>
-class stable_transform_expr final : comparable<stable_transform_expr<T, Expr>> {
+class stable_transform_expr final : comparable<stable_transform_expr<T, Expr>>, iterable<stable_transform_expr<T, Expr>> {
 private:
     static_assert(is_etl_expr<Expr>::value, "Only ETL expressions can be used in stable_transform_expr");
 

@@ -693,31 +693,13 @@ TEMPLATE_TEST_CASE_2( "fast_matrix/is_finite_1", "fast_matrix::is_finite", Z, fl
 TEMPLATE_TEST_CASE_2( "fast_matrix/is_finite_2", "fast_matrix::is_finite", Z, float, double ) {
     etl::fast_matrix<Z, 2, 2> a = {-1.0, NAN, 5.0, 1.0};
 
-    REQUIRE(a.is_finite() == false);
+    REQUIRE(!a.is_finite());
 }
 
 TEMPLATE_TEST_CASE_2( "fast_matrix/is_finite_3", "fast_matrix::is_finite", Z, float, double ) {
     etl::fast_matrix<Z, 2, 2> a = {-1.0, 1.0, INFINITY, 1.0};
 
-    REQUIRE(a.is_finite() == false);
-}
-
-TEMPLATE_TEST_CASE_2( "fast_matrix/is_finite_4", "fast_matrix::is_finite", Z, float, double ) {
-    etl::fast_matrix<Z, 2, 2> a = {-1.0, 2.0, 5.0, 1.0};
-
-    REQUIRE(etl::is_finite(a));
-}
-
-TEMPLATE_TEST_CASE_2( "fast_matrix/is_finite_5", "fast_matrix::is_finite", Z, float, double ) {
-    etl::fast_matrix<Z, 2, 2> a = {-1.0, NAN, 5.0, 1.0};
-
-    REQUIRE(etl::is_finite(a) == false);
-}
-
-TEMPLATE_TEST_CASE_2( "fast_matrix/is_finite_6", "fast_matrix::is_finite", Z, float, double ) {
-    etl::fast_matrix<Z, 2, 2> a = {-1.0, 1.0, INFINITY, 1.0};
-
-    REQUIRE(etl::is_finite(a) == false);
+    REQUIRE(!a.is_finite());
 }
 
 //}}} is_finite tests

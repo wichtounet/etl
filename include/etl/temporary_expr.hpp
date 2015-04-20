@@ -14,14 +14,16 @@
 
 #include "traits_lite.hpp"
 #include "iterator.hpp"
+
 #include "comparable.hpp"
+#include "iterable.hpp"
 
 namespace etl {
 
 //TODO Review constness of this class
 
 template <typename T, typename AExpr, typename BExpr, typename Op, typename Forced>
-struct temporary_binary_expr final : comparable<temporary_binary_expr<T, AExpr, BExpr, Op, Forced>> {
+struct temporary_binary_expr final : comparable<temporary_binary_expr<T, AExpr, BExpr, Op, Forced>>, iterable<temporary_binary_expr<T, AExpr, BExpr, Op, Forced>> {
     using        value_type = T;
     using       result_type = Forced;
     using       memory_type = value_type*;
