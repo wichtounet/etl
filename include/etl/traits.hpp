@@ -19,8 +19,8 @@ namespace etl {
 template<typename T, typename DT = std::decay_t<T>>
 using is_fast_matrix = is_var_2<etl::fast_matrix_impl, std::decay_t<T>>;
 
-template<typename T, typename DT = std::decay_t<T>>
-using is_dyn_matrix = is_2<etl::dyn_matrix, std::decay_t<T>>;
+template<typename T, typename DT>
+struct is_dyn_matrix : cpp::bool_constant_c<is_2<etl::dyn_matrix, std::decay_t<T>>> {};
 
 template<typename T, typename DT = std::decay_t<T>>
 using is_unary_expr = cpp::is_specialization_of<etl::unary_expr, DT>;
