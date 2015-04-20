@@ -220,7 +220,7 @@ TEMPLATE_TEST_CASE_2( "fflip_inplace/6", "[fflip][fast][matrix][inplace]", Z, fl
     etl::fast_matrix<Z, 31, 31> a(etl::magic<Z>(31));
     etl::fast_matrix<Z, 31, 31> b(etl::fflip(a));
 
-    fflip_inplace(a);
+    a.fflip_inplace();
 
     REQUIRE(a == b);
 }

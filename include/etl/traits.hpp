@@ -1053,19 +1053,6 @@ bool is_finite(const E& expr){
     return std::all_of(begin(expr), end(expr), static_cast<bool(*)(value_t<E>)>(std::isfinite));
 }
 
-template<typename E, cpp_enable_if(decay_traits<E>::dimensions() == 1)>
-void fflip_inplace(E&&){
-    //NOP
-}
-
-template<typename E, cpp_enable_if(decay_traits<E>::dimensions() == 2)>
-void fflip_inplace(E&& expr){
-    using std::begin;
-    using std::end;
-
-    std::reverse(begin(expr), end(expr));
-}
-
 } //end of namespace etl
 
 #endif
