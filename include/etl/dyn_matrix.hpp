@@ -494,6 +494,11 @@ public:
     }
 
     //}}}
+
+    std::size_t& unsafe_dimension_access(std::size_t i){
+        cpp_assert(i < n_dimensions, "Out of bounds");
+        return _dimensions[i];
+    }
 };
 
 template<typename T, std::size_t D>
