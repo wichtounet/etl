@@ -8,6 +8,8 @@
 #ifndef ETL_INPLACE_ASSIGNABLE_HPP
 #define ETL_INPLACE_ASSIGNABLE_HPP
 
+#include "impl/transpose.hpp"
+
 /*
  * Use CRTP technique to inject inplace operations into expressions and value classes. 
  */
@@ -44,14 +46,7 @@ struct inplace_assignable {
         static_assert(etl_traits<derived_t>::dimensions() == 2, "Only 2D matrix can be transposed");
         cpp_assert(etl::dim<0>(as_derived()) == etl::dim<1>(as_derived()), "Only square matrices can be tranposed inplace");
 
-        const auto N = etl::dim<0>(as_derived());
-
-        for(std::size_t i = 0; i < N - 1; ++i){
-            for(std::size_t j = i + 1; j < N; ++j){
-                using std::swap;
-                swap(as_derived()(i, j), as_derived()(j, i));
-            }
-        }
+        detail::inplace_square_transpose<derived_t>::apply(as_derived());
 
         return as_derived();
     }
@@ -60,31 +55,15 @@ struct inplace_assignable {
     derived_t& transpose_inplace(){
         static_assert(etl_traits<derived_t>::dimensions() == 2, "Only 2D matrix can be transposed");
 
-        using std::swap;
-
         decltype(auto) mat = as_derived();
 
-        const auto N = etl::dim<0>(mat);
-        const auto M = etl::dim<1>(mat);
-
-        if(M == N){
-            for(std::size_t i = 0; i < N - 1; ++i){
-                for(std::size_t j = i + 1; j < N; ++j){
-                    swap(mat(i, j), mat(j, i));
-                }
-            }
+        if(etl::dim<0>(mat) == etl::dim<1>(mat)){
+            detail::inplace_square_transpose<derived_t>::apply(mat);
         } else {
+            detail::rectangular_square_transpose<derived_t>::apply(mat);
+
+            using std::swap;
             swap(mat.unsafe_dimension_access(0), mat.unsafe_dimension_access(1));
-
-            auto data = mat.memory_start();
-
-            for(std::size_t k = 0; k < N*M; k++) {
-                auto idx = k;
-                do {
-                    idx = (idx % N) * M + (idx / N);
-                } while(idx < k);
-                std::swap(data[k], data[idx]);
-            }
         }
 
         return mat;
