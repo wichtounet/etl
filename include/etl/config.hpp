@@ -20,6 +20,20 @@ struct create_temporary : std::true_type {};
 
 #endif
 
+#ifdef ETL_MLK_MODE
+
+#ifndef ETL_BLAS_MODE
+#define ETL_BLAS_MODE
+#endif
+
+struct is_mkl_enabled : std::true_type {};
+
+#else
+
+struct is_mkl_enabled : std::false_type {};
+
+#endif
+
 #ifdef ETL_BLAS_MODE
 
 struct is_cblas_enabled : std::true_type {};
