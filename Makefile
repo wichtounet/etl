@@ -17,10 +17,16 @@ ifneq (,$(findstring c++-analyzer,$(CXX)))
 CXX_FLAGS += -stdlib=libc++
 endif
 
+ifneq (,$(ETL_MKL))
+CXX_FLAGS += -DETL_MKL_MODE $(shell pkg-config --cflags cblas)
+LD_FLAGS += $(shell pkg-config --libs cblas)
+else
 ifneq (,$(ETL_BLAS))
 CXX_FLAGS += -DETL_BLAS_MODE $(shell pkg-config --cflags cblas)
 LD_FLAGS += $(shell pkg-config --libs cblas)
 endif
+endif
+
 
 # Enable coverage if not disabled by the user
 ifeq (,$(ETL_NO_COVERAGE))
