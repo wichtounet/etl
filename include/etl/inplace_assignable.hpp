@@ -39,6 +39,7 @@ struct inplace_assignable {
         return as_derived();
     }
 
+    template<typename S = D, cpp_disable_if(is_dyn_matrix<S>::value)>
     derived_t& transpose_inplace(){
         static_assert(etl_traits<derived_t>::dimensions() == 2, "Only 2D matrix can be transposed");
         cpp_assert(etl::dim<0>(as_derived()) == etl::dim<1>(as_derived()), "Only square matrices can be tranposed inplace");
@@ -53,6 +54,40 @@ struct inplace_assignable {
         }
 
         return as_derived();
+    }
+
+    template<typename S = D, cpp_enable_if(is_dyn_matrix<S>::value)>
+    derived_t& transpose_inplace(){
+        static_assert(etl_traits<derived_t>::dimensions() == 2, "Only 2D matrix can be transposed");
+
+        using std::swap;
+
+        decltype(auto) mat = as_derived();
+
+        const auto N = etl::dim<0>(mat);
+        const auto M = etl::dim<1>(mat);
+
+        if(M == N){
+            for(std::size_t i = 0; i < N - 1; ++i){
+                for(std::size_t j = i + 1; j < N; ++j){
+                    swap(mat(i, j), mat(j, i));
+                }
+            }
+        } else {
+            swap(mat.unsafe_dimension_access(0), mat.unsafe_dimension_access(1));
+
+            auto data = mat.memory_start();
+
+            for(std::size_t k = 0; k < N*M; k++) {
+                auto idx = k;
+                do {
+                    idx = (idx % N) * M + (idx / N);
+                } while(idx < k);
+                std::swap(data[k], data[idx]);
+            }
+        }
+
+        return mat;
     }
 };
 
