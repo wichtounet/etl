@@ -49,6 +49,15 @@ struct iterable {
     bool is_rectangular() const noexcept {
         return !is_square();
     }
+
+    bool is_sub_square() const noexcept {
+        cpp_assert(decay_traits<derived_t>::dimensions() == 3, "Only 2D matrix can be sub square or sub rectangular");
+        return etl::dim<1>(as_derived()) == etl::dim<2>(as_derived());
+    }
+
+    bool is_sub_rectangular() const noexcept {
+        return !is_sub_square();
+    }
 };
 
 } //end of namespace etl
