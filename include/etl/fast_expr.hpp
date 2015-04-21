@@ -826,9 +826,9 @@ auto conv_deep_full(A&& a, B&& b, C&& c) -> dim_forced_temporary_binary_helper<A
 
 //Special convolutions
 
+//TODO This should be moved
 //TODO This should be adapted to an expression
-//
-//TODO For now this only works with square kernels
+//TODO For now, the fast version only works with square kernels
 
 template<typename A, typename B, typename C>
 void conv_2d_valid_multi(A&& input, B&& kernels, C&& features){
@@ -841,9 +841,16 @@ void conv_2d_valid_multi(A&& input, B&& kernels, C&& features){
     const auto k1 = etl::dim<1>(kernels);
     const auto k2 = etl::dim<2>(kernels);
 
-    etl::dyn_matrix<value_t<A>, 2> input_col(k1 * k2, (v1 - k1 + 1) * (v2 - k2 + 1));
+    if(v1 == v2 && k1 == k2){
+        etl::dyn_matrix<value_t<A>, 2> input_col(k1 * k2, (v1 - k1 + 1) * (v2 - k2 + 1));
 
-    conv_2d_valid_multi(std::forward<A>(input), std::forward<B>(kernels), std::forward<C>(features), input_col);
+        conv_2d_valid_multi(std::forward<A>(input), std::forward<B>(kernels), std::forward<C>(features), input_col);
+    } else {
+        //Standard version
+        for(size_t k = 0; k < etl::dim<0>(kernels); ++k){
+            features(k) = conv_2d_valid(input, kernels(k));
+        }
+    }
 }
 
 template<typename A, typename B, typename C, typename D>
@@ -894,10 +901,6 @@ void conv_2d_valid_multi_prepared(A&& input, B&& kernels, C&& features, D&& inpu
         //because of aliasing
     }
 
-    //Standard version in case of slow MMUL
-    //for(size_t k = 0; k < K; ++k){
-        //v_cv(0)(k) = conv_2d_valid(v(channel), w_t(channel)(k));
-    //}
 }
 
 //}}}
