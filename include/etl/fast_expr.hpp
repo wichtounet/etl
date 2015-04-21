@@ -12,6 +12,7 @@
 
 //Include implementations
 #include "impl/dot.hpp"
+#include "impl/scale.hpp"
 
 namespace etl {
 
@@ -226,9 +227,7 @@ LE& operator-=(LE&& lhs, const RE& rhs){
 
 template<typename LE, typename RE, cpp::enable_if_all_u<std::is_arithmetic<RE>::value, is_etl_assignable<LE>::value> = cpp::detail::dummy>
 LE& operator*=(LE&& lhs, RE rhs){
-    for(std::size_t i = 0; i < size(lhs); ++i){
-        lhs[i] *= rhs;
-    }
+    detail::scalar_scale<LE>::apply(std::forward<LE>(lhs), rhs);
 
     return lhs;
 }
@@ -246,9 +245,7 @@ LE& operator*=(LE&& lhs, const RE& rhs){
 
 template<typename LE, typename RE, cpp::enable_if_all_u<std::is_arithmetic<RE>::value, is_etl_assignable<LE>::value> = cpp::detail::dummy>
 LE& operator>>=(LE&& lhs, RE rhs){
-    for(std::size_t i = 0; i < size(lhs); ++i){
-        lhs[i] *= rhs;
-    }
+    detail::scalar_scale<LE>::apply(std::forward<LE>(lhs), rhs);
 
     return lhs;
 }
