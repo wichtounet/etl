@@ -62,7 +62,7 @@ struct inplace_assignable {
         if(etl::dim<0>(mat) == etl::dim<1>(mat)){
             detail::inplace_square_transpose<derived_t>::apply(mat);
         } else {
-            detail::rectangular_square_transpose<derived_t>::apply(mat);
+            detail::inplace_rectangular_transpose<derived_t>::apply(mat);
 
             using std::swap;
             swap(mat.unsafe_dimension_access(0), mat.unsafe_dimension_access(1));
