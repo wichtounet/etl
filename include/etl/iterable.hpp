@@ -38,6 +38,17 @@ struct iterable {
     bool is_zero() const noexcept {
         return std::all_of(as_derived().begin(), as_derived().end(), [](value_t<derived_t> v){ return v == value_t<derived_t>(0); });;
     }
+
+    //TODO The following operations could probably be moved away
+
+    bool is_square() const noexcept {
+        cpp_assert(decay_traits<derived_t>::dimensions() == 2, "Only 2D matrix can be square or rectangular");
+        return etl::dim<0>(as_derived()) == etl::dim<1>(as_derived());
+    }
+
+    bool is_rectangular() const noexcept {
+        return !is_square();
+    }
 };
 
 } //end of namespace etl
