@@ -12,7 +12,7 @@
 #include "../traits_lite.hpp"
 
 #ifdef ETL_MKL_MODE
-#include "mkl.h"
+#include "mkl_trans.h"
 #endif
 
 /**
@@ -78,6 +78,22 @@ struct inplace_square_transpose<C, std::enable_if_t<has_direct_access<C>::value 
 
 template<typename C>
 struct inplace_square_transpose<C, std::enable_if_t<has_direct_access<C>::value && is_double_precision<C>::value>> {
+    template<typename CC>
+    static void apply(CC&& c){
+        mkl_dimatcopy('R', 'T', etl::dim<0>(c), etl::dim<1>(c), 1.0f, c.memory_start(), etl::dim<1>(c), etl::dim<1>(c));
+    }
+};
+
+template<typename C>
+struct inplace_rectangular_transpose<C, std::enable_if_t<has_direct_access<C>::value && is_single_precision<C>::value>> {
+    template<typename CC>
+    static void apply(CC&& c){
+        mkl_simatcopy('R', 'T', etl::dim<0>(c), etl::dim<1>(c), 1.0f, c.memory_start(), etl::dim<1>(c), etl::dim<1>(c));
+    }
+};
+
+template<typename C>
+struct inplace_rectangular_transpose<C, std::enable_if_t<has_direct_access<C>::value && is_double_precision<C>::value>> {
     template<typename CC>
     static void apply(CC&& c){
         mkl_dimatcopy('R', 'T', etl::dim<0>(c), etl::dim<1>(c), 1.0f, c.memory_start(), etl::dim<1>(c), etl::dim<1>(c));
