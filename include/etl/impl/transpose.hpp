@@ -43,6 +43,8 @@ struct inplace_square_transpose {
     }
 };
 
+//TODO This implementation is really too slow
+
 template<typename C, typename Enable = void>
 struct rectangular_square_transpose {
     template<typename CC>
