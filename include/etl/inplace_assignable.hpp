@@ -8,10 +8,12 @@
 #ifndef ETL_INPLACE_ASSIGNABLE_HPP
 #define ETL_INPLACE_ASSIGNABLE_HPP
 
+#include <algorithm>
+
 #include "impl/transpose.hpp"
 
 /*
- * Use CRTP technique to inject inplace operations into expressions and value classes. 
+ * Use CRTP technique to inject inplace operations into expressions and value classes.
  */
 
 namespace etl {

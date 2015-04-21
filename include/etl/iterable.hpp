@@ -8,6 +8,8 @@
 #ifndef ETL_ITERABLE_HPP
 #define ETL_ITERABLE_HPP
 
+#include <algorithm>
+
 /*
  * Use CRTP technique to inject functions that test the values of
  * the expressions or the value classes.
