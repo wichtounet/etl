@@ -836,12 +836,12 @@ void conv_2d_valid_multi(A&& input, B&& kernels, C&& features){
 
     //TODO This version of the implementation should only be used if very fast MMUL is available
 
-    const auto v1 = etl::dim<0>(input);
-    const auto v2 = etl::dim<1>(input);
-    const auto k1 = etl::dim<1>(kernels);
-    const auto k2 = etl::dim<2>(kernels);
+    if(input.is_square() && kernels.is_sub_square()){
+        const auto v1 = etl::dim<0>(input);
+        const auto v2 = etl::dim<1>(input);
+        const auto k1 = etl::dim<1>(kernels);
+        const auto k2 = etl::dim<2>(kernels);
 
-    if(v1 == v2 && k1 == k2){
         etl::dyn_matrix<value_t<A>, 2> input_col(k1 * k2, (v1 - k1 + 1) * (v2 - k2 + 1));
 
         conv_2d_valid_multi(std::forward<A>(input), std::forward<B>(kernels), std::forward<C>(features), input_col);
@@ -855,9 +855,9 @@ void conv_2d_valid_multi(A&& input, B&& kernels, C&& features){
 
 template<typename A, typename B, typename C, typename D>
 void conv_2d_valid_multi(A&& input, B&& kernels, C&& features, D&& input_col){
-    //TODO Validate inputs
+    cpp_assert(input.is_square() && kernels.is_sub_square(), "Only implemented for square input and kernels");
 
-    //TODO This version of the implementation should only be used if very fast MMUL is available
+    //TODO Validate inputs
 
     etl::dyn_matrix<value_t<B>, 3> prepared_k(etl::dim<0>(kernels), etl::dim<1>(kernels), etl::dim<2>(kernels));
 
@@ -870,13 +870,13 @@ void conv_2d_valid_multi(A&& input, B&& kernels, C&& features, D&& input_col){
 
 template<typename A, typename B, typename C, typename D>
 void conv_2d_valid_multi_prepared(A&& input, B&& kernels, C&& features, D&& input_col){
+    cpp_assert(input.is_square() && kernels.is_sub_square(), "Only implemented for square input and kernels");
+
     //TODO Validate inputs
 
     const auto K  = etl::dim<0>(kernels);
     const auto k1 = etl::dim<1>(kernels);
     const auto k2 = etl::dim<2>(kernels);
-
-    //TODO This version of the implementation should only be used if very fast MMUL is available
 
     im2col_direct(input_col, input, k1, k2);
 
@@ -886,21 +886,8 @@ void conv_2d_valid_multi_prepared(A&& input, B&& kernels, C&& features, D&& inpu
         etl::reshape(features, K, etl::dim<1>(features) * etl::dim<2>(features)));
 
     for(std::size_t k = 0; k < K; ++k){
-        //TODO This should not be implemented here
-        //TODO This should be optimized as in place matrix transposition
-        for (std::size_t i = 0; i < etl::dim<1>(features); i++){
-            for (std::size_t j = i + 1; j < etl::dim<2>(features); j++){
-                auto temp = features(k, i, j);
-                features(k, i, j) = features(k, j, i);
-                features(k, j, i) = temp;
-            }
-        }
-
-        //Cannot do:
-        //features(k) = transpose(features(k));
-        //because of aliasing
+        features(k).transpose_inplace();
     }
-
 }
 
 //}}}
