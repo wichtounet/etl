@@ -20,7 +20,7 @@
  *    1. Simple implementation using for loop
  *    2. Implementations using MKL
  *
- * Square and rectangular implementation are separated. 
+ * Square and rectangular implementation are separated.
  */
 
 namespace etl {
@@ -72,7 +72,7 @@ template<typename C>
 struct inplace_square_transpose<C, std::enable_if_t<has_direct_access<C>::value && is_single_precision<C>::value>> {
     template<typename CC>
     static void apply(CC&& c){
-        mkl_simatcopy('R', 'T', etl::dim<0>(c), etl::dim<1>(c), 1.0f, c.memory_start(), etl::dim<1>(c), etl::dim<1>(c));
+        mkl_simatcopy('R', 'T', etl::dim<0>(c), etl::dim<1>(c), 1.0f, c.memory_start(), etl::dim<1>(c), etl::dim<0>(c));
     }
 };
 
@@ -80,7 +80,7 @@ template<typename C>
 struct inplace_square_transpose<C, std::enable_if_t<has_direct_access<C>::value && is_double_precision<C>::value>> {
     template<typename CC>
     static void apply(CC&& c){
-        mkl_dimatcopy('R', 'T', etl::dim<0>(c), etl::dim<1>(c), 1.0f, c.memory_start(), etl::dim<1>(c), etl::dim<1>(c));
+        mkl_dimatcopy('R', 'T', etl::dim<0>(c), etl::dim<1>(c), 1.0, c.memory_start(), etl::dim<1>(c), etl::dim<0>(c));
     }
 };
 
@@ -88,7 +88,7 @@ template<typename C>
 struct inplace_rectangular_transpose<C, std::enable_if_t<has_direct_access<C>::value && is_single_precision<C>::value>> {
     template<typename CC>
     static void apply(CC&& c){
-        mkl_simatcopy('R', 'T', etl::dim<0>(c), etl::dim<1>(c), 1.0f, c.memory_start(), etl::dim<1>(c), etl::dim<1>(c));
+        mkl_simatcopy('R', 'T', etl::dim<0>(c), etl::dim<1>(c), 1.0f, c.memory_start(), etl::dim<1>(c), etl::dim<0>(c));
     }
 };
 
@@ -96,7 +96,7 @@ template<typename C>
 struct inplace_rectangular_transpose<C, std::enable_if_t<has_direct_access<C>::value && is_double_precision<C>::value>> {
     template<typename CC>
     static void apply(CC&& c){
-        mkl_dimatcopy('R', 'T', etl::dim<0>(c), etl::dim<1>(c), 1.0f, c.memory_start(), etl::dim<1>(c), etl::dim<1>(c));
+        mkl_dimatcopy('R', 'T', etl::dim<0>(c), etl::dim<1>(c), 1.0, c.memory_start(), etl::dim<1>(c), etl::dim<0>(c));
     }
 };
 
