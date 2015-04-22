@@ -8,6 +8,8 @@
 #ifndef ETL_IMPL_TRANSPOSE_HPP
 #define ETL_IMPL_TRANSPOSE_HPP
 
+#include "../value_fwd.hpp"
+#include "../temporary.hpp"
 #include "../config.hpp"
 #include "../traits_lite.hpp"
 
@@ -43,12 +45,28 @@ struct inplace_square_transpose {
     }
 };
 
-//TODO This implementation is really too slow
-
 template<typename C, typename Enable = void>
 struct inplace_rectangular_transpose {
     template<typename CC>
     static void apply(CC&& mat){
+        auto copy = force_temporary(mat);
+
+        auto data = mat.memory_start();
+
+        //Dimensions prior to transposition
+        const auto N = etl::dim<0>(mat);
+        const auto M = etl::dim<1>(mat);
+
+        for(std::size_t i = 0; i < N; ++i){
+            for(std::size_t j = 0; j < M; ++j){
+                data[j * N + i] = copy(i, j);
+            }
+        }
+    }
+
+    //This implementation is really slow but has O(1) space
+    template<typename CC>
+    static void real_inplace(CC&& mat){
         using std::swap;
 
         const auto N = etl::dim<0>(mat);
@@ -88,7 +106,8 @@ template<typename C>
 struct inplace_rectangular_transpose<C, std::enable_if_t<has_direct_access<C>::value && is_single_precision<C>::value>> {
     template<typename CC>
     static void apply(CC&& c){
-        mkl_simatcopy('R', 'T', etl::dim<0>(c), etl::dim<1>(c), 1.0f, c.memory_start(), etl::dim<1>(c), etl::dim<0>(c));
+        auto copy = force_temporary(c);
+        mkl_somatcopy('R', 'T', etl::dim<0>(c), etl::dim<1>(c), 1.0, copy.memory_start(), etl::dim<1>(c), c.memory_start(), etl::dim<0>(c));
     }
 };
 
@@ -96,7 +115,8 @@ template<typename C>
 struct inplace_rectangular_transpose<C, std::enable_if_t<has_direct_access<C>::value && is_double_precision<C>::value>> {
     template<typename CC>
     static void apply(CC&& c){
-        mkl_dimatcopy('R', 'T', etl::dim<0>(c), etl::dim<1>(c), 1.0, c.memory_start(), etl::dim<1>(c), etl::dim<0>(c));
+        auto copy = force_temporary(c);
+        mkl_domatcopy('R', 'T', etl::dim<0>(c), etl::dim<1>(c), 1.0, copy.memory_start(), etl::dim<1>(c), c.memory_start(), etl::dim<0>(c));
     }
 };
 
