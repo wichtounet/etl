@@ -32,9 +32,6 @@ template<typename T, typename DT = std::decay_t<T>>
 using is_generator_expr = cpp::is_specialization_of<etl::generator_expr, DT>;
 
 template<typename T, typename DT = std::decay_t<T>>
-using is_stable_transform_expr = cpp::is_specialization_of<etl::stable_transform_expr, DT>;
-
-template<typename T, typename DT = std::decay_t<T>>
 using is_temporary_binary_expr = cpp::is_specialization_of<etl::temporary_binary_expr, DT>;
 
 template<typename T, typename DT>
@@ -79,7 +76,6 @@ struct is_etl_expr : cpp::bool_constant_c<cpp::or_c<
        is_unary_expr<T>,
        is_binary_expr<T>,
        is_temporary_binary_expr<T>,
-       is_stable_transform_expr<T>,
        is_generator_expr<T>,
        is_transformer<T>, is_view<T>,
        is_transformer<T>, is_magic_view<T>
@@ -91,8 +87,7 @@ struct is_copy_expr : cpp::bool_constant_c<cpp::or_c<
        is_dyn_matrix<T>,
        is_unary_expr<T>,
        is_binary_expr<T>,
-       is_temporary_binary_expr<T>,
-       is_stable_transform_expr<T>
+       is_temporary_binary_expr<T>
     >> {};
 
 template<typename T>
@@ -186,41 +181,6 @@ template <typename T, typename Expr, typename UnaryOp>
 struct etl_traits<etl::unary_expr<T, Expr, UnaryOp>> {
     using expr_t = etl::unary_expr<T, Expr, UnaryOp>;
     using sub_expr_t = std::decay_t<Expr>;
-
-    static constexpr const bool is_fast = etl_traits<sub_expr_t>::is_fast;
-    static constexpr const bool is_value = false;
-    static constexpr const bool is_generator = etl_traits<sub_expr_t>::is_generator;
-
-    static std::size_t size(const expr_t& v){
-        return etl_traits<sub_expr_t>::size(v.value());
-    }
-
-    static std::size_t dim(const expr_t& v, std::size_t d){
-        return etl_traits<sub_expr_t>::dim(v.value(), d);
-    }
-
-    template<bool B = is_fast, cpp::enable_if_u<B> = cpp::detail::dummy>
-    static constexpr std::size_t size(){
-        return etl_traits<sub_expr_t>::size();
-    }
-
-    template<std::size_t D>
-    static constexpr std::size_t dim(){
-        return etl_traits<sub_expr_t>::template dim<D>();
-    }
-
-    static constexpr std::size_t dimensions(){
-        return etl_traits<sub_expr_t>::dimensions();
-    }
-};
-
-/*!
- * \brief Specialization (un)stable_transform_expr
- */
-template <typename T>
-struct etl_traits<T, std::enable_if_t<is_stable_transform_expr<T>::value>> {
-    using expr_t = std::decay_t<T>;
-    using sub_expr_t = std::decay_t<typename expr_t::expr_type>;
 
     static constexpr const bool is_fast = etl_traits<sub_expr_t>::is_fast;
     static constexpr const bool is_value = false;
