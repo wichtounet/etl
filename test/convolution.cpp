@@ -1491,6 +1491,7 @@ TEMPLATE_TEST_CASE_2( "conv_2d_valid_multi/5", "[conv] [conv2]", Z, double, floa
     }
 }
 
-//TODO More tests
+//TODO Add tests for conv_2d_valid_multi when neithe rthe kernel nor
+//the image are square.
 
 //}}}
