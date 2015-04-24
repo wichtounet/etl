@@ -317,14 +317,6 @@ public:
         return value()(args...);
     }
 
-    iterator<this_type, false, false> begin() noexcept {
-        return {*this, 0};
-    }
-
-    iterator<this_type, false, false> end() noexcept {
-        return {*this, size(*this)};
-    }
-
     iterator<const this_type, false, false> begin() const noexcept {
         return {*this, 0};
     }
