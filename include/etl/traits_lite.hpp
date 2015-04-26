@@ -68,28 +68,28 @@ template<std::size_t D, typename E, cpp::enable_if_u<etl_traits<E>::is_fast> = c
 constexpr std::size_t dim() noexcept;
 
 template<typename T>
-struct is_single_precision : cpp::bool_constant_c<std::is_same<typename std::decay_t<T>::value_type, float>> {};
+struct is_single_precision : std::is_same<typename std::decay_t<T>::value_type, float> {};
+
+template<typename A, typename B>
+struct is_single_precision_2 : cpp::and_c<is_single_precision<A>, is_single_precision<B>> {};
+
+template<typename A, typename B, typename C>
+struct is_single_precision_3 : cpp::and_c<is_single_precision<A>, is_single_precision<B>, is_single_precision<C>> {};
 
 template<typename T>
-struct is_double_precision : cpp::bool_constant_c<std::is_same<typename std::decay_t<T>::value_type, double>> {};
+struct is_double_precision : std::is_same<typename std::decay_t<T>::value_type, double> {};
 
 template<typename A, typename B>
-struct is_single_precision_2 : cpp::bool_constant_c<cpp::and_c<is_single_precision<A>, is_single_precision<B>>> {};
+struct is_double_precision_2 : cpp::and_c<is_double_precision<A>, is_double_precision<B>> {};
+
+template<typename A, typename B, typename C>
+struct is_double_precision_3 : cpp::and_c<is_double_precision<A>, is_double_precision<B>, is_double_precision<C>> {};
 
 template<typename A, typename B>
-struct is_double_precision_2 : cpp::bool_constant_c<cpp::and_c<is_double_precision<A>, is_double_precision<B>>> {};
+struct is_dma_2 : cpp::and_c<has_direct_access<A>, has_direct_access<B>> {};
 
 template<typename A, typename B, typename C>
-struct is_single_precision_3 : cpp::bool_constant_c<cpp::and_c<is_single_precision<A>, is_single_precision<B>, is_single_precision<C>>> {};
-
-template<typename A, typename B, typename C>
-struct is_double_precision_3 : cpp::bool_constant_c<cpp::and_c<is_double_precision<A>, is_double_precision<B>, is_double_precision<C>>> {};
-
-template<typename A, typename B>
-struct is_dma_2 : cpp::bool_constant_c<cpp::and_c<has_direct_access<A>, has_direct_access<B>>> {};
-
-template<typename A, typename B, typename C>
-struct is_dma_3 : cpp::bool_constant_c<cpp::and_c<has_direct_access<A>, has_direct_access<B>, has_direct_access<C>>> {};
+struct is_dma_3 : cpp::and_c<has_direct_access<A>, has_direct_access<B>, has_direct_access<C>> {};
 
 template<typename E>
 using decay_traits = etl_traits<std::decay_t<E>>;

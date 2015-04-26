@@ -20,7 +20,7 @@ template<typename T, typename DT = std::decay_t<T>>
 using is_fast_matrix = is_var_2<etl::fast_matrix_impl, std::decay_t<T>>;
 
 template<typename T, typename DT>
-struct is_dyn_matrix : cpp::bool_constant_c<is_2<etl::dyn_matrix, std::decay_t<T>>> {};
+struct is_dyn_matrix : is_2<etl::dyn_matrix, std::decay_t<T>> {};
 
 template<typename T, typename DT = std::decay_t<T>>
 using is_unary_expr = cpp::is_specialization_of<etl::unary_expr, DT>;
@@ -35,16 +35,16 @@ template<typename T, typename DT = std::decay_t<T>>
 using is_stable_transform_expr = cpp::is_specialization_of<etl::stable_transform_expr, DT>;
 
 template<typename T, typename DT>
-struct is_temporary_unary_expr : cpp::bool_constant_c<cpp::is_specialization_of<etl::temporary_unary_expr, DT>> {};
+struct is_temporary_unary_expr : cpp::is_specialization_of<etl::temporary_unary_expr, DT> {};
 
 template<typename T, typename DT>
-struct is_temporary_binary_expr : cpp::bool_constant_c<cpp::is_specialization_of<etl::temporary_binary_expr, DT>> {};
+struct is_temporary_binary_expr : cpp::is_specialization_of<etl::temporary_binary_expr, DT> {};
 
 template<typename T>
-struct is_temporary_expr : cpp::bool_constant_c<cpp::or_c<is_temporary_unary_expr<T>, is_temporary_binary_expr<T>>> {};
+struct is_temporary_expr : cpp::or_c<is_temporary_unary_expr<T>, is_temporary_binary_expr<T>> {};
 
 template<typename T, typename DT>
-struct is_transformer : cpp::bool_constant_c<cpp::or_c<
+struct is_transformer : cpp::or_c<
         cpp::is_specialization_of<etl::hflip_transformer, DT>,
         cpp::is_specialization_of<etl::vflip_transformer, DT>,
         cpp::is_specialization_of<etl::fflip_transformer, DT>,
@@ -62,24 +62,24 @@ struct is_transformer : cpp::bool_constant_c<cpp::or_c<
         is_2<etl::dyn_rep_l_transformer, DT>,
         is_3<etl::p_max_pool_h_transformer, DT>,
         is_3<etl::p_max_pool_p_transformer, DT>
-    >> {};
+    > {};
 
 template<typename T, typename DT>
-struct is_view : cpp::bool_constant_c<cpp::or_c<
+struct is_view : cpp::or_c<
         is_2<etl::dim_view, DT>,
         is_3<etl::fast_matrix_view, DT>,
         cpp::is_specialization_of<etl::dyn_matrix_view, DT>,
         cpp::is_specialization_of<etl::sub_view, DT>
-    >> {};
+    > {};
 
 template<typename T, typename DT>
-struct is_magic_view : cpp::bool_constant_c<cpp::or_c<
+struct is_magic_view : cpp::or_c<
         cpp::is_specialization_of<etl::magic_view, DT>,
         is_2<etl::fast_magic_view, DT>
-    >> {};
+    > {};
 
 template<typename T>
-struct is_etl_expr : cpp::bool_constant_c<cpp::or_c<
+struct is_etl_expr : cpp::or_c<
        is_fast_matrix<T>,
        is_dyn_matrix<T>,
        is_unary_expr<T>,
@@ -90,10 +90,10 @@ struct is_etl_expr : cpp::bool_constant_c<cpp::or_c<
        is_generator_expr<T>,
        is_transformer<T>, is_view<T>,
        is_transformer<T>, is_magic_view<T>
-    >> {};
+    > {};
 
 template<typename T>
-struct is_copy_expr : cpp::bool_constant_c<cpp::or_c<
+struct is_copy_expr : cpp::or_c<
        is_fast_matrix<T>,
        is_dyn_matrix<T>,
        is_unary_expr<T>,
@@ -101,46 +101,46 @@ struct is_copy_expr : cpp::bool_constant_c<cpp::or_c<
        is_temporary_unary_expr<T>,
        is_temporary_binary_expr<T>,
        is_stable_transform_expr<T>
-    >> {};
+    > {};
 
 template<typename T>
-struct is_etl_value : cpp::bool_constant_c<cpp::or_c<
+struct is_etl_value : cpp::or_c<
         is_fast_matrix<T>,
         is_dyn_matrix<T>
-    >> {};
+    > {};
 
 template<typename T>
 struct is_direct_sub_view : std::false_type {};
 
 template<typename T>
-struct is_direct_sub_view<sub_view<T>> : cpp::bool_constant_c<has_direct_access<T>> {};
+struct is_direct_sub_view<sub_view<T>> : has_direct_access<T> {};
 
 template<typename T>
 struct is_direct_dim_view : std::false_type {};
 
 template<typename T>
-struct is_direct_dim_view<dim_view<T,1>> : cpp::bool_constant_c<has_direct_access<T>> {};
+struct is_direct_dim_view<dim_view<T,1>> : has_direct_access<T> {};
 
 template<typename T>
 struct is_direct_fast_matrix_view : std::false_type {};
 
 template<typename T, std::size_t R, std::size_t C>
-struct is_direct_fast_matrix_view<fast_matrix_view<T, R, C>> : cpp::bool_constant_c<has_direct_access<T>> {};
+struct is_direct_fast_matrix_view<fast_matrix_view<T, R, C>> : has_direct_access<T> {};
 
 template<typename T>
 struct is_direct_dyn_matrix_view : std::false_type {};
 
 template<typename T>
-struct is_direct_dyn_matrix_view<dyn_matrix_view<T>> : cpp::bool_constant_c<has_direct_access<T>> {};
+struct is_direct_dyn_matrix_view<dyn_matrix_view<T>> : has_direct_access<T> {};
 
 template<typename T>
 struct is_direct_identity_view : std::false_type {};
 
 template<typename T, typename V>
-struct is_direct_identity_view<etl::unary_expr<T, V, identity_op>> : cpp::bool_constant_c<has_direct_access<V>> {};
+struct is_direct_identity_view<etl::unary_expr<T, V, identity_op>> : has_direct_access<V> {};
 
 template<typename T, typename DT>
-struct has_direct_access : cpp::bool_constant_c<cpp::or_c<
+struct has_direct_access : cpp::or_c<
           is_etl_value<DT>
         , is_temporary_unary_expr<DT>
         , is_temporary_binary_expr<DT>
@@ -149,7 +149,7 @@ struct has_direct_access : cpp::bool_constant_c<cpp::or_c<
         , is_direct_dim_view<DT>
         , is_direct_fast_matrix_view<DT>
         , is_direct_dyn_matrix_view<DT>
-    >> {};
+    > {};
 
 template<typename T, typename Enable>
 struct etl_traits;

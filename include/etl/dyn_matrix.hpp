@@ -54,18 +54,18 @@ values_t<V...> values(V... v){
 namespace dyn_detail {
 
 template<typename... S>
-struct is_init_constructor : std::integral_constant<bool, false> {};
+struct is_init_constructor : std::false_type {};
 
 template<typename S1, typename S2, typename S3, typename... S>
 struct is_init_constructor<S1, S2, S3, S...> :
-    std::integral_constant<bool, std::is_same<init_flag_t, typename cpp::nth_type<1+sizeof...(S), S1, S2, S3, S...>::type>::value> {};
+    std::is_same<init_flag_t, typename cpp::nth_type<1+sizeof...(S), S1, S2, S3, S...>::type> {};
 
 template<typename... S>
-struct is_initializer_list_constructor : std::integral_constant<bool, false> {};
+struct is_initializer_list_constructor : std::false_type {};
 
 template<typename S1, typename S2, typename... S>
 struct is_initializer_list_constructor<S1, S2, S...> :
-    std::integral_constant<bool, cpp::is_specialization_of<std::initializer_list, typename cpp::last_type<S1, S2, S...>::type>::value> {};
+    cpp::is_specialization_of<std::initializer_list, typename cpp::last_type<S1, S2, S...>::type> {};
 
 inline std::size_t size(std::size_t first){
     return first;

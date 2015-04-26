@@ -73,7 +73,7 @@ struct sequence_equal<std::index_sequence<I1...>, std::index_sequence<I2...>,
 
 template<std::size_t I, std::size_t... I1, std::size_t... I2>
 struct sequence_equal<std::index_sequence<I, I1...>, std::index_sequence<I, I2...>,
-    std::enable_if_t<sizeof...(I1) == sizeof...(I2)>> : cpp::bool_constant<sequence_equal<std::index_sequence<I1...>, std::index_sequence<I2...>>::value> {};
+    std::enable_if_t<sizeof...(I1) == sizeof...(I2)>> : sequence_equal<std::index_sequence<I1...>, std::index_sequence<I2...>> {};
 
 template<std::size_t I11, std::size_t I21, std::size_t... I1, std::size_t... I2>
 struct sequence_equal<std::index_sequence<I11, I1...>, std::index_sequence<I21, I2...>,
