@@ -20,9 +20,7 @@ namespace etl {
 namespace detail {
 
 template<typename A, typename C, typename Enable = void>
-struct fft_impl {
-    //static_assert(false, "No FFT Implementation are available");
-};
+struct fft_impl;
 
 template<typename A, typename C>
 struct is_blas_dfft : cpp::bool_constant_c<cpp::and_c<is_mkl_enabled, is_double_precision<A>, is_dma_2<A, C>>> {};

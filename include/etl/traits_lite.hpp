@@ -20,6 +20,15 @@ template<typename T>
 struct is_copy_expr;
 
 template<typename T, typename DT = std::decay_t<T>>
+struct is_temporary_unary_expr;
+
+template<typename T, typename DT = std::decay_t<T>>
+struct is_temporary_binary_expr;
+
+template<typename T>
+struct is_temporary_expr;
+
+template<typename T, typename DT = std::decay_t<T>>
 struct is_view;
 
 template<typename T, typename DT = std::decay_t<T>>

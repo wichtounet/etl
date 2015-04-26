@@ -34,8 +34,14 @@ using is_generator_expr = cpp::is_specialization_of<etl::generator_expr, DT>;
 template<typename T, typename DT = std::decay_t<T>>
 using is_stable_transform_expr = cpp::is_specialization_of<etl::stable_transform_expr, DT>;
 
-template<typename T, typename DT = std::decay_t<T>>
-using is_temporary_binary_expr = cpp::is_specialization_of<etl::temporary_binary_expr, DT>;
+template<typename T, typename DT>
+struct is_temporary_unary_expr : cpp::bool_constant_c<cpp::is_specialization_of<etl::temporary_unary_expr, DT>> {};
+
+template<typename T, typename DT>
+struct is_temporary_binary_expr : cpp::bool_constant_c<cpp::is_specialization_of<etl::temporary_binary_expr, DT>> {};
+
+template<typename T>
+struct is_temporary_expr : cpp::bool_constant_c<cpp::or_c<is_temporary_unary_expr<T>, is_temporary_binary_expr<T>>> {};
 
 template<typename T, typename DT>
 struct is_transformer : cpp::bool_constant_c<cpp::or_c<
@@ -78,6 +84,7 @@ struct is_etl_expr : cpp::bool_constant_c<cpp::or_c<
        is_dyn_matrix<T>,
        is_unary_expr<T>,
        is_binary_expr<T>,
+       is_temporary_unary_expr<T>,
        is_temporary_binary_expr<T>,
        is_stable_transform_expr<T>,
        is_generator_expr<T>,
@@ -91,6 +98,7 @@ struct is_copy_expr : cpp::bool_constant_c<cpp::or_c<
        is_dyn_matrix<T>,
        is_unary_expr<T>,
        is_binary_expr<T>,
+       is_temporary_unary_expr<T>,
        is_temporary_binary_expr<T>,
        is_stable_transform_expr<T>
     >> {};
@@ -134,6 +142,7 @@ struct is_direct_identity_view<etl::unary_expr<T, V, identity_op>> : cpp::bool_c
 template<typename T, typename DT>
 struct has_direct_access : cpp::bool_constant_c<cpp::or_c<
           is_etl_value<DT>
+        , is_temporary_unary_expr<DT>
         , is_temporary_binary_expr<DT>
         , is_direct_identity_view<DT>
         , is_direct_sub_view<DT>
@@ -583,6 +592,41 @@ struct etl_traits<dyn_rep_l_transformer<T, D>> {
 };
 
 //TODO Optimization when forced is not void
+
+/*!
+ * \brief Specialization for temporary_unary_expr.
+ */
+template <typename T, typename A, typename Op, typename Forced>
+struct etl_traits<etl::temporary_unary_expr<T, A, Op, Forced>> {
+    using expr_t = etl::temporary_unary_expr<T, A, Op, Forced>;
+    using a_t = std::decay_t<A>;
+
+    static constexpr const bool is_fast = etl_traits<a_t>::is_fast;
+    static constexpr const bool is_value = false;
+    static constexpr const bool is_generator = false;
+
+    static std::size_t size(const expr_t& v){
+        return Op::size(v.a());
+    }
+
+    static std::size_t dim(const expr_t& v, std::size_t d){
+        return Op::dim(v.a(), d);
+    }
+
+    template<bool BB = is_fast, cpp_enable_if(BB)>
+    static constexpr std::size_t size(){
+        return Op::template size<a_t>();
+    }
+
+    template<std::size_t D>
+    static constexpr std::size_t dim(){
+        return Op::template dim<a_t, D>();
+    }
+
+    static constexpr std::size_t dimensions(){
+        return Op::dimensions();
+    }
+};
 
 /*!
  * \brief Specialization for temporary_binary_expr.

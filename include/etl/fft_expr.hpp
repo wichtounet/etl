@@ -29,7 +29,7 @@ struct basic_fft_expr {
 
     template<typename A>
     struct result_type_builder<A, std::enable_if_t<decay_traits<A>::is_fast>> {
-        using type = fast_dyn_matrix<std::complex<value_t<A>>, etl::template dim<A,0>(), etl::template dim<A,1>()>;
+        using type = fast_dyn_matrix<std::complex<value_t<A>>, etl::template dim<0,A>()>;
     };
 
     template<typename A>
@@ -42,7 +42,7 @@ struct basic_fft_expr {
 
     template<typename A, cpp_disable_if(decay_traits<A>::is_fast)>
     static result_type<A>* allocate(A&& a){
-        return new result_type<A>(etl::template dim<0>(a), etl::template dim<1>(a));
+        return new result_type<A>(etl::template dim<0>(a));
     }
 
     template<typename A, typename C>

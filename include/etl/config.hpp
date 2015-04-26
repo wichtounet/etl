@@ -20,7 +20,7 @@ struct create_temporary : std::true_type {};
 
 #endif
 
-#ifdef ETL_MLK_MODE
+#ifdef ETL_MKL_MODE
 
 #ifndef ETL_BLAS_MODE
 #define ETL_BLAS_MODE

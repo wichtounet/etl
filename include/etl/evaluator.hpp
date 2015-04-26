@@ -31,6 +31,13 @@ struct temporary_allocator_static_visitor {
         (*this)(v.lhs());
         (*this)(v.rhs());
     }
+    
+    template <typename T, typename AExpr, typename Op, typename Forced>
+    void operator()(etl::temporary_unary_expr<T, AExpr, Op, Forced>& v) const {
+        v.allocate_temporary();
+
+        (*this)(v.a());
+    }
 
     template <typename T, typename AExpr, typename BExpr, typename Op, typename Forced>
     void operator()(etl::temporary_binary_expr<T, AExpr, BExpr, Op, Forced>& v) const {
@@ -96,6 +103,13 @@ struct evaluator_static_visitor {
         (*this)(v.rhs());
     }
 
+    template <typename T, typename AExpr, typename Op, typename Forced>
+    void operator()(etl::temporary_unary_expr<T, AExpr, Op, Forced>& v) const {
+        (*this)(v.a());
+
+        v.evaluate();
+    }
+
     template <typename T, typename AExpr, typename BExpr, typename Op, typename Forced>
     void operator()(etl::temporary_binary_expr<T, AExpr, BExpr, Op, Forced>& v) const {
         (*this)(v.a());
@@ -145,7 +159,7 @@ struct evaluator_static_visitor {
 
 template<typename Expr, typename Result>
 struct standard_evaluator {
-    template<typename E, typename R, cpp_disable_if(cpp::is_specialization_of<etl::temporary_binary_expr, std::decay_t<E>>::value)>
+    template<typename E, typename R, cpp_disable_if(is_temporary_expr<E>::value)>
     static void evaluate(E&& expr, R&& result){
         detail::temporary_allocator_static_visitor allocator_visitor;
         allocator_visitor(expr);
@@ -158,7 +172,22 @@ struct standard_evaluator {
         }
     }
 
-    template<typename E, typename R, cpp_enable_if(cpp::is_specialization_of<etl::temporary_binary_expr, std::decay_t<E>>::value)>
+    //Note: In case of direct evaluation, temporary_expr must be
+    //evaluated by the static_visitor, otherwise, the result would
+    //be evaluated twice and a temporary would be allocated for nothing
+
+    template<typename E, typename R, cpp_enable_if(is_temporary_unary_expr<E>::value)>
+    static void evaluate(E&& expr, R&& result){
+        detail::temporary_allocator_static_visitor allocator_visitor;
+        allocator_visitor(expr.a());
+
+        detail::evaluator_static_visitor evaluator_visitor;
+        evaluator_visitor(expr.a());
+
+        expr.direct_evaluate(result);
+    }
+
+    template<typename E, typename R, cpp_enable_if(is_temporary_binary_expr<E>::value)>
     static void evaluate(E&& expr, R&& result){
         detail::temporary_allocator_static_visitor allocator_visitor;
         allocator_visitor(expr.a());
@@ -171,7 +200,7 @@ struct standard_evaluator {
         expr.direct_evaluate(result);
     }
 
-    template<typename E, cpp_enable_if(cpp::is_specialization_of<etl::temporary_binary_expr, std::decay_t<E>>::value)>
+    template<typename E, cpp_enable_if(is_temporary_expr<E>::value)>
     static void evaluate(E&& expr){
         detail::temporary_allocator_static_visitor allocator_visitor;
         allocator_visitor(expr);
