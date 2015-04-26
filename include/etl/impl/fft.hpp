@@ -20,7 +20,7 @@ namespace etl {
 namespace detail {
 
 template<typename A, typename C, typename Enable = void>
-struct fft_impl;
+struct fft1_impl;
 
 template<typename A, typename C>
 struct is_blas_dfft : cpp::bool_constant_c<cpp::and_c<is_mkl_enabled, is_double_precision<A>, is_dma_2<A, C>>> {};
@@ -29,16 +29,16 @@ template<typename A, typename C>
 struct is_blas_sfft : cpp::bool_constant_c<cpp::and_c<is_mkl_enabled, is_single_precision<A>, is_dma_2<A, C>>> {};
 
 template<typename A, typename C>
-struct fft_impl<A, C, std::enable_if_t<is_blas_dfft<A,C>::value>> {
+struct fft1_impl<A, C, std::enable_if_t<is_blas_dfft<A,C>::value>> {
     static void apply(A&& a, C&& c){
-        etl::impl::blas::dfft(std::forward<A>(a), std::forward<C>(c));
+        etl::impl::blas::dfft1(std::forward<A>(a), std::forward<C>(c));
     }
 };
 
 template<typename A, typename C>
-struct fft_impl<A, C, std::enable_if_t<is_blas_sfft<A,C>::value>> {
+struct fft1_impl<A, C, std::enable_if_t<is_blas_sfft<A,C>::value>> {
     static void apply(A&& a, C&& c){
-        etl::impl::blas::sfft(std::forward<A>(a), std::forward<C>(c));
+        etl::impl::blas::sfft1(std::forward<A>(a), std::forward<C>(c));
     }
 };
 

@@ -86,7 +86,7 @@ struct basic_fft_expr {
 //1D FFT
 
 template<typename T>
-using fft1_expr = basic_fft_expr<T, 1, detail::fft_impl>;
+using fft1_expr = basic_fft_expr<T, 1, detail::fft1_impl>;
 
 } //end of namespace etl
 

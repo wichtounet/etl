@@ -23,20 +23,78 @@ namespace blas {
 #ifdef ETL_MKL_MODE
 
 template<typename A, typename C>
-void dfft(A&&, C&&){
+void sfft1(A&& a, C&& c){
+    auto a_complex = allocate<std::complex<float>>(a.size());
+
+    std::copy(a.begin(), a.end(), a_complex);
+
+    DFTI_DESCRIPTOR_HANDLE descriptor;
+    MKL_LONG status;
+
+    status = DftiCreateDescriptor(&descriptor, DFTI_SINGLE, DFTI_COMPLEX, 1, a.size()); //Specify size and precision
+    status = DftiSetValue(descriptor, DFTI_PLACEMENT, DFTI_NOT_INPLACE);                //Out of place FFT
+    status = DftiCommitDescriptor(descriptor);                                          //Finalize the descriptor
+    status = DftiComputeForward(descriptor, a_complex, c.memory_start());               //Compute the Forward FFT
+    status = DftiFreeDescriptor(&descriptor);                                           //Free the descriptor
+
+    release(a_complex);
 };
 
 template<typename A, typename C>
-void sfft(A&&, C&&){
+void dfft1(A&& a, C&& c){
+    auto a_complex = allocate<std::complex<double>>(a.size());
+
+    std::copy(a.begin(), a.end(), a_complex);
+
+    DFTI_DESCRIPTOR_HANDLE descriptor;
+    MKL_LONG status;
+
+    status = DftiCreateDescriptor(&descriptor, DFTI_DOUBLE, DFTI_COMPLEX, 1, a.size()); //Specify size and precision
+    status = DftiSetValue(descriptor, DFTI_PLACEMENT, DFTI_NOT_INPLACE);                //Out of place FFT
+    status = DftiCommitDescriptor(descriptor);                                          //Finalize the descriptor
+    status = DftiComputeForward(descriptor, a_complex, c.memory_start());               //Compute the Forward FFT
+    status = DftiFreeDescriptor(&descriptor);                                           //Free the descriptor
+
+    release(a_complex);
+};
+
+template<typename A, typename C>
+void cfft1(A&& a, C&& c){
+    DFTI_DESCRIPTOR_HANDLE descriptor;
+    MKL_LONG status;
+
+    status = DftiCreateDescriptor(&descriptor, DFTI_SINGLE, DFTI_COMPLEX, 1, a.size()); //Specify size and precision
+    status = DftiSetValue(descriptor, DFTI_PLACEMENT, DFTI_NOT_INPLACE);                //Out of place FFT
+    status = DftiCommitDescriptor(descriptor);                                          //Finalize the descriptor
+    status = DftiComputeForward(descriptor, a.memory_start(), c.memory_start());        //Compute the Forward FFT
+    status = DftiFreeDescriptor(&descriptor);                                           //Free the descriptor
+};
+
+template<typename A, typename C>
+void zfft1(A&& a, C&& c){
+    DFTI_DESCRIPTOR_HANDLE descriptor;
+    MKL_LONG status;
+
+    status = DftiCreateDescriptor(&descriptor, DFTI_DOUBLE, DFTI_COMPLEX, 1, a.size()); //Specify size and precision
+    status = DftiSetValue(descriptor, DFTI_PLACEMENT, DFTI_NOT_INPLACE);                //Out of place FFT
+    status = DftiCommitDescriptor(descriptor);                                          //Finalize the descriptor
+    status = DftiComputeForward(descriptor, a.memory_start(), c.memory_start());        //Compute the Forward FFT
+    status = DftiFreeDescriptor(&descriptor);                                           //Free the descriptor
 };
 
 #else
 
 template<typename A, typename C>
-void dfft(A&&, C&&);
+void sfft1(A&&, C&&);
 
 template<typename A, typename C>
-void sfft(A&&, C&&);
+void dfft1(A&&, C&&);
+
+template<typename A, typename C>
+void cfft1(A&&, C&&);
+
+template<typename A, typename C>
+void zfft1(A&&, C&&);
 
 #endif
 
