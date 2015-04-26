@@ -166,9 +166,17 @@ struct basic_conv_expr {
         using type = dyn_vector<value_t<A>>;
     };
 
+    template<typename A, typename B, typename I>
+    struct fast_result_type_builder;
+
+    template<typename A, typename B, std::size_t... I>
+    struct fast_result_type_builder<A, B, std::index_sequence<I...>> {
+        using type = fast_dyn_matrix<typename std::decay_t<A>::value_type, this_type::template dim<A,B,I>()...>;
+    };
+
     template<typename A, typename B>
     struct result_type_builder<A, B, std::enable_if_t<decay_traits<A>::is_fast && decay_traits<B>::is_fast>> {
-        using type = fast_dyn_matrix<typename std::decay_t<A>::value_type, this_type::template dim<A,B,0>()>;
+        using type = typename fast_result_type_builder<A, B, std::make_index_sequence<D>>::type;
     };
 
     template<typename A, typename B>
