@@ -14,13 +14,12 @@
 
 #include "traits_lite.hpp"
 #include "iterator.hpp"
+#include "tmp.hpp"
 
 #include "comparable.hpp"
 #include "iterable.hpp"
 
 namespace etl {
-
-//TODO Review constness of this class
 
 template <typename T, typename AExpr, typename BExpr, typename Op, typename Forced>
 struct temporary_binary_expr final : comparable<temporary_binary_expr<T, AExpr, BExpr, Op, Forced>>, iterable<temporary_binary_expr<T, AExpr, BExpr, Op, Forced>> {
@@ -60,14 +59,7 @@ public:
     }
 
     //Move an expression
-    template<typename F = Forced, cpp_disable_if(std::is_same<F, void>::value)>
-    temporary_binary_expr(temporary_binary_expr&& e) : _a(e._a), _b(e._b), _c(e._c), evaluated(e.evaluated) {
-        e.evaluated = false;
-    }
-
-    //Move an expression
-    template<typename F = Forced, cpp_enable_if(std::is_same<F, void>::value)>
-    temporary_binary_expr(temporary_binary_expr&& e) : _a(e._a), _b(e._b), _c(std::move(e._c)), evaluated(e.evaluated) {
+    temporary_binary_expr(temporary_binary_expr&& e) : _a(e._a), _b(e._b), _c(optional_move<std::is_same<Forced,void>::value>(e._c)), evaluated(e.evaluated) {
         e.evaluated = false;
     }
 
@@ -178,24 +170,14 @@ public:
     //}}}
 
 private:
-    template<typename F = Forced, cpp_enable_if(std::is_same<F, void>::value)>
+    using get_result_op = std::conditional_t<std::is_same<Forced, void>::value, dereference_op, forward_op>;
+
     result_type& result(){
-        return *_c;
+        return get_result_op::apply(_c);
     }
 
-    template<typename F = Forced, cpp_enable_if(std::is_same<F, void>::value)>
     const result_type& result() const {
-        return *_c;
-    }
-
-    template<typename F = Forced, cpp_disable_if(std::is_same<F, void>::value)>
-    result_type& result(){
-        return _c;
-    }
-
-    template<typename F = Forced, cpp_disable_if(std::is_same<F, void>::value)>
-    const result_type& result() const {
-        return _c;
+        return get_result_op::apply(_c);
     }
 };
 

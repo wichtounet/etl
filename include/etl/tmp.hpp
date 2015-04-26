@@ -92,6 +92,30 @@ std::string concat_sizes(Dims... sizes){
     return result;
 }
 
+struct dereference_op {
+    template<typename T>
+    static decltype(auto) apply(T&& t){
+        return *(std::forward<T>(t));
+    }
+};
+
+struct forward_op {
+    template<typename T>
+    static decltype(auto) apply(T&& t){
+        return std::forward<T>(t);
+    }
+};
+
+template<bool B, typename T, cpp_enable_if(B)>
+constexpr decltype(auto) optional_move( T&& t ){
+    return std::move(t);
+}
+
+template<bool B, typename T, cpp_disable_if(B)>
+constexpr decltype(auto) optional_move(T&& t){
+    return std::forward<T>(t);
+}
+
 } //end of namespace etl
 
 #endif
