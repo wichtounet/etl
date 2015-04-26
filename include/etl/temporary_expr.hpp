@@ -38,7 +38,7 @@ private:
     AExpr _a;
     BExpr _b;
     Forced _c;
-    mutable bool evaluated = false;
+    bool evaluated = false;
 
 public:
     //Cannot be constructed with no args
@@ -183,8 +183,8 @@ private:
 
     AExpr _a;
     BExpr _b;
-    mutable std::shared_ptr<result_type> result_ptr;
-    mutable bool evaluated = false;
+    std::shared_ptr<result_type> result_ptr;
+    bool evaluated = false;
 
 public:
     //Cannot be constructed with no args
@@ -277,7 +277,7 @@ public:
         Op::apply(_a, _b, std::forward<Result>(result));
     }
 
-    void allocate_temporary() const {
+    void allocate_temporary(){
         if(!result_ptr){
             result_ptr.reset(Op::allocate(_a, _b));
         }
