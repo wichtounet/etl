@@ -21,13 +21,77 @@
 
 namespace etl {
 
+template <typename D, typename V>
+struct temporary_expr : comparable<D>, iterable<D> {
+    using         derived_t = D;
+    using        value_type = V;
+    using       memory_type = value_type*;
+    using const_memory_type = const value_type*;
+
+    derived_t& as_derived() noexcept {
+        return *static_cast<derived_t*>(this);
+    }
+
+    const derived_t& as_derived() const noexcept {
+        return *static_cast<const derived_t*>(this);
+    }
+
+    //Apply the expression
+
+    value_type operator[](std::size_t i){
+        return as_derived().result()[i];
+    }
+
+    value_type operator[](std::size_t i) const {
+        return as_derived().result()[i];
+    }
+
+    template<typename... S, cpp_enable_if(sizeof...(S) == sub_size_compare<derived_t>::value)>
+    value_type operator()(S... args){
+        static_assert(cpp::all_convertible_to<std::size_t, S...>::value, "Invalid size types");
+
+        return as_derived().result()(args...);
+    }
+
+    template<typename DD = D, cpp_enable_if((sub_size_compare<DD>::value > 1))>
+    auto operator()(std::size_t i){
+        return sub(as_derived(), i);
+    }
+
+    //{{{ Iterator
+
+    iterator<const derived_t> begin() const noexcept {
+        return {as_derived(), 0};
+    }
+
+    iterator<const derived_t> end() const noexcept {
+        return {as_derived(), size(as_derived())};
+    }
+
+    // Direct memory access
+
+    memory_type memory_start() noexcept {
+        return as_derived().result().memory_start();
+    }
+
+    const_memory_type memory_start() const noexcept {
+        return as_derived().result().memory_start();
+    }
+
+    memory_type memory_end() noexcept {
+        return as_derived().result().memory_end();
+    }
+
+    const_memory_type memory_end() const noexcept {
+        return as_derived().result().memory_end();
+    }
+};
+
 template <typename T, typename AExpr, typename Op, typename Forced>
-struct temporary_unary_expr final : comparable<temporary_unary_expr<T, AExpr, Op, Forced>>, iterable<temporary_unary_expr<T, AExpr, Op, Forced>> {
+struct temporary_unary_expr final : temporary_expr<temporary_unary_expr<T, AExpr, Op, Forced>, T> {
     using        value_type = T;
     using       result_type = std::conditional_t<std::is_same<Forced, void>::value, typename Op::template result_type<AExpr>, Forced>;
     using         data_type = std::conditional_t<std::is_same<Forced, void>::value, std::shared_ptr<result_type>, result_type>;
-    using       memory_type = value_type*;
-    using const_memory_type = const value_type*;
 
 private:
     static_assert(is_etl_expr<AExpr>::value, "The argument must be an ETL expr");
@@ -76,36 +140,6 @@ public:
         return _a;
     }
 
-    //Apply the expression
-
-    value_type operator[](std::size_t i){
-        return result()[i];
-    }
-
-    value_type operator[](std::size_t i) const {
-        return result()[i];
-    }
-
-    template<typename... S, cpp_enable_if(sizeof...(S) == sub_size_compare<this_type>::value)>
-    value_type operator()(S... args){
-        static_assert(cpp::all_convertible_to<std::size_t, S...>::value, "Invalid size types");
-
-        return result()(args...);
-    }
-
-    template<typename ST = T, typename A = AExpr, typename O = Op, typename F = Forced, cpp_enable_if((sub_size_compare<temporary_unary_expr<ST, A, O, F>>::value > 1))>
-    auto operator()(std::size_t i){
-        return sub(*this, i);
-    }
-
-    iterator<const this_type> begin() const noexcept {
-        return {*this, 0};
-    }
-
-    iterator<const this_type> end() const noexcept {
-        return {*this, size(*this)};
-    }
-
     void evaluate(){
         if(!evaluated){
             Op::apply(_a, result());
@@ -140,27 +174,6 @@ public:
         }
     }
 
-    //{{{ Direct memory access
-
-    memory_type memory_start() noexcept {
-        return result().memory_start();
-    }
-
-    const_memory_type memory_start() const noexcept {
-        return result().memory_start();
-    }
-
-    memory_type memory_end() noexcept {
-        return result().memory_end();
-    }
-
-    const_memory_type memory_end() const noexcept {
-        return result().memory_end();
-    }
-
-    //}}}
-
-private:
     using get_result_op = std::conditional_t<std::is_same<Forced, void>::value, dereference_op, forward_op>;
 
     result_type& result(){
@@ -173,12 +186,10 @@ private:
 };
 
 template <typename T, typename AExpr, typename BExpr, typename Op, typename Forced>
-struct temporary_binary_expr final : comparable<temporary_binary_expr<T, AExpr, BExpr, Op, Forced>>, iterable<temporary_binary_expr<T, AExpr, BExpr, Op, Forced>> {
+struct temporary_binary_expr final : temporary_expr<temporary_binary_expr<T, AExpr, BExpr, Op, Forced>, T> {
     using        value_type = T;
     using       result_type = std::conditional_t<std::is_same<Forced, void>::value, typename Op::template result_type<AExpr, BExpr>, Forced>;
     using         data_type = std::conditional_t<std::is_same<Forced, void>::value, std::shared_ptr<result_type>, result_type>;
-    using       memory_type = value_type*;
-    using const_memory_type = const value_type*;
 
 private:
     static_assert(is_etl_expr<AExpr>::value && is_etl_expr<BExpr>::value, "Both arguments must be ETL expr");
@@ -236,36 +247,6 @@ public:
         return _b;
     }
 
-    //Apply the expression
-
-    value_type operator[](std::size_t i){
-        return result()[i];
-    }
-
-    value_type operator[](std::size_t i) const {
-        return result()[i];
-    }
-
-    template<typename... S, cpp_enable_if(sizeof...(S) == sub_size_compare<this_type>::value)>
-    value_type operator()(S... args){
-        static_assert(cpp::all_convertible_to<std::size_t, S...>::value, "Invalid size types");
-
-        return result()(args...);
-    }
-
-    template<typename ST = T, typename A = AExpr, typename B = BExpr, typename O = Op, typename F = Forced, cpp_enable_if((sub_size_compare<temporary_binary_expr<ST, A, B, O, F>>::value > 1))>
-    auto operator()(std::size_t i){
-        return sub(*this, i);
-    }
-
-    iterator<const this_type> begin() const noexcept {
-        return {*this, 0};
-    }
-
-    iterator<const this_type> end() const noexcept {
-        return {*this, size(*this)};
-    }
-
     void evaluate(){
         if(!evaluated){
             Op::apply(_a, _b, result());
@@ -300,27 +281,6 @@ public:
         }
     }
 
-    //{{{ Direct memory access
-
-    memory_type memory_start() noexcept {
-        return result().memory_start();
-    }
-
-    const_memory_type memory_start() const noexcept {
-        return result().memory_start();
-    }
-
-    memory_type memory_end() noexcept {
-        return result().memory_end();
-    }
-
-    const_memory_type memory_end() const noexcept {
-        return result().memory_end();
-    }
-
-    //}}}
-
-private:
     using get_result_op = std::conditional_t<std::is_same<Forced, void>::value, dereference_op, forward_op>;
 
     result_type& result(){
