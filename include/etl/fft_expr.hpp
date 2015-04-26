@@ -22,14 +22,29 @@ namespace etl {
 
 template<typename T, std::size_t D, template<typename...> class Impl>
 struct basic_fft_expr {
+    using this_type = basic_fft_expr<T, D, Impl>;
+
     template<typename A, class Enable = void>
     struct result_type_builder {
         using type = dyn_vector<std::complex<value_t<A>>>;
     };
 
+    template<typename A, std::size_t DD>
+    static constexpr std::size_t dim(){
+        return decay_traits<A>::template dim<DD>();
+    }
+
+    template<typename A, typename I>
+    struct fast_result_type_builder;
+
+    template<typename A, std::size_t... I>
+    struct fast_result_type_builder<A, std::index_sequence<I...>> {
+        using type = fast_dyn_matrix<typename std::decay_t<A>::value_type, this_type::template dim<A,I>()...>;
+    };
+
     template<typename A>
     struct result_type_builder<A, std::enable_if_t<decay_traits<A>::is_fast>> {
-        using type = fast_dyn_matrix<std::complex<value_t<A>>, etl::template dim<0,A>()>;
+        using type = fast_result_type_builder<A, std::make_index_sequence<D>>;
     };
 
     template<typename A>
@@ -66,11 +81,6 @@ struct basic_fft_expr {
     template<typename A>
     static std::size_t size(const A& a){
         return etl::size(a);
-    }
-
-    template<typename A, std::size_t DD>
-    static constexpr std::size_t dim(){
-        return decay_traits<A>::template dim<DD>();
     }
 
     template<typename A>
