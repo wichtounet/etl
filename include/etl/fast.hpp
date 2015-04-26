@@ -214,7 +214,7 @@ public:
 
     //Construct from expression
 
-    template<typename E, cpp::enable_if_all_c<std::is_convertible<typename E::value_type, value_type>, is_copy_expr<E>> = cpp::detail::dummy>
+    template<typename E, cpp_enable_if(std::is_convertible<typename E::value_type, value_type>::value && is_copy_expr<E>::value)>
     fast_matrix_impl& operator=(E&& e){
         ensure_same_size(*this, e);
 

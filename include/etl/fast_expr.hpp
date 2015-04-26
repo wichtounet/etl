@@ -61,11 +61,17 @@ using temporary_binary_helper = temporary_binary_expr<value_t<A>, build_type<A>,
 template<typename A, template<typename> class OP>
 using temporary_unary_helper = temporary_unary_expr<value_t<A>, build_type<A>, OP<value_t<A>>, void>;
 
+template<typename T, typename A, template<typename> class OP>
+using temporary_unary_helper_type = temporary_unary_expr<T, build_type<A>, OP<T>, void>;
+
 template<typename A, typename B, typename C, template<typename> class OP>
 using forced_temporary_binary_helper = temporary_binary_expr<value_t<A>, build_type<A>, build_type<B>, OP<value_t<A>>, build_identity_type<C>>;
 
 template<typename A, typename C, template<typename> class OP>
 using forced_temporary_unary_helper = temporary_unary_expr<value_t<A>, build_type<A>, OP<value_t<A>>, build_identity_type<C>>;
+
+template<typename T, typename A, typename C, template<typename> class OP>
+using forced_temporary_unary_helper_type = temporary_unary_expr<T, build_type<A>, OP<T>, build_identity_type<C>>;
 
 template<typename A, typename B, template<typename, std::size_t> class OP, std::size_t D>
 using dim_temporary_binary_helper = temporary_binary_expr<value_t<A>, build_type<A>, build_type<B>, OP<value_t<A>, D>, void>;
@@ -897,29 +903,52 @@ void conv_2d_valid_multi_prepared(A&& input, B&& kernels, C&& features, D&& inpu
 
 //{{{ Fast-Fourrier-Transform
 
+template<typename A>
+using fft1_value_type = std::conditional_t<is_complex<A>::value, value_t<A>, std::complex<value_t<A>>>;
+
 template<typename A> 
-auto fft_1d(A&& a) -> temporary_unary_helper<A, fft1_expr> {
+auto fft_1d(A&& a) -> temporary_unary_helper_type<fft1_value_type<A>, A, fft1_expr> {
     static_assert(is_etl_expr<A>::value, "FFT only supported for ETL expressions");
 
     return {a};
 }
 
 template<typename A, typename C>
-auto fft_1d(A&& a, C&& c) -> forced_temporary_unary_helper<A, C, fft1_expr> {
+auto fft_1d(A&& a, C&& c) -> forced_temporary_unary_helper_type<fft1_value_type<A>, A, C, fft1_expr> {
     static_assert(is_etl_expr<A>::value && is_etl_expr<C>::value, "FFT only supported for ETL expressions");
 
     return {a, c};
 }
 
+template<typename A>
+using ifft1_value_type = std::conditional_t<is_complex<A>::value, value_t<A>, std::complex<value_t<A>>>;
+
 template<typename A> 
-auto ifft_1d(A&& a) -> temporary_unary_helper<A, ifft1_expr> {
+auto ifft_1d(A&& a) -> temporary_unary_helper_type<ifft1_value_type<A>, A, ifft1_expr> {
     static_assert(is_etl_expr<A>::value, "FFT only supported for ETL expressions");
 
     return {a};
 }
 
 template<typename A, typename C>
-auto ifft_1d(A&& a, C&& c) -> forced_temporary_unary_helper<A, C, ifft1_expr> {
+auto ifft_1d(A&& a, C&& c) -> forced_temporary_unary_helper_type<ifft1_value_type<A>, A, C, ifft1_expr> {
+    static_assert(is_etl_expr<A>::value && is_etl_expr<C>::value, "FFT only supported for ETL expressions");
+
+    return {a, c};
+}
+
+template<typename A>
+using ifft1_real_value_type = std::conditional_t<is_complex<A>::value, typename value_t<A>::value_type, value_t<A>>;
+
+template<typename A> 
+auto ifft_1d_real(A&& a) -> temporary_unary_helper_type<ifft1_real_value_type<A>, A, ifft1_real_expr> {
+    static_assert(is_etl_expr<A>::value, "FFT only supported for ETL expressions");
+
+    return {a};
+}
+
+template<typename A, typename C>
+auto ifft_1d_real(A&& a, C&& c) -> forced_temporary_unary_helper_type<ifft1_real_value_type<A>, A, C, ifft1_real_expr> {
     static_assert(is_etl_expr<A>::value && is_etl_expr<C>::value, "FFT only supported for ETL expressions");
 
     return {a, c};

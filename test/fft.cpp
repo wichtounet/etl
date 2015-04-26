@@ -161,3 +161,47 @@ TEMPLATE_TEST_CASE_2( "ifft_1d_c/2", "[fast][ifft]", Z, float, double ) {
 }
 
 //}}}
+
+//{{{ ifft_1d (real)
+
+TEMPLATE_TEST_CASE_2( "ifft_1d_real/1", "[fast][ifft]", Z, float, double ) {
+    etl::fast_matrix<std::complex<Z>, 5> a;
+    etl::fast_matrix<Z, 5> c;
+
+    a[0] = std::complex<Z>(1.0, 1.0);
+    a[1] = std::complex<Z>(2.0, 3.0);
+    a[2] = std::complex<Z>(-1.0, 0.0);
+    a[3] = std::complex<Z>(-2.0, 0.0);
+    a[4] = std::complex<Z>(0.5, 1.5);
+
+    c = etl::ifft_1d_real(a);
+
+    REQUIRE(c(0) == Approx(Z(0.1)));
+    REQUIRE(c(1) == Approx(Z(0.554602)));
+    REQUIRE(c(2) == Approx(Z(-0.566254)));
+    REQUIRE(c(3) == Approx(Z(-0.213583)));
+    REQUIRE(c(4) == Approx(Z(1.125236)));
+}
+
+TEMPLATE_TEST_CASE_2( "ifft_1d_real/2", "[fast][ifft]", Z, float, double ) {
+    etl::fast_matrix<std::complex<Z>, 6> a;
+    etl::fast_matrix<Z, 6> c;
+
+    a[0] = std::complex<Z>(1.0, 1.0);
+    a[1] = std::complex<Z>(2.0, 3.0);
+    a[2] = std::complex<Z>(-1.0, 0.0);
+    a[3] = std::complex<Z>(-2.0, 0.0);
+    a[4] = std::complex<Z>(0.5, 1.5);
+    a[5] = std::complex<Z>(0.5, 0.5);
+
+    c = etl::ifft_1d_real(a);
+
+    REQUIRE(c(0) == Approx(Z(0.166666)));
+    REQUIRE(c(1) == Approx(Z(0.605662)));
+    REQUIRE(c(2) == Approx(Z(-0.910684)));
+    REQUIRE(c(3) == Approx(Z(0)));
+    REQUIRE(c(4) == Approx(Z(0.244017)));
+    REQUIRE(c(5) == Approx(Z(0.894338)));
+}
+
+//}}}

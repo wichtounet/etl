@@ -25,6 +25,9 @@ struct fft1_impl;
 template<typename A, typename C, typename Enable = void>
 struct ifft1_impl;
 
+template<typename A, typename C, typename Enable = void>
+struct ifft1_real_impl;
+
 template<typename A, typename C>
 struct is_blas_dfft : cpp::and_c<is_mkl_enabled, is_double_precision<A>, is_dma_2<A, C>> {};
 
@@ -76,6 +79,20 @@ template<typename A, typename C>
 struct ifft1_impl<A, C, std::enable_if_t<is_blas_zfft<A,C>::value>> {
     static void apply(A&& a, C&& c){
         etl::impl::blas::zifft1(std::forward<A>(a), std::forward<C>(c));
+    }
+};
+
+template<typename A, typename C>
+struct ifft1_real_impl<A, C, std::enable_if_t<is_blas_cfft<A,C>::value>> {
+    static void apply(A&& a, C&& c){
+        etl::impl::blas::cifft1_real(std::forward<A>(a), std::forward<C>(c));
+    }
+};
+
+template<typename A, typename C>
+struct ifft1_real_impl<A, C, std::enable_if_t<is_blas_zfft<A,C>::value>> {
+    static void apply(A&& a, C&& c){
+        etl::impl::blas::zifft1_real(std::forward<A>(a), std::forward<C>(c));
     }
 };
 

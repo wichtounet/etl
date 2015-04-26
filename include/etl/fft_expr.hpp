@@ -20,20 +20,14 @@
 
 namespace etl {
 
-template<typename T, std::size_t D, bool Real, template<typename...> class Impl>
+template<typename T, std::size_t D, template<typename...> class Impl>
 struct basic_fft_expr {
-    using this_type = basic_fft_expr<T, D, Real, Impl>;
-
-    template<typename A>
-    using value_type = 
-        std::conditional_t<
-            Real,
-            std::conditional_t<is_complex<A>::value, typename value_t<A>::value_type, value_t<A>>,
-            std::conditional_t<is_complex<A>::value, value_t<A>, std::complex<value_t<A>>>>;
+    using this_type = basic_fft_expr<T, D, Impl>;
+    using value_type = T;
 
     template<typename A, class Enable = void>
     struct result_type_builder {
-        using type = dyn_vector<value_type<A>>;
+        using type = dyn_vector<value_type>;
     };
 
     template<typename A, std::size_t DD>
@@ -46,7 +40,7 @@ struct basic_fft_expr {
 
     template<typename A, std::size_t... I>
     struct fast_result_type_builder<A, std::index_sequence<I...>> {
-        using type = fast_dyn_matrix<value_type<A>, this_type::template dim<A,I>()...>;
+        using type = fast_dyn_matrix<value_type, this_type::template dim<A,I>()...>;
     };
 
     template<typename A>
@@ -103,10 +97,13 @@ struct basic_fft_expr {
 //1D FFT/IFFT
 
 template<typename T>
-using fft1_expr = basic_fft_expr<T, 1, false, detail::fft1_impl>;
+using fft1_expr = basic_fft_expr<T, 1, detail::fft1_impl>;
 
 template<typename T>
-using ifft1_expr = basic_fft_expr<T, 1, false, detail::ifft1_impl>;
+using ifft1_expr = basic_fft_expr<T, 1, detail::ifft1_impl>;
+
+template<typename T>
+using ifft1_real_expr = basic_fft_expr<T, 1, detail::ifft1_real_impl>;
 
 } //end of namespace etl
 
