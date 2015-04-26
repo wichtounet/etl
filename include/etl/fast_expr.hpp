@@ -58,8 +58,14 @@ using stable_transform_binary_helper = stable_transform_expr<value_t<LE>, OP<bui
 template<typename A, typename B, template<typename> class OP>
 using temporary_binary_helper = temporary_binary_expr<value_t<A>, build_type<A>, build_type<B>, OP<value_t<A>>, void>;
 
+template<typename A, template<typename> class OP>
+using temporary_unary_helper = temporary_unary_expr<value_t<A>, build_type<A>, OP<value_t<A>>, void>;
+
 template<typename A, typename B, typename C, template<typename> class OP>
 using forced_temporary_binary_helper = temporary_binary_expr<value_t<A>, build_type<A>, build_type<B>, OP<value_t<A>>, build_identity_type<C>>;
+
+template<typename A, typename C, template<typename> class OP>
+using forced_temporary_unary_helper = temporary_unary_expr<value_t<A>, build_type<A>, OP<value_t<A>>, build_identity_type<C>>;
 
 template<typename A, typename B, template<typename, std::size_t> class OP, std::size_t D>
 using dim_temporary_binary_helper = temporary_binary_expr<value_t<A>, build_type<A>, build_type<B>, OP<value_t<A>, D>, void>;
@@ -695,7 +701,7 @@ auto outer(A&& a, B&& b, C&& c) -> forced_temporary_binary_helper<A, B, C, outer
 
 //{{{ Convolution expressions
 
-template<typename A, typename B>
+template<typename A, typename B> 
 auto conv_1d_valid(A&& a, B&& b) -> temporary_binary_helper<A, B, conv1_valid_expr> {
     static_assert(is_etl_expr<A>::value && is_etl_expr<B>::value, "Convolution only supported for ETL expressions");
 
@@ -885,6 +891,24 @@ void conv_2d_valid_multi_prepared(A&& input, B&& kernels, C&& features, D&& inpu
     for(std::size_t k = 0; k < K; ++k){
         features(k).transpose_inplace();
     }
+}
+
+//}}}
+
+//{{{ Fast-Fourrier-Transform
+
+template<typename A> 
+auto fft_1d(A&& a) -> temporary_unary_helper<A, fft1_expr> {
+    static_assert(is_etl_expr<A>::value, "FFT only supported for ETL expressions");
+
+    return {a};
+}
+
+template<typename A, typename C>
+auto fft_1d(A&& a, C&& c) -> forced_temporary_unary_helper<A, C, fft1_expr> {
+    static_assert(is_etl_expr<A>::value && is_etl_expr<C>::value, "FFT only supported for ETL expressions");
+
+    return {a, c};
 }
 
 //}}}
