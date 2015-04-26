@@ -29,6 +29,12 @@ template<typename A, typename C>
 struct is_blas_sfft : cpp::and_c<is_mkl_enabled, is_single_precision<A>, is_dma_2<A, C>> {};
 
 template<typename A, typename C>
+struct is_blas_cfft : cpp::and_c<is_mkl_enabled, is_complex_single_precision<A>, is_dma_2<A, C>> {};
+
+template<typename A, typename C>
+struct is_blas_zfft : cpp::and_c<is_mkl_enabled, is_complex_double_precision<A>, is_dma_2<A, C>> {};
+
+template<typename A, typename C>
 struct fft1_impl<A, C, std::enable_if_t<is_blas_dfft<A,C>::value>> {
     static void apply(A&& a, C&& c){
         etl::impl::blas::dfft1(std::forward<A>(a), std::forward<C>(c));
@@ -39,6 +45,20 @@ template<typename A, typename C>
 struct fft1_impl<A, C, std::enable_if_t<is_blas_sfft<A,C>::value>> {
     static void apply(A&& a, C&& c){
         etl::impl::blas::sfft1(std::forward<A>(a), std::forward<C>(c));
+    }
+};
+
+template<typename A, typename C>
+struct fft1_impl<A, C, std::enable_if_t<is_blas_cfft<A,C>::value>> {
+    static void apply(A&& a, C&& c){
+        etl::impl::blas::cfft1(std::forward<A>(a), std::forward<C>(c));
+    }
+};
+
+template<typename A, typename C>
+struct fft1_impl<A, C, std::enable_if_t<is_blas_zfft<A,C>::value>> {
+    static void apply(A&& a, C&& c){
+        etl::impl::blas::zfft1(std::forward<A>(a), std::forward<C>(c));
     }
 };
 

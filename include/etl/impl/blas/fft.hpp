@@ -59,10 +59,12 @@ void cfft1(A&& a, C&& c){
     DFTI_DESCRIPTOR_HANDLE descriptor;
     MKL_LONG status;
 
+    auto* a_ptr = const_cast<void*>(static_cast<const void*>(a.memory_start()));
+
     status = DftiCreateDescriptor(&descriptor, DFTI_SINGLE, DFTI_COMPLEX, 1, a.size()); //Specify size and precision
     status = DftiSetValue(descriptor, DFTI_PLACEMENT, DFTI_NOT_INPLACE);                //Out of place FFT
     status = DftiCommitDescriptor(descriptor);                                          //Finalize the descriptor
-    status = DftiComputeForward(descriptor, a.memory_start(), c.memory_start());        //Compute the Forward FFT
+    status = DftiComputeForward(descriptor, a_ptr, c.memory_start());                   //Compute the Forward FFT
     status = DftiFreeDescriptor(&descriptor);                                           //Free the descriptor
 };
 
@@ -71,10 +73,12 @@ void zfft1(A&& a, C&& c){
     DFTI_DESCRIPTOR_HANDLE descriptor;
     MKL_LONG status;
 
+    auto* a_ptr = const_cast<void*>(static_cast<const void*>(a.memory_start()));
+
     status = DftiCreateDescriptor(&descriptor, DFTI_DOUBLE, DFTI_COMPLEX, 1, a.size()); //Specify size and precision
     status = DftiSetValue(descriptor, DFTI_PLACEMENT, DFTI_NOT_INPLACE);                //Out of place FFT
     status = DftiCommitDescriptor(descriptor);                                          //Finalize the descriptor
-    status = DftiComputeForward(descriptor, a.memory_start(), c.memory_start());        //Compute the Forward FFT
+    status = DftiComputeForward(descriptor, a_ptr, c.memory_start());                   //Compute the Forward FFT
     status = DftiFreeDescriptor(&descriptor);                                           //Free the descriptor
 };
 
