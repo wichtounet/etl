@@ -170,9 +170,6 @@ void zifft1(A&& a, C&& c){
 
 template<typename A, typename C>
 void cifft1_real(A&& a, C&& c){
-    DFTI_DESCRIPTOR_HANDLE descriptor;
-    MKL_LONG status;
-
     auto c_complex = allocate<std::complex<float>>(a.size());
 
     detail::cifft_kernel(a.memory_start(), a.size(), c_complex.get());
@@ -184,9 +181,6 @@ void cifft1_real(A&& a, C&& c){
 
 template<typename A, typename C>
 void zifft1_real(A&& a, C&& c){
-    DFTI_DESCRIPTOR_HANDLE descriptor;
-    MKL_LONG status;
-
     auto c_complex = allocate<std::complex<double>>(a.size());
 
     detail::zifft_kernel(a.memory_start(), a.size(), c_complex.get());
