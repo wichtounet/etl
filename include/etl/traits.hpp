@@ -31,8 +31,6 @@ using is_binary_expr = cpp::is_specialization_of<etl::binary_expr, DT>;
 template<typename T, typename DT = std::decay_t<T>>
 using is_generator_expr = cpp::is_specialization_of<etl::generator_expr, DT>;
 
-template<typename T, typename DT = std::decay_t<T>>
-
 template<typename T, typename DT>
 struct is_temporary_unary_expr : cpp::is_specialization_of<etl::temporary_unary_expr, DT> {};
 
@@ -97,7 +95,7 @@ struct is_copy_expr : cpp::or_c<
        is_unary_expr<T>,
        is_binary_expr<T>,
        is_temporary_unary_expr<T>,
-       is_temporary_binary_expr<T>,
+       is_temporary_binary_expr<T>
     > {};
 
 template<typename T>
