@@ -285,17 +285,8 @@ public:
 
     //Apply the expression
 
-    value_type operator[](std::size_t i){
-        return value()[i];
-    }
-
     value_type operator[](std::size_t i) const {
         return value()[i];
-    }
-
-    template<bool B = (sub_size_compare<this_type>::value > 1), cpp::enable_if_u<B> = cpp::detail::dummy>
-    value_type operator()(std::size_t i){
-        return sub(*this, i);
     }
 
     template<bool B = (sub_size_compare<this_type>::value > 1), cpp::enable_if_u<B> = cpp::detail::dummy>
@@ -304,25 +295,10 @@ public:
     }
 
     template<typename... S>
-    std::enable_if_t<sizeof...(S) == sub_size_compare<this_type>::value, value_type> operator()(S... args){
-        static_assert(cpp::all_convertible_to<std::size_t, S...>::value, "Invalid size types");
-
-        return value()(args...);
-    }
-
-    template<typename... S>
     std::enable_if_t<sizeof...(S) == sub_size_compare<this_type>::value, value_type> operator()(S... args) const {
         static_assert(cpp::all_convertible_to<std::size_t, S...>::value, "Invalid size types");
 
         return value()(args...);
-    }
-
-    iterator<this_type, false, false> begin() noexcept {
-        return {*this, 0};
-    }
-
-    iterator<this_type, false, false> end() noexcept {
-        return {*this, size(*this)};
     }
 
     iterator<const this_type, false, false> begin() const noexcept {

@@ -21,11 +21,6 @@ struct temporary_allocator_static_visitor {
         (*this)(v.value());
     }
 
-    template <typename T, typename Expr>
-    void operator()(etl::stable_transform_expr<T, Expr>& v) const {
-        (*this)(v.value());
-    }
-
     template <typename T, typename LeftExpr, typename BinaryOp, typename RightExpr>
     void operator()(etl::binary_expr<T, LeftExpr, BinaryOp, RightExpr>& v) const {
         (*this)(v.lhs());
@@ -62,7 +57,7 @@ struct temporary_allocator_static_visitor {
     void operator()(T& transformer) const {
         (*this)(transformer.value());
     }
-    
+
     template <typename Generator>
     void operator()(const generator_expr<Generator>&) const {
         //Leaf
@@ -89,11 +84,6 @@ struct temporary_allocator_static_visitor {
 struct evaluator_static_visitor {
     template <typename T, typename Expr, typename UnaryOp>
     void operator()(etl::unary_expr<T, Expr, UnaryOp>& v) const {
-        (*this)(v.value());
-    }
-
-    template <typename T, typename Expr>
-    void operator()(etl::stable_transform_expr<T, Expr>& v) const {
         (*this)(v.value());
     }
 

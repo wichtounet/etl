@@ -21,7 +21,6 @@
 // The expressions
 #include "binary_expr.hpp"
 #include "unary_expr.hpp"
-#include "stable_transform_expr.hpp"
 #include "generator_expr.hpp"
 #include "temporary_expr.hpp"
 
