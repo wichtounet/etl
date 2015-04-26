@@ -82,6 +82,36 @@ void zfft1(A&& a, C&& c){
     status = DftiFreeDescriptor(&descriptor);                                           //Free the descriptor
 };
 
+template<typename A, typename C>
+void cifft1(A&& a, C&& c){
+    DFTI_DESCRIPTOR_HANDLE descriptor;
+    MKL_LONG status;
+
+    auto* a_ptr = const_cast<void*>(static_cast<const void*>(a.memory_start()));
+
+    status = DftiCreateDescriptor(&descriptor, DFTI_SINGLE, DFTI_COMPLEX, 1, a.size()); //Specify size and precision
+    status = DftiSetValue(descriptor, DFTI_PLACEMENT, DFTI_NOT_INPLACE);                //Out of place FFT
+    status = DftiSetValue(descriptor, DFTI_BACKWARD_SCALE, 1.0f / a.size());           //Scale down the output
+    status = DftiCommitDescriptor(descriptor);                                          //Finalize the descriptor
+    status = DftiComputeBackward(descriptor, a_ptr, c.memory_start());                  //Compute the Forward FFT
+    status = DftiFreeDescriptor(&descriptor);                                           //Free the descriptor
+};
+
+template<typename A, typename C>
+void zifft1(A&& a, C&& c){
+    DFTI_DESCRIPTOR_HANDLE descriptor;
+    MKL_LONG status;
+
+    auto* a_ptr = const_cast<void*>(static_cast<const void*>(a.memory_start()));
+
+    status = DftiCreateDescriptor(&descriptor, DFTI_DOUBLE, DFTI_COMPLEX, 1, a.size()); //Specify size and precision
+    status = DftiSetValue(descriptor, DFTI_PLACEMENT, DFTI_NOT_INPLACE);                //Out of place FFT
+    status = DftiSetValue(descriptor, DFTI_BACKWARD_SCALE, 1.0f / a.size());           //Scale down the output
+    status = DftiCommitDescriptor(descriptor);                                          //Finalize the descriptor
+    status = DftiComputeBackward(descriptor, a_ptr, c.memory_start());                  //Compute the Forward FFT
+    status = DftiFreeDescriptor(&descriptor);                                           //Free the descriptor
+};
+
 #else
 
 template<typename A, typename C>
@@ -95,6 +125,12 @@ void cfft1(A&&, C&&);
 
 template<typename A, typename C>
 void zfft1(A&&, C&&);
+
+template<typename A, typename C>
+void cifft1(A&&, C&&);
+
+template<typename A, typename C>
+void zifft1(A&&, C&&);
 
 #endif
 

@@ -106,3 +106,58 @@ TEMPLATE_TEST_CASE_2( "fft_1d_c/2", "[fast][fft]", Z, float, double ) {
 }
 
 //}}}
+
+//{{{ ifft_1d (complex)
+
+TEMPLATE_TEST_CASE_2( "ifft_1d_c/1", "[fast][ifft]", Z, float, double ) {
+    etl::fast_matrix<std::complex<Z>, 5> a;
+    etl::fast_matrix<std::complex<Z>, 5> c;
+
+    a[0] = std::complex<Z>(1.0, 1.0);
+    a[1] = std::complex<Z>(2.0, 3.0);
+    a[2] = std::complex<Z>(-1.0, 0.0);
+    a[3] = std::complex<Z>(-2.0, 0.0);
+    a[4] = std::complex<Z>(0.5, 1.5);
+
+    c = etl::ifft_1d(a);
+
+    REQUIRE(c(0).real() == Approx(Z(0.1)));
+    REQUIRE(c(0).imag() == Approx(Z(1.1)));
+    REQUIRE(c(1).real() == Approx(Z(0.554602)));
+    REQUIRE(c(1).imag() == Approx(Z(0.880989)));
+    REQUIRE(c(2).real() == Approx(Z(-0.566254)));
+    REQUIRE(c(2).imag() == Approx(Z(-0.541991)));
+    REQUIRE(c(3).real() == Approx(Z(-0.213583)));
+    REQUIRE(c(3).imag() == Approx(Z(-0.51424)));
+    REQUIRE(c(4).real() == Approx(Z(1.125236)));
+    REQUIRE(c(4).imag() == Approx(Z(0.075241)));
+}
+
+TEMPLATE_TEST_CASE_2( "ifft_1d_c/2", "[fast][ifft]", Z, float, double ) {
+    etl::fast_matrix<std::complex<Z>, 6> a;
+    etl::fast_matrix<std::complex<Z>, 6> c;
+
+    a[0] = std::complex<Z>(1.0, 1.0);
+    a[1] = std::complex<Z>(2.0, 3.0);
+    a[2] = std::complex<Z>(-1.0, 0.0);
+    a[3] = std::complex<Z>(-2.0, 0.0);
+    a[4] = std::complex<Z>(0.5, 1.5);
+    a[5] = std::complex<Z>(0.5, 0.5);
+
+    c = etl::ifft_1d(a);
+
+    REQUIRE(c(0).real() == Approx(Z(0.166666)));
+    REQUIRE(c(0).imag() == Approx(Z(1.0)));
+    REQUIRE(c(1).real() == Approx(Z(0.605662)));
+    REQUIRE(c(1).imag() == Approx(Z(0.333333)));
+    REQUIRE(c(2).real() == Approx(Z(-0.910684)));
+    REQUIRE(c(2).imag() == Approx(Z(0.183013)));
+    REQUIRE(c(3).real() == Approx(Z(0)));
+    REQUIRE(c(3).imag() == Approx(Z(-0.166667)));
+    REQUIRE(c(4).real() == Approx(Z(0.244017)));
+    REQUIRE(c(4).imag() == Approx(Z(-0.683013)));
+    REQUIRE(c(5).real() == Approx(Z(0.894338)));
+    REQUIRE(c(5).imag() == Approx(Z(0.333333)));
+}
+
+//}}}
