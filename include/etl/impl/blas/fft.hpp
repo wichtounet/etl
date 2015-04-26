@@ -22,20 +22,121 @@ namespace blas {
 
 #ifdef ETL_MKL_MODE
 
+namespace detail {
+
+inline void cfft_kernel(const std::complex<float>* in, std::size_t s, std::complex<float>* out){
+    DFTI_DESCRIPTOR_HANDLE descriptor;
+    MKL_LONG status;
+
+    auto* in_ptr = const_cast<void*>(static_cast<const void*>(in));
+
+    status = DftiCreateDescriptor(&descriptor, DFTI_SINGLE, DFTI_COMPLEX, 1, s);    //Specify size and precision
+    status = DftiSetValue(descriptor, DFTI_PLACEMENT, DFTI_NOT_INPLACE);            //Out of place FFT
+    status = DftiCommitDescriptor(descriptor);                                      //Finalize the descriptor
+    status = DftiComputeForward(descriptor, in_ptr, out);                           //Compute the Forward FFT
+    status = DftiFreeDescriptor(&descriptor);                                       //Free the descriptor
+}
+
+inline void zfft_kernel(const std::complex<double>* in, std::size_t s, std::complex<double>* out){
+    DFTI_DESCRIPTOR_HANDLE descriptor;
+    MKL_LONG status;
+
+    auto* in_ptr = const_cast<void*>(static_cast<const void*>(in));
+
+    status = DftiCreateDescriptor(&descriptor, DFTI_DOUBLE, DFTI_COMPLEX, 1, s);    //Specify size and precision
+    status = DftiSetValue(descriptor, DFTI_PLACEMENT, DFTI_NOT_INPLACE);            //Out of place FFT
+    status = DftiCommitDescriptor(descriptor);                                      //Finalize the descriptor
+    status = DftiComputeForward(descriptor, in_ptr, out);                           //Compute the Forward FFT
+    status = DftiFreeDescriptor(&descriptor);                                       //Free the descriptor
+}
+
+inline void inplace_cfft_kernel(std::complex<float>* in, std::size_t s){
+    DFTI_DESCRIPTOR_HANDLE descriptor;
+    MKL_LONG status;
+
+    auto* in_ptr = static_cast<void*>(in);
+
+    status = DftiCreateDescriptor(&descriptor, DFTI_SINGLE, DFTI_COMPLEX, 1, s);    //Specify size and precision
+    status = DftiCommitDescriptor(descriptor);                                      //Finalize the descriptor
+    status = DftiComputeForward(descriptor, in_ptr);                                //Compute the Forward FFT
+    status = DftiFreeDescriptor(&descriptor);                                       //Free the descriptor
+}
+
+inline void inplace_zfft_kernel(std::complex<double>* in, std::size_t s){
+    DFTI_DESCRIPTOR_HANDLE descriptor;
+    MKL_LONG status;
+
+    auto* in_ptr = static_cast<void*>(in);
+
+    status = DftiCreateDescriptor(&descriptor, DFTI_DOUBLE, DFTI_COMPLEX, 1, s);    //Specify size and precision
+    status = DftiCommitDescriptor(descriptor);                                      //Finalize the descriptor
+    status = DftiComputeForward(descriptor, in_ptr, in);                            //Compute the Forward FFT
+    status = DftiFreeDescriptor(&descriptor);                                       //Free the descriptor
+}
+
+inline void cifft_kernel(const std::complex<float>* in, std::size_t s, std::complex<float>* out){
+    DFTI_DESCRIPTOR_HANDLE descriptor;
+    MKL_LONG status;
+
+    auto* in_ptr = const_cast<void*>(static_cast<const void*>(in));
+
+    status = DftiCreateDescriptor(&descriptor, DFTI_SINGLE, DFTI_COMPLEX, 1, s);    //Specify size and precision
+    status = DftiSetValue(descriptor, DFTI_PLACEMENT, DFTI_NOT_INPLACE);            //Out of place FFT
+    status = DftiSetValue(descriptor, DFTI_BACKWARD_SCALE, 1.0f / s);           //Scale down the output
+    status = DftiCommitDescriptor(descriptor);                                      //Finalize the descriptor
+    status = DftiComputeBackward(descriptor, in_ptr, out);                           //Compute the Forward FFT
+    status = DftiFreeDescriptor(&descriptor);                                       //Free the descriptor
+}
+
+inline void zifft_kernel(const std::complex<double>* in, std::size_t s, std::complex<double>* out){
+    DFTI_DESCRIPTOR_HANDLE descriptor;
+    MKL_LONG status;
+
+    auto* in_ptr = const_cast<void*>(static_cast<const void*>(in));
+
+    status = DftiCreateDescriptor(&descriptor, DFTI_DOUBLE, DFTI_COMPLEX, 1, s);    //Specify size and precision
+    status = DftiSetValue(descriptor, DFTI_PLACEMENT, DFTI_NOT_INPLACE);            //Out of place FFT
+    status = DftiSetValue(descriptor, DFTI_BACKWARD_SCALE, 1.0 / s);           //Scale down the output
+    status = DftiCommitDescriptor(descriptor);                                      //Finalize the descriptor
+    status = DftiComputeBackward(descriptor, in_ptr, out);                           //Compute the Forward FFT
+    status = DftiFreeDescriptor(&descriptor);                                       //Free the descriptor
+}
+
+inline void inplace_cifft_kernel(std::complex<float>* in, std::size_t s){
+    DFTI_DESCRIPTOR_HANDLE descriptor;
+    MKL_LONG status;
+
+    auto* in_ptr = static_cast<void*>(in);
+
+    status = DftiCreateDescriptor(&descriptor, DFTI_SINGLE, DFTI_COMPLEX, 1, s);    //Specify size and precision
+    status = DftiSetValue(descriptor, DFTI_BACKWARD_SCALE, 1.0f / s);               //Scale down the output
+    status = DftiCommitDescriptor(descriptor);                                      //Finalize the descriptor
+    status = DftiComputeBackward(descriptor, in_ptr);                               //Compute the Forward FFT
+    status = DftiFreeDescriptor(&descriptor);                                       //Free the descriptor
+}
+
+inline void inplace_zifft_kernel(std::complex<double>* in, std::size_t s){
+    DFTI_DESCRIPTOR_HANDLE descriptor;
+    MKL_LONG status;
+
+    auto* in_ptr = static_cast<void*>(in);
+
+    status = DftiCreateDescriptor(&descriptor, DFTI_DOUBLE, DFTI_COMPLEX, 1, s);    //Specify size and precision
+    status = DftiSetValue(descriptor, DFTI_BACKWARD_SCALE, 1.0 / s);                //Scale down the output
+    status = DftiCommitDescriptor(descriptor);                                      //Finalize the descriptor
+    status = DftiComputeBackward(descriptor, in_ptr);                               //Compute the Forward FFT
+    status = DftiFreeDescriptor(&descriptor);                                       //Free the descriptor
+}
+
+} //End of namespace detail
+
 template<typename A, typename C>
 void sfft1(A&& a, C&& c){
     auto a_complex = allocate<std::complex<float>>(a.size());
 
     std::copy(a.begin(), a.end(), a_complex.get());
 
-    DFTI_DESCRIPTOR_HANDLE descriptor;
-    MKL_LONG status;
-
-    status = DftiCreateDescriptor(&descriptor, DFTI_SINGLE, DFTI_COMPLEX, 1, a.size()); //Specify size and precision
-    status = DftiSetValue(descriptor, DFTI_PLACEMENT, DFTI_NOT_INPLACE);                //Out of place FFT
-    status = DftiCommitDescriptor(descriptor);                                          //Finalize the descriptor
-    status = DftiComputeForward(descriptor, a_complex.get(), c.memory_start());         //Compute the Forward FFT
-    status = DftiFreeDescriptor(&descriptor);                                           //Free the descriptor
+    detail::cfft_kernel(a_complex.get(), a.size(), c.memory_start());
 };
 
 template<typename A, typename C>
@@ -44,72 +145,27 @@ void dfft1(A&& a, C&& c){
 
     std::copy(a.begin(), a.end(), a_complex.get());
 
-    DFTI_DESCRIPTOR_HANDLE descriptor;
-    MKL_LONG status;
-
-    status = DftiCreateDescriptor(&descriptor, DFTI_DOUBLE, DFTI_COMPLEX, 1, a.size()); //Specify size and precision
-    status = DftiSetValue(descriptor, DFTI_PLACEMENT, DFTI_NOT_INPLACE);                //Out of place FFT
-    status = DftiCommitDescriptor(descriptor);                                          //Finalize the descriptor
-    status = DftiComputeForward(descriptor, a_complex.get(), c.memory_start());         //Compute the Forward FFT
-    status = DftiFreeDescriptor(&descriptor);                                           //Free the descriptor
+    detail::zfft_kernel(a_complex.get(), a.size(), c.memory_start());
 };
 
 template<typename A, typename C>
 void cfft1(A&& a, C&& c){
-    DFTI_DESCRIPTOR_HANDLE descriptor;
-    MKL_LONG status;
-
-    auto* a_ptr = const_cast<void*>(static_cast<const void*>(a.memory_start()));
-
-    status = DftiCreateDescriptor(&descriptor, DFTI_SINGLE, DFTI_COMPLEX, 1, a.size()); //Specify size and precision
-    status = DftiSetValue(descriptor, DFTI_PLACEMENT, DFTI_NOT_INPLACE);                //Out of place FFT
-    status = DftiCommitDescriptor(descriptor);                                          //Finalize the descriptor
-    status = DftiComputeForward(descriptor, a_ptr, c.memory_start());                   //Compute the Forward FFT
-    status = DftiFreeDescriptor(&descriptor);                                           //Free the descriptor
+    detail::cfft_kernel(a.memory_start(), a.size(), c.memory_start());
 };
 
 template<typename A, typename C>
 void zfft1(A&& a, C&& c){
-    DFTI_DESCRIPTOR_HANDLE descriptor;
-    MKL_LONG status;
-
-    auto* a_ptr = const_cast<void*>(static_cast<const void*>(a.memory_start()));
-
-    status = DftiCreateDescriptor(&descriptor, DFTI_DOUBLE, DFTI_COMPLEX, 1, a.size()); //Specify size and precision
-    status = DftiSetValue(descriptor, DFTI_PLACEMENT, DFTI_NOT_INPLACE);                //Out of place FFT
-    status = DftiCommitDescriptor(descriptor);                                          //Finalize the descriptor
-    status = DftiComputeForward(descriptor, a_ptr, c.memory_start());                   //Compute the Forward FFT
-    status = DftiFreeDescriptor(&descriptor);                                           //Free the descriptor
+    detail::zfft_kernel(a.memory_start(), a.size(), c.memory_start());
 };
 
 template<typename A, typename C>
 void cifft1(A&& a, C&& c){
-    DFTI_DESCRIPTOR_HANDLE descriptor;
-    MKL_LONG status;
-
-    auto* a_ptr = const_cast<void*>(static_cast<const void*>(a.memory_start()));
-
-    status = DftiCreateDescriptor(&descriptor, DFTI_SINGLE, DFTI_COMPLEX, 1, a.size()); //Specify size and precision
-    status = DftiSetValue(descriptor, DFTI_PLACEMENT, DFTI_NOT_INPLACE);                //Out of place FFT
-    status = DftiSetValue(descriptor, DFTI_BACKWARD_SCALE, 1.0f / a.size());           //Scale down the output
-    status = DftiCommitDescriptor(descriptor);                                          //Finalize the descriptor
-    status = DftiComputeBackward(descriptor, a_ptr, c.memory_start());                  //Compute the Forward FFT
-    status = DftiFreeDescriptor(&descriptor);                                           //Free the descriptor
+    detail::cifft_kernel(a.memory_start(), a.size(), c.memory_start());
 };
 
 template<typename A, typename C>
 void zifft1(A&& a, C&& c){
-    DFTI_DESCRIPTOR_HANDLE descriptor;
-    MKL_LONG status;
-
-    auto* a_ptr = const_cast<void*>(static_cast<const void*>(a.memory_start()));
-
-    status = DftiCreateDescriptor(&descriptor, DFTI_DOUBLE, DFTI_COMPLEX, 1, a.size()); //Specify size and precision
-    status = DftiSetValue(descriptor, DFTI_PLACEMENT, DFTI_NOT_INPLACE);                //Out of place FFT
-    status = DftiSetValue(descriptor, DFTI_BACKWARD_SCALE, 1.0f / a.size());           //Scale down the output
-    status = DftiCommitDescriptor(descriptor);                                          //Finalize the descriptor
-    status = DftiComputeBackward(descriptor, a_ptr, c.memory_start());                  //Compute the Forward FFT
-    status = DftiFreeDescriptor(&descriptor);                                           //Free the descriptor
+    detail::zifft_kernel(a.memory_start(), a.size(), c.memory_start());
 };
 
 template<typename A, typename C>
@@ -119,14 +175,7 @@ void cifft1_real(A&& a, C&& c){
 
     auto c_complex = allocate<std::complex<float>>(a.size());
 
-    auto* a_ptr = const_cast<void*>(static_cast<const void*>(a.memory_start()));
-
-    status = DftiCreateDescriptor(&descriptor, DFTI_SINGLE, DFTI_COMPLEX, 1, a.size()); //Specify size and precision
-    status = DftiSetValue(descriptor, DFTI_PLACEMENT, DFTI_NOT_INPLACE);                //Out of place FFT
-    status = DftiSetValue(descriptor, DFTI_BACKWARD_SCALE, 1.0f / a.size());           //Scale down the output
-    status = DftiCommitDescriptor(descriptor);                                          //Finalize the descriptor
-    status = DftiComputeBackward(descriptor, a_ptr, c_complex.get());                   //Compute the Forward FFT
-    status = DftiFreeDescriptor(&descriptor);                                           //Free the descriptor
+    detail::cifft_kernel(a.memory_start(), a.size(), c_complex.get());
 
     for(std::size_t i = 0; i < a.size(); ++i){
         c[i] = c_complex[i].real();
@@ -140,19 +189,68 @@ void zifft1_real(A&& a, C&& c){
 
     auto c_complex = allocate<std::complex<double>>(a.size());
 
-    auto* a_ptr = const_cast<void*>(static_cast<const void*>(a.memory_start()));
-
-    status = DftiCreateDescriptor(&descriptor, DFTI_DOUBLE, DFTI_COMPLEX, 1, a.size()); //Specify size and precision
-    status = DftiSetValue(descriptor, DFTI_PLACEMENT, DFTI_NOT_INPLACE);                //Out of place FFT
-    status = DftiSetValue(descriptor, DFTI_BACKWARD_SCALE, 1.0f / a.size());            //Scale down the output
-    status = DftiCommitDescriptor(descriptor);                                          //Finalize the descriptor
-    status = DftiComputeBackward(descriptor, a_ptr, c_complex.get());                   //Compute the Forward FFT
-    status = DftiFreeDescriptor(&descriptor);                                           //Free the descriptor
+    detail::zifft_kernel(a.memory_start(), a.size(), c_complex.get());
 
     for(std::size_t i = 0; i < a.size(); ++i){
         c[i] = c_complex[i].real();
     }
 };
+
+template<typename A, typename B, typename C>
+void sfft1_convolve(A&& a, B&& b, C&& c){
+    const auto m = a.size();
+    const auto n = b.size();
+    const auto size = m + n - 1;
+
+    auto a_padded = allocate<std::complex<float>>(size);
+    auto b_padded = allocate<std::complex<float>>(size);
+
+    std::copy(a.begin(), a.end(), a_padded.get());
+    std::fill(a_padded.get() + m, a_padded.get() + size, 0.0f);
+    std::copy(b.begin(), b.end(), b_padded.get());
+    std::fill(b_padded.get() + n, b_padded.get() + size, 0.0f);
+
+    detail::inplace_cfft_kernel(a_padded.get(), size);
+    detail::inplace_cfft_kernel(b_padded.get(), size);
+
+    for(std::size_t i = 0; i < size; ++i){
+        a_padded[i] *= b_padded[i];
+    }
+
+    detail::inplace_cifft_kernel(a_padded.get(), size);
+
+    for(std::size_t i = 0; i < size; ++i){
+        c[i] = a_padded[i].real();
+    }
+}
+
+template<typename A, typename B, typename C>
+void dfft1_convolve(A&& a, B&& b, C&& c){
+    const auto m = a.size();
+    const auto n = b.size();
+    const auto size = m + n - 1;
+
+    auto a_padded = allocate<std::complex<double>>(size);
+    auto b_padded = allocate<std::complex<double>>(size);
+
+    std::copy(a.begin(), a.end(), a_padded.get());
+    std::fill(a_padded.get() + m, a_padded.get() + size, 0.0);
+    std::copy(b.begin(), b.end(), b_padded.get());
+    std::fill(b_padded.get() + n, b_padded.get() + size, 0.0);
+
+    detail::inplace_zfft_kernel(a_padded.get(), size);
+    detail::inplace_zfft_kernel(b_padded.get(), size);
+
+    for(std::size_t i = 0; i < size; ++i){
+        a_padded[i] *= b_padded[i];
+    }
+
+    detail::inplace_zifft_kernel(a_padded.get(), size);
+
+    for(std::size_t i = 0; i < size; ++i){
+        c[i] = a_padded[i].real();
+    }
+}
 
 #else
 
@@ -179,6 +277,12 @@ void cifft1_real(A&&, C&&);
 
 template<typename A, typename C>
 void zifft1_real(A&&, C&&);
+
+template<typename A, typename B, typename C>
+void sfft1_convolve(A&&, C&&);
+
+template<typename A, typename B, typename C>
+void dfft1_convolve(A&&, B&&, C&&);
 
 #endif
 

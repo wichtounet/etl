@@ -289,6 +289,9 @@ using conv1_same_expr = basic_conv_expr<T, 1, conv_type::SAME, detail::conv1_sam
 template<typename T>
 using conv1_full_expr = basic_conv_expr<T, 1, conv_type::FULL, detail::conv1_full_impl>;
 
+template<typename T>
+using fft_conv1_full_expr = basic_conv_expr<T, 1, conv_type::FULL, detail::fft_conv1_full_impl>;
+
 //2D convolutions
 
 template<typename T>

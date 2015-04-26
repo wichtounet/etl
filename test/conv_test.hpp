@@ -62,6 +62,13 @@ CONV_FUNCTOR( std_conv2_valid, etl::impl::standard::conv2_valid(a, b, c) )
 #define CONV2_VALID_TEST_CASE_SECTION_DEFAULT  CONV_TEST_CASE_SECTIONS( default_conv2_valid, default_conv2_valid )
 #define CONV2_VALID_TEST_CASE_SECTION_STD      CONV_TEST_CASE_SECTIONS( std_conv2_valid, std_conv2_valid )
 
+#ifdef ETL_MKL_MODE
+CONV_FUNCTOR( fft_conv1_full, c = etl::fft_conv_1d_full(a, b) )
+#define CONV1_FULL_TEST_CASE_SECTION_FFT       CONV_TEST_CASE_SECTIONS( fft_conv1_full, fft_conv1_full )
+#else
+#define CONV1_FULL_TEST_CASE_SECTION_FFT
+#endif
+
 #ifdef TEST_SSE
 CONV_FUNCTOR( sse_conv1_full_float, etl::impl::sse::sconv1_full(a, b, c) )
 CONV_FUNCTOR( sse_conv1_full_double, etl::impl::sse::dconv1_full(a, b, c) )
@@ -154,6 +161,7 @@ CONV_FUNCTOR( avx_conv2_valid_double, etl::impl::avx::dconv2_valid(a, b, c) )
         CONV1_FULL_TEST_CASE_SECTION_DEFAULT \
         CONV1_FULL_TEST_CASE_SECTION_STD \
         CONV1_FULL_TEST_CASE_SECTION_REDUC \
+        CONV1_FULL_TEST_CASE_SECTION_FFT \
         CONV1_FULL_TEST_CASE_SECTION_SSE \
         CONV1_FULL_TEST_CASE_SECTION_AVX \
     } \

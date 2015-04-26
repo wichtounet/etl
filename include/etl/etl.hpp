@@ -30,9 +30,9 @@
 
 // The complex expressions
 #include "mmul_expr.hpp"
-#include "conv_expr.hpp"
 #include "outer_product_expr.hpp"
 #include "fft_expr.hpp"
+#include "conv_expr.hpp"
 
 // The expressions building
 #include "fast_expr.hpp"
