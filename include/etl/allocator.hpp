@@ -12,19 +12,6 @@
 
 namespace etl {
 
-template<typename Expr>
-struct standard_allocator {
-    template<typename T>
-    static T* allocate(std::size_t size){
-        return new T[size];
-    }
-
-    template<typename T>
-    static void release(T* ptr){
-        delete[] ptr;
-    }
-};
-
 template<typename Expr, std::size_t A>
 struct aligned_allocator {
     template<typename T>
@@ -49,13 +36,8 @@ struct aligned_allocator {
 };
 
 template<typename T>
-T* allocate(std::size_t size){
-    return standard_allocator<void>::allocate<T>(size);
-}
-
-template<typename T>
-void release(T* ptr){
-    return standard_allocator<void>::release<T>(ptr);
+auto allocate(std::size_t size){
+    return std::make_unique<T[]>(size);
 }
 
 template<typename T>

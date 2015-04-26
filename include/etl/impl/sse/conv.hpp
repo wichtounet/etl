@@ -69,8 +69,6 @@ inline void dconv1_valid_micro_kernel(const double* in, const std::size_t n, con
             out[i] += in[i+k] * kernel[m - k - 1];
         }
     }
-
-    release(kernel_reverse);
 }
 
 template<typename I, typename K, typename C>
@@ -150,8 +148,6 @@ inline void sconv1_valid_micro_kernel(const float* in, const std::size_t n, cons
             }
         }
     }
-
-    release(kernel_reverse);
 }
 
 template<typename I, typename K, typename C>

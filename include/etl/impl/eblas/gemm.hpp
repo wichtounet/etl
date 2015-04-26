@@ -356,9 +356,9 @@ void gemm_nn(std::size_t m, std::size_t n, std::size_t k, D alpha, const D* A, s
     constexpr const auto MR = gemm_config<D>::MR;
     constexpr const auto NR = gemm_config<D>::NR;
 
-    auto* _A = allocate<double>(MC * KC);
-    auto* _B = allocate<double>(KC * NC);
-    auto* _C = allocate<D>(MR * NR);
+    auto _A = allocate<double>(MC * KC);
+    auto _B = allocate<double>(KC * NC);
+    auto _C = allocate<D>(MR * NR);
 
     auto mb = (m+MC-1) / MC;
     auto nb = (n+NC-1) / NC;
@@ -375,21 +375,17 @@ void gemm_nn(std::size_t m, std::size_t n, std::size_t k, D alpha, const D* A, s
             auto kc = (l!=kb-1 || _kc==0) ? KC   : _kc;
             auto _beta = (l==0) ? beta : D(1);
 
-            pack_B(kc, nc, &B[l*KC*b_row_stride+j*NC*b_col_stride], b_row_stride, b_col_stride, _B);
+            pack_B(kc, nc, &B[l*KC*b_row_stride+j*NC*b_col_stride], b_row_stride, b_col_stride, _B.get());
 
             for (std::size_t i=0; i<mb; ++i) {
                 auto mc = (i!=mb-1 || _mc==0) ? MC : _mc;
 
-                pack_A(mc, kc, &A[i*MC*a_row_stride+l*KC*a_col_stride], a_row_stride, a_col_stride, _A);
+                pack_A(mc, kc, &A[i*MC*a_row_stride+l*KC*a_col_stride], a_row_stride, a_col_stride, _A.get());
 
-                gemm_macro_kernel(mc, nc, kc, alpha, _beta, &C[i*MC*c_row_stride+j*NC*c_col_stride], c_row_stride, c_col_stride, _A, _B, _C);
+                gemm_macro_kernel(mc, nc, kc, alpha, _beta, &C[i*MC*c_row_stride+j*NC*c_col_stride], c_row_stride, c_col_stride, _A.get(), _B.get(), _C.get());
             }
         }
     }
-
-    release(_A);
-    release(_B);
-    release(_C);
 }
 
 template<typename A, typename B, typename C>
