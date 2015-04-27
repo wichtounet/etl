@@ -105,6 +105,11 @@ using ifft1_expr = basic_fft_expr<T, 1, detail::ifft1_impl>;
 template<typename T>
 using ifft1_real_expr = basic_fft_expr<T, 1, detail::ifft1_real_impl>;
 
+//2D FFT/IFFT
+
+template<typename T>
+using fft2_expr = basic_fft_expr<T, 2, detail::fft2_impl>;
+
 } //end of namespace etl
 
 #endif

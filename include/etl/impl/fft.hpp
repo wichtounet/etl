@@ -23,6 +23,9 @@ template<typename A, typename C, typename Enable = void>
 struct fft1_impl;
 
 template<typename A, typename C, typename Enable = void>
+struct fft2_impl;
+
+template<typename A, typename C, typename Enable = void>
 struct ifft1_impl;
 
 template<typename A, typename C, typename Enable = void>
@@ -116,6 +119,34 @@ template<typename A, typename B, typename C>
 struct fft_conv1_full_impl<A, B, C, std::enable_if_t<is_blas_dfft_convolve<A,B,C>::value>> {
     static void apply(A&& a, B&& b, C&& c){
         etl::impl::blas::dfft1_convolve(std::forward<A>(a), std::forward<B>(b), std::forward<C>(c));
+    }
+};
+
+template<typename A, typename C>
+struct fft2_impl<A, C, std::enable_if_t<is_blas_dfft<A,C>::value>> {
+    static void apply(A&& a, C&& c){
+        etl::impl::blas::dfft2(std::forward<A>(a), std::forward<C>(c));
+    }
+};
+
+template<typename A, typename C>
+struct fft2_impl<A, C, std::enable_if_t<is_blas_sfft<A,C>::value>> {
+    static void apply(A&& a, C&& c){
+        etl::impl::blas::sfft2(std::forward<A>(a), std::forward<C>(c));
+    }
+};
+
+template<typename A, typename C>
+struct fft2_impl<A, C, std::enable_if_t<is_blas_cfft<A,C>::value>> {
+    static void apply(A&& a, C&& c){
+        etl::impl::blas::cfft2(std::forward<A>(a), std::forward<C>(c));
+    }
+};
+
+template<typename A, typename C>
+struct fft2_impl<A, C, std::enable_if_t<is_blas_zfft<A,C>::value>> {
+    static void apply(A&& a, C&& c){
+        etl::impl::blas::zfft2(std::forward<A>(a), std::forward<C>(c));
     }
 };
 

@@ -246,6 +246,26 @@ void dfft1_convolve(A&& a, B&& b, C&& c){
     }
 }
 
+template<typename A, typename C>
+void sfft2(A&&, C&&){
+    //TODO
+};
+
+template<typename A, typename C>
+void dfft2(A&&, C&&){
+    //TODO
+};
+
+template<typename A, typename C>
+void cfft2(A&&, C&&){
+    //TODO
+};
+
+template<typename A, typename C>
+void zfft2(A&&, C&&){
+    //TODO
+};
+
 #else
 
 template<typename A, typename C>
@@ -277,6 +297,18 @@ void sfft1_convolve(A&&, C&&);
 
 template<typename A, typename B, typename C>
 void dfft1_convolve(A&&, B&&, C&&);
+
+template<typename A, typename C>
+void sfft2(A&&, C&&);
+
+template<typename A, typename C>
+void dfft2(A&&, C&&);
+
+template<typename A, typename C>
+void cfft2(A&&, C&&);
+
+template<typename A, typename C>
+void zfft2(A&&, C&&);
 
 #endif
 

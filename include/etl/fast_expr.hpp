@@ -970,6 +970,20 @@ auto ifft_1d_real(A&& a, C&& c) -> forced_temporary_unary_helper_type<ifft_real_
     return {a, c};
 }
 
+template<typename A>
+auto fft_2d(A&& a) -> temporary_unary_helper_type<fft_value_type<A>, A, fft2_expr> {
+    static_assert(is_etl_expr<A>::value, "FFT only supported for ETL expressions");
+
+    return {a};
+}
+
+template<typename A, typename C>
+auto fft_2d(A&& a, C&& c) -> forced_temporary_unary_helper_type<fft_value_type<A>, A, C, fft2_expr> {
+    static_assert(is_etl_expr<A>::value && is_etl_expr<C>::value, "FFT only supported for ETL expressions");
+
+    return {a, c};
+}
+
 //}}}
 
 //{{{ Apply a reduction on an ETL expression (vector,matrix,binary,unary)
