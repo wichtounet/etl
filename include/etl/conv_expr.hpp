@@ -163,7 +163,7 @@ struct basic_conv_expr {
 
     template<typename A, typename B, class Enable = void>
     struct result_type_builder {
-        using type = dyn_vector<value_t<A>>;
+        using type = dyn_matrix<value_t<A>, D>;
     };
 
     template<typename A, typename B, typename I>
@@ -187,9 +187,14 @@ struct basic_conv_expr {
         return new result_type<A, B>();
     }
 
+    template<typename A, typename B, std::size_t... I>
+    static result_type<A,B>* dyn_allocate(const A& a, const B& b, std::index_sequence<I...>){
+        return new result_type<A, B>(this_type::dim(a, b, I)...);
+    }
+
     template<typename A, typename B, cpp_disable_if(decay_traits<A>::is_fast && decay_traits<B>::is_fast)>
     static result_type<A,B>* allocate(A&& a, B&& b){
-        return new result_type<A, B>(this_type::dim(a, b, 0));
+        return dyn_allocate(std::forward<A>(a), std::forward<B>(b), std::make_index_sequence<D>());
     }
 
     template<typename A, typename B, typename C, std::size_t D2 = D, cpp_enable_if(D2 == 1)>

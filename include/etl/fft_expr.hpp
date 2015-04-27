@@ -27,7 +27,7 @@ struct basic_fft_expr {
 
     template<typename A, class Enable = void>
     struct result_type_builder {
-        using type = dyn_vector<value_type>;
+        using type = dyn_matrix<value_type, D>;
     };
 
     template<typename A, std::size_t DD>
@@ -56,9 +56,14 @@ struct basic_fft_expr {
         return new result_type<A>();
     }
 
+    template<typename A, std::size_t... I>
+    static result_type<A>* dyn_allocate(A&& a, std::index_sequence<I...>){
+        return new result_type<A>(etl::template dim<I>(a)...);
+    }
+
     template<typename A, cpp_disable_if(decay_traits<A>::is_fast)>
     static result_type<A>* allocate(A&& a){
-        return new result_type<A>(etl::template dim<0>(a));
+        return dyn_allocate(std::forward<A>(a), std::make_index_sequence<D>());
     }
 
     template<typename A, typename C>

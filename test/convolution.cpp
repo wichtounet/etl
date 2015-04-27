@@ -1525,3 +1525,33 @@ TEMPLATE_TEST_CASE_2( "convolution/1", "[conv]", Z, float, double) {
     REQUIRE(c(3,2) == 4.5);
     REQUIRE(c(3,3) == 1.5);
 }
+
+TEMPLATE_TEST_CASE_2( "convolution/2", "[conv][dyn]", Z, float, double) {
+    //Test for bugfix: conv_2d_expr dimensions were not working for more than 1 dimensions
+
+    etl::dyn_matrix<Z> a(3, 3, etl::values(1.0, 2.0, 3.0, 0.0, 1.0, 1.0, 3.0, 2.0, 1.0));
+    etl::dyn_matrix<Z> b(2, 2, etl::values(2.0, 0.0, 0.5, 0.5));
+    etl::dyn_matrix<Z> c(4,4);
+
+    c = conv_2d_full(a, b) + conv_2d_full(a,b) * 2;
+
+    REQUIRE(c(0,0) == 6.0);
+    REQUIRE(c(0,1) == 12.0);
+    REQUIRE(c(0,2) == 18.0);
+    REQUIRE(c(0,3) == 0.0);
+
+    REQUIRE(c(1,0) == 1.5);
+    REQUIRE(c(1,1) == 10.5);
+    REQUIRE(c(1,2) == 13.5);
+    REQUIRE(c(1,3) == 4.5);
+
+    REQUIRE(c(2,0) == 18.0);
+    REQUIRE(c(2,1) == 13.5);
+    REQUIRE(c(2,2) == 9.0);
+    REQUIRE(c(2,3) == 1.5);
+
+    REQUIRE(c(3,0) == 4.5);
+    REQUIRE(c(3,1) == 7.5);
+    REQUIRE(c(3,2) == 4.5);
+    REQUIRE(c(3,3) == 1.5);
+}
