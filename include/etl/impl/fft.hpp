@@ -34,6 +34,9 @@ struct ifft1_real_impl;
 template<typename A, typename C, typename Enable = void>
 struct ifft2_impl;
 
+template<typename A, typename C, typename Enable = void>
+struct ifft2_real_impl;
+
 template<typename A, typename B, typename C, typename Enable = void>
 struct fft_conv1_full_impl;
 
@@ -164,6 +167,20 @@ template<typename A, typename C>
 struct ifft2_impl<A, C, std::enable_if_t<is_blas_zfft<A,C>::value>> {
     static void apply(A&& a, C&& c){
         etl::impl::blas::zifft2(std::forward<A>(a), std::forward<C>(c));
+    }
+};
+
+template<typename A, typename C>
+struct ifft2_real_impl<A, C, std::enable_if_t<is_blas_cfft<A,C>::value>> {
+    static void apply(A&& a, C&& c){
+        etl::impl::blas::cifft2_real(std::forward<A>(a), std::forward<C>(c));
+    }
+};
+
+template<typename A, typename C>
+struct ifft2_real_impl<A, C, std::enable_if_t<is_blas_zfft<A,C>::value>> {
+    static void apply(A&& a, C&& c){
+        etl::impl::blas::zifft2_real(std::forward<A>(a), std::forward<C>(c));
     }
 };
 

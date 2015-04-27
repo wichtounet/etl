@@ -342,6 +342,28 @@ void zifft2(A&& a, C&& c){
     detail::zifft2_kernel(a.memory_start(), etl::dim<0>(a), etl::dim<1>(a), c.memory_start());
 };
 
+template<typename A, typename C>
+void cifft2_real(A&& a, C&& c){
+    auto c_complex = allocate<std::complex<float>>(a.size());
+
+    detail::cifft2_kernel(a.memory_start(), etl::dim<0>(a), etl::dim<1>(a), c_complex.get());
+
+    for(std::size_t i = 0; i < a.size(); ++i){
+        c[i] = c_complex[i].real();
+    }
+};
+
+template<typename A, typename C>
+void zifft2_real(A&& a, C&& c){
+    auto c_complex = allocate<std::complex<double>>(a.size());
+
+    detail::zifft2_kernel(a.memory_start(), etl::dim<0>(a), etl::dim<1>(a), c_complex.get());
+
+    for(std::size_t i = 0; i < a.size(); ++i){
+        c[i] = c_complex[i].real();
+    }
+};
+
 #else
 
 template<typename A, typename C>
@@ -385,6 +407,18 @@ void cfft2(A&&, C&&);
 
 template<typename A, typename C>
 void zfft2(A&&, C&&);
+
+template<typename A, typename C>
+void cifft2(A&&, C&&);
+
+template<typename A, typename C>
+void zifft2(A&&, C&&);
+
+template<typename A, typename C>
+void cifft2_real(A&&, C&&);
+
+template<typename A, typename C>
+void zifft2_real(A&&, C&&);
 
 #endif
 
