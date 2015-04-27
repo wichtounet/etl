@@ -156,6 +156,36 @@ inline void zfft2_kernel(const std::complex<double>* in, std::size_t d1, std::si
     status = DftiFreeDescriptor(&descriptor);                                       //Free the descriptor
 }
 
+inline void cifft2_kernel(const std::complex<float>* in, std::size_t d1, std::size_t d2, std::complex<float>* out){
+    DFTI_DESCRIPTOR_HANDLE descriptor;
+    MKL_LONG status;
+    MKL_LONG dim[]{static_cast<long>(d1), static_cast<long>(d2)};
+
+    auto* in_ptr = const_cast<void*>(static_cast<const void*>(in));
+
+    status = DftiCreateDescriptor(&descriptor, DFTI_SINGLE, DFTI_COMPLEX, 2, dim);    //Specify size and precision
+    status = DftiSetValue(descriptor, DFTI_PLACEMENT, DFTI_NOT_INPLACE);            //Out of place FFT
+    status = DftiSetValue(descriptor, DFTI_BACKWARD_SCALE, 1.0f / (d1 * d2));           //Scale down the output
+    status = DftiCommitDescriptor(descriptor);                                      //Finalize the descriptor
+    status = DftiComputeBackward(descriptor, in_ptr, out);                           //Compute the Forward FFT
+    status = DftiFreeDescriptor(&descriptor);                                       //Free the descriptor
+}
+
+inline void zifft2_kernel(const std::complex<double>* in, std::size_t d1, std::size_t d2, std::complex<double>* out){
+    DFTI_DESCRIPTOR_HANDLE descriptor;
+    MKL_LONG status;
+    MKL_LONG dim[]{static_cast<long>(d1), static_cast<long>(d2)};
+
+    auto* in_ptr = const_cast<void*>(static_cast<const void*>(in));
+
+    status = DftiCreateDescriptor(&descriptor, DFTI_DOUBLE, DFTI_COMPLEX, 2, dim);    //Specify size and precision
+    status = DftiSetValue(descriptor, DFTI_PLACEMENT, DFTI_NOT_INPLACE);            //Out of place FFT
+    status = DftiSetValue(descriptor, DFTI_BACKWARD_SCALE, 1.0 / (d1 * d2));           //Scale down the output
+    status = DftiCommitDescriptor(descriptor);                                      //Finalize the descriptor
+    status = DftiComputeBackward(descriptor, in_ptr, out);                           //Compute the Forward FFT
+    status = DftiFreeDescriptor(&descriptor);                                       //Free the descriptor
+}
+
 } //End of namespace detail
 
 template<typename A, typename C>
@@ -300,6 +330,16 @@ void cfft2(A&& a, C&& c){
 template<typename A, typename C>
 void zfft2(A&& a, C&& c){
     detail::zfft2_kernel(a.memory_start(), etl::dim<0>(a), etl::dim<1>(a), c.memory_start());
+};
+
+template<typename A, typename C>
+void cifft2(A&& a, C&& c){
+    detail::cifft2_kernel(a.memory_start(), etl::dim<0>(a), etl::dim<1>(a), c.memory_start());
+};
+
+template<typename A, typename C>
+void zifft2(A&& a, C&& c){
+    detail::zifft2_kernel(a.memory_start(), etl::dim<0>(a), etl::dim<1>(a), c.memory_start());
 };
 
 #else
