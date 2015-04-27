@@ -128,6 +128,34 @@ inline void inplace_zifft_kernel(std::complex<double>* in, std::size_t s){
     status = DftiFreeDescriptor(&descriptor);                                       //Free the descriptor
 }
 
+inline void cfft2_kernel(const std::complex<float>* in, std::size_t d1, std::size_t d2, std::complex<float>* out){
+    DFTI_DESCRIPTOR_HANDLE descriptor;
+    MKL_LONG status;
+    MKL_LONG dim[]{static_cast<long>(d1), static_cast<long>(d2)};
+
+    auto* in_ptr = const_cast<void*>(static_cast<const void*>(in));
+
+    status = DftiCreateDescriptor(&descriptor, DFTI_SINGLE, DFTI_COMPLEX, 2, dim);  //Specify size and precision
+    status = DftiSetValue(descriptor, DFTI_PLACEMENT, DFTI_NOT_INPLACE);            //Out of place FFT
+    status = DftiCommitDescriptor(descriptor);                                      //Finalize the descriptor
+    status = DftiComputeForward(descriptor, in_ptr, out);                           //Compute the Forward FFT
+    status = DftiFreeDescriptor(&descriptor);                                       //Free the descriptor
+}
+
+inline void zfft2_kernel(const std::complex<double>* in, std::size_t d1, std::size_t d2, std::complex<double>* out){
+    DFTI_DESCRIPTOR_HANDLE descriptor;
+    MKL_LONG status;
+    MKL_LONG dim[]{static_cast<long>(d1), static_cast<long>(d2)};
+
+    auto* in_ptr = const_cast<void*>(static_cast<const void*>(in));
+
+    status = DftiCreateDescriptor(&descriptor, DFTI_DOUBLE, DFTI_COMPLEX, 2, dim);  //Specify size and precision
+    status = DftiSetValue(descriptor, DFTI_PLACEMENT, DFTI_NOT_INPLACE);            //Out of place FFT
+    status = DftiCommitDescriptor(descriptor);                                      //Finalize the descriptor
+    status = DftiComputeForward(descriptor, in_ptr, out);                           //Compute the Forward FFT
+    status = DftiFreeDescriptor(&descriptor);                                       //Free the descriptor
+}
+
 } //End of namespace detail
 
 template<typename A, typename C>
@@ -247,23 +275,31 @@ void dfft1_convolve(A&& a, B&& b, C&& c){
 }
 
 template<typename A, typename C>
-void sfft2(A&&, C&&){
-    //TODO
+void sfft2(A&& a, C&& c){
+    auto a_complex = allocate<std::complex<float>>(a.size());
+
+    std::copy(a.begin(), a.end(), a_complex.get());
+
+    detail::cfft2_kernel(a_complex.get(), etl::dim<0>(a), etl::dim<1>(a), c.memory_start());
 };
 
 template<typename A, typename C>
-void dfft2(A&&, C&&){
-    //TODO
+void dfft2(A&& a, C&& c){
+    auto a_complex = allocate<std::complex<double>>(a.size());
+
+    std::copy(a.begin(), a.end(), a_complex.get());
+
+    detail::zfft2_kernel(a_complex.get(), etl::dim<0>(a), etl::dim<1>(a), c.memory_start());
 };
 
 template<typename A, typename C>
-void cfft2(A&&, C&&){
-    //TODO
+void cfft2(A&& a, C&& c){
+    detail::cfft2_kernel(a.memory_start(), etl::dim<0>(a), etl::dim<1>(a), c.memory_start());
 };
 
 template<typename A, typename C>
-void zfft2(A&&, C&&){
-    //TODO
+void zfft2(A&& a, C&& c){
+    detail::zfft2_kernel(a.memory_start(), etl::dim<0>(a), etl::dim<1>(a), c.memory_start());
 };
 
 #else
