@@ -312,9 +312,7 @@ void sfft1_convolve(A&& a, B&& b, C&& c){
     auto b_padded = allocate<std::complex<float>>(size);
 
     std::copy(a.begin(), a.end(), a_padded.get());
-    std::fill(a_padded.get() + m, a_padded.get() + size, 0.0f);
     std::copy(b.begin(), b.end(), b_padded.get());
-    std::fill(b_padded.get() + n, b_padded.get() + size, 0.0f);
 
     detail::inplace_cfft_kernel(a_padded.get(), size);
     detail::inplace_cfft_kernel(b_padded.get(), size);
@@ -340,9 +338,7 @@ void dfft1_convolve(A&& a, B&& b, C&& c){
     auto b_padded = allocate<std::complex<double>>(size);
 
     std::copy(a.begin(), a.end(), a_padded.get());
-    std::fill(a_padded.get() + m, a_padded.get() + size, 0.0);
     std::copy(b.begin(), b.end(), b_padded.get());
-    std::fill(b_padded.get() + n, b_padded.get() + size, 0.0);
 
     detail::inplace_zfft_kernel(a_padded.get(), size);
     detail::inplace_zfft_kernel(b_padded.get(), size);
@@ -436,7 +432,7 @@ void sfft2_convolve(A&& a, B&& b, C&& c){
             a_padded[i * s2 + j] = a(i,j);
         }
     }
-    
+
     for(std::size_t i = 0; i < n1; ++i){
         for(std::size_t j = 0; j < n2; ++j){
             b_padded[i * s2 + j] = b(i,j);
