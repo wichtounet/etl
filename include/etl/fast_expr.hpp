@@ -806,6 +806,20 @@ auto conv_2d_full(A&& a, B&& b, C&& c) -> forced_temporary_binary_helper<A, B, C
 }
 
 template<typename A, typename B>
+auto fft_conv_2d_full(A&& a, B&& b) -> temporary_binary_helper<A, B, fft_conv2_full_expr> {
+    static_assert(is_etl_expr<A>::value && is_etl_expr<B>::value, "Convolution only supported for ETL expressions");
+
+    return {a, b};
+}
+
+template<typename A, typename B, typename C>
+auto fft_conv_2d_full(A&& a, B&& b, C&& c) -> forced_temporary_binary_helper<A, B, C, fft_conv2_full_expr> {
+    static_assert(is_etl_expr<A>::value && is_etl_expr<B>::value && is_etl_expr<C>::value, "Convolution only supported for ETL expressions");
+
+    return {a, b, c};
+}
+
+template<typename A, typename B>
 auto conv_deep_valid(A&& a, B&& b) -> dim_temporary_binary_helper<A, B, conv_deep_valid_expr, decay_traits<A>::dimensions()> {
     static_assert(is_etl_expr<A>::value && is_etl_expr<B>::value, "Convolution only supported for ETL expressions");
 

@@ -40,6 +40,9 @@ struct ifft2_real_impl;
 template<typename A, typename B, typename C, typename Enable = void>
 struct fft_conv1_full_impl;
 
+template<typename A, typename B, typename C, typename Enable = void>
+struct fft_conv2_full_impl;
+
 template<typename A, typename C>
 struct is_blas_dfft : cpp::and_c<is_mkl_enabled, is_double_precision<A>, is_dma_2<A, C>> {};
 
@@ -181,6 +184,20 @@ template<typename A, typename C>
 struct ifft2_real_impl<A, C, std::enable_if_t<is_blas_zfft<A,C>::value>> {
     static void apply(A&& a, C&& c){
         etl::impl::blas::zifft2_real(std::forward<A>(a), std::forward<C>(c));
+    }
+};
+
+template<typename A, typename B, typename C>
+struct fft_conv2_full_impl<A, B, C, std::enable_if_t<is_blas_sfft_convolve<A,B,C>::value>> {
+    static void apply(A&& a, B&& b, C&& c){
+        etl::impl::blas::sfft2_convolve(std::forward<A>(a), std::forward<B>(b), std::forward<C>(c));
+    }
+};
+
+template<typename A, typename B, typename C>
+struct fft_conv2_full_impl<A, B, C, std::enable_if_t<is_blas_dfft_convolve<A,B,C>::value>> {
+    static void apply(A&& a, B&& b, C&& c){
+        etl::impl::blas::dfft2_convolve(std::forward<A>(a), std::forward<B>(b), std::forward<C>(c));
     }
 };
 

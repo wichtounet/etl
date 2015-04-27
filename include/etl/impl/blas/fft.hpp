@@ -156,6 +156,32 @@ inline void zfft2_kernel(const std::complex<double>* in, std::size_t d1, std::si
     status = DftiFreeDescriptor(&descriptor);                                       //Free the descriptor
 }
 
+inline void inplace_cfft2_kernel(std::complex<float>* in, std::size_t d1, std::size_t d2){
+    DFTI_DESCRIPTOR_HANDLE descriptor;
+    MKL_LONG status;
+    MKL_LONG dim[]{static_cast<long>(d1), static_cast<long>(d2)};
+
+    auto* in_ptr = const_cast<void*>(static_cast<const void*>(in));
+
+    status = DftiCreateDescriptor(&descriptor, DFTI_SINGLE, DFTI_COMPLEX, 2, dim);  //Specify size and precision
+    status = DftiCommitDescriptor(descriptor);                                      //Finalize the descriptor
+    status = DftiComputeForward(descriptor, in_ptr);                                //Compute the Forward FFT
+    status = DftiFreeDescriptor(&descriptor);                                       //Free the descriptor
+}
+
+inline void inplace_zfft2_kernel(std::complex<double>* in, std::size_t d1, std::size_t d2){
+    DFTI_DESCRIPTOR_HANDLE descriptor;
+    MKL_LONG status;
+    MKL_LONG dim[]{static_cast<long>(d1), static_cast<long>(d2)};
+
+    auto* in_ptr = const_cast<void*>(static_cast<const void*>(in));
+
+    status = DftiCreateDescriptor(&descriptor, DFTI_DOUBLE, DFTI_COMPLEX, 2, dim);  //Specify size and precision
+    status = DftiCommitDescriptor(descriptor);                                      //Finalize the descriptor
+    status = DftiComputeForward(descriptor, in_ptr);                                //Compute the Forward FFT
+    status = DftiFreeDescriptor(&descriptor);                                       //Free the descriptor
+}
+
 inline void cifft2_kernel(const std::complex<float>* in, std::size_t d1, std::size_t d2, std::complex<float>* out){
     DFTI_DESCRIPTOR_HANDLE descriptor;
     MKL_LONG status;
@@ -183,6 +209,34 @@ inline void zifft2_kernel(const std::complex<double>* in, std::size_t d1, std::s
     status = DftiSetValue(descriptor, DFTI_BACKWARD_SCALE, 1.0 / (d1 * d2));           //Scale down the output
     status = DftiCommitDescriptor(descriptor);                                      //Finalize the descriptor
     status = DftiComputeBackward(descriptor, in_ptr, out);                           //Compute the Forward FFT
+    status = DftiFreeDescriptor(&descriptor);                                       //Free the descriptor
+}
+
+inline void inplace_cifft2_kernel(std::complex<float>* in, std::size_t d1, std::size_t d2){
+    DFTI_DESCRIPTOR_HANDLE descriptor;
+    MKL_LONG status;
+    MKL_LONG dim[]{static_cast<long>(d1), static_cast<long>(d2)};
+
+    auto* in_ptr = const_cast<void*>(static_cast<const void*>(in));
+
+    status = DftiCreateDescriptor(&descriptor, DFTI_SINGLE, DFTI_COMPLEX, 2, dim);  //Specify size and precision
+    status = DftiSetValue(descriptor, DFTI_BACKWARD_SCALE, 1.0f / (d1 * d2));       //Scale down the output
+    status = DftiCommitDescriptor(descriptor);                                      //Finalize the descriptor
+    status = DftiComputeBackward(descriptor, in_ptr);                               //Compute the Forward FFT
+    status = DftiFreeDescriptor(&descriptor);                                       //Free the descriptor
+}
+
+inline void inplace_zifft2_kernel(std::complex<double>* in, std::size_t d1, std::size_t d2){
+    DFTI_DESCRIPTOR_HANDLE descriptor;
+    MKL_LONG status;
+    MKL_LONG dim[]{static_cast<long>(d1), static_cast<long>(d2)};
+
+    auto* in_ptr = const_cast<void*>(static_cast<const void*>(in));
+
+    status = DftiCreateDescriptor(&descriptor, DFTI_DOUBLE, DFTI_COMPLEX, 2, dim);  //Specify size and precision
+    status = DftiSetValue(descriptor, DFTI_BACKWARD_SCALE, 1.0 / (d1 * d2));        //Scale down the output
+    status = DftiCommitDescriptor(descriptor);                                      //Finalize the descriptor
+    status = DftiComputeBackward(descriptor, in_ptr);                               //Compute the Forward FFT
     status = DftiFreeDescriptor(&descriptor);                                       //Free the descriptor
 }
 
@@ -364,6 +418,84 @@ void zifft2_real(A&& a, C&& c){
     }
 };
 
+template<typename A, typename B, typename C>
+void sfft2_convolve(A&& a, B&& b, C&& c){
+    const auto m1 = etl::dim<0>(a);
+    const auto n1= etl::dim<0>(b);
+    const auto s1 = m1 + n1 - 1;
+
+    const auto m2 = etl::dim<1>(a);
+    const auto n2= etl::dim<1>(b);
+    const auto s2 = m2 + n2 - 1;
+
+    auto a_padded = allocate<std::complex<float>>(c.size());
+    auto b_padded = allocate<std::complex<float>>(c.size());
+
+    for(std::size_t i = 0; i < m1; ++i){
+        for(std::size_t j = 0; j < m2; ++j){
+            a_padded[i * s2 + j] = a(i,j);
+        }
+    }
+    
+    for(std::size_t i = 0; i < n1; ++i){
+        for(std::size_t j = 0; j < n2; ++j){
+            b_padded[i * s2 + j] = b(i,j);
+        }
+    }
+
+    detail::inplace_cfft2_kernel(a_padded.get(), s1, s2);
+    detail::inplace_cfft2_kernel(b_padded.get(), s1, s2);
+
+    for(std::size_t i = 0; i < c.size(); ++i){
+        a_padded[i] *= b_padded[i];
+    }
+
+    detail::inplace_cifft2_kernel(a_padded.get(), s1, s2);
+
+    for(std::size_t i = 0; i < c.size(); ++i){
+        c[i] = a_padded[i].real();
+    }
+}
+
+template<typename A, typename B, typename C>
+void dfft2_convolve(A&& a, B&& b, C&& c){
+    const auto m1 = etl::dim<0>(a);
+    const auto n1= etl::dim<0>(b);
+    const auto s1 = m1 + n1 - 1;
+
+    const auto m2 = etl::dim<1>(a);
+    const auto n2= etl::dim<1>(b);
+    const auto s2 = m2 + n2 - 1;
+
+    auto a_padded = allocate<std::complex<double>>(c.size());
+    auto b_padded = allocate<std::complex<double>>(c.size());
+
+    for(std::size_t i = 0; i < m1; ++i){
+        for(std::size_t j = 0; j < m2; ++j){
+            a_padded[i * s2 + j] = a(i,j);
+        }
+    }
+
+    for(std::size_t i = 0; i < n1; ++i){
+        for(std::size_t j = 0; j < n2; ++j){
+            b_padded[i * s2 + j] = b(i,j);
+        }
+    }
+
+    detail::inplace_zfft2_kernel(a_padded.get(), s1, s2);
+    detail::inplace_zfft2_kernel(b_padded.get(), s1, s2);
+
+    for(std::size_t i = 0; i < c.size(); ++i){
+        a_padded[i] *= b_padded[i];
+    }
+
+    detail::inplace_zifft2_kernel(a_padded.get(), s1, s2);
+
+    for(std::size_t i = 0; i < c.size(); ++i){
+        c[i] = a_padded[i].real();
+    }
+}
+
 #else
 
 template<typename A, typename C>
@@ -419,6 +551,12 @@ void cifft2_real(A&&, C&&);
 
 template<typename A, typename C>
 void zifft2_real(A&&, C&&);
+
+template<typename A, typename B, typename C>
+void sfft2_convolve(A&&, C&&);
+
+template<typename A, typename B, typename C>
+void dfft2_convolve(A&&, B&&, C&&);
 
 #endif
 
