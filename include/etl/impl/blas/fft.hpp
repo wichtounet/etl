@@ -244,68 +244,68 @@ inline void inplace_zifft2_kernel(std::complex<double>* in, std::size_t d1, std:
 
 template<typename A, typename C>
 void sfft1(A&& a, C&& c){
-    auto a_complex = allocate<std::complex<float>>(a.size());
+    auto a_complex = allocate<std::complex<float>>(etl::size(a));
 
     std::copy(a.begin(), a.end(), a_complex.get());
 
-    detail::cfft_kernel(a_complex.get(), a.size(), c.memory_start());
+    detail::cfft_kernel(a_complex.get(), etl::size(a), c.memory_start());
 };
 
 template<typename A, typename C>
 void dfft1(A&& a, C&& c){
-    auto a_complex = allocate<std::complex<double>>(a.size());
+    auto a_complex = allocate<std::complex<double>>(etl::size(a));
 
     std::copy(a.begin(), a.end(), a_complex.get());
 
-    detail::zfft_kernel(a_complex.get(), a.size(), c.memory_start());
+    detail::zfft_kernel(a_complex.get(), etl::size(a), c.memory_start());
 };
 
 template<typename A, typename C>
 void cfft1(A&& a, C&& c){
-    detail::cfft_kernel(a.memory_start(), a.size(), c.memory_start());
+    detail::cfft_kernel(a.memory_start(), etl::size(a), c.memory_start());
 };
 
 template<typename A, typename C>
 void zfft1(A&& a, C&& c){
-    detail::zfft_kernel(a.memory_start(), a.size(), c.memory_start());
+    detail::zfft_kernel(a.memory_start(), etl::size(a), c.memory_start());
 };
 
 template<typename A, typename C>
 void cifft1(A&& a, C&& c){
-    detail::cifft_kernel(a.memory_start(), a.size(), c.memory_start());
+    detail::cifft_kernel(a.memory_start(), etl::size(a), c.memory_start());
 };
 
 template<typename A, typename C>
 void zifft1(A&& a, C&& c){
-    detail::zifft_kernel(a.memory_start(), a.size(), c.memory_start());
+    detail::zifft_kernel(a.memory_start(), etl::size(a), c.memory_start());
 };
 
 template<typename A, typename C>
 void cifft1_real(A&& a, C&& c){
-    auto c_complex = allocate<std::complex<float>>(a.size());
+    auto c_complex = allocate<std::complex<float>>(etl::size(a));
 
-    detail::cifft_kernel(a.memory_start(), a.size(), c_complex.get());
+    detail::cifft_kernel(a.memory_start(), etl::size(a), c_complex.get());
 
-    for(std::size_t i = 0; i < a.size(); ++i){
+    for(std::size_t i = 0; i < etl::size(a); ++i){
         c[i] = c_complex[i].real();
     }
 };
 
 template<typename A, typename C>
 void zifft1_real(A&& a, C&& c){
-    auto c_complex = allocate<std::complex<double>>(a.size());
+    auto c_complex = allocate<std::complex<double>>(etl::size(a));
 
-    detail::zifft_kernel(a.memory_start(), a.size(), c_complex.get());
+    detail::zifft_kernel(a.memory_start(), etl::size(a), c_complex.get());
 
-    for(std::size_t i = 0; i < a.size(); ++i){
+    for(std::size_t i = 0; i < etl::size(a); ++i){
         c[i] = c_complex[i].real();
     }
 };
 
 template<typename A, typename B, typename C>
 void sfft1_convolve(A&& a, B&& b, C&& c){
-    const auto m = a.size();
-    const auto n = b.size();
+    const auto m = etl::size(a);
+    const auto n = etl::size(b);
     const auto size = m + n - 1;
 
     auto a_padded = allocate<std::complex<float>>(size);
@@ -330,8 +330,8 @@ void sfft1_convolve(A&& a, B&& b, C&& c){
 
 template<typename A, typename B, typename C>
 void dfft1_convolve(A&& a, B&& b, C&& c){
-    const auto m = a.size();
-    const auto n = b.size();
+    const auto m = etl::size(a);
+    const auto n = etl::size(b);
     const auto size = m + n - 1;
 
     auto a_padded = allocate<std::complex<double>>(size);
@@ -356,7 +356,7 @@ void dfft1_convolve(A&& a, B&& b, C&& c){
 
 template<typename A, typename C>
 void sfft2(A&& a, C&& c){
-    auto a_complex = allocate<std::complex<float>>(a.size());
+    auto a_complex = allocate<std::complex<float>>(etl::size(a));
 
     std::copy(a.begin(), a.end(), a_complex.get());
 
@@ -365,7 +365,7 @@ void sfft2(A&& a, C&& c){
 
 template<typename A, typename C>
 void dfft2(A&& a, C&& c){
-    auto a_complex = allocate<std::complex<double>>(a.size());
+    auto a_complex = allocate<std::complex<double>>(etl::size(a));
 
     std::copy(a.begin(), a.end(), a_complex.get());
 
@@ -394,22 +394,22 @@ void zifft2(A&& a, C&& c){
 
 template<typename A, typename C>
 void cifft2_real(A&& a, C&& c){
-    auto c_complex = allocate<std::complex<float>>(a.size());
+    auto c_complex = allocate<std::complex<float>>(etl::size(a));
 
     detail::cifft2_kernel(a.memory_start(), etl::dim<0>(a), etl::dim<1>(a), c_complex.get());
 
-    for(std::size_t i = 0; i < a.size(); ++i){
+    for(std::size_t i = 0; i < etl::size(a); ++i){
         c[i] = c_complex[i].real();
     }
 };
 
 template<typename A, typename C>
 void zifft2_real(A&& a, C&& c){
-    auto c_complex = allocate<std::complex<double>>(a.size());
+    auto c_complex = allocate<std::complex<double>>(etl::size(a));
 
     detail::zifft2_kernel(a.memory_start(), etl::dim<0>(a), etl::dim<1>(a), c_complex.get());
 
-    for(std::size_t i = 0; i < a.size(); ++i){
+    for(std::size_t i = 0; i < etl::size(a); ++i){
         c[i] = c_complex[i].real();
     }
 };
@@ -424,8 +424,8 @@ void sfft2_convolve(A&& a, B&& b, C&& c){
     const auto n2= etl::dim<1>(b);
     const auto s2 = m2 + n2 - 1;
 
-    auto a_padded = allocate<std::complex<float>>(c.size());
-    auto b_padded = allocate<std::complex<float>>(c.size());
+    auto a_padded = allocate<std::complex<float>>(etl::size(c));
+    auto b_padded = allocate<std::complex<float>>(etl::size(c));
 
     for(std::size_t i = 0; i < m1; ++i){
         for(std::size_t j = 0; j < m2; ++j){
@@ -442,13 +442,13 @@ void sfft2_convolve(A&& a, B&& b, C&& c){
     detail::inplace_cfft2_kernel(a_padded.get(), s1, s2);
     detail::inplace_cfft2_kernel(b_padded.get(), s1, s2);
 
-    for(std::size_t i = 0; i < c.size(); ++i){
+    for(std::size_t i = 0; i < etl::size(c); ++i){
         a_padded[i] *= b_padded[i];
     }
 
     detail::inplace_cifft2_kernel(a_padded.get(), s1, s2);
 
-    for(std::size_t i = 0; i < c.size(); ++i){
+    for(std::size_t i = 0; i < etl::size(c); ++i){
         c[i] = a_padded[i].real();
     }
 }
@@ -463,8 +463,8 @@ void dfft2_convolve(A&& a, B&& b, C&& c){
     const auto n2= etl::dim<1>(b);
     const auto s2 = m2 + n2 - 1;
 
-    auto a_padded = allocate<std::complex<double>>(c.size());
-    auto b_padded = allocate<std::complex<double>>(c.size());
+    auto a_padded = allocate<std::complex<double>>(etl::size(c));
+    auto b_padded = allocate<std::complex<double>>(etl::size(c));
 
     for(std::size_t i = 0; i < m1; ++i){
         for(std::size_t j = 0; j < m2; ++j){
@@ -481,13 +481,13 @@ void dfft2_convolve(A&& a, B&& b, C&& c){
     detail::inplace_zfft2_kernel(a_padded.get(), s1, s2);
     detail::inplace_zfft2_kernel(b_padded.get(), s1, s2);
 
-    for(std::size_t i = 0; i < c.size(); ++i){
+    for(std::size_t i = 0; i < etl::size(c); ++i){
         a_padded[i] *= b_padded[i];
     }
 
     detail::inplace_zifft2_kernel(a_padded.get(), s1, s2);
 
-    for(std::size_t i = 0; i < c.size(); ++i){
+    for(std::size_t i = 0; i < etl::size(c); ++i){
         c[i] = a_padded[i].real();
     }
 }
