@@ -20,12 +20,20 @@
 #endif
 #endif
 
+#ifdef ETL_MKL_MODE
+#define TEST_MKL
+#endif
+
 #ifdef ETL_BLAS_MODE
 #define TEST_BLAS
 #endif
 
 #ifdef ETL_BENCH_STRASSEN
 #define TEST_STRASSEN
+#endif
+
+#ifdef ETL_BENCH_MMUL_CONV
+#define TEST_MMUL_CONV
 #endif
 
 typedef std::chrono::steady_clock timer_clock;
@@ -274,6 +282,7 @@ void bench_dyn_im2col_direct(std::size_t d1, std::size_t d2){
 TER_FUNCTOR(default_conv_1d_full, c = etl::conv_1d_full(a, b));
 TER_FUNCTOR(std_conv_1d_full, etl::impl::standard::conv1_full(a, b, c));
 TER_FUNCTOR(mmul_conv_1d_full, etl::impl::reduc::conv1_full(a, b, c));
+TER_FUNCTOR(fft_conv_1d_full, c = etl::fft_conv_1d_full(a, b));
 TER_FUNCTOR_SSE(sse_sconv_1d_full, etl::impl::sse::sconv1_full(a, b, c));
 TER_FUNCTOR_SSE(sse_dconv_1d_full, etl::impl::sse::dconv1_full(a, b, c));
 TER_FUNCTOR_AVX(avx_sconv_1d_full, etl::impl::avx::sconv1_full(a, b, c));
@@ -296,7 +305,13 @@ void measure_full_convolution_1d(A& a, B& b, C& c){
     measure_sub_ter<avx_dconv_1d_full, !F>("avx", a, b, c);
 #endif
 
+#ifdef TEST_MKL
+    measure_sub_ter<fft_conv_1d_full>("fft", a, b, c);
+#endif
+
+#ifdef TEST_MMUL_CONV
     measure_sub_ter<mmul_conv_1d_full>("mmul", a, b, c);
+#endif
 
     cpp_unused(F);
 }
@@ -469,9 +484,14 @@ void bench_dyn_valid_convolution_1d_s(std::size_t d1, std::size_t d2){
     measure_valid_convolution_1d(a, b, c);
 }
 
+std::string x2(std::size_t D){
+    return std::to_string(D) + "x" + std::to_string(D);
+}
+
 TER_FUNCTOR(default_conv_2d_full, c = etl::conv_2d_full(a, b));
 TER_FUNCTOR(std_conv_2d_full, etl::impl::standard::conv2_full(a, b, c));
 TER_FUNCTOR(mmul_conv_2d_full, etl::impl::reduc::conv2_full(a, b, c));
+TER_FUNCTOR(fft_conv_2d_full, c = etl::fft_conv_2d_full(a, b));
 TER_FUNCTOR_SSE(sse_sconv_2d_full, etl::impl::sse::sconv2_full(a, b, c));
 TER_FUNCTOR_SSE(sse_dconv_2d_full, etl::impl::sse::dconv2_full(a, b, c));
 TER_FUNCTOR_AVX(avx_sconv_2d_full, etl::impl::avx::sconv2_full(a, b, c));
@@ -494,7 +514,13 @@ void measure_full_convolution_2d(A& a, B& b, C& c){
     measure_sub_ter<avx_dconv_2d_full, !F>("avx", a, b, c);
 #endif
 
+#ifdef TEST_MKL
+    measure_sub_ter<fft_conv_2d_full>("fft", a, b, c);
+#endif
+
+#ifdef TEST_MMUL_CONV
     measure_sub_ter<mmul_conv_2d_full>("mmul", a, b, c);
+#endif
 
     cpp_unused(F);
 }
@@ -505,7 +531,7 @@ void bench_fast_full_convolution_2d_d(){
     etl::fast_matrix<double, D2, D2> b;
     etl::fast_matrix<double, D1+D2-1, D1+D2-1> c;
 
-    std::cout << "fast_full_convolution_2d_d" << "(" << D1 << "," << D2 << ")" << std::endl;
+    std::cout << "fast_full_convolution_2d_d" << "(" << x2( D1 ) << "," << x2( D2 ) << ")" << std::endl;
     measure_full_convolution_2d(a, b, c);
 }
 
@@ -514,7 +540,7 @@ void bench_dyn_full_convolution_2d_d(std::size_t d1, std::size_t d2){
     etl::dyn_matrix<double> b(d2, d2);
     etl::dyn_matrix<double> c(d1+d2-1, d1+d2-1);
 
-    std::cout << "dyn_full_convolution_2d_d" << "(" << d1 << "," << d2 << ")" << std::endl;
+    std::cout << "dyn_full_convolution_2d_d" << "(" << x2( d1 ) << "," << x2( d2 ) << ")" << std::endl;
     measure_full_convolution_2d(a, b, c);
 }
 
@@ -524,7 +550,7 @@ void bench_fast_full_convolution_2d_s(){
     etl::fast_matrix<float, D2, D2> b;
     etl::fast_matrix<float, D1+D2-1, D1+D2-1> c;
 
-    std::cout << "fast_full_convolution_2d_s" << "(" << D1 << "," << D2 << ")" << std::endl;
+    std::cout << "fast_full_convolution_2d_s" << "(" << x2( D1 ) << "," << x2( D2 ) << ")" << std::endl;
     measure_full_convolution_2d(a, b, c);
 }
 
@@ -533,7 +559,7 @@ void bench_dyn_full_convolution_2d_s(std::size_t d1, std::size_t d2){
     etl::dyn_matrix<float> b(d2, d2);
     etl::dyn_matrix<float> c(d1+d2-1, d1+d2-1);
 
-    std::cout << "dyn_full_convolution_2d_s" << "(" << d1 << "," << d2 << ")" << std::endl;
+    std::cout << "dyn_full_convolution_2d_s" << "(" << x2( d1 ) << "," << x2( d2 ) << ")" << std::endl;
     measure_full_convolution_2d(a, b, c);
 }
 
@@ -570,7 +596,7 @@ void bench_fast_same_convolution_2d_d(){
     etl::fast_matrix<double, D2, D2> b;
     etl::fast_matrix<double, D1, D1> c;
 
-    std::cout << "fast_same_convolution_2d_d" << "(" << D1 << "," << D2 << ")" << std::endl;
+    std::cout << "fast_same_convolution_2d_d" << "(" << x2( D1 ) << "," << x2( D2 ) << ")" << std::endl;
     measure_same_convolution_2d(a, b, c);
 }
 
@@ -579,7 +605,7 @@ void bench_dyn_same_convolution_2d_d(std::size_t d1, std::size_t d2){
     etl::dyn_matrix<double> b(d2, d2);
     etl::dyn_matrix<double> c(d1, d1);
 
-    std::cout << "dyn_same_convolution_2d_d" << "(" << d1 << "," << d2 << ")" << std::endl;
+    std::cout << "dyn_same_convolution_2d_d" << "(" << x2( d1 ) << "," << x2( d2 ) << ")" << std::endl;
     measure_same_convolution_2d(a, b, c);
 }
 
@@ -589,7 +615,7 @@ void bench_fast_same_convolution_2d_s(){
     etl::fast_matrix<float, D2, D2> b;
     etl::fast_matrix<float, D1, D1> c;
 
-    std::cout << "fast_same_convolution_2d_s" << "(" << D1 << "," << D2 << ")" << std::endl;
+    std::cout << "fast_same_convolution_2d_s" << "(" << x2( D1 ) << "," << x2( D2 ) << ")" << std::endl;
     measure_same_convolution_2d(a, b, c);
 }
 
@@ -598,7 +624,7 @@ void bench_dyn_same_convolution_2d_s(std::size_t d1, std::size_t d2){
     etl::dyn_matrix<float> b(d2, d2);
     etl::dyn_matrix<float> c(d1, d1);
 
-    std::cout << "dyn_same_convolution_2d_s" << "(" << d1 << "," << d2 << ")" << std::endl;
+    std::cout << "dyn_same_convolution_2d_s" << "(" << x2( d1 ) << "," << x2( d2 ) << ")" << std::endl;
     measure_same_convolution_2d(a, b, c);
 }
 
@@ -635,7 +661,7 @@ void bench_fast_valid_convolution_2d_d(){
     etl::fast_matrix<double, D2, D2> b;
     etl::fast_matrix<double, D1-D2+1, D1-D2+1> c;
 
-    std::cout << "fast_valid_convolution_2d_d" << "(" << D1 << "," << D2 << ")" << std::endl;
+    std::cout << "fast_valid_convolution_2d_d" << "(" << x2( D1 ) << "," << x2( D2 ) << ")" << std::endl;
     measure_valid_convolution_2d(a, b, c);
 }
 
@@ -644,7 +670,7 @@ void bench_dyn_valid_convolution_2d_d(std::size_t d1, std::size_t d2){
     etl::dyn_matrix<double> b(d2, d2);
     etl::dyn_matrix<double> c(d1-d2+1, d1-d2+1);
 
-    std::cout << "dyn_valid_convolution_2d_d" << "(" << d1 << "," << d2 << ")" << std::endl;
+    std::cout << "dyn_valid_convolution_2d_d" << "(" << x2( d1 ) << "," << x2( d2 ) << ")" << std::endl;
     measure_valid_convolution_2d(a, b, c);
 }
 
@@ -654,7 +680,7 @@ void bench_fast_valid_convolution_2d_s(){
     etl::fast_matrix<float, D2, D2> b;
     etl::fast_matrix<float, D1-D2+1, D1-D2+1> c;
 
-    std::cout << "fast_valid_convolution_2d_s" << "(" << D1 << "," << D2 << ")" << std::endl;
+    std::cout << "fast_valid_convolution_2d_s" << "(" << x2( D1 ) << "," << x2( D2 ) << ")" << std::endl;
     measure_valid_convolution_2d(a, b, c);
 }
 
@@ -663,7 +689,7 @@ void bench_dyn_valid_convolution_2d_s(std::size_t d1, std::size_t d2){
     etl::dyn_matrix<float> b(d2, d2);
     etl::dyn_matrix<float> c(d1-d2+1, d1-d2+1);
 
-    std::cout << "dyn_valid_convolution_2d_s" << "(" << d1 << "," << d2 << ")" << std::endl;
+    std::cout << "dyn_valid_convolution_2d_s" << "(" << x2( d1 ) << "," << x2( d2 ) << ")" << std::endl;
     measure_valid_convolution_2d(a, b, c);
 }
 
@@ -823,6 +849,8 @@ void bench_standard(){
     bench_dyn_same_convolution_2d_s(64, 32);
     bench_dyn_same_convolution_2d_s(128, 32);
 
+    bench_fast_full_convolution_2d_d<30, 13>();
+    bench_fast_full_convolution_2d_d<32, 16>();
     bench_fast_full_convolution_2d_d<64, 32>();
     bench_fast_full_convolution_2d_d<128, 32>();
     bench_dyn_full_convolution_2d_d(64, 32);
@@ -971,7 +999,7 @@ void bench_conv_rbm_hidden(std::size_t NC, std::size_t K, std::size_t NV, std::s
 
             for(std::size_t channel = 0; channel < NC; ++channel){
                 for(size_t k = 0; k < K; ++k){
-                    w_t(channel)(k) = fflip(w(channel)(k));
+                    w_t(channel)(k).fflip_inplace();
                 }
             }
 
@@ -1002,7 +1030,7 @@ void bench_conv_rbm_visible(std::size_t NC, std::size_t K, std::size_t NV, std::
         [&](){
             for(std::size_t channel = 0; channel < NC; ++channel){
                 for(std::size_t k = 0; k < K; ++k){
-                    h_cv(k) = conv_2d_full(h(k), w(channel)(k));
+                    h_cv(k) = etl::conv_2d_full(h(k), w(channel)(k));
                 }
 
                 v(channel) = sigmoid(c(channel) + sum_l(h_cv));
