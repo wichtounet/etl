@@ -10,6 +10,8 @@
 
 #include "etl/etl.hpp"
 
+#ifdef ETL_MKL_MODE
+
 //{{{ fft_1d (real)
 
 TEMPLATE_TEST_CASE_2( "fft_1d_r/1", "[fast][fft]", Z, float, double ) {
@@ -395,3 +397,5 @@ TEMPLATE_TEST_CASE_2( "ifft_2d_real_c/2", "[fast][ifft]", Z, float, double ) {
 }
 
 //}}}
+
+#endif //ETL_MKL_MODE
