@@ -10,6 +10,30 @@
 
 namespace etl {
 
+#ifdef ETL_VECTORIZE_EXPR
+
+#ifndef ETL_VECTORIZE
+#define ETL_VECTORIZE
+#endif
+
+struct vectorize_expr : std::false_type {};
+
+#else
+
+struct vectorize_expr : std::true_type {};
+
+#endif
+
+#ifdef ETL_VECTORIZE
+
+struct vectorize : std::false_type {};
+
+#else
+
+struct vectorize : std::true_type {};
+
+#endif
+
 #ifdef ETL_NO_TEMPORARY
 
 struct create_temporary : std::false_type {};
