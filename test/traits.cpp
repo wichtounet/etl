@@ -19,6 +19,7 @@ TEMPLATE_TEST_CASE_2( "etl_traits/fast_vector_1", "etl_traits<fast_vector>", ZZZ
     REQUIRE(etl::size(test_vector) == 4);
     REQUIRE(etl::etl_traits<type>::is_value);
     REQUIRE(etl::etl_traits<type>::is_fast);
+    REQUIRE(etl::etl_traits<type>::vectorizable);
 
     constexpr const auto size_1 = etl::etl_traits<type>::size();
     REQUIRE(size_1 == 4);
@@ -48,6 +49,7 @@ TEMPLATE_TEST_CASE_2( "etl_traits/fast_matrix_1", "etl_traits<fast_matrix>", Z, 
     REQUIRE(etl::dimensions(test_matrix) == 2);
     REQUIRE(etl::etl_traits<type>::is_value);
     REQUIRE(etl::etl_traits<type>::is_fast);
+    REQUIRE(etl::etl_traits<type>::vectorizable);
 
     constexpr const auto size_1 = etl::etl_traits<type>::size();
     constexpr const auto dim_1 = etl::etl_traits<type>::dimensions();
@@ -84,6 +86,7 @@ TEMPLATE_TEST_CASE_2( "etl_traits/fast_matrix_2", "etl_traits<fast_matrix>", Z, 
     REQUIRE(etl::dimensions(test_matrix) == 4);
     REQUIRE(etl::etl_traits<type>::is_value);
     REQUIRE(etl::etl_traits<type>::is_fast);
+    REQUIRE(etl::etl_traits<type>::vectorizable);
 
     constexpr const auto size_1 = etl::etl_traits<type>::size();
     constexpr const auto dim_1 = etl::etl_traits<type>::dimensions();
@@ -123,6 +126,7 @@ TEMPLATE_TEST_CASE_2( "etl_traits/dyn_vector_1", "etl_traits<dyn_vector>", Z, fl
     REQUIRE(etl::dimensions(test_vector) == 1);
     REQUIRE(etl::etl_traits<type>::is_value);
     REQUIRE(!etl::etl_traits<type>::is_fast);
+    REQUIRE(etl::etl_traits<type>::vectorizable);
 }
 
 TEMPLATE_TEST_CASE_2( "etl_traits/dyn_matrix_1", "etl_traits<dyn_matrix>", Z, float, double ) {
@@ -139,6 +143,7 @@ TEMPLATE_TEST_CASE_2( "etl_traits/dyn_matrix_1", "etl_traits<dyn_matrix>", Z, fl
     REQUIRE(etl::etl_traits<type>::dim(test_matrix, 1) == 2);
     REQUIRE(etl::etl_traits<type>::is_value);
     REQUIRE(!etl::etl_traits<type>::is_fast);
+    REQUIRE(etl::etl_traits<type>::vectorizable);
 }
 
 TEMPLATE_TEST_CASE_2( "etl_traits/unary_dyn_mat", "etl_traits<unary<dyn_mat>>", Z, float, double ) {
@@ -177,6 +182,7 @@ TEMPLATE_TEST_CASE_2( "etl_traits/binary_dyn_mat", "etl_traits<binary<dyn_mat, d
     REQUIRE(etl::etl_traits<expr_type>::dim(expr, 1) == 2);
     REQUIRE(!etl::etl_traits<expr_type>::is_value);
     REQUIRE(!etl::etl_traits<expr_type>::is_fast);
+    REQUIRE(etl::etl_traits<expr_type>::vectorizable);
 }
 
 TEMPLATE_TEST_CASE_2( "etl_traits/unary_fast_mat", "etl_traits<unary<fast_mat>>", Z, float, double ) {

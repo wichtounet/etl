@@ -157,6 +157,7 @@ struct etl_traits<T, std::enable_if_t<is_etl_value<T>::value>> {
     static constexpr const bool is_fast = is_fast_matrix<T>::value;
     static constexpr const bool is_value = true;
     static constexpr const bool is_generator = false;
+    static constexpr const bool vectorizable = true;
 
     static std::size_t size(const T& v){
         return v.size();
@@ -194,6 +195,7 @@ struct etl_traits<etl::unary_expr<T, Expr, UnaryOp>> {
     static constexpr const bool is_fast = etl_traits<sub_expr_t>::is_fast;
     static constexpr const bool is_value = false;
     static constexpr const bool is_generator = etl_traits<sub_expr_t>::is_generator;
+    static constexpr const bool vectorizable = false;
 
     static std::size_t size(const expr_t& v){
         return etl_traits<sub_expr_t>::size(v.value());
@@ -226,6 +228,7 @@ struct etl_traits<etl::generator_expr<Generator>> {
     static constexpr const bool is_fast = true;
     static constexpr const bool is_value = false;
     static constexpr const bool is_generator = true;
+    static constexpr const bool vectorizable = false;
 };
 
 /*!
@@ -236,6 +239,7 @@ struct etl_traits<etl::scalar<T>> {
     static constexpr const bool is_fast = true;
     static constexpr const bool is_value = false;
     static constexpr const bool is_generator = true;
+    static constexpr const bool vectorizable = true;
 };
 
 /*!
@@ -256,6 +260,7 @@ struct etl_traits<etl::binary_expr<T, LeftExpr, BinaryOp, RightExpr>> {
     static constexpr const bool is_generator = cpp::and_u<
             etl_traits<left_expr_t>::is_generator,
             etl_traits<right_expr_t>::is_generator>::value;
+    static constexpr const bool vectorizable = etl_traits<left_expr_t>::vectorizable && etl_traits<right_expr_t>::vectorizable && BinaryOp::vectorizable;
 
     template<bool B = left_directed, cpp::enable_if_u<B> = cpp::detail::dummy>
     static constexpr auto& get(const expr_t& v){
@@ -301,6 +306,7 @@ struct etl_traits<transpose_transformer<T>> {
     static constexpr const bool is_fast = etl_traits<sub_expr_t>::is_fast;
     static constexpr const bool is_value = false;
     static constexpr const bool is_generator = false;
+    static constexpr const bool vectorizable = false;
 
     static std::size_t size(const expr_t& v){
         return etl_traits<sub_expr_t>::size(v.sub);
@@ -337,6 +343,7 @@ struct etl_traits<mm_mul_transformer<LE, RE>> {
     static constexpr const bool is_fast = etl_traits<left_expr_t>::is_fast && etl_traits<right_expr_t>::is_fast;
     static constexpr const bool is_value = false;
     static constexpr const bool is_generator = false;
+    static constexpr const bool vectorizable = false;
 
     static std::size_t size(const expr_t& v){
         return dim(v, 0) * dim(v, 1);
@@ -380,6 +387,7 @@ struct etl_traits<dyn_convmtx_transformer<E>> {
     static constexpr const bool is_fast = false;
     static constexpr const bool is_value = false;
     static constexpr const bool is_generator = false;
+    static constexpr const bool vectorizable = false;
 
     static std::size_t size(const expr_t& v){
         return v.h * (etl::size(v.sub) + v.h - 1);
@@ -409,6 +417,7 @@ struct etl_traits<dyn_convmtx2_transformer<E>> {
     static constexpr const bool is_fast = false;
     static constexpr const bool is_value = false;
     static constexpr const bool is_generator = false;
+    static constexpr const bool vectorizable = false;
 
     static std::size_t size(const expr_t& v){
         auto c_height = (etl::dim<0>(v.sub) + v.k1 - 1) * (etl::dim<1>(v.sub) + v.k2 - 1);
@@ -440,6 +449,7 @@ struct etl_traits<rep_r_transformer<T, D...>> {
     static constexpr const bool is_fast = etl_traits<sub_expr_t>::is_fast;
     static constexpr const bool is_value = false;
     static constexpr const bool is_generator = false;
+    static constexpr const bool vectorizable = false;
 
     static std::size_t size(const expr_t& v){
         return mul_all<D...>::value * etl_traits<sub_expr_t>::size(v.sub);
@@ -476,6 +486,7 @@ struct etl_traits<rep_l_transformer<T, D...>> {
     static constexpr const bool is_fast = etl_traits<sub_expr_t>::is_fast;
     static constexpr const bool is_value = false;
     static constexpr const bool is_generator = false;
+    static constexpr const bool vectorizable = false;
 
     static std::size_t size(const expr_t& v){
         return mul_all<D...>::value * etl_traits<sub_expr_t>::size(v.sub);
@@ -512,6 +523,7 @@ struct etl_traits<dyn_rep_r_transformer<T, D>> {
     static constexpr const bool is_fast = false;
     static constexpr const bool is_value = false;
     static constexpr const bool is_generator = false;
+    static constexpr const bool vectorizable = false;
 
     static std::size_t size(const expr_t& v){
         return v.m * etl_traits<sub_expr_t>::size(v.sub);
@@ -537,6 +549,7 @@ struct etl_traits<dyn_rep_l_transformer<T, D>> {
     static constexpr const bool is_fast = false;
     static constexpr const bool is_value = false;
     static constexpr const bool is_generator = false;
+    static constexpr const bool vectorizable = false;
 
     static std::size_t size(const expr_t& v){
         return v.m * etl_traits<sub_expr_t>::size(v.sub);
@@ -564,6 +577,7 @@ struct etl_traits<etl::temporary_unary_expr<T, A, Op, Forced>> {
     static constexpr const bool is_fast = etl_traits<a_t>::is_fast;
     static constexpr const bool is_value = false;
     static constexpr const bool is_generator = false;
+    static constexpr const bool vectorizable = false;
 
     static std::size_t size(const expr_t& v){
         return Op::size(v.a());
@@ -600,6 +614,7 @@ struct etl_traits<etl::temporary_binary_expr<T, A, B, Op, Forced>> {
     static constexpr const bool is_fast = etl_traits<a_t>::is_fast && etl_traits<b_t>::is_fast;
     static constexpr const bool is_value = false;
     static constexpr const bool is_generator = false;
+    static constexpr const bool vectorizable = false;
 
     static std::size_t size(const expr_t& v){
         return Op::size(v.a(), v.b());
@@ -638,6 +653,7 @@ struct etl_traits<T, std::enable_if_t<cpp::or_c<
     static constexpr const bool is_fast = etl_traits<sub_expr_t>::is_fast;
     static constexpr const bool is_value = false;
     static constexpr const bool is_generator = false;
+    static constexpr const bool vectorizable = false;
 
     static std::size_t size(const expr_t& v){
         return etl::dim<0>(v.sub);
@@ -676,6 +692,7 @@ struct etl_traits<T, std::enable_if_t<cpp::or_c<
     static constexpr const bool is_fast = etl_traits<sub_expr_t>::is_fast;
     static constexpr const bool is_value = false;
     static constexpr const bool is_generator = false;
+    static constexpr const bool vectorizable = false;
 
     static std::size_t size(const expr_t& v){
         return etl::size(v.sub) / etl::dim<0>(v.sub);
@@ -708,6 +725,7 @@ struct etl_traits<p_max_pool_p_transformer<T, C1, C2>> {
     static constexpr const bool is_fast = etl_traits<sub_expr_t>::is_fast;
     static constexpr const bool is_value = false;
     static constexpr const bool is_generator = false;
+    static constexpr const bool vectorizable = false;
 
     static std::size_t size(const expr_t& v){
         return etl_traits<sub_expr_t>::size(v.sub) / (C1 * C2);
@@ -757,6 +775,7 @@ struct etl_traits<T, std::enable_if_t<cpp::or_c<
     static constexpr const bool is_fast = etl_traits<sub_expr_t>::is_fast;
     static constexpr const bool is_value = false;
     static constexpr const bool is_generator = false;
+    static constexpr const bool vectorizable = false;
 
     static std::size_t size(const expr_t& v){
         return etl_traits<sub_expr_t>::size(v.sub);
@@ -792,6 +811,7 @@ struct etl_traits<etl::dim_view<T, D>> {
     static constexpr const bool is_fast = etl_traits<sub_expr_t>::is_fast;
     static constexpr const bool is_value = false;
     static constexpr const bool is_generator = false;
+    static constexpr const bool vectorizable = false;
 
     static std::size_t size(const expr_t& v){
         if(D == 1){
@@ -836,6 +856,7 @@ struct etl_traits<etl::sub_view<T>> {
     static constexpr const bool is_fast = etl_traits<sub_expr_t>::is_fast;
     static constexpr const bool is_value = false;
     static constexpr const bool is_generator = false;
+    static constexpr const bool vectorizable = false;
 
     static std::size_t size(const expr_t& v){
         return etl_traits<sub_expr_t>::size(v.parent) / etl_traits<sub_expr_t>::dim(v.parent, 0);
@@ -871,6 +892,7 @@ struct etl_traits<etl::fast_matrix_view<T, Rows, Columns>> {
     static constexpr const bool is_fast = true;
     static constexpr const bool is_value = false;
     static constexpr const bool is_generator = false;
+    static constexpr const bool vectorizable = false;
 
     static constexpr std::size_t size(const expr_t&){
         return Rows * Columns;
@@ -905,6 +927,7 @@ struct etl_traits<etl::dyn_matrix_view<T>> {
     static constexpr const bool is_fast = false;
     static constexpr const bool is_value = false;
     static constexpr const bool is_generator = false;
+    static constexpr const bool vectorizable = false;
 
     static std::size_t size(const expr_t& v){
         return v.rows * v.columns;
@@ -926,6 +949,7 @@ struct etl_traits<etl::magic_view<V>> {
     static constexpr const bool is_fast = false;
     static constexpr const bool is_value = false;
     static constexpr const bool is_generator = false;
+    static constexpr const bool vectorizable = false;
 
     static std::size_t size(const expr_t& v){
         return v.n * v.n;
@@ -947,6 +971,7 @@ struct etl_traits<etl::fast_magic_view<V, N>> {
     static constexpr const bool is_fast = true;
     static constexpr const bool is_value = false;
     static constexpr const bool is_generator = false;
+    static constexpr const bool vectorizable = false;
 
     static constexpr std::size_t size(){
         return N * N;

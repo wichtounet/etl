@@ -23,6 +23,8 @@ struct simple_operator : std::true_type {};
 
 template<typename T>
 struct plus_binary_op {
+    static constexpr const bool vectorizable = true;
+
     static constexpr T apply(const T& lhs, const T& rhs) noexcept {
         return lhs + rhs;
     }
@@ -34,6 +36,8 @@ struct plus_binary_op {
 
 template<typename T>
 struct minus_binary_op {
+    static constexpr const bool vectorizable = true;
+
     static constexpr T apply(const T& lhs, const T& rhs) noexcept {
         return lhs - rhs;
     }
@@ -45,6 +49,8 @@ struct minus_binary_op {
 
 template<typename T>
 struct mul_binary_op {
+    static constexpr const bool vectorizable = true;
+
     static constexpr T apply(const T& lhs, const T& rhs) noexcept {
         return lhs * rhs;
     }
@@ -56,6 +62,8 @@ struct mul_binary_op {
 
 template<typename T>
 struct div_binary_op {
+    static constexpr const bool vectorizable = true;
+
     static constexpr T apply(const T& lhs, const T& rhs) noexcept {
         return lhs / rhs;
     }
@@ -67,6 +75,8 @@ struct div_binary_op {
 
 template<typename T>
 struct mod_binary_op {
+    static constexpr const bool vectorizable = false;
+
     static constexpr T apply(const T& lhs, const T& rhs) noexcept {
         return lhs % rhs;
     }
@@ -78,6 +88,8 @@ struct mod_binary_op {
 
 template<typename T, typename E>
 struct ranged_noise_binary_op {
+    static constexpr const bool vectorizable = false;
+
     static T apply(const T& x, E value){
         static random_engine rand_engine(std::time(nullptr));
         static std::normal_distribution<double> normal_distribution(0.0, 1.0);
@@ -97,6 +109,8 @@ struct ranged_noise_binary_op {
 
 template<typename T, typename E>
 struct max_binary_op {
+    static constexpr const bool vectorizable = false;
+
     static constexpr T apply(const T& x, E value) noexcept {
         return std::max(x, value);
     }
@@ -108,6 +122,8 @@ struct max_binary_op {
 
 template<typename T, typename E>
 struct min_binary_op {
+    static constexpr const bool vectorizable = false;
+
     static constexpr T apply(const T& x, E value) noexcept {
         return std::min(x, value);
     }
@@ -119,6 +135,8 @@ struct min_binary_op {
 
 template<typename T, typename E>
 struct pow_binary_op {
+    static constexpr const bool vectorizable = false;
+
     static constexpr T apply(const T& x, E value) noexcept {
         return std::pow(x, value);
     }
@@ -130,6 +148,8 @@ struct pow_binary_op {
 
 template<typename T, typename E>
 struct one_if_binary_op {
+    static constexpr const bool vectorizable = false;
+
     static constexpr T apply(const T& x, E value) noexcept {
         return 1.0 ? x == value : 0.0;
     }
