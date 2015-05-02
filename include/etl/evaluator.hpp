@@ -69,7 +69,7 @@ struct standard_evaluator {
     }
 
     template<typename E, typename R, cpp_disable_if(is_temporary_expr<E>::value)>
-    static void evaluate(E&& expr, R&& result){
+    static void assign_evaluate(E&& expr, R&& result){
         evaluate_only(expr);
 
         for(std::size_t i = 0; i < etl::size(result); ++i){
@@ -82,7 +82,7 @@ struct standard_evaluator {
     //be evaluated twice and a temporary would be allocated for nothing
 
     template<typename E, typename R, cpp_enable_if(is_temporary_unary_expr<E>::value)>
-    static void evaluate(E&& expr, R&& result){
+    static void assign_evaluate(E&& expr, R&& result){
         detail::temporary_allocator_static_visitor allocator_visitor;
         allocator_visitor(expr.a());
 
@@ -93,7 +93,7 @@ struct standard_evaluator {
     }
 
     template<typename E, typename R, cpp_enable_if(is_temporary_binary_expr<E>::value)>
-    static void evaluate(E&& expr, R&& result){
+    static void assign_evaluate(E&& expr, R&& result){
         detail::temporary_allocator_static_visitor allocator_visitor;
         allocator_visitor(expr.a());
         allocator_visitor(expr.b());
@@ -107,8 +107,8 @@ struct standard_evaluator {
 };
 
 template<typename Expr, typename Result>
-void evaluate(Expr&& expr, Result&& result){
-    standard_evaluator<Expr, Result>::evaluate(std::forward<Expr>(expr), std::forward<Result>(result));
+void assign_evaluate(Expr&& expr, Result&& result){
+    standard_evaluator<Expr, Result>::assign_evaluate(std::forward<Expr>(expr), std::forward<Result>(result));
 }
 
 template<typename Expr>

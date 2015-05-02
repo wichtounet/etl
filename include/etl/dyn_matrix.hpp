@@ -188,7 +188,7 @@ public:
             _dimensions(dyn_detail::sizes(std::make_index_sequence<(sizeof...(S))>(), s1, sizes...)) {
         const auto& e = cpp::last_value(sizes...);
 
-        evaluate(e, *this);
+        assign_evaluate(e, *this);
     }
 
     //Sizes followed by an init flag followed by the value
@@ -211,7 +211,7 @@ public:
             _dimensions[d] = etl::dim(e, d);
         }
 
-        evaluate(std::forward<E>(e), *this);
+        assign_evaluate(std::forward<E>(e), *this);
     }
 
     template<typename Container, cpp_enable_if(
@@ -254,14 +254,14 @@ public:
     dyn_matrix& operator=(E&& e){
         ensure_same_size(*this, e);
 
-        evaluate(e, *this);
+        assign_evaluate(e, *this);
 
         return *this;
     }
 
     template<typename Generator>
     dyn_matrix& operator=(generator_expr<Generator>&& e){
-        evaluate(e, *this);
+        assign_evaluate(e, *this);
 
         return *this;
     }

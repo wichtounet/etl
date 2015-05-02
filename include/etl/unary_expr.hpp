@@ -136,7 +136,7 @@ public:
     template<typename E, cpp::enable_if_all_u<non_const_return_ref, is_copy_expr<E>::value> = cpp::detail::dummy>
     unary_expr& operator=(E&& e){
         ensure_same_size(*this, e);
-        evaluate(std::forward<E>(e), *this);
+        assign_evaluate(std::forward<E>(e), *this);
         return *this;
     }
 

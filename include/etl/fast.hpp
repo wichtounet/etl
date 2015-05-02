@@ -154,7 +154,7 @@ public:
     explicit fast_matrix_impl(E&& e){
         init();
         ensure_same_size(*this, e);
-        evaluate(std::forward<E>(e), *this);
+        assign_evaluate(std::forward<E>(e), *this);
     }
 
     template<typename Container, cpp_enable_if(
@@ -171,7 +171,7 @@ public:
     template<typename Generator>
     explicit fast_matrix_impl(generator_expr<Generator>&& e){
         init();
-        evaluate(e, *this);
+        assign_evaluate(e, *this);
     }
 
     //}}}
@@ -218,14 +218,14 @@ public:
     fast_matrix_impl& operator=(E&& e){
         ensure_same_size(*this, e);
 
-        evaluate(std::forward<E>(e), *this);
+        assign_evaluate(std::forward<E>(e), *this);
 
         return *this;
     }
 
     template<typename Generator>
     fast_matrix_impl& operator=(generator_expr<Generator>&& e){
-        evaluate(e, *this);
+        assign_evaluate(e, *this);
 
         return *this;
     }
