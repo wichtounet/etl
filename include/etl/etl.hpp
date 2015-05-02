@@ -10,6 +10,10 @@
 
 #include<complex>
 
+// Utilities
+#include "config.hpp"
+#include "vectorization.hpp"
+
 // The operators
 #include "generators.hpp"
 #include "transformers.hpp"
