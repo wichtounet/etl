@@ -207,13 +207,9 @@ LE& operator+=(LE&& lhs, RE rhs){
 }
 
 template<typename LE, typename RE, cpp::enable_if_all_u<is_etl_expr<RE>::value, is_etl_assignable<LE>::value> = cpp::detail::dummy>
-LE& operator+=(LE&& lhs, const RE& rhs){
+LE& operator+=(LE&& lhs, RE&& rhs){
     ensure_same_size(lhs, rhs);
-
-    for(std::size_t i = 0; i < size(lhs); ++i){
-        lhs[i] += rhs[i];
-    }
-
+    add_evaluate(std::forward<RE>(rhs), std::forward<LE>(lhs));
     return lhs;
 }
 
@@ -227,49 +223,35 @@ LE& operator-=(LE&& lhs, RE rhs){
 }
 
 template<typename LE, typename RE, cpp::enable_if_all_u<is_etl_expr<RE>::value, is_etl_assignable<LE>::value> = cpp::detail::dummy>
-LE& operator-=(LE&& lhs, const RE& rhs){
+LE& operator-=(LE&& lhs, RE&& rhs){
     ensure_same_size(lhs, rhs);
-
-    for(std::size_t i = 0; i < size(lhs); ++i){
-        lhs[i] -= rhs[i];
-    }
-
+    sub_evaluate(std::forward<RE>(rhs), std::forward<LE>(lhs));
     return lhs;
 }
 
 template<typename LE, typename RE, cpp::enable_if_all_u<std::is_arithmetic<RE>::value, is_etl_assignable<LE>::value> = cpp::detail::dummy>
 LE& operator*=(LE&& lhs, RE rhs){
     detail::scalar_scale<LE>::apply(std::forward<LE>(lhs), rhs);
-
     return lhs;
 }
 
 template<typename LE, typename RE, cpp::enable_if_all_u<is_etl_expr<RE>::value, is_etl_assignable<LE>::value> = cpp::detail::dummy>
-LE& operator*=(LE&& lhs, const RE& rhs){
+LE& operator*=(LE&& lhs, RE&& rhs){
     ensure_same_size(lhs, rhs);
-
-    for(std::size_t i = 0; i < size(lhs); ++i){
-        lhs[i] *= rhs[i];
-    }
-
+    mul_evaluate(std::forward<RE>(rhs), std::forward<LE>(lhs));
     return lhs;
 }
 
 template<typename LE, typename RE, cpp::enable_if_all_u<std::is_arithmetic<RE>::value, is_etl_assignable<LE>::value> = cpp::detail::dummy>
 LE& operator>>=(LE&& lhs, RE rhs){
     detail::scalar_scale<LE>::apply(std::forward<LE>(lhs), rhs);
-
     return lhs;
 }
 
 template<typename LE, typename RE, cpp::enable_if_all_u<is_etl_expr<RE>::value, is_etl_assignable<LE>::value> = cpp::detail::dummy>
-LE& operator>>=(LE&& lhs, const RE& rhs){
+LE& operator>>=(LE&& lhs, RE&& rhs){
     ensure_same_size(lhs, rhs);
-
-    for(std::size_t i = 0; i < size(lhs); ++i){
-        lhs[i] *= rhs[i];
-    }
-
+    mul_evaluate(std::forward<RE>(rhs), std::forward<LE>(lhs));
     return lhs;
 }
 
@@ -283,13 +265,9 @@ LE& operator/=(LE&& lhs, RE rhs){
 }
 
 template<typename LE, typename RE, cpp::enable_if_all_u<is_etl_expr<RE>::value, is_etl_assignable<LE>::value> = cpp::detail::dummy>
-LE& operator/=(LE&& lhs, const RE& rhs){
+LE& operator/=(LE&& lhs, RE&& rhs){
     ensure_same_size(lhs, rhs);
-
-    for(std::size_t i = 0; i < size(lhs); ++i){
-        lhs[i] /= rhs[i];
-    }
-
+    div_evaluate(std::forward<RE>(rhs), std::forward<LE>(lhs));
     return lhs;
 }
 
@@ -303,13 +281,9 @@ LE& operator%=(LE&& lhs, RE rhs){
 }
 
 template<typename LE, typename RE, cpp::enable_if_all_u<is_etl_expr<RE>::value, is_etl_assignable<LE>::value> = cpp::detail::dummy>
-LE& operator%=(LE&& lhs, const RE& rhs){
+LE& operator%=(LE&& lhs, RE&& rhs){
     ensure_same_size(lhs, rhs);
-
-    for(std::size_t i = 0; i < size(lhs); ++i){
-        lhs[i] %= rhs[i];
-    }
-
+    mod_evaluate(std::forward<RE>(rhs), std::forward<LE>(lhs));
     return lhs;
 }
 

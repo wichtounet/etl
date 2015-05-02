@@ -77,6 +77,51 @@ struct standard_evaluator {
         }
     }
 
+    template<typename E, typename R, cpp_disable_if(is_temporary_expr<E>::value)>
+    static void add_evaluate(E&& expr, R&& result){
+        evaluate_only(expr);
+
+        for(std::size_t i = 0; i < etl::size(result); ++i){
+            result[i] += expr[i];
+        }
+    }
+
+    template<typename E, typename R, cpp_disable_if(is_temporary_expr<E>::value)>
+    static void sub_evaluate(E&& expr, R&& result){
+        evaluate_only(expr);
+
+        for(std::size_t i = 0; i < etl::size(result); ++i){
+            result[i] -= expr[i];
+        }
+    }
+
+    template<typename E, typename R, cpp_disable_if(is_temporary_expr<E>::value)>
+    static void mul_evaluate(E&& expr, R&& result){
+        evaluate_only(expr);
+
+        for(std::size_t i = 0; i < etl::size(result); ++i){
+            result[i] *= expr[i];
+        }
+    }
+
+    template<typename E, typename R, cpp_disable_if(is_temporary_expr<E>::value)>
+    static void div_evaluate(E&& expr, R&& result){
+        evaluate_only(expr);
+
+        for(std::size_t i = 0; i < etl::size(result); ++i){
+            result[i] /= expr[i];
+        }
+    }
+
+    template<typename E, typename R, cpp_disable_if(is_temporary_expr<E>::value)>
+    static void mod_evaluate(E&& expr, R&& result){
+        evaluate_only(expr);
+
+        for(std::size_t i = 0; i < etl::size(result); ++i){
+            result[i] %= expr[i];
+        }
+    }
+
     //Note: In case of direct evaluation, the temporary_expr itself must 
     //not beevaluated by the static_visitor, otherwise, the result would
     //be evaluated twice and a temporary would be allocated for nothing
@@ -111,6 +156,34 @@ void assign_evaluate(Expr&& expr, Result&& result){
     standard_evaluator<Expr, Result>::assign_evaluate(std::forward<Expr>(expr), std::forward<Result>(result));
 }
 
+template<typename Expr, typename Result>
+void add_evaluate(Expr&& expr, Result&& result){
+    standard_evaluator<Expr, Result>::add_evaluate(std::forward<Expr>(expr), std::forward<Result>(result));
+}
+
+template<typename Expr, typename Result>
+void sub_evaluate(Expr&& expr, Result&& result){
+    standard_evaluator<Expr, Result>::sub_evaluate(std::forward<Expr>(expr), std::forward<Result>(result));
+}
+
+template<typename Expr, typename Result>
+void mul_evaluate(Expr&& expr, Result&& result){
+    standard_evaluator<Expr, Result>::mul_evaluate(std::forward<Expr>(expr), std::forward<Result>(result));
+}
+
+template<typename Expr, typename Result>
+void div_evaluate(Expr&& expr, Result&& result){
+    standard_evaluator<Expr, Result>::div_evaluate(std::forward<Expr>(expr), std::forward<Result>(result));
+}
+
+template<typename Expr, typename Result>
+void mod_evaluate(Expr&& expr, Result&& result){
+    standard_evaluator<Expr, Result>::mod_evaluate(std::forward<Expr>(expr), std::forward<Result>(result));
+}
+
+/*!
+ * \brief Force the internal evaluation of an expression
+ */
 template<typename Expr>
 void force(Expr&& expr){
     standard_evaluator<Expr, void>::evaluate_only(std::forward<Expr>(expr));
