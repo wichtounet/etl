@@ -12,7 +12,7 @@
 
 //Include implementations
 #include "impl/dot.hpp"
-#include "impl/scale.hpp"
+#include "impl/scalar_op.hpp"
 
 namespace etl {
 
@@ -199,10 +199,7 @@ struct is_etl_assignable<unary_expr<T, Expr, identity_op>> : std::true_type {};
 
 template<typename LE, typename RE, cpp::enable_if_all_u<std::is_arithmetic<RE>::value, is_etl_assignable<LE>::value> = cpp::detail::dummy>
 LE& operator+=(LE&& lhs, RE rhs){
-    for(std::size_t i = 0; i < size(lhs); ++i){
-        lhs[i] += rhs;
-    }
-
+    detail::scalar_add<LE>::apply(std::forward<LE>(lhs), rhs);
     return lhs;
 }
 
@@ -215,10 +212,7 @@ LE& operator+=(LE&& lhs, RE&& rhs){
 
 template<typename LE, typename RE, cpp::enable_if_all_u<std::is_arithmetic<RE>::value, is_etl_assignable<LE>::value> = cpp::detail::dummy>
 LE& operator-=(LE&& lhs, RE rhs){
-    for(std::size_t i = 0; i < size(lhs); ++i){
-        lhs[i] -= rhs;
-    }
-
+    detail::scalar_sub<LE>::apply(std::forward<LE>(lhs), rhs);
     return lhs;
 }
 
@@ -231,7 +225,7 @@ LE& operator-=(LE&& lhs, RE&& rhs){
 
 template<typename LE, typename RE, cpp::enable_if_all_u<std::is_arithmetic<RE>::value, is_etl_assignable<LE>::value> = cpp::detail::dummy>
 LE& operator*=(LE&& lhs, RE rhs){
-    detail::scalar_scale<LE>::apply(std::forward<LE>(lhs), rhs);
+    detail::scalar_mul<LE>::apply(std::forward<LE>(lhs), rhs);
     return lhs;
 }
 
@@ -244,7 +238,7 @@ LE& operator*=(LE&& lhs, RE&& rhs){
 
 template<typename LE, typename RE, cpp::enable_if_all_u<std::is_arithmetic<RE>::value, is_etl_assignable<LE>::value> = cpp::detail::dummy>
 LE& operator>>=(LE&& lhs, RE rhs){
-    detail::scalar_scale<LE>::apply(std::forward<LE>(lhs), rhs);
+    detail::scalar_mul<LE>::apply(std::forward<LE>(lhs), rhs);
     return lhs;
 }
 
@@ -257,10 +251,7 @@ LE& operator>>=(LE&& lhs, RE&& rhs){
 
 template<typename LE, typename RE, cpp::enable_if_all_u<std::is_arithmetic<RE>::value, is_etl_assignable<LE>::value> = cpp::detail::dummy>
 LE& operator/=(LE&& lhs, RE rhs){
-    for(std::size_t i = 0; i < size(lhs); ++i){
-        lhs[i] /= rhs;
-    }
-
+    detail::scalar_div<LE>::apply(std::forward<LE>(lhs), rhs);
     return lhs;
 }
 
@@ -273,10 +264,7 @@ LE& operator/=(LE&& lhs, RE&& rhs){
 
 template<typename LE, typename RE, cpp::enable_if_all_u<std::is_arithmetic<RE>::value, is_etl_assignable<LE>::value> = cpp::detail::dummy>
 LE& operator%=(LE&& lhs, RE rhs){
-    for(std::size_t i = 0; i < size(lhs); ++i){
-        lhs[i] %= rhs;
-    }
-
+    detail::scalar_mod<LE>::apply(std::forward<LE>(lhs), rhs);
     return lhs;
 }
 
