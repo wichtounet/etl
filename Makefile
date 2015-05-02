@@ -97,8 +97,12 @@ coverage: debug_test
 coverage_view: coverage
 	firefox reports/coverage/index.html
 
+doc:
+	doxygen Doxyfile
+
 clean: base_clean
 	rm -rf reports
+	rm -rf latex/ html/
 
 -include $(DEBUG_D_FILES)
 -include $(RELEASE_D_FILES)
