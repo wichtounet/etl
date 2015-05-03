@@ -108,6 +108,18 @@ struct is_div_strict : std::false_type {};
 
 #endif
 
+#ifdef ETL_UNROLL_VECT
+constexpr const bool unroll_vectorized_loops = true;
+#else
+constexpr const bool unroll_vectorized_loops = false;
+#endif
+
+#ifdef ETL_UNROLL_NON_VECT
+constexpr const bool unroll_normal_loops = true;
+#else
+constexpr const bool unroll_normal_loops = false;
+#endif
+
 } //end of namespace etl
 
 #endif

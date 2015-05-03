@@ -72,8 +72,25 @@ struct standard_evaluator {
     static void assign_evaluate(E&& expr, R&& result){
         evaluate_only(expr);
 
-        for(std::size_t i = 0; i < etl::size(result); ++i){
-            result[i] = expr[i];
+        auto m = result.memory_start();
+
+        const std::size_t size = etl::size(result);
+
+        std::size_t iend = 0;
+
+        if(unroll_normal_loops){
+            iend = size & std::size_t(-4);
+
+            for(std::size_t i = 0; i < iend; i += 4){
+                m[i] = expr[i];
+                m[i+1] = expr[i+1];
+                m[i+2] = expr[i+2];
+                m[i+3] = expr[i+3];
+            }
+        }
+
+        for(std::size_t i = iend; i < size; ++i){
+            m[i] = expr[i];
         }
     }
 
@@ -86,12 +103,27 @@ struct standard_evaluator {
         auto m = result.memory_start();
 
         const std::size_t size = etl::size(result);
-        const std::size_t iend = size & std::size_t(-IT::size);
 
-        for(std::size_t i = 0; i < iend; i += IT::size){
-            vec::store(m + i, expr.load(i));
+        std::size_t iend = 0;
+
+        if(unroll_vectorized_loops){
+            iend = size & std::size_t(-IT::size * 4);
+
+            for(std::size_t i = 0; i < iend; i += IT::size * 4){
+                vec::store(m + i, expr.load(i));
+                vec::store(m + i + 1 * IT::size, expr.load(i + 1 * IT::size));
+                vec::store(m + i + 2 * IT::size, expr.load(i + 2 * IT::size));
+                vec::store(m + i + 3 * IT::size, expr.load(i + 3 * IT::size));
+            }
+        } else {
+            iend = size & std::size_t(-IT::size);
+
+            for(std::size_t i = 0; i < iend; i += IT::size){
+                vec::store(m + i, expr.load(i));
+            }
         }
 
+        //Finish the iterations in a non-vectorized fashion
         for(std::size_t i = iend; i < size; ++i){
             m[i] = expr[i];
         }
