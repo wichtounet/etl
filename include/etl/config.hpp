@@ -98,6 +98,16 @@ struct is_element_wise_mul_default : std::false_type {};
 
 #endif
 
+#ifdef ETL_STRICT_DIV
+
+struct is_div_strict : std::true_type {};
+
+#else
+
+struct is_div_strict : std::false_type {};
+
+#endif
+
 } //end of namespace etl
 
 #endif
