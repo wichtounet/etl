@@ -23,10 +23,18 @@ struct simple_operator : std::true_type {};
 
 template<typename T>
 struct plus_binary_op {
+    using vec_type = intrinsic_type<T>;
+
     static constexpr const bool vectorizable = true;
 
     static constexpr T apply(const T& lhs, const T& rhs) noexcept {
         return lhs + rhs;
+    }
+
+    static constexpr vec_type load(const vec_type& lhs, const vec_type& rhs) noexcept {
+        const vec_type ymm1(lhs);
+        const vec_type ymm2(rhs);
+        return vec::add(ymm1, ymm2);
     }
 
     static std::string desc() noexcept {
@@ -36,10 +44,18 @@ struct plus_binary_op {
 
 template<typename T>
 struct minus_binary_op {
+    using vec_type = intrinsic_type<T>;
+
     static constexpr const bool vectorizable = true;
 
     static constexpr T apply(const T& lhs, const T& rhs) noexcept {
         return lhs - rhs;
+    }
+
+    static constexpr vec_type load(const vec_type& lhs, const vec_type& rhs) noexcept {
+        const vec_type ymm1(lhs);
+        const vec_type ymm2(rhs);
+        return vec::sub(ymm1, ymm2);
     }
 
     static std::string desc() noexcept {
@@ -49,10 +65,18 @@ struct minus_binary_op {
 
 template<typename T>
 struct mul_binary_op {
+    using vec_type = intrinsic_type<T>;
+
     static constexpr const bool vectorizable = true;
 
     static constexpr T apply(const T& lhs, const T& rhs) noexcept {
         return lhs * rhs;
+    }
+
+    static constexpr vec_type load(const vec_type& lhs, const vec_type& rhs) noexcept {
+        const vec_type ymm1(lhs);
+        const vec_type ymm2(rhs);
+        return vec::mul(ymm1, ymm2);
     }
 
     static std::string desc() noexcept {
@@ -62,10 +86,18 @@ struct mul_binary_op {
 
 template<typename T>
 struct div_binary_op {
+    using vec_type = intrinsic_type<T>;
+
     static constexpr const bool vectorizable = true;
 
     static constexpr T apply(const T& lhs, const T& rhs) noexcept {
         return lhs / rhs;
+    }
+
+    static constexpr vec_type load(const vec_type& lhs, const vec_type& rhs) noexcept {
+        const vec_type ymm1(lhs);
+        const vec_type ymm2(rhs);
+        return vec::div(ymm1, ymm2);
     }
 
     static std::string desc() noexcept {

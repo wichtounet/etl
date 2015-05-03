@@ -15,6 +15,7 @@
 #include "vectorization.hpp"
 
 // The operators
+#include "scalar.hpp"
 #include "generators.hpp"
 #include "transformers.hpp"
 #include "views.hpp"

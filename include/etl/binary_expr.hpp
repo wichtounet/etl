@@ -85,6 +85,10 @@ public:
         return BinaryOp::apply(lhs()[i], rhs()[i]);
     }
 
+    intrinsic_type<value_type> load(std::size_t i) const {
+        return BinaryOp::load(lhs().load(i), rhs().load(i));
+    }
+
     template<typename... S, cpp_enable_if(sizeof...(S) == sub_size_compare<this_type>::value)>
     value_type operator()(S... args) const {
         static_assert(cpp::all_convertible_to<std::size_t, S...>::value, "Invalid size types");

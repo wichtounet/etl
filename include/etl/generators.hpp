@@ -18,24 +18,6 @@ namespace etl {
 
 using random_engine = std::mt19937_64;
 
-template<typename T>
-struct scalar {
-    const T value;
-
-    explicit constexpr scalar(T v) : value(v) {}
-
-    constexpr const T operator[](std::size_t) const {
-        return value;
-    }
-
-    template<typename... S>
-    T operator()(S... /*args*/) const {
-        static_assert(cpp::all_convertible_to<std::size_t, S...>::value, "Invalid size types");
-
-        return value;
-    }
-};
-
 template<typename T = double>
 struct normal_generator_op {
     using value_type = T;
@@ -63,11 +45,6 @@ struct sequence_generator_op {
         return current++;
     }
 };
-
-template<typename T>
-std::ostream& operator<<(std::ostream& os, const scalar<T>& s){
-    return os << s.value;
-}
 
 template<typename T>
 std::ostream& operator<<(std::ostream& os, const sequence_generator_op<T>& s){

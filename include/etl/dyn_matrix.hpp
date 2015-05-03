@@ -102,6 +102,7 @@ public:
     using            const_iterator = typename storage_impl::const_iterator;
     using               memory_type = value_type*;
     using         const_memory_type = const value_type*;
+    using                  vec_type = intrinsic_type<T>;
 
 private:
     const std::size_t _size;
@@ -447,6 +448,10 @@ public:
         cpp_assert(i < size(), "Out of bounds");
 
         return _data[i];
+    }
+
+    vec_type load(std::size_t i) const noexcept {
+        return vec::loadu(memory_start() + i);
     }
 
     iterator begin() noexcept(noexcept(_data.begin())) {

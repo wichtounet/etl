@@ -68,12 +68,32 @@ struct standard_evaluator {
         evaluator_visitor(expr);
     }
 
-    template<typename E, typename R, cpp_disable_if(is_temporary_expr<E>::value)>
+    template<typename E, typename R, cpp_enable_if(!(decay_traits<E>::vectorizable && intrinsic_traits<value_t<R>>::vectorizable && intrinsic_traits<value_t<E>>::vectorizable) && !is_temporary_expr<E>::value)>
     static void assign_evaluate(E&& expr, R&& result){
         evaluate_only(expr);
 
         for(std::size_t i = 0; i < etl::size(result); ++i){
             result[i] = expr[i];
+        }
+    }
+
+    template<typename E, typename R, cpp_enable_if(decay_traits<E>::vectorizable && intrinsic_traits<value_t<R>>::vectorizable && intrinsic_traits<value_t<E>>::vectorizable && !is_temporary_expr<E>::value)>
+    static void assign_evaluate(E&& expr, R&& result){
+        evaluate_only(expr);
+
+        using IT = intrinsic_traits<value_t<E>>;
+
+        auto m = result.memory_start();
+
+        const std::size_t size = etl::size(result);
+        const std::size_t iend = size & std::size_t(-IT::size);
+
+        for(std::size_t i = 0; i < iend; i += IT::size){
+            vec::store(m + i, expr.load(i));
+        }
+
+        for(std::size_t i = iend; i < size; ++i){
+            m[i] = expr[i];
         }
     }
 
