@@ -68,7 +68,10 @@ struct standard_evaluator {
         evaluator_visitor(expr);
     }
 
-    template<typename E, typename R, cpp_enable_if(!(decay_traits<E>::vectorizable && intrinsic_traits<value_t<R>>::vectorizable && intrinsic_traits<value_t<E>>::vectorizable) && !is_temporary_expr<E>::value)>
+    template<typename E, typename R>
+    struct vectorized_assign : cpp::and_u<vectorize_expr, decay_traits<E>::vectorizable, intrinsic_traits<value_t<R>>::vectorizable, intrinsic_traits<value_t<E>>::vectorizable> {};
+
+    template<typename E, typename R, cpp_enable_if(!vectorized_assign<E, R>::value && !is_temporary_expr<E>::value)>
     static void assign_evaluate(E&& expr, R&& result){
         evaluate_only(expr);
 
@@ -94,7 +97,7 @@ struct standard_evaluator {
         }
     }
 
-    template<typename E, typename R, cpp_enable_if(decay_traits<E>::vectorizable && intrinsic_traits<value_t<R>>::vectorizable && intrinsic_traits<value_t<E>>::vectorizable && !is_temporary_expr<E>::value)>
+    template<typename E, typename R, cpp_enable_if(vectorized_assign<E, R>::value && !is_temporary_expr<E>::value)>
     static void assign_evaluate(E&& expr, R&& result){
         evaluate_only(expr);
 

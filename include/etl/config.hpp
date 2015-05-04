@@ -10,28 +10,28 @@
 
 namespace etl {
 
+#ifdef ETL_VECTORIZE_FULL
+
+#ifndef ETL_VECTORIZE_EXPR
+#define ETL_VECTORIZE_EXPR
+#endif
+
+#ifndef ETL_VECTORIZE_IMPL
+#define ETL_VECTORIZE_IMPL
+#endif
+
+#endif //ETL_VECTORIZE_FULL
+
 #ifdef ETL_VECTORIZE_EXPR
-
-#ifndef ETL_VECTORIZE
-#define ETL_VECTORIZE
-#endif
-
-struct vectorize_expr : std::false_type {};
-
+constexpr const bool vectorize_expr = true;
 #else
-
-struct vectorize_expr : std::true_type {};
-
+constexpr const bool vectorize_expr = false;
 #endif
 
-#ifdef ETL_VECTORIZE
-
+#ifdef ETL_VECTORIZE_IMPL
 struct vectorize : std::false_type {};
-
 #else
-
 struct vectorize : std::true_type {};
-
 #endif
 
 //Flag to disable the creation of temporary in expressions
@@ -43,6 +43,7 @@ constexpr const bool create_temporary = true;
 
 #ifdef ETL_MKL_MODE
 
+//MKL mode implies BLAS mode
 #ifndef ETL_BLAS_MODE
 #define ETL_BLAS_MODE
 #endif
@@ -55,14 +56,11 @@ struct is_mkl_enabled : std::false_type {};
 
 #endif
 
+//Flag to enable the use of CBLAS library
 #ifdef ETL_BLAS_MODE
-
 struct is_cblas_enabled : std::true_type {};
-
 #else
-
 struct is_cblas_enabled : std::false_type {};
-
 #endif
 
 //Flag to perform elementwise multiplication by default (operator*) 
