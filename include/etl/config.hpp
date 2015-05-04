@@ -65,26 +65,6 @@ struct is_cblas_enabled : std::false_type {};
 
 #endif
 
-#ifdef ETL_CONV1_MMUL
-
-struct is_conv1_mmul_enabled : std::true_type {};
-
-#else
-
-struct is_conv1_mmul_enabled : std::false_type {};
-
-#endif
-
-#ifdef ETL_CONV2_MMUL
-
-struct is_conv2_mmul_enabled : std::true_type {};
-
-#else
-
-struct is_conv2_mmul_enabled : std::false_type {};
-
-#endif
-
 #ifdef ETL_ELEMENT_WISE_MULTIPLICATION
 
 struct is_element_wise_mul_default : std::true_type {};
@@ -102,12 +82,14 @@ constexpr const bool is_div_strict = true;
 constexpr const bool is_div_strict = false;
 #endif
 
+//Flag to enable unrolling of vectorized loops
 #ifdef ETL_UNROLL_VECT
 constexpr const bool unroll_vectorized_loops = true;
 #else
 constexpr const bool unroll_vectorized_loops = false;
 #endif
 
+//Flag to enable unrolling of non-vectorized loops
 #ifdef ETL_UNROLL_NON_VECT
 constexpr const bool unroll_normal_loops = true;
 #else
