@@ -23,21 +23,30 @@ struct rep_r_transformer {
     using sub_type = T;
     using value_type = value_t<T>;
 
+    static constexpr const std::size_t sub_d = decay_traits<sub_type>::dimensions();
+    static constexpr const std::size_t dimensions = sizeof...(D) + sub_d;
+
     sub_type sub;
 
     explicit rep_r_transformer(sub_type vec) : sub(vec) {}
 
     value_type operator[](std::size_t i) const {
-        return sub(i / mul_all<D...>::value);
+        return sub[i / mul_all<D...>::value];
     }
 
-    template<typename... Sizes>
-    value_type operator()(std::size_t i, Sizes... /*sizes*/) const {
-        return sub(i);
+    template<typename... Sizes, cpp_enable_if((sizeof...(Sizes) == dimensions))>
+    value_type operator()(Sizes... sizes) const {
+        return selected_only(std::make_index_sequence<sub_d>(), sizes...);
     }
 
     sub_type& value(){
         return sub;
+    }
+
+private:
+    template<typename... Sizes, std::size_t... I>
+    value_type selected_only(const std::index_sequence<I...>&, Sizes... sizes) const {
+        return sub(cpp::nth_value<I>(sizes...)...);
     }
 };
 
@@ -47,6 +56,7 @@ struct rep_l_transformer {
     using value_type = value_t<T>;
 
     static constexpr const std::size_t sub_d = decay_traits<sub_type>::dimensions();
+    static constexpr const std::size_t dimensions = sizeof...(D) + sub_d;
 
     sub_type sub;
 
@@ -56,18 +66,19 @@ struct rep_l_transformer {
         return sub[i % size(sub)];
     }
 
-    template<typename... Sizes, cpp_enable_if((sizeof...(Sizes) == sub_d))>
+    template<typename... Sizes, cpp_enable_if((sizeof...(Sizes) == dimensions))>
     value_type operator()(Sizes... sizes) const {
-        return sub(sizes...);
-    }
-
-    template<typename... Sizes, cpp_enable_if((sizeof...(Sizes) + 1 > sub_d))>
-    value_type operator()(std::size_t, Sizes... sizes) const {
-        return (*this)(sizes...);
+        return selected_only(make_index_range<sizeof...(D), dimensions>(), sizes...);
     }
 
     sub_type& value(){
         return sub;
+    }
+
+private:
+    template<typename... Sizes, std::size_t... I>
+    value_type selected_only(const std::index_sequence<I...>&, Sizes... sizes) const {
+        return sub(cpp::nth_value<I>(sizes...)...);
     }
 };
 

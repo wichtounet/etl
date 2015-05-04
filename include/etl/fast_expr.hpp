@@ -447,13 +447,11 @@ auto magic() -> virtual_helper<D, fast_magic_view<D, N>> {
 
 template<std::size_t D1, std::size_t... D, typename E, cpp_enable_if(is_etl_expr<E>::value)>
 auto rep(E&& value) -> unary_expr<value_t<E>, rep_r_transformer<build_type<E>, D1, D...>, virtual_op> {
-    static_assert(etl_traits<std::decay_t<E>>::dimensions() == 1, "Can only use rep on vector");
     return {rep_r_transformer<build_type<E>, D1, D...>(value)};
 }
 
 template<std::size_t D1, std::size_t... D, typename E, cpp_enable_if(is_etl_expr<E>::value)>
 auto rep_r(E&& value) -> unary_expr<value_t<E>, rep_r_transformer<build_type<E>, D1, D...>, virtual_op> {
-    static_assert(etl_traits<std::decay_t<E>>::dimensions() == 1, "Can only use rep on vector");
     return {rep_r_transformer<build_type<E>, D1, D...>(value)};
 }
 

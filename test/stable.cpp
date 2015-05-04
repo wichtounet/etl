@@ -81,6 +81,47 @@ TEMPLATE_TEST_CASE_2( "rep/fast_matrix_4", "rep", Z, float, double ) {
     }
 }
 
+TEMPLATE_TEST_CASE_2( "rep/fast_matrix_5", "rep", Z, float, double ) {
+    etl::fast_matrix<Z, 2, 3> a({1.0, -2.0, 3.0, -4.0, 5.0, -6.0});
+    etl::fast_matrix<Z, 2, 3, 3, 2> b;
+
+    b = etl::rep<3, 2>(a);
+
+    REQUIRE(b(0,0,0,0) ==  1.0);
+    REQUIRE(b(0,1,0,0) == -2.0);
+    REQUIRE(b(0,2,0,0) ==  3.0);
+    REQUIRE(b(1,0,0,0) == -4.0);
+    REQUIRE(b(1,1,0,0) ==  5.0);
+    REQUIRE(b(1,2,0,0) == -6.0);
+
+    REQUIRE(b(0,0,0,1) ==  1.0);
+    REQUIRE(b(0,1,2,0) == -2.0);
+    REQUIRE(b(0,2,0,1) ==  3.0);
+    REQUIRE(b(1,0,0,0) == -4.0);
+    REQUIRE(b(1,1,1,1) ==  5.0);
+    REQUIRE(b(1,2,0,0) == -6.0);
+}
+
+TEMPLATE_TEST_CASE_2( "rep/fast_matrix_6", "rep", Z, float, double ) {
+    etl::fast_matrix<Z, 2, 3> a({1.0, -2.0, 3.0, -4.0, 5.0, -6.0});
+
+    auto b = etl::rep<3, 2>(a);
+
+    REQUIRE(b(0,0,0,0) ==  1.0);
+    REQUIRE(b(0,1,0,0) == -2.0);
+    REQUIRE(b(0,2,0,0) ==  3.0);
+    REQUIRE(b(1,0,0,0) == -4.0);
+    REQUIRE(b(1,1,0,0) ==  5.0);
+    REQUIRE(b(1,2,0,0) == -6.0);
+
+    REQUIRE(b(0,0,0,1) ==  1.0);
+    REQUIRE(b(0,1,2,0) == -2.0);
+    REQUIRE(b(0,2,0,1) ==  3.0);
+    REQUIRE(b(1,0,0,0) == -4.0);
+    REQUIRE(b(1,1,1,1) ==  5.0);
+    REQUIRE(b(1,2,0,0) == -6.0);
+}
+
 TEMPLATE_TEST_CASE_2( "rep/dyn_matrix_1", "rep", Z, float, double ) {
     etl::dyn_vector<Z> a(3, etl::values(1.0, -2.0, 3.0));
     etl::dyn_matrix<Z> b(etl::rep<3>(a));

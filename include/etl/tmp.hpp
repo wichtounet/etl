@@ -79,6 +79,20 @@ template<std::size_t I11, std::size_t I21, std::size_t... I1, std::size_t... I2>
 struct sequence_equal<std::index_sequence<I11, I1...>, std::index_sequence<I21, I2...>,
     cpp::disable_if_t<I11 == I21>> : std::false_type {};
 
+template<typename Int, typename, Int Begin>
+struct integer_range_impl;
+
+template<typename Int, Int... N, Int Begin>
+struct integer_range_impl<Int, std::integer_sequence<Int, N...>, Begin> {
+    using type = std::integer_sequence<Int, N+Begin...>;
+};
+
+template<typename Int, Int Begin, Int End>
+using make_integer_range = typename integer_range_impl<Int, std::make_integer_sequence<Int, End-Begin>, Begin>::type;
+
+template<std::size_t Begin, std::size_t End>
+using make_index_range = make_integer_range<std::size_t, Begin, End>;
+
 template<typename... Dims>
 std::string concat_sizes(Dims... sizes){
     std::array<std::size_t, sizeof...(Dims)> tmp{{sizes...}};
