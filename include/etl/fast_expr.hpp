@@ -95,7 +95,7 @@ auto operator+(LE&& lhs, RE&& rhs) -> left_binary_helper<LE, RE, plus_binary_op>
     return {lhs, rhs};
 }
 
-template<typename LE, typename RE, cpp::enable_if_all_u<is_etl_expr<LE>::value, is_etl_expr<RE>::value, is_element_wise_mul_default::value> = cpp::detail::dummy>
+template<typename LE, typename RE, cpp::enable_if_all_u<is_etl_expr<LE>::value, is_etl_expr<RE>::value, is_element_wise_mul_default> = cpp::detail::dummy>
 auto operator*(LE&& lhs, RE&& rhs) -> left_binary_helper<LE, RE, mul_binary_op> {
     ensure_same_size(lhs, rhs);
 
@@ -562,7 +562,7 @@ auto convmtx2(A&& a, std::size_t k1, std::size_t k2) -> stable_transform_helper<
 //{{{ mul expressions
 
 template<typename A, typename B,
-    cpp_enable_if(decay_traits<A>::dimensions() == 2 && decay_traits<B>::dimensions() == 2 && !is_element_wise_mul_default::value)>
+    cpp_enable_if(decay_traits<A>::dimensions() == 2 && decay_traits<B>::dimensions() == 2 && !is_element_wise_mul_default)>
 auto operator*(A&& a, B&& b) -> temporary_binary_helper<A, B, mm_mul_expr> {
     static_assert(is_etl_expr<A>::value && is_etl_expr<B>::value, "Matrix multiplication only supported for ETL expressions");
     static_assert(decay_traits<A>::dimensions() == 2 && decay_traits<B>::dimensions() == 2, "Matrix multiplication only works in 2D");
@@ -572,7 +572,7 @@ auto operator*(A&& a, B&& b) -> temporary_binary_helper<A, B, mm_mul_expr> {
 
 template<typename A, typename B, cpp::enable_if_all_u<
     decay_traits<A>::dimensions() == 1, decay_traits<B>::dimensions() == 2,
-    !is_element_wise_mul_default::value
+    !is_element_wise_mul_default
 > = cpp::detail::dummy>
 auto operator*(A&& a, B&& b) -> temporary_binary_helper<A, B, vm_mul_expr> {
     return {a, b};
@@ -580,7 +580,7 @@ auto operator*(A&& a, B&& b) -> temporary_binary_helper<A, B, vm_mul_expr> {
 
 template<typename A, typename B, cpp::enable_if_all_u<
     decay_traits<A>::dimensions() == 2, decay_traits<B>::dimensions() == 1,
-    !is_element_wise_mul_default::value
+    !is_element_wise_mul_default
 > = cpp::detail::dummy>
 auto operator*(A&& a, B&& b) -> temporary_binary_helper<A, B, mv_mul_expr> {
     return {a, b};

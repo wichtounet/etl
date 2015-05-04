@@ -65,14 +65,12 @@ struct is_cblas_enabled : std::false_type {};
 
 #endif
 
+//Flag to perform elementwise multiplication by default (operator*) 
+//instead of matrix(vector) multiplication
 #ifdef ETL_ELEMENT_WISE_MULTIPLICATION
-
-struct is_element_wise_mul_default : std::true_type {};
-
+constexpr const bool is_element_wise_mul_default = true;
 #else
-
-struct is_element_wise_mul_default : std::false_type {};
-
+constexpr const bool is_element_wise_mul_default = false;
 #endif
 
 //Flag to prevent division to be done by multiplication
