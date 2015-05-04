@@ -14,9 +14,14 @@
 //{{{ Init tests
 
 TEMPLATE_TEST_CASE_2( "fast_matrix/init_1", "fast_matrix::fast_matrix(T)", Z, float, double ) {
-    etl::fast_matrix<Z, 2, 2> test_matrix(3.3);
+    etl::fast_matrix<Z, 2, 3> test_matrix(3.3);
 
-    REQUIRE(test_matrix.size() == 4);
+    REQUIRE(test_matrix.size() == 6);
+
+    REQUIRE(test_matrix.template dim<0>() == 2);
+    REQUIRE(test_matrix.template dim<1>() == 3);
+    REQUIRE(test_matrix.dim(0) == 2);
+    REQUIRE(test_matrix.dim(1) == 3);
 
     for(std::size_t i = 0; i < test_matrix.size(); ++i){
         REQUIRE(test_matrix[i] == Z(3.3));
@@ -76,6 +81,23 @@ TEMPLATE_TEST_CASE_2( "fast_matrix/init_6", "fast_matrix::operator=(T)", Z, floa
         REQUIRE(test_matrix[i] == Z(3.3));
         REQUIRE(test_matrix(i) == Z(3.3));
     }
+}
+
+TEMPLATE_TEST_CASE_2( "fast_matrix/dim_0", "fast_matrix::fast_matrix(T)", Z, float, double ) {
+    etl::fast_matrix<Z, 2, 3, 4, 5, 6, 7> test_matrix(3.3);
+
+    REQUIRE(test_matrix.template dim<0>() == 2);
+    REQUIRE(test_matrix.template dim<1>() == 3);
+    REQUIRE(test_matrix.template dim<2>() == 4);
+    REQUIRE(test_matrix.template dim<3>() == 5);
+    REQUIRE(test_matrix.template dim<4>() == 6);
+    REQUIRE(test_matrix.template dim<5>() == 7);
+    REQUIRE(test_matrix.dim(0) == 2);
+    REQUIRE(test_matrix.dim(1) == 3);
+    REQUIRE(test_matrix.dim(2) == 4);
+    REQUIRE(test_matrix.dim(3) == 5);
+    REQUIRE(test_matrix.dim(4) == 6);
+    REQUIRE(test_matrix.dim(5) == 7);
 }
 
 //}}} Init tests

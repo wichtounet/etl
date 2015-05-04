@@ -358,6 +358,13 @@ public:
         return _dimensions[d];
     }
 
+    template<std::size_t D2>
+    std::size_t dim() const  noexcept {
+        cpp_assert(D2 < n_dimensions, "Invalid dimension");
+
+        return _dimensions[D2];
+    }
+
     template<bool B = (n_dimensions > 1), cpp::enable_if_u<B> = cpp::detail::dummy>
     auto operator()(std::size_t i) noexcept {
         return sub(*this, i);

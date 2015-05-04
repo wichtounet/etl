@@ -61,6 +61,21 @@ struct nth_size final {
     static constexpr const std::size_t value = nth_size_int<S, I>::value;
 };
 
+template<std::size_t... D, cpp_enable_if(sizeof...(D) == 0)>
+std::size_t dyn_nth_size(std::size_t){ 
+    cpp_assert(false, "Should never be called");
+    return 0; 
+}
+
+template<std::size_t D1, std::size_t... D>
+std::size_t dyn_nth_size(std::size_t i){
+    if(i == 0){
+        return D1;
+    } else {
+        return dyn_nth_size<D...>(i - 1);
+    }
+}
+
 template<typename S1, typename S2, typename Enable = void>
 struct sequence_equal;
 

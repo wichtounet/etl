@@ -314,7 +314,9 @@ public:
         return nth_size<D, 0, Dims...>::value;
     }
 
-    //TODO Would probably be useful to have dim(std::size_t i)
+    std::size_t dim(std::size_t d) noexcept {
+        return dyn_nth_size<Dims...>(d);
+    }
 
     template<bool B = (n_dimensions > 1), cpp::enable_if_u<B> = cpp::detail::dummy>
     auto operator()(std::size_t i) noexcept {

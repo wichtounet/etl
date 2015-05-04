@@ -132,6 +132,23 @@ TEMPLATE_TEST_CASE_2( "dyn_matrix/init_8", "dyn_matrix::dyn_matrix(T)", Z, doubl
     }
 }
 
+TEMPLATE_TEST_CASE_2( "dyn_matrix/dim_0", "fast_matrix::fast_matrix(T)", Z, float, double ) {
+    etl::dyn_matrix<Z, 6> test_matrix(2, 3, 4, 5, 6, 7);
+
+    REQUIRE(test_matrix.template dim<0>() == 2);
+    REQUIRE(test_matrix.template dim<1>() == 3);
+    REQUIRE(test_matrix.template dim<2>() == 4);
+    REQUIRE(test_matrix.template dim<3>() == 5);
+    REQUIRE(test_matrix.template dim<4>() == 6);
+    REQUIRE(test_matrix.template dim<5>() == 7);
+    REQUIRE(test_matrix.dim(0) == 2);
+    REQUIRE(test_matrix.dim(1) == 3);
+    REQUIRE(test_matrix.dim(2) == 4);
+    REQUIRE(test_matrix.dim(3) == 5);
+    REQUIRE(test_matrix.dim(4) == 6);
+    REQUIRE(test_matrix.dim(5) == 7);
+}
+
 //}}} Init tests
 
 //{{{ Binary operators test
