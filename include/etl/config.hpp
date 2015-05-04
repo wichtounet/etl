@@ -36,9 +36,9 @@ struct vectorize : std::true_type {};
 
 //Flag to disable the creation of temporary in expressions
 #ifdef ETL_NO_TEMPORARY
-static constexpr const bool create_temporary = false;
+constexpr const bool create_temporary = false;
 #else
-static constexpr const bool create_temporary = true;
+constexpr const bool create_temporary = true;
 #endif
 
 #ifdef ETL_MKL_MODE
@@ -95,14 +95,11 @@ struct is_element_wise_mul_default : std::false_type {};
 
 #endif
 
+//Flag to prevent division to be done by multiplication
 #ifdef ETL_STRICT_DIV
-
-struct is_div_strict : std::true_type {};
-
+constexpr const bool is_div_strict = true;
 #else
-
-struct is_div_strict : std::false_type {};
-
+constexpr const bool is_div_strict = false;
 #endif
 
 #ifdef ETL_UNROLL_VECT
