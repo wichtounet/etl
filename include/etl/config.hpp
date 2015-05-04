@@ -34,14 +34,11 @@ struct vectorize : std::true_type {};
 
 #endif
 
+//Flag to disable the creation of temporary in expressions
 #ifdef ETL_NO_TEMPORARY
-
-struct create_temporary : std::false_type {};
-
+static constexpr const bool create_temporary = false;
 #else
-
-struct create_temporary : std::true_type {};
-
+static constexpr const bool create_temporary = true;
 #endif
 
 #ifdef ETL_MKL_MODE
