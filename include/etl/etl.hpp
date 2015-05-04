@@ -39,6 +39,7 @@
 #include "conv_expr.hpp"
 
 // The expressions building
+#include "checks.hpp"
 #include "fast_expr.hpp"
 
 // The value classes
@@ -51,7 +52,6 @@
 
 // The traits
 #include "traits.hpp"
-#include "checks.hpp"
 
 // to_string support
 #include "print.hpp"

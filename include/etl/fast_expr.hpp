@@ -529,15 +529,13 @@ auto transpose(const E& value) -> stable_transform_helper<E, transpose_transform
 
 template<std::size_t C1, std::size_t C2, typename E, cpp::enable_if_u<is_etl_expr<E>::value> = cpp::detail::dummy>
 auto p_max_pool_h(E&& value) -> unary_expr<value_t<E>, p_max_pool_h_transformer<build_type<E>, C1, C2>, virtual_op> {
-    static_assert(etl_traits<std::decay_t<E>>::dimensions() == 2 || etl_traits<std::decay_t<E>>::dimensions() == 3,
-        "Max pool is only implemented for 2D and 3D");
+    validate_pmax_pooling<C1, C2>(value);
     return {p_max_pool_h_transformer<build_type<E>, C1, C2>(value)};
 }
 
 template<std::size_t C1, std::size_t C2, typename E, cpp::enable_if_u<is_etl_expr<E>::value> = cpp::detail::dummy>
 auto p_max_pool_p(E&& value) -> unary_expr<value_t<E>, p_max_pool_p_transformer<build_type<E>, C1, C2>, virtual_op> {
-    static_assert(etl_traits<std::decay_t<E>>::dimensions() == 2 || etl_traits<std::decay_t<E>>::dimensions() == 3,
-        "Max pool is only implemented for 2D and 3D");
+    validate_pmax_pooling<C1, C2>(value);
     return {p_max_pool_p_transformer<build_type<E>, C1, C2>(value)};
 }
 
