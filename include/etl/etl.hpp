@@ -51,6 +51,7 @@
 
 // The traits
 #include "traits.hpp"
+#include "checks.hpp"
 
 // to_string support
 #include "print.hpp"
