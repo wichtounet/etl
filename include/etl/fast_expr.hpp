@@ -462,19 +462,16 @@ auto rep_l(E&& value) -> unary_expr<value_t<E>, rep_l_transformer<build_type<E>,
 
 template<typename... D, typename E, cpp_enable_if(is_etl_expr<E>::value && cpp::all_convertible_to<std::size_t, std::size_t, D...>::value)>
 auto rep(E&& value, std::size_t d1, D... d) -> unary_expr<value_t<E>, dyn_rep_r_transformer<build_type<E>, 1 + sizeof...(D)>, virtual_op> {
-    static_assert(etl_traits<std::decay_t<E>>::dimensions() == 1, "Can only use rep on vector");
     return {dyn_rep_r_transformer<build_type<E>, 1 + sizeof...(D)>(value, {{d1, static_cast<std::size_t>(d)...}})};
 }
 
 template<typename... D, typename E, cpp_enable_if(is_etl_expr<E>::value && cpp::all_convertible_to<std::size_t, std::size_t, D...>::value)>
 auto rep_r(E&& value, std::size_t d1, D... d) -> unary_expr<value_t<E>, dyn_rep_r_transformer<build_type<E>, 1 + sizeof...(D)>, virtual_op> {
-    static_assert(etl_traits<std::decay_t<E>>::dimensions() == 1, "Can only use rep on vector");
     return {dyn_rep_r_transformer<build_type<E>, 1 + sizeof...(D)>(value, {{d1, static_cast<std::size_t>(d)...}})};
 }
 
 template<typename... D, typename E, cpp_enable_if(is_etl_expr<E>::value && cpp::all_convertible_to<std::size_t, std::size_t, D...>::value)>
 auto rep_l(E&& value, std::size_t d1, D... d) -> unary_expr<value_t<E>, dyn_rep_l_transformer<build_type<E>, 1 + sizeof...(D)>, virtual_op> {
-    static_assert(etl_traits<std::decay_t<E>>::dimensions() == 1, "Can only use rep on vector");
     return {dyn_rep_l_transformer<build_type<E>, 1 + sizeof...(D)>(value, {{d1, static_cast<std::size_t>(d)...}})};
 }
 

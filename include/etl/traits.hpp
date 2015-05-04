@@ -451,6 +451,8 @@ struct etl_traits<rep_r_transformer<T, D...>> {
     static constexpr const bool is_generator = false;
     static constexpr const bool vectorizable = false;
 
+    static constexpr const std::size_t sub_d = etl_traits<sub_expr_t>::dimensions();
+
     static std::size_t size(const expr_t& v){
         return mul_all<D...>::value * etl_traits<sub_expr_t>::size(v.sub);
     }
@@ -464,8 +466,6 @@ struct etl_traits<rep_r_transformer<T, D...>> {
     static constexpr std::size_t size(){
         return mul_all<D...>::value * etl_traits<sub_expr_t>::size();
     }
-
-    static constexpr const std::size_t sub_d = etl_traits<sub_expr_t>::dimensions();
 
     template<std::size_t D2>
     static constexpr std::size_t dim(){
@@ -527,12 +527,14 @@ struct etl_traits<dyn_rep_r_transformer<T, D>> {
     static constexpr const bool is_generator = false;
     static constexpr const bool vectorizable = false;
 
+    static constexpr const std::size_t sub_d = etl_traits<sub_expr_t>::dimensions();
+
     static std::size_t size(const expr_t& v){
         return v.m * etl_traits<sub_expr_t>::size(v.sub);
     }
 
     static std::size_t dim(const expr_t& v, std::size_t d){
-        return d == 0 ? etl_traits<sub_expr_t>::dim(v.sub, 0) : v.reps[d-1];
+        return d < sub_d ? etl_traits<sub_expr_t>::dim(v.sub, d) : v.reps[d-sub_d];
     }
 
     static constexpr std::size_t dimensions(){
@@ -558,7 +560,7 @@ struct etl_traits<dyn_rep_l_transformer<T, D>> {
     }
 
     static std::size_t dim(const expr_t& v, std::size_t d){
-        return d == dimensions() - 1 ? etl_traits<sub_expr_t>::dim(v.sub, 0) : v.reps[d];
+        return d >= D ? etl_traits<sub_expr_t>::dim(v.sub, d - D) : v.reps[d];
     }
 
     static constexpr std::size_t dimensions(){

@@ -87,6 +87,9 @@ struct dyn_rep_r_transformer {
     using sub_type = T;
     using value_type = value_t<T>;
 
+    static constexpr const std::size_t sub_d = decay_traits<sub_type>::dimensions();
+    static constexpr const std::size_t dimensions = D + sub_d;
+
     sub_type sub;
     std::array<std::size_t, D> reps;
     std::size_t m;
@@ -99,13 +102,19 @@ struct dyn_rep_r_transformer {
         return sub(i / m);
     }
 
-    template<typename... Sizes>
-    value_type operator()(std::size_t i, Sizes... /*sizes*/) const {
-        return sub(i);
+    template<typename... Sizes, cpp_enable_if((sizeof...(Sizes) == dimensions))>
+    value_type operator()(Sizes... sizes) const {
+        return selected_only(std::make_index_sequence<sub_d>(), sizes...);
     }
 
     sub_type& value(){
         return sub;
+    }
+
+private:
+    template<typename... Sizes, std::size_t... I>
+    value_type selected_only(const std::index_sequence<I...>&, Sizes... sizes) const {
+        return sub(cpp::nth_value<I>(sizes...)...);
     }
 };
 
@@ -113,6 +122,9 @@ template<typename T, std::size_t D>
 struct dyn_rep_l_transformer {
     using sub_type = T;
     using value_type = value_t<T>;
+
+    static constexpr const std::size_t sub_d = decay_traits<sub_type>::dimensions();
+    static constexpr const std::size_t dimensions = D + sub_d;
 
     sub_type sub;
     std::array<std::size_t, D> reps;
@@ -126,13 +138,19 @@ struct dyn_rep_l_transformer {
         return sub(i % size(sub));
     }
 
-    template<typename... Sizes>
+    template<typename... Sizes, cpp_enable_if((sizeof...(Sizes) == dimensions))>
     value_type operator()(Sizes... sizes) const {
-        return sub(cpp::last_value(sizes...));
+        return selected_only(make_index_range<D, dimensions>(), sizes...);
     }
 
     sub_type& value(){
         return sub;
+    }
+
+private:
+    template<typename... Sizes, std::size_t... I>
+    value_type selected_only(const std::index_sequence<I...>&, Sizes... sizes) const {
+        return sub(cpp::nth_value<I>(sizes...)...);
     }
 };
 

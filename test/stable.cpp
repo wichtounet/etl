@@ -910,4 +910,6 @@ TEMPLATE_TEST_CASE_2( "dyn_rep_l/dyn_matrix_4", "dyn_rep", Z, float, double ) {
     }
 }
 
+//TODO Add tests for dyn_rep_l and dyn_rep_r on matrices
+
 //}}}
