@@ -504,7 +504,7 @@ struct etl_traits<rep_l_transformer<T, D...>> {
 
     template<std::size_t D2>
     static constexpr std::size_t dim(){
-        return D2 == dimensions() - 1 ? etl_traits<sub_expr_t>::template dim<0>() : nth_size<D2,0,D...>::value;
+        return D2 >= sizeof...(D) ? etl_traits<sub_expr_t>::template dim<D2 - sizeof...(D)>() : nth_size<D2,0,D...>::value;
     }
 
     static constexpr std::size_t dimensions(){

@@ -46,17 +46,24 @@ struct rep_l_transformer {
     using sub_type = T;
     using value_type = value_t<T>;
 
+    static constexpr const std::size_t sub_d = decay_traits<sub_type>::dimensions();
+
     sub_type sub;
 
     explicit rep_l_transformer(sub_type vec) : sub(vec) {}
 
     value_type operator[](std::size_t i) const {
-        return sub(i % size(sub));
+        return sub[i % size(sub)];
     }
 
-    template<typename... Sizes>
+    template<typename... Sizes, cpp_enable_if((sizeof...(Sizes) == sub_d))>
     value_type operator()(Sizes... sizes) const {
-        return sub(cpp::last_value(sizes...));
+        return sub(sizes...);
+    }
+
+    template<typename... Sizes, cpp_enable_if((sizeof...(Sizes) + 1 > sub_d))>
+    value_type operator()(std::size_t, Sizes... sizes) const {
+        return (*this)(sizes...);
     }
 
     sub_type& value(){
