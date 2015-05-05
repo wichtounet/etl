@@ -97,6 +97,9 @@ coverage: debug_test
 coverage_view: coverage
 	firefox reports/coverage/index.html
 
+format:
+	find include/etl/ test -name "*.hpp" -o -name "*.cpp" | xargs clang-format -i -style=file
+
 doc:
 	doxygen Doxyfile
 
