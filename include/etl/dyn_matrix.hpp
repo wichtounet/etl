@@ -112,9 +112,8 @@ private:
 public:
     //{{{ Construction
 
-    dyn_matrix(const dyn_matrix& rhs) : _size(rhs._size), _data(rhs._data), _dimensions(rhs._dimensions) {
-        //Nothing to init
-    }
+    //Default copy constructor
+    dyn_matrix(const dyn_matrix& rhs) = default;
 
     //Initializer-list construction for vector
     dyn_matrix(std::initializer_list<value_type> list) :
