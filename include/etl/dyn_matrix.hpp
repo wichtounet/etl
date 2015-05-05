@@ -21,9 +21,11 @@
 #include "traits_lite.hpp"          //forward declaration of the traits
 #include "compat.hpp"               //To make it work with g++
 
+// CRTP classes
 #include "inplace_assignable.hpp"
 #include "comparable.hpp"
 #include "iterable.hpp"
+#include "expression_able.hpp"
 
 namespace etl {
 
@@ -89,7 +91,11 @@ inline std::array<std::size_t, sizeof...(I)> sizes(const std::index_sequence<I..
 } // end of namespace dyn_detail
 
 template<typename T, std::size_t D>
-struct dyn_matrix final : inplace_assignable<dyn_matrix<T, D>>, comparable<dyn_matrix<T, D>>, iterable<dyn_matrix<T, D>> {
+struct dyn_matrix final : 
+        inplace_assignable<dyn_matrix<T, D>>, 
+        comparable<dyn_matrix<T, D>>, 
+        expression_able<dyn_matrix<T, D>>,
+        iterable<dyn_matrix<T, D>> {
     static_assert(D > 0, "A matrix must have a least 1 dimension");
 
 public:
@@ -293,31 +299,6 @@ public:
         using std::swap;
         swap(_data, other._data);
         swap(_dimensions, other._dimensions);
-    }
-
-    //}}}
-
-    //{{{ Operations returning expressions
-
-    template<typename E>
-    auto scale(E&& e) -> decltype(etl::scale(*this, std::forward<E>(e))) {
-        return etl::scale(*this, std::forward<E>(e));
-    }
-
-    auto fflip() -> decltype(etl::fflip(*this)) {
-        return etl::fflip(*this);
-    }
-
-    auto hflip() -> decltype(etl::hflip(*this)) {
-        return etl::hflip(*this);
-    }
-
-    auto vflip() -> decltype(etl::vflip(*this)) {
-        return etl::vflip(*this);
-    }
-
-    auto transpose() -> decltype(etl::transpose(*this)) {
-        return etl::transpose(*this);
     }
 
     //}}}

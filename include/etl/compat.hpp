@@ -17,4 +17,8 @@
 #define noexcept_this(...)
 #endif
 
+//Stupid trick to allow auto functions to have debug symbols
+
+#define ETL_DEBUG_AUTO_TRICK template <typename E = void>
+
 #endif

@@ -18,9 +18,11 @@
 #include "traits_lite.hpp"          //forward declaration of the traits
 #include "compat.hpp"               //To make it work with g++
 
+// CRTP classes
 #include "inplace_assignable.hpp"
 #include "comparable.hpp"
 #include "iterable.hpp"
+#include "expression_able.hpp"
 
 namespace etl {
 
@@ -69,7 +71,11 @@ struct is_vector<std::vector<N>> : std::true_type { };
 } //end of namespace detail
 
 template<typename T, typename ST, std::size_t... Dims>
-struct fast_matrix_impl final : inplace_assignable<fast_matrix_impl<T, ST, Dims...>>, comparable<fast_matrix_impl<T, ST, Dims...>>, iterable<fast_matrix_impl<T, ST, Dims...>> {
+struct fast_matrix_impl final : 
+        inplace_assignable<fast_matrix_impl<T, ST, Dims...>>, 
+        comparable<fast_matrix_impl<T, ST, Dims...>>, 
+        expression_able<fast_matrix_impl<T, ST, Dims...>>,
+        iterable<fast_matrix_impl<T, ST, Dims...>> {
     static_assert(sizeof...(Dims) > 0, "At least one dimension must be specified");
 
 public:
@@ -260,31 +266,6 @@ public:
         //TODO Ensure dimensions...
         using std::swap;
         swap(_data, other._data);
-    }
-
-    //}}}
-
-    //{{{ Operations returning expressions
-
-    template<typename E>
-    auto scale(E&& e) -> decltype(etl::scale(*this, std::forward<E>(e))) {
-        return etl::scale(*this, std::forward<E>(e));
-    }
-
-    auto fflip() -> decltype(etl::fflip(*this)) {
-        return etl::fflip(*this);
-    }
-
-    auto hflip() -> decltype(etl::hflip(*this)) {
-        return etl::hflip(*this);
-    }
-
-    auto vflip() -> decltype(etl::vflip(*this)) {
-        return etl::vflip(*this);
-    }
-
-    auto transpose() -> decltype(etl::transpose(*this)) {
-        return etl::transpose(*this);
     }
 
     //}}}
