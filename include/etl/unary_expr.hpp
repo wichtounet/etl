@@ -14,10 +14,11 @@
 
 #include "traits_lite.hpp"
 #include "iterator.hpp"
-#include "inplace_assignable.hpp"
 
-#include "comparable.hpp"
-#include "iterable.hpp"
+// CRTP classes
+#include "crtp/comparable.hpp"
+#include "crtp/iterable.hpp"
+#include "crtp/inplace_assignable.hpp"
 
 namespace etl {
 

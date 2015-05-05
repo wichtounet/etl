@@ -16,8 +16,9 @@
 #include "iterator.hpp"
 #include "tmp.hpp"
 
-#include "comparable.hpp"
-#include "iterable.hpp"
+// CRTP classes
+#include "crtp/comparable.hpp"
+#include "crtp/iterable.hpp"
 
 namespace etl {
 

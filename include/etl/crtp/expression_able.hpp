@@ -8,7 +8,7 @@
 #ifndef ETL_EXPRESSION_ABLE_HPP
 #define ETL_EXPRESSION_ABLE_HPP
 
-#include "compat.hpp"
+#include "../compat.hpp"
 
 /*
  * Use CRTP technique to inject functions that return expressions 

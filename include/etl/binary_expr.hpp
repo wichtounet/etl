@@ -15,8 +15,9 @@
 #include "traits_lite.hpp"
 #include "iterator.hpp"
 
-#include "comparable.hpp"
-#include "iterable.hpp"
+// CRTP Classes
+#include "crtp/comparable.hpp"
+#include "crtp/iterable.hpp"
 
 namespace etl {
 

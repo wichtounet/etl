@@ -10,7 +10,7 @@
 
 #include <algorithm>
 
-#include "impl/transpose.hpp"
+#include "../impl/transpose.hpp"
 
 /*
  * Use CRTP technique to inject inplace operations into expressions and value classes.

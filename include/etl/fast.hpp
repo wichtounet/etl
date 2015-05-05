@@ -19,10 +19,10 @@
 #include "compat.hpp"               //To make it work with g++
 
 // CRTP classes
-#include "inplace_assignable.hpp"
-#include "comparable.hpp"
-#include "iterable.hpp"
-#include "expression_able.hpp"
+#include "crtp/inplace_assignable.hpp"
+#include "crtp/comparable.hpp"
+#include "crtp/iterable.hpp"
+#include "crtp/expression_able.hpp"
 
 namespace etl {
 
