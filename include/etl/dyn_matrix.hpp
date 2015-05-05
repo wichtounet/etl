@@ -226,7 +226,7 @@ public:
         }
     }
 
-    //Default move
+    //Default move constructor
     dyn_matrix(dyn_matrix&& rhs) = default;
 
     //}}}
@@ -238,19 +238,14 @@ public:
     dyn_matrix& operator=(const dyn_matrix& rhs){
         ensure_same_size(*this, rhs);
 
-        for(std::size_t i = 0; i < size(); ++i){
-            _data[i] = rhs[i];
-        }
+        std::copy(rhs.begin(), rhs.end(), begin());
 
         return *this;
     }
 
     //Construct from expression
 
-    template<typename E, cpp::enable_if_all_c<
-        std::is_convertible<typename E::value_type, value_type>,
-        is_copy_expr<E>
-    > = cpp::detail::dummy>
+    template<typename E, cpp_enable_if(std::is_convertible<value_t<E>, value_type>::value && is_copy_expr<E>::value)>
     dyn_matrix& operator=(E&& e){
         ensure_same_size(*this, e);
 
@@ -268,16 +263,11 @@ public:
 
     //Allow copy from other containers
 
-    template<typename Container, cpp::enable_if_all_c<
-        cpp::not_c<is_etl_expr<Container>>,
-        std::is_convertible<typename Container::value_type, value_type>
-    > = cpp::detail::dummy>
+    template<typename Container, cpp_enable_if(!is_etl_expr<Container>::value, std::is_convertible<typename Container::value_type, value_type>::value)>
     dyn_matrix& operator=(const Container& vec){
         cpp_assert(vec.size() == size(), "Cannot copy from a vector of different size");
 
-        for(std::size_t i = 0; i < size(); ++i){
-            _data[i] = vec[i];
-        }
+        std::copy(vec.begin(), vec.end(), begin());
 
         return *this;
     }
@@ -289,7 +279,7 @@ public:
         return *this;
     }
 
-    //Default move
+    //Default move assignment operator
     dyn_matrix& operator=(dyn_matrix&& rhs) = default;
 
     //}}}
@@ -307,7 +297,7 @@ public:
 
     //}}}
 
-    //{{{ In place operations
+    //{{{ Operations returning expressions
 
     template<typename E>
     auto scale(E&& e) -> decltype(etl::scale(*this, std::forward<E>(e))) {
