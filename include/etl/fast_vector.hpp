@@ -11,7 +11,7 @@
 namespace etl {
 
 template<typename T, std::size_t Rows>
-using fast_vector = fast_matrix<T, Rows>;
+using fast_vector = fast_matrix_impl<T, std::array<T, Rows>, Rows>;
 
 } //end of namespace etl
 

@@ -11,7 +11,7 @@
 namespace etl {
 
 template<typename T>
-using dyn_vector = dyn_matrix<T, 1>;
+using dyn_vector = dyn_matrix_impl<T, 1>;
 
 } //end of namespace etl
 

@@ -13,8 +13,14 @@ namespace etl {
 template<typename T, typename ST, std::size_t... Dims>
 struct fast_matrix_impl;
 
+template<typename T, std::size_t D = 2>
+struct dyn_matrix_impl;
+
 template<typename T, std::size_t... Dims>
 using fast_matrix = fast_matrix_impl<T, std::array<T, mul_all<Dims...>::value>, Dims...>;
+
+template<typename T, std::size_t Rows>
+using fast_vector = fast_matrix_impl<T, std::array<T, Rows>, Rows>;
 
 template<typename T, std::size_t Rows>
 using fast_dyn_vector = fast_matrix_impl<T, std::vector<T>, Rows>;
@@ -23,10 +29,10 @@ template<typename T, std::size_t... Dims>
 using fast_dyn_matrix = fast_matrix_impl<T, std::vector<T>, Dims...>;
 
 template<typename T, std::size_t D = 2>
-struct dyn_matrix;
+using dyn_matrix = dyn_matrix_impl<T, D>;
 
 template<typename T>
-using dyn_vector = dyn_matrix<T, 1>;
+using dyn_vector = dyn_matrix_impl<T, 1>;
 
 }
 

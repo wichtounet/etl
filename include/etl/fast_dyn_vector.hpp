@@ -10,8 +10,6 @@
 
 #include<vector>
 
-#include "fast.hpp"
-
 namespace etl {
 
 template<typename T, std::size_t Rows>
