@@ -62,9 +62,9 @@ struct nth_size final {
 };
 
 template<std::size_t... D, cpp_enable_if(sizeof...(D) == 0)>
-std::size_t dyn_nth_size(std::size_t){ 
+std::size_t dyn_nth_size(std::size_t){
     cpp_assert(false, "Should never be called");
-    return 0; 
+    return 0;
 }
 
 template<std::size_t D1, std::size_t... D>

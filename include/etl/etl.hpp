@@ -11,6 +11,7 @@
 #include<complex>
 
 // Utilities
+#include "order.hpp"
 #include "config.hpp"
 #include "vectorization.hpp"
 

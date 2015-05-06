@@ -35,13 +35,13 @@ template<typename M, std::size_t I>
 struct matrix_subsize<M, I, std::enable_if_t<I == M::n_dimensions - 1>> : std::integral_constant<std::size_t, 1> {};
 
 template<typename M, std::size_t I, std::size_t Stop, typename S1, typename... S>
-struct matrix_index {
+struct row_major_matrix_index {
     template<std::size_t I2, typename Enable = void>
     struct matrix_index_int {
         static std::size_t compute(S1 first, S... args){
             cpp_assert(first < M::template dim<I2>(), "Out of bounds");
 
-            return matrix_subsize<M, I>::value * first + matrix_index<M, I+1, Stop, S...>::compute(args...);
+            return matrix_subsize<M, I>::value * first + row_major_matrix_index<M, I+1, Stop, S...>::compute(args...);
         }
     };
 
@@ -70,24 +70,25 @@ struct is_vector<std::vector<N>> : std::true_type { };
 
 } //end of namespace detail
 
-template<typename T, typename ST, std::size_t... Dims>
-struct fast_matrix_impl final : 
-        inplace_assignable<fast_matrix_impl<T, ST, Dims...>>, 
-        comparable<fast_matrix_impl<T, ST, Dims...>>, 
-        expression_able<fast_matrix_impl<T, ST, Dims...>>,
-        iterable<fast_matrix_impl<T, ST, Dims...>> {
+template<typename T, typename ST, order SO, std::size_t... Dims>
+struct fast_matrix_impl final :
+        inplace_assignable<fast_matrix_impl<T, ST, SO, Dims...>>,
+        comparable<fast_matrix_impl<T, ST, SO, Dims...>>,
+        expression_able<fast_matrix_impl<T, ST, SO, Dims...>>,
+        iterable<fast_matrix_impl<T, ST, SO, Dims...>> {
     static_assert(sizeof...(Dims) > 0, "At least one dimension must be specified");
 
 public:
     static constexpr const std::size_t n_dimensions = sizeof...(Dims);
     static constexpr const std::size_t etl_size = mul_all<Dims...>::value;
+    static constexpr const order storage_order = SO;
     static constexpr const bool array_impl = !matrix_detail::is_vector<ST>::value;
 
     using        value_type = T;
     using      storage_impl = ST;
     using          iterator = typename storage_impl::iterator;
     using    const_iterator = typename storage_impl::const_iterator;
-    using         this_type = fast_matrix_impl<T, ST, Dims...>;
+    using         this_type = fast_matrix_impl<T, ST, SO, Dims...>;
     using       memory_type = value_type*;
     using const_memory_type = const value_type*;
     using          vec_type = intrinsic_type<T>;
@@ -97,7 +98,7 @@ private:
 
     template<typename... S>
     static constexpr std::size_t index(S... args){
-        return matrix_detail::matrix_index<this_type, 0, n_dimensions - 1, S...>::compute(args...);
+        return matrix_detail::row_major_matrix_index<this_type, 0, n_dimensions - 1, S...>::compute(args...);
     }
 
     template<typename... S>
@@ -386,13 +387,13 @@ public:
     //}}}
 };
 
-template<typename T, typename ST, std::size_t... Dims>
-void swap(fast_matrix_impl<T, ST, Dims...>& lhs, fast_matrix_impl<T, ST, Dims...>& rhs){
+template<typename T, typename ST, order SO, std::size_t... Dims>
+void swap(fast_matrix_impl<T, ST, SO, Dims...>& lhs, fast_matrix_impl<T, ST, SO, Dims...>& rhs){
     lhs.swap(rhs);
 }
 
-template<typename T, typename ST, std::size_t... Dims>
-std::ostream& operator<<(std::ostream& os, const fast_matrix_impl<T, ST, Dims...>& ){
+template<typename T, typename ST, order SO, std::size_t... Dims>
+std::ostream& operator<<(std::ostream& os, const fast_matrix_impl<T, ST, SO, Dims...>& ){
     if(sizeof...(Dims) == 1){
         return os << "V[" << concat_sizes(Dims...) << "]";
     } else {

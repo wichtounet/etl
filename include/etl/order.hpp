@@ -11,8 +11,8 @@
 namespace etl {
 
 enum class order {
-    ROW_MAJOR,
-    COL_MAJOR
+    RowMajor,
+    ColumnMajor
 };
 
 } //end of namespace etl
