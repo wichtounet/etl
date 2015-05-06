@@ -42,15 +42,9 @@
 #include "checks.hpp"
 #include "fast_expr.hpp"
 
-// The value classes
+// The value classes implementation
 #include "etl/fast.hpp"
 #include "etl/dyn.hpp"
-#include "etl/fast_matrix.hpp"
-#include "etl/fast_vector.hpp"
-#include "etl/dyn_matrix.hpp"
-#include "etl/dyn_vector.hpp"
-#include "etl/fast_dyn_matrix.hpp"
-#include "etl/fast_dyn_vector.hpp"
 
 // The traits
 #include "traits.hpp"
