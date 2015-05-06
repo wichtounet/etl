@@ -6,7 +6,6 @@ include make-utils/flags.mk
 include make-utils/cpp-utils.mk
 
 WARNINGS_FLAGS += -pedantic
-
 CXX_FLAGS += -Ilib/include -ICatch/include -Werror
 
 ifneq (,$(findstring clang,$(CXX)))
@@ -82,6 +81,9 @@ test: all
 	./debug/bin/etl_test
 	./release_debug/bin/etl_test
 	./release/bin/etl_test
+
+valgrind_test: debug
+	valgrind --leak-check=full ./debug/bin/etl_test
 
 benchmark: release/bin/benchmark
 	./release/bin/benchmark
