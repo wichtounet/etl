@@ -109,6 +109,9 @@ compile_db:
 modernize:
 	clang-modernize -add-override -loop-convert -pass-by-value -use-auto -use-nullptr -p ${PWD} -include *
 
+tidy:
+	clang-tidy -checks='*,-llvm-include-order' -p ${PWD} test/*.cpp -header-filter='include/etl/*'
+
 doc:
 	doxygen Doxyfile
 
