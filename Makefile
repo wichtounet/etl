@@ -102,6 +102,10 @@ coverage_view: coverage
 format:
 	find include/etl/ test -name "*.hpp" -o -name "*.cpp" | xargs clang-format -i -style=file
 
+compile_db:
+	${MAKE} clean
+	bear make debug
+
 doc:
 	doxygen Doxyfile
 
