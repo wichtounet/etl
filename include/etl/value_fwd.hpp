@@ -19,6 +19,9 @@ struct dyn_matrix_impl;
 template<typename T, std::size_t... Dims>
 using fast_matrix = fast_matrix_impl<T, std::array<T, mul_all<Dims...>::value>, order::RowMajor, Dims...>;
 
+template<typename T, std::size_t... Dims>
+using fast_matrix_cm = fast_matrix_impl<T, std::array<T, mul_all<Dims...>::value>, order::ColumnMajor, Dims...>;
+
 template<typename T, std::size_t Rows>
 using fast_vector = fast_matrix_impl<T, std::array<T, Rows>, order::RowMajor, Rows>;
 
