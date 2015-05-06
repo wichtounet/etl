@@ -15,8 +15,10 @@ namespace etl {
 
 namespace detail {
 
-//TODO Disable completely the visitor if there are no temporary_expr in the tree (use TMP)
 struct temporary_allocator_static_visitor : etl_visitor<temporary_allocator_static_visitor> {
+    template<typename E>
+    using enabled = cpp::bool_constant<decay_traits<E>::needs_temporary_visitor>;
+
     using etl_visitor<temporary_allocator_static_visitor>::operator();
 
     template <typename T, typename AExpr, typename Op, typename Forced>
@@ -35,8 +37,10 @@ struct temporary_allocator_static_visitor : etl_visitor<temporary_allocator_stat
     }
 };
 
-//TODO Disable completely the visitor if there are no temporary_expr in the tree (use TMP)
 struct evaluator_static_visitor : etl_visitor<evaluator_static_visitor> {
+    template<typename E>
+    using enabled = cpp::bool_constant<decay_traits<E>::needs_evaluator_visitor>;
+
     using etl_visitor<evaluator_static_visitor>::operator();
 
     template <typename T, typename AExpr, typename Op, typename Forced>
@@ -61,11 +65,8 @@ template<typename Expr, typename Result>
 struct standard_evaluator {
     template<typename E>
     static void evaluate_only(E&& expr){
-        detail::temporary_allocator_static_visitor allocator_visitor;
-        allocator_visitor(expr);
-
-        detail::evaluator_static_visitor evaluator_visitor;
-        evaluator_visitor(expr);
+        apply_visitor<detail::temporary_allocator_static_visitor>(expr);
+        apply_visitor<detail::evaluator_static_visitor>(expr);
     }
 
     template<typename E, typename R>
@@ -177,30 +178,25 @@ struct standard_evaluator {
         }
     }
 
-    //Note: In case of direct evaluation, the temporary_expr itself must 
+    //Note: In case of direct evaluation, the temporary_expr itself must
     //not beevaluated by the static_visitor, otherwise, the result would
     //be evaluated twice and a temporary would be allocated for nothing
 
     template<typename E, typename R, cpp_enable_if(is_temporary_unary_expr<E>::value)>
     static void assign_evaluate(E&& expr, R&& result){
-        detail::temporary_allocator_static_visitor allocator_visitor;
-        allocator_visitor(expr.a());
-
-        detail::evaluator_static_visitor evaluator_visitor;
-        evaluator_visitor(expr.a());
+        apply_visitor<detail::temporary_allocator_static_visitor>(expr.a());
+        apply_visitor<detail::evaluator_static_visitor>(expr.a());
 
         expr.direct_evaluate(result);
     }
 
     template<typename E, typename R, cpp_enable_if(is_temporary_binary_expr<E>::value)>
     static void assign_evaluate(E&& expr, R&& result){
-        detail::temporary_allocator_static_visitor allocator_visitor;
-        allocator_visitor(expr.a());
-        allocator_visitor(expr.b());
+        apply_visitor<detail::temporary_allocator_static_visitor>(expr.a());
+        apply_visitor<detail::temporary_allocator_static_visitor>(expr.b());
 
-        detail::evaluator_static_visitor evaluator_visitor;
-        evaluator_visitor(expr.a());
-        evaluator_visitor(expr.b());
+        apply_visitor<detail::evaluator_static_visitor>(expr.a());
+        apply_visitor<detail::evaluator_static_visitor>(expr.b());
 
         expr.direct_evaluate(result);
     }
