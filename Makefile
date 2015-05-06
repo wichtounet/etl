@@ -106,6 +106,9 @@ compile_db:
 	${MAKE} clean
 	bear make debug
 
+modernize:
+	clang-modernize -add-override -loop-convert -pass-by-value -use-auto -use-nullptr -p ${PWD} -include *
+
 doc:
 	doxygen Doxyfile
 
