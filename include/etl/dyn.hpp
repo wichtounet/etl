@@ -90,16 +90,17 @@ inline std::array<std::size_t, sizeof...(I)> sizes(const std::index_sequence<I..
 
 } // end of namespace dyn_detail
 
-template<typename T, std::size_t D>
+template<typename T, order SO, std::size_t D>
 struct dyn_matrix_impl final :
-        inplace_assignable<dyn_matrix_impl<T, D>>,
-        comparable<dyn_matrix_impl<T, D>>,
-        expression_able<dyn_matrix_impl<T, D>>,
-        iterable<dyn_matrix_impl<T, D>> {
+        inplace_assignable<dyn_matrix_impl<T, SO, D>>,
+        comparable<dyn_matrix_impl<T, SO, D>>,
+        expression_able<dyn_matrix_impl<T, SO, D>>,
+        iterable<dyn_matrix_impl<T, SO, D>> {
     static_assert(D > 0, "A matrix must have a least 1 dimension");
 
 public:
     static constexpr const std::size_t n_dimensions = D;
+    static constexpr const order storage_order = SO;
 
     using                value_type = T;
     using              storage_impl = std::vector<value_type>;
@@ -364,7 +365,11 @@ public:
         cpp_assert(i < dim(0), "Out of bounds");
         cpp_assert(j < dim(1), "Out of bounds");
 
-        return _data[i * dim(1) + j];
+        if(storage_order == order::RowMajor){
+            return _data[i * dim(1) + j];
+        } else {
+            return _data[j * dim(0) + i];
+        }
     }
 
     template<bool B = n_dimensions == 2, cpp::enable_if_u<B> = cpp::detail::dummy>
@@ -372,10 +377,14 @@ public:
         cpp_assert(i < dim(0), "Out of bounds");
         cpp_assert(j < dim(1), "Out of bounds");
 
-        return _data[i * dim(1) + j];
+        if(storage_order == order::RowMajor){
+            return _data[i * dim(1) + j];
+        } else {
+            return _data[j * dim(0) + i];
+        }
     }
 
-    template<typename... S, cpp::enable_if_u<(sizeof...(S) > 0)> = cpp::detail::dummy>
+    template<typename... S, cpp::enable_if_u<(sizeof...(S) > 0 && storage_order == order::RowMajor)> = cpp::detail::dummy>
     std::size_t index(S... sizes) const noexcept {
         //Note: Version with sizes moved to a std::array and accessed with
         //standard loop may be faster, but need some stack space (relevant ?)
@@ -388,6 +397,24 @@ public:
             [&subsize, &index, &i, this](std::size_t s){
                 subsize /= dim(i++);
                 index += subsize * s;
+            }, sizes...);
+
+        return index;
+    }
+
+    template<typename... S, cpp::enable_if_u<(sizeof...(S) > 0 && storage_order == order::ColumnMajor)> = cpp::detail::dummy>
+    std::size_t index(S... sizes) const noexcept {
+        //Note: Version with sizes moved to a std::array and accessed with
+        //standard loop may be faster, but need some stack space (relevant ?)
+
+        auto subsize = 1;
+        std::size_t index = 0;
+        std::size_t i = 0;
+
+        cpp::for_each_in(
+            [&subsize, &index, &i, this](std::size_t s){
+                index += subsize * s;
+                subsize *= dim(i++);
             }, sizes...);
 
         return index;
@@ -483,13 +510,13 @@ public:
     }
 };
 
-template<typename T, std::size_t D>
-void swap(dyn_matrix_impl<T, D>& lhs, dyn_matrix_impl<T, D>& rhs){
+template<typename T, order SO, std::size_t D>
+void swap(dyn_matrix_impl<T, SO, D>& lhs, dyn_matrix_impl<T, SO, D>& rhs){
     lhs.swap(rhs);
 }
 
-template<typename T, std::size_t D>
-std::ostream& operator<<(std::ostream& os, const dyn_matrix_impl<T, D>& mat){
+template<typename T, order SO, std::size_t D>
+std::ostream& operator<<(std::ostream& os, const dyn_matrix_impl<T, SO, D>& mat){
     if(D == 1){
         return os << "V[" << mat.size() << "]";
     } else {

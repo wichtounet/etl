@@ -17,16 +17,22 @@
 namespace etl {
 
 template<typename T>
-struct is_fast_matrix_impl : std::false_type { };
+struct is_fast_matrix_impl : std::false_type {};
 
 template<typename V1, typename V2, order V3, std::size_t... R>
-struct is_fast_matrix_impl<fast_matrix_impl<V1, V2, V3, R...>> : std::true_type { };
+struct is_fast_matrix_impl<fast_matrix_impl<V1, V2, V3, R...>> : std::true_type {};
 
 template<typename T, typename DT = std::decay_t<T>>
 using is_fast_matrix = is_fast_matrix_impl<DT>;
 
+template<typename T>
+struct is_dyn_matrix_impl : std::false_type {};
+
+template<typename V1, order V2, std::size_t V3>
+struct is_dyn_matrix_impl<dyn_matrix_impl<V1, V2, V3>> : std::true_type {};
+
 template<typename T, typename DT>
-struct is_dyn_matrix : is_2<etl::dyn_matrix_impl, std::decay_t<T>> {};
+struct is_dyn_matrix : is_dyn_matrix_impl<DT> {};
 
 template<typename T, typename DT = std::decay_t<T>>
 using is_unary_expr = cpp::is_specialization_of<etl::unary_expr, DT>;

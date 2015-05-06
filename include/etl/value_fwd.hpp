@@ -13,7 +13,7 @@ namespace etl {
 template<typename T, typename ST, order SO, std::size_t... Dims>
 struct fast_matrix_impl;
 
-template<typename T, std::size_t D = 2>
+template<typename T, order SO, std::size_t D = 2>
 struct dyn_matrix_impl;
 
 template<typename T, std::size_t... Dims>
@@ -32,10 +32,13 @@ template<typename T, std::size_t... Dims>
 using fast_dyn_matrix = fast_matrix_impl<T, std::vector<T>, order::RowMajor, Dims...>;
 
 template<typename T, std::size_t D = 2>
-using dyn_matrix = dyn_matrix_impl<T, D>;
+using dyn_matrix = dyn_matrix_impl<T, order::RowMajor, D>;
+
+template<typename T, std::size_t D = 2>
+using dyn_matrix_cm = dyn_matrix_impl<T, order::ColumnMajor, D>;
 
 template<typename T>
-using dyn_vector = dyn_matrix_impl<T, 1>;
+using dyn_vector = dyn_matrix_impl<T, order::RowMajor, 1>;
 
 }
 
