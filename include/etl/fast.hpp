@@ -34,30 +34,15 @@ struct matrix_subsize  : std::integral_constant<std::size_t, M::template dim<I+1
 template<typename M, std::size_t I>
 struct matrix_subsize<M, I, std::enable_if_t<I == M::n_dimensions - 1>> : std::integral_constant<std::size_t, 1> {};
 
-template<typename M, std::size_t I, std::size_t Stop, typename S1, typename... S>
-struct row_major_matrix_index {
-    template<std::size_t I2, typename Enable = void>
-    struct matrix_index_int {
-        static std::size_t compute(S1 first, S... args){
-            cpp_assert(first < M::template dim<I2>(), "Out of bounds");
+template<typename M, std::size_t I, typename S1>
+inline constexpr std::size_t compute_index(S1 first) noexcept {
+    return first;
+}
 
-            return matrix_subsize<M, I>::value * first + row_major_matrix_index<M, I+1, Stop, S...>::compute(args...);
-        }
-    };
-
-    template<std::size_t I2>
-    struct matrix_index_int<I2, std::enable_if_t<I2 == Stop>> {
-        static std::size_t compute(S1 first){
-            cpp_assert(first < M::template dim<I2>(), "Out of bounds");
-
-            return first;
-        }
-    };
-
-    static std::size_t compute(S1 first, S... args){
-        return matrix_index_int<I>::compute(first, args...);
-    }
-};
+template<typename M, std::size_t I, typename S1, typename... S, cpp_enable_if((sizeof...(S) > 0))>
+inline constexpr std::size_t compute_index(S1 first, S... args) noexcept {
+    return matrix_subsize<M, I>::value * first + compute_index<M, I+1>(args...);
+}
 
 template <typename N>
 struct is_vector : std::false_type { };
@@ -68,7 +53,7 @@ struct is_vector<std::vector<N, A>> : std::true_type { };
 template <typename N>
 struct is_vector<std::vector<N>> : std::true_type { };
 
-} //end of namespace detail
+} //end of namespace matrix_detail
 
 template<typename T, typename ST, order SO, std::size_t... Dims>
 struct fast_matrix_impl final :
@@ -98,7 +83,8 @@ private:
 
     template<typename... S>
     static constexpr std::size_t index(S... args){
-        return matrix_detail::row_major_matrix_index<this_type, 0, n_dimensions - 1, S...>::compute(args...);
+        //return matrix_detail::row_major_matrix_index<this_type, 0, n_dimensions - 1, S...>::compute(args...);
+        return matrix_detail::compute_index<this_type, 0>(args...);
     }
 
     template<typename... S>
