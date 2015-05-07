@@ -108,7 +108,7 @@ public:
     temporary_unary_expr() = delete;
 
     //Construct a new expression
-    temporary_unary_expr(AExpr a) : _a(a) {
+    explicit temporary_unary_expr(AExpr a) : _a(a) {
         //Nothing else to init
     }
 

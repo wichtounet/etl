@@ -14,7 +14,7 @@ template<typename... E>
 struct all_etl_expr : cpp::and_c<is_etl_expr<E>...> {};
 
 template<typename LE, typename RE, cpp_enable_if(etl_traits<LE>::is_generator || etl_traits<RE>::is_generator)>
-void ensure_same_size(const LE&, const RE&) noexcept {
+void ensure_same_size(const LE& /*unused*/, const RE& /*unused*/) noexcept {
     //Nothing to test, generators are of infinite size
 }
 
@@ -26,7 +26,7 @@ void ensure_same_size(const LE& lhs, const RE& rhs){
 }
 
 template<typename LE, typename RE, cpp_enable_if(!(etl_traits<LE>::is_generator || etl_traits<RE>::is_generator) && all_etl_expr<LE, RE>::value && etl_traits<LE>::is_fast && etl_traits<RE>::is_fast)>
-void ensure_same_size(const LE&, const RE&){
+void ensure_same_size(const LE& /*unused*/, const RE& /*unused*/){
     static_assert(etl_traits<LE>::size() == etl_traits<RE>::size(), "Cannot perform element-wise operations on collections of different size");
 }
 
@@ -43,12 +43,12 @@ void validate_pmax_pooling_impl(const E& e){
 }
 
 template<std::size_t C1, std::size_t C2, typename E, cpp_enable_if(etl_traits<E>::dimensions() == 2 && etl_traits<E>::is_fast)>
-void validate_pmax_pooling_impl(const E&){
+void validate_pmax_pooling_impl(const E& /*unused*/){
     static_assert(etl_traits<E>::template dim<0>() % C1 == 0 && etl_traits<E>::template dim<1>() % C2 == 0, "Dimensions not divisible by the pooling ratio");
 }
 
 template<std::size_t C1, std::size_t C2, typename E, cpp_enable_if(etl_traits<E>::dimensions() == 3 && etl_traits<E>::is_fast)>
-void validate_pmax_pooling_impl(const E&){
+void validate_pmax_pooling_impl(const E& /*unused*/){
     static_assert(etl_traits<E>::template dim<1>() % C1 == 0 && etl_traits<E>::template dim<2>() % C2 == 0, "Dimensions not divisible by the pooling ratio");
 }
 

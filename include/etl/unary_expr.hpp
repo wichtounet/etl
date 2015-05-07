@@ -51,8 +51,8 @@ public:
     unary_expr(unary_expr&& rhs) = default;
 
     //Expression are invariant
-    unary_expr& operator=(const unary_expr&) = delete;
-    unary_expr& operator=(unary_expr&&) = delete;
+    unary_expr& operator=(const unary_expr& rhs) = delete;
+    unary_expr& operator=(unary_expr&& rhs) = delete;
 
     //Accessors
 

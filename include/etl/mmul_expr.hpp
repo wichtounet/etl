@@ -174,12 +174,12 @@ struct basic_vm_mul_expr {
     using result_type = typename result_type_builder<A, B>::type;
 
     template<typename A, typename B, cpp_enable_if(decay_traits<A>::is_fast && decay_traits<B>::is_fast)>
-    static result_type<A,B>* allocate(A&&, B&&){
+    static result_type<A,B>* allocate(A&& /*unused*/, B&& /*unused*/){
         return new result_type<A, B>();
     }
 
     template<typename A, typename B, cpp_disable_if(decay_traits<A>::is_fast && decay_traits<B>::is_fast)>
-    static result_type<A,B>* allocate(A&&, B&& b){
+    static result_type<A,B>* allocate(A&& /*unused*/, B&& b){
         return new result_type<A, B>(etl::dim<1>(b));
     }
 

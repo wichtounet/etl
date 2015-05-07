@@ -109,8 +109,13 @@ compile_db:
 modernize:
 	clang-modernize -add-override -loop-convert -pass-by-value -use-auto -use-nullptr -p ${PWD} -include *
 
+# clang-tidy with some false positive checks removed
 tidy:
-	clang-tidy -checks='*,-llvm-include-order,-clang-analyzer-alpha.core.PointerArithm' -p ${PWD} test/*.cpp -header-filter='include/etl/*'
+	clang-tidy -checks='*,-llvm-include-order,-clang-analyzer-alpha.core.PointerArithm,-clang-analyzer-alpha.deadcode.UnreachableCode' -p ${PWD} test/*.cpp -header-filter='include/etl/*'
+
+# clang-tidy with all the checks
+tidy_all:
+	clang-tidy -checks='*' -p ${PWD} test/*.cpp -header-filter='include/etl/*'
 
 doc:
 	doxygen Doxyfile

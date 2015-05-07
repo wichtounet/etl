@@ -715,7 +715,7 @@ struct etl_traits<T, std::enable_if_t<cpp::or_c<
         return etl::dim<0>(v.sub);
     }
 
-    static std::size_t dim(const expr_t& v, std::size_t){
+    static std::size_t dim(const expr_t& v, std::size_t /*unused*/){
         return etl::dim<0>(v.sub);
     }
 
@@ -962,11 +962,11 @@ struct etl_traits<etl::fast_matrix_view<T, Rows, Columns>> {
     static constexpr const bool needs_temporary_visitor = etl_traits<sub_expr_t>::needs_temporary_visitor;
     static constexpr const bool needs_evaluator_visitor = etl_traits<sub_expr_t>::needs_evaluator_visitor;
 
-    static constexpr std::size_t size(const expr_t&){
+    static constexpr std::size_t size(const expr_t& /*unused*/){
         return Rows * Columns;
     }
 
-    static std::size_t dim(const expr_t&, std::size_t d){
+    static std::size_t dim(const expr_t& /*unused*/, std::size_t d){
         return d == 0 ? Rows : Columns;
     }
 
@@ -1027,7 +1027,7 @@ struct etl_traits<etl::magic_view<V>> {
         return v.n * v.n;
     }
 
-    static std::size_t dim(const expr_t& v, std::size_t){
+    static std::size_t dim(const expr_t& v, std::size_t /*unused*/){
         return v.n;
     }
 
@@ -1051,7 +1051,7 @@ struct etl_traits<etl::fast_magic_view<V, N>> {
         return N * N;
     }
 
-    static std::size_t size(const expr_t&){
+    static std::size_t size(const expr_t& /*unused*/){
         return N * N;
     }
 
@@ -1060,7 +1060,7 @@ struct etl_traits<etl::fast_magic_view<V, N>> {
         return N;
     }
 
-    static std::size_t dim(const expr_t&, std::size_t){
+    static std::size_t dim(const expr_t&, std::size_t /*unused*/){
         return N;
     }
 
