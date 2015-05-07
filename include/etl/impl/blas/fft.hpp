@@ -495,64 +495,64 @@ void dfft2_convolve(A&& a, B&& b, C&& c){
 #else
 
 template<typename A, typename C>
-void sfft1(A&&, C&&);
+void sfft1(A&& /*unused*/, C&& /*unused*/);
 
 template<typename A, typename C>
-void dfft1(A&&, C&&);
+void dfft1(A&& /*unused*/, C&& /*unused*/);
 
 template<typename A, typename C>
-void cfft1(A&&, C&&);
+void cfft1(A&& /*unused*/, C&& /*unused*/);
 
 template<typename A, typename C>
-void zfft1(A&&, C&&);
+void zfft1(A&& /*unused*/, C&& /*unused*/);
 
 template<typename A, typename C>
-void cifft1(A&&, C&&);
+void cifft1(A&& /*unused*/, C&& /*unused*/);
 
 template<typename A, typename C>
-void zifft1(A&&, C&&);
+void zifft1(A&& /*unused*/, C&& /*unused*/);
 
 template<typename A, typename C>
-void cifft1_real(A&&, C&&);
+void cifft1_real(A&& /*unused*/, C&& /*unused*/);
 
 template<typename A, typename C>
-void zifft1_real(A&&, C&&);
+void zifft1_real(A&& /*unused*/, C&& /*unused*/);
 
 template<typename A, typename B, typename C>
-void sfft1_convolve(A&&, C&&);
+void sfft1_convolve(A&& /*unused*/, C&& /*unused*/);
 
 template<typename A, typename B, typename C>
-void dfft1_convolve(A&&, B&&, C&&);
+void dfft1_convolve(A&& /*unused*/, B&& /*unused*/, C&& /*unused*/);
 
 template<typename A, typename C>
-void sfft2(A&&, C&&);
+void sfft2(A&& /*unused*/, C&& /*unused*/);
 
 template<typename A, typename C>
-void dfft2(A&&, C&&);
+void dfft2(A&& /*unused*/, C&& /*unused*/);
 
 template<typename A, typename C>
-void cfft2(A&&, C&&);
+void cfft2(A&& /*unused*/, C&& /*unused*/);
 
 template<typename A, typename C>
-void zfft2(A&&, C&&);
+void zfft2(A&& /*unused*/, C&& /*unused*/);
 
 template<typename A, typename C>
-void cifft2(A&&, C&&);
+void cifft2(A&& /*unused*/, C&& /*unused*/);
 
 template<typename A, typename C>
-void zifft2(A&&, C&&);
+void zifft2(A&& /*unused*/, C&& /*unused*/);
 
 template<typename A, typename C>
-void cifft2_real(A&&, C&&);
+void cifft2_real(A&& /*unused*/, C&& /*unused*/);
 
 template<typename A, typename C>
-void zifft2_real(A&&, C&&);
+void zifft2_real(A&& /*unused*/, C&& /*unused*/);
 
 template<typename A, typename B, typename C>
-void sfft2_convolve(A&&, C&&);
+void sfft2_convolve(A&& /*unused*/, C&& /*unused*/);
 
 template<typename A, typename B, typename C>
-void dfft2_convolve(A&&, B&&, C&&);
+void dfft2_convolve(A&& /*unused*/, B&& /*unused*/, C&& /*unused*/);
 
 #endif
 
