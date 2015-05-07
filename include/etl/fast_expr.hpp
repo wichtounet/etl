@@ -423,7 +423,7 @@ template<typename E, cpp::enable_if_u<is_etl_expr<E>::value> = cpp::detail::dumm
 auto reshape(E&& value, std::size_t rows, std::size_t columns) -> identity_helper<E, dyn_matrix_view<build_identity_type<E>>> {
     cpp_assert(size(value) == rows * columns, "Invalid size for reshape");
 
-    return {dyn_matrix_view<build_identity_type<E>>(value, rows, columns)};
+    return {{value, rows, columns}};
 }
 
 //}}}
@@ -432,7 +432,7 @@ auto reshape(E&& value, std::size_t rows, std::size_t columns) -> identity_helpe
 
 template<typename D = double>
 auto magic(std::size_t i) -> virtual_helper<D, magic_view<D>> {
-    return {{i}};
+    return {magic_view<D>{i}};
 }
 
 template<std::size_t N, typename D = double>
