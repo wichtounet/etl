@@ -47,13 +47,8 @@ public:
         //Nothing else to init
     }
 
-    unary_expr(const unary_expr& e) : _value(e._value) {
-        //Nothing else to init
-    }
-
-    unary_expr(unary_expr&& e) : _value(e._value) {
-        //Nothing else to init
-    }
+    unary_expr(const unary_expr& rhs) = default;
+    unary_expr(unary_expr&& rhs) = default;
 
     //Expression are invariant
     unary_expr& operator=(const unary_expr&) = delete;
@@ -124,13 +119,8 @@ public:
         //Nothing else to init
     }
 
-    unary_expr(const unary_expr& e) : _value(e._value) {
-        //Nothing else to init
-    }
-
-    unary_expr(unary_expr&& e) : _value(e._value) {
-        //Nothing else to init
-    }
+    unary_expr(const unary_expr& rhs) = default;
+    unary_expr(unary_expr&& rhs) = default;
 
     //Assign expressions to the unary expr
 
@@ -266,13 +256,12 @@ public:
         //Nothing else to init
     }
 
-    unary_expr(const unary_expr& e) : _value(e._value) {
-        //Nothing else to init
-    }
+    unary_expr(const unary_expr& rhs) = default;
+    unary_expr(unary_expr&& rhs) = default;
 
-    unary_expr(unary_expr&& e) : _value(e._value) {
-        //Nothing else to init
-    }
+    //Expression are invariant
+    unary_expr& operator=(const unary_expr&) = delete;
+    unary_expr& operator=(unary_expr&&) = delete;
 
     //Accessors
 
