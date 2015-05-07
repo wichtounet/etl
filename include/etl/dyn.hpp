@@ -137,7 +137,7 @@ public:
             cpp::all_convertible_to<std::size_t, S...>::value,
             cpp::is_homogeneous<typename cpp::first_type<S...>::type, S...>::value
         )>
-    dyn_matrix_impl(S... sizes) :
+    explicit dyn_matrix_impl(S... sizes) :
             _size(dyn_detail::size(sizes...)),
             _data(_size),
             _dimensions{{static_cast<std::size_t>(sizes)...}} {
@@ -146,7 +146,7 @@ public:
 
     //Sizes followed by an initializer list
     template<typename... S, cpp_enable_if(dyn_detail::is_initializer_list_constructor<S...>::value)>
-    dyn_matrix_impl(S... sizes) :
+    explicit dyn_matrix_impl(S... sizes) :
             _size(dyn_detail::size(std::make_index_sequence<(sizeof...(S)-1)>(), sizes...)),
             _data(cpp::last_value(sizes...)),
             _dimensions(dyn_detail::sizes(std::make_index_sequence<(sizeof...(S)-1)>(), sizes...)) {
@@ -158,7 +158,7 @@ public:
             (sizeof...(S) == D),
             cpp::is_specialization_of<values_t, typename cpp::last_type<S1, S...>::type>::value
         )>
-    dyn_matrix_impl(S1 s1, S... sizes) :
+    explicit dyn_matrix_impl(S1 s1, S... sizes) :
             _size(dyn_detail::size(std::make_index_sequence<(sizeof...(S))>(), s1, sizes...)),
             _data(cpp::last_value(s1, sizes...).template list<value_type>()),
             _dimensions(dyn_detail::sizes(std::make_index_sequence<(sizeof...(S))>(), s1, sizes...)) {
@@ -175,7 +175,7 @@ public:
                 : std::is_same<value_type, typename cpp::last_type<S1, S...>::type>::value             //The last type must be exactly value_type
             )
         )>
-    dyn_matrix_impl(S1 s1, S... sizes) :
+    explicit dyn_matrix_impl(S1 s1, S... sizes) :
             _size(dyn_detail::size(std::make_index_sequence<(sizeof...(S))>(), s1, sizes...)),
             _data(_size, cpp::last_value(s1, sizes...)),
             _dimensions(dyn_detail::sizes(std::make_index_sequence<(sizeof...(S))>(), s1, sizes...)) {
@@ -189,7 +189,7 @@ public:
             cpp::is_sub_homogeneous<S1, S...>::value,                                            //The first N-1 types must homegeneous
             cpp::is_specialization_of<generator_expr, typename cpp::last_type<S1, S...>::type>::value     //The last type must be a generator expr
         )>
-    dyn_matrix_impl(S1 s1, S... sizes) :
+    explicit dyn_matrix_impl(S1 s1, S... sizes) :
             _size(dyn_detail::size(std::make_index_sequence<(sizeof...(S))>(), s1, sizes...)),
             _data(_size),
             _dimensions(dyn_detail::sizes(std::make_index_sequence<(sizeof...(S))>(), s1, sizes...)) {
@@ -200,7 +200,7 @@ public:
 
     //Sizes followed by an init flag followed by the value
     template<typename... S, cpp_enable_if(dyn_detail::is_init_constructor<S...>::value)>
-    dyn_matrix_impl(S... sizes) :
+    explicit dyn_matrix_impl(S... sizes) :
             _size(dyn_detail::size(std::make_index_sequence<(sizeof...(S)-2)>(), sizes...)),
             _data(_size, cpp::last_value(sizes...)),
             _dimensions(dyn_detail::sizes(std::make_index_sequence<(sizeof...(S)-2)>(), sizes...)) {
@@ -213,7 +213,7 @@ public:
         std::is_convertible<value_t<E>, value_type>::value,
         is_copy_expr<E>::value
     )>
-    dyn_matrix_impl(E&& e) :_size(etl::size(e)), _data(_size) {
+    explicit dyn_matrix_impl(E&& e) :_size(etl::size(e)), _data(_size) {
         for(std::size_t d = 0; d < etl::dimensions(e); ++d){
             _dimensions[d] = etl::dim(e, d);
         }
@@ -225,7 +225,7 @@ public:
         cpp::not_c<is_etl_expr<Container>>::value,
         std::is_convertible<typename Container::value_type, value_type>::value
     )>
-    dyn_matrix_impl(const Container& vec) : _size(vec.size()), _data(_size), _dimensions{{_size}} {
+    explicit dyn_matrix_impl(const Container& vec) : _size(vec.size()), _data(_size), _dimensions{{_size}} {
         static_assert(D == 1, "Only 1D matrix can be constructed from containers");
 
         for(std::size_t i = 0; i < size(); ++i){
