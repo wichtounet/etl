@@ -40,6 +40,6 @@ using dyn_matrix_cm = dyn_matrix_impl<T, order::ColumnMajor, D>;
 template<typename T>
 using dyn_vector = dyn_matrix_impl<T, order::RowMajor, 1>;
 
-}
+} //end of namespace etl
 
 #endif

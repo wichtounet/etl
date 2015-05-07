@@ -38,7 +38,7 @@ void conv2_full(const I& input, const K& kernel, C&& conv){
     );
 }
 
-} //end of namespace standard
+} //end of namespace reduc
 } //end of namespace impl
 } //end of namespace etl
 
