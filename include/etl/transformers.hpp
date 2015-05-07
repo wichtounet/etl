@@ -385,7 +385,7 @@ struct transpose_transformer {
         if(dimensions(sub) == 1){
             return sub[i];
         } else {
-            return sub[(i % dim<0>(sub)) * dim<1>(sub) + (i / dim<0>(sub))];
+            return sub(i % dim<0>(sub), i / dim<0>(sub));
         }
     }
 
