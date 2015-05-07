@@ -110,7 +110,7 @@ modernize:
 	clang-modernize -add-override -loop-convert -pass-by-value -use-auto -use-nullptr -p ${PWD} -include *
 
 tidy:
-	clang-tidy -checks='*,-llvm-include-order' -p ${PWD} test/*.cpp -header-filter='include/etl/*'
+	clang-tidy -checks='*,-llvm-include-order,-clang-analyzer-alpha.core.PointerArithm' -p ${PWD} test/*.cpp -header-filter='include/etl/*'
 
 doc:
 	doxygen Doxyfile
