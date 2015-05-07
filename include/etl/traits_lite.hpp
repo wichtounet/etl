@@ -104,7 +104,7 @@ template<typename E>
 using decay_traits = etl_traits<std::decay_t<E>>;
 
 template<typename E>
-constexpr std::size_t dimensions(const E&) noexcept {
+constexpr std::size_t dimensions(const E& /*unused*/) noexcept {
     return etl_traits<E>::dimensions();
 }
 
@@ -119,7 +119,7 @@ std::size_t rows(const E& v){
 }
 
 template<typename E, cpp::enable_if_u<etl_traits<E>::is_fast> = cpp::detail::dummy>
-constexpr std::size_t rows(const E&) noexcept {
+constexpr std::size_t rows(const E& /*unused*/) noexcept {
     return etl_traits<E>::template dim<0>();
 }
 
@@ -130,7 +130,7 @@ std::size_t columns(const E& v){
 }
 
 template<typename E, cpp::enable_if_u<etl_traits<E>::is_fast> = cpp::detail::dummy>
-constexpr std::size_t columns(const E&) noexcept {
+constexpr std::size_t columns(const E& /*unused*/) noexcept {
     static_assert(etl_traits<E>::dimensions() > 1, "columns() can only be used on 2D+ matrices");
     return etl_traits<E>::template dim<1>();
 }

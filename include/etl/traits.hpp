@@ -1077,7 +1077,7 @@ std::size_t size(const E& v){
 }
 
 template<typename E, cpp::enable_if_u<etl_traits<E>::is_fast>>
-constexpr std::size_t size(const E&) noexcept {
+constexpr std::size_t size(const E& /*unused*/) noexcept {
     return etl_traits<E>::size();
 }
 
@@ -1088,7 +1088,7 @@ std::size_t subsize(const E& v){
 }
 
 template<typename E, cpp::enable_if_u<etl_traits<E>::is_fast> = cpp::detail::dummy>
-constexpr std::size_t subsize(const E&) noexcept {
+constexpr std::size_t subsize(const E& /*unused*/) noexcept {
     static_assert(etl_traits<E>::dimensions() > 1, "Only 2D+ matrices have a subsize");
     return etl_traits<E>::size() / etl_traits<E>::template dim<0>();
 }
@@ -1104,7 +1104,7 @@ std::size_t dim(const E& e, std::size_t d){
 }
 
 template<std::size_t D, typename E, cpp::enable_if_u<etl_traits<E>::is_fast>>
-constexpr std::size_t dim(const E&) noexcept {
+constexpr std::size_t dim(const E& /*unused*/) noexcept {
     return etl_traits<E>::template dim<D>();
 }
 

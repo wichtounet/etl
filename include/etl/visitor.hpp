@@ -57,22 +57,22 @@ struct etl_visitor {
     }
 
     template <typename Generator>
-    void operator()(const generator_expr<Generator>&) const {
+    void operator()(const generator_expr<Generator>& /*unused*/) const {
         //Leaf
     }
 
     template<typename T, cpp_enable_if(etl::is_magic_view<T>::value)>
-    void operator()(const T&) const {
+    void operator()(const T& /*unused*/) const {
         //Leaf
     }
 
     template<typename T, cpp_enable_if(etl::is_etl_value<T>::value)>
-    void operator()(const T&) const {
+    void operator()(const T& /*unused*/) const {
         //Leaf
     }
 
     template <typename T>
-    void operator()(const etl::scalar<T>&) const {
+    void operator()(const etl::scalar<T>& /*unused*/) const {
         //Leaf
     }
 };

@@ -43,7 +43,7 @@ struct magic_view {
 
     const std::size_t n;
 
-    magic_view(std::size_t n) : n(n) {}
+    explicit magic_view(std::size_t n) : n(n) {}
 
     value_type operator[](std::size_t i) const {
         return detail::compute<value_type>(n, i / n, i % n);
