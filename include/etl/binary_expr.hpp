@@ -48,15 +48,9 @@ public:
         //Nothing else to init
     }
 
-    //Copy an expression
-    binary_expr(const binary_expr& e) : _lhs(e._lhs), _rhs(e._rhs) {
-        //Nothing else to init
-    }
-
-    //Move an expression
-    binary_expr(binary_expr&& e) : _lhs(e._lhs), _rhs(e._rhs) {
-        //Nothing else to init
-    }
+    //Expresison can be copied and moved
+    binary_expr(const binary_expr& e) = default;
+    binary_expr(binary_expr&& e) = default;
 
     //Expressions are invariant
     binary_expr& operator=(const binary_expr&) = delete;
