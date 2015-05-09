@@ -372,6 +372,11 @@ struct fflip_transformer {
     }
 };
 
+template<typename E>
+constexpr std::pair<std::size_t, std::size_t> index_to_2d(E&& sub, std::size_t i){
+    return std::make_pair(i / dim<0>(sub), i % dim<0>(sub));
+}
+
 template<typename T>
 struct transpose_transformer {
     using sub_type = T;
@@ -385,7 +390,9 @@ struct transpose_transformer {
         if(dimensions(sub) == 1){
             return sub[i];
         } else {
-            return sub(i % dim<0>(sub), i / dim<0>(sub));
+            std::size_t ii, jj;
+            std::tie(ii, jj) = index_to_2d(sub, i);
+            return sub(jj, ii);
         }
     }
 
