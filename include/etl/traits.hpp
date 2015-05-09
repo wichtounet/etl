@@ -1122,6 +1122,11 @@ struct sub_size_compare<E, std::enable_if_t<etl_traits<E>::is_generator>> : std:
 template<typename E>
 struct sub_size_compare<E, cpp::disable_if_t<etl_traits<E>::is_generator>> : std::integral_constant<std::size_t, etl_traits<E>::dimensions()> {};
 
+template<typename E>
+constexpr std::pair<std::size_t, std::size_t> index_to_2d(E&& sub, std::size_t i){
+    return std::make_pair(i / dim<0>(sub), i % dim<0>(sub));
+}
+
 } //end of namespace etl
 
 #endif
