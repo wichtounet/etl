@@ -25,6 +25,9 @@ namespace etl {
 struct identity_op;
 struct virtual_op;
 
+template <typename Generator>
+class generator_expr;
+
 template <typename T, typename Expr, typename UnaryOp>
 struct unary_expr final : comparable<unary_expr<T, Expr, UnaryOp>>, iterable<unary_expr<T, Expr, UnaryOp>> {
 private:
@@ -128,6 +131,12 @@ public:
     unary_expr& operator=(E&& e){
         ensure_same_size(*this, e);
         assign_evaluate(std::forward<E>(e), *this);
+        return *this;
+    }
+
+    template<typename Generator>
+    unary_expr& operator=(generator_expr<Generator>&& e){
+        assign_evaluate(e, *this);
         return *this;
     }
 
