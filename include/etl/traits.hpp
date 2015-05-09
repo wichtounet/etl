@@ -120,7 +120,7 @@ template<typename T>
 struct is_direct_sub_view : std::false_type {};
 
 template<typename T>
-struct is_direct_sub_view<sub_view<T>> : has_direct_access<T> {};
+struct is_direct_sub_view<sub_view<T>> : cpp::and_u<has_direct_access<T>::value, decay_traits<T>::storage_order == order::RowMajor> {};
 
 template<typename T>
 struct is_direct_dim_view : std::false_type {};

@@ -127,7 +127,11 @@ struct sub_view {
     sub_view(parent_type parent, std::size_t i) : parent(parent), i(i) {}
 
     const_return_type operator[](std::size_t j) const {
-        return parent[i * subsize(parent) + j];
+        if(decay_traits<parent_type>::storage_order == order::RowMajor){
+            return parent[i * subsize(parent) + j];
+        } else {
+            return parent[i * subsize(parent) + j];
+        }
     }
 
     template<typename... S>
@@ -150,22 +154,22 @@ struct sub_view {
 
     //{{{ Direct memory access
 
-    template<typename ST = T, cpp_enable_if(has_direct_access<ST>::value)>
+    template<typename ST = T, cpp_enable_if(has_direct_access<ST>::value && decay_traits<parent_type>::storage_order == order::RowMajor)>
     memory_type memory_start() noexcept {
         return parent.memory_start() + i * subsize(parent);
     }
 
-    template<typename ST = T, cpp_enable_if(has_direct_access<ST>::value)>
+    template<typename ST = T, cpp_enable_if(has_direct_access<ST>::value && decay_traits<parent_type>::storage_order == order::RowMajor)>
     const_memory_type memory_start() const noexcept {
         return parent.memory_start() + i * subsize(parent);
     }
 
-    template<typename ST = T, cpp_enable_if(has_direct_access<ST>::value)>
+    template<typename ST = T, cpp_enable_if(has_direct_access<ST>::value && decay_traits<parent_type>::storage_order == order::RowMajor)>
     memory_type memory_end() noexcept {
         return parent.memory_start() + (i + 1) * subsize(parent);
     }
 
-    template<typename ST = T, cpp_enable_if(has_direct_access<ST>::value)>
+    template<typename ST = T, cpp_enable_if(has_direct_access<ST>::value && decay_traits<parent_type>::storage_order == order::RowMajor)>
     const_memory_type memory_end() const noexcept {
         return parent.memory_start() + (i + 1) * subsize(parent);
     }
