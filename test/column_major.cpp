@@ -162,3 +162,15 @@ TEMPLATE_TEST_CASE_2( "column_major/tranpose/2", "[fast][cm]", Z, int, long ) {
     REQUIRE(b(1, 1) == 5);
     REQUIRE(b(1, 2) == 6);
 }
+
+TEMPLATE_TEST_CASE_2( "column_major/binary/1", "[fast][cm]", Z, int, long ) {
+    etl::fast_matrix_cm<Z, 3, 2> a(etl::sequence_generator(1));
+    etl::fast_matrix_cm<Z, 3, 2> b(a + a - a + a);
+
+    REQUIRE(b(0, 0) == 2);
+    REQUIRE(b(0, 1) == 8);
+    REQUIRE(b(1, 0) == 4);
+    REQUIRE(b(1, 1) == 10);
+    REQUIRE(b(2, 0) == 6);
+    REQUIRE(b(2, 1) == 12);
+}
