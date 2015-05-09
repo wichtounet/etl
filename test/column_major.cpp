@@ -167,10 +167,33 @@ TEMPLATE_TEST_CASE_2( "column_major/binary/1", "[fast][cm]", Z, int, long ) {
     etl::fast_matrix_cm<Z, 3, 2> a(etl::sequence_generator(1));
     etl::fast_matrix_cm<Z, 3, 2> b(a + a - a + a);
 
-    REQUIRE(b(0, 0) == 2);
-    REQUIRE(b(0, 1) == 8);
-    REQUIRE(b(1, 0) == 4);
-    REQUIRE(b(1, 1) == 10);
-    REQUIRE(b(2, 0) == 6);
-    REQUIRE(b(2, 1) == 12);
+    REQUIRE(a(0, 0) == 1);
+    REQUIRE(a(0, 1) == 4);
+    REQUIRE(a(1, 0) == 2);
+    REQUIRE(a(1, 1) == 5);
+    REQUIRE(a(2, 0) == 3);
+    REQUIRE(a(2, 1) == 6);
+}
+
+TEMPLATE_TEST_CASE_2( "column_major/sub/1", "[fast][cm]", Z, int, long ) {
+    etl::fast_matrix_cm<Z, 3, 3, 2> a;
+    etl::fast_matrix_cm<Z, 3, 2> b(a(1));
+
+    a(0) = etl::sequence_generator(1);
+    a(1) = etl::sequence_generator(7);
+    a(2) = etl::sequence_generator(13);
+
+    REQUIRE(a(0)(0, 0) == 1);
+    REQUIRE(a(0)(0, 1) == 4);
+    REQUIRE(a(0)(1, 0) == 2);
+    REQUIRE(a(0)(1, 1) == 5);
+    REQUIRE(a(0)(2, 0) == 3);
+    REQUIRE(a(0)(2, 1) == 6);
+
+    REQUIRE(b(0, 0) == 7);
+    REQUIRE(b(0, 1) == 10);
+    REQUIRE(b(1, 0) == 8);
+    REQUIRE(b(1, 1) == 11);
+    REQUIRE(b(2, 0) == 9);
+    REQUIRE(b(2, 1) == 15);
 }
