@@ -385,9 +385,13 @@ struct transpose_transformer {
         if(dimensions(sub) == 1){
             return sub[i];
         } else {
-            std::size_t ii, jj;
-            std::tie(ii, jj) = index_to_2d(sub, i);
-            return sub(jj, ii);
+            if(decay_traits<sub_type>::storage_order == order::RowMajor){
+                std::size_t ii, jj;
+                std::tie(ii, jj) = index_to_2d(sub, i);
+                return sub(jj, ii);
+            } else {
+                return sub(i / dim<1>(sub), i % dim<1>(sub));
+            }
         }
     }
 

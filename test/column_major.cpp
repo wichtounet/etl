@@ -124,7 +124,7 @@ TEMPLATE_TEST_CASE_2( "column_major/4", "[dyn][cm]", Z, int, long ) {
 }
 
 TEMPLATE_TEST_CASE_2( "column_major/5", "[fast][cm]", Z, int, long ) {
-    etl::fast_matrix_cm<Z, 2,3 > a(etl::sequence_generator(1));
+    etl::fast_matrix_cm<Z, 2, 3> a(etl::sequence_generator(1));
 
     REQUIRE(a(0, 0) == 1);
     REQUIRE(a(0, 1) == 3);
@@ -133,7 +133,7 @@ TEMPLATE_TEST_CASE_2( "column_major/5", "[fast][cm]", Z, int, long ) {
     REQUIRE(a(1, 1) == 4);
     REQUIRE(a(1, 2) == 6);
 
-    etl::fast_matrix_cm<Z, 2, 3> b(etl::transpose(a));
+    etl::fast_matrix_cm<Z, 3, 2> b(etl::transpose(a));
 
     REQUIRE(b(0, 0) == 1);
     REQUIRE(b(1, 0) == 3);
