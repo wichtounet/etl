@@ -112,12 +112,24 @@ ETL_INLINE_VEC_256 minus(__m256 x){
 
 #ifdef __INTEL_COMPILER
 
+//Exponential
+
 ETL_INLINE_VEC_256D exp(__m256d x){
     return _mm256_exp_pd(x);
 }
 
 ETL_INLINE_VEC_256 exp(__m256 x){
     return _mm256_exp_ps(x);
+}
+
+//Logarithm
+
+ETL_INLINE_VEC_256D log(__m256d x){
+    return _mm256_log_pd(x);
+}
+
+ETL_INLINE_VEC_256 log(__m256 x){
+    return _mm256_log_ps(x);
 }
 
 #endif

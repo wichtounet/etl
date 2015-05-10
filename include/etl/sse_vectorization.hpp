@@ -112,12 +112,24 @@ ETL_INLINE_VEC_128 minus(__m128 x){
 
 #ifdef __INTEL_COMPILER
 
+//Exponential
+
 ETL_INLINE_VEC_128D exp(__m128d x){
     return _mm_exp_pd(x);
 }
 
 ETL_INLINE_VEC_128 exp(__m128 x){
     return _mm_exp_ps(x);
+}
+
+//Logarithm
+
+ETL_INLINE_VEC_128D log(__m128d x){
+    return _mm_log_pd(x);
+}
+
+ETL_INLINE_VEC_128 log(__m128 x){
+    return _mm_log_ps(x);
 }
 
 #endif
