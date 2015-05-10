@@ -54,7 +54,7 @@ struct sqrt_unary_op {
         return std::sqrt(x);
     }
 
-    static constexpr vec_type sqrt(const vec_type& x) noexcept {
+    static constexpr vec_type load(const vec_type& x) noexcept {
         return vec::sqrt(x);
     }
 
@@ -65,11 +65,21 @@ struct sqrt_unary_op {
 
 template<typename T>
 struct exp_unary_op {
-    static constexpr const bool vectorizable = false;
+    using vec_type = intrinsic_type<T>;
 
     static constexpr T apply(const T& x){
         return std::exp(x);
     }
+
+#ifdef __INTEL_COMPILER
+    static constexpr const bool vectorizable = true;
+
+    static constexpr vec_type load(const vec_type& x) noexcept {
+        return vec::exp(x);
+    }
+#else
+    static constexpr const bool vectorizable = false;
+#endif
 
     static std::string desc() noexcept {
         return "exp";

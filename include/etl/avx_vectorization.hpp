@@ -110,6 +110,18 @@ ETL_INLINE_VEC_256 minus(__m256 x){
     return _mm256_xor_ps(x, _mm256_set1_ps(-0.f));
 }
 
+#ifdef __INTEL_COMPILER
+
+ETL_INLINE_VEC_256D exp(__m256d x){
+    return _mm256_sqrt_pd(x);
+}
+
+ETL_INLINE_VEC_256 exp(__m256 x){
+    return _mm256_sqrt_ps(x);
+}
+
+#endif
+
 } //end of namespace vec
 
 } //end of namespace etl

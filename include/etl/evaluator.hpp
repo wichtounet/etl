@@ -80,6 +80,10 @@ struct standard_evaluator {
 
         const std::size_t size = etl::size(result);
         std::cout << "diret" << std::endl;
+        std::cout << vectorize_expr << std::endl;
+        std::cout << decay_traits<E>::vectorizable << std::endl;
+        std::cout << intrinsic_traits<value_t<R>>::vectorizable << std::endl;
+        std::cout << intrinsic_traits<value_t<E>>::vectorizable << std::endl;
 
         std::size_t iend = 0;
 
