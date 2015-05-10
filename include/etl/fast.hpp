@@ -216,7 +216,7 @@ public:
     }
 
     template<std::size_t... SDims>
-    fast_matrix_impl& operator=(const fast_matrix_impl<T, ST, SDims...>& rhs) noexcept {
+    fast_matrix_impl& operator=(const fast_matrix_impl<T, ST, SO, SDims...>& rhs) noexcept {
         ensure_same_size(*this, rhs);
         _data = rhs._data;
         return *this;
