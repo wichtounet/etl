@@ -380,9 +380,9 @@ TEMPLATE_TEST_CASE_2( "dyn_vector/sigmoid", "dyn_vector::sigmoid", Z, double, fl
 
     etl::dyn_vector<Z> d(etl::sigmoid(a));
 
-    REQUIRE(d[0] == etl::logistic_sigmoid(Z(-1.0)));
-    REQUIRE(d[1] == etl::logistic_sigmoid(Z(2.0)));
-    REQUIRE(d[2] == etl::logistic_sigmoid(Z(0.0)));
+    REQUIRE(d[0] == Approx(etl::logistic_sigmoid(Z(-1.0))));
+    REQUIRE(d[1] == Approx(etl::logistic_sigmoid(Z(2.0))));
+    REQUIRE(d[2] == Approx(etl::logistic_sigmoid(Z(0.0))));
 }
 
 TEMPLATE_TEST_CASE_2( "dyn_vector/softplus", "dyn_vector::softplus", Z, double, float) {
@@ -390,9 +390,9 @@ TEMPLATE_TEST_CASE_2( "dyn_vector/softplus", "dyn_vector::softplus", Z, double, 
 
     etl::dyn_vector<Z> d(etl::softplus(a));
 
-    REQUIRE(d[0] == etl::softplus(Z(-1.0)));
-    REQUIRE(d[1] == etl::softplus(Z(2.0)));
-    REQUIRE(d[2] == etl::softplus(Z(0.0)));
+    REQUIRE(d[0] == Approx(etl::softplus(Z(-1.0))));
+    REQUIRE(d[1] == Approx(etl::softplus(Z(2.0))));
+    REQUIRE(d[2] == Approx(etl::softplus(Z(0.0))));
 }
 
 TEMPLATE_TEST_CASE_2( "dyn_vector/exp", "dyn_vector::exp", Z, double, float) {
@@ -400,9 +400,9 @@ TEMPLATE_TEST_CASE_2( "dyn_vector/exp", "dyn_vector::exp", Z, double, float) {
 
     etl::dyn_vector<Z> d(etl::exp(a));
 
-    REQUIRE(d[0] == std::exp(Z(-1.0)));
-    REQUIRE(d[1] == std::exp(Z(2.0)));
-    REQUIRE(d[2] == std::exp(Z(0.0)));
+    REQUIRE(d[0] == Approx(std::exp(Z(-1.0))));
+    REQUIRE(d[1] == Approx(std::exp(Z(2.0))));
+    REQUIRE(d[2] == Approx(std::exp(Z(0.0))));
 }
 
 TEMPLATE_TEST_CASE_2( "dyn_vector/max", "dyn_vector::max", Z, double, float) {

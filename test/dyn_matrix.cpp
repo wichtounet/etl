@@ -516,10 +516,10 @@ TEMPLATE_TEST_CASE_2( "dyn_matrix/exp", "dyn_matrix::exp", Z, double, float) {
 
     etl::dyn_matrix<Z> d(etl::exp(a));
 
-    REQUIRE(d[0] == std::exp(Z(-1.0)));
-    REQUIRE(d[1] == std::exp(Z(2.0)));
-    REQUIRE(d[2] == std::exp(Z(0.0)));
-    REQUIRE(d[3] == std::exp(Z(1.0)));
+    REQUIRE(d[0] == Approx(std::exp(Z(-1.0))));
+    REQUIRE(d[1] == Approx(std::exp(Z(2.0))));
+    REQUIRE(d[2] == Approx(std::exp(Z(0.0))));
+    REQUIRE(d[3] == Approx(std::exp(Z(1.0))));
 }
 
 TEMPLATE_TEST_CASE_2( "dyn_matrix/max", "dyn_matrix::max", Z, double, float) {
