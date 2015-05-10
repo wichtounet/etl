@@ -40,7 +40,7 @@ endif
 
 #DEBUG_FLAGS=-fsanitize=address -fsanitize=undefined
 
-CXX_FLAGS += -DETL_VECTORIZE
+CXX_FLAGS += -DETL_VECTORIZE_FULL
 
 CPP_FILES=$(wildcard test/*.cpp)
 TEST_FILES=$(CPP_FILES:test/%=%)
