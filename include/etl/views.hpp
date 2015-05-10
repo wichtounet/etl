@@ -130,17 +130,21 @@ struct sub_view {
         if(decay_traits<parent_type>::storage_order == order::RowMajor){
             return parent[i * subsize(parent) + j];
         } else {
+            return parent[i + dim<0>(parent) * j];
+        }
+    }
+
+    return_type operator[](std::size_t j){
+        if(decay_traits<parent_type>::storage_order == order::RowMajor){
             return parent[i * subsize(parent) + j];
+        } else {
+            return parent[i + dim<0>(parent) * j];
         }
     }
 
     template<typename... S>
     const_return_type operator()(S... args) const {
         return parent(i, static_cast<std::size_t>(args)...);
-    }
-
-    return_type operator[](std::size_t j){
-        return parent[i * subsize(parent) + j];
     }
 
     template<typename... S>
