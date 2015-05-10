@@ -10,8 +10,13 @@
 
 #include <immintrin.h>
 
+#ifdef __INTEL_COMPILER
+#define ETL_INLINE_VEC_256 inline __m256 __attribute__((__always_inline__)) 
+#define ETL_INLINE_VEC_256D inline __m256d __attribute__((__always_inline__)) 
+#else
 #define ETL_INLINE_VEC_256 inline __m256 __attribute__((__always_inline__, __nodebug__)) 
 #define ETL_INLINE_VEC_256D inline __m256d __attribute__((__always_inline__, __nodebug__)) 
+#endif
 
 namespace etl {
 
