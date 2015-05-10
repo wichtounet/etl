@@ -13,6 +13,7 @@
 #include <ctime>
 
 #include "math.hpp"
+#include "compat.hpp"
 
 namespace etl {
 
@@ -54,7 +55,7 @@ struct sqrt_unary_op {
         return std::sqrt(x);
     }
 
-    static constexpr vec_type load(const vec_type& x) noexcept {
+    static cpp14_constexpr vec_type load(const vec_type& x) noexcept {
         return vec::sqrt(x);
     }
 
@@ -74,7 +75,7 @@ struct exp_unary_op {
 #ifdef __INTEL_COMPILER
     static constexpr const bool vectorizable = true;
 
-    static constexpr vec_type load(const vec_type& x) noexcept {
+    static cpp14_constexpr vec_type load(const vec_type& x) noexcept {
         return vec::exp(x);
     }
 #else
@@ -135,7 +136,7 @@ struct minus_unary_op {
         return -x;
     }
 
-    static constexpr vec_type load(const vec_type& x) noexcept {
+    static cpp14_constexpr vec_type load(const vec_type& x) noexcept {
         return vec::minus(x);
     }
 
@@ -154,7 +155,7 @@ struct plus_unary_op {
         return +x;
     }
 
-    static constexpr vec_type load(const vec_type& x) noexcept {
+    static cpp14_constexpr vec_type load(const vec_type& x) noexcept {
         return x;
     }
 

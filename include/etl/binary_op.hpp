@@ -13,6 +13,7 @@
 #include <ctime>
 
 #include "math.hpp"
+#include "compat.hpp"
 
 namespace etl {
 
@@ -31,7 +32,7 @@ struct plus_binary_op {
         return lhs + rhs;
     }
 
-    static constexpr vec_type load(const vec_type& lhs, const vec_type& rhs) noexcept {
+    static cpp14_constexpr vec_type load(const vec_type& lhs, const vec_type& rhs) noexcept {
         const vec_type ymm1(lhs);
         const vec_type ymm2(rhs);
         return vec::add(ymm1, ymm2);
@@ -52,7 +53,7 @@ struct minus_binary_op {
         return lhs - rhs;
     }
 
-    static constexpr vec_type load(const vec_type& lhs, const vec_type& rhs) noexcept {
+    static cpp14_constexpr vec_type load(const vec_type& lhs, const vec_type& rhs) noexcept {
         const vec_type ymm1(lhs);
         const vec_type ymm2(rhs);
         return vec::sub(ymm1, ymm2);
@@ -73,7 +74,7 @@ struct mul_binary_op {
         return lhs * rhs;
     }
 
-    static constexpr vec_type load(const vec_type& lhs, const vec_type& rhs) noexcept {
+    static cpp14_constexpr vec_type load(const vec_type& lhs, const vec_type& rhs) noexcept {
         const vec_type ymm1(lhs);
         const vec_type ymm2(rhs);
         return vec::mul(ymm1, ymm2);
@@ -94,7 +95,7 @@ struct div_binary_op {
         return lhs / rhs;
     }
 
-    static constexpr vec_type load(const vec_type& lhs, const vec_type& rhs) noexcept {
+    static cpp14_constexpr vec_type load(const vec_type& lhs, const vec_type& rhs) noexcept {
         const vec_type ymm1(lhs);
         const vec_type ymm2(rhs);
         return vec::div(ymm1, ymm2);

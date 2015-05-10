@@ -113,11 +113,11 @@ ETL_INLINE_VEC_128 minus(__m128 x){
 #ifdef __INTEL_COMPILER
 
 ETL_INLINE_VEC_128D exp(__m128d x){
-    return _mm_sqrt_pd(x);
+    return _mm_exp_pd(x);
 }
 
 ETL_INLINE_VEC_128 exp(__m128 x){
-    return _mm_sqrt_ps(x);
+    return _mm_exp_ps(x);
 }
 
 #endif
