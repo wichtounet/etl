@@ -22,8 +22,13 @@
 
 namespace etl {
 
-struct identity_op;
-struct virtual_op;
+struct identity_op {
+    static constexpr const bool vectorizable = false;
+};
+
+struct virtual_op {
+    static constexpr const bool vectorizable = false;
+};
 
 template <typename Generator>
 class generator_expr;
@@ -71,6 +76,10 @@ public:
 
     value_type operator[](std::size_t i) const {
         return UnaryOp::apply(value()[i]);
+    }
+
+    intrinsic_type<value_type> load(std::size_t i) const {
+        return UnaryOp::load(value().load(i));
     }
 
     template<typename... S>

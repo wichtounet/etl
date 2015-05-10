@@ -20,6 +20,8 @@ using random_engine = std::mt19937_64;
 
 template<typename T>
 struct abs_unary_op {
+    static constexpr const bool vectorizable = false;
+
     static constexpr T apply(const T& x) noexcept {
         return std::abs(x);
     }
@@ -31,6 +33,8 @@ struct abs_unary_op {
 
 template<typename T>
 struct log_unary_op {
+    static constexpr const bool vectorizable = false;
+
     static constexpr T apply(const T& x){
         return std::log(x);
     }
@@ -42,6 +46,8 @@ struct log_unary_op {
 
 template<typename T>
 struct sqrt_unary_op {
+    static constexpr const bool vectorizable = false;
+
     static constexpr T apply(const T& x){
         return std::sqrt(x);
     }
@@ -53,6 +59,10 @@ struct sqrt_unary_op {
 
 template<typename T>
 struct exp_unary_op {
+    using vec_type = intrinsic_type<T>;
+
+    static constexpr const bool vectorizable = false;
+
     static constexpr T apply(const T& x){
         return std::exp(x);
     }
@@ -64,6 +74,8 @@ struct exp_unary_op {
 
 template<typename T>
 struct sign_unary_op {
+    static constexpr const bool vectorizable = false;
+
     static constexpr T apply(const T& x) noexcept {
         return sign(x);
     }
@@ -75,6 +87,8 @@ struct sign_unary_op {
 
 template<typename T>
 struct sigmoid_unary_op {
+    static constexpr const bool vectorizable = false;
+
     static constexpr T apply(const T& x){
         return logistic_sigmoid(x);
     }
@@ -86,6 +100,8 @@ struct sigmoid_unary_op {
 
 template<typename T>
 struct softplus_unary_op {
+    static constexpr const bool vectorizable = false;
+
     static constexpr T apply(const T& x){
         return softplus(x);
     }
@@ -97,6 +113,8 @@ struct softplus_unary_op {
 
 template<typename T>
 struct minus_unary_op {
+    static constexpr const bool vectorizable = false;
+
     static constexpr T apply(const T& x) noexcept {
         return -x;
     }
@@ -108,8 +126,16 @@ struct minus_unary_op {
 
 template<typename T>
 struct plus_unary_op {
+    using vec_type = intrinsic_type<T>;
+
+    static constexpr const bool vectorizable = true;
+
     static constexpr T apply(const T& x) noexcept {
         return +x;
+    }
+
+    static constexpr vec_type load(const vec_type& x) noexcept {
+        return x;
     }
 
     static std::string desc() noexcept {
@@ -119,6 +145,8 @@ struct plus_unary_op {
 
 template<typename T>
 struct bernoulli_unary_op {
+    static constexpr const bool vectorizable = false;
+
     static T apply(const T& x){
         static random_engine rand_engine(std::time(nullptr));
         static std::uniform_real_distribution<double> distribution(0.0, 1.0);
@@ -134,6 +162,8 @@ struct bernoulli_unary_op {
 
 template<typename T>
 struct reverse_bernoulli_unary_op {
+    static constexpr const bool vectorizable = false;
+
     static T apply(const T& x){
         static random_engine rand_engine(std::time(nullptr));
         static std::uniform_real_distribution<double> distribution(0.0, 1.0);
@@ -149,6 +179,8 @@ struct reverse_bernoulli_unary_op {
 
 template<typename T>
 struct uniform_noise_unary_op {
+    static constexpr const bool vectorizable = false;
+
     static T apply(const T& x){
         static random_engine rand_engine(std::time(nullptr));
         static std::uniform_real_distribution<double> real_distribution(0.0, 1.0);
@@ -164,6 +196,8 @@ struct uniform_noise_unary_op {
 
 template<typename T>
 struct normal_noise_unary_op {
+    static constexpr const bool vectorizable = false;
+
     static T apply(const T& x){
         static random_engine rand_engine(std::time(nullptr));
         static std::normal_distribution<double> normal_distribution(0.0, 1.0);
@@ -179,6 +213,8 @@ struct normal_noise_unary_op {
 
 template<typename T>
 struct logistic_noise_unary_op {
+    static constexpr const bool vectorizable = false;
+
     static T apply(const T& x){
         static random_engine rand_engine(std::time(nullptr));
 

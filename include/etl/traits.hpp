@@ -210,7 +210,7 @@ struct etl_traits<etl::unary_expr<T, Expr, UnaryOp>> {
     static constexpr const bool is_fast = etl_traits<sub_expr_t>::is_fast;
     static constexpr const bool is_value = false;
     static constexpr const bool is_generator = etl_traits<sub_expr_t>::is_generator;
-    static constexpr const bool vectorizable = false;
+    static constexpr const bool vectorizable = etl_traits<sub_expr_t>::vectorizable && UnaryOp::vectorizable;
     static constexpr const bool needs_temporary_visitor = etl_traits<sub_expr_t>::needs_temporary_visitor;
     static constexpr const bool needs_evaluator_visitor = etl_traits<sub_expr_t>::needs_evaluator_visitor;
     static constexpr const order storage_order = etl_traits<sub_expr_t>::storage_order;
