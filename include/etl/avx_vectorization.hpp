@@ -10,6 +10,9 @@
 
 #include <immintrin.h>
 
+#define ETL_INLINE_VEC_256 inline __m256 __attribute__((__always_inline__, __nodebug__)) 
+#define ETL_INLINE_VEC_256D inline __m256d __attribute__((__always_inline__, __nodebug__)) 
+
 namespace etl {
 
 template<>
@@ -38,67 +41,67 @@ inline void store(float* memory, __m256 value){
     _mm256_storeu_ps(memory, value);
 }
 
-inline __m256d loadu(const double* memory){
+ETL_INLINE_VEC_256D loadu(const double* memory){
     return _mm256_loadu_pd(memory);
 }
 
-inline __m256 loadu(const float* memory){
+ETL_INLINE_VEC_256 loadu(const float* memory){
     return _mm256_loadu_ps(memory);
 }
 
-inline __m256d set(double value){
+ETL_INLINE_VEC_256D set(double value){
     return _mm256_set1_pd(value);
 }
 
-inline __m256 set(float value){
+ETL_INLINE_VEC_256 set(float value){
     return _mm256_set1_ps(value);
 }
 
-inline __m256d add(__m256d lhs, __m256d rhs){
+ETL_INLINE_VEC_256D add(__m256d lhs, __m256d rhs){
     return _mm256_add_pd(lhs, rhs);
 }
 
-inline __m256d sub(__m256d lhs, __m256d rhs){
+ETL_INLINE_VEC_256D sub(__m256d lhs, __m256d rhs){
     return _mm256_sub_pd(lhs, rhs);
 }
 
-inline __m256d mul(__m256d lhs, __m256d rhs){
+ETL_INLINE_VEC_256D mul(__m256d lhs, __m256d rhs){
     return _mm256_mul_pd(lhs, rhs);
 }
 
-inline __m256d div(__m256d lhs, __m256d rhs){
+ETL_INLINE_VEC_256D div(__m256d lhs, __m256d rhs){
     return _mm256_div_pd(lhs, rhs);
 }
 
-inline __m256d sqrt(__m256d x){
+ETL_INLINE_VEC_256D sqrt(__m256d x){
     return _mm256_sqrt_pd(x);
 }
 
-inline __m256d minus(__m256d x){
+ETL_INLINE_VEC_256D minus(__m256d x){
     return _mm256_xor_pd(x, _mm256_set1_pd(-0.f));
 }
 
-inline __m256 add(__m256 lhs, __m256 rhs){
+ETL_INLINE_VEC_256 add(__m256 lhs, __m256 rhs){
     return _mm256_add_ps(lhs, rhs);
 }
 
-inline __m256 sub(__m256 lhs, __m256 rhs){
+ETL_INLINE_VEC_256 sub(__m256 lhs, __m256 rhs){
     return _mm256_sub_ps(lhs, rhs);
 }
 
-inline __m256 mul(__m256 lhs, __m256 rhs){
+ETL_INLINE_VEC_256 mul(__m256 lhs, __m256 rhs){
     return _mm256_mul_ps(lhs, rhs);
 }
 
-inline __m256 div(__m256 lhs, __m256 rhs){
+ETL_INLINE_VEC_256 div(__m256 lhs, __m256 rhs){
     return _mm256_div_ps(lhs, rhs);
 }
 
-inline __m256 sqrt(__m256 lhs){
+ETL_INLINE_VEC_256 sqrt(__m256 lhs){
     return _mm256_sqrt_ps(lhs);
 }
 
-inline __m256 minus(__m256 x){
+ETL_INLINE_VEC_256 minus(__m256 x){
     return _mm256_xor_ps(x, _mm256_set1_ps(-0.f));
 }
 
