@@ -29,17 +29,6 @@ struct etl_visitor {
         as_derived()(v.rhs());
     }
 
-    template<typename T, typename AExpr, typename Op, typename Forced>
-    void operator()(etl::temporary_unary_expr<T, AExpr, Op, Forced>& v) const {
-        as_derived()(v.a());
-    }
-
-    template<typename T, typename AExpr, typename BExpr, typename Op, typename Forced>
-    void operator()(etl::temporary_binary_expr<T, AExpr, BExpr, Op, Forced>& v) const {
-        as_derived()(v.a());
-        as_derived()(v.b());
-    }
-
     template<typename T, cpp_enable_if(etl::is_view<T>::value)>
     void operator()(T& view) const {
         as_derived()(view.value());
