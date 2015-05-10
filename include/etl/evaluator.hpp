@@ -72,13 +72,14 @@ struct standard_evaluator {
     template<typename E, typename R>
     struct vectorized_assign : cpp::and_u<vectorize_expr, decay_traits<E>::vectorizable, intrinsic_traits<value_t<R>>::vectorizable, intrinsic_traits<value_t<E>>::vectorizable> {};
 
-    template<typename E, typename R, cpp_enable_if(!vectorized_assign<E, R>::value && has_direct_access<E>::value && !is_temporary_expr<E>::value)>
+    template<typename E, typename R, cpp_enable_if(!vectorized_assign<E, R>::value && has_direct_access<R>::value && !is_temporary_expr<E>::value)>
     static void assign_evaluate(E&& expr, R&& result){
         evaluate_only(expr);
 
         auto m = result.memory_start();
 
         const std::size_t size = etl::size(result);
+        std::cout << "diret" << std::endl;
 
         std::size_t iend = 0;
 
@@ -98,11 +99,12 @@ struct standard_evaluator {
         }
     }
     
-    template<typename E, typename R, cpp_enable_if(!vectorized_assign<E, R>::value && !has_direct_access<E>::value && !is_temporary_expr<E>::value)>
+    template<typename E, typename R, cpp_enable_if(!vectorized_assign<E, R>::value && !has_direct_access<R>::value && !is_temporary_expr<E>::value)>
     static void assign_evaluate(E&& expr, R&& result){
         evaluate_only(expr);
 
         const std::size_t size = etl::size(result);
+        std::cout << "Indiret" << std::endl;
 
         for(std::size_t i = 0; i < size; ++i){
             result[i] = expr[i];
@@ -120,6 +122,8 @@ struct standard_evaluator {
         const std::size_t size = etl::size(result);
 
         std::size_t iend = 0;
+
+        std::cout << "Vectorized_assign" << std::endl;
 
         if(unroll_vectorized_loops){
             iend = size & std::size_t(-IT::size * 4);
