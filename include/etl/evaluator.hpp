@@ -103,7 +103,6 @@ struct standard_evaluator {
         evaluate_only(expr);
 
         const std::size_t size = etl::size(result);
-        std::cout << "Indiret" << std::endl;
 
         for(std::size_t i = 0; i < size; ++i){
             result[i] = expr[i];
@@ -121,8 +120,6 @@ struct standard_evaluator {
         const std::size_t size = etl::size(result);
 
         std::size_t iend = 0;
-
-        std::cout << "Vectorized_assign" << std::endl;
 
         if(unroll_vectorized_loops){
             iend = size & std::size_t(-IT::size * 4);
