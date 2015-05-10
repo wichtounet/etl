@@ -70,6 +70,14 @@ inline __m256d div(__m256d lhs, __m256d rhs){
     return _mm256_div_pd(lhs, rhs);
 }
 
+inline __m256d sqrt(__m256d x){
+    return _mm256_sqrt_pd(x);
+}
+
+inline __m256d minus(__m256d x){
+    return _mm256_xor_pd(x, _mm256_set1_pd(-0.f));
+}
+
 inline __m256 add(__m256 lhs, __m256 rhs){
     return _mm256_add_ps(lhs, rhs);
 }
@@ -84,6 +92,14 @@ inline __m256 mul(__m256 lhs, __m256 rhs){
 
 inline __m256 div(__m256 lhs, __m256 rhs){
     return _mm256_div_ps(lhs, rhs);
+}
+
+inline __m256 sqrt(__m256 lhs){
+    return _mm256_sqrt_ps(lhs);
+}
+
+inline __m256 minus(__m256 x){
+    return _mm256_xor_ps(x, _mm256_set1_ps(-0.f));
 }
 
 } //end of namespace vec

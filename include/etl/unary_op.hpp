@@ -46,10 +46,16 @@ struct log_unary_op {
 
 template<typename T>
 struct sqrt_unary_op {
-    static constexpr const bool vectorizable = false;
+    using vec_type = intrinsic_type<T>;
+
+    static constexpr const bool vectorizable = true;
 
     static constexpr T apply(const T& x){
         return std::sqrt(x);
+    }
+
+    static constexpr vec_type sqrt(const vec_type& x) noexcept {
+        return vec::sqrt(x);
     }
 
     static std::string desc() noexcept {
@@ -59,8 +65,6 @@ struct sqrt_unary_op {
 
 template<typename T>
 struct exp_unary_op {
-    using vec_type = intrinsic_type<T>;
-
     static constexpr const bool vectorizable = false;
 
     static constexpr T apply(const T& x){
@@ -113,10 +117,16 @@ struct softplus_unary_op {
 
 template<typename T>
 struct minus_unary_op {
-    static constexpr const bool vectorizable = false;
+    using vec_type = intrinsic_type<T>;
+
+    static constexpr const bool vectorizable = true;
 
     static constexpr T apply(const T& x) noexcept {
         return -x;
+    }
+
+    static constexpr vec_type load(const vec_type& x) noexcept {
+        return vec::minus(x);
     }
 
     static std::string desc() noexcept {

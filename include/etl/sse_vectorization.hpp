@@ -70,6 +70,14 @@ inline __m128d div(__m128d lhs, __m128d rhs){
     return _mm_div_pd(lhs, rhs);
 }
 
+inline __m128d sqrt(__m128d x){
+    return _mm_sqrt_pd(x);
+}
+
+inline __m128d minus(__m128d x){
+    return _mm_xor_pd(x, _mm_set1_pd(-0.f));
+}
+
 inline __m128 add(__m128 lhs, __m128 rhs){
     return _mm_add_ps(lhs, rhs);
 }
@@ -84,6 +92,14 @@ inline __m128 mul(__m128 lhs, __m128 rhs){
 
 inline __m128 div(__m128 lhs, __m128 rhs){
     return _mm_div_ps(lhs, rhs);
+}
+
+inline __m128 sqrt(__m128 x){
+    return _mm_sqrt_ps(x);
+}
+
+inline __m128 minus(__m128 x){
+    return _mm_xor_ps(x, _mm_set1_ps(-0.f));
 }
 
 } //end of namespace vec
