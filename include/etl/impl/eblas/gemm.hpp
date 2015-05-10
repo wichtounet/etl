@@ -10,11 +10,11 @@
 #ifndef ETL_IMPL_EBLAS_GEMM_HPP
 #define ETL_IMPL_EBLAS_GEMM_HPP
 
-#ifdef ETL_VECTORIZE
+#ifdef ETL_VECTORIZE_IMPL
 #ifdef __SSE3__
 #define DGEMM_SSE
 #endif //__SSE3__
-#endif //ETL_VECTORIZE
+#endif //ETL_VECTORIZE_IMPL
 
 #ifdef DGEMM_SSE
 #include <immintrin.h>

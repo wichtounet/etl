@@ -24,7 +24,7 @@ using intrinsic_type = typename intrinsic_traits<T>::intrinsic_type;
 
 } //end of namespace etl
 
-#ifdef ETL_VECTORIZE
+#ifdef ETL_VECTORIZE_EXPR
 
 #ifdef __AVX__
 

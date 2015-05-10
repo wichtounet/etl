@@ -17,7 +17,7 @@
 #ifndef ETL_IMPL_AVX_CONVOLUTION_HPP
 #define ETL_IMPL_AVX_CONVOLUTION_HPP
 
-#ifdef ETL_VECTORIZE
+#ifdef ETL_VECTORIZE_IMPL
 
 #ifdef __AVX__
 
@@ -553,6 +553,6 @@ void sconv2_full(const I& input, const K& kernel, C&& conv){
 
 #endif //__SSE3__
 
-#endif //ETL_VECTORIZE
+#endif //ETL_VECTORIZE_IMPL
 
 #endif

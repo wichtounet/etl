@@ -108,7 +108,7 @@ using conv_deep_same_impl = conv_deep_impl<conv_type::SAME, I, K, C>;
 template<typename I, typename K, typename C, typename Enable = void>
 using conv_deep_full_impl = conv_deep_impl<conv_type::FULL, I, K, C>;
 
-#ifdef ETL_VECTORIZE
+#ifdef ETL_VECTORIZE_IMPL
 
 #ifdef __AVX__
 
@@ -284,7 +284,7 @@ struct conv2_full_impl<I, K, C, std::enable_if_t<is_single_precision_3<I,K,C>::v
 
 #endif //__SSE3__
 
-#endif //ETL_VECTORIZE
+#endif //ETL_VECTORIZE_IMPL
 
 } //end of namespace detail
 
