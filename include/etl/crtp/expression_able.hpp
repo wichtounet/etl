@@ -26,7 +26,7 @@ struct expression_able {
     }
 
     template<typename E>
-    auto scale(E&& e) -> decltype(etl::scale(as_derived(), std::forward<E>(e))) {
+    auto scale(E&& e){
         return etl::scale(as_derived(), std::forward<E>(e));
     }
 
