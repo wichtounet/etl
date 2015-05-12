@@ -21,10 +21,10 @@
 
 #define ETL_DEBUG_AUTO_TRICK template <typename E = void>
 
-#ifdef __INTEL_COMPILER
-#define cpp14_constexpr
-#else
+#ifdef __clang__
 #define cpp14_constexpr constexpr
+#else
+#define cpp14_constexpr
 #endif
 
 #endif
