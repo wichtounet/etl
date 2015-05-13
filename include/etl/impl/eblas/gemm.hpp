@@ -393,10 +393,10 @@ void fast_dgemm(A&& a, B&& b, C&& c){
     gemm_nn(
         etl::dim<0>(a), etl::dim<1>(b), etl::dim<1>(a),
         1.0,
-        a.memory_start(), etl::dim<1>(a), 1,
-        b.memory_start(), etl::dim<1>(b), 1,
+        a.memory_start(), row_stride(a), col_stride(a),
+        b.memory_start(), row_stride(b), col_stride(b),
         0.0,
-        c.memory_start(), etl::dim<1>(c), 1
+        c.memory_start(), row_stride(c), col_stride(c)
     );
 }
 
@@ -405,10 +405,10 @@ void fast_sgemm(A&& a, B&& b, C&& c){
     gemm_nn(
         etl::dim<0>(a), etl::dim<1>(b), etl::dim<1>(a),
         1.0f,
-        a.memory_start(), etl::dim<1>(a), 1,
-        b.memory_start(), etl::dim<1>(b), 1,
+        a.memory_start(), row_stride(a), col_stride(a),
+        b.memory_start(), row_stride(b), col_stride(b),
         0.0f,
-        c.memory_start(), etl::dim<1>(c), 1
+        c.memory_start(), row_stride(c), col_stride(c)
     );
 }
 
