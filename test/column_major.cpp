@@ -8,8 +8,7 @@
 
 #include "catch.hpp"
 #include "template_test.hpp"
-
-#include "etl/etl.hpp"
+#include "mmul_test.hpp"
 
 TEMPLATE_TEST_CASE_2( "column_major/1", "[fast][cm]", Z, int, long ) {
     etl::fast_matrix_cm<Z, 2, 3> test_matrix(0);
@@ -197,4 +196,22 @@ TEMPLATE_TEST_CASE_2( "column_major/sub/1", "[fast][cm]", Z, int, long ) {
     REQUIRE(b(1, 1) == 11);
     REQUIRE(b(2, 0) == 9);
     REQUIRE(b(2, 1) == 12);
+}
+
+MMUL_TEST_CASE( "column_major/mul/1", "mmul") {
+    etl::fast_matrix_cm<T, 2, 3> a = {1,4,2,5,3,6};
+    etl::fast_matrix_cm<T, 3, 2> b = {7,9,11,8,10,12};
+    etl::fast_matrix_cm<T, 2, 2> c;
+
+    REQUIRE(etl::rows(a) == 2);
+    REQUIRE(etl::columns(a) == 3);
+    REQUIRE(etl::rows(b) == 3);
+    REQUIRE(etl::columns(b) == 2);
+
+    Impl::apply(a, b, c);
+
+    REQUIRE(c(0,0) == 58);
+    REQUIRE(c(0,1) == 64);
+    REQUIRE(c(1,0) == 139);
+    REQUIRE(c(1,1) == 154);
 }
