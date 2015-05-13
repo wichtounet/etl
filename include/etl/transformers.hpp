@@ -438,9 +438,9 @@ struct mm_mul_transformer {
     }
 
     value_type operator[](std::size_t i) const {
-        auto i_i = i / dim<1>(right);
-        auto i_j = i % dim<1>(right);
-        return (*this)(i_i, i_j);
+        std::size_t i_i, i_j;
+        std::tie(i_i, i_j) = index_to_2d(left, i);
+        return operator()(i_i, i_j);
     }
 
     value_type operator()(std::size_t i, std::size_t j) const {
