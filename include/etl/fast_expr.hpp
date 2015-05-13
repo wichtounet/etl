@@ -905,7 +905,7 @@ template<typename A>
 auto fft_1d(A&& a) -> temporary_unary_helper_type<fft_value_type<A>, A, fft1_expr> {
     static_assert(is_etl_expr<A>::value, "FFT only supported for ETL expressions");
 
-    return {a};
+    return temporary_unary_helper_type<fft_value_type<A>, A, fft1_expr>{a};
 }
 
 template<typename A, typename C>
@@ -919,7 +919,7 @@ template<typename A>
 auto ifft_1d(A&& a) -> temporary_unary_helper_type<ifft_value_type<A>, A, ifft1_expr> {
     static_assert(is_etl_expr<A>::value, "FFT only supported for ETL expressions");
 
-    return {a};
+    return temporary_unary_helper_type<ifft_value_type<A>, A, ifft1_expr>{a};
 }
 
 template<typename A, typename C>
@@ -933,7 +933,7 @@ template<typename A>
 auto ifft_1d_real(A&& a) -> temporary_unary_helper_type<ifft_real_value_type<A>, A, ifft1_real_expr> {
     static_assert(is_etl_expr<A>::value, "FFT only supported for ETL expressions");
 
-    return {a};
+    return temporary_unary_helper_type<ifft_real_value_type<A>, A, ifft1_real_expr>{a};
 }
 
 template<typename A, typename C>
@@ -947,7 +947,7 @@ template<typename A>
 auto fft_2d(A&& a) -> temporary_unary_helper_type<fft_value_type<A>, A, fft2_expr> {
     static_assert(is_etl_expr<A>::value, "FFT only supported for ETL expressions");
 
-    return {a};
+    return temporary_unary_helper_type<fft_value_type<A>, A, fft2_expr>{a};
 }
 
 template<typename A, typename C>
@@ -961,7 +961,7 @@ template<typename A>
 auto ifft_2d(A&& a) -> temporary_unary_helper_type<fft_value_type<A>, A, ifft2_expr> {
     static_assert(is_etl_expr<A>::value, "FFT only supported for ETL expressions");
 
-    return {a};
+    return temporary_unary_helper_type<fft_value_type<A>, A, ifft2_expr>{a};
 }
 
 template<typename A, typename C>
@@ -975,7 +975,7 @@ template<typename A>
 auto ifft_2d_real(A&& a) -> temporary_unary_helper_type<ifft_real_value_type<A>, A, ifft2_real_expr> {
     static_assert(is_etl_expr<A>::value, "FFT only supported for ETL expressions");
 
-    return {a};
+    return temporary_unary_helper_type<ifft_real_value_type<A>, A, ifft2_real_expr>{a};
 }
 
 template<typename A, typename C>
