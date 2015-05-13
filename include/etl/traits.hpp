@@ -1175,6 +1175,15 @@ std::size_t col_stride(E&& e){
     }
 }
 
+template<typename E>
+std::size_t major_stride(E&& e){
+    if(decay_traits<E>::storage_order == order::RowMajor){
+        return etl::dim<1>(e);
+    } else {
+        return etl::dim<0>(e);
+    }
+}
+
 } //end of namespace etl
 
 #endif

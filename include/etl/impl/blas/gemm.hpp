@@ -29,27 +29,33 @@ namespace blas {
 
 template<typename A, typename B, typename C>
 void dgemm(A&& a, B&& b, C&& c){
+    bool row_major = decay_traits<A>::storage_order == order::RowMajor;
+
     cblas_dgemm(
-        CblasRowMajor, CblasNoTrans, CblasNoTrans,
+        row_major ? CblasRowMajor : CblasColMajor,
+        CblasNoTrans, CblasNoTrans,
         etl::rows(a), etl::columns(b), etl::columns(a),
         1.0,
-        a.memory_start(), etl::dim<1>(a),
-        b.memory_start(), etl::dim<1>(b),
+        a.memory_start(), major_stride(a),
+        b.memory_start(), major_stride(b),
         0.0,
-        c.memory_start(), etl::dim<1>(c)
+        c.memory_start(), major_stride(c)
     );
 };
 
 template<typename A, typename B, typename C>
 void sgemm(A&& a, B&& b, C&& c){
+    bool row_major = decay_traits<A>::storage_order == order::RowMajor;
+
     cblas_sgemm(
-        CblasRowMajor, CblasNoTrans, CblasNoTrans,
+        row_major ? CblasRowMajor : CblasColMajor,
+        CblasNoTrans, CblasNoTrans,
         etl::rows(a), etl::columns(b), etl::columns(a),
-        1.0,
-        a.memory_start(), etl::dim<1>(a),
-        b.memory_start(), etl::dim<1>(b),
-        0.0,
-        c.memory_start(), etl::dim<1>(c)
+        1.0f,
+        a.memory_start(), major_stride(a),
+        b.memory_start(), major_stride(b),
+        0.0f,
+        c.memory_start(), major_stride(c)
     );
 };
 
