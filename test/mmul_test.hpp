@@ -5,6 +5,8 @@
 //  http://opensource.org/licenses/MIT)
 //=======================================================================
 
+#include "etl/etl.hpp"
+
 #define MMUL_FUNCTOR( name, ...)                                \
 struct name {                                                   \
     template<typename A, typename B, typename C>                \
@@ -40,7 +42,7 @@ MMUL_FUNCTOR( blas_mmul_double, etl::impl::blas::dgemm(a, b, c) )
     TEST_CASE( name, description )
 
 #define MMUL_TEST_CASE_SECTION( Tn, Impln) \
-        SECTION( #Tn #Impln ) \
+        SECTION( #Tn "_" #Impln ) \
         { \
             INTERNAL_CATCH_UNIQUE_NAME( ____C_A_T_C_H____T_E_M_P_L_A_TE____T_E_S_T____ )<Tn, Impln>(); \
         }
