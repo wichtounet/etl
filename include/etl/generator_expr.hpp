@@ -21,19 +21,14 @@ public:
     using value_type = typename Generator::value_type;
 
     template<typename... Args>
-    generator_expr(Args... args) : generator(std::forward<Args>(args)...) {}
+    explicit generator_expr(Args... args) : generator(std::forward<Args>(args)...) {}
 
-    generator_expr(const generator_expr& e) : generator(e.generator) {
-        //Nothing else to init
-    }
-
-    generator_expr(generator_expr&& e) : generator(std::move(e.generator)) {
-        //Nothing else to init
-    }
+    generator_expr(const generator_expr& e) = default;
+    generator_expr(generator_expr&& e) = default;
 
     //Expression are invariant
-    generator_expr& operator=(const generator_expr&) = delete;
-    generator_expr& operator=(generator_expr&&) = delete;
+    generator_expr& operator=(const generator_expr& e) = delete;
+    generator_expr& operator=(generator_expr&& e) = delete;
 
     //Apply the expression
 

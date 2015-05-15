@@ -47,11 +47,8 @@ public:
     using       memory_type = void;
     using const_memory_type = void;
 
-    //Cannot be constructed with no args
-    unary_expr() = delete;
-
     //Construct a new expression
-    unary_expr(Expr l) : _value(std::forward<Expr>(l)){
+    explicit unary_expr(Expr l) : _value(std::forward<Expr>(l)){
         //Nothing else to init
     }
 
@@ -123,11 +120,8 @@ public:
     using       return_type = std::conditional_t<non_const_return_ref, value_type&, value_type>;
     using const_return_type = std::conditional_t<const_return_ref, const value_type&, value_type>;
 
-    //Cannot be constructed with no args
-    unary_expr() = delete;
-
     //Construct a new expression
-    unary_expr(Expr l) : _value(std::forward<Expr>(l)){
+    explicit unary_expr(Expr l) : _value(std::forward<Expr>(l)){
         //Nothing else to init
     }
 
@@ -266,11 +260,8 @@ public:
     using       memory_type = void;
     using const_memory_type = void;
 
-    //Cannot be constructed with no args
-    unary_expr() = delete;
-
     //Construct a new expression
-    unary_expr(Expr l) : _value(std::forward<Expr>(l)){
+    explicit unary_expr(Expr l) : _value(std::forward<Expr>(l)){
         //Nothing else to init
     }
 
@@ -278,8 +269,8 @@ public:
     unary_expr(unary_expr&& rhs) = default;
 
     //Expression are invariant
-    unary_expr& operator=(const unary_expr&) = delete;
-    unary_expr& operator=(unary_expr&&) = delete;
+    unary_expr& operator=(const unary_expr& e) = delete;
+    unary_expr& operator=(unary_expr&& e) = delete;
 
     //Accessors
 

@@ -78,7 +78,7 @@ void check_conv_2d_sizes(const I& input, const K& kernel, const C& conv){
 }
 
 template<conv_type TT, typename I, typename K, typename C, cpp::enable_if_all_u<etl_traits<I>::is_fast, etl_traits<K>::is_fast, etl_traits<C>::is_fast> = cpp::detail::dummy>
-void check_conv_2d_sizes(const I&, const K&, const C&){
+void check_conv_2d_sizes(const I& /*input*/, const K& /*kernel*/, const C& /*conv*/){
     static_assert(etl_traits<I>::dimensions() == 2 && etl_traits<K>::dimensions() == 2 && etl_traits<C>::dimensions() == 2, "Invalid dimensions for 2D convolution");
 
     static_assert(
@@ -188,7 +188,7 @@ struct basic_conv_expr {
     }
 
     template<typename A, typename B, std::size_t... I>
-    static result_type<A,B>* dyn_allocate(const A& a, const B& b, std::index_sequence<I...>){
+    static result_type<A,B>* dyn_allocate(const A& a, const B& b, std::index_sequence<I...> /*seq*/){
         return new result_type<A, B>(this_type::dim(a, b, I)...);
     }
 

@@ -52,12 +52,12 @@ struct basic_fft_expr {
     using result_type = typename result_type_builder<A>::type;
 
     template<typename A, cpp_enable_if(decay_traits<A>::is_fast)>
-    static result_type<A>* allocate(A&&){
+    static result_type<A>* allocate(A&& /*a*/){
         return new result_type<A>();
     }
 
     template<typename A, std::size_t... I>
-    static result_type<A>* dyn_allocate(A&& a, std::index_sequence<I...>){
+    static result_type<A>* dyn_allocate(A&& a, std::index_sequence<I...> /*seq*/){
         return new result_type<A>(etl::template dim<I>(a)...);
     }
 
