@@ -20,11 +20,11 @@ struct scalar {
 
     explicit constexpr scalar(T v) : value(v) {}
 
-    constexpr const T operator[](std::size_t) const noexcept {
+    constexpr const T operator[](std::size_t /*d*/) const noexcept {
         return value;
     }
 
-    constexpr const vec_type load(std::size_t) const noexcept {
+    constexpr const vec_type load(std::size_t /*d*/) const noexcept {
         return vec::set(value);
     }
 

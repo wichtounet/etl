@@ -104,9 +104,6 @@ private:
     bool evaluated = false;
 
 public:
-    //Cannot be constructed with no args
-    temporary_unary_expr() = delete;
-
     //Construct a new expression
     explicit temporary_unary_expr(AExpr a) : _a(a) {
         //Nothing else to init
@@ -128,8 +125,8 @@ public:
     }
 
     //Expressions are invariant
-    temporary_unary_expr& operator=(const temporary_unary_expr&) = delete;
-    temporary_unary_expr& operator=(temporary_unary_expr&&) = delete;
+    temporary_unary_expr& operator=(const temporary_unary_expr& /*e*/) = delete;
+    temporary_unary_expr& operator=(temporary_unary_expr&& /*e*/) = delete;
 
     //Accessors
 
@@ -203,9 +200,6 @@ private:
     bool evaluated = false;
 
 public:
-    //Cannot be constructed with no args
-    temporary_binary_expr() = delete;
-
     //Construct a new expression
     temporary_binary_expr(AExpr a, BExpr b) : _a(a), _b(b) {
         //Nothing else to init
@@ -227,8 +221,8 @@ public:
     }
 
     //Expressions are invariant
-    temporary_binary_expr& operator=(const temporary_binary_expr&) = delete;
-    temporary_binary_expr& operator=(temporary_binary_expr&&) = delete;
+    temporary_binary_expr& operator=(const temporary_binary_expr& /*e*/) = delete;
+    temporary_binary_expr& operator=(temporary_binary_expr&& /*e*/) = delete;
 
     //Accessors
 

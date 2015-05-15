@@ -52,7 +52,7 @@ std::ostream& operator<<(std::ostream& os, const sequence_generator_op<T>& s){
 }
 
 template<typename T>
-std::ostream& operator<<(std::ostream& os, const normal_generator_op<T>&){
+std::ostream& operator<<(std::ostream& os, const normal_generator_op<T>& /*s*/){
     return os << "N(0,1)";
 }
 

@@ -32,7 +32,7 @@ public:
 
     //Apply the expression
 
-    value_type operator[](std::size_t) const {
+    value_type operator[](std::size_t /*d*/) const {
         return generator();
     }
 

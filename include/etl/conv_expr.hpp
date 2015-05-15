@@ -269,7 +269,7 @@ struct basic_conv_expr {
     }
 
     template<typename A, typename B, std::size_t... I>
-    static constexpr std::size_t size_mul(const std::index_sequence<I...>& ){
+    static constexpr std::size_t size_mul(const std::index_sequence<I...>& /*seq*/){
         return mul_all<this_type::dim<A, B, I>()...>::value;
     }
 
