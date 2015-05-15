@@ -53,8 +53,8 @@ public:
     binary_expr(binary_expr&& e) = default;
 
     //Expressions are invariant
-    binary_expr& operator=(const binary_expr&) = delete;
-    binary_expr& operator=(binary_expr&&) = delete;
+    binary_expr& operator=(const binary_expr& e) = delete;
+    binary_expr& operator=(binary_expr&& e) = delete;
 
     //Accessors
 
