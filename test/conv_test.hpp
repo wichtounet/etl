@@ -5,12 +5,12 @@
 //  http://opensource.org/licenses/MIT)
 //=======================================================================
 
-#ifdef ETL_VECTORIZE
-#ifdef __SSE3__
-#define TEST_SSE
-#endif
+#ifdef ETL_VECTORIZE_IMPL
 #ifdef __AVX__
 #define TEST_AVX
+#endif
+#ifdef __SSE3__
+#define TEST_SSE
 #endif
 #endif
 
