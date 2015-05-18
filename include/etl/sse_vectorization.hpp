@@ -137,22 +137,22 @@ ETL_INLINE_VEC_128 log(__m128 x){
 
 //Min
 
-ETL_INLINE_VEC_128 min(__m128 lhs, __m128 rhs){
-    return _mm_min_ps(lhs, rhs);
-}
-
 ETL_INLINE_VEC_128D min(__m128d lhs, __m128d rhs){
     return _mm_min_pd(lhs, rhs);
 }
 
-//Max
-
-ETL_INLINE_VEC_128 max(__m128 lhs, __m128 rhs){
-    return _mm_max_ps(lhs, rhs);
+ETL_INLINE_VEC_128 min(__m128 lhs, __m128 rhs){
+    return _mm_min_ps(lhs, rhs);
 }
+
+//Max
 
 ETL_INLINE_VEC_128D max(__m128d lhs, __m128d rhs){
     return _mm_max_pd(lhs, rhs);
+}
+
+ETL_INLINE_VEC_128 max(__m128 lhs, __m128 rhs){
+    return _mm_max_ps(lhs, rhs);
 }
 
 #endif
