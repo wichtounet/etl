@@ -35,7 +35,7 @@ constexpr const init_flag_t init_flag = init_flag_t::DUMMY;
 template<typename... V>
 struct values_t {
     const std::tuple<V...> values;
-    values_t(V... v) : values(v...) {};
+    explicit values_t(V... v) : values(v...) {};
 
     template<typename T, std::size_t... I>
     std::vector<T> list_sub(const std::index_sequence<I...>& /*i*/) const {
@@ -50,7 +50,7 @@ struct values_t {
 
 template<typename... V>
 values_t<V...> values(V... v){
-    return {v...};
+    return values_t<V...>{v...};
 }
 
 namespace dyn_detail {

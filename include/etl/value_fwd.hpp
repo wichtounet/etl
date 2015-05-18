@@ -26,6 +26,9 @@ template<typename T, std::size_t Rows>
 using fast_vector = fast_matrix_impl<T, std::array<T, Rows>, order::RowMajor, Rows>;
 
 template<typename T, std::size_t Rows>
+using fast_vector_cm = fast_matrix_impl<T, std::array<T, Rows>, order::ColumnMajor, Rows>;
+
+template<typename T, std::size_t Rows>
 using fast_dyn_vector = fast_matrix_impl<T, std::vector<T>, order::RowMajor, Rows>;
 
 template<typename T, std::size_t... Dims>

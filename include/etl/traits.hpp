@@ -1085,7 +1085,7 @@ struct etl_traits<etl::fast_magic_view<V, N>> {
         return N;
     }
 
-    static std::size_t dim(const expr_t&, std::size_t /*unused*/){
+    static std::size_t dim(const expr_t& /*e*/, std::size_t /*unused*/){
         return N;
     }
 

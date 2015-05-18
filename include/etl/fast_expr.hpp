@@ -286,12 +286,12 @@ LE& operator%=(LE&& lhs, RE&& rhs){
 
 template<typename E, cpp::enable_if_u<is_etl_expr<E>::value> = cpp::detail::dummy>
 auto operator-(E&& value) -> unary_helper<E, minus_unary_op> {
-    return {value};
+    return unary_helper<E, minus_unary_op>{value};
 }
 
 template<typename E, cpp::enable_if_u<is_etl_expr<std::decay_t<E>>::value> = cpp::detail::dummy>
 auto abs(E&& value) -> unary_helper<E, abs_unary_op> {
-    return {value};
+    return unary_helper<E, abs_unary_op>{value};
 }
 
 template<typename E, typename T, cpp::enable_if_all_u<is_etl_expr<E>::value, std::is_arithmetic<T>::value> = cpp::detail::dummy>
@@ -321,27 +321,27 @@ auto one_if_max(E&& value) -> left_binary_helper_op<E, scalar<value_t<E>>, one_i
 
 template<typename E, cpp::enable_if_u<is_etl_expr<E>::value> = cpp::detail::dummy>
 auto sqrt(E&& value) -> unary_helper<E, sqrt_unary_op> {
-    return {value};
+    return unary_helper<E, sqrt_unary_op>{value};
 }
 
 template<typename E, cpp::enable_if_u<is_etl_expr<E>::value> = cpp::detail::dummy>
 auto log(E&& value) -> unary_helper<E, log_unary_op> {
-    return {value};
+    return unary_helper<E, log_unary_op>{value};
 }
 
 template<typename E, cpp::enable_if_u<is_etl_expr<E>::value> = cpp::detail::dummy>
 auto uniform_noise(E&& value) -> unary_helper<E, uniform_noise_unary_op> {
-    return {value};
+    return unary_helper<E, uniform_noise_unary_op>{value};
 }
 
 template<typename E, cpp::enable_if_u<is_etl_expr<E>::value> = cpp::detail::dummy>
 auto normal_noise(E&& value) -> unary_helper<E, normal_noise_unary_op> {
-    return {value};
+    return unary_helper<E, normal_noise_unary_op>{value};
 }
 
 template<typename E, cpp::enable_if_u<is_etl_expr<E>::value> = cpp::detail::dummy>
 auto logistic_noise(E&& value) -> unary_helper<E, logistic_noise_unary_op> {
-    return {value};
+    return unary_helper<E, logistic_noise_unary_op>{value};
 }
 
 template<typename E, typename T, cpp::enable_if_all_u<is_etl_expr<E>::value, std::is_arithmetic<T>::value> = cpp::detail::dummy>
@@ -351,12 +351,12 @@ auto ranged_noise(E&& value, T v) -> left_binary_helper_op<E, scalar<value_t<E>>
 
 template<typename E, cpp::enable_if_u<is_etl_expr<E>::value> = cpp::detail::dummy>
 auto exp(E&& value) -> unary_helper<E, exp_unary_op> {
-    return {value};
+    return unary_helper<E, exp_unary_op>{value};
 }
 
 template<typename E, cpp::enable_if_u<is_etl_expr<E>::value> = cpp::detail::dummy>
 auto sign(E&& value) -> unary_helper<E, sign_unary_op> {
-    return {value};
+    return unary_helper<E, sign_unary_op>{value};
 }
 
 //Note: Use of decltype here should not be necessary, but g++ does
@@ -379,12 +379,12 @@ auto softmax(E&& e){
 
 template<typename E, cpp::enable_if_u<is_etl_expr<E>::value> = cpp::detail::dummy>
 auto bernoulli(const E& value) -> unary_helper<E, bernoulli_unary_op> {
-    return {value};
+    return unary_helper<E, bernoulli_unary_op>{value};
 }
 
 template<typename E, cpp::enable_if_u<is_etl_expr<E>::value> = cpp::detail::dummy>
 auto r_bernoulli(const E& value) -> unary_helper<E, reverse_bernoulli_unary_op> {
-    return {value};
+    return unary_helper<E, reverse_bernoulli_unary_op>{value};
 }
 
 //}}}
@@ -393,37 +393,37 @@ auto r_bernoulli(const E& value) -> unary_helper<E, reverse_bernoulli_unary_op> 
 
 template<std::size_t D, typename E, cpp::enable_if_u<is_etl_expr<E>::value> = cpp::detail::dummy>
 auto dim(E&& value, std::size_t i) -> identity_helper<E, dim_view<build_identity_type<E>, D>> {
-    return {{value, i}};
+    return identity_helper<E, dim_view<build_identity_type<E>, D>>{{value, i}};
 }
 
 template<typename E, cpp::enable_if_u<is_etl_expr<E>::value> = cpp::detail::dummy>
 auto row(E&& value, std::size_t i) -> identity_helper<E, dim_view<build_identity_type<E>, 1>> {
-    return {{value, i}};
+    return identity_helper<E, dim_view<build_identity_type<E>, 1>>{{value, i}};
 }
 
 template<typename E, cpp::enable_if_u<is_etl_expr<E>::value> = cpp::detail::dummy>
 auto col(E&& value, std::size_t i) -> identity_helper<E, dim_view<build_identity_type<E>, 2>> {
-    return {{value, i}};
+    return identity_helper<E, dim_view<build_identity_type<E>, 2>>{{value, i}};
 }
 
 template<typename E, cpp::enable_if_u<is_etl_expr<E>::value> = cpp::detail::dummy>
 auto sub(E&& value, std::size_t i) -> identity_helper<E, sub_view<build_identity_type<E>>> {
     static_assert(etl_traits<std::decay_t<E>>::dimensions() > 1, "Cannot use sub on vector");
-    return {{value, i}};
+    return identity_helper<E, sub_view<build_identity_type<E>>>{{value, i}};
 }
 
 template<std::size_t Rows, std::size_t Columns, typename E, cpp::enable_if_u<is_etl_expr<E>::value> = cpp::detail::dummy>
 auto reshape(E&& value) -> identity_helper<E, fast_matrix_view<build_identity_type<E>, Rows, Columns>> {
     cpp_assert(size(value) == Rows * Columns, "Invalid size for reshape");
 
-    return {fast_matrix_view<build_identity_type<E>, Rows, Columns>(value)};
+    return identity_helper<E, fast_matrix_view<build_identity_type<E>, Rows, Columns>>{fast_matrix_view<build_identity_type<E>, Rows, Columns>(value)};
 }
 
 template<typename E, cpp::enable_if_u<is_etl_expr<E>::value> = cpp::detail::dummy>
 auto reshape(E&& value, std::size_t rows, std::size_t columns) -> identity_helper<E, dyn_matrix_view<build_identity_type<E>>> {
     cpp_assert(size(value) == rows * columns, "Invalid size for reshape");
 
-    return {{value, rows, columns}};
+    return identity_helper<E, dyn_matrix_view<build_identity_type<E>>>{{value, rows, columns}};
 }
 
 //}}}
@@ -432,12 +432,12 @@ auto reshape(E&& value, std::size_t rows, std::size_t columns) -> identity_helpe
 
 template<typename D = double>
 auto magic(std::size_t i) -> virtual_helper<D, magic_view<D>> {
-    return {magic_view<D>{i}};
+    return virtual_helper<D, magic_view<D>>{magic_view<D>{i}};
 }
 
 template<std::size_t N, typename D = double>
 auto magic() -> virtual_helper<D, fast_magic_view<D, N>> {
-    return {{}};
+    return virtual_helper<D, fast_magic_view<D, N>>{{}};
 }
 
 //}}}
@@ -447,56 +447,59 @@ auto magic() -> virtual_helper<D, fast_magic_view<D, N>> {
 
 template<std::size_t D1, std::size_t... D, typename E, cpp_enable_if(is_etl_expr<E>::value)>
 auto rep(E&& value) -> unary_expr<value_t<E>, rep_r_transformer<build_type<E>, D1, D...>, virtual_op> {
-    return {rep_r_transformer<build_type<E>, D1, D...>(value)};
+    return unary_expr<value_t<E>, rep_r_transformer<build_type<E>, D1, D...>, virtual_op>{rep_r_transformer<build_type<E>, D1, D...>(value)};
 }
 
 template<std::size_t D1, std::size_t... D, typename E, cpp_enable_if(is_etl_expr<E>::value)>
 auto rep_r(E&& value) -> unary_expr<value_t<E>, rep_r_transformer<build_type<E>, D1, D...>, virtual_op> {
-    return {rep_r_transformer<build_type<E>, D1, D...>(value)};
+    return unary_expr<value_t<E>, rep_r_transformer<build_type<E>, D1, D...>, virtual_op>{rep_r_transformer<build_type<E>, D1, D...>(value)};
 }
 
 template<std::size_t D1, std::size_t... D, typename E, cpp_enable_if(is_etl_expr<E>::value)>
 auto rep_l(E&& value) -> unary_expr<value_t<E>, rep_l_transformer<build_type<E>, D1, D...>, virtual_op> {
-    return {rep_l_transformer<build_type<E>, D1, D...>(value)};
+    return unary_expr<value_t<E>, rep_l_transformer<build_type<E>, D1, D...>, virtual_op>{rep_l_transformer<build_type<E>, D1, D...>(value)};
 }
 
 template<typename... D, typename E, cpp_enable_if(is_etl_expr<E>::value && cpp::all_convertible_to<std::size_t, std::size_t, D...>::value)>
 auto rep(E&& value, std::size_t d1, D... d) -> unary_expr<value_t<E>, dyn_rep_r_transformer<build_type<E>, 1 + sizeof...(D)>, virtual_op> {
-    return {dyn_rep_r_transformer<build_type<E>, 1 + sizeof...(D)>(value, {{d1, static_cast<std::size_t>(d)...}})};
+    return unary_expr<value_t<E>, dyn_rep_r_transformer<build_type<E>, 1 + sizeof...(D)>, virtual_op>{
+        dyn_rep_r_transformer<build_type<E>, 1 + sizeof...(D)>(value, {{d1, static_cast<std::size_t>(d)...}})};
 }
 
 template<typename... D, typename E, cpp_enable_if(is_etl_expr<E>::value && cpp::all_convertible_to<std::size_t, std::size_t, D...>::value)>
 auto rep_r(E&& value, std::size_t d1, D... d) -> unary_expr<value_t<E>, dyn_rep_r_transformer<build_type<E>, 1 + sizeof...(D)>, virtual_op> {
-    return {dyn_rep_r_transformer<build_type<E>, 1 + sizeof...(D)>(value, {{d1, static_cast<std::size_t>(d)...}})};
+    return unary_expr<value_t<E>, dyn_rep_r_transformer<build_type<E>, 1 + sizeof...(D)>, virtual_op>{
+        dyn_rep_r_transformer<build_type<E>, 1 + sizeof...(D)>(value, {{d1, static_cast<std::size_t>(d)...}})};
 }
 
 template<typename... D, typename E, cpp_enable_if(is_etl_expr<E>::value && cpp::all_convertible_to<std::size_t, std::size_t, D...>::value)>
 auto rep_l(E&& value, std::size_t d1, D... d) -> unary_expr<value_t<E>, dyn_rep_l_transformer<build_type<E>, 1 + sizeof...(D)>, virtual_op> {
-    return {dyn_rep_l_transformer<build_type<E>, 1 + sizeof...(D)>(value, {{d1, static_cast<std::size_t>(d)...}})};
+    return unary_expr<value_t<E>, dyn_rep_l_transformer<build_type<E>, 1 + sizeof...(D)>, virtual_op>{
+        dyn_rep_l_transformer<build_type<E>, 1 + sizeof...(D)>(value, {{d1, static_cast<std::size_t>(d)...}})};
 }
 
 template<typename E, cpp::enable_if_u<is_etl_expr<E>::value> = cpp::detail::dummy>
 auto sum_r(E&& value) -> stable_transform_helper<E, sum_r_transformer> {
     static_assert(etl_traits<std::decay_t<E>>::dimensions() > 1, "Can only use sum_r on matrix");
-    return {sum_r_transformer<build_type<E>>(value)};
+    return stable_transform_helper<E, sum_r_transformer>{sum_r_transformer<build_type<E>>(value)};
 }
 
 template<typename E, cpp::enable_if_u<is_etl_expr<E>::value> = cpp::detail::dummy>
 auto sum_l(E&& value) -> stable_transform_helper<E, sum_l_transformer> {
     static_assert(etl_traits<std::decay_t<E>>::dimensions() > 1, "Can only use sum_r on matrix");
-    return {sum_l_transformer<build_type<E>>(value)};
+    return stable_transform_helper<E, sum_l_transformer>{sum_l_transformer<build_type<E>>(value)};
 }
 
 template<typename E, cpp::enable_if_u<is_etl_expr<E>::value> = cpp::detail::dummy>
 auto mean_r(E&& value) -> stable_transform_helper<E, mean_r_transformer> {
     static_assert(etl_traits<std::decay_t<E>>::dimensions() > 1, "Can only use sum_r on matrix");
-    return {mean_r_transformer<build_type<E>>(value)};
+    return stable_transform_helper<E, mean_r_transformer>{mean_r_transformer<build_type<E>>(value)};
 }
 
 template<typename E, cpp::enable_if_u<is_etl_expr<E>::value> = cpp::detail::dummy>
 auto mean_l(E&& value) -> stable_transform_helper<E, mean_l_transformer> {
     static_assert(etl_traits<std::decay_t<E>>::dimensions() > 1, "Can only use sum_r on matrix");
-    return {mean_l_transformer<build_type<E>>(value)};
+    return stable_transform_helper<E, mean_l_transformer>{mean_l_transformer<build_type<E>>(value)};
 }
 
 //}}}
@@ -506,37 +509,37 @@ auto mean_l(E&& value) -> stable_transform_helper<E, mean_l_transformer> {
 template<typename E, cpp::enable_if_u<is_etl_expr<E>::value> = cpp::detail::dummy>
 auto hflip(const E& value) -> stable_transform_helper<E, hflip_transformer> {
     static_assert(etl_traits<std::decay_t<E>>::dimensions() <= 2, "Can only use flips on 1D/2D");
-    return {hflip_transformer<build_type<E>>(value)};
+    return stable_transform_helper<E, hflip_transformer>{hflip_transformer<build_type<E>>(value)};
 }
 
 template<typename E, cpp::enable_if_u<is_etl_expr<E>::value> = cpp::detail::dummy>
 auto vflip(const E& value) -> stable_transform_helper<E, vflip_transformer> {
     static_assert(etl_traits<std::decay_t<E>>::dimensions() <= 2, "Can only use flips on 1D/2D");
-    return {vflip_transformer<build_type<E>>(value)};
+    return stable_transform_helper<E, vflip_transformer>{vflip_transformer<build_type<E>>(value)};
 }
 
 template<typename E, cpp::enable_if_u<is_etl_expr<E>::value> = cpp::detail::dummy>
 auto fflip(const E& value) -> stable_transform_helper<E, fflip_transformer> {
     static_assert(etl_traits<std::decay_t<E>>::dimensions() <= 2, "Can only use flips on 1D/2D");
-    return {fflip_transformer<build_type<E>>(value)};
+    return stable_transform_helper<E, fflip_transformer>{fflip_transformer<build_type<E>>(value)};
 }
 
 template<typename E, cpp::enable_if_u<is_etl_expr<E>::value> = cpp::detail::dummy>
 auto transpose(const E& value) -> stable_transform_helper<E, transpose_transformer> {
     static_assert(decay_traits<E>::dimensions() <= 2, "Transpose not defined for matrix > 2D");
-    return {transpose_transformer<build_type<E>>(value)};
+    return stable_transform_helper<E, transpose_transformer>{transpose_transformer<build_type<E>>(value)};
 }
 
 template<std::size_t C1, std::size_t C2, typename E, cpp::enable_if_u<is_etl_expr<E>::value> = cpp::detail::dummy>
 auto p_max_pool_h(E&& value) -> unary_expr<value_t<E>, p_max_pool_h_transformer<build_type<E>, C1, C2>, virtual_op> {
     validate_pmax_pooling<C1, C2>(value);
-    return {p_max_pool_h_transformer<build_type<E>, C1, C2>(value)};
+    return unary_expr<value_t<E>, p_max_pool_h_transformer<build_type<E>, C1, C2>, virtual_op>{p_max_pool_h_transformer<build_type<E>, C1, C2>(value)};
 }
 
 template<std::size_t C1, std::size_t C2, typename E, cpp::enable_if_u<is_etl_expr<E>::value> = cpp::detail::dummy>
 auto p_max_pool_p(E&& value) -> unary_expr<value_t<E>, p_max_pool_p_transformer<build_type<E>, C1, C2>, virtual_op> {
     validate_pmax_pooling<C1, C2>(value);
-    return {p_max_pool_p_transformer<build_type<E>, C1, C2>(value)};
+    return unary_expr<value_t<E>, p_max_pool_p_transformer<build_type<E>, C1, C2>, virtual_op>{p_max_pool_p_transformer<build_type<E>, C1, C2>(value)};
 }
 
 template<typename A>
@@ -544,7 +547,7 @@ auto convmtx(A&& a, std::size_t h) -> stable_transform_helper<A, dyn_convmtx_tra
     static_assert(is_etl_expr<A>::value, "Convolution matrices only supported for ETL expressions");
     static_assert(decay_traits<A>::dimensions() == 1, "Convolutional matrix only works in 1D");
 
-    return {dyn_convmtx_transformer<build_type<A>>(a, h)};
+    return stable_transform_helper<A, dyn_convmtx_transformer>{dyn_convmtx_transformer<build_type<A>>(a, h)};
 }
 
 template<typename A>
@@ -552,7 +555,7 @@ auto convmtx2(A&& a, std::size_t k1, std::size_t k2) -> stable_transform_helper<
     static_assert(is_etl_expr<A>::value, "Convolution matrices only supported for ETL expressions");
     static_assert(decay_traits<A>::dimensions() == 2, "Convolutional matrix only works in 2D");
 
-    return {dyn_convmtx2_transformer<build_type<A>>(a, k1, k2)};
+    return stable_transform_helper<A, dyn_convmtx2_transformer>{dyn_convmtx2_transformer<build_type<A>>(a, k1, k2)};
 }
 
 //}}}
@@ -605,7 +608,7 @@ auto lazy_mul(A&& a, B&& b) -> stable_transform_binary_helper<A, B, mm_mul_trans
     static_assert(is_etl_expr<A>::value && is_etl_expr<B>::value, "Matrix multiplication only supported for ETL expressions");
     static_assert(decay_traits<A>::dimensions() == 2 && decay_traits<B>::dimensions() == 2, "Matrix multiplication only works in 2D");
 
-    return {mm_mul_transformer<build_type<A>, build_type<B>>(a, b)};
+    return stable_transform_binary_helper<A, B, mm_mul_transformer>{mm_mul_transformer<build_type<A>, build_type<B>>(a, b)};
 }
 
 template<typename A, typename B, typename C, cpp::enable_if_all_u<
@@ -1063,12 +1066,12 @@ value_return_t<E> min(E&& values){
 
 template<typename T = double>
 auto normal_generator() -> generator_expr<normal_generator_op<T>> {
-    return {};
+    return generator_expr<normal_generator_op<T>>{};
 }
 
 template<typename T = double>
 auto sequence_generator(T current = 0) -> generator_expr<sequence_generator_op<T>> {
-    return {current};
+    return generator_expr<sequence_generator_op<T>>{current};
 }
 
 //}}}

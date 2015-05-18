@@ -32,7 +32,7 @@ void check_mm_mul_sizes(const A& a, const B& b, C& c){
 }
 
 template<typename A, typename B, typename C, cpp::enable_if_all_u<etl_traits<A>::is_fast, etl_traits<B>::is_fast, etl_traits<C>::is_fast> = cpp::detail::dummy>
-void check_mm_mul_sizes(const A&, const B&, C&){
+void check_mm_mul_sizes(const A& /*a*/, const B& /*b*/, C& /*c*/){
     static_assert(
             etl_traits<A>::template dim<1>() == etl_traits<B>::template dim<0>()          //interior dimensions
         &&  etl_traits<A>::template dim<0>() == etl_traits<C>::template dim<0>()          //exterior dimension 1
@@ -52,7 +52,7 @@ void check_vm_mul_sizes(const A& a, const B& b, C& c){
 }
 
 template<typename A, typename B, typename C, cpp::enable_if_all_u<etl_traits<A>::is_fast, etl_traits<B>::is_fast, etl_traits<C>::is_fast> = cpp::detail::dummy>
-void check_vm_mul_sizes(const A&, const B&, C&){
+void check_vm_mul_sizes(const A& /*a*/, const B& /*b*/, C& /*c*/){
     static_assert(
             etl_traits<A>::template dim<0>() == etl_traits<B>::template dim<0>()          //exterior dimension 1
         &&  etl_traits<B>::template dim<1>() == etl_traits<C>::template dim<0>(),         //exterior dimension 2
@@ -71,7 +71,7 @@ void check_mv_mul_sizes(const A& a, const B& b, C& c){
 }
 
 template<typename A, typename B, typename C, cpp::enable_if_all_u<etl_traits<A>::is_fast, etl_traits<B>::is_fast, etl_traits<C>::is_fast> = cpp::detail::dummy>
-void check_mv_mul_sizes(const A&, const B&, C&){
+void check_mv_mul_sizes(const A& /*a*/, const B& /*b*/, C& /*c*/){
     static_assert(
             etl_traits<A>::template dim<1>() == etl_traits<B>::template dim<0>()          //interior dimensions
         &&  etl_traits<A>::template dim<0>() == etl_traits<C>::template dim<0>()          //exterior dimension 1
@@ -96,7 +96,7 @@ struct basic_mm_mul_expr {
     using result_type = typename result_type_builder<A, B>::type;
 
     template<typename A, typename B, cpp_enable_if(decay_traits<A>::is_fast && decay_traits<B>::is_fast)>
-    static result_type<A,B>* allocate(A&&, B&&){
+    static result_type<A,B>* allocate(A&& /*a*/, B&& /*b*/){
         return new result_type<A, B>();
     }
 
@@ -200,12 +200,12 @@ struct basic_vm_mul_expr {
     }
 
     template<typename A, typename B>
-    static std::size_t size(const A&, const B& b){
+    static std::size_t size(const A& /*a*/, const B& b){
         return etl::dim<1>(b);
     }
 
     template<typename A, typename B>
-    static std::size_t dim(const A&, const B& b, std::size_t){
+    static std::size_t dim(const A& /*a*/, const B& b, std::size_t /*d*/){
         return etl::dim<1>(b);
     }
 
@@ -245,12 +245,12 @@ struct basic_mv_mul_expr {
     using result_type = typename result_type_builder<A, B>::type;
 
     template<typename A, typename B, cpp_enable_if(decay_traits<A>::is_fast && decay_traits<B>::is_fast)>
-    static result_type<A,B>* allocate(A&&, B&&){
+    static result_type<A,B>* allocate(A&& /*a*/, B&& /*b*/){
         return new result_type<A, B>();
     }
 
     template<typename A, typename B, cpp_disable_if(decay_traits<A>::is_fast && decay_traits<B>::is_fast)>
-    static result_type<A,B>* allocate(A&& a, B&&){
+    static result_type<A,B>* allocate(A&& a, B&& /*b*/){
         return new result_type<A, B>(etl::dim<0>(a));
     }
 
@@ -271,12 +271,12 @@ struct basic_mv_mul_expr {
     }
 
     template<typename A, typename B>
-    static std::size_t size(const A& a, const B&){
+    static std::size_t size(const A& a, const B& /*b*/){
         return etl::dim<0>(a);
     }
 
     template<typename A, typename B>
-    static std::size_t dim(const A& a, const B&, std::size_t){
+    static std::size_t dim(const A& a, const B& /*b*/, std::size_t /*d*/){
         return etl::dim<0>(a);
     }
 

@@ -39,7 +39,7 @@ struct sequence_generator_op {
     const value_type start;
     value_type current;
 
-    sequence_generator_op(value_type start = 0) : start(start), current(start) {}
+    explicit sequence_generator_op(value_type start = 0) : start(start), current(start) {}
 
     value_type operator()(){
         return current++;
@@ -52,7 +52,7 @@ std::ostream& operator<<(std::ostream& os, const sequence_generator_op<T>& s){
 }
 
 template<typename T>
-std::ostream& operator<<(std::ostream& os, const normal_generator_op<T>&){
+std::ostream& operator<<(std::ostream& os, const normal_generator_op<T>& /*s*/){
     return os << "N(0,1)";
 }
 

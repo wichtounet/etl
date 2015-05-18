@@ -45,7 +45,7 @@ struct rep_r_transformer {
 
 private:
     template<typename... Sizes, std::size_t... I>
-    value_type selected_only(const std::index_sequence<I...>&, Sizes... sizes) const {
+    value_type selected_only(const std::index_sequence<I...>& /*seq*/, Sizes... sizes) const {
         return sub(cpp::nth_value<I>(sizes...)...);
     }
 };
@@ -77,7 +77,7 @@ struct rep_l_transformer {
 
 private:
     template<typename... Sizes, std::size_t... I>
-    value_type selected_only(const std::index_sequence<I...>&, Sizes... sizes) const {
+    value_type selected_only(const std::index_sequence<I...>& /*seq*/, Sizes... sizes) const {
         return sub(cpp::nth_value<I>(sizes...)...);
     }
 };
@@ -113,7 +113,7 @@ struct dyn_rep_r_transformer {
 
 private:
     template<typename... Sizes, std::size_t... I>
-    value_type selected_only(const std::index_sequence<I...>&, Sizes... sizes) const {
+    value_type selected_only(const std::index_sequence<I...>& /*seq*/, Sizes... sizes) const {
         return sub(cpp::nth_value<I>(sizes...)...);
     }
 };
@@ -149,7 +149,7 @@ struct dyn_rep_l_transformer {
 
 private:
     template<typename... Sizes, std::size_t... I>
-    value_type selected_only(const std::index_sequence<I...>&, Sizes... sizes) const {
+    value_type selected_only(const std::index_sequence<I...>& /*seq*/, Sizes... sizes) const {
         return sub(cpp::nth_value<I>(sizes...)...);
     }
 };
@@ -427,7 +427,7 @@ struct mm_mul_transformer {
     }
 
     template<typename A, typename B, cpp::enable_if_all_u<etl_traits<A>::is_fast, etl_traits<B>::is_fast> = cpp::detail::dummy>
-    void check_mmul_sizes(const A&, const B&){
+    void check_mmul_sizes(const A& /*a*/, const B& /*b*/){
         static_assert(
                 etl_traits<A>::template dim<1>() == etl_traits<B>::template dim<0>()          //interior dimensions
             , "Invalid sizes for multiplication");
