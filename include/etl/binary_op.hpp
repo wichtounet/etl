@@ -212,6 +212,9 @@ struct one_if_binary_op {
     }
 };
 
+//Define operators which are no simple c++ operators (+,-,*,...)
+//These operators will be displayed differently
+
 template<typename T, typename E>
 struct simple_operator<ranged_noise_binary_op<T, E>> : std::false_type {};
 
@@ -226,7 +229,6 @@ struct simple_operator<pow_binary_op<T, E>> : std::false_type {};
 
 template<typename T, typename E>
 struct simple_operator<one_if_binary_op<T, E>> : std::false_type {};
-
 
 } //end of namespace etl
 
