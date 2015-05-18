@@ -269,3 +269,80 @@ CONV2_FULL_TEST_CASE( "column_major/conv2/full_1", "[cm][conv2]" ) {
     REQUIRE(c(3,2) == Approx(T(1.5)));
     REQUIRE(c(3,3) == Approx(T(0.5)));
 }
+
+CONV2_FULL_TEST_CASE( "column_major/conv2/full_2", "[cm][conv2]" ) {
+    etl::fast_matrix<T, 3, 3> aa(etl::magic(3));
+    etl::fast_matrix<T, 2, 2> bb(etl::magic(2));
+
+    etl::fast_matrix_cm<T, 3, 3> a;
+    etl::fast_matrix_cm<T, 2, 2> b;
+    etl::fast_matrix_cm<T, 4, 4> c;
+
+    //TODO magic(X) is not compatible with column major matrices
+
+    for(std::size_t i = 0; i < etl::dim<0>(aa); ++i){
+        for(std::size_t j = 0; j < etl::dim<1>(aa); ++j){
+            a(i,j) = aa(i,j);
+        }
+    }
+
+    for(std::size_t i = 0; i < etl::dim<0>(bb); ++i){
+        for(std::size_t j = 0; j < etl::dim<1>(bb); ++j){
+            b(i,j) = bb(i,j);
+        }
+    }
+
+    Impl::apply(a, b, c);
+
+    REQUIRE(c(0, 0) == Approx(T(8)));
+    REQUIRE(c(0, 1) == Approx(T(25)));
+    REQUIRE(c(0, 2) == Approx(T(9)));
+    REQUIRE(c(0, 3) == Approx(T(18)));
+
+    REQUIRE(c(1, 0) == Approx(T(35)));
+    REQUIRE(c(1, 1) == Approx(T(34)));
+    REQUIRE(c(1, 2) == Approx(T(48)));
+    REQUIRE(c(1, 3) == Approx(T(33)));
+
+    REQUIRE(c(2, 0) == Approx(T(16)));
+    REQUIRE(c(2, 1) == Approx(T(47)));
+    REQUIRE(c(2, 2) == Approx(T(67)));
+    REQUIRE(c(2, 3) == Approx(T(20)));
+
+    REQUIRE(c(3, 0) == Approx(T(16)));
+    REQUIRE(c(3, 1) == Approx(T(44)));
+    REQUIRE(c(3, 2) == Approx(T(26)));
+    REQUIRE(c(3, 3) == Approx(T(4)));
+}
+
+CONV2_FULL_TEST_CASE( "column_major/conv2/full_3", "[cm][conv2]" ) {
+    etl::fast_matrix_cm<T, 2, 6> a = {1,7,2,8,3,9,4,10,5,11,6,12};
+    etl::fast_matrix_cm<T, 2, 2> b = {1,3,2,4};
+    etl::fast_matrix_cm<T, 3, 7> c;
+
+    Impl::apply(a, b, c);
+
+    REQUIRE(c(0, 0) == Approx(T(1)));
+    REQUIRE(c(0, 1) == Approx(T(4)));
+    REQUIRE(c(0, 2) == Approx(T(7)));
+    REQUIRE(c(0, 3) == Approx(T(10)));
+    REQUIRE(c(0, 4) == Approx(T(13)));
+    REQUIRE(c(0, 5) == Approx(T(16)));
+    REQUIRE(c(0, 6) == Approx(T(12)));
+
+    REQUIRE(c(1, 0) == Approx(T(10)));
+    REQUIRE(c(1, 1) == Approx(T(32)));
+    REQUIRE(c(1, 2) == Approx(T(42)));
+    REQUIRE(c(1, 3) == Approx(T(52)));
+    REQUIRE(c(1, 4) == Approx(T(62)));
+    REQUIRE(c(1, 5) == Approx(T(72)));
+    REQUIRE(c(1, 6) == Approx(T(48)));
+
+    REQUIRE(c(2, 0) == Approx(T(21)));
+    REQUIRE(c(2, 1) == Approx(T(52)));
+    REQUIRE(c(2, 2) == Approx(T(59)));
+    REQUIRE(c(2, 3) == Approx(T(66)));
+    REQUIRE(c(2, 4) == Approx(T(73)));
+    REQUIRE(c(2, 5) == Approx(T(80)));
+    REQUIRE(c(2, 6) == Approx(T(48)));
+}
