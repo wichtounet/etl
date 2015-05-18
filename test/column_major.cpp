@@ -9,6 +9,7 @@
 #include "catch.hpp"
 #include "template_test.hpp"
 #include "mmul_test.hpp"
+#include "conv_test.hpp"
 
 TEMPLATE_TEST_CASE_2( "column_major/1", "[fast][cm]", Z, int, long ) {
     etl::fast_matrix_cm<Z, 2, 3> test_matrix(0);
@@ -225,4 +226,46 @@ TEMPLATE_TEST_CASE_2( "column_major/vmul/1", "vmmul", Z, double, float) {
 
     REQUIRE(c(0) == 50);
     REQUIRE(c(1) == 122);
+}
+
+CONV1_FULL_TEST_CASE( "column_major/conv/full_1", "[cm][conv]" ) {
+    etl::fast_vector_cm<T, 3> a = {1.0, 2.0, 3.0};
+    etl::fast_vector_cm<T, 3> b = {0.0, 1.0, 0.5};
+    etl::fast_vector_cm<T, 5> c;
+
+    Impl::apply(a, b, c);
+
+    REQUIRE(c[0] == Approx(0.0));
+    REQUIRE(c[1] == Approx(1.0));
+    REQUIRE(c[2] == Approx(2.5));
+    REQUIRE(c[3] == Approx(4.0));
+    REQUIRE(c[4] == Approx(1.5));
+}
+
+CONV2_FULL_TEST_CASE( "column_major/conv2/full_1", "[cm][conv2]" ) {
+    etl::fast_matrix_cm<T, 3, 3> a = {1.0, 0.0, 3.0, 2.0, 1.0, 2.0, 3.0, 1.0, 1.0};
+    etl::fast_matrix_cm<T, 2, 2> b = {2.0, 0.5, 0.0, 0.5};
+    etl::fast_matrix_cm<T, 4, 4> c;
+
+    Impl::apply(a, b, c);
+
+    REQUIRE(c(0,0) == Approx(T(2.0)));
+    REQUIRE(c(0,1) == Approx(T(4.0)));
+    REQUIRE(c(0,2) == Approx(T(6.0)));
+    REQUIRE(c(0,3) == Approx(T(0.0)));
+
+    REQUIRE(c(1,0) == Approx(T(0.5)));
+    REQUIRE(c(1,1) == Approx(T(3.5)));
+    REQUIRE(c(1,2) == Approx(T(4.5)));
+    REQUIRE(c(1,3) == Approx(T(1.5)));
+
+    REQUIRE(c(2,0) == Approx(T(6.0)));
+    REQUIRE(c(2,1) == Approx(T(4.5)));
+    REQUIRE(c(2,2) == Approx(T(3.0)));
+    REQUIRE(c(2,3) == Approx(T(0.5)));
+
+    REQUIRE(c(3,0) == Approx(T(1.5)));
+    REQUIRE(c(3,1) == Approx(T(2.5)));
+    REQUIRE(c(3,2) == Approx(T(1.5)));
+    REQUIRE(c(3,3) == Approx(T(0.5)));
 }
