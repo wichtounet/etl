@@ -142,11 +142,21 @@ struct ranged_noise_binary_op {
 
 template<typename T, typename E>
 struct max_binary_op {
-    static constexpr const bool vectorizable = false;
+    using vec_type = intrinsic_type<T>;
 
     static constexpr T apply(const T& x, E value) noexcept {
         return std::max(x, value);
     }
+
+#ifdef __INTEL_COMPILER
+    static constexpr const bool vectorizable = true;
+
+    static cpp14_constexpr vec_type load(const vec_type& lhs, const vec_type& rhs) noexcept {
+        return vec::max(lhs, rhs);
+    }
+#else
+    static constexpr const bool vectorizable = false;
+#endif
 
     static std::string desc() noexcept {
         return "max";
@@ -155,11 +165,21 @@ struct max_binary_op {
 
 template<typename T, typename E>
 struct min_binary_op {
-    static constexpr const bool vectorizable = false;
+    using vec_type = intrinsic_type<T>;
 
     static constexpr T apply(const T& x, E value) noexcept {
         return std::min(x, value);
     }
+
+#ifdef __INTEL_COMPILER
+    static constexpr const bool vectorizable = true;
+
+    static cpp14_constexpr vec_type load(const vec_type& lhs, const vec_type& rhs) noexcept {
+        return vec::min(lhs, rhs);
+    }
+#else
+    static constexpr const bool vectorizable = false;
+#endif
 
     static std::string desc() noexcept {
         return "min";

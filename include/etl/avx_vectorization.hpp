@@ -11,11 +11,11 @@
 #include <immintrin.h>
 
 #ifdef __clang__
-#define ETL_INLINE_VEC_256 inline __m256 __attribute__((__always_inline__, __nodebug__)) 
-#define ETL_INLINE_VEC_256D inline __m256d __attribute__((__always_inline__, __nodebug__)) 
+#define ETL_INLINE_VEC_256 inline __m256 __attribute__((__always_inline__, __nodebug__))
+#define ETL_INLINE_VEC_256D inline __m256d __attribute__((__always_inline__, __nodebug__))
 #else
-#define ETL_INLINE_VEC_256 inline __m256 __attribute__((__always_inline__)) 
-#define ETL_INLINE_VEC_256D inline __m256d __attribute__((__always_inline__)) 
+#define ETL_INLINE_VEC_256 inline __m256 __attribute__((__always_inline__))
+#define ETL_INLINE_VEC_256D inline __m256d __attribute__((__always_inline__))
 #endif
 
 namespace etl {
@@ -130,6 +130,26 @@ ETL_INLINE_VEC_256D log(__m256d x){
 
 ETL_INLINE_VEC_256 log(__m256 x){
     return _mm256_log_ps(x);
+}
+
+//Min
+
+ETL_INLINE_VEC_256D min(__m256d lhs, __m256d rhs){
+    return _mm256_min_pd(lhs, rhs);
+}
+
+ETL_INLINE_VEC_256 min(__m256 lhs, __m256 rhs){
+    return _mm256_min_ps(lhs, rhs);
+}
+
+//Max
+
+ETL_INLINE_VEC_256D max(__m256d lhs, __m256d rhs){
+    return _mm256_max_pd(lhs, rhs);
+}
+
+ETL_INLINE_VEC_256 max(__m256 lhs, __m256 rhs){
+    return _mm256_max_ps(lhs, rhs);
 }
 
 #endif

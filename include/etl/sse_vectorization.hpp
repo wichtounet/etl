@@ -11,11 +11,11 @@
 #include <immintrin.h>
 
 #ifdef __clang__
-#define ETL_INLINE_VEC_128 inline __m128 __attribute__((__always_inline__, __nodebug__)) 
-#define ETL_INLINE_VEC_128D inline __m128d __attribute__((__always_inline__, __nodebug__)) 
+#define ETL_INLINE_VEC_128 inline __m128 __attribute__((__always_inline__, __nodebug__))
+#define ETL_INLINE_VEC_128D inline __m128d __attribute__((__always_inline__, __nodebug__))
 #else
-#define ETL_INLINE_VEC_128 inline __m128 __attribute__((__always_inline__)) 
-#define ETL_INLINE_VEC_128D inline __m128d __attribute__((__always_inline__)) 
+#define ETL_INLINE_VEC_128 inline __m128 __attribute__((__always_inline__))
+#define ETL_INLINE_VEC_128D inline __m128d __attribute__((__always_inline__))
 #endif
 
 namespace etl {
@@ -110,6 +110,9 @@ ETL_INLINE_VEC_128 minus(__m128 x){
     return _mm_xor_ps(x, _mm_set1_ps(-0.f));
 }
 
+//The Intel C++ Compiler (icc) has more intrinsics.
+//ETL uses them when compiled with icc
+
 #ifdef __INTEL_COMPILER
 
 //Exponential
@@ -130,6 +133,26 @@ ETL_INLINE_VEC_128D log(__m128d x){
 
 ETL_INLINE_VEC_128 log(__m128 x){
     return _mm_log_ps(x);
+}
+
+//Min
+
+ETL_INLINE_VEC_128 min(__m128 lhs, __m128 rhs){
+    return _mm_min_ps(lhs, rhs);
+}
+
+ETL_INLINE_VEC_128D min(__m128d lhs, __m128d rhs){
+    return _mm_min_pd(lhs, rhs);
+}
+
+//Max
+
+ETL_INLINE_VEC_128 max(__m128 lhs, __m128 rhs){
+    return _mm_max_ps(lhs, rhs);
+}
+
+ETL_INLINE_VEC_128D max(__m128d lhs, __m128d rhs){
+    return _mm_max_pd(lhs, rhs);
 }
 
 #endif
