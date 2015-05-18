@@ -33,9 +33,9 @@ constexpr const bool vectorize_expr = false;
 
 //Flag to enable vectorized implementation of algorithms
 #ifdef ETL_VECTORIZE_IMPL
-struct vectorize_impl : std::false_type {};
+constexpr const bool vectorize_impl = true;
 #else
-struct vectorize_impl : std::true_type {};
+constexpr const bool vectorize_impl = true;
 #endif
 
 //Flag to disable the creation of temporary in expressions
@@ -103,11 +103,11 @@ enum class vector_mode_t {
 };
 
 #ifdef __AVX__
-constexpr const vector_mode_t vector = vector_mode_t::AVX;
+constexpr const vector_mode_t vector_mode = vector_mode_t::AVX;
 #elif defined(__SSE3__)
-constexpr const vector_mode_t vector = vector_mode_t::SSE3;
+constexpr const vector_mode_t vector_mode = vector_mode_t::SSE3;
 #else
-constexpr const vector_mode_t vector = vector_mode_t::NONE;
+constexpr const vector_mode_t vector_mode = vector_mode_t::NONE;
 #endif
 
 } //end of namespace etl

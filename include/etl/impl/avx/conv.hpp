@@ -17,11 +17,9 @@
 #ifndef ETL_IMPL_AVX_CONVOLUTION_HPP
 #define ETL_IMPL_AVX_CONVOLUTION_HPP
 
-#ifdef ETL_VECTORIZE_IMPL
-
-#ifdef __AVX__
-
+#if defined(ETL_VECTORIZE_IMPL) && defined(__AVX__)
 #include <immintrin.h>
+#endif
 
 #include "../../allocator.hpp"
 #include "../common/conv.hpp"
@@ -31,6 +29,8 @@ namespace etl {
 namespace impl {
 
 namespace avx {
+
+#if defined(ETL_VECTORIZE_IMPL) && defined(__AVX__)
 
 inline __m256d mm256_reverse_pd(__m256d m1){
 #ifdef __AVX2__
@@ -547,12 +547,48 @@ void sconv2_full(const I& input, const K& kernel, C&& conv){
         conv.memory_start());
 }
 
+#else
+
+template<typename I, typename K, typename C>
+void dconv1_full(const I& /*input*/, const K& /*kernel*/, C&& /*conv*/);
+
+template<typename I, typename K, typename C>
+void dconv1_same(const I& /*input*/, const K& /*kernel*/, C&& /*conv*/);
+
+template<typename I, typename K, typename C>
+void dconv1_valid(const I& /*input*/, const K& /*kernel*/, C&& /*conv*/);
+
+template<typename I, typename K, typename C>
+void sconv1_full(const I& /*input*/, const K& /*kernel*/, C&& /*conv*/);
+
+template<typename I, typename K, typename C>
+void sconv1_same(const I& /*input*/, const K& /*kernel*/, C&& /*conv*/);
+
+template<typename I, typename K, typename C>
+void sconv1_valid(const I& /*input*/, const K& /*kernel*/, C&& /*conv*/);
+
+template<typename I, typename K, typename C>
+void dconv2_valid(const I& /*input*/, const K& /*kernel*/, C&& /*conv*/);
+
+template<typename I, typename K, typename C>
+void dconv2_same(const I& /*input*/, const K& /*kernel*/, C&& /*conv*/);
+
+template<typename I, typename K, typename C>
+void dconv2_full(const I& /*input*/, const K& /*kernel*/, C&& /*conv*/);
+
+template<typename I, typename K, typename C>
+void sconv2_valid(const I& /*input*/, const K& /*kernel*/, C&& /*conv*/);
+
+template<typename I, typename K, typename C>
+void sconv2_same(const I& /*input*/, const K& /*kernel*/, C&& /*conv*/);
+
+template<typename I, typename K, typename C>
+void sconv2_full(const I& /*input*/, const K& /*kernel*/, C&& /*conv*/);
+
+#endif
+
 } //end of namespace avx
 } //end of namespace impl
 } //end of namespace etl
-
-#endif //__SSE3__
-
-#endif //ETL_VECTORIZE_IMPL
 
 #endif

@@ -7,7 +7,7 @@
 /*
  * SSE implementation of 1D and 2D convolutions
  *
- * Ideas: 
+ * Ideas:
  *  * the tmp_res vectors could be avoided by using hadd instructions
  *  * 1D convolution with no memory allocation could probably be worked out (needs to be benchmarked)
  */
@@ -15,11 +15,9 @@
 #ifndef ETL_IMPL_SSE_CONVOLUTION_HPP
 #define ETL_IMPL_SSE_CONVOLUTION_HPP
 
-#ifdef ETL_VECTORIZE_IMPL
-
-#ifdef __SSE3__
-
+#if defined(ETL_VECTORIZE_IMPL) && defined(__SSE3__)
 #include <immintrin.h>
+#endif
 
 #include "../../allocator.hpp"
 #include "../common/conv.hpp"
@@ -29,6 +27,8 @@ namespace etl {
 namespace impl {
 
 namespace sse {
+
+#if defined(ETL_VECTORIZE_IMPL) && defined(__SSE3__)
 
 inline void dconv1_valid_micro_kernel(const double* in, const std::size_t n, const double* kernel, std::size_t m, double* out){
     auto kernel_reverse = allocate<__m128d>(m);
@@ -292,7 +292,7 @@ void dconv2_same(const I& input, const K& kernel, C&& conv){
         input.memory_start(), etl::rows(input), etl::columns(input),
         kernel.memory_start(), etl::rows(kernel), etl::columns(kernel),
         conv.memory_start());
-} 
+}
 
 inline void dconv2_full_micro_kernel(const double* in, std::size_t n1, std::size_t n2, const double* kernel, std::size_t m1, std::size_t m2, double* out){
     auto c1 = n1 + m1 - 1;
@@ -463,7 +463,7 @@ void sconv2_same(const I& input, const K& kernel, C&& conv){
 inline void sconv2_full_micro_kernel(const float* in, std::size_t n1, std::size_t n2, const float* kernel, std::size_t m1, std::size_t m2, float* out){
     auto c1 = n1 + m1 - 1;
     auto c2 = n2 + m2 - 1;
-    
+
     __m128 tmp1;
     __m128 tmp2;
     __m128 tmp3;
@@ -518,12 +518,48 @@ void sconv2_full(const I& input, const K& kernel, C&& conv){
         conv.memory_start());
 }
 
+#else
+
+template<typename I, typename K, typename C>
+void dconv1_full(const I& /*input*/, const K& /*kernel*/, C&& /*conv*/);
+
+template<typename I, typename K, typename C>
+void dconv1_same(const I& /*input*/, const K& /*kernel*/, C&& /*conv*/);
+
+template<typename I, typename K, typename C>
+void dconv1_valid(const I& /*input*/, const K& /*kernel*/, C&& /*conv*/);
+
+template<typename I, typename K, typename C>
+void sconv1_full(const I& /*input*/, const K& /*kernel*/, C&& /*conv*/);
+
+template<typename I, typename K, typename C>
+void sconv1_same(const I& /*input*/, const K& /*kernel*/, C&& /*conv*/);
+
+template<typename I, typename K, typename C>
+void sconv1_valid(const I& /*input*/, const K& /*kernel*/, C&& /*conv*/);
+
+template<typename I, typename K, typename C>
+void dconv2_valid(const I& /*input*/, const K& /*kernel*/, C&& /*conv*/);
+
+template<typename I, typename K, typename C>
+void dconv2_same(const I& /*input*/, const K& /*kernel*/, C&& /*conv*/);
+
+template<typename I, typename K, typename C>
+void dconv2_full(const I& /*input*/, const K& /*kernel*/, C&& /*conv*/);
+
+template<typename I, typename K, typename C>
+void sconv2_valid(const I& /*input*/, const K& /*kernel*/, C&& /*conv*/);
+
+template<typename I, typename K, typename C>
+void sconv2_same(const I& /*input*/, const K& /*kernel*/, C&& /*conv*/);
+
+template<typename I, typename K, typename C>
+void sconv2_full(const I& /*input*/, const K& /*kernel*/, C&& /*conv*/);
+
+#endif
+
 } //end of namespace std
 } //end of namespace impl
 } //end of namespace etl
-
-#endif //__SSE3__
-
-#endif //ETL_VECTORIZE
 
 #endif
