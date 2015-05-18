@@ -12,26 +12,30 @@ namespace etl {
 
 #ifdef ETL_VECTORIZE_FULL
 
+//VECTORIZE_FULL enables VECTORIZE_EXPR
 #ifndef ETL_VECTORIZE_EXPR
 #define ETL_VECTORIZE_EXPR
 #endif
 
+//VECTORIZE_FULL enables VECTORIZE_IMPL
 #ifndef ETL_VECTORIZE_IMPL
 #define ETL_VECTORIZE_IMPL
 #endif
 
 #endif //ETL_VECTORIZE_FULL
 
+//Flag to enable auto-vectorization of expressions
 #ifdef ETL_VECTORIZE_EXPR
 constexpr const bool vectorize_expr = true;
 #else
 constexpr const bool vectorize_expr = false;
 #endif
 
+//Flag to enable vectorized implementation of algorithms
 #ifdef ETL_VECTORIZE_IMPL
-struct vectorize : std::false_type {};
+struct vectorize_impl : std::false_type {};
 #else
-struct vectorize : std::true_type {};
+struct vectorize_impl : std::true_type {};
 #endif
 
 //Flag to disable the creation of temporary in expressions
@@ -43,7 +47,7 @@ constexpr const bool create_temporary = true;
 
 #ifdef ETL_MKL_MODE
 
-//MKL mode implies BLAS mode
+//MKL mode enables BLAS mode
 #ifndef ETL_BLAS_MODE
 #define ETL_BLAS_MODE
 #endif
@@ -63,7 +67,7 @@ struct is_cblas_enabled : std::true_type {};
 struct is_cblas_enabled : std::false_type {};
 #endif
 
-//Flag to perform elementwise multiplication by default (operator*) 
+//Flag to perform elementwise multiplication by default (operator*)
 //instead of matrix(vector) multiplication
 #ifdef ETL_ELEMENT_WISE_MULTIPLICATION
 constexpr const bool is_element_wise_mul_default = true;
@@ -90,6 +94,20 @@ constexpr const bool unroll_vectorized_loops = false;
 constexpr const bool unroll_normal_loops = true;
 #else
 constexpr const bool unroll_normal_loops = false;
+#endif
+
+enum class vector_mode_t {
+    NONE,
+    SSE3,
+    AVX
+};
+
+#ifdef __AVX__
+constexpr const vector_mode_t vector = vector_mode_t::AVX;
+#elif defined(__SSE3__)
+constexpr const vector_mode_t vector = vector_mode_t::SSE3;
+#else
+constexpr const vector_mode_t vector = vector_mode_t::NONE;
 #endif
 
 } //end of namespace etl
