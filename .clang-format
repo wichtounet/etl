@@ -1,12 +1,14 @@
 ---
 BasedOnStyle: Google
 IndentWidth: 4
-ColumnLimit: 120
+ColumnLimit: 160
 ---
 Language: Cpp
 Standard: Cpp11
 
+# Tune some indentations
 AccessModifierOffset: -4
+ConstructorInitializerIndentWidth: 8
 
 # Only control statements should have spaces
 SpaceBeforeParens: ControlStatements
@@ -28,9 +30,10 @@ UseTab: Never
 AlignTrailingComments: true
 SpacesBeforeTrailingComments: 1
 
+# Avoid empty lines
 KeepEmptyLinesAtTheStartOfBlocks: false
 MaxEmptyLinesToKeep: 1
 
-# Force pointers to the type for C++.
+# Force pointers to the type
 DerivePointerAlignment: false
 PointerAlignment: Left
