@@ -22,7 +22,7 @@ namespace etl {
 
 namespace detail {
 
-template<conv_type TT, typename I, typename K, typename C, cpp::disable_if_all_u<all_fast<I,K,C>::value> = cpp::detail::dummy>
+template<conv_type TT, typename I, typename K, typename C, cpp_disable_if(all_fast<I,K,C>::value)>
 void check_conv_1d_sizes(const I& input, const K& kernel, const C& conv){
     static_assert(etl_traits<I>::dimensions() == 1 && etl_traits<K>::dimensions() == 1 && etl_traits<C>::dimensions() == 1, "Invalid dimensions for 1D convolution");
 
@@ -39,7 +39,7 @@ void check_conv_1d_sizes(const I& input, const K& kernel, const C& conv){
     cpp_unused(conv);
 }
 
-template<conv_type TT, typename I, typename K, typename C, cpp::enable_if_all_u<all_fast<I,K,C>::value> = cpp::detail::dummy>
+template<conv_type TT, typename I, typename K, typename C, cpp_enable_if(all_fast<I,K,C>::value)>
 void check_conv_1d_sizes(const I& /*input*/, const K& /*kernel*/, const C& /*conv*/){
     static_assert(etl_traits<I>::dimensions() == 1 && etl_traits<K>::dimensions() == 1 && etl_traits<C>::dimensions() == 1, "Invalid dimensions for 1D convolution");
 
@@ -54,7 +54,7 @@ void check_conv_1d_sizes(const I& /*input*/, const K& /*kernel*/, const C& /*con
         "Invalid sizes for 'valid'convolution");
 }
 
-template<conv_type TT, typename I, typename K, typename C, cpp::disable_if_all_u<all_fast<I,K,C>::value> = cpp::detail::dummy>
+template<conv_type TT, typename I, typename K, typename C, cpp_disable_if(all_fast<I,K,C>::value)>
 void check_conv_2d_sizes(const I& input, const K& kernel, const C& conv){
     static_assert(etl_traits<I>::dimensions() == 2 && etl_traits<K>::dimensions() == 2 && etl_traits<C>::dimensions() == 2, "Invalid dimensions for 2D convolution");
 
@@ -77,7 +77,7 @@ void check_conv_2d_sizes(const I& input, const K& kernel, const C& conv){
     cpp_unused(conv);
 }
 
-template<conv_type TT, typename I, typename K, typename C, cpp::enable_if_all_u<all_fast<I,K,C>::value> = cpp::detail::dummy>
+template<conv_type TT, typename I, typename K, typename C, cpp_enable_if(all_fast<I,K,C>::value)>
 void check_conv_2d_sizes(const I& /*input*/, const K& /*kernel*/, const C& /*conv*/){
     static_assert(etl_traits<I>::dimensions() == 2 && etl_traits<K>::dimensions() == 2 && etl_traits<C>::dimensions() == 2, "Invalid dimensions for 2D convolution");
 
@@ -214,7 +214,7 @@ struct basic_conv_expr {
 
     template<typename A, typename B, typename C>
     static void apply(A&& a, B&& b, C&& c){
-        static_assert(is_etl_expr<A>::value && is_etl_expr<B>::value && is_etl_expr<C>::value, "Convolution only supported for ETL expressions");
+        static_assert(all_etl_expr<A,B,C>::value, "Convolution only supported for ETL expressions");
 
         check(a, b, c);
 

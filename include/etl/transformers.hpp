@@ -417,7 +417,7 @@ struct mm_mul_transformer {
     left_type left;
     right_type right;
 
-    template<typename A, typename B, cpp::disable_if_all_u<all_fast<A,B>::value> = cpp::detail::dummy>
+    template<typename A, typename B, cpp_disable_if(all_fast<A,B>::value)>
     void check_mmul_sizes(const A& a, const B& b){
         cpp_assert(
                 dim<1>(a) == dim<0>(b)          //interior dimensions
@@ -426,7 +426,7 @@ struct mm_mul_transformer {
         cpp_unused(b);
     }
 
-    template<typename A, typename B, cpp::enable_if_all_u<all_fast<A,B>::value> = cpp::detail::dummy>
+    template<typename A, typename B, cpp_enable_if(all_fast<A,B>::value)>
     void check_mmul_sizes(const A& /*a*/, const B& /*b*/){
         static_assert(
                 etl_traits<A>::template dim<1>() == etl_traits<B>::template dim<0>()          //interior dimensions

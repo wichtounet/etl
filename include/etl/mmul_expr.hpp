@@ -19,7 +19,7 @@ namespace etl {
 
 namespace detail {
 
-template<typename A, typename B, typename C, cpp::disable_if_all_u<all_fast<A,B,C>::value> = cpp::detail::dummy>
+template<typename A, typename B, typename C, cpp_disable_if(all_fast<A,B,C>::value)>
 void check_mm_mul_sizes(const A& a, const B& b, C& c){
     cpp_assert(
             dim<1>(a) == dim<0>(b)          //interior dimensions
@@ -31,7 +31,7 @@ void check_mm_mul_sizes(const A& a, const B& b, C& c){
     cpp_unused(c);
 }
 
-template<typename A, typename B, typename C, cpp::enable_if_all_u<all_fast<A,B,C>::value> = cpp::detail::dummy>
+template<typename A, typename B, typename C, cpp_enable_if(all_fast<A,B,C>::value)>
 void check_mm_mul_sizes(const A& /*a*/, const B& /*b*/, C& /*c*/){
     static_assert(
             etl_traits<A>::template dim<1>() == etl_traits<B>::template dim<0>()          //interior dimensions
@@ -40,7 +40,7 @@ void check_mm_mul_sizes(const A& /*a*/, const B& /*b*/, C& /*c*/){
         "Invalid sizes for multiplication");
 }
 
-template<typename A, typename B, typename C, cpp::disable_if_all_u<all_fast<A,B,C>::value> = cpp::detail::dummy>
+template<typename A, typename B, typename C, cpp_disable_if(all_fast<A,B,C>::value)>
 void check_vm_mul_sizes(const A& a, const B& b, C& c){
     cpp_assert(
             dim<0>(a) == dim<0>(b)          //exterior dimension 1
@@ -51,7 +51,7 @@ void check_vm_mul_sizes(const A& a, const B& b, C& c){
     cpp_unused(c);
 }
 
-template<typename A, typename B, typename C, cpp::enable_if_all_u<all_fast<A,B,C>::value> = cpp::detail::dummy>
+template<typename A, typename B, typename C, cpp_enable_if(all_fast<A,B,C>::value)>
 void check_vm_mul_sizes(const A& /*a*/, const B& /*b*/, C& /*c*/){
     static_assert(
             etl_traits<A>::template dim<0>() == etl_traits<B>::template dim<0>()          //exterior dimension 1
@@ -59,7 +59,7 @@ void check_vm_mul_sizes(const A& /*a*/, const B& /*b*/, C& /*c*/){
         "Invalid sizes for multiplication");
 }
 
-template<typename A, typename B, typename C, cpp::disable_if_all_u<all_fast<A,B,C>::value> = cpp::detail::dummy>
+template<typename A, typename B, typename C, cpp_disable_if(all_fast<A,B,C>::value)>
 void check_mv_mul_sizes(const A& a, const B& b, C& c){
     cpp_assert(
             dim<1>(a) == dim<0>(b)          //interior dimensions
@@ -70,7 +70,7 @@ void check_mv_mul_sizes(const A& a, const B& b, C& c){
     cpp_unused(c);
 }
 
-template<typename A, typename B, typename C, cpp::enable_if_all_u<all_fast<A,B,C>::value> = cpp::detail::dummy>
+template<typename A, typename B, typename C, cpp_enable_if(all_fast<A,B,C>::value)>
 void check_mv_mul_sizes(const A& /*a*/, const B& /*b*/, C& /*c*/){
     static_assert(
             etl_traits<A>::template dim<1>() == etl_traits<B>::template dim<0>()          //interior dimensions
@@ -107,7 +107,7 @@ struct basic_mm_mul_expr {
 
     template<typename A, typename B, typename C>
     static void apply(A&& a, B&& b, C&& c){
-        static_assert(is_etl_expr<A>::value && is_etl_expr<B>::value && is_etl_expr<C>::value, "Matrix multiplication only supported for ETL expressions");
+        static_assert(all_etl_expr<A,B,C>::value, "Matrix multiplication only supported for ETL expressions");
         static_assert(decay_traits<A>::dimensions() == 2 && decay_traits<B>::dimensions() == 2 && decay_traits<C>::dimensions() == 2, "Matrix multiplication only works in 2D");
         detail::check_mm_mul_sizes(a,b,c);
 
@@ -185,7 +185,7 @@ struct basic_vm_mul_expr {
 
     template<typename A, typename B, typename C>
     static void apply(A&& a, B&& b, C&& c){
-        static_assert(is_etl_expr<A>::value && is_etl_expr<B>::value && is_etl_expr<C>::value, "Vector-Matrix multiplication only supported for ETL expressions");
+        static_assert(all_etl_expr<A,B,C>::value, "Vector-Matrix multiplication only supported for ETL expressions");
         static_assert(decay_traits<A>::dimensions() == 1 && decay_traits<B>::dimensions() == 2 && decay_traits<C>::dimensions() == 1, "Invalid dimensions for vecto-matrix multiplication");
         detail::check_vm_mul_sizes(a,b,c);
 
@@ -256,7 +256,7 @@ struct basic_mv_mul_expr {
 
     template<typename A, typename B, typename C>
     static void apply(A&& a, B&& b, C&& c){
-        static_assert(is_etl_expr<A>::value && is_etl_expr<B>::value && is_etl_expr<C>::value, "Vector-Matrix multiplication only supported for ETL expressions");
+        static_assert(all_etl_expr<A,B,C>::value, "Vector-Matrix multiplication only supported for ETL expressions");
         static_assert(decay_traits<A>::dimensions() == 2 && decay_traits<B>::dimensions() == 1 && decay_traits<C>::dimensions() == 1, "Invalid dimensions for vecto-matrix multiplication");
         detail::check_mv_mul_sizes(a,b,c);
 
