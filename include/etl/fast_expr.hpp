@@ -480,25 +480,25 @@ auto rep_l(E&& value, std::size_t d1, D... d) -> unary_expr<value_t<E>, dyn_rep_
 
 template<typename E, cpp::enable_if_u<is_etl_expr<E>::value> = cpp::detail::dummy>
 auto sum_r(E&& value) -> stable_transform_helper<E, sum_r_transformer> {
-    static_assert(etl_traits<std::decay_t<E>>::dimensions() > 1, "Can only use sum_r on matrix");
+    static_assert(decay_traits<E>::dimensions() > 1, "Can only use sum_r on matrix");
     return stable_transform_helper<E, sum_r_transformer>{sum_r_transformer<build_type<E>>(value)};
 }
 
 template<typename E, cpp::enable_if_u<is_etl_expr<E>::value> = cpp::detail::dummy>
 auto sum_l(E&& value) -> stable_transform_helper<E, sum_l_transformer> {
-    static_assert(etl_traits<std::decay_t<E>>::dimensions() > 1, "Can only use sum_r on matrix");
+    static_assert(decay_traits<E>::dimensions() > 1, "Can only use sum_l on matrix");
     return stable_transform_helper<E, sum_l_transformer>{sum_l_transformer<build_type<E>>(value)};
 }
 
 template<typename E, cpp::enable_if_u<is_etl_expr<E>::value> = cpp::detail::dummy>
 auto mean_r(E&& value) -> stable_transform_helper<E, mean_r_transformer> {
-    static_assert(etl_traits<std::decay_t<E>>::dimensions() > 1, "Can only use sum_r on matrix");
+    static_assert(decay_traits<E>::dimensions() > 1, "Can only use mean_r on matrix");
     return stable_transform_helper<E, mean_r_transformer>{mean_r_transformer<build_type<E>>(value)};
 }
 
 template<typename E, cpp::enable_if_u<is_etl_expr<E>::value> = cpp::detail::dummy>
 auto mean_l(E&& value) -> stable_transform_helper<E, mean_l_transformer> {
-    static_assert(etl_traits<std::decay_t<E>>::dimensions() > 1, "Can only use sum_r on matrix");
+    static_assert(decay_traits<E>::dimensions() > 1, "Can only use mean_l on matrix");
     return stable_transform_helper<E, mean_l_transformer>{mean_l_transformer<build_type<E>>(value)};
 }
 
