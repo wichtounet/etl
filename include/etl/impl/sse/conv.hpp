@@ -558,7 +558,7 @@ void sconv2_full(const I& /*input*/, const K& /*kernel*/, C&& /*conv*/);
 
 #endif
 
-} //end of namespace std
+} //end of namespace sse
 } //end of namespace impl
 } //end of namespace etl
 

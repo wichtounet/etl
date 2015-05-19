@@ -15,7 +15,7 @@ namespace impl {
 namespace common {
 
 template<typename T>
-void left_same_kernel(const T* in, const std::size_t, const T* kernel, std::size_t m, T* out){
+void left_same_kernel(const T* in, const std::size_t /*n*/, const T* kernel, std::size_t m, T* out){
     std::size_t left = (m - 1) / 2;
     std::size_t right = m / 2;
 
