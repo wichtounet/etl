@@ -5,16 +5,13 @@ default: release
 include make-utils/flags.mk
 include make-utils/cpp-utils.mk
 
-WARNINGS_FLAGS += -pedantic
-CXX_FLAGS += -Ilib/include -ICatch/include -Werror
+$(eval $(call use_libcxx))
 
-ifneq (,$(findstring clang,$(CXX)))
-CXX_FLAGS += -stdlib=libc++
-endif
+# Be stricter
+CXX_FLAGS += -pedantic -Werror
 
-ifneq (,$(findstring c++-analyzer,$(CXX)))
-CXX_FLAGS += -stdlib=libc++
-endif
+# Add includes
+CXX_FLAGS += -Ilib/include -ICatch/include
 
 ifneq (,$(ETL_MKL))
 CXX_FLAGS += -DETL_MKL_MODE $(shell pkg-config --cflags cblas)
@@ -29,29 +26,22 @@ endif
 
 # Enable coverage if not disabled by the user
 ifeq (,$(ETL_NO_COVERAGE))
-ifneq (,$(findstring clang,$(CXX)))
-DEBUG_FLAGS += -fprofile-arcs -ftest-coverage
-else
-ifneq (,$(findstring g++,$(CXX)))
-DEBUG_FLAGS += --coverage
-endif
-endif
+$(eval $(call enable_coverage))
 endif
 
 # Enable sanitizers in debug mode
-DEBUG_FLAGS=-fsanitize=address,undefined
+DEBUG_FLAGS += -fsanitize=address,undefined
 
 # Enable vectoirization by default
 CXX_FLAGS += -DETL_VECTORIZE_FULL
 
+# Compile folders
+$(eval $(call auto_folder_compile,workbench))
+$(eval $(call auto_folder_compile,test))
+
+# Collect files for the test executable
 CPP_FILES=$(wildcard test/*.cpp)
 TEST_FILES=$(CPP_FILES:test/%=%)
-
-DEBUG_D_FILES=$(CPP_FILES:%.cpp=debug/%.cpp.d)
-RELEASE_D_FILES=$(CPP_FILES:%.cpp=release/%.cpp.d)
-
-$(eval $(call folder_compile,workbench,-Wno-error))
-$(eval $(call test_folder_compile,))
 
 # Create executables
 $(eval $(call add_executable,test_asm_1,workbench/test.cpp))
@@ -104,10 +94,6 @@ coverage_view: coverage
 format:
 	find include/etl/ test -name "*.hpp" -o -name "*.cpp" | xargs clang-format -i -style=file
 
-compile_db:
-	${MAKE} clean
-	bear make debug
-
 modernize:
 	clang-modernize -add-override -loop-convert -pass-by-value -use-auto -use-nullptr -p ${PWD} -include *
 
@@ -126,5 +112,4 @@ clean: base_clean
 	rm -rf reports
 	rm -rf latex/ html/
 
--include $(DEBUG_D_FILES)
--include $(RELEASE_D_FILES)
+include make-utils/cpp-utils-finalize.mk
