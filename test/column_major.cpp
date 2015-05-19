@@ -271,26 +271,14 @@ CONV2_FULL_TEST_CASE( "column_major/conv2/full_1", "[cm][conv2]" ) {
 }
 
 CONV2_FULL_TEST_CASE( "column_major/conv2/full_2", "[cm][conv2]" ) {
+    //TODO magic(X) is not compatible with column major matrices
+
     etl::fast_matrix<T, 3, 3> aa(etl::magic(3));
     etl::fast_matrix<T, 2, 2> bb(etl::magic(2));
 
-    etl::fast_matrix_cm<T, 3, 3> a;
-    etl::fast_matrix_cm<T, 2, 2> b;
+    etl::fast_matrix_cm<T, 3, 3> a(aa);
+    etl::fast_matrix_cm<T, 2, 2> b(bb);
     etl::fast_matrix_cm<T, 4, 4> c;
-
-    //TODO magic(X) is not compatible with column major matrices
-
-    for(std::size_t i = 0; i < etl::dim<0>(aa); ++i){
-        for(std::size_t j = 0; j < etl::dim<1>(aa); ++j){
-            a(i,j) = aa(i,j);
-        }
-    }
-
-    for(std::size_t i = 0; i < etl::dim<0>(bb); ++i){
-        for(std::size_t j = 0; j < etl::dim<1>(bb); ++j){
-            b(i,j) = bb(i,j);
-        }
-    }
 
     Impl::apply(a, b, c);
 

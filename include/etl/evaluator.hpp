@@ -97,7 +97,7 @@ struct standard_evaluator {
             m[i] = expr[i];
         }
     }
-    
+
     template<typename E, typename R, cpp_enable_if(!vectorized_assign<E, R>::value && !has_direct_access<R>::value && !is_temporary_expr<E>::value)>
     static void assign_evaluate(E&& expr, R&& result){
         evaluate_only(expr);
@@ -213,32 +213,44 @@ struct standard_evaluator {
     }
 };
 
+//Only containers of the same storage order can be assigned directly
+//Generators can be assigned to everything
 template<typename Expr, typename Result>
+struct direct_assign_compatible : cpp::or_u<
+    decay_traits<Expr>::is_generator,
+    decay_traits<Expr>::storage_order == decay_traits<Result>::storage_order> {};
+
+template<typename Expr, typename Result, cpp_enable_if(direct_assign_compatible<Expr, Result>::value)>
 void assign_evaluate(Expr&& expr, Result&& result){
     standard_evaluator<Expr, Result>::assign_evaluate(std::forward<Expr>(expr), std::forward<Result>(result));
 }
 
-template<typename Expr, typename Result>
+template<typename Expr, typename Result, cpp_disable_if(direct_assign_compatible<Expr, Result>::value)>
+void assign_evaluate(Expr&& expr, Result&& result){
+    standard_evaluator<Expr, Result>::assign_evaluate(transpose(expr), std::forward<Result>(result));
+}
+
+template<typename Expr, typename Result, cpp_enable_if(direct_assign_compatible<Expr, Result>::value)>
 void add_evaluate(Expr&& expr, Result&& result){
     standard_evaluator<Expr, Result>::add_evaluate(std::forward<Expr>(expr), std::forward<Result>(result));
 }
 
-template<typename Expr, typename Result>
+template<typename Expr, typename Result, cpp_enable_if(direct_assign_compatible<Expr, Result>::value)>
 void sub_evaluate(Expr&& expr, Result&& result){
     standard_evaluator<Expr, Result>::sub_evaluate(std::forward<Expr>(expr), std::forward<Result>(result));
 }
 
-template<typename Expr, typename Result>
+template<typename Expr, typename Result, cpp_enable_if(direct_assign_compatible<Expr, Result>::value)>
 void mul_evaluate(Expr&& expr, Result&& result){
     standard_evaluator<Expr, Result>::mul_evaluate(std::forward<Expr>(expr), std::forward<Result>(result));
 }
 
-template<typename Expr, typename Result>
+template<typename Expr, typename Result, cpp_enable_if(direct_assign_compatible<Expr, Result>::value)>
 void div_evaluate(Expr&& expr, Result&& result){
     standard_evaluator<Expr, Result>::div_evaluate(std::forward<Expr>(expr), std::forward<Result>(result));
 }
 
-template<typename Expr, typename Result>
+template<typename Expr, typename Result, cpp_enable_if(direct_assign_compatible<Expr, Result>::value)>
 void mod_evaluate(Expr&& expr, Result&& result){
     standard_evaluator<Expr, Result>::mod_evaluate(std::forward<Expr>(expr), std::forward<Result>(result));
 }
