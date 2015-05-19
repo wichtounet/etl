@@ -39,23 +39,19 @@ struct temporary_expr : comparable<D>, iterable<D> {
 
     //Apply the expression
 
-    value_type operator[](std::size_t i){
-        return as_derived().result()[i];
-    }
-
     value_type operator[](std::size_t i) const {
         return as_derived().result()[i];
     }
 
     template<typename... S, cpp_enable_if(sizeof...(S) == sub_size_compare<derived_t>::value)>
-    value_type operator()(S... args){
+    value_type operator()(S... args) const {
         static_assert(cpp::all_convertible_to<std::size_t, S...>::value, "Invalid size types");
 
         return as_derived().result()(args...);
     }
 
     template<typename DD = D, cpp_enable_if((sub_size_compare<DD>::value > 1))>
-    auto operator()(std::size_t i){
+    auto operator()(std::size_t i) const {
         return sub(as_derived(), i);
     }
 
