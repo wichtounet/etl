@@ -38,8 +38,10 @@ endif
 endif
 endif
 
-#DEBUG_FLAGS=-fsanitize=address -fsanitize=undefined
+# Enable sanitizers in debug mode
+DEBUG_FLAGS=-fsanitize=address,undefined
 
+# Enable vectoirization by default
 CXX_FLAGS += -DETL_VECTORIZE_FULL
 
 CPP_FILES=$(wildcard test/*.cpp)
