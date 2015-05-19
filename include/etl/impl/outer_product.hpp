@@ -35,12 +35,12 @@ struct outer_product_impl {
 #ifdef ETL_BLAS_MODE
 
 template<typename A, typename B, typename C>
-struct outer_product_impl <A, B, C, std::enable_if_t<is_single_precision_3<A, B, C>::value && is_dma_3<A, B, C>::value>> {
+struct outer_product_impl <A, B, C, std::enable_if_t<all_single_precision<A, B, C>::value && all_dma<A, B, C>::value>> {
     static void apply(const A& a, const B& b, C&& c){
         c = 0;
 
         cblas_sger(
-            CblasRowMajor, 
+            CblasRowMajor,
             etl::dim<0>(a), etl::dim<0>(b),
             1.0,
             a.memory_start(), 1,
@@ -51,12 +51,12 @@ struct outer_product_impl <A, B, C, std::enable_if_t<is_single_precision_3<A, B,
 };
 
 template<typename A, typename B, typename C>
-struct outer_product_impl <A, B, C, std::enable_if_t<is_double_precision_3<A, B, C>::value && is_dma_3<A, B, C>::value>> {
+struct outer_product_impl <A, B, C, std::enable_if_t<all_double_precision<A, B, C>::value && all_dma<A, B, C>::value>> {
     static void apply(const A& a, const B& b, C&& c){
         c = 0;
 
         cblas_dger(
-            CblasRowMajor, 
+            CblasRowMajor,
             etl::dim<0>(a), etl::dim<0>(b),
             1.0,
             a.memory_start(), 1,

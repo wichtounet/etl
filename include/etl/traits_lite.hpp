@@ -70,20 +70,14 @@ constexpr std::size_t dim() noexcept;
 template<typename T>
 struct is_single_precision : std::is_same<typename std::decay_t<T>::value_type, float> {};
 
-template<typename A, typename B>
-struct is_single_precision_2 : cpp::and_c<is_single_precision<A>, is_single_precision<B>> {};
-
-template<typename A, typename B, typename C>
-struct is_single_precision_3 : cpp::and_c<is_single_precision<A>, is_single_precision<B>, is_single_precision<C>> {};
+template<typename... E>
+struct all_single_precision : cpp::and_c<is_single_precision<E>...> {};
 
 template<typename T>
 struct is_double_precision : std::is_same<typename std::decay_t<T>::value_type, double> {};
 
-template<typename A, typename B>
-struct is_double_precision_2 : cpp::and_c<is_double_precision<A>, is_double_precision<B>> {};
-
-template<typename A, typename B, typename C>
-struct is_double_precision_3 : cpp::and_c<is_double_precision<A>, is_double_precision<B>, is_double_precision<C>> {};
+template<typename... E>
+struct all_double_precision : cpp::and_c<is_double_precision<E>...> {};
 
 template<typename T>
 struct is_complex_single_precision : std::is_same<typename std::decay_t<T>::value_type, std::complex<float>> {};
@@ -94,11 +88,8 @@ struct is_complex_double_precision : std::is_same<typename std::decay_t<T>::valu
 template<typename T>
 struct is_complex : cpp::or_c<is_complex_single_precision<T>, is_complex_double_precision<T>> {};
 
-template<typename A, typename B>
-struct is_dma_2 : cpp::and_c<has_direct_access<A>, has_direct_access<B>> {};
-
-template<typename A, typename B, typename C>
-struct is_dma_3 : cpp::and_c<has_direct_access<A>, has_direct_access<B>, has_direct_access<C>> {};
+template<typename... E>
+struct all_dma : cpp::and_c<has_direct_access<E>...> {};
 
 template<typename E>
 using decay_traits = etl_traits<std::decay_t<E>>;

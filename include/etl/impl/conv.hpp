@@ -109,10 +109,10 @@ template<typename I, typename K, typename C, typename Enable = void>
 using conv_deep_full_impl = conv_deep_impl<conv_type::FULL, I, K, C>;
 
 template<typename A, typename B, typename C>
-using is_vector_3s = cpp::and_c<is_single_precision_3<A, B, C>, is_dma_3<A, B, C>>;
+using is_vector_3s = cpp::and_c<all_single_precision<A, B, C>, all_dma<A, B, C>>;
 
 template<typename A, typename B, typename C>
-using is_vector_3d = cpp::and_c<is_double_precision_3<A, B, C>, is_dma_3<A, B, C>>;
+using is_vector_3d = cpp::and_c<all_double_precision<A, B, C>, all_dma<A, B, C>>;
 
 template<typename A, typename B, typename C>
 struct is_sse_dconv : cpp::and_u<vectorize_impl, vector_mode == vector_mode_t::SSE3, is_vector_3d<A, B, C>::value> {};

@@ -30,10 +30,10 @@ struct mm_mul_impl {
 };
 
 template<typename A, typename B, typename C>
-struct is_fast_dgemm : cpp::and_c<cpp::not_c<is_cblas_enabled>, is_double_precision_3<A, B, C>, is_dma_3<A, B, C>> {};
+struct is_fast_dgemm : cpp::and_c<cpp::not_c<is_cblas_enabled>, all_double_precision<A, B, C>, all_dma<A, B, C>> {};
 
 template<typename A, typename B, typename C>
-struct is_fast_sgemm : cpp::and_c<cpp::not_c<is_cblas_enabled>, is_single_precision_3<A, B, C>, is_dma_3<A, B, C>> {};
+struct is_fast_sgemm : cpp::and_c<cpp::not_c<is_cblas_enabled>, all_single_precision<A, B, C>, all_dma<A, B, C>> {};
 
 template<typename A, typename B, typename C>
 struct mm_mul_impl<A, B, C, std::enable_if_t<is_fast_dgemm<A,B,C>::value>> {
@@ -50,10 +50,10 @@ struct mm_mul_impl<A, B, C, std::enable_if_t<is_fast_sgemm<A,B,C>::value>> {
 };
 
 template<typename A, typename B, typename C>
-struct is_blas_dgemm : cpp::and_c<is_cblas_enabled, is_double_precision_3<A, B, C>, is_dma_3<A, B, C>> {};
+struct is_blas_dgemm : cpp::and_c<is_cblas_enabled, all_double_precision<A, B, C>, all_dma<A, B, C>> {};
 
 template<typename A, typename B, typename C>
-struct is_blas_sgemm : cpp::and_c<is_cblas_enabled, is_single_precision_3<A, B, C>, is_dma_3<A, B, C>> {};
+struct is_blas_sgemm : cpp::and_c<is_cblas_enabled, all_single_precision<A, B, C>, all_dma<A, B, C>> {};
 
 template<typename A, typename B, typename C>
 struct mm_mul_impl<A, B, C, std::enable_if_t<is_blas_dgemm<A,B,C>::value>> {

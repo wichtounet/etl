@@ -31,7 +31,7 @@ struct dot_impl {
 #ifdef ETL_BLAS_MODE
 
 template<typename A, typename B>
-struct dot_impl <A, B, std::enable_if_t<is_single_precision_2<A, B>::value && is_dma_2<A, B>::value>> {
+struct dot_impl <A, B, std::enable_if_t<all_single_precision<A, B>::value && all_dma<A, B>::value>> {
     static float apply(const A& a, const B& b){
         auto m_a = a.memory_start();
         auto m_b = b.memory_start();
@@ -41,7 +41,7 @@ struct dot_impl <A, B, std::enable_if_t<is_single_precision_2<A, B>::value && is
 };
 
 template<typename A, typename B>
-struct dot_impl <A, B, std::enable_if_t<is_double_precision_2<A, B>::value && is_dma_2<A, B>::value>> {
+struct dot_impl <A, B, std::enable_if_t<all_double_precision<A, B>::value && all_dma<A, B>::value>> {
     static double apply(const A& a, const B& b){
         auto m_a = a.memory_start();
         auto m_b = b.memory_start();

@@ -44,16 +44,16 @@ template<typename A, typename B, typename C, typename Enable = void>
 struct fft_conv2_full_impl;
 
 template<typename A, typename C>
-struct is_blas_dfft : cpp::and_c<is_mkl_enabled, is_double_precision<A>, is_dma_2<A, C>> {};
+struct is_blas_dfft : cpp::and_c<is_mkl_enabled, is_double_precision<A>, all_dma<A, C>> {};
 
 template<typename A, typename C>
-struct is_blas_sfft : cpp::and_c<is_mkl_enabled, is_single_precision<A>, is_dma_2<A, C>> {};
+struct is_blas_sfft : cpp::and_c<is_mkl_enabled, is_single_precision<A>, all_dma<A, C>> {};
 
 template<typename A, typename C>
-struct is_blas_cfft : cpp::and_c<is_mkl_enabled, is_complex_single_precision<A>, is_dma_2<A, C>> {};
+struct is_blas_cfft : cpp::and_c<is_mkl_enabled, is_complex_single_precision<A>, all_dma<A, C>> {};
 
 template<typename A, typename C>
-struct is_blas_zfft : cpp::and_c<is_mkl_enabled, is_complex_double_precision<A>, is_dma_2<A, C>> {};
+struct is_blas_zfft : cpp::and_c<is_mkl_enabled, is_complex_double_precision<A>, all_dma<A, C>> {};
 
 template<typename A, typename C>
 struct fft1_impl<A, C, std::enable_if_t<is_blas_dfft<A,C>::value>> {
@@ -112,10 +112,10 @@ struct ifft1_real_impl<A, C, std::enable_if_t<is_blas_zfft<A,C>::value>> {
 };
 
 template<typename A, typename B, typename C>
-struct is_blas_sfft_convolve : cpp::and_c<is_mkl_enabled, is_single_precision_3<A,B,C>, is_dma_3<A, B, C>> {};
+struct is_blas_sfft_convolve : cpp::and_c<is_mkl_enabled, all_single_precision<A,B,C>, all_dma<A, B, C>> {};
 
 template<typename A, typename B, typename C>
-struct is_blas_dfft_convolve : cpp::and_c<is_mkl_enabled, is_double_precision_3<A,B,C>, is_dma_3<A, B, C>> {};
+struct is_blas_dfft_convolve : cpp::and_c<is_mkl_enabled, all_double_precision<A,B,C>, all_dma<A, B, C>> {};
 
 template<typename A, typename B, typename C>
 struct fft_conv1_full_impl<A, B, C, std::enable_if_t<is_blas_sfft_convolve<A,B,C>::value>> {
