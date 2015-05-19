@@ -22,7 +22,7 @@ namespace etl {
 
 namespace detail {
 
-template<conv_type TT, typename I, typename K, typename C, cpp::disable_if_all_u<etl_traits<I>::is_fast, etl_traits<K>::is_fast, etl_traits<C>::is_fast> = cpp::detail::dummy>
+template<conv_type TT, typename I, typename K, typename C, cpp::disable_if_all_u<all_fast<I,K,C>::value> = cpp::detail::dummy>
 void check_conv_1d_sizes(const I& input, const K& kernel, const C& conv){
     static_assert(etl_traits<I>::dimensions() == 1 && etl_traits<K>::dimensions() == 1 && etl_traits<C>::dimensions() == 1, "Invalid dimensions for 1D convolution");
 
@@ -39,7 +39,7 @@ void check_conv_1d_sizes(const I& input, const K& kernel, const C& conv){
     cpp_unused(conv);
 }
 
-template<conv_type TT, typename I, typename K, typename C, cpp::enable_if_all_u<etl_traits<I>::is_fast, etl_traits<K>::is_fast, etl_traits<C>::is_fast> = cpp::detail::dummy>
+template<conv_type TT, typename I, typename K, typename C, cpp::enable_if_all_u<all_fast<I,K,C>::value> = cpp::detail::dummy>
 void check_conv_1d_sizes(const I& /*input*/, const K& /*kernel*/, const C& /*conv*/){
     static_assert(etl_traits<I>::dimensions() == 1 && etl_traits<K>::dimensions() == 1 && etl_traits<C>::dimensions() == 1, "Invalid dimensions for 1D convolution");
 
@@ -54,7 +54,7 @@ void check_conv_1d_sizes(const I& /*input*/, const K& /*kernel*/, const C& /*con
         "Invalid sizes for 'valid'convolution");
 }
 
-template<conv_type TT, typename I, typename K, typename C, cpp::disable_if_all_u<etl_traits<I>::is_fast, etl_traits<K>::is_fast, etl_traits<C>::is_fast> = cpp::detail::dummy>
+template<conv_type TT, typename I, typename K, typename C, cpp::disable_if_all_u<all_fast<I,K,C>::value> = cpp::detail::dummy>
 void check_conv_2d_sizes(const I& input, const K& kernel, const C& conv){
     static_assert(etl_traits<I>::dimensions() == 2 && etl_traits<K>::dimensions() == 2 && etl_traits<C>::dimensions() == 2, "Invalid dimensions for 2D convolution");
 
@@ -77,7 +77,7 @@ void check_conv_2d_sizes(const I& input, const K& kernel, const C& conv){
     cpp_unused(conv);
 }
 
-template<conv_type TT, typename I, typename K, typename C, cpp::enable_if_all_u<etl_traits<I>::is_fast, etl_traits<K>::is_fast, etl_traits<C>::is_fast> = cpp::detail::dummy>
+template<conv_type TT, typename I, typename K, typename C, cpp::enable_if_all_u<all_fast<I,K,C>::value> = cpp::detail::dummy>
 void check_conv_2d_sizes(const I& /*input*/, const K& /*kernel*/, const C& /*conv*/){
     static_assert(etl_traits<I>::dimensions() == 2 && etl_traits<K>::dimensions() == 2 && etl_traits<C>::dimensions() == 2, "Invalid dimensions for 2D convolution");
 
@@ -98,7 +98,7 @@ void check_conv_2d_sizes(const I& /*input*/, const K& /*kernel*/, const C& /*con
         "Invalid sizes for 'valid'convolution");
 }
 
-template<conv_type TT, typename I, typename K, typename C, cpp_enable_if(etl_traits<I>::dimensions() == 3 && etl_traits<I>::is_fast && etl_traits<K>::is_fast && etl_traits<C>::is_fast)>
+template<conv_type TT, typename I, typename K, typename C, cpp_enable_if(etl_traits<I>::dimensions() == 3 && all_fast<I,K,C>::value)>
 void check_conv_deep_sizes(const I& i, const K& k, const C& c){
     static_assert(etl_traits<I>::dimensions() == 3 && etl_traits<K>::dimensions() == 3 && etl_traits<C>::dimensions() == 3, "Invalid dimensions for 3D convolution");
 
@@ -110,7 +110,7 @@ void check_conv_deep_sizes(const I& i, const K& k, const C& c){
     detail::check_conv_2d_sizes<TT>(i(0), k(0), c(0));
 }
 
-template<conv_type TT, typename I, typename K, typename C, cpp_enable_if((etl_traits<I>::dimensions() > 3) && etl_traits<I>::is_fast && etl_traits<K>::is_fast && etl_traits<C>::is_fast)>
+template<conv_type TT, typename I, typename K, typename C, cpp_enable_if((etl_traits<I>::dimensions() > 3) && all_fast<I,K,C>::value)>
 void check_conv_deep_sizes(const I& i, const K& k, const C& c){
     static_assert(etl_traits<I>::dimensions() == etl_traits<K>::dimensions() && etl_traits<K>::dimensions() == etl_traits<C>::dimensions(), "Invalid dimensions for 3D convolution");
 
@@ -122,7 +122,7 @@ void check_conv_deep_sizes(const I& i, const K& k, const C& c){
     detail::check_conv_deep_sizes<TT>(i(0), k(0), c(0));
 }
 
-template<conv_type TT, typename I, typename K, typename C, cpp_enable_if(etl_traits<I>::dimensions() == 3 && (!etl_traits<I>::is_fast || !etl_traits<K>::is_fast || !etl_traits<C>::is_fast))>
+template<conv_type TT, typename I, typename K, typename C, cpp_enable_if(etl_traits<I>::dimensions() == 3 && !all_fast<I,K,C>::value)>
 void check_conv_deep_sizes(const I& i, const K& k, const C& c){
     static_assert(etl_traits<I>::dimensions() == 3 && etl_traits<K>::dimensions() == 3 && etl_traits<C>::dimensions() == 3, "Invalid dimensions for 3D convolution");
 
@@ -134,7 +134,7 @@ void check_conv_deep_sizes(const I& i, const K& k, const C& c){
     detail::check_conv_2d_sizes<TT>(i(0), k(0), c(0));
 }
 
-template<conv_type TT, typename I, typename K, typename C, cpp_enable_if((etl_traits<I>::dimensions() > 3) && (!etl_traits<I>::is_fast || !etl_traits<K>::is_fast || !etl_traits<C>::is_fast))>
+template<conv_type TT, typename I, typename K, typename C, cpp_enable_if((etl_traits<I>::dimensions() > 3) && !all_fast<I,K,C>::value)>
 void check_conv_deep_sizes(const I& i, const K& k, const C& c){
     static_assert(etl_traits<I>::dimensions() == etl_traits<K>::dimensions() && etl_traits<K>::dimensions() == etl_traits<C>::dimensions(), "Invalid dimensions for 3D convolution");
 
@@ -175,14 +175,14 @@ struct basic_conv_expr {
     };
 
     template<typename A, typename B>
-    struct result_type_builder<A, B, std::enable_if_t<decay_traits<A>::is_fast && decay_traits<B>::is_fast>> {
+    struct result_type_builder<A, B, std::enable_if_t<all_fast<A,B>::value>> {
         using type = typename fast_result_type_builder<A, B, std::make_index_sequence<D>>::type;
     };
 
     template<typename A, typename B>
     using result_type = typename result_type_builder<A, B>::type;
 
-    template<typename A, typename B, cpp_enable_if(decay_traits<A>::is_fast && decay_traits<B>::is_fast)>
+    template<typename A, typename B, cpp_enable_if(all_fast<A,B>::value)>
     static result_type<A,B>* allocate(A&& /*a*/, B&& /*b*/){
         return new result_type<A, B>();
     }
@@ -192,7 +192,7 @@ struct basic_conv_expr {
         return new result_type<A, B>(this_type::dim(a, b, I)...);
     }
 
-    template<typename A, typename B, cpp_disable_if(decay_traits<A>::is_fast && decay_traits<B>::is_fast)>
+    template<typename A, typename B, cpp_disable_if(all_fast<A,B>::value)>
     static result_type<A,B>* allocate(A&& a, B&& b){
         return dyn_allocate(std::forward<A>(a), std::forward<B>(b), std::make_index_sequence<D>());
     }

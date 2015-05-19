@@ -97,6 +97,12 @@ using decay_traits = etl_traits<std::decay_t<E>>;
 template<typename... E>
 struct all_row_major : cpp::and_u<(decay_traits<E>::storage_order == order::RowMajor)...> {};
 
+template<typename... E>
+struct all_fast : cpp::and_u<decay_traits<E>::is_fast...> {};
+
+template<typename... E>
+struct all_etl_expr : cpp::and_c<is_etl_expr<E>...> {};
+
 template<typename E>
 constexpr std::size_t dimensions(const E& /*unused*/) noexcept {
     return etl_traits<E>::dimensions();

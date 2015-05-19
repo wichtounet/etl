@@ -25,19 +25,19 @@ struct outer_product_expr {
     };
 
     template<typename A, typename B>
-    struct result_type_builder<A, B, std::enable_if_t<decay_traits<A>::is_fast && decay_traits<B>::is_fast>> {
+    struct result_type_builder<A, B, std::enable_if_t<all_fast<A,B>::value>> {
         using type = fast_dyn_matrix<value_t<A>, decay_traits<A>::template dim<0>(), decay_traits<B>::template dim<0>()>;
     };
 
     template<typename A, typename B>
     using result_type = typename result_type_builder<A, B>::type;
 
-    template<typename A, typename B, cpp_enable_if(decay_traits<A>::is_fast && decay_traits<B>::is_fast)>
+    template<typename A, typename B, cpp_enable_if(all_fast<A,B>::value)>
     static result_type<A,B>* allocate(A&& /*a*/, B&& /*b*/){
         return new result_type<A, B>();
     }
 
-    template<typename A, typename B, cpp_disable_if(decay_traits<A>::is_fast && decay_traits<B>::is_fast)>
+    template<typename A, typename B, cpp_disable_if(all_fast<A,B>::value)>
     static result_type<A,B>* allocate(A&& a, B&& b){
         return new result_type<A, B>(etl::dim<0>(a), etl::dim<0>(b));
     }
