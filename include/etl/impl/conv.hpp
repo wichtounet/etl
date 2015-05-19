@@ -115,16 +115,16 @@ template<typename A, typename B, typename C>
 using is_vector_3d = cpp::and_c<all_double_precision<A, B, C>, all_dma<A, B, C>>;
 
 template<typename A, typename B, typename C>
-struct is_sse_dconv : cpp::and_u<vectorize_impl, vector_mode == vector_mode_t::SSE3, is_vector_3d<A, B, C>::value> {};
+struct is_sse_dconv : cpp::and_u<vectorize_impl, vector_mode == vector_mode_t::SSE3, is_vector_3d<A, B, C>::value, all_row_major<A,B,C>::value> {};
 
 template<typename A, typename B, typename C>
-struct is_sse_sconv : cpp::and_u<vectorize_impl, vector_mode == vector_mode_t::SSE3, is_vector_3s<A, B, C>::value> {};
+struct is_sse_sconv : cpp::and_u<vectorize_impl, vector_mode == vector_mode_t::SSE3, is_vector_3s<A, B, C>::value, all_row_major<A,B,C>::value> {};
 
 template<typename A, typename B, typename C>
-struct is_avx_dconv : cpp::and_u<vectorize_impl, vector_mode == vector_mode_t::AVX, is_vector_3d<A, B, C>::value> {};
+struct is_avx_dconv : cpp::and_u<vectorize_impl, vector_mode == vector_mode_t::AVX, is_vector_3d<A, B, C>::value, all_row_major<A,B,C>::value> {};
 
 template<typename A, typename B, typename C>
-struct is_avx_sconv : cpp::and_u<vectorize_impl, vector_mode == vector_mode_t::AVX, is_vector_3s<A, B, C>::value> {};
+struct is_avx_sconv : cpp::and_u<vectorize_impl, vector_mode == vector_mode_t::AVX, is_vector_3s<A, B, C>::value, all_row_major<A,B,C>::value> {};
 
 template<typename I, typename K, typename C>
 struct conv1_full_impl<I, K, C, std::enable_if_t<is_avx_dconv<I,K,C>::value>> {
