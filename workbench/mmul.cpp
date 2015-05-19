@@ -10,8 +10,6 @@
 #include <random>
 
 #include "etl/etl.hpp"
-#include "etl/convolution.hpp"
-#include "etl/multiplication.hpp"
 
 typedef std::chrono::high_resolution_clock timer_clock;
 typedef std::chrono::milliseconds milliseconds;

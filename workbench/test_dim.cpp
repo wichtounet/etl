@@ -5,14 +5,13 @@
 //  http://opensource.org/licenses/MIT)
 //=======================================================================
 
-#include "etl/fast_matrix.hpp"
-#include "etl/fast_vector.hpp"
+#include "etl/etl.hpp"
 
 etl::fast_matrix<double, 2, 3> a = {-1.0, 2.0, 5.0, 2.0, 5.0, 1.2};
 etl::fast_matrix<double, 2, 3> b = {-1.0, 2.0, 5.0, 1.2, 2.5, 3.0};
 
 /*
- * Simple source file to verify how the code is compiled. 
+ * Simple source file to verify how the code is compiled.
  */
 
 int main(){
