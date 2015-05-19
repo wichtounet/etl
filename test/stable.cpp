@@ -599,6 +599,18 @@ TEMPLATE_TEST_CASE_2( "mean_l/dyn_matrix_2", "mean_l", Z, float, double ) {
     REQUIRE(b(2) == Approx(3.333333));
 }
 
+TEMPLATE_TEST_CASE_2( "mean_l/fast_matrix_7", "mean_l/mean_r", Z, float, double ) {
+    etl::fast_matrix<Z, 3, 4, 2> a({1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24});
+    etl::fast_matrix<Z, 4> b;
+
+    b = etl::mean_r(etl::mean_l(a));
+
+    REQUIRE(b(0) == Approx(9.5));
+    REQUIRE(b(1) == Approx(11.5));
+    REQUIRE(b(2) == Approx(13.5));
+    REQUIRE(b(3) == Approx(15.5));
+}
+
 //}}}
 
 //{{{ Tests for sum_l

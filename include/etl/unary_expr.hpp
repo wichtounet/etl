@@ -289,7 +289,7 @@ public:
     }
 
     template<bool B = (sub_size_compare<this_type>::value > 1), cpp::enable_if_u<B> = cpp::detail::dummy>
-    value_type operator()(std::size_t i) const {
+    auto operator()(std::size_t i) const {
         return sub(*this, i);
     }
 
