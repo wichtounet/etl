@@ -103,6 +103,9 @@ struct is_dma_3 : cpp::and_c<has_direct_access<A>, has_direct_access<B>, has_dir
 template<typename E>
 using decay_traits = etl_traits<std::decay_t<E>>;
 
+template<typename... E>
+struct all_row_major : cpp::and_u<(decay_traits<E>::storage_order == order::RowMajor)...> {};
+
 template<typename E>
 constexpr std::size_t dimensions(const E& /*unused*/) noexcept {
     return etl_traits<E>::dimensions();

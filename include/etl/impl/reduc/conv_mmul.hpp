@@ -27,7 +27,7 @@ void conv1_full(const I& input, const K& kernel, C&& conv){
     );
 }
 
-template<typename I, typename K, typename C>
+template<typename I, typename K, typename C, cpp_enable_if(all_row_major<I,K,C>::value)>
 void conv2_full(const I& input, const K& kernel, C&& conv){
     conv = transpose(reshape(
         mul(
