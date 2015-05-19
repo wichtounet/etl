@@ -517,9 +517,14 @@ struct etl_traits<rep_r_transformer<T, D...>> {
         return mul_all<D...>::value * etl_traits<sub_expr_t>::size();
     }
 
-    template<std::size_t D2>
+    template<std::size_t D2, cpp_enable_if(D2 < sub_d)>
     static constexpr std::size_t dim(){
-        return D2 < sub_d ? etl_traits<sub_expr_t>::template dim<D2>() : nth_size<D2-sub_d,0,D...>::value;
+        return etl_traits<sub_expr_t>::template dim<D2>();
+    }
+
+    template<std::size_t D2, cpp_disable_if(D2 < sub_d)>
+    static constexpr std::size_t dim(){
+        return nth_size<D2-sub_d,0,D...>::value;
     }
 
     static constexpr std::size_t dimensions(){
