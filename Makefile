@@ -1,6 +1,7 @@
 default: release
 
-.PHONY: default release debug all clean
+.PHONY: default release debug all clean test debug_test release_debug_test release_test
+.PHONY: valgrind_test benchmark cppcheck coverage coverage_view format modernize tidy tidy_all doc
 
 include make-utils/flags.mk
 include make-utils/cpp-utils.mk
