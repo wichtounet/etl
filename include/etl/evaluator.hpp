@@ -235,9 +235,19 @@ void add_evaluate(Expr&& expr, Result&& result){
     standard_evaluator<Expr, Result>::add_evaluate(std::forward<Expr>(expr), std::forward<Result>(result));
 }
 
+template<typename Expr, typename Result, cpp_disable_if(direct_assign_compatible<Expr, Result>::value)>
+void add_evaluate(Expr&& expr, Result&& result){
+    standard_evaluator<Expr, Result>::add_evaluate(transpose(expr), std::forward<Result>(result));
+}
+
 template<typename Expr, typename Result, cpp_enable_if(direct_assign_compatible<Expr, Result>::value)>
 void sub_evaluate(Expr&& expr, Result&& result){
     standard_evaluator<Expr, Result>::sub_evaluate(std::forward<Expr>(expr), std::forward<Result>(result));
+}
+
+template<typename Expr, typename Result, cpp_disable_if(direct_assign_compatible<Expr, Result>::value)>
+void sub_evaluate(Expr&& expr, Result&& result){
+    standard_evaluator<Expr, Result>::sub_evaluate(transpose(expr), std::forward<Result>(result));
 }
 
 template<typename Expr, typename Result, cpp_enable_if(direct_assign_compatible<Expr, Result>::value)>
@@ -245,9 +255,19 @@ void mul_evaluate(Expr&& expr, Result&& result){
     standard_evaluator<Expr, Result>::mul_evaluate(std::forward<Expr>(expr), std::forward<Result>(result));
 }
 
+template<typename Expr, typename Result, cpp_disable_if(direct_assign_compatible<Expr, Result>::value)>
+void mul_evaluate(Expr&& expr, Result&& result){
+    standard_evaluator<Expr, Result>::mul_evaluate(transpose(expr), std::forward<Result>(result));
+}
+
 template<typename Expr, typename Result, cpp_enable_if(direct_assign_compatible<Expr, Result>::value)>
 void div_evaluate(Expr&& expr, Result&& result){
     standard_evaluator<Expr, Result>::div_evaluate(std::forward<Expr>(expr), std::forward<Result>(result));
+}
+
+template<typename Expr, typename Result, cpp_disable_if(direct_assign_compatible<Expr, Result>::value)>
+void div_evaluate(Expr&& expr, Result&& result){
+    standard_evaluator<Expr, Result>::div_evaluate(transpose(expr), std::forward<Result>(result));
 }
 
 template<typename Expr, typename Result, cpp_enable_if(direct_assign_compatible<Expr, Result>::value)>
@@ -255,8 +275,17 @@ void mod_evaluate(Expr&& expr, Result&& result){
     standard_evaluator<Expr, Result>::mod_evaluate(std::forward<Expr>(expr), std::forward<Result>(result));
 }
 
+template<typename Expr, typename Result, cpp_disable_if(direct_assign_compatible<Expr, Result>::value)>
+void mod_evaluate(Expr&& expr, Result&& result){
+    standard_evaluator<Expr, Result>::mod_evaluate(transpose(expr), std::forward<Result>(result));
+}
+
 /*!
  * \brief Force the internal evaluation of an expression
+ * \param expr The expression to force inner evaluation
+ *
+ * This function can be used when complex expressions are used
+ * lazily.
  */
 template<typename Expr>
 void force(Expr&& expr){

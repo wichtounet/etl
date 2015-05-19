@@ -334,3 +334,39 @@ CONV2_FULL_TEST_CASE_CM( "column_major/conv2/full_3", "[cm][conv2]" ) {
     REQUIRE(c(2, 5) == Approx(T(80)));
     REQUIRE(c(2, 6) == Approx(T(48)));
 }
+
+TEMPLATE_TEST_CASE_2( "column_major/compound/add_1", "[cm]", Z, float, double ) {
+    etl::fast_matrix_cm<Z, 2, 2> a = {-1.0, 2.0, 5.0, 1.0};
+    etl::fast_matrix_cm<Z, 2, 2> b = {2.5, 3.0, 4.0, 1.0};
+
+    a += b;
+
+    REQUIRE(a(0,0) == 1.5);
+    REQUIRE(a(0,1) == 9.0);
+    REQUIRE(a(1,0) == 5.0);
+    REQUIRE(a(1,1) == 2.0);
+}
+
+TEMPLATE_TEST_CASE_2( "column_major/compound/add_2", "[cm]", Z, float, double ) {
+    etl::fast_matrix<Z, 2, 2> a = {-1.0, 2.0, 5.0, 1.0};
+    etl::fast_matrix_cm<Z, 2, 2> b = {2.5, 3.0, 4.0, 1.0};
+
+    a += b;
+
+    REQUIRE(a(0,0) == 1.5);
+    REQUIRE(a(0,1) == 6.0);
+    REQUIRE(a(1,0) == 8.0);
+    REQUIRE(a(1,1) == 2.0);
+}
+
+TEMPLATE_TEST_CASE_2( "column_major/compound/add_3", "[cm]", Z, float, double ) {
+    etl::fast_matrix_cm<Z, 2, 2> a = {-1.0, 2.0, 5.0, 1.0};
+    etl::fast_matrix<Z, 2, 2> b = {2.5, 3.0, 4.0, 1.0};
+
+    a += b;
+
+    REQUIRE(a(0,0) == 1.5);
+    REQUIRE(a(0,1) == 8.0);
+    REQUIRE(a(1,0) == 6.0);
+    REQUIRE(a(1,1) == 2.0);
+}
