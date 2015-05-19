@@ -202,6 +202,15 @@ CONV_FUNCTOR( avx_conv2_valid_double, etl::impl::avx::dconv2_valid(a, b, c) )
     } \
     CONV_TEST_CASE_DEFN
 
+//Column major version
+#define CONV2_FULL_TEST_CASE_CM( name, description ) \
+    CONV_TEST_CASE_DECL( name, description ) \
+    { \
+        CONV2_FULL_TEST_CASE_SECTION_DEFAULT \
+        CONV2_FULL_TEST_CASE_SECTION_STD \
+    } \
+    CONV_TEST_CASE_DEFN
+
 #define CONV2_SAME_TEST_CASE( name, description ) \
     CONV_TEST_CASE_DECL( name, description ) \
     { \

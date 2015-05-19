@@ -242,7 +242,7 @@ CONV1_FULL_TEST_CASE( "column_major/conv/full_1", "[cm][conv]" ) {
     REQUIRE(c[4] == Approx(1.5));
 }
 
-CONV2_FULL_TEST_CASE( "column_major/conv2/full_1", "[cm][conv2]" ) {
+CONV2_FULL_TEST_CASE_CM( "column_major/conv2/full_1", "[cm][conv2]" ) {
     etl::fast_matrix_cm<T, 3, 3> a = {1.0, 0.0, 3.0, 2.0, 1.0, 2.0, 3.0, 1.0, 1.0};
     etl::fast_matrix_cm<T, 2, 2> b = {2.0, 0.5, 0.0, 0.5};
     etl::fast_matrix_cm<T, 4, 4> c;
@@ -270,7 +270,7 @@ CONV2_FULL_TEST_CASE( "column_major/conv2/full_1", "[cm][conv2]" ) {
     REQUIRE(c(3,3) == Approx(T(0.5)));
 }
 
-CONV2_FULL_TEST_CASE( "column_major/conv2/full_2", "[cm][conv2]" ) {
+CONV2_FULL_TEST_CASE_CM( "column_major/conv2/full_2", "[cm][conv2]" ) {
     //TODO magic(X) is not compatible with column major matrices
 
     etl::fast_matrix<T, 3, 3> aa(etl::magic(3));
@@ -303,7 +303,7 @@ CONV2_FULL_TEST_CASE( "column_major/conv2/full_2", "[cm][conv2]" ) {
     REQUIRE(c(3, 3) == Approx(T(4)));
 }
 
-CONV2_FULL_TEST_CASE( "column_major/conv2/full_3", "[cm][conv2]" ) {
+CONV2_FULL_TEST_CASE_CM( "column_major/conv2/full_3", "[cm][conv2]" ) {
     etl::fast_matrix_cm<T, 2, 6> a = {1,7,2,8,3,9,4,10,5,11,6,12};
     etl::fast_matrix_cm<T, 2, 2> b = {1,3,2,4};
     etl::fast_matrix_cm<T, 3, 7> c;
