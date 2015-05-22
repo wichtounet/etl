@@ -34,8 +34,12 @@ using intrinsic_type = typename intrinsic_traits<T>::intrinsic_type;
 
 #include "sse_vectorization.hpp"
 
-#endif
+#endif //defined(__SSE__)
 
-#endif //ETL_VECTORIZ
+#else //ETL_VECTORIZE_EXPR
+
+#include "no_vectorization.hpp"
+
+#endif //ETL_VECTORIZE_EXPR
 
 #endif //ETL_VECTORIZATION_HPP
