@@ -35,7 +35,7 @@ constexpr const bool vectorize_expr = false;
 #ifdef ETL_VECTORIZE_IMPL
 constexpr const bool vectorize_impl = true;
 #else
-constexpr const bool vectorize_impl = true;
+constexpr const bool vectorize_impl = false;
 #endif
 
 //Flag to disable the creation of temporary in expressions

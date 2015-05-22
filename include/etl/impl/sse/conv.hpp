@@ -17,10 +17,11 @@
 
 #if defined(ETL_VECTORIZE_IMPL) && defined(__SSE3__)
 #include <immintrin.h>
-#endif
 
 #include "../../allocator.hpp"
 #include "../common/conv.hpp"
+
+#endif
 
 namespace etl {
 
@@ -521,40 +522,40 @@ void sconv2_full(const I& input, const K& kernel, C&& conv){
 #else
 
 template<typename I, typename K, typename C>
-void dconv1_full(const I& /*input*/, const K& /*kernel*/, C&& /*conv*/);
+void dconv1_full(const I& /*input*/, const K& /*kernel*/, C&& /*conv*/){ cpp_unreachable("SSE not available/enable"); }
 
 template<typename I, typename K, typename C>
-void dconv1_same(const I& /*input*/, const K& /*kernel*/, C&& /*conv*/);
+void dconv1_same(const I& /*input*/, const K& /*kernel*/, C&& /*conv*/){ cpp_unreachable("SSE not available/enable"); }
 
 template<typename I, typename K, typename C>
-void dconv1_valid(const I& /*input*/, const K& /*kernel*/, C&& /*conv*/);
+void dconv1_valid(const I& /*input*/, const K& /*kernel*/, C&& /*conv*/){ cpp_unreachable("SSE not available/enable"); }
 
 template<typename I, typename K, typename C>
-void sconv1_full(const I& /*input*/, const K& /*kernel*/, C&& /*conv*/);
+void sconv1_full(const I& /*input*/, const K& /*kernel*/, C&& /*conv*/){ cpp_unreachable("SSE not available/enable"); }
 
 template<typename I, typename K, typename C>
-void sconv1_same(const I& /*input*/, const K& /*kernel*/, C&& /*conv*/);
+void sconv1_same(const I& /*input*/, const K& /*kernel*/, C&& /*conv*/){ cpp_unreachable("SSE not available/enable"); }
 
 template<typename I, typename K, typename C>
-void sconv1_valid(const I& /*input*/, const K& /*kernel*/, C&& /*conv*/);
+void sconv1_valid(const I& /*input*/, const K& /*kernel*/, C&& /*conv*/){ cpp_unreachable("SSE not available/enable"); }
 
 template<typename I, typename K, typename C>
-void dconv2_valid(const I& /*input*/, const K& /*kernel*/, C&& /*conv*/);
+void dconv2_valid(const I& /*input*/, const K& /*kernel*/, C&& /*conv*/){ cpp_unreachable("SSE not available/enable"); }
 
 template<typename I, typename K, typename C>
-void dconv2_same(const I& /*input*/, const K& /*kernel*/, C&& /*conv*/);
+void dconv2_same(const I& /*input*/, const K& /*kernel*/, C&& /*conv*/){ cpp_unreachable("SSE not available/enable"); }
 
 template<typename I, typename K, typename C>
-void dconv2_full(const I& /*input*/, const K& /*kernel*/, C&& /*conv*/);
+void dconv2_full(const I& /*input*/, const K& /*kernel*/, C&& /*conv*/){ cpp_unreachable("SSE not available/enable"); }
 
 template<typename I, typename K, typename C>
-void sconv2_valid(const I& /*input*/, const K& /*kernel*/, C&& /*conv*/);
+void sconv2_valid(const I& /*input*/, const K& /*kernel*/, C&& /*conv*/){ cpp_unreachable("SSE not available/enable"); }
 
 template<typename I, typename K, typename C>
-void sconv2_same(const I& /*input*/, const K& /*kernel*/, C&& /*conv*/);
+void sconv2_same(const I& /*input*/, const K& /*kernel*/, C&& /*conv*/){ cpp_unreachable("SSE not available/enable"); }
 
 template<typename I, typename K, typename C>
-void sconv2_full(const I& /*input*/, const K& /*kernel*/, C&& /*conv*/);
+void sconv2_full(const I& /*input*/, const K& /*kernel*/, C&& /*conv*/){ cpp_unreachable("SSE not available/enable"); }
 
 #endif
 
