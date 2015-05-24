@@ -198,6 +198,70 @@ using dmat = etl::dyn_matrix<double>;
 using mat_policy = VALUES_POLICY(10, 25, 50, 100, 200, 300, 400, 500, 600, 700, 800, 900, 1000);
 using mat_policy_2d = NARY_POLICY(mat_policy, mat_policy);
 
+//Bench addition
+CPM_BENCH() {
+    CPM_TWO_PASS_NS(
+        "r = a + b",
+        [](std::size_t d){ return std::make_tuple(dvec(d), dvec(d), dvec(d)); },
+        [](dvec& a, dvec& b, dvec& r){ r = a + b; }
+        );
+
+    CPM_TWO_PASS_NS_P(
+        mat_policy_2d,
+        "R = A + B",
+        [](auto d1, auto d2){ return std::make_tuple(dmat(d1, d2), dmat(d1, d2), dmat(d1, d2)); },
+        [](dmat& A, dmat& B, dmat& R){ R = A + B; }
+        );
+}
+
+//Bench subtraction
+CPM_BENCH() {
+    CPM_TWO_PASS_NS(
+        "r = a - b",
+        [](std::size_t d){ return std::make_tuple(dvec(d), dvec(d), dvec(d)); },
+        [](dvec& a, dvec& b, dvec& r){ r = a - b; }
+        );
+
+    CPM_TWO_PASS_NS_P(
+        mat_policy_2d,
+        "R = A - B",
+        [](auto d1, auto d2){ return std::make_tuple(dmat(d1, d2), dmat(d1, d2), dmat(d1, d2)); },
+        [](dmat& A, dmat& B, dmat& R){ R = A - B; }
+        );
+}
+
+//Bench multiplication
+CPM_BENCH() {
+    CPM_TWO_PASS_NS(
+        "r = a >> b",
+        [](std::size_t d){ return std::make_tuple(dvec(d), dvec(d), dvec(d)); },
+        [](dvec& a, dvec& b, dvec& r){ r = a >> b; }
+        );
+
+    CPM_TWO_PASS_NS_P(
+        mat_policy_2d,
+        "R = A >> B",
+        [](auto d1, auto d2){ return std::make_tuple(dmat(d1, d2), dmat(d1, d2), dmat(d1, d2)); },
+        [](dmat& A, dmat& B, dmat& R){ R = A >> B; }
+        );
+}
+
+//Bench division
+CPM_BENCH() {
+    CPM_TWO_PASS_NS(
+        "r = a / b",
+        [](std::size_t d){ return std::make_tuple(dvec(d), dvec(d), dvec(d)); },
+        [](dvec& a, dvec& b, dvec& r){ r = a / b; }
+        );
+
+    CPM_TWO_PASS_NS_P(
+        mat_policy_2d,
+        "R = A / B",
+        [](auto d1, auto d2){ return std::make_tuple(dmat(d1, d2), dmat(d1, d2), dmat(d1, d2)); },
+        [](dmat& A, dmat& B, dmat& R){ R = A / B; }
+        );
+}
+
 //Sigmoid benchmark
 CPM_BENCH() {
     CPM_TWO_PASS_NS(
@@ -212,48 +276,6 @@ CPM_BENCH() {
         [](auto d1, auto d2){ return std::make_tuple(dmat(d1, d2), dmat(d1, d2)); },
         [](dmat& A, dmat& R){ R = etl::sigmoid(A); }
         );
-}
-
-template<std::size_t D1, std::size_t D2>
-void bench_fast_matrix_simple(){
-    etl::fast_matrix<double, D1, D2> a;
-    etl::fast_matrix<double, D1, D2> b;
-    etl::fast_matrix<double, D1, D2> c;
-
-    measure("fast_matrix_simple(" + std::to_string(D1) + "," + std::to_string(D2) + ")(" + std::to_string(D1 * D2) + ")",
-        [&a, &b, &c](){c = 3.5 * a + etl::sigmoid(1.0 + b);}
-        , a, b);
-}
-
-template<std::size_t D1, std::size_t D2>
-void bench_fast_matrix_sigmoid(){
-    etl::fast_matrix<double, D1, D2> a;
-    etl::fast_matrix<double, D1, D2> b;
-    etl::fast_matrix<double, D1, D2> c;
-
-    measure("fast_matrix_sigmoid(" + std::to_string(D1) + "," + std::to_string(D2) + ")(" + std::to_string(D1 * D2) + ")",
-        [&a, &b, &c](){c = etl::sigmoid(1.0 + b);}
-        , a, b);
-}
-
-void bench_dyn_matrix_simple(std::size_t d1, std::size_t d2){
-    etl::dyn_matrix<double> a(d1, d2);
-    etl::dyn_matrix<double> b(d1, d2);
-    etl::dyn_matrix<double> c(d1, d2);
-
-    measure("dyn_matrix_simple(" + std::to_string(d1) + "," + std::to_string(d2) + ")(" + std::to_string(d1 * d2) + ")",
-        [&a, &b, &c](){c = 3.5 * a + etl::sigmoid(1.0 + b);}
-        , a, b);
-}
-
-void bench_dyn_matrix_sigmoid(std::size_t d1, std::size_t d2){
-    etl::dyn_matrix<double> a(d1, d2);
-    etl::dyn_matrix<double> b(d1, d2);
-    etl::dyn_matrix<double> c(d1, d2);
-
-    measure("dyn_matrix_sigmoid(" + std::to_string(d1) + "," + std::to_string(d2) + ")(" + std::to_string(d1 * d2) + ")",
-        [&a, &b, &c](){c = etl::sigmoid(1.0 + b);}
-        , a, b);
 }
 
 void bench_dyn_convmtx2(std::size_t d1, std::size_t d2){
@@ -768,16 +790,6 @@ void bench_dyn_mmul_s(std::size_t d1, std::size_t d2){
 void bench_standard(){
     std::cout << "Start benchmarking...\n";
     std::cout << "... all structures are on stack\n\n";
-
-    bench_fast_matrix_sigmoid<16, 256>();
-    bench_fast_matrix_sigmoid<256, 128>();
-    bench_dyn_matrix_sigmoid(16, 256);
-    bench_dyn_matrix_sigmoid(256, 128);
-
-    bench_fast_matrix_simple<16, 256>();
-    bench_fast_matrix_simple<256, 128>();
-    bench_dyn_matrix_simple(16, 256);
-    bench_dyn_matrix_simple(256, 128);
 
     bench_dyn_convmtx2(16, 4);
     bench_dyn_convmtx2(32, 4);
