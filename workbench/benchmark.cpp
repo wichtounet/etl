@@ -209,11 +209,24 @@ CPM_BENCH() {
         [](dvec& a, dvec& b, dvec& r){ r = a + b; }
         );
 
+    CPM_TWO_PASS_NS(
+        "r = a + b + c",
+        [](std::size_t d){ return std::make_tuple(dvec(d), dvec(d), dvec(d), dvec(d)); },
+        [](dvec& a, dvec& b, dvec& c, dvec& r){ r = a + b + c; }
+        );
+
     CPM_TWO_PASS_NS_P(
         mat_policy_2d,
         "R = A + B",
         [](auto d1, auto d2){ return std::make_tuple(dmat(d1, d2), dmat(d1, d2), dmat(d1, d2)); },
         [](dmat& A, dmat& B, dmat& R){ R = A + B; }
+        );
+
+    CPM_TWO_PASS_NS_P(
+        mat_policy_2d,
+        "R = A + B",
+        [](auto d1, auto d2){ return std::make_tuple(dmat(d1, d2), dmat(d1, d2), dmat(d1, d2), dmat(d1, d2)); },
+        [](dmat& A, dmat& B, dmat& C, dmat& R){ R = A + B + C; }
         );
 }
 
@@ -894,6 +907,15 @@ void bench_standard(){
 
 CPM_BENCH(){
     CPM_TWO_PASS_NS_P(
+        VALUES_POLICY(10, 50, 100, 200, 300, 400, 500, 600, 700, 800, 900, 1000, 1100),
+        "r = A * B",
+        [](std::size_t d){ return std::make_tuple(dmat(d,d), dmat(d,d), dmat(d,d)); },
+        [](dmat& A, dmat& B, dmat& R){ R = A * B; }
+        );
+}
+
+CPM_BENCH(){
+    CPM_TWO_PASS_NS_P(
         VALUES_POLICY(10, 50, 100, 500, 1000, 2000, 3000, 4000, 5000),
         "r = A * (a + b)",
         [](std::size_t d){ return std::make_tuple(dmat(d,d), dvec(d), dvec(d), dvec(d)); },
@@ -901,107 +923,67 @@ CPM_BENCH(){
         );
 }
 
-void bench_smart_0(std::size_t d){
-    etl::dyn_matrix<double> A(d, d);
-    etl::dyn_vector<double> a(d);
-    etl::dyn_vector<double> b(d);
-    etl::dyn_vector<double> result(d);
-
-    measure("A * (a + b) (" + std::to_string(d) + "x" + std::to_string(d) + ")", [&](){
-        result = A * (a + b);
-    }, A, a, b);
+CPM_BENCH(){
+    CPM_TWO_PASS_NS_P(
+        VALUES_POLICY(10, 50, 100, 500, 1000, 2000, 3000, 4000, 5000),
+        "r = A * (a + b + c)",
+        [](std::size_t d){ return std::make_tuple(dmat(d,d), dvec(d), dvec(d), dvec(d), dvec(d)); },
+        [](dmat& A, dvec& a, dvec& b, dvec& c, dvec& r){ r = A * (a + b + c); }
+        );
 }
 
-void bench_smart_1(std::size_t d){
-    etl::dyn_matrix<double> A(d, d);
-    etl::dyn_matrix<double> B(d, d);
-    etl::dyn_matrix<double> C(d, d);
-    etl::dyn_matrix<double> result(d, d);
-
-    measure("A * (B + C) (" + std::to_string(d) + "x" + std::to_string(d) + ")", [&A, &B, &C, &result](){
-        result = A * (B + C);
-    }, A, B, C);
+CPM_BENCH(){
+    CPM_TWO_PASS_NS_P(
+        VALUES_POLICY(10, 50, 100, 200, 300, 400, 500, 600, 700, 800, 900, 1000, 1100),
+        "R = A * (B + C)",
+        [](std::size_t d){ return std::make_tuple(dmat(d,d), dmat(d,d), dmat(d,d), dmat(d,d)); },
+        [](dmat& A, dmat& B, dmat& C, dmat& R){ R = A * (B + C); }
+        );
 }
 
-void bench_smart_2(std::size_t dd){
-    etl::dyn_matrix<double> A(dd, dd);
-    etl::dyn_vector<double> b(dd);
-    etl::dyn_vector<double> c(dd);
-    etl::dyn_vector<double> d(dd);
-    etl::dyn_vector<double> result(dd);
-
-    measure("A * (b + c + d) (" + std::to_string(dd) + "x" + std::to_string(dd) + ")", [&A, &b, &c, &d, &result](){
-        result = A * (b + c + d);
-    }, A, b, c, d);
+CPM_BENCH(){
+    CPM_TWO_PASS_NS_P(
+        VALUES_POLICY(10, 50, 100, 200, 300, 400, 500, 600, 700, 800, 900, 1000, 1100),
+        "R = A * (B + C + D)",
+        [](std::size_t d){ return std::make_tuple(dmat(d,d), dmat(d,d), dmat(d,d), dmat(d,d), dmat(d,d)); },
+        [](dmat& A, dmat& B, dmat& C, dmat& D, dmat& R){ R = A * (B + C + D); }
+        );
 }
 
-void bench_smart_3(std::size_t dd){
-    etl::dyn_vector<double> a(dd);
-    etl::dyn_matrix<double> A(dd,dd);
-    etl::dyn_matrix<double> B(dd,dd);
-    etl::dyn_matrix<double> C(dd,dd);
-    etl::dyn_vector<double> result(dd);
-
-    measure("a * (A + B - C) (" + std::to_string(dd) + "x" + std::to_string(dd) + ")", [&](){
-        result = a * (A + B + C);
-    }, a, A, B, C);
+CPM_BENCH(){
+    CPM_TWO_PASS_NS_P(
+        VALUES_POLICY(10, 50, 100, 200, 300, 400, 500, 600, 700, 800, 900, 1000, 1100),
+        "R = (A + B) * (C + D)",
+        [](std::size_t d){ return std::make_tuple(dmat(d,d), dmat(d,d), dmat(d,d), dmat(d,d), dmat(d,d)); },
+        [](dmat& A, dmat& B, dmat& C, dmat& D, dmat& R){ R = (A + B) * (C + D); }
+        );
 }
 
-void bench_smart_add(std::size_t d){
-    etl::dyn_matrix<double> A(d, d);
-    etl::dyn_matrix<double> B(d, d);
-    etl::dyn_matrix<double> result(d, d);
-
-    measure("A + B (" + std::to_string(d) + "x" + std::to_string(d) + ")", [&](){
-        result = A + B;
-    }, A, B);
+CPM_BENCH(){
+    CPM_TWO_PASS_NS_P(
+        VALUES_POLICY(10, 50, 100, 200, 300, 400, 500, 600, 700, 800, 900, 1000, 1100),
+        "r = a * (A + B - C)",
+        [](std::size_t d){ return std::make_tuple(dvec(d), dmat(d,d), dmat(d,d), dmat(d,d), dvec(d)); },
+        [](dvec& a, dmat& A, dmat& B, dmat& C, dvec& r){ r = a * (A + B - C); }
+        );
 }
 
-void bench_smart_add_2(std::size_t d){
-    etl::dyn_matrix<double> A(d, d);
-    etl::dyn_matrix<double> B(d, d);
-    etl::dyn_matrix<double> C(d, d);
-    etl::dyn_matrix<double> result(d, d);
-
-    measure("A + B + C (" + std::to_string(d) + "x" + std::to_string(d) + ")", [&](){
-        result = A + B + C;
-    }, A, B, C);
+CPM_BENCH(){
+    CPM_TWO_PASS_NS_P(
+        VALUES_POLICY(10, 50, 100, 200, 300, 400, 500, 600, 700, 800, 900, 1000, 1100),
+        "r = a * (A * B)",
+        [](std::size_t d){ return std::make_tuple(dvec(d), dmat(d,d), dmat(d,d), dvec(d)); },
+        [](dvec& a, dmat& A, dmat& B, dvec& r){ r = a * (A * B); }
+        );
 }
 
-void bench_smart(){
-    std::cout << "Start Smart benchmarking...\n";
-
-    bench_smart_0(50);
-    bench_smart_0(100);
-    bench_smart_0(250);
-    bench_smart_0(500);
-    bench_smart_0(1000);
-
-    bench_smart_2(50);
-    bench_smart_2(100);
-    bench_smart_2(250);
-    bench_smart_2(500);
-    bench_smart_2(1000);
-
-    bench_smart_1(50);
-    bench_smart_1(100);
-    bench_smart_1(250);
-    bench_smart_1(500);
-
-    bench_smart_3(50);
-    bench_smart_3(100);
-    bench_smart_3(250);
-    bench_smart_3(500);
-
-    bench_smart_add(128);
-    bench_smart_add(256);
-    bench_smart_add(512);
-    bench_smart_add(1024);
-
-    bench_smart_add_2(128);
-    bench_smart_add_2(256);
-    bench_smart_add_2(512);
-    bench_smart_add_2(1024);
+CPM_BENCH(){
+    CPM_TWO_PASS_NS_P(
+        VALUES_POLICY(10, 50, 100, 200, 300, 400, 500, 600, 700, 800, 900, 1000, 1100),
+        "r = a * A * B",
+        [](std::size_t d){ return std::make_tuple(dvec(d), dmat(d,d), dmat(d,d), dvec(d)); },
+        [](dvec& a, dmat& A, dmat& B, dvec& r){ r = a * (A * B); }
+        );
 }
 
 void bench_rbm_hidden(std::size_t n_v, std::size_t n_h){
@@ -1133,20 +1115,15 @@ int main_old(int argc, char* argv[]){
         args.emplace_back(argv[i]);
     }
 
-    bool smart = false;
     bool dll = false;
 
     for(auto& arg : args){
-        if(arg == "smart"){
-            smart = true;
-        } else if(arg == "dll"){
+        if(arg == "dll"){
             dll = true;
         }
     }
 
-    if(smart){
-        bench_smart();
-    } else if(dll){
+    if(dll){
         bench_dll();
     } else {
         bench_standard();
