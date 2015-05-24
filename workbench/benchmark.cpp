@@ -209,7 +209,7 @@ CPM_BENCH() {
     CPM_TWO_PASS_NS_P(
         mat_policy_2d,
         "R = sigmoid(A)",
-        [](auto dd){ return std::make_tuple(dmat(std::get<0>(dd), std::get<1>(dd)), dmat(std::get<0>(dd), std::get<1>(dd))); },
+        [](auto d1, auto d2){ return std::make_tuple(dmat(d1, d2), dmat(d1, d2)); },
         [](dmat& A, dmat& R){ R = etl::sigmoid(A); }
         );
 }
