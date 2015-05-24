@@ -200,17 +200,17 @@ using mat_policy_2d = NARY_POLICY(mat_policy, mat_policy);
 
 //Sigmoid benchmark
 CPM_BENCH() {
-    CPM_TWO_PASS(
+    CPM_TWO_PASS_NS(
         "r = sigmoid(a)",
         [](std::size_t d){ return std::make_tuple(dvec(d), dvec(d)); },
-        [](std::size_t /*d*/, dvec& a, dvec& r){ r = etl::sigmoid(a); }
+        [](dvec& a, dvec& r){ r = etl::sigmoid(a); }
         );
 
-    CPM_TWO_PASS_P(
+    CPM_TWO_PASS_NS_P(
         mat_policy_2d,
         "R = sigmoid(A)",
         [](auto dd){ return std::make_tuple(dmat(std::get<0>(dd), std::get<1>(dd)), dmat(std::get<0>(dd), std::get<1>(dd))); },
-        [](auto /*dd*/, dmat& A, dmat& R){ R = etl::sigmoid(A); }
+        [](dmat& A, dmat& R){ R = etl::sigmoid(A); }
         );
 }
 
