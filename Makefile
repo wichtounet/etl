@@ -38,7 +38,7 @@ RELEASE_FLAGS 		+= -DETL_VECTORIZE_FULL
 RELEASE_DEBUG_FLAGS += -DETL_VECTORIZE_FULL
 
 # Compile folders
-$(eval $(call auto_folder_compile,workbench))
+$(eval $(call auto_folder_compile,workbench,-Icpm/include))
 $(eval $(call auto_folder_compile,test))
 
 # Collect files for the test executable

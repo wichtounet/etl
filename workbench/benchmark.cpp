@@ -11,6 +11,9 @@
 
 #include "etl/etl.hpp"
 
+#define CPM_BENCHMARK "Tests Benchmarks"
+#include "cpm/cpm.hpp"
+
 #ifdef ETL_VECTORIZE
 #ifdef __SSE3__
 #define TEST_SSE
@@ -189,25 +192,26 @@ void measure_sub_ter(const std::string& title, A& a, B& b, C& c){
     sub_measure_ter<Functor, Enable>::measure_sub(title, a, b, c);
 }
 
-template<std::size_t D>
-void bench_fast_vector_simple(){
-    etl::fast_vector<double, D> a;
-    etl::fast_vector<double, D> b;
-    etl::fast_vector<double, D> c;
+using dvec = etl::dyn_vector<double>;
+using dmat = etl::dyn_matrix<double>;
 
-    measure("fast_vector_simple(" + std::to_string(D) + ")", [&a, &b, &c](){
-        c = 3.5 * a + etl::sigmoid(1.0 + b);
-    }, a, b);
-}
+using mat_policy = VALUES_POLICY(10, 25, 50, 100, 200, 300, 400, 500, 600, 700, 800, 900, 1000);
+using mat_policy_2d = NARY_POLICY(mat_policy, mat_policy);
 
-void bench_dyn_vector_simple(std::size_t d){
-    etl::dyn_vector<double> a(d);
-    etl::dyn_vector<double> b(d);
-    etl::dyn_vector<double> c(d);
+//Sigmoid benchmark
+CPM_BENCH() {
+    CPM_TWO_PASS(
+        "r = sigmoid(a)",
+        [](std::size_t d){ return std::make_tuple(dvec(d), dvec(d)); },
+        [](std::size_t /*d*/, dvec& a, dvec& r){ r = etl::sigmoid(a); }
+        );
 
-    measure("dyn_vector_simple(" + std::to_string(d) + ")", [&a, &b, &c](){
-        c = 3.5 * a + etl::sigmoid(1.0 + b);
-    }, a, b);
+    CPM_TWO_PASS_P(
+        mat_policy_2d,
+        "R = sigmoid(A)",
+        [](auto dd){ return std::make_tuple(dmat(std::get<0>(dd), std::get<1>(dd)), dmat(std::get<0>(dd), std::get<1>(dd))); },
+        [](auto /*dd*/, dmat& A, dmat& R){ R = etl::sigmoid(A); }
+        );
 }
 
 template<std::size_t D1, std::size_t D2>
@@ -770,11 +774,6 @@ void bench_standard(){
     bench_dyn_matrix_sigmoid(16, 256);
     bench_dyn_matrix_sigmoid(256, 128);
 
-    bench_fast_vector_simple<4096>();
-    bench_fast_vector_simple<16384>();
-    bench_dyn_vector_simple(4096);
-    bench_dyn_vector_simple(16384);
-
     bench_fast_matrix_simple<16, 256>();
     bench_fast_matrix_simple<256, 128>();
     bench_dyn_matrix_simple(16, 256);
@@ -1103,7 +1102,7 @@ void bench_dll(){
 
 } //end of anonymous namespace
 
-int main(int argc, char* argv[]){
+int main_old(int argc, char* argv[]){
     std::vector<std::string> args;
 
     for(int i = 1; i < argc; ++i){
