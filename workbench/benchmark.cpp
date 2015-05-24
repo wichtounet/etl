@@ -202,95 +202,143 @@ using mat_policy = VALUES_POLICY(10, 25, 50, 100, 200, 300, 400, 500, 600, 700, 
 using mat_policy_2d = NARY_POLICY(mat_policy, mat_policy);
 
 //Bench addition
+//CPM_BENCH() {
+    //CPM_TWO_PASS_NS(
+        //"r = a + b",
+        //[](std::size_t d){ return std::make_tuple(dvec(d), dvec(d), dvec(d)); },
+        //[](dvec& a, dvec& b, dvec& r){ r = a + b; }
+        //);
+
+    //CPM_TWO_PASS_NS(
+        //"r = a + b + c",
+        //[](std::size_t d){ return std::make_tuple(dvec(d), dvec(d), dvec(d), dvec(d)); },
+        //[](dvec& a, dvec& b, dvec& c, dvec& r){ r = a + b + c; }
+        //);
+
+    //CPM_TWO_PASS_NS_P(
+        //mat_policy_2d,
+        //"R = A + B",
+        //[](auto d1, auto d2){ return std::make_tuple(dmat(d1, d2), dmat(d1, d2), dmat(d1, d2)); },
+        //[](dmat& A, dmat& B, dmat& R){ R = A + B; }
+        //);
+
+    //CPM_TWO_PASS_NS_P(
+        //mat_policy_2d,
+        //"R = A + B",
+        //[](auto d1, auto d2){ return std::make_tuple(dmat(d1, d2), dmat(d1, d2), dmat(d1, d2), dmat(d1, d2)); },
+        //[](dmat& A, dmat& B, dmat& C, dmat& R){ R = A + B + C; }
+        //);
+//}
+
+////Bench subtraction
+//CPM_BENCH() {
+    //CPM_TWO_PASS_NS(
+        //"r = a - b",
+        //[](std::size_t d){ return std::make_tuple(dvec(d), dvec(d), dvec(d)); },
+        //[](dvec& a, dvec& b, dvec& r){ r = a - b; }
+        //);
+
+    //CPM_TWO_PASS_NS_P(
+        //mat_policy_2d,
+        //"R = A - B",
+        //[](auto d1, auto d2){ return std::make_tuple(dmat(d1, d2), dmat(d1, d2), dmat(d1, d2)); },
+        //[](dmat& A, dmat& B, dmat& R){ R = A - B; }
+        //);
+//}
+
+////Bench multiplication
+//CPM_BENCH() {
+    //CPM_TWO_PASS_NS(
+        //"r = a >> b",
+        //[](std::size_t d){ return std::make_tuple(dvec(d), dvec(d), dvec(d)); },
+        //[](dvec& a, dvec& b, dvec& r){ r = a >> b; }
+        //);
+
+    //CPM_TWO_PASS_NS_P(
+        //mat_policy_2d,
+        //"R = A >> B",
+        //[](auto d1, auto d2){ return std::make_tuple(dmat(d1, d2), dmat(d1, d2), dmat(d1, d2)); },
+        //[](dmat& A, dmat& B, dmat& R){ R = A >> B; }
+        //);
+//}
+
+////Bench division
+//CPM_BENCH() {
+    //CPM_TWO_PASS_NS(
+        //"r = a / b",
+        //[](std::size_t d){ return std::make_tuple(dvec(d), dvec(d), dvec(d)); },
+        //[](dvec& a, dvec& b, dvec& r){ r = a / b; }
+        //);
+
+    //CPM_TWO_PASS_NS_P(
+        //mat_policy_2d,
+        //"R = A / B",
+        //[](auto d1, auto d2){ return std::make_tuple(dmat(d1, d2), dmat(d1, d2), dmat(d1, d2)); },
+        //[](dmat& A, dmat& B, dmat& R){ R = A / B; }
+        //);
+//}
+
+////Sigmoid benchmark
+//CPM_BENCH() {
+    //CPM_TWO_PASS_NS(
+        //"r = sigmoid(a)",
+        //[](std::size_t d){ return std::make_tuple(dvec(d), dvec(d)); },
+        //[](dvec& a, dvec& r){ r = etl::sigmoid(a); }
+        //);
+
+    //CPM_TWO_PASS_NS_P(
+        //mat_policy_2d,
+        //"R = sigmoid(A)",
+        //[](auto d1, auto d2){ return std::make_tuple(dmat(d1, d2), dmat(d1, d2)); },
+        //[](dmat& A, dmat& R){ R = etl::sigmoid(A); }
+        //);
+//}
+
+//1D-Convolution benchmarks with large-kernel
 CPM_BENCH() {
-    CPM_TWO_PASS_NS(
-        "r = a + b",
-        [](std::size_t d){ return std::make_tuple(dvec(d), dvec(d), dvec(d)); },
-        [](dvec& a, dvec& b, dvec& r){ r = a + b; }
-        );
-
-    CPM_TWO_PASS_NS(
-        "r = a + b + c",
-        [](std::size_t d){ return std::make_tuple(dvec(d), dvec(d), dvec(d), dvec(d)); },
-        [](dvec& a, dvec& b, dvec& c, dvec& r){ r = a + b + c; }
+    CPM_TWO_PASS_NS_P(
+        NARY_POLICY(VALUES_POLICY(1000, 2000, 3000, 4000, 5000, 6000, 7000, 8000, 9000, 10000, 11000, 12000), VALUES_POLICY(500, 1000, 1500, 2000, 2500, 3000, 3500, 4000, 4500, 5000, 5500, 6000)),
+        "r = conv_1d_full(a,b)(large)",
+        [](std::size_t d1, std::size_t d2){ return std::make_tuple(dvec(d1), dvec(d2), dvec(d1 + d2 - 1)); },
+        [](dvec& a, dvec& b, dvec& r){ r = etl::conv_1d_full(a, b); }
         );
 
     CPM_TWO_PASS_NS_P(
-        mat_policy_2d,
-        "R = A + B",
-        [](auto d1, auto d2){ return std::make_tuple(dmat(d1, d2), dmat(d1, d2), dmat(d1, d2)); },
-        [](dmat& A, dmat& B, dmat& R){ R = A + B; }
+        NARY_POLICY(VALUES_POLICY(1000, 2000, 3000, 4000, 5000, 6000, 7000, 8000, 9000, 10000, 11000, 12000), VALUES_POLICY(500, 1000, 1500, 2000, 2500, 3000, 3500, 4000, 4500, 5000, 5500, 6000)),
+        "r = conv_1d_same(a,b)(large)",
+        [](std::size_t d1, std::size_t d2){ return std::make_tuple(dvec(d1), dvec(d2), dvec(d1)); },
+        [](dvec& a, dvec& b, dvec& r){ r = etl::conv_1d_same(a, b); }
         );
-
+    
     CPM_TWO_PASS_NS_P(
-        mat_policy_2d,
-        "R = A + B",
-        [](auto d1, auto d2){ return std::make_tuple(dmat(d1, d2), dmat(d1, d2), dmat(d1, d2), dmat(d1, d2)); },
-        [](dmat& A, dmat& B, dmat& C, dmat& R){ R = A + B + C; }
+        NARY_POLICY(VALUES_POLICY(1000, 2000, 3000, 4000, 5000, 6000, 7000, 8000, 9000, 10000, 11000, 12000), VALUES_POLICY(500, 1000, 1500, 2000, 2500, 3000, 3500, 4000, 4500, 5000, 5500, 6000)),
+        "r = conv_1d_valid(a,b)(large)",
+        [](std::size_t d1, std::size_t d2){ return std::make_tuple(dvec(d1), dvec(d2), dvec(d1 - d2 + 1)); },
+        [](dvec& a, dvec& b, dvec& r){ r = etl::conv_1d_valid(a, b); }
         );
 }
 
-//Bench subtraction
+//1D-Convolution benchmarks with small-kernel
 CPM_BENCH() {
-    CPM_TWO_PASS_NS(
-        "r = a - b",
-        [](std::size_t d){ return std::make_tuple(dvec(d), dvec(d), dvec(d)); },
-        [](dvec& a, dvec& b, dvec& r){ r = a - b; }
+    CPM_TWO_PASS_NS_P(
+        NARY_POLICY(VALUES_POLICY(1000, 2000, 3000, 4000, 5000, 6000, 7000, 8000, 9000, 10000, 11000, 12000), VALUES_POLICY(100, 200, 300, 400, 500, 600, 700, 800, 900, 1000, 1100, 1200)),
+        "r = conv_1d_full(a,b)(small)",
+        [](std::size_t d1, std::size_t d2){ return std::make_tuple(dvec(d1), dvec(d2), dvec(d1 + d2 - 1)); },
+        [](dvec& a, dvec& b, dvec& r){ r = etl::conv_1d_full(a, b); }
         );
 
     CPM_TWO_PASS_NS_P(
-        mat_policy_2d,
-        "R = A - B",
-        [](auto d1, auto d2){ return std::make_tuple(dmat(d1, d2), dmat(d1, d2), dmat(d1, d2)); },
-        [](dmat& A, dmat& B, dmat& R){ R = A - B; }
+        NARY_POLICY(VALUES_POLICY(1000, 2000, 3000, 4000, 5000, 6000, 7000, 8000, 9000, 10000, 11000, 12000), VALUES_POLICY(100, 200, 300, 400, 500, 600, 700, 800, 900, 1000, 1100, 1200)),
+        "r = conv_1d_same(a,b)(small)",
+        [](std::size_t d1, std::size_t d2){ return std::make_tuple(dvec(d1), dvec(d2), dvec(d1)); },
+        [](dvec& a, dvec& b, dvec& r){ r = etl::conv_1d_same(a, b); }
         );
-}
-
-//Bench multiplication
-CPM_BENCH() {
-    CPM_TWO_PASS_NS(
-        "r = a >> b",
-        [](std::size_t d){ return std::make_tuple(dvec(d), dvec(d), dvec(d)); },
-        [](dvec& a, dvec& b, dvec& r){ r = a >> b; }
-        );
-
+    
     CPM_TWO_PASS_NS_P(
-        mat_policy_2d,
-        "R = A >> B",
-        [](auto d1, auto d2){ return std::make_tuple(dmat(d1, d2), dmat(d1, d2), dmat(d1, d2)); },
-        [](dmat& A, dmat& B, dmat& R){ R = A >> B; }
-        );
-}
-
-//Bench division
-CPM_BENCH() {
-    CPM_TWO_PASS_NS(
-        "r = a / b",
-        [](std::size_t d){ return std::make_tuple(dvec(d), dvec(d), dvec(d)); },
-        [](dvec& a, dvec& b, dvec& r){ r = a / b; }
-        );
-
-    CPM_TWO_PASS_NS_P(
-        mat_policy_2d,
-        "R = A / B",
-        [](auto d1, auto d2){ return std::make_tuple(dmat(d1, d2), dmat(d1, d2), dmat(d1, d2)); },
-        [](dmat& A, dmat& B, dmat& R){ R = A / B; }
-        );
-}
-
-//Sigmoid benchmark
-CPM_BENCH() {
-    CPM_TWO_PASS_NS(
-        "r = sigmoid(a)",
-        [](std::size_t d){ return std::make_tuple(dvec(d), dvec(d)); },
-        [](dvec& a, dvec& r){ r = etl::sigmoid(a); }
-        );
-
-    CPM_TWO_PASS_NS_P(
-        mat_policy_2d,
-        "R = sigmoid(A)",
-        [](auto d1, auto d2){ return std::make_tuple(dmat(d1, d2), dmat(d1, d2)); },
-        [](dmat& A, dmat& R){ R = etl::sigmoid(A); }
+        NARY_POLICY(VALUES_POLICY(1000, 2000, 3000, 4000, 5000, 6000, 7000, 8000, 9000, 10000, 11000, 12000), VALUES_POLICY(100, 200, 300, 400, 500, 600, 700, 800, 900, 1000, 1100, 1200)),
+        "r = conv_1d_valid(a,b)(small)",
+        [](std::size_t d1, std::size_t d2){ return std::make_tuple(dvec(d1), dvec(d2), dvec(d1 - d2 + 1)); },
+        [](dvec& a, dvec& b, dvec& r){ r = etl::conv_1d_valid(a, b); }
         );
 }
 
