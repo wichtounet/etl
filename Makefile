@@ -25,6 +25,8 @@ LD_FLAGS += $(shell pkg-config --libs cblas)
 endif
 endif
 
+LD_FLAGS += -pthread
+
 # Enable coverage if not disabled by the user
 ifeq (,$(ETL_NO_COVERAGE))
 $(eval $(call enable_coverage))

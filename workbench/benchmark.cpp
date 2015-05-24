@@ -11,6 +11,9 @@
 
 #include "etl/etl.hpp"
 
+#define CPM_PARALLEL_RANDOMIZE
+#define CPM_FAST_RANDOMIZE
+
 #define CPM_BENCHMARK "Tests Benchmarks"
 #include "cpm/cpm.hpp"
 
