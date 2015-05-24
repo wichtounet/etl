@@ -889,6 +889,15 @@ void bench_standard(){
     bench_dyn_mmul_s(512, 256);
 }
 
+CPM_BENCH(){
+    CPM_TWO_PASS_NS_P(
+        VALUES_POLICY(10, 50, 100, 500, 1000, 2000, 3000, 4000, 5000),
+        "r = A * (a + b)",
+        [](std::size_t d){ return std::make_tuple(dmat(d,d), dvec(d), dvec(d), dvec(d)); },
+        [](dmat& A, dvec& a, dvec& b, dvec& r){ r = A * (a + b); }
+        );
+}
+
 void bench_smart_0(std::size_t d){
     etl::dyn_matrix<double> A(d, d);
     etl::dyn_vector<double> a(d);
