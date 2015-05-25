@@ -342,6 +342,54 @@ CPM_BENCH() {
         );
 }
 
+//2D-Convolution benchmarks with large-kernel
+CPM_BENCH() {
+    CPM_TWO_PASS_NS_P(
+        NARY_POLICY(VALUES_POLICY(100, 110, 120, 130, 140, 150, 160, 170, 180, 190, 200), VALUES_POLICY(50, 55, 60, 65, 70, 75, 80, 85, 90, 95, 100)),
+        "r = conv_2d_full(a,b)(large)",
+        [](std::size_t d1, std::size_t d2){ return std::make_tuple(dmat(d1, d1), dmat(d2, d2), dmat(d1 + d2 - 1, d1 + d2 - 1)); },
+        [](dmat& a, dmat& b, dmat& r){ r = etl::conv_2d_full(a, b); }
+        );
+
+    CPM_TWO_PASS_NS_P(
+        NARY_POLICY(VALUES_POLICY(100, 110, 120, 130, 140, 150, 160, 170, 180, 190, 200), VALUES_POLICY(50, 55, 60, 65, 70, 75, 80, 85, 90, 95, 100)),
+        "r = conv_2d_same(a,b)(large)",
+        [](std::size_t d1, std::size_t d2){ return std::make_tuple(dmat(d1, d1), dmat(d2, d2), dmat(d1, d1)); },
+        [](dmat& a, dmat& b, dmat& r){ r = etl::conv_2d_same(a, b); }
+        );
+
+    CPM_TWO_PASS_NS_P(
+        NARY_POLICY(VALUES_POLICY(100, 110, 120, 130, 140, 150, 160, 170, 180, 190, 200), VALUES_POLICY(50, 55, 60, 65, 70, 75, 80, 85, 90, 95, 100)),
+        "r = conv_2d_valid(a,b)(large)",
+        [](std::size_t d1, std::size_t d2){ return std::make_tuple(dmat(d1, d1), dmat(d2, d2), dmat(d1 - d2 + 1, d1 - d2 + 1)); },
+        [](dmat& a, dmat& b, dmat& r){ r = etl::conv_2d_valid(a, b); }
+        );
+}
+
+//2D-Convolution benchmarks with small-kernel
+CPM_BENCH() {
+    CPM_TWO_PASS_NS_P(
+        NARY_POLICY(VALUES_POLICY(100, 150, 200, 250, 300, 350, 400, 450, 500), VALUES_POLICY(10, 15, 20, 25, 30, 35, 40, 45, 50)),
+        "r = conv_2d_full(a,b)(small)",
+        [](std::size_t d1, std::size_t d2){ return std::make_tuple(dmat(d1, d1), dmat(d2, d2), dmat(d1 + d2 - 1, d1 + d2 - 1)); },
+        [](dmat& a, dmat& b, dmat& r){ r = etl::conv_2d_full(a, b); }
+        );
+
+    CPM_TWO_PASS_NS_P(
+        NARY_POLICY(VALUES_POLICY(100, 150, 200, 250, 300, 350, 400, 450, 500), VALUES_POLICY(10, 15, 20, 25, 30, 35, 40, 45, 50)),
+        "r = conv_2d_same(a,b)(small)",
+        [](std::size_t d1, std::size_t d2){ return std::make_tuple(dmat(d1, d1), dmat(d2, d2), dmat(d1, d1)); },
+        [](dmat& a, dmat& b, dmat& r){ r = etl::conv_2d_same(a, b); }
+        );
+
+    CPM_TWO_PASS_NS_P(
+        NARY_POLICY(VALUES_POLICY(100, 150, 200, 250, 300, 350, 400, 450, 500), VALUES_POLICY(10, 15, 20, 25, 30, 35, 40, 45, 50)),
+        "r = conv_2d_valid(a,b)(small)",
+        [](std::size_t d1, std::size_t d2){ return std::make_tuple(dmat(d1, d1), dmat(d2, d2), dmat(d1 - d2 + 1, d1 - d2 + 1)); },
+        [](dmat& a, dmat& b, dmat& r){ r = etl::conv_2d_valid(a, b); }
+        );
+}
+
 void bench_dyn_convmtx2(std::size_t d1, std::size_t d2){
     etl::dyn_matrix<double> a(d1, d1);
     etl::dyn_matrix<double> b((d1 + d2 - 1)*(d1 + d2 - 1), d2 * d2);
