@@ -17,7 +17,7 @@
 #define CPM_BENCHMARK "Tests Benchmarks"
 #include "cpm/cpm.hpp"
 
-#ifdef ETL_VECTORIZE
+#ifdef ETL_VECTORIZE_IMPL
 #ifdef __SSE3__
 #define TEST_SSE
 #endif
@@ -197,6 +197,9 @@ void measure_sub_ter(const std::string& title, A& a, B& b, C& c){
 
 using dvec = etl::dyn_vector<double>;
 using dmat = etl::dyn_matrix<double>;
+
+using svec = etl::dyn_vector<float>;
+using smat = etl::dyn_matrix<float>;
 
 using mat_policy = VALUES_POLICY(10, 25, 50, 100, 200, 300, 400, 500, 600, 700, 800, 900, 1000);
 using mat_policy_2d = NARY_POLICY(mat_policy, mat_policy);
@@ -415,6 +418,64 @@ void bench_dyn_im2col_direct(std::size_t d1, std::size_t d2){
     measure("im2col_direct(" + std::to_string(d1) + "x" + std::to_string(d1) + "," + std::to_string(d2) + "," + std::to_string(d2) + ")",
         [&a, &b, d2](){etl::im2col_direct(b, a, d2, d2);}
         , a);
+}
+
+using conv_1d_large_policy = NARY_POLICY(VALUES_POLICY(1000, 2000, 3000, 4000, 5000, 6000, 7000, 8000, 9000, 10000, 11000, 12000), VALUES_POLICY(500, 1000, 1500, 2000, 2500, 3000, 3500, 4000, 4500, 5000, 5500, 6000));
+
+CPM_SECTION_P(conv_1d_large_policy, "sconv1_valid") 
+    CPM_TWO_PASS_NS(
+        "default",
+        [](std::size_t d1, std::size_t d2){ return std::make_tuple(svec(d1), svec(d2), svec(d1 - d2 + 1)); },
+        [](svec& a, svec& b, svec& r){ r = etl::conv_1d_valid(a, b); }
+        );
+    
+    CPM_TWO_PASS_NS(
+        "std",
+        [](std::size_t d1, std::size_t d2){ return std::make_tuple(svec(d1), svec(d2), svec(d1 - d2 + 1)); },
+        [](svec& a, svec& b, svec& r){ etl::impl::standard::conv1_valid(a, b, r); }
+        );
+#ifdef TEST_SSE
+    CPM_TWO_PASS_NS(
+        "sse",
+        [](std::size_t d1, std::size_t d2){ return std::make_tuple(svec(d1), svec(d2), svec(d1 - d2 + 1)); },
+        [](svec& a, svec& b, svec& r){ etl::impl::sse::sconv1_valid(a, b, r); }
+        );
+#endif
+#ifdef TEST_AVX
+    CPM_TWO_PASS_NS(
+        "avx",
+        [](std::size_t d1, std::size_t d2){ return std::make_tuple(svec(d1), svec(d2), svec(d1 - d2 + 1)); },
+        [](svec& a, svec& b, svec& r){ etl::impl::avx::sconv1_valid(a, b, r); }
+        );
+#endif
+}
+
+CPM_SECTION_P(conv_1d_large_policy, "dconv1_valid") 
+    CPM_TWO_PASS_NS(
+        "default",
+        [](std::size_t d1, std::size_t d2){ return std::make_tuple(dvec(d1), dvec(d2), dvec(d1 - d2 + 1)); },
+        [](dvec& a, dvec& b, dvec& r){ r = etl::conv_1d_valid(a, b); }
+        );
+    
+    CPM_TWO_PASS_NS(
+        "std",
+        [](std::size_t d1, std::size_t d2){ return std::make_tuple(dvec(d1), dvec(d2), dvec(d1 - d2 + 1)); },
+        [](dvec& a, dvec& b, dvec& r){ etl::impl::standard::conv1_valid(a, b, r); }
+        );
+#ifdef TEST_SSE
+    CPM_TWO_PASS_NS(
+        "sse",
+        [](std::size_t d1, std::size_t d2){ return std::make_tuple(dvec(d1), dvec(d2), dvec(d1 - d2 + 1)); },
+        [](dvec& a, dvec& b, dvec& r){ etl::impl::sse::dconv1_valid(a, b, r); }
+        );
+#endif
+#ifdef TEST_AVX
+    CPM_TWO_PASS_NS(
+        "avx",
+        [](std::size_t d1, std::size_t d2){ return std::make_tuple(dvec(d1), dvec(d2), dvec(d1 - d2 + 1)); },
+        [](dvec& a, dvec& b, dvec& r){ etl::impl::avx::dconv1_valid(a, b, r); }
+        );
+#endif
 }
 
 TER_FUNCTOR(default_conv_1d_full, c = etl::conv_1d_full(a, b));
