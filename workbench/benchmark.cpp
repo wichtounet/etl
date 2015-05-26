@@ -246,7 +246,6 @@ using conv_2d_large_policy = NARY_POLICY(VALUES_POLICY(100, 105, 110, 115, 120, 
 #define MC_SECTION_FUNCTOR(name, ...)
 #endif
 
-
 //Bench addition
 CPM_BENCH() {
     CPM_TWO_PASS_NS(
@@ -436,32 +435,25 @@ CPM_BENCH() {
         );
 }
 
-void bench_dyn_convmtx2(std::size_t d1, std::size_t d2){
-    etl::dyn_matrix<double> a(d1, d1);
-    etl::dyn_matrix<double> b((d1 + d2 - 1)*(d1 + d2 - 1), d2 * d2);
+CPM_DIRECT_BENCH_TWO_PASS_P(
+    NARY_POLICY(VALUES_POLICY(16, 16, 32, 32, 64, 64), VALUES_POLICY(4, 8, 8, 16, 16, 32)),
+    "convmtx2",
+    [](std::size_t d1, std::size_t d2){ return std::make_tuple(dmat(d1, d1), dmat((d1 + d2 - 1)*(d1 + d2 - 1), d2 * d2)); }, [](std::size_t /*d1*/, std::size_t d2, dmat& a, dmat& b){ b = etl::convmtx2(a, d2, d2); }
+);
 
-    measure("convmtx2(" + std::to_string(d1) + "x" + std::to_string(d1) + "," + std::to_string(d2) + "," + std::to_string(d2) + ")",
-        [&a, &b, d2](){b = etl::convmtx2(a, d2, d2);}
-        , a);
-}
+CPM_DIRECT_BENCH_TWO_PASS_P(
+    NARY_POLICY(VALUES_POLICY(16, 16, 32, 32, 64, 64, 128), VALUES_POLICY(4, 8, 8, 16, 16, 32, 32)),
+    "convmtx2_t",
+    [](std::size_t d1, std::size_t d2){ return std::make_tuple(dmat(d1, d1), dmat((d1 + d2 - 1)*(d1 + d2 - 1), d2 * d2)); },
+    [](std::size_t /*d1*/, std::size_t d2, dmat& a, dmat& b){ etl::convmtx2_direct_t(b, a, d2, d2); }
+);
 
-void bench_dyn_convmtx2_t(std::size_t d1, std::size_t d2){
-    etl::dyn_matrix<double> a(d1, d1);
-    etl::dyn_matrix<double> b((d1 + d2 - 1)*(d1 + d2 - 1), d2 * d2);
-
-    measure("convmtx2_direct_t(" + std::to_string(d1) + "x" + std::to_string(d1) + "," + std::to_string(d2) + "," + std::to_string(d2) + ")",
-        [&a, &b, d2](){etl::convmtx2_direct_t(b, a, d2, d2);}
-        , a);
-}
-
-void bench_dyn_im2col_direct(std::size_t d1, std::size_t d2){
-    etl::dyn_matrix<double> a(d1, d1);
-    etl::dyn_matrix<double> b(d2 * d2, (d1 - d2 + 1)*(d1 - d2 + 1));
-
-    measure("im2col_direct(" + std::to_string(d1) + "x" + std::to_string(d1) + "," + std::to_string(d2) + "," + std::to_string(d2) + ")",
-        [&a, &b, d2](){etl::im2col_direct(b, a, d2, d2);}
-        , a);
-}
+CPM_DIRECT_BENCH_TWO_PASS_P(
+    NARY_POLICY(VALUES_POLICY(16, 16, 32, 32, 64, 64, 128), VALUES_POLICY(4, 8, 8, 16, 16, 32, 32)),
+    "im2col_direct",
+    [](std::size_t d1, std::size_t d2){ return std::make_tuple(dmat(d1, d1), dmat(d2 * d2, (d1 - d2 + 1)*(d1 - d2 + 1))); },
+    [](std::size_t /*d1*/, std::size_t d2, dmat& a, dmat& b){ etl::im2col_direct(b, a, d2, d2); }
+);
 
 CPM_DIRECT_SECTION_TWO_PASS_NS_P("sconv1_valid", conv_1d_large_policy, 
     CPM_SECTION_INIT([](std::size_t d1, std::size_t d2){ return std::make_tuple(svec(d1), svec(d2), svec(d1 - d2 + 1)); }),
@@ -566,30 +558,6 @@ CPM_DIRECT_SECTION_TWO_PASS_NS_P("dconv2_full", conv_2d_large_policy,
     MKL_SECTION_FUNCTOR("fft", [](dmat& a, dmat& b, dmat& r){ r = etl::fft_conv_2d_full(a, b); })
      MC_SECTION_FUNCTOR("mmul", [](dmat& a, dmat& b, dmat& r){ etl::impl::reduc::conv2_full(a, b, r); })
 )
-
-void bench_standard(){
-    std::cout << "Start benchmarking...\n";
-    std::cout << "... all structures are on stack\n\n";
-
-    bench_dyn_convmtx2(16, 4);
-    bench_dyn_convmtx2(32, 4);
-    bench_dyn_convmtx2(32, 8);
-    bench_dyn_convmtx2(32, 16);
-    bench_dyn_convmtx2(64, 32);
-
-    bench_dyn_convmtx2_t(16, 4);
-    bench_dyn_convmtx2_t(32, 4);
-    bench_dyn_convmtx2_t(32, 8);
-    bench_dyn_convmtx2_t(32, 16);
-    bench_dyn_convmtx2_t(64, 16);
-    bench_dyn_convmtx2_t(64, 32);
-
-    bench_dyn_im2col_direct(16, 4);
-    bench_dyn_im2col_direct(32, 4);
-    bench_dyn_im2col_direct(32, 8);
-    bench_dyn_im2col_direct(32, 16);
-    bench_dyn_im2col_direct(64, 32);
-}
 
 CPM_BENCH(){
     CPM_TWO_PASS_NS_P(
@@ -745,9 +713,3 @@ CPM_DIRECT_BENCH_TWO_PASS_NS_P(
 )
 
 } //end of anonymous namespace
-
-int main_old(){
-    bench_standard();
-
-    return 0;
-}
