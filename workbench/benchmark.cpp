@@ -209,6 +209,9 @@ void measure_sub_ter(const std::string& title, A& a, B& b, C& c){
 
 using dvec = etl::dyn_vector<double>;
 using dmat = etl::dyn_matrix<double>;
+using dmat2 = etl::dyn_matrix<double, 2>;
+using dmat3 = etl::dyn_matrix<double, 3>;
+using dmat4 = etl::dyn_matrix<double, 4>;
 
 using svec = etl::dyn_vector<float>;
 using smat = etl::dyn_matrix<float>;
@@ -242,6 +245,7 @@ using conv_2d_large_policy = NARY_POLICY(VALUES_POLICY(100, 105, 110, 115, 120, 
 #else
 #define MC_SECTION_FUNCTOR(name, ...)
 #endif
+
 
 //Bench addition
 CPM_BENCH() {
@@ -691,112 +695,59 @@ CPM_DIRECT_BENCH_TWO_PASS_NS_P(
     [](dvec& v, dvec& h, dvec& c, dvec& t, dmat& w){ v = etl::sigmoid(c + etl::mul(w, h, t)); }
 )
 
-void bench_conv_rbm_hidden(std::size_t NC, std::size_t K, std::size_t NV, std::size_t NH){
-    auto NW = NV - NH + 1;
+//Small optimizations
+// 1. Some time can be saved by keeping one matrix for the im2col result and pass it to conv_2d_valid_multi
+// 2. fflip is already done in conv_2d_multi and fflip(fflip(A)) = A, therefore only tranpose is necessary.
+// This means calling the _prepared version of conv_2d_valid_multi
 
-    etl::dyn_matrix<double, 4> w(NC, K, NW, NW);
-    etl::dyn_matrix<double, 4> w_t(NC, K, NW, NW);
-    etl::dyn_vector<double> b(K);
+CPM_DIRECT_BENCH_TWO_PASS_NS_P(
+    NARY_POLICY(VALUES_POLICY(1, 1, 1, 3, 3, 3, 30, 40), VALUES_POLICY(10, 10, 30, 30, 30, 40, 40, 40), VALUES_POLICY(28, 28, 28, 28, 36, 36, 36, 36), VALUES_POLICY(5, 11, 19, 19, 19, 19, 19, 19)),
+    "conv_rbm_hidden", 
+    [](std::size_t nc, std::size_t k, std::size_t nv, std::size_t nh){ 
+        auto nw = nv - nh + 1; 
+        return std::make_tuple(dmat4(nc,k,nw,nw), dmat4(nc,k,nw,nw), dvec(k), dmat3(nc,nv,nv), dmat3(k, nh, nh), dmat4(2ul, k, nh, nh));},
+    [](dmat4& w, dmat4& w_t, dvec& b, dmat3& v, dmat3& h, dmat4 v_cv){
+        v_cv(1) = 0;
 
-    etl::dyn_matrix<double, 3> v(NC, NV, NV);
-    etl::dyn_matrix<double, 3> h(K, NH, NH);
+        w_t = w;
 
-    etl::dyn_matrix<double, 4> v_cv(2UL, K, NH, NH);
-    etl::dyn_matrix<double, 3> h_cv(2UL, NV, NV);
+        for(std::size_t channel = 0; channel < etl::dim<0>(w_t); ++channel){
+            for(size_t k = 0; k < etl::dim<0>(b); ++k){
+                w_t(channel)(k).fflip_inplace();
+            }
+        }
 
-    //Small optimizations
-    // 1. Some time can be saved by keeping one matrix for the im2col result and pass it to conv_2d_valid_multi
-    // 2. fflip is already done in conv_2d_multi and fflip(fflip(A)) = A, therefore only tranpose is necessary.
-    // This means calling the _prepared version of conv_2d_valid_multi
+        for(std::size_t channel = 0; channel < etl::dim<0>(w_t); ++channel){
+            conv_2d_valid_multi(v(channel), w_t(channel), v_cv(0));
 
-    measure("CRBM Hidden Activation (" + std::to_string(NC) + "x" + std::to_string(NV) + "^2 -> " +
-        std::to_string(K) + "x" + std::to_string(NH) + "^2)",
-        [&](){
-            v_cv(1) = 0;
+            v_cv(1) += v_cv(0);
+        }
 
-            for(std::size_t channel = 0; channel < NC; ++channel){
-                for(size_t k = 0; k < K; ++k){
-                    w_t(channel)(k).fflip_inplace();
-                }
+        h = etl::sigmoid(etl::rep(b, etl::dim<1>(h), etl::dim<2>(h)) + v_cv(1));
+    }
+)
+
+CPM_DIRECT_BENCH_TWO_PASS_NS_P(
+    NARY_POLICY(VALUES_POLICY(1, 1, 1, 3, 3, 3, 30, 40), VALUES_POLICY(10, 10, 30, 30, 30, 40, 40, 40), VALUES_POLICY(28, 28, 28, 28, 36, 36, 36, 36), VALUES_POLICY(5, 11, 19, 19, 19, 19, 19, 19)),
+    "conv_rbm_visible", 
+    [](std::size_t nc, std::size_t k, std::size_t nv, std::size_t nh){ 
+        auto nw = nv - nh + 1; 
+        return std::make_tuple(dmat4(nc,k,nw,nw), dvec(k), dvec(nc), dmat3(nc,nv,nv), dmat3(k,nh,nh), dmat3(k,nv,nv));},
+    [](dmat4& w, dvec& b, dvec& c, dmat3& v, dmat3& h, dmat3& h_cv){
+        for(std::size_t channel = 0; channel < etl::dim<0>(c); ++channel){
+            for(std::size_t k = 0; k < etl::dim<0>(b); ++k){
+                h_cv(k) = etl::conv_2d_full(h(k), w(channel)(k));
             }
 
-            for(std::size_t channel = 0; channel < NC; ++channel){
-                conv_2d_valid_multi(v(channel), w_t(channel), v_cv(0));
-
-                v_cv(1) += v_cv(0);
-            }
-
-            h = etl::sigmoid(etl::rep(b, NH, NH) + v_cv(1));
-    }, b, v, w);
-}
-
-void bench_conv_rbm_visible(std::size_t NC, std::size_t K, std::size_t NV, std::size_t NH){
-    auto NW = NV - NH + 1;
-
-    etl::dyn_matrix<double, 4> w(NC, K, NW, NW);
-    etl::dyn_vector<double> b(K);
-    etl::dyn_vector<double> c(NC);
-
-    etl::dyn_matrix<double, 3> v(NC, NV, NV);
-    etl::dyn_matrix<double, 3> h(K, NH, NH);
-
-    etl::dyn_matrix<double, 3> h_cv(K, NV, NV);
-
-    measure("CRBM Visible Activation (" + std::to_string(NC) + "x" + std::to_string(NV) + "^2 -> " +
-        std::to_string(K) + "x" + std::to_string(NH) + "^2)",
-        [&](){
-            for(std::size_t channel = 0; channel < NC; ++channel){
-                for(std::size_t k = 0; k < K; ++k){
-                    h_cv(k) = etl::conv_2d_full(h(k), w(channel)(k));
-                }
-
-                v(channel) = sigmoid(c(channel) + sum_l(h_cv));
-            }
-    }, c, h, w);
-}
-
-void bench_dll(){
-    std::cout << "Start DLL benchmarking...\n";
-
-    bench_conv_rbm_hidden(1, 10, 10, 7);
-    bench_conv_rbm_hidden(1, 10, 30, 7);
-    bench_conv_rbm_hidden(1, 40, 30, 7);
-    bench_conv_rbm_hidden(3, 10, 30, 7);
-    bench_conv_rbm_hidden(3, 40, 30, 7);
-    bench_conv_rbm_hidden(3, 40, 30, 14);
-    bench_conv_rbm_hidden(40, 40, 30, 16);
-
-    bench_conv_rbm_visible(1, 10, 10, 7);
-    bench_conv_rbm_visible(1, 10, 30, 7);
-    bench_conv_rbm_visible(1, 40, 30, 7);
-    bench_conv_rbm_visible(3, 10, 30, 7);
-    bench_conv_rbm_visible(3, 40, 30, 7);
-    bench_conv_rbm_visible(3, 40, 30, 14);
-    bench_conv_rbm_visible(40, 40, 30, 16);
-}
+            v(channel) = sigmoid(c(channel) + sum_l(h_cv));
+        }
+    }
+)
 
 } //end of anonymous namespace
 
-int main_old(int argc, char* argv[]){
-    std::vector<std::string> args;
-
-    for(int i = 1; i < argc; ++i){
-        args.emplace_back(argv[i]);
-    }
-
-    bool dll = false;
-
-    for(auto& arg : args){
-        if(arg == "dll"){
-            dll = true;
-        }
-    }
-
-    if(dll){
-        bench_dll();
-    } else {
-        bench_standard();
-    }
+int main_old(){
+    bench_standard();
 
     return 0;
 }
