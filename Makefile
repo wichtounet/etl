@@ -82,7 +82,7 @@ valgrind_test: debug
 	valgrind --leak-check=full ./debug/bin/etl_test
 
 benchmark: release/bin/benchmark
-	./release/bin/benchmark
+	./release/bin/benchmark --tag=`git rev-list HEAD --count`-`git rev-parse HEAD`
 
 cppcheck:
 	cppcheck -I include/ --platform=unix64 --suppress=missingIncludeSystem --enable=all --std=c++11 workbench/*.cpp include/etl/*.hpp
