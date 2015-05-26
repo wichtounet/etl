@@ -116,4 +116,10 @@ clean: base_clean
 	rm -rf reports
 	rm -rf latex/ html/
 
+version:
+	@echo `git rev-parse HEAD`
+
+tag:
+	@echo `git rev-list HEAD --count`-`git rev-parse HEAD`
+
 include make-utils/cpp-utils-finalize.mk
