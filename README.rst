@@ -1,6 +1,10 @@
 Expression Templates Library (ETL)
 ==================================
 
+.. image:: https://img.shields.io/sonar/https/baptiste-wicht.ch/sonar/etl/coverage.svg 
+.. image:: https://img.shields.io/jenkins/s/https/baptiste-wicht.ch/jenkins/etl.svg 
+.. image:: https://img.shields.io/github/license/mashape/apistatus.svg
+
 ETL is a header only library for cC+ that provides vector and
 matrix classes with support for Expression Templates to perform very
 efficient operations on them.
