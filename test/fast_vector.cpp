@@ -403,6 +403,8 @@ TEMPLATE_TEST_CASE_2( "fast_vector/softmax_1", "fast_vector::softmax", Z, float,
     REQUIRE(d[0] == Approx(std::exp(Z(1.0)) / sum));
     REQUIRE(d[1] == Approx(std::exp(Z(2.0)) / sum));
     REQUIRE(d[2] == Approx(std::exp(Z(3.0)) / sum));
+
+    REQUIRE(etl::mean(d) == Approx(1.0 / 3.0));
 }
 
 TEMPLATE_TEST_CASE_2( "fast_vector/softmax_2", "fast_vector::softmax", Z, float, double ) {
@@ -415,6 +417,25 @@ TEMPLATE_TEST_CASE_2( "fast_vector/softmax_2", "fast_vector::softmax", Z, float,
     REQUIRE(d[0] == Approx(std::exp(Z(-1.0)) / sum));
     REQUIRE(d[1] == Approx(std::exp(Z(4.0)) / sum));
     REQUIRE(d[2] == Approx(std::exp(Z(5.0)) / sum));
+
+    REQUIRE(etl::mean(d) == Approx(1.0 / 3.0));
+}
+
+TEMPLATE_TEST_CASE_2( "softmax_3", "fast_vector::softmax", Z, float, double ) {
+    etl::fast_matrix<Z, 3, 3> a = {1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0};
+
+    etl::fast_matrix<Z, 3, 3> d(etl::softmax(a));
+
+    REQUIRE(etl::mean(d) == Approx(1.0 / 9.0));
+}
+
+TEMPLATE_TEST_CASE_2( "softmax_4", "fast_vector::softmax", Z, float, double ) {
+    etl::fast_matrix<Z, 3, 3> a = {1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0};
+    etl::fast_matrix<Z, 3, 3> b(1.4);
+
+    etl::fast_matrix<Z, 3, 3> d(etl::softmax(a + a * 2 + b + b * a));
+
+    REQUIRE(etl::mean(d) == Approx(1.0 / 9.0));
 }
 
 TEMPLATE_TEST_CASE_2( "fast_vector/softplus", "fast_vector::softplus", Z, float, double ) {
@@ -652,7 +673,7 @@ TEMPLATE_TEST_CASE_2( "fast_vector/outer_1", "sum", Z, float, double ) {
     REQUIRE(c(0,0) == 4.0);
     REQUIRE(c(0,1) == 5.0);
     REQUIRE(c(0,2) == 6.0);
-    
+
     REQUIRE(c(1,0) == 8.0);
     REQUIRE(c(1,1) == 10.0);
     REQUIRE(c(1,2) == 12.0);
