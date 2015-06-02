@@ -998,8 +998,10 @@ value_t<A> dot(const A& a, const B& b){
 }
 
 template<typename E, cpp::enable_if_u<is_etl_expr<E>::value> = cpp::detail::dummy>
-typename E::value_type sum(const E& values){
-    typename E::value_type acc(0);
+value_t<E> sum(E&& values){
+    force(values);
+
+    value_t<E> acc(0);
 
     for(std::size_t i = 0; i < size(values); ++i){
         acc += values[i];
@@ -1009,7 +1011,7 @@ typename E::value_type sum(const E& values){
 }
 
 template<typename E, cpp::enable_if_u<is_etl_expr<E>::value> = cpp::detail::dummy>
-typename E::value_type mean(const E& values){
+value_t<E> mean(E&& values){
     return sum(values) / size(values);
 }
 
