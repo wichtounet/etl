@@ -35,9 +35,11 @@ endif
 # Enable sanitizers in debug mode
 DEBUG_FLAGS += -fsanitize=address,undefined
 
-# Enable advanced vectorization for release modes
+# Enable advanced vectorization for release modes (
+ifeq(,$(ETL_NO_DEFAULT))
 RELEASE_FLAGS 		+= -DETL_VECTORIZE_FULL
 RELEASE_DEBUG_FLAGS += -DETL_VECTORIZE_FULL
+endif
 
 # Compile folders
 $(eval $(call auto_folder_compile,workbench,-Icpm/include))
