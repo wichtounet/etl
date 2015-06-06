@@ -41,7 +41,7 @@ void dgemm(A&& a, B&& b, C&& c){
         0.0,
         c.memory_start(), major_stride(c)
     );
-};
+}
 
 template<typename A, typename B, typename C>
 void sgemm(A&& a, B&& b, C&& c){
@@ -57,7 +57,7 @@ void sgemm(A&& a, B&& b, C&& c){
         0.0f,
         c.memory_start(), major_stride(c)
     );
-};
+}
 
 template<typename A, typename B, typename C>
 void dgemv(A&& a, B&& b, C&& c){
@@ -70,7 +70,7 @@ void dgemv(A&& a, B&& b, C&& c){
         0.0,
         c.memory_start(), 1
     );
-};
+}
 
 template<typename A, typename B, typename C>
 void sgemv(A&& a, B&& b, C&& c){
@@ -83,7 +83,7 @@ void sgemv(A&& a, B&& b, C&& c){
         0.0,
         c.memory_start(), 1
     );
-};
+}
 
 template<typename A, typename B, typename C>
 void dgevm(A&& a, B&& b, C&& c){
@@ -96,7 +96,7 @@ void dgevm(A&& a, B&& b, C&& c){
         0.0,
         c.memory_start(), 1
     );
-};
+}
 
 template<typename A, typename B, typename C>
 void sgevm(A&& a, B&& b, C&& c){
@@ -109,7 +109,7 @@ void sgevm(A&& a, B&& b, C&& c){
         0.0,
         c.memory_start(), 1
     );
-};
+}
 
 #else
 
