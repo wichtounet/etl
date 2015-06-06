@@ -2,6 +2,7 @@ default: release
 
 .PHONY: default release debug all clean test debug_test release_debug_test release_test
 .PHONY: valgrind_test benchmark cppcheck coverage coverage_view format modernize tidy tidy_all doc
+.PHONY: full_bench
 
 include make-utils/flags.mk
 include make-utils/cpp-utils.mk
@@ -17,7 +18,11 @@ CXX_FLAGS += -Ilib/include -ICatch/include
 ifneq (,$(ETL_MKL))
 CXX_FLAGS += -DETL_MKL_MODE $(shell pkg-config --cflags cblas)
 LD_FLAGS += $(shell pkg-config --libs cblas)
+
+ifneq (,$(findstring clang,$(CXX)))
 CXX_FLAGS += -Wno-tautological-compare
+endif
+
 else
 ifneq (,$(ETL_BLAS))
 CXX_FLAGS += -DETL_BLAS_MODE $(shell pkg-config --cflags cblas)
@@ -32,13 +37,21 @@ ifeq (,$(ETL_NO_COVERAGE))
 $(eval $(call enable_coverage))
 endif
 
-# Enable sanitizers in debug mode
+# Enable Clang sanitizers in debug mode
+ifneq (,$(findstring clang,$(CXX)))
 DEBUG_FLAGS += -fsanitize=address,undefined
+endif
 
-# Enable advanced vectorization for release modes (
-ifeq(,$(ETL_NO_DEFAULT))
+# Enable advanced vectorization for release modes (unset by the benchmark)
+ifeq (,$(ETL_NO_DEFAULT))
 RELEASE_FLAGS 		+= -DETL_VECTORIZE_FULL
 RELEASE_DEBUG_FLAGS += -DETL_VECTORIZE_FULL
+endif
+
+# Enable configurable default options (set by the benchmark)
+ifneq (,$(ETL_DEFAULTS))
+RELEASE_FLAGS 		+= $(ETL_DEFAULTS)
+RELEASE_DEBUG_FLAGS += $(ETL_DEFAULTS)
 endif
 
 # Compile folders
@@ -85,6 +98,9 @@ valgrind_test: debug
 
 benchmark: release/bin/benchmark
 	./release/bin/benchmark --tag=`git rev-list HEAD --count`-`git rev-parse HEAD`
+
+full_bench:
+	bash scripts/bench_runner.sh
 
 cppcheck:
 	cppcheck -I include/ --platform=unix64 --suppress=missingIncludeSystem --enable=all --std=c++11 workbench/*.cpp include/etl/*.hpp
