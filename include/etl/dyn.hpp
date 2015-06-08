@@ -122,6 +122,19 @@ public:
     //Default copy constructor
     dyn_matrix_impl(const dyn_matrix_impl& rhs) = default;
 
+    //Copy constructor with different type
+    //This constructor is necessary because the one from expression is explicit
+    template<typename T2>
+    dyn_matrix_impl(const dyn_matrix_impl<T2, SO, D>& rhs) : _size(rhs.size()), _data(size()) {
+        //The type is different, therefore attributes are private
+        for(std::size_t d = 0; d < etl::dimensions(rhs); ++d){
+            _dimensions[d] = etl::dim(rhs, d);
+        }
+
+        //The type is different, so we must use assign
+        assign_evaluate(rhs, *this);
+    }
+
     //Initializer-list construction for vector
     dyn_matrix_impl(std::initializer_list<value_type> list) :
             _size(list.size()),
