@@ -762,3 +762,20 @@ TEMPLATE_TEST_CASE_2( "dyn_matrix/swap_2", "", Z, float, double ) {
 }
 
 //}}} swap tests
+
+//Make sure assign between matrices of different are compiling correctly
+
+TEST_CASE( "dyn_matrix/assign_two_types", "" ) {
+    etl::dyn_matrix<double> a(3, 2, etl::values(-1.0, 2.0, 5.0, 1.0, 1.1, 1.9));
+    etl::dyn_matrix<float> b(3, 2, etl::values(1.0, 3.3, 4.4, 9, 10.1, -1.1));
+
+    //This must compile
+    a = b;
+    b = a;
+
+    etl::dyn_matrix<double> aa = b;
+    etl::dyn_matrix<float> bb = a;
+
+    etl::dyn_matrix<double> aaa(b);
+    etl::dyn_matrix<float> bbb(a);
+}
