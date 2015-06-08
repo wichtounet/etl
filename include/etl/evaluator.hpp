@@ -70,7 +70,11 @@ struct standard_evaluator {
     }
 
     template<typename E, typename R>
-    struct vectorized_assign : cpp::and_u<vectorize_expr, decay_traits<E>::vectorizable, intrinsic_traits<value_t<R>>::vectorizable, intrinsic_traits<value_t<E>>::vectorizable> {};
+    struct vectorized_assign : cpp::and_u<
+        vectorize_expr, 
+        decay_traits<E>::vectorizable, 
+        intrinsic_traits<value_t<R>>::vectorizable, intrinsic_traits<value_t<E>>::vectorizable,
+        std::is_same<typename intrinsic_traits<value_t<R>>::intrinsic_type, typename intrinsic_traits<value_t<E>>::intrinsic_type>::value> {};
 
     template<typename E, typename R, cpp_enable_if(!vectorized_assign<E, R>::value && has_direct_access<R>::value && !is_temporary_expr<E>::value)>
     static void assign_evaluate(E&& expr, R&& result){
