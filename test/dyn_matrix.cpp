@@ -782,7 +782,7 @@ TEST_CASE( "dyn_matrix/assign_two_types", "" ) {
 
 //Make sure default construction is possible and then size is modifiable
 
-TEST_CASE( "dyn_matrix/default_constructor", "" ) {
+TEST_CASE( "dyn_matrix/default_constructor_1", "" ) {
     etl::dyn_matrix<double> def_a;
     etl::dyn_matrix<float> def_b;
 
@@ -803,4 +803,16 @@ TEST_CASE( "dyn_matrix/default_constructor", "" ) {
 
     REQUIRE(def_a(1, 1) == 1.0);
     REQUIRE(def_b(1, 1) == 9.0);
+}
+
+TEST_CASE( "dyn_matrix/default_constructor_2", "" ) {
+    std::vector<etl::dyn_matrix<double>> values(10);
+
+    REQUIRE(values[0].size() == 0);
+
+    values[0] = etl::dyn_matrix<double>(3, 2);
+
+    REQUIRE(values[0].size() == 6);
+    REQUIRE(etl::dim<0>(values[0]) == 3);
+    REQUIRE(etl::dim<1>(values[0]) == 2);
 }
