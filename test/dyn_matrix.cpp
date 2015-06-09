@@ -779,3 +779,28 @@ TEST_CASE( "dyn_matrix/assign_two_types", "" ) {
     etl::dyn_matrix<double> aaa(b);
     etl::dyn_matrix<float> bbb(a);
 }
+
+//Make sure default construction is possible and then size is modifiable
+
+TEST_CASE( "dyn_matrix/default_constructor", "" ) {
+    etl::dyn_matrix<double> def_a;
+    etl::dyn_matrix<float> def_b;
+
+    etl::dyn_matrix<double> a(3, 2, etl::values(-1.0, 2.0, 5.0, 1.0, 1.1, 1.9));
+    etl::dyn_matrix<float> b(3, 2, etl::values(1.0, 3.3, 4.4, 9, 10.1, -1.1));
+
+    def_a = a;
+    def_b = b;
+
+    REQUIRE(def_a.size() == a.size());
+    REQUIRE(def_b.size() == b.size());
+
+    REQUIRE(etl::dim<0>(def_a) == etl::dim<0>(a));
+    REQUIRE(etl::dim<1>(def_a) == etl::dim<1>(a));
+
+    REQUIRE(etl::dim<0>(def_b) == etl::dim<0>(b));
+    REQUIRE(etl::dim<1>(def_b) == etl::dim<1>(b));
+
+    REQUIRE(def_a(1, 1) == 1.0);
+    REQUIRE(def_b(1, 1) == 9.0);
+}
