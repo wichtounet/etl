@@ -112,12 +112,17 @@ public:
     using                  vec_type = intrinsic_type<T>;
 
 private:
-    const std::size_t _size;
+    std::size_t _size;
     storage_impl _data;
     dimension_storage_impl _dimensions;
 
 public:
     //{{{ Construction
+
+    //Default constructor (constructs an empty matrix)
+    dyn_matrix_impl() : _size(0), _data(0) {
+        std::fill(_dimensions.begin(), _dimensions.end(), 0);
+    }
 
     //Default copy constructor
     dyn_matrix_impl(const dyn_matrix_impl& rhs) = default;
@@ -255,17 +260,24 @@ public:
 
     //Copy assignment operator
 
+    //Note: For now, this is the only constructor that is able to change the size and dimensions of the matrix
     dyn_matrix_impl& operator=(const dyn_matrix_impl& rhs){
-        ensure_same_size(*this, rhs);
+        if(size() == 0){
+            _size = rhs.size();
+            _dimensions = rhs._dimensions;
+            _data = rhs._data;
+        } else {
+            ensure_same_size(*this, rhs);
 
-        std::copy(rhs.begin(), rhs.end(), begin());
+            std::copy(rhs.begin(), rhs.end(), begin());
+        }
 
         return *this;
     }
 
     //Construct from expression
 
-    template<typename E, cpp_enable_if(std::is_convertible<value_t<E>, value_type>::value && is_copy_expr<E>::value)>
+    template<typename E, cpp_enable_if(!std::is_same<std::decay_t<E>, dyn_matrix_impl<T, SO, D>>::value && std::is_convertible<value_t<E>, value_type>::value && is_copy_expr<E>::value)>
     dyn_matrix_impl& operator=(E&& e){
         ensure_same_size(*this, e);
 
