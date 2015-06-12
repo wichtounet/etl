@@ -914,6 +914,7 @@ auto fft_1d(A&& a) -> temporary_unary_helper_type<fft_value_type<A>, A, fft1_exp
 template<typename A, typename C>
 auto fft_1d(A&& a, C&& c) -> forced_temporary_unary_helper_type<fft_value_type<A>, A, C, fft1_expr> {
     static_assert(is_etl_expr<A>::value && is_etl_expr<C>::value, "FFT only supported for ETL expressions");
+    validate_assign(c, a);
 
     return {a, c};
 }
@@ -928,6 +929,7 @@ auto ifft_1d(A&& a) -> temporary_unary_helper_type<ifft_value_type<A>, A, ifft1_
 template<typename A, typename C>
 auto ifft_1d(A&& a, C&& c) -> forced_temporary_unary_helper_type<ifft_value_type<A>, A, C, ifft1_expr> {
     static_assert(is_etl_expr<A>::value && is_etl_expr<C>::value, "FFT only supported for ETL expressions");
+    validate_assign(c, a);
 
     return {a, c};
 }
@@ -942,6 +944,7 @@ auto ifft_1d_real(A&& a) -> temporary_unary_helper_type<ifft_real_value_type<A>,
 template<typename A, typename C>
 auto ifft_1d_real(A&& a, C&& c) -> forced_temporary_unary_helper_type<ifft_real_value_type<A>, A, C, ifft1_real_expr> {
     static_assert(is_etl_expr<A>::value && is_etl_expr<C>::value, "FFT only supported for ETL expressions");
+    validate_assign(c, a);
 
     return {a, c};
 }
@@ -956,6 +959,7 @@ auto fft_2d(A&& a) -> temporary_unary_helper_type<fft_value_type<A>, A, fft2_exp
 template<typename A, typename C>
 auto fft_2d(A&& a, C&& c) -> forced_temporary_unary_helper_type<fft_value_type<A>, A, C, fft2_expr> {
     static_assert(is_etl_expr<A>::value && is_etl_expr<C>::value, "FFT only supported for ETL expressions");
+    validate_assign(c, a);
 
     return {a, c};
 }
@@ -970,6 +974,7 @@ auto ifft_2d(A&& a) -> temporary_unary_helper_type<fft_value_type<A>, A, ifft2_e
 template<typename A, typename C>
 auto ifft_2d(A&& a, C&& c) -> forced_temporary_unary_helper_type<fft_value_type<A>, A, C, ifft2_expr> {
     static_assert(is_etl_expr<A>::value && is_etl_expr<C>::value, "FFT only supported for ETL expressions");
+    validate_assign(c, a);
 
     return {a, c};
 }
@@ -984,6 +989,7 @@ auto ifft_2d_real(A&& a) -> temporary_unary_helper_type<ifft_real_value_type<A>,
 template<typename A, typename C>
 auto ifft_2d_real(A&& a, C&& c) -> forced_temporary_unary_helper_type<ifft_real_value_type<A>, A, C, ifft2_real_expr> {
     static_assert(is_etl_expr<A>::value && is_etl_expr<C>::value, "FFT only supported for ETL expressions");
+    validate_assign(c, a);
 
     return {a, c};
 }
@@ -994,6 +1000,7 @@ auto ifft_2d_real(A&& a, C&& c) -> forced_temporary_unary_helper_type<ifft_real_
 
 template<typename A, typename B, cpp::enable_if_all_u<is_etl_expr<A>::value, is_etl_expr<B>::value> = cpp::detail::dummy>
 value_t<A> dot(const A& a, const B& b){
+    validate_expression(a, b);
     return detail::dot_impl<A, B>::apply(a, b);
 }
 
