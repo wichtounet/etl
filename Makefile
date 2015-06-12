@@ -79,13 +79,13 @@ debug: debug_etl_test debug/bin/benchmark
 
 all: release release_debug debug
 
-debug_test: debug
+debug_test: debug_etl_test
 	./debug/bin/etl_test
 
-release_debug_test: release_debug
+release_debug_test: release_debug_etl_test
 	./release_debug/bin/etl_test
 
-release_test: release
+release_test: release_etl_test
 	./release/bin/etl_test
 
 test: all
