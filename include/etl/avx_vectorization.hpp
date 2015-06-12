@@ -24,6 +24,7 @@ template<>
 struct intrinsic_traits <double> {
     static constexpr const bool vectorizable = true;
     static constexpr const std::size_t size = 4;
+    static constexpr const std::size_t alignment = 32;
 
     using intrinsic_type = __m256d;
 };
@@ -32,6 +33,7 @@ template<>
 struct intrinsic_traits <float> {
     static constexpr const bool vectorizable = true;
     static constexpr const std::size_t size = 8;
+    static constexpr const std::size_t alignment = 32;
 
     using intrinsic_type = __m256;
 };

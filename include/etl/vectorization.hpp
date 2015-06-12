@@ -15,6 +15,7 @@ namespace etl {
 template<typename T>
 struct intrinsic_traits {
     static constexpr const bool vectorizable = false;
+    static constexpr const std::size_t alignment = 1;
 
     using intrinsic_type = T;
 };
