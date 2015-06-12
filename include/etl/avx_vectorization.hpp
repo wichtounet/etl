@@ -40,12 +40,20 @@ struct intrinsic_traits <float> {
 
 namespace vec {
 
-inline void store(double* memory, __m256d value){
+inline void storeu(double* memory, __m256d value){
     _mm256_storeu_pd(memory, value);
 }
 
-inline void store(float* memory, __m256 value){
+inline void storeu(float* memory, __m256 value){
     _mm256_storeu_ps(memory, value);
+}
+
+inline void store(double* memory, __m256d value){
+    _mm256_store_pd(memory, value);
+}
+
+inline void store(float* memory, __m256 value){
+    _mm256_store_ps(memory, value);
 }
 
 ETL_INLINE_VEC_256D loadu(const double* memory){

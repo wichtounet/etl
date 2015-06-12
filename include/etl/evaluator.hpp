@@ -126,30 +126,52 @@ struct standard_evaluator {
         std::size_t i = 0;
         std::size_t iend = 0;
 
-        //Peel the loop to align the following access
+        //1. Peel loop
 
-        auto u_loads = (reinterpret_cast<uintptr_t>(m) % IT::alignment) / sizeof(E);
+        constexpr const auto size_1 = sizeof(value_t<E>);
+        auto u_bytes = (reinterpret_cast<uintptr_t>(m) % IT::alignment);
 
-        for(; i < u_loads; ++i){
-            m[i] = expr[i];
-        }
+        if(u_bytes >= size_1 && u_bytes % size_1 == 0){
+            auto u_loads = std::min(u_bytes & -size_1, size);
 
-        if(unroll_vectorized_loops){
-            auto iend = size & std::size_t(-IT::size * 4);
-
-            for(; i < iend; i += IT::size * 4){
-                vec::store(m + i, expr.load(i));
-                vec::store(m + i + 1 * IT::size, expr.load(i + 1 * IT::size));
-                vec::store(m + i + 2 * IT::size, expr.load(i + 2 * IT::size));
-                vec::store(m + i + 3 * IT::size, expr.load(i + 3 * IT::size));
-            }
-        } else {
-            auto iend = size & std::size_t(-IT::size);
-
-            for(; i < iend; i += IT::size){
-                vec::store(m + i, expr.load(i));
+            for(; i < u_loads; ++i){
+                m[i] = expr[i];
             }
         }
+
+        //2. Vectorized loop
+
+        if(size - i >= IT::size){
+            if(reinterpret_cast<uintptr_t>(m + i) % IT::alignment == 0){
+                if(unroll_vectorized_loops && size - i > IT::size * 4){
+                    for(; i + IT::size * 4 - 1 < size; i += IT::size * 4){
+                        vec::store(m + i, expr.load(i));
+                        vec::store(m + i + 1 * IT::size, expr.load(i + 1 * IT::size));
+                        vec::store(m + i + 2 * IT::size, expr.load(i + 2 * IT::size));
+                        vec::store(m + i + 3 * IT::size, expr.load(i + 3 * IT::size));
+                    }
+                } else {
+                    for(; i + IT::size  - 1 < size; i += IT::size){
+                        vec::store(m + i, expr.load(i));
+                    }
+                }
+            } else {
+                if(unroll_vectorized_loops && size - i > IT::size * 4){
+                    for(; i + IT::size * 4 - 1 < size; i += IT::size * 4){
+                        vec::storeu(m + i, expr.load(i));
+                        vec::storeu(m + i + 1 * IT::size, expr.load(i + 1 * IT::size));
+                        vec::storeu(m + i + 2 * IT::size, expr.load(i + 2 * IT::size));
+                        vec::storeu(m + i + 3 * IT::size, expr.load(i + 3 * IT::size));
+                    }
+                } else {
+                    for(; i + IT::size  - 1 < size; i += IT::size){
+                        vec::storeu(m + i, expr.load(i));
+                    }
+                }
+            }
+        }
+
+        //3. Remainder loop
 
         //Finish the iterations in a non-vectorized fashion
         for(; i < size; ++i){
