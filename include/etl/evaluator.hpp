@@ -71,8 +71,8 @@ struct standard_evaluator {
 
     template<typename E, typename R>
     struct vectorized_assign : cpp::and_u<
-        vectorize_expr, 
-        decay_traits<E>::vectorizable, 
+        vectorize_expr,
+        decay_traits<E>::vectorizable,
         intrinsic_traits<value_t<R>>::vectorizable, intrinsic_traits<value_t<E>>::vectorizable,
         std::is_same<typename intrinsic_traits<value_t<R>>::intrinsic_type, typename intrinsic_traits<value_t<E>>::intrinsic_type>::value> {};
 
@@ -123,27 +123,36 @@ struct standard_evaluator {
 
         const std::size_t size = etl::size(result);
 
+        std::size_t i = 0;
         std::size_t iend = 0;
 
-        if(unroll_vectorized_loops){
-            iend = size & std::size_t(-IT::size * 4);
+        //Peel the loop to align the following access
 
-            for(std::size_t i = 0; i < iend; i += IT::size * 4){
+        auto u_loads = (reinterpret_cast<uintptr_t>(m) % IT::alignment) / sizeof(E);
+
+        for(; i < u_loads; ++i){
+            m[i] = expr[i];
+        }
+
+        if(unroll_vectorized_loops){
+            auto iend = size & std::size_t(-IT::size * 4);
+
+            for(; i < iend; i += IT::size * 4){
                 vec::store(m + i, expr.load(i));
                 vec::store(m + i + 1 * IT::size, expr.load(i + 1 * IT::size));
                 vec::store(m + i + 2 * IT::size, expr.load(i + 2 * IT::size));
                 vec::store(m + i + 3 * IT::size, expr.load(i + 3 * IT::size));
             }
         } else {
-            iend = size & std::size_t(-IT::size);
+            auto iend = size & std::size_t(-IT::size);
 
-            for(std::size_t i = 0; i < iend; i += IT::size){
+            for(; i < iend; i += IT::size){
                 vec::store(m + i, expr.load(i));
             }
         }
 
         //Finish the iterations in a non-vectorized fashion
-        for(std::size_t i = iend; i < size; ++i){
+        for(; i < size; ++i){
             m[i] = expr[i];
         }
     }
