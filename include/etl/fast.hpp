@@ -172,7 +172,7 @@ public:
     template<typename E, cpp_enable_if(std::is_convertible<value_t<E>, value_type>::value, is_copy_expr<E>::value)>
     explicit fast_matrix_impl(E&& e){
         init();
-        ensure_same_size(*this, e);
+        validate_expression(*this, e);
         assign_evaluate(std::forward<E>(e), *this);
     }
 
@@ -217,7 +217,7 @@ public:
 
     template<std::size_t... SDims>
     fast_matrix_impl& operator=(const fast_matrix_impl<T, ST, SO, SDims...>& rhs) noexcept {
-        ensure_same_size(*this, rhs);
+        validate_expression(*this, rhs);
         _data = rhs._data;
         return *this;
     }
@@ -235,7 +235,7 @@ public:
 
     template<typename E, cpp_enable_if(std::is_convertible<typename E::value_type, value_type>::value && is_copy_expr<E>::value)>
     fast_matrix_impl& operator=(E&& e){
-        ensure_same_size(*this, e);
+        validate_expression(*this, e);
 
         assign_evaluate(std::forward<E>(e), *this);
 

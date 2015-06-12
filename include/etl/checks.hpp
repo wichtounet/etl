@@ -13,7 +13,7 @@ namespace etl {
 //Check an expression containing a generator expression
 
 template<typename LE, typename RE, cpp_enable_if(etl_traits<LE>::is_generator || etl_traits<RE>::is_generator)>
-void ensure_same_size(const LE& /*unused*/, const RE& /*unused*/) noexcept {
+void validate_expression(const LE& /*unused*/, const RE& /*unused*/) noexcept {
     //Nothing to test, generators are of infinite size
 }
 
@@ -21,7 +21,7 @@ void ensure_same_size(const LE& /*unused*/, const RE& /*unused*/) noexcept {
 //Check a dynamic expression
 
 template<typename LE, typename RE, cpp_enable_if(!(etl_traits<LE>::is_generator || etl_traits<RE>::is_generator) && all_etl_expr<LE, RE>::value && !all_fast<LE,RE>::value)>
-void ensure_same_size(const LE& lhs, const RE& rhs){
+void validate_expression(const LE& lhs, const RE& rhs){
     cpp_assert(size(lhs) == size(rhs), "Cannot perform element-wise operations on collections of different size");
     cpp_unused(lhs);
     cpp_unused(rhs);
@@ -30,7 +30,7 @@ void ensure_same_size(const LE& lhs, const RE& rhs){
 //Check a fast expression
 
 template<typename LE, typename RE, cpp_enable_if(!(etl_traits<LE>::is_generator || etl_traits<RE>::is_generator) && all_etl_expr<LE, RE>::value && all_fast<LE, RE>::value)>
-void ensure_same_size(const LE& /*unused*/, const RE& /*unused*/){
+void validate_expression(const LE& /*unused*/, const RE& /*unused*/){
     static_assert(etl_traits<LE>::size() == etl_traits<RE>::size(), "Cannot perform element-wise operations on collections of different size");
 }
 

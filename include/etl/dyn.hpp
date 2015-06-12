@@ -267,7 +267,7 @@ public:
             _dimensions = rhs._dimensions;
             _data = rhs._data;
         } else {
-            ensure_same_size(*this, rhs);
+            validate_expression(*this, rhs);
 
             std::copy(rhs.begin(), rhs.end(), begin());
         }
@@ -279,7 +279,7 @@ public:
 
     template<typename E, cpp_enable_if(!std::is_same<std::decay_t<E>, dyn_matrix_impl<T, SO, D>>::value && std::is_convertible<value_t<E>, value_type>::value && is_copy_expr<E>::value)>
     dyn_matrix_impl& operator=(E&& e){
-        ensure_same_size(*this, e);
+        validate_expression(*this, e);
 
         assign_evaluate(e, *this);
 

@@ -83,49 +83,49 @@ using dim_forced_temporary_binary_helper = temporary_binary_expr<value_t<A>, bui
 
 template<typename LE, typename RE, cpp::enable_if_all_u<is_etl_expr<LE>::value, is_etl_expr<RE>::value> = cpp::detail::dummy>
 auto operator-(LE&& lhs, RE&& rhs) -> left_binary_helper<LE, RE, minus_binary_op> {
-    ensure_same_size(lhs, rhs);
+    validate_expression(lhs, rhs);
 
     return {lhs, rhs};
 }
 
 template<typename LE, typename RE, cpp::enable_if_all_u<is_etl_expr<LE>::value, is_etl_expr<RE>::value> = cpp::detail::dummy>
 auto operator+(LE&& lhs, RE&& rhs) -> left_binary_helper<LE, RE, plus_binary_op> {
-    ensure_same_size(lhs, rhs);
+    validate_expression(lhs, rhs);
 
     return {lhs, rhs};
 }
 
 template<typename LE, typename RE, cpp::enable_if_all_u<is_etl_expr<LE>::value, is_etl_expr<RE>::value, is_element_wise_mul_default> = cpp::detail::dummy>
 auto operator*(LE&& lhs, RE&& rhs) -> left_binary_helper<LE, RE, mul_binary_op> {
-    ensure_same_size(lhs, rhs);
+    validate_expression(lhs, rhs);
 
     return {lhs, rhs};
 }
 
 template<typename LE, typename RE, cpp_enable_if(is_etl_expr<LE>::value && is_etl_expr<RE>::value)>
 auto operator>>(LE&& lhs, RE&& rhs) -> left_binary_helper<LE, RE, mul_binary_op> {
-    ensure_same_size(lhs, rhs);
+    validate_expression(lhs, rhs);
 
     return {lhs, rhs};
 }
 
 template<typename LE, typename RE, cpp_enable_if(is_etl_expr<LE>::value && is_etl_expr<RE>::value)>
 auto scale(LE&& lhs, RE&& rhs) -> left_binary_helper<LE, RE, mul_binary_op> {
-    ensure_same_size(lhs, rhs);
+    validate_expression(lhs, rhs);
 
     return {lhs, rhs};
 }
 
 template<typename LE, typename RE, cpp::enable_if_all_u<is_etl_expr<LE>::value, is_etl_expr<RE>::value> = cpp::detail::dummy>
 auto operator/(LE&& lhs, RE&& rhs) -> left_binary_helper<LE, RE, div_binary_op> {
-    ensure_same_size(lhs, rhs);
+    validate_expression(lhs, rhs);
 
     return {lhs, rhs};
 }
 
 template<typename LE, typename RE, cpp::enable_if_all_u<is_etl_expr<LE>::value, is_etl_expr<RE>::value> = cpp::detail::dummy>
 auto operator%(LE&& lhs, RE&& rhs) -> left_binary_helper<LE, RE, mod_binary_op> {
-    ensure_same_size(lhs, rhs);
+    validate_expression(lhs, rhs);
 
     return {lhs, rhs};
 }
@@ -210,7 +210,7 @@ LE& operator+=(LE&& lhs, RE rhs){
 
 template<typename LE, typename RE, cpp::enable_if_all_u<is_etl_expr<RE>::value, is_etl_assignable<LE>::value> = cpp::detail::dummy>
 LE& operator+=(LE&& lhs, RE&& rhs){
-    ensure_same_size(lhs, rhs);
+    validate_expression(lhs, rhs);
     add_evaluate(std::forward<RE>(rhs), std::forward<LE>(lhs));
     return lhs;
 }
@@ -223,7 +223,7 @@ LE& operator-=(LE&& lhs, RE rhs){
 
 template<typename LE, typename RE, cpp::enable_if_all_u<is_etl_expr<RE>::value, is_etl_assignable<LE>::value> = cpp::detail::dummy>
 LE& operator-=(LE&& lhs, RE&& rhs){
-    ensure_same_size(lhs, rhs);
+    validate_expression(lhs, rhs);
     sub_evaluate(std::forward<RE>(rhs), std::forward<LE>(lhs));
     return lhs;
 }
@@ -236,7 +236,7 @@ LE& operator*=(LE&& lhs, RE rhs){
 
 template<typename LE, typename RE, cpp::enable_if_all_u<is_etl_expr<RE>::value, is_etl_assignable<LE>::value> = cpp::detail::dummy>
 LE& operator*=(LE&& lhs, RE&& rhs){
-    ensure_same_size(lhs, rhs);
+    validate_expression(lhs, rhs);
     mul_evaluate(std::forward<RE>(rhs), std::forward<LE>(lhs));
     return lhs;
 }
@@ -249,7 +249,7 @@ LE& operator>>=(LE&& lhs, RE rhs){
 
 template<typename LE, typename RE, cpp::enable_if_all_u<is_etl_expr<RE>::value, is_etl_assignable<LE>::value> = cpp::detail::dummy>
 LE& operator>>=(LE&& lhs, RE&& rhs){
-    ensure_same_size(lhs, rhs);
+    validate_expression(lhs, rhs);
     mul_evaluate(std::forward<RE>(rhs), std::forward<LE>(lhs));
     return lhs;
 }
@@ -262,7 +262,7 @@ LE& operator/=(LE&& lhs, RE rhs){
 
 template<typename LE, typename RE, cpp::enable_if_all_u<is_etl_expr<RE>::value, is_etl_assignable<LE>::value> = cpp::detail::dummy>
 LE& operator/=(LE&& lhs, RE&& rhs){
-    ensure_same_size(lhs, rhs);
+    validate_expression(lhs, rhs);
     div_evaluate(std::forward<RE>(rhs), std::forward<LE>(lhs));
     return lhs;
 }
@@ -275,7 +275,7 @@ LE& operator%=(LE&& lhs, RE rhs){
 
 template<typename LE, typename RE, cpp::enable_if_all_u<is_etl_expr<RE>::value, is_etl_assignable<LE>::value> = cpp::detail::dummy>
 LE& operator%=(LE&& lhs, RE&& rhs){
-    ensure_same_size(lhs, rhs);
+    validate_expression(lhs, rhs);
     mod_evaluate(std::forward<RE>(rhs), std::forward<LE>(lhs));
     return lhs;
 }
