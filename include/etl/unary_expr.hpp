@@ -132,13 +132,14 @@ public:
 
     template<typename E, cpp::enable_if_all_u<non_const_return_ref, is_copy_expr<E>::value> = cpp::detail::dummy>
     unary_expr& operator=(E&& e){
-        ensure_same_size(*this, e);
+        validate_assign(*this, e);
         assign_evaluate(std::forward<E>(e), *this);
         return *this;
     }
 
     template<typename Generator>
     unary_expr& operator=(generator_expr<Generator>&& e){
+        validate_assign(*this, e);
         assign_evaluate(e, *this);
         return *this;
     }
@@ -154,7 +155,7 @@ public:
 
     template<typename Container, cpp::enable_if_all_c<cpp::not_c<is_etl_expr<Container>>, std::is_convertible<typename Container::value_type, value_type>> = cpp::detail::dummy>
     unary_expr& operator=(const Container& vec){
-        cpp_assert(vec.size() == size(*this), "Cannot copy from a vector of different size");
+        validate_assign(*this, vec);
 
         for(std::size_t i = 0; i < size(*this); ++i){
             (*this)[i] = vec[i];

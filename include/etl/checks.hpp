@@ -10,10 +10,15 @@
 
 namespace etl {
 
+//Check an expression containing a generator expression
+
 template<typename LE, typename RE, cpp_enable_if(etl_traits<LE>::is_generator || etl_traits<RE>::is_generator)>
 void ensure_same_size(const LE& /*unused*/, const RE& /*unused*/) noexcept {
     //Nothing to test, generators are of infinite size
 }
+
+
+//Check a dynamic expression
 
 template<typename LE, typename RE, cpp_enable_if(!(etl_traits<LE>::is_generator || etl_traits<RE>::is_generator) && all_etl_expr<LE, RE>::value && !all_fast<LE,RE>::value)>
 void ensure_same_size(const LE& lhs, const RE& rhs){
@@ -22,9 +27,48 @@ void ensure_same_size(const LE& lhs, const RE& rhs){
     cpp_unused(rhs);
 }
 
+//Check a fast expression
+
 template<typename LE, typename RE, cpp_enable_if(!(etl_traits<LE>::is_generator || etl_traits<RE>::is_generator) && all_etl_expr<LE, RE>::value && all_fast<LE, RE>::value)>
 void ensure_same_size(const LE& /*unused*/, const RE& /*unused*/){
     static_assert(etl_traits<LE>::size() == etl_traits<RE>::size(), "Cannot perform element-wise operations on collections of different size");
+}
+
+// Assign a gnerator expression
+
+template<typename LE, typename RE, cpp_enable_if(etl_traits<RE>::is_generator)>
+void validate_assign(const LE& /*unused*/, const RE& /*unused*/) noexcept {
+    static_assert(is_etl_expr<LE>::value, "Assign can only work on ETL expressions");
+    //Nothing to test, generators are of infinite size
+}
+
+
+//Check a dynamic expression
+
+template<typename LE, typename RE, cpp_enable_if(!etl_traits<RE>::is_generator && all_etl_expr<RE>::value && !all_fast<LE,RE>::value)>
+void validate_assign(const LE& lhs, const RE& rhs){
+    static_assert(is_etl_expr<LE>::value, "Assign can only work on ETL expressions");
+    cpp_assert(size(lhs) == size(rhs), "Cannot perform element-wise operations on collections of different size");
+    cpp_unused(lhs);
+    cpp_unused(rhs);
+}
+
+//Check a fast expression
+
+template<typename LE, typename RE, cpp_enable_if(!etl_traits<RE>::is_generator && all_etl_expr<RE>::value && all_fast<LE,RE>::value)>
+void validate_assign(const LE& /*unused*/, const RE& /*unused*/){
+    static_assert(is_etl_expr<LE>::value, "Assign can only work on ETL expressions");
+    static_assert(etl_traits<LE>::size() == etl_traits<RE>::size(), "Cannot perform element-wise operations on collections of different size");
+}
+
+//Assign a container
+
+template<typename LE, typename RE, cpp_enable_if(!all_etl_expr<RE>::value)>
+void validate_assign(const LE& lhs, const RE& rhs){
+    static_assert(is_etl_expr<LE>::value, "Assign can only work on ETL expressions");
+    cpp_assert(size(lhs) == rhs.size(), "Cannot perform element-wise operations on collections of different size");
+    cpp_unused(lhs);
+    cpp_unused(rhs);
 }
 
 template<std::size_t C1, std::size_t C2, typename E, cpp_enable_if(etl_traits<E>::dimensions() == 2 && !etl_traits<E>::is_fast)>
