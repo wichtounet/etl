@@ -172,7 +172,7 @@ public:
     template<typename E, cpp_enable_if(std::is_convertible<value_t<E>, value_type>::value, is_copy_expr<E>::value)>
     explicit fast_matrix_impl(E&& e){
         init();
-        validate_expression(*this, e);
+        validate_assign(*this, e);
         assign_evaluate(std::forward<E>(e), *this);
     }
 
@@ -182,14 +182,14 @@ public:
         )>
     explicit fast_matrix_impl(const Container& vec){
         init();
-        cpp_assert(vec.size() == size(), "Cannnot copy from a container of another size");
-
+        validate_assign(*this, vec);
         std::copy(vec.begin(), vec.end(), begin());
     }
 
     template<typename Generator>
     explicit fast_matrix_impl(generator_expr<Generator>&& e){
         init();
+        validate_assign(*this, e);
         assign_evaluate(e, *this);
     }
 
@@ -217,7 +217,7 @@ public:
 
     template<std::size_t... SDims>
     fast_matrix_impl& operator=(const fast_matrix_impl<T, ST, SO, SDims...>& rhs) noexcept {
-        validate_expression(*this, rhs);
+        validate_assign(*this, rhs);
         _data = rhs._data;
         return *this;
     }
@@ -226,8 +226,8 @@ public:
 
     template<typename Container, cpp::enable_if_c<std::is_convertible<typename Container::value_type, value_type>> = cpp::detail::dummy>
     fast_matrix_impl& operator=(const Container& vec) noexcept {
+        validate_assign(*this, vec);
         std::copy(vec.begin(), vec.end(), begin());
-
         return *this;
     }
 
@@ -235,17 +235,15 @@ public:
 
     template<typename E, cpp_enable_if(std::is_convertible<typename E::value_type, value_type>::value && is_copy_expr<E>::value)>
     fast_matrix_impl& operator=(E&& e){
-        validate_expression(*this, e);
-
+        validate_assign(*this, e);
         assign_evaluate(std::forward<E>(e), *this);
-
         return *this;
     }
 
     template<typename Generator>
     fast_matrix_impl& operator=(generator_expr<Generator>&& e){
+        validate_assign(*this, e);
         assign_evaluate(e, *this);
-
         return *this;
     }
 

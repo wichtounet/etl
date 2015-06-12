@@ -267,7 +267,7 @@ public:
             _dimensions = rhs._dimensions;
             _data = rhs._data;
         } else {
-            validate_expression(*this, rhs);
+            validate_assign(*this, rhs);
 
             std::copy(rhs.begin(), rhs.end(), begin());
         }
@@ -279,7 +279,7 @@ public:
 
     template<typename E, cpp_enable_if(!std::is_same<std::decay_t<E>, dyn_matrix_impl<T, SO, D>>::value && std::is_convertible<value_t<E>, value_type>::value && is_copy_expr<E>::value)>
     dyn_matrix_impl& operator=(E&& e){
-        validate_expression(*this, e);
+        validate_assign(*this, e);
 
         assign_evaluate(e, *this);
 
@@ -288,6 +288,8 @@ public:
 
     template<typename Generator>
     dyn_matrix_impl& operator=(generator_expr<Generator>&& e){
+        validate_assign(*this, e);
+
         assign_evaluate(e, *this);
 
         return *this;
@@ -297,7 +299,7 @@ public:
 
     template<typename Container, cpp_enable_if(!is_etl_expr<Container>::value, std::is_convertible<typename Container::value_type, value_type>::value)>
     dyn_matrix_impl& operator=(const Container& vec){
-        cpp_assert(vec.size() == size(), "Cannot copy from a vector of different size");
+        validate_assign(*this, vec);
 
         std::copy(vec.begin(), vec.end(), begin());
 
