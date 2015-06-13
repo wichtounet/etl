@@ -115,7 +115,7 @@ CPM_BENCH() {
 
     CPM_TWO_PASS_NS_P(
         mat_policy_2d,
-        "R = A + B",
+        "R = A + B + C",
         [](auto d1, auto d2){ return std::make_tuple(dmat(d1, d2), dmat(d1, d2), dmat(d1, d2), dmat(d1, d2)); },
         [](dmat& A, dmat& B, dmat& C, dmat& R){ R = A + B + C; }
         );
