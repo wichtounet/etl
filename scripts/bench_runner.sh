@@ -1,4 +1,5 @@
 #!/bin/bash
+set -e
 
 # Disable default options
 export ETL_NO_DEFAULT=true
