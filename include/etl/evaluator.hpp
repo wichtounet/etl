@@ -124,7 +124,6 @@ struct standard_evaluator {
         const std::size_t size = etl::size(result);
 
         std::size_t i = 0;
-        std::size_t iend = 0;
 
         //1. Peel loop
 
