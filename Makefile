@@ -4,6 +4,8 @@ default: release
 .PHONY: valgrind_test benchmark cppcheck coverage coverage_view format modernize tidy tidy_all doc
 .PHONY: full_bench
 
+BLAS_PKG = mkl
+
 include make-utils/flags.mk
 include make-utils/cpp-utils.mk
 
@@ -16,8 +18,8 @@ CXX_FLAGS += -pedantic -Werror
 CXX_FLAGS += -Ilib/include -ICatch/include
 
 ifneq (,$(ETL_MKL))
-CXX_FLAGS += -DETL_MKL_MODE $(shell pkg-config --cflags cblas)
-LD_FLAGS += $(shell pkg-config --libs cblas)
+CXX_FLAGS += -DETL_MKL_MODE $(shell pkg-config --cflags $(BLAS_PKG))
+LD_FLAGS += $(shell pkg-config --libs $(BLAS_PKG))
 
 ifneq (,$(findstring clang,$(CXX)))
 CXX_FLAGS += -Wno-tautological-compare
@@ -25,8 +27,8 @@ endif
 
 else
 ifneq (,$(ETL_BLAS))
-CXX_FLAGS += -DETL_BLAS_MODE $(shell pkg-config --cflags cblas)
-LD_FLAGS += $(shell pkg-config --libs cblas)
+CXX_FLAGS += -DETL_BLAS_MODE $(shell pkg-config --cflags $(BLAS_PKG))
+LD_FLAGS += $(shell pkg-config --libs $(BLAS_PKG))
 endif
 endif
 
