@@ -24,7 +24,8 @@
 // CRTP classes
 #include "crtp/inplace_assignable.hpp"
 #include "crtp/comparable.hpp"
-#include "crtp/iterable.hpp"
+#include "crtp/value_testable.hpp"
+#include "crtp/dim_testable.hpp"
 #include "crtp/expression_able.hpp"
 
 namespace etl {
@@ -92,10 +93,12 @@ inline std::array<std::size_t, sizeof...(I)> sizes(const std::index_sequence<I..
 
 template<typename T, order SO, std::size_t D>
 struct dyn_matrix_impl final :
-        inplace_assignable<dyn_matrix_impl<T, SO, D>>,
-        comparable<dyn_matrix_impl<T, SO, D>>,
-        expression_able<dyn_matrix_impl<T, SO, D>>,
-        iterable<dyn_matrix_impl<T, SO, D>> {
+          inplace_assignable<dyn_matrix_impl<T, SO, D>>
+        , comparable<dyn_matrix_impl<T, SO, D>>
+        , expression_able<dyn_matrix_impl<T, SO, D>>
+        , value_testable<dyn_matrix_impl<T, SO, D>> 
+        , dim_testable<dyn_matrix_impl<T, SO, D>> 
+        {
     static_assert(D > 0, "A matrix must have a least 1 dimension");
 
 public:

@@ -18,12 +18,13 @@
 
 // CRTP classes
 #include "crtp/comparable.hpp"
-#include "crtp/iterable.hpp"
+#include "crtp/value_testable.hpp"
+#include "crtp/dim_testable.hpp"
 
 namespace etl {
 
 template <typename D, typename V>
-struct temporary_expr : comparable<D>, iterable<D> {
+struct temporary_expr : comparable<D>, value_testable<D>, dim_testable<D> {
     using         derived_t = D;
     using        value_type = V;
     using       memory_type = value_type*;

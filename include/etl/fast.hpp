@@ -21,7 +21,8 @@
 // CRTP classes
 #include "crtp/inplace_assignable.hpp"
 #include "crtp/comparable.hpp"
-#include "crtp/iterable.hpp"
+#include "crtp/value_testable.hpp"
+#include "crtp/dim_testable.hpp"
 #include "crtp/expression_able.hpp"
 
 namespace etl {
@@ -83,10 +84,12 @@ struct is_vector<std::vector<N>> : std::true_type { };
 
 template<typename T, typename ST, order SO, std::size_t... Dims>
 struct fast_matrix_impl final :
-        inplace_assignable<fast_matrix_impl<T, ST, SO, Dims...>>,
-        comparable<fast_matrix_impl<T, ST, SO, Dims...>>,
-        expression_able<fast_matrix_impl<T, ST, SO, Dims...>>,
-        iterable<fast_matrix_impl<T, ST, SO, Dims...>> {
+        inplace_assignable<fast_matrix_impl<T, ST, SO, Dims...>>
+        , comparable<fast_matrix_impl<T, ST, SO, Dims...>>
+        , expression_able<fast_matrix_impl<T, ST, SO, Dims...>>
+        , value_testable<fast_matrix_impl<T, ST, SO, Dims...>> 
+        , dim_testable<fast_matrix_impl<T, ST, SO, Dims...>> 
+        {
     static_assert(sizeof...(Dims) > 0, "At least one dimension must be specified");
 
 public:
