@@ -97,8 +97,14 @@ using decay_traits = etl_traits<std::decay_t<E>>;
 template<typename... E>
 struct all_row_major : cpp::and_u<(decay_traits<E>::storage_order == order::RowMajor)...> {};
 
+template<typename E, typename Enable = void>
+struct is_fast_safe : std::false_type {};
+
+template<typename E>
+struct is_fast_safe<E, std::enable_if_t<is_etl_expr<E>::value>> : cpp::bool_constant<decay_traits<E>::is_fast> {};
+
 template<typename... E>
-struct all_fast : cpp::and_u<decay_traits<E>::is_fast...> {};
+struct all_fast : cpp::and_c<is_fast_safe<E>...> {};
 
 template<typename... E>
 struct all_etl_expr : cpp::and_c<is_etl_expr<E>...> {};
