@@ -144,11 +144,7 @@ public:
     template<typename Result, typename F = Forced, cpp_disable_if(std::is_same<F, void>::value)>
     void direct_evaluate(Result&& r){
         evaluate();
-
-        //TODO Normally, this should not be necessary
-        if(&r != &result()){
-            r = result();
-        }
+        r = result();
     }
 
     template<typename Result, typename F = Forced, cpp_enable_if(std::is_same<F, void>::value)>
