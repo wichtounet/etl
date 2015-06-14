@@ -290,4 +290,18 @@ TEMPLATE_TEST_CASE_2( "multiplication/expression_2", "expression", Z, double, fl
     REQUIRE(c(3,1) == Approx((2.0 + 1.0 / 1.1) * 484));
 }
 
+TEMPLATE_TEST_CASE_2( "multiplication/expression_3", "expression", Z, double, float) {
+    etl::fast_matrix<Z, 2, 3> a = {1,2,3,4,5,6};
+    etl::fast_matrix<Z, 3, 2> b = {7,8,9,10,11,12};
+    etl::fast_matrix<Z, 2, 2> c;
+
+    c = a * b;
+    c += a * b;
+
+    REQUIRE(c(0,0) == 2 * 58);
+    REQUIRE(c(0,1) == 2 * 64);
+    REQUIRE(c(1,0) == 2 * 139);
+    REQUIRE(c(1,1) == 2 * 154);
+}
+
 //}}}
