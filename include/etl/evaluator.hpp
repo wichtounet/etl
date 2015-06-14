@@ -148,10 +148,10 @@ struct standard_evaluator {
             if(reinterpret_cast<uintptr_t>(m + i) % IT::alignment == 0){
                 if(unroll_vectorized_loops && size - i > IT::size * 4){
                     for(; i + IT::size * 4 - 1 < size; i += IT::size * 4){
-                        vec::store(m + i, expr.load(i));
-                        vec::store(m + i + 1 * IT::size, expr.load(i + 1 * IT::size));
-                        vec::store(m + i + 2 * IT::size, expr.load(i + 2 * IT::size));
-                        vec::store(m + i + 3 * IT::size, expr.load(i + 3 * IT::size));
+                        vec::store(m + i,                   expr.load(i));
+                        vec::store(m + i + 1 * IT::size,    expr.load(i + 1 * IT::size));
+                        vec::store(m + i + 2 * IT::size,    expr.load(i + 2 * IT::size));
+                        vec::store(m + i + 3 * IT::size,    expr.load(i + 3 * IT::size));
                     }
                 } else {
                     for(; i + IT::size  - 1 < size; i += IT::size){
@@ -161,10 +161,10 @@ struct standard_evaluator {
             } else {
                 if(unroll_vectorized_loops && size - i > IT::size * 4){
                     for(; i + IT::size * 4 - 1 < size; i += IT::size * 4){
-                        vec::storeu(m + i, expr.load(i));
-                        vec::storeu(m + i + 1 * IT::size, expr.load(i + 1 * IT::size));
-                        vec::storeu(m + i + 2 * IT::size, expr.load(i + 2 * IT::size));
-                        vec::storeu(m + i + 3 * IT::size, expr.load(i + 3 * IT::size));
+                        vec::storeu(m + i,                  expr.load(i));
+                        vec::storeu(m + i + 1 * IT::size,   expr.load(i + 1 * IT::size));
+                        vec::storeu(m + i + 2 * IT::size,   expr.load(i + 2 * IT::size));
+                        vec::storeu(m + i + 3 * IT::size,   expr.load(i + 3 * IT::size));
                     }
                 } else {
                     for(; i + IT::size  - 1 < size; i += IT::size){
