@@ -178,7 +178,7 @@ struct standard_evaluator {
         }
     }
 
-    template<typename E, typename R, cpp_disable_if(is_temporary_expr<E>::value)>
+    template<typename E, typename R>
     static void add_evaluate(E&& expr, R&& result){
         evaluate_only(expr);
 
@@ -187,7 +187,7 @@ struct standard_evaluator {
         }
     }
 
-    template<typename E, typename R, cpp_disable_if(is_temporary_expr<E>::value)>
+    template<typename E, typename R>
     static void sub_evaluate(E&& expr, R&& result){
         evaluate_only(expr);
 
@@ -196,7 +196,7 @@ struct standard_evaluator {
         }
     }
 
-    template<typename E, typename R, cpp_disable_if(is_temporary_expr<E>::value)>
+    template<typename E, typename R>
     static void mul_evaluate(E&& expr, R&& result){
         evaluate_only(expr);
 
@@ -205,7 +205,7 @@ struct standard_evaluator {
         }
     }
 
-    template<typename E, typename R, cpp_disable_if(is_temporary_expr<E>::value)>
+    template<typename E, typename R>
     static void div_evaluate(E&& expr, R&& result){
         evaluate_only(expr);
 
@@ -214,7 +214,7 @@ struct standard_evaluator {
         }
     }
 
-    template<typename E, typename R, cpp_disable_if(is_temporary_expr<E>::value)>
+    template<typename E, typename R>
     static void mod_evaluate(E&& expr, R&& result){
         evaluate_only(expr);
 
