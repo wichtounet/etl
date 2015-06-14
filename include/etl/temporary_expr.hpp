@@ -95,10 +95,12 @@ private:
 
     using this_type = temporary_unary_expr<T, AExpr, Op, Forced>;
 
+    using get_result_op = std::conditional_t<std::is_same<Forced, void>::value, dereference_op, forward_op>;
+
     AExpr _a;
     data_type _c;
-    bool evaluated = false;
     bool allocated = false;
+    bool evaluated = false;
 
 public:
     //Construct a new expression
@@ -107,17 +109,17 @@ public:
     }
 
     //Construct a new expression
-    temporary_unary_expr(AExpr a, std::conditional_t<std::is_same<Forced,void>::value, int, Forced> c) : _a(a), _c(c) {
+    temporary_unary_expr(AExpr a, std::conditional_t<std::is_same<Forced,void>::value, int, Forced> c) : _a(a), _c(c), allocated(true) {
         //Nothing else to init
     }
 
     //Copy an expression
-    temporary_unary_expr(const temporary_unary_expr& e) : _a(e._a), _c(e._c) {
+    temporary_unary_expr(const temporary_unary_expr& e) : _a(e._a), _c(e._c), allocated(e.allocated), evaluated(e.evaluated) {
         //Nothing else to init
     }
 
     //Move an expression
-    temporary_unary_expr(temporary_unary_expr&& e) : _a(e._a), _c(optional_move<std::is_same<Forced,void>::value>(e._c)), evaluated(e.evaluated) {
+    temporary_unary_expr(temporary_unary_expr&& e) : _a(e._a), _c(optional_move<std::is_same<Forced,void>::value>(e._c)), allocated(e.allocated), evaluated(e.evaluated) {
         e.evaluated = false;
     }
 
@@ -137,7 +139,8 @@ public:
 
     void evaluate(){
         if(!evaluated){
-            Op::apply(_a, result());
+            cpp_assert(allocated, "The result has not been allocated");
+            Op::apply(_a, get_result_op::apply(_c));
             evaluated = true;
         }
     }
@@ -154,7 +157,7 @@ public:
     }
 
     template<typename F = Forced, cpp_disable_if(std::is_same<F, void>::value)>
-    void allocate_temporary() const {
+    void allocate_temporary(){
         allocated = true;
     }
 
@@ -166,8 +169,6 @@ public:
 
         allocated = true;
     }
-
-    using get_result_op = std::conditional_t<std::is_same<Forced, void>::value, dereference_op, forward_op>;
 
     result_type& result(){
         cpp_assert(evaluated, "The result has not been evaluated");
@@ -193,11 +194,13 @@ private:
 
     using this_type = temporary_binary_expr<T, AExpr, BExpr, Op, Forced>;
 
+    using get_result_op = std::conditional_t<std::is_same<Forced, void>::value, dereference_op, forward_op>;
+
     AExpr _a;
     BExpr _b;
     data_type _c;
-    bool evaluated = false;
     bool allocated = false;
+    bool evaluated = false;
 
 public:
     //Construct a new expression
@@ -206,17 +209,17 @@ public:
     }
 
     //Construct a new expression
-    temporary_binary_expr(AExpr a, BExpr b, std::conditional_t<std::is_same<Forced,void>::value, int, Forced> c) : _a(a), _b(b), _c(c) {
+    temporary_binary_expr(AExpr a, BExpr b, std::conditional_t<std::is_same<Forced,void>::value, int, Forced> c) : _a(a), _b(b), _c(c), allocated(true) {
         //Nothing else to init
     }
 
     //Copy an expression
-    temporary_binary_expr(const temporary_binary_expr& e) : _a(e._a), _b(e._b), _c(e._c) {
+    temporary_binary_expr(const temporary_binary_expr& e) : _a(e._a), _b(e._b), _c(e._c), allocated(e.allocated), evaluated(e.evaluated) {
         //Nothing else to init
     }
 
     //Move an expression
-    temporary_binary_expr(temporary_binary_expr&& e) : _a(e._a), _b(e._b), _c(optional_move<std::is_same<Forced,void>::value>(e._c)), evaluated(e.evaluated) {
+    temporary_binary_expr(temporary_binary_expr&& e) : _a(e._a), _b(e._b), _c(optional_move<std::is_same<Forced,void>::value>(e._c)), allocated(e.allocated), evaluated(e.evaluated) {
         e.evaluated = false;
     }
 
@@ -244,7 +247,8 @@ public:
 
     void evaluate(){
         if(!evaluated){
-            Op::apply(_a, _b, result());
+            cpp_assert(allocated, "The result has not been allocated");
+            Op::apply(_a, _b, get_result_op::apply(_c));
             evaluated = true;
         }
     }
@@ -265,7 +269,7 @@ public:
     }
 
     template<typename F = Forced, cpp_disable_if(std::is_same<F, void>::value)>
-    void allocate_temporary() const {
+    void allocate_temporary(){
         allocated = true;
     }
 
@@ -277,8 +281,6 @@ public:
 
         allocated = true;
     }
-
-    using get_result_op = std::conditional_t<std::is_same<Forced, void>::value, dereference_op, forward_op>;
 
     result_type& result(){
         cpp_assert(evaluated, "The result has not been evaluated");
