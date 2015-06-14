@@ -98,6 +98,7 @@ private:
     AExpr _a;
     data_type _c;
     bool evaluated = false;
+    bool allocated = false;
 
 public:
     //Construct a new expression
@@ -154,7 +155,7 @@ public:
 
     template<typename F = Forced, cpp_disable_if(std::is_same<F, void>::value)>
     void allocate_temporary() const {
-        //NOP
+        allocated = true;
     }
 
     template<typename F = Forced, cpp_enable_if(std::is_same<F, void>::value)>
@@ -162,15 +163,21 @@ public:
         if(!_c){
             _c.reset(Op::allocate(_a));
         }
+
+        allocated = true;
     }
 
     using get_result_op = std::conditional_t<std::is_same<Forced, void>::value, dereference_op, forward_op>;
 
     result_type& result(){
+        cpp_assert(evaluated, "The result has not been evaluated");
+        cpp_assert(allocated, "The result has not been allocated");
         return get_result_op::apply(_c);
     }
 
     const result_type& result() const {
+        cpp_assert(evaluated, "The result has not been evaluated");
+        cpp_assert(allocated, "The result has not been allocated");
         return get_result_op::apply(_c);
     }
 };
