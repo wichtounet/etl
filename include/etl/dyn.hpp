@@ -321,10 +321,8 @@ public:
     //{{{ Swap operations
 
     void swap(dyn_matrix_impl& other){
-        //TODO This should be relaxed...
-        cpp_assert(other.size() == size(), "Cannot swap from a dyn_matrix of different size");
-
         using std::swap;
+        swap(_size, other._size);
         swap(_data, other._data);
         swap(_dimensions, other._dimensions);
     }

@@ -761,6 +761,20 @@ TEMPLATE_TEST_CASE_2( "dyn_matrix/swap_2", "", Z, float, double ) {
     REQUIRE(b[5] == Z(1.9));
 }
 
+TEMPLATE_TEST_CASE_2( "dyn_matrix/swap_3", "", Z, float, double ) {
+    etl::dyn_matrix<Z> a(2, 4, Z(1));
+    etl::dyn_matrix<Z> b(5, 6, Z(2));
+
+    a.swap(b);
+
+    REQUIRE(etl::size(a) == 30);
+    REQUIRE(etl::size(b) == 8);
+    REQUIRE(etl::dim<0>(a) == 5);
+    REQUIRE(etl::dim<1>(a) == 6);
+    REQUIRE(etl::dim<0>(b) == 2);
+    REQUIRE(etl::dim<1>(b) == 4);
+}
+
 //}}} swap tests
 
 //Make sure assign between matrices of different are compiling correctly

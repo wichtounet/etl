@@ -563,3 +563,25 @@ TEMPLATE_TEST_CASE_2( "dyn_vector/swap_1", "dyn_vector::swap", Z, double, float)
     REQUIRE(b[1] == 2.0);
     REQUIRE(b[2] == 5.0);
 }
+
+TEMPLATE_TEST_CASE_2( "dyn_vector/swap_2", "dyn_vector::swap", Z, double, float) {
+    etl::dyn_vector<Z> a = {-1.0, 2.0, 5.0};
+    etl::dyn_vector<Z> b = {2.5, 3.0, 4.0, 5.0};
+
+    using std::swap;
+    swap(a, b);
+    
+    REQUIRE(etl::size(a) == 4);
+    REQUIRE(etl::size(b) == 3);
+    REQUIRE(etl::dim<0>(a) == 4);
+    REQUIRE(etl::dim<0>(b) == 3);
+
+    REQUIRE(a[0] == 2.5);
+    REQUIRE(a[1] == 3.0);
+    REQUIRE(a[2] == 4.0);
+    REQUIRE(a[3] == 5.0);
+
+    REQUIRE(b[0] == -1.0);
+    REQUIRE(b[1] == 2.0);
+    REQUIRE(b[2] == 5.0);
+}
