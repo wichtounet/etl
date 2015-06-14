@@ -92,6 +92,7 @@ using fft_2d_policy = NARY_POLICY(VALUES_POLICY(200, 400, 600, 800, 1000, 1200, 
 #else
 #define MC_SECTION_FUNCTOR(name, ...)
 #endif
+
 //Bench addition
 CPM_BENCH() {
     CPM_TWO_PASS_NS(
@@ -111,6 +112,20 @@ CPM_BENCH() {
         "R = A + B",
         [](auto d1, auto d2){ return std::make_tuple(dmat(d1, d2), dmat(d1, d2), dmat(d1, d2)); },
         [](dmat& A, dmat& B, dmat& R){ R = A + B; }
+        );
+
+    CPM_TWO_PASS_NS_P(
+        mat_policy_2d,
+        "R += A",
+        [](auto d1, auto d2){ return std::make_tuple(dmat(d1, d2), dmat(d1, d2)); },
+        [](dmat& A, dmat& R){ R += A; }
+        );
+
+    CPM_TWO_PASS_NS_P(
+        mat_policy_2d,
+        "R += A + B",
+        [](auto d1, auto d2){ return std::make_tuple(dmat(d1, d2), dmat(d1, d2), dmat(d1, d2)); },
+        [](dmat& A, dmat& B, dmat& R){ R += A + B; }
         );
 
     CPM_TWO_PASS_NS_P(
