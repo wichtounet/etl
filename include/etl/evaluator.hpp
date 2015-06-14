@@ -76,6 +76,19 @@ struct standard_evaluator {
         intrinsic_traits<value_t<R>>::vectorizable, intrinsic_traits<value_t<E>>::vectorizable,
         std::is_same<typename intrinsic_traits<value_t<R>>::intrinsic_type, typename intrinsic_traits<value_t<E>>::intrinsic_type>::value> {};
 
+    //Standard assign version
+
+    template<typename E, typename R, cpp_enable_if(!vectorized_assign<E, R>::value && !has_direct_access<R>::value && !is_temporary_expr<E>::value)>
+    static void assign_evaluate(E&& expr, R&& result){
+        evaluate_only(expr);
+
+        for(std::size_t i = 0; i < etl::size(result); ++i){
+            result[i] = expr[i];
+        }
+    }
+
+    //Direct assign version
+
     template<typename E, typename R, cpp_enable_if(!vectorized_assign<E, R>::value && has_direct_access<R>::value && !is_temporary_expr<E>::value)>
     static void assign_evaluate(E&& expr, R&& result){
         evaluate_only(expr);
@@ -102,16 +115,7 @@ struct standard_evaluator {
         }
     }
 
-    template<typename E, typename R, cpp_enable_if(!vectorized_assign<E, R>::value && !has_direct_access<R>::value && !is_temporary_expr<E>::value)>
-    static void assign_evaluate(E&& expr, R&& result){
-        evaluate_only(expr);
-
-        const std::size_t size = etl::size(result);
-
-        for(std::size_t i = 0; i < size; ++i){
-            result[i] = expr[i];
-        }
-    }
+    //Vectorized assign version
 
     template<typename E, typename R, cpp_enable_if(vectorized_assign<E, R>::value && !is_temporary_expr<E>::value)>
     static void assign_evaluate(E&& expr, R&& result){
@@ -178,12 +182,100 @@ struct standard_evaluator {
         }
     }
 
-    template<typename E, typename R>
+    template<typename E, typename R, cpp_enable_if(!vectorized_assign<E, R>::value && !has_direct_access<R>::value)>
     static void add_evaluate(E&& expr, R&& result){
         evaluate_only(expr);
 
         for(std::size_t i = 0; i < etl::size(result); ++i){
             result[i] += expr[i];
+        }
+    }
+
+    template<typename E, typename R, cpp_enable_if(!vectorized_assign<E, R>::value && has_direct_access<R>::value)>
+    static void add_evaluate(E&& expr, R&& result){
+        evaluate_only(expr);
+
+        const std::size_t size = etl::size(result);
+        auto m = result.memory_start();
+
+        std::size_t i = 0;
+
+        if(unroll_normal_loops){
+            for(; i < (size & std::size_t(-4)); i += 4){
+                m[i] += expr[i];
+                m[i+1] += expr[i+1];
+                m[i+2] += expr[i+2];
+                m[i+3] += expr[i+3];
+            }
+        }
+
+        for(; i < size; ++i){
+            m[i] += expr[i];
+        }
+    }
+
+    template<typename E, typename R, cpp_enable_if(vectorized_assign<E, R>::value)>
+    static void add_evaluate(E&& expr, R&& result){
+        evaluate_only(expr);
+
+        using IT = intrinsic_traits<value_t<E>>;
+
+        auto m = result.memory_start();
+
+        const std::size_t size = etl::size(result);
+
+        std::size_t i = 0;
+
+        //1. Peel loop
+
+        constexpr const auto size_1 = sizeof(value_t<E>);
+        auto u_bytes = (reinterpret_cast<uintptr_t>(m) % IT::alignment);
+
+        if(u_bytes >= size_1 && u_bytes % size_1 == 0){
+            auto u_loads = std::min(u_bytes & -size_1, size);
+
+            for(; i < u_loads; ++i){
+                m[i] += expr[i];
+            }
+        }
+
+        //2. Vectorized loop
+
+        if(size - i >= IT::size){
+            if(reinterpret_cast<uintptr_t>(m + i) % IT::alignment == 0){
+                if(unroll_vectorized_loops && size - i > IT::size * 4){
+                    for(; i + IT::size * 4 - 1 < size; i += IT::size * 4){
+                        vec::store(m + i,                vec::add(result.load(i), expr.load(i)));
+                        vec::store(m + i + 1 * IT::size, vec::add(result.load(i + 1 * IT::size), expr.load(i + 1 * IT::size)));
+                        vec::store(m + i + 2 * IT::size, vec::add(result.load(i + 2 * IT::size), expr.load(i + 2 * IT::size)));
+                        vec::store(m + i + 3 * IT::size, vec::add(result.load(i + 3 * IT::size), expr.load(i + 3 * IT::size)));
+                    }
+                } else {
+                    for(; i + IT::size  - 1 < size; i += IT::size){
+                        vec::store(m + i, vec::add(result.load(i), expr.load(i)));
+                    }
+                }
+            } else {
+                if(unroll_vectorized_loops && size - i > IT::size * 4){
+                    for(; i + IT::size * 4 - 1 < size; i += IT::size * 4){
+                        vec::storeu(m + i,                vec::add(result.load(i), expr.load(i)));
+                        vec::storeu(m + i + 1 * IT::size, vec::add(result.load(i + 1 * IT::size), expr.load(i + 1 * IT::size)));
+                        vec::storeu(m + i + 2 * IT::size, vec::add(result.load(i + 2 * IT::size), expr.load(i + 2 * IT::size)));
+                        vec::storeu(m + i + 3 * IT::size, vec::add(result.load(i + 3 * IT::size), expr.load(i + 3 * IT::size)));
+                    }
+                } else {
+                    for(; i + IT::size  - 1 < size; i += IT::size){
+                        vec::storeu(m + i, vec::add(result.load(i), expr.load(i)));
+                    }
+                }
+            }
+        }
+
+        //3. Remainder loop
+
+        //Finish the iterations in a non-vectorized fashion
+        for(; i < size; ++i){
+            m[i] += expr[i];
         }
     }
 
