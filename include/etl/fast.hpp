@@ -273,7 +273,6 @@ public:
     //{{{ Swap operations
 
     void swap(fast_matrix_impl& other){
-        //TODO Ensure dimensions...
         using std::swap;
         swap(_data, other._data);
     }
