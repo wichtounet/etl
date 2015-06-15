@@ -830,3 +830,39 @@ TEST_CASE( "dyn_matrix/default_constructor_2", "" ) {
     REQUIRE(etl::dim<0>(values[0]) == 3);
     REQUIRE(etl::dim<1>(values[0]) == 2);
 }
+
+TEST_CASE( "dyn_matrix/default_constructor_3", "" ) {
+    std::vector<etl::dyn_matrix<double>> values;
+
+    values.emplace_back();
+
+    REQUIRE(values[0].size() == 0);
+
+    values.emplace_back(5, 5, 1.0);
+
+    REQUIRE(values[0].size() == 0);
+    REQUIRE(values[1].size() == 25);
+    REQUIRE(values[1][0] == 1.0);
+
+    values.push_back(etl::dyn_matrix<double>(3,3,10.0));
+
+    REQUIRE(values[0].size() == 0);
+    REQUIRE(values[1].size() == 25);
+    REQUIRE(values[1][0] == 1.0);
+    REQUIRE(values[2].size() == 9);
+    REQUIRE(values[2][0] == 10.0);
+
+    values.pop_back();
+    values.shrink_to_fit();
+
+    REQUIRE(values[0].size() == 0);
+    REQUIRE(values[1].size() == 25);
+    REQUIRE(values[1][0] == 1.0);
+
+    std::vector<etl::dyn_matrix<double>> values_2;
+    values_2 = values;
+
+    REQUIRE(values_2[0].size() == 0);
+    REQUIRE(values_2[1].size() == 25);
+    REQUIRE(values_2[1][0] == 1.0);
+}
