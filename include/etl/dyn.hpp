@@ -96,8 +96,8 @@ struct dyn_matrix_impl final :
           inplace_assignable<dyn_matrix_impl<T, SO, D>>
         , comparable<dyn_matrix_impl<T, SO, D>>
         , expression_able<dyn_matrix_impl<T, SO, D>>
-        , value_testable<dyn_matrix_impl<T, SO, D>> 
-        , dim_testable<dyn_matrix_impl<T, SO, D>> 
+        , value_testable<dyn_matrix_impl<T, SO, D>>
+        , dim_testable<dyn_matrix_impl<T, SO, D>>
         {
     static_assert(D > 0, "A matrix must have a least 1 dimension");
 
@@ -119,16 +119,25 @@ private:
     storage_impl _data;
     dimension_storage_impl _dimensions;
 
+    void check_invariants(){
+        cpp_assert(_size == _data.size(), "Invalid container size");
+        cpp_assert(_dimensions.size() == D, "Invalid dimensions");
+    }
+
 public:
     //{{{ Construction
 
     //Default constructor (constructs an empty matrix)
     dyn_matrix_impl() : _size(0), _data(0) {
         std::fill(_dimensions.begin(), _dimensions.end(), 0);
+
+        check_invariants();
     }
 
-    //Default copy constructor
-    dyn_matrix_impl(const dyn_matrix_impl& rhs) = default;
+    //Copy constructor
+    dyn_matrix_impl(const dyn_matrix_impl& rhs) : _size(rhs._size), _data(rhs._data), _dimensions(rhs._dimensions) {
+        check_invariants();
+    }
 
     //Copy constructor with different type
     //This constructor is necessary because the one from expression is explicit
@@ -141,6 +150,8 @@ public:
 
         //The type is different, so we must use assign
         assign_evaluate(rhs, *this);
+
+        check_invariants();
     }
 
     //Initializer-list construction for vector
@@ -150,6 +161,8 @@ public:
             _dimensions{{list.size()}} {
         static_assert(n_dimensions == 1, "This constructor can only be used for 1D matrix");
         //Nothing to init
+
+        check_invariants();
     }
 
     //Normal constructor with only sizes
@@ -163,6 +176,8 @@ public:
             _data(_size),
             _dimensions{{static_cast<std::size_t>(sizes)...}} {
         //Nothing to init
+
+        check_invariants();
     }
 
     //Sizes followed by an initializer list
@@ -172,6 +187,8 @@ public:
             _data(cpp::last_value(sizes...)),
             _dimensions(dyn_detail::sizes(std::make_index_sequence<(sizeof...(S)-1)>(), sizes...)) {
         static_assert(sizeof...(S) == D + 1, "Invalid number of dimensions");
+
+        check_invariants();
     }
 
     //Sizes followed by a values_t
@@ -184,6 +201,8 @@ public:
             _data(cpp::last_value(s1, sizes...).template list<value_type>()),
             _dimensions(dyn_detail::sizes(std::make_index_sequence<(sizeof...(S))>(), s1, sizes...)) {
         //Nothing to init
+
+        check_invariants();
     }
 
     //Sizes followed by a value
@@ -201,6 +220,8 @@ public:
             _data(_size, cpp::last_value(s1, sizes...)),
             _dimensions(dyn_detail::sizes(std::make_index_sequence<(sizeof...(S))>(), s1, sizes...)) {
         //Nothing to init
+
+        check_invariants();
     }
 
     //Sizes followed by a generator_expr
@@ -217,6 +238,8 @@ public:
         const auto& e = cpp::last_value(sizes...);
 
         assign_evaluate(e, *this);
+
+        check_invariants();
     }
 
     //Sizes followed by an init flag followed by the value
@@ -228,6 +251,8 @@ public:
         static_assert(sizeof...(S) == D + 2, "Invalid number of dimensions");
 
         //Nothing to init
+
+        check_invariants();
     }
 
     template<typename E, cpp_enable_if(
@@ -240,6 +265,8 @@ public:
         }
 
         assign_evaluate(std::forward<E>(e), *this);
+
+        check_invariants();
     }
 
     template<typename Container, cpp_enable_if(
@@ -252,10 +279,16 @@ public:
         for(std::size_t i = 0; i < size(); ++i){
             _data[i] = vec[i];
         }
+
+        check_invariants();
     }
 
-    //Default move constructor
-    dyn_matrix_impl(dyn_matrix_impl&& rhs) = default;
+    //Move constructor
+    dyn_matrix_impl(dyn_matrix_impl&& rhs) : _size(rhs._size), _data(std::move(rhs._data)), _dimensions(std::move(rhs._dimensions)) {
+        rhs._size = 0;
+
+        check_invariants();
+    }
 
     //}}}
 
@@ -265,15 +298,19 @@ public:
 
     //Note: For now, this is the only constructor that is able to change the size and dimensions of the matrix
     dyn_matrix_impl& operator=(const dyn_matrix_impl& rhs){
-        if(size() == 0){
-            _size = rhs.size();
-            _dimensions = rhs._dimensions;
-            _data = rhs._data;
-        } else {
-            validate_assign(*this, rhs);
+        if(this != &rhs){
+            if(size() == 0){
+                _size = rhs.size();
+                _dimensions = rhs._dimensions;
+                _data = rhs._data;
+            } else {
+                validate_assign(*this, rhs);
 
-            std::copy(rhs.begin(), rhs.end(), begin());
+                std::copy(rhs.begin(), rhs.end(), begin());
+            }
         }
+
+        check_invariants();
 
         return *this;
     }
@@ -286,6 +323,8 @@ public:
 
         assign_evaluate(e, *this);
 
+        check_invariants();
+
         return *this;
     }
 
@@ -294,6 +333,8 @@ public:
         validate_assign(*this, e);
 
         assign_evaluate(e, *this);
+
+        check_invariants();
 
         return *this;
     }
@@ -306,6 +347,8 @@ public:
 
         std::copy(vec.begin(), vec.end(), begin());
 
+        check_invariants();
+
         return *this;
     }
 
@@ -313,11 +356,25 @@ public:
     dyn_matrix_impl& operator=(const value_type& value){
         std::fill(_data.begin(), _data.end(), value);
 
+        check_invariants();
+
         return *this;
     }
 
     //Default move assignment operator
-    dyn_matrix_impl& operator=(dyn_matrix_impl&& rhs) = default;
+    dyn_matrix_impl& operator=(dyn_matrix_impl&& rhs){
+        if(this != & rhs){
+            _size = rhs._size;
+            _data = std::move(rhs._data);
+            _dimensions = std::move(rhs._dimensions);
+
+            rhs._size = 0;
+        }
+
+        check_invariants();
+
+        return *this;
+    }
 
     //}}}
 
@@ -328,6 +385,8 @@ public:
         swap(_size, other._size);
         swap(_data, other._data);
         swap(_dimensions, other._dimensions);
+
+        check_invariants();
     }
 
     //}}}
