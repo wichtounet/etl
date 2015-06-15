@@ -133,21 +133,21 @@ public:
     //{{{ Construction
 
     //Default constructor (constructs an empty matrix)
-    dyn_matrix_impl() : _size(0), _data(0) {
+    dyn_matrix_impl() noexcept : _size(0), _data(0) {
         std::fill(_dimensions.begin(), _dimensions.end(), 0);
 
         check_invariants();
     }
 
     //Copy constructor
-    dyn_matrix_impl(const dyn_matrix_impl& rhs) : _size(rhs._size), _data(rhs._data), _dimensions(rhs._dimensions) {
+    dyn_matrix_impl(const dyn_matrix_impl& rhs) noexcept : _size(rhs._size), _data(rhs._data), _dimensions(rhs._dimensions) {
         check_invariants();
     }
 
     //Copy constructor with different type
     //This constructor is necessary because the one from expression is explicit
     template<typename T2>
-    dyn_matrix_impl(const dyn_matrix_impl<T2, SO, D>& rhs) : _size(rhs.size()), _data(size()) {
+    dyn_matrix_impl(const dyn_matrix_impl<T2, SO, D>& rhs) noexcept : _size(rhs.size()), _data(size()) {
         //The type is different, therefore attributes are private
         for(std::size_t d = 0; d < etl::dimensions(rhs); ++d){
             _dimensions[d] = etl::dim(rhs, d);
@@ -159,8 +159,15 @@ public:
         check_invariants();
     }
 
+    //Move constructor
+    dyn_matrix_impl(dyn_matrix_impl&& rhs) noexcept : _size(rhs._size), _data(std::move(rhs._data)), _dimensions(std::move(rhs._dimensions)) {
+        rhs._size = 0;
+
+        check_invariants();
+    }
+
     //Initializer-list construction for vector
-    dyn_matrix_impl(std::initializer_list<value_type> list) :
+    dyn_matrix_impl(std::initializer_list<value_type> list) noexcept :
             _size(list.size()),
             _data(list),
             _dimensions{{list.size()}} {
@@ -176,7 +183,7 @@ public:
             cpp::all_convertible_to<std::size_t, S...>::value,
             cpp::is_homogeneous<typename cpp::first_type<S...>::type, S...>::value
         )>
-    explicit dyn_matrix_impl(S... sizes) :
+    explicit dyn_matrix_impl(S... sizes) noexcept :
             _size(dyn_detail::size(sizes...)),
             _data(_size),
             _dimensions{{static_cast<std::size_t>(sizes)...}} {
@@ -187,7 +194,7 @@ public:
 
     //Sizes followed by an initializer list
     template<typename... S, cpp_enable_if(dyn_detail::is_initializer_list_constructor<S...>::value)>
-    explicit dyn_matrix_impl(S... sizes) :
+    explicit dyn_matrix_impl(S... sizes) noexcept :
             _size(dyn_detail::size(std::make_index_sequence<(sizeof...(S)-1)>(), sizes...)),
             _data(cpp::last_value(sizes...)),
             _dimensions(dyn_detail::sizes(std::make_index_sequence<(sizeof...(S)-1)>(), sizes...)) {
@@ -201,7 +208,7 @@ public:
             (sizeof...(S) == D),
             cpp::is_specialization_of<values_t, typename cpp::last_type<S1, S...>::type>::value
         )>
-    explicit dyn_matrix_impl(S1 s1, S... sizes) :
+    explicit dyn_matrix_impl(S1 s1, S... sizes) noexcept :
             _size(dyn_detail::size(std::make_index_sequence<(sizeof...(S))>(), s1, sizes...)),
             _data(cpp::last_value(s1, sizes...).template list<value_type>()),
             _dimensions(dyn_detail::sizes(std::make_index_sequence<(sizeof...(S))>(), s1, sizes...)) {
@@ -220,7 +227,7 @@ public:
                 : std::is_same<value_type, typename cpp::last_type<S1, S...>::type>::value             //The last type must be exactly value_type
             )
         )>
-    explicit dyn_matrix_impl(S1 s1, S... sizes) :
+    explicit dyn_matrix_impl(S1 s1, S... sizes) noexcept :
             _size(dyn_detail::size(std::make_index_sequence<(sizeof...(S))>(), s1, sizes...)),
             _data(_size, cpp::last_value(s1, sizes...)),
             _dimensions(dyn_detail::sizes(std::make_index_sequence<(sizeof...(S))>(), s1, sizes...)) {
@@ -236,7 +243,7 @@ public:
             cpp::is_sub_homogeneous<S1, S...>::value,                                            //The first N-1 types must homegeneous
             cpp::is_specialization_of<generator_expr, typename cpp::last_type<S1, S...>::type>::value     //The last type must be a generator expr
         )>
-    explicit dyn_matrix_impl(S1 s1, S... sizes) :
+    explicit dyn_matrix_impl(S1 s1, S... sizes) noexcept :
             _size(dyn_detail::size(std::make_index_sequence<(sizeof...(S))>(), s1, sizes...)),
             _data(_size),
             _dimensions(dyn_detail::sizes(std::make_index_sequence<(sizeof...(S))>(), s1, sizes...)) {
@@ -249,7 +256,7 @@ public:
 
     //Sizes followed by an init flag followed by the value
     template<typename... S, cpp_enable_if(dyn_detail::is_init_constructor<S...>::value)>
-    explicit dyn_matrix_impl(S... sizes) :
+    explicit dyn_matrix_impl(S... sizes) noexcept :
             _size(dyn_detail::size(std::make_index_sequence<(sizeof...(S)-2)>(), sizes...)),
             _data(_size, cpp::last_value(sizes...)),
             _dimensions(dyn_detail::sizes(std::make_index_sequence<(sizeof...(S)-2)>(), sizes...)) {
@@ -264,7 +271,7 @@ public:
         std::is_convertible<value_t<E>, value_type>::value,
         is_copy_expr<E>::value
     )>
-    explicit dyn_matrix_impl(E&& e) :_size(etl::size(e)), _data(_size) {
+    explicit dyn_matrix_impl(E&& e) : _size(etl::size(e)), _data(_size) {
         for(std::size_t d = 0; d < etl::dimensions(e); ++d){
             _dimensions[d] = etl::dim(e, d);
         }
@@ -288,13 +295,6 @@ public:
         check_invariants();
     }
 
-    //Move constructor
-    dyn_matrix_impl(dyn_matrix_impl&& rhs) : _size(rhs._size), _data(std::move(rhs._data)), _dimensions(std::move(rhs._dimensions)) {
-        rhs._size = 0;
-
-        check_invariants();
-    }
-
     //}}}
 
     //{{{ Assignment
@@ -302,7 +302,7 @@ public:
     //Copy assignment operator
 
     //Note: For now, this is the only constructor that is able to change the size and dimensions of the matrix
-    dyn_matrix_impl& operator=(const dyn_matrix_impl& rhs){
+    dyn_matrix_impl& operator=(const dyn_matrix_impl& rhs) noexcept {
         if(this != &rhs){
             if(size() == 0){
                 _size = rhs.size();
@@ -313,6 +313,21 @@ public:
 
                 std::copy(rhs.begin(), rhs.end(), begin());
             }
+        }
+
+        check_invariants();
+
+        return *this;
+    }
+
+    //Default move assignment operator
+    dyn_matrix_impl& operator=(dyn_matrix_impl&& rhs) noexcept {
+        if(this != & rhs){
+            _size = rhs._size;
+            _data = std::move(rhs._data);
+            _dimensions = std::move(rhs._dimensions);
+
+            rhs._size = 0;
         }
 
         check_invariants();
@@ -360,21 +375,6 @@ public:
     //Set the same value to each element of the matrix
     dyn_matrix_impl& operator=(const value_type& value){
         std::fill(_data.begin(), _data.end(), value);
-
-        check_invariants();
-
-        return *this;
-    }
-
-    //Default move assignment operator
-    dyn_matrix_impl& operator=(dyn_matrix_impl&& rhs){
-        if(this != & rhs){
-            _size = rhs._size;
-            _data = std::move(rhs._data);
-            _dimensions = std::move(rhs._dimensions);
-
-            rhs._size = 0;
-        }
 
         check_invariants();
 
