@@ -86,19 +86,23 @@ TEMPLATE_TEST_CASE_2( "convmtx/convmtx_2", "convmtx", Z, float, double ) {
 TEMPLATE_TEST_CASE_2( "convmtx2/convmtx2_1", "convmtx conv", Z, double, float ) {
     etl::fast_matrix<Z, 3, 3> I(etl::magic<Z>(3));
     etl::fast_matrix<Z, 1, 1> K(etl::magic<Z>(1));
-    etl::fast_matrix<Z, 3*3, 1> C;
+    etl::fast_matrix<Z, 3*3, 1> C1;
+    etl::fast_matrix<Z, 3*3, 1> C2;
 
-    C = convmtx2(I, 1, 1);
+    C1 = etl::convmtx2(I, 1, 1);
+    C2 = etl::convmtx2_direct<1, 1>(I);
 
-    REQUIRE(C(0, 0) == 8);
-    REQUIRE(C(1, 0) == 3);
-    REQUIRE(C(2, 0) == 4);
-    REQUIRE(C(3, 0) == 1);
-    REQUIRE(C(4, 0) == 5);
-    REQUIRE(C(5, 0) == 9);
-    REQUIRE(C(6, 0) == 6);
-    REQUIRE(C(7, 0) == 7);
-    REQUIRE(C(8, 0) == 2);
+    REQUIRE(C1(0, 0) == 8);
+    REQUIRE(C1(1, 0) == 3);
+    REQUIRE(C1(2, 0) == 4);
+    REQUIRE(C1(3, 0) == 1);
+    REQUIRE(C1(4, 0) == 5);
+    REQUIRE(C1(5, 0) == 9);
+    REQUIRE(C1(6, 0) == 6);
+    REQUIRE(C1(7, 0) == 7);
+    REQUIRE(C1(8, 0) == 2);
+
+    REQUIRE(C1 == C2);
 }
 
 TEMPLATE_TEST_CASE_2( "convmtx2/convmtx2_2", "convmtx conv", Z, double, float ) {

@@ -38,6 +38,7 @@
 #include "outer_product_expr.hpp"
 #include "fft_expr.hpp"
 #include "conv_expr.hpp"
+#include "convmtx2_expr.hpp"
 
 // The expressions building
 #include "checks.hpp"
