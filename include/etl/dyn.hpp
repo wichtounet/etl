@@ -123,8 +123,10 @@ private:
         cpp_assert(_size == _data.size(), "Invalid container size");
         cpp_assert(_dimensions.size() == D, "Invalid dimensions");
 
+#ifndef NDEBUG
         auto computed = std::accumulate(_dimensions.begin(), _dimensions.end(), std::size_t(1), std::multiplies<std::size_t>());
         cpp_assert(computed == _size, "Incoherency in dimensions");
+#endif
     }
 
 public:
