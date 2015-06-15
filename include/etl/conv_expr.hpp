@@ -322,6 +322,8 @@ using conv_deep_same_expr = basic_conv_expr<T, D, conv_type::SAME, detail::conv_
 template<typename T, std::size_t D>
 using conv_deep_full_expr = basic_conv_expr<T, D, conv_type::FULL, detail::conv_deep_full_impl>;
 
+//TODO This should probably be moved
+
 //Deep convolutions
 
 template<typename I, typename K, typename C, cpp::enable_if_u<etl_traits<I>::dimensions() == 3> = cpp::detail::dummy>
