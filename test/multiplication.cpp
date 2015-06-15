@@ -64,8 +64,8 @@ MMUL_TEST_CASE( "multiplication/mm_mul_3", "mmul") {
 }
 
 MMUL_TEST_CASE( "multiplication/mm_mul_4", "mmul") {
-    etl::dyn_matrix<T> a(2,2, etl::values(1,2,3,4,5,6,7,8));
-    etl::dyn_matrix<T> b(2,2, etl::values(1,2,3,4,5,6,7,8));
+    etl::dyn_matrix<T> a(2,2, etl::values(1,2,3,4));
+    etl::dyn_matrix<T> b(2,2, etl::values(1,2,3,4));
     etl::dyn_matrix<T> c(2,2);
 
     Impl::apply(a, b, c);
