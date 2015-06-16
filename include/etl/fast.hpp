@@ -87,8 +87,8 @@ struct fast_matrix_impl final :
         inplace_assignable<fast_matrix_impl<T, ST, SO, Dims...>>
         , comparable<fast_matrix_impl<T, ST, SO, Dims...>>
         , expression_able<fast_matrix_impl<T, ST, SO, Dims...>>
-        , value_testable<fast_matrix_impl<T, ST, SO, Dims...>> 
-        , dim_testable<fast_matrix_impl<T, ST, SO, Dims...>> 
+        , value_testable<fast_matrix_impl<T, ST, SO, Dims...>>
+        , dim_testable<fast_matrix_impl<T, ST, SO, Dims...>>
         {
     static_assert(sizeof...(Dims) > 0, "At least one dimension must be specified");
 
@@ -307,7 +307,7 @@ public:
         return nth_size<D, 0, Dims...>::value;
     }
 
-    std::size_t dim(std::size_t d) noexcept {
+    std::size_t dim(std::size_t d) const noexcept {
         return dyn_nth_size<Dims...>(d);
     }
 
