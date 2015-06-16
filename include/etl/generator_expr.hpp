@@ -6,7 +6,7 @@
 //  http://opensource.org/licenses/MIT)
 //=======================================================================
 
-#include <iostream> //For stream support
+#include <iosfwd>     //For stream support
 
 namespace etl {
 

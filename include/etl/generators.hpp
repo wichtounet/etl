@@ -6,8 +6,8 @@
 //  http://opensource.org/licenses/MIT)
 //=======================================================================
 
-#include <chrono> //for std::time
-#include <iostream> //For stream support
+#include <chrono>      //for std::time
+#include <iosfwd>     //For stream support
 #include <random>
 
 #include "cpp_utils/tmp.hpp"

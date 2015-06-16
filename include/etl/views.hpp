@@ -6,7 +6,7 @@
 //  http://opensource.org/licenses/MIT)
 //=======================================================================
 
-#include <iostream>     //For stream support
+#include <iosfwd>     //For stream support
 
 #include "cpp_utils/tmp.hpp"
 #include "tmp.hpp"

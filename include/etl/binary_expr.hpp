@@ -6,9 +6,7 @@
 //  http://opensource.org/licenses/MIT)
 //=======================================================================
 
-#include <iostream>     //For stream support
-
-#include <ostream>
+#include <iosfwd>     //For stream support
 
 #include "traits_lite.hpp"
 #include "iterator.hpp"
