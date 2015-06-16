@@ -1,12 +1,10 @@
+#pragma once
 //=======================================================================
 // Copyright (c) 2014-2015 Baptiste Wicht
 // Distributed under the terms of the MIT License.
 // (See accompanying file LICENSE or copy at
 //  http://opensource.org/licenses/MIT)
 //=======================================================================
-
-#ifndef ETL_TRAITS_HPP
-#define ETL_TRAITS_HPP
 
 #include "cpp_utils/assert.hpp"
 #include "cpp_utils/tmp.hpp"
@@ -1190,5 +1188,3 @@ std::size_t major_stride(E&& e){
 }
 
 } //end of namespace etl
-
-#endif

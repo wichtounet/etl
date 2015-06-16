@@ -1,12 +1,10 @@
+#pragma once
 //=======================================================================
 // Copyright (c) 2014-2015 Baptiste Wicht
 // Distributed under the terms of the MIT License.
 // (See accompanying file LICENSE or copy at
 //  http://opensource.org/licenses/MIT)
 //=======================================================================
-
-#ifndef ETL_IMPL_COMMON_CONVOLUTION_HPP
-#define ETL_IMPL_COMMON_CONVOLUTION_HPP
 
 namespace etl {
 
@@ -91,5 +89,3 @@ void right_full_kernel(const T* in, const std::size_t n, const T* kernel, std::s
 } //end of namespace common
 } //end of namespace impl
 } //end of namespace etl
-
-#endif

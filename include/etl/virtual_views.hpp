@@ -1,12 +1,10 @@
+#pragma once
 //=======================================================================
 // Copyright (c) 2014-2015 Baptiste Wicht
 // Distributed under the terms of the MIT License.
 // (See accompanying file LICENSE or copy at
 //  http://opensource.org/licenses/MIT)
 //=======================================================================
-
-#ifndef ETL_VIRTUAL_VIEWS_HPP
-#define ETL_VIRTUAL_VIEWS_HPP
 
 #include <iostream>     //For stream support
 
@@ -84,5 +82,3 @@ struct fast_magic_view {
 };
 
 } //end of namespace etl
-
-#endif

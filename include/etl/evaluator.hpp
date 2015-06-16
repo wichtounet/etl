@@ -1,12 +1,10 @@
+#pragma once
 //=======================================================================
 // Copyright (c) 2014-2015 Baptiste Wicht
 // Distributed under the terms of the MIT License.
 // (See accompanying file LICENSE or copy at
 //  http://opensource.org/licenses/MIT)
 //=======================================================================
-
-#ifndef ETL_EVALUATOR_HPP
-#define ETL_EVALUATOR_HPP
 
 #include "traits_lite.hpp"   //forward declaration of the traits
 #include "visitor.hpp"   //forward declaration of the traits
@@ -683,5 +681,3 @@ void force(Expr&& expr){
 }
 
 } //end of namespace etl
-
-#endif

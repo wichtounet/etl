@@ -1,12 +1,10 @@
+#pragma once
 //=======================================================================
 // Copyright (c) 2014-2015 Baptiste Wicht
 // Distributed under the terms of the MIT License.
 // (See accompanying file LICENSE or copy at
 //  http://opensource.org/licenses/MIT)
 //=======================================================================
-
-#ifndef ETL_CONVOLUTION_EXPR_HPP
-#define ETL_CONVOLUTION_EXPR_HPP
 
 #include <algorithm>
 
@@ -399,5 +397,3 @@ C& convolve_deep_valid(const I& input, const K& kernel, C&& conv){
 }
 
 } //end of namespace etl
-
-#endif

@@ -5,8 +5,7 @@
 //  http://opensource.org/licenses/MIT)
 //=======================================================================
 
-#ifndef ETL_ALLOCATOR_HPP
-#define ETL_ALLOCATOR_HPP
+#pragma once
 
 #include "traits_lite.hpp"   //forward declaration of the traits
 
@@ -51,5 +50,3 @@ void aligned_release(T* ptr){
 }
 
 } //end of namespace etl
-
-#endif

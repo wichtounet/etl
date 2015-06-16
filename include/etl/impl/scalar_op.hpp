@@ -1,12 +1,10 @@
+#pragma once
 //=======================================================================
 // Copyright (c) 2014-2015 Baptiste Wicht
 // Distributed under the terms of the MIT License.
 // (See accompanying file LICENSE or copy at
 //  http://opensource.org/licenses/MIT)
 //=======================================================================
-
-#ifndef ETL_IMPL_SCALAR_OP_HPP
-#define ETL_IMPL_SCALAR_OP_HPP
 
 #include "../config.hpp"
 
@@ -101,5 +99,3 @@ struct scalar_mul<T, std::enable_if_t<is_double_precision<T>::value && has_direc
 } //end of namespace detail
 
 } //end of namespace etl
-
-#endif

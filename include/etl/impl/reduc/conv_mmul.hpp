@@ -1,12 +1,10 @@
+#pragma once
 //=======================================================================
 // Copyright (c) 2014-2015 Baptiste Wicht
 // Distributed under the terms of the MIT License.
 // (See accompanying file LICENSE or copy at
 //  http://opensource.org/licenses/MIT)
 //=======================================================================
-
-#ifndef ETL_IMPL_STD_CONV_MMUL_HPP
-#define ETL_IMPL_STD_CONV_MMUL_HPP
 
 #include <algorithm>
 
@@ -41,5 +39,3 @@ void conv2_full(const I& input, const K& kernel, C&& conv){
 } //end of namespace reduc
 } //end of namespace impl
 } //end of namespace etl
-
-#endif

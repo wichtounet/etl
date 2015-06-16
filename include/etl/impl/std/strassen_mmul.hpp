@@ -1,12 +1,10 @@
+#pragma once
 //=======================================================================
 // Copyright (c) 2014-2015 Baptiste Wicht
 // Distributed under the terms of the MIT License.
 // (See accompanying file LICENSE or copy at
 //  http://opensource.org/licenses/MIT)
 //=======================================================================
-
-#ifndef ETL_IMPL_STD_STRASSEN_MMUL_HPP
-#define ETL_IMPL_STD_STRASSEN_MMUL_HPP
 
 #include <algorithm>
 
@@ -240,5 +238,3 @@ void strassen_mm_mul(const A& a, const B& b, C& c){
 } //end of namespace impl
 
 } //end of namespace etl
-
-#endif

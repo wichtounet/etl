@@ -1,12 +1,10 @@
+#pragma once
 //=======================================================================
 // Copyright (c) 2014-2015 Baptiste Wicht
 // Distributed under the terms of the MIT License.
 // (See accompanying file LICENSE or copy at
 //  http://opensource.org/licenses/MIT)
 //=======================================================================
-
-#ifndef ETL_TMP_HPP
-#define ETL_TMP_HPP
 
 namespace etl {
 
@@ -146,5 +144,3 @@ constexpr decltype(auto) optional_move(T&& t){
 }
 
 } //end of namespace etl
-
-#endif

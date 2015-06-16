@@ -1,12 +1,10 @@
+#pragma once
 //=======================================================================
 // Copyright (c) 2014-2015 Baptiste Wicht
 // Distributed under the terms of the MIT License.
 // (See accompanying file LICENSE or copy at
 //  http://opensource.org/licenses/MIT)
 //=======================================================================
-
-#ifndef ETL_CONVMTX2_EXPR_HPP
-#define ETL_CONVMTX2_EXPR_HPP
 
 #include <algorithm>
 
@@ -103,5 +101,3 @@ template<typename T, std::size_t K1, std::size_t K2>
 using direct_convmtx2_expr = basic_convmtx2_expr<T, K1, K2, detail::convmtx2_direct>;
 
 } //end of namespace etl
-
-#endif

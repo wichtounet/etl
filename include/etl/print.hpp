@@ -1,12 +1,10 @@
+#pragma once
 //=======================================================================
 // Copyright (c) 2014-2015 Baptiste Wicht
 // Distributed under the terms of the MIT License.
 // (See accompanying file LICENSE or copy at
 //  http://opensource.org/licenses/MIT)
 //=======================================================================
-
-#ifndef ETL_PRINT_HPP
-#define ETL_PRINT_HPP
 
 #include<string>
 
@@ -78,5 +76,3 @@ std::string to_octave(const T& m){
 }
 
 } //end of namespace etl
-
-#endif

@@ -1,3 +1,4 @@
+#pragma once
 //=======================================================================
 // Copyright (c) 2014-2015 Baptiste Wicht
 // Distributed under the terms of the MIT License.
@@ -13,9 +14,6 @@
  *  * 1D convolution with no memory allocation could probably be worked out (needs to be benchmarked)
  *  * Probably some other AVX2 instructions that could improve performances
  */
-
-#ifndef ETL_IMPL_AVX_CONVOLUTION_HPP
-#define ETL_IMPL_AVX_CONVOLUTION_HPP
 
 #if defined(ETL_VECTORIZE_IMPL) && defined(__AVX__)
 #include <immintrin.h>
@@ -590,5 +588,3 @@ void sconv2_full(const I& /*input*/, const K& /*kernel*/, C&& /*conv*/){ cpp_unr
 } //end of namespace avx
 } //end of namespace impl
 } //end of namespace etl
-
-#endif

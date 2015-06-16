@@ -1,12 +1,10 @@
+#pragma once
 //=======================================================================
 // Copyright (c) 2014-2015 Baptiste Wicht
 // Distributed under the terms of the MIT License.
 // (See accompanying file LICENSE or copy at
 //  http://opensource.org/licenses/MIT)
 //=======================================================================
-
-#ifndef ETL_VECTORIZATION_HPP
-#define ETL_VECTORIZATION_HPP
 
 #include <immintrin.h>
 
@@ -42,5 +40,3 @@ using intrinsic_type = typename intrinsic_traits<T>::intrinsic_type;
 #include "no_vectorization.hpp"
 
 #endif //ETL_VECTORIZE_EXPR
-
-#endif //ETL_VECTORIZATION_HPP

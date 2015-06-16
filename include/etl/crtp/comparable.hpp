@@ -1,12 +1,10 @@
+#pragma once
 //=======================================================================
 // Copyright (c) 2014-2015 Baptiste Wicht
 // Distributed under the terms of the MIT License.
 // (See accompanying file LICENSE or copy at
 //  http://opensource.org/licenses/MIT)
 //=======================================================================
-
-#ifndef ETL_COMPARABLE_HPP
-#define ETL_COMPARABLE_HPP
 
 /*
  * Use CRTP technique to inject comparison operators to expressions and value classes.
@@ -40,5 +38,3 @@ struct comparable {
 };
 
 } //end of namespace etl
-
-#endif

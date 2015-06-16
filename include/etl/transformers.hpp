@@ -1,12 +1,10 @@
+#pragma once
 //=======================================================================
 // Copyright (c) 2014-2015 Baptiste Wicht
 // Distributed under the terms of the MIT License.
 // (See accompanying file LICENSE or copy at
 //  http://opensource.org/licenses/MIT)
 //=======================================================================
-
-#ifndef ETL_TRANSFORMERS_HPP
-#define ETL_TRANSFORMERS_HPP
 
 #include <iostream> //For stream support
 
@@ -823,5 +821,3 @@ std::ostream& operator<<(std::ostream& os, const p_max_pool_p_transformer<T, C1,
 }
 
 } //end of namespace etl
-
-#endif

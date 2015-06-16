@@ -1,12 +1,10 @@
+#pragma once
 //=======================================================================
 // Copyright (c) 2014-2015 Baptiste Wicht
 // Distributed under the terms of the MIT License.
 // (See accompanying file LICENSE or copy at
 //  http://opensource.org/licenses/MIT)
 //=======================================================================
-
-#ifndef ETL_IMPL_TRANSPOSE_HPP
-#define ETL_IMPL_TRANSPOSE_HPP
 
 #include "../value_fwd.hpp"
 #include "../temporary.hpp"
@@ -125,5 +123,3 @@ struct inplace_rectangular_transpose<C, std::enable_if_t<has_direct_access<C>::v
 } //end of namespace detail
 
 } //end of namespace etl
-
-#endif

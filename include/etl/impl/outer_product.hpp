@@ -1,12 +1,10 @@
+#pragma once
 //=======================================================================
 // Copyright (c) 2014-2015 Baptiste Wicht
 // Distributed under the terms of the MIT License.
 // (See accompanying file LICENSE or copy at
 //  http://opensource.org/licenses/MIT)
 //=======================================================================
-
-#ifndef ETL_IMPL_OUTER_PRODUCT_HPP
-#define ETL_IMPL_OUTER_PRODUCT_HPP
 
 #include "../config.hpp"
 #include "../traits_lite.hpp"
@@ -71,5 +69,3 @@ struct outer_product_impl <A, B, C, std::enable_if_t<all_double_precision<A, B, 
 } //end of namespace detail
 
 } //end of namespace etl
-
-#endif

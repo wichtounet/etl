@@ -1,12 +1,10 @@
+#pragma once
 //=======================================================================
 // Copyright (c) 2014-2015 Baptiste Wicht
 // Distributed under the terms of the MIT License.
 // (See accompanying file LICENSE or copy at
 //  http://opensource.org/licenses/MIT)
 //=======================================================================
-
-#ifndef ETL_FFT_EXPR_HPP
-#define ETL_FFT_EXPR_HPP
 
 #include <complex>
 
@@ -122,5 +120,3 @@ template<typename T>
 using ifft2_real_expr = basic_fft_expr<T, 2, detail::ifft2_real_impl>;
 
 } //end of namespace etl
-
-#endif

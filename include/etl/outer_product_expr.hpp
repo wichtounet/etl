@@ -1,12 +1,10 @@
+#pragma once
 //=======================================================================
 // Copyright (c) 2014-2015 Baptiste Wicht
 // Distributed under the terms of the MIT License.
 // (See accompanying file LICENSE or copy at
 //  http://opensource.org/licenses/MIT)
 //=======================================================================
-
-#ifndef ETL_OUTER_PRODUCT_EXPR_HPP
-#define ETL_OUTER_PRODUCT_EXPR_HPP
 
 #include <algorithm>
 
@@ -80,5 +78,3 @@ struct outer_product_expr {
 };
 
 } //end of namespace etl
-
-#endif

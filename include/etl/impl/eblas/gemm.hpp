@@ -1,3 +1,4 @@
+#pragma once
 //=======================================================================
 // Copyright (c) 2014-2015 Baptiste Wicht
 // Distributed under the terms of the MIT License.
@@ -6,9 +7,6 @@
 //=======================================================================
 
 //Highly inspired from the "GEMM: From Pure C to SSE Optimized Micro Kernels" course
-
-#ifndef ETL_IMPL_EBLAS_GEMM_HPP
-#define ETL_IMPL_EBLAS_GEMM_HPP
 
 #ifdef ETL_VECTORIZE_IMPL
 #ifdef __SSE3__
@@ -417,5 +415,3 @@ void fast_sgemm(A&& a, B&& b, C&& c){
 } //end of namespace impl
 
 } //end of namespace etl
-
-#endif

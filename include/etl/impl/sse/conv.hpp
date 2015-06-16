@@ -1,3 +1,4 @@
+#pragma once
 //=======================================================================
 // Copyright (c) 2014-2015 Baptiste Wicht
 // Distributed under the terms of the MIT License.
@@ -11,9 +12,6 @@
  *  * the tmp_res vectors could be avoided by using hadd instructions
  *  * 1D convolution with no memory allocation could probably be worked out (needs to be benchmarked)
  */
-
-#ifndef ETL_IMPL_SSE_CONVOLUTION_HPP
-#define ETL_IMPL_SSE_CONVOLUTION_HPP
 
 #if defined(ETL_VECTORIZE_IMPL) && defined(__SSE3__)
 #include <immintrin.h>
@@ -562,5 +560,3 @@ void sconv2_full(const I& /*input*/, const K& /*kernel*/, C&& /*conv*/){ cpp_unr
 } //end of namespace sse
 } //end of namespace impl
 } //end of namespace etl
-
-#endif
