@@ -62,9 +62,9 @@ struct basic_convmtx2_expr {
     template<typename A, typename C>
     static void apply(A&& a, C&& c){
         static_assert(all_etl_expr<A,C>::value, "convmtx2 only supported for ETL expressions");
-        static_assert(decay_traits<A>::dimensions == 2 && decay_traits<C>::dimensions == 2, "convmtx2 needs 2D matrices");
+        static_assert(decay_traits<A>::dimensions() == 2 && decay_traits<C>::dimensions() == 2, "convmtx2 needs 2D matrices");
 
-        Impl<decltype(make_temporary(std::forward<A>(a))), C>::apply<K1, K2>(
+        Impl<decltype(make_temporary(std::forward<A>(a))), C>::template apply<K1, K2>(
             make_temporary(std::forward<A>(a)),
             std::forward<C>(c));
     }
@@ -87,7 +87,7 @@ struct basic_convmtx2_expr {
         return (K1 * K2) * ((etl::dim<0>(a) + K1 - 1) * (etl::dim<1>(a) + K2 - 1));
     }
 
-    template<typename A, typename B>
+    template<typename A>
     static constexpr std::size_t size(){
         return this_type::template dim<A, 0>() * this_type::template dim<A, 1>();
     }
@@ -103,12 +103,15 @@ namespace detail {
 template<typename A, typename M>
 struct convmtx2_direct {
     template<std::size_t K1, std::size_t K2>
-    void apply(A&& sub, M& m){
+    static void apply(A&& sub, M& m){
         const auto i1 = etl::dim<0>(sub);
         const auto i2 = etl::dim<1>(sub);
 
-        const auto c_height = (i1 + K1 - 1) * (i2 + K2 - 1);
+        const auto c_height = etl::dim<0>(m);
         constexpr const auto c_width = K1 * K2;
+
+        cpp_assert(c_height == ((i1 + K1 - 1) * (i2 + K2 - 1)), "Invalid input height");
+        cpp_assert(c_width == etl::dim<1>(m), "Invalid input width");
 
         const auto max_fill = c_height - ((i1 + K1 - 1) * ((c_width - 1) / K1) + (c_width - 1) % K1);
         const auto inner_paddings = max_fill - (i1 * i2);
