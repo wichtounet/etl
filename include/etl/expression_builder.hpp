@@ -5,6 +5,11 @@
 //  http://opensource.org/licenses/MIT)
 //=======================================================================
 
+/*!
+ * \file expression_builder.hpp
+ * \brief Contains all the operators and functions to build expressions.
+*/
+
 #pragma once
 
 #include "config.hpp"
