@@ -1,8 +1,8 @@
 Expression Templates Library (ETL)
 ==================================
 
-.. image:: https://img.shields.io/sonar/https/baptiste-wicht.ch/sonar/etl/coverage.svg 
-.. image:: https://img.shields.io/jenkins/s/https/baptiste-wicht.ch/jenkins/etl.svg 
+.. image:: https://img.shields.io/sonar/https/baptiste-wicht.ch/sonar/etl/coverage.svg
+.. image:: https://img.shields.io/jenkins/s/https/baptiste-wicht.ch/jenkins/etl.svg
 .. image:: https://img.shields.io/github/license/mashape/apistatus.svg
 
 ETL is a header only library for cC+ that provides vector and
@@ -20,12 +20,12 @@ Usage
 The library is header-only and does not need to be built it at all,
 you just have to include its header files.
 
-Here are the header that can be included:
+Most of the headers are not meant to be included directly inside a problem. Here are the header that are made to be included:
 
-* etl.hpp: Should always be included, provide the basic features
-* multiplication.hpp: Include if you want matrix multiplication
-* convolution: Include if you want 1D/2D convolution
-* print.hpp: Include if you want to print elements
+* etl.hpp: Contains all the features of the library
+* etl_light.hpp: Contains the basic features of the library (no matrix multiplication, no convolution, no FFT)
+
+You should always include on of these headers in your program.
 
 Data structures
 ***************
