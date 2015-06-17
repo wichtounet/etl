@@ -43,6 +43,7 @@
 #include "checks.hpp"
 #include "expression_builder.hpp"
 #include "conv_expression_builder.hpp"
+#include "fft_expression_builder.hpp"
 
 // The value classes implementation
 #include "etl/fast.hpp"
