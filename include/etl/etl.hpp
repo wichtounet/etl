@@ -42,6 +42,7 @@
 // The expressions building
 #include "checks.hpp"
 #include "expression_builder.hpp"
+#include "mul_expression_builder.hpp"
 #include "conv_expression_builder.hpp"
 #include "fft_expression_builder.hpp"
 
