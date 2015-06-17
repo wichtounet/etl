@@ -8,7 +8,7 @@
 #include "catch.hpp"
 #include "template_test.hpp"
 
-#include "etl/etl.hpp"
+#include "etl/etl_light.hpp"
 
 //{{{ Init tests
 
@@ -570,7 +570,7 @@ TEMPLATE_TEST_CASE_2( "dyn_vector/swap_2", "dyn_vector::swap", Z, double, float)
 
     using std::swap;
     swap(a, b);
-    
+
     REQUIRE(etl::size(a) == 4);
     REQUIRE(etl::size(b) == 3);
     REQUIRE(etl::dim<0>(a) == 4);

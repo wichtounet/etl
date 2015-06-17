@@ -8,7 +8,7 @@
 #include "catch.hpp"
 #include "template_test.hpp"
 
-#include "etl/etl.hpp"
+#include "etl/etl_light.hpp"
 
 TEMPLATE_TEST_CASE_2( "transpose/fast_matrix_1", "transpose", Z, float, double ) {
     etl::fast_matrix<Z, 3, 2> a({1.0, -2.0, 3.0, 0.5, 0.0, -1});

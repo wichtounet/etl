@@ -7,7 +7,9 @@
 
 #include "catch.hpp"
 
-#include "etl/etl.hpp"
+#include "cpp_utils/tmp.hpp"
+#include "cpp_utils/assert.hpp"
+#include "etl/tmp.hpp"
 
 TEST_CASE( "tmp/sequence_equal/1", "[tmp]") {
     REQUIRE((etl::sequence_equal<std::index_sequence<2>, std::index_sequence<2>>::value));

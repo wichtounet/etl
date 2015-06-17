@@ -7,8 +7,7 @@
 
 #include "catch.hpp"
 
-#include "etl/etl.hpp"
-#include "etl/print.hpp"
+#include "etl/etl_light.hpp"
 
 //{{{ to_octave
 

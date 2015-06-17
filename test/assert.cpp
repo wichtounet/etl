@@ -10,7 +10,7 @@
 #undef NDEBUG
 #define CPP_UTILS_ASSERT_EXCEPTION
 
-#include "etl/etl.hpp"
+#include "etl/etl_light.hpp"
 
 TEST_CASE( "dyn_vector/assert", "assert" ) {
     etl::dyn_vector<double> a = {-1.0, 2.0, 5.0};

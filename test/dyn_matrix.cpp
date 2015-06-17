@@ -8,7 +8,7 @@
 #include "catch.hpp"
 #include "template_test.hpp"
 
-#include "etl/etl.hpp"
+#include "etl/etl_light.hpp"
 
 //{{{ Init tests
 

@@ -10,7 +10,7 @@
 
 #include <vector>
 
-#include "etl/etl.hpp"
+#include "etl/etl_light.hpp"
 #include "etl/stop.hpp"
 
 ///{{{ magic(n)

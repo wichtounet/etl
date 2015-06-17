@@ -305,3 +305,108 @@ TEMPLATE_TEST_CASE_2( "multiplication/expression_3", "expression", Z, double, fl
 }
 
 //}}}
+
+//{{{ outer product
+
+TEMPLATE_TEST_CASE_2( "fast_vector/outer_1", "sum", Z, float, double ) {
+    etl::fast_vector<Z, 3> a = {1.0, 2.0, 3.0};
+    etl::fast_vector<Z, 3> b = {4.0, 5.0, 6.0};
+    etl::fast_matrix<Z, 3, 3> c;
+
+    c = outer(a, b);
+
+    REQUIRE(c(0,0) == 4.0);
+    REQUIRE(c(0,1) == 5.0);
+    REQUIRE(c(0,2) == 6.0);
+
+    REQUIRE(c(1,0) == 8.0);
+    REQUIRE(c(1,1) == 10.0);
+    REQUIRE(c(1,2) == 12.0);
+
+    REQUIRE(c(2,0) == 12.0);
+    REQUIRE(c(2,1) == 15.0);
+    REQUIRE(c(2,2) == 18.0);
+}
+
+TEMPLATE_TEST_CASE_2( "fast_vector/outer_2", "sum", Z, float, double ) {
+    etl::fast_vector<Z, 2> a = {1.0, 2.0};
+    etl::fast_vector<Z, 4> b = {2.0, 3.0, 4.0, 5.0};
+    etl::fast_matrix<Z, 2, 4> c;
+
+    c = outer(a, b);
+
+    REQUIRE(c(0,0) == 2);
+    REQUIRE(c(0,1) == 3);
+    REQUIRE(c(0,2) == 4);
+    REQUIRE(c(0,3) == 5);
+
+    REQUIRE(c(1,0) == 4);
+    REQUIRE(c(1,1) == 6);
+    REQUIRE(c(1,2) == 8);
+    REQUIRE(c(1,3) == 10);
+}
+
+TEMPLATE_TEST_CASE_2( "fast_vector/outer_3", "sum", Z, float, double ) {
+    etl::fast_vector<Z, 2> a = {1.0, 2.0};
+    etl::dyn_vector<Z> b(4, etl::values(2.0, 3.0, 4.0, 5.0));
+    etl::fast_matrix<Z, 2, 4> c;
+
+    c = outer(a, b);
+
+    REQUIRE(c(0,0) == 2);
+    REQUIRE(c(0,1) == 3);
+    REQUIRE(c(0,2) == 4);
+    REQUIRE(c(0,3) == 5);
+
+    REQUIRE(c(1,0) == 4);
+    REQUIRE(c(1,1) == 6);
+    REQUIRE(c(1,2) == 8);
+    REQUIRE(c(1,3) == 10);
+}
+
+//}}}
+
+TEMPLATE_TEST_CASE_2( "lvalue/mmul1", "lvalue sub mmul", Z, float, double ) {
+    etl::fast_matrix<Z, 2, 2, 3> a = {1,2,3,4,5,6,1,2,3,4,5,6};
+    etl::fast_matrix<Z, 2, 3, 2> b = {7,8,9,10,11,12,7,8,9,10,11,12};
+    etl::fast_matrix<Z, 2, 2, 2> c;
+
+    auto s = etl::sub(c,0);
+
+    static_assert(etl::is_etl_expr<decltype(s)>::value, "");
+
+    etl::force(etl::mul(etl::sub(a,0), etl::sub(b,0), s));
+
+    REQUIRE(c(0,0,0) == 58);
+    REQUIRE(c(0,0,1) == 64);
+    REQUIRE(c(0,1,0) == 139);
+    REQUIRE(c(0,1,1) == 154);
+
+    etl::sub(c,1) = etl::sub(c, 0);
+
+    REQUIRE(c(1,0,0) == 58);
+    REQUIRE(c(1,0,1) == 64);
+    REQUIRE(c(1,1,0) == 139);
+    REQUIRE(c(1,1,1) == 154);
+}
+
+TEMPLATE_TEST_CASE_2( "lvalue/mmul2", "lvalue sub mmul", Z, float, double ) {
+    etl::fast_matrix<Z, 2, 2, 3> a = {1,2,3,4,5,6,1,2,3,4,5,6};
+    etl::fast_matrix<Z, 2, 3, 2> b = {7,8,9,10,11,12,7,8,9,10,11,12};
+    etl::fast_matrix<Z, 2, 2, 2> c;
+
+    etl::force(etl::mul(etl::sub(a,0), etl::sub(b,0), etl::sub(c,0)));
+
+    REQUIRE(c(0,0,0) == 58);
+    REQUIRE(c(0,0,1) == 64);
+    REQUIRE(c(0,1,0) == 139);
+    REQUIRE(c(0,1,1) == 154);
+
+    etl::sub(c,1) = etl::sub(c, 0);
+
+    REQUIRE(c(1,0,0) == 58);
+    REQUIRE(c(1,0,1) == 64);
+    REQUIRE(c(1,1,0) == 139);
+    REQUIRE(c(1,1,1) == 154);
+}
+

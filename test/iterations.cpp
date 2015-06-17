@@ -8,7 +8,7 @@
 #include "catch.hpp"
 #include "template_test.hpp"
 
-#include "etl/etl.hpp"
+#include "etl/etl_light.hpp"
 
 TEMPLATE_TEST_CASE_2( "iterable/fast_matrix", "iterable", Z, float, double ) {
     etl::fast_matrix<Z, 2, 2> test_matrix(5.5);

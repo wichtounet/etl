@@ -10,7 +10,7 @@
 
 #include <vector>
 
-#include "etl/etl.hpp"
+#include "etl/etl_light.hpp"
 
 ///{{{ Dim
 
@@ -886,50 +886,6 @@ TEMPLATE_TEST_CASE_2( "lvalue/dyn_matrix_12", "lvalue sub", Z, float, double ) {
     REQUIRE(a(0, 1, 0) == 3.0);
     REQUIRE(a(0, 1, 1) == 4.0);
     REQUIRE(a(1, 0, 0) == Z(1.1));
-}
-
-TEMPLATE_TEST_CASE_2( "lvalue/mmul1", "lvalue sub mmul", Z, float, double ) {
-    etl::fast_matrix<Z, 2, 2, 3> a = {1,2,3,4,5,6,1,2,3,4,5,6};
-    etl::fast_matrix<Z, 2, 3, 2> b = {7,8,9,10,11,12,7,8,9,10,11,12};
-    etl::fast_matrix<Z, 2, 2, 2> c;
-
-    auto s = etl::sub(c,0);
-
-    static_assert(etl::is_etl_expr<decltype(s)>::value, "");
-
-    etl::force(etl::mul(etl::sub(a,0), etl::sub(b,0), s));
-
-    REQUIRE(c(0,0,0) == 58);
-    REQUIRE(c(0,0,1) == 64);
-    REQUIRE(c(0,1,0) == 139);
-    REQUIRE(c(0,1,1) == 154);
-
-    etl::sub(c,1) = etl::sub(c, 0);
-
-    REQUIRE(c(1,0,0) == 58);
-    REQUIRE(c(1,0,1) == 64);
-    REQUIRE(c(1,1,0) == 139);
-    REQUIRE(c(1,1,1) == 154);
-}
-
-TEMPLATE_TEST_CASE_2( "lvalue/mmul2", "lvalue sub mmul", Z, float, double ) {
-    etl::fast_matrix<Z, 2, 2, 3> a = {1,2,3,4,5,6,1,2,3,4,5,6};
-    etl::fast_matrix<Z, 2, 3, 2> b = {7,8,9,10,11,12,7,8,9,10,11,12};
-    etl::fast_matrix<Z, 2, 2, 2> c;
-
-    etl::force(etl::mul(etl::sub(a,0), etl::sub(b,0), etl::sub(c,0)));
-
-    REQUIRE(c(0,0,0) == 58);
-    REQUIRE(c(0,0,1) == 64);
-    REQUIRE(c(0,1,0) == 139);
-    REQUIRE(c(0,1,1) == 154);
-
-    etl::sub(c,1) = etl::sub(c, 0);
-
-    REQUIRE(c(1,0,0) == 58);
-    REQUIRE(c(1,0,1) == 64);
-    REQUIRE(c(1,1,0) == 139);
-    REQUIRE(c(1,1,1) == 154);
 }
 
 ///}}}
