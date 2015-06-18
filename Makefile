@@ -56,6 +56,12 @@ RELEASE_FLAGS 		+= $(ETL_DEFAULTS)
 RELEASE_DEBUG_FLAGS += $(ETL_DEFAULTS)
 endif
 
+# Precompile some headers
+$(eval $(call precompile_init,test))
+$(eval $(call precompile_header,test,test.hpp))
+$(eval $(call precompile_header,test,test_light.hpp))
+$(eval $(call precompile_finalize))
+
 # Compile folders
 $(eval $(call auto_folder_compile,workbench,-Icpm/include))
 $(eval $(call auto_folder_compile,test))
