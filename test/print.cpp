@@ -5,9 +5,7 @@
 //  http://opensource.org/licenses/MIT)
 //=======================================================================
 
-#include "catch.hpp"
-
-#include "etl/etl_light.hpp"
+#include "test_light.hpp"
 
 //{{{ to_octave
 

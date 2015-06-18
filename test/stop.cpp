@@ -5,10 +5,7 @@
 //  http://opensource.org/licenses/MIT)
 //=======================================================================
 
-#include "catch.hpp"
-#include "template_test.hpp"
-
-#include "etl/etl_light.hpp"
+#include "test_light.hpp"
 #include "etl/stop.hpp"
 
 TEMPLATE_TEST_CASE_2( "stop/fast_vector_1", "stop<unary<fast_vec>>", Z, float, double ) {

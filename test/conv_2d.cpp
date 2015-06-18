@@ -5,10 +5,7 @@
 //  http://opensource.org/licenses/MIT)
 //=======================================================================
 
-#include "catch.hpp"
-#include "template_test.hpp"
-
-#include "etl/etl.hpp"
+#include "test.hpp"
 #include "conv_test.hpp"
 
 //Note: The results of the tests have been validated with one of (octave/matlab/matlab)

@@ -5,8 +5,6 @@
 //  http://opensource.org/licenses/MIT)
 //=======================================================================
 
-#include "etl/etl.hpp"
-
 #define MMUL_FUNCTOR( name, ...)                                \
 struct name {                                                   \
     template<typename A, typename B, typename C>                \

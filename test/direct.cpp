@@ -4,12 +4,9 @@
 //  http://opensource.org/licenses/MIT)
 //=======================================================================
 
+#include "test_light.hpp"
+
 #include <cmath>
-
-#include "catch.hpp"
-#include "template_test.hpp"
-
-#include "etl/etl_light.hpp"
 
 TEMPLATE_TEST_CASE_2( "direct_access/traits", "has_direct_access", Z, double, float) {
     etl::fast_matrix<Z, 3, 2> a;

@@ -4,12 +4,9 @@
 //  http://opensource.org/licenses/MIT)
 //=======================================================================
 
+#include "test.hpp"
+
 #include <cmath>
-
-#include "catch.hpp"
-#include "template_test.hpp"
-
-#include "etl/etl.hpp"
 
 TEMPLATE_TEST_CASE_2( "compare/1", "[compare]", Z, float, double ) {
     etl::fast_matrix<Z, 2, 2> a(3.3);

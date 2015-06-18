@@ -5,10 +5,7 @@
 //  http://opensource.org/licenses/MIT)
 //=======================================================================
 
-#include "catch.hpp"
-#include "template_test.hpp"
-
-#include "etl/etl.hpp"
+#include "test.hpp"
 
 TEMPLATE_TEST_CASE_2( "etl_traits/fast_vector_1", "etl_traits<fast_vector>", ZZZ, double, float ) {
     using type = etl::fast_vector<ZZZ, 4>;

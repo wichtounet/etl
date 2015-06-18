@@ -5,12 +5,7 @@
 //  http://opensource.org/licenses/MIT)
 //=======================================================================
 
-#include "catch.hpp"
-#include "template_test.hpp"
-
-#include <vector>
-
-#include "etl/etl_light.hpp"
+#include "test_light.hpp"
 #include "etl/stop.hpp"
 
 ///{{{ magic(n)

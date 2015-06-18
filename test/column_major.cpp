@@ -4,10 +4,10 @@
 //  http://opensource.org/licenses/MIT)
 //=======================================================================
 
+#include "test.hpp"
+
 #include <cmath>
 
-#include "catch.hpp"
-#include "template_test.hpp"
 #include "mmul_test.hpp"
 #include "conv_test.hpp"
 

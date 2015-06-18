@@ -4,12 +4,9 @@
 //  http://opensource.org/licenses/MIT)
 //=======================================================================
 
+#include "test_light.hpp"
+
 #include <cmath>
-
-#include "catch.hpp"
-#include "template_test.hpp"
-
-#include "etl/etl_light.hpp"
 
 //{{{ Init tests
 

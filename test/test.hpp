@@ -5,15 +5,6 @@
 //  http://opensource.org/licenses/MIT)
 //=======================================================================
 
-#undef NDEBUG
-#define CPP_UTILS_ASSERT_EXCEPTION
-
-#include "etl/etl_light.hpp"
+#include "etl/etl.hpp"
 #include "catch.hpp"
-
-TEST_CASE( "dyn_vector/assert", "assert" ) {
-    etl::dyn_vector<double> a = {-1.0, 2.0, 5.0};
-    etl::dyn_vector<double> b = {2.5, 3.0, 4.0, 1.0};
-
-    REQUIRE_THROWS(a + b);
-}
+#include "template_test.hpp"
