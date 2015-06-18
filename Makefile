@@ -12,10 +12,10 @@ include make-utils/cpp-utils.mk
 $(eval $(call use_libcxx))
 
 # Be stricter
-CXX_FLAGS += -pedantic -Werror
+CXX_FLAGS += -pedantic -Werror -Winvalid-pch
 
 # Add includes
-CXX_FLAGS += -Ilib/include -ICatch/include
+CXX_FLAGS += -Ilib/include -ICatch/include -Itest/include
 
 ifneq (,$(ETL_MKL))
 CXX_FLAGS += -DETL_MKL_MODE $(shell pkg-config --cflags $(BLAS_PKG))
@@ -56,18 +56,20 @@ RELEASE_FLAGS 		+= $(ETL_DEFAULTS)
 RELEASE_DEBUG_FLAGS += $(ETL_DEFAULTS)
 endif
 
-# Precompile some headers
-$(eval $(call precompile_init,test))
-$(eval $(call precompile_header,test,test.hpp))
-$(eval $(call precompile_header,test,test_light.hpp))
+# Add support for precompiler headers for GCC
+ifeq (,$(findstring clang,$(CXX)))
+$(eval $(call precompile_init,test/include))
+$(eval $(call precompile_header,test/include,test.hpp))
+$(eval $(call precompile_header,test/include,test_light.hpp))
 $(eval $(call precompile_finalize))
+endif
 
 # Compile folders
 $(eval $(call auto_folder_compile,workbench,-Icpm/include))
-$(eval $(call auto_folder_compile,test))
+$(eval $(call auto_folder_compile,test/src))
 
 # Collect files for the test executable
-CPP_FILES=$(wildcard test/*.cpp)
+CPP_FILES=$(wildcard test/src/*.cpp)
 TEST_FILES=$(CPP_FILES:test/%=%)
 
 # Create executables
