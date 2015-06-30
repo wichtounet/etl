@@ -533,6 +533,17 @@ TEMPLATE_TEST_CASE_2( "min/2", "[fast][vector][min]", Z, float, double ) {
     REQUIRE(d[3] == Z(3.4));
 }
 
+TEMPLATE_TEST_CASE_2( "clip/1", "[fast][vector][clip]", Z, float, double ) {
+    etl::fast_vector<Z, 5> a = {-1.0, 0.3, 0.0, 0.5, 1.65};
+
+    etl::fast_vector<Z, 5> d(etl::clip(a, 0.0, 1.0));
+
+    REQUIRE(d[0] == Z(0.0));
+    REQUIRE(d[1] == Z(0.3));
+    REQUIRE(d[2] == Z(0.0));
+    REQUIRE(d[3] == Z(0.5));
+    REQUIRE(d[4] == Z(1.0));
+}
 TEMPLATE_TEST_CASE_2( "fast_vector/one_if", "fast_vector::one_if", Z, float, double ) {
     etl::fast_vector<Z, 3> a = {-1.0, 2.0, 0.0};
 
