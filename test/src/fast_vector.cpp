@@ -390,6 +390,16 @@ TEMPLATE_TEST_CASE_2( "fast_vector/sigmoid", "fast_vector::sigmoid", Z, float, d
     REQUIRE(d[2] == etl::logistic_sigmoid(Z(0.0)));
 }
 
+TEMPLATE_TEST_CASE_2( "fast_vector/fast_sigmoid", "fast_vector::sigmoid", Z, float, double ) {
+    etl::fast_vector<Z, 3> a = {-1.0, 2.0, 0.0};
+
+    etl::fast_vector<Z, 3> d(etl::fast_sigmoid(a));
+
+    REQUIRE(d[0] == Approx(etl::logistic_sigmoid(Z(-1.0))).epsilon(0.05));
+    REQUIRE(d[1] == Approx(etl::logistic_sigmoid(Z(2.0))).epsilon(0.05));
+    REQUIRE(d[2] == Approx(etl::logistic_sigmoid(Z(0.0))).epsilon(0.05));
+}
+
 TEMPLATE_TEST_CASE_2( "fast_vector/softmax_1", "fast_vector::softmax", Z, float, double ) {
     etl::fast_vector<Z, 3> a = {1.0, 2.0, 3.0};
 

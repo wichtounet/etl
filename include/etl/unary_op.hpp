@@ -174,6 +174,42 @@ struct plus_unary_op {
 };
 
 template<typename T>
+struct fast_sigmoid_unary_op {
+    static constexpr const bool vectorizable = false;
+
+    static T apply(const T& v){
+         auto x = 0.5 * v;
+
+         T z;
+         if(x >= 0){
+             if(x < 1.7){
+                 z = (1.5 * x / (1 + x));
+             } else if(x < 3){
+                 z = (0.935409070603099 + 0.0458812946797165 * (x - 1.7));
+             } else {
+                 z = 0.99505475368673;
+             }
+         } else {
+             auto xx = -x;
+             if(xx < 1.7){
+                 z = (1.5 * xx / (1 + xx));
+             } else if(xx < 3){
+                 z = (0.935409070603099 + 0.0458812946797165 * (xx - 1.7));
+             } else {
+                 z = 0.99505475368673;
+             }
+             z = -z;
+         }
+
+         return 0.5 * (z + 1.0);
+    }
+
+    static std::string desc() noexcept {
+        return "fast_sigmoid";
+    }
+};
+
+template<typename T>
 struct bernoulli_unary_op {
     static constexpr const bool vectorizable = false;
 
