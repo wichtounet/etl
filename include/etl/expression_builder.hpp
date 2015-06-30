@@ -408,60 +408,60 @@ auto magic() -> detail::virtual_helper<D, fast_magic_view<D, N>> {
 //{{{ Apply a stable transformation
 
 template<std::size_t D1, std::size_t... D, typename E, cpp_enable_if(is_etl_expr<E>::value)>
-auto rep(E&& value) -> unary_expr<value_t<E>, rep_r_transformer<detail::build_type<E>, D1, D...>, stateful_op> {
-    return unary_expr<value_t<E>, rep_r_transformer<detail::build_type<E>, D1, D...>, stateful_op>{rep_r_transformer<detail::build_type<E>, D1, D...>(value)};
+auto rep(E&& value) -> unary_expr<value_t<E>, rep_r_transformer<detail::build_type<E>, D1, D...>, transform_op> {
+    return unary_expr<value_t<E>, rep_r_transformer<detail::build_type<E>, D1, D...>, transform_op>{rep_r_transformer<detail::build_type<E>, D1, D...>(value)};
 }
 
 template<std::size_t D1, std::size_t... D, typename E, cpp_enable_if(is_etl_expr<E>::value)>
-auto rep_r(E&& value) -> unary_expr<value_t<E>, rep_r_transformer<detail::build_type<E>, D1, D...>, stateful_op> {
-    return unary_expr<value_t<E>, rep_r_transformer<detail::build_type<E>, D1, D...>, stateful_op>{rep_r_transformer<detail::build_type<E>, D1, D...>(value)};
+auto rep_r(E&& value) -> unary_expr<value_t<E>, rep_r_transformer<detail::build_type<E>, D1, D...>, transform_op> {
+    return unary_expr<value_t<E>, rep_r_transformer<detail::build_type<E>, D1, D...>, transform_op>{rep_r_transformer<detail::build_type<E>, D1, D...>(value)};
 }
 
 template<std::size_t D1, std::size_t... D, typename E, cpp_enable_if(is_etl_expr<E>::value)>
-auto rep_l(E&& value) -> unary_expr<value_t<E>, rep_l_transformer<detail::build_type<E>, D1, D...>, stateful_op> {
-    return unary_expr<value_t<E>, rep_l_transformer<detail::build_type<E>, D1, D...>, stateful_op>{rep_l_transformer<detail::build_type<E>, D1, D...>(value)};
+auto rep_l(E&& value) -> unary_expr<value_t<E>, rep_l_transformer<detail::build_type<E>, D1, D...>, transform_op> {
+    return unary_expr<value_t<E>, rep_l_transformer<detail::build_type<E>, D1, D...>, transform_op>{rep_l_transformer<detail::build_type<E>, D1, D...>(value)};
 }
 
 template<typename... D, typename E, cpp_enable_if(is_etl_expr<E>::value && cpp::all_convertible_to<std::size_t, std::size_t, D...>::value)>
-auto rep(E&& value, std::size_t d1, D... d) -> unary_expr<value_t<E>, dyn_rep_r_transformer<detail::build_type<E>, 1 + sizeof...(D)>, stateful_op> {
-    return unary_expr<value_t<E>, dyn_rep_r_transformer<detail::build_type<E>, 1 + sizeof...(D)>, stateful_op>{
+auto rep(E&& value, std::size_t d1, D... d) -> unary_expr<value_t<E>, dyn_rep_r_transformer<detail::build_type<E>, 1 + sizeof...(D)>, transform_op> {
+    return unary_expr<value_t<E>, dyn_rep_r_transformer<detail::build_type<E>, 1 + sizeof...(D)>, transform_op>{
         dyn_rep_r_transformer<detail::build_type<E>, 1 + sizeof...(D)>(value, {{d1, static_cast<std::size_t>(d)...}})};
 }
 
 template<typename... D, typename E, cpp_enable_if(is_etl_expr<E>::value && cpp::all_convertible_to<std::size_t, std::size_t, D...>::value)>
-auto rep_r(E&& value, std::size_t d1, D... d) -> unary_expr<value_t<E>, dyn_rep_r_transformer<detail::build_type<E>, 1 + sizeof...(D)>, stateful_op> {
-    return unary_expr<value_t<E>, dyn_rep_r_transformer<detail::build_type<E>, 1 + sizeof...(D)>, stateful_op>{
+auto rep_r(E&& value, std::size_t d1, D... d) -> unary_expr<value_t<E>, dyn_rep_r_transformer<detail::build_type<E>, 1 + sizeof...(D)>, transform_op> {
+    return unary_expr<value_t<E>, dyn_rep_r_transformer<detail::build_type<E>, 1 + sizeof...(D)>, transform_op>{
         dyn_rep_r_transformer<detail::build_type<E>, 1 + sizeof...(D)>(value, {{d1, static_cast<std::size_t>(d)...}})};
 }
 
 template<typename... D, typename E, cpp_enable_if(is_etl_expr<E>::value && cpp::all_convertible_to<std::size_t, std::size_t, D...>::value)>
-auto rep_l(E&& value, std::size_t d1, D... d) -> unary_expr<value_t<E>, dyn_rep_l_transformer<detail::build_type<E>, 1 + sizeof...(D)>, stateful_op> {
-    return unary_expr<value_t<E>, dyn_rep_l_transformer<detail::build_type<E>, 1 + sizeof...(D)>, stateful_op>{
+auto rep_l(E&& value, std::size_t d1, D... d) -> unary_expr<value_t<E>, dyn_rep_l_transformer<detail::build_type<E>, 1 + sizeof...(D)>, transform_op> {
+    return unary_expr<value_t<E>, dyn_rep_l_transformer<detail::build_type<E>, 1 + sizeof...(D)>, transform_op>{
         dyn_rep_l_transformer<detail::build_type<E>, 1 + sizeof...(D)>(value, {{d1, static_cast<std::size_t>(d)...}})};
 }
 
 template<typename E, cpp::enable_if_u<is_etl_expr<E>::value> = cpp::detail::dummy>
 auto sum_r(E&& value) -> detail::stable_transform_helper<E, sum_r_transformer> {
     static_assert(decay_traits<E>::dimensions() > 1, "Can only use sum_r on matrix");
-    return detail::make_stateful_expr<E, sum_r_transformer>(value);
+    return detail::make_transform_expr<E, sum_r_transformer>(value);
 }
 
 template<typename E, cpp::enable_if_u<is_etl_expr<E>::value> = cpp::detail::dummy>
 auto sum_l(E&& value) -> detail::stable_transform_helper<E, sum_l_transformer> {
     static_assert(decay_traits<E>::dimensions() > 1, "Can only use sum_l on matrix");
-    return detail::make_stateful_expr<E, sum_l_transformer>(value);
+    return detail::make_transform_expr<E, sum_l_transformer>(value);
 }
 
 template<typename E, cpp::enable_if_u<is_etl_expr<E>::value> = cpp::detail::dummy>
 auto mean_r(E&& value) -> detail::stable_transform_helper<E, mean_r_transformer> {
     static_assert(decay_traits<E>::dimensions() > 1, "Can only use mean_r on matrix");
-    return detail::make_stateful_expr<E, mean_r_transformer>(value);
+    return detail::make_transform_expr<E, mean_r_transformer>(value);
 }
 
 template<typename E, cpp::enable_if_u<is_etl_expr<E>::value> = cpp::detail::dummy>
 auto mean_l(E&& value) -> detail::stable_transform_helper<E, mean_l_transformer> {
     static_assert(decay_traits<E>::dimensions() > 1, "Can only use mean_l on matrix");
-    return detail::make_stateful_expr<E, mean_l_transformer>(value);
+    return detail::make_transform_expr<E, mean_l_transformer>(value);
 }
 
 //}}}
@@ -471,37 +471,37 @@ auto mean_l(E&& value) -> detail::stable_transform_helper<E, mean_l_transformer>
 template<typename E, cpp::enable_if_u<is_etl_expr<E>::value> = cpp::detail::dummy>
 auto hflip(const E& value) -> detail::stable_transform_helper<E, hflip_transformer> {
     static_assert(etl_traits<std::decay_t<E>>::dimensions() <= 2, "Can only use flips on 1D/2D");
-    return detail::make_stateful_expr<E, hflip_transformer>(value);
+    return detail::make_transform_expr<E, hflip_transformer>(value);
 }
 
 template<typename E, cpp::enable_if_u<is_etl_expr<E>::value> = cpp::detail::dummy>
 auto vflip(const E& value) -> detail::stable_transform_helper<E, vflip_transformer> {
     static_assert(etl_traits<std::decay_t<E>>::dimensions() <= 2, "Can only use flips on 1D/2D");
-    return detail::make_stateful_expr<E, vflip_transformer>(value);
+    return detail::make_transform_expr<E, vflip_transformer>(value);
 }
 
 template<typename E, cpp::enable_if_u<is_etl_expr<E>::value> = cpp::detail::dummy>
 auto fflip(const E& value) -> detail::stable_transform_helper<E, fflip_transformer> {
     static_assert(etl_traits<std::decay_t<E>>::dimensions() <= 2, "Can only use flips on 1D/2D");
-    return detail::make_stateful_expr<E, fflip_transformer>(value);
+    return detail::make_transform_expr<E, fflip_transformer>(value);
 }
 
 template<typename E, cpp::enable_if_u<is_etl_expr<E>::value> = cpp::detail::dummy>
 auto transpose(const E& value) -> detail::stable_transform_helper<E, transpose_transformer> {
     static_assert(decay_traits<E>::dimensions() <= 2, "Transpose not defined for matrix > 2D");
-    return detail::make_stateful_expr<E, transpose_transformer>(value);
+    return detail::make_transform_expr<E, transpose_transformer>(value);
 }
 
 template<std::size_t C1, std::size_t C2, typename E, cpp::enable_if_u<is_etl_expr<E>::value> = cpp::detail::dummy>
-auto p_max_pool_h(E&& value) -> unary_expr<value_t<E>, p_max_pool_h_transformer<detail::build_type<E>, C1, C2>, stateful_op> {
+auto p_max_pool_h(E&& value) -> unary_expr<value_t<E>, p_max_pool_h_transformer<detail::build_type<E>, C1, C2>, transform_op> {
     validate_pmax_pooling<C1, C2>(value);
-    return unary_expr<value_t<E>, p_max_pool_h_transformer<detail::build_type<E>, C1, C2>, stateful_op>{p_max_pool_h_transformer<detail::build_type<E>, C1, C2>(value)};
+    return unary_expr<value_t<E>, p_max_pool_h_transformer<detail::build_type<E>, C1, C2>, transform_op>{p_max_pool_h_transformer<detail::build_type<E>, C1, C2>(value)};
 }
 
 template<std::size_t C1, std::size_t C2, typename E, cpp::enable_if_u<is_etl_expr<E>::value> = cpp::detail::dummy>
-auto p_max_pool_p(E&& value) -> unary_expr<value_t<E>, p_max_pool_p_transformer<detail::build_type<E>, C1, C2>, stateful_op> {
+auto p_max_pool_p(E&& value) -> unary_expr<value_t<E>, p_max_pool_p_transformer<detail::build_type<E>, C1, C2>, transform_op> {
     validate_pmax_pooling<C1, C2>(value);
-    return unary_expr<value_t<E>, p_max_pool_p_transformer<detail::build_type<E>, C1, C2>, stateful_op>{p_max_pool_p_transformer<detail::build_type<E>, C1, C2>(value)};
+    return unary_expr<value_t<E>, p_max_pool_p_transformer<detail::build_type<E>, C1, C2>, transform_op>{p_max_pool_p_transformer<detail::build_type<E>, C1, C2>(value)};
 }
 
 //}}}
