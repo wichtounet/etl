@@ -30,6 +30,12 @@ struct transform_op {
     static constexpr const bool vectorizable = false;
 };
 
+template<typename Sub>
+struct stateful_op {
+    static constexpr const bool vectorizable = Sub::vectorizable;
+    using op = Sub;
+};
+
 template <typename Generator>
 class generator_expr;
 
@@ -322,6 +328,77 @@ public:
         return {*this, size(*this)};
     }
 };
+
+template <typename T, typename Expr, typename Op>
+struct unary_expr<T, Expr, stateful_op<Op>> : 
+        comparable<unary_expr<T, Expr, stateful_op<Op>>>
+        , value_testable<unary_expr<T, Expr, stateful_op<Op>>>
+        , dim_testable<unary_expr<T, Expr, stateful_op<Op>>>
+        {
+private:
+    using this_type = unary_expr<T, Expr, stateful_op<Op>>;
+
+    Expr _value;
+    Op op;
+
+public:
+    using        value_type = T;
+    using       memory_type = void;
+    using const_memory_type = void;
+
+    //Construct a new expression
+    template<typename... Args>
+    explicit unary_expr(Expr l, Args&&... args) : _value(std::forward<Expr>(l)), op(std::forward<Args>(args)...) {
+        //Nothing else to init
+    }
+
+    unary_expr(const unary_expr& rhs) = default;
+    unary_expr(unary_expr&& rhs) = default;
+
+    //Expression are invariant
+    unary_expr& operator=(const unary_expr& e) = delete;
+    unary_expr& operator=(unary_expr&& e) = delete;
+
+    //Accessors
+
+    std::add_lvalue_reference_t<Expr> value() noexcept {
+        return _value;
+    }
+
+    cpp::add_const_lvalue_t<Expr> value() const noexcept {
+        return _value;
+    }
+
+    //Apply the expression
+
+    value_type operator[](std::size_t i) const {
+        return op.apply(value()[i]);
+    }
+
+    intrinsic_type<value_type> load(std::size_t i) const {
+        return op.load(value().load(i));
+    }
+
+    template<typename... S>
+    std::enable_if_t<sizeof...(S) == sub_size_compare<this_type>::value, value_type> operator()(S... args) const {
+        static_assert(cpp::all_convertible_to<std::size_t, S...>::value, "Invalid size types");
+
+        return op.apply(value()(args...));
+    }
+
+    iterator<const this_type, false, false> begin() const noexcept {
+        return {*this, 0};
+    }
+
+    iterator<const this_type, false, false> end() const noexcept {
+        return {*this, size(*this)};
+    }
+};
+
+template <typename T, typename Expr, typename UnaryOp>
+std::ostream& operator<<(std::ostream& os, const unary_expr<T, Expr, stateful_op<UnaryOp>>& expr){
+    return os << UnaryOp::desc() << '(' << expr.value() << ')';
+}
 
 template <typename T, typename Expr>
 std::ostream& operator<<(std::ostream& os, const unary_expr<T, Expr, identity_op>& expr){
