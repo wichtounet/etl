@@ -315,6 +315,11 @@ auto fast_sigmoid(const E& value) -> detail::unary_helper<E, fast_sigmoid_unary_
 }
 
 template<typename E, cpp::enable_if_u<is_etl_expr<E>::value> = cpp::detail::dummy>
+auto hard_sigmoid(E&& x) -> decltype(etl::min(etl::max(x * 0.2 + 0.5, 0.0), 1.0)) {
+    return etl::min(etl::max(x * 0.2 + 0.5, 0.0), 1.0);
+}
+
+template<typename E, cpp::enable_if_u<is_etl_expr<E>::value> = cpp::detail::dummy>
 auto softplus(E&& value){
     return log(1.0 + exp(value));
 }
