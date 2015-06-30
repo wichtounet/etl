@@ -489,7 +489,7 @@ TEMPLATE_TEST_CASE_2( "fast_vector/exp", "fast_vector::exp", Z, float, double ) 
     REQUIRE(d[2] == Approx(std::exp(Z(0.0))));
 }
 
-TEMPLATE_TEST_CASE_2( "fast_vector/max", "fast_vector::max", Z, float, double ) {
+TEMPLATE_TEST_CASE_2( "max/1", "[fast][max]", Z, float, double ) {
     etl::fast_vector<Z, 3> a = {-1.0, 2.0, 0.0};
 
     etl::fast_vector<Z, 3> d(etl::max(a, 1.0));
@@ -499,7 +499,19 @@ TEMPLATE_TEST_CASE_2( "fast_vector/max", "fast_vector::max", Z, float, double ) 
     REQUIRE(d[2] == 1.0);
 }
 
-TEMPLATE_TEST_CASE_2( "fast_vector/min", "fast_vector::min", Z, float, double ) {
+TEMPLATE_TEST_CASE_2( "max/2", "[fast][max]", Z, float, double ) {
+    etl::fast_vector<Z, 4> a = {-1.0, -3.0, 0.0, 3.4};
+    etl::fast_vector<Z, 4> b = {1.0, -2.0, 5.0, 3.5};
+
+    etl::fast_vector<Z, 4> d(etl::max(a, b));
+
+    REQUIRE(d[0] == Z(1.0));
+    REQUIRE(d[1] == Z(-2.0));
+    REQUIRE(d[2] == Z(5.0));
+    REQUIRE(d[3] == Z(3.5));
+}
+
+TEMPLATE_TEST_CASE_2( "min/1", "[fast][vector][min]", Z, float, double ) {
     etl::fast_vector<Z, 3> a = {-1.0, 2.0, 0.0};
 
     etl::fast_vector<Z, 3> d(etl::min(a, 1.0));
@@ -507,6 +519,18 @@ TEMPLATE_TEST_CASE_2( "fast_vector/min", "fast_vector::min", Z, float, double ) 
     REQUIRE(d[0] == -1.0);
     REQUIRE(d[1] == 1.0);
     REQUIRE(d[2] == 0.0);
+}
+
+TEMPLATE_TEST_CASE_2( "min/2", "[fast][vector][min]", Z, float, double ) {
+    etl::fast_vector<Z, 4> a = {-1.0, -3.0, 0.0, 3.4};
+    etl::fast_vector<Z, 4> b = {1.0, -2.0, 5.0, 3.5};
+
+    etl::fast_vector<Z, 4> d(etl::min(a, b));
+
+    REQUIRE(d[0] == Z(-1.0));
+    REQUIRE(d[1] == Z(-3.0));
+    REQUIRE(d[2] == Z(0.0));
+    REQUIRE(d[3] == Z(3.4));
 }
 
 TEMPLATE_TEST_CASE_2( "fast_vector/one_if", "fast_vector::one_if", Z, float, double ) {
