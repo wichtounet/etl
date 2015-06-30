@@ -256,6 +256,11 @@ auto min(L&& lhs, R&& rhs) -> detail::left_binary_helper_op<L, R, min_binary_op<
     return {lhs, rhs};
 }
 
+template<typename E, typename T, cpp_enable_if(is_etl_expr<E>::value && std::is_arithmetic<T>::value)>
+auto clip(E&& value, T min, T max){
+    return detail::make_stateful_unary_expr<E, clip_scalar_op<value_t<E>, value_t<E>>>(value, value_t<E>(min), value_t<E>(max));
+}
+
 template<typename E, typename T, cpp::enable_if_all_u<is_etl_expr<E>::value, std::is_arithmetic<T>::value> = cpp::detail::dummy>
 auto pow(E&& value, T v) -> detail::left_binary_helper_op<E, scalar<value_t<E>>, pow_binary_op<value_t<E>, value_t<E>>> {
     return {value, scalar<value_t<E>>(v)};

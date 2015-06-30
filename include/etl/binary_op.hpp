@@ -237,6 +237,33 @@ struct max_scalar_op {
     }
 };
 
+template<typename T, typename S>
+struct clip_scalar_op {
+    using vec_type = intrinsic_type<T>;
+
+    S min;
+    S max;
+    clip_scalar_op(S min, S max) : min(min), max(max) {}
+
+    constexpr T apply(const T& x) const noexcept {
+        return std::min(std::max(x, min), max);
+    }
+
+#ifdef __INTEL_COMPILER
+    static constexpr const bool vectorizable = true;
+
+    cpp14_constexpr vec_type load(const vec_type& lhs) const noexcept {
+        return vec::min(vec::max(lhs, vec::set(min)), vec::set(max));
+    }
+#else
+    static constexpr const bool vectorizable = false;
+#endif
+
+    static std::string desc() noexcept {
+        return "clip";
+    }
+};
+
 template<typename T, typename E>
 struct pow_binary_op {
     static constexpr const bool vectorizable = false;
