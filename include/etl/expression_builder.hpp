@@ -236,18 +236,24 @@ auto abs(E&& value) -> detail::unary_helper<E, abs_unary_op> {
     return detail::unary_helper<E, abs_unary_op>{value};
 }
 
-//TODO max/min/pow/... should be reviewed
-// one version for max(expr, expr) yield the max between a and b
-// one version for max(expr, scalar) where the scalar is stored inside the op
-
-template<typename E, typename T, cpp::enable_if_all_u<is_etl_expr<E>::value, std::is_arithmetic<T>::value> = cpp::detail::dummy>
-auto max(E&& value, T v) -> detail::left_binary_helper_op<E, scalar<value_t<E>>, max_binary_op<value_t<E>, value_t<E>>> {
-    return {value, scalar<value_t<E>>(v)};
+template<typename E, typename T, cpp_enable_if(is_etl_expr<E>::value && std::is_arithmetic<T>::value)>
+auto max(E&& value, T v){
+    return detail::make_stateful_unary_expr<E, max_scalar_op<value_t<E>, value_t<E>>>(value, value_t<E>(v));
 }
 
-template<typename E, typename T, cpp::enable_if_all_u<is_etl_expr<E>::value, std::is_arithmetic<T>::value> = cpp::detail::dummy>
-auto min(E&& value, T v) -> detail::left_binary_helper_op<E, scalar<value_t<E>>, min_binary_op<value_t<E>, value_t<E>>> {
-    return {value, scalar<value_t<E>>(v)};
+template<typename L, typename R, cpp_enable_if(is_etl_expr<L>::value && !std::is_arithmetic<R>::value)>
+auto max(L&& lhs, R&& rhs) -> detail::left_binary_helper_op<L, R, max_binary_op<value_t<L>, value_t<R>>> {
+    return {lhs, rhs};
+}
+
+template<typename E, typename T, cpp_enable_if(is_etl_expr<E>::value && std::is_arithmetic<T>::value)>
+auto min(E&& value, T v){
+    return detail::make_stateful_unary_expr<E, min_scalar_op<value_t<E>, value_t<E>>>(value, value_t<E>(v));
+}
+
+template<typename L, typename R, cpp_enable_if(is_etl_expr<L>::value && !std::is_arithmetic<R>::value)>
+auto min(L&& lhs, R&& rhs) -> detail::left_binary_helper_op<L, R, min_binary_op<value_t<L>, value_t<R>>> {
+    return {lhs, rhs};
 }
 
 template<typename E, typename T, cpp::enable_if_all_u<is_etl_expr<E>::value, std::is_arithmetic<T>::value> = cpp::detail::dummy>

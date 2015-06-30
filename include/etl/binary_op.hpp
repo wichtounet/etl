@@ -185,6 +185,58 @@ struct min_binary_op {
     }
 };
 
+template<typename T, typename S>
+struct min_scalar_op {
+    using vec_type = intrinsic_type<T>;
+
+    S s;
+    min_scalar_op(S s) : s(s) {}
+
+    constexpr T apply(const T& x) const noexcept {
+        return std::min(x, s);
+    }
+
+#ifdef __INTEL_COMPILER
+    static constexpr const bool vectorizable = true;
+
+    cpp14_constexpr vec_type load(const vec_type& lhs) const noexcept {
+        return vec::min(lhs, vec::set(s));
+    }
+#else
+    static constexpr const bool vectorizable = false;
+#endif
+
+    static std::string desc() noexcept {
+        return "min";
+    }
+};
+
+template<typename T, typename S>
+struct max_scalar_op {
+    using vec_type = intrinsic_type<T>;
+
+    S s;
+    max_scalar_op(S s) : s(s) {}
+
+    constexpr T apply(const T& x) const noexcept {
+        return std::max(x, s);
+    }
+
+#ifdef __INTEL_COMPILER
+    static constexpr const bool vectorizable = true;
+
+    cpp14_constexpr vec_type load(const vec_type& lhs) const noexcept {
+        return vec::max(lhs, vec::set(s));
+    }
+#else
+    static constexpr const bool vectorizable = false;
+#endif
+
+    static std::string desc() noexcept {
+        return "max";
+    }
+};
+
 template<typename T, typename E>
 struct pow_binary_op {
     static constexpr const bool vectorizable = false;
