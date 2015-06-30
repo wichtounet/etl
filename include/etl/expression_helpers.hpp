@@ -47,13 +47,13 @@ template<typename E, typename OP>
 using identity_helper = unary_expr<value_t<E>, OP, identity_op>;
 
 template<typename E, typename OP>
-using virtual_helper = unary_expr<E, OP, virtual_op>;
+using virtual_helper = unary_expr<E, OP, stateful_op>;
 
 template<typename E, template<typename> class OP>
-using stable_transform_helper = unary_expr<value_t<E>, OP<build_type<E>>, virtual_op>;
+using stable_transform_helper = unary_expr<value_t<E>, OP<build_type<E>>, stateful_op>;
 
 template<typename LE, typename RE, template<typename,typename> class OP>
-using stable_transform_binary_helper = unary_expr<value_t<LE>, OP<build_type<LE>, build_type<RE>>, virtual_op>;
+using stable_transform_binary_helper = unary_expr<value_t<LE>, OP<build_type<LE>, build_type<RE>>, stateful_op>;
 
 template<typename A, typename B, template<typename> class OP>
 using temporary_binary_helper = temporary_binary_expr<value_t<A>, build_type<A>, build_type<B>, OP<value_t<A>>, void>;

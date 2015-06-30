@@ -26,7 +26,7 @@ struct identity_op {
     static constexpr const bool vectorizable = false;
 };
 
-struct virtual_op {
+struct stateful_op {
     static constexpr const bool vectorizable = false;
 };
 
@@ -259,13 +259,13 @@ public:
 };
 
 template <typename T, typename Expr>
-struct unary_expr<T, Expr, virtual_op> : 
-        comparable<unary_expr<T, Expr, virtual_op>>
-        , value_testable<unary_expr<T, Expr, virtual_op>>
-        , dim_testable<unary_expr<T, Expr, virtual_op>>
+struct unary_expr<T, Expr, stateful_op> : 
+        comparable<unary_expr<T, Expr, stateful_op>>
+        , value_testable<unary_expr<T, Expr, stateful_op>>
+        , dim_testable<unary_expr<T, Expr, stateful_op>>
         {
 private:
-    using this_type = unary_expr<T, Expr, virtual_op>;
+    using this_type = unary_expr<T, Expr, stateful_op>;
 
     Expr _value;
 
@@ -329,7 +329,7 @@ std::ostream& operator<<(std::ostream& os, const unary_expr<T, Expr, identity_op
 }
 
 template <typename T, typename Expr>
-std::ostream& operator<<(std::ostream& os, const unary_expr<T, Expr, virtual_op>& expr){
+std::ostream& operator<<(std::ostream& os, const unary_expr<T, Expr, stateful_op>& expr){
     return os << expr.value();
 }
 
