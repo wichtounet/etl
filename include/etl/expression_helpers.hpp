@@ -55,6 +55,11 @@ using stable_transform_helper = unary_expr<value_t<E>, OP<build_type<E>>, statef
 template<typename LE, typename RE, template<typename,typename> class OP>
 using stable_transform_binary_helper = unary_expr<value_t<LE>, OP<build_type<LE>, build_type<RE>>, stateful_op>;
 
+template<typename E, template<typename> class OP, typename... Args>
+auto make_stateful_expr(Args&&... args){
+    return detail::stable_transform_helper<E, OP>{OP<detail::build_type<E>>(std::forward<Args>(args)...)};
+}
+
 template<typename A, typename B, template<typename> class OP>
 using temporary_binary_helper = temporary_binary_expr<value_t<A>, build_type<A>, build_type<B>, OP<value_t<A>>, void>;
 

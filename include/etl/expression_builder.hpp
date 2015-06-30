@@ -443,25 +443,25 @@ auto rep_l(E&& value, std::size_t d1, D... d) -> unary_expr<value_t<E>, dyn_rep_
 template<typename E, cpp::enable_if_u<is_etl_expr<E>::value> = cpp::detail::dummy>
 auto sum_r(E&& value) -> detail::stable_transform_helper<E, sum_r_transformer> {
     static_assert(decay_traits<E>::dimensions() > 1, "Can only use sum_r on matrix");
-    return detail::stable_transform_helper<E, sum_r_transformer>{sum_r_transformer<detail::build_type<E>>(value)};
+    return detail::make_stateful_expr<E, sum_r_transformer>(value);
 }
 
 template<typename E, cpp::enable_if_u<is_etl_expr<E>::value> = cpp::detail::dummy>
 auto sum_l(E&& value) -> detail::stable_transform_helper<E, sum_l_transformer> {
     static_assert(decay_traits<E>::dimensions() > 1, "Can only use sum_l on matrix");
-    return detail::stable_transform_helper<E, sum_l_transformer>{sum_l_transformer<detail::build_type<E>>(value)};
+    return detail::make_stateful_expr<E, sum_l_transformer>(value);
 }
 
 template<typename E, cpp::enable_if_u<is_etl_expr<E>::value> = cpp::detail::dummy>
 auto mean_r(E&& value) -> detail::stable_transform_helper<E, mean_r_transformer> {
     static_assert(decay_traits<E>::dimensions() > 1, "Can only use mean_r on matrix");
-    return detail::stable_transform_helper<E, mean_r_transformer>{mean_r_transformer<detail::build_type<E>>(value)};
+    return detail::make_stateful_expr<E, mean_r_transformer>(value);
 }
 
 template<typename E, cpp::enable_if_u<is_etl_expr<E>::value> = cpp::detail::dummy>
 auto mean_l(E&& value) -> detail::stable_transform_helper<E, mean_l_transformer> {
     static_assert(decay_traits<E>::dimensions() > 1, "Can only use mean_l on matrix");
-    return detail::stable_transform_helper<E, mean_l_transformer>{mean_l_transformer<detail::build_type<E>>(value)};
+    return detail::make_stateful_expr<E, mean_l_transformer>(value);
 }
 
 //}}}
@@ -471,25 +471,25 @@ auto mean_l(E&& value) -> detail::stable_transform_helper<E, mean_l_transformer>
 template<typename E, cpp::enable_if_u<is_etl_expr<E>::value> = cpp::detail::dummy>
 auto hflip(const E& value) -> detail::stable_transform_helper<E, hflip_transformer> {
     static_assert(etl_traits<std::decay_t<E>>::dimensions() <= 2, "Can only use flips on 1D/2D");
-    return detail::stable_transform_helper<E, hflip_transformer>{hflip_transformer<detail::build_type<E>>(value)};
+    return detail::make_stateful_expr<E, hflip_transformer>(value);
 }
 
 template<typename E, cpp::enable_if_u<is_etl_expr<E>::value> = cpp::detail::dummy>
 auto vflip(const E& value) -> detail::stable_transform_helper<E, vflip_transformer> {
     static_assert(etl_traits<std::decay_t<E>>::dimensions() <= 2, "Can only use flips on 1D/2D");
-    return detail::stable_transform_helper<E, vflip_transformer>{vflip_transformer<detail::build_type<E>>(value)};
+    return detail::make_stateful_expr<E, vflip_transformer>(value);
 }
 
 template<typename E, cpp::enable_if_u<is_etl_expr<E>::value> = cpp::detail::dummy>
 auto fflip(const E& value) -> detail::stable_transform_helper<E, fflip_transformer> {
     static_assert(etl_traits<std::decay_t<E>>::dimensions() <= 2, "Can only use flips on 1D/2D");
-    return detail::stable_transform_helper<E, fflip_transformer>{fflip_transformer<detail::build_type<E>>(value)};
+    return detail::make_stateful_expr<E, fflip_transformer>(value);
 }
 
 template<typename E, cpp::enable_if_u<is_etl_expr<E>::value> = cpp::detail::dummy>
 auto transpose(const E& value) -> detail::stable_transform_helper<E, transpose_transformer> {
     static_assert(decay_traits<E>::dimensions() <= 2, "Transpose not defined for matrix > 2D");
-    return detail::stable_transform_helper<E, transpose_transformer>{transpose_transformer<detail::build_type<E>>(value)};
+    return detail::make_stateful_expr<E, transpose_transformer>(value);
 }
 
 template<std::size_t C1, std::size_t C2, typename E, cpp::enable_if_u<is_etl_expr<E>::value> = cpp::detail::dummy>
