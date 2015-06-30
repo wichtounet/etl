@@ -69,6 +69,8 @@ using conv_2d_large_policy = NARY_POLICY(VALUES_POLICY(100, 105, 110, 115, 120, 
 using fft_1d_policy = VALUES_POLICY(10, 100, 1000, 10000, 100000, 1000000, 10000000);
 using fft_2d_policy = NARY_POLICY(VALUES_POLICY(200, 400, 600, 800, 1000, 1200, 1400, 1600, 1800, 2000), VALUES_POLICY(200, 400, 600, 800, 1000, 1200, 1400, 1600, 1800, 2000));
 
+using sigmoid_policy = VALUES_POLICY(250, 500, 750, 1000, 1250, 1500, 1750, 2000, 2250, 2500);
+
 #ifdef TEST_SSE
 #define SSE_SECTION_FUNCTOR(name, ...) , CPM_SECTION_FUNCTOR(name, __VA_ARGS__)
 #else
@@ -689,3 +691,17 @@ CPM_BENCH() {
 }
 
 #endif // TEST_MKL
+
+CPM_DIRECT_SECTION_TWO_PASS_NS_P("sigmoid(s)", sigmoid_policy, 
+    CPM_SECTION_INIT([](std::size_t d){ return std::make_tuple(smat(d,d), smat(d,d)); }),
+    CPM_SECTION_FUNCTOR("default", [](smat& a, smat& b){ a = etl::sigmoid(b); }),
+    CPM_SECTION_FUNCTOR("fast", [](smat& a, smat& b){ a = etl::fast_sigmoid(b); }),
+    CPM_SECTION_FUNCTOR("hard", [](smat& a, smat& b){ a = etl::hard_sigmoid(b); })
+)
+
+CPM_DIRECT_SECTION_TWO_PASS_NS_P("sigmoid(d)", sigmoid_policy, 
+    CPM_SECTION_INIT([](std::size_t d){ return std::make_tuple(dmat(d,d), dmat(d,d)); }),
+    CPM_SECTION_FUNCTOR("default", [](dmat& a, dmat& b){ a = etl::sigmoid(b); }),
+    CPM_SECTION_FUNCTOR("fast", [](dmat& a, dmat& b){ a = etl::fast_sigmoid(b); }),
+    CPM_SECTION_FUNCTOR("hard", [](dmat& a, dmat& b){ a = etl::hard_sigmoid(b); })
+)
