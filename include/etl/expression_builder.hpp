@@ -496,6 +496,7 @@ value_t<A> dot(const A& a, const B& b){
 
 template<typename E, cpp::enable_if_u<is_etl_expr<E>::value> = cpp::detail::dummy>
 value_t<E> sum(E&& values){
+    //Reduction force evaluation
     force(values);
 
     value_t<E> acc(0);
@@ -535,6 +536,9 @@ using value_return_t = typename value_return_type<E>::type;
 
 template<typename E, cpp::enable_if_u<is_etl_expr<std::decay_t<E>>::value> = cpp::detail::dummy>
 value_return_t<E> max(E&& values){
+    //Reduction force evaluation
+    force(values);
+
     std::size_t m = 0;
 
     for(std::size_t i = 1; i < size(values); ++i){
@@ -548,6 +552,9 @@ value_return_t<E> max(E&& values){
 
 template<typename E, cpp::enable_if_u<is_etl_expr<std::decay_t<E>>::value> = cpp::detail::dummy>
 value_return_t<E> min(E&& values){
+    //Reduction force evaluation
+    force(values);
+
     std::size_t m = 0;
 
     for(std::size_t i = 1; i < size(values); ++i){
