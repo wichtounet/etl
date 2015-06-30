@@ -320,6 +320,12 @@ auto softmax(E&& e){
 }
 
 template<typename E, cpp::enable_if_u<is_etl_expr<E>::value> = cpp::detail::dummy>
+auto stable_softmax(E&& e){
+    auto m = max(e);
+    return exp(e - m) / sum(exp(e - m));
+}
+
+template<typename E, cpp::enable_if_u<is_etl_expr<E>::value> = cpp::detail::dummy>
 auto bernoulli(const E& value) -> detail::unary_helper<E, bernoulli_unary_op> {
     return detail::unary_helper<E, bernoulli_unary_op>{value};
 }

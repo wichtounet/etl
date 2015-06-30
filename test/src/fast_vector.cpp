@@ -435,6 +435,20 @@ TEMPLATE_TEST_CASE_2( "softmax_4", "fast_vector::softmax", Z, float, double ) {
     REQUIRE(etl::mean(d) == Approx(1.0 / 9.0));
 }
 
+TEMPLATE_TEST_CASE_2( "fast_vector/stable_softmax_1", "stable_softmax", Z, float, double ) {
+    etl::fast_vector<Z, 3> a = {-1.0, 4.0, 5.0};
+
+    etl::fast_vector<Z, 3> d(etl::stable_softmax(a));
+
+    auto sum = std::exp(Z(-1.0)) + std::exp(Z(4.0)) + std::exp(Z(5.0));
+
+    REQUIRE(d[0] == Approx(std::exp(Z(-1.0)) / sum));
+    REQUIRE(d[1] == Approx(std::exp(Z(4.0)) / sum));
+    REQUIRE(d[2] == Approx(std::exp(Z(5.0)) / sum));
+
+    REQUIRE(etl::mean(d) == Approx(1.0 / 3.0));
+}
+
 TEMPLATE_TEST_CASE_2( "fast_vector/softplus", "fast_vector::softplus", Z, float, double ) {
     etl::fast_vector<Z, 3> a = {-1.0, 2.0, 0.0};
 
