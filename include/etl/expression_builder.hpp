@@ -236,6 +236,10 @@ auto abs(E&& value) -> detail::unary_helper<E, abs_unary_op> {
     return detail::unary_helper<E, abs_unary_op>{value};
 }
 
+//TODO max/min/pow/... should be reviewed
+// one version for max(expr, expr) yield the max between a and b
+// one version for max(expr, scalar) where the scalar is stored inside the op
+
 template<typename E, typename T, cpp::enable_if_all_u<is_etl_expr<E>::value, std::is_arithmetic<T>::value> = cpp::detail::dummy>
 auto max(E&& value, T v) -> detail::left_binary_helper_op<E, scalar<value_t<E>>, max_binary_op<value_t<E>, value_t<E>>> {
     return {value, scalar<value_t<E>>(v)};
