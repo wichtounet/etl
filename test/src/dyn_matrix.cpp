@@ -6,6 +6,7 @@
 //=======================================================================
 
 #include "test_light.hpp"
+#include "cpp_utils/algorithm.hpp"
 
 //{{{ Init tests
 
@@ -880,4 +881,82 @@ TEST_CASE( "dyn_matrix/default_constructor_3", "" ) {
     REQUIRE(values_2[1][0] == 1.0);
     REQUIRE(values_2[2].size() == 30);
     REQUIRE(values_2[2][0] == 13.0);
+}
+
+template<typename T>
+bool one_of(T first, T v1, T v2, T v3, T v4, T v5){
+    return first == v1 || first == v2 || first == v3 || first == v4 || first == v5;
+}
+
+TEST_CASE( "dyn_matrix/vector_shuffle", "" ) {
+    std::vector<etl::dyn_matrix<double, 3>> values;
+
+    values.emplace_back(5, 5, 1, 1.0);
+    values.emplace_back(2, 2, 2, 2.0);
+    values.emplace_back(3, 1, 2, 3.0);
+    values.emplace_back(10, 10, 10, 4.0);
+    values.emplace_back(1, 1, 1, 5.0);
+
+    std::random_device rd;
+    std::default_random_engine g(rd());
+
+    std::shuffle(values.begin(), values.end(), g);
+
+    REQUIRE(one_of(values[0](0, 0,0), 1.0, 2.0, 3.0, 4.0, 5.0));
+    REQUIRE(one_of(values[1](0, 0,0), 1.0, 2.0, 3.0, 4.0, 5.0));
+    REQUIRE(one_of(values[2](0, 0,0), 1.0, 2.0, 3.0, 4.0, 5.0));
+    REQUIRE(one_of(values[3](0, 0,0), 1.0, 2.0, 3.0, 4.0, 5.0));
+    REQUIRE(one_of(values[4](0, 0,0), 1.0, 2.0, 3.0, 4.0, 5.0));
+
+    REQUIRE(one_of(etl::size(values[0]), 25UL, 8UL, 6Ul, 1000UL, 1UL));
+    REQUIRE(one_of(etl::size(values[1]), 25UL, 8UL, 6Ul, 1000UL, 1UL));
+    REQUIRE(one_of(etl::size(values[2]), 25UL, 8UL, 6Ul, 1000UL, 1UL));
+    REQUIRE(one_of(etl::size(values[3]), 25UL, 8UL, 6Ul, 1000UL, 1UL));
+    REQUIRE(one_of(etl::size(values[4]), 25UL, 8UL, 6Ul, 1000UL, 1UL));
+}
+
+TEST_CASE( "dyn_matrix/parallel_vector_shuffle", "" ) {
+    std::vector<etl::dyn_matrix<double, 3>> values_1;
+    std::vector<etl::dyn_matrix<double, 3>> values_2;
+
+    values_1.emplace_back(5, 5, 1, 1.0);
+    values_1.emplace_back(2, 2, 2, 2.0);
+    values_1.emplace_back(3, 1, 2, 3.0);
+    values_1.emplace_back(10, 10, 10, 4.0);
+    values_1.emplace_back(1, 1, 1, 5.0);
+
+    values_2.emplace_back(50, 5, 1, 10.0);
+    values_2.emplace_back(20, 2, 2, 20.0);
+    values_2.emplace_back(30, 1, 2, 30.0);
+    values_2.emplace_back(100, 10, 10, 40.0);
+    values_2.emplace_back(10, 1, 1, 50.0);
+
+    std::random_device rd;
+    std::default_random_engine g(rd());
+
+    cpp::parallel_shuffle(values_1.begin(), values_1.end(), values_2.begin(), values_2.end(), g);
+
+    REQUIRE(one_of(values_1[0](0, 0,0), 1.0, 2.0, 3.0, 4.0, 5.0));
+    REQUIRE(one_of(values_1[1](0, 0,0), 1.0, 2.0, 3.0, 4.0, 5.0));
+    REQUIRE(one_of(values_1[2](0, 0,0), 1.0, 2.0, 3.0, 4.0, 5.0));
+    REQUIRE(one_of(values_1[3](0, 0,0), 1.0, 2.0, 3.0, 4.0, 5.0));
+    REQUIRE(one_of(values_1[4](0, 0,0), 1.0, 2.0, 3.0, 4.0, 5.0));
+
+    REQUIRE(one_of(etl::size(values_1[0]), 25UL, 8UL, 6Ul, 1000UL, 1UL));
+    REQUIRE(one_of(etl::size(values_1[1]), 25UL, 8UL, 6Ul, 1000UL, 1UL));
+    REQUIRE(one_of(etl::size(values_1[2]), 25UL, 8UL, 6Ul, 1000UL, 1UL));
+    REQUIRE(one_of(etl::size(values_1[3]), 25UL, 8UL, 6Ul, 1000UL, 1UL));
+    REQUIRE(one_of(etl::size(values_1[4]), 25UL, 8UL, 6Ul, 1000UL, 1UL));
+
+    REQUIRE(one_of(values_2[0](0, 0,0), 10.0, 20.0, 30.0, 40.0, 50.0));
+    REQUIRE(one_of(values_2[1](0, 0,0), 10.0, 20.0, 30.0, 40.0, 50.0));
+    REQUIRE(one_of(values_2[2](0, 0,0), 10.0, 20.0, 30.0, 40.0, 50.0));
+    REQUIRE(one_of(values_2[3](0, 0,0), 10.0, 20.0, 30.0, 40.0, 50.0));
+    REQUIRE(one_of(values_2[4](0, 0,0), 10.0, 20.0, 30.0, 40.0, 50.0));
+
+    REQUIRE(one_of(etl::size(values_2[0]), 250UL, 80UL, 60Ul, 10000UL, 10UL));
+    REQUIRE(one_of(etl::size(values_2[1]), 250UL, 80UL, 60Ul, 10000UL, 10UL));
+    REQUIRE(one_of(etl::size(values_2[2]), 250UL, 80UL, 60Ul, 10000UL, 10UL));
+    REQUIRE(one_of(etl::size(values_2[3]), 250UL, 80UL, 60Ul, 10000UL, 10UL));
+    REQUIRE(one_of(etl::size(values_2[4]), 250UL, 80UL, 60Ul, 10000UL, 10UL));
 }
