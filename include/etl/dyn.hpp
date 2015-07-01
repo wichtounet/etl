@@ -321,7 +321,7 @@ public:
 
     //Default move assignment operator
     dyn_matrix_impl& operator=(dyn_matrix_impl&& rhs) noexcept {
-        if(this != & rhs){
+        if(this != &rhs){
             _size = rhs._size;
             _data = std::move(rhs._data);
             _dimensions = std::move(rhs._dimensions);
