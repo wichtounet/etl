@@ -220,7 +220,7 @@ public:
     template<std::size_t... SDims>
     fast_matrix_impl& operator=(const fast_matrix_impl<T, ST, SO, SDims...>& rhs) noexcept {
         validate_assign(*this, rhs);
-        _data = rhs._data;
+        std::copy(rhs.begin(), rhs.end(), begin());
         return *this;
     }
 
