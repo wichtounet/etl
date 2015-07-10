@@ -74,6 +74,24 @@ auto fft_conv_1d_full(A&& a, B&& b, C&& c) -> detail::forced_temporary_binary_he
 }
 
 template<typename A, typename B>
+auto fast_conv_1d_full(A&& a, B&& b){
+    if(has_fft::value){
+        return fft_conv_1d_full(std::forward<A>(a), std::forward<B>(b));
+    } else {
+        return conv_1d_full(std::forward<A>(a), std::forward<B>(b));
+    }
+}
+
+template<typename A, typename B, typename C>
+auto fast_conv_1d_full(A&& a, B&& b, C&& c){
+    if(has_fft::value){
+        return fft_conv_1d_full(std::forward<A>(a), std::forward<B>(b), std::forward<C>(c));
+    } else {
+        return conv_1d_full(std::forward<A>(a), std::forward<B>(b), std::forward<C>(c));
+    }
+}
+
+template<typename A, typename B>
 auto conv_2d_valid(A&& a, B&& b) -> detail::temporary_binary_helper<A, B, conv2_valid_expr> {
     static_assert(is_etl_expr<A>::value && is_etl_expr<B>::value, "Convolution only supported for ETL expressions");
 
@@ -127,6 +145,24 @@ auto fft_conv_2d_full(A&& a, B&& b, C&& c) -> detail::forced_temporary_binary_he
     static_assert(is_etl_expr<A>::value && is_etl_expr<B>::value && is_etl_expr<C>::value, "Convolution only supported for ETL expressions");
 
     return {a, b, c};
+}
+
+template<typename A, typename B>
+auto fast_conv_2d_full(A&& a, B&& b){
+    if(has_fft::value){
+        return fft_conv_2d_full(std::forward<A>(a), std::forward<B>(b));
+    } else {
+        return conv_2d_full(std::forward<A>(a), std::forward<B>(b));
+    }
+}
+
+template<typename A, typename B, typename C>
+auto fast_conv_2d_full(A&& a, B&& b, C&& c){
+    if(has_fft::value){
+        return fft_conv_2d_full(std::forward<A>(a), std::forward<B>(b), std::forward<C>(c));
+    } else {
+        return conv_2d_full(std::forward<A>(a), std::forward<B>(b), std::forward<C>(c));
+    }
 }
 
 template<typename A, typename B>
