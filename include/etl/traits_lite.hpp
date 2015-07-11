@@ -87,6 +87,12 @@ struct is_complex_double_precision : std::is_same<typename std::decay_t<T>::valu
 template<typename T>
 struct is_complex : cpp::or_c<is_complex_single_precision<T>, is_complex_double_precision<T>> {};
 
+template<typename T>
+struct is_complex_t : std::false_type { };
+
+template<typename T>
+struct is_complex_t <std::complex<T>> : std::true_type { };
+
 template<typename... E>
 struct all_dma : cpp::and_c<has_direct_access<E>...> {};
 
