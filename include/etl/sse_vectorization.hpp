@@ -57,28 +57,52 @@ struct intrinsic_traits <std::complex<double>> {
 
 namespace vec {
 
-inline void storeu(double* memory, __m128d value){
-    _mm_storeu_pd(memory, value);
-}
-
 inline void storeu(float* memory, __m128 value){
     _mm_storeu_ps(memory, value);
 }
 
-inline void store(double* memory, __m128d value){
-    _mm_store_pd(memory, value);
+inline void storeu(double* memory, __m128d value){
+    _mm_storeu_pd(memory, value);
+}
+
+inline void storeu(std::complex<float>* memory, __m128 value){
+    _mm_storeu_ps(reinterpret_cast<float*>(memory), value);
+}
+
+inline void storeu(std::complex<double>* memory, __m128d value){
+    _mm_storeu_pd(reinterpret_cast<double*>(memory), value);
 }
 
 inline void store(float* memory, __m128 value){
     _mm_store_ps(memory, value);
 }
 
-ETL_INLINE_VEC_128D loadu(const double* memory){
-    return _mm_loadu_pd(memory);
+inline void store(double* memory, __m128d value){
+    _mm_store_pd(memory, value);
+}
+
+inline void store(std::complex<float>* memory, __m128 value){
+    _mm_store_ps(reinterpret_cast<float*>(memory), value);
+}
+
+inline void store(std::complex<double>* memory, __m128d value){
+    _mm_store_pd(reinterpret_cast<double*>(memory), value);
 }
 
 ETL_INLINE_VEC_128 loadu(const float* memory){
     return _mm_loadu_ps(memory);
+}
+
+ETL_INLINE_VEC_128D loadu(const double* memory){
+    return _mm_loadu_pd(memory);
+}
+
+ETL_INLINE_VEC_128 loadu(const std::complex<float>* memory){
+    return _mm_loadu_ps(reinterpret_cast<const float*>(memory));
+}
+
+ETL_INLINE_VEC_128D loadu(const std::complex<double>* memory){
+    return _mm_loadu_pd(reinterpret_cast<const double*>(memory));
 }
 
 ETL_INLINE_VEC_128D set(double value){
