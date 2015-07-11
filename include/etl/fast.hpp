@@ -226,7 +226,7 @@ public:
 
     //Allow copy from other containers
 
-    template<typename Container, cpp::enable_if_c<std::is_convertible<typename Container::value_type, value_type>> = cpp::detail::dummy>
+    template<typename Container, cpp_enable_if(!std::is_same<Container, value_type>::value && std::is_convertible<typename Container::value_type, value_type>::value)>
     fast_matrix_impl& operator=(const Container& vec) noexcept {
         validate_assign(*this, vec);
         std::copy(vec.begin(), vec.end(), begin());
