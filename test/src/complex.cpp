@@ -6,7 +6,6 @@
 //=======================================================================
 
 #include "test_light.hpp"
-//{{{ Complex content
 
 TEMPLATE_TEST_CASE_2( "complex/1", "[std::complex]", Z, float, double ) {
     etl::fast_vector<std::complex<Z>, 3> a = {-1.0, 2.0, 5.0};
