@@ -41,3 +41,15 @@ TEMPLATE_TEST_CASE_2( "complex/1", "[std::complex]", Z, float, double ) {
     REQUIRE(a[2].real() == Approx(Z(3.0)));
     REQUIRE(a[2].imag() == Approx(Z(-2.0)));
 }
+
+TEMPLATE_TEST_CASE_2( "complex/2", "[std::complex]", Z, float, double ) {
+    etl::fast_vector<std::complex<Z>, 3> a = {std::complex<Z>(1.0, 2.0), std::complex<Z>(-1.0, -2.0), std::complex<Z>(0.0, 0.5)};
+    etl::fast_vector<std::complex<Z>, 3> b = {std::complex<Z>(0.33, 0.66), std::complex<Z>(-1.5, 0.0), std::complex<Z>(0.5, 0.75)};
+    etl::fast_vector<std::complex<Z>, 3> c;
+
+    c = a >> b;
+
+    REQUIRE(c[0] == a[0] * b[0]);
+    REQUIRE(c[1] == a[1] * b[1]);
+    REQUIRE(c[2] == a[2] * b[2]);
+}
