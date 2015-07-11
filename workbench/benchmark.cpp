@@ -14,7 +14,7 @@
 #define CPM_PARALLEL_RANDOMIZE
 #define CPM_FAST_RANDOMIZE
 
-#define CPM_WARMUP 3 
+#define CPM_WARMUP 3
 #define CPM_REPEAT 10
 
 #define CPM_BENCHMARK "Tests Benchmarks"
@@ -135,6 +135,18 @@ CPM_BENCH() {
         "R = A + B + C",
         [](auto d1, auto d2){ return std::make_tuple(dmat(d1, d2), dmat(d1, d2), dmat(d1, d2), dmat(d1, d2)); },
         [](dmat& A, dmat& B, dmat& C, dmat& R){ R = A + B + C; }
+        );
+
+    CPM_TWO_PASS_NS(
+        "r = a + b (c)",
+        [](std::size_t d){ return std::make_tuple(cvec(d), cvec(d), cvec(d)); },
+        [](cvec& a, cvec& b, cvec& r){ r = a + b; }
+        );
+
+    CPM_TWO_PASS_NS(
+        "r = a + b (z)",
+        [](std::size_t d){ return std::make_tuple(zvec(d), zvec(d), zvec(d)); },
+        [](zvec& a, zvec& b, zvec& r){ r = a + b; }
         );
 }
 
@@ -318,7 +330,7 @@ CPM_DIRECT_BENCH_TWO_PASS_P(
     [](std::size_t /*d1*/, std::size_t d2, dmat& a, dmat& b){ etl::im2col_direct(b, a, d2, d2); }
 )
 
-CPM_DIRECT_SECTION_TWO_PASS_NS_P("sconv1_valid", conv_1d_large_policy, 
+CPM_DIRECT_SECTION_TWO_PASS_NS_P("sconv1_valid", conv_1d_large_policy,
     CPM_SECTION_INIT([](std::size_t d1, std::size_t d2){ return std::make_tuple(svec(d1), svec(d2), svec(d1 - d2 + 1)); }),
     CPM_SECTION_FUNCTOR("default", [](svec& a, svec& b, svec& r){ r = etl::conv_1d_valid(a, b); }),
     CPM_SECTION_FUNCTOR("std", [](svec& a, svec& b, svec& r){ etl::impl::standard::conv1_valid(a, b, r); })
@@ -326,7 +338,7 @@ CPM_DIRECT_SECTION_TWO_PASS_NS_P("sconv1_valid", conv_1d_large_policy,
     AVX_SECTION_FUNCTOR("avx", [](svec& a, svec& b, svec& r){ etl::impl::avx::sconv1_valid(a, b, r); })
 )
 
-CPM_DIRECT_SECTION_TWO_PASS_NS_P("dconv1_valid", conv_1d_large_policy, 
+CPM_DIRECT_SECTION_TWO_PASS_NS_P("dconv1_valid", conv_1d_large_policy,
     CPM_SECTION_INIT([](std::size_t d1, std::size_t d2){ return std::make_tuple(dvec(d1), dvec(d2), dvec(d1 - d2 + 1)); }),
     CPM_SECTION_FUNCTOR("default", [](dvec& a, dvec& b, dvec& r){ r = etl::conv_1d_valid(a, b); }),
     CPM_SECTION_FUNCTOR("std", [](dvec& a, dvec& b, dvec& r){ etl::impl::standard::conv1_valid(a, b, r); })
@@ -334,7 +346,7 @@ CPM_DIRECT_SECTION_TWO_PASS_NS_P("dconv1_valid", conv_1d_large_policy,
     AVX_SECTION_FUNCTOR("avx", [](dvec& a, dvec& b, dvec& r){ etl::impl::avx::dconv1_valid(a, b, r); })
 )
 
-CPM_DIRECT_SECTION_TWO_PASS_NS_P("sconv1_same", conv_1d_large_policy, 
+CPM_DIRECT_SECTION_TWO_PASS_NS_P("sconv1_same", conv_1d_large_policy,
     CPM_SECTION_INIT([](std::size_t d1, std::size_t d2){ return std::make_tuple(svec(d1), svec(d2), svec(d1)); }),
     CPM_SECTION_FUNCTOR("default", [](svec& a, svec& b, svec& r){ r = etl::conv_1d_same(a, b); }),
     CPM_SECTION_FUNCTOR("std", [](svec& a, svec& b, svec& r){ etl::impl::standard::conv1_same(a, b, r); })
@@ -342,7 +354,7 @@ CPM_DIRECT_SECTION_TWO_PASS_NS_P("sconv1_same", conv_1d_large_policy,
     AVX_SECTION_FUNCTOR("avx", [](svec& a, svec& b, svec& r){ etl::impl::avx::sconv1_same(a, b, r); })
 )
 
-CPM_DIRECT_SECTION_TWO_PASS_NS_P("dconv1_same", conv_1d_large_policy, 
+CPM_DIRECT_SECTION_TWO_PASS_NS_P("dconv1_same", conv_1d_large_policy,
     CPM_SECTION_INIT([](std::size_t d1, std::size_t d2){ return std::make_tuple(dvec(d1), dvec(d2), dvec(d1)); }),
     CPM_SECTION_FUNCTOR("default", [](dvec& a, dvec& b, dvec& r){ r = etl::conv_1d_same(a, b); }),
     CPM_SECTION_FUNCTOR("std", [](dvec& a, dvec& b, dvec& r){ etl::impl::standard::conv1_same(a, b, r); })
@@ -370,7 +382,7 @@ CPM_DIRECT_SECTION_TWO_PASS_NS_P("dconv1_full", conv_1d_large_policy,
      MC_SECTION_FUNCTOR("mmul", [](dvec& a, dvec& b, dvec& r){ etl::impl::reduc::conv1_full(a, b, r); })
 )
 
-CPM_DIRECT_SECTION_TWO_PASS_NS_P("sconv2_valid", conv_2d_large_policy, 
+CPM_DIRECT_SECTION_TWO_PASS_NS_P("sconv2_valid", conv_2d_large_policy,
     CPM_SECTION_INIT([](std::size_t d1, std::size_t d2){ return std::make_tuple(smat(d1,d1), smat(d2,d2), smat(d1 - d2 + 1, d1 - d2 + 1)); }),
     CPM_SECTION_FUNCTOR("default", [](smat& a, smat& b, smat& r){ r = etl::conv_2d_valid(a, b); }),
     CPM_SECTION_FUNCTOR("std", [](smat& a, smat& b, smat& r){ etl::impl::standard::conv2_valid(a, b, r); })
@@ -378,7 +390,7 @@ CPM_DIRECT_SECTION_TWO_PASS_NS_P("sconv2_valid", conv_2d_large_policy,
     AVX_SECTION_FUNCTOR("avx", [](smat& a, smat& b, smat& r){ etl::impl::avx::sconv2_valid(a, b, r); })
 )
 
-CPM_DIRECT_SECTION_TWO_PASS_NS_P("dconv2_valid", conv_2d_large_policy, 
+CPM_DIRECT_SECTION_TWO_PASS_NS_P("dconv2_valid", conv_2d_large_policy,
     CPM_SECTION_INIT([](std::size_t d1, std::size_t d2){ return std::make_tuple(dmat(d1,d1), dmat(d2,d2), dmat(d1 - d2 + 1, d1 - d2 + 1)); }),
     CPM_SECTION_FUNCTOR("default", [](dmat& a, dmat& b, dmat& r){ r = etl::conv_2d_valid(a, b); }),
     CPM_SECTION_FUNCTOR("std", [](dmat& a, dmat& b, dmat& r){ etl::impl::standard::conv2_valid(a, b, r); })
@@ -386,7 +398,7 @@ CPM_DIRECT_SECTION_TWO_PASS_NS_P("dconv2_valid", conv_2d_large_policy,
     AVX_SECTION_FUNCTOR("avx", [](dmat& a, dmat& b, dmat& r){ etl::impl::avx::dconv2_valid(a, b, r); })
 )
 
-CPM_DIRECT_SECTION_TWO_PASS_NS_P("sconv2_same", conv_2d_large_policy, 
+CPM_DIRECT_SECTION_TWO_PASS_NS_P("sconv2_same", conv_2d_large_policy,
     CPM_SECTION_INIT([](std::size_t d1, std::size_t d2){ return std::make_tuple(smat(d1,d1), smat(d2,d2), smat(d1,d1)); }),
     CPM_SECTION_FUNCTOR("default", [](smat& a, smat& b, smat& r){ r = etl::conv_2d_same(a, b); }),
     CPM_SECTION_FUNCTOR("std", [](smat& a, smat& b, smat& r){ etl::impl::standard::conv2_same(a, b, r); })
@@ -394,7 +406,7 @@ CPM_DIRECT_SECTION_TWO_PASS_NS_P("sconv2_same", conv_2d_large_policy,
     AVX_SECTION_FUNCTOR("avx", [](smat& a, smat& b, smat& r){ etl::impl::avx::sconv2_same(a, b, r); })
 )
 
-CPM_DIRECT_SECTION_TWO_PASS_NS_P("dconv2_same", conv_2d_large_policy, 
+CPM_DIRECT_SECTION_TWO_PASS_NS_P("dconv2_same", conv_2d_large_policy,
     CPM_SECTION_INIT([](std::size_t d1, std::size_t d2){ return std::make_tuple(dmat(d1,d1), dmat(d2,d2), dmat(d1,d1)); }),
     CPM_SECTION_FUNCTOR("default", [](dmat& a, dmat& b, dmat& r){ r = etl::conv_2d_same(a, b); }),
     CPM_SECTION_FUNCTOR("std", [](dmat& a, dmat& b, dmat& r){ etl::impl::standard::conv2_same(a, b, r); })
@@ -426,7 +438,7 @@ using square_policy = NARY_POLICY(VALUES_POLICY(100, 200, 300, 400, 500, 600, 70
 
 CPM_BENCH(){
     CPM_TWO_PASS_NS_P(
-        square_policy, 
+        square_policy,
         "r = A * B (float)",
         [](std::size_t d1,std::size_t d2){ return std::make_tuple(smat(d1,d2), smat(d1,d2), smat(d1,d2)); },
         [](smat& A, smat& B, smat& R){ R = A * B; }
@@ -435,7 +447,7 @@ CPM_BENCH(){
 
 CPM_BENCH(){
     CPM_TWO_PASS_NS_P(
-        square_policy, 
+        square_policy,
         "r = A * B (double)",
         [](std::size_t d1,std::size_t d2){ return std::make_tuple(dmat(d1,d2), dmat(d1,d2), dmat(d1,d2)); },
         [](dmat& A, dmat& B, dmat& R){ R = A * B; }
@@ -462,7 +474,7 @@ CPM_BENCH(){
 
 CPM_BENCH(){
     CPM_TWO_PASS_NS_P(
-        square_policy, 
+        square_policy,
         "R = A * (B + C)",
         [](std::size_t d1,std::size_t d2){ return std::make_tuple(dmat(d1,d2), dmat(d1,d2), dmat(d1,d2), dmat(d1,d2)); },
         [](dmat& A, dmat& B, dmat& C, dmat& R){ R = A * (B + C); }
@@ -471,7 +483,7 @@ CPM_BENCH(){
 
 CPM_BENCH(){
     CPM_TWO_PASS_NS_P(
-        square_policy, 
+        square_policy,
         "R = A * (B + C + D)",
         [](std::size_t d1,std::size_t d2){ return std::make_tuple(dmat(d1,d2), dmat(d1,d2), dmat(d1,d2), dmat(d1,d2), dmat(d1,d2)); },
         [](dmat& A, dmat& B, dmat& C, dmat& D, dmat& R){ R = A * (B + C + D); }
@@ -480,7 +492,7 @@ CPM_BENCH(){
 
 CPM_BENCH(){
     CPM_TWO_PASS_NS_P(
-        square_policy, 
+        square_policy,
         "R = (A + B) * (C + D)",
         [](std::size_t d1,std::size_t d2){ return std::make_tuple(dmat(d1,d2), dmat(d1,d2), dmat(d1,d2), dmat(d1,d2), dmat(d1,d2)); },
         [](dmat& A, dmat& B, dmat& C, dmat& D, dmat& R){ R = (A + B) * (C + D); }
@@ -489,7 +501,7 @@ CPM_BENCH(){
 
 CPM_BENCH(){
     CPM_TWO_PASS_NS_P(
-        square_policy, 
+        square_policy,
         "r = a * (A + B - C)",
         [](std::size_t d1,std::size_t d2){ return std::make_tuple(dvec(d1), dmat(d1,d2), dmat(d1,d2), dmat(d1,d2), dvec(d2)); },
         [](dvec& a, dmat& A, dmat& B, dmat& C, dvec& r){ r = a * (A + B - C); }
@@ -498,7 +510,7 @@ CPM_BENCH(){
 
 CPM_BENCH(){
     CPM_TWO_PASS_NS_P(
-        square_policy, 
+        square_policy,
         "r = a * (A * B)",
         [](std::size_t d1,std::size_t d2){ return std::make_tuple(dvec(d1), dmat(d1,d2), dmat(d1,d2), dvec(d2)); },
         [](dvec& a, dmat& A, dmat& B, dvec& r){ r = a * (A * B); }
@@ -507,7 +519,7 @@ CPM_BENCH(){
 
 CPM_BENCH(){
     CPM_TWO_PASS_NS_P(
-        square_policy, 
+        square_policy,
         "r = a * A * B",
         [](std::size_t d1,std::size_t d2){ return std::make_tuple(dvec(d1), dmat(d1,d2), dmat(d1,d2), dvec(d2)); },
         [](dvec& a, dmat& A, dmat& B, dvec& r){ r = a * (A * B); }
@@ -516,14 +528,14 @@ CPM_BENCH(){
 
 CPM_DIRECT_BENCH_TWO_PASS_NS_P(
     NARY_POLICY(VALUES_POLICY(100, 500, 550, 600, 1000, 2000, 2500), VALUES_POLICY(100, 120, 500, 1000, 1200, 2000, 5000)),
-    "rbm_hidden", 
+    "rbm_hidden",
     [](std::size_t d1, std::size_t d2){ return std::make_tuple(dvec(d1), dvec(d2), dvec(d2), dvec(d2), dmat(d1, d2));},
     [](dvec& v, dvec& h, dvec& b, dvec& t, dmat& w){ h = etl::sigmoid(b + etl::mul(v, w, t)); }
 )
 
 CPM_DIRECT_BENCH_TWO_PASS_NS_P(
     NARY_POLICY(VALUES_POLICY(100, 500, 550, 600, 1000, 2000, 2500), VALUES_POLICY(100, 120, 500, 1000, 1200, 2000, 5000)),
-    "rbm_visible", 
+    "rbm_visible",
     [](std::size_t d1, std::size_t d2){ return std::make_tuple(dvec(d1), dvec(d2), dvec(d1), dvec(d1), dmat(d1, d2));},
     [](dvec& v, dvec& h, dvec& c, dvec& t, dmat& w){ v = etl::sigmoid(c + etl::mul(w, h, t)); }
 )
@@ -535,9 +547,9 @@ CPM_DIRECT_BENCH_TWO_PASS_NS_P(
 
 CPM_DIRECT_BENCH_TWO_PASS_NS_P(
     NARY_POLICY(VALUES_POLICY(1, 1, 1, 3, 3, 3, 30, 40), VALUES_POLICY(10, 10, 30, 30, 30, 40, 40, 40), VALUES_POLICY(28, 28, 28, 28, 36, 36, 36, 36), VALUES_POLICY(5, 11, 19, 19, 19, 19, 19, 19)),
-    "conv_rbm_hidden", 
-    [](std::size_t nc, std::size_t k, std::size_t nv, std::size_t nh){ 
-        auto nw = nv - nh + 1; 
+    "conv_rbm_hidden",
+    [](std::size_t nc, std::size_t k, std::size_t nv, std::size_t nh){
+        auto nw = nv - nh + 1;
         return std::make_tuple(dmat4(nc,k,nw,nw), dmat4(nc,k,nw,nw), dvec(k), dmat3(nc,nv,nv), dmat3(k, nh, nh), dmat4(2ul, k, nh, nh));},
     [](dmat4& w, dmat4& w_t, dvec& b, dmat3& v, dmat3& h, dmat4 v_cv){
         v_cv(1) = 0;
@@ -562,9 +574,9 @@ CPM_DIRECT_BENCH_TWO_PASS_NS_P(
 
 CPM_DIRECT_BENCH_TWO_PASS_NS_P(
     NARY_POLICY(VALUES_POLICY(1, 1, 1, 3, 3, 3, 30, 40), VALUES_POLICY(10, 10, 30, 30, 30, 40, 40, 40), VALUES_POLICY(28, 28, 28, 28, 36, 36, 36, 36), VALUES_POLICY(5, 11, 19, 19, 19, 19, 19, 19)),
-    "conv_rbm_visible", 
-    [](std::size_t nc, std::size_t k, std::size_t nv, std::size_t nh){ 
-        auto nw = nv - nh + 1; 
+    "conv_rbm_visible",
+    [](std::size_t nc, std::size_t k, std::size_t nv, std::size_t nh){
+        auto nw = nv - nh + 1;
         return std::make_tuple(dmat4(nc,k,nw,nw), dvec(k), dvec(nc), dmat3(nc,nv,nv), dmat3(k,nh,nh), dmat3(k,nv,nv));},
     [](dmat4& w, dvec& b, dvec& c, dmat3& v, dmat3& h, dmat3& h_cv){
         for(std::size_t channel = 0; channel < etl::dim<0>(c); ++channel){
@@ -660,7 +672,7 @@ CPM_BENCH() {
         [](std::size_t d){ return std::make_tuple(zvec(d), zvec(d)); },
         [](zvec& a, zvec& r){ r = etl::fft_1d(a); }
         );
-    
+
     CPM_TWO_PASS_NS_P(
         fft_1d_policy,
         "sifft_1d",
@@ -692,14 +704,14 @@ CPM_BENCH() {
 
 #endif // TEST_MKL
 
-CPM_DIRECT_SECTION_TWO_PASS_NS_P("sigmoid(s)", sigmoid_policy, 
+CPM_DIRECT_SECTION_TWO_PASS_NS_P("sigmoid(s)", sigmoid_policy,
     CPM_SECTION_INIT([](std::size_t d){ return std::make_tuple(smat(d,d), smat(d,d)); }),
     CPM_SECTION_FUNCTOR("default", [](smat& a, smat& b){ a = etl::sigmoid(b); }),
     CPM_SECTION_FUNCTOR("fast", [](smat& a, smat& b){ a = etl::fast_sigmoid(b); }),
     CPM_SECTION_FUNCTOR("hard", [](smat& a, smat& b){ a = etl::hard_sigmoid(b); })
 )
 
-CPM_DIRECT_SECTION_TWO_PASS_NS_P("sigmoid(d)", sigmoid_policy, 
+CPM_DIRECT_SECTION_TWO_PASS_NS_P("sigmoid(d)", sigmoid_policy,
     CPM_SECTION_INIT([](std::size_t d){ return std::make_tuple(dmat(d,d), dmat(d,d)); }),
     CPM_SECTION_FUNCTOR("default", [](dmat& a, dmat& b){ a = etl::sigmoid(b); }),
     CPM_SECTION_FUNCTOR("fast", [](dmat& a, dmat& b){ a = etl::fast_sigmoid(b); }),
