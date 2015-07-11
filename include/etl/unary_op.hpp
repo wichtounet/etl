@@ -40,7 +40,7 @@ struct log_unary_op {
     }
 
 #ifdef __INTEL_COMPILER
-    static constexpr const bool vectorizable = true;
+    static constexpr const bool vectorizable = !is_complex_t<T>::value;
 
     static cpp14_constexpr vec_type load(const vec_type& x) noexcept {
         return vec::log(x);
@@ -58,7 +58,7 @@ template<typename T>
 struct sqrt_unary_op {
     using vec_type = intrinsic_type<T>;
 
-    static constexpr const bool vectorizable = true;
+    static constexpr const bool vectorizable = !is_complex_t<T>::value;
 
     static constexpr T apply(const T& x){
         return std::sqrt(x);
@@ -82,7 +82,7 @@ struct exp_unary_op {
     }
 
 #ifdef __INTEL_COMPILER
-    static constexpr const bool vectorizable = true;
+    static constexpr const bool vectorizable = !is_complex_t<T>::value;
 
     static cpp14_constexpr vec_type load(const vec_type& x) noexcept {
         return vec::exp(x);
@@ -139,7 +139,7 @@ template<typename T>
 struct minus_unary_op {
     using vec_type = intrinsic_type<T>;
 
-    static constexpr const bool vectorizable = true;
+    static constexpr const bool vectorizable = !is_complex_t<T>::value;
 
     static constexpr T apply(const T& x) noexcept {
         return -x;

@@ -25,7 +25,7 @@ template<typename T>
 struct plus_binary_op {
     using vec_type = intrinsic_type<T>;
 
-    static constexpr const bool vectorizable = true;
+    static constexpr const bool vectorizable = !is_complex_t<T>::value;
 
     static constexpr T apply(const T& lhs, const T& rhs) noexcept {
         return lhs + rhs;
@@ -46,7 +46,7 @@ template<typename T>
 struct minus_binary_op {
     using vec_type = intrinsic_type<T>;
 
-    static constexpr const bool vectorizable = true;
+    static constexpr const bool vectorizable = !is_complex_t<T>::value;
 
     static constexpr T apply(const T& lhs, const T& rhs) noexcept {
         return lhs - rhs;
@@ -67,7 +67,7 @@ template<typename T>
 struct mul_binary_op {
     using vec_type = intrinsic_type<T>;
 
-    static constexpr const bool vectorizable = true;
+    static constexpr const bool vectorizable = !is_complex_t<T>::value;
 
     static constexpr T apply(const T& lhs, const T& rhs) noexcept {
         return lhs * rhs;
@@ -88,7 +88,7 @@ template<typename T>
 struct div_binary_op {
     using vec_type = intrinsic_type<T>;
 
-    static constexpr const bool vectorizable = true;
+    static constexpr const bool vectorizable = !is_complex_t<T>::value;
 
     static constexpr T apply(const T& lhs, const T& rhs) noexcept {
         return lhs / rhs;
@@ -148,7 +148,7 @@ struct max_binary_op {
     }
 
 #ifdef __INTEL_COMPILER
-    static constexpr const bool vectorizable = true;
+    static constexpr const bool vectorizable = !is_complex_t<T>::value;
 
     static cpp14_constexpr vec_type load(const vec_type& lhs, const vec_type& rhs) noexcept {
         return vec::max(lhs, rhs);
@@ -171,7 +171,7 @@ struct min_binary_op {
     }
 
 #ifdef __INTEL_COMPILER
-    static constexpr const bool vectorizable = true;
+    static constexpr const bool vectorizable = !is_complex_t<T>::value;
 
     static cpp14_constexpr vec_type load(const vec_type& lhs, const vec_type& rhs) noexcept {
         return vec::min(lhs, rhs);
@@ -197,7 +197,7 @@ struct min_scalar_op {
     }
 
 #ifdef __INTEL_COMPILER
-    static constexpr const bool vectorizable = true;
+    static constexpr const bool vectorizable = !is_complex_t<T>::value;
 
     cpp14_constexpr vec_type load(const vec_type& lhs) const noexcept {
         return vec::min(lhs, vec::set(s));
@@ -223,7 +223,7 @@ struct max_scalar_op {
     }
 
 #ifdef __INTEL_COMPILER
-    static constexpr const bool vectorizable = true;
+    static constexpr const bool vectorizable = !is_complex_t<T>::value;
 
     cpp14_constexpr vec_type load(const vec_type& lhs) const noexcept {
         return vec::max(lhs, vec::set(s));
@@ -250,7 +250,7 @@ struct clip_scalar_op {
     }
 
 #ifdef __INTEL_COMPILER
-    static constexpr const bool vectorizable = true;
+    static constexpr const bool vectorizable = !is_complex_t<T>::value;
 
     cpp14_constexpr vec_type load(const vec_type& lhs) const noexcept {
         return vec::min(vec::max(lhs, vec::set(min)), vec::set(max));
