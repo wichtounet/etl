@@ -20,6 +20,15 @@
 namespace etl {
 
 template<>
+struct intrinsic_traits <float> {
+    static constexpr const bool vectorizable = true;
+    static constexpr const std::size_t size = 4;
+    static constexpr const std::size_t alignment = 16;
+
+    using intrinsic_type = __m128;
+};
+
+template<>
 struct intrinsic_traits <double> {
     static constexpr const bool vectorizable = true;
     static constexpr const std::size_t size = 2;
@@ -29,12 +38,21 @@ struct intrinsic_traits <double> {
 };
 
 template<>
-struct intrinsic_traits <float> {
+struct intrinsic_traits <std::complex<float>> {
     static constexpr const bool vectorizable = true;
-    static constexpr const std::size_t size = 4;
+    static constexpr const std::size_t size = 2;
     static constexpr const std::size_t alignment = 16;
 
     using intrinsic_type = __m128;
+};
+
+template<>
+struct intrinsic_traits <std::complex<double>> {
+    static constexpr const bool vectorizable = true;
+    static constexpr const std::size_t size = 1;
+    static constexpr const std::size_t alignment = 16;
+
+    using intrinsic_type = __m128d;
 };
 
 namespace vec {
