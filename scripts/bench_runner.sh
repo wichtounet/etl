@@ -11,13 +11,13 @@ unset ETL_BLAS
 export CXX=clang++
 export LD=clang++
 
-# 1. Clang (default)
+echo "Configuration 1. Clang (default)"
 
 make clean
 make release/bin/benchmark
 time ./release/bin/benchmark --tag=`git rev-list HEAD --count`-`git rev-parse HEAD` --configuration=default
 
-# 2. Clang (vectorize_impl)
+ echo "Configuration 2. Clang (vectorize_impl)"
 
 export ETL_DEFAULTS="-DETL_VECTORIZE_IMPL"
 
@@ -25,7 +25,7 @@ make clean
 make release/bin/benchmark
 time ./release/bin/benchmark --tag=`git rev-list HEAD --count`-`git rev-parse HEAD` --configuration=vectorize_impl
 
-# 3. Clang (vectorize_expr)
+echo "Configuration 3. Clang (vectorize_expr)"
 
 export ETL_DEFAULTS="-DETL_VECTORIZE_EXPR"
 
@@ -33,7 +33,7 @@ make clean
 make release/bin/benchmark
 time ./release/bin/benchmark --tag=`git rev-list HEAD --count`-`git rev-parse HEAD` --configuration=vectorize_expr
 
-# 4. Clang (vectorize_full)
+echo "Configuration 4. Clang (vectorize_full)"
 
 export ETL_DEFAULTS="-DETL_VECTORIZE_FULL"
 
@@ -41,7 +41,7 @@ make clean
 make release/bin/benchmark
 time ./release/bin/benchmark --tag=`git rev-list HEAD --count`-`git rev-parse HEAD` --configuration=vectorize_full
 
-# 5. Clang (vectorize_full blas_mode)
+echo "Configuration 5. Clang (vectorize_full blas_mode)"
 
 export ETL_DEFAULTS="-DETL_VECTORIZE_FULL"
 export ETL_BLAS=true
@@ -50,7 +50,7 @@ make clean
 make release/bin/benchmark
 time ./release/bin/benchmark --tag=`git rev-list HEAD --count`-`git rev-parse HEAD` --configuration="blas_mode+vectorize_full"
 
-# 6. Clang (vectorize_full mkl_mode)
+echo "Configuration 6. Clang (vectorize_full mkl_mode)"
 
 unset ETL_BLAS
 export ETL_DEFAULTS="-DETL_VECTORIZE_FULL"
@@ -67,13 +67,13 @@ unset ETL_MKL
 export CXX=g++-4.9.2
 export LD=g++-4.9.2
 
-# 1. GCC (default)
+echo "Configuration 1. GCC (default)"
 
 make clean
 make release/bin/benchmark
 time ./release/bin/benchmark --tag=`git rev-list HEAD --count`-`git rev-parse HEAD` --configuration=default
 
-# 2. GCC (vectorize_impl)
+echo "Configuration 2. GCC (vectorize_impl)"
 
 export ETL_DEFAULTS="-DETL_VECTORIZE_IMPL"
 
@@ -81,7 +81,7 @@ make clean
 make release/bin/benchmark
 time ./release/bin/benchmark --tag=`git rev-list HEAD --count`-`git rev-parse HEAD` --configuration=vectorize_impl
 
-# 3. GCC (vectorize_expr)
+echo "Configuration 3. GCC (vectorize_expr)"
 
 export ETL_DEFAULTS="-DETL_VECTORIZE_EXPR"
 
@@ -89,7 +89,7 @@ make clean
 make release/bin/benchmark
 time ./release/bin/benchmark --tag=`git rev-list HEAD --count`-`git rev-parse HEAD` --configuration=vectorize_expr
 
-# 4. GCC (vectorize_full)
+echo "Configuration 4. GCC (vectorize_full)"
 
 export ETL_DEFAULTS="-DETL_VECTORIZE_FULL"
 
@@ -97,7 +97,7 @@ make clean
 make release/bin/benchmark
 time ./release/bin/benchmark --tag=`git rev-list HEAD --count`-`git rev-parse HEAD` --configuration=vectorize_full
 
-# 5. GCC (vectorize_full blas_mode)
+echo "Configuration 5. GCC (vectorize_full blas_mode)"
 
 export ETL_DEFAULTS="-DETL_VECTORIZE_FULL"
 export ETL_BLAS=true
@@ -106,7 +106,7 @@ make clean
 make release/bin/benchmark
 time ./release/bin/benchmark --tag=`git rev-list HEAD --count`-`git rev-parse HEAD` --configuration="blas_mode+vectorize_full"
 
-# 6. GCC (vectorize_full mkl_mode)
+echo "Configuration 6. GCC (vectorize_full mkl_mode)"
 
 unset ETL_BLAS
 export ETL_DEFAULTS="-DETL_VECTORIZE_FULL"
