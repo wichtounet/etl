@@ -95,6 +95,40 @@ using sigmoid_policy = VALUES_POLICY(250, 500, 750, 1000, 1250, 1500, 1750, 2000
 #define MC_SECTION_FUNCTOR(name, ...)
 #endif
 
+//Bench assignment
+CPM_BENCH() {
+    CPM_TWO_PASS_NS(
+        "r = a (s)",
+        [](std::size_t d){ return std::make_tuple(svec(d), svec(d)); },
+        [](svec& a, svec& r){ r = a; }
+        );
+
+    CPM_TWO_PASS_NS(
+        "r = a (d)",
+        [](std::size_t d){ return std::make_tuple(dvec(d), dvec(d)); },
+        [](dvec& a, dvec& r){ r = a; }
+        );
+
+    CPM_TWO_PASS_NS(
+        "r = a (c)",
+        [](std::size_t d){ return std::make_tuple(cvec(d), cvec(d)); },
+        [](cvec& a, cvec& r){ r = a; }
+        );
+
+    CPM_TWO_PASS_NS(
+        "r = a (z)",
+        [](std::size_t d){ return std::make_tuple(zvec(d), zvec(d)); },
+        [](zvec& a, zvec& r){ r = a; }
+        );
+
+    CPM_TWO_PASS_NS_P(
+        mat_policy_2d,
+        "R = A (d)",
+        [](auto d1, auto d2){ return std::make_tuple(dmat(d1, d2), dmat(d1, d2)); },
+        [](dmat& A, dmat& R){ R = A; }
+        );
+}
+
 //Bench addition
 CPM_BENCH() {
     CPM_TWO_PASS_NS(
