@@ -14,8 +14,8 @@
 #define CPM_PARALLEL_RANDOMIZE
 #define CPM_FAST_RANDOMIZE
 
-#define CPM_WARMUP 3
-#define CPM_REPEAT 10
+#define CPM_WARMUP 2
+#define CPM_REPEAT 8
 
 #define CPM_BENCHMARK "Tests Benchmarks"
 #include "cpm/cpm.hpp"
