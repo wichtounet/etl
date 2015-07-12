@@ -64,7 +64,7 @@ using mat_policy = VALUES_POLICY(10, 25, 50, 100, 200, 300, 400, 500, 600, 700, 
 using mat_policy_2d = NARY_POLICY(mat_policy, mat_policy);
 
 using conv_1d_large_policy = NARY_POLICY(VALUES_POLICY(1000, 2000, 3000, 4000, 5000, 6000, 7000, 8000, 9000, 10000), VALUES_POLICY(500, 1000, 1500, 2000, 2500, 3000, 3500, 4000, 4500, 5000));
-using conv_2d_large_policy = NARY_POLICY(VALUES_POLICY(100, 105, 110, 115, 120, 125, 130, 135, 140, 145, 150), VALUES_POLICY(50, 50, 55, 55, 60, 60, 65, 65, 70, 70, 75));
+using conv_2d_large_policy = NARY_POLICY(VALUES_POLICY(100, 105, 110, 115, 120, 125, 130, 135, 140), VALUES_POLICY(50, 50, 55, 55, 60, 60, 65, 65, 70));
 
 using fft_1d_policy = VALUES_POLICY(10, 100, 1000, 10000, 100000, 1000000, 10000000);
 using fft_2d_policy = NARY_POLICY(VALUES_POLICY(200, 400, 600, 800, 1000, 1200, 1400, 1600, 1800, 2000), VALUES_POLICY(200, 400, 600, 800, 1000, 1200, 1400, 1600, 1800, 2000));
@@ -289,21 +289,21 @@ CPM_BENCH() {
 //2D-Convolution benchmarks with large-kernel
 CPM_BENCH() {
     CPM_TWO_PASS_NS_P(
-        NARY_POLICY(VALUES_POLICY(100, 110, 120, 130, 140, 150, 160, 170, 180, 190), VALUES_POLICY(50, 55, 60, 65, 70, 75, 80, 85, 90, 95)),
+        NARY_POLICY(VALUES_POLICY(100, 110, 120, 130, 140, 150, 160, 170, 180), VALUES_POLICY(50, 55, 60, 65, 70, 75, 80, 85, 90)),
         "r = conv_2d_full(a,b)(large)",
         [](std::size_t d1, std::size_t d2){ return std::make_tuple(dmat(d1, d1), dmat(d2, d2), dmat(d1 + d2 - 1, d1 + d2 - 1)); },
         [](dmat& a, dmat& b, dmat& r){ r = etl::conv_2d_full(a, b); }
         );
 
     CPM_TWO_PASS_NS_P(
-        NARY_POLICY(VALUES_POLICY(100, 110, 120, 130, 140, 150, 160, 170, 180, 190), VALUES_POLICY(50, 55, 60, 65, 70, 75, 80, 85, 90, 95)),
+        NARY_POLICY(VALUES_POLICY(100, 110, 120, 130, 140, 150, 160, 170, 180), VALUES_POLICY(50, 55, 60, 65, 70, 75, 80, 85, 90)),
         "r = conv_2d_same(a,b)(large)",
         [](std::size_t d1, std::size_t d2){ return std::make_tuple(dmat(d1, d1), dmat(d2, d2), dmat(d1, d1)); },
         [](dmat& a, dmat& b, dmat& r){ r = etl::conv_2d_same(a, b); }
         );
 
     CPM_TWO_PASS_NS_P(
-        NARY_POLICY(VALUES_POLICY(100, 110, 120, 130, 140, 150, 160, 170, 180, 190), VALUES_POLICY(50, 55, 60, 65, 70, 75, 80, 85, 90, 95)),
+        NARY_POLICY(VALUES_POLICY(100, 110, 120, 130, 140, 150, 160, 170, 180), VALUES_POLICY(50, 55, 60, 65, 70, 75, 80, 85, 90)),
         "r = conv_2d_valid(a,b)(large)",
         [](std::size_t d1, std::size_t d2){ return std::make_tuple(dmat(d1, d1), dmat(d2, d2), dmat(d1 - d2 + 1, d1 - d2 + 1)); },
         [](dmat& a, dmat& b, dmat& r){ r = etl::conv_2d_valid(a, b); }
