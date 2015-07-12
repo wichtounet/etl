@@ -69,7 +69,7 @@ using conv_2d_large_policy = NARY_POLICY(VALUES_POLICY(100, 105, 110, 115, 120, 
 using fft_1d_policy = VALUES_POLICY(10, 100, 1000, 10000, 100000, 1000000, 2500000);
 using fft_2d_policy = NARY_POLICY(VALUES_POLICY(200, 400, 600, 800, 1000, 1200, 1400, 1600, 1800), VALUES_POLICY(200, 400, 600, 800, 1000, 1200, 1400, 1600, 1800));
 
-using sigmoid_policy = VALUES_POLICY(250, 500, 750, 1000, 1250, 1500, 1750, 2000, 2250, 2500);
+using sigmoid_policy = VALUES_POLICY(250, 500, 750, 1000, 1250, 1500, 1750, 2000);
 
 #ifdef TEST_SSE
 #define SSE_SECTION_FUNCTOR(name, ...) , CPM_SECTION_FUNCTOR(name, __VA_ARGS__)
@@ -241,21 +241,21 @@ CPM_BENCH() {
 //1D-Convolution benchmarks with large-kernel
 CPM_BENCH() {
     CPM_TWO_PASS_NS_P(
-        NARY_POLICY(VALUES_POLICY(1000, 2000, 3000, 4000, 5000, 6000, 7000, 8000, 9000, 10000, 11000, 12000), VALUES_POLICY(500, 1000, 1500, 2000, 2500, 3000, 3500, 4000, 4500, 5000, 5500, 6000)),
+        NARY_POLICY(VALUES_POLICY(1000, 2000, 3000, 4000, 5000, 6000, 7000, 8000, 9000, 10000), VALUES_POLICY(500, 1000, 1500, 2000, 2500, 3000, 3500, 4000, 4500, 5000)),
         "r = conv_1d_full(a,b)(large)",
         [](std::size_t d1, std::size_t d2){ return std::make_tuple(dvec(d1), dvec(d2), dvec(d1 + d2 - 1)); },
         [](dvec& a, dvec& b, dvec& r){ r = etl::conv_1d_full(a, b); }
         );
 
     CPM_TWO_PASS_NS_P(
-        NARY_POLICY(VALUES_POLICY(1000, 2000, 3000, 4000, 5000, 6000, 7000, 8000, 9000, 10000, 11000, 12000), VALUES_POLICY(500, 1000, 1500, 2000, 2500, 3000, 3500, 4000, 4500, 5000, 5500, 6000)),
+        NARY_POLICY(VALUES_POLICY(1000, 2000, 3000, 4000, 5000, 6000, 7000, 8000, 9000, 10000), VALUES_POLICY(500, 1000, 1500, 2000, 2500, 3000, 3500, 4000, 4500, 5000)),
         "r = conv_1d_same(a,b)(large)",
         [](std::size_t d1, std::size_t d2){ return std::make_tuple(dvec(d1), dvec(d2), dvec(d1)); },
         [](dvec& a, dvec& b, dvec& r){ r = etl::conv_1d_same(a, b); }
         );
 
     CPM_TWO_PASS_NS_P(
-        NARY_POLICY(VALUES_POLICY(1000, 2000, 3000, 4000, 5000, 6000, 7000, 8000, 9000, 10000, 11000, 12000), VALUES_POLICY(500, 1000, 1500, 2000, 2500, 3000, 3500, 4000, 4500, 5000, 5500, 6000)),
+        NARY_POLICY(VALUES_POLICY(1000, 2000, 3000, 4000, 5000, 6000, 7000, 8000, 9000, 10000), VALUES_POLICY(500, 1000, 1500, 2000, 2500, 3000, 3500, 4000, 4500, 5000)),
         "r = conv_1d_valid(a,b)(large)",
         [](std::size_t d1, std::size_t d2){ return std::make_tuple(dvec(d1), dvec(d2), dvec(d1 - d2 + 1)); },
         [](dvec& a, dvec& b, dvec& r){ r = etl::conv_1d_valid(a, b); }
@@ -265,21 +265,21 @@ CPM_BENCH() {
 //1D-Convolution benchmarks with small-kernel
 CPM_BENCH() {
     CPM_TWO_PASS_NS_P(
-        NARY_POLICY(VALUES_POLICY(1000, 2000, 3000, 4000, 5000, 6000, 7000, 8000, 9000, 10000, 11000, 12000), VALUES_POLICY(100, 200, 300, 400, 500, 600, 700, 800, 900, 1000, 1100, 1200)),
+        NARY_POLICY(VALUES_POLICY(1000, 2000, 3000, 4000, 5000, 6000, 7000, 8000, 9000, 10000), VALUES_POLICY(100, 200, 300, 400, 500, 600, 700, 800, 900, 1000)),
         "r = conv_1d_full(a,b)(small)",
         [](std::size_t d1, std::size_t d2){ return std::make_tuple(dvec(d1), dvec(d2), dvec(d1 + d2 - 1)); },
         [](dvec& a, dvec& b, dvec& r){ r = etl::conv_1d_full(a, b); }
         );
 
     CPM_TWO_PASS_NS_P(
-        NARY_POLICY(VALUES_POLICY(1000, 2000, 3000, 4000, 5000, 6000, 7000, 8000, 9000, 10000, 11000, 12000), VALUES_POLICY(100, 200, 300, 400, 500, 600, 700, 800, 900, 1000, 1100, 1200)),
+        NARY_POLICY(VALUES_POLICY(1000, 2000, 3000, 4000, 5000, 6000, 7000, 8000, 9000, 10000), VALUES_POLICY(100, 200, 300, 400, 500, 600, 700, 800, 900, 1000)),
         "r = conv_1d_same(a,b)(small)",
         [](std::size_t d1, std::size_t d2){ return std::make_tuple(dvec(d1), dvec(d2), dvec(d1)); },
         [](dvec& a, dvec& b, dvec& r){ r = etl::conv_1d_same(a, b); }
         );
 
     CPM_TWO_PASS_NS_P(
-        NARY_POLICY(VALUES_POLICY(1000, 2000, 3000, 4000, 5000, 6000, 7000, 8000, 9000, 10000, 11000, 12000), VALUES_POLICY(100, 200, 300, 400, 500, 600, 700, 800, 900, 1000, 1100, 1200)),
+        NARY_POLICY(VALUES_POLICY(1000, 2000, 3000, 4000, 5000, 6000, 7000, 8000, 9000, 10000), VALUES_POLICY(100, 200, 300, 400, 500, 600, 700, 800, 900, 1000)),
         "r = conv_1d_valid(a,b)(small)",
         [](std::size_t d1, std::size_t d2){ return std::make_tuple(dvec(d1), dvec(d2), dvec(d1 - d2 + 1)); },
         [](dvec& a, dvec& b, dvec& r){ r = etl::conv_1d_valid(a, b); }
