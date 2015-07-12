@@ -15,7 +15,7 @@ echo "Configuration 1. Clang (default)"
 
 make clean
 make release/bin/benchmark
-time ./release/bin/benchmark --tag=`git rev-list HEAD --count`-`git rev-parse HEAD` --configuration=default
+time ./release/bin/benchmark $(BENCH_ARGS) --tag=`git rev-list HEAD --count`-`git rev-parse HEAD` --configuration=default
 
 echo "Configuration 2. Clang (vectorize_full)"
 
@@ -23,7 +23,7 @@ export ETL_DEFAULTS="-DETL_VECTORIZE_FULL"
 
 make clean
 make release/bin/benchmark
-time ./release/bin/benchmark --tag=`git rev-list HEAD --count`-`git rev-parse HEAD` --configuration=vectorize_full
+time ./release/bin/benchmark $(BENCH_ARGS) --tag=`git rev-list HEAD --count`-`git rev-parse HEAD` --configuration=vectorize_full
 
 echo "Configuration 3. Clang (vectorize_full blas_mode)"
 
@@ -32,7 +32,7 @@ export ETL_BLAS=true
 
 make clean
 make release/bin/benchmark
-time ./release/bin/benchmark --tag=`git rev-list HEAD --count`-`git rev-parse HEAD` --configuration="blas_mode+vectorize_full"
+time ./release/bin/benchmark $(BENCH_ARGS) --tag=`git rev-list HEAD --count`-`git rev-parse HEAD` --configuration="blas_mode+vectorize_full"
 
 echo "Configuration 4. Clang (vectorize_full mkl_mode)"
 
@@ -42,7 +42,7 @@ export ETL_MKL=true
 
 make clean
 make release/bin/benchmark
-time ./release/bin/benchmark --tag=`git rev-list HEAD --count`-`git rev-parse HEAD` --configuration="mkl_mode+vectorize_full"
+time ./release/bin/benchmark $(BENCH_ARGS) --tag=`git rev-list HEAD --count`-`git rev-parse HEAD` --configuration="mkl_mode+vectorize_full"
 
 unset ETL_DEFAULTS
 unset ETL_MKL
@@ -55,7 +55,7 @@ echo "Configuration 1. GCC (default)"
 
 make clean
 make release/bin/benchmark
-time ./release/bin/benchmark --tag=`git rev-list HEAD --count`-`git rev-parse HEAD` --configuration=default
+time ./release/bin/benchmark $(BENCH_ARGS) --tag=`git rev-list HEAD --count`-`git rev-parse HEAD` --configuration=default
 
 echo "Configuration 2. GCC (vectorize_full)"
 
@@ -63,7 +63,7 @@ export ETL_DEFAULTS="-DETL_VECTORIZE_FULL"
 
 make clean
 make release/bin/benchmark
-time ./release/bin/benchmark --tag=`git rev-list HEAD --count`-`git rev-parse HEAD` --configuration=vectorize_full
+time ./release/bin/benchmark $(BENCH_ARGS) --tag=`git rev-list HEAD --count`-`git rev-parse HEAD` --configuration=vectorize_full
 
 echo "Configuration 3. GCC (vectorize_full blas_mode)"
 
@@ -72,7 +72,7 @@ export ETL_BLAS=true
 
 make clean
 make release/bin/benchmark
-time ./release/bin/benchmark --tag=`git rev-list HEAD --count`-`git rev-parse HEAD` --configuration="blas_mode+vectorize_full"
+time ./release/bin/benchmark $(BENCH_ARGS) --tag=`git rev-list HEAD --count`-`git rev-parse HEAD` --configuration="blas_mode+vectorize_full"
 
 echo "Configuration 4. GCC (vectorize_full mkl_mode)"
 
@@ -82,4 +82,4 @@ export ETL_MKL=true
 
 make clean
 make release/bin/benchmark
-time ./release/bin/benchmark --tag=`git rev-list HEAD --count`-`git rev-parse HEAD` --configuration="mkl_mode+vectorize_full"
+time ./release/bin/benchmark $(BENCH_ARGS) --tag=`git rev-list HEAD --count`-`git rev-parse HEAD` --configuration="mkl_mode+vectorize_full"
