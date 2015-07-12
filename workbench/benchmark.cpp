@@ -71,6 +71,11 @@ using fft_2d_policy = NARY_POLICY(VALUES_POLICY(200, 400, 600, 800, 1000, 1200, 
 
 using sigmoid_policy = VALUES_POLICY(250, 500, 750, 1000, 1250, 1500, 1750, 2000);
 
+using trans_sub_policy = VALUES_POLICY(100, 200, 300, 400, 500, 600, 700, 800, 900, 1000);
+using trans_policy = NARY_POLICY(
+    VALUES_POLICY(100, 100, 200, 200, 300, 300, 400, 400, 500, 500, 600, 600, 700, 700, 800, 800, 900, 900, 1000, 1000),
+    VALUES_POLICY(100, 200, 200, 300, 300, 400, 400, 500, 500, 600, 600, 700, 700, 800, 800, 900, 900, 1000, 1000, 1100));
+
 #ifdef TEST_SSE
 #define SSE_SECTION_FUNCTOR(name, ...) , CPM_SECTION_FUNCTOR(name, __VA_ARGS__)
 #else
@@ -253,6 +258,37 @@ CPM_BENCH() {
         "R = A / B",
         [](auto d1, auto d2){ return std::make_tuple(dmat(d1, d2), dmat(d1, d2), dmat(d1, d2)); },
         [](dmat& A, dmat& B, dmat& R){ R = A / B; }
+        );
+}
+
+//Bench transposition
+CPM_BENCH() {
+    CPM_TWO_PASS_NS_P(
+        trans_policy,
+        "r = tranpose(a) (s)",
+        [](std::size_t d1, std::size_t d2){ return std::make_tuple(smat(d1, d2), smat(d1, d2)); },
+        [](smat& a, smat& r){ r = a.transpose(); }
+        );
+
+    CPM_TWO_PASS_NS_P(
+        trans_policy,
+        "r = tranpose(a) (d)",
+        [](std::size_t d1, std::size_t d2){ return std::make_tuple(dmat(d1, d2), dmat(d1, d2)); },
+        [](dmat& a, dmat& r){ r = a.transpose(); }
+        );
+
+    CPM_TWO_PASS_NS_P(
+        trans_policy,
+        "a = tranpose(a) (s)",
+        [](std::size_t d1, std::size_t d2){ return std::make_tuple(smat(d1, d2)); },
+        [](smat& a){ a.transpose_inplace(); }
+        );
+
+    CPM_TWO_PASS_NS_P(
+        trans_policy,
+        "a = tranpose(a) (d)",
+        [](std::size_t d1, std::size_t d2){ return std::make_tuple(dmat(d1, d2)); },
+        [](dmat& a){ a.transpose_inplace(); }
         );
 }
 
