@@ -174,6 +174,18 @@ CPM_BENCH() {
         [](dvec& a, dvec& b, dvec& r){ r = a >> b; }
         );
 
+    CPM_TWO_PASS_NS(
+        "r = a >> b (c)",
+        [](std::size_t d){ return std::make_tuple(cvec(d), cvec(d), cvec(d)); },
+        [](cvec& a, cvec& b, cvec& r){ r = a >> b; }
+        );
+
+    CPM_TWO_PASS_NS(
+        "r = a >> b (z)",
+        [](std::size_t d){ return std::make_tuple(zvec(d), zvec(d), zvec(d)); },
+        [](zvec& a, zvec& b, zvec& r){ r = a >> b; }
+        );
+
     CPM_TWO_PASS_NS_P(
         mat_policy_2d,
         "R = A >> B",
