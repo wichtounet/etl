@@ -17,7 +17,7 @@ make clean
 make release/bin/benchmark
 time ./release/bin/benchmark --tag=`git rev-list HEAD --count`-`git rev-parse HEAD` --configuration=default
 
- echo "Configuration 2. Clang (vectorize_impl)"
+echo "Configuration 2. Clang (vectorize_impl)"
 
 export ETL_DEFAULTS="-DETL_VECTORIZE_IMPL"
 
