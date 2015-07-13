@@ -9,6 +9,10 @@
 
 #include <immintrin.h>
 
+#ifdef VECT_DEBUG
+#include <iostream>
+#endif
+
 #ifdef __clang__
 #define ETL_INLINE_VEC_256 inline __m256 __attribute__((__always_inline__, __nodebug__))
 #define ETL_INLINE_VEC_256D inline __m256d __attribute__((__always_inline__, __nodebug__))
@@ -56,6 +60,43 @@ struct intrinsic_traits <std::complex<double>> {
 };
 
 namespace vec {
+
+#ifdef VEC_DEBUG
+
+template<typename T>
+std::string debug_d(T value){
+    union test {
+        __m256d vec; // a data field, maybe a register, maybe not
+        double array[4];
+        test(__m256d vec) : vec(vec) {}
+    };
+
+    test u_value = value;
+    std::cout << "[" << u_value.array[0] << "," << u_value.array[1] << ","<< u_value.array[2] << ","<< u_value.array[3] << "]" << std::endl;
+}
+
+template<typename T>
+std::string debug_s(T value){
+    union test {
+        __m256 vec; // a data field, maybe a register, maybe not
+        float array[8];
+        test(__m256 vec) : vec(vec) {}
+    };
+
+    test u_value = value;
+    std::cout << "[" << u_value.array[0] << "," << u_value.array[1] << ","<< u_value.array[2] << ","<< u_value.array[3]
+              << "," << u_value.array[4] << "," << u_value.array[5] << ","<< u_value.array[6] << ","<< u_value.array[7] << "]" << std::endl;
+}
+
+#else
+
+template<typename T>
+std::string debug_d(T){}
+
+template<typename T>
+std::string debug_s(T){}
+
+#endif
 
 inline void storeu(float* memory, __m256 value){
     _mm256_storeu_ps(memory, value);
@@ -158,9 +199,58 @@ ETL_INLINE_VEC_256 mul(__m256 lhs, __m256 rhs){
     return _mm256_mul_ps(lhs, rhs);
 }
 
+template<>
+ETL_INLINE_VEC_256 mul<true>(__m256 lhs, __m256 rhs){
+    //lhs = [x1.real, x1.img, x2.real, x2.img, ...]
+    //rhs = [y1.real, y1.img, y2.real, y2.img, ...]
+
+    //ymm1 = [y1.real, y1.real, y2.real, y2.real, ...]
+    __m256 ymm1 = _mm256_moveldup_ps(rhs);
+
+    //ymm2 = lhs * ymm1
+    __m256 ymm2 = _mm256_mul_ps(lhs, ymm1);
+
+    //ymm3 = [x1.img, x1.real, x2.img, x2.real]
+    __m256 ymm3 = _mm256_permute_ps(lhs, _MM_SHUFFLE(2, 3, 0, 1));
+
+    //ymm1 = [y1.imag, y1.imag, y2.imag, y2.imag]
+    ymm1 = _mm256_movehdup_ps(rhs);
+
+    //ymm4 = ymm3 * ymm1
+    __m256 ymm4 = _mm256_mul_ps(ymm3, ymm1);
+
+    //result = [ymm2 -+ ymm4];
+    return _mm256_addsub_ps(ymm2, ymm4);
+}
+
 template<bool Complex = false>
 ETL_INLINE_VEC_256D mul(__m256d lhs, __m256d rhs){
     return _mm256_mul_pd(lhs, rhs);
+}
+
+template<>
+ETL_INLINE_VEC_256D mul<true>(__m256d lhs, __m256d rhs){
+    //lhs = [x1.real, x1.img, x2.real, x2.img]
+    //rhs = [y1.real, y1.img, y2.real, y2.img]
+
+    //ymm1 = [y1.real, y1.real, y2.real, y2.real]
+    __m256d ymm1 = _mm256_movedup_pd(rhs);
+
+    //ymm2 = lhs * ymm1
+    __m256d ymm2 = _mm256_mul_pd(lhs, ymm1);
+
+    //ymm3 = [x1.img, x1.real, x2.img, x2.real]
+    __m256d ymm3 = _mm256_permute_pd(lhs, 5);
+
+    //ymm1 = [y1.imag, y1.imag, y2.imag, y2.imag]
+    __m256d ymm5 = _mm256_permute_pd(rhs, 5);
+    ymm1 = _mm256_movedup_pd(ymm5);
+
+    //ymm4 = ymm3 * ymm1
+    __m256d ymm4 = _mm256_mul_pd(ymm3, ymm1);
+
+    //result = [ymm2 -+ ymm4];
+    return _mm256_addsub_pd(ymm2, ymm4);
 }
 
 #ifdef __INTEL_COMPILER
