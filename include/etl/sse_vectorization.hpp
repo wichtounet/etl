@@ -233,15 +233,14 @@ ETL_INLINE_VEC_128D mul<true>(__m128d lhs, __m128d rhs){
     //ymm1 = [x.img, x.real]
     ymm1 = _mm_shuffle_pd(lhs, lhs, _MM_SHUFFLE2(0, 1));
 
-    //ymm2 =  [y.img, y.img]
-    __m128d ymm3 = _mm_shuffle_pd(rhs, rhs, _MM_SHUFFLE2(0, 1));
-    __m128d ymm4 = _mm_movedup_pd(ymm3);
+    //ymm3 =  [y.img, y.img]
+    __m128d ymm3 = _mm_shuffle_pd(rhs, rhs, _MM_SHUFFLE2(1, 1));
 
-    //ymm3 = [x.img * y.img, x.real * y.img]
-    ymm3 = _mm_mul_pd(ymm1, ymm4);
+    //ymm4 = [x.img * y.img, x.real * y.img]
+    __m128d ymm4 = _mm_mul_pd(ymm1, ymm3);
 
     //result = [x.real * y.real - x.img * y.img, x.img * y.real - x.real * y.img]
-    return _mm_addsub_pd(ymm2, ymm3);
+    return _mm_addsub_pd(ymm2, ymm4);
 }
 
 template<bool Complex = false>
