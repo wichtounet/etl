@@ -113,3 +113,39 @@ TEMPLATE_TEST_CASE_2( "complex/6", "[complex]", Z, float, double ) {
     REQUIRE(c[2].real() == Approx(Z(0.461538)));
     REQUIRE(c[2].imag() == Approx(Z(0.3076923)));
 }
+
+TEMPLATE_TEST_CASE_2( "complex/7", "[complex]", Z, float, double ) {
+    etl::fast_vector<std::complex<Z>, 1024> a;
+    etl::fast_vector<std::complex<Z>, 1024> b;
+    etl::fast_vector<std::complex<Z>, 1024> c;
+
+    for(std::size_t i = 0; i < 1024; ++i){
+        a[i] = std::complex<Z>(i * 1099.66, (i - 32.3) * -23.04);
+        b[i] = std::complex<Z>((i-100) * 99.66, (i + 14.3) * 23.04);
+    }
+
+    c = a >> b;
+
+    for(std::size_t i = 0; i < 1024; ++i){
+        REQUIRE(c[i].real() == Approx((a[i] * b[i]).real()));
+        REQUIRE(c[i].imag() == Approx((a[i] * b[i]).imag()));
+    }
+}
+
+TEMPLATE_TEST_CASE_2( "complex/8", "[complex]", Z, float, double ) {
+    etl::fast_vector<std::complex<Z>, 1024> a;
+    etl::fast_vector<std::complex<Z>, 1024> b;
+    etl::fast_vector<std::complex<Z>, 1024> c;
+
+    for(std::size_t i = 0; i < 1024; ++i){
+        a[i] = std::complex<Z>(i * 1099.66, (i - 32.3) * -23.04);
+        b[i] = std::complex<Z>((i-100) * 99.66, (i + 14.3) * 23.04);
+    }
+
+    c = a / b;
+
+    for(std::size_t i = 0; i < 1024; ++i){
+        REQUIRE(c[i].real() == Approx((a[i] / b[i]).real()));
+        REQUIRE(c[i].imag() == Approx((a[i] / b[i]).imag()));
+    }
+}
