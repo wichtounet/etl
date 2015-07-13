@@ -9,6 +9,10 @@
 
 #include <immintrin.h>
 
+#ifdef VECT_DEBUG
+#include <iostream>
+#endif
+
 #ifdef __clang__
 #define ETL_INLINE_VEC_128 inline __m128 __attribute__((__always_inline__, __nodebug__))
 #define ETL_INLINE_VEC_128D inline __m128d __attribute__((__always_inline__, __nodebug__))
@@ -56,6 +60,42 @@ struct intrinsic_traits <std::complex<double>> {
 };
 
 namespace vec {
+
+#ifdef VEC_DEBUG
+
+template<typename T>
+void debug_d(T value){
+    union test {
+        __m128d vec; // a data field, maybe a register, maybe not
+        double array[2];
+        test(__m128d vec) : vec(vec) {}
+    };
+
+    test u_value = value;
+    std::cout << "[" << u_value.array[0] << "," << u_value.array[1] << "]" << std::endl;
+}
+
+template<typename T>
+void debug_s(T value){
+    union test {
+        __m128 vec; // a data field, maybe a register, maybe not
+        float array[4];
+        test(__m128 vec) : vec(vec) {}
+    };
+
+    test u_value = value;
+    std::cout << "[" << u_value.array[0] << "," << u_value.array[1] << ","<< u_value.array[2] << ","<< u_value.array[3] << "]" << std::endl;
+}
+
+#else
+
+template<typename T>
+std::string debug_d(T){}
+
+template<typename T>
+std::string debug_s(T){}
+
+#endif
 
 inline void storeu(float* memory, __m128 value){
     _mm_storeu_ps(memory, value);
