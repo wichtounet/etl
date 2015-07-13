@@ -309,8 +309,7 @@ public:
                 _data = rhs._data;
             } else {
                 validate_assign(*this, rhs);
-
-                std::copy(rhs.begin(), rhs.end(), begin());
+                assign_evaluate(rhs, *this);
             }
         }
 

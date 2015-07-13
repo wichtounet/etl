@@ -158,7 +158,7 @@ public:
 
     fast_matrix_impl(const fast_matrix_impl& rhs) noexcept(array_impl) {
         init();
-        std::copy(rhs.begin(), rhs.end(), begin());
+        assign_evaluate(rhs, *this);
     }
 
     template<typename SST = ST, cpp_enable_if(matrix_detail::is_vector<SST>::value)>
@@ -204,7 +204,7 @@ public:
     template<typename SST = ST, cpp_enable_if(matrix_detail::is_vector<SST>::value)>
     fast_matrix_impl& operator=(const fast_matrix_impl& rhs) noexcept {
         if(this != &rhs){
-            _data = rhs._data;
+            assign_evaluate(rhs, *this);
         }
         return *this;
     }
@@ -212,7 +212,7 @@ public:
     template<typename SST = ST, cpp_disable_if(matrix_detail::is_vector<SST>::value)>
     fast_matrix_impl& operator=(const fast_matrix_impl& rhs) noexcept {
         if(this != &rhs){
-            std::copy(rhs.begin(), rhs.end(), begin());
+            assign_evaluate(rhs, *this);
         }
         return *this;
     }
@@ -220,7 +220,7 @@ public:
     template<std::size_t... SDims>
     fast_matrix_impl& operator=(const fast_matrix_impl<T, ST, SO, SDims...>& rhs) noexcept {
         validate_assign(*this, rhs);
-        std::copy(rhs.begin(), rhs.end(), begin());
+        assign_evaluate(rhs, *this);
         return *this;
     }
 
