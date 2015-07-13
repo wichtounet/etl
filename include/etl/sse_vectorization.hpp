@@ -253,7 +253,7 @@ ETL_INLINE_VEC_128 div<true>(__m128 lhs, __m128 rhs){
     //lhs = [x1.real, x1.img, x2.real, x2.img]
     //rhs = [y1.real, y1.img, y2.real, y2.img]
 
-    //ymm1 = [y1.real, y1.real, y2.real, y2.real]
+    //ymm0 = [y1.real, y1.real, y2.real, y2.real]
     __m128 ymm0 = _mm_moveldup_ps(rhs);
 
     //ymm1 = [y1.imag, y1.imag, y2.imag, y2.imag]
@@ -268,7 +268,7 @@ ETL_INLINE_VEC_128 div<true>(__m128 lhs, __m128 rhs){
     //ymm4 = [x.img * y.img, x.real * y.img, ...]
     __m128 ymm4 = _mm_mul_ps(ymm3, ymm1);
 
-    //ymm4 = subadd(ymm2, ymm1)
+    //ymm4 = subadd(ymm2, ymm4)
     ymm3 = _mm_sub_ps(_mm_set1_ps(0.0), ymm4);
     ymm4 = _mm_addsub_ps(ymm2, ymm3);
 
