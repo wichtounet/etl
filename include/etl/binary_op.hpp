@@ -97,7 +97,7 @@ struct div_binary_op {
     static cpp14_constexpr vec_type load(const vec_type& lhs, const vec_type& rhs) noexcept {
         const vec_type ymm1(lhs);
         const vec_type ymm2(rhs);
-        return vec::div(ymm1, ymm2);
+        return vec::div<is_complex_t<T>::value>(ymm1, ymm2);
     }
 
     static std::string desc() noexcept {

@@ -161,10 +161,6 @@ ETL_INLINE_VEC_128D sub(__m128d lhs, __m128d rhs){
     return _mm_sub_pd(lhs, rhs);
 }
 
-ETL_INLINE_VEC_128D div(__m128d lhs, __m128d rhs){
-    return _mm_div_pd(lhs, rhs);
-}
-
 ETL_INLINE_VEC_128D sqrt(__m128d x){
     return _mm_sqrt_pd(x);
 }
@@ -181,16 +177,22 @@ ETL_INLINE_VEC_128 sub(__m128 lhs, __m128 rhs){
     return _mm_sub_ps(lhs, rhs);
 }
 
-ETL_INLINE_VEC_128 div(__m128 lhs, __m128 rhs){
-    return _mm_div_ps(lhs, rhs);
-}
-
 ETL_INLINE_VEC_128 sqrt(__m128 x){
     return _mm_sqrt_ps(x);
 }
 
 ETL_INLINE_VEC_128 minus(__m128 x){
     return _mm_xor_ps(x, _mm_set1_ps(-0.f));
+}
+
+template<bool Complex = false>
+ETL_INLINE_VEC_128 div(__m128 lhs, __m128 rhs){
+    return _mm_div_ps(lhs, rhs);
+}
+
+template<bool Complex = false>
+ETL_INLINE_VEC_128D div(__m128d lhs, __m128d rhs){
+    return _mm_div_pd(lhs, rhs);
 }
 
 template<bool Complex = false>
