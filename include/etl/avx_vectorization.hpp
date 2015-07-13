@@ -187,16 +187,6 @@ ETL_INLINE_VEC_256 minus(__m256 x){
 }
 
 template<bool Complex = false>
-ETL_INLINE_VEC_256 div(__m256 lhs, __m256 rhs){
-    return _mm256_div_ps(lhs, rhs);
-}
-
-template<bool Complex = false>
-ETL_INLINE_VEC_256D div(__m256d lhs, __m256d rhs){
-    return _mm256_div_pd(lhs, rhs);
-}
-
-template<bool Complex = false>
 ETL_INLINE_VEC_256 mul(__m256 lhs, __m256 rhs){
     return _mm256_mul_ps(lhs, rhs);
 }
@@ -253,6 +243,16 @@ ETL_INLINE_VEC_256D mul<true>(__m256d lhs, __m256d rhs){
 
     //result = [ymm2 -+ ymm4];
     return _mm256_addsub_pd(ymm2, ymm4);
+}
+
+template<bool Complex = false>
+ETL_INLINE_VEC_256 div(__m256 lhs, __m256 rhs){
+    return _mm256_div_ps(lhs, rhs);
+}
+
+template<bool Complex = false>
+ETL_INLINE_VEC_256D div(__m256d lhs, __m256d rhs){
+    return _mm256_div_pd(lhs, rhs);
 }
 
 #ifdef __INTEL_COMPILER

@@ -186,16 +186,6 @@ ETL_INLINE_VEC_128 minus(__m128 x){
 }
 
 template<bool Complex = false>
-ETL_INLINE_VEC_128 div(__m128 lhs, __m128 rhs){
-    return _mm_div_ps(lhs, rhs);
-}
-
-template<bool Complex = false>
-ETL_INLINE_VEC_128D div(__m128d lhs, __m128d rhs){
-    return _mm_div_pd(lhs, rhs);
-}
-
-template<bool Complex = false>
 ETL_INLINE_VEC_128 mul(__m128 lhs, __m128 rhs){
     return _mm_mul_ps(lhs, rhs);
 }
@@ -252,6 +242,16 @@ ETL_INLINE_VEC_128D mul<true>(__m128d lhs, __m128d rhs){
 
     //result = [x.real * y.real - x.img * y.img, x.img * y.real - x.real * y.img]
     return _mm_addsub_pd(ymm2, ymm3);
+}
+
+template<bool Complex = false>
+ETL_INLINE_VEC_128 div(__m128 lhs, __m128 rhs){
+    return _mm_div_ps(lhs, rhs);
+}
+
+template<bool Complex = false>
+ETL_INLINE_VEC_128D div(__m128d lhs, __m128d rhs){
+    return _mm_div_pd(lhs, rhs);
 }
 
 //The Intel C++ Compiler (icc) has more intrinsics.
