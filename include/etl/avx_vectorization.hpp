@@ -203,7 +203,7 @@ ETL_INLINE_VEC_256 mul<true>(__m256 lhs, __m256 rhs){
     __m256 ymm2 = _mm256_mul_ps(lhs, ymm1);
 
     //ymm3 = [x1.img, x1.real, x2.img, x2.real]
-    __m256 ymm3 = _mm256_permute_ps(lhs, _MM_SHUFFLE(2, 3, 0, 1));
+    __m256 ymm3 = _mm256_permute_ps(lhs, 0b10110001);
 
     //ymm1 = [y1.imag, y1.imag, y2.imag, y2.imag]
     ymm1 = _mm256_movehdup_ps(rhs);
@@ -232,11 +232,10 @@ ETL_INLINE_VEC_256D mul<true>(__m256d lhs, __m256d rhs){
     __m256d ymm2 = _mm256_mul_pd(lhs, ymm1);
 
     //ymm3 = [x1.img, x1.real, x2.img, x2.real]
-    __m256d ymm3 = _mm256_permute_pd(lhs, 5);
+    __m256d ymm3 = _mm256_permute_pd(lhs, 0b0101);
 
     //ymm1 = [y1.imag, y1.imag, y2.imag, y2.imag]
-    __m256d ymm5 = _mm256_permute_pd(rhs, 5);
-    ymm1 = _mm256_movedup_pd(ymm5);
+    ymm1 = _mm256_permute_pd(rhs, 0b1111);
 
     //ymm4 = ymm3 * ymm1
     __m256d ymm4 = _mm256_mul_pd(ymm3, ymm1);
