@@ -67,7 +67,7 @@ template<typename T>
 struct mul_binary_op {
     using vec_type = intrinsic_type<T>;
 
-    static constexpr const bool vectorizable = !is_complex_t<T>::value;
+    static constexpr const bool vectorizable = true;
 
     static constexpr T apply(const T& lhs, const T& rhs) noexcept {
         return lhs * rhs;
