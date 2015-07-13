@@ -69,15 +69,40 @@ struct standard_evaluator {
     }
 
     template<typename E, typename R>
+    struct fast_assign : cpp::and_u<
+        has_direct_access<E>::value,
+        has_direct_access<R>::value,
+        !is_temporary_expr<E>::value
+    > {};
+
+    template<typename E, typename R>
     struct vectorized_assign : cpp::and_u<
+        !fast_assign<E, R>::value,
         vectorize_expr,
         decay_traits<E>::vectorizable,
         intrinsic_traits<value_t<R>>::vectorizable, intrinsic_traits<value_t<E>>::vectorizable,
+        !is_temporary_expr<E>::value,
         std::is_same<typename intrinsic_traits<value_t<R>>::intrinsic_type, typename intrinsic_traits<value_t<E>>::intrinsic_type>::value> {};
+
+    template<typename E, typename R>
+    struct standard_assign : cpp::and_u<
+        !fast_assign<E, R>::value,
+        !vectorized_assign<E, R>::value,
+        !has_direct_access<R>::value,
+        !is_temporary_expr<E>::value
+    > {};
+
+    template<typename E, typename R>
+    struct direct_assign : cpp::and_u<
+        !fast_assign<E, R>::value,
+        !vectorized_assign<E, R>::value,
+        has_direct_access<R>::value,
+        !is_temporary_expr<E>::value
+    > {};
 
     //Standard assign version
 
-    template<typename E, typename R, cpp_enable_if(!vectorized_assign<E, R>::value && !has_direct_access<R>::value && !is_temporary_expr<E>::value)>
+    template<typename E, typename R, cpp_enable_if(standard_assign<E, R>::value)>
     static void assign_evaluate(E&& expr, R&& result){
         evaluate_only(expr);
 
@@ -86,9 +111,18 @@ struct standard_evaluator {
         }
     }
 
+    //Fast assign version (memory copy)
+
+    template<typename E, typename R, cpp_enable_if(fast_assign<E, R>::value)>
+    static void assign_evaluate(E&& expr, R&& result){
+        evaluate_only(expr);
+
+        std::copy(expr.memory_start(), expr.memory_end(), result.memory_start());
+    }
+
     //Direct assign version
 
-    template<typename E, typename R, cpp_enable_if(!vectorized_assign<E, R>::value && has_direct_access<R>::value && !is_temporary_expr<E>::value)>
+    template<typename E, typename R, cpp_enable_if(direct_assign<E, R>::value)>
     static void assign_evaluate(E&& expr, R&& result){
         evaluate_only(expr);
 
@@ -116,7 +150,7 @@ struct standard_evaluator {
 
     //Vectorized assign version
 
-    template<typename E, typename R, cpp_enable_if(vectorized_assign<E, R>::value && !is_temporary_expr<E>::value)>
+    template<typename E, typename R, cpp_enable_if(vectorized_assign<E, R>::value)>
     static void assign_evaluate(E&& expr, R&& result){
         evaluate_only(expr);
 
