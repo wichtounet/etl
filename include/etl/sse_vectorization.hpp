@@ -254,41 +254,35 @@ ETL_INLINE_VEC_128 div<true>(__m128 lhs, __m128 rhs){
     //rhs = [y1.real, y1.img, y2.real, y2.img]
 
     //ymm1 = [y1.real, y1.real, y2.real, y2.real]
-    __m128 ymm1 = _mm_moveldup_ps(rhs);
+    __m128 ymm0 = _mm_moveldup_ps(rhs);
+
+    //ymm1 = [y1.imag, y1.imag, y2.imag, y2.imag]
+    __m128 ymm1 = _mm_movehdup_ps(rhs);
 
     //ymm2 = [x.real * y.real, x.img * y.real, ...]
-    __m128 ymm2 = _mm_mul_ps(lhs, ymm1);
+    __m128 ymm2 = _mm_mul_ps(lhs, ymm0);
 
-    //ymm1 = [x1.img, x1.real, x2.img, x2.real]
-    ymm1 = _mm_shuffle_ps(lhs, lhs, _MM_SHUFFLE(2, 3, 0, 1));
-
-    //ymm3 = [y1.imag, y1.imag, y2.imag, y2.imag]
-    __m128 ymm3 = _mm_movehdup_ps(rhs);
+    //ymm3 = [x1.img, x1.real, x2.img, x2.real]
+    __m128 ymm3 = _mm_shuffle_ps(lhs, lhs, _MM_SHUFFLE(2, 3, 0, 1));
 
     //ymm4 = [x.img * y.img, x.real * y.img, ...]
-    __m128 ymm4 = _mm_mul_ps(ymm1, ymm3);
+    __m128 ymm4 = _mm_mul_ps(ymm3, ymm1);
 
     //ymm4 = subadd(ymm2, ymm1)
-    ymm1 = _mm_sub_ps(_mm_set1_ps(0.0), ymm4);
-    ymm4 = _mm_addsub_ps(ymm2, ymm1);
-
-    //ymm1 = [y.real, y.real]
-    ymm1 = _mm_moveldup_ps(rhs);
+    ymm3 = _mm_sub_ps(_mm_set1_ps(0.0), ymm4);
+    ymm4 = _mm_addsub_ps(ymm2, ymm3);
 
     //ymm2 = [y.real^2, y.real^2]
-    ymm2 = _mm_mul_ps(ymm1, ymm1);
-
-    //ymm1 = [y.img, y.img]
-    ymm1 = _mm_movehdup_ps(rhs);
+    ymm2 = _mm_mul_ps(ymm0, ymm0);
 
     //ymm3 = [y.imag^2, y.imag^2]
     ymm3 = _mm_mul_ps(ymm1, ymm1);
 
-    //ymm4 = [y.real^2 + y.imag^2, y.real^2 + y.imag^2]
-    ymm1 = _mm_add_ps(ymm2, ymm3);
+    //ymm0 = [y.real^2 + y.imag^2, y.real^2 + y.imag^2]
+    ymm0 = _mm_add_ps(ymm2, ymm3);
 
-    //result = ymm4 / ym1m
-    return _mm_div_ps(ymm4, ymm1);
+    //result = ymm4 / ymm0
+    return _mm_div_ps(ymm4, ymm0);
 }
 
 template<bool Complex = false>
@@ -301,42 +295,36 @@ ETL_INLINE_VEC_128D div<true>(__m128d lhs, __m128d rhs){
     //lhs = [x.real, x.img]
     //rhs = [y.real, y.img]
 
-    //ymm1 = [y.real, y.real]
-    __m128d ymm1 = _mm_movedup_pd(rhs);
+    //ymm0 = [y.real, y.real]
+    __m128d ymm0 = _mm_movedup_pd(rhs);
+
+    //ymm1 =  [y.img, y.img]
+    __m128d ymm1 = _mm_shuffle_pd(rhs, rhs, _MM_SHUFFLE2(1, 1));
 
     //ymm2 = [x.real * y.real, x.img * y.real]
-    __m128d ymm2 = _mm_mul_pd(lhs, ymm1);
+    __m128d ymm2 = _mm_mul_pd(lhs, ymm0);
 
-    //ymm1 = [x.img, x.real]
-    ymm1 = _mm_shuffle_pd(lhs, lhs, _MM_SHUFFLE2(0, 1));
-
-    //ymm3 =  [y.img, y.img]
-    __m128d ymm3 = _mm_shuffle_pd(rhs, rhs, _MM_SHUFFLE2(1, 1));
+    //ymm3 = [x.img, x.real]
+    __m128d ymm3 = _mm_shuffle_pd(lhs, lhs, _MM_SHUFFLE2(0, 1));
 
     //ymm4 = [x.img * y.img, x.real * y.img]
-    __m128d ymm4 = _mm_mul_pd(ymm1, ymm3);
+    __m128d ymm4 = _mm_mul_pd(ymm3, ymm1);
 
-    //ymm4 = subadd(ymm2, ymm1)
-    ymm1 = _mm_sub_pd(_mm_set1_pd(0.0), ymm4);
-    ymm4 = _mm_addsub_pd(ymm2, ymm1);
-
-    //ymm1 = [y.real, y.real]
-    ymm1 = _mm_movedup_pd(rhs);
+    //ymm4 = subadd(ymm2, ymm4)
+    ymm3 = _mm_sub_pd(_mm_set1_pd(0.0), ymm4);
+    ymm4 = _mm_addsub_pd(ymm2, ymm3);
 
     //ymm2 = [y.real^2, y.real^2]
-    ymm2 = _mm_mul_pd(ymm1, ymm1);
-
-    //ymm1 = [y.img, y.img]
-    ymm1 = _mm_shuffle_pd(rhs, rhs, _MM_SHUFFLE2(1, 1));
+    ymm2 = _mm_mul_pd(ymm0, ymm0);
 
     //ymm3 = [y.imag^2, y.imag^2]
     ymm3 = _mm_mul_pd(ymm1, ymm1);
 
-    //ymm4 = [y.real^2 + y.imag^2, y.real^2 + y.imag^2]
-    ymm1 = _mm_add_pd(ymm2, ymm3);
+    //ymm0 = [y.real^2 + y.imag^2, y.real^2 + y.imag^2]
+    ymm0 = _mm_add_pd(ymm2, ymm3);
 
-    //result = ymm4 / ym1m
-    return _mm_div_pd(ymm4, ymm1);
+    //result = ymm4 / ymm0
+    return _mm_div_pd(ymm4, ymm0);
 }
 
 //The Intel C++ Compiler (icc) has more intrinsics.
