@@ -91,10 +91,10 @@ std::string debug_s(T value){
 #else
 
 template<typename T>
-std::string debug_d(T){}
+std::string debug_d(T){ return ""; }
 
 template<typename T>
-std::string debug_s(T){}
+std::string debug_s(T){ return ""; }
 
 #endif
 
