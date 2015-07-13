@@ -158,9 +158,58 @@ ETL_INLINE_VEC_128 mul(__m128 lhs, __m128 rhs){
     return _mm_mul_ps(lhs, rhs);
 }
 
+template<>
+ETL_INLINE_VEC_128 mul<true>(__m128 lhs, __m128 rhs){
+    //lhs = [x1.real, x1.img, x2.real, x2.img]
+    //rhs = [y1.real, y1.img, y2.real, y2.img]
+
+    //ymm1 = [y1.real, y1.real, y2.real, y2.real]
+    __m128 ymm1 = _mm_moveldup_ps(rhs);
+
+    //ymm2 = lhs * ymm1
+    __m128 ymm2 = _mm_mul_ps(lhs, ymm1);
+
+    //ymm3 = [x1.img, x1.real, x2.img, x2.real]
+    __m128 ymm3 = _mm_shuffle_ps(lhs, lhs, _MM_SHUFFLE(2, 3, 0, 1));
+
+    //ymm1 = [y1.imag, y1.imag, y2.imag, y2.imag]
+    ymm1 = _mm_movehdup_ps(rhs);
+
+    //ymm4 = ymm3 * ymm1
+    __m128 ymm4 = _mm_mul_ps(ymm3, ymm1);
+
+    //result = [ymm2 -+ ymm4];
+    return _mm_addsub_ps(ymm2, ymm4);
+}
+
 template<bool Complex = false>
 ETL_INLINE_VEC_128D mul(__m128d lhs, __m128d rhs){
     return _mm_mul_pd(lhs, rhs);
+}
+
+template<>
+ETL_INLINE_VEC_128D mul<true>(__m128d lhs, __m128d rhs){
+    //lhs = [x.real, x.img]
+    //rhs = [y.real, y.img]
+
+    //ymm1 = [y.real, y.real]
+    __m128d ymm1 = _mm_movedup_pd(rhs);
+
+    //ymm2 = [x.real * y.real, x.img * y.real]
+    __m128d ymm2 = _mm_mul_pd(lhs, ymm1);
+
+    //ymm1 = [x.img, x.real]
+    ymm1 = _mm_shuffle_pd(lhs, lhs, _MM_SHUFFLE2(0, 1));
+
+    //ymm2 =  [y.img, y.img]
+    __m128d ymm3 = _mm_shuffle_pd(rhs, rhs, _MM_SHUFFLE2(0, 1));
+    __m128d ymm4 = _mm_movedup_pd(ymm3);
+
+    //ymm3 = [x.img * y.img, x.real * y.img]
+    ymm3 = _mm_mul_pd(ymm1, ymm4);
+
+    //result = [x.real * y.real - x.img * y.img, x.img * y.real - x.real * y.img]
+    return _mm_addsub_pd(ymm2, ymm3);
 }
 
 //The Intel C++ Compiler (icc) has more intrinsics.
