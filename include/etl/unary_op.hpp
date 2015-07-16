@@ -210,6 +210,84 @@ struct fast_sigmoid_unary_op {
 };
 
 template<typename T>
+struct tan_unary_op {
+    static constexpr const bool vectorizable = false;
+
+    static constexpr T apply(const T& x) noexcept {
+        return std::tan(x);
+    }
+
+    static std::string desc() noexcept {
+        return "tan";
+    }
+};
+
+template<typename T>
+struct cos_unary_op {
+    static constexpr const bool vectorizable = false;
+
+    static constexpr T apply(const T& x) noexcept {
+        return std::cos(x);
+    }
+
+    static std::string desc() noexcept {
+        return "cos";
+    }
+};
+
+template<typename T>
+struct sin_unary_op {
+    static constexpr const bool vectorizable = false;
+
+    static constexpr T apply(const T& x) noexcept {
+        return std::sin(x);
+    }
+
+    static std::string desc() noexcept {
+        return "sin";
+    }
+};
+
+template<typename T>
+struct tanh_unary_op {
+    static constexpr const bool vectorizable = false;
+
+    static constexpr T apply(const T& x) noexcept {
+        return std::tanh(x);
+    }
+
+    static std::string desc() noexcept {
+        return "tanh";
+    }
+};
+
+template<typename T>
+struct cosh_unary_op {
+    static constexpr const bool vectorizable = false;
+
+    static constexpr T apply(const T& x) noexcept {
+        return std::cosh(x);
+    }
+
+    static std::string desc() noexcept {
+        return "cosh";
+    }
+};
+
+template<typename T>
+struct sinh_unary_op {
+    static constexpr const bool vectorizable = false;
+
+    static constexpr T apply(const T& x) noexcept {
+        return std::sinh(x);
+    }
+
+    static std::string desc() noexcept {
+        return "sinh";
+    }
+};
+
+template<typename T>
 struct bernoulli_unary_op {
     static constexpr const bool vectorizable = false;
 

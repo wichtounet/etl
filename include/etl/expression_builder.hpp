@@ -287,6 +287,36 @@ auto log(E&& value) -> detail::unary_helper<E, log_unary_op> {
 }
 
 template<typename E, cpp::enable_if_u<is_etl_expr<E>::value> = cpp::detail::dummy>
+auto tan(E&& value) -> detail::unary_helper<E, tan_unary_op> {
+    return detail::unary_helper<E, tan_unary_op>{value};
+}
+
+template<typename E, cpp::enable_if_u<is_etl_expr<E>::value> = cpp::detail::dummy>
+auto cos(E&& value) -> detail::unary_helper<E, cos_unary_op> {
+    return detail::unary_helper<E, cos_unary_op>{value};
+}
+
+template<typename E, cpp::enable_if_u<is_etl_expr<E>::value> = cpp::detail::dummy>
+auto sin(E&& value) -> detail::unary_helper<E, sin_unary_op> {
+    return detail::unary_helper<E, sin_unary_op>{value};
+}
+
+template<typename E, cpp::enable_if_u<is_etl_expr<E>::value> = cpp::detail::dummy>
+auto tanh(E&& value) -> detail::unary_helper<E, tanh_unary_op> {
+    return detail::unary_helper<E, tanh_unary_op>{value};
+}
+
+template<typename E, cpp::enable_if_u<is_etl_expr<E>::value> = cpp::detail::dummy>
+auto cosh(E&& value) -> detail::unary_helper<E, cosh_unary_op> {
+    return detail::unary_helper<E, cosh_unary_op>{value};
+}
+
+template<typename E, cpp::enable_if_u<is_etl_expr<E>::value> = cpp::detail::dummy>
+auto sinh(E&& value) -> detail::unary_helper<E, sinh_unary_op> {
+    return detail::unary_helper<E, sinh_unary_op>{value};
+}
+
+template<typename E, cpp::enable_if_u<is_etl_expr<E>::value> = cpp::detail::dummy>
 auto uniform_noise(E&& value) -> detail::unary_helper<E, uniform_noise_unary_op> {
     return detail::unary_helper<E, uniform_noise_unary_op>{value};
 }
