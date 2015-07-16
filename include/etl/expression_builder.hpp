@@ -106,6 +106,16 @@ auto operator*(LE lhs, RE&& rhs) -> detail::right_binary_helper<scalar<value_t<R
     return {scalar<value_t<RE>>(lhs), rhs};
 }
 
+template<typename LE, typename RE, cpp::enable_if_all_u<std::is_convertible<RE, value_t<LE>>::value, is_etl_expr<LE>::value> = cpp::detail::dummy>
+auto operator>>(LE&& lhs, RE rhs) -> detail::left_binary_helper<LE, scalar<value_t<LE>>, mul_binary_op> {
+    return {lhs, scalar<value_t<LE>>(rhs)};
+}
+
+template<typename LE, typename RE, cpp::enable_if_all_u<std::is_convertible<LE, value_t<RE>>::value, is_etl_expr<RE>::value> = cpp::detail::dummy>
+auto operator>>(LE lhs, RE&& rhs) -> detail::right_binary_helper<scalar<value_t<RE>>, RE, mul_binary_op> {
+    return {scalar<value_t<RE>>(lhs), rhs};
+}
+
 template<typename LE, typename RE, cpp_enable_if(std::is_convertible<RE, value_t<LE>>::value && is_etl_expr<LE>::value && (is_div_strict || !std::is_floating_point<RE>::value))>
 auto operator/(LE&& lhs, RE rhs) -> detail::left_binary_helper<LE, scalar<value_t<LE>>, div_binary_op> {
     return {lhs, scalar<value_t<LE>>(rhs)};
