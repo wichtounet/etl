@@ -632,8 +632,8 @@ value_return_t<E> min(E&& values){
 //{{{ Generate data
 
 template<typename T = double>
-auto normal_generator() -> generator_expr<normal_generator_op<T>> {
-    return generator_expr<normal_generator_op<T>>{};
+auto normal_generator(T mean = 0.0, T stddev = 1.0) -> generator_expr<normal_generator_op<T>> {
+    return generator_expr<normal_generator_op<T>>{mean, stddev};
 }
 
 template<typename T = double>

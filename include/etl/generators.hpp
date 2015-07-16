@@ -24,7 +24,7 @@ struct normal_generator_op {
     random_engine rand_engine;
     std::normal_distribution<value_type> normal_distribution;
 
-    normal_generator_op() : rand_engine(std::time(nullptr)), normal_distribution(0.0, 1.0) {}
+    normal_generator_op(T mean, T stddev) : rand_engine(std::time(nullptr)), normal_distribution(mean, stddev) {}
 
     value_type operator()(){
         return normal_distribution(rand_engine);
