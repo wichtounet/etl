@@ -417,7 +417,7 @@ auto r_bernoulli(const E& value) -> detail::unary_helper<E, reverse_bernoulli_un
 
 template<typename E>
 auto tanh_derivative(E&& value) -> decltype(1.0 - (value >> value)) {
-    return 1.0 - (value >> - value);
+    return 1.0 - (value >> value);
 }
 
 template<typename E>
