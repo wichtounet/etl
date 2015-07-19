@@ -288,6 +288,19 @@ struct sinh_unary_op {
 };
 
 template<typename T>
+struct relu_derivative_op {
+    static constexpr const bool vectorizable = false;
+
+    static T apply(const T& x){
+        return x > 0.0 ? 1.0 : 0.0;
+    }
+
+    static std::string desc() noexcept {
+        return "relu_derivative_op";
+    }
+};
+
+template<typename T>
 struct bernoulli_unary_op {
     static constexpr const bool vectorizable = false;
 

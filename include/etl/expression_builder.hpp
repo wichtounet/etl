@@ -311,7 +311,7 @@ auto sin(E&& value) -> detail::unary_helper<E, sin_unary_op> {
     return detail::unary_helper<E, sin_unary_op>{value};
 }
 
-template<typename E, cpp::enable_if_u<is_etl_expr<E>::value> = cpp::detail::dummy>
+template<typename E>
 auto tanh(E&& value) -> detail::unary_helper<E, tanh_unary_op> {
     return detail::unary_helper<E, tanh_unary_op>{value};
 }
@@ -356,12 +356,27 @@ auto sign(E&& value) -> detail::unary_helper<E, sign_unary_op> {
     return detail::unary_helper<E, sign_unary_op>{value};
 }
 
+template<typename E>
+auto identity(E&& value){
+    return std::forward<E>(value);
+}
+
+template<typename E>
+auto identity_derivative(E&&){
+    return 1.0;
+}
+
 //Note: Use of decltype here should not be necessary, but g++ does
 //not like it without it for some reason
 
-template<typename E, cpp::enable_if_u<is_etl_expr<E>::value> = cpp::detail::dummy>
+template<typename E>
 auto sigmoid(E&& value) -> decltype(1.0 / (1.0 + exp(-value))) {
     return 1.0 / (1.0 + exp(-value));
+}
+
+template<typename E>
+auto sigmoid_derivative(E&& value) -> decltype(value >> (1.0 - value)) {
+    return value >> (1.0 - value);
 }
 
 template<typename E, cpp::enable_if_u<is_etl_expr<E>::value> = cpp::detail::dummy>
@@ -398,6 +413,21 @@ auto bernoulli(const E& value) -> detail::unary_helper<E, bernoulli_unary_op> {
 template<typename E, cpp::enable_if_u<is_etl_expr<E>::value> = cpp::detail::dummy>
 auto r_bernoulli(const E& value) -> detail::unary_helper<E, reverse_bernoulli_unary_op> {
     return detail::unary_helper<E, reverse_bernoulli_unary_op>{value};
+}
+
+template<typename E>
+auto tanh_derivative(E&& value) -> decltype(1.0 - (value >> value)) {
+    return 1.0 - (value >> - value);
+}
+
+template<typename E>
+auto relu(E&& value) -> decltype(max(value, 0.0)) {
+    return max(value, 0.0);
+}
+
+template<typename E>
+auto relu_derivative(const E& value) -> detail::unary_helper<E, relu_derivative_op> {
+    return detail::unary_helper<E, relu_derivative_op>{value};
 }
 
 //}}}
