@@ -75,7 +75,7 @@ struct is_transformer : cpp::or_c<
 template<typename T, typename DT>
 struct is_view : cpp::or_c<
         is_2<etl::dim_view, DT>,
-        is_3<etl::fast_matrix_view, DT>,
+        is_var<etl::fast_matrix_view, DT>,
         cpp::is_specialization_of<etl::dyn_matrix_view, DT>,
         cpp::is_specialization_of<etl::sub_view, DT>
     > {};
@@ -130,8 +130,8 @@ struct is_direct_dim_view<dim_view<T,1>> : has_direct_access<T> {};
 template<typename T>
 struct is_direct_fast_matrix_view : std::false_type {};
 
-template<typename T, std::size_t R, std::size_t C>
-struct is_direct_fast_matrix_view<fast_matrix_view<T, R, C>> : has_direct_access<T> {};
+template<typename T, std::size_t... Dims>
+struct is_direct_fast_matrix_view<fast_matrix_view<T, Dims...>> : has_direct_access<T> {};
 
 template<typename T>
 struct is_direct_dyn_matrix_view : std::false_type {};
@@ -975,9 +975,9 @@ struct etl_traits<etl::sub_view<T>> {
 /*!
  * \brief Specialization for fast_matrix_view.
  */
-template<typename T, std::size_t Rows, std::size_t Columns>
-struct etl_traits<etl::fast_matrix_view<T, Rows, Columns>> {
-    using expr_t = etl::fast_matrix_view<T, Rows, Columns>;
+template<typename T, std::size_t... Dims>
+struct etl_traits<etl::fast_matrix_view<T, Dims...>> {
+    using expr_t = etl::fast_matrix_view<T, Dims...>;
     using sub_expr_t = std::decay_t<T>;
 
     static constexpr const bool is_fast = true;
@@ -989,24 +989,24 @@ struct etl_traits<etl::fast_matrix_view<T, Rows, Columns>> {
     static constexpr const order storage_order = etl_traits<sub_expr_t>::storage_order;
 
     static constexpr std::size_t size(const expr_t& /*unused*/){
-        return Rows * Columns;
+        return mul_all<Dims...>::value;
     }
 
     static std::size_t dim(const expr_t& /*unused*/, std::size_t d){
-        return d == 0 ? Rows : Columns;
+        return dyn_nth_size<Dims...>(d);
     }
 
     static constexpr std::size_t size(){
-        return Rows * Columns;
+        return mul_all<Dims...>::value;
     }
 
     template<std::size_t D>
     static constexpr std::size_t dim(){
-        return D == 0 ? Rows : Columns;
+        return nth_size<D, 0, Dims...>::value;
     }
 
     static constexpr std::size_t dimensions(){
-        return 2;
+        return sizeof...(Dims);
     }
 };
 

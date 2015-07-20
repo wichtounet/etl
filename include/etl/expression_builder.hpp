@@ -455,14 +455,14 @@ auto sub(E&& value, std::size_t i) -> detail::identity_helper<E, sub_view<detail
     return detail::identity_helper<E, sub_view<detail::build_identity_type<E>>>{{value, i}};
 }
 
-template<std::size_t Rows, std::size_t Columns, typename E, cpp::enable_if_u<is_etl_expr<E>::value> = cpp::detail::dummy>
-auto reshape(E&& value) -> detail::identity_helper<E, fast_matrix_view<detail::build_identity_type<E>, Rows, Columns>> {
-    cpp_assert(size(value) == Rows * Columns, "Invalid size for reshape");
+template<std::size_t... Dims, typename E>
+auto reshape(E&& value) -> detail::identity_helper<E, fast_matrix_view<detail::build_identity_type<E>, Dims...>> {
+    cpp_assert(size(value) == mul_all<Dims...>::value, "Invalid size for reshape");
 
-    return detail::identity_helper<E, fast_matrix_view<detail::build_identity_type<E>, Rows, Columns>>{fast_matrix_view<detail::build_identity_type<E>, Rows, Columns>(value)};
+    return detail::identity_helper<E, fast_matrix_view<detail::build_identity_type<E>, Dims...>>{fast_matrix_view<detail::build_identity_type<E>, Dims...>(value)};
 }
 
-template<typename E, cpp::enable_if_u<is_etl_expr<E>::value> = cpp::detail::dummy>
+template<typename E>
 auto reshape(E&& value, std::size_t rows, std::size_t columns) -> detail::identity_helper<E, dyn_matrix_view<detail::build_identity_type<E>>> {
     cpp_assert(size(value) == rows * columns, "Invalid size for reshape");
 

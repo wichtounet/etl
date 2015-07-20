@@ -160,6 +160,28 @@ TEMPLATE_TEST_CASE_2( "reshape/fast_vector_2", "reshape<2,3>", Z, float, double 
     REQUIRE(b(1,2) == 6.0);
 }
 
+TEMPLATE_TEST_CASE_2( "reshape/fast_vector_3", "reshape<2,2>", Z, float, double ) {
+    etl::fast_vector<Z, 4> a({1,2,3,4});
+    etl::fast_matrix<Z, 1, 2, 2> b(etl::reshape<1,2,2>(a));
+
+    REQUIRE(b(0,0,0) == 1.0);
+    REQUIRE(b(0,0,1) == 2.0);
+
+    REQUIRE(b(0,1,0) == 3.0);
+    REQUIRE(b(0,1,1) == 4.0);
+}
+
+TEMPLATE_TEST_CASE_2( "reshape/fast_vector_4", "reshape<2,2>", Z, float, double ) {
+    etl::fast_vector<Z, 4> a({1,2,3,4});
+    etl::fast_matrix<Z, 1, 2, 2, 1> b(etl::reshape<1,2,2,1>(a));
+
+    REQUIRE(b(0,0,0,0) == 1.0);
+    REQUIRE(b(0,0,1,0) == 2.0);
+
+    REQUIRE(b(0,1,0,0) == 3.0);
+    REQUIRE(b(0,1,1,0) == 4.0);
+}
+
 TEMPLATE_TEST_CASE_2( "reshape/traits", "traits<reshape<2,3>>", Z, float, double ) {
     etl::fast_vector<Z, 6> a({1,2,3,4,5,6});
 

@@ -180,11 +180,29 @@ struct sub_view {
     //}}}
 };
 
-template<typename T, std::size_t Rows, std::size_t Columns>
+namespace fast_matrix_view_detail {
+
+template<typename M, std::size_t I, typename Enable = void>
+struct matrix_subsize : std::integral_constant<std::size_t, M::template dim<I+1>() * matrix_subsize<M, I+1>::value> {};
+
+template<typename M, std::size_t I>
+struct matrix_subsize<M, I, std::enable_if_t<I == M::n_dimensions - 1>> : std::integral_constant<std::size_t, 1> {};
+
+template<typename M, std::size_t I, typename S1>
+inline constexpr std::size_t compute_index(S1 first) noexcept {
+    return first;
+}
+
+template<typename M, std::size_t I, typename S1, typename... S, cpp_enable_if((sizeof...(S) > 0))>
+inline constexpr std::size_t compute_index(S1 first, S... args) noexcept {
+    return matrix_subsize<M, I>::value * first + compute_index<M, I+1>(args...);
+}
+
+} //end of namespace fast_matrix_view_detail
+
+template<typename T, std::size_t... Dims>
 struct fast_matrix_view {
     T sub;
-
-    static_assert(Rows > 0 && Columns > 0 , "Invalid dimensions");
 
     using          sub_type = T;
     using        value_type = value_t<sub_type>;
@@ -193,34 +211,44 @@ struct fast_matrix_view {
     using       return_type = return_helper<sub_type, decltype(sub(0))>;
     using const_return_type = const_return_helper<sub_type, decltype(sub(0))>;
 
+    static constexpr std::size_t n_dimensions = sizeof...(Dims);
+
     explicit fast_matrix_view(sub_type sub) : sub(sub) {}
+
+    template<typename... S>
+    static constexpr std::size_t index(S... args){
+        return fast_matrix_view_detail::compute_index<fast_matrix_view<T, Dims...>, 0>(args...);
+    }
 
     const_return_type operator[](std::size_t j) const {
         return sub[j];
-    }
-
-    const_return_type operator()(std::size_t j) const {
-        return sub(j);
-    }
-
-    const_return_type operator()(std::size_t i, std::size_t j) const {
-        return sub[i * Columns + j];
     }
 
     return_type operator[](std::size_t j){
         return sub[j];
     }
 
-    return_type operator()(std::size_t j){
-        return sub(j);
+    template<typename... S>
+    std::enable_if_t<sizeof...(S) == sizeof...(Dims), return_type&> operator()(S... args) noexcept {
+        static_assert(cpp::all_convertible_to<std::size_t, S...>::value, "Invalid size types");
+
+        return sub[index(static_cast<std::size_t>(args)...)];
     }
 
-    return_type operator()(std::size_t i, std::size_t j){
-        return sub[i * Columns + j];
+    template<typename... S>
+    std::enable_if_t<sizeof...(S) == sizeof...(Dims), const_return_type&> operator()(S... args) const noexcept {
+        static_assert(cpp::all_convertible_to<std::size_t, S...>::value, "Invalid size types");
+
+        return sub[index(static_cast<std::size_t>(args)...)];
     }
 
     sub_type& value(){
         return sub;
+    }
+
+    template<std::size_t D>
+    static constexpr std::size_t dim() noexcept {
+        return nth_size<D, 0, Dims...>::value;
     }
 
     //{{{ Direct memory access
