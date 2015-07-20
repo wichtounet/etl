@@ -26,62 +26,66 @@ struct basic_upsample_2d_expr {
 
     using this_type = basic_upsample_2d_expr<T, C1, C2, Impl>;
 
-    template<typename A, typename B, std::size_t DD>
+    template<typename A, std::size_t DD>
     static constexpr std::size_t dim(){
-        return decay_traits<A>::template dim<DD>();
+        return DD == 0 ? decay_traits<A>::template dim<0>() * C1
+                       : decay_traits<A>::template dim<1>() * C2;
     }
 
-    template<typename A, typename B, class Enable = void>
+    template<typename A, class Enable = void>
     struct result_type_builder {
         using type = dyn_matrix<value_t<A>, 2>;
     };
 
-    template<typename A, typename B>
-    struct result_type_builder<A, B, std::enable_if_t<all_fast<A,B>::value>> {
-        using type = fast_dyn_matrix<value_t<A>, this_type::template dim<A, B, 0>(), this_type::template dim<A, B, 1>()>;
+    template<typename A>
+    struct result_type_builder<A, std::enable_if_t<all_fast<A>::value>> {
+        using type = fast_dyn_matrix<value_t<A>, this_type::template dim<A, 0>(), this_type::template dim<A, 1>()>;
     };
 
-    template<typename A, typename B>
-    using result_type = typename result_type_builder<A, B>::type;
+    template<typename A>
+    using result_type = typename result_type_builder<A>::type;
 
-    template<typename A, typename B, cpp_enable_if(all_fast<A, B>::value)>
-    static result_type<A,B>* allocate(A&& /*a*/, B&& /*b*/){
-        return new result_type<A,B>();
+    template<typename A, cpp_enable_if(all_fast<A>::value)>
+    static result_type<A>* allocate(A&& /*a*/){
+        return new result_type<A>();
     }
 
-    template<typename A, typename B, cpp_disable_if(all_fast<A>::value)>
-    static result_type<A,B>* allocate(A&& a, B&& /*b*/){
-        return new result_type<A,B>(etl::dim<0>(a), etl::dim<1>(a));
+    template<typename A, cpp_disable_if(all_fast<A>::value)>
+    static result_type<A>* allocate(A&& a){
+        return new result_type<A>(etl::dim<0>(a) * C2, etl::dim<1>(a) * C2);
     }
 
-    template<typename A, typename B, typename C>
-    static void apply(A&& a, B&& b, C&& c){
-        static_assert(all_etl_expr<A, B, C>::value, "upsample_2d only supported for ETL expressions");
-        static_assert(decay_traits<A>::dimensions() == 2 && decay_traits<A>::dimensions() == 2 && decay_traits<C>::dimensions() == 2, "upsample_2d needs 2D matrices");
+    template<typename A, typename C>
+    static void apply(A&& a, C&& c){
+        static_assert(all_etl_expr<A, C>::value, "pool_2d only supported for ETL expressions");
+        static_assert(decay_traits<A>::dimensions() == 2 && decay_traits<C>::dimensions() == 2, "pool_2d needs 2D matrices");
 
-        Impl<A, B, C>::template apply<C1, C2>(
-            std::forward<A>(a),
-            std::forward<B>(b),
+        Impl<decltype(make_temporary(std::forward<A>(a))), C>::template apply<C1, C2>(
+            make_temporary(std::forward<A>(a)),
             std::forward<C>(c));
     }
 
     static std::string desc() noexcept {
-        return "upsample_2d";
+        return "pool_2d";
     }
 
-    template<typename A, typename B>
-    static std::size_t dim(const A& a, const B& /*b*/, std::size_t d){
-        return etl::dim(a, d);
+    template<typename A>
+    static std::size_t dim(const A& a, std::size_t d){
+        if(d == 0){
+            return etl::dim<0>(a) * C1;
+        } else {
+            return etl::dim<1>(a) * C2;
+        }
     }
 
-    template<typename A, typename B>
-    static std::size_t size(const A& a, const B& /*b*/){
-        return etl::dim<0>(a) * etl::dim<1>(a);
+    template<typename A>
+    static std::size_t size(const A& a){
+        return (etl::dim<0>(a) * C1) * (etl::dim<1>(a) * C2);
     }
 
-    template<typename A, typename B>
+    template<typename A>
     static constexpr std::size_t size(){
-        return this_type::template dim<A, B, 0>() * this_type::template dim<A, B, 1>();
+        return this_type::template dim<A, 0>() * this_type::template dim<A, 1>();
     }
 
     static constexpr std::size_t dimensions(){
@@ -92,7 +96,7 @@ struct basic_upsample_2d_expr {
 //Max Pool 2D
 
 template<typename T, std::size_t C1, std::size_t C2>
-using max_upsample_2d_expr = basic_upsample_2d_expr<T, C1, C2, impl::max_upsample_2d>;
+using upsample_2d_expr = basic_upsample_2d_expr<T, C1, C2, impl::upsample_2d>;
 
 template<typename T, std::size_t C1, std::size_t C2, std::size_t C3, template<typename...> class Impl>
 struct basic_upsample_3d_expr {
@@ -102,62 +106,69 @@ struct basic_upsample_3d_expr {
 
     using this_type = basic_upsample_3d_expr<T, C1, C2, C3, Impl>;
 
-    template<typename A, typename B, std::size_t DD>
+    template<typename A, std::size_t DD>
     static constexpr std::size_t dim(){
-        return decay_traits<A>::template dim<DD>();
+        return   DD == 0 ? decay_traits<A>::template dim<0>() * C1
+               : DD == 1 ? decay_traits<A>::template dim<1>() * C2
+                         : decay_traits<A>::template dim<2>() * C3;
     }
 
-    template<typename A, typename B, class Enable = void>
+    template<typename A, class Enable = void>
     struct result_type_builder {
         using type = dyn_matrix<value_t<A>, 3>;
     };
 
-    template<typename A, typename B>
-    struct result_type_builder<A, B, std::enable_if_t<all_fast<A,B>::value>> {
-        using type = fast_dyn_matrix<value_t<A>, this_type::template dim<A, B, 0>(), this_type::template dim<A, B, 1>(), this_type::template dim<A, B, 2>()>;
+    template<typename A>
+    struct result_type_builder<A, std::enable_if_t<all_fast<A>::value>> {
+        using type = fast_dyn_matrix<value_t<A>, this_type::template dim<A, 0>(), this_type::template dim<A, 1>(), this_type::template dim<A, 2>()>;
     };
 
-    template<typename A, typename B>
-    using result_type = typename result_type_builder<A, B>::type;
+    template<typename A>
+    using result_type = typename result_type_builder<A>::type;
 
-    template<typename A, typename B, cpp_enable_if(all_fast<A, B>::value)>
-    static result_type<A,B>* allocate(A&& /*a*/, B&& /*b*/){
-        return new result_type<A,B>();
+    template<typename A, cpp_enable_if(all_fast<A>::value)>
+    static result_type<A>* allocate(A&& /*a*/){
+        return new result_type<A>();
     }
 
-    template<typename A, typename B, cpp_disable_if(all_fast<A>::value)>
-    static result_type<A,B>* allocate(A&& a, B&& /*b*/){
-        return new result_type<A,B>(etl::dim<0>(a), etl::dim<1>(a), etl::dim<2>(a));
+    template<typename A, cpp_disable_if(all_fast<A>::value)>
+    static result_type<A>* allocate(A&& a){
+        return new result_type<A>(etl::dim<0>(a) * C2, etl::dim<1>(a) * C2, etl::dim<2>(a) * C3);
     }
 
-    template<typename A, typename B, typename C>
-    static void apply(A&& a, B&& b, C&& c){
-        static_assert(all_etl_expr<A, B, C>::value, "upsample_2d only supported for ETL expressions");
-        static_assert(decay_traits<A>::dimensions() == 3 && decay_traits<A>::dimensions() == 3 && decay_traits<C>::dimensions() == 3, "upsample_2d needs 2D matrices");
+    template<typename A, typename C>
+    static void apply(A&& a, C&& c){
+        static_assert(all_etl_expr<A, C>::value, "pool_3d only supported for ETL expressions");
+        static_assert(decay_traits<A>::dimensions() == 3 && decay_traits<C>::dimensions() == 3, "pool_3d needs 3D matrices");
 
-        Impl<A, B, C>::template apply<C1, C2, C3>(
-            std::forward<A>(a),
-            std::forward<B>(b),
+        Impl<decltype(make_temporary(std::forward<A>(a))), C>::template apply<C1, C2, C3>(
+            make_temporary(std::forward<A>(a)),
             std::forward<C>(c));
     }
 
     static std::string desc() noexcept {
-        return "upsample_2d";
+        return "pool_3d";
     }
 
-    template<typename A, typename B>
-    static std::size_t dim(const A& a, const B& /*b*/, std::size_t d){
-        return etl::dim(a, d);
+    template<typename A>
+    static std::size_t dim(const A& a, std::size_t d){
+        if(d == 0){
+            return etl::dim<0>(a) * C1;
+        } else if(d == 1){
+            return etl::dim<1>(a) * C2;
+        } else {
+            return etl::dim<2>(a) * C3;
+        }
     }
 
-    template<typename A, typename B>
-    static std::size_t size(const A& a, const B& /*b*/){
-        return etl::dim<0>(a) * etl::dim<1>(a) * etl::dim<2>(a);
+    template<typename A>
+    static std::size_t size(const A& a){
+        return (etl::dim<0>(a) * C1) * (etl::dim<1>(a) * C2) * (etl::dim<2>(a) * C3);
     }
 
-    template<typename A, typename B>
+    template<typename A>
     static constexpr std::size_t size(){
-        return this_type::template dim<A, B, 0>() * this_type::template dim<A, B, 1>() * this_type::template dim<A, B, 2>();
+        return this_type::template dim<A, 0>() * this_type::template dim<A, 1>() * this_type::template dim<A, 2>();
     }
 
     static constexpr std::size_t dimensions(){
@@ -165,9 +176,7 @@ struct basic_upsample_3d_expr {
     }
 };
 
-//Max upsample 2D
-
 template<typename T, std::size_t C1, std::size_t C2, std::size_t C3>
-using max_upsample_3d_expr = basic_upsample_3d_expr<T, C1, C2, C3, impl::max_upsample_3d>;
+using upsample_3d_expr = basic_upsample_3d_expr<T, C1, C2, C3, impl::upsample_3d>;
 
 } //end of namespace etl

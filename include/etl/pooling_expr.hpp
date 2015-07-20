@@ -175,7 +175,7 @@ struct basic_pool_3d_expr {
     }
 
     static constexpr std::size_t dimensions(){
-        return 2;
+        return 3;
     }
 };
 
