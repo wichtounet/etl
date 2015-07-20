@@ -39,6 +39,7 @@
 #include "conv_expr.hpp"
 #include "convmtx2_expr.hpp"
 #include "pooling_expr.hpp"
+#include "upsample_expr.hpp"
 
 // The expressions building
 #include "checks.hpp"

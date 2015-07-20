@@ -115,6 +115,54 @@ struct avg_pool_3d {
     }
 };
 
+template<typename A, typename B, typename M>
+struct max_upsample_2d {
+    template<std::size_t C1, std::size_t C2>
+    static void apply(A&& in, B&& out, M& m){
+        for(std::size_t j = 0; j < etl::dim<0>(out); ++j){
+            for(std::size_t k = 0; k < etl::dim<1>(out); ++k){
+                auto max = out(j, k);
+
+                for(std::size_t jj = 0; jj < C1; ++jj){
+                    for(std::size_t kk = 0; kk < C2; ++kk){
+                        if(max == in(j * C1 + jj, k * C2 + kk)){
+                            m(j * C1 + jj, k * C2 + kk) = 1.0;
+                        } else {
+                            m(j * C1 + jj, k * C2 + kk) = 0.0;
+                        }
+                    }
+                }
+            }
+        }
+    }
+};
+
+template<typename A, typename B, typename M>
+struct max_upsample_3d {
+    template<std::size_t C1, std::size_t C2, std::size_t C3>
+    static void apply(A&& in, B&& out, M& m){
+        for(std::size_t i = 0; i < etl::dim<0>(out); ++i){
+            for(std::size_t j = 0; j < etl::dim<1>(out); ++j){
+                for(std::size_t k = 0; k < etl::dim<2>(out); ++k){
+                    auto max = out(i,j,k);
+
+                    for(std::size_t ii = 0; ii < C1; ++ii){
+                        for(std::size_t jj = 0; jj < C2; ++jj){
+                            for(std::size_t kk = 0; kk < C3; ++kk){
+                                if(max == in(i * C1 + ii, j * C2 + jj, k * C3 + kk)){
+                                    m(i * C1 + ii, j * C2 + jj, k * C3 + kk) = 1.0;
+                                } else {
+                                    m(i * C1 + ii, j * C2 + jj, k * C3 + kk) = 0.0;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+};
+
 } //end of namespace impl
 
 } //end of namespace etl
