@@ -38,6 +38,7 @@
 #include "fft_expr.hpp"
 #include "conv_expr.hpp"
 #include "convmtx2_expr.hpp"
+#include "pooling_expr.hpp"
 
 // The expressions building
 #include "checks.hpp"
@@ -45,6 +46,7 @@
 #include "mul_expression_builder.hpp"
 #include "conv_expression_builder.hpp"
 #include "fft_expression_builder.hpp"
+#include "pooling_expression_builder.hpp"
 
 // The value classes implementation
 #include "etl/fast.hpp"

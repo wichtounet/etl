@@ -573,18 +573,6 @@ auto transpose(const E& value) -> detail::stable_transform_helper<E, transpose_t
     return detail::make_transform_expr<E, transpose_transformer>(value);
 }
 
-template<std::size_t C1, std::size_t C2, typename E, cpp::enable_if_u<is_etl_expr<E>::value> = cpp::detail::dummy>
-auto p_max_pool_h(E&& value) -> unary_expr<value_t<E>, p_max_pool_h_transformer<detail::build_type<E>, C1, C2>, transform_op> {
-    validate_pmax_pooling<C1, C2>(value);
-    return unary_expr<value_t<E>, p_max_pool_h_transformer<detail::build_type<E>, C1, C2>, transform_op>{p_max_pool_h_transformer<detail::build_type<E>, C1, C2>(value)};
-}
-
-template<std::size_t C1, std::size_t C2, typename E, cpp::enable_if_u<is_etl_expr<E>::value> = cpp::detail::dummy>
-auto p_max_pool_p(E&& value) -> unary_expr<value_t<E>, p_max_pool_p_transformer<detail::build_type<E>, C1, C2>, transform_op> {
-    validate_pmax_pooling<C1, C2>(value);
-    return unary_expr<value_t<E>, p_max_pool_p_transformer<detail::build_type<E>, C1, C2>, transform_op>{p_max_pool_p_transformer<detail::build_type<E>, C1, C2>(value)};
-}
-
 //}}}
 
 //{{{ Apply a reduction on an ETL expression (vector,matrix,binary,unary)

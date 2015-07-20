@@ -5,7 +5,7 @@
 //  http://opensource.org/licenses/MIT)
 //=======================================================================
 
-#include "test_light.hpp"
+#include "test.hpp"
 
 //{{{ p_max_pool_h
 
