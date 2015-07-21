@@ -134,6 +134,7 @@ public:
     using const_memory_type = std::add_const_t<memory_t<Expr>>;
     using       return_type = std::conditional_t<non_const_return_ref, value_type&, value_type>;
     using const_return_type = std::conditional_t<const_return_ref, const value_type&, value_type>;
+    using          vec_type = intrinsic_type<T>;
 
     //Construct a new expression
     explicit unary_expr(Expr l) : _value(std::forward<Expr>(l)){
@@ -197,6 +198,11 @@ public:
 
     const_return_type operator[](std::size_t i) const {
         return value()[i];
+    }
+
+    template<typename SS = Expr, cpp_enable_if(has_direct_access<SS>::value)>
+    vec_type load(std::size_t i) const noexcept {
+        return vec::loadu(memory_start() + i);
     }
 
     template<bool B = (sub_size_compare<this_type>::value > 1), cpp::enable_if_u<B> = cpp::detail::dummy>
