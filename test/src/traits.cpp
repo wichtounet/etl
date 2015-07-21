@@ -312,6 +312,46 @@ TEMPLATE_TEST_CASE_2( "etl_traits/has_direct_access", "has_direct_access", Z, fl
     REQUIRE(!etl::has_direct_access<decltype(abs(b))>::value);
 }
 
+TEMPLATE_TEST_CASE_2( "etl_traits/vectorizable", "vectorizable", Z, float, double ) {
+    using mat_type_1 = etl::fast_matrix<Z, 3, 2, 4, 5>;
+    mat_type_1 a(3.3);
+
+    using mat_type_2 = etl::dyn_matrix<Z, 4>;
+    mat_type_2 b(3, 2, 4, 5);
+
+    //Values have direct access
+    REQUIRE(etl::etl_traits<mat_type_1>::vectorizable);
+    REQUIRE(etl::etl_traits<mat_type_2>::vectorizable);
+
+    //Values have direct access
+    REQUIRE(etl::etl_traits<decltype(a)>::vectorizable);
+    REQUIRE(etl::etl_traits<decltype(b)>::vectorizable);
+
+    //Sub have direct access
+    REQUIRE(etl::etl_traits<decltype(a(1))>::vectorizable);
+    REQUIRE(etl::etl_traits<decltype(b(2))>::vectorizable);
+
+    //Sub have direct access
+    REQUIRE(etl::etl_traits<decltype(a(0)(1))>::vectorizable);
+    REQUIRE(etl::etl_traits<decltype(b(1)(2))>::vectorizable);
+
+    //Sub have direct access
+    REQUIRE(etl::etl_traits<decltype(a(0)(1)(3))>::vectorizable);
+    REQUIRE(etl::etl_traits<decltype(b(1)(2)(0))>::vectorizable);
+
+    //Temporary binary expressions have direct access
+    REQUIRE(etl::etl_traits<decltype(a(0)(0) * a(0)(0))>::vectorizable);
+    REQUIRE(etl::etl_traits<decltype(b(0)(0) * b(0)(0))>::vectorizable);
+
+    //Binary do not have direct access
+    REQUIRE(etl::etl_traits<decltype(a+b)>::vectorizable);
+    REQUIRE(etl::etl_traits<decltype(b+b)>::vectorizable);
+
+    //abs do not have direct access
+    REQUIRE(!etl::etl_traits<decltype(abs(a))>::vectorizable);
+    REQUIRE(!etl::etl_traits<decltype(abs(b))>::vectorizable);
+}
+
 template<typename Z, typename E>
 bool correct_type(E&& /*e*/){
     if(std::is_same<Z, double>::value){
