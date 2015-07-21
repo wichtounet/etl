@@ -149,3 +149,15 @@ TEMPLATE_TEST_CASE_2( "complex/8", "[complex]", Z, float, double ) {
         REQUIRE(c[i].imag() == Approx((a[i] / b[i]).imag()));
     }
 }
+
+TEMPLATE_TEST_CASE_2( "complex/9", "[complex]", Z, float, double ) {
+    etl::fast_matrix<std::complex<Z>, 1, 3> a = {std::complex<Z>(1.0, 2.0), std::complex<Z>(-1.0, -2.0), std::complex<Z>(0.0, 0.5)};
+    etl::fast_matrix<std::complex<Z>, 1, 3> b = {std::complex<Z>(0.33, 0.66), std::complex<Z>(-1.5, 0.0), std::complex<Z>(0.5, 0.75)};
+    etl::fast_matrix<std::complex<Z>, 1, 3> c;
+
+    c(0) = a(0) >> b(0);
+
+    REQUIRE(c(0)[0] == a(0)[0] * b(0)[0]);
+    REQUIRE(c(0)[1] == a(0)[1] * b(0)[1]);
+    REQUIRE(c(0)[2] == a(0)[2] * b(0)[2]);
+}
