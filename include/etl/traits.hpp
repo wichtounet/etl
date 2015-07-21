@@ -644,7 +644,7 @@ struct etl_traits<etl::temporary_unary_expr<T, A, Op, Forced>> {
     static constexpr const bool is_fast = etl_traits<a_t>::is_fast;
     static constexpr const bool is_value = false;
     static constexpr const bool is_generator = false;
-    static constexpr const bool vectorizable = false;
+    static constexpr const bool vectorizable = true;
     static constexpr const bool needs_temporary_visitor = true;
     static constexpr const bool needs_evaluator_visitor = true;
     static constexpr const order storage_order = etl_traits<a_t>::storage_order;
@@ -684,7 +684,7 @@ struct etl_traits<etl::temporary_binary_expr<T, A, B, Op, Forced>> {
     static constexpr const bool is_fast = etl_traits<a_t>::is_fast && etl_traits<b_t>::is_fast;
     static constexpr const bool is_value = false;
     static constexpr const bool is_generator = false;
-    static constexpr const bool vectorizable = false;
+    static constexpr const bool vectorizable = true;
     static constexpr const bool needs_temporary_visitor = true;
     static constexpr const bool needs_evaluator_visitor = true;
     static constexpr const order storage_order = etl_traits<a_t>::is_generator ? etl_traits<b_t>::storage_order : etl_traits<a_t>::storage_order;
@@ -944,10 +944,10 @@ struct etl_traits<etl::sub_view<T>> {
     static constexpr const bool is_fast = etl_traits<sub_expr_t>::is_fast;
     static constexpr const bool is_value = false;
     static constexpr const bool is_generator = false;
-    static constexpr const bool vectorizable = false;
     static constexpr const bool needs_temporary_visitor = etl_traits<sub_expr_t>::needs_temporary_visitor;
     static constexpr const bool needs_evaluator_visitor = etl_traits<sub_expr_t>::needs_evaluator_visitor;
     static constexpr const order storage_order = etl_traits<sub_expr_t>::storage_order;
+    static constexpr const bool vectorizable = has_direct_access<sub_expr_t>::value && storage_order == order::RowMajor;
 
     static std::size_t size(const expr_t& v){
         return etl_traits<sub_expr_t>::size(v.parent) / etl_traits<sub_expr_t>::dim(v.parent, 0);

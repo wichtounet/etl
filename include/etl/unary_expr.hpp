@@ -23,7 +23,7 @@
 namespace etl {
 
 struct identity_op {
-    static constexpr const bool vectorizable = false;
+    static constexpr const bool vectorizable = true;
 };
 
 struct transform_op {
@@ -40,7 +40,7 @@ template <typename Generator>
 class generator_expr;
 
 template <typename T, typename Expr, typename UnaryOp>
-struct unary_expr final : 
+struct unary_expr final :
           comparable<unary_expr<T, Expr, UnaryOp>>
         , value_testable<unary_expr<T, Expr, UnaryOp>>
         , dim_testable<unary_expr<T, Expr, UnaryOp>>
@@ -106,11 +106,11 @@ public:
 };
 
 template <typename T, typename Expr>
-struct unary_expr<T, Expr, identity_op> : 
+struct unary_expr<T, Expr, identity_op> :
           inplace_assignable<unary_expr<T, Expr, identity_op>>
         , comparable<unary_expr<T, Expr, identity_op>>
-        , value_testable<unary_expr<T, Expr, identity_op>>  
-        , dim_testable<unary_expr<T, Expr, identity_op>>  
+        , value_testable<unary_expr<T, Expr, identity_op>>
+        , dim_testable<unary_expr<T, Expr, identity_op>>
         {
 private:
     static_assert(is_etl_expr<Expr>::value, "Only ETL expressions can be used in unary_expr");
@@ -265,7 +265,7 @@ public:
 };
 
 template <typename T, typename Expr>
-struct unary_expr<T, Expr, transform_op> : 
+struct unary_expr<T, Expr, transform_op> :
         comparable<unary_expr<T, Expr, transform_op>>
         , value_testable<unary_expr<T, Expr, transform_op>>
         , dim_testable<unary_expr<T, Expr, transform_op>>
@@ -330,7 +330,7 @@ public:
 };
 
 template <typename T, typename Expr, typename Op>
-struct unary_expr<T, Expr, stateful_op<Op>> : 
+struct unary_expr<T, Expr, stateful_op<Op>> :
         comparable<unary_expr<T, Expr, stateful_op<Op>>>
         , value_testable<unary_expr<T, Expr, stateful_op<Op>>>
         , dim_testable<unary_expr<T, Expr, stateful_op<Op>>>
