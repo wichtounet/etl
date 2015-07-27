@@ -9,7 +9,10 @@ BLAS_PKG = mkl
 include make-utils/flags.mk
 include make-utils/cpp-utils.mk
 
+# Build with libc++ if configured
+ifneq (,$(CLANG_LIBCXX))
 $(eval $(call use_libcxx))
+endif
 
 # Be stricter
 CXX_FLAGS += -pedantic -Werror -Winvalid-pch
