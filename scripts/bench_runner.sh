@@ -7,6 +7,9 @@ unset ETL_DEFAULTS
 unset ETL_MKL
 unset ETL_BLAS
 
+# Make sure libcxx is used for clang
+export CLANG_LIBCC=true
+
 # Start with clang
 export CXX=clang++
 export LD=clang++
