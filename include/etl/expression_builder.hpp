@@ -241,6 +241,11 @@ auto operator-(E&& value) -> detail::unary_helper<E, minus_unary_op> {
     return detail::unary_helper<E, minus_unary_op>{value};
 }
 
+template<typename E, cpp::enable_if_u<is_etl_expr<E>::value> = cpp::detail::dummy>
+auto operator+(E&& value) -> detail::unary_helper<E, plus_unary_op> {
+    return detail::unary_helper<E, plus_unary_op>{value};
+}
+
 template<typename E, cpp::enable_if_u<is_etl_expr<std::decay_t<E>>::value> = cpp::detail::dummy>
 auto abs(E&& value) -> detail::unary_helper<E, abs_unary_op> {
     return detail::unary_helper<E, abs_unary_op>{value};
