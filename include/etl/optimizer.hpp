@@ -236,6 +236,12 @@ struct optimizer<etl::unary_expr<T, Expr, UnaryOp>> {
     static void apply(Builder parent_builder, const etl::unary_expr<T, Expr, UnaryOp>& expr){
         if(is_optimizable(expr)){
             transform(parent_builder, expr);
+        } else if(is_optimizable_deep(expr.value())){
+            auto value_builder = [&](auto new_value){
+                parent_builder(unary_expr<T, detail::build_type<decltype(new_value)>, UnaryOp>(new_value));
+            };
+
+            optimize(value_builder, expr.value());
         } else {
             parent_builder(expr);
         }
@@ -249,16 +255,12 @@ struct optimizer <etl::binary_expr<T, LeftExpr, BinaryOp, RightExpr>> {
         if(is_optimizable(expr)){
             transform(parent_builder, expr);
         } else if(is_optimizable_deep(expr.lhs())){
-            std::cout << "Found optimization  lhs" << std::endl;
-
             auto lhs_builder = [&](auto new_lhs){
                 parent_builder(binary_expr<T, detail::build_type<decltype(new_lhs)>, BinaryOp, RightExpr>(new_lhs, expr.rhs()));
             };
 
             optimize(lhs_builder, expr.lhs());
         } else if(is_optimizable_deep(expr.rhs())){
-            std::cout << "Found optimization rhs" << std::endl;
-
             auto rhs_builder = [&](auto new_rhs){
                 parent_builder(binary_expr<T, LeftExpr, BinaryOp, detail::build_type<decltype(new_rhs)>>(expr.lhs(), new_rhs));
             };
