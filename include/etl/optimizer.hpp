@@ -67,6 +67,10 @@ struct optimizable<etl::binary_expr<T, etl::scalar<T>, BinaryOp, RightExpr>> {
             return true;
         }
 
+        if(expr.lhs().value == 0.0 && std::is_same<BinaryOp, div_binary_op<T>>::value){
+            return true;
+        }
+
         return false;
     }
 
@@ -92,6 +96,10 @@ struct optimizable<etl::binary_expr<T, LeftExpr, BinaryOp, etl::scalar<T>>> {
         }
 
         if(expr.rhs().value == 0.0 && std::is_same<BinaryOp, minus_binary_op<T>>::value){
+            return true;
+        }
+
+        if(expr.rhs().value == 1.0 && std::is_same<BinaryOp, div_binary_op<T>>::value){
             return true;
         }
 
@@ -159,6 +167,8 @@ struct transformer<etl::binary_expr<T, etl::scalar<T>, BinaryOp, RightExpr>> {
             parent_builder(expr.lhs());
         } else if(expr.lhs().value == 0.0 && std::is_same<BinaryOp, plus_binary_op<T>>::value){
             parent_builder(expr.rhs());
+        } else if(expr.lhs().value == 0.0 && std::is_same<BinaryOp, div_binary_op<T>>::value){
+            parent_builder(expr.lhs());
         }
     }
 };
@@ -174,6 +184,8 @@ struct transformer<etl::binary_expr<T, LeftExpr, BinaryOp, etl::scalar<T>>> {
         } else if(expr.rhs().value == 0.0 && std::is_same<BinaryOp, plus_binary_op<T>>::value){
             parent_builder(expr.lhs());
         } else if(expr.rhs().value == 0.0 && std::is_same<BinaryOp, minus_binary_op<T>>::value){
+            parent_builder(expr.lhs());
+        } else if(expr.rhs().value == 1.0 && std::is_same<BinaryOp, div_binary_op<T>>::value){
             parent_builder(expr.lhs());
         }
     }
