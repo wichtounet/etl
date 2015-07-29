@@ -208,8 +208,8 @@ struct fast_matrix_view {
     using        value_type = value_t<sub_type>;
     using       memory_type = memory_t<sub_type>;
     using const_memory_type = std::add_const_t<memory_t<sub_type>>;
-    using       return_type = return_helper<sub_type, decltype(sub(0))>;
-    using const_return_type = const_return_helper<sub_type, decltype(sub(0))>;
+    using       return_type = return_helper<sub_type, decltype(sub[0])>;
+    using const_return_type = const_return_helper<sub_type, decltype(sub[0])>;
 
     static constexpr std::size_t n_dimensions = sizeof...(Dims);
 
