@@ -23,6 +23,22 @@ struct optimizable {
     }
 };
 
+//unary_expr
+template <typename T, typename Expr, typename UnaryOp>
+struct optimizable<etl::unary_expr<T, Expr, UnaryOp>> {
+    static bool is(const etl::unary_expr<T, Expr, UnaryOp>&){
+        if(std::is_same<UnaryOp, plus_unary_op<T>>::value){
+            return true;
+        }
+
+        return false;
+    }
+
+    static bool is_deep(const etl::unary_expr<T, Expr, UnaryOp>& expr){
+        return is(expr) || is_optimizable_deep(expr.value());
+    }
+};
+
 //binary_expr with two scalar
 template <typename T, typename BinaryOp>
 struct optimizable<etl::binary_expr<T, etl::scalar<T>, BinaryOp, etl::scalar<T>>> {
@@ -141,6 +157,16 @@ struct transformer {
     }
 };
 
+template <typename T, typename Expr, typename UnaryOp>
+struct transformer<etl::unary_expr<T, Expr, UnaryOp>> {
+    template <typename Builder>
+    static void transform(Builder parent_builder, const etl::unary_expr<T, Expr, UnaryOp>& expr){
+        if(std::is_same<UnaryOp, plus_unary_op<T>>::value){
+            parent_builder(expr.value());
+        }
+    }
+};
+
 template <typename T, typename BinaryOp>
 struct transformer<etl::binary_expr<T, etl::scalar<T>, BinaryOp, etl::scalar<T>>> {
     template <typename Builder>
@@ -201,6 +227,18 @@ struct optimizer {
     template <typename Builder>
     static void apply(Builder, const Expr&){
         std::cout << "Leaf node" << std::endl;
+    }
+};
+
+template <typename T, typename Expr, typename UnaryOp>
+struct optimizer<etl::unary_expr<T, Expr, UnaryOp>> {
+    template <typename Builder>
+    static void apply(Builder parent_builder, const etl::unary_expr<T, Expr, UnaryOp>& expr){
+        if(is_optimizable(expr)){
+            transform(parent_builder, expr);
+        } else {
+            parent_builder(expr);
+        }
     }
 };
 

@@ -95,3 +95,25 @@ TEST_CASE( "optimize/8", "[fast][optimizer]" ) {
 
     REQUIRE(b[0] == 2.0);
 }
+
+TEST_CASE( "optimize/9", "[fast][optimizer]" ) {
+    etl::fast_vector<double, 3> a({1.0, -2.0, 3.0});
+    etl::fast_vector<double, 3> b;
+
+    auto expr = (0.0 / (a / 1.0)) >> (1.0 * a + 1.0 * (a - 0));
+
+    optimized_evaluate(expr, b);
+
+    REQUIRE(b[0] == 0.0);
+}
+
+TEST_CASE( "optimize/10", "[fast][optimizer]" ) {
+    etl::fast_vector<double, 3> a({1.0, -2.0, 3.0});
+    etl::fast_vector<double, 3> b;
+
+    auto expr = +a;
+
+    optimized_evaluate(expr, b);
+
+    REQUIRE(b[0] == 1.0);
+}
