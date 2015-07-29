@@ -111,9 +111,9 @@ TEST_CASE( "optimize/10", "[fast][optimizer]" ) {
     etl::fast_vector<double, 3> a({1.0, -2.0, 3.0});
     etl::fast_vector<double, 3> b;
 
-    auto expr = +a;
+    auto expr = +((-(a * 1.0)) * 1.0);
 
     optimized_evaluate(expr, b);
 
-    REQUIRE(b[0] == 1.0);
+    REQUIRE(b[0] == -1.0);
 }
