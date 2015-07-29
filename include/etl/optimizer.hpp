@@ -229,11 +229,6 @@ template<typename Expr, typename Result>
 void optimized_evaluate(Expr&& expr, Result&& result){
     std::cout << "Optimize " << expr << std::endl;
 
-    if(is_optimizable(expr)){
-        transform([&](auto new_expr) { optimized_evaluate(new_expr, result); }, std::forward<Expr>(expr));
-        return;
-    }
-
     if(is_optimizable_deep(expr)){
         optimize([&](auto new_expr) { optimized_evaluate(new_expr, result); }, std::forward<Expr>(expr));
         return;
