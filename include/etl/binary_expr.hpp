@@ -20,13 +20,14 @@
 namespace etl {
 
 template <typename T, typename LeftExpr, typename BinaryOp, typename RightExpr>
-struct binary_expr final : 
+struct binary_expr final :
           comparable<binary_expr<T, LeftExpr, BinaryOp, RightExpr>>
         , dim_testable<binary_expr<T, LeftExpr, BinaryOp, RightExpr>>
         , value_testable<binary_expr<T, LeftExpr, BinaryOp, RightExpr>>
         {
 private:
     static_assert(cpp::or_c<
+        cpp::and_c<std::is_same<LeftExpr, scalar<T>>, std::is_same<RightExpr, scalar<T>>>,
         cpp::and_c<is_etl_expr<LeftExpr>, std::is_same<RightExpr, scalar<T>>>,
         cpp::and_c<is_etl_expr<RightExpr>, std::is_same<LeftExpr, scalar<T>>>,
         cpp::and_c<is_etl_expr<LeftExpr>, is_etl_expr<RightExpr>>>::value,
