@@ -46,7 +46,9 @@ struct unary_expr final :
         , dim_testable<unary_expr<T, Expr, UnaryOp>>
         {
 private:
-    static_assert(is_etl_expr<Expr>::value, "Only ETL expressions can be used in unary_expr");
+    static_assert(
+        is_etl_expr<Expr>::value || std::is_same<Expr, etl::scalar<T>>::value,
+        "Only ETL expressions can be used in unary_expr");
 
     using this_type = unary_expr<T, Expr, UnaryOp>;
 
