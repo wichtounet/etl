@@ -217,7 +217,7 @@ MMUL_TEST_CASE( "column_major/mul/1", "mmul") {
     REQUIRE(c(1,1) == 154);
 }
 
-TEMPLATE_TEST_CASE_2( "column_major/vmul/1", "vmmul", Z, double, float) {
+TEMPLATE_TEST_CASE_2( "column_major/gemv/1", "vmmul", Z, double, float) {
     etl::fast_matrix_cm<Z, 2, 3> a = {1,4,2,5,3,6};
     etl::fast_vector_cm<Z, 3> b = {7,8,9};
     etl::fast_matrix_cm<Z, 2> c;
