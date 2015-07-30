@@ -7,6 +7,10 @@
 
 #pragma once
 
+#ifdef ETL_BLAS_MODE
+#include "cblas.h" //For ddot/sdot
+#endif
+
 #include "../config.hpp"
 #include "../traits_lite.hpp"
 

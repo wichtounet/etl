@@ -7,6 +7,10 @@
 
 #pragma once
 
+#ifdef ETL_BLAS_MODE
+#include "cblas.h" //For dscal/sscal
+#endif
+
 #include "../config.hpp"
 
 /**
