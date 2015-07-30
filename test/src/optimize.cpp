@@ -6,7 +6,6 @@
 //=======================================================================
 
 #include "test_light.hpp"
-#include "etl/optimizer.hpp"
 
 TEST_CASE( "optimize/1", "[fast][optimizer]" ) {
     etl::fast_vector<double, 3> a({1.0, -2.0, 3.0});

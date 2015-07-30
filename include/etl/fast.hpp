@@ -13,7 +13,6 @@
 #include "cpp_utils/assert.hpp"
 
 #include "tmp.hpp"
-#include "evaluator.hpp"
 #include "traits_lite.hpp"          //forward declaration of the traits
 #include "compat.hpp"               //To make it work with g++
 

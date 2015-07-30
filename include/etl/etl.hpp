@@ -51,6 +51,10 @@
 #include "fft_expression_builder.hpp"
 #include "pooling_expression_builder.hpp"
 
+// The evaluator and optimizer
+#include "etl/evaluator.hpp"
+#include "etl/optimizer.hpp"
+
 // The value classes implementation
 #include "etl/fast.hpp"
 #include "etl/dyn.hpp"
