@@ -60,11 +60,14 @@ void sgemm(A&& a, B&& b, C&& c){
 
 template<typename A, typename B, typename C>
 void dgemv(A&& a, B&& b, C&& c){
+    bool row_major = decay_traits<A>::storage_order == order::RowMajor;
+
     cblas_dgemv(
-        CblasRowMajor, CblasNoTrans,
+        row_major ? CblasRowMajor : CblasColMajor,
+        CblasNoTrans,
         etl::rows(a), etl::columns(a),
         1.0,
-        a.memory_start(), etl::dim<1>(a),
+        a.memory_start(), major_stride(a),
         b.memory_start(), 1,
         0.0,
         c.memory_start(), 1
@@ -73,11 +76,14 @@ void dgemv(A&& a, B&& b, C&& c){
 
 template<typename A, typename B, typename C>
 void sgemv(A&& a, B&& b, C&& c){
+    bool row_major = decay_traits<A>::storage_order == order::RowMajor;
+
     cblas_sgemv(
-        CblasRowMajor, CblasNoTrans,
+        row_major ? CblasRowMajor : CblasColMajor,
+        CblasNoTrans,
         etl::rows(a), etl::columns(a),
         1.0,
-        a.memory_start(), etl::dim<1>(a),
+        a.memory_start(), major_stride(a),
         b.memory_start(), 1,
         0.0,
         c.memory_start(), 1
@@ -86,11 +92,14 @@ void sgemv(A&& a, B&& b, C&& c){
 
 template<typename A, typename B, typename C>
 void dgevm(A&& a, B&& b, C&& c){
+    bool row_major = decay_traits<B>::storage_order == order::RowMajor;
+
     cblas_dgemv(
-        CblasRowMajor, CblasTrans,
+        row_major ? CblasRowMajor : CblasColMajor,
+        CblasTrans,
         etl::rows(b), etl::columns(b),
         1.0,
-        b.memory_start(), etl::dim<1>(b),
+        b.memory_start(), major_stride(b),
         a.memory_start(), 1,
         0.0,
         c.memory_start(), 1
@@ -99,11 +108,14 @@ void dgevm(A&& a, B&& b, C&& c){
 
 template<typename A, typename B, typename C>
 void sgevm(A&& a, B&& b, C&& c){
+    bool row_major = decay_traits<B>::storage_order == order::RowMajor;
+
     cblas_sgemv(
-        CblasRowMajor, CblasTrans,
+        row_major ? CblasRowMajor : CblasColMajor,
+        CblasTrans,
         etl::rows(b), etl::columns(b),
         1.0,
-        b.memory_start(), etl::dim<1>(b),
+        b.memory_start(), major_stride(b),
         a.memory_start(), 1,
         0.0,
         c.memory_start(), 1
