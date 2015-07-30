@@ -171,7 +171,7 @@ public:
         std::copy(rhs.begin(), rhs.end(), begin());
     }
 
-    template<typename E, cpp_enable_if(std::is_convertible<value_t<E>, value_type>::value, is_copy_expr<E>::value)>
+    template<typename E, cpp_enable_if(std::is_convertible<value_t<E>, value_type>::value, is_etl_expr<E>::value)>
     explicit fast_matrix_impl(E&& e){
         init();
         validate_assign(*this, e);
@@ -180,19 +180,12 @@ public:
 
     template<typename Container, cpp_enable_if(
             std::is_convertible<typename Container::value_type, value_type>::value,
-            cpp::not_c<is_copy_expr<Container>>::value
+            cpp::not_c<is_etl_expr<Container>>::value
         )>
     explicit fast_matrix_impl(const Container& vec){
         init();
         validate_assign(*this, vec);
         std::copy(vec.begin(), vec.end(), begin());
-    }
-
-    template<typename Generator>
-    explicit fast_matrix_impl(generator_expr<Generator>&& e){
-        init();
-        validate_assign(*this, e);
-        assign_evaluate(e, *this);
     }
 
     //}}}
@@ -235,17 +228,10 @@ public:
 
     //Construct from expression
 
-    template<typename E, cpp_enable_if(std::is_convertible<typename E::value_type, value_type>::value && is_copy_expr<E>::value)>
+    template<typename E, cpp_enable_if(std::is_convertible<typename E::value_type, value_type>::value && is_etl_expr<E>::value)>
     fast_matrix_impl& operator=(E&& e){
         validate_assign(*this, e);
         assign_evaluate(std::forward<E>(e), *this);
-        return *this;
-    }
-
-    template<typename Generator>
-    fast_matrix_impl& operator=(generator_expr<Generator>&& e){
-        validate_assign(*this, e);
-        assign_evaluate(e, *this);
         return *this;
     }
 

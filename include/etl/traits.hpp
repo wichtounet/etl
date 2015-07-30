@@ -100,16 +100,6 @@ struct is_etl_expr : cpp::or_c<
     > {};
 
 template<typename T>
-struct is_copy_expr : cpp::or_c<
-       is_fast_matrix<T>,
-       is_dyn_matrix<T>,
-       is_unary_expr<T>,
-       is_binary_expr<T>,
-       is_temporary_unary_expr<T>,
-       is_temporary_binary_expr<T>
-    > {};
-
-template<typename T>
 struct is_etl_value : cpp::or_c<
         is_fast_matrix<T>,
         is_dyn_matrix<T>

@@ -15,9 +15,6 @@ struct is_dyn_matrix;
 template<typename T>
 struct is_etl_expr;
 
-template<typename T>
-struct is_copy_expr;
-
 template<typename T, typename DT = std::decay_t<T>>
 struct is_temporary_unary_expr;
 
