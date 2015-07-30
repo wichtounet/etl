@@ -16,13 +16,11 @@ TEMPLATE_TEST_CASE_2( "magic/dyn_matrix_1", "magic(1)", Z, float, double ) {
     REQUIRE(etl::decay_traits<decltype(m)>::is_fast == false);
     REQUIRE(etl::decay_traits<decltype(m)>::size(m) == 1);
     REQUIRE((std::is_same<typename decltype(m)::value_type, Z>::value));
-    REQUIRE(etl::is_copy_expr<decltype(m)>::value);
     REQUIRE(etl::is_etl_expr<decltype(m)>::value);
 
     REQUIRE(etl::decay_traits<decltype(etl::magic<Z>(1))>::is_fast == false);
     REQUIRE(etl::decay_traits<decltype(etl::magic<Z>(1))>::size(etl::magic<Z>(1)) == 1);
     REQUIRE((std::is_same<typename decltype(etl::magic<Z>(1))::value_type, Z>::value));
-    REQUIRE(etl::is_copy_expr<decltype(etl::magic<Z>(1))>::value);
     REQUIRE(etl::is_etl_expr<decltype(etl::magic<Z>(1))>::value);
 
     REQUIRE(etl::size(m) == 1);
@@ -91,13 +89,11 @@ TEMPLATE_TEST_CASE_2( "fast_magic/dyn_matrix_1", "fast_magic(1)", Z, float, doub
     REQUIRE(etl::decay_traits<decltype(m)>::is_fast == true);
     REQUIRE(etl::decay_traits<decltype(m)>::size(m) == 1);
     REQUIRE((std::is_same<typename decltype(m)::value_type, Z>::value));
-    REQUIRE(etl::is_copy_expr<decltype(m)>::value);
     REQUIRE(etl::is_etl_expr<decltype(m)>::value);
 
     REQUIRE(etl::decay_traits<decltype(etl::magic<Z>(1))>::is_fast == false);
     REQUIRE(etl::decay_traits<decltype(etl::magic<Z>(1))>::size(etl::magic<Z>(1)) == 1);
     REQUIRE((std::is_same<typename decltype(etl::magic<Z>(1))::value_type, Z>::value));
-    REQUIRE(etl::is_copy_expr<decltype(etl::magic<Z>(1))>::value);
     REQUIRE(etl::is_etl_expr<decltype(etl::magic<Z>(1))>::value);
 
     REQUIRE(etl::size(m) == 1);

@@ -40,6 +40,9 @@ using left_binary_helper_op = binary_expr<value_t<LE>, build_type<LE>, OP, build
 template<typename LE, typename RE, template<typename> class OP>
 using right_binary_helper = binary_expr<value_t<RE>, build_type<LE>, OP<value_t<RE>>, build_type<RE>>;
 
+template<typename LE, typename RE, typename OP>
+using right_binary_helper_op = binary_expr<value_t<RE>, build_type<LE>, OP, build_type<RE>>;
+
 template<typename E, template<typename> class OP>
 using unary_helper = unary_expr<value_t<E>, build_type<E>, OP<value_t<E>>>;
 

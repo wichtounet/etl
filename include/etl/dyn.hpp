@@ -268,7 +268,7 @@ public:
 
     template<typename E, cpp_enable_if(
         std::is_convertible<value_t<E>, value_type>::value,
-        is_copy_expr<E>::value
+        is_etl_expr<E>::value
     )>
     explicit dyn_matrix_impl(E&& e) : _size(etl::size(e)), _data(_size) {
         for(std::size_t d = 0; d < etl::dimensions(e); ++d){
@@ -335,19 +335,8 @@ public:
 
     //Construct from expression
 
-    template<typename E, cpp_enable_if(!std::is_same<std::decay_t<E>, dyn_matrix_impl<T, SO, D>>::value && std::is_convertible<value_t<E>, value_type>::value && is_copy_expr<E>::value)>
+    template<typename E, cpp_enable_if(!std::is_same<std::decay_t<E>, dyn_matrix_impl<T, SO, D>>::value && std::is_convertible<value_t<E>, value_type>::value && is_etl_expr<E>::value)>
     dyn_matrix_impl& operator=(E&& e){
-        validate_assign(*this, e);
-
-        assign_evaluate(e, *this);
-
-        check_invariants();
-
-        return *this;
-    }
-
-    template<typename Generator>
-    dyn_matrix_impl& operator=(generator_expr<Generator>&& e){
         validate_assign(*this, e);
 
         assign_evaluate(e, *this);

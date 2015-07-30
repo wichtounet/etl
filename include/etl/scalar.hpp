@@ -13,6 +13,7 @@ namespace etl {
 
 template<typename T>
 struct scalar {
+    using value_type = T;
     using vec_type = intrinsic_type<T>;
 
     const T value;
