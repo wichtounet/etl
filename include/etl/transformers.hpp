@@ -474,9 +474,15 @@ struct dyn_convmtx_transformer {
     dyn_convmtx_transformer(sub_type sub, std::size_t h) : sub(sub), h(h) {}
 
     value_type operator[](std::size_t i) const {
-        auto i_i = i / (etl::size(sub) + h - 1);
-        auto i_j = i % (etl::size(sub) + h - 1);
-        return (*this)(i_i, i_j);
+        if(decay_traits<sub_type>::storage_order == order::RowMajor){
+            auto i_i = i / (etl::size(sub) + h - 1);
+            auto i_j = i % (etl::size(sub) + h - 1);
+            return operator()(i_i, i_j);
+        } else {
+            auto i_i = i % h;
+            auto i_j = i / h;
+            return operator()(i_i, i_j);
+        }
     }
 
     value_type operator()(std::size_t i, std::size_t j) const {
