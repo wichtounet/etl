@@ -28,6 +28,7 @@
 #include "unary_expr.hpp"
 #include "generator_expr.hpp"
 #include "temporary_expr.hpp"
+#include "optimized_expr.hpp"
 
 //Forward value classes for expressions
 #include "value_fwd.hpp"

@@ -676,6 +676,13 @@ auto sequence_generator(T current = 0) -> generator_expr<sequence_generator_op<T
 
 //}}}
 
+//Force optimization of an expression
+
+template <typename Expr>
+auto opt(Expr&& expr) -> optimized_expr<detail::build_type<Expr>> {
+    return {expr};
+}
+
 //Force evaluation of an expression
 
 template<typename Expr, cpp_enable_if(is_etl_expr<std::decay_t<Expr>>::value)>

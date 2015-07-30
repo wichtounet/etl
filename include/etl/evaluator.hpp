@@ -643,14 +643,19 @@ struct direct_assign_compatible : cpp::or_u<
     decay_traits<Expr>::is_generator,
     decay_traits<Expr>::storage_order == decay_traits<Result>::storage_order> {};
 
-template<typename Expr, typename Result, cpp_enable_if(direct_assign_compatible<Expr, Result>::value)>
+template<typename Expr, typename Result, cpp_enable_if(direct_assign_compatible<Expr, Result>::value && !is_optimized_expr<Expr>::value)>
 void assign_evaluate(Expr&& expr, Result&& result){
     standard_evaluator<Expr, Result>::assign_evaluate(std::forward<Expr>(expr), std::forward<Result>(result));
 }
 
-template<typename Expr, typename Result, cpp_disable_if(direct_assign_compatible<Expr, Result>::value)>
+template<typename Expr, typename Result, cpp_enable_if(!direct_assign_compatible<Expr, Result>::value && !is_optimized_expr<Expr>::value)>
 void assign_evaluate(Expr&& expr, Result&& result){
     standard_evaluator<Expr, Result>::assign_evaluate(transpose(expr), std::forward<Result>(result));
+}
+
+template<typename Expr, typename Result, cpp_enable_if(is_optimized_expr<Expr>::value)>
+void assign_evaluate(Expr&& expr, Result&& result){
+    optimized_forward(expr.value(), [&result](const auto& optimized){assign_evaluate(optimized, std::forward<Result>(result)); });
 }
 
 template<typename Expr, typename Result, cpp_enable_if(direct_assign_compatible<Expr, Result>::value)>

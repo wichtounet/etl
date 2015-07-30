@@ -43,6 +43,9 @@ template<typename T, typename DT = std::decay_t<T>>
 using is_generator_expr = cpp::is_specialization_of<etl::generator_expr, DT>;
 
 template<typename T, typename DT>
+struct is_optimized_expr : cpp::is_specialization_of<etl::optimized_expr, DT> {};
+
+template<typename T, typename DT>
 struct is_temporary_unary_expr : cpp::is_specialization_of<etl::temporary_unary_expr, DT> {};
 
 template<typename T, typename DT>
@@ -96,7 +99,8 @@ struct is_etl_expr : cpp::or_c<
        is_temporary_binary_expr<T>,
        is_generator_expr<T>,
        is_transformer<T>, is_view<T>,
-       is_transformer<T>, is_magic_view<T>
+       is_transformer<T>, is_magic_view<T>,
+       is_optimized_expr<T>
     > {};
 
 template<typename T>
@@ -1087,6 +1091,10 @@ struct etl_traits<etl::fast_magic_view<V, N>> {
         return 2;
     }
 };
+
+//Optimized expression simply use the same traits as its expression
+template <typename Expr>
+struct etl_traits<etl::optimized_expr<Expr>> : etl_traits<Expr> {};
 
 //Warning: default template parameters for size and dim are already defined in traits_fwd.hpp
 

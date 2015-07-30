@@ -338,9 +338,9 @@ void optimize(Builder parent_builder, const Expr& expr){
 }
 
 template<typename Expr, typename Result>
-void opt(const Expr& expr, Result result){
+void optimized_forward(const Expr& expr, Result result){
     if(is_optimizable_deep(expr)){
-        optimize([result](auto new_expr) { opt(new_expr, result); }, expr);
+        optimize([result](auto new_expr) { optimized_forward(new_expr, result); }, expr);
         return;
     }
 
@@ -349,7 +349,7 @@ void opt(const Expr& expr, Result result){
 
 template<typename Expr, typename Result>
 void optimized_evaluate(Expr&& expr, Result&& result){
-    opt(std::forward<Expr>(expr), [&result](auto new_expr){ assign_evaluate(new_expr, std::forward<Result>(result)); });
+    optimized_forward(std::forward<Expr>(expr), [&result](auto new_expr){ assign_evaluate(new_expr, std::forward<Result>(result)); });
 }
 
 } //end of namespace etl
