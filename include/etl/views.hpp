@@ -300,7 +300,11 @@ struct dyn_matrix_view {
     }
 
     const_return_type operator()(std::size_t i, std::size_t j) const {
-        return sub[i * columns + j];
+        if(decay_traits<sub_type>::storage_order == order::RowMajor){
+            return sub[i * columns + j];
+        } else {
+            return sub[i + rows * j];
+        }
     }
 
     return_type operator[](std::size_t j){
@@ -312,7 +316,11 @@ struct dyn_matrix_view {
     }
 
     return_type operator()(std::size_t i, std::size_t j){
-        return sub[i * columns + j];
+        if(decay_traits<sub_type>::storage_order == order::RowMajor){
+            return sub[i * columns + j];
+        } else {
+            return sub[i + rows * j];
+        }
     }
 
     sub_type& value(){
