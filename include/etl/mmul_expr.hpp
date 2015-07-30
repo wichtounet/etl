@@ -83,12 +83,13 @@ template<typename T, template<typename...> class Impl>
 struct basic_mm_mul_expr {
     template<typename A, typename B, class Enable = void>
     struct result_type_builder {
-        using type = dyn_matrix<value_t<A>>;
+        using type = dyn_matrix_impl<value_t<A>, decay_traits<A>::storage_order, 2>;
     };
 
     template<typename A, typename B>
     struct result_type_builder<A, B, std::enable_if_t<all_fast<A,B>::value>> {
-        using type = fast_dyn_matrix<typename std::decay_t<A>::value_type, decay_traits<A>::template dim<0>(), decay_traits<B>::template dim<1>()>;
+        using VT = typename std::decay_t<A>::value_type;
+        using type = fast_matrix_impl<VT, std::vector<VT>, decay_traits<A>::storage_order, decay_traits<A>::template dim<0>(), decay_traits<B>::template dim<1>()>;
     };
 
     template<typename A, typename B>

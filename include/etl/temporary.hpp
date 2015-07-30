@@ -18,7 +18,7 @@ struct build_fast_dyn_matrix_type;
 
 template<typename E, std::size_t... I>
 struct build_fast_dyn_matrix_type<E, std::index_sequence<I...>> {
-    using type = fast_dyn_matrix<value_t<E>, decay_traits<E>::template dim<I>()...>;
+    using type = fast_matrix_impl<value_t<E>, std::vector<value_t<E>>, decay_traits<E>::storage_order, decay_traits<E>::template dim<I>()...>;
 };
 
 template<typename E, cpp_enable_if(decay_traits<E>::is_fast)>
@@ -29,7 +29,7 @@ decltype(auto) force_temporary(E&& expr){
 template<typename E, cpp_disable_if(decay_traits<E>::is_fast)>
 decltype(auto) force_temporary(E&& expr){
     //Sizes will be directly propagated
-    return dyn_matrix<value_t<E>, decay_traits<E>::dimensions()>{std::forward<E>(expr)};
+    return dyn_matrix_impl<value_t<E>, decay_traits<E>::storage_order, decay_traits<E>::dimensions()>{std::forward<E>(expr)};
 }
 
 template<typename E, cpp_enable_if(has_direct_access<E>::value || !create_temporary)>
