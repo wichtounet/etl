@@ -347,9 +347,4 @@ void optimized_forward(const Expr& expr, Result result){
     result(expr);
 }
 
-template<typename Expr, typename Result>
-void optimized_evaluate(Expr&& expr, Result&& result){
-    optimized_forward(std::forward<Expr>(expr), [&result](auto new_expr){ assign_evaluate(new_expr, std::forward<Result>(result)); });
-}
-
 } //end of namespace etl
