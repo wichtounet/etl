@@ -171,12 +171,38 @@ TEMPLATE_TEST_CASE_2( "complex/10", "[mul][complex]", Z, float, double ) {
 
     c = a * b;
 
-    CHECK(c(0,0).real() == 3.0);
-    CHECK(c(0,0).imag() == -7.0);
-    CHECK(c(0,1).real() == -4.0);
-    CHECK(c(0,1).imag() == 12.0);
-    CHECK(c(1,0).real() == 5.0);
-    CHECK(c(1,0).imag() == 5.0);
-    CHECK(c(1,1).real() == 1.0);
-    CHECK(c(1,1).imag() == 9.0);
+    REQUIRE(c(0,0).real() == 3.0);
+    REQUIRE(c(0,0).imag() == -7.0);
+    REQUIRE(c(0,1).real() == -4.0);
+    REQUIRE(c(0,1).imag() == 12.0);
+    REQUIRE(c(1,0).real() == 5.0);
+    REQUIRE(c(1,0).imag() == 5.0);
+    REQUIRE(c(1,1).real() == 1.0);
+    REQUIRE(c(1,1).imag() == 9.0);
+}
+
+TEMPLATE_TEST_CASE_2( "complex/11", "[mul][complex]", Z, float, double ) {
+    etl::fast_matrix<std::complex<Z>, 2, 3> a = {CZ(1, 1), CZ(-2,-2), CZ(2, 3), CZ(0,0), CZ(1,1), CZ(2,2)};
+    etl::fast_vector<std::complex<Z>, 3> b = {CZ(1,1),CZ(-3,-3), CZ(5,0.1)};
+    etl::fast_matrix<std::complex<Z>, 2> c;
+
+    c = a * b;
+
+    REQUIRE(c(0).real() == Approx(Z(9.7)));
+    REQUIRE(c(0).imag() == Approx(Z(29.2)));
+    REQUIRE(c(1).real() == Approx(Z(9.8)));
+    REQUIRE(c(1).imag() == Approx(Z(4.2)));
+}
+
+TEMPLATE_TEST_CASE_2( "complex/12", "[mul][complex]", Z, float, double ) {
+    etl::fast_matrix<std::complex<Z>, 3, 2> a = {CZ(1, 1), CZ(-2,-2), CZ(2, 3), CZ(0,0), CZ(1,1), CZ(2,2)};
+    etl::fast_vector<std::complex<Z>, 3> b = {CZ(1,1),CZ(-3,-3), CZ(5,0.1)};
+    etl::fast_matrix<std::complex<Z>, 2> c;
+
+    c = b * a;
+
+    REQUIRE(c(0).real() == Approx(Z(7.9)));
+    REQUIRE(c(0).imag() == Approx(Z(-7.9)));
+    REQUIRE(c(1).real() == Approx(Z(9.8)));
+    REQUIRE(c(1).imag() == Approx(Z(6.2)));
 }
