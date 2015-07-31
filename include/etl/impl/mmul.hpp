@@ -55,6 +55,12 @@ template<typename A, typename B, typename C>
 using is_blas_sgemm = cpp::and_c<is_cblas_enabled, all_single_precision<A, B, C>, all_dma<A, B, C>>;
 
 template<typename A, typename B, typename C>
+using is_blas_cgemm = cpp::and_c<is_cblas_enabled, all_complex_single_precision<A, B, C>, all_dma<A, B, C>>;
+
+template<typename A, typename B, typename C>
+using is_blas_zgemm = cpp::and_c<is_cblas_enabled, all_complex_double_precision<A, B, C>, all_dma<A, B, C>>;
+
+template<typename A, typename B, typename C>
 struct mm_mul_impl<A, B, C, std::enable_if_t<is_blas_dgemm<A,B,C>::value>> {
     static void apply(A&& a, B&& b, C&& c){
         etl::impl::blas::dgemm(std::forward<A>(a), std::forward<B>(b), std::forward<C>(c));
@@ -65,6 +71,20 @@ template<typename A, typename B, typename C>
 struct mm_mul_impl<A, B, C, std::enable_if_t<is_blas_sgemm<A,B,C>::value>> {
     static void apply(A&& a, B&& b, C&& c){
         etl::impl::blas::sgemm(std::forward<A>(a), std::forward<B>(b), std::forward<C>(c));
+    }
+};
+
+template<typename A, typename B, typename C>
+struct mm_mul_impl<A, B, C, std::enable_if_t<is_blas_cgemm<A,B,C>::value>> {
+    static void apply(A&& a, B&& b, C&& c){
+        etl::impl::blas::cgemm(std::forward<A>(a), std::forward<B>(b), std::forward<C>(c));
+    }
+};
+
+template<typename A, typename B, typename C>
+struct mm_mul_impl<A, B, C, std::enable_if_t<is_blas_zgemm<A,B,C>::value>> {
+    static void apply(A&& a, B&& b, C&& c){
+        etl::impl::blas::zgemm(std::forward<A>(a), std::forward<B>(b), std::forward<C>(c));
     }
 };
 
@@ -96,6 +116,20 @@ struct vm_mul_impl<A, B, C, std::enable_if_t<is_blas_sgemm<A,B,C>::value>> {
     }
 };
 
+template<typename A, typename B, typename C>
+struct vm_mul_impl<A, B, C, std::enable_if_t<is_blas_cgemm<A,B,C>::value>> {
+    static void apply(A&& a, B&& b, C&& c){
+        etl::impl::blas::cgevm(std::forward<A>(a), std::forward<B>(b), std::forward<C>(c));
+    }
+};
+
+template<typename A, typename B, typename C>
+struct vm_mul_impl<A, B, C, std::enable_if_t<is_blas_zgemm<A,B,C>::value>> {
+    static void apply(A&& a, B&& b, C&& c){
+        etl::impl::blas::zgevm(std::forward<A>(a), std::forward<B>(b), std::forward<C>(c));
+    }
+};
+
 template<typename A, typename B, typename C, typename Enable = void>
 struct mv_mul_impl {
     static void apply(A&& a, B&& b, C&& c){
@@ -114,6 +148,20 @@ template<typename A, typename B, typename C>
 struct mv_mul_impl<A, B, C, std::enable_if_t<is_blas_sgemm<A,B,C>::value>> {
     static void apply(A&& a, B&& b, C&& c){
         etl::impl::blas::sgemv(std::forward<A>(a), std::forward<B>(b), std::forward<C>(c));
+    }
+};
+
+template<typename A, typename B, typename C>
+struct mv_mul_impl<A, B, C, std::enable_if_t<is_blas_cgemm<A,B,C>::value>> {
+    static void apply(A&& a, B&& b, C&& c){
+        etl::impl::blas::cgemv(std::forward<A>(a), std::forward<B>(b), std::forward<C>(c));
+    }
+};
+
+template<typename A, typename B, typename C>
+struct mv_mul_impl<A, B, C, std::enable_if_t<is_blas_zgemm<A,B,C>::value>> {
+    static void apply(A&& a, B&& b, C&& c){
+        etl::impl::blas::zgemv(std::forward<A>(a), std::forward<B>(b), std::forward<C>(c));
     }
 };
 
