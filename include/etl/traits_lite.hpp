@@ -84,6 +84,12 @@ struct is_complex_single_precision : std::is_same<typename std::decay_t<T>::valu
 template<typename T>
 struct is_complex_double_precision : std::is_same<typename std::decay_t<T>::value_type, std::complex<double>> {};
 
+template<typename... E>
+struct all_complex_single_precision : cpp::and_c<is_complex_single_precision<E>...> {};
+
+template<typename... E>
+struct all_complex_double_precision : cpp::and_c<is_complex_double_precision<E>...> {};
+
 template<typename T>
 struct is_complex : cpp::or_c<is_complex_single_precision<T>, is_complex_double_precision<T>> {};
 
