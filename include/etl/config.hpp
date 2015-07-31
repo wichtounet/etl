@@ -68,6 +68,12 @@ struct is_cblas_enabled : std::true_type {};
 struct is_cblas_enabled : std::false_type {};
 #endif
 
+#ifdef ETL_CUBLAS
+struct is_cublas_enabled : std::true_type {};
+#else
+struct is_cublas_enabled : std::false_type {};
+#endif
+
 //Flag to perform elementwise multiplication by default (operator*)
 //instead of matrix(vector) multiplication
 #ifdef ETL_ELEMENT_WISE_MULTIPLICATION
