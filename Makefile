@@ -40,7 +40,7 @@ CXX_FLAGS += -DETL_CUBLAS_MODE $(shell pkg-config --cflags cublas)
 LD_FLAGS += $(shell pkg-config --libs cublas)
 
 ifneq (,$(findstring clang,$(CXX)))
-CXX_FLAGS += -Wno-documentation-deprecated-sync
+CXX_FLAGS += -Wno-documentation
 endif
 endif
 
