@@ -16,6 +16,7 @@
 #include "std/strassen_mmul.hpp"
 #include "blas/gemm.hpp"
 #include "eblas/gemm.hpp"
+#include "cublas/gemm.hpp"
 
 namespace etl {
 
