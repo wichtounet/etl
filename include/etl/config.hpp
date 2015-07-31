@@ -68,7 +68,7 @@ struct is_cblas_enabled : std::true_type {};
 struct is_cblas_enabled : std::false_type {};
 #endif
 
-#ifdef ETL_CUBLAS
+#ifdef ETL_CUBLAS_MODE
 struct is_cublas_enabled : std::true_type {};
 #else
 struct is_cublas_enabled : std::false_type {};

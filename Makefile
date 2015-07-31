@@ -35,6 +35,15 @@ LD_FLAGS += $(shell pkg-config --libs $(BLAS_PKG))
 endif
 endif
 
+ifneq (,$(ETL_CUBLAS))
+CXX_FLAGS += -DETL_CUBLAS_MODE $(shell pkg-config --cflags cublas)
+LD_FLAGS += $(shell pkg-config --libs cublas)
+
+ifneq (,$(findstring clang,$(CXX)))
+CXX_FLAGS += -Wno-documentation-deprecated-sync
+endif
+endif
+
 LD_FLAGS += -pthread
 
 # Enable coverage if not disabled by the user
@@ -44,7 +53,9 @@ endif
 
 # Enable Clang sanitizers in debug mode
 ifneq (,$(findstring clang,$(CXX)))
+ifeq (,$(ETL_CUBLAS))
 DEBUG_FLAGS += -fsanitize=address,undefined
+endif
 endif
 
 # Enable advanced vectorization for release modes (unset by the benchmark)
