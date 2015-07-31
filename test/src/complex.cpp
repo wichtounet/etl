@@ -5,7 +5,9 @@
 //  http://opensource.org/licenses/MIT)
 //=======================================================================
 
-#include "test_light.hpp"
+#include "test.hpp"
+
+#define CZ(a,b) std::complex<Z>(a,b)
 
 TEMPLATE_TEST_CASE_2( "complex/1", "[complex]", Z, float, double ) {
     etl::fast_vector<std::complex<Z>, 3> a = {-1.0, 2.0, 5.0};
@@ -160,4 +162,21 @@ TEMPLATE_TEST_CASE_2( "complex/9", "[complex]", Z, float, double ) {
     REQUIRE(c(0)[0] == a(0)[0] * b(0)[0]);
     REQUIRE(c(0)[1] == a(0)[1] * b(0)[1]);
     REQUIRE(c(0)[2] == a(0)[2] * b(0)[2]);
+}
+
+TEMPLATE_TEST_CASE_2( "complex/10", "[mul][complex]", Z, float, double ) {
+    etl::fast_matrix<std::complex<Z>, 2, 3> a = {CZ(1, 1), CZ(-2,-2), CZ(2, 3), CZ(0,0), CZ(1,1), CZ(2,2)};
+    etl::fast_matrix<std::complex<Z>, 3, 2> b = {CZ(1, 1), CZ(2,2), CZ(3, 2), CZ(1,0), CZ(1,-1), CZ(2,2)};
+    etl::fast_matrix<std::complex<Z>, 2, 2> c;
+
+    c = a * b;
+
+    CHECK(c(0,0).real() == 3.0);
+    CHECK(c(0,0).imag() == -7.0);
+    CHECK(c(0,1).real() == -4.0);
+    CHECK(c(0,1).imag() == 12.0);
+    CHECK(c(1,0).real() == 5.0);
+    CHECK(c(1,0).imag() == 5.0);
+    CHECK(c(1,1).real() == 1.0);
+    CHECK(c(1,1).imag() == 9.0);
 }
