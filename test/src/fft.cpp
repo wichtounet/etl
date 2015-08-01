@@ -11,6 +11,30 @@
 
 //{{{ fft_1d (real)
 
+TEMPLATE_TEST_CASE_2( "fft_1d_r/0", "[fast][fft]", Z, float, double ) {
+    etl::fast_matrix<Z, 8> a({1.0, 1.0, 1.0, 1.0, 0.0, 0.0, 0.0, 0.0});
+    etl::fast_matrix<std::complex<Z>, 8> c;
+
+    c = etl::fft_1d(a);
+
+    REQUIRE(c(0).real() == Approx(Z(4.0)));
+    REQUIRE(c(0).imag() == Approx(Z(0.0)));
+    REQUIRE(c(1).real() == Approx(Z(1.0)));
+    REQUIRE(c(1).imag() == Approx(Z(-2.41421)));
+    REQUIRE(c(2).real() == Approx(Z(0.0)));
+    REQUIRE(c(2).imag() == Approx(Z(0.0)));
+    REQUIRE(c(3).real() == Approx(Z(1.0)));
+    REQUIRE(c(3).imag() == Approx(Z(-0.41421)));
+    REQUIRE(c(4).real() == Approx(Z(0.0)));
+    REQUIRE(c(4).imag() == Approx(Z(0.0)));
+    REQUIRE(c(5).real() == Approx(Z(1.0)));
+    REQUIRE(c(5).imag() == Approx(Z(0.41421)));
+    REQUIRE(c(6).real() == Approx(Z(0.0)));
+    REQUIRE(c(6).imag() == Approx(Z(0.0)));
+    REQUIRE(c(7).real() == Approx(Z(1.0)));
+    REQUIRE(c(7).imag() == Approx(Z(2.41421)));
+}
+
 TEMPLATE_TEST_CASE_2( "fft_1d_r/1", "[fast][fft]", Z, float, double ) {
     etl::fast_matrix<Z, 5> a({1.0, 2.0, 3.0, 4.0, 5.0});
     etl::fast_matrix<std::complex<Z>, 5> c;
@@ -107,6 +131,27 @@ TEMPLATE_TEST_CASE_2( "fft_1d_c/2", "[fast][fft]", Z, float, double ) {
 //}}}
 
 //{{{ ifft_1d (complex)
+
+TEMPLATE_TEST_CASE_2( "ifft_1d_c/0", "[fast][ifft]", Z, float, double ) {
+    etl::fast_matrix<std::complex<Z>, 4> a;
+    etl::fast_matrix<std::complex<Z>, 4> c;
+
+    a[0] = std::complex<Z>(1.0, 1.0);
+    a[1] = std::complex<Z>(2.0, 2.0);
+    a[2] = std::complex<Z>(-1.0, 0.0);
+    a[3] = std::complex<Z>(3.0, -3.0);
+
+    c = etl::ifft_1d(a);
+
+    REQUIRE(c(0).real() == Approx(Z(1.25)));
+    REQUIRE(c(0).imag() == Approx(Z(0.0)));
+    REQUIRE(c(1).real() == Approx(Z(-0.75)));
+    REQUIRE(c(1).imag() == Approx(Z(0.0)));
+    REQUIRE(c(2).real() == Approx(Z(-1.25)));
+    REQUIRE(c(2).imag() == Approx(Z(0.5)));
+    REQUIRE(c(3).real() == Approx(Z(1.75)));
+    REQUIRE(c(3).imag() == Approx(Z(0.5)));
+}
 
 TEMPLATE_TEST_CASE_2( "ifft_1d_c/1", "[fast][ifft]", Z, float, double ) {
     etl::fast_matrix<std::complex<Z>, 5> a;
