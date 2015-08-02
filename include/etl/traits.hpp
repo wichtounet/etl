@@ -1125,7 +1125,7 @@ std::size_t dim(const E& e){
     return etl_traits<E>::dim(e, D);
 }
 
-template<typename E, cpp::disable_if_u<etl_traits<E>::is_fast>>
+template<typename E>
 std::size_t dim(const E& e, std::size_t d){
     return etl_traits<E>::dim(e, d);
 }
