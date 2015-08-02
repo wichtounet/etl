@@ -12,6 +12,7 @@
 #include "../config.hpp"
 #include "../traits_lite.hpp"
 
+#include "std/fft.hpp"
 #include "blas/fft.hpp"
 
 namespace etl {
@@ -19,28 +20,60 @@ namespace etl {
 namespace detail {
 
 template<typename A, typename C, typename Enable = void>
-struct fft1_impl;
+struct fft1_impl {
+    static void apply(A&& a, C&& c){
+        etl::impl::standard::fft1(std::forward<A>(a), std::forward<C>(c));
+    }
+};
 
 template<typename A, typename C, typename Enable = void>
-struct fft2_impl;
+struct fft2_impl {
+    static void apply(A&& a, C&& c){
+        etl::impl::standard::fft2(std::forward<A>(a), std::forward<C>(c));
+    }
+};
 
 template<typename A, typename C, typename Enable = void>
-struct ifft1_impl;
+struct ifft1_impl {
+    static void apply(A&& a, C&& c){
+        etl::impl::standard::ifft1(std::forward<A>(a), std::forward<C>(c));
+    }
+};
 
 template<typename A, typename C, typename Enable = void>
-struct ifft1_real_impl;
+struct ifft1_real_impl {
+    static void apply(A&& a, C&& c){
+        etl::impl::standard::ifft1_real(std::forward<A>(a), std::forward<C>(c));
+    }
+};
 
 template<typename A, typename C, typename Enable = void>
-struct ifft2_impl;
+struct ifft2_impl {
+    static void apply(A&& a, C&& c){
+        etl::impl::standard::ifft2(std::forward<A>(a), std::forward<C>(c));
+    }
+};
 
 template<typename A, typename C, typename Enable = void>
-struct ifft2_real_impl;
+struct ifft2_real_impl {
+    static void apply(A&& a, C&& c){
+        etl::impl::standard::ifft2_real(std::forward<A>(a), std::forward<C>(c));
+    }
+};
 
 template<typename A, typename B, typename C, typename Enable = void>
-struct fft_conv1_full_impl;
+struct fft_conv1_full_impl {
+    static void apply(A&& a, B&& b, C&& c){
+        etl::impl::standard::fft1_convolve(std::forward<A>(a), std::forward<B>(b), std::forward<C>(c));
+    }
+};
 
 template<typename A, typename B, typename C, typename Enable = void>
-struct fft_conv2_full_impl;
+struct fft_conv2_full_impl {
+    static void apply(A&& a, B&& b, C&& c){
+        etl::impl::standard::fft2_convolve(std::forward<A>(a), std::forward<B>(b), std::forward<C>(c));
+    }
+};
 
 template<typename A, typename C>
 struct is_blas_dfft : cpp::and_c<is_mkl_enabled, is_double_precision<A>, all_dma<A, C>> {};
