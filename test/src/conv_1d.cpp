@@ -97,23 +97,23 @@ CONV1_FULL_TEST_CASE( "convolution_1d/full_5", "convolution_1d_full" ) {
 
     Impl::apply(a, b, c);
 
-    REQUIRE(c[0] == Approx(1240));
-    REQUIRE(c[1] == Approx(1547));
-    REQUIRE(c[2] == Approx(2648));
-    REQUIRE(c[3] == Approx(3398));
-    REQUIRE(c[4] == Approx(4515));
-    REQUIRE(c[5] == Approx(6037));
-    REQUIRE(c[6] == Approx(7227));
-    REQUIRE(c[7] == Approx(9268));
-    REQUIRE(c[8] == Approx(7947));
-    REQUIRE(c[9] == Approx(8496));
-    REQUIRE(c[10] == Approx(7515));
-    REQUIRE(c[11] == Approx(7452));
-    REQUIRE(c[12] == Approx(6777));
-    REQUIRE(c[13] == Approx(5490));
-    REQUIRE(c[14] == Approx(5121));
-    REQUIRE(c[15] == Approx(3222));
-    REQUIRE(c[16] == Approx(3465));
+    REQUIRE(c[0] == Approx(1240).epsilon(1.0));
+    REQUIRE(c[1] == Approx(1547).epsilon(1.0));
+    REQUIRE(c[2] == Approx(2648).epsilon(1.0));
+    REQUIRE(c[3] == Approx(3398).epsilon(1.0));
+    REQUIRE(c[4] == Approx(4515).epsilon(1.0));
+    REQUIRE(c[5] == Approx(6037).epsilon(1.0));
+    REQUIRE(c[6] == Approx(7227).epsilon(1.0));
+    REQUIRE(c[7] == Approx(9268).epsilon(1.0));
+    REQUIRE(c[8] == Approx(7947).epsilon(1.0));
+    REQUIRE(c[9] == Approx(8496).epsilon(1.0));
+    REQUIRE(c[10] == Approx(7515).epsilon(1.0));
+    REQUIRE(c[11] == Approx(7452).epsilon(1.0));
+    REQUIRE(c[12] == Approx(6777).epsilon(1.0));
+    REQUIRE(c[13] == Approx(5490).epsilon(1.0));
+    REQUIRE(c[14] == Approx(5121).epsilon(1.0));
+    REQUIRE(c[15] == Approx(3222).epsilon(1.0));
+    REQUIRE(c[16] == Approx(3465).epsilon(1.0));
 }
 
 CONV1_FULL_TEST_CASE( "convolution_1d/full_6", "reduc_conv1_full" ) {

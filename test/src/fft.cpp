@@ -7,8 +7,6 @@
 
 #include "test.hpp"
 
-#ifdef ETL_MKL_MODE
-
 //{{{ fft_1d (real)
 
 TEMPLATE_TEST_CASE_2( "fft_1d_r/0", "[fast][fft]", Z, float, double ) {
@@ -250,7 +248,7 @@ TEMPLATE_TEST_CASE_2( "ifft_1d_real/2", "[fast][ifft]", Z, float, double ) {
 
 //}}}
 
-//{{{ fft_1d (real)
+//{{{ fft_2d (real)
 
 TEMPLATE_TEST_CASE_2( "fft_2d_r/1", "[fast][fft]", Z, float, double ) {
     etl::fast_matrix<Z, 2, 3> a({1.0, 2.0, 3.0, 4.0, 5.0, 6.0});
@@ -439,5 +437,3 @@ TEMPLATE_TEST_CASE_2( "ifft_2d_real_c/2", "[fast][ifft]", Z, float, double ) {
 }
 
 //}}}
-
-#endif //ETL_MKL_MODE
