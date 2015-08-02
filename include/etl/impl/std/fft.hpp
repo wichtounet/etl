@@ -22,26 +22,33 @@ inline std::size_t next_power_of_two(std::size_t n) {
 }
 
 template<typename T>
+inline std::complex<T> inline_mul(std::complex<T> a, std::complex<T> b){
+    auto ac = a.real() * b.real();
+    auto bd = a.imag() * b.imag();
+
+    auto abcd = (a.real() + a.imag()) * (b.real() + b.imag());
+
+    return {ac - bd, abcd - ac - bd};
+}
+
+template<typename T>
 void inplace_radix2_fft1(std::complex<T>* x, std::size_t N){
     using complex_t = std::complex<T>;
 
     //Decimate
-    std::size_t m = std::log2(N);
-    for (std::size_t a = 0; a < N; a++){
-        std::size_t b = a;
-        // Reverse bits
-        b = (((b & 0xaaaaaaaa) >> 1) | ((b & 0x55555555) << 1));
-        b = (((b & 0xcccccccc) >> 2) | ((b & 0x33333333) << 2));
-        b = (((b & 0xf0f0f0f0) >> 4) | ((b & 0x0f0f0f0f) << 4));
-        b = (((b & 0xff00ff00) >> 8) | ((b & 0x00ff00ff) << 8));
-        b = ((b >> 16) | (b << 16)) >> (32 - m);
-
+    for (std::size_t a = 0, b = 0; a < N; ++a){
         if (b > a){
             std::swap(x[a], x[b]);
         }
+
+        auto bit = N;
+        do {
+            bit >>= 1;
+            b ^= bit;
+        } while( (b & bit) == 0 && bit != 1 );
     }
 
-    const T pi = M_PIl;
+    constexpr const T pi = M_PIl;
 
     const std::size_t NN = 1 << std::size_t(std::log2(N));
 
@@ -51,12 +58,14 @@ void inplace_radix2_fft1(std::complex<T>* x, std::size_t N){
         complex_t wm(cos(2 * -pi / m), sin(2 * -pi / m));
         for (std::size_t j=0; j < m/2; ++j) {
             for (std::size_t k=j; k < NN; k += m) {
-                complex_t t = w * x[k + m/2];
+                auto t = inline_mul(w, x[k + m/2]);
+
                 complex_t u = x[k];
                 x[k] = u + t;
                 x[k + m/2] = u - t;
             }
-            w *= wm;
+
+            w = inline_mul(w, wm);
         }
     }
 }
