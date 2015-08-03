@@ -100,6 +100,82 @@ void dgemm(A&& a, B&& b, C&& c){
     cudaMemcpy(c.memory_start(), gpu_d.get(), etl::size(c) * sizeof(double), cudaMemcpyDeviceToHost);
 }
 
+template<typename A, typename B, typename C>
+void cgemm(A&& a, B&& b, C&& c){
+    auto handle = start_cublas();
+
+    auto gpu_a = cuda_allocate_copy(a);
+    auto gpu_b = cuda_allocate_copy(b);
+    auto gpu_c = cuda_allocate(c);
+    auto gpu_d = cuda_allocate(c);
+
+    std::complex<float> alpha = 1.0;
+    std::complex<float> beta = 0.0;
+
+    // Do the actual multiplication
+    cublasCgemm(
+        handle.get(),
+        CUBLAS_OP_T, CUBLAS_OP_T,
+        etl::rows(c), etl::columns(c), etl::columns(a),
+        &alpha,
+        gpu_a.get(), etl::columns(a),
+        gpu_b.get(), etl::columns(b),
+        &beta,
+        gpu_c.get(), etl::rows(c));
+
+    //gpu_d = gpu_c'
+    cublasCgeam(
+        handle.get(),
+        CUBLAS_OP_T, CUBLAS_OP_N,
+        etl::rows(c), etl::columns(c),
+        &alpha,
+        gpu_c.get(), etl::columns(c),
+        &beta,
+        gpu_d.get(), etl::columns(c),
+        gpu_d.get(), etl::columns(c));
+
+    //C = gpu_d
+    cudaMemcpy(c.memory_start(), gpu_d.get(), etl::size(c) * sizeof(std::complex<float>), cudaMemcpyDeviceToHost);
+}
+
+template<typename A, typename B, typename C>
+void zgemm(A&& a, B&& b, C&& c){
+    auto handle = start_cublas();
+
+    auto gpu_a = cuda_allocate_copy(a);
+    auto gpu_b = cuda_allocate_copy(b);
+    auto gpu_c = cuda_allocate(c);
+    auto gpu_d = cuda_allocate(c);
+
+    std::complex<double> alpha = 1.0;
+    std::complex<double> beta = 0.0;
+
+    // Do the actual multiplication
+    cublasZgemm(
+        handle.get(),
+        CUBLAS_OP_T, CUBLAS_OP_T,
+        etl::rows(c), etl::columns(c), etl::columns(a),
+        &alpha,
+        gpu_a.get(), etl::columns(a),
+        gpu_b.get(), etl::columns(b),
+        &beta,
+        gpu_c.get(), etl::rows(c));
+
+    //gpu_d = gpu_c'
+    cublasZgeam(
+        handle.get(),
+        CUBLAS_OP_T, CUBLAS_OP_N,
+        etl::rows(c), etl::columns(c),
+        &alpha,
+        gpu_c.get(), etl::columns(c),
+        &beta,
+        gpu_d.get(), etl::columns(c),
+        gpu_d.get(), etl::columns(c));
+
+    //C = gpu_d
+    cudaMemcpy(c.memory_start(), gpu_d.get(), etl::size(c) * sizeof(std::complex<double>), cudaMemcpyDeviceToHost);
+}
+
 #else
 
 template<typename A, typename B, typename C>
@@ -107,6 +183,12 @@ void sgemm(A&& a, B&& b, C&& c);
 
 template<typename A, typename B, typename C>
 void dgemm(A&& a, B&& b, C&& c);
+
+template<typename A, typename B, typename C>
+void cgemm(A&& a, B&& b, C&& c);
+
+template<typename A, typename B, typename C>
+void zgemm(A&& a, B&& b, C&& c);
 
 #endif
 
