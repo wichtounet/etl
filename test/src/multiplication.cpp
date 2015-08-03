@@ -12,7 +12,7 @@
 
 //{{{ Matrix Matrix multiplication tests
 
-MMUL_TEST_CASE( "multiplication/mm_mul_1", "mmul") {
+GEMM_TEST_CASE( "multiplication/mm_mul_1", "mmul") {
     etl::fast_matrix<T, 2, 3> a = {1,2,3,4,5,6};
     etl::fast_matrix<T, 3, 2> b = {7,8,9,10,11,12};
     etl::fast_matrix<T, 2, 2> c;
@@ -25,7 +25,7 @@ MMUL_TEST_CASE( "multiplication/mm_mul_1", "mmul") {
     REQUIRE(c(1,1) == 154);
 }
 
-MMUL_TEST_CASE( "multiplication/mm_mul_2", "mmul") {
+GEMM_TEST_CASE( "multiplication/mm_mul_2", "mmul") {
     etl::fast_matrix<T, 3, 3> a = {1,2,3,4,5,6,7,8,9};
     etl::fast_matrix<T, 3, 3> b = {7,8,9,9,10,11,11,12,13};
     etl::fast_matrix<T, 3, 3> c;
@@ -43,7 +43,7 @@ MMUL_TEST_CASE( "multiplication/mm_mul_2", "mmul") {
     REQUIRE(c(2,2) == 268);
 }
 
-MMUL_TEST_CASE( "multiplication/mm_mul_3", "mmul") {
+GEMM_TEST_CASE( "multiplication/mm_mul_3", "mmul") {
     etl::dyn_matrix<T> a(4,4, etl::values(1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16));
     etl::dyn_matrix<T> b(4,4, etl::values(1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16));
     etl::dyn_matrix<T> c(4,4);
@@ -60,7 +60,7 @@ MMUL_TEST_CASE( "multiplication/mm_mul_3", "mmul") {
     REQUIRE(c(3,1) == 484);
 }
 
-MMUL_TEST_CASE( "multiplication/mm_mul_4", "mmul") {
+GEMM_TEST_CASE( "multiplication/mm_mul_4", "mmul") {
     etl::dyn_matrix<T> a(2,2, etl::values(1,2,3,4));
     etl::dyn_matrix<T> b(2,2, etl::values(1,2,3,4));
     etl::dyn_matrix<T> c(2,2);
@@ -73,7 +73,7 @@ MMUL_TEST_CASE( "multiplication/mm_mul_4", "mmul") {
     REQUIRE(c(1,1) == 22);
 }
 
-MMUL_TEST_CASE( "multiplication/mm_mul_5", "mmul") {
+GEMM_TEST_CASE( "multiplication/mm_mul_5", "mmul") {
     etl::dyn_matrix<T> a(3,3, std::initializer_list<T>({1,2,3,4,5,6,7,8,9}));
     etl::dyn_matrix<T> b(3,3, std::initializer_list<T>({7,8,9,9,10,11,11,12,13}));
     etl::dyn_matrix<T> c(3,3);
@@ -91,7 +91,7 @@ MMUL_TEST_CASE( "multiplication/mm_mul_5", "mmul") {
     REQUIRE(c(2,2) == 268);
 }
 
-MMUL_TEST_CASE( "multiplication/mm_mul_6", "mmul") {
+GEMM_TEST_CASE( "multiplication/mm_mul_6", "mmul") {
     etl::fast_matrix<T, 19, 19> a(etl::magic(19));
     etl::fast_matrix<T, 19, 19> b(etl::magic(19));
     etl::fast_matrix<T, 19, 19> c;

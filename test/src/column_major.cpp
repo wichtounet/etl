@@ -199,7 +199,7 @@ TEMPLATE_TEST_CASE_2( "column_major/sub/1", "[fast][cm]", Z, int, long ) {
     REQUIRE(b(2, 1) == 12);
 }
 
-MMUL_TEST_CASE( "column_major/mul/1", "mmul") {
+GEMM_TEST_CASE( "column_major/mul/1", "mmul") {
     etl::fast_matrix_cm<T, 2, 3> a = {1,4,2,5,3,6};
     etl::fast_matrix_cm<T, 3, 2> b = {7,9,11,8,10,12};
     etl::fast_matrix_cm<T, 2, 2> c;
