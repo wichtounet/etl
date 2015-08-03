@@ -33,6 +33,10 @@
 #define TEST_MKL
 #endif
 
+#ifdef ETL_CUBLAS_MODE
+#define TEST_CUBLAS
+#endif
+
 #ifdef ETL_BLAS_MODE
 #define TEST_BLAS
 #endif
@@ -44,6 +48,11 @@
 #ifdef ETL_BENCH_MMUL_CONV
 #define TEST_MMUL_CONV
 #endif
+
+using smat_cm = etl::dyn_matrix_cm<float>;
+using dmat_cm = etl::dyn_matrix_cm<double>;
+using cmat_cm = etl::dyn_matrix_cm<std::complex<float>>;
+using zmat_cm = etl::dyn_matrix_cm<std::complex<double>>;
 
 using dvec = etl::dyn_vector<double>;
 using dmat = etl::dyn_matrix<double>;
@@ -71,6 +80,9 @@ using fft_2d_policy = NARY_POLICY(VALUES_POLICY(200, 400, 600, 800, 1000, 1200, 
 
 using sigmoid_policy = VALUES_POLICY(250, 500, 750, 1000, 1250, 1500, 1750, 2000);
 
+using small_square_policy = NARY_POLICY(VALUES_POLICY(50, 100, 150, 200, 250, 300, 350, 400, 450, 500), VALUES_POLICY(50, 100, 150, 200, 250, 300, 350, 400, 450, 500));
+using square_policy = NARY_POLICY(VALUES_POLICY(50, 100, 200, 300, 400, 500, 600, 700, 800, 900, 1000), VALUES_POLICY(50, 100, 200, 300, 400, 500, 600, 700, 800, 900, 1000));
+
 using trans_sub_policy = VALUES_POLICY(100, 200, 300, 400, 500, 600, 700, 800, 900, 1000);
 using trans_policy = NARY_POLICY(
     VALUES_POLICY(100, 100, 200, 200, 300, 300, 400, 400, 500, 500, 600, 600, 700, 700, 800, 800, 900, 900, 1000, 1000),
@@ -92,6 +104,18 @@ using trans_policy = NARY_POLICY(
 #define MKL_SECTION_FUNCTOR(name, ...) , CPM_SECTION_FUNCTOR(name, __VA_ARGS__)
 #else
 #define MKL_SECTION_FUNCTOR(name, ...)
+#endif
+
+#ifdef TEST_BLAS
+#define BLAS_SECTION_FUNCTOR(name, ...) , CPM_SECTION_FUNCTOR(name, __VA_ARGS__)
+#else
+#define BLAS_SECTION_FUNCTOR(name, ...)
+#endif
+
+#ifdef TEST_CUBLAS
+#define CUBLAS_SECTION_FUNCTOR(name, ...) , CPM_SECTION_FUNCTOR(name, __VA_ARGS__)
+#else
+#define CUBLAS_SECTION_FUNCTOR(name, ...)
 #endif
 
 #ifdef TEST_MMUL_CONV
@@ -528,25 +552,48 @@ CPM_DIRECT_SECTION_TWO_PASS_NS_P("dconv2_full", conv_2d_large_policy,
      MC_SECTION_FUNCTOR("mmul", [](dmat& a, dmat& b, dmat& r){ etl::impl::reduc::conv2_full(a, b, r); })
 )
 
-using square_policy = NARY_POLICY(VALUES_POLICY(100, 200, 300, 400, 500, 600, 700, 800, 900, 1000), VALUES_POLICY(100, 200, 300, 400, 500, 600, 700, 800, 900, 1000));
+CPM_DIRECT_SECTION_TWO_PASS_NS_P("A * B (s)", square_policy,
+    CPM_SECTION_INIT([](std::size_t d1, std::size_t d2){ return std::make_tuple(smat(d1,d2), smat(d1,d2), smat(d1, d2)); }),
+    CPM_SECTION_FUNCTOR("default", [](smat& a, smat& b, smat& c){ c = a * b; }),
+    CPM_SECTION_FUNCTOR("std", [](smat& a, smat& b, smat& c){ etl::impl::standard::mm_mul(a, b, c); }),
+    CPM_SECTION_FUNCTOR("eblas", [](smat& a, smat& b, smat& c){ etl::impl::eblas::fast_sgemm(a, b, c); })
+    BLAS_SECTION_FUNCTOR("blas", [](smat& a, smat& b, smat& c){ etl::impl::blas::sgemm(a, b, c); })
+    CUBLAS_SECTION_FUNCTOR("cublas", [](smat& a, smat& b, smat& c){ etl::impl::cublas::sgemm(a, b, c); })
+)
 
-CPM_BENCH(){
-    CPM_TWO_PASS_NS_P(
-        square_policy,
-        "r = A * B (float)",
-        [](std::size_t d1,std::size_t d2){ return std::make_tuple(smat(d1,d2), smat(d1,d2), smat(d1,d2)); },
-        [](smat& A, smat& B, smat& R){ R = A * B; }
-        );
-}
+CPM_DIRECT_SECTION_TWO_PASS_NS_P("A * B (cm/s)", square_policy,
+    CPM_SECTION_INIT([](std::size_t d1, std::size_t d2){ return std::make_tuple(smat_cm(d1,d2), smat_cm(d1,d2), smat_cm(d1, d2)); }),
+    CPM_SECTION_FUNCTOR("default", [](smat_cm& a, smat_cm& b, smat_cm& c){ c = a * b; }),
+    CPM_SECTION_FUNCTOR("std", [](smat_cm& a, smat_cm& b, smat_cm& c){ etl::impl::standard::mm_mul(a, b, c); }),
+    CPM_SECTION_FUNCTOR("eblas", [](smat_cm& a, smat_cm& b, smat_cm& c){ etl::impl::eblas::fast_sgemm(a, b, c); })
+    BLAS_SECTION_FUNCTOR("blas", [](smat_cm& a, smat_cm& b, smat_cm& c){ etl::impl::blas::sgemm(a, b, c); })
+    CUBLAS_SECTION_FUNCTOR("cublas", [](smat_cm& a, smat_cm& b, smat_cm& c){ etl::impl::cublas::sgemm(a, b, c); })
+)
 
-CPM_BENCH(){
-    CPM_TWO_PASS_NS_P(
-        square_policy,
-        "r = A * B (double)",
-        [](std::size_t d1,std::size_t d2){ return std::make_tuple(dmat(d1,d2), dmat(d1,d2), dmat(d1,d2)); },
-        [](dmat& A, dmat& B, dmat& R){ R = A * B; }
-        );
-}
+CPM_DIRECT_SECTION_TWO_PASS_NS_P("A * B (d)", square_policy,
+    CPM_SECTION_INIT([](std::size_t d1, std::size_t d2){ return std::make_tuple(dmat(d1,d2), dmat(d1,d2), dmat(d1, d2)); }),
+    CPM_SECTION_FUNCTOR("default", [](dmat& a, dmat& b, dmat& c){ c = a * b; }),
+    CPM_SECTION_FUNCTOR("std", [](dmat& a, dmat& b, dmat& c){ etl::impl::standard::mm_mul(a, b, c); }),
+    CPM_SECTION_FUNCTOR("eblas", [](dmat& a, dmat& b, dmat& c){ etl::impl::eblas::fast_dgemm(a, b, c); })
+    BLAS_SECTION_FUNCTOR("blas", [](dmat& a, dmat& b, dmat& c){ etl::impl::blas::dgemm(a, b, c); })
+    CUBLAS_SECTION_FUNCTOR("cublas", [](dmat& a, dmat& b, dmat& c){ etl::impl::cublas::dgemm(a, b, c); })
+)
+
+CPM_DIRECT_SECTION_TWO_PASS_NS_P("A * B (c)", small_square_policy,
+    CPM_SECTION_INIT([](std::size_t d1, std::size_t d2){ return std::make_tuple(cmat(d1,d2), cmat(d1,d2), cmat(d1, d2)); }),
+    CPM_SECTION_FUNCTOR("default", [](cmat& a, cmat& b, cmat& c){ c = a * b; }),
+    CPM_SECTION_FUNCTOR("std", [](cmat& a, cmat& b, cmat& c){ etl::impl::standard::mm_mul(a, b, c); })
+    BLAS_SECTION_FUNCTOR("blas", [](cmat& a, cmat& b, cmat& c){ etl::impl::blas::cgemm(a, b, c); })
+    CUBLAS_SECTION_FUNCTOR("cublas", [](cmat& a, cmat& b, cmat& c){ etl::impl::cublas::cgemm(a, b, c); })
+)
+
+CPM_DIRECT_SECTION_TWO_PASS_NS_P("A * B (z)", small_square_policy,
+    CPM_SECTION_INIT([](std::size_t d1, std::size_t d2){ return std::make_tuple(zmat(d1,d2), zmat(d1,d2), zmat(d1, d2)); }),
+    CPM_SECTION_FUNCTOR("default", [](zmat& a, zmat& b, zmat& c){ c = a * b; }),
+    CPM_SECTION_FUNCTOR("std", [](zmat& a, zmat& b, zmat& c){ etl::impl::standard::mm_mul(a, b, c); })
+    BLAS_SECTION_FUNCTOR("blas", [](zmat& a, zmat& b, zmat& c){ etl::impl::blas::zgemm(a, b, c); })
+    CUBLAS_SECTION_FUNCTOR("cublas", [](zmat& a, zmat& b, zmat& c){ etl::impl::cublas::zgemm(a, b, c); })
+)
 
 CPM_BENCH(){
     CPM_TWO_PASS_NS_P(
