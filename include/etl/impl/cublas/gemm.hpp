@@ -24,6 +24,102 @@ namespace cublas {
 
 #ifdef ETL_CUBLAS_MODE
 
+template<typename C>
+void scopy_matrix(cublas_handle& handle, cuda_memory<float>& gpu, C&& c){
+    if(decay_traits<C>::storage_order == order::RowMajor){
+        auto gpu_d = cuda_allocate(c);
+
+        float alpha = 1.0;
+        float beta = 0.0;
+
+        cublasSgeam(
+            handle.get(),
+            CUBLAS_OP_T, CUBLAS_OP_N,
+            etl::rows(c), etl::columns(c),
+            &alpha,
+            gpu.get(), etl::columns(c),
+            &beta,
+            gpu_d.get(), etl::columns(c),
+            gpu_d.get(), etl::columns(c));
+
+        cudaMemcpy(c.memory_start(), gpu_d.get(), etl::size(c) * sizeof(float), cudaMemcpyDeviceToHost);
+    } else {
+        cudaMemcpy(c.memory_start(), gpu.get(), etl::size(c) * sizeof(float), cudaMemcpyDeviceToHost);
+    }
+}
+
+template<typename C>
+void dcopy_matrix(cublas_handle& handle, cuda_memory<double>& gpu, C&& c){
+    if(decay_traits<C>::storage_order == order::RowMajor){
+        auto gpu_d = cuda_allocate(c);
+
+        double alpha = 1.0;
+        double beta = 0.0;
+
+        cublasDgeam(
+            handle.get(),
+            CUBLAS_OP_T, CUBLAS_OP_N,
+            etl::rows(c), etl::columns(c),
+            &alpha,
+            gpu.get(), etl::columns(c),
+            &beta,
+            gpu_d.get(), etl::columns(c),
+            gpu_d.get(), etl::columns(c));
+
+        cudaMemcpy(c.memory_start(), gpu_d.get(), etl::size(c) * sizeof(double), cudaMemcpyDeviceToHost);
+    } else {
+        cudaMemcpy(c.memory_start(), gpu.get(), etl::size(c) * sizeof(double), cudaMemcpyDeviceToHost);
+    }
+}
+
+template<typename C>
+void ccopy_matrix(cublas_handle& handle, cuda_memory<std::complex<float>>& gpu, C&& c){
+    if(decay_traits<C>::storage_order == order::RowMajor){
+        auto gpu_d = cuda_allocate(c);
+
+        cuComplex alpha = make_cuComplex(1.0, 0.0);
+        cuComplex beta = make_cuComplex(0.0, 0.0);
+
+        cublasCgeam(
+            handle.get(),
+            CUBLAS_OP_T, CUBLAS_OP_N,
+            etl::rows(c), etl::columns(c),
+            &alpha,
+            reinterpret_cast<cuComplex*>(gpu.get()), etl::columns(c),
+            &beta,
+            reinterpret_cast<cuComplex*>(gpu_d.get()), etl::columns(c),
+            reinterpret_cast<cuComplex*>(gpu_d.get()), etl::columns(c));
+
+        cudaMemcpy(c.memory_start(), gpu_d.get(), etl::size(c) * sizeof(std::complex<float>), cudaMemcpyDeviceToHost);
+    } else {
+        cudaMemcpy(c.memory_start(), gpu.get(), etl::size(c) * sizeof(std::complex<float>), cudaMemcpyDeviceToHost);
+    }
+}
+
+template<typename C>
+void zcopy_matrix(cublas_handle& handle, cuda_memory<std::complex<float>>& gpu, C&& c){
+    if(decay_traits<C>::storage_order == order::RowMajor){
+        auto gpu_d = cuda_allocate(c);
+
+        cuDoubleComplex alpha = make_cuDoubleComplex(1.0, 0.0);
+        cuDoubleComplex beta = make_cuDoubleComplex(0.0, 0.0);
+
+        cublasCgeam(
+            handle.get(),
+            CUBLAS_OP_T, CUBLAS_OP_N,
+            etl::rows(c), etl::columns(c),
+            &alpha,
+            reinterpret_cast<cuDoubleComplex*>(gpu.get()), etl::columns(c),
+            &beta,
+            reinterpret_cast<cuDoubleComplex*>(gpu_d.get()), etl::columns(c),
+            reinterpret_cast<cuDoubleComplex*>(gpu_d.get()), etl::columns(c));
+
+        cudaMemcpy(c.memory_start(), gpu_d.get(), etl::size(c) * sizeof(std::complex<double>), cudaMemcpyDeviceToHost);
+    } else {
+        cudaMemcpy(c.memory_start(), gpu.get(), etl::size(c) * sizeof(std::complex<double>), cudaMemcpyDeviceToHost);
+    }
+}
+
 template<typename A, typename B, typename C>
 void sgemm(A&& a, B&& b, C&& c){
     auto handle = start_cublas();
@@ -65,23 +161,7 @@ void sgemm(A&& a, B&& b, C&& c){
 
     //Copy the result from GPU to CPU
 
-    if(decay_traits<C>::storage_order == order::RowMajor){
-        auto gpu_d = cuda_allocate(c);
-
-        cublasSgeam(
-            handle.get(),
-            CUBLAS_OP_T, CUBLAS_OP_N,
-            etl::rows(c), etl::columns(c),
-            &alpha,
-            gpu_c.get(), etl::columns(c),
-            &beta,
-            gpu_d.get(), etl::columns(c),
-            gpu_d.get(), etl::columns(c));
-
-        cudaMemcpy(c.memory_start(), gpu_d.get(), etl::size(c) * sizeof(float), cudaMemcpyDeviceToHost);
-    } else {
-        cudaMemcpy(c.memory_start(), gpu_c.get(), etl::size(c) * sizeof(float), cudaMemcpyDeviceToHost);
-    }
+    scopy_matrix(handle, gpu_c, c);
 }
 
 template<typename A, typename B, typename C>
@@ -125,23 +205,7 @@ void dgemm(A&& a, B&& b, C&& c){
 
     //Copy the result from GPU to CPU
 
-    if(decay_traits<C>::storage_order == order::RowMajor){
-        auto gpu_d = cuda_allocate(c);
-
-        cublasDgeam(
-            handle.get(),
-            CUBLAS_OP_T, CUBLAS_OP_N,
-            etl::rows(c), etl::columns(c),
-            &alpha,
-            gpu_c.get(), etl::columns(c),
-            &beta,
-            gpu_d.get(), etl::columns(c),
-            gpu_d.get(), etl::columns(c));
-
-        cudaMemcpy(c.memory_start(), gpu_d.get(), etl::size(c) * sizeof(double), cudaMemcpyDeviceToHost);
-    } else {
-        cudaMemcpy(c.memory_start(), gpu_c.get(), etl::size(c) * sizeof(double), cudaMemcpyDeviceToHost);
-    }
+    dcopy_matrix(handle, gpu_c, c);
 }
 
 template<typename A, typename B, typename C>
@@ -185,23 +249,7 @@ void cgemm(A&& a, B&& b, C&& c){
 
     //Copy the result from GPU to CPU
 
-    if(decay_traits<C>::storage_order == order::RowMajor){
-        auto gpu_d = cuda_allocate(c);
-
-        cublasCgeam(
-            handle.get(),
-            CUBLAS_OP_T, CUBLAS_OP_N,
-            etl::rows(c), etl::columns(c),
-            &alpha,
-            reinterpret_cast<cuComplex*>(gpu_c.get()), etl::columns(c),
-            &beta,
-            reinterpret_cast<cuComplex*>(gpu_d.get()), etl::columns(c),
-            reinterpret_cast<cuComplex*>(gpu_d.get()), etl::columns(c));
-
-        cudaMemcpy(c.memory_start(), gpu_d.get(), etl::size(c) * sizeof(std::complex<float>), cudaMemcpyDeviceToHost);
-    } else {
-        cudaMemcpy(c.memory_start(), gpu_c.get(), etl::size(c) * sizeof(std::complex<float>), cudaMemcpyDeviceToHost);
-    }
+    ccopy_matrix(handle, gpu_c, c);
 }
 
 template<typename A, typename B, typename C>
@@ -245,23 +293,359 @@ void zgemm(A&& a, B&& b, C&& c){
 
     //Copy the result from GPU to CPU
 
-    if(decay_traits<C>::storage_order == order::RowMajor){
-        auto gpu_d = cuda_allocate(c);
+    zcopy_matrix(handle, gpu_c, c);
+}
 
-        cublasZgeam(
+template<typename A, typename B, typename C>
+void sgemv(A&& a, B&& b, C&& c){
+    auto handle = start_cublas();
+
+    bool row_major = decay_traits<A>::storage_order == order::RowMajor;
+
+    auto gpu_a = cuda_allocate_copy(a);
+    auto gpu_b = cuda_allocate_copy(b);
+    auto gpu_c = cuda_allocate(c);
+
+    float alpha = 1.0;
+    float beta = 0.0;
+
+    //Perform the actual multiplication
+
+    if(row_major){
+        cublasSgemv(
             handle.get(),
-            CUBLAS_OP_T, CUBLAS_OP_N,
-            etl::rows(c), etl::columns(c),
+            CUBLAS_OP_T,
+            etl::rows(a), etl::columns(a),
             &alpha,
-            reinterpret_cast<cuDoubleComplex*>(gpu_c.get()), etl::columns(c),
+            gpu_a.get(), major_stride(a),
+            gpu_b.get(), 1,
             &beta,
-            reinterpret_cast<cuDoubleComplex*>(gpu_d.get()), etl::columns(c),
-            reinterpret_cast<cuDoubleComplex*>(gpu_d.get()), etl::columns(c));
-
-        cudaMemcpy(c.memory_start(), gpu_d.get(), etl::size(c) * sizeof(std::complex<double>), cudaMemcpyDeviceToHost);
+            gpu_c.get(), 1
+        );
     } else {
-        cudaMemcpy(c.memory_start(), gpu_c.get(), etl::size(c) * sizeof(std::complex<double>), cudaMemcpyDeviceToHost);
+        cublasSgemv(
+            handle.get(),
+            CUBLAS_OP_N,
+            etl::rows(a), etl::columns(a),
+            &alpha,
+            gpu_a.get(), major_stride(a),
+            gpu_b.get(), 1,
+            &beta,
+            gpu_c.get(), 1
+        );
     }
+
+    //Copy the result from GPU to CPU
+
+    cudaMemcpy(c.memory_start(), gpu_c.get(), etl::size(c) * sizeof(float), cudaMemcpyDeviceToHost);
+}
+
+template<typename A, typename B, typename C>
+void dgemv(A&& a, B&& b, C&& c){
+    auto handle = start_cublas();
+
+    bool row_major = decay_traits<A>::storage_order == order::RowMajor;
+
+    auto gpu_a = cuda_allocate_copy(a);
+    auto gpu_b = cuda_allocate_copy(b);
+    auto gpu_c = cuda_allocate(c);
+
+    double alpha = 1.0;
+    double beta = 0.0;
+
+    //Perform the actual multiplication
+
+    if(row_major){
+        cublasDgemv(
+            handle.get(),
+            CUBLAS_OP_T,
+            etl::rows(a), etl::columns(a),
+            &alpha,
+            gpu_a.get(), major_stride(a),
+            gpu_b.get(), 1,
+            &beta,
+            gpu_c.get(), 1
+        );
+    } else {
+        cublasDgemv(
+            handle.get(),
+            CUBLAS_OP_N,
+            etl::rows(a), etl::columns(a),
+            &alpha,
+            gpu_a.get(), major_stride(a),
+            gpu_b.get(), 1,
+            &beta,
+            gpu_c.get(), 1
+        );
+    }
+
+    //Copy the result from GPU to CPU
+
+    cudaMemcpy(c.memory_start(), gpu_c.get(), etl::size(c) * sizeof(double), cudaMemcpyDeviceToHost);
+}
+
+template<typename A, typename B, typename C>
+void cgemv(A&& a, B&& b, C&& c){
+    auto handle = start_cublas();
+
+    bool row_major = decay_traits<A>::storage_order == order::RowMajor;
+
+    auto gpu_a = cuda_allocate_copy(a);
+    auto gpu_b = cuda_allocate_copy(b);
+    auto gpu_c = cuda_allocate(c);
+
+    cuComplex alpha = make_cuComplex(1.0, 0.0);
+    cuComplex beta = make_cuComplex(0.0, 0.0);
+
+    //Perform the actual multiplication
+
+    if(row_major){
+        cublasCgemv(
+            handle.get(),
+            CUBLAS_OP_T,
+            etl::rows(a), etl::columns(a),
+            &alpha,
+            reinterpret_cast<cuComplex*>(gpu_a.get()), major_stride(a),
+            reinterpret_cast<cuComplex*>(gpu_b.get()), 1,
+            &beta,
+            reinterpret_cast<cuComplex*>(gpu_c.get()), 1
+        );
+    } else {
+        cublasCgemv(
+            handle.get(),
+            CUBLAS_OP_N,
+            etl::rows(a), etl::columns(a),
+            &alpha,
+            reinterpret_cast<cuComplex*>(gpu_a.get()), major_stride(a),
+            reinterpret_cast<cuComplex*>(gpu_b.get()), 1,
+            &beta,
+            reinterpret_cast<cuComplex*>(gpu_c.get()), 1
+        );
+    }
+
+    //Copy the result from GPU to CPU
+
+    cudaMemcpy(c.memory_start(), gpu_c.get(), etl::size(c) * sizeof(std::complex<float>), cudaMemcpyDeviceToHost);
+}
+
+template<typename A, typename B, typename C>
+void zgemv(A&& a, B&& b, C&& c){
+    auto handle = start_cublas();
+
+    bool row_major = decay_traits<A>::storage_order == order::RowMajor;
+
+    auto gpu_a = cuda_allocate_copy(a);
+    auto gpu_b = cuda_allocate_copy(b);
+    auto gpu_c = cuda_allocate(c);
+
+    cuDoubleComplex alpha = make_cuDoubleComplex(1.0, 0.0);
+    cuDoubleComplex beta = make_cuDoubleComplex(0.0, 0.0);
+
+    //Perform the actual multiplication
+
+    if(row_major){
+        cublasCgemv(
+            handle.get(),
+            CUBLAS_OP_T,
+            etl::rows(a), etl::columns(a),
+            &alpha,
+            reinterpret_cast<cuDoubleComplex*>(gpu_a.get()), major_stride(a),
+            reinterpret_cast<cuDoubleComplex*>(gpu_b.get()), 1,
+            &beta,
+            reinterpret_cast<cuDoubleComplex*>(gpu_c.get()), 1
+        );
+    } else {
+        cublasCgemv(
+            handle.get(),
+            CUBLAS_OP_N,
+            etl::rows(a), etl::columns(a),
+            &alpha,
+            reinterpret_cast<cuDoubleComplex*>(gpu_a.get()), major_stride(a),
+            reinterpret_cast<cuDoubleComplex*>(gpu_b.get()), 1,
+            &beta,
+            reinterpret_cast<cuDoubleComplex*>(gpu_c.get()), 1
+        );
+    }
+
+    //Copy the result from GPU to CPU
+
+    cudaMemcpy(c.memory_start(), gpu_c.get(), etl::size(c) * sizeof(std::complex<double>), cudaMemcpyDeviceToHost);
+}
+
+template<typename A, typename B, typename C>
+void sgevm(A&& a, B&& b, C&& c){
+    auto handle = start_cublas();
+
+    bool row_major = decay_traits<B>::storage_order == order::RowMajor;
+
+    auto gpu_a = cuda_allocate_copy(a);
+    auto gpu_b = cuda_allocate_copy(b);
+    auto gpu_c = cuda_allocate(c);
+
+    float alpha = 1.0;
+    float beta = 0.0;
+
+    //Perform the actual multiplication
+
+    if(row_major){
+        cublasSgemv(
+            handle.get(),
+            CUBLAS_OP_N,
+            etl::rows(b), etl::columns(b),
+            &alpha,
+            gpu_b.get(), major_stride(b),
+            gpu_a.get(), 1,
+            &beta,
+            gpu_c.get(), 1
+        );
+    } else {
+        cublasSgemv(
+            handle.get(),
+            CUBLAS_OP_T,
+            etl::rows(b), etl::columns(b),
+            &alpha,
+            gpu_b.get(), major_stride(b),
+            gpu_a.get(), 1,
+            &beta,
+            gpu_c.get(), 1
+        );
+    }
+
+    //Copy the result from GPU to CPU
+
+    cudaMemcpy(c.memory_start(), gpu_c.get(), etl::size(c) * sizeof(float), cudaMemcpyDeviceToHost);
+}
+
+template<typename A, typename B, typename C>
+void dgevm(A&& a, B&& b, C&& c){
+    auto handle = start_cublas();
+
+    bool row_major = decay_traits<B>::storage_order == order::RowMajor;
+
+    auto gpu_a = cuda_allocate_copy(a);
+    auto gpu_b = cuda_allocate_copy(b);
+    auto gpu_c = cuda_allocate(c);
+
+    double alpha = 1.0;
+    double beta = 0.0;
+
+    //Perform the actual multiplication
+
+    if(row_major){
+        cublasDgemv(
+            handle.get(),
+            CUBLAS_OP_N,
+            etl::rows(b), etl::columns(b),
+            &alpha,
+            gpu_b.get(), major_stride(b),
+            gpu_a.get(), 1,
+            &beta,
+            gpu_c.get(), 1
+        );
+    } else {
+        cublasDgemv(
+            handle.get(),
+            CUBLAS_OP_T,
+            etl::rows(b), etl::columns(b),
+            &alpha,
+            gpu_b.get(), major_stride(b),
+            gpu_a.get(), 1,
+            &beta,
+            gpu_c.get(), 1
+        );
+    }
+
+    //Copy the result from GPU to CPU
+
+    cudaMemcpy(c.memory_start(), gpu_c.get(), etl::size(c) * sizeof(double), cudaMemcpyDeviceToHost);
+}
+
+template<typename A, typename B, typename C>
+void cgevm(A&& a, B&& b, C&& c){
+    auto handle = start_cublas();
+
+    bool row_major = decay_traits<A>::storage_order == order::RowMajor;
+
+    auto gpu_a = cuda_allocate_copy(a);
+    auto gpu_b = cuda_allocate_copy(b);
+    auto gpu_c = cuda_allocate(c);
+
+    cuComplex alpha = make_cuComplex(1.0, 0.0);
+    cuComplex beta = make_cuComplex(0.0, 0.0);
+
+    //Perform the actual multiplication
+
+    if(row_major){
+        cublasCgemv(
+            handle.get(),
+            CUBLAS_OP_N,
+            etl::rows(b), etl::columns(b),
+            &alpha,
+            reinterpret_cast<cuComplex*>(gpu_b.get()), major_stride(b),
+            reinterpret_cast<cuComplex*>(gpu_a.get()), 1,
+            &beta,
+            reinterpret_cast<cuComplex*>(gpu_c.get()), 1
+        );
+    } else {
+        cublasCgemv(
+            handle.get(),
+            CUBLAS_OP_T,
+            etl::rows(b), etl::columns(b),
+            &alpha,
+            reinterpret_cast<cuComplex*>(gpu_b.get()), major_stride(b),
+            reinterpret_cast<cuComplex*>(gpu_a.get()), 1,
+            &beta,
+            reinterpret_cast<cuComplex*>(gpu_c.get()), 1
+        );
+    }
+
+    //Copy the result from GPU to CPU
+
+    cudaMemcpy(c.memory_start(), gpu_c.get(), etl::size(c) * sizeof(std::complex<float>), cudaMemcpyDeviceToHost);
+}
+
+template<typename A, typename B, typename C>
+void zgevm(A&& a, B&& b, C&& c){
+    auto handle = start_cublas();
+
+    bool row_major = decay_traits<A>::storage_order == order::RowMajor;
+
+    auto gpu_a = cuda_allocate_copy(a);
+    auto gpu_b = cuda_allocate_copy(b);
+    auto gpu_c = cuda_allocate(c);
+
+    cuDoubleComplex alpha = make_cuDoubleComplex(1.0, 0.0);
+    cuDoubleComplex beta = make_cuDoubleComplex(0.0, 0.0);
+
+    //Perform the actual multiplication
+
+    if(row_major){
+        cublasZgemv(
+            handle.get(),
+            CUBLAS_OP_N,
+            etl::rows(b), etl::columns(b),
+            &alpha,
+            reinterpret_cast<cuDoubleComplex*>(gpu_b.get()), major_stride(b),
+            reinterpret_cast<cuDoubleComplex*>(gpu_a.get()), 1,
+            &beta,
+            reinterpret_cast<cuDoubleComplex*>(gpu_c.get()), 1
+        );
+    } else {
+        cublasZgemv(
+            handle.get(),
+            CUBLAS_OP_T,
+            etl::rows(b), etl::columns(b),
+            &alpha,
+            reinterpret_cast<cuDoubleComplex*>(gpu_b.get()), major_stride(b),
+            reinterpret_cast<cuDoubleComplex*>(gpu_a.get()), 1,
+            &beta,
+            reinterpret_cast<cuDoubleComplex*>(gpu_c.get()), 1
+        );
+    }
+
+    //Copy the result from GPU to CPU
+
+    cudaMemcpy(c.memory_start(), gpu_c.get(), etl::size(c) * sizeof(std::complex<double>), cudaMemcpyDeviceToHost);
 }
 
 #else
@@ -277,6 +661,30 @@ void cgemm(A&& a, B&& b, C&& c);
 
 template<typename A, typename B, typename C>
 void zgemm(A&& a, B&& b, C&& c);
+
+template<typename A, typename B, typename C>
+void sgemv(A&& a, B&& b, C&& c);
+
+template<typename A, typename B, typename C>
+void dgemv(A&& a, B&& b, C&& c);
+
+template<typename A, typename B, typename C>
+void cgemv(A&& a, B&& b, C&& c);
+
+template<typename A, typename B, typename C>
+void zgemv(A&& a, B&& b, C&& c);
+
+template<typename A, typename B, typename C>
+void sgevm(A&& a, B&& b, C&& c);
+
+template<typename A, typename B, typename C>
+void dgevm(A&& a, B&& b, C&& c);
+
+template<typename A, typename B, typename C>
+void cgevm(A&& a, B&& b, C&& c);
+
+template<typename A, typename B, typename C>
+void zgevm(A&& a, B&& b, C&& c);
 
 #endif
 
