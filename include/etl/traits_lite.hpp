@@ -54,7 +54,7 @@ std::size_t size(const E& v);
 template<typename E, cpp::enable_if_u<etl_traits<E>::is_fast> = cpp::detail::dummy>
 constexpr std::size_t size(const E& /*unused*/) noexcept;
 
-template<typename E, cpp::disable_if_u<etl_traits<E>::is_fast> = cpp::detail::dummy>
+template<typename E>
 std::size_t dim(const E& e, std::size_t d);
 
 template<std::size_t D, typename E, cpp::disable_if_u<etl_traits<E>::is_fast> = cpp::detail::dummy>

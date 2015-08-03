@@ -207,25 +207,25 @@ CONV2_FULL_TEST_CASE( "convolution_2d/full_8", "convolution_2d_full" ) {
 
     Impl::apply(a, b, c);
 
-    CHECK(c(0, 0) == Approx(T(26461)));
-    CHECK(c(0, 1) == Approx(T(60760)));
-    CHECK(c(0, 2) == Approx(T(103282)));
-    CHECK(c(0, 3) == Approx(T(154412)));
+    CHECK(c(0, 0) == Approx(T(26461)).epsilon(5.0));
+    CHECK(c(0, 1) == Approx(T(60760)).epsilon(5.0));
+    CHECK(c(0, 2) == Approx(T(103282)).epsilon(5.0));
+    CHECK(c(0, 3) == Approx(T(154412)).epsilon(5.0));
 
-    CHECK(c(1, 0) == Approx(T(60150)));
-    CHECK(c(1, 1) == Approx(T(136700)));
-    CHECK(c(1, 2) == Approx(T(230420)));
-    CHECK(c(1, 3) == Approx(T(296477)));
+    CHECK(c(1, 0) == Approx(T(60150)).epsilon(5.0));
+    CHECK(c(1, 1) == Approx(T(136700)).epsilon(5.0));
+    CHECK(c(1, 2) == Approx(T(230420)).epsilon(5.0));
+    CHECK(c(1, 3) == Approx(T(296477)).epsilon(5.0));
 
-    CHECK(c(2, 0) == Approx(T(101407)));
-    CHECK(c(2, 1) == Approx(T(228500)));
-    CHECK(c(2, 2) == Approx(T(336831)));
-    CHECK(c(2, 3) == Approx(T(416899)));
+    CHECK(c(2, 0) == Approx(T(101407)).epsilon(5.0));
+    CHECK(c(2, 1) == Approx(T(228500)).epsilon(5.0));
+    CHECK(c(2, 2) == Approx(T(336831)).epsilon(5.0));
+    CHECK(c(2, 3) == Approx(T(416899)).epsilon(5.0));
 
-    CHECK(c(3, 0) == Approx(T(150572)));
-    CHECK(c(3, 1) == Approx(T(291237)));
-    CHECK(c(3, 2) == Approx(T(417946)));
-    CHECK(c(3, 3) == Approx(T(516210)));
+    CHECK(c(3, 0) == Approx(T(150572)).epsilon(5.0));
+    CHECK(c(3, 1) == Approx(T(291237)).epsilon(5.0));
+    CHECK(c(3, 2) == Approx(T(417946)).epsilon(5.0));
+    CHECK(c(3, 3) == Approx(T(516210)).epsilon(5.0));
 }
 
 //}}}

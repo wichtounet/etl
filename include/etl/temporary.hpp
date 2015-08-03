@@ -32,6 +32,12 @@ decltype(auto) force_temporary(E&& expr){
     return dyn_matrix_impl<value_t<E>, decay_traits<E>::storage_order, decay_traits<E>::dimensions()>{std::forward<E>(expr)};
 }
 
+template<typename E>
+decltype(auto) force_temporary_dyn(E&& expr){
+    //Sizes will be directly propagated
+    return dyn_matrix_impl<value_t<E>, decay_traits<E>::storage_order, decay_traits<E>::dimensions()>{std::forward<E>(expr)};
+}
+
 template<typename E, cpp_enable_if(has_direct_access<E>::value || !create_temporary)>
 decltype(auto) make_temporary(E&& expr){
     return std::forward<E>(expr);
