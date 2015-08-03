@@ -109,8 +109,8 @@ void cgemm(A&& a, B&& b, C&& c){
     auto gpu_c = cuda_allocate(c);
     auto gpu_d = cuda_allocate(c);
 
-    std::complex<float> alpha = 1.0;
-    std::complex<float> beta = 0.0;
+    cuComplex alpha = make_cuComplex(1.0, 0.0);
+    cuComplex beta = make_cuComplex(0.0, 0.0);
 
     // Do the actual multiplication
     cublasCgemm(
@@ -118,10 +118,10 @@ void cgemm(A&& a, B&& b, C&& c){
         CUBLAS_OP_T, CUBLAS_OP_T,
         etl::rows(c), etl::columns(c), etl::columns(a),
         &alpha,
-        gpu_a.get(), etl::columns(a),
-        gpu_b.get(), etl::columns(b),
+        reinterpret_cast<cuComplex*>(gpu_a.get()), etl::columns(a),
+        reinterpret_cast<cuComplex*>(gpu_b.get()), etl::columns(b),
         &beta,
-        gpu_c.get(), etl::rows(c));
+        reinterpret_cast<cuComplex*>(gpu_c.get()), etl::rows(c));
 
     //gpu_d = gpu_c'
     cublasCgeam(
@@ -129,10 +129,10 @@ void cgemm(A&& a, B&& b, C&& c){
         CUBLAS_OP_T, CUBLAS_OP_N,
         etl::rows(c), etl::columns(c),
         &alpha,
-        gpu_c.get(), etl::columns(c),
+        reinterpret_cast<cuComplex*>(gpu_c.get()), etl::columns(c),
         &beta,
-        gpu_d.get(), etl::columns(c),
-        gpu_d.get(), etl::columns(c));
+        reinterpret_cast<cuComplex*>(gpu_d.get()), etl::columns(c),
+        reinterpret_cast<cuComplex*>(gpu_d.get()), etl::columns(c));
 
     //C = gpu_d
     cudaMemcpy(c.memory_start(), gpu_d.get(), etl::size(c) * sizeof(std::complex<float>), cudaMemcpyDeviceToHost);
@@ -147,8 +147,8 @@ void zgemm(A&& a, B&& b, C&& c){
     auto gpu_c = cuda_allocate(c);
     auto gpu_d = cuda_allocate(c);
 
-    std::complex<double> alpha = 1.0;
-    std::complex<double> beta = 0.0;
+    cuDoubleComplex alpha = make_cuDoubleComplex(1.0, 0.0);
+    cuDoubleComplex beta = make_cuDoubleComplex(0.0, 0.0);
 
     // Do the actual multiplication
     cublasZgemm(
@@ -156,10 +156,10 @@ void zgemm(A&& a, B&& b, C&& c){
         CUBLAS_OP_T, CUBLAS_OP_T,
         etl::rows(c), etl::columns(c), etl::columns(a),
         &alpha,
-        gpu_a.get(), etl::columns(a),
-        gpu_b.get(), etl::columns(b),
+        reinterpret_cast<cuDoubleComplex*>(gpu_a.get()), etl::columns(a),
+        reinterpret_cast<cuDoubleComplex*>(gpu_b.get()), etl::columns(b),
         &beta,
-        gpu_c.get(), etl::rows(c));
+        reinterpret_cast<cuDoubleComplex*>(gpu_c.get()), etl::rows(c));
 
     //gpu_d = gpu_c'
     cublasZgeam(
@@ -167,10 +167,10 @@ void zgemm(A&& a, B&& b, C&& c){
         CUBLAS_OP_T, CUBLAS_OP_N,
         etl::rows(c), etl::columns(c),
         &alpha,
-        gpu_c.get(), etl::columns(c),
+        reinterpret_cast<cuDoubleComplex*>(gpu_c.get()), etl::columns(c),
         &beta,
-        gpu_d.get(), etl::columns(c),
-        gpu_d.get(), etl::columns(c));
+        reinterpret_cast<cuDoubleComplex*>(gpu_d.get()), etl::columns(c),
+        reinterpret_cast<cuDoubleComplex*>(gpu_d.get()), etl::columns(c));
 
     //C = gpu_d
     cudaMemcpy(c.memory_start(), gpu_d.get(), etl::size(c) * sizeof(std::complex<double>), cudaMemcpyDeviceToHost);
