@@ -34,6 +34,14 @@ MMUL_FUNCTOR( blas_mmul_double, etl::impl::blas::dgemm(a, b, c) )
 #define MMUL_TEST_CASE_SECTION_BLAS
 #endif
 
+#ifdef ETL_CUBLAS_MODE
+MMUL_FUNCTOR( cublas_mmul_float, etl::impl::cublas::sgemm(a, b, c) )
+MMUL_FUNCTOR( cublas_mmul_double, etl::impl::cublas::dgemm(a, b, c) )
+#define MMUL_TEST_CASE_SECTION_CUBLAS  MMUL_TEST_CASE_SECTIONS( cublas_mmul_float, cublas_mmul_double )
+#else
+#define MMUL_TEST_CASE_SECTION_CUBLAS
+#endif
+
 #define MMUL_TEST_CASE_DECL( name, description ) \
     template<typename T, typename Impl> \
     static void INTERNAL_CATCH_UNIQUE_NAME( ____C_A_T_C_H____T_E_M_P_L_A_TE____T_E_S_T____ )(); \
@@ -61,6 +69,7 @@ MMUL_FUNCTOR( blas_mmul_double, etl::impl::blas::dgemm(a, b, c) )
         MMUL_TEST_CASE_SECTION_LAZY \
         MMUL_TEST_CASE_SECTION_STRASSEN \
         MMUL_TEST_CASE_SECTION_BLAS \
+        MMUL_TEST_CASE_SECTION_CUBLAS \
         MMUL_TEST_CASE_SECTION_EBLAS \
     } \
     MMUL_TEST_CASE_DEFN
