@@ -17,12 +17,24 @@ namespace standard {
 
 template<typename A, typename B, typename C>
 static void mm_mul(A&& a, B&& b, C&& c){
+    bool row_major = decay_traits<A>::storage_order == order::RowMajor;
+
     c = 0;
 
-    for(std::size_t i = 0; i < rows(a); i++){
-        for(std::size_t k = 0; k < columns(a); k++){
-            for(std::size_t j = 0; j < columns(b); j++){
-                c(i,j) += a(i,k) * b(k,j);
+    if(row_major){
+        for(std::size_t i = 0; i < rows(a); i++){
+            for(std::size_t k = 0; k < columns(a); k++){
+                for(std::size_t j = 0; j < columns(b); j++){
+                    c(i,j) += a(i,k) * b(k,j);
+                }
+            }
+        }
+    } else {
+        for(std::size_t j = 0; j < columns(b); j++){
+            for(std::size_t k = 0; k < columns(a); k++){
+                for(std::size_t i = 0; i < rows(a); i++){
+                    c(i,j) += a(i,k) * b(k,j);
+                }
             }
         }
     }
@@ -30,22 +42,42 @@ static void mm_mul(A&& a, B&& b, C&& c){
 
 template<typename A, typename B, typename C>
 static void vm_mul(A&& a, B&& b, C&& c){
+    bool row_major = decay_traits<B>::storage_order == order::RowMajor;
+
     c = 0;
 
-    for(std::size_t k = 0; k < etl::dim<0>(a); k++){
+    if(row_major){
+        for(std::size_t k = 0; k < etl::dim<0>(a); k++){
+            for(std::size_t j = 0; j < columns(b); j++){
+                c(j) += a(k) * b(k,j);
+            }
+        }
+    } else {
         for(std::size_t j = 0; j < columns(b); j++){
-            c(j) += a(k) * b(k,j);
+            for(std::size_t k = 0; k < etl::dim<0>(a); k++){
+                c(j) += a(k) * b(k,j);
+            }
         }
     }
 }
 
 template<typename A, typename B, typename C>
 static void mv_mul(A&& a, B&& b, C&& c){
+    bool row_major = decay_traits<A>::storage_order == order::RowMajor;
+
     c = 0;
 
-    for(std::size_t i = 0; i < rows(a); i++){
+    if(row_major){
+        for(std::size_t i = 0; i < rows(a); i++){
+            for(std::size_t k = 0; k < columns(a); k++){
+                c(i) += a(i,k) * b(k);
+            }
+        }
+    } else {
         for(std::size_t k = 0; k < columns(a); k++){
-            c(i) += a(i,k) * b(k);
+            for(std::size_t i = 0; i < rows(a); i++){
+                c(i) += a(i,k) * b(k);
+            }
         }
     }
 }
