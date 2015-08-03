@@ -148,7 +148,7 @@ public:
 
     //Assign expressions to the unary expr
 
-    template<typename E, cpp::enable_if_all_u<non_const_return_ref, is_etl_expr<E>::value> = cpp::detail::dummy>
+    template<typename E, cpp_enable_if(non_const_return_ref && is_etl_expr<E>::value)>
     unary_expr& operator=(E&& e){
         validate_assign(*this, e);
         assign_evaluate(std::forward<E>(e), *this);
