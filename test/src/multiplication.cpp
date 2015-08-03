@@ -122,10 +122,10 @@ TEMPLATE_TEST_CASE_2( "multiplication/mm_mul_7", "mmul", Z, double, float) {
 
 //{{{ Matrix-Vector Multiplication
 
-TEMPLATE_TEST_CASE_2( "multiplication/gemv/0", "[mul]", Z, double, float) {
-    etl::fast_matrix<Z, 2, 3> a = {1,2,3,4,5,6};
-    etl::fast_vector<Z, 3> b = {7,8,9};
-    etl::fast_matrix<Z, 2> c;
+GEMV_TEST_CASE( "multiplication/gemv/0", "[mul]") {
+    etl::fast_matrix<T, 2, 3> a = {1,2,3,4,5,6};
+    etl::fast_vector<T, 3> b = {7,8,9};
+    etl::fast_matrix<T, 2> c;
 
     c = etl::mul(a, b, c);
 
@@ -133,10 +133,10 @@ TEMPLATE_TEST_CASE_2( "multiplication/gemv/0", "[mul]", Z, double, float) {
     REQUIRE(c(1) == 122);
 }
 
-TEMPLATE_TEST_CASE_2( "multiplication/gemv/1", "[mul]", Z, double, float) {
-    etl::fast_matrix<Z, 2, 5> a = {1,2,3,4,5,6,7,8,9,10};
-    etl::fast_vector<Z, 5> b = {7,8,9,10,11};
-    etl::fast_matrix<Z, 2> c;
+GEMV_TEST_CASE( "multiplication/gemv/1", "[mul]") {
+    etl::fast_matrix<T, 2, 5> a = {1,2,3,4,5,6,7,8,9,10};
+    etl::fast_vector<T, 5> b = {7,8,9,10,11};
+    etl::fast_matrix<T, 2> c;
 
     c = etl::mul(a, b);
 
@@ -144,10 +144,10 @@ TEMPLATE_TEST_CASE_2( "multiplication/gemv/1", "[mul]", Z, double, float) {
     REQUIRE(c(1) == 370);
 }
 
-TEMPLATE_TEST_CASE_2( "multiplication/gemv/2", "[mul]", Z, double, float) {
-    etl::dyn_matrix<Z> a(2,3, etl::values(1,2,3,4,5,6));
-    etl::dyn_vector<Z> b(3, etl::values(7,8,9));
-    etl::dyn_vector<Z> c(2);
+GEMV_TEST_CASE( "multiplication/gemv/2", "[mul]") {
+    etl::dyn_matrix<T> a(2,3, etl::values(1,2,3,4,5,6));
+    etl::dyn_vector<T> b(3, etl::values(7,8,9));
+    etl::dyn_vector<T> c(2);
 
     etl::force(etl::mul(a, b, c));
 
@@ -155,10 +155,10 @@ TEMPLATE_TEST_CASE_2( "multiplication/gemv/2", "[mul]", Z, double, float) {
     REQUIRE(c(1) == 122);
 }
 
-TEMPLATE_TEST_CASE_2( "multiplication/gemv/3", "[mul]", Z, double, float) {
-    etl::dyn_matrix<Z> a(2, 5, etl::values(1,2,3,4,5,6,7,8,9,10));
-    etl::dyn_vector<Z> b(5, etl::values(7,8,9,10,11));
-    etl::dyn_vector<Z> c(2);
+GEMV_TEST_CASE( "multiplication/gemv/3", "[mul]") {
+    etl::dyn_matrix<T> a(2, 5, etl::values(1,2,3,4,5,6,7,8,9,10));
+    etl::dyn_vector<T> b(5, etl::values(7,8,9,10,11));
+    etl::dyn_vector<T> c(2);
 
     etl::force(etl::mul(a, b, c));
 
@@ -170,10 +170,10 @@ TEMPLATE_TEST_CASE_2( "multiplication/gemv/3", "[mul]", Z, double, float) {
 
 //{{{ Vector-Matrix Multiplication
 
-TEMPLATE_TEST_CASE_2( "multiplication/gevm/0", "[mul]", Z, double, float) {
-    etl::fast_matrix<Z, 3, 2> a = {1,2,3,4,5,6};
-    etl::fast_vector<Z, 3> b = {7,8,9};
-    etl::fast_matrix<Z, 2> c;
+GEVM_TEST_CASE( "multiplication/gevm/0", "[mul]") {
+    etl::fast_matrix<T, 3, 2> a = {1,2,3,4,5,6};
+    etl::fast_vector<T, 3> b = {7,8,9};
+    etl::fast_matrix<T, 2> c;
 
     etl::force(etl::mul(b, a, c));
 
@@ -181,10 +181,10 @@ TEMPLATE_TEST_CASE_2( "multiplication/gevm/0", "[mul]", Z, double, float) {
     REQUIRE(c(1) == 100);
 }
 
-TEMPLATE_TEST_CASE_2( "multiplication/gevm/1", "[mul]", Z, double, float) {
-    etl::dyn_matrix<Z> a(3, 2, etl::values(1,2,3,4,5,6));
-    etl::dyn_vector<Z> b(3, etl::values(7,8,9));
-    etl::dyn_vector<Z> c(2);
+GEVM_TEST_CASE( "multiplication/gevm/1", "[mul]") {
+    etl::dyn_matrix<T> a(3, 2, etl::values(1,2,3,4,5,6));
+    etl::dyn_vector<T> b(3, etl::values(7,8,9));
+    etl::dyn_vector<T> c(2);
 
     etl::force(etl::mul(b, a, c));
 
