@@ -7,6 +7,8 @@
 
 #pragma once
 
+#include <memory>
+
 #include "traits_lite.hpp"   //forward declaration of the traits
 
 namespace etl {
