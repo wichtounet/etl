@@ -7,7 +7,10 @@
 
 #pragma once
 
+#include <complex>
+
 #include "../../config.hpp"
+#include "../../allocator.hpp"
 
 namespace etl {
 

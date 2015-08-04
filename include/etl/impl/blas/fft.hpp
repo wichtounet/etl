@@ -8,8 +8,11 @@
 #pragma once
 
 #include "../../config.hpp"
+#include "../../allocator.hpp"
 
 #ifdef ETL_MKL_MODE
+#include <complex>
+
 #include "mkl_dfti.h"
 #endif
 
@@ -162,7 +165,7 @@ inline void inplace_cfft2_kernel(std::complex<float>* in, std::size_t d1, std::s
 
 inline void inplace_zfft2_kernel(std::complex<double>* in, std::size_t d1, std::size_t d2){
     DFTI_DESCRIPTOR_HANDLE descriptor;
-    
+
     MKL_LONG dim[]{static_cast<long>(d1), static_cast<long>(d2)};
 
     auto* in_ptr = const_cast<void*>(static_cast<const void*>(in));
