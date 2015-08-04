@@ -30,8 +30,8 @@ struct fft1_impl {
 template<typename A, typename C, typename Enable = void>
 struct fft2_impl {
     template<typename AA, typename CC>
-    static void apply(A&& a, CC&& c){
-        etl::impl::standard::fft2(std::forward<A>(a), std::forward<CC>(c));
+    static void apply(AA&& a, CC&& c){
+        etl::impl::standard::fft2(std::forward<AA>(a), std::forward<CC>(c));
     }
 };
 
