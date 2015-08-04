@@ -10,6 +10,7 @@
 #include <algorithm>
 
 #include "../impl/transpose.hpp"
+#include "../impl/fft.hpp"
 
 /*
  * Use CRTP technique to inject inplace operations into expressions and value classes.
@@ -66,6 +67,50 @@ struct inplace_assignable {
             using std::swap;
             swap(mat.unsafe_dimension_access(0), mat.unsafe_dimension_access(1));
         }
+
+        return mat;
+    }
+
+    derived_t& fft_inplace(){
+        static_assert(is_complex<derived_t>::value, "Only complex vector can use inplace FFT");
+        static_assert(etl_traits<derived_t>::dimensions() == 1, "Only vector can use fft_inplace, use fft2_inplace for matrices");
+
+        decltype(auto) mat = as_derived();
+
+        detail::fft1_impl<derived_t, derived_t>::apply(mat, mat);
+
+        return mat;
+    }
+
+    derived_t& ifft_inplace(){
+        static_assert(is_complex<derived_t>::value, "Only complex vector can use inplace IFFT");
+        static_assert(etl_traits<derived_t>::dimensions() == 1, "Only vector can use ifft_inplace, use ifft2_inplace for matrices");
+
+        decltype(auto) mat = as_derived();
+
+        detail::ifft1_impl<derived_t, derived_t>::apply(mat, mat);
+
+        return mat;
+    }
+
+    derived_t& fft2_inplace(){
+        static_assert(is_complex<derived_t>::value, "Only complex vector can use inplace FFT");
+        static_assert(etl_traits<derived_t>::dimensions() == 2, "Only vector can use fft_inplace, use fft2_inplace for matrices");
+
+        decltype(auto) mat = as_derived();
+
+        detail::fft2_impl<derived_t, derived_t>::apply(mat, mat);
+
+        return mat;
+    }
+
+    derived_t& ifft2_inplace(){
+        static_assert(is_complex<derived_t>::value, "Only complex vector can use inplace IFFT");
+        static_assert(etl_traits<derived_t>::dimensions() == 2, "Only vector can use ifft_inplace, use ifft2_inplace for matrices");
+
+        decltype(auto) mat = as_derived();
+
+        detail::ifft2_impl<derived_t, derived_t>::apply(mat, mat);
 
         return mat;
     }
