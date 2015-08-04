@@ -126,6 +126,29 @@ TEMPLATE_TEST_CASE_2( "fft_1d_c/2", "[fast][fft]", Z, float, double ) {
     REQUIRE(c(5).imag() == Approx(Z(2.0)));
 }
 
+TEMPLATE_TEST_CASE_2( "fft_1d_c/3", "[fast][fft]", Z, float, double ) {
+    etl::fast_matrix<std::complex<Z>, 5> a;
+
+    a[0] = std::complex<Z>(1.0, 1.0);
+    a[1] = std::complex<Z>(2.0, 3.0);
+    a[2] = std::complex<Z>(-1.0, 0.0);
+    a[3] = std::complex<Z>(-2.0, 0.0);
+    a[4] = std::complex<Z>(0.5, 1.5);
+
+    a.fft_inplace();
+
+    REQUIRE(a(0).real() == Approx(Z(0.5)));
+    REQUIRE(a(0).imag() == Approx(Z(5.5)));
+    REQUIRE(a(1).real() == Approx(Z(5.626178)));
+    REQUIRE(a(1).imag() == Approx(Z(0.376206)));
+    REQUIRE(a(2).real() == Approx(Z(-1.067916)));
+    REQUIRE(a(2).imag() == Approx(Z(-2.571198)));
+    REQUIRE(a(3).real() == Approx(Z(-2.831271)));
+    REQUIRE(a(3).imag() == Approx(Z(-2.709955)));
+    REQUIRE(a(4).real() == Approx(Z(2.773009)));
+    REQUIRE(a(4).imag() == Approx(Z(4.404947)));
+}
+
 //}}}
 
 //{{{ ifft_1d (complex)
@@ -200,6 +223,26 @@ TEMPLATE_TEST_CASE_2( "ifft_1d_c/2", "[fast][ifft]", Z, float, double ) {
     REQUIRE(c(4).imag() == Approx(Z(-0.683013)));
     REQUIRE(c(5).real() == Approx(Z(0.894338)));
     REQUIRE(c(5).imag() == Approx(Z(0.333333)));
+}
+
+TEMPLATE_TEST_CASE_2( "ifft_1d_c/3", "[fast][ifft]", Z, float, double ) {
+    etl::fast_matrix<std::complex<Z>, 4> a;
+
+    a[0] = std::complex<Z>(1.0, 1.0);
+    a[1] = std::complex<Z>(2.0, 2.0);
+    a[2] = std::complex<Z>(-1.0, 0.0);
+    a[3] = std::complex<Z>(3.0, -3.0);
+
+    a.ifft_inplace();
+
+    REQUIRE(a(0).real() == Approx(Z(1.25)));
+    REQUIRE(a(0).imag() == Approx(Z(0.0)));
+    REQUIRE(a(1).real() == Approx(Z(-0.75)));
+    REQUIRE(a(1).imag() == Approx(Z(0.0)));
+    REQUIRE(a(2).real() == Approx(Z(-1.25)));
+    REQUIRE(a(2).imag() == Approx(Z(0.5)));
+    REQUIRE(a(3).real() == Approx(Z(1.75)));
+    REQUIRE(a(3).imag() == Approx(Z(0.5)));
 }
 
 //}}}
@@ -342,6 +385,32 @@ TEMPLATE_TEST_CASE_2( "fft_2d_c/2", "[fast][fft]", Z, float, double ) {
     REQUIRE(c(1,1).imag() == Approx(Z(-2.0)));
 }
 
+TEMPLATE_TEST_CASE_2( "fft_2d_c/3", "[fast][fft]", Z, float, double ) {
+    etl::fast_matrix<std::complex<Z>, 3, 2> a;
+
+    a[0] = std::complex<Z>(1.0, 1.0);
+    a[1] = std::complex<Z>(-2.0, 0.0);
+    a[2] = std::complex<Z>(3.5, 1.5);
+    a[3] = std::complex<Z>(-4.0, -4.0);
+    a[4] = std::complex<Z>(5.0, 0.5);
+    a[5] = std::complex<Z>(6.5, 1.25);
+
+    a.fft2_inplace();
+
+    REQUIRE(a(0,0).real() == Approx(Z(10.0)));
+    REQUIRE(a(0,0).imag() == Approx(Z(0.25)));
+    REQUIRE(a(0,1).real() == Approx(Z(9.0)));
+    REQUIRE(a(0,1).imag() == Approx(Z(5.75)));
+    REQUIRE(a(1,0).real() == Approx(Z(-10.1806)));
+    REQUIRE(a(1,0).imag() == Approx(Z(11.7673)));
+    REQUIRE(a(1,1).real() == Approx(Z(5.4127)));
+    REQUIRE(a(1,1).imag() == Approx(Z(-9.1692)));
+    REQUIRE(a(2,0).real() == Approx(Z(-2.8194)));
+    REQUIRE(a(2,0).imag() == Approx(Z(-9.0173)));
+    REQUIRE(a(2,1).real() == Approx(Z(-5.4127)));
+    REQUIRE(a(2,1).imag() == Approx(Z(6.4192)));
+}
+
 //}}}
 
 //{{{ ifft_2d (complex)
@@ -392,6 +461,32 @@ TEMPLATE_TEST_CASE_2( "ifft_2d_c/2", "[fast][ifft]", Z, float, double ) {
     REQUIRE(c(1,0).imag() == Approx(Z(1.0)));
     REQUIRE(c(1,1).real() == Approx(Z(-0.5)));
     REQUIRE(c(1,1).imag() == Approx(Z(-0.5)));
+}
+
+TEMPLATE_TEST_CASE_2( "ifft_2d_c/3", "[fast][ifft]", Z, float, double ) {
+    etl::fast_matrix<std::complex<Z>, 3, 2> a;
+
+    a[0] = std::complex<Z>(1.0, 1.0);
+    a[1] = std::complex<Z>(-2.0, 0.0);
+    a[2] = std::complex<Z>(3.5, 1.5);
+    a[3] = std::complex<Z>(-4.0, -4.0);
+    a[4] = std::complex<Z>(5.0, 0.5);
+    a[5] = std::complex<Z>(6.5, 1.25);
+
+    a.ifft2_inplace();
+
+    REQUIRE(a(0,0).real() == Approx(Z(1.66667)));
+    REQUIRE(a(0,0).imag() == Approx(Z(0.04167)));
+    REQUIRE(a(0,1).real() == Approx(Z(1.5)));
+    REQUIRE(a(0,1).imag() == Approx(Z(0.95833)));
+    REQUIRE(a(1,0).real() == Approx(Z(-0.4699)));
+    REQUIRE(a(1,0).imag() == Approx(Z(-1.5029)));
+    REQUIRE(a(1,1).real() == Approx(Z(-0.9021)));
+    REQUIRE(a(1,1).imag() == Approx(Z(1.06987)));
+    REQUIRE(a(2,0).real() == Approx(Z(-1.6968)));
+    REQUIRE(a(2,0).imag() == Approx(Z(1.9612)));
+    REQUIRE(a(2,1).real() == Approx(Z(0.9021)));
+    REQUIRE(a(2,1).imag() == Approx(Z(-1.5282)));
 }
 
 //}}}
