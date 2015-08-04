@@ -21,8 +21,9 @@ namespace detail {
 
 template<typename A, typename C, typename Enable = void>
 struct fft1_impl {
-    static void apply(A&& a, C&& c){
-        etl::impl::standard::fft1(std::forward<A>(a), std::forward<C>(c));
+    template<typename AA, typename CC>
+    static void apply(AA&& a, CC&& c){
+        etl::impl::standard::fft1(std::forward<AA>(a), std::forward<CC>(c));
     }
 };
 
@@ -35,15 +36,17 @@ struct fft2_impl {
 
 template<typename A, typename C, typename Enable = void>
 struct ifft1_impl {
-    static void apply(A&& a, C&& c){
-        etl::impl::standard::ifft1(std::forward<A>(a), std::forward<C>(c));
+    template<typename AA, typename CC>
+    static void apply(AA&& a, CC&& c){
+        etl::impl::standard::ifft1(std::forward<AA>(a), std::forward<C>(c));
     }
 };
 
 template<typename A, typename C, typename Enable = void>
 struct ifft1_real_impl {
+    template<typename AA, typename CC>
     static void apply(A&& a, C&& c){
-        etl::impl::standard::ifft1_real(std::forward<A>(a), std::forward<C>(c));
+        etl::impl::standard::ifft1_real(std::forward<AA>(a), std::forward<CC>(c));
     }
 };
 
@@ -89,57 +92,65 @@ struct is_blas_zfft : cpp::and_c<is_mkl_enabled, is_complex_double_precision<A>,
 
 template<typename A, typename C>
 struct fft1_impl<A, C, std::enable_if_t<is_blas_dfft<A,C>::value>> {
-    static void apply(A&& a, C&& c){
-        etl::impl::blas::dfft1(std::forward<A>(a), std::forward<C>(c));
+    template<typename AA, typename CC>
+    static void apply(AA&& a, CC&& c){
+        etl::impl::blas::dfft1(std::forward<AA>(a), std::forward<CC>(c));
     }
 };
 
 template<typename A, typename C>
 struct fft1_impl<A, C, std::enable_if_t<is_blas_sfft<A,C>::value>> {
-    static void apply(A&& a, C&& c){
-        etl::impl::blas::sfft1(std::forward<A>(a), std::forward<C>(c));
+    template<typename AA, typename CC>
+    static void apply(AA&& a, CC&& c){
+        etl::impl::blas::sfft1(std::forward<AA>(a), std::forward<CC>(c));
     }
 };
 
 template<typename A, typename C>
 struct fft1_impl<A, C, std::enable_if_t<is_blas_cfft<A,C>::value>> {
-    static void apply(A&& a, C&& c){
-        etl::impl::blas::cfft1(std::forward<A>(a), std::forward<C>(c));
+    template<typename AA, typename CC>
+    static void apply(AA&& a, CC&& c){
+        etl::impl::blas::cfft1(std::forward<AA>(a), std::forward<CC>(c));
     }
 };
 
 template<typename A, typename C>
 struct fft1_impl<A, C, std::enable_if_t<is_blas_zfft<A,C>::value>> {
-    static void apply(A&& a, C&& c){
-        etl::impl::blas::zfft1(std::forward<A>(a), std::forward<C>(c));
+    template<typename AA, typename CC>
+    static void apply(AA&& a, CC&& c){
+        etl::impl::blas::zfft1(std::forward<AA>(a), std::forward<CC>(c));
     }
 };
 
 template<typename A, typename C>
 struct ifft1_impl<A, C, std::enable_if_t<is_blas_cfft<A,C>::value>> {
-    static void apply(A&& a, C&& c){
-        etl::impl::blas::cifft1(std::forward<A>(a), std::forward<C>(c));
+    template<typename AA, typename CC>
+    static void apply(AA&& a, CC&& c){
+        etl::impl::blas::cifft1(std::forward<AA>(a), std::forward<CC>(c));
     }
 };
 
 template<typename A, typename C>
 struct ifft1_impl<A, C, std::enable_if_t<is_blas_zfft<A,C>::value>> {
-    static void apply(A&& a, C&& c){
-        etl::impl::blas::zifft1(std::forward<A>(a), std::forward<C>(c));
+    template<typename AA, typename CC>
+    static void apply(AA&& a, CC&& c){
+        etl::impl::blas::zifft1(std::forward<AA>(a), std::forward<CC>(c));
     }
 };
 
 template<typename A, typename C>
 struct ifft1_real_impl<A, C, std::enable_if_t<is_blas_cfft<A,C>::value>> {
-    static void apply(A&& a, C&& c){
-        etl::impl::blas::cifft1_real(std::forward<A>(a), std::forward<C>(c));
+    template<typename AA, typename CC>
+    static void apply(AA&& a, CC&& c){
+        etl::impl::blas::cifft1_real(std::forward<AA>(a), std::forward<CC>(c));
     }
 };
 
 template<typename A, typename C>
 struct ifft1_real_impl<A, C, std::enable_if_t<is_blas_zfft<A,C>::value>> {
-    static void apply(A&& a, C&& c){
-        etl::impl::blas::zifft1_real(std::forward<A>(a), std::forward<C>(c));
+    template<typename AA, typename CC>
+    static void apply(AA&& a, CC&& c){
+        etl::impl::blas::zifft1_real(std::forward<AA>(a), std::forward<CC>(c));
     }
 };
 
