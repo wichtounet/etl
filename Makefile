@@ -44,6 +44,12 @@ CXX_FLAGS += -Wno-documentation
 endif
 endif
 
+# On demand activation of cufft support
+ifneq (,$(ETL_CUFFT))
+CXX_FLAGS += -DETL_CUFFT_MODE $(shell pkg-config --cflags cufft)
+LD_FLAGS += $(shell pkg-config --libs cufft)
+endif
+
 LD_FLAGS += -pthread
 
 # Enable coverage if not disabled by the user
