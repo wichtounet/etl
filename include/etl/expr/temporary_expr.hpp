@@ -10,14 +10,14 @@
 #include <iosfwd>     //For stream support
 #include <memory>       //For shared_ptr
 
-#include "traits_lite.hpp"
-#include "iterator.hpp"
-#include "tmp.hpp"
+#include "etl/traits_lite.hpp"
+#include "etl/iterator.hpp"
+#include "etl/tmp.hpp"
 
 // CRTP classes
-#include "crtp/comparable.hpp"
-#include "crtp/value_testable.hpp"
-#include "crtp/dim_testable.hpp"
+#include "etl/crtp/comparable.hpp"
+#include "etl/crtp/value_testable.hpp"
+#include "etl/crtp/dim_testable.hpp"
 
 namespace etl {
 

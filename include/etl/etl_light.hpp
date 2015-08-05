@@ -24,11 +24,11 @@
 #include "binary_op.hpp"
 
 // The expressions
-#include "binary_expr.hpp"
-#include "unary_expr.hpp"
-#include "generator_expr.hpp"
-#include "temporary_expr.hpp"
-#include "optimized_expr.hpp"
+#include "expr/binary_expr.hpp"
+#include "expr/unary_expr.hpp"
+#include "expr/generator_expr.hpp"
+#include "expr/temporary_expr.hpp"
+#include "expr/optimized_expr.hpp"
 
 //Forward value classes for expressions
 #include "value_fwd.hpp"

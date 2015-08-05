@@ -9,7 +9,7 @@
 
 #include <iosfwd>     //For stream support
 
-#include "traits_lite.hpp"
+#include "etl/traits_lite.hpp"
 
 namespace etl {
 

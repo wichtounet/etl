@@ -11,14 +11,14 @@
 
 #include "cpp_utils/assert.hpp"
 
-#include "traits_lite.hpp"
-#include "iterator.hpp"
+#include "etl/traits_lite.hpp"
+#include "etl/iterator.hpp"
 
 // CRTP classes
-#include "crtp/comparable.hpp"
-#include "crtp/value_testable.hpp"
-#include "crtp/dim_testable.hpp"
-#include "crtp/inplace_assignable.hpp"
+#include "etl/crtp/comparable.hpp"
+#include "etl/crtp/value_testable.hpp"
+#include "etl/crtp/dim_testable.hpp"
+#include "etl/crtp/inplace_assignable.hpp"
 
 namespace etl {
 
