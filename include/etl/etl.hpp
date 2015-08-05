@@ -34,14 +34,14 @@
 #include "value_fwd.hpp"
 
 // The complex expressions
-#include "mmul_expr.hpp"
-#include "outer_product_expr.hpp"
-#include "fft_expr.hpp"
-#include "conv_expr.hpp"
-#include "convmtx2_expr.hpp"
-#include "pooling_expr.hpp"
-#include "pooling_derivative_expr.hpp"
-#include "upsample_expr.hpp"
+#include "expr/mmul_expr.hpp"
+#include "expr/outer_product_expr.hpp"
+#include "expr/fft_expr.hpp"
+#include "expr/conv_expr.hpp"
+#include "expr/convmtx2_expr.hpp"
+#include "expr/pooling_expr.hpp"
+#include "expr/pooling_derivative_expr.hpp"
+#include "expr/upsample_expr.hpp"
 
 // The expressions building
 #include "checks.hpp"

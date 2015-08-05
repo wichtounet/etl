@@ -9,10 +9,10 @@
 
 #include <algorithm>
 
-#include "impl/outer_product.hpp"
+#include "etl/impl/outer_product.hpp"
 
-#include "traits_lite.hpp"
-#include "temporary.hpp"
+#include "etl/traits_lite.hpp"
+#include "etl/temporary.hpp"
 
 namespace etl {
 

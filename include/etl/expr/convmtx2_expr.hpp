@@ -12,10 +12,10 @@
 #include "cpp_utils/assert.hpp"
 #include "cpp_utils/tmp.hpp"
 
-#include "traits_lite.hpp"
+#include "etl/traits_lite.hpp"
 
 //Get the implementations
-#include "impl/convmtx2.hpp"
+#include "etl/impl/convmtx2.hpp"
 
 namespace etl {
 
