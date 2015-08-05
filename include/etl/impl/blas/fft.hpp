@@ -7,12 +7,10 @@
 
 #pragma once
 
-#include "../../config.hpp"
-#include "../../allocator.hpp"
+#include "etl/config.hpp"
+#include "etl/allocator.hpp"
 
 #ifdef ETL_MKL_MODE
-#include <complex>
-
 #include "mkl_dfti.h"
 #endif
 

@@ -11,7 +11,7 @@
 #include "cblas.h" //For dscal/sscal
 #endif
 
-#include "../config.hpp"
+#include "etl/config.hpp"
 
 /**
  * Implementations of vector/matrix scalar operations.

@@ -28,20 +28,20 @@ using intrinsic_type = typename intrinsic_traits<T>::intrinsic_type;
 
 #ifdef __AVX__
 
-#include "avx_vectorization.hpp"
+#include "etl/avx_vectorization.hpp"
 
 #elif defined(__SSE3__)
 
-#include "sse_vectorization.hpp"
+#include "etl/sse_vectorization.hpp"
 
 #else
 
-#include "no_vectorization.hpp"
+#include "etl/no_vectorization.hpp"
 
 #endif //defined(__SSE__)
 
 #else //ETL_VECTORIZE_EXPR
 
-#include "no_vectorization.hpp"
+#include "etl/no_vectorization.hpp"
 
 #endif //ETL_VECTORIZE_EXPR

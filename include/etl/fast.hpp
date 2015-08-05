@@ -12,16 +12,16 @@
 
 #include "cpp_utils/assert.hpp"
 
-#include "tmp.hpp"
-#include "traits_lite.hpp"          //forward declaration of the traits
-#include "compat.hpp"               //To make it work with g++
+#include "etl/tmp.hpp"
+#include "etl/traits_lite.hpp"          //forward declaration of the traits
+#include "etl/compat.hpp"               //To make it work with g++
 
 // CRTP classes
-#include "crtp/inplace_assignable.hpp"
-#include "crtp/comparable.hpp"
-#include "crtp/value_testable.hpp"
-#include "crtp/dim_testable.hpp"
-#include "crtp/expression_able.hpp"
+#include "etl/crtp/inplace_assignable.hpp"
+#include "etl/crtp/comparable.hpp"
+#include "etl/crtp/value_testable.hpp"
+#include "etl/crtp/dim_testable.hpp"
+#include "etl/crtp/expression_able.hpp"
 
 namespace etl {
 

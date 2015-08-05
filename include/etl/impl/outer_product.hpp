@@ -7,8 +7,8 @@
 
 #pragma once
 
-#include "../config.hpp"
-#include "../traits_lite.hpp"
+#include "etl/config.hpp"
+#include "etl/traits_lite.hpp"
 
 /**
  * Implementations of the outer product:

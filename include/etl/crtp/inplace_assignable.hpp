@@ -9,8 +9,8 @@
 
 #include <algorithm>
 
-#include "../impl/transpose.hpp"
-#include "../impl/fft.hpp"
+#include "etl/impl/transpose.hpp"
+#include "etl/impl/fft.hpp"
 
 /*
  * Use CRTP technique to inject inplace operations into expressions and value classes.

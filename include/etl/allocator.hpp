@@ -9,7 +9,7 @@
 
 #include <memory>
 
-#include "traits_lite.hpp"   //forward declaration of the traits
+#include "etl/traits_lite.hpp"   //forward declaration of the traits
 
 namespace etl {
 

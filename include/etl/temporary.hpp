@@ -7,9 +7,9 @@
 
 #pragma once
 
-#include "config.hpp"       //configuration of ETL
-#include "traits_lite.hpp"  //type traits
-#include "stop.hpp"
+#include "etl/config.hpp"       //configuration of ETL
+#include "etl/traits_lite.hpp"  //type traits
+#include "etl/stop.hpp"
 
 namespace etl {
 

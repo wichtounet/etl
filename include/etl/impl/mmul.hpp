@@ -9,15 +9,16 @@
 
 #include <algorithm>
 
-#include "../config.hpp"
-#include "../threshold.hpp"
-#include "../traits_lite.hpp"
+#include "etl/config.hpp"
+#include "etl/threshold.hpp"
+#include "etl/traits_lite.hpp"
 
-#include "std/mmul.hpp"
-#include "std/strassen_mmul.hpp"
-#include "blas/gemm.hpp"
-#include "eblas/gemm.hpp"
-#include "cublas/gemm.hpp"
+//The implementations
+#include "etl/impl/std/mmul.hpp"
+#include "etl/impl/std/strassen_mmul.hpp"
+#include "etl/impl/blas/gemm.hpp"
+#include "etl/impl/eblas/gemm.hpp"
+#include "etl/impl/cublas/gemm.hpp"
 
 namespace etl {
 

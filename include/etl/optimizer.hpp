@@ -7,8 +7,8 @@
 
 #pragma once
 
-#include "traits_lite.hpp"   //forward declaration of the traits
-#include "visitor.hpp"   //forward declaration of the traits
+#include "etl/traits_lite.hpp"   //forward declaration of the traits
+#include "etl/visitor.hpp"   //forward declaration of the traits
 
 namespace etl {
 

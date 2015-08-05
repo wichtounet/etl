@@ -7,12 +7,12 @@
 
 #pragma once
 
-#include "../../config.hpp"
+#include "etl/config.hpp"
 
 #ifdef ETL_CUBLAS_MODE
 
-#include "cuda.hpp"
-#include "cublas.hpp"
+#include "etl/impl/cublas/cuda.hpp"
+#include "etl/impl/cublas/cublas.hpp"
 
 #endif
 

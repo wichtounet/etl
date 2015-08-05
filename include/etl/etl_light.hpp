@@ -10,32 +10,32 @@
 #include<complex>
 
 // Utilities
-#include "order.hpp"
-#include "config.hpp"
-#include "vectorization.hpp"
+#include "etl/order.hpp"
+#include "etl/config.hpp"
+#include "etl/vectorization.hpp"
 
 // The operators
-#include "op/scalar.hpp"
-#include "op/generators.hpp"
-#include "op/transformers.hpp"
-#include "op/views.hpp"
-#include "op/virtual_views.hpp"
-#include "op/unary_op.hpp"
-#include "op/binary_op.hpp"
+#include "etl/op/scalar.hpp"
+#include "etl/op/generators.hpp"
+#include "etl/op/transformers.hpp"
+#include "etl/op/views.hpp"
+#include "etl/op/virtual_views.hpp"
+#include "etl/op/unary_op.hpp"
+#include "etl/op/binary_op.hpp"
 
 // The expressions
-#include "expr/binary_expr.hpp"
-#include "expr/unary_expr.hpp"
-#include "expr/generator_expr.hpp"
-#include "expr/temporary_expr.hpp"
-#include "expr/optimized_expr.hpp"
+#include "etl/expr/binary_expr.hpp"
+#include "etl/expr/unary_expr.hpp"
+#include "etl/expr/generator_expr.hpp"
+#include "etl/expr/temporary_expr.hpp"
+#include "etl/expr/optimized_expr.hpp"
 
 //Forward value classes for expressions
-#include "value_fwd.hpp"
+#include "etl/value_fwd.hpp"
 
 // The expressions building
-#include "checks.hpp"
-#include "builder/expression_builder.hpp"
+#include "etl/checks.hpp"
+#include "etl/builder/expression_builder.hpp"
 
 // The evaluator and optimizer
 #include "etl/evaluator.hpp"
@@ -46,7 +46,7 @@
 #include "etl/dyn.hpp"
 
 // The traits
-#include "traits.hpp"
+#include "etl/traits.hpp"
 
 // to_string support
-#include "print.hpp"
+#include "etl/print.hpp"

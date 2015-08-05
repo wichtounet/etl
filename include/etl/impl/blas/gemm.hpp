@@ -7,7 +7,7 @@
 
 #pragma once
 
-#include "../../config.hpp"
+#include "etl/config.hpp"
 
 #ifdef ETL_BLAS_MODE
 

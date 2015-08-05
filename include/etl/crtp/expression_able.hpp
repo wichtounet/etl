@@ -7,11 +7,11 @@
 
 #pragma once
 
-#include "../compat.hpp"
+#include "etl/compat.hpp"
 
 /*
- * Use CRTP technique to inject functions that return expressions 
- * from this. 
+ * Use CRTP technique to inject functions that return expressions
+ * from this.
  */
 
 namespace etl {

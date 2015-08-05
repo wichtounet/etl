@@ -9,11 +9,11 @@
 
 #include <algorithm>
 
-#include "../config.hpp"
-#include "../traits_lite.hpp"
+#include "etl/config.hpp"
+#include "etl/traits_lite.hpp"
 
-#include "std/fft.hpp"
-#include "blas/fft.hpp"
+#include "etl/impl/std/fft.hpp"
+#include "etl/impl/blas/fft.hpp"
 
 namespace etl {
 

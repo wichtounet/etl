@@ -18,8 +18,8 @@
 #if defined(ETL_VECTORIZE_IMPL) && defined(__SSE3__)
 #include <immintrin.h>
 
-#include "../../allocator.hpp"
-#include "../common/conv.hpp"
+#include "etl/allocator.hpp"
+#include "etl/impl/common/conv.hpp"
 
 #endif
 

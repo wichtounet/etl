@@ -10,8 +10,8 @@
 #include "cpp_utils/assert.hpp"
 #include "cpp_utils/tmp.hpp"
 
-#include "tmp.hpp"          //Some TMP stuff
-#include "traits_lite.hpp"  //To avoid nasty errors
+#include "etl/tmp.hpp"          //Some TMP stuff
+#include "etl/traits_lite.hpp"  //To avoid nasty errors
 
 namespace etl {
 
