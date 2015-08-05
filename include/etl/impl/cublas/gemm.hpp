@@ -55,9 +55,9 @@ inline void cublas_geam(cublasHandle_t handle, cublasOperation_t transa, cublasO
 }
 
 template<typename C, typename T>
-void copy_matrix(cublas_handle& handle, cuda_memory<T>& gpu, C&& c){
+void copy_matrix(cublas_handle& handle, impl::cuda::cuda_memory<T>& gpu, C&& c){
     if(decay_traits<C>::storage_order == order::RowMajor){
-        auto gpu_d = cuda_allocate(c);
+        auto gpu_d = impl::cuda::cuda_allocate(c);
 
         T alpha = 1.0;
         T beta = 0.0;
@@ -89,9 +89,9 @@ void sgemm(A&& a, B&& b, C&& c){
     float alpha = 1.0;
     float beta = 0.0;
 
-    auto gpu_a = cuda_allocate_copy(a);
-    auto gpu_b = cuda_allocate_copy(b);
-    auto gpu_c = cuda_allocate(c);
+    auto gpu_a = impl::cuda::cuda_allocate_copy(a);
+    auto gpu_b = impl::cuda::cuda_allocate_copy(b);
+    auto gpu_c = impl::cuda::cuda_allocate(c);
 
     // Do the actual multiplication
 
@@ -133,9 +133,9 @@ void dgemm(A&& a, B&& b, C&& c){
     double alpha = 1.0;
     double beta = 0.0;
 
-    auto gpu_a = cuda_allocate_copy(a);
-    auto gpu_b = cuda_allocate_copy(b);
-    auto gpu_c = cuda_allocate(c);
+    auto gpu_a = impl::cuda::cuda_allocate_copy(a);
+    auto gpu_b = impl::cuda::cuda_allocate_copy(b);
+    auto gpu_c = impl::cuda::cuda_allocate(c);
 
     // Do the actual multiplication
 
@@ -174,9 +174,9 @@ void cgemm(A&& a, B&& b, C&& c){
 
     static_assert(decay_traits<A>::storage_order == decay_traits<B>::storage_order, "gemm only for same A/B storage order");
 
-    auto gpu_a = cuda_allocate_copy(a);
-    auto gpu_b = cuda_allocate_copy(b);
-    auto gpu_c = cuda_allocate(c);
+    auto gpu_a = impl::cuda::cuda_allocate_copy(a);
+    auto gpu_b = impl::cuda::cuda_allocate_copy(b);
+    auto gpu_c = impl::cuda::cuda_allocate(c);
 
     cuComplex alpha = make_cuComplex(1.0, 0.0);
     cuComplex beta = make_cuComplex(0.0, 0.0);
@@ -218,9 +218,9 @@ void zgemm(A&& a, B&& b, C&& c){
 
     static_assert(decay_traits<A>::storage_order == decay_traits<B>::storage_order, "gemm only for same A/B storage order");
 
-    auto gpu_a = cuda_allocate_copy(a);
-    auto gpu_b = cuda_allocate_copy(b);
-    auto gpu_c = cuda_allocate(c);
+    auto gpu_a = impl::cuda::cuda_allocate_copy(a);
+    auto gpu_b = impl::cuda::cuda_allocate_copy(b);
+    auto gpu_c = impl::cuda::cuda_allocate(c);
 
     cuDoubleComplex alpha = make_cuDoubleComplex(1.0, 0.0);
     cuDoubleComplex beta = make_cuDoubleComplex(0.0, 0.0);
@@ -260,9 +260,9 @@ void sgemv(A&& a, B&& b, C&& c){
 
     bool row_major = decay_traits<A>::storage_order == order::RowMajor;
 
-    auto gpu_a = cuda_allocate_copy(a);
-    auto gpu_b = cuda_allocate_copy(b);
-    auto gpu_c = cuda_allocate(c);
+    auto gpu_a = impl::cuda::cuda_allocate_copy(a);
+    auto gpu_b = impl::cuda::cuda_allocate_copy(b);
+    auto gpu_c = impl::cuda::cuda_allocate(c);
 
     float alpha = 1.0;
     float beta = 0.0;
@@ -304,9 +304,9 @@ void dgemv(A&& a, B&& b, C&& c){
 
     bool row_major = decay_traits<A>::storage_order == order::RowMajor;
 
-    auto gpu_a = cuda_allocate_copy(a);
-    auto gpu_b = cuda_allocate_copy(b);
-    auto gpu_c = cuda_allocate(c);
+    auto gpu_a = impl::cuda::cuda_allocate_copy(a);
+    auto gpu_b = impl::cuda::cuda_allocate_copy(b);
+    auto gpu_c = impl::cuda::cuda_allocate(c);
 
     double alpha = 1.0;
     double beta = 0.0;
@@ -348,9 +348,9 @@ void cgemv(A&& a, B&& b, C&& c){
 
     bool row_major = decay_traits<A>::storage_order == order::RowMajor;
 
-    auto gpu_a = cuda_allocate_copy(a);
-    auto gpu_b = cuda_allocate_copy(b);
-    auto gpu_c = cuda_allocate(c);
+    auto gpu_a = impl::cuda::cuda_allocate_copy(a);
+    auto gpu_b = impl::cuda::cuda_allocate_copy(b);
+    auto gpu_c = impl::cuda::cuda_allocate(c);
 
     cuComplex alpha = make_cuComplex(1.0, 0.0);
     cuComplex beta = make_cuComplex(0.0, 0.0);
@@ -392,9 +392,9 @@ void zgemv(A&& a, B&& b, C&& c){
 
     bool row_major = decay_traits<A>::storage_order == order::RowMajor;
 
-    auto gpu_a = cuda_allocate_copy(a);
-    auto gpu_b = cuda_allocate_copy(b);
-    auto gpu_c = cuda_allocate(c);
+    auto gpu_a = impl::cuda::cuda_allocate_copy(a);
+    auto gpu_b = impl::cuda::cuda_allocate_copy(b);
+    auto gpu_c = impl::cuda::cuda_allocate(c);
 
     cuDoubleComplex alpha = make_cuDoubleComplex(1.0, 0.0);
     cuDoubleComplex beta = make_cuDoubleComplex(0.0, 0.0);
@@ -436,9 +436,9 @@ void sgevm(A&& a, B&& b, C&& c){
 
     bool row_major = decay_traits<B>::storage_order == order::RowMajor;
 
-    auto gpu_a = cuda_allocate_copy(a);
-    auto gpu_b = cuda_allocate_copy(b);
-    auto gpu_c = cuda_allocate(c);
+    auto gpu_a = impl::cuda::cuda_allocate_copy(a);
+    auto gpu_b = impl::cuda::cuda_allocate_copy(b);
+    auto gpu_c = impl::cuda::cuda_allocate(c);
 
     float alpha = 1.0;
     float beta = 0.0;
@@ -480,9 +480,9 @@ void dgevm(A&& a, B&& b, C&& c){
 
     bool row_major = decay_traits<B>::storage_order == order::RowMajor;
 
-    auto gpu_a = cuda_allocate_copy(a);
-    auto gpu_b = cuda_allocate_copy(b);
-    auto gpu_c = cuda_allocate(c);
+    auto gpu_a = impl::cuda::cuda_allocate_copy(a);
+    auto gpu_b = impl::cuda::cuda_allocate_copy(b);
+    auto gpu_c = impl::cuda::cuda_allocate(c);
 
     double alpha = 1.0;
     double beta = 0.0;
@@ -524,9 +524,9 @@ void cgevm(A&& a, B&& b, C&& c){
 
     bool row_major = decay_traits<A>::storage_order == order::RowMajor;
 
-    auto gpu_a = cuda_allocate_copy(a);
-    auto gpu_b = cuda_allocate_copy(b);
-    auto gpu_c = cuda_allocate(c);
+    auto gpu_a = impl::cuda::cuda_allocate_copy(a);
+    auto gpu_b = impl::cuda::cuda_allocate_copy(b);
+    auto gpu_c = impl::cuda::cuda_allocate(c);
 
     cuComplex alpha = make_cuComplex(1.0, 0.0);
     cuComplex beta = make_cuComplex(0.0, 0.0);
@@ -568,9 +568,9 @@ void zgevm(A&& a, B&& b, C&& c){
 
     bool row_major = decay_traits<A>::storage_order == order::RowMajor;
 
-    auto gpu_a = cuda_allocate_copy(a);
-    auto gpu_b = cuda_allocate_copy(b);
-    auto gpu_c = cuda_allocate(c);
+    auto gpu_a = impl::cuda::cuda_allocate_copy(a);
+    auto gpu_b = impl::cuda::cuda_allocate_copy(b);
+    auto gpu_c = impl::cuda::cuda_allocate(c);
 
     cuDoubleComplex alpha = make_cuDoubleComplex(1.0, 0.0);
     cuDoubleComplex beta = make_cuDoubleComplex(0.0, 0.0);

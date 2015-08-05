@@ -13,7 +13,7 @@ namespace etl {
 
 namespace impl {
 
-namespace cublas {
+namespace cuda {
 
 template<typename T>
 struct cuda_memory {
@@ -34,7 +34,8 @@ auto cuda_allocate(const E& expr, bool copy = false) -> cuda_memory<value_t<E>> 
     auto cuda_status = cudaMalloc(&memory, etl::size(expr) * sizeof(value_t<E>));
 
     if (cuda_status != cudaSuccess) {
-        std::cout << "Failed to allocate GPU memory" << std::endl;
+        std::cout << "cuda: Failed to allocate GPU memory: " << cudaGetErrorString(cuda_status) << std::endl;
+        std::cout << "      Tried to allocate " << etl::size(expr) * sizeof(value_t<E>) << "B" << std::endl;
         exit(EXIT_FAILURE);
     }
 
