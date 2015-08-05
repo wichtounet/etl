@@ -45,11 +45,11 @@
 
 // The expressions building
 #include "checks.hpp"
-#include "expression_builder.hpp"
-#include "mul_expression_builder.hpp"
-#include "conv_expression_builder.hpp"
-#include "fft_expression_builder.hpp"
-#include "pooling_expression_builder.hpp"
+#include "builder/expression_builder.hpp"
+#include "builder/mul_expression_builder.hpp"
+#include "builder/conv_expression_builder.hpp"
+#include "builder/fft_expression_builder.hpp"
+#include "builder/pooling_expression_builder.hpp"
 
 // The evaluator and optimizer
 #include "etl/evaluator.hpp"

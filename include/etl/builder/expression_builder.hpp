@@ -12,12 +12,12 @@
 
 #pragma once
 
-#include "config.hpp"
-#include "expression_helpers.hpp"
+#include "etl/config.hpp"
+#include "etl/expression_helpers.hpp"
 
 //Include implementations
-#include "impl/dot.hpp"
-#include "impl/scalar_op.hpp"
+#include "etl/impl/dot.hpp"
+#include "etl/impl/scalar_op.hpp"
 
 namespace etl {
 

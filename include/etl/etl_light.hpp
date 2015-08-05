@@ -35,7 +35,7 @@
 
 // The expressions building
 #include "checks.hpp"
-#include "expression_builder.hpp"
+#include "builder/expression_builder.hpp"
 
 // The evaluator and optimizer
 #include "etl/evaluator.hpp"
