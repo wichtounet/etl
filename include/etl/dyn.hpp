@@ -89,6 +89,11 @@ inline std::array<std::size_t, sizeof...(I)> sizes(const std::index_sequence<I..
 
 } // end of namespace dyn_detail
 
+/*!
+ * \brief Matrix with runn-time fixed dimensions.
+ *
+ * The matrix support an arbitrary number of dimensions.
+ */
 template<typename T, order SO, std::size_t D>
 struct dyn_matrix_impl final :
           inplace_assignable<dyn_matrix_impl<T, SO, D>>

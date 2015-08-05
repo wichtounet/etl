@@ -80,6 +80,11 @@ struct is_vector<std::vector<N>> : std::true_type { };
 
 } //end of namespace matrix_detail
 
+/*!
+ * \brief Matrix with compile-time fixed dimensions.
+ *
+ * The matrix support an arbitrary number of dimensions.
+ */
 template<typename T, typename ST, order SO, std::size_t... Dims>
 struct fast_matrix_impl final :
         inplace_assignable<fast_matrix_impl<T, ST, SO, Dims...>>
