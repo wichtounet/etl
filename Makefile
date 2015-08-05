@@ -48,6 +48,10 @@ endif
 ifneq (,$(ETL_CUFFT))
 CXX_FLAGS += -DETL_CUFFT_MODE $(shell pkg-config --cflags cufft)
 LD_FLAGS += $(shell pkg-config --libs cufft)
+
+ifneq (,$(findstring clang,$(CXX)))
+CXX_FLAGS += -Wno-documentation
+endif
 endif
 
 LD_FLAGS += -pthread
