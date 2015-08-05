@@ -10,8 +10,9 @@
 #include <iosfwd>     //For stream support
 
 #include "cpp_utils/tmp.hpp"
-#include "tmp.hpp"
-#include "traits_lite.hpp"
+
+#include "etl/tmp.hpp"
+#include "etl/traits_lite.hpp"
 
 namespace etl {
 

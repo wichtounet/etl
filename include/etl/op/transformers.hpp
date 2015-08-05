@@ -12,8 +12,8 @@
 #include "cpp_utils/assert.hpp"
 #include "cpp_utils/tmp.hpp"
 
-#include "tmp.hpp"
-#include "traits_lite.hpp"
+#include "etl/tmp.hpp"
+#include "etl/traits_lite.hpp"
 
 namespace etl {
 

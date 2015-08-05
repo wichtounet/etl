@@ -15,13 +15,13 @@
 #include "vectorization.hpp"
 
 // The operators
-#include "scalar.hpp"
-#include "generators.hpp"
-#include "transformers.hpp"
-#include "views.hpp"
-#include "virtual_views.hpp"
-#include "unary_op.hpp"
-#include "binary_op.hpp"
+#include "op/scalar.hpp"
+#include "op/generators.hpp"
+#include "op/transformers.hpp"
+#include "op/views.hpp"
+#include "op/virtual_views.hpp"
+#include "op/unary_op.hpp"
+#include "op/binary_op.hpp"
 
 // The expressions
 #include "expr/binary_expr.hpp"

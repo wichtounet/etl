@@ -11,8 +11,8 @@
 #include <functional>
 #include <ctime>
 
-#include "math.hpp"
-#include "compat.hpp"
+#include "etl/math.hpp"
+#include "etl/compat.hpp"
 
 namespace etl {
 
