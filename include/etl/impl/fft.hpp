@@ -174,7 +174,7 @@ inline cpp14_constexpr fft_impl select_ifft1_impl(const std::size_t n){
 }
 
 template<bool DMA>
-inline cpp14_constexpr fft_impl select_fft2_impl(const std::size_t ){
+inline cpp14_constexpr fft_impl select_fft2_impl(const std::size_t n1, std::size_t n2){
     //Only std implementation is able to handle non-dma expressions
     if(!DMA){
         return fft_impl::STD;
@@ -185,6 +185,24 @@ inline cpp14_constexpr fft_impl select_fft2_impl(const std::size_t ){
     static constexpr const bool cufft = is_cufft_enabled::value;
 
     if(cufft){
+        if(is_power_of_two(n1) && is_power_of_two(n2)){
+            if(n1 * n2 < 150 * 150){
+                if(mkl){
+                    return fft_impl::MKL;
+                } else {
+                    return fft_impl::STD;
+                }
+            } else if(n1 * n2 <= 768 * 768 && mkl){
+                return fft_impl::MKL;
+            }
+
+            return fft_impl::CUFFT;
+        }
+
+        if(n1 * n2 <= 768 * 768 && mkl){
+            return fft_impl::MKL;
+        }
+
         return fft_impl::CUFFT;
     } else if(mkl) {
         return fft_impl::MKL;
@@ -245,7 +263,7 @@ template<typename A, typename C>
 struct fft2_impl {
     template<typename AA, typename CC>
     static void apply(AA&& a, CC&& c){
-        auto impl = select_fft2_impl<all_dma<A,C>::value>(etl::size(c));
+        auto impl = select_fft2_impl<all_dma<A,C>::value>(etl::dim<0>(c), etl::dim<1>(c));
 
         if(impl == fft_impl::STD){
             etl::impl::standard::fft2(std::forward<AA>(a), std::forward<CC>(c));
@@ -261,7 +279,7 @@ template<typename A, typename C>
 struct ifft2_impl {
     template<typename AA, typename CC>
     static void apply(AA&& a, CC&& c){
-        auto impl = select_fft2_impl<all_dma<A,C>::value>(etl::size(c));
+        auto impl = select_fft2_impl<all_dma<A,C>::value>(etl::dim<0>(c), etl::dim<1>(c));
 
         if(impl == fft_impl::STD){
             etl::impl::standard::ifft2(std::forward<AA>(a), std::forward<CC>(c));
@@ -277,7 +295,7 @@ template<typename A, typename C>
 struct ifft2_real_impl {
     template<typename AA, typename CC>
     static void apply(AA&& a, CC&& c){
-        auto impl = select_fft2_impl<all_dma<A,C>::value>(etl::size(c));
+        auto impl = select_fft2_impl<all_dma<A,C>::value>(etl::dim<0>(c), etl::dim<1>(c));
 
         if(impl == fft_impl::STD){
             etl::impl::standard::ifft2_real(std::forward<AA>(a), std::forward<CC>(c));
