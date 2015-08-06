@@ -14,6 +14,7 @@
 
 #include "etl/impl/std/fft.hpp"
 #include "etl/impl/blas/fft.hpp"
+#include "etl/impl/cufft/fft.hpp"
 
 namespace etl {
 
@@ -84,16 +85,16 @@ struct fft_conv2_full_impl {
 };
 
 template<typename A, typename C>
-struct is_blas_dfft : cpp::and_c<is_mkl_enabled, is_double_precision<A>, all_dma<A, C>> {};
+struct is_blas_dfft : cpp::and_c<is_mkl_enabled, cpp::not_c<is_cufft_enabled>, is_double_precision<A>, all_dma<A, C>> {};
 
 template<typename A, typename C>
-struct is_blas_sfft : cpp::and_c<is_mkl_enabled, is_single_precision<A>, all_dma<A, C>> {};
+struct is_blas_sfft : cpp::and_c<is_mkl_enabled, cpp::not_c<is_cufft_enabled>, is_single_precision<A>, all_dma<A, C>> {};
 
 template<typename A, typename C>
-struct is_blas_cfft : cpp::and_c<is_mkl_enabled, is_complex_single_precision<A>, all_dma<A, C>> {};
+struct is_blas_cfft : cpp::and_c<is_mkl_enabled, cpp::not_c<is_cufft_enabled>, is_complex_single_precision<A>, all_dma<A, C>> {};
 
 template<typename A, typename C>
-struct is_blas_zfft : cpp::and_c<is_mkl_enabled, is_complex_double_precision<A>, all_dma<A, C>> {};
+struct is_blas_zfft : cpp::and_c<is_mkl_enabled, cpp::not_c<is_cufft_enabled>, is_complex_double_precision<A>, all_dma<A, C>> {};
 
 template<typename A, typename C>
 struct fft1_impl<A, C, std::enable_if_t<is_blas_dfft<A,C>::value>> {
@@ -160,10 +161,10 @@ struct ifft1_real_impl<A, C, std::enable_if_t<is_blas_zfft<A,C>::value>> {
 };
 
 template<typename A, typename B, typename C>
-struct is_blas_sfft_convolve : cpp::and_c<is_mkl_enabled, all_single_precision<A,B,C>, all_dma<A, B, C>> {};
+struct is_blas_sfft_convolve : cpp::and_c<is_mkl_enabled, cpp::not_c<is_cufft_enabled>, all_single_precision<A,B,C>, all_dma<A, B, C>> {};
 
 template<typename A, typename B, typename C>
-struct is_blas_dfft_convolve : cpp::and_c<is_mkl_enabled, all_double_precision<A,B,C>, all_dma<A, B, C>> {};
+struct is_blas_dfft_convolve : cpp::and_c<is_mkl_enabled, cpp::not_c<is_cufft_enabled>, all_double_precision<A,B,C>, all_dma<A, B, C>> {};
 
 template<typename A, typename B, typename C>
 struct fft_conv1_full_impl<A, B, C, std::enable_if_t<is_blas_sfft_convolve<A,B,C>::value>> {
@@ -258,6 +259,184 @@ struct fft_conv2_full_impl<A, B, C, std::enable_if_t<is_blas_dfft_convolve<A,B,C
     template<typename AA, typename BB, typename CC>
     static void apply(AA&& a, BB&& b, CC&& c){
         etl::impl::blas::dfft2_convolve(std::forward<AA>(a), std::forward<BB>(b), std::forward<CC>(c));
+    }
+};
+
+template<typename A, typename C>
+struct is_cufft_dfft : cpp::and_c<is_cufft_enabled, is_double_precision<A>, all_dma<A, C>> {};
+
+template<typename A, typename C>
+struct is_cufft_sfft : cpp::and_c<is_cufft_enabled, is_single_precision<A>, all_dma<A, C>> {};
+
+template<typename A, typename C>
+struct is_cufft_cfft : cpp::and_c<is_cufft_enabled, is_complex_single_precision<A>, all_dma<A, C>> {};
+
+template<typename A, typename C>
+struct is_cufft_zfft : cpp::and_c<is_cufft_enabled, is_complex_double_precision<A>, all_dma<A, C>> {};
+
+template<typename A, typename C>
+struct fft1_impl<A, C, std::enable_if_t<is_cufft_dfft<A,C>::value>> {
+    template<typename AA, typename CC>
+    static void apply(AA&& a, CC&& c){
+        etl::impl::cufft::dfft1(std::forward<AA>(a), std::forward<CC>(c));
+    }
+};
+
+template<typename A, typename C>
+struct fft1_impl<A, C, std::enable_if_t<is_cufft_sfft<A,C>::value>> {
+    template<typename AA, typename CC>
+    static void apply(AA&& a, CC&& c){
+        etl::impl::cufft::sfft1(std::forward<AA>(a), std::forward<CC>(c));
+    }
+};
+
+template<typename A, typename C>
+struct fft1_impl<A, C, std::enable_if_t<is_cufft_cfft<A,C>::value>> {
+    template<typename AA, typename CC>
+    static void apply(AA&& a, CC&& c){
+        etl::impl::cufft::cfft1(std::forward<AA>(a), std::forward<CC>(c));
+    }
+};
+
+template<typename A, typename C>
+struct fft1_impl<A, C, std::enable_if_t<is_cufft_zfft<A,C>::value>> {
+    template<typename AA, typename CC>
+    static void apply(AA&& a, CC&& c){
+        etl::impl::cufft::zfft1(std::forward<AA>(a), std::forward<CC>(c));
+    }
+};
+
+template<typename A, typename C>
+struct ifft1_impl<A, C, std::enable_if_t<is_cufft_cfft<A,C>::value>> {
+    template<typename AA, typename CC>
+    static void apply(AA&& a, CC&& c){
+        etl::impl::cufft::cifft1(std::forward<AA>(a), std::forward<CC>(c));
+    }
+};
+
+template<typename A, typename C>
+struct ifft1_impl<A, C, std::enable_if_t<is_cufft_zfft<A,C>::value>> {
+    template<typename AA, typename CC>
+    static void apply(AA&& a, CC&& c){
+        etl::impl::cufft::zifft1(std::forward<AA>(a), std::forward<CC>(c));
+    }
+};
+
+template<typename A, typename C>
+struct ifft1_real_impl<A, C, std::enable_if_t<is_cufft_cfft<A,C>::value>> {
+    template<typename AA, typename CC>
+    static void apply(AA&& a, CC&& c){
+        etl::impl::cufft::cifft1_real(std::forward<AA>(a), std::forward<CC>(c));
+    }
+};
+
+template<typename A, typename C>
+struct ifft1_real_impl<A, C, std::enable_if_t<is_cufft_zfft<A,C>::value>> {
+    template<typename AA, typename CC>
+    static void apply(AA&& a, CC&& c){
+        etl::impl::cufft::zifft1_real(std::forward<AA>(a), std::forward<CC>(c));
+    }
+};
+
+template<typename A, typename B, typename C>
+struct is_cufft_sfft_convolve : cpp::and_c<is_cufft_enabled, all_single_precision<A,B,C>, all_dma<A, B, C>> {};
+
+template<typename A, typename B, typename C>
+struct is_cufft_dfft_convolve : cpp::and_c<is_cufft_enabled, all_double_precision<A,B,C>, all_dma<A, B, C>> {};
+
+template<typename A, typename B, typename C>
+struct fft_conv1_full_impl<A, B, C, std::enable_if_t<is_cufft_sfft_convolve<A,B,C>::value>> {
+    template<typename AA, typename BB, typename CC>
+    static void apply(AA&& a, BB&& b, CC&& c){
+        etl::impl::cufft::sfft1_convolve(std::forward<AA>(a), std::forward<BB>(b), std::forward<CC>(c));
+    }
+};
+
+template<typename A, typename B, typename C>
+struct fft_conv1_full_impl<A, B, C, std::enable_if_t<is_cufft_dfft_convolve<A,B,C>::value>> {
+    template<typename AA, typename BB, typename CC>
+    static void apply(AA&& a, BB&& b, CC&& c){
+        etl::impl::cufft::dfft1_convolve(std::forward<AA>(a), std::forward<BB>(b), std::forward<CC>(c));
+    }
+};
+
+template<typename A, typename C>
+struct fft2_impl<A, C, std::enable_if_t<is_cufft_dfft<A,C>::value>> {
+    template<typename AA, typename CC>
+    static void apply(AA&& a, CC&& c){
+        etl::impl::cufft::dfft2(std::forward<AA>(a), std::forward<CC>(c));
+    }
+};
+
+template<typename A, typename C>
+struct fft2_impl<A, C, std::enable_if_t<is_cufft_sfft<A,C>::value>> {
+    template<typename AA, typename CC>
+    static void apply(AA&& a, CC&& c){
+        etl::impl::cufft::sfft2(std::forward<AA>(a), std::forward<CC>(c));
+    }
+};
+
+template<typename A, typename C>
+struct fft2_impl<A, C, std::enable_if_t<is_cufft_cfft<A,C>::value>> {
+    template<typename AA, typename CC>
+    static void apply(AA&& a, CC&& c){
+        etl::impl::cufft::cfft2(std::forward<AA>(a), std::forward<CC>(c));
+    }
+};
+
+template<typename A, typename C>
+struct fft2_impl<A, C, std::enable_if_t<is_cufft_zfft<A,C>::value>> {
+    template<typename AA, typename CC>
+    static void apply(AA&& a, CC&& c){
+        etl::impl::cufft::zfft2(std::forward<AA>(a), std::forward<CC>(c));
+    }
+};
+
+template<typename A, typename C>
+struct ifft2_impl<A, C, std::enable_if_t<is_cufft_cfft<A,C>::value>> {
+    template<typename AA, typename CC>
+    static void apply(AA&& a, CC&& c){
+        etl::impl::cufft::cifft2(std::forward<AA>(a), std::forward<CC>(c));
+    }
+};
+
+template<typename A, typename C>
+struct ifft2_impl<A, C, std::enable_if_t<is_cufft_zfft<A,C>::value>> {
+    template<typename AA, typename CC>
+    static void apply(AA&& a, CC&& c){
+        etl::impl::cufft::zifft2(std::forward<AA>(a), std::forward<CC>(c));
+    }
+};
+
+template<typename A, typename C>
+struct ifft2_real_impl<A, C, std::enable_if_t<is_cufft_cfft<A,C>::value>> {
+    template<typename AA, typename CC>
+    static void apply(AA&& a, CC&& c){
+        etl::impl::cufft::cifft2_real(std::forward<AA>(a), std::forward<CC>(c));
+    }
+};
+
+template<typename A, typename C>
+struct ifft2_real_impl<A, C, std::enable_if_t<is_cufft_zfft<A,C>::value>> {
+    template<typename AA, typename CC>
+    static void apply(AA&& a, CC&& c){
+        etl::impl::cufft::zifft2_real(std::forward<AA>(a), std::forward<CC>(c));
+    }
+};
+
+template<typename A, typename B, typename C>
+struct fft_conv2_full_impl<A, B, C, std::enable_if_t<is_cufft_sfft_convolve<A,B,C>::value>> {
+    template<typename AA, typename BB, typename CC>
+    static void apply(AA&& a, BB&& b, CC&& c){
+        etl::impl::cufft::sfft2_convolve(std::forward<AA>(a), std::forward<BB>(b), std::forward<CC>(c));
+    }
+};
+
+template<typename A, typename B, typename C>
+struct fft_conv2_full_impl<A, B, C, std::enable_if_t<is_cufft_dfft_convolve<A,B,C>::value>> {
+    template<typename AA, typename BB, typename CC>
+    static void apply(AA&& a, BB&& b, CC&& c){
+        etl::impl::cufft::dfft2_convolve(std::forward<AA>(a), std::forward<BB>(b), std::forward<CC>(c));
     }
 };
 
