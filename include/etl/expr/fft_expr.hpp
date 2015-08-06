@@ -67,7 +67,7 @@ struct basic_fft_expr {
     static void apply(A&& a, C&& c){
         static_assert(is_etl_expr<A>::value && is_etl_expr<C>::value, "Fast-Fourrier Transform only supported for ETL expressions");
 
-        Impl<decltype(make_temporary(std::forward<A>(a))), C, void>::apply(
+        Impl<decltype(make_temporary(std::forward<A>(a))), C>::apply(
             make_temporary(std::forward<A>(a)),
             std::forward<C>(c));
     }
