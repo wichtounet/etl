@@ -19,7 +19,7 @@ template<typename T>
 struct cuda_memory {
     T* memory;
     cuda_memory(T* memory) : memory(memory) {}
-    T* get(){
+    T* get() const {
         return memory;
     }
     ~cuda_memory(){
@@ -49,6 +49,30 @@ auto cuda_allocate(const E& expr, bool copy = false) -> cuda_memory<value_t<E>> 
 template<typename E>
 auto cuda_allocate_copy(const E& expr) -> cuda_memory<value_t<E>> {
     return cuda_allocate(expr, true);
+}
+
+template<typename E>
+auto cuda_allocate(E* ptr, std::size_t n, bool copy = false) -> cuda_memory<E> {
+    E* memory;
+
+    auto cuda_status = cudaMalloc(&memory, n * sizeof(E));
+
+    if (cuda_status != cudaSuccess) {
+        std::cout << "cuda: Failed to allocate GPU memory: " << cudaGetErrorString(cuda_status) << std::endl;
+        std::cout << "      Tried to allocate " << n * sizeof(E) << "B" << std::endl;
+        exit(EXIT_FAILURE);
+    }
+
+    if(copy){
+        cudaMemcpy(memory, ptr, n * sizeof(E), cudaMemcpyHostToDevice);
+    }
+
+    return {memory};
+}
+
+template<typename E>
+auto cuda_allocate_copy(E* ptr, std::size_t n) -> cuda_memory<E> {
+    return cuda_allocate(ptr, n, true);
 }
 
 } //end of namespace cublas
