@@ -273,7 +273,7 @@ void gemv(A&& a, B&& b, C&& c){
         cublasSgemv(
             handle.get(),
             CUBLAS_OP_T,
-            etl::rows(a), etl::columns(a),
+            etl::columns(a), etl::rows(a),
             &alpha,
             gpu_a.get(), major_stride(a),
             gpu_b.get(), 1,
@@ -317,7 +317,7 @@ void gemv(A&& a, B&& b, C&& c){
         cublasDgemv(
             handle.get(),
             CUBLAS_OP_T,
-            etl::rows(a), etl::columns(a),
+            etl::columns(a), etl::rows(a),
             &alpha,
             gpu_a.get(), major_stride(a),
             gpu_b.get(), 1,
@@ -361,7 +361,7 @@ void gemv(A&& a, B&& b, C&& c){
         cublasCgemv(
             handle.get(),
             CUBLAS_OP_T,
-            etl::rows(a), etl::columns(a),
+            etl::columns(a), etl::rows(a),
             &alpha,
             reinterpret_cast<cuComplex*>(gpu_a.get()), major_stride(a),
             reinterpret_cast<cuComplex*>(gpu_b.get()), 1,
@@ -405,7 +405,7 @@ void gemv(A&& a, B&& b, C&& c){
         cublasZgemv(
             handle.get(),
             CUBLAS_OP_T,
-            etl::rows(a), etl::columns(a),
+            etl::columns(a), etl::rows(a),
             &alpha,
             reinterpret_cast<cuDoubleComplex*>(gpu_a.get()), major_stride(a),
             reinterpret_cast<cuDoubleComplex*>(gpu_b.get()), 1,
@@ -449,7 +449,7 @@ void gevm(A&& a, B&& b, C&& c){
         cublasSgemv(
             handle.get(),
             CUBLAS_OP_N,
-            etl::rows(b), etl::columns(b),
+            etl::columns(b), etl::rows(b),
             &alpha,
             gpu_b.get(), major_stride(b),
             gpu_a.get(), 1,
@@ -493,7 +493,7 @@ void gevm(A&& a, B&& b, C&& c){
         cublasDgemv(
             handle.get(),
             CUBLAS_OP_N,
-            etl::rows(b), etl::columns(b),
+            etl::columns(b), etl::rows(b),
             &alpha,
             gpu_b.get(), major_stride(b),
             gpu_a.get(), 1,
@@ -537,7 +537,7 @@ void gevm(A&& a, B&& b, C&& c){
         cublasCgemv(
             handle.get(),
             CUBLAS_OP_N,
-            etl::rows(b), etl::columns(b),
+            etl::columns(b), etl::rows(b),
             &alpha,
             reinterpret_cast<cuComplex*>(gpu_b.get()), major_stride(b),
             reinterpret_cast<cuComplex*>(gpu_a.get()), 1,
@@ -581,7 +581,7 @@ void gevm(A&& a, B&& b, C&& c){
         cublasZgemv(
             handle.get(),
             CUBLAS_OP_N,
-            etl::rows(b), etl::columns(b),
+            etl::columns(b), etl::rows(b),
             &alpha,
             reinterpret_cast<cuDoubleComplex*>(gpu_b.get()), major_stride(b),
             reinterpret_cast<cuDoubleComplex*>(gpu_a.get()), 1,
