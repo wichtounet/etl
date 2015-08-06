@@ -99,6 +99,12 @@ struct is_complex_t : std::false_type { };
 template<typename T>
 struct is_complex_t <std::complex<T>> : std::true_type { };
 
+template<typename T>
+struct is_complex_single_t : std::is_same<T, std::complex<float>> { };
+
+template<typename T>
+struct is_complex_double_t : std::is_same<T, std::complex<double>> { };
+
 template<typename... E>
 struct all_dma : cpp::and_c<has_direct_access<E>...> {};
 
