@@ -46,7 +46,7 @@ template<typename A, typename B, typename C>
 struct fft_conv1_full_impl<A, B, C, std::enable_if_t<is_blas_sfft_convolve<A,B,C>::value>> {
     template<typename AA, typename BB, typename CC>
     static void apply(AA&& a, BB&& b, CC&& c){
-        etl::impl::blas::sfft1_convolve(std::forward<AA>(a), std::forward<BB>(b), std::forward<CC>(c));
+        etl::impl::blas::fft1_convolve(std::forward<AA>(a), std::forward<BB>(b), std::forward<CC>(c));
     }
 };
 
@@ -54,7 +54,7 @@ template<typename A, typename B, typename C>
 struct fft_conv1_full_impl<A, B, C, std::enable_if_t<is_blas_dfft_convolve<A,B,C>::value>> {
     template<typename AA, typename BB, typename CC>
     static void apply(AA&& a, BB&& b, CC&& c){
-        etl::impl::blas::dfft1_convolve(std::forward<AA>(a), std::forward<BB>(b), std::forward<CC>(c));
+        etl::impl::blas::fft1_convolve(std::forward<AA>(a), std::forward<BB>(b), std::forward<CC>(c));
     }
 };
 
@@ -62,7 +62,7 @@ template<typename A, typename B, typename C>
 struct fft_conv2_full_impl<A, B, C, std::enable_if_t<is_blas_sfft_convolve<A,B,C>::value>> {
     template<typename AA, typename BB, typename CC>
     static void apply(AA&& a, BB&& b, CC&& c){
-        etl::impl::blas::sfft2_convolve(std::forward<AA>(a), std::forward<BB>(b), std::forward<CC>(c));
+        etl::impl::blas::fft2_convolve(std::forward<AA>(a), std::forward<BB>(b), std::forward<CC>(c));
     }
 };
 
@@ -70,7 +70,7 @@ template<typename A, typename B, typename C>
 struct fft_conv2_full_impl<A, B, C, std::enable_if_t<is_blas_dfft_convolve<A,B,C>::value>> {
     template<typename AA, typename BB, typename CC>
     static void apply(AA&& a, BB&& b, CC&& c){
-        etl::impl::blas::dfft2_convolve(std::forward<AA>(a), std::forward<BB>(b), std::forward<CC>(c));
+        etl::impl::blas::fft2_convolve(std::forward<AA>(a), std::forward<BB>(b), std::forward<CC>(c));
     }
 };
 
@@ -317,7 +317,7 @@ template<typename A, typename B, typename C>
 struct fft_conv1_full_impl<A, B, C, std::enable_if_t<is_cufft_sfft_convolve<A,B,C>::value>> {
     template<typename AA, typename BB, typename CC>
     static void apply(AA&& a, BB&& b, CC&& c){
-        etl::impl::cufft::sfft1_convolve(std::forward<AA>(a), std::forward<BB>(b), std::forward<CC>(c));
+        etl::impl::cufft::fft1_convolve(std::forward<AA>(a), std::forward<BB>(b), std::forward<CC>(c));
     }
 };
 
@@ -325,7 +325,7 @@ template<typename A, typename B, typename C>
 struct fft_conv1_full_impl<A, B, C, std::enable_if_t<is_cufft_dfft_convolve<A,B,C>::value>> {
     template<typename AA, typename BB, typename CC>
     static void apply(AA&& a, BB&& b, CC&& c){
-        etl::impl::cufft::dfft1_convolve(std::forward<AA>(a), std::forward<BB>(b), std::forward<CC>(c));
+        etl::impl::cufft::fft1_convolve(std::forward<AA>(a), std::forward<BB>(b), std::forward<CC>(c));
     }
 };
 
@@ -333,7 +333,7 @@ template<typename A, typename B, typename C>
 struct fft_conv2_full_impl<A, B, C, std::enable_if_t<is_cufft_sfft_convolve<A,B,C>::value>> {
     template<typename AA, typename BB, typename CC>
     static void apply(AA&& a, BB&& b, CC&& c){
-        etl::impl::cufft::sfft2_convolve(std::forward<AA>(a), std::forward<BB>(b), std::forward<CC>(c));
+        etl::impl::cufft::fft2_convolve(std::forward<AA>(a), std::forward<BB>(b), std::forward<CC>(c));
     }
 };
 
@@ -341,7 +341,7 @@ template<typename A, typename B, typename C>
 struct fft_conv2_full_impl<A, B, C, std::enable_if_t<is_cufft_dfft_convolve<A,B,C>::value>> {
     template<typename AA, typename BB, typename CC>
     static void apply(AA&& a, BB&& b, CC&& c){
-        etl::impl::cufft::dfft2_convolve(std::forward<AA>(a), std::forward<BB>(b), std::forward<CC>(c));
+        etl::impl::cufft::fft2_convolve(std::forward<AA>(a), std::forward<BB>(b), std::forward<CC>(c));
     }
 };
 

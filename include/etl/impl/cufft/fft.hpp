@@ -175,8 +175,8 @@ void ifft1_real(A&& a, C&& c){
     }
 }
 
-template<typename A, typename B, typename C>
-void sfft1_convolve(A&& a, B&& b, C&& c){
+template<typename A, typename B, typename C, cpp_enable_if(all_single_precision<A>::value && all_dma<A,C>::value)>
+void fft1_convolve(A&& a, B&& b, C&& c){
     auto handle = start_cufft();
 
     const auto size = etl::size(c);
@@ -214,8 +214,8 @@ void sfft1_convolve(A&& a, B&& b, C&& c){
     }
 }
 
-template<typename A, typename B, typename C>
-void dfft1_convolve(A&& a, B&& b, C&& c){
+template<typename A, typename B, typename C, cpp_enable_if(all_double_precision<A>::value && all_dma<A,C>::value)>
+void fft1_convolve(A&& a, B&& b, C&& c){
     auto handle = start_cufft();
 
     const auto size = etl::size(c);
@@ -345,8 +345,8 @@ void ifft2_real(A&& a, C&& c){
     }
 }
 
-template<typename A, typename B, typename C>
-void sfft2_convolve(A&& a, B&& b, C&& c){
+template<typename A, typename B, typename C, cpp_enable_if(all_single_precision<A>::value && all_dma<A,C>::value)>
+void fft2_convolve(A&& a, B&& b, C&& c){
     const auto m1 = etl::dim<0>(a);
     const auto n1= etl::dim<0>(b);
     const auto s1 = m1 + n1 - 1;
@@ -401,8 +401,8 @@ void sfft2_convolve(A&& a, B&& b, C&& c){
     }
 }
 
-template<typename A, typename B, typename C>
-void dfft2_convolve(A&& a, B&& b, C&& c){
+template<typename A, typename B, typename C, cpp_enable_if(all_double_precision<A>::value && all_dma<A,C>::value)>
+void fft2_convolve(A&& a, B&& b, C&& c){
     const auto m1 = etl::dim<0>(a);
     const auto n1= etl::dim<0>(b);
     const auto s1 = m1 + n1 - 1;
@@ -477,6 +477,12 @@ void ifft2(A&& /*unused*/, C&& /*unused*/){}
 template<typename A, typename C, cpp_enable_if(!all_dma<A,C>::value)>
 void ifft2_real(A&& /*unused*/, C&& /*unused*/){}
 
+template<typename A, typename B, typename C, cpp_enable_if(!all_dma<A,B,C>::value)>
+void fft1_convolve(A&& /*unused*/, C&& /*unused*/){}
+
+template<typename A, typename B, typename C, cpp_enable_if(!all_dma<A,B,C>::value)>
+void fft2_convolve(A&& /*unused*/, B&& /*unused*/, C&& /*unused*/){}
+
 #else
 
 template<typename A, typename C>
@@ -488,12 +494,6 @@ void ifft1(A&& /*unused*/, C&& /*unused*/);
 template<typename A, typename C>
 void ifft1_real(A&& /*unused*/, C&& /*unused*/);
 
-template<typename A, typename B, typename C>
-void sfft1_convolve(A&& /*unused*/, C&& /*unused*/);
-
-template<typename A, typename B, typename C>
-void dfft1_convolve(A&& /*unused*/, B&& /*unused*/, C&& /*unused*/);
-
 template<typename A, typename C>
 void fft2(A&& /*unused*/, C&& /*unused*/);
 
@@ -504,10 +504,10 @@ template<typename A, typename C>
 void ifft2_real(A&& /*unused*/, C&& /*unused*/);
 
 template<typename A, typename B, typename C>
-void sfft2_convolve(A&& /*unused*/, C&& /*unused*/);
+void fft1_convolve(A&& /*unused*/, C&& /*unused*/);
 
 template<typename A, typename B, typename C>
-void dfft2_convolve(A&& /*unused*/, B&& /*unused*/, C&& /*unused*/);
+void fft2_convolve(A&& /*unused*/, C&& /*unused*/);
 
 #endif
 
