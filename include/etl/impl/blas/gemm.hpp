@@ -26,24 +26,8 @@ namespace blas {
 
 #ifdef ETL_BLAS_MODE
 
-template<typename A, typename B, typename C>
-void dgemm(A&& a, B&& b, C&& c){
-    bool row_major = decay_traits<A>::storage_order == order::RowMajor;
-
-    cblas_dgemm(
-        row_major ? CblasRowMajor : CblasColMajor,
-        CblasNoTrans, CblasNoTrans,
-        etl::rows(a), etl::columns(b), etl::columns(a),
-        1.0,
-        a.memory_start(), major_stride(a),
-        b.memory_start(), major_stride(b),
-        0.0,
-        c.memory_start(), major_stride(c)
-    );
-}
-
-template<typename A, typename B, typename C>
-void sgemm(A&& a, B&& b, C&& c){
+template<typename A, typename B, typename C, cpp_enable_if(all_dma<A,B,C>::value && all_single_precision<A,B,C>::value)>
+void gemm(A&& a, B&& b, C&& c){
     bool row_major = decay_traits<A>::storage_order == order::RowMajor;
 
     cblas_sgemm(
@@ -58,8 +42,24 @@ void sgemm(A&& a, B&& b, C&& c){
     );
 }
 
-template<typename A, typename B, typename C>
-void cgemm(A&& a, B&& b, C&& c){
+template<typename A, typename B, typename C, cpp_enable_if(all_dma<A,B,C>::value && all_double_precision<A,B,C>::value)>
+void gemm(A&& a, B&& b, C&& c){
+    bool row_major = decay_traits<A>::storage_order == order::RowMajor;
+
+    cblas_dgemm(
+        row_major ? CblasRowMajor : CblasColMajor,
+        CblasNoTrans, CblasNoTrans,
+        etl::rows(a), etl::columns(b), etl::columns(a),
+        1.0,
+        a.memory_start(), major_stride(a),
+        b.memory_start(), major_stride(b),
+        0.0,
+        c.memory_start(), major_stride(c)
+    );
+}
+
+template<typename A, typename B, typename C, cpp_enable_if(all_dma<A,B,C>::value && all_complex_single_precision<A,B,C>::value)>
+void gemm(A&& a, B&& b, C&& c){
     bool row_major = decay_traits<A>::storage_order == order::RowMajor;
 
     std::complex<float> alpha(1.0, 0.0);
@@ -77,8 +77,8 @@ void cgemm(A&& a, B&& b, C&& c){
     );
 }
 
-template<typename A, typename B, typename C>
-void zgemm(A&& a, B&& b, C&& c){
+template<typename A, typename B, typename C, cpp_enable_if(all_dma<A,B,C>::value && all_complex_double_precision<A,B,C>::value)>
+void gemm(A&& a, B&& b, C&& c){
     bool row_major = decay_traits<A>::storage_order == order::RowMajor;
 
     std::complex<double> alpha(1.0, 0.0);
@@ -96,8 +96,8 @@ void zgemm(A&& a, B&& b, C&& c){
     );
 }
 
-template<typename A, typename B, typename C>
-void dgemv(A&& a, B&& b, C&& c){
+template<typename A, typename B, typename C, cpp_enable_if(all_dma<A,B,C>::value && all_double_precision<A,B,C>::value)>
+void gemv(A&& a, B&& b, C&& c){
     bool row_major = decay_traits<A>::storage_order == order::RowMajor;
 
     cblas_dgemv(
@@ -112,8 +112,8 @@ void dgemv(A&& a, B&& b, C&& c){
     );
 }
 
-template<typename A, typename B, typename C>
-void sgemv(A&& a, B&& b, C&& c){
+template<typename A, typename B, typename C, cpp_enable_if(all_dma<A,B,C>::value && all_single_precision<A,B,C>::value)>
+void gemv(A&& a, B&& b, C&& c){
     bool row_major = decay_traits<A>::storage_order == order::RowMajor;
 
     cblas_sgemv(
@@ -128,8 +128,8 @@ void sgemv(A&& a, B&& b, C&& c){
     );
 }
 
-template<typename A, typename B, typename C>
-void cgemv(A&& a, B&& b, C&& c){
+template<typename A, typename B, typename C, cpp_enable_if(all_dma<A,B,C>::value && all_complex_single_precision<A,B,C>::value)>
+void gemv(A&& a, B&& b, C&& c){
     bool row_major = decay_traits<A>::storage_order == order::RowMajor;
 
     std::complex<float> alpha(1.0, 0.0);
@@ -147,8 +147,8 @@ void cgemv(A&& a, B&& b, C&& c){
     );
 }
 
-template<typename A, typename B, typename C>
-void zgemv(A&& a, B&& b, C&& c){
+template<typename A, typename B, typename C, cpp_enable_if(all_dma<A,B,C>::value && all_complex_double_precision<A,B,C>::value)>
+void gemv(A&& a, B&& b, C&& c){
     bool row_major = decay_traits<A>::storage_order == order::RowMajor;
 
     std::complex<double> alpha(1.0, 0.0);
@@ -166,8 +166,8 @@ void zgemv(A&& a, B&& b, C&& c){
     );
 }
 
-template<typename A, typename B, typename C>
-void dgevm(A&& a, B&& b, C&& c){
+template<typename A, typename B, typename C, cpp_enable_if(all_dma<A,B,C>::value && all_double_precision<A,B,C>::value)>
+void gevm(A&& a, B&& b, C&& c){
     bool row_major = decay_traits<B>::storage_order == order::RowMajor;
 
     cblas_dgemv(
@@ -182,8 +182,8 @@ void dgevm(A&& a, B&& b, C&& c){
     );
 }
 
-template<typename A, typename B, typename C>
-void sgevm(A&& a, B&& b, C&& c){
+template<typename A, typename B, typename C, cpp_enable_if(all_dma<A,B,C>::value && all_single_precision<A,B,C>::value)>
+void gevm(A&& a, B&& b, C&& c){
     bool row_major = decay_traits<B>::storage_order == order::RowMajor;
 
     cblas_sgemv(
@@ -198,8 +198,8 @@ void sgevm(A&& a, B&& b, C&& c){
     );
 }
 
-template<typename A, typename B, typename C>
-void cgevm(A&& a, B&& b, C&& c){
+template<typename A, typename B, typename C, cpp_enable_if(all_dma<A,B,C>::value && all_complex_single_precision<A,B,C>::value)>
+void gevm(A&& a, B&& b, C&& c){
     bool row_major = decay_traits<B>::storage_order == order::RowMajor;
 
     std::complex<float> alpha(1.0, 0.0);
@@ -217,8 +217,8 @@ void cgevm(A&& a, B&& b, C&& c){
     );
 }
 
-template<typename A, typename B, typename C>
-void zgevm(A&& a, B&& b, C&& c){
+template<typename A, typename B, typename C, cpp_enable_if(all_dma<A,B,C>::value && all_complex_double_precision<A,B,C>::value)>
+void gevm(A&& a, B&& b, C&& c){
     bool row_major = decay_traits<B>::storage_order == order::RowMajor;
 
     std::complex<double> alpha(1.0, 0.0);
@@ -235,44 +235,26 @@ void zgevm(A&& a, B&& b, C&& c){
         c.memory_start(), 1
     );
 }
+
+template<typename A, typename B, typename C, cpp_enable_if(!all_dma<A,B,C>::value)>
+void gemm(A&& a, B&& b, C&& c);
+
+template<typename A, typename B, typename C, cpp_enable_if(!all_dma<A,B,C>::value)>
+void gemv(A&& a, B&& b, C&& c);
+
+template<typename A, typename B, typename C, cpp_enable_if(!all_dma<A,B,C>::value)>
+void gevm(A&& a, B&& b, C&& c);
 
 #else
 
 template<typename A, typename B, typename C>
-void dgemm(A&& a, B&& b, C&& c);
+void gemm(A&& a, B&& b, C&& c);
 
 template<typename A, typename B, typename C>
-void sgemm(A&& a, B&& b, C&& c);
+void gemv(A&& a, B&& b, C&& c);
 
 template<typename A, typename B, typename C>
-void cgemm(A&& a, B&& b, C&& c);
-
-template<typename A, typename B, typename C>
-void zgemm(A&& a, B&& b, C&& c);
-
-template<typename A, typename B, typename C>
-void dgemv(A&& a, B&& b, C&& c);
-
-template<typename A, typename B, typename C>
-void sgemv(A&& a, B&& b, C&& c);
-
-template<typename A, typename B, typename C>
-void cgemv(A&& a, B&& b, C&& c);
-
-template<typename A, typename B, typename C>
-void zgemv(A&& a, B&& b, C&& c);
-
-template<typename A, typename B, typename C>
-void dgevm(A&& a, B&& b, C&& c);
-
-template<typename A, typename B, typename C>
-void sgevm(A&& a, B&& b, C&& c);
-
-template<typename A, typename B, typename C>
-void cgevm(A&& a, B&& b, C&& c);
-
-template<typename A, typename B, typename C>
-void zgevm(A&& a, B&& b, C&& c);
+void gevm(A&& a, B&& b, C&& c);
 
 #endif
 

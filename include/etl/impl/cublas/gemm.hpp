@@ -78,8 +78,8 @@ void copy_matrix(cublas_handle& handle, impl::cuda::cuda_memory<T>& gpu, C&& c){
     }
 }
 
-template<typename A, typename B, typename C>
-void sgemm(A&& a, B&& b, C&& c){
+template<typename A, typename B, typename C, cpp_enable_if(all_dma<A,B,C>::value && all_single_precision<A,B,C>::value)>
+void gemm(A&& a, B&& b, C&& c){
     auto handle = start_cublas();
 
     bool row_major = decay_traits<A>::storage_order == order::RowMajor;
@@ -122,8 +122,8 @@ void sgemm(A&& a, B&& b, C&& c){
     copy_matrix(handle, gpu_c, c);
 }
 
-template<typename A, typename B, typename C>
-void dgemm(A&& a, B&& b, C&& c){
+template<typename A, typename B, typename C, cpp_enable_if(all_dma<A,B,C>::value && all_double_precision<A,B,C>::value)>
+void gemm(A&& a, B&& b, C&& c){
     auto handle = start_cublas();
 
     bool row_major = decay_traits<A>::storage_order == order::RowMajor;
@@ -166,8 +166,8 @@ void dgemm(A&& a, B&& b, C&& c){
     copy_matrix(handle, gpu_c, c);
 }
 
-template<typename A, typename B, typename C>
-void cgemm(A&& a, B&& b, C&& c){
+template<typename A, typename B, typename C, cpp_enable_if(all_dma<A,B,C>::value && all_complex_single_precision<A,B,C>::value)>
+void gemm(A&& a, B&& b, C&& c){
     auto handle = start_cublas();
 
     bool row_major = decay_traits<A>::storage_order == order::RowMajor;
@@ -210,8 +210,8 @@ void cgemm(A&& a, B&& b, C&& c){
     copy_matrix(handle, gpu_c, c);
 }
 
-template<typename A, typename B, typename C>
-void zgemm(A&& a, B&& b, C&& c){
+template<typename A, typename B, typename C, cpp_enable_if(all_dma<A,B,C>::value && all_complex_double_precision<A,B,C>::value)>
+void gemm(A&& a, B&& b, C&& c){
     auto handle = start_cublas();
 
     bool row_major = decay_traits<A>::storage_order == order::RowMajor;
@@ -254,8 +254,8 @@ void zgemm(A&& a, B&& b, C&& c){
     copy_matrix(handle, gpu_c, c);
 }
 
-template<typename A, typename B, typename C>
-void sgemv(A&& a, B&& b, C&& c){
+template<typename A, typename B, typename C, cpp_enable_if(all_dma<A,B,C>::value && all_single_precision<A,B,C>::value)>
+void gemv(A&& a, B&& b, C&& c){
     auto handle = start_cublas();
 
     bool row_major = decay_traits<A>::storage_order == order::RowMajor;
@@ -298,8 +298,8 @@ void sgemv(A&& a, B&& b, C&& c){
     cudaMemcpy(c.memory_start(), gpu_c.get(), etl::size(c) * sizeof(float), cudaMemcpyDeviceToHost);
 }
 
-template<typename A, typename B, typename C>
-void dgemv(A&& a, B&& b, C&& c){
+template<typename A, typename B, typename C, cpp_enable_if(all_dma<A,B,C>::value && all_double_precision<A,B,C>::value)>
+void gemv(A&& a, B&& b, C&& c){
     auto handle = start_cublas();
 
     bool row_major = decay_traits<A>::storage_order == order::RowMajor;
@@ -342,8 +342,8 @@ void dgemv(A&& a, B&& b, C&& c){
     cudaMemcpy(c.memory_start(), gpu_c.get(), etl::size(c) * sizeof(double), cudaMemcpyDeviceToHost);
 }
 
-template<typename A, typename B, typename C>
-void cgemv(A&& a, B&& b, C&& c){
+template<typename A, typename B, typename C, cpp_enable_if(all_dma<A,B,C>::value && all_complex_single_precision<A,B,C>::value)>
+void gemv(A&& a, B&& b, C&& c){
     auto handle = start_cublas();
 
     bool row_major = decay_traits<A>::storage_order == order::RowMajor;
@@ -386,8 +386,8 @@ void cgemv(A&& a, B&& b, C&& c){
     cudaMemcpy(c.memory_start(), gpu_c.get(), etl::size(c) * sizeof(std::complex<float>), cudaMemcpyDeviceToHost);
 }
 
-template<typename A, typename B, typename C>
-void zgemv(A&& a, B&& b, C&& c){
+template<typename A, typename B, typename C, cpp_enable_if(all_dma<A,B,C>::value && all_complex_double_precision<A,B,C>::value)>
+void gemv(A&& a, B&& b, C&& c){
     auto handle = start_cublas();
 
     bool row_major = decay_traits<A>::storage_order == order::RowMajor;
@@ -430,8 +430,8 @@ void zgemv(A&& a, B&& b, C&& c){
     cudaMemcpy(c.memory_start(), gpu_c.get(), etl::size(c) * sizeof(std::complex<double>), cudaMemcpyDeviceToHost);
 }
 
-template<typename A, typename B, typename C>
-void sgevm(A&& a, B&& b, C&& c){
+template<typename A, typename B, typename C, cpp_enable_if(all_dma<A,B,C>::value && all_single_precision<A,B,C>::value)>
+void gevm(A&& a, B&& b, C&& c){
     auto handle = start_cublas();
 
     bool row_major = decay_traits<B>::storage_order == order::RowMajor;
@@ -474,8 +474,8 @@ void sgevm(A&& a, B&& b, C&& c){
     cudaMemcpy(c.memory_start(), gpu_c.get(), etl::size(c) * sizeof(float), cudaMemcpyDeviceToHost);
 }
 
-template<typename A, typename B, typename C>
-void dgevm(A&& a, B&& b, C&& c){
+template<typename A, typename B, typename C, cpp_enable_if(all_dma<A,B,C>::value && all_double_precision<A,B,C>::value)>
+void gevm(A&& a, B&& b, C&& c){
     auto handle = start_cublas();
 
     bool row_major = decay_traits<B>::storage_order == order::RowMajor;
@@ -518,8 +518,8 @@ void dgevm(A&& a, B&& b, C&& c){
     cudaMemcpy(c.memory_start(), gpu_c.get(), etl::size(c) * sizeof(double), cudaMemcpyDeviceToHost);
 }
 
-template<typename A, typename B, typename C>
-void cgevm(A&& a, B&& b, C&& c){
+template<typename A, typename B, typename C, cpp_enable_if(all_dma<A,B,C>::value && all_complex_single_precision<A,B,C>::value)>
+void gevm(A&& a, B&& b, C&& c){
     auto handle = start_cublas();
 
     bool row_major = decay_traits<A>::storage_order == order::RowMajor;
@@ -562,8 +562,8 @@ void cgevm(A&& a, B&& b, C&& c){
     cudaMemcpy(c.memory_start(), gpu_c.get(), etl::size(c) * sizeof(std::complex<float>), cudaMemcpyDeviceToHost);
 }
 
-template<typename A, typename B, typename C>
-void zgevm(A&& a, B&& b, C&& c){
+template<typename A, typename B, typename C, cpp_enable_if(all_dma<A,B,C>::value && all_complex_double_precision<A,B,C>::value)>
+void gevm(A&& a, B&& b, C&& c){
     auto handle = start_cublas();
 
     bool row_major = decay_traits<A>::storage_order == order::RowMajor;
@@ -605,44 +605,26 @@ void zgevm(A&& a, B&& b, C&& c){
 
     cudaMemcpy(c.memory_start(), gpu_c.get(), etl::size(c) * sizeof(std::complex<double>), cudaMemcpyDeviceToHost);
 }
+
+template<typename A, typename B, typename C, cpp_enable_if(!all_dma<A,B,C>::value)>
+void gemm(A&& a, B&& b, C&& c);
+
+template<typename A, typename B, typename C, cpp_enable_if(!all_dma<A,B,C>::value)>
+void gemv(A&& a, B&& b, C&& c);
+
+template<typename A, typename B, typename C, cpp_enable_if(!all_dma<A,B,C>::value)>
+void gevm(A&& a, B&& b, C&& c);
 
 #else
 
 template<typename A, typename B, typename C>
-void sgemm(A&& a, B&& b, C&& c);
+void gemm(A&& a, B&& b, C&& c);
 
 template<typename A, typename B, typename C>
-void dgemm(A&& a, B&& b, C&& c);
+void gemv(A&& a, B&& b, C&& c);
 
 template<typename A, typename B, typename C>
-void cgemm(A&& a, B&& b, C&& c);
-
-template<typename A, typename B, typename C>
-void zgemm(A&& a, B&& b, C&& c);
-
-template<typename A, typename B, typename C>
-void sgemv(A&& a, B&& b, C&& c);
-
-template<typename A, typename B, typename C>
-void dgemv(A&& a, B&& b, C&& c);
-
-template<typename A, typename B, typename C>
-void cgemv(A&& a, B&& b, C&& c);
-
-template<typename A, typename B, typename C>
-void zgemv(A&& a, B&& b, C&& c);
-
-template<typename A, typename B, typename C>
-void sgevm(A&& a, B&& b, C&& c);
-
-template<typename A, typename B, typename C>
-void dgevm(A&& a, B&& b, C&& c);
-
-template<typename A, typename B, typename C>
-void cgevm(A&& a, B&& b, C&& c);
-
-template<typename A, typename B, typename C>
-void zgevm(A&& a, B&& b, C&& c);
+void gevm(A&& a, B&& b, C&& c);
 
 #endif
 

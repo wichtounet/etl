@@ -17,8 +17,7 @@ MUL_FUNCTOR( default_gemm, c = etl::mul(a, b) )
 MUL_FUNCTOR( lazy_gemm, c = etl::lazy_mul(a, b) )
 MUL_FUNCTOR( strassen_gemm, c = etl::strassen_mul(a, b) )
 MUL_FUNCTOR( std_gemm, etl::impl::standard::mm_mul(a, b, c) )
-MUL_FUNCTOR( eblas_gemm_float, etl::impl::eblas::fast_sgemm(a, b, c) )
-MUL_FUNCTOR( eblas_gemm_double, etl::impl::eblas::fast_dgemm(a, b, c) )
+MUL_FUNCTOR( eblas_gemm, etl::impl::eblas::gemm(a, b, c) )
 
 MUL_FUNCTOR( default_gemv, c = etl::mul(a, b) )
 MUL_FUNCTOR( std_gemv, etl::impl::standard::mv_mul(a, b, c) )
@@ -30,7 +29,7 @@ MUL_FUNCTOR( std_gevm, etl::impl::standard::vm_mul(a, b, c) )
 #define GEMM_TEST_CASE_SECTION_LAZY      MUL_TEST_CASE_SECTIONS( lazy_gemm, lazy_gemm )
 #define GEMM_TEST_CASE_SECTION_STD       MUL_TEST_CASE_SECTIONS( std_gemm, std_gemm )
 #define GEMM_TEST_CASE_SECTION_STRASSEN  MUL_TEST_CASE_SECTIONS( strassen_gemm, strassen_gemm )
-#define GEMM_TEST_CASE_SECTION_EBLAS     MUL_TEST_CASE_SECTIONS( eblas_gemm_float, eblas_gemm_double )
+#define GEMM_TEST_CASE_SECTION_EBLAS     MUL_TEST_CASE_SECTIONS( eblas_gemm, eblas_gemm)
 
 #define GEMV_TEST_CASE_SECTION_DEFAULT   MUL_TEST_CASE_SECTIONS( default_gemv, default_gemv )
 #define GEMV_TEST_CASE_SECTION_STD       MUL_TEST_CASE_SECTIONS( std_gemv, std_gemv )
@@ -39,15 +38,12 @@ MUL_FUNCTOR( std_gevm, etl::impl::standard::vm_mul(a, b, c) )
 #define GEVM_TEST_CASE_SECTION_STD       MUL_TEST_CASE_SECTIONS( std_gevm, std_gevm )
 
 #ifdef ETL_BLAS_MODE
-MUL_FUNCTOR( blas_gemm_float, etl::impl::blas::sgemm(a, b, c) )
-MUL_FUNCTOR( blas_gemm_double, etl::impl::blas::dgemm(a, b, c) )
-MUL_FUNCTOR( blas_gemv_float, etl::impl::blas::sgemv(a, b, c) )
-MUL_FUNCTOR( blas_gemv_double, etl::impl::blas::dgemv(a, b, c) )
-MUL_FUNCTOR( blas_gevm_float, etl::impl::blas::sgevm(a, b, c) )
-MUL_FUNCTOR( blas_gevm_double, etl::impl::blas::dgevm(a, b, c) )
-#define GEMM_TEST_CASE_SECTION_BLAS  MUL_TEST_CASE_SECTIONS( blas_gemm_float, blas_gemm_double )
-#define GEMV_TEST_CASE_SECTION_BLAS  MUL_TEST_CASE_SECTIONS( blas_gemv_float, blas_gemv_double )
-#define GEVM_TEST_CASE_SECTION_BLAS  MUL_TEST_CASE_SECTIONS( blas_gevm_float, blas_gevm_double )
+MUL_FUNCTOR( blas_gemm, etl::impl::blas::gemm(a, b, c) )
+MUL_FUNCTOR( blas_gemv, etl::impl::blas::gemv(a, b, c) )
+MUL_FUNCTOR( blas_gevm, etl::impl::blas::gevm(a, b, c) )
+#define GEMM_TEST_CASE_SECTION_BLAS  MUL_TEST_CASE_SECTIONS( blas_gemm, blas_gemm)
+#define GEMV_TEST_CASE_SECTION_BLAS  MUL_TEST_CASE_SECTIONS( blas_gemv, blas_gemv)
+#define GEVM_TEST_CASE_SECTION_BLAS  MUL_TEST_CASE_SECTIONS( blas_gevm, blas_gevm)
 #else
 #define GEMM_TEST_CASE_SECTION_BLAS
 #define GEMV_TEST_CASE_SECTION_BLAS
@@ -55,15 +51,12 @@ MUL_FUNCTOR( blas_gevm_double, etl::impl::blas::dgevm(a, b, c) )
 #endif
 
 #ifdef ETL_CUBLAS_MODE
-MUL_FUNCTOR( cublas_gemm_float, etl::impl::cublas::sgemm(a, b, c) )
-MUL_FUNCTOR( cublas_gemm_double, etl::impl::cublas::dgemm(a, b, c) )
-MUL_FUNCTOR( cublas_gemv_float, etl::impl::cublas::sgemv(a, b, c) )
-MUL_FUNCTOR( cublas_gemv_double, etl::impl::cublas::dgemv(a, b, c) )
-MUL_FUNCTOR( cublas_gevm_float, etl::impl::cublas::sgevm(a, b, c) )
-MUL_FUNCTOR( cublas_gevm_double, etl::impl::cublas::dgevm(a, b, c) )
-#define GEMM_TEST_CASE_SECTION_CUBLAS  MUL_TEST_CASE_SECTIONS( cublas_gemm_float, cublas_gemm_double )
-#define GEMV_TEST_CASE_SECTION_CUBLAS  MUL_TEST_CASE_SECTIONS( cublas_gemv_float, cublas_gemv_double )
-#define GEVM_TEST_CASE_SECTION_CUBLAS  MUL_TEST_CASE_SECTIONS( cublas_gevm_float, cublas_gevm_double )
+MUL_FUNCTOR( cublas_gemm, etl::impl::cublas::gemm(a, b, c) )
+MUL_FUNCTOR( cublas_gemv, etl::impl::cublas::gemv(a, b, c) )
+MUL_FUNCTOR( cublas_gevm, etl::impl::cublas::gevm(a, b, c) )
+#define GEMM_TEST_CASE_SECTION_CUBLAS  MUL_TEST_CASE_SECTIONS( cublas_gemm, cublas_gemm)
+#define GEMV_TEST_CASE_SECTION_CUBLAS  MUL_TEST_CASE_SECTIONS( cublas_gemv, cublas_gemv)
+#define GEVM_TEST_CASE_SECTION_CUBLAS  MUL_TEST_CASE_SECTIONS( cublas_gevm, cublas_gevm)
 #else
 #define GEMM_TEST_CASE_SECTION_CUBLAS
 #define GEMV_TEST_CASE_SECTION_CUBLAS

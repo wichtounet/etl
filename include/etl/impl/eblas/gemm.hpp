@@ -387,29 +387,20 @@ void gemm_nn(std::size_t m, std::size_t n, std::size_t k, D alpha, const D* A, s
     }
 }
 
-template<typename A, typename B, typename C>
-void fast_dgemm(A&& a, B&& b, C&& c){
+template<typename A, typename B, typename C, cpp_enable_if(all_dma<A,B,C>::value)>
+void gemm(A&& a, B&& b, C&& c){
     gemm_nn(
         etl::dim<0>(a), etl::dim<1>(b), etl::dim<1>(a),
-        1.0,
+        value_t<A>(1.0),
         a.memory_start(), row_stride(a), col_stride(a),
         b.memory_start(), row_stride(b), col_stride(b),
-        0.0,
+        value_t<A>(0.0),
         c.memory_start(), row_stride(c), col_stride(c)
     );
 }
 
-template<typename A, typename B, typename C>
-void fast_sgemm(A&& a, B&& b, C&& c){
-    gemm_nn(
-        etl::dim<0>(a), etl::dim<1>(b), etl::dim<1>(a),
-        1.0f,
-        a.memory_start(), row_stride(a), col_stride(a),
-        b.memory_start(), row_stride(b), col_stride(b),
-        0.0f,
-        c.memory_start(), row_stride(c), col_stride(c)
-    );
-}
+template<typename A, typename B, typename C, cpp_enable_if(!all_dma<A,B,C>::value)>
+void gemm(A&& /*a*/, B&& /*b*/, C&& /*c*/){}
 
 } //end of namespace eblas
 
