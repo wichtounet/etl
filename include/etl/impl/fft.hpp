@@ -136,6 +136,44 @@ inline cpp14_constexpr fft_impl select_fft1_impl(const std::size_t n){
 }
 
 template<bool DMA>
+inline cpp14_constexpr fft_impl select_ifft1_impl(const std::size_t n){
+    //Only std implementation is able to handle non-dma expressions
+    if(!DMA){
+        return fft_impl::STD;
+    }
+
+    //Note since these boolean will be known at compile time, the conditions will be a lot simplified
+    static constexpr const bool mkl = is_mkl_enabled::value;
+    static constexpr const bool cufft = is_cufft_enabled::value;
+
+    if(cufft){
+        if(is_power_of_two(n)){
+            if(n <= 1024){
+                if(mkl){
+                    return fft_impl::MKL;
+                } else {
+                    return fft_impl::STD;
+                }
+            } else if(n <= 262144 && mkl){
+                return fft_impl::MKL;
+            }
+
+            return fft_impl::CUFFT;
+        }
+
+        if(n <= 250000 && mkl){
+            return fft_impl::MKL;
+        }
+
+        return fft_impl::CUFFT;
+    } else if(mkl) {
+        return fft_impl::MKL;
+    } else {
+        return fft_impl::STD;
+    }
+}
+
+template<bool DMA>
 inline cpp14_constexpr fft_impl select_fft2_impl(const std::size_t ){
     //Only std implementation is able to handle non-dma expressions
     if(!DMA){
@@ -175,7 +213,7 @@ template<typename A, typename C>
 struct ifft1_impl {
     template<typename AA, typename CC>
     static void apply(AA&& a, CC&& c){
-        auto impl = select_fft1_impl<all_dma<A,C>::value>(etl::size(c));
+        auto impl = select_ifft1_impl<all_dma<A,C>::value>(etl::size(c));
 
         if(impl == fft_impl::STD){
             etl::impl::standard::ifft1(std::forward<AA>(a), std::forward<CC>(c));
@@ -191,7 +229,7 @@ template<typename A, typename C>
 struct ifft1_real_impl {
     template<typename AA, typename CC>
     static void apply(AA&& a, CC&& c){
-        auto impl = select_fft1_impl<all_dma<A,C>::value>(etl::size(c));
+        auto impl = select_ifft1_impl<all_dma<A,C>::value>(etl::size(c));
 
         if(impl == fft_impl::STD){
             etl::impl::standard::ifft1_real(std::forward<AA>(a), std::forward<CC>(c));
