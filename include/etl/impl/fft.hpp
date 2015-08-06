@@ -96,6 +96,10 @@ struct is_blas_cfft : cpp::and_c<is_mkl_enabled, cpp::not_c<is_cufft_enabled>, i
 template<typename A, typename C>
 struct is_blas_zfft : cpp::and_c<is_mkl_enabled, cpp::not_c<is_cufft_enabled>, is_complex_double_precision<A>, all_dma<A, C>> {};
 
+inline bool is_power_of_two(long n){
+    return (n & (n - 1)) == 0;
+}
+
 template<typename A, typename C>
 struct fft1_impl<A, C, std::enable_if_t<is_blas_dfft<A,C>::value>> {
     template<typename AA, typename CC>
@@ -274,19 +278,92 @@ struct is_cufft_cfft : cpp::and_c<is_cufft_enabled, is_complex_single_precision<
 template<typename A, typename C>
 struct is_cufft_zfft : cpp::and_c<is_cufft_enabled, is_complex_double_precision<A>, all_dma<A, C>> {};
 
-template<typename A, typename C>
-struct fft1_impl<A, C, std::enable_if_t<is_cufft_dfft<A,C>::value>> {
-    template<typename AA, typename CC>
-    static void apply(AA&& a, CC&& c){
-        etl::impl::cufft::dfft1(std::forward<AA>(a), std::forward<CC>(c));
-    }
+enum class fft_impl {
+    STD,
+    MKL,
+    CUFFT
 };
+
+enum class precision {
+    S,
+    D,
+    C,
+    Z
+};
+
+template<bool DMA>
+inline fft_impl select_fft1_impl(const std::size_t n){
+    //Only std implementation is able to handle non-dma expressions
+    if(!DMA){
+        return fft_impl::STD;
+    }
+
+    //Note since these boolean will be known at compile time, the conditions will be a lot simplified
+    static constexpr const bool mkl = is_mkl_enabled::value;
+    static constexpr const bool cufft = is_cufft_enabled::value;
+
+    if(cufft){
+        if(is_power_of_two(n)){
+            if(n <= 64){
+                return fft_impl::STD;
+            } else if(n <= 1024){
+                if(mkl){
+                    return fft_impl::MKL;
+                } else {
+                    return fft_impl::STD;
+                }
+            } else if(n <= 65536 && mkl){
+                return fft_impl::MKL;
+            }
+
+            return fft_impl::CUFFT;
+        }
+
+        if(n <= 250000 && mkl){
+            return fft_impl::MKL;
+        }
+
+        return fft_impl::CUFFT;
+    } else if(mkl) {
+        if(is_power_of_two(n) && n <= 64){
+            return fft_impl::STD;
+        }
+
+        return fft_impl::MKL;
+    } else {
+        return fft_impl::STD;
+    }
+}
 
 template<typename A, typename C>
 struct fft1_impl<A, C, std::enable_if_t<is_cufft_sfft<A,C>::value>> {
     template<typename AA, typename CC>
     static void apply(AA&& a, CC&& c){
-        etl::impl::cufft::sfft1(std::forward<AA>(a), std::forward<CC>(c));
+        auto impl = select_fft1_impl<all_dma<A,C>::value>(etl::size(c));
+
+        if(impl == fft_impl::STD){
+            etl::impl::standard::fft1(std::forward<AA>(a), std::forward<CC>(c));
+        } else if(impl == fft_impl::MKL){
+            etl::impl::blas::sfft1(std::forward<AA>(a), std::forward<CC>(c));
+        } else if(impl == fft_impl::CUFFT){
+            etl::impl::cufft::sfft1(std::forward<AA>(a), std::forward<CC>(c));
+        }
+    }
+};
+
+template<typename A, typename C>
+struct fft1_impl<A, C, std::enable_if_t<is_cufft_dfft<A,C>::value>> {
+    template<typename AA, typename CC>
+    static void apply(AA&& a, CC&& c){
+        auto impl = select_fft1_impl<all_dma<A,C>::value>(etl::size(c));
+
+        if(impl == fft_impl::STD){
+            etl::impl::standard::fft1(std::forward<AA>(a), std::forward<CC>(c));
+        } else if(impl == fft_impl::MKL){
+            etl::impl::blas::dfft1(std::forward<AA>(a), std::forward<CC>(c));
+        } else if(impl == fft_impl::CUFFT){
+            etl::impl::cufft::dfft1(std::forward<AA>(a), std::forward<CC>(c));
+        }
     }
 };
 
@@ -294,7 +371,15 @@ template<typename A, typename C>
 struct fft1_impl<A, C, std::enable_if_t<is_cufft_cfft<A,C>::value>> {
     template<typename AA, typename CC>
     static void apply(AA&& a, CC&& c){
-        etl::impl::cufft::cfft1(std::forward<AA>(a), std::forward<CC>(c));
+        auto impl = select_fft1_impl<all_dma<A,C>::value>(etl::size(c));
+
+        if(impl == fft_impl::STD){
+            etl::impl::standard::fft1(std::forward<AA>(a), std::forward<CC>(c));
+        } else if(impl == fft_impl::MKL){
+            etl::impl::blas::cfft1(std::forward<AA>(a), std::forward<CC>(c));
+        } else if(impl == fft_impl::CUFFT){
+            etl::impl::cufft::cfft1(std::forward<AA>(a), std::forward<CC>(c));
+        }
     }
 };
 
@@ -302,7 +387,15 @@ template<typename A, typename C>
 struct fft1_impl<A, C, std::enable_if_t<is_cufft_zfft<A,C>::value>> {
     template<typename AA, typename CC>
     static void apply(AA&& a, CC&& c){
-        etl::impl::cufft::zfft1(std::forward<AA>(a), std::forward<CC>(c));
+        auto impl = select_fft1_impl<all_dma<A,C>::value>(etl::size(c));
+
+        if(impl == fft_impl::STD){
+            etl::impl::standard::fft1(std::forward<AA>(a), std::forward<CC>(c));
+        } else if(impl == fft_impl::MKL){
+            etl::impl::blas::zfft1(std::forward<AA>(a), std::forward<CC>(c));
+        } else if(impl == fft_impl::CUFFT){
+            etl::impl::cufft::zfft1(std::forward<AA>(a), std::forward<CC>(c));
+        }
     }
 };
 
