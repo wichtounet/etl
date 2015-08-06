@@ -248,13 +248,13 @@ void gevm(A&& a, B&& b, C&& c);
 #else
 
 template<typename A, typename B, typename C>
-void gemm(A&& a, B&& b, C&& c);
+void gemm(A&&, B&&, C&&){}
 
 template<typename A, typename B, typename C>
-void gemv(A&& a, B&& b, C&& c);
+void gemv(A&&, B&&, C&&){}
 
 template<typename A, typename B, typename C>
-void gevm(A&& a, B&& b, C&& c);
+void gevm(A&&, B&&, C&&){}
 
 #endif
 
