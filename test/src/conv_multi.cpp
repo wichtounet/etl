@@ -87,9 +87,9 @@ TEMPLATE_TEST_CASE_2( "conv_2d_valid_multi/5", "[conv] [conv2]", Z, double, floa
     etl::fast_matrix<Z, 5, 5> I(etl::magic<Z>(5));
     etl::fast_matrix<Z, 3, 3, 3> K;
 
-    K(0) = etl::magic(3);
-    K(1) = etl::magic(3) * 2.0;
-    K(2) = etl::magic(3) * etl::magic(3);
+    K(0) = etl::magic<Z>(3);
+    K(1) = etl::magic<Z>(3) * 2.0;
+    K(2) = etl::magic<Z>(3) * etl::magic<Z>(3);
 
     etl::fast_matrix<Z, 3, 3, 3> c_1;
     etl::fast_matrix<Z, 3, 3, 3> c_2;

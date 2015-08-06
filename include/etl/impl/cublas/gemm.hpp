@@ -402,7 +402,7 @@ void gemv(A&& a, B&& b, C&& c){
     //Perform the actual multiplication
 
     if(row_major){
-        cublasCgemv(
+        cublasZgemv(
             handle.get(),
             CUBLAS_OP_T,
             etl::rows(a), etl::columns(a),
@@ -413,7 +413,7 @@ void gemv(A&& a, B&& b, C&& c){
             reinterpret_cast<cuDoubleComplex*>(gpu_c.get()), 1
         );
     } else {
-        cublasCgemv(
+        cublasZgemv(
             handle.get(),
             CUBLAS_OP_N,
             etl::rows(a), etl::columns(a),

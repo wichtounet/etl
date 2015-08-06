@@ -111,7 +111,7 @@ struct basic_mm_mul_expr {
         static_assert(decay_traits<A>::dimensions() == 2 && decay_traits<B>::dimensions() == 2 && decay_traits<C>::dimensions() == 2, "Matrix multiplication only works in 2D");
         detail::check_mm_mul_sizes(a,b,c);
 
-        Impl<decltype(make_temporary(std::forward<A>(a))), decltype(make_temporary(std::forward<B>(b))), C,void>::apply(
+        Impl<decltype(make_temporary(std::forward<A>(a))), decltype(make_temporary(std::forward<B>(b))), C>::apply(
             make_temporary(std::forward<A>(a)),
             make_temporary(std::forward<B>(b)),
             std::forward<C>(c));
@@ -189,7 +189,7 @@ struct basic_vm_mul_expr {
         static_assert(decay_traits<A>::dimensions() == 1 && decay_traits<B>::dimensions() == 2 && decay_traits<C>::dimensions() == 1, "Invalid dimensions for vecto-matrix multiplication");
         detail::check_vm_mul_sizes(a,b,c);
 
-        Impl<decltype(make_temporary(std::forward<A>(a))), decltype(make_temporary(std::forward<B>(b))), C, void>::apply(
+        Impl<decltype(make_temporary(std::forward<A>(a))), decltype(make_temporary(std::forward<B>(b))), C>::apply(
             make_temporary(std::forward<A>(a)),
             make_temporary(std::forward<B>(b)),
             std::forward<C>(c));
@@ -260,7 +260,7 @@ struct basic_mv_mul_expr {
         static_assert(decay_traits<A>::dimensions() == 2 && decay_traits<B>::dimensions() == 1 && decay_traits<C>::dimensions() == 1, "Invalid dimensions for vecto-matrix multiplication");
         detail::check_mv_mul_sizes(a,b,c);
 
-        Impl<decltype(make_temporary(std::forward<A>(a))), decltype(make_temporary(std::forward<B>(b))), C, void>::apply(
+        Impl<decltype(make_temporary(std::forward<A>(a))), decltype(make_temporary(std::forward<B>(b))), C>::apply(
             make_temporary(std::forward<A>(a)),
             make_temporary(std::forward<B>(b)),
             std::forward<C>(c));
