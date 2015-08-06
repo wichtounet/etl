@@ -91,6 +91,10 @@ using sigmoid_policy = VALUES_POLICY(250, 500, 750, 1000, 1250, 1500, 1750, 2000
 using small_square_policy = NARY_POLICY(VALUES_POLICY(50, 100, 150, 200, 250, 300, 350, 400, 450, 500), VALUES_POLICY(50, 100, 150, 200, 250, 300, 350, 400, 450, 500));
 using square_policy = NARY_POLICY(VALUES_POLICY(50, 100, 200, 300, 400, 500, 600, 700, 800, 900, 1000), VALUES_POLICY(50, 100, 200, 300, 400, 500, 600, 700, 800, 900, 1000));
 
+using gemv_policy = NARY_POLICY(
+    VALUES_POLICY(250, 500, 750, 1000, 2000, 3000, 4000, 5000, 6000, 7000, 8000),
+    VALUES_POLICY(250, 500, 750, 1000, 2000, 3000, 4000, 5000, 6000, 7000, 8000));
+
 using trans_sub_policy = VALUES_POLICY(100, 200, 300, 400, 500, 600, 700, 800, 900, 1000);
 using trans_policy = NARY_POLICY(
     VALUES_POLICY(100, 100, 200, 200, 300, 300, 400, 400, 500, 500, 600, 600, 700, 700, 800, 800, 900, 900, 1000, 1000),
@@ -608,6 +612,71 @@ CPM_DIRECT_SECTION_TWO_PASS_NS_P("A * B (z)", small_square_policy,
     BLAS_SECTION_FUNCTOR("blas", [](zmat& a, zmat& b, zmat& c){ etl::impl::blas::gemm(a, b, c); })
     CUBLAS_SECTION_FUNCTOR("cublas", [](zmat& a, zmat& b, zmat& c){ etl::impl::cublas::gemm(a, b, c); })
 )
+
+CPM_DIRECT_SECTION_TWO_PASS_NS_P("A * x (s)", gemv_policy,
+    CPM_SECTION_INIT([](std::size_t d1, std::size_t d2){ return std::make_tuple(smat(d1,d2), svec(d2), svec(d1)); }),
+    CPM_SECTION_FUNCTOR("default", [](smat& a, svec& b, svec& c){ c = a * b; }),
+    CPM_SECTION_FUNCTOR("std", [](smat& a, svec& b, svec& c){ etl::impl::standard::mv_mul(a, b, c); })
+    BLAS_SECTION_FUNCTOR("blas", [](smat& a, svec& b, svec& c){ etl::impl::blas::gemv(a, b, c); })
+    CUBLAS_SECTION_FUNCTOR("cublas", [](smat& a, svec& b, svec& c){ etl::impl::cublas::gemv(a, b, c); })
+)
+
+CPM_DIRECT_SECTION_TWO_PASS_NS_P("A * x (d)", gemv_policy,
+    CPM_SECTION_INIT([](std::size_t d1, std::size_t d2){ return std::make_tuple(dmat(d1,d2), dvec(d2), dvec(d1)); }),
+    CPM_SECTION_FUNCTOR("default", [](dmat& a, dvec& b, dvec& c){ c = a * b; }),
+    CPM_SECTION_FUNCTOR("std", [](dmat& a, dvec& b, dvec& c){ etl::impl::standard::mv_mul(a, b, c); })
+    BLAS_SECTION_FUNCTOR("blas", [](dmat& a, dvec& b, dvec& c){ etl::impl::blas::gemv(a, b, c); })
+    CUBLAS_SECTION_FUNCTOR("cublas", [](dmat& a, dvec& b, dvec& c){ etl::impl::cublas::gemv(a, b, c); })
+)
+
+CPM_DIRECT_SECTION_TWO_PASS_NS_P("A * x (c)", gemv_policy,
+    CPM_SECTION_INIT([](std::size_t d1, std::size_t d2){ return std::make_tuple(cmat(d1,d2), cvec(d2), cvec(d1)); }),
+    CPM_SECTION_FUNCTOR("default", [](cmat& a, cvec& b, cvec& c){ c = a * b; }),
+    CPM_SECTION_FUNCTOR("std", [](cmat& a, cvec& b, cvec& c){ etl::impl::standard::mv_mul(a, b, c); })
+    BLAS_SECTION_FUNCTOR("blas", [](cmat& a, cvec& b, cvec& c){ etl::impl::blas::gemv(a, b, c); })
+    CUBLAS_SECTION_FUNCTOR("cublas", [](cmat& a, cvec& b, cvec& c){ etl::impl::cublas::gemv(a, b, c); })
+)
+
+CPM_DIRECT_SECTION_TWO_PASS_NS_P("A * x (z)", gemv_policy,
+    CPM_SECTION_INIT([](std::size_t d1, std::size_t d2){ return std::make_tuple(zmat(d1,d2), zvec(d2), zvec(d1)); }),
+    CPM_SECTION_FUNCTOR("default", [](zmat& a, zvec& b, zvec& c){ c = a * b; }),
+    CPM_SECTION_FUNCTOR("std", [](zmat& a, zvec& b, zvec& c){ etl::impl::standard::mv_mul(a, b, c); })
+    BLAS_SECTION_FUNCTOR("blas", [](zmat& a, zvec& b, zvec& c){ etl::impl::blas::gemv(a, b, c); })
+    CUBLAS_SECTION_FUNCTOR("cublas", [](zmat& a, zvec& b, zvec& c){ etl::impl::cublas::gemv(a, b, c); })
+)
+
+CPM_DIRECT_SECTION_TWO_PASS_NS_P("x * A (s)", gemv_policy,
+    CPM_SECTION_INIT([](std::size_t d1, std::size_t d2){ return std::make_tuple(svec(d1), smat(d1,d2), svec(d2)); }),
+    CPM_SECTION_FUNCTOR("default", [](svec& a, smat& b, svec& c){ c = a * b; }),
+    CPM_SECTION_FUNCTOR("std", [](svec& a, smat& b, svec& c){ etl::impl::standard::vm_mul(a, b, c); })
+    BLAS_SECTION_FUNCTOR("blas", [](svec& a, smat& b, svec& c){ etl::impl::blas::gevm(a, b, c); })
+    CUBLAS_SECTION_FUNCTOR("cublas", [](svec& a, smat& b, svec& c){ etl::impl::cublas::gevm(a, b, c); })
+)
+
+CPM_DIRECT_SECTION_TWO_PASS_NS_P("x * A (d)", gemv_policy,
+    CPM_SECTION_INIT([](std::size_t d1, std::size_t d2){ return std::make_tuple(dvec(d1), dmat(d1,d2), dvec(d2)); }),
+    CPM_SECTION_FUNCTOR("default", [](dvec& a, dmat& b, dvec& c){ c = a * b; }),
+    CPM_SECTION_FUNCTOR("std", [](dvec& a, dmat& b, dvec& c){ etl::impl::standard::vm_mul(a, b, c); })
+    BLAS_SECTION_FUNCTOR("blas", [](dvec& a, dmat& b, dvec& c){ etl::impl::blas::gevm(a, b, c); })
+    CUBLAS_SECTION_FUNCTOR("cublas", [](dvec& a, dmat& b, dvec& c){ etl::impl::cublas::gevm(a, b, c); })
+)
+
+CPM_DIRECT_SECTION_TWO_PASS_NS_P("x * A (c)", gemv_policy,
+    CPM_SECTION_INIT([](std::size_t d1, std::size_t d2){ return std::make_tuple(cvec(d1), cmat(d1,d2), cvec(d2)); }),
+    CPM_SECTION_FUNCTOR("default", [](cvec& a, cmat& b, cvec& c){ c = a * b; }),
+    CPM_SECTION_FUNCTOR("std", [](cvec& a, cmat& b, cvec& c){ etl::impl::standard::vm_mul(a, b, c); })
+    BLAS_SECTION_FUNCTOR("blas", [](cvec& a, cmat& b, cvec& c){ etl::impl::blas::gevm(a, b, c); })
+    CUBLAS_SECTION_FUNCTOR("cublas", [](cvec& a, cmat& b, cvec& c){ etl::impl::cublas::gevm(a, b, c); })
+)
+
+CPM_DIRECT_SECTION_TWO_PASS_NS_P("x * A (z)", gemv_policy,
+    CPM_SECTION_INIT([](std::size_t d1, std::size_t d2){ return std::make_tuple(zvec(d1), zmat(d1,d2), zvec(d2)); }),
+    CPM_SECTION_FUNCTOR("default", [](zvec& a, zmat& b, zvec& c){ c = a * b; }),
+    CPM_SECTION_FUNCTOR("std", [](zvec& a, zmat& b, zvec& c){ etl::impl::standard::vm_mul(a, b, c); })
+    BLAS_SECTION_FUNCTOR("blas", [](zvec& a, zmat& b, zvec& c){ etl::impl::blas::gevm(a, b, c); })
+    CUBLAS_SECTION_FUNCTOR("cublas", [](zvec& a, zmat& b, zvec& c){ etl::impl::cublas::gevm(a, b, c); })
+)
+
 
 CPM_BENCH(){
     CPM_TWO_PASS_NS_P(
