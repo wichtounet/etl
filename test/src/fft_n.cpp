@@ -9,13 +9,15 @@
 
 namespace {
 
+constexpr const std::size_t MAX_FACTORS = 32;
+
 template<typename T>
-void fft_pass_2(const std::complex<T>* in, std::complex<T>* out, const std::size_t product, const std::size_t n, const std::complex<T>* twiddle){
+void fft_2_point(const std::complex<T>* in, std::complex<T>* out, const std::size_t product, const std::size_t n, const std::complex<T>* twiddle){
     static constexpr const std::size_t factor = 2;
 
     const std::size_t m = n / factor;
-    const std::size_t limit = product / factor;
-    const std::size_t inc = (factor - 1) * limit;
+    const std::size_t offset = product / factor;
+    const std::size_t inc = (factor - 1) * offset;
 
     std::size_t i = 0;
     std::size_t j = 0;
@@ -27,30 +29,76 @@ void fft_pass_2(const std::complex<T>* in, std::complex<T>* out, const std::size
             w = twiddle[k - 1];
         }
 
-        for (std::size_t k1 = 0; k1 < limit; ++k1, ++i, ++j){
+        for (std::size_t k1 = 0; k1 < offset; ++k1, ++i, ++j){
             auto z0 = in[i];
             auto z1 = in[i+m];
 
             out[j] = z0 + z1;
-            out[j+limit] = w * (z0 - z1);
+            out[j+offset] = w * (z0 - z1);
+        }
+    }
+}
+
+template<typename T>
+void fft_3_point(const std::complex<T>* in, std::complex<T>* out, const std::size_t product, const std::size_t n, const std::complex<T>* twiddle1, const std::complex<T>* twiddle2){
+    static constexpr const std::size_t factor = 3;
+
+    const std::size_t m = n / factor;
+    const std::size_t offset = product / factor;
+    const std::size_t inc = (factor - 1) * offset;
+
+    const T tau = std::sqrt(3.0) / 2.0;
+
+    std::size_t i = 0;
+    std::size_t j = 0;
+
+    for (std::size_t k = 0; k < n / product; k++, j += inc){
+        std::complex<T> w1(1.0, 0.0);
+        std::complex<T> w2(1.0, 0.0);
+
+        if (k > 0){
+            w1 = twiddle1[k - 1];
+            w2 = twiddle2[k - 1];
+        }
+
+        for (std::size_t k1 = 0; k1 < offset; ++k1, ++i, ++j){
+            auto z0 = in[i];
+            auto z1 = in[i+m];
+            auto z2 = in[i+2*m];
+
+            auto t1 = z1 + z2;
+            auto t2 = z0 - t1 / T(2.0);
+            auto t3 = -tau * (z1 - z2);
+
+            out[j] = z0 + t1;
+            out[j + offset] = w1 * std::complex<T>(t2.real() - t3.imag(), t2.imag() + t3.real());
+            out[j + 2 * offset] = w2 * std::complex<T>(t2.real() + t3.imag(), t2.imag() - t3.real());
+        }
+    }
+}
+
+inline void fft_factorize(std::size_t n, std::size_t* factors, std::size_t& n_factors){
+    while(n > 1){
+        if(n % 3 == 0){
+            n /= 3;
+            factors[n_factors++] = 3;
+        } else if(n % 2 == 0){
+            n /= 2;
+            factors[n_factors++] = 2;
         }
     }
 }
 
 template<typename T>
 void fft_n(const std::complex<T>* r_in, std::complex<T>* r_out, const std::size_t n){
-    std::complex<T>* twiddle[65]; //One for each possible factor
+    std::complex<T>* twiddle[MAX_FACTORS];
 
     //0. Factorize
 
-    std::size_t factors[65];
+    std::size_t factors[MAX_FACTORS];
     std::size_t n_factors = 0;
 
-    auto nn = n;
-    while(nn > 1){
-        nn /= 2;
-        factors[n_factors++] = 2;
-    }
+    fft_factorize(n, factors, n_factors);
 
     //1. Precompute twiddle factors
 
@@ -70,15 +118,13 @@ void fft_n(const std::complex<T>* r_in, std::complex<T>* r_out, const std::size_
             std::size_t q = n / product;
 
             for (std::size_t j = 1; j < factor; j++){
-                size_t m = 0;
+                std::size_t m = 0;
                 for (std::size_t k = 1; k <= q; k++){
-                    m = m + j * product_1;
-                    m = m % n;
+                    m = (m + j * product_1) % n;
 
-                    double theta = d_theta * m;
+                    T theta = d_theta * m;
 
-                    trig[t].real(cos(theta));
-                    trig[t].imag(sin(theta));
+                    trig[t] = {std::cos(theta), std::sin(theta)};
 
                     t++;
                 }
@@ -96,25 +142,22 @@ void fft_n(const std::complex<T>* r_in, std::complex<T>* r_out, const std::size_
     std::size_t product = 1;
 
     bool first = true;
-    std::size_t state = 0;
 
     for (std::size_t i = 0; i < n_factors; i++){
-        if (first) {
-            in = tmp.get();
-            out = r_out;
-            first = false;
-        } else {
-            in = r_out;
-            out = tmp.get();
-            first = true;
-        }
-
         std::size_t factor = factors[i];
+
+        if (i > 0) {
+            std::swap(in, out);
+        }
 
         product *= factor;
 
+        std::size_t offset = n / product;
+
         if(factor == 2){
-            fft_pass_2(in, out, product, n, twiddle[i]);
+            fft_2_point(in, out, product, n, twiddle[i]);
+        } else if(factor == 3){
+            fft_3_point(in, out, product, n, twiddle[i], twiddle[i] + offset);
         } else {
             std::cout << "unkwown factor" << std::endl;
         }
@@ -134,6 +177,25 @@ TEMPLATE_TEST_CASE_2( "experimental/1", "[fast][fft]", Z, float, double ) {
 
     a[0] = std::complex<Z>(1.0, 1.0);
     a[1] = std::complex<Z>(2.0, 3.0);
+
+    c1 = etl::fft_1d(a);
+
+    fft_n(a.memory_start(), c2.memory_start(), etl::size(a));
+
+    for(std::size_t i = 0; i < etl::size(a); ++i){
+        CHECK(c1[i].real() == Approx(c2[i].real()));
+        CHECK(c1[i].imag() == Approx(c2[i].imag()));
+    }
+}
+
+TEMPLATE_TEST_CASE_2( "experimental/4", "[fast][fft]", Z, float, double ) {
+    etl::fast_matrix<std::complex<Z>, 3> a;
+    etl::fast_matrix<std::complex<Z>, 3> c1;
+    etl::fast_matrix<std::complex<Z>, 3> c2;
+
+    a[0] = std::complex<Z>(1.0, 1.0);
+    a[1] = std::complex<Z>(2.0, 3.0);
+    a[2] = std::complex<Z>(3.0, -3.0);
 
     c1 = etl::fft_1d(a);
 
@@ -178,6 +240,28 @@ TEMPLATE_TEST_CASE_2( "experimental/3", "[fast][fft]", Z, float, double ) {
     a[5] = std::complex<Z>(2.0, 3.0);
     a[6] = std::complex<Z>(2.0, -1.0);
     a[7] = std::complex<Z>(4.0, 3.0);
+
+    c1 = etl::fft_1d(a);
+
+    fft_n(a.memory_start(), c2.memory_start(), etl::size(a));
+
+    for(std::size_t i = 0; i < etl::size(a); ++i){
+        CHECK(c1[i].real() == Approx(c2[i].real()));
+        CHECK(c1[i].imag() == Approx(c2[i].imag()));
+    }
+}
+
+TEMPLATE_TEST_CASE_2( "experimental/5", "[fast][fft]", Z, float, double ) {
+    etl::fast_matrix<std::complex<Z>, 6> a;
+    etl::fast_matrix<std::complex<Z>, 6> c1;
+    etl::fast_matrix<std::complex<Z>, 6> c2;
+
+    a[0] = std::complex<Z>(1.0, 1.0);
+    a[1] = std::complex<Z>(2.0, 3.0);
+    a[2] = std::complex<Z>(2.0, -1.0);
+    a[3] = std::complex<Z>(4.0, 3.0);
+    a[4] = std::complex<Z>(1.0, 1.0);
+    a[5] = std::complex<Z>(2.0, 3.0);
 
     c1 = etl::fft_1d(a);
 
