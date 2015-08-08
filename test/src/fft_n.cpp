@@ -19,10 +19,7 @@ void fft_2_point(const std::complex<T>* in, std::complex<T>* out, const std::siz
     const std::size_t offset = product / factor;
     const std::size_t inc = (factor - 1) * offset;
 
-    std::size_t i = 0;
-    std::size_t j = 0;
-
-    for (std::size_t k = 0; k < n / product; ++k, j += inc){
+    for (std::size_t k = 0, i = 0, j = 0; k < n / product; ++k, j += inc){
         std::complex<T> w(1.0, 0.0);
 
         if(k > 0){
@@ -47,12 +44,9 @@ void fft_3_point(const std::complex<T>* in, std::complex<T>* out, const std::siz
     const std::size_t offset = product / factor;
     const std::size_t inc = (factor - 1) * offset;
 
-    const T tau = std::sqrt(3.0) / 2.0;
+    static constexpr const T tau = std::sqrt(3.0) / 2.0;
 
-    std::size_t i = 0;
-    std::size_t j = 0;
-
-    for (std::size_t k = 0; k < n / product; k++, j += inc){
+    for (std::size_t k = 0, i = 0, j = 0; k < n / product; k++, j += inc){
         std::complex<T> w1(1.0, 0.0);
         std::complex<T> w2(1.0, 0.0);
 
