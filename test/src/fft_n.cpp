@@ -72,6 +72,8 @@ void fft_3_point(const std::complex<T>* in, std::complex<T>* out, const std::siz
 }
 
 inline void fft_factorize(std::size_t n, std::size_t* factors, std::size_t& n_factors){
+    //0. Favour the factors with implemented transform modules
+
     while(n > 1){
         if(n % 3 == 0){
             n /= 3;
@@ -79,7 +81,24 @@ inline void fft_factorize(std::size_t n, std::size_t* factors, std::size_t& n_fa
         } else if(n % 2 == 0){
             n /= 2;
             factors[n_factors++] = 2;
+        } else {
+            //At this point, there are no transform module
+            break;
         }
+    }
+
+    //1. Search for prime factors
+
+    std::size_t prime_factor = 5;
+
+    while (n > 1){
+        //Search for the next prime factor
+        while (n % prime_factor != 0){
+            prime_factor += 2;
+        }
+
+        n /= prime_factor;
+        factors[n_factors++] = prime_factor;
     }
 }
 
@@ -256,6 +275,33 @@ TEMPLATE_TEST_CASE_2( "experimental/5", "[fast][fft]", Z, float, double ) {
     a[3] = std::complex<Z>(4.0, 3.0);
     a[4] = std::complex<Z>(1.0, 1.0);
     a[5] = std::complex<Z>(2.0, 3.0);
+
+    c1 = etl::fft_1d(a);
+
+    fft_n(a.memory_start(), c2.memory_start(), etl::size(a));
+
+    for(std::size_t i = 0; i < etl::size(a); ++i){
+        CHECK(c1[i].real() == Approx(c2[i].real()));
+        CHECK(c1[i].imag() == Approx(c2[i].imag()));
+    }
+}
+
+TEMPLATE_TEST_CASE_2( "experimental/6", "[fast][fft]", Z, float, double ) {
+    etl::fast_matrix<std::complex<Z>, 11> a;
+    etl::fast_matrix<std::complex<Z>, 11> c1;
+    etl::fast_matrix<std::complex<Z>, 11> c2;
+
+    a[0] = std::complex<Z>(1.0, 1.0);
+    a[1] = std::complex<Z>(2.0, 3.0);
+    a[2] = std::complex<Z>(2.0, -1.0);
+    a[3] = std::complex<Z>(4.0, 3.0);
+    a[4] = std::complex<Z>(1.0, 1.0);
+    a[5] = std::complex<Z>(2.0, 3.0);
+    a[6] = std::complex<Z>(1.0, 1.0);
+    a[7] = std::complex<Z>(2.0, 3.0);
+    a[8] = std::complex<Z>(2.0, -1.0);
+    a[9] = std::complex<Z>(4.0, 3.0);
+    a[10] = std::complex<Z>(1.0, 1.0);
 
     c1 = etl::fft_1d(a);
 
