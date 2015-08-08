@@ -6,6 +6,7 @@
 //=======================================================================
 
 #include "test.hpp"
+#include <functional>
 
 namespace {
 
@@ -67,6 +68,76 @@ void fft_3_point(const std::complex<T>* in, std::complex<T>* out, const std::siz
             out[j] = z0 + t1;
             out[j + offset] = w1 * std::complex<T>(t2.real() - t3.imag(), t2.imag() + t3.real());
             out[j + 2 * offset] = w2 * std::complex<T>(t2.real() + t3.imag(), t2.imag() - t3.real());
+        }
+    }
+}
+
+//conj of the inverse
+template<typename T>
+std::complex<T> conj_inverse(std::complex<T> x){
+    return {x.imag(), -x.real()};
+}
+
+template<typename T>
+void fft_n_point(std::complex<T>* in, std::complex<T>* out, const std::size_t factor, const std::size_t product, const std::size_t n, const std::complex<T>* twiddle){
+    const std::size_t m = n / factor;
+    const std::size_t q = n / product;
+    const std::size_t offset = product / factor;
+    const std::size_t jump = (factor - 1) * offset;
+    const std::size_t factor_limit = (factor - 1) / 2 + 1;
+
+    std::copy_n(in, m, out);
+
+    for (std::size_t i = 1; i < (factor - 1) / 2 + 1; i++){
+        std::transform(in + i * m, in + i * m + m, in + (factor - i) * m, out + i * m, std::plus<std::complex<T>>());
+        std::transform(in + i * m, in + i * m + m, in + (factor - i) * m, out + (factor - i) * m, std::minus<std::complex<T>>());
+    }
+
+    std::copy_n(out, m, in);
+
+    for (std::size_t i = 1; i < factor_limit; i++){
+        std::transform(in, in + m, out + i * m, in, std::plus<std::complex<T>>());
+    }
+
+    for (std::size_t e = 1; e < factor_limit; e++){
+        std::copy_n(out, m, in + e * m);
+        std::copy_n(out, m, in + (factor - e) * m);
+
+        for (std::size_t k = 1, j = e * q; k < (factor - 1) / 2 + 1; k++){
+            std::complex<T> w(1.0, 0.0);
+
+            if (j > 0) {
+                w = twiddle[j - 1];
+            }
+
+            for (std::size_t i = 0; i < m; i++){
+                auto xp = out[i + k * m];
+                auto xm = out[i + (factor - k) * m];
+
+                in[i + e * m] += w.real() * xp - w.imag() * conj_inverse(xm);
+                in[i + (factor - e) * m] += w.real() * xp + w.imag() * conj_inverse(xm);
+            }
+
+            j = (j + (e * q)) % (factor * q);
+        }
+    }
+
+    std::copy_n(in, offset, out);
+
+    for (std::size_t i = 1; i < factor; i++){
+        std::copy_n(in + i * m, offset, out + i * offset);
+    }
+
+    for (std::size_t i = offset, j = product; i < offset + (q - 1) * offset; i += offset, j += offset + jump){
+        std::copy_n(in + i, offset, out + j);
+    }
+
+    for (std::size_t k = 1, i = offset, j = product; k < q; ++k, j += jump){
+        for (std::size_t k1 = 0; k1 < offset; ++k1, ++i, ++j){
+            for (std::size_t e = 1; e < factor; e++){
+                //out = w * x
+                out[j + e * offset] = twiddle[(e-1)*q + k-1] * in[i + e * m];
+            }
         }
     }
 }
@@ -172,7 +243,7 @@ void fft_n(const std::complex<T>* r_in, std::complex<T>* r_out, const std::size_
         } else if(factor == 3){
             fft_3_point(in, out, product, n, twiddle[i], twiddle[i] + offset);
         } else {
-            std::cout << "unkwown factor" << std::endl;
+            fft_n_point(in, out, factor, product, n, twiddle[i]);
         }
     }
 
@@ -308,7 +379,32 @@ TEMPLATE_TEST_CASE_2( "experimental/6", "[fast][fft]", Z, float, double ) {
     fft_n(a.memory_start(), c2.memory_start(), etl::size(a));
 
     for(std::size_t i = 0; i < etl::size(a); ++i){
-        CHECK(c1[i].real() == Approx(c2[i].real()));
-        CHECK(c1[i].imag() == Approx(c2[i].imag()));
+        CHECK(c1[i].real() == Approx(c2[i].real()).epsilon(0.01));
+        CHECK(c1[i].imag() == Approx(c2[i].imag()).epsilon(0.01));
+    }
+}
+
+TEMPLATE_TEST_CASE_2( "experimental/7", "[fast][fft]", Z, float, double ) {
+    etl::fast_matrix<std::complex<Z>, 131 * 11> a;
+    etl::fast_matrix<std::complex<Z>, 131 * 11> c1;
+    etl::fast_matrix<std::complex<Z>, 131 * 11> c2;
+
+    std::random_device rd;
+    std::mt19937_64 gen(rd());
+    std::uniform_real_distribution<Z> dist(-140.0, 250.0);
+    auto d = std::bind(dist, gen);
+
+    for(std::size_t i = 0; i < etl::size(a); ++i){
+        a[i].real(d());
+        a[i].imag(d());
+    }
+
+    c1 = etl::fft_1d(a);
+
+    fft_n(a.memory_start(), c2.memory_start(), etl::size(a));
+
+    for(std::size_t i = 0; i < etl::size(a); ++i){
+        CHECK(c1[i].real() == Approx(c2[i].real()).epsilon(0.01));
+        CHECK(c1[i].imag() == Approx(c2[i].imag()).epsilon(0.01));
     }
 }
