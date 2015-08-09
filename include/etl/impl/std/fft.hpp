@@ -35,6 +35,10 @@ std::complex<T> conj_inverse(std::complex<T> x){
     return {x.imag(), -x.real()};
 }
 
+inline bool is_power_of_two(long n){
+    return (n & (n - 1)) == 0;
+}
+
 template<typename T>
 void fft_2_point(const std::complex<T>* in, std::complex<T>* out, const std::size_t product, const std::size_t n, const std::complex<T>* twiddle){
     static constexpr const std::size_t factor = 2;
@@ -328,8 +332,8 @@ inline void fft_factorize(std::size_t n, std::size_t* factors, std::size_t& n_fa
     }
 }
 
-template<typename T>
-void fft_n(const std::complex<T>* r_in, std::complex<T>* r_out, const std::size_t n){
+template<typename In, typename T>
+void fft_n(const In* r_in, std::complex<T>* r_out, const std::size_t n){
     std::complex<T>* twiddle[MAX_FACTORS];
 
     //0. Factorize
@@ -373,7 +377,7 @@ void fft_n(const std::complex<T>* r_in, std::complex<T>* r_out, const std::size_
 
     auto tmp = etl::allocate<std::complex<T>>(n);
 
-    std::copy(r_in, r_in + n, tmp.get());
+    std::copy_n(r_in, n, tmp.get());
 
     auto* in = tmp.get();
     auto* out = r_out;
@@ -405,12 +409,8 @@ void fft_n(const std::complex<T>* r_in, std::complex<T>* r_out, const std::size_
     }
 
     if (out != r_out){
-        std::copy(out, out + n, r_out);
+        std::copy_n(out, n, r_out);
     }
-}
-
-inline std::size_t next_power_of_two(std::size_t n) {
-    return std::pow(2, static_cast<std::size_t>(std::ceil(std::log2(n))));
 }
 
 template<typename T>
@@ -462,92 +462,29 @@ void inplace_radix2_fft1(std::complex<T>* x, std::size_t N){
     }
 }
 
-template<typename T>
-void inplace_radix2_ifft1(std::complex<T>* x, std::size_t N){
-    //Conjugate the complex numbers
-    for(std::size_t i = 0; i < N; ++i){
-        x[i] = std::conj(x[i]);
+template<typename T1, typename T>
+void fft1_kernel(const T1* a, std::size_t n, std::complex<T>* c){
+    if(n <= 1024 * 1024 && is_power_of_two(n)){
+        std::copy_n(a, n, c);
+
+        detail::inplace_radix2_fft1(c, n);
+    } else {
+        detail::fft_n(a, c, n);
     }
-
-    // Forward FFT
-    detail::inplace_radix2_fft1(x, N);
-
-    //Conjugate the complex numbers again
-    for(std::size_t i = 0; i < N; ++i){
-        x[i] = std::conj(x[i]);
-    }
-
-    //Scale the numbers
-    for(std::size_t i = 0; i < N; ++i){
-        x[i] /= double(N);
-    }
-}
-
-template<typename T>
-void czt1(std::complex<T>* a, std::size_t n, std::complex<T>* c){
-    using complex_t = std::complex<T>;
-
-    std::size_t M = detail::next_power_of_two(2 * n - 1);
-
-    auto a_complex = allocate<complex_t>(M);
-    auto x = a_complex.get();
-
-    auto v_complex = allocate<complex_t>(M);
-    auto y = v_complex.get();
-
-    constexpr const T pi = M_PIl;
-
-    //Prepare x
-
-    std::copy(a, a + n, x);
-    std::fill(x + n, x + M, complex_t(0, 0));
-
-    for(std::size_t i = 0; i < n; ++i){
-        x[i] = x[i] * std::exp(complex_t(0, -(pi / n * i * i)));
-    }
-
-    //Prepare y
-
-    for(std::size_t i = 0; i < n; ++i){
-        y[i] = std::exp(complex_t(0,  pi / n * i * i));
-    }
-
-    std::fill(y + n, y + M - n, complex_t(0, 0));
-
-    for(int i = 1 - n; i <= -1; ++i){
-        y[M + i] = std::exp(complex_t(0, pi / n * i * i));
-    }
-
-    //Do the convolution
-
-    detail::inplace_radix2_fft1(x, M);
-    detail::inplace_radix2_fft1(y, M);
-
-    for(std::size_t i = 0; i < M; ++i){
-        y[i] = y[i] * x[i];
-    }
-
-    detail::inplace_radix2_ifft1(y, M);
-
-    //Scale back
-
-    for(std::size_t i = 0; i < M; ++i){
-        y[i] = y[i] * std::exp(complex_t(0, -(pi / n * i * i)));
-    }
-
-    std::copy(y, y + n, c);
 }
 
 template<typename T>
 void ifft1_kernel(const std::complex<T>* a, std::size_t n, std::complex<T>* c){
     using complex_t = std::complex<T>;
 
-    std::size_t N = detail::next_power_of_two(n);
+    if(n < 1024 * 1024 && is_power_of_two(n)){
+        //Conjugate the complex numbers
+        for(std::size_t i = 0; i < n; ++i){
+            c[i] = std::conj(a[i]);
+        }
 
-    if(N == n){
-        std::copy(a, a + n, c);
-
-        detail::inplace_radix2_ifft1(c, n);
+        // Forward FFT
+        detail::inplace_radix2_fft1(c, n);
     } else {
         auto a_complex = allocate<complex_t>(n);
         auto x = a_complex.get();
@@ -557,38 +494,18 @@ void ifft1_kernel(const std::complex<T>* a, std::size_t n, std::complex<T>* c){
             x[i] = std::conj(a[i]);
         }
 
-        // Forward FFT
-        detail::czt1(x, n, c);
-
-        //Conjugate the complex numbers again
-        for(std::size_t i = 0; i < n; ++i){
-            c[i] = std::conj(c[i]);
-        }
-
-        //Scale the numbers
-        for(std::size_t i = 0; i < n; ++i){
-            c[i] /= double(n);
-        }
+        //Foward FFT
+        detail::fft_n(a_complex.get(), c, n);
     }
-}
 
-template<typename T1, typename T>
-void fft1_kernel(const T1* a, std::size_t n, std::complex<T>* c){
-    using complex_t = std::complex<T>;
+    //Conjugate the complex numbers again
+    for(std::size_t i = 0; i < n; ++i){
+        c[i] = std::conj(c[i]);
+    }
 
-    std::size_t N = detail::next_power_of_two(n);
-
-    if(N == n){
-        std::copy(a, a + n, c);
-
-        detail::inplace_radix2_fft1(c, n);
-    } else {
-        auto a_complex = allocate<complex_t>(n);
-        auto x = a_complex.get();
-
-        std::copy(a, a + n, x);
-
-        detail::czt1(x, n, c);
+    //Scale the numbers
+    for(std::size_t i = 0; i < n; ++i){
+        c[i] /= double(n);
     }
 }
 
@@ -598,12 +515,6 @@ void fft1_kernel(const T1* a, std::size_t n, std::complex<T>* c){
 template<typename A, typename C>
 void fft1(A&& a, C&& c){
     detail::fft1_kernel(a.memory_start(), etl::size(a), c.memory_start());
-}
-
-//(T or complex<T>) -> complex<T>
-template<typename A, typename C>
-void fftn1(A&& a, C&& c){
-    detail::fft_n(a.memory_start(), c.memory_start(), etl::size(a));
 }
 
 //complex<T> -> complex<T>
