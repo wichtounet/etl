@@ -99,8 +99,8 @@ inline cpp14_constexpr fft_impl select_fft1_impl(const std::size_t n){
     }
 
     //Note since these boolean will be known at compile time, the conditions will be a lot simplified
-    static constexpr const bool mkl = is_mkl_enabled::value;
-    static constexpr const bool cufft = is_cufft_enabled::value;
+    constexpr const bool mkl = is_mkl_enabled::value;
+    constexpr const bool cufft = is_cufft_enabled::value;
 
     if(cufft){
         if(is_power_of_two(n)){
@@ -143,8 +143,8 @@ inline cpp14_constexpr fft_impl select_ifft1_impl(const std::size_t n){
     }
 
     //Note since these boolean will be known at compile time, the conditions will be a lot simplified
-    static constexpr const bool mkl = is_mkl_enabled::value;
-    static constexpr const bool cufft = is_cufft_enabled::value;
+    constexpr const bool mkl = is_mkl_enabled::value;
+    constexpr const bool cufft = is_cufft_enabled::value;
 
     if(cufft){
         if(is_power_of_two(n)){
@@ -181,8 +181,8 @@ inline cpp14_constexpr fft_impl select_fft2_impl(const std::size_t n1, std::size
     }
 
     //Note since these boolean will be known at compile time, the conditions will be a lot simplified
-    static constexpr const bool mkl = is_mkl_enabled::value;
-    static constexpr const bool cufft = is_cufft_enabled::value;
+    constexpr const bool mkl = is_mkl_enabled::value;
+    constexpr const bool cufft = is_cufft_enabled::value;
 
     if(cufft){
         if(is_power_of_two(n1) && is_power_of_two(n2)){
