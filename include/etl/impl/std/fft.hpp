@@ -100,6 +100,44 @@ void fft_3_point(const std::complex<T>* in, std::complex<T>* out, const std::siz
 }
 
 template<typename T>
+void fft_4_point(const std::complex<T>* in, std::complex<T>* out, const std::size_t product, const std::size_t n, const std::complex<T>* twiddle1, const std::complex<T>* twiddle2, const std::complex<T>* twiddle3){
+    static constexpr const std::size_t factor = 4;
+
+    const std::size_t m = n / factor;
+    const std::size_t offset = product / factor;
+    const std::size_t inc = (factor - 1) * offset;
+
+    for (std::size_t k = 0, i = 0, j = 0; k < n / product; k++, j += inc){
+        std::complex<T> w1(1.0, 0.0);
+        std::complex<T> w2(1.0, 0.0);
+        std::complex<T> w3(1.0, 0.0);
+
+        if (k > 0){
+            w1 = twiddle1[k - 1];
+            w2 = twiddle2[k - 1];
+            w3 = twiddle3[k - 1];
+        }
+
+        for (std::size_t k1 = 0; k1 < offset; ++k1, ++i, ++j){
+            auto z0 = in[i];
+            auto z1 = in[i + 1 * m];
+            auto z2 = in[i + 2 * m];
+            auto z3 = in[i + 3 * m];
+
+            auto t1 = z0 + z2;
+            auto t2 = z1 + z3;
+            auto t3 = z0 - z2;
+            auto t4 = T(-1.0) * (z1 - z3);
+
+            out[j] = t1 + t2;
+            out[j + 1 * offset] = w1 * (t3 + inverse_conj(t4));
+            out[j + 2 * offset] = w2 * (t1 - t2);
+            out[j + 3 * offset] = w3 * (t3 + conj_inverse(t4));
+        }
+    }
+}
+
+template<typename T>
 void fft_5_point(const std::complex<T>* in, std::complex<T>* out, const std::size_t product, const std::size_t n, const std::complex<T>* twiddle1, const std::complex<T>* twiddle2, const std::complex<T>* twiddle3, const std::complex<T>* twiddle4){
     static constexpr const std::size_t factor = 5;
 
@@ -305,6 +343,9 @@ inline void fft_factorize(std::size_t n, std::size_t* factors, std::size_t& n_fa
         } else if(n % 5 == 0){
             n /= 5;
             factors[n_factors++] = 5;
+        } else if(n % 4 == 0){
+            n /= 4;
+            factors[n_factors++] = 4;
         } else if(n % 3 == 0){
             n /= 3;
             factors[n_factors++] = 3;
@@ -399,6 +440,8 @@ void fft_n(const In* r_in, std::complex<T>* r_out, const std::size_t n){
             fft_2_point(in, out, product, n, twiddle[i]);
         } else if(factor == 3){
             fft_3_point(in, out, product, n, twiddle[i], twiddle[i] + offset);
+        } else if(factor == 4){
+            fft_4_point(in, out, product, n, twiddle[i], twiddle[i] + offset, twiddle[i] + 2 * offset);
         } else if(factor == 5){
             fft_5_point(in, out, product, n, twiddle[i], twiddle[i] + offset, twiddle[i] + 2 * offset, twiddle[i] + 3 * offset);
         } else if(factor == 7){
