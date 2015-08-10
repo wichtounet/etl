@@ -9,6 +9,7 @@
 
 #include "etl/config.hpp"
 #include "etl/allocator.hpp"
+#include "etl/complex.hpp"
 
 namespace etl {
 
@@ -23,24 +24,12 @@ namespace detail {
 
 constexpr const std::size_t MAX_FACTORS = 32;
 
-//inverse of the conj
-template<typename T>
-std::complex<T> inverse_conj(std::complex<T> x){
-    return {-x.imag(), x.real()};
-}
-
-//conj of the inverse
-template<typename T>
-std::complex<T> conj_inverse(std::complex<T> x){
-    return {x.imag(), -x.real()};
-}
-
 inline bool is_power_of_two(long n){
     return (n & (n - 1)) == 0;
 }
 
 template<typename T>
-void fft_2_point(const std::complex<T>* in, std::complex<T>* out, const std::size_t product, const std::size_t n, const std::complex<T>* twiddle){
+void fft_2_point(const etl::complex<T>* in, etl::complex<T>* out, const std::size_t product, const std::size_t n, const etl::complex<T>* twiddle){
     static constexpr const std::size_t factor = 2;
 
     const std::size_t m = n / factor;
@@ -48,7 +37,7 @@ void fft_2_point(const std::complex<T>* in, std::complex<T>* out, const std::siz
     const std::size_t inc = (factor - 1) * offset;
 
     for (std::size_t k = 0, i = 0, j = 0; k < n / product; ++k, j += inc){
-        std::complex<T> w(1.0, 0.0);
+        etl::complex<T> w(1.0, 0.0);
 
         if(k > 0){
             w = twiddle[k - 1];
@@ -65,7 +54,7 @@ void fft_2_point(const std::complex<T>* in, std::complex<T>* out, const std::siz
 }
 
 template<typename T>
-void fft_3_point(const std::complex<T>* in, std::complex<T>* out, const std::size_t product, const std::size_t n, const std::complex<T>* twiddle1, const std::complex<T>* twiddle2){
+void fft_3_point(const etl::complex<T>* in, etl::complex<T>* out, const std::size_t product, const std::size_t n, const etl::complex<T>* twiddle1, const etl::complex<T>* twiddle2){
     static constexpr const std::size_t factor = 3;
 
     const std::size_t m = n / factor;
@@ -75,8 +64,8 @@ void fft_3_point(const std::complex<T>* in, std::complex<T>* out, const std::siz
     static constexpr const T tau = std::sqrt(3.0) / 2.0;
 
     for (std::size_t k = 0, i = 0, j = 0; k < n / product; k++, j += inc){
-        std::complex<T> w1(1.0, 0.0);
-        std::complex<T> w2(1.0, 0.0);
+        etl::complex<T> w1(1.0, 0.0);
+        etl::complex<T> w2(1.0, 0.0);
 
         if (k > 0){
             w1 = twiddle1[k - 1];
@@ -100,7 +89,7 @@ void fft_3_point(const std::complex<T>* in, std::complex<T>* out, const std::siz
 }
 
 template<typename T>
-void fft_4_point(const std::complex<T>* in, std::complex<T>* out, const std::size_t product, const std::size_t n, const std::complex<T>* twiddle1, const std::complex<T>* twiddle2, const std::complex<T>* twiddle3){
+void fft_4_point(const etl::complex<T>* in, etl::complex<T>* out, const std::size_t product, const std::size_t n, const etl::complex<T>* twiddle1, const etl::complex<T>* twiddle2, const etl::complex<T>* twiddle3){
     static constexpr const std::size_t factor = 4;
 
     const std::size_t m = n / factor;
@@ -108,9 +97,9 @@ void fft_4_point(const std::complex<T>* in, std::complex<T>* out, const std::siz
     const std::size_t inc = (factor - 1) * offset;
 
     for (std::size_t k = 0, i = 0, j = 0; k < n / product; k++, j += inc){
-        std::complex<T> w1(1.0, 0.0);
-        std::complex<T> w2(1.0, 0.0);
-        std::complex<T> w3(1.0, 0.0);
+        etl::complex<T> w1(1.0, 0.0);
+        etl::complex<T> w2(1.0, 0.0);
+        etl::complex<T> w3(1.0, 0.0);
 
         if (k > 0){
             w1 = twiddle1[k - 1];
@@ -138,7 +127,7 @@ void fft_4_point(const std::complex<T>* in, std::complex<T>* out, const std::siz
 }
 
 template<typename T>
-void fft_5_point(const std::complex<T>* in, std::complex<T>* out, const std::size_t product, const std::size_t n, const std::complex<T>* twiddle1, const std::complex<T>* twiddle2, const std::complex<T>* twiddle3, const std::complex<T>* twiddle4){
+void fft_5_point(const etl::complex<T>* in, etl::complex<T>* out, const std::size_t product, const std::size_t n, const etl::complex<T>* twiddle1, const etl::complex<T>* twiddle2, const etl::complex<T>* twiddle3, const etl::complex<T>* twiddle4){
     static constexpr const std::size_t factor = 5;
 
     const std::size_t m = n / factor;
@@ -149,10 +138,10 @@ void fft_5_point(const std::complex<T>* in, std::complex<T>* out, const std::siz
     static constexpr const T theta_2 = -1.0 * std::sin(2.0 * M_PI / 10.0);
 
     for (std::size_t k = 0, i = 0, j = 0; k < n / product; ++k, j += inc){
-        std::complex<T> w1(1.0, 0.0);
-        std::complex<T> w2(1.0, 0.0);
-        std::complex<T> w3(1.0, 0.0);
-        std::complex<T> w4(1.0, 0.0);
+        etl::complex<T> w1(1.0, 0.0);
+        etl::complex<T> w2(1.0, 0.0);
+        etl::complex<T> w3(1.0, 0.0);
+        etl::complex<T> w4(1.0, 0.0);
 
         if (k > 0){
             w1 = twiddle1[k - 1];
@@ -190,7 +179,7 @@ void fft_5_point(const std::complex<T>* in, std::complex<T>* out, const std::siz
 }
 
 template<typename T>
-void fft_7_point(const std::complex<T>* in, std::complex<T>* out, const std::size_t product, const std::size_t n, const std::complex<T>* twiddle1, const std::complex<T>* twiddle2, const std::complex<T>* twiddle3, const std::complex<T>* twiddle4, const std::complex<T>* twiddle5, const std::complex<T>* twiddle6){
+void fft_7_point(const etl::complex<T>* in, etl::complex<T>* out, const std::size_t product, const std::size_t n, const etl::complex<T>* twiddle1, const etl::complex<T>* twiddle2, const etl::complex<T>* twiddle3, const etl::complex<T>* twiddle4, const etl::complex<T>* twiddle5, const etl::complex<T>* twiddle6){
     static constexpr const std::size_t factor = 7;
 
     const std::size_t m = n / factor;
@@ -210,12 +199,12 @@ void fft_7_point(const std::complex<T>* in, std::complex<T>* out, const std::siz
     static constexpr const T theta_8 = (std::sin(theta_0) + std::sin(2.0 * theta_0) + 2.0 * std::sin(3.0 * theta_0)) / 3.0;
 
     for (std::size_t k = 0, i = 0, j = 0; k < n / product; ++k, j += inc){
-        std::complex<T> w1(1.0, 0.0);
-        std::complex<T> w2(1.0, 0.0);
-        std::complex<T> w3(1.0, 0.0);
-        std::complex<T> w4(1.0, 0.0);
-        std::complex<T> w5(1.0, 0.0);
-        std::complex<T> w6(1.0, 0.0);
+        etl::complex<T> w1(1.0, 0.0);
+        etl::complex<T> w2(1.0, 0.0);
+        etl::complex<T> w3(1.0, 0.0);
+        etl::complex<T> w4(1.0, 0.0);
+        etl::complex<T> w5(1.0, 0.0);
+        etl::complex<T> w6(1.0, 0.0);
 
         if (k > 0){
             w1 = twiddle1[k - 1];
@@ -270,7 +259,7 @@ void fft_7_point(const std::complex<T>* in, std::complex<T>* out, const std::siz
 }
 
 template<typename T>
-void fft_n_point(std::complex<T>* in, std::complex<T>* out, const std::size_t factor, const std::size_t product, const std::size_t n, const std::complex<T>* twiddle){
+void fft_n_point(etl::complex<T>* in, etl::complex<T>* out, const std::size_t factor, const std::size_t product, const std::size_t n, const etl::complex<T>* twiddle){
     const std::size_t m = n / factor;
     const std::size_t q = n / product;
     const std::size_t offset = product / factor;
@@ -280,14 +269,14 @@ void fft_n_point(std::complex<T>* in, std::complex<T>* out, const std::size_t fa
     std::copy_n(in, m, out);
 
     for (std::size_t i = 1; i < (factor - 1) / 2 + 1; i++){
-        std::transform(in + i * m, in + i * m + m, in + (factor - i) * m, out + i * m, std::plus<std::complex<T>>());
-        std::transform(in + i * m, in + i * m + m, in + (factor - i) * m, out + (factor - i) * m, std::minus<std::complex<T>>());
+        std::transform(in + i * m, in + i * m + m, in + (factor - i) * m, out + i * m, std::plus<etl::complex<T>>());
+        std::transform(in + i * m, in + i * m + m, in + (factor - i) * m, out + (factor - i) * m, std::minus<etl::complex<T>>());
     }
 
     std::copy_n(out, m, in);
 
     for (std::size_t i = 1; i < factor_limit; i++){
-        std::transform(in, in + m, out + i * m, in, std::plus<std::complex<T>>());
+        std::transform(in, in + m, out + i * m, in, std::plus<etl::complex<T>>());
     }
 
     for (std::size_t e = 1; e < factor_limit; e++){
@@ -295,7 +284,7 @@ void fft_n_point(std::complex<T>* in, std::complex<T>* out, const std::size_t fa
         std::copy_n(out, m, in + (factor - e) * m);
 
         for (std::size_t k = 1, j = e * q; k < (factor - 1) / 2 + 1; k++){
-            std::complex<T> w(1.0, 0.0);
+            etl::complex<T> w(1.0, 0.0);
 
             if (j > 0) {
                 w = twiddle[j - 1];
@@ -305,8 +294,8 @@ void fft_n_point(std::complex<T>* in, std::complex<T>* out, const std::size_t fa
                 auto xp = out[i + k * m];
                 auto xm = out[i + (factor - k) * m];
 
-                in[i + e * m] += w.real() * xp - w.imag() * conj_inverse(xm);
-                in[i + (factor - e) * m] += w.real() * xp + w.imag() * conj_inverse(xm);
+                in[i + e * m] += w.real * xp - w.imag * conj_inverse(xm);
+                in[i + (factor - e) * m] += w.real * xp + w.imag * conj_inverse(xm);
             }
 
             j = (j + (e * q)) % (factor * q);
@@ -374,8 +363,8 @@ inline void fft_factorize(std::size_t n, std::size_t* factors, std::size_t& n_fa
 }
 
 template<typename In, typename T>
-void fft_n(const In* r_in, std::complex<T>* r_out, const std::size_t n){
-    std::complex<T>* twiddle[MAX_FACTORS];
+void fft_n(const In* r_in, etl::complex<T>* r_out, const std::size_t n){
+    etl::complex<T>* twiddle[MAX_FACTORS];
 
     //0. Factorize
 
@@ -386,7 +375,7 @@ void fft_n(const In* r_in, std::complex<T>* r_out, const std::size_t n){
 
     //1. Precompute twiddle factors
 
-    auto trig = etl::allocate<std::complex<T>>(n);
+    auto trig = etl::allocate<etl::complex<T>>(n);
 
     {
         const T d_theta = -2.0 * M_PI / ((T) n);
@@ -408,7 +397,7 @@ void fft_n(const In* r_in, std::complex<T>* r_out, const std::size_t n){
 
                     T theta = d_theta * m;
 
-                    trig[t] = {std::cos(theta), std::sin(theta)};
+                    trig[t] = etl::complex<T>{std::cos(theta), std::sin(theta)};
 
                     t++;
                 }
@@ -416,7 +405,7 @@ void fft_n(const In* r_in, std::complex<T>* r_out, const std::size_t n){
         }
     }
 
-    auto tmp = etl::allocate<std::complex<T>>(n);
+    auto tmp = etl::allocate<etl::complex<T>>(n);
 
     std::copy_n(r_in, n, tmp.get());
 
@@ -457,18 +446,8 @@ void fft_n(const In* r_in, std::complex<T>* r_out, const std::size_t n){
 }
 
 template<typename T>
-inline std::complex<T> inline_mul(std::complex<T> a, std::complex<T> b){
-    auto ac = a.real() * b.real();
-    auto bd = a.imag() * b.imag();
-
-    auto abcd = (a.real() + a.imag()) * (b.real() + b.imag());
-
-    return {ac - bd, abcd - ac - bd};
-}
-
-template<typename T>
-void inplace_radix2_fft1(std::complex<T>* x, std::size_t N){
-    using complex_t = std::complex<T>;
+void inplace_radix2_fft1(etl::complex<T>* x, std::size_t N){
+    using complex_t = etl::complex<T>;
 
     //Decimate
     for (std::size_t a = 0, b = 0; a < N; ++a){
@@ -489,30 +468,30 @@ void inplace_radix2_fft1(std::complex<T>* x, std::size_t N){
 
     for (std::size_t s = 1; s <= std::log2(N); ++s) {
         std::size_t m = 1 << s;
-        complex_t w(1, 0);
+        complex_t w(1.0, 0.0);
         complex_t wm(cos(2 * -pi / m), sin(2 * -pi / m));
         for (std::size_t j=0; j < m/2; ++j) {
             for (std::size_t k=j; k < NN; k += m) {
-                auto t = inline_mul(w, x[k + m/2]);
+                auto t = w * x[k + m/2];
 
                 complex_t u = x[k];
                 x[k] = u + t;
                 x[k + m/2] = u - t;
             }
 
-            w = inline_mul(w, wm);
+            w *= wm;
         }
     }
 }
 
 template<typename T1, typename T>
 void fft1_kernel(const T1* a, std::size_t n, std::complex<T>* c){
-    if(n <= 1024 * 1024 && is_power_of_two(n)){
+    if(n <= 131072 && is_power_of_two(n)){
         std::copy_n(a, n, c);
 
-        detail::inplace_radix2_fft1(c, n);
+        detail::inplace_radix2_fft1(reinterpret_cast<etl::complex<T>*>(c), n);
     } else {
-        detail::fft_n(a, c, n);
+        detail::fft_n(a, reinterpret_cast<etl::complex<T>*>(c), n);
     }
 }
 
@@ -520,14 +499,14 @@ template<typename T>
 void ifft1_kernel(const std::complex<T>* a, std::size_t n, std::complex<T>* c){
     using complex_t = std::complex<T>;
 
-    if(n < 1024 * 1024 && is_power_of_two(n)){
+    if(n <= 131072 && is_power_of_two(n)){
         //Conjugate the complex numbers
         for(std::size_t i = 0; i < n; ++i){
             c[i] = std::conj(a[i]);
         }
 
         // Forward FFT
-        detail::inplace_radix2_fft1(c, n);
+        detail::inplace_radix2_fft1(reinterpret_cast<etl::complex<T>*>(c), n);
     } else {
         auto a_complex = allocate<complex_t>(n);
         auto x = a_complex.get();
@@ -538,7 +517,7 @@ void ifft1_kernel(const std::complex<T>* a, std::size_t n, std::complex<T>* c){
         }
 
         //Foward FFT
-        detail::fft_n(a_complex.get(), c, n);
+        detail::fft_n(a_complex.get(), reinterpret_cast<etl::complex<T>*>(c), n);
     }
 
     //Conjugate the complex numbers again
