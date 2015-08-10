@@ -18,7 +18,7 @@ TEMPLATE_TEST_CASE_2( "experimental/1", "[fast][fft]", Z, float, double ) {
 
     c1 = etl::fft_1d(a);
 
-    etl::impl::standard::fftn1(a, c2);
+    etl::impl::standard::fft1(a, c2);
 
     for(std::size_t i = 0; i < etl::size(a); ++i){
         CHECK(c1[i].real() == Approx(c2[i].real()));
@@ -37,7 +37,7 @@ TEMPLATE_TEST_CASE_2( "experimental/4", "[fast][fft]", Z, float, double ) {
 
     c1 = etl::fft_1d(a);
 
-    etl::impl::standard::fftn1(a, c2);
+    etl::impl::standard::fft1(a, c2);
 
     for(std::size_t i = 0; i < etl::size(a); ++i){
         CHECK(c1[i].real() == Approx(c2[i].real()));
@@ -57,7 +57,7 @@ TEMPLATE_TEST_CASE_2( "experimental/2", "[fast][fft]", Z, float, double ) {
 
     c1 = etl::fft_1d(a);
 
-    etl::impl::standard::fftn1(a, c2);
+    etl::impl::standard::fft1(a, c2);
 
     for(std::size_t i = 0; i < etl::size(a); ++i){
         CHECK(c1[i].real() == Approx(c2[i].real()));
@@ -81,7 +81,7 @@ TEMPLATE_TEST_CASE_2( "experimental/3", "[fast][fft]", Z, float, double ) {
 
     c1 = etl::fft_1d(a);
 
-    etl::impl::standard::fftn1(a, c2);
+    etl::impl::standard::fft1(a, c2);
 
     for(std::size_t i = 0; i < etl::size(a); ++i){
         CHECK(c1[i].real() == Approx(c2[i].real()));
@@ -103,7 +103,7 @@ TEMPLATE_TEST_CASE_2( "experimental/5", "[fast][fft]", Z, float, double ) {
 
     c1 = etl::fft_1d(a);
 
-    etl::impl::standard::fftn1(a, c2);
+    etl::impl::standard::fft1(a, c2);
 
     for(std::size_t i = 0; i < etl::size(a); ++i){
         CHECK(c1[i].real() == Approx(c2[i].real()));
@@ -130,7 +130,7 @@ TEMPLATE_TEST_CASE_2( "experimental/6", "[fast][fft]", Z, float, double ) {
 
     c1 = etl::fft_1d(a);
 
-    etl::impl::standard::fftn1(a, c2);
+    etl::impl::standard::fft1(a, c2);
 
     for(std::size_t i = 0; i < etl::size(a); ++i){
         CHECK(c1[i].real() == Approx(c2[i].real()).epsilon(0.01));
@@ -155,7 +155,7 @@ TEMPLATE_TEST_CASE_2( "experimental/7", "[fast][fft]", Z, float, double ) {
 
     c1 = etl::fft_1d(a);
 
-    etl::impl::standard::fftn1(a, c2);
+    etl::impl::standard::fft1(a, c2);
 
     for(std::size_t i = 0; i < etl::size(a); ++i){
         CHECK(c1[i].real() == Approx(c2[i].real()).epsilon(0.01));
