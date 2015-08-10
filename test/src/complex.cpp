@@ -9,6 +9,21 @@
 
 #define CZ(a,b) std::complex<Z>(a,b)
 
+TEST_CASE("etl_complex/1", "[complex]"){
+    REQUIRE(sizeof(etl::complex<float>) == sizeof(std::complex<float>));
+    REQUIRE(sizeof(etl::complex<double>) == sizeof(std::complex<double>));
+
+    etl::complex<float> a(3.3, 5.5);
+
+    REQUIRE(reinterpret_cast<float(&)[2]>(a)[0] == float(3.3));
+    REQUIRE(reinterpret_cast<float(&)[2]>(a)[1] == float(5.5));
+
+    etl::complex<double> b(-2.3, 4.1);
+
+    REQUIRE(reinterpret_cast<double(&)[2]>(b)[0] == double(-2.3));
+    REQUIRE(reinterpret_cast<double(&)[2]>(b)[1] == double(4.1));
+}
+
 TEMPLATE_TEST_CASE_2( "complex/1", "[complex]", Z, float, double ) {
     etl::fast_vector<std::complex<Z>, 3> a = {-1.0, 2.0, 5.0};
 
