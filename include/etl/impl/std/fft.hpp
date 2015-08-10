@@ -61,7 +61,7 @@ void fft_3_point(const etl::complex<T>* in, etl::complex<T>* out, const std::siz
     const std::size_t offset = product / factor;
     const std::size_t inc = (factor - 1) * offset;
 
-    static constexpr const T tau = std::sqrt(3.0) / 2.0;
+    static const T tau = std::sqrt(3.0) / 2.0;
 
     for (std::size_t k = 0, i = 0, j = 0; k < n / product; k++, j += inc){
         etl::complex<T> w1(1.0, 0.0);
@@ -134,8 +134,8 @@ void fft_5_point(const etl::complex<T>* in, etl::complex<T>* out, const std::siz
     const std::size_t offset = product / factor;
     const std::size_t inc = (factor - 1) * offset;
 
-    static constexpr const T theta_1 = -1.0 * std::sin(2.0 * M_PI / 5.0);
-    static constexpr const T theta_2 = -1.0 * std::sin(2.0 * M_PI / 10.0);
+    static const T theta_1 = -1.0 * std::sin(2.0 * M_PI / 5.0);
+    static const T theta_2 = -1.0 * std::sin(2.0 * M_PI / 10.0);
 
     for (std::size_t k = 0, i = 0, j = 0; k < n / product; ++k, j += inc){
         etl::complex<T> w1(1.0, 0.0);
@@ -188,15 +188,15 @@ void fft_7_point(const etl::complex<T>* in, etl::complex<T>* out, const std::siz
 
     static constexpr const T theta_0 = 2.0 * M_PI / 7.0;
 
-    static constexpr const T theta_1 = (std::cos(theta_0) + std::cos(2.0 * theta_0) + std::cos(3.0 * theta_0)) / 3.0 - 1.0;
-    static constexpr const T theta_2 = (2.0 * std::cos(theta_0) - std::cos(2.0 * theta_0) - std::cos(3.0 * theta_0)) / 3.0;
-    static constexpr const T theta_3 = (std::cos(theta_0) - 2.0 * std::cos(2.0 * theta_0) + std::cos(3.0 * theta_0)) / 3.0;
-    static constexpr const T theta_4 = (std::cos(theta_0) + std::cos(2.0 * theta_0) - 2.0 * std::cos(3.0 * theta_0)) / 3.0;
+    static const T theta_1 = (std::cos(theta_0) + std::cos(2.0 * theta_0) + std::cos(3.0 * theta_0)) / 3.0 - 1.0;
+    static const T theta_2 = (2.0 * std::cos(theta_0) - std::cos(2.0 * theta_0) - std::cos(3.0 * theta_0)) / 3.0;
+    static const T theta_3 = (std::cos(theta_0) - 2.0 * std::cos(2.0 * theta_0) + std::cos(3.0 * theta_0)) / 3.0;
+    static const T theta_4 = (std::cos(theta_0) + std::cos(2.0 * theta_0) - 2.0 * std::cos(3.0 * theta_0)) / 3.0;
 
-    static constexpr const T theta_5 = (std::sin(theta_0) + std::sin(2.0 * theta_0) - std::sin(3.0 * theta_0)) / 3.0;
-    static constexpr const T theta_6 = (2.0 * std::sin(theta_0) - std::sin(2.0 * theta_0) + std::sin(3.0 * theta_0)) / 3.0;
-    static constexpr const T theta_7 = (std::sin(theta_0) - 2.0 * std::sin(2.0 * theta_0) - std::sin(3.0 * theta_0)) / 3.0;
-    static constexpr const T theta_8 = (std::sin(theta_0) + std::sin(2.0 * theta_0) + 2.0 * std::sin(3.0 * theta_0)) / 3.0;
+    static const T theta_5 = (std::sin(theta_0) + std::sin(2.0 * theta_0) - std::sin(3.0 * theta_0)) / 3.0;
+    static const T theta_6 = (2.0 * std::sin(theta_0) - std::sin(2.0 * theta_0) + std::sin(3.0 * theta_0)) / 3.0;
+    static const T theta_7 = (std::sin(theta_0) - 2.0 * std::sin(2.0 * theta_0) - std::sin(3.0 * theta_0)) / 3.0;
+    static const T theta_8 = (std::sin(theta_0) + std::sin(2.0 * theta_0) + 2.0 * std::sin(3.0 * theta_0)) / 3.0;
 
     for (std::size_t k = 0, i = 0, j = 0; k < n / product; ++k, j += inc){
         etl::complex<T> w1(1.0, 0.0);
