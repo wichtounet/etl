@@ -68,14 +68,15 @@ DEBUG_FLAGS += -fsanitize=address,undefined
 endif
 endif
 
-# Enable advanced vectorization for release modes (unset by the benchmark)
+# Enable advanced vectorization for release modes (unset by the benchmark and the test runner)
 ifeq (,$(ETL_NO_DEFAULT))
 RELEASE_FLAGS 		+= -DETL_VECTORIZE_FULL
 RELEASE_DEBUG_FLAGS += -DETL_VECTORIZE_FULL
 endif
 
-# Enable configurable default options (set by the benchmark)
+# Enable configurable default options (set by the benchmark and the test runner)
 ifneq (,$(ETL_DEFAULTS))
+DEBUG_FLAGS 		+= $(ETL_DEFAULTS)
 RELEASE_FLAGS 		+= $(ETL_DEFAULTS)
 RELEASE_DEBUG_FLAGS += $(ETL_DEFAULTS)
 endif
