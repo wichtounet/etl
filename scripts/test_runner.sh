@@ -14,7 +14,7 @@ export LD=g++-4.9.2
 echo "Test 1. GCC (debug default)"
 
 make clean
-make -j9 debug/bin/etl_test
+make -j2 debug/bin/etl_test
 ./debug/bin/etl_test
 gcovr -x -b -r . --object-directory=debug/test > coverage_1.xml
 
@@ -23,7 +23,7 @@ echo "Test 2. GCC (debug vectorize avx)"
 export ETL_DEFAULTS="-DETL_VECTORIZE_FULL -mavx2 -mavx"
 
 make clean
-make -j9 debug/bin/etl_test
+make -j2 debug/bin/etl_test
 ./debug/bin/etl_test
 gcovr -x -b -r . --object-directory=debug/test > coverage_2.xml
 
@@ -32,7 +32,7 @@ echo "Test 3. GCC (debug vectorize sse)"
 export ETL_DEFAULTS="-DETL_VECTORIZE_FULL -msse3 -msse4"
 
 make clean
-make -j9 debug/bin/etl_test
+make -j2 debug/bin/etl_test
 ./debug/bin/etl_test
 gcovr -x -b -r . --object-directory=debug/test > coverage_3.xml
 
@@ -42,6 +42,10 @@ unset ETL_DEFAULTS
 export ETL_MKL=true
 
 make clean
-make -j9 debug/bin/etl_test
+make -j2 debug/bin/etl_test
 ./debug/bin/etl_test
 gcovr -x -b -r . --object-directory=debug/test > coverage_4.xml
+
+echo "Merge the coverage reports"
+
+merger coverage_1.xml coverage_2.xml coverage_3.xml coverage_4.xml coverage_report.xml
