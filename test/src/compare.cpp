@@ -72,3 +72,19 @@ TEMPLATE_TEST_CASE_2( "compare/4", "[compare]", Z, float, double ) {
     REQUIRE(log(a + b) == log(b + a));
     REQUIRE(log(a + b) != exp(b + a));
 }
+
+TEMPLATE_TEST_CASE_2( "compare/5", "[compare]", Z, float, double ) {
+    etl::fast_matrix<Z, 2, 2> a(3.3);
+    etl::dyn_matrix<Z> b(2, 2, 3.3);
+
+    etl::fast_matrix<Z, 3, 2> c(3.3);
+    etl::dyn_matrix<Z> d(3, 2, 3.3);
+
+    REQUIRE(a != c);
+    REQUIRE(b != d);
+
+    REQUIRE((a + b) != (c + d));
+    REQUIRE((2 * a) != (c * 2));
+
+    REQUIRE(log(a + b) != log(c + d));
+}

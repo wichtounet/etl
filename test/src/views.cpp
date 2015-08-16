@@ -180,6 +180,10 @@ TEMPLATE_TEST_CASE_2( "reshape/fast_vector_4", "reshape<2,2>", Z, float, double 
 
     REQUIRE(b(0,1,0,0) == 3.0);
     REQUIRE(b(0,1,1,0) == 4.0);
+
+    const auto& c = etl::reshape<1,2,2,1>(a);
+
+    REQUIRE(c[0] == a[0]);
 }
 
 TEMPLATE_TEST_CASE_2( "reshape/traits", "traits<reshape<2,3>>", Z, float, double ) {
@@ -230,6 +234,10 @@ TEMPLATE_TEST_CASE_2( "reshape/dyn_vector_2", "reshape(2,3)", Z, float, double )
     REQUIRE(b(1,0) == 4.0);
     REQUIRE(b(1,1) == 5.0);
     REQUIRE(b(1,2) == 6.0);
+
+    const auto& c = etl::reshape(a, 2, 3);
+
+    REQUIRE(c[0] == a[0]);
 }
 
 TEMPLATE_TEST_CASE_2( "reshape/dyn_traits", "traits<reshape<2,3>>", Z, float, double ) {
