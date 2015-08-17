@@ -17,7 +17,7 @@
 #endif
 
 /**
- * Implementations of matrix transposition.
+ * Implementations of inplace matrix transposition.
  *    1. Simple implementation using for loop
  *    2. Implementations using MKL
  *
