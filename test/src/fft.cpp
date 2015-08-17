@@ -6,6 +6,7 @@
 //=======================================================================
 
 #include "test.hpp"
+#include "catch_complex_approx.hpp"
 
 #define MC(a,b) std::complex<Z>(a,b)
 
@@ -204,6 +205,128 @@ TEMPLATE_TEST_CASE_2( "fft_1d_c/4", "[fast][fft]", Z, float, double ) {
     REQUIRE(a(3).imag() == Approx(Z(-2.709955)));
     REQUIRE(a(4).real() == Approx(Z(2.773009)));
     REQUIRE(a(4).imag() == Approx(Z(4.404947)));
+}
+
+TEMPLATE_TEST_CASE_2( "fft_1d/5", "[fast][fft]", Z, float, double ) {
+    etl::fast_matrix<std::complex<Z>, 2> a;
+    etl::fast_matrix<std::complex<Z>, 2> c;
+
+    a[0] = std::complex<Z>(1.0, 1.0);
+    a[1] = std::complex<Z>(2.0, 3.0);
+
+    c = etl::fft_1d(a);
+
+    REQUIRE(c(0) == std::complex<Z>(3.0, 4.0));
+    REQUIRE(c(1) == std::complex<Z>(-1.0, -2.0));
+}
+
+TEMPLATE_TEST_CASE_2( "fft_1d/6", "[fast][fft]", Z, float, double ) {
+    etl::fast_matrix<std::complex<Z>, 3> a;
+    etl::fast_matrix<std::complex<Z>, 3> c;
+
+    a[0] = std::complex<Z>(1.0, 1.0);
+    a[1] = std::complex<Z>(2.0, 3.0);
+    a[2] = std::complex<Z>(3.0, -3.0);
+
+    c = etl::fft_1d(a);
+
+    REQUIRE(c(0) == ComplexApprox<Z>(6.0, 1.0));
+    REQUIRE(c(1) == ComplexApprox<Z>(3.69615, 1.86603));
+    REQUIRE(c(2) == ComplexApprox<Z>(-6.69615, 0.133975));
+}
+
+TEMPLATE_TEST_CASE_2( "fft_1d/7", "[fast][fft]", Z, float, double ) {
+    etl::fast_matrix<std::complex<Z>, 4> a;
+    etl::fast_matrix<std::complex<Z>, 4> c;
+
+    a[0] = std::complex<Z>(1.0, 1.0);
+    a[1] = std::complex<Z>(2.0, 3.0);
+    a[2] = std::complex<Z>(2.0, -1.0);
+    a[3] = std::complex<Z>(4.0, 3.0);
+
+    c = etl::fft_1d(a);
+
+    REQUIRE(c(0) == ComplexApprox<Z>(9.0, 6.0));
+    REQUIRE(c(1) == ComplexApprox<Z>(-1.0, 4.0));
+    REQUIRE(c(2) == ComplexApprox<Z>(-3.0, -6.0));
+    REQUIRE(c(3) == ComplexApprox<Z>(-1.0, 0.0));
+}
+
+TEMPLATE_TEST_CASE_2( "fft_1d/8", "[fast][fft]", Z, float, double ) {
+    etl::fast_matrix<std::complex<Z>, 8> a;
+    etl::fast_matrix<std::complex<Z>, 8> c;
+
+    a[0] = std::complex<Z>(1.0, 1.0);
+    a[1] = std::complex<Z>(2.0, 3.0);
+    a[2] = std::complex<Z>(2.0, -1.0);
+    a[3] = std::complex<Z>(4.0, 3.0);
+    a[4] = std::complex<Z>(1.0, 1.0);
+    a[5] = std::complex<Z>(2.0, 3.0);
+    a[6] = std::complex<Z>(2.0, -1.0);
+    a[7] = std::complex<Z>(4.0, 3.0);
+
+    c = etl::fft_1d(a);
+
+    REQUIRE(c(0) == ComplexApprox<Z>(18.0, 12.0));
+    REQUIRE(c(1) == ComplexApprox<Z>(0.0, 0.0));
+    REQUIRE(c(2) == ComplexApprox<Z>(-2.0, 8.0));
+    REQUIRE(c(3) == ComplexApprox<Z>(0.0, 0.0));
+    REQUIRE(c(4) == ComplexApprox<Z>(-6.0, -12.0));
+    REQUIRE(c(5) == ComplexApprox<Z>(0.0, 0.0));
+    REQUIRE(c(6) == ComplexApprox<Z>(-2.0, 0.0));
+    REQUIRE(c(7) == ComplexApprox<Z>(0.0, 0.0));
+}
+
+TEMPLATE_TEST_CASE_2( "fft_1d/9", "[fast][fft]", Z, float, double ) {
+    etl::fast_matrix<std::complex<Z>, 6> a;
+    etl::fast_matrix<std::complex<Z>, 6> c;
+
+    a[0] = std::complex<Z>(1.0, 1.0);
+    a[1] = std::complex<Z>(2.0, 3.0);
+    a[2] = std::complex<Z>(2.0, -1.0);
+    a[3] = std::complex<Z>(4.0, 3.0);
+    a[4] = std::complex<Z>(1.0, 1.0);
+    a[5] = std::complex<Z>(2.0, 3.0);
+
+    c = etl::fft_1d(a);
+
+    REQUIRE(c(0) == ComplexApprox<Z>(12.0, 10.0));
+    REQUIRE(c(1) == ComplexApprox<Z>(-4.23205, 0.133975));
+    REQUIRE(c(2) == ComplexApprox<Z>(3.232051, 1.866025));
+    REQUIRE(c(3) == ComplexApprox<Z>(-4.0, -8.0));
+    REQUIRE(c(4) == ComplexApprox<Z>(-0.232051, 0.133975));
+    REQUIRE(c(5) == ComplexApprox<Z>(-0.767949, 1.866025));
+}
+
+TEMPLATE_TEST_CASE_2( "fft_1d/10", "[fast][fft]", Z, float, double ) {
+    etl::fast_matrix<std::complex<Z>, 11> a;
+    etl::fast_matrix<std::complex<Z>, 11> c;
+
+    a[0] = std::complex<Z>(1.0, 1.0);
+    a[1] = std::complex<Z>(2.0, 3.0);
+    a[2] = std::complex<Z>(2.0, -1.0);
+    a[3] = std::complex<Z>(4.0, 3.0);
+    a[4] = std::complex<Z>(1.0, 1.0);
+    a[5] = std::complex<Z>(2.0, 3.0);
+    a[6] = std::complex<Z>(1.0, 1.0);
+    a[7] = std::complex<Z>(2.0, 3.0);
+    a[8] = std::complex<Z>(2.0, -1.0);
+    a[9] = std::complex<Z>(4.0, 3.0);
+    a[10] = std::complex<Z>(1.0, 1.0);
+
+    c = etl::fft_1d(a);
+
+    REQUIRE(c(0) == ComplexApprox<Z>(22.0, 17.0));
+    REQUIRE(c(1) == ComplexApprox<Z>(0.773306, -1.773203));
+    REQUIRE(c(2) == ComplexApprox<Z>(-6.775364, 2.944859));
+    REQUIRE(c(3) == ComplexApprox<Z>(-2.233971, +0.139025));
+    REQUIRE(c(4) == ComplexApprox<Z>(6.847435, -5.023187));
+    REQUIRE(c(5) == ComplexApprox<Z>(9.607112, -6.146752));
+    REQUIRE(c(6) == ComplexApprox<Z>(-9.488755, 3.401181));
+    REQUIRE(c(7) == ComplexApprox<Z>(-3.653803, 0.227432));
+    REQUIRE(c(8) == ComplexApprox<Z>(-2.030497, 0.037287));
+    REQUIRE(c(9) == ComplexApprox<Z>(-3.910758, 1.512556));
+    REQUIRE(c(10) == ComplexApprox<Z>(-0.134705, -1.319198));
 }
 
 //ifft_1d (complex)
