@@ -866,12 +866,14 @@ CPM_DIRECT_SECTION_TWO_PASS_NS_P("fft_1d_many(1000) (c)", fft_1d_many_policy,
     CPM_SECTION_INIT([](std::size_t d){ return std::make_tuple(cmat(1000UL, d), cmat(1000UL, d)); }),
     CPM_SECTION_FUNCTOR("default", [](cmat& a, cmat& b){ b = etl::fft_1d_many(a); }),
     CPM_SECTION_FUNCTOR("std", [](cmat& a, cmat& b){ etl::impl::standard::fft1_many(a, b); })
+    MKL_SECTION_FUNCTOR("mkl", [](cmat& a, cmat& b){ etl::impl::blas::fft1_many(a, b); })
 )
 
 CPM_DIRECT_SECTION_TWO_PASS_NS_P("fft_1d_many(1000) (z)", fft_1d_many_policy,
     CPM_SECTION_INIT([](std::size_t d){ return std::make_tuple(zmat(1000UL, d), zmat(1000UL, d)); }),
     CPM_SECTION_FUNCTOR("default", [](zmat& a, zmat& b){ b = etl::fft_1d_many(a); }),
     CPM_SECTION_FUNCTOR("std", [](zmat& a, zmat& b){ etl::impl::standard::fft1_many(a, b); })
+    MKL_SECTION_FUNCTOR("mkl", [](zmat& a, zmat& b){ etl::impl::blas::fft1_many(a, b); })
 )
 
 CPM_DIRECT_SECTION_TWO_PASS_NS_P("cfft_2d(2^b)", fft_2d_policy,

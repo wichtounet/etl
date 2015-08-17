@@ -602,7 +602,7 @@ void fft1_many(A&& a, C&& c){
     auto n = etl::dim<1>(a);
 
     if(n <= 65536 && detail::is_power_of_two(n)){
-        if(a.memory_start() != c.memory_start()){
+        if(reinterpret_cast<const void*>(a.memory_start()) != reinterpret_cast<const void*>(c.memory_start())){
             std::copy_n(a.begin(), etl::size(c), c.begin());
         }
 

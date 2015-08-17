@@ -495,6 +495,9 @@ template<typename A, typename C>
 void ifft1_real(A&& /*unused*/, C&& /*unused*/){}
 
 template<typename A, typename C>
+void fft1_many(A&& /*unused*/, C&& /*unused*/){}
+
+template<typename A, typename C>
 void fft2(A&& /*unused*/, C&& /*unused*/){}
 
 template<typename A, typename C>
