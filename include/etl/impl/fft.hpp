@@ -143,16 +143,16 @@ inline cpp14_constexpr fft_impl select_fft1_many_impl(const std::size_t /*batch*
     }
 
     //Note since these boolean will be known at compile time, the conditions will be a lot simplified
-    //constexpr const bool mkl = is_mkl_enabled::value;
-    //constexpr const bool cufft = is_cufft_enabled::value;
+    constexpr const bool mkl = is_mkl_enabled::value;
+    constexpr const bool cufft = is_cufft_enabled::value;
 
-    //if(cufft){
-        //return fft_impl::CUFFT;
-    //} else if(mkl) {
+    if(cufft){
+        return fft_impl::CUFFT;
+    } else if(mkl) {
         return fft_impl::MKL;
-    //} else {
-        //return fft_impl::STD;
-    //}
+    } else {
+        return fft_impl::STD;
+    }
 }
 
 template<bool DMA>
