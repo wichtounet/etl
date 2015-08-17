@@ -71,6 +71,40 @@ TEMPLATE_TEST_CASE_2( "fft_1d_r/2", "[fast][fft]", Z, float, double ) {
     REQUIRE(c(5).imag() == Approx(Z(5.71577)));
 }
 
+TEMPLATE_TEST_CASE_2( "fft_1d_r/3", "[fast][fft]", Z, float, double ) {
+    etl::fast_matrix<Z, 12> a({1.0, 1.0, 1.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 1.0, 1.0, 1.0});
+    etl::fast_matrix<std::complex<Z>, 12> c;
+
+    c = etl::fft_1d(a);
+
+    REQUIRE(c(0).real() == Approx(Z(8.0)));
+    REQUIRE(c(0).imag() == Approx(Z(0.0)));
+    REQUIRE(c(1).real() == Approx(Z(3.23205)));
+    REQUIRE(c(1).imag() == Approx(Z(0.86603)));
+    REQUIRE(c(2).real() == Approx(Z(-1.5)));
+    REQUIRE(c(2).imag() == Approx(Z(-0.86603)));
+    REQUIRE(c(3).real() == Approx(Z(0.0)));
+    REQUIRE(c(3).imag() == Approx(Z(0.0)));
+    REQUIRE(c(4).real() == Approx(Z(0.5)));
+    REQUIRE(c(4).imag() == Approx(Z(0.86603)));
+    REQUIRE(c(5).real() == Approx(Z(-0.23205)));
+    REQUIRE(c(5).imag() == Approx(Z(-0.86603)));
+    REQUIRE(c(6).real() == Approx(Z(0.0)));
+    REQUIRE(c(6).imag() == Approx(Z(0.0)));
+
+    REQUIRE(c(7).real() == Approx(Z(-0.23205)));
+    REQUIRE(c(7).imag() == Approx(Z(0.86603)));
+    REQUIRE(c(8).real() == Approx(Z(0.5)));
+    REQUIRE(c(8).imag() == Approx(Z(-0.86603)));
+    REQUIRE(c(9).real() == Approx(Z(0.0)));
+    REQUIRE(c(9).imag() == Approx(Z(0.0)));
+
+    REQUIRE(c(10).real() == Approx(Z(-1.5)));
+    REQUIRE(c(10).imag() == Approx(Z(0.86603)));
+    REQUIRE(c(11).real() == Approx(Z(3.23205)));
+    REQUIRE(c(11).imag() == Approx(Z(-.86603)));
+}
+
 //}}}
 
 //{{{ fft_1d (complex)
