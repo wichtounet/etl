@@ -136,7 +136,7 @@ inline cpp14_constexpr fft_impl select_fft1_impl(const std::size_t n){
 }
 
 template<bool DMA>
-inline cpp14_constexpr fft_impl select_fft1_many_impl(const std::size_t /*batch*/, const std::size_t /*n*/){
+inline cpp14_constexpr fft_impl select_fft1_many_impl(const std::size_t /*batch*/, const std::size_t n){
     //Only std implementation is able to handle non-dma expressions
     if(!DMA){
         return fft_impl::STD;
@@ -146,7 +146,13 @@ inline cpp14_constexpr fft_impl select_fft1_many_impl(const std::size_t /*batch*
     constexpr const bool mkl = is_mkl_enabled::value;
     constexpr const bool cufft = is_cufft_enabled::value;
 
+    //Note: more testing would probably improve this selection
+
     if(cufft){
+        if(n <= 250000 && mkl){
+            return fft_impl::MKL;
+        }
+
         return fft_impl::CUFFT;
     } else if(mkl) {
         return fft_impl::MKL;
