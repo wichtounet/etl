@@ -9,7 +9,7 @@
 
 #define MC(a,b) std::complex<Z>(a,b)
 
-//{{{ fft_1d (real)
+//fft_1d (real)
 
 TEMPLATE_TEST_CASE_2( "fft_1d_r/0", "[fast][fft]", Z, float, double ) {
     etl::fast_matrix<Z, 8> a({1.0, 1.0, 1.0, 1.0, 0.0, 0.0, 0.0, 0.0});
@@ -107,9 +107,7 @@ TEMPLATE_TEST_CASE_2( "fft_1d_r/3", "[fast][fft]", Z, float, double ) {
     REQUIRE(c(11).imag() == Approx(Z(-.86603)));
 }
 
-//}}}
-
-//{{{ fft_1d (complex)
+//fft_1d (complex)
 
 TEMPLATE_TEST_CASE_2( "fft_1d_c/1", "[fast][fft]", Z, float, double ) {
     etl::fast_matrix<std::complex<Z>, 5> a;
@@ -185,9 +183,7 @@ TEMPLATE_TEST_CASE_2( "fft_1d_c/3", "[fast][fft]", Z, float, double ) {
     REQUIRE(a(4).imag() == Approx(Z(4.404947)));
 }
 
-//}}}
-
-//{{{ ifft_1d (complex)
+//ifft_1d (complex)
 
 TEMPLATE_TEST_CASE_2( "ifft_1d_c/0", "[fast][ifft]", Z, float, double ) {
     etl::fast_matrix<std::complex<Z>, 4> a;
@@ -281,9 +277,7 @@ TEMPLATE_TEST_CASE_2( "ifft_1d_c/3", "[fast][ifft]", Z, float, double ) {
     REQUIRE(a(3).imag() == Approx(Z(0.5)));
 }
 
-//}}}
-
-//{{{ ifft_1d (real)
+//ifft_1d (real)
 
 TEMPLATE_TEST_CASE_2( "ifft_1d_real/1", "[fast][ifft]", Z, float, double ) {
     etl::fast_matrix<std::complex<Z>, 5> a;
@@ -325,9 +319,7 @@ TEMPLATE_TEST_CASE_2( "ifft_1d_real/2", "[fast][ifft]", Z, float, double ) {
     REQUIRE(c(5) == Approx(Z(0.894338)));
 }
 
-//}}}
-
-//{{{ fft_2d (real)
+//fft_2d (real)
 
 TEMPLATE_TEST_CASE_2( "fft_2d_r/1", "[fast][fft]", Z, float, double ) {
     etl::fast_matrix<Z, 2, 3> a({1.0, 2.0, 3.0, 4.0, 5.0, 6.0});
@@ -369,9 +361,7 @@ TEMPLATE_TEST_CASE_2( "fft_2d_r/2", "[fast][fft]", Z, float, double ) {
     REQUIRE(c(2,1).imag() == Approx(Z(7.7942)));
 }
 
-//}}}
-
-//{{{ fft_2d (complex)
+//fft_2d (complex)
 
 TEMPLATE_TEST_CASE_2( "fft_2d_c/1", "[fast][fft]", Z, float, double ) {
     etl::fast_matrix<std::complex<Z>, 3, 2> a;
@@ -447,9 +437,7 @@ TEMPLATE_TEST_CASE_2( "fft_2d_c/3", "[fast][fft]", Z, float, double ) {
     REQUIRE(a(2,1).imag() == Approx(Z(6.4192)));
 }
 
-//}}}
-
-//{{{ ifft_2d (complex)
+//ifft_2d (complex)
 
 TEMPLATE_TEST_CASE_2( "ifft_2d_c/1", "[fast][ifft]", Z, float, double ) {
     etl::fast_matrix<std::complex<Z>, 3, 2> a;
@@ -525,9 +513,7 @@ TEMPLATE_TEST_CASE_2( "ifft_2d_c/3", "[fast][ifft]", Z, float, double ) {
     REQUIRE(a(2,1).imag() == Approx(Z(-1.5282)));
 }
 
-//}}}
-
-//{{{ ifft_2d (real)
+//ifft_2d (real)
 
 TEMPLATE_TEST_CASE_2( "ifft_2d_c_real/1", "[fast][ifft]", Z, float, double ) {
     etl::fast_matrix<std::complex<Z>, 3, 2> a;
@@ -566,8 +552,6 @@ TEMPLATE_TEST_CASE_2( "ifft_2d_real_c/2", "[fast][ifft]", Z, float, double ) {
     REQUIRE(c(1,0) == Approx(Z(1.5)));
     REQUIRE(c(1,1) == Approx(Z(-0.5)));
 }
-
-//}}}
 
 /* fft_many tests */
 
