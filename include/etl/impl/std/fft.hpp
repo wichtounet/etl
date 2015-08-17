@@ -598,20 +598,34 @@ void ifft1_real(A&& a, C&& c){
 
 //(T or complex<T>) -> complex<T>
 template<typename A, typename C>
+void fft1_many(A&& a, C&& c){
+    auto n = etl::dim<1>(a);
+
+    if(n <= 65536 && detail::is_power_of_two(n)){
+        if(a.memory_start() != c.memory_start()){
+            std::copy_n(a.begin(), etl::size(c), c.begin());
+        }
+
+        for(std::size_t i = 0; i < etl::dim<0>(c); ++i){
+            detail::inplace_radix2_fft1(reinterpret_cast<etl::complex<typename value_t<C>::value_type>*>(c(i).memory_start()), n);
+        }
+    } else {
+        detail::fft_n_many(a.memory_start(), reinterpret_cast<etl::complex<typename value_t<C>::value_type>*>(c.memory_start()), etl::dim<0>(c), n);
+    }
+}
+
+//(T or complex<T>) -> complex<T>
+template<typename A, typename C>
 void fft2(A&& a, C&& c){
     auto w = etl::force_temporary_dyn(c);
 
     //Perform FFT on each rows
-    for(std::size_t r = 0; r < etl::dim<0>(c); ++r){
-        detail::fft1_kernel(a(r).memory_start(), etl::dim<1>(a), w(r).memory_start());
-    }
+    fft1_many(a, w);
 
     w.transpose_inplace();
 
     //Perform FFT on each columns
-    for(std::size_t r = 0; r < etl::dim<1>(c); ++r){
-        detail::fft1_kernel(w(r).memory_start(), etl::dim<0>(a), w(r).memory_start());
-    }
+    fft1_many(w, w);
 
     w.transpose_inplace();
 
@@ -650,22 +664,6 @@ void ifft2_real(A&& a, C&& c){
 
     for(std::size_t i = 0; i < etl::size(a); ++i){
         c[i] = w[i].real();
-    }
-}
-
-//(T or complex<T>) -> complex<T>
-template<typename A, typename C>
-void fft1_many(A&& a, C&& c){
-    auto n = etl::dim<1>(a);
-
-    if(n <= 65536 && detail::is_power_of_two(n)){
-        std::copy_n(a.begin(), etl::size(c), c.begin());
-
-        for(std::size_t i = 0; i < etl::dim<0>(c); ++i){
-            detail::inplace_radix2_fft1(reinterpret_cast<etl::complex<typename value_t<C>::value_type>*>(c(i).memory_start()), n);
-        }
-    } else {
-        detail::fft_n_many(a.memory_start(), reinterpret_cast<etl::complex<typename value_t<C>::value_type>*>(c.memory_start()), etl::dim<0>(c), n);
     }
 }
 
