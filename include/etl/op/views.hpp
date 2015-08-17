@@ -87,7 +87,7 @@ struct dim_view {
         return sub;
     }
 
-    //{{{ Direct memory access
+    // Direct memory access
 
     template<typename ST = T, std::size_t SD = D, cpp_enable_if(has_direct_access<ST>::value && SD == 1)>
     memory_type memory_start() noexcept {
@@ -108,8 +108,6 @@ struct dim_view {
     const_memory_type memory_end() const noexcept {
         return sub.memory_start() + (i + 1) * subsize(sub);
     }
-
-    //}}}
 };
 
 template<typename T>
@@ -156,7 +154,7 @@ struct sub_view {
         return parent;
     }
 
-    //{{{ Direct memory access
+    // Direct memory access
 
     template<typename ST = T, cpp_enable_if(has_direct_access<ST>::value && decay_traits<parent_type>::storage_order == order::RowMajor)>
     memory_type memory_start() noexcept {
@@ -177,8 +175,6 @@ struct sub_view {
     const_memory_type memory_end() const noexcept {
         return parent.memory_start() + (i + 1) * subsize(parent);
     }
-
-    //}}}
 };
 
 namespace fast_matrix_view_detail {
@@ -252,7 +248,7 @@ struct fast_matrix_view {
         return nth_size<D, 0, Dims...>::value;
     }
 
-    //{{{ Direct memory access
+    // Direct memory access
 
     template<typename SS = T, cpp_enable_if(has_direct_access<SS>::value)>
     memory_type memory_start() noexcept {
@@ -273,8 +269,6 @@ struct fast_matrix_view {
     const_memory_type memory_end() const noexcept {
         return sub.memory_end();
     }
-
-    //}}}
 };
 
 template<typename T>
@@ -328,7 +322,7 @@ struct dyn_matrix_view {
         return sub;
     }
 
-    //{{{ Direct memory access
+    // Direct memory access
 
     template<typename SS = T, cpp_enable_if(has_direct_access<SS>::value)>
     memory_type memory_start() noexcept {
@@ -349,8 +343,6 @@ struct dyn_matrix_view {
     const_memory_type memory_end() const noexcept {
         return sub.memory_end();
     }
-
-    //}}}
 };
 
 template<typename T, std::size_t D>

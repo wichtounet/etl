@@ -10,7 +10,7 @@
 
 #include "mmul_test.hpp"
 
-//{{{ Matrix Matrix multiplication tests
+// Matrix Matrix multiplication tests
 
 GEMM_TEST_CASE( "multiplication/mm_mul_1", "mmul") {
     etl::fast_matrix<T, 2, 3> a = {1,2,3,4,5,6};
@@ -118,9 +118,7 @@ TEMPLATE_TEST_CASE_2( "multiplication/mm_mul_7", "mmul", Z, double, float) {
     REQUIRE(c(0,1,1) == 154);
 }
 
-//}}}
-
-//{{{ Matrix-Vector Multiplication
+// Matrix-Vector Multiplication
 
 GEMV_TEST_CASE( "multiplication/gemv/0", "[mul]") {
     etl::fast_matrix<T, 2, 3> a = {1,2,3,4,5,6};
@@ -166,9 +164,7 @@ GEMV_TEST_CASE( "multiplication/gemv/3", "[mul]") {
     REQUIRE(c(1) == 370);
 }
 
-//}}}
-
-//{{{ Vector-Matrix Multiplication
+// Vector-Matrix Multiplication
 
 GEVM_TEST_CASE( "multiplication/gevm/0", "[mul]") {
     etl::fast_matrix<T, 3, 2> a = {1,2,3,4,5,6};
@@ -191,8 +187,6 @@ GEVM_TEST_CASE( "multiplication/gevm/1", "[mul]") {
     REQUIRE(c(0) == 76);
     REQUIRE(c(1) == 100);
 }
-
-//}}}
 
 //Test using expressions directly
 TEMPLATE_TEST_CASE_2( "multiplication/expression", "expression mmul", Z, double, float) {
@@ -266,9 +260,7 @@ TEMPLATE_TEST_CASE_2( "multiplication/stop_mmul_1", "mmul", Z, double, float) {
     REQUIRE(c(2,2) == 268);
 }
 
-//}}}
-
-//{{{ Expressions
+// Expressions
 
 TEMPLATE_TEST_CASE_2( "multiplication/expression_1", "expression", Z, double, float) {
     etl::dyn_matrix<Z> a(4,4, etl::values(1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16));
@@ -318,9 +310,7 @@ TEMPLATE_TEST_CASE_2( "multiplication/expression_3", "expression", Z, double, fl
     REQUIRE(c(1,1) == 2 * 154);
 }
 
-//}}}
-
-//{{{ outer product
+// outer product
 
 TEMPLATE_TEST_CASE_2( "fast_vector/outer_1", "sum", Z, float, double ) {
     etl::fast_vector<Z, 3> a = {1.0, 2.0, 3.0};
@@ -377,8 +367,6 @@ TEMPLATE_TEST_CASE_2( "fast_vector/outer_3", "sum", Z, float, double ) {
     REQUIRE(c(1,2) == 8);
     REQUIRE(c(1,3) == 10);
 }
-
-//}}}
 
 TEMPLATE_TEST_CASE_2( "lvalue/mmul1", "lvalue sub mmul", Z, float, double ) {
     etl::fast_matrix<Z, 2, 2, 3> a = {1,2,3,4,5,6,1,2,3,4,5,6};

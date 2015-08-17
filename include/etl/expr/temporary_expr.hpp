@@ -59,7 +59,7 @@ struct temporary_expr : comparable<D>, value_testable<D>, dim_testable<D> {
         return vec::loadu(memory_start() + i);
     }
 
-    //{{{ Iterator
+    // Iterator
 
     iterator<const derived_t> begin() const noexcept {
         return {as_derived(), 0};

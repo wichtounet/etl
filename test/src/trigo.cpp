@@ -8,7 +8,7 @@
 #include "test_light.hpp"
 #include "cpp_utils/algorithm.hpp"
 
-//{{{ Trigonometric tests
+// Trigonometric tests
 
 TEMPLATE_TEST_CASE_2( "trigo/tan", "dyn_matrix::dyn_matrix(T)", Z, double, float) {
     etl::dyn_matrix<Z> a(3, 2, etl::values(1.0, 2.0, -1.0, -0.5, 0.6, 0.1));
@@ -63,5 +63,3 @@ TEMPLATE_TEST_CASE_2( "trigo/cosh", "dyn_matrix::dyn_matrix(T)", Z, double, floa
         REQUIRE(b[i] == Approx(std::cosh(a[i])));
     }
 }
-
-//}}}

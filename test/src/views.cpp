@@ -9,7 +9,7 @@
 
 #include <vector>
 
-///{{{ Dim
+/// Dim
 
 TEMPLATE_TEST_CASE_2( "dim/fast_matrix_1", "dim<1>", Z, float, double ) {
     etl::fast_matrix<Z, 2, 3> a({1.0, -2.0, 4.0, 3.0, 0.5, -0.1});
@@ -132,9 +132,7 @@ TEMPLATE_TEST_CASE_2( "dim/mix", "dim", Z, float, double ) {
     REQUIRE(c[2] == Approx(-0.03));
 }
 
-///}}}
-
-//{{{ reshape
+// reshape
 
 TEMPLATE_TEST_CASE_2( "reshape/fast_vector_1", "reshape<2,2>", Z, float, double ) {
     etl::fast_vector<Z, 4> a({1,2,3,4});
@@ -269,9 +267,7 @@ TEMPLATE_TEST_CASE_2( "reshape/expr", "reshape(a+b)", Z, float, double ) {
     REQUIRE(c(1,2) == 12.0);
 }
 
-//}}}
-
-//{{{ sub
+// sub
 
 TEMPLATE_TEST_CASE_2( "fast_matrix/sub_view_1_1", "fast_matrix::sub", Z, float, double ) {
     etl::fast_matrix<Z, 2, 2, 2> a = {1.1, 2.0, 5.0, 1.0, 1.1, 2.0, 5.0, 1.0};
@@ -541,9 +537,7 @@ TEMPLATE_TEST_CASE_2( "fast_matrix/sub_min_4", "fast_matrix::sub::min", Z, float
     REQUIRE(m2 == 1.0);
 }
 
-//}}}
-
-///{{{ lvalue access
+/// lvalue access
 
 TEMPLATE_TEST_CASE_2( "lvalue/fast_matrix_1", "lvalue dim<1>", Z, float, double ) {
     etl::fast_matrix<Z, 2, 3> a({1.0, -2.0, 4.0, 3.0, 0.5, -0.1});
@@ -914,5 +908,3 @@ TEMPLATE_TEST_CASE_2( "lvalue/dyn_matrix_12", "lvalue sub", Z, float, double ) {
     REQUIRE(a(0, 1, 1) == 4.0);
     REQUIRE(a(1, 0, 0) == Z(1.1));
 }
-
-///}}}

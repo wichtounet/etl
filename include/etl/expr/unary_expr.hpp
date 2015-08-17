@@ -240,7 +240,7 @@ public:
         return {*this, size(*this)};
     }
 
-    //{{{ Direct memory access
+    // Direct memory access
 
     template<typename SS = Expr, cpp_enable_if(has_direct_access<SS>::value)>
     memory_type memory_start() noexcept {
@@ -261,8 +261,6 @@ public:
     const_memory_type memory_end() const noexcept {
         return value().memory_end();
     }
-
-    //}}}
 };
 
 template <typename T, typename Expr>

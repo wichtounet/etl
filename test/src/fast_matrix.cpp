@@ -8,7 +8,7 @@
 
 #include <cmath>
 
-//{{{ Init tests
+// Init tests
 
 TEMPLATE_TEST_CASE_2( "fast_matrix/init_1", "fast_matrix::fast_matrix(T)", Z, float, double ) {
     etl::fast_matrix<Z, 2, 3> test_matrix(3.3);
@@ -97,8 +97,6 @@ TEMPLATE_TEST_CASE_2( "fast_matrix/dim_0", "fast_matrix::fast_matrix(T)", Z, flo
     REQUIRE(test_matrix.dim(5) == 7);
 }
 
-//}}} Init tests
-
 TEMPLATE_TEST_CASE_2( "fast_matrix/access", "fast_matrix::operator()", Z, float, double ) {
     etl::fast_matrix<Z, 2, 3, 2> test_matrix({1.0, -2.0, 3.0, 0.5, 0.0, -1, 1.0, -2.0, 3.0, 0.5, 0.0, -1});
 
@@ -117,7 +115,7 @@ TEMPLATE_TEST_CASE_2( "fast_matrix/access", "fast_matrix::operator()", Z, float,
     REQUIRE(test_matrix(1, 2, 1) == -1);
 }
 
-//{{{ Binary operators test
+// Binary operators test
 
 TEMPLATE_TEST_CASE_2( "fast_matrix/add_scalar_1", "fast_matrix::operator+", Z, float, double ) {
     etl::fast_matrix<Z, 2, 2> test_matrix = {-1.0, 2.0, 5.5, 1.0};
@@ -426,9 +424,7 @@ TEST_CASE( "fast_matrix/mod_2", "fast_matrix::operator%=") {
     REQUIRE(a[2] == 5 % 4);
 }
 
-//}}} Binary operator tests
-
-//{{{ Unary operator tests
+// Unary operator tests
 
 TEMPLATE_TEST_CASE_2( "fast_matrix/minus_1", "fast_matrix::minus", Z, float, double ) {
     etl::fast_matrix<Z, 2, 2> a = {-1.0, 2.0, 5.0, 1.0};
@@ -645,9 +641,7 @@ TEMPLATE_TEST_CASE_2( "fast_matrix/r_bernoulli", "fast_matrix::r_bernoulli", Z, 
     REQUIRE(binary(d[3]));
 }
 
-//}}} Unary operators test
-
-//{{{ Complex tests
+// Complex tests
 
 TEMPLATE_TEST_CASE_2( "fast_matrix/complex", "fast_matrix::complex", Z, float, double ) {
     etl::fast_matrix<Z, 2, 2> a = {-1.0, 2.0, 5.0, 1.0};
@@ -699,9 +693,7 @@ TEMPLATE_TEST_CASE_2( "fast_matrix/complex_4", "fast_matrix::complex", Z, float,
     REQUIRE(d[6] == Approx(5.8273));
 }
 
-//}}} Complex tests
-
-//{{{ is_finite tests
+// is_finite tests
 
 TEMPLATE_TEST_CASE_2( "fast_matrix/is_finite_1", "fast_matrix::is_finite", Z, float, double ) {
     etl::fast_matrix<Z, 2, 2> a = {-1.0, 2.0, 5.0, 1.0};
@@ -721,9 +713,7 @@ TEMPLATE_TEST_CASE_2( "fast_matrix/is_finite_3", "fast_matrix::is_finite", Z, fl
     REQUIRE(!a.is_finite());
 }
 
-//}}} is_finite tests
-
-//{{{ scale tests
+// scale tests
 
 TEMPLATE_TEST_CASE_2( "fast_matrix/scale_1", "", Z, float, double ) {
     etl::fast_matrix<Z, 2, 2> a = {-1.0, 2.0, 5.0, 1.0};
@@ -771,9 +761,7 @@ TEMPLATE_TEST_CASE_2( "fast_matrix/scale_4", "", Z, float, double ) {
     REQUIRE(a[3] == 2.5);
 }
 
-//}}} scale tests
-
-//{{{ swap tests
+// swap tests
 
 TEMPLATE_TEST_CASE_2( "fast_matrix/swap_1", "", Z, float, double ) {
     etl::fast_matrix<Z, 3, 2> a = {-1.0, 2.0, 5.0, 1.0, 1.1, 1.9};
@@ -816,5 +804,3 @@ TEMPLATE_TEST_CASE_2( "fast_matrix/swap_2", "", Z, float, double ) {
     REQUIRE(b[4] == Z(1.1));
     REQUIRE(b[5] == Z(1.9));
 }
-
-//}}} swap tests

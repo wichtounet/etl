@@ -11,7 +11,7 @@
 
 //Note: The results of the tests have been validated with one of (octave/matlab/matlab)
 
-//{{{ conv_2d_valid_multi
+// conv_2d_valid_multi
 
 TEMPLATE_TEST_CASE_2( "conv_2d_valid_multi/1", "[conv] [conv2]", Z, double, float ) {
     etl::fast_matrix<Z, 3, 3> I = {1.0, 2.0, 3.0, 0.0, 1.0, 1.0, 3.0, 2.0, 1.0};
@@ -107,5 +107,3 @@ TEMPLATE_TEST_CASE_2( "conv_2d_valid_multi/5", "[conv] [conv2]", Z, double, floa
 
 //TODO Add tests for conv_2d_valid_multi when neithe rthe kernel nor
 //the image are square.
-
-//}}}

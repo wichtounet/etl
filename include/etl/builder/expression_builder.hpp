@@ -21,7 +21,7 @@
 
 namespace etl {
 
-//{{{ Build binary expressions from two ETL expressions (vector,matrix,binary,unary)
+// Build binary expressions from two ETL expressions (vector,matrix,binary,unary)
 
 template<typename LE, typename RE, cpp::enable_if_all_u<is_etl_expr<LE>::value, is_etl_expr<RE>::value> = cpp::detail::dummy>
 auto operator-(LE&& lhs, RE&& rhs) -> detail::left_binary_helper<LE, RE, minus_binary_op> {
@@ -72,9 +72,7 @@ auto operator%(LE&& lhs, RE&& rhs) -> detail::left_binary_helper<LE, RE, mod_bin
     return {lhs, rhs};
 }
 
-//}}}
-
-//{{{ Mix scalars and ETL expressions (vector,matrix,binary,unary)
+// Mix scalars and ETL expressions (vector,matrix,binary,unary)
 
 template<typename LE, typename RE, cpp::enable_if_all_u<std::is_convertible<RE, value_t<LE>>::value, is_etl_expr<LE>::value> = cpp::detail::dummy>
 auto operator-(LE&& lhs, RE rhs) -> detail::left_binary_helper<LE, scalar<value_t<LE>>, minus_binary_op> {
@@ -141,9 +139,7 @@ auto operator%(LE lhs, RE&& rhs) -> detail::right_binary_helper<scalar<value_t<R
     return {scalar<value_t<RE>>(lhs), rhs};
 }
 
-//}}}
-
-//{{{ Compound operators
+// Compound operators
 
 template<typename T, typename Enable = void>
 struct is_etl_assignable : std::false_type {};
@@ -232,9 +228,7 @@ LE& operator%=(LE&& lhs, RE&& rhs){
     return lhs;
 }
 
-//}}}
-
-//{{{ Apply an unary expression on an ETL expression (vector,matrix,binary,unary)
+// Apply an unary expression on an ETL expression (vector,matrix,binary,unary)
 
 template<typename E, cpp::enable_if_u<is_etl_expr<E>::value> = cpp::detail::dummy>
 auto operator-(E&& value) -> detail::unary_helper<E, minus_unary_op> {
@@ -435,9 +429,7 @@ auto relu_derivative(const E& value) -> detail::unary_helper<E, relu_derivative_
     return detail::unary_helper<E, relu_derivative_op>{value};
 }
 
-//}}}
-
-//{{{ Views that returns lvalues
+// Views that returns lvalues
 
 template<std::size_t D, typename E, cpp::enable_if_u<is_etl_expr<E>::value> = cpp::detail::dummy>
 auto dim(E&& value, std::size_t i) -> detail::identity_helper<E, dim_view<detail::build_identity_type<E>, D>> {
@@ -474,9 +466,7 @@ auto reshape(E&& value, std::size_t rows, std::size_t columns) -> detail::identi
     return detail::identity_helper<E, dyn_matrix_view<detail::build_identity_type<E>>>{{value, rows, columns}};
 }
 
-//}}}
-
-//{{{ Virtual Views that returns rvalues
+// Virtual Views that returns rvalues
 
 template<typename D = double>
 auto magic(std::size_t i) -> detail::virtual_helper<D, magic_view<D>> {
@@ -488,10 +478,7 @@ auto magic() -> detail::virtual_helper<D, fast_magic_view<D, N>> {
     return detail::virtual_helper<D, fast_magic_view<D, N>>{{}};
 }
 
-//}}}
-
-
-//{{{ Apply a stable transformation
+// Apply a stable transformation
 
 template<std::size_t D1, std::size_t... D, typename E, cpp_enable_if(is_etl_expr<E>::value)>
 auto rep(E&& value) -> unary_expr<value_t<E>, rep_r_transformer<detail::build_type<E>, D1, D...>, transform_op> {
@@ -550,9 +537,7 @@ auto mean_l(E&& value) -> detail::stable_transform_helper<E, mean_l_transformer>
     return detail::make_transform_expr<E, mean_l_transformer>(value);
 }
 
-//}}}
-
-//{{{ Apply a special expression that can change order of elements
+// Apply a special expression that can change order of elements
 
 template<typename E, cpp::enable_if_u<is_etl_expr<E>::value> = cpp::detail::dummy>
 auto hflip(const E& value) -> detail::stable_transform_helper<E, hflip_transformer> {
@@ -578,9 +563,7 @@ auto transpose(const E& value) -> detail::stable_transform_helper<E, transpose_t
     return detail::make_transform_expr<E, transpose_transformer>(value);
 }
 
-//}}}
-
-//{{{ Apply a reduction on an ETL expression (vector,matrix,binary,unary)
+// Apply a reduction on an ETL expression (vector,matrix,binary,unary)
 
 template<typename A, typename B, cpp::enable_if_all_u<is_etl_expr<A>::value, is_etl_expr<B>::value> = cpp::detail::dummy>
 value_t<A> dot(const A& a, const B& b){
@@ -660,9 +643,7 @@ value_return_t<E> min(E&& values){
     return values[m];
 }
 
-//}}}
-
-//{{{ Generate data
+// Generate data
 
 template<typename T = double>
 auto normal_generator(T mean = 0.0, T stddev = 1.0) -> generator_expr<normal_generator_op<T>> {
@@ -673,8 +654,6 @@ template<typename T = double>
 auto sequence_generator(T current = 0) -> generator_expr<sequence_generator_op<T>> {
     return generator_expr<sequence_generator_op<T>>{current};
 }
-
-//}}}
 
 //Force optimization of an expression
 

@@ -11,7 +11,7 @@
 
 //Note: The results of the tests have been validated with one of (octave/matlab/matlab)
 
-//{{{ convolution_deep_full
+// convolution_deep_full
 
 TEMPLATE_TEST_CASE_2( "convolution_3d/full_1", "convolution_deep_full", Z, float, double ) {
     etl::fast_matrix<Z, 2, 2, 2> a = {1.0, 2.0, 3.0, 2.0, 5.0, 6.0, 7.0, 8.0};
@@ -76,5 +76,3 @@ TEMPLATE_TEST_CASE_2( "convolution_4d/full_1", "convolution_deep_full", Z, float
     REQUIRE(c(0,1,2,1) == 22.0);
     REQUIRE(c(0,1,2,2) == 16.0);
 }
-
-//}}}

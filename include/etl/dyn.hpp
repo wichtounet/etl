@@ -133,7 +133,7 @@ private:
     }
 
 public:
-    //{{{ Construction
+    // Construction
 
     //Default constructor (constructs an empty matrix)
     dyn_matrix_impl() noexcept : _size(0), _data(0) {
@@ -298,9 +298,7 @@ public:
         check_invariants();
     }
 
-    //}}}
-
-    //{{{ Assignment
+    // Assignment
 
     //Copy assignment operator
 
@@ -372,9 +370,7 @@ public:
         return *this;
     }
 
-    //}}}
-
-    //{{{ Swap operations
+    // Swap operations
 
     void swap(dyn_matrix_impl& other){
         using std::swap;
@@ -385,9 +381,7 @@ public:
         check_invariants();
     }
 
-    //}}}
-
-    //{{{ Accessors
+    // Accessors
 
     std::size_t size() const noexcept {
         return _size;
@@ -565,9 +559,7 @@ public:
         return _data.cend();
     }
 
-    //}}}
-
-    //{{{ Direct memory access
+    // Direct memory access
 
     memory_type memory_start() noexcept {
         return &_data[0];
@@ -584,8 +576,6 @@ public:
     const_memory_type memory_end() const noexcept {
         return &_data[size()];
     }
-
-    //}}}
 
     std::size_t& unsafe_dimension_access(std::size_t i){
         cpp_assert(i < n_dimensions, "Out of bounds");

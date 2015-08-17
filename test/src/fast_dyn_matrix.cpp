@@ -6,7 +6,7 @@
 
 #include "test_light.hpp"
 
-//{{{ Init tests
+// Init tests
 
 TEMPLATE_TEST_CASE_2( "fast_dyn_matrix/init_1", "fast_dyn_matrix::fast_dyn_matrix(T)", Z, float, double ) {
     etl::fast_dyn_matrix<Z, 2, 2> test_matrix(3.3);
@@ -40,8 +40,6 @@ TEMPLATE_TEST_CASE_2( "fast_dyn_matrix/init_3", "fast_dyn_matrix::fast_dyn_matri
     REQUIRE(test_matrix[2] == 5.0);
 }
 
-//}}} Init tests
-
 TEMPLATE_TEST_CASE_2( "fast_dyn_matrix/access", "fast_dyn_matrix::operator()", Z, float, double ) {
     etl::fast_dyn_matrix<Z, 2, 3, 2> test_matrix({1.0, -2.0, 3.0, 0.5, 0.0, -1, 1.0, -2.0, 3.0, 0.5, 0.0, -1});
 
@@ -60,7 +58,7 @@ TEMPLATE_TEST_CASE_2( "fast_dyn_matrix/access", "fast_dyn_matrix::operator()", Z
     REQUIRE(test_matrix(1, 2, 1) == -1);
 }
 
-//{{{ Binary operators test
+// Binary operators test
 
 TEMPLATE_TEST_CASE_2( "fast_dyn_matrix/add_scalar_1", "fast_dyn_matrix::operator+", Z, float, double ) {
     etl::fast_dyn_matrix<Z, 2, 2> test_matrix = {-1.0, 2.0, 5.5, 1.0};
@@ -115,9 +113,7 @@ TEMPLATE_TEST_CASE_2( "fast_dyn_matrix/add_2", "fast_dyn_matrix::operator+=", Z,
     REQUIRE(a[2] ==  9.0);
 }
 
-//}}} Binary operator tests
-
-//{{{ Unary operator tests
+// Unary operator tests
 
 TEMPLATE_TEST_CASE_2( "fast_dyn_matrix/log_1", "fast_dyn_matrix::log", Z, float, double ) {
     etl::fast_dyn_matrix<Z, 2, 2> a = {-1.0, 2.0, 5.0, 1.0};
@@ -170,9 +166,7 @@ TEMPLATE_TEST_CASE_2( "fast_dyn_matrix/min", "fast_dyn_matrix::min", Z, float, d
     REQUIRE(d[3] == 1.0);
 }
 
-//}}} Unary operators test
-
-//{{{ Complex tests
+// Complex tests
 
 TEMPLATE_TEST_CASE_2( "fast_dyn_matrix/complex", "fast_dyn_matrix::complex", Z, float, double ) {
     etl::fast_dyn_matrix<Z, 2, 2> a = {-1.0, 2.0, 5.0, 1.0};
@@ -185,8 +179,6 @@ TEMPLATE_TEST_CASE_2( "fast_dyn_matrix/complex", "fast_dyn_matrix::complex", Z, 
     REQUIRE(d[1] == Approx(5.0));
     REQUIRE(d[2] == Approx(0.68627));
 }
-
-//}}} Complex tests
 
 TEMPLATE_TEST_CASE_2( "fast_dyn_matrix/special_1", "", Z, float, double ) {
     etl::fast_dyn_matrix<Z, 2, 2> a(3.3);

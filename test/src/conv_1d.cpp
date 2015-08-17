@@ -11,7 +11,7 @@
 
 //Note: The results of the tests have been validated with one of (octave/matlab/matlab)
 
-//{{{ convolution_1d_full
+// convolution_1d_full
 
 CONV1_FULL_TEST_CASE( "convolution_1d/full_1", "convolution_1d_full" ) {
     etl::fast_vector<T, 3> a = {1.0, 2.0, 3.0};
@@ -160,9 +160,7 @@ CONV1_FULL_TEST_CASE( "convolution_1d/full_8", "convolution_1d_full" ) {
     REQUIRE(c[6] == Approx(7.5));
 }
 
-//}}}
-
-//{{{ convolution_1d_same
+// convolution_1d_same
 
 CONV1_SAME_TEST_CASE( "convolution_1d/same_1", "convolution_1d_same" ) {
     etl::fast_vector<T, 3> a = {1.0, 2.0, 3.0};
@@ -255,9 +253,7 @@ CONV1_SAME_TEST_CASE( "convolution_1d/same_5", "convolution_1d_same" ) {
     REQUIRE(c[16-4] == 3465);
 }
 
-//}}}
-
-//{{{ convolution_1d_valid
+// convolution_1d_valid
 
 CONV1_VALID_TEST_CASE( "convolution_1d/valid_1", "convolution_1d_valid" ) {
     etl::fast_vector<T, 3> a = {1.0, 2.0, 3.0};
@@ -348,9 +344,7 @@ CONV1_VALID_TEST_CASE( "convolution_1d/valid_5", "convolution_1d_valid" ) {
     REQUIRE(c[16] == 8036);
 }
 
-//}}}
-
-//{{{ convolution_subs
+// convolution_subs
 
 TEMPLATE_TEST_CASE_2( "convolution_1d/sub_1", "convolution_1d_full_sub", Z, float, double ) {
     etl::fast_matrix<Z, 1, 3> a = {1.0, 2.0, 3.0};
@@ -387,7 +381,7 @@ TEMPLATE_TEST_CASE_2( "convolution_1d/sub_3", "convolution_1d_valid", Z, float, 
 
     REQUIRE(c[0] == 2.5);
 }
-//{{{ convolution_1d_full_expr
+// convolution_1d_full_expr
 
 TEMPLATE_TEST_CASE_2( "convolution_1d/expr_full_1", "convolution_1d_full", Z, float, double ) {
     etl::dyn_vector<Z> a({1.0, 2.0, 3.0});
@@ -418,5 +412,3 @@ TEMPLATE_TEST_CASE_2( "convolution_1d/expr_full_2", "convolution_1d_full", Z, fl
     REQUIRE(c[5] == Approx(11.0));
     REQUIRE(c[6] == Approx(7.5));
 }
-
-//}}}

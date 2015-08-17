@@ -8,7 +8,7 @@
 #include "test_light.hpp"
 #include "cpp_utils/algorithm.hpp"
 
-//{{{ Init tests
+// Init tests
 
 TEMPLATE_TEST_CASE_2( "dyn_matrix/init_1", "dyn_matrix::dyn_matrix(T)", Z, double, float) {
     etl::dyn_matrix<Z> test_matrix(3, 2, 3.3);
@@ -147,9 +147,7 @@ TEMPLATE_TEST_CASE_2( "dyn_matrix/dim_0", "fast_matrix::fast_matrix(T)", Z, floa
     REQUIRE(test_matrix.dim(5) == 7);
 }
 
-//}}} Init tests
-
-//{{{ Binary operators test
+// Binary operators test
 
 TEMPLATE_TEST_CASE_2( "dyn_matrix/add_scalar_1", "dyn_matrix::operator+", Z, double, float) {
     etl::dyn_matrix<Z> test_matrix(2,2, std::initializer_list<Z>({-1.0, 2.0, 5.5, 1.0}));
@@ -423,9 +421,7 @@ TEST_CASE( "dyn_matrix/mod_2", "dyn_matrix::operator%=") {
     REQUIRE(a[2] == 5 % 4);
 }
 
-//}}} Binary operator tests
-
-//{{{ Unary operator tests
+// Unary operator tests
 
 TEMPLATE_TEST_CASE_2( "dyn_matrix/log", "dyn_matrix::abs", Z, double, float) {
     etl::dyn_matrix<Z> a(2,2, std::initializer_list<Z>({-1.0, 2.0, 5.0, 1.0}));
@@ -557,9 +553,7 @@ TEMPLATE_TEST_CASE_2( "dyn_matrix/bernoulli", "dyn_matrix::bernoulli", Z, double
     REQUIRE(binary(d[3]));
 }
 
-//}}} Unary operators test
-
-//{{{ Complex tests
+// Complex tests
 
 TEMPLATE_TEST_CASE_2( "dyn_matrix/complex", "dyn_matrix::complex", Z, double, float) {
     etl::dyn_matrix<Z> a(2,2, std::initializer_list<Z>({-1.0, 2.0, 5.0, 1.0}));
@@ -597,9 +591,7 @@ TEMPLATE_TEST_CASE_2( "dyn_matrix/complex_3", "dyn_matrix::complex", Z, double, 
     REQUIRE(d[2] == Approx(0.125));
 }
 
-//}}} Complex tests
-
-//{{{ Reductions
+// Reductions
 
 TEMPLATE_TEST_CASE_2( "dny_matrix/sum", "sum", Z, double, float) {
     etl::dyn_matrix<Z> a(3, 1, std::initializer_list<Z>({-1.0, 2.0, 8.5}));
@@ -641,9 +633,7 @@ TEMPLATE_TEST_CASE_2( "dyn_matrix/max_reduc", "max", Z, double, float) {
     REQUIRE(d == 8.5);
 }
 
-//}}} Reductions
-
-//{{{ is_finite tests
+// is_finite tests
 
 TEMPLATE_TEST_CASE_2( "dyn_matrix/is_finite_1", "dyn_matrix::is_finite", Z, double, float) {
     etl::dyn_matrix<Z> a(2,2, std::initializer_list<Z>({-1.0, 2.0, 5.0, 1.0}));
@@ -663,9 +653,7 @@ TEMPLATE_TEST_CASE_2( "dyn_matrix/is_finite_3", "dyn_matrix::is_finite", Z, doub
     REQUIRE(!a.is_finite());
 }
 
-//}}} is_finite tests
-
-//{{{ scale tests
+// scale tests
 
 TEMPLATE_TEST_CASE_2( "dyn_matrix/scale_1", "", Z, float, double ) {
     etl::dyn_matrix<Z> a(2, 2, etl::values(-1.0, 2.0, 5.0, 1.0));
@@ -713,9 +701,7 @@ TEMPLATE_TEST_CASE_2( "dyn_matrix/scale_4", "", Z, float, double ) {
     REQUIRE(a[3] == 2.5);
 }
 
-//}}} scale tests
-
-//{{{ swap tests
+// swap tests
 
 TEMPLATE_TEST_CASE_2( "dyn_matrix/swap_1", "", Z, float, double ) {
     etl::dyn_matrix<Z> a(3, 2, etl::values(-1.0, 2.0, 5.0, 1.0, 1.1, 1.9));
@@ -772,8 +758,6 @@ TEMPLATE_TEST_CASE_2( "dyn_matrix/swap_3", "", Z, float, double ) {
     REQUIRE(etl::dim<0>(b) == 2);
     REQUIRE(etl::dim<1>(b) == 4);
 }
-
-//}}} swap tests
 
 //Make sure assign between matrices of different are compiling correctly
 

@@ -7,7 +7,7 @@
 
 #include "test_light.hpp"
 
-//{{{ Tests for rep_r
+// Tests for rep_r
 
 TEMPLATE_TEST_CASE_2( "rep/fast_matrix_1", "rep", Z, float, double ) {
     etl::fast_matrix<Z, 3> a({1.0, -2.0, 3.0});
@@ -188,9 +188,7 @@ TEMPLATE_TEST_CASE_2( "rep/dyn_matrix_4", "rep", Z, float, double ) {
     }
 }
 
-//}}}
-
-//{{{ Tests for rep_l
+// Tests for rep_l
 
 TEMPLATE_TEST_CASE_2( "rep_l/fast_matrix_1", "rep", Z, float, double ) {
     etl::fast_matrix<Z, 3> a({1.0, -2.0, 3.0});
@@ -369,9 +367,7 @@ TEMPLATE_TEST_CASE_2( "rep_l/dyn_matrix_4", "rep", Z, float, double ) {
     }
 }
 
-//}}}
-
-//{{{ Tests for sum_r
+// Tests for sum_r
 
 TEMPLATE_TEST_CASE_2( "sum_r/fast_matrix_1", "sum_r", Z, float, double ) {
     etl::fast_matrix<Z, 3, 4> a({1,2,3,4,0,0,1,1,4,5,6,7});
@@ -415,9 +411,7 @@ TEMPLATE_TEST_CASE_2( "sum_r/fast_matrix_4", "sum_r", Z, float, double ) {
     REQUIRE(b(2) == 2.5);
 }
 
-//}}}
-
-//{{{ Tests for mean_r
+// Tests for mean_r
 
 TEMPLATE_TEST_CASE_2( "mean_r/fast_matrix_1", "mean_r", Z, float, double ) {
     etl::fast_matrix<Z, 3, 4> a({1,2,3,4,0,0,1,1,4,5,6,7});
@@ -503,9 +497,7 @@ TEMPLATE_TEST_CASE_2( "mean_r/dyn_matrix_2", "mean_r", Z, float, double ) {
     REQUIRE(b(2) == 5.5);
 }
 
-//}}}
-
-//{{{ Tests for mean_l
+// Tests for mean_l
 
 TEMPLATE_TEST_CASE_2( "mean_l/fast_matrix_1", "mean_l", Z, float, double ) {
     etl::fast_matrix<Z, 3, 4> a({1,2,3,4, 0,0,1,1, 4,5,6,7});
@@ -608,9 +600,7 @@ TEMPLATE_TEST_CASE_2( "mean_l/fast_matrix_7", "mean_l/mean_r", Z, float, double 
     REQUIRE(b(3) == Approx(15.5));
 }
 
-//}}}
-
-//{{{ Tests for sum_l
+// Tests for sum_l
 
 TEMPLATE_TEST_CASE_2( "sum_l/fast_matrix_1", "sum_l", Z, float, double ) {
     etl::fast_matrix<Z, 3, 4> a({1,2,3,4, 0,0,1,1, 4,5,6,7});
@@ -637,9 +627,7 @@ TEMPLATE_TEST_CASE_2( "sum_l/fast_matrix_6", "sum_l", Z, float, double ) {
     REQUIRE(b(3,1) == Approx(48.0));
 }
 
-//}}}
-
-//{{{ Tests for dyn_rep_r
+// Tests for dyn_rep_r
 
 TEMPLATE_TEST_CASE_2( "dyn_rep/fast_matrix_1", "dyn_rep", Z, float, double ) {
     etl::fast_matrix<Z, 3> a({1.0, -2.0, 3.0});
@@ -779,9 +767,7 @@ TEMPLATE_TEST_CASE_2( "dyn_rep/dyn_matrix_4", "dyn_rep", Z, float, double ) {
     }
 }
 
-//}}}
-
-//{{{ Tests for dyn_rep_l
+// Tests for dyn_rep_l
 
 TEMPLATE_TEST_CASE_2( "dyn_rep_l/fast_matrix_1", "dyn_rep", Z, float, double ) {
     etl::fast_matrix<Z, 3> a({1.0, -2.0, 3.0});
@@ -920,5 +906,3 @@ TEMPLATE_TEST_CASE_2( "dyn_rep_l/dyn_matrix_4", "dyn_rep", Z, float, double ) {
 }
 
 //TODO Add tests for dyn_rep_l and dyn_rep_r on matrices
-
-//}}}

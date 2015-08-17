@@ -10,7 +10,7 @@
 
 //Note: The results of the tests have been validated with one of (octave/matlab/matlab)
 
-//{{{ convolution_2d_full
+// convolution_2d_full
 
 CONV2_FULL_TEST_CASE( "convolution_2d/full_1", "convolution_2d_full" ) {
     etl::fast_matrix<T, 3, 3> a = {1.0, 2.0, 3.0, 0.0, 1.0, 1.0, 3.0, 2.0, 1.0};
@@ -228,9 +228,7 @@ CONV2_FULL_TEST_CASE( "convolution_2d/full_8", "convolution_2d_full" ) {
     CHECK(c(3, 3) == Approx(T(516210)).epsilon(5.0));
 }
 
-//}}}
-
-//{{{ convolution_2d_same
+// convolution_2d_same
 
 CONV2_SAME_TEST_CASE( "convolution_2d/same_1", "convolution_2d_same" ) {
     etl::fast_matrix<T, 3, 3> a = {1.0, 2.0, 3.0, 0.0, 1.0, 1.0, 3.0, 2.0, 1.0};
@@ -410,9 +408,7 @@ CONV2_SAME_TEST_CASE( "convolution_2d/same_8", "convolution_2d_same" ) {
 }
 
 
-//}}}
-
-//{{{ convolution_2d_valid
+// convolution_2d_valid
 
 CONV2_VALID_TEST_CASE( "convolution_2d/valid_1", "convolution_2d_valid" ) {
     etl::fast_matrix<T, 3, 3> a = {1.0, 2.0, 3.0, 0.0, 1.0, 1.0, 3.0, 2.0, 1.0};
@@ -588,9 +584,7 @@ CONV2_VALID_TEST_CASE( "convolution_2d/valid_11", "convolution_2d_valid" ) {
     REQUIRE(c(0,0) == 8.5);
 }
 
-//}}}
-
-//{{{ convolution_subs
+// convolution_subs
 
 TEMPLATE_TEST_CASE_2( "convolution_2d/sub_1", "convolution_2d_full", Z, float, double ) {
     etl::fast_matrix<Z, 1, 3, 3> a = {1.0, 2.0, 3.0, 0.0, 1.0, 1.0, 3.0, 2.0, 1.0};
@@ -653,8 +647,6 @@ TEMPLATE_TEST_CASE_2( "convolution_2d/sub_3", "convolution_2d_valid", Z, float, 
     REQUIRE(c(0,1,0) == 4.5);
     REQUIRE(c(0,1,1) == 3.0);
 }
-
-//}}}
 
 TEMPLATE_TEST_CASE_2( "convolution/1", "[conv]", Z, float, double) {
     //Test for bugfix: conv_2d_expr dimensions were not working for more than 1 dimensions
