@@ -237,6 +237,32 @@ inline cpp14_constexpr fft_impl select_fft2_impl(const std::size_t n1, std::size
     }
 }
 
+template<bool DMA>
+inline cpp14_constexpr fft_impl select_fft2_many_impl(const std::size_t /*batch*/, const std::size_t n1, const std::size_t n2){
+    //Only std implementation is able to handle non-dma expressions
+    if(!DMA){
+        return fft_impl::STD;
+    }
+
+    //Note since these boolean will be known at compile time, the conditions will be a lot simplified
+    constexpr const bool mkl = is_mkl_enabled::value;
+    constexpr const bool cufft = is_cufft_enabled::value;
+
+    //Note: more testing would probably improve this selection
+
+    if(cufft){
+        if(n1 * n2 <= 768 * 768 && mkl){
+            return fft_impl::MKL;
+        }
+
+        return fft_impl::CUFFT;
+    } else if(mkl) {
+        return fft_impl::MKL;
+    } else {
+        return fft_impl::STD;
+    }
+}
+
 template<typename A, typename C>
 struct fft1_impl {
     template<typename AA, typename CC>
@@ -345,6 +371,22 @@ struct fft1_many_impl {
             etl::impl::blas::fft1_many(std::forward<AA>(a), std::forward<CC>(c));
         } else if(impl == fft_impl::CUFFT){
             etl::impl::cufft::fft1_many(std::forward<AA>(a), std::forward<CC>(c));
+        }
+    }
+};
+
+template<typename A, typename C>
+struct fft2_many_impl {
+    template<typename AA, typename CC>
+    static void apply(AA&& a, CC&& c){
+        auto impl = select_fft2_many_impl<all_dma<A,C>::value>(etl::dim<0>(c), etl::dim<1>(c), etl::dim<2>(c));
+
+        if(impl == fft_impl::STD){
+            etl::impl::standard::fft2_many(std::forward<AA>(a), std::forward<CC>(c));
+        } else if(impl == fft_impl::MKL){
+            etl::impl::blas::fft2_many(std::forward<AA>(a), std::forward<CC>(c));
+        } else if(impl == fft_impl::CUFFT){
+            etl::impl::cufft::fft2_many(std::forward<AA>(a), std::forward<CC>(c));
         }
     }
 };

@@ -49,7 +49,6 @@ inline void inplace_cfft1_many_kernel(const impl::cuda::cuda_memory<std::complex
         nullptr, 1, n,
         CUFFT_C2C, batch);
 
-    //cufftPlan1d(&handle.get(), n, CUFFT_C2C, 1);
     cufftExecC2C(handle.get(), complex_cast(data.get()), complex_cast(data.get()), CUFFT_FORWARD);
 }
 
@@ -63,7 +62,6 @@ inline void inplace_zfft1_many_kernel(const impl::cuda::cuda_memory<std::complex
         nullptr, 1, n,
         CUFFT_Z2Z, batch);
 
-    //cufftPlan1d(&handle.get(), n, CUFFT_Z2Z, 1);
     cufftExecZ2Z(handle.get(), complex_cast(data.get()), complex_cast(data.get()), CUFFT_FORWARD);
 }
 
@@ -92,6 +90,32 @@ inline void inplace_zfft2_kernel(const impl::cuda::cuda_memory<std::complex<doub
     auto handle = start_cufft();
 
     cufftPlan2d(&handle.get(), d1, d2, CUFFT_Z2Z);
+    cufftExecZ2Z(handle.get(), complex_cast(data.get()), complex_cast(data.get()), CUFFT_FORWARD);
+}
+
+inline void inplace_cfft2_many_kernel(const impl::cuda::cuda_memory<std::complex<float>>& data, std::size_t batch, std::size_t d1, std::size_t d2){
+    auto handle = start_cufft();
+
+    int dims[] = {int(d1), int(d2)};
+
+    cufftPlanMany(&handle.get(), 2, dims,
+        nullptr, 1, d1 * d2,
+        nullptr, 1, d1 * d2,
+        CUFFT_C2C, batch);
+
+    cufftExecC2C(handle.get(), complex_cast(data.get()), complex_cast(data.get()), CUFFT_FORWARD);
+}
+
+inline void inplace_zfft2_many_kernel(const impl::cuda::cuda_memory<std::complex<double>>& data, std::size_t batch, std::size_t d1, std::size_t d2){
+    auto handle = start_cufft();
+
+    int dims[] = {int(d1), int(d2)};
+
+    cufftPlanMany(&handle.get(), 2, dims,
+        nullptr, 1, d1 * d2,
+        nullptr, 1, d1 * d2,
+        CUFFT_Z2Z, batch);
+
     cufftExecZ2Z(handle.get(), complex_cast(data.get()), complex_cast(data.get()), CUFFT_FORWARD);
 }
 
@@ -413,6 +437,46 @@ void ifft2_real(A&& a, C&& c){
     }
 }
 
+template<typename A, typename C, cpp_enable_if(all_single_precision<A>::value && all_dma<A,C>::value)>
+void fft2_many(A&& a, C&& c){
+    std::copy(a.begin(), a.end(), c.begin());
+
+    auto gpu_c = impl::cuda::cuda_allocate_copy(c);
+
+    detail::inplace_cfft2_many_kernel(gpu_c, etl::dim<0>(a), etl::dim<1>(a), etl::dim<2>(a));
+
+    cudaMemcpy(c.memory_start(), gpu_c.get(), etl::size(c) * sizeof(value_t<C>), cudaMemcpyDeviceToHost);
+}
+
+template<typename A, typename C, cpp_enable_if(all_double_precision<A>::value && all_dma<A,C>::value)>
+void fft2_many(A&& a, C&& c){
+    std::copy(a.begin(), a.end(), c.begin());
+
+    auto gpu_c = impl::cuda::cuda_allocate_copy(c);
+
+    detail::inplace_zfft2_many_kernel(gpu_c, etl::dim<0>(a), etl::dim<1>(a), etl::dim<2>(a));
+
+    cudaMemcpy(c.memory_start(), gpu_c.get(), etl::size(c) * sizeof(value_t<C>), cudaMemcpyDeviceToHost);
+}
+
+template<typename A, typename C, cpp_enable_if(all_complex_single_precision<A>::value && all_dma<A,C>::value)>
+void fft2_many(A&& a, C&& c){
+    auto gpu_a = impl::cuda::cuda_allocate_copy(a);
+
+    detail::inplace_cfft2_many_kernel(gpu_a, etl::dim<0>(a), etl::dim<1>(a), etl::dim<2>(a));
+
+    cudaMemcpy(c.memory_start(), gpu_a.get(), etl::size(c) * sizeof(value_t<C>), cudaMemcpyDeviceToHost);
+}
+
+template<typename A, typename C, cpp_enable_if(all_complex_double_precision<A>::value && all_dma<A,C>::value)>
+void fft2_many(A&& a, C&& c){
+    auto gpu_a = impl::cuda::cuda_allocate_copy(a);
+
+    detail::inplace_zfft2_many_kernel(gpu_a, etl::dim<0>(a), etl::dim<1>(a), etl::dim<2>(a));
+
+    cudaMemcpy(c.memory_start(), gpu_a.get(), etl::size(c) * sizeof(value_t<C>), cudaMemcpyDeviceToHost);
+}
+
 template<typename A, typename B, typename C, cpp_enable_if(all_single_precision<A>::value && all_dma<A,C>::value)>
 void fft2_convolve(A&& a, B&& b, C&& c){
     const auto m1 = etl::dim<0>(a);
@@ -548,6 +612,9 @@ void ifft2(A&& /*unused*/, C&& /*unused*/){}
 template<typename A, typename C, cpp_enable_if(!all_dma<A,C>::value)>
 void ifft2_real(A&& /*unused*/, C&& /*unused*/){}
 
+template<typename A, typename C, cpp_enable_if(!all_dma<A,C>::value)>
+void fft2_many(A&& /*unused*/, C&& /*unused*/){}
+
 template<typename A, typename B, typename C, cpp_enable_if(!all_dma<A,B,C>::value)>
 void fft1_convolve(A&& /*unused*/, C&& /*unused*/){}
 
@@ -576,6 +643,9 @@ void ifft2(A&& /*unused*/, C&& /*unused*/){}
 
 template<typename A, typename C>
 void ifft2_real(A&& /*unused*/, C&& /*unused*/){}
+
+template<typename A, typename C>
+void fft2_many(A&& /*unused*/, C&& /*unused*/){}
 
 template<typename A, typename B, typename C>
 void fft1_convolve(A&& /*unused*/, C&& /*unused*/){}

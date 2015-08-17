@@ -178,6 +178,40 @@ inline void zfft2_kernel(const std::complex<double>* in, std::size_t d1, std::si
     DftiFreeDescriptor(&descriptor);                                       //Free the descriptor
 }
 
+inline void cfft2_many_kernel(const std::complex<float>* in, std::size_t batch, std::size_t d1, std::size_t d2, std::complex<float>* out){
+    DFTI_DESCRIPTOR_HANDLE descriptor;
+
+    MKL_LONG dim[]{static_cast<long>(d1), static_cast<long>(d2)};
+
+    auto* in_ptr = const_cast<void*>(static_cast<const void*>(in));
+
+    DftiCreateDescriptor(&descriptor, DFTI_SINGLE, DFTI_COMPLEX, 2, dim);  //Specify size and precision
+    DftiSetValue(descriptor, DFTI_PLACEMENT, DFTI_NOT_INPLACE);            //Out of place FFT
+    DftiSetValue(descriptor, DFTI_NUMBER_OF_TRANSFORMS, batch);            //Number of transforms
+    DftiSetValue(descriptor, DFTI_INPUT_DISTANCE, d1 * d2);                //Input stride
+    DftiSetValue(descriptor, DFTI_OUTPUT_DISTANCE, d1 * d2);               //Output stride
+    DftiCommitDescriptor(descriptor);                                      //Finalize the descriptor
+    DftiComputeForward(descriptor, in_ptr, out);                           //Compute the Forward FFT
+    DftiFreeDescriptor(&descriptor);                                       //Free the descriptor
+}
+
+inline void zfft2_many_kernel(const std::complex<double>* in, std::size_t batch, std::size_t d1, std::size_t d2, std::complex<double>* out){
+    DFTI_DESCRIPTOR_HANDLE descriptor;
+
+    MKL_LONG dim[]{static_cast<long>(d1), static_cast<long>(d2)};
+
+    auto* in_ptr = const_cast<void*>(static_cast<const void*>(in));
+
+    DftiCreateDescriptor(&descriptor, DFTI_DOUBLE, DFTI_COMPLEX, 2, dim);  //Specify size and precision
+    DftiSetValue(descriptor, DFTI_PLACEMENT, DFTI_NOT_INPLACE);            //Out of place FFT
+    DftiSetValue(descriptor, DFTI_NUMBER_OF_TRANSFORMS, batch);            //Number of transforms
+    DftiSetValue(descriptor, DFTI_INPUT_DISTANCE, d1 * d2);                //Input stride
+    DftiSetValue(descriptor, DFTI_OUTPUT_DISTANCE, d1 * d2);               //Output stride
+    DftiCommitDescriptor(descriptor);                                      //Finalize the descriptor
+    DftiComputeForward(descriptor, in_ptr, out);                           //Compute the Forward FFT
+    DftiFreeDescriptor(&descriptor);                                       //Free the descriptor
+}
+
 inline void inplace_cfft2_kernel(std::complex<float>* in, std::size_t d1, std::size_t d2){
     DFTI_DESCRIPTOR_HANDLE descriptor;
 
@@ -432,6 +466,34 @@ void fft2(A&& a, C&& c){
     detail::zfft2_kernel(a.memory_start(), etl::dim<0>(a), etl::dim<1>(a), c.memory_start());
 }
 
+template<typename A, typename C, cpp_enable_if(all_single_precision<A>::value && all_dma<A,C>::value)>
+void fft2_many(A&& a, C&& c){
+    auto a_complex = allocate<std::complex<float>>(etl::size(a));
+
+    std::copy(a.begin(), a.end(), a_complex.get());
+
+    detail::cfft2_many_kernel(a_complex.get(), etl::dim<0>(a), etl::dim<1>(a), etl::dim<2>(a), c.memory_start());
+}
+
+template<typename A, typename C, cpp_enable_if(all_double_precision<A>::value && all_dma<A,C>::value)>
+void fft2_many(A&& a, C&& c){
+    auto a_complex = allocate<std::complex<double>>(etl::size(a));
+
+    std::copy(a.begin(), a.end(), a_complex.get());
+
+    detail::zfft2_many_kernel(a_complex.get(), etl::dim<0>(a), etl::dim<1>(a), etl::dim<2>(a), c.memory_start());
+}
+
+template<typename A, typename C, cpp_enable_if(all_complex_single_precision<A>::value && all_dma<A,C>::value)>
+void fft2_many(A&& a, C&& c){
+    detail::cfft2_many_kernel(a.memory_start(), etl::dim<0>(a), etl::dim<1>(a), etl::dim<2>(a), c.memory_start());
+}
+
+template<typename A, typename C, cpp_enable_if(all_complex_double_precision<A>::value && all_dma<A,C>::value)>
+void fft2_many(A&& a, C&& c){
+    detail::zfft2_many_kernel(a.memory_start(), etl::dim<0>(a), etl::dim<1>(a), etl::dim<2>(a), c.memory_start());
+}
+
 template<typename A, typename C, cpp_enable_if(all_complex_single_precision<A>::value && all_dma<A,C>::value)>
 void ifft2(A&& a, C&& c){
     detail::cifft2_kernel(a.memory_start(), etl::dim<0>(a), etl::dim<1>(a), c.memory_start());
@@ -565,6 +627,9 @@ void ifft2(A&& /*unused*/, C&& /*unused*/){}
 template<typename A, typename C, cpp_enable_if(!all_dma<A,C>::value)>
 void ifft2_real(A&& /*unused*/, C&& /*unused*/){}
 
+template<typename A, typename C, cpp_enable_if(!all_dma<A,C>::value)>
+void fft2_many(A&& /*unused*/, C&& /*unused*/){}
+
 template<typename A, typename B, typename C, cpp_enable_if(!all_dma<A,B,C>::value)>
 void fft1_convolve(A&& /*unused*/, C&& /*unused*/){}
 
@@ -593,6 +658,9 @@ void ifft2(A&& /*unused*/, C&& /*unused*/){}
 
 template<typename A, typename C>
 void ifft2_real(A&& /*unused*/, C&& /*unused*/){}
+
+template<typename A, typename C>
+void fft2_many(A&& /*unused*/, C&& /*unused*/){}
 
 template<typename A, typename B, typename C>
 void fft1_convolve(A&& /*unused*/, C&& /*unused*/){}

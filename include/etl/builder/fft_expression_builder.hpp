@@ -139,4 +139,21 @@ auto fft_1d_many(A&& a, C&& c) -> detail::forced_temporary_unary_helper_type<det
     return {a, c};
 }
 
+template<typename A>
+auto fft_2d_many(A&& a) -> detail::temporary_unary_helper_type<detail::fft_value_type<A>, A, fft2_many_expr> {
+    static_assert(is_etl_expr<A>::value, "FFT only supported for ETL expressions");
+    static_assert(decay_traits<A>::dimensions() == 3, "fft_many requires 3D matrices");
+
+    return detail::temporary_unary_helper_type<detail::fft_value_type<A>, A, fft2_many_expr>{a};
+}
+
+template<typename A, typename C>
+auto fft_2d_many(A&& a, C&& c) -> detail::forced_temporary_unary_helper_type<detail::fft_value_type<A>, A, C, fft2_many_expr> {
+    static_assert(is_etl_expr<A>::value && is_etl_expr<C>::value, "FFT only supported for ETL expressions");
+    static_assert(decay_traits<A>::dimensions() == 3 && decay_traits<C>::dimensions() == 3, "fft_many requires 3D matrices");
+    validate_assign(c, a);
+
+    return {a, c};
+}
+
 } //end of namespace etl

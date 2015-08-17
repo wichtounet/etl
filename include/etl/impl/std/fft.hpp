@@ -667,6 +667,28 @@ void ifft2_real(A&& a, C&& c){
     }
 }
 
+//(T or complex<T>) -> complex<T>
+template<typename A, typename C>
+void fft2_many(A&& a, C&& c){
+    //TODO Improve performance by using fft1_many with higher order (2) and sub transposition
+
+    for(std::size_t i = 0; i < etl::dim<0>(c); ++i){
+        auto w = etl::force_temporary_dyn(c(i));
+
+        //Perform FFT on each rows
+        fft1_many(a(i), w);
+
+        w.transpose_inplace();
+
+        //Perform FFT on each columns
+        fft1_many(w, w);
+
+        w.transpose_inplace();
+
+        c(i) = w;
+    }
+}
+
 template<typename A, typename B, typename C>
 void fft1_convolve(A&& a, B&& b, C&& c){
     const auto m = etl::size(a);
