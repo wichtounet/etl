@@ -362,49 +362,41 @@ inline void fft_factorize(std::size_t n, std::size_t* factors, std::size_t& n_fa
     }
 }
 
-template<typename In, typename T>
-void fft_n(const In* r_in, etl::complex<T>* r_out, const std::size_t n){
-    etl::complex<T>* twiddle[MAX_FACTORS];
+template<typename T>
+std::unique_ptr<etl::complex<T>[]> twiddle_compute(const std::size_t n, std::size_t* factors, std::size_t n_factors, etl::complex<T>** twiddle){
+    std::unique_ptr<etl::complex<T>[]> trig = etl::allocate<etl::complex<T>>(n);
 
-    //0. Factorize
+    const T d_theta = -2.0 * M_PI / ((T) n);
 
-    std::size_t factors[MAX_FACTORS];
-    std::size_t n_factors = 0;
+    std::size_t t = 0;
+    std::size_t product = 1;
 
-    fft_factorize(n, factors, n_factors);
+    for (std::size_t i = 0; i < n_factors; i++){
+        std::size_t factor = factors[i];
+        twiddle[i] = &trig[0] + t;
 
-    //1. Precompute twiddle factors
+        std::size_t prev_product = product;
+        product *= factor;
 
-    auto trig = etl::allocate<etl::complex<T>>(n);
+        for (std::size_t j = 1; j < factor; j++){
+            std::size_t m = 0;
+            for (std::size_t k = 1; k <= n / product; k++){
+                m = (m + j * prev_product) % n;
 
-    {
-        const T d_theta = -2.0 * M_PI / ((T) n);
+                T theta = d_theta * m;
 
-        std::size_t t = 0;
-        std::size_t product = 1;
+                trig[t] = etl::complex<T>{std::cos(theta), std::sin(theta)};
 
-        for (std::size_t i = 0; i < n_factors; i++){
-            std::size_t factor = factors[i];
-            twiddle[i] = &trig[0] + t;
-
-            std::size_t prev_product = product;
-            product *= factor;
-
-            for (std::size_t j = 1; j < factor; j++){
-                std::size_t m = 0;
-                for (std::size_t k = 1; k <= n / product; k++){
-                    m = (m + j * prev_product) % n;
-
-                    T theta = d_theta * m;
-
-                    trig[t] = etl::complex<T>{std::cos(theta), std::sin(theta)};
-
-                    t++;
-                }
+                t++;
             }
         }
     }
 
+    return std::move(trig);
+}
+
+template<typename In, typename T>
+void fft_perform(const In* r_in, etl::complex<T>* r_out, const std::size_t n, std::size_t* factors, std::size_t n_factors, etl::complex<T>** twiddle){
     auto tmp = etl::allocate<etl::complex<T>>(n);
 
     std::copy_n(r_in, n, tmp.get());
@@ -442,6 +434,48 @@ void fft_n(const In* r_in, etl::complex<T>* r_out, const std::size_t n){
 
     if (out != r_out){
         std::copy_n(out, n, r_out);
+    }
+}
+
+template<typename In, typename T>
+void fft_n(const In* r_in, etl::complex<T>* r_out, const std::size_t n){
+    //0. Factorize
+
+    std::size_t factors[MAX_FACTORS];
+    std::size_t n_factors = 0;
+
+    fft_factorize(n, factors, n_factors);
+
+    //1. Precompute twiddle factors (stored in trig)
+
+    etl::complex<T>* twiddle[MAX_FACTORS];
+
+    auto trig = twiddle_compute(n, factors, n_factors, twiddle);
+
+    //2. Perform the FFT itself
+
+    fft_perform(r_in, r_out, n, factors, n_factors, twiddle);
+}
+
+template<typename In, typename T>
+void fft_n_many(const In* r_in, etl::complex<T>* r_out, const std::size_t batch, const std::size_t n){
+    //0. Factorize
+
+    std::size_t factors[MAX_FACTORS];
+    std::size_t n_factors = 0;
+
+    fft_factorize(n, factors, n_factors);
+
+    //1. Precompute twiddle factors (stored in trig)
+
+    etl::complex<T>* twiddle[MAX_FACTORS];
+
+    auto trig = twiddle_compute(n, factors, n_factors, twiddle);
+
+    //2. Perform all the FFT itself
+
+    for(std::size_t b = 0; b < batch; ++b){
+        fft_perform(r_in + b * n, r_out + b * n, n, factors, n_factors, twiddle);
     }
 }
 
@@ -622,8 +656,16 @@ void ifft2_real(A&& a, C&& c){
 //(T or complex<T>) -> complex<T>
 template<typename A, typename C>
 void fft1_many(A&& a, C&& c){
-    for(std::size_t i = 0; i < etl::dim<0>(c); ++i){
-        detail::fft1_kernel(a(i).memory_start(), etl::dim<1>(a), c(i).memory_start());
+    auto n = etl::dim<1>(a);
+
+    if(n <= 65536 && detail::is_power_of_two(n)){
+        std::copy_n(a.begin(), etl::size(c), c.begin());
+
+        for(std::size_t i = 0; i < etl::dim<0>(c); ++i){
+            detail::inplace_radix2_fft1(reinterpret_cast<etl::complex<typename value_t<C>::value_type>*>(c(i).memory_start()), n);
+        }
+    } else {
+        detail::fft_n_many(a.memory_start(), reinterpret_cast<etl::complex<typename value_t<C>::value_type>*>(c.memory_start()), etl::dim<0>(c), n);
     }
 }
 
