@@ -298,7 +298,7 @@ inline void inplace_zifft2_kernel(std::complex<double>* in, std::size_t d1, std:
 
 } //End of namespace detail
 
-template<typename A, typename C, cpp_enable_if(all_single_precision<A>::value && all_dma<A,C>::value)>
+template<typename A, typename C, cpp_enable_if(all_single_precision<A>::value)>
 void fft1(A&& a, C&& c){
     auto a_complex = allocate<std::complex<float>>(etl::size(a));
 
@@ -307,7 +307,7 @@ void fft1(A&& a, C&& c){
     detail::cfft_kernel(a_complex.get(), etl::size(a), c.memory_start());
 }
 
-template<typename A, typename C, cpp_enable_if(all_double_precision<A>::value && all_dma<A,C>::value)>
+template<typename A, typename C, cpp_enable_if(all_double_precision<A>::value)>
 void fft1(A&& a, C&& c){
     auto a_complex = allocate<std::complex<double>>(etl::size(a));
 
@@ -316,27 +316,27 @@ void fft1(A&& a, C&& c){
     detail::zfft_kernel(a_complex.get(), etl::size(a), c.memory_start());
 }
 
-template<typename A, typename C, cpp_enable_if(all_complex_single_precision<A>::value && all_dma<A,C>::value)>
+template<typename A, typename C, cpp_enable_if(all_complex_single_precision<A>::value)>
 void fft1(A&& a, C&& c){
     detail::cfft_kernel(a.memory_start(), etl::size(a), c.memory_start());
 }
 
-template<typename A, typename C, cpp_enable_if(all_complex_double_precision<A>::value && all_dma<A,C>::value)>
+template<typename A, typename C, cpp_enable_if(all_complex_double_precision<A>::value)>
 void fft1(A&& a, C&& c){
     detail::zfft_kernel(a.memory_start(), etl::size(a), c.memory_start());
 }
 
-template<typename A, typename C, cpp_enable_if(all_complex_single_precision<A>::value && all_dma<A,C>::value)>
+template<typename A, typename C, cpp_enable_if(all_complex_single_precision<A>::value)>
 void ifft1(A&& a, C&& c){
     detail::cifft_kernel(a.memory_start(), etl::size(a), c.memory_start());
 }
 
-template<typename A, typename C, cpp_enable_if(all_complex_double_precision<A>::value && all_dma<A,C>::value)>
+template<typename A, typename C, cpp_enable_if(all_complex_double_precision<A>::value)>
 void ifft1(A&& a, C&& c){
     detail::zifft_kernel(a.memory_start(), etl::size(a), c.memory_start());
 }
 
-template<typename A, typename C, cpp_enable_if(all_complex_single_precision<A>::value && all_dma<A,C>::value)>
+template<typename A, typename C, cpp_enable_if(all_complex_single_precision<A>::value)>
 void ifft1_real(A&& a, C&& c){
     auto c_complex = allocate<std::complex<float>>(etl::size(a));
 
@@ -347,7 +347,7 @@ void ifft1_real(A&& a, C&& c){
     }
 }
 
-template<typename A, typename C, cpp_enable_if(all_complex_double_precision<A>::value && all_dma<A,C>::value)>
+template<typename A, typename C, cpp_enable_if(all_complex_double_precision<A>::value)>
 void ifft1_real(A&& a, C&& c){
     auto c_complex = allocate<std::complex<double>>(etl::size(a));
 
@@ -358,7 +358,7 @@ void ifft1_real(A&& a, C&& c){
     }
 }
 
-template<typename A, typename C, cpp_enable_if(all_single_precision<A>::value && all_dma<A,C>::value)>
+template<typename A, typename C, cpp_enable_if(all_single_precision<A>::value)>
 void fft1_many(A&& a, C&& c){
     auto a_complex = allocate<std::complex<float>>(etl::size(a));
 
@@ -367,7 +367,7 @@ void fft1_many(A&& a, C&& c){
     detail::cfft_many_kernel(a_complex.get(), etl::dim<0>(a), etl::dim<1>(a), c.memory_start());
 }
 
-template<typename A, typename C, cpp_enable_if(all_double_precision<A>::value && all_dma<A,C>::value)>
+template<typename A, typename C, cpp_enable_if(all_double_precision<A>::value)>
 void fft1_many(A&& a, C&& c){
     auto a_complex = allocate<std::complex<double>>(etl::size(a));
 
@@ -376,17 +376,17 @@ void fft1_many(A&& a, C&& c){
     detail::zfft_many_kernel(a_complex.get(), etl::dim<0>(a), etl::dim<1>(a), c.memory_start());
 }
 
-template<typename A, typename C, cpp_enable_if(all_complex_single_precision<A>::value && all_dma<A,C>::value)>
+template<typename A, typename C, cpp_enable_if(all_complex_single_precision<A>::value)>
 void fft1_many(A&& a, C&& c){
     detail::cfft_many_kernel(a.memory_start(), etl::dim<0>(a), etl::dim<1>(a), c.memory_start());
 }
 
-template<typename A, typename C, cpp_enable_if(all_complex_double_precision<A>::value && all_dma<A,C>::value)>
+template<typename A, typename C, cpp_enable_if(all_complex_double_precision<A>::value)>
 void fft1_many(A&& a, C&& c){
     detail::zfft_many_kernel(a.memory_start(), etl::dim<0>(a), etl::dim<1>(a), c.memory_start());
 }
 
-template<typename A, typename B, typename C, cpp_enable_if(all_single_precision<A>::value && all_dma<A,C>::value)>
+template<typename A, typename B, typename C, cpp_enable_if(all_single_precision<A>::value)>
 void fft1_convolve(A&& a, B&& b, C&& c){
     const auto m = etl::size(a);
     const auto n = etl::size(b);
@@ -412,7 +412,7 @@ void fft1_convolve(A&& a, B&& b, C&& c){
     }
 }
 
-template<typename A, typename B, typename C, cpp_enable_if(all_double_precision<A>::value && all_dma<A,C>::value)>
+template<typename A, typename B, typename C, cpp_enable_if(all_double_precision<A>::value)>
 void fft1_convolve(A&& a, B&& b, C&& c){
     const auto m = etl::size(a);
     const auto n = etl::size(b);
@@ -438,7 +438,7 @@ void fft1_convolve(A&& a, B&& b, C&& c){
     }
 }
 
-template<typename A, typename C, cpp_enable_if(all_single_precision<A>::value && all_dma<A,C>::value)>
+template<typename A, typename C, cpp_enable_if(all_single_precision<A>::value)>
 void fft2(A&& a, C&& c){
     auto a_complex = allocate<std::complex<float>>(etl::size(a));
 
@@ -447,7 +447,7 @@ void fft2(A&& a, C&& c){
     detail::cfft2_kernel(a_complex.get(), etl::dim<0>(a), etl::dim<1>(a), c.memory_start());
 }
 
-template<typename A, typename C, cpp_enable_if(all_double_precision<A>::value && all_dma<A,C>::value)>
+template<typename A, typename C, cpp_enable_if(all_double_precision<A>::value)>
 void fft2(A&& a, C&& c){
     auto a_complex = allocate<std::complex<double>>(etl::size(a));
 
@@ -456,17 +456,17 @@ void fft2(A&& a, C&& c){
     detail::zfft2_kernel(a_complex.get(), etl::dim<0>(a), etl::dim<1>(a), c.memory_start());
 }
 
-template<typename A, typename C, cpp_enable_if(all_complex_single_precision<A>::value && all_dma<A,C>::value)>
+template<typename A, typename C, cpp_enable_if(all_complex_single_precision<A>::value)>
 void fft2(A&& a, C&& c){
     detail::cfft2_kernel(a.memory_start(), etl::dim<0>(a), etl::dim<1>(a), c.memory_start());
 }
 
-template<typename A, typename C, cpp_enable_if(all_complex_double_precision<A>::value && all_dma<A,C>::value)>
+template<typename A, typename C, cpp_enable_if(all_complex_double_precision<A>::value)>
 void fft2(A&& a, C&& c){
     detail::zfft2_kernel(a.memory_start(), etl::dim<0>(a), etl::dim<1>(a), c.memory_start());
 }
 
-template<typename A, typename C, cpp_enable_if(all_single_precision<A>::value && all_dma<A,C>::value)>
+template<typename A, typename C, cpp_enable_if(all_single_precision<A>::value)>
 void fft2_many(A&& a, C&& c){
     auto a_complex = allocate<std::complex<float>>(etl::size(a));
 
@@ -475,7 +475,7 @@ void fft2_many(A&& a, C&& c){
     detail::cfft2_many_kernel(a_complex.get(), etl::dim<0>(a), etl::dim<1>(a), etl::dim<2>(a), c.memory_start());
 }
 
-template<typename A, typename C, cpp_enable_if(all_double_precision<A>::value && all_dma<A,C>::value)>
+template<typename A, typename C, cpp_enable_if(all_double_precision<A>::value)>
 void fft2_many(A&& a, C&& c){
     auto a_complex = allocate<std::complex<double>>(etl::size(a));
 
@@ -484,27 +484,27 @@ void fft2_many(A&& a, C&& c){
     detail::zfft2_many_kernel(a_complex.get(), etl::dim<0>(a), etl::dim<1>(a), etl::dim<2>(a), c.memory_start());
 }
 
-template<typename A, typename C, cpp_enable_if(all_complex_single_precision<A>::value && all_dma<A,C>::value)>
+template<typename A, typename C, cpp_enable_if(all_complex_single_precision<A>::value)>
 void fft2_many(A&& a, C&& c){
     detail::cfft2_many_kernel(a.memory_start(), etl::dim<0>(a), etl::dim<1>(a), etl::dim<2>(a), c.memory_start());
 }
 
-template<typename A, typename C, cpp_enable_if(all_complex_double_precision<A>::value && all_dma<A,C>::value)>
+template<typename A, typename C, cpp_enable_if(all_complex_double_precision<A>::value)>
 void fft2_many(A&& a, C&& c){
     detail::zfft2_many_kernel(a.memory_start(), etl::dim<0>(a), etl::dim<1>(a), etl::dim<2>(a), c.memory_start());
 }
 
-template<typename A, typename C, cpp_enable_if(all_complex_single_precision<A>::value && all_dma<A,C>::value)>
+template<typename A, typename C, cpp_enable_if(all_complex_single_precision<A>::value)>
 void ifft2(A&& a, C&& c){
     detail::cifft2_kernel(a.memory_start(), etl::dim<0>(a), etl::dim<1>(a), c.memory_start());
 }
 
-template<typename A, typename C, cpp_enable_if(all_complex_double_precision<A>::value && all_dma<A,C>::value)>
+template<typename A, typename C, cpp_enable_if(all_complex_double_precision<A>::value)>
 void ifft2(A&& a, C&& c){
     detail::zifft2_kernel(a.memory_start(), etl::dim<0>(a), etl::dim<1>(a), c.memory_start());
 }
 
-template<typename A, typename C, cpp_enable_if(all_complex_single_precision<A>::value && all_dma<A,C>::value)>
+template<typename A, typename C, cpp_enable_if(all_complex_single_precision<A>::value)>
 void ifft2_real(A&& a, C&& c){
     auto c_complex = allocate<std::complex<float>>(etl::size(a));
 
@@ -515,7 +515,7 @@ void ifft2_real(A&& a, C&& c){
     }
 }
 
-template<typename A, typename C, cpp_enable_if(all_complex_double_precision<A>::value && all_dma<A,C>::value)>
+template<typename A, typename C, cpp_enable_if(all_complex_double_precision<A>::value)>
 void ifft2_real(A&& a, C&& c){
     auto c_complex = allocate<std::complex<double>>(etl::size(a));
 
@@ -526,7 +526,7 @@ void ifft2_real(A&& a, C&& c){
     }
 }
 
-template<typename A, typename B, typename C, cpp_enable_if(all_single_precision<A>::value && all_dma<A,C>::value)>
+template<typename A, typename B, typename C, cpp_enable_if(all_single_precision<A>::value)>
 void fft2_convolve(A&& a, B&& b, C&& c){
     const auto m1 = etl::dim<0>(a);
     const auto n1= etl::dim<0>(b);
@@ -565,7 +565,7 @@ void fft2_convolve(A&& a, B&& b, C&& c){
     }
 }
 
-template<typename A, typename B, typename C, cpp_enable_if(all_double_precision<A>::value && all_dma<A,C>::value)>
+template<typename A, typename B, typename C, cpp_enable_if(all_double_precision<A>::value)>
 void fft2_convolve(A&& a, B&& b, C&& c){
     const auto m1 = etl::dim<0>(a);
     const auto n1= etl::dim<0>(b);
@@ -603,38 +603,6 @@ void fft2_convolve(A&& a, B&& b, C&& c){
         c[i] = a_padded[i].real();
     }
 }
-
-//The following functionsare here to ensure compilation
-
-template<typename A, typename C, cpp_enable_if(!all_dma<A,C>::value)>
-void fft1(A&& /*unused*/, C&& /*unused*/){}
-
-template<typename A, typename C, cpp_enable_if(!all_dma<A,C>::value)>
-void ifft1(A&& /*unused*/, C&& /*unused*/){}
-
-template<typename A, typename C, cpp_enable_if(!all_dma<A,C>::value)>
-void ifft1_real(A&& /*unused*/, C&& /*unused*/){}
-
-template<typename A, typename C, cpp_enable_if(!all_dma<A,C>::value)>
-void fft1_many(A&& /*unused*/, C&& /*unused*/){}
-
-template<typename A, typename C, cpp_enable_if(!all_dma<A,C>::value)>
-void fft2(A&& /*unused*/, C&& /*unused*/){}
-
-template<typename A, typename C, cpp_enable_if(!all_dma<A,C>::value)>
-void ifft2(A&& /*unused*/, C&& /*unused*/){}
-
-template<typename A, typename C, cpp_enable_if(!all_dma<A,C>::value)>
-void ifft2_real(A&& /*unused*/, C&& /*unused*/){}
-
-template<typename A, typename C, cpp_enable_if(!all_dma<A,C>::value)>
-void fft2_many(A&& /*unused*/, C&& /*unused*/){}
-
-template<typename A, typename B, typename C, cpp_enable_if(!all_dma<A,B,C>::value)>
-void fft1_convolve(A&& /*unused*/, C&& /*unused*/){}
-
-template<typename A, typename B, typename C, cpp_enable_if(!all_dma<A,B,C>::value)>
-void fft2_convolve(A&& /*unused*/, B&& /*unused*/, C&& /*unused*/){}
 
 #else
 

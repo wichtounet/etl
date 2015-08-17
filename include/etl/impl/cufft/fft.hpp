@@ -135,7 +135,7 @@ inline void inplace_zifft2_kernel(const impl::cuda::cuda_memory<std::complex<dou
 
 } //End of namespace detail
 
-template<typename A, typename C, cpp_enable_if(all_single_precision<A>::value && all_dma<A,C>::value)>
+template<typename A, typename C, cpp_enable_if(all_single_precision<A>::value)>
 void fft1(A&& a, C&& c){
     std::copy(a.begin(), a.end(), c.begin());
 
@@ -146,7 +146,7 @@ void fft1(A&& a, C&& c){
     cudaMemcpy(c.memory_start(), gpu_c.get(), etl::size(c) * sizeof(value_t<C>), cudaMemcpyDeviceToHost);
 }
 
-template<typename A, typename C, cpp_enable_if(all_double_precision<A>::value && all_dma<A,C>::value)>
+template<typename A, typename C, cpp_enable_if(all_double_precision<A>::value)>
 void fft1(A&& a, C&& c){
     std::copy(a.begin(), a.end(), c.begin());
 
@@ -157,7 +157,7 @@ void fft1(A&& a, C&& c){
     cudaMemcpy(c.memory_start(), gpu_c.get(), etl::size(c) * sizeof(value_t<C>), cudaMemcpyDeviceToHost);
 }
 
-template<typename A, typename C, cpp_enable_if(all_complex_single_precision<A>::value && all_dma<A,C>::value)>
+template<typename A, typename C, cpp_enable_if(all_complex_single_precision<A>::value)>
 void fft1(A&& a, C&& c){
     auto gpu_a = impl::cuda::cuda_allocate_copy(a);
 
@@ -166,7 +166,7 @@ void fft1(A&& a, C&& c){
     cudaMemcpy(c.memory_start(), gpu_a.get(), etl::size(c) * sizeof(value_t<C>), cudaMemcpyDeviceToHost);
 }
 
-template<typename A, typename C, cpp_enable_if(all_complex_double_precision<A>::value && all_dma<A,C>::value)>
+template<typename A, typename C, cpp_enable_if(all_complex_double_precision<A>::value)>
 void fft1(A&& a, C&& c){
     auto gpu_a = impl::cuda::cuda_allocate_copy(a);
 
@@ -175,7 +175,7 @@ void fft1(A&& a, C&& c){
     cudaMemcpy(c.memory_start(), gpu_a.get(), etl::size(c) * sizeof(value_t<C>), cudaMemcpyDeviceToHost);
 }
 
-template<typename A, typename C, cpp_enable_if(all_single_precision<A>::value && all_dma<A,C>::value)>
+template<typename A, typename C, cpp_enable_if(all_single_precision<A>::value)>
 void fft1_many(A&& a, C&& c){
     std::copy(a.begin(), a.end(), c.begin());
 
@@ -186,7 +186,7 @@ void fft1_many(A&& a, C&& c){
     cudaMemcpy(c.memory_start(), gpu_c.get(), etl::size(c) * sizeof(value_t<C>), cudaMemcpyDeviceToHost);
 }
 
-template<typename A, typename C, cpp_enable_if(all_double_precision<A>::value && all_dma<A,C>::value)>
+template<typename A, typename C, cpp_enable_if(all_double_precision<A>::value)>
 void fft1_many(A&& a, C&& c){
     std::copy(a.begin(), a.end(), c.begin());
 
@@ -197,7 +197,7 @@ void fft1_many(A&& a, C&& c){
     cudaMemcpy(c.memory_start(), gpu_c.get(), etl::size(c) * sizeof(value_t<C>), cudaMemcpyDeviceToHost);
 }
 
-template<typename A, typename C, cpp_enable_if(all_complex_single_precision<A>::value && all_dma<A,C>::value)>
+template<typename A, typename C, cpp_enable_if(all_complex_single_precision<A>::value)>
 void fft1_many(A&& a, C&& c){
     auto gpu_a = impl::cuda::cuda_allocate_copy(a);
 
@@ -206,7 +206,7 @@ void fft1_many(A&& a, C&& c){
     cudaMemcpy(c.memory_start(), gpu_a.get(), etl::size(c) * sizeof(value_t<C>), cudaMemcpyDeviceToHost);
 }
 
-template<typename A, typename C, cpp_enable_if(all_complex_double_precision<A>::value && all_dma<A,C>::value)>
+template<typename A, typename C, cpp_enable_if(all_complex_double_precision<A>::value)>
 void fft1_many(A&& a, C&& c){
     auto gpu_a = impl::cuda::cuda_allocate_copy(a);
 
@@ -215,7 +215,7 @@ void fft1_many(A&& a, C&& c){
     cudaMemcpy(c.memory_start(), gpu_a.get(), etl::size(c) * sizeof(value_t<C>), cudaMemcpyDeviceToHost);
 }
 
-template<typename A, typename C, cpp_enable_if(all_complex_single_precision<A>::value && all_dma<A,C>::value)>
+template<typename A, typename C, cpp_enable_if(all_complex_single_precision<A>::value)>
 void ifft1(A&& a, C&& c){
     auto gpu_a = impl::cuda::cuda_allocate_copy(a);
 
@@ -226,7 +226,7 @@ void ifft1(A&& a, C&& c){
     c *= 1.0 / etl::size(c);
 }
 
-template<typename A, typename C, cpp_enable_if(all_complex_double_precision<A>::value && all_dma<A,C>::value)>
+template<typename A, typename C, cpp_enable_if(all_complex_double_precision<A>::value)>
 void ifft1(A&& a, C&& c){
     auto gpu_a = impl::cuda::cuda_allocate_copy(a);
 
@@ -237,7 +237,7 @@ void ifft1(A&& a, C&& c){
     c *= 1.0 / etl::size(c);
 }
 
-template<typename A, typename C, cpp_enable_if(all_complex_single_precision<A>::value && all_dma<A,C>::value)>
+template<typename A, typename C, cpp_enable_if(all_complex_single_precision<A>::value)>
 void ifft1_real(A&& a, C&& c){
     auto gpu_a = impl::cuda::cuda_allocate_copy(a);
 
@@ -252,7 +252,7 @@ void ifft1_real(A&& a, C&& c){
     }
 }
 
-template<typename A, typename C, cpp_enable_if(all_complex_double_precision<A>::value && all_dma<A,C>::value)>
+template<typename A, typename C, cpp_enable_if(all_complex_double_precision<A>::value)>
 void ifft1_real(A&& a, C&& c){
     auto gpu_a = impl::cuda::cuda_allocate_copy(a);
 
@@ -267,7 +267,7 @@ void ifft1_real(A&& a, C&& c){
     }
 }
 
-template<typename A, typename B, typename C, cpp_enable_if(all_single_precision<A>::value && all_dma<A,C>::value)>
+template<typename A, typename B, typename C, cpp_enable_if(all_single_precision<A>::value)>
 void fft1_convolve(A&& a, B&& b, C&& c){
     auto handle = start_cufft();
 
@@ -306,7 +306,7 @@ void fft1_convolve(A&& a, B&& b, C&& c){
     }
 }
 
-template<typename A, typename B, typename C, cpp_enable_if(all_double_precision<A>::value && all_dma<A,C>::value)>
+template<typename A, typename B, typename C, cpp_enable_if(all_double_precision<A>::value)>
 void fft1_convolve(A&& a, B&& b, C&& c){
     auto handle = start_cufft();
 
@@ -345,7 +345,7 @@ void fft1_convolve(A&& a, B&& b, C&& c){
     }
 }
 
-template<typename A, typename C, cpp_enable_if(all_single_precision<A>::value && all_dma<A,C>::value)>
+template<typename A, typename C, cpp_enable_if(all_single_precision<A>::value)>
 void fft2(A&& a, C&& c){
     std::copy(a.begin(), a.end(), c.begin());
 
@@ -356,7 +356,7 @@ void fft2(A&& a, C&& c){
     cudaMemcpy(c.memory_start(), gpu_c.get(), etl::size(c) * sizeof(value_t<C>), cudaMemcpyDeviceToHost);
 }
 
-template<typename A, typename C, cpp_enable_if(all_double_precision<A>::value && all_dma<A,C>::value)>
+template<typename A, typename C, cpp_enable_if(all_double_precision<A>::value)>
 void fft2(A&& a, C&& c){
     std::copy(a.begin(), a.end(), c.begin());
 
@@ -367,7 +367,7 @@ void fft2(A&& a, C&& c){
     cudaMemcpy(c.memory_start(), gpu_c.get(), etl::size(c) * sizeof(value_t<C>), cudaMemcpyDeviceToHost);
 }
 
-template<typename A, typename C, cpp_enable_if(all_complex_single_precision<A>::value && all_dma<A,C>::value)>
+template<typename A, typename C, cpp_enable_if(all_complex_single_precision<A>::value)>
 void fft2(A&& a, C&& c){
     auto gpu_a = impl::cuda::cuda_allocate_copy(a);
 
@@ -376,7 +376,7 @@ void fft2(A&& a, C&& c){
     cudaMemcpy(c.memory_start(), gpu_a.get(), etl::size(c) * sizeof(value_t<C>), cudaMemcpyDeviceToHost);
 }
 
-template<typename A, typename C, cpp_enable_if(all_complex_double_precision<A>::value && all_dma<A,C>::value)>
+template<typename A, typename C, cpp_enable_if(all_complex_double_precision<A>::value)>
 void fft2(A&& a, C&& c){
     auto gpu_a = impl::cuda::cuda_allocate_copy(a);
 
@@ -385,7 +385,7 @@ void fft2(A&& a, C&& c){
     cudaMemcpy(c.memory_start(), gpu_a.get(), etl::size(c) * sizeof(value_t<C>), cudaMemcpyDeviceToHost);
 }
 
-template<typename A, typename C, cpp_enable_if(all_complex_single_precision<A>::value && all_dma<A,C>::value)>
+template<typename A, typename C, cpp_enable_if(all_complex_single_precision<A>::value)>
 void ifft2(A&& a, C&& c){
     auto gpu_a = impl::cuda::cuda_allocate_copy(a);
 
@@ -396,7 +396,7 @@ void ifft2(A&& a, C&& c){
     c *= 1.0 / etl::size(c);
 }
 
-template<typename A, typename C, cpp_enable_if(all_complex_double_precision<A>::value && all_dma<A,C>::value)>
+template<typename A, typename C, cpp_enable_if(all_complex_double_precision<A>::value)>
 void ifft2(A&& a, C&& c){
     auto gpu_a = impl::cuda::cuda_allocate_copy(a);
 
@@ -407,7 +407,7 @@ void ifft2(A&& a, C&& c){
     c *= 1.0 / etl::size(c);
 }
 
-template<typename A, typename C, cpp_enable_if(all_complex_single_precision<A>::value && all_dma<A,C>::value)>
+template<typename A, typename C, cpp_enable_if(all_complex_single_precision<A>::value)>
 void ifft2_real(A&& a, C&& c){
     auto gpu_a = impl::cuda::cuda_allocate_copy(a);
 
@@ -422,7 +422,7 @@ void ifft2_real(A&& a, C&& c){
     }
 }
 
-template<typename A, typename C, cpp_enable_if(all_complex_double_precision<A>::value && all_dma<A,C>::value)>
+template<typename A, typename C, cpp_enable_if(all_complex_double_precision<A>::value)>
 void ifft2_real(A&& a, C&& c){
     auto gpu_a = impl::cuda::cuda_allocate_copy(a);
 
@@ -437,7 +437,7 @@ void ifft2_real(A&& a, C&& c){
     }
 }
 
-template<typename A, typename C, cpp_enable_if(all_single_precision<A>::value && all_dma<A,C>::value)>
+template<typename A, typename C, cpp_enable_if(all_single_precision<A>::value)>
 void fft2_many(A&& a, C&& c){
     std::copy(a.begin(), a.end(), c.begin());
 
@@ -448,7 +448,7 @@ void fft2_many(A&& a, C&& c){
     cudaMemcpy(c.memory_start(), gpu_c.get(), etl::size(c) * sizeof(value_t<C>), cudaMemcpyDeviceToHost);
 }
 
-template<typename A, typename C, cpp_enable_if(all_double_precision<A>::value && all_dma<A,C>::value)>
+template<typename A, typename C, cpp_enable_if(all_double_precision<A>::value)>
 void fft2_many(A&& a, C&& c){
     std::copy(a.begin(), a.end(), c.begin());
 
@@ -459,7 +459,7 @@ void fft2_many(A&& a, C&& c){
     cudaMemcpy(c.memory_start(), gpu_c.get(), etl::size(c) * sizeof(value_t<C>), cudaMemcpyDeviceToHost);
 }
 
-template<typename A, typename C, cpp_enable_if(all_complex_single_precision<A>::value && all_dma<A,C>::value)>
+template<typename A, typename C, cpp_enable_if(all_complex_single_precision<A>::value)>
 void fft2_many(A&& a, C&& c){
     auto gpu_a = impl::cuda::cuda_allocate_copy(a);
 
@@ -468,7 +468,7 @@ void fft2_many(A&& a, C&& c){
     cudaMemcpy(c.memory_start(), gpu_a.get(), etl::size(c) * sizeof(value_t<C>), cudaMemcpyDeviceToHost);
 }
 
-template<typename A, typename C, cpp_enable_if(all_complex_double_precision<A>::value && all_dma<A,C>::value)>
+template<typename A, typename C, cpp_enable_if(all_complex_double_precision<A>::value)>
 void fft2_many(A&& a, C&& c){
     auto gpu_a = impl::cuda::cuda_allocate_copy(a);
 
@@ -477,7 +477,7 @@ void fft2_many(A&& a, C&& c){
     cudaMemcpy(c.memory_start(), gpu_a.get(), etl::size(c) * sizeof(value_t<C>), cudaMemcpyDeviceToHost);
 }
 
-template<typename A, typename B, typename C, cpp_enable_if(all_single_precision<A>::value && all_dma<A,C>::value)>
+template<typename A, typename B, typename C, cpp_enable_if(all_single_precision<A>::value)>
 void fft2_convolve(A&& a, B&& b, C&& c){
     const auto m1 = etl::dim<0>(a);
     const auto n1= etl::dim<0>(b);
@@ -533,7 +533,7 @@ void fft2_convolve(A&& a, B&& b, C&& c){
     }
 }
 
-template<typename A, typename B, typename C, cpp_enable_if(all_double_precision<A>::value && all_dma<A,C>::value)>
+template<typename A, typename B, typename C, cpp_enable_if(all_double_precision<A>::value)>
 void fft2_convolve(A&& a, B&& b, C&& c){
     const auto m1 = etl::dim<0>(a);
     const auto n1= etl::dim<0>(b);
@@ -588,38 +588,6 @@ void fft2_convolve(A&& a, B&& b, C&& c){
         c[i] = a_padded[i].real() * (1.0 / size);
     }
 }
-
-//The following functions are here to ensure compilation
-
-template<typename A, typename C, cpp_enable_if(!all_dma<A,C>::value)>
-void fft1(A&& /*unused*/, C&& /*unused*/){}
-
-template<typename A, typename C, cpp_enable_if(!all_dma<A,C>::value)>
-void ifft1(A&& /*unused*/, C&& /*unused*/){}
-
-template<typename A, typename C, cpp_enable_if(!all_dma<A,C>::value)>
-void ifft1_real(A&& /*unused*/, C&& /*unused*/){}
-
-template<typename A, typename C, cpp_enable_if(!all_dma<A,C>::value)>
-void fft1_many(A&& /*unused*/, C&& /*unused*/){}
-
-template<typename A, typename C, cpp_enable_if(!all_dma<A,C>::value)>
-void fft2(A&& /*unused*/, C&& /*unused*/){}
-
-template<typename A, typename C, cpp_enable_if(!all_dma<A,C>::value)>
-void ifft2(A&& /*unused*/, C&& /*unused*/){}
-
-template<typename A, typename C, cpp_enable_if(!all_dma<A,C>::value)>
-void ifft2_real(A&& /*unused*/, C&& /*unused*/){}
-
-template<typename A, typename C, cpp_enable_if(!all_dma<A,C>::value)>
-void fft2_many(A&& /*unused*/, C&& /*unused*/){}
-
-template<typename A, typename B, typename C, cpp_enable_if(!all_dma<A,B,C>::value)>
-void fft1_convolve(A&& /*unused*/, C&& /*unused*/){}
-
-template<typename A, typename B, typename C, cpp_enable_if(!all_dma<A,B,C>::value)>
-void fft2_convolve(A&& /*unused*/, B&& /*unused*/, C&& /*unused*/){}
 
 #else
 
