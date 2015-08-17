@@ -307,6 +307,16 @@ struct ifft2_real_impl {
     }
 };
 
+template<typename A, typename C>
+struct fft1_many_impl {
+    template<typename AA, typename CC>
+    static void apply(AA&& a, CC&& c){
+        //TODO SELECTIOn
+
+        etl::impl::standard::fft1_many(std::forward<AA>(a), std::forward<CC>(c));
+    }
+};
+
 template<typename A, typename B, typename C>
 struct is_cufft_sfft_convolve : cpp::and_c<is_cufft_enabled, all_single_precision<A,B,C>, all_dma<A, B, C>> {};
 

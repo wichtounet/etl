@@ -619,6 +619,14 @@ void ifft2_real(A&& a, C&& c){
     }
 }
 
+//(T or complex<T>) -> complex<T>
+template<typename A, typename C>
+void fft1_many(A&& a, C&& c){
+    for(std::size_t i = 0; i < etl::dim<0>(c); ++i){
+        detail::fft1_kernel(a(i).memory_start(), etl::dim<1>(a), c(i).memory_start());
+    }
+}
+
 template<typename A, typename B, typename C>
 void fft1_convolve(A&& a, B&& b, C&& c){
     const auto m = etl::size(a);
