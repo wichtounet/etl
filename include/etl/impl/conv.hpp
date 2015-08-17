@@ -25,49 +25,123 @@ enum class conv_type {
 
 namespace detail {
 
-template<typename I, typename K, typename C, typename Enable = void>
+enum class conv_impl {
+    STD,
+    SSE,
+    AVX
+};
+
+template<bool DMA, typename T>
+inline cpp14_constexpr conv_impl select_conv_impl(){
+    //Only std implementation is able to handle non-dma expressions
+    if(!DMA){
+        return conv_impl::STD;
+    }
+
+    //Note since these boolean will be known at compile time, the conditions will be a lot simplified
+    auto sse = vectorize_impl && vector_mode == vector_mode_t::SSE3;
+    auto avx = vectorize_impl && vector_mode == vector_mode_t::AVX;
+
+    if(avx){
+        return conv_impl::AVX;
+    } else if(sse){
+        return conv_impl::SSE;
+    } else {
+        return conv_impl::STD;
+    }
+}
+
+template<typename I, typename K, typename C>
 struct conv1_full_impl {
     static void apply(const I& input, const K& kernel, C&& conv){
-        impl::standard::conv1_full(input, kernel, conv);
+        auto impl = select_conv_impl<all_dma<I,K,C>::value, value_t<I>>();
+
+        if(impl == conv_impl::AVX){
+            impl::avx::conv1_full(input, kernel, conv);
+        } else if(impl == conv_impl::SSE){
+            impl::sse::conv1_full(input, kernel, conv);
+        } else if(impl == conv_impl::STD){
+            impl::standard::conv1_full(input, kernel, conv);
+        }
     }
 };
 
-template<typename I, typename K, typename C, typename Enable = void>
+template<typename I, typename K, typename C>
 struct conv1_same_impl {
     static void apply(const I& input, const K& kernel, C&& conv){
-        impl::standard::conv1_same(input, kernel, conv);
+        auto impl = select_conv_impl<all_dma<I,K,C>::value, value_t<I>>();
+
+        if(impl == conv_impl::AVX){
+            impl::avx::conv1_same(input, kernel, conv);
+        } else if(impl == conv_impl::SSE){
+            impl::sse::conv1_same(input, kernel, conv);
+        } else if(impl == conv_impl::STD){
+            impl::standard::conv1_same(input, kernel, conv);
+        }
     }
 };
 
-template<typename I, typename K, typename C, typename Enable = void>
+template<typename I, typename K, typename C>
 struct conv1_valid_impl {
     static void apply(const I& input, const K& kernel, C&& conv){
-        impl::standard::conv1_valid(input, kernel, conv);
+        auto impl = select_conv_impl<all_dma<I,K,C>::value, value_t<I>>();
+
+        if(impl == conv_impl::AVX){
+            impl::avx::conv1_valid(input, kernel, conv);
+        } else if(impl == conv_impl::SSE){
+            impl::sse::conv1_valid(input, kernel, conv);
+        } else if(impl == conv_impl::STD){
+            impl::standard::conv1_valid(input, kernel, conv);
+        }
     }
 };
 
-template<typename I, typename K, typename C, typename Enable = void>
+template<typename I, typename K, typename C>
 struct conv2_full_impl {
     static void apply(const I& input, const K& kernel, C&& conv){
-        impl::standard::conv2_full(input, kernel, conv);
+        auto impl = select_conv_impl<all_dma<I,K,C>::value, value_t<I>>();
+
+        if(impl == conv_impl::AVX){
+            impl::avx::conv2_full(input, kernel, conv);
+        } else if(impl == conv_impl::SSE){
+            impl::sse::conv2_full(input, kernel, conv);
+        } else if(impl == conv_impl::STD){
+            impl::standard::conv2_full(input, kernel, conv);
+        }
     }
 };
 
-template<typename I, typename K, typename C, typename Enable = void>
+template<typename I, typename K, typename C>
 struct conv2_same_impl {
     static void apply(const I& input, const K& kernel, C&& conv){
-        impl::standard::conv2_same(input, kernel, conv);
+        auto impl = select_conv_impl<all_dma<I,K,C>::value, value_t<I>>();
+
+        if(impl == conv_impl::AVX){
+            impl::avx::conv2_same(input, kernel, conv);
+        } else if(impl == conv_impl::SSE){
+            impl::sse::conv2_same(input, kernel, conv);
+        } else if(impl == conv_impl::STD){
+            impl::standard::conv2_same(input, kernel, conv);
+        }
     }
 };
 
-template<typename I, typename K, typename C, typename Enable = void>
+template<typename I, typename K, typename C>
 struct conv2_valid_impl {
     static void apply(const I& input, const K& kernel, C&& conv){
-        impl::standard::conv2_valid(input, kernel, conv);
+        auto impl = select_conv_impl<all_dma<I,K,C>::value, value_t<I>>();
+
+        if(impl == conv_impl::AVX){
+            impl::avx::conv2_valid(input, kernel, conv);
+        } else if(impl == conv_impl::SSE){
+            impl::sse::conv2_valid(input, kernel, conv);
+        } else if(impl == conv_impl::STD){
+            impl::standard::conv2_valid(input, kernel, conv);
+        }
     }
 };
 
-template<conv_type TT, typename I, typename K, typename C, typename Enable = void>
+template<conv_type TT, typename I, typename K, typename C>
 struct conv_deep_impl {
     template<conv_type TT2 = TT, typename I2 = I, cpp_enable_if(decay_traits<I2>::dimensions() == 3 && TT2 == conv_type::FULL)>
     static void apply(const I& input, const K& kernel, C&& conv){
@@ -98,200 +172,14 @@ struct conv_deep_impl {
     }
 };
 
-template<typename I, typename K, typename C, typename Enable = void>
+template<typename I, typename K, typename C>
 using conv_deep_valid_impl = conv_deep_impl<conv_type::VALID, I, K, C>;
 
-template<typename I, typename K, typename C, typename Enable = void>
+template<typename I, typename K, typename C>
 using conv_deep_same_impl = conv_deep_impl<conv_type::SAME, I, K, C>;
 
-template<typename I, typename K, typename C, typename Enable = void>
+template<typename I, typename K, typename C>
 using conv_deep_full_impl = conv_deep_impl<conv_type::FULL, I, K, C>;
-
-template<typename A, typename B, typename C>
-using is_vector_3s = cpp::and_c<all_single_precision<A, B, C>, all_dma<A, B, C>>;
-
-template<typename A, typename B, typename C>
-using is_vector_3d = cpp::and_c<all_double_precision<A, B, C>, all_dma<A, B, C>>;
-
-template<typename A, typename B, typename C>
-struct is_sse_dconv : cpp::and_u<vectorize_impl, vector_mode == vector_mode_t::SSE3, is_vector_3d<A, B, C>::value, all_row_major<A,B,C>::value> {};
-
-template<typename A, typename B, typename C>
-struct is_sse_sconv : cpp::and_u<vectorize_impl, vector_mode == vector_mode_t::SSE3, is_vector_3s<A, B, C>::value, all_row_major<A,B,C>::value> {};
-
-template<typename A, typename B, typename C>
-struct is_avx_dconv : cpp::and_u<vectorize_impl, vector_mode == vector_mode_t::AVX, is_vector_3d<A, B, C>::value, all_row_major<A,B,C>::value> {};
-
-template<typename A, typename B, typename C>
-struct is_avx_sconv : cpp::and_u<vectorize_impl, vector_mode == vector_mode_t::AVX, is_vector_3s<A, B, C>::value, all_row_major<A,B,C>::value> {};
-
-template<typename I, typename K, typename C>
-struct conv1_full_impl<I, K, C, std::enable_if_t<is_avx_dconv<I,K,C>::value>> {
-    static void apply(const I& input, const K& kernel, C&& conv){
-        impl::avx::dconv1_full(input, kernel, conv);
-    }
-};
-
-template<typename I, typename K, typename C>
-struct conv1_same_impl<I, K, C, std::enable_if_t<is_avx_dconv<I,K,C>::value>> {
-    static void apply(const I& input, const K& kernel, C&& conv){
-        impl::avx::dconv1_same(input, kernel, conv);
-    }
-};
-
-template<typename I, typename K, typename C>
-struct conv1_valid_impl<I, K, C, std::enable_if_t<is_avx_dconv<I,K,C>::value>> {
-    static void apply(const I& input, const K& kernel, C&& conv){
-        impl::avx::dconv1_valid(input, kernel, conv);
-    }
-};
-
-template<typename I, typename K, typename C>
-struct conv1_full_impl<I, K, C, std::enable_if_t<is_avx_sconv<I,K,C>::value>> {
-    static void apply(const I& input, const K& kernel, C&& conv){
-        impl::sse::sconv1_full(input, kernel, conv);
-    }
-};
-
-template<typename I, typename K, typename C>
-struct conv1_same_impl<I, K, C, std::enable_if_t<is_avx_sconv<I,K,C>::value>> {
-    static void apply(const I& input, const K& kernel, C&& conv){
-        impl::sse::sconv1_same(input, kernel, conv);
-    }
-};
-
-template<typename I, typename K, typename C>
-struct conv1_valid_impl<I, K, C, std::enable_if_t<is_avx_sconv<I,K,C>::value>> {
-    static void apply(const I& input, const K& kernel, C&& conv){
-        impl::avx::sconv1_valid(input, kernel, conv);
-    }
-};
-
-template<typename I, typename K, typename C>
-struct conv2_full_impl<I, K, C, std::enable_if_t<is_avx_dconv<I,K,C>::value>> {
-    static void apply(const I& input, const K& kernel, C&& conv){
-        impl::avx::dconv2_full(input, kernel, conv);
-    }
-};
-
-template<typename I, typename K, typename C>
-struct conv2_same_impl<I, K, C, std::enable_if_t<is_avx_dconv<I,K,C>::value>> {
-    static void apply(const I& input, const K& kernel, C&& conv){
-        impl::avx::dconv2_same(input, kernel, conv);
-    }
-};
-
-template<typename I, typename K, typename C>
-struct conv2_valid_impl<I, K, C, std::enable_if_t<is_avx_dconv<I,K,C>::value>> {
-    static void apply(const I& input, const K& kernel, C&& conv){
-        impl::avx::dconv2_valid(input, kernel, conv);
-    }
-};
-
-template<typename I, typename K, typename C>
-struct conv2_full_impl<I, K, C, std::enable_if_t<is_avx_sconv<I,K,C>::value>> {
-    static void apply(const I& input, const K& kernel, C&& conv){
-        impl::avx::sconv2_full(input, kernel, conv);
-    }
-};
-
-template<typename I, typename K, typename C>
-struct conv2_same_impl<I, K, C, std::enable_if_t<is_avx_sconv<I,K,C>::value>> {
-    static void apply(const I& input, const K& kernel, C&& conv){
-        impl::avx::sconv2_same(input, kernel, conv);
-    }
-};
-
-template<typename I, typename K, typename C>
-struct conv2_valid_impl<I, K, C, std::enable_if_t<is_avx_sconv<I,K,C>::value>> {
-    static void apply(const I& input, const K& kernel, C&& conv){
-        impl::avx::sconv2_valid(input, kernel, conv);
-    }
-};
-
-template<typename I, typename K, typename C>
-struct conv1_full_impl<I, K, C, std::enable_if_t<is_sse_dconv<I,K,C>::value>> {
-    static void apply(const I& input, const K& kernel, C&& conv){
-        impl::sse::dconv1_full(input, kernel, conv);
-    }
-};
-
-template<typename I, typename K, typename C>
-struct conv1_same_impl<I, K, C, std::enable_if_t<is_sse_dconv<I,K,C>::value>> {
-    static void apply(const I& input, const K& kernel, C&& conv){
-        impl::sse::dconv1_same(input, kernel, conv);
-    }
-};
-
-template<typename I, typename K, typename C>
-struct conv1_valid_impl<I, K, C, std::enable_if_t<is_sse_dconv<I,K,C>::value>> {
-    static void apply(const I& input, const K& kernel, C&& conv){
-        impl::sse::dconv1_valid(input, kernel, conv);
-    }
-};
-
-template<typename I, typename K, typename C>
-struct conv2_full_impl<I, K, C, std::enable_if_t<is_sse_dconv<I,K,C>::value>> {
-    static void apply(const I& input, const K& kernel, C&& conv){
-        impl::sse::dconv2_full(input, kernel, conv);
-    }
-};
-
-template<typename I, typename K, typename C>
-struct conv2_same_impl<I, K, C, std::enable_if_t<is_sse_dconv<I,K,C>::value>> {
-    static void apply(const I& input, const K& kernel, C&& conv){
-        impl::sse::dconv2_same(input, kernel, conv);
-    }
-};
-
-template<typename I, typename K, typename C>
-struct conv2_valid_impl<I, K, C, std::enable_if_t<is_sse_dconv<I,K,C>::value>> {
-    static void apply(const I& input, const K& kernel, C&& conv){
-        impl::sse::dconv2_valid(input, kernel, conv);
-    }
-};
-
-template<typename I, typename K, typename C>
-struct conv1_full_impl<I, K, C, std::enable_if_t<is_sse_sconv<I,K,C>::value>> {
-    static void apply(const I& input, const K& kernel, C&& conv){
-        impl::sse::sconv1_full(input, kernel, conv);
-    }
-};
-
-template<typename I, typename K, typename C>
-struct conv1_same_impl<I, K, C, std::enable_if_t<is_sse_sconv<I,K,C>::value>> {
-    static void apply(const I& input, const K& kernel, C&& conv){
-        impl::sse::sconv1_same(input, kernel, conv);
-    }
-};
-
-template<typename I, typename K, typename C>
-struct conv1_valid_impl<I, K, C, std::enable_if_t<is_sse_sconv<I,K,C>::value>> {
-    static void apply(const I& input, const K& kernel, C&& conv){
-        impl::sse::sconv1_valid(input, kernel, conv);
-    }
-};
-
-template<typename I, typename K, typename C>
-struct conv2_valid_impl<I, K, C, std::enable_if_t<is_sse_sconv<I,K,C>::value>> {
-    static void apply(const I& input, const K& kernel, C&& conv){
-        impl::sse::sconv2_valid(input, kernel, conv);
-    }
-};
-
-template<typename I, typename K, typename C>
-struct conv2_same_impl<I, K, C, std::enable_if_t<is_sse_sconv<I,K,C>::value>> {
-    static void apply(const I& input, const K& kernel, C&& conv){
-        impl::sse::sconv2_same(input, kernel, conv);
-    }
-};
-
-template<typename I, typename K, typename C>
-struct conv2_full_impl<I, K, C, std::enable_if_t<is_sse_sconv<I,K,C>::value>> {
-    static void apply(const I& input, const K& kernel, C&& conv){
-        impl::sse::sconv2_full(input, kernel, conv);
-    }
-};
 
 } //end of namespace detail
 
