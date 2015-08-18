@@ -360,30 +360,50 @@ void ifft1_real(A&& a, C&& c){
 
 template<typename A, typename C, cpp_enable_if(all_single_precision<A>::value)>
 void fft1_many(A&& a, C&& c){
+    static constexpr const std::size_t N = decay_traits<A>::dimensions();
+
+    auto n = etl::dim<N - 1>(a);        //Size of the transform
+    auto batch = etl::size(a) / n;      //Number of batch
+
     auto a_complex = allocate<std::complex<float>>(etl::size(a));
 
     std::copy(a.begin(), a.end(), a_complex.get());
 
-    detail::cfft_many_kernel(a_complex.get(), etl::dim<0>(a), etl::dim<1>(a), c.memory_start());
+    detail::cfft_many_kernel(a_complex.get(), batch, n, c.memory_start());
 }
 
 template<typename A, typename C, cpp_enable_if(all_double_precision<A>::value)>
 void fft1_many(A&& a, C&& c){
+    static constexpr const std::size_t N = decay_traits<A>::dimensions();
+
+    auto n = etl::dim<N - 1>(a);        //Size of the transform
+    auto batch = etl::size(a) / n;      //Number of batch
+
     auto a_complex = allocate<std::complex<double>>(etl::size(a));
 
     std::copy(a.begin(), a.end(), a_complex.get());
 
-    detail::zfft_many_kernel(a_complex.get(), etl::dim<0>(a), etl::dim<1>(a), c.memory_start());
+    detail::zfft_many_kernel(a_complex.get(), batch, n, c.memory_start());
 }
 
 template<typename A, typename C, cpp_enable_if(all_complex_single_precision<A>::value)>
 void fft1_many(A&& a, C&& c){
-    detail::cfft_many_kernel(a.memory_start(), etl::dim<0>(a), etl::dim<1>(a), c.memory_start());
+    static constexpr const std::size_t N = decay_traits<A>::dimensions();
+
+    auto n = etl::dim<N - 1>(a);        //Size of the transform
+    auto batch = etl::size(a) / n;      //Number of batch
+
+    detail::cfft_many_kernel(a.memory_start(), batch, n, c.memory_start());
 }
 
 template<typename A, typename C, cpp_enable_if(all_complex_double_precision<A>::value)>
 void fft1_many(A&& a, C&& c){
-    detail::zfft_many_kernel(a.memory_start(), etl::dim<0>(a), etl::dim<1>(a), c.memory_start());
+    static constexpr const std::size_t N = decay_traits<A>::dimensions();
+
+    auto n = etl::dim<N - 1>(a);        //Size of the transform
+    auto batch = etl::size(a) / n;      //Number of batch
+
+    detail::zfft_many_kernel(a.memory_start(), batch, n, c.memory_start());
 }
 
 template<typename A, typename B, typename C, cpp_enable_if(all_single_precision<A>::value)>
@@ -468,30 +488,54 @@ void fft2(A&& a, C&& c){
 
 template<typename A, typename C, cpp_enable_if(all_single_precision<A>::value)>
 void fft2_many(A&& a, C&& c){
+    static constexpr const std::size_t N = decay_traits<A>::dimensions();
+
+    auto n1 = etl::dim<N - 2>(a);           //Size of the transform
+    auto n2 = etl::dim<N - 1>(a);           //Size of the transform
+    auto batch = etl::size(a) / (n1 * n2);  //Number of batch
+
     auto a_complex = allocate<std::complex<float>>(etl::size(a));
 
     std::copy(a.begin(), a.end(), a_complex.get());
 
-    detail::cfft2_many_kernel(a_complex.get(), etl::dim<0>(a), etl::dim<1>(a), etl::dim<2>(a), c.memory_start());
+    detail::cfft2_many_kernel(a_complex.get(), batch, n1, n2, c.memory_start());
 }
 
 template<typename A, typename C, cpp_enable_if(all_double_precision<A>::value)>
 void fft2_many(A&& a, C&& c){
+    static constexpr const std::size_t N = decay_traits<A>::dimensions();
+
+    auto n1 = etl::dim<N - 2>(a);           //Size of the transform
+    auto n2 = etl::dim<N - 1>(a);           //Size of the transform
+    auto batch = etl::size(a) / (n1 * n2);  //Number of batch
+
     auto a_complex = allocate<std::complex<double>>(etl::size(a));
 
     std::copy(a.begin(), a.end(), a_complex.get());
 
-    detail::zfft2_many_kernel(a_complex.get(), etl::dim<0>(a), etl::dim<1>(a), etl::dim<2>(a), c.memory_start());
+    detail::zfft2_many_kernel(a_complex.get(), batch, n1, n2, c.memory_start());
 }
 
 template<typename A, typename C, cpp_enable_if(all_complex_single_precision<A>::value)>
 void fft2_many(A&& a, C&& c){
-    detail::cfft2_many_kernel(a.memory_start(), etl::dim<0>(a), etl::dim<1>(a), etl::dim<2>(a), c.memory_start());
+    static constexpr const std::size_t N = decay_traits<A>::dimensions();
+
+    auto n1 = etl::dim<N - 2>(a);           //Size of the transform
+    auto n2 = etl::dim<N - 1>(a);           //Size of the transform
+    auto batch = etl::size(a) / (n1 * n2);  //Number of batch
+
+    detail::cfft2_many_kernel(a.memory_start(), batch, n1, n2, c.memory_start());
 }
 
 template<typename A, typename C, cpp_enable_if(all_complex_double_precision<A>::value)>
 void fft2_many(A&& a, C&& c){
-    detail::zfft2_many_kernel(a.memory_start(), etl::dim<0>(a), etl::dim<1>(a), etl::dim<2>(a), c.memory_start());
+    static constexpr const std::size_t N = decay_traits<A>::dimensions();
+
+    auto n1 = etl::dim<N - 2>(a);           //Size of the transform
+    auto n2 = etl::dim<N - 1>(a);           //Size of the transform
+    auto batch = etl::size(a) / (n1 * n2);  //Number of batch
+
+    detail::zfft2_many_kernel(a.memory_start(), batch, n1, n2, c.memory_start());
 }
 
 template<typename A, typename C, cpp_enable_if(all_complex_single_precision<A>::value)>

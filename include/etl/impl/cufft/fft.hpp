@@ -177,40 +177,60 @@ void fft1(A&& a, C&& c){
 
 template<typename A, typename C, cpp_enable_if(all_single_precision<A>::value)>
 void fft1_many(A&& a, C&& c){
+    static constexpr const std::size_t N = decay_traits<A>::dimensions();
+
+    auto n = etl::dim<N - 1>(a);        //Size of the transform
+    auto batch = etl::size(a) / n;      //Number of batch
+
     std::copy(a.begin(), a.end(), c.begin());
 
     auto gpu_c = impl::cuda::cuda_allocate_copy(c);
 
-    detail::inplace_cfft1_many_kernel(gpu_c, etl::dim<0>(a), etl::dim<1>(a));
+    detail::inplace_cfft1_many_kernel(gpu_c, batch, n);
 
     cudaMemcpy(c.memory_start(), gpu_c.get(), etl::size(c) * sizeof(value_t<C>), cudaMemcpyDeviceToHost);
 }
 
 template<typename A, typename C, cpp_enable_if(all_double_precision<A>::value)>
 void fft1_many(A&& a, C&& c){
+    static constexpr const std::size_t N = decay_traits<A>::dimensions();
+
+    auto n = etl::dim<N - 1>(a);        //Size of the transform
+    auto batch = etl::size(a) / n;      //Number of batch
+
     std::copy(a.begin(), a.end(), c.begin());
 
     auto gpu_c = impl::cuda::cuda_allocate_copy(c);
 
-    detail::inplace_zfft1_many_kernel(gpu_c, etl::dim<0>(a), etl::dim<1>(a));
+    detail::inplace_zfft1_many_kernel(gpu_c, batch, n);
 
     cudaMemcpy(c.memory_start(), gpu_c.get(), etl::size(c) * sizeof(value_t<C>), cudaMemcpyDeviceToHost);
 }
 
 template<typename A, typename C, cpp_enable_if(all_complex_single_precision<A>::value)>
 void fft1_many(A&& a, C&& c){
+    static constexpr const std::size_t N = decay_traits<A>::dimensions();
+
+    auto n = etl::dim<N - 1>(a);        //Size of the transform
+    auto batch = etl::size(a) / n;      //Number of batch
+
     auto gpu_a = impl::cuda::cuda_allocate_copy(a);
 
-    detail::inplace_cfft1_many_kernel(gpu_a, etl::dim<0>(a), etl::dim<1>(a));
+    detail::inplace_cfft1_many_kernel(gpu_a, batch, n);
 
     cudaMemcpy(c.memory_start(), gpu_a.get(), etl::size(c) * sizeof(value_t<C>), cudaMemcpyDeviceToHost);
 }
 
 template<typename A, typename C, cpp_enable_if(all_complex_double_precision<A>::value)>
 void fft1_many(A&& a, C&& c){
+    static constexpr const std::size_t N = decay_traits<A>::dimensions();
+
+    auto n = etl::dim<N - 1>(a);        //Size of the transform
+    auto batch = etl::size(a) / n;      //Number of batch
+
     auto gpu_a = impl::cuda::cuda_allocate_copy(a);
 
-    detail::inplace_zfft1_many_kernel(gpu_a, etl::dim<0>(a), etl::dim<1>(a));
+    detail::inplace_zfft1_many_kernel(gpu_a, batch, n);
 
     cudaMemcpy(c.memory_start(), gpu_a.get(), etl::size(c) * sizeof(value_t<C>), cudaMemcpyDeviceToHost);
 }
@@ -439,40 +459,64 @@ void ifft2_real(A&& a, C&& c){
 
 template<typename A, typename C, cpp_enable_if(all_single_precision<A>::value)>
 void fft2_many(A&& a, C&& c){
+    static constexpr const std::size_t N = decay_traits<A>::dimensions();
+
+    auto n1 = etl::dim<N - 2>(a);           //Size of the transform
+    auto n2 = etl::dim<N - 1>(a);           //Size of the transform
+    auto batch = etl::size(a) / (n1 * n2);  //Number of batch
+
     std::copy(a.begin(), a.end(), c.begin());
 
     auto gpu_c = impl::cuda::cuda_allocate_copy(c);
 
-    detail::inplace_cfft2_many_kernel(gpu_c, etl::dim<0>(a), etl::dim<1>(a), etl::dim<2>(a));
+    detail::inplace_cfft2_many_kernel(gpu_c, batch, n1, n2);
 
     cudaMemcpy(c.memory_start(), gpu_c.get(), etl::size(c) * sizeof(value_t<C>), cudaMemcpyDeviceToHost);
 }
 
 template<typename A, typename C, cpp_enable_if(all_double_precision<A>::value)>
 void fft2_many(A&& a, C&& c){
+    static constexpr const std::size_t N = decay_traits<A>::dimensions();
+
+    auto n1 = etl::dim<N - 2>(a);           //Size of the transform
+    auto n2 = etl::dim<N - 1>(a);           //Size of the transform
+    auto batch = etl::size(a) / (n1 * n2);  //Number of batch
+
     std::copy(a.begin(), a.end(), c.begin());
 
     auto gpu_c = impl::cuda::cuda_allocate_copy(c);
 
-    detail::inplace_zfft2_many_kernel(gpu_c, etl::dim<0>(a), etl::dim<1>(a), etl::dim<2>(a));
+    detail::inplace_zfft2_many_kernel(gpu_c, batch, n1, n2);
 
     cudaMemcpy(c.memory_start(), gpu_c.get(), etl::size(c) * sizeof(value_t<C>), cudaMemcpyDeviceToHost);
 }
 
 template<typename A, typename C, cpp_enable_if(all_complex_single_precision<A>::value)>
 void fft2_many(A&& a, C&& c){
+    static constexpr const std::size_t N = decay_traits<A>::dimensions();
+
+    auto n1 = etl::dim<N - 2>(a);           //Size of the transform
+    auto n2 = etl::dim<N - 1>(a);           //Size of the transform
+    auto batch = etl::size(a) / (n1 * n2);  //Number of batch
+
     auto gpu_a = impl::cuda::cuda_allocate_copy(a);
 
-    detail::inplace_cfft2_many_kernel(gpu_a, etl::dim<0>(a), etl::dim<1>(a), etl::dim<2>(a));
+    detail::inplace_cfft2_many_kernel(gpu_a, batch, n1, n2);
 
     cudaMemcpy(c.memory_start(), gpu_a.get(), etl::size(c) * sizeof(value_t<C>), cudaMemcpyDeviceToHost);
 }
 
 template<typename A, typename C, cpp_enable_if(all_complex_double_precision<A>::value)>
 void fft2_many(A&& a, C&& c){
+    static constexpr const std::size_t N = decay_traits<A>::dimensions();
+
+    auto n1 = etl::dim<N - 2>(a);           //Size of the transform
+    auto n2 = etl::dim<N - 1>(a);           //Size of the transform
+    auto batch = etl::size(a) / (n1 * n2);  //Number of batch
+
     auto gpu_a = impl::cuda::cuda_allocate_copy(a);
 
-    detail::inplace_zfft2_many_kernel(gpu_a, etl::dim<0>(a), etl::dim<1>(a), etl::dim<2>(a));
+    detail::inplace_zfft2_many_kernel(gpu_a, batch, n1, n2);
 
     cudaMemcpy(c.memory_start(), gpu_a.get(), etl::size(c) * sizeof(value_t<C>), cudaMemcpyDeviceToHost);
 }

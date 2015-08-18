@@ -459,6 +459,8 @@ void fft_n(const In* r_in, etl::complex<T>* r_out, const std::size_t n){
 
 template<typename In, typename T>
 void fft_n_many(const In* r_in, etl::complex<T>* r_out, const std::size_t batch, const std::size_t n){
+    const auto distance = n; //in/out distance between samples
+
     //0. Factorize
 
     std::size_t factors[MAX_FACTORS];
@@ -475,7 +477,7 @@ void fft_n_many(const In* r_in, etl::complex<T>* r_out, const std::size_t batch,
     //2. Perform all the FFT itself
 
     for(std::size_t b = 0; b < batch; ++b){
-        fft_perform(r_in + b * n, r_out + b * n, n, factors, n_factors, twiddle);
+        fft_perform(r_in + b * distance, r_out + b * distance, n, factors, n_factors, twiddle);
     }
 }
 
@@ -599,18 +601,25 @@ void ifft1_real(A&& a, C&& c){
 //(T or complex<T>) -> complex<T>
 template<typename A, typename C>
 void fft1_many(A&& a, C&& c){
-    auto n = etl::dim<1>(a);
+    static constexpr const std::size_t N = decay_traits<A>::dimensions();
+
+    auto n = etl::dim<N - 1>(a);        //Size of the transform
+    auto batch = etl::size(a) / n;      //Number of batch
+    auto distance = n;                  //Distance between samples
 
     if(n <= 65536 && detail::is_power_of_two(n)){
+        //Copy a -> c (if not aliasing)
         if(reinterpret_cast<const void*>(a.memory_start()) != reinterpret_cast<const void*>(c.memory_start())){
             std::copy_n(a.begin(), etl::size(c), c.begin());
         }
 
-        for(std::size_t i = 0; i < etl::dim<0>(c); ++i){
-            detail::inplace_radix2_fft1(reinterpret_cast<etl::complex<typename value_t<C>::value_type>*>(c(i).memory_start()), n);
+        auto* m = c.memory_start();
+
+        for(std::size_t i = 0; i < batch; ++i){
+            detail::inplace_radix2_fft1(reinterpret_cast<etl::complex<typename value_t<C>::value_type>*>(m + i * distance), n);
         }
     } else {
-        detail::fft_n_many(a.memory_start(), reinterpret_cast<etl::complex<typename value_t<C>::value_type>*>(c.memory_start()), etl::dim<0>(c), n);
+        detail::fft_n_many(a.memory_start(), reinterpret_cast<etl::complex<typename value_t<C>::value_type>*>(c.memory_start()), batch, n);
     }
 }
 
@@ -670,23 +679,18 @@ void ifft2_real(A&& a, C&& c){
 //(T or complex<T>) -> complex<T>
 template<typename A, typename C>
 void fft2_many(A&& a, C&& c){
-    //TODO Improve performance by using fft1_many with higher order (2) and sub transposition
+    //Note: we need dyn matrix for inplace rectangular transpose
+    auto w = etl::force_temporary_dyn(c);
 
-    for(std::size_t i = 0; i < etl::dim<0>(c); ++i){
-        auto w = etl::force_temporary_dyn(c(i));
+    fft1_many(a, w);
 
-        //Perform FFT on each rows
-        fft1_many(a(i), w);
+    w.deep_transpose_inplace();
 
-        w.transpose_inplace();
+    fft1_many(w, w);
 
-        //Perform FFT on each columns
-        fft1_many(w, w);
+    w.deep_transpose_inplace();
 
-        w.transpose_inplace();
-
-        c(i) = w;
-    }
+    c = w;
 }
 
 template<typename A, typename B, typename C>
