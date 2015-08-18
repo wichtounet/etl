@@ -205,3 +205,55 @@ TEMPLATE_TEST_CASE_2( "transpose/expr_1", "transpose", Z, float, double ) {
     REQUIRE(a(2,2,1) == 8.0);
     REQUIRE(a(2,2,2) == 9.0);
 }
+
+TEMPLATE_TEST_CASE_2( "deep_transpose/1", "[dyn][trans]", Z, float, double ) {
+    etl::dyn_matrix<Z, 3> a(2, 3, 3, etl::values<Z>(1,2,3,4,5,6,7,8,9, 1,2,3,4,5,6,7,8,9 ));
+
+    a.deep_transpose_inplace();
+
+    REQUIRE(a(0,0,0) == 1.0);
+    REQUIRE(a(0,0,1) == 4.0);
+    REQUIRE(a(0,0,2) == 7.0);
+    REQUIRE(a(0,1,0) == 2.0);
+    REQUIRE(a(0,1,1) == 5.0);
+    REQUIRE(a(0,1,2) == 8.0);
+    REQUIRE(a(0,2,0) == 3.0);
+    REQUIRE(a(0,2,1) == 6.0);
+    REQUIRE(a(0,2,2) == 9.0);
+
+    REQUIRE(a(1,0,0) == 1.0);
+    REQUIRE(a(1,0,1) == 4.0);
+    REQUIRE(a(1,0,2) == 7.0);
+    REQUIRE(a(1,1,0) == 2.0);
+    REQUIRE(a(1,1,1) == 5.0);
+    REQUIRE(a(1,1,2) == 8.0);
+    REQUIRE(a(1,2,0) == 3.0);
+    REQUIRE(a(1,2,1) == 6.0);
+    REQUIRE(a(1,2,2) == 9.0);
+}
+
+TEMPLATE_TEST_CASE_2( "deep_transpose/2", "[dyn][trans]", Z, float, double ) {
+    etl::dyn_matrix<Z, 4> a(2, 2, 3, 3, etl::values<Z>(1,2,3,4,5,6,7,8,9, 1,2,3,4,5,6,7,8,9, 1,2,3,4,5,6,7,8,9, 1,2,3,4,5,6,7,8,9 ));
+
+    a.deep_transpose_inplace();
+
+    REQUIRE(a(0,0,0,0) == 1.0);
+    REQUIRE(a(0,0,0,1) == 4.0);
+    REQUIRE(a(0,0,0,2) == 7.0);
+    REQUIRE(a(0,0,1,0) == 2.0);
+    REQUIRE(a(0,0,1,1) == 5.0);
+    REQUIRE(a(0,0,1,2) == 8.0);
+    REQUIRE(a(0,0,2,0) == 3.0);
+    REQUIRE(a(0,0,2,1) == 6.0);
+    REQUIRE(a(0,0,2,2) == 9.0);
+
+    REQUIRE(a(1,1,0,0) == 1.0);
+    REQUIRE(a(1,1,0,1) == 4.0);
+    REQUIRE(a(1,1,0,2) == 7.0);
+    REQUIRE(a(1,1,1,0) == 2.0);
+    REQUIRE(a(1,1,1,1) == 5.0);
+    REQUIRE(a(1,1,1,2) == 8.0);
+    REQUIRE(a(1,1,2,0) == 3.0);
+    REQUIRE(a(1,1,2,1) == 6.0);
+    REQUIRE(a(1,1,2,2) == 9.0);
+}
