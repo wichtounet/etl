@@ -104,6 +104,17 @@ struct inplace_assignable {
         return mat;
     }
 
+    derived_t& fft_many_inplace(){
+        static_assert(is_complex<derived_t>::value, "Only complex vector can use inplace FFT");
+        static_assert(etl_traits<derived_t>::dimensions() > 1, "Only matrix of dimensions > 1 can use fft_many_inplace");
+
+        decltype(auto) mat = as_derived();
+
+        detail::fft1_many_impl<derived_t, derived_t>::apply(mat, mat);
+
+        return mat;
+    }
+
     derived_t& ifft_inplace(){
         static_assert(is_complex<derived_t>::value, "Only complex vector can use inplace IFFT");
         static_assert(etl_traits<derived_t>::dimensions() == 1, "Only vector can use ifft_inplace, use ifft2_inplace for matrices");
@@ -117,11 +128,22 @@ struct inplace_assignable {
 
     derived_t& fft2_inplace(){
         static_assert(is_complex<derived_t>::value, "Only complex vector can use inplace FFT");
-        static_assert(etl_traits<derived_t>::dimensions() == 2, "Only vector can use fft_inplace, use fft2_inplace for matrices");
+        static_assert(etl_traits<derived_t>::dimensions() == 2, "Only matrix can use fft2_inplace, use fft_inplace for vectors");
 
         decltype(auto) mat = as_derived();
 
         detail::fft2_impl<derived_t, derived_t>::apply(mat, mat);
+
+        return mat;
+    }
+
+    derived_t& fft2_many_inplace(){
+        static_assert(is_complex<derived_t>::value, "Only complex vector can use inplace FFT");
+        static_assert(etl_traits<derived_t>::dimensions() > 2, "Only matrix of dimensions > 2 can use fft2_many_inplace");
+
+        decltype(auto) mat = as_derived();
+
+        detail::fft2_many_impl<derived_t, derived_t>::apply(mat, mat);
 
         return mat;
     }

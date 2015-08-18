@@ -860,6 +860,34 @@ TEMPLATE_TEST_CASE_2( "fft_1d_many/3", "[fast][fft]", Z, float, double ) {
     REQUIRE(c(1,4).imag() == Approx(Z(-3.440955)));
 }
 
+TEMPLATE_TEST_CASE_2( "fft_1d_many/4", "[fast][fft]", Z, float, double ) {
+    etl::fast_matrix<std::complex<Z>, 2, 5> a({MC(1.0,0.0), MC(2.0,0.0), MC(3.0,0.0), MC(4.0,0.0), MC(5.0,0.0), MC(6.0,0.0), MC(7.0,0.0), MC(8.0,0.0), MC(9.0,0.0), MC(10.0,0.0)});
+
+    a.fft_many_inplace();
+
+    REQUIRE(a(0,0).real() == Approx(Z(15.0)));
+    REQUIRE(a(0,0).imag() == Approx(Z(0.0)));
+    REQUIRE(a(0,1).real() == Approx(Z(-2.5)));
+    REQUIRE(a(0,1).imag() == Approx(Z(3.440955)));
+    REQUIRE(a(0,2).real() == Approx(Z(-2.5)));
+    REQUIRE(a(0,2).imag() == Approx(Z(0.8123)));
+    REQUIRE(a(0,3).real() == Approx(Z(-2.5)));
+    REQUIRE(a(0,3).imag() == Approx(Z(-0.8123)));
+    REQUIRE(a(0,4).real() == Approx(Z(-2.5)));
+    REQUIRE(a(0,4).imag() == Approx(Z(-3.440955)));
+
+    REQUIRE(a(1,0).real() == Approx(Z(40.0)));
+    REQUIRE(a(1,0).imag() == Approx(Z(0.0)));
+    REQUIRE(a(1,1).real() == Approx(Z(-2.5)));
+    REQUIRE(a(1,1).imag() == Approx(Z(3.440955)));
+    REQUIRE(a(1,2).real() == Approx(Z(-2.5)));
+    REQUIRE(a(1,2).imag() == Approx(Z(0.8123)));
+    REQUIRE(a(1,3).real() == Approx(Z(-2.5)));
+    REQUIRE(a(1,3).imag() == Approx(Z(-0.8123)));
+    REQUIRE(a(1,4).real() == Approx(Z(-2.5)));
+    REQUIRE(a(1,4).imag() == Approx(Z(-3.440955)));
+}
+
 //fft_2d_many
 
 TEMPLATE_TEST_CASE_2( "fft_2d_many/0", "[fast][fft]", Z, float, double ) {
@@ -912,4 +940,30 @@ TEMPLATE_TEST_CASE_2( "fft_2d_many/1", "[fast][fft]", Z, float, double ) {
     REQUIRE(c(1,1,0).imag() == Approx(Z(1.0)));
     REQUIRE(c(1,1,1).real() == Approx(Z(-3.5)));
     REQUIRE(c(1,1,1).imag() == Approx(Z(1.0)));
+}
+
+TEMPLATE_TEST_CASE_2( "fft_2d_many/2", "[fast][fft]", Z, float, double ) {
+    etl::fast_matrix<std::complex<Z>, 2, 2, 2> a({
+        MC(1.0, 1.0), MC(2.0, 3.0), MC(-1.0, 0.0), MC(-2.0, 0.0),
+        MC(-1.0, 1.0), MC(2.0, 1.0), MC(-0.5, 0.0), MC(-1.0, 1.0)});
+
+    a.fft2_many_inplace();
+
+    REQUIRE(a(0,0,0).real() == Approx(Z(0.0)));
+    REQUIRE(a(0,0,0).imag() == Approx(Z(4.0)));
+    REQUIRE(a(0,0,1).real() == Approx(Z(0.0)));
+    REQUIRE(a(0,0,1).imag() == Approx(Z(-2.0)));
+    REQUIRE(a(0,1,0).real() == Approx(Z(6.0)));
+    REQUIRE(a(0,1,0).imag() == Approx(Z(4.0)));
+    REQUIRE(a(0,1,1).real() == Approx(Z(-2.0)));
+    REQUIRE(a(0,1,1).imag() == Approx(Z(-2.0)));
+
+    REQUIRE(a(1,0,0).real() == Approx(Z(-0.5)));
+    REQUIRE(a(1,0,0).imag() == Approx(Z(3.0)));
+    REQUIRE(a(1,0,1).real() == Approx(Z(-2.5)));
+    REQUIRE(a(1,0,1).imag() == Approx(Z(-1.0)));
+    REQUIRE(a(1,1,0).real() == Approx(Z(2.5)));
+    REQUIRE(a(1,1,0).imag() == Approx(Z(1.0)));
+    REQUIRE(a(1,1,1).real() == Approx(Z(-3.5)));
+    REQUIRE(a(1,1,1).imag() == Approx(Z(1.0)));
 }
