@@ -43,6 +43,28 @@ struct inplace_assignable {
         return as_derived();
     }
 
+    template<typename S = D, cpp_enable_if((decay_traits<S>::dimensions() > 3))>
+    derived_t& deep_transpose_inplace(){
+        decltype(auto) mat = as_derived();
+
+        for(std::size_t i = 0; i < etl::dim<0>(mat); ++i){
+            mat(i).deep_transpose_inplace();
+        }
+
+        return mat;
+    }
+
+    template<typename S = D, cpp_enable_if((decay_traits<S>::dimensions() == 3))>
+    derived_t& deep_transpose_inplace(){
+        decltype(auto) mat = as_derived();
+
+        for(std::size_t i = 0; i < etl::dim<0>(mat); ++i){
+            mat(i).transpose_inplace();
+        }
+
+        return mat;
+    }
+
     template<typename S = D, cpp_disable_if(is_dyn_matrix<S>::value)>
     derived_t& transpose_inplace(){
         static_assert(etl_traits<derived_t>::dimensions() == 2, "Only 2D matrix can be transposed");
