@@ -97,10 +97,12 @@ $(eval $(call auto_folder_compile,test/src))
 CPP_FILES=$(wildcard test/src/*.cpp)
 TEST_FILES=$(CPP_FILES:test/%=%)
 
+BENCH_FILES=$(wildcard workbench/benchmark*cpp)
+
 # Create executables
 $(eval $(call add_executable,test_asm_1,workbench/test.cpp))
 $(eval $(call add_executable,test_asm_2,workbench/test_dim.cpp))
-$(eval $(call add_executable,benchmark,workbench/benchmark.cpp))
+$(eval $(call add_executable,benchmark,$(BENCH_FILES)))
 $(eval $(call add_executable,mmul,workbench/mmul.cpp))
 $(eval $(call add_test_executable,etl_test,$(TEST_FILES)))
 
