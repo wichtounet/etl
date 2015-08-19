@@ -43,13 +43,10 @@ template<typename D>
 void pack_MRxk(std::size_t k, const D* A, std::size_t a_row_stride, std::size_t a_col_stride, double* buffer){
     constexpr const auto MR = gemm_config<D>::MR;
 
-    for (std::size_t j=0; j<k; ++j) {
-        for (std::size_t i=0; i<MR; ++i) {
-            buffer[i] = A[i*a_row_stride];
+    for (std::size_t j = 0; j < k; ++j) {
+        for (std::size_t i = 0; i < MR; ++i) {
+            buffer[j * MR + i] = A[j * a_col_stride + i * a_row_stride];
         }
-
-        buffer += MR;
-        A += a_col_stride;
     }
 }
 
@@ -81,13 +78,12 @@ template<typename D>
 void pack_kxNR(std::size_t k, const D* B, std::size_t b_row_stride, std::size_t b_col_stride, double* buffer){
     constexpr const auto NR = gemm_config<D>::NR;
 
-    for (std::size_t i=0; i<k; ++i) {
-        for (std::size_t j=0; j<NR; ++j) {
-            buffer[j] = B[j*b_col_stride];
+    for (std::size_t i = 0; i < k; ++i) {
+        for (std::size_t j  =0; j < NR; ++j) {
+            decltype(auto) lhs = buffer[i * NR + j];
+            auto rhs = B[i * b_row_stride + j * b_col_stride];
+            lhs = rhs;
         }
-
-        buffer += NR;
-        B += b_row_stride;
     }
 }
 
