@@ -31,11 +31,22 @@ enum class conv_impl {
     AVX
 };
 
-template<typename T>
-inline cpp14_constexpr conv_impl select_conv_impl(){
-    //Note since these boolean will be known at compile time, the conditions will be a lot simplified
-    constexpr const bool sse = vectorize_impl && vector_mode == vector_mode_t::SSE3;
-    constexpr const bool avx = vectorize_impl && vector_mode == vector_mode_t::AVX;
+template<typename I, typename K, typename C>
+inline conv_impl select_conv_impl(){
+    //Note: since the constexpr values will be known at compile time, the
+    //conditions will be a lot simplified
+
+    static constexpr const order input_order = decay_traits<I>::storage_order;
+    static constexpr const order kernel_order = decay_traits<K>::storage_order;
+    static constexpr const order output_order = decay_traits<C>::storage_order;
+
+    //Only the standard implementation is able to handle column major
+    if(input_order == order::ColumnMajor || kernel_order == order::ColumnMajor || output_order == order::ColumnMajor){
+        return conv_impl::STD;
+    }
+
+    static constexpr const bool sse = vectorize_impl && vector_mode == vector_mode_t::SSE3;
+    static constexpr const bool avx = vectorize_impl && vector_mode == vector_mode_t::AVX;
 
     if(avx){
         return conv_impl::AVX;
@@ -49,7 +60,7 @@ inline cpp14_constexpr conv_impl select_conv_impl(){
 template<typename I, typename K, typename C, typename Enable = void>
 struct conv1_full_impl {
     static void apply(const I& input, const K& kernel, C&& conv){
-        auto impl = select_conv_impl<value_t<I>>();
+        auto impl = select_conv_impl<I,K,C>();
 
         if(impl == conv_impl::AVX){
             impl::avx::conv1_full(input, kernel, conv);
@@ -64,7 +75,7 @@ struct conv1_full_impl {
 template<typename I, typename K, typename C, typename Enable = void>
 struct conv1_same_impl {
     static void apply(const I& input, const K& kernel, C&& conv){
-        auto impl = select_conv_impl<value_t<I>>();
+        auto impl = select_conv_impl<I,K,C>();
 
         if(impl == conv_impl::AVX){
             impl::avx::conv1_same(input, kernel, conv);
@@ -79,7 +90,7 @@ struct conv1_same_impl {
 template<typename I, typename K, typename C, typename Enable = void>
 struct conv1_valid_impl {
     static void apply(const I& input, const K& kernel, C&& conv){
-        auto impl = select_conv_impl<value_t<I>>();
+        auto impl = select_conv_impl<I,K,C>();
 
         if(impl == conv_impl::AVX){
             impl::avx::conv1_valid(input, kernel, conv);
@@ -94,7 +105,7 @@ struct conv1_valid_impl {
 template<typename I, typename K, typename C, typename Enable = void>
 struct conv2_full_impl {
     static void apply(const I& input, const K& kernel, C&& conv){
-        auto impl = select_conv_impl<value_t<I>>();
+        auto impl = select_conv_impl<I,K,C>();
 
         if(impl == conv_impl::AVX){
             impl::avx::conv2_full(input, kernel, conv);
@@ -109,7 +120,7 @@ struct conv2_full_impl {
 template<typename I, typename K, typename C, typename Enable = void>
 struct conv2_same_impl {
     static void apply(const I& input, const K& kernel, C&& conv){
-        auto impl = select_conv_impl<value_t<I>>();
+        auto impl = select_conv_impl<I,K,C>();
 
         if(impl == conv_impl::AVX){
             impl::avx::conv2_same(input, kernel, conv);
@@ -124,7 +135,7 @@ struct conv2_same_impl {
 template<typename I, typename K, typename C, typename Enable = void>
 struct conv2_valid_impl {
     static void apply(const I& input, const K& kernel, C&& conv){
-        auto impl = select_conv_impl<value_t<I>>();
+        auto impl = select_conv_impl<I,K,C>();
 
         if(impl == conv_impl::AVX){
             impl::avx::conv2_valid(input, kernel, conv);
