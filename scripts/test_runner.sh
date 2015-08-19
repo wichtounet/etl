@@ -20,7 +20,7 @@ gcovr -x -b -r . --object-directory=debug/test > coverage_1.xml
 
 echo "Test 2. GCC (debug vectorize avx)"
 
-export ETL_DEFAULTS="-DETL_VECTORIZE_FULL -mavx2 -mavx"
+export ETL_DEFAULTS="-DETL_VECTORIZE_FULL -mavx"
 
 make clean
 make -j2 debug/bin/etl_test
