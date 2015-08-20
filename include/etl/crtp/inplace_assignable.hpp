@@ -93,6 +93,9 @@ struct inplace_assignable {
         return mat;
     }
 
+    /*!
+     * \brief Perform inplace 1D FFT of the vector.
+     */
     derived_t& fft_inplace(){
         static_assert(is_complex<derived_t>::value, "Only complex vector can use inplace FFT");
         static_assert(etl_traits<derived_t>::dimensions() == 1, "Only vector can use fft_inplace, use fft2_inplace for matrices");
