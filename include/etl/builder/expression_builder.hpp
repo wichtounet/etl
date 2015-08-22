@@ -240,118 +240,145 @@ auto operator+(E&& value) -> detail::unary_helper<E, plus_unary_op> {
     return detail::unary_helper<E, plus_unary_op>{value};
 }
 
-template<typename E, cpp::enable_if_u<is_etl_expr<std::decay_t<E>>::value> = cpp::detail::dummy>
+template<typename E>
 auto abs(E&& value) -> detail::unary_helper<E, abs_unary_op> {
+    static_assert(is_etl_expr<E>::value, "etl::abs can only be used on ETL expressions");
     return detail::unary_helper<E, abs_unary_op>{value};
 }
 
-template<typename E, typename T, cpp_enable_if(is_etl_expr<E>::value && std::is_arithmetic<T>::value)>
+template<typename E, typename T, cpp_enable_if(std::is_arithmetic<T>::value)>
 auto max(E&& value, T v){
+    static_assert(is_etl_expr<E>::value, "etl::max can only be used on ETL expressions");
     return detail::make_stateful_unary_expr<E, max_scalar_op<value_t<E>, value_t<E>>>(value, value_t<E>(v));
 }
 
-template<typename L, typename R, cpp_enable_if(is_etl_expr<L>::value && !std::is_arithmetic<R>::value)>
+template<typename L, typename R, cpp_enable_if(!std::is_arithmetic<R>::value)>
 auto max(L&& lhs, R&& rhs) -> detail::left_binary_helper_op<L, R, max_binary_op<value_t<L>, value_t<R>>> {
+    static_assert(is_etl_expr<L>::value, "etl::max can only be used on ETL expressions");
     return {lhs, rhs};
 }
 
-template<typename E, typename T, cpp_enable_if(is_etl_expr<E>::value && std::is_arithmetic<T>::value)>
+template<typename E, typename T, cpp_enable_if(std::is_arithmetic<T>::value)>
 auto min(E&& value, T v){
+    static_assert(is_etl_expr<E>::value, "etl::max can only be used on ETL expressions");
     return detail::make_stateful_unary_expr<E, min_scalar_op<value_t<E>, value_t<E>>>(value, value_t<E>(v));
 }
 
-template<typename L, typename R, cpp_enable_if(is_etl_expr<L>::value && !std::is_arithmetic<R>::value)>
+template<typename L, typename R, cpp_enable_if(!std::is_arithmetic<R>::value)>
 auto min(L&& lhs, R&& rhs) -> detail::left_binary_helper_op<L, R, min_binary_op<value_t<L>, value_t<R>>> {
+    static_assert(is_etl_expr<L>::value, "etl::max can only be used on ETL expressions");
     return {lhs, rhs};
 }
 
-template<typename E, typename T, cpp_enable_if(is_etl_expr<E>::value && std::is_arithmetic<T>::value)>
+template<typename E, typename T>
 auto clip(E&& value, T min, T max){
+    static_assert(is_etl_expr<E>::value, "etl::clip can only be used on ETL expressions");
+    static_assert(std::is_arithmetic<T>::value, "etl::clip can only be used with arithmetic values");
     return detail::make_stateful_unary_expr<E, clip_scalar_op<value_t<E>, value_t<E>>>(value, value_t<E>(min), value_t<E>(max));
 }
 
-template<typename E, typename T, cpp::enable_if_all_u<is_etl_expr<E>::value, std::is_arithmetic<T>::value> = cpp::detail::dummy>
+template<typename E, typename T>
 auto pow(E&& value, T v) -> detail::left_binary_helper_op<E, scalar<value_t<E>>, pow_binary_op<value_t<E>, value_t<E>>> {
+    static_assert(is_etl_expr<E>::value, "etl::pow can only be used on ETL expressions");
+    static_assert(std::is_arithmetic<T>::value, "etl::pow can only be used with arithmetic values");
     return {value, scalar<value_t<E>>(v)};
 }
 
-template<typename E, typename T, cpp::enable_if_all_u<is_etl_expr<E>::value, std::is_arithmetic<T>::value> = cpp::detail::dummy>
+template<typename E, typename T>
 auto one_if(E&& value, T v) -> detail::left_binary_helper_op<E, scalar<value_t<E>>, one_if_binary_op<value_t<E>, value_t<E>>> {
+    static_assert(is_etl_expr<E>::value, "etl::one_if can only be used on ETL expressions");
+    static_assert(std::is_arithmetic<T>::value, "etl::one_if can only be used with arithmetic values");
     return {value, scalar<value_t<E>>(v)};
 }
 
-template<typename E, cpp::enable_if_u<is_etl_expr<E>::value> = cpp::detail::dummy>
+template<typename E>
 auto one_if_max(E&& value) -> detail::left_binary_helper_op<E, scalar<value_t<E>>, one_if_binary_op<value_t<E>, value_t<E>>> {
+    static_assert(is_etl_expr<E>::value, "etl::one_if_max can only be used on ETL expressions");
     return {value, scalar<value_t<E>>(max(value))};
 }
 
-template<typename E, cpp::enable_if_u<is_etl_expr<E>::value> = cpp::detail::dummy>
+template<typename E>
 auto sqrt(E&& value) -> detail::unary_helper<E, sqrt_unary_op> {
+    static_assert(is_etl_expr<E>::value, "etl::sqrt can only be used on ETL expressions");
     return detail::unary_helper<E, sqrt_unary_op>{value};
 }
 
-template<typename E, cpp::enable_if_u<is_etl_expr<E>::value> = cpp::detail::dummy>
+template<typename E>
 auto log(E&& value) -> detail::unary_helper<E, log_unary_op> {
+    static_assert(is_etl_expr<E>::value, "etl::log can only be used on ETL expressions");
     return detail::unary_helper<E, log_unary_op>{value};
 }
 
-template<typename E, cpp::enable_if_u<is_etl_expr<E>::value> = cpp::detail::dummy>
+template<typename E>
 auto tan(E&& value) -> detail::unary_helper<E, tan_unary_op> {
+    static_assert(is_etl_expr<E>::value, "etl::tan can only be used on ETL expressions");
     return detail::unary_helper<E, tan_unary_op>{value};
 }
 
-template<typename E, cpp::enable_if_u<is_etl_expr<E>::value> = cpp::detail::dummy>
+template<typename E>
 auto cos(E&& value) -> detail::unary_helper<E, cos_unary_op> {
+    static_assert(is_etl_expr<E>::value, "etl::cos can only be used on ETL expressions");
     return detail::unary_helper<E, cos_unary_op>{value};
 }
 
-template<typename E, cpp::enable_if_u<is_etl_expr<E>::value> = cpp::detail::dummy>
+template<typename E>
 auto sin(E&& value) -> detail::unary_helper<E, sin_unary_op> {
+    static_assert(is_etl_expr<E>::value, "etl::sin can only be used on ETL expressions");
     return detail::unary_helper<E, sin_unary_op>{value};
 }
 
 template<typename E>
 auto tanh(E&& value) -> detail::unary_helper<E, tanh_unary_op> {
+    static_assert(is_etl_expr<E>::value, "etl::tanh can only be used on ETL expressions");
     return detail::unary_helper<E, tanh_unary_op>{value};
 }
 
-template<typename E, cpp::enable_if_u<is_etl_expr<E>::value> = cpp::detail::dummy>
+template<typename E>
 auto cosh(E&& value) -> detail::unary_helper<E, cosh_unary_op> {
+    static_assert(is_etl_expr<E>::value, "etl::cosh can only be used on ETL expressions");
     return detail::unary_helper<E, cosh_unary_op>{value};
 }
 
-template<typename E, cpp::enable_if_u<is_etl_expr<E>::value> = cpp::detail::dummy>
+template<typename E>
 auto sinh(E&& value) -> detail::unary_helper<E, sinh_unary_op> {
+    static_assert(is_etl_expr<E>::value, "etl::sinh can only be used on ETL expressions");
     return detail::unary_helper<E, sinh_unary_op>{value};
 }
 
-template<typename E, cpp::enable_if_u<is_etl_expr<E>::value> = cpp::detail::dummy>
+template<typename E>
 auto uniform_noise(E&& value) -> detail::unary_helper<E, uniform_noise_unary_op> {
+    static_assert(is_etl_expr<E>::value, "etl::uniform_noise can only be used on ETL expressions");
     return detail::unary_helper<E, uniform_noise_unary_op>{value};
 }
 
-template<typename E, cpp::enable_if_u<is_etl_expr<E>::value> = cpp::detail::dummy>
+template<typename E>
 auto normal_noise(E&& value) -> detail::unary_helper<E, normal_noise_unary_op> {
+    static_assert(is_etl_expr<E>::value, "etl::normal_noise can only be used on ETL expressions");
     return detail::unary_helper<E, normal_noise_unary_op>{value};
 }
 
-template<typename E, cpp::enable_if_u<is_etl_expr<E>::value> = cpp::detail::dummy>
+template<typename E>
 auto logistic_noise(E&& value) -> detail::unary_helper<E, logistic_noise_unary_op> {
+    static_assert(is_etl_expr<E>::value, "etl::logistic_noise can only be used on ETL expressions");
     return detail::unary_helper<E, logistic_noise_unary_op>{value};
 }
 
-template<typename E, typename T, cpp::enable_if_all_u<is_etl_expr<E>::value, std::is_arithmetic<T>::value> = cpp::detail::dummy>
+template<typename E, typename T>
 auto ranged_noise(E&& value, T v) -> detail::left_binary_helper_op<E, scalar<value_t<E>>, ranged_noise_binary_op<value_t<E>, value_t<E>>> {
+    static_assert(is_etl_expr<E>::value, "etl::ranged_noise can only be used on ETL expressions");
+    static_assert(std::is_arithmetic<T>::value, "etl::ranged_noise can only be used with arithmetic values");
     return {value, scalar<value_t<E>>(v)};
 }
 
-template<typename E, cpp::enable_if_u<is_etl_expr<E>::value> = cpp::detail::dummy>
+template<typename E>
 auto exp(E&& value) -> detail::unary_helper<E, exp_unary_op> {
+    static_assert(is_etl_expr<E>::value, "etl::exp can only be used on ETL expressions");
     return detail::unary_helper<E, exp_unary_op>{value};
 }
 
-template<typename E, cpp::enable_if_u<is_etl_expr<E>::value> = cpp::detail::dummy>
+template<typename E>
 auto sign(E&& value) -> detail::unary_helper<E, sign_unary_op> {
+    static_assert(is_etl_expr<E>::value, "etl::sign can only be used on ETL expressions");
     return detail::unary_helper<E, sign_unary_op>{value};
 }
 
@@ -370,84 +397,100 @@ auto identity_derivative(E&&){
 
 template<typename E>
 auto sigmoid(E&& value) -> decltype(1.0 / (1.0 + exp(-value))) {
+    static_assert(is_etl_expr<E>::value, "etl::sigmoid can only be used on ETL expressions");
     return 1.0 / (1.0 + exp(-value));
 }
 
 template<typename E>
 auto sigmoid_derivative(E&& value) -> decltype(value >> (1.0 - value)) {
+    static_assert(is_etl_expr<E>::value, "etl::sigmoid_derivative can only be used on ETL expressions");
     return value >> (1.0 - value);
 }
 
-template<typename E, cpp::enable_if_u<is_etl_expr<E>::value> = cpp::detail::dummy>
+template<typename E>
 auto fast_sigmoid(const E& value) -> detail::unary_helper<E, fast_sigmoid_unary_op> {
+    static_assert(is_etl_expr<E>::value, "etl::fast_sigmoid can only be used on ETL expressions");
     return detail::unary_helper<E, fast_sigmoid_unary_op>{value};
 }
 
-template<typename E, cpp::enable_if_u<is_etl_expr<E>::value> = cpp::detail::dummy>
+template<typename E>
 auto hard_sigmoid(E&& x) -> decltype(etl::clip(x * 0.2 + 0.5, 0.0, 1.0)) {
+    static_assert(is_etl_expr<E>::value, "etl::hard_sigmoid can only be used on ETL expressions");
     return etl::clip(x * 0.2 + 0.5, 0.0, 1.0);
 }
 
 template<typename E, cpp::enable_if_u<is_etl_expr<E>::value> = cpp::detail::dummy>
 auto softplus(E&& value){
+    static_assert(is_etl_expr<E>::value, "etl::softplus can only be used on ETL expressions");
     return log(1.0 + exp(value));
 }
 
 template<typename E, cpp::enable_if_u<is_etl_expr<E>::value> = cpp::detail::dummy>
 auto softmax(E&& e){
+    static_assert(is_etl_expr<E>::value, "etl::softmax can only be used on ETL expressions");
     return exp(e) / sum(exp(e));
 }
 
-template<typename E, cpp::enable_if_u<is_etl_expr<E>::value> = cpp::detail::dummy>
+template<typename E>
 auto stable_softmax(E&& e){
+    static_assert(is_etl_expr<E>::value, "etl::stable_softmax can only be used on ETL expressions");
     auto m = max(e);
     return exp(e - m) / sum(exp(e - m));
 }
 
-template<typename E, cpp::enable_if_u<is_etl_expr<E>::value> = cpp::detail::dummy>
+template<typename E>
 auto bernoulli(const E& value) -> detail::unary_helper<E, bernoulli_unary_op> {
+    static_assert(is_etl_expr<E>::value, "etl::bernoulli can only be used on ETL expressions");
     return detail::unary_helper<E, bernoulli_unary_op>{value};
 }
 
-template<typename E, cpp::enable_if_u<is_etl_expr<E>::value> = cpp::detail::dummy>
+template<typename E>
 auto r_bernoulli(const E& value) -> detail::unary_helper<E, reverse_bernoulli_unary_op> {
+    static_assert(is_etl_expr<E>::value, "etl::r_bernoulli can only be used on ETL expressions");
     return detail::unary_helper<E, reverse_bernoulli_unary_op>{value};
 }
 
 template<typename E>
 auto tanh_derivative(E&& value) -> decltype(1.0 - (value >> value)) {
+    static_assert(is_etl_expr<E>::value, "etl::tanh_derivative can only be used on ETL expressions");
     return 1.0 - (value >> value);
 }
 
 template<typename E>
 auto relu(E&& value) -> decltype(max(value, 0.0)) {
+    static_assert(is_etl_expr<E>::value, "etl::relu can only be used on ETL expressions");
     return max(value, 0.0);
 }
 
 template<typename E>
 auto relu_derivative(const E& value) -> detail::unary_helper<E, relu_derivative_op> {
+    static_assert(is_etl_expr<E>::value, "etl::relu_derivative can only be used on ETL expressions");
     return detail::unary_helper<E, relu_derivative_op>{value};
 }
 
 // Views that returns lvalues
 
-template<std::size_t D, typename E, cpp::enable_if_u<is_etl_expr<E>::value> = cpp::detail::dummy>
+template<std::size_t D, typename E>
 auto dim(E&& value, std::size_t i) -> detail::identity_helper<E, dim_view<detail::build_identity_type<E>, D>> {
+    static_assert(is_etl_expr<E>::value, "etl::dim can only be used on ETL expressions");
     return detail::identity_helper<E, dim_view<detail::build_identity_type<E>, D>>{{value, i}};
 }
 
-template<typename E, cpp::enable_if_u<is_etl_expr<E>::value> = cpp::detail::dummy>
+template<typename E>
 auto row(E&& value, std::size_t i) -> detail::identity_helper<E, dim_view<detail::build_identity_type<E>, 1>> {
+    static_assert(is_etl_expr<E>::value, "etl::row can only be used on ETL expressions");
     return detail::identity_helper<E, dim_view<detail::build_identity_type<E>, 1>>{{value, i}};
 }
 
-template<typename E, cpp::enable_if_u<is_etl_expr<E>::value> = cpp::detail::dummy>
+template<typename E>
 auto col(E&& value, std::size_t i) -> detail::identity_helper<E, dim_view<detail::build_identity_type<E>, 2>> {
+    static_assert(is_etl_expr<E>::value, "etl::col can only be used on ETL expressions");
     return detail::identity_helper<E, dim_view<detail::build_identity_type<E>, 2>>{{value, i}};
 }
 
-template<typename E, cpp::enable_if_u<is_etl_expr<E>::value> = cpp::detail::dummy>
+template<typename E>
 auto sub(E&& value, std::size_t i) -> detail::identity_helper<E, sub_view<detail::build_identity_type<E>>> {
+    static_assert(is_etl_expr<E>::value, "etl::sub can only be used on ETL expressions");
     static_assert(etl_traits<std::decay_t<E>>::dimensions() > 1, "Cannot use sub on vector");
     return detail::identity_helper<E, sub_view<detail::build_identity_type<E>>>{{value, i}};
 }
