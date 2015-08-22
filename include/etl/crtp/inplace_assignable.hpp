@@ -13,11 +13,17 @@
 #include "etl/impl/fft.hpp"
 
 /*
- * Use CRTP technique to inject inplace operations into expressions and value classes.
+ * \file inplace_assignable.hpp
+ * \brief Use CRTP technique to inject inplace operations into expressions and value classes.
  */
 
 namespace etl {
 
+/*!
+ * \brief CRTP class to inject inplace operations to matrix and vector structures.
+ *
+ * This CRTP class injects inplace FFT, Transposition, flipping and scaling.
+ */
 template<typename D>
 struct inplace_assignable {
     using derived_t = D;
