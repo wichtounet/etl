@@ -12,7 +12,7 @@
 #include "etl/impl/transpose.hpp"
 #include "etl/impl/fft.hpp"
 
-/*
+/*!
  * \file inplace_assignable.hpp
  * \brief Use CRTP technique to inject inplace operations into expressions and value classes.
  */

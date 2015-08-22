@@ -7,12 +7,16 @@
 
 #pragma once
 
-/*
- * Use CRTP technique to inject comparison operators to expressions and value classes.
+/*!
+ * \file comparable.hpp
+ * \brief Use CRTP technique to inject comparison operators to expressions and value classes.
  */
 
 namespace etl {
 
+/*!
+ * \brief CRTP class to inject comparison operators.
+ */
 template<typename D>
 struct comparable {
     using derived_t = D;
