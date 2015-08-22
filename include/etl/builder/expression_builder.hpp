@@ -383,7 +383,7 @@ auto sign(E&& value) -> detail::unary_helper<E, sign_unary_op> {
 }
 
 template<typename E>
-auto identity(E&& value){
+decltype(auto) identity(E&& value){
     return std::forward<E>(value);
 }
 
