@@ -564,66 +564,77 @@ auto rep_l(E&& value, std::size_t d1, D... d) -> unary_expr<value_t<E>, dyn_rep_
         dyn_rep_l_transformer<detail::build_type<E>, 1 + sizeof...(D)>(value, {{d1, static_cast<std::size_t>(d)...}})};
 }
 
-template<typename E, cpp::enable_if_u<is_etl_expr<E>::value> = cpp::detail::dummy>
+template<typename E>
 auto sum_r(E&& value) -> detail::stable_transform_helper<E, sum_r_transformer> {
+    static_assert(is_etl_expr<E>::value, "etl::sum_r can only be used on ETL expressions");
     static_assert(decay_traits<E>::dimensions() > 1, "Can only use sum_r on matrix");
     return detail::make_transform_expr<E, sum_r_transformer>(value);
 }
 
-template<typename E, cpp::enable_if_u<is_etl_expr<E>::value> = cpp::detail::dummy>
+template<typename E>
 auto sum_l(E&& value) -> detail::stable_transform_helper<E, sum_l_transformer> {
+    static_assert(is_etl_expr<E>::value, "etl::sum_l can only be used on ETL expressions");
     static_assert(decay_traits<E>::dimensions() > 1, "Can only use sum_l on matrix");
     return detail::make_transform_expr<E, sum_l_transformer>(value);
 }
 
-template<typename E, cpp::enable_if_u<is_etl_expr<E>::value> = cpp::detail::dummy>
+template<typename E>
 auto mean_r(E&& value) -> detail::stable_transform_helper<E, mean_r_transformer> {
+    static_assert(is_etl_expr<E>::value, "etl::mean_r can only be used on ETL expressions");
     static_assert(decay_traits<E>::dimensions() > 1, "Can only use mean_r on matrix");
     return detail::make_transform_expr<E, mean_r_transformer>(value);
 }
 
-template<typename E, cpp::enable_if_u<is_etl_expr<E>::value> = cpp::detail::dummy>
+template<typename E>
 auto mean_l(E&& value) -> detail::stable_transform_helper<E, mean_l_transformer> {
+    static_assert(is_etl_expr<E>::value, "etl::mean_l can only be used on ETL expressions");
     static_assert(decay_traits<E>::dimensions() > 1, "Can only use mean_l on matrix");
     return detail::make_transform_expr<E, mean_l_transformer>(value);
 }
 
 // Apply a special expression that can change order of elements
 
-template<typename E, cpp::enable_if_u<is_etl_expr<E>::value> = cpp::detail::dummy>
+template<typename E>
 auto hflip(const E& value) -> detail::stable_transform_helper<E, hflip_transformer> {
+    static_assert(is_etl_expr<E>::value, "etl::hflip can only be used on ETL expressions");
     static_assert(etl_traits<std::decay_t<E>>::dimensions() <= 2, "Can only use flips on 1D/2D");
     return detail::make_transform_expr<E, hflip_transformer>(value);
 }
 
-template<typename E, cpp::enable_if_u<is_etl_expr<E>::value> = cpp::detail::dummy>
+template<typename E>
 auto vflip(const E& value) -> detail::stable_transform_helper<E, vflip_transformer> {
+    static_assert(is_etl_expr<E>::value, "etl::vflip can only be used on ETL expressions");
     static_assert(etl_traits<std::decay_t<E>>::dimensions() <= 2, "Can only use flips on 1D/2D");
     return detail::make_transform_expr<E, vflip_transformer>(value);
 }
 
-template<typename E, cpp::enable_if_u<is_etl_expr<E>::value> = cpp::detail::dummy>
+template<typename E>
 auto fflip(const E& value) -> detail::stable_transform_helper<E, fflip_transformer> {
+    static_assert(is_etl_expr<E>::value, "etl::fflip can only be used on ETL expressions");
     static_assert(etl_traits<std::decay_t<E>>::dimensions() <= 2, "Can only use flips on 1D/2D");
     return detail::make_transform_expr<E, fflip_transformer>(value);
 }
 
-template<typename E, cpp::enable_if_u<is_etl_expr<E>::value> = cpp::detail::dummy>
+template<typename E>
 auto transpose(const E& value) -> detail::stable_transform_helper<E, transpose_transformer> {
+    static_assert(is_etl_expr<E>::value, "etl::transpose can only be used on ETL expressions");
     static_assert(decay_traits<E>::dimensions() <= 2, "Transpose not defined for matrix > 2D");
     return detail::make_transform_expr<E, transpose_transformer>(value);
 }
 
 // Apply a reduction on an ETL expression (vector,matrix,binary,unary)
 
-template<typename A, typename B, cpp::enable_if_all_u<is_etl_expr<A>::value, is_etl_expr<B>::value> = cpp::detail::dummy>
+template<typename A, typename B>
 value_t<A> dot(const A& a, const B& b){
+    static_assert(is_etl_expr<A>::value && is_etl_expr<B>::value, "etl::dot can only be used on ETL expressions");
     validate_expression(a, b);
     return detail::dot_impl<A, B>::apply(a, b);
 }
 
-template<typename E, cpp::enable_if_u<is_etl_expr<E>::value> = cpp::detail::dummy>
+template<typename E>
 value_t<E> sum(E&& values){
+    static_assert(is_etl_expr<E>::value, "etl::sum can only be used on ETL expressions");
+
     //Reduction force evaluation
     force(values);
 
@@ -638,6 +649,8 @@ value_t<E> sum(E&& values){
 
 template<typename E, cpp::enable_if_u<is_etl_expr<E>::value> = cpp::detail::dummy>
 value_t<E> mean(E&& values){
+    static_assert(is_etl_expr<E>::value, "etl::mean can only be used on ETL expressions");
+
     return sum(values) / size(values);
 }
 
@@ -662,8 +675,10 @@ using type =
 template<typename E>
 using value_return_t = typename value_return_type<E>::type;
 
-template<typename E, cpp::enable_if_u<is_etl_expr<std::decay_t<E>>::value> = cpp::detail::dummy>
+template<typename E>
 value_return_t<E> max(E&& values){
+    static_assert(is_etl_expr<E>::value, "etl::max can only be used on ETL expressions");
+
     //Reduction force evaluation
     force(values);
 
@@ -678,8 +693,10 @@ value_return_t<E> max(E&& values){
     return values[m];
 }
 
-template<typename E, cpp::enable_if_u<is_etl_expr<std::decay_t<E>>::value> = cpp::detail::dummy>
+template<typename E>
 value_return_t<E> min(E&& values){
+    static_assert(is_etl_expr<E>::value, "etl::min can only be used on ETL expressions");
+
     //Reduction force evaluation
     force(values);
 
