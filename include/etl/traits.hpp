@@ -175,7 +175,6 @@ struct etl_traits<T, std::enable_if_t<is_etl_value<T>::value>> {
         return v.dim(d);
     }
 
-    template<bool B = is_fast, cpp::enable_if_u<B> = cpp::detail::dummy>
     static constexpr std::size_t size(){
         return T::size();
     }
@@ -216,7 +215,6 @@ struct etl_traits<etl::unary_expr<T, Expr, UnaryOp>> {
         return etl_traits<sub_expr_t>::dim(v.value(), d);
     }
 
-    template<bool B = is_fast, cpp::enable_if_u<B> = cpp::detail::dummy>
     static constexpr std::size_t size(){
         return etl_traits<sub_expr_t>::size();
     }
@@ -304,7 +302,6 @@ struct etl_traits<etl::binary_expr<T, LeftExpr, BinaryOp, RightExpr>> {
         return etl_traits<sub_expr_t>::dim(get(v), d);
     }
 
-    template<bool B = is_fast, cpp::enable_if_u<B> = cpp::detail::dummy>
     static constexpr std::size_t size(){
         return etl_traits<sub_expr_t>::size();
     }
@@ -343,7 +340,6 @@ struct etl_traits<transpose_transformer<T>> {
         return etl_traits<sub_expr_t>::dim(v.sub, 1-d);
     }
 
-    template<bool B = is_fast, cpp::enable_if_u<B> = cpp::detail::dummy>
     static constexpr std::size_t size(){
         return etl_traits<sub_expr_t>::size();
     }
@@ -393,7 +389,6 @@ struct etl_traits<mm_mul_transformer<LE, RE>> {
         }
     }
 
-    template<bool B = is_fast, cpp::enable_if_u<B> = cpp::detail::dummy>
     static constexpr std::size_t size(){
         return etl_traits<left_expr_t>::template dim<0>() * etl_traits<right_expr_t>::template dim<1>();
     }
@@ -505,7 +500,6 @@ struct etl_traits<rep_r_transformer<T, D...>> {
         return d == 0 ? etl_traits<sub_expr_t>::dim(v.sub, 0) : nth_size<0,0,D...>::value;
     }
 
-    template<bool B = is_fast, cpp::enable_if_u<B> = cpp::detail::dummy>
     static constexpr std::size_t size(){
         return mul_all<D...>::value * etl_traits<sub_expr_t>::size();
     }
@@ -550,7 +544,6 @@ struct etl_traits<rep_l_transformer<T, D...>> {
         return d == dimensions() - 1 ? etl_traits<sub_expr_t>::dim(v.sub, 0) : nth_size<0,0,D...>::value;
     }
 
-    template<bool B = is_fast, cpp::enable_if_u<B> = cpp::detail::dummy>
     static constexpr std::size_t size(){
         return mul_all<D...>::value * etl_traits<sub_expr_t>::size();
     }
@@ -651,7 +644,6 @@ struct etl_traits<etl::temporary_unary_expr<T, A, Op, Forced>> {
         return Op::dim(v.a(), d);
     }
 
-    template<bool BB = is_fast, cpp_enable_if(BB)>
     static constexpr std::size_t size(){
         return Op::template size<a_t>();
     }
@@ -691,7 +683,6 @@ struct etl_traits<etl::temporary_binary_expr<T, A, B, Op, Forced>> {
         return Op::dim(v.a(), v.b(), d);
     }
 
-    template<bool BB = is_fast, cpp_enable_if(BB)>
     static constexpr std::size_t size(){
         return Op::template size<a_t, b_t>();
     }
@@ -733,7 +724,6 @@ struct etl_traits<T, std::enable_if_t<cpp::or_c<
         return etl::dim<0>(v.sub);
     }
 
-    template<bool B = is_fast, cpp::enable_if_u<B> = cpp::detail::dummy>
     static constexpr std::size_t size(){
         return etl_traits<sub_expr_t>::template dim<0>();
     }
@@ -775,7 +765,6 @@ struct etl_traits<T, std::enable_if_t<cpp::or_c<
         return etl::dim(v.sub, d + 1);
     }
 
-    template<bool B = is_fast, cpp::enable_if_u<B> = cpp::detail::dummy>
     static constexpr std::size_t size(){
         return etl_traits<sub_expr_t>::size() / etl_traits<sub_expr_t>::template dim<0>();
     }
@@ -817,7 +806,6 @@ struct etl_traits<p_max_pool_p_transformer<T, C1, C2>> {
         }
     }
 
-    template<bool B = is_fast, cpp::enable_if_u<B> = cpp::detail::dummy>
     static constexpr std::size_t size(){
         return etl_traits<sub_expr_t>::size() / (C1 * C2);
     }
@@ -864,7 +852,6 @@ struct etl_traits<T, std::enable_if_t<cpp::or_c<
         return etl_traits<sub_expr_t>::dim(v.sub, d);
     }
 
-    template<bool B = is_fast, cpp::enable_if_u<B> = cpp::detail::dummy>
     static constexpr std::size_t size(){
         return etl_traits<sub_expr_t>::size();
     }
@@ -910,7 +897,6 @@ struct etl_traits<etl::dim_view<T, D>> {
         return size(v);
     }
 
-    template<bool B = is_fast, cpp::enable_if_u<B> = cpp::detail::dummy>
     static constexpr std::size_t size(){
         return D == 1 ? etl_traits<sub_expr_t>::template dim<1>() : etl_traits<sub_expr_t>::template dim<0>();
     }
@@ -951,7 +937,6 @@ struct etl_traits<etl::sub_view<T>> {
         return etl_traits<sub_expr_t>::dim(v.parent, d + 1);
     }
 
-    template<bool B = is_fast, cpp::enable_if_u<B> = cpp::detail::dummy>
     static constexpr std::size_t size(){
         return etl_traits<sub_expr_t>::size() / etl_traits<sub_expr_t>::template dim<0>();
     }
