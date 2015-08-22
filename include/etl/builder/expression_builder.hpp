@@ -497,6 +497,7 @@ auto sub(E&& value, std::size_t i) -> detail::identity_helper<E, sub_view<detail
 
 template<std::size_t... Dims, typename E>
 auto reshape(E&& value) -> detail::identity_helper<E, fast_matrix_view<detail::build_identity_type<E>, Dims...>> {
+    static_assert(is_etl_expr<E>::value, "etl::reshape can only be used on ETL expressions");
     cpp_assert(size(value) == mul_all<Dims...>::value, "Invalid size for reshape");
 
     return detail::identity_helper<E, fast_matrix_view<detail::build_identity_type<E>, Dims...>>{fast_matrix_view<detail::build_identity_type<E>, Dims...>(value)};
@@ -504,6 +505,7 @@ auto reshape(E&& value) -> detail::identity_helper<E, fast_matrix_view<detail::b
 
 template<typename E>
 auto reshape(E&& value, std::size_t rows, std::size_t columns) -> detail::identity_helper<E, dyn_matrix_view<detail::build_identity_type<E>>> {
+    static_assert(is_etl_expr<E>::value, "etl::reshape can only be used on ETL expressions");
     cpp_assert(size(value) == rows * columns, "Invalid size for reshape");
 
     return detail::identity_helper<E, dyn_matrix_view<detail::build_identity_type<E>>>{{value, rows, columns}};
@@ -523,35 +525,41 @@ auto magic() -> detail::virtual_helper<D, fast_magic_view<D, N>> {
 
 // Apply a stable transformation
 
-template<std::size_t D1, std::size_t... D, typename E, cpp_enable_if(is_etl_expr<E>::value)>
+template<std::size_t D1, std::size_t... D, typename E>
 auto rep(E&& value) -> unary_expr<value_t<E>, rep_r_transformer<detail::build_type<E>, D1, D...>, transform_op> {
+    static_assert(is_etl_expr<E>::value, "etl::rep can only be used on ETL expressions");
     return unary_expr<value_t<E>, rep_r_transformer<detail::build_type<E>, D1, D...>, transform_op>{rep_r_transformer<detail::build_type<E>, D1, D...>(value)};
 }
 
-template<std::size_t D1, std::size_t... D, typename E, cpp_enable_if(is_etl_expr<E>::value)>
+template<std::size_t D1, std::size_t... D, typename E>
 auto rep_r(E&& value) -> unary_expr<value_t<E>, rep_r_transformer<detail::build_type<E>, D1, D...>, transform_op> {
+    static_assert(is_etl_expr<E>::value, "etl::rep_r can only be used on ETL expressions");
     return unary_expr<value_t<E>, rep_r_transformer<detail::build_type<E>, D1, D...>, transform_op>{rep_r_transformer<detail::build_type<E>, D1, D...>(value)};
 }
 
-template<std::size_t D1, std::size_t... D, typename E, cpp_enable_if(is_etl_expr<E>::value)>
+template<std::size_t D1, std::size_t... D, typename E>
 auto rep_l(E&& value) -> unary_expr<value_t<E>, rep_l_transformer<detail::build_type<E>, D1, D...>, transform_op> {
+    static_assert(is_etl_expr<E>::value, "etl::rep_l can only be used on ETL expressions");
     return unary_expr<value_t<E>, rep_l_transformer<detail::build_type<E>, D1, D...>, transform_op>{rep_l_transformer<detail::build_type<E>, D1, D...>(value)};
 }
 
-template<typename... D, typename E, cpp_enable_if(is_etl_expr<E>::value && cpp::all_convertible_to<std::size_t, std::size_t, D...>::value)>
+template<typename... D, typename E, cpp_enable_if(cpp::all_convertible_to<std::size_t, std::size_t, D...>::value)>
 auto rep(E&& value, std::size_t d1, D... d) -> unary_expr<value_t<E>, dyn_rep_r_transformer<detail::build_type<E>, 1 + sizeof...(D)>, transform_op> {
+    static_assert(is_etl_expr<E>::value, "etl::rep can only be used on ETL expressions");
     return unary_expr<value_t<E>, dyn_rep_r_transformer<detail::build_type<E>, 1 + sizeof...(D)>, transform_op>{
         dyn_rep_r_transformer<detail::build_type<E>, 1 + sizeof...(D)>(value, {{d1, static_cast<std::size_t>(d)...}})};
 }
 
-template<typename... D, typename E, cpp_enable_if(is_etl_expr<E>::value && cpp::all_convertible_to<std::size_t, std::size_t, D...>::value)>
+template<typename... D, typename E, cpp_enable_if(cpp::all_convertible_to<std::size_t, std::size_t, D...>::value)>
 auto rep_r(E&& value, std::size_t d1, D... d) -> unary_expr<value_t<E>, dyn_rep_r_transformer<detail::build_type<E>, 1 + sizeof...(D)>, transform_op> {
+    static_assert(is_etl_expr<E>::value, "etl::rep_r can only be used on ETL expressions");
     return unary_expr<value_t<E>, dyn_rep_r_transformer<detail::build_type<E>, 1 + sizeof...(D)>, transform_op>{
         dyn_rep_r_transformer<detail::build_type<E>, 1 + sizeof...(D)>(value, {{d1, static_cast<std::size_t>(d)...}})};
 }
 
-template<typename... D, typename E, cpp_enable_if(is_etl_expr<E>::value && cpp::all_convertible_to<std::size_t, std::size_t, D...>::value)>
+template<typename... D, typename E, cpp_enable_if(cpp::all_convertible_to<std::size_t, std::size_t, D...>::value)>
 auto rep_l(E&& value, std::size_t d1, D... d) -> unary_expr<value_t<E>, dyn_rep_l_transformer<detail::build_type<E>, 1 + sizeof...(D)>, transform_op> {
+    static_assert(is_etl_expr<E>::value, "etl::rep_l can only be used on ETL expressions");
     return unary_expr<value_t<E>, dyn_rep_l_transformer<detail::build_type<E>, 1 + sizeof...(D)>, transform_op>{
         dyn_rep_l_transformer<detail::build_type<E>, 1 + sizeof...(D)>(value, {{d1, static_cast<std::size_t>(d)...}})};
 }
