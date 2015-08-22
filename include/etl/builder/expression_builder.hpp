@@ -419,13 +419,13 @@ auto hard_sigmoid(E&& x) -> decltype(etl::clip(x * 0.2 + 0.5, 0.0, 1.0)) {
     return etl::clip(x * 0.2 + 0.5, 0.0, 1.0);
 }
 
-template<typename E, cpp::enable_if_u<is_etl_expr<E>::value> = cpp::detail::dummy>
-auto softplus(E&& value){
+template<typename E>
+auto softplus(E&& value) -> decltype(log(1.0 + exp(value))) {
     static_assert(is_etl_expr<E>::value, "etl::softplus can only be used on ETL expressions");
     return log(1.0 + exp(value));
 }
 
-template<typename E, cpp::enable_if_u<is_etl_expr<E>::value> = cpp::detail::dummy>
+template<typename E>
 auto softmax(E&& e){
     static_assert(is_etl_expr<E>::value, "etl::softmax can only be used on ETL expressions");
     return exp(e) / sum(exp(e));

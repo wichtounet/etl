@@ -101,7 +101,7 @@ struct sign_unary_op {
     static constexpr const bool vectorizable = false;
 
     static constexpr T apply(const T& x) noexcept {
-        return sign(x);
+        return math::sign(x);
     }
 
     static std::string desc() noexcept {
@@ -114,7 +114,7 @@ struct sigmoid_unary_op {
     static constexpr const bool vectorizable = false;
 
     static constexpr T apply(const T& x){
-        return logistic_sigmoid(x);
+        return math::logistic_sigmoid(x);
     }
 
     static std::string desc() noexcept {
@@ -127,7 +127,7 @@ struct softplus_unary_op {
     static constexpr const bool vectorizable = false;
 
     static constexpr T apply(const T& x){
-        return softplus(x);
+        return math::softplus(x);
     }
 
     static std::string desc() noexcept {

@@ -545,10 +545,10 @@ TEMPLATE_TEST_CASE_2( "fast_matrix/sigmoid", "fast_matrix::sigmoid", Z, float, d
 
     etl::fast_matrix<Z, 2, 2> d(sigmoid(a));
 
-    REQUIRE(d[0] == Approx(etl::logistic_sigmoid(Z(-1.0))));
-    REQUIRE(d[1] == Approx(etl::logistic_sigmoid(Z(2.0))));
-    REQUIRE(d[2] == Approx(etl::logistic_sigmoid(Z(0.0))));
-    REQUIRE(d[3] == Approx(etl::logistic_sigmoid(Z(1.0))));
+    REQUIRE(d[0] == Approx(etl::math::logistic_sigmoid(Z(-1.0))));
+    REQUIRE(d[1] == Approx(etl::math::logistic_sigmoid(Z(2.0))));
+    REQUIRE(d[2] == Approx(etl::math::logistic_sigmoid(Z(0.0))));
+    REQUIRE(d[3] == Approx(etl::math::logistic_sigmoid(Z(1.0))));
 }
 
 TEMPLATE_TEST_CASE_2( "fast_matrix/softplus", "fast_matrix::softplus", Z, float, double ) {
@@ -556,10 +556,10 @@ TEMPLATE_TEST_CASE_2( "fast_matrix/softplus", "fast_matrix::softplus", Z, float,
 
     etl::fast_matrix<Z, 2, 2> d(softplus(a));
 
-    REQUIRE(d[0] == Approx(etl::softplus(Z(-1.0))));
-    REQUIRE(d[1] == Approx(etl::softplus(Z(2.0))));
-    REQUIRE(d[2] == Approx(etl::softplus(Z(0.0))));
-    REQUIRE(d[3] == Approx(etl::softplus(Z(1.0))));
+    REQUIRE(d[0] == Approx(etl::math::softplus(Z(-1.0))));
+    REQUIRE(d[1] == Approx(etl::math::softplus(Z(2.0))));
+    REQUIRE(d[2] == Approx(etl::math::softplus(Z(0.0))));
+    REQUIRE(d[3] == Approx(etl::math::softplus(Z(1.0))));
 }
 
 TEMPLATE_TEST_CASE_2( "fast_matrix/exp", "fast_matrix::exp", Z, float, double ) {

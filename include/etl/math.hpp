@@ -13,6 +13,8 @@
 
 namespace etl {
 
+namespace math {
+
 template<typename W, cpp::enable_if_u<std::is_arithmetic<W>::value> = cpp::detail::dummy>
 inline constexpr W logistic_sigmoid(W x){
     return W(1.0) / (W(1.0) + std::exp(-x));
@@ -28,5 +30,6 @@ inline constexpr double sign(W v) noexcept {
     return v == W(0) ? W(0) : (v > W(0) ? W(1) : W(-1));
 }
 
+} //end of namespace math
 
 } //end of namespace etl
