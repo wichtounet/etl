@@ -242,23 +242,23 @@ public:
 
     // Direct memory access
 
-    template<typename SS = Expr, cpp_enable_if(has_direct_access<SS>::value)>
     memory_type memory_start() noexcept {
+        static_assert(has_direct_access<Expr>::value, "This expression does not have direct memory access");
         return value().memory_start();
     }
 
-    template<typename SS = Expr, cpp_enable_if(has_direct_access<SS>::value)>
     const_memory_type memory_start() const noexcept {
+        static_assert(has_direct_access<Expr>::value, "This expression does not have direct memory access");
         return value().memory_start();
     }
 
-    template<typename SS = Expr, cpp_enable_if(has_direct_access<SS>::value)>
     memory_type memory_end() noexcept {
+        static_assert(has_direct_access<Expr>::value, "This expression does not have direct memory access");
         return value().memory_end();
     }
 
-    template<typename SS = Expr, cpp_enable_if(has_direct_access<SS>::value)>
     const_memory_type memory_end() const noexcept {
+        static_assert(has_direct_access<Expr>::value, "This expression does not have direct memory access");
         return value().memory_end();
     }
 };

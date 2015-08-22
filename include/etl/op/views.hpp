@@ -89,23 +89,23 @@ struct dim_view {
 
     // Direct memory access
 
-    template<typename ST = T, std::size_t SD = D, cpp_enable_if(has_direct_access<ST>::value && SD == 1)>
     memory_type memory_start() noexcept {
+        static_assert(has_direct_access<T>::value && D == 1, "This expression does not have direct memory access");
         return sub.memory_start() + i * subsize(sub);
     }
 
-    template<typename ST = T, std::size_t SD = D, cpp_enable_if(has_direct_access<ST>::value && SD == 1)>
     const_memory_type memory_start() const noexcept {
+        static_assert(has_direct_access<T>::value && D == 1, "This expression does not have direct memory access");
         return sub.memory_start() + i * subsize(sub);
     }
 
-    template<typename ST = T, std::size_t SD = D, cpp_enable_if(has_direct_access<ST>::value && SD == 1)>
     memory_type memory_end() noexcept {
+        static_assert(has_direct_access<T>::value && D == 1, "This expression does not have direct memory access");
         return sub.memory_start() + (i + 1) * subsize(sub);
     }
 
-    template<typename ST = T, std::size_t SD = D, cpp_enable_if(has_direct_access<ST>::value && SD == 1)>
     const_memory_type memory_end() const noexcept {
+        static_assert(has_direct_access<T>::value && D == 1, "This expression does not have direct memory access");
         return sub.memory_start() + (i + 1) * subsize(sub);
     }
 };
@@ -156,23 +156,23 @@ struct sub_view {
 
     // Direct memory access
 
-    template<typename ST = T, cpp_enable_if(has_direct_access<ST>::value && decay_traits<parent_type>::storage_order == order::RowMajor)>
     memory_type memory_start() noexcept {
+        static_assert(has_direct_access<T>::value && decay_traits<parent_type>::storage_order == order::RowMajor, "This expression does not have direct memory access");
         return parent.memory_start() + i * subsize(parent);
     }
 
-    template<typename ST = T, cpp_enable_if(has_direct_access<ST>::value && decay_traits<parent_type>::storage_order == order::RowMajor)>
     const_memory_type memory_start() const noexcept {
+        static_assert(has_direct_access<T>::value && decay_traits<parent_type>::storage_order == order::RowMajor, "This expression does not have direct memory access");
         return parent.memory_start() + i * subsize(parent);
     }
 
-    template<typename ST = T, cpp_enable_if(has_direct_access<ST>::value && decay_traits<parent_type>::storage_order == order::RowMajor)>
     memory_type memory_end() noexcept {
+        static_assert(has_direct_access<T>::value && decay_traits<parent_type>::storage_order == order::RowMajor, "This expression does not have direct memory access");
         return parent.memory_start() + (i + 1) * subsize(parent);
     }
 
-    template<typename ST = T, cpp_enable_if(has_direct_access<ST>::value && decay_traits<parent_type>::storage_order == order::RowMajor)>
     const_memory_type memory_end() const noexcept {
+        static_assert(has_direct_access<T>::value && decay_traits<parent_type>::storage_order == order::RowMajor, "This expression does not have direct memory access");
         return parent.memory_start() + (i + 1) * subsize(parent);
     }
 };
@@ -250,23 +250,23 @@ struct fast_matrix_view {
 
     // Direct memory access
 
-    template<typename SS = T, cpp_enable_if(has_direct_access<SS>::value)>
     memory_type memory_start() noexcept {
+        static_assert(has_direct_access<T>::value, "This expression does not have direct memory access");
         return sub.memory_start();
     }
 
-    template<typename SS = T, cpp_enable_if(has_direct_access<SS>::value)>
     const_memory_type memory_start() const noexcept {
+        static_assert(has_direct_access<T>::value, "This expression does not have direct memory access");
         return sub.memory_start();
     }
 
-    template<typename SS = T, cpp_enable_if(has_direct_access<SS>::value)>
     memory_type memory_end() noexcept {
+        static_assert(has_direct_access<T>::value, "This expression does not have direct memory access");
         return sub.memory_end();
     }
 
-    template<typename SS = T, cpp_enable_if(has_direct_access<SS>::value)>
     const_memory_type memory_end() const noexcept {
+        static_assert(has_direct_access<T>::value, "This expression does not have direct memory access");
         return sub.memory_end();
     }
 };
@@ -324,23 +324,23 @@ struct dyn_matrix_view {
 
     // Direct memory access
 
-    template<typename SS = T, cpp_enable_if(has_direct_access<SS>::value)>
     memory_type memory_start() noexcept {
+        static_assert(has_direct_access<T>::value, "This expression does not have direct memory access");
         return sub.memory_start();
     }
 
-    template<typename SS = T, cpp_enable_if(has_direct_access<SS>::value)>
     const_memory_type memory_start() const noexcept {
+        static_assert(has_direct_access<T>::value, "This expression does not have direct memory access");
         return sub.memory_start();
     }
 
-    template<typename SS = T, cpp_enable_if(has_direct_access<SS>::value)>
     memory_type memory_end() noexcept {
+        static_assert(has_direct_access<T>::value, "This expression does not have direct memory access");
         return sub.memory_end();
     }
 
-    template<typename SS = T, cpp_enable_if(has_direct_access<SS>::value)>
     const_memory_type memory_end() const noexcept {
+        static_assert(has_direct_access<T>::value, "This expression does not have direct memory access");
         return sub.memory_end();
     }
 };
