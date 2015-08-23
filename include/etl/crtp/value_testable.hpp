@@ -9,13 +9,18 @@
 
 #include <algorithm>
 
-/*
- * Use CRTP technique to inject functions that test the values of
- * the expressions or the value classes.
+/*!
+ * \file value_testable.hpp
+ * \brief Use CRTP technique to inject functions that test the values of the expressions or the value classes.
  */
 
 namespace etl {
 
+/*!
+ * \brief CRTP class to inject functions testing values of the expressions.
+ *
+ * This CRTP class injects test for is_finite and is_zero.
+ */
 template<typename D>
 struct value_testable {
     using derived_t = D;
