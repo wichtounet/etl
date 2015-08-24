@@ -155,8 +155,9 @@ public:
         return *this;
     }
 
-    template<bool B = non_const_return_ref, cpp::enable_if_u<B> = cpp::detail::dummy>
     unary_expr& operator=(const value_type& e){
+        static_assert(non_const_return_ref, "Impossible to modify read-only unary_expr");
+
         for(std::size_t i = 0; i < size(*this); ++i){
             (*this)[i] = e;
         }
