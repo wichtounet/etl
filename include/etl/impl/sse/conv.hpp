@@ -44,7 +44,7 @@ inline void dconv1_valid_micro_kernel(const double* in, const std::size_t n, con
     __m128d tmp2;
     __m128d res;
 
-    auto c = n - m + 1;
+    std::size_t c = n - m + 1;
 
     //Compute the convolution, 2 doubles at a time
 
@@ -189,8 +189,8 @@ void conv1_valid(const I& input, const K& kernel, C&& conv){
 }
 
 inline void dconv2_valid_micro_kernel(const double* in, std::size_t n1, std::size_t n2, const double* kernel, std::size_t m1, std::size_t m2, double* out){
-    auto c1 = n1 - m1 + 1;
-    auto c2 = n2 - m2 + 1;
+    std::size_t c1 = n1 - m1 + 1;
+    std::size_t c2 = n2 - m2 + 1;
 
     __m128d tmp1;
     __m128d tmp2;
@@ -239,8 +239,8 @@ void conv2_valid(const I& input, const K& kernel, C&& conv){
 }
 
 inline void dconv2_same_micro_kernel(const double* in, std::size_t n1, std::size_t n2, const double* kernel, std::size_t m1, std::size_t m2, double* out){
-    auto c1 = n1;
-    auto c2 = n2;
+    std::size_t c1 = n1;
+    std::size_t c2 = n2;
 
     __m128d tmp1;
     __m128d tmp2;
@@ -296,8 +296,8 @@ void conv2_same(const I& input, const K& kernel, C&& conv){
 }
 
 inline void dconv2_full_micro_kernel(const double* in, std::size_t n1, std::size_t n2, const double* kernel, std::size_t m1, std::size_t m2, double* out){
-    auto c1 = n1 + m1 - 1;
-    auto c2 = n2 + m2 - 1;
+    std::size_t c1 = n1 + m1 - 1;
+    std::size_t c2 = n2 + m2 - 1;
 
     __m128d tmp1;
     __m128d tmp2;
@@ -352,8 +352,8 @@ void conv2_full(const I& input, const K& kernel, C&& conv){
 }
 
 inline void sconv2_valid_micro_kernel(const float* in, std::size_t n1, std::size_t n2, const float* kernel, std::size_t m1, std::size_t m2, float* out){
-    auto c1 = n1 - m1 + 1;
-    auto c2 = n2 - m2 + 1;
+    std::size_t c1 = n1 - m1 + 1;
+    std::size_t c2 = n2 - m2 + 1;
 
     __m128 tmp1;
     __m128 tmp2;
@@ -404,8 +404,8 @@ void conv2_valid(const I& input, const K& kernel, C&& conv){
 }
 
 inline void sconv2_same_micro_kernel(const float* in, std::size_t n1, std::size_t n2, const float* kernel, std::size_t m1, std::size_t m2, float* out){
-    auto c1 = n1;
-    auto c2 = n2;
+    std::size_t c1 = n1;
+    std::size_t c2 = n2;
 
     __m128 tmp1;
     __m128 tmp2;
@@ -462,8 +462,8 @@ void conv2_same(const I& input, const K& kernel, C&& conv){
 }
 
 inline void sconv2_full_micro_kernel(const float* in, std::size_t n1, std::size_t n2, const float* kernel, std::size_t m1, std::size_t m2, float* out){
-    auto c1 = n1 + m1 - 1;
-    auto c2 = n2 + m2 - 1;
+    std::size_t c1 = n1 + m1 - 1;
+    std::size_t c2 = n2 + m2 - 1;
 
     __m128 tmp1;
     __m128 tmp2;

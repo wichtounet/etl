@@ -278,7 +278,7 @@ struct hflip_transformer {
 
     explicit hflip_transformer(sub_type vec) : sub(vec) {}
 
-    static constexpr const auto matrix = etl_traits<std::decay_t<sub_type>>::dimensions() == 2;
+    static constexpr const bool matrix = etl_traits<std::decay_t<sub_type>>::dimensions() == 2;
 
     template<bool C = matrix, cpp::disable_if_u<C> = cpp::detail::dummy>
     value_type operator[](std::size_t i) const {
@@ -287,8 +287,8 @@ struct hflip_transformer {
 
     template<bool C = matrix, cpp::enable_if_u<C> = cpp::detail::dummy>
     value_type operator[](std::size_t i) const {
-        auto i_i = i / dim<1>(sub);
-        auto i_j = i % dim<1>(sub);
+        std::size_t i_i = i / dim<1>(sub);
+        std::size_t i_j = i % dim<1>(sub);
         return sub[i_i * dim<1>(sub) + (dim<1>(sub) - 1 - i_j)];
     }
 
@@ -314,7 +314,7 @@ struct vflip_transformer {
 
     explicit vflip_transformer(sub_type vec) : sub(vec) {}
 
-    static constexpr const auto matrix = etl_traits<std::decay_t<sub_type>>::dimensions() == 2;
+    static constexpr const bool matrix = etl_traits<std::decay_t<sub_type>>::dimensions() == 2;
 
     template<bool C = matrix, cpp::disable_if_u<C> = cpp::detail::dummy>
     value_type operator[](std::size_t i) const {
@@ -323,8 +323,8 @@ struct vflip_transformer {
 
     template<bool C = matrix, cpp::enable_if_u<C> = cpp::detail::dummy>
     value_type operator[](std::size_t i) const {
-        auto i_i = i / dim<1>(sub);
-        auto i_j = i % dim<1>(sub);
+        std::size_t i_i = i / dim<1>(sub);
+        std::size_t i_j = i % dim<1>(sub);
         return sub[(dim<0>(sub) - 1 - i_i) * dim<1>(sub) + i_j];
     }
 
@@ -475,12 +475,12 @@ struct dyn_convmtx_transformer {
 
     value_type operator[](std::size_t i) const {
         if(decay_traits<sub_type>::storage_order == order::RowMajor){
-            auto i_i = i / (etl::size(sub) + h - 1);
-            auto i_j = i % (etl::size(sub) + h - 1);
+            std::size_t i_i = i / (etl::size(sub) + h - 1);
+            std::size_t i_j = i % (etl::size(sub) + h - 1);
             return operator()(i_i, i_j);
         } else {
-            auto i_i = i % h;
-            auto i_j = i / h;
+            std::size_t i_i = i % h;
+            std::size_t i_j = i / h;
             return operator()(i_i, i_j);
         }
     }
@@ -519,8 +519,8 @@ struct dyn_convmtx2_transformer {
         i1 = etl::dim<0>(sub);
         i2 = etl::dim<1>(sub);
 
-        auto c_height = (i1 + k1 - 1) * (i2 + k2 - 1);
-        auto c_width = k1 * k2;
+        std::size_t c_height = (i1 + k1 - 1) * (i2 + k2 - 1);
+        std::size_t c_width = k1 * k2;
 
         auto max_fill = c_height - ((i1 + k1 - 1) * ((c_width - 1) / k1) + (c_width - 1) % k1);
         inner_paddings = max_fill - (i1 * i2);
@@ -528,8 +528,8 @@ struct dyn_convmtx2_transformer {
     }
 
     value_type operator[](std::size_t i) const {
-        auto i_i = i / (k1 * k2);
-        auto i_j = i % (k1 * k2);
+        std::size_t i_i = i / (k1 * k2);
+        std::size_t i_j = i % (k1 * k2);
         return (*this)(i_i, i_j);
     }
 
@@ -560,11 +560,11 @@ struct dyn_convmtx2_transformer {
 
 template<typename A, typename M>
 void convmtx2_direct_t(M& m, A&& sub, std::size_t k1, std::size_t k2){
-    const auto i1 = etl::dim<0>(sub);
-    const auto i2 = etl::dim<1>(sub);
+    const std::size_t i1 = etl::dim<0>(sub);
+    const std::size_t i2 = etl::dim<1>(sub);
 
-    const auto c_height = (i1 + k1 - 1) * (i2 + k2 - 1);
-    const auto c_width = k1 * k2;
+    const std::size_t c_height = (i1 + k1 - 1) * (i2 + k2 - 1);
+    const std::size_t c_width = k1 * k2;
 
     const auto max_fill = c_height - ((i1 + k1 - 1) * ((c_width - 1) / k1) + (c_width - 1) % k1);
     const auto inner_paddings = max_fill - (i1 * i2);
@@ -592,10 +592,10 @@ void convmtx2_direct_t(M& m, A&& sub, std::size_t k1, std::size_t k2){
 
 template<typename A, typename M, cpp_disable_if(has_direct_access<A>::value && has_direct_access<M>::value)>
 void im2col_direct(M& m, A&& sub, std::size_t k1, std::size_t k2){
-    const auto i1 = etl::dim<0>(sub);
-    const auto i2 = etl::dim<1>(sub);
+    const std::size_t i1 = etl::dim<0>(sub);
+    const std::size_t i2 = etl::dim<1>(sub);
 
-    const auto m_width = (i1 - k1 + 1) * (i2 - k2 + 1);
+    const std::size_t m_width = (i1 - k1 + 1) * (i2 - k2 + 1);
 
     for(std::size_t b = 0; b < m_width; ++b){
         auto s_i = b % (i1 - k1 + 1);
@@ -613,8 +613,8 @@ void im2col_direct(M& m, A&& sub, std::size_t k1, std::size_t k2){
 
 template<typename A, typename M, cpp_enable_if(has_direct_access<A>::value && has_direct_access<M>::value)>
 void im2col_direct(M& m, A&& sub, std::size_t k1, std::size_t k2){
-    const auto i1 = etl::dim<0>(sub);
-    const auto i2 = etl::dim<1>(sub);
+    const std::size_t i1 = etl::dim<0>(sub);
+    const std::size_t i2 = etl::dim<1>(sub);
 
     const auto m_width = (i1 - k1 + 1) * (i2 - k2 + 1);
 
@@ -686,23 +686,23 @@ struct p_max_pool_h_transformer : p_max_pool_transformer<T, C1, C2> {
 
     using base_type::sub;
 
-    static constexpr const auto d2d = etl_traits<std::decay_t<sub_type>>::dimensions() == 2;
+    static constexpr const bool d2d = etl_traits<std::decay_t<sub_type>>::dimensions() == 2;
 
     explicit p_max_pool_h_transformer(sub_type vec) : base_type(vec) {}
 
     template<bool C = d2d, cpp::enable_if_u<C> = cpp::detail::dummy>
     value_type operator[](std::size_t i) const {
-        auto i_i = i / dim<1>(sub);
-        auto i_j = i % dim<1>(sub);
+        std::size_t i_i = i / dim<1>(sub);
+        std::size_t i_j = i % dim<1>(sub);
         return (*this)(i_i, i_j);
     }
 
     template<bool C = d2d, cpp::disable_if_u<C> = cpp::detail::dummy>
     value_type operator[](std::size_t i) const {
-        auto i_i = i / (dim<1>(sub) * dim<2>(sub));
-        auto i_ij = i % (dim<1>(sub) * dim<2>(sub));
-        auto i_j = i_ij / dim<2>(sub);
-        auto i_k = i_ij % dim<2>(sub);
+        std::size_t i_i = i / (dim<1>(sub) * dim<2>(sub));
+        std::size_t i_ij = i % (dim<1>(sub) * dim<2>(sub));
+        std::size_t i_j = i_ij / dim<2>(sub);
+        std::size_t i_k = i_ij % dim<2>(sub);
 
         return (*this)(i_i, i_j, i_k);
     }
@@ -728,23 +728,23 @@ struct p_max_pool_p_transformer : p_max_pool_transformer<T, C1, C2> {
 
     using base_type::sub;
 
-    static constexpr const auto d2d = etl_traits<std::decay_t<sub_type>>::dimensions() == 2;
+    static constexpr const bool d2d = etl_traits<std::decay_t<sub_type>>::dimensions() == 2;
 
     explicit p_max_pool_p_transformer(sub_type vec) : base_type(vec) {}
 
     template<bool C = d2d, cpp::enable_if_u<C> = cpp::detail::dummy>
     value_type operator[](std::size_t i) const {
-        auto i_i = i / (dim<1>(sub) / C2);
-        auto i_j = i % (dim<1>(sub)/ C2);
+        std::size_t i_i = i / (dim<1>(sub) / C2);
+        std::size_t i_j = i % (dim<1>(sub)/ C2);
         return (*this)(i_i, i_j);
     }
 
     template<bool C = d2d, cpp::disable_if_u<C> = cpp::detail::dummy>
     value_type operator[](std::size_t i) const {
-        auto i_i = i / ((dim<1>(sub) / C1) * (dim<2>(sub) / C2));
-        auto i_ij = i % ((dim<1>(sub) / C1)* (dim<2>(sub) / C2));
-        auto i_j = i_ij / (dim<2>(sub) / C2);
-        auto i_k = i_ij % (dim<2>(sub) / C2);
+        std::size_t i_i = i / ((dim<1>(sub) / C1) * (dim<2>(sub) / C2));
+        std::size_t i_ij = i % ((dim<1>(sub) / C1)* (dim<2>(sub) / C2));
+        std::size_t i_j = i_ij / (dim<2>(sub) / C2);
+        std::size_t i_k = i_ij % (dim<2>(sub) / C2);
 
         return (*this)(i_i, i_j, i_k);
     }

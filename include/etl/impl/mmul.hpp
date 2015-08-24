@@ -116,7 +116,7 @@ inline cpp14_constexpr gemm_impl select_gevm_impl(const std::size_t n1, const st
 template<typename A, typename B, typename C>
 struct mm_mul_impl {
     static void apply(A&& a, B&& b, C&& c){
-        auto impl = select_gemm_impl<all_dma<A,B,C>::value, value_t<A>>(etl::dim<0>(a), etl::dim<1>(a), etl::dim<1>(c));
+        gemm_impl impl = select_gemm_impl<all_dma<A,B,C>::value, value_t<A>>(etl::dim<0>(a), etl::dim<1>(a), etl::dim<1>(c));
 
         if(impl == gemm_impl::STD){
             etl::impl::standard::mm_mul(std::forward<A>(a), std::forward<B>(b), std::forward<C>(c));
@@ -133,7 +133,7 @@ struct mm_mul_impl {
 template<typename A, typename B, typename C>
 struct vm_mul_impl {
     static void apply(A&& a, B&& b, C&& c){
-        auto impl = select_gevm_impl<all_dma<A,B,C>::value, value_t<A>>(etl::dim<0>(b), etl::dim<1>(b));
+        gemm_impl impl = select_gevm_impl<all_dma<A,B,C>::value, value_t<A>>(etl::dim<0>(b), etl::dim<1>(b));
 
         if(impl == gemm_impl::STD){
             etl::impl::standard::vm_mul(std::forward<A>(a), std::forward<B>(b), std::forward<C>(c));
@@ -148,7 +148,7 @@ struct vm_mul_impl {
 template<typename A, typename B, typename C>
 struct mv_mul_impl {
     static void apply(A&& a, B&& b, C&& c){
-        auto impl = select_gemv_impl<all_dma<A,B,C>::value, value_t<A>>(etl::dim<0>(a), etl::dim<1>(a));
+        gemm_impl impl = select_gemv_impl<all_dma<A,B,C>::value, value_t<A>>(etl::dim<0>(a), etl::dim<1>(a));
 
         if(impl == gemm_impl::STD){
             etl::impl::standard::mv_mul(std::forward<A>(a), std::forward<B>(b), std::forward<C>(c));

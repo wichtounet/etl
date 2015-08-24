@@ -307,9 +307,8 @@ struct bernoulli_unary_op {
     static T apply(const T& x){
         static random_engine rand_engine(std::time(nullptr));
         static std::uniform_real_distribution<double> distribution(0.0, 1.0);
-        static auto generator = std::bind(distribution, rand_engine);
 
-        return x > generator() ? 1.0 : 0.0;
+        return x > distribution(rand_engine) ? 1.0 : 0.0;
     }
 
     static std::string desc() noexcept {
@@ -324,9 +323,8 @@ struct reverse_bernoulli_unary_op {
     static T apply(const T& x){
         static random_engine rand_engine(std::time(nullptr));
         static std::uniform_real_distribution<double> distribution(0.0, 1.0);
-        static auto generator = std::bind(distribution, rand_engine);
 
-        return x > generator() ? 0.0 : 1.0;
+        return x > distribution(rand_engine) ? 0.0 : 1.0;
     }
 
     static std::string desc() noexcept {
@@ -341,9 +339,8 @@ struct uniform_noise_unary_op {
     static T apply(const T& x){
         static random_engine rand_engine(std::time(nullptr));
         static std::uniform_real_distribution<double> real_distribution(0.0, 1.0);
-        static auto noise = std::bind(real_distribution, rand_engine);
 
-        return x + noise();
+        return x + real_distribution(rand_engine);
     }
 
     static std::string desc() noexcept {
@@ -358,9 +355,8 @@ struct normal_noise_unary_op {
     static T apply(const T& x){
         static random_engine rand_engine(std::time(nullptr));
         static std::normal_distribution<double> normal_distribution(0.0, 1.0);
-        static auto noise = std::bind(normal_distribution, rand_engine);
 
-        return x + noise();
+        return x + normal_distribution(rand_engine);
     }
 
     static std::string desc() noexcept {
@@ -376,9 +372,8 @@ struct logistic_noise_unary_op {
         static random_engine rand_engine(std::time(nullptr));
 
         std::normal_distribution<double> noise_distribution(0.0, logistic_sigmoid(x));
-        auto noise = std::bind(noise_distribution, rand_engine);
 
-        return x + noise();
+        return x + noise_distribution(rand_engine);
     }
 
     static std::string desc() noexcept {

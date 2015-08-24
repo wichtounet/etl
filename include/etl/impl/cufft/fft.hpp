@@ -26,21 +26,21 @@ namespace cufft {
 namespace detail {
 
 inline void inplace_cfft1_kernel(const impl::cuda::cuda_memory<std::complex<float>>& data, std::size_t n){
-    auto handle = start_cufft();
+    cufft_handle handle = start_cufft();
 
     cufftPlan1d(&handle.get(), n, CUFFT_C2C, 1);
     cufftExecC2C(handle.get(), complex_cast(data.get()), complex_cast(data.get()), CUFFT_FORWARD);
 }
 
 inline void inplace_zfft1_kernel(const impl::cuda::cuda_memory<std::complex<double>>& data, std::size_t n){
-    auto handle = start_cufft();
+    cufft_handle handle = start_cufft();
 
     cufftPlan1d(&handle.get(), n, CUFFT_Z2Z, 1);
     cufftExecZ2Z(handle.get(), complex_cast(data.get()), complex_cast(data.get()), CUFFT_FORWARD);
 }
 
 inline void inplace_cfft1_many_kernel(const impl::cuda::cuda_memory<std::complex<float>>& data, std::size_t batch, std::size_t n){
-    auto handle = start_cufft();
+    cufft_handle handle = start_cufft();
 
     int dims[] = {int(n)};
 
@@ -53,7 +53,7 @@ inline void inplace_cfft1_many_kernel(const impl::cuda::cuda_memory<std::complex
 }
 
 inline void inplace_zfft1_many_kernel(const impl::cuda::cuda_memory<std::complex<double>>& data, std::size_t batch, std::size_t n){
-    auto handle = start_cufft();
+    cufft_handle handle = start_cufft();
 
     int dims[] = {int(n)};
 
@@ -66,35 +66,35 @@ inline void inplace_zfft1_many_kernel(const impl::cuda::cuda_memory<std::complex
 }
 
 inline void inplace_cifft1_kernel(const impl::cuda::cuda_memory<std::complex<float>>& data, std::size_t n){
-    auto handle = start_cufft();
+    cufft_handle handle = start_cufft();
 
     cufftPlan1d(&handle.get(), n, CUFFT_C2C, 1);
     cufftExecC2C(handle.get(), complex_cast(data.get()), complex_cast(data.get()), CUFFT_INVERSE);
 }
 
 inline void inplace_zifft1_kernel(const impl::cuda::cuda_memory<std::complex<double>>& data, std::size_t n){
-    auto handle = start_cufft();
+    cufft_handle handle = start_cufft();
 
     cufftPlan1d(&handle.get(), n, CUFFT_Z2Z, 1);
     cufftExecZ2Z(handle.get(), complex_cast(data.get()), complex_cast(data.get()), CUFFT_INVERSE);
 }
 
 inline void inplace_cfft2_kernel(const impl::cuda::cuda_memory<std::complex<float>>& data, std::size_t d1, std::size_t d2){
-    auto handle = start_cufft();
+    cufft_handle handle = start_cufft();
 
     cufftPlan2d(&handle.get(), d1, d2, CUFFT_C2C);
     cufftExecC2C(handle.get(), complex_cast(data.get()), complex_cast(data.get()), CUFFT_FORWARD);
 }
 
 inline void inplace_zfft2_kernel(const impl::cuda::cuda_memory<std::complex<double>>& data, std::size_t d1, std::size_t d2){
-    auto handle = start_cufft();
+    cufft_handle handle = start_cufft();
 
     cufftPlan2d(&handle.get(), d1, d2, CUFFT_Z2Z);
     cufftExecZ2Z(handle.get(), complex_cast(data.get()), complex_cast(data.get()), CUFFT_FORWARD);
 }
 
 inline void inplace_cfft2_many_kernel(const impl::cuda::cuda_memory<std::complex<float>>& data, std::size_t batch, std::size_t d1, std::size_t d2){
-    auto handle = start_cufft();
+    cufft_handle handle = start_cufft();
 
     int dims[] = {int(d1), int(d2)};
 
@@ -107,7 +107,7 @@ inline void inplace_cfft2_many_kernel(const impl::cuda::cuda_memory<std::complex
 }
 
 inline void inplace_zfft2_many_kernel(const impl::cuda::cuda_memory<std::complex<double>>& data, std::size_t batch, std::size_t d1, std::size_t d2){
-    auto handle = start_cufft();
+    cufft_handle handle = start_cufft();
 
     int dims[] = {int(d1), int(d2)};
 
@@ -120,14 +120,14 @@ inline void inplace_zfft2_many_kernel(const impl::cuda::cuda_memory<std::complex
 }
 
 inline void inplace_cifft2_kernel(const impl::cuda::cuda_memory<std::complex<float>>& data, std::size_t d1, std::size_t d2){
-    auto handle = start_cufft();
+    cufft_handle handle = start_cufft();
 
     cufftPlan2d(&handle.get(), d1, d2, CUFFT_C2C);
     cufftExecC2C(handle.get(), complex_cast(data.get()), complex_cast(data.get()), CUFFT_INVERSE);
 }
 
 inline void inplace_zifft2_kernel(const impl::cuda::cuda_memory<std::complex<double>>& data, std::size_t d1, std::size_t d2){
-    auto handle = start_cufft();
+    cufft_handle handle = start_cufft();
 
     cufftPlan2d(&handle.get(), d1, d2, CUFFT_Z2Z);
     cufftExecZ2Z(handle.get(), complex_cast(data.get()), complex_cast(data.get()), CUFFT_INVERSE);
@@ -179,8 +179,8 @@ template<typename A, typename C, cpp_enable_if(all_single_precision<A>::value)>
 void fft1_many(A&& a, C&& c){
     static constexpr const std::size_t N = decay_traits<A>::dimensions();
 
-    auto n = etl::dim<N - 1>(a);        //Size of the transform
-    auto batch = etl::size(a) / n;      //Number of batch
+    std::size_t n = etl::dim<N - 1>(a);        //Size of the transform
+    std::size_t batch = etl::size(a) / n;      //Number of batch
 
     std::copy(a.begin(), a.end(), c.begin());
 
@@ -195,8 +195,8 @@ template<typename A, typename C, cpp_enable_if(all_double_precision<A>::value)>
 void fft1_many(A&& a, C&& c){
     static constexpr const std::size_t N = decay_traits<A>::dimensions();
 
-    auto n = etl::dim<N - 1>(a);        //Size of the transform
-    auto batch = etl::size(a) / n;      //Number of batch
+    std::size_t n = etl::dim<N - 1>(a);        //Size of the transform
+    std::size_t batch = etl::size(a) / n;      //Number of batch
 
     std::copy(a.begin(), a.end(), c.begin());
 
@@ -211,8 +211,8 @@ template<typename A, typename C, cpp_enable_if(all_complex_single_precision<A>::
 void fft1_many(A&& a, C&& c){
     static constexpr const std::size_t N = decay_traits<A>::dimensions();
 
-    auto n = etl::dim<N - 1>(a);        //Size of the transform
-    auto batch = etl::size(a) / n;      //Number of batch
+    std::size_t n = etl::dim<N - 1>(a);        //Size of the transform
+    std::size_t batch = etl::size(a) / n;      //Number of batch
 
     auto gpu_a = impl::cuda::cuda_allocate_copy(a);
 
@@ -225,8 +225,8 @@ template<typename A, typename C, cpp_enable_if(all_complex_double_precision<A>::
 void fft1_many(A&& a, C&& c){
     static constexpr const std::size_t N = decay_traits<A>::dimensions();
 
-    auto n = etl::dim<N - 1>(a);        //Size of the transform
-    auto batch = etl::size(a) / n;      //Number of batch
+    std::size_t n = etl::dim<N - 1>(a);        //Size of the transform
+    std::size_t batch = etl::size(a) / n;      //Number of batch
 
     auto gpu_a = impl::cuda::cuda_allocate_copy(a);
 
@@ -291,8 +291,8 @@ template<typename A, typename B, typename C, cpp_enable_if(all_single_precision<
 void fft1_convolve(A&& a, B&& b, C&& c){
     auto handle = start_cufft();
 
-    const auto size = etl::size(c);
-    const auto mem_size = size * sizeof(std::complex<float>);
+    const std::size_t size = etl::size(c);
+    const std::size_t mem_size = size * sizeof(std::complex<float>);
 
     auto a_padded = allocate<std::complex<float>>(size);
     auto b_padded = allocate<std::complex<float>>(size);
@@ -330,8 +330,8 @@ template<typename A, typename B, typename C, cpp_enable_if(all_double_precision<
 void fft1_convolve(A&& a, B&& b, C&& c){
     auto handle = start_cufft();
 
-    const auto size = etl::size(c);
-    const auto mem_size = size * sizeof(std::complex<double>);
+    const std::size_t size = etl::size(c);
+    const std::size_t mem_size = size * sizeof(std::complex<double>);
 
     auto a_padded = allocate<std::complex<double>>(size);
     auto b_padded = allocate<std::complex<double>>(size);
@@ -461,9 +461,9 @@ template<typename A, typename C, cpp_enable_if(all_single_precision<A>::value)>
 void fft2_many(A&& a, C&& c){
     static constexpr const std::size_t N = decay_traits<A>::dimensions();
 
-    auto n1 = etl::dim<N - 2>(a);           //Size of the transform
-    auto n2 = etl::dim<N - 1>(a);           //Size of the transform
-    auto batch = etl::size(a) / (n1 * n2);  //Number of batch
+    std::size_t n1 = etl::dim<N - 2>(a);           //Size of the transform
+    std::size_t n2 = etl::dim<N - 1>(a);           //Size of the transform
+    std::size_t batch = etl::size(a) / (n1 * n2);  //Number of batch
 
     std::copy(a.begin(), a.end(), c.begin());
 
@@ -478,9 +478,9 @@ template<typename A, typename C, cpp_enable_if(all_double_precision<A>::value)>
 void fft2_many(A&& a, C&& c){
     static constexpr const std::size_t N = decay_traits<A>::dimensions();
 
-    auto n1 = etl::dim<N - 2>(a);           //Size of the transform
-    auto n2 = etl::dim<N - 1>(a);           //Size of the transform
-    auto batch = etl::size(a) / (n1 * n2);  //Number of batch
+    std::size_t n1 = etl::dim<N - 2>(a);           //Size of the transform
+    std::size_t n2 = etl::dim<N - 1>(a);           //Size of the transform
+    std::size_t batch = etl::size(a) / (n1 * n2);  //Number of batch
 
     std::copy(a.begin(), a.end(), c.begin());
 
@@ -495,9 +495,9 @@ template<typename A, typename C, cpp_enable_if(all_complex_single_precision<A>::
 void fft2_many(A&& a, C&& c){
     static constexpr const std::size_t N = decay_traits<A>::dimensions();
 
-    auto n1 = etl::dim<N - 2>(a);           //Size of the transform
-    auto n2 = etl::dim<N - 1>(a);           //Size of the transform
-    auto batch = etl::size(a) / (n1 * n2);  //Number of batch
+    std::size_t n1 = etl::dim<N - 2>(a);           //Size of the transform
+    std::size_t n2 = etl::dim<N - 1>(a);           //Size of the transform
+    std::size_t batch = etl::size(a) / (n1 * n2);  //Number of batch
 
     auto gpu_a = impl::cuda::cuda_allocate_copy(a);
 
@@ -510,9 +510,9 @@ template<typename A, typename C, cpp_enable_if(all_complex_double_precision<A>::
 void fft2_many(A&& a, C&& c){
     static constexpr const std::size_t N = decay_traits<A>::dimensions();
 
-    auto n1 = etl::dim<N - 2>(a);           //Size of the transform
-    auto n2 = etl::dim<N - 1>(a);           //Size of the transform
-    auto batch = etl::size(a) / (n1 * n2);  //Number of batch
+    std::size_t n1 = etl::dim<N - 2>(a);           //Size of the transform
+    std::size_t n2 = etl::dim<N - 1>(a);           //Size of the transform
+    std::size_t batch = etl::size(a) / (n1 * n2);  //Number of batch
 
     auto gpu_a = impl::cuda::cuda_allocate_copy(a);
 
@@ -523,18 +523,18 @@ void fft2_many(A&& a, C&& c){
 
 template<typename A, typename B, typename C, cpp_enable_if(all_single_precision<A>::value)>
 void fft2_convolve(A&& a, B&& b, C&& c){
-    const auto m1 = etl::dim<0>(a);
-    const auto n1= etl::dim<0>(b);
-    const auto s1 = m1 + n1 - 1;
+    const std::size_t m1 = etl::dim<0>(a);
+    const std::size_t n1= etl::dim<0>(b);
+    const std::size_t s1 = m1 + n1 - 1;
 
-    const auto m2 = etl::dim<1>(a);
-    const auto n2= etl::dim<1>(b);
-    const auto s2 = m2 + n2 - 1;
+    const std::size_t m2 = etl::dim<1>(a);
+    const std::size_t n2= etl::dim<1>(b);
+    const std::size_t s2 = m2 + n2 - 1;
 
     auto handle = start_cufft();
 
-    const auto size = etl::size(c);
-    const auto mem_size = size * sizeof(std::complex<float>);
+    const std::size_t size = etl::size(c);
+    const std::size_t mem_size = size * sizeof(std::complex<float>);
 
     auto a_padded = allocate<std::complex<float>>(size);
     auto b_padded = allocate<std::complex<float>>(size);
@@ -579,18 +579,18 @@ void fft2_convolve(A&& a, B&& b, C&& c){
 
 template<typename A, typename B, typename C, cpp_enable_if(all_double_precision<A>::value)>
 void fft2_convolve(A&& a, B&& b, C&& c){
-    const auto m1 = etl::dim<0>(a);
-    const auto n1= etl::dim<0>(b);
-    const auto s1 = m1 + n1 - 1;
+    const std::size_t m1 = etl::dim<0>(a);
+    const std::size_t n1= etl::dim<0>(b);
+    const std::size_t s1 = m1 + n1 - 1;
 
-    const auto m2 = etl::dim<1>(a);
-    const auto n2= etl::dim<1>(b);
-    const auto s2 = m2 + n2 - 1;
+    const std::size_t m2 = etl::dim<1>(a);
+    const std::size_t n2= etl::dim<1>(b);
+    const std::size_t s2 = m2 + n2 - 1;
 
     auto handle = start_cufft();
 
-    const auto size = etl::size(c);
-    const auto mem_size = size * sizeof(std::complex<double>);
+    const std::size_t size = etl::size(c);
+    const std::size_t mem_size = size * sizeof(std::complex<double>);
 
     auto a_padded = allocate<std::complex<double>>(size);
     auto b_padded = allocate<std::complex<double>>(size);

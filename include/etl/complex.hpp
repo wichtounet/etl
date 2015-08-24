@@ -50,24 +50,24 @@ struct complex {
     }
 
     void operator*=(const complex& rhs){
-        auto ac = real * rhs.real;
-        auto bd = imag * rhs.imag;
+        T ac = real * rhs.real;
+        T bd = imag * rhs.imag;
 
-        auto bc = imag * rhs.real;
-        auto ad = real * rhs.imag;
+        T bc = imag * rhs.real;
+        T ad = real * rhs.imag;
 
         real = ac - bd;
         imag = bc + ad;
     }
 
     void operator/=(const complex& rhs){
-        auto ac = real * rhs.real;
-        auto bd = imag * rhs.imag;
+        T ac = real * rhs.real;
+        T bd = imag * rhs.imag;
 
-        auto bc = imag * rhs.real;
-        auto ad = real * rhs.imag;
+        T bc = imag * rhs.real;
+        T ad = real * rhs.imag;
 
-        auto frac = rhs.real * rhs.real + rhs.imag * rhs.imag;
+        T frac = rhs.real * rhs.real + rhs.imag * rhs.imag;
 
         real = (ac + bd) / frac;
         imag = (bc - ad) / frac;
@@ -91,11 +91,11 @@ inline complex<T> operator-(const complex<T>& lhs, const complex<T>& rhs){
 
 template<typename T>
 inline complex<T> operator*(const complex<T>& lhs, const complex<T>& rhs){
-    auto ac = lhs.real * rhs.real;
-    auto bd = lhs.imag * rhs.imag;
+    T ac = lhs.real * rhs.real;
+    T bd = lhs.imag * rhs.imag;
 
-    auto bc = lhs.imag * rhs.real;
-    auto ad = lhs.real * rhs.imag;
+    T bc = lhs.imag * rhs.real;
+    T ad = lhs.real * rhs.imag;
 
     return {ac - bd, bc + ad};
 }
@@ -117,13 +117,13 @@ inline complex<T> operator/(const complex<T>& lhs, T rhs){
 
 template<typename T>
 inline complex<T> operator/(const complex<T>& lhs, const complex<T>& rhs){
-    auto ac = lhs.real * rhs.real;
-    auto bd = lhs.imag * rhs.imag;
+    T ac = lhs.real * rhs.real;
+    T bd = lhs.imag * rhs.imag;
 
-    auto bc = lhs.imag * rhs.real;
-    auto ad = lhs.real * rhs.imag;
+    T bc = lhs.imag * rhs.real;
+    T ad = lhs.real * rhs.imag;
 
-    auto frac = rhs.real * rhs.real + rhs.imag * rhs.imag;
+    T frac = rhs.real * rhs.real + rhs.imag * rhs.imag;
 
     return {(ac + bd) / frac, (bc - ad) / frac};
 }

@@ -41,7 +41,7 @@ struct gemm_config {
 
 template<typename D>
 void pack_MRxk(std::size_t k, const D* A, std::size_t a_row_stride, std::size_t a_col_stride, double* buffer){
-    constexpr const auto MR = gemm_config<D>::MR;
+    constexpr const std::size_t MR = gemm_config<D>::MR;
 
     for (std::size_t j = 0; j < k; ++j) {
         for (std::size_t i = 0; i < MR; ++i) {
@@ -52,7 +52,7 @@ void pack_MRxk(std::size_t k, const D* A, std::size_t a_row_stride, std::size_t 
 
 template<typename D>
 void pack_A(std::size_t mc, std::size_t kc, const D* A, std::size_t a_row_stride, std::size_t a_col_stride, double* buffer){
-    constexpr const auto MR = gemm_config<D>::MR;
+    constexpr const std::size_t MR = gemm_config<D>::MR;
 
     for (std::size_t i=0; i < mc / MR; ++i) {
         pack_MRxk(kc, A, a_row_stride, a_col_stride, buffer);
@@ -60,7 +60,7 @@ void pack_A(std::size_t mc, std::size_t kc, const D* A, std::size_t a_row_stride
         A += MR*a_row_stride;
     }
 
-    auto mr = mc % MR;
+    std::size_t mr = mc % MR;
     if (mr>0) {
         for (std::size_t j=0; j<kc; ++j) {
             for (std::size_t i=0; i<mr; ++i) {
@@ -76,7 +76,7 @@ void pack_A(std::size_t mc, std::size_t kc, const D* A, std::size_t a_row_stride
 
 template<typename D>
 void pack_kxNR(std::size_t k, const D* B, std::size_t b_row_stride, std::size_t b_col_stride, double* buffer){
-    constexpr const auto NR = gemm_config<D>::NR;
+    constexpr const std::size_t NR = gemm_config<D>::NR;
 
     for (std::size_t i = 0; i < k; ++i) {
         for (std::size_t j  =0; j < NR; ++j) {
@@ -89,7 +89,7 @@ void pack_kxNR(std::size_t k, const D* B, std::size_t b_row_stride, std::size_t 
 
 template<typename D>
 void pack_B(std::size_t kc, std::size_t nc, const D* B, std::size_t b_row_stride, std::size_t b_col_stride, double* buffer){
-    constexpr const auto NR = gemm_config<D>::NR;
+    constexpr const std::size_t NR = gemm_config<D>::NR;
 
     for (std::size_t j=0; j<nc / NR; ++j) {
         pack_kxNR(kc, B, b_row_stride, b_col_stride, buffer);
@@ -97,7 +97,7 @@ void pack_B(std::size_t kc, std::size_t nc, const D* B, std::size_t b_row_stride
         B += NR*b_col_stride;
     }
 
-    auto nr = nc % NR;
+    std::size_t nr = nc % NR;
     if (nr>0) {
         for (std::size_t i=0; i<kc; ++i) {
             for (std::size_t j=0; j<nr; ++j) {
@@ -114,8 +114,8 @@ void pack_B(std::size_t kc, std::size_t nc, const D* B, std::size_t b_row_stride
 
 template<typename D>
 void gemm_micro_kernel(std::size_t kc, D alpha, const double* A, const double* B, D beta, D* C, std::size_t c_row_stride, std::size_t c_col_stride){
-    constexpr const auto MR = gemm_config<double>::MR;
-    constexpr const auto NR = gemm_config<double>::NR;
+    constexpr const std::size_t MR = gemm_config<double>::MR;
+    constexpr const std::size_t NR = gemm_config<double>::NR;
 
     double AB[MR*NR] __attribute__ ((aligned (16)));
 
@@ -227,8 +227,8 @@ void gemm_micro_kernel(std::size_t kc, D alpha, const double* A, const double* B
 
 template<typename D>
 void gemm_micro_kernel(std::size_t kc, D alpha, const double* A, const double* B, D beta, D* C, std::size_t c_row_stride, std::size_t c_col_stride){
-    constexpr const auto MR = gemm_config<D>::MR;
-    constexpr const auto NR = gemm_config<D>::NR;
+    constexpr const std::size_t MR = gemm_config<D>::MR;
+    constexpr const std::size_t NR = gemm_config<D>::NR;
 
     double AB[MR*NR];
 
@@ -311,8 +311,8 @@ void dgescal(std::size_t m, std::size_t n, D beta, D* X, std::size_t incRowX, st
 
 template<typename D>
 void gemm_macro_kernel(std::size_t mc, std::size_t nc, std::size_t kc, D alpha, D beta, D* C, std::size_t c_row_stride, std::size_t c_col_stride, double* _A, double* _B, D* _C){
-    constexpr const auto MR = gemm_config<D>::MR;
-    constexpr const auto NR = gemm_config<D>::NR;
+    constexpr const std::size_t MR = gemm_config<D>::MR;
+    constexpr const std::size_t NR = gemm_config<D>::NR;
 
     auto mp = (mc+MR-1) / MR;
     auto np = (nc+NR-1) / NR;
@@ -344,12 +344,12 @@ void gemm_nn(std::size_t m, std::size_t n, std::size_t k, D alpha, const D* A, s
         return;
     }
 
-    constexpr const auto MC = gemm_config<D>::MC;
-    constexpr const auto NC = gemm_config<D>::NC;
-    constexpr const auto KC = gemm_config<D>::KC;
+    constexpr const std::size_t MC = gemm_config<D>::MC;
+    constexpr const std::size_t NC = gemm_config<D>::NC;
+    constexpr const std::size_t KC = gemm_config<D>::KC;
 
-    constexpr const auto MR = gemm_config<D>::MR;
-    constexpr const auto NR = gemm_config<D>::NR;
+    constexpr const std::size_t MR = gemm_config<D>::MR;
+    constexpr const std::size_t NR = gemm_config<D>::NR;
 
     auto _A = allocate<double>(MC * KC);
     auto _B = allocate<double>(KC * NC);
@@ -359,9 +359,9 @@ void gemm_nn(std::size_t m, std::size_t n, std::size_t k, D alpha, const D* A, s
     auto nb = (n+NC-1) / NC;
     auto kb = (k+KC-1) / KC;
 
-    auto _mc = m % MC;
-    auto _nc = n % NC;
-    auto _kc = k % KC;
+    std::size_t _mc = m % MC;
+    std::size_t _nc = n % NC;
+    std::size_t _kc = k % KC;
 
     for (std::size_t j=0; j<nb; ++j) {
         auto nc = (j!=nb-1 || _nc==0) ? NC : _nc;

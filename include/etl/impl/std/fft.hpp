@@ -44,8 +44,8 @@ void fft_2_point(const etl::complex<T>* in, etl::complex<T>* out, const std::siz
         }
 
         for (std::size_t k1 = 0; k1 < offset; ++k1, ++i, ++j){
-            auto z0 = in[i];
-            auto z1 = in[i+m];
+            etl::complex<T> z0 = in[i];
+            etl::complex<T> z1 = in[i+m];
 
             out[j] = z0 + z1;
             out[j+offset] = w * (z0 - z1);
@@ -73,13 +73,13 @@ void fft_3_point(const etl::complex<T>* in, etl::complex<T>* out, const std::siz
         }
 
         for (std::size_t k1 = 0; k1 < offset; ++k1, ++i, ++j){
-            auto z0 = in[i];
-            auto z1 = in[i+m];
-            auto z2 = in[i+2*m];
+            etl::complex<T> z0 = in[i];
+            etl::complex<T> z1 = in[i+m];
+            etl::complex<T> z2 = in[i+2*m];
 
-            auto t1 = z1 + z2;
-            auto t2 = z0 - t1 / T(2.0);
-            auto t3 = -tau * (z1 - z2);
+            etl::complex<T> t1 = z1 + z2;
+            etl::complex<T> t2 = z0 - t1 / T(2.0);
+            etl::complex<T> t3 = -tau * (z1 - z2);
 
             out[j] = z0 + t1;
             out[j + offset] = w1 * (t2 + inverse_conj(t3));
@@ -108,15 +108,15 @@ void fft_4_point(const etl::complex<T>* in, etl::complex<T>* out, const std::siz
         }
 
         for (std::size_t k1 = 0; k1 < offset; ++k1, ++i, ++j){
-            auto z0 = in[i];
-            auto z1 = in[i + 1 * m];
-            auto z2 = in[i + 2 * m];
-            auto z3 = in[i + 3 * m];
+            etl::complex<T> z0 = in[i];
+            etl::complex<T> z1 = in[i + 1 * m];
+            etl::complex<T> z2 = in[i + 2 * m];
+            etl::complex<T> z3 = in[i + 3 * m];
 
-            auto t1 = z0 + z2;
-            auto t2 = z1 + z3;
-            auto t3 = z0 - z2;
-            auto t4 = T(-1.0) * (z1 - z3);
+            etl::complex<T> t1 = z0 + z2;
+            etl::complex<T> t2 = z1 + z3;
+            etl::complex<T> t3 = z0 - z2;
+            etl::complex<T> t4 = T(-1.0) * (z1 - z3);
 
             out[j] = t1 + t2;
             out[j + 1 * offset] = w1 * (t3 + inverse_conj(t4));
@@ -151,23 +151,23 @@ void fft_5_point(const etl::complex<T>* in, etl::complex<T>* out, const std::siz
         }
 
         for (std::size_t k1 = 0; k1 < offset; ++k1, ++i, ++j){
-            auto z0 = in[i];
-            auto z1 = in[i + m];
-            auto z2 = in[i + 2 * m];
-            auto z3 = in[i + 3 * m];
-            auto z4 = in[i + 4 * m];
+            etl::complex<T> z0 = in[i];
+            etl::complex<T> z1 = in[i + m];
+            etl::complex<T> z2 = in[i + 2 * m];
+            etl::complex<T> z3 = in[i + 3 * m];
+            etl::complex<T> z4 = in[i + 4 * m];
 
-            auto t1 = z1 + z4;
-            auto t2 = z2 + z3;
-            auto t3 = z1 - z4;
-            auto t4 = z2 - z3;
-            auto t5 = t1 + t2;
-            auto t6 = T(std::sqrt(5.0) / 4.0) * (t1 - t2);
-            auto t7 = z0 - (t5 / T(4));
-            auto t8 = t7 + t6;
-            auto t9 = t7 - t6;
-            auto t10 = theta_1 * t3 + theta_2 * t4;
-            auto t11 = theta_2 * t3 - theta_1 * t4;
+            etl::complex<T> t1 = z1 + z4;
+            etl::complex<T> t2 = z2 + z3;
+            etl::complex<T> t3 = z1 - z4;
+            etl::complex<T> t4 = z2 - z3;
+            etl::complex<T> t5 = t1 + t2;
+            etl::complex<T> t6 = T(std::sqrt(5.0) / 4.0) * (t1 - t2);
+            etl::complex<T> t7 = z0 - (t5 / T(4));
+            etl::complex<T> t8 = t7 + t6;
+            etl::complex<T> t9 = t7 - t6;
+            etl::complex<T> t10 = theta_1 * t3 + theta_2 * t4;
+            etl::complex<T> t11 = theta_2 * t3 - theta_1 * t4;
 
             out[j] = z0 + t5;
             out[j + offset] = w1 * (t8 + inverse_conj(t10));
@@ -216,36 +216,36 @@ void fft_7_point(const etl::complex<T>* in, etl::complex<T>* out, const std::siz
         }
 
         for (std::size_t k1 = 0; k1 < offset; k1++, ++i, ++j){
-            auto z0 = in[i];
-            auto z1 = in[i + m];
-            auto z2 = in[i + 2 * m];
-            auto z3 = in[i + 3 * m];
-            auto z4 = in[i + 4 * m];
-            auto z5 = in[i + 5 * m];
-            auto z6 = in[i + 6 * m];
+            etl::complex<T> z0 = in[i];
+            etl::complex<T> z1 = in[i + m];
+            etl::complex<T> z2 = in[i + 2 * m];
+            etl::complex<T> z3 = in[i + 3 * m];
+            etl::complex<T> z4 = in[i + 4 * m];
+            etl::complex<T> z5 = in[i + 5 * m];
+            etl::complex<T> z6 = in[i + 6 * m];
 
-            auto t0 = z1 + z6;
-            auto t1 = z1 - z6;
-            auto t2 = z2 + z5;
-            auto t3 = z2 - z5;
-            auto t4 = z4 + z3;
-            auto t5 = z4 - z3;
-            auto t6 = t2 + t0;
-            auto t8 = z0 + t6 + t4;
-            auto t10 = theta_2 * (t0 - t4);
-            auto t11 = theta_3 * (t4 - t2);
-            auto t12 = theta_4 * (t2 - t0);
-            auto t13 = theta_5 * (t5 + t3 + t1);
-            auto t14 = theta_6 * (t1 - t5);
-            auto t15 = theta_7 * (t5 - t3);
-            auto t16 = theta_8 * (t3 - t1);
-            auto t17 = t8 + theta_1 * (t6 + t4);
-            auto t18 = t17 + t10 + t11;
-            auto t19 = t17 + t12 - t11;
-            auto t20 = t17 - t10 - t12;
-            auto t21 = t14 + t15 + t13;
-            auto t22 = t16 - t15 + t13;
-            auto t23 = -t16 - t14 + t13;
+            etl::complex<T> t0 = z1 + z6;
+            etl::complex<T> t1 = z1 - z6;
+            etl::complex<T> t2 = z2 + z5;
+            etl::complex<T> t3 = z2 - z5;
+            etl::complex<T> t4 = z4 + z3;
+            etl::complex<T> t5 = z4 - z3;
+            etl::complex<T> t6 = t2 + t0;
+            etl::complex<T> t8 = z0 + t6 + t4;
+            etl::complex<T> t10 = theta_2 * (t0 - t4);
+            etl::complex<T> t11 = theta_3 * (t4 - t2);
+            etl::complex<T> t12 = theta_4 * (t2 - t0);
+            etl::complex<T> t13 = theta_5 * (t5 + t3 + t1);
+            etl::complex<T> t14 = theta_6 * (t1 - t5);
+            etl::complex<T> t15 = theta_7 * (t5 - t3);
+            etl::complex<T> t16 = theta_8 * (t3 - t1);
+            etl::complex<T> t17 = t8 + theta_1 * (t6 + t4);
+            etl::complex<T> t18 = t17 + t10 + t11;
+            etl::complex<T> t19 = t17 + t12 - t11;
+            etl::complex<T> t20 = t17 - t10 - t12;
+            etl::complex<T> t21 = t14 + t15 + t13;
+            etl::complex<T> t22 = t16 - t15 + t13;
+            etl::complex<T> t23 = -t16 - t14 + t13;
 
             out[j] = t8;
             out[j + 1 * offset] = w1 * (t18 + conj_inverse(t21));
@@ -291,8 +291,8 @@ void fft_n_point(etl::complex<T>* in, etl::complex<T>* out, const std::size_t fa
             }
 
             for (std::size_t i = 0; i < m; i++){
-                auto xp = out[i + k * m];
-                auto xm = out[i + (factor - k) * m];
+                etl::complex<T> xp = out[i + k * m];
+                etl::complex<T> xm = out[i + (factor - k) * m];
 
                 in[i + e * m] += w.real * xp - w.imag * conj_inverse(xm);
                 in[i + (factor - e) * m] += w.real * xp + w.imag * conj_inverse(xm);
@@ -459,7 +459,7 @@ void fft_n(const In* r_in, etl::complex<T>* r_out, const std::size_t n){
 
 template<typename In, typename T>
 void fft_n_many(const In* r_in, etl::complex<T>* r_out, const std::size_t batch, const std::size_t n){
-    const auto distance = n; //in/out distance between samples
+    const std::size_t distance = n; //in/out distance between samples
 
     //0. Factorize
 
@@ -491,7 +491,7 @@ void inplace_radix2_fft1(etl::complex<T>* x, std::size_t N){
             std::swap(x[a], x[b]);
         }
 
-        auto bit = N;
+        std::size_t bit = N;
         do {
             bit >>= 1;
             b ^= bit;
@@ -603,9 +603,9 @@ template<typename A, typename C>
 void fft1_many(A&& a, C&& c){
     static constexpr const std::size_t N = decay_traits<A>::dimensions();
 
-    auto n = etl::dim<N - 1>(a);        //Size of the transform
-    auto batch = etl::size(a) / n;      //Number of batch
-    auto distance = n;                  //Distance between samples
+    std::size_t n = etl::dim<N - 1>(a);        //Size of the transform
+    std::size_t batch = etl::size(a) / n;      //Number of batch
+    std::size_t distance = n;                  //Distance between samples
 
     if(n <= 65536 && detail::is_power_of_two(n)){
         //Copy a -> c (if not aliasing)
@@ -695,9 +695,9 @@ void fft2_many(A&& a, C&& c){
 
 template<typename A, typename B, typename C>
 void fft1_convolve(A&& a, B&& b, C&& c){
-    const auto m = etl::size(a);
-    const auto n = etl::size(b);
-    const auto size = m + n - 1;
+    const std::size_t m = etl::size(a);
+    const std::size_t n = etl::size(b);
+    const std::size_t size = m + n - 1;
 
     auto a_padded = allocate<std::complex<value_t<A>>>(size);
     auto b_padded = allocate<std::complex<value_t<A>>>(size);
@@ -721,13 +721,13 @@ void fft1_convolve(A&& a, B&& b, C&& c){
 
 template<typename A, typename B, typename C>
 void fft2_convolve(A&& a, B&& b, C&& c){
-    const auto m1 = etl::dim<0>(a);
-    const auto n1= etl::dim<0>(b);
-    const auto s1 = m1 + n1 - 1;
+    const std::size_t m1 = etl::dim<0>(a);
+    const std::size_t n1= etl::dim<0>(b);
+    const std::size_t s1 = m1 + n1 - 1;
 
-    const auto m2 = etl::dim<1>(a);
-    const auto n2= etl::dim<1>(b);
-    const auto s2 = m2 + n2 - 1;
+    const std::size_t m2 = etl::dim<1>(a);
+    const std::size_t n2= etl::dim<1>(b);
+    const std::size_t s2 = m2 + n2 - 1;
 
     dyn_matrix<std::complex<value_t<A>>, 2> a_padded(s1, s2);
     dyn_matrix<std::complex<value_t<A>>, 2> b_padded(s1, s2);

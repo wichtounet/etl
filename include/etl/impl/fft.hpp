@@ -237,7 +237,7 @@ template<typename A, typename C>
 struct fft1_impl {
     template<typename AA, typename CC>
     static void apply(AA&& a, CC&& c){
-        auto impl = select_fft1_impl(etl::size(c));
+        fft_impl impl = select_fft1_impl(etl::size(c));
 
         if(impl == fft_impl::STD){
             etl::impl::standard::fft1(std::forward<AA>(a), std::forward<CC>(c));
@@ -253,7 +253,7 @@ template<typename A, typename C>
 struct ifft1_impl {
     template<typename AA, typename CC>
     static void apply(AA&& a, CC&& c){
-        auto impl = select_ifft1_impl(etl::size(c));
+        fft_impl impl = select_ifft1_impl(etl::size(c));
 
         if(impl == fft_impl::STD){
             etl::impl::standard::ifft1(std::forward<AA>(a), std::forward<CC>(c));
@@ -269,7 +269,7 @@ template<typename A, typename C>
 struct ifft1_real_impl {
     template<typename AA, typename CC>
     static void apply(AA&& a, CC&& c){
-        auto impl = select_ifft1_impl(etl::size(c));
+        fft_impl impl = select_ifft1_impl(etl::size(c));
 
         if(impl == fft_impl::STD){
             etl::impl::standard::ifft1_real(std::forward<AA>(a), std::forward<CC>(c));
@@ -285,7 +285,7 @@ template<typename A, typename C>
 struct fft2_impl {
     template<typename AA, typename CC>
     static void apply(AA&& a, CC&& c){
-        auto impl = select_fft2_impl(etl::dim<0>(c), etl::dim<1>(c));
+        fft_impl impl = select_fft2_impl(etl::dim<0>(c), etl::dim<1>(c));
 
         if(impl == fft_impl::STD){
             etl::impl::standard::fft2(std::forward<AA>(a), std::forward<CC>(c));
@@ -301,7 +301,7 @@ template<typename A, typename C>
 struct ifft2_impl {
     template<typename AA, typename CC>
     static void apply(AA&& a, CC&& c){
-        auto impl = select_fft2_impl(etl::dim<0>(c), etl::dim<1>(c));
+        fft_impl impl = select_fft2_impl(etl::dim<0>(c), etl::dim<1>(c));
 
         if(impl == fft_impl::STD){
             etl::impl::standard::ifft2(std::forward<AA>(a), std::forward<CC>(c));
@@ -317,7 +317,7 @@ template<typename A, typename C>
 struct ifft2_real_impl {
     template<typename AA, typename CC>
     static void apply(AA&& a, CC&& c){
-        auto impl = select_fft2_impl(etl::dim<0>(c), etl::dim<1>(c));
+        fft_impl impl = select_fft2_impl(etl::dim<0>(c), etl::dim<1>(c));
 
         if(impl == fft_impl::STD){
             etl::impl::standard::ifft2_real(std::forward<AA>(a), std::forward<CC>(c));
@@ -333,7 +333,7 @@ template<typename A, typename C>
 struct fft1_many_impl {
     template<typename AA, typename CC>
     static void apply(AA&& a, CC&& c){
-        auto impl = select_fft1_many_impl(etl::dim<0>(c), etl::dim<1>(c));
+        fft_impl impl = select_fft1_many_impl(etl::dim<0>(c), etl::dim<1>(c));
 
         if(impl == fft_impl::STD){
             etl::impl::standard::fft1_many(std::forward<AA>(a), std::forward<CC>(c));
@@ -349,7 +349,7 @@ template<typename A, typename C>
 struct fft2_many_impl {
     template<typename AA, typename CC>
     static void apply(AA&& a, CC&& c){
-        auto impl = select_fft2_many_impl(etl::dim<0>(c), etl::dim<1>(c), etl::dim<2>(c));
+        fft_impl impl = select_fft2_many_impl(etl::dim<0>(c), etl::dim<1>(c), etl::dim<2>(c));
 
         if(impl == fft_impl::STD){
             etl::impl::standard::fft2_many(std::forward<AA>(a), std::forward<CC>(c));

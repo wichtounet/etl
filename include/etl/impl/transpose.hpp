@@ -34,7 +34,7 @@ struct inplace_square_transpose {
     static void apply(CC&& c){
         using std::swap;
 
-        const auto N = etl::dim<0>(c);
+        const std::size_t N = etl::dim<0>(c);
 
         for(std::size_t i = 0; i < N - 1; ++i){
             for(std::size_t j = i + 1; j < N; ++j){
@@ -53,8 +53,8 @@ struct inplace_rectangular_transpose {
         auto data = mat.memory_start();
 
         //Dimensions prior to transposition
-        const auto N = etl::dim<0>(mat);
-        const auto M = etl::dim<1>(mat);
+        const std::size_t N = etl::dim<0>(mat);
+        const std::size_t M = etl::dim<1>(mat);
 
         for(std::size_t i = 0; i < N; ++i){
             for(std::size_t j = 0; j < M; ++j){
@@ -68,8 +68,8 @@ struct inplace_rectangular_transpose {
     static void real_inplace(CC&& mat){
         using std::swap;
 
-        const auto N = etl::dim<0>(mat);
-        const auto M = etl::dim<1>(mat);
+        const std::size_t N = etl::dim<0>(mat);
+        const std::size_t M = etl::dim<1>(mat);
 
         auto data = mat.memory_start();
 
