@@ -15,19 +15,19 @@ namespace etl {
 
 namespace math {
 
-inline constexpr float logistic_sigmoid(float x){
+inline float logistic_sigmoid(float x){
     return 1.0f / (1.0f + std::exp(-x));
 }
 
-inline constexpr double logistic_sigmoid(double x){
+inline double logistic_sigmoid(double x){
     return 1.0 / (1.0 + std::exp(-x));
 }
 
-inline constexpr float softplus(float x){
+inline float softplus(float x){
     return std::log(1.0f + std::exp(x));
 }
 
-inline constexpr double softplus(double x){
+inline double softplus(double x){
     return std::log(1.0 + std::exp(x));
 }
 
