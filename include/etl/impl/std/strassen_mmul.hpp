@@ -19,31 +19,31 @@ namespace standard {
 
 template<typename A, typename B, typename C>
 void strassen_mm_mul_r(const A& a, const B& b, C& c){
-    using type = typename A::value_type;
+    using value_type = value_t<A>;
 
-    auto n = dim<0>(a);
+    std::size_t n = dim<0>(a);
 
     //1x1 matrix mul
     if (n == 1) {
         c(0,0) = a(0,0) * b(0,0);
     } else if(n == 2){
-        auto a11 = a(0,0);
-        auto a12 = a(0,1);
-        auto a21 = a(1,0);
-        auto a22 = a(1,1);
+        value_type a11 = a(0,0);
+        value_type a12 = a(0,1);
+        value_type a21 = a(1,0);
+        value_type a22 = a(1,1);
 
-        auto b11 = b(0,0);
-        auto b12 = b(0,1);
-        auto b21 = b(1,0);
-        auto b22 = b(1,1);
+        value_type b11 = b(0,0);
+        value_type b12 = b(0,1);
+        value_type b21 = b(1,0);
+        value_type b22 = b(1,1);
 
-        auto p1 = (a11 + a22) * (b11 + b22);
-        auto p2 = (a12 - a22) * (b21 + b22);
-        auto p3 = a11 * (b12 - b22);
-        auto p4 = a22 * (b21 - b11);
-        auto p5 = (a11 + a12) * b22;
-        auto p6 = (a21 + a22) * b11;
-        auto p7 = (a21 - a11) * (b11 + b12);
+        value_type p1 = (a11 + a22) * (b11 + b22);
+        value_type p2 = (a12 - a22) * (b21 + b22);
+        value_type p3 = a11 * (b12 - b22);
+        value_type p4 = a22 * (b21 - b11);
+        value_type p5 = (a11 + a12) * b22;
+        value_type p6 = (a21 + a22) * b11;
+        value_type p7 = (a21 - a11) * (b11 + b12);
 
         c(0,0) = p1 + p4 + p2 - p5;
         c(0,1) = p3 + p5;
@@ -52,23 +52,23 @@ void strassen_mm_mul_r(const A& a, const B& b, C& c){
     } else if(n == 4){
         //This is entirely done on stack
 
-        auto new_n = n / 2;
+        std::size_t new_n = n / 2;
 
-        etl::fast_matrix<type, 2, 2> a11;
-        etl::fast_matrix<type, 2, 2> a12;
-        etl::fast_matrix<type, 2, 2> a21;
-        etl::fast_matrix<type, 2, 2> a22;
+        etl::fast_matrix<value_type, 2, 2> a11;
+        etl::fast_matrix<value_type, 2, 2> a12;
+        etl::fast_matrix<value_type, 2, 2> a21;
+        etl::fast_matrix<value_type, 2, 2> a22;
 
-        etl::fast_matrix<type, 2, 2> b11;
-        etl::fast_matrix<type, 2, 2> b12;
-        etl::fast_matrix<type, 2, 2> b21;
-        etl::fast_matrix<type, 2, 2> b22;
+        etl::fast_matrix<value_type, 2, 2> b11;
+        etl::fast_matrix<value_type, 2, 2> b12;
+        etl::fast_matrix<value_type, 2, 2> b21;
+        etl::fast_matrix<value_type, 2, 2> b22;
 
-        etl::fast_matrix<type, 2, 2> p1;
-        etl::fast_matrix<type, 2, 2> p2;
-        etl::fast_matrix<type, 2, 2> p3;
-        etl::fast_matrix<type, 2, 2> p4;
-        etl::fast_matrix<type, 2, 2> p5;
+        etl::fast_matrix<value_type, 2, 2> p1;
+        etl::fast_matrix<value_type, 2, 2> p2;
+        etl::fast_matrix<value_type, 2, 2> p3;
+        etl::fast_matrix<value_type, 2, 2> p4;
+        etl::fast_matrix<value_type, 2, 2> p5;
 
         for (std::size_t i = 0; i < new_n; i++) {
             for (std::size_t j = 0; j < new_n; j++) {
@@ -120,23 +120,23 @@ void strassen_mm_mul_r(const A& a, const B& b, C& c){
             }
         }
     } else {
-        auto new_n = n / 2;
+        std::size_t new_n = n / 2;
 
-        etl::dyn_matrix<type> a11(new_n, new_n);
-        etl::dyn_matrix<type> a12(new_n, new_n);
-        etl::dyn_matrix<type> a21(new_n, new_n);
-        etl::dyn_matrix<type> a22(new_n, new_n);
+        etl::dyn_matrix<value_type> a11(new_n, new_n);
+        etl::dyn_matrix<value_type> a12(new_n, new_n);
+        etl::dyn_matrix<value_type> a21(new_n, new_n);
+        etl::dyn_matrix<value_type> a22(new_n, new_n);
 
-        etl::dyn_matrix<type> b11(new_n, new_n);
-        etl::dyn_matrix<type> b12(new_n, new_n);
-        etl::dyn_matrix<type> b21(new_n, new_n);
-        etl::dyn_matrix<type> b22(new_n, new_n);
+        etl::dyn_matrix<value_type> b11(new_n, new_n);
+        etl::dyn_matrix<value_type> b12(new_n, new_n);
+        etl::dyn_matrix<value_type> b21(new_n, new_n);
+        etl::dyn_matrix<value_type> b22(new_n, new_n);
 
-        etl::dyn_matrix<type> p1(new_n, new_n);
-        etl::dyn_matrix<type> p2(new_n, new_n);
-        etl::dyn_matrix<type> p3(new_n, new_n);
-        etl::dyn_matrix<type> p4(new_n, new_n);
-        etl::dyn_matrix<type> p5(new_n, new_n);
+        etl::dyn_matrix<value_type> p1(new_n, new_n);
+        etl::dyn_matrix<value_type> p2(new_n, new_n);
+        etl::dyn_matrix<value_type> p3(new_n, new_n);
+        etl::dyn_matrix<value_type> p4(new_n, new_n);
+        etl::dyn_matrix<value_type> p5(new_n, new_n);
 
         for (std::size_t i = 0; i < new_n; i++) {
             for (std::size_t j = 0; j < new_n; j++) {
@@ -200,17 +200,17 @@ void strassen_mm_mul(const A& a, const B& b, C& c){
 
     //For now, assume matrices are of size 2^nx2^n
 
-    auto n = std::max(dim<0>(a), std::max(dim<1>(a), dim<1>(b)));
-    auto m = nextPowerOfTwo(n);
+    std::size_t n = std::max(dim<0>(a), std::max(dim<1>(a), dim<1>(b)));
+    std::size_t m = nextPowerOfTwo(n);
 
     if(dim<0>(a) == m && dim<0>(b) == m && dim<1>(a) == m && dim<1>(b) == m){
         strassen_mm_mul_r(a, b, c);
     } else {
-        using type = typename A::value_type;
+        using value_type = typename A::value_type;
 
-        etl::dyn_matrix<type> a_prep(m, m, static_cast<type>(0));
-        etl::dyn_matrix<type> b_prep(m, m, static_cast<type>(0));
-        etl::dyn_matrix<type> c_prep(m, m, static_cast<type>(0));
+        etl::dyn_matrix<value_type> a_prep(m, m, value_type(0));
+        etl::dyn_matrix<value_type> b_prep(m, m, value_type(0));
+        etl::dyn_matrix<value_type> c_prep(m, m, value_type(0));
 
         for(std::size_t i=0; i< dim<0>(a); i++) {
             for (std::size_t j=0; j<dim<1>(a); j++) {
