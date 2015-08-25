@@ -76,9 +76,9 @@ template<typename I, typename K, typename C, cpp_enable_if((all_double_precision
 void conv1_full(const I& input, const K& kernel, C&& conv){
     std::size_t left = size(kernel) - 1;
 
-    auto out = conv.memory_start();
-    auto in = input.memory_start();
-    auto k = kernel.memory_start();
+    double* out = conv.memory_start();
+    const double* in = input.memory_start();
+    const double* k = kernel.memory_start();
 
     //Process not-'valid' parts of the convolution (left and right)
     etl::impl::common::left_full_kernel(in, size(input), k, size(kernel), out);
@@ -92,9 +92,9 @@ template<typename I, typename K, typename C, cpp_enable_if((all_double_precision
 void conv1_same(const I& input, const K& kernel, C&& conv){
     std::size_t left = (size(kernel) - 1) / 2;
 
-    auto out = conv.memory_start();
-    auto in = input.memory_start();
-    auto k = kernel.memory_start();
+    double* out = conv.memory_start();
+    const double* in = input.memory_start();
+    const double* k = kernel.memory_start();
 
     //Process not-'valid' parts of the convolution (left and right)
     etl::impl::common::left_same_kernel(in, size(input), k, size(kernel), out);
@@ -122,7 +122,7 @@ inline void sconv1_valid_micro_kernel(const float* in, const std::size_t n, cons
     __m128 tmp2;
     __m128 res;
 
-    auto c = n - m + 1;
+    std::size_t c = n - m + 1;
 
     //Compute the convolution 4 floats at a time
 
@@ -155,9 +155,9 @@ template<typename I, typename K, typename C, cpp_enable_if((all_single_precision
 void conv1_full(const I& input, const K& kernel, C&& conv){
     std::size_t left = size(kernel) - 1;
 
-    auto out = conv.memory_start();
-    auto in = input.memory_start();
-    auto k = kernel.memory_start();
+    double* out = conv.memory_start();
+    const double* in = input.memory_start();
+    const double* k = kernel.memory_start();
 
     //Process not-'valid' parts of the convolution (left and right)
     etl::impl::common::left_full_kernel(in, size(input), k, size(kernel), out);
@@ -171,9 +171,9 @@ template<typename I, typename K, typename C, cpp_enable_if((all_single_precision
 void conv1_same(const I& input, const K& kernel, C&& conv){
     std::size_t left = (size(kernel) - 1) / 2;
 
-    auto out = conv.memory_start();
-    auto in = input.memory_start();
-    auto k = kernel.memory_start();
+    double* out = conv.memory_start();
+    const double* in = input.memory_start();
+    const double* k = kernel.memory_start();
 
     //Process not-'valid' parts of the convolution (left and right)
     etl::impl::common::left_same_kernel(in, size(input), k, size(kernel), out);
