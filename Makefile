@@ -90,20 +90,20 @@ $(eval $(call precompile_finalize))
 endif
 
 # Compile folders
-$(eval $(call auto_folder_compile,workbench,-Icpm/include))
+$(eval $(call auto_folder_compile,workbench/src,-Icpm/include))
 $(eval $(call auto_folder_compile,test/src))
 
 # Collect files for the test executable
 CPP_FILES=$(wildcard test/src/*.cpp)
 TEST_FILES=$(CPP_FILES:test/%=%)
 
-BENCH_FILES=$(wildcard workbench/benchmark*cpp)
+BENCH_FILES=$(wildcard workbench/src/benchmark*cpp)
 
 # Create executables
-$(eval $(call add_executable,test_asm_1,workbench/test.cpp))
-$(eval $(call add_executable,test_asm_2,workbench/test_dim.cpp))
+$(eval $(call add_executable,test_asm_1,workbench/src/test.cpp))
+$(eval $(call add_executable,test_asm_2,workbench/src/test_dim.cpp))
 $(eval $(call add_executable,benchmark,$(BENCH_FILES)))
-$(eval $(call add_executable,mmul,workbench/mmul.cpp))
+$(eval $(call add_executable,mmul,workbench/src/mmul.cpp))
 $(eval $(call add_test_executable,etl_test,$(TEST_FILES)))
 
 $(eval $(call add_executable_set,etl_test,etl_test))
