@@ -461,38 +461,32 @@ public:
         }
     }
 
-    template<typename... S, cpp::enable_if_u<(sizeof...(S) > 0 && storage_order == order::RowMajor)> = cpp::detail::dummy>
+    template<typename... S, cpp_enable_if((sizeof...(S) > 0))>
     std::size_t index(S... sizes) const noexcept {
         //Note: Version with sizes moved to a std::array and accessed with
         //standard loop may be faster, but need some stack space (relevant ?)
 
-        auto subsize = size();
         std::size_t index = 0;
-        std::size_t i = 0;
 
-        cpp::for_each_in(
-            [&subsize, &index, &i, this](std::size_t s){
-                subsize /= dim(i++);
-                index += subsize * s;
-            }, sizes...);
+        if(storage_order == order::RowMajor){
+            std::size_t subsize = size();
+            std::size_t i = 0;
 
-        return index;
-    }
+            cpp::for_each_in(
+                [&subsize, &index, &i, this](std::size_t s){
+                    subsize /= dim(i++);
+                    index += subsize * s;
+                }, sizes...);
+        } else {
+            std::size_t subsize = 1;
+            std::size_t i = 0;
 
-    template<typename... S, cpp::enable_if_u<(sizeof...(S) > 0 && storage_order == order::ColumnMajor)> = cpp::detail::dummy>
-    std::size_t index(S... sizes) const noexcept {
-        //Note: Version with sizes moved to a std::array and accessed with
-        //standard loop may be faster, but need some stack space (relevant ?)
-
-        auto subsize = 1;
-        std::size_t index = 0;
-        std::size_t i = 0;
-
-        cpp::for_each_in(
-            [&subsize, &index, &i, this](std::size_t s){
-                index += subsize * s;
-                subsize *= dim(i++);
-            }, sizes...);
+            cpp::for_each_in(
+                [&subsize, &index, &i, this](std::size_t s){
+                    index += subsize * s;
+                    subsize *= dim(i++);
+                }, sizes...);
+        }
 
         return index;
     }
