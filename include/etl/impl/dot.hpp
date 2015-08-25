@@ -36,8 +36,8 @@ struct dot_impl {
 template<typename A, typename B>
 struct dot_impl <A, B, std::enable_if_t<all_single_precision<A, B>::value && all_dma<A, B>::value>> {
     static float apply(const A& a, const B& b){
-        float* m_a = a.memory_start();
-        float* m_b = b.memory_start();
+        const float* m_a = a.memory_start();
+        const float* m_b = b.memory_start();
 
         return cblas_sdot(etl::size(a), m_a, 1, m_b, 1);
     }
@@ -46,8 +46,8 @@ struct dot_impl <A, B, std::enable_if_t<all_single_precision<A, B>::value && all
 template<typename A, typename B>
 struct dot_impl <A, B, std::enable_if_t<all_double_precision<A, B>::value && all_dma<A, B>::value>> {
     static double apply(const A& a, const B& b){
-        double* m_a = a.memory_start();
-        double* m_b = b.memory_start();
+        const double* m_a = a.memory_start();
+        const double* m_b = b.memory_start();
 
         return cblas_ddot(etl::size(a), m_a, 1, m_b, 1);
     }
