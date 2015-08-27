@@ -28,6 +28,10 @@ template<typename D>
 struct inplace_assignable {
     using derived_t = D;
 
+    /*!
+     * \brief Returns a reference to the derived object, i.e. the object using the CRTP injector.
+     * \return a reference to the derived object.
+     */
     derived_t& as_derived() noexcept {
         return *static_cast<derived_t*>(this);
     }
