@@ -5,6 +5,11 @@
 //  http://opensource.org/licenses/MIT)
 //=======================================================================
 
+/*!
+ * \file sse_vectorization.hpp
+ * \brief Contains SSE vectorized functions for the vectorized assignment of expressions
+ */
+
 #pragma once
 
 #include <immintrin.h>
