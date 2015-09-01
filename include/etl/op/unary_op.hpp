@@ -371,7 +371,7 @@ struct logistic_noise_unary_op {
     static T apply(const T& x){
         static random_engine rand_engine(std::time(nullptr));
 
-        std::normal_distribution<double> noise_distribution(0.0, logistic_sigmoid(x));
+        std::normal_distribution<double> noise_distribution(0.0, math::logistic_sigmoid(x));
 
         return x + noise_distribution(rand_engine);
     }
