@@ -272,6 +272,63 @@ struct fast_matrix_view {
 };
 
 template<typename T>
+struct dyn_vector_view {
+    T sub;
+    std::size_t rows;
+
+    using          sub_type = T;
+    using        value_type = value_t<sub_type>;
+    using       memory_type = memory_t<sub_type>;
+    using const_memory_type = std::add_const_t<memory_t<sub_type>>;
+    using       return_type = return_helper<sub_type, decltype(sub[0])>;
+    using const_return_type = const_return_helper<sub_type, decltype(sub[0])>;
+
+    dyn_vector_view(sub_type sub, std::size_t rows) : sub(sub), rows(rows) {}
+
+    const_return_type operator[](std::size_t j) const {
+        return sub[j];
+    }
+
+    const_return_type operator()(std::size_t j) const {
+        return sub[j];
+    }
+
+    return_type operator[](std::size_t j){
+        return sub[j];
+    }
+
+    return_type operator()(std::size_t j){
+        return sub[j];
+    }
+
+    sub_type& value(){
+        return sub;
+    }
+
+    // Direct memory access
+
+    memory_type memory_start() noexcept {
+        static_assert(has_direct_access<T>::value, "This expression does not have direct memory access");
+        return sub.memory_start();
+    }
+
+    const_memory_type memory_start() const noexcept {
+        static_assert(has_direct_access<T>::value, "This expression does not have direct memory access");
+        return sub.memory_start();
+    }
+
+    memory_type memory_end() noexcept {
+        static_assert(has_direct_access<T>::value, "This expression does not have direct memory access");
+        return sub.memory_end();
+    }
+
+    const_memory_type memory_end() const noexcept {
+        static_assert(has_direct_access<T>::value, "This expression does not have direct memory access");
+        return sub.memory_end();
+    }
+};
+
+template<typename T>
 struct dyn_matrix_view {
     T sub;
     std::size_t rows;
@@ -363,6 +420,11 @@ std::ostream& operator<<(std::ostream& os, const fast_matrix_view<T, Rows, Colum
 template<typename T>
 std::ostream& operator<<(std::ostream& os, const dyn_matrix_view<T>& v){
     return os << "reshape[" << v.rows << "," << v.columns << "](" << v.sub << ")";
+}
+
+template<typename T>
+std::ostream& operator<<(std::ostream& os, const dyn_vector_view<T>& v){
+    return os << "reshape[" << v.rows << "](" << v.sub << ")";
 }
 
 } //end of namespace etl

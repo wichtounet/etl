@@ -511,6 +511,14 @@ auto reshape(E&& value, std::size_t rows, std::size_t columns) -> detail::identi
     return detail::identity_helper<E, dyn_matrix_view<detail::build_identity_type<E>>>{{value, rows, columns}};
 }
 
+template<typename E>
+auto reshape(E&& value, std::size_t rows) -> detail::identity_helper<E, dyn_vector_view<detail::build_identity_type<E>>> {
+    static_assert(is_etl_expr<E>::value, "etl::reshape can only be used on ETL expressions");
+    cpp_assert(size(value) == rows, "Invalid size for reshape");
+
+    return detail::identity_helper<E, dyn_vector_view<detail::build_identity_type<E>>>{{value, rows}};
+}
+
 // Virtual Views that returns rvalues
 
 template<typename D = double>

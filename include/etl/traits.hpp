@@ -80,6 +80,7 @@ struct is_view : cpp::or_c<
         is_2<etl::dim_view, DT>,
         is_var<etl::fast_matrix_view, DT>,
         cpp::is_specialization_of<etl::dyn_matrix_view, DT>,
+        cpp::is_specialization_of<etl::dyn_vector_view, DT>,
         cpp::is_specialization_of<etl::sub_view, DT>
     > {};
 
@@ -134,6 +135,12 @@ template<typename T>
 struct is_direct_dyn_matrix_view<dyn_matrix_view<T>> : has_direct_access<T> {};
 
 template<typename T>
+struct is_direct_dyn_vector_view : std::false_type {};
+
+template<typename T>
+struct is_direct_dyn_vector_view<dyn_vector_view<T>> : has_direct_access<T> {};
+
+template<typename T>
 struct is_direct_identity_view : std::false_type {};
 
 template<typename T, typename V>
@@ -149,6 +156,7 @@ struct has_direct_access : cpp::or_c<
         , is_direct_dim_view<DT>
         , is_direct_fast_matrix_view<DT>
         , is_direct_dyn_matrix_view<DT>
+        , is_direct_dyn_vector_view<DT>
     > {};
 
 template<typename T, typename Enable>
@@ -1015,6 +1023,35 @@ struct etl_traits<etl::dyn_matrix_view<T>> {
 
     static constexpr std::size_t dimensions(){
         return 2;
+    }
+};
+
+/*!
+ * \brief Specialization for dyn_vector_view.
+ */
+template<typename T>
+struct etl_traits<etl::dyn_vector_view<T>> {
+    using expr_t = etl::dyn_vector_view<T>;
+    using sub_expr_t = std::decay_t<T>;
+
+    static constexpr const bool is_fast = false;
+    static constexpr const bool is_value = false;
+    static constexpr const bool is_generator = false;
+    static constexpr const bool vectorizable = false;
+    static constexpr const bool needs_temporary_visitor = etl_traits<sub_expr_t>::needs_temporary_visitor;
+    static constexpr const bool needs_evaluator_visitor = etl_traits<sub_expr_t>::needs_evaluator_visitor;
+    static constexpr const order storage_order = etl_traits<sub_expr_t>::storage_order;
+
+    static std::size_t size(const expr_t& v){
+        return v.rows;
+    }
+
+    static std::size_t dim(const expr_t& v, std::size_t /*d*/){
+        return v.rows;
+    }
+
+    static constexpr std::size_t dimensions(){
+        return 1;
     }
 };
 
