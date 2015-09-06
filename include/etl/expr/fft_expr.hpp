@@ -5,6 +5,11 @@
 //  http://opensource.org/licenses/MIT)
 //=======================================================================
 
+/*!
+ * \file fft_expr.hpp
+ * \brief Contains the FFT expressions.
+*/
+
 #pragma once
 
 #include "cpp_utils/assert.hpp"
