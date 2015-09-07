@@ -5,6 +5,15 @@
 //  http://opensource.org/licenses/MIT)
 //=======================================================================
 
+/*!
+ * \file generator_expr.hpp
+ * \brief Contains generator expressions.
+ *
+ * A generator expression is an expression that yields any number of values, for instance random values. The indexes
+ * are not taken into account, but rather the sequence in which the functions are called. This is mostly useful for
+ * initializing matrices / vectors.
+*/
+
 #pragma once
 
 #include <iosfwd>     //For stream support

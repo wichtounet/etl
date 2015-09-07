@@ -5,6 +5,13 @@
 //  http://opensource.org/licenses/MIT)
 //=======================================================================
 
+/*!
+ * \file optimized_expr.hpp
+ * \brief Contains an optimized expression implementation.
+ *
+ * An optimized expression will first pass throught the optimizer before it is passed through the evaluator.
+*/
+
 #pragma once
 
 #include <iosfwd>     //For stream support
