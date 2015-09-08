@@ -87,29 +87,27 @@ struct dim_view {
         return sub;
     }
 
-    //{{{ Direct memory access
+    // Direct memory access
 
-    template<typename ST = T, std::size_t SD = D, cpp_enable_if(has_direct_access<ST>::value && SD == 1)>
     memory_type memory_start() noexcept {
+        static_assert(has_direct_access<T>::value && D == 1, "This expression does not have direct memory access");
         return sub.memory_start() + i * subsize(sub);
     }
 
-    template<typename ST = T, std::size_t SD = D, cpp_enable_if(has_direct_access<ST>::value && SD == 1)>
     const_memory_type memory_start() const noexcept {
+        static_assert(has_direct_access<T>::value && D == 1, "This expression does not have direct memory access");
         return sub.memory_start() + i * subsize(sub);
     }
 
-    template<typename ST = T, std::size_t SD = D, cpp_enable_if(has_direct_access<ST>::value && SD == 1)>
     memory_type memory_end() noexcept {
+        static_assert(has_direct_access<T>::value && D == 1, "This expression does not have direct memory access");
         return sub.memory_start() + (i + 1) * subsize(sub);
     }
 
-    template<typename ST = T, std::size_t SD = D, cpp_enable_if(has_direct_access<ST>::value && SD == 1)>
     const_memory_type memory_end() const noexcept {
+        static_assert(has_direct_access<T>::value && D == 1, "This expression does not have direct memory access");
         return sub.memory_start() + (i + 1) * subsize(sub);
     }
-
-    //}}}
 };
 
 template<typename T>
@@ -156,29 +154,27 @@ struct sub_view {
         return parent;
     }
 
-    //{{{ Direct memory access
+    // Direct memory access
 
-    template<typename ST = T, cpp_enable_if(has_direct_access<ST>::value && decay_traits<parent_type>::storage_order == order::RowMajor)>
     memory_type memory_start() noexcept {
+        static_assert(has_direct_access<T>::value && decay_traits<parent_type>::storage_order == order::RowMajor, "This expression does not have direct memory access");
         return parent.memory_start() + i * subsize(parent);
     }
 
-    template<typename ST = T, cpp_enable_if(has_direct_access<ST>::value && decay_traits<parent_type>::storage_order == order::RowMajor)>
     const_memory_type memory_start() const noexcept {
+        static_assert(has_direct_access<T>::value && decay_traits<parent_type>::storage_order == order::RowMajor, "This expression does not have direct memory access");
         return parent.memory_start() + i * subsize(parent);
     }
 
-    template<typename ST = T, cpp_enable_if(has_direct_access<ST>::value && decay_traits<parent_type>::storage_order == order::RowMajor)>
     memory_type memory_end() noexcept {
+        static_assert(has_direct_access<T>::value && decay_traits<parent_type>::storage_order == order::RowMajor, "This expression does not have direct memory access");
         return parent.memory_start() + (i + 1) * subsize(parent);
     }
 
-    template<typename ST = T, cpp_enable_if(has_direct_access<ST>::value && decay_traits<parent_type>::storage_order == order::RowMajor)>
     const_memory_type memory_end() const noexcept {
+        static_assert(has_direct_access<T>::value && decay_traits<parent_type>::storage_order == order::RowMajor, "This expression does not have direct memory access");
         return parent.memory_start() + (i + 1) * subsize(parent);
     }
-
-    //}}}
 };
 
 namespace fast_matrix_view_detail {
@@ -252,29 +248,84 @@ struct fast_matrix_view {
         return nth_size<D, 0, Dims...>::value;
     }
 
-    //{{{ Direct memory access
+    // Direct memory access
 
-    template<typename SS = T, cpp_enable_if(has_direct_access<SS>::value)>
     memory_type memory_start() noexcept {
+        static_assert(has_direct_access<T>::value, "This expression does not have direct memory access");
         return sub.memory_start();
     }
 
-    template<typename SS = T, cpp_enable_if(has_direct_access<SS>::value)>
     const_memory_type memory_start() const noexcept {
+        static_assert(has_direct_access<T>::value, "This expression does not have direct memory access");
         return sub.memory_start();
     }
 
-    template<typename SS = T, cpp_enable_if(has_direct_access<SS>::value)>
     memory_type memory_end() noexcept {
+        static_assert(has_direct_access<T>::value, "This expression does not have direct memory access");
         return sub.memory_end();
     }
 
-    template<typename SS = T, cpp_enable_if(has_direct_access<SS>::value)>
     const_memory_type memory_end() const noexcept {
+        static_assert(has_direct_access<T>::value, "This expression does not have direct memory access");
+        return sub.memory_end();
+    }
+};
+
+template<typename T>
+struct dyn_vector_view {
+    T sub;
+    std::size_t rows;
+
+    using          sub_type = T;
+    using        value_type = value_t<sub_type>;
+    using       memory_type = memory_t<sub_type>;
+    using const_memory_type = std::add_const_t<memory_t<sub_type>>;
+    using       return_type = return_helper<sub_type, decltype(sub[0])>;
+    using const_return_type = const_return_helper<sub_type, decltype(sub[0])>;
+
+    dyn_vector_view(sub_type sub, std::size_t rows) : sub(sub), rows(rows) {}
+
+    const_return_type operator[](std::size_t j) const {
+        return sub[j];
+    }
+
+    const_return_type operator()(std::size_t j) const {
+        return sub[j];
+    }
+
+    return_type operator[](std::size_t j){
+        return sub[j];
+    }
+
+    return_type operator()(std::size_t j){
+        return sub[j];
+    }
+
+    sub_type& value(){
+        return sub;
+    }
+
+    // Direct memory access
+
+    memory_type memory_start() noexcept {
+        static_assert(has_direct_access<T>::value, "This expression does not have direct memory access");
+        return sub.memory_start();
+    }
+
+    const_memory_type memory_start() const noexcept {
+        static_assert(has_direct_access<T>::value, "This expression does not have direct memory access");
+        return sub.memory_start();
+    }
+
+    memory_type memory_end() noexcept {
+        static_assert(has_direct_access<T>::value, "This expression does not have direct memory access");
         return sub.memory_end();
     }
 
-    //}}}
+    const_memory_type memory_end() const noexcept {
+        static_assert(has_direct_access<T>::value, "This expression does not have direct memory access");
+        return sub.memory_end();
+    }
 };
 
 template<typename T>
@@ -328,29 +379,27 @@ struct dyn_matrix_view {
         return sub;
     }
 
-    //{{{ Direct memory access
+    // Direct memory access
 
-    template<typename SS = T, cpp_enable_if(has_direct_access<SS>::value)>
     memory_type memory_start() noexcept {
+        static_assert(has_direct_access<T>::value, "This expression does not have direct memory access");
         return sub.memory_start();
     }
 
-    template<typename SS = T, cpp_enable_if(has_direct_access<SS>::value)>
     const_memory_type memory_start() const noexcept {
+        static_assert(has_direct_access<T>::value, "This expression does not have direct memory access");
         return sub.memory_start();
     }
 
-    template<typename SS = T, cpp_enable_if(has_direct_access<SS>::value)>
     memory_type memory_end() noexcept {
+        static_assert(has_direct_access<T>::value, "This expression does not have direct memory access");
         return sub.memory_end();
     }
 
-    template<typename SS = T, cpp_enable_if(has_direct_access<SS>::value)>
     const_memory_type memory_end() const noexcept {
+        static_assert(has_direct_access<T>::value, "This expression does not have direct memory access");
         return sub.memory_end();
     }
-
-    //}}}
 };
 
 template<typename T, std::size_t D>
@@ -371,6 +420,11 @@ std::ostream& operator<<(std::ostream& os, const fast_matrix_view<T, Rows, Colum
 template<typename T>
 std::ostream& operator<<(std::ostream& os, const dyn_matrix_view<T>& v){
     return os << "reshape[" << v.rows << "," << v.columns << "](" << v.sub << ")";
+}
+
+template<typename T>
+std::ostream& operator<<(std::ostream& os, const dyn_vector_view<T>& v){
+    return os << "reshape[" << v.rows << "](" << v.sub << ")";
 }
 
 } //end of namespace etl

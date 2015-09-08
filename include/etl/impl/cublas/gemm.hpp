@@ -80,7 +80,7 @@ void copy_matrix(cublas_handle& handle, impl::cuda::cuda_memory<T>& gpu, C&& c){
 
 template<typename A, typename B, typename C, cpp_enable_if(all_dma<A,B,C>::value && all_single_precision<A,B,C>::value)>
 void gemm(A&& a, B&& b, C&& c){
-    auto handle = start_cublas();
+    cublas_handle handle = start_cublas();
 
     bool row_major = decay_traits<A>::storage_order == order::RowMajor;
 
@@ -124,7 +124,7 @@ void gemm(A&& a, B&& b, C&& c){
 
 template<typename A, typename B, typename C, cpp_enable_if(all_dma<A,B,C>::value && all_double_precision<A,B,C>::value)>
 void gemm(A&& a, B&& b, C&& c){
-    auto handle = start_cublas();
+    cublas_handle handle = start_cublas();
 
     bool row_major = decay_traits<A>::storage_order == order::RowMajor;
 
@@ -168,7 +168,7 @@ void gemm(A&& a, B&& b, C&& c){
 
 template<typename A, typename B, typename C, cpp_enable_if(all_dma<A,B,C>::value && all_complex_single_precision<A,B,C>::value)>
 void gemm(A&& a, B&& b, C&& c){
-    auto handle = start_cublas();
+    cublas_handle handle = start_cublas();
 
     bool row_major = decay_traits<A>::storage_order == order::RowMajor;
 
@@ -212,7 +212,7 @@ void gemm(A&& a, B&& b, C&& c){
 
 template<typename A, typename B, typename C, cpp_enable_if(all_dma<A,B,C>::value && all_complex_double_precision<A,B,C>::value)>
 void gemm(A&& a, B&& b, C&& c){
-    auto handle = start_cublas();
+    cublas_handle handle = start_cublas();
 
     bool row_major = decay_traits<A>::storage_order == order::RowMajor;
 
@@ -256,7 +256,7 @@ void gemm(A&& a, B&& b, C&& c){
 
 template<typename A, typename B, typename C, cpp_enable_if(all_dma<A,B,C>::value && all_single_precision<A,B,C>::value)>
 void gemv(A&& a, B&& b, C&& c){
-    auto handle = start_cublas();
+    cublas_handle handle = start_cublas();
 
     bool row_major = decay_traits<A>::storage_order == order::RowMajor;
 
@@ -300,7 +300,7 @@ void gemv(A&& a, B&& b, C&& c){
 
 template<typename A, typename B, typename C, cpp_enable_if(all_dma<A,B,C>::value && all_double_precision<A,B,C>::value)>
 void gemv(A&& a, B&& b, C&& c){
-    auto handle = start_cublas();
+    cublas_handle handle = start_cublas();
 
     bool row_major = decay_traits<A>::storage_order == order::RowMajor;
 
@@ -344,7 +344,7 @@ void gemv(A&& a, B&& b, C&& c){
 
 template<typename A, typename B, typename C, cpp_enable_if(all_dma<A,B,C>::value && all_complex_single_precision<A,B,C>::value)>
 void gemv(A&& a, B&& b, C&& c){
-    auto handle = start_cublas();
+    cublas_handle handle = start_cublas();
 
     bool row_major = decay_traits<A>::storage_order == order::RowMajor;
 
@@ -388,7 +388,7 @@ void gemv(A&& a, B&& b, C&& c){
 
 template<typename A, typename B, typename C, cpp_enable_if(all_dma<A,B,C>::value && all_complex_double_precision<A,B,C>::value)>
 void gemv(A&& a, B&& b, C&& c){
-    auto handle = start_cublas();
+    cublas_handle handle = start_cublas();
 
     bool row_major = decay_traits<A>::storage_order == order::RowMajor;
 
@@ -432,7 +432,7 @@ void gemv(A&& a, B&& b, C&& c){
 
 template<typename A, typename B, typename C, cpp_enable_if(all_dma<A,B,C>::value && all_single_precision<A,B,C>::value)>
 void gevm(A&& a, B&& b, C&& c){
-    auto handle = start_cublas();
+    cublas_handle handle = start_cublas();
 
     bool row_major = decay_traits<B>::storage_order == order::RowMajor;
 
@@ -476,7 +476,7 @@ void gevm(A&& a, B&& b, C&& c){
 
 template<typename A, typename B, typename C, cpp_enable_if(all_dma<A,B,C>::value && all_double_precision<A,B,C>::value)>
 void gevm(A&& a, B&& b, C&& c){
-    auto handle = start_cublas();
+    cublas_handle handle = start_cublas();
 
     bool row_major = decay_traits<B>::storage_order == order::RowMajor;
 
@@ -520,7 +520,7 @@ void gevm(A&& a, B&& b, C&& c){
 
 template<typename A, typename B, typename C, cpp_enable_if(all_dma<A,B,C>::value && all_complex_single_precision<A,B,C>::value)>
 void gevm(A&& a, B&& b, C&& c){
-    auto handle = start_cublas();
+    cublas_handle handle = start_cublas();
 
     bool row_major = decay_traits<A>::storage_order == order::RowMajor;
 
@@ -564,7 +564,7 @@ void gevm(A&& a, B&& b, C&& c){
 
 template<typename A, typename B, typename C, cpp_enable_if(all_dma<A,B,C>::value && all_complex_double_precision<A,B,C>::value)>
 void gevm(A&& a, B&& b, C&& c){
-    auto handle = start_cublas();
+    cublas_handle handle = start_cublas();
 
     bool row_major = decay_traits<A>::storage_order == order::RowMajor;
 

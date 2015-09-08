@@ -224,10 +224,10 @@ void conv_2d_valid_multi(A&& input, B&& kernels, C&& features){
     //TODO This version of the implementation should only be used if very fast MMUL is available
 
     if(input.is_square() && kernels.is_sub_square()){
-        const auto v1 = etl::dim<0>(input);
-        const auto v2 = etl::dim<1>(input);
-        const auto k1 = etl::dim<1>(kernels);
-        const auto k2 = etl::dim<2>(kernels);
+        const std::size_t v1 = etl::dim<0>(input);
+        const std::size_t v2 = etl::dim<1>(input);
+        const std::size_t k1 = etl::dim<1>(kernels);
+        const std::size_t k2 = etl::dim<2>(kernels);
 
         etl::dyn_matrix<value_t<A>, 2> input_col(k1 * k2, (v1 - k1 + 1) * (v2 - k2 + 1));
 
@@ -261,9 +261,9 @@ void conv_2d_valid_multi_prepared(A&& input, B&& kernels, C&& features, D&& inpu
 
     //TODO Validate inputs
 
-    const auto K  = etl::dim<0>(kernels);
-    const auto k1 = etl::dim<1>(kernels);
-    const auto k2 = etl::dim<2>(kernels);
+    const std::size_t K  = etl::dim<0>(kernels);
+    const std::size_t k1 = etl::dim<1>(kernels);
+    const std::size_t k2 = etl::dim<2>(kernels);
 
     im2col_direct(input_col, input, k1, k2);
 

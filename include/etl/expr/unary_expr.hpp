@@ -155,8 +155,9 @@ public:
         return *this;
     }
 
-    template<bool B = non_const_return_ref, cpp::enable_if_u<B> = cpp::detail::dummy>
     unary_expr& operator=(const value_type& e){
+        static_assert(non_const_return_ref, "Impossible to modify read-only unary_expr");
+
         for(std::size_t i = 0; i < size(*this); ++i){
             (*this)[i] = e;
         }
@@ -240,29 +241,27 @@ public:
         return {*this, size(*this)};
     }
 
-    //{{{ Direct memory access
+    // Direct memory access
 
-    template<typename SS = Expr, cpp_enable_if(has_direct_access<SS>::value)>
     memory_type memory_start() noexcept {
+        static_assert(has_direct_access<Expr>::value, "This expression does not have direct memory access");
         return value().memory_start();
     }
 
-    template<typename SS = Expr, cpp_enable_if(has_direct_access<SS>::value)>
     const_memory_type memory_start() const noexcept {
+        static_assert(has_direct_access<Expr>::value, "This expression does not have direct memory access");
         return value().memory_start();
     }
 
-    template<typename SS = Expr, cpp_enable_if(has_direct_access<SS>::value)>
     memory_type memory_end() noexcept {
+        static_assert(has_direct_access<Expr>::value, "This expression does not have direct memory access");
         return value().memory_end();
     }
 
-    template<typename SS = Expr, cpp_enable_if(has_direct_access<SS>::value)>
     const_memory_type memory_end() const noexcept {
+        static_assert(has_direct_access<Expr>::value, "This expression does not have direct memory access");
         return value().memory_end();
     }
-
-    //}}}
 };
 
 template <typename T, typename Expr>

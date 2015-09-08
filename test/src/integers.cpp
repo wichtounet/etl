@@ -7,7 +7,7 @@
 
 #include "test_light.hpp"
 
-//{{{ Init tests
+// Init tests
 
 TEMPLATE_TEST_CASE_2( "integers/init_1", "[integers][fast]", Z, int, long ) {
     etl::fast_vector<Z, 4> test_vector(3);
@@ -75,9 +75,7 @@ TEMPLATE_TEST_CASE_2( "integers/init_6", "[integers][dyn]", Z, int, long) {
     REQUIRE(test_vector[2] == 3);
 }
 
-//}}} Init tests
-
-//{{{ Binary operators test
+// Binary operators test
 
 TEMPLATE_TEST_CASE_2( "integers/add_scalar_1", "fast_vector::operator+", Z, int, long ) {
     etl::fast_vector<Z, 3> test_vector = {-1, 2, 5};
@@ -297,5 +295,3 @@ TEMPLATE_TEST_CASE_2( "integers/div_2", "fast_vector::operator/=", Z, int, long 
     REQUIRE(a[1] == 0);
     REQUIRE(a[2] == 1);
 }
-
-//}}} Binary operator tests

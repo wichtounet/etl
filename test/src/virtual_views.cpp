@@ -8,7 +8,7 @@
 #include "test_light.hpp"
 #include "etl/stop.hpp"
 
-///{{{ magic(n)
+/// magic(n)
 
 TEMPLATE_TEST_CASE_2( "magic/dyn_matrix_1", "magic(1)", Z, float, double ) {
     auto m = etl::s(etl::magic<Z>(1));
@@ -79,9 +79,7 @@ TEMPLATE_TEST_CASE_2( "magic/dyn_matrix_4", "magic(4)", Z, float, double ) {
     REQUIRE(m(2,3) == 2);
 }
 
-///}}}
-
-///{{{ magic<N>
+/// magic<N>
 
 TEMPLATE_TEST_CASE_2( "fast_magic/dyn_matrix_1", "fast_magic(1)", Z, float, double ) {
     auto m = etl::s(etl::magic<1, Z>());
@@ -151,5 +149,3 @@ TEMPLATE_TEST_CASE_2( "fast_magic/dyn_matrix_4", "fast_magic(4)", Z, float, doub
     REQUIRE(m(2,2) == 16);
     REQUIRE(m(2,3) == 2);
 }
-
-///}}}

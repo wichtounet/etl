@@ -44,7 +44,7 @@ inline void dconv1_valid_micro_kernel(const double* in, const std::size_t n, con
     __m128d tmp2;
     __m128d res;
 
-    auto c = n - m + 1;
+    std::size_t c = n - m + 1;
 
     //Compute the convolution, 2 doubles at a time
 
@@ -72,13 +72,13 @@ inline void dconv1_valid_micro_kernel(const double* in, const std::size_t n, con
     }
 }
 
-template<typename I, typename K, typename C>
-void dconv1_full(const I& input, const K& kernel, C&& conv){
+template<typename I, typename K, typename C, cpp_enable_if((all_double_precision<I, K, C>::value))>
+void conv1_full(const I& input, const K& kernel, C&& conv){
     std::size_t left = size(kernel) - 1;
 
-    auto out = conv.memory_start();
-    auto in = input.memory_start();
-    auto k = kernel.memory_start();
+    double* out = conv.memory_start();
+    const double* in = input.memory_start();
+    const double* k = kernel.memory_start();
 
     //Process not-'valid' parts of the convolution (left and right)
     etl::impl::common::left_full_kernel(in, size(input), k, size(kernel), out);
@@ -88,13 +88,13 @@ void dconv1_full(const I& input, const K& kernel, C&& conv){
     dconv1_valid_micro_kernel(in, size(input), k, size(kernel), out + left);
 }
 
-template<typename I, typename K, typename C>
-void dconv1_same(const I& input, const K& kernel, C&& conv){
+template<typename I, typename K, typename C, cpp_enable_if((all_double_precision<I, K, C>::value))>
+void conv1_same(const I& input, const K& kernel, C&& conv){
     std::size_t left = (size(kernel) - 1) / 2;
 
-    auto out = conv.memory_start();
-    auto in = input.memory_start();
-    auto k = kernel.memory_start();
+    double* out = conv.memory_start();
+    const double* in = input.memory_start();
+    const double* k = kernel.memory_start();
 
     //Process not-'valid' parts of the convolution (left and right)
     etl::impl::common::left_same_kernel(in, size(input), k, size(kernel), out);
@@ -104,8 +104,8 @@ void dconv1_same(const I& input, const K& kernel, C&& conv){
     dconv1_valid_micro_kernel(in, size(input), k, size(kernel), out + left);
 }
 
-template<typename I, typename K, typename C>
-void dconv1_valid(const I& input, const K& kernel, C&& conv){
+template<typename I, typename K, typename C, cpp_enable_if((all_double_precision<I, K, C>::value))>
+void conv1_valid(const I& input, const K& kernel, C&& conv){
     dconv1_valid_micro_kernel(input.memory_start(), size(input), kernel.memory_start(), size(kernel), conv.memory_start());
 }
 
@@ -122,7 +122,7 @@ inline void sconv1_valid_micro_kernel(const float* in, const std::size_t n, cons
     __m128 tmp2;
     __m128 res;
 
-    auto c = n - m + 1;
+    std::size_t c = n - m + 1;
 
     //Compute the convolution 4 floats at a time
 
@@ -151,13 +151,13 @@ inline void sconv1_valid_micro_kernel(const float* in, const std::size_t n, cons
     }
 }
 
-template<typename I, typename K, typename C>
-void sconv1_full(const I& input, const K& kernel, C&& conv){
+template<typename I, typename K, typename C, cpp_enable_if((all_single_precision<I, K, C>::value))>
+void conv1_full(const I& input, const K& kernel, C&& conv){
     std::size_t left = size(kernel) - 1;
 
-    auto out = conv.memory_start();
-    auto in = input.memory_start();
-    auto k = kernel.memory_start();
+    float* out = conv.memory_start();
+    const float* in = input.memory_start();
+    const float* k = kernel.memory_start();
 
     //Process not-'valid' parts of the convolution (left and right)
     etl::impl::common::left_full_kernel(in, size(input), k, size(kernel), out);
@@ -167,13 +167,13 @@ void sconv1_full(const I& input, const K& kernel, C&& conv){
     sconv1_valid_micro_kernel(in, size(input), k, size(kernel), out + left);
 }
 
-template<typename I, typename K, typename C>
-void sconv1_same(const I& input, const K& kernel, C&& conv){
+template<typename I, typename K, typename C, cpp_enable_if((all_single_precision<I, K, C>::value))>
+void conv1_same(const I& input, const K& kernel, C&& conv){
     std::size_t left = (size(kernel) - 1) / 2;
 
-    auto out = conv.memory_start();
-    auto in = input.memory_start();
-    auto k = kernel.memory_start();
+    float* out = conv.memory_start();
+    const float* in = input.memory_start();
+    const float* k = kernel.memory_start();
 
     //Process not-'valid' parts of the convolution (left and right)
     etl::impl::common::left_same_kernel(in, size(input), k, size(kernel), out);
@@ -183,14 +183,14 @@ void sconv1_same(const I& input, const K& kernel, C&& conv){
     sconv1_valid_micro_kernel(in, size(input), k, size(kernel), out + left);
 }
 
-template<typename I, typename K, typename C>
-void sconv1_valid(const I& input, const K& kernel, C&& conv){
+template<typename I, typename K, typename C, cpp_enable_if((all_single_precision<I, K, C>::value))>
+void conv1_valid(const I& input, const K& kernel, C&& conv){
     sconv1_valid_micro_kernel(input.memory_start(), size(input), kernel.memory_start(), size(kernel), conv.memory_start());
 }
 
 inline void dconv2_valid_micro_kernel(const double* in, std::size_t n1, std::size_t n2, const double* kernel, std::size_t m1, std::size_t m2, double* out){
-    auto c1 = n1 - m1 + 1;
-    auto c2 = n2 - m2 + 1;
+    std::size_t c1 = n1 - m1 + 1;
+    std::size_t c2 = n2 - m2 + 1;
 
     __m128d tmp1;
     __m128d tmp2;
@@ -230,8 +230,8 @@ inline void dconv2_valid_micro_kernel(const double* in, std::size_t n1, std::siz
     }
 }
 
-template<typename I, typename K, typename C>
-void dconv2_valid(const I& input, const K& kernel, C&& conv){
+template<typename I, typename K, typename C, cpp_enable_if((all_double_precision<I, K, C>::value))>
+void conv2_valid(const I& input, const K& kernel, C&& conv){
     dconv2_valid_micro_kernel(
         input.memory_start(), etl::rows(input), etl::columns(input),
         kernel.memory_start(), etl::rows(kernel), etl::columns(kernel),
@@ -239,8 +239,8 @@ void dconv2_valid(const I& input, const K& kernel, C&& conv){
 }
 
 inline void dconv2_same_micro_kernel(const double* in, std::size_t n1, std::size_t n2, const double* kernel, std::size_t m1, std::size_t m2, double* out){
-    auto c1 = n1;
-    auto c2 = n2;
+    std::size_t c1 = n1;
+    std::size_t c2 = n2;
 
     __m128d tmp1;
     __m128d tmp2;
@@ -287,8 +287,8 @@ inline void dconv2_same_micro_kernel(const double* in, std::size_t n1, std::size
     }
 }
 
-template<typename I, typename K, typename C>
-void dconv2_same(const I& input, const K& kernel, C&& conv){
+template<typename I, typename K, typename C, cpp_enable_if((all_double_precision<I, K, C>::value))>
+void conv2_same(const I& input, const K& kernel, C&& conv){
     dconv2_same_micro_kernel(
         input.memory_start(), etl::rows(input), etl::columns(input),
         kernel.memory_start(), etl::rows(kernel), etl::columns(kernel),
@@ -296,8 +296,8 @@ void dconv2_same(const I& input, const K& kernel, C&& conv){
 }
 
 inline void dconv2_full_micro_kernel(const double* in, std::size_t n1, std::size_t n2, const double* kernel, std::size_t m1, std::size_t m2, double* out){
-    auto c1 = n1 + m1 - 1;
-    auto c2 = n2 + m2 - 1;
+    std::size_t c1 = n1 + m1 - 1;
+    std::size_t c2 = n2 + m2 - 1;
 
     __m128d tmp1;
     __m128d tmp2;
@@ -343,8 +343,8 @@ inline void dconv2_full_micro_kernel(const double* in, std::size_t n1, std::size
 
 }
 
-template<typename I, typename K, typename C>
-void dconv2_full(const I& input, const K& kernel, C&& conv){
+template<typename I, typename K, typename C, cpp_enable_if((all_double_precision<I, K, C>::value))>
+void conv2_full(const I& input, const K& kernel, C&& conv){
     dconv2_full_micro_kernel(
         input.memory_start(), etl::rows(input), etl::columns(input),
         kernel.memory_start(), etl::rows(kernel), etl::columns(kernel),
@@ -352,8 +352,8 @@ void dconv2_full(const I& input, const K& kernel, C&& conv){
 }
 
 inline void sconv2_valid_micro_kernel(const float* in, std::size_t n1, std::size_t n2, const float* kernel, std::size_t m1, std::size_t m2, float* out){
-    auto c1 = n1 - m1 + 1;
-    auto c2 = n2 - m2 + 1;
+    std::size_t c1 = n1 - m1 + 1;
+    std::size_t c2 = n2 - m2 + 1;
 
     __m128 tmp1;
     __m128 tmp2;
@@ -395,8 +395,8 @@ inline void sconv2_valid_micro_kernel(const float* in, std::size_t n1, std::size
     }
 }
 
-template<typename I, typename K, typename C>
-void sconv2_valid(const I& input, const K& kernel, C&& conv){
+template<typename I, typename K, typename C, cpp_enable_if((all_single_precision<I, K, C>::value))>
+void conv2_valid(const I& input, const K& kernel, C&& conv){
     sconv2_valid_micro_kernel(
         input.memory_start(), etl::rows(input), etl::columns(input),
         kernel.memory_start(), etl::rows(kernel), etl::columns(kernel),
@@ -404,8 +404,8 @@ void sconv2_valid(const I& input, const K& kernel, C&& conv){
 }
 
 inline void sconv2_same_micro_kernel(const float* in, std::size_t n1, std::size_t n2, const float* kernel, std::size_t m1, std::size_t m2, float* out){
-    auto c1 = n1;
-    auto c2 = n2;
+    std::size_t c1 = n1;
+    std::size_t c2 = n2;
 
     __m128 tmp1;
     __m128 tmp2;
@@ -453,8 +453,8 @@ inline void sconv2_same_micro_kernel(const float* in, std::size_t n1, std::size_
     }
 }
 
-template<typename I, typename K, typename C>
-void sconv2_same(const I& input, const K& kernel, C&& conv){
+template<typename I, typename K, typename C, cpp_enable_if((all_single_precision<I, K, C>::value))>
+void conv2_same(const I& input, const K& kernel, C&& conv){
     sconv2_same_micro_kernel(
         input.memory_start(), etl::rows(input), etl::columns(input),
         kernel.memory_start(), etl::rows(kernel), etl::columns(kernel),
@@ -462,8 +462,8 @@ void sconv2_same(const I& input, const K& kernel, C&& conv){
 }
 
 inline void sconv2_full_micro_kernel(const float* in, std::size_t n1, std::size_t n2, const float* kernel, std::size_t m1, std::size_t m2, float* out){
-    auto c1 = n1 + m1 - 1;
-    auto c2 = n2 + m2 - 1;
+    std::size_t c1 = n1 + m1 - 1;
+    std::size_t c2 = n2 + m2 - 1;
 
     __m128 tmp1;
     __m128 tmp2;
@@ -511,8 +511,8 @@ inline void sconv2_full_micro_kernel(const float* in, std::size_t n1, std::size_
     }
 }
 
-template<typename I, typename K, typename C>
-void sconv2_full(const I& input, const K& kernel, C&& conv){
+template<typename I, typename K, typename C, cpp_enable_if((all_single_precision<I, K, C>::value))>
+void conv2_full(const I& input, const K& kernel, C&& conv){
     sconv2_full_micro_kernel(
         input.memory_start(), etl::rows(input), etl::columns(input),
         kernel.memory_start(), etl::rows(kernel), etl::columns(kernel),
@@ -522,40 +522,22 @@ void sconv2_full(const I& input, const K& kernel, C&& conv){
 #else
 
 template<typename I, typename K, typename C>
-void dconv1_full(const I& /*input*/, const K& /*kernel*/, C&& /*conv*/){ cpp_unreachable("SSE not available/enable"); }
+void conv1_full(const I& /*input*/, const K& /*kernel*/, C&& /*conv*/){ cpp_unreachable("SSE not available/enable"); }
 
 template<typename I, typename K, typename C>
-void dconv1_same(const I& /*input*/, const K& /*kernel*/, C&& /*conv*/){ cpp_unreachable("SSE not available/enable"); }
+void conv1_same(const I& /*input*/, const K& /*kernel*/, C&& /*conv*/){ cpp_unreachable("SSE not available/enable"); }
 
 template<typename I, typename K, typename C>
-void dconv1_valid(const I& /*input*/, const K& /*kernel*/, C&& /*conv*/){ cpp_unreachable("SSE not available/enable"); }
+void conv1_valid(const I& /*input*/, const K& /*kernel*/, C&& /*conv*/){ cpp_unreachable("SSE not available/enable"); }
 
 template<typename I, typename K, typename C>
-void sconv1_full(const I& /*input*/, const K& /*kernel*/, C&& /*conv*/){ cpp_unreachable("SSE not available/enable"); }
+void conv2_valid(const I& /*input*/, const K& /*kernel*/, C&& /*conv*/){ cpp_unreachable("SSE not available/enable"); }
 
 template<typename I, typename K, typename C>
-void sconv1_same(const I& /*input*/, const K& /*kernel*/, C&& /*conv*/){ cpp_unreachable("SSE not available/enable"); }
+void conv2_same(const I& /*input*/, const K& /*kernel*/, C&& /*conv*/){ cpp_unreachable("SSE not available/enable"); }
 
 template<typename I, typename K, typename C>
-void sconv1_valid(const I& /*input*/, const K& /*kernel*/, C&& /*conv*/){ cpp_unreachable("SSE not available/enable"); }
-
-template<typename I, typename K, typename C>
-void dconv2_valid(const I& /*input*/, const K& /*kernel*/, C&& /*conv*/){ cpp_unreachable("SSE not available/enable"); }
-
-template<typename I, typename K, typename C>
-void dconv2_same(const I& /*input*/, const K& /*kernel*/, C&& /*conv*/){ cpp_unreachable("SSE not available/enable"); }
-
-template<typename I, typename K, typename C>
-void dconv2_full(const I& /*input*/, const K& /*kernel*/, C&& /*conv*/){ cpp_unreachable("SSE not available/enable"); }
-
-template<typename I, typename K, typename C>
-void sconv2_valid(const I& /*input*/, const K& /*kernel*/, C&& /*conv*/){ cpp_unreachable("SSE not available/enable"); }
-
-template<typename I, typename K, typename C>
-void sconv2_same(const I& /*input*/, const K& /*kernel*/, C&& /*conv*/){ cpp_unreachable("SSE not available/enable"); }
-
-template<typename I, typename K, typename C>
-void sconv2_full(const I& /*input*/, const K& /*kernel*/, C&& /*conv*/){ cpp_unreachable("SSE not available/enable"); }
+void conv2_full(const I& /*input*/, const K& /*kernel*/, C&& /*conv*/){ cpp_unreachable("SSE not available/enable"); }
 
 #endif
 

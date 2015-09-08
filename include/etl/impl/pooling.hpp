@@ -17,8 +17,8 @@ template<typename A, typename M>
 struct max_pool_2d {
     template<std::size_t C1, std::size_t C2>
     static void apply(A&& sub, M& m){
-        const auto o1 = etl::dim<0>(sub) / C1;
-        const auto o2 = etl::dim<1>(sub) / C2;
+        const std::size_t o1 = etl::dim<0>(sub) / C1;
+        const std::size_t o2 = etl::dim<1>(sub) / C2;
 
         for(std::size_t j = 0; j < o1; ++j){
             for(std::size_t k = 0; k < o2; ++k){
@@ -40,8 +40,8 @@ template<typename A, typename M>
 struct avg_pool_2d {
     template<std::size_t C1, std::size_t C2>
     static void apply(A&& sub, M& m){
-        const auto o1 = etl::dim<0>(sub) / C1;
-        const auto o2 = etl::dim<1>(sub) / C2;
+        const std::size_t o1 = etl::dim<0>(sub) / C1;
+        const std::size_t o2 = etl::dim<1>(sub) / C2;
 
         for(std::size_t j = 0; j < o1; ++j){
             for(std::size_t k = 0; k < o2; ++k){
@@ -63,9 +63,9 @@ template<typename A, typename M>
 struct max_pool_3d {
     template<std::size_t C1, std::size_t C2, std::size_t C3>
     static void apply(A&& sub, M& m){
-        const auto o1 = etl::dim<0>(sub) / C1;
-        const auto o2 = etl::dim<1>(sub) / C2;
-        const auto o3 = etl::dim<2>(sub) / C3;
+        const std::size_t o1 = etl::dim<0>(sub) / C1;
+        const std::size_t o2 = etl::dim<1>(sub) / C2;
+        const std::size_t o3 = etl::dim<2>(sub) / C3;
 
         for(std::size_t i = 0; i < o1; ++i){
             for(std::size_t j = 0; j < o2; ++j){
@@ -91,9 +91,9 @@ template<typename A, typename M>
 struct avg_pool_3d {
     template<std::size_t C1, std::size_t C2, std::size_t C3>
     static void apply(A&& sub, M& m){
-        const auto o1 = etl::dim<0>(sub) / C1;
-        const auto o2 = etl::dim<1>(sub) / C2;
-        const auto o3 = etl::dim<2>(sub) / C3;
+        const std::size_t o1 = etl::dim<0>(sub) / C1;
+        const std::size_t o2 = etl::dim<1>(sub) / C2;
+        const std::size_t o3 = etl::dim<2>(sub) / C3;
 
         for(std::size_t i = 0; i < o1; ++i){
             for(std::size_t j = 0; j < o2; ++j){

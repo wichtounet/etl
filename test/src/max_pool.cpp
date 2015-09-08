@@ -7,7 +7,7 @@
 
 #include "test.hpp"
 
-//{{{ p_max_pool_h
+// p_max_pool_h
 
 TEMPLATE_TEST_CASE_2( "p_max_pool_h_1", "p_max_pool_h_2d", Z, float, double ) {
     etl::fast_matrix<Z, 4, 4> a({1.0, -2.0, 3.0, 0.5, 0.0, -1, 3.0, 7.5, 1.0, -2.0, 3.0, 0.5, 0.0, -1, 3.0, 7.5});
@@ -108,9 +108,7 @@ TEMPLATE_TEST_CASE_2( "p_max_pool_h_4", "p_max_pool_h_3d", Z, float, double ) {
     CHECK(b(1, 2, 3) == Approx(0.00089));
 }
 
-//}}}
-
-//{{{ p_max_pool_p
+// p_max_pool_p
 
 TEMPLATE_TEST_CASE_2( "p_max_pool_p_1", "p_max_pool_p_2d", Z, float, double ) {
     etl::fast_matrix<Z, 4, 4> a({1.0, -2.0, 3.0, 0.5, 0.0, -1, 3.0, 7.5, 1.0, -2.0, 3.0, 0.5, 0.0, -1, 3.0, 7.5});
@@ -185,5 +183,3 @@ TEMPLATE_TEST_CASE_2( "p_max_pool_p_6", "p_max_pool_p_2d", Z, float, double ) {
     REQUIRE(b(1, 1, 0) == Approx(0.19151));
     REQUIRE(b(1, 1, 1) == Approx(0.00054));
 }
-
-//}}}

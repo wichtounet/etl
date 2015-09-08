@@ -7,7 +7,7 @@
 
 #include "test_light.hpp"
 
-//{{{ Init tests
+// Init tests
 
 TEMPLATE_TEST_CASE_2( "dyn_vector/init_1", "dyn_vector::dyn_vector(T)", Z, double, float) {
     etl::dyn_vector<Z> test_vector(4, 3.3);
@@ -43,10 +43,7 @@ TEMPLATE_TEST_CASE_2( "dyn_vector/init_3", "dyn_vector::dyn_vector(initializer_l
     REQUIRE(test_vector[2] == 3.0);
 }
 
-//}}} Init tests
-
-
-//{{{ Binary operators test
+// Binary operators test
 
 TEMPLATE_TEST_CASE_2( "dyn_vector/add_scalar_1", "dyn_vector::operator+", Z, double, float) {
     etl::dyn_vector<Z> test_vector = {-1.0, 2.0, 5.5};
@@ -308,9 +305,7 @@ TEMPLATE_TEST_CASE_2( "dyn_vector/mod_2", "dyn_vector::operator%", Z, double, fl
     REQUIRE(a[2] == 5 % 4);
 }
 
-//}}} Binary operator tests
-
-//{{{ Unary operator tests
+// Unary operator tests
 
 TEMPLATE_TEST_CASE_2( "dyn_vector/log", "dyn_vector::abs", Z, double, float) {
     etl::dyn_vector<Z> a = {-1.0, 2.0, 5.0};
@@ -377,9 +372,9 @@ TEMPLATE_TEST_CASE_2( "dyn_vector/sigmoid", "dyn_vector::sigmoid", Z, double, fl
 
     etl::dyn_vector<Z> d(etl::sigmoid(a));
 
-    REQUIRE(d[0] == Approx(etl::logistic_sigmoid(Z(-1.0))));
-    REQUIRE(d[1] == Approx(etl::logistic_sigmoid(Z(2.0))));
-    REQUIRE(d[2] == Approx(etl::logistic_sigmoid(Z(0.0))));
+    REQUIRE(d[0] == Approx(etl::math::logistic_sigmoid(Z(-1.0))));
+    REQUIRE(d[1] == Approx(etl::math::logistic_sigmoid(Z(2.0))));
+    REQUIRE(d[2] == Approx(etl::math::logistic_sigmoid(Z(0.0))));
 }
 
 TEMPLATE_TEST_CASE_2( "dyn_vector/softplus", "dyn_vector::softplus", Z, double, float) {
@@ -387,9 +382,9 @@ TEMPLATE_TEST_CASE_2( "dyn_vector/softplus", "dyn_vector::softplus", Z, double, 
 
     etl::dyn_vector<Z> d(etl::softplus(a));
 
-    REQUIRE(d[0] == Approx(etl::softplus(Z(-1.0))));
-    REQUIRE(d[1] == Approx(etl::softplus(Z(2.0))));
-    REQUIRE(d[2] == Approx(etl::softplus(Z(0.0))));
+    REQUIRE(d[0] == Approx(etl::math::softplus(Z(-1.0))));
+    REQUIRE(d[1] == Approx(etl::math::softplus(Z(2.0))));
+    REQUIRE(d[2] == Approx(etl::math::softplus(Z(0.0))));
 }
 
 TEMPLATE_TEST_CASE_2( "dyn_vector/exp", "dyn_vector::exp", Z, double, float) {
@@ -436,10 +431,7 @@ TEMPLATE_TEST_CASE_2( "dyn_vector/bernoulli", "dyn_vector::bernoulli", Z, double
     REQUIRE(binary(d[2]));
 }
 
-
-//}}} Unary operators test
-
-//{{{ Reductions
+// Reductions
 
 TEMPLATE_TEST_CASE_2( "dyn_vector/sum", "sum", Z, double, float) {
     etl::dyn_vector<Z> a = {-1.0, 2.0, 8.5};
@@ -483,9 +475,7 @@ TEMPLATE_TEST_CASE_2( "dyn_vector/dot_2", "sum", Z, double, float) {
     REQUIRE(d == -21.0);
 }
 
-//}}} Reductions
-
-//{{{ Complex tests
+// Complex tests
 
 TEMPLATE_TEST_CASE_2( "dyn_vector/complex", "dyn_vector::complex", Z, double, float) {
     etl::dyn_vector<Z> a = {-1.0, 2.0, 5.0};
@@ -523,9 +513,7 @@ TEMPLATE_TEST_CASE_2( "dyn_vector/complex_3", "dyn_vector::complex", Z, double, 
     REQUIRE(d[2] == Approx(0.125));
 }
 
-//}}} Complex tests
-
-//{{{ Complex content
+// Complex content
 
 TEMPLATE_TEST_CASE_2( "dyn_vector/complex_content_1", "dyn_vector<dyn_matrix>>", Z, double, float) {
     etl::dyn_vector<etl::dyn_matrix<Z>> a(11, etl::dyn_matrix<Z>(3,3));
@@ -542,8 +530,6 @@ TEMPLATE_TEST_CASE_2( "dyn_vector/complex_content_2", "vector<dyn_vector<dyn_mat
     //It is enough for this test to compile
     REQUIRE(true);
 }
-
-//}}} Complex content
 
 TEMPLATE_TEST_CASE_2( "dyn_vector/swap_1", "dyn_vector::swap", Z, double, float) {
     etl::dyn_vector<Z> a = {-1.0, 2.0, 5.0};

@@ -17,11 +17,11 @@ template<typename A, typename M>
 struct convmtx2_direct {
     template<std::size_t K1, std::size_t K2>
     static void apply(A&& sub, M& m){
-        const auto i1 = etl::dim<0>(sub);
-        const auto i2 = etl::dim<1>(sub);
+        const std::size_t i1 = etl::dim<0>(sub);
+        const std::size_t i2 = etl::dim<1>(sub);
 
-        const auto c_height = etl::dim<0>(m);
-        constexpr const auto c_width = K1 * K2;
+        const std::size_t c_height = etl::dim<0>(m);
+        constexpr const std::size_t c_width = K1 * K2;
 
         cpp_assert(c_height == ((i1 + K1 - 1) * (i2 + K2 - 1)), "Invalid input height");
         cpp_assert(c_width == etl::dim<1>(m), "Invalid input width");

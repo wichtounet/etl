@@ -13,20 +13,29 @@
 
 namespace etl {
 
-template<typename W, cpp::enable_if_u<std::is_arithmetic<W>::value> = cpp::detail::dummy>
-inline constexpr W logistic_sigmoid(W x){
-    return W(1.0) / (W(1.0) + std::exp(-x));
+namespace math {
+
+inline float logistic_sigmoid(float x){
+    return 1.0f / (1.0f + std::exp(-x));
 }
 
-template<typename W, cpp::enable_if_u<std::is_arithmetic<W>::value> = cpp::detail::dummy>
-inline constexpr W softplus(W x){
-    return std::log(W(1.0) + std::exp(x));
+inline double logistic_sigmoid(double x){
+    return 1.0 / (1.0 + std::exp(-x));
 }
 
-template<typename W, cpp::enable_if_u<std::is_arithmetic<W>::value> = cpp::detail::dummy>
+inline float softplus(float x){
+    return std::log(1.0f + std::exp(x));
+}
+
+inline double softplus(double x){
+    return std::log(1.0 + std::exp(x));
+}
+
+template<typename W>
 inline constexpr double sign(W v) noexcept {
     return v == W(0) ? W(0) : (v > W(0) ? W(1) : W(-1));
 }
 
+} //end of namespace math
 
 } //end of namespace etl

@@ -7,7 +7,7 @@
 
 #include "test_light.hpp"
 
-//{{{ Init tests
+// Init tests
 
 TEMPLATE_TEST_CASE_2( "fast_vector/init_1", "fast_vector::fast_vector(T)", Z, float, double ) {
     etl::fast_vector<Z, 4> test_vector(3.3);
@@ -41,9 +41,7 @@ TEMPLATE_TEST_CASE_2( "fast_vector/init_3", "fast_vector::fast_vector(initialize
     REQUIRE(test_vector[2] == 3.0);
 }
 
-//}}} Init tests
-
-//{{{ Binary operators test
+// Binary operators test
 
 TEMPLATE_TEST_CASE_2( "fast_vector/add_scalar_1", "fast_vector::operator+", Z, float, double ) {
     etl::fast_vector<Z, 3> test_vector = {-1.0, 2.0, 5.5};
@@ -316,9 +314,7 @@ TEST_CASE( "fast_vector/mod_2", "fast_vector::operator%") {
     REQUIRE(a[2] == 5 % 4);
 }
 
-//}}} Binary operator tests
-
-//{{{ Unary operator tests
+// Unary operator tests
 
 TEMPLATE_TEST_CASE_2( "fast_vector/log", "fast_vector::abs", Z, float, double ) {
     etl::fast_vector<Z, 3> a = {-1.0, 2.0, 5.0};
@@ -385,9 +381,9 @@ TEMPLATE_TEST_CASE_2( "fast_vector/sigmoid", "fast_vector::sigmoid", Z, float, d
 
     etl::fast_vector<Z, 3> d(etl::sigmoid(a));
 
-    REQUIRE(d[0] == etl::logistic_sigmoid(Z(-1.0)));
-    REQUIRE(d[1] == etl::logistic_sigmoid(Z(2.0)));
-    REQUIRE(d[2] == etl::logistic_sigmoid(Z(0.0)));
+    REQUIRE(d[0] == etl::math::logistic_sigmoid(Z(-1.0)));
+    REQUIRE(d[1] == etl::math::logistic_sigmoid(Z(2.0)));
+    REQUIRE(d[2] == etl::math::logistic_sigmoid(Z(0.0)));
 }
 
 TEMPLATE_TEST_CASE_2( "fast_sigmoid/1", "[sigmoid]", Z, float, double ) {
@@ -395,9 +391,9 @@ TEMPLATE_TEST_CASE_2( "fast_sigmoid/1", "[sigmoid]", Z, float, double ) {
 
     etl::fast_vector<Z, 3> d(etl::fast_sigmoid(a));
 
-    REQUIRE(d[0] == Approx(etl::logistic_sigmoid(Z(-1.0))).epsilon(0.05));
-    REQUIRE(d[1] == Approx(etl::logistic_sigmoid(Z(2.0))).epsilon(0.05));
-    REQUIRE(d[2] == Approx(etl::logistic_sigmoid(Z(0.0))).epsilon(0.05));
+    REQUIRE(d[0] == Approx(etl::math::logistic_sigmoid(Z(-1.0))).epsilon(0.05));
+    REQUIRE(d[1] == Approx(etl::math::logistic_sigmoid(Z(2.0))).epsilon(0.05));
+    REQUIRE(d[2] == Approx(etl::math::logistic_sigmoid(Z(0.0))).epsilon(0.05));
 }
 
 TEMPLATE_TEST_CASE_2( "hard_sigmoid/1", "[sigmoid]", Z, float, double ) {
@@ -405,9 +401,9 @@ TEMPLATE_TEST_CASE_2( "hard_sigmoid/1", "[sigmoid]", Z, float, double ) {
 
     etl::fast_vector<Z, 3> d(etl::hard_sigmoid(a));
 
-    REQUIRE(d[0] == Approx(etl::logistic_sigmoid(Z(-1.0))).epsilon(0.05));
-    REQUIRE(d[1] == Approx(etl::logistic_sigmoid(Z(2.0))).epsilon(0.05));
-    REQUIRE(d[2] == Approx(etl::logistic_sigmoid(Z(0.0))).epsilon(0.05));
+    REQUIRE(d[0] == Approx(etl::math::logistic_sigmoid(Z(-1.0))).epsilon(0.05));
+    REQUIRE(d[1] == Approx(etl::math::logistic_sigmoid(Z(2.0))).epsilon(0.05));
+    REQUIRE(d[2] == Approx(etl::math::logistic_sigmoid(Z(0.0))).epsilon(0.05));
 }
 
 TEMPLATE_TEST_CASE_2( "fast_vector/softmax_1", "fast_vector::softmax", Z, float, double ) {
@@ -474,9 +470,9 @@ TEMPLATE_TEST_CASE_2( "fast_vector/softplus", "fast_vector::softplus", Z, float,
 
     etl::fast_vector<Z, 3> d(etl::softplus(a));
 
-    REQUIRE(d[0] == Approx(etl::softplus(Z(-1.0))));
-    REQUIRE(d[1] == Approx(etl::softplus(Z(2.0))));
-    REQUIRE(d[2] == Approx(etl::softplus(Z(0.0))));
+    REQUIRE(d[0] == Approx(etl::math::softplus(Z(-1.0))));
+    REQUIRE(d[1] == Approx(etl::math::softplus(Z(2.0))));
+    REQUIRE(d[2] == Approx(etl::math::softplus(Z(0.0))));
 }
 
 TEMPLATE_TEST_CASE_2( "fast_vector/exp", "fast_vector::exp", Z, float, double ) {
@@ -580,9 +576,7 @@ TEMPLATE_TEST_CASE_2( "fast_vector/bernoulli", "fast_vector::bernoulli", Z, floa
     REQUIRE(binary(d[2]));
 }
 
-//}}} Unary operators test
-
-//{{{ Reductions
+// Reductions
 
 TEMPLATE_TEST_CASE_2( "fast_vector/sum", "sum", Z, float, double ) {
     etl::fast_vector<Z, 3> a = {-1.0, 2.0, 8.5};
@@ -648,9 +642,7 @@ TEMPLATE_TEST_CASE_2( "fast_vector/max_reduc_2", "max", Z, float, double ) {
     REQUIRE(d == Z(3.2));
 }
 
-//}}} Reductions
-
-//{{{ Complex tests
+// Complex tests
 
 TEMPLATE_TEST_CASE_2( "fast_vector/complex", "fast_vector::complex", Z, float, double ) {
     etl::fast_vector<Z, 3> a = {-1.0, 2.0, 5.0};
@@ -687,8 +679,6 @@ TEMPLATE_TEST_CASE_2( "fast_vector/complex_3", "fast_vector::complex", Z, float,
     REQUIRE(d[2] == Approx(0.125));
 }
 
-//}}} Complex tests
-
 TEMPLATE_TEST_CASE_2( "fast_vector/swap_1", "fast_vector::swap", Z, float, double ) {
     etl::fast_vector<Z, 3> a = {-1.0, 2.0, 5.0};
     etl::fast_vector<Z, 3> b = {2.5, 3.0, 4.0};
@@ -705,7 +695,7 @@ TEMPLATE_TEST_CASE_2( "fast_vector/swap_1", "fast_vector::swap", Z, float, doubl
     REQUIRE(b[2] == 5.0);
 }
 
-//{{{ dot
+// dot
 
 TEMPLATE_TEST_CASE_2( "fast_vector/dot_1", "sum", Z, float, double ) {
     etl::fast_vector<Z, 3> a = {-1.0, 2.0, 8.5};
@@ -724,5 +714,3 @@ TEMPLATE_TEST_CASE_2( "fast_vector/dot_2", "sum", Z, float, double ) {
 
     REQUIRE(d == -21.0);
 }
-
-//}}}

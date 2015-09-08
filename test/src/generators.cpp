@@ -7,7 +7,7 @@
 
 #include "test_light.hpp"
 
-///{{{ sequence_generator
+/// sequence_generator
 
 TEMPLATE_TEST_CASE_2( "sequence/fast_vector_1", "generator", Z, float, double ) {
     etl::fast_vector<Z, 3> b;
@@ -109,9 +109,7 @@ TEMPLATE_TEST_CASE_2( "sequence/dyn_matrix_1", "generator", Z, float, double ) {
     REQUIRE(b(2,1) == 5.0);
 }
 
-///}}}
-
-///{{{ normal_generator
+/// normal_generator
 
 //Simply ensures that it compiles
 
@@ -138,5 +136,3 @@ TEMPLATE_TEST_CASE_2( "normal/dyn_matrix_1", "generator", Z, float, double ) {
 
     b = etl::normal_generator();
 }
-
-///}}}

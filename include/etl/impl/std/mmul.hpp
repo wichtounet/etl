@@ -54,10 +54,10 @@ inline void add_mul(double& c, double a, double b){
 
 template<typename T>
 inline void add_mul(std::complex<T>& c, std::complex<T> a, std::complex<T> b){
-    auto ac = a.real() * b.real();
-    auto bd = a.imag() * b.imag();
+    T ac = a.real() * b.real();
+    T bd = a.imag() * b.imag();
 
-    auto abcd = (a.real() + a.imag()) * (b.real() + b.imag());
+    T abcd = (a.real() + a.imag()) * (b.real() + b.imag());
 
     c.real(c.real() + ac - bd);
     c.imag(c.imag() + abcd - ac - bd);

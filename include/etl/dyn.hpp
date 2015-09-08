@@ -133,7 +133,7 @@ private:
     }
 
 public:
-    //{{{ Construction
+    // Construction
 
     //Default constructor (constructs an empty matrix)
     dyn_matrix_impl() noexcept : _size(0), _data(0) {
@@ -298,9 +298,7 @@ public:
         check_invariants();
     }
 
-    //}}}
-
-    //{{{ Assignment
+    // Assignment
 
     //Copy assignment operator
 
@@ -372,9 +370,7 @@ public:
         return *this;
     }
 
-    //}}}
-
-    //{{{ Swap operations
+    // Swap operations
 
     void swap(dyn_matrix_impl& other){
         using std::swap;
@@ -385,9 +381,7 @@ public:
         check_invariants();
     }
 
-    //}}}
-
-    //{{{ Accessors
+    // Accessors
 
     std::size_t size() const noexcept {
         return _size;
@@ -467,38 +461,32 @@ public:
         }
     }
 
-    template<typename... S, cpp::enable_if_u<(sizeof...(S) > 0 && storage_order == order::RowMajor)> = cpp::detail::dummy>
+    template<typename... S, cpp_enable_if((sizeof...(S) > 0))>
     std::size_t index(S... sizes) const noexcept {
         //Note: Version with sizes moved to a std::array and accessed with
         //standard loop may be faster, but need some stack space (relevant ?)
 
-        auto subsize = size();
         std::size_t index = 0;
-        std::size_t i = 0;
 
-        cpp::for_each_in(
-            [&subsize, &index, &i, this](std::size_t s){
-                subsize /= dim(i++);
-                index += subsize * s;
-            }, sizes...);
+        if(storage_order == order::RowMajor){
+            std::size_t subsize = size();
+            std::size_t i = 0;
 
-        return index;
-    }
+            cpp::for_each_in(
+                [&subsize, &index, &i, this](std::size_t s){
+                    subsize /= dim(i++);
+                    index += subsize * s;
+                }, sizes...);
+        } else {
+            std::size_t subsize = 1;
+            std::size_t i = 0;
 
-    template<typename... S, cpp::enable_if_u<(sizeof...(S) > 0 && storage_order == order::ColumnMajor)> = cpp::detail::dummy>
-    std::size_t index(S... sizes) const noexcept {
-        //Note: Version with sizes moved to a std::array and accessed with
-        //standard loop may be faster, but need some stack space (relevant ?)
-
-        auto subsize = 1;
-        std::size_t index = 0;
-        std::size_t i = 0;
-
-        cpp::for_each_in(
-            [&subsize, &index, &i, this](std::size_t s){
-                index += subsize * s;
-                subsize *= dim(i++);
-            }, sizes...);
+            cpp::for_each_in(
+                [&subsize, &index, &i, this](std::size_t s){
+                    index += subsize * s;
+                    subsize *= dim(i++);
+                }, sizes...);
+        }
 
         return index;
     }
@@ -565,9 +553,7 @@ public:
         return _data.cend();
     }
 
-    //}}}
-
-    //{{{ Direct memory access
+    // Direct memory access
 
     memory_type memory_start() noexcept {
         return &_data[0];
@@ -584,8 +570,6 @@ public:
     const_memory_type memory_end() const noexcept {
         return &_data[size()];
     }
-
-    //}}}
 
     std::size_t& unsafe_dimension_access(std::size_t i){
         cpp_assert(i < n_dimensions, "Out of bounds");

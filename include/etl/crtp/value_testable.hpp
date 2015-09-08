@@ -9,29 +9,50 @@
 
 #include <algorithm>
 
-/*
- * Use CRTP technique to inject functions that test the values of
- * the expressions or the value classes.
+/*!
+ * \file value_testable.hpp
+ * \brief Use CRTP technique to inject functions that test the values of the expressions or the value classes.
  */
 
 namespace etl {
 
+/*!
+ * \brief CRTP class to inject functions testing values of the expressions.
+ *
+ * This CRTP class injects test for is_finite and is_zero.
+ */
 template<typename D>
 struct value_testable {
     using derived_t = D;
 
+    /*!
+     * \brief Returns a reference to the derived object, i.e. the object using the CRTP injector.
+     * \return a reference to the derived object.
+     */
     derived_t& as_derived() noexcept {
         return *static_cast<derived_t*>(this);
     }
 
+    /*!
+     * \brief Returns a reference to the derived object, i.e. the object using the CRTP injector.
+     * \return a reference to the derived object.
+     */
     const derived_t& as_derived() const noexcept {
         return *static_cast<const derived_t*>(this);
     }
 
+    /*!
+     * \brief Indicates if the expression contains only finite values.
+     * \return true if the sequence only contains finite values, false otherwise.
+     */
     bool is_finite() const noexcept {
         return std::all_of(as_derived().begin(), as_derived().end(), static_cast<bool(*)(value_t<derived_t>)>(std::isfinite));
     }
 
+    /*!
+     * \brief Indicates if the expression contains only zero values.
+     * \return true if the sequence only contains zero values, false otherwise.
+     */
     bool is_zero() const noexcept {
         return std::all_of(as_derived().begin(), as_derived().end(), [](value_t<derived_t> v){ return v == value_t<derived_t>(0); });;
     }

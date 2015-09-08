@@ -130,7 +130,7 @@ private:
 
 public:
 
-    ///{{{ Construction
+    /// Construction
 
     template<typename S = ST, cpp::enable_if_c<matrix_detail::is_vector<S>> = cpp::detail::dummy>
     void init(){
@@ -192,11 +192,9 @@ public:
         std::copy(vec.begin(), vec.end(), begin());
     }
 
-    //}}}
+    // Assignment
 
-    //{{{ Assignment
-
-    //Copy assignment operator
+    // Copy assignment operator
 
     template<typename SST = ST, cpp_enable_if(matrix_detail::is_vector<SST>::value)>
     fast_matrix_impl& operator=(const fast_matrix_impl& rhs) noexcept {
@@ -260,18 +258,14 @@ public:
     template<typename SST = ST, cpp_disable_if(matrix_detail::is_vector<SST>::value)>
     fast_matrix_impl& operator=(fast_matrix_impl&& rhs) = delete;
 
-    //}}}
-
-    //{{{ Swap operations
+    // Swap operations
 
     void swap(fast_matrix_impl& other){
         using std::swap;
         swap(_data, other._data);
     }
 
-    //}}}
-
-    //{{{ Accessors
+    // Accessors
 
     static constexpr std::size_t size() noexcept {
         return etl_size;
@@ -364,9 +358,7 @@ public:
         return _data.cend();
     }
 
-    //}}}
-
-    //{{{ Direct memory access
+    // Direct memory access
 
     memory_type memory_start() noexcept {
         return &_data[0];
@@ -383,8 +375,6 @@ public:
     const_memory_type memory_end() const noexcept {
         return &_data[size()];
     }
-
-    //}}}
 };
 
 template<typename T, typename ST, order SO, std::size_t... Dims>

@@ -7,7 +7,7 @@
 
 #include "test_light.hpp"
 
-//{{{ hflip
+// hflip
 
 TEMPLATE_TEST_CASE_2( "hflip/fast_vector", "hflip", Z, float, double ) {
     etl::fast_vector<Z, 3> a({1.0, -2.0, 3.0});
@@ -51,9 +51,7 @@ TEMPLATE_TEST_CASE_2( "hflip/dyn_matrix", "hflip", Z, float, double ) {
     REQUIRE(b(2,1) == 0.0);
 }
 
-//}}}
-
-//{{{ vflip
+// vflip
 
 TEMPLATE_TEST_CASE_2( "vflip/fast_vector", "vflip", Z, float, double ) {
     etl::fast_vector<Z, 3> a({1.0, -2.0, 3.0});
@@ -97,9 +95,7 @@ TEMPLATE_TEST_CASE_2( "vflip/dyn_matrix", "vflip", Z, float, double ) {
     REQUIRE(b(2,1) == -2.0);
 }
 
-//}}}
-
-//{{{ fflip
+// fflip
 
 TEMPLATE_TEST_CASE_2( "fflip/fast_vector", "fflip", Z, float, double ) {
     etl::fast_vector<Z, 3> a({1.0, -2.0, 3.0});
@@ -143,9 +139,7 @@ TEMPLATE_TEST_CASE_2( "fflip/dyn_matrix", "fflip", Z, float, double ) {
     REQUIRE(b(2,1) == 1.0);
 }
 
-//}}}
-
-//{{{ fflip_inplace
+// fflip_inplace
 
 TEMPLATE_TEST_CASE_2( "fflip_inplace/1", "[fflip][fast][vector][inplace]", Z, float, double ) {
     etl::fast_vector<Z, 3> a({1.0, -2.0, 3.0});
@@ -221,5 +215,3 @@ TEMPLATE_TEST_CASE_2( "fflip_inplace/6", "[fflip][fast][matrix][inplace]", Z, fl
 
     REQUIRE(a == b);
 }
-
-//}}}

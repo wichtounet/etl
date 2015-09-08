@@ -5,6 +5,11 @@
 //  http://opensource.org/licenses/MIT)
 //=======================================================================
 
+/*!
+ * \file avx_vectorization.hpp
+ * \brief Contains AVX vectorized functions for the vectorized assignment of expressions
+ */
+
 #pragma once
 
 #include <immintrin.h>

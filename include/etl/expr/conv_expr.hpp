@@ -218,12 +218,12 @@ struct basic_conv_expr {
         check(a, b, c);
 
         if(D == 1 || D == 2){
-            Impl<decltype(make_temporary(std::forward<A>(a))), decltype(make_temporary(std::forward<B>(b))), C, void>::apply(
+            Impl<decltype(make_temporary(std::forward<A>(a))), decltype(make_temporary(std::forward<B>(b))), C>::apply(
                 make_temporary(std::forward<A>(a)),
                 make_temporary(std::forward<B>(b)),
                 std::forward<C>(c));
         } else {
-            Impl<A,B,C,void>::apply(std::forward<A>(a), std::forward<B>(b), std::forward<C>(c));
+            Impl<A,B,C>::apply(std::forward<A>(a), std::forward<B>(b), std::forward<C>(c));
         }
     }
 
