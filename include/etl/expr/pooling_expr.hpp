@@ -5,6 +5,11 @@
 //  http://opensource.org/licenses/MIT)
 //=======================================================================
 
+/*!
+ * \file fft_expr.hpp
+ * \brief Contains the pooling expressions.
+*/
+
 #pragma once
 
 #include <algorithm>
@@ -19,6 +24,9 @@
 
 namespace etl {
 
+/*!
+ * \brief Base class for all 2D pooling expressions
+ */
 template<typename T, std::size_t C1, std::size_t C2, template<typename...> class Impl>
 struct basic_pool_2d_expr {
     static_assert(C1 > 0, "C1 must be greater than 0");
@@ -101,6 +109,9 @@ using max_pool_2d_expr = basic_pool_2d_expr<T, C1, C2, impl::max_pool_2d>;
 template<typename T, std::size_t C1, std::size_t C2>
 using avg_pool_2d_expr = basic_pool_2d_expr<T, C1, C2, impl::avg_pool_2d>;
 
+/*!
+ * \brief Base class for all 3D pooling expressions
+ */
 template<typename T, std::size_t C1, std::size_t C2, std::size_t C3, template<typename...> class Impl>
 struct basic_pool_3d_expr {
     static_assert(C1 > 0, "C1 must be greater than 0");
