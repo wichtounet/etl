@@ -73,22 +73,22 @@ auto fft_conv_1d_full(A&& a, B&& b, C&& c) -> detail::forced_temporary_binary_he
     return {a, b, c};
 }
 
-template<typename A, typename B, cpp_enable_if_cst(has_fft::value)>
+template<typename A, typename B, cpp_enable_if_cst(has_fast_fft::value)>
 auto fast_conv_1d_full(A&& a, B&& b){
     return fft_conv_1d_full(std::forward<A>(a), std::forward<B>(b));
 }
 
-template<typename A, typename B, cpp_disable_if_cst(has_fft::value)>
+template<typename A, typename B, cpp_disable_if_cst(has_fast_fft::value)>
 auto fast_conv_1d_full(A&& a, B&& b){
     return conv_1d_full(std::forward<A>(a), std::forward<B>(b));
 }
 
-template<typename A, typename B, typename C, cpp_enable_if_cst(has_fft::value)>
+template<typename A, typename B, typename C, cpp_enable_if_cst(has_fast_fft::value)>
 auto fast_conv_1d_full(A&& a, B&& b, C&& c){
     return fft_conv_1d_full(std::forward<A>(a), std::forward<B>(b), std::forward<C>(c));
 }
 
-template<typename A, typename B, typename C, cpp_disable_if_cst(has_fft::value)>
+template<typename A, typename B, typename C, cpp_disable_if_cst(has_fast_fft::value)>
 auto fast_conv_1d_full(A&& a, B&& b, C&& c){
     return conv_1d_full(std::forward<A>(a), std::forward<B>(b), std::forward<C>(c));
 }
@@ -149,22 +149,22 @@ auto fft_conv_2d_full(A&& a, B&& b, C&& c) -> detail::forced_temporary_binary_he
     return {a, b, c};
 }
 
-template<typename A, typename B, cpp_enable_if_cst(has_fft::value)>
+template<typename A, typename B, cpp_enable_if_cst(has_fast_fft::value)>
 auto fast_conv_2d_full(A&& a, B&& b){
     return fft_conv_2d_full(std::forward<A>(a), std::forward<B>(b));
 }
 
-template<typename A, typename B, cpp_disable_if_cst(has_fft::value)>
+template<typename A, typename B, cpp_disable_if_cst(has_fast_fft::value)>
 auto fast_conv_2d_full(A&& a, B&& b){
     return conv_2d_full(std::forward<A>(a), std::forward<B>(b));
 }
 
-template<typename A, typename B, typename C, cpp_enable_if_cst(has_fft::value)>
+template<typename A, typename B, typename C, cpp_enable_if_cst(has_fast_fft::value)>
 auto fast_conv_2d_full(A&& a, B&& b, C&& c){
     return fft_conv_2d_full(std::forward<A>(a), std::forward<B>(b), std::forward<C>(c));
 }
 
-template<typename A, typename B, typename C, cpp_disable_if_cst(has_fft::value)>
+template<typename A, typename B, typename C, cpp_disable_if_cst(has_fast_fft::value)>
 auto fast_conv_2d_full(A&& a, B&& b, C&& c){
     return conv_2d_full(std::forward<A>(a), std::forward<B>(b), std::forward<C>(c));
 }

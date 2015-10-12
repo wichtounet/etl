@@ -52,12 +52,12 @@ constexpr const bool create_temporary = true;
 #endif
 
 struct is_mkl_enabled : std::true_type {};
-struct has_fft : std::true_type {};
+struct has_fast_fft : std::true_type {};
 
 #else
 
 struct is_mkl_enabled : std::false_type {};
-struct has_fft : std::false_type {};
+struct has_fast_fft : std::false_type {};
 
 #endif
 
