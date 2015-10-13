@@ -1,7 +1,11 @@
+
+# This format file is made especially for clang-format-3.7
+
 ---
 BasedOnStyle: Google
 IndentWidth: 4
-ColumnLimit: 160
+# clang-format is not very good to break long lines, don't let it do it
+ColumnLimit: 0
 ---
 Language: Cpp
 Standard: Cpp11
@@ -14,14 +18,17 @@ ConstructorInitializerIndentWidth: 8
 SpaceBeforeParens: ControlStatements
 
 # No block and its body should EVER be on a single line
-AllowShortFunctionsOnASingleLine: None
+AllowShortFunctionsOnASingleLine: Empty
 AllowShortBlocksOnASingleLine: false
-#AllowShortCaseLabelsOnASingleLine: false
+AllowShortCaseLabelsOnASingleLine: false
 AllowShortIfStatementsOnASingleLine: false
 AllowShortLoopsOnASingleLine: false
 
-# Don't mess with my comments
-CommentPragmas:  '^[^ ]'
+# Better C++11 support
+Cpp11BracedListStyle: true
+
+# Avoid too many empty lines
+MaxEmptyLinesToKeep: 1
 
 # Templates should always be on a separate line
 AlwaysBreakTemplateDeclarations: true
@@ -32,6 +39,9 @@ UseTab: Never
 # Configure comments
 AlignTrailingComments: true
 SpacesBeforeTrailingComments: 1
+
+# Don't mess with my comments
+CommentPragmas:  '^[^ ]'
 
 # Avoid empty lines
 KeepEmptyLinesAtTheStartOfBlocks: false
