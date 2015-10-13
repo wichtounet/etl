@@ -386,9 +386,9 @@ template<typename T, typename ST, order SO, std::size_t... Dims>
 std::ostream& operator<<(std::ostream& os, const fast_matrix_impl<T, ST, SO, Dims...>& /*matrix*/){
     if(sizeof...(Dims) == 1){
         return os << "V[" << concat_sizes(Dims...) << "]";
-    } else {
-        return os << "M[" << concat_sizes(Dims...) << "]";
     }
+
+    return os << "M[" << concat_sizes(Dims...) << "]";
 }
 
 } //end of namespace etl
