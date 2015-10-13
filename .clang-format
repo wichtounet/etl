@@ -20,6 +20,9 @@ AllowShortBlocksOnASingleLine: false
 AllowShortIfStatementsOnASingleLine: false
 AllowShortLoopsOnASingleLine: false
 
+# Don't mess with my comments
+CommentPragmas:  '^[^ ]'
+
 # Templates should always be on a separate line
 AlwaysBreakTemplateDeclarations: true
 
