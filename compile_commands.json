@@ -1,142 +1,212 @@
 [
     {
-        "command": "clang++ -Iinclude -std=c++1y -Wextra -Wall -Qunused-arguments -Wuninitialized -Wsometimes-uninitialized -Wno-long-long -Winit-self -Wdocumentation -Ilib/include -ICatch/include -Werror -stdlib=libc++ -DETL_VECTORIZE_FULL -g -fprofile-arcs -ftest-coverage -o debug/test/virtual_views.cpp.o -c test/virtual_views.cpp", 
+        "command": "clang++ -g -fprofile-arcs -ftest-coverage -fsanitize=address,undefined -Iinclude -std=c++1y -Wextra -Wall -Qunused-arguments -Wuninitialized -Wsometimes-uninitialized -Wno-long-long -Winit-self -Wdocumentation -pedantic -Werror -Winvalid-pch -Ilib/include -ICatch/include -Itest/include -Icpm/include -MD -MF debug/workbench/src/benchmark_gemm.cpp.d -o debug/workbench/src/benchmark_gemm.cpp.o -c workbench/src/benchmark_gemm.cpp", 
         "directory": "/home/wichtounet/dev/etl", 
-        "file": "/home/wichtounet/dev/etl/test/virtual_views.cpp"
+        "file": "/home/wichtounet/dev/etl/workbench/src/benchmark_gemm.cpp"
     }, 
     {
-        "command": "clang++ -Iinclude -std=c++1y -Wextra -Wall -Qunused-arguments -Wuninitialized -Wsometimes-uninitialized -Wno-long-long -Winit-self -Wdocumentation -Ilib/include -ICatch/include -Werror -stdlib=libc++ -DETL_VECTORIZE_FULL -g -fprofile-arcs -ftest-coverage -o debug/test/fast_matrix.cpp.o -c test/fast_matrix.cpp", 
+        "command": "clang++ -g -fprofile-arcs -ftest-coverage -fsanitize=address,undefined -Iinclude -std=c++1y -Wextra -Wall -Qunused-arguments -Wuninitialized -Wsometimes-uninitialized -Wno-long-long -Winit-self -Wdocumentation -pedantic -Werror -Winvalid-pch -Ilib/include -ICatch/include -Itest/include -MD -MF debug/test/src/convmtx.cpp.d -o debug/test/src/convmtx.cpp.o -c test/src/convmtx.cpp", 
         "directory": "/home/wichtounet/dev/etl", 
-        "file": "/home/wichtounet/dev/etl/test/fast_matrix.cpp"
+        "file": "/home/wichtounet/dev/etl/test/src/convmtx.cpp"
     }, 
     {
-        "command": "clang++ -Iinclude -std=c++1y -Wextra -Wall -Qunused-arguments -Wuninitialized -Wsometimes-uninitialized -Wno-long-long -Winit-self -Wdocumentation -Ilib/include -ICatch/include -Werror -stdlib=libc++ -DETL_VECTORIZE_FULL -g -fprofile-arcs -ftest-coverage -o debug/test/direct.cpp.o -c test/direct.cpp", 
+        "command": "clang++ -g -fprofile-arcs -ftest-coverage -fsanitize=address,undefined -Iinclude -std=c++1y -Wextra -Wall -Qunused-arguments -Wuninitialized -Wsometimes-uninitialized -Wno-long-long -Winit-self -Wdocumentation -pedantic -Werror -Winvalid-pch -Ilib/include -ICatch/include -Itest/include -MD -MF debug/test/src/virtual_views.cpp.d -o debug/test/src/virtual_views.cpp.o -c test/src/virtual_views.cpp", 
         "directory": "/home/wichtounet/dev/etl", 
-        "file": "/home/wichtounet/dev/etl/test/direct.cpp"
+        "file": "/home/wichtounet/dev/etl/test/src/virtual_views.cpp"
     }, 
     {
-        "command": "clang++ -Iinclude -std=c++1y -Wextra -Wall -Qunused-arguments -Wuninitialized -Wsometimes-uninitialized -Wno-long-long -Winit-self -Wdocumentation -Ilib/include -ICatch/include -Werror -stdlib=libc++ -DETL_VECTORIZE_FULL -g -fprofile-arcs -ftest-coverage -o debug/test/special_cases.cpp.o -c test/special_cases.cpp", 
+        "command": "clang++ -g -fprofile-arcs -ftest-coverage -fsanitize=address,undefined -Iinclude -std=c++1y -Wextra -Wall -Qunused-arguments -Wuninitialized -Wsometimes-uninitialized -Wno-long-long -Winit-self -Wdocumentation -pedantic -Werror -Winvalid-pch -Ilib/include -ICatch/include -Itest/include -MD -MF debug/test/src/im2col.cpp.d -o debug/test/src/im2col.cpp.o -c test/src/im2col.cpp", 
         "directory": "/home/wichtounet/dev/etl", 
-        "file": "/home/wichtounet/dev/etl/test/special_cases.cpp"
+        "file": "/home/wichtounet/dev/etl/test/src/im2col.cpp"
     }, 
     {
-        "command": "clang++ -Iinclude -std=c++1y -Wextra -Wall -Qunused-arguments -Wuninitialized -Wsometimes-uninitialized -Wno-long-long -Winit-self -Wdocumentation -Ilib/include -ICatch/include -Werror -stdlib=libc++ -DETL_VECTORIZE_FULL -g -fprofile-arcs -ftest-coverage -o debug/test/dyn_matrix.cpp.o -c test/dyn_matrix.cpp", 
+        "command": "clang++ -g -fprofile-arcs -ftest-coverage -fsanitize=address,undefined -Iinclude -std=c++1y -Wextra -Wall -Qunused-arguments -Wuninitialized -Wsometimes-uninitialized -Wno-long-long -Winit-self -Wdocumentation -pedantic -Werror -Winvalid-pch -Ilib/include -ICatch/include -Itest/include -MD -MF debug/test/src/fast_matrix.cpp.d -o debug/test/src/fast_matrix.cpp.o -c test/src/fast_matrix.cpp", 
         "directory": "/home/wichtounet/dev/etl", 
-        "file": "/home/wichtounet/dev/etl/test/dyn_matrix.cpp"
+        "file": "/home/wichtounet/dev/etl/test/src/fast_matrix.cpp"
     }, 
     {
-        "command": "clang++ -Iinclude -std=c++1y -Wextra -Wall -Qunused-arguments -Wuninitialized -Wsometimes-uninitialized -Wno-long-long -Winit-self -Wdocumentation -Ilib/include -ICatch/include -Werror -stdlib=libc++ -DETL_VECTORIZE_FULL -g -fprofile-arcs -ftest-coverage -o debug/test/max_pool.cpp.o -c test/max_pool.cpp", 
+        "command": "clang++ -g -fprofile-arcs -ftest-coverage -fsanitize=address,undefined -Iinclude -std=c++1y -Wextra -Wall -Qunused-arguments -Wuninitialized -Wsometimes-uninitialized -Wno-long-long -Winit-self -Wdocumentation -pedantic -Werror -Winvalid-pch -Ilib/include -ICatch/include -Itest/include -MD -MF debug/test/src/direct.cpp.d -o debug/test/src/direct.cpp.o -c test/src/direct.cpp", 
         "directory": "/home/wichtounet/dev/etl", 
-        "file": "/home/wichtounet/dev/etl/test/max_pool.cpp"
+        "file": "/home/wichtounet/dev/etl/test/src/direct.cpp"
     }, 
     {
-        "command": "clang++ -Iinclude -std=c++1y -Wextra -Wall -Qunused-arguments -Wuninitialized -Wsometimes-uninitialized -Wno-long-long -Winit-self -Wdocumentation -Ilib/include -ICatch/include -Werror -stdlib=libc++ -DETL_VECTORIZE_FULL -g -fprofile-arcs -ftest-coverage -o debug/test/assert.cpp.o -c test/assert.cpp", 
+        "command": "clang++ -g -fprofile-arcs -ftest-coverage -fsanitize=address,undefined -Iinclude -std=c++1y -Wextra -Wall -Qunused-arguments -Wuninitialized -Wsometimes-uninitialized -Wno-long-long -Winit-self -Wdocumentation -pedantic -Werror -Winvalid-pch -Ilib/include -ICatch/include -Itest/include -MD -MF debug/test/src/special_cases.cpp.d -o debug/test/src/special_cases.cpp.o -c test/src/special_cases.cpp", 
         "directory": "/home/wichtounet/dev/etl", 
-        "file": "/home/wichtounet/dev/etl/test/assert.cpp"
+        "file": "/home/wichtounet/dev/etl/test/src/special_cases.cpp"
     }, 
     {
-        "command": "clang++ -Iinclude -std=c++1y -Wextra -Wall -Qunused-arguments -Wuninitialized -Wsometimes-uninitialized -Wno-long-long -Winit-self -Wdocumentation -Ilib/include -ICatch/include -Werror -stdlib=libc++ -DETL_VECTORIZE_FULL -g -fprofile-arcs -ftest-coverage -o debug/test/traits.cpp.o -c test/traits.cpp", 
+        "command": "clang++ -g -fprofile-arcs -ftest-coverage -fsanitize=address,undefined -Iinclude -std=c++1y -Wextra -Wall -Qunused-arguments -Wuninitialized -Wsometimes-uninitialized -Wno-long-long -Winit-self -Wdocumentation -pedantic -Werror -Winvalid-pch -Ilib/include -ICatch/include -Itest/include -MD -MF debug/test/src/dyn_matrix.cpp.d -o debug/test/src/dyn_matrix.cpp.o -c test/src/dyn_matrix.cpp", 
         "directory": "/home/wichtounet/dev/etl", 
-        "file": "/home/wichtounet/dev/etl/test/traits.cpp"
+        "file": "/home/wichtounet/dev/etl/test/src/dyn_matrix.cpp"
     }, 
     {
-        "command": "clang++ -Iinclude -std=c++1y -Wextra -Wall -Qunused-arguments -Wuninitialized -Wsometimes-uninitialized -Wno-long-long -Winit-self -Wdocumentation -Ilib/include -ICatch/include -Werror -stdlib=libc++ -DETL_VECTORIZE_FULL -g -fprofile-arcs -ftest-coverage -o debug/test/fast_dyn_matrix.cpp.o -c test/fast_dyn_matrix.cpp", 
+        "command": "clang++ -g -fprofile-arcs -ftest-coverage -fsanitize=address,undefined -Iinclude -std=c++1y -Wextra -Wall -Qunused-arguments -Wuninitialized -Wsometimes-uninitialized -Wno-long-long -Winit-self -Wdocumentation -pedantic -Werror -Winvalid-pch -Ilib/include -ICatch/include -Itest/include -MD -MF debug/test/src/max_pool.cpp.d -o debug/test/src/max_pool.cpp.o -c test/src/max_pool.cpp", 
         "directory": "/home/wichtounet/dev/etl", 
-        "file": "/home/wichtounet/dev/etl/test/fast_dyn_matrix.cpp"
+        "file": "/home/wichtounet/dev/etl/test/src/max_pool.cpp"
     }, 
     {
-        "command": "clang++ -Iinclude -std=c++1y -Wextra -Wall -Qunused-arguments -Wuninitialized -Wsometimes-uninitialized -Wno-long-long -Winit-self -Wdocumentation -Ilib/include -ICatch/include -Werror -stdlib=libc++ -DETL_VECTORIZE_FULL -g -fprofile-arcs -ftest-coverage -o debug/test/print.cpp.o -c test/print.cpp", 
+        "command": "clang++ -g -fprofile-arcs -ftest-coverage -fsanitize=address,undefined -Iinclude -std=c++1y -Wextra -Wall -Qunused-arguments -Wuninitialized -Wsometimes-uninitialized -Wno-long-long -Winit-self -Wdocumentation -pedantic -Werror -Winvalid-pch -Ilib/include -ICatch/include -Itest/include -MD -MF debug/test/src/assert.cpp.d -o debug/test/src/assert.cpp.o -c test/src/assert.cpp", 
         "directory": "/home/wichtounet/dev/etl", 
-        "file": "/home/wichtounet/dev/etl/test/print.cpp"
+        "file": "/home/wichtounet/dev/etl/test/src/assert.cpp"
     }, 
     {
-        "command": "clang++ -Iinclude -std=c++1y -Wextra -Wall -Qunused-arguments -Wuninitialized -Wsometimes-uninitialized -Wno-long-long -Winit-self -Wdocumentation -Ilib/include -ICatch/include -Werror -stdlib=libc++ -DETL_VECTORIZE_FULL -g -fprofile-arcs -ftest-coverage -o debug/test/stop.cpp.o -c test/stop.cpp", 
+        "command": "clang++ -g -fprofile-arcs -ftest-coverage -fsanitize=address,undefined -Iinclude -std=c++1y -Wextra -Wall -Qunused-arguments -Wuninitialized -Wsometimes-uninitialized -Wno-long-long -Winit-self -Wdocumentation -pedantic -Werror -Winvalid-pch -Ilib/include -ICatch/include -Itest/include -MD -MF debug/test/src/fast_dyn_matrix.cpp.d -o debug/test/src/fast_dyn_matrix.cpp.o -c test/src/fast_dyn_matrix.cpp", 
         "directory": "/home/wichtounet/dev/etl", 
-        "file": "/home/wichtounet/dev/etl/test/stop.cpp"
+        "file": "/home/wichtounet/dev/etl/test/src/fast_dyn_matrix.cpp"
     }, 
     {
-        "command": "clang++ -Iinclude -std=c++1y -Wextra -Wall -Qunused-arguments -Wuninitialized -Wsometimes-uninitialized -Wno-long-long -Winit-self -Wdocumentation -Ilib/include -ICatch/include -Werror -stdlib=libc++ -DETL_VECTORIZE_FULL -g -fprofile-arcs -ftest-coverage -o debug/test/stable.cpp.o -c test/stable.cpp", 
+        "command": "clang++ -g -fprofile-arcs -ftest-coverage -fsanitize=address,undefined -Iinclude -std=c++1y -Wextra -Wall -Qunused-arguments -Wuninitialized -Wsometimes-uninitialized -Wno-long-long -Winit-self -Wdocumentation -pedantic -Werror -Winvalid-pch -Ilib/include -ICatch/include -Itest/include -MD -MF debug/test/src/conv_2d.cpp.d -o debug/test/src/conv_2d.cpp.o -c test/src/conv_2d.cpp", 
         "directory": "/home/wichtounet/dev/etl", 
-        "file": "/home/wichtounet/dev/etl/test/stable.cpp"
+        "file": "/home/wichtounet/dev/etl/test/src/conv_2d.cpp"
     }, 
     {
-        "command": "clang++ -Iinclude -std=c++1y -Wextra -Wall -Qunused-arguments -Wuninitialized -Wsometimes-uninitialized -Wno-long-long -Winit-self -Wdocumentation -Ilib/include -ICatch/include -Werror -stdlib=libc++ -DETL_VECTORIZE_FULL -g -fprofile-arcs -ftest-coverage -o debug/test/fast_vector.cpp.o -c test/fast_vector.cpp", 
+        "command": "clang++ -g -fprofile-arcs -ftest-coverage -fsanitize=address,undefined -Iinclude -std=c++1y -Wextra -Wall -Qunused-arguments -Wuninitialized -Wsometimes-uninitialized -Wno-long-long -Winit-self -Wdocumentation -pedantic -Werror -Winvalid-pch -Ilib/include -ICatch/include -Itest/include -MD -MF debug/test/src/print.cpp.d -o debug/test/src/print.cpp.o -c test/src/print.cpp", 
         "directory": "/home/wichtounet/dev/etl", 
-        "file": "/home/wichtounet/dev/etl/test/fast_vector.cpp"
+        "file": "/home/wichtounet/dev/etl/test/src/print.cpp"
     }, 
     {
-        "command": "clang++ -Iinclude -std=c++1y -Wextra -Wall -Qunused-arguments -Wuninitialized -Wsometimes-uninitialized -Wno-long-long -Winit-self -Wdocumentation -Ilib/include -ICatch/include -Werror -stdlib=libc++ -DETL_VECTORIZE_FULL -g -fprofile-arcs -ftest-coverage -o debug/test/column_major.cpp.o -c test/column_major.cpp", 
+        "command": "clang++ -g -fprofile-arcs -ftest-coverage -fsanitize=address,undefined -Iinclude -std=c++1y -Wextra -Wall -Qunused-arguments -Wuninitialized -Wsometimes-uninitialized -Wno-long-long -Winit-self -Wdocumentation -pedantic -Werror -Winvalid-pch -Ilib/include -ICatch/include -Itest/include -MD -MF debug/test/src/stop.cpp.d -o debug/test/src/stop.cpp.o -c test/src/stop.cpp", 
         "directory": "/home/wichtounet/dev/etl", 
-        "file": "/home/wichtounet/dev/etl/test/column_major.cpp"
+        "file": "/home/wichtounet/dev/etl/test/src/stop.cpp"
     }, 
     {
-        "command": "clang++ -Iinclude -std=c++1y -Wextra -Wall -Qunused-arguments -Wuninitialized -Wsometimes-uninitialized -Wno-long-long -Winit-self -Wdocumentation -Ilib/include -ICatch/include -Werror -stdlib=libc++ -DETL_VECTORIZE_FULL -g -fprofile-arcs -ftest-coverage -o debug/test/dyn_vector.cpp.o -c test/dyn_vector.cpp", 
+        "command": "clang++ -g -fprofile-arcs -ftest-coverage -fsanitize=address,undefined -Iinclude -std=c++1y -Wextra -Wall -Qunused-arguments -Wuninitialized -Wsometimes-uninitialized -Wno-long-long -Winit-self -Wdocumentation -pedantic -Werror -Winvalid-pch -Ilib/include -ICatch/include -Itest/include -MD -MF debug/test/src/stable.cpp.d -o debug/test/src/stable.cpp.o -c test/src/stable.cpp", 
         "directory": "/home/wichtounet/dev/etl", 
-        "file": "/home/wichtounet/dev/etl/test/dyn_vector.cpp"
+        "file": "/home/wichtounet/dev/etl/test/src/stable.cpp"
     }, 
     {
-        "command": "clang++ -Iinclude -std=c++1y -Wextra -Wall -Qunused-arguments -Wuninitialized -Wsometimes-uninitialized -Wno-long-long -Winit-self -Wdocumentation -Ilib/include -ICatch/include -Werror -stdlib=libc++ -DETL_VECTORIZE_FULL -g -fprofile-arcs -ftest-coverage -o debug/test/compare.cpp.o -c test/compare.cpp", 
+        "command": "clang++ -g -fprofile-arcs -ftest-coverage -fsanitize=address,undefined -Iinclude -std=c++1y -Wextra -Wall -Qunused-arguments -Wuninitialized -Wsometimes-uninitialized -Wno-long-long -Winit-self -Wdocumentation -pedantic -Werror -Winvalid-pch -Ilib/include -ICatch/include -Itest/include -MD -MF debug/test/src/fast_vector.cpp.d -o debug/test/src/fast_vector.cpp.o -c test/src/fast_vector.cpp", 
         "directory": "/home/wichtounet/dev/etl", 
-        "file": "/home/wichtounet/dev/etl/test/compare.cpp"
+        "file": "/home/wichtounet/dev/etl/test/src/fast_vector.cpp"
     }, 
     {
-        "command": "clang++ -Iinclude -std=c++1y -Wextra -Wall -Qunused-arguments -Wuninitialized -Wsometimes-uninitialized -Wno-long-long -Winit-self -Wdocumentation -Ilib/include -ICatch/include -Werror -stdlib=libc++ -DETL_VECTORIZE_FULL -g -fprofile-arcs -ftest-coverage -o debug/test/iterations.cpp.o -c test/iterations.cpp", 
+        "command": "clang++ -g -fprofile-arcs -ftest-coverage -fsanitize=address,undefined -Iinclude -std=c++1y -Wextra -Wall -Qunused-arguments -Wuninitialized -Wsometimes-uninitialized -Wno-long-long -Winit-self -Wdocumentation -pedantic -Werror -Winvalid-pch -Ilib/include -ICatch/include -Itest/include -MD -MF debug/test/src/column_major.cpp.d -o debug/test/src/column_major.cpp.o -c test/src/column_major.cpp", 
         "directory": "/home/wichtounet/dev/etl", 
-        "file": "/home/wichtounet/dev/etl/test/iterations.cpp"
+        "file": "/home/wichtounet/dev/etl/test/src/column_major.cpp"
     }, 
     {
-        "command": "clang++ -Iinclude -std=c++1y -Wextra -Wall -Qunused-arguments -Wuninitialized -Wsometimes-uninitialized -Wno-long-long -Winit-self -Wdocumentation -Ilib/include -ICatch/include -Werror -stdlib=libc++ -DETL_VECTORIZE_FULL -g -fprofile-arcs -ftest-coverage -o debug/test/generators.cpp.o -c test/generators.cpp", 
+        "command": "clang++ -g -fprofile-arcs -ftest-coverage -fsanitize=address,undefined -Iinclude -std=c++1y -Wextra -Wall -Qunused-arguments -Wuninitialized -Wsometimes-uninitialized -Wno-long-long -Winit-self -Wdocumentation -pedantic -Werror -Winvalid-pch -Ilib/include -ICatch/include -Itest/include -MD -MF debug/test/src/dyn_vector.cpp.d -o debug/test/src/dyn_vector.cpp.o -c test/src/dyn_vector.cpp", 
         "directory": "/home/wichtounet/dev/etl", 
-        "file": "/home/wichtounet/dev/etl/test/generators.cpp"
+        "file": "/home/wichtounet/dev/etl/test/src/dyn_vector.cpp"
     }, 
     {
-        "command": "clang++ -Iinclude -std=c++1y -Wextra -Wall -Qunused-arguments -Wuninitialized -Wsometimes-uninitialized -Wno-long-long -Winit-self -Wdocumentation -Ilib/include -ICatch/include -Werror -stdlib=libc++ -DETL_VECTORIZE_FULL -g -fprofile-arcs -ftest-coverage -o debug/test/transpose.cpp.o -c test/transpose.cpp", 
+        "command": "clang++ -g -fprofile-arcs -ftest-coverage -fsanitize=address,undefined -Iinclude -std=c++1y -Wextra -Wall -Qunused-arguments -Wuninitialized -Wsometimes-uninitialized -Wno-long-long -Winit-self -Wdocumentation -pedantic -Werror -Winvalid-pch -Ilib/include -ICatch/include -Itest/include -MD -MF debug/test/src/compare.cpp.d -o debug/test/src/compare.cpp.o -c test/src/compare.cpp", 
         "directory": "/home/wichtounet/dev/etl", 
-        "file": "/home/wichtounet/dev/etl/test/transpose.cpp"
+        "file": "/home/wichtounet/dev/etl/test/src/compare.cpp"
     }, 
     {
-        "command": "clang++ -Iinclude -std=c++1y -Wextra -Wall -Qunused-arguments -Wuninitialized -Wsometimes-uninitialized -Wno-long-long -Winit-self -Wdocumentation -Ilib/include -ICatch/include -Werror -stdlib=libc++ -DETL_VECTORIZE_FULL -g -fprofile-arcs -ftest-coverage -o debug/test/tmp.cpp.o -c test/tmp.cpp", 
+        "command": "clang++ -g -fprofile-arcs -ftest-coverage -fsanitize=address,undefined -Iinclude -std=c++1y -Wextra -Wall -Qunused-arguments -Wuninitialized -Wsometimes-uninitialized -Wno-long-long -Winit-self -Wdocumentation -pedantic -Werror -Winvalid-pch -Ilib/include -ICatch/include -Itest/include -MD -MF debug/test/src/optimize_2.cpp.d -o debug/test/src/optimize_2.cpp.o -c test/src/optimize_2.cpp", 
         "directory": "/home/wichtounet/dev/etl", 
-        "file": "/home/wichtounet/dev/etl/test/tmp.cpp"
+        "file": "/home/wichtounet/dev/etl/test/src/optimize_2.cpp"
     }, 
     {
-        "command": "clang++ -Iinclude -std=c++1y -Wextra -Wall -Qunused-arguments -Wuninitialized -Wsometimes-uninitialized -Wno-long-long -Winit-self -Wdocumentation -Ilib/include -ICatch/include -Werror -stdlib=libc++ -DETL_VECTORIZE_FULL -g -fprofile-arcs -ftest-coverage -o debug/test/multiplication.cpp.o -c test/multiplication.cpp", 
+        "command": "clang++ -g -fprofile-arcs -ftest-coverage -fsanitize=address,undefined -Iinclude -std=c++1y -Wextra -Wall -Qunused-arguments -Wuninitialized -Wsometimes-uninitialized -Wno-long-long -Winit-self -Wdocumentation -pedantic -Werror -Winvalid-pch -Ilib/include -ICatch/include -Itest/include -MD -MF debug/test/src/views.cpp.d -o debug/test/src/views.cpp.o -c test/src/views.cpp", 
         "directory": "/home/wichtounet/dev/etl", 
-        "file": "/home/wichtounet/dev/etl/test/multiplication.cpp"
+        "file": "/home/wichtounet/dev/etl/test/src/views.cpp"
     }, 
     {
-        "command": "clang++ -Iinclude -std=c++1y -Wextra -Wall -Qunused-arguments -Wuninitialized -Wsometimes-uninitialized -Wno-long-long -Winit-self -Wdocumentation -Ilib/include -ICatch/include -Werror -stdlib=libc++ -DETL_VECTORIZE_FULL -g -fprofile-arcs -ftest-coverage -o debug/test/integers.cpp.o -c test/integers.cpp", 
+        "command": "clang++ -g -fprofile-arcs -ftest-coverage -fsanitize=address,undefined -Iinclude -std=c++1y -Wextra -Wall -Qunused-arguments -Wuninitialized -Wsometimes-uninitialized -Wno-long-long -Winit-self -Wdocumentation -pedantic -Werror -Winvalid-pch -Ilib/include -ICatch/include -Itest/include -MD -MF debug/test/src/iterations.cpp.d -o debug/test/src/iterations.cpp.o -c test/src/iterations.cpp", 
         "directory": "/home/wichtounet/dev/etl", 
-        "file": "/home/wichtounet/dev/etl/test/integers.cpp"
+        "file": "/home/wichtounet/dev/etl/test/src/iterations.cpp"
     }, 
     {
-        "command": "clang++ -Iinclude -std=c++1y -Wextra -Wall -Qunused-arguments -Wuninitialized -Wsometimes-uninitialized -Wno-long-long -Winit-self -Wdocumentation -Ilib/include -ICatch/include -Werror -stdlib=libc++ -DETL_VECTORIZE_FULL -g -fprofile-arcs -ftest-coverage -o debug/test/test.cpp.o -c test/test.cpp", 
+        "command": "clang++ -g -fprofile-arcs -ftest-coverage -fsanitize=address,undefined -Iinclude -std=c++1y -Wextra -Wall -Qunused-arguments -Wuninitialized -Wsometimes-uninitialized -Wno-long-long -Winit-self -Wdocumentation -pedantic -Werror -Winvalid-pch -Ilib/include -ICatch/include -Itest/include -MD -MF debug/test/src/pooling.cpp.d -o debug/test/src/pooling.cpp.o -c test/src/pooling.cpp", 
         "directory": "/home/wichtounet/dev/etl", 
-        "file": "/home/wichtounet/dev/etl/test/test.cpp"
+        "file": "/home/wichtounet/dev/etl/test/src/pooling.cpp"
     }, 
     {
-        "command": "clang++ -Iinclude -std=c++1y -Wextra -Wall -Qunused-arguments -Wuninitialized -Wsometimes-uninitialized -Wno-long-long -Winit-self -Wdocumentation -Ilib/include -ICatch/include -Werror -stdlib=libc++ -DETL_VECTORIZE_FULL -g -fprofile-arcs -ftest-coverage -o debug/test/fft.cpp.o -c test/fft.cpp", 
+        "command": "clang++ -g -fprofile-arcs -ftest-coverage -fsanitize=address,undefined -Iinclude -std=c++1y -Wextra -Wall -Qunused-arguments -Wuninitialized -Wsometimes-uninitialized -Wno-long-long -Winit-self -Wdocumentation -pedantic -Werror -Winvalid-pch -Ilib/include -ICatch/include -Itest/include -MD -MF debug/test/src/traits.cpp.d -o debug/test/src/traits.cpp.o -c test/src/traits.cpp", 
         "directory": "/home/wichtounet/dev/etl", 
-        "file": "/home/wichtounet/dev/etl/test/fft.cpp"
+        "file": "/home/wichtounet/dev/etl/test/src/traits.cpp"
     }, 
     {
-        "command": "clang++ -Iinclude -std=c++1y -Wextra -Wall -Qunused-arguments -Wuninitialized -Wsometimes-uninitialized -Wno-long-long -Winit-self -Wdocumentation -Ilib/include -ICatch/include -Werror -stdlib=libc++ -DETL_VECTORIZE_FULL -g -fprofile-arcs -ftest-coverage -o debug/test/flipping.cpp.o -c test/flipping.cpp", 
+        "command": "clang++ -g -fprofile-arcs -ftest-coverage -fsanitize=address,undefined -Iinclude -std=c++1y -Wextra -Wall -Qunused-arguments -Wuninitialized -Wsometimes-uninitialized -Wno-long-long -Winit-self -Wdocumentation -pedantic -Werror -Winvalid-pch -Ilib/include -ICatch/include -Itest/include -MD -MF debug/test/src/conv_deep.cpp.d -o debug/test/src/conv_deep.cpp.o -c test/src/conv_deep.cpp", 
         "directory": "/home/wichtounet/dev/etl", 
-        "file": "/home/wichtounet/dev/etl/test/flipping.cpp"
+        "file": "/home/wichtounet/dev/etl/test/src/conv_deep.cpp"
     }, 
     {
-        "command": "clang++ -Iinclude -std=c++1y -Wextra -Wall -Qunused-arguments -Wuninitialized -Wsometimes-uninitialized -Wno-long-long -Winit-self -Wdocumentation -Ilib/include -ICatch/include -Werror -stdlib=libc++ -DETL_VECTORIZE_FULL -g -fprofile-arcs -ftest-coverage -o debug/test/views.cpp.o -c test/views.cpp", 
+        "command": "clang++ -g -fprofile-arcs -ftest-coverage -fsanitize=address,undefined -Iinclude -std=c++1y -Wextra -Wall -Qunused-arguments -Wuninitialized -Wsometimes-uninitialized -Wno-long-long -Winit-self -Wdocumentation -pedantic -Werror -Winvalid-pch -Ilib/include -ICatch/include -Itest/include -MD -MF debug/test/src/generators.cpp.d -o debug/test/src/generators.cpp.o -c test/src/generators.cpp", 
         "directory": "/home/wichtounet/dev/etl", 
-        "file": "/home/wichtounet/dev/etl/test/views.cpp"
+        "file": "/home/wichtounet/dev/etl/test/src/generators.cpp"
     }, 
     {
-        "command": "clang++ -Iinclude -std=c++1y -Wextra -Wall -Qunused-arguments -Wuninitialized -Wsometimes-uninitialized -Wno-long-long -Winit-self -Wdocumentation -Ilib/include -ICatch/include -Werror -stdlib=libc++ -DETL_VECTORIZE_FULL -g -fprofile-arcs -ftest-coverage -o debug/test/convolution.cpp.o -c test/convolution.cpp", 
+        "command": "clang++ -g -fprofile-arcs -ftest-coverage -fsanitize=address,undefined -Iinclude -std=c++1y -Wextra -Wall -Qunused-arguments -Wuninitialized -Wsometimes-uninitialized -Wno-long-long -Winit-self -Wdocumentation -pedantic -Werror -Winvalid-pch -Ilib/include -ICatch/include -Itest/include -MD -MF debug/test/src/fft.cpp.d -o debug/test/src/fft.cpp.o -c test/src/fft.cpp", 
         "directory": "/home/wichtounet/dev/etl", 
-        "file": "/home/wichtounet/dev/etl/test/convolution.cpp"
+        "file": "/home/wichtounet/dev/etl/test/src/fft.cpp"
     }, 
     {
-        "command": "clang++ -Iinclude -std=c++1y -Wextra -Wall -Qunused-arguments -Wuninitialized -Wsometimes-uninitialized -Wno-long-long -Winit-self -Wdocumentation -Ilib/include -ICatch/include -Werror -stdlib=libc++ -DETL_VECTORIZE_FULL -g -fprofile-arcs -ftest-coverage -Wno-error -o debug/workbench/benchmark.cpp.o -c workbench/benchmark.cpp", 
+        "command": "clang++ -g -fprofile-arcs -ftest-coverage -fsanitize=address,undefined -Iinclude -std=c++1y -Wextra -Wall -Qunused-arguments -Wuninitialized -Wsometimes-uninitialized -Wno-long-long -Winit-self -Wdocumentation -pedantic -Werror -Winvalid-pch -Ilib/include -ICatch/include -Itest/include -MD -MF debug/test/src/transpose.cpp.d -o debug/test/src/transpose.cpp.o -c test/src/transpose.cpp", 
         "directory": "/home/wichtounet/dev/etl", 
-        "file": "/home/wichtounet/dev/etl/workbench/benchmark.cpp"
+        "file": "/home/wichtounet/dev/etl/test/src/transpose.cpp"
+    }, 
+    {
+        "command": "clang++ -g -fprofile-arcs -ftest-coverage -fsanitize=address,undefined -Iinclude -std=c++1y -Wextra -Wall -Qunused-arguments -Wuninitialized -Wsometimes-uninitialized -Wno-long-long -Winit-self -Wdocumentation -pedantic -Werror -Winvalid-pch -Ilib/include -ICatch/include -Itest/include -MD -MF debug/test/src/tmp.cpp.d -o debug/test/src/tmp.cpp.o -c test/src/tmp.cpp", 
+        "directory": "/home/wichtounet/dev/etl", 
+        "file": "/home/wichtounet/dev/etl/test/src/tmp.cpp"
+    }, 
+    {
+        "command": "clang++ -g -fprofile-arcs -ftest-coverage -fsanitize=address,undefined -Iinclude -std=c++1y -Wextra -Wall -Qunused-arguments -Wuninitialized -Wsometimes-uninitialized -Wno-long-long -Winit-self -Wdocumentation -pedantic -Werror -Winvalid-pch -Ilib/include -ICatch/include -Itest/include -MD -MF debug/test/src/multiplication.cpp.d -o debug/test/src/multiplication.cpp.o -c test/src/multiplication.cpp", 
+        "directory": "/home/wichtounet/dev/etl", 
+        "file": "/home/wichtounet/dev/etl/test/src/multiplication.cpp"
+    }, 
+    {
+        "command": "clang++ -g -fprofile-arcs -ftest-coverage -fsanitize=address,undefined -Iinclude -std=c++1y -Wextra -Wall -Qunused-arguments -Wuninitialized -Wsometimes-uninitialized -Wno-long-long -Winit-self -Wdocumentation -pedantic -Werror -Winvalid-pch -Ilib/include -ICatch/include -Itest/include -MD -MF debug/test/src/integers.cpp.d -o debug/test/src/integers.cpp.o -c test/src/integers.cpp", 
+        "directory": "/home/wichtounet/dev/etl", 
+        "file": "/home/wichtounet/dev/etl/test/src/integers.cpp"
+    }, 
+    {
+        "command": "clang++ -g -fprofile-arcs -ftest-coverage -fsanitize=address,undefined -Iinclude -std=c++1y -Wextra -Wall -Qunused-arguments -Wuninitialized -Wsometimes-uninitialized -Wno-long-long -Winit-self -Wdocumentation -pedantic -Werror -Winvalid-pch -Ilib/include -ICatch/include -Itest/include -MD -MF debug/test/src/conv_multi.cpp.d -o debug/test/src/conv_multi.cpp.o -c test/src/conv_multi.cpp", 
+        "directory": "/home/wichtounet/dev/etl", 
+        "file": "/home/wichtounet/dev/etl/test/src/conv_multi.cpp"
+    }, 
+    {
+        "command": "clang++ -g -fprofile-arcs -ftest-coverage -fsanitize=address,undefined -Iinclude -std=c++1y -Wextra -Wall -Qunused-arguments -Wuninitialized -Wsometimes-uninitialized -Wno-long-long -Winit-self -Wdocumentation -pedantic -Werror -Winvalid-pch -Ilib/include -ICatch/include -Itest/include -MD -MF debug/test/src/flipping.cpp.d -o debug/test/src/flipping.cpp.o -c test/src/flipping.cpp", 
+        "directory": "/home/wichtounet/dev/etl", 
+        "file": "/home/wichtounet/dev/etl/test/src/flipping.cpp"
+    }, 
+    {
+        "command": "clang++ -g -fprofile-arcs -ftest-coverage -fsanitize=address,undefined -Iinclude -std=c++1y -Wextra -Wall -Qunused-arguments -Wuninitialized -Wsometimes-uninitialized -Wno-long-long -Winit-self -Wdocumentation -pedantic -Werror -Winvalid-pch -Ilib/include -ICatch/include -Itest/include -MD -MF debug/test/src/test.cpp.d -o debug/test/src/test.cpp.o -c test/src/test.cpp", 
+        "directory": "/home/wichtounet/dev/etl", 
+        "file": "/home/wichtounet/dev/etl/test/src/test.cpp"
+    }, 
+    {
+        "command": "clang++ -g -fprofile-arcs -ftest-coverage -fsanitize=address,undefined -Iinclude -std=c++1y -Wextra -Wall -Qunused-arguments -Wuninitialized -Wsometimes-uninitialized -Wno-long-long -Winit-self -Wdocumentation -pedantic -Werror -Winvalid-pch -Ilib/include -ICatch/include -Itest/include -MD -MF debug/test/src/optimize_1.cpp.d -o debug/test/src/optimize_1.cpp.o -c test/src/optimize_1.cpp", 
+        "directory": "/home/wichtounet/dev/etl", 
+        "file": "/home/wichtounet/dev/etl/test/src/optimize_1.cpp"
+    }, 
+    {
+        "command": "clang++ -g -fprofile-arcs -ftest-coverage -fsanitize=address,undefined -Iinclude -std=c++1y -Wextra -Wall -Qunused-arguments -Wuninitialized -Wsometimes-uninitialized -Wno-long-long -Winit-self -Wdocumentation -pedantic -Werror -Winvalid-pch -Ilib/include -ICatch/include -Itest/include -MD -MF debug/test/src/complex.cpp.d -o debug/test/src/complex.cpp.o -c test/src/complex.cpp", 
+        "directory": "/home/wichtounet/dev/etl", 
+        "file": "/home/wichtounet/dev/etl/test/src/complex.cpp"
+    }, 
+    {
+        "command": "clang++ -g -fprofile-arcs -ftest-coverage -fsanitize=address,undefined -Iinclude -std=c++1y -Wextra -Wall -Qunused-arguments -Wuninitialized -Wsometimes-uninitialized -Wno-long-long -Winit-self -Wdocumentation -pedantic -Werror -Winvalid-pch -Ilib/include -ICatch/include -Itest/include -MD -MF debug/test/src/trigo.cpp.d -o debug/test/src/trigo.cpp.o -c test/src/trigo.cpp", 
+        "directory": "/home/wichtounet/dev/etl", 
+        "file": "/home/wichtounet/dev/etl/test/src/trigo.cpp"
+    }, 
+    {
+        "command": "clang++ -g -fprofile-arcs -ftest-coverage -fsanitize=address,undefined -Iinclude -std=c++1y -Wextra -Wall -Qunused-arguments -Wuninitialized -Wsometimes-uninitialized -Wno-long-long -Winit-self -Wdocumentation -pedantic -Werror -Winvalid-pch -Ilib/include -ICatch/include -Itest/include -MD -MF debug/test/src/conv_1d.cpp.d -o debug/test/src/conv_1d.cpp.o -c test/src/conv_1d.cpp", 
+        "directory": "/home/wichtounet/dev/etl", 
+        "file": "/home/wichtounet/dev/etl/test/src/conv_1d.cpp"
+    }, 
+    {
+        "command": "clang++ -g -fprofile-arcs -ftest-coverage -fsanitize=address,undefined -Iinclude -std=c++1y -Wextra -Wall -Qunused-arguments -Wuninitialized -Wsometimes-uninitialized -Wno-long-long -Winit-self -Wdocumentation -pedantic -Werror -Winvalid-pch -Ilib/include -ICatch/include -Itest/include -Icpm/include -MD -MF debug/workbench/src/benchmark_cdbn.cpp.d -o debug/workbench/src/benchmark_cdbn.cpp.o -c workbench/src/benchmark_cdbn.cpp", 
+        "directory": "/home/wichtounet/dev/etl", 
+        "file": "/home/wichtounet/dev/etl/workbench/src/benchmark_cdbn.cpp"
+    }, 
+    {
+        "command": "clang++ -g -fprofile-arcs -ftest-coverage -fsanitize=address,undefined -Iinclude -std=c++1y -Wextra -Wall -Qunused-arguments -Wuninitialized -Wsometimes-uninitialized -Wno-long-long -Winit-self -Wdocumentation -pedantic -Werror -Winvalid-pch -Ilib/include -ICatch/include -Itest/include -Icpm/include -MD -MF debug/workbench/src/benchmark_fft.cpp.d -o debug/workbench/src/benchmark_fft.cpp.o -c workbench/src/benchmark_fft.cpp", 
+        "directory": "/home/wichtounet/dev/etl", 
+        "file": "/home/wichtounet/dev/etl/workbench/src/benchmark_fft.cpp"
+    }, 
+    {
+        "command": "clang++ -g -fprofile-arcs -ftest-coverage -fsanitize=address,undefined -Iinclude -std=c++1y -Wextra -Wall -Qunused-arguments -Wuninitialized -Wsometimes-uninitialized -Wno-long-long -Winit-self -Wdocumentation -pedantic -Werror -Winvalid-pch -Ilib/include -ICatch/include -Itest/include -Icpm/include -MD -MF debug/workbench/src/benchmark.cpp.d -o debug/workbench/src/benchmark.cpp.o -c workbench/src/benchmark.cpp", 
+        "directory": "/home/wichtounet/dev/etl", 
+        "file": "/home/wichtounet/dev/etl/workbench/src/benchmark.cpp"
+    }, 
+    {
+        "command": "clang++ -g -fprofile-arcs -ftest-coverage -fsanitize=address,undefined -Iinclude -std=c++1y -Wextra -Wall -Qunused-arguments -Wuninitialized -Wsometimes-uninitialized -Wno-long-long -Winit-self -Wdocumentation -pedantic -Werror -Winvalid-pch -Ilib/include -ICatch/include -Itest/include -Icpm/include -MD -MF debug/workbench/src/benchmark_conv.cpp.d -o debug/workbench/src/benchmark_conv.cpp.o -c workbench/src/benchmark_conv.cpp", 
+        "directory": "/home/wichtounet/dev/etl", 
+        "file": "/home/wichtounet/dev/etl/workbench/src/benchmark_conv.cpp"
     }
 ]
