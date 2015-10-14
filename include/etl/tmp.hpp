@@ -69,7 +69,7 @@ template <std::size_t D1, std::size_t... D>
 std::size_t dyn_nth_size(std::size_t i) {
     return i == 0
                ? D1
-               : dyn_nth_size<D...>(i - 1)
+               : dyn_nth_size<D...>(i - 1);
 }
 
 template <typename S1, typename S2, typename Enable = void>
