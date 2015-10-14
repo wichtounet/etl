@@ -36,6 +36,9 @@ AlwaysBreakTemplateDeclarations: true
 # Nice alignement
 AlignConsecutiveAssignments: true
 
+# Improve ternary operators alignement
+BreakBeforeTernaryOperators: true
+
 # Tabs are bad news
 UseTab: Never
 
