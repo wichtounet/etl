@@ -14,8 +14,6 @@ Standard: Cpp11
 AccessModifierOffset: -4
 ConstructorInitializerIndentWidth: 8
 
-AlignConsecutiveAssignments: true
-
 # Only control statements should have spaces
 SpaceBeforeParens: ControlStatements
 
@@ -34,6 +32,9 @@ MaxEmptyLinesToKeep: 1
 
 # Templates should always be on a separate line
 AlwaysBreakTemplateDeclarations: true
+
+# Nice alignement
+AlignConsecutiveAssignments: true
 
 # Tabs are bad news
 UseTab: Never
