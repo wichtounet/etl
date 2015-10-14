@@ -150,19 +150,28 @@ coverage: debug_test
 coverage_view: coverage
 	firefox reports/coverage/index.html
 
-format:
-	find include/etl/ test -name "*.hpp" -o -name "*.cpp" | xargs clang-format -i -style=file
+CLANG_FORMAT ?= clang-format-3.7
+CLANG_MODERNIZE ?= clang-modernize-3.7
+CLANG_TIDY ?= clang-tidy-3.7
 
+format:
+	find include test workbench -name "*.hpp" -o -name "*.cpp" | xargs ${CLANG_FORMAT} -i -style=file
+
+# Note: test are not included on purpose (we want to force to test some operators on matrix/vector)
 modernize:
-	clang-modernize -add-override -loop-convert -pass-by-value -use-auto -use-nullptr -p ${PWD} -include *
+	find include workbench -name "*.hpp" -o -name "*.cpp" > etl_file_list
+	${CLANG_MODERNIZE} -add-override -loop-convert -pass-by-value -use-auto -use-nullptr -p ${PWD} -include-from=etl_file_list
+	rm etl_file_list
 
 # clang-tidy with some false positive checks removed
 tidy:
-	clang-tidy -checks='*,-llvm-include-order,-clang-analyzer-alpha.core.PointerArithm,-clang-analyzer-alpha.deadcode.UnreachableCode,-clang-analyzer-alpha.core.IdenticalExpr' -p ${PWD} test/*.cpp -header-filter='include/etl/*'
+	${CLANG_TIDY} -checks='*,-llvm-include-order,-clang-analyzer-alpha.core.PointerArithm,-clang-analyzer-alpha.deadcode.UnreachableCode,-clang-analyzer-alpha.core.IdenticalExpr' -p ${PWD} test/src/*.cpp -header-filter='include/etl/*' &> tidy_report_light
+	echo "The report from clang-tidy is availabe in tidy_report_light"
 
 # clang-tidy with all the checks
 tidy_all:
-	clang-tidy -checks='*' -p ${PWD} test/*.cpp -header-filter='include/etl/*'
+	${CLANG_TIDY} -checks='*' -p ${PWD} test/*.cpp -header-filter='include/etl/*' &> tidy_report_all
+	echo "The report from clang-tidy is availabe in tidy_report_all"
 
 doc:
 	doxygen Doxyfile
