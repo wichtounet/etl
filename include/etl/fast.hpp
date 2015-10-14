@@ -384,4 +384,3 @@ std::ostream& operator<<(std::ostream& os, const fast_matrix_impl<T, ST, SO, Dim
 }
 
 } //end of namespace etl
-
