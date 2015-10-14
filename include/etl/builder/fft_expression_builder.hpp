@@ -29,7 +29,8 @@ using ifft_value_type = std::conditional_t<is_complex<A>::value, value_t<A>, std
 
 template <typename A>
 using ifft_real_value_type = std::conditional_t<is_complex<A>::value, typename value_t<A>::value_type, value_t<A>>;
-}
+
+} //end of namespace detail
 
 template <typename A>
 auto fft_1d(A&& a) -> detail::temporary_unary_helper_type<detail::fft_value_type<A>, A, fft1_expr> {

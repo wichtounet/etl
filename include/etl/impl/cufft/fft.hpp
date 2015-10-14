@@ -667,7 +667,7 @@ void fft2_convolve(A&& /*unused*/, C&& /*unused*/) {}
 
 #endif
 
-} //end of namespace blas
+} //end of namespace cufft
 
 } //end of namespace impl
 

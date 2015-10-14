@@ -33,7 +33,7 @@ public:
             : generator(std::forward<Args>(args)...) {}
 
     generator_expr(const generator_expr& e) = default;
-    generator_expr(generator_expr&& e) = default;
+    generator_expr(generator_expr&& e) noexcept = default;
 
     //Expression are invariant
     generator_expr& operator=(const generator_expr& e) = delete;

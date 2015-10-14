@@ -366,7 +366,7 @@ template <typename T>
 std::unique_ptr<etl::complex<T>[]> twiddle_compute(const std::size_t n, std::size_t* factors, std::size_t n_factors, etl::complex<T>** twiddle) {
     std::unique_ptr<etl::complex<T>[]> trig = etl::allocate<etl::complex<T>>(n);
 
-    const T d_theta = -2.0 * M_PI / ((T)n);
+    const T d_theta = -2.0 * M_PI / (static_cast<T>(n));
 
     std::size_t t       = 0;
     std::size_t product = 1;

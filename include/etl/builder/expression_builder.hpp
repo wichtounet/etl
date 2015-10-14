@@ -388,7 +388,7 @@ decltype(auto) identity(E&& value) {
 }
 
 template <typename E>
-auto identity_derivative(E&&) {
+auto identity_derivative(E&& /*value*/) {
     return 1.0;
 }
 

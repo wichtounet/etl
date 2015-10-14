@@ -126,19 +126,15 @@ struct sub_view {
             : parent(parent), i(i) {}
 
     const_return_type operator[](std::size_t j) const {
-        if (decay_traits<parent_type>::storage_order == order::RowMajor) {
-            return parent[i * subsize(parent) + j];
-        } else {
-            return parent[i + dim<0>(parent) * j];
-        }
+        return decay_traits<parent_type>::storage_order == order::RowMajor
+                   ? parent[i * subsize(parent) + j]
+                   : parent[i + dim<0>(parent) * j];
     }
 
     return_type operator[](std::size_t j) {
-        if (decay_traits<parent_type>::storage_order == order::RowMajor) {
-            return parent[i * subsize(parent) + j];
-        } else {
-            return parent[i + dim<0>(parent) * j];
-        }
+        return decay_traits<parent_type>::storage_order == order::RowMajor
+                   ? parent[i * subsize(parent) + j]
+                   : parent[i + dim<0>(parent) * j];
     }
 
     template <typename... S>
@@ -356,11 +352,9 @@ struct dyn_matrix_view {
     }
 
     const_return_type operator()(std::size_t i, std::size_t j) const {
-        if (decay_traits<sub_type>::storage_order == order::RowMajor) {
-            return sub[i * columns + j];
-        } else {
-            return sub[i + rows * j];
-        }
+        return decay_traits<sub_type>::storage_order == order::RowMajor
+                   ? sub[i * columns + j]
+                   : sub[i + rows * j];
     }
 
     return_type operator[](std::size_t j) {
@@ -372,11 +366,9 @@ struct dyn_matrix_view {
     }
 
     return_type operator()(std::size_t i, std::size_t j) {
-        if (decay_traits<sub_type>::storage_order == order::RowMajor) {
-            return sub[i * columns + j];
-        } else {
-            return sub[i + rows * j];
-        }
+        return decay_traits<sub_type>::storage_order == order::RowMajor
+                   ? sub[i * columns + j]
+                   : sub[i + rows * j];
     }
 
     sub_type& value() {

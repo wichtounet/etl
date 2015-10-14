@@ -569,15 +569,15 @@ template <typename T, order SO, std::size_t D>
 std::ostream& operator<<(std::ostream& os, const dyn_matrix_impl<T, SO, D>& mat) {
     if (D == 1) {
         return os << "V[" << mat.size() << "]";
-    } else {
-        os << "M[" << mat.dim(0);
-
-        for (std::size_t i = 1; i < D; ++i) {
-            os << "," << mat.dim(i);
-        }
-
-        return os << "]";
     }
+
+    os << "M[" << mat.dim(0);
+
+    for (std::size_t i = 1; i < D; ++i) {
+        os << "," << mat.dim(i);
+    }
+
+    return os << "]";
 }
 
 } //end of namespace etl

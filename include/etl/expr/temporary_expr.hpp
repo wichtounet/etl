@@ -126,8 +126,8 @@ public:
     }
 
     //Move an expression
-    temporary_unary_expr(temporary_unary_expr&& e)
-            : _a(e._a), _c(optional_move<std::is_same<Forced, void>::value>(e._c)), allocated(e.allocated), evaluated(e.evaluated) {
+    temporary_unary_expr(temporary_unary_expr&& e) noexcept
+            : _a(e._a), _c(optional_move<std::is_same<Forced, void>::value>(e._c)), allocated(e.allocated), evaluated(e.evaluated){
         e.evaluated = false;
     }
 
@@ -230,7 +230,7 @@ public:
     }
 
     //Move an expression
-    temporary_binary_expr(temporary_binary_expr&& e)
+    temporary_binary_expr(temporary_binary_expr&& e) noexcept
             : _a(e._a), _b(e._b), _c(optional_move<std::is_same<Forced, void>::value>(e._c)), allocated(e.allocated), evaluated(e.evaluated) {
         e.evaluated = false;
     }

@@ -39,7 +39,7 @@ public:
 
     //Expresison can be copied and moved
     optimized_expr(const optimized_expr& e) = default;
-    optimized_expr(optimized_expr&& e) = default;
+    optimized_expr(optimized_expr&& e) noexcept = default;
 
     //Expressions are invariant
     optimized_expr& operator=(const optimized_expr& e) = delete;

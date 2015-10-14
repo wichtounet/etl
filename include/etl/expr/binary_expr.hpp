@@ -50,7 +50,7 @@ public:
 
     //Expresison can be copied and moved
     binary_expr(const binary_expr& e) = default;
-    binary_expr(binary_expr&& e) = default;
+    binary_expr(binary_expr&& e) noexcept = default;
 
     //Expressions are invariant
     binary_expr& operator=(const binary_expr& e) = delete;

@@ -84,7 +84,7 @@ TEMPLATE_TEST_CASE_2("magic/dyn_matrix_4", "magic(4)", Z, float, double) {
 TEMPLATE_TEST_CASE_2("fast_magic/dyn_matrix_1", "fast_magic(1)", Z, float, double) {
     auto m = etl::s(etl::magic<1, Z>());
 
-    REQUIRE(etl::decay_traits<decltype(m)>::is_fast == true);
+    REQUIRE(etl::decay_traits<decltype(m)>::is_fast);
     REQUIRE(etl::decay_traits<decltype(m)>::size(m) == 1);
     REQUIRE((std::is_same<typename decltype(m)::value_type, Z>::value));
     REQUIRE(etl::is_etl_expr<decltype(m)>::value);
@@ -103,7 +103,7 @@ TEMPLATE_TEST_CASE_2("fast_magic/dyn_matrix_1", "fast_magic(1)", Z, float, doubl
 TEMPLATE_TEST_CASE_2("fast_magic/dyn_matrix_2", "fast_magic(2)", Z, float, double) {
     auto m = etl::s(etl::magic<2, Z>());
 
-    REQUIRE(etl::decay_traits<decltype(m)>::is_fast == true);
+    REQUIRE(etl::decay_traits<decltype(m)>::is_fast);
     REQUIRE(etl::decay_traits<decltype(m)>::size(m) == 4);
     REQUIRE(etl::size(m) == 4);
 
@@ -120,7 +120,7 @@ TEMPLATE_TEST_CASE_2("fast_magic/dyn_matrix_2", "fast_magic(2)", Z, float, doubl
 TEMPLATE_TEST_CASE_2("fast_magic/dyn_matrix_3", "fast_magic(3)", Z, float, double) {
     auto m = etl::s(etl::magic<3, Z>());
 
-    REQUIRE(etl::decay_traits<decltype(m)>::is_fast == true);
+    REQUIRE(etl::decay_traits<decltype(m)>::is_fast);
     REQUIRE(etl::decay_traits<decltype(m)>::size(m) == 9);
     REQUIRE(etl::size(m) == 9);
 
@@ -139,7 +139,7 @@ TEMPLATE_TEST_CASE_2("fast_magic/dyn_matrix_3", "fast_magic(3)", Z, float, doubl
 TEMPLATE_TEST_CASE_2("fast_magic/dyn_matrix_4", "fast_magic(4)", Z, float, double) {
     auto m = etl::s(etl::magic<4, Z>());
 
-    REQUIRE(etl::decay_traits<decltype(m)>::is_fast == true);
+    REQUIRE(etl::decay_traits<decltype(m)>::is_fast);
     REQUIRE(etl::decay_traits<decltype(m)>::size(m) == 16);
     REQUIRE(etl::size(m) == 16);
 

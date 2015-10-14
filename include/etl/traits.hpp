@@ -1160,29 +1160,23 @@ constexpr std::pair<std::size_t, std::size_t> index_to_2d(E&& sub, std::size_t i
 
 template <typename E>
 std::size_t row_stride(E&& e) {
-    if (decay_traits<E>::storage_order == order::RowMajor) {
-        return etl::dim<1>(e);
-    } else {
-        return 1;
-    }
+    return decay_traits<E>::storage_order == order::RowMajor
+               ? etl::dim<1>(e)
+               : 1;
 }
 
 template <typename E>
 std::size_t col_stride(E&& e) {
-    if (decay_traits<E>::storage_order == order::RowMajor) {
-        return 1;
-    } else {
-        return etl::dim<0>(e);
-    }
+    return decay_traits<E>::storage_order == order::RowMajor
+               ? 1
+               : etl::dim<0>(e);
 }
 
 template <typename E>
 std::size_t major_stride(E&& e) {
-    if (decay_traits<E>::storage_order == order::RowMajor) {
-        return etl::dim<1>(e);
-    } else {
-        return etl::dim<0>(e);
-    }
+    return decay_traits<E>::storage_order == order::RowMajor
+               ? etl::dim<1>(e)
+               : etl::dim<0>(e);
 }
 
 } //end of namespace etl

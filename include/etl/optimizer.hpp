@@ -14,11 +14,11 @@ namespace etl {
 
 template <typename Expr>
 struct optimizable {
-    static bool is(const Expr&) {
+    static bool is(const Expr& /*unused*/) {
         return false;
     }
 
-    static bool is_deep(const Expr&) {
+    static bool is_deep(const Expr& /*unused*/) {
         return false;
     }
 };
@@ -26,7 +26,7 @@ struct optimizable {
 //unary_expr
 template <typename T, typename Expr, typename UnaryOp>
 struct optimizable<etl::unary_expr<T, Expr, UnaryOp>> {
-    static bool is(const etl::unary_expr<T, Expr, UnaryOp>&) {
+    static bool is(const etl::unary_expr<T, Expr, UnaryOp>& /*unused*/) {
         if (std::is_same<UnaryOp, plus_unary_op<T>>::value) {
             return true;
         }
@@ -42,7 +42,7 @@ struct optimizable<etl::unary_expr<T, Expr, UnaryOp>> {
 //binary_expr with two scalar
 template <typename T, typename BinaryOp>
 struct optimizable<etl::binary_expr<T, etl::scalar<T>, BinaryOp, etl::scalar<T>>> {
-    static bool is(const etl::binary_expr<T, etl::scalar<T>, BinaryOp, etl::scalar<T>>&) {
+    static bool is(const etl::binary_expr<T, etl::scalar<T>, BinaryOp, etl::scalar<T>>& /*unused*/) {
         if (std::is_same<BinaryOp, mul_binary_op<T>>::value) {
             return true;
         }
@@ -130,7 +130,7 @@ struct optimizable<etl::binary_expr<T, LeftExpr, BinaryOp, etl::scalar<T>>> {
 //General form of binary expr
 template <typename T, typename LeftExpr, typename BinaryOp, typename RightExpr>
 struct optimizable<etl::binary_expr<T, LeftExpr, BinaryOp, RightExpr>> {
-    static bool is(const etl::binary_expr<T, LeftExpr, BinaryOp, RightExpr>&) {
+    static bool is(const etl::binary_expr<T, LeftExpr, BinaryOp, RightExpr>& /*unused*/) {
         return false;
     }
 
@@ -141,7 +141,7 @@ struct optimizable<etl::binary_expr<T, LeftExpr, BinaryOp, RightExpr>> {
 
 template <typename T, typename A, typename Op, typename Forced>
 struct optimizable<etl::temporary_unary_expr<T, A, Op, Forced>> {
-    static bool is(const etl::temporary_unary_expr<T, A, Op, Forced>&) {
+    static bool is(const etl::temporary_unary_expr<T, A, Op, Forced>& /*unused*/) {
         return false;
     }
 
@@ -152,7 +152,7 @@ struct optimizable<etl::temporary_unary_expr<T, A, Op, Forced>> {
 
 template <typename T, typename A, typename B, typename Op, typename Forced>
 struct optimizable<etl::temporary_binary_expr<T, A, B, Op, Forced>> {
-    static bool is(const etl::temporary_binary_expr<T, A, B, Op, Forced>&) {
+    static bool is(const etl::temporary_binary_expr<T, A, B, Op, Forced>& /*unused*/) {
         return false;
     }
 
@@ -174,7 +174,7 @@ bool is_optimizable_deep(const Expr& expr) {
 template <typename Expr>
 struct transformer {
     template <typename Builder>
-    static void transform(Builder, const Expr&) {
+    static void transform(Builder /*unused*/, const Expr& /*unused*/) {
         std::cout << "Arrived in parent, should not happen" << std::endl;
     }
 };
@@ -247,7 +247,7 @@ void transform(Builder parent_builder, const Expr& expr) {
 template <typename Expr>
 struct optimizer {
     template <typename Builder>
-    static void apply(Builder, const Expr&) {
+    static void apply(Builder /*unused*/, const Expr& /*unused*/) {
         std::cout << "Leaf node" << std::endl;
     }
 };

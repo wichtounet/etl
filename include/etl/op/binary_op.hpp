@@ -190,7 +190,7 @@ struct min_scalar_op {
     using vec_type = intrinsic_type<T>;
 
     S s;
-    min_scalar_op(S s)
+    explicit min_scalar_op(S s)
             : s(s) {}
 
     constexpr T apply(const T& x) const noexcept {
@@ -217,7 +217,7 @@ struct max_scalar_op {
     using vec_type = intrinsic_type<T>;
 
     S s;
-    max_scalar_op(S s)
+    explicit max_scalar_op(S s)
             : s(s) {}
 
     constexpr T apply(const T& x) const noexcept {
