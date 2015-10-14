@@ -28,26 +28,26 @@ namespace etl {
 
 namespace detail {
 
-template<typename C, typename Enable = void>
+template <typename C, typename Enable = void>
 struct inplace_square_transpose {
-    template<typename CC>
-    static void apply(CC&& c){
+    template <typename CC>
+    static void apply(CC&& c) {
         using std::swap;
 
         const std::size_t N = etl::dim<0>(c);
 
-        for(std::size_t i = 0; i < N - 1; ++i){
-            for(std::size_t j = i + 1; j < N; ++j){
+        for (std::size_t i = 0; i < N - 1; ++i) {
+            for (std::size_t j = i + 1; j < N; ++j) {
                 swap(c(i, j), c(j, i));
             }
         }
     }
 };
 
-template<typename C, typename Enable = void>
+template <typename C, typename Enable = void>
 struct inplace_rectangular_transpose {
-    template<typename CC>
-    static void apply(CC&& mat){
+    template <typename CC>
+    static void apply(CC&& mat) {
         auto copy = force_temporary(mat);
 
         auto data = mat.memory_start();
@@ -56,16 +56,16 @@ struct inplace_rectangular_transpose {
         const std::size_t N = etl::dim<0>(mat);
         const std::size_t M = etl::dim<1>(mat);
 
-        for(std::size_t i = 0; i < N; ++i){
-            for(std::size_t j = 0; j < M; ++j){
+        for (std::size_t i = 0; i < N; ++i) {
+            for (std::size_t j = 0; j < M; ++j) {
                 data[j * N + i] = copy(i, j);
             }
         }
     }
 
     //This implementation is really slow but has O(1) space
-    template<typename CC>
-    static void real_inplace(CC&& mat){
+    template <typename CC>
+    static void real_inplace(CC&& mat) {
         using std::swap;
 
         const std::size_t N = etl::dim<0>(mat);
@@ -73,11 +73,11 @@ struct inplace_rectangular_transpose {
 
         auto data = mat.memory_start();
 
-        for(std::size_t k = 0; k < N*M; k++) {
+        for (std::size_t k = 0; k < N * M; k++) {
             auto idx = k;
             do {
                 idx = (idx % N) * M + (idx / N);
-            } while(idx < k);
+            } while (idx < k);
             std::swap(data[k], data[idx]);
         }
     }
@@ -85,35 +85,35 @@ struct inplace_rectangular_transpose {
 
 #ifdef ETL_MKL_MODE
 
-template<typename C>
+template <typename C>
 struct inplace_square_transpose<C, std::enable_if_t<has_direct_access<C>::value && is_single_precision<C>::value>> {
-    template<typename CC>
-    static void apply(CC&& c){
+    template <typename CC>
+    static void apply(CC&& c) {
         mkl_simatcopy('R', 'T', etl::dim<0>(c), etl::dim<1>(c), 1.0f, c.memory_start(), etl::dim<1>(c), etl::dim<0>(c));
     }
 };
 
-template<typename C>
+template <typename C>
 struct inplace_square_transpose<C, std::enable_if_t<has_direct_access<C>::value && is_double_precision<C>::value>> {
-    template<typename CC>
-    static void apply(CC&& c){
+    template <typename CC>
+    static void apply(CC&& c) {
         mkl_dimatcopy('R', 'T', etl::dim<0>(c), etl::dim<1>(c), 1.0, c.memory_start(), etl::dim<1>(c), etl::dim<0>(c));
     }
 };
 
-template<typename C>
+template <typename C>
 struct inplace_rectangular_transpose<C, std::enable_if_t<has_direct_access<C>::value && is_single_precision<C>::value>> {
-    template<typename CC>
-    static void apply(CC&& c){
+    template <typename CC>
+    static void apply(CC&& c) {
         auto copy = force_temporary(c);
         mkl_somatcopy('R', 'T', etl::dim<0>(c), etl::dim<1>(c), 1.0, copy.memory_start(), etl::dim<1>(c), c.memory_start(), etl::dim<0>(c));
     }
 };
 
-template<typename C>
+template <typename C>
 struct inplace_rectangular_transpose<C, std::enable_if_t<has_direct_access<C>::value && is_double_precision<C>::value>> {
-    template<typename CC>
-    static void apply(CC&& c){
+    template <typename CC>
+    static void apply(CC&& c) {
         auto copy = force_temporary(c);
         mkl_domatcopy('R', 'T', etl::dim<0>(c), etl::dim<1>(c), 1.0, copy.memory_start(), etl::dim<1>(c), c.memory_start(), etl::dim<0>(c));
     }

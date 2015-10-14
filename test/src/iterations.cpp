@@ -7,78 +7,78 @@
 
 #include "test_light.hpp"
 
-TEMPLATE_TEST_CASE_2( "iterable/fast_matrix", "iterable", Z, float, double ) {
+TEMPLATE_TEST_CASE_2("iterable/fast_matrix", "iterable", Z, float, double) {
     etl::fast_matrix<Z, 2, 2> test_matrix(5.5);
 
-    for(auto& v : test_matrix){
+    for (auto& v : test_matrix) {
         REQUIRE(v == 5.5);
     }
 }
 
-TEMPLATE_TEST_CASE_2( "iterable/dyn_matrix", "iterable", Z, float, double ) {
-    etl::dyn_matrix<Z> test_matrix(2,2,5.5);
+TEMPLATE_TEST_CASE_2("iterable/dyn_matrix", "iterable", Z, float, double) {
+    etl::dyn_matrix<Z> test_matrix(2, 2, 5.5);
 
-    for(auto& v : test_matrix){
+    for (auto& v : test_matrix) {
         REQUIRE(v == 5.5);
     }
 }
 
-TEMPLATE_TEST_CASE_2( "iterable/binary_expr", "iterable", Z, float, double ) {
+TEMPLATE_TEST_CASE_2("iterable/binary_expr", "iterable", Z, float, double) {
     etl::fast_matrix<Z, 2, 2> a(5.5);
 
     auto expr = a + a;
 
-    for(auto v : expr){
+    for (auto v : expr) {
         REQUIRE(v == 11.0);
     }
 }
 
-TEMPLATE_TEST_CASE_2( "iterable/unary_expr", "iterable", Z, float, double ) {
+TEMPLATE_TEST_CASE_2("iterable/unary_expr", "iterable", Z, float, double) {
     etl::fast_matrix<Z, 2, 2> a(5.5);
 
     auto expr = -a;
 
-    for(auto v : expr){
+    for (auto v : expr) {
         REQUIRE(v == -5.5);
     }
 }
 
-TEMPLATE_TEST_CASE_2( "iterable/identity", "iterable", Z, float, double ) {
+TEMPLATE_TEST_CASE_2("iterable/identity", "iterable", Z, float, double) {
     etl::fast_matrix<Z, 2, 2> a(5.5);
 
     auto expr = a(0);
 
-    for(auto v : expr){
+    for (auto v : expr) {
         REQUIRE(v == 5.5);
     }
 }
 
-TEMPLATE_TEST_CASE_2( "iterable/identity_2", "iterable", Z, float, double ) {
+TEMPLATE_TEST_CASE_2("iterable/identity_2", "iterable", Z, float, double) {
     etl::fast_matrix<Z, 2, 2> a(5.5);
 
     auto expr = sub(a + a, 0);
 
-    for(auto v : expr){
+    for (auto v : expr) {
         REQUIRE(v == 11.0);
     }
 }
 
-TEMPLATE_TEST_CASE_2( "iterable/stable_transform_expr", "iterable", Z, float, double ) {
+TEMPLATE_TEST_CASE_2("iterable/stable_transform_expr", "iterable", Z, float, double) {
     etl::fast_matrix<Z, 2, 2> a(5.5);
 
     auto expr = mean_l(a);
 
-    for(auto v : expr){
+    for (auto v : expr) {
         REQUIRE(v == 5.5);
     }
 }
 
-TEMPLATE_TEST_CASE_2( "iterator/binary_expr", "iterator", Z, float, double ) {
-    etl::fast_matrix<Z, 2, 2> a({1,2,3,4});
+TEMPLATE_TEST_CASE_2("iterator/binary_expr", "iterator", Z, float, double) {
+    etl::fast_matrix<Z, 2, 2> a({1, 2, 3, 4});
 
     auto expr = a + a;
 
-    auto it = expr.begin();
+    auto it  = expr.begin();
     auto end = expr.end();
 
     REQUIRE(std::distance(it, end) == 4);
@@ -99,7 +99,7 @@ TEMPLATE_TEST_CASE_2( "iterator/binary_expr", "iterator", Z, float, double ) {
     REQUIRE(it != end);
 
     auto temp = it + 1;
-    REQUIRE(*(it-1) == 6.0);
+    REQUIRE(*(it - 1) == 6.0);
     REQUIRE(temp == end);
 
     REQUIRE(end == expr.end());
@@ -113,16 +113,16 @@ TEMPLATE_TEST_CASE_2( "iterator/binary_expr", "iterator", Z, float, double ) {
     REQUIRE(std::accumulate(std::begin(expr), std::end(expr), 0.0) == 20.0);
 }
 
-TEMPLATE_TEST_CASE_2( "iterator/const identity", "iterator", Z, float, double ) {
-    etl::fast_matrix<Z, 2, 4> a({1,2,3,4,1,2,3,4});
+TEMPLATE_TEST_CASE_2("iterator/const identity", "iterator", Z, float, double) {
+    etl::fast_matrix<Z, 2, 4> a({1, 2, 3, 4, 1, 2, 3, 4});
 
     const auto expr = a(0);
 
-    for(auto& v : expr){
+    for (auto& v : expr) {
         REQUIRE(v > 0);
     }
 
-    auto it = expr.begin();
+    auto it  = expr.begin();
     auto end = expr.end();
 
     REQUIRE(std::distance(it, end) == 4);
@@ -143,7 +143,7 @@ TEMPLATE_TEST_CASE_2( "iterator/const identity", "iterator", Z, float, double ) 
     REQUIRE(it != end);
 
     auto temp = it + 1;
-    REQUIRE(*(it-1) == 3.0);
+    REQUIRE(*(it - 1) == 3.0);
     REQUIRE(temp == end);
 
     REQUIRE(end == expr.end());
@@ -157,17 +157,17 @@ TEMPLATE_TEST_CASE_2( "iterator/const identity", "iterator", Z, float, double ) 
     REQUIRE(std::accumulate(std::begin(expr), std::end(expr), 0.0) == 10.0);
 }
 
-TEMPLATE_TEST_CASE_2( "iterator/identity", "iterator", Z, float, double ) {
-    etl::fast_matrix<Z, 2, 4> a({1,2,3,4,1,2,3,4});
+TEMPLATE_TEST_CASE_2("iterator/identity", "iterator", Z, float, double) {
+    etl::fast_matrix<Z, 2, 4> a({1, 2, 3, 4, 1, 2, 3, 4});
 
     auto expr = a(0);
 
-    for(auto& v : expr){
+    for (auto& v : expr) {
         ++v;
         REQUIRE(v > 0);
     }
 
-    auto it = expr.begin();
+    auto it  = expr.begin();
     auto end = expr.end();
 
     REQUIRE(std::distance(it, end) == 4);
@@ -188,7 +188,7 @@ TEMPLATE_TEST_CASE_2( "iterator/identity", "iterator", Z, float, double ) {
     REQUIRE(it != end);
 
     auto temp = it + 1;
-    REQUIRE(*(it-1) == 4.0);
+    REQUIRE(*(it - 1) == 4.0);
     REQUIRE(temp == end);
 
     REQUIRE(end == expr.end());

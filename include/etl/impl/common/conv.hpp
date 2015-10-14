@@ -13,16 +13,16 @@ namespace impl {
 
 namespace common {
 
-template<typename T>
-void left_same_kernel(const T* in, const std::size_t /*n*/, const T* kernel, std::size_t m, T* out){
-    std::size_t left = (m - 1) / 2;
+template <typename T>
+void left_same_kernel(const T* in, const std::size_t /*n*/, const T* kernel, std::size_t m, T* out) {
+    std::size_t left  = (m - 1) / 2;
     std::size_t right = m / 2;
 
     //Left invalid part
-    for(std::size_t j = 0 ; j < left ; ++j){
+    for (std::size_t j = 0; j < left; ++j) {
         T temp = 0.0;
 
-        for(std::size_t l = 0 ; l <= j + right; ++l){
+        for (std::size_t l = 0; l <= j + right; ++l) {
             temp += in[l] * kernel[j - l + right];
         }
 
@@ -30,17 +30,17 @@ void left_same_kernel(const T* in, const std::size_t /*n*/, const T* kernel, std
     }
 }
 
-template<typename T>
-void right_same_kernel(const T* in, const std::size_t n, const T* kernel, std::size_t m, T* out){
-    std::size_t left = (m - 1) / 2;
+template <typename T>
+void right_same_kernel(const T* in, const std::size_t n, const T* kernel, std::size_t m, T* out) {
+    std::size_t left  = (m - 1) / 2;
     std::size_t right = m / 2;
 
     //Right invalid part
-    for(std::size_t j = n - right ; j < n; ++j){
+    for (std::size_t j = n - right; j < n; ++j) {
         T temp = 0.0;
 
         std::size_t hi = std::min<int>(n - 1, j + right);
-        for(std::size_t l = j - left ; l <= hi; ++l){
+        for (std::size_t l = j - left; l <= hi; ++l) {
             temp += in[l] * kernel[j - l + m / 2];
         }
 
@@ -48,17 +48,17 @@ void right_same_kernel(const T* in, const std::size_t n, const T* kernel, std::s
     }
 }
 
-template<typename T>
-void left_full_kernel(const T* in, const std::size_t n, const T* kernel, std::size_t m, T* out){
+template <typename T>
+void left_full_kernel(const T* in, const std::size_t n, const T* kernel, std::size_t m, T* out) {
     std::size_t left = m - 1;
 
     //Left invalid part
-    for(std::size_t i = 0; i < left; ++i) {
+    for (std::size_t i = 0; i < left; ++i) {
         const auto hi = i < n - 1 ? i : n - 1;
 
         T temp = 0.0;
 
-        for(std::size_t j = 0; j <= hi; ++j) {
+        for (std::size_t j = 0; j <= hi; ++j) {
             temp += in[j] * kernel[i - j];
         }
 
@@ -66,20 +66,20 @@ void left_full_kernel(const T* in, const std::size_t n, const T* kernel, std::si
     }
 }
 
-template<typename T>
-void right_full_kernel(const T* in, const std::size_t n, const T* kernel, std::size_t m, T* out){
+template <typename T>
+void right_full_kernel(const T* in, const std::size_t n, const T* kernel, std::size_t m, T* out) {
     std::size_t right = m - 1;
 
     auto c = n + m - 1;
 
     //Right invalid part
-    for(std::size_t i = c - right; i < c; ++i) {
+    for (std::size_t i = c - right; i < c; ++i) {
         const auto lo = i >= m - 1 ? i - (m - 1) : 0;
         const auto hi = i < n - 1 ? i : n - 1;
 
         T temp = 0.0;
 
-        for(std::size_t j = lo; j <= hi; ++j) {
+        for (std::size_t j = lo; j <= hi; ++j) {
             temp += in[j] * kernel[i - j];
         }
 

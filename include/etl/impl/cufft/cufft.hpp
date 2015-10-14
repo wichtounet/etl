@@ -18,24 +18,24 @@ namespace cufft {
 struct cufft_handle {
     cufftHandle handle;
 
-    cufftHandle& get(){
+    cufftHandle& get() {
         return handle;
     }
 
-    ~cufft_handle(){
+    ~cufft_handle() {
         cufftDestroy(handle);
     }
 };
 
-inline cufft_handle start_cufft(){
+inline cufft_handle start_cufft() {
     return cufft_handle();
 }
 
-inline cufftComplex* complex_cast(std::complex<float>* ptr){
+inline cufftComplex* complex_cast(std::complex<float>* ptr) {
     return reinterpret_cast<cufftComplex*>(ptr);
 }
 
-inline cufftDoubleComplex* complex_cast(std::complex<double>* ptr){
+inline cufftDoubleComplex* complex_cast(std::complex<double>* ptr) {
     return reinterpret_cast<cufftDoubleComplex*>(ptr);
 }
 

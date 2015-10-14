@@ -8,7 +8,7 @@
 
 #include <cmath>
 
-TEMPLATE_TEST_CASE_2( "direct_access/traits", "has_direct_access", Z, double, float) {
+TEMPLATE_TEST_CASE_2("direct_access/traits", "has_direct_access", Z, double, float) {
     etl::fast_matrix<Z, 3, 2> a;
 
     using expr_1 = etl::fast_matrix<Z, 3, 2>;
@@ -23,11 +23,11 @@ TEMPLATE_TEST_CASE_2( "direct_access/traits", "has_direct_access", Z, double, fl
     REQUIRE(!etl::has_direct_access<expr_3>::value);
     REQUIRE(!etl::has_direct_access<expr_4>::value);
 
-    using expr_5 = decltype(a(1));
-    using expr_6 = decltype(etl::reshape<2,3>(a));
-    using expr_7 = decltype(etl::reshape<2,3>(a+a));
-    using expr_8 = decltype(etl::reshape(a, 2, 3));
-    using expr_9 = decltype(etl::reshape(a+a, 2, 3));
+    using expr_5  = decltype(a(1));
+    using expr_6  = decltype(etl::reshape<2, 3>(a));
+    using expr_7  = decltype(etl::reshape<2, 3>(a + a));
+    using expr_8  = decltype(etl::reshape(a, 2, 3));
+    using expr_9  = decltype(etl::reshape(a + a, 2, 3));
     using expr_10 = decltype(etl::row(a, 1));
 
     REQUIRE(etl::has_direct_access<expr_5>::value);
@@ -38,18 +38,18 @@ TEMPLATE_TEST_CASE_2( "direct_access/traits", "has_direct_access", Z, double, fl
     REQUIRE(etl::has_direct_access<expr_10>::value);
 }
 
-TEMPLATE_TEST_CASE_2( "direct_access/fast_matrix", "direct_access", Z, double, float) {
+TEMPLATE_TEST_CASE_2("direct_access/fast_matrix", "direct_access", Z, double, float) {
     etl::fast_matrix<Z, 5, 5> test_matrix{etl::magic<5>()};
 
     REQUIRE(test_matrix.size() == 25);
 
-    auto it = test_matrix.memory_start();
+    auto it  = test_matrix.memory_start();
     auto end = test_matrix.memory_end();
 
     REQUIRE(std::is_pointer<decltype(it)>::value);
     REQUIRE(std::is_pointer<decltype(end)>::value);
 
-    for(std::size_t i = 0; i < test_matrix.size(); ++i){
+    for (std::size_t i = 0; i < test_matrix.size(); ++i) {
         REQUIRE(test_matrix[i] == *it);
         REQUIRE(it != end);
         ++it;
@@ -58,18 +58,18 @@ TEMPLATE_TEST_CASE_2( "direct_access/fast_matrix", "direct_access", Z, double, f
     REQUIRE(it == end);
 }
 
-TEMPLATE_TEST_CASE_2( "direct_access/dyn_matrix", "direct_access", Z, double, float) {
+TEMPLATE_TEST_CASE_2("direct_access/dyn_matrix", "direct_access", Z, double, float) {
     etl::dyn_matrix<Z, 2> test_matrix{etl::magic(5)};
 
     REQUIRE(test_matrix.size() == 25);
 
-    auto it = test_matrix.memory_start();
+    auto it  = test_matrix.memory_start();
     auto end = test_matrix.memory_end();
 
     REQUIRE(std::is_pointer<decltype(it)>::value);
     REQUIRE(std::is_pointer<decltype(end)>::value);
 
-    for(std::size_t i = 0; i < test_matrix.size(); ++i){
+    for (std::size_t i = 0; i < test_matrix.size(); ++i) {
         REQUIRE(test_matrix[i] == *it);
         REQUIRE(it != end);
         ++it;
@@ -78,18 +78,18 @@ TEMPLATE_TEST_CASE_2( "direct_access/dyn_matrix", "direct_access", Z, double, fl
     REQUIRE(it == end);
 }
 
-TEMPLATE_TEST_CASE_2( "direct_access/sub_view", "direct_access", Z, double, float) {
+TEMPLATE_TEST_CASE_2("direct_access/sub_view", "direct_access", Z, double, float) {
     etl::dyn_matrix<Z, 2> test_matrix{etl::magic(5)};
 
     auto v = test_matrix(1);
 
-    auto it = v.memory_start();
+    auto it  = v.memory_start();
     auto end = v.memory_end();
 
     REQUIRE(std::is_pointer<decltype(it)>::value);
     REQUIRE(std::is_pointer<decltype(end)>::value);
 
-    for(std::size_t i = 0; i < etl::size(v); ++i){
+    for (std::size_t i = 0; i < etl::size(v); ++i) {
         REQUIRE(v[i] == *it);
         REQUIRE(it != end);
         ++it;
@@ -98,18 +98,18 @@ TEMPLATE_TEST_CASE_2( "direct_access/sub_view", "direct_access", Z, double, floa
     REQUIRE(it == end);
 }
 
-TEMPLATE_TEST_CASE_2( "direct_access/reshape", "direct_access", Z, double, float) {
+TEMPLATE_TEST_CASE_2("direct_access/reshape", "direct_access", Z, double, float) {
     etl::dyn_matrix<Z, 2> test_matrix{etl::magic(6)};
 
-    auto v = etl::reshape<3,12>(test_matrix);
+    auto v = etl::reshape<3, 12>(test_matrix);
 
-    auto it = v.memory_start();
+    auto it  = v.memory_start();
     auto end = v.memory_end();
 
     REQUIRE(std::is_pointer<decltype(it)>::value);
     REQUIRE(std::is_pointer<decltype(end)>::value);
 
-    for(std::size_t i = 0; i < etl::size(v); ++i){
+    for (std::size_t i = 0; i < etl::size(v); ++i) {
         REQUIRE(v[i] == *it);
         REQUIRE(it != end);
         ++it;
@@ -118,18 +118,18 @@ TEMPLATE_TEST_CASE_2( "direct_access/reshape", "direct_access", Z, double, float
     REQUIRE(it == end);
 }
 
-TEMPLATE_TEST_CASE_2( "direct_access/reshape_dyn", "direct_access", Z, double, float) {
+TEMPLATE_TEST_CASE_2("direct_access/reshape_dyn", "direct_access", Z, double, float) {
     etl::dyn_matrix<Z, 2> test_matrix{etl::magic(6)};
 
     auto v = etl::reshape(test_matrix, 3, 12);
 
-    auto it = v.memory_start();
+    auto it  = v.memory_start();
     auto end = v.memory_end();
 
     REQUIRE(std::is_pointer<decltype(it)>::value);
     REQUIRE(std::is_pointer<decltype(end)>::value);
 
-    for(std::size_t i = 0; i < etl::size(v); ++i){
+    for (std::size_t i = 0; i < etl::size(v); ++i) {
         REQUIRE(v[i] == *it);
         REQUIRE(it != end);
         ++it;
@@ -138,18 +138,18 @@ TEMPLATE_TEST_CASE_2( "direct_access/reshape_dyn", "direct_access", Z, double, f
     REQUIRE(it == end);
 }
 
-TEMPLATE_TEST_CASE_2( "direct_access/dim_view", "direct_access", Z, double, float) {
+TEMPLATE_TEST_CASE_2("direct_access/dim_view", "direct_access", Z, double, float) {
     etl::dyn_matrix<Z, 2> test_matrix{etl::magic(6)};
 
     auto v = row(test_matrix, 2);
 
-    auto it = v.memory_start();
+    auto it  = v.memory_start();
     auto end = v.memory_end();
 
     REQUIRE(std::is_pointer<decltype(it)>::value);
     REQUIRE(std::is_pointer<decltype(end)>::value);
 
-    for(std::size_t i = 0; i < etl::size(v); ++i){
+    for (std::size_t i = 0; i < etl::size(v); ++i) {
         REQUIRE(v[i] == *it);
         REQUIRE(it != end);
         ++it;

@@ -16,13 +16,13 @@ namespace etl {
 
 namespace detail {
 
-template<typename T>
+template <typename T>
 using build_type = std::conditional_t<
     is_etl_value<T>::value,
     const std::decay_t<T>&,
     std::decay_t<T>>;
 
-template<typename T>
+template <typename T>
 using build_identity_type = std::conditional_t<
     is_etl_value<T>::value,
     std::conditional_t<
@@ -31,65 +31,65 @@ using build_identity_type = std::conditional_t<
         std::decay_t<T>&>,
     std::decay_t<T>>;
 
-template<typename LE, typename RE, template<typename> class OP>
+template <typename LE, typename RE, template <typename> class OP>
 using left_binary_helper = binary_expr<value_t<LE>, build_type<LE>, OP<value_t<LE>>, build_type<RE>>;
 
-template<typename LE, typename RE, typename OP>
+template <typename LE, typename RE, typename OP>
 using left_binary_helper_op = binary_expr<value_t<LE>, build_type<LE>, OP, build_type<RE>>;
 
-template<typename LE, typename RE, template<typename> class OP>
+template <typename LE, typename RE, template <typename> class OP>
 using right_binary_helper = binary_expr<value_t<RE>, build_type<LE>, OP<value_t<RE>>, build_type<RE>>;
 
-template<typename LE, typename RE, typename OP>
+template <typename LE, typename RE, typename OP>
 using right_binary_helper_op = binary_expr<value_t<RE>, build_type<LE>, OP, build_type<RE>>;
 
-template<typename E, template<typename> class OP>
+template <typename E, template <typename> class OP>
 using unary_helper = unary_expr<value_t<E>, build_type<E>, OP<value_t<E>>>;
 
-template<typename E, typename OP>
+template <typename E, typename OP>
 using identity_helper = unary_expr<value_t<E>, OP, identity_op>;
 
-template<typename E, typename OP>
+template <typename E, typename OP>
 using virtual_helper = unary_expr<E, OP, transform_op>;
 
-template<typename E, template<typename> class OP>
+template <typename E, template <typename> class OP>
 using stable_transform_helper = unary_expr<value_t<E>, OP<build_type<E>>, transform_op>;
 
-template<typename LE, typename RE, template<typename,typename> class OP>
+template <typename LE, typename RE, template <typename, typename> class OP>
 using stable_transform_binary_helper = unary_expr<value_t<LE>, OP<build_type<LE>, build_type<RE>>, transform_op>;
 
-template<typename E, template<typename> class OP, typename... Args>
-auto make_transform_expr(Args&&... args){
+template <typename E, template <typename> class OP, typename... Args>
+auto make_transform_expr(Args&&... args) {
     return detail::stable_transform_helper<E, OP>{OP<detail::build_type<E>>(std::forward<Args>(args)...)};
 }
 
-template<typename E, typename OP, typename... Args>
-auto make_stateful_unary_expr(Args&&... args){
+template <typename E, typename OP, typename... Args>
+auto make_stateful_unary_expr(Args&&... args) {
     return unary_expr<value_t<E>, build_type<E>, stateful_op<OP>>(std::forward<Args>(args)...);
 }
 
-template<typename A, typename B, template<typename> class OP>
+template <typename A, typename B, template <typename> class OP>
 using temporary_binary_helper = temporary_binary_expr<value_t<A>, build_type<A>, build_type<B>, OP<value_t<A>>, void>;
 
-template<typename A, template<typename> class OP>
+template <typename A, template <typename> class OP>
 using temporary_unary_helper = temporary_unary_expr<value_t<A>, build_type<A>, OP<value_t<A>>, void>;
 
-template<typename T, typename A, template<typename> class OP>
+template <typename T, typename A, template <typename> class OP>
 using temporary_unary_helper_type = temporary_unary_expr<T, build_type<A>, OP<T>, void>;
 
-template<typename A, typename B, typename C, template<typename> class OP>
+template <typename A, typename B, typename C, template <typename> class OP>
 using forced_temporary_binary_helper = temporary_binary_expr<value_t<A>, build_type<A>, build_type<B>, OP<value_t<A>>, build_identity_type<C>>;
 
-template<typename A, typename C, template<typename> class OP>
+template <typename A, typename C, template <typename> class OP>
 using forced_temporary_unary_helper = temporary_unary_expr<value_t<A>, build_type<A>, OP<value_t<A>>, build_identity_type<C>>;
 
-template<typename T, typename A, typename C, template<typename> class OP>
+template <typename T, typename A, typename C, template <typename> class OP>
 using forced_temporary_unary_helper_type = temporary_unary_expr<T, build_type<A>, OP<T>, build_identity_type<C>>;
 
-template<typename A, typename B, template<typename, std::size_t> class OP, std::size_t D>
+template <typename A, typename B, template <typename, std::size_t> class OP, std::size_t D>
 using dim_temporary_binary_helper = temporary_binary_expr<value_t<A>, build_type<A>, build_type<B>, OP<value_t<A>, D>, void>;
 
-template<typename A, typename B, typename C, template<typename, std::size_t> class OP, std::size_t D>
+template <typename A, typename B, typename C, template <typename, std::size_t> class OP, std::size_t D>
 using dim_forced_temporary_binary_helper = temporary_binary_expr<value_t<A>, build_type<A>, build_type<B>, OP<value_t<A>, D>, build_identity_type<C>>;
 
 } //end of namespace detail

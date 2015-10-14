@@ -19,7 +19,7 @@ namespace etl {
 /*!
  * \brief CRTP class to inject functions testing the dimensions.
  */
-template<typename D>
+template <typename D>
 struct dim_testable {
     using derived_t = D;
 

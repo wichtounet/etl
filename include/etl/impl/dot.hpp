@@ -24,18 +24,18 @@ namespace etl {
 
 namespace detail {
 
-template<typename A, typename B, typename Enable = void>
+template <typename A, typename B, typename Enable = void>
 struct dot_impl {
-    static auto apply(const A& a, const B& b){
+    static auto apply(const A& a, const B& b) {
         return sum(scale(a, b));
     }
 };
 
 #ifdef ETL_BLAS_MODE
 
-template<typename A, typename B>
-struct dot_impl <A, B, std::enable_if_t<all_single_precision<A, B>::value && all_dma<A, B>::value>> {
-    static float apply(const A& a, const B& b){
+template <typename A, typename B>
+struct dot_impl<A, B, std::enable_if_t<all_single_precision<A, B>::value && all_dma<A, B>::value>> {
+    static float apply(const A& a, const B& b) {
         const float* m_a = a.memory_start();
         const float* m_b = b.memory_start();
 
@@ -43,9 +43,9 @@ struct dot_impl <A, B, std::enable_if_t<all_single_precision<A, B>::value && all
     }
 };
 
-template<typename A, typename B>
-struct dot_impl <A, B, std::enable_if_t<all_double_precision<A, B>::value && all_dma<A, B>::value>> {
-    static double apply(const A& a, const B& b){
+template <typename A, typename B>
+struct dot_impl<A, B, std::enable_if_t<all_double_precision<A, B>::value && all_dma<A, B>::value>> {
+    static double apply(const A& a, const B& b) {
         const double* m_a = a.memory_start();
         const double* m_b = b.memory_start();
 

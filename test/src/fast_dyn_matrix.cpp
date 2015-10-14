@@ -8,29 +8,29 @@
 
 // Init tests
 
-TEMPLATE_TEST_CASE_2( "fast_dyn_matrix/init_1", "fast_dyn_matrix::fast_dyn_matrix(T)", Z, float, double ) {
+TEMPLATE_TEST_CASE_2("fast_dyn_matrix/init_1", "fast_dyn_matrix::fast_dyn_matrix(T)", Z, float, double) {
     etl::fast_dyn_matrix<Z, 2, 2> test_matrix(3.3);
 
     REQUIRE(test_matrix.size() == 4);
 
-    for(std::size_t i = 0; i < test_matrix.size(); ++i){
+    for (std::size_t i = 0; i < test_matrix.size(); ++i) {
         REQUIRE(test_matrix[i] == Z(3.3));
     }
 }
 
-TEMPLATE_TEST_CASE_2( "fast_dyn_matrix/init_2", "fast_dyn_matrix::operator=(T)", Z, float, double ) {
+TEMPLATE_TEST_CASE_2("fast_dyn_matrix/init_2", "fast_dyn_matrix::operator=(T)", Z, float, double) {
     etl::fast_dyn_matrix<Z, 2, 2> test_matrix;
 
     test_matrix = 3.3;
 
     REQUIRE(test_matrix.size() == 4);
 
-    for(std::size_t i = 0; i < test_matrix.size(); ++i){
+    for (std::size_t i = 0; i < test_matrix.size(); ++i) {
         REQUIRE(test_matrix[i] == Z(3.3));
     }
 }
 
-TEMPLATE_TEST_CASE_2( "fast_dyn_matrix/init_3", "fast_dyn_matrix::fast_dyn_matrix(initializer_list)", Z, float, double ) {
+TEMPLATE_TEST_CASE_2("fast_dyn_matrix/init_3", "fast_dyn_matrix::fast_dyn_matrix(initializer_list)", Z, float, double) {
     etl::fast_dyn_matrix<Z, 2, 2> test_matrix = {1.0, 3.0, 5.0, 2.0};
 
     REQUIRE(test_matrix.size() == 4);
@@ -40,7 +40,7 @@ TEMPLATE_TEST_CASE_2( "fast_dyn_matrix/init_3", "fast_dyn_matrix::fast_dyn_matri
     REQUIRE(test_matrix[2] == 5.0);
 }
 
-TEMPLATE_TEST_CASE_2( "fast_dyn_matrix/access", "fast_dyn_matrix::operator()", Z, float, double ) {
+TEMPLATE_TEST_CASE_2("fast_dyn_matrix/access", "fast_dyn_matrix::operator()", Z, float, double) {
     etl::fast_dyn_matrix<Z, 2, 3, 2> test_matrix({1.0, -2.0, 3.0, 0.5, 0.0, -1, 1.0, -2.0, 3.0, 0.5, 0.0, -1});
 
     REQUIRE(test_matrix(0, 0, 0) == 1.0);
@@ -60,7 +60,7 @@ TEMPLATE_TEST_CASE_2( "fast_dyn_matrix/access", "fast_dyn_matrix::operator()", Z
 
 // Binary operators test
 
-TEMPLATE_TEST_CASE_2( "fast_dyn_matrix/add_scalar_1", "fast_dyn_matrix::operator+", Z, float, double ) {
+TEMPLATE_TEST_CASE_2("fast_dyn_matrix/add_scalar_1", "fast_dyn_matrix::operator+", Z, float, double) {
     etl::fast_dyn_matrix<Z, 2, 2> test_matrix = {-1.0, 2.0, 5.5, 1.0};
 
     test_matrix = 1.0 + test_matrix;
@@ -70,7 +70,7 @@ TEMPLATE_TEST_CASE_2( "fast_dyn_matrix/add_scalar_1", "fast_dyn_matrix::operator
     REQUIRE(test_matrix[2] == 6.5);
 }
 
-TEMPLATE_TEST_CASE_2( "fast_dyn_matrix/add_scalar_2", "fast_dyn_matrix::operator+", Z, float, double ) {
+TEMPLATE_TEST_CASE_2("fast_dyn_matrix/add_scalar_2", "fast_dyn_matrix::operator+", Z, float, double) {
     etl::fast_dyn_matrix<Z, 2, 2> test_matrix = {-1.0, 2.0, 5.5, 1.0};
 
     test_matrix = test_matrix + 1.0;
@@ -80,7 +80,7 @@ TEMPLATE_TEST_CASE_2( "fast_dyn_matrix/add_scalar_2", "fast_dyn_matrix::operator
     REQUIRE(test_matrix[2] == 6.5);
 }
 
-TEMPLATE_TEST_CASE_2( "fast_dyn_matrix/add_scalar_4", "fast_dyn_matrix::operator+=", Z, float, double ) {
+TEMPLATE_TEST_CASE_2("fast_dyn_matrix/add_scalar_4", "fast_dyn_matrix::operator+=", Z, float, double) {
     etl::fast_dyn_matrix<Z, 2, 2, 2> test_matrix = {-1.0, 2.0, 5.5, 1.0, 1.0, 1.0, 1.0, 1.0};
 
     test_matrix += 1.0;
@@ -91,31 +91,31 @@ TEMPLATE_TEST_CASE_2( "fast_dyn_matrix/add_scalar_4", "fast_dyn_matrix::operator
     REQUIRE(test_matrix[7] == 2.0);
 }
 
-TEMPLATE_TEST_CASE_2( "fast_dyn_matrix/add_1", "fast_dyn_matrix::operator+", Z, float, double ) {
+TEMPLATE_TEST_CASE_2("fast_dyn_matrix/add_1", "fast_dyn_matrix::operator+", Z, float, double) {
     etl::fast_dyn_matrix<Z, 2, 2> a = {-1.0, 2.0, 5.0, 1.0};
     etl::fast_dyn_matrix<Z, 2, 2> b = {2.5, 3.0, 4.0, 1.0};
 
     etl::fast_dyn_matrix<Z, 2, 2> c(a + b);
 
-    REQUIRE(c[0] ==  1.5);
-    REQUIRE(c[1] ==  5.0);
-    REQUIRE(c[2] ==  9.0);
+    REQUIRE(c[0] == 1.5);
+    REQUIRE(c[1] == 5.0);
+    REQUIRE(c[2] == 9.0);
 }
 
-TEMPLATE_TEST_CASE_2( "fast_dyn_matrix/add_2", "fast_dyn_matrix::operator+=", Z, float, double ) {
+TEMPLATE_TEST_CASE_2("fast_dyn_matrix/add_2", "fast_dyn_matrix::operator+=", Z, float, double) {
     etl::fast_dyn_matrix<Z, 2, 2> a = {-1.0, 2.0, 5.0, 1.0};
     etl::fast_dyn_matrix<Z, 2, 2> b = {2.5, 3.0, 4.0, 1.0};
 
     a += b;
 
-    REQUIRE(a[0] ==  1.5);
-    REQUIRE(a[1] ==  5.0);
-    REQUIRE(a[2] ==  9.0);
+    REQUIRE(a[0] == 1.5);
+    REQUIRE(a[1] == 5.0);
+    REQUIRE(a[2] == 9.0);
 }
 
 // Unary operator tests
 
-TEMPLATE_TEST_CASE_2( "fast_dyn_matrix/log_1", "fast_dyn_matrix::log", Z, float, double ) {
+TEMPLATE_TEST_CASE_2("fast_dyn_matrix/log_1", "fast_dyn_matrix::log", Z, float, double) {
     etl::fast_dyn_matrix<Z, 2, 2> a = {-1.0, 2.0, 5.0, 1.0};
 
     etl::fast_dyn_matrix<Z, 2, 2> d(log(a));
@@ -125,7 +125,7 @@ TEMPLATE_TEST_CASE_2( "fast_dyn_matrix/log_1", "fast_dyn_matrix::log", Z, float,
     REQUIRE(d[2] == std::log(Z(5.0)));
 }
 
-TEMPLATE_TEST_CASE_2( "fast_dyn_matrix/log_2", "fast_dyn_matrix::log", Z, float, double ) {
+TEMPLATE_TEST_CASE_2("fast_dyn_matrix/log_2", "fast_dyn_matrix::log", Z, float, double) {
     etl::fast_dyn_matrix<Z, 2, 2, 1> a = {-1.0, 2.0, 5.0, 1.0};
 
     etl::fast_dyn_matrix<Z, 2, 2, 1> d(log(a));
@@ -135,7 +135,7 @@ TEMPLATE_TEST_CASE_2( "fast_dyn_matrix/log_2", "fast_dyn_matrix::log", Z, float,
     REQUIRE(d[2] == std::log(Z(5.0)));
 }
 
-TEMPLATE_TEST_CASE_2( "fast_dyn_matrix/unary_unary", "fast_dyn_matrix::abs", Z, float, double ) {
+TEMPLATE_TEST_CASE_2("fast_dyn_matrix/unary_unary", "fast_dyn_matrix::abs", Z, float, double) {
     etl::fast_dyn_matrix<Z, 2, 2> a = {-1.0, 2.0, 0.0, 3.0};
 
     etl::fast_dyn_matrix<Z, 2, 2> d(abs(sign(a)));
@@ -145,7 +145,7 @@ TEMPLATE_TEST_CASE_2( "fast_dyn_matrix/unary_unary", "fast_dyn_matrix::abs", Z, 
     REQUIRE(d[2] == 0.0);
 }
 
-TEMPLATE_TEST_CASE_2( "fast_dyn_matrix/unary_binary_1", "fast_dyn_matrix::abs", Z, float, double ) {
+TEMPLATE_TEST_CASE_2("fast_dyn_matrix/unary_binary_1", "fast_dyn_matrix::abs", Z, float, double) {
     etl::fast_dyn_matrix<Z, 2, 2> a = {-1.0, 2.0, 0.0, 1.0};
 
     etl::fast_dyn_matrix<Z, 2, 2> d(abs(a + a));
@@ -155,7 +155,7 @@ TEMPLATE_TEST_CASE_2( "fast_dyn_matrix/unary_binary_1", "fast_dyn_matrix::abs", 
     REQUIRE(d[2] == 0.0);
 }
 
-TEMPLATE_TEST_CASE_2( "fast_dyn_matrix/min", "fast_dyn_matrix::min", Z, float, double ) {
+TEMPLATE_TEST_CASE_2("fast_dyn_matrix/min", "fast_dyn_matrix::min", Z, float, double) {
     etl::fast_dyn_matrix<Z, 2, 2> a = {-1.0, 2.0, 0.0, 1.0};
 
     etl::fast_dyn_matrix<Z, 2, 2> d(min(a, 1.0));
@@ -168,7 +168,7 @@ TEMPLATE_TEST_CASE_2( "fast_dyn_matrix/min", "fast_dyn_matrix::min", Z, float, d
 
 // Complex tests
 
-TEMPLATE_TEST_CASE_2( "fast_dyn_matrix/complex", "fast_dyn_matrix::complex", Z, float, double ) {
+TEMPLATE_TEST_CASE_2("fast_dyn_matrix/complex", "fast_dyn_matrix::complex", Z, float, double) {
     etl::fast_dyn_matrix<Z, 2, 2> a = {-1.0, 2.0, 5.0, 1.0};
     etl::fast_dyn_matrix<Z, 2, 2> b = {2.5, 3.0, 4.0, 1.0};
     etl::fast_dyn_matrix<Z, 2, 2> c = {1.2, -3.0, 3.5, 1.0};
@@ -180,7 +180,7 @@ TEMPLATE_TEST_CASE_2( "fast_dyn_matrix/complex", "fast_dyn_matrix::complex", Z, 
     REQUIRE(d[2] == Approx(0.68627));
 }
 
-TEMPLATE_TEST_CASE_2( "fast_dyn_matrix/special_1", "", Z, float, double ) {
+TEMPLATE_TEST_CASE_2("fast_dyn_matrix/special_1", "", Z, float, double) {
     etl::fast_dyn_matrix<Z, 2, 2> a(3.3);
     etl::fast_matrix<Z, 2, 2> b(4.4);
 
@@ -188,7 +188,7 @@ TEMPLATE_TEST_CASE_2( "fast_dyn_matrix/special_1", "", Z, float, double ) {
 
     REQUIRE(a.size() == 4);
 
-    for(std::size_t i = 0; i < a.size(); ++i){
+    for (std::size_t i = 0; i < a.size(); ++i) {
         REQUIRE(a[i] == Z(4.4));
     }
 
@@ -196,12 +196,12 @@ TEMPLATE_TEST_CASE_2( "fast_dyn_matrix/special_1", "", Z, float, double ) {
 
     b = a;
 
-    for(std::size_t i = 0; i < a.size(); ++i){
+    for (std::size_t i = 0; i < a.size(); ++i) {
         REQUIRE(b[i] == Z(3.3));
     }
 }
 
-TEMPLATE_TEST_CASE_2( "fast_dyn_matrix/special_2", "", Z, float, double ) {
+TEMPLATE_TEST_CASE_2("fast_dyn_matrix/special_2", "", Z, float, double) {
     etl::fast_dyn_matrix<Z, 4, 3> a(3.3);
     etl::fast_matrix<Z, 2, 6> b(4.4);
 
@@ -209,7 +209,7 @@ TEMPLATE_TEST_CASE_2( "fast_dyn_matrix/special_2", "", Z, float, double ) {
 
     REQUIRE(a.size() == 12);
 
-    for(std::size_t i = 0; i < a.size(); ++i){
+    for (std::size_t i = 0; i < a.size(); ++i) {
         REQUIRE(a[i] == Z(4.4));
     }
 
@@ -217,7 +217,7 @@ TEMPLATE_TEST_CASE_2( "fast_dyn_matrix/special_2", "", Z, float, double ) {
 
     b = a;
 
-    for(std::size_t i = 0; i < b.size(); ++i){
+    for (std::size_t i = 0; i < b.size(); ++i) {
         REQUIRE(b[i] == Z(3.3));
     }
 }

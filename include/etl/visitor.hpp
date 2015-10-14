@@ -9,7 +9,7 @@
 
 namespace etl {
 
-template<typename D>
+template <typename D>
 struct etl_visitor {
     using derived_t = D;
 
@@ -28,18 +28,18 @@ struct etl_visitor {
         as_derived()(v.rhs());
     }
 
-    template<typename T, cpp_enable_if(etl::is_view<T>::value)>
+    template <typename T, cpp_enable_if(etl::is_view<T>::value)>
     void operator()(T& view) const {
         as_derived()(view.value());
     }
 
-    template<typename L, typename R>
-    void operator()(mm_mul_transformer<L,R>& transformer) const {
+    template <typename L, typename R>
+    void operator()(mm_mul_transformer<L, R>& transformer) const {
         as_derived()(transformer.lhs());
         as_derived()(transformer.rhs());
     }
 
-    template<typename T, cpp_enable_if(etl::is_transformer<T>::value)>
+    template <typename T, cpp_enable_if(etl::is_transformer<T>::value)>
     void operator()(T& transformer) const {
         as_derived()(transformer.value());
     }
@@ -49,12 +49,12 @@ struct etl_visitor {
         //Leaf
     }
 
-    template<typename T, cpp_enable_if(etl::is_magic_view<T>::value)>
+    template <typename T, cpp_enable_if(etl::is_magic_view<T>::value)>
     void operator()(const T& /*unused*/) const {
         //Leaf
     }
 
-    template<typename T, cpp_enable_if(etl::is_etl_value<T>::value)>
+    template <typename T, cpp_enable_if(etl::is_etl_value<T>::value)>
     void operator()(const T& /*unused*/) const {
         //Leaf
     }
@@ -66,28 +66,28 @@ struct etl_visitor {
 };
 
 template <typename Visitor, typename Expr, cpp_enable_if(Visitor::template enabled<Expr>::value)>
-void apply_visitor(const Visitor& visitor, Expr& expr){
+void apply_visitor(const Visitor& visitor, Expr& expr) {
     visitor(expr);
 }
 
 template <typename Visitor, typename Expr, cpp_enable_if(Visitor::template enabled<Expr>::value)>
-void apply_visitor(Visitor& visitor, Expr& expr){
+void apply_visitor(Visitor& visitor, Expr& expr) {
     visitor(expr);
 }
 
 template <typename Visitor, typename Expr, cpp_enable_if(Visitor::template enabled<Expr>::value)>
-void apply_visitor(Expr& expr){
+void apply_visitor(Expr& expr) {
     Visitor visitor;
     visitor(expr);
 }
 
 template <typename Visitor, typename Expr, cpp_disable_if(Visitor::template enabled<Expr>::value)>
-void apply_visitor(const Visitor& /*visitor*/, Expr& /*expr*/){}
+void apply_visitor(const Visitor& /*visitor*/, Expr& /*expr*/) {}
 
 template <typename Visitor, typename Expr, cpp_disable_if(Visitor::template enabled<Expr>::value)>
-void apply_visitor(Visitor& /*visitor*/, Expr& /*expr*/){}
+void apply_visitor(Visitor& /*visitor*/, Expr& /*expr*/) {}
 
 template <typename Visitor, typename Expr, cpp_disable_if(Visitor::template enabled<Expr>::value)>
-void apply_visitor(Expr& /*expr*/){}
+void apply_visitor(Expr& /*expr*/) {}
 
 } //end of namespace etl

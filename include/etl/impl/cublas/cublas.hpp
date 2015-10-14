@@ -18,17 +18,18 @@ namespace cublas {
 struct cublas_handle {
     cublasHandle_t handle;
 
-    cublas_handle(cublasHandle_t handle) : handle(handle) {}
+    cublas_handle(cublasHandle_t handle)
+            : handle(handle) {}
 
-    cublasHandle_t get(){
+    cublasHandle_t get() {
         return handle;
     }
-    ~cublas_handle(){
+    ~cublas_handle() {
         cublasDestroy(handle);
     }
 };
 
-inline cublas_handle start_cublas(){
+inline cublas_handle start_cublas() {
     cublasHandle_t handle;
     cublasCreate(&handle);
     return {handle};

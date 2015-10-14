@@ -15,19 +15,20 @@ namespace impl {
 
 namespace cuda {
 
-template<typename T>
+template <typename T>
 struct cuda_memory {
     T* memory;
-    cuda_memory(T* memory) : memory(memory) {}
+    cuda_memory(T* memory)
+            : memory(memory) {}
     T* get() const {
         return memory;
     }
-    ~cuda_memory(){
+    ~cuda_memory() {
         cudaFree(memory);
     }
 };
 
-template<typename E>
+template <typename E>
 auto cuda_allocate(const E& expr, bool copy = false) -> cuda_memory<value_t<E>> {
     value_t<E>* memory;
 
@@ -39,19 +40,19 @@ auto cuda_allocate(const E& expr, bool copy = false) -> cuda_memory<value_t<E>> 
         exit(EXIT_FAILURE);
     }
 
-    if(copy){
+    if (copy) {
         cudaMemcpy(memory, expr.memory_start(), etl::size(expr) * sizeof(value_t<E>), cudaMemcpyHostToDevice);
     }
 
     return {memory};
 }
 
-template<typename E>
+template <typename E>
 auto cuda_allocate_copy(const E& expr) -> cuda_memory<value_t<E>> {
     return cuda_allocate(expr, true);
 }
 
-template<typename E>
+template <typename E>
 auto cuda_allocate(E* ptr, std::size_t n, bool copy = false) -> cuda_memory<E> {
     E* memory;
 
@@ -63,14 +64,14 @@ auto cuda_allocate(E* ptr, std::size_t n, bool copy = false) -> cuda_memory<E> {
         exit(EXIT_FAILURE);
     }
 
-    if(copy){
+    if (copy) {
         cudaMemcpy(memory, ptr, n * sizeof(E), cudaMemcpyHostToDevice);
     }
 
     return {memory};
 }
 
-template<typename E>
+template <typename E>
 auto cuda_allocate_copy(E* ptr, std::size_t n) -> cuda_memory<E> {
     return cuda_allocate(ptr, n, true);
 }

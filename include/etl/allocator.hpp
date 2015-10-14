@@ -9,19 +9,19 @@
 
 #include <memory>
 
-#include "etl/traits_lite.hpp"   //forward declaration of the traits
+#include "etl/traits_lite.hpp" //forward declaration of the traits
 
 namespace etl {
 
-template<typename Expr, std::size_t A>
+template <typename Expr, std::size_t A>
 struct aligned_allocator {
-    template<typename T>
-    static T* allocate(std::size_t size){
+    template <typename T>
+    static T* allocate(std::size_t size) {
         auto required_bytes = sizeof(T) * size;
-        auto offset = (A - 1) + sizeof(uintptr_t);
-        auto orig = malloc(required_bytes + offset);
+        auto offset         = (A - 1) + sizeof(uintptr_t);
+        auto orig           = malloc(required_bytes + offset);
 
-        if(!orig){
+        if (!orig) {
             return nullptr;
         }
 
@@ -30,24 +30,24 @@ struct aligned_allocator {
         return reinterpret_cast<T*>(aligned);
     }
 
-    template<typename T>
-    static void release(T* ptr){
+    template <typename T>
+    static void release(T* ptr) {
         free((reinterpret_cast<void**>(ptr))[-1]);
     }
 };
 
-template<typename T>
-auto allocate(std::size_t size){
+template <typename T>
+auto allocate(std::size_t size) {
     return std::make_unique<T[]>(size);
 }
 
-template<typename T>
-T* aligned_allocate(std::size_t size){
+template <typename T>
+T* aligned_allocate(std::size_t size) {
     return aligned_allocator<void, 32>::allocate<T>(size);
 }
 
-template<typename T>
-void aligned_release(T* ptr){
+template <typename T>
+void aligned_release(T* ptr) {
     return aligned_allocator<void, 32>::release<T>(ptr);
 }
 

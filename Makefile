@@ -154,8 +154,9 @@ CLANG_FORMAT ?= clang-format-3.7
 CLANG_MODERNIZE ?= clang-modernize-3.7
 CLANG_TIDY ?= clang-tidy-3.7
 
+# Note: Workbench is no included on purpose because of poor macro alignment
 format:
-	find include test workbench -name "*.hpp" -o -name "*.cpp" | xargs ${CLANG_FORMAT} -i -style=file
+	find include test -name "*.hpp" -o -name "*.cpp" | xargs ${CLANG_FORMAT} -i -style=file
 
 # Note: test are not included on purpose (we want to force to test some operators on matrix/vector)
 modernize:

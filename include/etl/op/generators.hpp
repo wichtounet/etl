@@ -7,8 +7,8 @@
 
 #pragma once
 
-#include <chrono>      //for std::time
-#include <iosfwd>     //For stream support
+#include <chrono> //for std::time
+#include <iosfwd> //For stream support
 #include <random>
 
 #include "cpp_utils/tmp.hpp"
@@ -17,43 +17,44 @@ namespace etl {
 
 using random_engine = std::mt19937_64;
 
-template<typename T = double>
+template <typename T = double>
 struct normal_generator_op {
     using value_type = T;
 
     random_engine rand_engine;
     std::normal_distribution<value_type> normal_distribution;
 
-    normal_generator_op(T mean, T stddev) : rand_engine(std::time(nullptr)), normal_distribution(mean, stddev) {}
+    normal_generator_op(T mean, T stddev)
+            : rand_engine(std::time(nullptr)), normal_distribution(mean, stddev) {}
 
-    value_type operator()(){
+    value_type operator()() {
         return normal_distribution(rand_engine);
     }
 };
 
-template<typename T = double>
+template <typename T = double>
 struct sequence_generator_op {
     using value_type = T;
 
     const value_type start;
     value_type current;
 
-    explicit sequence_generator_op(value_type start = 0) : start(start), current(start) {}
+    explicit sequence_generator_op(value_type start = 0)
+            : start(start), current(start) {}
 
-    value_type operator()(){
+    value_type operator()() {
         return current++;
     }
 };
 
-template<typename T>
-std::ostream& operator<<(std::ostream& os, const sequence_generator_op<T>& s){
+template <typename T>
+std::ostream& operator<<(std::ostream& os, const sequence_generator_op<T>& s) {
     return os << "[" << s.start << ",...]";
 }
 
-template<typename T>
-std::ostream& operator<<(std::ostream& os, const normal_generator_op<T>& /*s*/){
+template <typename T>
+std::ostream& operator<<(std::ostream& os, const normal_generator_op<T>& /*s*/) {
     return os << "N(0,1)";
 }
 
 } //end of namespace etl
-

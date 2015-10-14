@@ -18,16 +18,15 @@
 
 namespace etl {
 
-
 /*!
  * \brief Define traits to get vectorization information for types.
  *
  * This traits are overloaded by SSE/AVX implementation for types that are vectorizable.
  */
-template<typename T>
+template <typename T>
 struct intrinsic_traits {
-    static constexpr const bool vectorizable = false; ///< Boolean flag indicating if the type is vectorizable or not
-    static constexpr const std::size_t alignment = 1; ///< Necessary number of bytes of alignment for this type
+    static constexpr const bool vectorizable     = false; ///< Boolean flag indicating if the type is vectorizable or not
+    static constexpr const std::size_t alignment = 1;     ///< Necessary number of bytes of alignment for this type
 
     using intrinsic_type = T;
 };
@@ -35,7 +34,7 @@ struct intrinsic_traits {
 /*!
  * \brief Helper to get the intrinsic corresponding type of a vectorizable type.
  */
-template<typename T>
+template <typename T>
 using intrinsic_type = typename intrinsic_traits<T>::intrinsic_type;
 
 } //end of namespace etl

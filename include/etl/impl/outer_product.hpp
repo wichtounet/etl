@@ -20,12 +20,12 @@ namespace etl {
 
 namespace detail {
 
-template<typename A, typename B, typename C, typename Enable = void>
+template <typename A, typename B, typename C, typename Enable = void>
 struct outer_product_impl {
-    static void apply(const A& a, const B& b, C&& c){
-        for(std::size_t i = 0; i < etl::dim<0>(c); ++i){
-            for(std::size_t j = 0; j < etl::dim<1>(c); ++j){
-                c(i,j) = a(i) * b(j);
+    static void apply(const A& a, const B& b, C&& c) {
+        for (std::size_t i = 0; i < etl::dim<0>(c); ++i) {
+            for (std::size_t j = 0; j < etl::dim<1>(c); ++j) {
+                c(i, j) = a(i) * b(j);
             }
         }
     }
@@ -33,9 +33,9 @@ struct outer_product_impl {
 
 #ifdef ETL_BLAS_MODE
 
-template<typename A, typename B, typename C>
-struct outer_product_impl <A, B, C, std::enable_if_t<all_single_precision<A, B, C>::value && all_dma<A, B, C>::value>> {
-    static void apply(const A& a, const B& b, C&& c){
+template <typename A, typename B, typename C>
+struct outer_product_impl<A, B, C, std::enable_if_t<all_single_precision<A, B, C>::value && all_dma<A, B, C>::value>> {
+    static void apply(const A& a, const B& b, C&& c) {
         c = 0;
 
         cblas_sger(
@@ -44,14 +44,13 @@ struct outer_product_impl <A, B, C, std::enable_if_t<all_single_precision<A, B, 
             1.0,
             a.memory_start(), 1,
             b.memory_start(), 1,
-            c.memory_start(), etl::dim<0>(b)
-        );
+            c.memory_start(), etl::dim<0>(b));
     }
 };
 
-template<typename A, typename B, typename C>
-struct outer_product_impl <A, B, C, std::enable_if_t<all_double_precision<A, B, C>::value && all_dma<A, B, C>::value>> {
-    static void apply(const A& a, const B& b, C&& c){
+template <typename A, typename B, typename C>
+struct outer_product_impl<A, B, C, std::enable_if_t<all_double_precision<A, B, C>::value && all_dma<A, B, C>::value>> {
+    static void apply(const A& a, const B& b, C&& c) {
         c = 0;
 
         cblas_dger(
@@ -60,8 +59,7 @@ struct outer_product_impl <A, B, C, std::enable_if_t<all_double_precision<A, B, 
             1.0,
             a.memory_start(), 1,
             b.memory_start(), 1,
-            c.memory_start(), etl::dim<0>(b)
-        );
+            c.memory_start(), etl::dim<0>(b));
     }
 };
 

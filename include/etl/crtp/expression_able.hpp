@@ -21,7 +21,7 @@ namespace etl {
  *
  * All the functions returns new expressions, no modificatio of the expression is done.j
  */
-template<typename D>
+template <typename D>
 struct expression_able {
     using derived_t = D;
 
@@ -37,8 +37,8 @@ struct expression_able {
      * \brief Scale the expression by a scalar factor or another expression.
      * \return A new expression representing the scaling of this expression.
      */
-    template<typename E>
-    auto scale(E&& e){
+    template <typename E>
+    auto scale(E&& e) {
         return etl::scale(as_derived(), std::forward<E>(e));
     }
 
@@ -46,7 +46,7 @@ struct expression_able {
      * \brief Flip the matrix horizontally and vertically.
      * \return A new expression representing the horizontal and vertical flipping of the matrix.
      */
-    ETL_DEBUG_AUTO_TRICK auto fflip(){
+    ETL_DEBUG_AUTO_TRICK auto fflip() {
         return etl::fflip(as_derived());
     }
 
@@ -54,7 +54,7 @@ struct expression_able {
      * \brief Flip the matrix horizontally.
      * \return A new expression representing the horizontal flipping of the matrix.
      */
-    ETL_DEBUG_AUTO_TRICK auto hflip(){
+    ETL_DEBUG_AUTO_TRICK auto hflip() {
         return etl::hflip(as_derived());
     }
 
@@ -62,7 +62,7 @@ struct expression_able {
      * \brief Flip the matrix vertically.
      * \return A new expression representing the vertical flipping of the matrix.
      */
-    ETL_DEBUG_AUTO_TRICK auto vflip(){
+    ETL_DEBUG_AUTO_TRICK auto vflip() {
         return etl::vflip(as_derived());
     }
 
@@ -70,7 +70,7 @@ struct expression_able {
      * \brief Transpose the matrix
      * \return A new expression representing the transposition of this expression.
      */
-    ETL_DEBUG_AUTO_TRICK auto transpose(){
+    ETL_DEBUG_AUTO_TRICK auto transpose() {
         return etl::transpose(as_derived());
     }
 };

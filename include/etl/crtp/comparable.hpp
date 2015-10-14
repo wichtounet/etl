@@ -17,7 +17,7 @@ namespace etl {
 /*!
  * \brief CRTP class to inject comparison operators.
  */
-template<typename D>
+template <typename D>
 struct comparable {
     using derived_t = D;
 
@@ -34,9 +34,9 @@ struct comparable {
      *
      * \return true if the expressions contains the same sequence of values, false othwerise.
      */
-    template<typename E>
-    bool operator==(const E& rhs){
-        if(etl::size(as_derived()) != etl::size(rhs)){
+    template <typename E>
+    bool operator==(const E& rhs) {
+        if (etl::size(as_derived()) != etl::size(rhs)) {
             return false;
         }
 
@@ -50,8 +50,8 @@ struct comparable {
      *
      * \return false if the expressions contains the same sequence of values, true othwerise.
      */
-    template<typename E>
-    bool operator!=(const E& rhs){
+    template <typename E>
+    bool operator!=(const E& rhs) {
         return !(as_derived() == rhs);
     }
 };

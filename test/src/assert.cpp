@@ -11,7 +11,7 @@
 #include "etl/etl_light.hpp"
 #include "catch.hpp"
 
-TEST_CASE( "dyn_vector/assert", "assert" ) {
+TEST_CASE("dyn_vector/assert", "assert") {
     etl::dyn_vector<double> a = {-1.0, 2.0, 5.0};
     etl::dyn_vector<double> b = {2.5, 3.0, 4.0, 1.0};
 

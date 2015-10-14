@@ -13,9 +13,9 @@
 
 // conv_2d_valid_multi
 
-TEMPLATE_TEST_CASE_2( "conv_2d_valid_multi/1", "[conv] [conv2]", Z, double, float ) {
-    etl::fast_matrix<Z, 3, 3> I = {1.0, 2.0, 3.0, 0.0, 1.0, 1.0, 3.0, 2.0, 1.0};
-    etl::fast_matrix<Z, 2, 2, 2> K = {2.0, 0.0, 0.5, 0.5,  2.0, 0.0, 0.5, 0.5};
+TEMPLATE_TEST_CASE_2("conv_2d_valid_multi/1", "[conv] [conv2]", Z, double, float) {
+    etl::fast_matrix<Z, 3, 3> I    = {1.0, 2.0, 3.0, 0.0, 1.0, 1.0, 3.0, 2.0, 1.0};
+    etl::fast_matrix<Z, 2, 2, 2> K = {2.0, 0.0, 0.5, 0.5, 2.0, 0.0, 0.5, 0.5};
 
     etl::fast_matrix<Z, 2, 2, 2> c_1;
     etl::fast_matrix<Z, 2, 2, 2> c_2;
@@ -25,14 +25,14 @@ TEMPLATE_TEST_CASE_2( "conv_2d_valid_multi/1", "[conv] [conv2]", Z, double, floa
 
     conv_2d_valid_multi(I, K, c_2);
 
-    for(std::size_t i = 0; i < etl::size(c_1); ++i){
+    for (std::size_t i = 0; i < etl::size(c_1); ++i) {
         REQUIRE(c_1[i] == Approx(c_2[i]));
     }
 }
 
-TEMPLATE_TEST_CASE_2( "conv_2d_valid_multi/2", "[conv] [conv2]", Z, double, float ) {
-    etl::fast_matrix<Z, 3, 3> I = {1.0, 2.0, 3.0, 0.0, 1.0, 1.0, 3.0, 2.0, 1.0};
-    etl::fast_matrix<Z, 2, 2, 2> K = {2.0, 0.0, 0.5, 0.5,  1.0, 0.5, 0.7, 0.1};
+TEMPLATE_TEST_CASE_2("conv_2d_valid_multi/2", "[conv] [conv2]", Z, double, float) {
+    etl::fast_matrix<Z, 3, 3> I    = {1.0, 2.0, 3.0, 0.0, 1.0, 1.0, 3.0, 2.0, 1.0};
+    etl::fast_matrix<Z, 2, 2, 2> K = {2.0, 0.0, 0.5, 0.5, 1.0, 0.5, 0.7, 0.1};
 
     etl::fast_matrix<Z, 2, 2, 2> c_1;
     etl::fast_matrix<Z, 2, 2, 2> c_2;
@@ -42,14 +42,14 @@ TEMPLATE_TEST_CASE_2( "conv_2d_valid_multi/2", "[conv] [conv2]", Z, double, floa
 
     conv_2d_valid_multi(I, K, c_2);
 
-    for(std::size_t i = 0; i < etl::size(c_1); ++i){
+    for (std::size_t i = 0; i < etl::size(c_1); ++i) {
         REQUIRE(c_1[i] == Approx(c_2[i]));
     }
 }
 
-TEMPLATE_TEST_CASE_2( "conv_2d_valid_multi/3", "[conv] [conv2]", Z, double, float ) {
-    etl::fast_matrix<Z, 3, 3> I = {1.0, 2.0, 3.0, 0.0, 1.0, 1.0, 3.0, 2.0, 1.0};
-    etl::fast_matrix<Z, 3, 2, 2> K = {2.0, 0.0, 0.5, 0.5,  1.0, 0.5, 0.7, 0.1,  0.0, -1.0, 1.0, 1.0};
+TEMPLATE_TEST_CASE_2("conv_2d_valid_multi/3", "[conv] [conv2]", Z, double, float) {
+    etl::fast_matrix<Z, 3, 3> I    = {1.0, 2.0, 3.0, 0.0, 1.0, 1.0, 3.0, 2.0, 1.0};
+    etl::fast_matrix<Z, 3, 2, 2> K = {2.0, 0.0, 0.5, 0.5, 1.0, 0.5, 0.7, 0.1, 0.0, -1.0, 1.0, 1.0};
 
     etl::fast_matrix<Z, 3, 2, 2> c_1;
     etl::fast_matrix<Z, 3, 2, 2> c_2;
@@ -60,14 +60,14 @@ TEMPLATE_TEST_CASE_2( "conv_2d_valid_multi/3", "[conv] [conv2]", Z, double, floa
 
     conv_2d_valid_multi(I, K, c_2);
 
-    for(std::size_t i = 0; i < etl::size(c_1); ++i){
+    for (std::size_t i = 0; i < etl::size(c_1); ++i) {
         REQUIRE(c_1[i] == Approx(c_2[i]));
     }
 }
 
-TEMPLATE_TEST_CASE_2( "conv_2d_valid_multi/4", "[conv] [conv2]", Z, double, float ) {
+TEMPLATE_TEST_CASE_2("conv_2d_valid_multi/4", "[conv] [conv2]", Z, double, float) {
     etl::fast_matrix<Z, 5, 5> I(etl::magic<Z>(5));
-    etl::fast_matrix<Z, 3, 2, 2> K = {2.0, 0.0, 0.5, 0.5,  1.0, 0.5, 0.7, 0.1,  0.0, -1.0, 1.0, 1.0};
+    etl::fast_matrix<Z, 3, 2, 2> K = {2.0, 0.0, 0.5, 0.5, 1.0, 0.5, 0.7, 0.1, 0.0, -1.0, 1.0, 1.0};
 
     etl::fast_matrix<Z, 3, 4, 4> c_1;
     etl::fast_matrix<Z, 3, 4, 4> c_2;
@@ -78,12 +78,12 @@ TEMPLATE_TEST_CASE_2( "conv_2d_valid_multi/4", "[conv] [conv2]", Z, double, floa
 
     conv_2d_valid_multi(I, K, c_2);
 
-    for(std::size_t i = 0; i < etl::size(c_1); ++i){
+    for (std::size_t i = 0; i < etl::size(c_1); ++i) {
         REQUIRE(c_1[i] == Approx(c_2[i]));
     }
 }
 
-TEMPLATE_TEST_CASE_2( "conv_2d_valid_multi/5", "[conv] [conv2]", Z, double, float ) {
+TEMPLATE_TEST_CASE_2("conv_2d_valid_multi/5", "[conv] [conv2]", Z, double, float) {
     etl::fast_matrix<Z, 5, 5> I(etl::magic<Z>(5));
     etl::fast_matrix<Z, 3, 3, 3> K;
 
@@ -100,7 +100,7 @@ TEMPLATE_TEST_CASE_2( "conv_2d_valid_multi/5", "[conv] [conv2]", Z, double, floa
 
     conv_2d_valid_multi(I, K, c_2);
 
-    for(std::size_t i = 0; i < etl::size(c_1); ++i){
+    for (std::size_t i = 0; i < etl::size(c_1); ++i) {
         REQUIRE(c_1[i] == Approx(c_2[i]));
     }
 }

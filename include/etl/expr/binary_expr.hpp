@@ -7,7 +7,7 @@
 
 #pragma once
 
-#include <iosfwd>     //For stream support
+#include <iosfwd> //For stream support
 
 #include "etl/traits_lite.hpp"
 #include "etl/iterator.hpp"
@@ -20,18 +20,14 @@
 namespace etl {
 
 template <typename T, typename LeftExpr, typename BinaryOp, typename RightExpr>
-struct binary_expr final :
-          comparable<binary_expr<T, LeftExpr, BinaryOp, RightExpr>>
-        , dim_testable<binary_expr<T, LeftExpr, BinaryOp, RightExpr>>
-        , value_testable<binary_expr<T, LeftExpr, BinaryOp, RightExpr>>
-        {
+struct binary_expr final : comparable<binary_expr<T, LeftExpr, BinaryOp, RightExpr>>, dim_testable<binary_expr<T, LeftExpr, BinaryOp, RightExpr>>, value_testable<binary_expr<T, LeftExpr, BinaryOp, RightExpr>> {
 private:
     static_assert(cpp::or_c<
-        cpp::and_c<std::is_same<LeftExpr, scalar<T>>, std::is_same<RightExpr, scalar<T>>>,
-        cpp::and_c<is_etl_expr<LeftExpr>, std::is_same<RightExpr, scalar<T>>>,
-        cpp::and_c<is_etl_expr<RightExpr>, std::is_same<LeftExpr, scalar<T>>>,
-        cpp::and_c<is_etl_expr<LeftExpr>, is_etl_expr<RightExpr>>>::value,
-        "One argument must be an ETL expression and the other one convertible to T");
+                      cpp::and_c<std::is_same<LeftExpr, scalar<T>>, std::is_same<RightExpr, scalar<T>>>,
+                      cpp::and_c<is_etl_expr<LeftExpr>, std::is_same<RightExpr, scalar<T>>>,
+                      cpp::and_c<is_etl_expr<RightExpr>, std::is_same<LeftExpr, scalar<T>>>,
+                      cpp::and_c<is_etl_expr<LeftExpr>, is_etl_expr<RightExpr>>>::value,
+                  "One argument must be an ETL expression and the other one convertible to T");
 
     using this_type = binary_expr<T, LeftExpr, BinaryOp, RightExpr>;
 
@@ -39,15 +35,16 @@ private:
     RightExpr _rhs;
 
 public:
-    using        value_type = T;
-    using       memory_type = void;
+    using value_type        = T;
+    using memory_type       = void;
     using const_memory_type = void;
 
     //Cannot be constructed with no args
     binary_expr() = delete;
 
     //Construct a new expression
-    binary_expr(LeftExpr l, RightExpr r) : _lhs(std::forward<LeftExpr>(l)), _rhs(std::forward<RightExpr>(r)) {
+    binary_expr(LeftExpr l, RightExpr r)
+            : _lhs(std::forward<LeftExpr>(l)), _rhs(std::forward<RightExpr>(r)) {
         //Nothing else to init
     }
 
@@ -61,7 +58,7 @@ public:
 
     //Accessors
 
-    std::add_lvalue_reference_t<LeftExpr> lhs(){
+    std::add_lvalue_reference_t<LeftExpr> lhs() {
         return _lhs;
     }
 
@@ -69,7 +66,7 @@ public:
         return _lhs;
     }
 
-    std::add_lvalue_reference_t<RightExpr> rhs(){
+    std::add_lvalue_reference_t<RightExpr> rhs() {
         return _rhs;
     }
 
@@ -87,7 +84,7 @@ public:
         return BinaryOp::load(lhs().load(i), rhs().load(i));
     }
 
-    template<typename... S, cpp_enable_if(sizeof...(S) == sub_size_compare<this_type>::value)>
+    template <typename... S, cpp_enable_if(sizeof...(S) == sub_size_compare<this_type>::value)>
     value_type operator()(S... args) const {
         static_assert(cpp::all_convertible_to<std::size_t, S...>::value, "Invalid size types");
 
@@ -97,7 +94,7 @@ public:
     //TODO Simplify the next two SFINAE functions
 
     template <typename ST = T, typename L = LeftExpr, typename B = BinaryOp, typename R = RightExpr, cpp_enable_if((sub_size_compare<binary_expr<ST, L, B, R>>::value > 1))>
-    auto operator()(std::size_t i){
+    auto operator()(std::size_t i) {
         return sub(*this, i);
     }
 
@@ -116,8 +113,8 @@ public:
 };
 
 template <typename T, typename LeftExpr, typename BinaryOp, typename RightExpr>
-std::ostream& operator<<(std::ostream& os, const binary_expr<T, LeftExpr, BinaryOp, RightExpr>& expr){
-    if(simple_operator<BinaryOp>::value){
+std::ostream& operator<<(std::ostream& os, const binary_expr<T, LeftExpr, BinaryOp, RightExpr>& expr) {
+    if (simple_operator<BinaryOp>::value) {
         return os << "(" << expr.lhs() << ' ' << BinaryOp::desc() << ' ' << expr.rhs() << ")";
     } else {
         return os << BinaryOp::desc() << "(" << expr.lhs() << ", " << expr.rhs() << ")";

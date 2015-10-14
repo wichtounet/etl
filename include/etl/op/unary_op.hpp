@@ -18,7 +18,7 @@ namespace etl {
 
 using random_engine = std::mt19937_64;
 
-template<typename T>
+template <typename T>
 struct abs_unary_op {
     static constexpr const bool vectorizable = false;
 
@@ -31,11 +31,11 @@ struct abs_unary_op {
     }
 };
 
-template<typename T>
+template <typename T>
 struct log_unary_op {
     using vec_type = intrinsic_type<T>;
 
-    static constexpr T apply(const T& x){
+    static constexpr T apply(const T& x) {
         return std::log(x);
     }
 
@@ -54,13 +54,13 @@ struct log_unary_op {
     }
 };
 
-template<typename T>
+template <typename T>
 struct sqrt_unary_op {
     using vec_type = intrinsic_type<T>;
 
     static constexpr const bool vectorizable = !is_complex_t<T>::value;
 
-    static constexpr T apply(const T& x){
+    static constexpr T apply(const T& x) {
         return std::sqrt(x);
     }
 
@@ -73,11 +73,11 @@ struct sqrt_unary_op {
     }
 };
 
-template<typename T>
+template <typename T>
 struct exp_unary_op {
     using vec_type = intrinsic_type<T>;
 
-    static constexpr T apply(const T& x){
+    static constexpr T apply(const T& x) {
         return std::exp(x);
     }
 
@@ -96,7 +96,7 @@ struct exp_unary_op {
     }
 };
 
-template<typename T>
+template <typename T>
 struct sign_unary_op {
     static constexpr const bool vectorizable = false;
 
@@ -109,11 +109,11 @@ struct sign_unary_op {
     }
 };
 
-template<typename T>
+template <typename T>
 struct sigmoid_unary_op {
     static constexpr const bool vectorizable = false;
 
-    static constexpr T apply(const T& x){
+    static constexpr T apply(const T& x) {
         return math::logistic_sigmoid(x);
     }
 
@@ -122,11 +122,11 @@ struct sigmoid_unary_op {
     }
 };
 
-template<typename T>
+template <typename T>
 struct softplus_unary_op {
     static constexpr const bool vectorizable = false;
 
-    static constexpr T apply(const T& x){
+    static constexpr T apply(const T& x) {
         return math::softplus(x);
     }
 
@@ -135,7 +135,7 @@ struct softplus_unary_op {
     }
 };
 
-template<typename T>
+template <typename T>
 struct minus_unary_op {
     using vec_type = intrinsic_type<T>;
 
@@ -154,7 +154,7 @@ struct minus_unary_op {
     }
 };
 
-template<typename T>
+template <typename T>
 struct plus_unary_op {
     using vec_type = intrinsic_type<T>;
 
@@ -173,35 +173,35 @@ struct plus_unary_op {
     }
 };
 
-template<typename T>
+template <typename T>
 struct fast_sigmoid_unary_op {
     static constexpr const bool vectorizable = false;
 
-    static T apply(const T& v){
-         auto x = 0.5 * v;
+    static T apply(const T& v) {
+        auto x = 0.5 * v;
 
-         T z;
-         if(x >= 0){
-             if(x < 1.7){
-                 z = (1.5 * x / (1 + x));
-             } else if(x < 3){
-                 z = (0.935409070603099 + 0.0458812946797165 * (x - 1.7));
-             } else {
-                 z = 0.99505475368673;
-             }
-         } else {
-             auto xx = -x;
-             if(xx < 1.7){
-                 z = (1.5 * xx / (1 + xx));
-             } else if(xx < 3){
-                 z = (0.935409070603099 + 0.0458812946797165 * (xx - 1.7));
-             } else {
-                 z = 0.99505475368673;
-             }
-             z = -z;
-         }
+        T z;
+        if (x >= 0) {
+            if (x < 1.7) {
+                z = (1.5 * x / (1 + x));
+            } else if (x < 3) {
+                z = (0.935409070603099 + 0.0458812946797165 * (x - 1.7));
+            } else {
+                z = 0.99505475368673;
+            }
+        } else {
+            auto xx = -x;
+            if (xx < 1.7) {
+                z = (1.5 * xx / (1 + xx));
+            } else if (xx < 3) {
+                z = (0.935409070603099 + 0.0458812946797165 * (xx - 1.7));
+            } else {
+                z = 0.99505475368673;
+            }
+            z = -z;
+        }
 
-         return 0.5 * (z + 1.0);
+        return 0.5 * (z + 1.0);
     }
 
     static std::string desc() noexcept {
@@ -209,7 +209,7 @@ struct fast_sigmoid_unary_op {
     }
 };
 
-template<typename T>
+template <typename T>
 struct tan_unary_op {
     static constexpr const bool vectorizable = false;
 
@@ -222,7 +222,7 @@ struct tan_unary_op {
     }
 };
 
-template<typename T>
+template <typename T>
 struct cos_unary_op {
     static constexpr const bool vectorizable = false;
 
@@ -235,7 +235,7 @@ struct cos_unary_op {
     }
 };
 
-template<typename T>
+template <typename T>
 struct sin_unary_op {
     static constexpr const bool vectorizable = false;
 
@@ -248,7 +248,7 @@ struct sin_unary_op {
     }
 };
 
-template<typename T>
+template <typename T>
 struct tanh_unary_op {
     static constexpr const bool vectorizable = false;
 
@@ -261,7 +261,7 @@ struct tanh_unary_op {
     }
 };
 
-template<typename T>
+template <typename T>
 struct cosh_unary_op {
     static constexpr const bool vectorizable = false;
 
@@ -274,7 +274,7 @@ struct cosh_unary_op {
     }
 };
 
-template<typename T>
+template <typename T>
 struct sinh_unary_op {
     static constexpr const bool vectorizable = false;
 
@@ -287,11 +287,11 @@ struct sinh_unary_op {
     }
 };
 
-template<typename T>
+template <typename T>
 struct relu_derivative_op {
     static constexpr const bool vectorizable = false;
 
-    static T apply(const T& x){
+    static T apply(const T& x) {
         return x > 0.0 ? 1.0 : 0.0;
     }
 
@@ -300,11 +300,11 @@ struct relu_derivative_op {
     }
 };
 
-template<typename T>
+template <typename T>
 struct bernoulli_unary_op {
     static constexpr const bool vectorizable = false;
 
-    static T apply(const T& x){
+    static T apply(const T& x) {
         static random_engine rand_engine(std::time(nullptr));
         static std::uniform_real_distribution<double> distribution(0.0, 1.0);
 
@@ -316,11 +316,11 @@ struct bernoulli_unary_op {
     }
 };
 
-template<typename T>
+template <typename T>
 struct reverse_bernoulli_unary_op {
     static constexpr const bool vectorizable = false;
 
-    static T apply(const T& x){
+    static T apply(const T& x) {
         static random_engine rand_engine(std::time(nullptr));
         static std::uniform_real_distribution<double> distribution(0.0, 1.0);
 
@@ -332,11 +332,11 @@ struct reverse_bernoulli_unary_op {
     }
 };
 
-template<typename T>
+template <typename T>
 struct uniform_noise_unary_op {
     static constexpr const bool vectorizable = false;
 
-    static T apply(const T& x){
+    static T apply(const T& x) {
         static random_engine rand_engine(std::time(nullptr));
         static std::uniform_real_distribution<double> real_distribution(0.0, 1.0);
 
@@ -348,11 +348,11 @@ struct uniform_noise_unary_op {
     }
 };
 
-template<typename T>
+template <typename T>
 struct normal_noise_unary_op {
     static constexpr const bool vectorizable = false;
 
-    static T apply(const T& x){
+    static T apply(const T& x) {
         static random_engine rand_engine(std::time(nullptr));
         static std::normal_distribution<double> normal_distribution(0.0, 1.0);
 
@@ -364,11 +364,11 @@ struct normal_noise_unary_op {
     }
 };
 
-template<typename T>
+template <typename T>
 struct logistic_noise_unary_op {
     static constexpr const bool vectorizable = false;
 
-    static T apply(const T& x){
+    static T apply(const T& x) {
         static random_engine rand_engine(std::time(nullptr));
 
         std::normal_distribution<double> noise_distribution(0.0, math::logistic_sigmoid(x));

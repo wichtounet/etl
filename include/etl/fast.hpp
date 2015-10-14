@@ -7,14 +7,14 @@
 
 #pragma once
 
-#include <algorithm>    //For std::find_if
-#include <iosfwd>     //For stream support
+#include <algorithm> //For std::find_if
+#include <iosfwd>    //For stream support
 
 #include "cpp_utils/assert.hpp"
 
 #include "etl/tmp.hpp"
-#include "etl/traits_lite.hpp"          //forward declaration of the traits
-#include "etl/compat.hpp"               //To make it work with g++
+#include "etl/traits_lite.hpp" //forward declaration of the traits
+#include "etl/compat.hpp"      //To make it work with g++
 
 // CRTP classes
 #include "etl/crtp/inplace_assignable.hpp"
@@ -27,56 +27,56 @@ namespace etl {
 
 namespace matrix_detail {
 
-template<typename M, std::size_t I, typename Enable = void>
-struct matrix_subsize : std::integral_constant<std::size_t, M::template dim<I+1>() * matrix_subsize<M, I+1>::value> {};
+template <typename M, std::size_t I, typename Enable = void>
+struct matrix_subsize : std::integral_constant<std::size_t, M::template dim<I + 1>() * matrix_subsize<M, I + 1>::value> {};
 
-template<typename M, std::size_t I>
+template <typename M, std::size_t I>
 struct matrix_subsize<M, I, std::enable_if_t<I == M::n_dimensions - 1>> : std::integral_constant<std::size_t, 1> {};
 
-template<typename M, std::size_t I, typename Enable = void>
-struct matrix_leadingsize : std::integral_constant<std::size_t, M::template dim<I-1>() * matrix_leadingsize<M, I-1>::value> {};
+template <typename M, std::size_t I, typename Enable = void>
+struct matrix_leadingsize : std::integral_constant<std::size_t, M::template dim<I - 1>() * matrix_leadingsize<M, I - 1>::value> {};
 
-template<typename M>
+template <typename M>
 struct matrix_leadingsize<M, 0> : std::integral_constant<std::size_t, 1> {};
 
-template<typename M, std::size_t I, typename S1>
+template <typename M, std::size_t I, typename S1>
 inline constexpr std::size_t rm_compute_index(S1 first) noexcept {
     return first;
 }
 
-template<typename M, std::size_t I, typename S1, typename... S, cpp_enable_if((sizeof...(S) > 0))>
+template <typename M, std::size_t I, typename S1, typename... S, cpp_enable_if((sizeof...(S) > 0))>
 inline constexpr std::size_t rm_compute_index(S1 first, S... args) noexcept {
-    return matrix_subsize<M, I>::value * first + rm_compute_index<M, I+1>(args...);
+    return matrix_subsize<M, I>::value * first + rm_compute_index<M, I + 1>(args...);
 }
 
-template<typename M, std::size_t I, typename S1>
+template <typename M, std::size_t I, typename S1>
 inline constexpr std::size_t cm_compute_index(S1 first) noexcept {
     return matrix_leadingsize<M, I>::value * first;
 }
 
-template<typename M, std::size_t I, typename S1, typename... S, cpp_enable_if((sizeof...(S) > 0))>
+template <typename M, std::size_t I, typename S1, typename... S, cpp_enable_if((sizeof...(S) > 0))>
 inline constexpr std::size_t cm_compute_index(S1 first, S... args) noexcept {
-    return matrix_leadingsize<M, I>::value * first + cm_compute_index<M, I+1>(args...);
+    return matrix_leadingsize<M, I>::value * first + cm_compute_index<M, I + 1>(args...);
 }
 
-template<typename M, std::size_t I, typename... S, cpp_enable_if(M::storage_order == order::RowMajor)>
+template <typename M, std::size_t I, typename... S, cpp_enable_if(M::storage_order == order::RowMajor)>
 inline constexpr std::size_t compute_index(S... args) noexcept {
     return rm_compute_index<M, I>(args...);
 }
 
-template<typename M, std::size_t I, typename... S, cpp_enable_if(M::storage_order == order::ColumnMajor)>
+template <typename M, std::size_t I, typename... S, cpp_enable_if(M::storage_order == order::ColumnMajor)>
 inline constexpr std::size_t compute_index(S... args) noexcept {
     return cm_compute_index<M, I>(args...);
 }
 
 template <typename N>
-struct is_vector : std::false_type { };
+struct is_vector : std::false_type {};
 
 template <typename N, typename A>
-struct is_vector<std::vector<N, A>> : std::true_type { };
+struct is_vector<std::vector<N, A>> : std::true_type {};
 
 template <typename N>
-struct is_vector<std::vector<N>> : std::true_type { };
+struct is_vector<std::vector<N>> : std::true_type {};
 
 } //end of namespace matrix_detail
 
@@ -85,59 +85,52 @@ struct is_vector<std::vector<N>> : std::true_type { };
  *
  * The matrix support an arbitrary number of dimensions.
  */
-template<typename T, typename ST, order SO, std::size_t... Dims>
-struct fast_matrix_impl final :
-        inplace_assignable<fast_matrix_impl<T, ST, SO, Dims...>>
-        , comparable<fast_matrix_impl<T, ST, SO, Dims...>>
-        , expression_able<fast_matrix_impl<T, ST, SO, Dims...>>
-        , value_testable<fast_matrix_impl<T, ST, SO, Dims...>>
-        , dim_testable<fast_matrix_impl<T, ST, SO, Dims...>>
-        {
+template <typename T, typename ST, order SO, std::size_t... Dims>
+struct fast_matrix_impl final : inplace_assignable<fast_matrix_impl<T, ST, SO, Dims...>>, comparable<fast_matrix_impl<T, ST, SO, Dims...>>, expression_able<fast_matrix_impl<T, ST, SO, Dims...>>, value_testable<fast_matrix_impl<T, ST, SO, Dims...>>, dim_testable<fast_matrix_impl<T, ST, SO, Dims...>> {
     static_assert(sizeof...(Dims) > 0, "At least one dimension must be specified");
 
 public:
     static constexpr const std::size_t n_dimensions = sizeof...(Dims);
-    static constexpr const std::size_t etl_size = mul_all<Dims...>::value;
-    static constexpr const order storage_order = SO;
-    static constexpr const bool array_impl = !matrix_detail::is_vector<ST>::value;
+    static constexpr const std::size_t etl_size     = mul_all<Dims...>::value;
+    static constexpr const order storage_order      = SO;
+    static constexpr const bool array_impl          = !matrix_detail::is_vector<ST>::value;
 
-    using        value_type = T;
-    using      storage_impl = ST;
-    using          iterator = typename storage_impl::iterator;
-    using    const_iterator = typename storage_impl::const_iterator;
-    using         this_type = fast_matrix_impl<T, ST, SO, Dims...>;
-    using       memory_type = value_type*;
+    using value_type        = T;
+    using storage_impl      = ST;
+    using iterator          = typename storage_impl::iterator;
+    using const_iterator    = typename storage_impl::const_iterator;
+    using this_type         = fast_matrix_impl<T, ST, SO, Dims...>;
+    using memory_type       = value_type*;
     using const_memory_type = const value_type*;
-    using          vec_type = intrinsic_type<T>;
+    using vec_type          = intrinsic_type<T>;
 
 private:
     storage_impl _data;
 
-    template<typename... S>
-    static constexpr std::size_t index(S... args){
+    template <typename... S>
+    static constexpr std::size_t index(S... args) {
         return matrix_detail::compute_index<this_type, 0>(args...);
     }
 
-    template<typename... S>
-    value_type& access(S... args){
+    template <typename... S>
+    value_type& access(S... args) {
         return _data[index(args...)];
     }
 
-    template<typename... S>
+    template <typename... S>
     const value_type& access(S... args) const {
         return _data[index(args...)];
     }
 
 public:
-
     /// Construction
 
-    template<typename S = ST, cpp::enable_if_c<matrix_detail::is_vector<S>> = cpp::detail::dummy>
-    void init(){
+    template <typename S = ST, cpp::enable_if_c<matrix_detail::is_vector<S>> = cpp::detail::dummy>
+    void init() {
         _data.resize(etl_size);
     }
 
-    template<typename S = ST, cpp::disable_if_c<matrix_detail::is_vector<S>> = cpp::detail::dummy>
+    template <typename S = ST, cpp::disable_if_c<matrix_detail::is_vector<S>> = cpp::detail::dummy>
     void init() noexcept {
         //Nothing to init
     }
@@ -146,13 +139,13 @@ public:
         init();
     }
 
-    template<typename VT, cpp::enable_if_one_c<std::is_convertible<VT, value_type>, std::is_assignable<T&, VT>> = cpp::detail::dummy>
-    explicit fast_matrix_impl(const VT& value){
+    template <typename VT, cpp::enable_if_one_c<std::is_convertible<VT, value_type>, std::is_assignable<T&, VT>> = cpp::detail::dummy>
+    explicit fast_matrix_impl(const VT& value) {
         init();
         std::fill(_data.begin(), _data.end(), value);
     }
 
-    fast_matrix_impl(std::initializer_list<value_type> l){
+    fast_matrix_impl(std::initializer_list<value_type> l) {
         init();
 
         cpp_assert(l.size() == size(), "Cannot copy from an initializer of different size");
@@ -165,28 +158,27 @@ public:
         assign_evaluate(rhs, *this);
     }
 
-    template<typename SST = ST, cpp_enable_if(matrix_detail::is_vector<SST>::value)>
+    template <typename SST = ST, cpp_enable_if(matrix_detail::is_vector<SST>::value)>
     fast_matrix_impl(fast_matrix_impl&& rhs) noexcept {
         _data = std::move(rhs._data);
     }
 
-    template<typename SST = ST, cpp_disable_if(matrix_detail::is_vector<SST>::value)>
+    template <typename SST = ST, cpp_disable_if(matrix_detail::is_vector<SST>::value)>
     explicit fast_matrix_impl(fast_matrix_impl&& rhs) noexcept {
         std::copy(rhs.begin(), rhs.end(), begin());
     }
 
-    template<typename E, cpp_enable_if(std::is_convertible<value_t<E>, value_type>::value, is_etl_expr<E>::value)>
-    explicit fast_matrix_impl(E&& e){
+    template <typename E, cpp_enable_if(std::is_convertible<value_t<E>, value_type>::value, is_etl_expr<E>::value)>
+    explicit fast_matrix_impl(E&& e) {
         init();
         validate_assign(*this, e);
         assign_evaluate(std::forward<E>(e), *this);
     }
 
-    template<typename Container, cpp_enable_if(
-            std::is_convertible<typename Container::value_type, value_type>::value,
-            cpp::not_c<is_etl_expr<Container>>::value
-        )>
-    explicit fast_matrix_impl(const Container& vec){
+    template <typename Container, cpp_enable_if(
+                                      std::is_convertible<typename Container::value_type, value_type>::value,
+                                      cpp::not_c<is_etl_expr<Container>>::value)>
+    explicit fast_matrix_impl(const Container& vec) {
         init();
         validate_assign(*this, vec);
         std::copy(vec.begin(), vec.end(), begin());
@@ -196,23 +188,23 @@ public:
 
     // Copy assignment operator
 
-    template<typename SST = ST, cpp_enable_if(matrix_detail::is_vector<SST>::value)>
+    template <typename SST    = ST, cpp_enable_if(matrix_detail::is_vector<SST>::value)>
     fast_matrix_impl& operator=(const fast_matrix_impl& rhs) noexcept {
-        if(this != &rhs){
+        if (this != &rhs) {
             assign_evaluate(rhs, *this);
         }
         return *this;
     }
 
-    template<typename SST = ST, cpp_disable_if(matrix_detail::is_vector<SST>::value)>
+    template <typename SST    = ST, cpp_disable_if(matrix_detail::is_vector<SST>::value)>
     fast_matrix_impl& operator=(const fast_matrix_impl& rhs) noexcept {
-        if(this != &rhs){
+        if (this != &rhs) {
             assign_evaluate(rhs, *this);
         }
         return *this;
     }
 
-    template<std::size_t... SDims>
+    template <std::size_t... SDims>
     fast_matrix_impl& operator=(const fast_matrix_impl<T, ST, SO, SDims...>& rhs) noexcept {
         validate_assign(*this, rhs);
         assign_evaluate(rhs, *this);
@@ -221,7 +213,7 @@ public:
 
     //Allow copy from other containers
 
-    template<typename Container, cpp_enable_if(!std::is_same<Container, value_type>::value && std::is_convertible<typename Container::value_type, value_type>::value)>
+    template <typename Container, cpp_enable_if(!std::is_same<Container, value_type>::value && std::is_convertible<typename Container::value_type, value_type>::value)>
     fast_matrix_impl& operator=(const Container& vec) noexcept {
         validate_assign(*this, vec);
         std::copy(vec.begin(), vec.end(), begin());
@@ -230,15 +222,15 @@ public:
 
     //Construct from expression
 
-    template<typename E, cpp_enable_if(std::is_convertible<typename E::value_type, value_type>::value && is_etl_expr<E>::value)>
-    fast_matrix_impl& operator=(E&& e){
+    template <typename E, cpp_enable_if(std::is_convertible<typename E::value_type, value_type>::value&& is_etl_expr<E>::value)>
+    fast_matrix_impl& operator=(E&& e) {
         validate_assign(*this, e);
         assign_evaluate(std::forward<E>(e), *this);
         return *this;
     }
 
     //Set the same value to each element of the matrix
-    template<typename VT, cpp::enable_if_one_c<std::is_convertible<VT, value_type>, std::is_assignable<T&, VT>> = cpp::detail::dummy>
+    template <typename VT, cpp::enable_if_one_c<std::is_convertible<VT, value_type>, std::is_assignable<T&, VT>> = cpp::detail::dummy>
     fast_matrix_impl& operator=(const VT& value) noexcept {
         std::fill(_data.begin(), _data.end(), value);
 
@@ -247,20 +239,20 @@ public:
 
     //Prohibit move
 
-    template<typename SST = ST, cpp_enable_if(matrix_detail::is_vector<SST>::value)>
-    fast_matrix_impl& operator=(fast_matrix_impl&& rhs){
-        if(this != &rhs){
+    template <typename SST    = ST, cpp_enable_if(matrix_detail::is_vector<SST>::value)>
+    fast_matrix_impl& operator=(fast_matrix_impl&& rhs) {
+        if (this != &rhs) {
             _data = std::move(rhs._data);
         }
         return *this;
     }
 
-    template<typename SST = ST, cpp_disable_if(matrix_detail::is_vector<SST>::value)>
+    template <typename SST    = ST, cpp_disable_if(matrix_detail::is_vector<SST>::value)>
     fast_matrix_impl& operator=(fast_matrix_impl&& rhs) = delete;
 
     // Swap operations
 
-    void swap(fast_matrix_impl& other){
+    void swap(fast_matrix_impl& other) {
         using std::swap;
         swap(_data, other._data);
     }
@@ -285,7 +277,7 @@ public:
         return n_dimensions;
     }
 
-    template<std::size_t D>
+    template <std::size_t D>
     static constexpr std::size_t dim() noexcept {
         return nth_size<D, 0, Dims...>::value;
     }
@@ -294,24 +286,24 @@ public:
         return dyn_nth_size<Dims...>(d);
     }
 
-    template<bool B = (n_dimensions > 1), cpp::enable_if_u<B> = cpp::detail::dummy>
+    template <bool B = (n_dimensions > 1), cpp::enable_if_u<B> = cpp::detail::dummy>
     auto operator()(std::size_t i) noexcept {
         return sub(*this, i);
     }
 
-    template<bool B = (n_dimensions > 1), cpp::enable_if_u<B> = cpp::detail::dummy>
+    template <bool B = (n_dimensions > 1), cpp::enable_if_u<B> = cpp::detail::dummy>
     auto operator()(std::size_t i) const noexcept {
         return sub(*this, i);
     }
 
-    template<typename... S>
+    template <typename... S>
     std::enable_if_t<sizeof...(S) == sizeof...(Dims), value_type&> operator()(S... args) noexcept {
         static_assert(cpp::all_convertible_to<std::size_t, S...>::value, "Invalid size types");
 
         return access(static_cast<std::size_t>(args)...);
     }
 
-    template<typename... S>
+    template <typename... S>
     std::enable_if_t<sizeof...(S) == sizeof...(Dims), const value_type&> operator()(S... args) const noexcept {
         static_assert(cpp::all_convertible_to<std::size_t, S...>::value, "Invalid size types");
 
@@ -377,14 +369,14 @@ public:
     }
 };
 
-template<typename T, typename ST, order SO, std::size_t... Dims>
-void swap(fast_matrix_impl<T, ST, SO, Dims...>& lhs, fast_matrix_impl<T, ST, SO, Dims...>& rhs){
+template <typename T, typename ST, order SO, std::size_t... Dims>
+void swap(fast_matrix_impl<T, ST, SO, Dims...>& lhs, fast_matrix_impl<T, ST, SO, Dims...>& rhs) {
     lhs.swap(rhs);
 }
 
-template<typename T, typename ST, order SO, std::size_t... Dims>
-std::ostream& operator<<(std::ostream& os, const fast_matrix_impl<T, ST, SO, Dims...>& /*matrix*/){
-    if(sizeof...(Dims) == 1){
+template <typename T, typename ST, order SO, std::size_t... Dims>
+std::ostream& operator<<(std::ostream& os, const fast_matrix_impl<T, ST, SO, Dims...>& /*matrix*/) {
+    if (sizeof...(Dims) == 1) {
         return os << "V[" << concat_sizes(Dims...) << "]";
     }
 
@@ -392,3 +384,4 @@ std::ostream& operator<<(std::ostream& os, const fast_matrix_impl<T, ST, SO, Dim
 }
 
 } //end of namespace etl
+

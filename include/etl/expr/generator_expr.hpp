@@ -16,7 +16,7 @@
 
 #pragma once
 
-#include <iosfwd>     //For stream support
+#include <iosfwd> //For stream support
 
 namespace etl {
 
@@ -28,8 +28,9 @@ private:
 public:
     using value_type = typename Generator::value_type;
 
-    template<typename... Args>
-    explicit generator_expr(Args... args) : generator(std::forward<Args>(args)...) {}
+    template <typename... Args>
+    explicit generator_expr(Args... args)
+            : generator(std::forward<Args>(args)...) {}
 
     generator_expr(const generator_expr& e) = default;
     generator_expr(generator_expr&& e) = default;
@@ -54,7 +55,7 @@ public:
 };
 
 template <typename Generator>
-std::ostream& operator<<(std::ostream& os, const generator_expr<Generator>& expr){
+std::ostream& operator<<(std::ostream& os, const generator_expr<Generator>& expr) {
     return os << expr.get_generator();
 }
 

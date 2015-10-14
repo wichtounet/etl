@@ -13,7 +13,7 @@
 
 // convolution_1d_full
 
-CONV1_FULL_TEST_CASE( "convolution_1d/full_1", "convolution_1d_full" ) {
+CONV1_FULL_TEST_CASE("convolution_1d/full_1", "convolution_1d_full") {
     etl::fast_vector<T, 3> a = {1.0, 2.0, 3.0};
     etl::fast_vector<T, 3> b = {0.0, 1.0, 0.5};
     etl::fast_vector<T, 5> c;
@@ -27,7 +27,7 @@ CONV1_FULL_TEST_CASE( "convolution_1d/full_1", "convolution_1d_full" ) {
     REQUIRE(c[4] == Approx(1.5));
 }
 
-CONV1_FULL_TEST_CASE( "convolution_1d/full_2", "convolution_1d_full" ) {
+CONV1_FULL_TEST_CASE("convolution_1d/full_2", "convolution_1d_full") {
     etl::fast_vector<T, 5> a = {1.0, 2.0, 3.0, 4.0, 5.0};
     etl::fast_vector<T, 3> b = {0.5, 1.0, 1.5};
     etl::fast_vector<T, 7> c;
@@ -43,7 +43,7 @@ CONV1_FULL_TEST_CASE( "convolution_1d/full_2", "convolution_1d_full" ) {
     REQUIRE(c[6] == Approx(7.5));
 }
 
-CONV1_FULL_TEST_CASE( "convolution_1d/full_3", "convolution_1d_full" ) {
+CONV1_FULL_TEST_CASE("convolution_1d/full_3", "convolution_1d_full") {
     etl::fast_vector<T, 9> a(etl::magic<T>(3));
     etl::fast_vector<T, 4> b(etl::magic<T>(2));
     etl::fast_vector<T, 12> c;
@@ -64,7 +64,7 @@ CONV1_FULL_TEST_CASE( "convolution_1d/full_3", "convolution_1d_full" ) {
     REQUIRE(c[11] == Approx(4));
 }
 
-CONV1_FULL_TEST_CASE( "convolution_1d/full_4", "convolution_1d_full" ) {
+CONV1_FULL_TEST_CASE("convolution_1d/full_4", "convolution_1d_full") {
     etl::fast_vector<T, 25> a(etl::magic(5));
     etl::fast_vector<T, 9> b(etl::magic(3));
     etl::fast_vector<T, 33> c;
@@ -90,7 +90,7 @@ CONV1_FULL_TEST_CASE( "convolution_1d/full_4", "convolution_1d_full" ) {
     REQUIRE(c[16] == Approx(593));
 }
 
-CONV1_FULL_TEST_CASE( "convolution_1d/full_5", "convolution_1d_full" ) {
+CONV1_FULL_TEST_CASE("convolution_1d/full_5", "convolution_1d_full") {
     etl::fast_vector<T, 17 * 17> a(etl::magic(17));
     etl::fast_vector<T, 3 * 3> b(etl::magic(3));
     etl::fast_vector<T, 17 * 17 + 9 - 1> c;
@@ -116,7 +116,7 @@ CONV1_FULL_TEST_CASE( "convolution_1d/full_5", "convolution_1d_full" ) {
     REQUIRE(c[16] == Approx(3465).epsilon(1.0));
 }
 
-CONV1_FULL_TEST_CASE( "convolution_1d/full_6", "reduc_conv1_full" ) {
+CONV1_FULL_TEST_CASE("convolution_1d/full_6", "reduc_conv1_full") {
     etl::fast_vector<T, 3> a = {1.0, 2.0, 3.0};
     etl::fast_vector<T, 3> b = {0.0, 1.0, 0.5};
     etl::fast_vector<T, 5> c;
@@ -130,7 +130,7 @@ CONV1_FULL_TEST_CASE( "convolution_1d/full_6", "reduc_conv1_full" ) {
     REQUIRE(c[4] == Approx(1.5));
 }
 
-CONV1_FULL_TEST_CASE( "convolution_1d/full_7", "convolution_1d_full" ) {
+CONV1_FULL_TEST_CASE("convolution_1d/full_7", "convolution_1d_full") {
     etl::dyn_vector<T> a({1.0, 2.0, 3.0});
     etl::dyn_vector<T> b({0.0, 1.0, 0.5});
     etl::dyn_vector<T> c(5);
@@ -144,7 +144,7 @@ CONV1_FULL_TEST_CASE( "convolution_1d/full_7", "convolution_1d_full" ) {
     REQUIRE(c[4] == Approx(1.5));
 }
 
-CONV1_FULL_TEST_CASE( "convolution_1d/full_8", "convolution_1d_full" ) {
+CONV1_FULL_TEST_CASE("convolution_1d/full_8", "convolution_1d_full") {
     etl::dyn_vector<T> a({1.0, 2.0, 3.0, 4.0, 5.0});
     etl::dyn_vector<T> b({0.5, 1.0, 1.5});
     etl::dyn_vector<T> c(7);
@@ -162,7 +162,7 @@ CONV1_FULL_TEST_CASE( "convolution_1d/full_8", "convolution_1d_full" ) {
 
 // convolution_1d_same
 
-CONV1_SAME_TEST_CASE( "convolution_1d/same_1", "convolution_1d_same" ) {
+CONV1_SAME_TEST_CASE("convolution_1d/same_1", "convolution_1d_same") {
     etl::fast_vector<T, 3> a = {1.0, 2.0, 3.0};
     etl::fast_vector<T, 3> b = {0.0, 1.0, 0.5};
     etl::fast_vector<T, 3> c;
@@ -174,7 +174,7 @@ CONV1_SAME_TEST_CASE( "convolution_1d/same_1", "convolution_1d_same" ) {
     REQUIRE(c[2] == Approx(4.0));
 }
 
-CONV1_SAME_TEST_CASE( "convolution_1d/same_2", "convolution_1d_same" ) {
+CONV1_SAME_TEST_CASE("convolution_1d/same_2", "convolution_1d_same") {
     etl::fast_vector<T, 6> a = {1.0, 2.0, 3.0, 0.0, 0.5, 2.0};
     etl::fast_vector<T, 4> b = {0.0, 0.5, 1.0, 0.0};
     etl::fast_vector<T, 6> c;
@@ -189,7 +189,7 @@ CONV1_SAME_TEST_CASE( "convolution_1d/same_2", "convolution_1d_same" ) {
     REQUIRE(c[5] == Approx(2.0));
 }
 
-CONV1_SAME_TEST_CASE( "convolution_1d/same_3", "convolution_1d_same" ) {
+CONV1_SAME_TEST_CASE("convolution_1d/same_3", "convolution_1d_same") {
     etl::fast_vector<T, 9> a(etl::magic(3));
     etl::fast_vector<T, 4> b(etl::magic(2));
     etl::fast_vector<T, 9> c;
@@ -207,7 +207,7 @@ CONV1_SAME_TEST_CASE( "convolution_1d/same_3", "convolution_1d_same" ) {
     REQUIRE(c[8] == 26);
 }
 
-CONV1_SAME_TEST_CASE( "convolution_1d/same_4", "convolution_1d_same" ) {
+CONV1_SAME_TEST_CASE("convolution_1d/same_4", "convolution_1d_same") {
     etl::fast_vector<T, 25> a(etl::magic(5));
     etl::fast_vector<T, 9> b(etl::magic(3));
     etl::fast_vector<T, 25> c;
@@ -231,31 +231,31 @@ CONV1_SAME_TEST_CASE( "convolution_1d/same_4", "convolution_1d_same" ) {
     REQUIRE(c[14] == 653);
 }
 
-CONV1_SAME_TEST_CASE( "convolution_1d/same_5", "convolution_1d_same" ) {
+CONV1_SAME_TEST_CASE("convolution_1d/same_5", "convolution_1d_same") {
     etl::fast_vector<T, 17 * 17> a(etl::magic(17));
     etl::fast_vector<T, 3 * 3> b(etl::magic(3));
     etl::fast_vector<T, 17 * 17> c;
 
     *etl::conv_1d_same(a, b, c);
 
-    REQUIRE(c[4-4] == 4515);
-    REQUIRE(c[5-4] == 6037);
-    REQUIRE(c[6-4] == 7227);
-    REQUIRE(c[7-4] == 9268);
-    REQUIRE(c[8-4] == 7947);
-    REQUIRE(c[9-4] == 8496);
-    REQUIRE(c[10-4] == 7515);
-    REQUIRE(c[11-4] == 7452);
-    REQUIRE(c[12-4] == 6777);
-    REQUIRE(c[13-4] == 5490);
-    REQUIRE(c[14-4] == 5121);
-    REQUIRE(c[15-4] == 3222);
-    REQUIRE(c[16-4] == 3465);
+    REQUIRE(c[4 - 4] == 4515);
+    REQUIRE(c[5 - 4] == 6037);
+    REQUIRE(c[6 - 4] == 7227);
+    REQUIRE(c[7 - 4] == 9268);
+    REQUIRE(c[8 - 4] == 7947);
+    REQUIRE(c[9 - 4] == 8496);
+    REQUIRE(c[10 - 4] == 7515);
+    REQUIRE(c[11 - 4] == 7452);
+    REQUIRE(c[12 - 4] == 6777);
+    REQUIRE(c[13 - 4] == 5490);
+    REQUIRE(c[14 - 4] == 5121);
+    REQUIRE(c[15 - 4] == 3222);
+    REQUIRE(c[16 - 4] == 3465);
 }
 
 // convolution_1d_valid
 
-CONV1_VALID_TEST_CASE( "convolution_1d/valid_1", "convolution_1d_valid" ) {
+CONV1_VALID_TEST_CASE("convolution_1d/valid_1", "convolution_1d_valid") {
     etl::fast_vector<T, 3> a = {1.0, 2.0, 3.0};
     etl::fast_vector<T, 3> b = {0.0, 1.0, 0.5};
     etl::fast_vector<T, 1> c;
@@ -265,7 +265,7 @@ CONV1_VALID_TEST_CASE( "convolution_1d/valid_1", "convolution_1d_valid" ) {
     REQUIRE(c[0] == 2.5);
 }
 
-CONV1_VALID_TEST_CASE( "convolution_1d/valid_2", "convolution_1d_valid" ) {
+CONV1_VALID_TEST_CASE("convolution_1d/valid_2", "convolution_1d_valid") {
     etl::fast_vector<T, 5> a = {1.0, 2.0, 3.0, 4.0, 5.0};
     etl::fast_vector<T, 3> b = {0.5, 1.0, 1.5};
     etl::fast_vector<T, 3> c;
@@ -277,7 +277,7 @@ CONV1_VALID_TEST_CASE( "convolution_1d/valid_2", "convolution_1d_valid" ) {
     REQUIRE(c[2] == 11);
 }
 
-CONV1_VALID_TEST_CASE( "convolution_1d/valid_3", "convolution_1d_valid" ) {
+CONV1_VALID_TEST_CASE("convolution_1d/valid_3", "convolution_1d_valid") {
     etl::fast_vector<T, 9> a(etl::magic(3));
     etl::fast_vector<T, 4> b(etl::magic(2));
     etl::fast_vector<T, 6> c;
@@ -292,7 +292,7 @@ CONV1_VALID_TEST_CASE( "convolution_1d/valid_3", "convolution_1d_valid" ) {
     REQUIRE(c[5] == 59);
 }
 
-CONV1_VALID_TEST_CASE( "convolution_1d/valid_4", "convolution_1d_valid" ) {
+CONV1_VALID_TEST_CASE("convolution_1d/valid_4", "convolution_1d_valid") {
     etl::fast_vector<T, 25> a(etl::magic(5));
     etl::fast_vector<T, 9> b(etl::magic(3));
     etl::fast_vector<T, 17> c;
@@ -318,7 +318,7 @@ CONV1_VALID_TEST_CASE( "convolution_1d/valid_4", "convolution_1d_valid" ) {
     REQUIRE(c[16] == 633);
 }
 
-CONV1_VALID_TEST_CASE( "convolution_1d/valid_5", "convolution_1d_valid" ) {
+CONV1_VALID_TEST_CASE("convolution_1d/valid_5", "convolution_1d_valid") {
     etl::fast_vector<T, 17 * 17> a(etl::magic(17));
     etl::fast_vector<T, 3 * 3> b(etl::magic(3));
     etl::fast_vector<T, 17 * 17 - 9 + 1> c;
@@ -346,7 +346,7 @@ CONV1_VALID_TEST_CASE( "convolution_1d/valid_5", "convolution_1d_valid" ) {
 
 // convolution_subs
 
-TEMPLATE_TEST_CASE_2( "convolution_1d/sub_1", "convolution_1d_full_sub", Z, float, double ) {
+TEMPLATE_TEST_CASE_2("convolution_1d/sub_1", "convolution_1d_full_sub", Z, float, double) {
     etl::fast_matrix<Z, 1, 3> a = {1.0, 2.0, 3.0};
     etl::fast_matrix<Z, 1, 3> b = {0.0, 1.0, 0.5};
     etl::fast_matrix<Z, 1, 5> c;
@@ -360,7 +360,7 @@ TEMPLATE_TEST_CASE_2( "convolution_1d/sub_1", "convolution_1d_full_sub", Z, floa
     REQUIRE(c[4] == Approx(1.5));
 }
 
-TEMPLATE_TEST_CASE_2( "convolution_1d/sub_2", "convolution_1d_same", Z, float, double ) {
+TEMPLATE_TEST_CASE_2("convolution_1d/sub_2", "convolution_1d_same", Z, float, double) {
     etl::fast_matrix<Z, 1, 3> a = {1.0, 2.0, 3.0};
     etl::fast_matrix<Z, 1, 3> b = {0.0, 1.0, 0.5};
     etl::fast_matrix<Z, 1, 3> c;
@@ -372,7 +372,7 @@ TEMPLATE_TEST_CASE_2( "convolution_1d/sub_2", "convolution_1d_same", Z, float, d
     REQUIRE(c[2] == Approx(4.0));
 }
 
-TEMPLATE_TEST_CASE_2( "convolution_1d/sub_3", "convolution_1d_valid", Z, float, double ) {
+TEMPLATE_TEST_CASE_2("convolution_1d/sub_3", "convolution_1d_valid", Z, float, double) {
     etl::fast_matrix<Z, 1, 3> a = {1.0, 2.0, 3.0};
     etl::fast_matrix<Z, 1, 3> b = {0.0, 1.0, 0.5};
     etl::fast_matrix<Z, 1, 1> c;
@@ -383,7 +383,7 @@ TEMPLATE_TEST_CASE_2( "convolution_1d/sub_3", "convolution_1d_valid", Z, float, 
 }
 // convolution_1d_full_expr
 
-TEMPLATE_TEST_CASE_2( "convolution_1d/expr_full_1", "convolution_1d_full", Z, float, double ) {
+TEMPLATE_TEST_CASE_2("convolution_1d/expr_full_1", "convolution_1d_full", Z, float, double) {
     etl::dyn_vector<Z> a({1.0, 2.0, 3.0});
     etl::dyn_vector<Z> b({0.0, 1.0, 0.5});
     etl::dyn_vector<Z> c(5);
@@ -397,7 +397,7 @@ TEMPLATE_TEST_CASE_2( "convolution_1d/expr_full_1", "convolution_1d_full", Z, fl
     REQUIRE(c[4] == Approx(1.5));
 }
 
-TEMPLATE_TEST_CASE_2( "convolution_1d/expr_full_2", "convolution_1d_full", Z, float, double ) {
+TEMPLATE_TEST_CASE_2("convolution_1d/expr_full_2", "convolution_1d_full", Z, float, double) {
     etl::dyn_vector<Z> a({1.0, 2.0, 3.0, 4.0, 5.0});
     etl::dyn_vector<Z> b({0.5, 1.0, 1.5});
     etl::dyn_vector<Z> c(7);

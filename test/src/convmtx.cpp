@@ -11,7 +11,7 @@
 
 //Note: The results of the tests have been validated with one of (octave/matlab/matlab)
 
-TEMPLATE_TEST_CASE_2( "convmtx/convmtx_1", "convmtx", Z, float, double ) {
+TEMPLATE_TEST_CASE_2("convmtx/convmtx_1", "convmtx", Z, float, double) {
     etl::fast_vector<Z, 3> a = {1.0, 2.0, 3.0};
 
     auto c = convmtx(a, 4);
@@ -45,7 +45,7 @@ TEMPLATE_TEST_CASE_2( "convmtx/convmtx_1", "convmtx", Z, float, double ) {
     REQUIRE(c(3, 5) == 3);
 }
 
-TEMPLATE_TEST_CASE_2( "convmtx/convmtx_2", "convmtx", Z, float, double ) {
+TEMPLATE_TEST_CASE_2("convmtx/convmtx_2", "convmtx", Z, float, double) {
     etl::fast_vector<Z, 3> a = {1.0, 2.0, 3.0};
     etl::fast_matrix<Z, 4, 6> c;
 
@@ -80,7 +80,7 @@ TEMPLATE_TEST_CASE_2( "convmtx/convmtx_2", "convmtx", Z, float, double ) {
     REQUIRE(c(3, 5) == 3);
 }
 
-TEMPLATE_TEST_CASE_2( "convmtx/convmtx_3", "convmtx", Z, float, double ) {
+TEMPLATE_TEST_CASE_2("convmtx/convmtx_3", "convmtx", Z, float, double) {
     etl::fast_vector_cm<Z, 3> a = {1.0, 2.0, 3.0};
     etl::fast_matrix_cm<Z, 4, 6> c;
     c = convmtx(a, 4);
@@ -114,11 +114,11 @@ TEMPLATE_TEST_CASE_2( "convmtx/convmtx_3", "convmtx", Z, float, double ) {
     REQUIRE(c(3, 5) == 3);
 }
 
-TEMPLATE_TEST_CASE_2( "convmtx2/convmtx2_1", "convmtx conv", Z, double, float ) {
+TEMPLATE_TEST_CASE_2("convmtx2/convmtx2_1", "convmtx conv", Z, double, float) {
     etl::fast_matrix<Z, 3, 3> I(etl::magic<Z>(3));
     etl::fast_matrix<Z, 1, 1> K(etl::magic<Z>(1));
-    etl::fast_matrix<Z, 3*3, 1> C1;
-    etl::fast_matrix<Z, 3*3, 1> C2;
+    etl::fast_matrix<Z, 3 * 3, 1> C1;
+    etl::fast_matrix<Z, 3 * 3, 1> C2;
 
     C1 = etl::convmtx2(I, 1, 1);
     C2 = etl::convmtx2_direct<1, 1>(I);
@@ -136,11 +136,11 @@ TEMPLATE_TEST_CASE_2( "convmtx2/convmtx2_1", "convmtx conv", Z, double, float ) 
     REQUIRE(C1 == C2);
 }
 
-TEMPLATE_TEST_CASE_2( "convmtx2/convmtx2_2", "convmtx conv", Z, double, float ) {
+TEMPLATE_TEST_CASE_2("convmtx2/convmtx2_2", "convmtx conv", Z, double, float) {
     etl::fast_matrix<Z, 3, 3> I(etl::magic<Z>(3));
     etl::fast_matrix<Z, 2, 2> K(etl::magic<Z>(2));
-    etl::fast_matrix<Z, 4*4, 4> C1;
-    etl::fast_matrix<Z, 4*4, 4> C2;
+    etl::fast_matrix<Z, 4 * 4, 4> C1;
+    etl::fast_matrix<Z, 4 * 4, 4> C2;
 
     C1 = etl::convmtx2(I, 2, 2);
     C2 = etl::convmtx2_direct<2, 2>(I);
@@ -178,12 +178,12 @@ TEMPLATE_TEST_CASE_2( "convmtx2/convmtx2_2", "convmtx conv", Z, double, float ) 
     REQUIRE(C1 == C2);
 }
 
-TEMPLATE_TEST_CASE_2( "convmtx2/convmtx2_3", "convmtx conv", Z, double, float ) {
+TEMPLATE_TEST_CASE_2("convmtx2/convmtx2_3", "convmtx conv", Z, double, float) {
     etl::fast_matrix<Z, 3, 3> I(etl::magic<Z>(3));
     etl::fast_matrix<Z, 2, 2> K(etl::magic<Z>(2));
 
-    etl::fast_matrix<Z, 4*4, 4> C1(etl::convmtx2(I, 2, 2));
-    etl::fast_matrix<Z, 4*4, 4> C2(etl::convmtx2_direct<2, 2>(I));
+    etl::fast_matrix<Z, 4 * 4, 4> C1(etl::convmtx2(I, 2, 2));
+    etl::fast_matrix<Z, 4 * 4, 4> C2(etl::convmtx2_direct<2, 2>(I));
 
     etl::fast_matrix<Z, 16, 1> a1(etl::mul(C1, etl::reshape<4, 1>(etl::transpose(K))));
     etl::fast_matrix<Z, 4, 4> b1(etl::transpose(etl::reshape<4, 4>(a1)));
@@ -197,7 +197,7 @@ TEMPLATE_TEST_CASE_2( "convmtx2/convmtx2_3", "convmtx conv", Z, double, float ) 
     REQUIRE(ref == b2);
 }
 
-TEMPLATE_TEST_CASE_2( "convmtx2/convmtx2_4", "convmtx conv", Z, double, float ) {
+TEMPLATE_TEST_CASE_2("convmtx2/convmtx2_4", "convmtx conv", Z, double, float) {
     etl::dyn_matrix<Z> I(etl::magic<Z>(7));
     etl::dyn_matrix<Z> K(etl::magic<Z>(5));
 

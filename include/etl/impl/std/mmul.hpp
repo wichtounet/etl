@@ -15,36 +15,36 @@ namespace impl {
 
 namespace standard {
 
-template<typename A, typename B, typename C>
-static void mm_mul(A&& a, B&& b, C&& c){
+template <typename A, typename B, typename C>
+static void mm_mul(A&& a, B&& b, C&& c) {
     bool row_major = decay_traits<A>::storage_order == order::RowMajor;
 
     c = 0;
 
-    if(row_major){
-        for(std::size_t i = 0; i < rows(a); i++){
-            for(std::size_t k = 0; k < columns(a); k++){
-                for(std::size_t j = 0; j < columns(b); j++){
-                    c(i,j) += a(i,k) * b(k,j);
+    if (row_major) {
+        for (std::size_t i = 0; i < rows(a); i++) {
+            for (std::size_t k = 0; k < columns(a); k++) {
+                for (std::size_t j = 0; j < columns(b); j++) {
+                    c(i, j) += a(i, k) * b(k, j);
                 }
             }
         }
     } else {
-        for(std::size_t j = 0; j < columns(b); j++){
-            for(std::size_t k = 0; k < columns(a); k++){
-                for(std::size_t i = 0; i < rows(a); i++){
-                    c(i,j) += a(i,k) * b(k,j);
+        for (std::size_t j = 0; j < columns(b); j++) {
+            for (std::size_t k = 0; k < columns(a); k++) {
+                for (std::size_t i = 0; i < rows(a); i++) {
+                    c(i, j) += a(i, k) * b(k, j);
                 }
             }
         }
     }
 }
 
-inline void add_mul(float& c, float a, float b){
+inline void add_mul(float& c, float a, float b) {
     c += a * b;
 }
 
-inline void add_mul(double& c, double a, double b){
+inline void add_mul(double& c, double a, double b) {
     c += a * b;
 }
 
@@ -52,8 +52,8 @@ inline void add_mul(double& c, double a, double b){
 //inlining/vectorizing std::complex operations
 //This helper improves performance by more than 50% on some cases
 
-template<typename T>
-inline void add_mul(std::complex<T>& c, std::complex<T> a, std::complex<T> b){
+template <typename T>
+inline void add_mul(std::complex<T>& c, std::complex<T> a, std::complex<T> b) {
     T ac = a.real() * b.real();
     T bd = a.imag() * b.imag();
 
@@ -63,47 +63,47 @@ inline void add_mul(std::complex<T>& c, std::complex<T> a, std::complex<T> b){
     c.imag(c.imag() + abcd - ac - bd);
 }
 
-template<typename A, typename B, typename C>
-static void vm_mul(A&& a, B&& b, C&& c){
+template <typename A, typename B, typename C>
+static void vm_mul(A&& a, B&& b, C&& c) {
     bool row_major = decay_traits<B>::storage_order == order::RowMajor;
 
     c = 0;
 
-    if(row_major){
-        for(std::size_t k = 0; k < etl::dim<0>(a); k++){
-            for(std::size_t j = 0; j < columns(b); j++){
+    if (row_major) {
+        for (std::size_t k = 0; k < etl::dim<0>(a); k++) {
+            for (std::size_t j = 0; j < columns(b); j++) {
                 //c(j) += a(k) * b(k,j);
-                add_mul(c(j), a(k), b(k,j));
+                add_mul(c(j), a(k), b(k, j));
             }
         }
     } else {
-        for(std::size_t j = 0; j < columns(b); j++){
-            for(std::size_t k = 0; k < etl::dim<0>(a); k++){
+        for (std::size_t j = 0; j < columns(b); j++) {
+            for (std::size_t k = 0; k < etl::dim<0>(a); k++) {
                 //c(j) += a(k) * b(k,j);
-                add_mul(c(j), a(k), b(k,j));
+                add_mul(c(j), a(k), b(k, j));
             }
         }
     }
 }
 
-template<typename A, typename B, typename C>
-static void mv_mul(A&& a, B&& b, C&& c){
+template <typename A, typename B, typename C>
+static void mv_mul(A&& a, B&& b, C&& c) {
     bool row_major = decay_traits<A>::storage_order == order::RowMajor;
 
     c = 0;
 
-    if(row_major){
-        for(std::size_t i = 0; i < rows(a); i++){
-            for(std::size_t k = 0; k < columns(a); k++){
+    if (row_major) {
+        for (std::size_t i = 0; i < rows(a); i++) {
+            for (std::size_t k = 0; k < columns(a); k++) {
                 //c(i) += a(i,k) * b(k);
-                add_mul(c(i), a(i,k), b(k));
+                add_mul(c(i), a(i, k), b(k));
             }
         }
     } else {
-        for(std::size_t k = 0; k < columns(a); k++){
-            for(std::size_t i = 0; i < rows(a); i++){
+        for (std::size_t k = 0; k < columns(a); k++) {
+            for (std::size_t i = 0; i < rows(a); i++) {
                 //c(i) += a(i,k) * b(k);
-                add_mul(c(i), a(i,k), b(k));
+                add_mul(c(i), a(i, k), b(k));
             }
         }
     }

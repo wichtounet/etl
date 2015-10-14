@@ -21,61 +21,61 @@ namespace etl {
 
 namespace detail {
 
-template<typename T, typename Enable = void>
+template <typename T, typename Enable = void>
 struct scalar_add {
-    template<typename TT>
-    static void apply(TT&& lhs, value_t<TT> rhs){
+    template <typename TT>
+    static void apply(TT&& lhs, value_t<TT> rhs) {
         auto m = lhs.memory_start();
 
-        for(std::size_t i = 0; i < size(lhs); ++i){
+        for (std::size_t i = 0; i < size(lhs); ++i) {
             m[i] += rhs;
         }
     }
 };
 
-template<typename T, typename Enable = void>
+template <typename T, typename Enable = void>
 struct scalar_sub {
-    template<typename TT>
-    static void apply(TT&& lhs, value_t<TT> rhs){
+    template <typename TT>
+    static void apply(TT&& lhs, value_t<TT> rhs) {
         auto m = lhs.memory_start();
 
-        for(std::size_t i = 0; i < size(lhs); ++i){
+        for (std::size_t i = 0; i < size(lhs); ++i) {
             m[i] -= rhs;
         }
     }
 };
 
-template<typename T, typename Enable = void>
+template <typename T, typename Enable = void>
 struct scalar_mul {
-    template<typename TT>
-    static void apply(TT&& lhs, value_t<TT> rhs){
+    template <typename TT>
+    static void apply(TT&& lhs, value_t<TT> rhs) {
         auto m = lhs.memory_start();
 
-        for(std::size_t i = 0; i < size(lhs); ++i){
+        for (std::size_t i = 0; i < size(lhs); ++i) {
             m[i] *= rhs;
         }
     }
 };
 
-template<typename T, typename Enable = void>
+template <typename T, typename Enable = void>
 struct scalar_div {
-    template<typename TT>
-    static void apply(TT&& lhs, value_t<TT> rhs){
+    template <typename TT>
+    static void apply(TT&& lhs, value_t<TT> rhs) {
         auto m = lhs.memory_start();
 
-        for(std::size_t i = 0; i < size(lhs); ++i){
+        for (std::size_t i = 0; i < size(lhs); ++i) {
             m[i] /= rhs;
         }
     }
 };
 
-template<typename T, typename Enable = void>
+template <typename T, typename Enable = void>
 struct scalar_mod {
-    template<typename TT>
-    static void apply(TT&& lhs, value_t<TT> rhs){
+    template <typename TT>
+    static void apply(TT&& lhs, value_t<TT> rhs) {
         auto m = lhs.memory_start();
 
-        for(std::size_t i = 0; i < size(lhs); ++i){
+        for (std::size_t i = 0; i < size(lhs); ++i) {
             m[i] %= rhs;
         }
     }
@@ -83,18 +83,18 @@ struct scalar_mod {
 
 #ifdef ETL_BLAS_MODE
 
-template<typename T>
+template <typename T>
 struct scalar_mul<T, std::enable_if_t<is_single_precision<T>::value && has_direct_access<T>::value>> {
-    template<typename TT>
-    static void apply(TT&& lhs, value_t<TT> rhs){
+    template <typename TT>
+    static void apply(TT&& lhs, value_t<TT> rhs) {
         cblas_sscal(size(lhs), rhs, lhs.memory_start(), 1);
     }
 };
 
-template<typename T>
+template <typename T>
 struct scalar_mul<T, std::enable_if_t<is_double_precision<T>::value && has_direct_access<T>::value>> {
-    template<typename TT>
-    static void apply(TT&& lhs, value_t<TT> rhs){
+    template <typename TT>
+    static void apply(TT&& lhs, value_t<TT> rhs) {
         cblas_dscal(size(lhs), rhs, lhs.memory_start(), 1);
     }
 };

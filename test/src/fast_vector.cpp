@@ -9,29 +9,29 @@
 
 // Init tests
 
-TEMPLATE_TEST_CASE_2( "fast_vector/init_1", "fast_vector::fast_vector(T)", Z, float, double ) {
+TEMPLATE_TEST_CASE_2("fast_vector/init_1", "fast_vector::fast_vector(T)", Z, float, double) {
     etl::fast_vector<Z, 4> test_vector(3.3);
 
     REQUIRE(test_vector.size() == 4);
 
-    for(std::size_t i = 0; i < test_vector.size(); ++i){
+    for (std::size_t i = 0; i < test_vector.size(); ++i) {
         REQUIRE(test_vector[i] == Z(3.3));
     }
 }
 
-TEMPLATE_TEST_CASE_2( "fast_vector/init_2", "fast_vector::operator=(T)", Z, float, double ) {
+TEMPLATE_TEST_CASE_2("fast_vector/init_2", "fast_vector::operator=(T)", Z, float, double) {
     etl::fast_vector<Z, 4> test_vector;
 
     test_vector = 3.3;
 
     REQUIRE(test_vector.size() == 4);
 
-    for(std::size_t i = 0; i < test_vector.size(); ++i){
+    for (std::size_t i = 0; i < test_vector.size(); ++i) {
         REQUIRE(test_vector[i] == Z(3.3));
     }
 }
 
-TEMPLATE_TEST_CASE_2( "fast_vector/init_3", "fast_vector::fast_vector(initializer_list)", Z, float, double ) {
+TEMPLATE_TEST_CASE_2("fast_vector/init_3", "fast_vector::fast_vector(initializer_list)", Z, float, double) {
     etl::fast_vector<Z, 3> test_vector = {1.0, 2.0, 3.0};
 
     REQUIRE(test_vector.size() == 3);
@@ -43,7 +43,7 @@ TEMPLATE_TEST_CASE_2( "fast_vector/init_3", "fast_vector::fast_vector(initialize
 
 // Binary operators test
 
-TEMPLATE_TEST_CASE_2( "fast_vector/add_scalar_1", "fast_vector::operator+", Z, float, double ) {
+TEMPLATE_TEST_CASE_2("fast_vector/add_scalar_1", "fast_vector::operator+", Z, float, double) {
     etl::fast_vector<Z, 3> test_vector = {-1.0, 2.0, 5.5};
 
     test_vector = 1.0 + test_vector;
@@ -53,7 +53,7 @@ TEMPLATE_TEST_CASE_2( "fast_vector/add_scalar_1", "fast_vector::operator+", Z, f
     REQUIRE(test_vector[2] == 6.5);
 }
 
-TEMPLATE_TEST_CASE_2( "fast_vector/add_scalar_2", "fast_vector::operator+", Z, float, double ) {
+TEMPLATE_TEST_CASE_2("fast_vector/add_scalar_2", "fast_vector::operator+", Z, float, double) {
     etl::fast_vector<Z, 3> test_vector = {-1.0, 2.0, 5.5};
 
     test_vector = test_vector + 1.0;
@@ -63,7 +63,7 @@ TEMPLATE_TEST_CASE_2( "fast_vector/add_scalar_2", "fast_vector::operator+", Z, f
     REQUIRE(test_vector[2] == 6.5);
 }
 
-TEMPLATE_TEST_CASE_2( "fast_vector/add_scalar_3", "fast_vector::operator+=", Z, float, double ) {
+TEMPLATE_TEST_CASE_2("fast_vector/add_scalar_3", "fast_vector::operator+=", Z, float, double) {
     etl::fast_vector<Z, 3> test_vector = {-1.0, 2.0, 5.5};
 
     test_vector += 1.0;
@@ -73,29 +73,29 @@ TEMPLATE_TEST_CASE_2( "fast_vector/add_scalar_3", "fast_vector::operator+=", Z, 
     REQUIRE(test_vector[2] == 6.5);
 }
 
-TEMPLATE_TEST_CASE_2( "fast_vector/add_1", "fast_vector::operator+", Z, float, double ) {
+TEMPLATE_TEST_CASE_2("fast_vector/add_1", "fast_vector::operator+", Z, float, double) {
     etl::fast_vector<Z, 3> a = {-1.0, 2.0, 5.0};
     etl::fast_vector<Z, 3> b = {2.5, 3.0, 4.0};
 
     etl::fast_vector<Z, 3> c(a + b);
 
-    REQUIRE(c[0] ==  1.5);
-    REQUIRE(c[1] ==  5.0);
-    REQUIRE(c[2] ==  9.0);
+    REQUIRE(c[0] == 1.5);
+    REQUIRE(c[1] == 5.0);
+    REQUIRE(c[2] == 9.0);
 }
 
-TEMPLATE_TEST_CASE_2( "fast_vector/add_2", "fast_vector::operator+=", Z, float, double ) {
+TEMPLATE_TEST_CASE_2("fast_vector/add_2", "fast_vector::operator+=", Z, float, double) {
     etl::fast_vector<Z, 3> a = {-1.0, 2.0, 5.0};
     etl::fast_vector<Z, 3> b = {2.5, 3.0, 4.0};
 
     a += b;
 
-    REQUIRE(a[0] ==  1.5);
-    REQUIRE(a[1] ==  5.0);
-    REQUIRE(a[2] ==  9.0);
+    REQUIRE(a[0] == 1.5);
+    REQUIRE(a[1] == 5.0);
+    REQUIRE(a[2] == 9.0);
 }
 
-TEMPLATE_TEST_CASE_2( "fast_vector/sub_scalar_1", "fast_vector::operator+", Z, float, double ) {
+TEMPLATE_TEST_CASE_2("fast_vector/sub_scalar_1", "fast_vector::operator+", Z, float, double) {
     etl::fast_vector<Z, 3> test_vector = {-1.0, 2.0, 5.5};
 
     test_vector = 1.0 - test_vector;
@@ -105,7 +105,7 @@ TEMPLATE_TEST_CASE_2( "fast_vector/sub_scalar_1", "fast_vector::operator+", Z, f
     REQUIRE(test_vector[2] == -4.5);
 }
 
-TEMPLATE_TEST_CASE_2( "fast_vector/sub_scalar_2", "fast_vector::operator+", Z, float, double ) {
+TEMPLATE_TEST_CASE_2("fast_vector/sub_scalar_2", "fast_vector::operator+", Z, float, double) {
     etl::fast_vector<Z, 3> test_vector = {-1.0, 2.0, 5.5};
 
     test_vector = test_vector - 1.0;
@@ -115,7 +115,7 @@ TEMPLATE_TEST_CASE_2( "fast_vector/sub_scalar_2", "fast_vector::operator+", Z, f
     REQUIRE(test_vector[2] == 4.5);
 }
 
-TEMPLATE_TEST_CASE_2( "fast_vector/sub_scalar_3", "fast_vector::operator+=", Z, float, double ) {
+TEMPLATE_TEST_CASE_2("fast_vector/sub_scalar_3", "fast_vector::operator+=", Z, float, double) {
     etl::fast_vector<Z, 3> test_vector = {-1.0, 2.0, 5.5};
 
     test_vector -= 1.0;
@@ -125,7 +125,7 @@ TEMPLATE_TEST_CASE_2( "fast_vector/sub_scalar_3", "fast_vector::operator+=", Z, 
     REQUIRE(test_vector[2] == 4.5);
 }
 
-TEMPLATE_TEST_CASE_2( "fast_vector/sub_1", "fast_vector::operator-", Z, float, double ) {
+TEMPLATE_TEST_CASE_2("fast_vector/sub_1", "fast_vector::operator-", Z, float, double) {
     etl::fast_vector<Z, 3> a = {-1.0, 2.0, 5.0};
     etl::fast_vector<Z, 3> b = {2.5, 3.0, 4.0};
 
@@ -133,10 +133,10 @@ TEMPLATE_TEST_CASE_2( "fast_vector/sub_1", "fast_vector::operator-", Z, float, d
 
     REQUIRE(c[0] == -3.5);
     REQUIRE(c[1] == -1.0);
-    REQUIRE(c[2] ==  1.0);
+    REQUIRE(c[2] == 1.0);
 }
 
-TEMPLATE_TEST_CASE_2( "fast_vector/sub_2", "fast_vector::operator-=", Z, float, double ) {
+TEMPLATE_TEST_CASE_2("fast_vector/sub_2", "fast_vector::operator-=", Z, float, double) {
     etl::fast_vector<Z, 3> a = {-1.0, 2.0, 5.0};
     etl::fast_vector<Z, 3> b = {2.5, 3.0, 4.0};
 
@@ -144,93 +144,93 @@ TEMPLATE_TEST_CASE_2( "fast_vector/sub_2", "fast_vector::operator-=", Z, float, 
 
     REQUIRE(a[0] == -3.5);
     REQUIRE(a[1] == -1.0);
-    REQUIRE(a[2] ==  1.0);
+    REQUIRE(a[2] == 1.0);
 }
 
-TEMPLATE_TEST_CASE_2( "fast_vector/mul_scalar_1", "fast_vector::operator*", Z, float, double ) {
+TEMPLATE_TEST_CASE_2("fast_vector/mul_scalar_1", "fast_vector::operator*", Z, float, double) {
     etl::fast_vector<Z, 3> test_vector = {-1.0, 2.0, 5.0};
 
     test_vector = 2.5 * test_vector;
 
     REQUIRE(test_vector[0] == -2.5);
-    REQUIRE(test_vector[1] ==  5.0);
+    REQUIRE(test_vector[1] == 5.0);
     REQUIRE(test_vector[2] == 12.5);
 }
 
-TEMPLATE_TEST_CASE_2( "fast_vector/mul_scalar_2", "fast_vector::operator*", Z, float, double ) {
+TEMPLATE_TEST_CASE_2("fast_vector/mul_scalar_2", "fast_vector::operator*", Z, float, double) {
     etl::fast_vector<Z, 3> test_vector = {-1.0, 2.0, 5.0};
 
     test_vector = test_vector * 2.5;
 
     REQUIRE(test_vector[0] == -2.5);
-    REQUIRE(test_vector[1] ==  5.0);
+    REQUIRE(test_vector[1] == 5.0);
     REQUIRE(test_vector[2] == 12.5);
 }
 
-TEMPLATE_TEST_CASE_2( "fast_vector/mul_scalar_3", "fast_vector::operator*=", Z, float, double ) {
+TEMPLATE_TEST_CASE_2("fast_vector/mul_scalar_3", "fast_vector::operator*=", Z, float, double) {
     etl::fast_vector<Z, 3> test_vector = {-1.0, 2.0, 5.0};
 
     test_vector *= 2.5;
 
     REQUIRE(test_vector[0] == -2.5);
-    REQUIRE(test_vector[1] ==  5.0);
+    REQUIRE(test_vector[1] == 5.0);
     REQUIRE(test_vector[2] == 12.5);
 }
 
-TEMPLATE_TEST_CASE_2( "fast_vector/mul_1", "fast_vector::operator*", Z, float, double ) {
+TEMPLATE_TEST_CASE_2("fast_vector/mul_1", "fast_vector::operator*", Z, float, double) {
     etl::fast_vector<Z, 3> a = {-1.0, 2.0, 5.0};
     etl::fast_vector<Z, 3> b = {2.5, 3.0, 4.0};
 
     etl::fast_vector<Z, 3> c(a >> b);
 
     REQUIRE(c[0] == -2.5);
-    REQUIRE(c[1] ==  6.0);
+    REQUIRE(c[1] == 6.0);
     REQUIRE(c[2] == 20.0);
 }
 
-TEMPLATE_TEST_CASE_2( "fast_vector/mul_2", "fast_vector::operator*=", Z, float, double ) {
+TEMPLATE_TEST_CASE_2("fast_vector/mul_2", "fast_vector::operator*=", Z, float, double) {
     etl::fast_vector<Z, 3> a = {-1.0, 2.0, 5.0};
     etl::fast_vector<Z, 3> b = {2.5, 3.0, 4.0};
 
     a *= b;
 
     REQUIRE(a[0] == -2.5);
-    REQUIRE(a[1] ==  6.0);
+    REQUIRE(a[1] == 6.0);
     REQUIRE(a[2] == 20.0);
 }
 
-TEMPLATE_TEST_CASE_2( "fast_vector/mul_3", "fast_vector::operator*", Z, float, double ) {
+TEMPLATE_TEST_CASE_2("fast_vector/mul_3", "fast_vector::operator*", Z, float, double) {
     etl::fast_vector<Z, 3> a = {-1.0, 2.0, 5.0};
     etl::fast_vector<Z, 3> b = {2.5, 3.0, 4.0};
 
     etl::fast_vector<Z, 3> c(a >> b);
 
     REQUIRE(c[0] == -2.5);
-    REQUIRE(c[1] ==  6.0);
+    REQUIRE(c[1] == 6.0);
     REQUIRE(c[2] == 20.0);
 }
 
-TEMPLATE_TEST_CASE_2( "fast_vector/div_scalar_1", "fast_vector::operator/", Z, float, double ) {
+TEMPLATE_TEST_CASE_2("fast_vector/div_scalar_1", "fast_vector::operator/", Z, float, double) {
     etl::fast_vector<Z, 3> test_vector = {-1.0, 2.0, 5.0};
 
     test_vector = test_vector / 2.5;
 
     REQUIRE(test_vector[0] == Approx(-1.0 / 2.5));
-    REQUIRE(test_vector[1] == Approx( 2.0 / 2.5));
-    REQUIRE(test_vector[2] == Approx( 5.0 / 2.5));
+    REQUIRE(test_vector[1] == Approx(2.0 / 2.5));
+    REQUIRE(test_vector[2] == Approx(5.0 / 2.5));
 }
 
-TEMPLATE_TEST_CASE_2( "fast_vector/div_scalar_2", "fast_vector::operator/", Z, float, double ) {
+TEMPLATE_TEST_CASE_2("fast_vector/div_scalar_2", "fast_vector::operator/", Z, float, double) {
     etl::fast_vector<Z, 3> test_vector = {-1.0, 2.0, 5.0};
 
     test_vector = 2.5 / test_vector;
 
     REQUIRE(test_vector[0] == Approx(2.5 / -1.0));
-    REQUIRE(test_vector[1] == Approx(2.5 /  2.0));
-    REQUIRE(test_vector[2] == Approx(2.5 /  5.0));
+    REQUIRE(test_vector[1] == Approx(2.5 / 2.0));
+    REQUIRE(test_vector[2] == Approx(2.5 / 5.0));
 }
 
-TEMPLATE_TEST_CASE_2( "fast_vector/div_scalar_3", "fast_vector::operator/=", Z, float, double ) {
+TEMPLATE_TEST_CASE_2("fast_vector/div_scalar_3", "fast_vector::operator/=", Z, float, double) {
     etl::fast_vector<Z, 3> test_vector = {-1.0, 2.0, 5.0};
 
     test_vector /= 2.5;
@@ -240,7 +240,7 @@ TEMPLATE_TEST_CASE_2( "fast_vector/div_scalar_3", "fast_vector::operator/=", Z, 
     REQUIRE(test_vector[2] == Approx(5.0 / 2.5));
 }
 
-TEMPLATE_TEST_CASE_2( "fast_vector/div_1", "fast_vector::operator/", Z, float, double ){
+TEMPLATE_TEST_CASE_2("fast_vector/div_1", "fast_vector::operator/", Z, float, double) {
     etl::fast_vector<Z, 3> a = {-1.0, 2.0, 5.0};
     etl::fast_vector<Z, 3> b = {2.5, 3.0, 4.0};
 
@@ -251,7 +251,7 @@ TEMPLATE_TEST_CASE_2( "fast_vector/div_1", "fast_vector::operator/", Z, float, d
     REQUIRE(c[2] == Approx(5.0 / 4.0));
 }
 
-TEMPLATE_TEST_CASE_2( "fast_vector/div_2", "fast_vector::operator/=", Z, float, double ){
+TEMPLATE_TEST_CASE_2("fast_vector/div_2", "fast_vector::operator/=", Z, float, double) {
     etl::fast_vector<Z, 3> a = {-1.0, 2.0, 5.0};
     etl::fast_vector<Z, 3> b = {2.5, 3.0, 4.0};
 
@@ -262,37 +262,37 @@ TEMPLATE_TEST_CASE_2( "fast_vector/div_2", "fast_vector::operator/=", Z, float, 
     REQUIRE(a[2] == Approx(5.0 / 4.0));
 }
 
-TEST_CASE( "fast_vector/mod_scalar_1", "fast_vector::operator%") {
+TEST_CASE("fast_vector/mod_scalar_1", "fast_vector::operator%") {
     etl::fast_vector<int, 3> test_vector = {-1, 2, 5};
 
     test_vector = test_vector % 2;
 
     REQUIRE(test_vector[0] == -1 % 2);
-    REQUIRE(test_vector[1] ==  2 % 2);
-    REQUIRE(test_vector[2] ==  5 % 2);
+    REQUIRE(test_vector[1] == 2 % 2);
+    REQUIRE(test_vector[2] == 5 % 2);
 }
 
-TEST_CASE( "fast_vector/mod_scalar_2", "fast_vector::operator%") {
+TEST_CASE("fast_vector/mod_scalar_2", "fast_vector::operator%") {
     etl::fast_vector<int, 3> test_vector = {-1, 2, 5};
 
     test_vector = 2 % test_vector;
 
     REQUIRE(test_vector[0] == 2 % -1);
-    REQUIRE(test_vector[1] == 2 %  2);
-    REQUIRE(test_vector[2] == 2 %  5);
+    REQUIRE(test_vector[1] == 2 % 2);
+    REQUIRE(test_vector[2] == 2 % 5);
 }
 
-TEST_CASE( "fast_vector/mod_scalar_3", "fast_vector::operator%=") {
+TEST_CASE("fast_vector/mod_scalar_3", "fast_vector::operator%=") {
     etl::fast_vector<int, 3> test_vector = {-1, 2, 5};
 
     test_vector %= 2;
 
     REQUIRE(test_vector[0] == -1 % 2);
-    REQUIRE(test_vector[1] ==  2 % 2);
-    REQUIRE(test_vector[2] ==  5 % 2);
+    REQUIRE(test_vector[1] == 2 % 2);
+    REQUIRE(test_vector[2] == 5 % 2);
 }
 
-TEST_CASE( "fast_vector/mod_1", "fast_vector::operator%") {
+TEST_CASE("fast_vector/mod_1", "fast_vector::operator%") {
     etl::fast_vector<int, 3> a = {-1, 2, 5};
     etl::fast_vector<int, 3> b = {2, 3, 4};
 
@@ -303,7 +303,7 @@ TEST_CASE( "fast_vector/mod_1", "fast_vector::operator%") {
     REQUIRE(c[2] == 5 % 4);
 }
 
-TEST_CASE( "fast_vector/mod_2", "fast_vector::operator%") {
+TEST_CASE("fast_vector/mod_2", "fast_vector::operator%") {
     etl::fast_vector<int, 3> a = {-1, 2, 5};
     etl::fast_vector<int, 3> b = {2, 3, 4};
 
@@ -316,7 +316,7 @@ TEST_CASE( "fast_vector/mod_2", "fast_vector::operator%") {
 
 // Unary operator tests
 
-TEMPLATE_TEST_CASE_2( "fast_vector/log", "fast_vector::abs", Z, float, double ) {
+TEMPLATE_TEST_CASE_2("fast_vector/log", "fast_vector::abs", Z, float, double) {
     etl::fast_vector<Z, 3> a = {-1.0, 2.0, 5.0};
 
     etl::fast_vector<Z, 3> d(log(a));
@@ -326,7 +326,7 @@ TEMPLATE_TEST_CASE_2( "fast_vector/log", "fast_vector::abs", Z, float, double ) 
     REQUIRE(d[2] == std::log(Z(5.0)));
 }
 
-TEMPLATE_TEST_CASE_2( "fast_vector/abs", "fast_vector::abs", Z, float, double ) {
+TEMPLATE_TEST_CASE_2("fast_vector/abs", "fast_vector::abs", Z, float, double) {
     etl::fast_vector<Z, 3> a = {-1.0, 2.0, 0.0};
 
     etl::fast_vector<Z, 3> d(abs(a));
@@ -336,7 +336,7 @@ TEMPLATE_TEST_CASE_2( "fast_vector/abs", "fast_vector::abs", Z, float, double ) 
     REQUIRE(d[2] == 0.0);
 }
 
-TEMPLATE_TEST_CASE_2( "fast_vector/sign", "fast_vector::abs", Z, float, double ) {
+TEMPLATE_TEST_CASE_2("fast_vector/sign", "fast_vector::abs", Z, float, double) {
     etl::fast_vector<Z, 3> a = {-1.0, 2.0, 0.0};
 
     etl::fast_vector<Z, 3> d(sign(a));
@@ -346,7 +346,7 @@ TEMPLATE_TEST_CASE_2( "fast_vector/sign", "fast_vector::abs", Z, float, double )
     REQUIRE(d[2] == 0.0);
 }
 
-TEMPLATE_TEST_CASE_2( "fast_vector/unary_unary", "fast_vector::abs", Z, float, double ) {
+TEMPLATE_TEST_CASE_2("fast_vector/unary_unary", "fast_vector::abs", Z, float, double) {
     etl::fast_vector<Z, 3> a = {-1.0, 2.0, 0.0};
 
     etl::fast_vector<Z, 3> d(abs(sign(a)));
@@ -356,7 +356,7 @@ TEMPLATE_TEST_CASE_2( "fast_vector/unary_unary", "fast_vector::abs", Z, float, d
     REQUIRE(d[2] == 0.0);
 }
 
-TEMPLATE_TEST_CASE_2( "fast_vector/unary_binary_1", "fast_vector::abs", Z, float, double ) {
+TEMPLATE_TEST_CASE_2("fast_vector/unary_binary_1", "fast_vector::abs", Z, float, double) {
     etl::fast_vector<Z, 3> a = {-1.0, 2.0, 0.0};
 
     etl::fast_vector<Z, 3> d(abs(a + a));
@@ -366,7 +366,7 @@ TEMPLATE_TEST_CASE_2( "fast_vector/unary_binary_1", "fast_vector::abs", Z, float
     REQUIRE(d[2] == 0.0);
 }
 
-TEMPLATE_TEST_CASE_2( "fast_vector/unary_binary_2", "fast_vector::abs", Z, float, double ) {
+TEMPLATE_TEST_CASE_2("fast_vector/unary_binary_2", "fast_vector::abs", Z, float, double) {
     etl::fast_vector<Z, 3> a = {-1.0, 2.0, 0.0};
 
     etl::fast_vector<Z, 3> d(abs(a) + a);
@@ -376,7 +376,7 @@ TEMPLATE_TEST_CASE_2( "fast_vector/unary_binary_2", "fast_vector::abs", Z, float
     REQUIRE(d[2] == 0.0);
 }
 
-TEMPLATE_TEST_CASE_2( "fast_vector/sigmoid", "fast_vector::sigmoid", Z, float, double ) {
+TEMPLATE_TEST_CASE_2("fast_vector/sigmoid", "fast_vector::sigmoid", Z, float, double) {
     etl::fast_vector<Z, 3> a = {-1.0, 2.0, 0.0};
 
     etl::fast_vector<Z, 3> d(etl::sigmoid(a));
@@ -386,7 +386,7 @@ TEMPLATE_TEST_CASE_2( "fast_vector/sigmoid", "fast_vector::sigmoid", Z, float, d
     REQUIRE(d[2] == etl::math::logistic_sigmoid(Z(0.0)));
 }
 
-TEMPLATE_TEST_CASE_2( "fast_sigmoid/1", "[sigmoid]", Z, float, double ) {
+TEMPLATE_TEST_CASE_2("fast_sigmoid/1", "[sigmoid]", Z, float, double) {
     etl::fast_vector<Z, 3> a = {-1.0, 2.0, 0.0};
 
     etl::fast_vector<Z, 3> d(etl::fast_sigmoid(a));
@@ -396,7 +396,7 @@ TEMPLATE_TEST_CASE_2( "fast_sigmoid/1", "[sigmoid]", Z, float, double ) {
     REQUIRE(d[2] == Approx(etl::math::logistic_sigmoid(Z(0.0))).epsilon(0.05));
 }
 
-TEMPLATE_TEST_CASE_2( "hard_sigmoid/1", "[sigmoid]", Z, float, double ) {
+TEMPLATE_TEST_CASE_2("hard_sigmoid/1", "[sigmoid]", Z, float, double) {
     etl::fast_vector<Z, 3> a = {-1.0, 2.0, 0.0};
 
     etl::fast_vector<Z, 3> d(etl::hard_sigmoid(a));
@@ -406,7 +406,7 @@ TEMPLATE_TEST_CASE_2( "hard_sigmoid/1", "[sigmoid]", Z, float, double ) {
     REQUIRE(d[2] == Approx(etl::math::logistic_sigmoid(Z(0.0))).epsilon(0.05));
 }
 
-TEMPLATE_TEST_CASE_2( "fast_vector/softmax_1", "fast_vector::softmax", Z, float, double ) {
+TEMPLATE_TEST_CASE_2("fast_vector/softmax_1", "fast_vector::softmax", Z, float, double) {
     etl::fast_vector<Z, 3> a = {1.0, 2.0, 3.0};
 
     etl::fast_vector<Z, 3> d(etl::softmax(a));
@@ -420,7 +420,7 @@ TEMPLATE_TEST_CASE_2( "fast_vector/softmax_1", "fast_vector::softmax", Z, float,
     REQUIRE(etl::mean(d) == Approx(1.0 / 3.0));
 }
 
-TEMPLATE_TEST_CASE_2( "fast_vector/softmax_2", "fast_vector::softmax", Z, float, double ) {
+TEMPLATE_TEST_CASE_2("fast_vector/softmax_2", "fast_vector::softmax", Z, float, double) {
     etl::fast_vector<Z, 3> a = {-1.0, 4.0, 5.0};
 
     etl::fast_vector<Z, 3> d(etl::softmax(a));
@@ -434,7 +434,7 @@ TEMPLATE_TEST_CASE_2( "fast_vector/softmax_2", "fast_vector::softmax", Z, float,
     REQUIRE(etl::mean(d) == Approx(1.0 / 3.0));
 }
 
-TEMPLATE_TEST_CASE_2( "softmax_3", "fast_vector::softmax", Z, float, double ) {
+TEMPLATE_TEST_CASE_2("softmax_3", "fast_vector::softmax", Z, float, double) {
     etl::fast_matrix<Z, 3, 3> a = {1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0};
 
     etl::fast_matrix<Z, 3, 3> d(etl::softmax(a));
@@ -442,7 +442,7 @@ TEMPLATE_TEST_CASE_2( "softmax_3", "fast_vector::softmax", Z, float, double ) {
     REQUIRE(etl::mean(d) == Approx(1.0 / 9.0));
 }
 
-TEMPLATE_TEST_CASE_2( "softmax_4", "fast_vector::softmax", Z, float, double ) {
+TEMPLATE_TEST_CASE_2("softmax_4", "fast_vector::softmax", Z, float, double) {
     etl::fast_matrix<Z, 3, 3> a = {1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0};
     etl::fast_matrix<Z, 3, 3> b(1.4);
 
@@ -451,7 +451,7 @@ TEMPLATE_TEST_CASE_2( "softmax_4", "fast_vector::softmax", Z, float, double ) {
     REQUIRE(etl::mean(d) == Approx(1.0 / 9.0));
 }
 
-TEMPLATE_TEST_CASE_2( "fast_vector/stable_softmax_1", "stable_softmax", Z, float, double ) {
+TEMPLATE_TEST_CASE_2("fast_vector/stable_softmax_1", "stable_softmax", Z, float, double) {
     etl::fast_vector<Z, 3> a = {-1.0, 4.0, 5.0};
 
     etl::fast_vector<Z, 3> d(etl::stable_softmax(a));
@@ -465,7 +465,7 @@ TEMPLATE_TEST_CASE_2( "fast_vector/stable_softmax_1", "stable_softmax", Z, float
     REQUIRE(etl::mean(d) == Approx(1.0 / 3.0));
 }
 
-TEMPLATE_TEST_CASE_2( "fast_vector/softplus", "fast_vector::softplus", Z, float, double ) {
+TEMPLATE_TEST_CASE_2("fast_vector/softplus", "fast_vector::softplus", Z, float, double) {
     etl::fast_vector<Z, 3> a = {-1.0, 2.0, 0.0};
 
     etl::fast_vector<Z, 3> d(etl::softplus(a));
@@ -475,7 +475,7 @@ TEMPLATE_TEST_CASE_2( "fast_vector/softplus", "fast_vector::softplus", Z, float,
     REQUIRE(d[2] == Approx(etl::math::softplus(Z(0.0))));
 }
 
-TEMPLATE_TEST_CASE_2( "fast_vector/exp", "fast_vector::exp", Z, float, double ) {
+TEMPLATE_TEST_CASE_2("fast_vector/exp", "fast_vector::exp", Z, float, double) {
     etl::fast_vector<Z, 3> a = {-1.0, 2.0, 0.0};
 
     etl::fast_vector<Z, 3> d(etl::exp(a));
@@ -485,7 +485,7 @@ TEMPLATE_TEST_CASE_2( "fast_vector/exp", "fast_vector::exp", Z, float, double ) 
     REQUIRE(d[2] == Approx(std::exp(Z(0.0))));
 }
 
-TEMPLATE_TEST_CASE_2( "max/1", "[fast][max]", Z, float, double ) {
+TEMPLATE_TEST_CASE_2("max/1", "[fast][max]", Z, float, double) {
     etl::fast_vector<Z, 3> a = {-1.0, 2.0, 0.0};
 
     etl::fast_vector<Z, 3> d(etl::max(a, 1.0));
@@ -495,7 +495,7 @@ TEMPLATE_TEST_CASE_2( "max/1", "[fast][max]", Z, float, double ) {
     REQUIRE(d[2] == 1.0);
 }
 
-TEMPLATE_TEST_CASE_2( "max/2", "[fast][max]", Z, float, double ) {
+TEMPLATE_TEST_CASE_2("max/2", "[fast][max]", Z, float, double) {
     etl::fast_vector<Z, 4> a = {-1.0, -3.0, 0.0, 3.4};
     etl::fast_vector<Z, 4> b = {1.0, -2.0, 5.0, 3.5};
 
@@ -507,7 +507,7 @@ TEMPLATE_TEST_CASE_2( "max/2", "[fast][max]", Z, float, double ) {
     REQUIRE(d[3] == Z(3.5));
 }
 
-TEMPLATE_TEST_CASE_2( "min/1", "[fast][vector][min]", Z, float, double ) {
+TEMPLATE_TEST_CASE_2("min/1", "[fast][vector][min]", Z, float, double) {
     etl::fast_vector<Z, 3> a = {-1.0, 2.0, 0.0};
 
     etl::fast_vector<Z, 3> d(etl::min(a, 1.0));
@@ -517,7 +517,7 @@ TEMPLATE_TEST_CASE_2( "min/1", "[fast][vector][min]", Z, float, double ) {
     REQUIRE(d[2] == 0.0);
 }
 
-TEMPLATE_TEST_CASE_2( "min/2", "[fast][vector][min]", Z, float, double ) {
+TEMPLATE_TEST_CASE_2("min/2", "[fast][vector][min]", Z, float, double) {
     etl::fast_vector<Z, 4> a = {-1.0, -3.0, 0.0, 3.4};
     etl::fast_vector<Z, 4> b = {1.0, -2.0, 5.0, 3.5};
 
@@ -529,7 +529,7 @@ TEMPLATE_TEST_CASE_2( "min/2", "[fast][vector][min]", Z, float, double ) {
     REQUIRE(d[3] == Z(3.4));
 }
 
-TEMPLATE_TEST_CASE_2( "clip/1", "[fast][vector][clip]", Z, float, double ) {
+TEMPLATE_TEST_CASE_2("clip/1", "[fast][vector][clip]", Z, float, double) {
     etl::fast_vector<Z, 5> a = {-1.0, 0.3, 0.0, 0.5, 1.65};
 
     etl::fast_vector<Z, 5> d(etl::clip(a, 0.0, 1.0));
@@ -540,7 +540,7 @@ TEMPLATE_TEST_CASE_2( "clip/1", "[fast][vector][clip]", Z, float, double ) {
     REQUIRE(d[3] == Z(0.5));
     REQUIRE(d[4] == Z(1.0));
 }
-TEMPLATE_TEST_CASE_2( "fast_vector/one_if", "fast_vector::one_if", Z, float, double ) {
+TEMPLATE_TEST_CASE_2("fast_vector/one_if", "fast_vector::one_if", Z, float, double) {
     etl::fast_vector<Z, 3> a = {-1.0, 2.0, 0.0};
 
     etl::fast_vector<Z, 3> d(etl::one_if(a, 0.0));
@@ -550,7 +550,7 @@ TEMPLATE_TEST_CASE_2( "fast_vector/one_if", "fast_vector::one_if", Z, float, dou
     REQUIRE(d[2] == 1.0);
 }
 
-TEMPLATE_TEST_CASE_2( "fast_vector/one_if_max", "fast_vector::one_if_max", Z, float, double ) {
+TEMPLATE_TEST_CASE_2("fast_vector/one_if_max", "fast_vector::one_if_max", Z, float, double) {
     etl::fast_vector<Z, 5> a = {-1.0, 2.0, 0.0, 3.0, -4};
 
     etl::fast_vector<Z, 5> d(etl::one_if_max(a));
@@ -562,11 +562,11 @@ TEMPLATE_TEST_CASE_2( "fast_vector/one_if_max", "fast_vector::one_if_max", Z, fl
     REQUIRE(d[4] == 0.0);
 }
 
-constexpr bool binary(double a){
+constexpr bool binary(double a) {
     return a == 0.0 || a == 1.0;
 }
 
-TEMPLATE_TEST_CASE_2( "fast_vector/bernoulli", "fast_vector::bernoulli", Z, float, double ) {
+TEMPLATE_TEST_CASE_2("fast_vector/bernoulli", "fast_vector::bernoulli", Z, float, double) {
     etl::fast_vector<Z, 3> a = {-1.0, 0.3, 0.7};
 
     etl::fast_vector<Z, 3> d(etl::bernoulli(a));
@@ -578,7 +578,7 @@ TEMPLATE_TEST_CASE_2( "fast_vector/bernoulli", "fast_vector::bernoulli", Z, floa
 
 // Reductions
 
-TEMPLATE_TEST_CASE_2( "fast_vector/sum", "sum", Z, float, double ) {
+TEMPLATE_TEST_CASE_2("fast_vector/sum", "sum", Z, float, double) {
     etl::fast_vector<Z, 3> a = {-1.0, 2.0, 8.5};
 
     auto d = sum(a);
@@ -586,7 +586,7 @@ TEMPLATE_TEST_CASE_2( "fast_vector/sum", "sum", Z, float, double ) {
     REQUIRE(d == 9.5);
 }
 
-TEMPLATE_TEST_CASE_2( "fast_vector/sum_2", "sum", Z, float, double ) {
+TEMPLATE_TEST_CASE_2("fast_vector/sum_2", "sum", Z, float, double) {
     etl::fast_vector<Z, 3> a = {-1.0, 2.0, 8.5};
 
     auto d = sum(a + a);
@@ -594,7 +594,7 @@ TEMPLATE_TEST_CASE_2( "fast_vector/sum_2", "sum", Z, float, double ) {
     REQUIRE(d == 19);
 }
 
-TEMPLATE_TEST_CASE_2( "fast_vector/sum_3", "sum", Z, float, double ) {
+TEMPLATE_TEST_CASE_2("fast_vector/sum_3", "sum", Z, float, double) {
     etl::fast_vector<Z, 3> a = {-1.0, 2.0, 8.5};
 
     auto d = sum(abs(a + a));
@@ -602,7 +602,7 @@ TEMPLATE_TEST_CASE_2( "fast_vector/sum_3", "sum", Z, float, double ) {
     REQUIRE(d == 23.0);
 }
 
-TEMPLATE_TEST_CASE_2( "fast_vector/min_reduc_1", "min", Z, float, double ) {
+TEMPLATE_TEST_CASE_2("fast_vector/min_reduc_1", "min", Z, float, double) {
     etl::fast_vector<Z, 3> a = {-1.0, 2.0, 8.5};
 
     auto d = min(a);
@@ -610,7 +610,7 @@ TEMPLATE_TEST_CASE_2( "fast_vector/min_reduc_1", "min", Z, float, double ) {
     REQUIRE(d == -1.0);
 }
 
-TEMPLATE_TEST_CASE_2( "fast_vector/max_reduc_1", "max", Z, float, double ) {
+TEMPLATE_TEST_CASE_2("fast_vector/max_reduc_1", "max", Z, float, double) {
     etl::fast_vector<Z, 3> a = {-1.0, 2.0, 8.5};
 
     auto d = max(a);
@@ -618,7 +618,7 @@ TEMPLATE_TEST_CASE_2( "fast_vector/max_reduc_1", "max", Z, float, double ) {
     REQUIRE(d == 8.5);
 }
 
-TEMPLATE_TEST_CASE_2( "fast_vector/min_reduc_2", "min", Z, float, double ) {
+TEMPLATE_TEST_CASE_2("fast_vector/min_reduc_2", "min", Z, float, double) {
     etl::fast_vector<Z, 3> a = {-1.0, 2.0, 8.5};
 
     auto& d = min(a);
@@ -630,7 +630,7 @@ TEMPLATE_TEST_CASE_2( "fast_vector/min_reduc_2", "min", Z, float, double ) {
     REQUIRE(d == Z(3.3));
 }
 
-TEMPLATE_TEST_CASE_2( "fast_vector/max_reduc_2", "max", Z, float, double ) {
+TEMPLATE_TEST_CASE_2("fast_vector/max_reduc_2", "max", Z, float, double) {
     etl::fast_vector<Z, 3> a = {-1.0, 2.0, 8.5};
 
     auto& d = max(a);
@@ -644,7 +644,7 @@ TEMPLATE_TEST_CASE_2( "fast_vector/max_reduc_2", "max", Z, float, double ) {
 
 // Complex tests
 
-TEMPLATE_TEST_CASE_2( "fast_vector/complex", "fast_vector::complex", Z, float, double ) {
+TEMPLATE_TEST_CASE_2("fast_vector/complex", "fast_vector::complex", Z, float, double) {
     etl::fast_vector<Z, 3> a = {-1.0, 2.0, 5.0};
     etl::fast_vector<Z, 3> b = {2.5, 3.0, 4.0};
     etl::fast_vector<Z, 3> c = {1.2, -3.0, 3.5};
@@ -656,7 +656,7 @@ TEMPLATE_TEST_CASE_2( "fast_vector/complex", "fast_vector::complex", Z, float, d
     REQUIRE(d[2] == Approx(0.68627));
 }
 
-TEMPLATE_TEST_CASE_2( "fast_vector/complex_2", "fast_vector::complex", Z, float, double ) {
+TEMPLATE_TEST_CASE_2("fast_vector/complex_2", "fast_vector::complex", Z, float, double) {
     etl::fast_vector<Z, 3> a = {1.1, 2.0, 5.0};
     etl::fast_vector<Z, 3> b = {2.5, -3.0, 4.0};
     etl::fast_vector<Z, 3> c = {2.2, 3.0, 3.5};
@@ -668,7 +668,7 @@ TEMPLATE_TEST_CASE_2( "fast_vector/complex_2", "fast_vector::complex", Z, float,
     REQUIRE(d[2] == Approx(5.8273));
 }
 
-TEMPLATE_TEST_CASE_2( "fast_vector/complex_3", "fast_vector::complex", Z, float, double ) {
+TEMPLATE_TEST_CASE_2("fast_vector/complex_3", "fast_vector::complex", Z, float, double) {
     etl::fast_vector<Z, 3> a = {-1.0, 2.0, 5.0};
     etl::fast_vector<Z, 3> b = {2.5, 3.0, 4.0};
 
@@ -679,7 +679,7 @@ TEMPLATE_TEST_CASE_2( "fast_vector/complex_3", "fast_vector::complex", Z, float,
     REQUIRE(d[2] == Approx(0.125));
 }
 
-TEMPLATE_TEST_CASE_2( "fast_vector/swap_1", "fast_vector::swap", Z, float, double ) {
+TEMPLATE_TEST_CASE_2("fast_vector/swap_1", "fast_vector::swap", Z, float, double) {
     etl::fast_vector<Z, 3> a = {-1.0, 2.0, 5.0};
     etl::fast_vector<Z, 3> b = {2.5, 3.0, 4.0};
 
@@ -697,7 +697,7 @@ TEMPLATE_TEST_CASE_2( "fast_vector/swap_1", "fast_vector::swap", Z, float, doubl
 
 // dot
 
-TEMPLATE_TEST_CASE_2( "fast_vector/dot_1", "sum", Z, float, double ) {
+TEMPLATE_TEST_CASE_2("fast_vector/dot_1", "sum", Z, float, double) {
     etl::fast_vector<Z, 3> a = {-1.0, 2.0, 8.5};
     etl::fast_vector<Z, 3> b = {2.0, 3.0, 2.0};
 
@@ -706,7 +706,7 @@ TEMPLATE_TEST_CASE_2( "fast_vector/dot_1", "sum", Z, float, double ) {
     REQUIRE(d == 21.0);
 }
 
-TEMPLATE_TEST_CASE_2( "fast_vector/dot_2", "sum", Z, float, double ) {
+TEMPLATE_TEST_CASE_2("fast_vector/dot_2", "sum", Z, float, double) {
     etl::fast_vector<Z, 3> a = {-1.0, 2.0, 8.5};
     etl::fast_vector<Z, 3> b = {2.0, 3.0, 2.0};
 

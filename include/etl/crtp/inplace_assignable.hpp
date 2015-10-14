@@ -24,7 +24,7 @@ namespace etl {
  *
  * This CRTP class injects inplace FFT, Transposition, flipping and scaling.
  */
-template<typename D>
+template <typename D>
 struct inplace_assignable {
     using derived_t = D;
 
@@ -41,8 +41,8 @@ struct inplace_assignable {
      *
      * \param e The scaling factor.
      */
-    template<typename E>
-    derived_t& scale_inplace(E&& e){
+    template <typename E>
+    derived_t& scale_inplace(E&& e) {
         as_derived() *= e;
 
         return as_derived();
@@ -51,10 +51,10 @@ struct inplace_assignable {
     /*!
      * \brief Flip the matrix horizontally and vertically, in place.
      */
-    derived_t& fflip_inplace(){
+    derived_t& fflip_inplace() {
         static_assert(etl_traits<derived_t>::dimensions() <= 2, "Impossible to fflip a matrix of D > 2");
 
-        if(etl_traits<derived_t>::dimensions() == 2){
+        if (etl_traits<derived_t>::dimensions() == 2) {
             std::reverse(as_derived().begin(), as_derived().end());
         }
 
@@ -64,11 +64,11 @@ struct inplace_assignable {
     /*!
      * \brief Transpose each sub 2D matrix in place.
      */
-    template<typename S = D, cpp_enable_if((decay_traits<S>::dimensions() > 3))>
-    derived_t& deep_transpose_inplace(){
+    template <typename S = D, cpp_enable_if((decay_traits<S>::dimensions() > 3))>
+    derived_t& deep_transpose_inplace() {
         decltype(auto) mat = as_derived();
 
-        for(std::size_t i = 0; i < etl::dim<0>(mat); ++i){
+        for (std::size_t i = 0; i < etl::dim<0>(mat); ++i) {
             mat(i).deep_transpose_inplace();
         }
 
@@ -78,11 +78,11 @@ struct inplace_assignable {
     /*!
      * \brief Transpose each sub 2D matrix in place.
      */
-    template<typename S = D, cpp_enable_if((decay_traits<S>::dimensions() == 3))>
-    derived_t& deep_transpose_inplace(){
+    template <typename S = D, cpp_enable_if((decay_traits<S>::dimensions() == 3))>
+    derived_t& deep_transpose_inplace() {
         decltype(auto) mat = as_derived();
 
-        for(std::size_t i = 0; i < etl::dim<0>(mat); ++i){
+        for (std::size_t i = 0; i < etl::dim<0>(mat); ++i) {
             mat(i).transpose_inplace();
         }
 
@@ -94,8 +94,8 @@ struct inplace_assignable {
      *
      * Only square fast matrix can be transpose in place, dyn matrix don't have any limitation.
      */
-    template<typename S = D, cpp_disable_if(is_dyn_matrix<S>::value)>
-    derived_t& transpose_inplace(){
+    template <typename S = D, cpp_disable_if(is_dyn_matrix<S>::value)>
+    derived_t& transpose_inplace() {
         static_assert(etl_traits<derived_t>::dimensions() == 2, "Only 2D matrix can be transposed");
         cpp_assert(etl::dim<0>(as_derived()) == etl::dim<1>(as_derived()), "Only square matrices can be tranposed inplace");
 
@@ -109,13 +109,13 @@ struct inplace_assignable {
      *
      * Only square fast matrix can be transpose in place, dyn matrix don't have any limitation.
      */
-    template<typename S = D, cpp_enable_if(is_dyn_matrix<S>::value)>
-    derived_t& transpose_inplace(){
+    template <typename S = D, cpp_enable_if(is_dyn_matrix<S>::value)>
+    derived_t& transpose_inplace() {
         static_assert(etl_traits<derived_t>::dimensions() == 2, "Only 2D matrix can be transposed");
 
         decltype(auto) mat = as_derived();
 
-        if(etl::dim<0>(mat) == etl::dim<1>(mat)){
+        if (etl::dim<0>(mat) == etl::dim<1>(mat)) {
             detail::inplace_square_transpose<derived_t>::apply(mat);
         } else {
             detail::inplace_rectangular_transpose<derived_t>::apply(mat);
@@ -130,7 +130,7 @@ struct inplace_assignable {
     /*!
      * \brief Perform inplace 1D FFT of the vector.
      */
-    derived_t& fft_inplace(){
+    derived_t& fft_inplace() {
         static_assert(is_complex<derived_t>::value, "Only complex vector can use inplace FFT");
         static_assert(etl_traits<derived_t>::dimensions() == 1, "Only vector can use fft_inplace, use fft2_inplace for matrices");
 
@@ -146,7 +146,7 @@ struct inplace_assignable {
      *
      * This function considers the first dimension as being batches of 1D FFT.
      */
-    derived_t& fft_many_inplace(){
+    derived_t& fft_many_inplace() {
         static_assert(is_complex<derived_t>::value, "Only complex vector can use inplace FFT");
         static_assert(etl_traits<derived_t>::dimensions() > 1, "Only matrix of dimensions > 1 can use fft_many_inplace");
 
@@ -160,7 +160,7 @@ struct inplace_assignable {
     /*!
      * \brief Perform inplace 1D Inverse FFT of the vector.
      */
-    derived_t& ifft_inplace(){
+    derived_t& ifft_inplace() {
         static_assert(is_complex<derived_t>::value, "Only complex vector can use inplace IFFT");
         static_assert(etl_traits<derived_t>::dimensions() == 1, "Only vector can use ifft_inplace, use ifft2_inplace for matrices");
 
@@ -174,7 +174,7 @@ struct inplace_assignable {
     /*!
      * \brief Perform inplace 2D FFT of the matrix.
      */
-    derived_t& fft2_inplace(){
+    derived_t& fft2_inplace() {
         static_assert(is_complex<derived_t>::value, "Only complex vector can use inplace FFT");
         static_assert(etl_traits<derived_t>::dimensions() == 2, "Only matrix can use fft2_inplace, use fft_inplace for vectors");
 
@@ -190,7 +190,7 @@ struct inplace_assignable {
      *
      * This function considers the first dimension as being batches of 2D FFT.
      */
-    derived_t& fft2_many_inplace(){
+    derived_t& fft2_many_inplace() {
         static_assert(is_complex<derived_t>::value, "Only complex vector can use inplace FFT");
         static_assert(etl_traits<derived_t>::dimensions() > 2, "Only matrix of dimensions > 2 can use fft2_many_inplace");
 
@@ -204,7 +204,7 @@ struct inplace_assignable {
     /*!
      * \brief Perform inplace 2D Inverse FFT of the matrix.
      */
-    derived_t& ifft2_inplace(){
+    derived_t& ifft2_inplace() {
         static_assert(is_complex<derived_t>::value, "Only complex vector can use inplace IFFT");
         static_assert(etl_traits<derived_t>::dimensions() == 2, "Only vector can use ifft_inplace, use ifft2_inplace for matrices");
 

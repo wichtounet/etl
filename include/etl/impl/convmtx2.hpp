@@ -13,35 +13,35 @@ namespace etl {
 
 namespace detail {
 
-template<typename A, typename M>
+template <typename A, typename M>
 struct convmtx2_direct {
-    template<std::size_t K1, std::size_t K2>
-    static void apply(A&& sub, M& m){
+    template <std::size_t K1, std::size_t K2>
+    static void apply(A&& sub, M& m) {
         const std::size_t i1 = etl::dim<0>(sub);
         const std::size_t i2 = etl::dim<1>(sub);
 
-        const std::size_t c_height = etl::dim<0>(m);
+        const std::size_t c_height          = etl::dim<0>(m);
         constexpr const std::size_t c_width = K1 * K2;
 
         cpp_assert(c_height == ((i1 + K1 - 1) * (i2 + K2 - 1)), "Invalid input height");
         cpp_assert(c_width == etl::dim<1>(m), "Invalid input width");
 
-        const auto max_fill = c_height - ((i1 + K1 - 1) * ((c_width - 1) / K1) + (c_width - 1) % K1);
+        const auto max_fill       = c_height - ((i1 + K1 - 1) * ((c_width - 1) / K1) + (c_width - 1) % K1);
         const auto inner_paddings = max_fill - (i1 * i2);
-        const auto inner_padding = inner_paddings / (i2 - 1);
+        const auto inner_padding  = inner_paddings / (i2 - 1);
 
         m = 0;
 
-        for(std::size_t j = 0; j < c_width; ++j){
-            auto top_padding = (i1 + K1 - 1) * (j / K1) + j % K1;
+        for (std::size_t j = 0; j < c_width; ++j) {
+            auto top_padding    = (i1 + K1 - 1) * (j / K1) + j % K1;
             auto bottom_padding = top_padding + (i1 * i2) + inner_paddings;
 
-            for(std::size_t i = top_padding; i < bottom_padding; ++i){
+            for (std::size_t i = top_padding; i < bottom_padding; ++i) {
                 auto inner = i - top_padding;
                 auto block = inner / (i1 + inner_padding);
-                auto col = inner % (i1 + inner_padding);
+                auto col   = inner % (i1 + inner_padding);
 
-                if(col < i1){
+                if (col < i1) {
                     m(i, j) = sub(col, block);
                 }
             }

@@ -27,14 +27,14 @@ namespace etl {
 #ifdef ETL_VECTORIZE_EXPR
 constexpr const bool vectorize_expr = true;
 #else
-constexpr const bool vectorize_expr = false;
+constexpr const bool vectorize_expr   = false;
 #endif
 
 //Flag to enable vectorized implementation of algorithms
 #ifdef ETL_VECTORIZE_IMPL
 constexpr const bool vectorize_impl = true;
 #else
-constexpr const bool vectorize_impl = false;
+constexpr const bool vectorize_impl   = false;
 #endif
 
 //Flag to disable the creation of temporary in expressions
@@ -92,21 +92,21 @@ constexpr const bool is_element_wise_mul_default = false;
 #ifdef ETL_STRICT_DIV
 constexpr const bool is_div_strict = true;
 #else
-constexpr const bool is_div_strict = false;
+constexpr const bool is_div_strict               = false;
 #endif
 
 //Flag to enable unrolling of vectorized loops
 #ifdef ETL_UNROLL_VECT
 constexpr const bool unroll_vectorized_loops = true;
 #else
-constexpr const bool unroll_vectorized_loops = false;
+constexpr const bool unroll_vectorized_loops     = false;
 #endif
 
 //Flag to enable unrolling of non-vectorized loops
 #ifdef ETL_UNROLL_NON_VECT
 constexpr const bool unroll_normal_loops = true;
 #else
-constexpr const bool unroll_normal_loops = false;
+constexpr const bool unroll_normal_loops         = false;
 #endif
 
 enum class vector_mode_t {
@@ -118,7 +118,7 @@ enum class vector_mode_t {
 #ifdef __AVX__
 constexpr const vector_mode_t vector_mode = vector_mode_t::AVX;
 #elif defined(__SSE3__)
-constexpr const vector_mode_t vector_mode = vector_mode_t::SSE3;
+constexpr const vector_mode_t vector_mode        = vector_mode_t::SSE3;
 #else
 constexpr const vector_mode_t vector_mode = vector_mode_t::NONE;
 #endif

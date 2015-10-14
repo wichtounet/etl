@@ -14,7 +14,7 @@
 
 #pragma once
 
-#include <iosfwd>     //For stream support
+#include <iosfwd> //For stream support
 
 #include "etl/traits_lite.hpp"
 
@@ -26,13 +26,14 @@ private:
     Expr _value;
 
 public:
-    using        value_type = value_t<Expr>;
+    using value_type = value_t<Expr>;
 
     //Cannot be constructed with no args
     optimized_expr() = delete;
 
     //Construct a new expression
-    optimized_expr(Expr l) : _value(std::forward<Expr>(l)) {
+    optimized_expr(Expr l)
+            : _value(std::forward<Expr>(l)) {
         //Nothing else to init
     }
 
@@ -46,7 +47,7 @@ public:
 
     //Accessors
 
-    std::add_lvalue_reference_t<Expr> value(){
+    std::add_lvalue_reference_t<Expr> value() {
         return _value;
     }
 
@@ -56,7 +57,7 @@ public:
 };
 
 template <typename Expr>
-std::ostream& operator<<(std::ostream& os, const optimized_expr<Expr>& expr){
+std::ostream& operator<<(std::ostream& os, const optimized_expr<Expr>& expr) {
     return os << "OPT(" << expr.value() << ")";
 }
 

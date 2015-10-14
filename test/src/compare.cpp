@@ -8,7 +8,7 @@
 
 #include <cmath>
 
-TEMPLATE_TEST_CASE_2( "compare/1", "[compare]", Z, float, double ) {
+TEMPLATE_TEST_CASE_2("compare/1", "[compare]", Z, float, double) {
     etl::fast_matrix<Z, 2, 2> a(3.3);
     etl::fast_matrix<Z, 2, 2> b(3.3);
     etl::fast_matrix<Z, 2, 2> c(33.3);
@@ -28,7 +28,7 @@ TEMPLATE_TEST_CASE_2( "compare/1", "[compare]", Z, float, double ) {
     REQUIRE(b != c);
 }
 
-TEMPLATE_TEST_CASE_2( "compare/2", "[compare]", Z, float, double ) {
+TEMPLATE_TEST_CASE_2("compare/2", "[compare]", Z, float, double) {
     etl::dyn_matrix<Z> a(2, 2, 3.3);
     etl::dyn_matrix<Z> b(2, 2, 3.3);
     etl::dyn_matrix<Z> c(2, 2, 33.3);
@@ -48,7 +48,7 @@ TEMPLATE_TEST_CASE_2( "compare/2", "[compare]", Z, float, double ) {
     REQUIRE(b != c);
 }
 
-TEMPLATE_TEST_CASE_2( "compare/3", "[compare]", Z, float, double ) {
+TEMPLATE_TEST_CASE_2("compare/3", "[compare]", Z, float, double) {
     etl::fast_matrix<Z, 2, 2> fa(3.3);
     etl::fast_matrix<Z, 2, 2> fc(33.3);
     etl::dyn_matrix<Z> da(2, 2, 3.3);
@@ -61,7 +61,7 @@ TEMPLATE_TEST_CASE_2( "compare/3", "[compare]", Z, float, double ) {
     REQUIRE(fc != da);
 }
 
-TEMPLATE_TEST_CASE_2( "compare/4", "[compare]", Z, float, double ) {
+TEMPLATE_TEST_CASE_2("compare/4", "[compare]", Z, float, double) {
     etl::fast_matrix<Z, 2, 2> a(3.3);
     etl::dyn_matrix<Z> b(2, 2, 3.3);
 
@@ -73,7 +73,7 @@ TEMPLATE_TEST_CASE_2( "compare/4", "[compare]", Z, float, double ) {
     REQUIRE(log(a + b) != exp(b + a));
 }
 
-TEMPLATE_TEST_CASE_2( "compare/5", "[compare]", Z, float, double ) {
+TEMPLATE_TEST_CASE_2("compare/5", "[compare]", Z, float, double) {
     etl::fast_matrix<Z, 2, 2> a(3.3);
     etl::dyn_matrix<Z> b(2, 2, 3.3);
 

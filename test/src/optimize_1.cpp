@@ -7,7 +7,7 @@
 
 #include "test_light.hpp"
 
-TEST_CASE( "optimize/1", "[fast][optimizer]" ) {
+TEST_CASE("optimize/1", "[fast][optimizer]") {
     etl::fast_vector<double, 3> a({1.0, -2.0, 3.0});
     etl::fast_vector<double, 3> b;
 
@@ -16,7 +16,7 @@ TEST_CASE( "optimize/1", "[fast][optimizer]" ) {
     REQUIRE(b[0] == 2.0);
 }
 
-TEST_CASE( "optimize/2", "[fast][optimizer]" ) {
+TEST_CASE("optimize/2", "[fast][optimizer]") {
     etl::fast_vector<double, 3> a({1.0, -2.0, 3.0});
     etl::fast_vector<double, 3> b;
 
@@ -25,29 +25,29 @@ TEST_CASE( "optimize/2", "[fast][optimizer]" ) {
     REQUIRE(b[0] == 1.0);
 }
 
-TEST_CASE( "optimize/3", "[fast][optimizer]" ) {
+TEST_CASE("optimize/3", "[fast][optimizer]") {
     etl::fast_vector<double, 3> a({1.0, -2.0, 3.0});
     etl::fast_vector<double, 3> b;
 
-    b = opt( a + a * 1.0);
+    b = opt(a + a * 1.0);
 
     REQUIRE(b[0] == 2.0);
 }
 
-TEST_CASE( "optimize/4", "[fast][optimizer]" ) {
+TEST_CASE("optimize/4", "[fast][optimizer]") {
     etl::fast_vector<double, 3> a({1.0, -2.0, 3.0});
     etl::fast_vector<double, 3> b;
 
-    b = opt( a + 1.0 * a);
+    b = opt(a + 1.0 * a);
 
     REQUIRE(b[0] == 2.0);
 }
 
-TEST_CASE( "optimize/5", "[fast][optimizer]" ) {
+TEST_CASE("optimize/5", "[fast][optimizer]") {
     etl::fast_vector<double, 3> a({1.0, -2.0, 3.0});
     etl::fast_vector<double, 3> b;
 
-    b = opt( a * 1.0  + 1.0 * a);
+    b = opt(a * 1.0 + 1.0 * a);
 
     REQUIRE(b[0] == 2.0);
 }

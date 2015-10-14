@@ -10,7 +10,7 @@
 //Workaround for use of this in noexcept specifier
 
 #ifdef __clang__
-#define noexcept_this(...) noexcept( __VA_ARGS__ )
+#define noexcept_this(...) noexcept(__VA_ARGS__)
 #else
 //GCC is bugged (Bug: 52869), it is therefore impossible to use this in noexcept
 #define noexcept_this(...)

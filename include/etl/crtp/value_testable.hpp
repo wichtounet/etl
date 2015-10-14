@@ -21,7 +21,7 @@ namespace etl {
  *
  * This CRTP class injects test for is_finite and is_zero.
  */
-template<typename D>
+template <typename D>
 struct value_testable {
     using derived_t = D;
 
@@ -46,7 +46,7 @@ struct value_testable {
      * \return true if the sequence only contains finite values, false otherwise.
      */
     bool is_finite() const noexcept {
-        return std::all_of(as_derived().begin(), as_derived().end(), static_cast<bool(*)(value_t<derived_t>)>(std::isfinite));
+        return std::all_of(as_derived().begin(), as_derived().end(), static_cast<bool (*)(value_t<derived_t>)>(std::isfinite));
     }
 
     /*!
@@ -54,7 +54,8 @@ struct value_testable {
      * \return true if the sequence only contains zero values, false otherwise.
      */
     bool is_zero() const noexcept {
-        return std::all_of(as_derived().begin(), as_derived().end(), [](value_t<derived_t> v){ return v == value_t<derived_t>(0); });;
+        return std::all_of(as_derived().begin(), as_derived().end(), [](value_t<derived_t> v) { return v == value_t<derived_t>(0); });
+        ;
     }
 };
 
