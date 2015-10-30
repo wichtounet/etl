@@ -7,6 +7,8 @@
 
 #pragma once
 
+#include <thread>
+
 namespace etl {
 
 #ifdef ETL_VECTORIZE_FULL
@@ -42,6 +44,18 @@ constexpr const bool vectorize_impl   = false;
 constexpr const bool create_temporary = false;
 #else
 constexpr const bool create_temporary = true;
+#endif
+
+#ifdef ETL_PARALLEL
+constexpr const bool parallel = true;
+#else
+constexpr const bool parallel = false;
+#endif
+
+#ifdef ETL_PARALLEL_THREADS
+constexpr const std::size_t threads = ETL_PARALLEL_THREADS;
+#else
+const std::size_t threads = std::thread::hardware_concurrency();
 #endif
 
 #ifdef ETL_MKL_MODE
