@@ -77,16 +77,19 @@ struct standard_evaluator {
                              !is_temporary_expr<E>::value> {};
 
     template <typename E, typename R>
-    struct parallel_assign : cpp::and_u<
-                                   has_direct_access<R>::value,
+    struct parallel_vectorized_assign : cpp::and_u<
                                    !fast_assign<E, R>::value,
+                                   vectorize_expr,
                                    parallel,
-                                   !is_temporary_expr<E>::value> {};
+                                   decay_traits<E>::vectorizable,
+                                   intrinsic_traits<value_t<R>>::vectorizable, intrinsic_traits<value_t<E>>::vectorizable,
+                                   !is_temporary_expr<E>::value,
+                                   std::is_same<typename intrinsic_traits<value_t<R>>::intrinsic_type, typename intrinsic_traits<value_t<E>>::intrinsic_type>::value> {};
 
     template <typename E, typename R>
     struct vectorized_assign : cpp::and_u<
                                    !fast_assign<E, R>::value,
-                                   !parallel_assign<E, R>::value,
+                                   !parallel_vectorized_assign<E, R>::value,
                                    vectorize_expr,
                                    decay_traits<E>::vectorizable,
                                    intrinsic_traits<value_t<R>>::vectorizable, intrinsic_traits<value_t<E>>::vectorizable,
@@ -94,9 +97,18 @@ struct standard_evaluator {
                                    std::is_same<typename intrinsic_traits<value_t<R>>::intrinsic_type, typename intrinsic_traits<value_t<E>>::intrinsic_type>::value> {};
 
     template <typename E, typename R>
+    struct parallel_assign : cpp::and_u<
+                                   has_direct_access<R>::value,
+                                   !fast_assign<E, R>::value,
+                                   !parallel_vectorized_assign<E, R>::value,
+                                   parallel,
+                                   !is_temporary_expr<E>::value> {};
+
+    template <typename E, typename R>
     struct direct_assign : cpp::and_u<
                                !fast_assign<E, R>::value,
                                !parallel_assign<E, R>::value,
+                               !parallel_vectorized_assign<E, R>::value,
                                !vectorized_assign<E, R>::value,
                                has_direct_access<R>::value,
                                !is_temporary_expr<E>::value> {};
@@ -105,6 +117,7 @@ struct standard_evaluator {
     struct standard_assign : cpp::and_u<
                                  !fast_assign<E, R>::value,
                                  !parallel_assign<E, R>::value,
+                                 !parallel_vectorized_assign<E, R>::value,
                                  !vectorized_assign<E, R>::value,
                                  !has_direct_access<R>::value,
                                  !is_temporary_expr<E>::value> {};
@@ -186,6 +199,78 @@ struct standard_evaluator {
         pool.do_task(batch_functor, (threads - 1) * batch, size);
 
         pool.wait();
+    }
+
+    //Parallel vectorized assign
+
+    template <typename E, typename R, cpp_enable_if(parallel_vectorized_assign<E, R>::value)>
+    static void assign_evaluate(E&& expr, R&& result) {
+        evaluate_only(expr);
+
+        using IT = intrinsic_traits<value_t<E>>;
+
+        auto m = result.memory_start();
+
+        const std::size_t size = etl::size(result);
+
+        std::size_t i = 0;
+
+        //1. Peel loop
+
+        constexpr const auto size_1 = sizeof(value_t<E>);
+        auto u_bytes                = (reinterpret_cast<uintptr_t>(m) % IT::alignment);
+
+        if (u_bytes >= size_1 && u_bytes % size_1 == 0) {
+            auto u_loads = std::min(u_bytes & -size_1, size);
+
+            for (; i < u_loads; ++i) {
+                m[i] = expr[i];
+            }
+        }
+
+        //2. Vectorized loop
+
+        if (size - i >= IT::size) {
+            cpp::default_thread_pool<> pool(threads);
+
+            auto n = (size - i) / IT::size;
+            auto batch = n / threads;
+
+            if (reinterpret_cast<uintptr_t>(m + i) % IT::alignment == 0) {
+                auto batch_functor = [&m, &expr](std::size_t first, std::size_t last){
+                    for(std::size_t i = first; i < last; i += IT::size){
+                        vec::store(m + i, expr.load(i));
+                    }
+                };
+
+                for(std::size_t t = 0; t < threads - 1; ++t){
+                    pool.do_task(batch_functor, i + t * batch, i + (t+1) * batch);
+                }
+
+                pool.do_task(batch_functor, i + (threads - 1) * batch, i + n * IT::size);
+            } else {
+                auto batch_functor = [&m, &expr](std::size_t first, std::size_t last){
+                    for(std::size_t i = first; i < last; i += IT::size){
+                        vec::storeu(m + i, expr.load(i));
+                    }
+                };
+
+                for(std::size_t t = 0; t < threads - 1; ++t){
+                    pool.do_task(batch_functor, i + t * batch, i + (t+1) * batch);
+                }
+
+                pool.do_task(batch_functor, i + (threads - 1) * batch, i + n * IT::size);
+            }
+
+            i += n * IT::size;
+        }
+
+        //3. Remainder loop
+
+        //Finish the iterations in a non-vectorized fashion
+        for (; i < size; ++i) {
+            m[i] = expr[i];
+        }
     }
 
     //Vectorized assign version
