@@ -35,6 +35,10 @@ LD_FLAGS += $(shell pkg-config --libs $(BLAS_PKG))
 endif
 endif
 
+ifneq (,$(ETL_PARALLEL))
+CXX_FLAGS += -DETL_PARALLEL
+endif
+
 ifneq (,$(ETL_CUBLAS))
 CXX_FLAGS += -DETL_CUBLAS_MODE $(shell pkg-config --cflags cublas)
 LD_FLAGS += $(shell pkg-config --libs cublas)
