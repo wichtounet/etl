@@ -382,11 +382,21 @@ auto sign(E&& value) -> detail::unary_helper<E, sign_unary_op> {
     return detail::unary_helper<E, sign_unary_op>{value};
 }
 
+/*!
+ * \brief Performs the identiy function on the ETL expression.
+ * \paramm value The ETL expression
+ * \return The same value, perfectly forwardd
+ */
 template <typename E>
 decltype(auto) identity(E&& value) {
     return std::forward<E>(value);
 }
 
+/*!
+ * \brief Return the derivative of the identiy function for the given value.
+ * \paramm value The ETL expression
+ * \return 1.0
+ */
 template <typename E>
 auto identity_derivative(E&& /*value*/) {
     return 1.0;
