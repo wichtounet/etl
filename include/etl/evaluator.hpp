@@ -10,7 +10,8 @@
 #include "cpp_utils/parallel.hpp"
 
 #include "etl/traits_lite.hpp" //forward declaration of the traits
-#include "etl/visitor.hpp"     //forward declaration of the traits
+#include "etl/visitor.hpp"     //visitor of the expressions
+#include "etl/threshold.hpp"    //parallel thresholds
 
 namespace etl {
 
@@ -179,11 +180,17 @@ struct standard_evaluator {
 
     template <typename E, typename R, cpp_enable_if(parallel_assign<E, R>::value)>
     static void assign_evaluate(E&& expr, R&& result) {
+        const auto n = etl::size(result);
+
+        if(n < parallel_threshold){
+            direct_assign_evaluate(std::forward<E>(expr), std::forward<R>(result));
+            return;
+        }
+
         evaluate_only(expr);
 
         auto m = result.memory_start();
 
-        const auto size = etl::size(result);
 
         cpp::default_thread_pool<> pool(threads);
 
@@ -195,13 +202,13 @@ struct standard_evaluator {
 
         //Distribute evenly the batches
 
-        auto batch = size / threads;
+        auto batch = n / threads;
 
         for(std::size_t t = 0; t < threads - 1; ++t){
             pool.do_task(batch_functor, t * batch, (t+1) * batch);
         }
 
-        pool.do_task(batch_functor, (threads - 1) * batch, size);
+        pool.do_task(batch_functor, (threads - 1) * batch, n);
 
         pool.wait();
     }
@@ -210,13 +217,18 @@ struct standard_evaluator {
 
     template <typename E, typename R, cpp_enable_if(parallel_vectorized_assign<E, R>::value)>
     static void assign_evaluate(E&& expr, R&& result) {
-        evaluate_only(expr);
+        const std::size_t size = etl::size(result);
+
+        if(size < parallel_threshold){
+            vectorized_assign_evaluate(std::forward<E>(expr), std::forward<R>(result));
+            return;
+        }
 
         using IT = intrinsic_traits<value_t<E>>;
 
         auto m = result.memory_start();
 
-        const std::size_t size = etl::size(result);
+        evaluate_only(expr);
 
         std::size_t i = 0;
 
@@ -268,6 +280,8 @@ struct standard_evaluator {
             }
 
             i += n * IT::size;
+
+            pool.wait();
         }
 
         //3. Remainder loop

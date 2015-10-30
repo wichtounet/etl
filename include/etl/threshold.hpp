@@ -23,4 +23,6 @@ constexpr const std::size_t cgemm_cublas_min = 175 * 175;
 constexpr const std::size_t zgemm_std_max    = 75 * 75;
 constexpr const std::size_t zgemm_cublas_min = 180 * 180;
 
+constexpr const std::size_t parallel_threshold = 1024;
+
 } //end of namespace etl
