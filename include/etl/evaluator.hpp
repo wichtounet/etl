@@ -144,8 +144,8 @@ struct standard_evaluator {
 
     //Direct assign version
 
-    template <typename E, typename R, cpp_enable_if(direct_assign<E, R>::value)>
-    static void assign_evaluate(E&& expr, R&& result) {
+    template <typename E, typename R>
+    static void direct_assign_evaluate(E&& expr, R&& result) {
         evaluate_only(expr);
 
         auto m = result.memory_start();
@@ -168,6 +168,11 @@ struct standard_evaluator {
         for (std::size_t i = iend; i < size; ++i) {
             m[i] = expr[i];
         }
+    }
+
+    template <typename E, typename R, cpp_enable_if(direct_assign<E, R>::value)>
+    static void assign_evaluate(E&& expr, R&& result) {
+        direct_assign_evaluate(std::forward<E>(expr), std::forward<R>(result));
     }
 
     //Parallel assign version
@@ -275,8 +280,8 @@ struct standard_evaluator {
 
     //Vectorized assign version
 
-    template <typename E, typename R, cpp_enable_if(vectorized_assign<E, R>::value)>
-    static void assign_evaluate(E&& expr, R&& result) {
+    template <typename E, typename R>
+    static void vectorized_assign_evaluate(E&& expr, R&& result) {
         evaluate_only(expr);
 
         using IT = intrinsic_traits<value_t<E>>;
@@ -338,6 +343,11 @@ struct standard_evaluator {
         for (; i < size; ++i) {
             m[i] = expr[i];
         }
+    }
+
+    template <typename E, typename R, cpp_enable_if(vectorized_assign<E, R>::value)>
+    static void assign_evaluate(E&& expr, R&& result) {
+        vectorized_assign_evaluate(std::forward<E>(expr), std::forward<R>(result));
     }
 
     template <typename E, typename R, cpp_enable_if(!vectorized_assign<E, R>::value && !has_direct_access<R>::value)>

@@ -74,7 +74,7 @@ using cmat = etl::dyn_matrix<std::complex<float>>;
 using zvec = etl::dyn_vector<std::complex<double>>;
 using zmat = etl::dyn_matrix<std::complex<double>>;
 
-using mat_policy = VALUES_POLICY(10, 25, 50, 100, 200, 300, 400, 500, 600, 700, 800, 900, 1000);
+using mat_policy = VALUES_POLICY(10, 25, 50, 100, 200, 300, 400, 500, 600, 700, 800, 900, 1000, 2000,3000,4000,8000);
 using mat_policy_2d = NARY_POLICY(mat_policy, mat_policy);
 
 using conv_1d_large_policy = NARY_POLICY(VALUES_POLICY(1000, 2000, 3000, 4000, 5000, 6000, 7000, 8000, 9000, 10000), VALUES_POLICY(500, 1000, 1500, 2000, 2500, 3000, 3500, 4000, 4500, 5000));
