@@ -405,24 +405,50 @@ auto identity_derivative(E&& /*value*/) {
 //Note: Use of decltype here should not be necessary, but g++ does
 //not like it without it for some reason
 
+/*!
+ * \brief Return the logistic sigmoid of the given ETL expression.
+ * \param value The ETL expression
+ * \return An ETL expression representing the logistic sigmoid of the input.
+ */
 template <typename E>
 auto sigmoid(E&& value) -> decltype(1.0 / (1.0 + exp(-value))) {
     static_assert(is_etl_expr<E>::value, "etl::sigmoid can only be used on ETL expressions");
     return 1.0 / (1.0 + exp(-value));
 }
 
+/*!
+ * \brief Return the derivative of the logistic sigmoid of the given ETL expression.
+ * \param value The ETL expression
+ * \return An ETL expression representing the derivative of the logistic sigmoid of the input.
+ */
 template <typename E>
 auto sigmoid_derivative(E&& value) -> decltype(value >> (1.0 - value)) {
     static_assert(is_etl_expr<E>::value, "etl::sigmoid_derivative can only be used on ETL expressions");
     return value >> (1.0 - value);
 }
 
+/*!
+ * \brief Return a fast approximation of the logistic sigmoid of the given ETL expression.
+ *
+ * This function is faster than the sigmoid function and has an acceptable precision.
+ *
+ * \param value The ETL expression
+ * \return An ETL expression representing a fast approximation of the logistic sigmoid of the input.
+ */
 template <typename E>
 auto fast_sigmoid(const E& value) -> detail::unary_helper<E, fast_sigmoid_unary_op> {
     static_assert(is_etl_expr<E>::value, "etl::fast_sigmoid can only be used on ETL expressions");
     return detail::unary_helper<E, fast_sigmoid_unary_op>{value};
 }
 
+/*!
+ * \brief Return an hard approximation of the logistic sigmoid of the given ETL expression.
+ *
+ * This function is much faster than the sigmoid, but it's precision is very low.
+ *
+ * \param value The ETL expression
+ * \return An ETL expression representing an hard approximation of the logistic sigmoid of the input.
+ */
 template <typename E>
 auto hard_sigmoid(E&& x) -> decltype(etl::clip(x * 0.2 + 0.5, 0.0, 1.0)) {
     static_assert(is_etl_expr<E>::value, "etl::hard_sigmoid can only be used on ETL expressions");
