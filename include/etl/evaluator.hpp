@@ -7,6 +7,8 @@
 
 #pragma once
 
+#include "cpp_utils/parallel.hpp"
+
 #include "etl/traits_lite.hpp" //forward declaration of the traits
 #include "etl/visitor.hpp"     //forward declaration of the traits
 
@@ -76,6 +78,7 @@ struct standard_evaluator {
 
     template <typename E, typename R>
     struct parallel_assign : cpp::and_u<
+                                   has_direct_access<R>::value,
                                    !fast_assign<E, R>::value,
                                    parallel,
                                    !is_temporary_expr<E>::value> {};
@@ -152,6 +155,37 @@ struct standard_evaluator {
         for (std::size_t i = iend; i < size; ++i) {
             m[i] = expr[i];
         }
+    }
+
+    //Parallel assign version
+
+    template <typename E, typename R, cpp_enable_if(parallel_assign<E, R>::value)>
+    static void assign_evaluate(E&& expr, R&& result) {
+        evaluate_only(expr);
+
+        auto m = result.memory_start();
+
+        const auto size = etl::size(result);
+
+        cpp::default_thread_pool<> pool(threads);
+
+        auto batch_functor = [&m, &expr](std::size_t first, std::size_t last){
+            for(std::size_t i = first; i < last; ++i){
+                m[i] = expr[i];
+            }
+        };
+
+        //Distribute evenly the batches
+
+        auto batch = size / threads;
+
+        for(std::size_t t = 0; t < threads - 1; ++t){
+            pool.do_task(batch_functor, t * batch, (t+1) * batch);
+        }
+
+        pool.do_task(batch_functor, (threads - 1) * batch, size);
+
+        pool.wait();
     }
 
     //Vectorized assign version
