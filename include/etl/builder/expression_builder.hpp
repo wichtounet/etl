@@ -384,7 +384,7 @@ auto sign(E&& value) -> detail::unary_helper<E, sign_unary_op> {
 
 /*!
  * \brief Performs the identiy function on the ETL expression.
- * \paramm value The ETL expression
+ * \param value The ETL expression
  * \return The same value, perfectly forwardd
  */
 template <typename E>
@@ -394,11 +394,12 @@ decltype(auto) identity(E&& value) {
 
 /*!
  * \brief Return the derivative of the identiy function for the given value.
- * \paramm value The ETL expression
+ * \param value The ETL expression
  * \return 1.0
  */
 template <typename E>
-auto identity_derivative(E&& /*value*/) {
+auto identity_derivative(E&& value) {
+    cpp_unused(value);
     return 1.0;
 }
 
@@ -446,7 +447,7 @@ auto fast_sigmoid(const E& value) -> detail::unary_helper<E, fast_sigmoid_unary_
  *
  * This function is much faster than the sigmoid, but it's precision is very low.
  *
- * \param value The ETL expression
+ * \param x The ETL expression
  * \return An ETL expression representing an hard approximation of the logistic sigmoid of the input.
  */
 template <typename E>
