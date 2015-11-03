@@ -108,6 +108,7 @@ $(eval $(call add_executable,test_asm_1,workbench/src/test.cpp))
 $(eval $(call add_executable,test_asm_2,workbench/src/test_dim.cpp))
 $(eval $(call add_executable,benchmark,$(BENCH_FILES)))
 $(eval $(call add_executable,mmul,workbench/src/mmul.cpp))
+$(eval $(call add_executable,parallel,workbench/src/parallel.cpp))
 $(eval $(call add_test_executable,etl_test,$(TEST_FILES)))
 
 $(eval $(call add_executable_set,etl_test,etl_test))
