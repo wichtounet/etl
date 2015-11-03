@@ -8,7 +8,7 @@
 #define CPM_LIB
 #include "benchmark.hpp"
 
-/*CPM_DIRECT_BENCH_TWO_PASS_NS_P(
+CPM_DIRECT_BENCH_TWO_PASS_NS_P(
     NARY_POLICY(VALUES_POLICY(100, 500, 550, 600, 1000, 2000, 2500), VALUES_POLICY(100, 120, 500, 1000, 1200, 2000, 5000)),
     "rbm_hidden",
     [](std::size_t d1, std::size_t d2){ return std::make_tuple(dvec(d1), dvec(d2), dvec(d2), dvec(d2), dmat(d1, d2));},
@@ -69,4 +69,4 @@ CPM_DIRECT_BENCH_TWO_PASS_NS_P(
             v(channel) = sigmoid(c(channel) + sum_l(h_cv));
         }
     }
-)*/
+)
