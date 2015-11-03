@@ -215,8 +215,68 @@ struct standard_evaluator {
 
     //Parallel vectorized assign
 
+    template<typename V_T, typename V_Expr>
+    struct VectorizedStoreAligned {
+        mutable V_T* lhs;
+        V_Expr& rhs;
+        const std::size_t first;
+        const std::size_t last;
+
+        using IT = intrinsic_traits<value_t<V_Expr>>;
+
+        VectorizedStoreAligned(V_T* lhs, V_Expr& rhs, std::size_t first, std::size_t last) : lhs(lhs), rhs(rhs), first(first), last(last) {
+            //Nothing else
+        }
+
+        void operator()() const {
+            if(unroll_vectorized_loops && last - first > IT::size * 4){
+                for(std::size_t i = first; i + IT::size * 4 - 1 < last; i += IT::size * 4){
+                    vec::store(lhs + i, rhs.load(i));
+                    vec::store(lhs + i + 1 * IT::size, rhs.load(i + 1 * IT::size));
+                    vec::store(lhs + i + 2 * IT::size, rhs.load(i + 2 * IT::size));
+                    vec::store(lhs + i + 3 * IT::size, rhs.load(i + 3 * IT::size));
+                }
+            } else {
+                for(std::size_t i = first; i < last; i += IT::size){
+                    vec::store(lhs + i, rhs.load(i));
+                }
+            }
+        }
+    };
+
+    template<typename V_T, typename V_Expr>
+    struct VectorizedStoreUnaligned {
+        mutable V_T* lhs;
+        V_Expr& rhs;
+        const std::size_t first;
+        const std::size_t last;
+
+        using IT = intrinsic_traits<value_t<V_Expr>>;
+
+        VectorizedStoreUnaligned(V_T* lhs, V_Expr& rhs, std::size_t first, std::size_t last) : lhs(lhs), rhs(rhs), first(first), last(last) {
+            //Nothing else
+        }
+
+        void operator()() const {
+            if(unroll_vectorized_loops && last - first > IT::size * 4){
+                for(std::size_t i = first; i + IT::size * 4 - 1 < last; i += IT::size * 4){
+                    vec::storeu(lhs + i, rhs.load(i));
+                    vec::storeu(lhs + i + 1 * IT::size, rhs.load(i + 1 * IT::size));
+                    vec::storeu(lhs + i + 2 * IT::size, rhs.load(i + 2 * IT::size));
+                    vec::storeu(lhs + i + 3 * IT::size, rhs.load(i + 3 * IT::size));
+                }
+            } else {
+                for(std::size_t i = first; i < last; i += IT::size){
+                    vec::storeu(lhs + i, rhs.load(i));
+                }
+            }
+        }
+    };
+
     template <typename E, typename R, cpp_enable_if(parallel_vectorized_assign<E, R>::value)>
     static void assign_evaluate(E&& expr, R&& result) {
+        static cpp::default_thread_pool<> pool(threads);
+
         const std::size_t size = etl::size(result);
 
         if(size < parallel_threshold){
@@ -248,35 +308,21 @@ struct standard_evaluator {
         //2. Vectorized loop
 
         if (size - i >= IT::size) {
-            cpp::default_thread_pool<> pool(threads);
-
             auto n = (size - i) / IT::size;
-            auto batch = n / threads;
+            auto batch = (size - i) / threads;
 
             if (reinterpret_cast<uintptr_t>(m + i) % IT::alignment == 0) {
-                auto batch_functor = [&m, &expr](std::size_t first, std::size_t last){
-                    for(std::size_t i = first; i < last; i += IT::size){
-                        vec::store(m + i, expr.load(i));
-                    }
-                };
-
                 for(std::size_t t = 0; t < threads - 1; ++t){
-                    pool.do_task(batch_functor, i + t * batch, i + (t+1) * batch);
+                    pool.do_task(VectorizedStoreAligned<value_t<R>, E>(m, expr, i + t * batch, i + (t+1) * batch));
                 }
 
-                pool.do_task(batch_functor, i + (threads - 1) * batch, i + n * IT::size);
+                pool.do_task(VectorizedStoreAligned<value_t<R>, E>(m, expr, i + (threads - 1) * batch, i + n * IT::size));
             } else {
-                auto batch_functor = [&m, &expr](std::size_t first, std::size_t last){
-                    for(std::size_t i = first; i < last; i += IT::size){
-                        vec::storeu(m + i, expr.load(i));
-                    }
-                };
-
                 for(std::size_t t = 0; t < threads - 1; ++t){
-                    pool.do_task(batch_functor, i + t * batch, i + (t+1) * batch);
+                    pool.do_task(VectorizedStoreUnaligned<value_t<R>, E>(m, expr, i + t * batch, i + (t+1) * batch));
                 }
 
-                pool.do_task(batch_functor, i + (threads - 1) * batch, i + n * IT::size);
+                pool.do_task(VectorizedStoreUnaligned<value_t<R>, E>(m, expr, i + (threads - 1) * batch, i + n * IT::size));
             }
 
             i += n * IT::size;
