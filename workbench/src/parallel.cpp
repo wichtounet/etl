@@ -77,23 +77,32 @@ void bench(std::size_t n){
 
     randomize(a, b, c);
 
-    auto start_time = timer_clock::now();
+    std::size_t duration_acc = 0;
 
-    for(std::size_t i = 0; i < 1000; ++i){
-        c = a + b;
+    auto steps = 100UL;
+    auto rpt = 1000UL;
+
+    for(std::size_t i = 0; i < steps; ++i){
+        auto start_time = timer_clock::now();
+
+        for(std::size_t i = 0; i < rpt; ++i){
+            c = a + b;
+        }
+
+        auto end_time = timer_clock::now();
+        auto duration = std::chrono::duration_cast<microseconds>(end_time - start_time);
+        duration_acc += duration.count();
     }
 
-    auto end_time = timer_clock::now();
-    auto duration = std::chrono::duration_cast<microseconds>(end_time - start_time);
-    auto duration_acc = duration.count();
 
     std::cout << "Size:" << n << " took " << duration_str(duration_acc) << "\n";
+    std::cout << "\tMFlops:" << n  / (double(duration_acc)  / rpt / double(steps)) << std::endl;
 }
 
 } //end of anonymous namespace
 
 int main(){
-    for(std::size_t n = 100000; n < 1000000; n += 100000){
+    for(std::size_t n = 90000; n <= 110000; n += 10000){
         bench( n );
     }
 
