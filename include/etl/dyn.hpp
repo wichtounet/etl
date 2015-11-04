@@ -99,7 +99,7 @@ struct dyn_matrix_impl final : inplace_assignable<dyn_matrix_impl<T, SO, D>>, co
 public:
     static constexpr const std::size_t n_dimensions = D;
     static constexpr const order storage_order      = SO;
-    static constexpr const std::size_t alignment    = alignof(T);
+    static constexpr const std::size_t alignment    = intrinsic_traits<T>::alignment;
 
     using value_type             = T;
     using dimension_storage_impl = std::array<std::size_t, n_dimensions>;
@@ -126,6 +126,7 @@ private:
     static memory_type allocate(std::size_t n) {
         auto* memory = aligned_allocator<void, alignment>::template allocate<T>(n);
         cpp_assert(memory, "Impossible to allocate memory for dyn_matrix");
+        cpp_assert(reinterpret_cast<uintptr_t>(memory) % alignment == 0, "Failed to align memory of matrix");
 
         //In case of non-trivial type, we need to call the constructors
         if(!std::is_trivial<value_type>::value){
