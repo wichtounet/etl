@@ -25,8 +25,9 @@ namespace etl {
  */
 template <typename T>
 struct intrinsic_traits {
-    static constexpr const bool vectorizable     = false; ///< Boolean flag indicating if the type is vectorizable or not
-    static constexpr const std::size_t alignment = 1;     ///< Necessary number of bytes of alignment for this type
+    static constexpr const bool vectorizable     = false;      ///< Boolean flag indicating if the type is vectorizable or not
+    static constexpr const std::size_t size      = 1;          ///< Numbers of elements done at once
+    static constexpr const std::size_t alignment = alignof(T); ///< Necessary number of bytes of alignment for this type
 
     using intrinsic_type = T;
 };
