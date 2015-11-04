@@ -216,60 +216,100 @@ struct standard_evaluator {
     //Parallel vectorized assign
 
     template<typename V_T, typename V_Expr>
-    struct VectorizedStoreAligned {
+    struct VectorizedStore {
         mutable V_T* lhs;
         V_Expr& rhs;
-        const std::size_t first;
-        const std::size_t last;
+        const std::size_t _first;
+        const std::size_t _last;
+        const std::size_t _size;
 
         using IT = intrinsic_traits<value_t<V_Expr>>;
 
-        VectorizedStoreAligned(V_T* lhs, V_Expr& rhs, std::size_t first, std::size_t last) : lhs(lhs), rhs(rhs), first(first), last(last) {
+        VectorizedStore(V_T* lhs, V_Expr& rhs, std::size_t first, std::size_t last)
+                : lhs(lhs), rhs(rhs), _first(first), _last(last), _size(last - first) {
             //Nothing else
         }
 
-        void operator()() const {
-            if(unroll_vectorized_loops && last - first > IT::size * 4){
-                for(std::size_t i = first; i + IT::size * 4 - 1 < last; i += IT::size * 4){
+        std::size_t peel_loop() const {
+            std::size_t i = 0;
+
+            constexpr const auto size_1 = sizeof(value_t<V_Expr>);
+            auto u_bytes                = (reinterpret_cast<uintptr_t>(lhs + _first) % IT::alignment);
+
+            if (u_bytes >= size_1 && u_bytes % size_1 == 0) {
+                auto u_loads = std::min(u_bytes / size_1, _size);
+
+                for (; i < u_loads; ++i) {
+                    lhs[_first + i] = rhs[_first + i];
+                }
+            }
+
+            return i;
+        }
+
+        inline std::size_t aligned_main_loop(std::size_t first) const {
+            std::size_t i = 0;
+
+            if(unroll_vectorized_loops && _last - first > IT::size * 4){
+                for(i = first; i + IT::size * 4 - 1 < _last; i += IT::size * 4){
                     vec::store(lhs + i, rhs.load(i));
                     vec::store(lhs + i + 1 * IT::size, rhs.load(i + 1 * IT::size));
                     vec::store(lhs + i + 2 * IT::size, rhs.load(i + 2 * IT::size));
                     vec::store(lhs + i + 3 * IT::size, rhs.load(i + 3 * IT::size));
                 }
             } else {
-                for(std::size_t i = first; i < last; i += IT::size){
+                for(i = first; i + IT::size - 1 < _last; i += IT::size){
                     vec::store(lhs + i, rhs.load(i));
                 }
             }
-        }
-    };
 
-    template<typename V_T, typename V_Expr>
-    struct VectorizedStoreUnaligned {
-        mutable V_T* lhs;
-        V_Expr& rhs;
-        const std::size_t first;
-        const std::size_t last;
-
-        using IT = intrinsic_traits<value_t<V_Expr>>;
-
-        VectorizedStoreUnaligned(V_T* lhs, V_Expr& rhs, std::size_t first, std::size_t last) : lhs(lhs), rhs(rhs), first(first), last(last) {
-            //Nothing else
+            return i;
         }
 
-        void operator()() const {
-            if(unroll_vectorized_loops && last - first > IT::size * 4){
-                for(std::size_t i = first; i + IT::size * 4 - 1 < last; i += IT::size * 4){
+        inline std::size_t unaligned_main_loop(std::size_t first) const {
+            std::size_t i;
+
+            if(unroll_vectorized_loops && _last - first > IT::size * 4){
+                for(i = first; i + IT::size * 4 - 1 < _last; i += IT::size * 4){
                     vec::storeu(lhs + i, rhs.load(i));
                     vec::storeu(lhs + i + 1 * IT::size, rhs.load(i + 1 * IT::size));
                     vec::storeu(lhs + i + 2 * IT::size, rhs.load(i + 2 * IT::size));
                     vec::storeu(lhs + i + 3 * IT::size, rhs.load(i + 3 * IT::size));
                 }
             } else {
-                for(std::size_t i = first; i < last; i += IT::size){
+                for(i = first; i + IT::size - 1 < _last; i += IT::size){
                     vec::storeu(lhs + i, rhs.load(i));
                 }
             }
+
+            return i;
+        }
+
+        void remainder_loop(std::size_t first) const {
+            for (std::size_t i = first; i < _last; ++i) {
+                lhs[i] = rhs[i];
+            }
+        }
+
+        void operator()() const {
+            //1. Peel loop (if necessary)
+            auto peeled = peel_loop();
+
+            //2. Main vectorized loop
+
+            std::size_t first = peeled;
+
+            if (_size - peeled >= IT::size) {
+                if (reinterpret_cast<uintptr_t>(lhs + _first + peeled) % IT::alignment == 0) {
+                    first = aligned_main_loop(_first + peeled);
+                } else {
+                    first = unaligned_main_loop(_first + peeled);
+                }
+            }
+
+            //3. Remainder loop (non-vectorized)
+
+            remainder_loop(first);
         }
     };
 
@@ -284,58 +324,20 @@ struct standard_evaluator {
             return;
         }
 
-        using IT = intrinsic_traits<value_t<E>>;
+        //Evaluate the sub parts of the expression, if any
+        evaluate_only(expr);
 
         auto m = result.memory_start();
 
-        evaluate_only(expr);
+        auto batch = size / threads;
 
-        std::size_t i = 0;
-
-        //1. Peel loop
-
-        constexpr const auto size_1 = sizeof(value_t<E>);
-        auto u_bytes                = (reinterpret_cast<uintptr_t>(m) % IT::alignment);
-
-        if (u_bytes >= size_1 && u_bytes % size_1 == 0) {
-            auto u_loads = std::min(u_bytes & -size_1, size);
-
-            for (; i < u_loads; ++i) {
-                m[i] = expr[i];
-            }
+        for(std::size_t t = 0; t < threads - 1; ++t){
+            pool.do_task(VectorizedStore<value_t<R>, E>(m, expr, t * batch, (t+1) * batch));
         }
 
-        //2. Vectorized loop
+        pool.do_task(VectorizedStore<value_t<R>, E>(m, expr, (threads - 1) * batch, size));
 
-        if (size - i >= IT::size) {
-            auto n = (size - i) / IT::size;
-            auto batch = (size - i) / threads;
-
-            if (reinterpret_cast<uintptr_t>(m + i) % IT::alignment == 0) {
-                for(std::size_t t = 0; t < threads - 1; ++t){
-                    pool.do_task(VectorizedStoreAligned<value_t<R>, E>(m, expr, i + t * batch, i + (t+1) * batch));
-                }
-
-                pool.do_task(VectorizedStoreAligned<value_t<R>, E>(m, expr, i + (threads - 1) * batch, i + n * IT::size));
-            } else {
-                for(std::size_t t = 0; t < threads - 1; ++t){
-                    pool.do_task(VectorizedStoreUnaligned<value_t<R>, E>(m, expr, i + t * batch, i + (t+1) * batch));
-                }
-
-                pool.do_task(VectorizedStoreUnaligned<value_t<R>, E>(m, expr, i + (threads - 1) * batch, i + n * IT::size));
-            }
-
-            i += n * IT::size;
-
-            pool.wait();
-        }
-
-        //3. Remainder loop
-
-        //Finish the iterations in a non-vectorized fashion
-        for (; i < size; ++i) {
-            m[i] = expr[i];
-        }
+        pool.wait();
     }
 
     //Vectorized assign version
