@@ -7,7 +7,6 @@
 
 #pragma once
 
-#include <vector>    //To store the data
 #include <array>     //To store the dimensions
 #include <tuple>     //For TMP stuff
 #include <algorithm> //For std::find_if
@@ -100,23 +99,22 @@ struct dyn_matrix_impl final : inplace_assignable<dyn_matrix_impl<T, SO, D>>, co
 public:
     static constexpr const std::size_t n_dimensions = D;
     static constexpr const order storage_order      = SO;
+    static constexpr const std::size_t alignment    = alignof(T);
 
     using value_type             = T;
-    using storage_impl           = std::vector<value_type>;
     using dimension_storage_impl = std::array<std::size_t, n_dimensions>;
-    using iterator               = typename storage_impl::iterator;
-    using const_iterator         = typename storage_impl::const_iterator;
     using memory_type            = value_type*;
     using const_memory_type      = const value_type*;
+    using iterator               = memory_type;
+    using const_iterator         = const_memory_type;
     using vec_type               = intrinsic_type<T>;
 
 private:
     std::size_t _size;
-    storage_impl _data;
     dimension_storage_impl _dimensions;
+    memory_type _memory;
 
     void check_invariants() {
-        cpp_assert(_size == _data.size(), "Invalid container size");
         cpp_assert(_dimensions.size() == D, "Invalid dimensions");
 
 #ifndef NDEBUG
@@ -125,25 +123,51 @@ private:
 #endif
     }
 
+    static memory_type allocate(std::size_t n) {
+        auto* memory = aligned_allocator<void, alignment>::template allocate<T>(n);
+        cpp_assert(memory, "Impossible to allocate memory for dyn_matrix");
+
+        //In case of non-trivial type, we need to call the constructors
+        if(!std::is_trivial<value_type>::value){
+            new (memory) value_type[n]();
+        }
+
+        return memory;
+    }
+
+    static void release(memory_type ptr, std::size_t n) {
+        //In case of non-trivial type, we need to call the destructors
+        if(!std::is_trivial<value_type>::value){
+            for(std::size_t i = 0; i < n; ++i){
+                ptr[i].~value_type();
+            }
+        }
+
+        aligned_allocator<void, alignment>::template release<T>(ptr);
+    }
+
 public:
     // Construction
 
     //Default constructor (constructs an empty matrix)
-    dyn_matrix_impl() noexcept : _size(0), _data(0) {
+    dyn_matrix_impl() noexcept : _size(0), _memory(nullptr) {
         std::fill(_dimensions.begin(), _dimensions.end(), 0);
 
         check_invariants();
     }
 
     //Copy constructor
-    dyn_matrix_impl(const dyn_matrix_impl& rhs) noexcept : _size(rhs._size), _data(rhs._data), _dimensions(rhs._dimensions) {
+    dyn_matrix_impl(const dyn_matrix_impl& rhs) noexcept : _size(rhs._size), _dimensions(rhs._dimensions), _memory(allocate(_size)) {
         check_invariants();
+
+        std::copy_n(rhs._memory, _size, _memory);
+
     }
 
     //Copy constructor with different type
     //This constructor is necessary because the one from expression is explicit
     template <typename T2>
-    dyn_matrix_impl(const dyn_matrix_impl<T2, SO, D>& rhs) noexcept : _size(rhs.size()), _data(size()) {
+    dyn_matrix_impl(const dyn_matrix_impl<T2, SO, D>& rhs) noexcept : _size(rhs.size()), _memory(allocate(_size)) {
         //The type is different, therefore attributes are private
         for (std::size_t d = 0; d < etl::dimensions(rhs); ++d) {
             _dimensions[d] = etl::dim(rhs, d);
@@ -156,18 +180,20 @@ public:
     }
 
     //Move constructor
-    dyn_matrix_impl(dyn_matrix_impl&& rhs) noexcept : _size(rhs._size), _data(std::move(rhs._data)), _dimensions(std::move(rhs._dimensions)) {
+    dyn_matrix_impl(dyn_matrix_impl&& rhs) noexcept : _size(rhs._size), _dimensions(std::move(rhs._dimensions)), _memory(rhs._memory) {
         rhs._size = 0;
+        rhs._memory = nullptr;
 
         check_invariants();
     }
 
     //Initializer-list construction for vector
     dyn_matrix_impl(std::initializer_list<value_type> list) noexcept : _size(list.size()),
-                                                                       _data(list),
-                                                                       _dimensions{{list.size()}} {
+                                                                       _dimensions{{list.size()}},
+                                                                       _memory(allocate(_size)) {
         static_assert(n_dimensions == 1, "This constructor can only be used for 1D matrix");
-        //Nothing to init
+
+        std::copy(list.begin(), list.end(), begin());
 
         check_invariants();
     }
@@ -178,8 +204,8 @@ public:
                                  cpp::all_convertible_to<std::size_t, S...>::value,
                                  cpp::is_homogeneous<typename cpp::first_type<S...>::type, S...>::value)>
     explicit dyn_matrix_impl(S... sizes) noexcept : _size(dyn_detail::size(sizes...)),
-                                                    _data(_size),
-                                                    _dimensions{{static_cast<std::size_t>(sizes)...}} {
+                                                    _dimensions{{static_cast<std::size_t>(sizes)...}},
+                                                                       _memory(allocate(_size))  {
         //Nothing to init
 
         check_invariants();
@@ -188,9 +214,12 @@ public:
     //Sizes followed by an initializer list
     template <typename... S, cpp_enable_if(dyn_detail::is_initializer_list_constructor<S...>::value)>
     explicit dyn_matrix_impl(S... sizes) noexcept : _size(dyn_detail::size(std::make_index_sequence<(sizeof...(S)-1)>(), sizes...)),
-                                                    _data(cpp::last_value(sizes...)),
-                                                    _dimensions(dyn_detail::sizes(std::make_index_sequence<(sizeof...(S)-1)>(), sizes...)) {
+                                                    _dimensions(dyn_detail::sizes(std::make_index_sequence<(sizeof...(S)-1)>(), sizes...)),
+                                                                       _memory(allocate(_size))  {
         static_assert(sizeof...(S) == D + 1, "Invalid number of dimensions");
+
+        auto list = cpp::last_value(sizes...);
+        std::copy(list.begin(), list.end(), begin());
 
         check_invariants();
     }
@@ -200,9 +229,10 @@ public:
                                               (sizeof...(S) == D),
                                               cpp::is_specialization_of<values_t, typename cpp::last_type<S1, S...>::type>::value)>
     explicit dyn_matrix_impl(S1 s1, S... sizes) noexcept : _size(dyn_detail::size(std::make_index_sequence<(sizeof...(S))>(), s1, sizes...)),
-                                                           _data(cpp::last_value(s1, sizes...).template list<value_type>()),
-                                                           _dimensions(dyn_detail::sizes(std::make_index_sequence<(sizeof...(S))>(), s1, sizes...)) {
-        //Nothing to init
+                                                           _dimensions(dyn_detail::sizes(std::make_index_sequence<(sizeof...(S))>(), s1, sizes...)),
+                                                                       _memory(allocate(_size))  {
+        auto list = cpp::last_value(sizes...).template list<value_type>();
+        std::copy(list.begin(), list.end(), begin());
 
         check_invariants();
     }
@@ -217,10 +247,10 @@ public:
                                                    : std::is_same<value_type, typename cpp::last_type<S1, S...>::type>::value        //The last type must be exactly value_type
                                                ))>
     explicit dyn_matrix_impl(S1 s1, S... sizes) noexcept : _size(dyn_detail::size(std::make_index_sequence<(sizeof...(S))>(), s1, sizes...)),
-                                                           _data(_size, cpp::last_value(s1, sizes...)),
-                                                           _dimensions(dyn_detail::sizes(std::make_index_sequence<(sizeof...(S))>(), s1, sizes...)) {
-        //Nothing to init
-
+                                                           _dimensions(dyn_detail::sizes(std::make_index_sequence<(sizeof...(S))>(), s1, sizes...)),
+                                                                       _memory(allocate(_size))  {
+        decltype(auto) value = cpp::last_value(s1, sizes...);
+        std::fill(begin(), end(), value);
         check_invariants();
     }
 
@@ -232,8 +262,8 @@ public:
                                               cpp::is_specialization_of<generator_expr, typename cpp::last_type<S1, S...>::type>::value //The last type must be a generator expr
                                               )>
     explicit dyn_matrix_impl(S1 s1, S... sizes) noexcept : _size(dyn_detail::size(std::make_index_sequence<(sizeof...(S))>(), s1, sizes...)),
-                                                           _data(_size),
-                                                           _dimensions(dyn_detail::sizes(std::make_index_sequence<(sizeof...(S))>(), s1, sizes...)) {
+                                                           _dimensions(dyn_detail::sizes(std::make_index_sequence<(sizeof...(S))>(), s1, sizes...)),
+                                                                       _memory(allocate(_size))  {
         const auto& e = cpp::last_value(sizes...);
 
         assign_evaluate(e, *this);
@@ -244,11 +274,11 @@ public:
     //Sizes followed by an init flag followed by the value
     template <typename... S, cpp_enable_if(dyn_detail::is_init_constructor<S...>::value)>
     explicit dyn_matrix_impl(S... sizes) noexcept : _size(dyn_detail::size(std::make_index_sequence<(sizeof...(S)-2)>(), sizes...)),
-                                                    _data(_size, cpp::last_value(sizes...)),
-                                                    _dimensions(dyn_detail::sizes(std::make_index_sequence<(sizeof...(S)-2)>(), sizes...)) {
+                                                    _dimensions(dyn_detail::sizes(std::make_index_sequence<(sizeof...(S)-2)>(), sizes...)),
+                                                                       _memory(allocate(_size))  {
         static_assert(sizeof...(S) == D + 2, "Invalid number of dimensions");
 
-        //Nothing to init
+        std::fill(begin(), end(), cpp::last_value(sizes...));
 
         check_invariants();
     }
@@ -257,7 +287,7 @@ public:
                               std::is_convertible<value_t<E>, value_type>::value,
                               is_etl_expr<E>::value)>
     explicit dyn_matrix_impl(E&& e)
-            : _size(etl::size(e)), _data(_size) {
+            : _size(etl::size(e)), _memory(allocate(_size)) {
         for (std::size_t d = 0; d < etl::dimensions(e); ++d) {
             _dimensions[d] = etl::dim(e, d);
         }
@@ -271,11 +301,11 @@ public:
                                       cpp::not_c<is_etl_expr<Container>>::value,
                                       std::is_convertible<typename Container::value_type, value_type>::value)>
     explicit dyn_matrix_impl(const Container& vec)
-            : _size(vec.size()), _data(_size), _dimensions{{_size}} {
+            : _size(vec.size()), _dimensions{{_size}, _memory(allocate(_size))} {
         static_assert(D == 1, "Only 1D matrix can be constructed from containers");
 
         for (std::size_t i = 0; i < size(); ++i) {
-            _data[i] = vec[i];
+            _memory[i] = vec[i];
         }
 
         check_invariants();
@@ -288,10 +318,11 @@ public:
     //Note: For now, this is the only constructor that is able to change the size and dimensions of the matrix
     dyn_matrix_impl& operator=(const dyn_matrix_impl& rhs) noexcept {
         if (this != &rhs) {
-            if (size() == 0) {
+            if (!_size) {
                 _size       = rhs.size();
                 _dimensions = rhs._dimensions;
-                _data       = rhs._data;
+                _memory =   allocate(_size);
+                std::copy_n(rhs._memory, _size, _memory);
             } else {
                 validate_assign(*this, rhs);
                 assign_evaluate(rhs, *this);
@@ -306,11 +337,16 @@ public:
     //Default move assignment operator
     dyn_matrix_impl& operator=(dyn_matrix_impl&& rhs) noexcept {
         if (this != &rhs) {
+            if(_memory){
+                release(_memory, _size);
+            }
+
             _size       = rhs._size;
-            _data       = std::move(rhs._data);
             _dimensions = std::move(rhs._dimensions);
+            _memory = rhs._memory;
 
             rhs._size = 0;
+            rhs._memory = nullptr;
         }
 
         check_invariants();
@@ -346,11 +382,19 @@ public:
 
     //Set the same value to each element of the matrix
     dyn_matrix_impl& operator=(const value_type& value) {
-        std::fill(_data.begin(), _data.end(), value);
+        std::fill(begin(), end(), value);
 
         check_invariants();
 
         return *this;
+    }
+
+    //Destructor
+
+    ~dyn_matrix_impl(){
+        if(_memory){
+            release(_memory, _size);
+        }
     }
 
     // Swap operations
@@ -358,8 +402,8 @@ public:
     void swap(dyn_matrix_impl& other) {
         using std::swap;
         swap(_size, other._size);
-        swap(_data, other._data);
         swap(_dimensions, other._dimensions);
+        swap(_memory, other._memory);
 
         check_invariants();
     }
@@ -410,14 +454,14 @@ public:
     value_type& operator()(std::size_t i) noexcept {
         cpp_assert(i < dim(0), "Out of bounds");
 
-        return _data[i];
+        return _memory[i];
     }
 
     template <bool B = n_dimensions == 1, cpp::enable_if_u<B> = cpp::detail::dummy>
     const value_type& operator()(std::size_t i) const noexcept {
         cpp_assert(i < dim(0), "Out of bounds");
 
-        return _data[i];
+        return _memory[i];
     }
 
     template <bool B = n_dimensions == 2, cpp::enable_if_u<B> = cpp::detail::dummy>
@@ -426,9 +470,9 @@ public:
         cpp_assert(j < dim(1), "Out of bounds");
 
         if (storage_order == order::RowMajor) {
-            return _data[i * dim(1) + j];
+            return _memory[i * dim(1) + j];
         } else {
-            return _data[j * dim(0) + i];
+            return _memory[j * dim(0) + i];
         }
     }
 
@@ -438,9 +482,9 @@ public:
         cpp_assert(j < dim(1), "Out of bounds");
 
         if (storage_order == order::RowMajor) {
-            return _data[i * dim(1) + j];
+            return _memory[i * dim(1) + j];
         } else {
-            return _data[j * dim(0) + i];
+            return _memory[j * dim(0) + i];
         }
     }
 
@@ -483,7 +527,7 @@ public:
     const value_type& operator()(S... sizes) const noexcept {
         static_assert(sizeof...(S) == n_dimensions, "Invalid number of parameters");
 
-        return _data[index(sizes...)];
+        return _memory[index(sizes...)];
     }
 
     template <typename... S, cpp::enable_if_all_u<
@@ -493,65 +537,65 @@ public:
     value_type& operator()(S... sizes) noexcept {
         static_assert(sizeof...(S) == n_dimensions, "Invalid number of parameters");
 
-        return _data[index(sizes...)];
+        return _memory[index(sizes...)];
     }
 
     const value_type& operator[](std::size_t i) const noexcept {
         cpp_assert(i < size(), "Out of bounds");
 
-        return _data[i];
+        return _memory[i];
     }
 
     value_type& operator[](std::size_t i) noexcept {
         cpp_assert(i < size(), "Out of bounds");
 
-        return _data[i];
+        return _memory[i];
     }
 
     vec_type load(std::size_t i) const noexcept {
-        return vec::loadu(memory_start() + i);
+        return vec::loadu(_memory + i);
     }
 
-    iterator begin() noexcept(noexcept(_data.begin())) {
-        return _data.begin();
+    iterator begin() noexcept {
+        return _memory;
     }
 
-    iterator end() noexcept(noexcept(_data.end())) {
-        return _data.end();
+    iterator end() noexcept {
+        return _memory + _size;
     }
 
-    const_iterator begin() const noexcept(noexcept(_data.cbegin())) {
-        return _data.cbegin();
+    const_iterator begin() const noexcept {
+        return _memory;
     }
 
-    const_iterator end() const noexcept(noexcept(_data.cend())) {
-        return _data.cend();
+    const_iterator end() const noexcept {
+        return _memory + _size;
     }
 
-    const_iterator cbegin() const noexcept(noexcept(_data.cbegin())) {
-        return _data.cbegin();
+    const_iterator cbegin() const noexcept {
+        return _memory;
     }
 
-    const_iterator cend() const noexcept(noexcept(_data.cend())) {
-        return _data.cend();
+    const_iterator cend() const noexcept {
+        return _memory + _size;
     }
 
     // Direct memory access
 
-    memory_type memory_start() noexcept {
-        return &_data[0];
+    inline memory_type memory_start() noexcept {
+        return _memory;
     }
 
-    const_memory_type memory_start() const noexcept {
-        return &_data[0];
+    inline const_memory_type memory_start() const noexcept {
+        return _memory;
     }
 
     memory_type memory_end() noexcept {
-        return &_data[size()];
+        return _memory + _size;
     }
 
     const_memory_type memory_end() const noexcept {
-        return &_data[size()];
+        return _memory + _size;
     }
 
     std::size_t& unsafe_dimension_access(std::size_t i) {
