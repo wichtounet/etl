@@ -182,7 +182,7 @@ struct standard_evaluator {
     static void assign_evaluate(E&& expr, R&& result) {
         const auto n = etl::size(result);
 
-        if(n < parallel_threshold){
+        if(n < parallel_threshold || threads < 2){
             direct_assign_evaluate(std::forward<E>(expr), std::forward<R>(result));
             return;
         }
@@ -191,8 +191,7 @@ struct standard_evaluator {
 
         auto m = result.memory_start();
 
-
-        cpp::default_thread_pool<> pool(threads);
+        static cpp::default_thread_pool<> pool(threads - 1);
 
         auto batch_functor = [&m, &expr](std::size_t first, std::size_t last){
             for(std::size_t i = first; i < last; ++i){
@@ -208,7 +207,7 @@ struct standard_evaluator {
             pool.do_task(batch_functor, t * batch, (t+1) * batch);
         }
 
-        pool.do_task(batch_functor, (threads - 1) * batch, n);
+        batch_functor((threads - 1) * batch, n);
 
         pool.wait();
     }
@@ -315,11 +314,11 @@ struct standard_evaluator {
 
     template <typename E, typename R, cpp_enable_if(parallel_vectorized_assign<E, R>::value)>
     static void assign_evaluate(E&& expr, R&& result) {
-        static cpp::default_thread_pool<> pool(threads);
+        static cpp::default_thread_pool<> pool(threads - 1);
 
         const std::size_t size = etl::size(result);
 
-        if(size < parallel_threshold){
+        if(size < parallel_threshold || threads < 2){
             vectorized_assign_evaluate(std::forward<E>(expr), std::forward<R>(result));
             return;
         }
@@ -331,12 +330,15 @@ struct standard_evaluator {
 
         auto batch = size / threads;
 
+        //Schedule threads - 1 tasks
         for(std::size_t t = 0; t < threads - 1; ++t){
             pool.do_task(VectorizedStore<value_t<R>, E>(m, expr, t * batch, (t+1) * batch));
         }
 
-        pool.do_task(VectorizedStore<value_t<R>, E>(m, expr, (threads - 1) * batch, size));
+        //Perform the last task on the current threads
+        VectorizedStore<value_t<R>, E>(m, expr, (threads - 1) * batch, size)();
 
+        //Wait for the other threads
         pool.wait();
     }
 
