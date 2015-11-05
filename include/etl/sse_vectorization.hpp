@@ -140,6 +140,22 @@ inline void store(std::complex<double>* memory, __m128d value) {
     _mm_store_pd(reinterpret_cast<double*>(memory), value);
 }
 
+ETL_INLINE_VEC_128 load(const float* memory) {
+    return _mm_load_ps(memory);
+}
+
+ETL_INLINE_VEC_128D load(const double* memory) {
+    return _mm_load_pd(memory);
+}
+
+ETL_INLINE_VEC_128 load(const std::complex<float>* memory) {
+    return _mm_load_ps(reinterpret_cast<const float*>(memory));
+}
+
+ETL_INLINE_VEC_128D load(const std::complex<double>* memory) {
+    return _mm_load_pd(reinterpret_cast<const double*>(memory));
+}
+
 ETL_INLINE_VEC_128 loadu(const float* memory) {
     return _mm_loadu_ps(memory);
 }

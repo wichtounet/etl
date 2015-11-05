@@ -18,6 +18,9 @@ template <typename F, typename M>
 inline void store(F* /*memory*/, M /*value*/) {}
 
 template <typename F>
+F load(const F* /*memory*/) {}
+
+template <typename F>
 F loadu(const F* /*memory*/) {}
 
 template <typename F>
