@@ -554,7 +554,7 @@ public:
     }
 
     vec_type load(std::size_t i) const noexcept {
-        return vec::loadu(_memory + i);
+        return vec::load(_memory + i);
     }
 
     iterator begin() noexcept {
