@@ -19,9 +19,11 @@
 #endif
 
 #ifdef __clang__
+#define ETL_INLINE_VEC_VOID inline void __attribute__((__always_inline__, __nodebug__))
 #define ETL_INLINE_VEC_256 inline __m256 __attribute__((__always_inline__, __nodebug__))
 #define ETL_INLINE_VEC_256D inline __m256d __attribute__((__always_inline__, __nodebug__))
 #else
+#define ETL_INLINE_VEC_VOID inline void __attribute__((__always_inline__))
 #define ETL_INLINE_VEC_256 inline __m256 __attribute__((__always_inline__))
 #define ETL_INLINE_VEC_256D inline __m256d __attribute__((__always_inline__))
 #endif
@@ -109,35 +111,35 @@ std::string debug_s(T) {
 
 #endif
 
-inline void storeu(float* memory, __m256 value) {
+ETL_INLINE_VEC_VOID storeu(float* memory, __m256 value) {
     _mm256_storeu_ps(memory, value);
 }
 
-inline void storeu(double* memory, __m256d value) {
+ETL_INLINE_VEC_VOID storeu(double* memory, __m256d value) {
     _mm256_storeu_pd(memory, value);
 }
 
-inline void storeu(std::complex<float>* memory, __m256 value) {
+ETL_INLINE_VEC_VOID storeu(std::complex<float>* memory, __m256 value) {
     _mm256_storeu_ps(reinterpret_cast<float*>(memory), value);
 }
 
-inline void storeu(std::complex<double>* memory, __m256d value) {
+ETL_INLINE_VEC_VOID storeu(std::complex<double>* memory, __m256d value) {
     _mm256_storeu_pd(reinterpret_cast<double*>(memory), value);
 }
 
-inline void store(float* memory, __m256 value) {
+ETL_INLINE_VEC_VOID store(float* memory, __m256 value) {
     _mm256_store_ps(memory, value);
 }
 
-inline void store(double* memory, __m256d value) {
+ETL_INLINE_VEC_VOID store(double* memory, __m256d value) {
     _mm256_store_pd(memory, value);
 }
 
-inline void store(std::complex<float>* memory, __m256 value) {
+ETL_INLINE_VEC_VOID store(std::complex<float>* memory, __m256 value) {
     _mm256_store_ps(reinterpret_cast<float*>(memory), value);
 }
 
-inline void store(std::complex<double>* memory, __m256d value) {
+ETL_INLINE_VEC_VOID store(std::complex<double>* memory, __m256d value) {
     _mm256_store_pd(reinterpret_cast<double*>(memory), value);
 }
 
