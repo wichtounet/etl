@@ -46,16 +46,16 @@ constexpr const bool create_temporary = false;
 constexpr const bool create_temporary = true;
 #endif
 
-#ifdef ETL_PARALLEL
-constexpr const bool parallel = true;
-#else
-constexpr const bool parallel = false;
-#endif
-
 #ifdef ETL_PARALLEL_THREADS
 constexpr const std::size_t threads = ETL_PARALLEL_THREADS;
 #else
 const std::size_t threads = std::thread::hardware_concurrency();
+#endif
+
+#ifdef ETL_PARALLEL
+const bool parallel = threads > 1;
+#else
+constexpr const bool parallel = false;
 #endif
 
 #ifdef ETL_MKL_MODE
