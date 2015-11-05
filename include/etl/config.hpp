@@ -53,7 +53,7 @@ const std::size_t threads = std::thread::hardware_concurrency();
 #endif
 
 #ifdef ETL_PARALLEL
-const bool parallel = threads > 1;
+const bool parallel = true;
 #else
 constexpr const bool parallel = false;
 #endif
