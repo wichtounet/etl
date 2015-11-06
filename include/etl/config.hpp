@@ -110,17 +110,17 @@ constexpr const bool is_div_strict               = false;
 #endif
 
 //Flag to enable unrolling of vectorized loops
-#ifdef ETL_UNROLL_VECT
-constexpr const bool unroll_vectorized_loops = true;
+#ifdef ETL_NO_UNROLL_VECT
+constexpr const bool unroll_vectorized_loops = false;
 #else
-constexpr const bool unroll_vectorized_loops     = false;
+constexpr const bool unroll_vectorized_loops     = true;
 #endif
 
 //Flag to enable unrolling of non-vectorized loops
-#ifdef ETL_UNROLL_NON_VECT
-constexpr const bool unroll_normal_loops = true;
+#ifdef ETL_NO_UNROLL_NON_VECT
+constexpr const bool unroll_normal_loops = false;
 #else
-constexpr const bool unroll_normal_loops         = false;
+constexpr const bool unroll_normal_loops         = true;
 #endif
 
 enum class vector_mode_t {
