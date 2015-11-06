@@ -178,13 +178,13 @@ struct conv_deep_impl {
     }
 };
 
-template <typename I, typename K, typename C>
+template <typename I, typename K, typename C, typename = void>
 using conv_deep_valid_impl = conv_deep_impl<conv_type::VALID, I, K, C>;
 
-template <typename I, typename K, typename C>
+template <typename I, typename K, typename C, typename = void>
 using conv_deep_same_impl = conv_deep_impl<conv_type::SAME, I, K, C>;
 
-template <typename I, typename K, typename C>
+template <typename I, typename K, typename C, typename = void>
 using conv_deep_full_impl = conv_deep_impl<conv_type::FULL, I, K, C>;
 
 //The following partial specializations are here to ensure compilation

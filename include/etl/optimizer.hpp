@@ -260,7 +260,7 @@ struct optimizer<etl::unary_expr<T, Expr, UnaryOp>> {
             transform(parent_builder, expr);
         } else if (is_optimizable_deep(expr.value())) {
             auto value_builder = [&](const auto& new_value) {
-                parent_builder(unary_expr<T, detail::build_type<decltype(new_value)>, UnaryOp>(new_value));
+                parent_builder(etl::unary_expr<T, etl::detail::build_type<decltype(new_value)>, UnaryOp>(new_value));
             };
 
             optimize(value_builder, expr.value());
@@ -278,13 +278,13 @@ struct optimizer<etl::binary_expr<T, LeftExpr, BinaryOp, RightExpr>> {
             transform(parent_builder, expr);
         } else if (is_optimizable_deep(expr.lhs())) {
             auto lhs_builder = [&](const auto& new_lhs) {
-                parent_builder(binary_expr<T, detail::build_type<decltype(new_lhs)>, BinaryOp, RightExpr>(new_lhs, expr.rhs()));
+                parent_builder(etl::binary_expr<T, etl::detail::build_type<decltype(new_lhs)>, BinaryOp, RightExpr>(new_lhs, expr.rhs()));
             };
 
             optimize(lhs_builder, expr.lhs());
         } else if (is_optimizable_deep(expr.rhs())) {
             auto rhs_builder = [&](const auto& new_rhs) {
-                parent_builder(binary_expr<T, LeftExpr, BinaryOp, detail::build_type<decltype(new_rhs)>>(expr.lhs(), new_rhs));
+                parent_builder(etl::binary_expr<T, LeftExpr, BinaryOp, etl::detail::build_type<decltype(new_rhs)>>(expr.lhs(), new_rhs));
             };
 
             optimize(rhs_builder, expr.rhs());
@@ -300,7 +300,7 @@ struct optimizer<etl::temporary_unary_expr<T, A, Op, Forced>> {
     static void is(Builder parent_builder, const etl::temporary_unary_expr<T, A, Op, Forced>& expr) {
         if (is_optimizable_deep(expr.a())) {
             auto lhs_builder = [&](const auto& new_lhs) {
-                parent_builder(temporary_unary_expr<T, detail::build_type<decltype(new_lhs)>, Op, Forced>(new_lhs));
+                parent_builder(etl::temporary_unary_expr<T, etl::detail::build_type<decltype(new_lhs)>, Op, Forced>(new_lhs));
             };
 
             optimize(lhs_builder, expr.a());
@@ -316,13 +316,13 @@ struct optimizer<etl::temporary_binary_expr<T, A, B, Op, Forced>> {
     static void apply(Builder parent_builder, const etl::temporary_binary_expr<T, A, B, Op, Forced>& expr) {
         if (is_optimizable_deep(expr.a())) {
             auto lhs_builder = [&](const auto& new_lhs) {
-                parent_builder(temporary_binary_expr<T, detail::build_type<decltype(new_lhs)>, B, Op, Forced>(new_lhs));
+                parent_builder(etl::temporary_binary_expr<T, etl::detail::build_type<decltype(new_lhs)>, B, Op, Forced>(new_lhs));
             };
 
             optimize(lhs_builder, expr.a());
         } else if (is_optimizable_deep(expr.b())) {
             auto rhs_builder = [&](const auto& new_rhs) {
-                parent_builder(temporary_binary_expr<T, A, detail::build_type<decltype(new_rhs)>, Op, Forced>(new_rhs));
+                parent_builder(etl::temporary_binary_expr<T, A, etl::detail::build_type<decltype(new_rhs)>, Op, Forced>(new_rhs));
             };
 
             optimize(rhs_builder, expr.b());

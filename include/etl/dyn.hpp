@@ -250,7 +250,7 @@ public:
     explicit dyn_matrix_impl(S1 s1, S... sizes) noexcept : _size(dyn_detail::size(std::make_index_sequence<(sizeof...(S))>(), s1, sizes...)),
                                                            _dimensions(dyn_detail::sizes(std::make_index_sequence<(sizeof...(S))>(), s1, sizes...)),
                                                                        _memory(allocate(_size))  {
-        decltype(auto) value = cpp::last_value(s1, sizes...);
+        intel_decltype_auto value = cpp::last_value(s1, sizes...);
         std::fill(begin(), end(), value);
         check_invariants();
     }
@@ -265,7 +265,7 @@ public:
     explicit dyn_matrix_impl(S1 s1, S... sizes) noexcept : _size(dyn_detail::size(std::make_index_sequence<(sizeof...(S))>(), s1, sizes...)),
                                                            _dimensions(dyn_detail::sizes(std::make_index_sequence<(sizeof...(S))>(), s1, sizes...)),
                                                                        _memory(allocate(_size))  {
-        const auto& e = cpp::last_value(sizes...);
+        intel_decltype_auto e = cpp::last_value(sizes...);
 
         assign_evaluate(e, *this);
 

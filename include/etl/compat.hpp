@@ -20,8 +20,18 @@
 
 #define ETL_DEBUG_AUTO_TRICK template <typename E = void>
 
+//Only clang supports constexpr functions in their C++14 full fashion
+
 #ifdef __clang__
 #define cpp14_constexpr constexpr
 #else
 #define cpp14_constexpr
+#endif
+
+//Fix an assertion failed in Intel C++ Compiler
+
+#ifdef __INTEL_COMPILER
+#define intel_decltype_auto auto
+#else
+#define intel_decltype_auto decltype(auto)
 #endif
