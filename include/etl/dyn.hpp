@@ -287,7 +287,7 @@ public:
     template <typename E, cpp_enable_if(
                               std::is_convertible<value_t<E>, value_type>::value,
                               is_etl_expr<E>::value)>
-    explicit dyn_matrix_impl(E&& e)
+    explicit dyn_matrix_impl(E&& e) noexcept
             : _size(etl::size(e)), _memory(allocate(_size)) {
         for (std::size_t d = 0; d < etl::dimensions(e); ++d) {
             _dimensions[d] = etl::dim(e, d);
@@ -358,7 +358,7 @@ public:
     //Construct from expression
 
     template <typename E, cpp_enable_if(!std::is_same<std::decay_t<E>, dyn_matrix_impl<T, SO, D>>::value && std::is_convertible<value_t<E>, value_type>::value && is_etl_expr<E>::value)>
-    dyn_matrix_impl& operator=(E&& e) {
+    dyn_matrix_impl& operator=(E&& e) noexcept {
         validate_assign(*this, e);
 
         assign_evaluate(e, *this);
@@ -382,7 +382,7 @@ public:
     }
 
     //Set the same value to each element of the matrix
-    dyn_matrix_impl& operator=(const value_type& value) {
+    dyn_matrix_impl& operator=(const value_type& value) noexcept {
         std::fill(begin(), end(), value);
 
         check_invariants();
@@ -392,7 +392,7 @@ public:
 
     //Destructor
 
-    ~dyn_matrix_impl(){
+    ~dyn_matrix_impl() noexcept {
         if(_memory){
             release(_memory, _size);
         }
