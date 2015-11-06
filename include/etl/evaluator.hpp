@@ -360,8 +360,6 @@ struct standard_evaluator {
     static void vectorized_assign_evaluate(E&& expr, R&& result) {
         evaluate_only(expr);
 
-        using IT = intrinsic_traits<value_t<E>>;
-
         auto m = result.memory_start();
 
         const std::size_t size = etl::size(result);
