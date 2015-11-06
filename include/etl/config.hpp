@@ -109,14 +109,14 @@ constexpr const bool is_div_strict = true;
 constexpr const bool is_div_strict               = false;
 #endif
 
-//Flag to enable unrolling of vectorized loops
+//Flag to disable unrolling of vectorized loops
 #ifdef ETL_NO_UNROLL_VECT
 constexpr const bool unroll_vectorized_loops = false;
 #else
 constexpr const bool unroll_vectorized_loops     = true;
 #endif
 
-//Flag to enable unrolling of non-vectorized loops
+//Flag to disable unrolling of non-vectorized loops
 #ifdef ETL_NO_UNROLL_NON_VECT
 constexpr const bool unroll_normal_loops = false;
 #else
