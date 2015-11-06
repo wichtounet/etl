@@ -176,6 +176,39 @@ struct standard_evaluator {
         direct_assign_evaluate(std::forward<E>(expr), std::forward<R>(result));
     }
 
+    template<typename V_T, typename V_Expr>
+    struct Assign {
+        mutable V_T* lhs;
+        V_Expr& rhs;
+        const std::size_t _first;
+        const std::size_t _last;
+        const std::size_t _size;
+
+        Assign(V_T* lhs, V_Expr& rhs, std::size_t first, std::size_t last)
+                : lhs(lhs), rhs(rhs), _first(first), _last(last), _size(last - first) {
+            //Nothing else
+        }
+
+        void operator()() const {
+            std::size_t iend = _first;
+
+            if (unroll_normal_loops) {
+                iend = _first + _size & std::size_t(-4);
+
+                for (std::size_t i = _first; i < iend; i += 4) {
+                    lhs[i]     = rhs[i];
+                    lhs[i + 1] = rhs[i + 1];
+                    lhs[i + 2] = rhs[i + 2];
+                    lhs[i + 3] = rhs[i + 3];
+                }
+            }
+
+            for (std::size_t i = iend; i < _last; ++i) {
+                lhs[i] = rhs[i];
+            }
+        }
+    };
+
     //Parallel assign version
 
     template <typename E, typename R, cpp_enable_if(parallel_assign<E, R>::value)>
@@ -193,21 +226,15 @@ struct standard_evaluator {
 
         static cpp::default_thread_pool<> pool(threads - 1);
 
-        auto batch_functor = [&m, &expr](std::size_t first, std::size_t last){
-            for(std::size_t i = first; i < last; ++i){
-                m[i] = expr[i];
-            }
-        };
-
         //Distribute evenly the batches
 
         auto batch = n / threads;
 
         for(std::size_t t = 0; t < threads - 1; ++t){
-            pool.do_task(batch_functor, t * batch, (t+1) * batch);
+            pool.do_task(Assign<value_t<R>,E>(m, expr, t * batch, (t+1) * batch));
         }
 
-        batch_functor((threads - 1) * batch, n);
+        Assign<value_t<R>,E>(m, expr, (threads - 1) * batch, n)();
 
         pool.wait();
     }
