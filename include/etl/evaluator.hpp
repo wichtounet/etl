@@ -78,7 +78,7 @@ struct Assign {
         std::size_t iend = _first;
 
         if (unroll_normal_loops) {
-            iend = _first + _size & std::size_t(-4);
+            iend = _first + (_size & std::size_t(-4));
 
             for (std::size_t i = _first; i < iend; i += 4) {
                 lhs[i]     = rhs[i];
