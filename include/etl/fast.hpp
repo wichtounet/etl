@@ -125,12 +125,12 @@ private:
 public:
     /// Construction
 
-    template <typename S = ST, cpp::enable_if_c<matrix_detail::is_vector<S>> = cpp::detail::dummy>
+    template <typename S = ST, cpp_enable_if(matrix_detail::is_vector<S>::value)>
     void init() {
         _data.resize(etl_size);
     }
 
-    template <typename S = ST, cpp::disable_if_c<matrix_detail::is_vector<S>> = cpp::detail::dummy>
+    template <typename S = ST, cpp_disable_if(matrix_detail::is_vector<S>::value)>
     void init() noexcept {
         //Nothing to init
     }
@@ -139,7 +139,7 @@ public:
         init();
     }
 
-    template <typename VT, cpp::enable_if_one_c<std::is_convertible<VT, value_type>, std::is_assignable<T&, VT>> = cpp::detail::dummy>
+    template <typename VT, cpp_enable_if_or(std::is_convertible<VT, value_type>::value, std::is_assignable<T&, VT>::value)>
     explicit fast_matrix_impl(const VT& value) {
         init();
         std::fill(_data.begin(), _data.end(), value);
@@ -213,7 +213,7 @@ public:
 
     //Allow copy from other containers
 
-    template <typename Container, cpp_enable_if(!std::is_same<Container, value_type>::value && std::is_convertible<typename Container::value_type, value_type>::value)>
+    template <typename Container, cpp_enable_if(!std::is_same<Container, value_type>::value, std::is_convertible<typename Container::value_type, value_type>::value)>
     fast_matrix_impl& operator=(const Container& vec) noexcept {
         validate_assign(*this, vec);
         std::copy(vec.begin(), vec.end(), begin());
@@ -230,7 +230,7 @@ public:
     }
 
     //Set the same value to each element of the matrix
-    template <typename VT, cpp::enable_if_one_c<std::is_convertible<VT, value_type>, std::is_assignable<T&, VT>> = cpp::detail::dummy>
+    template <typename VT, cpp_enable_if_or(std::is_convertible<VT, value_type>::value, std::is_assignable<T&, VT>::value)>
     fast_matrix_impl& operator=(const VT& value) noexcept {
         std::fill(_data.begin(), _data.end(), value);
 
@@ -286,12 +286,12 @@ public:
         return dyn_nth_size<Dims...>(d);
     }
 
-    template <bool B = (n_dimensions > 1), cpp::enable_if_u<B> = cpp::detail::dummy>
+    template <bool B = (n_dimensions > 1), cpp_enable_if(B)>
     auto operator()(std::size_t i) noexcept {
         return sub(*this, i);
     }
 
-    template <bool B = (n_dimensions > 1), cpp::enable_if_u<B> = cpp::detail::dummy>
+    template <bool B = (n_dimensions > 1), cpp_enable_if(B)>
     auto operator()(std::size_t i) const noexcept {
         return sub(*this, i);
     }

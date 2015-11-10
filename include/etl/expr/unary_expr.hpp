@@ -157,7 +157,7 @@ public:
         return *this;
     }
 
-    template <typename Container, cpp::enable_if_all_c<cpp::not_c<is_etl_expr<Container>>, std::is_convertible<typename Container::value_type, value_type>> = cpp::detail::dummy>
+    template <typename Container, cpp_enable_if(!is_etl_expr<Container>::value, std::is_convertible<typename Container::value_type, value_type>::value)>
     unary_expr& operator=(const Container& vec) {
         validate_assign(*this, vec);
 
@@ -193,12 +193,12 @@ public:
         return vec::loadu(memory_start() + i);
     }
 
-    template <bool B = (sub_size_compare<this_type>::value > 1), cpp::enable_if_u<B> = cpp::detail::dummy>
+    template <bool B = (sub_size_compare<this_type>::value > 1), cpp_enable_if(B)>
     auto operator()(std::size_t i) {
         return sub(*this, i);
     }
 
-    template <bool B = (sub_size_compare<this_type>::value > 1), cpp::enable_if_u<B> = cpp::detail::dummy>
+    template <bool B = (sub_size_compare<this_type>::value > 1), cpp_enable_if(B)>
     auto operator()(std::size_t i) const {
         return sub(*this, i);
     }
@@ -297,7 +297,7 @@ public:
         return value()[i];
     }
 
-    template <bool B = (sub_size_compare<this_type>::value > 1), cpp::enable_if_u<B> = cpp::detail::dummy>
+    template <bool B = (sub_size_compare<this_type>::value > 1), cpp_enable_if(B)>
     auto operator()(std::size_t i) const {
         return sub(*this, i);
     }

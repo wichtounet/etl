@@ -67,13 +67,13 @@ auto upsample_3d(E&& value) -> temporary_unary_expr<value_t<E>, detail::build_ty
     return temporary_unary_expr<value_t<E>, detail::build_type<E>, upsample_3d_expr<value_t<E>, C1, C2, C3>, void>{value};
 }
 
-template <std::size_t C1, std::size_t C2, typename E, cpp::enable_if_u<is_etl_expr<E>::value> = cpp::detail::dummy>
+template <std::size_t C1, std::size_t C2, typename E, cpp_enable_if(is_etl_expr<E>::value)>
 auto p_max_pool_h(E&& value) -> unary_expr<value_t<E>, p_max_pool_h_transformer<detail::build_type<E>, C1, C2>, transform_op> {
     validate_pmax_pooling<C1, C2>(value);
     return unary_expr<value_t<E>, p_max_pool_h_transformer<detail::build_type<E>, C1, C2>, transform_op>{p_max_pool_h_transformer<detail::build_type<E>, C1, C2>(value)};
 }
 
-template <std::size_t C1, std::size_t C2, typename E, cpp::enable_if_u<is_etl_expr<E>::value> = cpp::detail::dummy>
+template <std::size_t C1, std::size_t C2, typename E, cpp_enable_if(is_etl_expr<E>::value)>
 auto p_max_pool_p(E&& value) -> unary_expr<value_t<E>, p_max_pool_p_transformer<detail::build_type<E>, C1, C2>, transform_op> {
     validate_pmax_pooling<C1, C2>(value);
     return unary_expr<value_t<E>, p_max_pool_p_transformer<detail::build_type<E>, C1, C2>, transform_op>{p_max_pool_p_transformer<detail::build_type<E>, C1, C2>(value)};

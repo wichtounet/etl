@@ -26,16 +26,16 @@ auto operator*(A&& a, B&& b) -> detail::temporary_binary_helper<A, B, mm_mul_exp
     return {a, b};
 }
 
-template <typename A, typename B, cpp::enable_if_all_u<
+template <typename A, typename B, cpp_enable_if(
                                       decay_traits<A>::dimensions() == 1, decay_traits<B>::dimensions() == 2,
-                                      !is_element_wise_mul_default> = cpp::detail::dummy>
+                                      !is_element_wise_mul_default)>
 auto operator*(A&& a, B&& b) -> detail::temporary_binary_helper<A, B, vm_mul_expr> {
     return {a, b};
 }
 
-template <typename A, typename B, cpp::enable_if_all_u<
+template <typename A, typename B, cpp_enable_if(
                                       decay_traits<A>::dimensions() == 2, decay_traits<B>::dimensions() == 1,
-                                      !is_element_wise_mul_default> = cpp::detail::dummy>
+                                      !is_element_wise_mul_default)>
 auto operator*(A&& a, B&& b) -> detail::temporary_binary_helper<A, B, mv_mul_expr> {
     return {a, b};
 }
@@ -64,26 +64,26 @@ auto lazy_mul(A&& a, B&& b) -> detail::stable_transform_binary_helper<A, B, mm_m
     return detail::stable_transform_binary_helper<A, B, mm_mul_transformer>{mm_mul_transformer<detail::build_type<A>, detail::build_type<B>>(a, b)};
 }
 
-template <typename A, typename B, typename C, cpp::enable_if_all_u<
-                                                  decay_traits<A>::dimensions() == 1, decay_traits<B>::dimensions() == 2> = cpp::detail::dummy>
+template <typename A, typename B, typename C, cpp_enable_if(
+                                                  decay_traits<A>::dimensions() == 1, decay_traits<B>::dimensions() == 2)>
 auto mul(A&& a, B&& b, C& c) -> detail::forced_temporary_binary_helper<A, B, C, vm_mul_expr> {
     return {a, b, c};
 }
 
-template <typename A, typename B, typename C, cpp::enable_if_all_u<
-                                                  decay_traits<A>::dimensions() == 2, decay_traits<B>::dimensions() == 1> = cpp::detail::dummy>
+template <typename A, typename B, typename C, cpp_enable_if(
+                                                  decay_traits<A>::dimensions() == 2, decay_traits<B>::dimensions() == 1)>
 auto mul(A&& a, B&& b, C& c) -> detail::forced_temporary_binary_helper<A, B, C, mv_mul_expr> {
     return {a, b, c};
 }
 
-template <typename A, typename B, cpp::enable_if_all_u<
-                                      decay_traits<A>::dimensions() == 1, decay_traits<B>::dimensions() == 2> = cpp::detail::dummy>
+template <typename A, typename B, cpp_enable_if(
+                                      decay_traits<A>::dimensions() == 1, decay_traits<B>::dimensions() == 2)>
 auto mul(A&& a, B&& b) -> detail::temporary_binary_helper<A, B, vm_mul_expr> {
     return {a, b};
 }
 
-template <typename A, typename B, cpp::enable_if_all_u<
-                                      decay_traits<A>::dimensions() == 2, decay_traits<B>::dimensions() == 1> = cpp::detail::dummy>
+template <typename A, typename B, cpp_enable_if(
+                                      decay_traits<A>::dimensions() == 2, decay_traits<B>::dimensions() == 1)>
 auto mul(A&& a, B&& b) -> detail::temporary_binary_helper<A, B, mv_mul_expr> {
     return {a, b};
 }

@@ -275,12 +275,12 @@ struct etl_traits<etl::binary_expr<T, LeftExpr, BinaryOp, RightExpr>> {
         etl_traits<left_expr_t>::needs_evaluator_visitor || etl_traits<right_expr_t>::needs_evaluator_visitor;
     static constexpr const order storage_order = etl_traits<left_expr_t>::is_generator ? etl_traits<right_expr_t>::storage_order : etl_traits<left_expr_t>::storage_order;
 
-    template <bool B = left_directed, cpp::enable_if_u<B> = cpp::detail::dummy>
+    template <bool B = left_directed, cpp_enable_if(B)>
     static constexpr auto& get(const expr_t& v) {
         return v.lhs();
     }
 
-    template <bool B = left_directed, cpp::disable_if_u<B> = cpp::detail::dummy>
+    template <bool B = left_directed, cpp_disable_if(B)>
     static constexpr auto& get(const expr_t& v) {
         return v.rhs();
     }
@@ -1097,29 +1097,29 @@ struct etl_traits<etl::optimized_expr<Expr>> : etl_traits<Expr> {};
 
 //Warning: default template parameters for size and dim are already defined in traits_fwd.hpp
 
-template <typename E, cpp::disable_if_u<etl_traits<E>::is_fast>>
+template <typename E, cpp_disable_if_fwd(etl_traits<E>::is_fast)>
 std::size_t size(const E& v) {
     return etl_traits<E>::size(v);
 }
 
-template <typename E, cpp::enable_if_u<etl_traits<E>::is_fast>>
+template <typename E, cpp_enable_if_fwd(etl_traits<E>::is_fast)>
 constexpr std::size_t size(const E& /*unused*/) noexcept {
     return etl_traits<E>::size();
 }
 
-template <typename E, cpp::disable_if_u<etl_traits<E>::is_fast> = cpp::detail::dummy>
+template <typename E, cpp_disable_if(etl_traits<E>::is_fast)>
 std::size_t subsize(const E& v) {
     static_assert(etl_traits<E>::dimensions() > 1, "Only 2D+ matrices have a subsize");
     return etl_traits<E>::size(v) / etl_traits<E>::dim(v, 0);
 }
 
-template <typename E, cpp::enable_if_u<etl_traits<E>::is_fast> = cpp::detail::dummy>
+template <typename E, cpp_enable_if(etl_traits<E>::is_fast)>
 constexpr std::size_t subsize(const E& /*unused*/) noexcept {
     static_assert(etl_traits<E>::dimensions() > 1, "Only 2D+ matrices have a subsize");
     return etl_traits<E>::size() / etl_traits<E>::template dim<0>();
 }
 
-template <std::size_t D, typename E, cpp::disable_if_u<etl_traits<E>::is_fast>>
+template <std::size_t D, typename E, cpp_disable_if_fwd(etl_traits<E>::is_fast)>
 std::size_t dim(const E& e) {
     return etl_traits<E>::dim(e, D);
 }
@@ -1129,12 +1129,12 @@ std::size_t dim(const E& e, std::size_t d) {
     return etl_traits<E>::dim(e, d);
 }
 
-template <std::size_t D, typename E, cpp::enable_if_u<etl_traits<E>::is_fast>>
+template <std::size_t D, typename E, cpp_enable_if_fwd(etl_traits<E>::is_fast)>
 constexpr std::size_t dim(const E& /*unused*/) noexcept {
     return etl_traits<E>::template dim<D>();
 }
 
-template <std::size_t D, typename E, cpp::enable_if_u<etl_traits<E>::is_fast>>
+template <std::size_t D, typename E, cpp_enable_if_fwd(etl_traits<E>::is_fast)>
 constexpr std::size_t dim() noexcept {
     return decay_traits<E>::template dim<D>();
 }

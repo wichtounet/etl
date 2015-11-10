@@ -48,22 +48,22 @@ struct etl_traits;
 template <typename T, typename DT = std::decay_t<T>>
 struct has_direct_access;
 
-template <typename E, cpp::disable_if_u<etl_traits<E>::is_fast> = cpp::detail::dummy>
+template <typename E, cpp_disable_if(etl_traits<E>::is_fast)>
 std::size_t size(const E& v);
 
-template <typename E, cpp::enable_if_u<etl_traits<E>::is_fast> = cpp::detail::dummy>
+template <typename E, cpp_enable_if(etl_traits<E>::is_fast)>
 constexpr std::size_t size(const E& /*unused*/) noexcept;
 
 template <typename E>
 std::size_t dim(const E& e, std::size_t d);
 
-template <std::size_t D, typename E, cpp::disable_if_u<etl_traits<E>::is_fast> = cpp::detail::dummy>
+template <std::size_t D, typename E, cpp_disable_if(etl_traits<E>::is_fast)>
 std::size_t dim(const E& e);
 
-template <std::size_t D, typename E, cpp::enable_if_u<etl_traits<E>::is_fast> = cpp::detail::dummy>
+template <std::size_t D, typename E, cpp_enable_if(etl_traits<E>::is_fast)>
 constexpr std::size_t dim(const E& /*unused*/) noexcept;
 
-template <std::size_t D, typename E, cpp::enable_if_u<etl_traits<E>::is_fast> = cpp::detail::dummy>
+template <std::size_t D, typename E, cpp_enable_if(etl_traits<E>::is_fast)>
 constexpr std::size_t dim() noexcept;
 
 template <typename T>
@@ -136,23 +136,23 @@ constexpr std::size_t dimensions() noexcept {
     return decay_traits<E>::dimensions();
 }
 
-template <typename E, cpp::disable_if_u<etl_traits<E>::is_fast> = cpp::detail::dummy>
+template <typename E, cpp_disable_if(etl_traits<E>::is_fast)>
 std::size_t rows(const E& v) {
     return etl_traits<E>::dim(v, 0);
 }
 
-template <typename E, cpp::enable_if_u<etl_traits<E>::is_fast> = cpp::detail::dummy>
+template <typename E, cpp_enable_if(etl_traits<E>::is_fast)>
 constexpr std::size_t rows(const E& /*unused*/) noexcept {
     return etl_traits<E>::template dim<0>();
 }
 
-template <typename E, cpp::disable_if_u<etl_traits<E>::is_fast> = cpp::detail::dummy>
+template <typename E, cpp_disable_if(etl_traits<E>::is_fast)>
 std::size_t columns(const E& v) {
     static_assert(etl_traits<E>::dimensions() > 1, "columns() can only be used on 2D+ matrices");
     return etl_traits<E>::dim(v, 1);
 }
 
-template <typename E, cpp::enable_if_u<etl_traits<E>::is_fast> = cpp::detail::dummy>
+template <typename E, cpp_enable_if(etl_traits<E>::is_fast)>
 constexpr std::size_t columns(const E& /*unused*/) noexcept {
     static_assert(etl_traits<E>::dimensions() > 1, "columns() can only be used on 2D+ matrices");
     return etl_traits<E>::template dim<1>();

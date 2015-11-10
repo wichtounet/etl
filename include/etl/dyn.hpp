@@ -441,31 +441,31 @@ public:
         return _dimensions[D2];
     }
 
-    template <bool B = (n_dimensions > 1), cpp::enable_if_u<B> = cpp::detail::dummy>
+    template <bool B = (n_dimensions > 1), cpp_enable_if(B)>
     auto operator()(std::size_t i) noexcept {
         return sub(*this, i);
     }
 
-    template <bool B = (n_dimensions > 1), cpp::enable_if_u<B> = cpp::detail::dummy>
+    template <bool B = (n_dimensions > 1), cpp_enable_if(B)>
     auto operator()(std::size_t i) const noexcept {
         return sub(*this, i);
     }
 
-    template <bool B = n_dimensions == 1, cpp::enable_if_u<B> = cpp::detail::dummy>
+    template <bool B = n_dimensions == 1, cpp_enable_if(B)>
     value_type& operator()(std::size_t i) noexcept {
         cpp_assert(i < dim(0), "Out of bounds");
 
         return _memory[i];
     }
 
-    template <bool B = n_dimensions == 1, cpp::enable_if_u<B> = cpp::detail::dummy>
+    template <bool B = n_dimensions == 1, cpp_enable_if(B)>
     const value_type& operator()(std::size_t i) const noexcept {
         cpp_assert(i < dim(0), "Out of bounds");
 
         return _memory[i];
     }
 
-    template <bool B = n_dimensions == 2, cpp::enable_if_u<B> = cpp::detail::dummy>
+    template <bool B = n_dimensions == 2, cpp_enable_if(B)>
     value_type& operator()(std::size_t i, std::size_t j) noexcept {
         cpp_assert(i < dim(0), "Out of bounds");
         cpp_assert(j < dim(1), "Out of bounds");
@@ -477,7 +477,7 @@ public:
         }
     }
 
-    template <bool B = n_dimensions == 2, cpp::enable_if_u<B> = cpp::detail::dummy>
+    template <bool B = n_dimensions == 2, cpp_enable_if(B)>
     const value_type& operator()(std::size_t i, std::size_t j) const noexcept {
         cpp_assert(i < dim(0), "Out of bounds");
         cpp_assert(j < dim(1), "Out of bounds");
@@ -521,20 +521,20 @@ public:
         return index;
     }
 
-    template <typename... S, cpp::enable_if_all_u<
+    template <typename... S, cpp_enable_if(
                                  (n_dimensions > 2),
                                  (sizeof...(S) == n_dimensions),
-                                 cpp::all_convertible_to<std::size_t, S...>::value> = cpp::detail::dummy>
+                                 cpp::all_convertible_to<std::size_t, S...>::value)>
     const value_type& operator()(S... sizes) const noexcept {
         static_assert(sizeof...(S) == n_dimensions, "Invalid number of parameters");
 
         return _memory[index(sizes...)];
     }
 
-    template <typename... S, cpp::enable_if_all_u<
+    template <typename... S, cpp_enable_if(
                                  (n_dimensions > 2),
                                  (sizeof...(S) == n_dimensions),
-                                 cpp::all_convertible_to<std::size_t, S...>::value> = cpp::detail::dummy>
+                                 cpp::all_convertible_to<std::size_t, S...>::value)>
     value_type& operator()(S... sizes) noexcept {
         static_assert(sizeof...(S) == n_dimensions, "Invalid number of parameters");
 

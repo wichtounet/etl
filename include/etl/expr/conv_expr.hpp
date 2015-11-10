@@ -312,7 +312,7 @@ using conv_deep_full_expr = basic_conv_expr<T, D, conv_type::FULL, detail::conv_
 
 //Deep convolutions
 
-template <typename I, typename K, typename C, cpp::enable_if_u<etl_traits<I>::dimensions() == 3> = cpp::detail::dummy>
+template <typename I, typename K, typename C, cpp_enable_if(etl_traits<I>::dimensions() == 3)>
 C& convolve_deep_full(const I& input, const K& kernel, C&& conv) {
     static_assert(dimensions<I>() == dimensions<K>() && dimensions<I>() == dimensions<C>(), "Deep convolution parameters need to have the same number of dimensions");
     static_assert(dim<0, I>() == dim<0, K>() && dim<0, I>() == dim<0, C>(), "Deep convolution parameters need to have the same first dimension");
@@ -324,7 +324,7 @@ C& convolve_deep_full(const I& input, const K& kernel, C&& conv) {
     return conv;
 }
 
-template <typename I, typename K, typename C, cpp::enable_if_u<(etl_traits<I>::dimensions() > 3)> = cpp::detail::dummy>
+template <typename I, typename K, typename C, cpp_enable_if((etl_traits<I>::dimensions() > 3))>
 C& convolve_deep_full(const I& input, const K& kernel, C&& conv) {
     static_assert(dimensions<I>() == dimensions<K>() && dimensions<I>() == dimensions<C>(), "Deep convolution parameters need to have the same number of dimensions");
     static_assert(dim<0, I>() == dim<0, K>() && dim<0, I>() == dim<0, C>(), "Deep convolution parameters need to have the same first dimension");
@@ -336,7 +336,7 @@ C& convolve_deep_full(const I& input, const K& kernel, C&& conv) {
     return conv;
 }
 
-template <typename I, typename K, typename C, cpp::enable_if_u<etl_traits<I>::dimensions() == 3> = cpp::detail::dummy>
+template <typename I, typename K, typename C, cpp_enable_if(etl_traits<I>::dimensions() == 3)>
 C& convolve_deep_same(const I& input, const K& kernel, C&& conv) {
     static_assert(dimensions<I>() == dimensions<K>() && dimensions<I>() == dimensions<C>(), "Deep convolution parameters need to have the same number of dimensions");
     static_assert(dim<0, I>() == dim<0, K>() && dim<0, I>() == dim<0, C>(), "Deep convolution parameters need to have the same first dimension");
@@ -348,7 +348,7 @@ C& convolve_deep_same(const I& input, const K& kernel, C&& conv) {
     return conv;
 }
 
-template <typename I, typename K, typename C, cpp::enable_if_u<(etl_traits<I>::dimensions() > 3)> = cpp::detail::dummy>
+template <typename I, typename K, typename C, cpp_enable_if((etl_traits<I>::dimensions() > 3))>
 C& convolve_deep_same(const I& input, const K& kernel, C&& conv) {
     static_assert(dimensions<I>() == dimensions<K>() && dimensions<I>() == dimensions<C>(), "Deep convolution parameters need to have the same number of dimensions");
     static_assert(dim<0, I>() == dim<0, K>() && dim<0, I>() == dim<0, C>(), "Deep convolution parameters need to have the same first dimension");
@@ -360,7 +360,7 @@ C& convolve_deep_same(const I& input, const K& kernel, C&& conv) {
     return conv;
 }
 
-template <typename I, typename K, typename C, cpp::enable_if_u<etl_traits<I>::dimensions() == 3> = cpp::detail::dummy>
+template <typename I, typename K, typename C, cpp_enable_if(etl_traits<I>::dimensions() == 3)>
 C& convolve_deep_valid(const I& input, const K& kernel, C&& conv) {
     static_assert(dimensions<I>() == dimensions<K>() && dimensions<I>() == dimensions<C>(), "Deep convolution parameters need to have the same number of dimensions");
     static_assert(dim<0, I>() == dim<0, K>() && dim<0, I>() == dim<0, C>(), "Deep convolution parameters need to have the same first dimension");
@@ -372,7 +372,7 @@ C& convolve_deep_valid(const I& input, const K& kernel, C&& conv) {
     return conv;
 }
 
-template <typename I, typename K, typename C, cpp::enable_if_u<(etl_traits<I>::dimensions() > 3)> = cpp::detail::dummy>
+template <typename I, typename K, typename C, cpp_enable_if((etl_traits<I>::dimensions() > 3))>
 C& convolve_deep_valid(const I& input, const K& kernel, C&& conv) {
     static_assert(dimensions<I>() == dimensions<K>() && dimensions<I>() == dimensions<C>(), "Deep convolution parameters need to have the same number of dimensions");
     static_assert(dim<0, I>() == dim<0, K>() && dim<0, I>() == dim<0, C>(), "Deep convolution parameters need to have the same first dimension");

@@ -289,12 +289,12 @@ struct hflip_transformer {
 
     static constexpr const bool matrix = etl_traits<std::decay_t<sub_type>>::dimensions() == 2;
 
-    template <bool C = matrix, cpp::disable_if_u<C> = cpp::detail::dummy>
+    template <bool C = matrix, cpp_disable_if(C)>
     value_type operator[](std::size_t i) const {
         return sub[size(sub) - i - 1];
     }
 
-    template <bool C = matrix, cpp::enable_if_u<C> = cpp::detail::dummy>
+    template <bool C = matrix, cpp_enable_if(C)>
     value_type operator[](std::size_t i) const {
         std::size_t i_i = i / dim<1>(sub);
         std::size_t i_j = i % dim<1>(sub);
@@ -326,12 +326,12 @@ struct vflip_transformer {
 
     static constexpr const bool matrix = etl_traits<std::decay_t<sub_type>>::dimensions() == 2;
 
-    template <bool C = matrix, cpp::disable_if_u<C> = cpp::detail::dummy>
+    template <bool C = matrix, cpp_disable_if(C)>
     value_type operator[](std::size_t i) const {
         return sub[i];
     }
 
-    template <bool C = matrix, cpp::enable_if_u<C> = cpp::detail::dummy>
+    template <bool C = matrix, cpp_enable_if(C)>
     value_type operator[](std::size_t i) const {
         std::size_t i_i = i / dim<1>(sub);
         std::size_t i_j = i % dim<1>(sub);
@@ -708,14 +708,14 @@ struct p_max_pool_h_transformer : p_max_pool_transformer<T, C1, C2> {
     explicit p_max_pool_h_transformer(sub_type vec)
             : base_type(vec) {}
 
-    template <bool C = d2d, cpp::enable_if_u<C> = cpp::detail::dummy>
+    template <bool C = d2d, cpp_enable_if(C)>
     value_type operator[](std::size_t i) const {
         std::size_t i_i = i / dim<1>(sub);
         std::size_t i_j = i % dim<1>(sub);
         return (*this)(i_i, i_j);
     }
 
-    template <bool C = d2d, cpp::disable_if_u<C> = cpp::detail::dummy>
+    template <bool C = d2d, cpp_disable_if(C)>
     value_type operator[](std::size_t i) const {
         std::size_t i_i  = i / (dim<1>(sub) * dim<2>(sub));
         std::size_t i_ij = i % (dim<1>(sub) * dim<2>(sub));
@@ -751,14 +751,14 @@ struct p_max_pool_p_transformer : p_max_pool_transformer<T, C1, C2> {
     explicit p_max_pool_p_transformer(sub_type vec)
             : base_type(vec) {}
 
-    template <bool C = d2d, cpp::enable_if_u<C> = cpp::detail::dummy>
+    template <bool C = d2d, cpp_enable_if(C)>
     value_type operator[](std::size_t i) const {
         std::size_t i_i = i / (dim<1>(sub) / C2);
         std::size_t i_j = i % (dim<1>(sub) / C2);
         return (*this)(i_i, i_j);
     }
 
-    template <bool C = d2d, cpp::disable_if_u<C> = cpp::detail::dummy>
+    template <bool C = d2d, cpp_disable_if(C)>
     value_type operator[](std::size_t i) const {
         std::size_t i_i  = i / ((dim<1>(sub) / C1) * (dim<2>(sub) / C2));
         std::size_t i_ij = i % ((dim<1>(sub) / C1) * (dim<2>(sub) / C2));
