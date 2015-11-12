@@ -192,6 +192,39 @@ struct VectorizedAssign {
     }
 };
 
+template<typename V_T, typename V_Expr>
+struct AssignAdd {
+    mutable V_T* lhs;
+    V_Expr& rhs;
+    const std::size_t _first;
+    const std::size_t _last;
+    const std::size_t _size;
+
+    AssignAdd(V_T* lhs, V_Expr& rhs, std::size_t first, std::size_t last)
+            : lhs(lhs), rhs(rhs), _first(first), _last(last), _size(last - first) {
+        //Nothing else
+    }
+
+    void operator()() const {
+        std::size_t iend = _first;
+
+        if (unroll_normal_loops) {
+            iend = _first + (_size & std::size_t(-4));
+
+            for (std::size_t i = _first; i < iend; i += 4) {
+                lhs[i]     += rhs[i];
+                lhs[i + 1] += rhs[i + 1];
+                lhs[i + 2] += rhs[i + 2];
+                lhs[i + 3] += rhs[i + 3];
+            }
+        }
+
+        for (std::size_t i = iend; i < _last; ++i) {
+            lhs[i] += rhs[i];
+        }
+    }
+};
+
 } //end of namespace detail
 
 template <typename Expr, typename Result>
@@ -384,30 +417,23 @@ struct standard_evaluator {
     }
 
     template <typename E, typename R, cpp_enable_if(!vectorized_assign<E, R>::value && has_direct_access<R>::value)>
-    static void add_evaluate(E&& expr, R&& result) {
+    static void direct_add_evaluate(E&& expr, R&& result) {
         evaluate_only(expr);
 
+        auto m = result.memory_start();
+
         const std::size_t size = etl::size(result);
-        auto m                 = result.memory_start();
 
-        std::size_t i = 0;
+        detail::AssignAdd<value_t<R>,E>(m, expr, 0, size)();
+    }
 
-        if (unroll_normal_loops) {
-            for (; i < (size & std::size_t(-4)); i += 4) {
-                m[i] += expr[i];
-                m[i + 1] += expr[i + 1];
-                m[i + 2] += expr[i + 2];
-                m[i + 3] += expr[i + 3];
-            }
-        }
-
-        for (; i < size; ++i) {
-            m[i] += expr[i];
-        }
+    template <typename E, typename R, cpp_enable_if(!vectorized_assign<E, R>::value && has_direct_access<R>::value)>
+    static void add_evaluate(E&& expr, R&& result) {
+        direct_add_evaluate(std::forward<E>(expr), std::forward<R>(result));
     }
 
     template <typename E, typename R, cpp_enable_if(vectorized_assign<E, R>::value)>
-    static void add_evaluate(E&& expr, R&& result) {
+    static void vectorized_add_evaluate(E&& expr, R&& result) {
         evaluate_only(expr);
 
         using IT = intrinsic_traits<value_t<E>>;
@@ -469,6 +495,11 @@ struct standard_evaluator {
         for (; i < size; ++i) {
             m[i] += expr[i];
         }
+    }
+
+    template <typename E, typename R, cpp_enable_if(vectorized_assign<E, R>::value)>
+    static void add_evaluate(E&& expr, R&& result) {
+        vectorized_add_evaluate(std::forward<E>(expr), std::forward<R>(result));
     }
 
     template <typename E, typename R, cpp_enable_if(!vectorized_assign<E, R>::value && !has_direct_access<R>::value)>
