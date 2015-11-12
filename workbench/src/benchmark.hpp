@@ -13,8 +13,7 @@
 
 #include "etl/etl.hpp"
 
-#define CPM_PARALLEL_RANDOMIZE
-#define CPM_FAST_RANDOMIZE
+#define CPM_NO_RANDOMIZATION
 
 #define CPM_WARMUP 2
 #define CPM_REPEAT 8
