@@ -11,32 +11,32 @@
 //Bench assignment
 CPM_BENCH() {
     CPM_TWO_PASS_NS(
-        "r = a (s)",
+        "r = a (s) [std][assign]",
         [](std::size_t d){ return std::make_tuple(svec(d), svec(d)); },
         [](svec& a, svec& r){ r = a; }
         );
 
     CPM_TWO_PASS_NS(
-        "r = a (d)",
+        "r = a (d) [std][assign]",
         [](std::size_t d){ return std::make_tuple(dvec(d), dvec(d)); },
         [](dvec& a, dvec& r){ r = a; }
         );
 
     CPM_TWO_PASS_NS(
-        "r = a (c)",
+        "r = a (c) [std][assign]",
         [](std::size_t d){ return std::make_tuple(cvec(d), cvec(d)); },
         [](cvec& a, cvec& r){ r = a; }
         );
 
     CPM_TWO_PASS_NS(
-        "r = a (z)",
+        "r = a (z) [std][assign]",
         [](std::size_t d){ return std::make_tuple(zvec(d), zvec(d)); },
         [](zvec& a, zvec& r){ r = a; }
         );
 
     CPM_TWO_PASS_NS_P(
         mat_policy_2d,
-        "R = A (d)",
+        "R = A (d) [std][assign]",
         [](auto d1, auto d2){ return std::make_tuple(dmat(d1, d2), dmat(d1, d2)); },
         [](dmat& A, dmat& R){ R = A; }
         );
@@ -45,53 +45,54 @@ CPM_BENCH() {
 //Bench addition
 CPM_BENCH() {
     CPM_TWO_PASS_NS(
-        "r = a + b",
+        "r = a + b [std][add]",
         [](std::size_t d){ return std::make_tuple(dvec(d), dvec(d), dvec(d)); },
         [](dvec& a, dvec& b, dvec& r){ r = a + b; }
         );
 
     CPM_TWO_PASS_NS(
-        "r = a + b + c",
+        "r = a + b + c [std][add]",
         [](std::size_t d){ return std::make_tuple(dvec(d), dvec(d), dvec(d), dvec(d)); },
-        [](dvec& a, dvec& b, dvec& c, dvec& r){ r = a + b + c; }
+        [](dvec& a, dvec& b, dvec& c, dvec& r){ r = a + b + c; },
+        [](std::size_t d){ return 2 * d; }
         );
 
     CPM_TWO_PASS_NS_P(
         mat_policy_2d,
-        "R = A + B",
+        "R = A + B [std][add]",
         [](auto d1, auto d2){ return std::make_tuple(dmat(d1, d2), dmat(d1, d2), dmat(d1, d2)); },
         [](dmat& A, dmat& B, dmat& R){ R = A + B; }
         );
 
     CPM_TWO_PASS_NS_P(
         mat_policy_2d,
-        "R += A",
+        "R += A [std][add]",
         [](auto d1, auto d2){ return std::make_tuple(dmat(d1, d2), dmat(d1, d2)); },
         [](dmat& A, dmat& R){ R += A; }
         );
 
     CPM_TWO_PASS_NS_P(
         mat_policy_2d,
-        "R += A + B",
+        "R += A + B [std][add]",
         [](auto d1, auto d2){ return std::make_tuple(dmat(d1, d2), dmat(d1, d2), dmat(d1, d2)); },
         [](dmat& A, dmat& B, dmat& R){ R += A + B; }
         );
 
     CPM_TWO_PASS_NS_P(
         mat_policy_2d,
-        "R = A + B + C",
+        "R = A + B + C [std][add]",
         [](auto d1, auto d2){ return std::make_tuple(dmat(d1, d2), dmat(d1, d2), dmat(d1, d2), dmat(d1, d2)); },
         [](dmat& A, dmat& B, dmat& C, dmat& R){ R = A + B + C; }
         );
 
     CPM_TWO_PASS_NS(
-        "r = a + b (c)",
+        "r = a + b (c) [std][add]",
         [](std::size_t d){ return std::make_tuple(cvec(d), cvec(d), cvec(d)); },
         [](cvec& a, cvec& b, cvec& r){ r = a + b; }
         );
 
     CPM_TWO_PASS_NS(
-        "r = a + b (z)",
+        "r = a + b (z) [std][add]",
         [](std::size_t d){ return std::make_tuple(zvec(d), zvec(d), zvec(d)); },
         [](zvec& a, zvec& b, zvec& r){ r = a + b; }
         );
