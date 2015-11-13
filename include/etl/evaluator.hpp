@@ -5,6 +5,21 @@
 //  http://opensource.org/licenses/MIT)
 //=======================================================================
 
+/*!
+ * \file evaluator.hpp
+ * \brief The evaluator is responsible for assigning one expression to another.
+ *
+ * The evaluator will handle all expressions assignment and for each of them,
+ * it will choose the most adapted implementation to assign one to another.
+ * There are several implementations of assign:
+ *   * standard: Use of standard operators []
+ *   * direct: Assign directly to the memory
+ *   * fast: memcopy
+ *   * vectorized: Use SSE/AVX to compute the expression and store it
+ *   * parallel: Parallelized version of direct
+ *   * parallel_vectorized  Parallel version of vectorized
+*/
+
 #pragma once
 
 #include "cpp_utils/parallel.hpp"
