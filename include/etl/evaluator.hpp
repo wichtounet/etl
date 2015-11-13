@@ -94,9 +94,12 @@ struct Assign {
     }
 };
 
-template<typename V_T, typename V_Expr>
+template<typename L_Expr, typename V_Expr>
 struct VectorizedAssign {
-    mutable V_T* lhs;
+    using memory_type = value_t<L_Expr>*;
+
+    L_Expr& lhs;
+    memory_type lhs_m;
     V_Expr& rhs;
     const std::size_t _first;
     const std::size_t _last;
@@ -104,8 +107,8 @@ struct VectorizedAssign {
 
     using IT = intrinsic_traits<value_t<V_Expr>>;
 
-    VectorizedAssign(V_T* lhs, V_Expr& rhs, std::size_t first, std::size_t last)
-            : lhs(lhs), rhs(rhs), _first(first), _last(last), _size(last - first) {
+    VectorizedAssign(L_Expr& lhs, V_Expr& rhs, std::size_t first, std::size_t last)
+            : lhs(lhs), lhs_m(lhs.memory_start()), rhs(rhs), _first(first), _last(last), _size(last - first) {
         //Nothing else
     }
 
@@ -113,13 +116,13 @@ struct VectorizedAssign {
         std::size_t i = 0;
 
         constexpr const auto size_1 = sizeof(value_t<V_Expr>);
-        auto u_bytes                = (reinterpret_cast<uintptr_t>(lhs + _first) % IT::alignment);
+        auto u_bytes                = (reinterpret_cast<uintptr_t>(lhs_m + _first) % IT::alignment);
 
         if (u_bytes >= size_1 && u_bytes % size_1 == 0) {
             auto u_loads = std::min(u_bytes / size_1, _size);
 
             for (; i < u_loads; ++i) {
-                lhs[_first + i] = rhs[_first + i];
+                lhs_m[_first + i] = rhs[_first + i];
             }
         }
 
@@ -131,14 +134,14 @@ struct VectorizedAssign {
 
         if(unroll_vectorized_loops && _last - first > IT::size * 4){
             for(i = first; i + IT::size * 4 - 1 < _last; i += IT::size * 4){
-                vec::store(lhs + i, rhs.load(i));
-                vec::store(lhs + i + 1 * IT::size, rhs.load(i + 1 * IT::size));
-                vec::store(lhs + i + 2 * IT::size, rhs.load(i + 2 * IT::size));
-                vec::store(lhs + i + 3 * IT::size, rhs.load(i + 3 * IT::size));
+                vec::store(lhs_m + i, rhs.load(i));
+                vec::store(lhs_m + i + 1 * IT::size, rhs.load(i + 1 * IT::size));
+                vec::store(lhs_m + i + 2 * IT::size, rhs.load(i + 2 * IT::size));
+                vec::store(lhs_m + i + 3 * IT::size, rhs.load(i + 3 * IT::size));
             }
         } else {
             for(i = first; i + IT::size - 1 < _last; i += IT::size){
-                vec::store(lhs + i, rhs.load(i));
+                vec::store(lhs_m + i, rhs.load(i));
             }
         }
 
@@ -150,14 +153,14 @@ struct VectorizedAssign {
 
         if(unroll_vectorized_loops && _last - first > IT::size * 4){
             for(i = first; i + IT::size * 4 - 1 < _last; i += IT::size * 4){
-                vec::storeu(lhs + i, rhs.load(i));
-                vec::storeu(lhs + i + 1 * IT::size, rhs.load(i + 1 * IT::size));
-                vec::storeu(lhs + i + 2 * IT::size, rhs.load(i + 2 * IT::size));
-                vec::storeu(lhs + i + 3 * IT::size, rhs.load(i + 3 * IT::size));
+                vec::storeu(lhs_m + i, rhs.load(i));
+                vec::storeu(lhs_m + i + 1 * IT::size, rhs.load(i + 1 * IT::size));
+                vec::storeu(lhs_m + i + 2 * IT::size, rhs.load(i + 2 * IT::size));
+                vec::storeu(lhs_m + i + 3 * IT::size, rhs.load(i + 3 * IT::size));
             }
         } else {
             for(i = first; i + IT::size - 1 < _last; i += IT::size){
-                vec::storeu(lhs + i, rhs.load(i));
+                vec::storeu(lhs_m + i, rhs.load(i));
             }
         }
 
@@ -166,7 +169,7 @@ struct VectorizedAssign {
 
     void remainder_loop(std::size_t first) const {
         for (std::size_t i = first; i < _last; ++i) {
-            lhs[i] = rhs[i];
+            lhs_m[i] = rhs[i];
         }
     }
 
@@ -179,7 +182,7 @@ struct VectorizedAssign {
         std::size_t first = peeled;
 
         if (_size - peeled >= IT::size) {
-            if (reinterpret_cast<uintptr_t>(lhs + _first + peeled) % IT::alignment == 0) {
+            if (reinterpret_cast<uintptr_t>(lhs_m + _first + peeled) % IT::alignment == 0) {
                 first = aligned_main_loop(_first + peeled);
             } else {
                 first = unaligned_main_loop(_first + peeled);
@@ -222,6 +225,108 @@ struct AssignAdd {
         for (std::size_t i = iend; i < _last; ++i) {
             lhs[i] += rhs[i];
         }
+    }
+};
+
+template<typename L_Expr, typename V_Expr>
+struct VectorizedAssignAdd {
+    using memory_type = value_t<L_Expr>*;
+
+    L_Expr& lhs;
+    memory_type lhs_m;
+
+    V_Expr& rhs;
+    const std::size_t _first;
+    const std::size_t _last;
+    const std::size_t _size;
+
+    using IT = intrinsic_traits<value_t<V_Expr>>;
+
+    VectorizedAssignAdd(L_Expr& lhs, V_Expr& rhs, std::size_t first, std::size_t last)
+            : lhs(lhs), lhs_m(lhs.memory_start()), rhs(rhs), _first(first), _last(last), _size(last - first) {
+        //Nothing else
+    }
+
+    std::size_t peel_loop() const {
+        std::size_t i = 0;
+
+        constexpr const auto size_1 = sizeof(value_t<V_Expr>);
+        auto u_bytes                = (reinterpret_cast<uintptr_t>(lhs_m + _first) % IT::alignment);
+
+        if (u_bytes >= size_1 && u_bytes % size_1 == 0) {
+            auto u_loads = std::min(u_bytes / size_1, _size);
+
+            for (; i < u_loads; ++i) {
+                lhs_m[_first + i] += rhs[_first + i];
+            }
+        }
+
+        return i;
+    }
+
+    inline std::size_t aligned_main_loop(std::size_t first) const {
+        std::size_t i = 0;
+
+        if(unroll_vectorized_loops && _last - first > IT::size * 4){
+            for(i = first; i + IT::size * 4 - 1 < _last; i += IT::size * 4){
+                vec::store(lhs_m + i,                vec::add(lhs.load(i), rhs.load(i)));
+                vec::store(lhs_m + i + 1 * IT::size, vec::add(lhs.load(i + 1 * IT::size), rhs.load(i + 1 * IT::size)));
+                vec::store(lhs_m + i + 2 * IT::size, vec::add(lhs.load(i + 2 * IT::size), rhs.load(i + 2 * IT::size)));
+                vec::store(lhs_m + i + 3 * IT::size, vec::add(lhs.load(i + 3 * IT::size), rhs.load(i + 3 * IT::size)));
+            }
+        } else {
+            for(i = first; i + IT::size - 1 < _last; i += IT::size){
+                vec::store(lhs_m + i, vec::add(lhs.load(i), rhs.load(i)));
+            }
+        }
+
+        return i;
+    }
+
+    inline std::size_t unaligned_main_loop(std::size_t first) const {
+        std::size_t i;
+
+        if(unroll_vectorized_loops && _last - first > IT::size * 4){
+            for(i = first; i + IT::size * 4 - 1 < _last; i += IT::size * 4){
+                vec::storeu(lhs_m + i,                vec::add(lhs.load(i), rhs.load(i)));
+                vec::storeu(lhs_m + i + 1 * IT::size, vec::add(lhs.load(i + 1 * IT::size), rhs.load(i + 1 * IT::size)));
+                vec::storeu(lhs_m + i + 2 * IT::size, vec::add(lhs.load(i + 2 * IT::size), rhs.load(i + 2 * IT::size)));
+                vec::storeu(lhs_m + i + 3 * IT::size, vec::add(lhs.load(i + 3 * IT::size), rhs.load(i + 3 * IT::size)));
+            }
+        } else {
+            for(i = first; i + IT::size - 1 < _last; i += IT::size){
+                vec::storeu(lhs_m + i, vec::add(lhs.load(i), rhs.load(i)));
+            }
+        }
+
+        return i;
+    }
+
+    void remainder_loop(std::size_t first) const {
+        for (std::size_t i = first; i < _last; ++i) {
+            lhs_m[i] += rhs[i];
+        }
+    }
+
+    void operator()() const {
+        //1. Peel loop (if necessary)
+        auto peeled = peel_loop();
+
+        //2. Main vectorized loop
+
+        std::size_t first = peeled;
+
+        if (_size - peeled >= IT::size) {
+            if (reinterpret_cast<uintptr_t>(lhs_m + _first + peeled) % IT::alignment == 0) {
+                first = aligned_main_loop(_first + peeled);
+            } else {
+                first = unaligned_main_loop(_first + peeled);
+            }
+        }
+
+        //3. Remainder loop (non-vectorized)
+
+        remainder_loop(first);
     }
 };
 
@@ -334,6 +439,8 @@ struct standard_evaluator {
         apply_visitor<detail::evaluator_static_visitor>(expr);
     }
 
+    //Selectors for assign
+
     template <typename E, typename R>
     struct fast_assign : cpp::and_u<
                              has_direct_access<E>::value,
@@ -385,6 +492,44 @@ struct standard_evaluator {
                                  !vectorized_assign<E, R>::value,
                                  !has_direct_access<R>::value,
                                  !is_temporary_expr<E>::value> {};
+
+    //Selectors for compound operations
+
+    template <typename E, typename R>
+    struct parallel_vectorized_compound : cpp::and_u<
+                                   vectorize_expr,
+                                   parallel,
+                                   decay_traits<E>::vectorizable,
+                                   intrinsic_traits<value_t<R>>::vectorizable, intrinsic_traits<value_t<E>>::vectorizable,
+                                   std::is_same<typename intrinsic_traits<value_t<R>>::intrinsic_type, typename intrinsic_traits<value_t<E>>::intrinsic_type>::value> {};
+
+    template <typename E, typename R>
+    struct vectorized_compound : cpp::and_u<
+                                   !parallel_vectorized_compound<E, R>::value,
+                                   vectorize_expr,
+                                   decay_traits<E>::vectorizable,
+                                   intrinsic_traits<value_t<R>>::vectorizable, intrinsic_traits<value_t<E>>::vectorizable,
+                                   std::is_same<typename intrinsic_traits<value_t<R>>::intrinsic_type, typename intrinsic_traits<value_t<E>>::intrinsic_type>::value> {};
+
+    template <typename E, typename R>
+    struct parallel_compound : cpp::and_u<
+                                   has_direct_access<R>::value,
+                                   !parallel_vectorized_compound<E, R>::value,
+                                   parallel> {};
+
+    template <typename E, typename R>
+    struct direct_compound : cpp::and_u<
+                               !parallel_compound<E, R>::value,
+                               !parallel_vectorized_compound<E, R>::value,
+                               !vectorized_compound<E, R>::value,
+                               has_direct_access<R>::value> {};
+
+    template <typename E, typename R>
+    struct standard_compound : cpp::and_u<
+                                 !parallel_compound<E, R>::value,
+                                 !parallel_vectorized_compound<E, R>::value,
+                                 !vectorized_compound<E, R>::value,
+                                 !direct_compound<E, R>::value> {};
 
     //Standard assign version
 
@@ -470,17 +615,15 @@ struct standard_evaluator {
         //Evaluate the sub parts of the expression, if any
         evaluate_only(expr);
 
-        auto m = result.memory_start();
-
         auto batch = size / threads;
 
         //Schedule threads - 1 tasks
         for(std::size_t t = 0; t < threads - 1; ++t){
-            pool.do_task(detail::VectorizedAssign<value_t<R>, E>(m, expr, t * batch, (t+1) * batch));
+            pool.do_task(detail::VectorizedAssign<R, E>(result, expr, t * batch, (t+1) * batch));
         }
 
         //Perform the last task on the current threads
-        detail::VectorizedAssign<value_t<R>, E>(m, expr, (threads - 1) * batch, size)();
+        detail::VectorizedAssign<R, E>(result, expr, (threads - 1) * batch, size)();
 
         //Wait for the other threads
         pool.wait();
@@ -492,11 +635,7 @@ struct standard_evaluator {
     static void vectorized_assign_evaluate(E&& expr, R&& result) {
         evaluate_only(expr);
 
-        auto m = result.memory_start();
-
-        const std::size_t size = etl::size(result);
-
-        detail::VectorizedAssign<value_t<R>, E>(m, expr, 0, size)();
+        detail::VectorizedAssign<R, E>(result, expr, 0, etl::size(result))();
     }
 
     template <typename E, typename R, cpp_enable_if(vectorized_assign<E, R>::value)>
@@ -504,9 +643,9 @@ struct standard_evaluator {
         vectorized_assign_evaluate(std::forward<E>(expr), std::forward<R>(result));
     }
 
-    //Add Assign
+    //Standard Add Assign
 
-    template <typename E, typename R, cpp_enable_if(!vectorized_assign<E, R>::value && !has_direct_access<R>::value)>
+    template <typename E, typename R, cpp_enable_if(standard_compound<E, R>::value)>
     static void add_evaluate(E&& expr, R&& result) {
         evaluate_only(expr);
 
@@ -515,7 +654,39 @@ struct standard_evaluator {
         }
     }
 
-    template <typename E, typename R, cpp_enable_if(!vectorized_assign<E, R>::value && has_direct_access<R>::value)>
+    //Parallel direct add assign
+
+    template <typename E, typename R, cpp_enable_if(parallel_compound<E, R>::value)>
+    static void add_evaluate(E&& expr, R&& result) {
+        const auto n = etl::size(result);
+
+        if(n < parallel_threshold || threads < 2){
+            direct_add_evaluate(std::forward<E>(expr), std::forward<R>(result));
+            return;
+        }
+
+        evaluate_only(expr);
+
+        auto m = result.memory_start();
+
+        static cpp::default_thread_pool<> pool(threads - 1);
+
+        //Distribute evenly the batches
+
+        auto batch = n / threads;
+
+        for(std::size_t t = 0; t < threads - 1; ++t){
+            pool.do_task(detail::AssignAdd<value_t<R>,E>(m, expr, t * batch, (t+1) * batch));
+        }
+
+        detail::AssignAdd<value_t<R>,E>(m, expr, (threads - 1) * batch, n)();
+
+        pool.wait();
+    }
+
+    //Direct Add Assign
+
+    template <typename E, typename R>
     static void direct_add_evaluate(E&& expr, R&& result) {
         evaluate_only(expr);
 
@@ -526,80 +697,56 @@ struct standard_evaluator {
         detail::AssignAdd<value_t<R>,E>(m, expr, 0, size)();
     }
 
-    template <typename E, typename R, cpp_enable_if(!vectorized_assign<E, R>::value && has_direct_access<R>::value)>
+    template <typename E, typename R, cpp_enable_if(direct_compound<E, R>::value)>
     static void add_evaluate(E&& expr, R&& result) {
         direct_add_evaluate(std::forward<E>(expr), std::forward<R>(result));
     }
 
-    template <typename E, typename R, cpp_enable_if(vectorized_assign<E, R>::value)>
-    static void vectorized_add_evaluate(E&& expr, R&& result) {
-        evaluate_only(expr);
+    //Parallel vectorized add assign
 
-        using IT = intrinsic_traits<value_t<E>>;
-
-        auto m = result.memory_start();
+    template <typename E, typename R, cpp_enable_if(parallel_vectorized_compound<E, R>::value)>
+    static void add_evaluate(E&& expr, R&& result) {
+        static cpp::default_thread_pool<> pool(threads - 1);
 
         const std::size_t size = etl::size(result);
 
-        std::size_t i = 0;
-
-        //1. Peel loop
-
-        constexpr const auto size_1 = sizeof(value_t<E>);
-        auto u_bytes                = (reinterpret_cast<uintptr_t>(m) % IT::alignment);
-
-        if (u_bytes >= size_1 && u_bytes % size_1 == 0) {
-            auto u_loads = std::min(u_bytes & -size_1, size);
-
-            for (; i < u_loads; ++i) {
-                m[i] += expr[i];
-            }
+        if(size < parallel_threshold || threads < 2){
+            vectorized_add_evaluate(std::forward<E>(expr), std::forward<R>(result));
+            return;
         }
 
-        //2. Vectorized loop
+        //Evaluate the sub parts of the expression, if any
+        evaluate_only(expr);
 
-        if (size - i >= IT::size) {
-            if (reinterpret_cast<uintptr_t>(m + i) % IT::alignment == 0) {
-                if (unroll_vectorized_loops && size - i > IT::size * 4) {
-                    for (; i + IT::size * 4 - 1 < size; i += IT::size * 4) {
-                        vec::store(m + i, vec::add(result.load(i), expr.load(i)));
-                        vec::store(m + i + 1 * IT::size, vec::add(result.load(i + 1 * IT::size), expr.load(i + 1 * IT::size)));
-                        vec::store(m + i + 2 * IT::size, vec::add(result.load(i + 2 * IT::size), expr.load(i + 2 * IT::size)));
-                        vec::store(m + i + 3 * IT::size, vec::add(result.load(i + 3 * IT::size), expr.load(i + 3 * IT::size)));
-                    }
-                } else {
-                    for (; i + IT::size - 1 < size; i += IT::size) {
-                        vec::store(m + i, vec::add(result.load(i), expr.load(i)));
-                    }
-                }
-            } else {
-                if (unroll_vectorized_loops && size - i > IT::size * 4) {
-                    for (; i + IT::size * 4 - 1 < size; i += IT::size * 4) {
-                        vec::storeu(m + i, vec::add(result.load(i), expr.load(i)));
-                        vec::storeu(m + i + 1 * IT::size, vec::add(result.load(i + 1 * IT::size), expr.load(i + 1 * IT::size)));
-                        vec::storeu(m + i + 2 * IT::size, vec::add(result.load(i + 2 * IT::size), expr.load(i + 2 * IT::size)));
-                        vec::storeu(m + i + 3 * IT::size, vec::add(result.load(i + 3 * IT::size), expr.load(i + 3 * IT::size)));
-                    }
-                } else {
-                    for (; i + IT::size - 1 < size; i += IT::size) {
-                        vec::storeu(m + i, vec::add(result.load(i), expr.load(i)));
-                    }
-                }
-            }
+        auto batch = size / threads;
+
+        //Schedule threads - 1 tasks
+        for(std::size_t t = 0; t < threads - 1; ++t){
+            pool.do_task(detail::VectorizedAssignAdd<R, E>(result, expr, t * batch, (t+1) * batch));
         }
 
-        //3. Remainder loop
+        //Perform the last task on the current threads
+        detail::VectorizedAssignAdd<R, E>(result, expr, (threads - 1) * batch, size)();
 
-        //Finish the iterations in a non-vectorized fashion
-        for (; i < size; ++i) {
-            m[i] += expr[i];
-        }
+        //Wait for the other threads
+        pool.wait();
     }
 
-    template <typename E, typename R, cpp_enable_if(vectorized_assign<E, R>::value)>
+    //Vectorized Add Assign
+
+    template <typename E, typename R>
+    static void vectorized_add_evaluate(E&& expr, R&& result) {
+        evaluate_only(expr);
+
+        detail::VectorizedAssignAdd<R, E>(result, expr, 0, etl::size(result))();
+    }
+
+    template <typename E, typename R, cpp_enable_if(vectorized_compound<E, R>::value)>
     static void add_evaluate(E&& expr, R&& result) {
         vectorized_add_evaluate(std::forward<E>(expr), std::forward<R>(result));
     }
+
+    //Standard sub assign
 
     template <typename E, typename R, cpp_enable_if(!vectorized_assign<E, R>::value && !has_direct_access<R>::value)>
     static void sub_evaluate(E&& expr, R&& result) {
@@ -610,7 +757,7 @@ struct standard_evaluator {
         }
     }
 
-    template <typename E, typename R, cpp_enable_if(!vectorized_assign<E, R>::value && has_direct_access<R>::value)>
+    template <typename E, typename R>
     static void direct_sub_evaluate(E&& expr, R&& result) {
         evaluate_only(expr);
 
@@ -626,7 +773,7 @@ struct standard_evaluator {
         direct_sub_evaluate(std::forward<E>(expr), std::forward<R>(result));
     }
 
-    template <typename E, typename R, cpp_enable_if(vectorized_assign<E, R>::value)>
+    template <typename E, typename R>
     static void vectorized_sub_evaluate(E&& expr, R&& result) {
         evaluate_only(expr);
 
@@ -696,6 +843,8 @@ struct standard_evaluator {
         vectorized_sub_evaluate(std::forward<E>(expr), std::forward<R>(result));
     }
 
+    //Standard Mul Assign
+
     template <typename E, typename R, cpp_enable_if(!vectorized_assign<E, R>::value && !has_direct_access<R>::value)>
     static void mul_evaluate(E&& expr, R&& result) {
         evaluate_only(expr);
@@ -705,7 +854,7 @@ struct standard_evaluator {
         }
     }
 
-    template <typename E, typename R, cpp_enable_if(!vectorized_assign<E, R>::value && has_direct_access<R>::value)>
+    template <typename E, typename R>
     static void direct_mul_evaluate(E&& expr, R&& result) {
         evaluate_only(expr);
 
@@ -721,7 +870,7 @@ struct standard_evaluator {
         direct_mul_evaluate(std::forward<E>(expr), std::forward<R>(result));
     }
 
-    template <typename E, typename R, cpp_enable_if(vectorized_assign<E, R>::value)>
+    template <typename E, typename R>
     static void vectorized_mul_evaluate(E&& expr, R&& result) {
         evaluate_only(expr);
 
@@ -791,6 +940,8 @@ struct standard_evaluator {
         vectorized_mul_evaluate(std::forward<E>(expr), std::forward<R>(result));
     }
 
+    //Standard Div Assign
+
     template <typename E, typename R, cpp_enable_if(!vectorized_assign<E, R>::value && !has_direct_access<R>::value)>
     static void div_evaluate(E&& expr, R&& result) {
         evaluate_only(expr);
@@ -800,7 +951,7 @@ struct standard_evaluator {
         }
     }
 
-    template <typename E, typename R, cpp_enable_if(!vectorized_assign<E, R>::value && has_direct_access<R>::value)>
+    template <typename E, typename R>
     static void direct_div_evaluate(E&& expr, R&& result) {
         evaluate_only(expr);
 
@@ -816,7 +967,7 @@ struct standard_evaluator {
         direct_div_evaluate(std::forward<E>(expr), std::forward<R>(result));
     }
 
-    template <typename E, typename R, cpp_enable_if(vectorized_assign<E, R>::value)>
+    template <typename E, typename R>
     static void vectorized_div_evaluate(E&& expr, R&& result) {
         evaluate_only(expr);
 
@@ -885,6 +1036,8 @@ struct standard_evaluator {
     static void div_evaluate(E&& expr, R&& result) {
         vectorized_div_evaluate(std::forward<E>(expr), std::forward<R>(result));
     }
+
+    //Standard Mod Evaluate (no optimized versions for mod)
 
     template <typename E, typename R>
     static void mod_evaluate(E&& expr, R&& result) {
