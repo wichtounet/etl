@@ -98,6 +98,8 @@ struct vectorized_base {
             } else {
                 first = as_derived().unaligned_main_loop(_first + peeled);
             }
+        } else {
+            first += _first;
         }
 
         //3. Remainder loop (non-vectorized)
