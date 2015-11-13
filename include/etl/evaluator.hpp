@@ -434,6 +434,99 @@ struct AssignDiv {
     }
 };
 
+//Selectors for assign
+
+template <typename E, typename R>
+struct fast_assign : cpp::and_u<
+                         has_direct_access<E>::value,
+                         has_direct_access<R>::value,
+                         !is_temporary_expr<E>::value> {};
+
+template <typename E, typename R>
+struct parallel_vectorized_assign : cpp::and_u<
+                               !fast_assign<E, R>::value,
+                               vectorize_expr,
+                               parallel,
+                               decay_traits<E>::vectorizable,
+                               intrinsic_traits<value_t<R>>::vectorizable, intrinsic_traits<value_t<E>>::vectorizable,
+                               !is_temporary_expr<E>::value,
+                               std::is_same<typename intrinsic_traits<value_t<R>>::intrinsic_type, typename intrinsic_traits<value_t<E>>::intrinsic_type>::value> {};
+
+template <typename E, typename R>
+struct vectorized_assign : cpp::and_u<
+                               !fast_assign<E, R>::value,
+                               !parallel_vectorized_assign<E, R>::value,
+                               vectorize_expr,
+                               decay_traits<E>::vectorizable,
+                               intrinsic_traits<value_t<R>>::vectorizable, intrinsic_traits<value_t<E>>::vectorizable,
+                               !is_temporary_expr<E>::value,
+                               std::is_same<typename intrinsic_traits<value_t<R>>::intrinsic_type, typename intrinsic_traits<value_t<E>>::intrinsic_type>::value> {};
+
+template <typename E, typename R>
+struct parallel_assign : cpp::and_u<
+                               has_direct_access<R>::value,
+                               !fast_assign<E, R>::value,
+                               !parallel_vectorized_assign<E, R>::value,
+                               parallel,
+                               !is_temporary_expr<E>::value> {};
+
+template <typename E, typename R>
+struct direct_assign : cpp::and_u<
+                           !fast_assign<E, R>::value,
+                           !parallel_assign<E, R>::value,
+                           !parallel_vectorized_assign<E, R>::value,
+                           !vectorized_assign<E, R>::value,
+                           has_direct_access<R>::value,
+                           !is_temporary_expr<E>::value> {};
+
+template <typename E, typename R>
+struct standard_assign : cpp::and_u<
+                             !fast_assign<E, R>::value,
+                             !parallel_assign<E, R>::value,
+                             !parallel_vectorized_assign<E, R>::value,
+                             !vectorized_assign<E, R>::value,
+                             !has_direct_access<R>::value,
+                             !is_temporary_expr<E>::value> {};
+
+//Selectors for compound operations
+
+template <typename E, typename R>
+struct parallel_vectorized_compound : cpp::and_u<
+                               vectorize_expr,
+                               parallel,
+                               decay_traits<E>::vectorizable,
+                               intrinsic_traits<value_t<R>>::vectorizable, intrinsic_traits<value_t<E>>::vectorizable,
+                               std::is_same<typename intrinsic_traits<value_t<R>>::intrinsic_type, typename intrinsic_traits<value_t<E>>::intrinsic_type>::value> {};
+
+template <typename E, typename R>
+struct vectorized_compound : cpp::and_u<
+                               !parallel_vectorized_compound<E, R>::value,
+                               vectorize_expr,
+                               decay_traits<E>::vectorizable,
+                               intrinsic_traits<value_t<R>>::vectorizable, intrinsic_traits<value_t<E>>::vectorizable,
+                               std::is_same<typename intrinsic_traits<value_t<R>>::intrinsic_type, typename intrinsic_traits<value_t<E>>::intrinsic_type>::value> {};
+
+template <typename E, typename R>
+struct parallel_compound : cpp::and_u<
+                               has_direct_access<R>::value,
+                               !parallel_vectorized_compound<E, R>::value,
+                               parallel> {};
+
+template <typename E, typename R>
+struct direct_compound : cpp::and_u<
+                           !parallel_compound<E, R>::value,
+                           !parallel_vectorized_compound<E, R>::value,
+                           !vectorized_compound<E, R>::value,
+                           has_direct_access<R>::value> {};
+
+template <typename E, typename R>
+struct standard_compound : cpp::and_u<
+                             !parallel_compound<E, R>::value,
+                             !parallel_vectorized_compound<E, R>::value,
+                             !vectorized_compound<E, R>::value,
+                             !direct_compound<E, R>::value> {};
+
+
 } //end of namespace detail
 
 template <typename Expr, typename Result>
@@ -444,101 +537,9 @@ struct standard_evaluator {
         apply_visitor<detail::evaluator_static_visitor>(expr);
     }
 
-    //Selectors for assign
-
-    template <typename E, typename R>
-    struct fast_assign : cpp::and_u<
-                             has_direct_access<E>::value,
-                             has_direct_access<R>::value,
-                             !is_temporary_expr<E>::value> {};
-
-    template <typename E, typename R>
-    struct parallel_vectorized_assign : cpp::and_u<
-                                   !fast_assign<E, R>::value,
-                                   vectorize_expr,
-                                   parallel,
-                                   decay_traits<E>::vectorizable,
-                                   intrinsic_traits<value_t<R>>::vectorizable, intrinsic_traits<value_t<E>>::vectorizable,
-                                   !is_temporary_expr<E>::value,
-                                   std::is_same<typename intrinsic_traits<value_t<R>>::intrinsic_type, typename intrinsic_traits<value_t<E>>::intrinsic_type>::value> {};
-
-    template <typename E, typename R>
-    struct vectorized_assign : cpp::and_u<
-                                   !fast_assign<E, R>::value,
-                                   !parallel_vectorized_assign<E, R>::value,
-                                   vectorize_expr,
-                                   decay_traits<E>::vectorizable,
-                                   intrinsic_traits<value_t<R>>::vectorizable, intrinsic_traits<value_t<E>>::vectorizable,
-                                   !is_temporary_expr<E>::value,
-                                   std::is_same<typename intrinsic_traits<value_t<R>>::intrinsic_type, typename intrinsic_traits<value_t<E>>::intrinsic_type>::value> {};
-
-    template <typename E, typename R>
-    struct parallel_assign : cpp::and_u<
-                                   has_direct_access<R>::value,
-                                   !fast_assign<E, R>::value,
-                                   !parallel_vectorized_assign<E, R>::value,
-                                   parallel,
-                                   !is_temporary_expr<E>::value> {};
-
-    template <typename E, typename R>
-    struct direct_assign : cpp::and_u<
-                               !fast_assign<E, R>::value,
-                               !parallel_assign<E, R>::value,
-                               !parallel_vectorized_assign<E, R>::value,
-                               !vectorized_assign<E, R>::value,
-                               has_direct_access<R>::value,
-                               !is_temporary_expr<E>::value> {};
-
-    template <typename E, typename R>
-    struct standard_assign : cpp::and_u<
-                                 !fast_assign<E, R>::value,
-                                 !parallel_assign<E, R>::value,
-                                 !parallel_vectorized_assign<E, R>::value,
-                                 !vectorized_assign<E, R>::value,
-                                 !has_direct_access<R>::value,
-                                 !is_temporary_expr<E>::value> {};
-
-    //Selectors for compound operations
-
-    template <typename E, typename R>
-    struct parallel_vectorized_compound : cpp::and_u<
-                                   vectorize_expr,
-                                   parallel,
-                                   decay_traits<E>::vectorizable,
-                                   intrinsic_traits<value_t<R>>::vectorizable, intrinsic_traits<value_t<E>>::vectorizable,
-                                   std::is_same<typename intrinsic_traits<value_t<R>>::intrinsic_type, typename intrinsic_traits<value_t<E>>::intrinsic_type>::value> {};
-
-    template <typename E, typename R>
-    struct vectorized_compound : cpp::and_u<
-                                   !parallel_vectorized_compound<E, R>::value,
-                                   vectorize_expr,
-                                   decay_traits<E>::vectorizable,
-                                   intrinsic_traits<value_t<R>>::vectorizable, intrinsic_traits<value_t<E>>::vectorizable,
-                                   std::is_same<typename intrinsic_traits<value_t<R>>::intrinsic_type, typename intrinsic_traits<value_t<E>>::intrinsic_type>::value> {};
-
-    template <typename E, typename R>
-    struct parallel_compound : cpp::and_u<
-                                   has_direct_access<R>::value,
-                                   !parallel_vectorized_compound<E, R>::value,
-                                   parallel> {};
-
-    template <typename E, typename R>
-    struct direct_compound : cpp::and_u<
-                               !parallel_compound<E, R>::value,
-                               !parallel_vectorized_compound<E, R>::value,
-                               !vectorized_compound<E, R>::value,
-                               has_direct_access<R>::value> {};
-
-    template <typename E, typename R>
-    struct standard_compound : cpp::and_u<
-                                 !parallel_compound<E, R>::value,
-                                 !parallel_vectorized_compound<E, R>::value,
-                                 !vectorized_compound<E, R>::value,
-                                 !direct_compound<E, R>::value> {};
-
     //Standard assign version
 
-    template <typename E, typename R, cpp_enable_if(standard_assign<E, R>::value)>
+    template <typename E, typename R, cpp_enable_if(detail::standard_assign<E, R>::value)>
     static void assign_evaluate(E&& expr, R&& result) {
         evaluate_only(expr);
 
@@ -549,7 +550,7 @@ struct standard_evaluator {
 
     //Fast assign version (memory copy)
 
-    template <typename E, typename R, cpp_enable_if(fast_assign<E, R>::value)>
+    template <typename E, typename R, cpp_enable_if(detail::fast_assign<E, R>::value)>
     static void assign_evaluate(E&& expr, R&& result) {
         evaluate_only(expr);
 
@@ -569,14 +570,14 @@ struct standard_evaluator {
         detail::Assign<value_t<R>,E>(m, expr, 0, size)();
     }
 
-    template <typename E, typename R, cpp_enable_if(direct_assign<E, R>::value)>
+    template <typename E, typename R, cpp_enable_if(detail::direct_assign<E, R>::value)>
     static void assign_evaluate(E&& expr, R&& result) {
         direct_assign_evaluate(std::forward<E>(expr), std::forward<R>(result));
     }
 
     //Parallel assign version
 
-    template <typename E, typename R, cpp_enable_if(parallel_assign<E, R>::value)>
+    template <typename E, typename R, cpp_enable_if(detail::parallel_assign<E, R>::value)>
     static void assign_evaluate(E&& expr, R&& result) {
         const auto n = etl::size(result);
 
@@ -606,7 +607,7 @@ struct standard_evaluator {
 
     //Parallel vectorized assign
 
-    template <typename E, typename R, cpp_enable_if(parallel_vectorized_assign<E, R>::value)>
+    template <typename E, typename R, cpp_enable_if(detail::parallel_vectorized_assign<E, R>::value)>
     static void assign_evaluate(E&& expr, R&& result) {
         static cpp::default_thread_pool<> pool(threads - 1);
 
@@ -643,14 +644,14 @@ struct standard_evaluator {
         detail::VectorizedAssign<R, E>(result, expr, 0, etl::size(result))();
     }
 
-    template <typename E, typename R, cpp_enable_if(vectorized_assign<E, R>::value)>
+    template <typename E, typename R, cpp_enable_if(detail::vectorized_assign<E, R>::value)>
     static void assign_evaluate(E&& expr, R&& result) {
         vectorized_assign_evaluate(std::forward<E>(expr), std::forward<R>(result));
     }
 
     //Standard Add Assign
 
-    template <typename E, typename R, cpp_enable_if(standard_compound<E, R>::value)>
+    template <typename E, typename R, cpp_enable_if(detail::standard_compound<E, R>::value)>
     static void add_evaluate(E&& expr, R&& result) {
         evaluate_only(expr);
 
@@ -661,7 +662,7 @@ struct standard_evaluator {
 
     //Parallel direct add assign
 
-    template <typename E, typename R, cpp_enable_if(parallel_compound<E, R>::value)>
+    template <typename E, typename R, cpp_enable_if(detail::parallel_compound<E, R>::value)>
     static void add_evaluate(E&& expr, R&& result) {
         const auto n = etl::size(result);
 
@@ -702,14 +703,14 @@ struct standard_evaluator {
         detail::AssignAdd<value_t<R>,E>(m, expr, 0, size)();
     }
 
-    template <typename E, typename R, cpp_enable_if(direct_compound<E, R>::value)>
+    template <typename E, typename R, cpp_enable_if(detail::direct_compound<E, R>::value)>
     static void add_evaluate(E&& expr, R&& result) {
         direct_add_evaluate(std::forward<E>(expr), std::forward<R>(result));
     }
 
     //Parallel vectorized add assign
 
-    template <typename E, typename R, cpp_enable_if(parallel_vectorized_compound<E, R>::value)>
+    template <typename E, typename R, cpp_enable_if(detail::parallel_vectorized_compound<E, R>::value)>
     static void add_evaluate(E&& expr, R&& result) {
         static cpp::default_thread_pool<> pool(threads - 1);
 
@@ -746,14 +747,14 @@ struct standard_evaluator {
         detail::VectorizedAssignAdd<R, E>(result, expr, 0, etl::size(result))();
     }
 
-    template <typename E, typename R, cpp_enable_if(vectorized_compound<E, R>::value)>
+    template <typename E, typename R, cpp_enable_if(detail::vectorized_compound<E, R>::value)>
     static void add_evaluate(E&& expr, R&& result) {
         vectorized_add_evaluate(std::forward<E>(expr), std::forward<R>(result));
     }
 
     //Standard sub assign
 
-    template <typename E, typename R, cpp_enable_if(!vectorized_assign<E, R>::value && !has_direct_access<R>::value)>
+    template <typename E, typename R, cpp_enable_if(!detail::vectorized_assign<E, R>::value && !has_direct_access<R>::value)>
     static void sub_evaluate(E&& expr, R&& result) {
         evaluate_only(expr);
 
@@ -773,7 +774,7 @@ struct standard_evaluator {
         detail::AssignSub<value_t<R>,E>(m, expr, 0, size)();
     }
 
-    template <typename E, typename R, cpp_enable_if(!vectorized_assign<E, R>::value && has_direct_access<R>::value)>
+    template <typename E, typename R, cpp_enable_if(!detail::vectorized_assign<E, R>::value && has_direct_access<R>::value)>
     static void sub_evaluate(E&& expr, R&& result) {
         direct_sub_evaluate(std::forward<E>(expr), std::forward<R>(result));
     }
@@ -843,14 +844,14 @@ struct standard_evaluator {
         }
     }
 
-    template <typename E, typename R, cpp_enable_if(vectorized_assign<E, R>::value)>
+    template <typename E, typename R, cpp_enable_if(detail::vectorized_assign<E, R>::value)>
     static void sub_evaluate(E&& expr, R&& result) {
         vectorized_sub_evaluate(std::forward<E>(expr), std::forward<R>(result));
     }
 
     //Standard Mul Assign
 
-    template <typename E, typename R, cpp_enable_if(!vectorized_assign<E, R>::value && !has_direct_access<R>::value)>
+    template <typename E, typename R, cpp_enable_if(!detail::vectorized_assign<E, R>::value && !has_direct_access<R>::value)>
     static void mul_evaluate(E&& expr, R&& result) {
         evaluate_only(expr);
 
@@ -870,7 +871,7 @@ struct standard_evaluator {
         detail::AssignMul<value_t<R>,E>(m, expr, 0, size)();
     }
 
-    template <typename E, typename R, cpp_enable_if(!vectorized_assign<E, R>::value && has_direct_access<R>::value)>
+    template <typename E, typename R, cpp_enable_if(!detail::vectorized_assign<E, R>::value && has_direct_access<R>::value)>
     static void mul_evaluate(E&& expr, R&& result) {
         direct_mul_evaluate(std::forward<E>(expr), std::forward<R>(result));
     }
@@ -940,14 +941,14 @@ struct standard_evaluator {
         }
     }
 
-    template <typename E, typename R, cpp_enable_if(vectorized_assign<E, R>::value)>
+    template <typename E, typename R, cpp_enable_if(detail::vectorized_assign<E, R>::value)>
     static void mul_evaluate(E&& expr, R&& result) {
         vectorized_mul_evaluate(std::forward<E>(expr), std::forward<R>(result));
     }
 
     //Standard Div Assign
 
-    template <typename E, typename R, cpp_enable_if(!vectorized_assign<E, R>::value && !has_direct_access<R>::value)>
+    template <typename E, typename R, cpp_enable_if(!detail::vectorized_assign<E, R>::value && !has_direct_access<R>::value)>
     static void div_evaluate(E&& expr, R&& result) {
         evaluate_only(expr);
 
@@ -967,7 +968,7 @@ struct standard_evaluator {
         detail::AssignDiv<value_t<R>,E>(m, expr, 0, size)();
     }
 
-    template <typename E, typename R, cpp_enable_if(!vectorized_assign<E, R>::value && has_direct_access<R>::value)>
+    template <typename E, typename R, cpp_enable_if(!detail::vectorized_assign<E, R>::value && has_direct_access<R>::value)>
     static void div_evaluate(E&& expr, R&& result) {
         direct_div_evaluate(std::forward<E>(expr), std::forward<R>(result));
     }
@@ -1037,7 +1038,7 @@ struct standard_evaluator {
         }
     }
 
-    template <typename E, typename R, cpp_enable_if(vectorized_assign<E, R>::value)>
+    template <typename E, typename R, cpp_enable_if(detail::vectorized_assign<E, R>::value)>
     static void div_evaluate(E&& expr, R&& result) {
         vectorized_div_evaluate(std::forward<E>(expr), std::forward<R>(result));
     }
