@@ -331,6 +331,86 @@ struct AssignSub {
     }
 };
 
+template<typename L_Expr, typename V_Expr>
+struct VectorizedAssignSub : vectorized_base<L_Expr, V_Expr, VectorizedAssignSub<L_Expr, V_Expr>> {
+    using base_t = vectorized_base<L_Expr, V_Expr, VectorizedAssignSub<L_Expr, V_Expr>>;
+    using IT = typename base_t::IT;
+
+    using base_t::lhs;
+    using base_t::lhs_m;
+    using base_t::rhs;
+    using base_t::_first;
+    using base_t::_size;
+    using base_t::_last;
+
+    VectorizedAssignSub(L_Expr& lhs, V_Expr& rhs, std::size_t first, std::size_t last) : base_t(lhs, rhs, first, last) {
+        //Nothing else
+    }
+
+    using base_t::operator();
+
+    std::size_t peel_loop() const {
+        std::size_t i = 0;
+
+        constexpr const auto size_1 = sizeof(value_t<V_Expr>);
+        auto u_bytes                = (reinterpret_cast<uintptr_t>(lhs_m + _first) % IT::alignment);
+
+        if (u_bytes >= size_1 && u_bytes % size_1 == 0) {
+            auto u_loads = std::min(u_bytes / size_1, _size);
+
+            for (; i < u_loads; ++i) {
+                lhs_m[_first + i] -= rhs[_first + i];
+            }
+        }
+
+        return i;
+    }
+
+    inline std::size_t aligned_main_loop(std::size_t first) const {
+        std::size_t i = 0;
+
+        if(unroll_vectorized_loops && _last - first > IT::size * 4){
+            for(i = first; i + IT::size * 4 - 1 < _last; i += IT::size * 4){
+                vec::store(lhs_m + i,                vec::sub(lhs.load(i), rhs.load(i)));
+                vec::store(lhs_m + i + 1 * IT::size, vec::sub(lhs.load(i + 1 * IT::size), rhs.load(i + 1 * IT::size)));
+                vec::store(lhs_m + i + 2 * IT::size, vec::sub(lhs.load(i + 2 * IT::size), rhs.load(i + 2 * IT::size)));
+                vec::store(lhs_m + i + 3 * IT::size, vec::sub(lhs.load(i + 3 * IT::size), rhs.load(i + 3 * IT::size)));
+            }
+        } else {
+            for(i = first; i + IT::size - 1 < _last; i += IT::size){
+                vec::store(lhs_m + i, vec::sub(lhs.load(i), rhs.load(i)));
+            }
+        }
+
+        return i;
+    }
+
+    inline std::size_t unaligned_main_loop(std::size_t first) const {
+        std::size_t i;
+
+        if(unroll_vectorized_loops && _last - first > IT::size * 4){
+            for(i = first; i + IT::size * 4 - 1 < _last; i += IT::size * 4){
+                vec::storeu(lhs_m + i,                vec::sub(lhs.load(i), rhs.load(i)));
+                vec::storeu(lhs_m + i + 1 * IT::size, vec::sub(lhs.load(i + 1 * IT::size), rhs.load(i + 1 * IT::size)));
+                vec::storeu(lhs_m + i + 2 * IT::size, vec::sub(lhs.load(i + 2 * IT::size), rhs.load(i + 2 * IT::size)));
+                vec::storeu(lhs_m + i + 3 * IT::size, vec::sub(lhs.load(i + 3 * IT::size), rhs.load(i + 3 * IT::size)));
+            }
+        } else {
+            for(i = first; i + IT::size - 1 < _last; i += IT::size){
+                vec::storeu(lhs_m + i, vec::sub(lhs.load(i), rhs.load(i)));
+            }
+        }
+
+        return i;
+    }
+
+    void remainder_loop(std::size_t first) const {
+        for (std::size_t i = first; i < _last; ++i) {
+            lhs_m[i] -= rhs[i];
+        }
+    }
+};
+
 template<typename V_T, typename V_Expr>
 struct AssignMul {
     mutable V_T* lhs;
@@ -364,6 +444,86 @@ struct AssignMul {
     }
 };
 
+template<typename L_Expr, typename V_Expr>
+struct VectorizedAssignMul : vectorized_base<L_Expr, V_Expr, VectorizedAssignMul<L_Expr, V_Expr>> {
+    using base_t = vectorized_base<L_Expr, V_Expr, VectorizedAssignMul<L_Expr, V_Expr>>;
+    using IT = typename base_t::IT;
+
+    using base_t::lhs;
+    using base_t::lhs_m;
+    using base_t::rhs;
+    using base_t::_first;
+    using base_t::_size;
+    using base_t::_last;
+
+    VectorizedAssignMul(L_Expr& lhs, V_Expr& rhs, std::size_t first, std::size_t last) : base_t(lhs, rhs, first, last) {
+        //Nothing else
+    }
+
+    using base_t::operator();
+
+    std::size_t peel_loop() const {
+        std::size_t i = 0;
+
+        constexpr const auto size_1 = sizeof(value_t<V_Expr>);
+        auto u_bytes                = (reinterpret_cast<uintptr_t>(lhs_m + _first) % IT::alignment);
+
+        if (u_bytes >= size_1 && u_bytes % size_1 == 0) {
+            auto u_loads = std::min(u_bytes / size_1, _size);
+
+            for (; i < u_loads; ++i) {
+                lhs_m[_first + i] *= rhs[_first + i];
+            }
+        }
+
+        return i;
+    }
+
+    inline std::size_t aligned_main_loop(std::size_t first) const {
+        std::size_t i = 0;
+
+        if(unroll_vectorized_loops && _last - first > IT::size * 4){
+            for(i = first; i + IT::size * 4 - 1 < _last; i += IT::size * 4){
+                vec::store(lhs_m + i,                vec::mul(lhs.load(i), rhs.load(i)));
+                vec::store(lhs_m + i + 1 * IT::size, vec::mul(lhs.load(i + 1 * IT::size), rhs.load(i + 1 * IT::size)));
+                vec::store(lhs_m + i + 2 * IT::size, vec::mul(lhs.load(i + 2 * IT::size), rhs.load(i + 2 * IT::size)));
+                vec::store(lhs_m + i + 3 * IT::size, vec::mul(lhs.load(i + 3 * IT::size), rhs.load(i + 3 * IT::size)));
+            }
+        } else {
+            for(i = first; i + IT::size - 1 < _last; i += IT::size){
+                vec::store(lhs_m + i, vec::mul(lhs.load(i), rhs.load(i)));
+            }
+        }
+
+        return i;
+    }
+
+    inline std::size_t unaligned_main_loop(std::size_t first) const {
+        std::size_t i;
+
+        if(unroll_vectorized_loops && _last - first > IT::size * 4){
+            for(i = first; i + IT::size * 4 - 1 < _last; i += IT::size * 4){
+                vec::storeu(lhs_m + i,                vec::mul(lhs.load(i), rhs.load(i)));
+                vec::storeu(lhs_m + i + 1 * IT::size, vec::mul(lhs.load(i + 1 * IT::size), rhs.load(i + 1 * IT::size)));
+                vec::storeu(lhs_m + i + 2 * IT::size, vec::mul(lhs.load(i + 2 * IT::size), rhs.load(i + 2 * IT::size)));
+                vec::storeu(lhs_m + i + 3 * IT::size, vec::mul(lhs.load(i + 3 * IT::size), rhs.load(i + 3 * IT::size)));
+            }
+        } else {
+            for(i = first; i + IT::size - 1 < _last; i += IT::size){
+                vec::storeu(lhs_m + i, vec::mul(lhs.load(i), rhs.load(i)));
+            }
+        }
+
+        return i;
+    }
+
+    void remainder_loop(std::size_t first) const {
+        for (std::size_t i = first; i < _last; ++i) {
+            lhs_m[i] *= rhs[i];
+        }
+    }
+};
+
 template<typename V_T, typename V_Expr>
 struct AssignDiv {
     mutable V_T* lhs;
@@ -393,6 +553,86 @@ struct AssignDiv {
 
         for (std::size_t i = iend; i < _last; ++i) {
             lhs[i] /= rhs[i];
+        }
+    }
+};
+
+template<typename L_Expr, typename V_Expr>
+struct VectorizedAssignDiv : vectorized_base<L_Expr, V_Expr, VectorizedAssignDiv<L_Expr, V_Expr>> {
+    using base_t = vectorized_base<L_Expr, V_Expr, VectorizedAssignDiv<L_Expr, V_Expr>>;
+    using IT = typename base_t::IT;
+
+    using base_t::lhs;
+    using base_t::lhs_m;
+    using base_t::rhs;
+    using base_t::_first;
+    using base_t::_size;
+    using base_t::_last;
+
+    VectorizedAssignDiv(L_Expr& lhs, V_Expr& rhs, std::size_t first, std::size_t last) : base_t(lhs, rhs, first, last) {
+        //Nothing else
+    }
+
+    using base_t::operator();
+
+    std::size_t peel_loop() const {
+        std::size_t i = 0;
+
+        constexpr const auto size_1 = sizeof(value_t<V_Expr>);
+        auto u_bytes                = (reinterpret_cast<uintptr_t>(lhs_m + _first) % IT::alignment);
+
+        if (u_bytes >= size_1 && u_bytes % size_1 == 0) {
+            auto u_loads = std::min(u_bytes / size_1, _size);
+
+            for (; i < u_loads; ++i) {
+                lhs_m[_first + i] /= rhs[_first + i];
+            }
+        }
+
+        return i;
+    }
+
+    inline std::size_t aligned_main_loop(std::size_t first) const {
+        std::size_t i = 0;
+
+        if(unroll_vectorized_loops && _last - first > IT::size * 4){
+            for(i = first; i + IT::size * 4 - 1 < _last; i += IT::size * 4){
+                vec::store(lhs_m + i,                vec::div(lhs.load(i), rhs.load(i)));
+                vec::store(lhs_m + i + 1 * IT::size, vec::div(lhs.load(i + 1 * IT::size), rhs.load(i + 1 * IT::size)));
+                vec::store(lhs_m + i + 2 * IT::size, vec::div(lhs.load(i + 2 * IT::size), rhs.load(i + 2 * IT::size)));
+                vec::store(lhs_m + i + 3 * IT::size, vec::div(lhs.load(i + 3 * IT::size), rhs.load(i + 3 * IT::size)));
+            }
+        } else {
+            for(i = first; i + IT::size - 1 < _last; i += IT::size){
+                vec::store(lhs_m + i, vec::div(lhs.load(i), rhs.load(i)));
+            }
+        }
+
+        return i;
+    }
+
+    inline std::size_t unaligned_main_loop(std::size_t first) const {
+        std::size_t i;
+
+        if(unroll_vectorized_loops && _last - first > IT::size * 4){
+            for(i = first; i + IT::size * 4 - 1 < _last; i += IT::size * 4){
+                vec::storeu(lhs_m + i,                vec::div(lhs.load(i), rhs.load(i)));
+                vec::storeu(lhs_m + i + 1 * IT::size, vec::div(lhs.load(i + 1 * IT::size), rhs.load(i + 1 * IT::size)));
+                vec::storeu(lhs_m + i + 2 * IT::size, vec::div(lhs.load(i + 2 * IT::size), rhs.load(i + 2 * IT::size)));
+                vec::storeu(lhs_m + i + 3 * IT::size, vec::div(lhs.load(i + 3 * IT::size), rhs.load(i + 3 * IT::size)));
+            }
+        } else {
+            for(i = first; i + IT::size - 1 < _last; i += IT::size){
+                vec::storeu(lhs_m + i, vec::div(lhs.load(i), rhs.load(i)));
+            }
+        }
+
+        return i;
+    }
+
+    void remainder_loop(std::size_t first) const {
+        for (std::size_t i = first; i < _last; ++i) {
+            lhs_m[i] /= rhs[i];
         }
     }
 };
