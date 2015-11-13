@@ -94,8 +94,9 @@ struct Assign {
     }
 };
 
-template<typename L_Expr, typename V_Expr>
-struct VectorizedAssign {
+template<typename L_Expr, typename V_Expr, typename Base>
+struct vectorized_base {
+    using derived_t = Base;
     using memory_type = value_t<L_Expr>*;
 
     L_Expr& lhs;
@@ -107,10 +108,57 @@ struct VectorizedAssign {
 
     using IT = intrinsic_traits<value_t<V_Expr>>;
 
-    VectorizedAssign(L_Expr& lhs, V_Expr& rhs, std::size_t first, std::size_t last)
+    vectorized_base(L_Expr& lhs, V_Expr& rhs, std::size_t first, std::size_t last)
             : lhs(lhs), lhs_m(lhs.memory_start()), rhs(rhs), _first(first), _last(last), _size(last - first) {
         //Nothing else
     }
+
+    /*!
+     * \brief Returns a reference to the derived object, i.e. the object using the CRTP injector.
+     * \return a reference to the derived object.
+     */
+    const derived_t& as_derived() const noexcept {
+        return *static_cast<const derived_t*>(this);
+    }
+
+    void operator()() const {
+        //1. Peel loop (if necessary)
+        auto peeled = as_derived().peel_loop();
+
+        //2. Main vectorized loop
+
+        std::size_t first = peeled;
+
+        if (_size - peeled >= IT::size) {
+            if (reinterpret_cast<uintptr_t>(lhs_m + _first + peeled) % IT::alignment == 0) {
+                first = as_derived().aligned_main_loop(_first + peeled);
+            } else {
+                first = as_derived().unaligned_main_loop(_first + peeled);
+            }
+        }
+
+        //3. Remainder loop (non-vectorized)
+
+        as_derived().remainder_loop(first);
+    }
+};
+
+template<typename L_Expr, typename V_Expr>
+struct VectorizedAssign : vectorized_base<L_Expr, V_Expr, VectorizedAssign<L_Expr, V_Expr>> {
+    using base_t = vectorized_base<L_Expr, V_Expr, VectorizedAssign<L_Expr, V_Expr>>;
+    using IT = typename base_t::IT;
+
+    using base_t::lhs_m;
+    using base_t::rhs;
+    using base_t::_first;
+    using base_t::_size;
+    using base_t::_last;
+
+    VectorizedAssign(L_Expr& lhs, V_Expr& rhs, std::size_t first, std::size_t last) : base_t(lhs, rhs, first, last) {
+        //Nothing else
+    }
+
+    using base_t::operator();
 
     std::size_t peel_loop() const {
         std::size_t i = 0;
@@ -172,27 +220,6 @@ struct VectorizedAssign {
             lhs_m[i] = rhs[i];
         }
     }
-
-    void operator()() const {
-        //1. Peel loop (if necessary)
-        auto peeled = peel_loop();
-
-        //2. Main vectorized loop
-
-        std::size_t first = peeled;
-
-        if (_size - peeled >= IT::size) {
-            if (reinterpret_cast<uintptr_t>(lhs_m + _first + peeled) % IT::alignment == 0) {
-                first = aligned_main_loop(_first + peeled);
-            } else {
-                first = unaligned_main_loop(_first + peeled);
-            }
-        }
-
-        //3. Remainder loop (non-vectorized)
-
-        remainder_loop(first);
-    }
 };
 
 template<typename V_T, typename V_Expr>
@@ -229,23 +256,22 @@ struct AssignAdd {
 };
 
 template<typename L_Expr, typename V_Expr>
-struct VectorizedAssignAdd {
-    using memory_type = value_t<L_Expr>*;
+struct VectorizedAssignAdd : vectorized_base<L_Expr, V_Expr, VectorizedAssignAdd<L_Expr, V_Expr>> {
+    using base_t = vectorized_base<L_Expr, V_Expr, VectorizedAssignAdd<L_Expr, V_Expr>>;
+    using IT = typename base_t::IT;
 
-    L_Expr& lhs;
-    memory_type lhs_m;
+    using base_t::lhs;
+    using base_t::lhs_m;
+    using base_t::rhs;
+    using base_t::_first;
+    using base_t::_size;
+    using base_t::_last;
 
-    V_Expr& rhs;
-    const std::size_t _first;
-    const std::size_t _last;
-    const std::size_t _size;
-
-    using IT = intrinsic_traits<value_t<V_Expr>>;
-
-    VectorizedAssignAdd(L_Expr& lhs, V_Expr& rhs, std::size_t first, std::size_t last)
-            : lhs(lhs), lhs_m(lhs.memory_start()), rhs(rhs), _first(first), _last(last), _size(last - first) {
+    VectorizedAssignAdd(L_Expr& lhs, V_Expr& rhs, std::size_t first, std::size_t last) : base_t(lhs, rhs, first, last) {
         //Nothing else
     }
+
+    using base_t::operator();
 
     std::size_t peel_loop() const {
         std::size_t i = 0;
@@ -306,27 +332,6 @@ struct VectorizedAssignAdd {
         for (std::size_t i = first; i < _last; ++i) {
             lhs_m[i] += rhs[i];
         }
-    }
-
-    void operator()() const {
-        //1. Peel loop (if necessary)
-        auto peeled = peel_loop();
-
-        //2. Main vectorized loop
-
-        std::size_t first = peeled;
-
-        if (_size - peeled >= IT::size) {
-            if (reinterpret_cast<uintptr_t>(lhs_m + _first + peeled) % IT::alignment == 0) {
-                first = aligned_main_loop(_first + peeled);
-            } else {
-                first = unaligned_main_loop(_first + peeled);
-            }
-        }
-
-        //3. Remainder loop (non-vectorized)
-
-        remainder_loop(first);
     }
 };
 
