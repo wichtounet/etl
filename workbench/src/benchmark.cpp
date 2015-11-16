@@ -158,13 +158,15 @@ CPM_BENCH() {
     CPM_TWO_PASS_NS(
         "r = a / b (c)",
         [](std::size_t d){ return std::make_tuple(cvec(d), cvec(d), cvec(d)); },
-        [](cvec& a, cvec& b, cvec& r){ r = a / b; }
+        [](cvec& a, cvec& b, cvec& r){ r = a / b; },
+        [](std::size_t d){ return 6 * d; }
         );
 
     CPM_TWO_PASS_NS(
         "r = a / b (z)",
         [](std::size_t d){ return std::make_tuple(zvec(d), zvec(d), zvec(d)); },
-        [](zvec& a, zvec& b, zvec& r){ r = a / b; }
+        [](zvec& a, zvec& b, zvec& r){ r = a / b; },
+        [](std::size_t d){ return 6 * d; }
         );
 
     CPM_TWO_PASS_NS_P(
@@ -208,28 +210,34 @@ CPM_BENCH() {
 
 //Sigmoid benchmark
 CPM_BENCH() {
+    //Flops: 20 for exp, 1 for div, 1 for add
+
     CPM_TWO_PASS_NS(
         "r = sigmoid(a)",
         [](std::size_t d){ return std::make_tuple(dvec(d), dvec(d)); },
-        [](dvec& a, dvec& r){ r = etl::sigmoid(a); }
+        [](dvec& a, dvec& r){ r = etl::sigmoid(a); },
+        [](std::size_t d){ return 22 * d; }
         );
 
     CPM_TWO_PASS_NS_P(
         mat_policy_2d,
         "R = sigmoid(A)",
         [](auto d1, auto d2){ return std::make_tuple(dmat(d1, d2), dmat(d1, d2)); },
-        [](dmat& A, dmat& R){ R = etl::sigmoid(A); }
+        [](dmat& A, dmat& R){ R = etl::sigmoid(A); },
+        [](auto d1, auto d2){ return 22 * d1 * d2; }
         );
 }
 
-CPM_DIRECT_SECTION_TWO_PASS_NS_P("sigmoid(s)", sigmoid_policy,
+CPM_DIRECT_SECTION_TWO_PASS_NS_PF("sigmoid(s)", sigmoid_policy,
+    FLOPS([](std::size_t d){ return 22 * d; }),
     CPM_SECTION_INIT([](std::size_t d){ return std::make_tuple(smat(d,d), smat(d,d)); }),
     CPM_SECTION_FUNCTOR("default", [](smat& a, smat& b){ a = etl::sigmoid(b); }),
     CPM_SECTION_FUNCTOR("fast", [](smat& a, smat& b){ a = etl::fast_sigmoid(b); }),
     CPM_SECTION_FUNCTOR("hard", [](smat& a, smat& b){ a = etl::hard_sigmoid(b); })
 )
 
-CPM_DIRECT_SECTION_TWO_PASS_NS_P("sigmoid(d)", sigmoid_policy,
+CPM_DIRECT_SECTION_TWO_PASS_NS_PF("sigmoid(d)", sigmoid_policy,
+    FLOPS([](std::size_t d){ return 22 * d; }),
     CPM_SECTION_INIT([](std::size_t d){ return std::make_tuple(dmat(d,d), dmat(d,d)); }),
     CPM_SECTION_FUNCTOR("default", [](dmat& a, dmat& b){ a = etl::sigmoid(b); }),
     CPM_SECTION_FUNCTOR("fast", [](dmat& a, dmat& b){ a = etl::fast_sigmoid(b); }),
