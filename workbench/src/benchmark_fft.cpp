@@ -8,7 +8,8 @@
 #define CPM_LIB
 #include "benchmark.hpp"
 
-CPM_DIRECT_SECTION_TWO_PASS_NS_P("cfft_1d(2^b)", fft_1d_policy_2,
+CPM_DIRECT_SECTION_TWO_PASS_NS_PF("cfft_1d(2^b) [fft]", fft_1d_policy_2,
+    FLOPS([](std::size_t d){ return 2 * d * std::log2(d); }),
     CPM_SECTION_INIT([](std::size_t d){ return std::make_tuple(cvec(d), cvec(d)); }),
     CPM_SECTION_FUNCTOR("default", [](cvec& a, cvec& b){ b = etl::fft_1d(a); }),
     CPM_SECTION_FUNCTOR("std", [](cvec& a, cvec& b){ etl::impl::standard::fft1(a, b); })
@@ -16,7 +17,8 @@ CPM_DIRECT_SECTION_TWO_PASS_NS_P("cfft_1d(2^b)", fft_1d_policy_2,
     CUFFT_SECTION_FUNCTOR("cufft", [](cvec& a, cvec& b){ etl::impl::cufft::fft1(a, b); })
 )
 
-CPM_DIRECT_SECTION_TWO_PASS_NS_P("zfft_1d(2^b)", fft_1d_policy_2,
+CPM_DIRECT_SECTION_TWO_PASS_NS_PF("zfft_1d(2^b) [fft]", fft_1d_policy_2,
+    FLOPS([](std::size_t d){ return 2 * d * std::log2(d); }),
     CPM_SECTION_INIT([](std::size_t d){ return std::make_tuple(zvec(d), zvec(d)); }),
     CPM_SECTION_FUNCTOR("default", [](zvec& a, zvec& b){ b = etl::fft_1d(a); }),
     CPM_SECTION_FUNCTOR("std", [](zvec& a, zvec& b){ etl::impl::standard::fft1(a, b); })
@@ -24,7 +26,8 @@ CPM_DIRECT_SECTION_TWO_PASS_NS_P("zfft_1d(2^b)", fft_1d_policy_2,
     CUFFT_SECTION_FUNCTOR("cufft", [](zvec& a, zvec& b){ etl::impl::cufft::fft1(a, b); })
 )
 
-CPM_DIRECT_SECTION_TWO_PASS_NS_P("cfft_1d(10^b)", fft_1d_policy,
+CPM_DIRECT_SECTION_TWO_PASS_NS_PF("cfft_1d(10^b) [fft]", fft_1d_policy,
+    FLOPS([](std::size_t d){ return 2 * d * std::log2(d); }),
     CPM_SECTION_INIT([](std::size_t d){ return std::make_tuple(cvec(d), cvec(d)); }),
     CPM_SECTION_FUNCTOR("default", [](cvec& a, cvec& b){ b = etl::fft_1d(a); }),
     CPM_SECTION_FUNCTOR("std", [](cvec& a, cvec& b){ etl::impl::standard::fft1(a, b); })
@@ -32,7 +35,8 @@ CPM_DIRECT_SECTION_TWO_PASS_NS_P("cfft_1d(10^b)", fft_1d_policy,
     CUFFT_SECTION_FUNCTOR("cufft", [](cvec& a, cvec& b){ etl::impl::cufft::fft1(a, b); })
 )
 
-CPM_DIRECT_SECTION_TWO_PASS_NS_P("zfft_1d(10^b)", fft_1d_policy,
+CPM_DIRECT_SECTION_TWO_PASS_NS_PF("zfft_1d(10^b) [fft]", fft_1d_policy,
+    FLOPS([](std::size_t d){ return 2 * d * std::log2(d); }),
     CPM_SECTION_INIT([](std::size_t d){ return std::make_tuple(zvec(d), zvec(d)); }),
     CPM_SECTION_FUNCTOR("default", [](zvec& a, zvec& b){ b = etl::fft_1d(a); }),
     CPM_SECTION_FUNCTOR("std", [](zvec& a, zvec& b){ etl::impl::standard::fft1(a, b); })
@@ -40,7 +44,8 @@ CPM_DIRECT_SECTION_TWO_PASS_NS_P("zfft_1d(10^b)", fft_1d_policy,
     CUFFT_SECTION_FUNCTOR("cufft", [](zvec& a, zvec& b){ etl::impl::cufft::fft1(a, b); })
 )
 
-CPM_DIRECT_SECTION_TWO_PASS_NS_P("cifft_1d(2^b)", fft_1d_policy_2,
+CPM_DIRECT_SECTION_TWO_PASS_NS_PF("cifft_1d(2^b) [fft]", fft_1d_policy_2,
+    FLOPS([](std::size_t d){ return 2 * d * std::log2(d); }),
     CPM_SECTION_INIT([](std::size_t d){ return std::make_tuple(cvec(d), cvec(d)); }),
     CPM_SECTION_FUNCTOR("default", [](cvec& a, cvec& b){ b = etl::ifft_1d(a); }),
     CPM_SECTION_FUNCTOR("std", [](cvec& a, cvec& b){ etl::impl::standard::ifft1(a, b); })
@@ -48,7 +53,8 @@ CPM_DIRECT_SECTION_TWO_PASS_NS_P("cifft_1d(2^b)", fft_1d_policy_2,
     CUFFT_SECTION_FUNCTOR("cufft", [](cvec& a, cvec& b){ etl::impl::cufft::ifft1(a, b); })
 )
 
-CPM_DIRECT_SECTION_TWO_PASS_NS_P("zifft_1d(2^b)", fft_1d_policy_2,
+CPM_DIRECT_SECTION_TWO_PASS_NS_PF("zifft_1d(2^b) [fft]", fft_1d_policy_2,
+    FLOPS([](std::size_t d){ return 2 * d * std::log2(d); }),
     CPM_SECTION_INIT([](std::size_t d){ return std::make_tuple(zvec(d), zvec(d)); }),
     CPM_SECTION_FUNCTOR("default", [](zvec& a, zvec& b){ b = etl::ifft_1d(a); }),
     CPM_SECTION_FUNCTOR("std", [](zvec& a, zvec& b){ etl::impl::standard::ifft1(a, b); })
@@ -56,7 +62,8 @@ CPM_DIRECT_SECTION_TWO_PASS_NS_P("zifft_1d(2^b)", fft_1d_policy_2,
     CUFFT_SECTION_FUNCTOR("cufft", [](zvec& a, zvec& b){ etl::impl::cufft::ifft1(a, b); })
 )
 
-CPM_DIRECT_SECTION_TWO_PASS_NS_P("fft_1d_many(1000) (c)", fft_1d_many_policy,
+CPM_DIRECT_SECTION_TWO_PASS_NS_PF("fft_1d_many(1000) (c) [fft]", fft_1d_many_policy,
+    FLOPS([](std::size_t d){ return 2 * 1000 * d * std::log2(d); }),
     CPM_SECTION_INIT([](std::size_t d){ return std::make_tuple(cmat(1000UL, d), cmat(1000UL, d)); }),
     CPM_SECTION_FUNCTOR("default", [](cmat& a, cmat& b){ b = etl::fft_1d_many(a); }),
     CPM_SECTION_FUNCTOR("std", [](cmat& a, cmat& b){ etl::impl::standard::fft1_many(a, b); })
@@ -64,7 +71,8 @@ CPM_DIRECT_SECTION_TWO_PASS_NS_P("fft_1d_many(1000) (c)", fft_1d_many_policy,
     CUFFT_SECTION_FUNCTOR("cufft", [](cmat& a, cmat& b){ etl::impl::cufft::fft1_many(a, b); })
 )
 
-CPM_DIRECT_SECTION_TWO_PASS_NS_P("fft_1d_many(1000) (z)", fft_1d_many_policy,
+CPM_DIRECT_SECTION_TWO_PASS_NS_PF("fft_1d_many(1000) (z) [fft]", fft_1d_many_policy,
+    FLOPS([](std::size_t d){ return 2 * 1000 * d * std::log2(d); }),
     CPM_SECTION_INIT([](std::size_t d){ return std::make_tuple(zmat(1000UL, d), zmat(1000UL, d)); }),
     CPM_SECTION_FUNCTOR("default", [](zmat& a, zmat& b){ b = etl::fft_1d_many(a); }),
     CPM_SECTION_FUNCTOR("std", [](zmat& a, zmat& b){ etl::impl::standard::fft1_many(a, b); })
@@ -72,7 +80,8 @@ CPM_DIRECT_SECTION_TWO_PASS_NS_P("fft_1d_many(1000) (z)", fft_1d_many_policy,
     CUFFT_SECTION_FUNCTOR("cufft", [](zmat& a, zmat& b){ etl::impl::cufft::fft1_many(a, b); })
 )
 
-CPM_DIRECT_SECTION_TWO_PASS_NS_P("cfft_2d(2^b)", fft_2d_policy,
+CPM_DIRECT_SECTION_TWO_PASS_NS_PF("cfft_2d(2^b) [fft]", fft_2d_policy,
+    FLOPS([](std::size_t d1, std::size_t d2){ return 2 * d1 * d2 * std::log2(d1 * d2); }),
     CPM_SECTION_INIT([](std::size_t d1, std::size_t d2){ return std::make_tuple(cmat(d1,d2), cmat(d1,d2)); }),
     CPM_SECTION_FUNCTOR("default", [](cmat& a, cmat& b){ b = etl::fft_2d(a); }),
     CPM_SECTION_FUNCTOR("std", [](cmat& a, cmat& b){ etl::impl::standard::fft2(a, b); })
@@ -80,7 +89,8 @@ CPM_DIRECT_SECTION_TWO_PASS_NS_P("cfft_2d(2^b)", fft_2d_policy,
     CUFFT_SECTION_FUNCTOR("cufft", [](cmat& a, cmat& b){ etl::impl::cufft::fft2(a, b); })
 )
 
-CPM_DIRECT_SECTION_TWO_PASS_NS_P("zfft_2d(2^b)", fft_2d_policy,
+CPM_DIRECT_SECTION_TWO_PASS_NS_PF("zfft_2d(2^b) [fft]", fft_2d_policy,
+    FLOPS([](std::size_t d1, std::size_t d2){ return 2 * d1 * d2 * std::log2(d1 * d2); }),
     CPM_SECTION_INIT([](std::size_t d1, std::size_t d2){ return std::make_tuple(zmat(d1,d2), zmat(d1,d2)); }),
     CPM_SECTION_FUNCTOR("default", [](zmat& a, zmat& b){ b = etl::fft_2d(a); }),
     CPM_SECTION_FUNCTOR("std", [](zmat& a, zmat& b){ etl::impl::standard::fft2(a, b); })
