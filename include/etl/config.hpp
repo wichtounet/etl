@@ -126,13 +126,16 @@ constexpr const bool unroll_normal_loops         = true;
 enum class vector_mode_t {
     NONE,
     SSE3,
-    AVX
+    AVX,
+    AVX512
 };
 
-#ifdef __AVX__
+#ifdef __AVX512F__
+constexpr const vector_mode_t vector_mode = vector_mode_t::AVX512;
+#elif defined(__AVX__)
 constexpr const vector_mode_t vector_mode = vector_mode_t::AVX;
 #elif defined(__SSE3__)
-constexpr const vector_mode_t vector_mode        = vector_mode_t::SSE3;
+constexpr const vector_mode_t vector_mode = vector_mode_t::SSE3;
 #else
 constexpr const vector_mode_t vector_mode = vector_mode_t::NONE;
 #endif
