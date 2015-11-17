@@ -67,7 +67,7 @@ struct conv1_full_impl {
         } else if (impl == conv_impl::SSE) {
             impl::sse::conv1_full(input, kernel, conv);
         } else if (impl == conv_impl::STD) {
-            impl::standard::conv1_full(input, kernel, conv);
+            impl::standard::conv1_full(input, kernel, conv, 0, size(conv));
         }
     }
 };
@@ -82,7 +82,7 @@ struct conv1_same_impl {
         } else if (impl == conv_impl::SSE) {
             impl::sse::conv1_same(input, kernel, conv);
         } else if (impl == conv_impl::STD) {
-            impl::standard::conv1_same(input, kernel, conv);
+            impl::standard::conv1_same(input, kernel, conv, 0, size(conv));
         }
     }
 };
@@ -97,7 +97,7 @@ struct conv1_valid_impl {
         } else if (impl == conv_impl::SSE) {
             impl::sse::conv1_valid(input, kernel, conv);
         } else if (impl == conv_impl::STD) {
-            impl::standard::conv1_valid(input, kernel, conv);
+            impl::standard::conv1_valid(input, kernel, conv, 0, size(conv));
         }
     }
 };

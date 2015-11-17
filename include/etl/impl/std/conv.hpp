@@ -16,8 +16,8 @@ namespace impl {
 namespace standard {
 
 template <typename I, typename K, typename C>
-void conv1_full(const I& input, const K& kernel, C&& conv) {
-    for (std::size_t i = 0; i < size(conv); ++i) {
+void conv1_full(const I& input, const K& kernel, C&& conv, std::size_t first, std::size_t last) {
+    for (std::size_t i = first; i < last; ++i) {
         const auto lo = i >= size(kernel) - 1 ? i - (size(kernel) - 1) : 0;
         const auto hi = (i < size(input) - 1 ? i : size(input) - 1) + 1;
 
@@ -32,8 +32,8 @@ void conv1_full(const I& input, const K& kernel, C&& conv) {
 }
 
 template <typename I, typename K, typename C>
-void conv1_same(const I& input, const K& kernel, C&& conv) {
-    for (std::size_t j = 0; j < size(conv); ++j) {
+void conv1_same(const I& input, const K& kernel, C&& conv, std::size_t first, std::size_t last) {
+    for (std::size_t j = first; j < last; ++j) {
         std::size_t l_lo = std::max<int>(0, j - (size(kernel) - 1) / 2);
         std::size_t l_hi = std::min<int>(size(input) - 1, j + size(kernel) / 2) + 1;
 
@@ -48,8 +48,8 @@ void conv1_same(const I& input, const K& kernel, C&& conv) {
 }
 
 template <typename I, typename K, typename C>
-void conv1_valid(const I& input, const K& kernel, C&& conv) {
-    for (std::size_t j = 0; j < size(conv); ++j) {
+void conv1_valid(const I& input, const K& kernel, C&& conv, std::size_t first, std::size_t last) {
+    for (std::size_t j = first; j < last; ++j) {
         typename I::value_type temp = 0.0;
 
         for (std::size_t l = j; l < j + size(kernel); ++l) {

@@ -23,14 +23,14 @@
     };
 
 CONV_FUNCTOR(default_conv1_full, c = etl::conv_1d_full(a, b))
-CONV_FUNCTOR(std_conv1_full, etl::impl::standard::conv1_full(a, b, c))
+CONV_FUNCTOR(std_conv1_full, etl::impl::standard::conv1_full(a, b, c, 0, size(c)))
 CONV_FUNCTOR(reduc_conv1_full, etl::impl::reduc::conv1_full(a, b, c))
 
 CONV_FUNCTOR(default_conv1_same, c = etl::conv_1d_same(a, b))
-CONV_FUNCTOR(std_conv1_same, etl::impl::standard::conv1_same(a, b, c))
+CONV_FUNCTOR(std_conv1_same, etl::impl::standard::conv1_same(a, b, c, 0, size(c)))
 
 CONV_FUNCTOR(default_conv1_valid, c = etl::conv_1d_valid(a, b))
-CONV_FUNCTOR(std_conv1_valid, etl::impl::standard::conv1_valid(a, b, c))
+CONV_FUNCTOR(std_conv1_valid, etl::impl::standard::conv1_valid(a, b, c, 0, size(c)))
 
 CONV_FUNCTOR(default_conv2_full, c = etl::conv_2d_full(a, b))
 CONV_FUNCTOR(std_conv2_full, etl::impl::standard::conv2_full(a, b, c))
