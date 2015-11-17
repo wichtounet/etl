@@ -9,6 +9,8 @@
 
 #include <algorithm>
 
+#include "etl/parallel.hpp" //For parallel dispatching
+
 //Include the implementations
 #include "etl/impl/std/conv.hpp"
 #include "etl/impl/sse/conv.hpp"
@@ -57,17 +59,53 @@ inline conv_impl select_conv_impl() {
     }
 }
 
+template <typename I, typename K, typename C>
+inline bool select_parallel(const I& /*input*/, const K& kernel, C&& conv) {
+    if(parallel){
+        return size(conv) >= conv1_parallel_threshold_conv && size(kernel) >= conv1_parallel_threshold_kernel;
+    } else {
+        return false;
+    }
+}
+
+template <typename Functor>
+inline void dispatch_1d(bool p, Functor&& functor, std::size_t first, std::size_t last){
+    if(p){
+        cpp::default_thread_pool<> pool(threads - 1);
+
+        auto n = last - first;
+        auto batch = n / threads;
+
+        for(std::size_t t = 0; t < threads - 1; ++t){
+            pool.do_task(functor, first + t * batch, first + (t+1) * batch);
+        }
+
+        functor(first + (threads - 1) * batch, last);
+
+        //pool.wait();
+    } else {
+        functor(first, last);
+    }
+}
+
 template <typename I, typename K, typename C, typename Enable = void>
 struct conv1_full_impl {
     static void apply(const I& input, const K& kernel, C&& conv) {
         conv_impl impl = select_conv_impl<I, K, C>();
+        selected_apply(input, kernel, std::forward<C>(conv), impl);
+    }
+
+    static void selected_apply(const I& input, const K& kernel, C&& conv, conv_impl impl) {
+        bool parallel_dispatch = select_parallel(input, kernel, conv);
 
         if (impl == conv_impl::AVX) {
             impl::avx::conv1_full(input, kernel, conv);
         } else if (impl == conv_impl::SSE) {
             impl::sse::conv1_full(input, kernel, conv);
         } else if (impl == conv_impl::STD) {
-            impl::standard::conv1_full(input, kernel, conv, 0, size(conv));
+            dispatch_1d(parallel_dispatch, [&](std::size_t first, std::size_t last){
+                impl::standard::conv1_full(input, kernel, conv, first, last);
+            }, 0, size(conv));
         }
     }
 };
@@ -76,13 +114,20 @@ template <typename I, typename K, typename C, typename Enable = void>
 struct conv1_same_impl {
     static void apply(const I& input, const K& kernel, C&& conv) {
         conv_impl impl = select_conv_impl<I, K, C>();
+        selected_apply(input, kernel, std::forward<C>(conv), impl);
+    }
+
+    static void selected_apply(const I& input, const K& kernel, C&& conv, conv_impl impl) {
+        bool parallel_dispatch = select_parallel(input, kernel, conv);
 
         if (impl == conv_impl::AVX) {
             impl::avx::conv1_same(input, kernel, conv);
         } else if (impl == conv_impl::SSE) {
             impl::sse::conv1_same(input, kernel, conv);
         } else if (impl == conv_impl::STD) {
-            impl::standard::conv1_same(input, kernel, conv, 0, size(conv));
+            dispatch_1d(parallel_dispatch, [&](std::size_t first, std::size_t last){
+                impl::standard::conv1_same(input, kernel, conv, first, last);
+            }, 0, size(conv));
         }
     }
 };
@@ -91,16 +136,41 @@ template <typename I, typename K, typename C, typename Enable = void>
 struct conv1_valid_impl {
     static void apply(const I& input, const K& kernel, C&& conv) {
         conv_impl impl = select_conv_impl<I, K, C>();
+        selected_apply(input, kernel, std::forward<C>(conv), impl);
+    }
+
+    static void selected_apply(const I& input, const K& kernel, C&& conv, conv_impl impl) {
+        bool parallel_dispatch = select_parallel(input, kernel, conv);
 
         if (impl == conv_impl::AVX) {
             impl::avx::conv1_valid(input, kernel, conv);
         } else if (impl == conv_impl::SSE) {
             impl::sse::conv1_valid(input, kernel, conv);
         } else if (impl == conv_impl::STD) {
-            impl::standard::conv1_valid(input, kernel, conv, 0, size(conv));
+            dispatch_1d(parallel_dispatch, [&](std::size_t first, std::size_t last){
+                impl::standard::conv1_valid(input, kernel, conv, first, last);
+            }, 0, size(conv));
         }
     }
 };
+
+//Should only be used by the benchmark
+template <typename I, typename K, typename C>
+void conv1_full_direct(const I& input, const K& kernel, C&& conv, conv_impl impl){
+    conv1_full_impl<I, K, C>::selected_apply(input, kernel, std::forward<C>(conv), impl);
+}
+
+//Should only be used by the benchmark
+template <typename I, typename K, typename C>
+void conv1_same_direct(const I& input, const K& kernel, C&& conv, conv_impl impl){
+    conv1_same_impl<I, K, C>::selected_apply(input, kernel, std::forward<C>(conv), impl);
+}
+
+//Should only be used by the benchmark
+template <typename I, typename K, typename C>
+void conv1_valid_direct(const I& input, const K& kernel, C&& conv, conv_impl impl){
+    conv1_valid_impl<I, K, C>::selected_apply(input, kernel, std::forward<C>(conv), impl);
+}
 
 template <typename I, typename K, typename C, typename Enable = void>
 struct conv2_full_impl {

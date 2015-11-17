@@ -7,10 +7,6 @@
 
 #pragma once
 
-#ifdef ETL_PARALLEL
-
 #include <thread>
 
 #include "cpp_utils/parallel.hpp"
-
-#endif
