@@ -146,8 +146,8 @@ void conv1_full(const I& input, const K& kernel, C&& conv) {
     const double* k  = kernel.memory_start();
 
     //Process not-'valid' parts of the convolution (left and right)
-    etl::impl::common::left_full_kernel(in, size(input), k, size(kernel), out);
-    etl::impl::common::right_full_kernel(in, size(input), k, size(kernel), out);
+    etl::impl::common::left_full_kernel(in, size(input), k, size(kernel), out, 0, size(conv));
+    etl::impl::common::right_full_kernel(in, size(input), k, size(kernel), out, 0, size(conv));
 
     //Central part is a 'valid' convolution
     dconv1_valid_micro_kernel(in, size(input), k, size(kernel), out + left);
@@ -162,8 +162,8 @@ void conv1_same(const I& input, const K& kernel, C&& conv) {
     const double* k  = kernel.memory_start();
 
     //Process not-'valid' parts of the convolution (left and right)
-    etl::impl::common::left_same_kernel(in, size(input), k, size(kernel), out);
-    etl::impl::common::right_same_kernel(in, size(input), k, size(kernel), out);
+    etl::impl::common::left_same_kernel(in, size(input), k, size(kernel), out, 0, size(conv));
+    etl::impl::common::right_same_kernel(in, size(input), k, size(kernel), out, 0, size(conv));
 
     //Central part is a 'valid' convolution
     dconv1_valid_micro_kernel(in, size(input), k, size(kernel), out + left);
@@ -183,8 +183,8 @@ void conv1_full(const I& input, const K& kernel, C&& conv) {
     const float* k  = kernel.memory_start();
 
     //Process not-'valid' parts of the convolution (left and right)
-    etl::impl::common::left_full_kernel(in, size(input), k, size(kernel), out);
-    etl::impl::common::right_full_kernel(in, size(input), k, size(kernel), out);
+    etl::impl::common::left_full_kernel(in, size(input), k, size(kernel), out, 0, size(conv));
+    etl::impl::common::right_full_kernel(in, size(input), k, size(kernel), out, 0, size(conv));
 
     //Central part is a 'valid' convolution
     sconv1_valid_micro_kernel(in, size(input), k, size(kernel), out + left);
@@ -199,8 +199,8 @@ void conv1_same(const I& input, const K& kernel, C&& conv) {
     const float* k  = kernel.memory_start();
 
     //Process not-'valid' parts of the convolution (left and right)
-    etl::impl::common::left_same_kernel(in, size(input), k, size(kernel), out);
-    etl::impl::common::right_same_kernel(in, size(input), k, size(kernel), out);
+    etl::impl::common::left_same_kernel(in, size(input), k, size(kernel), out, 0, size(conv));
+    etl::impl::common::right_same_kernel(in, size(input), k, size(kernel), out, 0, size(conv));
 
     //Central part is a 'valid' convolution
     sconv1_valid_micro_kernel(in, size(input), k, size(kernel), out + left);
