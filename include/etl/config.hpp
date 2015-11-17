@@ -137,4 +137,10 @@ constexpr const vector_mode_t vector_mode        = vector_mode_t::SSE3;
 constexpr const vector_mode_t vector_mode = vector_mode_t::NONE;
 #endif
 
+#ifdef __INTEL_COMPILER
+constexpr const bool intel_compiler = true;
+#else
+constexpr const bool intel_compiler = false;
+#endif
+
 } //end of namespace etl

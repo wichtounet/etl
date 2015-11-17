@@ -143,18 +143,16 @@ template <typename T, typename E>
 struct max_binary_op {
     using vec_type = intrinsic_type<T>;
 
+    static constexpr const bool vectorizable = intel_compiler && !is_complex_t<T>::value;
+
     static constexpr T apply(const T& x, E value) noexcept {
         return std::max(x, value);
     }
 
 #ifdef __INTEL_COMPILER
-    static constexpr const bool vectorizable = !is_complex_t<T>::value;
-
     static cpp14_constexpr vec_type load(const vec_type& lhs, const vec_type& rhs) noexcept {
         return vec::max(lhs, rhs);
     }
-#else
-    static constexpr const bool vectorizable = false;
 #endif
 
     static std::string desc() noexcept {
@@ -166,18 +164,16 @@ template <typename T, typename E>
 struct min_binary_op {
     using vec_type = intrinsic_type<T>;
 
+    static constexpr const bool vectorizable = intel_compiler && !is_complex_t<T>::value;
+
     static constexpr T apply(const T& x, E value) noexcept {
         return std::min(x, value);
     }
 
 #ifdef __INTEL_COMPILER
-    static constexpr const bool vectorizable = !is_complex_t<T>::value;
-
     static cpp14_constexpr vec_type load(const vec_type& lhs, const vec_type& rhs) noexcept {
         return vec::min(lhs, rhs);
     }
-#else
-    static constexpr const bool vectorizable = false;
 #endif
 
     static std::string desc() noexcept {
@@ -189,6 +185,8 @@ template <typename T, typename S>
 struct min_scalar_op {
     using vec_type = intrinsic_type<T>;
 
+    static constexpr const bool vectorizable = intel_compiler && !is_complex_t<T>::value;
+
     S s;
     explicit min_scalar_op(S s)
             : s(s) {}
@@ -198,13 +196,9 @@ struct min_scalar_op {
     }
 
 #ifdef __INTEL_COMPILER
-    static constexpr const bool vectorizable = !is_complex_t<T>::value;
-
     cpp14_constexpr vec_type load(const vec_type& lhs) const noexcept {
         return vec::min(lhs, vec::set(s));
     }
-#else
-    static constexpr const bool vectorizable = false;
 #endif
 
     static std::string desc() noexcept {
@@ -216,6 +210,8 @@ template <typename T, typename S>
 struct max_scalar_op {
     using vec_type = intrinsic_type<T>;
 
+    static constexpr const bool vectorizable = intel_compiler && !is_complex_t<T>::value;
+
     S s;
     explicit max_scalar_op(S s)
             : s(s) {}
@@ -225,13 +221,10 @@ struct max_scalar_op {
     }
 
 #ifdef __INTEL_COMPILER
-    static constexpr const bool vectorizable = !is_complex_t<T>::value;
 
     cpp14_constexpr vec_type load(const vec_type& lhs) const noexcept {
         return vec::max(lhs, vec::set(s));
     }
-#else
-    static constexpr const bool vectorizable = false;
 #endif
 
     static std::string desc() noexcept {
@@ -243,6 +236,8 @@ template <typename T, typename S>
 struct clip_scalar_op {
     using vec_type = intrinsic_type<T>;
 
+    static constexpr const bool vectorizable = intel_compiler && !is_complex_t<T>::value;
+
     S min;
     S max;
     clip_scalar_op(S min, S max)
@@ -253,13 +248,9 @@ struct clip_scalar_op {
     }
 
 #ifdef __INTEL_COMPILER
-    static constexpr const bool vectorizable = !is_complex_t<T>::value;
-
     cpp14_constexpr vec_type load(const vec_type& lhs) const noexcept {
         return vec::min(vec::max(lhs, vec::set(min)), vec::set(max));
     }
-#else
-    static constexpr const bool vectorizable = false;
 #endif
 
     static std::string desc() noexcept {

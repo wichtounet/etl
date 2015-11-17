@@ -33,20 +33,19 @@ struct abs_unary_op {
 
 template <typename T>
 struct log_unary_op {
+    static constexpr const bool vectorizable = intel_compiler && !is_complex_t<T>::value;
+
     using vec_type = intrinsic_type<T>;
 
     static constexpr T apply(const T& x) {
         return std::log(x);
     }
 
-#ifdef __INTEL_COMPILER
-    static constexpr const bool vectorizable = !is_complex_t<T>::value;
 
+#ifdef __INTEL_COMPILER
     static cpp14_constexpr vec_type load(const vec_type& x) noexcept {
         return vec::log(x);
     }
-#else
-    static constexpr const bool vectorizable = false;
 #endif
 
     static std::string desc() noexcept {
@@ -77,18 +76,16 @@ template <typename T>
 struct exp_unary_op {
     using vec_type = intrinsic_type<T>;
 
+    static constexpr const bool vectorizable = intel_compiler && !is_complex_t<T>::value;
+
     static constexpr T apply(const T& x) {
         return std::exp(x);
     }
 
 #ifdef __INTEL_COMPILER
-    static constexpr const bool vectorizable = !is_complex_t<T>::value;
-
     static cpp14_constexpr vec_type load(const vec_type& x) noexcept {
         return vec::exp(x);
     }
-#else
-    static constexpr const bool vectorizable = false;
 #endif
 
     static std::string desc() noexcept {
