@@ -67,7 +67,7 @@ template <typename T>
 struct mul_binary_op {
     using vec_type = intrinsic_type<T>;
 
-    static constexpr const bool vectorizable = true;
+    static constexpr const bool vectorizable = vector_mode == vector_mode_t::AVX512 ? !is_complex_t<T>::value : true ;
 
     static constexpr T apply(const T& lhs, const T& rhs) noexcept {
         return lhs * rhs;
@@ -88,7 +88,7 @@ template <typename T>
 struct div_binary_op {
     using vec_type = intrinsic_type<T>;
 
-    static constexpr const bool vectorizable = true;
+    static constexpr const bool vectorizable = vector_mode == vector_mode_t::AVX512 ? !is_complex_t<T>::value : true ;
 
     static constexpr T apply(const T& lhs, const T& rhs) noexcept {
         return lhs / rhs;

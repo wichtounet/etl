@@ -42,7 +42,11 @@ using intrinsic_type = typename intrinsic_traits<T>::intrinsic_type;
 
 #ifdef ETL_VECTORIZE_EXPR
 
-#ifdef __AVX__
+#ifdef __AVX512F__
+
+#include "etl/avx512_vectorization.hpp"
+
+#elif defined(__AVX__)
 
 #include "etl/avx_vectorization.hpp"
 
