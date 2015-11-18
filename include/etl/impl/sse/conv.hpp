@@ -74,7 +74,7 @@ inline void dconv1_valid_micro_kernel(const double* in, const std::size_t n, con
 }
 
 template <typename I, typename K, typename C, cpp_enable_if((all_double_precision<I, K, C>::value))>
-void conv1_full(const I& input, const K& kernel, C&& conv) {
+void conv1_full(const I& input, const K& kernel, C&& conv, std::size_t first, std::size_t last) {
     std::size_t left = size(kernel) - 1;
 
     double* out      = conv.memory_start();
@@ -82,15 +82,15 @@ void conv1_full(const I& input, const K& kernel, C&& conv) {
     const double* k  = kernel.memory_start();
 
     //Process not-'valid' parts of the convolution (left and right)
-    etl::impl::common::left_full_kernel(in, size(input), k, size(kernel), out, 0, size(conv));
-    etl::impl::common::right_full_kernel(in, size(input), k, size(kernel), out, 0, size(conv));
+    etl::impl::common::left_full_kernel(in, size(input), k, size(kernel), out, first, last);
+    etl::impl::common::right_full_kernel(in, size(input), k, size(kernel), out, first, last);
 
     //Central part is a 'valid' convolution
-    dconv1_valid_micro_kernel(in, size(input), k, size(kernel), out + left, 0, size(conv));
+    dconv1_valid_micro_kernel(in, size(input), k, size(kernel), out + left, first, last);
 }
 
 template <typename I, typename K, typename C, cpp_enable_if((all_double_precision<I, K, C>::value))>
-void conv1_same(const I& input, const K& kernel, C&& conv) {
+void conv1_same(const I& input, const K& kernel, C&& conv, std::size_t first, std::size_t last) {
     std::size_t left = (size(kernel) - 1) / 2;
 
     double* out      = conv.memory_start();
@@ -98,20 +98,20 @@ void conv1_same(const I& input, const K& kernel, C&& conv) {
     const double* k  = kernel.memory_start();
 
     //Process not-'valid' parts of the convolution (left and right)
-    etl::impl::common::left_same_kernel(in, size(input), k, size(kernel), out, 0, size(conv));
-    etl::impl::common::right_same_kernel(in, size(input), k, size(kernel), out, 0, size(conv));
+    etl::impl::common::left_same_kernel(in, size(input), k, size(kernel), out, first, last);
+    etl::impl::common::right_same_kernel(in, size(input), k, size(kernel), out, first, last);
 
     //Central part is a 'valid' convolution
-    dconv1_valid_micro_kernel(in, size(input), k, size(kernel), out + left, 0, size(conv));
+    dconv1_valid_micro_kernel(in, size(input), k, size(kernel), out + left, first, last);
 }
 
 template <typename I, typename K, typename C, cpp_enable_if((all_double_precision<I, K, C>::value))>
-void conv1_valid(const I& input, const K& kernel, C&& conv) {
+void conv1_valid(const I& input, const K& kernel, C&& conv, std::size_t first, std::size_t last) {
     double* out      = conv.memory_start();
     const double* in = input.memory_start();
     const double* k  = kernel.memory_start();
 
-    dconv1_valid_micro_kernel(in, size(input), k, size(kernel), out, 0, size(conv));
+    dconv1_valid_micro_kernel(in, size(input), k, size(kernel), out, first, last);
 }
 
 inline void sconv1_valid_micro_kernel(const float* in, const std::size_t n, const float* kernel, std::size_t m, float* out, std::size_t first, std::size_t last) {
@@ -159,7 +159,7 @@ inline void sconv1_valid_micro_kernel(const float* in, const std::size_t n, cons
 }
 
 template <typename I, typename K, typename C, cpp_enable_if((all_single_precision<I, K, C>::value))>
-void conv1_full(const I& input, const K& kernel, C&& conv) {
+void conv1_full(const I& input, const K& kernel, C&& conv, std::size_t first, std::size_t last) {
     std::size_t left = size(kernel) - 1;
 
     float* out      = conv.memory_start();
@@ -167,15 +167,15 @@ void conv1_full(const I& input, const K& kernel, C&& conv) {
     const float* k  = kernel.memory_start();
 
     //Process not-'valid' parts of the convolution (left and right)
-    etl::impl::common::left_full_kernel(in, size(input), k, size(kernel), out, 0, size(conv));
-    etl::impl::common::right_full_kernel(in, size(input), k, size(kernel), out, 0, size(conv));
+    etl::impl::common::left_full_kernel(in, size(input), k, size(kernel), out, first, last);
+    etl::impl::common::right_full_kernel(in, size(input), k, size(kernel), out, first, last);
 
     //Central part is a 'valid' convolution
-    sconv1_valid_micro_kernel(in, size(input), k, size(kernel), out + left, 0, size(conv));
+    sconv1_valid_micro_kernel(in, size(input), k, size(kernel), out + left, first, last);
 }
 
 template <typename I, typename K, typename C, cpp_enable_if((all_single_precision<I, K, C>::value))>
-void conv1_same(const I& input, const K& kernel, C&& conv) {
+void conv1_same(const I& input, const K& kernel, C&& conv, std::size_t first, std::size_t last) {
     std::size_t left = (size(kernel) - 1) / 2;
 
     float* out      = conv.memory_start();
@@ -183,20 +183,20 @@ void conv1_same(const I& input, const K& kernel, C&& conv) {
     const float* k  = kernel.memory_start();
 
     //Process not-'valid' parts of the convolution (left and right)
-    etl::impl::common::left_same_kernel(in, size(input), k, size(kernel), out, 0, size(conv));
-    etl::impl::common::right_same_kernel(in, size(input), k, size(kernel), out, 0, size(conv));
+    etl::impl::common::left_same_kernel(in, size(input), k, size(kernel), out, first, last);
+    etl::impl::common::right_same_kernel(in, size(input), k, size(kernel), out, first, last);
 
     //Central part is a 'valid' convolution
-    sconv1_valid_micro_kernel(in, size(input), k, size(kernel), out + left, 0, size(conv));
+    sconv1_valid_micro_kernel(in, size(input), k, size(kernel), out + left, first, last);
 }
 
 template <typename I, typename K, typename C, cpp_enable_if((all_single_precision<I, K, C>::value))>
-void conv1_valid(const I& input, const K& kernel, C&& conv) {
+void conv1_valid(const I& input, const K& kernel, C&& conv, std::size_t first, std::size_t last) {
     float* out      = conv.memory_start();
     const float* in = input.memory_start();
     const float* k  = kernel.memory_start();
 
-    sconv1_valid_micro_kernel(in, size(input), k, size(kernel), out, 0, size(conv));
+    sconv1_valid_micro_kernel(in, size(input), k, size(kernel), out, first, last);
 }
 
 inline void dconv2_valid_micro_kernel(const double* in, std::size_t n1, std::size_t n2, const double* kernel, std::size_t m1, std::size_t m2, double* out) {

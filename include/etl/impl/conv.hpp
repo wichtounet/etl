@@ -101,7 +101,9 @@ struct conv1_full_impl {
         if (impl == conv_impl::AVX) {
             impl::avx::conv1_full(input, kernel, conv);
         } else if (impl == conv_impl::SSE) {
-            impl::sse::conv1_full(input, kernel, conv);
+            dispatch_1d(parallel_dispatch, [&](std::size_t first, std::size_t last){
+                impl::sse::conv1_full(input, kernel, conv, first, last);
+            }, 0, size(conv));
         } else if (impl == conv_impl::STD) {
             dispatch_1d(parallel_dispatch, [&](std::size_t first, std::size_t last){
                 impl::standard::conv1_full(input, kernel, conv, first, last);
@@ -123,7 +125,9 @@ struct conv1_same_impl {
         if (impl == conv_impl::AVX) {
             impl::avx::conv1_same(input, kernel, conv);
         } else if (impl == conv_impl::SSE) {
-            impl::sse::conv1_same(input, kernel, conv);
+            dispatch_1d(parallel_dispatch, [&](std::size_t first, std::size_t last){
+                impl::sse::conv1_same(input, kernel, conv, first, last);
+            }, 0, size(conv));
         } else if (impl == conv_impl::STD) {
             dispatch_1d(parallel_dispatch, [&](std::size_t first, std::size_t last){
                 impl::standard::conv1_same(input, kernel, conv, first, last);
@@ -145,7 +149,9 @@ struct conv1_valid_impl {
         if (impl == conv_impl::AVX) {
             impl::avx::conv1_valid(input, kernel, conv);
         } else if (impl == conv_impl::SSE) {
-            impl::sse::conv1_valid(input, kernel, conv);
+            dispatch_1d(parallel_dispatch, [&](std::size_t first, std::size_t last){
+                impl::sse::conv1_valid(input, kernel, conv, first, last);
+            }, 0, size(conv));
         } else if (impl == conv_impl::STD) {
             dispatch_1d(parallel_dispatch, [&](std::size_t first, std::size_t last){
                 impl::standard::conv1_valid(input, kernel, conv, first, last);
