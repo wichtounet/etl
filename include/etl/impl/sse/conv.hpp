@@ -145,8 +145,10 @@ inline void sconv1_valid_micro_kernel(const float* in, const std::size_t n, cons
 
     //Complete the last outputs which are not vectorized
 
-    if (llast - first % 4 != 0) {
-        auto rem = llast - first % 4;
+    auto c = llast - first;
+
+    if (c % 4 != 0) {
+        auto rem = c % 4;
         for (std::size_t i = llast - rem; i < llast; ++i) {
             out[i] = 0.0;
             for (std::size_t k = 0; k < m; k++) {
