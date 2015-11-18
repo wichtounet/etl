@@ -5,16 +5,19 @@
 //  http://opensource.org/licenses/MIT)
 //=======================================================================
 
-#pragma once
-
-#include "etl/config.hpp"
-#include "etl/traits_lite.hpp"
-
-/**
+/*!
+ * \file outer.hpp
+ * \brief Contains implementations of the outer product
+ *
  * Implementations of the outer product:
  *    1. Simple implementation using for loop
  *    2. Implementations using BLAS SGET and DGER
  */
+
+#pragma once
+
+#include "etl/config.hpp"
+#include "etl/traits_lite.hpp"
 
 namespace etl {
 

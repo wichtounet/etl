@@ -5,6 +5,20 @@
 //  http://opensource.org/licenses/MIT)
 //=======================================================================
 
+/*!
+ * \file
+ * \brief Selector for the convolution implementations.
+ *
+ * The functions are responsible for selecting the most efficient
+ * implementation for each case, based on what is available. The selection of
+ * parallel versus serial is also done at this level. The implementation
+ * functions should never be used directly, only functions of this header can
+ * be used directly.
+ *
+ * Ideas for improvements:
+ *  * Parallel dispatching for SSE/AVX implementation is not perfect, it should be done inside the micro kernel main loop
+ */
+
 #pragma once
 
 #include <algorithm>

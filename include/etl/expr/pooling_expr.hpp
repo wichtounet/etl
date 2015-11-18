@@ -6,7 +6,7 @@
 //=======================================================================
 
 /*!
- * \file fft_expr.hpp
+ * \file
  * \brief Contains the pooling expressions.
 */
 

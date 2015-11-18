@@ -667,8 +667,12 @@ auto transpose(const E& value) -> detail::stable_transform_helper<E, transpose_t
     return detail::make_transform_expr<E, transpose_transformer>(value);
 }
 
-// Apply a reduction on an ETL expression (vector,matrix,binary,unary)
-
+/*!
+ * \brief Returns the dot product of the two given expressions.
+ * \param a The left expression
+ * \param b The right expression
+ * \return The dot product of the two expressions
+ */
 template <typename A, typename B>
 value_t<A> dot(const A& a, const B& b) {
     static_assert(is_etl_expr<A>::value && is_etl_expr<B>::value, "etl::dot can only be used on ETL expressions");
@@ -676,6 +680,11 @@ value_t<A> dot(const A& a, const B& b) {
     return detail::dot_impl<A, B>::apply(a, b);
 }
 
+/*!
+ * \brief Returns the sum of all the values contained in the given expression
+ * \param values The expression to reduce
+ * \return The sum of the values of the expression
+ */
 template <typename E>
 value_t<E> sum(E&& values) {
     static_assert(is_etl_expr<E>::value, "etl::sum can only be used on ETL expressions");
@@ -692,12 +701,19 @@ value_t<E> sum(E&& values) {
     return acc;
 }
 
+/*!
+ * \brief Returns the mean of all the values contained in the given expression
+ * \param values The expression to reduce
+ * \return The mean of the values of the expression
+ */
 template <typename E, cpp_enable_if(is_etl_expr<E>::value)>
 value_t<E> mean(E&& values) {
     static_assert(is_etl_expr<E>::value, "etl::mean can only be used on ETL expressions");
 
     return sum(values) / size(values);
 }
+
+namespace detail {
 
 template <typename E>
 struct value_return_type {
@@ -717,8 +733,16 @@ struct value_return_type {
 template <typename E>
 using value_return_t = typename value_return_type<E>::type;
 
+} //end of namespace detail
+
+/*!
+ * \brief Returns the maximum element contained in the expression
+ * When possible, this returns a reference to the element.
+ * \param values The expression to search
+ * \return The maximum element of the expression
+ */
 template <typename E>
-value_return_t<E> max(E&& values) {
+detail::value_return_t<E> max(E&& values) {
     static_assert(is_etl_expr<E>::value, "etl::max can only be used on ETL expressions");
 
     //Reduction force evaluation
@@ -735,8 +759,14 @@ value_return_t<E> max(E&& values) {
     return values[m];
 }
 
+/*!
+ * \brief Returns the minimum element contained in the expression
+ * When possible, this returns a reference to the element.
+ * \param values The expression to search
+ * \return The minimum element of the expression
+ */
 template <typename E>
-value_return_t<E> min(E&& values) {
+detail::value_return_t<E> min(E&& values) {
     static_assert(is_etl_expr<E>::value, "etl::min can only be used on ETL expressions");
 
     //Reduction force evaluation

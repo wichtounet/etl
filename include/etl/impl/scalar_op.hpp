@@ -5,6 +5,11 @@
 //  http://opensource.org/licenses/MIT)
 //=======================================================================
 
+/*!
+ * \file scalar_op.hpp
+ * \brief Implementations of vector/matrix scalar operations.
+ */
+
 #pragma once
 
 #ifdef ETL_BLAS_MODE
@@ -12,10 +17,6 @@
 #endif
 
 #include "etl/config.hpp"
-
-/**
- * Implementations of vector/matrix scalar operations.
- */
 
 namespace etl {
 

@@ -5,6 +5,15 @@
 //  http://opensource.org/licenses/MIT)
 //=======================================================================
 
+/*!
+ * \file dot.hpp
+ * \brief Contains implementations of the dot product
+ *
+ * Implementations of the dot product:
+ *    1. Simple implementation using expressions
+ *    2. Implementations using BLAS SDOT and DDOT
+ */
+
 #pragma once
 
 #ifdef ETL_BLAS_MODE
@@ -13,12 +22,6 @@
 
 #include "etl/config.hpp"
 #include "etl/traits_lite.hpp"
-
-/**
- * Implementations of the dot product:
- *    1. Simple implementation using expressions
- *    2. Implementations using BLAS SDOT and DDOT
- */
 
 namespace etl {
 

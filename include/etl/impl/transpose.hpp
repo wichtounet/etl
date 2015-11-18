@@ -5,6 +5,17 @@
 //  http://opensource.org/licenses/MIT)
 //=======================================================================
 
+/*!
+ * \file transpose.hpp
+ * \brief Implementations of inplace matrix transposition
+ *
+ * Implementations of inplace matrix transposition.
+ *    1. Simple implementation using for loop
+ *    2. Implementations using MKL
+ *
+ * Square and rectangular implementation are separated.
+ */
+
 #pragma once
 
 #include "etl/value_fwd.hpp"
@@ -15,14 +26,6 @@
 #ifdef ETL_MKL_MODE
 #include "mkl_trans.h"
 #endif
-
-/**
- * Implementations of inplace matrix transposition.
- *    1. Simple implementation using for loop
- *    2. Implementations using MKL
- *
- * Square and rectangular implementation are separated.
- */
 
 namespace etl {
 
