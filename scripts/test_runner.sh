@@ -8,8 +8,8 @@ unset ETL_MKL
 unset ETL_BLAS
 
 # Use gcc
-export CXX=g++-4.9.2
-export LD=g++-4.9.2
+export CXX=$ETL_GPP
+export LD=$ETL_GPP
 
 echo "Test 1. GCC (debug default)"
 
