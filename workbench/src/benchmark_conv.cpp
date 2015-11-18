@@ -142,7 +142,7 @@ CPM_DIRECT_SECTION_TWO_PASS_NS_PF("sconv1_valid [conv][conv1]", conv_1d_large_po
     CPM_SECTION_FUNCTOR("default", [](svec& a, svec& b, svec& r){ r = etl::conv_1d_valid(a, b); }),
     CPM_SECTION_FUNCTOR("std", [](svec& a, svec& b, svec& r){ etl::detail::conv1_valid_direct(a, b, r, etl::detail::conv_impl::STD); })
     SSE_SECTION_FUNCTOR("sse", [](svec& a, svec& b, svec& r){ etl::detail::conv1_valid_direct(a, b, r, etl::detail::conv_impl::SSE); })
-    AVX_SECTION_FUNCTOR("avx", [](svec& a, svec& b, svec& r){ etl::impl::avx::conv1_valid(a, b, r); })
+    SSE_SECTION_FUNCTOR("avx", [](svec& a, svec& b, svec& r){ etl::detail::conv1_valid_direct(a, b, r, etl::detail::conv_impl::AVX); })
 )
 
 CPM_DIRECT_SECTION_TWO_PASS_NS_PF("dconv1_valid [conv][conv1]", conv_1d_large_policy,
@@ -151,7 +151,7 @@ CPM_DIRECT_SECTION_TWO_PASS_NS_PF("dconv1_valid [conv][conv1]", conv_1d_large_po
     CPM_SECTION_FUNCTOR("default", [](dvec& a, dvec& b, dvec& r){ r = etl::conv_1d_valid(a, b); }),
     CPM_SECTION_FUNCTOR("std", [](dvec& a, dvec& b, dvec& r){ etl::detail::conv1_valid_direct(a, b, r, etl::detail::conv_impl::STD); })
     SSE_SECTION_FUNCTOR("sse", [](dvec& a, dvec& b, dvec& r){ etl::detail::conv1_valid_direct(a, b, r, etl::detail::conv_impl::SSE); })
-    AVX_SECTION_FUNCTOR("avx", [](dvec& a, dvec& b, dvec& r){ etl::impl::avx::conv1_valid(a, b, r); })
+    SSE_SECTION_FUNCTOR("avx", [](dvec& a, dvec& b, dvec& r){ etl::detail::conv1_valid_direct(a, b, r, etl::detail::conv_impl::AVX); })
 )
 
 CPM_DIRECT_SECTION_TWO_PASS_NS_PF("sconv1_same [conv][conv1]", conv_1d_large_policy,
@@ -160,7 +160,7 @@ CPM_DIRECT_SECTION_TWO_PASS_NS_PF("sconv1_same [conv][conv1]", conv_1d_large_pol
     CPM_SECTION_FUNCTOR("default", [](svec& a, svec& b, svec& r){ r = etl::conv_1d_same(a, b); }),
     CPM_SECTION_FUNCTOR("std", [](svec& a, svec& b, svec& r){ etl::detail::conv1_same_direct(a, b, r, etl::detail::conv_impl::STD); })
     SSE_SECTION_FUNCTOR("sse", [](svec& a, svec& b, svec& r){ etl::detail::conv1_same_direct(a, b, r, etl::detail::conv_impl::SSE); })
-    AVX_SECTION_FUNCTOR("avx", [](svec& a, svec& b, svec& r){ etl::impl::avx::conv1_same(a, b, r); })
+    SSE_SECTION_FUNCTOR("avx", [](svec& a, svec& b, svec& r){ etl::detail::conv1_same_direct(a, b, r, etl::detail::conv_impl::AVX); })
 )
 
 CPM_DIRECT_SECTION_TWO_PASS_NS_PF("dconv1_same [conv][conv1]", conv_1d_large_policy,
@@ -169,7 +169,7 @@ CPM_DIRECT_SECTION_TWO_PASS_NS_PF("dconv1_same [conv][conv1]", conv_1d_large_pol
     CPM_SECTION_FUNCTOR("default", [](dvec& a, dvec& b, dvec& r){ r = etl::conv_1d_same(a, b); }),
     CPM_SECTION_FUNCTOR("std", [](dvec& a, dvec& b, dvec& r){ etl::detail::conv1_same_direct(a, b, r, etl::detail::conv_impl::STD); })
     SSE_SECTION_FUNCTOR("sse", [](dvec& a, dvec& b, dvec& r){ etl::detail::conv1_same_direct(a, b, r, etl::detail::conv_impl::SSE); })
-    AVX_SECTION_FUNCTOR("avx", [](dvec& a, dvec& b, dvec& r){ etl::impl::avx::conv1_same(a, b, r); })
+    SSE_SECTION_FUNCTOR("avx", [](dvec& a, dvec& b, dvec& r){ etl::detail::conv1_same_direct(a, b, r, etl::detail::conv_impl::AVX); })
 )
 
 CPM_DIRECT_SECTION_TWO_PASS_NS_PF("sconv1_full [conv][conv1]", conv_1d_large_policy,
@@ -178,7 +178,7 @@ CPM_DIRECT_SECTION_TWO_PASS_NS_PF("sconv1_full [conv][conv1]", conv_1d_large_pol
     CPM_SECTION_FUNCTOR("default", [](svec& a, svec& b, svec& r){ r = etl::conv_1d_full(a, b); }),
     CPM_SECTION_FUNCTOR("std", [](svec& a, svec& b, svec& r){ etl::detail::conv1_full_direct(a, b, r, etl::detail::conv_impl::STD); })
     SSE_SECTION_FUNCTOR("sse", [](svec& a, svec& b, svec& r){ etl::detail::conv1_full_direct(a, b, r, etl::detail::conv_impl::SSE); })
-    AVX_SECTION_FUNCTOR("avx", [](svec& a, svec& b, svec& r){ etl::impl::avx::conv1_full(a, b, r); })
+    SSE_SECTION_FUNCTOR("avx", [](svec& a, svec& b, svec& r){ etl::detail::conv1_full_direct(a, b, r, etl::detail::conv_impl::AVX); })
     ,CPM_SECTION_FUNCTOR("fft", [](svec& a, svec& b, svec& r){ r = etl::fft_conv_1d_full(a, b); })
      MC_SECTION_FUNCTOR("mmul", [](svec& a, svec& b, svec& r){ etl::impl::reduc::conv1_full(a, b, r); })
 )
@@ -189,7 +189,7 @@ CPM_DIRECT_SECTION_TWO_PASS_NS_PF("dconv1_full [conv][conv1]", conv_1d_large_pol
     CPM_SECTION_FUNCTOR("default", [](dvec& a, dvec& b, dvec& r){ r = etl::conv_1d_full(a, b); }),
     CPM_SECTION_FUNCTOR("std", [](dvec& a, dvec& b, dvec& r){ etl::detail::conv1_full_direct(a, b, r, etl::detail::conv_impl::STD); })
     SSE_SECTION_FUNCTOR("sse", [](dvec& a, dvec& b, dvec& r){ etl::detail::conv1_full_direct(a, b, r, etl::detail::conv_impl::SSE); })
-    AVX_SECTION_FUNCTOR("avx", [](dvec& a, dvec& b, dvec& r){ etl::impl::avx::conv1_full(a, b, r); })
+    SSE_SECTION_FUNCTOR("avx", [](dvec& a, dvec& b, dvec& r){ etl::detail::conv1_full_direct(a, b, r, etl::detail::conv_impl::AVX); })
     ,CPM_SECTION_FUNCTOR("fft", [](dvec& a, dvec& b, dvec& r){ r = etl::fft_conv_1d_full(a, b); })
      MC_SECTION_FUNCTOR("mmul", [](dvec& a, dvec& b, dvec& r){ etl::impl::reduc::conv1_full(a, b, r); })
 )

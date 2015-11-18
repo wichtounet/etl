@@ -81,8 +81,6 @@ inline void dispatch_1d(bool p, Functor&& functor, std::size_t first, std::size_
         }
 
         functor(first + (threads - 1) * batch, last);
-
-        //pool.wait();
     } else {
         functor(first, last);
     }
@@ -99,7 +97,9 @@ struct conv1_full_impl {
         bool parallel_dispatch = select_parallel(input, kernel, conv);
 
         if (impl == conv_impl::AVX) {
-            impl::avx::conv1_full(input, kernel, conv);
+            dispatch_1d(parallel_dispatch, [&](std::size_t first, std::size_t last){
+                impl::avx::conv1_full(input, kernel, conv, first, last);
+            }, 0, size(conv));
         } else if (impl == conv_impl::SSE) {
             dispatch_1d(parallel_dispatch, [&](std::size_t first, std::size_t last){
                 impl::sse::conv1_full(input, kernel, conv, first, last);
@@ -123,7 +123,9 @@ struct conv1_same_impl {
         bool parallel_dispatch = select_parallel(input, kernel, conv);
 
         if (impl == conv_impl::AVX) {
-            impl::avx::conv1_same(input, kernel, conv);
+            dispatch_1d(parallel_dispatch, [&](std::size_t first, std::size_t last){
+                impl::avx::conv1_same(input, kernel, conv, first, last);
+            }, 0, size(conv));
         } else if (impl == conv_impl::SSE) {
             dispatch_1d(parallel_dispatch, [&](std::size_t first, std::size_t last){
                 impl::sse::conv1_same(input, kernel, conv, first, last);
@@ -147,7 +149,9 @@ struct conv1_valid_impl {
         bool parallel_dispatch = select_parallel(input, kernel, conv);
 
         if (impl == conv_impl::AVX) {
-            impl::avx::conv1_valid(input, kernel, conv);
+            dispatch_1d(parallel_dispatch, [&](std::size_t first, std::size_t last){
+                impl::avx::conv1_valid(input, kernel, conv, first, last);
+            }, 0, size(conv));
         } else if (impl == conv_impl::SSE) {
             dispatch_1d(parallel_dispatch, [&](std::size_t first, std::size_t last){
                 impl::sse::conv1_valid(input, kernel, conv, first, last);
