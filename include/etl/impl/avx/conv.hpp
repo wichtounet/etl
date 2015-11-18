@@ -562,33 +562,33 @@ void conv2_full(const I& input, const K& kernel, C&& conv) {
 #else
 
 template <typename I, typename K, typename C>
-void conv1_full(const I& /*input*/, const K& /*kernel*/, C&& /*conv*/) {
-    cpp_unreachable("AVX not available/enable");
+void conv1_full(const I& /*input*/, const K& /*kernel*/, C&& /*conv*/, std::size_t /*first*/, std::size_t /*last*/) {
+    cpp_unreachable("AVX not available/enabled");
 }
 
 template <typename I, typename K, typename C>
-void conv1_same(const I& /*input*/, const K& /*kernel*/, C&& /*conv*/) {
-    cpp_unreachable("AVX not available/enable");
+void conv1_same(const I& /*input*/, const K& /*kernel*/, C&& /*conv*/, std::size_t /*first*/, std::size_t /*last*/) {
+    cpp_unreachable("AVX not available/enabled");
 }
 
 template <typename I, typename K, typename C>
-void conv1_valid(const I& /*input*/, const K& /*kernel*/, C&& /*conv*/) {
-    cpp_unreachable("AVX not available/enable");
+void conv1_valid(const I& /*input*/, const K& /*kernel*/, C&& /*conv*/, std::size_t /*first*/, std::size_t /*last*/) {
+    cpp_unreachable("AVX not available/enabled");
 }
 
 template <typename I, typename K, typename C>
-void conv2_valid(const I& /*input*/, const K& /*kernel*/, C&& /*conv*/) {
-    cpp_unreachable("AVX not available/enable");
+void conv2_valid(const I& /*input*/, const K& /*kernel*/, C&& /*conv*/, std::size_t /*first*/, std::size_t /*last*/) {
+    cpp_unreachable("AVX not available/enabled");
 }
 
 template <typename I, typename K, typename C>
-void conv2_same(const I& /*input*/, const K& /*kernel*/, C&& /*conv*/) {
-    cpp_unreachable("AVX not available/enable");
+void conv2_same(const I& /*input*/, const K& /*kernel*/, C&& /*conv*/, std::size_t /*first*/, std::size_t /*last*/) {
+    cpp_unreachable("AVX not available/enabled");
 }
 
 template <typename I, typename K, typename C>
-void conv2_full(const I& /*input*/, const K& /*kernel*/, C&& /*conv*/) {
-    cpp_unreachable("AVX not available/enable");
+void conv2_full(const I& /*input*/, const K& /*kernel*/, C&& /*conv*/, std::size_t /*first*/, std::size_t /*last*/) {
+    cpp_unreachable("AVX not available/enabled");
 }
 
 #endif
