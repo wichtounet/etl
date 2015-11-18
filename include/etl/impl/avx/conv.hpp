@@ -577,17 +577,17 @@ void conv1_valid(const I& /*input*/, const K& /*kernel*/, C&& /*conv*/, std::siz
 }
 
 template <typename I, typename K, typename C>
-void conv2_valid(const I& /*input*/, const K& /*kernel*/, C&& /*conv*/, std::size_t /*first*/, std::size_t /*last*/) {
+void conv2_valid(const I& /*input*/, const K& /*kernel*/, C&& /*conv*/){
     cpp_unreachable("AVX not available/enabled");
 }
 
 template <typename I, typename K, typename C>
-void conv2_same(const I& /*input*/, const K& /*kernel*/, C&& /*conv*/, std::size_t /*first*/, std::size_t /*last*/) {
+void conv2_same(const I& /*input*/, const K& /*kernel*/, C&& /*conv*/){
     cpp_unreachable("AVX not available/enabled");
 }
 
 template <typename I, typename K, typename C>
-void conv2_full(const I& /*input*/, const K& /*kernel*/, C&& /*conv*/, std::size_t /*first*/, std::size_t /*last*/) {
+void conv2_full(const I& /*input*/, const K& /*kernel*/, C&& /*conv*/){
     cpp_unreachable("AVX not available/enabled");
 }
 
