@@ -11,8 +11,10 @@ namespace etl {
 
 template <typename T>
 struct complex {
-    T real;
-    T imag;
+    using value_type = T;
+
+    value_type real;
+    value_type imag;
 
     constexpr complex(const T& re = T(), const T& im = T())
             : real(re), imag(im) {}
@@ -152,5 +154,28 @@ template <typename T>
 inline complex<T> conj(const complex<T>& rhs) {
     return {rhs.real, -rhs.imag};
 }
+
+//Common API to etl::complex and std::complex
+
+template<typename T>
+inline T get_imag(const std::complex<T>& c){
+    return c.imag();
+}
+
+template<typename T>
+inline T get_imag(const etl::complex<T>& c){
+    return c.imag;
+}
+
+template<typename T>
+inline T get_real(const std::complex<T>& c){
+    return c.real();
+}
+
+template<typename T>
+inline T get_real(const etl::complex<T>& c){
+    return c.real;
+}
+
 
 } //end of namespace etl
