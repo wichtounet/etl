@@ -8,6 +8,7 @@
 #include "test.hpp"
 
 #define CZ(a, b) std::complex<Z>(a, b)
+#define ECZ(a, b) etl::complex<Z>(a, b)
 
 TEST_CASE("etl_complex/1", "[complex]") {
     REQUIRE(sizeof(etl::complex<float>) == sizeof(std::complex<float>));
@@ -220,4 +221,34 @@ TEMPLATE_TEST_CASE_2("complex/12", "[mul][complex]", Z, float, double) {
     REQUIRE(c(0).imag() == Approx(Z(-7.9)));
     REQUIRE(c(1).real() == Approx(Z(9.8)));
     REQUIRE(c(1).imag() == Approx(Z(6.2)));
+}
+
+TEMPLATE_TEST_CASE_2("complex/real/1", "[complex]", Z, float, double) {
+    etl::fast_matrix<std::complex<Z>, 3, 2> a = {CZ(1, 1), CZ(-2, -2), CZ(2, 3), CZ(0, 0), CZ(1, 1), CZ(2, 2)};
+
+    etl::fast_matrix<Z, 3, 2> b;
+
+    b = etl::real(a);
+
+    REQUIRE(b(0,0) == 1);
+    REQUIRE(b(0,1) == -2);
+    REQUIRE(b(1,0) == 2);
+    REQUIRE(b(1,1) == 0);
+    REQUIRE(b(2,0) == 1);
+    REQUIRE(b(2,1) == 2);
+}
+
+TEMPLATE_TEST_CASE_2("complex/real/2", "[complex]", Z, float, double) {
+    etl::fast_matrix<etl::complex<Z>, 3, 2> a = {ECZ(1, 1), ECZ(-2, -2), ECZ(2, 3), ECZ(0, 0), ECZ(1, 1), ECZ(2, 2)};
+
+    etl::fast_matrix<Z, 3, 2> b;
+
+    b = etl::real(a);
+
+    REQUIRE(b(0,0) == 1);
+    REQUIRE(b(0,1) == -2);
+    REQUIRE(b(1,0) == 2);
+    REQUIRE(b(1,1) == 0);
+    REQUIRE(b(2,0) == 1);
+    REQUIRE(b(2,1) == 2);
 }

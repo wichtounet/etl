@@ -285,6 +285,19 @@ struct sinh_unary_op {
 };
 
 template <typename T>
+struct real_unary_op {
+    static constexpr const bool vectorizable = false;
+
+    static constexpr value_t<T> apply(const T& x) noexcept {
+        return get_real(x);
+    }
+
+    static std::string desc() noexcept {
+        return "real";
+    }
+};
+
+template <typename T>
 struct relu_derivative_op {
     static constexpr const bool vectorizable = false;
 
