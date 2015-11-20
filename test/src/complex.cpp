@@ -25,7 +25,7 @@ TEST_CASE("etl_complex/1", "[complex]") {
     REQUIRE(reinterpret_cast<double(&)[2]>(b)[1] == double(4.1));
 }
 
-TEMPLATE_TEST_CASE_2("complex/1", "[complex]", Z, float, double) {
+TEMPLATE_TEST_CASE_2("complex/std/1", "[complex]", Z, float, double) {
     etl::fast_vector<std::complex<Z>, 3> a = {-1.0, 2.0, 5.0};
 
     REQUIRE(a[0].real() == Approx(Z(-1.0)));
@@ -60,7 +60,7 @@ TEMPLATE_TEST_CASE_2("complex/1", "[complex]", Z, float, double) {
     REQUIRE(a[2].imag() == Approx(Z(-2.0)));
 }
 
-TEMPLATE_TEST_CASE_2("complex/2", "[complex]", Z, float, double) {
+TEMPLATE_TEST_CASE_2("complex/std/2", "[complex]", Z, float, double) {
     etl::fast_vector<std::complex<Z>, 3> a = {std::complex<Z>(1.0, 2.0), std::complex<Z>(-1.0, -2.0), std::complex<Z>(0.0, 0.5)};
     etl::fast_vector<std::complex<Z>, 3> b = {std::complex<Z>(0.33, 0.66), std::complex<Z>(-1.5, 0.0), std::complex<Z>(0.5, 0.75)};
     etl::fast_vector<std::complex<Z>, 3> c;
@@ -72,7 +72,7 @@ TEMPLATE_TEST_CASE_2("complex/2", "[complex]", Z, float, double) {
     REQUIRE(c[2] == a[2] * b[2]);
 }
 
-TEMPLATE_TEST_CASE_2("complex/3", "[complex]", Z, float, double) {
+TEMPLATE_TEST_CASE_2("complex/std/3", "[complex]", Z, float, double) {
     etl::fast_vector<std::complex<Z>, 3> a = {std::complex<Z>(1.0, 2.0), std::complex<Z>(-1.0, -2.0), std::complex<Z>(0.0, 0.5)};
     etl::fast_vector<std::complex<Z>, 3> b = {std::complex<Z>(0.33, 0.66), std::complex<Z>(-1.5, 0.0), std::complex<Z>(0.5, 0.75)};
     etl::fast_vector<std::complex<Z>, 3> c;
@@ -87,7 +87,7 @@ TEMPLATE_TEST_CASE_2("complex/3", "[complex]", Z, float, double) {
     REQUIRE(c[2].imag() == Approx(Z(1.25)));
 }
 
-TEMPLATE_TEST_CASE_2("complex/4", "[complex]", Z, float, double) {
+TEMPLATE_TEST_CASE_2("complex/std/4", "[complex]", Z, float, double) {
     etl::fast_vector<std::complex<Z>, 3> a = {std::complex<Z>(1.0, 2.0), std::complex<Z>(-1.0, -2.0), std::complex<Z>(0.0, 0.5)};
     etl::fast_vector<std::complex<Z>, 3> b = {std::complex<Z>(0.33, 0.66), std::complex<Z>(-1.5, 0.0), std::complex<Z>(0.5, 0.75)};
     etl::fast_vector<std::complex<Z>, 3> c;
@@ -102,7 +102,7 @@ TEMPLATE_TEST_CASE_2("complex/4", "[complex]", Z, float, double) {
     REQUIRE(c[2].imag() == Approx(Z(-0.25)));
 }
 
-TEMPLATE_TEST_CASE_2("complex/5", "[complex]", Z, float, double) {
+TEMPLATE_TEST_CASE_2("complex/std/5", "[complex]", Z, float, double) {
     etl::fast_vector<std::complex<Z>, 3> a = {std::complex<Z>(1.0, 2.0), std::complex<Z>(-1.0, -2.0), std::complex<Z>(0.0, 0.5)};
     etl::fast_vector<std::complex<Z>, 3> b = {std::complex<Z>(0.33, 0.66), std::complex<Z>(-1.5, 0.0), std::complex<Z>(0.5, 0.75)};
     etl::fast_vector<std::complex<Z>, 3> c;
@@ -117,7 +117,7 @@ TEMPLATE_TEST_CASE_2("complex/5", "[complex]", Z, float, double) {
     REQUIRE(c[2].imag() == Approx(Z(0.25)));
 }
 
-TEMPLATE_TEST_CASE_2("complex/6", "[complex]", Z, float, double) {
+TEMPLATE_TEST_CASE_2("complex/std/6", "[complex]", Z, float, double) {
     etl::fast_vector<std::complex<Z>, 3> a = {std::complex<Z>(1.0, 2.0), std::complex<Z>(-1.0, -2.0), std::complex<Z>(0.0, 0.5)};
     etl::fast_vector<std::complex<Z>, 3> b = {std::complex<Z>(0.33, 0.66), std::complex<Z>(-1.5, 0.0), std::complex<Z>(0.5, 0.75)};
     etl::fast_vector<std::complex<Z>, 3> c;
@@ -132,7 +132,7 @@ TEMPLATE_TEST_CASE_2("complex/6", "[complex]", Z, float, double) {
     REQUIRE(c[2].imag() == Approx(Z(0.3076923)));
 }
 
-TEMPLATE_TEST_CASE_2("complex/7", "[complex]", Z, float, double) {
+TEMPLATE_TEST_CASE_2("complex/std/7", "[complex]", Z, float, double) {
     etl::fast_vector<std::complex<Z>, 1024> a;
     etl::fast_vector<std::complex<Z>, 1024> b;
     etl::fast_vector<std::complex<Z>, 1024> c;
@@ -150,7 +150,7 @@ TEMPLATE_TEST_CASE_2("complex/7", "[complex]", Z, float, double) {
     }
 }
 
-TEMPLATE_TEST_CASE_2("complex/8", "[complex]", Z, float, double) {
+TEMPLATE_TEST_CASE_2("complex/std/8", "[complex]", Z, float, double) {
     etl::fast_vector<std::complex<Z>, 1024> a;
     etl::fast_vector<std::complex<Z>, 1024> b;
     etl::fast_vector<std::complex<Z>, 1024> c;
@@ -168,7 +168,7 @@ TEMPLATE_TEST_CASE_2("complex/8", "[complex]", Z, float, double) {
     }
 }
 
-TEMPLATE_TEST_CASE_2("complex/9", "[complex]", Z, float, double) {
+TEMPLATE_TEST_CASE_2("complex/std/9", "[complex]", Z, float, double) {
     etl::fast_matrix<std::complex<Z>, 1, 3> a = {std::complex<Z>(1.0, 2.0), std::complex<Z>(-1.0, -2.0), std::complex<Z>(0.0, 0.5)};
     etl::fast_matrix<std::complex<Z>, 1, 3> b = {std::complex<Z>(0.33, 0.66), std::complex<Z>(-1.5, 0.0), std::complex<Z>(0.5, 0.75)};
     etl::fast_matrix<std::complex<Z>, 1, 3> c;
@@ -180,7 +180,7 @@ TEMPLATE_TEST_CASE_2("complex/9", "[complex]", Z, float, double) {
     REQUIRE(c(0)[2] == a(0)[2] * b(0)[2]);
 }
 
-TEMPLATE_TEST_CASE_2("complex/10", "[mul][complex]", Z, float, double) {
+TEMPLATE_TEST_CASE_2("complex/std/10", "[mul][complex]", Z, float, double) {
     etl::fast_matrix<std::complex<Z>, 2, 3> a = {CZ(1, 1), CZ(-2, -2), CZ(2, 3), CZ(0, 0), CZ(1, 1), CZ(2, 2)};
     etl::fast_matrix<std::complex<Z>, 3, 2> b = {CZ(1, 1), CZ(2, 2), CZ(3, 2), CZ(1, 0), CZ(1, -1), CZ(2, 2)};
     etl::fast_matrix<std::complex<Z>, 2, 2> c;
@@ -197,7 +197,7 @@ TEMPLATE_TEST_CASE_2("complex/10", "[mul][complex]", Z, float, double) {
     REQUIRE(c(1, 1).imag() == 9.0);
 }
 
-TEMPLATE_TEST_CASE_2("complex/11", "[mul][complex]", Z, float, double) {
+TEMPLATE_TEST_CASE_2("complex/std/11", "[mul][complex]", Z, float, double) {
     etl::fast_matrix<std::complex<Z>, 2, 3> a = {CZ(1, 1), CZ(-2, -2), CZ(2, 3), CZ(0, 0), CZ(1, 1), CZ(2, 2)};
     etl::fast_vector<std::complex<Z>, 3> b    = {CZ(1, 1), CZ(-3, -3), CZ(5, 0.1)};
     etl::fast_matrix<std::complex<Z>, 2> c;
@@ -210,7 +210,7 @@ TEMPLATE_TEST_CASE_2("complex/11", "[mul][complex]", Z, float, double) {
     REQUIRE(c(1).imag() == Approx(Z(4.2)));
 }
 
-TEMPLATE_TEST_CASE_2("complex/12", "[mul][complex]", Z, float, double) {
+TEMPLATE_TEST_CASE_2("complex/std/12", "[mul][complex]", Z, float, double) {
     etl::fast_matrix<std::complex<Z>, 3, 2> a = {CZ(1, 1), CZ(-2, -2), CZ(2, 3), CZ(0, 0), CZ(1, 1), CZ(2, 2)};
     etl::fast_vector<std::complex<Z>, 3> b    = {CZ(1, 1), CZ(-3, -3), CZ(5, 0.1)};
     etl::fast_matrix<std::complex<Z>, 2> c;
@@ -221,6 +221,44 @@ TEMPLATE_TEST_CASE_2("complex/12", "[mul][complex]", Z, float, double) {
     REQUIRE(c(0).imag() == Approx(Z(-7.9)));
     REQUIRE(c(1).real() == Approx(Z(9.8)));
     REQUIRE(c(1).imag() == Approx(Z(6.2)));
+}
+
+TEMPLATE_TEST_CASE_2("complex/etl/9", "[complex]", Z, float, double) {
+    etl::fast_matrix<etl::complex<Z>, 1, 3> a = {etl::complex<Z>(1.0, 2.0), etl::complex<Z>(-1.0, -2.0), etl::complex<Z>(0.0, 0.5)};
+    etl::fast_matrix<etl::complex<Z>, 1, 3> b = {etl::complex<Z>(0.33, 0.66), etl::complex<Z>(-1.5, 0.0), etl::complex<Z>(0.5, 0.75)};
+    etl::fast_matrix<etl::complex<Z>, 1, 3> c;
+
+    c(0) = a(0) >> b(0);
+
+    REQUIRE(c(0)[0] == a(0)[0] * b(0)[0]);
+    REQUIRE(c(0)[1] == a(0)[1] * b(0)[1]);
+    REQUIRE(c(0)[2] == a(0)[2] * b(0)[2]);
+}
+
+TEMPLATE_TEST_CASE_2("complex/etl/11", "[mul][complex]", Z, float, double) {
+    etl::fast_matrix<etl::complex<Z>, 2, 3> a = {ECZ(1, 1), ECZ(-2, -2), ECZ(2, 3), ECZ(0, 0), ECZ(1, 1), ECZ(2, 2)};
+    etl::fast_vector<etl::complex<Z>, 3> b    = {ECZ(1, 1), ECZ(-3, -3), ECZ(5, 0.1)};
+    etl::fast_matrix<etl::complex<Z>, 2> c;
+
+    c = a * b;
+
+    REQUIRE(c(0).real == Approx(Z(9.7)));
+    REQUIRE(c(0).imag == Approx(Z(29.2)));
+    REQUIRE(c(1).real == Approx(Z(9.8)));
+    REQUIRE(c(1).imag == Approx(Z(4.2)));
+}
+
+TEMPLATE_TEST_CASE_2("complex/etl/12", "[mul][complex]", Z, float, double) {
+    etl::fast_matrix<etl::complex<Z>, 3, 2> a = {ECZ(1, 1), ECZ(-2, -2), ECZ(2, 3), ECZ(0, 0), ECZ(1, 1), ECZ(2, 2)};
+    etl::fast_vector<etl::complex<Z>, 3> b    = {ECZ(1, 1), ECZ(-3, -3), ECZ(5, 0.1)};
+    etl::fast_matrix<etl::complex<Z>, 2> c;
+
+    c = b * a;
+
+    REQUIRE(c(0).real == Approx(Z(7.9)));
+    REQUIRE(c(0).imag == Approx(Z(-7.9)));
+    REQUIRE(c(1).real == Approx(Z(9.8)));
+    REQUIRE(c(1).imag == Approx(Z(6.2)));
 }
 
 TEMPLATE_TEST_CASE_2("complex/real/1", "[complex]", Z, float, double) {
