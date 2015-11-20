@@ -73,6 +73,22 @@ struct expression_able {
     ETL_DEBUG_AUTO_TRICK auto transpose() {
         return etl::transpose(as_derived());
     }
+
+    /*!
+     * \brief Extract the real part of a complex expression
+     * \return A new expression representing only real part of this expression.
+     */
+    ETL_DEBUG_AUTO_TRICK auto real() {
+        return etl::real(as_derived());
+    }
+
+    /*!
+     * \brief Extract the imag part of a complex expression
+     * \return A new expression representing only imag part of this expression.
+     */
+    ETL_DEBUG_AUTO_TRICK auto imag() {
+        return etl::imag(as_derived());
+    }
 };
 
 } //end of namespace etl
