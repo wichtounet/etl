@@ -48,6 +48,11 @@ inline void add_mul(double& c, double a, double b) {
     c += a * b;
 }
 
+template <typename T>
+inline void add_mul(etl::complex<T>& c, etl::complex<T> a, etl::complex<T> b) {
+    c += a * b;
+}
+
 //Note: For some reason, compilers have a real hard time
 //inlining/vectorizing std::complex operations
 //This helper improves performance by more than 50% on some cases
