@@ -13,6 +13,7 @@
 #include "etl/order.hpp"
 #include "etl/config.hpp"
 #include "etl/vectorization.hpp"
+#include "etl/complex.hpp"
 
 // The operators
 #include "etl/op/scalar.hpp"
