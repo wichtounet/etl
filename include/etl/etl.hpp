@@ -52,6 +52,9 @@
 #include "etl/builder/fft_expression_builder.hpp"
 #include "etl/builder/pooling_expression_builder.hpp"
 
+//Some tests
+#include "etl/globals.hpp"
+
 // The evaluator and optimizer
 #include "etl/evaluator.hpp"
 #include "etl/optimizer.hpp"

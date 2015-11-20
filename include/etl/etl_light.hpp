@@ -42,6 +42,9 @@
 #include "etl/evaluator.hpp"
 #include "etl/optimizer.hpp"
 
+//Some tests
+#include "etl/globals.hpp"
+
 // The value classes implementation
 #include "etl/fast.hpp"
 #include "etl/dyn.hpp"
