@@ -25,3 +25,12 @@
         INTERNAL_CATCH_TEMPLATE_TEST_CASE_SECTION(T2)              \
     }                                                              \
     INTERNAL_CATCH_TEMPLATE_TEST_CASE_DEFN(T)
+
+#define TEMPLATE_TEST_CASE_4(name, description, T, T1, T2, T3, T4) \
+    INTERNAL_CATCH_TEMPLATE_TEST_CASE_DECL(name, description, T) { \
+        INTERNAL_CATCH_TEMPLATE_TEST_CASE_SECTION(T1)              \
+        INTERNAL_CATCH_TEMPLATE_TEST_CASE_SECTION(T2)              \
+        INTERNAL_CATCH_TEMPLATE_TEST_CASE_SECTION(T3)              \
+        INTERNAL_CATCH_TEMPLATE_TEST_CASE_SECTION(T4)              \
+    }                                                              \
+    INTERNAL_CATCH_TEMPLATE_TEST_CASE_DEFN(T)
