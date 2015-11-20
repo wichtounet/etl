@@ -89,6 +89,14 @@ struct expression_able {
     ETL_DEBUG_AUTO_TRICK auto imag() {
         return etl::imag(as_derived());
     }
+
+    /*!
+     * \brief Returns a new expression containg the conjugate of each value of the expression.
+     * \return A new expression containing the conjugate of each complex value of the expression.
+     */
+    ETL_DEBUG_AUTO_TRICK auto conj() {
+        return etl::conj(as_derived());
+    }
 };
 
 } //end of namespace etl

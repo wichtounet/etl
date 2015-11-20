@@ -360,6 +360,13 @@ auto imag(E&& value) -> unary_expr<typename value_t<E>::value_type, detail::buil
 }
 
 template <typename E>
+auto conj(E&& value) -> unary_expr<value_t<E>, detail::build_type<E>, conj_unary_op<value_t<E>>> {
+    static_assert(is_etl_expr<E>::value, "etl::conj can only be used on ETL expressions");
+    static_assert(is_complex_t<value_t<E>>::value, "etl::conj can only be used on ETL expressions containing complex numbers");
+    return unary_expr<value_t<E>, detail::build_type<E>, conj_unary_op<value_t<E>>>{value};
+}
+
+template <typename E>
 auto uniform_noise(E&& value) -> detail::unary_helper<E, uniform_noise_unary_op> {
     static_assert(is_etl_expr<E>::value, "etl::uniform_noise can only be used on ETL expressions");
     return detail::unary_helper<E, uniform_noise_unary_op>{value};

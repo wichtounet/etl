@@ -311,6 +311,19 @@ struct imag_unary_op {
 };
 
 template <typename T>
+struct conj_unary_op {
+    static constexpr const bool vectorizable = false;
+
+    static constexpr T apply(const T& x) noexcept {
+        return get_conj(x);
+    }
+
+    static std::string desc() noexcept {
+        return "conj";
+    }
+};
+
+template <typename T>
 struct relu_derivative_op {
     static constexpr const bool vectorizable = false;
 

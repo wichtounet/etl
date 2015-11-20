@@ -198,5 +198,15 @@ inline T get_real(const etl::complex<T>& c){
     return c.real;
 }
 
+template<typename T>
+inline std::complex<T> get_conj(const std::complex<T>& c){
+    return std::conj(c);
+}
+
+template<typename T>
+inline etl::complex<T> get_conj(const etl::complex<T>& c){
+    return {c.real, -c.imag};
+}
+
 
 } //end of namespace etl
