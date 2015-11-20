@@ -100,6 +100,9 @@ template <typename T>
 struct is_complex_t<std::complex<T>> : std::true_type {};
 
 template <typename T>
+struct is_complex_t<etl::complex<T>> : std::true_type {};
+
+template <typename T>
 struct is_complex_single_t : std::is_same<T, std::complex<float>> {};
 
 template <typename T>
