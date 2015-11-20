@@ -353,6 +353,13 @@ auto real(E&& value) -> unary_expr<typename value_t<E>::value_type, detail::buil
 }
 
 template <typename E>
+auto imag(E&& value) -> unary_expr<typename value_t<E>::value_type, detail::build_type<E>, imag_unary_op<value_t<E>>> {
+    static_assert(is_etl_expr<E>::value, "etl::imag can only be used on ETL expressions");
+    static_assert(is_complex_t<value_t<E>>::value, "etl::imag can only be used on ETL expressions containing complex numbers");
+    return unary_expr<typename value_t<E>::value_type, detail::build_type<E>, imag_unary_op<value_t<E>>>{value};
+}
+
+template <typename E>
 auto uniform_noise(E&& value) -> detail::unary_helper<E, uniform_noise_unary_op> {
     static_assert(is_etl_expr<E>::value, "etl::uniform_noise can only be used on ETL expressions");
     return detail::unary_helper<E, uniform_noise_unary_op>{value};

@@ -252,3 +252,33 @@ TEMPLATE_TEST_CASE_2("complex/real/2", "[complex]", Z, float, double) {
     REQUIRE(b(2,0) == 1);
     REQUIRE(b(2,1) == 2);
 }
+
+TEMPLATE_TEST_CASE_2("complex/imag/1", "[complex]", Z, float, double) {
+    etl::fast_matrix<std::complex<Z>, 3, 2> a = {CZ(1, 1), CZ(-2, -2), CZ(2, 3), CZ(0, 0), CZ(1, 1), CZ(2, 2)};
+
+    etl::fast_matrix<Z, 3, 2> b;
+
+    b = etl::imag(a);
+
+    REQUIRE(b(0,0) == 1);
+    REQUIRE(b(0,1) == -2);
+    REQUIRE(b(1,0) == 3);
+    REQUIRE(b(1,1) == 0);
+    REQUIRE(b(2,0) == 1);
+    REQUIRE(b(2,1) == 2);
+}
+
+TEMPLATE_TEST_CASE_2("complex/imag/2", "[complex]", Z, float, double) {
+    etl::fast_matrix<etl::complex<Z>, 3, 2> a = {ECZ(1, 1), ECZ(-2, -2), ECZ(2, 3), ECZ(0, 0), ECZ(1, 1), ECZ(2, 2)};
+
+    etl::fast_matrix<Z, 3, 2> b;
+
+    b = etl::imag(a);
+
+    REQUIRE(b(0,0) == 1);
+    REQUIRE(b(0,1) == -2);
+    REQUIRE(b(1,0) == 3);
+    REQUIRE(b(1,1) == 0);
+    REQUIRE(b(2,0) == 1);
+    REQUIRE(b(2,1) == 2);
+}
