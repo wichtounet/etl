@@ -5,6 +5,17 @@
 //  http://opensource.org/licenses/MIT)
 //=======================================================================
 
+/*!
+ * \file
+ * \brief binary-compatible std::complex faster implementation
+ *
+ * For some reason, the compilers are not inlining std::complex
+ * operations, resulting in way slower code. This template is
+ * binary-compatible so it can be reinterpreted as to one another
+ * and its operations can be inlined easily. This results in much
+ * faster code for FFT for instance.
+ */
+
 #pragma once
 
 namespace etl {
@@ -77,6 +88,16 @@ struct complex {
         imag = (bc - ad) / frac;
     }
 };
+
+template <typename T>
+inline bool operator==(const complex<T>& lhs, const complex<T>& rhs) {
+    return lhs.real == rhs.real && lhs.imag == rhs.imag;
+}
+
+template <typename T>
+inline bool operator!=(const complex<T>& lhs, const complex<T>& rhs) {
+    return !(lhs == rhs);
+}
 
 template <typename T>
 inline complex<T> operator-(const complex<T>& rhs) {
