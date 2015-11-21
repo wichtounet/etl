@@ -416,3 +416,45 @@ TEMPLATE_TEST_CASE_2("complex/conj/3", "[complex]", Z, float, double) {
     REQUIRE(b(2,1).real == 2);
     REQUIRE(b(2,1).imag == -2);
 }
+
+TEMPLATE_TEST_CASE_2("complex/ctrans/1", "[complex]", Z, float, double) {
+    etl::fast_matrix<std::complex<Z>, 3, 2> a = {CZ(1, 1), CZ(-2, -2), CZ(2, 3), CZ(0, 0), CZ(1, 1), CZ(2, 2)};
+    etl::fast_matrix<std::complex<Z>, 2, 3> b;
+
+    b = etl::ctrans(a);
+
+    REQUIRE(b(0,0).real() == 1);
+    REQUIRE(b(0,0).imag() == -1);
+    REQUIRE(b(0,1).real() == 2);
+    REQUIRE(b(0,1).imag() == -3);
+    REQUIRE(b(0,2).real() == 1);
+    REQUIRE(b(0,2).imag() == -1);
+
+    REQUIRE(b(1,0).real() == -2);
+    REQUIRE(b(1,0).imag() == 2);
+    REQUIRE(b(1,1).real() == 0);
+    REQUIRE(b(1,1).imag() == 0);
+    REQUIRE(b(1,2).real() == 2);
+    REQUIRE(b(1,2).imag() == -2);
+}
+
+TEMPLATE_TEST_CASE_2("complex/ctrans/2", "[complex]", Z, float, double) {
+    etl::fast_matrix<etl::complex<Z>, 3, 2> a = {ECZ(1, 1), ECZ(-2, -2), ECZ(2, 3), ECZ(0, 0), ECZ(1, 1), ECZ(2, 2)};
+    etl::fast_matrix<etl::complex<Z>, 2, 3> b;
+
+    b = etl::conj_transpose(a);
+
+    REQUIRE(b(0,0).real == 1);
+    REQUIRE(b(0,0).imag == -1);
+    REQUIRE(b(0,1).real == 2);
+    REQUIRE(b(0,1).imag == -3);
+    REQUIRE(b(0,2).real == 1);
+    REQUIRE(b(0,2).imag == -1);
+
+    REQUIRE(b(1,0).real == -2);
+    REQUIRE(b(1,0).imag == 2);
+    REQUIRE(b(1,1).real == 0);
+    REQUIRE(b(1,1).imag == 0);
+    REQUIRE(b(1,2).real == 2);
+    REQUIRE(b(1,2).imag == -2);
+}

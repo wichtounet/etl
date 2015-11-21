@@ -688,6 +688,21 @@ auto transpose(const E& value) -> detail::stable_transform_helper<E, transpose_t
     return detail::make_transform_expr<E, transpose_transformer>(value);
 }
 
+template <typename E>
+auto trans(const E& value){
+    return transpose(value);
+}
+
+template <typename E>
+auto conj_transpose(const E& value){
+    return conj(transpose(value));
+}
+
+template <typename E>
+auto ctrans(const E& value){
+    return conj(transpose(value));
+}
+
 /*!
  * \brief Returns the dot product of the two given expressions.
  * \param a The left expression
