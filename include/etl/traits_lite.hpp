@@ -79,10 +79,16 @@ template <typename... E>
 struct all_double_precision : cpp::and_c<is_double_precision<E>...> {};
 
 template <typename T>
-struct is_complex_single_precision : std::is_same<typename std::decay_t<T>::value_type, std::complex<float>> {};
+struct is_complex_single_precision : cpp::or_c<
+   std::is_same<typename std::decay_t<T>::value_type, std::complex<float>>,
+   std::is_same<typename std::decay_t<T>::value_type, etl::complex<float>>
+> {};
 
 template <typename T>
-struct is_complex_double_precision : std::is_same<typename std::decay_t<T>::value_type, std::complex<double>> {};
+struct is_complex_double_precision : cpp::or_c<
+   std::is_same<typename std::decay_t<T>::value_type, std::complex<double>>,
+   std::is_same<typename std::decay_t<T>::value_type, etl::complex<double>>
+> {};
 
 template <typename... E>
 struct all_complex_single_precision : cpp::and_c<is_complex_single_precision<E>...> {};
@@ -103,10 +109,10 @@ template <typename T>
 struct is_complex_t<etl::complex<T>> : std::true_type {};
 
 template <typename T>
-struct is_complex_single_t : std::is_same<T, std::complex<float>> {};
+struct is_complex_single_t : cpp::or_c<std::is_same<T, std::complex<float>>, std::is_same<T, etl::complex<float>>> {};
 
 template <typename T>
-struct is_complex_double_t : std::is_same<T, std::complex<double>> {};
+struct is_complex_double_t : cpp::or_c<std::is_same<T, std::complex<double>>, std::is_same<T, etl::complex<double>>> {};
 
 template <typename... E>
 struct all_dma : cpp::and_c<has_direct_access<E>...> {};
