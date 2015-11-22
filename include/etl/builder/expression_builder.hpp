@@ -658,8 +658,11 @@ auto mean_l(E&& value) -> detail::stable_transform_helper<E, mean_l_transformer>
     return detail::make_transform_expr<E, mean_l_transformer>(value);
 }
 
-// Apply a special expression that can change order of elements
-
+/*!
+ * \brief Returns the horizontal flipping of the given expression.
+ * \param value The expression
+ * \return The horizontal flipping of the given expression.
+ */
 template <typename E>
 auto hflip(const E& value) -> detail::stable_transform_helper<E, hflip_transformer> {
     static_assert(is_etl_expr<E>::value, "etl::hflip can only be used on ETL expressions");
@@ -667,6 +670,11 @@ auto hflip(const E& value) -> detail::stable_transform_helper<E, hflip_transform
     return detail::make_transform_expr<E, hflip_transformer>(value);
 }
 
+/*!
+ * \brief Returns the vertical flipping of the given expression.
+ * \param value The expression
+ * \return The vertical flipping of the given expression.
+ */
 template <typename E>
 auto vflip(const E& value) -> detail::stable_transform_helper<E, vflip_transformer> {
     static_assert(is_etl_expr<E>::value, "etl::vflip can only be used on ETL expressions");
@@ -674,6 +682,11 @@ auto vflip(const E& value) -> detail::stable_transform_helper<E, vflip_transform
     return detail::make_transform_expr<E, vflip_transformer>(value);
 }
 
+/*!
+ * \brief Returns the horizontal and vertical flipping of the given expression.
+ * \param value The expression
+ * \return The horizontal and vertical flipping of the given expression.
+ */
 template <typename E>
 auto fflip(const E& value) -> detail::stable_transform_helper<E, fflip_transformer> {
     static_assert(is_etl_expr<E>::value, "etl::fflip can only be used on ETL expressions");
@@ -681,6 +694,11 @@ auto fflip(const E& value) -> detail::stable_transform_helper<E, fflip_transform
     return detail::make_transform_expr<E, fflip_transformer>(value);
 }
 
+/*!
+ * \brief Returns the transpose of the given expression.
+ * \param value The expression
+ * \return The transpose of the given expression.
+ */
 template <typename E>
 auto transpose(const E& value) -> detail::stable_transform_helper<E, transpose_transformer> {
     static_assert(is_etl_expr<E>::value, "etl::transpose can only be used on ETL expressions");
@@ -688,16 +706,31 @@ auto transpose(const E& value) -> detail::stable_transform_helper<E, transpose_t
     return detail::make_transform_expr<E, transpose_transformer>(value);
 }
 
+/*!
+ * \brief Returns the transpose of the given expression.
+ * \param value The expression
+ * \return The transpose of the given expression.
+ */
 template <typename E>
 auto trans(const E& value){
     return transpose(value);
 }
 
+/*!
+ * \brief Returns the conjugate transpose of the given expression.
+ * \param value The expression
+ * \return The conjugate transpose of the given expression.
+ */
 template <typename E>
 auto conj_transpose(const E& value){
     return conj(transpose(value));
 }
 
+/*!
+ * \brief Returns the conjugate transpose of the given expression.
+ * \param value The expression
+ * \return The conjugate transpose of the given expression.
+ */
 template <typename E>
 auto ctrans(const E& value){
     return conj(transpose(value));
