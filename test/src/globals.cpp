@@ -118,3 +118,39 @@ TEST_CASE("globals/is_symmetric/3", "[globals]") {
     REQUIRE(!expr.is_symmetric());
     REQUIRE(!is_symmetric(expr));
 }
+
+TEST_CASE("globals/is_lower_triangular/1", "[globals]") {
+    etl::fast_matrix<double, 2, 2> a{1.0, 0.0, 2.0, 1.0};
+
+    REQUIRE(a.is_lower_triangular());
+    REQUIRE(is_lower_triangular(a));
+
+    decltype(auto) expr = a + a;
+
+    REQUIRE(expr.is_lower_triangular());
+    REQUIRE(is_lower_triangular(expr));
+}
+
+TEST_CASE("globals/is_lower_triangular/2", "[globals]") {
+    etl::fast_matrix<double, 3, 3> a{1.0, 0.0, 0.0, 2.0, 2.0, 0.0, 3.0, 4.0, 3.0};
+
+    REQUIRE(a.is_lower_triangular());
+    REQUIRE(is_lower_triangular(a));
+
+    decltype(auto) expr = a + a;
+
+    REQUIRE(expr.is_lower_triangular());
+    REQUIRE(is_lower_triangular(expr));
+}
+
+TEST_CASE("globals/is_lower_triangular/3", "[globals]") {
+    etl::fast_matrix<double, 3, 3> a{2.0, 2.0, 3.0, 5.0, 2.0, 4.0, 3.0, 4.0, 3.0};
+
+    REQUIRE(!a.is_lower_triangular());
+    REQUIRE(!is_lower_triangular(a));
+
+    decltype(auto) expr = a + a;
+
+    REQUIRE(!expr.is_lower_triangular());
+    REQUIRE(!is_lower_triangular(expr));
+}

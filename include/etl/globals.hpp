@@ -76,4 +76,26 @@ bool is_symmetric(E&& expr) {
     return false;
 }
 
+/*!
+ * \brief Indicates if the given expression is a lower triangular matrix or not.
+ * \param expr The expression to test
+ * \return true if the given expression is a lower triangular matrix, false otherwise.
+ */
+template<typename E>
+bool is_lower_triangular(E&& expr) {
+    if(is_square(expr)){
+        for(std::size_t i = 0; i < etl::dim<0>(expr) - 1; ++i){
+            for(std::size_t j = i + 1; j < etl::dim<0>(expr); ++j){
+                if(expr(i, j) != 0.0){
+                    return false;
+                }
+            }
+        }
+
+        return true;
+    }
+
+    return false;
+}
+
 } //end of namespace etl

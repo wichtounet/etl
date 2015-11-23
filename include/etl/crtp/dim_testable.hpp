@@ -78,6 +78,14 @@ struct dim_testable {
     bool is_symmetric() const noexcept {
         return etl::is_symmetric(as_derived());
     }
+
+    /*!
+     * \brief Indicates if the given expression is a lower triangular matrix or not.
+     * \return true if the given expression is a lower triangular matrix, false otherwise.
+     */
+    bool is_lower_triangular() const noexcept {
+        return etl::is_lower_triangular(as_derived());
+    }
 };
 
 } //end of namespace etl
