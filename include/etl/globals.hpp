@@ -120,4 +120,26 @@ bool is_strictly_lower_triangular(E&& expr) {
     return false;
 }
 
+/*!
+ * \brief Indicates if the given expression is a upper triangular matrix or not.
+ * \param expr The expression to test
+ * \return true if the given expression is a upper triangular matrix, false otherwise.
+ */
+template<typename E>
+bool is_upper_triangular(E&& expr) {
+    if(is_square(expr)){
+        for(std::size_t i = 1; i < etl::dim<0>(expr); ++i){
+            for(std::size_t j = 0; j < i; ++j){
+                if(expr(i, j) != 0.0){
+                    return false;
+                }
+            }
+        }
+
+        return true;
+    }
+
+    return false;
+}
+
 } //end of namespace etl

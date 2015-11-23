@@ -190,3 +190,39 @@ TEST_CASE("globals/is_strictly_lower_triangular/3", "[globals]") {
     REQUIRE(!expr.is_strictly_lower_triangular());
     REQUIRE(!is_strictly_lower_triangular(expr));
 }
+
+TEST_CASE("globals/is_upper_triangular/1", "[globals]") {
+    etl::fast_matrix<double, 2, 2> a{1.0, 1.0, 0.0, 1.0};
+
+    REQUIRE(a.is_upper_triangular());
+    REQUIRE(is_upper_triangular(a));
+
+    decltype(auto) expr = a + a;
+
+    REQUIRE(expr.is_upper_triangular());
+    REQUIRE(is_upper_triangular(expr));
+}
+
+TEST_CASE("globals/is_upper_triangular/2", "[globals]") {
+    etl::fast_matrix<double, 3, 3> a{1.0, 2.0, 3.0, 0.0, 2.0, 1.0, 0.0, 0.0, 3.0};
+
+    REQUIRE(a.is_upper_triangular());
+    REQUIRE(is_upper_triangular(a));
+
+    decltype(auto) expr = a + a;
+
+    REQUIRE(expr.is_upper_triangular());
+    REQUIRE(is_upper_triangular(expr));
+}
+
+TEST_CASE("globals/is_upper_triangular/3", "[globals]") {
+    etl::fast_matrix<double, 3, 3> a{2.0, 2.0, 3.0, 5.0, 2.0, 4.0, 3.0, 4.0, 3.0};
+
+    REQUIRE(!a.is_upper_triangular());
+    REQUIRE(!is_upper_triangular(a));
+
+    decltype(auto) expr = a + a;
+
+    REQUIRE(!expr.is_upper_triangular());
+    REQUIRE(!is_upper_triangular(expr));
+}
