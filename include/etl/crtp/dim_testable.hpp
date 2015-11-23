@@ -86,6 +86,14 @@ struct dim_testable {
     bool is_lower_triangular() const noexcept {
         return etl::is_lower_triangular(as_derived());
     }
+
+    /*!
+     * \brief Indicates if the given expression is a strictly lower triangular matrix or not.
+     * \return true if the given expression is a strictly lower triangular matrix, false otherwise.
+     */
+    bool is_strictly_lower_triangular() const noexcept {
+        return etl::is_strictly_lower_triangular(as_derived());
+    }
 };
 
 } //end of namespace etl
