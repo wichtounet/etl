@@ -165,6 +165,28 @@ bool is_strictly_upper_triangular(E&& expr) {
 }
 
 /*!
+ * \brief Indicates if the given expression is a diagonal matrix or not.
+ * \param expr The expression to test
+ * \return true if the given expression is a diagonal matrix, false otherwise.
+ */
+template<typename E>
+bool is_diagonal(E&& expr) {
+    if(is_square(expr)){
+        for(std::size_t i = 0; i < etl::dim<0>(expr); ++i){
+            for(std::size_t j = 0; j <= etl::dim<0>(expr); ++j){
+                if(i != j && expr(i, j) != 0.0){
+                    return false;
+                }
+            }
+        }
+
+        return true;
+    }
+
+    return false;
+}
+
+/*!
  * \brief Indicates if the given expression is uniform (all elements of the same value)
  * \param expr The expression to test
  * \return true if the given expression is uniform, false otherwise.

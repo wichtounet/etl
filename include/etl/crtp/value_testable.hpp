@@ -59,6 +59,14 @@ struct value_testable {
     }
 
     /*!
+     * \brief Indicates if the expression is diagonal.
+     * \return true if the expression is diagonal, false otherwise.
+     */
+    bool is_diagonal() const noexcept {
+        return etl::is_diagonal(as_derived());
+    }
+
+    /*!
      * \brief Indicates if the expression is uniform, i.e. all elements are of the same value
      * \return true if the expression is uniform, false otherwise.
      */

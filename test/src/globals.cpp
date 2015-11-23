@@ -286,3 +286,27 @@ TEST_CASE("globals/is_uniform/2", "[globals]") {
     REQUIRE(!expr.is_uniform());
     REQUIRE(!is_uniform(expr));
 }
+
+TEST_CASE("globals/is_diagonal/1", "[globals]") {
+    etl::fast_matrix<double, 3, 3> a{1.0, 0.0, 0.0, 0.0, 2.0, 0.0, 0.0, 0.0, -1.0};
+
+    REQUIRE(a.is_diagonal());
+    REQUIRE(is_diagonal(a));
+
+    decltype(auto) expr = a + a;
+
+    REQUIRE(expr.is_diagonal());
+    REQUIRE(is_diagonal(expr));
+}
+
+TEST_CASE("globals/is_diagonal/2", "[globals]") {
+    etl::fast_matrix<double, 3, 3> a{1.0, 0.0, 0.0, 0.0, 2.0, 0.0, 1.0, 0.0, -1.0};
+
+    REQUIRE(!a.is_diagonal());
+    REQUIRE(!is_diagonal(a));
+
+    decltype(auto) expr = a + a;
+
+    REQUIRE(!expr.is_diagonal());
+    REQUIRE(!is_diagonal(expr));
+}
