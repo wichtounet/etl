@@ -82,3 +82,39 @@ TEST_CASE("globals/4", "[globals]") {
     REQUIRE(expr.is_sub_rectangular());
     REQUIRE(is_sub_rectangular(a + a));
 }
+
+TEST_CASE("globals/is_symmetric/1", "[globals]") {
+    etl::fast_matrix<double, 2, 2> a{1.0, 2.0, 2.0, 1.0};
+
+    REQUIRE(a.is_symmetric());
+    REQUIRE(is_symmetric(a));
+
+    decltype(auto) expr = a + a;
+
+    REQUIRE(expr.is_symmetric());
+    REQUIRE(is_symmetric(expr));
+}
+
+TEST_CASE("globals/is_symmetric/2", "[globals]") {
+    etl::fast_matrix<double, 3, 3> a{1.0, 2.0, 3.0, 2.0, 2.0, 4.0, 3.0, 4.0, 3.0};
+
+    REQUIRE(a.is_symmetric());
+    REQUIRE(is_symmetric(a));
+
+    decltype(auto) expr = a + a;
+
+    REQUIRE(expr.is_symmetric());
+    REQUIRE(is_symmetric(expr));
+}
+
+TEST_CASE("globals/is_symmetric/3", "[globals]") {
+    etl::fast_matrix<double, 3, 3> a{2.0, 2.0, 3.0, 5.0, 2.0, 4.0, 3.0, 4.0, 3.0};
+
+    REQUIRE(!a.is_symmetric());
+    REQUIRE(!is_symmetric(a));
+
+    decltype(auto) expr = a + a;
+
+    REQUIRE(!expr.is_symmetric());
+    REQUIRE(!is_symmetric(expr));
+}

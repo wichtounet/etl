@@ -54,4 +54,26 @@ bool is_sub_rectangular(E&& expr) {
     return decay_traits<E>::dimensions() == 3 && etl::dim<1>(expr) != etl::dim<2>(expr);
 }
 
+/*!
+ * \brief Indicates if the given expression is a symmetric matrix or not.
+ * \param expr The expression to test
+ * \return true if the given expression is a symmetric matrix, false otherwise.
+ */
+template<typename E>
+bool is_symmetric(E&& expr) {
+    if(is_square(expr)){
+        for(std::size_t i = 0; i < etl::dim<0>(expr) - 1; ++i){
+            for(std::size_t j = i + 1; j < etl::dim<0>(expr); ++j){
+                if(expr(i, j) != expr(j, i)){
+                    return false;
+                }
+            }
+        }
+
+        return true;
+    }
+
+    return false;
+}
+
 } //end of namespace etl

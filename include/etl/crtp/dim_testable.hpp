@@ -40,7 +40,7 @@ struct dim_testable {
     }
 
     /*!
-     * \brief Indicates if the epressions is of square dimensions (only for 2d expression)
+     * \brief Indicates if the expressions is of square dimensions (only for 2d expression)
      * \return true if the expressions is square, false otherwise.
      */
     bool is_square() const noexcept {
@@ -48,7 +48,7 @@ struct dim_testable {
     }
 
     /*!
-     * \brief Indicates if the epressions is of rectangular dimensions (only for 2d expression)
+     * \brief Indicates if the expressions is of rectangular dimensions (only for 2d expression)
      * \return true if the expressions is rectangular, false otherwise.
      */
     bool is_rectangular() const noexcept {
@@ -56,7 +56,7 @@ struct dim_testable {
     }
 
     /*!
-     * \brief Indicates if the epressions is of square dimensions, ignoring the first dimension (only for 3d expression)
+     * \brief Indicates if the expressions is of square dimensions, ignoring the first dimension (only for 3d expression)
      * \return true if the expressions is sub square, false otherwise.
      */
     bool is_sub_square() const noexcept {
@@ -64,11 +64,19 @@ struct dim_testable {
     }
 
     /*!
-     * \brief Indicates if the epressions is of rectangular dimensions, ignoring the first dimension (only for 3d expression)
+     * \brief Indicates if the expressions is of rectangular dimensions, ignoring the first dimension (only for 3d expression)
      * \return true if the expressions is sub rectangular, false otherwise.
      */
     bool is_sub_rectangular() const noexcept {
         return etl::is_sub_rectangular(as_derived());
+    }
+
+    /*!
+     * \brief Indicates if the given expression is a symmetric matrix or not.
+     * \return true if the given expression is a symmetric matrix, false otherwise.
+     */
+    bool is_symmetric() const noexcept {
+        return etl::is_symmetric(as_derived());
     }
 };
 
