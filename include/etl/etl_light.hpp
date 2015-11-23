@@ -24,6 +24,9 @@
 #include "etl/op/unary_op.hpp"
 #include "etl/op/binary_op.hpp"
 
+//Global test functions
+#include "etl/globals.hpp"
+
 // The expressions
 #include "etl/expr/binary_expr.hpp"
 #include "etl/expr/unary_expr.hpp"
@@ -41,9 +44,6 @@
 // The evaluator and optimizer
 #include "etl/evaluator.hpp"
 #include "etl/optimizer.hpp"
-
-//Some tests
-#include "etl/globals.hpp"
 
 // The value classes implementation
 #include "etl/fast.hpp"

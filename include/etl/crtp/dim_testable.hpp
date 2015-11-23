@@ -44,8 +44,7 @@ struct dim_testable {
      * \return true if the expressions is square, false otherwise.
      */
     bool is_square() const noexcept {
-        cpp_assert(decay_traits<derived_t>::dimensions() == 2, "Only 2D matrix can be square or rectangular");
-        return etl::dim<0>(as_derived()) == etl::dim<1>(as_derived());
+        return etl::is_square(as_derived());
     }
 
     /*!
@@ -53,7 +52,7 @@ struct dim_testable {
      * \return true if the expressions is rectangular, false otherwise.
      */
     bool is_rectangular() const noexcept {
-        return !is_square();
+        return etl::is_rectangular(as_derived());
     }
 
     /*!
@@ -61,8 +60,7 @@ struct dim_testable {
      * \return true if the expressions is sub square, false otherwise.
      */
     bool is_sub_square() const noexcept {
-        cpp_assert(decay_traits<derived_t>::dimensions() == 3, "Only 2D matrix can be sub square or sub rectangular");
-        return etl::dim<1>(as_derived()) == etl::dim<2>(as_derived());
+        return etl::is_sub_square(as_derived());
     }
 
     /*!
@@ -70,7 +68,7 @@ struct dim_testable {
      * \return true if the expressions is sub rectangular, false otherwise.
      */
     bool is_sub_rectangular() const noexcept {
-        return !is_sub_square();
+        return etl::is_sub_rectangular(as_derived());
     }
 };
 

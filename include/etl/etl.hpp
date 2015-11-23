@@ -24,6 +24,9 @@
 #include "etl/op/unary_op.hpp"
 #include "etl/op/binary_op.hpp"
 
+//Global test functions
+#include "etl/globals.hpp"
+
 // The expressions
 #include "etl/expr/binary_expr.hpp"
 #include "etl/expr/unary_expr.hpp"
@@ -51,9 +54,6 @@
 #include "etl/builder/conv_expression_builder.hpp"
 #include "etl/builder/fft_expression_builder.hpp"
 #include "etl/builder/pooling_expression_builder.hpp"
-
-//Some tests
-#include "etl/globals.hpp"
 
 // The evaluator and optimizer
 #include "etl/evaluator.hpp"

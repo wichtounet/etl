@@ -10,30 +10,48 @@
  * \brief Contains some global functions.
 */
 
-//TODO Think of reverting this and put the implementation here and not in dim_testable CRTP class
-
 #pragma once
 
 namespace etl {
 
+/*!
+ * \brief Indicates if the given expression is a square matrix or not.
+ * \param expr The expression to test
+ * \return true if the given expression is a square matrix, false otherwise.
+ */
 template<typename E>
 bool is_square(E&& expr) {
-    return expr.is_square();
+    return decay_traits<E>::dimensions() == 2 && etl::dim<0>(expr) == etl::dim<1>(expr);
 }
 
+/*!
+ * \brief Indicates if the given expression is a rectangular matrix or not.
+ * \param expr The expression to test
+ * \return true if the given expression is a rectangular matrix, false otherwise.
+ */
 template<typename E>
 bool is_rectangular(E&& expr) {
-    return expr.is_rectangular();
+    return decay_traits<E>::dimensions() == 2 && etl::dim<0>(expr) != etl::dim<1>(expr);
 }
 
+/*!
+ * \brief Indicates if the given expression contains sub matrices that are square.
+ * \param expr The expression to test
+ * \return true if the given expression contains sub matrices that are square, false otherwise.
+ */
 template<typename E>
 bool is_sub_square(E&& expr) {
-    return expr.is_sub_square();
+    return decay_traits<E>::dimensions() == 3 && etl::dim<1>(expr) == etl::dim<2>(expr);
 }
 
+/*!
+ * \brief Indicates if the given expression contains sub matrices that are rectangular.
+ * \param expr The expression to test
+ * \return true if the given expression contains sub matrices that are rectangular, false otherwise.
+ */
 template<typename E>
 bool is_sub_rectangular(E&& expr) {
-    return expr.is_sub_rectangular();
+    return decay_traits<E>::dimensions() == 3 && etl::dim<1>(expr) != etl::dim<2>(expr);
 }
 
 } //end of namespace etl
