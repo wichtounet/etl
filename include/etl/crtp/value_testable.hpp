@@ -57,6 +57,14 @@ struct value_testable {
         return std::all_of(as_derived().begin(), as_derived().end(), [](value_t<derived_t> v) { return v == value_t<derived_t>(0); });
         ;
     }
+
+    /*!
+     * \brief Indicates if the expression is uniform, i.e. all elements are of the same value
+     * \return true if the expression is uniform, false otherwise.
+     */
+    bool is_uniform() const noexcept {
+        return etl::is_uniform(as_derived());
+    }
 };
 
 } //end of namespace etl

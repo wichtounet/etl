@@ -262,3 +262,27 @@ TEST_CASE("globals/is_strictly_upper_triangular/3", "[globals]") {
     REQUIRE(!expr.is_strictly_upper_triangular());
     REQUIRE(!is_strictly_upper_triangular(expr));
 }
+
+TEST_CASE("globals/is_uniform/1", "[globals]") {
+    etl::fast_matrix<double, 3, 3> a(1.0);
+
+    REQUIRE(a.is_uniform());
+    REQUIRE(is_uniform(a));
+
+    decltype(auto) expr = a + a;
+
+    REQUIRE(expr.is_uniform());
+    REQUIRE(is_uniform(expr));
+}
+
+TEST_CASE("globals/is_uniform/2", "[globals]") {
+    etl::fast_matrix<double, 3, 3> a{2.0, 2.0, 3.0, 5.0, 2.0, 4.0, 3.0, 4.0, 3.0};
+
+    REQUIRE(!a.is_uniform());
+    REQUIRE(!is_uniform(a));
+
+    decltype(auto) expr = a + a;
+
+    REQUIRE(!expr.is_uniform());
+    REQUIRE(!is_uniform(expr));
+}

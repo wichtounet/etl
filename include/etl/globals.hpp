@@ -164,4 +164,26 @@ bool is_strictly_upper_triangular(E&& expr) {
     return false;
 }
 
+/*!
+ * \brief Indicates if the given expression is uniform (all elements of the same value)
+ * \param expr The expression to test
+ * \return true if the given expression is uniform, false otherwise.
+ */
+template<typename E>
+bool is_uniform(E&& expr){
+    if(!etl::size(expr)){
+        return false;
+    }
+
+    auto first = *expr.begin();
+
+    for(auto v : expr){
+        if(v != first){
+            return false;
+        }
+    }
+
+    return true;
+}
+
 } //end of namespace etl
