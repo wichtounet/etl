@@ -86,7 +86,7 @@ public:
     }
 
     //Initializer-list construction for vector
-    dyn_matrix_impl(std::initializer_list<value_type> list) noexcept : base_type(list.size(), {list.size()}),
+    dyn_matrix_impl(std::initializer_list<value_type> list) noexcept : base_type(list.size(), {{list.size()}}),
                                                                        _memory(allocate(_size)) {
         static_assert(n_dimensions == 1, "This constructor can only be used for 1D matrix");
 
