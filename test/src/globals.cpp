@@ -314,7 +314,7 @@ TEST_CASE("globals/is_diagonal/2", "[globals]") {
 TEST_CASE("globals/trace/1", "[globals]") {
     etl::fast_matrix<double, 2, 2> a{1.0, 2.0, 3.0, 4.0};
 
-    REQUIRE(trace(a) == 5.0);
+    REQUIRE(trace(a) == Approx(5.0));
 
     decltype(auto) expr = a + a;
 
