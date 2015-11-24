@@ -42,4 +42,10 @@ using dyn_matrix_cm                 = dyn_matrix_impl<T, order::ColumnMajor, D>;
 template <typename T>
 using dyn_vector = dyn_matrix_impl<T, order::RowMajor, 1>;
 
+template <typename T, sparse_storage SS, std::size_t D>
+struct sparse_matrix_impl;
+
+template <typename T, std::size_t D = 2>
+using sparse_matrix = sparse_matrix_impl<T, sparse_storage::COO, D>;
+
 } //end of namespace etl

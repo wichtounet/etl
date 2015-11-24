@@ -11,6 +11,7 @@
 
 // Utilities
 #include "etl/order.hpp"
+#include "etl/sparse_storage.hpp"
 #include "etl/config.hpp"
 #include "etl/vectorization.hpp"
 #include "etl/complex.hpp"
@@ -62,6 +63,7 @@
 // The value classes implementation
 #include "etl/fast.hpp"
 #include "etl/dyn.hpp"
+#include "etl/sparse.hpp"
 
 // The traits
 #include "etl/traits.hpp"
