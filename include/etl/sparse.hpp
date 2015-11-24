@@ -65,17 +65,10 @@ public:
         //Nothing else to init
     }
 
-    //Sizes followed by an initializer list
-    template <typename... S, cpp_enable_if(dyn_detail::is_initializer_list_constructor<S...>::value)>
-    explicit sparse_matrix_impl(S... sizes) noexcept : base_type(dyn_detail::size(std::make_index_sequence<(sizeof...(S)-1)>(), sizes...),
-                                                              dyn_detail::sizes(std::make_index_sequence<(sizeof...(S)-1)>(), sizes...)),
-                                                    _memory(allocate(_size)) {
-        static_assert(sizeof...(S) == D + 1, "Invalid number of dimensions");
-
-        auto list = cpp::last_value(sizes...);
-
+    template<typename It>
+    void build_from_iterable(const It& iterable){
         nnz =  0;
-        for (auto v : list) {
+        for (auto v : iterable) {
             if(v != 0.0){
                 ++nnz;
             }
@@ -86,7 +79,7 @@ public:
         _row_index = base_type::template allocate<index_memory_type>(nnz);
         _col_index = base_type::template allocate<index_memory_type>(nnz);
 
-        auto it = list.begin();
+        auto it = iterable.begin();
         std::size_t n = 0;
 
         for(std::size_t i = 0; i < rows(); ++i){
@@ -101,6 +94,28 @@ public:
                 ++it;
             }
         }
+    }
+
+    //Sizes followed by an initializer list
+    template <typename... S, cpp_enable_if(dyn_detail::is_initializer_list_constructor<S...>::value)>
+    explicit sparse_matrix_impl(S... sizes) noexcept : base_type(dyn_detail::size(std::make_index_sequence<(sizeof...(S)-1)>(), sizes...),
+                                                              dyn_detail::sizes(std::make_index_sequence<(sizeof...(S)-1)>(), sizes...)),
+                                                    _memory(allocate(_size)) {
+        static_assert(sizeof...(S) == D + 1, "Invalid number of dimensions");
+
+        auto list = cpp::last_value(sizes...);
+        build_from_iterable(list);
+    }
+
+    //Sizes followed by a values_t
+    template <typename S1, typename... S, cpp_enable_if(
+                                              (sizeof...(S) == D),
+                                              cpp::is_specialization_of<values_t, typename cpp::last_type<S1, S...>::type>::value)>
+    explicit sparse_matrix_impl(S1 s1, S... sizes) noexcept : base_type(dyn_detail::size(std::make_index_sequence<(sizeof...(S))>(), s1, sizes...),
+                                                                     dyn_detail::sizes(std::make_index_sequence<(sizeof...(S))>(), s1, sizes...)),
+                                                           _memory(allocate(_size)) {
+        auto list = cpp::last_value(sizes...).template list<value_type>();
+        build_from_iterable(list);
     }
 
     template <bool B = n_dimensions == 2, cpp_enable_if(B)>
