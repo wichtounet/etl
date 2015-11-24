@@ -310,3 +310,23 @@ TEST_CASE("globals/is_diagonal/2", "[globals]") {
     REQUIRE(!expr.is_diagonal());
     REQUIRE(!is_diagonal(expr));
 }
+
+TEST_CASE("globals/trace/1", "[globals]") {
+    etl::fast_matrix<double, 2, 2> a{1.0, 2.0, 3.0, 4.0};
+
+    REQUIRE(trace(a) == 5.0);
+
+    decltype(auto) expr = a + a;
+
+    REQUIRE(trace(expr) == Approx(10.0));
+}
+
+TEST_CASE("globals/trace/2", "[globals]") {
+    etl::fast_matrix<double, 3, 3> a{1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0};
+
+    REQUIRE(trace(a) == Approx(15.0));
+
+    decltype(auto) expr = a + a;
+
+    REQUIRE(trace(expr) == Approx(30.0));
+}

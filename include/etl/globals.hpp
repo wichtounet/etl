@@ -208,4 +208,25 @@ bool is_uniform(E&& expr){
     return true;
 }
 
+/*!
+ * \brief Returns the trace of the given square matrix.
+ *
+ * If the given expression does not represent a square matrix, this function will fail
+ *
+ * \param expr The expression to get the trace from.
+ * \return The trace of the given expression
+ */
+template<typename E>
+value_t<E> trace(E&& expr){
+    cpp_assert(is_square(expr), "trace is only defined for square matrices");
+
+    auto value = value_t<E>();
+
+    for(std::size_t i = 0; i < etl::dim<0>(expr); ++i){
+        value += expr(i, i);
+    }
+
+    return value;
+}
+
 } //end of namespace etl
