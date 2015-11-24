@@ -53,10 +53,13 @@ private:
     using base_type::_dimensions;
     memory_type _memory;
 
-    using base_type::check_invariants;
     using base_type::release;
     using base_type::allocate;
+    using base_type::check_invariants;
+
 public:
+    using base_type::dim;
+
     // Construction
 
     //Default constructor (constructs an empty matrix)
@@ -80,8 +83,6 @@ public:
     //Move constructor
     dyn_matrix_impl(dyn_matrix_impl&& rhs) noexcept : base_type(std::move(rhs)), _memory(rhs._memory) {
         rhs._memory = nullptr;
-
-        check_invariants();
     }
 
     //Initializer-list construction for vector
@@ -90,8 +91,6 @@ public:
         static_assert(n_dimensions == 1, "This constructor can only be used for 1D matrix");
 
         std::copy(list.begin(), list.end(), begin());
-
-        check_invariants();
     }
 
     //Normal constructor with only sizes
@@ -102,8 +101,6 @@ public:
     explicit dyn_matrix_impl(S... sizes) noexcept : base_type(dyn_detail::size(sizes...), {{static_cast<std::size_t>(sizes)...}}),
                                                     _memory(allocate(_size)) {
         //Nothing to init
-
-        check_invariants();
     }
 
     //Sizes followed by an initializer list
@@ -115,8 +112,6 @@ public:
 
         auto list = cpp::last_value(sizes...);
         std::copy(list.begin(), list.end(), begin());
-
-        check_invariants();
     }
 
     //Sizes followed by a values_t
@@ -128,8 +123,6 @@ public:
                                                            _memory(allocate(_size)) {
         auto list = cpp::last_value(sizes...).template list<value_type>();
         std::copy(list.begin(), list.end(), begin());
-
-        check_invariants();
     }
 
     //Sizes followed by a value
@@ -148,7 +141,6 @@ public:
                                                            _memory(allocate(_size)) {
         intel_decltype_auto value = cpp::last_value(s1, sizes...);
         std::fill(begin(), end(), value);
-        check_invariants();
     }
 
     //Sizes followed by a generator_expr
@@ -164,8 +156,6 @@ public:
         intel_decltype_auto e = cpp::last_value(sizes...);
 
         assign_evaluate(e, *this);
-
-        check_invariants();
     }
 
     //Sizes followed by an init flag followed by the value
@@ -176,8 +166,6 @@ public:
         static_assert(sizeof...(S) == D + 2, "Invalid number of dimensions");
 
         std::fill(begin(), end(), cpp::last_value(sizes...));
-
-        check_invariants();
     }
 
     template <typename E, cpp_enable_if(
@@ -186,8 +174,6 @@ public:
     explicit dyn_matrix_impl(E&& e) noexcept
             : base_type(e), _memory(allocate(_size)) {
         assign_evaluate(std::forward<E>(e), *this);
-
-        check_invariants();
     }
 
     template <typename Container, cpp_enable_if(
@@ -200,8 +186,6 @@ public:
         for (std::size_t i = 0; i < _size; ++i) {
             _memory[i] = vec[i];
         }
-
-        check_invariants();
     }
 
     // Assignment
@@ -305,19 +289,6 @@ public:
 
     static constexpr std::size_t dimensions() noexcept {
         return n_dimensions;
-    }
-
-    std::size_t dim(std::size_t d) const noexcept {
-        cpp_assert(d < n_dimensions, "Invalid dimension");
-
-        return _dimensions[d];
-    }
-
-    template <std::size_t D2>
-    std::size_t dim() const noexcept {
-        cpp_assert(D2 < n_dimensions, "Invalid dimension");
-
-        return _dimensions[D2];
     }
 
     template <bool B = (n_dimensions > 1), cpp_enable_if(B)>

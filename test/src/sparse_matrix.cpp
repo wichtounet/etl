@@ -11,9 +11,24 @@
 // Init tests
 
 TEMPLATE_TEST_CASE_2("sparse_matrix/init/1", "[mat][init][sparse]", Z, double, float) {
-    etl::sparse_matrix<Z> test_matrix;
+    etl::sparse_matrix<Z> a;
 
-    REQUIRE(test_matrix.rows() == 0);
-    REQUIRE(test_matrix.columns() == 0);
-    REQUIRE(test_matrix.size() == 0);
+    REQUIRE(a.rows() == 0);
+    REQUIRE(a.columns() == 0);
+    REQUIRE(a.size() == 0);
+}
+
+TEMPLATE_TEST_CASE_2("sparse_matrix/init/2", "[mat][init][sparse]", Z, double, float) {
+    etl::dyn_matrix<Z> a(3, 2, std::initializer_list<Z>({1.0, 0.0, 0.0, 2.0, 3.0, 0.0}));
+
+    REQUIRE(a.rows() == 3);
+    REQUIRE(a.columns() == 2);
+    REQUIRE(a.size() == 6);
+
+    REQUIRE(a(0, 0) == 1.0);
+    REQUIRE(a(0, 1) == 0.0);
+    REQUIRE(a(1, 0) == 0.0);
+    REQUIRE(a(1, 1) == 2.0);
+    REQUIRE(a(2, 0) == 3.0);
+    REQUIRE(a(2, 1) == 0.0);
 }

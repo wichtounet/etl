@@ -116,28 +116,30 @@ protected:
 #endif
     }
 
-    static memory_type allocate(std::size_t n) {
-        auto* memory = aligned_allocator<void, alignment>::template allocate<T>(n);
+    template<typename M = value_type>
+    static M* allocate(std::size_t n) {
+        M* memory = aligned_allocator<void, alignment>::template allocate<M>(n);
         cpp_assert(memory, "Impossible to allocate memory for dyn_matrix");
         cpp_assert(reinterpret_cast<uintptr_t>(memory) % alignment == 0, "Failed to align memory of matrix");
 
         //In case of non-trivial type, we need to call the constructors
-        if(!std::is_trivial<value_type>::value){
-            new (memory) value_type[n]();
+        if(!std::is_trivial<M>::value){
+            new (memory) M[n]();
         }
 
         return memory;
     }
 
-    static void release(memory_type ptr, std::size_t n) {
+    template<typename M>
+    static void release(M* ptr, std::size_t n) {
         //In case of non-trivial type, we need to call the destructors
-        if(!std::is_trivial<value_type>::value){
+        if(!std::is_trivial<M>::value){
             for(std::size_t i = 0; i < n; ++i){
-                ptr[i].~value_type();
+                ptr[i].~M();
             }
         }
 
-        aligned_allocator<void, alignment>::template release<T>(ptr);
+        aligned_allocator<void, alignment>::template release<M>(ptr);
     }
 
     dyn_base() noexcept : _size(0) {
@@ -177,6 +179,19 @@ public:
     std::size_t columns() const noexcept {
         static_assert(n_dimensions > 1, "columns() only valid for 2D+ matrices");
         return _dimensions[1];
+    }
+
+    std::size_t dim(std::size_t d) const noexcept {
+        cpp_assert(d < n_dimensions, "Invalid dimension");
+
+        return _dimensions[d];
+    }
+
+    template <std::size_t D2>
+    std::size_t dim() const noexcept {
+        cpp_assert(D2 < n_dimensions, "Invalid dimension");
+
+        return _dimensions[D2];
     }
 };
 
