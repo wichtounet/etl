@@ -88,7 +88,7 @@ inline std::array<std::size_t, sizeof...(I)> sizes(const std::index_sequence<I..
 } // end of namespace dyn_detail
 
 /*!
- * \brief Matrix with runn-time fixed dimensions.
+ * \brief Matrix with run-time fixed dimensions.
  *
  * The matrix support an arbitrary number of dimensions.
  */
