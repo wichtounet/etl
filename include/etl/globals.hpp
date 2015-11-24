@@ -218,7 +218,7 @@ bool is_uniform(E&& expr){
  */
 template<typename E>
 value_t<E> trace(E&& expr){
-    cpp_assert(is_square(expr), "trace is only defined for square matrices");
+    assert_square(expr);
 
     auto value = value_t<E>();
 

@@ -68,6 +68,18 @@ void validate_assign(const LE& lhs, const RE& rhs) {
     cpp_unused(rhs);
 }
 
+template <typename E, cpp_enable_if(all_fast<E>::value)>
+void assert_square(E&& /*expr*/){
+    static_assert(decay_traits<E>::dimensions() == 2, "Function undefined for non-square matrix");
+    static_assert(decay_traits<E>::template dim<0>() == decay_traits<E>::template dim<1>(), "Function undefined for non-square matrix");
+}
+
+template <typename E, cpp_disable_if(all_fast<E>::value)>
+void assert_square(E&& expr){
+    static_assert(decay_traits<E>::dimensions() == 2, "Function undefined for non-square matrix");
+    cpp_assert(etl::dim<0>(expr) == etl::dim<1>(expr), "Function undefined for non-square matrix");
+}
+
 template <std::size_t C1, std::size_t C2, typename E, cpp_enable_if(etl_traits<E>::dimensions() == 2 && !etl_traits<E>::is_fast)>
 void validate_pmax_pooling_impl(const E& e) {
     cpp_assert(etl::template dim<0>(e) % C1 == 0 && etl::template dim<1>(e) % C2 == 0, "Dimensions not divisible by the pooling ratio");
