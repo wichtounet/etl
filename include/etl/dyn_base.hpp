@@ -5,6 +5,11 @@
 //  http://opensource.org/licenses/MIT)
 //=======================================================================
 
+/*!
+ * \file
+ * \brief Base class and utilities for dyn matrix implementations
+ */
+
 #pragma once
 
 #include <array>     //To store the dimensions
