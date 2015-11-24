@@ -78,6 +78,7 @@ template <typename E, cpp_disable_if(all_fast<E>::value)>
 void assert_square(E&& expr){
     static_assert(decay_traits<E>::dimensions() == 2, "Function undefined for non-square matrix");
     cpp_assert(etl::dim<0>(expr) == etl::dim<1>(expr), "Function undefined for non-square matrix");
+    cpp_unused(expr); //In case assert is disabled
 }
 
 template <std::size_t C1, std::size_t C2, typename E, cpp_enable_if(etl_traits<E>::dimensions() == 2 && !etl_traits<E>::is_fast)>
