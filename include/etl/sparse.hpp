@@ -215,8 +215,8 @@ private:
             release(_col_index, nnz);
 
             _memory    = nullptr;
-            _col_index = nullptr;
             _row_index = nullptr;
+            _col_index = nullptr;
         } else {
             auto new_memory    = allocate(nnz - 1);
             auto new_row_index = base_type::template allocate<index_type>(nnz - 1);
@@ -231,9 +231,9 @@ private:
                 std::copy(_row_index, _row_index + n, new_row_index);
                 std::copy(_col_index, _col_index + n, new_col_index);
 
-                std::copy(_memory + n + 1, _memory + nnz, new_memory);
-                std::copy(_row_index + n + 1, _row_index + nnz, new_row_index);
-                std::copy(_col_index + n + 1, _col_index + nnz, new_col_index);
+                std::copy(_memory + n + 1, _memory + nnz, new_memory + n);
+                std::copy(_row_index + n + 1, _row_index + nnz, new_row_index + n);
+                std::copy(_col_index + n + 1, _col_index + nnz, new_col_index + n);
             }
 
             release(_memory, nnz);
@@ -241,8 +241,8 @@ private:
             release(_col_index, nnz);
 
             _memory    = new_memory;
-            _col_index = new_col_index;
             _row_index = new_row_index;
+            _col_index = new_col_index;
         }
 
         --nnz;
