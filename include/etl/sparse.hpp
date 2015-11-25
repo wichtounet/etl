@@ -350,8 +350,7 @@ public:
     //Sizes followed by an initializer list
     template <typename... S, cpp_enable_if(dyn_detail::is_initializer_list_constructor<S...>::value)>
     explicit sparse_matrix_impl(S... sizes) noexcept : base_type(dyn_detail::size(std::make_index_sequence<(sizeof...(S)-1)>(), sizes...),
-                                                              dyn_detail::sizes(std::make_index_sequence<(sizeof...(S)-1)>(), sizes...)),
-                                                    _memory(allocate(_size)) {
+                                                              dyn_detail::sizes(std::make_index_sequence<(sizeof...(S)-1)>(), sizes...)){
         static_assert(sizeof...(S) == D + 1, "Invalid number of dimensions");
 
         auto list = cpp::last_value(sizes...);
@@ -363,8 +362,7 @@ public:
                                               (sizeof...(S) == D),
                                               cpp::is_specialization_of<values_t, typename cpp::last_type<S1, S...>::type>::value)>
     explicit sparse_matrix_impl(S1 s1, S... sizes) noexcept : base_type(dyn_detail::size(std::make_index_sequence<(sizeof...(S))>(), s1, sizes...),
-                                                                     dyn_detail::sizes(std::make_index_sequence<(sizeof...(S))>(), s1, sizes...)),
-                                                           _memory(allocate(_size)) {
+                                                                     dyn_detail::sizes(std::make_index_sequence<(sizeof...(S))>(), s1, sizes...)){
         auto list = cpp::last_value(sizes...).template list<value_type>();
         build_from_iterable(list);
     }
