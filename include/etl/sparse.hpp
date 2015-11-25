@@ -36,7 +36,8 @@ struct sparse_matrix_impl <T, sparse_storage::COO, D> final : dyn_base<T, D> {
     using dimension_storage_impl = std::array<std::size_t, n_dimensions>;
     using memory_type            = value_type*;
     using const_memory_type      = const value_type*;
-    using index_memory_type      = std::size_t*;
+    using index_type             = std::size_t;
+    using index_memory_type      = index_type*;
     using iterator               = memory_type;
     using const_iterator         = const_memory_type;
     using vec_type               = intrinsic_type<T>;
@@ -76,8 +77,8 @@ public:
 
         //Allocate space for the three arrays
         _memory    = allocate(nnz);
-        _row_index = base_type::template allocate<index_memory_type>(nnz);
-        _col_index = base_type::template allocate<index_memory_type>(nnz);
+        _row_index = base_type::template allocate<index_type>(nnz);
+        _col_index = base_type::template allocate<index_type>(nnz);
 
         auto it = iterable.begin();
         std::size_t n = 0;
@@ -144,6 +145,17 @@ public:
     template <bool B = n_dimensions == 2, cpp_enable_if(B)>
     const value_type operator()(std::size_t i, std::size_t j) const noexcept {
         return access(i, j);
+    }
+
+    /*!
+     * \brief Returns the number of non zeros entries in the sparse matrix.
+     *
+     * This is a constant time O(1) operation.
+     *
+     * \return The number of non zeros entries in the sparse matrix.
+     */
+    std::size_t non_zeros() const noexcept {
+        return nnz;
     }
 
     //Destructor
