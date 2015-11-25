@@ -121,6 +121,70 @@ TEMPLATE_TEST_CASE_2("sparse_matrix/set/2", "[mat][set][sparse]", Z, double, flo
     REQUIRE(a.non_zeros() == 2);
 }
 
+TEMPLATE_TEST_CASE_2("sparse_matrix/reference/1", "[mat][reference][sparse]", Z, double, float) {
+    etl::sparse_matrix<Z> a(3, 3);
+
+    REQUIRE(a.rows() == 3);
+    REQUIRE(a.columns() == 3);
+    REQUIRE(a.size() == 9);
+    REQUIRE(a.non_zeros() == 0);
+
+    a(1, 1) = 42;
+
+    REQUIRE(a.get(1, 1) == 42.0);
+    REQUIRE(a.non_zeros() == 1);
+
+    a(0, 0) = 1.0;
+    a(2, 2) = 2.0;
+
+    REQUIRE(a.get(0, 0) == 1.0);
+    REQUIRE(a.get(1, 1) == 42.0);
+    REQUIRE(a.get(2, 2) == 2.0);
+    REQUIRE(a.non_zeros() == 3);
+
+    a(2, 2) = -2.0;
+
+    REQUIRE(a.get(0, 0) == 1.0);
+    REQUIRE(a.get(1, 1) == 42.0);
+    REQUIRE(a.get(2, 2) == -2.0);
+    REQUIRE(a.non_zeros() == 3);
+}
+
+TEMPLATE_TEST_CASE_2("sparse_matrix/reference/2", "[mat][reference][sparse]", Z, double, float) {
+    etl::sparse_matrix<Z> a(3, 3);
+
+    REQUIRE(a.rows() == 3);
+    REQUIRE(a.columns() == 3);
+    REQUIRE(a.size() == 9);
+    REQUIRE(a.non_zeros() == 0);
+
+    a(0, 0) = 1.0;
+    a(1, 1) = 42;
+    a(2, 2) = 2;
+
+    REQUIRE(a.get(0, 0) == 1.0);
+    REQUIRE(a.get(0, 1) == 0.0);
+    REQUIRE(a.get(1, 1) == 42);
+    REQUIRE(a.get(2, 2) == 2.0);
+    REQUIRE(a.non_zeros() == 3);
+
+    a(0, 0) = 0.0;
+
+    REQUIRE(a.get(0, 0) == 0.0);
+    REQUIRE(a.get(0, 1) == 0.0);
+    REQUIRE(a.get(1, 1) == 42);
+    REQUIRE(a.get(2, 2) == 2.0);
+    REQUIRE(a.non_zeros() == 2);
+
+    a(2, 2) = 0.0;
+
+    REQUIRE(a.get(0, 0) == 0.0);
+    REQUIRE(a.get(0, 1) == 0.0);
+    REQUIRE(a.get(1, 1) == 42);
+    REQUIRE(a.get(2, 2) == 0.0);
+    REQUIRE(a.non_zeros() == 1);
+}
+
 TEMPLATE_TEST_CASE_2("sparse_matrix/erase/1", "[mat][erase][sparse]", Z, double, float) {
     etl::sparse_matrix<Z> a(3, 2, std::initializer_list<Z>({1.0, 0.0, 0.0, 2.0, 3.0, 0.0}));
 

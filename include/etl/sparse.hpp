@@ -25,19 +25,65 @@ namespace sparse_detail {
 
 template<typename M>
 struct sparse_reference {
-    using matrix_type = M;
-    using value_type = typename matrix_type::value_type;
+    using matrix_type        = M;
+    using value_type         = typename matrix_type::value_type;
+    using raw_pointer_type   = value_type*;
+    using raw_reference_type = value_type&;
 
     matrix_type& matrix;
     std::size_t i;
     std::size_t j;
+    std::size_t n;
+    raw_pointer_type ptr;
 
     sparse_reference(matrix_type& matrix, std::size_t i, std::size_t j) : matrix(matrix), i(i), j(j) {
-        //TODO Insert if necessary
+        n = matrix.find_n(i, j);
+        matrix.unsafe_set_hint(i, j, n, matrix.get_hint(i, j, n));
+        ptr = &matrix.unsafe_ref_hint(n);
     }
 
     ~sparse_reference(){
-        //TODO Erase if necessary
+        //Update the value, possibly erasing it
+        matrix.set_hint(i, j, n, *ptr);
+    }
+
+    sparse_reference& operator=(value_type rhs){
+        get() = rhs;
+        return *this;
+    }
+
+    sparse_reference& operator+=(value_type rhs){
+        get() += rhs;
+        return *this;
+    }
+
+    sparse_reference& operator-=(value_type rhs){
+        get() -= rhs;
+        return *this;
+    }
+
+    sparse_reference& operator*=(value_type rhs){
+        get() *= rhs;
+        return *this;
+    }
+
+    sparse_reference& operator/=(value_type rhs){
+        get() /= rhs;
+        return *this;
+    }
+
+    sparse_reference& operator%=(value_type rhs){
+        get() %= rhs;
+        return *this;
+    }
+
+    operator raw_reference_type(){
+        return get();
+    }
+
+private:
+    raw_reference_type get(){
+        return *ptr;
     }
 };
 
@@ -54,6 +100,9 @@ struct sparse_matrix_impl <T, sparse_storage::COO, D> final : dyn_base<T, D> {
     static constexpr const std::size_t alignment         = intrinsic_traits<T>::alignment;
 
     using base_type              = dyn_base<T, D>;
+    using this_type              = sparse_matrix_impl<T, sparse_storage::COO, D>;
+    using reference_type         = sparse_detail::sparse_reference<this_type>;
+    using const_reference_type   = sparse_detail::sparse_reference<const this_type>;
     using value_type             = T;
     using dimension_storage_impl = std::array<std::size_t, n_dimensions>;
     using memory_type            = value_type*;
@@ -63,6 +112,11 @@ struct sparse_matrix_impl <T, sparse_storage::COO, D> final : dyn_base<T, D> {
     using iterator               = memory_type;
     using const_iterator         = const_memory_type;
     using vec_type               = intrinsic_type<T>;
+
+    //template<typename M>
+    //friend struct sparse_detail::sparse_reference<M>;
+    friend struct sparse_detail::sparse_reference<this_type>;
+    friend struct sparse_detail::sparse_reference<const this_type>;
 
 private:
     using base_type::_size;
@@ -239,6 +293,51 @@ private:
         }
     }
 
+    template <bool B = n_dimensions == 2, cpp_enable_if(B)>
+    value_type get_hint(std::size_t i, std::size_t j, std::size_t n) noexcept {
+        if (n < nnz) {
+            if (_row_index[n] == i && _col_index[n] == j) {
+                return _memory[n];
+            }
+        }
+
+        return 0.0;
+    }
+
+    void set_hint(std::size_t i, std::size_t j, std::size_t n, value_type value){
+        if(n < nnz){
+            if(_row_index[n] == i && _col_index[n] == j){
+                //At this point, there is already a value for (i,j)
+                //If zero, we remove it, otherwise edit it
+                if(value != value_type(0)){
+                    unsafe_set_hint(i, j, n, value);
+                } else {
+                    erase_n(n);
+                }
+            } else {
+                //At this point, the value does not exist
+                //We insert it if not zero
+                if(value != value_type(0)){
+                    unsafe_set_hint(i, j, n, value);
+                }
+            }
+        } else {
+            //At this point, the value does not exist
+            //We insert it if not zero
+            if(value != value_type(0)){
+                unsafe_set_hint(i, j, n, value);
+            }
+        }
+    }
+
+    value_type& unsafe_ref_hint(std::size_t n) {
+        return _memory[n];
+    }
+
+    const value_type& unsafe_ref_hint(std::size_t n) const {
+        return _memory[n];
+    }
+
 public:
     using base_type::dim;
     using base_type::rows;
@@ -298,27 +397,18 @@ public:
         cpp_assert(i < dim(0), "Out of bounds");
         cpp_assert(j < dim(1), "Out of bounds");
 
-        for(std::size_t n = 0; n < nnz; ++n){
-            if(_row_index[n] == i && _col_index[n] == j){
-                return _memory[n];
-            }
-
-            if(_row_index[n] > i){
-                break;
-            }
-        }
-
-        return 0.0;
+        auto n = find_n(i, j);
+        return get_hint(i, j, n);
     }
 
     template <bool B = n_dimensions == 2, cpp_enable_if(B)>
-    value_type operator()(std::size_t i, std::size_t j) noexcept {
-        return get(i, j);
+    reference_type operator()(std::size_t i, std::size_t j) noexcept {
+        return {*this, i, j};
     }
 
     template <bool B = n_dimensions == 2, cpp_enable_if(B)>
-    const value_type operator()(std::size_t i, std::size_t j) const noexcept {
-        return get(i, j);
+    const_reference_type operator()(std::size_t i, std::size_t j) const noexcept {
+        return {*this, i, j};
     }
 
     /*!
@@ -338,35 +428,12 @@ public:
 
         auto n = find_n(i, j);
 
-        unsafe_set_hin(i, j, n, value);
+        unsafe_set_hint(i, j, n, value);
     }
 
     void set(std::size_t i, std::size_t j, value_type value){
         auto n = find_n(i, j);
-
-        if(n < nnz){
-            if(_row_index[n] == i && _col_index[n] == j){
-                //At this point, there is already a value for (i,j)
-                //If zero, we remove it, otherwise edit it
-                if(value != value_type(0)){
-                    unsafe_set_hint(i, j, n, value);
-                } else {
-                    erase_n(n);
-                }
-            } else {
-                //At this point, the value does not exist
-                //We insert it if not zero
-                if(value != value_type(0)){
-                    unsafe_set_hint(i, j, n, value);
-                }
-            }
-        } else {
-            //At this point, the value does not exist
-            //We insert it if not zero
-            if(value != value_type(0)){
-                unsafe_set_hint(i, j, n, value);
-            }
-        }
+        set_hint(i, j, n, value);
     }
 
     void erase(std::size_t i, std::size_t j) {
