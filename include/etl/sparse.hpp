@@ -119,8 +119,18 @@ public:
         build_from_iterable(list);
     }
 
+    /*!
+     * \brief Returns the value at the given (i,j) position in the matrix.
+     *
+     * This function will never insert a new element in the matrix. It is suited when only reading the matrix and not neeeding references.
+     *
+     * \param i The row
+     * \param j The column
+     *
+     * \return The value at the (i,j) position.
+     */
     template <bool B = n_dimensions == 2, cpp_enable_if(B)>
-    value_type access(std::size_t i, std::size_t j) noexcept {
+    value_type get(std::size_t i, std::size_t j) noexcept {
         cpp_assert(i < dim(0), "Out of bounds");
         cpp_assert(j < dim(1), "Out of bounds");
 
@@ -139,12 +149,12 @@ public:
 
     template <bool B = n_dimensions == 2, cpp_enable_if(B)>
     value_type operator()(std::size_t i, std::size_t j) noexcept {
-        return access(i, j);
+        return get(i, j);
     }
 
     template <bool B = n_dimensions == 2, cpp_enable_if(B)>
     const value_type operator()(std::size_t i, std::size_t j) const noexcept {
-        return access(i, j);
+        return get(i, j);
     }
 
     /*!
