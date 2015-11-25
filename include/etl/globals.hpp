@@ -173,7 +173,7 @@ template<typename E>
 bool is_diagonal(E&& expr) {
     if(is_square(expr)){
         for(std::size_t i = 0; i < etl::dim<0>(expr); ++i){
-            for(std::size_t j = 0; j <= etl::dim<0>(expr); ++j){
+            for(std::size_t j = 0; j < etl::dim<0>(expr); ++j){
                 if(i != j && expr(i, j) != 0.0){
                     return false;
                 }
