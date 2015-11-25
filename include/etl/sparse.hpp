@@ -169,7 +169,74 @@ private:
             _col_index = base_type::template allocate<index_type>(nnz + 1);
         }
 
-        nnz = nnz + 1;
+        ++nnz;
+    }
+
+    std::size_t find_n(std::size_t i, std::size_t j){
+        for(std::size_t n = 0; n < nnz; ++n){
+            //The value exists, modify it
+            if(_row_index[n] == i && _col_index[n] == j){
+                return n;
+            }
+
+            //The insertion point has been found
+            if((_row_index[n] == i && _col_index[n] > j) || _row_index[n] > i){
+                return n;
+            }
+        }
+
+        return nnz;
+    }
+
+    void erase_n(std::size_t n){
+        auto new_memory    = allocate(nnz - 1);
+        auto new_row_index = base_type::template allocate<index_type>(nnz - 1);
+        auto new_col_index = base_type::template allocate<index_type>(nnz - 1);
+
+        if(n == nnz - 1){
+            std::copy_n(_memory, nnz - 1, new_memory);
+            std::copy_n(_row_index, nnz - 1, new_row_index);
+            std::copy_n(_col_index, nnz - 1, new_col_index);
+        } else {
+            std::copy(_memory, _memory + n, new_memory);
+            std::copy(_row_index, _row_index + n, new_row_index);
+            std::copy(_col_index, _col_index + n, new_col_index);
+
+            std::copy(_memory + n + 1, _memory + nnz, new_memory);
+            std::copy(_row_index + n + 1, _row_index + nnz, new_row_index);
+            std::copy(_col_index + n + 1, _col_index + nnz, new_col_index);
+        }
+
+        release(_memory, nnz);
+        release(_row_index, nnz);
+        release(_col_index, nnz);
+
+        _memory    = new_memory;
+        _col_index = new_col_index;
+        _row_index = new_row_index;
+
+        --nnz;
+    }
+
+    void unsafe_set_hint(std::size_t i, std::size_t j, std::size_t n, value_type value){
+        if(n < nnz){
+            //The value exists, modify it
+            if(_row_index[n] == i && _col_index[n] == j){
+                _memory[n] = value;
+            } else {
+                reserve_hint(n);
+
+                _memory[n] = value;
+                _row_index[n] = i;
+                _col_index[n] = j;
+            }
+        } else {
+            //At this point, it means we need to insert at the last position
+            reserve(nnz + 1);
+            _memory[nnz - 1] = value;
+            _row_index[nnz - 1] = i;
+            _col_index[nnz - 1] = j;
+        }
     }
 
 public:
@@ -265,34 +332,51 @@ public:
         return nnz;
     }
 
-    void set(std::size_t i, std::size_t j, value_type value){
+    void unsafe_set(std::size_t i, std::size_t j, value_type value){
         cpp_assert(i < dim(0), "Out of bounds");
         cpp_assert(j < dim(1), "Out of bounds");
 
-        for(std::size_t n = 0; n < nnz; ++n){
-            //The value exists, modify it
+        auto n = find_n(i, j);
+
+        unsafe_set_hin(i, j, n, value);
+    }
+
+    void set(std::size_t i, std::size_t j, value_type value){
+        auto n = find_n(i, j);
+
+        if(n < nnz){
             if(_row_index[n] == i && _col_index[n] == j){
-                _memory[n] = value;
-                return;
+                //At this point, there is already a value for (i,j)
+                //If zero, we remove it, otherwise edit it
+                if(value != value_type(0)){
+                    unsafe_set_hint(i, j, n, value);
+                } else {
+                    erase_n(n);
+                }
+            } else {
+                //At this point, the value does not exist
+                //We insert it if not zero
+                if(value != value_type(0)){
+                    unsafe_set_hint(i, j, n, value);
+                }
             }
-
-            //The insertion point has been found
-            if((_row_index[n] == i && _col_index[n] > j) || _row_index[n] > i){
-                reserve_hint(n);
-
-                _memory[n] = value;
-                _row_index[n] = i;
-                _col_index[n] = j;
-
-                return;
+        } else {
+            //At this point, the value does not exist
+            //We insert it if not zero
+            if(value != value_type(0)){
+                unsafe_set_hint(i, j, n, value);
             }
         }
+    }
 
-        //At this point, it means we need to insert at the last position
-        reserve(nnz + 1);
-        _memory[nnz - 1] = value;
-        _row_index[nnz - 1] = i;
-        _col_index[nnz - 1] = j;
+    void erase(std::size_t i, std::size_t j) {
+        auto n = find_n(i, j);
+
+        if (n < nnz) {
+            if (_row_index[n] == i && _col_index[n] == j) {
+                erase_n(n);
+            }
+        }
     }
 
     //Destructor
