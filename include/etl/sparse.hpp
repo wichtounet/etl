@@ -207,31 +207,43 @@ private:
     }
 
     void erase_hint(std::size_t n){
-        auto new_memory    = allocate(nnz - 1);
-        auto new_row_index = base_type::template allocate<index_type>(nnz - 1);
-        auto new_col_index = base_type::template allocate<index_type>(nnz - 1);
+        cpp_assert(nnz > 0, "Invalid erase_hint call (no non-zero elements");
 
-        if(n == nnz - 1){
-            std::copy_n(_memory, nnz - 1, new_memory);
-            std::copy_n(_row_index, nnz - 1, new_row_index);
-            std::copy_n(_col_index, nnz - 1, new_col_index);
+        if(nnz == 1){
+            release(_memory, nnz);
+            release(_row_index, nnz);
+            release(_col_index, nnz);
+
+            _memory    = nullptr;
+            _col_index = nullptr;
+            _row_index = nullptr;
         } else {
-            std::copy(_memory, _memory + n, new_memory);
-            std::copy(_row_index, _row_index + n, new_row_index);
-            std::copy(_col_index, _col_index + n, new_col_index);
+            auto new_memory    = allocate(nnz - 1);
+            auto new_row_index = base_type::template allocate<index_type>(nnz - 1);
+            auto new_col_index = base_type::template allocate<index_type>(nnz - 1);
 
-            std::copy(_memory + n + 1, _memory + nnz, new_memory);
-            std::copy(_row_index + n + 1, _row_index + nnz, new_row_index);
-            std::copy(_col_index + n + 1, _col_index + nnz, new_col_index);
+            if(n == nnz - 1){
+                std::copy_n(_memory, nnz - 1, new_memory);
+                std::copy_n(_row_index, nnz - 1, new_row_index);
+                std::copy_n(_col_index, nnz - 1, new_col_index);
+            } else {
+                std::copy(_memory, _memory + n, new_memory);
+                std::copy(_row_index, _row_index + n, new_row_index);
+                std::copy(_col_index, _col_index + n, new_col_index);
+
+                std::copy(_memory + n + 1, _memory + nnz, new_memory);
+                std::copy(_row_index + n + 1, _row_index + nnz, new_row_index);
+                std::copy(_col_index + n + 1, _col_index + nnz, new_col_index);
+            }
+
+            release(_memory, nnz);
+            release(_row_index, nnz);
+            release(_col_index, nnz);
+
+            _memory    = new_memory;
+            _col_index = new_col_index;
+            _row_index = new_row_index;
         }
-
-        release(_memory, nnz);
-        release(_row_index, nnz);
-        release(_col_index, nnz);
-
-        _memory    = new_memory;
-        _col_index = new_col_index;
-        _row_index = new_row_index;
 
         --nnz;
     }
