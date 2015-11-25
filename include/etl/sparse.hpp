@@ -163,33 +163,6 @@ private:
         }
     }
 
-    void reserve(std::size_t new_nnz){
-        if(_memory){
-            auto new_memory    = allocate(new_nnz);
-            auto new_row_index = base_type::template allocate<index_type>(new_nnz);
-            auto new_col_index = base_type::template allocate<index_type>(new_nnz);
-
-            //Copy the elements
-            std::copy_n(_memory, nnz, new_memory);
-            std::copy_n(_row_index, nnz, new_row_index);
-            std::copy_n(_col_index, nnz, new_col_index);
-
-            release(_memory, nnz);
-            release(_row_index, nnz);
-            release(_col_index, nnz);
-
-            _memory = new_memory;
-            _col_index = new_col_index;
-            _row_index = new_row_index;
-        } else {
-            _memory    = allocate(new_nnz);
-            _row_index = base_type::template allocate<index_type>(new_nnz);
-            _col_index = base_type::template allocate<index_type>(new_nnz);
-        }
-
-        nnz = new_nnz;
-    }
-
     void reserve_hint(std::size_t hint){
         cpp_assert(hint < nnz + 1, "Invalid hint for reserve_hint");
 
@@ -198,15 +171,22 @@ private:
             auto new_row_index = base_type::template allocate<index_type>(nnz + 1);
             auto new_col_index = base_type::template allocate<index_type>(nnz + 1);
 
-            //Copy the elements before hint
-            std::copy(_memory, _memory + hint, new_memory);
-            std::copy(_row_index, _row_index + hint, new_row_index);
-            std::copy(_col_index, _col_index + hint, new_col_index);
+            if(hint == nnz){
+                //Copy the elements
+                std::copy_n(_memory, nnz, new_memory);
+                std::copy_n(_row_index, nnz, new_row_index);
+                std::copy_n(_col_index, nnz, new_col_index);
+            } else {
+                //Copy the elements before hint
+                std::copy(_memory, _memory + hint, new_memory);
+                std::copy(_row_index, _row_index + hint, new_row_index);
+                std::copy(_col_index, _col_index + hint, new_col_index);
 
-            //Copy the elements after hint
-            std::copy(_memory + hint, _memory + nnz, new_memory + hint + 1);
-            std::copy(_row_index + hint, _row_index + nnz, new_row_index + hint + 1);
-            std::copy(_col_index + hint, _col_index + nnz, new_col_index + hint + 1);
+                //Copy the elements after hint
+                std::copy(_memory + hint, _memory + nnz, new_memory + hint + 1);
+                std::copy(_row_index + hint, _row_index + nnz, new_row_index + hint + 1);
+                std::copy(_col_index + hint, _col_index + nnz, new_col_index + hint + 1);
+            }
 
             release(_memory, nnz);
             release(_row_index, nnz);
@@ -226,23 +206,7 @@ private:
         ++nnz;
     }
 
-    std::size_t find_n(std::size_t i, std::size_t j){
-        for(std::size_t n = 0; n < nnz; ++n){
-            //The value exists, modify it
-            if(_row_index[n] == i && _col_index[n] == j){
-                return n;
-            }
-
-            //The insertion point has been found
-            if((_row_index[n] == i && _col_index[n] > j) || _row_index[n] > i){
-                return n;
-            }
-        }
-
-        return nnz;
-    }
-
-    void erase_n(std::size_t n){
+    void erase_hint(std::size_t n){
         auto new_memory    = allocate(nnz - 1);
         auto new_row_index = base_type::template allocate<index_type>(nnz - 1);
         auto new_col_index = base_type::template allocate<index_type>(nnz - 1);
@@ -272,25 +236,36 @@ private:
         --nnz;
     }
 
+    std::size_t find_n(std::size_t i, std::size_t j){
+        for(std::size_t n = 0; n < nnz; ++n){
+            //The value exists, modify it
+            if(_row_index[n] == i && _col_index[n] == j){
+                return n;
+            }
+
+            //The insertion point has been found
+            if((_row_index[n] == i && _col_index[n] > j) || _row_index[n] > i){
+                return n;
+            }
+        }
+
+        return nnz;
+    }
+
     void unsafe_set_hint(std::size_t i, std::size_t j, std::size_t n, value_type value){
         if(n < nnz){
             //The value exists, modify it
             if(_row_index[n] == i && _col_index[n] == j){
                 _memory[n] = value;
-            } else {
-                reserve_hint(n);
-
-                _memory[n] = value;
-                _row_index[n] = i;
-                _col_index[n] = j;
+                return;
             }
-        } else {
-            //At this point, it means we need to insert at the last position
-            reserve(nnz + 1);
-            _memory[nnz - 1] = value;
-            _row_index[nnz - 1] = i;
-            _col_index[nnz - 1] = j;
         }
+
+        reserve_hint(n);
+
+        _memory[n] = value;
+        _row_index[n] = i;
+        _col_index[n] = j;
     }
 
     template <bool B = n_dimensions == 2, cpp_enable_if(B)>
@@ -312,7 +287,7 @@ private:
                 if(value != value_type(0)){
                     unsafe_set_hint(i, j, n, value);
                 } else {
-                    erase_n(n);
+                    erase_hint(n);
                 }
             } else {
                 //At this point, the value does not exist
@@ -441,7 +416,7 @@ public:
 
         if (n < nnz) {
             if (_row_index[n] == i && _col_index[n] == j) {
-                erase_n(n);
+                erase_hint(n);
             }
         }
     }
