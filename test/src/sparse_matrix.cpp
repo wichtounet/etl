@@ -64,3 +64,32 @@ TEMPLATE_TEST_CASE_2("sparse_matrix/init/3", "[mat][init][sparse]", Z, double, f
     REQUIRE(a(2, 0) == Z(0.0));
     REQUIRE(a(2, 1) == Z(0.01));
 }
+
+TEMPLATE_TEST_CASE_2("sparse_matrix/set/1", "[mat][init][sparse]", Z, double, float) {
+    etl::sparse_matrix<Z> a(3, 3);
+
+    REQUIRE(a.rows() == 3);
+    REQUIRE(a.columns() == 3);
+    REQUIRE(a.size() == 9);
+    REQUIRE(a.non_zeros() == 0);
+
+    a.set(1, 1, 42);
+
+    REQUIRE(a.get(1, 1) == 42);
+    REQUIRE(a.non_zeros() == 1);
+
+    a.set(2, 2, 2);
+    a.set(0, 0, 1);
+
+    REQUIRE(a.get(0, 0) == 1);
+    REQUIRE(a.get(1, 1) == 42);
+    REQUIRE(a.get(2, 2) == 2);
+    REQUIRE(a.non_zeros() == 3);
+
+    a.set(2, 2, -2.0);
+
+    REQUIRE(a.get(0, 0) == 1);
+    REQUIRE(a.get(1, 1) == 42);
+    REQUIRE(a.get(2, 2) == -2.0);
+    REQUIRE(a.non_zeros() == 3);
+}
