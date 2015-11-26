@@ -33,6 +33,15 @@ struct is_dyn_matrix_impl<dyn_matrix_impl<V1, V2, V3>> : std::true_type {};
 template <typename T, typename DT>
 struct is_dyn_matrix : is_dyn_matrix_impl<DT> {};
 
+template <typename T>
+struct is_sparse_matrix_impl : std::false_type {};
+
+template <typename V1, sparse_storage V2, std::size_t V3>
+struct is_sparse_matrix_impl<sparse_matrix_impl<V1, V2, V3>> : std::true_type {};
+
+template <typename T, typename DT>
+struct is_sparse_matrix : is_sparse_matrix_impl<DT> {};
+
 template <typename T, typename DT = std::decay_t<T>>
 using is_unary_expr               = cpp::is_specialization_of<etl::unary_expr, DT>;
 
@@ -91,6 +100,7 @@ template <typename T>
 struct is_etl_expr : cpp::or_c<
                          is_fast_matrix<T>,
                          is_dyn_matrix<T>,
+                         is_sparse_matrix<T>,
                          is_unary_expr<T>,
                          is_binary_expr<T>,
                          is_temporary_unary_expr<T>,
@@ -101,9 +111,15 @@ struct is_etl_expr : cpp::or_c<
                          is_optimized_expr<T>> {};
 
 template <typename T>
-struct is_etl_value : cpp::or_c<
+struct is_etl_direct_value : cpp::or_c<
                           is_fast_matrix<T>,
                           is_dyn_matrix<T>> {};
+
+template <typename T>
+struct is_etl_value : cpp::or_c<
+                          is_fast_matrix<T>,
+                          is_dyn_matrix<T>,
+                          is_sparse_matrix<T>> {};
 
 template <typename T>
 struct is_direct_sub_view : std::false_type {};
@@ -143,7 +159,7 @@ struct is_direct_identity_view<etl::unary_expr<T, V, identity_op>> : has_direct_
 
 template <typename T, typename DT>
 struct has_direct_access : cpp::or_c<
-                               is_etl_value<DT>, is_temporary_unary_expr<DT>, is_temporary_binary_expr<DT>, is_direct_identity_view<DT>, is_direct_sub_view<DT>, is_direct_dim_view<DT>, is_direct_fast_matrix_view<DT>, is_direct_dyn_matrix_view<DT>, is_direct_dyn_vector_view<DT>> {};
+                               is_etl_direct_value<DT>, is_temporary_unary_expr<DT>, is_temporary_binary_expr<DT>, is_direct_identity_view<DT>, is_direct_sub_view<DT>, is_direct_dim_view<DT>, is_direct_fast_matrix_view<DT>, is_direct_dyn_matrix_view<DT>, is_direct_dyn_vector_view<DT>> {};
 
 template <typename T, typename Enable>
 struct etl_traits;

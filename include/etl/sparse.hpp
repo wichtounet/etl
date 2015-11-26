@@ -97,6 +97,7 @@ template <typename T, std::size_t D>
 struct sparse_matrix_impl <T, sparse_storage::COO, D> final : dyn_base<T, D> {
     static constexpr const std::size_t n_dimensions      = D;
     static constexpr const sparse_storage storage_format = sparse_storage::COO;
+    static constexpr const order storage_order           = order::RowMajor;
     static constexpr const std::size_t alignment         = intrinsic_traits<T>::alignment;
 
     using base_type              = dyn_base<T, D>;
@@ -248,7 +249,7 @@ private:
         --nnz;
     }
 
-    std::size_t find_n(std::size_t i, std::size_t j){
+    std::size_t find_n(std::size_t i, std::size_t j) const noexcept {
         for(std::size_t n = 0; n < nnz; ++n){
             //The value exists, modify it
             if(_row_index[n] == i && _col_index[n] == j){
@@ -281,7 +282,7 @@ private:
     }
 
     template <bool B = n_dimensions == 2, cpp_enable_if(B)>
-    value_type get_hint(std::size_t i, std::size_t j, std::size_t n) noexcept {
+    value_type get_hint(std::size_t i, std::size_t j, std::size_t n) const noexcept {
         if (n < nnz) {
             if (_row_index[n] == i && _col_index[n] == j) {
                 return _memory[n];
@@ -365,6 +366,17 @@ public:
                                                                      dyn_detail::sizes(std::make_index_sequence<(sizeof...(S))>(), s1, sizes...)){
         auto list = cpp::last_value(sizes...).template list<value_type>();
         build_from_iterable(list);
+    }
+
+    template <typename E, cpp_enable_if(!std::is_same<std::decay_t<E>, sparse_matrix_impl<T, storage_format, D>>::value && std::is_convertible<value_t<E>, value_type>::value && is_etl_expr<E>::value)>
+    sparse_matrix_impl& operator=(E&& e) noexcept {
+        validate_assign(*this, e);
+
+        assign_evaluate(e, *this);
+
+        check_invariants();
+
+        return *this;
     }
 
     /*!

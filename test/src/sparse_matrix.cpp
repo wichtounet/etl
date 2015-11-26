@@ -8,7 +8,22 @@
 #include "test_light.hpp"
 #include "cpp_utils/algorithm.hpp"
 
-// Init tests
+TEMPLATE_TEST_CASE_2("sparse_matrix/traits/1", "[mat][init][sparse]", Z, double, float) {
+    etl::sparse_matrix<Z> a;
+
+    REQUIRE(etl::is_etl_expr<decltype(a)>::value);
+    REQUIRE(etl::is_sparse_matrix<decltype(a)>::value);
+}
+
+TEMPLATE_TEST_CASE_2("sparse_matrix/traits/2", "[mat][init][sparse]", Z, double, float) {
+    etl::sparse_matrix<Z> a(3, 4);
+
+    REQUIRE(etl::is_etl_expr<decltype(a)>::value);
+    REQUIRE(etl::is_sparse_matrix<decltype(a)>::value);
+    REQUIRE(etl::rows(a) == 3);
+    REQUIRE(etl::columns(a) == 4);
+    REQUIRE(etl::size(a) == 12);
+}
 
 TEMPLATE_TEST_CASE_2("sparse_matrix/init/1", "[mat][init][sparse]", Z, double, float) {
     etl::sparse_matrix<Z> a;
@@ -228,4 +243,14 @@ TEMPLATE_TEST_CASE_2("sparse_matrix/sequential/1", "[mat][erase][sparse]", Z, do
     REQUIRE(a[3] == 2.0);
     REQUIRE(a[4] == 3.0);
     REQUIRE(a[5] == 0.0);
+}
+
+TEMPLATE_TEST_CASE_2("sparse_matrix/add/1", "[mat][erase][sparse]", Z, double, float) {
+    etl::sparse_matrix<Z> a(3, 2, std::initializer_list<Z>({1.0, 0.0, 0.0, 2.0, 3.0, 0.0}));
+    etl::sparse_matrix<Z> b(3, 2, std::initializer_list<Z>({2.0, 1.0, 0.0, 3.0, 0.0, 0.0}));
+    etl::sparse_matrix<Z> c(3, 2);
+
+    //c = a + b;
+
+    //TODO Continue the test
 }

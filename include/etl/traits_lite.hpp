@@ -12,6 +12,9 @@ namespace etl {
 template <typename T, typename DT = std::decay_t<T>>
 struct is_dyn_matrix;
 
+template <typename T, typename DT = std::decay_t<T>>
+struct is_sparse_matrix;
+
 template <typename T>
 struct is_etl_expr;
 
