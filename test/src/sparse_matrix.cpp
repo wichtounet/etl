@@ -250,7 +250,7 @@ TEMPLATE_TEST_CASE_2("sparse_matrix/add/1", "[mat][erase][sparse]", Z, double, f
     etl::sparse_matrix<Z> b(3, 2, std::initializer_list<Z>({2.0, 1.0, 0.0, 3.0, 0.0, 0.0}));
     etl::sparse_matrix<Z> c(3, 2);
 
-    //c = a + b;
+    c = a + b;
 
     //TODO Continue the test
 }

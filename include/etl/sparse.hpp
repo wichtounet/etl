@@ -390,7 +390,7 @@ public:
      * \return The value at the (i,j) position.
      */
     template <bool B = n_dimensions == 2, cpp_enable_if(B)>
-    value_type get(std::size_t i, std::size_t j) noexcept {
+    value_type get(std::size_t i, std::size_t j) const noexcept {
         cpp_assert(i < dim(0), "Out of bounds");
         cpp_assert(j < dim(1), "Out of bounds");
 
