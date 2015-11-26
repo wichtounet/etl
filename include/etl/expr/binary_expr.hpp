@@ -80,6 +80,10 @@ public:
         return BinaryOp::apply(lhs()[i], rhs()[i]);
     }
 
+    value_type read_flat(std::size_t i) const {
+        return BinaryOp::apply(lhs().read_flat(i), rhs().read_flat(i));
+    }
+
     intrinsic_type<value_type> load(std::size_t i) const {
         return BinaryOp::load(lhs().load(i), rhs().load(i));
     }

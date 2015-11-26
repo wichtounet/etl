@@ -67,6 +67,14 @@ struct dim_view {
         }
     }
 
+    value_type read_flat(std::size_t j) const noexcept {
+        if (D == 1) {
+            return sub(i, j);
+        } else { //D == 2
+            return sub(j, i);
+        }
+    }
+
     const_return_type operator()(std::size_t j) const {
         if (D == 1) {
             return sub(i, j);
@@ -135,6 +143,12 @@ struct sub_view {
         return decay_traits<parent_type>::storage_order == order::RowMajor
                    ? parent[i * subsize(parent) + j]
                    : parent[i + dim<0>(parent) * j];
+    }
+
+    value_type read_flat(std::size_t j) const noexcept {
+        return decay_traits<parent_type>::storage_order == order::RowMajor
+                   ? parent.read_flat(i * subsize(parent) + j)
+                   : parent.read_flat(i + dim<0>(parent) * j);
     }
 
     template <typename... S>
@@ -223,6 +237,10 @@ struct fast_matrix_view {
         return sub[j];
     }
 
+    value_type read_flat(std::size_t j) const noexcept {
+        return sub.read_flat(j);
+    }
+
     template <typename... S>
     std::enable_if_t<sizeof...(S) == sizeof...(Dims), return_type&> operator()(S... args) noexcept {
         static_assert(cpp::all_convertible_to<std::size_t, S...>::value, "Invalid size types");
@@ -296,6 +314,10 @@ struct dyn_vector_view {
         return sub[j];
     }
 
+    value_type read_flat(std::size_t j) const noexcept {
+        return sub.read_flat(j);
+    }
+
     return_type operator()(std::size_t j) {
         return sub[j];
     }
@@ -359,6 +381,10 @@ struct dyn_matrix_view {
 
     return_type operator[](std::size_t j) {
         return sub[j];
+    }
+
+    value_type read_flat(std::size_t j) const noexcept {
+        return sub.read_flat(j);
     }
 
     return_type operator()(std::size_t j) {

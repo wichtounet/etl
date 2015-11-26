@@ -45,6 +45,10 @@ public:
         return generator();
     }
 
+    value_type read_flat(std::size_t /*d*/) const {
+        return generator();
+    }
+
     value_type operator()() const {
         return generator();
     }

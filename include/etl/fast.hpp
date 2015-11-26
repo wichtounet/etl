@@ -322,6 +322,12 @@ public:
         return _data[i];
     }
 
+    value_type read_flat(std::size_t i) const noexcept {
+        cpp_assert(i < size(), "Out of bounds");
+
+        return _data[i];
+    }
+
     vec_type load(std::size_t i) const noexcept {
         return vec::loadu(memory_start() + i);
     }

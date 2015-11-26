@@ -84,6 +84,10 @@ public:
         return UnaryOp::apply(value()[i]);
     }
 
+    value_type read_flat(std::size_t i) const noexcept {
+        return UnaryOp::apply(value().read_flat(i));
+    }
+
     intrinsic_type<value_type> load(std::size_t i) const {
         return UnaryOp::load(value().load(i));
     }
@@ -186,6 +190,10 @@ public:
 
     const_return_type operator[](std::size_t i) const {
         return value()[i];
+    }
+
+    value_type read_flat(std::size_t i) const noexcept {
+        return value().read_flat(i);
     }
 
     template <typename SS = Expr, cpp_enable_if(has_direct_access<SS>::value)>
@@ -297,6 +305,10 @@ public:
         return value()[i];
     }
 
+    value_type read_flat(std::size_t i) const noexcept {
+        return value().read_flat(i);
+    }
+
     template <bool B = (sub_size_compare<this_type>::value > 1), cpp_enable_if(B)>
     auto operator()(std::size_t i) const {
         return sub(*this, i);
@@ -359,6 +371,10 @@ public:
 
     value_type operator[](std::size_t i) const {
         return op.apply(value()[i]);
+    }
+
+    value_type read_flat(std::size_t i) const {
+        return op.apply(value().read_flat(i));
     }
 
     intrinsic_type<value_type> load(std::size_t i) const {

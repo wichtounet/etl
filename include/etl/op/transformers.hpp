@@ -34,6 +34,10 @@ struct rep_r_transformer {
         return sub[i / mul_all<D...>::value];
     }
 
+    value_type read_flat(std::size_t i) const noexcept {
+        return sub.read_flat(i / mul_all<D...>::value);
+    }
+
     template <typename... Sizes, cpp_enable_if((sizeof...(Sizes) == dimensions))>
     value_type operator()(Sizes... sizes) const {
         return selected_only(std::make_index_sequence<sub_d>(), sizes...);
@@ -65,6 +69,10 @@ struct rep_l_transformer {
 
     value_type operator[](std::size_t i) const {
         return sub[i % size(sub)];
+    }
+
+    value_type read_flat(std::size_t i) const noexcept {
+        return sub.read_flat(i % size(sub));
     }
 
     template <typename... Sizes, cpp_enable_if((sizeof...(Sizes) == dimensions))>
@@ -101,6 +109,10 @@ struct dyn_rep_r_transformer {
     }
 
     value_type operator[](std::size_t i) const {
+        return sub(i / m);
+    }
+
+    value_type read_flat(std::size_t i) const noexcept {
         return sub(i / m);
     }
 
@@ -141,6 +153,10 @@ struct dyn_rep_l_transformer {
         return sub(i % size(sub));
     }
 
+    value_type read_flat(std::size_t i) const {
+        return sub(i % size(sub));
+    }
+
     template <typename... Sizes, cpp_enable_if((sizeof...(Sizes) == dimensions))>
     value_type operator()(Sizes... sizes) const {
         return selected_only(make_index_range<D, dimensions>(), sizes...);
@@ -171,6 +187,10 @@ struct sum_r_transformer {
         return sum(sub(i));
     }
 
+    value_type read_flat(std::size_t i) const {
+        return sum(sub(i));
+    }
+
     template <typename... Sizes>
     value_type operator()(std::size_t i, Sizes... /*sizes*/) const {
         return sum(sub(i));
@@ -192,6 +212,10 @@ struct mean_r_transformer {
             : sub(vec) {}
 
     value_type operator[](std::size_t i) const {
+        return mean(sub(i));
+    }
+
+    value_type read_flat(std::size_t i) const {
         return mean(sub(i));
     }
 
@@ -220,6 +244,16 @@ struct sum_l_transformer {
 
         for (std::size_t i = 0; i < dim<0>(sub); ++i) {
             m += sub[j + i * (size(sub) / dim<0>(sub))];
+        }
+
+        return m;
+    }
+
+    value_type read_flat(std::size_t j) const noexcept {
+        value_type m = 0.0;
+
+        for (std::size_t i = 0; i < dim<0>(sub); ++i) {
+            m += sub.read_flat(j + i * (size(sub) / dim<0>(sub)));
         }
 
         return m;
@@ -256,6 +290,16 @@ struct mean_l_transformer {
 
         for (std::size_t i = 0; i < dim<0>(sub); ++i) {
             m += sub[j + i * (size(sub) / dim<0>(sub))];
+        }
+
+        return m / dim<0>(sub);
+    }
+
+    value_type read_flat(std::size_t j) const noexcept {
+        value_type m = 0.0;
+
+        for (std::size_t i = 0; i < dim<0>(sub); ++i) {
+            m += sub.read_flat(j + i * (size(sub) / dim<0>(sub)));
         }
 
         return m / dim<0>(sub);
@@ -301,6 +345,18 @@ struct hflip_transformer {
         return sub[i_i * dim<1>(sub) + (dim<1>(sub) - 1 - i_j)];
     }
 
+    template <bool C = matrix, cpp_disable_if(C)>
+    value_type read_flat(std::size_t i) const {
+        return sub.read_flat(size(sub) - i - 1);
+    }
+
+    template <bool C = matrix, cpp_enable_if(C)>
+    value_type read_flat(std::size_t i) const {
+        std::size_t i_i = i / dim<1>(sub);
+        std::size_t i_j = i % dim<1>(sub);
+        return sub.read_flat(i_i * dim<1>(sub) + (dim<1>(sub) - 1 - i_j));
+    }
+
     value_type operator()(std::size_t i) const {
         return sub(size(sub) - 1 - i);
     }
@@ -338,6 +394,18 @@ struct vflip_transformer {
         return sub[(dim<0>(sub) - 1 - i_i) * dim<1>(sub) + i_j];
     }
 
+    template <bool C = matrix, cpp_disable_if(C)>
+    value_type read_flat(std::size_t i) const {
+        return sub.read_flat(i);
+    }
+
+    template <bool C = matrix, cpp_enable_if(C)>
+    value_type read_flat(std::size_t i) const {
+        std::size_t i_i = i / dim<1>(sub);
+        std::size_t i_j = i % dim<1>(sub);
+        return sub.read_flat((dim<0>(sub) - 1 - i_i) * dim<1>(sub) + i_j);
+    }
+
     value_type operator()(std::size_t i) const {
         return sub(i);
     }
@@ -369,6 +437,14 @@ struct fflip_transformer {
         }
     }
 
+    value_type read_flat(std::size_t i) const {
+        if (dimensions(sub) == 1) {
+            return sub.read_flat(i);
+        } else {
+            return sub.read_flat(size(sub) - i - 1);
+        }
+    }
+
     value_type operator()(std::size_t i) const {
         return sub(i);
     }
@@ -395,6 +471,20 @@ struct transpose_transformer {
     value_type operator[](std::size_t i) const {
         if (dimensions(sub) == 1) {
             return sub[i];
+        } else {
+            if (decay_traits<sub_type>::storage_order == order::RowMajor) {
+                std::size_t ii, jj;
+                std::tie(ii, jj) = index_to_2d(sub, i);
+                return sub(jj, ii);
+            } else {
+                return sub(i / dim<1>(sub), i % dim<1>(sub));
+            }
+        }
+    }
+
+    value_type read_flat(std::size_t i) const {
+        if (dimensions(sub) == 1) {
+            return sub.read_flat(i);
         } else {
             if (decay_traits<sub_type>::storage_order == order::RowMajor) {
                 std::size_t ii, jj;
@@ -457,6 +547,12 @@ struct mm_mul_transformer {
         return operator()(i_i, i_j);
     }
 
+    value_type read_flat(std::size_t i) const {
+        std::size_t i_i, i_j;
+        std::tie(i_i, i_j) = index_to_2d(left, i);
+        return operator()(i_i, i_j);
+    }
+
     value_type operator()(std::size_t i, std::size_t j) const {
         value_type c = 0;
 
@@ -499,6 +595,10 @@ struct dyn_convmtx_transformer {
             std::size_t i_j = i / h;
             return operator()(i_i, i_j);
         }
+    }
+
+    value_type read_flat(std::size_t i) const {
+        return operator[](i);
     }
 
     value_type operator()(std::size_t i, std::size_t j) const {
@@ -545,6 +645,12 @@ struct dyn_convmtx2_transformer {
     }
 
     value_type operator[](std::size_t i) const {
+        std::size_t i_i = i / (k1 * k2);
+        std::size_t i_j = i % (k1 * k2);
+        return (*this)(i_i, i_j);
+    }
+
+    value_type read_flat(std::size_t i) const noexcept {
         std::size_t i_i = i / (k1 * k2);
         std::size_t i_j = i % (k1 * k2);
         return (*this)(i_i, i_j);
@@ -725,6 +831,23 @@ struct p_max_pool_h_transformer : p_max_pool_transformer<T, C1, C2> {
         return (*this)(i_i, i_j, i_k);
     }
 
+    template <bool C = d2d, cpp_enable_if(C)>
+    value_type read_flat(std::size_t i) const {
+        std::size_t i_i = i / dim<1>(sub);
+        std::size_t i_j = i % dim<1>(sub);
+        return (*this)(i_i, i_j);
+    }
+
+    template <bool C = d2d, cpp_disable_if(C)>
+    value_type read_flat(std::size_t i) const {
+        std::size_t i_i  = i / (dim<1>(sub) * dim<2>(sub));
+        std::size_t i_ij = i % (dim<1>(sub) * dim<2>(sub));
+        std::size_t i_j  = i_ij / dim<2>(sub);
+        std::size_t i_k  = i_ij % dim<2>(sub);
+
+        return (*this)(i_i, i_j, i_k);
+    }
+
     value_type operator()(std::size_t i, std::size_t j) const {
         return std::exp(sub(i, j)) / (1.0 + base_type::pool(i, j));
     }
@@ -760,6 +883,23 @@ struct p_max_pool_p_transformer : p_max_pool_transformer<T, C1, C2> {
 
     template <bool C = d2d, cpp_disable_if(C)>
     value_type operator[](std::size_t i) const {
+        std::size_t i_i  = i / ((dim<1>(sub) / C1) * (dim<2>(sub) / C2));
+        std::size_t i_ij = i % ((dim<1>(sub) / C1) * (dim<2>(sub) / C2));
+        std::size_t i_j  = i_ij / (dim<2>(sub) / C2);
+        std::size_t i_k  = i_ij % (dim<2>(sub) / C2);
+
+        return (*this)(i_i, i_j, i_k);
+    }
+
+    template <bool C = d2d, cpp_enable_if(C)>
+    value_type read_flat(std::size_t i) const noexcept {
+        std::size_t i_i = i / (dim<1>(sub) / C2);
+        std::size_t i_j = i % (dim<1>(sub) / C2);
+        return (*this)(i_i, i_j);
+    }
+
+    template <bool C = d2d, cpp_disable_if(C)>
+    value_type read_flat(std::size_t i) const noexcept {
         std::size_t i_i  = i / ((dim<1>(sub) / C1) * (dim<2>(sub) / C2));
         std::size_t i_ij = i % ((dim<1>(sub) / C1) * (dim<2>(sub) / C2));
         std::size_t i_j  = i_ij / (dim<2>(sub) / C2);

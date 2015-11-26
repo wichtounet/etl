@@ -43,6 +43,10 @@ struct temporary_expr : comparable<D>, value_testable<D>, dim_testable<D> {
         return as_derived().result()[i];
     }
 
+    value_type read_flat(std::size_t i) const {
+        return as_derived().result().read_flat(i);
+    }
+
     template <typename... S, cpp_enable_if(sizeof...(S) == sub_size_compare<derived_t>::value)>
     value_type operator()(S... args) const {
         static_assert(cpp::all_convertible_to<std::size_t, S...>::value, "Invalid size types");

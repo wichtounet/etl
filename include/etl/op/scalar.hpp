@@ -25,6 +25,10 @@ struct scalar {
         return value;
     }
 
+    constexpr const T read_flat(std::size_t /*d*/) const noexcept {
+        return value;
+    }
+
     constexpr const vec_type load(std::size_t /*d*/) const noexcept {
         return vec::set(value);
     }

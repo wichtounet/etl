@@ -47,6 +47,10 @@ struct magic_view {
         return detail::compute<value_type>(n, i / n, i % n);
     }
 
+    value_type read_flat(std::size_t i) const {
+        return detail::compute<value_type>(n, i / n, i % n);
+    }
+
     value_type operator[](std::size_t i) {
         return detail::compute<value_type>(n, i / n, i % n);
     }
@@ -65,6 +69,10 @@ struct fast_magic_view {
     using value_type = V;
 
     value_type operator[](std::size_t i) const {
+        return detail::compute<value_type>(N, i / N, i % N);
+    }
+
+    value_type read_flat(std::size_t i) const {
         return detail::compute<value_type>(N, i / N, i % N);
     }
 

@@ -403,6 +403,12 @@ public:
         return _memory[i];
     }
 
+    value_type read_flat(std::size_t i) const noexcept {
+        cpp_assert(i < _size, "Out of bounds");
+
+        return _memory[i];
+    }
+
     vec_type load(std::size_t i) const noexcept {
         return vec::load(_memory + i);
     }

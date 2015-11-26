@@ -47,7 +47,7 @@ struct standard_evaluator {
         evaluate_only(expr);
 
         for (std::size_t i = 0; i < etl::size(result); ++i) {
-            result[i] = expr[i];
+            result[i] = expr.read_flat(i);
         }
     }
 

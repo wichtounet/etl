@@ -44,15 +44,15 @@ struct Assign {
             iend = _first + (_size & std::size_t(-4));
 
             for (std::size_t i = _first; i < iend; i += 4) {
-                lhs[i]     = rhs[i];
-                lhs[i + 1] = rhs[i + 1];
-                lhs[i + 2] = rhs[i + 2];
-                lhs[i + 3] = rhs[i + 3];
+                lhs[i]     = rhs.read_flat(i);
+                lhs[i + 1] = rhs.read_flat(i + 1);
+                lhs[i + 2] = rhs.read_flat(i + 2);
+                lhs[i + 3] = rhs.read_flat(i + 3);
             }
         }
 
         for (std::size_t i = iend; i < _last; ++i) {
-            lhs[i] = rhs[i];
+            lhs[i] = rhs.read_flat(i);
         }
     }
 };
