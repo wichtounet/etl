@@ -396,6 +396,16 @@ public:
         return {*this, i, j};
     }
 
+    template <bool B = n_dimensions == 2, cpp_enable_if(B)>
+    reference_type operator[](std::size_t n) noexcept {
+        return {*this, n / columns(), n % columns()};
+    }
+
+    template <bool B = n_dimensions == 2, cpp_enable_if(B)>
+    const_reference_type operator[](std::size_t n) const noexcept {
+        return {*this, n / columns(), n % columns()};
+    }
+
     /*!
      * \brief Returns the number of non zeros entries in the sparse matrix.
      *

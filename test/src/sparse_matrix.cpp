@@ -218,3 +218,14 @@ TEMPLATE_TEST_CASE_2("sparse_matrix/erase/1", "[mat][erase][sparse]", Z, double,
     REQUIRE(a.get(2, 0) == 3.0);
     REQUIRE(a.non_zeros() == 1);
 }
+
+TEMPLATE_TEST_CASE_2("sparse_matrix/sequential/1", "[mat][erase][sparse]", Z, double, float) {
+    etl::sparse_matrix<Z> a(3, 2, std::initializer_list<Z>({1.0, 0.0, 0.0, 2.0, 3.0, 0.0}));
+
+    REQUIRE(a[0] == 1.0);
+    REQUIRE(a[1] == 0.0);
+    REQUIRE(a[2] == 0.0);
+    REQUIRE(a[3] == 2.0);
+    REQUIRE(a[4] == 3.0);
+    REQUIRE(a[5] == 0.0);
+}
