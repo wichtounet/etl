@@ -172,7 +172,7 @@ struct etl_traits<T, std::enable_if_t<is_etl_value<T>::value>> {
     static constexpr const bool is_fast                 = is_fast_matrix<T>::value;
     static constexpr const bool is_value                = true;
     static constexpr const bool is_generator            = false;
-    static constexpr const bool vectorizable            = true;
+    static constexpr const bool vectorizable            = !is_sparse_matrix<T>::value;
     static constexpr const bool needs_temporary_visitor = false;
     static constexpr const bool needs_evaluator_visitor = false;
     static constexpr const order storage_order          = T::storage_order;
