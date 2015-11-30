@@ -185,3 +185,59 @@ TEMPLATE_TEST_CASE_2("sparse/complex/erase/1", "[mat][erase][sparse]", Z, double
     REQUIRE(a.get(2, 0) == CZ(3.0, 3.3));
     REQUIRE(a.non_zeros() == 1);
 }
+
+TEMPLATE_TEST_CASE_2("sparse/complex/add/1", "[mat][add][sparse]", Z, double, float) {
+    etl::sparse_matrix<std::complex<Z>> a(2, 2, std::initializer_list<std::complex<Z>>({CZ(1.0, 0.0), CZ(0.0, 0.0), CZ(0.0, 0.0), CZ(2.0, 0.0)}));
+    etl::sparse_matrix<std::complex<Z>> b(2, 2, std::initializer_list<std::complex<Z>>({CZ(2.0, -2.0), CZ(1.0, 2.0), CZ(0.0, 0.0), CZ(2.0, 0.0)}));
+    etl::sparse_matrix<std::complex<Z>> c(2, 2);
+
+    c = a + b;
+
+    REQUIRE(c.get(0,0) == CZ(3.0, -2.0));
+    REQUIRE(c.get(0,1) == CZ(1.0, 2.0));
+    REQUIRE(c.get(1,0) == CZ(0.0, 0.0));
+    REQUIRE(c.get(1,1) == CZ(4.0, 0.0));
+    REQUIRE(c.non_zeros() == 3);
+}
+
+TEMPLATE_TEST_CASE_2("sparse/complex/sub/1", "[mat][add][sparse]", Z, double, float) {
+    etl::sparse_matrix<std::complex<Z>> a(2, 2, std::initializer_list<std::complex<Z>>({CZ(1.0, 0.0), CZ(0.0, 0.0), CZ(0.0, 0.0), CZ(2.0, 0.0)}));
+    etl::sparse_matrix<std::complex<Z>> b(2, 2, std::initializer_list<std::complex<Z>>({CZ(2.0, -2.0), CZ(1.0, 2.0), CZ(0.0, 0.0), CZ(2.0, 0.0)}));
+    etl::sparse_matrix<std::complex<Z>> c(2, 2);
+
+    c = a - b;
+
+    REQUIRE(c.get(0,0) == CZ(-1.0, 2.0));
+    REQUIRE(c.get(0,1) == CZ(-1.0, -2.0));
+    REQUIRE(c.get(1,0) == CZ(0.0, 0.0));
+    REQUIRE(c.get(1,1) == CZ(0.0, 0.0));
+    REQUIRE(c.non_zeros() == 2);
+}
+
+TEMPLATE_TEST_CASE_2("sparse/complex/mul/1", "[mat][add][sparse]", Z, double, float) {
+    etl::sparse_matrix<std::complex<Z>> a(2, 2, std::initializer_list<std::complex<Z>>({CZ(1.0, 0.0), CZ(0.0, 0.0), CZ(0.0, 0.0), CZ(2.0, 0.0)}));
+    etl::sparse_matrix<std::complex<Z>> b(2, 2, std::initializer_list<std::complex<Z>>({CZ(2.0, -2.0), CZ(1.0, 2.0), CZ(0.0, 0.0), CZ(2.0, 0.0)}));
+    etl::sparse_matrix<std::complex<Z>> c(2, 2);
+
+    c = a >> b;
+
+    REQUIRE(c.get(0,0) == CZ(2.0, -2.0));
+    REQUIRE(c.get(0,1) == CZ(0.0, 0.0));
+    REQUIRE(c.get(1,0) == CZ(0.0, 0.0));
+    REQUIRE(c.get(1,1) == CZ(4.0, 0.0));
+    REQUIRE(c.non_zeros() == 2);
+}
+
+TEMPLATE_TEST_CASE_2("sparse/complex/div/1", "[mat][div][sparse]", Z, double, float) {
+    etl::sparse_matrix<std::complex<Z>> a(2, 2, std::initializer_list<std::complex<Z>>({CZ(1.0, 0.0), CZ(0.0, 0.0), CZ(0.0, 0.0), CZ(2.0, 0.0)}));
+    etl::sparse_matrix<std::complex<Z>> b(2, 2, std::initializer_list<std::complex<Z>>({CZ(2.0, -2.0), CZ(1.0, 2.0), CZ(1.0, 0.0), CZ(2.0, 0.0)}));
+    etl::sparse_matrix<std::complex<Z>> c(2, 2);
+
+    c = a / b;
+
+    REQUIRE(c.get(0,0) == CZ(0.25, 0.25));
+    REQUIRE(c.get(0,1) == CZ(0.0, 0.0));
+    REQUIRE(c.get(1,0) == CZ(0.0, 0.0));
+    REQUIRE(c.get(1,1) == CZ(1.0, 0.0));
+    REQUIRE(c.non_zeros() == 2);
+}
