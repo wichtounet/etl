@@ -77,10 +77,6 @@ struct sparse_reference {
         return *this;
     }
 
-    bool operator==(value_type rhs){
-        return get() == rhs;
-    }
-
     operator raw_reference_type(){
         return get();
     }
@@ -91,27 +87,27 @@ private:
     }
 };
 
-bool is_zero(double a){
+inline bool is_zero(double a){
     return a == 0.0;
 }
 
-bool is_zero(float a){
+inline bool is_zero(float a){
     return a == 0.0f;
 }
 
-bool is_zero(std::complex<float> a){
+inline bool is_zero(std::complex<float> a){
     return a.real() == 0.0f && a.imag() == 0.0f;
 }
 
-bool is_zero(std::complex<double> a){
+inline bool is_zero(std::complex<double> a){
     return a.real() == 0.0 && a.imag() == 0.0;
 }
 
-bool is_zero(etl::complex<float> a){
+inline bool is_zero(etl::complex<float> a){
     return a.real == 0.0f && a.imag == 0.0f;
 }
 
-bool is_zero(etl::complex<double> a){
+inline bool is_zero(etl::complex<double> a){
     return a.real == 0.0 && a.imag == 0.0;
 }
 
