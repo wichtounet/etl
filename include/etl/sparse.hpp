@@ -77,6 +77,10 @@ struct sparse_reference {
         return *this;
     }
 
+    bool operator==(value_type rhs){
+        return get() == rhs;
+    }
+
     operator raw_reference_type(){
         return get();
     }
@@ -86,6 +90,35 @@ private:
         return *ptr;
     }
 };
+
+bool is_zero(double a){
+    return a == 0.0;
+}
+
+bool is_zero(float a){
+    return a == 0.0f;
+}
+
+bool is_zero(std::complex<float> a){
+    return a.real() == 0.0f && a.imag() == 0.0f;
+}
+
+bool is_zero(std::complex<double> a){
+    return a.real() == 0.0 && a.imag() == 0.0;
+}
+
+bool is_zero(etl::complex<float> a){
+    return a.real == 0.0f && a.imag == 0.0f;
+}
+
+bool is_zero(etl::complex<double> a){
+    return a.real == 0.0 && a.imag == 0.0;
+}
+
+template<typename T>
+bool is_non_zero(T value){
+    return !is_zero(value);
+}
 
 } //end of namespace sparse_detail
 
@@ -135,7 +168,7 @@ private:
     void build_from_iterable(const It& iterable){
         nnz =  0;
         for (auto v : iterable) {
-            if(v != 0.0){
+            if(sparse_detail::is_non_zero(v)){
                 ++nnz;
             }
         }
@@ -151,7 +184,7 @@ private:
 
             for(std::size_t i = 0; i < rows(); ++i){
                 for(std::size_t j = 0; j < columns(); ++j){
-                    if(*it != 0.0){
+                    if(sparse_detail::is_non_zero(*it)){
                         _memory[n] = *it;
                         _row_index[n] = i;
                         _col_index[n] = j;
@@ -297,7 +330,7 @@ private:
             if(_row_index[n] == i && _col_index[n] == j){
                 //At this point, there is already a value for (i,j)
                 //If zero, we remove it, otherwise edit it
-                if(value != value_type(0)){
+                if(sparse_detail::is_non_zero(value)){
                     unsafe_set_hint(i, j, n, value);
                 } else {
                     erase_hint(n);
@@ -305,14 +338,14 @@ private:
             } else {
                 //At this point, the value does not exist
                 //We insert it if not zero
-                if(value != value_type(0)){
+                if(sparse_detail::is_non_zero(value)){
                     unsafe_set_hint(i, j, n, value);
                 }
             }
         } else {
             //At this point, the value does not exist
             //We insert it if not zero
-            if(value != value_type(0)){
+            if(sparse_detail::is_non_zero(value)){
                 unsafe_set_hint(i, j, n, value);
             }
         }
