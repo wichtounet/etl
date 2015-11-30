@@ -88,3 +88,100 @@ TEMPLATE_TEST_CASE_2("sparse/complex/set/2", "[mat][set][sparse]", Z, double, fl
     REQUIRE(a.get(2, 2) == CZ(2.2, 3.2));
     REQUIRE(a.non_zeros() == 2);
 }
+
+TEMPLATE_TEST_CASE_2("sparse/complex/reference/1", "[mat][reference][sparse]", Z, double, float) {
+    etl::sparse_matrix<std::complex<Z>> a(3, 3);
+
+    REQUIRE(a.rows() == 3);
+    REQUIRE(a.columns() == 3);
+    REQUIRE(a.size() == 9);
+    REQUIRE(a.non_zeros() == 0);
+
+    a(1, 1) = CZ(1.0, 2.0);
+
+    REQUIRE(a.get(1, 1) == CZ(1.0, 2.0));
+    REQUIRE(a.non_zeros() == 1);
+
+    a(0, 0) = CZ(1.0, 1.0);
+    a(2, 2) = CZ(2.0, 2.0);
+
+    REQUIRE(a.get(0, 0) == CZ(1.0, 1.0));
+    REQUIRE(a.get(1, 1) == CZ(1.0, 2.0));
+    REQUIRE(a.get(2, 2) == CZ(2.0, 2.0));
+    REQUIRE(a.non_zeros() == 3);
+
+    a(2, 2) = CZ(-2.0, 2.0);
+
+    REQUIRE(a.get(0, 0) == CZ(1.0, 1.0));
+    REQUIRE(a.get(1, 1) == CZ(1.0, 2.0));
+    REQUIRE(a.get(2, 2) == CZ(-2.0, 2.0));
+    REQUIRE(a.non_zeros() == 3);
+}
+
+TEMPLATE_TEST_CASE_2("sparse/complex/reference/2", "[mat][reference][sparse]", Z, double, float) {
+    etl::sparse_matrix<std::complex<Z>> a(3, 3);
+
+    REQUIRE(a.rows() == 3);
+    REQUIRE(a.columns() == 3);
+    REQUIRE(a.size() == 9);
+    REQUIRE(a.non_zeros() == 0);
+
+    a(0, 0) = CZ(1.0, 1.01);
+    a(1, 1) = CZ(42.0, 32.0);
+    a(2, 2) = CZ(2.0, 1.0);
+
+    REQUIRE(a.get(0, 0) == CZ(1.0, 1.01));
+    REQUIRE(a.get(0, 1) == CZ(0.0, 0.0));
+    REQUIRE(a.get(1, 1) == CZ(42, 32.0));
+    REQUIRE(a.get(2, 2) == CZ(2.0, 1.0));
+    REQUIRE(a.non_zeros() == 3);
+
+    a(0, 0) = 0.0;
+
+    REQUIRE(a.get(0, 0) == CZ(0.0, 0.0));
+    REQUIRE(a.get(0, 1) == CZ(0.0, 0.0));
+    REQUIRE(a.get(1, 1) == CZ(42, 32.0));
+    REQUIRE(a.get(2, 2) == CZ(2.0, 1.0));
+    REQUIRE(a.non_zeros() == 2);
+
+    a(2, 2) = 0.0;
+
+    REQUIRE(a.get(0, 0) == CZ(0.0, 0.0));
+    REQUIRE(a.get(0, 1) == CZ(0.0, 0.0));
+    REQUIRE(a.get(1, 1) == CZ(42, 32.0));
+    REQUIRE(a.get(2, 2) == CZ(0.0, 0.0));
+    REQUIRE(a.non_zeros() == 1);
+}
+
+TEMPLATE_TEST_CASE_2("sparse/complex/erase/1", "[mat][erase][sparse]", Z, double, float) {
+    etl::sparse_matrix<std::complex<Z>> a(3, 2, std::initializer_list<std::complex<Z>>({CZ(1.0, 0.0), CZ(0.0, 0.0), CZ(0.0, 0.0), CZ(0.0, 0.0), CZ(-1.0, 2.0), CZ(0.0, 1.0)    }));
+
+    REQUIRE(a.non_zeros() == 3);
+
+    a.erase(0, 0);
+
+    REQUIRE(a.get(0, 0) == CZ(0.0, 0.0));
+    REQUIRE(a.get(0, 1) == CZ(0.0, 0.0));
+    REQUIRE(a.get(2, 0) == CZ(-1.0, 2.0));
+    REQUIRE(a.non_zeros() == 2);
+
+    a.erase(0, 0);
+
+    REQUIRE(a.get(0, 0) == CZ(0.0, 0.0));
+    REQUIRE(a.get(0, 1) == CZ(0.0, 0.0));
+    REQUIRE(a.get(2, 0) == CZ(-1.0, 2.0));
+    REQUIRE(a.non_zeros() == 2);
+
+    a.erase(2, 0);
+    a.erase(2, 1);
+
+    REQUIRE(a.get(0, 0) == CZ(0.0, 0.0));
+    REQUIRE(a.get(0, 1) == CZ(0.0, 0.0));
+    REQUIRE(a.get(2, 0) == CZ(0.0, 0.0));
+    REQUIRE(a.non_zeros() == 0);
+
+    a.set(2, 0, CZ(3.0, 3.3));
+
+    REQUIRE(a.get(2, 0) == CZ(3.0, 3.3));
+    REQUIRE(a.non_zeros() == 1);
+}
