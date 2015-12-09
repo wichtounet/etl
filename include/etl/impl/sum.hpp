@@ -14,6 +14,10 @@
  * parallel versus serial is also done at this level. The implementation
  * functions should never be used directly, only functions of this header can
  * be used directly.
+ *
+ * Note: In a perfect world (full constexpr function and variable templates),
+ * the selection should be done with a template parameter in a variable
+ * template full sspecialization (alias for each real functions).
  */
 
 #pragma once
