@@ -64,11 +64,15 @@ cpp14_constexpr sum_imple select_sum_impl() {
     return sum_imple::STD;
 }
 
-template <typename E, typename Enable = void>
+template <typename E>
 struct sum_impl {
     static value_t<E> apply(const E& e) {
         cpp14_constexpr auto impl = select_sum_impl<E>();
 
+        return selected_apply(e, impl);
+    }
+
+    static value_t<E> selected_apply(const E& e, sum_imple impl) {
         if (impl == sum_imple::AVX) {
             return impl::avx::sum(e);
         } else if (impl == sum_imple::SSE) {
@@ -78,6 +82,11 @@ struct sum_impl {
         }
     }
 };
+
+template <typename E>
+auto sum_direct(const E& e, sum_imple impl){
+    return sum_impl<E>::selected_apply(e, impl);
+}
 
 } //end of namespace detail
 

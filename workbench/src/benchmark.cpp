@@ -192,14 +192,16 @@ CPM_BENCH() {
         );
 }
 
+CPM_DIRECT_SECTION_TWO_PASS_NS("ssum [std][sum][sse][s]",
+    CPM_SECTION_INIT([](std::size_t d1){ return std::make_tuple(0.0f, svec(d1)); }),
+    CPM_SECTION_FUNCTOR("default", [](float& r, svec& a){ r = etl::sum(a); }),
+    CPM_SECTION_FUNCTOR("std", [](float& r, svec& a){ r = etl::detail::sum_direct(a, etl::detail::sum_imple::STD); })
+    SSE_SECTION_FUNCTOR("sse", [](float& r, svec& a){ r = etl::detail::sum_direct(a, etl::detail::sum_imple::SSE); })
+    SSE_SECTION_FUNCTOR("avx", [](float& r, svec& a){ r = etl::detail::sum_direct(a, etl::detail::sum_imple::AVX); })
+)
+
 //Bench reductions
 CPM_BENCH() {
-    CPM_TWO_PASS_NS(
-        "ssum [std][sum][s]",
-        [](std::size_t d){ return std::make_tuple(0.0f, svec(d)); },
-        [](float& a, svec& b){ a = etl::sum(b); }
-        );
-
     CPM_TWO_PASS_NS(
         "dsum [std][sum][d]",
         [](std::size_t d){ return std::make_tuple(0.0, dvec(d)); },
