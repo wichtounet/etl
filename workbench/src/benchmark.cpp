@@ -177,6 +177,21 @@ CPM_BENCH() {
         );
 }
 
+//Bench saxpy
+CPM_BENCH() {
+    CPM_TWO_PASS_NS(
+        "saxpy [std][assign][s]",
+        [](std::size_t d){ return std::make_tuple(svec(d), svec(d)); },
+        [](svec& a, svec& r){ r = a * 2.3 + r; }
+        );
+
+    CPM_TWO_PASS_NS(
+        "daxpy [std][assign][s]",
+        [](std::size_t d){ return std::make_tuple(dvec(d), dvec(d)); },
+        [](dvec& a, dvec& r){ r = a * 2.3 + r; }
+        );
+}
+
 //Bench transposition
 CPM_BENCH() {
     CPM_TWO_PASS_NS_P(
