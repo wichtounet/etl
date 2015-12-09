@@ -23,6 +23,7 @@
 
 //Include the implementations
 #include "etl/impl/std/sum.hpp"
+#include "etl/impl/sse/sum.hpp"
 
 namespace etl {
 
@@ -39,31 +40,34 @@ cpp14_constexpr sum_imple select_sum_impl() {
     //Note: since the constexpr values will be known at compile time, the
     //conditions will be a lot simplified
 
-    if(!decay_traits<E>::vectorizable){
+    //Only standard access elements through the expression itself
+    if(!has_direct_access<E>::value){
         return sum_imple::STD;
     }
 
-    constexpr const bool sse = vectorize_impl && vector_mode == vector_mode_t::SSE3;
-    constexpr const bool avx = vectorize_impl && vector_mode == vector_mode_t::AVX;
+    if(decay_traits<E>::vectorizable){
+        constexpr const bool sse = vectorize_impl && vector_mode == vector_mode_t::SSE3;
+        constexpr const bool avx = vectorize_impl && vector_mode == vector_mode_t::AVX;
 
-    if (avx) {
-        return sum_imple::AVX;
-    } else if (sse) {
-        return sum_imple::SSE;
-    } else {
-        return sum_imple::STD;
+        if (avx) {
+            return sum_imple::AVX;
+        } else if (sse) {
+            return sum_imple::SSE;
+        }
     }
+
+    return sum_imple::STD;
 }
 
 template <typename E, typename Enable = void>
 struct sum_impl {
-    static auto apply(const E& e) {
+    static value_t<E> apply(const E& e) {
         cpp14_constexpr auto impl = select_sum_impl<E>();
 
         if (impl == sum_imple::AVX) {
             return impl::standard::sum(e);
         } else if (impl == sum_imple::SSE) {
-            return impl::standard::sum(e);
+            return impl::sse::sum(e);
         } else {
             return impl::standard::sum(e);
         }
