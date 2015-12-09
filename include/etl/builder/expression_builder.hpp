@@ -478,23 +478,49 @@ auto hard_sigmoid(E&& x) -> decltype(etl::clip(x * 0.2 + 0.5, 0.0, 1.0)) {
     return etl::clip(x * 0.2 + 0.5, 0.0, 1.0);
 }
 
-template <typename E>
-auto softplus(E&& value) -> decltype(log(1.0 + exp(value))) {
-    static_assert(is_etl_expr<E>::value, "etl::softplus can only be used on ETL expressions");
-    return log(1.0 + exp(value));
-}
-
+/*!
+ * \brief Return the softmax function of the given ETL expression.
+ * \param value The ETL expression
+ * \return An ETL expression representing the softmax function of the input.
+ */
 template <typename E>
 auto softmax(E&& e) {
     static_assert(is_etl_expr<E>::value, "etl::softmax can only be used on ETL expressions");
     return exp(e) / sum(exp(e));
 }
 
+/*!
+ * \brief Returns the softmax function of the given ETL expression.
+ * This version is implemented so that numerical stability is preserved.
+ * \param value The ETL expression
+ * \return An ETL expression representing the softmax function of the input.
+ */
 template <typename E>
 auto stable_softmax(E&& e) {
     static_assert(is_etl_expr<E>::value, "etl::stable_softmax can only be used on ETL expressions");
     auto m = max(e);
     return exp(e - m) / sum(exp(e - m));
+}
+
+/*!
+ * \brief Return the derivative of the softmax function of the given ETL expression.
+ * \param value The ETL expression
+ * \return An ETL expression representing the derivative of the softmax function of the input.
+ */
+template <typename E>
+auto softmax_derivate(E&& /*value*/){
+    return 1.0;
+}
+
+/*!
+ * \brief Return the softplus of the given ETL expression.
+ * \param value The ETL expression
+ * \return An ETL expression representing the softplus of the input.
+ */
+template <typename E>
+auto softplus(E&& value) -> decltype(log(1.0 + exp(value))) {
+    static_assert(is_etl_expr<E>::value, "etl::softplus can only be used on ETL expressions");
+    return log(1.0 + exp(value));
 }
 
 template <typename E>
