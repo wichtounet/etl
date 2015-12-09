@@ -18,6 +18,7 @@
 //Include implementations
 #include "etl/impl/dot.hpp"
 #include "etl/impl/scalar_op.hpp"
+#include "etl/impl/sum.hpp"
 
 namespace etl {
 
@@ -761,13 +762,7 @@ value_t<E> sum(E&& values) {
     //Reduction force evaluation
     force(values);
 
-    value_t<E> acc(0);
-
-    for (std::size_t i = 0; i < size(values); ++i) {
-        acc += values[i];
-    }
-
-    return acc;
+    return detail::sum_impl<E>::apply(values);
 }
 
 /*!
