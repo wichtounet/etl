@@ -28,6 +28,7 @@
 //Include the implementations
 #include "etl/impl/std/sum.hpp"
 #include "etl/impl/sse/sum.hpp"
+#include "etl/impl/avx/sum.hpp"
 
 namespace etl {
 
@@ -69,7 +70,7 @@ struct sum_impl {
         cpp14_constexpr auto impl = select_sum_impl<E>();
 
         if (impl == sum_imple::AVX) {
-            return impl::standard::sum(e);
+            return impl::avx::sum(e);
         } else if (impl == sum_imple::SSE) {
             return impl::sse::sum(e);
         } else {
