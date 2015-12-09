@@ -480,7 +480,7 @@ auto hard_sigmoid(E&& x) -> decltype(etl::clip(x * 0.2 + 0.5, 0.0, 1.0)) {
 
 /*!
  * \brief Return the softmax function of the given ETL expression.
- * \param value The ETL expression
+ * \param e The ETL expression
  * \return An ETL expression representing the softmax function of the input.
  */
 template <typename E>
@@ -492,7 +492,7 @@ auto softmax(E&& e) {
 /*!
  * \brief Returns the softmax function of the given ETL expression.
  * This version is implemented so that numerical stability is preserved.
- * \param value The ETL expression
+ * \param e The ETL expression
  * \return An ETL expression representing the softmax function of the input.
  */
 template <typename E>
@@ -504,11 +504,12 @@ auto stable_softmax(E&& e) {
 
 /*!
  * \brief Return the derivative of the softmax function of the given ETL expression.
- * \param value The ETL expression
+ * \param e The ETL expression
  * \return An ETL expression representing the derivative of the softmax function of the input.
  */
 template <typename E>
-auto softmax_derivate(E&& /*value*/){
+auto softmax_derivate(E&& e){
+    cpp_unused(e);
     return 1.0;
 }
 
