@@ -31,7 +31,7 @@ inline double sum(const double* in, std::size_t n){
     ymm2 = _mm_setzero_pd();
 
     for (std::size_t i = 0; i + 1 < n; i += 2) {
-        ymm1 = _mm_load_pd(in + i);
+        ymm1 = _mm_loadu_pd(in + i);
         ymm2 = _mm_add_pd(ymm2, ymm1);
     }
 
@@ -57,7 +57,7 @@ inline float sum(const float* in, std::size_t n){
     ymm2 = _mm_setzero_ps();
 
     for (std::size_t i = 0; i + 3 < n; i += 4) {
-        ymm1 = _mm_load_ps(in + i);
+        ymm1 = _mm_loadu_ps(in + i);
         ymm2 = _mm_add_ps(ymm2, ymm1);
     }
 
