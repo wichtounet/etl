@@ -180,15 +180,30 @@ CPM_BENCH() {
 //Bench saxpy
 CPM_BENCH() {
     CPM_TWO_PASS_NS(
-        "saxpy [std][assign][s]",
+        "saxpy [std][axpy][s]",
         [](std::size_t d){ return std::make_tuple(svec(d), svec(d)); },
         [](svec& a, svec& r){ r = a * 2.3 + r; }
         );
 
     CPM_TWO_PASS_NS(
-        "daxpy [std][assign][s]",
+        "daxpy [std][axpy][d]",
         [](std::size_t d){ return std::make_tuple(dvec(d), dvec(d)); },
         [](dvec& a, dvec& r){ r = a * 2.3 + r; }
+        );
+}
+
+//Bench reductions
+CPM_BENCH() {
+    CPM_TWO_PASS_NS(
+        "ssum [std][sum][s]",
+        [](std::size_t d){ return std::make_tuple(0.0f, svec(d)); },
+        [](float& a, svec& b){ a = etl::sum(b); }
+        );
+
+    CPM_TWO_PASS_NS(
+        "dsum [std][sum][d]",
+        [](std::size_t d){ return std::make_tuple(0.0, dvec(d)); },
+        [](double& a, dvec& b){ a = etl::sum(b); }
         );
 }
 
