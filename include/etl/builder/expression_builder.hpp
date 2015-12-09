@@ -508,7 +508,7 @@ auto stable_softmax(E&& e) {
  * \return An ETL expression representing the derivative of the softmax function of the input.
  */
 template <typename E>
-auto softmax_derivate(E&& e){
+auto softmax_derivative(E&& e){
     cpp_unused(e);
     return 1.0;
 }
