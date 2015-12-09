@@ -200,14 +200,13 @@ CPM_DIRECT_SECTION_TWO_PASS_NS("ssum [std][sum][sse][s]",
     SSE_SECTION_FUNCTOR("avx", [](float& r, svec& a){ r = etl::detail::sum_direct(a, etl::detail::sum_imple::AVX); })
 )
 
-//Bench reductions
-CPM_BENCH() {
-    CPM_TWO_PASS_NS(
-        "dsum [std][sum][d]",
-        [](std::size_t d){ return std::make_tuple(0.0, dvec(d)); },
-        [](double& a, dvec& b){ a = etl::sum(b); }
-        );
-}
+CPM_DIRECT_SECTION_TWO_PASS_NS("dsum [std][sum][sse][s]",
+    CPM_SECTION_INIT([](std::size_t d1){ return std::make_tuple(0.0, dvec(d1)); }),
+    CPM_SECTION_FUNCTOR("default", [](double& r, dvec& a){ r = etl::sum(a); }),
+    CPM_SECTION_FUNCTOR("std", [](double& r, dvec& a){ r = etl::detail::sum_direct(a, etl::detail::sum_imple::STD); })
+    SSE_SECTION_FUNCTOR("sse", [](double& r, dvec& a){ r = etl::detail::sum_direct(a, etl::detail::sum_imple::SSE); })
+    SSE_SECTION_FUNCTOR("avx", [](double& r, dvec& a){ r = etl::detail::sum_direct(a, etl::detail::sum_imple::AVX); })
+)
 
 //Bench transposition
 CPM_BENCH() {
