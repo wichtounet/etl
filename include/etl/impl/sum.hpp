@@ -43,8 +43,8 @@ cpp14_constexpr sum_imple select_sum_impl() {
         return sum_imple::STD;
     }
 
-    static constexpr const bool sse = vectorize_impl && vector_mode == vector_mode_t::SSE3;
-    static constexpr const bool avx = vectorize_impl && vector_mode == vector_mode_t::AVX;
+    constexpr const bool sse = vectorize_impl && vector_mode == vector_mode_t::SSE3;
+    constexpr const bool avx = vectorize_impl && vector_mode == vector_mode_t::AVX;
 
     if (avx) {
         return sum_imple::AVX;
