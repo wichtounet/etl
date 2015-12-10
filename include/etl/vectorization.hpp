@@ -7,7 +7,7 @@
 
 /*!
  * \file vectorization.hpp
- * \brief Contais vectorization utilities for the vectorized assignments (done by the evaluator).
+ * \brief Contains vectorization utilities for the vectorized assignments (done by the evaluator).
  *
  * This file automatically includes the correct header based on which vectorization utility is supported (AVX -> SSE -> NONE).
  */
@@ -15,30 +15,6 @@
 #pragma once
 
 #include <immintrin.h>
-
-namespace etl {
-
-/*!
- * \brief Define traits to get vectorization information for types.
- *
- * This traits are overloaded by SSE/AVX implementation for types that are vectorizable.
- */
-template <typename T>
-struct intrinsic_traits {
-    static constexpr const bool vectorizable     = false;      ///< Boolean flag indicating if the type is vectorizable or not
-    static constexpr const std::size_t size      = 1;          ///< Numbers of elements done at once
-    static constexpr const std::size_t alignment = alignof(T); ///< Necessary number of bytes of alignment for this type
-
-    using intrinsic_type = T;
-};
-
-/*!
- * \brief Helper to get the intrinsic corresponding type of a vectorizable type.
- */
-template <typename T>
-using intrinsic_type = typename intrinsic_traits<T>::intrinsic_type;
-
-} //end of namespace etl
 
 //Include al the vector implementation
 #include "etl/avx512_vectorization.hpp"
@@ -54,17 +30,29 @@ namespace etl {
 
 using default_vec = avx512_vec;
 
+template <typename T>
+using intrinsic_traits = avx512_intrinsic_traits<T>;
+
 #elif defined(__AVX__)
 
 using default_vec = avx_vec;
+
+template <typename T>
+using intrinsic_traits = avx_intrinsic_traits<T>;
 
 #elif defined(__SSE3__)
 
 using default_vec = sse_vec;
 
+template <typename T>
+using intrinsic_traits = sse_intrinsic_traits<T>;
+
 #else
 
 using default_vec = no_vec;
+
+template <typename T>
+using intrinsic_traits = no_intrinsic_traits<T>;
 
 #endif //defined(__SSE__)
 
@@ -72,6 +60,15 @@ using default_vec = no_vec;
 
 using default_vec = no_vec;
 
+template <typename T>
+using intrinsic_traits = no_intrinsic_traits<T>;
+
 #endif //ETL_VECTORIZE_EXPR
+
+/*!
+ * \brief Helper to get the intrinsic corresponding type of a vectorizable type.
+ */
+template <typename T>
+using intrinsic_type = typename intrinsic_traits<T>::intrinsic_type;
 
 } //end of namespace etl
