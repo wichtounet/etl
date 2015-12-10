@@ -23,7 +23,8 @@ struct simple_operator : std::true_type {};
 
 template <typename T>
 struct plus_binary_op {
-    using vec_type = intrinsic_type<T>;
+    template<typename V = default_vec>
+    using vec_type = typename V::template vec_type<T>;
 
     static constexpr const bool vectorizable = true;
 
@@ -31,10 +32,11 @@ struct plus_binary_op {
         return lhs + rhs;
     }
 
-    static cpp14_constexpr vec_type load(const vec_type& lhs, const vec_type& rhs) noexcept {
-        const vec_type ymm1(lhs);
-        const vec_type ymm2(rhs);
-        return default_vec::add(ymm1, ymm2);
+    template<typename V = default_vec>
+    static cpp14_constexpr vec_type<V> load(const vec_type<V>& lhs, const vec_type<V>& rhs) noexcept {
+        const vec_type<V> ymm1(lhs);
+        const vec_type<V> ymm2(rhs);
+        return V::add(ymm1, ymm2);
     }
 
     static std::string desc() noexcept {
@@ -44,7 +46,8 @@ struct plus_binary_op {
 
 template <typename T>
 struct minus_binary_op {
-    using vec_type = intrinsic_type<T>;
+    template<typename V = default_vec>
+    using vec_type = typename V::template vec_type<T>;
 
     static constexpr const bool vectorizable = true;
 
@@ -52,10 +55,11 @@ struct minus_binary_op {
         return lhs - rhs;
     }
 
-    static cpp14_constexpr vec_type load(const vec_type& lhs, const vec_type& rhs) noexcept {
-        const vec_type ymm1(lhs);
-        const vec_type ymm2(rhs);
-        return default_vec::sub(ymm1, ymm2);
+    template<typename V = default_vec>
+    static cpp14_constexpr vec_type<V> load(const vec_type<V>& lhs, const vec_type<V>& rhs) noexcept {
+        const vec_type<V> ymm1(lhs);
+        const vec_type<V> ymm2(rhs);
+        return V::sub(ymm1, ymm2);
     }
 
     static std::string desc() noexcept {
@@ -65,7 +69,8 @@ struct minus_binary_op {
 
 template <typename T>
 struct mul_binary_op {
-    using vec_type = intrinsic_type<T>;
+    template<typename V = default_vec>
+    using vec_type = typename V::template vec_type<T>;
 
     static constexpr const bool vectorizable = vector_mode == vector_mode_t::AVX512 ? !is_complex_t<T>::value : true ;
 
@@ -73,10 +78,11 @@ struct mul_binary_op {
         return lhs * rhs;
     }
 
-    static cpp14_constexpr vec_type load(const vec_type& lhs, const vec_type& rhs) noexcept {
-        const vec_type ymm1(lhs);
-        const vec_type ymm2(rhs);
-        return default_vec::mul<is_complex_t<T>::value>(ymm1, ymm2);
+    template<typename V = default_vec>
+    static cpp14_constexpr vec_type<V> load(const vec_type<V>& lhs, const vec_type<V>& rhs) noexcept {
+        const vec_type<V> ymm1(lhs);
+        const vec_type<V> ymm2(rhs);
+        return V::template mul<is_complex_t<T>::value>(ymm1, ymm2);
     }
 
     static std::string desc() noexcept {
@@ -86,7 +92,8 @@ struct mul_binary_op {
 
 template <typename T>
 struct div_binary_op {
-    using vec_type = intrinsic_type<T>;
+    template<typename V = default_vec>
+    using vec_type = typename V::template vec_type<T>;
 
     static constexpr const bool vectorizable = vector_mode == vector_mode_t::AVX512 ? !is_complex_t<T>::value : true ;
 
@@ -94,10 +101,11 @@ struct div_binary_op {
         return lhs / rhs;
     }
 
-    static cpp14_constexpr vec_type load(const vec_type& lhs, const vec_type& rhs) noexcept {
-        const vec_type ymm1(lhs);
-        const vec_type ymm2(rhs);
-        return default_vec::div<is_complex_t<T>::value>(ymm1, ymm2);
+    template<typename V = default_vec>
+    static cpp14_constexpr vec_type<V> load(const vec_type<V>& lhs, const vec_type<V>& rhs) noexcept {
+        const vec_type<V> ymm1(lhs);
+        const vec_type<V> ymm2(rhs);
+        return V::template div<is_complex_t<T>::value>(ymm1, ymm2);
     }
 
     static std::string desc() noexcept {
@@ -141,7 +149,8 @@ struct ranged_noise_binary_op {
 
 template <typename T, typename E>
 struct max_binary_op {
-    using vec_type = intrinsic_type<T>;
+    template<typename V = default_vec>
+    using vec_type = typename V::template vec_type<T>;
 
     static constexpr const bool vectorizable = intel_compiler && !is_complex_t<T>::value;
 
@@ -150,8 +159,9 @@ struct max_binary_op {
     }
 
 #ifdef __INTEL_COMPILER
-    static cpp14_constexpr vec_type load(const vec_type& lhs, const vec_type& rhs) noexcept {
-        return default_vec::max(lhs, rhs);
+    template<typename V = default_vec>
+    static cpp14_constexpr vec_type<V> load(const vec_type<V>& lhs, const vec_type<V>& rhs) noexcept {
+        return V::max(lhs, rhs);
     }
 #endif
 
@@ -162,7 +172,8 @@ struct max_binary_op {
 
 template <typename T, typename E>
 struct min_binary_op {
-    using vec_type = intrinsic_type<T>;
+    template<typename V = default_vec>
+    using vec_type = typename V::template vec_type<T>;
 
     static constexpr const bool vectorizable = intel_compiler && !is_complex_t<T>::value;
 
@@ -171,8 +182,9 @@ struct min_binary_op {
     }
 
 #ifdef __INTEL_COMPILER
-    static cpp14_constexpr vec_type load(const vec_type& lhs, const vec_type& rhs) noexcept {
-        return default_vec::min(lhs, rhs);
+    template<typename V = default_vec>
+    static cpp14_constexpr vec_type<V> load(const vec_type<V>& lhs, const vec_type<V>& rhs) noexcept {
+        return V::min(lhs, rhs);
     }
 #endif
 
@@ -183,7 +195,8 @@ struct min_binary_op {
 
 template <typename T, typename S>
 struct min_scalar_op {
-    using vec_type = intrinsic_type<T>;
+    template<typename V = default_vec>
+    using vec_type = typename V::template vec_type<T>;
 
     static constexpr const bool vectorizable = intel_compiler && !is_complex_t<T>::value;
 
@@ -196,8 +209,9 @@ struct min_scalar_op {
     }
 
 #ifdef __INTEL_COMPILER
-    cpp14_constexpr vec_type load(const vec_type& lhs) const noexcept {
-        return default_vec::min(lhs, default_vec::set(s));
+    template<typename V = default_vec>
+    cpp14_constexpr vec_type<V> load(const vec_type<V>& lhs) const noexcept {
+        return V::min(lhs, V::set(s));
     }
 #endif
 
@@ -208,7 +222,8 @@ struct min_scalar_op {
 
 template <typename T, typename S>
 struct max_scalar_op {
-    using vec_type = intrinsic_type<T>;
+    template<typename V = default_vec>
+    using vec_type = typename V::template vec_type<T>;
 
     static constexpr const bool vectorizable = intel_compiler && !is_complex_t<T>::value;
 
@@ -221,9 +236,9 @@ struct max_scalar_op {
     }
 
 #ifdef __INTEL_COMPILER
-
-    cpp14_constexpr vec_type load(const vec_type& lhs) const noexcept {
-        return default_vec::max(lhs, default_vec::set(s));
+    template<typename V = default_vec>
+    cpp14_constexpr vec_type<V> load(const vec_type<V>& lhs) const noexcept {
+        return V::max(lhs, V::set(s));
     }
 #endif
 
@@ -234,7 +249,8 @@ struct max_scalar_op {
 
 template <typename T, typename S>
 struct clip_scalar_op {
-    using vec_type = intrinsic_type<T>;
+    template<typename V = default_vec>
+    using vec_type = typename V::template vec_type<T>;
 
     static constexpr const bool vectorizable = intel_compiler && !is_complex_t<T>::value;
 
@@ -248,8 +264,9 @@ struct clip_scalar_op {
     }
 
 #ifdef __INTEL_COMPILER
-    cpp14_constexpr vec_type load(const vec_type& lhs) const noexcept {
-        return default_vec::min(default_vec::max(lhs, default_vec::set(min)), default_vec::set(max));
+    template<typename V = default_vec>
+    cpp14_constexpr vec_type<V> load(const vec_type<V>& lhs) const noexcept {
+        return V::min(V::max(lhs, V::set(min)), V::set(max));
     }
 #endif
 

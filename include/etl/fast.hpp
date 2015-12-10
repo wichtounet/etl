@@ -102,7 +102,9 @@ public:
     using this_type         = fast_matrix_impl<T, ST, SO, Dims...>;
     using memory_type       = value_type*;
     using const_memory_type = const value_type*;
-    using vec_type          = intrinsic_type<T>;
+
+    template<typename V = default_vec>
+    using vec_type               = typename V::template vec_type<T>;
 
 private:
     storage_impl _data;
@@ -328,8 +330,9 @@ public:
         return _data[i];
     }
 
-    vec_type load(std::size_t i) const noexcept {
-        return default_vec::loadu(memory_start() + i);
+    template<typename V = default_vec>
+    vec_type<V> load(std::size_t i) const noexcept {
+        return V::loadu(memory_start() + i);
     }
 
     iterator begin() noexcept(noexcept(_data.begin())) {

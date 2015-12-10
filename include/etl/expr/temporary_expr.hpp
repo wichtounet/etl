@@ -27,7 +27,9 @@ struct temporary_expr : comparable<D>, value_testable<D>, dim_testable<D> {
     using value_type        = V;
     using memory_type       = value_type*;
     using const_memory_type = const value_type*;
-    using vec_type          = intrinsic_type<value_type>;
+
+    template<typename VV = default_vec>
+    using vec_type = typename VV::template vec_type<value_type>;
 
     derived_t& as_derived() noexcept {
         return *static_cast<derived_t*>(this);
@@ -59,8 +61,9 @@ struct temporary_expr : comparable<D>, value_testable<D>, dim_testable<D> {
         return sub(as_derived(), i);
     }
 
-    vec_type load(std::size_t i) const noexcept {
-        return default_vec::loadu(memory_start() + i);
+    template<typename VV = default_vec>
+    vec_type<VV> load(std::size_t i) const noexcept {
+        return VV::loadu(memory_start() + i);
     }
 
     // Iterator

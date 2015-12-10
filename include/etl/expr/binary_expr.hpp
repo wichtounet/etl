@@ -39,6 +39,9 @@ public:
     using memory_type       = void;
     using const_memory_type = void;
 
+    template<typename V = default_vec>
+    using vec_type          = typename V::template vec_type<T>;
+
     //Cannot be constructed with no args
     binary_expr() = delete;
 
@@ -84,8 +87,9 @@ public:
         return BinaryOp::apply(lhs().read_flat(i), rhs().read_flat(i));
     }
 
-    intrinsic_type<value_type> load(std::size_t i) const {
-        return BinaryOp::load(lhs().load(i), rhs().load(i));
+    template<typename V = default_vec>
+    vec_type<V> load(std::size_t i) const {
+        return BinaryOp::template load<V>(lhs().template load<V>(i), rhs().template load<V>(i));
     }
 
     template <typename... S, cpp_enable_if(sizeof...(S) == sub_size_compare<this_type>::value)>

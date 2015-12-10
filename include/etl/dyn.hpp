@@ -46,7 +46,9 @@ struct dyn_matrix_impl final : dyn_base<T, D>, inplace_assignable<dyn_matrix_imp
     using const_memory_type      = const value_type*;
     using iterator               = memory_type;
     using const_iterator         = const_memory_type;
-    using vec_type               = intrinsic_type<T>;
+
+    template<typename V = default_vec>
+    using vec_type               = typename V::template vec_type<T>;
 
 private:
     using base_type::_size;
@@ -409,8 +411,9 @@ public:
         return _memory[i];
     }
 
-    vec_type load(std::size_t i) const noexcept {
-        return default_vec::load(_memory + i);
+    template<typename V = default_vec>
+    vec_type<V> load(std::size_t i) const noexcept {
+        return V::load(_memory + i);
     }
 
     iterator begin() noexcept {

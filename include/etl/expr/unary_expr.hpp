@@ -55,6 +55,9 @@ public:
     using memory_type       = void;
     using const_memory_type = void;
 
+    template<typename V = default_vec>
+    using vec_type          = typename V::template vec_type<T>;
+
     //Construct a new expression
     explicit unary_expr(Expr l)
             : _value(std::forward<Expr>(l)) {
@@ -88,8 +91,9 @@ public:
         return UnaryOp::apply(value().read_flat(i));
     }
 
-    intrinsic_type<value_type> load(std::size_t i) const {
-        return UnaryOp::load(value().load(i));
+    template<typename V = default_vec>
+    vec_type<V> load(std::size_t i) const {
+        return UnaryOp::template load<V>(value().template load<V>(i));
     }
 
     template <typename... S>
@@ -131,7 +135,9 @@ public:
     using const_memory_type = std::add_const_t<memory_t<Expr>>;
     using return_type       = std::conditional_t<non_const_return_ref, value_type&, value_type>;
     using const_return_type = std::conditional_t<const_return_ref, const value_type&, value_type>;
-    using vec_type          = intrinsic_type<T>;
+
+    template<typename V = default_vec>
+    using vec_type          = typename V::template vec_type<T>;
 
     //Construct a new expression
     explicit unary_expr(Expr l)
@@ -196,9 +202,9 @@ public:
         return value().read_flat(i);
     }
 
-    template <typename SS = Expr, cpp_enable_if(has_direct_access<SS>::value)>
-    vec_type load(std::size_t i) const noexcept {
-        return default_vec::loadu(memory_start() + i);
+    template <typename V = default_vec, typename SS = Expr, cpp_enable_if(has_direct_access<SS>::value)>
+    vec_type<V> load(std::size_t i) const noexcept {
+        return V::loadu(memory_start() + i);
     }
 
     template <bool B = (sub_size_compare<this_type>::value > 1), cpp_enable_if(B)>
@@ -343,6 +349,9 @@ public:
     using memory_type       = void;
     using const_memory_type = void;
 
+    template<typename V = default_vec>
+    using vec_type          = typename V::template vec_type<T>;
+
     //Construct a new expression
     template <typename... Args>
     explicit unary_expr(Expr l, Args&&... args)
@@ -377,8 +386,9 @@ public:
         return op.apply(value().read_flat(i));
     }
 
-    intrinsic_type<value_type> load(std::size_t i) const {
-        return op.load(value().load(i));
+    template<typename V = default_vec>
+    vec_type<V> load(std::size_t i) const {
+        return op.template load<V>(value().template load<V>(i));
     }
 
     template <typename... S>

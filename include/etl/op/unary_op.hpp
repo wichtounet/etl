@@ -35,7 +35,8 @@ template <typename T>
 struct log_unary_op {
     static constexpr const bool vectorizable = intel_compiler && !is_complex_t<T>::value;
 
-    using vec_type = intrinsic_type<T>;
+    template<typename V = default_vec>
+    using vec_type = typename V::template vec_type<T>;
 
     static constexpr T apply(const T& x) {
         return std::log(x);
@@ -43,8 +44,9 @@ struct log_unary_op {
 
 
 #ifdef __INTEL_COMPILER
-    static cpp14_constexpr vec_type load(const vec_type& x) noexcept {
-        return default_vec::log(x);
+    template<typename V = default_vec>
+    static cpp14_constexpr vec_type<V> load(const vec_type<V>& x) noexcept {
+        return V::log(x);
     }
 #endif
 
@@ -55,7 +57,8 @@ struct log_unary_op {
 
 template <typename T>
 struct sqrt_unary_op {
-    using vec_type = intrinsic_type<T>;
+    template<typename V = default_vec>
+    using vec_type = typename V::template vec_type<T>;
 
     static constexpr const bool vectorizable = !is_complex_t<T>::value;
 
@@ -63,8 +66,9 @@ struct sqrt_unary_op {
         return std::sqrt(x);
     }
 
-    static cpp14_constexpr vec_type load(const vec_type& x) noexcept {
-        return default_vec::sqrt(x);
+    template<typename V = default_vec>
+    static cpp14_constexpr vec_type<V> load(const vec_type<V>& x) noexcept {
+        return V::sqrt(x);
     }
 
     static std::string desc() noexcept {
@@ -74,7 +78,8 @@ struct sqrt_unary_op {
 
 template <typename T>
 struct exp_unary_op {
-    using vec_type = intrinsic_type<T>;
+    template<typename V = default_vec>
+    using vec_type = typename V::template vec_type<T>;
 
     static constexpr const bool vectorizable = intel_compiler && !is_complex_t<T>::value;
 
@@ -83,8 +88,9 @@ struct exp_unary_op {
     }
 
 #ifdef __INTEL_COMPILER
-    static cpp14_constexpr vec_type load(const vec_type& x) noexcept {
-        return default_vec::exp(x);
+    template<typename V = default_vec>
+    static cpp14_constexpr vec_type<V> load(const vec_type<V>& x) noexcept {
+        return V::exp(x);
     }
 #endif
 
@@ -134,7 +140,8 @@ struct softplus_unary_op {
 
 template <typename T>
 struct minus_unary_op {
-    using vec_type = intrinsic_type<T>;
+    template<typename V = default_vec>
+    using vec_type = typename V::template vec_type<T>;
 
     static constexpr const bool vectorizable = !is_complex_t<T>::value;
 
@@ -142,8 +149,9 @@ struct minus_unary_op {
         return -x;
     }
 
-    static cpp14_constexpr vec_type load(const vec_type& x) noexcept {
-        return default_vec::minus(x);
+    template<typename V = default_vec>
+    static cpp14_constexpr vec_type<V> load(const vec_type<V>& x) noexcept {
+        return V::minus(x);
     }
 
     static std::string desc() noexcept {
@@ -153,7 +161,8 @@ struct minus_unary_op {
 
 template <typename T>
 struct plus_unary_op {
-    using vec_type = intrinsic_type<T>;
+    template<typename V = default_vec>
+    using vec_type = typename V::template vec_type<T>;
 
     static constexpr const bool vectorizable = true;
 
@@ -161,7 +170,8 @@ struct plus_unary_op {
         return +x;
     }
 
-    static cpp14_constexpr vec_type load(const vec_type& x) noexcept {
+    template<typename V = default_vec>
+    static cpp14_constexpr vec_type<V> load(const vec_type<V>& x) noexcept {
         return x;
     }
 

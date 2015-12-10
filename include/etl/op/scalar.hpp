@@ -14,7 +14,9 @@ namespace etl {
 template <typename T>
 struct scalar {
     using value_type = T;
-    using vec_type   = intrinsic_type<T>;
+
+    template<typename V = default_vec>
+    using vec_type   = typename V::template vec_type<T>;
 
     const T value;
 
@@ -29,8 +31,9 @@ struct scalar {
         return value;
     }
 
-    constexpr const vec_type load(std::size_t /*d*/) const noexcept {
-        return default_vec::set(value);
+    template<typename V = default_vec>
+    constexpr const vec_type<V> load(std::size_t /*d*/) const noexcept {
+        return V::set(value);
     }
 
     template <typename... S>
