@@ -20,7 +20,8 @@ namespace sse {
 
 #if defined(ETL_VECTORIZE_IMPL) && defined(__SSE3__)
 
-inline double sum(const double* in, std::size_t n){
+template<typename E>
+double dsum_kernel(const E& in, std::size_t n){
     double tmp_res[2] __attribute__((aligned(16)));
 
     __m128d ymm1;
@@ -31,7 +32,7 @@ inline double sum(const double* in, std::size_t n){
     ymm2 = _mm_setzero_pd();
 
     for (std::size_t i = 0; i + 1 < n; i += 2) {
-        ymm1 = _mm_loadu_pd(in + i);
+        ymm1 = in.template load<sse_vec>(i);
         ymm2 = _mm_add_pd(ymm2, ymm1);
     }
 
@@ -46,7 +47,8 @@ inline double sum(const double* in, std::size_t n){
     return acc;
 }
 
-inline float sum(const float* in, std::size_t n){
+template<typename E>
+float ssum_kernel(const E& in, std::size_t n){
     float tmp_res[4] __attribute__((aligned(16)));
 
     __m128 ymm1;
@@ -57,7 +59,7 @@ inline float sum(const float* in, std::size_t n){
     ymm2 = _mm_setzero_ps();
 
     for (std::size_t i = 0; i + 3 < n; i += 4) {
-        ymm1 = _mm_loadu_ps(in + i);
+        ymm1 = in.template load<sse_vec>(i);
         ymm2 = _mm_add_ps(ymm2, ymm1);
     }
 
@@ -75,9 +77,14 @@ inline float sum(const float* in, std::size_t n){
     return acc;
 }
 
-template <typename I, cpp_enable_if(has_direct_access<I>::value)>
+template <typename I, cpp_enable_if(all_single_precision<I>::value && has_direct_access<I>::value)>
 value_t<I> sum(const I& input) {
-    return sum(input.memory_start(), etl::size(input));
+    return ssum_kernel(input, etl::size(input));
+}
+
+template <typename I, cpp_enable_if(all_double_precision<I>::value && has_direct_access<I>::value)>
+value_t<I> sum(const I& input) {
+    return dsum_kernel(input, etl::size(input));
 }
 
 template <typename I, cpp_disable_if(has_direct_access<I>::value)>
