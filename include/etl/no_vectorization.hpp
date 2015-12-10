@@ -22,6 +22,12 @@ struct no_intrinsic_traits {
 };
 
 struct no_vec {
+    template<typename T>
+    using traits = no_intrinsic_traits<T>;
+
+    template<typename T>
+    using vec_type = typename traits<T>::intrinsic_type;
+
     template <typename F, typename M>
     static inline void storeu(F* /*memory*/, M /*value*/) {}
 

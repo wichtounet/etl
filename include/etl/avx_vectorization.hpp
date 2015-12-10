@@ -85,6 +85,12 @@ struct avx_intrinsic_traits<std::complex<double>> {
 };
 
 struct avx_vec {
+    template<typename T>
+    using traits = avx_intrinsic_traits<T>;
+
+    template<typename T>
+    using vec_type = typename traits<T>::intrinsic_type;
+
 #ifdef VEC_DEBUG
 
     template <typename T>
