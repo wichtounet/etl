@@ -77,17 +77,17 @@ float ssum_kernel(const E& in, std::size_t n){
     return acc;
 }
 
-template <typename I, cpp_enable_if(all_single_precision<I>::value && has_direct_access<I>::value)>
+template <typename I, cpp_enable_if(all_single_precision<I>::value && decay_traits<I>::vectorizable)>
 value_t<I> sum(const I& input) {
     return ssum_kernel(input, etl::size(input));
 }
 
-template <typename I, cpp_enable_if(all_double_precision<I>::value && has_direct_access<I>::value)>
+template <typename I, cpp_enable_if(all_double_precision<I>::value && decay_traits<I>::vectorizable)>
 value_t<I> sum(const I& input) {
     return dsum_kernel(input, etl::size(input));
 }
 
-template <typename I, cpp_disable_if(has_direct_access<I>::value)>
+template <typename I, cpp_disable_if(decay_traits<I>::vectorizable)>
 value_t<I> sum(const I& /*input*/) {
     cpp_unreachable("SSE not available/enabled");
     return value_t<I>(0.0);
