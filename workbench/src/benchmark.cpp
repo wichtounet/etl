@@ -208,6 +208,13 @@ CPM_DIRECT_SECTION_TWO_PASS_NS("dsum [std][sum][sse][s]",
     SSE_SECTION_FUNCTOR("avx", [](double& r, dvec& a){ r = etl::detail::sum_direct(a, etl::detail::sum_imple::AVX); })
 )
 
+CPM_DIRECT_SECTION_TWO_PASS_NS_F("ssum_expr [std][sum][sse][s]",
+    FLOPS([](std::size_t d){ return 4 * d; }),
+    CPM_SECTION_INIT([](std::size_t d1){ return std::make_tuple(0.0f, svec(d1), svec(d1)); }),
+    CPM_SECTION_FUNCTOR("default", [](float& r, svec& a, svec& b){ r = etl::sum(a >> a - b >> b); }),
+    CPM_SECTION_FUNCTOR("std", [](float& r, svec& a, svec& b){ r = etl::detail::sum_direct(a >> a - b >> b, etl::detail::sum_imple::STD); })
+)
+
 //Bench transposition
 CPM_BENCH() {
     CPM_TWO_PASS_NS_P(
