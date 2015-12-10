@@ -198,7 +198,7 @@ public:
 
     template <typename SS = Expr, cpp_enable_if(has_direct_access<SS>::value)>
     vec_type load(std::size_t i) const noexcept {
-        return vec::loadu(memory_start() + i);
+        return default_vec::loadu(memory_start() + i);
     }
 
     template <bool B = (sub_size_compare<this_type>::value > 1), cpp_enable_if(B)>

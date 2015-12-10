@@ -34,7 +34,7 @@ struct plus_binary_op {
     static cpp14_constexpr vec_type load(const vec_type& lhs, const vec_type& rhs) noexcept {
         const vec_type ymm1(lhs);
         const vec_type ymm2(rhs);
-        return vec::add(ymm1, ymm2);
+        return default_vec::add(ymm1, ymm2);
     }
 
     static std::string desc() noexcept {
@@ -55,7 +55,7 @@ struct minus_binary_op {
     static cpp14_constexpr vec_type load(const vec_type& lhs, const vec_type& rhs) noexcept {
         const vec_type ymm1(lhs);
         const vec_type ymm2(rhs);
-        return vec::sub(ymm1, ymm2);
+        return default_vec::sub(ymm1, ymm2);
     }
 
     static std::string desc() noexcept {
@@ -76,7 +76,7 @@ struct mul_binary_op {
     static cpp14_constexpr vec_type load(const vec_type& lhs, const vec_type& rhs) noexcept {
         const vec_type ymm1(lhs);
         const vec_type ymm2(rhs);
-        return vec::mul<is_complex_t<T>::value>(ymm1, ymm2);
+        return default_vec::mul<is_complex_t<T>::value>(ymm1, ymm2);
     }
 
     static std::string desc() noexcept {
@@ -97,7 +97,7 @@ struct div_binary_op {
     static cpp14_constexpr vec_type load(const vec_type& lhs, const vec_type& rhs) noexcept {
         const vec_type ymm1(lhs);
         const vec_type ymm2(rhs);
-        return vec::div<is_complex_t<T>::value>(ymm1, ymm2);
+        return default_vec::div<is_complex_t<T>::value>(ymm1, ymm2);
     }
 
     static std::string desc() noexcept {
@@ -151,7 +151,7 @@ struct max_binary_op {
 
 #ifdef __INTEL_COMPILER
     static cpp14_constexpr vec_type load(const vec_type& lhs, const vec_type& rhs) noexcept {
-        return vec::max(lhs, rhs);
+        return default_vec::max(lhs, rhs);
     }
 #endif
 
@@ -172,7 +172,7 @@ struct min_binary_op {
 
 #ifdef __INTEL_COMPILER
     static cpp14_constexpr vec_type load(const vec_type& lhs, const vec_type& rhs) noexcept {
-        return vec::min(lhs, rhs);
+        return default_vec::min(lhs, rhs);
     }
 #endif
 
@@ -197,7 +197,7 @@ struct min_scalar_op {
 
 #ifdef __INTEL_COMPILER
     cpp14_constexpr vec_type load(const vec_type& lhs) const noexcept {
-        return vec::min(lhs, vec::set(s));
+        return default_vec::min(lhs, default_vec::set(s));
     }
 #endif
 
@@ -223,7 +223,7 @@ struct max_scalar_op {
 #ifdef __INTEL_COMPILER
 
     cpp14_constexpr vec_type load(const vec_type& lhs) const noexcept {
-        return vec::max(lhs, vec::set(s));
+        return default_vec::max(lhs, default_vec::set(s));
     }
 #endif
 
@@ -249,7 +249,7 @@ struct clip_scalar_op {
 
 #ifdef __INTEL_COMPILER
     cpp14_constexpr vec_type load(const vec_type& lhs) const noexcept {
-        return vec::min(vec::max(lhs, vec::set(min)), vec::set(max));
+        return default_vec::min(default_vec::max(lhs, default_vec::set(min)), default_vec::set(max));
     }
 #endif
 

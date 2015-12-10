@@ -14,6 +14,8 @@
 
 #pragma once
 
+#ifdef __AVX512F__
+
 #include <immintrin.h>
 
 #ifdef VECT_DEBUG
@@ -21,13 +23,13 @@
 #endif
 
 #ifdef __clang__
-#define ETL_INLINE_VEC_VOID inline void __attribute__((__always_inline__, __nodebug__))
-#define ETL_INLINE_VEC_512 inline __m512 __attribute__((__always_inline__, __nodebug__))
-#define ETL_INLINE_VEC_512D inline __m512d __attribute__((__always_inline__, __nodebug__))
+#define ETL_INLINE_VEC_VOID static inline void __attribute__((__always_inline__, __nodebug__))
+#define ETL_INLINE_VEC_512 static inline __m512 __attribute__((__always_inline__, __nodebug__))
+#define ETL_INLINE_VEC_512D static inline __m512d __attribute__((__always_inline__, __nodebug__))
 #else
-#define ETL_INLINE_VEC_VOID inline void __attribute__((__always_inline__))
-#define ETL_INLINE_VEC_512 inline __m512 __attribute__((__always_inline__))
-#define ETL_INLINE_VEC_512D inline __m512d __attribute__((__always_inline__))
+#define ETL_INLINE_VEC_VOID static inline void __attribute__((__always_inline__))
+#define ETL_INLINE_VEC_512 static inline __m512 __attribute__((__always_inline__))
+#define ETL_INLINE_VEC_512D static inline __m512d __attribute__((__always_inline__))
 #endif
 
 namespace etl {
@@ -68,12 +70,12 @@ struct intrinsic_traits<std::complex<double>> {
     using intrinsic_type = __m512d;
 };
 
-namespace vec {
+struct avx512_vec {
 
 #ifdef VEC_DEBUG
 
 template <typename T>
-std::string debug_d(T value) {
+static std::string debug_d(T value) {
     union test {
         __m512d vec;
         double array[8];
@@ -89,7 +91,7 @@ std::string debug_d(T value) {
 }
 
 template <typename T>
-std::string debug_s(T value) {
+static std::string debug_s(T value) {
     union test {
         __m512 vec;
         float array[16];
@@ -109,12 +111,12 @@ std::string debug_s(T value) {
 #else
 
 template <typename T>
-std::string debug_d(T) {
+static std::string debug_d(T) {
     return "";
 }
 
 template <typename T>
-std::string debug_s(T) {
+static std::string debug_s(T) {
     return "";
 }
 
@@ -310,8 +312,10 @@ ETL_INLINE_VEC_512 max(__m512 lhs, __m512 rhs) {
     return _mm512_max_ps(lhs, rhs);
 }
 
-#endif
+#endif //__INTEL_COMPILER
 
-} //end of namespace vec
+};
 
 } //end of namespace etl
+
+#endif //__AVX512F__

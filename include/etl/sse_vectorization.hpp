@@ -12,6 +12,8 @@
 
 #pragma once
 
+#ifdef __SSE3__
+
 #include <immintrin.h>
 
 #ifdef VECT_DEBUG
@@ -19,13 +21,13 @@
 #endif
 
 #ifdef __clang__
-#define ETL_INLINE_VEC_VOID inline void __attribute__((__always_inline__, __nodebug__))
-#define ETL_INLINE_VEC_128 inline __m128 __attribute__((__always_inline__, __nodebug__))
-#define ETL_INLINE_VEC_128D inline __m128d __attribute__((__always_inline__, __nodebug__))
+#define ETL_INLINE_VEC_VOID static inline void __attribute__((__always_inline__, __nodebug__))
+#define ETL_INLINE_VEC_128 static inline __m128 __attribute__((__always_inline__, __nodebug__))
+#define ETL_INLINE_VEC_128D static inline __m128d __attribute__((__always_inline__, __nodebug__))
 #else
-#define ETL_INLINE_VEC_VOID inline void __attribute__((__always_inline__))
-#define ETL_INLINE_VEC_128 inline __m128 __attribute__((__always_inline__))
-#define ETL_INLINE_VEC_128D inline __m128d __attribute__((__always_inline__))
+#define ETL_INLINE_VEC_VOID static inline void __attribute__((__always_inline__))
+#define ETL_INLINE_VEC_128 static inline __m128 __attribute__((__always_inline__))
+#define ETL_INLINE_VEC_128D static inline __m128d __attribute__((__always_inline__))
 #endif
 
 namespace etl {
@@ -66,12 +68,12 @@ struct intrinsic_traits<std::complex<double>> {
     using intrinsic_type = __m128d;
 };
 
-namespace vec {
+struct sse_vec {
 
 #ifdef VEC_DEBUG
 
 template <typename T>
-void debug_d(T value) {
+static void debug_d(T value) {
     union test {
         __m128d vec; // a data field, maybe a register, maybe not
         double array[2];
@@ -84,7 +86,7 @@ void debug_d(T value) {
 }
 
 template <typename T>
-void debug_s(T value) {
+static void debug_s(T value) {
     union test {
         __m128 vec; // a data field, maybe a register, maybe not
         float array[4];
@@ -99,12 +101,12 @@ void debug_s(T value) {
 #else
 
 template <typename T>
-std::string debug_d(T) {
+static std::string debug_d(T) {
     return "";
 }
 
 template <typename T>
-std::string debug_s(T) {
+static std::string debug_s(T) {
     return "";
 }
 
@@ -401,8 +403,10 @@ ETL_INLINE_VEC_128 max(__m128 lhs, __m128 rhs) {
     return _mm_max_ps(lhs, rhs);
 }
 
-#endif
+#endif //__INTEL_COMPILER
 
-} //end of namespace vec
+};
 
 } //end of namespace etl
+
+#endif //__SSE3__

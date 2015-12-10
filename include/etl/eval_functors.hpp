@@ -147,14 +147,14 @@ struct VectorizedAssign : vectorized_base<L_Expr, V_Expr, VectorizedAssign<L_Exp
 
         if(unroll_vectorized_loops && _last - first > IT::size * 4){
             for(i = first; i + IT::size * 4 - 1 < _last; i += IT::size * 4){
-                vec::store(lhs_m + i, rhs.load(i));
-                vec::store(lhs_m + i + 1 * IT::size, rhs.load(i + 1 * IT::size));
-                vec::store(lhs_m + i + 2 * IT::size, rhs.load(i + 2 * IT::size));
-                vec::store(lhs_m + i + 3 * IT::size, rhs.load(i + 3 * IT::size));
+                default_vec::store(lhs_m + i, rhs.load(i));
+                default_vec::store(lhs_m + i + 1 * IT::size, rhs.load(i + 1 * IT::size));
+                default_vec::store(lhs_m + i + 2 * IT::size, rhs.load(i + 2 * IT::size));
+                default_vec::store(lhs_m + i + 3 * IT::size, rhs.load(i + 3 * IT::size));
             }
         } else {
             for(i = first; i + IT::size - 1 < _last; i += IT::size){
-                vec::store(lhs_m + i, rhs.load(i));
+                default_vec::store(lhs_m + i, rhs.load(i));
             }
         }
 
@@ -166,14 +166,14 @@ struct VectorizedAssign : vectorized_base<L_Expr, V_Expr, VectorizedAssign<L_Exp
 
         if(unroll_vectorized_loops && _last - first > IT::size * 4){
             for(i = first; i + IT::size * 4 - 1 < _last; i += IT::size * 4){
-                vec::storeu(lhs_m + i, rhs.load(i));
-                vec::storeu(lhs_m + i + 1 * IT::size, rhs.load(i + 1 * IT::size));
-                vec::storeu(lhs_m + i + 2 * IT::size, rhs.load(i + 2 * IT::size));
-                vec::storeu(lhs_m + i + 3 * IT::size, rhs.load(i + 3 * IT::size));
+                default_vec::storeu(lhs_m + i, rhs.load(i));
+                default_vec::storeu(lhs_m + i + 1 * IT::size, rhs.load(i + 1 * IT::size));
+                default_vec::storeu(lhs_m + i + 2 * IT::size, rhs.load(i + 2 * IT::size));
+                default_vec::storeu(lhs_m + i + 3 * IT::size, rhs.load(i + 3 * IT::size));
             }
         } else {
             for(i = first; i + IT::size - 1 < _last; i += IT::size){
-                vec::storeu(lhs_m + i, rhs.load(i));
+                default_vec::storeu(lhs_m + i, rhs.load(i));
             }
         }
 
@@ -260,14 +260,14 @@ struct VectorizedAssignAdd : vectorized_base<L_Expr, V_Expr, VectorizedAssignAdd
 
         if(unroll_vectorized_loops && _last - first > IT::size * 4){
             for(i = first; i + IT::size * 4 - 1 < _last; i += IT::size * 4){
-                vec::store(lhs_m + i,                vec::add(lhs.load(i), rhs.load(i)));
-                vec::store(lhs_m + i + 1 * IT::size, vec::add(lhs.load(i + 1 * IT::size), rhs.load(i + 1 * IT::size)));
-                vec::store(lhs_m + i + 2 * IT::size, vec::add(lhs.load(i + 2 * IT::size), rhs.load(i + 2 * IT::size)));
-                vec::store(lhs_m + i + 3 * IT::size, vec::add(lhs.load(i + 3 * IT::size), rhs.load(i + 3 * IT::size)));
+                default_vec::store(lhs_m + i,                default_vec::add(lhs.load(i), rhs.load(i)));
+                default_vec::store(lhs_m + i + 1 * IT::size, default_vec::add(lhs.load(i + 1 * IT::size), rhs.load(i + 1 * IT::size)));
+                default_vec::store(lhs_m + i + 2 * IT::size, default_vec::add(lhs.load(i + 2 * IT::size), rhs.load(i + 2 * IT::size)));
+                default_vec::store(lhs_m + i + 3 * IT::size, default_vec::add(lhs.load(i + 3 * IT::size), rhs.load(i + 3 * IT::size)));
             }
         } else {
             for(i = first; i + IT::size - 1 < _last; i += IT::size){
-                vec::store(lhs_m + i, vec::add(lhs.load(i), rhs.load(i)));
+                default_vec::store(lhs_m + i, default_vec::add(lhs.load(i), rhs.load(i)));
             }
         }
 
@@ -279,14 +279,14 @@ struct VectorizedAssignAdd : vectorized_base<L_Expr, V_Expr, VectorizedAssignAdd
 
         if(unroll_vectorized_loops && _last - first > IT::size * 4){
             for(i = first; i + IT::size * 4 - 1 < _last; i += IT::size * 4){
-                vec::storeu(lhs_m + i,                vec::add(lhs.load(i), rhs.load(i)));
-                vec::storeu(lhs_m + i + 1 * IT::size, vec::add(lhs.load(i + 1 * IT::size), rhs.load(i + 1 * IT::size)));
-                vec::storeu(lhs_m + i + 2 * IT::size, vec::add(lhs.load(i + 2 * IT::size), rhs.load(i + 2 * IT::size)));
-                vec::storeu(lhs_m + i + 3 * IT::size, vec::add(lhs.load(i + 3 * IT::size), rhs.load(i + 3 * IT::size)));
+                default_vec::storeu(lhs_m + i,                default_vec::add(lhs.load(i), rhs.load(i)));
+                default_vec::storeu(lhs_m + i + 1 * IT::size, default_vec::add(lhs.load(i + 1 * IT::size), rhs.load(i + 1 * IT::size)));
+                default_vec::storeu(lhs_m + i + 2 * IT::size, default_vec::add(lhs.load(i + 2 * IT::size), rhs.load(i + 2 * IT::size)));
+                default_vec::storeu(lhs_m + i + 3 * IT::size, default_vec::add(lhs.load(i + 3 * IT::size), rhs.load(i + 3 * IT::size)));
             }
         } else {
             for(i = first; i + IT::size - 1 < _last; i += IT::size){
-                vec::storeu(lhs_m + i, vec::add(lhs.load(i), rhs.load(i)));
+                default_vec::storeu(lhs_m + i, default_vec::add(lhs.load(i), rhs.load(i)));
             }
         }
 
@@ -373,14 +373,14 @@ struct VectorizedAssignSub : vectorized_base<L_Expr, V_Expr, VectorizedAssignSub
 
         if(unroll_vectorized_loops && _last - first > IT::size * 4){
             for(i = first; i + IT::size * 4 - 1 < _last; i += IT::size * 4){
-                vec::store(lhs_m + i,                vec::sub(lhs.load(i), rhs.load(i)));
-                vec::store(lhs_m + i + 1 * IT::size, vec::sub(lhs.load(i + 1 * IT::size), rhs.load(i + 1 * IT::size)));
-                vec::store(lhs_m + i + 2 * IT::size, vec::sub(lhs.load(i + 2 * IT::size), rhs.load(i + 2 * IT::size)));
-                vec::store(lhs_m + i + 3 * IT::size, vec::sub(lhs.load(i + 3 * IT::size), rhs.load(i + 3 * IT::size)));
+                default_vec::store(lhs_m + i,                default_vec::sub(lhs.load(i), rhs.load(i)));
+                default_vec::store(lhs_m + i + 1 * IT::size, default_vec::sub(lhs.load(i + 1 * IT::size), rhs.load(i + 1 * IT::size)));
+                default_vec::store(lhs_m + i + 2 * IT::size, default_vec::sub(lhs.load(i + 2 * IT::size), rhs.load(i + 2 * IT::size)));
+                default_vec::store(lhs_m + i + 3 * IT::size, default_vec::sub(lhs.load(i + 3 * IT::size), rhs.load(i + 3 * IT::size)));
             }
         } else {
             for(i = first; i + IT::size - 1 < _last; i += IT::size){
-                vec::store(lhs_m + i, vec::sub(lhs.load(i), rhs.load(i)));
+                default_vec::store(lhs_m + i, default_vec::sub(lhs.load(i), rhs.load(i)));
             }
         }
 
@@ -392,14 +392,14 @@ struct VectorizedAssignSub : vectorized_base<L_Expr, V_Expr, VectorizedAssignSub
 
         if(unroll_vectorized_loops && _last - first > IT::size * 4){
             for(i = first; i + IT::size * 4 - 1 < _last; i += IT::size * 4){
-                vec::storeu(lhs_m + i,                vec::sub(lhs.load(i), rhs.load(i)));
-                vec::storeu(lhs_m + i + 1 * IT::size, vec::sub(lhs.load(i + 1 * IT::size), rhs.load(i + 1 * IT::size)));
-                vec::storeu(lhs_m + i + 2 * IT::size, vec::sub(lhs.load(i + 2 * IT::size), rhs.load(i + 2 * IT::size)));
-                vec::storeu(lhs_m + i + 3 * IT::size, vec::sub(lhs.load(i + 3 * IT::size), rhs.load(i + 3 * IT::size)));
+                default_vec::storeu(lhs_m + i,                default_vec::sub(lhs.load(i), rhs.load(i)));
+                default_vec::storeu(lhs_m + i + 1 * IT::size, default_vec::sub(lhs.load(i + 1 * IT::size), rhs.load(i + 1 * IT::size)));
+                default_vec::storeu(lhs_m + i + 2 * IT::size, default_vec::sub(lhs.load(i + 2 * IT::size), rhs.load(i + 2 * IT::size)));
+                default_vec::storeu(lhs_m + i + 3 * IT::size, default_vec::sub(lhs.load(i + 3 * IT::size), rhs.load(i + 3 * IT::size)));
             }
         } else {
             for(i = first; i + IT::size - 1 < _last; i += IT::size){
-                vec::storeu(lhs_m + i, vec::sub(lhs.load(i), rhs.load(i)));
+                default_vec::storeu(lhs_m + i, default_vec::sub(lhs.load(i), rhs.load(i)));
             }
         }
 
@@ -486,14 +486,14 @@ struct VectorizedAssignMul : vectorized_base<L_Expr, V_Expr, VectorizedAssignMul
 
         if(unroll_vectorized_loops && _last - first > IT::size * 4){
             for(i = first; i + IT::size * 4 - 1 < _last; i += IT::size * 4){
-                vec::store(lhs_m + i,                vec::mul(lhs.load(i), rhs.load(i)));
-                vec::store(lhs_m + i + 1 * IT::size, vec::mul(lhs.load(i + 1 * IT::size), rhs.load(i + 1 * IT::size)));
-                vec::store(lhs_m + i + 2 * IT::size, vec::mul(lhs.load(i + 2 * IT::size), rhs.load(i + 2 * IT::size)));
-                vec::store(lhs_m + i + 3 * IT::size, vec::mul(lhs.load(i + 3 * IT::size), rhs.load(i + 3 * IT::size)));
+                default_vec::store(lhs_m + i,                default_vec::mul(lhs.load(i), rhs.load(i)));
+                default_vec::store(lhs_m + i + 1 * IT::size, default_vec::mul(lhs.load(i + 1 * IT::size), rhs.load(i + 1 * IT::size)));
+                default_vec::store(lhs_m + i + 2 * IT::size, default_vec::mul(lhs.load(i + 2 * IT::size), rhs.load(i + 2 * IT::size)));
+                default_vec::store(lhs_m + i + 3 * IT::size, default_vec::mul(lhs.load(i + 3 * IT::size), rhs.load(i + 3 * IT::size)));
             }
         } else {
             for(i = first; i + IT::size - 1 < _last; i += IT::size){
-                vec::store(lhs_m + i, vec::mul(lhs.load(i), rhs.load(i)));
+                default_vec::store(lhs_m + i, default_vec::mul(lhs.load(i), rhs.load(i)));
             }
         }
 
@@ -505,14 +505,14 @@ struct VectorizedAssignMul : vectorized_base<L_Expr, V_Expr, VectorizedAssignMul
 
         if(unroll_vectorized_loops && _last - first > IT::size * 4){
             for(i = first; i + IT::size * 4 - 1 < _last; i += IT::size * 4){
-                vec::storeu(lhs_m + i,                vec::mul(lhs.load(i), rhs.load(i)));
-                vec::storeu(lhs_m + i + 1 * IT::size, vec::mul(lhs.load(i + 1 * IT::size), rhs.load(i + 1 * IT::size)));
-                vec::storeu(lhs_m + i + 2 * IT::size, vec::mul(lhs.load(i + 2 * IT::size), rhs.load(i + 2 * IT::size)));
-                vec::storeu(lhs_m + i + 3 * IT::size, vec::mul(lhs.load(i + 3 * IT::size), rhs.load(i + 3 * IT::size)));
+                default_vec::storeu(lhs_m + i,                default_vec::mul(lhs.load(i), rhs.load(i)));
+                default_vec::storeu(lhs_m + i + 1 * IT::size, default_vec::mul(lhs.load(i + 1 * IT::size), rhs.load(i + 1 * IT::size)));
+                default_vec::storeu(lhs_m + i + 2 * IT::size, default_vec::mul(lhs.load(i + 2 * IT::size), rhs.load(i + 2 * IT::size)));
+                default_vec::storeu(lhs_m + i + 3 * IT::size, default_vec::mul(lhs.load(i + 3 * IT::size), rhs.load(i + 3 * IT::size)));
             }
         } else {
             for(i = first; i + IT::size - 1 < _last; i += IT::size){
-                vec::storeu(lhs_m + i, vec::mul(lhs.load(i), rhs.load(i)));
+                default_vec::storeu(lhs_m + i, default_vec::mul(lhs.load(i), rhs.load(i)));
             }
         }
 
@@ -599,14 +599,14 @@ struct VectorizedAssignDiv : vectorized_base<L_Expr, V_Expr, VectorizedAssignDiv
 
         if(unroll_vectorized_loops && _last - first > IT::size * 4){
             for(i = first; i + IT::size * 4 - 1 < _last; i += IT::size * 4){
-                vec::store(lhs_m + i,                vec::div(lhs.load(i), rhs.load(i)));
-                vec::store(lhs_m + i + 1 * IT::size, vec::div(lhs.load(i + 1 * IT::size), rhs.load(i + 1 * IT::size)));
-                vec::store(lhs_m + i + 2 * IT::size, vec::div(lhs.load(i + 2 * IT::size), rhs.load(i + 2 * IT::size)));
-                vec::store(lhs_m + i + 3 * IT::size, vec::div(lhs.load(i + 3 * IT::size), rhs.load(i + 3 * IT::size)));
+                default_vec::store(lhs_m + i,                default_vec::div(lhs.load(i), rhs.load(i)));
+                default_vec::store(lhs_m + i + 1 * IT::size, default_vec::div(lhs.load(i + 1 * IT::size), rhs.load(i + 1 * IT::size)));
+                default_vec::store(lhs_m + i + 2 * IT::size, default_vec::div(lhs.load(i + 2 * IT::size), rhs.load(i + 2 * IT::size)));
+                default_vec::store(lhs_m + i + 3 * IT::size, default_vec::div(lhs.load(i + 3 * IT::size), rhs.load(i + 3 * IT::size)));
             }
         } else {
             for(i = first; i + IT::size - 1 < _last; i += IT::size){
-                vec::store(lhs_m + i, vec::div(lhs.load(i), rhs.load(i)));
+                default_vec::store(lhs_m + i, default_vec::div(lhs.load(i), rhs.load(i)));
             }
         }
 
@@ -618,14 +618,14 @@ struct VectorizedAssignDiv : vectorized_base<L_Expr, V_Expr, VectorizedAssignDiv
 
         if(unroll_vectorized_loops && _last - first > IT::size * 4){
             for(i = first; i + IT::size * 4 - 1 < _last; i += IT::size * 4){
-                vec::storeu(lhs_m + i,                vec::div(lhs.load(i), rhs.load(i)));
-                vec::storeu(lhs_m + i + 1 * IT::size, vec::div(lhs.load(i + 1 * IT::size), rhs.load(i + 1 * IT::size)));
-                vec::storeu(lhs_m + i + 2 * IT::size, vec::div(lhs.load(i + 2 * IT::size), rhs.load(i + 2 * IT::size)));
-                vec::storeu(lhs_m + i + 3 * IT::size, vec::div(lhs.load(i + 3 * IT::size), rhs.load(i + 3 * IT::size)));
+                default_vec::storeu(lhs_m + i,                default_vec::div(lhs.load(i), rhs.load(i)));
+                default_vec::storeu(lhs_m + i + 1 * IT::size, default_vec::div(lhs.load(i + 1 * IT::size), rhs.load(i + 1 * IT::size)));
+                default_vec::storeu(lhs_m + i + 2 * IT::size, default_vec::div(lhs.load(i + 2 * IT::size), rhs.load(i + 2 * IT::size)));
+                default_vec::storeu(lhs_m + i + 3 * IT::size, default_vec::div(lhs.load(i + 3 * IT::size), rhs.load(i + 3 * IT::size)));
             }
         } else {
             for(i = first; i + IT::size - 1 < _last; i += IT::size){
-                vec::storeu(lhs_m + i, vec::div(lhs.load(i), rhs.load(i)));
+                default_vec::storeu(lhs_m + i, default_vec::div(lhs.load(i), rhs.load(i)));
             }
         }
 

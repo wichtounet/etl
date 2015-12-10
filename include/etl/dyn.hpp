@@ -410,7 +410,7 @@ public:
     }
 
     vec_type load(std::size_t i) const noexcept {
-        return vec::load(_memory + i);
+        return default_vec::load(_memory + i);
     }
 
     iterator begin() noexcept {

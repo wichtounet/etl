@@ -44,7 +44,7 @@ struct log_unary_op {
 
 #ifdef __INTEL_COMPILER
     static cpp14_constexpr vec_type load(const vec_type& x) noexcept {
-        return vec::log(x);
+        return default_vec::log(x);
     }
 #endif
 
@@ -64,7 +64,7 @@ struct sqrt_unary_op {
     }
 
     static cpp14_constexpr vec_type load(const vec_type& x) noexcept {
-        return vec::sqrt(x);
+        return default_vec::sqrt(x);
     }
 
     static std::string desc() noexcept {
@@ -84,7 +84,7 @@ struct exp_unary_op {
 
 #ifdef __INTEL_COMPILER
     static cpp14_constexpr vec_type load(const vec_type& x) noexcept {
-        return vec::exp(x);
+        return default_vec::exp(x);
     }
 #endif
 
@@ -143,7 +143,7 @@ struct minus_unary_op {
     }
 
     static cpp14_constexpr vec_type load(const vec_type& x) noexcept {
-        return vec::minus(x);
+        return default_vec::minus(x);
     }
 
     static std::string desc() noexcept {

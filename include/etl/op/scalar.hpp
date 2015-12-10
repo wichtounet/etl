@@ -30,7 +30,7 @@ struct scalar {
     }
 
     constexpr const vec_type load(std::size_t /*d*/) const noexcept {
-        return vec::set(value);
+        return default_vec::set(value);
     }
 
     template <typename... S>

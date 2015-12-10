@@ -40,28 +40,38 @@ using intrinsic_type = typename intrinsic_traits<T>::intrinsic_type;
 
 } //end of namespace etl
 
+//Include al the vector implementation
+#include "etl/avx512_vectorization.hpp"
+#include "etl/avx_vectorization.hpp"
+#include "etl/sse_vectorization.hpp"
+#include "etl/no_vectorization.hpp"
+
+namespace etl {
+
 #ifdef ETL_VECTORIZE_EXPR
 
 #ifdef __AVX512F__
 
-#include "etl/avx512_vectorization.hpp"
+using default_vec = avx512_vec;
 
 #elif defined(__AVX__)
 
-#include "etl/avx_vectorization.hpp"
+using default_vec = avx_vec;
 
 #elif defined(__SSE3__)
 
-#include "etl/sse_vectorization.hpp"
+using default_vec = sse_vec;
 
 #else
 
-#include "etl/no_vectorization.hpp"
+using default_vec = no_vec;
 
 #endif //defined(__SSE__)
 
 #else //ETL_VECTORIZE_EXPR
 
-#include "etl/no_vectorization.hpp"
+using default_vec = no_vec;
 
 #endif //ETL_VECTORIZE_EXPR
+
+} //end of namespace etl

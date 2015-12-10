@@ -60,7 +60,7 @@ struct temporary_expr : comparable<D>, value_testable<D>, dim_testable<D> {
     }
 
     vec_type load(std::size_t i) const noexcept {
-        return vec::loadu(memory_start() + i);
+        return default_vec::loadu(memory_start() + i);
     }
 
     // Iterator
