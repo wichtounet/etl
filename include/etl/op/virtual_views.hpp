@@ -89,4 +89,71 @@ struct fast_magic_view {
     }
 };
 
+template <typename V>
+struct etl_traits<etl::magic_view<V>> {
+    using expr_t = etl::magic_view<V>;
+
+    static constexpr const bool is_etl                 = true;
+    static constexpr const bool is_transformer = false;
+    static constexpr const bool is_view = false;
+    static constexpr const bool is_magic_view = true;
+    static constexpr const bool is_fast                 = false;
+    static constexpr const bool is_value                = false;
+    static constexpr const bool is_generator            = false;
+    static constexpr const bool vectorizable            = false;
+    static constexpr const bool needs_temporary_visitor = false;
+    static constexpr const bool needs_evaluator_visitor = false;
+    static constexpr const order storage_order          = order::RowMajor;
+
+    static std::size_t size(const expr_t& v) {
+        return v.n * v.n;
+    }
+
+    static std::size_t dim(const expr_t& v, std::size_t /*unused*/) {
+        return v.n;
+    }
+
+    static constexpr std::size_t dimensions() {
+        return 2;
+    }
+};
+
+template <std::size_t N, typename V>
+struct etl_traits<etl::fast_magic_view<V, N>> {
+    using expr_t = etl::fast_magic_view<V, N>;
+
+    static constexpr const bool is_etl                 = true;
+    static constexpr const bool is_transformer = false;
+    static constexpr const bool is_view = false;
+    static constexpr const bool is_magic_view = true;
+    static constexpr const bool is_fast                 = true;
+    static constexpr const bool is_value                = false;
+    static constexpr const bool is_generator            = false;
+    static constexpr const bool vectorizable            = false;
+    static constexpr const bool needs_temporary_visitor = false;
+    static constexpr const bool needs_evaluator_visitor = false;
+    static constexpr const order storage_order          = order::RowMajor;
+
+    static constexpr std::size_t size() {
+        return N * N;
+    }
+
+    static std::size_t size(const expr_t& /*unused*/) {
+        return N * N;
+    }
+
+    template <std::size_t D>
+    static constexpr std::size_t dim() {
+        return N;
+    }
+
+    static std::size_t dim(const expr_t& /*e*/, std::size_t /*unused*/) {
+        return N;
+    }
+
+    static constexpr std::size_t dimensions() {
+        return 2;
+    }
+};
+
 } //end of namespace etl

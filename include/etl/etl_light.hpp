@@ -9,12 +9,21 @@
 
 #include <complex>
 
+//Metaprogramming utilities
+#include "etl/tmp.hpp"
+
 // Utilities
 #include "etl/order.hpp"
 #include "etl/sparse_storage.hpp"
 #include "etl/config.hpp"
 #include "etl/vectorization.hpp"
 #include "etl/complex.hpp"
+
+//Forward declarations
+#include "etl/value_fwd.hpp"
+
+// The traits
+#include "etl/traits.hpp"
 
 // The operators
 #include "etl/op/scalar.hpp"
@@ -50,9 +59,6 @@
 #include "etl/fast.hpp"
 #include "etl/dyn.hpp"
 #include "etl/sparse.hpp"
-
-// The traits
-#include "etl/traits.hpp"
 
 // to_string support
 #include "etl/print.hpp"

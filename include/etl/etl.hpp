@@ -9,12 +9,21 @@
 
 #include <complex>
 
+//Metaprogramming utilities
+#include "etl/tmp.hpp"
+
 // Utilities
 #include "etl/order.hpp"
 #include "etl/sparse_storage.hpp"
 #include "etl/config.hpp"
 #include "etl/vectorization.hpp"
 #include "etl/complex.hpp"
+
+//Forward declarations
+#include "etl/value_fwd.hpp"
+
+// The traits
+#include "etl/traits.hpp"
 
 // The operators
 #include "etl/op/scalar.hpp"
@@ -34,9 +43,6 @@
 #include "etl/expr/generator_expr.hpp"
 #include "etl/expr/temporary_expr.hpp"
 #include "etl/expr/optimized_expr.hpp"
-
-//Forward value classes for expressions
-#include "etl/value_fwd.hpp"
 
 // The complex expressions
 #include "etl/expr/mmul_expr.hpp"

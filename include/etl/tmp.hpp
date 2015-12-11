@@ -7,6 +7,9 @@
 
 #pragma once
 
+#include "cpp_utils/assert.hpp"
+#include "cpp_utils/tmp.hpp"
+
 namespace etl {
 
 template <template <typename, std::size_t> class TT, typename T>

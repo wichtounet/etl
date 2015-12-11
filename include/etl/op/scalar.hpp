@@ -44,6 +44,24 @@ struct scalar {
     }
 };
 
+/*!
+ * \brief Specialization scalar
+ */
+template <typename T>
+struct etl_traits<etl::scalar<T>, void> {
+    static constexpr const bool is_etl                 = true;
+    static constexpr const bool is_transformer = false;
+    static constexpr const bool is_view = false;
+    static constexpr const bool is_magic_view = false;
+    static constexpr const bool is_fast                 = true;
+    static constexpr const bool is_value                = false;
+    static constexpr const bool is_generator            = true;
+    static constexpr const bool vectorizable            = true;
+    static constexpr const bool needs_temporary_visitor = false;
+    static constexpr const bool needs_evaluator_visitor = false;
+    static constexpr const order storage_order          = order::RowMajor;
+};
+
 template <typename T>
 std::ostream& operator<<(std::ostream& os, const scalar<T>& s) {
     return os << s.value;

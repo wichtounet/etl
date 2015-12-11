@@ -36,9 +36,6 @@ struct stateful_op {
     using op                                 = Sub;
 };
 
-template <typename Generator>
-class generator_expr;
-
 template <typename T, typename Expr, typename UnaryOp>
 struct unary_expr final : comparable<unary_expr<T, Expr, UnaryOp>>, value_testable<unary_expr<T, Expr, UnaryOp>>, dim_testable<unary_expr<T, Expr, UnaryOp>> {
 private:

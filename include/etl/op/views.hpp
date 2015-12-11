@@ -424,6 +424,7 @@ struct dyn_matrix_view {
     }
 };
 
+
 template <typename T, std::size_t D>
 std::ostream& operator<<(std::ostream& os, const dim_view<T, D>& v) {
     return os << "dim[" << D << "](" << v.sub << ", " << v.i << ")";
