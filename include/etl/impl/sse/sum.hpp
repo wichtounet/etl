@@ -22,6 +22,12 @@ namespace sse {
 
 template<typename E>
 double dsum_kernel(const E& in, std::size_t first, std::size_t last){
+    double acc = 0.0;
+
+    while(first < last && first % 2 != 0){
+        acc += in[first++];
+    }
+
     double tmp_res[2] __attribute__((aligned(16)));
 
     __m128d ymm1;
@@ -38,7 +44,7 @@ double dsum_kernel(const E& in, std::size_t first, std::size_t last){
 
     _mm_store_pd(tmp_res, ymm2);
 
-    auto acc = tmp_res[0] + tmp_res[1];
+    acc += tmp_res[0] + tmp_res[1];
 
     auto n = last - first;
     if (n % 2) {
@@ -50,6 +56,12 @@ double dsum_kernel(const E& in, std::size_t first, std::size_t last){
 
 template<typename E>
 float ssum_kernel(const E& in, std::size_t first, std::size_t last){
+    float acc = 0.0;
+
+    while(first < last && first % 4 != 0){
+        acc += in[first++];
+    }
+
     float tmp_res[4] __attribute__((aligned(16)));
 
     __m128 ymm1;
@@ -66,7 +78,7 @@ float ssum_kernel(const E& in, std::size_t first, std::size_t last){
 
     _mm_store_ps(tmp_res, ymm2);
 
-    auto acc = tmp_res[0] + tmp_res[1] + tmp_res[2] + tmp_res[3];
+    acc += tmp_res[0] + tmp_res[1] + tmp_res[2] + tmp_res[3];
 
     auto n = last - first;
     if (n % 4) {

@@ -22,6 +22,12 @@ namespace avx {
 
 template<typename E>
 double dsum_kernel(const E& in, std::size_t first, std::size_t last){
+    double acc = 0.0;
+
+    while(first < last && first % 4 != 0){
+        acc += in[first++];
+    }
+
     double tmp_res[4] __attribute__((aligned(32)));
 
     __m256d ymm1;
@@ -38,7 +44,7 @@ double dsum_kernel(const E& in, std::size_t first, std::size_t last){
 
     _mm256_store_pd(tmp_res, ymm2);
 
-    auto acc = tmp_res[0] + tmp_res[1] + tmp_res[2] + tmp_res[3];
+    acc += tmp_res[0] + tmp_res[1] + tmp_res[2] + tmp_res[3];
 
     auto n = last - first;
     if (n % 4) {
@@ -53,6 +59,12 @@ double dsum_kernel(const E& in, std::size_t first, std::size_t last){
 
 template<typename E>
 float ssum_kernel(const E& in, std::size_t first, std::size_t last){
+    float acc = 0.0;
+
+    while(first < last && first % 8 != 0){
+        acc += in[first++];
+    }
+
     float tmp_res[8] __attribute__((aligned(32)));
 
     __m256 ymm1;
@@ -62,14 +74,14 @@ float ssum_kernel(const E& in, std::size_t first, std::size_t last){
 
     ymm2 = _mm256_setzero_ps();
 
-    for (std::size_t i = 0; i + 7 < n; i += 8) {
+    for (std::size_t i = first; i + 7 < last; i += 8) {
         ymm1 = in.template load<avx_vec>(i);
         ymm2 = _mm256_add_ps(ymm2, ymm1);
     }
 
     _mm256_store_ps(tmp_res, ymm2);
 
-    auto acc = tmp_res[0] + tmp_res[1] + tmp_res[2] + tmp_res[3] + tmp_res[4] + tmp_res[5] + tmp_res[6] + tmp_res[7];
+    acc += tmp_res[0] + tmp_res[1] + tmp_res[2] + tmp_res[3] + tmp_res[4] + tmp_res[5] + tmp_res[6] + tmp_res[7];
 
     auto n = last - first;
     if (n % 8) {

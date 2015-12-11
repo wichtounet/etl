@@ -79,15 +79,28 @@ struct sum_impl {
 
     static value_t<E> selected_apply(const E& e, sum_imple impl) {
         bool parallel_dispatch = select_parallel(e);
-        cpp_unused(parallel_dispatch);
+
+        value_t<E> acc(0);
+
+        auto acc_functor = [&acc](value_t<E> value){
+            acc += value;
+        };
 
         if (impl == sum_imple::AVX) {
-            return impl::avx::sum(e, 0, size(e));
+            dispatch_1d_acc<value_t<E>>(parallel_dispatch, [&](std::size_t first, std::size_t last){
+                return impl::avx::sum(e, first, last);
+            }, acc_functor, 0, size(e));
         } else if (impl == sum_imple::SSE) {
-            return impl::sse::sum(e, 0, size(e));
+            dispatch_1d_acc<value_t<E>>(parallel_dispatch, [&](std::size_t first, std::size_t last){
+                return impl::sse::sum(e, first, last);
+            }, acc_functor, 0, size(e));
         } else {
-            return impl::standard::sum(e, 0, size(e));
+            dispatch_1d_acc<value_t<E>>(parallel_dispatch, [&](std::size_t first, std::size_t last){
+                return impl::standard::sum(e, first, last);
+            }, acc_functor, 0, size(e));
         }
+
+        return acc;
     }
 };
 
