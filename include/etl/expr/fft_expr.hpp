@@ -45,7 +45,7 @@ struct basic_fft_expr {
 
     template <typename A>
     struct result_type_builder<A, std::enable_if_t<decay_traits<A>::is_fast>> {
-        using type = fast_result_type_builder<A, std::make_index_sequence<D>>;
+        using type = typename fast_result_type_builder<A, std::make_index_sequence<D>>::type;
     };
 
     template <typename A>
