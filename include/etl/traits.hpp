@@ -40,15 +40,16 @@ struct is_sparse_matrix_impl<sparse_matrix_impl<V1, V2, V3>> : std::true_type {}
  */
 template <typename T, typename Enable = void>
 struct etl_traits {
-    static constexpr const bool is_etl = false;
+    static constexpr const bool is_etl         = false;
     static constexpr const bool is_transformer = false;
-    static constexpr const bool is_view = false;
-    static constexpr const bool is_magic_view = false;
+    static constexpr const bool is_view        = false;
+    static constexpr const bool is_magic_view  = false;
+    static constexpr const bool is_fast        = false;
 };
 
 /*!
  * \brief Traits helper to get information about ETL types, the type is first decayed.
- * \tparam T the type to introspect
+ * \tparam E the type to introspect
  */
 template <typename E>
 using decay_traits = etl_traits<std::decay_t<E>>;
@@ -58,65 +59,60 @@ using decay_traits = etl_traits<std::decay_t<E>>;
  * \tparam T The type to test
  */
 template <typename T>
-struct is_fast_matrix : traits_detail::is_fast_matrix_impl<std::decay_t<T>> {};
+using is_fast_matrix = traits_detail::is_fast_matrix_impl<std::decay_t<T>>;
 
 /*!
  * \brief Traits indicating if the given ETL type is a dyn matrix
  * \tparam T The type to test
  */
 template <typename T>
-struct is_dyn_matrix : traits_detail::is_dyn_matrix_impl<std::decay_t<T>> {};
+using is_dyn_matrix = traits_detail::is_dyn_matrix_impl<std::decay_t<T>>;
 
 /*!
  * \brief Traits indicating if the given ETL type is a sparse matrix
  * \tparam T The type to test
  */
 template <typename T>
-struct is_sparse_matrix : traits_detail::is_sparse_matrix_impl<std::decay_t<T>> {};
-
-template <typename T, typename DT = std::decay_t<T>>
-using is_unary_expr               = cpp::is_specialization_of<etl::unary_expr, DT>;
-
-template <typename T, typename DT = std::decay_t<T>>
-using is_binary_expr              = cpp::is_specialization_of<etl::binary_expr, DT>;
-
-template <typename T, typename DT = std::decay_t<T>>
-using is_generator_expr           = cpp::is_specialization_of<etl::generator_expr, DT>;
-
-template <typename T, typename DT = std::decay_t<T>>
-struct is_optimized_expr : cpp::is_specialization_of<etl::optimized_expr, DT> {};
-
-template <typename T, typename DT = std::decay_t<T>>
-struct is_temporary_unary_expr : cpp::is_specialization_of<etl::temporary_unary_expr, DT> {};
-
-template <typename T, typename DT = std::decay_t<T>>
-struct is_temporary_binary_expr : cpp::is_specialization_of<etl::temporary_binary_expr, DT> {};
+using is_sparse_matrix = traits_detail::is_sparse_matrix_impl<std::decay_t<T>>;
 
 template <typename T>
-struct is_temporary_expr : cpp::or_c<is_temporary_unary_expr<T>, is_temporary_binary_expr<T>> {};
+using is_unary_expr = cpp::is_specialization_of<etl::unary_expr, std::decay_t<T>>;
 
 template <typename T>
-struct is_transformer : cpp::bool_constant<decay_traits<T>::is_transformer> {};
+using is_binary_expr = cpp::is_specialization_of<etl::binary_expr, std::decay_t<T>>;
 
 template <typename T>
-struct is_view : cpp::bool_constant<decay_traits<T>::is_view> {};
+using is_generator_expr = cpp::is_specialization_of<etl::generator_expr, std::decay_t<T>>;
 
 template <typename T>
-struct is_magic_view : cpp::bool_constant<decay_traits<T>::is_magic_view> {};
+using is_optimized_expr = cpp::is_specialization_of<etl::optimized_expr, std::decay_t<T>>;
 
 template <typename T>
-struct is_etl_expr : cpp::bool_constant<decay_traits<T>::is_etl> {};
+using is_temporary_unary_expr = cpp::is_specialization_of<etl::temporary_unary_expr, std::decay_t<T>>;
 
 template <typename T>
-struct is_etl_direct_value : cpp::or_c<
-                          is_fast_matrix<T>,
-                          is_dyn_matrix<T>> {};
+using is_temporary_binary_expr = cpp::is_specialization_of<etl::temporary_binary_expr, std::decay_t<T>>;
 
 template <typename T>
-struct is_etl_value : cpp::or_c<
-                          is_fast_matrix<T>,
-                          is_dyn_matrix<T>,
-                          is_sparse_matrix<T>> {};
+using is_temporary_expr = cpp::or_c<is_temporary_unary_expr<T>, is_temporary_binary_expr<T>>;
+
+template <typename T>
+using is_transformer = cpp::bool_constant<decay_traits<T>::is_transformer>;
+
+template <typename T>
+using is_view = cpp::bool_constant<decay_traits<T>::is_view>;
+
+template <typename T>
+using is_magic_view = cpp::bool_constant<decay_traits<T>::is_magic_view>;
+
+template <typename T>
+using is_etl_expr = cpp::bool_constant<decay_traits<T>::is_etl>;
+
+template <typename T>
+using is_etl_direct_value = cpp::or_c<is_fast_matrix<T>, is_dyn_matrix<T>>;
+
+template <typename T>
+using is_etl_value = cpp::or_c<is_fast_matrix<T>, is_dyn_matrix<T>, is_sparse_matrix<T>>;
 
 template <typename T, typename DT = std::decay_t<T>>
 struct has_direct_access;
@@ -162,37 +158,37 @@ struct has_direct_access : cpp::or_c<
                                is_etl_direct_value<DT>, is_temporary_unary_expr<DT>, is_temporary_binary_expr<DT>, is_direct_identity_view<DT>, is_direct_sub_view<DT>, is_direct_dim_view<DT>, is_direct_fast_matrix_view<DT>, is_direct_dyn_matrix_view<DT>, is_direct_dyn_vector_view<DT>> {};
 
 template <typename T>
-struct is_single_precision : std::is_same<typename std::decay_t<T>::value_type, float> {};
+using is_single_precision = std::is_same<typename std::decay_t<T>::value_type, float>;
 
 template <typename... E>
-struct all_single_precision : cpp::and_c<is_single_precision<E>...> {};
+using all_single_precision = cpp::and_c<is_single_precision<E>...>;
 
 template <typename T>
-struct is_double_precision : std::is_same<typename std::decay_t<T>::value_type, double> {};
+using is_double_precision = std::is_same<typename std::decay_t<T>::value_type, double>;
 
 template <typename... E>
-struct all_double_precision : cpp::and_c<is_double_precision<E>...> {};
+using all_double_precision = cpp::and_c<is_double_precision<E>...>;
 
 template <typename T>
-struct is_complex_single_precision : cpp::or_c<
+using is_complex_single_precision = cpp::or_c<
    std::is_same<typename std::decay_t<T>::value_type, std::complex<float>>,
    std::is_same<typename std::decay_t<T>::value_type, etl::complex<float>>
-> {};
+>;
 
 template <typename T>
-struct is_complex_double_precision : cpp::or_c<
+using is_complex_double_precision = cpp::or_c<
    std::is_same<typename std::decay_t<T>::value_type, std::complex<double>>,
    std::is_same<typename std::decay_t<T>::value_type, etl::complex<double>>
-> {};
+>;
 
 template <typename... E>
-struct all_complex_single_precision : cpp::and_c<is_complex_single_precision<E>...> {};
+using all_complex_single_precision = cpp::and_c<is_complex_single_precision<E>...>;
 
 template <typename... E>
-struct all_complex_double_precision : cpp::and_c<is_complex_double_precision<E>...> {};
+using all_complex_double_precision = cpp::and_c<is_complex_double_precision<E>...>;
 
 template <typename T>
-struct is_complex : cpp::or_c<is_complex_single_precision<T>, is_complex_double_precision<T>> {};
+using is_complex = cpp::or_c<is_complex_single_precision<T>, is_complex_double_precision<T>>;
 
 template <typename T>
 struct is_complex_t : std::false_type {};
@@ -204,28 +200,25 @@ template <typename T>
 struct is_complex_t<etl::complex<T>> : std::true_type {};
 
 template <typename T>
-struct is_complex_single_t : cpp::or_c<std::is_same<T, std::complex<float>>, std::is_same<T, etl::complex<float>>> {};
+using is_complex_single_t = cpp::or_c<std::is_same<T, std::complex<float>>, std::is_same<T, etl::complex<float>>>;
 
 template <typename T>
-struct is_complex_double_t : cpp::or_c<std::is_same<T, std::complex<double>>, std::is_same<T, etl::complex<double>>> {};
+using is_complex_double_t = cpp::or_c<std::is_same<T, std::complex<double>>, std::is_same<T, etl::complex<double>>>;
 
 template <typename... E>
-struct all_dma : cpp::and_c<has_direct_access<E>...> {};
+using all_dma = cpp::and_c<has_direct_access<E>...>;
 
 template <typename... E>
-struct all_row_major : cpp::and_u<(decay_traits<E>::storage_order == order::RowMajor)...> {};
-
-template <typename E, typename Enable = void>
-struct is_fast_safe : std::false_type {};
+using all_row_major = cpp::and_u<(decay_traits<E>::storage_order == order::RowMajor)...>;
 
 template <typename E>
-struct is_fast_safe<E, std::enable_if_t<is_etl_expr<E>::value>> : cpp::bool_constant<decay_traits<E>::is_fast> {};
+using is_fast_safe = cpp::bool_constant<decay_traits<E>::is_fast>;
 
 template <typename... E>
-struct all_fast : cpp::and_c<is_fast_safe<E>...> {};
+using all_fast = cpp::and_c<is_fast_safe<E>...>;
 
 template <typename... E>
-struct all_etl_expr : cpp::and_c<is_etl_expr<E>...> {};
+using all_etl_expr = cpp::and_c<is_etl_expr<E>...>;
 
 /*!
  * \brief Specialization for value structures
