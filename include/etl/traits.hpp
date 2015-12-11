@@ -123,7 +123,7 @@ struct is_etl_expr : cpp::or_c<
                          is_temporary_binary_expr<T>,
                          is_generator_expr<T>,
                          is_transformer<T>, is_view<T>,
-                         is_transformer<T>, is_magic_view<T>,
+                         is_magic_view<T>,
                          is_optimized_expr<T>> {};
 
 template <typename T>
