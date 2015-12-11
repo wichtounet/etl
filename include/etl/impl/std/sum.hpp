@@ -19,12 +19,10 @@ namespace impl {
 namespace standard {
 
 template <typename E>
-value_t<E> sum(const E& input) {
+value_t<E> sum(const E& input, std::size_t first, std::size_t last) {
     value_t<E> acc(0);
 
-    auto n = size(input);
-
-    for (std::size_t i = 0; i < n; ++i) {
+    for (std::size_t i = first; i < last; ++i) {
         acc += input[i];
     }
 

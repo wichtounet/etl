@@ -25,6 +25,8 @@ constexpr const std::size_t zgemm_cublas_min = 180 * 180;
 
 constexpr const std::size_t parallel_threshold = 1024;
 
+constexpr const std::size_t sum_parallel_threshold = 64;
+
 constexpr const std::size_t conv1_parallel_threshold_conv = 100;
 constexpr const std::size_t conv1_parallel_threshold_kernel = 16;
 

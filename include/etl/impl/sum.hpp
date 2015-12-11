@@ -23,6 +23,8 @@
 #pragma once
 
 #include "etl/config.hpp"
+#include "etl/threshold.hpp"
+#include "etl/parallel.hpp" //For parallel dispatching
 
 //Include the implementations
 #include "etl/impl/std/sum.hpp"
@@ -59,6 +61,15 @@ cpp14_constexpr sum_imple select_sum_impl() {
 }
 
 template <typename E>
+inline bool select_parallel(const E& e) {
+    if(parallel){
+        return size(e) >= sum_parallel_threshold;
+    } else {
+        return false;
+    }
+}
+
+template <typename E>
 struct sum_impl {
     static value_t<E> apply(const E& e) {
         cpp14_constexpr auto impl = select_sum_impl<E>();
@@ -67,12 +78,15 @@ struct sum_impl {
     }
 
     static value_t<E> selected_apply(const E& e, sum_imple impl) {
+        bool parallel_dispatch = select_parallel(e);
+        cpp_unused(parallel_dispatch);
+
         if (impl == sum_imple::AVX) {
-            return impl::avx::sum(e);
+            return impl::avx::sum(e, 0, size(e));
         } else if (impl == sum_imple::SSE) {
-            return impl::sse::sum(e);
+            return impl::sse::sum(e, 0, size(e));
         } else {
-            return impl::standard::sum(e);
+            return impl::standard::sum(e, 0, size(e));
         }
     }
 };
