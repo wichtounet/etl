@@ -15,14 +15,13 @@
 
 namespace etl {
 
+namespace traits_detail {
+
 template <typename T>
 struct is_fast_matrix_impl : std::false_type {};
 
 template <typename V1, typename V2, order V3, std::size_t... R>
 struct is_fast_matrix_impl<fast_matrix_impl<V1, V2, V3, R...>> : std::true_type {};
-
-template <typename T, typename DT = std::decay_t<T>>
-using is_fast_matrix              = is_fast_matrix_impl<DT>;
 
 template <typename T>
 struct is_dyn_matrix_impl : std::false_type {};
@@ -30,17 +29,34 @@ struct is_dyn_matrix_impl : std::false_type {};
 template <typename V1, order V2, std::size_t V3>
 struct is_dyn_matrix_impl<dyn_matrix_impl<V1, V2, V3>> : std::true_type {};
 
-template <typename T, typename DT>
-struct is_dyn_matrix : is_dyn_matrix_impl<DT> {};
-
 template <typename T>
 struct is_sparse_matrix_impl : std::false_type {};
 
 template <typename V1, sparse_storage V2, std::size_t V3>
 struct is_sparse_matrix_impl<sparse_matrix_impl<V1, V2, V3>> : std::true_type {};
 
-template <typename T, typename DT>
-struct is_sparse_matrix : is_sparse_matrix_impl<DT> {};
+} //end of namespace traits_detail
+
+/*!
+ * \brief Traits indicating if the given ETL type is a fast matrix
+ * \tparam T The type to test
+ */
+template <typename T>
+struct is_fast_matrix : traits_detail::is_fast_matrix_impl<std::decay_t<T>> {};
+
+/*!
+ * \brief Traits indicating if the given ETL type is a dyn matrix
+ * \tparam T The type to test
+ */
+template <typename T>
+struct is_dyn_matrix : traits_detail::is_dyn_matrix_impl<std::decay_t<T>> {};
+
+/*!
+ * \brief Traits indicating if the given ETL type is a sparse matrix
+ * \tparam T The type to test
+ */
+template <typename T>
+struct is_sparse_matrix : traits_detail::is_sparse_matrix_impl<std::decay_t<T>> {};
 
 template <typename T, typename DT = std::decay_t<T>>
 using is_unary_expr               = cpp::is_specialization_of<etl::unary_expr, DT>;

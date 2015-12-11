@@ -9,10 +9,25 @@
 
 namespace etl {
 
-template <typename T, typename DT = std::decay_t<T>>
+/*!
+ * \brief Traits indicating if the given ETL type is a fast matrix
+ * \tparam T The type to test
+ */
+template <typename T>
+struct is_fast_matrix;
+
+/*!
+ * \brief Traits indicating if the given ETL type is a dyn matrix
+ * \tparam T The type to test
+ */
+template <typename T>
 struct is_dyn_matrix;
 
-template <typename T, typename DT = std::decay_t<T>>
+/*!
+ * \brief Traits indicating if the given ETL type is a sparse matrix
+ * \tparam T The type to test
+ */
+template <typename T>
 struct is_sparse_matrix;
 
 template <typename T>
