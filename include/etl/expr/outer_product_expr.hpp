@@ -11,7 +11,6 @@
 
 #include "etl/impl/outer_product.hpp"
 
-#include "etl/traits_lite.hpp"
 #include "etl/temporary.hpp"
 
 namespace etl {

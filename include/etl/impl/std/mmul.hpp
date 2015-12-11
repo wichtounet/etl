@@ -7,8 +7,6 @@
 
 #pragma once
 
-#include "etl/traits_lite.hpp"
-
 namespace etl {
 
 namespace impl {

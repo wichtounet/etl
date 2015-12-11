@@ -9,8 +9,6 @@
 
 #include <memory>
 
-#include "etl/traits_lite.hpp" //forward declaration of the traits
-
 namespace etl {
 
 template <typename Expr, std::size_t A>

@@ -16,8 +16,6 @@
 
 #include <iosfwd> //For stream support
 
-#include "etl/traits_lite.hpp"
-
 namespace etl {
 
 template <typename Expr>

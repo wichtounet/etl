@@ -10,7 +10,6 @@
 #include <algorithm>
 
 #include "etl/config.hpp"
-#include "etl/traits_lite.hpp"
 
 #include "etl/impl/std/fft.hpp"
 #include "etl/impl/blas/fft.hpp"

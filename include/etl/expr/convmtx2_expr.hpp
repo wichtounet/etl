@@ -12,8 +12,6 @@
 #include "cpp_utils/assert.hpp"
 #include "cpp_utils/tmp.hpp"
 
-#include "etl/traits_lite.hpp"
-
 //Get the implementations
 #include "etl/impl/convmtx2.hpp"
 

@@ -8,7 +8,6 @@
 #pragma once
 
 #include "etl/config.hpp"      //configuration of ETL
-#include "etl/traits_lite.hpp" //type traits
 #include "etl/stop.hpp"
 
 namespace etl {

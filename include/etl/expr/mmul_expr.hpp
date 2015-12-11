@@ -11,7 +11,6 @@
 
 #include "etl/impl/mmul.hpp"
 
-#include "etl/traits_lite.hpp"
 #include "etl/temporary.hpp"
 
 namespace etl {

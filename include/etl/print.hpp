@@ -11,8 +11,6 @@
 
 #include "cpp_utils/tmp.hpp"
 
-#include "etl/traits_lite.hpp"
-
 namespace etl {
 
 template <typename T, cpp_enable_if((etl_traits<T>::dimensions() > 1))>

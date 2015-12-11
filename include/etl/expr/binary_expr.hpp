@@ -9,7 +9,6 @@
 
 #include <iosfwd> //For stream support
 
-#include "etl/traits_lite.hpp"
 #include "etl/iterator.hpp"
 
 // CRTP Classes

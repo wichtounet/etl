@@ -11,7 +11,6 @@
 
 #include "cpp_utils/assert.hpp"
 
-#include "etl/traits_lite.hpp"
 #include "etl/iterator.hpp"
 
 // CRTP classes

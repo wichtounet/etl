@@ -10,7 +10,6 @@
 #include <iosfwd> //For stream support
 #include <memory> //For shared_ptr
 
-#include "etl/traits_lite.hpp"
 #include "etl/iterator.hpp"
 #include "etl/tmp.hpp"
 

@@ -11,7 +11,6 @@
 
 #include "etl/config.hpp"
 #include "etl/threshold.hpp"
-#include "etl/traits_lite.hpp"
 
 //The implementations
 #include "etl/impl/std/mmul.hpp"

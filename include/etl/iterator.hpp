@@ -9,8 +9,6 @@
 
 #include <iterator>
 
-#include "etl/traits_lite.hpp"
-
 namespace etl {
 
 template <typename Expr, bool Ref = false, bool Const = true>

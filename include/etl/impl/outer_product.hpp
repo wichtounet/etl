@@ -17,7 +17,6 @@
 #pragma once
 
 #include "etl/config.hpp"
-#include "etl/traits_lite.hpp"
 
 namespace etl {
 

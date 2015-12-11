@@ -23,7 +23,6 @@
 #pragma once
 
 #include "etl/parallel.hpp"       //Parallel helpers
-#include "etl/traits_lite.hpp"    //forward declaration of the traits
 #include "etl/visitor.hpp"        //visitor of the expressions
 #include "etl/threshold.hpp"      //parallel thresholds
 #include "etl/eval_selectors.hpp" //method selectors

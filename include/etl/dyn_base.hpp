@@ -20,7 +20,6 @@
 #include "cpp_utils/assert.hpp"
 #include "cpp_utils/tmp.hpp"
 
-#include "etl/traits_lite.hpp" //forward declaration of the traits
 #include "etl/compat.hpp"      //To make it work with g++
 
 namespace etl {

@@ -23,7 +23,6 @@
 #pragma once
 
 #include "etl/config.hpp"
-#include "etl/traits_lite.hpp"
 
 //Include the implementations
 #include "etl/impl/std/sum.hpp"

@@ -13,8 +13,6 @@
 
 #pragma once
 
-#include "etl/traits_lite.hpp" //forward declaration of the traits
-
 namespace etl {
 
 namespace detail {
