@@ -31,6 +31,13 @@ struct is_sparse_matrix_impl<sparse_matrix_impl<V1, V2, V3>> : std::true_type {}
 
 } //end of namespace traits_detail
 
+/*!
+ * \brief Traits to get information about ETL types
+ *
+ * For non-ETL types, is_etl is false and in that case, no other fields should be used on the traits.
+ *
+ * \tparam T the type to introspect
+ */
 template <typename T, typename Enable = void>
 struct etl_traits {
     static constexpr const bool is_etl = false;
@@ -39,6 +46,10 @@ struct etl_traits {
     static constexpr const bool is_magic_view = false;
 };
 
+/*!
+ * \brief Traits helper to get information about ETL types, the type is first decayed.
+ * \tparam T the type to introspect
+ */
 template <typename E>
 using decay_traits = etl_traits<std::decay_t<E>>;
 
