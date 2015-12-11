@@ -75,42 +75,94 @@ using is_dyn_matrix = traits_detail::is_dyn_matrix_impl<std::decay_t<T>>;
 template <typename T>
 using is_sparse_matrix = traits_detail::is_sparse_matrix_impl<std::decay_t<T>>;
 
+/*!
+ * \brief Traits indicating if the given ETL type is a unary expression.
+ * \tparam T The type to test
+ */
 template <typename T>
 using is_unary_expr = cpp::is_specialization_of<etl::unary_expr, std::decay_t<T>>;
 
+/*!
+ * \brief Traits indicating if the given ETL type is a binary expression.
+ * \tparam T The type to test
+ */
 template <typename T>
 using is_binary_expr = cpp::is_specialization_of<etl::binary_expr, std::decay_t<T>>;
 
+/*!
+ * \brief Traits indicating if the given ETL type is a generator expression.
+ * \tparam T The type to test
+ */
 template <typename T>
 using is_generator_expr = cpp::is_specialization_of<etl::generator_expr, std::decay_t<T>>;
 
+/*!
+ * \brief Traits indicating if the given ETL type is an optimized expression.
+ * \tparam T The type to test
+ */
 template <typename T>
 using is_optimized_expr = cpp::is_specialization_of<etl::optimized_expr, std::decay_t<T>>;
 
+/*!
+ * \brief Traits indicating if the given ETL type is a temporary unary expression.
+ * \tparam T The type to test
+ */
 template <typename T>
 using is_temporary_unary_expr = cpp::is_specialization_of<etl::temporary_unary_expr, std::decay_t<T>>;
 
+/*!
+ * \brief Traits indicating if the given ETL type is a temporary binary expression.
+ * \tparam T The type to test
+ */
 template <typename T>
 using is_temporary_binary_expr = cpp::is_specialization_of<etl::temporary_binary_expr, std::decay_t<T>>;
 
+/*!
+ * \brief Traits indicating if the given ETL type is a temporary expression.
+ * \tparam T The type to test
+ */
 template <typename T>
 using is_temporary_expr = cpp::or_c<is_temporary_unary_expr<T>, is_temporary_binary_expr<T>>;
 
+/*!
+ * \brief Traits indicating if the given ETL type is a transformer expression.
+ * \tparam T The type to test
+ */
 template <typename T>
 using is_transformer = cpp::bool_constant<decay_traits<T>::is_transformer>;
 
+/*!
+ * \brief Traits indicating if the given ETL type is a view expression.
+ * \tparam T The type to test
+ */
 template <typename T>
 using is_view = cpp::bool_constant<decay_traits<T>::is_view>;
 
+/*!
+ * \brief Traits indicating if the given ETL type is a magic view expression.
+ * \tparam T The type to test
+ */
 template <typename T>
 using is_magic_view = cpp::bool_constant<decay_traits<T>::is_magic_view>;
 
+/*!
+ * \brief Traits indicating if the given type is an ETL type.
+ * \tparam T The type to test
+ */
 template <typename T>
 using is_etl_expr = cpp::bool_constant<decay_traits<T>::is_etl>;
 
+/*!
+ * \brief Traits indicating if the given ETL type is a value type with direct access.
+ * \tparam T The type to test
+ */
 template <typename T>
 using is_etl_direct_value = cpp::or_c<is_fast_matrix<T>, is_dyn_matrix<T>>;
 
+/*!
+ * \brief Traits indicating if the given ETL type is a value type.
+ * \tparam T The type to test
+ */
 template <typename T>
 using is_etl_value = cpp::or_c<is_fast_matrix<T>, is_dyn_matrix<T>, is_sparse_matrix<T>>;
 
