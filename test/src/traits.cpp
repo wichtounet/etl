@@ -276,26 +276,38 @@ TEMPLATE_TEST_CASE_2("etl_traits/has_direct_access", "has_direct_access", Z, flo
     REQUIRE(etl::has_direct_access<const mat_type_2&&>::value);
 
     //Values have direct access
+    REQUIRE(etl::is_fast_matrix<decltype(a)>::value);
     REQUIRE(etl::has_direct_access<decltype(a)>::value);
+    REQUIRE(etl::is_dyn_matrix<decltype(b)>::value);
     REQUIRE(etl::has_direct_access<decltype(b)>::value);
 
     //Sub have direct access
+    REQUIRE(etl::is_unary_expr<decltype(a(0)(1)(3))>::value);
     REQUIRE(etl::has_direct_access<decltype(a(1))>::value);
     REQUIRE(etl::has_direct_access<decltype(b(2))>::value);
 
     //Sub have direct access
+    REQUIRE(etl::is_unary_expr<decltype(a(0)(1)(3))>::value);
     REQUIRE(etl::has_direct_access<decltype(a(0)(1))>::value);
     REQUIRE(etl::has_direct_access<decltype(b(1)(2))>::value);
 
     //Sub have direct access
+    REQUIRE(etl::is_unary_expr<decltype(a(0)(1)(3))>::value);
     REQUIRE(etl::has_direct_access<decltype(a(0)(1)(3))>::value);
     REQUIRE(etl::has_direct_access<decltype(b(1)(2)(0))>::value);
 
-    //Identity unary have direct access
+    //View have direct access
+    REQUIRE(etl::is_unary_expr<decltype(etl::reshape<4, 30>(a))>::value);
     REQUIRE(etl::has_direct_access<decltype(etl::reshape<4, 30>(a))>::value);
     REQUIRE(etl::has_direct_access<decltype(etl::reshape(b, 3, 40))>::value);
 
+    //Temporary unary expressions have direct access
+    REQUIRE(etl::is_temporary_unary_expr<decltype(etl::fft_1d(a(1)(0)(0)))>::value);
+    REQUIRE(etl::has_direct_access<decltype(etl::fft_1d(a(1)(0)(0)))>::value);
+    REQUIRE(etl::has_direct_access<decltype(etl::fft_1d(b(1)(0)(0)))>::value);
+
     //Temporary binary expressions have direct access
+    REQUIRE(etl::is_temporary_binary_expr<decltype(a(0)(0) * a(0)(0))>::value);
     REQUIRE(etl::has_direct_access<decltype(a(0)(0) * a(0)(0))>::value);
     REQUIRE(etl::has_direct_access<decltype(b(0)(0) * b(0)(0))>::value);
 
