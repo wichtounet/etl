@@ -56,6 +56,10 @@ public:
     }
 };
 
+//Optimized expression simply use the same traits as its expression
+template <typename Expr>
+struct etl_traits<etl::optimized_expr<Expr>> : etl_traits<Expr> {};
+
 template <typename Expr>
 std::ostream& operator<<(std::ostream& os, const optimized_expr<Expr>& expr) {
     return os << "OPT(" << expr.value() << ")";

@@ -310,6 +310,92 @@ public:
     }
 };
 
+/*!
+ * \brief Specialization for temporary_unary_expr.
+ */
+template <typename T, typename A, typename Op, typename Forced>
+struct etl_traits<etl::temporary_unary_expr<T, A, Op, Forced>> {
+    using expr_t = etl::temporary_unary_expr<T, A, Op, Forced>;
+    using a_t    = std::decay_t<A>;
+
+    static constexpr const bool is_etl                 = true;
+    static constexpr const bool is_transformer = false;
+    static constexpr const bool is_view = false;
+    static constexpr const bool is_magic_view = false;
+    static constexpr const bool is_fast                 = etl_traits<a_t>::is_fast;
+    static constexpr const bool is_value                = false;
+    static constexpr const bool is_generator            = false;
+    static constexpr const bool vectorizable            = true;
+    static constexpr const bool needs_temporary_visitor = true;
+    static constexpr const bool needs_evaluator_visitor = true;
+    static constexpr const order storage_order          = etl_traits<a_t>::storage_order;
+
+    static std::size_t size(const expr_t& v) {
+        return Op::size(v.a());
+    }
+
+    static std::size_t dim(const expr_t& v, std::size_t d) {
+        return Op::dim(v.a(), d);
+    }
+
+    static constexpr std::size_t size() {
+        return Op::template size<a_t>();
+    }
+
+    template <std::size_t D>
+    static constexpr std::size_t dim() {
+        return Op::template dim<a_t, D>();
+    }
+
+    static constexpr std::size_t dimensions() {
+        return Op::dimensions();
+    }
+};
+
+/*!
+ * \brief Specialization for temporary_binary_expr.
+ */
+template <typename T, typename A, typename B, typename Op, typename Forced>
+struct etl_traits<etl::temporary_binary_expr<T, A, B, Op, Forced>> {
+    using expr_t = etl::temporary_binary_expr<T, A, B, Op, Forced>;
+    using a_t    = std::decay_t<A>;
+    using b_t    = std::decay_t<B>;
+
+    static constexpr const bool is_etl                 = true;
+    static constexpr const bool is_transformer = false;
+    static constexpr const bool is_view = false;
+    static constexpr const bool is_magic_view = false;
+    static constexpr const bool is_fast                 = etl_traits<a_t>::is_fast && etl_traits<b_t>::is_fast;
+    static constexpr const bool is_value                = false;
+    static constexpr const bool is_generator            = false;
+    static constexpr const bool vectorizable            = true;
+    static constexpr const bool needs_temporary_visitor = true;
+    static constexpr const bool needs_evaluator_visitor = true;
+    static constexpr const order storage_order          = etl_traits<a_t>::is_generator ? etl_traits<b_t>::storage_order : etl_traits<a_t>::storage_order;
+
+    static std::size_t size(const expr_t& v) {
+        return Op::size(v.a(), v.b());
+    }
+
+    static std::size_t dim(const expr_t& v, std::size_t d) {
+        return Op::dim(v.a(), v.b(), d);
+    }
+
+    static constexpr std::size_t size() {
+        return Op::template size<a_t, b_t>();
+    }
+
+    template <std::size_t D>
+    static constexpr std::size_t dim() {
+        return Op::template dim<a_t, b_t, D>();
+    }
+
+    static constexpr std::size_t dimensions() {
+        return Op::dimensions();
+    }
+};
+
+
 template <typename T, typename AExpr, typename Op, typename Forced>
 std::ostream& operator<<(std::ostream& os, const temporary_unary_expr<T, AExpr, Op, Forced>& expr) {
     return os << Op::desc() << "(" << expr.a() << ")";

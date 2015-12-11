@@ -424,6 +424,207 @@ struct dyn_matrix_view {
     }
 };
 
+/*!
+ * \brief Specialization for dim_view
+ */
+template <typename T, std::size_t D>
+struct etl_traits<etl::dim_view<T, D>> {
+    using expr_t     = etl::dim_view<T, D>;
+    using sub_expr_t = std::decay_t<T>;
+
+    static constexpr const bool is_etl                 = true;
+    static constexpr const bool is_transformer = false;
+    static constexpr const bool is_view = true;
+    static constexpr const bool is_magic_view = false;
+    static constexpr const bool is_fast                 = etl_traits<sub_expr_t>::is_fast;
+    static constexpr const bool is_value                = false;
+    static constexpr const bool is_generator            = false;
+    static constexpr const bool vectorizable            = false;
+    static constexpr const bool needs_temporary_visitor = etl_traits<sub_expr_t>::needs_temporary_visitor;
+    static constexpr const bool needs_evaluator_visitor = etl_traits<sub_expr_t>::needs_evaluator_visitor;
+    static constexpr const order storage_order          = etl_traits<sub_expr_t>::storage_order;
+
+    static std::size_t size(const expr_t& v) {
+        if (D == 1) {
+            return etl_traits<sub_expr_t>::dim(v.sub, 1);
+        } else {
+            return etl_traits<sub_expr_t>::dim(v.sub, 0);
+        }
+    }
+
+    static std::size_t dim(const expr_t& v, std::size_t d) {
+        cpp_assert(d == 0, "Invalid dimension");
+        cpp_unused(d);
+
+        return size(v);
+    }
+
+    static constexpr std::size_t size() {
+        return D == 1 ? etl_traits<sub_expr_t>::template dim<1>() : etl_traits<sub_expr_t>::template dim<0>();
+    }
+
+    template <std::size_t D2>
+    static constexpr std::size_t dim() {
+        static_assert(D2 == 0, "Invalid dimension");
+
+        return size();
+    }
+
+    static constexpr std::size_t dimensions() {
+        return 1;
+    }
+};
+
+/*!
+ * \brief Specialization for sub_view
+ */
+template <typename T>
+struct etl_traits<etl::sub_view<T>> {
+    using expr_t     = etl::sub_view<T>;
+    using sub_expr_t = std::decay_t<T>;
+
+    static constexpr const bool is_etl                 = true;
+    static constexpr const bool is_transformer = false;
+    static constexpr const bool is_view = true;
+    static constexpr const bool is_magic_view = false;
+    static constexpr const bool is_fast                 = etl_traits<sub_expr_t>::is_fast;
+    static constexpr const bool is_value                = false;
+    static constexpr const bool is_generator            = false;
+    static constexpr const bool needs_temporary_visitor = etl_traits<sub_expr_t>::needs_temporary_visitor;
+    static constexpr const bool needs_evaluator_visitor = etl_traits<sub_expr_t>::needs_evaluator_visitor;
+    static constexpr const order storage_order          = etl_traits<sub_expr_t>::storage_order;
+    static constexpr const bool vectorizable            = has_direct_access<sub_expr_t>::value && storage_order == order::RowMajor;
+
+    static std::size_t size(const expr_t& v) {
+        return etl_traits<sub_expr_t>::size(v.parent) / etl_traits<sub_expr_t>::dim(v.parent, 0);
+    }
+
+    static std::size_t dim(const expr_t& v, std::size_t d) {
+        return etl_traits<sub_expr_t>::dim(v.parent, d + 1);
+    }
+
+    static constexpr std::size_t size() {
+        return etl_traits<sub_expr_t>::size() / etl_traits<sub_expr_t>::template dim<0>();
+    }
+
+    template <std::size_t D>
+    static constexpr std::size_t dim() {
+        return etl_traits<sub_expr_t>::template dim<D + 1>();
+    }
+
+    static constexpr std::size_t dimensions() {
+        return etl_traits<sub_expr_t>::dimensions() - 1;
+    }
+};
+
+/*!
+ * \brief Specialization for fast_matrix_view.
+ */
+template <typename T, std::size_t... Dims>
+struct etl_traits<etl::fast_matrix_view<T, Dims...>> {
+    using expr_t     = etl::fast_matrix_view<T, Dims...>;
+    using sub_expr_t = std::decay_t<T>;
+
+    static constexpr const bool is_etl                 = true;
+    static constexpr const bool is_transformer = false;
+    static constexpr const bool is_view = true;
+    static constexpr const bool is_magic_view = false;
+    static constexpr const bool is_fast                 = true;
+    static constexpr const bool is_value                = false;
+    static constexpr const bool is_generator            = false;
+    static constexpr const bool vectorizable            = false;
+    static constexpr const bool needs_temporary_visitor = etl_traits<sub_expr_t>::needs_temporary_visitor;
+    static constexpr const bool needs_evaluator_visitor = etl_traits<sub_expr_t>::needs_evaluator_visitor;
+    static constexpr const order storage_order          = etl_traits<sub_expr_t>::storage_order;
+
+    static constexpr std::size_t size(const expr_t& /*unused*/) {
+        return mul_all<Dims...>::value;
+    }
+
+    static std::size_t dim(const expr_t& /*unused*/, std::size_t d) {
+        return dyn_nth_size<Dims...>(d);
+    }
+
+    static constexpr std::size_t size() {
+        return mul_all<Dims...>::value;
+    }
+
+    template <std::size_t D>
+    static constexpr std::size_t dim() {
+        return nth_size<D, 0, Dims...>::value;
+    }
+
+    static constexpr std::size_t dimensions() {
+        return sizeof...(Dims);
+    }
+};
+
+/*!
+ * \brief Specialization for dyn_matrix_view.
+ */
+template <typename T>
+struct etl_traits<etl::dyn_matrix_view<T>> {
+    using expr_t     = etl::dyn_matrix_view<T>;
+    using sub_expr_t = std::decay_t<T>;
+
+    static constexpr const bool is_etl                 = true;
+    static constexpr const bool is_transformer = false;
+    static constexpr const bool is_view = true;
+    static constexpr const bool is_magic_view = false;
+    static constexpr const bool is_fast                 = false;
+    static constexpr const bool is_value                = false;
+    static constexpr const bool is_generator            = false;
+    static constexpr const bool vectorizable            = false;
+    static constexpr const bool needs_temporary_visitor = etl_traits<sub_expr_t>::needs_temporary_visitor;
+    static constexpr const bool needs_evaluator_visitor = etl_traits<sub_expr_t>::needs_evaluator_visitor;
+    static constexpr const order storage_order          = etl_traits<sub_expr_t>::storage_order;
+
+    static std::size_t size(const expr_t& v) {
+        return v.rows * v.columns;
+    }
+
+    static std::size_t dim(const expr_t& v, std::size_t d) {
+        return d == 0 ? v.rows : v.columns;
+    }
+
+    static constexpr std::size_t dimensions() {
+        return 2;
+    }
+};
+
+/*!
+ * \brief Specialization for dyn_vector_view.
+ */
+template <typename T>
+struct etl_traits<etl::dyn_vector_view<T>> {
+    using expr_t     = etl::dyn_vector_view<T>;
+    using sub_expr_t = std::decay_t<T>;
+
+    static constexpr const bool is_etl                 = true;
+    static constexpr const bool is_transformer = false;
+    static constexpr const bool is_view = true;
+    static constexpr const bool is_magic_view = false;
+    static constexpr const bool is_fast                 = false;
+    static constexpr const bool is_value                = false;
+    static constexpr const bool is_generator            = false;
+    static constexpr const bool vectorizable            = false;
+    static constexpr const bool needs_temporary_visitor = etl_traits<sub_expr_t>::needs_temporary_visitor;
+    static constexpr const bool needs_evaluator_visitor = etl_traits<sub_expr_t>::needs_evaluator_visitor;
+    static constexpr const order storage_order          = etl_traits<sub_expr_t>::storage_order;
+
+    static std::size_t size(const expr_t& v) {
+        return v.rows;
+    }
+
+    static std::size_t dim(const expr_t& v, std::size_t /*d*/) {
+        return v.rows;
+    }
+
+    static constexpr std::size_t dimensions() {
+        return 1;
+    }
+};
+
 
 template <typename T, std::size_t D>
 std::ostream& operator<<(std::ostream& os, const dim_view<T, D>& v) {

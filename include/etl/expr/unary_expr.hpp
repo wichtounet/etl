@@ -404,6 +404,48 @@ public:
     }
 };
 
+/*!
+ * \brief Specialization unary_expr
+ */
+template <typename T, typename Expr, typename UnaryOp>
+struct etl_traits<etl::unary_expr<T, Expr, UnaryOp>> {
+    using expr_t     = etl::unary_expr<T, Expr, UnaryOp>;
+    using sub_expr_t = std::decay_t<Expr>;
+
+    static constexpr const bool is_etl                 = true;
+    static constexpr const bool is_transformer = false;
+    static constexpr const bool is_view = false;
+    static constexpr const bool is_magic_view = false;
+    static constexpr const bool is_fast                 = etl_traits<sub_expr_t>::is_fast;
+    static constexpr const bool is_value                = false;
+    static constexpr const bool is_generator            = etl_traits<sub_expr_t>::is_generator;
+    static constexpr const bool vectorizable            = etl_traits<sub_expr_t>::vectorizable && UnaryOp::vectorizable;
+    static constexpr const bool needs_temporary_visitor = etl_traits<sub_expr_t>::needs_temporary_visitor;
+    static constexpr const bool needs_evaluator_visitor = etl_traits<sub_expr_t>::needs_evaluator_visitor;
+    static constexpr const order storage_order          = etl_traits<sub_expr_t>::storage_order;
+
+    static std::size_t size(const expr_t& v) {
+        return etl_traits<sub_expr_t>::size(v.value());
+    }
+
+    static std::size_t dim(const expr_t& v, std::size_t d) {
+        return etl_traits<sub_expr_t>::dim(v.value(), d);
+    }
+
+    static constexpr std::size_t size() {
+        return etl_traits<sub_expr_t>::size();
+    }
+
+    template <std::size_t D>
+    static constexpr std::size_t dim() {
+        return etl_traits<sub_expr_t>::template dim<D>();
+    }
+
+    static constexpr std::size_t dimensions() {
+        return etl_traits<sub_expr_t>::dimensions();
+    }
+};
+
 template <typename T, typename Expr, typename UnaryOp>
 std::ostream& operator<<(std::ostream& os, const unary_expr<T, Expr, stateful_op<UnaryOp>>& expr) {
     return os << UnaryOp::desc() << '(' << expr.value() << ')';

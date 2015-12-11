@@ -120,6 +120,67 @@ public:
     }
 };
 
+/*!
+ * \brief Specialization for binary_expr.
+ */
+template <typename T, typename LeftExpr, typename BinaryOp, typename RightExpr>
+struct etl_traits<etl::binary_expr<T, LeftExpr, BinaryOp, RightExpr>> {
+    using expr_t       = etl::binary_expr<T, LeftExpr, BinaryOp, RightExpr>;
+    using left_expr_t  = std::decay_t<LeftExpr>;
+    using right_expr_t = std::decay_t<RightExpr>;
+
+    static constexpr const bool left_directed = cpp::not_u<etl_traits<left_expr_t>::is_generator>::value;
+
+    using sub_expr_t = std::conditional_t<left_directed, left_expr_t, right_expr_t>;
+
+    static constexpr const bool is_etl                 = true;
+    static constexpr const bool is_transformer = false;
+    static constexpr const bool is_view = false;
+    static constexpr const bool is_magic_view = false;
+    static constexpr const bool is_fast  = etl_traits<sub_expr_t>::is_fast;
+    static constexpr const bool is_value = false;
+    static constexpr const bool is_generator =
+        etl_traits<left_expr_t>::is_generator && etl_traits<right_expr_t>::is_generator;
+    static constexpr const bool vectorizable = etl_traits<left_expr_t>::vectorizable && etl_traits<right_expr_t>::vectorizable && BinaryOp::vectorizable;
+    static constexpr const bool needs_temporary_visitor =
+        etl_traits<left_expr_t>::needs_temporary_visitor || etl_traits<right_expr_t>::needs_temporary_visitor;
+    static constexpr const bool needs_evaluator_visitor =
+        etl_traits<left_expr_t>::needs_evaluator_visitor || etl_traits<right_expr_t>::needs_evaluator_visitor;
+    static constexpr const order storage_order = etl_traits<left_expr_t>::is_generator ? etl_traits<right_expr_t>::storage_order : etl_traits<left_expr_t>::storage_order;
+
+    template <bool B = left_directed, cpp_enable_if(B)>
+    static constexpr auto& get(const expr_t& v) {
+        return v.lhs();
+    }
+
+    template <bool B = left_directed, cpp_disable_if(B)>
+    static constexpr auto& get(const expr_t& v) {
+        return v.rhs();
+    }
+
+    static std::size_t size(const expr_t& v) {
+        return etl_traits<sub_expr_t>::size(get(v));
+    }
+
+    static std::size_t dim(const expr_t& v, std::size_t d) {
+        return etl_traits<sub_expr_t>::dim(get(v), d);
+    }
+
+    static constexpr std::size_t size() {
+        return etl_traits<sub_expr_t>::size();
+    }
+
+    template <std::size_t D>
+    static constexpr std::size_t dim() {
+        return etl_traits<sub_expr_t>::template dim<D>();
+    }
+
+    static constexpr std::size_t dimensions() {
+        return etl_traits<sub_expr_t>::dimensions();
+    }
+};
+
+
 template <typename T, typename LeftExpr, typename BinaryOp, typename RightExpr>
 std::ostream& operator<<(std::ostream& os, const binary_expr<T, LeftExpr, BinaryOp, RightExpr>& expr) {
     if (simple_operator<BinaryOp>::value) {
