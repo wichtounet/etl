@@ -45,13 +45,13 @@ struct is_temporary_binary_expr;
 template <typename T>
 struct is_temporary_expr;
 
-template <typename T, typename DT = std::decay_t<T>>
+template <typename T>
 struct is_view;
 
-template <typename T, typename DT = std::decay_t<T>>
+template <typename T>
 struct is_magic_view;
 
-template <typename T, typename DT = std::decay_t<T>>
+template <typename T>
 struct is_transformer;
 
 template <typename T>
