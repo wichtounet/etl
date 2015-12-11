@@ -82,24 +82,6 @@ inline bool select_parallel(const I& /*input*/, const K& kernel, C&& conv) {
     }
 }
 
-template <typename Functor>
-inline void dispatch_1d(bool p, Functor&& functor, std::size_t first, std::size_t last){
-    if(p){
-        cpp::default_thread_pool<> pool(threads - 1);
-
-        auto n = last - first;
-        auto batch = n / threads;
-
-        for(std::size_t t = 0; t < threads - 1; ++t){
-            pool.do_task(functor, first + t * batch, first + (t+1) * batch);
-        }
-
-        functor(first + (threads - 1) * batch, last);
-    } else {
-        functor(first, last);
-    }
-}
-
 template <typename I, typename K, typename C, typename Enable = void>
 struct conv1_full_impl {
     static void apply(const I& input, const K& kernel, C&& conv) {
