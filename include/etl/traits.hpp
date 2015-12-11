@@ -7,8 +7,6 @@
 
 #pragma once
 
-#include "etl/traits_lite.hpp" //To avoid nasty errors
-
 namespace etl {
 
 namespace traits_detail {
@@ -32,6 +30,17 @@ template <typename V1, sparse_storage V2, std::size_t V3>
 struct is_sparse_matrix_impl<sparse_matrix_impl<V1, V2, V3>> : std::true_type {};
 
 } //end of namespace traits_detail
+
+template <typename T, typename Enable = void>
+struct etl_traits {
+    static constexpr const bool is_etl = false;
+    static constexpr const bool is_transformer = false;
+    static constexpr const bool is_view = false;
+    static constexpr const bool is_magic_view = false;
+};
+
+template <typename E>
+using decay_traits = etl_traits<std::decay_t<E>>;
 
 /*!
  * \brief Traits indicating if the given ETL type is a fast matrix
@@ -63,13 +72,13 @@ using is_binary_expr              = cpp::is_specialization_of<etl::binary_expr, 
 template <typename T, typename DT = std::decay_t<T>>
 using is_generator_expr           = cpp::is_specialization_of<etl::generator_expr, DT>;
 
-template <typename T, typename DT>
+template <typename T, typename DT = std::decay_t<T>>
 struct is_optimized_expr : cpp::is_specialization_of<etl::optimized_expr, DT> {};
 
-template <typename T, typename DT>
+template <typename T, typename DT = std::decay_t<T>>
 struct is_temporary_unary_expr : cpp::is_specialization_of<etl::temporary_unary_expr, DT> {};
 
-template <typename T, typename DT>
+template <typename T, typename DT = std::decay_t<T>>
 struct is_temporary_binary_expr : cpp::is_specialization_of<etl::temporary_binary_expr, DT> {};
 
 template <typename T>
@@ -97,6 +106,9 @@ struct is_etl_value : cpp::or_c<
                           is_fast_matrix<T>,
                           is_dyn_matrix<T>,
                           is_sparse_matrix<T>> {};
+
+template <typename T, typename DT = std::decay_t<T>>
+struct has_direct_access;
 
 template <typename T>
 struct is_direct_sub_view : std::false_type {};
@@ -138,13 +150,71 @@ template <typename T, typename DT>
 struct has_direct_access : cpp::or_c<
                                is_etl_direct_value<DT>, is_temporary_unary_expr<DT>, is_temporary_binary_expr<DT>, is_direct_identity_view<DT>, is_direct_sub_view<DT>, is_direct_dim_view<DT>, is_direct_fast_matrix_view<DT>, is_direct_dyn_matrix_view<DT>, is_direct_dyn_vector_view<DT>> {};
 
-template <typename T, typename Enable>
-struct etl_traits {
-    static constexpr const bool is_etl = false;
-    static constexpr const bool is_transformer = false;
-    static constexpr const bool is_view = false;
-    static constexpr const bool is_magic_view = false;
-};
+template <typename T>
+struct is_single_precision : std::is_same<typename std::decay_t<T>::value_type, float> {};
+
+template <typename... E>
+struct all_single_precision : cpp::and_c<is_single_precision<E>...> {};
+
+template <typename T>
+struct is_double_precision : std::is_same<typename std::decay_t<T>::value_type, double> {};
+
+template <typename... E>
+struct all_double_precision : cpp::and_c<is_double_precision<E>...> {};
+
+template <typename T>
+struct is_complex_single_precision : cpp::or_c<
+   std::is_same<typename std::decay_t<T>::value_type, std::complex<float>>,
+   std::is_same<typename std::decay_t<T>::value_type, etl::complex<float>>
+> {};
+
+template <typename T>
+struct is_complex_double_precision : cpp::or_c<
+   std::is_same<typename std::decay_t<T>::value_type, std::complex<double>>,
+   std::is_same<typename std::decay_t<T>::value_type, etl::complex<double>>
+> {};
+
+template <typename... E>
+struct all_complex_single_precision : cpp::and_c<is_complex_single_precision<E>...> {};
+
+template <typename... E>
+struct all_complex_double_precision : cpp::and_c<is_complex_double_precision<E>...> {};
+
+template <typename T>
+struct is_complex : cpp::or_c<is_complex_single_precision<T>, is_complex_double_precision<T>> {};
+
+template <typename T>
+struct is_complex_t : std::false_type {};
+
+template <typename T>
+struct is_complex_t<std::complex<T>> : std::true_type {};
+
+template <typename T>
+struct is_complex_t<etl::complex<T>> : std::true_type {};
+
+template <typename T>
+struct is_complex_single_t : cpp::or_c<std::is_same<T, std::complex<float>>, std::is_same<T, etl::complex<float>>> {};
+
+template <typename T>
+struct is_complex_double_t : cpp::or_c<std::is_same<T, std::complex<double>>, std::is_same<T, etl::complex<double>>> {};
+
+template <typename... E>
+struct all_dma : cpp::and_c<has_direct_access<E>...> {};
+
+template <typename... E>
+struct all_row_major : cpp::and_u<(decay_traits<E>::storage_order == order::RowMajor)...> {};
+
+template <typename E, typename Enable = void>
+struct is_fast_safe : std::false_type {};
+
+template <typename E>
+struct is_fast_safe<E, std::enable_if_t<is_etl_expr<E>::value>> : cpp::bool_constant<decay_traits<E>::is_fast> {};
+
+template <typename... E>
+struct all_fast : cpp::and_c<is_fast_safe<E>...> {};
+
+template <typename... E>
+struct all_etl_expr : cpp::and_c<is_etl_expr<E>...> {};
 
 /*!
  * \brief Specialization for value structures
@@ -187,14 +257,44 @@ struct etl_traits<T, std::enable_if_t<is_etl_value<T>::value>> {
     }
 };
 
-//Warning: default template parameters for size and dim are already defined in traits_fwd.hpp
+template <typename E>
+constexpr std::size_t dimensions(const E& /*unused*/) noexcept {
+    return etl_traits<E>::dimensions();
+}
 
-template <typename E, cpp_disable_if_fwd(etl_traits<E>::is_fast)>
+template <typename E>
+constexpr std::size_t dimensions() noexcept {
+    return decay_traits<E>::dimensions();
+}
+
+template <typename E, cpp_disable_if(etl_traits<E>::is_fast)>
+std::size_t rows(const E& v) {
+    return etl_traits<E>::dim(v, 0);
+}
+
+template <typename E, cpp_enable_if(etl_traits<E>::is_fast)>
+constexpr std::size_t rows(const E& /*unused*/) noexcept {
+    return etl_traits<E>::template dim<0>();
+}
+
+template <typename E, cpp_disable_if(etl_traits<E>::is_fast)>
+std::size_t columns(const E& v) {
+    static_assert(etl_traits<E>::dimensions() > 1, "columns() can only be used on 2D+ matrices");
+    return etl_traits<E>::dim(v, 1);
+}
+
+template <typename E, cpp_enable_if(etl_traits<E>::is_fast)>
+constexpr std::size_t columns(const E& /*unused*/) noexcept {
+    static_assert(etl_traits<E>::dimensions() > 1, "columns() can only be used on 2D+ matrices");
+    return etl_traits<E>::template dim<1>();
+}
+
+template <typename E, cpp_disable_if(etl_traits<E>::is_fast)>
 std::size_t size(const E& v) {
     return etl_traits<E>::size(v);
 }
 
-template <typename E, cpp_enable_if_fwd(etl_traits<E>::is_fast)>
+template <typename E, cpp_enable_if(etl_traits<E>::is_fast)>
 constexpr std::size_t size(const E& /*unused*/) noexcept {
     return etl_traits<E>::size();
 }
@@ -211,7 +311,7 @@ constexpr std::size_t subsize(const E& /*unused*/) noexcept {
     return etl_traits<E>::size() / etl_traits<E>::template dim<0>();
 }
 
-template <std::size_t D, typename E, cpp_disable_if_fwd(etl_traits<E>::is_fast)>
+template <std::size_t D, typename E, cpp_disable_if(etl_traits<E>::is_fast)>
 std::size_t dim(const E& e) {
     return etl_traits<E>::dim(e, D);
 }
@@ -221,17 +321,17 @@ std::size_t dim(const E& e, std::size_t d) {
     return etl_traits<E>::dim(e, d);
 }
 
-template <std::size_t D, typename E, cpp_enable_if_fwd(etl_traits<E>::is_fast)>
+template <std::size_t D, typename E, cpp_enable_if(etl_traits<E>::is_fast)>
 constexpr std::size_t dim(const E& /*unused*/) noexcept {
     return etl_traits<E>::template dim<D>();
 }
 
-template <std::size_t D, typename E, cpp_enable_if_fwd(etl_traits<E>::is_fast)>
+template <std::size_t D, typename E, cpp_enable_if(etl_traits<E>::is_fast)>
 constexpr std::size_t dim() noexcept {
     return decay_traits<E>::template dim<D>();
 }
 
-template <typename E, typename Enable>
+template <typename E, typename Enable = void>
 struct sub_size_compare;
 
 template <typename E>
