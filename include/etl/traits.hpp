@@ -237,25 +237,28 @@ using is_double_precision = std::is_same<typename std::decay_t<T>::value_type, d
 template <typename... E>
 using all_double_precision = cpp::and_c<is_double_precision<E>...>;
 
+template <typename T>
+using is_complex_t = cpp::or_c<cpp::is_specialization_of<std::complex, std::decay_t<T>>, cpp::is_specialization_of<etl::complex, std::decay_t<T>>>;
+
+template <typename T>
+using is_complex_single_t = cpp::or_c<std::is_same<T, std::complex<float>>, std::is_same<T, etl::complex<float>>>;
+
+template <typename T>
+using is_complex_double_t = cpp::or_c<std::is_same<T, std::complex<double>>, std::is_same<T, etl::complex<double>>>;
+
 /*!
  * \brief Traits to test if the given ETL expresion type contains single precision complex numbers.
  * \tparam The ETL expression type.
  */
 template <typename T>
-using is_complex_single_precision = cpp::or_c<
-   std::is_same<typename std::decay_t<T>::value_type, std::complex<float>>,
-   std::is_same<typename std::decay_t<T>::value_type, etl::complex<float>>
->;
+using is_complex_single_precision = is_complex_single_t<typename std::decay_t<T>::value_type>;
 
 /*!
  * \brief Traits to test if the given ETL expresion type contains double precision complex numbers.
  * \tparam The ETL expression type.
  */
 template <typename T>
-using is_complex_double_precision = cpp::or_c<
-   std::is_same<typename std::decay_t<T>::value_type, std::complex<double>>,
-   std::is_same<typename std::decay_t<T>::value_type, etl::complex<double>>
->;
+using is_complex_double_precision = is_complex_double_t<typename std::decay_t<T>::value_type>;
 
 /*!
  * \brief Traits to test if all the given ETL expresion types contains single precision complex numbers.
@@ -277,21 +280,6 @@ using all_complex_double_precision = cpp::and_c<is_complex_double_precision<E>..
  */
 template <typename T>
 using is_complex = cpp::or_c<is_complex_single_precision<T>, is_complex_double_precision<T>>;
-
-template <typename T>
-struct is_complex_t : std::false_type {};
-
-template <typename T>
-struct is_complex_t<std::complex<T>> : std::true_type {};
-
-template <typename T>
-struct is_complex_t<etl::complex<T>> : std::true_type {};
-
-template <typename T>
-using is_complex_single_t = cpp::or_c<std::is_same<T, std::complex<float>>, std::is_same<T, etl::complex<float>>>;
-
-template <typename T>
-using is_complex_double_t = cpp::or_c<std::is_same<T, std::complex<double>>, std::is_same<T, etl::complex<double>>>;
 
 template <typename... E>
 using all_dma = cpp::and_c<has_direct_access<E>...>;
