@@ -209,15 +209,31 @@ template <typename T, typename DT>
 struct has_direct_access : cpp::or_c<
                                is_etl_direct_value<DT>, is_temporary_unary_expr<DT>, is_temporary_binary_expr<DT>, is_direct_identity_view<DT>, is_direct_sub_view<DT>, is_direct_dim_view<DT>, is_direct_fast_matrix_view<DT>, is_direct_dyn_matrix_view<DT>, is_direct_dyn_vector_view<DT>> {};
 
+/*!
+ * \brief Traits to test if the given ETL expresion contains single precision numbers.
+ * \tparam The ETL expression type.
+ */
 template <typename T>
 using is_single_precision = std::is_same<typename std::decay_t<T>::value_type, float>;
 
+/*!
+ * \brief Traits to test if all the given ETL expresion types contains single precision numbers.
+ * \tparam The ETL expression types.
+ */
 template <typename... E>
 using all_single_precision = cpp::and_c<is_single_precision<E>...>;
 
+/*!
+ * \brief Traits to test if the given ETL expresion contains double precision numbers.
+ * \tparam The ETL expression type.
+ */
 template <typename T>
 using is_double_precision = std::is_same<typename std::decay_t<T>::value_type, double>;
 
+/*!
+ * \brief Traits to test if all the given ETL expresion types contains double precision numbers.
+ * \tparam The ETL expression types.
+ */
 template <typename... E>
 using all_double_precision = cpp::and_c<is_double_precision<E>...>;
 
