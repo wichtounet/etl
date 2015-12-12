@@ -237,24 +237,44 @@ using is_double_precision = std::is_same<typename std::decay_t<T>::value_type, d
 template <typename... E>
 using all_double_precision = cpp::and_c<is_double_precision<E>...>;
 
+/*!
+ * \brief Traits to test if the given ETL expresion type contains single precision complex numbers.
+ * \tparam The ETL expression type.
+ */
 template <typename T>
 using is_complex_single_precision = cpp::or_c<
    std::is_same<typename std::decay_t<T>::value_type, std::complex<float>>,
    std::is_same<typename std::decay_t<T>::value_type, etl::complex<float>>
 >;
 
+/*!
+ * \brief Traits to test if the given ETL expresion type contains double precision complex numbers.
+ * \tparam The ETL expression type.
+ */
 template <typename T>
 using is_complex_double_precision = cpp::or_c<
    std::is_same<typename std::decay_t<T>::value_type, std::complex<double>>,
    std::is_same<typename std::decay_t<T>::value_type, etl::complex<double>>
 >;
 
+/*!
+ * \brief Traits to test if all the given ETL expresion types contains single precision complex numbers.
+ * \tparam The ETL expression types.
+ */
 template <typename... E>
 using all_complex_single_precision = cpp::and_c<is_complex_single_precision<E>...>;
 
+/*!
+ * \brief Traits to test if all the given ETL expresion types contains double precision complex numbers.
+ * \tparam The ETL expression types.
+ */
 template <typename... E>
 using all_complex_double_precision = cpp::and_c<is_complex_double_precision<E>...>;
 
+/*!
+ * \brief Traits to test if the given ETL expresion type contains complex numbers.
+ * \tparam The ETL expression type.
+ */
 template <typename T>
 using is_complex = cpp::or_c<is_complex_single_precision<T>, is_complex_double_precision<T>>;
 
