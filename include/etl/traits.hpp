@@ -293,18 +293,31 @@ using all_complex_double_precision = cpp::and_c<is_complex_double_precision<E>..
 template <typename T>
 using is_complex = cpp::or_c<is_complex_single_precision<T>, is_complex_double_precision<T>>;
 
+/*!
+ * \brief Traits to test if all the given ETL expresion types have direct memory access (DMA).
+ * \tparam The ETL expression types.
+ */
 template <typename... E>
 using all_dma = cpp::and_c<has_direct_access<E>...>;
 
+/*!
+ * \brief Traits to test if all the given ETL expresion types are row-major.
+ * \tparam The ETL expression types.
+ */
 template <typename... E>
 using all_row_major = cpp::and_u<(decay_traits<E>::storage_order == order::RowMajor)...>;
 
-template <typename E>
-using is_fast_safe = cpp::bool_constant<decay_traits<E>::is_fast>;
-
+/*!
+ * \brief Traits to test if all the given ETL expresion types are fast (sizes known at compile-time)
+ * \tparam The ETL expression types.
+ */
 template <typename... E>
-using all_fast = cpp::and_c<is_fast_safe<E>...>;
+using all_fast = cpp::and_u<decay_traits<E>::is_fast...>;
 
+/*!
+ * \brief Traits to test if all the given types are ETL types.
+ * \tparam The ETL expression types.
+ */
 template <typename... E>
 using all_etl_expr = cpp::and_c<is_etl_expr<E>...>;
 
