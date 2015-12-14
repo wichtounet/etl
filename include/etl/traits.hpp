@@ -369,8 +369,7 @@ struct etl_traits<T, std::enable_if_t<is_etl_value<T>::value>> {
  */
 template <typename E>
 constexpr std::size_t dimensions(const E& expr) noexcept {
-    cpp_unused(expr);
-    return etl_traits<E>::dimensions();
+    return (void) expr, etl_traits<E>::dimensions();
 }
 
 /*
@@ -383,36 +382,66 @@ constexpr std::size_t dimensions() noexcept {
     return decay_traits<E>::dimensions();
 }
 
+/*!
+ * \brief Returns the number of rows of the given ETL expression.
+ * \param expr The expression to get the number of rows from.
+ * \return The number of rows of the given expression.
+ */
 template <typename E, cpp_disable_if(etl_traits<E>::is_fast)>
 std::size_t rows(const E& expr) {
     return etl_traits<E>::dim(expr, 0);
 }
 
+/*!
+ * \brief Returns the number of rows of the given ETL expression.
+ * \param expr The expression to get the number of rows from.
+ * \return The number of rows of the given expression.
+ */
 template <typename E, cpp_enable_if(etl_traits<E>::is_fast)>
-constexpr std::size_t rows(const E& /*unused*/) noexcept {
-    return etl_traits<E>::template dim<0>();
+constexpr std::size_t rows(const E& expr) noexcept {
+    return (void) expr, etl_traits<E>::template dim<0>();
 }
 
+/*!
+ * \brief Returns the number of columns of the given ETL expression.
+ * \param expr The expression to get the number of columns from.
+ * \return The number of columns of the given expression.
+ */
 template <typename E, cpp_disable_if(etl_traits<E>::is_fast)>
 std::size_t columns(const E& expr) {
     static_assert(etl_traits<E>::dimensions() > 1, "columns() can only be used on 2D+ matrices");
     return etl_traits<E>::dim(expr, 1);
 }
 
+/*!
+ * \brief Returns the number of columns of the given ETL expression.
+ * \param expr The expression to get the number of columns from.
+ * \return The number of columns of the given expression.
+ */
 template <typename E, cpp_enable_if(etl_traits<E>::is_fast)>
-constexpr std::size_t columns(const E& /*unused*/) noexcept {
+constexpr std::size_t columns(const E& expr) noexcept {
     static_assert(etl_traits<E>::dimensions() > 1, "columns() can only be used on 2D+ matrices");
-    return etl_traits<E>::template dim<1>();
+    return (void) expr, etl_traits<E>::template dim<1>();
 }
 
+/*!
+ * \brief Returns the size of the given ETL expression.
+ * \param expr The expression to get the size from.
+ * \return The size of the given expression.
+ */
 template <typename E, cpp_disable_if(etl_traits<E>::is_fast)>
 std::size_t size(const E& expr) {
     return etl_traits<E>::size(expr);
 }
 
+/*!
+ * \brief Returns the size of the given ETL expression.
+ * \param expr The expression to get the size from.
+ * \return The size of the given expression.
+ */
 template <typename E, cpp_enable_if(etl_traits<E>::is_fast)>
-constexpr std::size_t size(const E& /*unused*/) noexcept {
-    return etl_traits<E>::size();
+constexpr std::size_t size(const E& expr) noexcept {
+    return (void) expr, etl_traits<E>::size();
 }
 
 template <typename E, cpp_disable_if(etl_traits<E>::is_fast)>
