@@ -20,8 +20,6 @@
 #include "cblas.h" //For ddot/sdot
 #endif
 
-#include "etl/config.hpp"
-
 namespace etl {
 
 namespace detail {

@@ -12,7 +12,6 @@
 
 #pragma once
 
-#include "etl/config.hpp"
 #include "etl/expression_helpers.hpp"
 
 namespace etl {

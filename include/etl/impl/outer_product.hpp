@@ -16,8 +16,6 @@
 
 #pragma once
 
-#include "etl/config.hpp"
-
 namespace etl {
 
 namespace detail {

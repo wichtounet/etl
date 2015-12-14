@@ -20,7 +20,6 @@
 
 #include "etl/value_fwd.hpp"
 #include "etl/temporary.hpp"
-#include "etl/config.hpp"
 
 #ifdef ETL_MKL_MODE
 #include "mkl_trans.h"

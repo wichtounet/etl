@@ -16,8 +16,6 @@
 #include "cblas.h" //For dscal/sscal
 #endif
 
-#include "etl/config.hpp"
-
 namespace etl {
 
 namespace detail {

@@ -9,7 +9,6 @@
 
 #include <algorithm>
 
-#include "etl/config.hpp"
 #include "etl/threshold.hpp"
 
 //The implementations

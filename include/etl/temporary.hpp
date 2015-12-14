@@ -7,7 +7,6 @@
 
 #pragma once
 
-#include "etl/config.hpp"      //configuration of ETL
 #include "etl/stop.hpp"
 
 namespace etl {

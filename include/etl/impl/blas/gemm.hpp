@@ -7,8 +7,6 @@
 
 #pragma once
 
-#include "etl/config.hpp"
-
 #ifdef ETL_BLAS_MODE
 
 extern "C" {

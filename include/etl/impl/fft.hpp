@@ -9,8 +9,6 @@
 
 #include <algorithm>
 
-#include "etl/config.hpp"
-
 #include "etl/impl/std/fft.hpp"
 #include "etl/impl/blas/fft.hpp"
 #include "etl/impl/cufft/fft.hpp"

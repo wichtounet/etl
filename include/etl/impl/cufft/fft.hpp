@@ -7,7 +7,6 @@
 
 #pragma once
 
-#include "etl/config.hpp"
 #include "etl/allocator.hpp"
 
 #ifdef ETL_CUFFT_MODE

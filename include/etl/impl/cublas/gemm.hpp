@@ -7,8 +7,6 @@
 
 #pragma once
 
-#include "etl/config.hpp"
-
 #ifdef ETL_CUBLAS_MODE
 
 #include "etl/impl/cublas/cuda.hpp"

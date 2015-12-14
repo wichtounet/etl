@@ -22,7 +22,6 @@
 
 #pragma once
 
-#include "etl/config.hpp"
 #include "etl/threshold.hpp"
 #include "etl/parallel.hpp" //For parallel dispatching
 
