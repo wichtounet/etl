@@ -8,6 +8,8 @@
 #pragma once
 
 #include <complex>
+#include <vector>
+#include <array>
 
 //Metaprogramming utilities
 #include "etl/tmp.hpp"
@@ -22,6 +24,7 @@
 
 //Forward declarations
 #include "etl/value_fwd.hpp"
+#include "etl/expr_fwd.hpp"
 
 // The traits
 #include "etl/traits.hpp"
@@ -44,9 +47,6 @@
 #include "etl/expr/generator_expr.hpp"
 #include "etl/expr/temporary_expr.hpp"
 #include "etl/expr/optimized_expr.hpp"
-
-//Forward value classes for expressions
-#include "etl/value_fwd.hpp"
 
 // The expressions building
 #include "etl/checks.hpp"

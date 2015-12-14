@@ -8,6 +8,8 @@
 #pragma once
 
 #include <complex>
+#include <vector>
+#include <array>
 
 //Metaprogramming utilities
 #include "etl/tmp.hpp"
@@ -22,6 +24,7 @@
 
 //Forward declarations
 #include "etl/value_fwd.hpp"
+#include "etl/expr_fwd.hpp"
 
 // The traits
 #include "etl/traits.hpp"

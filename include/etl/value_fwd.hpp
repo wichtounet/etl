@@ -7,9 +7,6 @@
 
 #pragma once
 
-#include <vector>
-#include <array>
-
 namespace etl {
 
 template <typename T, typename ST, order SO, std::size_t... Dims>
@@ -49,48 +46,6 @@ template <typename T, sparse_storage SS, std::size_t D>
 struct sparse_matrix_impl;
 
 template <typename T, std::size_t D = 2>
-using sparse_matrix = sparse_matrix_impl<T, sparse_storage::COO, D>;
-
-//TODO Move exprssions in expr_fwd
-
-struct identity_op;
-
-struct transform_op;
-
-template <typename Sub>
-struct stateful_op;
-
-template <typename T, typename Expr, typename UnaryOp>
-struct unary_expr;
-
-template <typename T, typename LeftExpr, typename BinaryOp, typename RightExpr>
-struct binary_expr;
-
-template <typename Generator>
-class generator_expr;
-
-template <typename Expr>
-struct optimized_expr;
-
-template <typename T, typename AExpr, typename Op, typename Forced>
-struct temporary_unary_expr;
-
-template <typename T, typename AExpr, typename BExpr, typename Op, typename Forced>
-struct temporary_binary_expr;
-
-template <typename T, std::size_t D>
-struct dim_view;
-
-template <typename T>
-struct sub_view;
-
-template <typename T, std::size_t... Dims>
-struct fast_matrix_view;
-
-template <typename T>
-struct dyn_vector_view;
-
-template <typename T>
-struct dyn_matrix_view;
+using sparse_matrix                 = sparse_matrix_impl<T, sparse_storage::COO, D>;
 
 } //end of namespace etl

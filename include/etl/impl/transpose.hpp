@@ -18,7 +18,6 @@
 
 #pragma once
 
-#include "etl/value_fwd.hpp"
 #include "etl/temporary.hpp"
 
 #ifdef ETL_MKL_MODE

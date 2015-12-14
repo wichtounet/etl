@@ -8,7 +8,6 @@
 #pragma once
 
 #include "etl/allocator.hpp"
-#include "etl/complex.hpp"
 
 namespace etl {
 

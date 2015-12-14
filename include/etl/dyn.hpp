@@ -7,7 +7,6 @@
 
 #pragma once
 
-#include <array>     //To store the dimensions
 #include <tuple>     //For TMP stuff
 #include <algorithm> //For std::find_if
 #include <iosfwd>    //For stream support
