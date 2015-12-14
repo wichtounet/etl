@@ -12,7 +12,6 @@
 #include <ctime>
 
 #include "etl/math.hpp"
-#include "etl/compat.hpp"
 
 namespace etl {
 

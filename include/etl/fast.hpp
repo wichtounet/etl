@@ -13,7 +13,6 @@
 #include "cpp_utils/assert.hpp"
 
 #include "etl/tmp.hpp"
-#include "etl/compat.hpp"      //To make it work with g++
 
 // CRTP classes
 #include "etl/crtp/inplace_assignable.hpp"

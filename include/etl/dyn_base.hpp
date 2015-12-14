@@ -20,8 +20,6 @@
 #include "cpp_utils/assert.hpp"
 #include "cpp_utils/tmp.hpp"
 
-#include "etl/compat.hpp"      //To make it work with g++
-
 namespace etl {
 
 enum class init_flag_t { DUMMY };

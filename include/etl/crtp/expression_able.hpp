@@ -7,8 +7,6 @@
 
 #pragma once
 
-#include "etl/compat.hpp"
-
 /*!
  * \file expression_able.hpp
  * \brief Use CRTP technique to inject functions creating new expressions.

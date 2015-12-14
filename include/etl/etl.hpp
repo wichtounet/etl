@@ -18,6 +18,7 @@
 #include "etl/config.hpp"
 #include "etl/vectorization.hpp"
 #include "etl/complex.hpp"
+#include "etl/compat.hpp"
 
 //Forward declarations
 #include "etl/value_fwd.hpp"
