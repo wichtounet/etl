@@ -444,16 +444,26 @@ constexpr std::size_t size(const E& expr) noexcept {
     return (void) expr, etl_traits<E>::size();
 }
 
+/*!
+ * \brief Returns the sub-size of the given ETL expression, i.e. the size not considering the first dimension.
+ * \param expr The expression to get the sub-size from.
+ * \return The sub-size of the given expression.
+ */
 template <typename E, cpp_disable_if(etl_traits<E>::is_fast)>
 std::size_t subsize(const E& expr) {
     static_assert(etl_traits<E>::dimensions() > 1, "Only 2D+ matrices have a subsize");
     return etl_traits<E>::size(expr) / etl_traits<E>::dim(expr, 0);
 }
 
+/*!
+ * \brief Returns the sub-size of the given ETL expression, i.e. the size not considering the first dimension.
+ * \param expr The expression to get the sub-size from.
+ * \return The sub-size of the given expression.
+ */
 template <typename E, cpp_enable_if(etl_traits<E>::is_fast)>
-constexpr std::size_t subsize(const E& /*unused*/) noexcept {
+constexpr std::size_t subsize(const E& expr) noexcept {
     static_assert(etl_traits<E>::dimensions() > 1, "Only 2D+ matrices have a subsize");
-    return etl_traits<E>::size() / etl_traits<E>::template dim<0>();
+    return (void) expr, etl_traits<E>::size() / etl_traits<E>::template dim<0>();
 }
 
 template <std::size_t D, typename E, cpp_disable_if(etl_traits<E>::is_fast)>
@@ -495,25 +505,40 @@ constexpr std::pair<std::size_t, std::size_t> index_to_2d(E&& sub, std::size_t i
     return std::make_pair(i % dim<0>(sub), i / dim<0>(sub));
 }
 
+/*!
+ * \brief Returns the row stride of the given ETL matrix expression
+ * \param expr The ETL expression.
+ * \return the row stride of the given ETL matrix expression
+ */
 template <typename E>
-std::size_t row_stride(E&& e) {
+std::size_t row_stride(E&& expr) {
     return decay_traits<E>::storage_order == order::RowMajor
-               ? etl::dim<1>(e)
+               ? etl::dim<1>(expr)
                : 1;
 }
 
+/*!
+ * \brief Returns the column stride of the given ETL matrix expression
+ * \param expr The ETL expression.
+ * \return the column stride of the given ETL matrix expression
+ */
 template <typename E>
-std::size_t col_stride(E&& e) {
+std::size_t col_stride(E&& expr) {
     return decay_traits<E>::storage_order == order::RowMajor
                ? 1
-               : etl::dim<0>(e);
+               : etl::dim<0>(expr);
 }
 
+/*!
+ * \brief Returns the major stride of the given ETL matrix expression
+ * \param expr The ETL expression.
+ * \return the major stride of the given ETL matrix expression
+ */
 template <typename E>
-std::size_t major_stride(E&& e) {
+std::size_t major_stride(E&& expr) {
     return decay_traits<E>::storage_order == order::RowMajor
-               ? etl::dim<1>(e)
-               : etl::dim<0>(e);
+               ? etl::dim<1>(expr)
+               : etl::dim<0>(expr);
 }
 
 } //end of namespace etl
