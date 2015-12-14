@@ -362,19 +362,30 @@ struct etl_traits<T, std::enable_if_t<is_etl_value<T>::value>> {
     }
 };
 
+/*
+ * \brief Return the number of dimensions of the given ETL expression
+ * \param expr The expression to get the number of dimensions for
+ * \return The number of dimensions of the given expression.
+ */
 template <typename E>
-constexpr std::size_t dimensions(const E& /*unused*/) noexcept {
+constexpr std::size_t dimensions(const E& expr) noexcept {
+    cpp_unused(expr);
     return etl_traits<E>::dimensions();
 }
 
+/*
+ * \brief Return the number of dimensions of the given ETL type
+ * \tparam E The expression type to get the number of dimensions for
+ * \return The number of dimensions of the given type.
+ */
 template <typename E>
 constexpr std::size_t dimensions() noexcept {
     return decay_traits<E>::dimensions();
 }
 
 template <typename E, cpp_disable_if(etl_traits<E>::is_fast)>
-std::size_t rows(const E& v) {
-    return etl_traits<E>::dim(v, 0);
+std::size_t rows(const E& expr) {
+    return etl_traits<E>::dim(expr, 0);
 }
 
 template <typename E, cpp_enable_if(etl_traits<E>::is_fast)>
@@ -383,9 +394,9 @@ constexpr std::size_t rows(const E& /*unused*/) noexcept {
 }
 
 template <typename E, cpp_disable_if(etl_traits<E>::is_fast)>
-std::size_t columns(const E& v) {
+std::size_t columns(const E& expr) {
     static_assert(etl_traits<E>::dimensions() > 1, "columns() can only be used on 2D+ matrices");
-    return etl_traits<E>::dim(v, 1);
+    return etl_traits<E>::dim(expr, 1);
 }
 
 template <typename E, cpp_enable_if(etl_traits<E>::is_fast)>
@@ -395,8 +406,8 @@ constexpr std::size_t columns(const E& /*unused*/) noexcept {
 }
 
 template <typename E, cpp_disable_if(etl_traits<E>::is_fast)>
-std::size_t size(const E& v) {
-    return etl_traits<E>::size(v);
+std::size_t size(const E& expr) {
+    return etl_traits<E>::size(expr);
 }
 
 template <typename E, cpp_enable_if(etl_traits<E>::is_fast)>
@@ -405,9 +416,9 @@ constexpr std::size_t size(const E& /*unused*/) noexcept {
 }
 
 template <typename E, cpp_disable_if(etl_traits<E>::is_fast)>
-std::size_t subsize(const E& v) {
+std::size_t subsize(const E& expr) {
     static_assert(etl_traits<E>::dimensions() > 1, "Only 2D+ matrices have a subsize");
-    return etl_traits<E>::size(v) / etl_traits<E>::dim(v, 0);
+    return etl_traits<E>::size(expr) / etl_traits<E>::dim(expr, 0);
 }
 
 template <typename E, cpp_enable_if(etl_traits<E>::is_fast)>
