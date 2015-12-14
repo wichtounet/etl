@@ -7,7 +7,7 @@
 
 #pragma once
 
-eamespace etl {
+namespace etl {
 
 struct identity_op;
 
