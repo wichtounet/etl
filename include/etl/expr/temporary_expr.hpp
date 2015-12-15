@@ -184,6 +184,11 @@ public:
         allocated = true;
     }
 
+    template <typename E>
+    bool alias(const E& rhs) const {
+        return _a.alias(rhs);
+    }
+
     result_type& result() {
         cpp_assert(evaluated, "The result has not been evaluated");
         cpp_assert(allocated, "The result has not been allocated");
@@ -294,6 +299,11 @@ public:
         }
 
         allocated = true;
+    }
+
+    template <typename E>
+    bool alias(const E& rhs) const {
+        return _a.alias(rhs) || _b.alias(rhs);
     }
 
     result_type& result() {

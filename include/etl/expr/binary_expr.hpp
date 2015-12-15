@@ -76,6 +76,11 @@ public:
         return _rhs;
     }
 
+    template<typename E>
+    bool alias(const E& rhs) const noexcept {
+        return _lhs.alias(rhs) || _rhs.alias(rhs);
+    }
+
     //Apply the expression
 
     value_type operator[](std::size_t i) const {

@@ -186,8 +186,7 @@ public:
     }
 
     // Assignment
-
-    // Copy assignment operator
+// Copy assignment operator
 
     template <typename SST    = ST, cpp_enable_if(matrix_detail::is_vector<SST>::value)>
     fast_matrix_impl& operator=(const fast_matrix_impl& rhs) noexcept {
@@ -327,6 +326,16 @@ public:
         cpp_assert(i < size(), "Out of bounds");
 
         return _data[i];
+    }
+
+    template<typename E, cpp_enable_if(all_dma<E>::value)>
+    bool alias(const E& rhs) const noexcept {
+        return memory_alias(memory_start(), memory_end(), rhs.memory_start(), rhs.memory_end());
+    }
+
+    template<typename E, cpp_disable_if(all_dma<E>::value)>
+    bool alias(const E& rhs) const noexcept {
+        return rhs.alias(*this);
     }
 
     template<typename V = default_vec>

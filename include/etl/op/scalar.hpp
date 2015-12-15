@@ -42,6 +42,11 @@ struct scalar {
 
         return value;
     }
+
+    template<typename E>
+    constexpr bool alias(const E& /*rhs*/) const noexcept {
+        return false;
+    }
 };
 
 /*!

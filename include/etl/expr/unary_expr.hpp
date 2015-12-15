@@ -103,6 +103,11 @@ public:
         return UnaryOp::apply(value()(args...));
     }
 
+    template<typename E>
+    bool alias(const E& rhs) const noexcept {
+        return _value.alias(rhs);
+    }
+
     iterator<const this_type> begin() const noexcept {
         return {*this, 0};
     }
@@ -229,6 +234,16 @@ public:
         static_assert(cpp::all_convertible_to<std::size_t, S...>::value, "Invalid size types");
 
         return value()(args...);
+    }
+
+    template<typename E, cpp_enable_if(has_direct_access<Expr>::value && all_dma<E>::value)>
+    bool alias(const E& rhs) const noexcept {
+        return memory_alias(memory_start(), memory_end(), rhs.memory_start(), rhs.memory_end());
+    }
+
+    template<typename E, cpp_disable_if(has_direct_access<Expr>::value && all_dma<E>::value)>
+    bool alias(const E& rhs) const noexcept {
+        return rhs.alias(*this);
     }
 
     iterator<this_type, non_const_return_ref, false> begin() noexcept {
