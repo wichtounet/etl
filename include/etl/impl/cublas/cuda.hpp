@@ -22,12 +22,12 @@ struct cuda_memory {
     cuda_memory(T* memory) : memory(memory) {}
 
     //Delete copy operations
-    cuda_memory(cuda_memory& rhs){
+    cuda_memory(const cuda_memory& rhs){
         cpp_assert(!is_set(), "copy of cuda_memory is only possible when not allocated");
         cpp_assert(!rhs.is_set(), "copy of cuda_memory is only possible when not allocated");
     }
 
-    cuda_memory& operator=(cuda_memory& rhs){
+    cuda_memory& operator=(const cuda_memory& rhs){
         cpp_assert(!is_set(), "copy of cuda_memory is only possible when not allocated");
         cpp_assert(!rhs.is_set(), "copy of cuda_memory is only possible when not allocated");
 
