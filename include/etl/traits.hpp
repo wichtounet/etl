@@ -545,4 +545,13 @@ std::size_t major_stride(E&& expr) {
                : etl::dim<0>(expr);
 }
 
+template<typename P1, typename P2>
+bool memory_alias(const P1* a_begin, const P1* a_end, const P2* b_begin, const P2* b_end){
+    cpp_assert(a_begin <= a_end, "memory_alias works on ordered ranges");
+    cpp_assert(b_begin <= b_end, "memory_alias works on ordered ranges");
+
+    return reinterpret_cast<uintptr_t>(a_begin) < reinterpret_cast<uintptr_t>(b_end)
+        && reinterpret_cast<uintptr_t>(a_end) > reinterpret_cast<uintptr_t>(b_begin);
+}
+
 } //end of namespace etl
