@@ -84,29 +84,34 @@ void inplace_zifft1_kernel(A&& a, std::size_t n) {
     cufftExecZ2Z(handle.get(), complex_cast(a.gpu_memory()), complex_cast(a.gpu_memory()), CUFFT_INVERSE);
 }
 
-inline void inplace_cfft2_kernel(const impl::cuda::cuda_memory<std::complex<float>>& data, std::size_t d1, std::size_t d2) {
+template<typename A>
+inline void inplace_cfft2_kernel(A&& a, std::size_t d1, std::size_t d2) {
     cufft_handle handle = start_cufft();
 
     cufftPlan2d(&handle.get(), d1, d2, CUFFT_C2C);
-    cufftExecC2C(handle.get(), complex_cast(data.get()), complex_cast(data.get()), CUFFT_FORWARD);
+    cufftExecC2C(handle.get(), complex_cast(a.gpu_memory()), complex_cast(a.gpu_memory()), CUFFT_FORWARD);
 }
 
-inline void inplace_zfft2_kernel(const impl::cuda::cuda_memory<std::complex<double>>& data, std::size_t d1, std::size_t d2) {
+template<typename A>
+inline void inplace_zfft2_kernel(A&& a, std::size_t d1, std::size_t d2) {
     cufft_handle handle = start_cufft();
 
     cufftPlan2d(&handle.get(), d1, d2, CUFFT_Z2Z);
-    cufftExecZ2Z(handle.get(), complex_cast(data.get()), complex_cast(data.get()), CUFFT_FORWARD);
+    cufftExecZ2Z(handle.get(), complex_cast(a.gpu_memory()), complex_cast(a.gpu_memory()), CUFFT_FORWARD);
 }
 
-inline void inplace_cfft2_many_kernel(const impl::cuda::cuda_memory<std::complex<float>>& data, std::size_t batch, std::size_t d1, std::size_t d2) {
+template<typename A>
+void inplace_cfft2_many_kernel(A&& a, std::size_t batch, std::size_t d1, std::size_t d2) {
     cufft_handle handle = start_cufft();
 
     int dims[] = {int(d1), int(d2)};
 
-    cufftPlanMany(&handle.get(), 2, dims,
-                  nullptr, 1, d1 * d2, nullptr, 1, d1 * d2, CUFFT_C2C, batch); cufftExecC2C(handle.get(), complex_cast(data.get()), complex_cast(data.get()), CUFFT_FORWARD); }
+    cufftPlanMany(&handle.get(), 2, dims, nullptr, 1, d1 * d2, nullptr, 1, d1 * d2, CUFFT_C2C, batch);
+    cufftExecC2C(handle.get(), complex_cast(a.gpu_memory()), complex_cast(a.gpu_memory()), CUFFT_FORWARD);
+}
 
-inline void inplace_zfft2_many_kernel(const impl::cuda::cuda_memory<std::complex<double>>& data, std::size_t batch, std::size_t d1, std::size_t d2) {
+template<typename A>
+void inplace_zfft2_many_kernel(A&& a, std::size_t batch, std::size_t d1, std::size_t d2) {
     cufft_handle handle = start_cufft();
 
     int dims[] = {int(d1), int(d2)};
@@ -116,21 +121,23 @@ inline void inplace_zfft2_many_kernel(const impl::cuda::cuda_memory<std::complex
                   nullptr, 1, d1 * d2,
                   CUFFT_Z2Z, batch);
 
-    cufftExecZ2Z(handle.get(), complex_cast(data.get()), complex_cast(data.get()), CUFFT_FORWARD);
+    cufftExecZ2Z(handle.get(), complex_cast(a.gpu_memory()), complex_cast(a.gpu_memory()), CUFFT_FORWARD);
 }
 
-inline void inplace_cifft2_kernel(const impl::cuda::cuda_memory<std::complex<float>>& data, std::size_t d1, std::size_t d2) {
+template<typename A>
+void inplace_cifft2_kernel(A&& a, std::size_t d1, std::size_t d2) {
     cufft_handle handle = start_cufft();
 
     cufftPlan2d(&handle.get(), d1, d2, CUFFT_C2C);
-    cufftExecC2C(handle.get(), complex_cast(data.get()), complex_cast(data.get()), CUFFT_INVERSE);
+    cufftExecC2C(handle.get(), complex_cast(a.gpu_memory()), complex_cast(a.gpu_memory()), CUFFT_INVERSE);
 }
 
-inline void inplace_zifft2_kernel(const impl::cuda::cuda_memory<std::complex<double>>& data, std::size_t d1, std::size_t d2) {
+template<typename A>
+void inplace_zifft2_kernel(A&& a, std::size_t d1, std::size_t d2) {
     cufft_handle handle = start_cufft();
 
     cufftPlan2d(&handle.get(), d1, d2, CUFFT_Z2Z);
-    cufftExecZ2Z(handle.get(), complex_cast(data.get()), complex_cast(data.get()), CUFFT_INVERSE);
+    cufftExecZ2Z(handle.get(), complex_cast(a.gpu_memory()), complex_cast(a.gpu_memory()), CUFFT_INVERSE);
 }
 
 } //End of namespace detail
@@ -385,73 +392,83 @@ template <typename A, typename C, cpp_enable_if(all_single_precision<A>::value)>
 void fft2(A&& a, C&& c) {
     std::copy(a.begin(), a.end(), c.begin());
 
-    auto gpu_c = impl::cuda::cuda_allocate_copy(c);
+    c.gpu_allocate_copy_if_necessary();
 
-    detail::inplace_cfft2_kernel(gpu_c, etl::dim<0>(a), etl::dim<1>(a));
+    detail::inplace_cfft2_kernel(c, etl::dim<0>(a), etl::dim<1>(a));
 
-    cudaMemcpy(c.memory_start(), gpu_c.get(), etl::size(c) * sizeof(value_t<C>), cudaMemcpyDeviceToHost);
+    c.gpu_copy_from();
+    c.gpu_evict();
 }
 
 template <typename A, typename C, cpp_enable_if(all_double_precision<A>::value)>
 void fft2(A&& a, C&& c) {
     std::copy(a.begin(), a.end(), c.begin());
 
-    auto gpu_c = impl::cuda::cuda_allocate_copy(c);
+    c.gpu_allocate_copy_if_necessary();
 
-    detail::inplace_zfft2_kernel(gpu_c, etl::dim<0>(a), etl::dim<1>(a));
+    detail::inplace_zfft2_kernel(c, etl::dim<0>(a), etl::dim<1>(a));
 
-    cudaMemcpy(c.memory_start(), gpu_c.get(), etl::size(c) * sizeof(value_t<C>), cudaMemcpyDeviceToHost);
+    c.gpu_copy_from();
+    c.gpu_evict();
 }
 
 template <typename A, typename C, cpp_enable_if(all_complex_single_precision<A>::value)>
 void fft2(A&& a, C&& c) {
-    auto gpu_a = impl::cuda::cuda_allocate_copy(a);
+    a.gpu_allocate_copy_if_necessary();
 
-    detail::inplace_cfft2_kernel(gpu_a, etl::dim<0>(a), etl::dim<1>(a));
+    detail::inplace_cfft2_kernel(a, etl::dim<0>(a), etl::dim<1>(a));
 
-    cudaMemcpy(c.memory_start(), gpu_a.get(), etl::size(c) * sizeof(value_t<C>), cudaMemcpyDeviceToHost);
+    c.gpu_reallocate(a.gpu_release());
+    c.gpu_copy_from();
+    c.gpu_evict();
 }
 
 template <typename A, typename C, cpp_enable_if(all_complex_double_precision<A>::value)>
 void fft2(A&& a, C&& c) {
-    auto gpu_a = impl::cuda::cuda_allocate_copy(a);
+    a.gpu_allocate_copy_if_necessary();
 
-    detail::inplace_zfft2_kernel(gpu_a, etl::dim<0>(a), etl::dim<1>(a));
+    detail::inplace_zfft2_kernel(a, etl::dim<0>(a), etl::dim<1>(a));
 
-    cudaMemcpy(c.memory_start(), gpu_a.get(), etl::size(c) * sizeof(value_t<C>), cudaMemcpyDeviceToHost);
+    c.gpu_reallocate(a.gpu_release());
+    c.gpu_copy_from();
+    c.gpu_evict();
 }
 
 template <typename A, typename C, cpp_enable_if(all_complex_single_precision<A>::value)>
 void ifft2(A&& a, C&& c) {
-    auto gpu_a = impl::cuda::cuda_allocate_copy(a);
+    a.gpu_allocate_copy_if_necessary();
 
-    detail::inplace_cifft2_kernel(gpu_a, etl::dim<0>(a), etl::dim<1>(a));
+    detail::inplace_cifft2_kernel(a, etl::dim<0>(a), etl::dim<1>(a));
 
-    cudaMemcpy(c.memory_start(), gpu_a.get(), etl::size(c) * sizeof(value_t<C>), cudaMemcpyDeviceToHost);
+    c.gpu_reallocate(a.gpu_release());
+    c.gpu_copy_from();
+    c.gpu_evict();
 
     c *= 1.0 / etl::size(c);
 }
 
 template <typename A, typename C, cpp_enable_if(all_complex_double_precision<A>::value)>
 void ifft2(A&& a, C&& c) {
-    auto gpu_a = impl::cuda::cuda_allocate_copy(a);
+    a.gpu_allocate_copy_if_necessary();
 
-    detail::inplace_zifft2_kernel(gpu_a, etl::dim<0>(a), etl::dim<1>(a));
+    detail::inplace_zifft2_kernel(a, etl::dim<0>(a), etl::dim<1>(a));
 
-    cudaMemcpy(c.memory_start(), gpu_a.get(), etl::size(c) * sizeof(value_t<C>), cudaMemcpyDeviceToHost);
+    c.gpu_reallocate(a.gpu_release());
+    c.gpu_copy_from();
+    c.gpu_evict();
 
     c *= 1.0 / etl::size(c);
 }
 
 template <typename A, typename C, cpp_enable_if(all_complex_single_precision<A>::value)>
 void ifft2_real(A&& a, C&& c) {
-    auto gpu_a = impl::cuda::cuda_allocate_copy(a);
+    a.gpu_allocate_copy_if_necessary();
 
     auto tmp = allocate<value_t<A>>(etl::size(a));
 
-    detail::inplace_cifft2_kernel(gpu_a, etl::dim<0>(a), etl::dim<1>(a));
+    detail::inplace_cifft2_kernel(a, etl::dim<0>(a), etl::dim<1>(a));
 
-    cudaMemcpy(tmp.get(), gpu_a.get(), etl::size(c) * sizeof(value_t<A>), cudaMemcpyDeviceToHost);
+    cudaMemcpy(tmp.get(), a.gpu_memory(), etl::size(c) * sizeof(value_t<A>), cudaMemcpyDeviceToHost);
 
     for (std::size_t i = 0; i < etl::size(a); ++i) {
         c[i] = tmp[i].real() / etl::size(a);
@@ -460,13 +477,13 @@ void ifft2_real(A&& a, C&& c) {
 
 template <typename A, typename C, cpp_enable_if(all_complex_double_precision<A>::value)>
 void ifft2_real(A&& a, C&& c) {
-    auto gpu_a = impl::cuda::cuda_allocate_copy(a);
+    a.gpu_allocate_copy_if_necessary();
 
     auto tmp = allocate<value_t<A>>(etl::size(a));
 
-    detail::inplace_zifft2_kernel(gpu_a, etl::dim<0>(a), etl::dim<1>(a));
+    detail::inplace_zifft2_kernel(a, etl::dim<0>(a), etl::dim<1>(a));
 
-    cudaMemcpy(tmp.get(), gpu_a.get(), etl::size(c) * sizeof(value_t<A>), cudaMemcpyDeviceToHost);
+    cudaMemcpy(tmp.get(), a.gpu_memory(), etl::size(c) * sizeof(value_t<A>), cudaMemcpyDeviceToHost);
 
     for (std::size_t i = 0; i < etl::size(a); ++i) {
         c[i] = tmp[i].real() / etl::size(a);
@@ -483,11 +500,12 @@ void fft2_many(A&& a, C&& c) {
 
     std::copy(a.begin(), a.end(), c.begin());
 
-    auto gpu_c = impl::cuda::cuda_allocate_copy(c);
+    c.gpu_allocate_copy_if_necessary();
 
-    detail::inplace_cfft2_many_kernel(gpu_c, batch, n1, n2);
+    detail::inplace_cfft2_many_kernel(c, batch, n1, n2);
 
-    cudaMemcpy(c.memory_start(), gpu_c.get(), etl::size(c) * sizeof(value_t<C>), cudaMemcpyDeviceToHost);
+    c.gpu_copy_from();
+    c.gpu_evict();
 }
 
 template <typename A, typename C, cpp_enable_if(all_double_precision<A>::value)>
@@ -500,11 +518,12 @@ void fft2_many(A&& a, C&& c) {
 
     std::copy(a.begin(), a.end(), c.begin());
 
-    auto gpu_c = impl::cuda::cuda_allocate_copy(c);
+    c.gpu_allocate_copy_if_necessary();
 
-    detail::inplace_zfft2_many_kernel(gpu_c, batch, n1, n2);
+    detail::inplace_zfft2_many_kernel(c, batch, n1, n2);
 
-    cudaMemcpy(c.memory_start(), gpu_c.get(), etl::size(c) * sizeof(value_t<C>), cudaMemcpyDeviceToHost);
+    c.gpu_copy_from();
+    c.gpu_evict();
 }
 
 template <typename A, typename C, cpp_enable_if(all_complex_single_precision<A>::value)>
@@ -515,11 +534,13 @@ void fft2_many(A&& a, C&& c) {
     std::size_t n2    = etl::dim<N - 1>(a);       //Size of the transform
     std::size_t batch = etl::size(a) / (n1 * n2); //Number of batch
 
-    auto gpu_a = impl::cuda::cuda_allocate_copy(a);
+    a.gpu_allocate_copy_if_necessary();
 
-    detail::inplace_cfft2_many_kernel(gpu_a, batch, n1, n2);
+    detail::inplace_cfft2_many_kernel(a, batch, n1, n2);
 
-    cudaMemcpy(c.memory_start(), gpu_a.get(), etl::size(c) * sizeof(value_t<C>), cudaMemcpyDeviceToHost);
+    c.gpu_reallocate(a.gpu_release());
+    c.gpu_copy_from();
+    c.gpu_evict();
 }
 
 template <typename A, typename C, cpp_enable_if(all_complex_double_precision<A>::value)>
@@ -530,11 +551,13 @@ void fft2_many(A&& a, C&& c) {
     std::size_t n2    = etl::dim<N - 1>(a);       //Size of the transform
     std::size_t batch = etl::size(a) / (n1 * n2); //Number of batch
 
-    auto gpu_a = impl::cuda::cuda_allocate_copy(a);
+    a.gpu_allocate_copy_if_necessary();
 
-    detail::inplace_zfft2_many_kernel(gpu_a, batch, n1, n2);
+    detail::inplace_zfft2_many_kernel(a, batch, n1, n2);
 
-    cudaMemcpy(c.memory_start(), gpu_a.get(), etl::size(c) * sizeof(value_t<C>), cudaMemcpyDeviceToHost);
+    c.gpu_reallocate(a.gpu_release());
+    c.gpu_copy_from();
+    c.gpu_evict();
 }
 
 template <typename A, typename B, typename C, cpp_enable_if(all_single_precision<A>::value)>
