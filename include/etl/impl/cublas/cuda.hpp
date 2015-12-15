@@ -19,17 +19,19 @@ template <typename T>
 struct cuda_memory {
     T* memory;
 
+    cuda_memory() : memory(nullptr) {}
     cuda_memory(T* memory) : memory(memory) {}
 
     //Delete copy operations
-    cuda_memory(const cuda_memory& rhs){
-        cpp_assert(!is_set(), "copy of cuda_memory is only possible when not allocated");
+    cuda_memory(const cuda_memory& rhs) : memory(nullptr) {
         cpp_assert(!rhs.is_set(), "copy of cuda_memory is only possible when not allocated");
     }
 
     cuda_memory& operator=(const cuda_memory& rhs){
-        cpp_assert(!is_set(), "copy of cuda_memory is only possible when not allocated");
-        cpp_assert(!rhs.is_set(), "copy of cuda_memory is only possible when not allocated");
+        if(this != &rhs){
+            cpp_assert(!is_set(), "copy of cuda_memory is only possible when not allocated");
+            cpp_assert(!rhs.is_set(), "copy of cuda_memory is only possible when not allocated");
+        }
 
         return *this;
     }
@@ -39,12 +41,14 @@ struct cuda_memory {
     }
 
     cuda_memory& operator=(cuda_memory&& rhs){
-        if(memory){
-            cudaFree(memory);
-        }
+        if(this != &rhs){
+            if(memory){
+                cudaFree(memory);
+            }
 
-        memory = rhs.memory;
-        rhs.memory = nullptr;
+            memory = rhs.memory;
+            rhs.memory = nullptr;
+        }
 
         return *this;
     }
