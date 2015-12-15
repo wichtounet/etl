@@ -45,6 +45,8 @@ struct cuda_memory {
 
         memory = rhs.memory;
         rhs.memory = nullptr;
+
+        return *this;
     }
 
     cuda_memory& operator=(T* new_memory){
