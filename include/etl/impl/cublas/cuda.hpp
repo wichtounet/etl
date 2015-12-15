@@ -21,6 +21,42 @@ struct cuda_memory {
 
     cuda_memory(T* memory) : memory(memory) {}
 
+    //Delete copy operations
+    cuda_memory(cuda_memory& rhs){
+        cpp_assert(!is_set(), "copy of cuda_memory is only possible when not allocated");
+        cpp_assert(!rhs.is_set(), "copy of cuda_memory is only possible when not allocated");
+    }
+
+    cuda_memory& operator=(cuda_memory& rhs){
+        cpp_assert(!is_set(), "copy of cuda_memory is only possible when not allocated");
+        cpp_assert(!rhs.is_set(), "copy of cuda_memory is only possible when not allocated");
+
+        return *this;
+    }
+
+    cuda_memory(cuda_memory&& rhs) : memory(rhs.memory){
+        rhs.memory = nullptr;
+    }
+
+    cuda_memory& operator=(cuda_memory&& rhs){
+        if(memory){
+            cudaFree(memory);
+        }
+
+        memory = rhs.memory;
+        rhs.memory = nullptr;
+    }
+
+    cuda_memory& operator=(T* new_memory){
+        if(memory){
+            cudaFree(memory);
+        }
+
+        memory = new_memory;
+
+        return *this;
+    }
+
     T* get() const {
         return memory;
     }
@@ -29,8 +65,18 @@ struct cuda_memory {
         return memory;
     }
 
+    void reset(){
+        if(memory){
+            cudaFree(memory);
+        }
+
+        memory = nullptr;
+    }
+
     ~cuda_memory() {
-        cudaFree(memory);
+        if(memory){
+            cudaFree(memory);
+        }
     }
 };
 
