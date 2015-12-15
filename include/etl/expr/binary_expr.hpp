@@ -132,11 +132,12 @@ struct etl_traits<etl::binary_expr<T, LeftExpr, BinaryOp, RightExpr>> {
 
     using sub_expr_t = std::conditional_t<left_directed, left_expr_t, right_expr_t>;
 
-    static constexpr const bool is_etl                 = true;
+    static constexpr const bool is_etl         = true;
     static constexpr const bool is_transformer = false;
-    static constexpr const bool is_view = false;
-    static constexpr const bool is_magic_view = false;
-    static constexpr const bool is_fast  = etl_traits<sub_expr_t>::is_fast;
+    static constexpr const bool is_view        = false;
+    static constexpr const bool is_magic_view  = false;
+    static constexpr const bool is_fast        = etl_traits<sub_expr_t>::is_fast;
+    static constexpr const bool is_linear      = etl_traits<left_expr_t>::is_linear && etl_traits<right_expr_t>::is_linear && BinaryOp::linear;
     static constexpr const bool is_value = false;
     static constexpr const bool is_generator =
         etl_traits<left_expr_t>::is_generator && etl_traits<right_expr_t>::is_generator;

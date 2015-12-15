@@ -935,6 +935,7 @@ struct etl_traits<T, std::enable_if_t<cpp::or_c<
     static constexpr const bool is_view = false;
     static constexpr const bool is_magic_view = false;
     static constexpr const bool is_fast                 = etl_traits<sub_expr_t>::is_fast;
+    static constexpr const bool is_linear               = false;
     static constexpr const bool is_value                = false;
     static constexpr const bool is_generator            = false;
     static constexpr const bool vectorizable            = false;
@@ -979,6 +980,7 @@ struct etl_traits<T, std::enable_if_t<cpp::or_c<
     static constexpr const bool is_view = false;
     static constexpr const bool is_magic_view = false;
     static constexpr const bool is_fast                 = etl_traits<sub_expr_t>::is_fast;
+    static constexpr const bool is_linear               = false;
     static constexpr const bool is_value                = false;
     static constexpr const bool is_generator            = false;
     static constexpr const bool vectorizable            = false;
@@ -1018,6 +1020,7 @@ struct etl_traits<p_max_pool_p_transformer<T, C1, C2>> {
     static constexpr const bool is_view = false;
     static constexpr const bool is_magic_view = false;
     static constexpr const bool is_fast                 = etl_traits<sub_expr_t>::is_fast;
+    static constexpr const bool is_linear               = false;
     static constexpr const bool is_value                = false;
     static constexpr const bool is_generator            = false;
     static constexpr const bool vectorizable            = false;
@@ -1072,6 +1075,7 @@ struct etl_traits<T, std::enable_if_t<cpp::or_c<
     static constexpr const bool is_view = false;
     static constexpr const bool is_magic_view = false;
     static constexpr const bool is_fast                 = etl_traits<sub_expr_t>::is_fast;
+    static constexpr const bool is_linear               = false;
     static constexpr const bool is_value                = false;
     static constexpr const bool is_generator            = false;
     static constexpr const bool vectorizable            = false;
@@ -1115,6 +1119,7 @@ struct etl_traits<transpose_transformer<T>> {
     static constexpr const bool is_view = false;
     static constexpr const bool is_magic_view = false;
     static constexpr const bool is_fast                 = etl_traits<sub_expr_t>::is_fast;
+    static constexpr const bool is_linear               = false;
     static constexpr const bool is_value                = false;
     static constexpr const bool is_generator            = false;
     static constexpr const bool vectorizable            = false;
@@ -1153,13 +1158,14 @@ struct etl_traits<mm_mul_transformer<LE, RE>> {
     using left_expr_t  = std::decay_t<LE>;
     using right_expr_t = std::decay_t<RE>;
 
-    static constexpr const bool is_etl                 = true;
+    static constexpr const bool is_etl         = true;
     static constexpr const bool is_transformer = true;
-    static constexpr const bool is_view = false;
-    static constexpr const bool is_magic_view = false;
-    static constexpr const bool is_fast      = etl_traits<left_expr_t>::is_fast && etl_traits<right_expr_t>::is_fast;
-    static constexpr const bool is_value     = false;
-    static constexpr const bool is_generator = false;
+    static constexpr const bool is_view        = false;
+    static constexpr const bool is_magic_view  = false;
+    static constexpr const bool is_fast        = etl_traits<left_expr_t>::is_fast && etl_traits<right_expr_t>::is_fast;
+    static constexpr const bool is_linear      = false;
+    static constexpr const bool is_value       = false;
+    static constexpr const bool is_generator   = false;
     static constexpr const bool vectorizable = false;
     static constexpr const bool needs_temporary_visitor =
         etl_traits<left_expr_t>::needs_temporary_visitor || etl_traits<right_expr_t>::needs_temporary_visitor;
@@ -1210,6 +1216,7 @@ struct etl_traits<dyn_convmtx_transformer<E>> {
     static constexpr const bool is_view = false;
     static constexpr const bool is_magic_view = false;
     static constexpr const bool is_fast                 = false;
+    static constexpr const bool is_linear      = false;
     static constexpr const bool is_value                = false;
     static constexpr const bool is_generator            = false;
     static constexpr const bool vectorizable            = false;
@@ -1242,10 +1249,11 @@ struct etl_traits<dyn_convmtx2_transformer<E>> {
     using expr_t     = etl::dyn_convmtx2_transformer<E>;
     using sub_expr_t = std::decay_t<E>;
 
-    static constexpr const bool is_etl                 = true;
-    static constexpr const bool is_transformer = true;
-    static constexpr const bool is_view = false;
-    static constexpr const bool is_magic_view = false;
+    static constexpr const bool is_etl                  = true;
+    static constexpr const bool is_transformer          = true;
+    static constexpr const bool is_view                 = false;
+    static constexpr const bool is_magic_view           = false;
+    static constexpr const bool is_linear               = false;
     static constexpr const bool is_fast                 = false;
     static constexpr const bool is_value                = false;
     static constexpr const bool is_generator            = false;
@@ -1281,11 +1289,12 @@ struct etl_traits<rep_r_transformer<T, D...>> {
     using expr_t     = etl::rep_r_transformer<T, D...>;
     using sub_expr_t = std::decay_t<T>;
 
-    static constexpr const bool is_etl                 = true;
-    static constexpr const bool is_transformer = true;
-    static constexpr const bool is_view = false;
-    static constexpr const bool is_magic_view = false;
+    static constexpr const bool is_etl                  = true;
+    static constexpr const bool is_transformer          = true;
+    static constexpr const bool is_view                 = false;
+    static constexpr const bool is_magic_view           = false;
     static constexpr const bool is_fast                 = etl_traits<sub_expr_t>::is_fast;
+    static constexpr const bool is_linear               = false;
     static constexpr const bool is_value                = false;
     static constexpr const bool is_generator            = false;
     static constexpr const bool vectorizable            = false;
@@ -1331,11 +1340,12 @@ struct etl_traits<rep_l_transformer<T, D...>> {
     using expr_t     = etl::rep_l_transformer<T, D...>;
     using sub_expr_t = std::decay_t<T>;
 
-    static constexpr const bool is_etl                 = true;
-    static constexpr const bool is_transformer = true;
-    static constexpr const bool is_view = false;
-    static constexpr const bool is_magic_view = false;
+    static constexpr const bool is_etl                  = true;
+    static constexpr const bool is_transformer          = true;
+    static constexpr const bool is_view                 = false;
+    static constexpr const bool is_magic_view           = false;
     static constexpr const bool is_fast                 = etl_traits<sub_expr_t>::is_fast;
+    static constexpr const bool is_linear               = false;
     static constexpr const bool is_value                = false;
     static constexpr const bool is_generator            = false;
     static constexpr const bool vectorizable            = false;
@@ -1374,10 +1384,11 @@ struct etl_traits<dyn_rep_r_transformer<T, D>> {
     using expr_t     = etl::dyn_rep_r_transformer<T, D>;
     using sub_expr_t = std::decay_t<T>;
 
-    static constexpr const bool is_etl                 = true;
-    static constexpr const bool is_transformer = true;
-    static constexpr const bool is_view = false;
-    static constexpr const bool is_magic_view = false;
+    static constexpr const bool is_etl                  = true;
+    static constexpr const bool is_transformer          = true;
+    static constexpr const bool is_view                 = false;
+    static constexpr const bool is_magic_view           = false;
+    static constexpr const bool is_linear               = false;
     static constexpr const bool is_fast                 = false;
     static constexpr const bool is_value                = false;
     static constexpr const bool is_generator            = false;
@@ -1409,11 +1420,12 @@ struct etl_traits<dyn_rep_l_transformer<T, D>> {
     using expr_t     = etl::dyn_rep_l_transformer<T, D>;
     using sub_expr_t = std::decay_t<T>;
 
-    static constexpr const bool is_etl                 = true;
-    static constexpr const bool is_transformer = true;
-    static constexpr const bool is_view = false;
-    static constexpr const bool is_magic_view = false;
+    static constexpr const bool is_etl                  = true;
+    static constexpr const bool is_transformer          = true;
+    static constexpr const bool is_view                 = false;
+    static constexpr const bool is_magic_view           = false;
     static constexpr const bool is_fast                 = false;
+    static constexpr const bool is_linear               = false;
     static constexpr const bool is_value                = false;
     static constexpr const bool is_generator            = false;
     static constexpr const bool vectorizable            = false;

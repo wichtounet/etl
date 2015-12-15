@@ -24,15 +24,18 @@ namespace etl {
 
 struct identity_op {
     static constexpr const bool vectorizable = true;
+    static constexpr const bool linear       = true;
 };
 
 struct transform_op {
     static constexpr const bool vectorizable = false;
+    static constexpr const bool linear       = false;
 };
 
 template <typename Sub>
 struct stateful_op {
     static constexpr const bool vectorizable = Sub::vectorizable;
+    static constexpr const bool linear       = Sub::linear;
     using op                                 = Sub;
 };
 
@@ -418,6 +421,7 @@ struct etl_traits<etl::unary_expr<T, Expr, UnaryOp>> {
     static constexpr const bool is_magic_view = false;
     static constexpr const bool is_fast                 = etl_traits<sub_expr_t>::is_fast;
     static constexpr const bool is_value                = false;
+    static constexpr const bool is_linear               = etl_traits<sub_expr_t>::is_linear && UnaryOp::linear;
     static constexpr const bool is_generator            = etl_traits<sub_expr_t>::is_generator;
     static constexpr const bool vectorizable            = etl_traits<sub_expr_t>::vectorizable && UnaryOp::vectorizable;
     static constexpr const bool needs_temporary_visitor = etl_traits<sub_expr_t>::needs_temporary_visitor;

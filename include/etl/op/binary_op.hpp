@@ -26,6 +26,7 @@ struct plus_binary_op {
     using vec_type = typename V::template vec_type<T>;
 
     static constexpr const bool vectorizable = true;
+    static constexpr const bool linear       = true;
 
     static constexpr T apply(const T& lhs, const T& rhs) noexcept {
         return lhs + rhs;
@@ -49,6 +50,7 @@ struct minus_binary_op {
     using vec_type = typename V::template vec_type<T>;
 
     static constexpr const bool vectorizable = true;
+    static constexpr const bool linear       = true;
 
     static constexpr T apply(const T& lhs, const T& rhs) noexcept {
         return lhs - rhs;
@@ -72,6 +74,7 @@ struct mul_binary_op {
     using vec_type = typename V::template vec_type<T>;
 
     static constexpr const bool vectorizable = vector_mode == vector_mode_t::AVX512 ? !is_complex_t<T>::value : true ;
+    static constexpr const bool linear       = true;
 
     static constexpr T apply(const T& lhs, const T& rhs) noexcept {
         return lhs * rhs;
@@ -95,6 +98,7 @@ struct div_binary_op {
     using vec_type = typename V::template vec_type<T>;
 
     static constexpr const bool vectorizable = vector_mode == vector_mode_t::AVX512 ? !is_complex_t<T>::value : true ;
+    static constexpr const bool linear       = true;
 
     static constexpr T apply(const T& lhs, const T& rhs) noexcept {
         return lhs / rhs;
@@ -115,6 +119,7 @@ struct div_binary_op {
 template <typename T>
 struct mod_binary_op {
     static constexpr const bool vectorizable = false;
+    static constexpr const bool linear       = true;
 
     static constexpr T apply(const T& lhs, const T& rhs) noexcept {
         return lhs % rhs;
@@ -128,6 +133,7 @@ struct mod_binary_op {
 template <typename T, typename E>
 struct ranged_noise_binary_op {
     static constexpr const bool vectorizable = false;
+    static constexpr const bool linear       = true;
 
     static T apply(const T& x, E value) {
         static random_engine rand_engine(std::time(nullptr));
@@ -152,6 +158,7 @@ struct max_binary_op {
     using vec_type = typename V::template vec_type<T>;
 
     static constexpr const bool vectorizable = intel_compiler && !is_complex_t<T>::value;
+    static constexpr const bool linear       = true;
 
     static constexpr T apply(const T& x, E value) noexcept {
         return std::max(x, value);
@@ -175,6 +182,7 @@ struct min_binary_op {
     using vec_type = typename V::template vec_type<T>;
 
     static constexpr const bool vectorizable = intel_compiler && !is_complex_t<T>::value;
+    static constexpr const bool linear       = true;
 
     static constexpr T apply(const T& x, E value) noexcept {
         return std::min(x, value);
@@ -198,6 +206,7 @@ struct min_scalar_op {
     using vec_type = typename V::template vec_type<T>;
 
     static constexpr const bool vectorizable = intel_compiler && !is_complex_t<T>::value;
+    static constexpr const bool linear       = true;
 
     S s;
     explicit min_scalar_op(S s)
@@ -225,6 +234,7 @@ struct max_scalar_op {
     using vec_type = typename V::template vec_type<T>;
 
     static constexpr const bool vectorizable = intel_compiler && !is_complex_t<T>::value;
+    static constexpr const bool linear       = true;
 
     S s;
     explicit max_scalar_op(S s)
@@ -252,6 +262,7 @@ struct clip_scalar_op {
     using vec_type = typename V::template vec_type<T>;
 
     static constexpr const bool vectorizable = intel_compiler && !is_complex_t<T>::value;
+    static constexpr const bool linear       = true;
 
     S min;
     S max;
@@ -277,6 +288,7 @@ struct clip_scalar_op {
 template <typename T, typename E>
 struct pow_binary_op {
     static constexpr const bool vectorizable = false;
+    static constexpr const bool linear       = true;
 
     static constexpr T apply(const T& x, E value) noexcept {
         return std::pow(x, value);
@@ -290,6 +302,7 @@ struct pow_binary_op {
 template <typename T, typename E>
 struct one_if_binary_op {
     static constexpr const bool vectorizable = false;
+    static constexpr const bool linear       = true;
 
     static constexpr T apply(const T& x, E value) noexcept {
         return 1.0 ? x == value : 0.0;

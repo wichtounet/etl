@@ -317,11 +317,12 @@ struct etl_traits<etl::temporary_unary_expr<T, A, Op, Forced>> {
     using expr_t = etl::temporary_unary_expr<T, A, Op, Forced>;
     using a_t    = std::decay_t<A>;
 
-    static constexpr const bool is_etl                 = true;
-    static constexpr const bool is_transformer = false;
-    static constexpr const bool is_view = false;
-    static constexpr const bool is_magic_view = false;
+    static constexpr const bool is_etl                  = true;
+    static constexpr const bool is_transformer          = false;
+    static constexpr const bool is_view                 = false;
+    static constexpr const bool is_magic_view           = false;
     static constexpr const bool is_fast                 = etl_traits<a_t>::is_fast;
+    static constexpr const bool is_linear               = true;
     static constexpr const bool is_value                = false;
     static constexpr const bool is_generator            = false;
     static constexpr const bool vectorizable            = true;
@@ -360,11 +361,12 @@ struct etl_traits<etl::temporary_binary_expr<T, A, B, Op, Forced>> {
     using a_t    = std::decay_t<A>;
     using b_t    = std::decay_t<B>;
 
-    static constexpr const bool is_etl                 = true;
-    static constexpr const bool is_transformer = false;
-    static constexpr const bool is_view = false;
-    static constexpr const bool is_magic_view = false;
+    static constexpr const bool is_etl                  = true;
+    static constexpr const bool is_transformer          = false;
+    static constexpr const bool is_view                 = false;
+    static constexpr const bool is_magic_view           = false;
     static constexpr const bool is_fast                 = etl_traits<a_t>::is_fast && etl_traits<b_t>::is_fast;
+    static constexpr const bool is_linear               = true;
     static constexpr const bool is_value                = false;
     static constexpr const bool is_generator            = false;
     static constexpr const bool vectorizable            = true;
