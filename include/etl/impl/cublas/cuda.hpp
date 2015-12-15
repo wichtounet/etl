@@ -18,11 +18,17 @@ namespace cuda {
 template <typename T>
 struct cuda_memory {
     T* memory;
-    cuda_memory(T* memory)
-            : memory(memory) {}
+
+    cuda_memory(T* memory) : memory(memory) {}
+
     T* get() const {
         return memory;
     }
+
+    bool is_set() const {
+        return memory;
+    }
+
     ~cuda_memory() {
         cudaFree(memory);
     }
