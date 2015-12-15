@@ -117,6 +117,14 @@ struct gpu_able {
     }
 
     /*!
+     * \brief Release the GPU memory for another expression to use
+     * \return A rvalue reference to the gpu_memory_handler.
+     */
+    impl::cuda::cuda_memory<T>&& gpu_release(){
+        return std::move(gpu_memory_handler);
+    }
+
+    /*!
      * \brief Copy back from the GPU to the expression memory.
      */
     void gpu_copy_from(){
