@@ -22,6 +22,7 @@
 #include "etl/crtp/value_testable.hpp"
 #include "etl/crtp/dim_testable.hpp"
 #include "etl/crtp/expression_able.hpp"
+#include "etl/crtp/gpu_able.hpp"
 
 namespace etl {
 
@@ -31,7 +32,7 @@ namespace etl {
  * The matrix support an arbitrary number of dimensions.
  */
 template <typename T, order SO, std::size_t D>
-struct dyn_matrix_impl final : dyn_base<T, D>, inplace_assignable<dyn_matrix_impl<T, SO, D>>, comparable<dyn_matrix_impl<T, SO, D>>, expression_able<dyn_matrix_impl<T, SO, D>>, value_testable<dyn_matrix_impl<T, SO, D>>, dim_testable<dyn_matrix_impl<T, SO, D>> {
+struct dyn_matrix_impl final : dyn_base<T, D>, inplace_assignable<dyn_matrix_impl<T, SO, D>>, comparable<dyn_matrix_impl<T, SO, D>>, expression_able<dyn_matrix_impl<T, SO, D>>, value_testable<dyn_matrix_impl<T, SO, D>>, dim_testable<dyn_matrix_impl<T, SO, D>>, gpu_able<T, dyn_matrix_impl<T, SO, D>> {
     static constexpr const std::size_t n_dimensions = D;
     static constexpr const order storage_order      = SO;
     static constexpr const std::size_t alignment    = intrinsic_traits<T>::alignment;

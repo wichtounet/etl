@@ -18,6 +18,7 @@
 #include "etl/crtp/value_testable.hpp"
 #include "etl/crtp/dim_testable.hpp"
 #include "etl/crtp/inplace_assignable.hpp"
+#include "etl/crtp/gpu_able.hpp"
 
 namespace etl {
 
@@ -109,7 +110,7 @@ public:
 };
 
 template <typename T, typename Expr>
-struct unary_expr<T, Expr, identity_op> : inplace_assignable<unary_expr<T, Expr, identity_op>>, comparable<unary_expr<T, Expr, identity_op>>, value_testable<unary_expr<T, Expr, identity_op>>, dim_testable<unary_expr<T, Expr, identity_op>> {
+struct unary_expr<T, Expr, identity_op> : inplace_assignable<unary_expr<T, Expr, identity_op>>, comparable<unary_expr<T, Expr, identity_op>>, value_testable<unary_expr<T, Expr, identity_op>>, dim_testable<unary_expr<T, Expr, identity_op>>, gpu_able<T, unary_expr<T, Expr, identity_op>> {
 private:
     static_assert(is_etl_expr<Expr>::value, "Only ETL expressions can be used in unary_expr");
 

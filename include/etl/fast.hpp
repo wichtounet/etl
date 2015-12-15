@@ -20,6 +20,7 @@
 #include "etl/crtp/value_testable.hpp"
 #include "etl/crtp/dim_testable.hpp"
 #include "etl/crtp/expression_able.hpp"
+#include "etl/crtp/gpu_able.hpp"
 
 namespace etl {
 
@@ -84,7 +85,7 @@ struct is_vector<std::vector<N>> : std::true_type {};
  * The matrix support an arbitrary number of dimensions.
  */
 template <typename T, typename ST, order SO, std::size_t... Dims>
-struct fast_matrix_impl final : inplace_assignable<fast_matrix_impl<T, ST, SO, Dims...>>, comparable<fast_matrix_impl<T, ST, SO, Dims...>>, expression_able<fast_matrix_impl<T, ST, SO, Dims...>>, value_testable<fast_matrix_impl<T, ST, SO, Dims...>>, dim_testable<fast_matrix_impl<T, ST, SO, Dims...>> {
+struct fast_matrix_impl final : inplace_assignable<fast_matrix_impl<T, ST, SO, Dims...>>, comparable<fast_matrix_impl<T, ST, SO, Dims...>>, expression_able<fast_matrix_impl<T, ST, SO, Dims...>>, value_testable<fast_matrix_impl<T, ST, SO, Dims...>>, dim_testable<fast_matrix_impl<T, ST, SO, Dims...>>, gpu_able<T, fast_matrix_impl<T, ST, SO, Dims...>> {
     static_assert(sizeof...(Dims) > 0, "At least one dimension must be specified");
 
 public:
