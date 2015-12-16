@@ -94,6 +94,11 @@ struct dim_view {
         return sub;
     }
 
+    template<typename E>
+    bool alias(const E& rhs) const noexcept {
+        return sub.alias(rhs);
+    }
+
     // Direct memory access
 
     memory_type memory_start() noexcept {
@@ -162,6 +167,11 @@ struct sub_view {
 
     parent_type& value() {
         return parent;
+    }
+
+    template<typename E>
+    bool alias(const E& rhs) const noexcept {
+        return parent.alias(rhs);
     }
 
     // Direct memory access
@@ -263,6 +273,11 @@ struct fast_matrix_view {
         return nth_size<D, 0, Dims...>::value;
     }
 
+    template<typename E>
+    bool alias(const E& rhs) const noexcept {
+        return sub.alias(rhs);
+    }
+
     // Direct memory access
 
     memory_type memory_start() noexcept {
@@ -323,6 +338,11 @@ struct dyn_vector_view {
 
     sub_type& value() {
         return sub;
+    }
+
+    template<typename E>
+    bool alias(const E& rhs) const noexcept {
+        return sub.alias(rhs);
     }
 
     // Direct memory access
@@ -398,6 +418,11 @@ struct dyn_matrix_view {
 
     sub_type& value() {
         return sub;
+    }
+
+    template<typename E>
+    bool alias(const E& rhs) const noexcept {
+        return sub.alias(rhs);
     }
 
     // Direct memory access

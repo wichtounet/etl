@@ -243,7 +243,7 @@ public:
 
     template<typename E, cpp_disable_if(has_direct_access<Expr>::value && all_dma<E>::value)>
     bool alias(const E& rhs) const noexcept {
-        return rhs.alias(*this);
+        return _value.alias(rhs);
     }
 
     iterator<this_type, non_const_return_ref, false> begin() noexcept {
