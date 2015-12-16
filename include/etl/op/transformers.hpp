@@ -42,6 +42,10 @@ struct rep_r_transformer {
         return selected_only(std::make_index_sequence<sub_d>(), sizes...);
     }
 
+    /*!
+     * \brief Returns the value on which the transformer is working.
+     * \return A reference  to the value on which the transformer is working.
+     */
     sub_type& value() {
         return sub;
     }
@@ -89,6 +93,10 @@ struct rep_l_transformer {
         return selected_only(make_index_range<sizeof...(D), dimensions>(), sizes...);
     }
 
+    /*!
+     * \brief Returns the value on which the transformer is working.
+     * \return A reference  to the value on which the transformer is working.
+     */
     sub_type& value() {
         return sub;
     }
@@ -140,6 +148,10 @@ struct dyn_rep_r_transformer {
         return selected_only(std::make_index_sequence<sub_d>(), sizes...);
     }
 
+    /*!
+     * \brief Returns the value on which the transformer is working.
+     * \return A reference  to the value on which the transformer is working.
+     */
     sub_type& value() {
         return sub;
     }
@@ -191,6 +203,10 @@ struct dyn_rep_l_transformer {
         return selected_only(make_index_range<D, dimensions>(), sizes...);
     }
 
+    /*!
+     * \brief Returns the value on which the transformer is working.
+     * \return A reference  to the value on which the transformer is working.
+     */
     sub_type& value() {
         return sub;
     }
@@ -235,6 +251,10 @@ struct sum_r_transformer {
         return sum(sub(i));
     }
 
+    /*!
+     * \brief Returns the value on which the transformer is working.
+     * \return A reference  to the value on which the transformer is working.
+     */
     sub_type& value() {
         return sub;
     }
@@ -273,6 +293,10 @@ struct mean_r_transformer {
         return mean(sub(i));
     }
 
+    /*!
+     * \brief Returns the value on which the transformer is working.
+     * \return A reference  to the value on which the transformer is working.
+     */
     sub_type& value() {
         return sub;
     }
@@ -329,6 +353,10 @@ struct sum_l_transformer {
         return m;
     }
 
+    /*!
+     * \brief Returns the value on which the transformer is working.
+     * \return A reference  to the value on which the transformer is working.
+     */
     sub_type& value() {
         return sub;
     }
@@ -385,6 +413,10 @@ struct mean_l_transformer {
         return m / dim<0>(sub);
     }
 
+    /*!
+     * \brief Returns the value on which the transformer is working.
+     * \return A reference  to the value on which the transformer is working.
+     */
     sub_type& value() {
         return sub;
     }
@@ -444,6 +476,10 @@ struct hflip_transformer {
         return sub(i, columns(sub) - 1 - j);
     }
 
+    /*!
+     * \brief Returns the value on which the transformer is working.
+     * \return A reference  to the value on which the transformer is working.
+     */
     sub_type& value() {
         return sub;
     }
@@ -503,6 +539,10 @@ struct vflip_transformer {
         return sub(rows(sub) - 1 - i, j);
     }
 
+    /*!
+     * \brief Returns the value on which the transformer is working.
+     * \return A reference  to the value on which the transformer is working.
+     */
     sub_type& value() {
         return sub;
     }
@@ -552,6 +592,10 @@ struct fflip_transformer {
         return sub(rows(sub) - 1 - i, columns(sub) - 1 - j);
     }
 
+    /*!
+     * \brief Returns the value on which the transformer is working.
+     * \return A reference  to the value on which the transformer is working.
+     */
     sub_type& value() {
         return sub;
     }
@@ -613,6 +657,10 @@ struct transpose_transformer {
         return sub(j, i);
     }
 
+    /*!
+     * \brief Returns the value on which the transformer is working.
+     * \return A reference  to the value on which the transformer is working.
+     */
     sub_type& value() {
         return sub;
     }
@@ -740,6 +788,10 @@ struct dyn_convmtx_transformer {
         }
     }
 
+    /*!
+     * \brief Returns the value on which the transformer is working.
+     * \return A reference  to the value on which the transformer is working.
+     */
     sub_type& value() {
         return sub;
     }
@@ -813,6 +865,10 @@ struct dyn_convmtx2_transformer {
         }
     }
 
+    /*!
+     * \brief Returns the value on which the transformer is working.
+     * \return A reference  to the value on which the transformer is working.
+     */
     sub_type& value() {
         return sub;
     }
@@ -945,6 +1001,10 @@ struct p_max_pool_transformer {
         return p;
     }
 
+    /*!
+     * \brief Returns the value on which the transformer is working.
+     * \return A reference  to the value on which the transformer is working.
+     */
     sub_type& value() {
         return sub;
     }
@@ -1015,6 +1075,10 @@ struct p_max_pool_h_transformer : p_max_pool_transformer<T, C1, C2> {
         return std::exp(sub(k, i, j)) / (1.0 + base_type::pool(k, i, j));
     }
 
+    /*!
+     * \brief Returns the value on which the transformer is working.
+     * \return A reference  to the value on which the transformer is working.
+     */
     sub_type& value() {
         return sub;
     }
@@ -1085,6 +1149,10 @@ struct p_max_pool_p_transformer : p_max_pool_transformer<T, C1, C2> {
         return 1.0 / (1.0 + base_type::pool(k, i * C1, j * C2));
     }
 
+    /*!
+     * \brief Returns the value on which the transformer is working.
+     * \return A reference  to the value on which the transformer is working.
+     */
     sub_type& value() {
         return sub;
     }
