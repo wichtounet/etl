@@ -43,3 +43,19 @@ TEMPLATE_TEST_CASE_2("alias/traits/1", "[alias][traits]", Z, float, double) {
     REQUIRE(!etl::decay_traits<decltype(fflip(a))>::is_linear);
     REQUIRE(!etl::decay_traits<decltype(a + fflip(a))>::is_linear);
 }
+
+TEMPLATE_TEST_CASE_2("alias/transpose/1", "[alias][transpose]", Z, float, double) {
+    etl::fast_matrix<Z, 3, 3> a({1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0});
+
+    a = transpose(a);
+
+    REQUIRE(a(0, 0) == 1.0);
+    REQUIRE(a(0, 1) == 4.0);
+    REQUIRE(a(0, 2) == 7.0);
+    REQUIRE(a(1, 0) == 2.0);
+    REQUIRE(a(1, 1) == 5.0);
+    REQUIRE(a(1, 2) == 8.0);
+    REQUIRE(a(2, 0) == 3.0);
+    REQUIRE(a(2, 1) == 6.0);
+    REQUIRE(a(2, 2) == 9.0);
+}
