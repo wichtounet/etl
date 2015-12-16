@@ -26,6 +26,10 @@ struct abs_unary_op {
         return std::abs(x);
     }
 
+    /*!
+     * \brief Returns a textual representation of the operator
+     * \return a string representing the operator
+     */
     static std::string desc() noexcept {
         return "abs";
     }
@@ -50,6 +54,10 @@ struct log_unary_op {
     }
 #endif
 
+    /*!
+     * \brief Returns a textual representation of the operator
+     * \return a string representing the operator
+     */
     static std::string desc() noexcept {
         return "log";
     }
@@ -72,6 +80,10 @@ struct sqrt_unary_op {
         return V::sqrt(x);
     }
 
+    /*!
+     * \brief Returns a textual representation of the operator
+     * \return a string representing the operator
+     */
     static std::string desc() noexcept {
         return "sqrt";
     }
@@ -96,6 +108,10 @@ struct exp_unary_op {
     }
 #endif
 
+    /*!
+     * \brief Returns a textual representation of the operator
+     * \return a string representing the operator
+     */
     static std::string desc() noexcept {
         return "exp";
     }
@@ -110,6 +126,10 @@ struct sign_unary_op {
         return math::sign(x);
     }
 
+    /*!
+     * \brief Returns a textual representation of the operator
+     * \return a string representing the operator
+     */
     static std::string desc() noexcept {
         return "sign";
     }
@@ -124,6 +144,10 @@ struct sigmoid_unary_op {
         return math::logistic_sigmoid(x);
     }
 
+    /*!
+     * \brief Returns a textual representation of the operator
+     * \return a string representing the operator
+     */
     static std::string desc() noexcept {
         return "sigmoid";
     }
@@ -138,6 +162,10 @@ struct softplus_unary_op {
         return math::softplus(x);
     }
 
+    /*!
+     * \brief Returns a textual representation of the operator
+     * \return a string representing the operator
+     */
     static std::string desc() noexcept {
         return "softplus";
     }
@@ -160,6 +188,10 @@ struct minus_unary_op {
         return V::minus(x);
     }
 
+    /*!
+     * \brief Returns a textual representation of the operator
+     * \return a string representing the operator
+     */
     static std::string desc() noexcept {
         return "-";
     }
@@ -182,6 +214,10 @@ struct plus_unary_op {
         return x;
     }
 
+    /*!
+     * \brief Returns a textual representation of the operator
+     * \return a string representing the operator
+     */
     static std::string desc() noexcept {
         return "+";
     }
@@ -219,6 +255,10 @@ struct fast_sigmoid_unary_op {
         return 0.5 * (z + 1.0);
     }
 
+    /*!
+     * \brief Returns a textual representation of the operator
+     * \return a string representing the operator
+     */
     static std::string desc() noexcept {
         return "fast_sigmoid";
     }
@@ -233,6 +273,10 @@ struct tan_unary_op {
         return std::tan(x);
     }
 
+    /*!
+     * \brief Returns a textual representation of the operator
+     * \return a string representing the operator
+     */
     static std::string desc() noexcept {
         return "tan";
     }
@@ -247,6 +291,10 @@ struct cos_unary_op {
         return std::cos(x);
     }
 
+    /*!
+     * \brief Returns a textual representation of the operator
+     * \return a string representing the operator
+     */
     static std::string desc() noexcept {
         return "cos";
     }
@@ -261,6 +309,10 @@ struct sin_unary_op {
         return std::sin(x);
     }
 
+    /*!
+     * \brief Returns a textual representation of the operator
+     * \return a string representing the operator
+     */
     static std::string desc() noexcept {
         return "sin";
     }
@@ -275,6 +327,10 @@ struct tanh_unary_op {
         return std::tanh(x);
     }
 
+    /*!
+     * \brief Returns a textual representation of the operator
+     * \return a string representing the operator
+     */
     static std::string desc() noexcept {
         return "tanh";
     }
@@ -289,6 +345,10 @@ struct cosh_unary_op {
         return std::cosh(x);
     }
 
+    /*!
+     * \brief Returns a textual representation of the operator
+     * \return a string representing the operator
+     */
     static std::string desc() noexcept {
         return "cosh";
     }
@@ -303,6 +363,10 @@ struct sinh_unary_op {
         return std::sinh(x);
     }
 
+    /*!
+     * \brief Returns a textual representation of the operator
+     * \return a string representing the operator
+     */
     static std::string desc() noexcept {
         return "sinh";
     }
@@ -317,6 +381,10 @@ struct real_unary_op {
         return get_real(x);
     }
 
+    /*!
+     * \brief Returns a textual representation of the operator
+     * \return a string representing the operator
+     */
     static std::string desc() noexcept {
         return "real";
     }
@@ -331,6 +399,10 @@ struct imag_unary_op {
         return get_imag(x);
     }
 
+    /*!
+     * \brief Returns a textual representation of the operator
+     * \return a string representing the operator
+     */
     static std::string desc() noexcept {
         return "imag";
     }
@@ -345,6 +417,10 @@ struct conj_unary_op {
         return get_conj(x);
     }
 
+    /*!
+     * \brief Returns a textual representation of the operator
+     * \return a string representing the operator
+     */
     static std::string desc() noexcept {
         return "conj";
     }
@@ -359,6 +435,10 @@ struct relu_derivative_op {
         return x > 0.0 ? 1.0 : 0.0;
     }
 
+    /*!
+     * \brief Returns a textual representation of the operator
+     * \return a string representing the operator
+     */
     static std::string desc() noexcept {
         return "relu_derivative_op";
     }
@@ -376,6 +456,10 @@ struct bernoulli_unary_op {
         return x > distribution(rand_engine) ? 1.0 : 0.0;
     }
 
+    /*!
+     * \brief Returns a textual representation of the operator
+     * \return a string representing the operator
+     */
     static std::string desc() noexcept {
         return "bernoulli";
     }
@@ -393,6 +477,10 @@ struct reverse_bernoulli_unary_op {
         return x > distribution(rand_engine) ? 0.0 : 1.0;
     }
 
+    /*!
+     * \brief Returns a textual representation of the operator
+     * \return a string representing the operator
+     */
     static std::string desc() noexcept {
         return "bernoulli_reverse";
     }
@@ -410,6 +498,10 @@ struct uniform_noise_unary_op {
         return x + real_distribution(rand_engine);
     }
 
+    /*!
+     * \brief Returns a textual representation of the operator
+     * \return a string representing the operator
+     */
     static std::string desc() noexcept {
         return "uniform_noise";
     }
@@ -427,6 +519,10 @@ struct normal_noise_unary_op {
         return x + normal_distribution(rand_engine);
     }
 
+    /*!
+     * \brief Returns a textual representation of the operator
+     * \return a string representing the operator
+     */
     static std::string desc() noexcept {
         return "normal_noise";
     }
@@ -445,6 +541,10 @@ struct logistic_noise_unary_op {
         return x + noise_distribution(rand_engine);
     }
 
+    /*!
+     * \brief Returns a textual representation of the operator
+     * \return a string representing the operator
+     */
     static std::string desc() noexcept {
         return "logistic_noise";
     }
