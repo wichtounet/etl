@@ -62,6 +62,11 @@ struct magic_view {
     value_type operator()(std::size_t i, std::size_t j) const {
         return detail::compute<value_type>(n, i, j);
     }
+
+    template<typename E>
+    constexpr bool alias(const E& /*rhs*/) const noexcept {
+        return false;
+    }
 };
 
 template <typename V, std::size_t N>
@@ -87,17 +92,23 @@ struct fast_magic_view {
     value_type operator()(std::size_t i, std::size_t j) const {
         return detail::compute<value_type>(N, i, j);
     }
+
+    template<typename E>
+    constexpr bool alias(const E& /*rhs*/) const noexcept {
+        return false;
+    }
 };
 
 template <typename V>
 struct etl_traits<etl::magic_view<V>> {
     using expr_t = etl::magic_view<V>;
 
-    static constexpr const bool is_etl                 = true;
-    static constexpr const bool is_transformer = false;
-    static constexpr const bool is_view = false;
-    static constexpr const bool is_magic_view = true;
+    static constexpr const bool is_etl                  = true;
+    static constexpr const bool is_transformer          = false;
+    static constexpr const bool is_view                 = false;
+    static constexpr const bool is_magic_view           = true;
     static constexpr const bool is_fast                 = false;
+    static constexpr const bool is_linear               = true;
     static constexpr const bool is_value                = false;
     static constexpr const bool is_generator            = false;
     static constexpr const bool vectorizable            = false;
@@ -122,11 +133,12 @@ template <std::size_t N, typename V>
 struct etl_traits<etl::fast_magic_view<V, N>> {
     using expr_t = etl::fast_magic_view<V, N>;
 
-    static constexpr const bool is_etl                 = true;
-    static constexpr const bool is_transformer = false;
-    static constexpr const bool is_view = false;
-    static constexpr const bool is_magic_view = true;
+    static constexpr const bool is_etl                  = true;
+    static constexpr const bool is_transformer          = false;
+    static constexpr const bool is_view                 = false;
+    static constexpr const bool is_magic_view           = true;
     static constexpr const bool is_fast                 = true;
+    static constexpr const bool is_linear               = true;
     static constexpr const bool is_value                = false;
     static constexpr const bool is_generator            = false;
     static constexpr const bool vectorizable            = false;

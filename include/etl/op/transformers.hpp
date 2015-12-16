@@ -46,6 +46,11 @@ struct rep_r_transformer {
         return sub;
     }
 
+    template<typename E>
+    bool alias(const E& rhs) const noexcept {
+        return sub.alias(rhs);
+    }
+
 private:
     template <typename... Sizes, std::size_t... I>
     value_type selected_only(const std::index_sequence<I...>& /*seq*/, Sizes... sizes) const {
@@ -81,6 +86,11 @@ struct rep_l_transformer {
 
     sub_type& value() {
         return sub;
+    }
+
+    template<typename E>
+    bool alias(const E& rhs) const noexcept {
+        return sub.alias(rhs);
     }
 
 private:
@@ -124,6 +134,11 @@ struct dyn_rep_r_transformer {
         return sub;
     }
 
+    template<typename E>
+    bool alias(const E& rhs) const noexcept {
+        return sub.alias(rhs);
+    }
+
 private:
     template <typename... Sizes, std::size_t... I>
     value_type selected_only(const std::index_sequence<I...>& /*seq*/, Sizes... sizes) const {
@@ -165,6 +180,11 @@ struct dyn_rep_l_transformer {
         return sub;
     }
 
+    template<typename E>
+    bool alias(const E& rhs) const noexcept {
+        return sub.alias(rhs);
+    }
+
 private:
     template <typename... Sizes, std::size_t... I>
     value_type selected_only(const std::index_sequence<I...>& /*seq*/, Sizes... sizes) const {
@@ -198,6 +218,11 @@ struct sum_r_transformer {
     sub_type& value() {
         return sub;
     }
+
+    template<typename E>
+    bool alias(const E& rhs) const noexcept {
+        return sub.alias(rhs);
+    }
 };
 
 template <typename T>
@@ -225,6 +250,11 @@ struct mean_r_transformer {
 
     sub_type& value() {
         return sub;
+    }
+
+    template<typename E>
+    bool alias(const E& rhs) const noexcept {
+        return sub.alias(rhs);
     }
 };
 
@@ -272,6 +302,11 @@ struct sum_l_transformer {
     sub_type& value() {
         return sub;
     }
+
+    template<typename E>
+    bool alias(const E& rhs) const noexcept {
+        return sub.alias(rhs);
+    }
 };
 
 template <typename T>
@@ -317,6 +352,11 @@ struct mean_l_transformer {
 
     sub_type& value() {
         return sub;
+    }
+
+    template<typename E>
+    bool alias(const E& rhs) const noexcept {
+        return sub.alias(rhs);
     }
 };
 
@@ -367,6 +407,11 @@ struct hflip_transformer {
     sub_type& value() {
         return sub;
     }
+
+    template<typename E>
+    bool alias(const E& rhs) const noexcept {
+        return sub.alias(rhs);
+    }
 };
 
 template <typename T>
@@ -416,6 +461,11 @@ struct vflip_transformer {
     sub_type& value() {
         return sub;
     }
+
+    template<typename E>
+    bool alias(const E& rhs) const noexcept {
+        return sub.alias(rhs);
+    }
 };
 
 template <typename T>
@@ -454,6 +504,11 @@ struct fflip_transformer {
 
     sub_type& value() {
         return sub;
+    }
+
+    template<typename E>
+    bool alias(const E& rhs) const noexcept {
+        return sub.alias(rhs);
     }
 };
 
@@ -505,6 +560,11 @@ struct transpose_transformer {
 
     sub_type& value() {
         return sub;
+    }
+
+    template<typename E>
+    bool alias(const E& rhs) const noexcept {
+        return sub.alias(rhs);
     }
 };
 
@@ -569,6 +629,11 @@ struct mm_mul_transformer {
     right_type& rhs() {
         return right;
     }
+
+    template<typename E>
+    bool alias(const E& rhs) const noexcept {
+        return left.alias(rhs) || right.alias(rhs);
+    }
 };
 
 template <typename T>
@@ -612,6 +677,11 @@ struct dyn_convmtx_transformer {
 
     sub_type& value() {
         return sub;
+    }
+
+    template<typename E>
+    bool alias(const E& rhs) const noexcept {
+        return sub.alias(rhs);
     }
 };
 
@@ -675,6 +745,11 @@ struct dyn_convmtx2_transformer {
 
     sub_type& value() {
         return sub;
+    }
+
+    template<typename E>
+    bool alias(const E& rhs) const noexcept {
+        return sub.alias(rhs);
     }
 };
 
@@ -798,6 +873,11 @@ struct p_max_pool_transformer {
     sub_type& value() {
         return sub;
     }
+
+    template<typename E>
+    bool alias(const E& rhs) const noexcept {
+        return sub.alias(rhs);
+    }
 };
 
 template <typename T, std::size_t C1, std::size_t C2>
@@ -858,6 +938,11 @@ struct p_max_pool_h_transformer : p_max_pool_transformer<T, C1, C2> {
     sub_type& value() {
         return sub;
     }
+
+    template<typename E>
+    bool alias(const E& rhs) const noexcept {
+        return sub.alias(rhs);
+    }
 };
 
 template <typename T, std::size_t C1, std::size_t C2>
@@ -917,6 +1002,11 @@ struct p_max_pool_p_transformer : p_max_pool_transformer<T, C1, C2> {
 
     sub_type& value() {
         return sub;
+    }
+
+    template<typename E>
+    bool alias(const E& rhs) const noexcept {
+        return sub.alias(rhs);
     }
 };
 

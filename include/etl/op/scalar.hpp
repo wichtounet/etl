@@ -54,11 +54,12 @@ struct scalar {
  */
 template <typename T>
 struct etl_traits<etl::scalar<T>, void> {
-    static constexpr const bool is_etl                 = true;
-    static constexpr const bool is_transformer = false;
-    static constexpr const bool is_view = false;
-    static constexpr const bool is_magic_view = false;
+    static constexpr const bool is_etl                  = true;
+    static constexpr const bool is_transformer          = false;
+    static constexpr const bool is_view                 = false;
+    static constexpr const bool is_magic_view           = false;
     static constexpr const bool is_fast                 = true;
+    static constexpr const bool is_linear               = true;
     static constexpr const bool is_value                = false;
     static constexpr const bool is_generator            = true;
     static constexpr const bool vectorizable            = true;

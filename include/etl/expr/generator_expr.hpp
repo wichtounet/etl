@@ -49,6 +49,11 @@ public:
         return generator();
     }
 
+    template<typename E>
+    constexpr bool alias(const E& /*rhs*/) const noexcept {
+        return false;
+    }
+
     value_type operator()() const {
         return generator();
     }
@@ -63,11 +68,12 @@ public:
  */
 template <typename Generator>
 struct etl_traits<etl::generator_expr<Generator>> {
-    static constexpr const bool is_etl                 = true;
-    static constexpr const bool is_transformer = false;
-    static constexpr const bool is_view = false;
-    static constexpr const bool is_magic_view = false;
+    static constexpr const bool is_etl                  = true;
+    static constexpr const bool is_transformer          = false;
+    static constexpr const bool is_view                 = false;
+    static constexpr const bool is_magic_view           = false;
     static constexpr const bool is_fast                 = true;
+    static constexpr const bool is_linear               = true;
     static constexpr const bool is_value                = false;
     static constexpr const bool is_generator            = true;
     static constexpr const bool vectorizable            = false;

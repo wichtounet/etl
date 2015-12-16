@@ -484,6 +484,16 @@ public:
         }
     }
 
+    template<typename E, cpp_enable_if(is_sparse_matrix<E>::value)>
+    bool alias(const E& rhs) const noexcept {
+        return this == &rhs;
+    }
+
+    template<typename E, cpp_disable_if(is_sparse_matrix<E>::value)>
+    bool alias(const E& rhs) const noexcept {
+        return rhs.alias(*this);
+    }
+
     //Destructor
 
     ~sparse_matrix_impl() noexcept {

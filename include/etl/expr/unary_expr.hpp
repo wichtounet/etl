@@ -342,6 +342,11 @@ public:
         return value()(args...);
     }
 
+    template<typename E>
+    bool alias(const E& rhs) const noexcept {
+        return _value.alias(rhs);
+    }
+
     iterator<const this_type, false, false> begin() const noexcept {
         return {*this, 0};
     }
@@ -411,6 +416,11 @@ public:
         static_assert(cpp::all_convertible_to<std::size_t, S...>::value, "Invalid size types");
 
         return op.apply(value()(args...));
+    }
+
+    template<typename E>
+    bool alias(const E& rhs) const noexcept {
+        return _value.alias(rhs);
     }
 
     iterator<const this_type, false, false> begin() const noexcept {
