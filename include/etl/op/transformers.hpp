@@ -18,8 +18,8 @@ namespace etl {
 
 template <typename T, std::size_t... D>
 struct rep_r_transformer {
-    using sub_type   = T;
-    using value_type = value_t<T>;
+    using sub_type   = T;           ///< The type on which the expression works
+    using value_type = value_t<T>;  ///< The type of valuie
 
     static constexpr const std::size_t sub_d      = decay_traits<sub_type>::dimensions();
     static constexpr const std::size_t dimensions = sizeof...(D) + sub_d;
@@ -46,6 +46,11 @@ struct rep_r_transformer {
         return sub;
     }
 
+    /*!
+     * \brief Test if this expression aliases with the given expression
+     * \param rhs The other expression to test
+     * \return true if the two expressions aliases, false otherwise
+     */
     template<typename E>
     bool alias(const E& rhs) const noexcept {
         return sub.alias(rhs);
@@ -60,8 +65,8 @@ private:
 
 template <typename T, std::size_t... D>
 struct rep_l_transformer {
-    using sub_type   = T;
-    using value_type = value_t<T>;
+    using sub_type   = T;           ///< The type on which the expression works
+    using value_type = value_t<T>;  ///< The type of valuie
 
     static constexpr const std::size_t sub_d      = decay_traits<sub_type>::dimensions();
     static constexpr const std::size_t dimensions = sizeof...(D) + sub_d;
@@ -88,6 +93,11 @@ struct rep_l_transformer {
         return sub;
     }
 
+    /*!
+     * \brief Test if this expression aliases with the given expression
+     * \param rhs The other expression to test
+     * \return true if the two expressions aliases, false otherwise
+     */
     template<typename E>
     bool alias(const E& rhs) const noexcept {
         return sub.alias(rhs);
@@ -102,8 +112,8 @@ private:
 
 template <typename T, std::size_t D>
 struct dyn_rep_r_transformer {
-    using sub_type   = T;
-    using value_type = value_t<T>;
+    using sub_type   = T;           ///< The type on which the expression works
+    using value_type = value_t<T>;  ///< The type of valuie
 
     static constexpr const std::size_t sub_d      = decay_traits<sub_type>::dimensions();
     static constexpr const std::size_t dimensions = D + sub_d;
@@ -134,6 +144,11 @@ struct dyn_rep_r_transformer {
         return sub;
     }
 
+    /*!
+     * \brief Test if this expression aliases with the given expression
+     * \param rhs The other expression to test
+     * \return true if the two expressions aliases, false otherwise
+     */
     template<typename E>
     bool alias(const E& rhs) const noexcept {
         return sub.alias(rhs);
@@ -148,8 +163,8 @@ private:
 
 template <typename T, std::size_t D>
 struct dyn_rep_l_transformer {
-    using sub_type   = T;
-    using value_type = value_t<T>;
+    using sub_type   = T;           ///< The type on which the expression works
+    using value_type = value_t<T>;  ///< The type of valuie
 
     static constexpr const std::size_t sub_d      = decay_traits<sub_type>::dimensions();
     static constexpr const std::size_t dimensions = D + sub_d;
@@ -180,6 +195,11 @@ struct dyn_rep_l_transformer {
         return sub;
     }
 
+    /*!
+     * \brief Test if this expression aliases with the given expression
+     * \param rhs The other expression to test
+     * \return true if the two expressions aliases, false otherwise
+     */
     template<typename E>
     bool alias(const E& rhs) const noexcept {
         return sub.alias(rhs);
@@ -194,8 +214,8 @@ private:
 
 template <typename T>
 struct sum_r_transformer {
-    using sub_type   = T;
-    using value_type = value_t<T>;
+    using sub_type   = T;           ///< The type on which the expression works
+    using value_type = value_t<T>;  ///< The type of valuie
 
     sub_type sub;
 
@@ -219,6 +239,11 @@ struct sum_r_transformer {
         return sub;
     }
 
+    /*!
+     * \brief Test if this expression aliases with the given expression
+     * \param rhs The other expression to test
+     * \return true if the two expressions aliases, false otherwise
+     */
     template<typename E>
     bool alias(const E& rhs) const noexcept {
         return sub.alias(rhs);
@@ -227,8 +252,8 @@ struct sum_r_transformer {
 
 template <typename T>
 struct mean_r_transformer {
-    using sub_type   = T;
-    using value_type = value_t<T>;
+    using sub_type   = T;           ///< The type on which the expression works
+    using value_type = value_t<T>;  ///< The type of valuie
 
     sub_type sub;
 
@@ -252,6 +277,11 @@ struct mean_r_transformer {
         return sub;
     }
 
+    /*!
+     * \brief Test if this expression aliases with the given expression
+     * \param rhs The other expression to test
+     * \return true if the two expressions aliases, false otherwise
+     */
     template<typename E>
     bool alias(const E& rhs) const noexcept {
         return sub.alias(rhs);
@@ -260,8 +290,8 @@ struct mean_r_transformer {
 
 template <typename T>
 struct sum_l_transformer {
-    using sub_type   = T;
-    using value_type = value_t<T>;
+    using sub_type   = T;           ///< The type on which the expression works
+    using value_type = value_t<T>;  ///< The type of valuie
 
     sub_type sub;
 
@@ -303,6 +333,11 @@ struct sum_l_transformer {
         return sub;
     }
 
+    /*!
+     * \brief Test if this expression aliases with the given expression
+     * \param rhs The other expression to test
+     * \return true if the two expressions aliases, false otherwise
+     */
     template<typename E>
     bool alias(const E& rhs) const noexcept {
         return sub.alias(rhs);
@@ -311,8 +346,8 @@ struct sum_l_transformer {
 
 template <typename T>
 struct mean_l_transformer {
-    using sub_type   = T;
-    using value_type = value_t<T>;
+    using sub_type   = T;           ///< The type on which the expression works
+    using value_type = value_t<T>;  ///< The type of valuie
 
     sub_type sub;
 
@@ -354,6 +389,11 @@ struct mean_l_transformer {
         return sub;
     }
 
+    /*!
+     * \brief Test if this expression aliases with the given expression
+     * \param rhs The other expression to test
+     * \return true if the two expressions aliases, false otherwise
+     */
     template<typename E>
     bool alias(const E& rhs) const noexcept {
         return sub.alias(rhs);
@@ -362,8 +402,8 @@ struct mean_l_transformer {
 
 template <typename T>
 struct hflip_transformer {
-    using sub_type   = T;
-    using value_type = value_t<T>;
+    using sub_type   = T;           ///< The type on which the expression works
+    using value_type = value_t<T>;  ///< The type of valuie
 
     sub_type sub;
 
@@ -408,6 +448,11 @@ struct hflip_transformer {
         return sub;
     }
 
+    /*!
+     * \brief Test if this expression aliases with the given expression
+     * \param rhs The other expression to test
+     * \return true if the two expressions aliases, false otherwise
+     */
     template<typename E>
     bool alias(const E& rhs) const noexcept {
         return sub.alias(rhs);
@@ -416,8 +461,8 @@ struct hflip_transformer {
 
 template <typename T>
 struct vflip_transformer {
-    using sub_type   = T;
-    using value_type = value_t<T>;
+    using sub_type   = T;           ///< The type on which the expression works
+    using value_type = value_t<T>;  ///< The type of valuie
 
     sub_type sub;
 
@@ -462,6 +507,11 @@ struct vflip_transformer {
         return sub;
     }
 
+    /*!
+     * \brief Test if this expression aliases with the given expression
+     * \param rhs The other expression to test
+     * \return true if the two expressions aliases, false otherwise
+     */
     template<typename E>
     bool alias(const E& rhs) const noexcept {
         return sub.alias(rhs);
@@ -470,8 +520,8 @@ struct vflip_transformer {
 
 template <typename T>
 struct fflip_transformer {
-    using sub_type   = T;
-    using value_type = value_t<T>;
+    using sub_type   = T;           ///< The type on which the expression works
+    using value_type = value_t<T>;  ///< The type of valuie
 
     sub_type sub;
 
@@ -506,6 +556,11 @@ struct fflip_transformer {
         return sub;
     }
 
+    /*!
+     * \brief Test if this expression aliases with the given expression
+     * \param rhs The other expression to test
+     * \return true if the two expressions aliases, false otherwise
+     */
     template<typename E>
     bool alias(const E& rhs) const noexcept {
         return sub.alias(rhs);
@@ -514,8 +569,8 @@ struct fflip_transformer {
 
 template <typename T>
 struct transpose_transformer {
-    using sub_type   = T;
-    using value_type = value_t<T>;
+    using sub_type   = T;           ///< The type on which the expression works
+    using value_type = value_t<T>;  ///< The type of valuie
 
     sub_type sub;
 
@@ -562,6 +617,11 @@ struct transpose_transformer {
         return sub;
     }
 
+    /*!
+     * \brief Test if this expression aliases with the given expression
+     * \param rhs The other expression to test
+     * \return true if the two expressions aliases, false otherwise
+     */
     template<typename E>
     bool alias(const E& rhs) const noexcept {
         return sub.alias(rhs);
@@ -630,6 +690,11 @@ struct mm_mul_transformer {
         return right;
     }
 
+    /*!
+     * \brief Test if this expression aliases with the given expression
+     * \param rhs The other expression to test
+     * \return true if the two expressions aliases, false otherwise
+     */
     template<typename E>
     bool alias(const E& rhs) const noexcept {
         return left.alias(rhs) || right.alias(rhs);
@@ -638,8 +703,8 @@ struct mm_mul_transformer {
 
 template <typename T>
 struct dyn_convmtx_transformer {
-    using sub_type   = T;
-    using value_type = value_t<sub_type>;
+    using sub_type   = T;           ///< The type on which the expression works
+    using value_type = value_t<T>;  ///< The type of valuie
 
     static_assert(decay_traits<T>::dimensions() == 1, "convmtx can only be applied on vectors");
 
@@ -679,6 +744,11 @@ struct dyn_convmtx_transformer {
         return sub;
     }
 
+    /*!
+     * \brief Test if this expression aliases with the given expression
+     * \param rhs The other expression to test
+     * \return true if the two expressions aliases, false otherwise
+     */
     template<typename E>
     bool alias(const E& rhs) const noexcept {
         return sub.alias(rhs);
@@ -687,8 +757,8 @@ struct dyn_convmtx_transformer {
 
 template <typename T>
 struct dyn_convmtx2_transformer {
-    using sub_type   = T;
-    using value_type = value_t<sub_type>;
+    using sub_type   = T;           ///< The type on which the expression works
+    using value_type = value_t<T>;  ///< The type of valuie
 
     static_assert(decay_traits<T>::dimensions() == 2, "convmtx2 can only be applied on matrices");
 
@@ -747,6 +817,11 @@ struct dyn_convmtx2_transformer {
         return sub;
     }
 
+    /*!
+     * \brief Test if this expression aliases with the given expression
+     * \param rhs The other expression to test
+     * \return true if the two expressions aliases, false otherwise
+     */
     template<typename E>
     bool alias(const E& rhs) const noexcept {
         return sub.alias(rhs);
@@ -832,8 +907,8 @@ void im2col_direct(M& m, A&& sub, std::size_t k1, std::size_t k2) {
 
 template <typename T, std::size_t C1, std::size_t C2>
 struct p_max_pool_transformer {
-    using sub_type   = T;
-    using value_type = value_t<T>;
+    using sub_type   = T;           ///< The type on which the expression works
+    using value_type = value_t<T>;  ///< The type of valuie
 
     sub_type sub;
 
@@ -874,6 +949,11 @@ struct p_max_pool_transformer {
         return sub;
     }
 
+    /*!
+     * \brief Test if this expression aliases with the given expression
+     * \param rhs The other expression to test
+     * \return true if the two expressions aliases, false otherwise
+     */
     template<typename E>
     bool alias(const E& rhs) const noexcept {
         return sub.alias(rhs);
@@ -882,9 +962,9 @@ struct p_max_pool_transformer {
 
 template <typename T, std::size_t C1, std::size_t C2>
 struct p_max_pool_h_transformer : p_max_pool_transformer<T, C1, C2> {
-    using base_type  = p_max_pool_transformer<T, C1, C2>;
-    using sub_type   = typename base_type::sub_type;
-    using value_type = typename base_type::value_type;
+    using base_type  = p_max_pool_transformer<T, C1, C2>; ///< The base type
+    using sub_type   = typename base_type::sub_type;      ///< The type on which the expression works
+    using value_type = typename base_type::value_type;    ///< The type of valuie
 
     using base_type::sub;
 
@@ -939,6 +1019,11 @@ struct p_max_pool_h_transformer : p_max_pool_transformer<T, C1, C2> {
         return sub;
     }
 
+    /*!
+     * \brief Test if this expression aliases with the given expression
+     * \param rhs The other expression to test
+     * \return true if the two expressions aliases, false otherwise
+     */
     template<typename E>
     bool alias(const E& rhs) const noexcept {
         return sub.alias(rhs);
@@ -947,9 +1032,9 @@ struct p_max_pool_h_transformer : p_max_pool_transformer<T, C1, C2> {
 
 template <typename T, std::size_t C1, std::size_t C2>
 struct p_max_pool_p_transformer : p_max_pool_transformer<T, C1, C2> {
-    using base_type  = p_max_pool_transformer<T, C1, C2>;
-    using sub_type   = typename base_type::sub_type;
-    using value_type = typename base_type::value_type;
+    using base_type  = p_max_pool_transformer<T, C1, C2>; ///< The base type
+    using sub_type   = typename base_type::sub_type;      ///< The type on which the expression works
+    using value_type = typename base_type::value_type;    ///< The type of valuie
 
     using base_type::sub;
 
@@ -1004,6 +1089,11 @@ struct p_max_pool_p_transformer : p_max_pool_transformer<T, C1, C2> {
         return sub;
     }
 
+    /*!
+     * \brief Test if this expression aliases with the given expression
+     * \param rhs The other expression to test
+     * \return true if the two expressions aliases, false otherwise
+     */
     template<typename E>
     bool alias(const E& rhs) const noexcept {
         return sub.alias(rhs);
