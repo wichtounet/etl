@@ -145,13 +145,13 @@ public:
     using vec_type          = typename V::template vec_type<T>;
 
     //Construct a new expression
-    explicit unary_expr(Expr l)
+    explicit unary_expr(Expr l) noexcept
             : _value(std::forward<Expr>(l)) {
         //Nothing else to init
     }
 
     unary_expr(const unary_expr& rhs) = default;
-    unary_expr(unary_expr&& rhs) = default;
+    unary_expr(unary_expr&& rhs) noexcept = default;
 
     //Assign expressions to the unary expr
 
