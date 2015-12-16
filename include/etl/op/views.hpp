@@ -66,6 +66,12 @@ struct dim_view {
         }
     }
 
+    /*!
+     * \returns the value at the given index
+     * This function never has side effects.
+     * \param j The index
+     * \return the value at the given index.
+     */
     value_type read_flat(std::size_t j) const noexcept {
         if (D == 1) {
             return sub(i, j);
@@ -172,6 +178,12 @@ struct sub_view {
                    : sub[i + dim<0>(sub) * j];
     }
 
+    /*!
+     * \returns the value at the given index
+     * This function never has side effects.
+     * \param j The index
+     * \return the value at the given index.
+     */
     value_type read_flat(std::size_t j) const noexcept {
         return decay_traits<sub_type>::storage_order == order::RowMajor
                    ? sub.read_flat(i * subsize(sub) + j)
@@ -292,6 +304,12 @@ struct fast_matrix_view {
         return sub[j];
     }
 
+    /*!
+     * \returns the value at the given index
+     * This function never has side effects.
+     * \param j The index
+     * \return the value at the given index.
+     */
     value_type read_flat(std::size_t j) const noexcept {
         return sub.read_flat(j);
     }
@@ -397,6 +415,12 @@ struct dyn_vector_view {
         return sub[j];
     }
 
+    /*!
+     * \returns the value at the given index
+     * This function never has side effects.
+     * \param j The index
+     * \return the value at the given index.
+     */
     value_type read_flat(std::size_t j) const noexcept {
         return sub.read_flat(j);
     }
@@ -494,6 +518,12 @@ struct dyn_matrix_view {
         return sub[j];
     }
 
+    /*!
+     * \returns the value at the given index
+     * This function never has side effects.
+     * \param j The index
+     * \return the value at the given index.
+     */
     value_type read_flat(std::size_t j) const noexcept {
         return sub.read_flat(j);
     }

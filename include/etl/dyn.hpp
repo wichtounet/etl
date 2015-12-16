@@ -403,6 +403,12 @@ public:
         return _memory[i];
     }
 
+    /*!
+     * \returns the value at the given index
+     * This function never alters the state of the container.
+     * \param i The index
+     * \return the value at the given index.
+     */
     value_type read_flat(std::size_t i) const noexcept {
         cpp_assert(i < _size, "Out of bounds");
 
