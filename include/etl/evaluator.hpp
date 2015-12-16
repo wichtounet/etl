@@ -42,9 +42,7 @@ struct standard_evaluator {
     //Standard assign version
 
     template <typename E, typename R, cpp_enable_if(detail::standard_assign<E, R>::value)>
-    static void assign_evaluate(E&& expr, R&& result) {
-        evaluate_only(expr);
-
+    static void assign_evaluate_impl(E&& expr, R&& result) {
         for (std::size_t i = 0; i < etl::size(result); ++i) {
             result[i] = expr.read_flat(i);
         }
@@ -53,9 +51,7 @@ struct standard_evaluator {
     //Fast assign version (memory copy)
 
     template <typename E, typename R, cpp_enable_if(detail::fast_assign<E, R>::value)>
-    static void assign_evaluate(E&& expr, R&& result) {
-        evaluate_only(expr);
-
+    static void assign_evaluate_impl(E&& expr, R&& result) {
         std::copy(expr.memory_start(), expr.memory_end(), result.memory_start());
     }
 
@@ -63,8 +59,6 @@ struct standard_evaluator {
 
     template <typename E, typename R>
     static void direct_assign_evaluate(E&& expr, R&& result) {
-        evaluate_only(expr);
-
         auto m = result.memory_start();
 
         const std::size_t size = etl::size(result);
@@ -73,22 +67,20 @@ struct standard_evaluator {
     }
 
     template <typename E, typename R, cpp_enable_if(detail::direct_assign<E, R>::value)>
-    static void assign_evaluate(E&& expr, R&& result) {
+    static void assign_evaluate_impl(E&& expr, R&& result) {
         direct_assign_evaluate(std::forward<E>(expr), std::forward<R>(result));
     }
 
     //Parallel assign version
 
     template <typename E, typename R, cpp_enable_if(detail::parallel_assign<E, R>::value)>
-    static void assign_evaluate(E&& expr, R&& result) {
+    static void assign_evaluate_impl(E&& expr, R&& result) {
         const auto n = etl::size(result);
 
         if(n < parallel_threshold || threads < 2){
             direct_assign_evaluate(std::forward<E>(expr), std::forward<R>(result));
             return;
         }
-
-        evaluate_only(expr);
 
         auto m = result.memory_start();
 
@@ -110,7 +102,7 @@ struct standard_evaluator {
     //Parallel vectorized assign
 
     template <typename E, typename R, cpp_enable_if(detail::parallel_vectorized_assign<E, R>::value)>
-    static void assign_evaluate(E&& expr, R&& result) {
+    static void assign_evaluate_impl(E&& expr, R&& result) {
         static cpp::default_thread_pool<> pool(threads - 1);
 
         const std::size_t size = etl::size(result);
@@ -119,9 +111,6 @@ struct standard_evaluator {
             vectorized_assign_evaluate(std::forward<E>(expr), std::forward<R>(result));
             return;
         }
-
-        //Evaluate the sub parts of the expression, if any
-        evaluate_only(expr);
 
         auto batch = size / threads;
 
@@ -141,13 +130,11 @@ struct standard_evaluator {
 
     template <typename E, typename R>
     static void vectorized_assign_evaluate(E&& expr, R&& result) {
-        evaluate_only(expr);
-
         detail::VectorizedAssign<R, E>(result, expr, 0, etl::size(result))();
     }
 
     template <typename E, typename R, cpp_enable_if(detail::vectorized_assign<E, R>::value)>
-    static void assign_evaluate(E&& expr, R&& result) {
+    static void assign_evaluate_impl(E&& expr, R&& result) {
         vectorized_assign_evaluate(std::forward<E>(expr), std::forward<R>(result));
     }
 
@@ -577,6 +564,15 @@ struct standard_evaluator {
     //Note: In case of direct evaluation, the temporary_expr itself must
     //not beevaluated by the static_visitor, otherwise, the result would
     //be evaluated twice and a temporary would be allocated for nothing
+
+    template <typename E, typename R, cpp_disable_if(is_temporary_expr<E>::value)>
+    static void assign_evaluate(E&& expr, R&& result) {
+        //Evaluate sub parts, if any
+        evaluate_only(expr);
+
+        //Perform the real evaluation, selected by TMP
+        assign_evaluate_impl(expr, result);
+    }
 
     template <typename E, typename R, cpp_enable_if(is_temporary_unary_expr<E>::value)>
     static void assign_evaluate(E&& expr, R&& result) {
