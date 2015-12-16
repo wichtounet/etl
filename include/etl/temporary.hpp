@@ -24,10 +24,19 @@ decltype(auto) force_temporary(E&& expr) {
     return typename build_fast_dyn_matrix_type<E, std::make_index_sequence<decay_traits<E>::dimensions()>>::type{std::forward<E>(expr)};
 }
 
-template <typename E, cpp_disable_if(decay_traits<E>::is_fast)>
+template <typename E, cpp_enable_if(!decay_traits<E>::is_fast && !is_sparse_matrix<E>::value)>
 decltype(auto) force_temporary(E&& expr) {
     //Sizes will be directly propagated
     return dyn_matrix_impl<value_t<E>, decay_traits<E>::storage_order, decay_traits<E>::dimensions()>{std::forward<E>(expr)};
+}
+
+//TODO the traits should include and is_sparse value that should be
+//handled here
+
+template <typename E, cpp_enable_if(is_sparse_matrix<E>::value)>
+decltype(auto) force_temporary(E&& expr) {
+    //Sizes will be directly propagated
+    return std::decay_t<E>{std::forward<E>(expr)};
 }
 
 template <typename E>
