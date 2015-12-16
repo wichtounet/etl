@@ -24,11 +24,11 @@ inline double logistic_sigmoid(double x) {
 }
 
 inline float softplus(float x) {
-    return std::log(1.0f + std::exp(x));
+    return std::log1p(std::exp(x));
 }
 
 inline double softplus(double x) {
-    return std::log(1.0 + std::exp(x));
+    return std::log1p(std::exp(x));
 }
 
 template <typename W>
