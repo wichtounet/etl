@@ -570,8 +570,20 @@ struct standard_evaluator {
         //Evaluate sub parts, if any
         evaluate_only(expr);
 
-        //Perform the real evaluation, selected by TMP
-        assign_evaluate_impl(expr, result);
+        constexpr bool linear = decay_traits<Expr>::is_linear;
+
+        if(!linear && result.alias(expr)){
+            auto tmp_result = force_temporary(result);
+
+            //Perform the evaluation to tmp_result
+            assign_evaluate_impl(expr, tmp_result);
+
+            //Perform the real evaluation to result
+            assign_evaluate_impl(tmp_result, result);
+        } else {
+            //Perform the real evaluation, selected by TMP
+            assign_evaluate_impl(expr, result);
+        }
     }
 
     template <typename E, typename R, cpp_enable_if(is_temporary_unary_expr<E>::value)>
