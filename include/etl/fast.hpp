@@ -7,8 +7,9 @@
 
 #pragma once
 
-#include <algorithm> //For std::find_if
-#include <iosfwd>    //For stream support
+#include <algorithm>   //For std::find_if
+#include <iosfwd>      //For stream support
+#include <type_traits> //For static assertions tests
 
 #include "cpp_utils/assert.hpp"
 
@@ -136,12 +137,12 @@ public:
         //Nothing to init
     }
 
-    fast_matrix_impl() noexcept(array_impl) {
+    fast_matrix_impl() noexcept {
         init();
     }
 
     template <typename VT, cpp_enable_if_or(std::is_convertible<VT, value_type>::value, std::is_assignable<T&, VT>::value)>
-    explicit fast_matrix_impl(const VT& value) {
+    explicit fast_matrix_impl(const VT& value) noexcept {
         init();
         std::fill(_data.begin(), _data.end(), value);
     }
@@ -154,19 +155,13 @@ public:
         std::copy(l.begin(), l.end(), begin());
     }
 
-    fast_matrix_impl(const fast_matrix_impl& rhs) noexcept(array_impl) {
+    fast_matrix_impl(const fast_matrix_impl& rhs) noexcept {
         init();
         assign_evaluate(rhs, *this);
     }
 
-    template <typename SST = ST, cpp_enable_if(matrix_detail::is_vector<SST>::value)>
     fast_matrix_impl(fast_matrix_impl&& rhs) noexcept {
         _data = std::move(rhs._data);
-    }
-
-    template <typename SST = ST, cpp_disable_if(matrix_detail::is_vector<SST>::value)>
-    explicit fast_matrix_impl(fast_matrix_impl&& rhs) noexcept {
-        std::copy(rhs.begin(), rhs.end(), begin());
     }
 
     template <typename E, cpp_enable_if(std::is_convertible<value_t<E>, value_type>::value, is_etl_expr<E>::value)>
@@ -186,17 +181,9 @@ public:
     }
 
     // Assignment
-// Copy assignment operator
 
-    template <typename SST    = ST, cpp_enable_if(matrix_detail::is_vector<SST>::value)>
-    fast_matrix_impl& operator=(const fast_matrix_impl& rhs) noexcept {
-        if (this != &rhs) {
-            assign_evaluate(rhs, *this);
-        }
-        return *this;
-    }
+    // Copy assignment operator
 
-    template <typename SST    = ST, cpp_disable_if(matrix_detail::is_vector<SST>::value)>
     fast_matrix_impl& operator=(const fast_matrix_impl& rhs) noexcept {
         if (this != &rhs) {
             assign_evaluate(rhs, *this);
@@ -237,18 +224,13 @@ public:
         return *this;
     }
 
-    //Prohibit move
-
-    template <typename SST    = ST, cpp_enable_if(matrix_detail::is_vector<SST>::value)>
-    fast_matrix_impl& operator=(fast_matrix_impl&& rhs) {
+    fast_matrix_impl& operator=(fast_matrix_impl&& rhs) noexcept {
         if (this != &rhs) {
             _data = std::move(rhs._data);
         }
+
         return *this;
     }
-
-    template <typename SST    = ST, cpp_disable_if(matrix_detail::is_vector<SST>::value)>
-    fast_matrix_impl& operator=(fast_matrix_impl&& rhs) = delete;
 
     // Swap operations
 
@@ -385,6 +367,12 @@ public:
         return &_data[size()];
     }
 };
+
+static_assert(std::is_nothrow_default_constructible<fast_vector<double, 2>>::value, "fast_vector should be nothrow default constructible");
+static_assert(std::is_nothrow_copy_constructible<fast_vector<double, 2>>::value, "fast_vector should be nothrow copy constructible");
+static_assert(std::is_nothrow_move_constructible<fast_vector<double, 2>>::value, "fast_vector should be nothrow move constructible");
+static_assert(std::is_nothrow_copy_assignable<fast_vector<double, 2>>::value, "fast_vector should be nothrow copy assignable");
+static_assert(std::is_nothrow_move_assignable<fast_vector<double, 2>>::value, "fast_vector should be nothrow move assignable");
 
 template <typename T, typename ST, order SO, std::size_t... Dims>
 void swap(fast_matrix_impl<T, ST, SO, Dims...>& lhs, fast_matrix_impl<T, ST, SO, Dims...>& rhs) {
