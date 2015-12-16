@@ -43,7 +43,7 @@ struct dim_view {
     using sub_type          = T;
     using value_type        = value_t<sub_type>;
     using memory_type       = memory_t<sub_type>;
-    using const_memory_type = std::add_const_t<memory_t<sub_type>>;
+    using const_memory_type = const_memory_t<sub_type>;
     using return_type       = return_helper<sub_type, decltype(sub(0, 0))>;
     using const_return_type = const_return_helper<sub_type, decltype(sub(0, 0))>;
 
@@ -125,7 +125,7 @@ struct sub_view {
     using parent_type       = T;
     using value_type        = value_t<parent_type>;
     using memory_type       = memory_t<parent_type>;
-    using const_memory_type = std::add_const_t<memory_t<parent_type>>;
+    using const_memory_type = const_memory_t<parent_type>;
     using return_type       = return_helper<parent_type, decltype(parent[0])>;
     using const_return_type = const_return_helper<parent_type, decltype(parent[0])>;
 
@@ -214,7 +214,7 @@ struct fast_matrix_view {
     using sub_type          = T;
     using value_type        = value_t<sub_type>;
     using memory_type       = memory_t<sub_type>;
-    using const_memory_type = std::add_const_t<memory_t<sub_type>>;
+    using const_memory_type = const_memory_t<sub_type>;
     using return_type       = return_helper<sub_type, decltype(sub[0])>;
     using const_return_type = const_return_helper<sub_type, decltype(sub[0])>;
 
@@ -294,7 +294,7 @@ struct dyn_vector_view {
     using sub_type          = T;
     using value_type        = value_t<sub_type>;
     using memory_type       = memory_t<sub_type>;
-    using const_memory_type = std::add_const_t<memory_t<sub_type>>;
+    using const_memory_type = const_memory_t<sub_type>;
     using return_type       = return_helper<sub_type, decltype(sub[0])>;
     using const_return_type = const_return_helper<sub_type, decltype(sub[0])>;
 
@@ -357,7 +357,7 @@ struct dyn_matrix_view {
     using sub_type          = T;
     using value_type        = value_t<sub_type>;
     using memory_type       = memory_t<sub_type>;
-    using const_memory_type = std::add_const_t<memory_t<sub_type>>;
+    using const_memory_type = const_memory_t<sub_type>;
     using return_type       = return_helper<sub_type, decltype(sub[0])>;
     using const_return_type = const_return_helper<sub_type, decltype(sub[0])>;
 

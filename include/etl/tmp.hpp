@@ -45,6 +45,9 @@ using memory_t = std::conditional_t<
     typename std::decay_t<S>::const_memory_type,
     typename std::decay_t<S>::memory_type>;
 
+template <typename S>
+using const_memory_t = typename std::decay_t<S>::const_memory_type;
+
 template <std::size_t F, std::size_t... Dims>
 struct mul_all final : std::integral_constant<std::size_t, F * mul_all<Dims...>::value> {};
 

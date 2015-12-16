@@ -137,7 +137,7 @@ private:
 public:
     using value_type        = T;
     using memory_type       = memory_t<Expr>;
-    using const_memory_type = std::add_const_t<memory_t<Expr>>;
+    using const_memory_type = const_memory_t<Expr>;
     using return_type       = std::conditional_t<non_const_return_ref, value_type&, value_type>;
     using const_return_type = std::conditional_t<const_return_ref, const value_type&, value_type>;
 
