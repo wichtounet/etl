@@ -59,3 +59,19 @@ TEMPLATE_TEST_CASE_2("alias/transpose/1", "[alias][transpose]", Z, float, double
     REQUIRE(a(2, 1) == 6.0);
     REQUIRE(a(2, 2) == 9.0);
 }
+
+TEMPLATE_TEST_CASE_2("alias/transpose/2", "[alias][transpose]", Z, float, double) {
+    etl::fast_matrix<Z, 3, 3> a({1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0});
+
+    a = (transpose(a) >> 2.0) + (transpose(a) >> 3.0);
+
+    REQUIRE(a(0, 0) == 5.0);
+    REQUIRE(a(0, 1) == 20.0);
+    REQUIRE(a(0, 2) == 35.0);
+    REQUIRE(a(1, 0) == 10.0);
+    REQUIRE(a(1, 1) == 25.0);
+    REQUIRE(a(1, 2) == 40.0);
+    REQUIRE(a(2, 0) == 15.0);
+    REQUIRE(a(2, 1) == 30.0);
+    REQUIRE(a(2, 2) == 45.0);
+}
