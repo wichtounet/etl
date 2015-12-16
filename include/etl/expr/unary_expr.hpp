@@ -303,8 +303,8 @@ public:
         //Nothing else to init
     }
 
-    unary_expr(const unary_expr& rhs) noexcept = default;
-    unary_expr(unary_expr&& rhs) noexcept = default;
+    unary_expr(const unary_expr& rhs) = default;
+    unary_expr(unary_expr&& rhs) = default;
 
     //Expression are invariant
     unary_expr& operator=(const unary_expr& e) = delete;
