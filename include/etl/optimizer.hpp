@@ -26,11 +26,7 @@ struct optimizable {
 template <typename T, typename Expr, typename UnaryOp>
 struct optimizable<etl::unary_expr<T, Expr, UnaryOp>> {
     static bool is(const etl::unary_expr<T, Expr, UnaryOp>& /*unused*/) {
-        if (std::is_same<UnaryOp, plus_unary_op<T>>::value) {
-            return true;
-        }
-
-        return false;
+        return std::is_same<UnaryOp, plus_unary_op<T>>::value;
     }
 
     static bool is_deep(const etl::unary_expr<T, Expr, UnaryOp>& expr) {

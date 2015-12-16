@@ -144,8 +144,8 @@ protected:
         check_invariants();
     }
 
-    dyn_base(const dyn_base& rhs) = default;
-    dyn_base(dyn_base&& rhs) = default;
+    dyn_base(const dyn_base& rhs) noexcept = default;
+    dyn_base(dyn_base&& rhs) noexcept = default;
 
     dyn_base(std::size_t size, dimension_storage_impl dimensions) noexcept : _size(size), _dimensions(dimensions) {
         check_invariants();
