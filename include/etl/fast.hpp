@@ -351,18 +351,34 @@ public:
 
     // Direct memory access
 
+    /*!
+     * \brief Returns a pointer to the first element in memory.
+     * \return a pointer tot the first element in memory.
+     */
     memory_type memory_start() noexcept {
         return &_data[0];
     }
 
+    /*!
+     * \brief Returns a pointer to the first element in memory.
+     * \return a pointer tot the first element in memory.
+     */
     const_memory_type memory_start() const noexcept {
         return &_data[0];
     }
 
+    /*!
+     * \brief Returns a pointer to the past-the-end element in memory.
+     * \return a pointer tot the past-the-end element in memory.
+     */
     memory_type memory_end() noexcept {
         return &_data[size()];
     }
 
+    /*!
+     * \brief Returns a pointer to the past-the-end element in memory.
+     * \return a pointer tot the past-the-end element in memory.
+     */
     const_memory_type memory_end() const noexcept {
         return &_data[size()];
     }

@@ -90,32 +90,55 @@ struct dim_view {
         }
     }
 
+    /*!
+     * \brief Returns the value on which the transformer is working.
+     * \return A reference  to the value on which the transformer is working.
+     */
     sub_type& value() {
         return sub;
     }
 
+    /*!
+     * \brief Test if this expression aliases with the given expression
+     * \param rhs The other expression to test
+     * \return true if the two expressions aliases, false otherwise
+     */
     template<typename E>
     bool alias(const E& rhs) const noexcept {
         return sub.alias(rhs);
     }
 
-    // Direct memory access
-
+    /*!
+     * \brief Returns a pointer to the first element in memory.
+     * \return a pointer tot the first element in memory.
+     */
     memory_type memory_start() noexcept {
         static_assert(has_direct_access<T>::value && D == 1, "This expression does not have direct memory access");
         return sub.memory_start() + i * subsize(sub);
     }
 
+    /*!
+     * \brief Returns a pointer to the first element in memory.
+     * \return a pointer tot the first element in memory.
+     */
     const_memory_type memory_start() const noexcept {
         static_assert(has_direct_access<T>::value && D == 1, "This expression does not have direct memory access");
         return sub.memory_start() + i * subsize(sub);
     }
 
+    /*!
+     * \brief Returns a pointer to the past-the-end element in memory.
+     * \return a pointer tot the past-the-end element in memory.
+     */
     memory_type memory_end() noexcept {
         static_assert(has_direct_access<T>::value && D == 1, "This expression does not have direct memory access");
         return sub.memory_start() + (i + 1) * subsize(sub);
     }
 
+    /*!
+     * \brief Returns a pointer to the past-the-end element in memory.
+     * \return a pointer tot the past-the-end element in memory.
+     */
     const_memory_type memory_end() const noexcept {
         static_assert(has_direct_access<T>::value && D == 1, "This expression does not have direct memory access");
         return sub.memory_start() + (i + 1) * subsize(sub);
@@ -124,76 +147,99 @@ struct dim_view {
 
 template <typename T>
 struct sub_view {
-    T parent;
+    T sub;
     const std::size_t i;
 
-    using parent_type       = T;
-    using value_type        = value_t<parent_type>;
-    using memory_type       = memory_t<parent_type>;
-    using const_memory_type = const_memory_t<parent_type>;
-    using return_type       = return_helper<parent_type, decltype(parent[0])>;
-    using const_return_type = const_return_helper<parent_type, decltype(parent[0])>;
+    using sub_type       = T;
+    using value_type        = value_t<sub_type>;
+    using memory_type       = memory_t<sub_type>;
+    using const_memory_type = const_memory_t<sub_type>;
+    using return_type       = return_helper<sub_type, decltype(sub[0])>;
+    using const_return_type = const_return_helper<sub_type, decltype(sub[0])>;
 
-    sub_view(parent_type parent, std::size_t i)
-            : parent(parent), i(i) {}
+    sub_view(sub_type sub, std::size_t i)
+            : sub(sub), i(i) {}
 
     const_return_type operator[](std::size_t j) const {
-        return decay_traits<parent_type>::storage_order == order::RowMajor
-                   ? parent[i * subsize(parent) + j]
-                   : parent[i + dim<0>(parent) * j];
+        return decay_traits<sub_type>::storage_order == order::RowMajor
+                   ? sub[i * subsize(sub) + j]
+                   : sub[i + dim<0>(sub) * j];
     }
 
     return_type operator[](std::size_t j) {
-        return decay_traits<parent_type>::storage_order == order::RowMajor
-                   ? parent[i * subsize(parent) + j]
-                   : parent[i + dim<0>(parent) * j];
+        return decay_traits<sub_type>::storage_order == order::RowMajor
+                   ? sub[i * subsize(sub) + j]
+                   : sub[i + dim<0>(sub) * j];
     }
 
     value_type read_flat(std::size_t j) const noexcept {
-        return decay_traits<parent_type>::storage_order == order::RowMajor
-                   ? parent.read_flat(i * subsize(parent) + j)
-                   : parent.read_flat(i + dim<0>(parent) * j);
+        return decay_traits<sub_type>::storage_order == order::RowMajor
+                   ? sub.read_flat(i * subsize(sub) + j)
+                   : sub.read_flat(i + dim<0>(sub) * j);
     }
 
     template <typename... S>
     const_return_type operator()(S... args) const {
-        return parent(i, static_cast<std::size_t>(args)...);
+        return sub(i, static_cast<std::size_t>(args)...);
     }
 
     template <typename... S>
     return_type operator()(S... args) {
-        return parent(i, static_cast<std::size_t>(args)...);
+        return sub(i, static_cast<std::size_t>(args)...);
     }
 
-    parent_type& value() {
-        return parent;
+    /*!
+     * \brief Returns the value on which the transformer is working.
+     * \return A reference  to the value on which the transformer is working.
+     */
+    sub_type& value() {
+        return sub;
     }
 
+    /*!
+     * \brief Test if this expression aliases with the given expression
+     * \param rhs The other expression to test
+     * \return true if the two expressions aliases, false otherwise
+     */
     template<typename E>
     bool alias(const E& rhs) const noexcept {
-        return parent.alias(rhs);
+        return sub.alias(rhs);
     }
 
-    // Direct memory access
-
+    /*!
+     * \brief Returns a pointer to the first element in memory.
+     * \return a pointer tot the first element in memory.
+     */
     memory_type memory_start() noexcept {
-        static_assert(has_direct_access<T>::value && decay_traits<parent_type>::storage_order == order::RowMajor, "This expression does not have direct memory access");
-        return parent.memory_start() + i * subsize(parent);
+        static_assert(has_direct_access<T>::value && decay_traits<sub_type>::storage_order == order::RowMajor, "This expression does not have direct memory access");
+        return sub.memory_start() + i * subsize(sub);
     }
 
+    /*!
+     * \brief Returns a pointer to the first element in memory.
+     * \return a pointer tot the first element in memory.
+     */
     const_memory_type memory_start() const noexcept {
-        static_assert(has_direct_access<T>::value && decay_traits<parent_type>::storage_order == order::RowMajor, "This expression does not have direct memory access");
-        return parent.memory_start() + i * subsize(parent);
+        static_assert(has_direct_access<T>::value && decay_traits<sub_type>::storage_order == order::RowMajor, "This expression does not have direct memory access");
+        return sub.memory_start() + i * subsize(sub);
     }
 
+    /*!
+     * \brief Returns a pointer to the past-the-end element in memory.
+     * \return a pointer tot the past-the-end element in memory.
+     */
     memory_type memory_end() noexcept {
-        static_assert(has_direct_access<T>::value && decay_traits<parent_type>::storage_order == order::RowMajor, "This expression does not have direct memory access");
-        return parent.memory_start() + (i + 1) * subsize(parent);
+        static_assert(has_direct_access<T>::value && decay_traits<sub_type>::storage_order == order::RowMajor, "This expression does not have direct memory access");
+        return sub.memory_start() + (i + 1) * subsize(sub);
     }
 
+    /*!
+     * \brief Returns a pointer to the past-the-end element in memory.
+     * \return a pointer tot the past-the-end element in memory.
+     */
     const_memory_type memory_end() const noexcept {
-        static_assert(has_direct_access<T>::value && decay_traits<parent_type>::storage_order == order::RowMajor, "This expression does not have direct memory access");
-        return parent.memory_start() + (i + 1) * subsize(parent);
+        static_assert(has_direct_access<T>::value && decay_traits<sub_type>::storage_order == order::RowMajor, "This expression does not have direct memory access");
+        return sub.memory_start() + (i + 1) * subsize(sub);
     }
 };
 
@@ -264,6 +310,10 @@ struct fast_matrix_view {
         return sub[index(static_cast<std::size_t>(args)...)];
     }
 
+    /*!
+     * \brief Returns the value on which the transformer is working.
+     * \return A reference  to the value on which the transformer is working.
+     */
     sub_type& value() {
         return sub;
     }
@@ -273,28 +323,47 @@ struct fast_matrix_view {
         return nth_size<D, 0, Dims...>::value;
     }
 
+    /*!
+     * \brief Test if this expression aliases with the given expression
+     * \param rhs The other expression to test
+     * \return true if the two expressions aliases, false otherwise
+     */
     template<typename E>
     bool alias(const E& rhs) const noexcept {
         return sub.alias(rhs);
     }
 
-    // Direct memory access
-
+    /*!
+     * \brief Returns a pointer to the first element in memory.
+     * \return a pointer tot the first element in memory.
+     */
     memory_type memory_start() noexcept {
         static_assert(has_direct_access<T>::value, "This expression does not have direct memory access");
         return sub.memory_start();
     }
 
+    /*!
+     * \brief Returns a pointer to the first element in memory.
+     * \return a pointer tot the first element in memory.
+     */
     const_memory_type memory_start() const noexcept {
         static_assert(has_direct_access<T>::value, "This expression does not have direct memory access");
         return sub.memory_start();
     }
 
+    /*!
+     * \brief Returns a pointer to the past-the-end element in memory.
+     * \return a pointer tot the past-the-end element in memory.
+     */
     memory_type memory_end() noexcept {
         static_assert(has_direct_access<T>::value, "This expression does not have direct memory access");
         return sub.memory_end();
     }
 
+    /*!
+     * \brief Returns a pointer to the past-the-end element in memory.
+     * \return a pointer tot the past-the-end element in memory.
+     */
     const_memory_type memory_end() const noexcept {
         static_assert(has_direct_access<T>::value, "This expression does not have direct memory access");
         return sub.memory_end();
@@ -336,32 +405,55 @@ struct dyn_vector_view {
         return sub[j];
     }
 
+    /*!
+     * \brief Returns the value on which the transformer is working.
+     * \return A reference  to the value on which the transformer is working.
+     */
     sub_type& value() {
         return sub;
     }
 
+    /*!
+     * \brief Test if this expression aliases with the given expression
+     * \param rhs The other expression to test
+     * \return true if the two expressions aliases, false otherwise
+     */
     template<typename E>
     bool alias(const E& rhs) const noexcept {
         return sub.alias(rhs);
     }
 
-    // Direct memory access
-
+    /*!
+     * \brief Returns a pointer to the first element in memory.
+     * \return a pointer tot the first element in memory.
+     */
     memory_type memory_start() noexcept {
         static_assert(has_direct_access<T>::value, "This expression does not have direct memory access");
         return sub.memory_start();
     }
 
+    /*!
+     * \brief Returns a pointer to the first element in memory.
+     * \return a pointer tot the first element in memory.
+     */
     const_memory_type memory_start() const noexcept {
         static_assert(has_direct_access<T>::value, "This expression does not have direct memory access");
         return sub.memory_start();
     }
 
+    /*!
+     * \brief Returns a pointer to the past-the-end element in memory.
+     * \return a pointer tot the past-the-end element in memory.
+     */
     memory_type memory_end() noexcept {
         static_assert(has_direct_access<T>::value, "This expression does not have direct memory access");
         return sub.memory_end();
     }
 
+    /*!
+     * \brief Returns a pointer to the past-the-end element in memory.
+     * \return a pointer tot the past-the-end element in memory.
+     */
     const_memory_type memory_end() const noexcept {
         static_assert(has_direct_access<T>::value, "This expression does not have direct memory access");
         return sub.memory_end();
@@ -416,32 +508,55 @@ struct dyn_matrix_view {
                    : sub[i + rows * j];
     }
 
+    /*!
+     * \brief Returns the value on which the transformer is working.
+     * \return A reference  to the value on which the transformer is working.
+     */
     sub_type& value() {
         return sub;
     }
 
+    /*!
+     * \brief Test if this expression aliases with the given expression
+     * \param rhs The other expression to test
+     * \return true if the two expressions aliases, false otherwise
+     */
     template<typename E>
     bool alias(const E& rhs) const noexcept {
         return sub.alias(rhs);
     }
 
-    // Direct memory access
-
+    /*!
+     * \brief Returns a pointer to the first element in memory.
+     * \return a pointer tot the first element in memory.
+     */
     memory_type memory_start() noexcept {
         static_assert(has_direct_access<T>::value, "This expression does not have direct memory access");
         return sub.memory_start();
     }
 
+    /*!
+     * \brief Returns a pointer to the first element in memory.
+     * \return a pointer tot the first element in memory.
+     */
     const_memory_type memory_start() const noexcept {
         static_assert(has_direct_access<T>::value, "This expression does not have direct memory access");
         return sub.memory_start();
     }
 
+    /*!
+     * \brief Returns a pointer to the past-the-end element in memory.
+     * \return a pointer tot the past-the-end element in memory.
+     */
     memory_type memory_end() noexcept {
         static_assert(has_direct_access<T>::value, "This expression does not have direct memory access");
         return sub.memory_end();
     }
 
+    /*!
+     * \brief Returns a pointer to the past-the-end element in memory.
+     * \return a pointer tot the past-the-end element in memory.
+     */
     const_memory_type memory_end() const noexcept {
         static_assert(has_direct_access<T>::value, "This expression does not have direct memory access");
         return sub.memory_end();
@@ -522,11 +637,11 @@ struct etl_traits<etl::sub_view<T>> {
     static constexpr const bool vectorizable            = has_direct_access<sub_expr_t>::value && storage_order == order::RowMajor;
 
     static std::size_t size(const expr_t& v) {
-        return etl_traits<sub_expr_t>::size(v.parent) / etl_traits<sub_expr_t>::dim(v.parent, 0);
+        return etl_traits<sub_expr_t>::size(v.sub) / etl_traits<sub_expr_t>::dim(v.sub, 0);
     }
 
     static std::size_t dim(const expr_t& v, std::size_t d) {
-        return etl_traits<sub_expr_t>::dim(v.parent, d + 1);
+        return etl_traits<sub_expr_t>::dim(v.sub, d + 1);
     }
 
     static constexpr std::size_t size() {
@@ -662,7 +777,7 @@ std::ostream& operator<<(std::ostream& os, const dim_view<T, D>& v) {
 
 template <typename T>
 std::ostream& operator<<(std::ostream& os, const sub_view<T>& v) {
-    return os << "sub(" << v.parent << ", " << v.i << ")";
+    return os << "sub(" << v.sub << ", " << v.i << ")";
 }
 
 template <typename T, std::size_t Rows, std::size_t Columns>
