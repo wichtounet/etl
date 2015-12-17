@@ -62,7 +62,7 @@ struct dim_view {
 
     /*!
      * \brief Returns the element at the given index
-     * \param i The index
+     * \param j The index
      * \return a reference to the element at the given index.
      */
     const_return_type operator[](std::size_t j) const {
@@ -75,7 +75,7 @@ struct dim_view {
 
     /*!
      * \brief Returns the element at the given index
-     * \param i The index
+     * \param j The index
      * \return a reference to the element at the given index.
      */
     return_type operator[](std::size_t j) {
@@ -102,7 +102,7 @@ struct dim_view {
 
     /*!
      * \brief Returns the element at the given index
-     * \param i The index
+     * \param j The index
      * \return a reference to the element at the given index.
      */
     const_return_type operator()(std::size_t j) const {
@@ -115,7 +115,7 @@ struct dim_view {
 
     /*!
      * \brief Returns the element at the given index
-     * \param i The index
+     * \param j The index
      * \return a reference to the element at the given index.
      */
     return_type operator()(std::size_t j) {
@@ -202,7 +202,7 @@ struct sub_view {
 
     /*!
      * \brief Returns the element at the given index
-     * \param i The index
+     * \param j The index
      * \return a reference to the element at the given index.
      */
     const_return_type operator[](std::size_t j) const {
@@ -213,7 +213,7 @@ struct sub_view {
 
     /*!
      * \brief Returns the element at the given index
-     * \param i The index
+     * \param j The index
      * \return a reference to the element at the given index.
      */
     return_type operator[](std::size_t j) {
@@ -357,7 +357,7 @@ struct fast_matrix_view {
 
     /*!
      * \brief Returns the element at the given index
-     * \param i The index
+     * \param j The index
      * \return a reference to the element at the given index.
      */
     const_return_type operator[](std::size_t j) const {
@@ -366,7 +366,7 @@ struct fast_matrix_view {
 
     /*!
      * \brief Returns the element at the given index
-     * \param i The index
+     * \param j The index
      * \return a reference to the element at the given index.
      */
     return_type operator[](std::size_t j) {
@@ -488,7 +488,7 @@ struct dyn_vector_view {
 
     /*!
      * \brief Returns the element at the given index
-     * \param i The index
+     * \param j The index
      * \return a reference to the element at the given index.
      */
     const_return_type operator[](std::size_t j) const {
@@ -497,7 +497,7 @@ struct dyn_vector_view {
 
     /*!
      * \brief Returns the element at the given index
-     * \param i The index
+     * \param j The index
      * \return a reference to the element at the given index.
      */
     return_type operator[](std::size_t j) {
@@ -516,7 +516,7 @@ struct dyn_vector_view {
 
     /*!
      * \brief Access to the element at the given position
-     * \param i The index
+     * \param j The index
      * \return a reference to the element at the given position.
      */
     return_type operator()(std::size_t j) {
@@ -525,7 +525,7 @@ struct dyn_vector_view {
 
     /*!
      * \brief Access to the element at the given position
-     * \param i The index
+     * \param j The index
      * \return a reference to the element at the given position.
      */
     const_return_type operator()(std::size_t j) const {
@@ -609,7 +609,7 @@ struct dyn_matrix_view {
 
     /*!
      * \brief Returns the element at the given index
-     * \param i The index
+     * \param j The index
      * \return a reference to the element at the given index.
      */
     const_return_type operator[](std::size_t j) const {
@@ -618,7 +618,7 @@ struct dyn_matrix_view {
 
     /*!
      * \brief Returns the element at the given index
-     * \param i The index
+     * \param j The index
      * \return a reference to the element at the given index.
      */
     return_type operator[](std::size_t j) {
@@ -627,7 +627,7 @@ struct dyn_matrix_view {
 
     /*!
      * \brief Access to the element at the given position
-     * \param i The index
+     * \param j The index
      * \return a reference to the element at the given position.
      */
     const_return_type operator()(std::size_t j) const {
@@ -636,7 +636,8 @@ struct dyn_matrix_view {
 
     /*!
      * \brief Access to the element at the given position
-     * \param i The index
+     * \param i The first index
+     * \param j The second index
      * \return a reference to the element at the given position.
      */
     const_return_type operator()(std::size_t i, std::size_t j) const {
@@ -657,7 +658,7 @@ struct dyn_matrix_view {
 
     /*!
      * \brief Access to the element at the given position
-     * \param i The index
+     * \param j The index
      * \return a reference to the element at the given position.
      */
     return_type operator()(std::size_t j) {

@@ -461,7 +461,7 @@ public:
     /*!
      * \brief Returns the value at the given index
      * This function never alters the state of the container.
-     * \param i The index
+     * \param n The index
      * \return the value at the given index.
      */
     template <bool B = n_dimensions == 2, cpp_enable_if(B)>

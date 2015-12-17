@@ -328,7 +328,7 @@ struct fast_sigmoid_unary_op {
 
     /*!
      * \brief Apply the unary operator on x
-     * \param x The value on which to apply the operator
+     * \param v The value on which to apply the operator
      * \return The result of applying the unary operator on x
      */
     static T apply(const T& v) {

@@ -442,7 +442,7 @@ struct sum_l_transformer {
 
     /*!
      * \brief Returns the value at the given index
-     * \param i The index
+     * \param j The index
      * \return the value at the given index.
      */
     value_type operator[](std::size_t j) const {
@@ -458,7 +458,7 @@ struct sum_l_transformer {
     /*!
      * \brief Returns the value at the given index
      * This function never has side effects.
-     * \param i The index
+     * \param j The index
      * \return the value at the given index.
      */
     value_type read_flat(std::size_t j) const noexcept {
@@ -517,7 +517,7 @@ struct mean_l_transformer {
 
     /*!
      * \brief Returns the value at the given index
-     * \param i The index
+     * \param j The index
      * \return the value at the given index.
      */
     value_type operator[](std::size_t j) const {
@@ -533,7 +533,7 @@ struct mean_l_transformer {
     /*!
      * \brief Returns the value at the given index
      * This function never has side effects.
-     * \param i The index
+     * \param j The index
      * \return the value at the given index.
      */
     value_type read_flat(std::size_t j) const noexcept {
