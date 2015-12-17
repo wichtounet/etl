@@ -67,7 +67,7 @@ struct dim_view {
     }
 
     /*!
-     * \returns the value at the given index
+     * \brief Returns the value at the given index
      * This function never has side effects.
      * \param j The index
      * \return the value at the given index.
@@ -179,7 +179,7 @@ struct sub_view {
     }
 
     /*!
-     * \returns the value at the given index
+     * \brief Returns the value at the given index
      * This function never has side effects.
      * \param j The index
      * \return the value at the given index.
@@ -305,7 +305,7 @@ struct fast_matrix_view {
     }
 
     /*!
-     * \returns the value at the given index
+     * \brief Returns the value at the given index
      * This function never has side effects.
      * \param j The index
      * \return the value at the given index.
@@ -416,7 +416,7 @@ struct dyn_vector_view {
     }
 
     /*!
-     * \returns the value at the given index
+     * \brief Returns the value at the given index
      * This function never has side effects.
      * \param j The index
      * \return the value at the given index.
@@ -519,7 +519,7 @@ struct dyn_matrix_view {
     }
 
     /*!
-     * \returns the value at the given index
+     * \brief Returns the value at the given index
      * This function never has side effects.
      * \param j The index
      * \return the value at the given index.

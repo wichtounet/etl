@@ -34,7 +34,7 @@ struct rep_r_transformer {
     }
 
     /*!
-     * \returns the value at the given index
+     * \brief Returns the value at the given index
      * This function never has side effects.
      * \param i The index
      * \return the value at the given index.
@@ -91,7 +91,7 @@ struct rep_l_transformer {
     }
 
     /*!
-     * \returns the value at the given index
+     * \brief Returns the value at the given index
      * This function never has side effects.
      * \param i The index
      * \return the value at the given index.
@@ -152,7 +152,7 @@ struct dyn_rep_r_transformer {
     }
 
     /*!
-     * \returns the value at the given index
+     * \brief Returns the value at the given index
      * This function never has side effects.
      * \param i The index
      * \return the value at the given index.
@@ -213,7 +213,7 @@ struct dyn_rep_l_transformer {
     }
 
     /*!
-     * \returns the value at the given index
+     * \brief Returns the value at the given index
      * This function never has side effects.
      * \param i The index
      * \return the value at the given index.
@@ -267,7 +267,7 @@ struct sum_r_transformer {
     }
 
     /*!
-     * \returns the value at the given index
+     * \brief Returns the value at the given index
      * This function never has side effects.
      * \param i The index
      * \return the value at the given index.
@@ -315,7 +315,7 @@ struct mean_r_transformer {
     }
 
     /*!
-     * \returns the value at the given index
+     * \brief Returns the value at the given index
      * This function never has side effects.
      * \param i The index
      * \return the value at the given index.
@@ -369,7 +369,7 @@ struct sum_l_transformer {
     }
 
     /*!
-     * \returns the value at the given index
+     * \brief Returns the value at the given index
      * This function never has side effects.
      * \param i The index
      * \return the value at the given index.
@@ -435,7 +435,7 @@ struct mean_l_transformer {
     }
 
     /*!
-     * \returns the value at the given index
+     * \brief Returns the value at the given index
      * This function never has side effects.
      * \param i The index
      * \return the value at the given index.
@@ -505,7 +505,7 @@ struct hflip_transformer {
     }
 
     /*!
-     * \returns the value at the given index
+     * \brief Returns the value at the given index
      * This function never has side effects.
      * \param i The index
      * \return the value at the given index.
@@ -516,7 +516,7 @@ struct hflip_transformer {
     }
 
     /*!
-     * \returns the value at the given index
+     * \brief Returns the value at the given index
      * This function never has side effects.
      * \param i The index
      * \return the value at the given index.
@@ -580,7 +580,7 @@ struct vflip_transformer {
     }
 
     /*!
-     * \returns the value at the given index
+     * \brief Returns the value at the given index
      * This function never has side effects.
      * \param i The index
      * \return the value at the given index.
@@ -591,7 +591,7 @@ struct vflip_transformer {
     }
 
     /*!
-     * \returns the value at the given index
+     * \brief Returns the value at the given index
      * This function never has side effects.
      * \param i The index
      * \return the value at the given index.
@@ -649,7 +649,7 @@ struct fflip_transformer {
     }
 
     /*!
-     * \returns the value at the given index
+     * \brief Returns the value at the given index
      * This function never has side effects.
      * \param i The index
      * \return the value at the given index.
@@ -714,7 +714,7 @@ struct transpose_transformer {
     }
 
     /*!
-     * \returns the value at the given index
+     * \brief Returns the value at the given index
      * This function never has side effects.
      * \param i The index
      * \return the value at the given index.
@@ -799,7 +799,7 @@ struct mm_mul_transformer {
     }
 
     /*!
-     * \returns the value at the given index
+     * \brief Returns the value at the given index
      * This function never has side effects.
      * \param i The index
      * \return the value at the given index.
@@ -865,7 +865,7 @@ struct dyn_convmtx_transformer {
     }
 
     /*!
-     * \returns the value at the given index
+     * \brief Returns the value at the given index
      * This function never has side effects.
      * \param i The index
      * \return the value at the given index.
@@ -938,7 +938,7 @@ struct dyn_convmtx2_transformer {
     }
 
     /*!
-     * \returns the value at the given index
+     * \brief Returns the value at the given index
      * This function never has side effects.
      * \param i The index
      * \return the value at the given index.
@@ -1153,7 +1153,7 @@ struct p_max_pool_h_transformer : p_max_pool_transformer<T, C1, C2> {
     }
 
     /*!
-     * \returns the value at the given index
+     * \brief Returns the value at the given index
      * This function never has side effects.
      * \param i The index
      * \return the value at the given index.
@@ -1166,7 +1166,7 @@ struct p_max_pool_h_transformer : p_max_pool_transformer<T, C1, C2> {
     }
 
     /*!
-     * \returns the value at the given index
+     * \brief Returns the value at the given index
      * This function never has side effects.
      * \param i The index
      * \return the value at the given index.
@@ -1239,7 +1239,7 @@ struct p_max_pool_p_transformer : p_max_pool_transformer<T, C1, C2> {
     }
 
     /*!
-     * \returns the value at the given index
+     * \brief Returns the value at the given index
      * This function never has side effects.
      * \param i The index
      * \return the value at the given index.
@@ -1252,7 +1252,7 @@ struct p_max_pool_p_transformer : p_max_pool_transformer<T, C1, C2> {
     }
 
     /*!
-     * \returns the value at the given index
+     * \brief Returns the value at the given index
      * This function never has side effects.
      * \param i The index
      * \return the value at the given index.
