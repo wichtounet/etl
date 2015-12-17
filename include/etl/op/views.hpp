@@ -5,6 +5,11 @@
 //  http://opensource.org/licenses/MIT)
 //=======================================================================
 
+/*!
+ * \file
+ * \brief Contains the views implementations of the expressions
+ */
+
 #pragma once
 
 #include <iosfwd> //For stream support
@@ -33,9 +38,14 @@ using const_return_helper = std::conditional_t<
     const value_t<T>&,
     value_t<T>>;
 
+/*!
+ * \brief View that shows one dimension of a matrix
+ * \tparam T The type of expression on which the view is made
+ * \tparam D The dimension to show
+ */
 template <typename T, std::size_t D>
 struct dim_view {
-    T sub;
+    T sub; ///< The Sub expression
     const std::size_t i;
 
     static_assert(D == 1 || D == 2, "Invalid dimension");
@@ -50,6 +60,11 @@ struct dim_view {
     dim_view(sub_type sub, std::size_t i)
             : sub(sub), i(i) {}
 
+    /*!
+     * \brief Returns the element at the given index
+     * \param i The index
+     * \return a reference to the element at the given index.
+     */
     const_return_type operator[](std::size_t j) const {
         if (D == 1) {
             return sub(i, j);
@@ -58,6 +73,11 @@ struct dim_view {
         }
     }
 
+    /*!
+     * \brief Returns the element at the given index
+     * \param i The index
+     * \return a reference to the element at the given index.
+     */
     return_type operator[](std::size_t j) {
         if (D == 1) {
             return sub(i, j);
@@ -80,6 +100,11 @@ struct dim_view {
         }
     }
 
+    /*!
+     * \brief Returns the element at the given index
+     * \param i The index
+     * \return a reference to the element at the given index.
+     */
     const_return_type operator()(std::size_t j) const {
         if (D == 1) {
             return sub(i, j);
@@ -88,6 +113,11 @@ struct dim_view {
         }
     }
 
+    /*!
+     * \brief Returns the element at the given index
+     * \param i The index
+     * \return a reference to the element at the given index.
+     */
     return_type operator()(std::size_t j) {
         if (D == 1) {
             return sub(i, j);
@@ -151,9 +181,13 @@ struct dim_view {
     }
 };
 
+/*!
+ * \brief View that shows a sub matrix of an expression
+ * \tparam T The type of expression on which the view is made
+ */
 template <typename T>
 struct sub_view {
-    T sub;
+    T sub; ///< The Sub expression
     const std::size_t i;
 
     using sub_type       = T;
@@ -166,12 +200,22 @@ struct sub_view {
     sub_view(sub_type sub, std::size_t i)
             : sub(sub), i(i) {}
 
+    /*!
+     * \brief Returns the element at the given index
+     * \param i The index
+     * \return a reference to the element at the given index.
+     */
     const_return_type operator[](std::size_t j) const {
         return decay_traits<sub_type>::storage_order == order::RowMajor
                    ? sub[i * subsize(sub) + j]
                    : sub[i + dim<0>(sub) * j];
     }
 
+    /*!
+     * \brief Returns the element at the given index
+     * \param i The index
+     * \return a reference to the element at the given index.
+     */
     return_type operator[](std::size_t j) {
         return decay_traits<sub_type>::storage_order == order::RowMajor
                    ? sub[i * subsize(sub) + j]
@@ -190,11 +234,21 @@ struct sub_view {
                    : sub.read_flat(i + dim<0>(sub) * j);
     }
 
+    /*!
+     * \brief Access to the element at the given (args...) position
+     * \param args The indices
+     * \return a reference to the element at the given position.
+     */
     template <typename... S>
     const_return_type operator()(S... args) const {
         return sub(i, static_cast<std::size_t>(args)...);
     }
 
+    /*!
+     * \brief Access to the element at the given (args...) position
+     * \param args The indices
+     * \return a reference to the element at the given position.
+     */
     template <typename... S>
     return_type operator()(S... args) {
         return sub(i, static_cast<std::size_t>(args)...);
@@ -275,16 +329,21 @@ inline constexpr std::size_t compute_index(S1 first, S... args) noexcept {
 
 } //end of namespace fast_matrix_view_detail
 
+/*!
+ * \brief View to represent a fast matrix in top of an expression
+ * \tparam T The type of expression on which the view is made
+ * \tparam Dims The dimensios of the view
+ */
 template <typename T, std::size_t... Dims>
 struct fast_matrix_view {
-    T sub;
+    T sub; ///< The Sub expression
 
-    using sub_type          = T;
-    using value_type        = value_t<sub_type>;
-    using memory_type       = memory_t<sub_type>;
-    using const_memory_type = const_memory_t<sub_type>;
-    using return_type       = return_helper<sub_type, decltype(sub[0])>;
-    using const_return_type = const_return_helper<sub_type, decltype(sub[0])>;
+    using sub_type          = T;                                               ///< The sub type
+    using value_type        = value_t<sub_type>;                               ///< The value contained in the expression
+    using memory_type       = memory_t<sub_type>;                              ///< The memory acess type
+    using const_memory_type = const_memory_t<sub_type>;                        ///< The const memory access type
+    using return_type       = return_helper<sub_type, decltype(sub[0])>;       ///< The type returned by the view
+    using const_return_type = const_return_helper<sub_type, decltype(sub[0])>; ///< The const type return by the view
 
     static constexpr std::size_t n_dimensions = sizeof...(Dims);
 
@@ -296,10 +355,20 @@ struct fast_matrix_view {
         return fast_matrix_view_detail::compute_index<fast_matrix_view<T, Dims...>, 0>(args...);
     }
 
+    /*!
+     * \brief Returns the element at the given index
+     * \param i The index
+     * \return a reference to the element at the given index.
+     */
     const_return_type operator[](std::size_t j) const {
         return sub[j];
     }
 
+    /*!
+     * \brief Returns the element at the given index
+     * \param i The index
+     * \return a reference to the element at the given index.
+     */
     return_type operator[](std::size_t j) {
         return sub[j];
     }
@@ -314,6 +383,11 @@ struct fast_matrix_view {
         return sub.read_flat(j);
     }
 
+    /*!
+     * \brief Access to the element at the given (args...) position
+     * \param args The indices
+     * \return a reference to the element at the given position.
+     */
     template <typename... S>
     std::enable_if_t<sizeof...(S) == sizeof...(Dims), return_type&> operator()(S... args) noexcept {
         static_assert(cpp::all_convertible_to<std::size_t, S...>::value, "Invalid size types");
@@ -321,6 +395,11 @@ struct fast_matrix_view {
         return sub[index(static_cast<std::size_t>(args)...)];
     }
 
+    /*!
+     * \brief Access to the element at the given (args...) position
+     * \param args The indices
+     * \return a reference to the element at the given position.
+     */
     template <typename... S>
     std::enable_if_t<sizeof...(S) == sizeof...(Dims), const_return_type&> operator()(S... args) const noexcept {
         static_assert(cpp::all_convertible_to<std::size_t, S...>::value, "Invalid size types");
@@ -388,29 +467,39 @@ struct fast_matrix_view {
     }
 };
 
+/*!
+ * \brief View to represent a dyn vector in top of an expression
+ * \tparam T The type of expression on which the view is made
+ */
 template <typename T>
 struct dyn_vector_view {
-    T sub;
+    T sub; ///< The Sub expression
     std::size_t rows;
 
-    using sub_type          = T;
-    using value_type        = value_t<sub_type>;
-    using memory_type       = memory_t<sub_type>;
-    using const_memory_type = const_memory_t<sub_type>;
-    using return_type       = return_helper<sub_type, decltype(sub[0])>;
-    using const_return_type = const_return_helper<sub_type, decltype(sub[0])>;
+    using sub_type          = T;                                               ///< The sub type
+    using value_type        = value_t<sub_type>;                               ///< The value contained in the expression
+    using memory_type       = memory_t<sub_type>;                              ///< The memory acess type
+    using const_memory_type = const_memory_t<sub_type>;                        ///< The const memory access type
+    using return_type       = return_helper<sub_type, decltype(sub[0])>;       ///< The type returned by the view
+    using const_return_type = const_return_helper<sub_type, decltype(sub[0])>; ///< The const type return by the view
 
     dyn_vector_view(sub_type sub, std::size_t rows)
             : sub(sub), rows(rows) {}
 
+    /*!
+     * \brief Returns the element at the given index
+     * \param i The index
+     * \return a reference to the element at the given index.
+     */
     const_return_type operator[](std::size_t j) const {
         return sub[j];
     }
 
-    const_return_type operator()(std::size_t j) const {
-        return sub[j];
-    }
-
+    /*!
+     * \brief Returns the element at the given index
+     * \param i The index
+     * \return a reference to the element at the given index.
+     */
     return_type operator[](std::size_t j) {
         return sub[j];
     }
@@ -425,7 +514,21 @@ struct dyn_vector_view {
         return sub.read_flat(j);
     }
 
+    /*!
+     * \brief Access to the element at the given position
+     * \param i The index
+     * \return a reference to the element at the given position.
+     */
     return_type operator()(std::size_t j) {
+        return sub[j];
+    }
+
+    /*!
+     * \brief Access to the element at the given position
+     * \param i The index
+     * \return a reference to the element at the given position.
+     */
+    const_return_type operator()(std::size_t j) const {
         return sub[j];
     }
 
@@ -484,38 +587,62 @@ struct dyn_vector_view {
     }
 };
 
+/*!
+ * \brief View to represent a dyn matrix in top of an expression
+ * \tparam T The type of expression on which the view is made
+ */
 template <typename T>
 struct dyn_matrix_view {
-    T sub;
-    std::size_t rows;
-    std::size_t columns;
+    T sub;               ///< The sub expression
+    std::size_t rows;    ///<The number of rows
+    std::size_t columns; ///< The number columns
 
-    using sub_type          = T;
-    using value_type        = value_t<sub_type>;
-    using memory_type       = memory_t<sub_type>;
-    using const_memory_type = const_memory_t<sub_type>;
-    using return_type       = return_helper<sub_type, decltype(sub[0])>;
-    using const_return_type = const_return_helper<sub_type, decltype(sub[0])>;
+    using sub_type          = T;                                               ///< The sub type
+    using value_type        = value_t<sub_type>;                               ///< The value contained in the expression
+    using memory_type       = memory_t<sub_type>;                              ///< The memory acess type
+    using const_memory_type = const_memory_t<sub_type>;                        ///< The const memory access type
+    using return_type       = return_helper<sub_type, decltype(sub[0])>;       ///< The type returned by the view
+    using const_return_type = const_return_helper<sub_type, decltype(sub[0])>; ///< The const type return by the view
 
     dyn_matrix_view(sub_type sub, std::size_t rows, std::size_t columns)
             : sub(sub), rows(rows), columns(columns) {}
 
+    /*!
+     * \brief Returns the element at the given index
+     * \param i The index
+     * \return a reference to the element at the given index.
+     */
     const_return_type operator[](std::size_t j) const {
         return sub[j];
     }
 
+    /*!
+     * \brief Returns the element at the given index
+     * \param i The index
+     * \return a reference to the element at the given index.
+     */
+    return_type operator[](std::size_t j) {
+        return sub[j];
+    }
+
+    /*!
+     * \brief Access to the element at the given position
+     * \param i The index
+     * \return a reference to the element at the given position.
+     */
     const_return_type operator()(std::size_t j) const {
         return sub[j];
     }
 
+    /*!
+     * \brief Access to the element at the given position
+     * \param i The index
+     * \return a reference to the element at the given position.
+     */
     const_return_type operator()(std::size_t i, std::size_t j) const {
         return decay_traits<sub_type>::storage_order == order::RowMajor
                    ? sub[i * columns + j]
                    : sub[i + rows * j];
-    }
-
-    return_type operator[](std::size_t j) {
-        return sub[j];
     }
 
     /*!
@@ -528,10 +655,21 @@ struct dyn_matrix_view {
         return sub.read_flat(j);
     }
 
+    /*!
+     * \brief Access to the element at the given position
+     * \param i The index
+     * \return a reference to the element at the given position.
+     */
     return_type operator()(std::size_t j) {
         return sub[j];
     }
 
+    /*!
+     * \brief Access to the element at the given (i,j) position
+     * \param i The first index
+     * \param j The second index
+     * \return a reference to the element at the given position.
+     */
     return_type operator()(std::size_t i, std::size_t j) {
         return decay_traits<sub_type>::storage_order == order::RowMajor
                    ? sub[i * columns + j]

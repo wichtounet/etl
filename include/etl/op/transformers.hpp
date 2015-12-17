@@ -16,6 +16,11 @@
 
 namespace etl {
 
+/*!
+ * \brief Transform that repeats the expression to the right
+ * \tparam T The type on which the transformer is applied
+ * \tparam D The new dimensions
+ */
 template <typename T, std::size_t... D>
 struct rep_r_transformer {
     using sub_type   = T;           ///< The type on which the expression works
@@ -29,6 +34,11 @@ struct rep_r_transformer {
     explicit rep_r_transformer(sub_type vec)
             : sub(vec) {}
 
+    /*!
+     * \brief Returns the value at the given index
+     * \param i The index
+     * \return the value at the given index.
+     */
     value_type operator[](std::size_t i) const {
         return sub[i / mul_all<D...>::value];
     }
@@ -43,9 +53,14 @@ struct rep_r_transformer {
         return sub.read_flat(i / mul_all<D...>::value);
     }
 
+    /*!
+     * \brief Access to the value at the given (args...) position
+     * \param args The indices
+     * \return The value at the position (args...)
+     */
     template <typename... Sizes, cpp_enable_if((sizeof...(Sizes) == dimensions))>
-    value_type operator()(Sizes... sizes) const {
-        return selected_only(std::make_index_sequence<sub_d>(), sizes...);
+    value_type operator()(Sizes... args) const {
+        return selected_only(std::make_index_sequence<sub_d>(), args...);
     }
 
     /*!
@@ -73,6 +88,11 @@ private:
     }
 };
 
+/*!
+ * \brief Transform that repeats the expression to the left
+ * \tparam T The type on which the transformer is applied
+ * \tparam D The new dimensions
+ */
 template <typename T, std::size_t... D>
 struct rep_l_transformer {
     using sub_type   = T;           ///< The type on which the expression works
@@ -86,6 +106,11 @@ struct rep_l_transformer {
     explicit rep_l_transformer(sub_type vec)
             : sub(vec) {}
 
+    /*!
+     * \brief Returns the value at the given index
+     * \param i The index
+     * \return the value at the given index.
+     */
     value_type operator[](std::size_t i) const {
         return sub[i % size(sub)];
     }
@@ -100,9 +125,14 @@ struct rep_l_transformer {
         return sub.read_flat(i % size(sub));
     }
 
+    /*!
+     * \brief Access to the value at the given (args...) position
+     * \param args The indices
+     * \return The value at the position (args...)
+     */
     template <typename... Sizes, cpp_enable_if((sizeof...(Sizes) == dimensions))>
-    value_type operator()(Sizes... sizes) const {
-        return selected_only(make_index_range<sizeof...(D), dimensions>(), sizes...);
+    value_type operator()(Sizes... args) const {
+        return selected_only(make_index_range<sizeof...(D), dimensions>(), args...);
     }
 
     /*!
@@ -130,6 +160,11 @@ private:
     }
 };
 
+/*!
+ * \brief Transform (dynamic) that repeats the expression to the right
+ * \tparam T The type on which the transformer is applied
+ * \tparam D The number of new dimensions
+ */
 template <typename T, std::size_t D>
 struct dyn_rep_r_transformer {
     using sub_type   = T;           ///< The type on which the expression works
@@ -147,6 +182,11 @@ struct dyn_rep_r_transformer {
         m = std::accumulate(reps.begin(), reps.end(), 1UL, [](std::size_t a, std::size_t b) { return a * b; });
     }
 
+    /*!
+     * \brief Returns the value at the given index
+     * \param i The index
+     * \return the value at the given index.
+     */
     value_type operator[](std::size_t i) const {
         return sub(i / m);
     }
@@ -161,9 +201,14 @@ struct dyn_rep_r_transformer {
         return sub(i / m);
     }
 
+    /*!
+     * \brief Access to the value at the given (args...) position
+     * \param args The indices
+     * \return The value at the position (args...)
+     */
     template <typename... Sizes, cpp_enable_if((sizeof...(Sizes) == dimensions))>
-    value_type operator()(Sizes... sizes) const {
-        return selected_only(std::make_index_sequence<sub_d>(), sizes...);
+    value_type operator()(Sizes... args) const {
+        return selected_only(std::make_index_sequence<sub_d>(), args...);
     }
 
     /*!
@@ -191,6 +236,11 @@ private:
     }
 };
 
+/*!
+ * \brief Transform (dynamic) that repeats the expression to the left
+ * \tparam T The type on which the transformer is applied
+ * \tparam D The number of new dimensions
+ */
 template <typename T, std::size_t D>
 struct dyn_rep_l_transformer {
     using sub_type   = T;           ///< The type on which the expression works
@@ -208,6 +258,11 @@ struct dyn_rep_l_transformer {
         m = std::accumulate(reps.begin(), reps.end(), 1UL, [](std::size_t a, std::size_t b) { return a * b; });
     }
 
+    /*!
+     * \brief Returns the value at the given index
+     * \param i The index
+     * \return the value at the given index.
+     */
     value_type operator[](std::size_t i) const {
         return sub(i % size(sub));
     }
@@ -222,9 +277,14 @@ struct dyn_rep_l_transformer {
         return sub(i % size(sub));
     }
 
+    /*!
+     * \brief Access to the value at the given (args...) position
+     * \param args The indices
+     * \return The value at the position (args...)
+     */
     template <typename... Sizes, cpp_enable_if((sizeof...(Sizes) == dimensions))>
-    value_type operator()(Sizes... sizes) const {
-        return selected_only(make_index_range<D, dimensions>(), sizes...);
+    value_type operator()(Sizes... args) const {
+        return selected_only(make_index_range<D, dimensions>(), args...);
     }
 
     /*!
@@ -252,6 +312,10 @@ private:
     }
 };
 
+/*!
+ * \brief Transform (dynamic) that sums the expression from the right, effectively removing the right dimension.
+ * \tparam T The type on which the transformer is applied
+ */
 template <typename T>
 struct sum_r_transformer {
     using sub_type   = T;           ///< The type on which the expression works
@@ -262,6 +326,11 @@ struct sum_r_transformer {
     explicit sum_r_transformer(sub_type vec)
             : sub(vec) {}
 
+    /*!
+     * \brief Returns the value at the given index
+     * \param i The index
+     * \return the value at the given index.
+     */
     value_type operator[](std::size_t i) const {
         return sum(sub(i));
     }
@@ -300,6 +369,10 @@ struct sum_r_transformer {
     }
 };
 
+/*!
+ * \brief Transform (dynamic) that averages the expression from the right, effectively removing the right dimension.
+ * \tparam T The type on which the transformer is applied
+ */
 template <typename T>
 struct mean_r_transformer {
     using sub_type   = T;           ///< The type on which the expression works
@@ -310,6 +383,11 @@ struct mean_r_transformer {
     explicit mean_r_transformer(sub_type vec)
             : sub(vec) {}
 
+    /*!
+     * \brief Returns the value at the given index
+     * \param i The index
+     * \return the value at the given index.
+     */
     value_type operator[](std::size_t i) const {
         return mean(sub(i));
     }
@@ -348,6 +426,10 @@ struct mean_r_transformer {
     }
 };
 
+/*!
+ * \brief Transform (dynamic) that sums the expression from the left, effectively removing the left dimension.
+ * \tparam T The type on which the transformer is applied
+ */
 template <typename T>
 struct sum_l_transformer {
     using sub_type   = T;           ///< The type on which the expression works
@@ -358,6 +440,11 @@ struct sum_l_transformer {
     explicit sum_l_transformer(sub_type vec)
             : sub(vec) {}
 
+    /*!
+     * \brief Returns the value at the given index
+     * \param i The index
+     * \return the value at the given index.
+     */
     value_type operator[](std::size_t j) const {
         value_type m = 0.0;
 
@@ -414,6 +501,10 @@ struct sum_l_transformer {
     }
 };
 
+/*!
+ * \brief Transform (dynamic) that averages the expression from the left, effectively removing the left dimension.
+ * \tparam T The type on which the transformer is applied
+ */
 template <typename T>
 struct mean_l_transformer {
     using sub_type   = T;           ///< The type on which the expression works
@@ -424,6 +515,11 @@ struct mean_l_transformer {
     explicit mean_l_transformer(sub_type vec)
             : sub(vec) {}
 
+    /*!
+     * \brief Returns the value at the given index
+     * \param i The index
+     * \return the value at the given index.
+     */
     value_type operator[](std::size_t j) const {
         value_type m = 0.0;
 
@@ -480,6 +576,11 @@ struct mean_l_transformer {
     }
 };
 
+
+/*!
+ * \brief Transform (dynamic) that flips a matrix horizontally
+ * \tparam T The type on which the transformer is applied
+ */
 template <typename T>
 struct hflip_transformer {
     using sub_type   = T;           ///< The type on which the expression works
@@ -492,11 +593,21 @@ struct hflip_transformer {
 
     static constexpr const bool matrix = etl_traits<std::decay_t<sub_type>>::dimensions() == 2;
 
+    /*!
+     * \brief Returns the value at the given index
+     * \param i The index
+     * \return the value at the given index.
+     */
     template <bool C = matrix, cpp_disable_if(C)>
     value_type operator[](std::size_t i) const {
         return sub[size(sub) - i - 1];
     }
 
+    /*!
+     * \brief Returns the value at the given index
+     * \param i The index
+     * \return the value at the given index.
+     */
     template <bool C = matrix, cpp_enable_if(C)>
     value_type operator[](std::size_t i) const {
         std::size_t i_i = i / dim<1>(sub);
@@ -528,10 +639,21 @@ struct hflip_transformer {
         return sub.read_flat(i_i * dim<1>(sub) + (dim<1>(sub) - 1 - i_j));
     }
 
+    /*!
+     * \brief Access to the value at the given (i) position
+     * \param i The index
+     * \return The value at the position (i)
+     */
     value_type operator()(std::size_t i) const {
         return sub(size(sub) - 1 - i);
     }
 
+    /*!
+     * \brief Access to the value at the given (i, j) position
+     * \param i The first index
+     * \param j The second index
+     * \return The value at the position (i, j)
+     */
     value_type operator()(std::size_t i, std::size_t j) const {
         return sub(i, columns(sub) - 1 - j);
     }
@@ -555,6 +677,10 @@ struct hflip_transformer {
     }
 };
 
+/*!
+ * \brief Transform (dynamic) that flips a matrix vertically
+ * \tparam T The type on which the transformer is applied
+ */
 template <typename T>
 struct vflip_transformer {
     using sub_type   = T;           ///< The type on which the expression works
@@ -567,11 +693,21 @@ struct vflip_transformer {
 
     static constexpr const bool matrix = etl_traits<std::decay_t<sub_type>>::dimensions() == 2;
 
+    /*!
+     * \brief Returns the value at the given index
+     * \param i The index
+     * \return the value at the given index.
+     */
     template <bool C = matrix, cpp_disable_if(C)>
     value_type operator[](std::size_t i) const {
         return sub[i];
     }
 
+    /*!
+     * \brief Returns the value at the given index
+     * \param i The index
+     * \return the value at the given index.
+     */
     template <bool C = matrix, cpp_enable_if(C)>
     value_type operator[](std::size_t i) const {
         std::size_t i_i = i / dim<1>(sub);
@@ -603,10 +739,21 @@ struct vflip_transformer {
         return sub.read_flat((dim<0>(sub) - 1 - i_i) * dim<1>(sub) + i_j);
     }
 
+    /*!
+     * \brief Access to the value at the given (i) position
+     * \param i The index
+     * \return The value at the position (i)
+     */
     value_type operator()(std::size_t i) const {
         return sub(i);
     }
 
+    /*!
+     * \brief Access to the value at the given (i, j) position
+     * \param i The first index
+     * \param j The second index
+     * \return The value at the position (i, j)
+     */
     value_type operator()(std::size_t i, std::size_t j) const {
         return sub(rows(sub) - 1 - i, j);
     }
@@ -630,6 +777,10 @@ struct vflip_transformer {
     }
 };
 
+/*!
+ * \brief Transform (dynamic) that flips a matrix vertically and horizontally.
+ * \tparam T The type on which the transformer is applied
+ */
 template <typename T>
 struct fflip_transformer {
     using sub_type   = T;           ///< The type on which the expression works
@@ -640,6 +791,11 @@ struct fflip_transformer {
     explicit fflip_transformer(sub_type vec)
             : sub(vec) {}
 
+    /*!
+     * \brief Returns the value at the given index
+     * \param i The index
+     * \return the value at the given index.
+     */
     value_type operator[](std::size_t i) const {
         if (dimensions(sub) == 1) {
             return sub[i];
@@ -662,10 +818,21 @@ struct fflip_transformer {
         }
     }
 
+    /*!
+     * \brief Access to the value at the given (i) position
+     * \param i The index
+     * \return The value at the position (i)
+     */
     value_type operator()(std::size_t i) const {
         return sub(i);
     }
 
+    /*!
+     * \brief Access to the value at the given (i, j) position
+     * \param i The first index
+     * \param j The second index
+     * \return The value at the position (i, j)
+     */
     value_type operator()(std::size_t i, std::size_t j) const {
         return sub(rows(sub) - 1 - i, columns(sub) - 1 - j);
     }
@@ -689,6 +856,10 @@ struct fflip_transformer {
     }
 };
 
+/*!
+ * \brief Transform (dynamic) that transposes a matrix.
+ * \tparam T The type on which the transformer is applied
+ */
 template <typename T>
 struct transpose_transformer {
     using sub_type   = T;           ///< The type on which the expression works
@@ -699,6 +870,11 @@ struct transpose_transformer {
     explicit transpose_transformer(sub_type vec)
             : sub(vec) {}
 
+    /*!
+     * \brief Returns the value at the given index
+     * \param i The index
+     * \return the value at the given index.
+     */
     value_type operator[](std::size_t i) const {
         if (dimensions(sub) == 1) {
             return sub[i];
@@ -733,10 +909,21 @@ struct transpose_transformer {
         }
     }
 
+    /*!
+     * \brief Access to the value at the given (i) position
+     * \param i The index
+     * \return The value at the position (i)
+     */
     value_type operator()(std::size_t i) const {
         return sub(i);
     }
 
+    /*!
+     * \brief Access to the value at the given (i, j) position
+     * \param i The first index
+     * \param j The second index
+     * \return The value at the position (i, j)
+     */
     value_type operator()(std::size_t i, std::size_t j) const {
         return sub(j, i);
     }
@@ -760,6 +947,12 @@ struct transpose_transformer {
     }
 };
 
+
+/*!
+ * \brief Transform that applies a lazy matrix multiplication to two matrices
+ * \tparam L The left type on which the transformer is applied
+ * \tparam R The right type on which the transformer is applied
+ */
 template <typename L, typename R>
 struct mm_mul_transformer {
     using left_type  = L;
@@ -792,6 +985,11 @@ struct mm_mul_transformer {
         check_mmul_sizes(left, right);
     }
 
+    /*!
+     * \brief Returns the value at the given index
+     * \param i The index
+     * \return the value at the given index.
+     */
     value_type operator[](std::size_t i) const {
         std::size_t i_i, i_j;
         std::tie(i_i, i_j) = index_to_2d(left, i);
@@ -810,6 +1008,12 @@ struct mm_mul_transformer {
         return operator()(i_i, i_j);
     }
 
+    /*!
+     * \brief Access to the value at the given (i, j) position
+     * \param i The first index
+     * \param j The second index
+     * \return The value at the position (i, j)
+     */
     value_type operator()(std::size_t i, std::size_t j) const {
         value_type c = 0;
 
@@ -820,10 +1024,18 @@ struct mm_mul_transformer {
         return c;
     }
 
+    /*!
+     * \brief Returns the left value on which the transformer is working.
+     * \return A reference to the left value on which the transformer is working.
+     */
     left_type& lhs() {
         return left;
     }
 
+    /*!
+     * \brief Returns the right value on which the transformer is working.
+     * \return A reference to the right value on which the transformer is working.
+     */
     right_type& rhs() {
         return right;
     }
@@ -839,6 +1051,10 @@ struct mm_mul_transformer {
     }
 };
 
+/*!
+ * \brief Transform that applies a convmtx transformation on a matrix.
+ * \tparam T The type on which the transformer is applied
+ */
 template <typename T>
 struct dyn_convmtx_transformer {
     using sub_type   = T;           ///< The type on which the expression works
@@ -852,6 +1068,11 @@ struct dyn_convmtx_transformer {
     dyn_convmtx_transformer(sub_type sub, std::size_t h)
             : sub(sub), h(h) {}
 
+    /*!
+     * \brief Returns the value at the given index
+     * \param i The index
+     * \return the value at the given index.
+     */
     value_type operator[](std::size_t i) const {
         if (decay_traits<sub_type>::storage_order == order::RowMajor) {
             std::size_t i_i = i / (etl::size(sub) + h - 1);
@@ -874,6 +1095,12 @@ struct dyn_convmtx_transformer {
         return operator[](i);
     }
 
+    /*!
+     * \brief Access to the value at the given (i, j) position
+     * \param i The first index
+     * \param j The second index
+     * \return The value at the position (i, j)
+     */
     value_type operator()(std::size_t i, std::size_t j) const {
         if (j < i) {
             return value_type(0);
@@ -903,6 +1130,10 @@ struct dyn_convmtx_transformer {
     }
 };
 
+/*!
+ * \brief Transform that applies a convmtx2 transformation on a matrix.
+ * \tparam T The type on which the transformer is applied
+ */
 template <typename T>
 struct dyn_convmtx2_transformer {
     using sub_type   = T;           ///< The type on which the expression works
@@ -931,6 +1162,11 @@ struct dyn_convmtx2_transformer {
         inner_padding  = inner_paddings / (i2 - 1);
     }
 
+    /*!
+     * \brief Returns the value at the given index
+     * \param i The index
+     * \return the value at the given index.
+     */
     value_type operator[](std::size_t i) const {
         std::size_t i_i = i / (k1 * k2);
         std::size_t i_j = i % (k1 * k2);
@@ -949,6 +1185,12 @@ struct dyn_convmtx2_transformer {
         return (*this)(i_i, i_j);
     }
 
+    /*!
+     * \brief Access to the value at the given (i, j) position
+     * \param i The first index
+     * \param j The second index
+     * \return The value at the position (i, j)
+     */
     value_type operator()(std::size_t i, std::size_t j) const {
         auto top_padding = (i1 + k1 - 1) * (j / k1) + j % k1;
 
@@ -1063,6 +1305,12 @@ void im2col_direct(M& m, A&& sub, std::size_t k1, std::size_t k2) {
     }
 }
 
+/*!
+ * \brief Transform that applies probabilistic max pooling on a expression
+ * \tparam T The type on which the transformer is applied
+ * \tparam C1 The shrink factor of the first dimension
+ * \tparam C2 The shrink factor of the second dimension
+ */
 template <typename T, std::size_t C1, std::size_t C2>
 struct p_max_pool_transformer {
     using sub_type   = T;           ///< The type on which the expression works
@@ -1122,6 +1370,12 @@ struct p_max_pool_transformer {
     }
 };
 
+/*!
+ * \brief Transform that applies probabilistic max pooling on a expression (for hidden units)
+ * \tparam T The type on which the transformer is applied
+ * \tparam C1 The shrink factor of the first dimension
+ * \tparam C2 The shrink factor of the second dimension
+ */
 template <typename T, std::size_t C1, std::size_t C2>
 struct p_max_pool_h_transformer : p_max_pool_transformer<T, C1, C2> {
     using base_type  = p_max_pool_transformer<T, C1, C2>; ///< The base type
@@ -1135,6 +1389,11 @@ struct p_max_pool_h_transformer : p_max_pool_transformer<T, C1, C2> {
     explicit p_max_pool_h_transformer(sub_type vec)
             : base_type(vec) {}
 
+    /*!
+     * \brief Returns the value at the given index
+     * \param i The index
+     * \return the value at the given index.
+     */
     template <bool C = d2d, cpp_enable_if(C)>
     value_type operator[](std::size_t i) const {
         std::size_t i_i = i / dim<1>(sub);
@@ -1142,6 +1401,11 @@ struct p_max_pool_h_transformer : p_max_pool_transformer<T, C1, C2> {
         return (*this)(i_i, i_j);
     }
 
+    /*!
+     * \brief Returns the value at the given index
+     * \param i The index
+     * \return the value at the given index.
+     */
     template <bool C = d2d, cpp_disable_if(C)>
     value_type operator[](std::size_t i) const {
         std::size_t i_i  = i / (dim<1>(sub) * dim<2>(sub));
@@ -1181,10 +1445,23 @@ struct p_max_pool_h_transformer : p_max_pool_transformer<T, C1, C2> {
         return (*this)(i_i, i_j, i_k);
     }
 
+    /*!
+     * \brief Access to the value at the given (i, j) position
+     * \param i The first index
+     * \param j The second index
+     * \return The value at the position (i, j)
+     */
     value_type operator()(std::size_t i, std::size_t j) const {
         return std::exp(sub(i, j)) / (1.0 + base_type::pool(i, j));
     }
 
+    /*!
+     * \brief Access to the value at the given (k, i, j) position
+     * \param k The first index
+     * \param i The second index
+     * \param j The third index
+     * \return The value at the position (k, i, j)
+     */
     value_type operator()(std::size_t k, std::size_t i, std::size_t j) const {
         return std::exp(sub(k, i, j)) / (1.0 + base_type::pool(k, i, j));
     }
@@ -1208,6 +1485,12 @@ struct p_max_pool_h_transformer : p_max_pool_transformer<T, C1, C2> {
     }
 };
 
+/*!
+ * \brief Transform that applies probabilistic max pooling on a expression (for pooling units)
+ * \tparam T The type on which the transformer is applied
+ * \tparam C1 The shrink factor of the first dimension
+ * \tparam C2 The shrink factor of the second dimension
+ */
 template <typename T, std::size_t C1, std::size_t C2>
 struct p_max_pool_p_transformer : p_max_pool_transformer<T, C1, C2> {
     using base_type  = p_max_pool_transformer<T, C1, C2>; ///< The base type
@@ -1221,6 +1504,11 @@ struct p_max_pool_p_transformer : p_max_pool_transformer<T, C1, C2> {
     explicit p_max_pool_p_transformer(sub_type vec)
             : base_type(vec) {}
 
+    /*!
+     * \brief Returns the value at the given index
+     * \param i The index
+     * \return the value at the given index.
+     */
     template <bool C = d2d, cpp_enable_if(C)>
     value_type operator[](std::size_t i) const {
         std::size_t i_i = i / (dim<1>(sub) / C2);
@@ -1228,6 +1516,11 @@ struct p_max_pool_p_transformer : p_max_pool_transformer<T, C1, C2> {
         return (*this)(i_i, i_j);
     }
 
+    /*!
+     * \brief Returns the value at the given index
+     * \param i The index
+     * \return the value at the given index.
+     */
     template <bool C = d2d, cpp_disable_if(C)>
     value_type operator[](std::size_t i) const {
         std::size_t i_i  = i / ((dim<1>(sub) / C1) * (dim<2>(sub) / C2));
@@ -1267,10 +1560,23 @@ struct p_max_pool_p_transformer : p_max_pool_transformer<T, C1, C2> {
         return (*this)(i_i, i_j, i_k);
     }
 
+    /*!
+     * \brief Access to the value at the given (i, j) position
+     * \param i The first index
+     * \param j The second index
+     * \return The value at the position (i, j)
+     */
     value_type operator()(std::size_t i, std::size_t j) const {
         return 1.0 / (1.0 + base_type::pool(i * C1, j * C2));
     }
 
+    /*!
+     * \brief Access to the value at the given (k, i, j) position
+     * \param k The first index
+     * \param i The second index
+     * \param j The third index
+     * \return The value at the position (k, i, j)
+     */
     value_type operator()(std::size_t k, std::size_t i, std::size_t j) const {
         return 1.0 / (1.0 + base_type::pool(k, i * C1, j * C2));
     }
@@ -1384,6 +1690,9 @@ struct etl_traits<T, std::enable_if_t<cpp::or_c<
     }
 };
 
+/*!
+ * \brief Specialization for p_max_pool_p_transformer
+ */
 template <typename T, std::size_t C1, std::size_t C2>
 struct etl_traits<p_max_pool_p_transformer<T, C1, C2>> {
     using expr_t     = p_max_pool_p_transformer<T, C1, C2>;

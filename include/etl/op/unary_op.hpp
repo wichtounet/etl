@@ -5,6 +5,16 @@
 //  http://opensource.org/licenses/MIT)
 //=======================================================================
 
+/*!
+ * \file
+ * \brief Contains the unary operators for the unary expression
+ *
+ * A unary operator is a simple class with a static function apply that
+ * computes its result. If the operator is vectorizable, it also contains a
+ * static function load that computes the result for several operands at a
+ * time.
+ */
+
 #pragma once
 
 #include <random>
@@ -15,13 +25,25 @@
 
 namespace etl {
 
+/*!
+ * \brief The random engine used by the noise operators
+ */
 using random_engine = std::mt19937_64;
 
+/*!
+ * \brief Unary operation taking the absolute value
+ * \tparam T The type of value
+ */
 template <typename T>
 struct abs_unary_op {
     static constexpr const bool vectorizable = false; ///< Indicates if the operator is vectorizable
     static constexpr const bool linear       = true;  ///< Indicates if the operator is linear
 
+    /*!
+     * \brief Apply the unary operator on x
+     * \param x The value on which to apply the operator
+     * \return The result of applying the unary operator on x
+     */
     static constexpr T apply(const T& x) noexcept {
         return std::abs(x);
     }
@@ -35,6 +57,10 @@ struct abs_unary_op {
     }
 };
 
+/*!
+ * \brief Unary operation taking the logarithmic value
+ * \tparam T The type of value
+ */
 template <typename T>
 struct log_unary_op {
     static constexpr const bool vectorizable = intel_compiler && !is_complex_t<T>::value; ///< Indicates if the operator is vectorizable
@@ -43,6 +69,11 @@ struct log_unary_op {
     template <typename V = default_vec>
     using vec_type       = typename V::template vec_type<T>;
 
+    /*!
+     * \brief Apply the unary operator on x
+     * \param x The value on which to apply the operator
+     * \return The result of applying the unary operator on x
+     */
     static constexpr T apply(const T& x) {
         return std::log(x);
     }
@@ -63,6 +94,10 @@ struct log_unary_op {
     }
 };
 
+/*!
+ * \brief Unary operation taking the square root value
+ * \tparam T The type of value
+ */
 template <typename T>
 struct sqrt_unary_op {
     template <typename V = default_vec>
@@ -71,6 +106,11 @@ struct sqrt_unary_op {
     static constexpr const bool vectorizable = !is_complex_t<T>::value; ///< Indicates if the operator is vectorizable
     static constexpr const bool linear       = true;                    ///< Indicates if the operator is linear
 
+    /*!
+     * \brief Apply the unary operator on x
+     * \param x The value on which to apply the operator
+     * \return The result of applying the unary operator on x
+     */
     static constexpr T apply(const T& x) {
         return std::sqrt(x);
     }
@@ -89,6 +129,10 @@ struct sqrt_unary_op {
     }
 };
 
+/*!
+ * \brief Unary operation computing the exponential
+ * \tparam T The type of value
+ */
 template <typename T>
 struct exp_unary_op {
     template <typename V = default_vec>
@@ -97,6 +141,11 @@ struct exp_unary_op {
     static constexpr const bool vectorizable = intel_compiler && !is_complex_t<T>::value; ///< Indicates if the operator is vectorizable
     static constexpr const bool linear       = true;                                      ///< Indicates if the operator is linear
 
+    /*!
+     * \brief Apply the unary operator on x
+     * \param x The value on which to apply the operator
+     * \return The result of applying the unary operator on x
+     */
     static constexpr T apply(const T& x) {
         return std::exp(x);
     }
@@ -117,11 +166,20 @@ struct exp_unary_op {
     }
 };
 
+/*!
+ * \brief Unary operation computing the sign
+ * \tparam T The type of value
+ */
 template <typename T>
 struct sign_unary_op {
     static constexpr const bool vectorizable = false; ///< Indicates if the operator is vectorizable
     static constexpr const bool linear       = true;  ///< Indicates if the operator is linear
 
+    /*!
+     * \brief Apply the unary operator on x
+     * \param x The value on which to apply the operator
+     * \return The result of applying the unary operator on x
+     */
     static constexpr T apply(const T& x) noexcept {
         return math::sign(x);
     }
@@ -135,11 +193,20 @@ struct sign_unary_op {
     }
 };
 
+/*!
+ * \brief Unary operation computing the logistic sigmoid
+ * \tparam T The type of value
+ */
 template <typename T>
 struct sigmoid_unary_op {
     static constexpr const bool vectorizable = false; ///< Indicates if the operator is vectorizable
     static constexpr const bool linear       = true;  ///< Indicates if the operator is linear
 
+    /*!
+     * \brief Apply the unary operator on x
+     * \param x The value on which to apply the operator
+     * \return The result of applying the unary operator on x
+     */
     static constexpr T apply(const T& x) {
         return math::logistic_sigmoid(x);
     }
@@ -153,11 +220,20 @@ struct sigmoid_unary_op {
     }
 };
 
+/*!
+ * \brief Unary operation computing the softplus
+ * \tparam T The type of value
+ */
 template <typename T>
 struct softplus_unary_op {
     static constexpr const bool vectorizable = false; ///< Indicates if the operator is vectorizable
     static constexpr const bool linear       = true;  ///< Indicates if the operator is linear
 
+    /*!
+     * \brief Apply the unary operator on x
+     * \param x The value on which to apply the operator
+     * \return The result of applying the unary operator on x
+     */
     static constexpr T apply(const T& x) {
         return math::softplus(x);
     }
@@ -171,6 +247,10 @@ struct softplus_unary_op {
     }
 };
 
+/*!
+ * \brief Unary operation computing the minus operation
+ * \tparam T The type of value
+ */
 template <typename T>
 struct minus_unary_op {
     template <typename V = default_vec>
@@ -179,6 +259,11 @@ struct minus_unary_op {
     static constexpr const bool vectorizable = !is_complex_t<T>::value; ///< Indicates if the operator is vectorizable
     static constexpr const bool linear       = true;                    ///< Indicates if the operator is linear
 
+    /*!
+     * \brief Apply the unary operator on x
+     * \param x The value on which to apply the operator
+     * \return The result of applying the unary operator on x
+     */
     static constexpr T apply(const T& x) noexcept {
         return -x;
     }
@@ -197,6 +282,10 @@ struct minus_unary_op {
     }
 };
 
+/*!
+ * \brief Unary operation computing the plus operation
+ * \tparam T The type of value
+ */
 template <typename T>
 struct plus_unary_op {
     template <typename V = default_vec>
@@ -205,6 +294,11 @@ struct plus_unary_op {
     static constexpr const bool vectorizable = true; ///< Indicates if the operator is vectorizable
     static constexpr const bool linear       = true; ///< Indicates if the operator is linear
 
+    /*!
+     * \brief Apply the unary operator on x
+     * \param x The value on which to apply the operator
+     * \return The result of applying the unary operator on x
+     */
     static constexpr T apply(const T& x) noexcept {
         return +x;
     }
@@ -223,11 +317,20 @@ struct plus_unary_op {
     }
 };
 
+/*!
+ * \brief Unary operation computing a fast sigmoid approximation
+ * \tparam T The type of value
+ */
 template <typename T>
 struct fast_sigmoid_unary_op {
     static constexpr const bool vectorizable = false; ///< Indicates if the operator is vectorizable
     static constexpr const bool linear       = true;  ///< Indicates if the operator is linear
 
+    /*!
+     * \brief Apply the unary operator on x
+     * \param x The value on which to apply the operator
+     * \return The result of applying the unary operator on x
+     */
     static T apply(const T& v) {
         auto x = 0.5 * v;
 
@@ -264,11 +367,20 @@ struct fast_sigmoid_unary_op {
     }
 };
 
+/*!
+ * \brief Unary operation computing the tangent
+ * \tparam T The type of value
+ */
 template <typename T>
 struct tan_unary_op {
     static constexpr const bool vectorizable = false; ///< Indicates if the operator is vectorizable
     static constexpr const bool linear       = true;  ///< Indicates if the operator is linear
 
+    /*!
+     * \brief Apply the unary operator on x
+     * \param x The value on which to apply the operator
+     * \return The result of applying the unary operator on x
+     */
     static constexpr T apply(const T& x) noexcept {
         return std::tan(x);
     }
@@ -282,11 +394,20 @@ struct tan_unary_op {
     }
 };
 
+/*!
+ * \brief Unary operation computing the cosinus
+ * \tparam T The type of value
+ */
 template <typename T>
 struct cos_unary_op {
     static constexpr const bool vectorizable = false; ///< Indicates if the operator is vectorizable
     static constexpr const bool linear       = true;  ///< Indicates if the operator is linear
 
+    /*!
+     * \brief Apply the unary operator on x
+     * \param x The value on which to apply the operator
+     * \return The result of applying the unary operator on x
+     */
     static constexpr T apply(const T& x) noexcept {
         return std::cos(x);
     }
@@ -300,11 +421,20 @@ struct cos_unary_op {
     }
 };
 
+/*!
+ * \brief Unary operation computing the sinus
+ * \tparam T The type of value
+ */
 template <typename T>
 struct sin_unary_op {
     static constexpr const bool vectorizable = false; ///< Indicates if the operator is vectorizable
     static constexpr const bool linear       = true;  ///< Indicates if the operator is linear
 
+    /*!
+     * \brief Apply the unary operator on x
+     * \param x The value on which to apply the operator
+     * \return The result of applying the unary operator on x
+     */
     static constexpr T apply(const T& x) noexcept {
         return std::sin(x);
     }
@@ -318,11 +448,20 @@ struct sin_unary_op {
     }
 };
 
+/*!
+ * \brief Unary operation computing the hyperbolic tangent
+ * \tparam T The type of value
+ */
 template <typename T>
 struct tanh_unary_op {
     static constexpr const bool vectorizable = false; ///< Indicates if the operator is vectorizable
     static constexpr const bool linear       = true;  ///< Indicates if the operator is linear
 
+    /*!
+     * \brief Apply the unary operator on x
+     * \param x The value on which to apply the operator
+     * \return The result of applying the unary operator on x
+     */
     static constexpr T apply(const T& x) noexcept {
         return std::tanh(x);
     }
@@ -336,11 +475,20 @@ struct tanh_unary_op {
     }
 };
 
+/*!
+ * \brief Unary operation computing the hyperbolic cosinus
+ * \tparam T The type of value
+ */
 template <typename T>
 struct cosh_unary_op {
     static constexpr const bool vectorizable = false; ///< Indicates if the operator is vectorizable
     static constexpr const bool linear       = true;  ///< Indicates if the operator is linear
 
+    /*!
+     * \brief Apply the unary operator on x
+     * \param x The value on which to apply the operator
+     * \return The result of applying the unary operator on x
+     */
     static constexpr T apply(const T& x) noexcept {
         return std::cosh(x);
     }
@@ -354,11 +502,20 @@ struct cosh_unary_op {
     }
 };
 
+/*!
+ * \brief Unary operation computing the hyperbolic sinus
+ * \tparam T The type of value
+ */
 template <typename T>
 struct sinh_unary_op {
     static constexpr const bool vectorizable = false; ///< Indicates if the operator is vectorizable
     static constexpr const bool linear       = true;  ///< Indicates if the operator is linear
 
+    /*!
+     * \brief Apply the unary operator on x
+     * \param x The value on which to apply the operator
+     * \return The result of applying the unary operator on x
+     */
     static constexpr T apply(const T& x) noexcept {
         return std::sinh(x);
     }
@@ -372,11 +529,20 @@ struct sinh_unary_op {
     }
 };
 
+/*!
+ * \brief Unary operation extracting the real part of a complex number
+ * \tparam T The type of value
+ */
 template <typename T>
 struct real_unary_op {
     static constexpr const bool vectorizable = false; ///< Indicates if the operator is vectorizable
     static constexpr const bool linear       = true;  ///< Indicates if the operator is linear
 
+    /*!
+     * \brief Apply the unary operator on x
+     * \param x The value on which to apply the operator
+     * \return The result of applying the unary operator on x
+     */
     static constexpr value_t<T> apply(const T& x) noexcept {
         return get_real(x);
     }
@@ -390,11 +556,20 @@ struct real_unary_op {
     }
 };
 
+/*!
+ * \brief Unary operation extracting the imag part of a complex number
+ * \tparam T The type of value
+ */
 template <typename T>
 struct imag_unary_op {
     static constexpr const bool vectorizable = false; ///< Indicates if the operator is vectorizable
     static constexpr const bool linear       = true;  ///< Indicates if the operator is linear
 
+    /*!
+     * \brief Apply the unary operator on x
+     * \param x The value on which to apply the operator
+     * \return The result of applying the unary operator on x
+     */
     static constexpr value_t<T> apply(const T& x) noexcept {
         return get_imag(x);
     }
@@ -408,11 +583,20 @@ struct imag_unary_op {
     }
 };
 
+/*!
+ * \brief Unary operation computing the conjugate value of complex number
+ * \tparam T The type of value
+ */
 template <typename T>
 struct conj_unary_op {
     static constexpr const bool vectorizable = false; ///< Indicates if the operator is vectorizable
     static constexpr const bool linear       = true;  ///< Indicates if the operator is linear
 
+    /*!
+     * \brief Apply the unary operator on x
+     * \param x The value on which to apply the operator
+     * \return The result of applying the unary operator on x
+     */
     static constexpr T apply(const T& x) noexcept {
         return get_conj(x);
     }
@@ -426,11 +610,20 @@ struct conj_unary_op {
     }
 };
 
+/*!
+ * \brief Unary operation computing the derivate of the RELU operation
+ * \tparam T The type of value
+ */
 template <typename T>
 struct relu_derivative_op {
     static constexpr const bool vectorizable = false; ///< Indicates if the operator is vectorizable
     static constexpr const bool linear       = true;  ///< Indicates if the operator is linear
 
+    /*!
+     * \brief Apply the unary operator on x
+     * \param x The value on which to apply the operator
+     * \return The result of applying the unary operator on x
+     */
     static T apply(const T& x) {
         return x > 0.0 ? 1.0 : 0.0;
     }
@@ -444,11 +637,20 @@ struct relu_derivative_op {
     }
 };
 
+/*!
+ * \brief Unary operation sampling with a Bernoulli distribution
+ * \tparam T The type of value
+ */
 template <typename T>
 struct bernoulli_unary_op {
     static constexpr const bool vectorizable = false; ///< Indicates if the operator is vectorizable
     static constexpr const bool linear       = true;  ///< Indicates if the operator is linear
 
+    /*!
+     * \brief Apply the unary operator on x
+     * \param x The value on which to apply the operator
+     * \return The result of applying the unary operator on x
+     */
     static T apply(const T& x) {
         static random_engine rand_engine(std::time(nullptr));
         static std::uniform_real_distribution<double> distribution(0.0, 1.0);
@@ -465,11 +667,20 @@ struct bernoulli_unary_op {
     }
 };
 
+/*!
+ * \brief Unary operation sampling with a reverse Bernoulli distribution
+ * \tparam T The type of value
+ */
 template <typename T>
 struct reverse_bernoulli_unary_op {
     static constexpr const bool vectorizable = false; ///< Indicates if the operator is vectorizable
     static constexpr const bool linear       = true;  ///< Indicates if the operator is linear
 
+    /*!
+     * \brief Apply the unary operator on x
+     * \param x The value on which to apply the operator
+     * \return The result of applying the unary operator on x
+     */
     static T apply(const T& x) {
         static random_engine rand_engine(std::time(nullptr));
         static std::uniform_real_distribution<double> distribution(0.0, 1.0);
@@ -486,11 +697,20 @@ struct reverse_bernoulli_unary_op {
     }
 };
 
+/*!
+ * \brief Unary operation applying an uniform noise (0.0, 1.0(
+ * \tparam T The type of value
+ */
 template <typename T>
 struct uniform_noise_unary_op {
     static constexpr const bool vectorizable = false; ///< Indicates if the operator is vectorizable
     static constexpr const bool linear       = true;  ///< Indicates if the operator is linear
 
+    /*!
+     * \brief Apply the unary operator on x
+     * \param x The value on which to apply the operator
+     * \return The result of applying the unary operator on x
+     */
     static T apply(const T& x) {
         static random_engine rand_engine(std::time(nullptr));
         static std::uniform_real_distribution<double> real_distribution(0.0, 1.0);
@@ -507,11 +727,20 @@ struct uniform_noise_unary_op {
     }
 };
 
+/*!
+ * \brief Unary operation applying a normal noise
+ * \tparam T The type of value
+ */
 template <typename T>
 struct normal_noise_unary_op {
     static constexpr const bool vectorizable = false; ///< Indicates if the operator is vectorizable
     static constexpr const bool linear       = true;  ///< Indicates if the operator is linear
 
+    /*!
+     * \brief Apply the unary operator on x
+     * \param x The value on which to apply the operator
+     * \return The result of applying the unary operator on x
+     */
     static T apply(const T& x) {
         static random_engine rand_engine(std::time(nullptr));
         static std::normal_distribution<double> normal_distribution(0.0, 1.0);
@@ -528,11 +757,20 @@ struct normal_noise_unary_op {
     }
 };
 
+/*!
+ * \brief Unary operation applying a logistic noise
+ * \tparam T The type of value
+ */
 template <typename T>
 struct logistic_noise_unary_op {
     static constexpr const bool vectorizable = false; ///< Indicates if the operator is vectorizable
     static constexpr const bool linear       = true;  ///< Indicates if the operator is linear
 
+    /*!
+     * \brief Apply the unary operator on x
+     * \param x The value on which to apply the operator
+     * \return The result of applying the unary operator on x
+     */
     static T apply(const T& x) {
         static random_engine rand_engine(std::time(nullptr));
 
