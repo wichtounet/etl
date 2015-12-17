@@ -292,12 +292,22 @@ public:
         return access(static_cast<std::size_t>(args)...);
     }
 
+    /*!
+     * \brief Returns the element at the given index
+     * \param i The index
+     * \return a reference to the element at the given index.
+     */
     const value_type& operator[](std::size_t i) const noexcept {
         cpp_assert(i < size(), "Out of bounds");
 
         return _data[i];
     }
 
+    /*!
+     * \brief Returns the element at the given index
+     * \param i The index
+     * \return a reference to the element at the given index.
+     */
     value_type& operator[](std::size_t i) noexcept {
         cpp_assert(i < size(), "Out of bounds");
 
@@ -305,7 +315,7 @@ public:
     }
 
     /*!
-     * \returns the value at the given index
+     * \brief Returns the value at the given index
      * This function never alters the state of the container.
      * \param i The index
      * \return the value at the given index.

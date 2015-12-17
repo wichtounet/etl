@@ -434,18 +434,32 @@ public:
         return {*this, i, j};
     }
 
+    /*!
+     * \brief Returns the element at the given index
+     * This function may result in insertion of deletion of elements
+     * in the matrix and therefore invalidation of some references.
+     * \param n The index
+     * \return a reference to the element at the given index.
+     */
     template <bool B = n_dimensions == 2, cpp_enable_if(B)>
     reference_type operator[](std::size_t n) noexcept {
         return {*this, n / columns(), n % columns()};
     }
 
+    /*!
+     * \brief Returns the element at the given index
+     * This function may result in insertion of deletion of elements
+     * in the matrix and therefore invalidation of some references.
+     * \param n The index
+     * \return a reference to the element at the given index.
+     */
     template <bool B = n_dimensions == 2, cpp_enable_if(B)>
     const_reference_type operator[](std::size_t n) const noexcept {
         return {*this, n / columns(), n % columns()};
     }
 
     /*!
-     * \returns the value at the given index
+     * \brief Returns the value at the given index
      * This function never alters the state of the container.
      * \param i The index
      * \return the value at the given index.
@@ -456,7 +470,7 @@ public:
     }
 
     /*!
-     * \brief Returns the number of non zeros entries in the sparse matrix.
+     * \brief Returns Returns the number of non zeros entries in the sparse matrix.
      *
      * This is a constant time O(1) operation.
      *

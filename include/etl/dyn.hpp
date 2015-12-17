@@ -391,12 +391,22 @@ public:
         return _memory[index(sizes...)];
     }
 
+    /*!
+     * \brief Returns the element at the given index
+     * \param i The index
+     * \return a reference to the element at the given index.
+     */
     const value_type& operator[](std::size_t i) const noexcept {
         cpp_assert(i < _size, "Out of bounds");
 
         return _memory[i];
     }
 
+    /*!
+     * \brief Returns the element at the given index
+     * \param i The index
+     * \return a reference to the element at the given index.
+     */
     value_type& operator[](std::size_t i) noexcept {
         cpp_assert(i < _size, "Out of bounds");
 
