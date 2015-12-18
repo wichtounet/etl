@@ -7,6 +7,42 @@
 
 #include "test_light.hpp"
 
+
+// stream
+
+namespace {
+
+template<typename T>
+std::string to_stream_string(const T& value){
+    std::stringstream ss;
+    ss << value;
+    return ss.str();
+}
+
+} //end of anonymous namespace
+
+TEST_CASE("print/expr/1", "[print][stream]"){
+    etl::fast_vector<double, 3> a;
+    etl::dyn_vector<double> b(3);
+    etl::fast_matrix<double, 3, 4> c;
+    etl::dyn_matrix<double> d(3, 4);
+
+    REQUIRE(to_stream_string(a) == "V[3]");
+    REQUIRE(to_stream_string(b) == "V[3]");
+    REQUIRE(to_stream_string(c) == "M[3,4]");
+    REQUIRE(to_stream_string(d) == "M[3,4]");
+}
+
+TEST_CASE("print/expr/2", "[print][stream]"){
+    etl::fast_matrix<double, 3, 4> a;
+
+    REQUIRE(to_stream_string(a + a) == "(M[3,4] + M[3,4])");
+    REQUIRE(to_stream_string(a + a + a) == "((M[3,4] + M[3,4]) + M[3,4])");
+    REQUIRE(to_stream_string(a / a >> a) == "((M[3,4] / M[3,4]) * M[3,4])");
+    REQUIRE(to_stream_string(etl::log(a) + etl::abs(a)) == "(log(M[3,4]) + abs(M[3,4]))");
+    REQUIRE(to_stream_string(a(1) + etl::abs(a(0) - a(1))) == "(sub(M[3,4], 1) + abs((sub(M[3,4], 0) - sub(M[3,4], 1))))");
+}
+
 // to_octave
 
 TEST_CASE("to_octave/fast_vector", "to_octave") {
