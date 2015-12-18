@@ -29,7 +29,7 @@ struct rep_r_transformer {
     static constexpr const std::size_t sub_d      = decay_traits<sub_type>::dimensions();
     static constexpr const std::size_t dimensions = sizeof...(D) + sub_d;
 
-    sub_type sub;
+    sub_type sub; ///< The subexpression
 
     explicit rep_r_transformer(sub_type vec)
             : sub(vec) {}
@@ -101,7 +101,7 @@ struct rep_l_transformer {
     static constexpr const std::size_t sub_d      = decay_traits<sub_type>::dimensions();
     static constexpr const std::size_t dimensions = sizeof...(D) + sub_d;
 
-    sub_type sub;
+    sub_type sub; ///< The subexpression
 
     explicit rep_l_transformer(sub_type vec)
             : sub(vec) {}
@@ -173,7 +173,7 @@ struct dyn_rep_r_transformer {
     static constexpr const std::size_t sub_d      = decay_traits<sub_type>::dimensions();
     static constexpr const std::size_t dimensions = D + sub_d;
 
-    sub_type sub;
+    sub_type sub; ///< The subexpression
     std::array<std::size_t, D> reps;
     std::size_t m;
 
@@ -249,7 +249,7 @@ struct dyn_rep_l_transformer {
     static constexpr const std::size_t sub_d      = decay_traits<sub_type>::dimensions();
     static constexpr const std::size_t dimensions = D + sub_d;
 
-    sub_type sub;
+    sub_type sub; ///< The subexpression
     std::array<std::size_t, D> reps;
     std::size_t m;
 
@@ -321,7 +321,7 @@ struct sum_r_transformer {
     using sub_type   = T;           ///< The type on which the expression works
     using value_type = value_t<T>;  ///< The type of valuie
 
-    sub_type sub;
+    sub_type sub; ///< The subexpression
 
     explicit sum_r_transformer(sub_type vec)
             : sub(vec) {}
@@ -378,7 +378,7 @@ struct mean_r_transformer {
     using sub_type   = T;           ///< The type on which the expression works
     using value_type = value_t<T>;  ///< The type of valuie
 
-    sub_type sub;
+    sub_type sub; ///< The subexpression
 
     explicit mean_r_transformer(sub_type vec)
             : sub(vec) {}
@@ -435,7 +435,7 @@ struct sum_l_transformer {
     using sub_type   = T;           ///< The type on which the expression works
     using value_type = value_t<T>;  ///< The type of valuie
 
-    sub_type sub;
+    sub_type sub; ///< The subexpression
 
     explicit sum_l_transformer(sub_type vec)
             : sub(vec) {}
@@ -510,7 +510,7 @@ struct mean_l_transformer {
     using sub_type   = T;           ///< The type on which the expression works
     using value_type = value_t<T>;  ///< The type of valuie
 
-    sub_type sub;
+    sub_type sub; ///< The subexpression
 
     explicit mean_l_transformer(sub_type vec)
             : sub(vec) {}
@@ -586,7 +586,7 @@ struct hflip_transformer {
     using sub_type   = T;           ///< The type on which the expression works
     using value_type = value_t<T>;  ///< The type of valuie
 
-    sub_type sub;
+    sub_type sub; ///< The subexpression
 
     explicit hflip_transformer(sub_type vec)
             : sub(vec) {}
@@ -686,7 +686,7 @@ struct vflip_transformer {
     using sub_type   = T;           ///< The type on which the expression works
     using value_type = value_t<T>;  ///< The type of valuie
 
-    sub_type sub;
+    sub_type sub; ///< The subexpression
 
     explicit vflip_transformer(sub_type vec)
             : sub(vec) {}
@@ -786,7 +786,7 @@ struct fflip_transformer {
     using sub_type   = T;           ///< The type on which the expression works
     using value_type = value_t<T>;  ///< The type of valuie
 
-    sub_type sub;
+    sub_type sub; ///< The subexpression
 
     explicit fflip_transformer(sub_type vec)
             : sub(vec) {}
@@ -865,7 +865,7 @@ struct transpose_transformer {
     using sub_type   = T;           ///< The type on which the expression works
     using value_type = value_t<T>;  ///< The type of valuie
 
-    sub_type sub;
+    sub_type sub; ///< The subexpression
 
     explicit transpose_transformer(sub_type vec)
             : sub(vec) {}
@@ -1062,7 +1062,7 @@ struct dyn_convmtx_transformer {
 
     static_assert(decay_traits<T>::dimensions() == 1, "convmtx can only be applied on vectors");
 
-    sub_type sub;
+    sub_type sub; ///< The subexpression
     std::size_t h;
 
     dyn_convmtx_transformer(sub_type sub, std::size_t h)
@@ -1141,7 +1141,7 @@ struct dyn_convmtx2_transformer {
 
     static_assert(decay_traits<T>::dimensions() == 2, "convmtx2 can only be applied on matrices");
 
-    sub_type sub;
+    sub_type sub; ///< The subexpression
     const std::size_t k1;
     const std::size_t k2;
     std::size_t i1;
@@ -1316,7 +1316,7 @@ struct p_max_pool_transformer {
     using sub_type   = T;           ///< The type on which the expression works
     using value_type = value_t<T>;  ///< The type of valuie
 
-    sub_type sub;
+    sub_type sub; ///< The subexpression
 
     explicit p_max_pool_transformer(sub_type vec)
             : sub(vec) {}
@@ -1610,36 +1610,61 @@ struct etl_traits<T, std::enable_if_t<cpp::or_c<
     using expr_t     = T;
     using sub_expr_t = std::decay_t<typename std::decay_t<T>::sub_type>;
 
-    static constexpr const bool is_etl                  = true;
-    static constexpr const bool is_transformer          = true;
-    static constexpr const bool is_view                 = false;
-    static constexpr const bool is_magic_view           = false;
-    static constexpr const bool is_fast                 = etl_traits<sub_expr_t>::is_fast;
-    static constexpr const bool is_linear               = false;
-    static constexpr const bool is_value                = false;
-    static constexpr const bool is_generator            = false;
-    static constexpr const bool vectorizable            = false;
-    static constexpr const bool needs_temporary_visitor = etl_traits<sub_expr_t>::needs_temporary_visitor;
-    static constexpr const bool needs_evaluator_visitor = etl_traits<sub_expr_t>::needs_evaluator_visitor;
-    static constexpr const order storage_order          = etl_traits<sub_expr_t>::storage_order;
+    static constexpr const bool is_etl                  = true;  ///< Indicates if the type is an ETL expression
+    static constexpr const bool is_transformer          = true;  ///< Indicates if the type is a transformer
+    static constexpr const bool is_view                 = false; ///< Indicates if the type is a view
+    static constexpr const bool is_magic_view           = false; ///< Indicates if the type is a magic view
+    static constexpr const bool is_fast                 = etl_traits<sub_expr_t>::is_fast; ///< Indicates if the expression is fast
+    static constexpr const bool is_linear               = false; ///< Indicates if the expression is linear
+    static constexpr const bool is_value                = false; ///< Indicates if the expression is of value type
+    static constexpr const bool is_generator            = false; ///< Indicates if the expression is a generated
+    static constexpr const bool vectorizable            = false; ///< Indicates if the expression is vectorizable
+    static constexpr const bool needs_temporary_visitor = etl_traits<sub_expr_t>::needs_temporary_visitor; ///< Indicates if the expression needs a temporary visitor
+    static constexpr const bool needs_evaluator_visitor = etl_traits<sub_expr_t>::needs_evaluator_visitor; ///< Indicaes if the expression needs an evaluator visitor
+    static constexpr const order storage_order          = etl_traits<sub_expr_t>::storage_order;           ///< The expression storage order
 
+    /*!
+     * \brief Returns the size of the given expression
+     * \param v The expression to get the size for
+     * \returns the size of the given expression
+     */
     static std::size_t size(const expr_t& v) {
         return etl::dim<0>(v.sub);
     }
 
-    static std::size_t dim(const expr_t& v, std::size_t /*unused*/) {
+    /*!
+     * \brief Returns the dth dimension of the given expression
+     * \param v The expression
+     * \param d The dimension to get
+     * \return The dth dimension of the given expression
+     */
+    static std::size_t dim(const expr_t& v, std::size_t d) {
+        cpp_unused(d);
         return etl::dim<0>(v.sub);
     }
 
+    /*!
+     * \brief Returns the size of an expression of this fast type.
+     * \returns the size of an expression of this fast type.
+     */
     static constexpr std::size_t size() {
         return etl_traits<sub_expr_t>::template dim<0>();
     }
 
+    /*!
+     * \brief Returns the Dth dimension of an expression of this type
+     * \tparam D The dimension to get
+     * \return the Dth dimension of an expression of this type
+     */
     template <std::size_t D>
     static constexpr std::size_t dim() {
         return etl_traits<sub_expr_t>::template dim<0>();
     }
 
+    /*!
+     * \brief Returns the number of expressions for this type
+     * \return the number of dimensions of this type
+     */
     static constexpr std::size_t dimensions() {
         return 1;
     }
@@ -1655,36 +1680,60 @@ struct etl_traits<T, std::enable_if_t<cpp::or_c<
     using expr_t     = T;
     using sub_expr_t = std::decay_t<typename std::decay_t<T>::sub_type>;
 
-    static constexpr const bool is_etl                  = true;
-    static constexpr const bool is_transformer          = true;
-    static constexpr const bool is_view                 = false;
-    static constexpr const bool is_magic_view           = false;
-    static constexpr const bool is_fast                 = etl_traits<sub_expr_t>::is_fast;
-    static constexpr const bool is_linear               = false;
-    static constexpr const bool is_value                = false;
-    static constexpr const bool is_generator            = false;
-    static constexpr const bool vectorizable            = false;
-    static constexpr const bool needs_temporary_visitor = etl_traits<sub_expr_t>::needs_temporary_visitor;
-    static constexpr const bool needs_evaluator_visitor = etl_traits<sub_expr_t>::needs_evaluator_visitor;
-    static constexpr const order storage_order          = etl_traits<sub_expr_t>::storage_order;
+    static constexpr const bool is_etl                  = true;  ///< Indicates if the type is an ETL expression
+    static constexpr const bool is_transformer          = true;  ///< Indicates if the type is a transformer
+    static constexpr const bool is_view                 = false; ///< Indicates if the type is a view
+    static constexpr const bool is_magic_view           = false; ///< Indicates if the type is a magic view
+    static constexpr const bool is_fast                 = etl_traits<sub_expr_t>::is_fast; ///< Indicates if the expression is fast
+    static constexpr const bool is_linear               = false; ///< Indicates if the expression is linear
+    static constexpr const bool is_value                = false; ///< Indicates if the expression is of value type
+    static constexpr const bool is_generator            = false; ///< Indicates if the expression is a generated
+    static constexpr const bool vectorizable            = false; ///< Indicates if the expression is vectorizable
+    static constexpr const bool needs_temporary_visitor = etl_traits<sub_expr_t>::needs_temporary_visitor; ///< Indicates if the expression needs a temporary visitor
+    static constexpr const bool needs_evaluator_visitor = etl_traits<sub_expr_t>::needs_evaluator_visitor; ///< Indicaes if the expression needs an evaluator visitor
+    static constexpr const order storage_order          = etl_traits<sub_expr_t>::storage_order;           ///< The expression storage order
 
+    /*!
+     * \brief Returns the size of the given expression
+     * \param v The expression to get the size for
+     * \returns the size of the given expression
+     */
     static std::size_t size(const expr_t& v) {
         return etl::size(v.sub) / etl::dim<0>(v.sub);
     }
 
+    /*!
+     * \brief Returns the dth dimension of the given expression
+     * \param v The expression
+     * \param d The dimension to get
+     * \return The dth dimension of the given expression
+     */
     static std::size_t dim(const expr_t& v, std::size_t d) {
         return etl::dim(v.sub, d + 1);
     }
 
+    /*!
+     * \brief Returns the size of an expression of this fast type.
+     * \returns the size of an expression of this fast type.
+     */
     static constexpr std::size_t size() {
         return etl_traits<sub_expr_t>::size() / etl_traits<sub_expr_t>::template dim<0>();
     }
 
+    /*!
+     * \brief Returns the Dth dimension of an expression of this type
+     * \tparam D The dimension to get
+     * \return the Dth dimension of an expression of this type
+     */
     template <std::size_t D>
     static constexpr std::size_t dim() {
         return etl_traits<sub_expr_t>::template dim<D + 1>();
     }
 
+    /*!
+     * \brief Returns the number of expressions for this type
+     * \return the number of dimensions of this type
+     */
     static constexpr std::size_t dimensions() {
         return etl_traits<sub_expr_t>::dimensions() - 1;
     }
@@ -1698,23 +1747,34 @@ struct etl_traits<p_max_pool_p_transformer<T, C1, C2>> {
     using expr_t     = p_max_pool_p_transformer<T, C1, C2>;
     using sub_expr_t = std::decay_t<T>;
 
-    static constexpr const bool is_etl                  = true;
-    static constexpr const bool is_transformer          = true;
-    static constexpr const bool is_view                 = false;
-    static constexpr const bool is_magic_view           = false;
-    static constexpr const bool is_fast                 = etl_traits<sub_expr_t>::is_fast;
-    static constexpr const bool is_linear               = false;
-    static constexpr const bool is_value                = false;
-    static constexpr const bool is_generator            = false;
-    static constexpr const bool vectorizable            = false;
-    static constexpr const bool needs_temporary_visitor = etl_traits<sub_expr_t>::needs_temporary_visitor;
-    static constexpr const bool needs_evaluator_visitor = etl_traits<sub_expr_t>::needs_evaluator_visitor;
-    static constexpr const order storage_order          = etl_traits<sub_expr_t>::storage_order;
+    static constexpr const bool is_etl                  = true;  ///< Indicates if the type is an ETL expression
+    static constexpr const bool is_transformer          = true;  ///< Indicates if the type is a transformer
+    static constexpr const bool is_view                 = false; ///< Indicates if the type is a view
+    static constexpr const bool is_magic_view           = false; ///< Indicates if the type is a magic view
+    static constexpr const bool is_fast                 = etl_traits<sub_expr_t>::is_fast; ///< Indicates if the expression is fast
+    static constexpr const bool is_linear               = false; ///< Indicates if the expression is linear
+    static constexpr const bool is_value                = false; ///< Indicates if the expression is of value type
+    static constexpr const bool is_generator            = false; ///< Indicates if the expression is a generated
+    static constexpr const bool vectorizable            = false; ///< Indicates if the expression is vectorizable
+    static constexpr const bool needs_temporary_visitor = etl_traits<sub_expr_t>::needs_temporary_visitor; ///< Indicates if the expression needs a temporary visitor
+    static constexpr const bool needs_evaluator_visitor = etl_traits<sub_expr_t>::needs_evaluator_visitor; ///< Indicaes if the expression needs an evaluator visitor
+    static constexpr const order storage_order          = etl_traits<sub_expr_t>::storage_order;           ///< The expression storage order
 
+    /*!
+     * \brief Returns the size of the given expression
+     * \param v The expression to get the size for
+     * \returns the size of the given expression
+     */
     static std::size_t size(const expr_t& v) {
         return etl_traits<sub_expr_t>::size(v.sub) / (C1 * C2);
     }
 
+    /*!
+     * \brief Returns the dth dimension of the given expression
+     * \param v The expression
+     * \param d The dimension to get
+     * \return The dth dimension of the given expression
+     */
     static std::size_t dim(const expr_t& v, std::size_t d) {
         if (d == dimensions() - 1) {
             return etl_traits<sub_expr_t>::dim(v.sub, d) / C2;
@@ -1725,10 +1785,19 @@ struct etl_traits<p_max_pool_p_transformer<T, C1, C2>> {
         }
     }
 
+    /*!
+     * \brief Returns the size of an expression of this fast type.
+     * \returns the size of an expression of this fast type.
+     */
     static constexpr std::size_t size() {
         return etl_traits<sub_expr_t>::size() / (C1 * C2);
     }
 
+    /*!
+     * \brief Returns the Dth dimension of an expression of this type
+     * \tparam D The dimension to get
+     * \return the Dth dimension of an expression of this type
+     */
     template <std::size_t D>
     static constexpr std::size_t dim() {
         return D == dimensions() - 1 ? etl_traits<sub_expr_t>::template dim<D>() / C2
@@ -1736,6 +1805,10 @@ struct etl_traits<p_max_pool_p_transformer<T, C1, C2>> {
                                                              : etl_traits<sub_expr_t>::template dim<D>();
     }
 
+    /*!
+     * \brief Returns the number of expressions for this type
+     * \return the number of dimensions of this type
+     */
     static constexpr std::size_t dimensions() {
         return etl_traits<sub_expr_t>::dimensions();
     }
@@ -1753,36 +1826,60 @@ struct etl_traits<T, std::enable_if_t<cpp::or_c<
     using expr_t     = T;
     using sub_expr_t = std::decay_t<typename T::sub_type>;
 
-    static constexpr const bool is_etl                  = true;
-    static constexpr const bool is_transformer          = true;
-    static constexpr const bool is_view                 = false;
-    static constexpr const bool is_magic_view           = false;
-    static constexpr const bool is_fast                 = etl_traits<sub_expr_t>::is_fast;
-    static constexpr const bool is_linear               = false;
-    static constexpr const bool is_value                = false;
-    static constexpr const bool is_generator            = false;
-    static constexpr const bool vectorizable            = false;
-    static constexpr const bool needs_temporary_visitor = etl_traits<sub_expr_t>::needs_temporary_visitor;
-    static constexpr const bool needs_evaluator_visitor = etl_traits<sub_expr_t>::needs_evaluator_visitor;
-    static constexpr const order storage_order          = etl_traits<sub_expr_t>::storage_order;
+    static constexpr const bool is_etl                  = true;  ///< Indicates if the type is an ETL expression
+    static constexpr const bool is_transformer          = true;  ///< Indicates if the type is a transformer
+    static constexpr const bool is_view                 = false; ///< Indicates if the type is a view
+    static constexpr const bool is_magic_view           = false; ///< Indicates if the type is a magic view
+    static constexpr const bool is_fast                 = etl_traits<sub_expr_t>::is_fast; ///< Indicates if the expression is fast
+    static constexpr const bool is_linear               = false; ///< Indicates if the expression is linear
+    static constexpr const bool is_value                = false; ///< Indicates if the expression is of value type
+    static constexpr const bool is_generator            = false; ///< Indicates if the expression is a generated
+    static constexpr const bool vectorizable            = false; ///< Indicates if the expression is vectorizable
+    static constexpr const bool needs_temporary_visitor = etl_traits<sub_expr_t>::needs_temporary_visitor; ///< Indicates if the expression needs a temporary visitor
+    static constexpr const bool needs_evaluator_visitor = etl_traits<sub_expr_t>::needs_evaluator_visitor; ///< Indicaes if the expression needs an evaluator visitor
+    static constexpr const order storage_order          = etl_traits<sub_expr_t>::storage_order;           ///< The expression storage order
 
+    /*!
+     * \brief Returns the size of the given expression
+     * \param v The expression to get the size for
+     * \returns the size of the given expression
+     */
     static std::size_t size(const expr_t& v) {
         return etl_traits<sub_expr_t>::size(v.sub);
     }
 
+    /*!
+     * \brief Returns the dth dimension of the given expression
+     * \param v The expression
+     * \param d The dimension to get
+     * \return The dth dimension of the given expression
+     */
     static std::size_t dim(const expr_t& v, std::size_t d) {
         return etl_traits<sub_expr_t>::dim(v.sub, d);
     }
 
+    /*!
+     * \brief Returns the size of an expression of this fast type.
+     * \returns the size of an expression of this fast type.
+     */
     static constexpr std::size_t size() {
         return etl_traits<sub_expr_t>::size();
     }
 
+    /*!
+     * \brief Returns the Dth dimension of an expression of this type
+     * \tparam D The dimension to get
+     * \return the Dth dimension of an expression of this type
+     */
     template <std::size_t D>
     static constexpr std::size_t dim() {
         return etl_traits<sub_expr_t>::template dim<D>();
     }
 
+    /*!
+     * \brief Returns the number of expressions for this type
+     * \return the number of dimensions of this type
+     */
     static constexpr std::size_t dimensions() {
         return etl_traits<sub_expr_t>::dimensions();
     }
@@ -1797,36 +1894,60 @@ struct etl_traits<transpose_transformer<T>> {
     using expr_t     = etl::transpose_transformer<T>;
     using sub_expr_t = std::decay_t<T>;
 
-    static constexpr const bool is_etl                  = true;
-    static constexpr const bool is_transformer          = true;
-    static constexpr const bool is_view                 = false;
-    static constexpr const bool is_magic_view           = false;
-    static constexpr const bool is_fast                 = etl_traits<sub_expr_t>::is_fast;
-    static constexpr const bool is_linear               = false;
-    static constexpr const bool is_value                = false;
-    static constexpr const bool is_generator            = false;
-    static constexpr const bool vectorizable            = false;
-    static constexpr const bool needs_temporary_visitor = etl_traits<sub_expr_t>::needs_temporary_visitor;
-    static constexpr const bool needs_evaluator_visitor = etl_traits<sub_expr_t>::needs_evaluator_visitor;
-    static constexpr const order storage_order          = etl_traits<sub_expr_t>::storage_order;
+    static constexpr const bool is_etl                  = true;  ///< Indicates if the type is an ETL expression
+    static constexpr const bool is_transformer          = true;  ///< Indicates if the type is a transformer
+    static constexpr const bool is_view                 = false; ///< Indicates if the type is a view
+    static constexpr const bool is_magic_view           = false; ///< Indicates if the type is a magic view
+    static constexpr const bool is_fast                 = etl_traits<sub_expr_t>::is_fast; ///< Indicates if the expression is fast
+    static constexpr const bool is_linear               = false; ///< Indicates if the expression is linear
+    static constexpr const bool is_value                = false; ///< Indicates if the expression is of value type
+    static constexpr const bool is_generator            = false; ///< Indicates if the expression is a generated
+    static constexpr const bool vectorizable            = false; ///< Indicates if the expression is vectorizable
+    static constexpr const bool needs_temporary_visitor = etl_traits<sub_expr_t>::needs_temporary_visitor; ///< Indicates if the expression needs a temporary visitor
+    static constexpr const bool needs_evaluator_visitor = etl_traits<sub_expr_t>::needs_evaluator_visitor; ///< Indicaes if the expression needs an evaluator visitor
+    static constexpr const order storage_order          = etl_traits<sub_expr_t>::storage_order;           ///< The expression storage order
 
+    /*!
+     * \brief Returns the size of the given expression
+     * \param v The expression to get the size for
+     * \returns the size of the given expression
+     */
     static std::size_t size(const expr_t& v) {
         return etl_traits<sub_expr_t>::size(v.sub);
     }
 
+    /*!
+     * \brief Returns the dth dimension of the given expression
+     * \param v The expression
+     * \param d The dimension to get
+     * \return The dth dimension of the given expression
+     */
     static std::size_t dim(const expr_t& v, std::size_t d) {
         return etl_traits<sub_expr_t>::dim(v.sub, 1 - d);
     }
 
+    /*!
+     * \brief Returns the size of an expression of this fast type.
+     * \returns the size of an expression of this fast type.
+     */
     static constexpr std::size_t size() {
         return etl_traits<sub_expr_t>::size();
     }
 
+    /*!
+     * \brief Returns the Dth dimension of an expression of this type
+     * \tparam D The dimension to get
+     * \return the Dth dimension of an expression of this type
+     */
     template <std::size_t D>
     static constexpr std::size_t dim() {
         return etl_traits<sub_expr_t>::template dim<1 - D>();
     }
 
+    /*!
+     * \brief Returns the number of expressions for this type
+     * \return the number of dimensions of this type
+     */
     static constexpr std::size_t dimensions() {
         return etl_traits<sub_expr_t>::dimensions();
     }
@@ -1841,25 +1962,36 @@ struct etl_traits<mm_mul_transformer<LE, RE>> {
     using left_expr_t  = std::decay_t<LE>;
     using right_expr_t = std::decay_t<RE>;
 
-    static constexpr const bool is_etl         = true;
-    static constexpr const bool is_transformer = true;
-    static constexpr const bool is_view        = false;
-    static constexpr const bool is_magic_view  = false;
-    static constexpr const bool is_fast        = etl_traits<left_expr_t>::is_fast && etl_traits<right_expr_t>::is_fast;
-    static constexpr const bool is_linear      = false;
-    static constexpr const bool is_value       = false;
-    static constexpr const bool is_generator   = false;
-    static constexpr const bool vectorizable = false;
+    static constexpr const bool is_etl                  = true;  ///< Indicates if the type is an ETL expression
+    static constexpr const bool is_transformer          = true;  ///< Indicates if the type is a transformer
+    static constexpr const bool is_view                 = false; ///< Indicates if the type is a view
+    static constexpr const bool is_magic_view           = false; ///< Indicates if the type is a magic view
+    static constexpr const bool is_fast        = etl_traits<left_expr_t>::is_fast && etl_traits<right_expr_t>::is_fast; ///< Indicates if the expression is fast
+    static constexpr const bool is_linear               = false; ///< Indicates if the expression is linear
+    static constexpr const bool is_value                = false; ///< Indicates if the expression is of value type
+    static constexpr const bool is_generator            = false; ///< Indicates if the expression is a generated
+    static constexpr const bool vectorizable            = false; ///< Indicates if the expression is vectorizable
     static constexpr const bool needs_temporary_visitor =
         etl_traits<left_expr_t>::needs_temporary_visitor || etl_traits<right_expr_t>::needs_temporary_visitor;
     static constexpr const bool needs_evaluator_visitor =
         etl_traits<left_expr_t>::needs_evaluator_visitor || etl_traits<right_expr_t>::needs_evaluator_visitor;
     static constexpr const order storage_order = etl_traits<left_expr_t>::is_generator ? etl_traits<right_expr_t>::storage_order : etl_traits<left_expr_t>::storage_order;
 
+    /*!
+     * \brief Returns the size of the given expression
+     * \param v The expression to get the size for
+     * \returns the size of the given expression
+     */
     static std::size_t size(const expr_t& v) {
         return dim(v, 0) * dim(v, 1);
     }
 
+    /*!
+     * \brief Returns the dth dimension of the given expression
+     * \param v The expression
+     * \param d The dimension to get
+     * \return The dth dimension of the given expression
+     */
     static std::size_t dim(const expr_t& v, std::size_t d) {
         if (d == 0) {
             return etl::dim(v.left, 0);
@@ -1870,10 +2002,19 @@ struct etl_traits<mm_mul_transformer<LE, RE>> {
         }
     }
 
+    /*!
+     * \brief Returns the size of an expression of this fast type.
+     * \returns the size of an expression of this fast type.
+     */
     static constexpr std::size_t size() {
         return etl_traits<left_expr_t>::template dim<0>() * etl_traits<right_expr_t>::template dim<1>();
     }
 
+    /*!
+     * \brief Returns the Dth dimension of an expression of this type
+     * \tparam D The dimension to get
+     * \return the Dth dimension of an expression of this type
+     */
     template <std::size_t D>
     static constexpr std::size_t dim() {
         static_assert(D < 2, "Only 2D mmul are supported");
@@ -1881,6 +2022,10 @@ struct etl_traits<mm_mul_transformer<LE, RE>> {
         return D == 0 ? etl_traits<left_expr_t>::template dim<0>() : etl_traits<right_expr_t>::template dim<1>();
     }
 
+    /*!
+     * \brief Returns the number of expressions for this type
+     * \return the number of dimensions of this type
+     */
     static constexpr std::size_t dimensions() {
         return 2;
     }
@@ -1894,23 +2039,34 @@ struct etl_traits<dyn_convmtx_transformer<E>> {
     using expr_t     = etl::dyn_convmtx_transformer<E>;
     using sub_expr_t = std::decay_t<E>;
 
-    static constexpr const bool is_etl                  = true;
-    static constexpr const bool is_transformer          = true;
-    static constexpr const bool is_view                 = false;
-    static constexpr const bool is_magic_view           = false;
-    static constexpr const bool is_fast                 = false;
-    static constexpr const bool is_linear               = false;
-    static constexpr const bool is_value                = false;
-    static constexpr const bool is_generator            = false;
-    static constexpr const bool vectorizable            = false;
-    static constexpr const bool needs_temporary_visitor = etl_traits<sub_expr_t>::needs_temporary_visitor;
-    static constexpr const bool needs_evaluator_visitor = etl_traits<sub_expr_t>::needs_evaluator_visitor;
-    static constexpr const order storage_order          = etl_traits<sub_expr_t>::storage_order;
+    static constexpr const bool is_etl                  = true;  ///< Indicates if the type is an ETL expression
+    static constexpr const bool is_transformer          = true;  ///< Indicates if the type is a transformer
+    static constexpr const bool is_view                 = false; ///< Indicates if the type is a view
+    static constexpr const bool is_magic_view           = false; ///< Indicates if the type is a magic view
+    static constexpr const bool is_fast                 = false; ///< Indicates if the expression is fast
+    static constexpr const bool is_linear               = false; ///< Indicates if the expression is linear
+    static constexpr const bool is_value                = false; ///< Indicates if the expression is of value type
+    static constexpr const bool is_generator            = false; ///< Indicates if the expression is a generated
+    static constexpr const bool vectorizable            = false; ///< Indicates if the expression is vectorizable
+    static constexpr const bool needs_temporary_visitor = etl_traits<sub_expr_t>::needs_temporary_visitor; ///< Indicates if the expression needs a temporary visitor
+    static constexpr const bool needs_evaluator_visitor = etl_traits<sub_expr_t>::needs_evaluator_visitor; ///< Indicaes if the expression needs an evaluator visitor
+    static constexpr const order storage_order          = etl_traits<sub_expr_t>::storage_order;           ///< The expression storage order
 
+    /*!
+     * \brief Returns the size of the given expression
+     * \param v The expression to get the size for
+     * \returns the size of the given expression
+     */
     static std::size_t size(const expr_t& v) {
         return v.h * (etl::size(v.sub) + v.h - 1);
     }
 
+    /*!
+     * \brief Returns the dth dimension of the given expression
+     * \param v The expression
+     * \param d The dimension to get
+     * \return The dth dimension of the given expression
+     */
     static std::size_t dim(const expr_t& v, std::size_t d) {
         if (d == 0) {
             return v.h;
@@ -1919,6 +2075,10 @@ struct etl_traits<dyn_convmtx_transformer<E>> {
         }
     }
 
+    /*!
+     * \brief Returns the number of expressions for this type
+     * \return the number of dimensions of this type
+     */
     static constexpr std::size_t dimensions() {
         return 2;
     }
@@ -1932,25 +2092,36 @@ struct etl_traits<dyn_convmtx2_transformer<E>> {
     using expr_t     = etl::dyn_convmtx2_transformer<E>;
     using sub_expr_t = std::decay_t<E>;
 
-    static constexpr const bool is_etl                  = true;
-    static constexpr const bool is_transformer          = true;
-    static constexpr const bool is_view                 = false;
-    static constexpr const bool is_magic_view           = false;
-    static constexpr const bool is_linear               = false;
-    static constexpr const bool is_fast                 = false;
-    static constexpr const bool is_value                = false;
-    static constexpr const bool is_generator            = false;
-    static constexpr const bool vectorizable            = false;
-    static constexpr const bool needs_temporary_visitor = etl_traits<sub_expr_t>::needs_temporary_visitor;
-    static constexpr const bool needs_evaluator_visitor = etl_traits<sub_expr_t>::needs_evaluator_visitor;
-    static constexpr const order storage_order          = etl_traits<sub_expr_t>::storage_order;
+    static constexpr const bool is_etl                  = true;  ///< Indicates if the type is an ETL expression
+    static constexpr const bool is_transformer          = true;  ///< Indicates if the type is a transformer
+    static constexpr const bool is_view                 = false; ///< Indicates if the type is a view
+    static constexpr const bool is_magic_view           = false; ///< Indicates if the type is a magic view
+    static constexpr const bool is_fast                 = false; ///< Indicates if the expression is fast
+    static constexpr const bool is_linear               = false; ///< Indicates if the expression is linear
+    static constexpr const bool is_value                = false; ///< Indicates if the expression is of value type
+    static constexpr const bool is_generator            = false; ///< Indicates if the expression is a generated
+    static constexpr const bool vectorizable            = false; ///< Indicates if the expression is vectorizable
+    static constexpr const bool needs_temporary_visitor = etl_traits<sub_expr_t>::needs_temporary_visitor; ///< Indicates if the expression needs a temporary visitor
+    static constexpr const bool needs_evaluator_visitor = etl_traits<sub_expr_t>::needs_evaluator_visitor; ///< Indicaes if the expression needs an evaluator visitor
+    static constexpr const order storage_order          = etl_traits<sub_expr_t>::storage_order;           ///< The expression storage order
 
+    /*!
+     * \brief Returns the size of the given expression
+     * \param v The expression to get the size for
+     * \returns the size of the given expression
+     */
     static std::size_t size(const expr_t& v) {
         auto c_height = (etl::dim<0>(v.sub) + v.k1 - 1) * (etl::dim<1>(v.sub) + v.k2 - 1);
         auto c_width  = v.k1 * v.k2;
         return c_height * c_width;
     }
 
+    /*!
+     * \brief Returns the dth dimension of the given expression
+     * \param v The expression
+     * \param d The dimension to get
+     * \return The dth dimension of the given expression
+     */
     static std::size_t dim(const expr_t& v, std::size_t d) {
         if (d == 0) {
             return (etl::dim<0>(v.sub) + v.k1 - 1) * (etl::dim<1>(v.sub) + v.k2 - 1);
@@ -1959,6 +2130,10 @@ struct etl_traits<dyn_convmtx2_transformer<E>> {
         }
     }
 
+    /*!
+     * \brief Returns the number of expressions for this type
+     * \return the number of dimensions of this type
+     */
     static constexpr std::size_t dimensions() {
         return 2;
     }
@@ -1972,30 +2147,45 @@ struct etl_traits<rep_r_transformer<T, D...>> {
     using expr_t     = etl::rep_r_transformer<T, D...>;
     using sub_expr_t = std::decay_t<T>;
 
-    static constexpr const bool is_etl                  = true;
-    static constexpr const bool is_transformer          = true;
-    static constexpr const bool is_view                 = false;
-    static constexpr const bool is_magic_view           = false;
-    static constexpr const bool is_fast                 = etl_traits<sub_expr_t>::is_fast;
-    static constexpr const bool is_linear               = false;
-    static constexpr const bool is_value                = false;
-    static constexpr const bool is_generator            = false;
-    static constexpr const bool vectorizable            = false;
-    static constexpr const bool needs_temporary_visitor = etl_traits<sub_expr_t>::needs_temporary_visitor;
-    static constexpr const bool needs_evaluator_visitor = etl_traits<sub_expr_t>::needs_evaluator_visitor;
-    static constexpr const order storage_order          = etl_traits<sub_expr_t>::storage_order;
+    static constexpr const bool is_etl                  = true;  ///< Indicates if the type is an ETL expression
+    static constexpr const bool is_transformer          = true;  ///< Indicates if the type is a transformer
+    static constexpr const bool is_view                 = false; ///< Indicates if the type is a view
+    static constexpr const bool is_magic_view           = false; ///< Indicates if the type is a magic view
+    static constexpr const bool is_fast                 = etl_traits<sub_expr_t>::is_fast; ///< Indicates if the expression is fast
+    static constexpr const bool is_linear               = false; ///< Indicates if the expression is linear
+    static constexpr const bool is_value                = false; ///< Indicates if the expression is of value type
+    static constexpr const bool is_generator            = false; ///< Indicates if the expression is a generated
+    static constexpr const bool vectorizable            = false; ///< Indicates if the expression is vectorizable
+    static constexpr const bool needs_temporary_visitor = etl_traits<sub_expr_t>::needs_temporary_visitor; ///< Indicates if the expression needs a temporary visitor
+    static constexpr const bool needs_evaluator_visitor = etl_traits<sub_expr_t>::needs_evaluator_visitor; ///< Indicaes if the expression needs an evaluator visitor
+    static constexpr const order storage_order          = etl_traits<sub_expr_t>::storage_order;           ///< The expression storage order
 
     static constexpr const std::size_t sub_d = etl_traits<sub_expr_t>::dimensions();
 
+    /*!
+     * \brief Returns the size of the given expression
+     * \param v The expression to get the size for
+     * \returns the size of the given expression
+     */
     static std::size_t size(const expr_t& v) {
         return mul_all<D...>::value * etl_traits<sub_expr_t>::size(v.sub);
     }
 
+    /*!
+     * \brief Returns the dth dimension of the given expression
+     * \param v The expression
+     * \param d The dimension to get
+     * \return The dth dimension of the given expression
+     */
     static std::size_t dim(const expr_t& v, std::size_t d) {
         static_assert(sizeof...(D) == 1, "dim(d) is uninmplemented for rep<T, D1, D...>");
         return d == 0 ? etl_traits<sub_expr_t>::dim(v.sub, 0) : nth_size<0, 0, D...>::value;
     }
 
+    /*!
+     * \brief Returns the size of an expression of this fast type.
+     * \returns the size of an expression of this fast type.
+     */
     static constexpr std::size_t size() {
         return mul_all<D...>::value * etl_traits<sub_expr_t>::size();
     }
@@ -2010,6 +2200,10 @@ struct etl_traits<rep_r_transformer<T, D...>> {
         return nth_size<D2 - sub_d, 0, D...>::value;
     }
 
+    /*!
+     * \brief Returns the number of expressions for this type
+     * \return the number of dimensions of this type
+     */
     static constexpr std::size_t dimensions() {
         return sizeof...(D) + etl_traits<sub_expr_t>::dimensions();
     }
@@ -2023,28 +2217,43 @@ struct etl_traits<rep_l_transformer<T, D...>> {
     using expr_t     = etl::rep_l_transformer<T, D...>;
     using sub_expr_t = std::decay_t<T>;
 
-    static constexpr const bool is_etl                  = true;
-    static constexpr const bool is_transformer          = true;
-    static constexpr const bool is_view                 = false;
-    static constexpr const bool is_magic_view           = false;
-    static constexpr const bool is_fast                 = etl_traits<sub_expr_t>::is_fast;
-    static constexpr const bool is_linear               = false;
-    static constexpr const bool is_value                = false;
-    static constexpr const bool is_generator            = false;
-    static constexpr const bool vectorizable            = false;
-    static constexpr const bool needs_temporary_visitor = etl_traits<sub_expr_t>::needs_temporary_visitor;
-    static constexpr const bool needs_evaluator_visitor = etl_traits<sub_expr_t>::needs_evaluator_visitor;
-    static constexpr const order storage_order          = etl_traits<sub_expr_t>::storage_order;
+    static constexpr const bool is_etl                  = true;  ///< Indicates if the type is an ETL expression
+    static constexpr const bool is_transformer          = true;  ///< Indicates if the type is a transformer
+    static constexpr const bool is_view                 = false; ///< Indicates if the type is a view
+    static constexpr const bool is_magic_view           = false; ///< Indicates if the type is a magic view
+    static constexpr const bool is_fast                 = etl_traits<sub_expr_t>::is_fast; ///< Indicates if the expression is fast
+    static constexpr const bool is_linear               = false; ///< Indicates if the expression is linear
+    static constexpr const bool is_value                = false; ///< Indicates if the expression is of value type
+    static constexpr const bool is_generator            = false; ///< Indicates if the expression is a generated
+    static constexpr const bool vectorizable            = false; ///< Indicates if the expression is vectorizable
+    static constexpr const bool needs_temporary_visitor = etl_traits<sub_expr_t>::needs_temporary_visitor; ///< Indicates if the expression needs a temporary visitor
+    static constexpr const bool needs_evaluator_visitor = etl_traits<sub_expr_t>::needs_evaluator_visitor; ///< Indicaes if the expression needs an evaluator visitor
+    static constexpr const order storage_order          = etl_traits<sub_expr_t>::storage_order;           ///< The expression storage order
 
+    /*!
+     * \brief Returns the size of the given expression
+     * \param v The expression to get the size for
+     * \returns the size of the given expression
+     */
     static std::size_t size(const expr_t& v) {
         return mul_all<D...>::value * etl_traits<sub_expr_t>::size(v.sub);
     }
 
+    /*!
+     * \brief Returns the dth dimension of the given expression
+     * \param v The expression
+     * \param d The dimension to get
+     * \return The dth dimension of the given expression
+     */
     static std::size_t dim(const expr_t& v, std::size_t d) {
         static_assert(sizeof...(D) == 1, "dim(d) is uninmplemented for rep<T, D1, D...>");
         return d == dimensions() - 1 ? etl_traits<sub_expr_t>::dim(v.sub, 0) : nth_size<0, 0, D...>::value;
     }
 
+    /*!
+     * \brief Returns the size of an expression of this fast type.
+     * \returns the size of an expression of this fast type.
+     */
     static constexpr std::size_t size() {
         return mul_all<D...>::value * etl_traits<sub_expr_t>::size();
     }
@@ -2054,6 +2263,10 @@ struct etl_traits<rep_l_transformer<T, D...>> {
         return D2 >= sizeof...(D) ? etl_traits<sub_expr_t>::template dim<D2 - sizeof...(D)>() : nth_size<D2, 0, D...>::value;
     }
 
+    /*!
+     * \brief Returns the number of expressions for this type
+     * \return the number of dimensions of this type
+     */
     static constexpr std::size_t dimensions() {
         return sizeof...(D) + etl_traits<sub_expr_t>::dimensions();
     }
@@ -2067,29 +2280,44 @@ struct etl_traits<dyn_rep_r_transformer<T, D>> {
     using expr_t     = etl::dyn_rep_r_transformer<T, D>;
     using sub_expr_t = std::decay_t<T>;
 
-    static constexpr const bool is_etl                  = true;
-    static constexpr const bool is_transformer          = true;
-    static constexpr const bool is_view                 = false;
-    static constexpr const bool is_magic_view           = false;
-    static constexpr const bool is_linear               = false;
-    static constexpr const bool is_fast                 = false;
-    static constexpr const bool is_value                = false;
-    static constexpr const bool is_generator            = false;
-    static constexpr const bool vectorizable            = false;
-    static constexpr const bool needs_temporary_visitor = etl_traits<sub_expr_t>::needs_temporary_visitor;
-    static constexpr const bool needs_evaluator_visitor = etl_traits<sub_expr_t>::needs_evaluator_visitor;
-    static constexpr const order storage_order          = etl_traits<sub_expr_t>::storage_order;
+    static constexpr const bool is_etl                  = true;  ///< Indicates if the type is an ETL expression
+    static constexpr const bool is_transformer          = true;  ///< Indicates if the type is a transformer
+    static constexpr const bool is_view                 = false; ///< Indicates if the type is a view
+    static constexpr const bool is_magic_view           = false; ///< Indicates if the type is a magic view
+    static constexpr const bool is_fast                 = false; ///< Indicates if the expression is fast
+    static constexpr const bool is_linear               = false; ///< Indicates if the expression is linear
+    static constexpr const bool is_value                = false; ///< Indicates if the expression is of value type
+    static constexpr const bool is_generator            = false; ///< Indicates if the expression is a generated
+    static constexpr const bool vectorizable            = false; ///< Indicates if the expression is vectorizable
+    static constexpr const bool needs_temporary_visitor = etl_traits<sub_expr_t>::needs_temporary_visitor; ///< Indicates if the expression needs a temporary visitor
+    static constexpr const bool needs_evaluator_visitor = etl_traits<sub_expr_t>::needs_evaluator_visitor; ///< Indicaes if the expression needs an evaluator visitor
+    static constexpr const order storage_order          = etl_traits<sub_expr_t>::storage_order;           ///< The expression storage order
 
     static constexpr const std::size_t sub_d = etl_traits<sub_expr_t>::dimensions();
 
+    /*!
+     * \brief Returns the size of the given expression
+     * \param v The expression to get the size for
+     * \returns the size of the given expression
+     */
     static std::size_t size(const expr_t& v) {
         return v.m * etl_traits<sub_expr_t>::size(v.sub);
     }
 
+    /*!
+     * \brief Returns the dth dimension of the given expression
+     * \param v The expression
+     * \param d The dimension to get
+     * \return The dth dimension of the given expression
+     */
     static std::size_t dim(const expr_t& v, std::size_t d) {
         return d < sub_d ? etl_traits<sub_expr_t>::dim(v.sub, d) : v.reps[d - sub_d];
     }
 
+    /*!
+     * \brief Returns the number of expressions for this type
+     * \return the number of dimensions of this type
+     */
     static constexpr std::size_t dimensions() {
         return D + etl_traits<sub_expr_t>::dimensions();
     }
@@ -2103,27 +2331,42 @@ struct etl_traits<dyn_rep_l_transformer<T, D>> {
     using expr_t     = etl::dyn_rep_l_transformer<T, D>;
     using sub_expr_t = std::decay_t<T>;
 
-    static constexpr const bool is_etl                  = true;
-    static constexpr const bool is_transformer          = true;
-    static constexpr const bool is_view                 = false;
-    static constexpr const bool is_magic_view           = false;
-    static constexpr const bool is_fast                 = false;
-    static constexpr const bool is_linear               = false;
-    static constexpr const bool is_value                = false;
-    static constexpr const bool is_generator            = false;
-    static constexpr const bool vectorizable            = false;
-    static constexpr const bool needs_temporary_visitor = etl_traits<sub_expr_t>::needs_temporary_visitor;
-    static constexpr const bool needs_evaluator_visitor = etl_traits<sub_expr_t>::needs_evaluator_visitor;
-    static constexpr const order storage_order          = etl_traits<sub_expr_t>::storage_order;
+    static constexpr const bool is_etl                  = true;  ///< Indicates if the type is an ETL expression
+    static constexpr const bool is_transformer          = true;  ///< Indicates if the type is a transformer
+    static constexpr const bool is_view                 = false; ///< Indicates if the type is a view
+    static constexpr const bool is_magic_view           = false; ///< Indicates if the type is a magic view
+    static constexpr const bool is_fast                 = false; ///< Indicates if the expression is fast
+    static constexpr const bool is_linear               = false; ///< Indicates if the expression is linear
+    static constexpr const bool is_value                = false; ///< Indicates if the expression is of value type
+    static constexpr const bool is_generator            = false; ///< Indicates if the expression is a generated
+    static constexpr const bool vectorizable            = false; ///< Indicates if the expression is vectorizable
+    static constexpr const bool needs_temporary_visitor = etl_traits<sub_expr_t>::needs_temporary_visitor; ///< Indicates if the expression needs a temporary visitor
+    static constexpr const bool needs_evaluator_visitor = etl_traits<sub_expr_t>::needs_evaluator_visitor; ///< Indicaes if the expression needs an evaluator visitor
+    static constexpr const order storage_order          = etl_traits<sub_expr_t>::storage_order;           ///< The expression storage order
 
+    /*!
+     * \brief Returns the size of the given expression
+     * \param v The expression to get the size for
+     * \returns the size of the given expression
+     */
     static std::size_t size(const expr_t& v) {
         return v.m * etl_traits<sub_expr_t>::size(v.sub);
     }
 
+    /*!
+     * \brief Returns the dth dimension of the given expression
+     * \param v The expression
+     * \param d The dimension to get
+     * \return The dth dimension of the given expression
+     */
     static std::size_t dim(const expr_t& v, std::size_t d) {
         return d >= D ? etl_traits<sub_expr_t>::dim(v.sub, d - D) : v.reps[d];
     }
 
+    /*!
+     * \brief Returns the number of expressions for this type
+     * \return the number of dimensions of this type
+     */
     static constexpr std::size_t dimensions() {
         return D + etl_traits<sub_expr_t>::dimensions();
     }
