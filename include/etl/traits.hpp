@@ -166,39 +166,67 @@ using is_etl_direct_value = cpp::or_c<is_fast_matrix<T>, is_dyn_matrix<T>>;
 template <typename T>
 using is_etl_value = cpp::or_c<is_fast_matrix<T>, is_dyn_matrix<T>, is_sparse_matrix<T>>;
 
+/*!
+ * \brief Traits indicating if the given ETL type has direct memory access.
+ * \tparam T The type to test
+ */
 template <typename T, typename DT = std::decay_t<T>>
 struct has_direct_access;
 
+/*!
+ * \brief Traits indicating if the given ETL type is a sub view with direct access to memory
+ * \tparam T The type to test
+ */
 template <typename T>
 struct is_direct_sub_view : std::false_type {};
 
 template <typename T>
 struct is_direct_sub_view<sub_view<T>> : cpp::and_u<has_direct_access<T>::value, decay_traits<T>::storage_order == order::RowMajor> {};
 
+/*!
+ * \brief Traits indicating if the given ETL type is a dim view with direct access to memory
+ * \tparam T The type to test
+ */
 template <typename T>
 struct is_direct_dim_view : std::false_type {};
 
 template <typename T>
 struct is_direct_dim_view<dim_view<T, 1>> : has_direct_access<T> {};
 
+/*!
+ * \brief Traits indicating if the given ETL type is a fast matrix view with direct access to memory
+ * \tparam T The type to test
+ */
 template <typename T>
 struct is_direct_fast_matrix_view : std::false_type {};
 
 template <typename T, std::size_t... Dims>
 struct is_direct_fast_matrix_view<fast_matrix_view<T, Dims...>> : has_direct_access<T> {};
 
+/*!
+ * \brief Traits indicating if the given ETL type is a dyn matrix view with direct access to memory
+ * \tparam T The type to test
+ */
 template <typename T>
 struct is_direct_dyn_matrix_view : std::false_type {};
 
 template <typename T>
 struct is_direct_dyn_matrix_view<dyn_matrix_view<T>> : has_direct_access<T> {};
 
+/*!
+ * \brief Traits indicating if the given ETL type is a dyn vector view with direct access to memory
+ * \tparam T The type to test
+ */
 template <typename T>
 struct is_direct_dyn_vector_view : std::false_type {};
 
 template <typename T>
 struct is_direct_dyn_vector_view<dyn_vector_view<T>> : has_direct_access<T> {};
 
+/*!
+ * \brief Traits indicating if the given ETL type is an identity view with direct access to memory
+ * \tparam T The type to test
+ */
 template <typename T>
 struct is_direct_identity_view : std::false_type {};
 
@@ -467,21 +495,45 @@ constexpr std::size_t subsize(const E& expr) noexcept {
     return (void) expr, etl_traits<E>::size() / etl_traits<E>::template dim<0>();
 }
 
+/*!
+ * \brief Return the D dimension of e
+ * \param e The expression to get the dimensions from
+ * \tparam D The dimension to get
+ * \return the Dth dimension of e
+ */
 template <std::size_t D, typename E, cpp_disable_if(etl_traits<E>::is_fast)>
 std::size_t dim(const E& e) {
     return etl_traits<E>::dim(e, D);
 }
 
+/*!
+ * \brief Return the d dimension of e
+ * \param e The expression to get the dimensions from
+ * \param d The dimension to get
+ * \return the dth dimension of e
+ */
 template <typename E>
 std::size_t dim(const E& e, std::size_t d) {
     return etl_traits<E>::dim(e, d);
 }
 
+/*!
+ * \brief Return the D dimension of e
+ * \param e The expression to get the dimensions from
+ * \tparam D The dimension to get
+ * \return the Dth dimension of e
+ */
 template <std::size_t D, typename E, cpp_enable_if(etl_traits<E>::is_fast)>
-constexpr std::size_t dim(const E& /*unused*/) noexcept {
-    return etl_traits<E>::template dim<D>();
+constexpr std::size_t dim(const E& e) noexcept {
+    return (void) e, etl_traits<E>::template dim<D>();
 }
 
+/*!
+ * \brief Return the d dimension of e
+ * \param e The expression to get the dimensions from
+ * \param d The dimension to get
+ * \return the dth dimension of e
+ */
 template <std::size_t D, typename E, cpp_enable_if(etl_traits<E>::is_fast)>
 constexpr std::size_t dim() noexcept {
     return decay_traits<E>::template dim<D>();
@@ -545,6 +597,17 @@ std::size_t major_stride(E&& expr) {
                : etl::dim<0>(expr);
 }
 
+/*!
+ * \brief Test if two memory ranges overlap.
+ * \param a_begin The beginning of the first range
+ * \param a_end The end (exclusive) of the first range
+ * \param b_begin The beginning of the second range
+ * \param b_end The end (exclusive) of the second range
+ *
+ * The ranges must be ordered (begin <= end). This function is optimized so that only two comparisons are performed.
+ *
+ * \return true if the two ranges overlap, false otherwise
+ */
 template<typename P1, typename P2>
 bool memory_alias(const P1* a_begin, const P1* a_end, const P2* b_begin, const P2* b_end){
     cpp_assert(a_begin <= a_end, "memory_alias works on ordered ranges");
