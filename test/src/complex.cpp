@@ -156,8 +156,8 @@ TEMPLATE_TEST_CASE_2("complex/std/8", "[complex]", Z, float, double) {
     etl::fast_vector<std::complex<Z>, 1024> c;
 
     for (std::size_t i = 0; i < 1024; ++i) {
-        a[i] = std::complex<Z>(i * 1099.66, (i - 32.3) * -23.04);
-        b[i] = std::complex<Z>((i - 100) * 99.66, (i + 14.3) * 23.04);
+        a[i] = std::complex<Z>(i * 1039.66, (i - 12.3) * -22.04);
+        b[i] = std::complex<Z>((i - 10) * 39.66, (i + 18.3) * 21.04);
     }
 
     c = a / b;
