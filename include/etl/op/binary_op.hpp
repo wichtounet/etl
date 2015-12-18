@@ -20,6 +20,13 @@ namespace etl {
  */
 using random_engine = std::mt19937_64;
 
+/*!
+ * \brief Simple traits indicate if the operator is considered simple
+ *
+ * This changes the way the operator is displayed by stream operators.
+ *
+ * \tparam T The type to test
+ */
 template <typename T>
 struct simple_operator : std::true_type {};
 
@@ -41,6 +48,13 @@ struct plus_binary_op {
         return lhs + rhs;
     }
 
+    /*!
+     * \brief Compute several applications of the operator at a time
+     * \param lhs The left hand side vector
+     * \param rhs The right hand side vector
+     * \tparam V The vectorization mode
+     * \return a vector containing several results of the operator
+     */
     template<typename V = default_vec>
     static cpp14_constexpr vec_type<V> load(const vec_type<V>& lhs, const vec_type<V>& rhs) noexcept {
         const vec_type<V> ymm1(lhs);
@@ -48,6 +62,10 @@ struct plus_binary_op {
         return V::add(ymm1, ymm2);
     }
 
+    /*!
+     * \brief Returns a textual representation of the operator
+     * \return a string representing the operator
+     */
     static std::string desc() noexcept {
         return "+";
     }
@@ -71,6 +89,13 @@ struct minus_binary_op {
         return lhs - rhs;
     }
 
+    /*!
+     * \brief Compute several applications of the operator at a time
+     * \param lhs The left hand side vector
+     * \param rhs The right hand side vector
+     * \tparam V The vectorization mode
+     * \return a vector containing several results of the operator
+     */
     template<typename V = default_vec>
     static cpp14_constexpr vec_type<V> load(const vec_type<V>& lhs, const vec_type<V>& rhs) noexcept {
         const vec_type<V> ymm1(lhs);
@@ -78,6 +103,10 @@ struct minus_binary_op {
         return V::sub(ymm1, ymm2);
     }
 
+    /*!
+     * \brief Returns a textual representation of the operator
+     * \return a string representing the operator
+     */
     static std::string desc() noexcept {
         return "-";
     }
@@ -101,6 +130,13 @@ struct mul_binary_op {
         return lhs * rhs;
     }
 
+    /*!
+     * \brief Compute several applications of the operator at a time
+     * \param lhs The left hand side vector
+     * \param rhs The right hand side vector
+     * \tparam V The vectorization mode
+     * \return a vector containing several results of the operator
+     */
     template<typename V = default_vec>
     static cpp14_constexpr vec_type<V> load(const vec_type<V>& lhs, const vec_type<V>& rhs) noexcept {
         const vec_type<V> ymm1(lhs);
@@ -108,6 +144,10 @@ struct mul_binary_op {
         return V::template mul<is_complex_t<T>::value>(ymm1, ymm2);
     }
 
+    /*!
+     * \brief Returns a textual representation of the operator
+     * \return a string representing the operator
+     */
     static std::string desc() noexcept {
         return "*";
     }
@@ -131,6 +171,13 @@ struct div_binary_op {
         return lhs / rhs;
     }
 
+    /*!
+     * \brief Compute several applications of the operator at a time
+     * \param lhs The left hand side vector
+     * \param rhs The right hand side vector
+     * \tparam V The vectorization mode
+     * \return a vector containing several results of the operator
+     */
     template<typename V = default_vec>
     static cpp14_constexpr vec_type<V> load(const vec_type<V>& lhs, const vec_type<V>& rhs) noexcept {
         const vec_type<V> ymm1(lhs);
@@ -138,6 +185,10 @@ struct div_binary_op {
         return V::template div<is_complex_t<T>::value>(ymm1, ymm2);
     }
 
+    /*!
+     * \brief Returns a textual representation of the operator
+     * \return a string representing the operator
+     */
     static std::string desc() noexcept {
         return "/";
     }
@@ -158,6 +209,10 @@ struct mod_binary_op {
         return lhs % rhs;
     }
 
+    /*!
+     * \brief Returns a textual representation of the operator
+     * \return a string representing the operator
+     */
     static std::string desc() noexcept {
         return "%";
     }
@@ -170,8 +225,8 @@ struct ranged_noise_binary_op {
 
     /*!
      * \brief Apply the unary operator on lhs and rhs
-     * \param lhs The left hand side value on which to apply the operator
-     * \param lhs The right hand side value on which to apply the operator
+     * \param x The left hand side value on which to apply the operator
+     * \param value The right hand side value on which to apply the operator
      * \return The result of applying the binary operator on lhs and rhs
      */
     static T apply(const T& x, E value) {
@@ -186,6 +241,10 @@ struct ranged_noise_binary_op {
         }
     }
 
+    /*!
+     * \brief Returns a textual representation of the operator
+     * \return a string representing the operator
+     */
     static std::string desc() noexcept {
         return "ranged_noise";
     }
@@ -201,8 +260,8 @@ struct max_binary_op {
 
     /*!
      * \brief Apply the unary operator on lhs and rhs
-     * \param lhs The left hand side value on which to apply the operator
-     * \param lhs The right hand side value on which to apply the operator
+     * \param x The left hand side value on which to apply the operator
+     * \param value The right hand side value on which to apply the operator
      * \return The result of applying the binary operator on lhs and rhs
      */
     static constexpr T apply(const T& x, E value) noexcept {
@@ -210,12 +269,23 @@ struct max_binary_op {
     }
 
 #ifdef __INTEL_COMPILER
+    /*!
+     * \brief Compute several applications of the operator at a time
+     * \param lhs The left hand side vector
+     * \param rhs The right hand side vector
+     * \tparam V The vectorization mode
+     * \return a vector containing several results of the operator
+     */
     template<typename V = default_vec>
     static cpp14_constexpr vec_type<V> load(const vec_type<V>& lhs, const vec_type<V>& rhs) noexcept {
         return V::max(lhs, rhs);
     }
 #endif
 
+    /*!
+     * \brief Returns a textual representation of the operator
+     * \return a string representing the operator
+     */
     static std::string desc() noexcept {
         return "max";
     }
@@ -231,8 +301,8 @@ struct min_binary_op {
 
     /*!
      * \brief Apply the unary operator on lhs and rhs
-     * \param lhs The left hand side value on which to apply the operator
-     * \param lhs The right hand side value on which to apply the operator
+     * \param x The left hand side value on which to apply the operator
+     * \param value The right hand side value on which to apply the operator
      * \return The result of applying the binary operator on lhs and rhs
      */
     static constexpr T apply(const T& x, E value) noexcept {
@@ -240,12 +310,23 @@ struct min_binary_op {
     }
 
 #ifdef __INTEL_COMPILER
+    /*!
+     * \brief Compute several applications of the operator at a time
+     * \param lhs The left hand side vector
+     * \param rhs The right hand side vector
+     * \tparam V The vectorization mode
+     * \return a vector containing several results of the operator
+     */
     template<typename V = default_vec>
     static cpp14_constexpr vec_type<V> load(const vec_type<V>& lhs, const vec_type<V>& rhs) noexcept {
         return V::min(lhs, rhs);
     }
 #endif
 
+    /*!
+     * \brief Returns a textual representation of the operator
+     * \return a string representing the operator
+     */
     static std::string desc() noexcept {
         return "min";
     }
@@ -258,14 +339,18 @@ struct pow_binary_op {
 
     /*!
      * \brief Apply the unary operator on lhs and rhs
-     * \param lhs The left hand side value on which to apply the operator
-     * \param lhs The right hand side value on which to apply the operator
+     * \param x The left hand side value on which to apply the operator
+     * \param value The right hand side value on which to apply the operator
      * \return The result of applying the binary operator on lhs and rhs
      */
     static constexpr T apply(const T& x, E value) noexcept {
         return std::pow(x, value);
     }
 
+    /*!
+     * \brief Returns a textual representation of the operator
+     * \return a string representing the operator
+     */
     static std::string desc() noexcept {
         return "pow";
     }
@@ -278,14 +363,18 @@ struct one_if_binary_op {
 
     /*!
      * \brief Apply the unary operator on lhs and rhs
-     * \param lhs The left hand side value on which to apply the operator
-     * \param lhs The right hand side value on which to apply the operator
+     * \param x The left hand side value on which to apply the operator
+     * \param value The right hand side value on which to apply the operator
      * \return The result of applying the binary operator on lhs and rhs
      */
     static constexpr T apply(const T& x, E value) noexcept {
         return 1.0 ? x == value : 0.0;
     }
 
+    /*!
+     * \brief Returns a textual representation of the operator
+     * \return a string representing the operator
+     */
     static std::string desc() noexcept {
         return "one_if";
     }

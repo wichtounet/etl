@@ -79,6 +79,12 @@ struct log_unary_op {
     }
 
 #ifdef __INTEL_COMPILER
+    /*!
+     * \brief Compute several applications of the operator at a time
+     * \param x The vector on which to operate
+     * \tparam V The vectorization mode
+     * \return a vector containing several results of the operator
+     */
     template <typename V = default_vec>
     static cpp14_constexpr vec_type<V> load(const vec_type<V>& x) noexcept {
         return V::log(x);
@@ -115,6 +121,12 @@ struct sqrt_unary_op {
         return std::sqrt(x);
     }
 
+    /*!
+     * \brief Compute several applications of the operator at a time
+     * \param x The vector on which to operate
+     * \tparam V The vectorization mode
+     * \return a vector containing several results of the operator
+     */
     template <typename V = default_vec>
     static cpp14_constexpr vec_type<V> load(const vec_type<V>& x) noexcept {
         return V::sqrt(x);
@@ -151,6 +163,12 @@ struct exp_unary_op {
     }
 
 #ifdef __INTEL_COMPILER
+    /*!
+     * \brief Compute several applications of the operator at a time
+     * \param x The vector on which to operate
+     * \tparam V The vectorization mode
+     * \return a vector containing several results of the operator
+     */
     template <typename V = default_vec>
     static cpp14_constexpr vec_type<V> load(const vec_type<V>& x) noexcept {
         return V::exp(x);
@@ -268,6 +286,12 @@ struct minus_unary_op {
         return -x;
     }
 
+    /*!
+     * \brief Compute several applications of the operator at a time
+     * \param x The vector on which to operate
+     * \tparam V The vectorization mode
+     * \return a vector containing several results of the operator
+     */
     template <typename V = default_vec>
     static cpp14_constexpr vec_type<V> load(const vec_type<V>& x) noexcept {
         return V::minus(x);
@@ -303,6 +327,12 @@ struct plus_unary_op {
         return +x;
     }
 
+    /*!
+     * \brief Compute several applications of the operator at a time
+     * \param x The vector on which to operate
+     * \tparam V The vectorization mode
+     * \return a vector containing several results of the operator
+     */
     template <typename V = default_vec>
     static cpp14_constexpr vec_type<V> load(const vec_type<V>& x) noexcept {
         return x;
@@ -800,17 +830,32 @@ struct min_scalar_op {
     explicit min_scalar_op(S s)
             : s(s) {}
 
+    /*!
+     * \brief Apply the unary operator on x
+     * \param x The value on which to apply the operator
+     * \return The result of applying the unary operator on x
+     */
     constexpr T apply(const T& x) const noexcept {
         return std::min(x, s);
     }
 
 #ifdef __INTEL_COMPILER
+    /*!
+     * \brief Compute several applications of the operator at a time
+     * \param x The vector on which to operate
+     * \tparam V The vectorization mode
+     * \return a vector containing several results of the operator
+     */
     template<typename V = default_vec>
     cpp14_constexpr vec_type<V> load(const vec_type<V>& lhs) const noexcept {
         return V::min(lhs, V::set(s));
     }
 #endif
 
+    /*!
+     * \brief Returns a textual representation of the operator
+     * \return a string representing the operator
+     */
     static std::string desc() noexcept {
         return "min";
     }
@@ -828,17 +873,32 @@ struct max_scalar_op {
     explicit max_scalar_op(S s)
             : s(s) {}
 
+    /*!
+     * \brief Apply the unary operator on x
+     * \param x The value on which to apply the operator
+     * \return The result of applying the unary operator on x
+     */
     constexpr T apply(const T& x) const noexcept {
         return std::max(x, s);
     }
 
 #ifdef __INTEL_COMPILER
+    /*!
+     * \brief Compute several applications of the operator at a time
+     * \param x The vector on which to operate
+     * \tparam V The vectorization mode
+     * \return a vector containing several results of the operator
+     */
     template<typename V = default_vec>
     cpp14_constexpr vec_type<V> load(const vec_type<V>& lhs) const noexcept {
         return V::max(lhs, V::set(s));
     }
 #endif
 
+    /*!
+     * \brief Returns a textual representation of the operator
+     * \return a string representing the operator
+     */
     static std::string desc() noexcept {
         return "max";
     }
@@ -857,17 +917,32 @@ struct clip_scalar_op {
     clip_scalar_op(S min, S max)
             : min(min), max(max) {}
 
+    /*!
+     * \brief Apply the unary operator on x
+     * \param x The value on which to apply the operator
+     * \return The result of applying the unary operator on x
+     */
     constexpr T apply(const T& x) const noexcept {
         return std::min(std::max(x, min), max);
     }
 
 #ifdef __INTEL_COMPILER
+    /*!
+     * \brief Compute several applications of the operator at a time
+     * \param x The vector on which to operate
+     * \tparam V The vectorization mode
+     * \return a vector containing several results of the operator
+     */
     template<typename V = default_vec>
     cpp14_constexpr vec_type<V> load(const vec_type<V>& lhs) const noexcept {
         return V::min(V::max(lhs, V::set(min)), V::set(max));
     }
 #endif
 
+    /*!
+     * \brief Returns a textual representation of the operator
+     * \return a string representing the operator
+     */
     static std::string desc() noexcept {
         return "clip";
     }
