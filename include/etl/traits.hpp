@@ -40,11 +40,11 @@ struct is_sparse_matrix_impl<sparse_matrix_impl<V1, V2, V3>> : std::true_type {}
  */
 template <typename T, typename Enable = void>
 struct etl_traits {
-    static constexpr const bool is_etl         = false;
-    static constexpr const bool is_transformer = false;
-    static constexpr const bool is_view        = false;
-    static constexpr const bool is_magic_view  = false;
-    static constexpr const bool is_fast        = false;
+    static constexpr const bool is_etl         = false; ///< Indicates if T is an ETL type
+    static constexpr const bool is_transformer = false; ///< Indicates if T is a transformer
+    static constexpr const bool is_view        = false; ///< Indicates if T is a view
+    static constexpr const bool is_magic_view  = false; ///< Indicates if T is a magic view
+    static constexpr const bool is_fast        = false; ///< Indicates if T is a fast structure
 };
 
 /*!
