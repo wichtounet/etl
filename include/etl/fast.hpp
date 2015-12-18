@@ -268,11 +268,21 @@ public:
         return dyn_nth_size<Dims...>(d);
     }
 
+    /*!
+     * \brief Creates a sub view of the matrix, effectively removing the first dimension and fixing it to the given index.
+     * \param i The index to use
+     * \return a sub view of the matrix at position i.
+     */
     template <bool B = (n_dimensions > 1), cpp_enable_if(B)>
     auto operator()(std::size_t i) noexcept {
         return sub(*this, i);
     }
 
+    /*!
+     * \brief Creates a sub view of the matrix, effectively removing the first dimension and fixing it to the given index.
+     * \param i The index to use
+     * \return a sub view of the matrix at position i.
+     */
     template <bool B = (n_dimensions > 1), cpp_enable_if(B)>
     auto operator()(std::size_t i) const noexcept {
         return sub(*this, i);
@@ -326,41 +336,81 @@ public:
         return _data[i];
     }
 
+    /*!
+     * \brief Test if this expression aliases with the given expression
+     * \param rhs The other expression to test
+     * \return true if the two expressions aliases, false otherwise
+     */
     template<typename E, cpp_enable_if(all_dma<E>::value)>
     bool alias(const E& rhs) const noexcept {
         return memory_alias(memory_start(), memory_end(), rhs.memory_start(), rhs.memory_end());
     }
 
+    /*!
+     * \brief Test if this expression aliases with the given expression
+     * \param rhs The other expression to test
+     * \return true if the two expressions aliases, false otherwise
+     */
     template<typename E, cpp_disable_if(all_dma<E>::value)>
     bool alias(const E& rhs) const noexcept {
         return rhs.alias(*this);
     }
 
+    /*!
+     * \brief Load several elements of the matrix at once
+     * \param i The position at which to start. This will be aligned from the beginning (multiple of the vector size).
+     * \tparam V The vectorization mode to use
+     * \return a vector containing several elements of the matrix
+     */
     template<typename V = default_vec>
     vec_type<V> load(std::size_t i) const noexcept {
         return V::loadu(memory_start() + i);
     }
 
+    /*!
+     * \brief Return an iterator to the first element of the matrix
+     * \return an iterator pointing to the first element of the matrix
+     */
     iterator begin() noexcept(noexcept(_data.begin())) {
         return _data.begin();
     }
 
+    /*!
+     * \brief Return an iterator to the past-the-end element of the matrix
+     * \return an iterator pointing to the past-the-end element of the matrix
+     */
     iterator end() noexcept(noexcept(_data.end())) {
         return _data.end();
     }
 
+    /*!
+     * \brief Return an iterator to the first element of the matrix
+     * \return a const iterator pointing to the first element of the matrix
+     */
     const_iterator begin() const noexcept(noexcept(_data.cbegin())) {
         return _data.cbegin();
     }
 
+    /*!
+     * \brief Return an iterator to the past-the-end element of the matrix
+     * \return a const iterator pointing to the past-the-end element of the matrix
+     */
     const_iterator end() const noexcept(noexcept(_data.end())) {
         return _data.cend();
     }
 
+    /*!
+     * \brief Return a const iterator to the first element of the matrix
+     * \return an const iterator pointing to the first element of the matrix
+     */
     const_iterator cbegin() const noexcept(noexcept(_data.cbegin())) {
         return _data.cbegin();
     }
 
+    /*!
+     * \brief Return a const iterator to the past-the-end element of the matrix
+     * \return a const iterator pointing to the past-the-end element of the matrix
+     */
     const_iterator cend() const noexcept(noexcept(_data.end())) {
         return _data.cend();
     }

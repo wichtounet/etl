@@ -22,16 +22,33 @@
 
 namespace etl {
 
+/*!
+ * \brief Simple unary op for identity operations
+ *
+ * Such an unary expr does not apply the operator but delegates to its sub expression.
+ */
 struct identity_op {
     static constexpr const bool vectorizable = true;
     static constexpr const bool linear       = true;
 };
 
+/*!
+ * \brief Simple unary op for transform operations
+ *
+ * Such an unary expr does not apply the operator but delegates to its sub expression.
+ */
 struct transform_op {
     static constexpr const bool vectorizable = false;
     static constexpr const bool linear       = false;
 };
 
+/*!
+ * \brief Simple unary op for stateful operations
+ *
+ * The sub operation (the real unary operation) is constructed from the
+ * arguments of the unary_expr constructor. Such an unary expr does not apply
+ * the operator but delegates to its sub expression.
+ */
 template <typename Sub>
 struct stateful_op {
     static constexpr const bool vectorizable = Sub::vectorizable;
@@ -71,26 +88,47 @@ public:
     unary_expr& operator=(const unary_expr& rhs) = delete;
     unary_expr& operator=(unary_expr&& rhs) = delete;
 
-    //Accessors
-
+    /*!
+     * \brief Return the value on which this expression operates
+     * \return The value on which this expression operates.
+     */
     std::add_lvalue_reference_t<Expr> value() noexcept {
         return _value;
     }
 
+    /*!
+     * \brief Return the value on which this expression operates
+     * \return The value on which this expression operates.
+     */
     cpp::add_const_lvalue_t<Expr> value() const noexcept {
         return _value;
     }
 
-    //Apply the expression
-
+    /*!
+     * \brief Returns the element at the given index
+     * \param i The index
+     * \return a reference to the element at the given index.
+     */
     value_type operator[](std::size_t i) const {
         return UnaryOp::apply(value()[i]);
     }
 
+    /*!
+     * \brief Returns the value at the given index
+     * This function never alters the state of the container.
+     * \param i The index
+     * \return the value at the given index.
+     */
     value_type read_flat(std::size_t i) const noexcept {
         return UnaryOp::apply(value().read_flat(i));
     }
 
+    /*!
+     * \brief Load several elements of the matrix at once
+     * \param i The position at which to start. This will be aligned from the beginning (multiple of the vector size).
+     * \tparam V The vectorization mode to use
+     * \return a vector containing several elements of the matrix
+     */
     template<typename V = default_vec>
     vec_type<V> load(std::size_t i) const {
         return UnaryOp::template load<V>(value().template load<V>(i));
@@ -103,15 +141,28 @@ public:
         return UnaryOp::apply(value()(args...));
     }
 
+    /*!
+     * \brief Test if this expression aliases with the given expression
+     * \param rhs The other expression to test
+     * \return true if the two expressions aliases, false otherwise
+     */
     template<typename E>
     bool alias(const E& rhs) const noexcept {
         return _value.alias(rhs);
     }
 
+    /*!
+     * \brief Return an iterator to the first element of the matrix
+     * \return an const iterator pointing to the first element of the matrix
+     */
     iterator<const this_type> begin() const noexcept {
         return {*this, 0};
     }
 
+    /*!
+     * \brief Return an iterator to the past-the-end element of the matrix
+     * \return a const iterator pointing to the past-the-end element of the matrix
+     */
     iterator<const this_type> end() const noexcept {
         return {*this, size(*this)};
     }
@@ -183,40 +234,76 @@ public:
         return *this;
     }
 
-    //Accessors
-
+    /*!
+     * \brief Return the value on which this expression operates
+     * \return The value on which this expression operates.
+     */
     std::add_lvalue_reference_t<Expr> value() noexcept {
         return _value;
     }
 
+    /*!
+     * \brief Return the value on which this expression operates
+     * \return The value on which this expression operates.
+     */
     cpp::add_const_lvalue_t<Expr> value() const noexcept {
         return _value;
     }
 
-    //Apply the expression
-
+    /*!
+     * \brief Returns the element at the given index
+     * \param i The index
+     * \return a reference to the element at the given index.
+     */
     return_type operator[](std::size_t i) {
         return value()[i];
     }
 
+    /*!
+     * \brief Returns the element at the given index
+     * \param i The index
+     * \return a reference to the element at the given index.
+     */
     const_return_type operator[](std::size_t i) const {
         return value()[i];
     }
 
+    /*!
+     * \brief Returns the value at the given index
+     * This function never alters the state of the container.
+     * \param i The index
+     * \return the value at the given index.
+     */
     value_type read_flat(std::size_t i) const noexcept {
         return value().read_flat(i);
     }
 
+    /*!
+     * \brief Load several elements of the matrix at once
+     * \param i The position at which to start. This will be aligned from the beginning (multiple of the vector size).
+     * \tparam V The vectorization mode to use
+     * \return a vector containing several elements of the matrix
+     */
     template <typename V = default_vec, typename SS = Expr, cpp_enable_if(has_direct_access<SS>::value)>
     vec_type<V> load(std::size_t i) const noexcept {
         return V::loadu(memory_start() + i);
     }
 
+    /*!
+     * \brief Creates a sub view of the matrix, effectively removing the first dimension and fixing it to the given index.
+     * \param i The index to use
+     * \return a sub view of the matrix at position i.
+     */
     template <bool B = (sub_size_compare<this_type>::value > 1), cpp_enable_if(B)>
     auto operator()(std::size_t i) {
         return sub(*this, i);
     }
 
+    /*!
+     * \brief Creates a sub view of the matrix, effectively removing the first dimension and fixing it to the given index.
+     * \param i The index to use
+     * \return a sub view of the matrix at position i.
+     */
     template <bool B = (sub_size_compare<this_type>::value > 1), cpp_enable_if(B)>
     auto operator()(std::size_t i) const {
         return sub(*this, i);
@@ -236,49 +323,89 @@ public:
         return value()(args...);
     }
 
+    /*!
+     * \brief Test if this expression aliases with the given expression
+     * \param rhs The other expression to test
+     * \return true if the two expressions aliases, false otherwise
+     */
     template<typename E, cpp_enable_if(has_direct_access<Expr>::value && all_dma<E>::value)>
     bool alias(const E& rhs) const noexcept {
         return memory_alias(memory_start(), memory_end(), rhs.memory_start(), rhs.memory_end());
     }
 
+    /*!
+     * \brief Test if this expression aliases with the given expression
+     * \param rhs The other expression to test
+     * \return true if the two expressions aliases, false otherwise
+     */
     template<typename E, cpp_disable_if(has_direct_access<Expr>::value && all_dma<E>::value)>
     bool alias(const E& rhs) const noexcept {
         return _value.alias(rhs);
     }
 
+    /*!
+     * \brief Return an iterator to the first element of the matrix
+     * \return a iterator pointing to the first element of the matrix
+     */
     iterator<this_type, non_const_return_ref, false> begin() noexcept {
         return {*this, 0};
     }
 
+    /*!
+     * \brief Return an iterator to the past-the-end element of the matrix
+     * \return an iterator pointing to the past-the-end element of the matrix
+     */
     iterator<this_type, non_const_return_ref, false> end() noexcept {
         return {*this, size(*this)};
     }
 
+    /*!
+     * \brief Return an iterator to the first element of the matrix
+     * \return an const iterator pointing to the first element of the matrix
+     */
     iterator<const this_type, true> begin() const noexcept {
         return {*this, 0};
     }
 
+    /*!
+     * \brief Return an iterator to the past-the-end element of the matrix
+     * \return a const iterator pointing to the past-the-end element of the matrix
+     */
     iterator<const this_type, true> end() const noexcept {
         return {*this, size(*this)};
     }
 
-    // Direct memory access
-
+    /*!
+     * \brief Returns a pointer to the first element in memory.
+     * \return a pointer tot the first element in memory.
+     */
     memory_type memory_start() noexcept {
         static_assert(has_direct_access<Expr>::value, "This expression does not have direct memory access");
         return value().memory_start();
     }
 
+    /*!
+     * \brief Returns a pointer to the first element in memory.
+     * \return a pointer tot the first element in memory.
+     */
     const_memory_type memory_start() const noexcept {
         static_assert(has_direct_access<Expr>::value, "This expression does not have direct memory access");
         return value().memory_start();
     }
 
+    /*!
+     * \brief Returns a pointer to the past-the-end element in memory.
+     * \return a pointer tot the past-the-end element in memory.
+     */
     memory_type memory_end() noexcept {
         static_assert(has_direct_access<Expr>::value, "This expression does not have direct memory access");
         return value().memory_end();
     }
 
+    /*!
+     * \brief Returns a pointer to the past-the-end element in memory.
+     * \return a pointer tot the past-the-end element in memory.
+     */
     const_memory_type memory_end() const noexcept {
         static_assert(has_direct_access<Expr>::value, "This expression does not have direct memory access");
         return value().memory_end();
@@ -310,26 +437,46 @@ public:
     unary_expr& operator=(const unary_expr& e) = delete;
     unary_expr& operator=(unary_expr&& e) = delete;
 
-    //Accessors
-
+    /*!
+     * \brief Return the value on which this expression operates
+     * \return The value on which this expression operates.
+     */
     std::add_lvalue_reference_t<Expr> value() noexcept {
         return _value;
     }
 
+    /*!
+     * \brief Return the value on which this expression operates
+     * \return The value on which this expression operates.
+     */
     cpp::add_const_lvalue_t<Expr> value() const noexcept {
         return _value;
     }
 
-    //Apply the expression
-
+    /*!
+     * \brief Returns the element at the given index
+     * \param i The index
+     * \return a reference to the element at the given index.
+     */
     value_type operator[](std::size_t i) const {
         return value()[i];
     }
 
+    /*!
+     * \brief Returns the value at the given index
+     * This function never alters the state of the container.
+     * \param i The index
+     * \return the value at the given index.
+     */
     value_type read_flat(std::size_t i) const noexcept {
         return value().read_flat(i);
     }
 
+    /*!
+     * \brief Creates a sub view of the matrix, effectively removing the first dimension and fixing it to the given index.
+     * \param i The index to use
+     * \return a sub view of the matrix at position i.
+     */
     template <bool B = (sub_size_compare<this_type>::value > 1), cpp_enable_if(B)>
     auto operator()(std::size_t i) const {
         return sub(*this, i);
@@ -342,15 +489,28 @@ public:
         return value()(args...);
     }
 
+    /*!
+     * \brief Test if this expression aliases with the given expression
+     * \param rhs The other expression to test
+     * \return true if the two expressions aliases, false otherwise
+     */
     template<typename E>
     bool alias(const E& rhs) const noexcept {
         return _value.alias(rhs);
     }
 
+    /*!
+     * \brief Return an iterator to the first element of the matrix
+     * \return a const iterator pointing to the first element of the matrix
+     */
     iterator<const this_type, false, false> begin() const noexcept {
         return {*this, 0};
     }
 
+    /*!
+     * \brief Return an iterator to the past-the-end element of the matrix
+     * \return a const iterator pointing to the past-the-end element of the matrix
+     */
     iterator<const this_type, false, false> end() const noexcept {
         return {*this, size(*this)};
     }
@@ -386,26 +546,47 @@ public:
     unary_expr& operator=(const unary_expr& e) = delete;
     unary_expr& operator=(unary_expr&& e) = delete;
 
-    //Accessors
-
+    /*!
+     * \brief Return the value on which this expression operates
+     * \return The value on which this expression operates.
+     */
     std::add_lvalue_reference_t<Expr> value() noexcept {
         return _value;
     }
 
+    /*!
+     * \brief Return the value on which this expression operates
+     * \return The value on which this expression operates.
+     */
     cpp::add_const_lvalue_t<Expr> value() const noexcept {
         return _value;
     }
 
-    //Apply the expression
-
+    /*!
+     * \brief Returns the element at the given index
+     * \param i The index
+     * \return a reference to the element at the given index.
+     */
     value_type operator[](std::size_t i) const {
         return op.apply(value()[i]);
     }
 
+    /*!
+     * \brief Returns the value at the given index
+     * This function never alters the state of the container.
+     * \param i The index
+     * \return the value at the given index.
+     */
     value_type read_flat(std::size_t i) const {
         return op.apply(value().read_flat(i));
     }
 
+    /*!
+     * \brief Load several elements of the matrix at once
+     * \param i The position at which to start. This will be aligned from the beginning (multiple of the vector size).
+     * \tparam V The vectorization mode to use
+     * \return a vector containing several elements of the matrix
+     */
     template<typename V = default_vec>
     vec_type<V> load(std::size_t i) const {
         return op.template load<V>(value().template load<V>(i));
@@ -418,15 +599,28 @@ public:
         return op.apply(value()(args...));
     }
 
+    /*!
+     * \brief Test if this expression aliases with the given expression
+     * \param rhs The other expression to test
+     * \return true if the two expressions aliases, false otherwise
+     */
     template<typename E>
     bool alias(const E& rhs) const noexcept {
         return _value.alias(rhs);
     }
 
+    /*!
+     * \brief Return an iterator to the first element of the matrix
+     * \return a const iterator pointing to the first element of the matrix
+     */
     iterator<const this_type, false, false> begin() const noexcept {
         return {*this, 0};
     }
 
+    /*!
+     * \brief Return an iterator to the past-the-end element of the matrix
+     * \return a const iterator pointing to the past-the-end element of the matrix
+     */
     iterator<const this_type, false, false> end() const noexcept {
         return {*this, size(*this)};
     }
