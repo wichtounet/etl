@@ -21,8 +21,12 @@
 
 namespace etl {
 
-// Build binary expressions from two ETL expressions (vector,matrix,binary,unary)
-
+/*!
+ * \brief Builds an expression representing the subtraction of lhs and rhs
+ * \param lhs The left hand side expression
+ * \param rhs The right hand side expression
+ * \return An expression representing the subtraction of lhs and rhs
+ */
 template <typename LE, typename RE, cpp_enable_if(is_etl_expr<LE>::value, is_etl_expr<RE>::value)>
 auto operator-(LE&& lhs, RE&& rhs) -> detail::left_binary_helper<LE, RE, minus_binary_op> {
     validate_expression(lhs, rhs);
@@ -30,6 +34,12 @@ auto operator-(LE&& lhs, RE&& rhs) -> detail::left_binary_helper<LE, RE, minus_b
     return {lhs, rhs};
 }
 
+/*!
+ * \brief Builds an expression representing the addition of lhs and rhs
+ * \param lhs The left hand side expression
+ * \param rhs The right hand side expression
+ * \return An expression representing the addition of lhs and rhs
+ */
 template <typename LE, typename RE, cpp_enable_if(is_etl_expr<LE>::value, is_etl_expr<RE>::value)>
 auto operator+(LE&& lhs, RE&& rhs) -> detail::left_binary_helper<LE, RE, plus_binary_op> {
     validate_expression(lhs, rhs);
@@ -37,6 +47,12 @@ auto operator+(LE&& lhs, RE&& rhs) -> detail::left_binary_helper<LE, RE, plus_bi
     return {lhs, rhs};
 }
 
+/*!
+ * \brief Builds an expression representing the scalar multiplication of lhs and rhs
+ * \param lhs The left hand side expression
+ * \param rhs The right hand side expression
+ * \return An expression representing the scalar multiplication of lhs and rhs
+ */
 template <typename LE, typename RE, cpp_enable_if(is_etl_expr<LE>::value, is_etl_expr<RE>::value, is_element_wise_mul_default)>
 auto operator*(LE&& lhs, RE&& rhs) -> detail::left_binary_helper<LE, RE, mul_binary_op> {
     validate_expression(lhs, rhs);
@@ -44,6 +60,12 @@ auto operator*(LE&& lhs, RE&& rhs) -> detail::left_binary_helper<LE, RE, mul_bin
     return {lhs, rhs};
 }
 
+/*!
+ * \brief Builds an expression representing the scalar multipliation of lhs and rhs
+ * \param lhs The left hand side expression
+ * \param rhs The right hand side expression
+ * \return An expression representing the scalar multipliation of lhs and rhs
+ */
 template <typename LE, typename RE, cpp_enable_if(is_etl_expr<LE>::value&& is_etl_expr<RE>::value)>
 auto operator>>(LE&& lhs, RE&& rhs) -> detail::left_binary_helper<LE, RE, mul_binary_op> {
     validate_expression(lhs, rhs);
@@ -51,6 +73,12 @@ auto operator>>(LE&& lhs, RE&& rhs) -> detail::left_binary_helper<LE, RE, mul_bi
     return {lhs, rhs};
 }
 
+/*!
+ * \brief Builds an expression representing the scalar multiplication of lhs and rhs
+ * \param lhs The left hand side expression
+ * \param rhs The right hand side expression
+ * \return An expression representing the scalar multiplication of lhs and rhs
+ */
 template <typename LE, typename RE, cpp_enable_if(is_etl_expr<LE>::value&& is_etl_expr<RE>::value)>
 auto scale(LE&& lhs, RE&& rhs) -> detail::left_binary_helper<LE, RE, mul_binary_op> {
     validate_expression(lhs, rhs);
@@ -58,6 +86,12 @@ auto scale(LE&& lhs, RE&& rhs) -> detail::left_binary_helper<LE, RE, mul_binary_
     return {lhs, rhs};
 }
 
+/*!
+ * \brief Builds an expression representing the division of lhs and rhs
+ * \param lhs The left hand side expression
+ * \param rhs The right hand side expression
+ * \return An expression representing the division of lhs and rhs
+ */
 template <typename LE, typename RE, cpp_enable_if(is_etl_expr<LE>::value, is_etl_expr<RE>::value)>
 auto operator/(LE&& lhs, RE&& rhs) -> detail::left_binary_helper<LE, RE, div_binary_op> {
     validate_expression(lhs, rhs);
@@ -65,6 +99,12 @@ auto operator/(LE&& lhs, RE&& rhs) -> detail::left_binary_helper<LE, RE, div_bin
     return {lhs, rhs};
 }
 
+/*!
+ * \brief Builds an expression representing the modulo of lhs and rhs
+ * \param lhs The left hand side expression
+ * \param rhs The right hand side expression
+ * \return An expression representing the modulo of lhs and rhs
+ */
 template <typename LE, typename RE, cpp_enable_if(is_etl_expr<LE>::value, is_etl_expr<RE>::value)>
 auto operator%(LE&& lhs, RE&& rhs) -> detail::left_binary_helper<LE, RE, mod_binary_op> {
     validate_expression(lhs, rhs);
@@ -74,66 +114,144 @@ auto operator%(LE&& lhs, RE&& rhs) -> detail::left_binary_helper<LE, RE, mod_bin
 
 // Mix scalars and ETL expressions (vector,matrix,binary,unary)
 
+/*!
+ * \brief Builds an expression representing the subtraction of lhs and rhs (scalar)
+ * \param lhs The left hand side expression
+ * \param rhs The right hand side expression
+ * \return An expression representing the subtraction of lhs and rhs (scalar)
+ */
 template <typename LE, typename RE, cpp_enable_if(std::is_convertible<RE, value_t<LE>>::value, is_etl_expr<LE>::value)>
 auto operator-(LE&& lhs, RE rhs) -> detail::left_binary_helper<LE, scalar<value_t<LE>>, minus_binary_op> {
     return {lhs, scalar<value_t<LE>>(rhs)};
 }
 
+/*!
+ * \brief Builds an expression representing the subtraction of lhs (scalar) and rhs
+ * \param lhs The left hand side expression
+ * \param rhs The right hand side expression
+ * \return An expression representing the subtraction of lhs (scalar) and rhs
+ */
 template <typename LE, typename RE, cpp_enable_if(std::is_convertible<LE, value_t<RE>>::value, is_etl_expr<RE>::value)>
 auto operator-(LE lhs, RE&& rhs) -> detail::right_binary_helper<scalar<value_t<RE>>, RE, minus_binary_op> {
     return {scalar<value_t<RE>>(lhs), rhs};
 }
 
+/*!
+ * \brief Builds an expression representing the addition of lhs and rhs (scalar)
+ * \param lhs The left hand side expression
+ * \param rhs The right hand side expression
+ * \return An expression representing the addition of lhs and rhs (scalar)
+ */
 template <typename LE, typename RE, cpp_enable_if(std::is_convertible<RE, value_t<LE>>::value, is_etl_expr<LE>::value)>
 auto operator+(LE&& lhs, RE rhs) -> detail::left_binary_helper<LE, scalar<value_t<LE>>, plus_binary_op> {
     return {lhs, scalar<value_t<LE>>(rhs)};
 }
 
+/*!
+ * \brief Builds an expression representing the addition of lhs (scalar) and rhs
+ * \param lhs The left hand side expression
+ * \param rhs The right hand side expression
+ * \return An expression representing the addition of lhs (scalar) and rhs
+ */
 template <typename LE, typename RE, cpp_enable_if(std::is_convertible<LE, value_t<RE>>::value, is_etl_expr<RE>::value)>
 auto operator+(LE lhs, RE&& rhs) -> detail::right_binary_helper<scalar<value_t<RE>>, RE, plus_binary_op> {
     return {scalar<value_t<RE>>(lhs), rhs};
 }
 
+/*!
+ * \brief Builds an expression representing the multiplication of lhs and rhs (scalar)
+ * \param lhs The left hand side expression
+ * \param rhs The right hand side expression
+ * \return An expression representing the multiplication of lhs and rhs (scalar)
+ */
 template <typename LE, typename RE, cpp_enable_if(std::is_convertible<RE, value_t<LE>>::value, is_etl_expr<LE>::value)>
 auto operator*(LE&& lhs, RE rhs) -> detail::left_binary_helper<LE, scalar<value_t<LE>>, mul_binary_op> {
     return {lhs, scalar<value_t<LE>>(rhs)};
 }
 
+/*!
+ * \brief Builds an expression representing the multiplication of lhs (scalar) and rhs
+ * \param lhs The left hand side expression
+ * \param rhs The right hand side expression
+ * \return An expression representing the multiplication of lhs (scalar) and rhs
+ */
 template <typename LE, typename RE, cpp_enable_if(std::is_convertible<LE, value_t<RE>>::value, is_etl_expr<RE>::value)>
 auto operator*(LE lhs, RE&& rhs) -> detail::right_binary_helper<scalar<value_t<RE>>, RE, mul_binary_op> {
     return {scalar<value_t<RE>>(lhs), rhs};
 }
 
+/*!
+ * \brief Builds an expression representing the multiplication of lhs and rhs (scalar)
+ * \param lhs The left hand side expression
+ * \param rhs The right hand side expression
+ * \return An expression representing the multiplication of lhs and rhs (scalar)
+ */
 template <typename LE, typename RE, cpp_enable_if(std::is_convertible<RE, value_t<LE>>::value, is_etl_expr<LE>::value)>
 auto operator>>(LE&& lhs, RE rhs) -> detail::left_binary_helper<LE, scalar<value_t<LE>>, mul_binary_op> {
     return {lhs, scalar<value_t<LE>>(rhs)};
 }
 
+/*!
+ * \brief Builds an expression representing the multiplication of lhs (scalar) and rhs
+ * \param lhs The left hand side expression
+ * \param rhs The right hand side expression
+ * \return An expression representing the multiplication of lhs (scalar) and rhs
+ */
 template <typename LE, typename RE, cpp_enable_if(std::is_convertible<LE, value_t<RE>>::value, is_etl_expr<RE>::value)>
 auto operator>>(LE lhs, RE&& rhs) -> detail::right_binary_helper<scalar<value_t<RE>>, RE, mul_binary_op> {
     return {scalar<value_t<RE>>(lhs), rhs};
 }
 
+/*!
+ * \brief Builds an expression representing the division of lhs and rhs (scalar)
+ * \param lhs The left hand side expression
+ * \param rhs The right hand side expression
+ * \return An expression representing the division of lhs and rhs (scalar)
+ */
 template <typename LE, typename RE, cpp_enable_if(std::is_convertible<RE, value_t<LE>>::value&& is_etl_expr<LE>::value && (is_div_strict || !std::is_floating_point<RE>::value))>
 auto operator/(LE&& lhs, RE rhs) -> detail::left_binary_helper<LE, scalar<value_t<LE>>, div_binary_op> {
     return {lhs, scalar<value_t<LE>>(rhs)};
 }
 
+/*!
+ * \brief Builds an expression representing the division of lhs and rhs (scalar)
+ * \param lhs The left hand side expression
+ * \param rhs The right hand side expression
+ * \return An expression representing the division of lhs and rhs (scalar)
+ */
 template <typename LE, typename RE, cpp_enable_if(std::is_convertible<RE, value_t<LE>>::value&& is_etl_expr<LE>::value && !is_div_strict && std::is_floating_point<RE>::value)>
 auto operator/(LE&& lhs, RE rhs) -> detail::left_binary_helper<LE, scalar<value_t<LE>>, mul_binary_op> {
     return {lhs, scalar<value_t<LE>>(value_t<LE>(1.0) / rhs)};
 }
 
+/*!
+ * \brief Builds an expression representing the division of lhs (scalar) and rhs
+ * \param lhs The left hand side expression
+ * \param rhs The right hand side expression
+ * \return An expression representing the division of lhs (scalar) and rhs
+ */
 template <typename LE, typename RE, cpp_enable_if(std::is_convertible<LE, value_t<RE>>::value, is_etl_expr<RE>::value)>
 auto operator/(LE lhs, RE&& rhs) -> detail::right_binary_helper<scalar<value_t<RE>>, RE, div_binary_op> {
     return {scalar<value_t<RE>>(lhs), rhs};
 }
 
+/*!
+ * \brief Builds an expression representing the modulo of lhs and rhs (scalar)
+ * \param lhs The left hand side expression
+ * \param rhs The right hand side expression
+ * \return An expression representing the modulo of lhs and rhs (scalar)
+ */
 template <typename LE, typename RE, cpp_enable_if(std::is_convertible<RE, value_t<LE>>::value, is_etl_expr<LE>::value)>
 auto operator%(LE&& lhs, RE rhs) -> detail::left_binary_helper<LE, scalar<value_t<LE>>, mod_binary_op> {
     return {lhs, scalar<value_t<LE>>(rhs)};
 }
 
+/*!
+ * \brief Builds an expression representing the modulo of lhs (scalar) and rhs
+ * \param lhs The left hand side expression
+ * \param rhs The right hand side expression
+ * \return An expression representing the modulo of lhs (scalar) and rhs
+ */
 template <typename LE, typename RE, cpp_enable_if(std::is_convertible<LE, value_t<RE>>::value, is_etl_expr<RE>::value)>
 auto operator%(LE lhs, RE&& rhs) -> detail::right_binary_helper<scalar<value_t<RE>>, RE, mod_binary_op> {
     return {scalar<value_t<RE>>(lhs), rhs};

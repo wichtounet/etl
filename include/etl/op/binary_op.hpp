@@ -15,6 +15,9 @@
 
 namespace etl {
 
+/*!
+ * \brief The random engine used by the noise operators
+ */
 using random_engine = std::mt19937_64;
 
 template <typename T>
@@ -25,9 +28,15 @@ struct plus_binary_op {
     template<typename V = default_vec>
     using vec_type = typename V::template vec_type<T>;
 
-    static constexpr const bool vectorizable = true;
-    static constexpr const bool linear       = true;
+    static constexpr const bool vectorizable = true; ///< Indicates if the opeator is vectorizable or not
+    static constexpr const bool linear       = true; ///< Indicates if the operator is linear or not
 
+    /*!
+     * \brief Apply the unary operator on lhs and rhs
+     * \param lhs The left hand side value on which to apply the operator
+     * \param lhs The right hand side value on which to apply the operator
+     * \return The result of applying the binary operator on lhs and rhs
+     */
     static constexpr T apply(const T& lhs, const T& rhs) noexcept {
         return lhs + rhs;
     }
@@ -49,9 +58,15 @@ struct minus_binary_op {
     template<typename V = default_vec>
     using vec_type = typename V::template vec_type<T>;
 
-    static constexpr const bool vectorizable = true;
-    static constexpr const bool linear       = true;
+    static constexpr const bool vectorizable = true; ///< Indicates if the opeator is vectorizable or not
+    static constexpr const bool linear       = true; ///< Indicates if the operator is linear or not
 
+    /*!
+     * \brief Apply the unary operator on lhs and rhs
+     * \param lhs The left hand side value on which to apply the operator
+     * \param lhs The right hand side value on which to apply the operator
+     * \return The result of applying the binary operator on lhs and rhs
+     */
     static constexpr T apply(const T& lhs, const T& rhs) noexcept {
         return lhs - rhs;
     }
@@ -73,9 +88,15 @@ struct mul_binary_op {
     template<typename V = default_vec>
     using vec_type = typename V::template vec_type<T>;
 
-    static constexpr const bool vectorizable = vector_mode == vector_mode_t::AVX512 ? !is_complex_t<T>::value : true ;
-    static constexpr const bool linear       = true;
+    static constexpr const bool vectorizable = vector_mode == vector_mode_t::AVX512 ? !is_complex_t<T>::value : true ; ///< Indicates if the opeator is vectorizable or not
+    static constexpr const bool linear       = true; ///< Indicates if the operator is linear or not
 
+    /*!
+     * \brief Apply the unary operator on lhs and rhs
+     * \param lhs The left hand side value on which to apply the operator
+     * \param lhs The right hand side value on which to apply the operator
+     * \return The result of applying the binary operator on lhs and rhs
+     */
     static constexpr T apply(const T& lhs, const T& rhs) noexcept {
         return lhs * rhs;
     }
@@ -97,9 +118,15 @@ struct div_binary_op {
     template<typename V = default_vec>
     using vec_type = typename V::template vec_type<T>;
 
-    static constexpr const bool vectorizable = vector_mode == vector_mode_t::AVX512 ? !is_complex_t<T>::value : true ;
-    static constexpr const bool linear       = true;
+    static constexpr const bool vectorizable = vector_mode == vector_mode_t::AVX512 ? !is_complex_t<T>::value : true ; ///< Indicates if the opeator is vectorizable or not
+    static constexpr const bool linear       = true; ///< Indicates if the operator is linear or not
 
+    /*!
+     * \brief Apply the unary operator on lhs and rhs
+     * \param lhs The left hand side value on which to apply the operator
+     * \param lhs The right hand side value on which to apply the operator
+     * \return The result of applying the binary operator on lhs and rhs
+     */
     static constexpr T apply(const T& lhs, const T& rhs) noexcept {
         return lhs / rhs;
     }
@@ -118,9 +145,15 @@ struct div_binary_op {
 
 template <typename T>
 struct mod_binary_op {
-    static constexpr const bool vectorizable = false;
-    static constexpr const bool linear       = true;
+    static constexpr const bool vectorizable = false; ///< Indicates if the opeator is vectorizable or not
+    static constexpr const bool linear       = true; ///< Indicates if the operator is linear or not
 
+    /*!
+     * \brief Apply the unary operator on lhs and rhs
+     * \param lhs The left hand side value on which to apply the operator
+     * \param lhs The right hand side value on which to apply the operator
+     * \return The result of applying the binary operator on lhs and rhs
+     */
     static constexpr T apply(const T& lhs, const T& rhs) noexcept {
         return lhs % rhs;
     }
@@ -132,9 +165,15 @@ struct mod_binary_op {
 
 template <typename T, typename E>
 struct ranged_noise_binary_op {
-    static constexpr const bool vectorizable = false;
-    static constexpr const bool linear       = true;
+    static constexpr const bool vectorizable = false; ///< Indicates if the opeator is vectorizable or not
+    static constexpr const bool linear       = true; ///< Indicates if the operator is linear or not
 
+    /*!
+     * \brief Apply the unary operator on lhs and rhs
+     * \param lhs The left hand side value on which to apply the operator
+     * \param lhs The right hand side value on which to apply the operator
+     * \return The result of applying the binary operator on lhs and rhs
+     */
     static T apply(const T& x, E value) {
         static random_engine rand_engine(std::time(nullptr));
         static std::normal_distribution<double> normal_distribution(0.0, 1.0);
@@ -157,9 +196,15 @@ struct max_binary_op {
     template<typename V = default_vec>
     using vec_type = typename V::template vec_type<T>;
 
-    static constexpr const bool vectorizable = intel_compiler && !is_complex_t<T>::value;
-    static constexpr const bool linear       = true;
+    static constexpr const bool vectorizable = intel_compiler && !is_complex_t<T>::value; ///< Indicates if the opeator is vectorizable or not
+    static constexpr const bool linear       = true; ///< Indicates if the operator is linear or not
 
+    /*!
+     * \brief Apply the unary operator on lhs and rhs
+     * \param lhs The left hand side value on which to apply the operator
+     * \param lhs The right hand side value on which to apply the operator
+     * \return The result of applying the binary operator on lhs and rhs
+     */
     static constexpr T apply(const T& x, E value) noexcept {
         return std::max(x, value);
     }
@@ -181,9 +226,15 @@ struct min_binary_op {
     template<typename V = default_vec>
     using vec_type = typename V::template vec_type<T>;
 
-    static constexpr const bool vectorizable = intel_compiler && !is_complex_t<T>::value;
-    static constexpr const bool linear       = true;
+    static constexpr const bool vectorizable = intel_compiler && !is_complex_t<T>::value; ///< Indicates if the opeator is vectorizable or not
+    static constexpr const bool linear       = true; ///< Indicates if the operator is linear or not
 
+    /*!
+     * \brief Apply the unary operator on lhs and rhs
+     * \param lhs The left hand side value on which to apply the operator
+     * \param lhs The right hand side value on which to apply the operator
+     * \return The result of applying the binary operator on lhs and rhs
+     */
     static constexpr T apply(const T& x, E value) noexcept {
         return std::min(x, value);
     }
@@ -205,8 +256,8 @@ struct min_scalar_op {
     template<typename V = default_vec>
     using vec_type = typename V::template vec_type<T>;
 
-    static constexpr const bool vectorizable = intel_compiler && !is_complex_t<T>::value;
-    static constexpr const bool linear       = true;
+    static constexpr const bool vectorizable = intel_compiler && !is_complex_t<T>::value; ///< Indicates if the opeator is vectorizable or not
+    static constexpr const bool linear       = true; ///< Indicates if the operator is linear or not
 
     S s;
     explicit min_scalar_op(S s)
@@ -233,8 +284,8 @@ struct max_scalar_op {
     template<typename V = default_vec>
     using vec_type = typename V::template vec_type<T>;
 
-    static constexpr const bool vectorizable = intel_compiler && !is_complex_t<T>::value;
-    static constexpr const bool linear       = true;
+    static constexpr const bool vectorizable = intel_compiler && !is_complex_t<T>::value; ///< Indicates if the opeator is vectorizable or not
+    static constexpr const bool linear       = true; ///< Indicates if the operator is linear or not
 
     S s;
     explicit max_scalar_op(S s)
@@ -261,8 +312,8 @@ struct clip_scalar_op {
     template<typename V = default_vec>
     using vec_type = typename V::template vec_type<T>;
 
-    static constexpr const bool vectorizable = intel_compiler && !is_complex_t<T>::value;
-    static constexpr const bool linear       = true;
+    static constexpr const bool vectorizable = intel_compiler && !is_complex_t<T>::value; ///< Indicates if the opeator is vectorizable or not
+    static constexpr const bool linear       = true; ///< Indicates if the operator is linear or not
 
     S min;
     S max;
@@ -287,9 +338,15 @@ struct clip_scalar_op {
 
 template <typename T, typename E>
 struct pow_binary_op {
-    static constexpr const bool vectorizable = false;
-    static constexpr const bool linear       = true;
+    static constexpr const bool vectorizable = false; ///< Indicates if the opeator is vectorizable or not
+    static constexpr const bool linear       = true; ///< Indicates if the operator is linear or not
 
+    /*!
+     * \brief Apply the unary operator on lhs and rhs
+     * \param lhs The left hand side value on which to apply the operator
+     * \param lhs The right hand side value on which to apply the operator
+     * \return The result of applying the binary operator on lhs and rhs
+     */
     static constexpr T apply(const T& x, E value) noexcept {
         return std::pow(x, value);
     }
@@ -301,9 +358,15 @@ struct pow_binary_op {
 
 template <typename T, typename E>
 struct one_if_binary_op {
-    static constexpr const bool vectorizable = false;
-    static constexpr const bool linear       = true;
+    static constexpr const bool vectorizable = false; ///< Indicates if the opeator is vectorizable or not
+    static constexpr const bool linear       = true; ///< Indicates if the operator is linear or not
 
+    /*!
+     * \brief Apply the unary operator on lhs and rhs
+     * \param lhs The left hand side value on which to apply the operator
+     * \param lhs The right hand side value on which to apply the operator
+     * \return The result of applying the binary operator on lhs and rhs
+     */
     static constexpr T apply(const T& x, E value) noexcept {
         return 1.0 ? x == value : 0.0;
     }

@@ -415,8 +415,6 @@ public:
         return _data.cend();
     }
 
-    // Direct memory access
-
     /*!
      * \brief Returns a pointer to the first element in memory.
      * \return a pointer tot the first element in memory.

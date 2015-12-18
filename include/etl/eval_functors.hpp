@@ -75,14 +75,6 @@ struct vectorized_base {
         //Nothing else
     }
 
-    /*!
-     * \brief Returns a reference to the derived object, i.e. the object using the CRTP injector.
-     * \return a reference to the derived object.
-     */
-    const derived_t& as_derived() const noexcept {
-        return *static_cast<const derived_t*>(this);
-    }
-
     void operator()() const {
         //1. Peel loop (if necessary)
         auto peeled = as_derived().peel_loop();
@@ -104,6 +96,15 @@ struct vectorized_base {
         //3. Remainder loop (non-vectorized)
 
         as_derived().remainder_loop(first);
+    }
+
+private:
+    /*!
+     * \brief Returns a reference to the derived object, i.e. the object using the CRTP injector.
+     * \return a reference to the derived object.
+     */
+    const derived_t& as_derived() const noexcept {
+        return *static_cast<const derived_t*>(this);
     }
 };
 

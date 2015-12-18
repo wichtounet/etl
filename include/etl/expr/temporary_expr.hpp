@@ -77,18 +77,34 @@ struct temporary_expr : comparable<D>, value_testable<D>, dim_testable<D> {
 
     // Direct memory access
 
+    /*!
+     * \brief Returns a pointer to the first element in memory.
+     * \return a pointer tot the first element in memory.
+     */
     memory_type memory_start() noexcept {
         return as_derived().result().memory_start();
     }
 
+    /*!
+     * \brief Returns a pointer to the first element in memory.
+     * \return a pointer tot the first element in memory.
+     */
     const_memory_type memory_start() const noexcept {
         return as_derived().result().memory_start();
     }
 
+    /*!
+     * \brief Returns a pointer to the past-the-end element in memory.
+     * \return a pointer tot the past-the-end element in memory.
+     */
     memory_type memory_end() noexcept {
         return as_derived().result().memory_end();
     }
 
+    /*!
+     * \brief Returns a pointer to the past-the-end element in memory.
+     * \return a pointer tot the past-the-end element in memory.
+     */
     const_memory_type memory_end() const noexcept {
         return as_derived().result().memory_end();
     }
@@ -96,21 +112,23 @@ struct temporary_expr : comparable<D>, value_testable<D>, dim_testable<D> {
 
 template <typename T, typename AExpr, typename Op, typename Forced>
 struct temporary_unary_expr final : temporary_expr<temporary_unary_expr<T, AExpr, Op, Forced>, T> {
+    static constexpr const bool is_forced = std::is_same<Forced, void>::value; ///< Indicate if the result is forced to an expression
+
     using value_type  = T;
-    using result_type = std::conditional_t<std::is_same<Forced, void>::value, typename Op::template result_type<AExpr>, Forced>;
-    using data_type   = std::conditional_t<std::is_same<Forced, void>::value, std::shared_ptr<result_type>, result_type>;
+    using result_type = std::conditional_t<is_forced, typename Op::template result_type<AExpr>, Forced>;
+    using data_type   = std::conditional_t<is_forced, std::shared_ptr<result_type>, result_type>;
 
 private:
     static_assert(is_etl_expr<AExpr>::value, "The argument must be an ETL expr");
 
     using this_type = temporary_unary_expr<T, AExpr, Op, Forced>;
 
-    using get_result_op = std::conditional_t<std::is_same<Forced, void>::value, dereference_op, forward_op>;
+    using get_result_op = std::conditional_t<is_forced, dereference_op, forward_op>;
 
-    AExpr _a;
-    data_type _c;
-    bool allocated = false;
-    bool evaluated = false;
+    AExpr _a;               ///< The sub expression reference
+    data_type _c;           ///< The result reference
+    bool allocated = false; ///< Indicates if the temporary has been allocated
+    bool evaluated = false; ///< Indicates if the expression has been evaluated
 
 public:
     //Construct a new expression
@@ -120,7 +138,7 @@ public:
     }
 
     //Construct a new expression
-    temporary_unary_expr(AExpr a, std::conditional_t<std::is_same<Forced, void>::value, int, Forced> c)
+    temporary_unary_expr(AExpr a, std::conditional_t<is_forced, int, Forced> c)
             : _a(a), _c(c), allocated(true) {
         //Nothing else to init
     }
@@ -133,7 +151,7 @@ public:
 
     //Move an expression
     temporary_unary_expr(temporary_unary_expr&& e) noexcept
-            : _a(e._a), _c(optional_move<std::is_same<Forced, void>::value>(e._c)), allocated(e.allocated), evaluated(e.evaluated){
+            : _a(e._a), _c(optional_move<is_forced>(e._c)), allocated(e.allocated), evaluated(e.evaluated){
         e.evaluated = false;
     }
 
@@ -143,10 +161,18 @@ public:
 
     //Accessors
 
+    /*!
+     * \brief Returns the sub expression
+     * \return a reference to the sub expression
+     */
     std::add_lvalue_reference_t<AExpr> a() {
         return _a;
     }
 
+    /*!
+     * \brief Returns the sub expression
+     * \return a reference to the sub expression
+     */
     cpp::add_const_lvalue_t<AExpr> a() const {
         return _a;
     }
@@ -184,17 +210,30 @@ public:
         allocated = true;
     }
 
+    /*!
+     * \brief Test if this expression aliases with the given expression
+     * \param rhs The other expression to test
+     * \return true if the two expressions aliases, false otherwise
+     */
     template <typename E>
     bool alias(const E& rhs) const {
         return _a.alias(rhs);
     }
 
+    /*!
+     * \brief Returns the expression containing the result of the expression.
+     * \return a const reference to the expression containing the result of the expression
+     */
     result_type& result() {
         cpp_assert(evaluated, "The result has not been evaluated");
         cpp_assert(allocated, "The result has not been allocated");
         return get_result_op::apply(_c);
     }
 
+    /*!
+     * \brief Returns the expression containing the result of the expression.
+     * \return a const reference to the expression containing the result of the expression
+     */
     const result_type& result() const {
         cpp_assert(evaluated, "The result has not been evaluated");
         cpp_assert(allocated, "The result has not been allocated");
@@ -204,22 +243,24 @@ public:
 
 template <typename T, typename AExpr, typename BExpr, typename Op, typename Forced>
 struct temporary_binary_expr final : temporary_expr<temporary_binary_expr<T, AExpr, BExpr, Op, Forced>, T> {
+    static constexpr const bool is_forced = std::is_same<Forced, void>::value; ///< Indicate if the result is forced to an expression
+
     using value_type  = T;
-    using result_type = std::conditional_t<std::is_same<Forced, void>::value, typename Op::template result_type<AExpr, BExpr>, Forced>;
-    using data_type   = std::conditional_t<std::is_same<Forced, void>::value, std::shared_ptr<result_type>, result_type>;
+    using result_type = std::conditional_t<is_forced, typename Op::template result_type<AExpr, BExpr>, Forced>;
+    using data_type   = std::conditional_t<is_forced, std::shared_ptr<result_type>, result_type>;
 
 private:
     static_assert(is_etl_expr<AExpr>::value && is_etl_expr<BExpr>::value, "Both arguments must be ETL expr");
 
     using this_type = temporary_binary_expr<T, AExpr, BExpr, Op, Forced>;
 
-    using get_result_op = std::conditional_t<std::is_same<Forced, void>::value, dereference_op, forward_op>;
+    using get_result_op = std::conditional_t<is_forced, dereference_op, forward_op>;
 
-    AExpr _a;
-    BExpr _b;
-    data_type _c;
-    bool allocated = false;
-    bool evaluated = false;
+    AExpr _a;               ///< The left hand side expression reference
+    BExpr _b;               ///< The right hand side expression reference
+    data_type _c;           ///< The result reference
+    bool allocated = false; ///< Indicates if the temporary has been allocated
+    bool evaluated = false; ///< Indicates if the expression has been evaluated
 
 public:
     //Construct a new expression
@@ -229,7 +270,7 @@ public:
     }
 
     //Construct a new expression
-    temporary_binary_expr(AExpr a, BExpr b, std::conditional_t<std::is_same<Forced, void>::value, int, Forced> c)
+    temporary_binary_expr(AExpr a, BExpr b, std::conditional_t<is_forced, int, Forced> c)
             : _a(a), _b(b), _c(c), allocated(true) {
         //Nothing else to init
     }
@@ -242,7 +283,7 @@ public:
 
     //Move an expression
     temporary_binary_expr(temporary_binary_expr&& e) noexcept
-            : _a(e._a), _b(e._b), _c(optional_move<std::is_same<Forced, void>::value>(e._c)), allocated(e.allocated), evaluated(e.evaluated) {
+            : _a(e._a), _b(e._b), _c(optional_move<is_forced>(e._c)), allocated(e.allocated), evaluated(e.evaluated) {
         e.evaluated = false;
     }
 
@@ -252,18 +293,34 @@ public:
 
     //Accessors
 
+    /*!
+     * \brief Returns the left-hand-side expression
+     * \return a reference to the left hand side expression
+     */
     std::add_lvalue_reference_t<AExpr> a() {
         return _a;
     }
 
+    /*!
+     * \brief Returns the left-hand-side expression
+     * \return a reference to the left hand side expression
+     */
     cpp::add_const_lvalue_t<AExpr> a() const {
         return _a;
     }
 
+    /*!
+     * \brief Returns the right-hand-side expression
+     * \return a reference to the right hand side expression
+     */
     std::add_lvalue_reference_t<BExpr> b() {
         return _b;
     }
 
+    /*!
+     * \brief Returns the right-hand-side expression
+     * \return a reference to the right hand side expression
+     */
     cpp::add_const_lvalue_t<BExpr> b() const {
         return _b;
     }
@@ -301,17 +358,30 @@ public:
         allocated = true;
     }
 
+    /*!
+     * \brief Test if this expression aliases with the given expression
+     * \param rhs The other expression to test
+     * \return true if the two expressions aliases, false otherwise
+     */
     template <typename E>
     bool alias(const E& rhs) const {
         return _a.alias(rhs) || _b.alias(rhs);
     }
 
+    /*!
+     * \brief Returns the expression containing the result of the expression.
+     * \return a reference to the expression containing the result of the expression
+     */
     result_type& result() {
         cpp_assert(evaluated, "The result has not been evaluated");
         cpp_assert(allocated, "The result has not been allocated");
         return get_result_op::apply(_c);
     }
 
+    /*!
+     * \brief Returns the expression containing the result of the expression.
+     * \return a const reference to the expression containing the result of the expression
+     */
     const result_type& result() const {
         cpp_assert(evaluated, "The result has not been evaluated");
         cpp_assert(allocated, "The result has not been allocated");
