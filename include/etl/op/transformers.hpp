@@ -2258,6 +2258,11 @@ struct etl_traits<rep_l_transformer<T, D...>> {
         return mul_all<D...>::value * etl_traits<sub_expr_t>::size();
     }
 
+    /*!
+     * \brief Returns the D2th dimension of an expression of this type
+     * \tparam D2 The dimension to get
+     * \return the D2th dimension of an expression of this type
+     */
     template <std::size_t D2>
     static constexpr std::size_t dim() {
         return D2 >= sizeof...(D) ? etl_traits<sub_expr_t>::template dim<D2 - sizeof...(D)>() : nth_size<D2, 0, D...>::value;

@@ -792,6 +792,11 @@ struct etl_traits<etl::dim_view<T, D>> {
         return D == 1 ? etl_traits<sub_expr_t>::template dim<1>() : etl_traits<sub_expr_t>::template dim<0>();
     }
 
+    /*!
+     * \brief Returns the D2th dimension of an expression of this type
+     * \tparam D2 The dimension to get
+     * \return the D2th dimension of an expression of this type
+     */
     template <std::size_t D2>
     static constexpr std::size_t dim() {
         static_assert(D2 == 0, "Invalid dimension");
