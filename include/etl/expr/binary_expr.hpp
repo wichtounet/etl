@@ -188,10 +188,10 @@ struct etl_traits<etl::binary_expr<T, LeftExpr, BinaryOp, RightExpr>> {
 
 template <typename T, typename LeftExpr, typename BinaryOp, typename RightExpr>
 std::ostream& operator<<(std::ostream& os, const binary_expr<T, LeftExpr, BinaryOp, RightExpr>& expr) {
-    if (simple_operator<BinaryOp>::value) {
-        return os << "(" << expr.lhs() << ' ' << BinaryOp::desc() << ' ' << expr.rhs() << ")";
-    } else {
+    if (BinaryOp::desc_func) {
         return os << BinaryOp::desc() << "(" << expr.lhs() << ", " << expr.rhs() << ")";
+    } else {
+        return os << "(" << expr.lhs() << ' ' << BinaryOp::desc() << ' ' << expr.rhs() << ")";
     }
 }
 

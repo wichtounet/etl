@@ -20,23 +20,14 @@ namespace etl {
  */
 using random_engine = std::mt19937_64;
 
-/*!
- * \brief Simple traits indicate if the operator is considered simple
- *
- * This changes the way the operator is displayed by stream operators.
- *
- * \tparam T The type to test
- */
-template <typename T>
-struct simple_operator : std::true_type {};
-
 template <typename T>
 struct plus_binary_op {
     template<typename V = default_vec>
     using vec_type = typename V::template vec_type<T>;
 
-    static constexpr const bool vectorizable = true; ///< Indicates if the opeator is vectorizable or not
-    static constexpr const bool linear       = true; ///< Indicates if the operator is linear or not
+    static constexpr const bool vectorizable = true;  ///< Indicates if the opeator is vectorizable or not
+    static constexpr const bool linear       = true;  ///< Indicates if the operator is linear or not
+    static constexpr const bool desc_func    = false; ///< Indicates if the description must be printed as function
 
     /*!
      * \brief Apply the unary operator on lhs and rhs
@@ -78,6 +69,7 @@ struct minus_binary_op {
 
     static constexpr const bool vectorizable = true; ///< Indicates if the opeator is vectorizable or not
     static constexpr const bool linear       = true; ///< Indicates if the operator is linear or not
+    static constexpr const bool desc_func    = false; ///< Indicates if the description must be printed as function
 
     /*!
      * \brief Apply the unary operator on lhs and rhs
@@ -119,6 +111,7 @@ struct mul_binary_op {
 
     static constexpr const bool vectorizable = vector_mode == vector_mode_t::AVX512 ? !is_complex_t<T>::value : true ; ///< Indicates if the opeator is vectorizable or not
     static constexpr const bool linear       = true; ///< Indicates if the operator is linear or not
+    static constexpr const bool desc_func    = false; ///< Indicates if the description must be printed as function
 
     /*!
      * \brief Apply the unary operator on lhs and rhs
@@ -160,6 +153,7 @@ struct div_binary_op {
 
     static constexpr const bool vectorizable = vector_mode == vector_mode_t::AVX512 ? !is_complex_t<T>::value : true ; ///< Indicates if the opeator is vectorizable or not
     static constexpr const bool linear       = true; ///< Indicates if the operator is linear or not
+    static constexpr const bool desc_func    = false; ///< Indicates if the description must be printed as function
 
     /*!
      * \brief Apply the unary operator on lhs and rhs
@@ -198,6 +192,7 @@ template <typename T>
 struct mod_binary_op {
     static constexpr const bool vectorizable = false; ///< Indicates if the opeator is vectorizable or not
     static constexpr const bool linear       = true; ///< Indicates if the operator is linear or not
+    static constexpr const bool desc_func    = false; ///< Indicates if the description must be printed as function
 
     /*!
      * \brief Apply the unary operator on lhs and rhs
@@ -222,6 +217,7 @@ template <typename T, typename E>
 struct ranged_noise_binary_op {
     static constexpr const bool vectorizable = false; ///< Indicates if the opeator is vectorizable or not
     static constexpr const bool linear       = true; ///< Indicates if the operator is linear or not
+    static constexpr const bool desc_func    = true; ///< Indicates if the description must be printed as function
 
     /*!
      * \brief Apply the unary operator on lhs and rhs
@@ -257,6 +253,7 @@ struct max_binary_op {
 
     static constexpr const bool vectorizable = intel_compiler && !is_complex_t<T>::value; ///< Indicates if the opeator is vectorizable or not
     static constexpr const bool linear       = true; ///< Indicates if the operator is linear or not
+    static constexpr const bool desc_func    = true; ///< Indicates if the description must be printed as function
 
     /*!
      * \brief Apply the unary operator on lhs and rhs
@@ -298,6 +295,7 @@ struct min_binary_op {
 
     static constexpr const bool vectorizable = intel_compiler && !is_complex_t<T>::value; ///< Indicates if the opeator is vectorizable or not
     static constexpr const bool linear       = true; ///< Indicates if the operator is linear or not
+    static constexpr const bool desc_func    = true; ///< Indicates if the description must be printed as function
 
     /*!
      * \brief Apply the unary operator on lhs and rhs
@@ -336,6 +334,7 @@ template <typename T, typename E>
 struct pow_binary_op {
     static constexpr const bool vectorizable = false; ///< Indicates if the opeator is vectorizable or not
     static constexpr const bool linear       = true; ///< Indicates if the operator is linear or not
+    static constexpr const bool desc_func    = true; ///< Indicates if the description must be printed as function
 
     /*!
      * \brief Apply the unary operator on lhs and rhs
@@ -360,6 +359,7 @@ template <typename T, typename E>
 struct one_if_binary_op {
     static constexpr const bool vectorizable = false; ///< Indicates if the opeator is vectorizable or not
     static constexpr const bool linear       = true; ///< Indicates if the operator is linear or not
+    static constexpr const bool desc_func    = true; ///< Indicates if the description must be printed as function
 
     /*!
      * \brief Apply the unary operator on lhs and rhs
@@ -379,23 +379,5 @@ struct one_if_binary_op {
         return "one_if";
     }
 };
-
-//Define operators which are no simple c++ operators (+,-,*,...)
-//These operators will be displayed differently
-
-template <typename T, typename E>
-struct simple_operator<ranged_noise_binary_op<T, E>> : std::false_type {};
-
-template <typename T, typename E>
-struct simple_operator<max_binary_op<T, E>> : std::false_type {};
-
-template <typename T, typename E>
-struct simple_operator<min_binary_op<T, E>> : std::false_type {};
-
-template <typename T, typename E>
-struct simple_operator<pow_binary_op<T, E>> : std::false_type {};
-
-template <typename T, typename E>
-struct simple_operator<one_if_binary_op<T, E>> : std::false_type {};
 
 } //end of namespace etl
