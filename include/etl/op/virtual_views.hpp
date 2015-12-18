@@ -198,6 +198,7 @@ struct etl_traits<etl::magic_view<V>> {
      * \return The dth dimension of the given expression
      */
     static std::size_t dim(const expr_t& v, std::size_t d) {
+        cpp_unused(d);
         return v.n;
     }
 
