@@ -40,10 +40,21 @@ struct temporary_expr : comparable<D>, value_testable<D>, dim_testable<D> {
 
     //Apply the expression
 
+    /*!
+     * \brief Returns the element at the given index
+     * \param i The index
+     * \return a reference to the element at the given index.
+     */
     value_type operator[](std::size_t i) const {
         return as_derived().result()[i];
     }
 
+    /*!
+     * \brief Returns the value at the given index
+     * This function never alters the state of the container.
+     * \param i The index
+     * \return the value at the given index.
+     */
     value_type read_flat(std::size_t i) const {
         return as_derived().result().read_flat(i);
     }

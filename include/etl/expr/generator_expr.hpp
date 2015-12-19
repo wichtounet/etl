@@ -41,23 +41,48 @@ public:
 
     //Apply the expression
 
-    value_type operator[](std::size_t /*d*/) const {
+    /*!
+     * \brief Returns the element at the given index
+     * \param i The index
+     * \return a reference to the element at the given index.
+     */
+    value_type operator[](std::size_t i) const {
+        cpp_unused(i);
         return generator();
     }
 
-    value_type read_flat(std::size_t /*d*/) const {
+    /*!
+     * \brief Returns the value at the given index
+     * This function never alters the state of the container.
+     * \param i The index
+     * \return the value at the given index.
+     */
+    value_type read_flat(std::size_t i) const {
+        cpp_unused(i);
         return generator();
     }
 
+    /*!
+     * \brief Test if this expression aliases with the given expression
+     * \param rhs The other expression to test
+     * \return true if the two expressions aliases, false otherwise
+     */
     template<typename E>
     constexpr bool alias(const E& /*rhs*/) const noexcept {
         return false;
     }
 
+    /*!
+     * \brief Apply the functor
+     * \return The new value of the generator
+     */
     value_type operator()() const {
         return generator();
     }
 
+    /*!
+     * \brief Returns a reference to the generator op
+     * \return a reference to the generator op.
     const Generator& get_generator() const {
         return generator;
     }
