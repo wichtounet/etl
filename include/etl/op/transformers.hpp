@@ -1607,8 +1607,8 @@ template <typename T>
 struct etl_traits<T, std::enable_if_t<cpp::or_c<
                          cpp::is_specialization_of<etl::sum_r_transformer, std::decay_t<T>>,
                          cpp::is_specialization_of<etl::mean_r_transformer, std::decay_t<T>>>::value>> {
-    using expr_t     = T;
-    using sub_expr_t = std::decay_t<typename std::decay_t<T>::sub_type>;
+    using expr_t     = T; ///< The expression type
+    using sub_expr_t = std::decay_t<typename std::decay_t<T>::sub_type>; ///< The sub expression type
 
     static constexpr const bool is_etl                  = true;  ///< Indicates if the type is an ETL expression
     static constexpr const bool is_transformer          = true;  ///< Indicates if the type is a transformer
@@ -1677,8 +1677,8 @@ template <typename T>
 struct etl_traits<T, std::enable_if_t<cpp::or_c<
                          cpp::is_specialization_of<etl::sum_l_transformer, std::decay_t<T>>,
                          cpp::is_specialization_of<etl::mean_l_transformer, std::decay_t<T>>>::value>> {
-    using expr_t     = T;
-    using sub_expr_t = std::decay_t<typename std::decay_t<T>::sub_type>;
+    using expr_t     = T; ///< The expression type
+    using sub_expr_t = std::decay_t<typename std::decay_t<T>::sub_type>; ///< The sub expression type
 
     static constexpr const bool is_etl                  = true;  ///< Indicates if the type is an ETL expression
     static constexpr const bool is_transformer          = true;  ///< Indicates if the type is a transformer
@@ -1744,8 +1744,8 @@ struct etl_traits<T, std::enable_if_t<cpp::or_c<
  */
 template <typename T, std::size_t C1, std::size_t C2>
 struct etl_traits<p_max_pool_p_transformer<T, C1, C2>> {
-    using expr_t     = p_max_pool_p_transformer<T, C1, C2>;
-    using sub_expr_t = std::decay_t<T>;
+    using expr_t     = p_max_pool_p_transformer<T, C1, C2>; ///< The expression type
+    using sub_expr_t = std::decay_t<T>; ///< The sub expression type
 
     static constexpr const bool is_etl                  = true;  ///< Indicates if the type is an ETL expression
     static constexpr const bool is_transformer          = true;  ///< Indicates if the type is a transformer
@@ -1823,8 +1823,8 @@ struct etl_traits<T, std::enable_if_t<cpp::or_c<
                          cpp::is_specialization_of<etl::vflip_transformer, std::decay_t<T>>,
                          cpp::is_specialization_of<etl::fflip_transformer, std::decay_t<T>>,
                          is_3<etl::p_max_pool_h_transformer, std::decay_t<T>>>::value>> {
-    using expr_t     = T;
-    using sub_expr_t = std::decay_t<typename T::sub_type>;
+    using expr_t     = T; ///< The expression type
+    using sub_expr_t = std::decay_t<typename T::sub_type>; ///< The sub expression type
 
     static constexpr const bool is_etl                  = true;  ///< Indicates if the type is an ETL expression
     static constexpr const bool is_transformer          = true;  ///< Indicates if the type is a transformer
@@ -1891,8 +1891,8 @@ struct etl_traits<T, std::enable_if_t<cpp::or_c<
  */
 template <typename T>
 struct etl_traits<transpose_transformer<T>> {
-    using expr_t     = etl::transpose_transformer<T>;
-    using sub_expr_t = std::decay_t<T>;
+    using expr_t     = etl::transpose_transformer<T>; ///< The expression type
+    using sub_expr_t = std::decay_t<T>; ///< The sub expression type
 
     static constexpr const bool is_etl                  = true;  ///< Indicates if the type is an ETL expression
     static constexpr const bool is_transformer          = true;  ///< Indicates if the type is a transformer
@@ -1958,7 +1958,7 @@ struct etl_traits<transpose_transformer<T>> {
  */
 template <typename LE, typename RE>
 struct etl_traits<mm_mul_transformer<LE, RE>> {
-    using expr_t       = etl::mm_mul_transformer<LE, RE>;
+    using expr_t       = etl::mm_mul_transformer<LE, RE>; ///< The expression type
     using left_expr_t  = std::decay_t<LE>;
     using right_expr_t = std::decay_t<RE>;
 
@@ -2036,8 +2036,8 @@ struct etl_traits<mm_mul_transformer<LE, RE>> {
  */
 template <typename E>
 struct etl_traits<dyn_convmtx_transformer<E>> {
-    using expr_t     = etl::dyn_convmtx_transformer<E>;
-    using sub_expr_t = std::decay_t<E>;
+    using expr_t     = etl::dyn_convmtx_transformer<E>; ///< The expression type
+    using sub_expr_t = std::decay_t<E>; ///< The sub expression type
 
     static constexpr const bool is_etl                  = true;  ///< Indicates if the type is an ETL expression
     static constexpr const bool is_transformer          = true;  ///< Indicates if the type is a transformer
@@ -2089,8 +2089,8 @@ struct etl_traits<dyn_convmtx_transformer<E>> {
  */
 template <typename E>
 struct etl_traits<dyn_convmtx2_transformer<E>> {
-    using expr_t     = etl::dyn_convmtx2_transformer<E>;
-    using sub_expr_t = std::decay_t<E>;
+    using expr_t     = etl::dyn_convmtx2_transformer<E>; ///< The expression type
+    using sub_expr_t = std::decay_t<E>; ///< The sub expression type
 
     static constexpr const bool is_etl                  = true;  ///< Indicates if the type is an ETL expression
     static constexpr const bool is_transformer          = true;  ///< Indicates if the type is a transformer
@@ -2144,8 +2144,8 @@ struct etl_traits<dyn_convmtx2_transformer<E>> {
  */
 template <typename T, std::size_t... D>
 struct etl_traits<rep_r_transformer<T, D...>> {
-    using expr_t     = etl::rep_r_transformer<T, D...>;
-    using sub_expr_t = std::decay_t<T>;
+    using expr_t     = etl::rep_r_transformer<T, D...>; ///< The expression type
+    using sub_expr_t = std::decay_t<T>; ///< The sub expression type
 
     static constexpr const bool is_etl                  = true;  ///< Indicates if the type is an ETL expression
     static constexpr const bool is_transformer          = true;  ///< Indicates if the type is a transformer
@@ -2214,8 +2214,8 @@ struct etl_traits<rep_r_transformer<T, D...>> {
  */
 template <typename T, std::size_t... D>
 struct etl_traits<rep_l_transformer<T, D...>> {
-    using expr_t     = etl::rep_l_transformer<T, D...>;
-    using sub_expr_t = std::decay_t<T>;
+    using expr_t     = etl::rep_l_transformer<T, D...>; ///< The expression type
+    using sub_expr_t = std::decay_t<T>; ///< The sub expression type
 
     static constexpr const bool is_etl                  = true;  ///< Indicates if the type is an ETL expression
     static constexpr const bool is_transformer          = true;  ///< Indicates if the type is a transformer
@@ -2282,8 +2282,8 @@ struct etl_traits<rep_l_transformer<T, D...>> {
  */
 template <typename T, std::size_t D>
 struct etl_traits<dyn_rep_r_transformer<T, D>> {
-    using expr_t     = etl::dyn_rep_r_transformer<T, D>;
-    using sub_expr_t = std::decay_t<T>;
+    using expr_t     = etl::dyn_rep_r_transformer<T, D>; ///< The expression type
+    using sub_expr_t = std::decay_t<T>; ///< The sub expression type
 
     static constexpr const bool is_etl                  = true;  ///< Indicates if the type is an ETL expression
     static constexpr const bool is_transformer          = true;  ///< Indicates if the type is a transformer
@@ -2333,8 +2333,8 @@ struct etl_traits<dyn_rep_r_transformer<T, D>> {
  */
 template <typename T, std::size_t D>
 struct etl_traits<dyn_rep_l_transformer<T, D>> {
-    using expr_t     = etl::dyn_rep_l_transformer<T, D>;
-    using sub_expr_t = std::decay_t<T>;
+    using expr_t     = etl::dyn_rep_l_transformer<T, D>; ///< The expression type
+    using sub_expr_t = std::decay_t<T>; ///< The sub expression type
 
     static constexpr const bool is_etl                  = true;  ///< Indicates if the type is an ETL expression
     static constexpr const bool is_transformer          = true;  ///< Indicates if the type is a transformer
@@ -2377,66 +2377,144 @@ struct etl_traits<dyn_rep_l_transformer<T, D>> {
     }
 };
 
+/*!
+ * \brief Display the transformer on the given stream
+ * \param os The output stream
+ * \param transformer The transformer to print
+ * \return the output stream
+ */
 template <typename T, std::size_t... D>
 std::ostream& operator<<(std::ostream& os, const rep_r_transformer<T, D...>& transformer) {
     return os << "rep_r[" << concat_sizes(D...) << "](" << transformer.sub << ")";
 }
 
+/*!
+ * \brief Display the transformer on the given stream
+ * \param os The output stream
+ * \param transformer The transformer to print
+ * \return the output stream
+ */
 template <typename T, std::size_t... D>
 std::ostream& operator<<(std::ostream& os, const rep_l_transformer<T, D...>& transformer) {
     return os << "rep_l[" << concat_sizes(D...) << "](" << transformer.sub << ")";
 }
 
+/*!
+ * \brief Display the transformer on the given stream
+ * \param os The output stream
+ * \param transformer The transformer to print
+ * \return the output stream
+ */
 template <typename T>
 std::ostream& operator<<(std::ostream& os, const sum_r_transformer<T>& transformer) {
     return os << "sum_r(" << transformer.sub << ")";
 }
 
+/*!
+ * \brief Display the transformer on the given stream
+ * \param os The output stream
+ * \param transformer The transformer to print
+ * \return the output stream
+ */
 template <typename T>
 std::ostream& operator<<(std::ostream& os, const mean_r_transformer<T>& transformer) {
     return os << "mean_r(" << transformer.sub << ")";
 }
 
+/*!
+ * \brief Display the transformer on the given stream
+ * \param os The output stream
+ * \param transformer The transformer to print
+ * \return the output stream
+ */
 template <typename T>
 std::ostream& operator<<(std::ostream& os, const sum_l_transformer<T>& transformer) {
     return os << "sum_l(" << transformer.sub << ")";
 }
 
+/*!
+ * \brief Display the transformer on the given stream
+ * \param os The output stream
+ * \param transformer The transformer to print
+ * \return the output stream
+ */
 template <typename T>
 std::ostream& operator<<(std::ostream& os, const mean_l_transformer<T>& transformer) {
     return os << "mean_l(" << transformer.sub << ")";
 }
 
+/*!
+ * \brief Display the transformer on the given stream
+ * \param os The output stream
+ * \param transformer The transformer to print
+ * \return the output stream
+ */
 template <typename T>
 std::ostream& operator<<(std::ostream& os, const hflip_transformer<T>& transformer) {
     return os << "hflip(" << transformer.sub << ")";
 }
 
+/*!
+ * \brief Display the transformer on the given stream
+ * \param os The output stream
+ * \param transformer The transformer to print
+ * \return the output stream
+ */
 template <typename T>
 std::ostream& operator<<(std::ostream& os, const vflip_transformer<T>& transformer) {
     return os << "vflip(" << transformer.sub << ")";
 }
 
+/*!
+ * \brief Display the transformer on the given stream
+ * \param os The output stream
+ * \param transformer The transformer to print
+ * \return the output stream
+ */
 template <typename T>
 std::ostream& operator<<(std::ostream& os, const fflip_transformer<T>& transformer) {
     return os << "fflip(" << transformer.sub << ")";
 }
 
+/*!
+ * \brief Display the transformer on the given stream
+ * \param os The output stream
+ * \param transformer The transformer to print
+ * \return the output stream
+ */
 template <typename T>
 std::ostream& operator<<(std::ostream& os, const transpose_transformer<T>& transformer) {
     return os << "T(" << transformer.sub << ")";
 }
 
+/*!
+ * \brief Display the transformer on the given stream
+ * \param os The output stream
+ * \param transformer The transformer to print
+ * \return the output stream
+ */
 template <typename L, typename R>
 std::ostream& operator<<(std::ostream& os, const mm_mul_transformer<L, R>& transformer) {
     return os << "mm_mul(" << transformer.left << "," << transformer.right << ")";
 }
 
+/*!
+ * \brief Display the transformer on the given stream
+ * \param os The output stream
+ * \param transformer The transformer to print
+ * \return the output stream
+ */
 template <typename T, std::size_t C1, std::size_t C2>
 std::ostream& operator<<(std::ostream& os, const p_max_pool_h_transformer<T, C1, C2>& transformer) {
     return os << "p_mp_h[" << concat_sizes(C1, C2) << "](" << transformer.sub << ")";
 }
 
+/*!
+ * \brief Display the transformer on the given stream
+ * \param os The output stream
+ * \param transformer The transformer to print
+ * \return the output stream
+ */
 template <typename T, std::size_t C1, std::size_t C2>
 std::ostream& operator<<(std::ostream& os, const p_max_pool_p_transformer<T, C1, C2>& transformer) {
     return os << "p_mp_p[" << concat_sizes(C1, C2) << "](" << transformer.sub << ")";
