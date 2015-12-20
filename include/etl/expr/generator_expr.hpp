@@ -83,6 +83,7 @@ public:
     /*!
      * \brief Returns a reference to the generator op
      * \return a reference to the generator op.
+     */
     const Generator& get_generator() const {
         return generator;
     }
