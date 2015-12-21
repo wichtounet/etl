@@ -20,6 +20,13 @@
 
 namespace etl {
 
+/*!
+ * \brief Complex number implementation
+ *
+ * This implementation is binary-compatible with std::complex. This
+ * implementation is not opaque like std::complex and its operation can be
+ * inlined.
+ */
 template <typename T>
 struct complex {
     using value_type = T;
