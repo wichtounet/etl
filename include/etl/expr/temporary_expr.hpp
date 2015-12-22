@@ -59,6 +59,11 @@ struct temporary_expr : comparable<D>, value_testable<D>, dim_testable<D> {
         return as_derived().result().read_flat(i);
     }
 
+    /*!
+     * \brief Returns the value at the given position (args...)
+     * \param args The position indices
+     * \return The value at the given position (args...)
+     */
     template <typename... S, cpp_enable_if(sizeof...(S) == sub_size_compare<derived_t>::value)>
     value_type operator()(S... args) const {
         static_assert(cpp::all_convertible_to<std::size_t, S...>::value, "Invalid size types");
@@ -71,6 +76,12 @@ struct temporary_expr : comparable<D>, value_testable<D>, dim_testable<D> {
         return sub(as_derived(), i);
     }
 
+    /*!
+     * \brief Perform several operations at once.
+     * \param i The index at which to perform the operation
+     * \tparam V The vectorization mode to use
+     * \return a vector containing several results of the expression
+     */
     template<typename VV = default_vec>
     vec_type<VV> load(std::size_t i) const noexcept {
         return VV::loadu(memory_start() + i);
@@ -78,10 +89,18 @@ struct temporary_expr : comparable<D>, value_testable<D>, dim_testable<D> {
 
     // Iterator
 
+    /*!
+     * \brief Return an iterator to the first element of the matrix
+     * \return an const iterator pointing to the first element of the matrix
+     */
     iterator<const derived_t> begin() const noexcept {
         return {as_derived(), 0};
     }
 
+    /*!
+     * \brief Return an iterator to the past-the-end element of the matrix
+     * \return a const iterator pointing to the past-the-end element of the matrix
+     */
     iterator<const derived_t> end() const noexcept {
         return {as_derived(), size(as_derived())};
     }
@@ -408,18 +427,18 @@ struct etl_traits<etl::temporary_unary_expr<T, A, Op, Forced>> {
     using expr_t = etl::temporary_unary_expr<T, A, Op, Forced>;
     using a_t    = std::decay_t<A>;
 
-    static constexpr const bool is_etl                  = true;
-    static constexpr const bool is_transformer          = false;
-    static constexpr const bool is_view                 = false;
-    static constexpr const bool is_magic_view           = false;
-    static constexpr const bool is_fast                 = etl_traits<a_t>::is_fast;
-    static constexpr const bool is_linear               = true;
-    static constexpr const bool is_value                = false;
-    static constexpr const bool is_generator            = false;
-    static constexpr const bool vectorizable            = true;
-    static constexpr const bool needs_temporary_visitor = true;
-    static constexpr const bool needs_evaluator_visitor = true;
-    static constexpr const order storage_order          = etl_traits<a_t>::storage_order;
+    static constexpr const bool is_etl                  = true;                           ///< Indicates if the type is an ETL type
+    static constexpr const bool is_transformer          = false;                          ///< Indicates if the type is a transformer
+    static constexpr const bool is_view                 = false;                          ///< Indicates if the type is a view
+    static constexpr const bool is_magic_view           = false;                          ///< Indicates if the type is a magic view
+    static constexpr const bool is_fast                 = etl_traits<a_t>::is_fast;       ///< Indicates if the expression is fast
+    static constexpr const bool is_linear               = true;                           ///< Indicates if the expression is linear
+    static constexpr const bool is_value                = false;                          ///< Indicates if the expression is of value type
+    static constexpr const bool is_generator            = false;                          ///< Indicates if the expression is a generated
+    static constexpr const bool vectorizable            = true;                           ///< Indicates if the expression is vectorizable
+    static constexpr const bool needs_temporary_visitor = true;                           ///< Indicates if the expression needs a temporary visitor
+    static constexpr const bool needs_evaluator_visitor = true;                           ///< Indicaes if the expression needs an evaluator visitor
+    static constexpr const order storage_order          = etl_traits<a_t>::storage_order; ///< The expression storage order
 
     static std::size_t size(const expr_t& v) {
         return Op::size(v.a());
@@ -452,18 +471,18 @@ struct etl_traits<etl::temporary_binary_expr<T, A, B, Op, Forced>> {
     using a_t    = std::decay_t<A>;
     using b_t    = std::decay_t<B>;
 
-    static constexpr const bool is_etl                  = true;
-    static constexpr const bool is_transformer          = false;
-    static constexpr const bool is_view                 = false;
-    static constexpr const bool is_magic_view           = false;
-    static constexpr const bool is_fast                 = etl_traits<a_t>::is_fast && etl_traits<b_t>::is_fast;
-    static constexpr const bool is_linear               = true;
-    static constexpr const bool is_value                = false;
-    static constexpr const bool is_generator            = false;
-    static constexpr const bool vectorizable            = true;
-    static constexpr const bool needs_temporary_visitor = true;
-    static constexpr const bool needs_evaluator_visitor = true;
-    static constexpr const order storage_order          = etl_traits<a_t>::is_generator ? etl_traits<b_t>::storage_order : etl_traits<a_t>::storage_order;
+    static constexpr const bool is_etl                  = true;                                                                                            ///< Indicates if the type is an ETL type
+    static constexpr const bool is_transformer          = false;                                                                                           ///< Indicates if the type is a transformer
+    static constexpr const bool is_view                 = false;                                                                                           ///< Indicates if the type is a view
+    static constexpr const bool is_magic_view           = false;                                                                                           ///< Indicates if the type is a magic view
+    static constexpr const bool is_fast                 = etl_traits<a_t>::is_fast && etl_traits<b_t>::is_fast;                                            ///< Indicates if the expression is fast
+    static constexpr const bool is_linear               = true;                                                                                            ///< Indicates if the expression is linear
+    static constexpr const bool is_value                = false;                                                                                           ///< Indicates if the expression is of value type
+    static constexpr const bool is_generator            = false;                                                                                           ///< Indicates if the expression is a generated
+    static constexpr const bool vectorizable            = true;                                                                                            ///< Indicates if the expression is vectorizable
+    static constexpr const bool needs_temporary_visitor = true;                                                                                            ///< Indicates if the expression needs a temporary visitor
+    static constexpr const bool needs_evaluator_visitor = true;                                                                                            ///< Indicaes if the expression needs an evaluator visitor
+    static constexpr const order storage_order          = etl_traits<a_t>::is_generator ? etl_traits<b_t>::storage_order : etl_traits<a_t>::storage_order; ///< The expression storage order
 
     static std::size_t size(const expr_t& v) {
         return Op::size(v.a(), v.b());

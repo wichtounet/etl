@@ -18,6 +18,11 @@
 
 namespace etl {
 
+/*!
+ * \brief A binary expression
+ *
+ * A binary expression has a left hand side expression and a right hand side expression and for each element applies a binary opeartor to both expressions.
+ */
 template <typename T, typename LeftExpr, typename BinaryOp, typename RightExpr>
 struct binary_expr final : comparable<binary_expr<T, LeftExpr, BinaryOp, RightExpr>>, dim_testable<binary_expr<T, LeftExpr, BinaryOp, RightExpr>>, value_testable<binary_expr<T, LeftExpr, BinaryOp, RightExpr>> {
 private:
@@ -60,22 +65,43 @@ public:
 
     //Accessors
 
+    /*!
+     * \brief Returns the left hand side expression on which the transformer is working.
+     * \return A reference to the left hand side expression on which the transformer is working.
+     */
     std::add_lvalue_reference_t<LeftExpr> lhs() {
         return _lhs;
     }
 
+    /*!
+     * \brief Returns the left hand side expression on which the transformer is working.
+     * \return A reference to the left hand side expression on which the transformer is working.
+     */
     cpp::add_const_lvalue_t<LeftExpr> lhs() const {
         return _lhs;
     }
 
+    /*!
+     * \brief Returns the right hand side expression on which the transformer is working.
+     * \return A reference to the right hand side expression on which the transformer is working.
+     */
     std::add_lvalue_reference_t<RightExpr> rhs() {
         return _rhs;
     }
 
+    /*!
+     * \brief Returns the right hand side expression on which the transformer is working.
+     * \return A reference to the right hand side expression on which the transformer is working.
+     */
     cpp::add_const_lvalue_t<RightExpr> rhs() const {
         return _rhs;
     }
 
+    /*!
+     * \brief Test if this expression aliases with the given expression
+     * \param rhs The other expression to test
+     * \return true if the two expressions aliases, false otherwise
+     */
     template<typename E>
     bool alias(const E& rhs) const noexcept {
         return _lhs.alias(rhs) || _rhs.alias(rhs);
@@ -83,19 +109,41 @@ public:
 
     //Apply the expression
 
+    /*!
+     * \brief Returns the element at the given index
+     * \param i The index
+     * \return a reference to the element at the given index.
+     */
     value_type operator[](std::size_t i) const {
         return BinaryOp::apply(lhs()[i], rhs()[i]);
     }
 
+    /*!
+     * \brief Returns the value at the given index
+     * This function never alters the state of the container.
+     * \param i The index
+     * \return the value at the given index.
+     */
     value_type read_flat(std::size_t i) const {
         return BinaryOp::apply(lhs().read_flat(i), rhs().read_flat(i));
     }
 
+    /*!
+     * \brief Perform several operations at once.
+     * \param i The index at which to perform the operation
+     * \tparam V The vectorization mode to use
+     * \return a vector containing several results of the expression
+     */
     template<typename V = default_vec>
     vec_type<V> load(std::size_t i) const {
         return BinaryOp::template load<V>(lhs().template load<V>(i), rhs().template load<V>(i));
     }
 
+    /*!
+     * \brief Returns the value at the given position (args...)
+     * \param args The position indices
+     * \return The value at the given position (args...)
+     */
     template <typename... S, cpp_enable_if(sizeof...(S) == sub_size_compare<this_type>::value)>
     value_type operator()(S... args) const {
         static_assert(cpp::all_convertible_to<std::size_t, S...>::value, "Invalid size types");
@@ -115,10 +163,18 @@ public:
         return sub(*this, i);
     }
 
+    /*!
+     * \brief Return an iterator to the first element of the matrix
+     * \return an const iterator pointing to the first element of the matrix
+     */
     iterator<const this_type> begin() const noexcept {
         return {*this, 0};
     }
 
+    /*!
+     * \brief Return an iterator to the past-the-end element of the matrix
+     * \return a const iterator pointing to the past-the-end element of the matrix
+     */
     iterator<const this_type> end() const noexcept {
         return {*this, size(*this)};
     }
@@ -137,21 +193,21 @@ struct etl_traits<etl::binary_expr<T, LeftExpr, BinaryOp, RightExpr>> {
 
     using sub_expr_t = std::conditional_t<left_directed, left_expr_t, right_expr_t>;
 
-    static constexpr const bool is_etl         = true;
-    static constexpr const bool is_transformer = false;
-    static constexpr const bool is_view        = false;
-    static constexpr const bool is_magic_view  = false;
-    static constexpr const bool is_fast        = etl_traits<sub_expr_t>::is_fast;
-    static constexpr const bool is_linear      = etl_traits<left_expr_t>::is_linear && etl_traits<right_expr_t>::is_linear && BinaryOp::linear;
-    static constexpr const bool is_value = false;
+    static constexpr const bool is_etl         = true;                                                                                          ///< Indicates if the type is an ETL expression
+    static constexpr const bool is_transformer = false;                                                                                         ///< Indicates if the type is a transformer
+    static constexpr const bool is_view        = false;                                                                                         ///< Indicates if the type is a view
+    static constexpr const bool is_magic_view  = false;                                                                                         ///< Indicates if the type is a magic view
+    static constexpr const bool is_fast        = etl_traits<sub_expr_t>::is_fast;                                                               ///< Indicates if the expression is fast
+    static constexpr const bool is_linear      = etl_traits<left_expr_t>::is_linear && etl_traits<right_expr_t>::is_linear && BinaryOp::linear; ///< Indicates if the expression is linear
+    static constexpr const bool is_value = false;                                                                                               ///< Indicates if the expression is of value type
     static constexpr const bool is_generator =
-        etl_traits<left_expr_t>::is_generator && etl_traits<right_expr_t>::is_generator;
-    static constexpr const bool vectorizable = etl_traits<left_expr_t>::vectorizable && etl_traits<right_expr_t>::vectorizable && BinaryOp::vectorizable;
+        etl_traits<left_expr_t>::is_generator && etl_traits<right_expr_t>::is_generator;                                                                  ///< Indicates if the expression is a generator expression
+    static constexpr const bool vectorizable = etl_traits<left_expr_t>::vectorizable && etl_traits<right_expr_t>::vectorizable && BinaryOp::vectorizable; ///< Indicates if the expression is vectorizable
     static constexpr const bool needs_temporary_visitor =
-        etl_traits<left_expr_t>::needs_temporary_visitor || etl_traits<right_expr_t>::needs_temporary_visitor;
+        etl_traits<left_expr_t>::needs_temporary_visitor || etl_traits<right_expr_t>::needs_temporary_visitor; ///< Indicates if the expression needs a temporary visitor
     static constexpr const bool needs_evaluator_visitor =
-        etl_traits<left_expr_t>::needs_evaluator_visitor || etl_traits<right_expr_t>::needs_evaluator_visitor;
-    static constexpr const order storage_order = etl_traits<left_expr_t>::is_generator ? etl_traits<right_expr_t>::storage_order : etl_traits<left_expr_t>::storage_order;
+        etl_traits<left_expr_t>::needs_evaluator_visitor || etl_traits<right_expr_t>::needs_evaluator_visitor;                                                             ///< Indicaes if the expression needs an evaluator visitor
+    static constexpr const order storage_order = etl_traits<left_expr_t>::is_generator ? etl_traits<right_expr_t>::storage_order : etl_traits<left_expr_t>::storage_order; ///< The expression storage order
 
     template <bool B = left_directed, cpp_enable_if(B)>
     static constexpr auto& get(const expr_t& v) {

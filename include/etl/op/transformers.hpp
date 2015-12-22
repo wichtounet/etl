@@ -26,13 +26,17 @@ struct rep_r_transformer {
     using sub_type   = T;           ///< The type on which the expression works
     using value_type = value_t<T>;  ///< The type of valuie
 
-    static constexpr const std::size_t sub_d      = decay_traits<sub_type>::dimensions();
-    static constexpr const std::size_t dimensions = sizeof...(D) + sub_d;
+    static constexpr const std::size_t sub_d      = decay_traits<sub_type>::dimensions(); ///< The number of dimensions of the sub type
+    static constexpr const std::size_t dimensions = sizeof...(D) + sub_d; ///< The number of dimensions of the transformer
 
     sub_type sub; ///< The subexpression
 
-    explicit rep_r_transformer(sub_type vec)
-            : sub(vec) {}
+    /*!
+     * \brief Construct a new transformer around the given expression
+     * \param expr The sub expression
+     */
+    explicit rep_r_transformer(sub_type expr)
+            : sub(expr) {}
 
     /*!
      * \brief Returns the value at the given index
@@ -98,13 +102,17 @@ struct rep_l_transformer {
     using sub_type   = T;           ///< The type on which the expression works
     using value_type = value_t<T>;  ///< The type of valuie
 
-    static constexpr const std::size_t sub_d      = decay_traits<sub_type>::dimensions();
-    static constexpr const std::size_t dimensions = sizeof...(D) + sub_d;
+    static constexpr const std::size_t sub_d      = decay_traits<sub_type>::dimensions(); ///< The number of dimensions of the sub type
+    static constexpr const std::size_t dimensions = sizeof...(D) + sub_d; ///< The number of dimensions of the transformer
 
     sub_type sub; ///< The subexpression
 
-    explicit rep_l_transformer(sub_type vec)
-            : sub(vec) {}
+    /*!
+     * \brief Construct a new transformer around the given expression
+     * \param expr The sub expression
+     */
+    explicit rep_l_transformer(sub_type expr)
+            : sub(expr) {}
 
     /*!
      * \brief Returns the value at the given index
@@ -170,15 +178,20 @@ struct dyn_rep_r_transformer {
     using sub_type   = T;           ///< The type on which the expression works
     using value_type = value_t<T>;  ///< The type of valuie
 
-    static constexpr const std::size_t sub_d      = decay_traits<sub_type>::dimensions();
-    static constexpr const std::size_t dimensions = D + sub_d;
+    static constexpr const std::size_t sub_d      = decay_traits<sub_type>::dimensions(); ///< The number of dimensions of the sub type
+    static constexpr const std::size_t dimensions = D + sub_d; ///< The number of dimensions of the transformer
 
-    sub_type sub; ///< The subexpression
-    std::array<std::size_t, D> reps;
-    std::size_t m;
+    sub_type sub;                    ///< The subexpression
+    std::array<std::size_t, D> reps; ///< The repeated dimensions
+    std::size_t m;                   ///< The repeated size
 
-    dyn_rep_r_transformer(sub_type vec, std::array<std::size_t, D> reps_a)
-            : sub(vec), reps(reps_a) {
+    /*!
+     * \brief Construct a new transformer around the given expression
+     * \param expr The sub expression
+     * \param reps_a The repeated dimensions
+     */
+    dyn_rep_r_transformer(sub_type expr, std::array<std::size_t, D> reps_a)
+            : sub(expr), reps(reps_a) {
         m = std::accumulate(reps.begin(), reps.end(), 1UL, [](std::size_t a, std::size_t b) { return a * b; });
     }
 
@@ -246,15 +259,20 @@ struct dyn_rep_l_transformer {
     using sub_type   = T;           ///< The type on which the expression works
     using value_type = value_t<T>;  ///< The type of valuie
 
-    static constexpr const std::size_t sub_d      = decay_traits<sub_type>::dimensions();
-    static constexpr const std::size_t dimensions = D + sub_d;
+    static constexpr const std::size_t sub_d      = decay_traits<sub_type>::dimensions(); ///< The number of dimensions of the sub type
+    static constexpr const std::size_t dimensions = D + sub_d; ///< The number of dimensions of the transformer
 
-    sub_type sub; ///< The subexpression
-    std::array<std::size_t, D> reps;
-    std::size_t m;
+    sub_type sub;                    ///< The subexpression
+    std::array<std::size_t, D> reps; ///< The repeated dimensions
+    std::size_t m;                   ///< The repeated size
 
-    dyn_rep_l_transformer(sub_type vec, std::array<std::size_t, D> reps_a)
-            : sub(vec), reps(reps_a) {
+    /*!
+     * \brief Construct a new transformer around the given expression
+     * \param expr The sub expression
+     * \param reps_a The repeated dimensions
+     */
+    dyn_rep_l_transformer(sub_type expr, std::array<std::size_t, D> reps_a)
+            : sub(expr), reps(reps_a) {
         m = std::accumulate(reps.begin(), reps.end(), 1UL, [](std::size_t a, std::size_t b) { return a * b; });
     }
 
@@ -323,8 +341,12 @@ struct sum_r_transformer {
 
     sub_type sub; ///< The subexpression
 
-    explicit sum_r_transformer(sub_type vec)
-            : sub(vec) {}
+    /*!
+     * \brief Construct a new transformer around the given expression
+     * \param expr The sub expression
+     */
+    explicit sum_r_transformer(sub_type expr)
+            : sub(expr) {}
 
     /*!
      * \brief Returns the value at the given index
@@ -380,8 +402,12 @@ struct mean_r_transformer {
 
     sub_type sub; ///< The subexpression
 
-    explicit mean_r_transformer(sub_type vec)
-            : sub(vec) {}
+    /*!
+     * \brief Construct a new transformer around the given expression
+     * \param expr The sub expression
+     */
+    explicit mean_r_transformer(sub_type expr)
+            : sub(expr) {}
 
     /*!
      * \brief Returns the value at the given index
@@ -437,8 +463,12 @@ struct sum_l_transformer {
 
     sub_type sub; ///< The subexpression
 
-    explicit sum_l_transformer(sub_type vec)
-            : sub(vec) {}
+    /*!
+     * \brief Construct a new transformer around the given expression
+     * \param expr The sub expression
+     */
+    explicit sum_l_transformer(sub_type expr)
+            : sub(expr) {}
 
     /*!
      * \brief Returns the value at the given index
@@ -471,6 +501,12 @@ struct sum_l_transformer {
         return m;
     }
 
+    /*!
+     * \brief Access to the value at the given (j, sizes...) position
+     * \param j The first index
+     * \param sizes The remaining indices
+     * \return The value at the position (j, sizes...)
+     */
     template <typename... Sizes>
     value_type operator()(std::size_t j, Sizes... sizes) const {
         value_type m = 0.0;
@@ -512,8 +548,12 @@ struct mean_l_transformer {
 
     sub_type sub; ///< The subexpression
 
-    explicit mean_l_transformer(sub_type vec)
-            : sub(vec) {}
+    /*!
+     * \brief Construct a new transformer around the given expression
+     * \param expr The sub expression
+     */
+    explicit mean_l_transformer(sub_type expr)
+            : sub(expr) {}
 
     /*!
      * \brief Returns the value at the given index
@@ -546,6 +586,12 @@ struct mean_l_transformer {
         return m / dim<0>(sub);
     }
 
+    /*!
+     * \brief Access to the value at the given (j, sizes...) position
+     * \param j The first index
+     * \param sizes The remaining indices
+     * \return The value at the position (j, sizes...)
+     */
     template <typename... Sizes>
     value_type operator()(std::size_t j, Sizes... sizes) const {
         value_type m = 0.0;
@@ -588,10 +634,14 @@ struct hflip_transformer {
 
     sub_type sub; ///< The subexpression
 
-    explicit hflip_transformer(sub_type vec)
-            : sub(vec) {}
+    /*!
+     * \brief Construct a new transformer around the given expression
+     * \param expr The sub expression
+     */
+    explicit hflip_transformer(sub_type expr)
+            : sub(expr) {}
 
-    static constexpr const bool matrix = etl_traits<std::decay_t<sub_type>>::dimensions() == 2;
+    static constexpr const bool matrix = etl_traits<std::decay_t<sub_type>>::dimensions() == 2; ///< INdicates if the sub type is a matrix or not
 
     /*!
      * \brief Returns the value at the given index
@@ -688,10 +738,14 @@ struct vflip_transformer {
 
     sub_type sub; ///< The subexpression
 
-    explicit vflip_transformer(sub_type vec)
-            : sub(vec) {}
+    /*!
+     * \brief Construct a new transformer around the given expression
+     * \param expr The sub expression
+     */
+    explicit vflip_transformer(sub_type expr)
+            : sub(expr) {}
 
-    static constexpr const bool matrix = etl_traits<std::decay_t<sub_type>>::dimensions() == 2;
+    static constexpr const bool matrix = etl_traits<std::decay_t<sub_type>>::dimensions() == 2; ///< Indicates if the sub type is a 2D matrix or not
 
     /*!
      * \brief Returns the value at the given index
@@ -788,8 +842,12 @@ struct fflip_transformer {
 
     sub_type sub; ///< The subexpression
 
-    explicit fflip_transformer(sub_type vec)
-            : sub(vec) {}
+    /*!
+     * \brief Construct a new transformer around the given expression
+     * \param expr The sub expression
+     */
+    explicit fflip_transformer(sub_type expr)
+            : sub(expr) {}
 
     /*!
      * \brief Returns the value at the given index
@@ -867,8 +925,12 @@ struct transpose_transformer {
 
     sub_type sub; ///< The subexpression
 
-    explicit transpose_transformer(sub_type vec)
-            : sub(vec) {}
+    /*!
+     * \brief Construct a new transformer around the given expression
+     * \param expr The sub expression
+     */
+    explicit transpose_transformer(sub_type expr)
+            : sub(expr) {}
 
     /*!
      * \brief Returns the value at the given index
@@ -962,24 +1024,11 @@ struct mm_mul_transformer {
     left_type left;
     right_type right;
 
-    template <typename A, typename B, cpp_disable_if(all_fast<A, B>::value)>
-    void check_mmul_sizes(const A& a, const B& b) {
-        cpp_assert(
-            dim<1>(a) == dim<0>(b) //interior dimensions
-            ,
-            "Invalid sizes for multiplication");
-        cpp_unused(a);
-        cpp_unused(b);
-    }
-
-    template <typename A, typename B, cpp_enable_if(all_fast<A, B>::value)>
-    void check_mmul_sizes(const A& /*a*/, const B& /*b*/) {
-        static_assert(
-            etl_traits<A>::template dim<1>() == etl_traits<B>::template dim<0>() //interior dimensions
-            ,
-            "Invalid sizes for multiplication");
-    }
-
+    /*!
+     * \brief Construct a new transformer around the given expressions
+     * \param left The left hand side sub expression
+     * \param right The right hand side sub expression
+     */
     mm_mul_transformer(left_type left, right_type right)
             : left(left), right(right) {
         check_mmul_sizes(left, right);
@@ -1049,6 +1098,26 @@ struct mm_mul_transformer {
     bool alias(const E& rhs) const noexcept {
         return left.alias(rhs) || right.alias(rhs);
     }
+
+private:
+
+    template <typename A, typename B, cpp_disable_if(all_fast<A, B>::value)>
+    void check_mmul_sizes(const A& a, const B& b) {
+        cpp_assert(
+            dim<1>(a) == dim<0>(b) //interior dimensions
+            ,
+            "Invalid sizes for multiplication");
+        cpp_unused(a);
+        cpp_unused(b);
+    }
+
+    template <typename A, typename B, cpp_enable_if(all_fast<A, B>::value)>
+    void check_mmul_sizes(const A& /*a*/, const B& /*b*/) {
+        static_assert(
+            etl_traits<A>::template dim<1>() == etl_traits<B>::template dim<0>() //interior dimensions
+            ,
+            "Invalid sizes for multiplication");
+    }
 };
 
 /*!
@@ -1063,10 +1132,15 @@ struct dyn_convmtx_transformer {
     static_assert(decay_traits<T>::dimensions() == 1, "convmtx can only be applied on vectors");
 
     sub_type sub; ///< The subexpression
-    std::size_t h;
+    std::size_t h; ///< The convmtx transformation size
 
-    dyn_convmtx_transformer(sub_type sub, std::size_t h)
-            : sub(sub), h(h) {}
+    /*!
+     * \brief Construct a new transformer around the given expression
+     * \param expr The sub expression
+     * \param h The convmtx transformation size
+     */
+    dyn_convmtx_transformer(sub_type expr, std::size_t h)
+            : sub(expr), h(h) {}
 
     /*!
      * \brief Returns the value at the given index
@@ -1318,8 +1392,12 @@ struct p_max_pool_transformer {
 
     sub_type sub; ///< The subexpression
 
-    explicit p_max_pool_transformer(sub_type vec)
-            : sub(vec) {}
+    /*!
+     * \brief Construct a new transformer around the given expression
+     * \param expr The sub expression
+     */
+    explicit p_max_pool_transformer(sub_type expr)
+            : sub(expr) {}
 
     value_type pool(std::size_t i, std::size_t j) const {
         value_type p = 0;
@@ -1386,8 +1464,12 @@ struct p_max_pool_h_transformer : p_max_pool_transformer<T, C1, C2> {
 
     static constexpr const bool d2d = etl_traits<std::decay_t<sub_type>>::dimensions() == 2;
 
-    explicit p_max_pool_h_transformer(sub_type vec)
-            : base_type(vec) {}
+    /*!
+     * \brief Construct a new transformer around the given expression
+     * \param expr The sub expression
+     */
+    explicit p_max_pool_h_transformer(sub_type expr)
+            : base_type(expr) {}
 
     /*!
      * \brief Returns the value at the given index
@@ -1499,10 +1581,14 @@ struct p_max_pool_p_transformer : p_max_pool_transformer<T, C1, C2> {
 
     using base_type::sub;
 
-    static constexpr const bool d2d = etl_traits<std::decay_t<sub_type>>::dimensions() == 2;
+    static constexpr const bool d2d = etl_traits<std::decay_t<sub_type>>::dimensions() == 2; ///< Indicates if the sub type is a 2D matrix
 
-    explicit p_max_pool_p_transformer(sub_type vec)
-            : base_type(vec) {}
+    /*!
+     * \brief Construct a new transformer around the given expression
+     * \param expr The sub expression
+     */
+    explicit p_max_pool_p_transformer(sub_type expr)
+            : base_type(expr) {}
 
     /*!
      * \brief Returns the value at the given index
@@ -2160,7 +2246,7 @@ struct etl_traits<rep_r_transformer<T, D...>> {
     static constexpr const bool needs_evaluator_visitor = etl_traits<sub_expr_t>::needs_evaluator_visitor; ///< Indicaes if the expression needs an evaluator visitor
     static constexpr const order storage_order          = etl_traits<sub_expr_t>::storage_order;           ///< The expression storage order
 
-    static constexpr const std::size_t sub_d = etl_traits<sub_expr_t>::dimensions();
+    static constexpr const std::size_t sub_d = etl_traits<sub_expr_t>::dimensions(); ///< The number of dimensions of the sub type
 
     /*!
      * \brief Returns the size of the given expression
@@ -2298,7 +2384,7 @@ struct etl_traits<dyn_rep_r_transformer<T, D>> {
     static constexpr const bool needs_evaluator_visitor = etl_traits<sub_expr_t>::needs_evaluator_visitor; ///< Indicaes if the expression needs an evaluator visitor
     static constexpr const order storage_order          = etl_traits<sub_expr_t>::storage_order;           ///< The expression storage order
 
-    static constexpr const std::size_t sub_d = etl_traits<sub_expr_t>::dimensions();
+    static constexpr const std::size_t sub_d = etl_traits<sub_expr_t>::dimensions(); ///< The number of dimensions of the sub type
 
     /*!
      * \brief Returns the size of the given expression
