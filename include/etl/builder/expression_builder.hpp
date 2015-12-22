@@ -358,6 +358,11 @@ auto operator+(E&& value) -> detail::unary_helper<E, plus_unary_op> {
     return detail::unary_helper<E, plus_unary_op>{value};
 }
 
+/*!
+ * \brief Apply absolute on each value of the given expression
+ * \param value The ETL expression
+ * \return an expression representing the absolute of each value of the given expression
+ */
 template <typename E>
 auto abs(E&& value) -> detail::unary_helper<E, abs_unary_op> {
     static_assert(is_etl_expr<E>::value, "etl::abs can only be used on ETL expressions");
@@ -415,54 +420,99 @@ auto one_if_max(E&& value) -> detail::left_binary_helper_op<E, scalar<value_t<E>
     return {value, scalar<value_t<E>>(max(value))};
 }
 
+/*!
+ * \brief Apply square root on each value of the given expression
+ * \param value The ETL expression
+ * \return an expression representing the square root of each value of the given expression
+ */
 template <typename E>
 auto sqrt(E&& value) -> detail::unary_helper<E, sqrt_unary_op> {
     static_assert(is_etl_expr<E>::value, "etl::sqrt can only be used on ETL expressions");
     return detail::unary_helper<E, sqrt_unary_op>{value};
 }
 
+/*!
+ * \brief Apply logarithm on each value of the given expression
+ * \param value The ETL expression
+ * \return an expression representing the logarithm of each value of the given expression
+ */
 template <typename E>
 auto log(E&& value) -> detail::unary_helper<E, log_unary_op> {
     static_assert(is_etl_expr<E>::value, "etl::log can only be used on ETL expressions");
     return detail::unary_helper<E, log_unary_op>{value};
 }
 
+/*!
+ * \brief Apply tangent on each value of the given expression
+ * \param value The ETL expression
+ * \return an expression representing the tangent of each value of the given expression
+ */
 template <typename E>
 auto tan(E&& value) -> detail::unary_helper<E, tan_unary_op> {
     static_assert(is_etl_expr<E>::value, "etl::tan can only be used on ETL expressions");
     return detail::unary_helper<E, tan_unary_op>{value};
 }
 
+/*!
+ * \brief Apply cosinus on each value of the given expression
+ * \param value The ETL expression
+ * \return an expression representing the cosinus of each value of the given expression
+ */
 template <typename E>
 auto cos(E&& value) -> detail::unary_helper<E, cos_unary_op> {
     static_assert(is_etl_expr<E>::value, "etl::cos can only be used on ETL expressions");
     return detail::unary_helper<E, cos_unary_op>{value};
 }
 
+/*!
+ * \brief Apply sinus on each value of the given expression
+ * \param value The ETL expression
+ * \return an expression representing the sinus of each value of the given expression
+ */
 template <typename E>
 auto sin(E&& value) -> detail::unary_helper<E, sin_unary_op> {
     static_assert(is_etl_expr<E>::value, "etl::sin can only be used on ETL expressions");
     return detail::unary_helper<E, sin_unary_op>{value};
 }
 
+/*!
+ * \brief Apply hyperbolic tangent on each value of the given expression
+ * \param value The ETL expression
+ * \return an expression representing the hyperbolic tangent of each value of the given expression
+ */
 template <typename E>
 auto tanh(E&& value) -> detail::unary_helper<E, tanh_unary_op> {
     static_assert(is_etl_expr<E>::value, "etl::tanh can only be used on ETL expressions");
     return detail::unary_helper<E, tanh_unary_op>{value};
 }
 
+/*!
+ * \brief Apply hyperbolic cosinus on each value of the given expression
+ * \param value The ETL expression
+ * \return an expression representing the hyperbolic cosinus of each value of the given expression
+ */
 template <typename E>
 auto cosh(E&& value) -> detail::unary_helper<E, cosh_unary_op> {
     static_assert(is_etl_expr<E>::value, "etl::cosh can only be used on ETL expressions");
     return detail::unary_helper<E, cosh_unary_op>{value};
 }
 
+/*!
+ * \brief Apply hyperbolic sinus on each value of the given expression
+ * \param value The ETL expression
+ * \return an expression representing the hyperbolic sinus of each value of the given expression
+ */
 template <typename E>
 auto sinh(E&& value) -> detail::unary_helper<E, sinh_unary_op> {
     static_assert(is_etl_expr<E>::value, "etl::sinh can only be used on ETL expressions");
     return detail::unary_helper<E, sinh_unary_op>{value};
 }
 
+/*!
+ * \brief Extract the real part of each complex value of the given expression
+ * \param value The ETL expression
+ * \return an expression representing the real part of each complex of the given expression
+ */
 template <typename E>
 auto real(E&& value) -> unary_expr<typename value_t<E>::value_type, detail::build_type<E>, real_unary_op<value_t<E>>> {
     static_assert(is_etl_expr<E>::value, "etl::real can only be used on ETL expressions");
@@ -470,6 +520,11 @@ auto real(E&& value) -> unary_expr<typename value_t<E>::value_type, detail::buil
     return unary_expr<typename value_t<E>::value_type, detail::build_type<E>, real_unary_op<value_t<E>>>{value};
 }
 
+/*!
+ * \brief Extract the imag part of each complex value of the given expression
+ * \param value The ETL expression
+ * \return an expression representing the imag part of each complex of the given expression
+ */
 template <typename E>
 auto imag(E&& value) -> unary_expr<typename value_t<E>::value_type, detail::build_type<E>, imag_unary_op<value_t<E>>> {
     static_assert(is_etl_expr<E>::value, "etl::imag can only be used on ETL expressions");
@@ -477,6 +532,11 @@ auto imag(E&& value) -> unary_expr<typename value_t<E>::value_type, detail::buil
     return unary_expr<typename value_t<E>::value_type, detail::build_type<E>, imag_unary_op<value_t<E>>>{value};
 }
 
+/*!
+ * \brief Apply the conjugate operation on each complex value of the given expression
+ * \param value The ETL expression
+ * \return an expression representing the the conjugate operation of each complex of the given expression
+ */
 template <typename E>
 auto conj(E&& value) -> unary_expr<value_t<E>, detail::build_type<E>, conj_unary_op<value_t<E>>> {
     static_assert(is_etl_expr<E>::value, "etl::conj can only be used on ETL expressions");
@@ -679,18 +739,36 @@ auto dim(E&& value, std::size_t i) -> detail::identity_helper<E, dim_view<detail
     return detail::identity_helper<E, dim_view<detail::build_identity_type<E>, D>>{{value, i}};
 }
 
+/*!
+ * \brief Returns view representing the ith row of the given expression
+ * \param value The ETL expression
+ * \param i The row index
+ * \return a view expression representing the ith row of the given expression
+ */
 template <typename E>
 auto row(E&& value, std::size_t i) -> detail::identity_helper<E, dim_view<detail::build_identity_type<E>, 1>> {
     static_assert(is_etl_expr<E>::value, "etl::row can only be used on ETL expressions");
     return detail::identity_helper<E, dim_view<detail::build_identity_type<E>, 1>>{{value, i}};
 }
 
+/*!
+ * \brief Returns view representing the ith column of the given expression
+ * \param value The ETL expression
+ * \param i The column index
+ * \return a view expression representing the ith column of the given expression
+ */
 template <typename E>
 auto col(E&& value, std::size_t i) -> detail::identity_helper<E, dim_view<detail::build_identity_type<E>, 2>> {
     static_assert(is_etl_expr<E>::value, "etl::col can only be used on ETL expressions");
     return detail::identity_helper<E, dim_view<detail::build_identity_type<E>, 2>>{{value, i}};
 }
 
+/*!
+ * \brief Returns view representing a sub dimensional view of the given expression.
+ * \param value The ETL expression
+ * \param i The first index
+ * \return a view expression representing a sub dimensional view of the given expression
+ */
 template <typename E>
 auto sub(E&& value, std::size_t i) -> detail::identity_helper<E, sub_view<detail::build_identity_type<E>>> {
     static_assert(is_etl_expr<E>::value, "etl::sub can only be used on ETL expressions");
