@@ -20,18 +20,22 @@ namespace etl {
 
 namespace sparse_detail {
 
+/*!
+ * \brief A proxy representing a reference to an element of a sparse matrix
+ * \tparam M The matrix type
+ */
 template<typename M>
 struct sparse_reference {
-    using matrix_type        = M;
-    using value_type         = typename matrix_type::value_type;
-    using raw_pointer_type   = value_type*;
-    using raw_reference_type = value_type&;
+    using matrix_type        = M;                                ///< The matrix type
+    using value_type         = typename matrix_type::value_type; ///< The value type
+    using raw_pointer_type   = value_type*;                      ///< A raw pointer type
+    using raw_reference_type = value_type&;                      ///< A raw reference type
 
-    matrix_type& matrix;
-    std::size_t i;
-    std::size_t j;
-    std::size_t n;
-    raw_pointer_type ptr;
+    matrix_type& matrix;  ///< Reference to the matrix
+    std::size_t i;        ///< The first index
+    std::size_t j;        ///< The second index
+    std::size_t n;        ///< hint
+    raw_pointer_type ptr; ///< Pointer to the element
 
     sparse_reference(matrix_type& matrix, std::size_t i, std::size_t j) : matrix(matrix), i(i), j(j) {
         n = matrix.find_n(i, j);
@@ -39,41 +43,78 @@ struct sparse_reference {
         ptr = &matrix.unsafe_ref_hint(n);
     }
 
+    /*!
+     * \brief Destruct the proxy reference and updates the matrix to the correct value
+     */
     ~sparse_reference(){
         //Update the value, possibly erasing it
         matrix.set_hint(i, j, n, *ptr);
     }
 
+    /*!
+     * \brief Sets a new value to the proxy reference
+     * \param rhs The new value
+     * \return a reference to the proxy reference
+     */
     sparse_reference& operator=(value_type rhs){
         get() = rhs;
         return *this;
     }
 
+    /*!
+     * \brief Adds a new value to the proxy reference
+     * \param rhs The new value
+     * \return a reference to the proxy reference
+     */
     sparse_reference& operator+=(value_type rhs){
         get() += rhs;
         return *this;
     }
 
+    /*!
+     * \brief Subtract a new value from the proxy reference
+     * \param rhs The new value
+     * \return a reference to the proxy reference
+     */
     sparse_reference& operator-=(value_type rhs){
         get() -= rhs;
         return *this;
     }
 
+    /*!
+     * \brief Multiply by a new value the proxy reference
+     * \param rhs The new value
+     * \return a reference to the proxy reference
+     */
     sparse_reference& operator*=(value_type rhs){
         get() *= rhs;
         return *this;
     }
 
+    /*!
+     * \brief Divide by a new value the proxy reference
+     * \param rhs The new value
+     * \return a reference to the proxy reference
+     */
     sparse_reference& operator/=(value_type rhs){
         get() /= rhs;
         return *this;
     }
 
+    /*!
+     * \brief Modulo by a new value the proxy reference
+     * \param rhs The new value
+     * \return a reference to the proxy reference
+     */
     sparse_reference& operator%=(value_type rhs){
         get() %= rhs;
         return *this;
     }
 
+    /*!
+     * \brief Casts the proxy reference to the raw reference type
+     * \return a raw reference to the element
+     */
     operator raw_reference_type(){
         return get();
     }
