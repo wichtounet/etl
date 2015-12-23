@@ -268,12 +268,24 @@ struct is_etl_assignable<T, std::enable_if_t<is_etl_value<T>::value>> : std::tru
 template <typename T, typename Expr>
 struct is_etl_assignable<unary_expr<T, Expr, identity_op>> : std::true_type {};
 
+/*!
+ * \brief Compound addition of the right hand side to the left hand side
+ * \param lhs The left hand side, will be changed
+ * \param rhs The right hand side
+ * \return the left hand side
+ */
 template <typename LE, typename RE, cpp_enable_if(std::is_arithmetic<RE>::value, is_etl_assignable<LE>::value)>
 LE& operator+=(LE&& lhs, RE rhs) {
     detail::scalar_add<LE>::apply(std::forward<LE>(lhs), rhs);
     return lhs;
 }
 
+/*!
+ * \brief Compound addition of the right hand side to the left hand side
+ * \param lhs The left hand side, will be changed
+ * \param rhs The right hand side
+ * \return the left hand side
+ */
 template <typename LE, typename RE, cpp_enable_if(is_etl_expr<RE>::value, is_etl_assignable<LE>::value)>
 LE& operator+=(LE&& lhs, RE&& rhs) {
     validate_expression(lhs, rhs);
@@ -281,12 +293,24 @@ LE& operator+=(LE&& lhs, RE&& rhs) {
     return lhs;
 }
 
+/*!
+ * \brief Compound subtraction of the right hand side to the left hand side
+ * \param lhs The left hand side, will be changed
+ * \param rhs The right hand side
+ * \return the left hand side
+ */
 template <typename LE, typename RE, cpp_enable_if(std::is_arithmetic<RE>::value, is_etl_assignable<LE>::value)>
 LE& operator-=(LE&& lhs, RE rhs) {
     detail::scalar_sub<LE>::apply(std::forward<LE>(lhs), rhs);
     return lhs;
 }
 
+/*!
+ * \brief Compound subtraction of the right hand side to the left hand side
+ * \param lhs The left hand side, will be changed
+ * \param rhs The right hand side
+ * \return the left hand side
+ */
 template <typename LE, typename RE, cpp_enable_if(is_etl_expr<RE>::value, is_etl_assignable<LE>::value)>
 LE& operator-=(LE&& lhs, RE&& rhs) {
     validate_expression(lhs, rhs);
@@ -294,12 +318,24 @@ LE& operator-=(LE&& lhs, RE&& rhs) {
     return lhs;
 }
 
+/*!
+ * \brief Compound multiplication of the right hand side to the left hand side
+ * \param lhs The left hand side, will be changed
+ * \param rhs The right hand side
+ * \return the left hand side
+ */
 template <typename LE, typename RE, cpp_enable_if(std::is_arithmetic<RE>::value, is_etl_assignable<LE>::value)>
 LE& operator*=(LE&& lhs, RE rhs) {
     detail::scalar_mul<LE>::apply(std::forward<LE>(lhs), rhs);
     return lhs;
 }
 
+/*!
+ * \brief Compound multiplication of the right hand side to the left hand side
+ * \param lhs The left hand side, will be changed
+ * \param rhs The right hand side
+ * \return the left hand side
+ */
 template <typename LE, typename RE, cpp_enable_if(is_etl_expr<RE>::value, is_etl_assignable<LE>::value)>
 LE& operator*=(LE&& lhs, RE&& rhs) {
     validate_expression(lhs, rhs);
@@ -307,12 +343,24 @@ LE& operator*=(LE&& lhs, RE&& rhs) {
     return lhs;
 }
 
+/*!
+ * \brief Compound multiplication of the right hand side to the left hand side
+ * \param lhs The left hand side, will be changed
+ * \param rhs The right hand side
+ * \return the left hand side
+ */
 template <typename LE, typename RE, cpp_enable_if(std::is_arithmetic<RE>::value, is_etl_assignable<LE>::value)>
 LE& operator>>=(LE&& lhs, RE rhs) {
     detail::scalar_mul<LE>::apply(std::forward<LE>(lhs), rhs);
     return lhs;
 }
 
+/*!
+ * \brief Compound multiplication of the right hand side to the left hand side
+ * \param lhs The left hand side, will be changed
+ * \param rhs The right hand side
+ * \return the left hand side
+ */
 template <typename LE, typename RE, cpp_enable_if(is_etl_expr<RE>::value, is_etl_assignable<LE>::value)>
 LE& operator>>=(LE&& lhs, RE&& rhs) {
     validate_expression(lhs, rhs);
@@ -320,12 +368,24 @@ LE& operator>>=(LE&& lhs, RE&& rhs) {
     return lhs;
 }
 
+/*!
+ * \brief Compound division of the right hand side to the left hand side
+ * \param lhs The left hand side, will be changed
+ * \param rhs The right hand side
+ * \return the left hand side
+ */
 template <typename LE, typename RE, cpp_enable_if(std::is_arithmetic<RE>::value, is_etl_assignable<LE>::value)>
 LE& operator/=(LE&& lhs, RE rhs) {
     detail::scalar_div<LE>::apply(std::forward<LE>(lhs), rhs);
     return lhs;
 }
 
+/*!
+ * \brief Compound division of the right hand side to the left hand side
+ * \param lhs The left hand side, will be changed
+ * \param rhs The right hand side
+ * \return the left hand side
+ */
 template <typename LE, typename RE, cpp_enable_if(is_etl_expr<RE>::value, is_etl_assignable<LE>::value)>
 LE& operator/=(LE&& lhs, RE&& rhs) {
     validate_expression(lhs, rhs);
@@ -333,12 +393,24 @@ LE& operator/=(LE&& lhs, RE&& rhs) {
     return lhs;
 }
 
+/*!
+ * \brief Compound modulo of the right hand side to the left hand side
+ * \param lhs The left hand side, will be changed
+ * \param rhs The right hand side
+ * \return the left hand side
+ */
 template <typename LE, typename RE, cpp_enable_if(std::is_arithmetic<RE>::value, is_etl_assignable<LE>::value)>
 LE& operator%=(LE&& lhs, RE rhs) {
     detail::scalar_mod<LE>::apply(std::forward<LE>(lhs), rhs);
     return lhs;
 }
 
+/*!
+ * \brief Compound modulo of the right hand side to the left hand side
+ * \param lhs The left hand side, will be changed
+ * \param rhs The right hand side
+ * \return the left hand side
+ */
 template <typename LE, typename RE, cpp_enable_if(is_etl_expr<RE>::value, is_etl_assignable<LE>::value)>
 LE& operator%=(LE&& lhs, RE&& rhs) {
     validate_expression(lhs, rhs);
