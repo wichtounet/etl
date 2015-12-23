@@ -121,37 +121,32 @@ struct sparse_matrix_impl;
 //Implementation with COO format
 template <typename T, std::size_t D>
 struct sparse_matrix_impl <T, sparse_storage::COO, D> final : dyn_base<T, D> {
-    static constexpr const std::size_t n_dimensions      = D;
-    static constexpr const sparse_storage storage_format = sparse_storage::COO;
-    static constexpr const order storage_order           = order::RowMajor;
-    static constexpr const std::size_t alignment         = intrinsic_traits<T>::alignment;
+    static constexpr const std::size_t n_dimensions      = D;                              ///< The number of dimensions
+    static constexpr const sparse_storage storage_format = sparse_storage::COO;            ///< The sparse storage scheme
+    static constexpr const order storage_order           = order::RowMajor;                ///< The storage order
+    static constexpr const std::size_t alignment         = intrinsic_traits<T>::alignment; ///< The alignment
 
-    using base_type              = dyn_base<T, D>;
-    using this_type              = sparse_matrix_impl<T, sparse_storage::COO, D>;
-    using reference_type         = sparse_detail::sparse_reference<this_type>;
-    using const_reference_type   = sparse_detail::sparse_reference<const this_type>;
-    using value_type             = T;
-    using dimension_storage_impl = std::array<std::size_t, n_dimensions>;
-    using memory_type            = value_type*;
-    using const_memory_type      = const value_type*;
-    using index_type             = std::size_t;
-    using index_memory_type      = index_type*;
-    using iterator               = memory_type;
-    using const_iterator         = const_memory_type;
-    using vec_type               = intrinsic_type<T>;
+    using base_type              = dyn_base<T, D>;                                   ///< The base type
+    using this_type              = sparse_matrix_impl<T, sparse_storage::COO, D>;    ///< this type
+    using reference_type         = sparse_detail::sparse_reference<this_type>;       ///< The type of reference returned by the functions
+    using const_reference_type   = sparse_detail::sparse_reference<const this_type>; ///< The type of const reference returned by the functions
+    using value_type             = T;                                                ///< The type of value returned by the function
+    using dimension_storage_impl = std::array<std::size_t, n_dimensions>;            ///< The type used to store the dimensions
+    using memory_type            = value_type*;                                      ///< The memory type
+    using const_memory_type      = const value_type*;                                ///< The const memory type
+    using index_type             = std::size_t;                                      ///< The type used to store the COO index
+    using index_memory_type      = index_type*;                                      ///< The memory type to the COO index
 
-    //template<typename M>
-    //friend struct sparse_detail::sparse_reference<M>;
     friend struct sparse_detail::sparse_reference<this_type>;
     friend struct sparse_detail::sparse_reference<const this_type>;
 
 private:
     using base_type::_size;
     using base_type::_dimensions;
-    memory_type _memory;
-    index_memory_type _row_index;
-    index_memory_type _col_index;
-    std::size_t nnz;
+    memory_type _memory;          ///< The memory
+    index_memory_type _row_index; ///< The row index
+    index_memory_type _col_index; ///< The column index
+    std::size_t nnz;              ///< The number of nonzeros in the matrix
 
     using base_type::release;
     using base_type::allocate;
@@ -359,7 +354,9 @@ public:
 
     // Construction
 
-    //Default constructor (constructs an empty matrix)
+    /*!
+     * \brief Constructs a new empty sparse matrix
+     */
     sparse_matrix_impl() noexcept : base_type(), _memory(nullptr), _row_index(nullptr), _col_index(nullptr), nnz(0) {
         //Nothing else to init
     }
@@ -408,7 +405,8 @@ public:
     /*!
      * \brief Returns the value at the given (i,j) position in the matrix.
      *
-     * This function will never insert a new element in the matrix. It is suited when only reading the matrix and not neeeding references.
+     * This function will never insert a new element in the matrix. It is
+     * suited when only reading the matrix and not neeeding references.
      *
      * \param i The row
      * \param j The column
@@ -424,11 +422,23 @@ public:
         return get_hint(i, j, n);
     }
 
+    /*!
+     * \brief Returns a reference to the element at the position (i,j)
+     * \param i The first index
+     * \param j The second index
+     * \return a sparse reference (proxy reference) to the element at position (i,j)
+     */
     template <bool B = n_dimensions == 2, cpp_enable_if(B)>
     reference_type operator()(std::size_t i, std::size_t j) noexcept {
         return {*this, i, j};
     }
 
+    /*!
+     * \brief Returns a reference to the element at the position (i,j)
+     * \param i The first index
+     * \param j The second index
+     * \return a sparse reference (proxy reference) to the element at position (i,j)
+     */
     template <bool B = n_dimensions == 2, cpp_enable_if(B)>
     const_reference_type operator()(std::size_t i, std::size_t j) const noexcept {
         return {*this, i, j};
@@ -480,6 +490,28 @@ public:
         return nnz;
     }
 
+    /*!
+     * \brief Sets the element at the given position (i, j) to the given value
+     * \param i The first index
+     * \param j The second index
+     * \param value The new value
+     */
+    void set(std::size_t i, std::size_t j, value_type value){
+        auto n = find_n(i, j);
+        set_hint(i, j, n, value);
+    }
+
+    /*!
+     * \brief Sets the element at the given position (i, j) to the given value
+     *
+     * This function will always set the element to the given value, even if it
+     * is zero (the normal behaviour would have been to erase it). This must be
+     * used when we need a pointer to the element in memory.
+     *
+     * \param i The first index
+     * \param j The second index
+     * \param value The new value
+     */
     void unsafe_set(std::size_t i, std::size_t j, value_type value){
         cpp_assert(i < dim(0), "Out of bounds");
         cpp_assert(j < dim(1), "Out of bounds");
@@ -489,11 +521,11 @@ public:
         unsafe_set_hint(i, j, n, value);
     }
 
-    void set(std::size_t i, std::size_t j, value_type value){
-        auto n = find_n(i, j);
-        set_hint(i, j, n, value);
-    }
-
+    /*!
+     * \brief Erases (sets to zero) the element at the given position (i, j)
+     * \param i The first index
+     * \param j The second index
+     */
     void erase(std::size_t i, std::size_t j) {
         auto n = find_n(i, j);
 
@@ -504,18 +536,29 @@ public:
         }
     }
 
+    /*!
+     * \brief Test if this expression aliases with the given expression
+     * \param rhs The other expression to test
+     * \return true if the two expressions aliases, false otherwise
+     */
     template<typename E, cpp_enable_if(is_sparse_matrix<E>::value)>
     bool alias(const E& rhs) const noexcept {
         return this == &rhs;
     }
 
+    /*!
+     * \brief Test if this expression aliases with the given expression
+     * \param rhs The other expression to test
+     * \return true if the two expressions aliases, false otherwise
+     */
     template<typename E, cpp_disable_if(is_sparse_matrix<E>::value)>
     bool alias(const E& rhs) const noexcept {
         return rhs.alias(*this);
     }
 
-    //Destructor
-
+    /*!
+     * \brief Destructs the matrix and releases all its memory
+     */
     ~sparse_matrix_impl() noexcept {
         if(_memory){
             release(_memory, nnz);
