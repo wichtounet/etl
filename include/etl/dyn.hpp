@@ -33,17 +33,17 @@ namespace etl {
  */
 template <typename T, order SO, std::size_t D>
 struct dyn_matrix_impl final : dyn_base<T, D>, inplace_assignable<dyn_matrix_impl<T, SO, D>>, comparable<dyn_matrix_impl<T, SO, D>>, expression_able<dyn_matrix_impl<T, SO, D>>, value_testable<dyn_matrix_impl<T, SO, D>>, dim_testable<dyn_matrix_impl<T, SO, D>>, gpu_able<T, dyn_matrix_impl<T, SO, D>> {
-    static constexpr const std::size_t n_dimensions = D;
-    static constexpr const order storage_order      = SO;
-    static constexpr const std::size_t alignment    = intrinsic_traits<T>::alignment;
+    static constexpr const std::size_t n_dimensions = D;                              ///< The number of dimensions
+    static constexpr const order storage_order      = SO;                             ///< The storage order
+    static constexpr const std::size_t alignment    = intrinsic_traits<T>::alignment; ///< The memory alignment
 
-    using base_type              = dyn_base<T, D>;
-    using value_type             = T;
-    using dimension_storage_impl = std::array<std::size_t, n_dimensions>;
-    using memory_type            = value_type*;
-    using const_memory_type      = const value_type*;
-    using iterator               = memory_type;
-    using const_iterator         = const_memory_type;
+    using base_type              = dyn_base<T, D>;                        ///< The base type
+    using value_type             = T;                                     ///< The value type
+    using dimension_storage_impl = std::array<std::size_t, n_dimensions>; ///< The type used to store the dimensions
+    using memory_type            = value_type*;                           ///< The memory type
+    using const_memory_type      = const value_type*;                     ///< The const memory type
+    using iterator               = memory_type;                           ///< The type of iterator
+    using const_iterator         = const_memory_type;                     ///< The type of const iterator
 
     template<typename V = default_vec>
     using vec_type               = typename V::template vec_type<T>;
@@ -291,11 +291,21 @@ public:
         return n_dimensions;
     }
 
+    /*!
+     * \brief Creates a sub view of the matrix, effectively removing the first dimension and fixing it to the given index.
+     * \param i The index to use
+     * \return a sub view of the matrix at position i.
+     */
     template <bool B = (n_dimensions > 1), cpp_enable_if(B)>
     auto operator()(std::size_t i) noexcept {
         return sub(*this, i);
     }
 
+    /*!
+     * \brief Creates a sub view of the matrix, effectively removing the first dimension and fixing it to the given index.
+     * \param i The index to use
+     * \return a sub view of the matrix at position i.
+     */
     template <bool B = (n_dimensions > 1), cpp_enable_if(B)>
     auto operator()(std::size_t i) const noexcept {
         return sub(*this, i);
@@ -371,6 +381,11 @@ public:
         return index;
     }
 
+    /*!
+     * \brief Returns the value at the position (sizes...)
+     * \param args The indices
+     * \return The value at the position (sizes...)
+     */
     template <typename... S, cpp_enable_if(
                                  (n_dimensions > 2),
                                  (sizeof...(S) == n_dimensions),
@@ -381,6 +396,11 @@ public:
         return _memory[index(sizes...)];
     }
 
+    /*!
+     * \brief Returns the value at the position (sizes...)
+     * \param args The indices
+     * \return The value at the position (sizes...)
+     */
     template <typename... S, cpp_enable_if(
                                  (n_dimensions > 2),
                                  (sizeof...(S) == n_dimensions),
@@ -425,60 +445,114 @@ public:
         return _memory[i];
     }
 
+    /*!
+     * \brief Load several elements of the matrix at once
+     * \param i The position at which to start. This will be aligned from the beginning (multiple of the vector size).
+     * \tparam V The vectorization mode to use
+     * \return a vector containing several elements of the matrix
+     */
     template<typename V = default_vec>
     vec_type<V> load(std::size_t i) const noexcept {
         return V::load(_memory + i);
     }
 
+    /*!
+     * \brief Test if this expression aliases with the given expression
+     * \param rhs The other expression to test
+     * \return true if the two expressions aliases, false otherwise
+     */
     template<typename E, cpp_enable_if(all_dma<E>::value)>
     bool alias(const E& rhs) const noexcept {
         return memory_alias(memory_start(), memory_end(), rhs.memory_start(), rhs.memory_end());
     }
 
+    /*!
+     * \brief Test if this expression aliases with the given expression
+     * \param rhs The other expression to test
+     * \return true if the two expressions aliases, false otherwise
+     */
     template<typename E, cpp_disable_if(all_dma<E>::value)>
     bool alias(const E& rhs) const noexcept {
         return rhs.alias(*this);
     }
 
 
+    /*!
+     * \brief Return an iterator to the first element of the matrix
+     * \return an iterator pointing to the first element of the matrix
+     */
     iterator begin() noexcept {
         return _memory;
     }
 
+    /*!
+     * \brief Return an iterator to the past-the-end element of the matrix
+     * \return an iterator pointing to the past-the-end element of the matrix
+     */
     iterator end() noexcept {
         return _memory + _size;
     }
 
+    /*!
+     * \brief Return an iterator to the first element of the matrix
+     * \return an iterator pointing to the first element of the matrix
+     */
     const_iterator begin() const noexcept {
         return _memory;
     }
 
+    /*!
+     * \brief Return an iterator to the past-the-end element of the matrix
+     * \return an iterator pointing to the past-the-end element of the matrix
+     */
     const_iterator end() const noexcept {
         return _memory + _size;
     }
 
+    /*!
+     * \brief Return a const iterator to the first element of the matrix
+     * \return an const iterator pointing to the first element of the matrix
+     */
     const_iterator cbegin() const noexcept {
         return _memory;
     }
 
+    /*!
+     * \brief Return a const iterator to the past-the-end element of the matrix
+     * \return a const iterator pointing to the past-the-end element of the matrix
+     */
     const_iterator cend() const noexcept {
         return _memory + _size;
     }
 
-    // Direct memory access
-
+    /*!
+     * \brief Returns a pointer to the first element in memory.
+     * \return a pointer tot the first element in memory.
+     */
     inline memory_type memory_start() noexcept {
         return _memory;
     }
 
+    /*!
+     * \brief Returns a pointer to the first element in memory.
+     * \return a pointer tot the first element in memory.
+     */
     inline const_memory_type memory_start() const noexcept {
         return _memory;
     }
 
+    /*!
+     * \brief Returns a pointer to the past-the-end element in memory.
+     * \return a pointer tot the past-the-end element in memory.
+     */
     memory_type memory_end() noexcept {
         return _memory + _size;
     }
 
+    /*!
+     * \brief Returns a pointer to the past-the-end element in memory.
+     * \return a pointer tot the past-the-end element in memory.
+     */
     const_memory_type memory_end() const noexcept {
         return _memory + _size;
     }
