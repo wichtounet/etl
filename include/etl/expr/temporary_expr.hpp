@@ -20,20 +20,33 @@
 
 namespace etl {
 
+/*!
+ * \brief A temporary expression base
+ *
+ * A temporary expression computes the expression directly and stores it into a temporary.
+ */
 template <typename D, typename V>
 struct temporary_expr : comparable<D>, value_testable<D>, dim_testable<D> {
-    using derived_t         = D;
-    using value_type        = V;
-    using memory_type       = value_type*;
-    using const_memory_type = const value_type*;
+    using derived_t         = D;                 ///< The derived type
+    using value_type        = V;                 ///< The value type
+    using memory_type       = value_type*;       ///< The memory type
+    using const_memory_type = const value_type*; ///< The const memory type
 
     template<typename VV = default_vec>
     using vec_type = typename VV::template vec_type<value_type>;
 
+    /*!
+     * \brief Returns a reference to the derived object, i.e. the object using the CRTP injector.
+     * \return a reference to the derived object.
+     */
     derived_t& as_derived() noexcept {
         return *static_cast<derived_t*>(this);
     }
 
+    /*!
+     * \brief Returns a reference to the derived object, i.e. the object using the CRTP injector.
+     * \return a reference to the derived object.
+     */
     const derived_t& as_derived() const noexcept {
         return *static_cast<const derived_t*>(this);
     }
@@ -140,6 +153,9 @@ struct temporary_expr : comparable<D>, value_testable<D>, dim_testable<D> {
     }
 };
 
+/*!
+ * \brief A temporary unary expression
+ */
 template <typename T, typename AExpr, typename Op, typename Forced>
 struct temporary_unary_expr final : temporary_expr<temporary_unary_expr<T, AExpr, Op, Forced>, T> {
     static constexpr const bool is_forced = std::is_same<Forced, void>::value; ///< Indicate if the result is forced to an expression
@@ -271,6 +287,9 @@ public:
     }
 };
 
+/*!
+ * \brief A temporary binary expression
+ */
 template <typename T, typename AExpr, typename BExpr, typename Op, typename Forced>
 struct temporary_binary_expr final : temporary_expr<temporary_binary_expr<T, AExpr, BExpr, Op, Forced>, T> {
     static constexpr const bool is_forced = std::is_same<Forced, void>::value; ///< Indicate if the result is forced to an expression
@@ -440,23 +459,47 @@ struct etl_traits<etl::temporary_unary_expr<T, A, Op, Forced>> {
     static constexpr const bool needs_evaluator_visitor = true;                           ///< Indicaes if the expression needs an evaluator visitor
     static constexpr const order storage_order          = etl_traits<a_t>::storage_order; ///< The expression storage order
 
+    /*!
+     * \brief Returns the size of the given expression
+     * \param v The expression to get the size for
+     * \returns the size of the given expression
+     */
     static std::size_t size(const expr_t& v) {
         return Op::size(v.a());
     }
 
+    /*!
+     * \brief Returns the dth dimension of the given expression
+     * \param v The expression
+     * \param d The dimension to get
+     * \return The dth dimension of the given expression
+     */
     static std::size_t dim(const expr_t& v, std::size_t d) {
         return Op::dim(v.a(), d);
     }
 
+    /*!
+     * \brief Returns the size of an expression of this fast type.
+     * \returns the size of an expression of this fast type.
+     */
     static constexpr std::size_t size() {
         return Op::template size<a_t>();
     }
 
+    /*!
+     * \brief Returns the Dth dimension of an expression of this type
+     * \tparam D The dimension to get
+     * \return the Dth dimension of an expression of this type
+     */
     template <std::size_t D>
     static constexpr std::size_t dim() {
         return Op::template dim<a_t, D>();
     }
 
+    /*!
+     * \brief Returns the number of expressions for this type
+     * \return the number of dimensions of this type
+     */
     static constexpr std::size_t dimensions() {
         return Op::dimensions();
     }
@@ -484,23 +527,47 @@ struct etl_traits<etl::temporary_binary_expr<T, A, B, Op, Forced>> {
     static constexpr const bool needs_evaluator_visitor = true;                                                                                            ///< Indicaes if the expression needs an evaluator visitor
     static constexpr const order storage_order          = etl_traits<a_t>::is_generator ? etl_traits<b_t>::storage_order : etl_traits<a_t>::storage_order; ///< The expression storage order
 
+    /*!
+     * \brief Returns the size of the given expression
+     * \param v The expression to get the size for
+     * \returns the size of the given expression
+     */
     static std::size_t size(const expr_t& v) {
         return Op::size(v.a(), v.b());
     }
 
+    /*!
+     * \brief Returns the dth dimension of the given expression
+     * \param v The expression
+     * \param d The dimension to get
+     * \return The dth dimension of the given expression
+     */
     static std::size_t dim(const expr_t& v, std::size_t d) {
         return Op::dim(v.a(), v.b(), d);
     }
 
+    /*!
+     * \brief Returns the size of an expression of this fast type.
+     * \returns the size of an expression of this fast type.
+     */
     static constexpr std::size_t size() {
         return Op::template size<a_t, b_t>();
     }
 
+    /*!
+     * \brief Returns the Dth dimension of an expression of this type
+     * \tparam D The dimension to get
+     * \return the Dth dimension of an expression of this type
+     */
     template <std::size_t D>
     static constexpr std::size_t dim() {
         return Op::template dim<a_t, b_t, D>();
     }
 
+    /*!
+     * \brief Returns the number of expressions for this type
+     * \return the number of dimensions of this type
+     */
     static constexpr std::size_t dimensions() {
         return Op::dimensions();
     }
