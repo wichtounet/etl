@@ -219,23 +219,47 @@ struct etl_traits<etl::binary_expr<T, LeftExpr, BinaryOp, RightExpr>> {
         return v.rhs();
     }
 
+    /*!
+     * \brief Returns the size of the given expression
+     * \param v The expression to get the size for
+     * \returns the size of the given expression
+     */
     static std::size_t size(const expr_t& v) {
         return etl_traits<sub_expr_t>::size(get(v));
     }
 
+    /*!
+     * \brief Returns the dth dimension of the given expression
+     * \param v The expression
+     * \param d The dimension to get
+     * \return The dth dimension of the given expression
+     */
     static std::size_t dim(const expr_t& v, std::size_t d) {
         return etl_traits<sub_expr_t>::dim(get(v), d);
     }
 
+    /*!
+     * \brief Returns the size of an expression of this fast type.
+     * \returns the size of an expression of this fast type.
+     */
     static constexpr std::size_t size() {
         return etl_traits<sub_expr_t>::size();
     }
 
+    /*!
+     * \brief Returns the Dth dimension of an expression of this type
+     * \tparam D The dimension to get
+     * \return the Dth dimension of an expression of this type
+     */
     template <std::size_t D>
     static constexpr std::size_t dim() {
         return etl_traits<sub_expr_t>::template dim<D>();
     }
 
+    /*!
+     * \brief Returns the number of expressions for this type
+     * \return the number of dimensions of this type
+     */
     static constexpr std::size_t dimensions() {
         return etl_traits<sub_expr_t>::dimensions();
     }

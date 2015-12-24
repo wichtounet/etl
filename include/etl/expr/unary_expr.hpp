@@ -28,8 +28,8 @@ namespace etl {
  * Such an unary expr does not apply the operator but delegates to its sub expression.
  */
 struct identity_op {
-    static constexpr const bool vectorizable = true;
-    static constexpr const bool linear       = true;
+    static constexpr const bool vectorizable = true; ///< Indicates if the operator is vectorizable
+    static constexpr const bool linear       = true; ///< Indicates if the operator is linear
 };
 
 /*!
@@ -38,8 +38,8 @@ struct identity_op {
  * Such an unary expr does not apply the operator but delegates to its sub expression.
  */
 struct transform_op {
-    static constexpr const bool vectorizable = false;
-    static constexpr const bool linear       = false;
+    static constexpr const bool vectorizable = false; ///< Indicates if the operator is vectorizable
+    static constexpr const bool linear       = false; ///< Indicates if the operator is linear
 };
 
 /*!
@@ -51,9 +51,9 @@ struct transform_op {
  */
 template <typename Sub>
 struct stateful_op {
-    static constexpr const bool vectorizable = Sub::vectorizable;
-    static constexpr const bool linear       = Sub::linear;
-    using op                                 = Sub;
+    static constexpr const bool vectorizable = Sub::vectorizable; ///< Indicates if the operator is vectorizable
+    static constexpr const bool linear       = Sub::linear;       ///< Indicates if the operator is linear
+    using op                                 = Sub;               ///< The sub operator type
 };
 
 template <typename T, typename Expr, typename UnaryOp>
@@ -68,9 +68,9 @@ private:
     Expr _value;
 
 public:
-    using value_type        = T;
-    using memory_type       = void;
-    using const_memory_type = void;
+    using value_type        = T;    ///< The value type
+    using memory_type       = void; ///< The memory type
+    using const_memory_type = void; ///< The const memory type
 
     template<typename V = default_vec>
     using vec_type          = typename V::template vec_type<T>;
@@ -134,6 +134,11 @@ public:
         return UnaryOp::template load<V>(value().template load<V>(i));
     }
 
+    /*!
+     * \brief Returns the value at the position (args...)
+     * \param args The indices
+     * \return The computed value at the position (args...)
+     */
     template <typename... S>
     std::enable_if_t<sizeof...(S) == sub_size_compare<this_type>::value, value_type> operator()(S... args) const {
         static_assert(cpp::all_convertible_to<std::size_t, S...>::value, "Invalid size types");
@@ -186,11 +191,11 @@ private:
         std::is_lvalue_reference<decltype(_value[0])>::value;
 
 public:
-    using value_type        = T;
-    using memory_type       = memory_t<Expr>;
-    using const_memory_type = const_memory_t<Expr>;
-    using return_type       = std::conditional_t<non_const_return_ref, value_type&, value_type>;
-    using const_return_type = std::conditional_t<const_return_ref, const value_type&, value_type>;
+    using value_type        = T;                                                                   ///< The value type
+    using memory_type       = memory_t<Expr>;                                                      ///< The memory type
+    using const_memory_type = const_memory_t<Expr>;                                                ///< The const memory type
+    using return_type       = std::conditional_t<non_const_return_ref, value_type&, value_type>;   ///< The type returned by the functions
+    using const_return_type = std::conditional_t<const_return_ref, const value_type&, value_type>; ///< The const type returned by the const functions
 
     template<typename V = default_vec>
     using vec_type          = typename V::template vec_type<T>;
@@ -309,6 +314,11 @@ public:
         return sub(*this, i);
     }
 
+    /*!
+     * \brief Returns the value at the position (args...)
+     * \param args The indices
+     * \return The computed value at the position (args...)
+     */
     template <typename... S>
     std::enable_if_t<sizeof...(S) == sub_size_compare<this_type>::value, return_type> operator()(S... args) {
         static_assert(cpp::all_convertible_to<std::size_t, S...>::value, "Invalid size types");
@@ -316,6 +326,11 @@ public:
         return value()(args...);
     }
 
+    /*!
+     * \brief Returns the value at the position (args...)
+     * \param args The indices
+     * \return The computed value at the position (args...)
+     */
     template <typename... S>
     std::enable_if_t<sizeof...(S) == sub_size_compare<this_type>::value, const_return_type> operator()(S... args) const {
         static_assert(cpp::all_convertible_to<std::size_t, S...>::value, "Invalid size types");
@@ -482,6 +497,11 @@ public:
         return sub(*this, i);
     }
 
+    /*!
+     * \brief Returns the value at the position (args...)
+     * \param args The indices
+     * \return The computed value at the position (args...)
+     */
     template <typename... S>
     std::enable_if_t<sizeof...(S) == sub_size_compare<this_type>::value, value_type> operator()(S... args) const {
         static_assert(cpp::all_convertible_to<std::size_t, S...>::value, "Invalid size types");
@@ -592,6 +612,11 @@ public:
         return op.template load<V>(value().template load<V>(i));
     }
 
+    /*!
+     * \brief Returns the value at the position (args...)
+     * \param args The indices
+     * \return The computed value at the position (args...)
+     */
     template <typename... S>
     std::enable_if_t<sizeof...(S) == sub_size_compare<this_type>::value, value_type> operator()(S... args) const {
         static_assert(cpp::all_convertible_to<std::size_t, S...>::value, "Invalid size types");
@@ -634,36 +659,60 @@ struct etl_traits<etl::unary_expr<T, Expr, UnaryOp>> {
     using expr_t     = etl::unary_expr<T, Expr, UnaryOp>;
     using sub_expr_t = std::decay_t<Expr>;
 
-    static constexpr const bool is_etl                 = true;
-    static constexpr const bool is_transformer = false;
-    static constexpr const bool is_view = false;
-    static constexpr const bool is_magic_view = false;
-    static constexpr const bool is_fast                 = etl_traits<sub_expr_t>::is_fast;
-    static constexpr const bool is_value                = false;
-    static constexpr const bool is_linear               = etl_traits<sub_expr_t>::is_linear && UnaryOp::linear;
-    static constexpr const bool is_generator            = etl_traits<sub_expr_t>::is_generator;
-    static constexpr const bool vectorizable            = etl_traits<sub_expr_t>::vectorizable && UnaryOp::vectorizable;
-    static constexpr const bool needs_temporary_visitor = etl_traits<sub_expr_t>::needs_temporary_visitor;
-    static constexpr const bool needs_evaluator_visitor = etl_traits<sub_expr_t>::needs_evaluator_visitor;
-    static constexpr const order storage_order          = etl_traits<sub_expr_t>::storage_order;
+    static constexpr const bool is_etl                  = true;                                                          ///< Indicates if the type is an ETL expression
+    static constexpr const bool is_transformer          = false;                                                         ///< Indicates if the type is a transformer
+    static constexpr const bool is_view                 = false;                                                         ///< Indicates if the type is a view
+    static constexpr const bool is_magic_view           = false;                                                         ///< Indicates if the type is a magic view
+    static constexpr const bool is_fast                 = etl_traits<sub_expr_t>::is_fast;                               ///< Indicates if the expression is fast
+    static constexpr const bool is_value                = false;                                                         ///< Indicates if the expression is of value type
+    static constexpr const bool is_linear               = etl_traits<sub_expr_t>::is_linear && UnaryOp::linear;          ///< Indicates if the expression is linear
+    static constexpr const bool is_generator            = etl_traits<sub_expr_t>::is_generator;                          ///< Indicates if the expression is a generator expression
+    static constexpr const bool vectorizable            = etl_traits<sub_expr_t>::vectorizable && UnaryOp::vectorizable; ///< Indicates if the expression is vectorizable
+    static constexpr const bool needs_temporary_visitor = etl_traits<sub_expr_t>::needs_temporary_visitor;               ///< Indicates if the expression needs a temporary visitor
+    static constexpr const bool needs_evaluator_visitor = etl_traits<sub_expr_t>::needs_evaluator_visitor;               ///< Indicaes if the expression needs an evaluator visitor
+    static constexpr const order storage_order          = etl_traits<sub_expr_t>::storage_order;                         ///< The expression storage order
 
+    /*!
+     * \brief Returns the size of the given expression
+     * \param v The expression to get the size for
+     * \returns the size of the given expression
+     */
     static std::size_t size(const expr_t& v) {
         return etl_traits<sub_expr_t>::size(v.value());
     }
 
+    /*!
+     * \brief Returns the dth dimension of the given expression
+     * \param v The expression
+     * \param d The dimension to get
+     * \return The dth dimension of the given expression
+     */
     static std::size_t dim(const expr_t& v, std::size_t d) {
         return etl_traits<sub_expr_t>::dim(v.value(), d);
     }
 
+    /*!
+     * \brief Returns the size of an expression of this fast type.
+     * \returns the size of an expression of this fast type.
+     */
     static constexpr std::size_t size() {
         return etl_traits<sub_expr_t>::size();
     }
 
+    /*!
+     * \brief Returns the Dth dimension of an expression of this type
+     * \tparam D The dimension to get
+     * \return the Dth dimension of an expression of this type
+     */
     template <std::size_t D>
     static constexpr std::size_t dim() {
         return etl_traits<sub_expr_t>::template dim<D>();
     }
 
+    /*!
+     * \brief Returns the number of expressions for this type
+     * \return the number of dimensions of this type
+     */
     static constexpr std::size_t dimensions() {
         return etl_traits<sub_expr_t>::dimensions();
     }
