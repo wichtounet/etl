@@ -613,66 +613,131 @@ struct direct_assign_compatible : cpp::or_u<
                                       decay_traits<Expr>::is_generator,
                                       decay_traits<Expr>::storage_order == decay_traits<Result>::storage_order> {};
 
+/*!
+ * \brief Evaluation of the expr into result
+ * \param expr The right hand side expression
+ * \param result The left hand side
+ */
 template <typename Expr, typename Result, cpp_enable_if(direct_assign_compatible<Expr, Result>::value && !is_optimized_expr<Expr>::value)>
 void assign_evaluate(Expr&& expr, Result&& result) {
     standard_evaluator<Expr, Result>::assign_evaluate(std::forward<Expr>(expr), std::forward<Result>(result));
 }
 
+/*!
+ * \brief Evaluation of the expr into result
+ * \param expr The right hand side expression
+ * \param result The left hand side
+ */
 template <typename Expr, typename Result, cpp_enable_if(!direct_assign_compatible<Expr, Result>::value && !is_optimized_expr<Expr>::value)>
 void assign_evaluate(Expr&& expr, Result&& result) {
     standard_evaluator<Expr, Result>::assign_evaluate(transpose(expr), std::forward<Result>(result));
 }
 
+/*!
+ * \brief Evaluation of the expr into result
+ * \param expr The right hand side expression
+ * \param result The left hand side
+ */
 template <typename Expr, typename Result, cpp_enable_if(is_optimized_expr<Expr>::value)>
 void assign_evaluate(Expr&& expr, Result&& result) {
     optimized_forward(expr.value(), [&result](const auto& optimized) { assign_evaluate(optimized, std::forward<Result>(result)); });
 }
 
+/*!
+ * \brief Compound add evaluation of the expr into result
+ * \param expr The right hand side expression
+ * \param result The left hand side
+ */
 template <typename Expr, typename Result, cpp_enable_if(direct_assign_compatible<Expr, Result>::value)>
 void add_evaluate(Expr&& expr, Result&& result) {
     standard_evaluator<Expr, Result>::add_evaluate(std::forward<Expr>(expr), std::forward<Result>(result));
 }
 
+/*!
+ * \brief Compound add evaluation of the expr into result
+ * \param expr The right hand side expression
+ * \param result The left hand side
+ */
 template <typename Expr, typename Result, cpp_disable_if(direct_assign_compatible<Expr, Result>::value)>
 void add_evaluate(Expr&& expr, Result&& result) {
     standard_evaluator<Expr, Result>::add_evaluate(transpose(expr), std::forward<Result>(result));
 }
 
+/*!
+ * \brief Compound subtract evaluation of the expr into result
+ * \param expr The right hand side expression
+ * \param result The left hand side
+ */
 template <typename Expr, typename Result, cpp_enable_if(direct_assign_compatible<Expr, Result>::value)>
 void sub_evaluate(Expr&& expr, Result&& result) {
     standard_evaluator<Expr, Result>::sub_evaluate(std::forward<Expr>(expr), std::forward<Result>(result));
 }
 
+/*!
+ * \brief Compound subtract evaluation of the expr into result
+ * \param expr The right hand side expression
+ * \param result The left hand side
+ */
 template <typename Expr, typename Result, cpp_disable_if(direct_assign_compatible<Expr, Result>::value)>
 void sub_evaluate(Expr&& expr, Result&& result) {
     standard_evaluator<Expr, Result>::sub_evaluate(transpose(expr), std::forward<Result>(result));
 }
 
+/*!
+ * \brief Compound multiply evaluation of the expr into result
+ * \param expr The right hand side expression
+ * \param result The left hand side
+ */
 template <typename Expr, typename Result, cpp_enable_if(direct_assign_compatible<Expr, Result>::value)>
 void mul_evaluate(Expr&& expr, Result&& result) {
     standard_evaluator<Expr, Result>::mul_evaluate(std::forward<Expr>(expr), std::forward<Result>(result));
 }
 
+/*!
+ * \brief Compound multiply evaluation of the expr into result
+ * \param expr The right hand side expression
+ * \param result The left hand side
+ */
 template <typename Expr, typename Result, cpp_disable_if(direct_assign_compatible<Expr, Result>::value)>
 void mul_evaluate(Expr&& expr, Result&& result) {
     standard_evaluator<Expr, Result>::mul_evaluate(transpose(expr), std::forward<Result>(result));
 }
 
+/*!
+ * \brief Compound divide evaluation of the expr into result
+ * \param expr The right hand side expression
+ * \param result The left hand side
+ */
 template <typename Expr, typename Result, cpp_enable_if(direct_assign_compatible<Expr, Result>::value)>
 void div_evaluate(Expr&& expr, Result&& result) {
     standard_evaluator<Expr, Result>::div_evaluate(std::forward<Expr>(expr), std::forward<Result>(result));
 }
 
+/*!
+ * \brief Compound divide evaluation of the expr into result
+ * \param expr The right hand side expression
+ * \param result The left hand side
+ */
 template <typename Expr, typename Result, cpp_disable_if(direct_assign_compatible<Expr, Result>::value)>
 void div_evaluate(Expr&& expr, Result&& result) {
     standard_evaluator<Expr, Result>::div_evaluate(transpose(expr), std::forward<Result>(result));
 }
 
+/*!
+ * \brief Compound modulo evaluation of the expr into result
+ * \param expr The right hand side expression
+ * \param result The left hand side
+ */
 template <typename Expr, typename Result, cpp_enable_if(direct_assign_compatible<Expr, Result>::value)>
 void mod_evaluate(Expr&& expr, Result&& result) {
     standard_evaluator<Expr, Result>::mod_evaluate(std::forward<Expr>(expr), std::forward<Result>(result));
 }
 
+/*!
+ * \brief Compound modulo evaluation of the expr into result
+ * \param expr The right hand side expression
+ * \param result The left hand side
+ */
 template <typename Expr, typename Result, cpp_disable_if(direct_assign_compatible<Expr, Result>::value)>
 void mod_evaluate(Expr&& expr, Result&& result) {
     standard_evaluator<Expr, Result>::mod_evaluate(transpose(expr), std::forward<Result>(result));
