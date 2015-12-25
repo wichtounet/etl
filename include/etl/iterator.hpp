@@ -29,13 +29,11 @@ private:
     std::size_t i; ///< Current index
 
 public:
-    using base_iterator_t = std::iterator<std::random_access_iterator_tag, value_t<Expr>>; ///< The base iterator type
-    using value_type      = value_t<Expr>;                                                 ///< The value type
-    using reference_t     = std::conditional_t<Ref,
-                                           std::conditional_t<Const, const value_type&, value_type&>,
-                                           value_type>; ///< The type of reference
-    using pointer_t    = std::conditional_t<Const, const value_type*, value_type*>; ///< The type of pointer
-    using difference_t = typename base_iterator_t::difference_type;                 ///< The type used for subtracting two iterators
+    using base_iterator_t = std::iterator<std::random_access_iterator_tag, value_t<Expr>>;                                  ///< The base iterator type
+    using value_type      = value_t<Expr>;                                                                                  ///< The value type
+    using reference_t     = std::conditional_t<Ref, std::conditional_t<Const, const value_type&, value_type&>, value_type>; ///< The type of reference
+    using pointer_t       = std::conditional_t<Const, const value_type*, value_type*>;                                      ///< The type of pointer
+    using difference_t    = typename base_iterator_t::difference_type;                                                      ///< The type used for subtracting two iterators
 
     /*!
      * \brief Construct a new iterator
