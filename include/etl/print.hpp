@@ -13,6 +13,11 @@
 
 namespace etl {
 
+/*!
+ * \brief Construct a textual representation of the matrix contents
+ * \param m The expression to transform
+ * \return a string representing the contents of the expression
+ */
 template <typename T, cpp_enable_if((etl_traits<T>::dimensions() > 1))>
 std::string to_string(const T& m) {
     std::string v = "[";
@@ -27,11 +32,21 @@ std::string to_string(const T& m) {
     return v;
 }
 
+/*!
+ * \brief Construct a textual representation of the matrix contents
+ * \param m The expression to transform
+ * \return a string representing the contents of the expression
+ */
 template <typename T, cpp_enable_if(etl_traits<T>::dimensions() == 1)>
 std::string to_string(const T& m) {
     return to_octave(m);
 }
 
+/*!
+ * \brief Construct a textual representation of the matrix contents, following the octave format
+ * \param m The expression to transform
+ * \return a string representing the contents of the expression
+ */
 template <bool Sub = false, typename T, cpp_enable_if((etl_traits<T>::dimensions() > 1))>
 std::string to_octave(const T& m) {
     std::string v;
@@ -54,6 +69,11 @@ std::string to_octave(const T& m) {
     return v;
 }
 
+/*!
+ * \brief Construct a textual representation of the matrix contents, following the octave format
+ * \param m The expression to transform
+ * \return a string representing the contents of the expression
+ */
 template <bool Sub = false, typename T, cpp_enable_if(etl_traits<T>::dimensions() == 1)>
 std::string to_octave(const T& m) {
     std::string v;

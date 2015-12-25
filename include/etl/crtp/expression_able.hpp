@@ -5,12 +5,12 @@
 //  http://opensource.org/licenses/MIT)
 //=======================================================================
 
-#pragma once
-
 /*!
  * \file expression_able.hpp
  * \brief Use CRTP technique to inject functions creating new expressions.
  */
+
+#pragma once
 
 namespace etl {
 
@@ -21,7 +21,7 @@ namespace etl {
  */
 template <typename D>
 struct expression_able {
-    using derived_t = D;
+    using derived_t = D; ///< The derived type
 
     /*!
      * \brief Returns a reference to the derived object, i.e. the object using the CRTP injector.

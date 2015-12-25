@@ -5,14 +5,14 @@
 //  http://opensource.org/licenses/MIT)
 //=======================================================================
 
-#pragma once
-
-#include <algorithm>
-
 /*!
  * \file value_testable.hpp
  * \brief Use CRTP technique to inject functions that test the values of the expressions or the value classes.
  */
+
+#pragma once
+
+#include <algorithm>
 
 namespace etl {
 
@@ -23,7 +23,7 @@ namespace etl {
  */
 template <typename D>
 struct value_testable {
-    using derived_t = D;
+    using derived_t = D; ///< The derived type
 
     /*!
      * \brief Returns a reference to the derived object, i.e. the object using the CRTP injector.
