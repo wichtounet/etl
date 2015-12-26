@@ -90,19 +90,22 @@ struct fast_matrix_impl final : inplace_assignable<fast_matrix_impl<T, ST, SO, D
     static_assert(sizeof...(Dims) > 0, "At least one dimension must be specified");
 
 public:
-    static constexpr const std::size_t n_dimensions = sizeof...(Dims);
-    static constexpr const std::size_t etl_size     = mul_all<Dims...>::value;
-    static constexpr const order storage_order      = SO;
-    static constexpr const bool array_impl          = !matrix_detail::is_vector<ST>::value;
+    static constexpr const std::size_t n_dimensions = sizeof...(Dims);                      ///< The number of dimensions
+    static constexpr const std::size_t etl_size     = mul_all<Dims...>::value;              ///< The size of the matrix
+    static constexpr const order storage_order      = SO;                                   ///< The storage order
+    static constexpr const bool array_impl          = !matrix_detail::is_vector<ST>::value; ///< true if the storage is an std::arraw, false otherwise
 
-    using value_type        = T;
-    using storage_impl      = ST;
-    using iterator          = typename storage_impl::iterator;
-    using const_iterator    = typename storage_impl::const_iterator;
-    using this_type         = fast_matrix_impl<T, ST, SO, Dims...>;
-    using memory_type       = value_type*;
-    using const_memory_type = const value_type*;
+    using value_type        = T;                                     ///< The value type
+    using storage_impl      = ST;                                    ///< The storage implementation
+    using iterator          = typename storage_impl::iterator;       ///< The iterator type
+    using const_iterator    = typename storage_impl::const_iterator; ///< The const iterator type
+    using this_type         = fast_matrix_impl<T, ST, SO, Dims...>;  ///< this type
+    using memory_type       = value_type*;                           ///< The memory type
+    using const_memory_type = const value_type*;                     ///< The const memory type
 
+    /*!
+     * The vectorization type for V
+     */
     template<typename V = default_vec>
     using vec_type               = typename V::template vec_type<T>;
 
@@ -124,9 +127,6 @@ private:
         return _data[index(args...)];
     }
 
-public:
-    /// Construction
-
     template <typename S = ST, cpp_enable_if(matrix_detail::is_vector<S>::value)>
     void init() {
         _data.resize(etl_size);
@@ -137,6 +137,12 @@ public:
         //Nothing to init
     }
 
+public:
+    /// Construction
+
+    /*!
+     * \brief Construct an empty fast matrix
+     */
     fast_matrix_impl() noexcept {
         init();
     }
@@ -234,6 +240,10 @@ public:
 
     // Swap operations
 
+    /*!
+     * \brief Swap the contents of the matrix with another matrix
+     * \param other The other matrix
+     */
     void swap(fast_matrix_impl& other) {
         using std::swap;
         swap(_data, other._data);
@@ -241,29 +251,54 @@ public:
 
     // Accessors
 
+    /*!
+     * \brief Returns the size of the matrix, in O(1)
+     * \return The size of the matrix
+     */
     static constexpr std::size_t size() noexcept {
         return etl_size;
     }
 
+    /*!
+     * \brief Returns the number of rows of the matrix (the first dimension), in O(1)
+     * \return The number of rows of the matrix
+     */
     static constexpr std::size_t rows() noexcept {
         return dim<0>();
     }
 
+    /*!
+     * \brief Returns the number of columns of the matrix (the second dimension), in O(1)
+     * \return The number of columns of the matrix
+     */
     static constexpr std::size_t columns() noexcept {
         static_assert(n_dimensions > 1, "columns() can only be used on 2D+ matrices");
 
         return dim<1>();
     }
 
+    /*!
+     * \brief Returns the number of dimensions of the matrix
+     * \return the number of dimensions of the matrix
+     */
     static constexpr std::size_t dimensions() noexcept {
         return n_dimensions;
     }
 
+    /*!
+     * \brief Returns the Dth dimension of the matrix
+     * \return The Dth dimension of the matrix
+     */
     template <std::size_t D>
     static constexpr std::size_t dim() noexcept {
         return nth_size<D, 0, Dims...>::value;
     }
 
+    /*!
+     * \brief Returns the dth dimension of the matrix
+     * \param d The dimension to get
+     * \return The Dth dimension of the matrix
+     */
     std::size_t dim(std::size_t d) const noexcept {
         return dyn_nth_size<Dims...>(d);
     }
@@ -288,6 +323,11 @@ public:
         return sub(*this, i);
     }
 
+    /*!
+     * \brief Returns the value of the element at the position (args...)
+     * \param args The position indices
+     * \return The value of the element at (args...)
+     */
     template <typename... S>
     std::enable_if_t<sizeof...(S) == sizeof...(Dims), value_type&> operator()(S... args) noexcept {
         static_assert(cpp::all_convertible_to<std::size_t, S...>::value, "Invalid size types");
@@ -295,6 +335,11 @@ public:
         return access(static_cast<std::size_t>(args)...);
     }
 
+    /*!
+     * \brief Returns the value of the element at the position (args...)
+     * \param args The position indices
+     * \return The value of the element at (args...)
+     */
     template <typename... S>
     std::enable_if_t<sizeof...(S) == sizeof...(Dims), const value_type&> operator()(S... args) const noexcept {
         static_assert(cpp::all_convertible_to<std::size_t, S...>::value, "Invalid size types");
@@ -454,13 +499,26 @@ static_assert(std::is_nothrow_move_constructible<fast_vector<double, 2>>::value,
 static_assert(std::is_nothrow_copy_assignable<fast_vector<double, 2>>::value, "fast_vector should be nothrow copy assignable");
 static_assert(std::is_nothrow_move_assignable<fast_vector<double, 2>>::value, "fast_vector should be nothrow move assignable");
 
+/*!
+ * \brief Swaps the given two matrices
+ * \param lhs The first matrix to swap
+ * \param rhs The second matrix to swap
+ */
 template <typename T, typename ST, order SO, std::size_t... Dims>
 void swap(fast_matrix_impl<T, ST, SO, Dims...>& lhs, fast_matrix_impl<T, ST, SO, Dims...>& rhs) {
     lhs.swap(rhs);
 }
 
+/*!
+ * \brief Prints a fast matrix type (not the contents) to the given stream
+ * \param os The output stream
+ * \param matrix The fast matrix to print
+ * \return the output stream
+ */
 template <typename T, typename ST, order SO, std::size_t... Dims>
-std::ostream& operator<<(std::ostream& os, const fast_matrix_impl<T, ST, SO, Dims...>& /*matrix*/) {
+std::ostream& operator<<(std::ostream& os, const fast_matrix_impl<T, ST, SO, Dims...>& matrix) {
+    cpp_unused(matrix);
+
     if (sizeof...(Dims) == 1) {
         return os << "V[" << concat_sizes(Dims...) << "]";
     }
