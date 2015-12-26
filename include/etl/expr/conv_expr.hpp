@@ -133,10 +133,18 @@ void check_conv_deep_sizes(const I& i, const K& k, const C& c) {
 
 } //end of namespace detail
 
+/*!
+ * \brief A basic configurable convolution expr
+ * \tparam T The value type
+ * \tparam D The dimensions of convolution
+ * \tparam TT The convolution type
+ * \tparam Impl The implementation class
+ */
 template <typename T, std::size_t D, conv_type TT, template <typename...> class Impl>
 struct basic_conv_expr {
     using this_type = basic_conv_expr<T, D, TT, Impl>;
 
+private:
     template <typename A, typename B, std::size_t DD>
     static constexpr std::size_t dim() {
         return (D > 2 && DD < (D - 2)) ? decay_traits<A>::template dim<DD>()
@@ -163,6 +171,12 @@ struct basic_conv_expr {
         using type = typename fast_result_type_builder<A, B, std::make_index_sequence<D>>::type;
     };
 
+    template <typename A, typename B, std::size_t... I>
+    static constexpr std::size_t size_mul(const std::index_sequence<I...>& /*seq*/) {
+        return mul_all<this_type::dim<A, B, I>()...>::value;
+    }
+
+public:
     template <typename A, typename B>
     using result_type = typename result_type_builder<A, B>::type;
 
@@ -181,16 +195,34 @@ struct basic_conv_expr {
         return dyn_allocate(std::forward<A>(a), std::forward<B>(b), std::make_index_sequence<D>());
     }
 
+    /*!
+     * \brief Validate the convolutiond dimensions
+     * \param a The input matrix
+     * \þaram b The kernel matrix
+     * \þaram c The output matrix
+     */
     template <typename A, typename B, typename C, std::size_t D2 = D, cpp_enable_if(D2 == 1)>
     static void check(const A& a, const B& b, const C& c) {
         detail::check_conv_1d_sizes<TT>(a, b, c);
     }
 
+    /*!
+     * \brief Validate the convolutiond dimensions
+     * \param a The input matrix
+     * \þaram b The kernel matrix
+     * \þaram c The output matrix
+     */
     template <typename A, typename B, typename C, std::size_t D2 = D, cpp_enable_if(D2 == 2)>
     static void check(const A& a, const B& b, const C& c) {
         detail::check_conv_2d_sizes<TT>(a, b, c);
     }
 
+    /*!
+     * \brief Validate the convolutiond dimensions
+     * \param a The input matrix
+     * \þaram b The kernel matrix
+     * \þaram c The output matrix
+     */
     template <typename A, typename B, typename C, std::size_t D2 = D, cpp_enable_if((D2 > 2))>
     static void check(const A& a, const B& b, const C& c) {
         detail::check_conv_deep_sizes<TT>(a, b, c);
@@ -212,6 +244,10 @@ struct basic_conv_expr {
         }
     }
 
+    /*!
+     * \brief Returns a textual representation of the operation
+     * \return a textual representation of the operation
+     */
     static std::string desc() noexcept {
         if (TT == conv_type::VALID) {
             return "conv_valid";
@@ -252,16 +288,19 @@ struct basic_conv_expr {
         }
     }
 
-    template <typename A, typename B, std::size_t... I>
-    static constexpr std::size_t size_mul(const std::index_sequence<I...>& /*seq*/) {
-        return mul_all<this_type::dim<A, B, I>()...>::value;
-    }
-
+    /*!
+     * \brief Returns the size of the expression
+     * \return the size of the expression
+     */
     template <typename A, typename B>
     static constexpr std::size_t size() {
         return size_mul<A, B>(std::make_index_sequence<D>());
     }
 
+    /*!
+     * \brief Returns the number of dimensions of the expression
+     * \return the number of dimensions of the expression
+     */
     static constexpr std::size_t dimensions() {
         return D;
     }
@@ -269,117 +308,74 @@ struct basic_conv_expr {
 
 //1D convolution
 
+/*!
+ * \brief Expression for 1D valid convolution
+ */
 template <typename T>
 using conv1_valid_expr = basic_conv_expr<T, 1, conv_type::VALID, detail::conv1_valid_impl>;
 
+/*!
+ * \brief Expression for 1D same convolution
+ */
 template <typename T>
 using conv1_same_expr = basic_conv_expr<T, 1, conv_type::SAME, detail::conv1_same_impl>;
 
+/*!
+ * \brief Expression for 1D full convolution
+ */
 template <typename T>
 using conv1_full_expr = basic_conv_expr<T, 1, conv_type::FULL, detail::conv1_full_impl>;
 
+/*!
+ * \brief Expression for 1D full by fft convolution
+ */
 template <typename T>
 using fft_conv1_full_expr = basic_conv_expr<T, 1, conv_type::FULL, detail::fft_conv1_full_impl>;
 
 //2D convolutions
 
+/*!
+ * \brief Expression for 2D valid convolution
+ */
 template <typename T>
 using conv2_valid_expr = basic_conv_expr<T, 2, conv_type::VALID, detail::conv2_valid_impl>;
 
+/*!
+ * \brief Expression for 2D same convolution
+ */
 template <typename T>
 using conv2_same_expr = basic_conv_expr<T, 2, conv_type::SAME, detail::conv2_same_impl>;
 
+/*!
+ * \brief Expression for 2D full convolution
+ */
 template <typename T>
 using conv2_full_expr = basic_conv_expr<T, 2, conv_type::FULL, detail::conv2_full_impl>;
 
+/*!
+ * \brief Expression for 2D full by fft convolution
+ */
 template <typename T>
 using fft_conv2_full_expr = basic_conv_expr<T, 2, conv_type::FULL, detail::fft_conv2_full_impl>;
 
 //>2D convolutions
 
+/*!
+ * \brief Expression for >2D valid convolution
+ */
 template <typename T, std::size_t D>
 using conv_deep_valid_expr = basic_conv_expr<T, D, conv_type::VALID, detail::conv_deep_valid_impl>;
 
+/*!
+ * \brief Expression for >2D same convolution
+ */
 template <typename T, std::size_t D>
 using conv_deep_same_expr = basic_conv_expr<T, D, conv_type::SAME, detail::conv_deep_same_impl>;
 
+/*!
+ * \brief Expression for >2D full convolution
+ */
 template <typename T, std::size_t D>
 using conv_deep_full_expr = basic_conv_expr<T, D, conv_type::FULL, detail::conv_deep_full_impl>;
-
-//TODO This should probably be moved
-
-//Deep convolutions
-
-template <typename I, typename K, typename C, cpp_enable_if(etl_traits<I>::dimensions() == 3)>
-C& convolve_deep_full(const I& input, const K& kernel, C&& conv) {
-    static_assert(dimensions<I>() == dimensions<K>() && dimensions<I>() == dimensions<C>(), "Deep convolution parameters need to have the same number of dimensions");
-    static_assert(dim<0, I>() == dim<0, K>() && dim<0, I>() == dim<0, C>(), "Deep convolution parameters need to have the same first dimension");
-
-    for (std::size_t i = 0; i < dim<0>(input); ++i) {
-        conv(i) = conv_2d_full(input(i), kernel(i));
-    }
-
-    return conv;
-}
-
-template <typename I, typename K, typename C, cpp_enable_if((etl_traits<I>::dimensions() > 3))>
-C& convolve_deep_full(const I& input, const K& kernel, C&& conv) {
-    static_assert(dimensions<I>() == dimensions<K>() && dimensions<I>() == dimensions<C>(), "Deep convolution parameters need to have the same number of dimensions");
-    static_assert(dim<0, I>() == dim<0, K>() && dim<0, I>() == dim<0, C>(), "Deep convolution parameters need to have the same first dimension");
-
-    for (std::size_t i = 0; i < dim<0>(input); ++i) {
-        convolve_deep_full(input(i), kernel(i), conv(i));
-    }
-
-    return conv;
-}
-
-template <typename I, typename K, typename C, cpp_enable_if(etl_traits<I>::dimensions() == 3)>
-C& convolve_deep_same(const I& input, const K& kernel, C&& conv) {
-    static_assert(dimensions<I>() == dimensions<K>() && dimensions<I>() == dimensions<C>(), "Deep convolution parameters need to have the same number of dimensions");
-    static_assert(dim<0, I>() == dim<0, K>() && dim<0, I>() == dim<0, C>(), "Deep convolution parameters need to have the same first dimension");
-
-    for (std::size_t i = 0; i < dim<0>(input); ++i) {
-        conv(i) = conv_2d_same(input(i), kernel(i));
-    }
-
-    return conv;
-}
-
-template <typename I, typename K, typename C, cpp_enable_if((etl_traits<I>::dimensions() > 3))>
-C& convolve_deep_same(const I& input, const K& kernel, C&& conv) {
-    static_assert(dimensions<I>() == dimensions<K>() && dimensions<I>() == dimensions<C>(), "Deep convolution parameters need to have the same number of dimensions");
-    static_assert(dim<0, I>() == dim<0, K>() && dim<0, I>() == dim<0, C>(), "Deep convolution parameters need to have the same first dimension");
-
-    for (std::size_t i = 0; i < dim<0>(input); ++i) {
-        convolve_deep_same(input(i), kernel(i), conv(i));
-    }
-
-    return conv;
-}
-
-template <typename I, typename K, typename C, cpp_enable_if(etl_traits<I>::dimensions() == 3)>
-C& convolve_deep_valid(const I& input, const K& kernel, C&& conv) {
-    static_assert(dimensions<I>() == dimensions<K>() && dimensions<I>() == dimensions<C>(), "Deep convolution parameters need to have the same number of dimensions");
-    static_assert(dim<0, I>() == dim<0, K>() && dim<0, I>() == dim<0, C>(), "Deep convolution parameters need to have the same first dimension");
-
-    for (std::size_t i = 0; i < dim<0>(input); ++i) {
-        conv(i) = conv_2d_valid(input(i), kernel(i));
-    }
-
-    return conv;
-}
-
-template <typename I, typename K, typename C, cpp_enable_if((etl_traits<I>::dimensions() > 3))>
-C& convolve_deep_valid(const I& input, const K& kernel, C&& conv) {
-    static_assert(dimensions<I>() == dimensions<K>() && dimensions<I>() == dimensions<C>(), "Deep convolution parameters need to have the same number of dimensions");
-    static_assert(dim<0, I>() == dim<0, K>() && dim<0, I>() == dim<0, C>(), "Deep convolution parameters need to have the same first dimension");
-
-    for (std::size_t i = 0; i < dim<0>(input); ++i) {
-        convolve_deep_valid(input(i), kernel(i), conv(i));
-    }
-
-    return conv;
-}
 
 } //end of namespace etl
