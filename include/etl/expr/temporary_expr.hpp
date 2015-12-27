@@ -32,6 +32,9 @@ struct temporary_expr : comparable<D>, value_testable<D>, dim_testable<D> {
     using memory_type       = value_type*;       ///< The memory type
     using const_memory_type = const value_type*; ///< The const memory type
 
+    /*!
+     * \brief The vectorization type for V
+     */
     template<typename VV = default_vec>
     using vec_type = typename VV::template vec_type<value_type>;
 
@@ -84,6 +87,11 @@ struct temporary_expr : comparable<D>, value_testable<D>, dim_testable<D> {
         return as_derived().result()(args...);
     }
 
+    /*!
+     * \brief Creates a sub view of the matrix, effectively removing the first dimension and fixing it to the given index.
+     * \param i The index to use
+     * \return a sub view of the matrix at position i.
+     */
     template <typename DD = D, cpp_enable_if((sub_size_compare<DD>::value > 1))>
     auto operator()(std::size_t i) const {
         return sub(as_derived(), i);
@@ -160,9 +168,9 @@ template <typename T, typename AExpr, typename Op, typename Forced>
 struct temporary_unary_expr final : temporary_expr<temporary_unary_expr<T, AExpr, Op, Forced>, T> {
     static constexpr const bool is_forced = std::is_same<Forced, void>::value; ///< Indicate if the result is forced to an expression
 
-    using value_type  = T;
-    using result_type = std::conditional_t<is_forced, typename Op::template result_type<AExpr>, Forced>;
-    using data_type   = std::conditional_t<is_forced, std::shared_ptr<result_type>, result_type>;
+    using value_type  = T;                                                                               ///< The value type
+    using result_type = std::conditional_t<is_forced, typename Op::template result_type<AExpr>, Forced>; ///< The result type
+    using data_type   = std::conditional_t<is_forced, std::shared_ptr<result_type>, result_type>;        ///< The data type
 
 private:
     static_assert(is_etl_expr<AExpr>::value, "The argument must be an ETL expr");
@@ -223,6 +231,11 @@ public:
         return _a;
     }
 
+    /*!
+     * \brief Evaluate the expression, if not evaluated
+     *
+     * Will fail if not previously allocated
+     */
     void evaluate() {
         if (!evaluated) {
             cpp_assert(allocated, "The result has not been allocated");
@@ -231,22 +244,38 @@ public:
         }
     }
 
+    /*!
+     * \brief Evaluate the expression directly into the given result
+     *
+     * Will fail if not previously allocated
+     */
     template <typename Result, typename F = Forced, cpp_disable_if(std::is_same<F, void>::value)>
     void direct_evaluate(Result&& r) {
         evaluate();
         r = result();
     }
 
+    /*!
+     * \brief Evaluate the expression directly into the given result
+     *
+     * Will fail if not previously allocated
+     */
     template <typename Result, typename F = Forced, cpp_enable_if(std::is_same<F, void>::value)>
     void direct_evaluate(Result&& result) {
         Op::apply(_a, std::forward<Result>(result));
     }
 
+    /*!
+     * \brief Allocate the necessary temporaries, if necessary
+     */
     template <typename F = Forced, cpp_disable_if(std::is_same<F, void>::value)>
     void allocate_temporary() {
         allocated = true;
     }
 
+    /*!
+     * \brief Allocate the necessary temporaries, if necessary
+     */
     template <typename F = Forced, cpp_enable_if(std::is_same<F, void>::value)>
     void allocate_temporary() {
         if (!_c) {
@@ -294,9 +323,9 @@ template <typename T, typename AExpr, typename BExpr, typename Op, typename Forc
 struct temporary_binary_expr final : temporary_expr<temporary_binary_expr<T, AExpr, BExpr, Op, Forced>, T> {
     static constexpr const bool is_forced = std::is_same<Forced, void>::value; ///< Indicate if the result is forced to an expression
 
-    using value_type  = T;
-    using result_type = std::conditional_t<is_forced, typename Op::template result_type<AExpr, BExpr>, Forced>;
-    using data_type   = std::conditional_t<is_forced, std::shared_ptr<result_type>, result_type>;
+    using value_type  = T;                                                                                      ///< The value type
+    using result_type = std::conditional_t<is_forced, typename Op::template result_type<AExpr, BExpr>, Forced>; ///< The result type
+    using data_type   = std::conditional_t<is_forced, std::shared_ptr<result_type>, result_type>;               ///< The data type
 
 private:
     static_assert(is_etl_expr<AExpr>::value && is_etl_expr<BExpr>::value, "Both arguments must be ETL expr");
@@ -374,6 +403,11 @@ public:
         return _b;
     }
 
+    /*!
+     * \brief Evaluate the expression, if not evaluated
+     *
+     * Will fail if not previously allocated
+     */
     void evaluate() {
         if (!evaluated) {
             cpp_assert(allocated, "The result has not been allocated");
@@ -382,22 +416,38 @@ public:
         }
     }
 
+    /*!
+     * \brief Evaluate the expression directly into the given result
+     *
+     * Will fail if not previously allocated
+     */
     template <typename Result, typename F = Forced, cpp_disable_if(std::is_same<F, void>::value)>
     void direct_evaluate(Result&& r) {
         evaluate();
         r = result();
     }
 
+    /*!
+     * \brief Evaluate the expression directly into the given result
+     *
+     * Will fail if not previously allocated
+     */
     template <typename Result, typename F = Forced, cpp_enable_if(std::is_same<F, void>::value)>
     void direct_evaluate(Result&& result) {
         Op::apply(_a, _b, std::forward<Result>(result));
     }
 
+    /*!
+     * \brief Allocate the necessary temporaries, if necessary
+     */
     template <typename F = Forced, cpp_disable_if(std::is_same<F, void>::value)>
     void allocate_temporary() {
         allocated = true;
     }
 
+    /*!
+     * \brief Allocate the necessary temporaries, if necessary
+     */
     template <typename F = Forced, cpp_enable_if(std::is_same<F, void>::value)>
     void allocate_temporary() {
         if (!_c) {
@@ -573,12 +623,23 @@ struct etl_traits<etl::temporary_binary_expr<T, A, B, Op, Forced>> {
     }
 };
 
-
+/*!
+ * \brief Prints a description of the temporary unary expr to the given stream
+ * \param os The output stream
+ * \param expr The expression to print
+ * \return the output stream
+ */
 template <typename T, typename AExpr, typename Op, typename Forced>
 std::ostream& operator<<(std::ostream& os, const temporary_unary_expr<T, AExpr, Op, Forced>& expr) {
     return os << Op::desc() << "(" << expr.a() << ")";
 }
 
+/*!
+ * \brief Prints a description of the temporary binary expr to the given stream
+ * \param os The output stream
+ * \param expr The expression to print
+ * \return the output stream
+ */
 template <typename T, typename AExpr, typename BExpr, typename Op, typename Forced>
 std::ostream& operator<<(std::ostream& os, const temporary_binary_expr<T, AExpr, BExpr, Op, Forced>& expr) {
     return os << Op::desc() << "(" << expr.a() << ", " << expr.b() << ")";
