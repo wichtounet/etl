@@ -56,6 +56,11 @@ struct stateful_op {
     using op                                 = Sub;               ///< The sub operator type
 };
 
+/*!
+ * \brief An unary expression
+ *
+ * This expression applies an unary operator on each element of a sub expression
+ */
 template <typename T, typename Expr, typename UnaryOp>
 struct unary_expr final : comparable<unary_expr<T, Expr, UnaryOp>>, value_testable<unary_expr<T, Expr, UnaryOp>>, dim_testable<unary_expr<T, Expr, UnaryOp>> {
 private:
@@ -72,6 +77,9 @@ public:
     using memory_type       = void; ///< The memory type
     using const_memory_type = void; ///< The const memory type
 
+    /*!
+     * The vectorization type for V
+     */
     template<typename V = default_vec>
     using vec_type          = typename V::template vec_type<T>;
 
@@ -197,6 +205,9 @@ public:
     using return_type       = std::conditional_t<non_const_return_ref, value_type&, value_type>;   ///< The type returned by the functions
     using const_return_type = std::conditional_t<const_return_ref, const value_type&, value_type>; ///< The const type returned by the const functions
 
+    /*!
+     * The vectorization type for V
+     */
     template<typename V = default_vec>
     using vec_type          = typename V::template vec_type<T>;
 
@@ -549,6 +560,9 @@ public:
     using memory_type       = void;
     using const_memory_type = void;
 
+    /*!
+     * The vectorization type for V
+     */
     template<typename V = default_vec>
     using vec_type          = typename V::template vec_type<T>;
 

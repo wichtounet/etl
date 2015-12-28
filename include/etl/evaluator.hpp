@@ -33,6 +33,10 @@ namespace etl {
 
 template <typename Expr, typename Result>
 struct standard_evaluator {
+    /*!
+     * \brief Allocate temporaries and evaluate sub expressions
+     * \param expr The expr to be visited
+     */
     template <typename E>
     static void evaluate_only(E&& expr) {
         apply_visitor<detail::temporary_allocator_static_visitor>(expr);

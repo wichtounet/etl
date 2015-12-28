@@ -20,6 +20,9 @@
 
 namespace etl {
 
+/*!
+ * Builder to construct the type returned by a view.
+ */
 template <typename T, typename S>
 using return_helper =
     std::conditional_t<
@@ -32,6 +35,9 @@ using return_helper =
             value_t<T>&,
             value_t<T>>>;
 
+/*!
+ * Builder to construct the const type returned by a view.
+ */
 template <typename T, typename S>
 using const_return_helper = std::conditional_t<
     std::is_lvalue_reference<S>::value,
@@ -45,17 +51,17 @@ using const_return_helper = std::conditional_t<
  */
 template <typename T, std::size_t D>
 struct dim_view {
-    T sub; ///< The Sub expression
-    const std::size_t i;
+    T sub;               ///< The Sub expression
+    const std::size_t i; ///< The index
 
     static_assert(D == 1 || D == 2, "Invalid dimension");
 
-    using sub_type          = T;
-    using value_type        = value_t<sub_type>;
-    using memory_type       = memory_t<sub_type>;
-    using const_memory_type = const_memory_t<sub_type>;
-    using return_type       = return_helper<sub_type, decltype(sub(0, 0))>;
-    using const_return_type = const_return_helper<sub_type, decltype(sub(0, 0))>;
+    using sub_type          = T;                                                  ///< The sub type
+    using value_type        = value_t<sub_type>;                                  ///< The value contained in the expression
+    using memory_type       = memory_t<sub_type>;                                 ///< The memory acess type
+    using const_memory_type = const_memory_t<sub_type>;                           ///< The const memory access type
+    using return_type       = return_helper<sub_type, decltype(sub(0, 0))>;       ///< The type returned by the view
+    using const_return_type = const_return_helper<sub_type, decltype(sub(0, 0))>; ///< The const type return by the view
 
     dim_view(sub_type sub, std::size_t i)
             : sub(sub), i(i) {}
@@ -187,15 +193,15 @@ struct dim_view {
  */
 template <typename T>
 struct sub_view {
-    T sub; ///< The Sub expression
-    const std::size_t i;
+    T sub;               ///< The Sub expression
+    const std::size_t i; ///< The index
 
-    using sub_type       = T;
-    using value_type        = value_t<sub_type>;
-    using memory_type       = memory_t<sub_type>;
-    using const_memory_type = const_memory_t<sub_type>;
-    using return_type       = return_helper<sub_type, decltype(sub[0])>;
-    using const_return_type = const_return_helper<sub_type, decltype(sub[0])>;
+    using sub_type          = T;                                               ///< The sub type
+    using value_type        = value_t<sub_type>;                               ///< The value contained in the expression
+    using memory_type       = memory_t<sub_type>;                              ///< The memory acess type
+    using const_memory_type = const_memory_t<sub_type>;                        ///< The const memory access type
+    using return_type       = return_helper<sub_type, decltype(sub[0])>;       ///< The type returned by the view
+    using const_return_type = const_return_helper<sub_type, decltype(sub[0])>; ///< The const type return by the view
 
     sub_view(sub_type sub, std::size_t i)
             : sub(sub), i(i) {}
@@ -478,8 +484,8 @@ struct fast_matrix_view {
  */
 template <typename T>
 struct dyn_vector_view {
-    T sub; ///< The Sub expression
-    std::size_t rows;
+    T sub;            ///< The Sub expression
+    std::size_t rows; ///< The number of rows
 
     using sub_type          = T;                                               ///< The sub type
     using value_type        = value_t<sub_type>;                               ///< The value contained in the expression
@@ -599,7 +605,7 @@ struct dyn_vector_view {
 template <typename T>
 struct dyn_matrix_view {
     T sub;               ///< The sub expression
-    std::size_t rows;    ///<The number of rows
+    std::size_t rows;    ///< The number of rows
     std::size_t columns; ///< The number columns
 
     using sub_type          = T;                                               ///< The sub type
@@ -742,8 +748,8 @@ struct dyn_matrix_view {
  */
 template <typename T, std::size_t D>
 struct etl_traits<etl::dim_view<T, D>> {
-    using expr_t     = etl::dim_view<T, D>;
-    using sub_expr_t = std::decay_t<T>;
+    using expr_t     = etl::dim_view<T, D>; ///< The expression type
+    using sub_expr_t = std::decay_t<T>; ///< The sub expression type
 
     static constexpr const bool is_etl                  = true;  ///< Indicates if the type is an ETL expression
     static constexpr const bool is_transformer          = false;  ///< Indicates if the type is a transformer
@@ -818,8 +824,8 @@ struct etl_traits<etl::dim_view<T, D>> {
  */
 template <typename T>
 struct etl_traits<etl::sub_view<T>> {
-    using expr_t     = etl::sub_view<T>;
-    using sub_expr_t = std::decay_t<T>;
+    using expr_t     = etl::sub_view<T>; ///< The expression type
+    using sub_expr_t = std::decay_t<T>; ///< The sub expression type
 
     static constexpr const bool is_etl                  = true;  ///< Indicates if the type is an ETL expression
     static constexpr const bool is_transformer          = false;  ///< Indicates if the type is a transformer
@@ -885,8 +891,8 @@ struct etl_traits<etl::sub_view<T>> {
  */
 template <typename T, std::size_t... Dims>
 struct etl_traits<etl::fast_matrix_view<T, Dims...>> {
-    using expr_t     = etl::fast_matrix_view<T, Dims...>;
-    using sub_expr_t = std::decay_t<T>;
+    using expr_t     = etl::fast_matrix_view<T, Dims...>; ///< The expression type
+    using sub_expr_t = std::decay_t<T>; ///< The sub expression type
 
     static constexpr const bool is_etl                  = true;  ///< Indicates if the type is an ETL expression
     static constexpr const bool is_transformer          = false;  ///< Indicates if the type is a transformer
@@ -948,8 +954,8 @@ struct etl_traits<etl::fast_matrix_view<T, Dims...>> {
  */
 template <typename T>
 struct etl_traits<etl::dyn_matrix_view<T>> {
-    using expr_t     = etl::dyn_matrix_view<T>;
-    using sub_expr_t = std::decay_t<T>;
+    using expr_t     = etl::dyn_matrix_view<T>; ///< The expression type
+    using sub_expr_t = std::decay_t<T>; ///< The sub expression type
 
     static constexpr const bool is_etl                  = true;  ///< Indicates if the type is an ETL expression
     static constexpr const bool is_transformer          = false;  ///< Indicates if the type is a transformer
@@ -997,8 +1003,8 @@ struct etl_traits<etl::dyn_matrix_view<T>> {
  */
 template <typename T>
 struct etl_traits<etl::dyn_vector_view<T>> {
-    using expr_t     = etl::dyn_vector_view<T>;
-    using sub_expr_t = std::decay_t<T>;
+    using expr_t     = etl::dyn_vector_view<T>; ///< The expression type
+    using sub_expr_t = std::decay_t<T>; ///< The sub expression type
 
     static constexpr const bool is_etl                  = true;  ///< Indicates if the type is an ETL expression
     static constexpr const bool is_transformer          = false;  ///< Indicates if the type is a transformer
