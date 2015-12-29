@@ -31,6 +31,11 @@ using ifft_real_value_type = std::conditional_t<is_complex<A>::value, typename v
 
 } //end of namespace detail
 
+/*!
+ * \brief Creates an expression representing the 1D Fast-Fourrier-Transform of the given expression
+ * \param a The input expression
+ * \return an expression representing the 1D FFT of a
+ */
 template <typename A>
 auto fft_1d(A&& a) -> detail::temporary_unary_helper_type<detail::fft_value_type<A>, A, fft1_expr> {
     static_assert(is_etl_expr<A>::value, "FFT only supported for ETL expressions");
@@ -38,6 +43,12 @@ auto fft_1d(A&& a) -> detail::temporary_unary_helper_type<detail::fft_value_type
     return detail::temporary_unary_helper_type<detail::fft_value_type<A>, A, fft1_expr>{a};
 }
 
+/*!
+ * \brief Creates an expression representing the 1D Fast-Fourrier-Transform of the given expression, the result will be stored in c
+ * \param a The input expression
+ * \param c The result
+ * \return an expression representing the 1D FFT of a
+ */
 template <typename A, typename C>
 auto fft_1d(A&& a, C&& c) -> detail::forced_temporary_unary_helper_type<detail::fft_value_type<A>, A, C, fft1_expr> {
     static_assert(is_etl_expr<A>::value && is_etl_expr<C>::value, "FFT only supported for ETL expressions");
@@ -46,6 +57,11 @@ auto fft_1d(A&& a, C&& c) -> detail::forced_temporary_unary_helper_type<detail::
     return {a, c};
 }
 
+/*!
+ * \brief Creates an expression representing the 1D inverse Fast-Fourrier-Transform of the given expression
+ * \param a The input expression
+ * \return an expression representing the 1D inverse FFT of a
+ */
 template <typename A>
 auto ifft_1d(A&& a) -> detail::temporary_unary_helper_type<detail::ifft_value_type<A>, A, ifft1_expr> {
     static_assert(is_etl_expr<A>::value, "FFT only supported for ETL expressions");
@@ -53,6 +69,12 @@ auto ifft_1d(A&& a) -> detail::temporary_unary_helper_type<detail::ifft_value_ty
     return detail::temporary_unary_helper_type<detail::ifft_value_type<A>, A, ifft1_expr>{a};
 }
 
+/*!
+ * \brief Creates an expression representing the 1D inverse Fast-Fourrier-Transform of the given expression, the result will be stored in c
+ * \param a The input expression
+ * \param c The result
+ * \return an expression representing the 1D inverse FFT of a
+ */
 template <typename A, typename C>
 auto ifft_1d(A&& a, C&& c) -> detail::forced_temporary_unary_helper_type<detail::ifft_value_type<A>, A, C, ifft1_expr> {
     static_assert(is_etl_expr<A>::value && is_etl_expr<C>::value, "FFT only supported for ETL expressions");
@@ -61,6 +83,11 @@ auto ifft_1d(A&& a, C&& c) -> detail::forced_temporary_unary_helper_type<detail:
     return {a, c};
 }
 
+/*!
+ * \brief Creates an expression representing the real part of the 1D inverse Fast-Fourrier-Transform of the given expression
+ * \param a The input expression
+ * \return an expression representing the real part of the 1D inverse FFT of a
+ */
 template <typename A>
 auto ifft_1d_real(A&& a) -> detail::temporary_unary_helper_type<detail::ifft_real_value_type<A>, A, ifft1_real_expr> {
     static_assert(is_etl_expr<A>::value, "FFT only supported for ETL expressions");
@@ -68,6 +95,12 @@ auto ifft_1d_real(A&& a) -> detail::temporary_unary_helper_type<detail::ifft_rea
     return detail::temporary_unary_helper_type<detail::ifft_real_value_type<A>, A, ifft1_real_expr>{a};
 }
 
+/*!
+ * \brief Creates an expression representing the real part of the 1D inverse Fast-Fourrier-Transform of the given expression, the result will be stored in c
+ * \param a The input expression
+ * \param c The result
+ * \return an expression representing the real part of the 1D inverse FFT of a
+ */
 template <typename A, typename C>
 auto ifft_1d_real(A&& a, C&& c) -> detail::forced_temporary_unary_helper_type<detail::ifft_real_value_type<A>, A, C, ifft1_real_expr> {
     static_assert(is_etl_expr<A>::value && is_etl_expr<C>::value, "FFT only supported for ETL expressions");
@@ -76,6 +109,11 @@ auto ifft_1d_real(A&& a, C&& c) -> detail::forced_temporary_unary_helper_type<de
     return {a, c};
 }
 
+/*!
+ * \brief Creates an expression representing the 2D Fast-Fourrier-Transform of the given expression
+ * \param a The input expression
+ * \return an expression representing the 2D FFT of a
+ */
 template <typename A>
 auto fft_2d(A&& a) -> detail::temporary_unary_helper_type<detail::fft_value_type<A>, A, fft2_expr> {
     static_assert(is_etl_expr<A>::value, "FFT only supported for ETL expressions");
@@ -83,6 +121,12 @@ auto fft_2d(A&& a) -> detail::temporary_unary_helper_type<detail::fft_value_type
     return detail::temporary_unary_helper_type<detail::fft_value_type<A>, A, fft2_expr>{a};
 }
 
+/*!
+ * \brief Creates an expression representing the 2D Fast-Fourrier-Transform of the given expression, the result will be stored in c
+ * \param a The input expression
+ * \param c The result
+ * \return an expression representing the 2D FFT of a
+ */
 template <typename A, typename C>
 auto fft_2d(A&& a, C&& c) -> detail::forced_temporary_unary_helper_type<detail::fft_value_type<A>, A, C, fft2_expr> {
     static_assert(is_etl_expr<A>::value && is_etl_expr<C>::value, "FFT only supported for ETL expressions");
@@ -91,6 +135,11 @@ auto fft_2d(A&& a, C&& c) -> detail::forced_temporary_unary_helper_type<detail::
     return {a, c};
 }
 
+/*!
+ * \brief Creates an expression representing the 2D inverse Fast-Fourrier-Transform of the given expression
+ * \param a The input expression
+ * \return an expression representing the 2D inverse FFT of a
+ */
 template <typename A>
 auto ifft_2d(A&& a) -> detail::temporary_unary_helper_type<detail::fft_value_type<A>, A, ifft2_expr> {
     static_assert(is_etl_expr<A>::value, "FFT only supported for ETL expressions");
@@ -98,6 +147,12 @@ auto ifft_2d(A&& a) -> detail::temporary_unary_helper_type<detail::fft_value_typ
     return detail::temporary_unary_helper_type<detail::fft_value_type<A>, A, ifft2_expr>{a};
 }
 
+/*!
+ * \brief Creates an expression representing the 2D inverse Fast-Fourrier-Transform of the given expression, the result will be stored in c
+ * \param a The input expression
+ * \param c The result
+ * \return an expression representing the 2D inverse FFT of a
+ */
 template <typename A, typename C>
 auto ifft_2d(A&& a, C&& c) -> detail::forced_temporary_unary_helper_type<detail::fft_value_type<A>, A, C, ifft2_expr> {
     static_assert(is_etl_expr<A>::value && is_etl_expr<C>::value, "FFT only supported for ETL expressions");
@@ -106,6 +161,11 @@ auto ifft_2d(A&& a, C&& c) -> detail::forced_temporary_unary_helper_type<detail:
     return {a, c};
 }
 
+/*!
+ * \brief Creates an expression representing the real part of the 2D inverse Fast-Fourrier-Transform of the given expression
+ * \param a The input expression
+ * \return an expression representing the real part of the 2D inverse FFT of a
+ */
 template <typename A>
 auto ifft_2d_real(A&& a) -> detail::temporary_unary_helper_type<detail::ifft_real_value_type<A>, A, ifft2_real_expr> {
     static_assert(is_etl_expr<A>::value, "FFT only supported for ETL expressions");
@@ -113,6 +173,12 @@ auto ifft_2d_real(A&& a) -> detail::temporary_unary_helper_type<detail::ifft_rea
     return detail::temporary_unary_helper_type<detail::ifft_real_value_type<A>, A, ifft2_real_expr>{a};
 }
 
+/*!
+ * \brief Creates an expression representing the real part of the 2D inverse Fast-Fourrier-Transform of the given expression, the result will be stored in c
+ * \param a The input expression
+ * \param c The result
+ * \return an expression representing the real part of the 2D inverse FFT of a
+ */
 template <typename A, typename C>
 auto ifft_2d_real(A&& a, C&& c) -> detail::forced_temporary_unary_helper_type<detail::ifft_real_value_type<A>, A, C, ifft2_real_expr> {
     static_assert(is_etl_expr<A>::value && is_etl_expr<C>::value, "FFT only supported for ETL expressions");
@@ -121,6 +187,14 @@ auto ifft_2d_real(A&& a, C&& c) -> detail::forced_temporary_unary_helper_type<de
     return {a, c};
 }
 
+/*!
+ * \brief Creates an expression representing several 1D Fast-Fourrier-Transform of the given expression
+ *
+ * Only the last dimension is used for the FFT itself, the first dimensions are used as containers to perform multiple FFT.
+ *
+ * \param a The input expression
+ * \return an expression representing several 1D FFT of a
+ */
 template <typename A>
 auto fft_1d_many(A&& a) -> detail::temporary_unary_helper_type<detail::fft_value_type<A>, A, fft1_many_expr> {
     static_assert(is_etl_expr<A>::value, "FFT only supported for ETL expressions");
@@ -129,6 +203,15 @@ auto fft_1d_many(A&& a) -> detail::temporary_unary_helper_type<detail::fft_value
     return detail::temporary_unary_helper_type<detail::fft_value_type<A>, A, fft1_many_expr>{a};
 }
 
+/*!
+ * \brief Creates an expression representing several 1D Fast-Fourrier-Transform of the given expression, the result will be stored in c
+ *
+ * Only the last dimension is used for the FFT itself, the first dimensions are used as containers to perform multiple FFT.
+ *
+ * \param a The input expression
+ * \param c The result
+ * \return an expression representing several 1D FFT of a
+ */
 template <typename A, typename C>
 auto fft_1d_many(A&& a, C&& c) -> detail::forced_temporary_unary_helper_type<detail::fft_value_type<A>, A, C, fft1_many_expr> {
     static_assert(is_etl_expr<A>::value && is_etl_expr<C>::value, "FFT only supported for ETL expressions");
@@ -138,6 +221,14 @@ auto fft_1d_many(A&& a, C&& c) -> detail::forced_temporary_unary_helper_type<det
     return {a, c};
 }
 
+/*!
+ * \brief Creates an expression representing several 2D Fast-Fourrier-Transform of the given expression
+ *
+ * Only the last two dimensions are used for the FFT itself, the first dimensions are used as containers to perform multiple FFT.
+ *
+ * \param a The input expression
+ * \return an expression representing several 2D FFT of a
+ */
 template <typename A>
 auto fft_2d_many(A&& a) -> detail::temporary_unary_helper_type<detail::fft_value_type<A>, A, fft2_many_expr> {
     static_assert(is_etl_expr<A>::value, "FFT only supported for ETL expressions");
@@ -146,6 +237,15 @@ auto fft_2d_many(A&& a) -> detail::temporary_unary_helper_type<detail::fft_value
     return detail::temporary_unary_helper_type<detail::fft_value_type<A>, A, fft2_many_expr>{a};
 }
 
+/*!
+ * \brief Creates an expression representing several 2D Fast-Fourrier-Transform of the given expression, the result will be stored in c
+ *
+ * Only the last two dimensions are used for the FFT itself, the first dimensions are used as containers to perform multiple FFT.
+ *
+ * \param a The input expression
+ * \param c The result
+ * \return an expression representing several 2D FFT of a
+ */
 template <typename A, typename C>
 auto fft_2d_many(A&& a, C&& c) -> detail::forced_temporary_unary_helper_type<detail::fft_value_type<A>, A, C, fft2_many_expr> {
     static_assert(is_etl_expr<A>::value && is_etl_expr<C>::value, "FFT only supported for ETL expressions");

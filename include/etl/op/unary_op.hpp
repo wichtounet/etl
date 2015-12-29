@@ -66,6 +66,9 @@ struct log_unary_op {
     static constexpr const bool vectorizable = intel_compiler && !is_complex_t<T>::value; ///< Indicates if the operator is vectorizable
     static constexpr const bool linear       = true;                                      ///< Indicates if the operator is linear
 
+    /*!
+     * The vectorization type for V
+     */
     template <typename V = default_vec>
     using vec_type       = typename V::template vec_type<T>;
 
@@ -106,6 +109,9 @@ struct log_unary_op {
  */
 template <typename T>
 struct sqrt_unary_op {
+    /*!
+     * The vectorization type for V
+     */
     template <typename V = default_vec>
     using vec_type       = typename V::template vec_type<T>;
 
@@ -147,6 +153,9 @@ struct sqrt_unary_op {
  */
 template <typename T>
 struct exp_unary_op {
+    /*!
+     * The vectorization type for V
+     */
     template <typename V = default_vec>
     using vec_type       = typename V::template vec_type<T>;
 
@@ -271,6 +280,9 @@ struct softplus_unary_op {
  */
 template <typename T>
 struct minus_unary_op {
+    /*!
+     * The vectorization type for V
+     */
     template <typename V = default_vec>
     using vec_type       = typename V::template vec_type<T>;
 
@@ -312,6 +324,9 @@ struct minus_unary_op {
  */
 template <typename T>
 struct plus_unary_op {
+    /*!
+     * The vectorization type for V
+     */
     template <typename V = default_vec>
     using vec_type       = typename V::template vec_type<T>;
 
@@ -820,6 +835,9 @@ struct logistic_noise_unary_op {
 
 template <typename T, typename S>
 struct min_scalar_op {
+    /*!
+     * The vectorization type for V
+     */
     template<typename V = default_vec>
     using vec_type = typename V::template vec_type<T>;
 
@@ -863,6 +881,9 @@ struct min_scalar_op {
 
 template <typename T, typename S>
 struct max_scalar_op {
+    /*!
+     * The vectorization type for V
+     */
     template<typename V = default_vec>
     using vec_type = typename V::template vec_type<T>;
 
@@ -906,14 +927,23 @@ struct max_scalar_op {
 
 template <typename T, typename S>
 struct clip_scalar_op {
+    /*!
+     * The vectorization type for V
+     */
     template<typename V = default_vec>
     using vec_type = typename V::template vec_type<T>;
 
     static constexpr const bool vectorizable = intel_compiler && !is_complex_t<T>::value; ///< Indicates if the opeator is vectorizable or not
     static constexpr const bool linear       = true; ///< Indicates if the operator is linear or not
 
-    S min;
-    S max;
+    S min; ///< The minimum for clipping
+    S max; ///< The maximum for clipping
+
+    /*!
+     * \brief Builds a new operator
+     * \param min The minimum for clipping
+     * \param max The maximum for clipping
+     */
     clip_scalar_op(S min, S max)
             : min(min), max(max) {}
 
