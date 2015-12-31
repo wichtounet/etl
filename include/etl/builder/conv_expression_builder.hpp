@@ -124,21 +124,47 @@ auto fft_conv_1d_full(A&& a, B&& b, C&& c) -> detail::forced_temporary_binary_he
     return {a, b, c};
 }
 
+/*!
+ * \brief Creates an expression representing the full 1D convolution of a and b, the convolution is done with the faster available implementation.
+ * \param a The input expression
+ * \param b The kernel expression
+ * \return an expression representing the full 1D convolution of a and b
+ */
 template <typename A, typename B, cpp_enable_if_cst(has_fast_fft::value)>
 auto fast_conv_1d_full(A&& a, B&& b) {
     return fft_conv_1d_full(std::forward<A>(a), std::forward<B>(b));
 }
 
+/*!
+ * \brief Creates an expression representing the full 1D convolution of a and b, the convolution is done with the faster available implementation.
+ * \param a The input expression
+ * \param b The kernel expression
+ * \return an expression representing the full 1D convolution of a and b
+ */
 template <typename A, typename B, cpp_disable_if_cst(has_fast_fft::value)>
 auto fast_conv_1d_full(A&& a, B&& b) {
     return conv_1d_full(std::forward<A>(a), std::forward<B>(b));
 }
 
+/*!
+ * \brief Creates an expression representing the full 1D convolution of a and b, the result is stored in c, the convolution is done with the faster available implementation.
+ * \param a The input expression
+ * \param b The kernel expression
+ * \param c The result
+ * \return an expression representing the full 1D convolution of a and b
+ */
 template <typename A, typename B, typename C, cpp_enable_if_cst(has_fast_fft::value)>
 auto fast_conv_1d_full(A&& a, B&& b, C&& c) {
     return fft_conv_1d_full(std::forward<A>(a), std::forward<B>(b), std::forward<C>(c));
 }
 
+/*!
+ * \brief Creates an expression representing the full 1D convolution of a and b, the result is stored in c, the convolution is done with the faster available implementation.
+ * \param a The input expression
+ * \param b The kernel expression
+ * \param c The result
+ * \return an expression representing the full 1D convolution of a and b
+ */
 template <typename A, typename B, typename C, cpp_disable_if_cst(has_fast_fft::value)>
 auto fast_conv_1d_full(A&& a, B&& b, C&& c) {
     return conv_1d_full(std::forward<A>(a), std::forward<B>(b), std::forward<C>(c));
@@ -225,6 +251,12 @@ auto conv_2d_full(A&& a, B&& b, C&& c) -> detail::forced_temporary_binary_helper
     return {a, b, c};
 }
 
+/*!
+ * \brief Creates an expression representing the full 2D convolution of a and b, computed with a FFT.
+ * \param a The input expression
+ * \param b The kernel expression
+ * \return an expression representing the full 2D convolution of a and b
+ */
 template <typename A, typename B>
 auto fft_conv_2d_full(A&& a, B&& b) -> detail::temporary_binary_helper<A, B, fft_conv2_full_expr> {
     static_assert(is_etl_expr<A>::value && is_etl_expr<B>::value, "Convolution only supported for ETL expressions");
@@ -232,6 +264,13 @@ auto fft_conv_2d_full(A&& a, B&& b) -> detail::temporary_binary_helper<A, B, fft
     return {a, b};
 }
 
+/*!
+ * \brief Creates an expression representing the full 2D convolution of a and b, the result will be stored in c, computed with a FFT.
+ * \param a The input expression
+ * \param b The kernel expression
+ * \param c The result
+ * \return an expression representing the full 2D convolution of a and b
+ */
 template <typename A, typename B, typename C>
 auto fft_conv_2d_full(A&& a, B&& b, C&& c) -> detail::forced_temporary_binary_helper<A, B, C, fft_conv2_full_expr> {
     static_assert(is_etl_expr<A>::value && is_etl_expr<B>::value && is_etl_expr<C>::value, "Convolution only supported for ETL expressions");
@@ -239,26 +278,61 @@ auto fft_conv_2d_full(A&& a, B&& b, C&& c) -> detail::forced_temporary_binary_he
     return {a, b, c};
 }
 
+/*!
+ * \brief Creates an expression representing the full 2D convolution of a and b, the convolution is done with the faster available implementation.
+ * \param a The input expression
+ * \param b The kernel expression
+ * \return an expression representing the full 2D convolution of a and b
+ */
 template <typename A, typename B, cpp_enable_if_cst(has_fast_fft::value)>
 auto fast_conv_2d_full(A&& a, B&& b) {
     return fft_conv_2d_full(std::forward<A>(a), std::forward<B>(b));
 }
 
+/*!
+ * \brief Creates an expression representing the full 2D convolution of a and b, the convolution is done with the faster available implementation.
+ * \param a The input expression
+ * \param b The kernel expression
+ * \return an expression representing the full 2D convolution of a and b
+ */
 template <typename A, typename B, cpp_disable_if_cst(has_fast_fft::value)>
 auto fast_conv_2d_full(A&& a, B&& b) {
     return conv_2d_full(std::forward<A>(a), std::forward<B>(b));
 }
 
+/*!
+ * \brief Creates an expression representing the full 2D convolution of a and b, the result is stored in c, the convolution is done with the faster available implementation.
+ * \param a The input expression
+ * \param b The kernel expression
+ * \param c The result
+ * \return an expression representing the full 2D convolution of a and b
+ */
 template <typename A, typename B, typename C, cpp_enable_if_cst(has_fast_fft::value)>
 auto fast_conv_2d_full(A&& a, B&& b, C&& c) {
     return fft_conv_2d_full(std::forward<A>(a), std::forward<B>(b), std::forward<C>(c));
 }
 
+/*!
+ * \brief Creates an expression representing the full 2D convolution of a and b, the result is stored in c, the convolution is done with the faster available implementation.
+ * \param a The input expression
+ * \param b The kernel expression
+ * \param c The result
+ * \return an expression representing the full 2D convolution of a and b
+ */
 template <typename A, typename B, typename C, cpp_disable_if_cst(has_fast_fft::value)>
 auto fast_conv_2d_full(A&& a, B&& b, C&& c) {
     return conv_2d_full(std::forward<A>(a), std::forward<B>(b), std::forward<C>(c));
 }
 
+/*!
+ * \brief Creates an expression representing many valid 2D convolution of a and b.
+ *
+ * Only the last two dimensions are used for the convolution itself, the first dimensions are used as containers to perform multiple FFT.
+ *
+ * \param a The input expression
+ * \param b The kernel expression
+ * \return an expression representing many valid 2D convolution of a and b
+ */
 template <typename A, typename B>
 auto conv_deep_valid(A&& a, B&& b) -> detail::dim_temporary_binary_helper<A, B, conv_deep_valid_expr, decay_traits<A>::dimensions()> {
     static_assert(is_etl_expr<A>::value && is_etl_expr<B>::value, "Convolution only supported for ETL expressions");
@@ -266,6 +340,16 @@ auto conv_deep_valid(A&& a, B&& b) -> detail::dim_temporary_binary_helper<A, B, 
     return {a, b};
 }
 
+/*!
+ * \brief Creates an expression representing many valid 2D convolution of a and b, the result is stored in c
+ *
+ * Only the last two dimensions are used for the convolution itself, the first dimensions are used as containers to perform multiple FFT.
+ *
+ * \param a The input expression
+ * \param b The kernel expression
+ * \param c The result
+ * \return an expression representing many valid 2D convolution of a and b
+ */
 template <typename A, typename B, typename C>
 auto conv_deep_valid(A&& a, B&& b, C&& c) -> detail::dim_forced_temporary_binary_helper<A, B, C, conv_deep_valid_expr, decay_traits<A>::dimensions()> {
     static_assert(is_etl_expr<A>::value && is_etl_expr<B>::value && is_etl_expr<C>::value, "Convolution only supported for ETL expressions");
@@ -273,6 +357,15 @@ auto conv_deep_valid(A&& a, B&& b, C&& c) -> detail::dim_forced_temporary_binary
     return {a, b, c};
 }
 
+/*!
+ * \brief Creates an expression representing many same 2D convolution of a and b.
+ *
+ * Only the last two dimensions are used for the convolution itself, the first dimensions are used as containers to perform multiple FFT.
+ *
+ * \param a The input expression
+ * \param b The kernel expression
+ * \return an expression representing many same 2D convolution of a and b
+ */
 template <typename A, typename B>
 auto conv_deep_same(A&& a, B&& b) -> detail::dim_temporary_binary_helper<A, B, conv_deep_same_expr, decay_traits<A>::dimensions()> {
     static_assert(is_etl_expr<A>::value && is_etl_expr<B>::value, "Convolution only supported for ETL expressions");
@@ -280,6 +373,16 @@ auto conv_deep_same(A&& a, B&& b) -> detail::dim_temporary_binary_helper<A, B, c
     return {a, b};
 }
 
+/*!
+ * \brief Creates an expression representing many same 2D convolution of a and b, the result is stored in c
+ *
+ * Only the last two dimensions are used for the convolution itself, the first dimensions are used as containers to perform multiple FFT.
+ *
+ * \param a The input expression
+ * \param b The kernel expression
+ * \param c The result
+ * \return an expression representing many same 2D convolution of a and b
+ */
 template <typename A, typename B, typename C>
 auto conv_deep_same(A&& a, B&& b, C&& c) -> detail::dim_forced_temporary_binary_helper<A, B, C, conv_deep_same_expr, decay_traits<A>::dimensions()> {
     static_assert(is_etl_expr<A>::value && is_etl_expr<B>::value && is_etl_expr<C>::value, "Convolution only supported for ETL expressions");
@@ -287,6 +390,15 @@ auto conv_deep_same(A&& a, B&& b, C&& c) -> detail::dim_forced_temporary_binary_
     return {a, b, c};
 }
 
+/*!
+ * \brief Creates an expression representing many full 2D convolution of a and b.
+ *
+ * Only the last two dimensions are used for the convolution itself, the first dimensions are used as containers to perform multiple FFT.
+ *
+ * \param a The input expression
+ * \param b The kernel expression
+ * \return an expression representing many full 2D convolution of a and b
+ */
 template <typename A, typename B>
 auto conv_deep_full(A&& a, B&& b) -> detail::dim_temporary_binary_helper<A, B, conv_deep_full_expr, decay_traits<A>::dimensions()> {
     static_assert(is_etl_expr<A>::value && is_etl_expr<B>::value, "Convolution only supported for ETL expressions");
@@ -294,6 +406,16 @@ auto conv_deep_full(A&& a, B&& b) -> detail::dim_temporary_binary_helper<A, B, c
     return {a, b};
 }
 
+/*!
+ * \brief Creates an expression representing many full 2D convolution of a and b, the result is stored in c
+ *
+ * Only the last two dimensions are used for the convolution itself, the first dimensions are used as containers to perform multiple FFT.
+ *
+ * \param a The input expression
+ * \param b The kernel expression
+ * \param c The result
+ * \return an expression representing many full 2D convolution of a and b
+ */
 template <typename A, typename B, typename C>
 auto conv_deep_full(A&& a, B&& b, C&& c) -> detail::dim_forced_temporary_binary_helper<A, B, C, conv_deep_full_expr, decay_traits<A>::dimensions()> {
     static_assert(is_etl_expr<A>::value && is_etl_expr<B>::value && is_etl_expr<C>::value, "Convolution only supported for ETL expressions");
