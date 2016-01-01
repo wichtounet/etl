@@ -21,6 +21,8 @@
 
 namespace etl {
 
+//TODO Fix the false positives in sonar-cxx for these functions
+
 /*!
  * \brief Builds an expression representing the subtraction of lhs and rhs
  * \param lhs The left hand side expression
