@@ -441,30 +441,61 @@ auto abs(E&& value) -> detail::unary_helper<E, abs_unary_op> {
     return detail::unary_helper<E, abs_unary_op>{value};
 }
 
+/*!
+ * \brief Apply max(x, v) on each element x of the ETL expression
+ * \param value The ETL expression
+ * \param v The maximum
+ * \return an expression representing the max(x, v) of each value x of the given expression
+ */
 template <typename E, typename T, cpp_enable_if(std::is_arithmetic<T>::value)>
 auto max(E&& value, T v) {
     static_assert(is_etl_expr<E>::value, "etl::max can only be used on ETL expressions");
     return detail::make_stateful_unary_expr<E, max_scalar_op<value_t<E>, value_t<E>>>(value, value_t<E>(v));
 }
 
+/*!
+ * \brief Create an expression with the max value of lhs or rhs
+ * \param lhs The left hand side ETL expression
+ * \param rhs The right hand side ETL expression
+ * \return an expression representing the max values from lhs and rhs
+ */
 template <typename L, typename R, cpp_enable_if(!std::is_arithmetic<R>::value)>
 auto max(L&& lhs, R&& rhs) -> detail::left_binary_helper_op<L, R, max_binary_op<value_t<L>, value_t<R>>> {
     static_assert(is_etl_expr<L>::value, "etl::max can only be used on ETL expressions");
     return {lhs, rhs};
 }
 
+/*!
+ * \brief Apply min(x, v) on each element x of the ETL expression
+ * \param value The ETL expression
+ * \param v The minimum
+ * \return an expression representing the min(x, v) of each value x of the given expression
+ */
 template <typename E, typename T, cpp_enable_if(std::is_arithmetic<T>::value)>
 auto min(E&& value, T v) {
     static_assert(is_etl_expr<E>::value, "etl::max can only be used on ETL expressions");
     return detail::make_stateful_unary_expr<E, min_scalar_op<value_t<E>, value_t<E>>>(value, value_t<E>(v));
 }
 
+/*!
+ * \brief Create an expression with the min value of lhs or rhs
+ * \param lhs The left hand side ETL expression
+ * \param rhs The right hand side ETL expression
+ * \return an expression representing the min values from lhs and rhs
+ */
 template <typename L, typename R, cpp_enable_if(!std::is_arithmetic<R>::value)>
 auto min(L&& lhs, R&& rhs) -> detail::left_binary_helper_op<L, R, min_binary_op<value_t<L>, value_t<R>>> {
     static_assert(is_etl_expr<L>::value, "etl::max can only be used on ETL expressions");
     return {lhs, rhs};
 }
 
+/*!
+ * \brief Clip each values of the ETL expression between min and max
+ * \param value The ETL expression
+ * \param min The minimum
+ * \param max The maximum
+ * \return an expression representing the values of the ETL expression clipped between min and max
+ */
 template <typename E, typename T>
 auto clip(E&& value, T min, T max) {
     static_assert(is_etl_expr<E>::value, "etl::clip can only be used on ETL expressions");
@@ -472,6 +503,12 @@ auto clip(E&& value, T min, T max) {
     return detail::make_stateful_unary_expr<E, clip_scalar_op<value_t<E>, value_t<E>>>(value, value_t<E>(min), value_t<E>(max));
 }
 
+/*!
+ * \brief Apply pow(x, v) on each element x of the ETL expression
+ * \param value The ETL expression
+ * \param v The power
+ * \return an expression representing the pow(x, v) of each value x of the given expression
+ */
 template <typename E, typename T>
 auto pow(E&& value, T v) -> detail::left_binary_helper_op<E, scalar<value_t<E>>, pow_binary_op<value_t<E>, value_t<E>>> {
     static_assert(is_etl_expr<E>::value, "etl::pow can only be used on ETL expressions");
@@ -479,6 +516,12 @@ auto pow(E&& value, T v) -> detail::left_binary_helper_op<E, scalar<value_t<E>>,
     return {value, scalar<value_t<E>>(v)};
 }
 
+/*!
+ * \brief Creates an expression with values of 1 where the ETL expression has a value of v
+ * \param value The ETL expression
+ * \param v The value to test
+ * \return an expression representing the values of 1 where the ETL expression has a value of v
+ */
 template <typename E, typename T>
 auto one_if(E&& value, T v) -> detail::left_binary_helper_op<E, scalar<value_t<E>>, one_if_binary_op<value_t<E>, value_t<E>>> {
     static_assert(is_etl_expr<E>::value, "etl::one_if can only be used on ETL expressions");
@@ -486,6 +529,12 @@ auto one_if(E&& value, T v) -> detail::left_binary_helper_op<E, scalar<value_t<E
     return {value, scalar<value_t<E>>(v)};
 }
 
+/*!
+ * \brief Creates an expression with a value of 1 where the max value is and all zeroes other places
+ * \param value The ETL expression
+ * \param v The value to test
+ * \return an expression with a value of 1 where the max value is and all zeroes other places
+ */
 template <typename E>
 auto one_if_max(E&& value) -> detail::left_binary_helper_op<E, scalar<value_t<E>>, one_if_binary_op<value_t<E>, value_t<E>>> {
     static_assert(is_etl_expr<E>::value, "etl::one_if_max can only be used on ETL expressions");
@@ -641,12 +690,22 @@ auto ranged_noise(E&& value, T v) -> detail::left_binary_helper_op<E, scalar<val
     return {value, scalar<value_t<E>>(v)};
 }
 
+/*!
+ * \brief Apply exponential on each value of the given expression
+ * \param value The ETL expression
+ * \return an expression representing the exponential of each value of the given expression
+ */
 template <typename E>
 auto exp(E&& value) -> detail::unary_helper<E, exp_unary_op> {
     static_assert(is_etl_expr<E>::value, "etl::exp can only be used on ETL expressions");
     return detail::unary_helper<E, exp_unary_op>{value};
 }
 
+/*!
+ * \brief Apply sign on each value of the given expression
+ * \param value The ETL expression
+ * \return an expression representing the sign of each value of the given expression
+ */
 template <typename E>
 auto sign(E&& value) -> detail::unary_helper<E, sign_unary_op> {
     static_assert(is_etl_expr<E>::value, "etl::sign can only be used on ETL expressions");
