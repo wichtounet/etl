@@ -26,7 +26,7 @@ namespace etl {
  */
 template <typename D>
 struct inplace_assignable {
-    using derived_t = D;
+    using derived_t = D; ///< The derived type
 
     /*!
      * \brief Returns a reference to the derived object, i.e. the object using the CRTP injector.
