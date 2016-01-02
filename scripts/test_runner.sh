@@ -14,7 +14,7 @@ export LD=$ETL_GPP
 echo "Test 1. GCC (debug default)"
 
 make clean
-make -j2 debug/bin/etl_test
+make $ETL_THREADS debug/bin/etl_test
 ./debug/bin/etl_test
 gcovr -x -b -r . --object-directory=debug/test > coverage_1.xml
 
@@ -23,7 +23,7 @@ echo "Test 2. GCC (debug vectorize avx)"
 export ETL_DEFAULTS="-DETL_VECTORIZE_FULL -mavx"
 
 make clean
-make -j2 debug/bin/etl_test
+make $ETL_THREADS debug/bin/etl_test
 ./debug/bin/etl_test
 gcovr -x -b -r . --object-directory=debug/test > coverage_2.xml
 
@@ -32,7 +32,7 @@ echo "Test 3. GCC (debug vectorize sse)"
 export ETL_DEFAULTS="-DETL_VECTORIZE_FULL -msse3 -msse4"
 
 make clean
-make -j2 debug/bin/etl_test
+make $ETL_THREADS debug/bin/etl_test
 ./debug/bin/etl_test
 gcovr -x -b -r . --object-directory=debug/test > coverage_3.xml
 
@@ -42,7 +42,7 @@ unset ETL_DEFAULTS
 export ETL_MKL=true
 
 make clean
-make -j2 debug/bin/etl_test
+make $ETL_THREADS debug/bin/etl_test
 ./debug/bin/etl_test
 gcovr -x -b -r . --object-directory=debug/test > coverage_4.xml
 
