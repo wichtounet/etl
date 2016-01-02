@@ -68,8 +68,8 @@ public:
      * \return true if the two expressions aliases, false otherwise
      */
     template<typename E>
-    constexpr bool alias(const E& /*rhs*/) const noexcept {
-        return false;
+    constexpr bool alias(const E& rhs) const noexcept {
+        return (void) rhs, false;
     }
 
     /*!

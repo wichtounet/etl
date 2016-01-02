@@ -247,7 +247,7 @@ struct etl_traits<etl::fast_magic_view<V, N>> {
 
     /*!
      * \brief Returns the D2th dimension of an expression of this type
-     * \tparam D2 The dimension to get
+     * \tparam D The dimension to get
      * \return the D2th dimension of an expression of this type
      */
     template <std::size_t D>
@@ -257,7 +257,7 @@ struct etl_traits<etl::fast_magic_view<V, N>> {
 
     /*!
      * \brief Returns the dth dimension of the given expression
-     * \param v The expression
+     * \param e The expression
      * \param d The dimension to get
      * \return The dth dimension of the given expression
      */

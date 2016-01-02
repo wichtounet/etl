@@ -90,9 +90,11 @@ struct complex {
      * \param rhs The complex number to add
      * \return a reference to this
      */
-    void operator+=(const complex& rhs) {
+    complex& operator+=(const complex& rhs) {
         real += rhs.real;
         imag += rhs.imag;
+
+        return *this;
     }
 
     /*!
@@ -100,9 +102,11 @@ struct complex {
      * \param rhs The complex number to add
      * \return a reference to this
      */
-    void operator-=(const complex& rhs) {
+    complex& operator-=(const complex& rhs) {
         real -= rhs.real;
         imag -= rhs.imag;
+
+        return *this;
     }
 
     /*!
@@ -110,7 +114,7 @@ struct complex {
      * \param rhs The complex number to add
      * \return a reference to this
      */
-    void operator*=(const complex& rhs) {
+    complex& operator*=(const complex& rhs) {
         T ac = real * rhs.real;
         T bd = imag * rhs.imag;
 
@@ -119,6 +123,8 @@ struct complex {
 
         real = ac - bd;
         imag = bc + ad;
+
+        return *this;
     }
 
     /*!
@@ -126,7 +132,7 @@ struct complex {
      * \param rhs The complex number to add
      * \return a reference to this
      */
-    void operator/=(const complex& rhs) {
+    complex& operator/=(const complex& rhs) {
         T ac = real * rhs.real;
         T bd = imag * rhs.imag;
 
@@ -137,6 +143,8 @@ struct complex {
 
         real = (ac + bd) / frac;
         imag = (bc - ad) / frac;
+
+        return *this;
     }
 };
 
@@ -265,7 +273,7 @@ inline complex<T> operator/(const complex<T>& lhs, const complex<T>& rhs) {
 
 /*!
  * \brief Returns the inverse of the complex number
- * \param c The complex number
+ * \param x The complex number
  * \return The inverse of the complex number
  */
 template <typename T>
@@ -275,7 +283,7 @@ inline complex<T> inverse(complex<T> x) {
 
 /*!
  * \brief Returns the inverse of the conjugate of the complex number
- * \param c The complex number
+ * \param x The complex number
  * \return The inverse of the conjugate of the complex number
  */
 template <typename T>
@@ -285,7 +293,7 @@ inline complex<T> inverse_conj(complex<T> x) {
 
 /*!
  * \brief Returns the conjugate of the inverse of the complex number
- * \param c The complex number
+ * \param x The complex number
  * \return The conjugate of the inverse of the complex number
  */
 template <typename T>

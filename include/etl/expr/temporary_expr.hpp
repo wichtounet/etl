@@ -100,7 +100,7 @@ struct temporary_expr : comparable<D>, value_testable<D>, dim_testable<D> {
     /*!
      * \brief Perform several operations at once.
      * \param i The index at which to perform the operation
-     * \tparam V The vectorization mode to use
+     * \tparam VV The vectorization mode to use
      * \return a vector containing several results of the expression
      */
     template<typename VV = default_vec>

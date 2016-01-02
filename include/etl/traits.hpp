@@ -529,10 +529,8 @@ constexpr std::size_t dim(const E& e) noexcept {
 }
 
 /*!
- * \brief Return the d dimension of e
- * \param e The expression to get the dimensions from
- * \param d The dimension to get
- * \return the dth dimension of e
+ * \brief Return the D dimension of E
+ * \return the Dth dimension of E
  */
 template <std::size_t D, typename E, cpp_enable_if(etl_traits<E>::is_fast)>
 constexpr std::size_t dim() noexcept {

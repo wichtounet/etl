@@ -534,7 +534,6 @@ auto one_if(E&& value, T v) -> detail::left_binary_helper_op<E, scalar<value_t<E
 /*!
  * \brief Creates an expression with a value of 1 where the max value is and all zeroes other places
  * \param value The ETL expression
- * \param v The value to test
  * \return an expression with a value of 1 where the max value is and all zeroes other places
  */
 template <typename E>

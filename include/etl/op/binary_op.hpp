@@ -32,7 +32,7 @@ struct plus_binary_op {
     /*!
      * \brief Apply the unary operator on lhs and rhs
      * \param lhs The left hand side value on which to apply the operator
-     * \param lhs The right hand side value on which to apply the operator
+     * \param rhs The right hand side value on which to apply the operator
      * \return The result of applying the binary operator on lhs and rhs
      */
     static constexpr T apply(const T& lhs, const T& rhs) noexcept {
@@ -74,7 +74,7 @@ struct minus_binary_op {
     /*!
      * \brief Apply the unary operator on lhs and rhs
      * \param lhs The left hand side value on which to apply the operator
-     * \param lhs The right hand side value on which to apply the operator
+     * \param rhs The right hand side value on which to apply the operator
      * \return The result of applying the binary operator on lhs and rhs
      */
     static constexpr T apply(const T& lhs, const T& rhs) noexcept {
@@ -116,7 +116,7 @@ struct mul_binary_op {
     /*!
      * \brief Apply the unary operator on lhs and rhs
      * \param lhs The left hand side value on which to apply the operator
-     * \param lhs The right hand side value on which to apply the operator
+     * \param rhs The right hand side value on which to apply the operator
      * \return The result of applying the binary operator on lhs and rhs
      */
     static constexpr T apply(const T& lhs, const T& rhs) noexcept {
@@ -158,7 +158,7 @@ struct div_binary_op {
     /*!
      * \brief Apply the unary operator on lhs and rhs
      * \param lhs The left hand side value on which to apply the operator
-     * \param lhs The right hand side value on which to apply the operator
+     * \param rhs The right hand side value on which to apply the operator
      * \return The result of applying the binary operator on lhs and rhs
      */
     static constexpr T apply(const T& lhs, const T& rhs) noexcept {
@@ -197,7 +197,7 @@ struct mod_binary_op {
     /*!
      * \brief Apply the unary operator on lhs and rhs
      * \param lhs The left hand side value on which to apply the operator
-     * \param lhs The right hand side value on which to apply the operator
+     * \param rhs The right hand side value on which to apply the operator
      * \return The result of applying the binary operator on lhs and rhs
      */
     static constexpr T apply(const T& lhs, const T& rhs) noexcept {

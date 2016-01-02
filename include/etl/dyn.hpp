@@ -383,7 +383,7 @@ public:
 
     /*!
      * \brief Returns the value at the position (sizes...)
-     * \param args The indices
+     * \param sizes The indices
      * \return The value at the position (sizes...)
      */
     template <typename... S, cpp_enable_if(
@@ -398,7 +398,7 @@ public:
 
     /*!
      * \brief Returns the value at the position (sizes...)
-     * \param args The indices
+     * \param sizes The indices
      * \return The value at the position (sizes...)
      */
     template <typename... S, cpp_enable_if(
