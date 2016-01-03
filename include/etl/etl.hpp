@@ -75,8 +75,5 @@
 #include "etl/dyn.hpp"
 #include "etl/sparse.hpp"
 
-// The traits
-#include "etl/traits.hpp"
-
 // to_string support
 #include "etl/print.hpp"
