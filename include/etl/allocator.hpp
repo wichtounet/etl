@@ -11,8 +11,18 @@
 
 namespace etl {
 
+/*!
+ * \brief Allocated for aligned memory
+ * \tparam Expr The expression typoe
+ * \param A The alignment
+ */
 template <typename Expr, std::size_t A>
 struct aligned_allocator {
+    /*!
+     * \brief Allocate a block of memory of *size* elements
+     * \param size The number of elements
+     * \return A pointer to the allocated memory
+     */
     template <typename T>
     static T* allocate(std::size_t size) {
         auto required_bytes = sizeof(T) * size;
@@ -28,22 +38,41 @@ struct aligned_allocator {
         return reinterpret_cast<T*>(aligned);
     }
 
+    /*!
+     * \brief Release the memory
+     * \param ptr The pointer to the memory to be released
+     */
     template <typename T>
     static void release(T* ptr) {
         free((reinterpret_cast<void**>(ptr))[-1]);
     }
 };
 
+
+/*!
+ * \brief Allocate an array of the given size for the given type
+ * \param size The number of elements
+ * \return An unique pointer to the memory
+ */
 template <typename T>
 auto allocate(std::size_t size) {
     return std::make_unique<T[]>(size);
 }
 
+/*!
+ * \brief Allocate an aligned rray of the given size for the given type
+ * \param size The number of elements
+ * \return A pointer to the aligned memory
+ */
 template <typename T>
 T* aligned_allocate(std::size_t size) {
     return aligned_allocator<void, 32>::allocate<T>(size);
 }
 
+/*!
+ * \brief Release some aligned memory
+ * \param size The ptr to the aligned memory
+ */
 template <typename T>
 void aligned_release(T* ptr) {
     return aligned_allocator<void, 32>::release<T>(ptr);

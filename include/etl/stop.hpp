@@ -11,6 +11,11 @@
 
 namespace etl {
 
+/*!
+ * \brief Force the evaluation of the given expression
+ * \param value The ETL expression
+ * \return A value class with the values of the given expression
+ */
 template <typename T, cpp_enable_if(is_etl_expr<T>::value && !etl_traits<T>::is_value && !etl_traits<T>::is_fast)>
 auto s(T&& value) {
     // Sizes will be directly propagated
@@ -25,6 +30,11 @@ struct build_matrix_type<M, std::index_sequence<I...>> {
     using type = fast_matrix<typename M::value_type, etl_traits<M>::template dim<I>()...>;
 };
 
+/*!
+ * \brief Force the evaluation of the given expression
+ * \param value The ETL expression
+ * \return A value class with the values of the given expression
+ */
 template <typename T, cpp_enable_if(is_etl_expr<T>::value && !etl_traits<T>::is_value && etl_traits<T>::is_fast)>
 auto s(T&& value) {
     return typename build_matrix_type<T, std::make_index_sequence<etl_traits<T>::dimensions()>>::type(std::forward<T>(value));

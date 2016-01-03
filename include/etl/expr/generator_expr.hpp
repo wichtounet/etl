@@ -20,6 +20,11 @@
 
 namespace etl {
 
+/*!
+ * \brief A generator expression
+ *
+ * \tparam Generator The generator functor
+ */
 template <typename Generator>
 class generator_expr final {
 private:
@@ -108,7 +113,12 @@ struct etl_traits<etl::generator_expr<Generator>> {
     static constexpr const order storage_order          = order::RowMajor;           ///< The expression's storage order
 };
 
-
+/*!
+ * \brief Outputs the expression to the given stream
+ * \param os The output stream
+ * \param expr The generator expr
+ * \return The output stream
+ */
 template <typename Generator>
 std::ostream& operator<<(std::ostream& os, const generator_expr<Generator>& expr) {
     return os << expr.get_generator();
