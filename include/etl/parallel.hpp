@@ -13,6 +13,13 @@
 
 namespace etl {
 
+/*!
+ * \brief Dispatch the elements of a range to a functor in a parallel manner
+ * \param p Boolean tag to indicate if parallel dispatching must be done
+ * \param functor The functor to execute
+ * \param first The beginning of the range
+ * \param last The end of the range
+ */
 template <typename Functor>
 inline void dispatch_1d(bool p, Functor&& functor, std::size_t first, std::size_t last){
     if(p){
@@ -31,6 +38,14 @@ inline void dispatch_1d(bool p, Functor&& functor, std::size_t first, std::size_
     }
 }
 
+/*!
+ * \brief Dispatch the elements of a range to a functor in a parallel manner and use an accumulator functor to accumulate the results
+ * \param p Boolean tag to indicate if parallel dispatching must be done
+ * \param functor The functor to execute
+ * \param acc_functor The functor to accumulate results
+ * \param first The beginning of the range
+ * \param last The end of the range
+ */
 template <typename T, typename Functor, typename AccFunctor>
 inline void dispatch_1d_acc(bool p, Functor&& functor, AccFunctor&& acc_functor, std::size_t first, std::size_t last){
     if(p){
