@@ -176,22 +176,43 @@ private:
         return mul_all<this_type::dim<A, B, I>()...>::value;
     }
 
-public:
-    template <typename A, typename B>
-    using result_type = typename result_type_builder<A, B>::type;
-
-    template <typename A, typename B, cpp_enable_if(all_fast<A, B>::value)>
-    static result_type<A, B>* allocate(A&& /*a*/, B&& /*b*/) {
-        return new result_type<A, B>();
-    }
-
     template <typename A, typename B, std::size_t... I>
     static result_type<A, B>* dyn_allocate(const A& a, const B& b, std::index_sequence<I...> /*seq*/) {
         return new result_type<A, B>(this_type::dim(a, b, I)...);
     }
 
+public:
+    /*!
+     * \brief The result type for given sub types
+     * \tparam A The left hand side epxpression type
+     * \tparam B The right hand side epxpression type
+     */
+    template <typename A, typename B>
+    using result_type = typename result_type_builder<A, B>::type;
+
+    /*!
+     * \brief Allocate the temporary for the expression
+     * \param a The left hand side
+     * \param b The right hand side
+     * \return a pointer to the temporary
+     */
+    template <typename A, typename B, cpp_enable_if(all_fast<A, B>::value)>
+    static result_type<A, B>* allocate(A&& a, B&& b) {
+        cpp_unused(a);
+        cpp_unused(b);
+        return new result_type<A, B>();
+    }
+
+    /*!
+     * \brief Allocate the temporary for the expression
+     * \param a The left hand side
+     * \param b The right hand side
+     * \return a pointer to the temporary
+     */
     template <typename A, typename B, cpp_disable_if(all_fast<A, B>::value)>
     static result_type<A, B>* allocate(A&& a, B&& b) {
+        cpp_unused(a);
+        cpp_unused(b);
         return dyn_allocate(std::forward<A>(a), std::forward<B>(b), std::make_index_sequence<D>());
     }
 
@@ -228,6 +249,12 @@ public:
         detail::check_conv_deep_sizes<TT>(a, b, c);
     }
 
+    /*!
+     * \brief Apply the expression
+     * \param a The left hand side
+     * \param b The right hand side
+     * \param c The expression where to store the results
+     */
     template <typename A, typename B, typename C>
     static void apply(A&& a, B&& b, C&& c) {
         static_assert(all_etl_expr<A, B, C>::value, "Convolution only supported for ETL expressions");
@@ -258,6 +285,13 @@ public:
         }
     }
 
+    /*!
+     * \brief Returns the dth dimension of the expression
+     * \param a The left hand side
+     * \param b The right hand side
+     * \param d The dimension to get
+     * \return the dth dimension of the expression
+     */
     template <typename A, typename B>
     static std::size_t dim(const A& a, const B& b, std::size_t d) {
         if (D > 2 && d < (D - 2)) {
@@ -273,6 +307,12 @@ public:
         }
     }
 
+    /*!
+     * \brief Returns the size of the expression
+     * \param a The left hand side
+     * \param b The right hand side
+     * \return the size of the expression
+     */
     template <typename A, typename B>
     static std::size_t size(const A& a, const B& b) {
         if (D > 2) {

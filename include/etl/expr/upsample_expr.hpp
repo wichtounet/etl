@@ -24,12 +24,7 @@ struct basic_upsample_2d_expr {
 
     using this_type = basic_upsample_2d_expr<T, C1, C2, Impl>;
 
-    template <typename A, std::size_t DD>
-    static constexpr std::size_t dim() {
-        return DD == 0 ? decay_traits<A>::template dim<0>() * C1
-                       : decay_traits<A>::template dim<1>() * C2;
-    }
-
+private:
     template <typename A, class Enable = void>
     struct result_type_builder {
         using type = dyn_matrix<value_t<A>, 2>;
@@ -40,19 +35,53 @@ struct basic_upsample_2d_expr {
         using type = fast_dyn_matrix<value_t<A>, this_type::template dim<A, 0>(), this_type::template dim<A, 1>()>;
     };
 
+public:
+
+    /*!
+     * \brief The result type for a given sub expression type
+     * \tparam A The sub epxpression type
+     */
     template <typename A>
     using result_type = typename result_type_builder<A>::type;
 
+    /*!
+     * \brief Returns the DDth dimension of the expression
+     * \param a The sub expression
+     * \tparam DD The dimension to get
+     * \return the DDth dimension of the expression
+     */
+    template <typename A, std::size_t DD>
+    static constexpr std::size_t dim() {
+        return DD == 0 ? decay_traits<A>::template dim<0>() * C1
+                       : decay_traits<A>::template dim<1>() * C2;
+    }
+
+    /*!
+     * \brief Allocate the temporary for the expression
+     * \param a The sub expression
+     * \return a pointer to the temporary
+     */
     template <typename A, cpp_enable_if(all_fast<A>::value)>
-    static result_type<A>* allocate(A&& /*a*/) {
+    static result_type<A>* allocate(A&& a) {
+        cpp_unused(a);
         return new result_type<A>();
     }
 
+    /*!
+     * \brief Allocate the temporary for the expression
+     * \param a The sub expression
+     * \return a pointer to the temporary
+     */
     template <typename A, cpp_disable_if(all_fast<A>::value)>
     static result_type<A>* allocate(A&& a) {
         return new result_type<A>(etl::dim<0>(a) * C2, etl::dim<1>(a) * C2);
     }
 
+    /*!
+     * \brief Apply the expression
+     * \param a The sub expression
+     * \param c The expression where to store the results
+     */
     template <typename A, typename C>
     static void apply(A&& a, C&& c) {
         static_assert(all_etl_expr<A, C>::value, "pool_2d only supported for ETL expressions");
@@ -63,10 +92,20 @@ struct basic_upsample_2d_expr {
             std::forward<C>(c));
     }
 
+    /*!
+     * \brief Returns a textual representation of the operation
+     * \return a textual representation of the operation
+     */
     static std::string desc() noexcept {
         return "pool_2d";
     }
 
+    /*!
+     * \brief Returns the dth dimension of the expression
+     * \param a The sub expression
+     * \param d The dimension to get
+     * \return the dth dimension of the expression
+     */
     template <typename A>
     static std::size_t dim(const A& a, std::size_t d) {
         if (d == 0) {
@@ -76,16 +115,29 @@ struct basic_upsample_2d_expr {
         }
     }
 
+    /*!
+     * \brief Returns the size of the expression
+     * \param a The sub expression
+     * \return the size of the expression
+     */
     template <typename A>
     static std::size_t size(const A& a) {
         return (etl::dim<0>(a) * C1) * (etl::dim<1>(a) * C2);
     }
 
+    /*!
+     * \brief Returns the size of the expression
+     * \return the size of the expression
+     */
     template <typename A>
     static constexpr std::size_t size() {
         return this_type::template dim<A, 0>() * this_type::template dim<A, 1>();
     }
 
+    /*!
+     * \brief Returns the number of dimensions of the expression
+     * \return the number of dimensions of the expression
+     */
     static constexpr std::size_t dimensions() {
         return 2;
     }
