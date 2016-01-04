@@ -176,11 +176,6 @@ private:
         return mul_all<this_type::dim<A, B, I>()...>::value;
     }
 
-    template <typename A, typename B, std::size_t... I>
-    static result_type<A, B>* dyn_allocate(const A& a, const B& b, std::index_sequence<I...> /*seq*/) {
-        return new result_type<A, B>(this_type::dim(a, b, I)...);
-    }
-
 public:
     /*!
      * \brief The result type for given sub types
@@ -189,6 +184,11 @@ public:
      */
     template <typename A, typename B>
     using result_type = typename result_type_builder<A, B>::type;
+
+    template <typename A, typename B, std::size_t... I>
+    static result_type<A, B>* dyn_allocate(const A& a, const B& b, std::index_sequence<I...> /*seq*/) {
+        return new result_type<A, B>(this_type::dim(a, b, I)...);
+    }
 
     /*!
      * \brief Allocate the temporary for the expression

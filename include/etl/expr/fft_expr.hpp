@@ -44,11 +44,6 @@ private:
         using type = typename fast_result_type_builder<A, std::make_index_sequence<D>>::type;
     };
 
-    template <typename A, std::size_t... I>
-    static result_type<A>* dyn_allocate(A&& a, std::index_sequence<I...> /*seq*/) {
-        return new result_type<A>(etl::template dim<I>(a)...);
-    }
-
 public:
 
     /*!
@@ -57,6 +52,11 @@ public:
      */
     template <typename A>
     using result_type = typename result_type_builder<A>::type;
+
+    template <typename A, std::size_t... I>
+    static result_type<A>* dyn_allocate(A&& a, std::index_sequence<I...> /*seq*/) {
+        return new result_type<A>(etl::template dim<I>(a)...);
+    }
 
     /*!
      * \brief Returns the DDth dimension of the expression
