@@ -39,10 +39,13 @@ private:
     RightExpr _rhs;
 
 public:
-    using value_type        = T;
-    using memory_type       = void;
-    using const_memory_type = void;
+    using value_type        = T;    ///< The Value type
+    using memory_type       = void; ///< The memory type
+    using const_memory_type = void; ///< The const memory type
 
+    /*!
+     * \brief The vectorization type for V
+     */
     template<typename V = default_vec>
     using vec_type          = typename V::template vec_type<T>;
 
@@ -62,8 +65,6 @@ public:
     //Expressions are invariant
     binary_expr& operator=(const binary_expr& e) = delete;
     binary_expr& operator=(binary_expr&& e) = delete;
-
-    //Accessors
 
     /*!
      * \brief Returns the left hand side expression on which the transformer is working.

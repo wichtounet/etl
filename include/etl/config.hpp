@@ -29,33 +29,33 @@ namespace etl {
 #ifdef ETL_VECTORIZE_EXPR
 constexpr const bool vectorize_expr = true;
 #else
-constexpr const bool vectorize_expr   = false;
+constexpr const bool vectorize_expr   = false; ///< Boolean flag indicating if the expression are automatically vectorized
 #endif
 
 //Flag to enable vectorized implementation of algorithms
 #ifdef ETL_VECTORIZE_IMPL
 constexpr const bool vectorize_impl = true;
 #else
-constexpr const bool vectorize_impl   = false;
+constexpr const bool vectorize_impl   = false; ///< Boolean flag indicating if the implementations are automatically vectorized
 #endif
 
 //Flag to disable the creation of temporary in expressions
 #ifdef ETL_NO_TEMPORARY
 constexpr const bool create_temporary = false;
 #else
-constexpr const bool create_temporary = true;
+constexpr const bool create_temporary = true; ///< Boolean flag indicating if temporaries are created
 #endif
 
 #ifdef ETL_PARALLEL_THREADS
 constexpr const std::size_t threads = ETL_PARALLEL_THREADS;
 #else
-const std::size_t threads = std::thread::hardware_concurrency();
+const std::size_t threads = std::thread::hardware_concurrency(); ///< Number of threads
 #endif
 
 #ifdef ETL_PARALLEL
 constexpr const bool parallel = true;
 #else
-constexpr const bool parallel = false;
+constexpr const bool parallel = false; ///< Boolean flag indicating if expressions and implementations are parallelized (alpha)
 #endif
 
 #ifdef ETL_MKL_MODE
@@ -99,30 +99,33 @@ struct is_cufft_enabled : std::false_type {};
 #ifdef ETL_ELEMENT_WISE_MULTIPLICATION
 constexpr const bool is_element_wise_mul_default = true;
 #else
-constexpr const bool is_element_wise_mul_default = false;
+constexpr const bool is_element_wise_mul_default = false; ///< Boolean flag indicating if multiplication of two expression means matrix multiplication (false) or element-wise multiplication (true)
 #endif
 
 //Flag to prevent division to be done by multiplication
 #ifdef ETL_STRICT_DIV
 constexpr const bool is_div_strict = true;
 #else
-constexpr const bool is_div_strict               = false;
+constexpr const bool is_div_strict               = false; ///< Boolean flag indicating if division can be done by multiplication (false) or not (true)
 #endif
 
 //Flag to disable unrolling of vectorized loops
 #ifdef ETL_NO_UNROLL_VECT
 constexpr const bool unroll_vectorized_loops = false;
 #else
-constexpr const bool unroll_vectorized_loops     = true;
+constexpr const bool unroll_vectorized_loops     = true; ///< Boolean flag indicating if vectorized loops are getting unrolled
 #endif
 
 //Flag to disable unrolling of non-vectorized loops
 #ifdef ETL_NO_UNROLL_NON_VECT
 constexpr const bool unroll_normal_loops = false;
 #else
-constexpr const bool unroll_normal_loops         = true;
+constexpr const bool unroll_normal_loops         = true; ///< Boolean flag indicating if normal loops are getting unrolled
 #endif
 
+/*!
+ * \brief Vectorization mode
+ */
 enum class vector_mode_t {
     NONE,
     SSE3,
@@ -137,13 +140,13 @@ constexpr const vector_mode_t vector_mode = vector_mode_t::AVX;
 #elif defined(__SSE3__)
 constexpr const vector_mode_t vector_mode = vector_mode_t::SSE3;
 #else
-constexpr const vector_mode_t vector_mode = vector_mode_t::NONE;
+constexpr const vector_mode_t vector_mode = vector_mode_t::NONE; ///< The vector mode in use
 #endif
 
 #ifdef __INTEL_COMPILER
 constexpr const bool intel_compiler = true;
 #else
-constexpr const bool intel_compiler = false;
+constexpr const bool intel_compiler = false; ///< Indicates if the project is compiled with intel
 #endif
 
 } //end of namespace etl
