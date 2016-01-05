@@ -32,18 +32,6 @@ struct basic_upsample_2d_expr : impl_expr<basic_upsample_2d_expr<T, C1, C2, Impl
     using result_type = detail::expr_result_t<this_type, A>;
 
     /*!
-     * \brief Returns the DDth dimension of the expression
-     * \tparam A The sub expression type
-     * \tparam DD The dimension to get
-     * \return the DDth dimension of the expression
-     */
-    template <typename A, std::size_t DD>
-    static constexpr std::size_t dim() {
-        return DD == 0 ? decay_traits<A>::template dim<0>() * C1
-                       : decay_traits<A>::template dim<1>() * C2;
-    }
-
-    /*!
      * \brief Apply the expression
      * \param a The sub expression
      * \param c The expression where to store the results
@@ -64,6 +52,18 @@ struct basic_upsample_2d_expr : impl_expr<basic_upsample_2d_expr<T, C1, C2, Impl
      */
     static std::string desc() noexcept {
         return "pool_2d";
+    }
+
+    /*!
+     * \brief Returns the DDth dimension of the expression
+     * \tparam A The sub expression type
+     * \tparam DD The dimension to get
+     * \return the DDth dimension of the expression
+     */
+    template <typename A, std::size_t DD>
+    static constexpr std::size_t dim() {
+        return DD == 0 ? decay_traits<A>::template dim<0>() * C1
+                       : decay_traits<A>::template dim<1>() * C2;
     }
 
     /*!
