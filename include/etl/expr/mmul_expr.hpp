@@ -165,6 +165,10 @@ struct basic_vm_mul_expr : impl_expr<basic_vm_mul_expr<T, Impl>> {
             std::forward<C>(c));
     }
 
+    /*!
+     * \brief Returns a textual representation of the operation
+     * \return a textual representation of the operation
+     */
     static std::string desc() noexcept {
         return "vm_mul";
     }
@@ -219,6 +223,10 @@ struct basic_mv_mul_expr : impl_expr<basic_mv_mul_expr<T, Impl>> {
             std::forward<C>(c));
     }
 
+    /*!
+     * \brief Returns a textual representation of the operation
+     * \return a textual representation of the operation
+     */
     static std::string desc() noexcept {
         return "mv_mul";
     }

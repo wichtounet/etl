@@ -110,6 +110,10 @@ struct basic_pool_derivative_3d_expr : impl_expr<basic_pool_derivative_3d_expr<T
             std::forward<C>(c));
     }
 
+    /*!
+     * \brief Returns a textual representation of the operation
+     * \return a textual representation of the operation
+     */
     static std::string desc() noexcept {
         return "pool_derivative_2d";
     }

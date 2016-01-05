@@ -116,6 +116,10 @@ struct basic_pool_3d_expr : impl_expr<basic_pool_3d_expr<T, C1, C2, C3, Impl>> {
             std::forward<C>(c));
     }
 
+    /*!
+     * \brief Returns a textual representation of the operation
+     * \return a textual representation of the operation
+     */
     static std::string desc() noexcept {
         return "pool_3d";
     }
