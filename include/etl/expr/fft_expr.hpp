@@ -55,7 +55,7 @@ struct basic_fft_expr : impl_expr<basic_fft_expr<T, D, Impl>> {
 
     /*!
      * \brief Returns the DDth dimension of the expression
-     * \param a The sub expression
+     * \tparam A The sub expression type
      * \tparam DD The dimension to get
      * \return the DDth dimension of the expression
      */

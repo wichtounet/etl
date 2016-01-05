@@ -60,7 +60,7 @@ struct impl_expr {
      * \return a pointer to the temporary
      */
     template <typename... Subs, cpp_enable_if(all_fast<Subs...>::value)>
-    static result_type<Subs...>* allocate(Subs&&... /*args*/) {
+    static result_type<Subs...>* allocate(__attribute__ ((unused)) Subs&&... args) {
         return new result_type<Subs...>();
     }
 
