@@ -73,6 +73,15 @@ struct basic_pool_derivative_2d_expr : impl_expr<basic_pool_derivative_2d_expr<T
         return this_type::template dim<A, B, 0>() * this_type::template dim<A, B, 1>();
     }
 
+    /*!
+     * \brief Returns the storage order of the expression.
+     * \return the storage order of the expression
+     */
+    template <typename A, typename B>
+    static constexpr etl::order order() {
+        return etl::order::RowMajor;
+    }
+
     static constexpr std::size_t dimensions() {
         return 2;
     }
@@ -136,6 +145,15 @@ struct basic_pool_derivative_3d_expr : impl_expr<basic_pool_derivative_3d_expr<T
     template <typename A, typename B>
     static constexpr std::size_t size() {
         return this_type::template dim<A, B, 0>() * this_type::template dim<A, B, 1>() * this_type::template dim<A, B, 2>();
+    }
+
+    /*!
+     * \brief Returns the storage order of the expression.
+     * \return the storage order of the expression
+     */
+    template <typename A, typename B>
+    static constexpr etl::order order() {
+        return etl::order::RowMajor;
     }
 
     static constexpr std::size_t dimensions() {

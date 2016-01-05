@@ -101,6 +101,15 @@ struct basic_upsample_2d_expr : impl_expr<basic_upsample_2d_expr<T, C1, C2, Impl
     }
 
     /*!
+     * \brief Returns the storage order of the expression.
+     * \return the storage order of the expression
+     */
+    template <typename A>
+    static constexpr etl::order order() {
+        return etl::order::RowMajor;
+    }
+
+    /*!
      * \brief Returns the number of dimensions of the expression
      * \return the number of dimensions of the expression
      */
@@ -174,6 +183,15 @@ struct basic_upsample_3d_expr  : impl_expr<basic_upsample_3d_expr<T, C1, C2, C3,
     template <typename A>
     static constexpr std::size_t size() {
         return this_type::template dim<A, 0>() * this_type::template dim<A, 1>() * this_type::template dim<A, 2>();
+    }
+
+    /*!
+     * \brief Returns the storage order of the expression.
+     * \return the storage order of the expression
+     */
+    template <typename A>
+    static constexpr etl::order order() {
+        return etl::order::RowMajor;
     }
 
     static constexpr std::size_t dimensions() {

@@ -78,6 +78,15 @@ struct basic_pool_2d_expr : impl_expr<basic_pool_2d_expr<T, C1, C2, Impl>> {
         return this_type::template dim<A, 0>() * this_type::template dim<A, 1>();
     }
 
+    /*!
+     * \brief Returns the storage order of the expression.
+     * \return the storage order of the expression
+     */
+    template <typename A>
+    static constexpr etl::order order() {
+        return etl::order::RowMajor;
+    }
+
     static constexpr std::size_t dimensions() {
         return 2;
     }
@@ -150,6 +159,15 @@ struct basic_pool_3d_expr : impl_expr<basic_pool_3d_expr<T, C1, C2, C3, Impl>> {
     template <typename A>
     static constexpr std::size_t size() {
         return this_type::template dim<A, 0>() * this_type::template dim<A, 1>() * this_type::template dim<A, 2>();
+    }
+
+    /*!
+     * \brief Returns the storage order of the expression.
+     * \return the storage order of the expression
+     */
+    template <typename A>
+    static constexpr etl::order order() {
+        return etl::order::RowMajor;
     }
 
     static constexpr std::size_t dimensions() {

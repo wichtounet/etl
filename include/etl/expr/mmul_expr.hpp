@@ -127,6 +127,15 @@ struct basic_mm_mul_expr : impl_expr<basic_mm_mul_expr<T, Impl>> {
         return etl_traits<A>::template dim<0>() * etl_traits<B>::template dim<1>();
     }
 
+    /*!
+     * \brief Returns the storage order of the expression.
+     * \return the storage order of the expression
+     */
+    template <typename A, typename B>
+    static constexpr etl::order order() {
+        return decay_traits<A>::storage_order;
+    }
+
     template <typename A, typename B, std::size_t D>
     static constexpr std::size_t dim() {
         return D == 0 ? decay_traits<A>::template dim<0>() : decay_traits<B>::template dim<1>();
@@ -188,6 +197,15 @@ struct basic_vm_mul_expr : impl_expr<basic_vm_mul_expr<T, Impl>> {
         return etl_traits<B>::template dim<1>();
     }
 
+    /*!
+     * \brief Returns the storage order of the expression.
+     * \return the storage order of the expression
+     */
+    template <typename A, typename B>
+    static constexpr etl::order order() {
+        return etl::order::RowMajor;
+    }
+
     template <typename A, typename B, std::size_t D>
     static constexpr std::size_t dim() {
         return decay_traits<B>::template dim<1>();
@@ -244,6 +262,15 @@ struct basic_mv_mul_expr : impl_expr<basic_mv_mul_expr<T, Impl>> {
     template <typename A, typename B>
     static constexpr std::size_t size() {
         return etl_traits<A>::template dim<0>();
+    }
+
+    /*!
+     * \brief Returns the storage order of the expression.
+     * \return the storage order of the expression
+     */
+    template <typename A, typename B>
+    static constexpr etl::order order() {
+        return etl::order::RowMajor;
     }
 
     template <typename A, typename B, std::size_t D>

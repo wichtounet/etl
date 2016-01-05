@@ -290,6 +290,15 @@ struct basic_conv_expr : impl_expr<basic_conv_expr<T, D, TT, Impl>> {
     }
 
     /*!
+     * \brief Returns the storage order of the expression.
+     * \return the storage order of the expression
+     */
+    template <typename A, typename B>
+    static constexpr etl::order order() {
+        return etl::order::RowMajor;
+    }
+
+    /*!
      * \brief Returns the number of dimensions of the expression
      * \return the number of dimensions of the expression
      */

@@ -60,6 +60,15 @@ struct outer_product_expr : impl_expr<outer_product_expr<T>> {
         return etl_traits<A>::template dim<0>() * etl_traits<B>::template dim<0>();
     }
 
+    /*!
+     * \brief Returns the storage order of the expression.
+     * \return the storage order of the expression
+     */
+    template <typename A, typename B>
+    static constexpr etl::order order() {
+        return etl::order::RowMajor;
+    }
+
     template <typename A, typename B, std::size_t D>
     static constexpr std::size_t dim() {
         return D == 0 ? decay_traits<A>::template dim<0>() : decay_traits<B>::template dim<0>();

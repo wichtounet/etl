@@ -26,7 +26,8 @@ struct fast_result_type_builder;
 
 template <typename E, std::size_t... I, typename... Subs>
 struct fast_result_type_builder<E, std::index_sequence<I...>, Subs...> {
-    using type = fast_dyn_matrix<typename E::value_type, E::template dim<Subs..., I>()...>;
+    using value_type = typename E::value_type;
+    using type = fast_matrix_impl<value_type, std::vector<value_type>, E::template order<Subs...>(), E::template dim<Subs..., I>()...>;
 };
 
 template <typename E, bool Fast, typename... Subs>
@@ -34,7 +35,7 @@ struct expr_result;
 
 template <typename E, typename... Subs>
 struct expr_result<E, false, Subs...> {
-    using type = dyn_matrix<typename E::value_type, E::dimensions()>;
+    using type = dyn_matrix_impl<typename E::value_type, E::template order<Subs...>(), E::dimensions()>;
 };
 
 template <typename E, typename... Subs>

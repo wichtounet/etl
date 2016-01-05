@@ -77,6 +77,15 @@ struct basic_convmtx2_expr : impl_expr<basic_convmtx2_expr<T, K1, K2, Impl>> {
         return this_type::template dim<A, 0>() * this_type::template dim<A, 1>();
     }
 
+    /*!
+     * \brief Returns the storage order of the expression.
+     * \return the storage order of the expression
+     */
+    template <typename A>
+    static constexpr etl::order order() {
+        return etl::order::RowMajor;
+    }
+
     static constexpr std::size_t dimensions() {
         return 2;
     }
