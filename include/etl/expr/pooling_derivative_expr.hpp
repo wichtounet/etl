@@ -12,6 +12,8 @@
 #include "cpp_utils/assert.hpp"
 #include "cpp_utils/tmp.hpp"
 
+#include "etl/expr/detail.hpp"
+
 //Get the implementations
 #include "etl/impl/pooling.hpp"
 
@@ -23,24 +25,14 @@ struct basic_pool_derivative_2d_expr {
     static_assert(C2 > 0, "C2 must be greater than 0");
 
     using this_type = basic_pool_derivative_2d_expr<T, C1, C2, Impl>;
+    using value_type = T;
 
-    template <typename A, typename B, std::size_t DD>
-    static constexpr std::size_t dim() {
-        return decay_traits<A>::template dim<DD>();
-    }
-
-    template <typename A, typename B, class Enable = void>
-    struct result_type_builder {
-        using type = dyn_matrix<value_t<A>, 2>;
-    };
-
+    /*!
+     * \brief The result type for given sub types
+     * \tparam A The sub expression type
+     */
     template <typename A, typename B>
-    struct result_type_builder<A, B, std::enable_if_t<all_fast<A, B>::value>> {
-        using type = fast_dyn_matrix<value_t<A>, this_type::template dim<A, B, 0>(), this_type::template dim<A, B, 1>()>;
-    };
-
-    template <typename A, typename B>
-    using result_type = typename result_type_builder<A, B>::type;
+    using result_type = detail::expr_result_t<this_type, A, B>;
 
     template <typename A, typename B, cpp_enable_if(all_fast<A, B>::value)>
     static result_type<A, B>* allocate(A&& /*a*/, B&& /*b*/) {
@@ -63,8 +55,17 @@ struct basic_pool_derivative_2d_expr {
             std::forward<C>(c));
     }
 
+    /*!
+     * \brief Returns a textual representation of the operation
+     * \return a textual representation of the operation
+     */
     static std::string desc() noexcept {
         return "pool_derivative_2d";
+    }
+
+    template <typename A, typename B, std::size_t DD>
+    static constexpr std::size_t dim() {
+        return decay_traits<A>::template dim<DD>();
     }
 
     template <typename A, typename B>
@@ -99,24 +100,14 @@ struct basic_pool_derivative_3d_expr {
     static_assert(C3 > 0, "C3 must be greater than 0");
 
     using this_type = basic_pool_derivative_3d_expr<T, C1, C2, C3, Impl>;
+    using value_type = T;
 
-    template <typename A, typename B, std::size_t DD>
-    static constexpr std::size_t dim() {
-        return decay_traits<A>::template dim<DD>();
-    }
-
-    template <typename A, typename B, class Enable = void>
-    struct result_type_builder {
-        using type = dyn_matrix<value_t<A>, 3>;
-    };
-
+    /*!
+     * \brief The result type for given sub types
+     * \tparam A The sub expression type
+     */
     template <typename A, typename B>
-    struct result_type_builder<A, B, std::enable_if_t<all_fast<A, B>::value>> {
-        using type = fast_dyn_matrix<value_t<A>, this_type::template dim<A, B, 0>(), this_type::template dim<A, B, 1>(), this_type::template dim<A, B, 2>()>;
-    };
-
-    template <typename A, typename B>
-    using result_type = typename result_type_builder<A, B>::type;
+    using result_type = detail::expr_result_t<this_type, A, B>;
 
     template <typename A, typename B, cpp_enable_if(all_fast<A, B>::value)>
     static result_type<A, B>* allocate(A&& /*a*/, B&& /*b*/) {
@@ -141,6 +132,11 @@ struct basic_pool_derivative_3d_expr {
 
     static std::string desc() noexcept {
         return "pool_derivative_2d";
+    }
+
+    template <typename A, typename B, std::size_t DD>
+    static constexpr std::size_t dim() {
+        return decay_traits<A>::template dim<DD>();
     }
 
     template <typename A, typename B>

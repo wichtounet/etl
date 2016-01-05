@@ -12,6 +12,8 @@
 #include "cpp_utils/assert.hpp"
 #include "cpp_utils/tmp.hpp"
 
+#include "etl/expr/detail.hpp"
+
 //Get the implementations
 #include "etl/impl/convmtx2.hpp"
 
@@ -22,26 +24,21 @@ struct basic_convmtx2_expr {
     static_assert(K1 > 0, "K1 must be greater than 0");
     static_assert(K2 > 0, "K2 must be greater than 0");
 
-    using this_type = basic_convmtx2_expr<T, K1, K2, Impl>;
+    using value_type = T;
+    using this_type  = basic_convmtx2_expr<T, K1, K2, Impl>;
+
+    /*!
+     * \brief The result type for given sub types
+     * \tparam A The sub expression type
+     */
+    template <typename A>
+    using result_type = detail::expr_result_t<this_type, A>;
 
     template <typename A, std::size_t DD>
     static constexpr std::size_t dim() {
         return DD == 0 ? ((decay_traits<A>::template dim<0>() + K1 - 1) * (decay_traits<A>::template dim<1>() + K2 - 1))
                        : K1 * K2;
     }
-
-    template <typename A, class Enable = void>
-    struct result_type_builder {
-        using type = dyn_matrix<value_t<A>, 2>;
-    };
-
-    template <typename A>
-    struct result_type_builder<A, std::enable_if_t<all_fast<A>::value>> {
-        using type = fast_dyn_matrix<value_t<A>, this_type::template dim<A, 0>(), this_type::template dim<A, 1>()>;
-    };
-
-    template <typename A>
-    using result_type = typename result_type_builder<A>::type;
 
     template <typename A, cpp_enable_if(all_fast<A>::value)>
     static result_type<A>* allocate(A&& /*a*/) {
@@ -65,6 +62,10 @@ struct basic_convmtx2_expr {
             std::forward<C>(c));
     }
 
+    /*!
+     * \brief Returns a textual representation of the operation
+     * \return a textual representation of the operation
+     */
     static std::string desc() noexcept {
         return "convmtx2";
     }

@@ -12,8 +12,7 @@
 
 #pragma once
 
-#include "cpp_utils/assert.hpp"
-#include "cpp_utils/tmp.hpp"
+#include "etl/expr/detail.hpp"
 
 //Get the implementations
 #include "etl/impl/fft.hpp"
@@ -25,33 +24,12 @@ struct basic_fft_expr {
     using this_type  = basic_fft_expr<T, D, Impl>;
     using value_type = T;
 
-private:
-    template <typename A, class Enable = void>
-    struct result_type_builder {
-        using type = dyn_matrix<value_type, D>;
-    };
-
-    template <typename A, typename I>
-    struct fast_result_type_builder;
-
-    template <typename A, std::size_t... I>
-    struct fast_result_type_builder<A, std::index_sequence<I...>> {
-        using type = fast_dyn_matrix<value_type, this_type::template dim<A, I>()...>;
-    };
-
-    template <typename A>
-    struct result_type_builder<A, std::enable_if_t<decay_traits<A>::is_fast>> {
-        using type = typename fast_result_type_builder<A, std::make_index_sequence<D>>::type;
-    };
-
-public:
-
     /*!
      * \brief The result type for a given sub expression type
      * \tparam A The sub epxpression type
      */
     template <typename A>
-    using result_type = typename result_type_builder<A>::type;
+    using result_type = detail::expr_result_t<this_type, A>;
 
     template <typename A, std::size_t... I>
     static result_type<A>* dyn_allocate(A&& a, std::index_sequence<I...> /*seq*/) {

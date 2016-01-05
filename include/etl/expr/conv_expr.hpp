@@ -12,6 +12,8 @@
 #include "cpp_utils/assert.hpp"
 #include "cpp_utils/tmp.hpp"
 
+#include "etl/expr/detail.hpp"
+
 //Get the implementations
 #include "etl/impl/conv.hpp"
 
@@ -142,9 +144,17 @@ void check_conv_deep_sizes(const I& i, const K& k, const C& c) {
  */
 template <typename T, std::size_t D, conv_type TT, template <typename...> class Impl>
 struct basic_conv_expr {
-    using this_type = basic_conv_expr<T, D, TT, Impl>;
+    using value_type = T;
+    using this_type  = basic_conv_expr<T, D, TT, Impl>;
 
-private:
+    /*!
+     * \brief The result type for given sub types
+     * \tparam A The left hand side epxpression type
+     * \tparam B The right hand side epxpression type
+     */
+    template <typename A, typename B>
+    using result_type = detail::expr_result_t<this_type, A, B>;
+
     template <typename A, typename B, std::size_t DD>
     static constexpr std::size_t dim() {
         return (D > 2 && DD < (D - 2)) ? decay_traits<A>::template dim<DD>()
@@ -152,38 +162,6 @@ private:
                                                                 : TT == conv_type::SAME ? decay_traits<A>::template dim<DD>()
                                                                                         : decay_traits<A>::template dim<DD>() + decay_traits<B>::template dim<DD>() - 1;
     }
-
-    template <typename A, typename B, class Enable = void>
-    struct result_type_builder {
-        using type = dyn_matrix<value_t<A>, D>;
-    };
-
-    template <typename A, typename B, typename I>
-    struct fast_result_type_builder;
-
-    template <typename A, typename B, std::size_t... I>
-    struct fast_result_type_builder<A, B, std::index_sequence<I...>> {
-        using type = fast_dyn_matrix<typename std::decay_t<A>::value_type, this_type::template dim<A, B, I>()...>;
-    };
-
-    template <typename A, typename B>
-    struct result_type_builder<A, B, std::enable_if_t<all_fast<A, B>::value>> {
-        using type = typename fast_result_type_builder<A, B, std::make_index_sequence<D>>::type;
-    };
-
-    template <typename A, typename B, std::size_t... I>
-    static constexpr std::size_t size_mul(const std::index_sequence<I...>& /*seq*/) {
-        return mul_all<this_type::dim<A, B, I>()...>::value;
-    }
-
-public:
-    /*!
-     * \brief The result type for given sub types
-     * \tparam A The left hand side epxpression type
-     * \tparam B The right hand side epxpression type
-     */
-    template <typename A, typename B>
-    using result_type = typename result_type_builder<A, B>::type;
 
     template <typename A, typename B, std::size_t... I>
     static result_type<A, B>* dyn_allocate(const A& a, const B& b, std::index_sequence<I...> /*seq*/) {
@@ -326,6 +304,11 @@ public:
         } else { //D == 2
             return this_type::dim(a, b, 0) * this_type::dim(a, b, 1);
         }
+    }
+
+    template <typename A, typename B, std::size_t... I>
+    static constexpr std::size_t size_mul(const std::index_sequence<I...>& /*seq*/) {
+        return mul_all<this_type::dim<A, B, I>()...>::value;
     }
 
     /*!

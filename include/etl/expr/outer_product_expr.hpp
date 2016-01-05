@@ -9,6 +9,8 @@
 
 #include <algorithm>
 
+#include "etl/expr/detail.hpp"
+
 #include "etl/impl/outer_product.hpp"
 
 #include "etl/temporary.hpp"
@@ -17,18 +19,15 @@ namespace etl {
 
 template <typename T>
 struct outer_product_expr {
-    template <typename A, typename B, class Enable = void>
-    struct result_type_builder {
-        using type = dyn_matrix<value_t<A>>;
-    };
+    using value_type = T;
+    using this_type  = outer_product_expr<T>;
 
+    /*!
+     * \brief The result type for given sub types
+     * \tparam A The sub expression type
+     */
     template <typename A, typename B>
-    struct result_type_builder<A, B, std::enable_if_t<all_fast<A, B>::value>> {
-        using type = fast_dyn_matrix<value_t<A>, decay_traits<A>::template dim<0>(), decay_traits<B>::template dim<0>()>;
-    };
-
-    template <typename A, typename B>
-    using result_type = typename result_type_builder<A, B>::type;
+    using result_type = detail::expr_result_t<this_type, A, B>;
 
     template <typename A, typename B, cpp_enable_if(all_fast<A, B>::value)>
     static result_type<A, B>* allocate(A&& /*a*/, B&& /*b*/) {
@@ -48,6 +47,10 @@ struct outer_product_expr {
         detail::outer_product_impl<A, B, C>::apply(std::forward<A>(a), std::forward<B>(b), std::forward<C>(c));
     }
 
+    /*!
+     * \brief Returns a textual representation of the operation
+     * \return a textual representation of the operation
+     */
     static std::string desc() noexcept {
         return "outer_product";
     }
@@ -69,7 +72,7 @@ struct outer_product_expr {
 
     template <typename A, typename B, std::size_t D>
     static constexpr std::size_t dim() {
-        return D == 0 ? etl_traits<A>::template dim<0>() : etl_traits<B>::template dim<0>();
+        return D == 0 ? decay_traits<A>::template dim<0>() : decay_traits<B>::template dim<0>();
     }
 
     static constexpr std::size_t dimensions() {

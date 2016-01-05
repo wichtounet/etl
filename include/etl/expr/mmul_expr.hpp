@@ -9,9 +9,9 @@
 
 #include <algorithm>
 
-#include "etl/impl/mmul.hpp"
+#include "etl/expr/detail.hpp"
 
-#include "etl/temporary.hpp"
+#include "etl/impl/mmul.hpp"
 
 namespace etl {
 
@@ -82,19 +82,11 @@ void check_mv_mul_sizes(const A& /*a*/, const B& /*b*/, C& /*c*/) {
 
 template <typename T, template <typename...> class Impl>
 struct basic_mm_mul_expr {
-    template <typename A, typename B, class Enable = void>
-    struct result_type_builder {
-        using type = dyn_matrix_impl<value_t<A>, decay_traits<A>::storage_order, 2>;
-    };
+    using value_type = T;
+    using this_type  = basic_mm_mul_expr<T, Impl>;
 
     template <typename A, typename B>
-    struct result_type_builder<A, B, std::enable_if_t<all_fast<A, B>::value>> {
-        using VT   = typename std::decay_t<A>::value_type;
-        using type = fast_matrix_impl<VT, std::vector<VT>, decay_traits<A>::storage_order, decay_traits<A>::template dim<0>(), decay_traits<B>::template dim<1>()>;
-    };
-
-    template <typename A, typename B>
-    using result_type = typename result_type_builder<A, B>::type;
+    using result_type = detail::expr_result_t<this_type, A, B>;
 
     template <typename A, typename B, cpp_enable_if(all_fast<A, B>::value)>
     static result_type<A, B>* allocate(A&& /*a*/, B&& /*b*/) {
@@ -118,6 +110,10 @@ struct basic_mm_mul_expr {
             std::forward<C>(c));
     }
 
+    /*!
+     * \brief Returns a textual representation of the operation
+     * \return a textual representation of the operation
+     */
     static std::string desc() noexcept {
         return "mm_mul";
     }
@@ -143,7 +139,7 @@ struct basic_mm_mul_expr {
 
     template <typename A, typename B, std::size_t D>
     static constexpr std::size_t dim() {
-        return D == 0 ? etl_traits<A>::template dim<0>() : etl_traits<B>::template dim<1>();
+        return D == 0 ? decay_traits<A>::template dim<0>() : decay_traits<B>::template dim<1>();
     }
 
     static constexpr std::size_t dimensions() {
@@ -161,18 +157,11 @@ using strassen_mm_mul_expr = basic_mm_mul_expr<T, detail::strassen_mm_mul_impl>;
 
 template <typename T, template <typename...> class Impl>
 struct basic_vm_mul_expr {
-    template <typename A, typename B, class Enable = void>
-    struct result_type_builder {
-        using type = dyn_vector<value_t<A>>;
-    };
+    using value_type = T;
+    using this_type  = basic_vm_mul_expr<T, Impl>;
 
     template <typename A, typename B>
-    struct result_type_builder<A, B, std::enable_if_t<all_fast<A, B>::value>> {
-        using type = fast_dyn_matrix<typename std::decay_t<A>::value_type, decay_traits<B>::template dim<1>()>;
-    };
-
-    template <typename A, typename B>
-    using result_type = typename result_type_builder<A, B>::type;
+    using result_type = detail::expr_result_t<this_type, A, B>;
 
     template <typename A, typename B, cpp_enable_if(all_fast<A, B>::value)>
     static result_type<A, B>* allocate(A&& /*unused*/, B&& /*unused*/) {
@@ -217,7 +206,7 @@ struct basic_vm_mul_expr {
 
     template <typename A, typename B, std::size_t D>
     static constexpr std::size_t dim() {
-        return etl_traits<B>::template dim<1>();
+        return decay_traits<B>::template dim<1>();
     }
 
     static constexpr std::size_t dimensions() {
@@ -232,18 +221,11 @@ using vm_mul_expr = basic_vm_mul_expr<T, detail::vm_mul_impl>;
 
 template <typename T, template <typename...> class Impl>
 struct basic_mv_mul_expr {
-    template <typename A, typename B, class Enable = void>
-    struct result_type_builder {
-        using type = dyn_vector<value_t<A>>;
-    };
+    using value_type = T;
+    using this_type  = basic_mv_mul_expr<T, Impl>;
 
     template <typename A, typename B>
-    struct result_type_builder<A, B, std::enable_if_t<all_fast<A, B>::value>> {
-        using type = fast_dyn_matrix<typename std::decay_t<A>::value_type, decay_traits<A>::template dim<0>()>;
-    };
-
-    template <typename A, typename B>
-    using result_type = typename result_type_builder<A, B>::type;
+    using result_type = detail::expr_result_t<this_type, A, B>;
 
     template <typename A, typename B, cpp_enable_if(all_fast<A, B>::value)>
     static result_type<A, B>* allocate(A&& /*a*/, B&& /*b*/) {
@@ -288,7 +270,7 @@ struct basic_mv_mul_expr {
 
     template <typename A, typename B, std::size_t D>
     static constexpr std::size_t dim() {
-        return etl_traits<A>::template dim<0>();
+        return decay_traits<A>::template dim<0>();
     }
 
     static constexpr std::size_t dimensions() {

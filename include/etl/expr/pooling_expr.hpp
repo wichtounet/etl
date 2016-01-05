@@ -14,8 +14,7 @@
 
 #include <algorithm>
 
-#include "cpp_utils/assert.hpp"
-#include "cpp_utils/tmp.hpp"
+#include "etl/expr/detail.hpp"
 
 //Get the implementations
 #include "etl/impl/pooling.hpp"
@@ -30,26 +29,11 @@ struct basic_pool_2d_expr {
     static_assert(C1 > 0, "C1 must be greater than 0");
     static_assert(C2 > 0, "C2 must be greater than 0");
 
-    using this_type = basic_pool_2d_expr<T, C1, C2, Impl>;
-
-    template <typename A, std::size_t DD>
-    static constexpr std::size_t dim() {
-        return DD == 0 ? decay_traits<A>::template dim<0>() / C1
-                       : decay_traits<A>::template dim<1>() / C2;
-    }
-
-    template <typename A, class Enable = void>
-    struct result_type_builder {
-        using type = dyn_matrix<value_t<A>, 2>;
-    };
+    using value_type = T;
+    using this_type  = basic_pool_2d_expr<T, C1, C2, Impl>;
 
     template <typename A>
-    struct result_type_builder<A, std::enable_if_t<all_fast<A>::value>> {
-        using type = fast_dyn_matrix<value_t<A>, this_type::template dim<A, 0>(), this_type::template dim<A, 1>()>;
-    };
-
-    template <typename A>
-    using result_type = typename result_type_builder<A>::type;
+    using result_type = detail::expr_result_t<this_type, A>;
 
     template <typename A, cpp_enable_if(all_fast<A>::value)>
     static result_type<A>* allocate(A&& /*a*/) {
@@ -71,6 +55,16 @@ struct basic_pool_2d_expr {
             std::forward<C>(c));
     }
 
+    template <typename A, std::size_t DD>
+    static constexpr std::size_t dim() {
+        return DD == 0 ? decay_traits<A>::template dim<0>() / C1
+                       : decay_traits<A>::template dim<1>() / C2;
+    }
+
+    /*!
+     * \brief Returns a textual representation of the operation
+     * \return a textual representation of the operation
+     */
     static std::string desc() noexcept {
         return "pool_2d";
     }
@@ -116,27 +110,11 @@ struct basic_pool_3d_expr {
     static_assert(C2 > 0, "C2 must be greater than 0");
     static_assert(C3 > 0, "C3 must be greater than 0");
 
-    using this_type = basic_pool_3d_expr<T, C1, C2, C3, Impl>;
-
-    template <typename A, std::size_t DD>
-    static constexpr std::size_t dim() {
-        return DD == 0 ? decay_traits<A>::template dim<0>() / C1
-                       : DD == 1 ? decay_traits<A>::template dim<1>() / C2
-                                 : decay_traits<A>::template dim<2>() / C3;
-    }
-
-    template <typename A, class Enable = void>
-    struct result_type_builder {
-        using type = dyn_matrix<value_t<A>, 3>;
-    };
+    using value_type = T;
+    using this_type  = basic_pool_3d_expr<T, C1, C2, C3, Impl>;
 
     template <typename A>
-    struct result_type_builder<A, std::enable_if_t<all_fast<A>::value>> {
-        using type = fast_dyn_matrix<value_t<A>, this_type::template dim<A, 0>(), this_type::template dim<A, 1>(), this_type::template dim<A, 2>()>;
-    };
-
-    template <typename A>
-    using result_type = typename result_type_builder<A>::type;
+    using result_type = detail::expr_result_t<this_type, A>;
 
     template <typename A, cpp_enable_if(all_fast<A>::value)>
     static result_type<A>* allocate(A&& /*a*/) {
@@ -160,6 +138,13 @@ struct basic_pool_3d_expr {
 
     static std::string desc() noexcept {
         return "pool_3d";
+    }
+
+    template <typename A, std::size_t DD>
+    static constexpr std::size_t dim() {
+        return DD == 0 ? decay_traits<A>::template dim<0>() / C1
+                       : DD == 1 ? decay_traits<A>::template dim<1>() / C2
+                                 : decay_traits<A>::template dim<2>() / C3;
     }
 
     template <typename A>
