@@ -20,7 +20,7 @@
 namespace etl {
 
 template <typename T, std::size_t C1, std::size_t C2, template <typename...> class Impl>
-struct basic_pool_derivative_2d_expr {
+struct basic_pool_derivative_2d_expr : impl_expr<basic_pool_derivative_2d_expr<T, C1, C2, Impl>> {
     static_assert(C1 > 0, "C1 must be greater than 0");
     static_assert(C2 > 0, "C2 must be greater than 0");
 
@@ -33,16 +33,6 @@ struct basic_pool_derivative_2d_expr {
      */
     template <typename A, typename B>
     using result_type = detail::expr_result_t<this_type, A, B>;
-
-    template <typename A, typename B, cpp_enable_if(all_fast<A, B>::value)>
-    static result_type<A, B>* allocate(A&& /*a*/, B&& /*b*/) {
-        return new result_type<A, B>();
-    }
-
-    template <typename A, typename B, cpp_disable_if(all_fast<A>::value)>
-    static result_type<A, B>* allocate(A&& a, B&& /*b*/) {
-        return new result_type<A, B>(etl::dim<0>(a), etl::dim<1>(a));
-    }
 
     template <typename A, typename B, typename C>
     static void apply(A&& a, B&& b, C&& c) {
@@ -94,7 +84,7 @@ template <typename T, std::size_t C1, std::size_t C2>
 using max_pool_derivative_2d_expr = basic_pool_derivative_2d_expr<T, C1, C2, impl::max_pool_derivative_2d>;
 
 template <typename T, std::size_t C1, std::size_t C2, std::size_t C3, template <typename...> class Impl>
-struct basic_pool_derivative_3d_expr {
+struct basic_pool_derivative_3d_expr : impl_expr<basic_pool_derivative_3d_expr<T, C1, C2, C3, Impl>> {
     static_assert(C1 > 0, "C1 must be greater than 0");
     static_assert(C2 > 0, "C2 must be greater than 0");
     static_assert(C3 > 0, "C3 must be greater than 0");
@@ -108,16 +98,6 @@ struct basic_pool_derivative_3d_expr {
      */
     template <typename A, typename B>
     using result_type = detail::expr_result_t<this_type, A, B>;
-
-    template <typename A, typename B, cpp_enable_if(all_fast<A, B>::value)>
-    static result_type<A, B>* allocate(A&& /*a*/, B&& /*b*/) {
-        return new result_type<A, B>();
-    }
-
-    template <typename A, typename B, cpp_disable_if(all_fast<A>::value)>
-    static result_type<A, B>* allocate(A&& a, B&& /*b*/) {
-        return new result_type<A, B>(etl::dim<0>(a), etl::dim<1>(a), etl::dim<2>(a));
-    }
 
     template <typename A, typename B, typename C>
     static void apply(A&& a, B&& b, C&& c) {

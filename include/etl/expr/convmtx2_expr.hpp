@@ -20,7 +20,7 @@
 namespace etl {
 
 template <typename T, std::size_t K1, std::size_t K2, template <typename...> class Impl>
-struct basic_convmtx2_expr {
+struct basic_convmtx2_expr : impl_expr<basic_convmtx2_expr<T, K1, K2, Impl>> {
     static_assert(K1 > 0, "K1 must be greater than 0");
     static_assert(K2 > 0, "K2 must be greater than 0");
 
@@ -33,24 +33,6 @@ struct basic_convmtx2_expr {
      */
     template <typename A>
     using result_type = detail::expr_result_t<this_type, A>;
-
-    template <typename A, std::size_t DD>
-    static constexpr std::size_t dim() {
-        return DD == 0 ? ((decay_traits<A>::template dim<0>() + K1 - 1) * (decay_traits<A>::template dim<1>() + K2 - 1))
-                       : K1 * K2;
-    }
-
-    template <typename A, cpp_enable_if(all_fast<A>::value)>
-    static result_type<A>* allocate(A&& /*a*/) {
-        return new result_type<A>();
-    }
-
-    template <typename A, cpp_disable_if(all_fast<A>::value)>
-    static result_type<A>* allocate(A&& a) {
-        auto c_height = (etl::dim<0>(a) + K1 - 1) * (etl::dim<1>(a) + K2 - 1);
-        auto c_width = K1 * K2;
-        return new result_type<A>(c_height, c_width);
-    }
 
     template <typename A, typename C>
     static void apply(A&& a, C&& c) {
@@ -68,6 +50,12 @@ struct basic_convmtx2_expr {
      */
     static std::string desc() noexcept {
         return "convmtx2";
+    }
+
+    template <typename A, std::size_t DD>
+    static constexpr std::size_t dim() {
+        return DD == 0 ? ((decay_traits<A>::template dim<0>() + K1 - 1) * (decay_traits<A>::template dim<1>() + K2 - 1))
+                       : K1 * K2;
     }
 
     template <typename A>

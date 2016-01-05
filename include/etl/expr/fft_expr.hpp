@@ -20,7 +20,7 @@
 namespace etl {
 
 template <typename T, std::size_t D, template <typename...> class Impl>
-struct basic_fft_expr {
+struct basic_fft_expr : impl_expr<basic_fft_expr<T, D, Impl>> {
     using this_type  = basic_fft_expr<T, D, Impl>;
     using value_type = T;
 
@@ -30,43 +30,6 @@ struct basic_fft_expr {
      */
     template <typename A>
     using result_type = detail::expr_result_t<this_type, A>;
-
-    template <typename A, std::size_t... I>
-    static result_type<A>* dyn_allocate(A&& a, std::index_sequence<I...> /*seq*/) {
-        return new result_type<A>(etl::template dim<I>(a)...);
-    }
-
-    /*!
-     * \brief Returns the DDth dimension of the expression
-     * \param a The sub expression
-     * \tparam DD The dimension to get
-     * \return the DDth dimension of the expression
-     */
-    template <typename A, std::size_t DD>
-    static constexpr std::size_t dim() {
-        return decay_traits<A>::template dim<DD>();
-    }
-
-    /*!
-     * \brief Allocate the temporary for the expression
-     * \param a The sub expression
-     * \return a pointer to the temporary
-     */
-    template <typename A, cpp_enable_if(decay_traits<A>::is_fast)>
-    static result_type<A>* allocate(A&& a) {
-        cpp_unused(a);
-        return new result_type<A>();
-    }
-
-    /*!
-     * \brief Allocate the temporary for the expression
-     * \param a The sub expression
-     * \return a pointer to the temporary
-     */
-    template <typename A, cpp_disable_if(decay_traits<A>::is_fast)>
-    static result_type<A>* allocate(A&& a) {
-        return dyn_allocate(std::forward<A>(a), std::make_index_sequence<D>());
-    }
 
     /*!
      * \brief Apply the expression
@@ -88,6 +51,17 @@ struct basic_fft_expr {
      */
     static std::string desc() noexcept {
         return "fft";
+    }
+
+    /*!
+     * \brief Returns the DDth dimension of the expression
+     * \param a The sub expression
+     * \tparam DD The dimension to get
+     * \return the DDth dimension of the expression
+     */
+    template <typename A, std::size_t DD>
+    static constexpr std::size_t dim() {
+        return decay_traits<A>::template dim<DD>();
     }
 
     /*!

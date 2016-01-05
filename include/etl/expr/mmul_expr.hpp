@@ -81,22 +81,12 @@ void check_mv_mul_sizes(const A& /*a*/, const B& /*b*/, C& /*c*/) {
 } //end of namespace detail
 
 template <typename T, template <typename...> class Impl>
-struct basic_mm_mul_expr {
+struct basic_mm_mul_expr : impl_expr<basic_mm_mul_expr<T, Impl>> {
     using value_type = T;
     using this_type  = basic_mm_mul_expr<T, Impl>;
 
     template <typename A, typename B>
     using result_type = detail::expr_result_t<this_type, A, B>;
-
-    template <typename A, typename B, cpp_enable_if(all_fast<A, B>::value)>
-    static result_type<A, B>* allocate(A&& /*a*/, B&& /*b*/) {
-        return new result_type<A, B>();
-    }
-
-    template <typename A, typename B, cpp_disable_if(all_fast<A, B>::value)>
-    static result_type<A, B>* allocate(A&& a, B&& b) {
-        return new result_type<A, B>(etl::dim<0>(a), etl::dim<1>(b));
-    }
 
     template <typename A, typename B, typename C>
     static void apply(A&& a, B&& b, C&& c) {
@@ -156,22 +146,12 @@ using strassen_mm_mul_expr = basic_mm_mul_expr<T, detail::strassen_mm_mul_impl>;
 //Vector matrix multiplication
 
 template <typename T, template <typename...> class Impl>
-struct basic_vm_mul_expr {
+struct basic_vm_mul_expr : impl_expr<basic_vm_mul_expr<T, Impl>> {
     using value_type = T;
     using this_type  = basic_vm_mul_expr<T, Impl>;
 
     template <typename A, typename B>
     using result_type = detail::expr_result_t<this_type, A, B>;
-
-    template <typename A, typename B, cpp_enable_if(all_fast<A, B>::value)>
-    static result_type<A, B>* allocate(A&& /*unused*/, B&& /*unused*/) {
-        return new result_type<A, B>();
-    }
-
-    template <typename A, typename B, cpp_disable_if(all_fast<A, B>::value)>
-    static result_type<A, B>* allocate(A&& /*unused*/, B&& b) {
-        return new result_type<A, B>(etl::dim<1>(b));
-    }
 
     template <typename A, typename B, typename C>
     static void apply(A&& a, B&& b, C&& c) {
@@ -220,22 +200,12 @@ using vm_mul_expr = basic_vm_mul_expr<T, detail::vm_mul_impl>;
 //Matrix Vector multiplication
 
 template <typename T, template <typename...> class Impl>
-struct basic_mv_mul_expr {
+struct basic_mv_mul_expr : impl_expr<basic_mv_mul_expr<T, Impl>> {
     using value_type = T;
     using this_type  = basic_mv_mul_expr<T, Impl>;
 
     template <typename A, typename B>
     using result_type = detail::expr_result_t<this_type, A, B>;
-
-    template <typename A, typename B, cpp_enable_if(all_fast<A, B>::value)>
-    static result_type<A, B>* allocate(A&& /*a*/, B&& /*b*/) {
-        return new result_type<A, B>();
-    }
-
-    template <typename A, typename B, cpp_disable_if(all_fast<A, B>::value)>
-    static result_type<A, B>* allocate(A&& a, B&& /*b*/) {
-        return new result_type<A, B>(etl::dim<0>(a));
-    }
 
     template <typename A, typename B, typename C>
     static void apply(A&& a, B&& b, C&& c) {

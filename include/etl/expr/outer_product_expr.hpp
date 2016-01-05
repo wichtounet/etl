@@ -18,7 +18,7 @@
 namespace etl {
 
 template <typename T>
-struct outer_product_expr {
+struct outer_product_expr : impl_expr<outer_product_expr<T>> {
     using value_type = T;
     using this_type  = outer_product_expr<T>;
 
@@ -28,16 +28,6 @@ struct outer_product_expr {
      */
     template <typename A, typename B>
     using result_type = detail::expr_result_t<this_type, A, B>;
-
-    template <typename A, typename B, cpp_enable_if(all_fast<A, B>::value)>
-    static result_type<A, B>* allocate(A&& /*a*/, B&& /*b*/) {
-        return new result_type<A, B>();
-    }
-
-    template <typename A, typename B, cpp_disable_if(all_fast<A, B>::value)>
-    static result_type<A, B>* allocate(A&& a, B&& b) {
-        return new result_type<A, B>(etl::dim<0>(a), etl::dim<0>(b));
-    }
 
     template <typename A, typename B, typename C>
     static void apply(A&& a, B&& b, C&& c) {

@@ -143,7 +143,7 @@ void check_conv_deep_sizes(const I& i, const K& k, const C& c) {
  * \tparam Impl The implementation class
  */
 template <typename T, std::size_t D, conv_type TT, template <typename...> class Impl>
-struct basic_conv_expr {
+struct basic_conv_expr : impl_expr<basic_conv_expr<T, D, TT, Impl>> {
     using value_type = T;
     using this_type  = basic_conv_expr<T, D, TT, Impl>;
 
@@ -154,45 +154,6 @@ struct basic_conv_expr {
      */
     template <typename A, typename B>
     using result_type = detail::expr_result_t<this_type, A, B>;
-
-    template <typename A, typename B, std::size_t DD>
-    static constexpr std::size_t dim() {
-        return (D > 2 && DD < (D - 2)) ? decay_traits<A>::template dim<DD>()
-                                       : TT == conv_type::VALID ? decay_traits<A>::template dim<DD>() - decay_traits<B>::template dim<DD>() + 1
-                                                                : TT == conv_type::SAME ? decay_traits<A>::template dim<DD>()
-                                                                                        : decay_traits<A>::template dim<DD>() + decay_traits<B>::template dim<DD>() - 1;
-    }
-
-    template <typename A, typename B, std::size_t... I>
-    static result_type<A, B>* dyn_allocate(const A& a, const B& b, std::index_sequence<I...> /*seq*/) {
-        return new result_type<A, B>(this_type::dim(a, b, I)...);
-    }
-
-    /*!
-     * \brief Allocate the temporary for the expression
-     * \param a The left hand side
-     * \param b The right hand side
-     * \return a pointer to the temporary
-     */
-    template <typename A, typename B, cpp_enable_if(all_fast<A, B>::value)>
-    static result_type<A, B>* allocate(A&& a, B&& b) {
-        cpp_unused(a);
-        cpp_unused(b);
-        return new result_type<A, B>();
-    }
-
-    /*!
-     * \brief Allocate the temporary for the expression
-     * \param a The left hand side
-     * \param b The right hand side
-     * \return a pointer to the temporary
-     */
-    template <typename A, typename B, cpp_disable_if(all_fast<A, B>::value)>
-    static result_type<A, B>* allocate(A&& a, B&& b) {
-        cpp_unused(a);
-        cpp_unused(b);
-        return dyn_allocate(std::forward<A>(a), std::forward<B>(b), std::make_index_sequence<D>());
-    }
 
     /*!
      * \brief Validate the convolutiond dimensions
@@ -261,6 +222,14 @@ struct basic_conv_expr {
         } else {
             return "conv_full";
         }
+    }
+
+    template <typename A, typename B, std::size_t DD>
+    static constexpr std::size_t dim() {
+        return (D > 2 && DD < (D - 2)) ? decay_traits<A>::template dim<DD>()
+                                       : TT == conv_type::VALID ? decay_traits<A>::template dim<DD>() - decay_traits<B>::template dim<DD>() + 1
+                                                                : TT == conv_type::SAME ? decay_traits<A>::template dim<DD>()
+                                                                                        : decay_traits<A>::template dim<DD>() + decay_traits<B>::template dim<DD>() - 1;
     }
 
     /*!

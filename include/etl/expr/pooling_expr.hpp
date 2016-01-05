@@ -25,7 +25,7 @@ namespace etl {
  * \brief Base class for all 2D pooling expressions
  */
 template <typename T, std::size_t C1, std::size_t C2, template <typename...> class Impl>
-struct basic_pool_2d_expr {
+struct basic_pool_2d_expr : impl_expr<basic_pool_2d_expr<T, C1, C2, Impl>> {
     static_assert(C1 > 0, "C1 must be greater than 0");
     static_assert(C2 > 0, "C2 must be greater than 0");
 
@@ -34,16 +34,6 @@ struct basic_pool_2d_expr {
 
     template <typename A>
     using result_type = detail::expr_result_t<this_type, A>;
-
-    template <typename A, cpp_enable_if(all_fast<A>::value)>
-    static result_type<A>* allocate(A&& /*a*/) {
-        return new result_type<A>();
-    }
-
-    template <typename A, cpp_disable_if(all_fast<A>::value)>
-    static result_type<A>* allocate(A&& a) {
-        return new result_type<A>(etl::dim<0>(a) / C2, etl::dim<1>(a) / C2);
-    }
 
     template <typename A, typename C>
     static void apply(A&& a, C&& c) {
@@ -105,7 +95,7 @@ using avg_pool_2d_expr = basic_pool_2d_expr<T, C1, C2, impl::avg_pool_2d>;
  * \brief Base class for all 3D pooling expressions
  */
 template <typename T, std::size_t C1, std::size_t C2, std::size_t C3, template <typename...> class Impl>
-struct basic_pool_3d_expr {
+struct basic_pool_3d_expr : impl_expr<basic_pool_3d_expr<T, C1, C2, C3, Impl>> {
     static_assert(C1 > 0, "C1 must be greater than 0");
     static_assert(C2 > 0, "C2 must be greater than 0");
     static_assert(C3 > 0, "C3 must be greater than 0");
@@ -115,16 +105,6 @@ struct basic_pool_3d_expr {
 
     template <typename A>
     using result_type = detail::expr_result_t<this_type, A>;
-
-    template <typename A, cpp_enable_if(all_fast<A>::value)>
-    static result_type<A>* allocate(A&& /*a*/) {
-        return new result_type<A>();
-    }
-
-    template <typename A, cpp_disable_if(all_fast<A>::value)>
-    static result_type<A>* allocate(A&& a) {
-        return new result_type<A>(etl::dim<0>(a) / C2, etl::dim<1>(a) / C2, etl::dim<2>(a) / C3);
-    }
 
     template <typename A, typename C>
     static void apply(A&& a, C&& c) {

@@ -17,7 +17,7 @@
 namespace etl {
 
 template <typename T, std::size_t C1, std::size_t C2, template <typename...> class Impl>
-struct basic_upsample_2d_expr {
+struct basic_upsample_2d_expr : impl_expr<basic_upsample_2d_expr<T, C1, C2, Impl>> {
     static_assert(C1 > 0, "C1 must be greater than 0");
     static_assert(C2 > 0, "C2 must be greater than 0");
 
@@ -41,27 +41,6 @@ struct basic_upsample_2d_expr {
     static constexpr std::size_t dim() {
         return DD == 0 ? decay_traits<A>::template dim<0>() * C1
                        : decay_traits<A>::template dim<1>() * C2;
-    }
-
-    /*!
-     * \brief Allocate the temporary for the expression
-     * \param a The sub expression
-     * \return a pointer to the temporary
-     */
-    template <typename A, cpp_enable_if(all_fast<A>::value)>
-    static result_type<A>* allocate(A&& a) {
-        cpp_unused(a);
-        return new result_type<A>();
-    }
-
-    /*!
-     * \brief Allocate the temporary for the expression
-     * \param a The sub expression
-     * \return a pointer to the temporary
-     */
-    template <typename A, cpp_disable_if(all_fast<A>::value)>
-    static result_type<A>* allocate(A&& a) {
-        return new result_type<A>(etl::dim<0>(a) * C2, etl::dim<1>(a) * C2);
     }
 
     /*!
@@ -136,7 +115,7 @@ template <typename T, std::size_t C1, std::size_t C2>
 using upsample_2d_expr = basic_upsample_2d_expr<T, C1, C2, impl::upsample_2d>;
 
 template <typename T, std::size_t C1, std::size_t C2, std::size_t C3, template <typename...> class Impl>
-struct basic_upsample_3d_expr {
+struct basic_upsample_3d_expr  : impl_expr<basic_upsample_3d_expr<T, C1, C2, C3, Impl>>{
     static_assert(C1 > 0, "C1 must be greater than 0");
     static_assert(C2 > 0, "C2 must be greater than 0");
     static_assert(C3 > 0, "C3 must be greater than 0");
@@ -150,16 +129,6 @@ struct basic_upsample_3d_expr {
      */
     template <typename A>
     using result_type = detail::expr_result_t<this_type, A>;
-
-    template <typename A, cpp_enable_if(all_fast<A>::value)>
-    static result_type<A>* allocate(A&& /*a*/) {
-        return new result_type<A>();
-    }
-
-    template <typename A, cpp_disable_if(all_fast<A>::value)>
-    static result_type<A>* allocate(A&& a) {
-        return new result_type<A>(etl::dim<0>(a) * C2, etl::dim<1>(a) * C2, etl::dim<2>(a) * C3);
-    }
 
     template <typename A, typename C>
     static void apply(A&& a, C&& c) {
