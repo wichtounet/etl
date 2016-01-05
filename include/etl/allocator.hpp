@@ -14,7 +14,7 @@ namespace etl {
 /*!
  * \brief Allocated for aligned memory
  * \tparam Expr The expression typoe
- * \param A The alignment
+ * \tparam A The alignment
  */
 template <typename Expr, std::size_t A>
 struct aligned_allocator {
@@ -71,7 +71,7 @@ T* aligned_allocate(std::size_t size) {
 
 /*!
  * \brief Release some aligned memory
- * \param size The ptr to the aligned memory
+ * \param ptr The ptr to the aligned memory
  */
 template <typename T>
 void aligned_release(T* ptr) {
