@@ -20,8 +20,14 @@ namespace etl {
  */
 using random_engine = std::mt19937_64;
 
+/*
+ * \brief Binary operator for scalar addition
+ */
 template <typename T>
 struct plus_binary_op {
+    /*!
+     * The vectorization type for V
+     */
     template<typename V = default_vec>
     using vec_type = typename V::template vec_type<T>;
 
@@ -62,8 +68,14 @@ struct plus_binary_op {
     }
 };
 
+/*
+ * \brief Binary operator for scalar subtraction
+ */
 template <typename T>
 struct minus_binary_op {
+    /*!
+     * The vectorization type for V
+     */
     template<typename V = default_vec>
     using vec_type = typename V::template vec_type<T>;
 
@@ -104,8 +116,14 @@ struct minus_binary_op {
     }
 };
 
+/*
+ * \brief Binary operator for scalar multiplication
+ */
 template <typename T>
 struct mul_binary_op {
+    /*!
+     * The vectorization type for V
+     */
     template<typename V = default_vec>
     using vec_type = typename V::template vec_type<T>;
 
@@ -146,8 +164,14 @@ struct mul_binary_op {
     }
 };
 
+/*
+ * \brief Binary operator for scalar division
+ */
 template <typename T>
 struct div_binary_op {
+    /*!
+     * The vectorization type for V
+     */
     template<typename V = default_vec>
     using vec_type = typename V::template vec_type<T>;
 
@@ -188,6 +212,9 @@ struct div_binary_op {
     }
 };
 
+/*
+ * \brief Binary operator for scalar modulo
+ */
 template <typename T>
 struct mod_binary_op {
     static constexpr const bool vectorizable = false; ///< Indicates if the opeator is vectorizable or not
@@ -213,6 +240,12 @@ struct mod_binary_op {
     }
 };
 
+/*
+ * \brief Binary operator for ranged noise generation
+ *
+ * This operator adds noise from N(0,1) to x. If x is 0 or the rhs
+ * value, x is not modified.
+ */
 template <typename T, typename E>
 struct ranged_noise_binary_op {
     static constexpr const bool vectorizable = false; ///< Indicates if the opeator is vectorizable or not
@@ -246,8 +279,14 @@ struct ranged_noise_binary_op {
     }
 };
 
+/*
+ * \brief Binary operator for scalar maximum
+ */
 template <typename T, typename E>
 struct max_binary_op {
+    /*!
+     * The vectorization type for V
+     */
     template<typename V = default_vec>
     using vec_type = typename V::template vec_type<T>;
 
@@ -288,8 +327,14 @@ struct max_binary_op {
     }
 };
 
+/*
+ * \brief Binary operator for scalar minimum
+ */
 template <typename T, typename E>
 struct min_binary_op {
+    /*!
+     * The vectorization type for V
+     */
     template<typename V = default_vec>
     using vec_type = typename V::template vec_type<T>;
 
@@ -330,6 +375,9 @@ struct min_binary_op {
     }
 };
 
+/*
+ * \brief Binary operator for scalar power
+ */
 template <typename T, typename E>
 struct pow_binary_op {
     static constexpr const bool vectorizable = false; ///< Indicates if the opeator is vectorizable or not
@@ -355,11 +403,14 @@ struct pow_binary_op {
     }
 };
 
+/*
+ * \brief Binary operator to get 1.0 if x equals to rhs value, 0 otherwise
+ */
 template <typename T, typename E>
 struct one_if_binary_op {
     static constexpr const bool vectorizable = false; ///< Indicates if the opeator is vectorizable or not
-    static constexpr const bool linear       = true; ///< Indicates if the operator is linear or not
-    static constexpr const bool desc_func    = true; ///< Indicates if the description must be printed as function
+    static constexpr const bool linear       = true;  ///< Indicates if the operator is linear or not
+    static constexpr const bool desc_func    = true;  ///< Indicates if the description must be printed as function
 
     /*!
      * \brief Apply the unary operator on lhs and rhs
