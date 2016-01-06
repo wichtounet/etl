@@ -350,6 +350,20 @@ template <typename... E>
 using all_etl_expr = cpp::and_c<is_etl_expr<E>...>;
 
 /*!
+ * \brief Traits to test if the given expression type is 1D
+ * \tparam E The ETL expression type
+ */
+template <typename T>
+using is_1d = cpp::bool_constant<decay_traits<T>::dimensions() == 1>;
+
+/*!
+ * \brief Traits to test if the given expression type is 2D
+ * \tparam E The ETL expression type
+ */
+template <typename T>
+using is_2d = cpp::bool_constant<decay_traits<T>::dimensions() == 2>;
+
+/*!
  * \brief Specialization for value structures
  */
 template <typename T>
