@@ -5,6 +5,11 @@
 //  http://opensource.org/licenses/MIT)
 //=======================================================================
 
+/*!
+ * \file
+ * \brief Contains binary operators
+ */
+
 #pragma once
 
 #include <random>
