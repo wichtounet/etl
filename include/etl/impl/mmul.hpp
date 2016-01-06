@@ -41,12 +41,12 @@ inline cpp14_constexpr gemm_impl select_gemm_impl(const std::size_t n1, const st
     constexpr const bool cublas = is_cublas_enabled::value;
 
     if (cublas) {
-        if (n1 * n3 < zgemm_cublas_min) {
+        if (n1 * n3 < gemm_cublas_min) {
             if (blas) {
                 return gemm_impl::BLAS;
             }
 
-            if (n1 * n3 < zgemm_std_max) {
+            if (n1 * n3 < gemm_std_max) {
                 return gemm_impl::STD;
             }
         }
@@ -56,7 +56,7 @@ inline cpp14_constexpr gemm_impl select_gemm_impl(const std::size_t n1, const st
         return gemm_impl::BLAS;
     }
 
-    if (n1 * n3 < zgemm_std_max) {
+    if (n1 * n3 < gemm_std_max) {
         return gemm_impl::STD;
     } else {
         return gemm_impl::FAST;

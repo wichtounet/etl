@@ -5,6 +5,11 @@
 //  http://opensource.org/licenses/MIT)
 //=======================================================================
 
+/*!
+ * \file
+ * \brief Contains generators
+ */
+
 #pragma once
 
 #include <chrono> //for std::time
@@ -17,43 +22,79 @@ namespace etl {
 
 using random_engine = std::mt19937_64;
 
+/*!
+ * \brief Generator from a normal distribution
+ */
 template <typename T = double>
 struct normal_generator_op {
-    using value_type = T;
+    using value_type = T; ///< The value type
 
-    random_engine rand_engine;
-    std::normal_distribution<value_type> normal_distribution;
+    random_engine rand_engine;                         ///< The random engine
+    std::normal_distribution<value_type> distribution; ///< The used distribution
 
+    /*!
+     * \brief Construct a new generator with the given mean and standard deviation
+     * \param mean The mean
+     * \param stddev The standard deviation
+     */
     normal_generator_op(T mean, T stddev)
-            : rand_engine(std::time(nullptr)), normal_distribution(mean, stddev) {}
+            : rand_engine(std::time(nullptr)), distribution(mean, stddev) {}
 
+    /*!
+     * \brief Generate a new value
+     * \return the newly generated value
+     */
     value_type operator()() {
-        return normal_distribution(rand_engine);
+        return distribution(rand_engine);
     }
 };
 
+/*!
+ * \brief Generator from a sequence
+ */
 template <typename T = double>
 struct sequence_generator_op {
-    using value_type = T;
+    using value_type = T; ///< The value type
 
-    const value_type start;
-    value_type current;
+    const value_type start; ///< The beginning of the sequence
+    value_type current;     ///< The current sequence element
 
+    /*!
+     * \brief Construct a new generator with the given sequence start
+     * \param start The beginning of the sequence
+     */
     explicit sequence_generator_op(value_type start = 0)
             : start(start), current(start) {}
 
+    /*!
+     * \brief Generate a new value
+     * \return the newly generated value
+     */
     value_type operator()() {
         return current++;
     }
 };
 
+/*!
+ * \brief Outputs the given generator to the given stream
+ * \param os The output stream
+ * \param s The generator
+ * \return the output stream
+ */
 template <typename T>
 std::ostream& operator<<(std::ostream& os, const sequence_generator_op<T>& s) {
     return os << "[" << s.start << ",...]";
 }
 
+/*!
+ * \brief Outputs the given generator to the given stream
+ * \param os The output stream
+ * \param s The generator
+ * \return the output stream
+ */
 template <typename T>
-std::ostream& operator<<(std::ostream& os, const normal_generator_op<T>& /*s*/) {
+std::ostream& operator<<(std::ostream& os, const normal_generator_op<T>& s) {
+    cpp_unused(s);
     return os << "N(0,1)";
 }
 
