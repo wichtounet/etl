@@ -16,6 +16,12 @@
 
 namespace etl {
 
+/*!
+ * \brief Multiply two matrices together
+ * \param a The left hand side matrix
+ * \param b The right hand side matrix
+ * \return An expression representing the matrix-matrix multiplication of a and b
+ */
 template <typename A, typename B,
           cpp_enable_if(decay_traits<A>::dimensions() == 2 && decay_traits<B>::dimensions() == 2 && !is_element_wise_mul_default)>
 auto operator*(A&& a, B&& b) -> detail::temporary_binary_helper<A, B, mm_mul_expr> {
@@ -25,6 +31,12 @@ auto operator*(A&& a, B&& b) -> detail::temporary_binary_helper<A, B, mm_mul_exp
     return {a, b};
 }
 
+/*!
+ * \brief Multiply a vector and a matrix together
+ * \param a The left hand side vector
+ * \param b The right hand side matrix
+ * \return An expression representing the vector-matrix multiplication of a and b
+ */
 template <typename A, typename B, cpp_enable_if(
                                       decay_traits<A>::dimensions() == 1, decay_traits<B>::dimensions() == 2,
                                       !is_element_wise_mul_default)>
@@ -32,6 +44,12 @@ auto operator*(A&& a, B&& b) -> detail::temporary_binary_helper<A, B, vm_mul_exp
     return {a, b};
 }
 
+/*!
+ * \brief Multiply a matrix and a vector together
+ * \param a The left hand side matrix
+ * \param b The right hand side vector
+ * \return An expression representing the matrix-vector multiplication of a and b
+ */
 template <typename A, typename B, cpp_enable_if(
                                       decay_traits<A>::dimensions() == 2, decay_traits<B>::dimensions() == 1,
                                       !is_element_wise_mul_default)>
@@ -39,6 +57,12 @@ auto operator*(A&& a, B&& b) -> detail::temporary_binary_helper<A, B, mv_mul_exp
     return {a, b};
 }
 
+/*!
+ * \brief Multiply two matrices together
+ * \param a The left hand side matrix
+ * \param b The right hand side matrix
+ * \return An expression representing the matrix-matrix multiplication of a and b
+ */
 template <typename A, typename B, cpp_enable_if(decay_traits<A>::dimensions() == 2 && decay_traits<B>::dimensions() == 2)>
 auto mul(A&& a, B&& b) -> detail::temporary_binary_helper<A, B, mm_mul_expr> {
     static_assert(is_etl_expr<A>::value && is_etl_expr<B>::value, "Matrix multiplication only supported for ETL expressions");
