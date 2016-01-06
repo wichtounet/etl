@@ -5,6 +5,11 @@
 //  http://opensource.org/licenses/MIT)
 //=======================================================================
 
+/*!
+ * \file
+ * \brief Contains runtime matrix implementation
+ */
+
 #pragma once
 
 #include <tuple>     //For TMP stuff

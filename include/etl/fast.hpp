@@ -5,6 +5,11 @@
 //  http://opensource.org/licenses/MIT)
 //=======================================================================
 
+/*!
+ * \file
+ * \brief Contains static matrix implementation
+ */
+
 #pragma once
 
 #include <algorithm>   //For std::find_if
