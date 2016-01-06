@@ -59,8 +59,10 @@ void validate_expression(const LE& lhs, const RE& rhs) {
  * \param rhs The right hand side expression
  */
 template <typename LE, typename RE, cpp_enable_if(!(etl_traits<LE>::is_generator || etl_traits<RE>::is_generator) && all_etl_expr<LE, RE>::value && all_fast<LE, RE>::value)>
-void validate_expression(const LE& /*unused*/, const RE& /*unused*/) {
+void validate_expression(const LE& lhs, const RE& rhs) {
     static_assert(etl_traits<LE>::size() == etl_traits<RE>::size(), "Cannot perform element-wise operations on collections of different size");
+    cpp_unused(lhs);
+    cpp_unused(rhs);
 }
 
 /*!
@@ -73,9 +75,11 @@ void validate_expression(const LE& /*unused*/, const RE& /*unused*/) {
  * \param rhs The right hand side expression
  */
 template <typename LE, typename RE, cpp_enable_if(etl_traits<RE>::is_generator)>
-void validate_assign(const LE& /*unused*/, const RE& /*unused*/) noexcept {
+void validate_assign(const LE& lhs, const RE& rhs) noexcept {
     static_assert(is_etl_expr<LE>::value, "Assign can only work on ETL expressions");
     //Nothing to test, generators are of infinite size
+    cpp_unused(lhs);
+    cpp_unused(rhs);
 }
 
 /*!
