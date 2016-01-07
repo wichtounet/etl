@@ -20,6 +20,7 @@
 #include "etl/config.hpp"
 #include "etl/vectorization.hpp"
 #include "etl/complex.hpp"
+#include "etl/random.hpp"
 #include "etl/compat.hpp"
 
 //Forward declarations

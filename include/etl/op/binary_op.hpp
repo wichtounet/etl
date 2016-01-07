@@ -12,18 +12,12 @@
 
 #pragma once
 
-#include <random>
 #include <functional>
 #include <ctime>
 
 #include "etl/math.hpp"
 
 namespace etl {
-
-/*!
- * \brief The random engine used by the noise operators
- */
-using random_engine = std::mt19937_64;
 
 /*
  * \brief Binary operator for scalar addition

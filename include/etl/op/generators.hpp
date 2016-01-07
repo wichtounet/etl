@@ -14,13 +14,10 @@
 
 #include <chrono> //for std::time
 #include <iosfwd> //For stream support
-#include <random>
 
 #include "cpp_utils/tmp.hpp"
 
 namespace etl {
-
-using random_engine = std::mt19937_64;
 
 /*!
  * \brief Generator from a normal distribution
