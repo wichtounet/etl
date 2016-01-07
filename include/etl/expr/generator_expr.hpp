@@ -33,6 +33,10 @@ private:
 public:
     using value_type = typename Generator::value_type;
 
+    /*!
+     * \brief Construct a generator expression and forward the arguments to the generator
+     * \param args The input arguments of the generator
+     */
     template <typename... Args>
     explicit generator_expr(Args... args)
             : generator(std::forward<Args>(args)...) {}

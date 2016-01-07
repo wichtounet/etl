@@ -13,8 +13,8 @@ namespace etl {
  * \brief Storage order of a matrix
  */
 enum class order {
-    RowMajor        ///< Row-Major storage
-    , ColumnMajor   ///< Column-Major storage
+    RowMajor,   ///< Row-Major storage
+    ColumnMajor ///< Column-Major storage
 };
 
 } //end of namespace etl
