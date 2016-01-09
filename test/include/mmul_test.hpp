@@ -6,16 +6,7 @@
 //=======================================================================
 
 #define MUL_FUNCTOR(name, ...)                        \
-    /*!                                               \
-     * \brief name functor                            \
-     */                                               \
     struct name {                                     \
-        /*!                                           \
-         * \brief Apply the functor                   \
-         * \param a a                                 \
-         * \param b a                                 \
-         * \param c target                            \
-         */                                           \
         template <typename A, typename B, typename C> \
         static void apply(A&& a, B&& b, C& c) {       \
             __VA_ARGS__;                              \
