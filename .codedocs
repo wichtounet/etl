@@ -1,0 +1,2 @@
+PROJECT_NAME           = "Expression Templates Library (ETL)"
+EXCLUDE                = Catch, cpm, lib, make-utils
