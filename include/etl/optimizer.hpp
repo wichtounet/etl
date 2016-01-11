@@ -11,13 +11,32 @@
 
 namespace etl {
 
+/*!
+ * \brief Simple traits to test if an expression is optimizable
+ *
+ * The default traits implementation return false for each
+ * expression. The traits should be specialized for each optimizable
+ * expression.
+ */
 template <typename Expr>
 struct optimizable {
-    static bool is(const Expr& /*unused*/) {
+    /*!
+     * \brief Indicates if the given expression is optimizable or not
+     * \param expr The expression to test
+     * \return true if the expression is optimizable, false otherwise
+     */
+    static bool is(const Expr& expr) {
+        cpp_unused(expr);
         return false;
     }
 
-    static bool is_deep(const Expr& /*unused*/) {
+    /*!
+     * \brief Indicates if the given expression or one of its sub expressions is optimizable or not
+     * \param expr The expression to test
+     * \return true if the expression or one of its sub expressions is optimizable, false otherwise
+     */
+    static bool is_deep(const Expr& unused) {
+        cpp_unused(expr);
         return false;
     }
 };
