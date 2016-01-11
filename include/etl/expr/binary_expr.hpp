@@ -33,10 +33,10 @@ private:
                       cpp::and_c<is_etl_expr<LeftExpr>, is_etl_expr<RightExpr>>>::value,
                   "One argument must be an ETL expression and the other one convertible to T");
 
-    using this_type = binary_expr<T, LeftExpr, BinaryOp, RightExpr>;
+    using this_type = binary_expr<T, LeftExpr, BinaryOp, RightExpr>; ///< This type
 
-    LeftExpr _lhs;
-    RightExpr _rhs;
+    LeftExpr _lhs;  ///< The Left hand side expression
+    RightExpr _rhs; ///< The right hand side expression
 
 public:
     using value_type        = T;    ///< The Value type
@@ -154,11 +154,21 @@ public:
 
     //TODO Simplify the next two SFINAE functions
 
+    /*!
+     * \brief Creates a sub view of the expression, effectively removing the first dimension and fixing it to the given index.
+     * \param i The index to use
+     * \return a sub view of the expression at position i.
+     */
     template <typename ST = T, typename L = LeftExpr, typename B = BinaryOp, typename R = RightExpr, cpp_enable_if((sub_size_compare<binary_expr<ST, L, B, R>>::value > 1))>
     auto operator()(std::size_t i) {
         return sub(*this, i);
     }
 
+    /*!
+     * \brief Creates a sub view of the expression, effectively removing the first dimension and fixing it to the given index.
+     * \param i The index to use
+     * \return a sub view of the expression at position i.
+     */
     template <typename ST = T, typename L = LeftExpr, typename B = BinaryOp, typename R = RightExpr, cpp_enable_if((sub_size_compare<binary_expr<ST, L, B, R>>::value > 1))>
     auto operator()(std::size_t i) const {
         return sub(*this, i);
@@ -186,13 +196,13 @@ public:
  */
 template <typename T, typename LeftExpr, typename BinaryOp, typename RightExpr>
 struct etl_traits<etl::binary_expr<T, LeftExpr, BinaryOp, RightExpr>> {
-    using expr_t       = etl::binary_expr<T, LeftExpr, BinaryOp, RightExpr>;
-    using left_expr_t  = std::decay_t<LeftExpr>;
-    using right_expr_t = std::decay_t<RightExpr>;
+    using expr_t       = etl::binary_expr<T, LeftExpr, BinaryOp, RightExpr>; ///< The type of the expression
+    using left_expr_t  = std::decay_t<LeftExpr>;                             ///< The type of the left expression
+    using right_expr_t = std::decay_t<RightExpr>;                            ///< The type of the right expression
 
-    static constexpr const bool left_directed = cpp::not_u<etl_traits<left_expr_t>::is_generator>::value;
+    static constexpr const bool left_directed = cpp::not_u<etl_traits<left_expr_t>::is_generator>::value; ///< True if directed by the left expression, false otherwise
 
-    using sub_expr_t = std::conditional_t<left_directed, left_expr_t, right_expr_t>;
+    using sub_expr_t = std::conditional_t<left_directed, left_expr_t, right_expr_t>; ///< The type of sub expression
 
     static constexpr const bool is_etl         = true;                                                                                          ///< Indicates if the type is an ETL expression
     static constexpr const bool is_transformer = false;                                                                                         ///< Indicates if the type is a transformer
@@ -210,11 +220,22 @@ struct etl_traits<etl::binary_expr<T, LeftExpr, BinaryOp, RightExpr>> {
         etl_traits<left_expr_t>::needs_evaluator_visitor || etl_traits<right_expr_t>::needs_evaluator_visitor;                                                             ///< Indicaes if the expression needs an evaluator visitor
     static constexpr const order storage_order = etl_traits<left_expr_t>::is_generator ? etl_traits<right_expr_t>::storage_order : etl_traits<left_expr_t>::storage_order; ///< The expression storage order
 
+
+    /*!
+     * \brief Get reference to the main sub expression
+     * \param v The binary expr
+     * \return a refernece to the main sub expression
+     */
     template <bool B = left_directed, cpp_enable_if(B)>
     static constexpr auto& get(const expr_t& v) {
         return v.lhs();
     }
 
+    /*!
+     * \brief Get reference to the main sub expression
+     * \param v The binary expr
+     * \return a refernece to the main sub expression
+     */
     template <bool B = left_directed, cpp_disable_if(B)>
     static constexpr auto& get(const expr_t& v) {
         return v.rhs();
