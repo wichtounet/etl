@@ -35,7 +35,7 @@ struct optimizable {
      * \param expr The expression to test
      * \return true if the expression or one of its sub expressions is optimizable, false otherwise
      */
-    static bool is_deep(const Expr& unused) {
+    static bool is_deep(const Expr& expr) {
         cpp_unused(expr);
         return false;
     }
