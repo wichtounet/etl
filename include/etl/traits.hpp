@@ -364,6 +364,13 @@ template <typename T>
 using is_2d = cpp::bool_constant<decay_traits<T>::dimensions() == 2>;
 
 /*!
+ * \brief Traits to test if all the given ETL expresion types are vectorizable.
+ * \tparam E The ETL expression types.
+ */
+template <typename... E>
+using all_vectorizable = cpp::and_u<decay_traits<E>::vectorizable...>;
+
+/*!
  * \brief Specialization for value structures
  */
 template <typename T>
