@@ -75,14 +75,14 @@ static void vm_mul(A&& a, B&& b, C&& c) {
     if (row_major) {
         for (std::size_t k = 0; k < etl::dim<0>(a); k++) {
             for (std::size_t j = 0; j < columns(b); j++) {
-                //c(j) += a(k) * b(k,j);
+                //optimized compound add of the multiplication
                 add_mul(c(j), a(k), b(k, j));
             }
         }
     } else {
         for (std::size_t j = 0; j < columns(b); j++) {
             for (std::size_t k = 0; k < etl::dim<0>(a); k++) {
-                //c(j) += a(k) * b(k,j);
+                //optimized compound add of the multiplication
                 add_mul(c(j), a(k), b(k, j));
             }
         }
@@ -98,14 +98,14 @@ static void mv_mul(A&& a, B&& b, C&& c) {
     if (row_major) {
         for (std::size_t i = 0; i < rows(a); i++) {
             for (std::size_t k = 0; k < columns(a); k++) {
-                //c(i) += a(i,k) * b(k);
+                //optimized compound add of the multiplication
                 add_mul(c(i), a(i, k), b(k));
             }
         }
     } else {
         for (std::size_t k = 0; k < columns(a); k++) {
             for (std::size_t i = 0; i < rows(a); i++) {
-                //c(i) += a(i,k) * b(k);
+                //optimized compound add of the multiplication
                 add_mul(c(i), a(i, k), b(k));
             }
         }
