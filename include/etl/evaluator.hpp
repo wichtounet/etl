@@ -644,7 +644,10 @@ void assign_evaluate(Expr&& expr, Result&& result) {
  */
 template <typename Expr, typename Result, cpp_enable_if(is_optimized_expr<Expr>::value)>
 void assign_evaluate(Expr&& expr, Result&& result) {
-    optimized_forward(expr.value(), [&result](const auto& optimized) { assign_evaluate(optimized, std::forward<Result>(result)); });
+    optimized_forward(expr.value(),
+                      [&result](const auto& optimized) {
+                          assign_evaluate(optimized, std::forward<Result>(result));
+                      });
 }
 
 /*!

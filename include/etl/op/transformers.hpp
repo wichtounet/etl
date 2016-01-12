@@ -192,7 +192,10 @@ struct dyn_rep_r_transformer {
      */
     dyn_rep_r_transformer(sub_type expr, std::array<std::size_t, D> reps_a)
             : sub(expr), reps(reps_a) {
-        m = std::accumulate(reps.begin(), reps.end(), 1UL, [](std::size_t a, std::size_t b) { return a * b; });
+        m = std::accumulate(reps.begin(), reps.end(), 1UL,
+                            [](std::size_t a, std::size_t b) {
+                                return a * b;
+                            });
     }
 
     /*!
@@ -273,7 +276,10 @@ struct dyn_rep_l_transformer {
      */
     dyn_rep_l_transformer(sub_type expr, std::array<std::size_t, D> reps_a)
             : sub(expr), reps(reps_a) {
-        m = std::accumulate(reps.begin(), reps.end(), 1UL, [](std::size_t a, std::size_t b) { return a * b; });
+        m = std::accumulate(reps.begin(), reps.end(), 1UL,
+                            [](std::size_t a, std::size_t b) {
+                                return a * b;
+                            });
     }
 
     /*!

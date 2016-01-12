@@ -398,7 +398,9 @@ void optimize(Builder parent_builder, const Expr& expr) {
 template <typename Expr, typename Result>
 void optimized_forward(const Expr& expr, Result result) {
     if (is_optimizable_deep(expr)) {
-        optimize([result](const auto& new_expr) { optimized_forward(new_expr, result); }, expr);
+        optimize(
+            [result](const auto& new_expr) { optimized_forward(new_expr, result); },
+            expr);
         return;
     }
 
