@@ -622,7 +622,7 @@ struct direct_assign_compatible : cpp::or_u<
  * \param expr The right hand side expression
  * \param result The left hand side
  */
-template <typename Expr, typename Result, cpp_enable_if(direct_assign_compatible<Expr, Result>::value && !is_optimized_expr<Expr>::value)>
+template <typename Expr, typename Result, cpp_enable_if(direct_assign_compatible<Expr, Result>::value, !is_optimized_expr<Expr>::value)>
 void assign_evaluate(Expr&& expr, Result&& result) {
     standard_evaluator<Expr, Result>::assign_evaluate(std::forward<Expr>(expr), std::forward<Result>(result));
 }
@@ -632,7 +632,7 @@ void assign_evaluate(Expr&& expr, Result&& result) {
  * \param expr The right hand side expression
  * \param result The left hand side
  */
-template <typename Expr, typename Result, cpp_enable_if(!direct_assign_compatible<Expr, Result>::value && !is_optimized_expr<Expr>::value)>
+template <typename Expr, typename Result, cpp_enable_if(!direct_assign_compatible<Expr, Result>::value, !is_optimized_expr<Expr>::value)>
 void assign_evaluate(Expr&& expr, Result&& result) {
     standard_evaluator<Expr, Result>::assign_evaluate(transpose(expr), std::forward<Result>(result));
 }

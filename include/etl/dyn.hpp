@@ -238,7 +238,7 @@ public:
 
     //Construct from expression
 
-    template <typename E, cpp_enable_if(!std::is_same<std::decay_t<E>, dyn_matrix_impl<T, SO, D>>::value && std::is_convertible<value_t<E>, value_type>::value && is_etl_expr<E>::value)>
+    template <typename E, cpp_enable_if(!std::is_same<std::decay_t<E>, dyn_matrix_impl<T, SO, D>>::value, std::is_convertible<value_t<E>, value_type>::value, is_etl_expr<E>::value)>
     dyn_matrix_impl& operator=(E&& e) noexcept {
         validate_assign(*this, e);
 

@@ -225,21 +225,21 @@ struct conv2_valid_impl {
 
 template <conv_type TT, typename I, typename K, typename C, typename Enable = void>
 struct conv_deep_impl {
-    template <conv_type TT2 = TT, typename I2 = I, cpp_enable_if(decay_traits<I2>::dimensions() == 3 && TT2 == conv_type::FULL)>
+    template <conv_type TT2 = TT, typename I2 = I, cpp_enable_if(decay_traits<I2>::dimensions() == 3, TT2 == conv_type::FULL)>
     static void apply(const I& input, const K& kernel, C&& conv) {
         for (std::size_t i = 0; i < dim<0>(input); ++i) {
             conv(i) = conv_2d_full(input(i), kernel(i));
         }
     }
 
-    template <conv_type TT2 = TT, typename I2 = I, cpp_enable_if(decay_traits<I2>::dimensions() == 3 && TT2 == conv_type::SAME)>
+    template <conv_type TT2 = TT, typename I2 = I, cpp_enable_if(decay_traits<I2>::dimensions() == 3, TT2 == conv_type::SAME)>
     static void apply(const I& input, const K& kernel, C&& conv) {
         for (std::size_t i = 0; i < dim<0>(input); ++i) {
             conv(i) = conv_2d_same(input(i), kernel(i));
         }
     }
 
-    template <conv_type TT2 = TT, typename I2 = I, cpp_enable_if(decay_traits<I2>::dimensions() == 3 && TT2 == conv_type::VALID)>
+    template <conv_type TT2 = TT, typename I2 = I, cpp_enable_if(decay_traits<I2>::dimensions() == 3, TT2 == conv_type::VALID)>
     static void apply(const I& input, const K& kernel, C&& conv) {
         for (std::size_t i = 0; i < dim<0>(input); ++i) {
             conv(i) = conv_2d_valid(input(i), kernel(i));

@@ -383,7 +383,7 @@ void gemm_nn(std::size_t m, std::size_t n, std::size_t k, D alpha, const D* A, s
     }
 }
 
-template <typename A, typename B, typename C, cpp_enable_if(all_dma<A, B, C>::value && !is_complex<A>::value)>
+template <typename A, typename B, typename C, cpp_enable_if(all_dma<A, B, C>::value, !is_complex<A>::value)>
 void gemm(A&& a, B&& b, C&& c) {
     gemm_nn(
         etl::dim<0>(a), etl::dim<1>(b), etl::dim<1>(a),

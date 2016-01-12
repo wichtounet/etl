@@ -222,7 +222,7 @@ public:
 
     //Assign expressions to the unary expr
 
-    template <typename E, cpp_enable_if(non_const_return_ref&& is_etl_expr<E>::value)>
+    template <typename E, cpp_enable_if(non_const_return_ref, is_etl_expr<E>::value)>
     unary_expr& operator=(E&& e) {
         validate_assign(*this, e);
         assign_evaluate(std::forward<E>(e), *this);
@@ -354,7 +354,7 @@ public:
      * \param rhs The other expression to test
      * \return true if the two expressions aliases, false otherwise
      */
-    template<typename E, cpp_enable_if(has_direct_access<Expr>::value && all_dma<E>::value)>
+    template<typename E, cpp_enable_if(has_direct_access<Expr>::value, all_dma<E>::value)>
     bool alias(const E& rhs) const noexcept {
         return memory_alias(memory_start(), memory_end(), rhs.memory_start(), rhs.memory_end());
     }

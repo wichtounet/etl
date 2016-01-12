@@ -68,7 +68,7 @@ auto operator*(LE&& lhs, RE&& rhs) -> detail::left_binary_helper<LE, RE, mul_bin
  * \param rhs The right hand side expression
  * \return An expression representing the scalar multipliation of lhs and rhs
  */
-template <typename LE, typename RE, cpp_enable_if(is_etl_expr<LE>::value&& is_etl_expr<RE>::value)>
+template <typename LE, typename RE, cpp_enable_if(is_etl_expr<LE>::value, is_etl_expr<RE>::value)>
 auto operator>>(LE&& lhs, RE&& rhs) -> detail::left_binary_helper<LE, RE, mul_binary_op> {
     validate_expression(lhs, rhs);
 
@@ -81,7 +81,7 @@ auto operator>>(LE&& lhs, RE&& rhs) -> detail::left_binary_helper<LE, RE, mul_bi
  * \param rhs The right hand side expression
  * \return An expression representing the scalar multiplication of lhs and rhs
  */
-template <typename LE, typename RE, cpp_enable_if(is_etl_expr<LE>::value&& is_etl_expr<RE>::value)>
+template <typename LE, typename RE, cpp_enable_if(is_etl_expr<LE>::value, is_etl_expr<RE>::value)>
 auto scale(LE&& lhs, RE&& rhs) -> detail::left_binary_helper<LE, RE, mul_binary_op> {
     validate_expression(lhs, rhs);
 
@@ -210,7 +210,7 @@ auto operator>>(LE lhs, RE&& rhs) -> detail::right_binary_helper<scalar<value_t<
  * \param rhs The right hand side expression
  * \return An expression representing the division of lhs and rhs (scalar)
  */
-template <typename LE, typename RE, cpp_enable_if(std::is_convertible<RE, value_t<LE>>::value&& is_etl_expr<LE>::value && (is_div_strict || !std::is_floating_point<RE>::value))>
+template <typename LE, typename RE, cpp_enable_if(std::is_convertible<RE, value_t<LE>>::value, is_etl_expr<LE>::value, (is_div_strict || !std::is_floating_point<RE>::value))>
 auto operator/(LE&& lhs, RE rhs) -> detail::left_binary_helper<LE, scalar<value_t<LE>>, div_binary_op> {
     return {lhs, scalar<value_t<LE>>(rhs)};
 }
@@ -221,7 +221,7 @@ auto operator/(LE&& lhs, RE rhs) -> detail::left_binary_helper<LE, scalar<value_
  * \param rhs The right hand side expression
  * \return An expression representing the division of lhs and rhs (scalar)
  */
-template <typename LE, typename RE, cpp_enable_if(std::is_convertible<RE, value_t<LE>>::value&& is_etl_expr<LE>::value && !is_div_strict && std::is_floating_point<RE>::value)>
+template <typename LE, typename RE, cpp_enable_if(std::is_convertible<RE, value_t<LE>>::value, is_etl_expr<LE>::value, !is_div_strict, std::is_floating_point<RE>::value)>
 auto operator/(LE&& lhs, RE rhs) -> detail::left_binary_helper<LE, scalar<value_t<LE>>, mul_binary_op> {
     return {lhs, scalar<value_t<LE>>(value_t<LE>(1.0) / rhs)};
 }
@@ -461,7 +461,7 @@ auto max(E&& value, T v) {
  * \param rhs The right hand side ETL expression
  * \return an expression representing the max values from lhs and rhs
  */
-template <typename L, typename R, cpp_enable_if(!std::is_arithmetic<R>::value)>
+template <typename L, typename R, cpp_disable_if(std::is_arithmetic<R>::value)>
 auto max(L&& lhs, R&& rhs) -> detail::left_binary_helper_op<L, R, max_binary_op<value_t<L>, value_t<R>>> {
     static_assert(is_etl_expr<L>::value, "etl::max can only be used on ETL expressions");
     return {lhs, rhs};
@@ -485,7 +485,7 @@ auto min(E&& value, T v) {
  * \param rhs The right hand side ETL expression
  * \return an expression representing the min values from lhs and rhs
  */
-template <typename L, typename R, cpp_enable_if(!std::is_arithmetic<R>::value)>
+template <typename L, typename R, cpp_disable_if(std::is_arithmetic<R>::value)>
 auto min(L&& lhs, R&& rhs) -> detail::left_binary_helper_op<L, R, min_binary_op<value_t<L>, value_t<R>>> {
     static_assert(is_etl_expr<L>::value, "etl::max can only be used on ETL expressions");
     return {lhs, rhs};

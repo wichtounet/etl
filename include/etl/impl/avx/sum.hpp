@@ -94,12 +94,12 @@ float ssum_kernel(const E& in, std::size_t first, std::size_t last){
     return acc;
 }
 
-template <typename I, cpp_enable_if(all_single_precision<I>::value && decay_traits<I>::vectorizable)>
+template <typename I, cpp_enable_if(all_single_precision<I>::value, decay_traits<I>::vectorizable)>
 value_t<I> sum(const I& input, std::size_t first, std::size_t last) {
     return ssum_kernel(input, first, last);
 }
 
-template <typename I, cpp_enable_if(all_double_precision<I>::value && decay_traits<I>::vectorizable)>
+template <typename I, cpp_enable_if(all_double_precision<I>::value, decay_traits<I>::vectorizable)>
 value_t<I> sum(const I& input, std::size_t first, std::size_t last) {
     return dsum_kernel(input, first, last);
 }

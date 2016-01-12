@@ -1357,7 +1357,7 @@ void im2col_direct(M& m, A&& sub, std::size_t k1, std::size_t k2) {
 
 //TODO Find out why clang is unable to optimize the first version and then remove the second version
 
-template <typename A, typename M, cpp_enable_if(has_direct_access<A>::value&& has_direct_access<M>::value)>
+template <typename A, typename M, cpp_enable_if(has_direct_access<A>::value, has_direct_access<M>::value)>
 void im2col_direct(M& m, A&& sub, std::size_t k1, std::size_t k2) {
     const std::size_t i1 = etl::dim<0>(sub);
     const std::size_t i2 = etl::dim<1>(sub);

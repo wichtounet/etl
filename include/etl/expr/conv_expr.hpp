@@ -89,7 +89,7 @@ void check_conv_2d_sizes(const I& /*input*/, const K& /*kernel*/, const C& /*con
         "Invalid sizes for 'valid'convolution");
 }
 
-template <conv_type TT, typename I, typename K, typename C, cpp_enable_if(etl_traits<I>::dimensions() == 3 && all_fast<I, K, C>::value)>
+template <conv_type TT, typename I, typename K, typename C, cpp_enable_if(etl_traits<I>::dimensions() == 3, all_fast<I, K, C>::value)>
 void check_conv_deep_sizes(const I& i, const K& k, const C& c) {
     static_assert(etl_traits<I>::dimensions() == 3 && etl_traits<K>::dimensions() == 3 && etl_traits<C>::dimensions() == 3, "Invalid dimensions for 3D convolution");
 
@@ -100,7 +100,7 @@ void check_conv_deep_sizes(const I& i, const K& k, const C& c) {
     detail::check_conv_2d_sizes<TT>(i(0), k(0), c(0));
 }
 
-template <conv_type TT, typename I, typename K, typename C, cpp_enable_if((etl_traits<I>::dimensions() > 3) && all_fast<I, K, C>::value)>
+template <conv_type TT, typename I, typename K, typename C, cpp_enable_if((etl_traits<I>::dimensions() > 3), all_fast<I, K, C>::value)>
 void check_conv_deep_sizes(const I& i, const K& k, const C& c) {
     static_assert(etl_traits<I>::dimensions() == etl_traits<K>::dimensions() && etl_traits<K>::dimensions() == etl_traits<C>::dimensions(), "Invalid dimensions for 3D convolution");
 
@@ -111,7 +111,7 @@ void check_conv_deep_sizes(const I& i, const K& k, const C& c) {
     detail::check_conv_deep_sizes<TT>(i(0), k(0), c(0));
 }
 
-template <conv_type TT, typename I, typename K, typename C, cpp_enable_if(etl_traits<I>::dimensions() == 3 && !all_fast<I, K, C>::value)>
+template <conv_type TT, typename I, typename K, typename C, cpp_enable_if(etl_traits<I>::dimensions() == 3, !all_fast<I, K, C>::value)>
 void check_conv_deep_sizes(const I& i, const K& k, const C& c) {
     static_assert(etl_traits<I>::dimensions() == 3 && etl_traits<K>::dimensions() == 3 && etl_traits<C>::dimensions() == 3, "Invalid dimensions for 3D convolution");
 
@@ -122,7 +122,7 @@ void check_conv_deep_sizes(const I& i, const K& k, const C& c) {
     detail::check_conv_2d_sizes<TT>(i(0), k(0), c(0));
 }
 
-template <conv_type TT, typename I, typename K, typename C, cpp_enable_if((etl_traits<I>::dimensions() > 3) && !all_fast<I, K, C>::value)>
+template <conv_type TT, typename I, typename K, typename C, cpp_enable_if((etl_traits<I>::dimensions() > 3), !all_fast<I, K, C>::value)>
 void check_conv_deep_sizes(const I& i, const K& k, const C& c) {
     static_assert(etl_traits<I>::dimensions() == etl_traits<K>::dimensions() && etl_traits<K>::dimensions() == etl_traits<C>::dimensions(), "Invalid dimensions for 3D convolution");
 
