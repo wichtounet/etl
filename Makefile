@@ -65,6 +65,11 @@ ifeq (,$(ETL_NO_COVERAGE))
 $(eval $(call enable_coverage))
 endif
 
+# Enable sonar workarounds
+ifeq (,$(ETL_SONAR))
+CXX_FLAGS += -DSONAR_ANALYSIS
+endif
+
 # Enable Clang sanitizers in debug mode
 ifneq (,$(findstring clang,$(CXX)))
 ifeq (,$(ETL_CUBLAS))
