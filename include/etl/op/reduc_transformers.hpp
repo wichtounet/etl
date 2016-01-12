@@ -7,17 +7,6 @@
 
 #pragma once
 
-#include <iosfwd> //For stream support
-
-#include "cpp_utils/assert.hpp"
-#include "cpp_utils/tmp.hpp"
-
-#include "etl/tmp.hpp"
-
-//The transformers
-#include "etl/op/flip_transformers.hpp"
-#include "etl/op/rep_transformers.hpp"
-
 namespace etl {
 
 /*!
