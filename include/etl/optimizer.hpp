@@ -41,21 +41,32 @@ struct optimizable {
     }
 };
 
-//unary_expr
+/*!
+ * \copydoc optimizable
+ *
+ * Specialization for unary_expr
+ */
 template <typename T, typename Expr, typename UnaryOp>
 struct optimizable<etl::unary_expr<T, Expr, UnaryOp>> {
+    /*! \copydoc optimizable::is */
     static bool is(const etl::unary_expr<T, Expr, UnaryOp>& /*unused*/) {
         return std::is_same<UnaryOp, plus_unary_op<T>>::value;
     }
 
+    /*! \copydoc optimizable::is_deep */
     static bool is_deep(const etl::unary_expr<T, Expr, UnaryOp>& expr) {
         return is(expr) || is_optimizable_deep(expr.value());
     }
 };
 
-//binary_expr with two scalar
+/*!
+ * \copydoc optimizable
+ *
+ * Specialization for binary_expr and two scalars
+ */
 template <typename T, typename BinaryOp>
 struct optimizable<etl::binary_expr<T, etl::scalar<T>, BinaryOp, etl::scalar<T>>> {
+    /*! \copydoc optimizable::is */
     static bool is(const etl::binary_expr<T, etl::scalar<T>, BinaryOp, etl::scalar<T>>& /*unused*/) {
         if (std::is_same<BinaryOp, mul_binary_op<T>>::value) {
             return true;
@@ -76,14 +87,20 @@ struct optimizable<etl::binary_expr<T, etl::scalar<T>, BinaryOp, etl::scalar<T>>
         return false;
     }
 
+    /*! \copydoc optimizable::is_deep */
     static bool is_deep(const etl::binary_expr<T, etl::scalar<T>, BinaryOp, etl::scalar<T>>& expr) {
         return is(expr) || is_optimizable_deep(expr.lhs()) || is_optimizable_deep(expr.rhs());
     }
 };
 
-//binary_expr with a scalar lhs
+/*!
+ * \copydoc optimizable
+ *
+ * Specialization for binary_expr with scalar lhs
+ */
 template <typename T, typename BinaryOp, typename RightExpr>
 struct optimizable<etl::binary_expr<T, etl::scalar<T>, BinaryOp, RightExpr>> {
+    /*! \copydoc optimizable::is */
     static bool is(const etl::binary_expr<T, etl::scalar<T>, BinaryOp, RightExpr>& expr) {
         if (expr.lhs().value == 1.0 && std::is_same<BinaryOp, mul_binary_op<T>>::value) {
             return true;
@@ -104,14 +121,20 @@ struct optimizable<etl::binary_expr<T, etl::scalar<T>, BinaryOp, RightExpr>> {
         return false;
     }
 
+    /*! \copydoc optimizable::is_deep */
     static bool is_deep(const etl::binary_expr<T, etl::scalar<T>, BinaryOp, RightExpr>& expr) {
         return is(expr) || is_optimizable_deep(expr.lhs()) || is_optimizable_deep(expr.rhs());
     }
 };
 
-//binary_expr with a scalar rhs
+/*!
+ * \copydoc optimizable
+ *
+ * Specialization for binary_expr with scalar rhs
+ */
 template <typename T, typename LeftExpr, typename BinaryOp>
 struct optimizable<etl::binary_expr<T, LeftExpr, BinaryOp, etl::scalar<T>>> {
+    /*! \copydoc optimizable::is */
     static bool is(const etl::binary_expr<T, LeftExpr, BinaryOp, etl::scalar<T>>& expr) {
         if (expr.rhs().value == 1.0 && std::is_same<BinaryOp, mul_binary_op<T>>::value) {
             return true;
@@ -136,40 +159,61 @@ struct optimizable<etl::binary_expr<T, LeftExpr, BinaryOp, etl::scalar<T>>> {
         return false;
     }
 
+    /*! \copydoc optimizable::is_deep */
     static bool is_deep(const etl::binary_expr<T, LeftExpr, BinaryOp, etl::scalar<T>>& expr) {
         return is(expr) || is_optimizable_deep(expr.lhs()) || is_optimizable_deep(expr.rhs());
     }
 };
 
-//General form of binary expr
+/*!
+ * \copydoc optimizable
+ *
+ * Specialization for general binary_expr
+ */
 template <typename T, typename LeftExpr, typename BinaryOp, typename RightExpr>
 struct optimizable<etl::binary_expr<T, LeftExpr, BinaryOp, RightExpr>> {
+    /*! \copydoc optimizable::is */
     static bool is(const etl::binary_expr<T, LeftExpr, BinaryOp, RightExpr>& /*unused*/) {
         return false;
     }
 
+    /*! \copydoc optimizable::is_deep */
     static bool is_deep(const etl::binary_expr<T, LeftExpr, BinaryOp, RightExpr>& expr) {
         return is_optimizable_deep(expr.lhs()) || is_optimizable_deep(expr.rhs());
     }
 };
 
+/*!
+ * \copydoc optimizable
+ *
+ * Specialization for temporary_unary_expr
+ */
 template <typename T, typename A, typename Op, typename Forced>
 struct optimizable<etl::temporary_unary_expr<T, A, Op, Forced>> {
+    /*! \copydoc optimizable::is */
     static bool is(const etl::temporary_unary_expr<T, A, Op, Forced>& /*unused*/) {
         return false;
     }
 
+    /*! \copydoc optimizable::is_deep */
     static bool is_deep(const etl::temporary_unary_expr<T, A, Op, Forced>& expr) {
         return is_optimizable_deep(expr.a());
     }
 };
 
+/*!
+ * \copydoc optimizable
+ *
+ * Specialization for temporary_binary_expr
+ */
 template <typename T, typename A, typename B, typename Op, typename Forced>
 struct optimizable<etl::temporary_binary_expr<T, A, B, Op, Forced>> {
+    /*! \copydoc optimizable::is */
     static bool is(const etl::temporary_binary_expr<T, A, B, Op, Forced>& /*unused*/) {
         return false;
     }
 
+    /*! \copydoc optimizable::is_deep */
     static bool is_deep(const etl::temporary_binary_expr<T, A, B, Op, Forced>& expr) {
         return is_optimizable_deep(expr.a()) || is_optimizable_deep(expr.b());
     }
