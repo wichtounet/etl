@@ -328,12 +328,10 @@ private:
     }
 
     void unsafe_set_hint(std::size_t i, std::size_t j, std::size_t n, value_type value){
-        if(n < nnz){
-            //The value exists, modify it
-            if(_row_index[n] == i && _col_index[n] == j){
-                _memory[n] = value;
-                return;
-            }
+        //The value exists, modify it
+        if(n < nnz && _row_index[n] == i && _col_index[n] == j){
+            _memory[n] = value;
+            return;
         }
 
         reserve_hint(n);
@@ -345,10 +343,8 @@ private:
 
     template <bool B = n_dimensions == 2, cpp_enable_if(B)>
     value_type get_hint(std::size_t i, std::size_t j, std::size_t n) const noexcept {
-        if (n < nnz) {
-            if (_row_index[n] == i && _col_index[n] == j) {
-                return _memory[n];
-            }
+        if (n < nnz && _row_index[n] == i && _col_index[n] == j) {
+            return _memory[n];
         }
 
         return 0.0;
@@ -570,10 +566,8 @@ public:
     void erase(std::size_t i, std::size_t j) {
         auto n = find_n(i, j);
 
-        if (n < nnz) {
-            if (_row_index[n] == i && _col_index[n] == j) {
-                erase_hint(n);
-            }
+        if (n < nnz && _row_index[n] == i && _col_index[n] == j) {
+            erase_hint(n);
         }
     }
 
