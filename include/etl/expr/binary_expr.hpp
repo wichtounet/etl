@@ -284,7 +284,12 @@ struct etl_traits<etl::binary_expr<T, LeftExpr, BinaryOp, RightExpr>> {
     }
 };
 
-
+/*!
+ * \brief Prints the type of the binary expression to the stream
+ * \param os The output stream
+ * \param expr The expression to print
+ * \return the output stream
+ */
 template <typename T, typename LeftExpr, typename BinaryOp, typename RightExpr>
 std::ostream& operator<<(std::ostream& os, const binary_expr<T, LeftExpr, BinaryOp, RightExpr>& expr) {
     if (BinaryOp::desc_func) {

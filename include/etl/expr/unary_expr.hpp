@@ -732,21 +732,45 @@ struct etl_traits<etl::unary_expr<T, Expr, UnaryOp>> {
     }
 };
 
+/*!
+ * \brief Prints the type of the unary expression to the stream
+ * \param os The output stream
+ * \param expr The expression to print
+ * \return the output stream
+ */
 template <typename T, typename Expr, typename UnaryOp>
 std::ostream& operator<<(std::ostream& os, const unary_expr<T, Expr, stateful_op<UnaryOp>>& expr) {
     return os << UnaryOp::desc() << '(' << expr.value() << ')';
 }
 
+/*!
+ * \brief Prints the type of the unary expression to the stream
+ * \param os The output stream
+ * \param expr The expression to print
+ * \return the output stream
+ */
 template <typename T, typename Expr>
 std::ostream& operator<<(std::ostream& os, const unary_expr<T, Expr, identity_op>& expr) {
     return os << expr.value();
 }
 
+/*!
+ * \brief Prints the type of the unary expression to the stream
+ * \param os The output stream
+ * \param expr The expression to print
+ * \return the output stream
+ */
 template <typename T, typename Expr>
 std::ostream& operator<<(std::ostream& os, const unary_expr<T, Expr, transform_op>& expr) {
     return os << expr.value();
 }
 
+/*!
+ * \brief Prints the type of the unary expression to the stream
+ * \param os The output stream
+ * \param expr The expression to print
+ * \return the output stream
+ */
 template <typename T, typename Expr, typename UnaryOp>
 std::ostream& operator<<(std::ostream& os, const unary_expr<T, Expr, UnaryOp>& expr) {
     return os << UnaryOp::desc() << '(' << expr.value() << ')';
