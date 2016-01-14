@@ -43,6 +43,30 @@ using right_binary_helper = binary_expr<value_t<RE>, build_type<LE>, OP<value_t<
 template <typename LE, typename RE, typename OP>
 using right_binary_helper_op = binary_expr<value_t<RE>, build_type<LE>, OP, build_type<RE>>;
 
+template <typename LE, typename RE, template <typename> class OP, typename Enable = void>
+struct smart_binary_helper;
+
+//a) ETL - ETL
+template <typename LE, typename RE, template <typename> class OP>
+struct smart_binary_helper<LE, RE, OP, std::enable_if_t<is_etl_expr<LE>::value && is_etl_expr<RE>::value>> {
+    using type = binary_expr<value_t<LE>, build_type<LE>, OP<value_t<LE>>, build_type<RE>>;
+};
+
+//b) ETL - Scalar
+template <typename LE, typename RE, template <typename> class OP>
+struct smart_binary_helper<LE, RE, OP, std::enable_if_t<is_etl_expr<LE>::value && std::is_convertible<RE, value_t<LE>>::value>> {
+    using type = binary_expr<value_t<LE>, build_type<LE>, OP<value_t<LE>>, scalar<value_t<LE>>>;
+};
+
+//c) Scalar - ETL
+template <typename LE, typename RE, template <typename> class OP>
+struct smart_binary_helper<LE, RE, OP, std::enable_if_t<is_etl_expr<RE>::value && std::is_convertible<LE, value_t<RE>>::value>> {
+    using type = binary_expr<value_t<RE>, scalar<value_t<RE>>, OP<value_t<RE>>, build_type<RE>>;
+};
+
+template <typename LE, typename RE, template <typename> class OP>
+using smart_binary_helper_t = typename smart_binary_helper<LE, RE, OP>::type;
+
 template <typename E, template <typename> class OP>
 using unary_helper = unary_expr<value_t<E>, build_type<E>, OP<value_t<E>>>;
 

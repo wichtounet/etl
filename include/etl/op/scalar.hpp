@@ -30,7 +30,7 @@ struct scalar {
      * \brief Builds a new scalar
      * \þaram v The scalar value
      */
-    explicit constexpr scalar(T v)
+    constexpr scalar(T v)
             : value(v) {}
 
     constexpr T operator[](std::size_t /*d*/) const noexcept {
