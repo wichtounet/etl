@@ -81,11 +81,11 @@ auto operator>>(LE&& lhs, RE&& rhs) -> detail::left_binary_helper<LE, RE, mul_bi
  * \param rhs The right hand side expression
  * \return An expression representing the scalar multiplication of lhs and rhs
  */
-template <typename LE, typename RE, cpp_enable_if(is_etl_expr<LE>::value, is_etl_expr<RE>::value)>
-auto scale(LE&& lhs, RE&& rhs) -> detail::left_binary_helper<LE, RE, mul_binary_op> {
+template <typename LE, typename RE>
+auto scale(LE&& lhs, RE&& rhs){
     validate_expression(lhs, rhs);
 
-    return {lhs, rhs};
+    return detail::left_binary_helper<LE, RE, mul_binary_op>{lhs, rhs};
 }
 
 /*!
@@ -1099,7 +1099,6 @@ auto ctrans(const E& value){
  */
 template <typename A, typename B>
 value_t<A> dot(const A& a, const B& b) {
-    static_assert(is_etl_expr<A>::value && is_etl_expr<B>::value, "etl::dot can only be used on ETL expressions");
     validate_expression(a, b);
     return detail::dot_impl<A, B>::apply(a, b);
 }
