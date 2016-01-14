@@ -98,7 +98,7 @@ TEMPLATE_TEST_CASE_2("fast_vector/add_2", "fast_vector::operator+=", Z, float, d
 TEMPLATE_TEST_CASE_2("fast_vector/sub_scalar_1", "fast_vector::operator+", Z, float, double) {
     etl::fast_vector<Z, 3> test_vector = {-1.0, 2.0, 5.5};
 
-    test_vector = 1.0 - test_vector;
+    test_vector = Z(1.0) - test_vector;
 
     REQUIRE(test_vector[0] == 2.0);
     REQUIRE(test_vector[1] == -1.0);
@@ -108,7 +108,7 @@ TEMPLATE_TEST_CASE_2("fast_vector/sub_scalar_1", "fast_vector::operator+", Z, fl
 TEMPLATE_TEST_CASE_2("fast_vector/sub_scalar_2", "fast_vector::operator+", Z, float, double) {
     etl::fast_vector<Z, 3> test_vector = {-1.0, 2.0, 5.5};
 
-    test_vector = test_vector - 1.0;
+    test_vector = test_vector - Z(1.0);
 
     REQUIRE(test_vector[0] == -2.0);
     REQUIRE(test_vector[1] == 1.0);
