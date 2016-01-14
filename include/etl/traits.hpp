@@ -45,6 +45,7 @@ struct etl_traits {
     static constexpr const bool is_view        = false; ///< Indicates if T is a view
     static constexpr const bool is_magic_view  = false; ///< Indicates if T is a magic view
     static constexpr const bool is_fast        = false; ///< Indicates if T is a fast structure
+    static constexpr const bool is_generator   = false; ///< Indicates if T is a generator expression
 };
 
 /*!
