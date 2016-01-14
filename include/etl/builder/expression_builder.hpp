@@ -82,7 +82,7 @@ auto operator>>(LE&& lhs, RE&& rhs) -> detail::left_binary_helper<LE, RE, mul_bi
  * \return An expression representing the scalar multiplication of lhs and rhs
  */
 template <typename LE, typename RE>
-auto scale(LE&& lhs, RE&& rhs){
+auto scale(LE&& lhs, RE&& rhs) -> detail::left_binary_helper<LE, RE, mul_binary_op> {
     validate_expression(lhs, rhs);
 
     return detail::left_binary_helper<LE, RE, mul_binary_op>{lhs, rhs};
@@ -422,12 +422,12 @@ LE& operator%=(LE&& lhs, RE&& rhs) {
 
 // Apply an unary expression on an ETL expression (vector,matrix,binary,unary)
 
-template <typename E, cpp_enable_if(is_etl_expr<E>::value)>
+template <typename E>
 auto operator-(E&& value) -> detail::unary_helper<E, minus_unary_op> {
     return detail::unary_helper<E, minus_unary_op>{value};
 }
 
-template <typename E, cpp_enable_if(is_etl_expr<E>::value)>
+template <typename E>
 auto operator+(E&& value) -> detail::unary_helper<E, plus_unary_op> {
     return detail::unary_helper<E, plus_unary_op>{value};
 }
@@ -964,21 +964,21 @@ auto rep_l(E&& value) -> unary_expr<value_t<E>, rep_l_transformer<detail::build_
     return unary_expr<value_t<E>, rep_l_transformer<detail::build_type<E>, D1, D...>, transform_op>{rep_l_transformer<detail::build_type<E>, D1, D...>(value)};
 }
 
-template <typename... D, typename E, cpp_enable_if(cpp::all_convertible_to<std::size_t, std::size_t, D...>::value)>
+template <typename... D, typename E>
 auto rep(E&& value, std::size_t d1, D... d) -> unary_expr<value_t<E>, dyn_rep_r_transformer<detail::build_type<E>, 1 + sizeof...(D)>, transform_op> {
     static_assert(is_etl_expr<E>::value, "etl::rep can only be used on ETL expressions");
     return unary_expr<value_t<E>, dyn_rep_r_transformer<detail::build_type<E>, 1 + sizeof...(D)>, transform_op>{
         dyn_rep_r_transformer<detail::build_type<E>, 1 + sizeof...(D)>(value, {{d1, static_cast<std::size_t>(d)...}})};
 }
 
-template <typename... D, typename E, cpp_enable_if(cpp::all_convertible_to<std::size_t, std::size_t, D...>::value)>
+template <typename... D, typename E>
 auto rep_r(E&& value, std::size_t d1, D... d) -> unary_expr<value_t<E>, dyn_rep_r_transformer<detail::build_type<E>, 1 + sizeof...(D)>, transform_op> {
     static_assert(is_etl_expr<E>::value, "etl::rep_r can only be used on ETL expressions");
     return unary_expr<value_t<E>, dyn_rep_r_transformer<detail::build_type<E>, 1 + sizeof...(D)>, transform_op>{
         dyn_rep_r_transformer<detail::build_type<E>, 1 + sizeof...(D)>(value, {{d1, static_cast<std::size_t>(d)...}})};
 }
 
-template <typename... D, typename E, cpp_enable_if(cpp::all_convertible_to<std::size_t, std::size_t, D...>::value)>
+template <typename... D, typename E>
 auto rep_l(E&& value, std::size_t d1, D... d) -> unary_expr<value_t<E>, dyn_rep_l_transformer<detail::build_type<E>, 1 + sizeof...(D)>, transform_op> {
     static_assert(is_etl_expr<E>::value, "etl::rep_l can only be used on ETL expressions");
     return unary_expr<value_t<E>, dyn_rep_l_transformer<detail::build_type<E>, 1 + sizeof...(D)>, transform_op>{
@@ -1123,7 +1123,7 @@ value_t<E> sum(E&& values) {
  * \param values The expression to reduce
  * \return The mean of the values of the expression
  */
-template <typename E, cpp_enable_if(is_etl_expr<E>::value)>
+template <typename E>
 value_t<E> mean(E&& values) {
     static_assert(is_etl_expr<E>::value, "etl::mean can only be used on ETL expressions");
 
