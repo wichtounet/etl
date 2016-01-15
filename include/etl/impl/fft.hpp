@@ -7,8 +7,6 @@
 
 #pragma once
 
-#include <algorithm>
-
 #include "etl/impl/std/fft.hpp"
 #include "etl/impl/blas/fft.hpp"
 #include "etl/impl/cufft/fft.hpp"

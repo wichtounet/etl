@@ -7,8 +7,6 @@
 
 #pragma once
 
-#include "etl/tmp.hpp"
-
 namespace etl {
 
 namespace detail {

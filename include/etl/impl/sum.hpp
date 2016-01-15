@@ -23,7 +23,6 @@
 #pragma once
 
 #include "etl/threshold.hpp"
-#include "etl/parallel.hpp" //For parallel dispatching
 
 //Include the implementations
 #include "etl/impl/std/sum.hpp"

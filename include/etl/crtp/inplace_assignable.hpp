@@ -7,8 +7,6 @@
 
 #pragma once
 
-#include <algorithm>
-
 #include "etl/impl/transpose.hpp"
 #include "etl/impl/fft.hpp"
 

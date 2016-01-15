@@ -7,8 +7,6 @@
 
 #pragma once
 
-#include <algorithm>
-
 #include "etl/threshold.hpp"
 
 //The implementations

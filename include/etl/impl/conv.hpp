@@ -21,10 +21,6 @@
 
 #pragma once
 
-#include <algorithm>
-
-#include "etl/parallel.hpp" //For parallel dispatching
-
 //Include the implementations
 #include "etl/impl/std/conv.hpp"
 #include "etl/impl/sse/conv.hpp"

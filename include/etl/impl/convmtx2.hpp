@@ -7,8 +7,6 @@
 
 #pragma once
 
-#include <algorithm>
-
 namespace etl {
 
 namespace detail {

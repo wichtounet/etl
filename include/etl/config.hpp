@@ -7,8 +7,6 @@
 
 #pragma once
 
-#include <thread>
-
 namespace etl {
 
 #ifdef ETL_VECTORIZE_FULL

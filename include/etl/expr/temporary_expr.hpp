@@ -7,16 +7,9 @@
 
 #pragma once
 
-#include <iosfwd> //For stream support
 #include <memory> //For shared_ptr
 
 #include "etl/iterator.hpp"
-#include "etl/tmp.hpp"
-
-// CRTP classes
-#include "etl/crtp/comparable.hpp"
-#include "etl/crtp/value_testable.hpp"
-#include "etl/crtp/dim_testable.hpp"
 
 namespace etl {
 
