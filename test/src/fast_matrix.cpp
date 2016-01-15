@@ -809,8 +809,13 @@ TEMPLATE_TEST_CASE_2("fast_matrix/binary_sub", "[binary][sub]", Z, float, double
     etl::fast_matrix<Z, 2, 1, 2> b = {-1.0, 2.0, 5.5, 1.0};
     etl::fast_matrix<Z, 2> c;
 
+    REQUIRE(a(0, 0, 0) == -1.0);
+
     c = (a + b)(1)(0);
 
     REQUIRE(c[0] == 11.0);
     REQUIRE(c[1] == 2.0);
+
+    REQUIRE((a + b)(1)(0)(0) == 11.0);
+    REQUIRE((a + b)(1)(0)(1) == 2.0);
 }
