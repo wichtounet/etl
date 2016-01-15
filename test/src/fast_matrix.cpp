@@ -120,7 +120,7 @@ TEMPLATE_TEST_CASE_2("fast_matrix/access", "fast_matrix::operator()", Z, float, 
 TEMPLATE_TEST_CASE_2("fast_matrix/add_scalar_1", "fast_matrix::operator+", Z, float, double) {
     etl::fast_matrix<Z, 2, 2> test_matrix = {-1.0, 2.0, 5.5, 1.0};
 
-    test_matrix = 1.0 + test_matrix;
+    test_matrix = Z(1.0) + test_matrix;
 
     REQUIRE(test_matrix[0] == 0.0);
     REQUIRE(test_matrix[1] == 3.0);
@@ -130,7 +130,7 @@ TEMPLATE_TEST_CASE_2("fast_matrix/add_scalar_1", "fast_matrix::operator+", Z, fl
 TEMPLATE_TEST_CASE_2("fast_matrix/add_scalar_2", "fast_matrix::operator+", Z, float, double) {
     etl::fast_matrix<Z, 2, 2> test_matrix = {-1.0, 2.0, 5.5, 1.0};
 
-    test_matrix = test_matrix + 1.0;
+    test_matrix = test_matrix + Z(1.0);
 
     REQUIRE(test_matrix[0] == 0.0);
     REQUIRE(test_matrix[1] == 3.0);
@@ -207,7 +207,7 @@ TEMPLATE_TEST_CASE_2("fast_matrix/add_4", "fast_matrix::operator+=", Z, float, d
 TEMPLATE_TEST_CASE_2("fast_matrix/sub_scalar_1", "fast_matrix::operator+", Z, float, double) {
     etl::fast_matrix<Z, 2, 2> test_matrix = {-1.0, 2.0, 5.5, 1.0};
 
-    test_matrix = 1.0 - test_matrix;
+    test_matrix = Z(1.0) - test_matrix;
 
     REQUIRE(test_matrix[0] == 2.0);
     REQUIRE(test_matrix[1] == -1.0);
@@ -217,7 +217,7 @@ TEMPLATE_TEST_CASE_2("fast_matrix/sub_scalar_1", "fast_matrix::operator+", Z, fl
 TEMPLATE_TEST_CASE_2("fast_matrix/sub_scalar_2", "fast_matrix::operator+", Z, float, double) {
     etl::fast_matrix<Z, 2, 2> test_matrix = {-1.0, 2.0, 5.5, 1.0};
 
-    test_matrix = test_matrix - 1.0;
+    test_matrix = test_matrix - Z(1.0);
 
     REQUIRE(test_matrix[0] == -2.0);
     REQUIRE(test_matrix[1] == 1.0);
@@ -227,7 +227,7 @@ TEMPLATE_TEST_CASE_2("fast_matrix/sub_scalar_2", "fast_matrix::operator+", Z, fl
 TEMPLATE_TEST_CASE_2("fast_matrix/sub_scalar_3", "fast_matrix::operator+=", Z, float, double) {
     etl::fast_matrix<Z, 2, 2> test_matrix = {-1.0, 2.0, 5.5, 1.0};
 
-    test_matrix -= 1.0;
+    test_matrix -= Z(1.0);
 
     REQUIRE(test_matrix[0] == -2.0);
     REQUIRE(test_matrix[1] == 1.0);
