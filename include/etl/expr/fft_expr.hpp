@@ -12,8 +12,6 @@
 
 #pragma once
 
-#include "etl/expr/detail.hpp"
-
 //Get the implementations
 #include "etl/impl/fft.hpp"
 

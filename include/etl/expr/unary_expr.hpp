@@ -7,10 +7,6 @@
 
 #pragma once
 
-#include <iosfwd> //For stream support
-
-#include "cpp_utils/assert.hpp"
-
 #include "etl/iterator.hpp"
 
 // CRTP classes

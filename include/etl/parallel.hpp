@@ -7,10 +7,6 @@
 
 #pragma once
 
-#include <thread>
-
-#include "cpp_utils/parallel.hpp"
-
 namespace etl {
 
 /*!

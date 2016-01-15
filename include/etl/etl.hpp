@@ -7,9 +7,8 @@
 
 #pragma once
 
-#include <complex>
-#include <vector>
-#include <array>
+//Common STL includes
+#include "etl/std.hpp"
 
 //Metaprogramming utilities
 #include "etl/tmp.hpp"
@@ -43,6 +42,7 @@
 #include "etl/globals.hpp"
 
 // The expressions
+#include "etl/expr/detail.hpp"
 #include "etl/expr/binary_expr.hpp"
 #include "etl/expr/unary_expr.hpp"
 #include "etl/expr/generator_expr.hpp"

@@ -13,8 +13,6 @@
 
 #pragma once
 
-#include "cpp_utils/parallel.hpp"
-
 #include "etl/visitor.hpp"        //visitor of the expressions
 
 namespace etl {

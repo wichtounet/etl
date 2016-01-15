@@ -12,14 +12,6 @@
 
 #pragma once
 
-#include <algorithm>   //For std::find_if
-#include <iosfwd>      //For stream support
-#include <type_traits> //For static assertions tests
-
-#include "cpp_utils/assert.hpp"
-
-#include "etl/tmp.hpp"
-
 // CRTP classes
 #include "etl/crtp/inplace_assignable.hpp"
 #include "etl/crtp/comparable.hpp"

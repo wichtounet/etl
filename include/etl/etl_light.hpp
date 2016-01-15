@@ -7,9 +7,8 @@
 
 #pragma once
 
-#include <complex>
-#include <vector>
-#include <array>
+//Common STL includes
+#include "etl/std.hpp"
 
 //Metaprogramming utilities
 #include "etl/tmp.hpp"

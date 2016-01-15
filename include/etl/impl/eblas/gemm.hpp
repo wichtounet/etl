@@ -19,8 +19,6 @@
 #include <immintrin.h>
 #endif
 
-#include "cpp_utils/likely.hpp"
-
 #include "etl/allocator.hpp"
 
 namespace etl {

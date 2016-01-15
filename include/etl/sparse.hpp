@@ -7,13 +7,6 @@
 
 #pragma once
 
-#include <tuple>     //For TMP stuff
-#include <algorithm> //For std::find_if
-#include <iosfwd>    //For stream support
-
-#include "cpp_utils/assert.hpp"
-#include "cpp_utils/tmp.hpp"
-
 #include "etl/dyn_base.hpp"    //The base class and utilities
 
 namespace etl {

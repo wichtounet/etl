@@ -9,8 +9,6 @@
 
 #include <cmath>
 
-#include "cpp_utils/tmp.hpp"
-
 namespace etl {
 
 namespace math {
