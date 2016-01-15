@@ -181,7 +181,7 @@ struct sparse_matrix_impl <T, sparse_storage::COO, D> final : dyn_base<T, D> {
     friend struct sparse_detail::sparse_reference<this_type>;
     friend struct sparse_detail::sparse_reference<const this_type>;
 
-    static_assert(dimensions == 2, "Only 2D sparse matrix are supported");
+    static_assert(n_dimensions == 2, "Only 2D sparse matrix are supported");
 
 private:
     using base_type::_size;
@@ -508,6 +508,7 @@ public:
      * \param n The index
      * \return the value at the given index.
      */
+    template <bool B = n_dimensions == 2, cpp_enable_if(B)>
     value_type read_flat(std::size_t n) const noexcept {
         return get(n / columns(), n % columns());
     }
