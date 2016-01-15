@@ -300,7 +300,7 @@ public:
      * \tparam V The vectorization mode to use
      * \return a vector containing several elements of the matrix
      */
-    template <typename V = default_vec, typename SS = Expr, cpp_enable_if(has_direct_access<SS>::value)>
+    template <typename V = default_vec>
     vec_type<V> load(std::size_t i) const noexcept {
         return V::loadu(memory_start() + i);
     }

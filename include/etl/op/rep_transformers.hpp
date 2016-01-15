@@ -55,7 +55,7 @@ struct rep_r_transformer {
      * \param args The indices
      * \return The value at the position (args...)
      */
-    template <typename... Sizes, cpp_enable_if((sizeof...(Sizes) == dimensions))>
+    template <typename... Sizes>
     value_type operator()(Sizes... args) const {
         return selected_only(std::make_index_sequence<sub_d>(), args...);
     }
@@ -131,7 +131,7 @@ struct rep_l_transformer {
      * \param args The indices
      * \return The value at the position (args...)
      */
-    template <typename... Sizes, cpp_enable_if((sizeof...(Sizes) == dimensions))>
+    template <typename... Sizes>
     value_type operator()(Sizes... args) const {
         return selected_only(make_index_range<sizeof...(D), dimensions>(), args...);
     }
@@ -215,7 +215,7 @@ struct dyn_rep_r_transformer {
      * \param args The indices
      * \return The value at the position (args...)
      */
-    template <typename... Sizes, cpp_enable_if((sizeof...(Sizes) == dimensions))>
+    template <typename... Sizes>
     value_type operator()(Sizes... args) const {
         return selected_only(std::make_index_sequence<sub_d>(), args...);
     }
@@ -299,7 +299,7 @@ struct dyn_rep_l_transformer {
      * \param args The indices
      * \return The value at the position (args...)
      */
-    template <typename... Sizes, cpp_enable_if((sizeof...(Sizes) == dimensions))>
+    template <typename... Sizes>
     value_type operator()(Sizes... args) const {
         return selected_only(make_index_range<D, dimensions>(), args...);
     }
