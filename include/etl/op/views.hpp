@@ -323,13 +323,13 @@ struct matrix_subsize : std::integral_constant<std::size_t, M::template dim<I + 
 template <typename M, std::size_t I>
 struct matrix_subsize<M, I, std::enable_if_t<I == M::n_dimensions - 1>> : std::integral_constant<std::size_t, 1> {};
 
-template <typename M, std::size_t I, typename S1>
-inline constexpr std::size_t compute_index(S1 first) noexcept {
+template <typename M, std::size_t I>
+inline constexpr std::size_t compute_index(std::size_t first) noexcept {
     return first;
 }
 
-template <typename M, std::size_t I, typename S1, typename... S, cpp_enable_if((sizeof...(S) > 0))>
-inline constexpr std::size_t compute_index(S1 first, S... args) noexcept {
+template <typename M, std::size_t I, typename... S, cpp_enable_if((sizeof...(S) > 0))>
+inline constexpr std::size_t compute_index(std::size_t first, S... args) noexcept {
     return matrix_subsize<M, I>::value * first + compute_index<M, I + 1>(args...);
 }
 

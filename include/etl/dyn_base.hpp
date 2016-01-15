@@ -52,13 +52,13 @@ template <typename... S>
 struct is_init_constructor : std::false_type {};
 
 template <typename S1, typename S2, typename S3, typename... S>
-struct is_init_constructor<S1, S2, S3, S...> : std::is_same<init_flag_t, typename cpp::nth_type<1 + sizeof...(S), S1, S2, S3, S...>::type> {};
+struct is_init_constructor<S1, S2, S3, S...> : std::is_same<init_flag_t, typename cpp::nth_type<sizeof...(S), S2, S3, S...>::type> {};
 
 template <typename... S>
 struct is_initializer_list_constructor : std::false_type {};
 
 template <typename S1, typename S2, typename... S>
-struct is_initializer_list_constructor<S1, S2, S...> : cpp::is_specialization_of<std::initializer_list, typename cpp::last_type<S1, S2, S...>::type> {};
+struct is_initializer_list_constructor<S1, S2, S...> : cpp::is_specialization_of<std::initializer_list, typename cpp::last_type<S2, S...>::type> {};
 
 inline std::size_t size(std::size_t first) {
     return first;

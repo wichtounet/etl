@@ -120,10 +120,10 @@ public:
     }
 
     //Sizes followed by a values_t
-    template <typename S1, typename... S, cpp_enable_if(
+    template <typename... S, cpp_enable_if(
                                               (sizeof...(S) == D),
-                                              cpp::is_specialization_of<values_t, typename cpp::last_type<S1, S...>::type>::value)>
-    explicit dyn_matrix_impl(S1 s1, S... sizes) noexcept : base_type(dyn_detail::size(std::make_index_sequence<(sizeof...(S))>(), s1, sizes...),
+                                              cpp::is_specialization_of<values_t, typename cpp::last_type<std::size_t, S...>::type>::value)>
+    explicit dyn_matrix_impl(std::size_t s1, S... sizes) noexcept : base_type(dyn_detail::size(std::make_index_sequence<(sizeof...(S))>(), s1, sizes...),
                                                                      dyn_detail::sizes(std::make_index_sequence<(sizeof...(S))>(), s1, sizes...)),
                                                            _memory(allocate(_size)) {
         auto list = cpp::last_value(sizes...).template list<value_type>();
@@ -133,7 +133,7 @@ public:
     //Sizes followed by a value
     template <typename S1, typename... S, cpp_enable_if(
                                               (sizeof...(S) == D),
-                                              std::is_convertible<std::size_t, typename cpp::first_type<S1, S...>::type>::value, //The first type must be convertible to size_t
+                                              std::is_convertible<std::size_t, S1>::value, //The first type must be convertible to size_t
                                               cpp::is_sub_homogeneous<S1, S...>::value,                                          //The first N-1 types must homegeneous
                                               (std::is_arithmetic<typename cpp::last_type<S1, S...>::type>::value
                                                    ? std::is_convertible<value_type, typename cpp::last_type<S1, S...>::type>::value //The last type must be convertible to value_type
@@ -151,7 +151,7 @@ public:
     //Sizes followed by a generator_expr
     template <typename S1, typename... S, cpp_enable_if(
                                               (sizeof...(S) == D),
-                                              std::is_convertible<std::size_t, typename cpp::first_type<S1, S...>::type>::value,        //The first type must be convertible to size_t
+                                              std::is_convertible<std::size_t, S1>::value,        //The first type must be convertible to size_t
                                               cpp::is_sub_homogeneous<S1, S...>::value,                                                 //The first N-1 types must homegeneous
                                               cpp::is_specialization_of<generator_expr, typename cpp::last_type<S1, S...>::type>::value //The last type must be a generator expr
                                               )>
@@ -354,7 +354,7 @@ public:
         }
     }
 
-    template <typename... S, cpp_enable_if((sizeof...(S) > 0))>
+    template <typename... S>
     std::size_t index(S... sizes) const noexcept {
         //Note: Version with sizes moved to a std::array and accessed with
         //standard loop may be faster, but need some stack space (relevant ?)
