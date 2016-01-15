@@ -699,10 +699,10 @@ template <typename A, typename C>
 void fft2_many(A&& /*unused*/, C&& /*unused*/) {}
 
 template <typename A, typename B, typename C>
-void fft1_convolve(A&& /*unused*/, C&& /*unused*/) {}
+void fft1_convolve(A&& /*unused*/, B&& /*unused*/, C&& /*unused*/) {}
 
 template <typename A, typename B, typename C>
-void fft2_convolve(A&& /*unused*/, C&& /*unused*/) {}
+void fft2_convolve(A&& /*unused*/, B&& /*unused*/, C&& /*unused*/) {}
 
 #endif
 
