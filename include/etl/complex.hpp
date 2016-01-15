@@ -176,7 +176,7 @@ inline bool operator!=(const complex<T>& lhs, const complex<T>& rhs) {
  * \return a complex number with the value of -rhs
  */
 template <typename T>
-inline complex<T> operator-(const complex<T>& rhs) {
+inline complex<T> operator-(complex<T> rhs) {
     return {-rhs.real, -rhs.imag};
 }
 
