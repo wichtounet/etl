@@ -33,6 +33,14 @@ struct scalar {
     constexpr scalar(T v)
             : value(v) {}
 
+    /*!
+     * \brief Builds a new scalar
+     * \þaram v The scalar value
+     */
+    template<typename TT, cpp_enable_if(std::is_convertible<TT, T>::value)>
+    constexpr scalar(TT v)
+            : value(v) {}
+
     constexpr T operator[](std::size_t /*d*/) const noexcept {
         return value;
     }
