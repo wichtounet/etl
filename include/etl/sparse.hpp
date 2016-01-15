@@ -181,6 +181,8 @@ struct sparse_matrix_impl <T, sparse_storage::COO, D> final : dyn_base<T, D> {
     friend struct sparse_detail::sparse_reference<this_type>;
     friend struct sparse_detail::sparse_reference<const this_type>;
 
+    static_assert(dimensions == 2, "Only 2D sparse matrix are supported");
+
 private:
     using base_type::_size;
     using base_type::_dimensions;
@@ -450,7 +452,6 @@ public:
      *
      * \return The value at the (i,j) position.
      */
-    template <bool B = n_dimensions == 2, cpp_enable_if(B)>
     value_type get(std::size_t i, std::size_t j) const noexcept {
         cpp_assert(i < dim(0), "Out of bounds");
         cpp_assert(j < dim(1), "Out of bounds");
@@ -465,7 +466,6 @@ public:
      * \param j The second index
      * \return a sparse reference (proxy reference) to the element at position (i,j)
      */
-    template <bool B = n_dimensions == 2, cpp_enable_if(B)>
     reference_type operator()(std::size_t i, std::size_t j) noexcept {
         return {*this, i, j};
     }
@@ -476,7 +476,6 @@ public:
      * \param j The second index
      * \return a sparse reference (proxy reference) to the element at position (i,j)
      */
-    template <bool B = n_dimensions == 2, cpp_enable_if(B)>
     const_reference_type operator()(std::size_t i, std::size_t j) const noexcept {
         return {*this, i, j};
     }
@@ -488,7 +487,6 @@ public:
      * \param n The index
      * \return a reference to the element at the given index.
      */
-    template <bool B = n_dimensions == 2, cpp_enable_if(B)>
     reference_type operator[](std::size_t n) noexcept {
         return {*this, n / columns(), n % columns()};
     }
@@ -500,7 +498,6 @@ public:
      * \param n The index
      * \return a reference to the element at the given index.
      */
-    template <bool B = n_dimensions == 2, cpp_enable_if(B)>
     const_reference_type operator[](std::size_t n) const noexcept {
         return {*this, n / columns(), n % columns()};
     }
@@ -511,7 +508,6 @@ public:
      * \param n The index
      * \return the value at the given index.
      */
-    template <bool B = n_dimensions == 2, cpp_enable_if(B)>
     value_type read_flat(std::size_t n) const noexcept {
         return get(n / columns(), n % columns());
     }
