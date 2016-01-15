@@ -44,34 +44,31 @@ struct matrix_leadingsize : std::integral_constant<std::size_t, M::template dim<
 template <typename M>
 struct matrix_leadingsize<M, 0> : std::integral_constant<std::size_t, 1> {};
 
-template <typename M, std::size_t I, typename S1>
-inline constexpr std::size_t rm_compute_index(S1 first) noexcept {
+template <typename M, std::size_t I>
+inline constexpr std::size_t rm_compute_index(std::size_t first) noexcept {
     return first;
 }
 
-template <typename M, std::size_t I, typename S1, typename... S, cpp_enable_if((sizeof...(S) > 0))>
-inline constexpr std::size_t rm_compute_index(S1 first, S... args) noexcept {
-    return matrix_subsize<M, I>::value * first + rm_compute_index<M, I + 1>(args...);
+template <typename M, std::size_t I, typename... S>
+inline constexpr std::size_t rm_compute_index(std::size_t first, std::size_t second, S... args) noexcept {
+    return matrix_subsize<M, I>::value * first + rm_compute_index<M, I + 1>(second, args...);
 }
 
-template <typename M, std::size_t I, typename S1>
-inline constexpr std::size_t cm_compute_index(S1 first) noexcept {
+template <typename M, std::size_t I>
+inline constexpr std::size_t cm_compute_index(std::size_t first) noexcept {
     return matrix_leadingsize<M, I>::value * first;
 }
 
-template <typename M, std::size_t I, typename S1, typename... S, cpp_enable_if((sizeof...(S) > 0))>
-inline constexpr std::size_t cm_compute_index(S1 first, S... args) noexcept {
-    return matrix_leadingsize<M, I>::value * first + cm_compute_index<M, I + 1>(args...);
+template <typename M, std::size_t I, typename... S>
+inline constexpr std::size_t cm_compute_index(std::size_t first, std::size_t second, S... args) noexcept {
+    return matrix_leadingsize<M, I>::value * first + cm_compute_index<M, I + 1>(second, args...);
 }
 
-template <typename M, std::size_t I, typename... S, cpp_enable_if(M::storage_order == order::RowMajor)>
+template <typename M, std::size_t I, typename... S>
 inline constexpr std::size_t compute_index(S... args) noexcept {
-    return rm_compute_index<M, I>(args...);
-}
-
-template <typename M, std::size_t I, typename... S, cpp_enable_if(M::storage_order == order::ColumnMajor)>
-inline constexpr std::size_t compute_index(S... args) noexcept {
-    return cm_compute_index<M, I>(args...);
+    return M::storage_order == order::ColumnMajor
+        ? cm_compute_index<M, I>(args...)
+        : rm_compute_index<M, I>(args...);
 }
 
 template <typename N>

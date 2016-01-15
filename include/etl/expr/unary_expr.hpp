@@ -148,7 +148,7 @@ public:
      * \return The computed value at the position (args...)
      */
     template <typename... S>
-    std::enable_if_t<sizeof...(S) == sub_size_compare<this_type>::value, value_type> operator()(S... args) const {
+    value_type operator()(S... args) const {
         static_assert(cpp::all_convertible_to<std::size_t, S...>::value, "Invalid size types");
 
         return UnaryOp::apply(value()(args...));
