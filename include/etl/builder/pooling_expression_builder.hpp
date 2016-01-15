@@ -24,7 +24,7 @@ namespace etl {
  * \return A expression representing the 2D Max Pooling of the input expression.
  */
 template <std::size_t C1, std::size_t C2, typename E>
-auto max_pool_2d(E&& value) -> temporary_unary_expr<value_t<E>, detail::build_type<E>, max_pool_2d_expr<value_t<E>, C1, C2>, void> {
+auto max_pool_2d(E&& value){
     return temporary_unary_expr<value_t<E>, detail::build_type<E>, max_pool_2d_expr<value_t<E>, C1, C2>, void>{value};
 }
 
@@ -36,7 +36,7 @@ auto max_pool_2d(E&& value) -> temporary_unary_expr<value_t<E>, detail::build_ty
  * \return A expression representing the 2D Average Pooling of the input expression.
  */
 template <std::size_t C1, std::size_t C2, typename E>
-auto avg_pool_2d(E&& value) -> temporary_unary_expr<value_t<E>, detail::build_type<E>, avg_pool_2d_expr<value_t<E>, C1, C2>, void> {
+auto avg_pool_2d(E&& value){
     return temporary_unary_expr<value_t<E>, detail::build_type<E>, avg_pool_2d_expr<value_t<E>, C1, C2>, void>{value};
 }
 
@@ -49,7 +49,7 @@ auto avg_pool_2d(E&& value) -> temporary_unary_expr<value_t<E>, detail::build_ty
  * \return A expression representing the 3D Max Pooling of the input expression.
  */
 template <std::size_t C1, std::size_t C2, std::size_t C3, typename E>
-auto max_pool_3d(E&& value) -> temporary_unary_expr<value_t<E>, detail::build_type<E>, max_pool_3d_expr<value_t<E>, C1, C2, C3>, void> {
+auto max_pool_3d(E&& value){
     return temporary_unary_expr<value_t<E>, detail::build_type<E>, max_pool_3d_expr<value_t<E>, C1, C2, C3>, void>{value};
 }
 
@@ -62,7 +62,7 @@ auto max_pool_3d(E&& value) -> temporary_unary_expr<value_t<E>, detail::build_ty
  * \return A expression representing the 3D Average Pooling of the input expression.
  */
 template <std::size_t C1, std::size_t C2, std::size_t C3, typename E>
-auto avg_pool_3d(E&& value) -> temporary_unary_expr<value_t<E>, detail::build_type<E>, avg_pool_3d_expr<value_t<E>, C1, C2, C3>, void> {
+auto avg_pool_3d(E&& value){
     return temporary_unary_expr<value_t<E>, detail::build_type<E>, avg_pool_3d_expr<value_t<E>, C1, C2, C3>, void>{value};
 }
 
@@ -106,7 +106,7 @@ auto avg_pool_derivative_3d(E&& input, F&& output) {
  * \return A expression representing the Derivative of 2D Max Pooling of the input expression.
  */
 template <std::size_t C1, std::size_t C2, typename E, typename F>
-auto max_pool_derivative_2d(E&& input, F&& output) -> temporary_binary_expr<value_t<E>, detail::build_type<E>, detail::build_type<F>, max_pool_derivative_2d_expr<value_t<E>, C1, C2>, void> {
+auto max_pool_derivative_2d(E&& input, F&& output){
     return temporary_binary_expr<value_t<E>, detail::build_type<E>, detail::build_type<F>, max_pool_derivative_2d_expr<value_t<E>, C1, C2>, void>{input, output};
 }
 
@@ -120,7 +120,7 @@ auto max_pool_derivative_2d(E&& input, F&& output) -> temporary_binary_expr<valu
  * \return A expression representing the Derivative of 3D Max Pooling of the input expression.
  */
 template <std::size_t C1, std::size_t C2, std::size_t C3, typename E, typename F>
-auto max_pool_derivative_3d(E&& input, F&& output) -> temporary_binary_expr<value_t<E>, detail::build_type<E>, detail::build_type<F>, max_pool_derivative_3d_expr<value_t<E>, C1, C2, C3>, void> {
+auto max_pool_derivative_3d(E&& input, F&& output){
     return temporary_binary_expr<value_t<E>, detail::build_type<E>, detail::build_type<F>, max_pool_derivative_3d_expr<value_t<E>, C1, C2, C3>, void>{input, output};
 }
 
@@ -132,7 +132,7 @@ auto max_pool_derivative_3d(E&& input, F&& output) -> temporary_binary_expr<valu
  * \return A expression representing the Upsampling of the given expression
  */
 template <std::size_t C1, std::size_t C2, typename E>
-auto upsample_2d(E&& value) -> temporary_unary_expr<value_t<E>, detail::build_type<E>, upsample_2d_expr<value_t<E>, C1, C2>, void> {
+auto upsample_2d(E&& value){
     return temporary_unary_expr<value_t<E>, detail::build_type<E>, upsample_2d_expr<value_t<E>, C1, C2>, void>{value};
 }
 
@@ -145,7 +145,7 @@ auto upsample_2d(E&& value) -> temporary_unary_expr<value_t<E>, detail::build_ty
  * \return A expression representing the Upsampling of the given expression
  */
 template <std::size_t C1, std::size_t C2, std::size_t C3, typename E>
-auto upsample_3d(E&& value) -> temporary_unary_expr<value_t<E>, detail::build_type<E>, upsample_3d_expr<value_t<E>, C1, C2, C3>, void> {
+auto upsample_3d(E&& value){
     return temporary_unary_expr<value_t<E>, detail::build_type<E>, upsample_3d_expr<value_t<E>, C1, C2, C3>, void>{value};
 }
 
@@ -157,7 +157,7 @@ auto upsample_3d(E&& value) -> temporary_unary_expr<value_t<E>, detail::build_ty
  * \return A expression representing the Probabilistic Max Pooling of hidden units
  */
 template <std::size_t C1, std::size_t C2, typename E, cpp_enable_if(is_etl_expr<E>::value)>
-auto p_max_pool_h(E&& value) -> unary_expr<value_t<E>, p_max_pool_h_transformer<detail::build_type<E>, C1, C2>, transform_op> {
+auto p_max_pool_h(E&& value){
     validate_pmax_pooling<C1, C2>(value);
     return unary_expr<value_t<E>, p_max_pool_h_transformer<detail::build_type<E>, C1, C2>, transform_op>{p_max_pool_h_transformer<detail::build_type<E>, C1, C2>(value)};
 }
@@ -170,7 +170,7 @@ auto p_max_pool_h(E&& value) -> unary_expr<value_t<E>, p_max_pool_h_transformer<
  * \return A expression representing the Probabilistic Max Pooling of pooling units
  */
 template <std::size_t C1, std::size_t C2, typename E, cpp_enable_if(is_etl_expr<E>::value)>
-auto p_max_pool_p(E&& value) -> unary_expr<value_t<E>, p_max_pool_p_transformer<detail::build_type<E>, C1, C2>, transform_op> {
+auto p_max_pool_p(E&& value){
     validate_pmax_pooling<C1, C2>(value);
     return unary_expr<value_t<E>, p_max_pool_p_transformer<detail::build_type<E>, C1, C2>, transform_op>{p_max_pool_p_transformer<detail::build_type<E>, C1, C2>(value)};
 }
