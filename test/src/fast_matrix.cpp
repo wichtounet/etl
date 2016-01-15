@@ -259,7 +259,7 @@ TEMPLATE_TEST_CASE_2("fast_matrix/sub_2", "fast_matrix::operator-=", Z, float, d
 TEMPLATE_TEST_CASE_2("fast_matrix/mul_scalar_1", "fast_matrix::operator*", Z, float, double) {
     etl::fast_matrix<Z, 2, 2> test_matrix = {-1.0, 2.0, 5.0, 1.0};
 
-    test_matrix = 2.5 * test_matrix;
+    test_matrix = Z(2.5) * test_matrix;
 
     REQUIRE(test_matrix[0] == -2.5);
     REQUIRE(test_matrix[1] == 5.0);
@@ -269,7 +269,7 @@ TEMPLATE_TEST_CASE_2("fast_matrix/mul_scalar_1", "fast_matrix::operator*", Z, fl
 TEMPLATE_TEST_CASE_2("fast_matrix/mul_scalar_2", "fast_matrix::operator*", Z, float, double) {
     etl::fast_matrix<Z, 2, 2> test_matrix = {-1.0, 2.0, 5.0, 1.0};
 
-    test_matrix = test_matrix * 2.5;
+    test_matrix = test_matrix * Z(2.5);
 
     REQUIRE(test_matrix[0] == -2.5);
     REQUIRE(test_matrix[1] == 5.0);
@@ -279,7 +279,7 @@ TEMPLATE_TEST_CASE_2("fast_matrix/mul_scalar_2", "fast_matrix::operator*", Z, fl
 TEMPLATE_TEST_CASE_2("fast_matrix/mul_scalar_3", "fast_matrix::operator*=", Z, float, double) {
     etl::fast_matrix<Z, 2, 2> test_matrix = {-1.0, 2.0, 5.0, 1.0};
 
-    test_matrix *= 2.5;
+    test_matrix *= Z(2.5);
 
     REQUIRE(test_matrix[0] == -2.5);
     REQUIRE(test_matrix[1] == 5.0);
@@ -322,7 +322,7 @@ TEMPLATE_TEST_CASE_2("fast_matrix/mul_3", "fast_matrix::operator*", Z, float, do
 TEMPLATE_TEST_CASE_2("fast_matrix/div_scalar_1", "fast_matrix::operator/", Z, float, double) {
     etl::fast_matrix<Z, 2, 2> test_matrix = {-1.0, 2.0, 5.0, 1.0};
 
-    test_matrix = test_matrix / 2.5;
+    test_matrix = test_matrix / Z(2.5);
 
     REQUIRE(test_matrix[0] == Approx(-1.0 / 2.5));
     REQUIRE(test_matrix[1] == Approx(2.0 / 2.5));
@@ -332,7 +332,7 @@ TEMPLATE_TEST_CASE_2("fast_matrix/div_scalar_1", "fast_matrix::operator/", Z, fl
 TEMPLATE_TEST_CASE_2("fast_matrix/div_scalar_2", "fast_matrix::operator/", Z, float, double) {
     etl::fast_matrix<Z, 2, 2> test_matrix = {-1.0, 2.0, 5.0, 1.0};
 
-    test_matrix = 2.5 / test_matrix;
+    test_matrix = Z(2.5) / test_matrix;
 
     REQUIRE(test_matrix[0] == Approx(2.5 / -1.0));
     REQUIRE(test_matrix[1] == Approx(2.5 / 2.0));
@@ -342,7 +342,7 @@ TEMPLATE_TEST_CASE_2("fast_matrix/div_scalar_2", "fast_matrix::operator/", Z, fl
 TEMPLATE_TEST_CASE_2("fast_matrix/div_scalar_3", "fast_matrix::operator/=", Z, float, double) {
     etl::fast_matrix<Z, 2, 2> test_matrix = {-1.0, 2.0, 5.0, 1.0};
 
-    test_matrix /= 2.5;
+    test_matrix /= Z(2.5);
 
     REQUIRE(test_matrix[0] == Approx(-1.0 / 2.5));
     REQUIRE(test_matrix[1] == Approx(2.0 / 2.5));
@@ -606,7 +606,7 @@ TEMPLATE_TEST_CASE_2("fast_matrix/pow_1", "fast_matrix::pow_1", Z, float, double
 
 TEMPLATE_TEST_CASE_2("fast_matrix/pow_2", "fast_matrix::pow_1", Z, float, double) {
     etl::fast_matrix<Z, 2, 2> a = {-1.0, 2.0, 0.0, 1.0};
-    etl::fast_matrix<Z, 2, 2> d(pow((a >> a) + 1.0, 2));
+    etl::fast_matrix<Z, 2, 2> d(pow((a >> a) + Z(1.0), 2));
 
     REQUIRE(d[0] == 4.0);
     REQUIRE(d[1] == 25.0);

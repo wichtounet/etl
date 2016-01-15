@@ -152,7 +152,7 @@ TEMPLATE_TEST_CASE_2("dyn_matrix/dim_0", "fast_matrix::fast_matrix(T)", Z, float
 TEMPLATE_TEST_CASE_2("dyn_matrix/add_scalar_1", "dyn_matrix::operator+", Z, double, float) {
     etl::dyn_matrix<Z> test_matrix(2, 2, std::initializer_list<Z>({-1.0, 2.0, 5.5, 1.0}));
 
-    test_matrix = 1.0 + test_matrix;
+    test_matrix = Z(1.0) + test_matrix;
 
     REQUIRE(test_matrix[0] == 0.0);
     REQUIRE(test_matrix[1] == 3.0);
@@ -162,7 +162,7 @@ TEMPLATE_TEST_CASE_2("dyn_matrix/add_scalar_1", "dyn_matrix::operator+", Z, doub
 TEMPLATE_TEST_CASE_2("dyn_matrix/add_scalar_2", "dyn_matrix::operator+", Z, double, float) {
     etl::dyn_matrix<Z> test_matrix(2, 2, std::initializer_list<Z>({-1.0, 2.0, 5.5, 1.0}));
 
-    test_matrix = test_matrix + 1.0;
+    test_matrix = test_matrix + Z(1.0);
 
     REQUIRE(test_matrix[0] == 0.0);
     REQUIRE(test_matrix[1] == 3.0);
@@ -172,7 +172,7 @@ TEMPLATE_TEST_CASE_2("dyn_matrix/add_scalar_2", "dyn_matrix::operator+", Z, doub
 TEMPLATE_TEST_CASE_2("dyn_matrix/add_scalar_3", "dyn_matrix::operator+=", Z, double, float) {
     etl::dyn_matrix<Z> test_matrix(2, 2, std::initializer_list<Z>({-1.0, 2.0, 5.5, 1.0}));
 
-    test_matrix += 1.0;
+    test_matrix += Z(1.0);
 
     REQUIRE(test_matrix[0] == 0.0);
     REQUIRE(test_matrix[1] == 3.0);

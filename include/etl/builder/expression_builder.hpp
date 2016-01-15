@@ -650,7 +650,7 @@ auto identity_derivative(E&& value) {
 template <typename E>
 auto sigmoid(E&& value) -> decltype(1.0 / (1.0 + exp(-value))) {
     static_assert(is_etl_expr<E>::value, "etl::sigmoid can only be used on ETL expressions");
-    return 1.0 / (1.0 + exp(-value));
+    return value_t<E>(1.0) / (value_t<E>(1.0) + exp(-value));
 }
 
 /*!
@@ -661,7 +661,7 @@ auto sigmoid(E&& value) -> decltype(1.0 / (1.0 + exp(-value))) {
 template <typename E>
 auto sigmoid_derivative(E&& value) -> decltype(value >> (1.0 - value)) {
     static_assert(is_etl_expr<E>::value, "etl::sigmoid_derivative can only be used on ETL expressions");
-    return value >> (1.0 - value);
+    return value >> (value_t<E>(1.0) - value);
 }
 
 /*!
@@ -735,7 +735,7 @@ auto softmax_derivative(E&& e){
 template <typename E>
 auto softplus(E&& value) -> decltype(log(1.0 + exp(value))) {
     static_assert(is_etl_expr<E>::value, "etl::softplus can only be used on ETL expressions");
-    return log(1.0 + exp(value));
+    return log(value_t<E>(1.0) + exp(value));
 }
 
 template <typename E>
