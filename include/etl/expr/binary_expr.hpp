@@ -152,14 +152,12 @@ public:
         return BinaryOp::apply(lhs()(args...), rhs()(args...));
     }
 
-    //TODO Simplify the next two SFINAE functions
-
     /*!
      * \brief Creates a sub view of the expression, effectively removing the first dimension and fixing it to the given index.
      * \param i The index to use
      * \return a sub view of the expression at position i.
      */
-    template <typename ST = T, typename L = LeftExpr, typename B = BinaryOp, typename R = RightExpr, cpp_enable_if((sub_size_compare<binary_expr<ST, L, B, R>>::value > 1))>
+    template <bool B = (sub_size_compare<this_type>::value > 1), cpp_enable_if(B)>
     auto operator()(std::size_t i) {
         return sub(*this, i);
     }
@@ -169,7 +167,7 @@ public:
      * \param i The index to use
      * \return a sub view of the expression at position i.
      */
-    template <typename ST = T, typename L = LeftExpr, typename B = BinaryOp, typename R = RightExpr, cpp_enable_if((sub_size_compare<binary_expr<ST, L, B, R>>::value > 1))>
+    template <bool B = (sub_size_compare<this_type>::value > 1), cpp_enable_if(B)>
     auto operator()(std::size_t i) const {
         return sub(*this, i);
     }
