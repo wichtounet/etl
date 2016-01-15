@@ -271,21 +271,21 @@ using all_double_precision = cpp::and_c<is_double_precision<E>...>;
  * \tparam T The type to test.
  */
 template <typename T>
-using is_complex_t = cpp::or_c<cpp::is_specialization_of<std::complex, std::decay_t<T>>, cpp::is_specialization_of<etl::complex, std::decay_t<T>>>;
+using is_complex_t = cpp::or_c<cpp::is_specialization_of<std::complex, std::decay_t<T>>, cpp::is_specialization_of<etl::detail::complex, std::decay_t<T>>>;
 
 /*!
  * \brief Traits to test if a type is a single precision complex number type
  * \tparam T The type to test.
  */
 template <typename T>
-using is_complex_single_t = cpp::or_c<std::is_same<T, std::complex<float>>, std::is_same<T, etl::complex<float>>>;
+using is_complex_single_t = cpp::or_c<std::is_same<T, std::complex<float>>, std::is_same<T, etl::detail::complex<float>>>;
 
 /*!
  * \brief Traits to test if a type is a double precision complex number type
  * \tparam T The type to test.
  */
 template <typename T>
-using is_complex_double_t = cpp::or_c<std::is_same<T, std::complex<double>>, std::is_same<T, etl::complex<double>>>;
+using is_complex_double_t = cpp::or_c<std::is_same<T, std::complex<double>>, std::is_same<T, etl::detail::complex<double>>>;
 
 /*!
  * \brief Traits to test if the given ETL expresion type contains single precision complex numbers.

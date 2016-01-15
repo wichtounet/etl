@@ -8,18 +8,18 @@
 #include "test.hpp"
 
 #define CZ(a, b) std::complex<Z>(a, b)
-#define ECZ(a, b) etl::complex<Z>(a, b)
+#define ECZ(a, b) etl::detail::complex<Z>(a, b)
 
 TEST_CASE("etl_complex/1", "[complex]") {
-    REQUIRE(sizeof(etl::complex<float>) == sizeof(std::complex<float>));
-    REQUIRE(sizeof(etl::complex<double>) == sizeof(std::complex<double>));
+    REQUIRE(sizeof(etl::detail::complex<float>) == sizeof(std::complex<float>));
+    REQUIRE(sizeof(etl::detail::complex<double>) == sizeof(std::complex<double>));
 
-    etl::complex<float> a(3.3, 5.5);
+    etl::detail::complex<float> a(3.3, 5.5);
 
     REQUIRE(reinterpret_cast<float(&)[2]>(a)[0] == float(3.3));
     REQUIRE(reinterpret_cast<float(&)[2]>(a)[1] == float(5.5));
 
-    etl::complex<double> b(-2.3, 4.1);
+    etl::detail::complex<double> b(-2.3, 4.1);
 
     REQUIRE(reinterpret_cast<double(&)[2]>(b)[0] == double(-2.3));
     REQUIRE(reinterpret_cast<double(&)[2]>(b)[1] == double(4.1));
@@ -224,9 +224,9 @@ TEMPLATE_TEST_CASE_2("complex/std/12", "[mul][complex]", Z, float, double) {
 }
 
 TEMPLATE_TEST_CASE_2("complex/etl/9", "[complex]", Z, float, double) {
-    etl::fast_matrix<etl::complex<Z>, 1, 3> a = {etl::complex<Z>(1.0, 2.0), etl::complex<Z>(-1.0, -2.0), etl::complex<Z>(0.0, 0.5)};
-    etl::fast_matrix<etl::complex<Z>, 1, 3> b = {etl::complex<Z>(0.33, 0.66), etl::complex<Z>(-1.5, 0.0), etl::complex<Z>(0.5, 0.75)};
-    etl::fast_matrix<etl::complex<Z>, 1, 3> c;
+    etl::fast_matrix<etl::detail::complex<Z>, 1, 3> a = {etl::detail::complex<Z>(1.0, 2.0), etl::detail::complex<Z>(-1.0, -2.0), etl::detail::complex<Z>(0.0, 0.5)};
+    etl::fast_matrix<etl::detail::complex<Z>, 1, 3> b = {etl::detail::complex<Z>(0.33, 0.66), etl::detail::complex<Z>(-1.5, 0.0), etl::detail::complex<Z>(0.5, 0.75)};
+    etl::fast_matrix<etl::detail::complex<Z>, 1, 3> c;
 
     c(0) = a(0) >> b(0);
 
@@ -236,9 +236,9 @@ TEMPLATE_TEST_CASE_2("complex/etl/9", "[complex]", Z, float, double) {
 }
 
 TEMPLATE_TEST_CASE_2("complex/etl/11", "[mul][complex]", Z, float, double) {
-    etl::fast_matrix<etl::complex<Z>, 2, 3> a = {ECZ(1, 1), ECZ(-2, -2), ECZ(2, 3), ECZ(0, 0), ECZ(1, 1), ECZ(2, 2)};
-    etl::fast_vector<etl::complex<Z>, 3> b    = {ECZ(1, 1), ECZ(-3, -3), ECZ(5, 0.1)};
-    etl::fast_matrix<etl::complex<Z>, 2> c;
+    etl::fast_matrix<etl::detail::complex<Z>, 2, 3> a = {ECZ(1, 1), ECZ(-2, -2), ECZ(2, 3), ECZ(0, 0), ECZ(1, 1), ECZ(2, 2)};
+    etl::fast_vector<etl::detail::complex<Z>, 3> b    = {ECZ(1, 1), ECZ(-3, -3), ECZ(5, 0.1)};
+    etl::fast_matrix<etl::detail::complex<Z>, 2> c;
 
     c = a * b;
 
@@ -249,9 +249,9 @@ TEMPLATE_TEST_CASE_2("complex/etl/11", "[mul][complex]", Z, float, double) {
 }
 
 TEMPLATE_TEST_CASE_2("complex/etl/12", "[mul][complex]", Z, float, double) {
-    etl::fast_matrix<etl::complex<Z>, 3, 2> a = {ECZ(1, 1), ECZ(-2, -2), ECZ(2, 3), ECZ(0, 0), ECZ(1, 1), ECZ(2, 2)};
-    etl::fast_vector<etl::complex<Z>, 3> b    = {ECZ(1, 1), ECZ(-3, -3), ECZ(5, 0.1)};
-    etl::fast_matrix<etl::complex<Z>, 2> c;
+    etl::fast_matrix<etl::detail::complex<Z>, 3, 2> a = {ECZ(1, 1), ECZ(-2, -2), ECZ(2, 3), ECZ(0, 0), ECZ(1, 1), ECZ(2, 2)};
+    etl::fast_vector<etl::detail::complex<Z>, 3> b    = {ECZ(1, 1), ECZ(-3, -3), ECZ(5, 0.1)};
+    etl::fast_matrix<etl::detail::complex<Z>, 2> c;
 
     c = b * a;
 
@@ -277,7 +277,7 @@ TEMPLATE_TEST_CASE_2("complex/real/1", "[complex]", Z, float, double) {
 }
 
 TEMPLATE_TEST_CASE_2("complex/real/2", "[complex]", Z, float, double) {
-    etl::fast_matrix<etl::complex<Z>, 3, 2> a = {ECZ(1, 1), ECZ(-2, -2), ECZ(2, 3), ECZ(0, 0), ECZ(1, 1), ECZ(2, 2)};
+    etl::fast_matrix<etl::detail::complex<Z>, 3, 2> a = {ECZ(1, 1), ECZ(-2, -2), ECZ(2, 3), ECZ(0, 0), ECZ(1, 1), ECZ(2, 2)};
 
     etl::fast_matrix<Z, 3, 2> b;
 
@@ -292,7 +292,7 @@ TEMPLATE_TEST_CASE_2("complex/real/2", "[complex]", Z, float, double) {
 }
 
 TEMPLATE_TEST_CASE_2("complex/real/3", "[complex]", Z, float, double) {
-    etl::fast_matrix<etl::complex<Z>, 3, 2> a = {ECZ(1, 1), ECZ(-2, -2), ECZ(2, 3), ECZ(0, 0), ECZ(1, 1), ECZ(2, 2)};
+    etl::fast_matrix<etl::detail::complex<Z>, 3, 2> a = {ECZ(1, 1), ECZ(-2, -2), ECZ(2, 3), ECZ(0, 0), ECZ(1, 1), ECZ(2, 2)};
 
     etl::fast_matrix<Z, 3, 2> b;
 
@@ -322,7 +322,7 @@ TEMPLATE_TEST_CASE_2("complex/imag/1", "[complex]", Z, float, double) {
 }
 
 TEMPLATE_TEST_CASE_2("complex/imag/2", "[complex]", Z, float, double) {
-    etl::fast_matrix<etl::complex<Z>, 3, 2> a = {ECZ(1, 1), ECZ(-2, -2), ECZ(2, 3), ECZ(0, 0), ECZ(1, 1), ECZ(2, 2)};
+    etl::fast_matrix<etl::detail::complex<Z>, 3, 2> a = {ECZ(1, 1), ECZ(-2, -2), ECZ(2, 3), ECZ(0, 0), ECZ(1, 1), ECZ(2, 2)};
 
     etl::fast_matrix<Z, 3, 2> b;
 
@@ -337,7 +337,7 @@ TEMPLATE_TEST_CASE_2("complex/imag/2", "[complex]", Z, float, double) {
 }
 
 TEMPLATE_TEST_CASE_2("complex/imag/3", "[complex]", Z, float, double) {
-    etl::fast_matrix<etl::complex<Z>, 3, 2> a = {ECZ(1, 1), ECZ(-2, -2), ECZ(2, 3), ECZ(0, 0), ECZ(1, 1), ECZ(2, 2)};
+    etl::fast_matrix<etl::detail::complex<Z>, 3, 2> a = {ECZ(1, 1), ECZ(-2, -2), ECZ(2, 3), ECZ(0, 0), ECZ(1, 1), ECZ(2, 2)};
 
     etl::fast_matrix<Z, 3, 2> b;
 
@@ -374,8 +374,8 @@ TEMPLATE_TEST_CASE_2("complex/conj/1", "[complex]", Z, float, double) {
 }
 
 TEMPLATE_TEST_CASE_2("complex/conj/2", "[complex]", Z, float, double) {
-    etl::fast_matrix<etl::complex<Z>, 3, 2> a = {ECZ(1, 1), ECZ(-2, -2), ECZ(2, 3), ECZ(0, 0), ECZ(1, 1), ECZ(2, 2)};
-    etl::fast_matrix<etl::complex<Z>, 3, 2> b;
+    etl::fast_matrix<etl::detail::complex<Z>, 3, 2> a = {ECZ(1, 1), ECZ(-2, -2), ECZ(2, 3), ECZ(0, 0), ECZ(1, 1), ECZ(2, 2)};
+    etl::fast_matrix<etl::detail::complex<Z>, 3, 2> b;
 
     b = etl::conj(a);
 
@@ -396,8 +396,8 @@ TEMPLATE_TEST_CASE_2("complex/conj/2", "[complex]", Z, float, double) {
 }
 
 TEMPLATE_TEST_CASE_2("complex/conj/3", "[complex]", Z, float, double) {
-    etl::fast_matrix<etl::complex<Z>, 3, 2> a = {ECZ(1, 1), ECZ(-2, -2), ECZ(2, 3), ECZ(0, 0), ECZ(1, 1), ECZ(2, 2)};
-    etl::fast_matrix<etl::complex<Z>, 3, 2> b;
+    etl::fast_matrix<etl::detail::complex<Z>, 3, 2> a = {ECZ(1, 1), ECZ(-2, -2), ECZ(2, 3), ECZ(0, 0), ECZ(1, 1), ECZ(2, 2)};
+    etl::fast_matrix<etl::detail::complex<Z>, 3, 2> b;
 
     b = a.conj();
 
@@ -439,8 +439,8 @@ TEMPLATE_TEST_CASE_2("complex/ctrans/1", "[complex]", Z, float, double) {
 }
 
 TEMPLATE_TEST_CASE_2("complex/ctrans/2", "[complex]", Z, float, double) {
-    etl::fast_matrix<etl::complex<Z>, 3, 2> a = {ECZ(1, 1), ECZ(-2, -2), ECZ(2, 3), ECZ(0, 0), ECZ(1, 1), ECZ(2, 2)};
-    etl::fast_matrix<etl::complex<Z>, 2, 3> b;
+    etl::fast_matrix<etl::detail::complex<Z>, 3, 2> a = {ECZ(1, 1), ECZ(-2, -2), ECZ(2, 3), ECZ(0, 0), ECZ(1, 1), ECZ(2, 2)};
+    etl::fast_matrix<etl::detail::complex<Z>, 2, 3> b;
 
     b = etl::conj_transpose(a);
 

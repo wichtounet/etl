@@ -141,11 +141,11 @@ inline bool is_zero(std::complex<double> a){
     return a.real() == 0.0 && a.imag() == 0.0;
 }
 
-inline bool is_zero(etl::complex<float> a){
+inline bool is_zero(etl::detail::complex<float> a){
     return a.real == 0.0f && a.imag == 0.0f;
 }
 
-inline bool is_zero(etl::complex<double> a){
+inline bool is_zero(etl::detail::complex<double> a){
     return a.real == 0.0 && a.imag == 0.0;
 }
 

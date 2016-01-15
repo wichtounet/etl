@@ -9,7 +9,7 @@
 #include "cpp_utils/algorithm.hpp"
 
 #define CZ(a, b) std::complex<Z>(a, b)
-#define ECZ(a, b) etl::complex<Z>(a, b)
+#define ECZ(a, b) etl::detail::complex<Z>(a, b)
 
 TEMPLATE_TEST_CASE_2("sparse/complex/init/1", "[mat][init][sparse]", Z, double, float) {
     etl::sparse_matrix<std::complex<Z>> a(3, 2, std::initializer_list<std::complex<Z>>({CZ(1.0, 0.0), CZ(0.0, 0.0), CZ(0.0, 0.0), CZ(0.0, 0.0), CZ(-1.0, 2.0), CZ(0.0, 1.0)    }));

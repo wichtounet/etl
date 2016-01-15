@@ -47,7 +47,7 @@ inline void add_mul(double& c, double a, double b) {
 }
 
 template <typename T>
-inline void add_mul(etl::complex<T>& c, etl::complex<T> a, etl::complex<T> b) {
+inline void add_mul(etl::detail::complex<T>& c, etl::detail::complex<T> a, etl::detail::complex<T> b) {
     c += a * b;
 }
 
