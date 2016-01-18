@@ -593,4 +593,21 @@ public:
     }
 };
 
+/*!
+ * \brief Prints a fast matrix type (not the contents) to the given stream
+ * \param os The output stream
+ * \param matrix The fast matrix to print
+ * \return the output stream
+ */
+template <typename T, sparse_storage SS, std::size_t D>
+std::ostream& operator<<(std::ostream& os, const sparse_matrix_impl<T, SS, D>& matrix) {
+    os << "SM[" << matrix.dim(0);
+
+    for (std::size_t i = 1; i < D; ++i) {
+        os << "," << matrix.dim(i);
+    }
+
+    return os << "]";
+}
+
 } //end of namespace etl
