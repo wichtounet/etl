@@ -119,12 +119,12 @@ struct transpose_transformer {
  */
 template <typename L, typename R>
 struct mm_mul_transformer {
-    using left_type  = L;
-    using right_type = R;
-    using value_type = value_t<L>;
+    using left_type  = L;          ///< The left side type
+    using right_type = R;          ///< The right side type
+    using value_type = value_t<L>; ///< The value type
 
-    left_type left;
-    right_type right;
+    left_type left;   ///< The left expression
+    right_type right; ///< The right expression
 
     /*!
      * \brief Construct a new transformer around the given expressions
@@ -317,13 +317,13 @@ struct dyn_convmtx2_transformer {
 
     static_assert(decay_traits<T>::dimensions() == 2, "convmtx2 can only be applied on matrices");
 
-    sub_type sub; ///< The subexpression
-    const std::size_t k1;
-    const std::size_t k2;
-    std::size_t i1;
-    std::size_t i2;
-    std::size_t inner_paddings;
-    std::size_t inner_padding;
+    sub_type sub;               ///< The subexpression
+    const std::size_t k1;       ///< The first dimension of the kernel
+    const std::size_t k2;       ///< The second dimension of the kernel
+    std::size_t i1;             ///< The first dimension of the input
+    std::size_t i2;             ///< The second dimension of the input
+    std::size_t inner_paddings; ///< The inner padding sum
+    std::size_t inner_padding;  ///< The inner padding
 
     dyn_convmtx2_transformer(sub_type sub, std::size_t k1, std::size_t k2)
             : sub(sub), k1(k1), k2(k2) {
