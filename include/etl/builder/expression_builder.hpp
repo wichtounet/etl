@@ -413,11 +413,21 @@ LE& operator%=(LE&& lhs, RE&& rhs) {
 
 // Apply an unary expression on an ETL expression (vector,matrix,binary,unary)
 
+/*!
+ * \Apply Unary minus on the expression
+ * \param value The expression on which to apply the operator
+ * \return an expression representing the unary minus of the given expression
+ */
 template <typename E>
 auto operator-(E&& value) -> detail::unary_helper<E, minus_unary_op> {
     return detail::unary_helper<E, minus_unary_op>{value};
 }
 
+/*!
+ * \Apply Unary plus on the expression
+ * \param value The expression on which to apply the operator
+ * \return an expression representing the unary plus of the given expression
+ */
 template <typename E>
 auto operator+(E&& value) -> detail::unary_helper<E, plus_unary_op> {
     return detail::unary_helper<E, plus_unary_op>{value};
@@ -657,18 +667,33 @@ auto conj(E&& value) -> unary_expr<value_t<E>, detail::build_type<E>, conj_unary
     return unary_expr<value_t<E>, detail::build_type<E>, conj_unary_op<value_t<E>>>{value};
 }
 
+/*!
+ * \brief Add some uniform noise (0, 1.0) to the given expression
+ * \param value The input ETL expression
+ * \return an expression representing the input expression plus noise
+ */
 template <typename E>
 auto uniform_noise(E&& value) -> detail::unary_helper<E, uniform_noise_unary_op> {
     static_assert(is_etl_expr<E>::value, "etl::uniform_noise can only be used on ETL expressions");
     return detail::unary_helper<E, uniform_noise_unary_op>{value};
 }
 
+/*!
+ * \brief Add some normal noise (0, 1.0) to the given expression
+ * \param value The input ETL expression
+ * \return an expression representing the input expression plus noise
+ */
 template <typename E>
 auto normal_noise(E&& value) -> detail::unary_helper<E, normal_noise_unary_op> {
     static_assert(is_etl_expr<E>::value, "etl::normal_noise can only be used on ETL expressions");
     return detail::unary_helper<E, normal_noise_unary_op>{value};
 }
 
+/*!
+ * \brief Add some normal noise (0, sigmoid(x)) to the given expression
+ * \param value The input ETL expression
+ * \return an expression representing the input expression plus noise
+ */
 template <typename E>
 auto logistic_noise(E&& value) -> detail::unary_helper<E, logistic_noise_unary_op> {
     static_assert(is_etl_expr<E>::value, "etl::logistic_noise can only be used on ETL expressions");
@@ -836,18 +861,33 @@ auto r_bernoulli(const E& value) -> detail::unary_helper<E, reverse_bernoulli_un
     return detail::unary_helper<E, reverse_bernoulli_unary_op>{value};
 }
 
+/*!
+ * \brief Return the derivative of the tanh function of the given ETL expression.
+ * \param e The ETL expression
+ * \return An ETL expression representing the derivative of the tanh function of the input.
+ */
 template <typename E>
 auto tanh_derivative(E&& value) -> decltype(1.0 - (value >> value)) {
     static_assert(is_etl_expr<E>::value, "etl::tanh_derivative can only be used on ETL expressions");
     return 1.0 - (value >> value);
 }
 
+/*!
+ * \brief Return the relu activation of the given ETL expression.
+ * \param value The ETL expression
+ * \return An ETL expression representing the relu activation of the input.
+ */
 template <typename E>
 auto relu(E&& value) -> decltype(max(value, 0.0)) {
     static_assert(is_etl_expr<E>::value, "etl::relu can only be used on ETL expressions");
     return max(value, 0.0);
 }
 
+/*!
+ * \brief Return the derivative of the relu function of the given ETL expression.
+ * \param e The ETL expression
+ * \return An ETL expression representing the derivative of the relu function of the input.
+ */
 template <typename E>
 auto relu_derivative(const E& value) -> detail::unary_helper<E, relu_derivative_op> {
     static_assert(is_etl_expr<E>::value, "etl::relu_derivative can only be used on ETL expressions");
