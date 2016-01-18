@@ -188,6 +188,9 @@ struct has_direct_access;
 template <typename T>
 struct is_direct_sub_view : std::false_type {};
 
+/*!
+ * \copydoc is_direct_sub_view
+ */
 template <typename T>
 struct is_direct_sub_view<sub_view<T>> : cpp::and_u<has_direct_access<T>::value, decay_traits<T>::storage_order == order::RowMajor> {};
 
