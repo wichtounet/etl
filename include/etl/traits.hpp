@@ -168,6 +168,13 @@ template <typename T>
 using is_etl_value = cpp::or_c<is_fast_matrix<T>, is_dyn_matrix<T>, is_sparse_matrix<T>>;
 
 /*!
+ * \brief Traits indicating if the given ETL type can be left hand side type
+ * \tparam T The type to test
+ */
+template <typename T>
+using is_lhs = cpp::or_c<is_etl_value<T>, is_unary_expr<T>>;
+
+/*!
  * \brief Traits indicating if the given ETL type has direct memory access.
  * \tparam T The type to test
  */
