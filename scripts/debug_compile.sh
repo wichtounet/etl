@@ -12,8 +12,8 @@ do
     results=$(/usr/bin/time -v make debug/$f.o 2>&1)
     rss=$(echo "$results" | grep "Maximum resident set size" | rev | cut -d" " -f1 | rev)
     elapsed=$(echo "$results" | grep "Elapsed" | rev | cut -d" " -f1 | rev)
-    memory=$(echo "scale=2; $rss/1024" | bc -l)
-    echo "$f => $elapsed => ${memory}MB (rss:$rss)"
+    memory=$(echo "scale=2; $rss/1024/4" | bc -l)
+    echo "$f => $elapsed => ${memory}MB"
 
     if [ $(echo "$max_memory < $memory" | bc) -eq 1 ]
     then
