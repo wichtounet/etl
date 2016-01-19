@@ -390,7 +390,7 @@ std::unique_ptr<etl::complex<T>[]> twiddle_compute(const std::size_t n, std::siz
         }
     }
 
-    return std::move(trig);
+    return trig;
 }
 
 template <typename In, typename T>
