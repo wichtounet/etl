@@ -408,6 +408,8 @@ struct etl_traits<T, std::enable_if_t<is_etl_value<T>::value>> {
     }
 
     static constexpr std::size_t size() {
+        static_assert(is_fast, "Only fast_matrix have compile-time access to the dimensions");
+
         return T::size();
     }
 
