@@ -92,8 +92,8 @@ public:
     /*!
      * The vectorization type for V
      */
-    template<typename V = default_vec>
-    using vec_type               = typename V::template vec_type<T>;
+    template <typename V = default_vec>
+    using vec_type       = typename V::template vec_type<T>;
 
 private:
     storage_impl _data;
