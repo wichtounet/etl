@@ -28,7 +28,7 @@ enum class precision {
     Z
 };
 
-inline bool is_power_of_two(long n) {
+inline constexpr bool is_power_of_two(long n) {
     return (n & (n - 1)) == 0;
 }
 
