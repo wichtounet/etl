@@ -5,9 +5,14 @@
 //  http://opensource.org/licenses/MIT)
 //=======================================================================
 
+/*!
+ * \file
+ * \brief This file contains macros to abstract some incompatibilities between compilers
+ */
+
 #pragma once
 
-//Workaround for use of this in noexcept specifier
+//Workaround for use of this in noexcept specifier in gcc
 
 #ifdef __clang__
 #define noexcept_this(...) noexcept(__VA_ARGS__)
@@ -16,20 +21,22 @@
 #define noexcept_this(...)
 #endif
 
-//Stupid trick to allow auto functions to have debug symbols
+//Stupid trick to allow auto functions to have debug symbols in some compilers
 
+#ifdef __clang__
 #define ETL_DEBUG_AUTO_TRICK template <typename E = void>
+#else
+#define ETL_DEBUG_AUTO_TRICK
+#endif
 
 //Only clang and GCC >=5 supports constexpr functions in their C++14 full fashion
 
-#ifdef __clang__
+#ifdef __clang__ //clang version
 #define cpp14_constexpr constexpr
-#else
-#if __GNUC__ >= 4
+#elif __GNUC__ >= 5 //GCC5+ version
 #define cpp14_constexpr constexpr
-#else
+#else //other compilers
 #define cpp14_constexpr
-#endif
 #endif
 
 //Fix an assertion failed in Intel C++ Compiler
