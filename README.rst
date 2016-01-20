@@ -178,9 +178,13 @@ This library is completely header-only, there is no need to build it.
 However, this library makes extensive use of C++11 and C++14,
 therefore, a recent compiler is necessary to use it. This library is
 tested on the following compilers:
- * CLang 3.4 and greater
  * GCC 4.9.1 and greater
+ * CLang 3.4 and greater
  * icc 15.0.2 and greater
+
+Although compilation should work on all these compilers, for some
+reason clang has huge memory consumption on this library. icc
+produces the fastest executable but it is quite slow to compile.
 
 The library has never been tested on Windows.
 
