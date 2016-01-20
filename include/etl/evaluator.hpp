@@ -62,7 +62,7 @@ namespace standard_evaluator {
 
     //Fast assign version (memory copy)
 
-    /*
+    /*!
      * \copydoc assign_evaluate_impl
      */
     template <typename E, typename R, cpp_enable_if(detail::fast_assign<E, R>::value)>
@@ -81,7 +81,7 @@ namespace standard_evaluator {
         detail::Assign<value_t<R>,E>(m, expr, 0, size)();
     }
 
-    /*
+    /*!
      * \copydoc assign_evaluate_impl
      */
     template <typename E, typename R, cpp_enable_if(detail::direct_assign<E, R>::value)>
@@ -91,7 +91,7 @@ namespace standard_evaluator {
 
     //Parallel assign version
 
-    /*
+    /*!
      * \copydoc assign_evaluate_impl
      */
     template <typename E, typename R, cpp_enable_if(detail::parallel_assign<E, R>::value)>
@@ -122,7 +122,7 @@ namespace standard_evaluator {
 
     //Parallel vectorized assign
 
-    /*
+    /*!
      * \copydoc assign_evaluate_impl
      */
     template <typename E, typename R, cpp_enable_if(detail::parallel_vectorized_assign<E, R>::value)>
@@ -157,7 +157,7 @@ namespace standard_evaluator {
         detail::VectorizedAssign<R, E>(result, expr, 0, etl::size(result))();
     }
 
-    /*
+    /*!
      * \copydoc assign_evaluate_impl
      */
     template <typename E, typename R, cpp_enable_if(detail::vectorized_assign<E, R>::value)>
@@ -183,7 +183,7 @@ namespace standard_evaluator {
 
     //Parallel direct add assign
 
-    /*
+    /*!
      * \copydoc add_evaluate
      */
     template <typename E, typename R, cpp_enable_if(detail::parallel_compound<E, R>::value)>
@@ -227,7 +227,7 @@ namespace standard_evaluator {
         detail::AssignAdd<value_t<R>,E>(m, expr, 0, size)();
     }
 
-    /*
+    /*!
      * \copydoc add_evaluate
      */
     template <typename E, typename R, cpp_enable_if(detail::direct_compound<E, R>::value)>
@@ -237,7 +237,7 @@ namespace standard_evaluator {
 
     //Parallel vectorized add assign
 
-    /*
+    /*!
      * \copydoc add_evaluate
      */
     template <typename E, typename R, cpp_enable_if(detail::parallel_vectorized_compound<E, R>::value)>
@@ -277,7 +277,7 @@ namespace standard_evaluator {
         detail::VectorizedAssignAdd<R, E>(result, expr, 0, etl::size(result))();
     }
 
-    /*
+    /*!
      * \copydoc add_evaluate
      */
     template <typename E, typename R, cpp_enable_if(detail::vectorized_compound<E, R>::value)>
@@ -303,7 +303,7 @@ namespace standard_evaluator {
 
     //Parallel direct sub assign
 
-    /*
+    /*!
      * \copydoc sub_evaluate
      */
     template <typename E, typename R, cpp_enable_if(detail::parallel_compound<E, R>::value)>
@@ -347,7 +347,7 @@ namespace standard_evaluator {
         detail::AssignSub<value_t<R>,E>(m, expr, 0, size)();
     }
 
-    /*
+    /*!
      * \copydoc sub_evaluate
      */
     template <typename E, typename R, cpp_enable_if(detail::direct_compound<E, R>::value)>
@@ -357,7 +357,7 @@ namespace standard_evaluator {
 
     //Parallel vectorized sub assign
 
-    /*
+    /*!
      * \copydoc sub_evaluate
      */
     template <typename E, typename R, cpp_enable_if(detail::parallel_vectorized_compound<E, R>::value)>
@@ -397,7 +397,7 @@ namespace standard_evaluator {
         detail::VectorizedAssignSub<R, E>(result, expr, 0, etl::size(result))();
     }
 
-    /*
+    /*!
      * \copydoc sub_evaluate
      */
     template <typename E, typename R, cpp_enable_if(detail::vectorized_compound<E, R>::value)>
@@ -423,7 +423,7 @@ namespace standard_evaluator {
 
     //Parallel direct mul assign
 
-    /*
+    /*!
      * \copydoc mul_evaluate
      */
     template <typename E, typename R, cpp_enable_if(detail::parallel_compound<E, R>::value)>
@@ -467,7 +467,7 @@ namespace standard_evaluator {
         detail::AssignMul<value_t<R>,E>(m, expr, 0, size)();
     }
 
-    /*
+    /*!
      * \copydoc mul_evaluate
      */
     template <typename E, typename R, cpp_enable_if(detail::direct_compound<E, R>::value)>
@@ -477,7 +477,7 @@ namespace standard_evaluator {
 
     //Parallel vectorized mul assign
 
-    /*
+    /*!
      * \copydoc mul_evaluate
      */
     template <typename E, typename R, cpp_enable_if(detail::parallel_vectorized_compound<E, R>::value)>
@@ -517,7 +517,7 @@ namespace standard_evaluator {
         detail::VectorizedAssignMul<R, E>(result, expr, 0, etl::size(result))();
     }
 
-    /*
+    /*!
      * \copydoc mul_evaluate
      */
     template <typename E, typename R, cpp_enable_if(detail::vectorized_compound<E, R>::value)>
@@ -543,7 +543,7 @@ namespace standard_evaluator {
 
     //Parallel direct Div assign
 
-    /*
+    /*!
      * \copydoc div_evaluate
      */
     template <typename E, typename R, cpp_enable_if(detail::parallel_compound<E, R>::value)>
@@ -587,7 +587,7 @@ namespace standard_evaluator {
         detail::AssignDiv<value_t<R>,E>(m, expr, 0, size)();
     }
 
-    /*
+    /*!
      * \copydoc div_evaluate
      */
     template <typename E, typename R, cpp_enable_if(detail::direct_compound<E, R>::value)>
@@ -597,7 +597,7 @@ namespace standard_evaluator {
 
     //Parallel vectorized div assign
 
-    /*
+    /*!
      * \copydoc div_evaluate
      */
     template <typename E, typename R, cpp_enable_if(detail::parallel_vectorized_compound<E, R>::value)>
@@ -637,7 +637,7 @@ namespace standard_evaluator {
         detail::VectorizedAssignDiv<R, E>(result, expr, 0, etl::size(result))();
     }
 
-    /*
+    /*!
      * \copydoc div_evaluate
      */
     template <typename E, typename R, cpp_enable_if(detail::vectorized_compound<E, R>::value)>
