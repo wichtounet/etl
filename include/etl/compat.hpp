@@ -20,12 +20,16 @@
 
 #define ETL_DEBUG_AUTO_TRICK template <typename E = void>
 
-//Only clang supports constexpr functions in their C++14 full fashion
+//Only clang and GCC >=5 supports constexpr functions in their C++14 full fashion
 
 #ifdef __clang__
 #define cpp14_constexpr constexpr
 #else
+#if __GNUC__ >= 4
+#define cpp14_constexpr constexpr
+#else
 #define cpp14_constexpr
+#endif
 #endif
 
 //Fix an assertion failed in Intel C++ Compiler
