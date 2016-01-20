@@ -15,23 +15,39 @@ namespace etl {
 
 namespace detail {
 
+/*!
+ * \brief The different FFT implementations
+ */
 enum class fft_impl {
-    STD,
-    MKL,
-    CUFFT
+    STD,  ///< The standard implementation
+    MKL,  ///< The Intel MKL implementation
+    CUFFT ///< The NVidia CuFFT implementation
 };
 
+/*!
+ * \brief The precision of the operation
+ */
 enum class precision {
-    S,
-    D,
-    C,
-    Z
+    S, ///< Single precision
+    D, ///< Double precision
+    C, ///< Single complex precision
+    Z  ///< Double complex precision
 };
 
+/*!
+ * \brief Test if the given number is a power of two
+ * \param n The number to test
+ * \return true if the number is a power of two, false otherwise
+ */
 inline constexpr bool is_power_of_two(long n) {
     return (n & (n - 1)) == 0;
 }
 
+/*!
+ * \brief Select a 1D FFT implementation based on the operation size
+ * \param n The size of the operation
+ * \return The implementation to use
+ */
 inline cpp14_constexpr fft_impl select_fft1_impl(const std::size_t n) {
     //Note since these boolean will be known at compile time, the conditions will be a lot simplified
     constexpr const bool mkl   = is_mkl_enabled::value;
@@ -70,7 +86,15 @@ inline cpp14_constexpr fft_impl select_fft1_impl(const std::size_t n) {
     }
 }
 
-inline cpp14_constexpr fft_impl select_fft1_many_impl(const std::size_t /*batch*/, const std::size_t n) {
+/*!
+ * \brief Select a Many-1D FFT implementation based on the operation size
+ * \param batch The number of operations
+ * \param n The size of the operation
+ * \return The implementation to use
+ */
+inline cpp14_constexpr fft_impl select_fft1_many_impl(const std::size_t batch, const std::size_t n) {
+    cpp_unused(batch);
+
     //Note since these boolean will be known at compile time, the conditions will be a lot simplified
     constexpr const bool mkl   = is_mkl_enabled::value;
     constexpr const bool cufft = is_cufft_enabled::value;
@@ -90,6 +114,11 @@ inline cpp14_constexpr fft_impl select_fft1_many_impl(const std::size_t /*batch*
     }
 }
 
+/*!
+ * \brief Select a 1D IFFT implementation based on the operation size
+ * \param n The size of the operation
+ * \return The implementation to use
+ */
 inline cpp14_constexpr fft_impl select_ifft1_impl(const std::size_t n) {
     //Note since these boolean will be known at compile time, the conditions will be a lot simplified
     constexpr const bool mkl   = is_mkl_enabled::value;
@@ -122,6 +151,13 @@ inline cpp14_constexpr fft_impl select_ifft1_impl(const std::size_t n) {
     }
 }
 
+
+/*!
+ * \brief Select a 2D FFT implementation based on the operation size
+ * \param n1 The first dimension of the operation
+ * \param n2 The second dimension of the operation
+ * \return The implementation to use
+ */
 inline cpp14_constexpr fft_impl select_fft2_impl(const std::size_t n1, std::size_t n2) {
     //Note since these boolean will be known at compile time, the conditions will be a lot simplified
     constexpr const bool mkl   = is_mkl_enabled::value;
@@ -154,7 +190,16 @@ inline cpp14_constexpr fft_impl select_fft2_impl(const std::size_t n1, std::size
     }
 }
 
-inline cpp14_constexpr fft_impl select_fft2_many_impl(const std::size_t /*batch*/, const std::size_t n1, const std::size_t n2) {
+/*!
+ * \brief Select a Many-2D FFT implementation based on the operation size
+ * \param batch The number of operations
+ * \param n1 The first dimension of the operation
+ * \param n2 The second dimension of the operation
+ * \return The implementation to use
+ */
+inline cpp14_constexpr fft_impl select_fft2_many_impl(const std::size_t batch, const std::size_t n1, const std::size_t n2) {
+    cpp_unused(batch);
+
     //Note since these boolean will be known at compile time, the conditions will be a lot simplified
     constexpr const bool mkl   = is_mkl_enabled::value;
     constexpr const bool cufft = is_cufft_enabled::value;
