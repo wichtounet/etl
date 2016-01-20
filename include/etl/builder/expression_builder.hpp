@@ -861,7 +861,7 @@ auto r_bernoulli(const E& value) -> detail::unary_helper<E, reverse_bernoulli_un
 
 /*!
  * \brief Return the derivative of the tanh function of the given ETL expression.
- * \param e The ETL expression
+ * \param value The ETL expression
  * \return An ETL expression representing the derivative of the tanh function of the input.
  */
 template <typename E>
@@ -883,7 +883,7 @@ auto relu(E&& value) -> decltype(max(value, 0.0)) {
 
 /*!
  * \brief Return the derivative of the relu function of the given ETL expression.
- * \param e The ETL expression
+ * \param value The ETL expression
  * \return An ETL expression representing the derivative of the relu function of the input.
  */
 template <typename E>
