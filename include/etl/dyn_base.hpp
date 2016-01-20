@@ -84,17 +84,16 @@ struct dyn_base {
     static_assert(D > 0, "A matrix must have a least 1 dimension");
 
 protected:
-    static constexpr const std::size_t n_dimensions = D;
-    static constexpr const std::size_t alignment    = intrinsic_traits<T>::alignment;
+    static constexpr const std::size_t n_dimensions = D;                              ///< The number of dimensions
+    static constexpr const std::size_t alignment    = intrinsic_traits<T>::alignment; ///< The memory alignment
 
-    using value_type             = T;
-    using dimension_storage_impl = std::array<std::size_t, n_dimensions>;
-    using memory_type            = value_type*;
-    using const_memory_type      = const value_type*;
-    using vec_type               = intrinsic_type<T>;
+    using value_type             = T;                                     ///< The value type
+    using dimension_storage_impl = std::array<std::size_t, n_dimensions>; ///< The type used to store the dimensions
+    using memory_type            = value_type*;                           ///< The memory type
+    using const_memory_type      = const value_type*;                     ///< The const memory type
 
-    std::size_t _size;
-    dimension_storage_impl _dimensions;
+    std::size_t _size;                  ///< The size of the matrix
+    dimension_storage_impl _dimensions; ///< The dimensions of the matrix
 
     void check_invariants() {
         cpp_assert(_dimensions.size() == D, "Invalid dimensions");
@@ -105,6 +104,13 @@ protected:
 #endif
     }
 
+
+    /*!
+     * \brief Allocate aligned memory for n elements of the given type
+     * \tparam M the type of objects to allocate
+     * \param n The number of elements to allocate
+     * \return The allocated memory
+     */
     template<typename M = value_type>
     static M* allocate(std::size_t n) {
         M* memory = aligned_allocator<void, alignment>::template allocate<M>(n);
@@ -119,6 +125,11 @@ protected:
         return memory;
     }
 
+    /*!
+     * \brief Release aligned memory for n elements of the given type
+     * \param ptr Pointer to the memory to release
+     * \param n The number of elements to release
+     */
     template<typename M>
     static void release(M* ptr, std::size_t n) {
         //In case of non-trivial type, we need to call the destructors
@@ -157,25 +168,46 @@ public:
 
     // Accessors
 
+    /*!
+     * \brief Returns the size of the matrix, in O(1)
+     * \return The size of the matrix
+     */
     std::size_t size() const noexcept {
         return _size;
     }
 
+    /*!
+     * \brief Returns the number of rows of the matrix (the first dimension)
+     * \return The number of rows of the matrix
+     */
     std::size_t rows() const noexcept {
         return _dimensions[0];
     }
 
+    /*!
+     * \brief Returns the number of columns of the matrix (the first dimension)
+     * \return The number of columns of the matrix
+     */
     std::size_t columns() const noexcept {
         static_assert(n_dimensions > 1, "columns() only valid for 2D+ matrices");
         return _dimensions[1];
     }
 
+    /*!
+     * \brief Returns the dth dimension of the matrix
+     * \param d The dimension to get
+     * \return The Dth dimension of the matrix
+     */
     std::size_t dim(std::size_t d) const noexcept {
         cpp_assert(d < n_dimensions, "Invalid dimension");
 
         return _dimensions[d];
     }
 
+    /*!
+     * \brief Returns the D2th dimension of the matrix
+     * \return The D2th dimension of the matrix
+     */
     template <std::size_t D2>
     std::size_t dim() const noexcept {
         cpp_assert(D2 < n_dimensions, "Invalid dimension");
