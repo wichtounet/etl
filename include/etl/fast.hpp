@@ -90,7 +90,7 @@ public:
     using const_memory_type = const value_type*;                     ///< The const memory type
 
     /*!
-     * The vectorization type for V
+     * \brief The vectorization type for V
      */
     template <typename V = default_vec>
     using vec_type       = typename V::template vec_type<T>;

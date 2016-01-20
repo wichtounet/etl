@@ -219,16 +219,29 @@ struct optimizable<etl::temporary_binary_expr<T, A, B, Op, Forced>> {
     }
 };
 
+/*!
+ * \brief Function to test if expr is optimizable
+ * \param expr The expression to test
+ * \return true if the expression is optimizable or not
+ */
 template <typename Expr>
 bool is_optimizable(const Expr& expr) {
     return optimizable<std::decay_t<Expr>>::is(expr);
 }
 
+/*!
+ * \brief Function to test if expr or sub parts of expr are optimizable
+ * \param expr The expression to test
+ * \return true if the expression is deeply optimizable or not
+ */
 template <typename Expr>
 bool is_optimizable_deep(const Expr& expr) {
     return optimizable<std::decay_t<Expr>>::is_deep(expr);
 }
 
+/*!
+ * \brief Transformer functor for optimizable expression
+ */
 template <typename Expr>
 struct transformer {
     template <typename Builder>
@@ -237,6 +250,11 @@ struct transformer {
     }
 };
 
+/*!
+ * \copydoc transformer
+ *
+ * Specialization for unary_expr
+ */
 template <typename T, typename Expr, typename UnaryOp>
 struct transformer<etl::unary_expr<T, Expr, UnaryOp>> {
     template <typename Builder>
@@ -247,6 +265,11 @@ struct transformer<etl::unary_expr<T, Expr, UnaryOp>> {
     }
 };
 
+/*!
+ * \copydoc transformer
+ *
+ * Specialization for binary_expr<Scalar, Scalar>
+ */
 template <typename T, typename BinaryOp>
 struct transformer<etl::binary_expr<T, etl::scalar<T>, BinaryOp, etl::scalar<T>>> {
     template <typename Builder>
@@ -263,6 +286,11 @@ struct transformer<etl::binary_expr<T, etl::scalar<T>, BinaryOp, etl::scalar<T>>
     }
 };
 
+/*!
+ * \copydoc transformer
+ *
+ * Specialization for binary_expr<Scalar, ETL>
+ */
 template <typename T, typename BinaryOp, typename RightExpr>
 struct transformer<etl::binary_expr<T, etl::scalar<T>, BinaryOp, RightExpr>> {
     template <typename Builder>
@@ -279,6 +307,11 @@ struct transformer<etl::binary_expr<T, etl::scalar<T>, BinaryOp, RightExpr>> {
     }
 };
 
+/*!
+ * \copydoc transformer
+ *
+ * Specialization for binary_expr<ETL, Scalar>
+ */
 template <typename T, typename LeftExpr, typename BinaryOp>
 struct transformer<etl::binary_expr<T, LeftExpr, BinaryOp, etl::scalar<T>>> {
     template <typename Builder>
@@ -297,6 +330,11 @@ struct transformer<etl::binary_expr<T, LeftExpr, BinaryOp, etl::scalar<T>>> {
     }
 };
 
+/*!
+ * \brief Function to transform the expression into its optimized form
+ * \param parent_builder The builder of its parent node
+ * \param expr The expression to optimize
+ */
 template <typename Builder, typename Expr>
 void transform(Builder parent_builder, const Expr& expr) {
     transformer<std::decay_t<Expr>>::transform(parent_builder, expr);

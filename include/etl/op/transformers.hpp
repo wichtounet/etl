@@ -949,9 +949,9 @@ struct etl_traits<mm_mul_transformer<LE, RE>> {
     static constexpr const bool is_generator            = false; ///< Indicates if the expression is a generated
     static constexpr const bool vectorizable            = false; ///< Indicates if the expression is vectorizable
     static constexpr const bool needs_temporary_visitor =
-        etl_traits<left_expr_t>::needs_temporary_visitor || etl_traits<right_expr_t>::needs_temporary_visitor;
+        etl_traits<left_expr_t>::needs_temporary_visitor || etl_traits<right_expr_t>::needs_temporary_visitor;///< Indicates if the expression needs a temporary visitor
     static constexpr const bool needs_evaluator_visitor =
-        etl_traits<left_expr_t>::needs_evaluator_visitor || etl_traits<right_expr_t>::needs_evaluator_visitor;
+        etl_traits<left_expr_t>::needs_evaluator_visitor || etl_traits<right_expr_t>::needs_evaluator_visitor;///< Indicates if the expression needs an evaluator visitor
     static constexpr const order storage_order = etl_traits<left_expr_t>::is_generator ? etl_traits<right_expr_t>::storage_order : etl_traits<left_expr_t>::storage_order;
 
     /*!

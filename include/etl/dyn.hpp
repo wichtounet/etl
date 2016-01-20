@@ -35,6 +35,9 @@ struct dyn_matrix_impl final : dyn_base<T, D>, inplace_assignable<dyn_matrix_imp
     using iterator               = memory_type;                           ///< The type of iterator
     using const_iterator         = const_memory_type;                     ///< The type of const iterator
 
+    /*!
+     * \brief The vectorization type for V
+     */
     template<typename V = default_vec>
     using vec_type               = typename V::template vec_type<T>;
 
@@ -258,6 +261,9 @@ public:
 
     //Destructor
 
+    /*!
+     * \brief Destruct the matrix and release all its memory
+     */
     ~dyn_matrix_impl() noexcept {
         if(_memory){
             release(_memory, _size);
@@ -277,6 +283,10 @@ public:
 
     // Accessors
 
+    /*!
+     * \brief Returns the number of dimensions of the matrix
+     * \return the number of dimensions of the matrix
+     */
     static constexpr std::size_t dimensions() noexcept {
         return n_dimensions;
     }
