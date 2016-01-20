@@ -52,9 +52,6 @@ decltype(auto) force_temporary(E&& expr) {
     return dyn_matrix_impl<value_t<E>, decay_traits<E>::storage_order, decay_traits<E>::dimensions()>{std::forward<E>(expr)};
 }
 
-//TODO the traits should include and is_sparse value that should be
-//handled here
-
 /*!
  * \brief Force a temporary out of the expression
  *
