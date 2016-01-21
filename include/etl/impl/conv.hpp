@@ -29,18 +29,24 @@
 
 namespace etl {
 
+/*!
+ * \brief Enumeration describing the different types of convolution
+ */
 enum class conv_type {
-    VALID,
-    SAME,
-    FULL
+    VALID, ///< Valid convolution
+    SAME,  ///< Same convolution
+    FULL   ///< Full convolution
 };
 
 namespace detail {
 
+/*!
+ * \brief Enumeration describing the different convolution implementations
+ */
 enum class conv_impl {
-    STD,
-    SSE,
-    AVX
+    STD, ///< Standard implementation
+    SSE, ///< Vectorized SSE implementation
+    AVX  ///< Vectorized AVX implementation
 };
 
 template <typename I, typename K, typename C>

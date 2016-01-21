@@ -44,7 +44,7 @@ struct dyn_matrix_impl final : dyn_base<T, D>, inplace_assignable<dyn_matrix_imp
 private:
     using base_type::_size;
     using base_type::_dimensions;
-    memory_type _memory;
+    memory_type _memory; ///< Pointer to the allocated memory
 
     using base_type::release;
     using base_type::allocate;

@@ -20,11 +20,11 @@ namespace detail {
 //The efficient sub transforms modules have been taken from the "FFT Algorithms"
 //paper by Brian Gough, 1997
 
+/*!
+ * \brief Limit on the number of factors of the prime factorization
+ * of the FFT size
+ */
 constexpr const std::size_t MAX_FACTORS = 32;
-
-inline bool is_power_of_two(long n) {
-    return (n & (n - 1)) == 0;
-}
 
 template <typename T>
 void fft_2_point(const etl::complex<T>* in, etl::complex<T>* out, const std::size_t product, const std::size_t n, const etl::complex<T>* twiddle) {
@@ -520,7 +520,7 @@ void inplace_radix2_fft1(etl::complex<T>* x, std::size_t N) {
 
 template <typename T1, typename T>
 void fft1_kernel(const T1* a, std::size_t n, std::complex<T>* c) {
-    if (n <= 131072 && is_power_of_two(n)) {
+    if (n <= 131072 && math::is_power_of_two(n)) {
         std::copy_n(a, n, c);
 
         detail::inplace_radix2_fft1(reinterpret_cast<etl::complex<T>*>(c), n);
@@ -533,7 +533,7 @@ template <typename T>
 void ifft1_kernel(const std::complex<T>* a, std::size_t n, std::complex<T>* c) {
     using complex_t = std::complex<T>;
 
-    if (n <= 131072 && is_power_of_two(n)) {
+    if (n <= 131072 && math::is_power_of_two(n)) {
         //Conjugate the complex numbers
         for (std::size_t i = 0; i < n; ++i) {
             c[i] = std::conj(a[i]);
@@ -605,7 +605,7 @@ void fft1_many(A&& a, C&& c) {
     std::size_t batch    = etl::size(a) / n;   //Number of batch
     std::size_t distance = n;                  //Distance between samples
 
-    if (n <= 65536 && detail::is_power_of_two(n)) {
+    if (n <= 65536 && math::is_power_of_two(n)) {
         //Copy a -> c (if not aliasing)
         if (reinterpret_cast<const void*>(a.memory_start()) != reinterpret_cast<const void*>(c.memory_start())) {
             std::copy_n(a.begin(), etl::size(c), c.begin());

@@ -112,8 +112,18 @@ value_t<I> sum(const I& /*input*/, std::size_t /*first*/, std::size_t /*last*/) 
 
 #else
 
+/*!
+ * \brief Compute the of the input in the given range
+ * \param input The input expression
+ * \param first The beginning of the range
+ * \param last The end of the range
+ * \return the sum
+ */
 template <typename I>
-double sum(const I& /*input*/, std::size_t /*first*/, std::size_t /*last*/) {
+double sum(const I& input, std::size_t first, std::size_t last) {
+    cpp_unused(input);
+    cpp_unused(first);
+    cpp_unused(last);
     cpp_unreachable("AVX not available/enabled");
     return 0.0;
 }

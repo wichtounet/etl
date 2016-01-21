@@ -35,15 +35,6 @@ enum class precision {
 };
 
 /*!
- * \brief Test if the given number is a power of two
- * \param n The number to test
- * \return true if the number is a power of two, false otherwise
- */
-inline constexpr bool is_power_of_two(long n) {
-    return (n & (n - 1)) == 0;
-}
-
-/*!
  * \brief Select a 1D FFT implementation based on the operation size
  * \param n The size of the operation
  * \return The implementation to use
@@ -54,7 +45,7 @@ inline cpp14_constexpr fft_impl select_fft1_impl(const std::size_t n) {
     constexpr const bool cufft = is_cufft_enabled::value;
 
     if (cufft) {
-        if (is_power_of_two(n)) {
+        if (math::is_power_of_two(n)) {
             if (n <= 64) {
                 return fft_impl::STD;
             } else if (n <= 1024) {
@@ -76,7 +67,7 @@ inline cpp14_constexpr fft_impl select_fft1_impl(const std::size_t n) {
 
         return fft_impl::CUFFT;
     } else if (mkl) {
-        if (is_power_of_two(n) && n <= 64) {
+        if (math::is_power_of_two(n) && n <= 64) {
             return fft_impl::STD;
         }
 
@@ -125,7 +116,7 @@ inline cpp14_constexpr fft_impl select_ifft1_impl(const std::size_t n) {
     constexpr const bool cufft = is_cufft_enabled::value;
 
     if (cufft) {
-        if (is_power_of_two(n)) {
+        if (math::is_power_of_two(n)) {
             if (n <= 1024) {
                 if (mkl) {
                     return fft_impl::MKL;
@@ -164,7 +155,7 @@ inline cpp14_constexpr fft_impl select_fft2_impl(const std::size_t n1, std::size
     constexpr const bool cufft = is_cufft_enabled::value;
 
     if (cufft) {
-        if (is_power_of_two(n1) && is_power_of_two(n2)) {
+        if (math::is_power_of_two(n1) && math::is_power_of_two(n2)) {
             if (n1 * n2 < 150 * 150) {
                 if (mkl) {
                     return fft_impl::MKL;
