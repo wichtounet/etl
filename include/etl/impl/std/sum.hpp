@@ -18,6 +18,13 @@ namespace impl {
 
 namespace standard {
 
+/*!
+ * \brief Compute the of the input in the given range
+ * \param input The input expression
+ * \param first The beginning of the range
+ * \param last The end of the range
+ * \return the sum
+ */
 template <typename E>
 value_t<E> sum(const E& input, std::size_t first, std::size_t last) {
     value_t<E> acc(0);
