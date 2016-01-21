@@ -13,6 +13,16 @@ namespace impl {
 
 namespace common {
 
+/*!
+ * \brief Compute the left part of the kernel for a same convolution
+ * \param in Pointer to the memory of the input
+ * \param n The size of the input
+ * \param kernel Pointer to the memory of the kernel
+ * \param m The size of the kernel
+ * \param out Pointer to the output
+ * \param first The beginning of the range of the input to consider
+ * \param last The end of the range of the input to consider
+ */
 template <typename T>
 void left_same_kernel(const T* in, const std::size_t /*n*/, const T* kernel, std::size_t m, T* out, std::size_t first, std::size_t last) {
     std::size_t left  = (m - 1) / 2;
@@ -30,6 +40,16 @@ void left_same_kernel(const T* in, const std::size_t /*n*/, const T* kernel, std
     }
 }
 
+/*!
+ * \brief Compute the right part of the kernel for a same convolution
+ * \param in Pointer to the memory of the input
+ * \param n The size of the input
+ * \param kernel Pointer to the memory of the kernel
+ * \param m The size of the kernel
+ * \param out Pointer to the output
+ * \param first The beginning of the range of the input to consider
+ * \param last The end of the range of the input to consider
+ */
 template <typename T>
 void right_same_kernel(const T* in, const std::size_t n, const T* kernel, std::size_t m, T* out, std::size_t first, std::size_t last) {
     std::size_t left  = (m - 1) / 2;
@@ -48,6 +68,16 @@ void right_same_kernel(const T* in, const std::size_t n, const T* kernel, std::s
     }
 }
 
+/*!
+ * \brief Compute the left part of the kernel for a full convolution
+ * \param in Pointer to the memory of the input
+ * \param n The size of the input
+ * \param kernel Pointer to the memory of the kernel
+ * \param m The size of the kernel
+ * \param out Pointer to the output
+ * \param first The beginning of the range of the input to consider
+ * \param last The end of the range of the input to consider
+ */
 template <typename T>
 void left_full_kernel(const T* in, const std::size_t n, const T* kernel, std::size_t m, T* out, std::size_t first, std::size_t last) {
     std::size_t left = m - 1;
@@ -66,6 +96,16 @@ void left_full_kernel(const T* in, const std::size_t n, const T* kernel, std::si
     }
 }
 
+/*!
+ * \brief Compute the right part of the kernel for a full convolution
+ * \param in Pointer to the memory of the input
+ * \param n The size of the input
+ * \param kernel Pointer to the memory of the kernel
+ * \param m The size of the kernel
+ * \param out Pointer to the output
+ * \param first The beginning of the range of the input to consider
+ * \param last The end of the range of the input to consider
+ */
 template <typename T>
 void right_full_kernel(const T* in, const std::size_t n, const T* kernel, std::size_t m, T* out, std::size_t first, std::size_t last) {
     std::size_t right = m - 1;
