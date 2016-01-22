@@ -20,8 +20,18 @@ namespace etl {
 
 namespace detail {
 
+
+/*!
+ * \brief Functor for outer product
+ */
 template <typename A, typename B, typename C, typename Enable = void>
 struct outer_product_impl {
+    /*!
+     * \brief Apply the functor to a and b and store the result in c
+     * \param a the left hand side
+     * \param b the left hand side
+     * \param c the result
+     */
     static void apply(const A& a, const B& b, C&& c) {
         for (std::size_t i = 0; i < etl::dim<0>(c); ++i) {
             for (std::size_t j = 0; j < etl::dim<1>(c); ++j) {

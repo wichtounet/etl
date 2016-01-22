@@ -46,6 +46,9 @@ struct sum_r_transformer {
         return sum(sub(i));
     }
 
+    /*!
+     * \brief Returns the value at the given position (i, sizes...)
+     */
     template <typename... Sizes>
     value_type operator()(std::size_t i, Sizes... /*sizes*/) const {
         return sum(sub(i));
@@ -107,6 +110,9 @@ struct mean_r_transformer {
         return mean(sub(i));
     }
 
+    /*!
+     * \brief Returns the value at the given position (i, sizes...)
+     */
     template <typename... Sizes>
     value_type operator()(std::size_t i, Sizes... /*sizes*/) const {
         return mean(sub(i));

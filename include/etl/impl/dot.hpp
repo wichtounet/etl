@@ -24,8 +24,17 @@ namespace etl {
 
 namespace detail {
 
+/*!
+ * \brief Functor for dot product
+ */
 template <typename A, typename B, typename Enable = void>
 struct dot_impl {
+    /*!
+     * \brief Apply the functor to a and b
+     * \param a the left hand side
+     * \param b the left hand side
+     * \return the dot product of a and b
+     */
     static auto apply(const A& a, const B& b) {
         return sum(scale(a, b));
     }

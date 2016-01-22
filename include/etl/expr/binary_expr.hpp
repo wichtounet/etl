@@ -45,14 +45,26 @@ public:
     //Cannot be constructed with no args
     binary_expr() = delete;
 
-    //Construct a new expression
+    /*!
+     * \brief Construct a new binary expression
+     * \param l The left hand side of the expression
+     * \param r The right hand side of the expression
+     */
     binary_expr(LeftExpr l, RightExpr r)
             : _lhs(std::forward<LeftExpr>(l)), _rhs(std::forward<RightExpr>(r)) {
         //Nothing else to init
     }
 
-    //Expresison can be copied and moved
+    /*!
+     * \brief Copy construct a new binary expression
+     * \param e The expression from which to copy
+     */
     binary_expr(const binary_expr& e) = default;
+
+    /*!
+     * \brief Move construct a new binary expression
+     * \param e The expression from which to move
+     */
     binary_expr(binary_expr&& e) noexcept = default;
 
     //Expressions are invariant

@@ -32,7 +32,10 @@ public:
     //Cannot be constructed with no args
     optimized_expr() = delete;
 
-    //Construct a new expression
+    /*!
+     * \brief Construt a new optimized expression around the given ETL expression
+     * \param l The ETL expression
+     */
     optimized_expr(Expr l)
             : _value(std::forward<Expr>(l)) {
         //Nothing else to init
@@ -63,7 +66,10 @@ public:
     }
 };
 
-//Optimized expression simply use the same traits as its expression
+/*!
+ * \brief Specilization of the traits for optimized_expr
+ * Optimized expression simply use the same traits as its expression
+ */
 template <typename Expr>
 struct etl_traits<etl::optimized_expr<Expr>> : etl_traits<Expr> {};
 

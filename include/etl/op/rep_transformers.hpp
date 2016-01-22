@@ -380,11 +380,17 @@ struct etl_traits<rep_r_transformer<T, D...>> {
         return mul_all<D...>::value * etl_traits<sub_expr_t>::size();
     }
 
+    /*!
+     * \brief Returns the D2th dimension of the expression
+     */
     template <std::size_t D2, cpp_enable_if(D2 < sub_d)>
     static constexpr std::size_t dim() {
         return etl_traits<sub_expr_t>::template dim<D2>();
     }
 
+    /*!
+     * \brief Returns the D2th dimension of the expression
+     */
     template <std::size_t D2, cpp_disable_if(D2 < sub_d)>
     static constexpr std::size_t dim() {
         return nth_size<D2 - sub_d, 0, D...>::value;
