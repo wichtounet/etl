@@ -65,17 +65,31 @@ public:
         std::copy_n(rhs._memory, _size, _memory);
     }
 
-    //Copy constructor with different type
-    //This constructor is necessary because the one from expression is explicit
-    template <typename T2>
-    dyn_matrix_impl(const dyn_matrix_impl<T2, SO, D>& rhs) noexcept : base_type(rhs), _memory(allocate(_size)) {
+    //Move constructor
+    dyn_matrix_impl(dyn_matrix_impl&& rhs) noexcept : base_type(std::move(rhs)), _memory(rhs._memory) {
+        rhs._memory = nullptr;
+    }
+
+    //Copy constructors with different type
+
+    template <typename T2, order SO2, std::size_t D2, cpp_enable_if(SO2 == SO)>
+    dyn_matrix_impl(const dyn_matrix_impl<T2, SO2, D2>& rhs) noexcept : base_type(rhs), _memory(allocate(_size)) {
+        standard_evaluator::direct_copy(rhs.memory_start(), rhs.memory_end(), memory_start());
+    }
+
+    template <typename T2, order SO2, std::size_t D2, cpp_disable_if(SO2 == SO)>
+    dyn_matrix_impl(const dyn_matrix_impl<T2, SO2, D2>& rhs) noexcept : base_type(rhs), _memory(allocate(_size)) {
         //The type is different, so we must use assign
         assign_evaluate(rhs, *this);
     }
 
-    //Move constructor
-    dyn_matrix_impl(dyn_matrix_impl&& rhs) noexcept : base_type(std::move(rhs)), _memory(rhs._memory) {
-        rhs._memory = nullptr;
+    template <typename E, cpp_enable_if(
+                              std::is_convertible<value_t<E>, value_type>::value,
+                              is_etl_expr<E>::value,
+                              !is_dyn_matrix<E>::value)>
+    explicit dyn_matrix_impl(E&& e) noexcept
+            : base_type(e), _memory(allocate(_size)) {
+        assign_evaluate(std::forward<E>(e), *this);
     }
 
     //Initializer-list construction for vector
@@ -161,14 +175,6 @@ public:
         std::fill(begin(), end(), cpp::last_value(sizes...));
     }
 
-    template <typename E, cpp_enable_if(
-                              std::is_convertible<value_t<E>, value_type>::value,
-                              is_etl_expr<E>::value)>
-    explicit dyn_matrix_impl(E&& e) noexcept
-            : base_type(e), _memory(allocate(_size)) {
-        assign_evaluate(std::forward<E>(e), *this);
-    }
-
     template <typename Container, cpp_enable_if(
                                       cpp::not_c<is_etl_expr<Container>>::value,
                                       std::is_convertible<typename Container::value_type, value_type>::value)>
@@ -195,7 +201,7 @@ public:
                 std::copy_n(rhs._memory, _size, _memory);
             } else {
                 validate_assign(*this, rhs);
-                assign_evaluate(rhs, *this);
+                standard_evaluator::direct_copy(rhs.memory_start(), rhs.memory_end(), memory_start());
             }
         }
 
