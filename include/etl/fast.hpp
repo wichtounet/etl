@@ -149,14 +149,28 @@ public:
 
     fast_matrix_impl(const fast_matrix_impl& rhs) noexcept {
         init();
-        assign_evaluate(rhs, *this);
+        standard_evaluator::direct_copy(rhs.memory_start(), rhs.memory_end(), memory_start());
     }
 
     fast_matrix_impl(fast_matrix_impl&& rhs) noexcept {
         _data = std::move(rhs._data);
     }
 
-    template <typename E, cpp_enable_if(std::is_convertible<value_t<E>, value_type>::value, is_etl_expr<E>::value)>
+    template <typename T2, typename ST2, order SO2, std::size_t... Dims2, cpp_enable_if(std::is_same<T, T2>::value, SO == SO2)>
+    fast_matrix_impl(const fast_matrix_impl<T2, ST2, SO2, Dims2...>& rhs) noexcept {
+        init();
+        validate_assign(*this, rhs);
+        standard_evaluator::direct_copy(rhs.memory_start(), rhs.memory_end(), memory_start());
+    }
+
+    template <typename T2, typename ST2, order SO2, std::size_t... Dims2, cpp_disable_if(std::is_same<T, T2>::value, SO == SO2)>
+    fast_matrix_impl(const fast_matrix_impl<T2, ST2, SO2, Dims2...>& rhs) noexcept {
+        init();
+        validate_assign(*this, rhs);
+        assign_evaluate(rhs, *this);
+    }
+
+    template <typename E, cpp_enable_if(!is_fast_matrix<E>::value, std::is_convertible<value_t<E>, value_type>::value, is_etl_expr<E>::value)>
     explicit fast_matrix_impl(E&& e) {
         init();
         validate_assign(*this, e);
@@ -178,7 +192,7 @@ public:
 
     fast_matrix_impl& operator=(const fast_matrix_impl& rhs) noexcept {
         if (this != &rhs) {
-            assign_evaluate(rhs, *this);
+            standard_evaluator::direct_copy(rhs.memory_start(), rhs.memory_end(), memory_start());
         }
         return *this;
     }
