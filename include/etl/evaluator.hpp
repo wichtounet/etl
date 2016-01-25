@@ -42,8 +42,8 @@ namespace standard_evaluator {
      * \param last pointer to the next-to-last element to copy
      * \param target pointer to the first element of the result
      */
-    template <typename T>
-    void direct_copy(const T* first, const T* last, T* target) {
+    template <typename S, typename T>
+    void direct_copy(const S* first, const S* last, T* target) {
         std::copy(first, last, target);
     }
 

@@ -156,14 +156,14 @@ public:
         _data = std::move(rhs._data);
     }
 
-    template <typename T2, typename ST2, order SO2, std::size_t... Dims2, cpp_enable_if(std::is_same<T, T2>::value, SO == SO2)>
+    template <typename T2, typename ST2, order SO2, std::size_t... Dims2, cpp_enable_if(SO == SO2)>
     fast_matrix_impl(const fast_matrix_impl<T2, ST2, SO2, Dims2...>& rhs) noexcept {
         init();
         validate_assign(*this, rhs);
         standard_evaluator::direct_copy(rhs.memory_start(), rhs.memory_end(), memory_start());
     }
 
-    template <typename T2, typename ST2, order SO2, std::size_t... Dims2, cpp_disable_if(std::is_same<T, T2>::value, SO == SO2)>
+    template <typename T2, typename ST2, order SO2, std::size_t... Dims2, cpp_disable_if(SO == SO2)>
     fast_matrix_impl(const fast_matrix_impl<T2, ST2, SO2, Dims2...>& rhs) noexcept {
         init();
         validate_assign(*this, rhs);
