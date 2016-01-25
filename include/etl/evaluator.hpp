@@ -37,6 +37,17 @@ namespace etl {
  */
 namespace standard_evaluator {
     /*!
+     * \brief Performs a direct memory copy
+     * \param first pointer to the first element to copy
+     * \param last pointer to the next-to-last element to copy
+     * \param target pointer to the first element of the result
+     */
+    template <typename T>
+    void direct_copy(const T* first, const T* last, T* target) {
+        std::copy(first, last, target);
+    }
+
+    /*!
      * \brief Allocate temporaries and evaluate sub expressions
      * \param expr The expr to be visited
      */
@@ -67,7 +78,7 @@ namespace standard_evaluator {
      */
     template <typename E, typename R, cpp_enable_if(detail::fast_assign<E, R>::value)>
     void assign_evaluate_impl(E&& expr, R&& result) {
-        std::copy(expr.memory_start(), expr.memory_end(), result.memory_start());
+        direct_copy(expr.memory_start(), expr.memory_end(), result.memory_start());
     }
 
     //Direct assign version
