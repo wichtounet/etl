@@ -64,6 +64,30 @@ struct is_vector<std::vector<N, A>> : std::true_type {};
 template <typename N>
 struct is_vector<std::vector<N>> : std::true_type {};
 
+template <typename T>
+struct iterator_type {
+    using iterator       = typename T::iterator;
+    using const_iterator = typename T::const_iterator;
+};
+
+template <typename T>
+struct iterator_type <T*> {
+    using iterator       = T*;
+    using const_iterator = const T*;
+};
+
+template <typename T>
+struct iterator_type <const T*> {
+    using iterator       = const T*;
+    using const_iterator = const T*;
+};
+
+template <typename T>
+using iterator_t = typename iterator_type<T>::iterator;
+
+template <typename T>
+using const_iterator_t = typename iterator_type<T>::const_iterator;
+
 } //end of namespace matrix_detail
 
 /*!
@@ -81,13 +105,13 @@ public:
     static constexpr const order storage_order      = SO;                                   ///< The storage order
     static constexpr const bool array_impl          = !matrix_detail::is_vector<ST>::value; ///< true if the storage is an std::arraw, false otherwise
 
-    using value_type        = T;                                     ///< The value type
-    using storage_impl      = ST;                                    ///< The storage implementation
-    using iterator          = typename storage_impl::iterator;       ///< The iterator type
-    using const_iterator    = typename storage_impl::const_iterator; ///< The const iterator type
-    using this_type         = fast_matrix_impl<T, ST, SO, Dims...>;  ///< this type
-    using memory_type       = value_type*;                           ///< The memory type
-    using const_memory_type = const value_type*;                     ///< The const memory type
+    using value_type        = T;                                             ///< The value type
+    using storage_impl      = ST;                                            ///< The storage implementation
+    using iterator          = matrix_detail::iterator_t<storage_impl>;       ///< The iterator type
+    using const_iterator    = matrix_detail::const_iterator_t<storage_impl>; ///< The const iterator type
+    using this_type         = fast_matrix_impl<T, ST, SO, Dims...>;          ///< this type
+    using memory_type       = value_type*;                                   ///< The memory type
+    using const_memory_type = const value_type*;                             ///< The const memory type
 
     /*!
      * \brief The vectorization type for V
@@ -96,6 +120,7 @@ public:
     using vec_type       = typename V::template vec_type<T>;
 
 private:
+    bool managed = true;
     storage_impl _data;
 
     template <typename... S>
