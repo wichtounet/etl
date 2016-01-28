@@ -44,7 +44,8 @@ struct aligned_allocator {
      */
     template <typename T>
     static void release(T* ptr) {
-        free((reinterpret_cast<void**>(ptr))[-1]);
+        //Note the const_cast is only to allow compilation
+        free((reinterpret_cast<void**>(const_cast<std::remove_const_t<T>*>(ptr)))[-1]);
     }
 };
 
