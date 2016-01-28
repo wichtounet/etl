@@ -12,6 +12,8 @@
 
 #pragma once
 
+#include "cpp_utils/array_wrapper.hpp"
+
 namespace etl {
 
 namespace matrix_detail {
@@ -120,7 +122,6 @@ public:
     using vec_type       = typename V::template vec_type<T>;
 
 private:
-    bool managed = true;
     storage_impl _data;
 
     template <typename... S>
@@ -172,13 +173,17 @@ public:
         std::copy(l.begin(), l.end(), begin());
     }
 
+    fast_matrix_impl(storage_impl data) : _data(data) {
+        //Nothing else to init
+    }
+
     fast_matrix_impl(const fast_matrix_impl& rhs) noexcept {
         init();
         standard_evaluator::direct_copy(rhs.memory_start(), rhs.memory_end(), memory_start());
     }
 
-    fast_matrix_impl(fast_matrix_impl&& rhs) noexcept {
-        _data = std::move(rhs._data);
+    fast_matrix_impl(fast_matrix_impl&& rhs) noexcept : _data(std::move(rhs._data)) {
+        //Nothing else to init
     }
 
     template <typename T2, typename ST2, order SO2, std::size_t... Dims2, cpp_enable_if(SO == SO2)>
@@ -524,6 +529,11 @@ static_assert(std::is_nothrow_move_constructible<fast_vector<double, 2>>::value,
 static_assert(std::is_nothrow_copy_assignable<fast_vector<double, 2>>::value, "fast_vector should be nothrow copy assignable");
 static_assert(std::is_nothrow_move_assignable<fast_vector<double, 2>>::value, "fast_vector should be nothrow move assignable");
 static_assert(std::is_nothrow_destructible<fast_vector<double, 2>>::value, "fast_vector should be nothrow destructible");
+
+template <std::size_t... Dims, typename T>
+fast_matrix_impl<T, cpp::array_wrapper<T>, order::RowMajor, Dims...> fast_matrix_over(T* memory){
+    return fast_matrix_impl<T, cpp::array_wrapper<T>, order::RowMajor, Dims...>(cpp::array_wrapper<T>(memory, mul_all<Dims...>::value));
+}
 
 /*!
  * \brief Swaps the given two matrices
