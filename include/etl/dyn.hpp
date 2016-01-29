@@ -63,7 +63,7 @@ public:
 
     //Copy constructor
     dyn_matrix_impl(const dyn_matrix_impl& rhs) noexcept : base_type(rhs), _memory(allocate(_size)) {
-        std::copy_n(rhs._memory, _size, _memory);
+        standard_evaluator::direct_copy(rhs.memory_start(), rhs.memory_end(), memory_start());
     }
 
     //Move constructor
@@ -209,11 +209,11 @@ public:
                 _size       = rhs._size;
                 _dimensions = rhs._dimensions;
                 _memory =   allocate(_size);
-                std::copy_n(rhs._memory, _size, _memory);
             } else {
                 validate_assign(*this, rhs);
-                standard_evaluator::direct_copy(rhs.memory_start(), rhs.memory_end(), memory_start());
             }
+
+            standard_evaluator::direct_copy(rhs.memory_start(), rhs.memory_end(), memory_start());
         }
 
         check_invariants();
