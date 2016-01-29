@@ -608,7 +608,7 @@ void fft1_many(A&& a, C&& c) {
     if (n <= 65536 && math::is_power_of_two(n)) {
         //Copy a -> c (if not aliasing)
         if (reinterpret_cast<const void*>(a.memory_start()) != reinterpret_cast<const void*>(c.memory_start())) {
-            std::copy_n(a.begin(), etl::size(c), c.begin());
+            standard_evaluator::direct_copy(a.memory_start(), a.memory_end(), c.memory_start());
         }
 
         auto* m = c.memory_start();
@@ -700,8 +700,8 @@ void fft1_convolve(A&& a, B&& b, C&& c) {
     auto a_padded = allocate<std::complex<value_t<A>>>(size);
     auto b_padded = allocate<std::complex<value_t<A>>>(size);
 
-    std::copy(a.begin(), a.end(), a_padded.get());
-    std::copy(b.begin(), b.end(), b_padded.get());
+    standard_evaluator::direct_copy(a.memory_start(), a.memory_end(), a_padded.get());
+    standard_evaluator::direct_copy(b.memory_start(), b.memory_end(), b_padded.get());
 
     detail::fft1_kernel(a_padded.get(), size, a_padded.get());
     detail::fft1_kernel(b_padded.get(), size, b_padded.get());
