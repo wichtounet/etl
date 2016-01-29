@@ -42,6 +42,9 @@
 //Global test functions
 #include "etl/globals.hpp"
 
+// The evaluator
+#include "etl/evaluator.hpp"
+
 // CRTP classes
 #include "etl/crtp/inplace_assignable.hpp"
 #include "etl/crtp/comparable.hpp"
@@ -75,8 +78,7 @@
 #include "etl/builder/fft_expression_builder.hpp"
 #include "etl/builder/pooling_expression_builder.hpp"
 
-// The evaluator and optimizer
-#include "etl/evaluator.hpp"
+// The optimizer
 #include "etl/optimizer.hpp"
 
 // The value classes implementation
