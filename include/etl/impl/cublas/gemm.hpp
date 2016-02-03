@@ -66,23 +66,6 @@ inline void cublas_geam(cublasHandle_t handle, cublasOperation_t transa, cublasO
 //Apparenttly, I'm way too stupid to handle xgeam from cublas, therefore I need to do it
 //by hand, very innefficiently
 
-template <typename C, typename T>
-void copy_matrix(cublas_handle& , impl::cuda::cuda_memory<T>& gpu, C&& c) {
-    cudaMemcpy(c.memory_start(), gpu.get(), etl::size(c) * sizeof(T), cudaMemcpyDeviceToHost);
-
-    if (decay_traits<C>::storage_order == order::RowMajor) {
-        auto tmp = force_temporary(c);
-
-        std::size_t oi = 0;
-
-        for(std::size_t j = 0; j < etl::columns(c); ++j){
-            for(std::size_t i = 0; i < etl::rows(c); ++i){
-                c[i * etl::columns(c) + j] = tmp[oi++];
-            }
-        }
-    }
-}
-
 template <typename C>
 void copy_matrix(cublas_handle& , C&& c) {
     c.gpu_copy_from();
