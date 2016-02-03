@@ -442,3 +442,19 @@ TEMPLATE_TEST_CASE_2("etl_traits/temporary", "make_temporary", Z, float, double)
     REQUIRE(c.memory_start() == make_temporary(c).memory_start());
     REQUIRE(d.memory_start() == make_temporary(d).memory_start());
 }
+
+TEMPLATE_TEST_CASE_2("etl_traits/inplace_transpose_able", "inplace_transpose_able", Z, float, double) {
+    using mat_type_1 = etl::fast_matrix<Z, 3, 2, 4, 5>;
+    using mat_type_2 = etl::fast_matrix<Z, 3, 2>;
+    using mat_type_3 = etl::fast_matrix<Z, 3, 3>;
+    using mat_type_4 = etl::fast_matrix<Z, 2, 3>;
+    using mat_type_5 = etl::dyn_matrix<Z, 4>;
+    using mat_type_6 = etl::dyn_matrix<Z, 2>;
+
+    REQUIRE(!etl::inplace_transpose_able<mat_type_1>::value);
+    REQUIRE(!etl::inplace_transpose_able<mat_type_2>::value);
+    REQUIRE(etl::inplace_transpose_able<mat_type_3>::value);
+    REQUIRE(!etl::inplace_transpose_able<mat_type_4>::value);
+    REQUIRE(!etl::inplace_transpose_able<mat_type_5>::value);
+    REQUIRE(etl::inplace_transpose_able<mat_type_6>::value);
+}
