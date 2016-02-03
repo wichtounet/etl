@@ -95,7 +95,7 @@ struct inplace_assignable {
     template <typename S = D, cpp_disable_if(is_dyn_matrix<S>::value)>
     derived_t& transpose_inplace() {
         static_assert(etl_traits<derived_t>::dimensions() == 2, "Only 2D matrix can be transposed");
-        cpp_assert(etl::dim<0>(as_derived()) == etl::dim<1>(as_derived()), "Only square matrices can be tranposed inplace");
+        cpp_assert(etl::dim<0>(as_derived()) == etl::dim<1>(as_derived()), "Only square fast matrices can be tranposed inplace");
 
         detail::inplace_square_transpose<derived_t>::apply(as_derived());
 
