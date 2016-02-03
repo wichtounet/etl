@@ -301,7 +301,7 @@ template <typename A, typename C, cpp_enable_if(all_single_precision<A>::value)>
 void fft1(A&& a, C&& c) {
     auto a_complex = allocate<std::complex<float>>(etl::size(a));
 
-    std::copy(a.begin(), a.end(), a_complex.get());
+    standard_evaluator::direct_copy(a.memory_start(), a.memory_end(), a_complex.get());
 
     detail::cfft_kernel(a_complex.get(), etl::size(a), c.memory_start());
 }
@@ -310,7 +310,7 @@ template <typename A, typename C, cpp_enable_if(all_double_precision<A>::value)>
 void fft1(A&& a, C&& c) {
     auto a_complex = allocate<std::complex<double>>(etl::size(a));
 
-    std::copy(a.begin(), a.end(), a_complex.get());
+    standard_evaluator::direct_copy(a.memory_start(), a.memory_end(), a_complex.get());
 
     detail::zfft_kernel(a_complex.get(), etl::size(a), c.memory_start());
 }
@@ -366,7 +366,7 @@ void fft1_many(A&& a, C&& c) {
 
     auto a_complex = allocate<std::complex<float>>(etl::size(a));
 
-    std::copy(a.begin(), a.end(), a_complex.get());
+    standard_evaluator::direct_copy(a.memory_start(), a.memory_end(), a_complex.get());
 
     detail::cfft_many_kernel(a_complex.get(), batch, n, c.memory_start());
 }
@@ -380,7 +380,7 @@ void fft1_many(A&& a, C&& c) {
 
     auto a_complex = allocate<std::complex<double>>(etl::size(a));
 
-    std::copy(a.begin(), a.end(), a_complex.get());
+    standard_evaluator::direct_copy(a.memory_start(), a.memory_end(), a_complex.get());
 
     detail::zfft_many_kernel(a_complex.get(), batch, n, c.memory_start());
 }
@@ -414,8 +414,8 @@ void fft1_convolve(A&& a, B&& b, C&& c) {
     auto a_padded = allocate<std::complex<float>>(size);
     auto b_padded = allocate<std::complex<float>>(size);
 
-    std::copy(a.begin(), a.end(), a_padded.get());
-    std::copy(b.begin(), b.end(), b_padded.get());
+    standard_evaluator::direct_copy(a.memory_start(), a.memory_end(), a_padded.get());
+    standard_evaluator::direct_copy(b.memory_start(), b.memory_end(), b_padded.get());
 
     detail::inplace_cfft_kernel(a_padded.get(), size);
     detail::inplace_cfft_kernel(b_padded.get(), size);
@@ -440,8 +440,8 @@ void fft1_convolve(A&& a, B&& b, C&& c) {
     auto a_padded = allocate<std::complex<double>>(size);
     auto b_padded = allocate<std::complex<double>>(size);
 
-    std::copy(a.begin(), a.end(), a_padded.get());
-    std::copy(b.begin(), b.end(), b_padded.get());
+    standard_evaluator::direct_copy(a.memory_start(), a.memory_end(), a_padded.get());
+    standard_evaluator::direct_copy(b.memory_start(), b.memory_end(), b_padded.get());
 
     detail::inplace_zfft_kernel(a_padded.get(), size);
     detail::inplace_zfft_kernel(b_padded.get(), size);
@@ -461,7 +461,7 @@ template <typename A, typename C, cpp_enable_if(all_single_precision<A>::value)>
 void fft2(A&& a, C&& c) {
     auto a_complex = allocate<std::complex<float>>(etl::size(a));
 
-    std::copy(a.begin(), a.end(), a_complex.get());
+    standard_evaluator::direct_copy(a.memory_start(), a.memory_end(), a_complex.get());
 
     detail::cfft2_kernel(a_complex.get(), etl::dim<0>(a), etl::dim<1>(a), c.memory_start());
 }
@@ -470,7 +470,7 @@ template <typename A, typename C, cpp_enable_if(all_double_precision<A>::value)>
 void fft2(A&& a, C&& c) {
     auto a_complex = allocate<std::complex<double>>(etl::size(a));
 
-    std::copy(a.begin(), a.end(), a_complex.get());
+    standard_evaluator::direct_copy(a.memory_start(), a.memory_end(), a_complex.get());
 
     detail::zfft2_kernel(a_complex.get(), etl::dim<0>(a), etl::dim<1>(a), c.memory_start());
 }
@@ -495,7 +495,7 @@ void fft2_many(A&& a, C&& c) {
 
     auto a_complex = allocate<std::complex<float>>(etl::size(a));
 
-    std::copy(a.begin(), a.end(), a_complex.get());
+    standard_evaluator::direct_copy(a.memory_start(), a.memory_end(), a_complex.get());
 
     detail::cfft2_many_kernel(a_complex.get(), batch, n1, n2, c.memory_start());
 }
@@ -510,7 +510,7 @@ void fft2_many(A&& a, C&& c) {
 
     auto a_complex = allocate<std::complex<double>>(etl::size(a));
 
-    std::copy(a.begin(), a.end(), a_complex.get());
+    standard_evaluator::direct_copy(a.memory_start(), a.memory_end(), a_complex.get());
 
     detail::zfft2_many_kernel(a_complex.get(), batch, n1, n2, c.memory_start());
 }
@@ -674,10 +674,10 @@ template <typename A, typename C>
 void fft2_many(A&& /*unused*/, C&& /*unused*/) {}
 
 template <typename A, typename B, typename C>
-void fft1_convolve(A&& /*unused*/, C&& /*unused*/) {}
+void fft1_convolve(A&& /*unused*/, B&& /*unused*/, C&& /*unused*/) {}
 
 template <typename A, typename B, typename C>
-void fft2_convolve(A&& /*unused*/, C&& /*unused*/) {}
+void fft2_convolve(A&& /*unused*/, B&& /*unused*/, C&& /*unused*/) {}
 
 #endif
 

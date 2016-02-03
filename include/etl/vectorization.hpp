@@ -58,8 +58,14 @@ using intrinsic_traits = no_intrinsic_traits<T>;
 
 #else //ETL_VECTORIZE_EXPR
 
+/*!
+ * \brief The defautl vectorization scheme
+ */
 using default_vec = no_vec;
 
+/*!
+ * \brief The default intrinsic traits
+ */
 template <typename T>
 using intrinsic_traits = no_intrinsic_traits<T>;
 

@@ -26,22 +26,24 @@ using fast_assign = cpp::and_u<
                          >;
 
 template <typename E, typename R>
-using parallel_vectorized_assign = cpp::and_u<
-                               !fast_assign<E, R>::value,
+using are_vectorizable = cpp::and_u<
                                vectorize_expr,
-                               parallel,
                                decay_traits<E>::vectorizable,
                                intrinsic_traits<value_t<R>>::vectorizable, intrinsic_traits<value_t<E>>::vectorizable,
                                std::is_same<intrinsic_type<value_t<R>>, intrinsic_type<value_t<E>>>::value>;
+
+template <typename E, typename R>
+using parallel_vectorized_assign = cpp::and_u<
+                               !fast_assign<E, R>::value,
+                               parallel,
+                               are_vectorizable<E, R>::value>;
 
 template <typename E, typename R>
 using vectorized_assign = cpp::and_u<
                                !fast_assign<E, R>::value,
                                !parallel_vectorized_assign<E, R>::value,
                                vectorize_expr,
-                               decay_traits<E>::vectorizable,
-                               intrinsic_traits<value_t<R>>::vectorizable, intrinsic_traits<value_t<E>>::vectorizable,
-                               std::is_same<intrinsic_type<value_t<R>>, intrinsic_type<value_t<E>>>::value>;
+                               are_vectorizable<E, R>::value>;
 
 template <typename E, typename R>
 using parallel_assign = cpp::and_u<
@@ -70,19 +72,13 @@ using standard_assign = cpp::and_u<
 
 template <typename E, typename R>
 using parallel_vectorized_compound = cpp::and_u<
-                               vectorize_expr,
                                parallel,
-                               decay_traits<E>::vectorizable,
-                               intrinsic_traits<value_t<R>>::vectorizable, intrinsic_traits<value_t<E>>::vectorizable,
-                               std::is_same<intrinsic_type<value_t<R>>, intrinsic_type<value_t<E>>>::value>;
+                               are_vectorizable<E, R>::value>;
 
 template <typename E, typename R>
 using vectorized_compound = cpp::and_u<
                                !parallel_vectorized_compound<E, R>::value,
-                               vectorize_expr,
-                               decay_traits<E>::vectorizable,
-                               intrinsic_traits<value_t<R>>::vectorizable, intrinsic_traits<value_t<E>>::vectorizable,
-                               std::is_same<intrinsic_type<value_t<R>>, intrinsic_type<value_t<E>>>::value>;
+                               are_vectorizable<E, R>::value>;
 
 template <typename E, typename R>
 using parallel_compound = cpp::and_u<

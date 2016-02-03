@@ -7,14 +7,7 @@
 
 #pragma once
 
-#include <iosfwd> //For stream support
-
 #include "etl/iterator.hpp"
-
-// CRTP Classes
-#include "etl/crtp/comparable.hpp"
-#include "etl/crtp/value_testable.hpp"
-#include "etl/crtp/dim_testable.hpp"
 
 namespace etl {
 
@@ -33,10 +26,10 @@ private:
                       cpp::and_c<is_etl_expr<LeftExpr>, is_etl_expr<RightExpr>>>::value,
                   "One argument must be an ETL expression and the other one convertible to T");
 
-    using this_type = binary_expr<T, LeftExpr, BinaryOp, RightExpr>;
+    using this_type = binary_expr<T, LeftExpr, BinaryOp, RightExpr>; ///< This type
 
-    LeftExpr _lhs;
-    RightExpr _rhs;
+    LeftExpr _lhs;  ///< The Left hand side expression
+    RightExpr _rhs; ///< The right hand side expression
 
 public:
     using value_type        = T;    ///< The Value type
@@ -52,14 +45,26 @@ public:
     //Cannot be constructed with no args
     binary_expr() = delete;
 
-    //Construct a new expression
+    /*!
+     * \brief Construct a new binary expression
+     * \param l The left hand side of the expression
+     * \param r The right hand side of the expression
+     */
     binary_expr(LeftExpr l, RightExpr r)
             : _lhs(std::forward<LeftExpr>(l)), _rhs(std::forward<RightExpr>(r)) {
         //Nothing else to init
     }
 
-    //Expresison can be copied and moved
+    /*!
+     * \brief Copy construct a new binary expression
+     * \param e The expression from which to copy
+     */
     binary_expr(const binary_expr& e) = default;
+
+    /*!
+     * \brief Move construct a new binary expression
+     * \param e The expression from which to move
+     */
     binary_expr(binary_expr&& e) noexcept = default;
 
     //Expressions are invariant
@@ -152,14 +157,22 @@ public:
         return BinaryOp::apply(lhs()(args...), rhs()(args...));
     }
 
-    //TODO Simplify the next two SFINAE functions
-
-    template <typename ST = T, typename L = LeftExpr, typename B = BinaryOp, typename R = RightExpr, cpp_enable_if((sub_size_compare<binary_expr<ST, L, B, R>>::value > 1))>
+    /*!
+     * \brief Creates a sub view of the expression, effectively removing the first dimension and fixing it to the given index.
+     * \param i The index to use
+     * \return a sub view of the expression at position i.
+     */
+    template <bool B = (sub_size_compare<this_type>::value > 1), cpp_enable_if(B)>
     auto operator()(std::size_t i) {
         return sub(*this, i);
     }
 
-    template <typename ST = T, typename L = LeftExpr, typename B = BinaryOp, typename R = RightExpr, cpp_enable_if((sub_size_compare<binary_expr<ST, L, B, R>>::value > 1))>
+    /*!
+     * \brief Creates a sub view of the expression, effectively removing the first dimension and fixing it to the given index.
+     * \param i The index to use
+     * \return a sub view of the expression at position i.
+     */
+    template <bool B = (sub_size_compare<this_type>::value > 1), cpp_enable_if(B)>
     auto operator()(std::size_t i) const {
         return sub(*this, i);
     }
@@ -186,13 +199,13 @@ public:
  */
 template <typename T, typename LeftExpr, typename BinaryOp, typename RightExpr>
 struct etl_traits<etl::binary_expr<T, LeftExpr, BinaryOp, RightExpr>> {
-    using expr_t       = etl::binary_expr<T, LeftExpr, BinaryOp, RightExpr>;
-    using left_expr_t  = std::decay_t<LeftExpr>;
-    using right_expr_t = std::decay_t<RightExpr>;
+    using expr_t       = etl::binary_expr<T, LeftExpr, BinaryOp, RightExpr>; ///< The type of the expression
+    using left_expr_t  = std::decay_t<LeftExpr>;                             ///< The type of the left expression
+    using right_expr_t = std::decay_t<RightExpr>;                            ///< The type of the right expression
 
-    static constexpr const bool left_directed = cpp::not_u<etl_traits<left_expr_t>::is_generator>::value;
+    static constexpr const bool left_directed = cpp::not_u<etl_traits<left_expr_t>::is_generator>::value; ///< True if directed by the left expression, false otherwise
 
-    using sub_expr_t = std::conditional_t<left_directed, left_expr_t, right_expr_t>;
+    using sub_expr_t = std::conditional_t<left_directed, left_expr_t, right_expr_t>; ///< The type of sub expression
 
     static constexpr const bool is_etl         = true;                                                                                          ///< Indicates if the type is an ETL expression
     static constexpr const bool is_transformer = false;                                                                                         ///< Indicates if the type is a transformer
@@ -200,21 +213,29 @@ struct etl_traits<etl::binary_expr<T, LeftExpr, BinaryOp, RightExpr>> {
     static constexpr const bool is_magic_view  = false;                                                                                         ///< Indicates if the type is a magic view
     static constexpr const bool is_fast        = etl_traits<sub_expr_t>::is_fast;                                                               ///< Indicates if the expression is fast
     static constexpr const bool is_linear      = etl_traits<left_expr_t>::is_linear && etl_traits<right_expr_t>::is_linear && BinaryOp::linear; ///< Indicates if the expression is linear
-    static constexpr const bool is_value = false;                                                                                               ///< Indicates if the expression is of value type
-    static constexpr const bool is_generator =
-        etl_traits<left_expr_t>::is_generator && etl_traits<right_expr_t>::is_generator;                                                                  ///< Indicates if the expression is a generator expression
-    static constexpr const bool vectorizable = etl_traits<left_expr_t>::vectorizable && etl_traits<right_expr_t>::vectorizable && BinaryOp::vectorizable; ///< Indicates if the expression is vectorizable
-    static constexpr const bool needs_temporary_visitor =
-        etl_traits<left_expr_t>::needs_temporary_visitor || etl_traits<right_expr_t>::needs_temporary_visitor; ///< Indicates if the expression needs a temporary visitor
-    static constexpr const bool needs_evaluator_visitor =
-        etl_traits<left_expr_t>::needs_evaluator_visitor || etl_traits<right_expr_t>::needs_evaluator_visitor;                                                             ///< Indicaes if the expression needs an evaluator visitor
+    static constexpr const bool is_value       = false;                                                                                         ///< Indicates if the expression is of value type
+    static constexpr const bool is_generator = etl_traits<left_expr_t>::is_generator && etl_traits<right_expr_t>::is_generator; ///< Indicates if the expression is a generator expression
+    static constexpr const bool vectorizable = all_vectorizable<left_expr_t, right_expr_t>::value && BinaryOp::vectorizable; ///< Indicates if the expression is vectorizable
+    static constexpr const bool needs_temporary_visitor = etl_traits<left_expr_t>::needs_temporary_visitor || etl_traits<right_expr_t>::needs_temporary_visitor; ///< Indicates if the expression needs a temporary visitor
+    static constexpr const bool needs_evaluator_visitor = etl_traits<left_expr_t>::needs_evaluator_visitor || etl_traits<right_expr_t>::needs_evaluator_visitor; ///< Indicaes if the expression needs an evaluator visitor
     static constexpr const order storage_order = etl_traits<left_expr_t>::is_generator ? etl_traits<right_expr_t>::storage_order : etl_traits<left_expr_t>::storage_order; ///< The expression storage order
 
+
+    /*!
+     * \brief Get reference to the main sub expression
+     * \param v The binary expr
+     * \return a refernece to the main sub expression
+     */
     template <bool B = left_directed, cpp_enable_if(B)>
     static constexpr auto& get(const expr_t& v) {
         return v.lhs();
     }
 
+    /*!
+     * \brief Get reference to the main sub expression
+     * \param v The binary expr
+     * \return a refernece to the main sub expression
+     */
     template <bool B = left_directed, cpp_disable_if(B)>
     static constexpr auto& get(const expr_t& v) {
         return v.rhs();
@@ -266,7 +287,12 @@ struct etl_traits<etl::binary_expr<T, LeftExpr, BinaryOp, RightExpr>> {
     }
 };
 
-
+/*!
+ * \brief Prints the type of the binary expression to the stream
+ * \param os The output stream
+ * \param expr The expression to print
+ * \return the output stream
+ */
 template <typename T, typename LeftExpr, typename BinaryOp, typename RightExpr>
 std::ostream& operator<<(std::ostream& os, const binary_expr<T, LeftExpr, BinaryOp, RightExpr>& expr) {
     if (BinaryOp::desc_func) {

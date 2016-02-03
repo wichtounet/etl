@@ -7,13 +7,6 @@
 
 #pragma once
 
-#include <tuple>     //For TMP stuff
-#include <algorithm> //For std::find_if
-#include <iosfwd>    //For stream support
-
-#include "cpp_utils/assert.hpp"
-#include "cpp_utils/tmp.hpp"
-
 #include "etl/dyn_base.hpp"    //The base class and utilities
 
 namespace etl {
@@ -181,6 +174,8 @@ struct sparse_matrix_impl <T, sparse_storage::COO, D> final : dyn_base<T, D> {
     friend struct sparse_detail::sparse_reference<this_type>;
     friend struct sparse_detail::sparse_reference<const this_type>;
 
+    static_assert(n_dimensions == 2, "Only 2D sparse matrix are supported");
+
 private:
     using base_type::_size;
     using base_type::_dimensions;
@@ -328,12 +323,10 @@ private:
     }
 
     void unsafe_set_hint(std::size_t i, std::size_t j, std::size_t n, value_type value){
-        if(n < nnz){
-            //The value exists, modify it
-            if(_row_index[n] == i && _col_index[n] == j){
-                _memory[n] = value;
-                return;
-            }
+        //The value exists, modify it
+        if(n < nnz && _row_index[n] == i && _col_index[n] == j){
+            _memory[n] = value;
+            return;
         }
 
         reserve_hint(n);
@@ -345,10 +338,8 @@ private:
 
     template <bool B = n_dimensions == 2, cpp_enable_if(B)>
     value_type get_hint(std::size_t i, std::size_t j, std::size_t n) const noexcept {
-        if (n < nnz) {
-            if (_row_index[n] == i && _col_index[n] == j) {
-                return _memory[n];
-            }
+        if (n < nnz && _row_index[n] == i && _col_index[n] == j) {
+            return _memory[n];
         }
 
         return 0.0;
@@ -432,7 +423,7 @@ public:
         build_from_iterable(list);
     }
 
-    template <typename E, cpp_enable_if(!std::is_same<std::decay_t<E>, sparse_matrix_impl<T, storage_format, D>>::value && std::is_convertible<value_t<E>, value_type>::value && is_etl_expr<E>::value)>
+    template <typename E, cpp_enable_if(!std::is_same<std::decay_t<E>, sparse_matrix_impl<T, storage_format, D>>::value, std::is_convertible<value_t<E>, value_type>::value, is_etl_expr<E>::value)>
     sparse_matrix_impl& operator=(E&& e) noexcept {
         validate_assign(*this, e);
 
@@ -454,7 +445,6 @@ public:
      *
      * \return The value at the (i,j) position.
      */
-    template <bool B = n_dimensions == 2, cpp_enable_if(B)>
     value_type get(std::size_t i, std::size_t j) const noexcept {
         cpp_assert(i < dim(0), "Out of bounds");
         cpp_assert(j < dim(1), "Out of bounds");
@@ -469,7 +459,6 @@ public:
      * \param j The second index
      * \return a sparse reference (proxy reference) to the element at position (i,j)
      */
-    template <bool B = n_dimensions == 2, cpp_enable_if(B)>
     reference_type operator()(std::size_t i, std::size_t j) noexcept {
         return {*this, i, j};
     }
@@ -480,7 +469,6 @@ public:
      * \param j The second index
      * \return a sparse reference (proxy reference) to the element at position (i,j)
      */
-    template <bool B = n_dimensions == 2, cpp_enable_if(B)>
     const_reference_type operator()(std::size_t i, std::size_t j) const noexcept {
         return {*this, i, j};
     }
@@ -492,7 +480,6 @@ public:
      * \param n The index
      * \return a reference to the element at the given index.
      */
-    template <bool B = n_dimensions == 2, cpp_enable_if(B)>
     reference_type operator[](std::size_t n) noexcept {
         return {*this, n / columns(), n % columns()};
     }
@@ -504,7 +491,6 @@ public:
      * \param n The index
      * \return a reference to the element at the given index.
      */
-    template <bool B = n_dimensions == 2, cpp_enable_if(B)>
     const_reference_type operator[](std::size_t n) const noexcept {
         return {*this, n / columns(), n % columns()};
     }
@@ -570,10 +556,8 @@ public:
     void erase(std::size_t i, std::size_t j) {
         auto n = find_n(i, j);
 
-        if (n < nnz) {
-            if (_row_index[n] == i && _col_index[n] == j) {
-                erase_hint(n);
-            }
+        if (n < nnz && _row_index[n] == i && _col_index[n] == j) {
+            erase_hint(n);
         }
     }
 
@@ -608,5 +592,22 @@ public:
         }
     }
 };
+
+/*!
+ * \brief Prints a fast matrix type (not the contents) to the given stream
+ * \param os The output stream
+ * \param matrix The fast matrix to print
+ * \return the output stream
+ */
+template <typename T, sparse_storage SS, std::size_t D>
+std::ostream& operator<<(std::ostream& os, const sparse_matrix_impl<T, SS, D>& matrix) {
+    os << "SM[" << matrix.dim(0);
+
+    for (std::size_t i = 1; i < D; ++i) {
+        os << "," << matrix.dim(i);
+    }
+
+    return os << "]";
+}
 
 } //end of namespace etl

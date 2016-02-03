@@ -7,9 +7,6 @@
 
 #pragma once
 
-#include "cpp_utils/assert.hpp"
-#include "cpp_utils/tmp.hpp"
-
 namespace etl {
 
 template <template <typename, std::size_t> class TT, typename T>
@@ -36,15 +33,24 @@ struct is_var_2 : std::false_type {};
 template <template <typename, typename, std::size_t...> class TT, typename V1, typename V2, std::size_t... R>
 struct is_var_2<TT, TT<V1, V2, R...>> : std::true_type {};
 
+/*!
+ * \brief Traits to extract the value type out of an ETL type
+ */
 template <typename E>
 using value_t = typename std::decay_t<E>::value_type;
 
+/*!
+ * \brief Traits to extract the direct memory type out of an ETL type
+ */
 template <typename S>
 using memory_t = std::conditional_t<
     std::is_const<std::remove_reference_t<S>>::value,
     typename std::decay_t<S>::const_memory_type,
     typename std::decay_t<S>::memory_type>;
 
+/*!
+ * \brief Traits to extract the direct const memory type out of an ETL type
+ */
 template <typename S>
 using const_memory_t = typename std::decay_t<S>::const_memory_type;
 
@@ -104,9 +110,15 @@ struct integer_range_impl<Int, std::integer_sequence<Int, N...>, Begin> {
     using type = std::integer_sequence<Int, N + Begin...>;
 };
 
+/*!
+ * \brief Helper to create an integer_range of numbers
+ */
 template <typename Int, Int Begin, Int End>
 using make_integer_range = typename integer_range_impl<Int, std::make_integer_sequence<Int, End - Begin>, Begin>::type;
 
+/*!
+ * \brief Helper to create an integer_range of std::size_t numbers
+ */
 template <std::size_t Begin, std::size_t End>
 using make_index_range = make_integer_range<std::size_t, Begin, End>;
 
@@ -137,11 +149,18 @@ struct forward_op {
     }
 };
 
+/*!
+ * \brief Function to move or forward depending on a constant boolean flag
+ * \tparam B Decides if return is moving (true) or forwarding (false)
+ */
 template <bool B, typename T, cpp_enable_if(B)>
 constexpr decltype(auto) optional_move(T&& t) {
     return std::move(t);
 }
 
+/*!
+ * \copydoc optional_move
+ */
 template <bool B, typename T, cpp_disable_if(B)>
 constexpr decltype(auto) optional_move(T&& t) {
     return std::forward<T>(t);

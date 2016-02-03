@@ -7,10 +7,6 @@
 
 #pragma once
 
-#include <algorithm>
-
-#include "etl/expr/detail.hpp"
-
 #include "etl/impl/mmul.hpp"
 
 namespace etl {

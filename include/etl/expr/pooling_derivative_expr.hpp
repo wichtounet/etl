@@ -7,13 +7,6 @@
 
 #pragma once
 
-#include <algorithm>
-
-#include "cpp_utils/assert.hpp"
-#include "cpp_utils/tmp.hpp"
-
-#include "etl/expr/detail.hpp"
-
 //Get the implementations
 #include "etl/impl/pooling.hpp"
 

@@ -7,18 +7,7 @@
 
 #pragma once
 
-#include <iosfwd> //For stream support
-
-#include "cpp_utils/assert.hpp"
-
 #include "etl/iterator.hpp"
-
-// CRTP classes
-#include "etl/crtp/comparable.hpp"
-#include "etl/crtp/value_testable.hpp"
-#include "etl/crtp/dim_testable.hpp"
-#include "etl/crtp/inplace_assignable.hpp"
-#include "etl/crtp/gpu_able.hpp"
 
 namespace etl {
 
@@ -148,7 +137,7 @@ public:
      * \return The computed value at the position (args...)
      */
     template <typename... S>
-    std::enable_if_t<sizeof...(S) == sub_size_compare<this_type>::value, value_type> operator()(S... args) const {
+    value_type operator()(S... args) const {
         static_assert(cpp::all_convertible_to<std::size_t, S...>::value, "Invalid size types");
 
         return UnaryOp::apply(value()(args...));
@@ -222,7 +211,7 @@ public:
 
     //Assign expressions to the unary expr
 
-    template <typename E, cpp_enable_if(non_const_return_ref&& is_etl_expr<E>::value)>
+    template <typename E, cpp_enable_if(non_const_return_ref, is_etl_expr<E>::value)>
     unary_expr& operator=(E&& e) {
         validate_assign(*this, e);
         assign_evaluate(std::forward<E>(e), *this);
@@ -300,7 +289,7 @@ public:
      * \tparam V The vectorization mode to use
      * \return a vector containing several elements of the matrix
      */
-    template <typename V = default_vec, typename SS = Expr, cpp_enable_if(has_direct_access<SS>::value)>
+    template <typename V = default_vec>
     vec_type<V> load(std::size_t i) const noexcept {
         return V::loadu(memory_start() + i);
     }
@@ -354,7 +343,7 @@ public:
      * \param rhs The other expression to test
      * \return true if the two expressions aliases, false otherwise
      */
-    template<typename E, cpp_enable_if(has_direct_access<Expr>::value && all_dma<E>::value)>
+    template<typename E, cpp_enable_if(has_direct_access<Expr>::value, all_dma<E>::value)>
     bool alias(const E& rhs) const noexcept {
         return memory_alias(memory_start(), memory_end(), rhs.memory_start(), rhs.memory_end());
     }
@@ -732,21 +721,45 @@ struct etl_traits<etl::unary_expr<T, Expr, UnaryOp>> {
     }
 };
 
+/*!
+ * \brief Prints the type of the unary expression to the stream
+ * \param os The output stream
+ * \param expr The expression to print
+ * \return the output stream
+ */
 template <typename T, typename Expr, typename UnaryOp>
 std::ostream& operator<<(std::ostream& os, const unary_expr<T, Expr, stateful_op<UnaryOp>>& expr) {
     return os << UnaryOp::desc() << '(' << expr.value() << ')';
 }
 
+/*!
+ * \brief Prints the type of the unary expression to the stream
+ * \param os The output stream
+ * \param expr The expression to print
+ * \return the output stream
+ */
 template <typename T, typename Expr>
 std::ostream& operator<<(std::ostream& os, const unary_expr<T, Expr, identity_op>& expr) {
     return os << expr.value();
 }
 
+/*!
+ * \brief Prints the type of the unary expression to the stream
+ * \param os The output stream
+ * \param expr The expression to print
+ * \return the output stream
+ */
 template <typename T, typename Expr>
 std::ostream& operator<<(std::ostream& os, const unary_expr<T, Expr, transform_op>& expr) {
     return os << expr.value();
 }
 
+/*!
+ * \brief Prints the type of the unary expression to the stream
+ * \param os The output stream
+ * \param expr The expression to print
+ * \return the output stream
+ */
 template <typename T, typename Expr, typename UnaryOp>
 std::ostream& operator<<(std::ostream& os, const unary_expr<T, Expr, UnaryOp>& expr) {
     return os << UnaryOp::desc() << '(' << expr.value() << ')';

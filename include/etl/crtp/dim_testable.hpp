@@ -12,8 +12,6 @@
 
 #pragma once
 
-#include <algorithm>
-
 namespace etl {
 
 /*!

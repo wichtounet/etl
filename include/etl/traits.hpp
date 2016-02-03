@@ -45,6 +45,7 @@ struct etl_traits {
     static constexpr const bool is_view        = false; ///< Indicates if T is a view
     static constexpr const bool is_magic_view  = false; ///< Indicates if T is a magic view
     static constexpr const bool is_fast        = false; ///< Indicates if T is a fast structure
+    static constexpr const bool is_generator   = false; ///< Indicates if T is a generator expression
 };
 
 /*!
@@ -167,6 +168,13 @@ template <typename T>
 using is_etl_value = cpp::or_c<is_fast_matrix<T>, is_dyn_matrix<T>, is_sparse_matrix<T>>;
 
 /*!
+ * \brief Traits indicating if the given ETL type can be left hand side type
+ * \tparam T The type to test
+ */
+template <typename T>
+using is_lhs = cpp::or_c<is_etl_value<T>, is_unary_expr<T>>;
+
+/*!
  * \brief Traits indicating if the given ETL type has direct memory access.
  * \tparam T The type to test
  */
@@ -180,6 +188,9 @@ struct has_direct_access;
 template <typename T>
 struct is_direct_sub_view : std::false_type {};
 
+/*!
+ * \copydoc is_direct_sub_view
+ */
 template <typename T>
 struct is_direct_sub_view<sub_view<T>> : cpp::and_u<has_direct_access<T>::value, decay_traits<T>::storage_order == order::RowMajor> {};
 
@@ -364,6 +375,56 @@ template <typename T>
 using is_2d = cpp::bool_constant<decay_traits<T>::dimensions() == 2>;
 
 /*!
+ * \brief Traits to test if the given expression type is 3D
+ * \tparam T The ETL expression type
+ */
+template <typename T>
+using is_3d = cpp::bool_constant<decay_traits<T>::dimensions() == 3>;
+
+/*!
+ * \brief Traits to test if all the given ETL expresion types are vectorizable.
+ * \tparam E The ETL expression types.
+ */
+template <typename... E>
+using all_vectorizable = cpp::and_u<decay_traits<E>::vectorizable...>;
+
+template <typename T, typename Enable = void>
+struct inplace_transpose_able;
+
+template <typename T>
+struct inplace_transpose_able<T, std::enable_if_t<all_fast<T>::value && is_2d<T>::value>> {
+    static constexpr const bool value = decay_traits<T>::template dim<0>() == decay_traits<T>::template dim<1>();
+};
+
+template <typename T>
+struct inplace_transpose_able<T, std::enable_if_t<!all_fast<T>::value && is_2d<T>::value>> {
+    static constexpr const bool value = true;
+};
+
+template <typename T>
+struct inplace_transpose_able<T, std::enable_if_t<!is_2d<T>::value>> {
+    static constexpr const bool value = false;
+};
+
+template <typename T, typename Enable = void>
+struct inplace_sub_transpose_able;
+
+template <typename T>
+struct inplace_sub_transpose_able<T, std::enable_if_t<all_fast<T>::value && is_3d<T>::value>> {
+    static constexpr const bool value = decay_traits<T>::template dim<1>() == decay_traits<T>::template dim<2>();
+};
+
+template <typename T>
+struct inplace_sub_transpose_able<T, std::enable_if_t<!all_fast<T>::value && is_3d<T>::value>> {
+    static constexpr const bool value = true;
+};
+
+template <typename T>
+struct inplace_sub_transpose_able<T, std::enable_if_t<!is_3d<T>::value>> {
+    static constexpr const bool value = false;
+};
+
+/*!
  * \brief Specialization for value structures
  */
 template <typename T>
@@ -390,6 +451,8 @@ struct etl_traits<T, std::enable_if_t<is_etl_value<T>::value>> {
     }
 
     static constexpr std::size_t size() {
+        static_assert(is_fast, "Only fast_matrix have compile-time access to the dimensions");
+
         return T::size();
     }
 
@@ -560,14 +623,11 @@ struct sub_size_compare<E, std::enable_if_t<etl_traits<E>::is_generator>> : std:
 template <typename E>
 struct sub_size_compare<E, cpp::disable_if_t<etl_traits<E>::is_generator>> : std::integral_constant<std::size_t, etl_traits<E>::dimensions()> {};
 
-template <typename E, cpp_enable_if(decay_traits<E>::storage_order == order::RowMajor)>
+template <typename E>
 constexpr std::pair<std::size_t, std::size_t> index_to_2d(E&& sub, std::size_t i) {
-    return std::make_pair(i / dim<0>(sub), i % dim<0>(sub));
-}
-
-template <typename E, cpp_enable_if(decay_traits<E>::storage_order == order::ColumnMajor)>
-constexpr std::pair<std::size_t, std::size_t> index_to_2d(E&& sub, std::size_t i) {
-    return std::make_pair(i % dim<0>(sub), i / dim<0>(sub));
+    return decay_traits<E>::storage_order == order::RowMajor
+        ? std::make_pair(i / dim<0>(sub), i % dim<0>(sub))
+        : std::make_pair(i % dim<0>(sub), i / dim<0>(sub));
 }
 
 /*!

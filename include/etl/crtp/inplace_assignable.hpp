@@ -7,8 +7,6 @@
 
 #pragma once
 
-#include <algorithm>
-
 #include "etl/impl/transpose.hpp"
 #include "etl/impl/fft.hpp"
 
@@ -64,7 +62,7 @@ struct inplace_assignable {
     /*!
      * \brief Transpose each sub 2D matrix in place.
      */
-    template <typename S = D, cpp_enable_if((decay_traits<S>::dimensions() > 3))>
+    template <typename S = D, cpp_enable_if((etl_traits<S>::dimensions() > 3))>
     derived_t& deep_transpose_inplace() {
         decltype(auto) mat = as_derived();
 
@@ -78,7 +76,7 @@ struct inplace_assignable {
     /*!
      * \brief Transpose each sub 2D matrix in place.
      */
-    template <typename S = D, cpp_enable_if((decay_traits<S>::dimensions() == 3))>
+    template <typename S = D, cpp_enable_if((etl_traits<S>::dimensions() == 3))>
     derived_t& deep_transpose_inplace() {
         decltype(auto) mat = as_derived();
 
@@ -97,7 +95,7 @@ struct inplace_assignable {
     template <typename S = D, cpp_disable_if(is_dyn_matrix<S>::value)>
     derived_t& transpose_inplace() {
         static_assert(etl_traits<derived_t>::dimensions() == 2, "Only 2D matrix can be transposed");
-        cpp_assert(etl::dim<0>(as_derived()) == etl::dim<1>(as_derived()), "Only square matrices can be tranposed inplace");
+        cpp_assert(etl::dim<0>(as_derived()) == etl::dim<1>(as_derived()), "Only square fast matrices can be tranposed inplace");
 
         detail::inplace_square_transpose<derived_t>::apply(as_derived());
 

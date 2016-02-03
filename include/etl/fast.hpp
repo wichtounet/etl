@@ -12,21 +12,7 @@
 
 #pragma once
 
-#include <algorithm>   //For std::find_if
-#include <iosfwd>      //For stream support
-#include <type_traits> //For static assertions tests
-
-#include "cpp_utils/assert.hpp"
-
-#include "etl/tmp.hpp"
-
-// CRTP classes
-#include "etl/crtp/inplace_assignable.hpp"
-#include "etl/crtp/comparable.hpp"
-#include "etl/crtp/value_testable.hpp"
-#include "etl/crtp/dim_testable.hpp"
-#include "etl/crtp/expression_able.hpp"
-#include "etl/crtp/gpu_able.hpp"
+#include "cpp_utils/array_wrapper.hpp"
 
 namespace etl {
 
@@ -44,34 +30,31 @@ struct matrix_leadingsize : std::integral_constant<std::size_t, M::template dim<
 template <typename M>
 struct matrix_leadingsize<M, 0> : std::integral_constant<std::size_t, 1> {};
 
-template <typename M, std::size_t I, typename S1>
-inline constexpr std::size_t rm_compute_index(S1 first) noexcept {
+template <typename M, std::size_t I>
+inline constexpr std::size_t rm_compute_index(std::size_t first) noexcept {
     return first;
 }
 
-template <typename M, std::size_t I, typename S1, typename... S, cpp_enable_if((sizeof...(S) > 0))>
-inline constexpr std::size_t rm_compute_index(S1 first, S... args) noexcept {
-    return matrix_subsize<M, I>::value * first + rm_compute_index<M, I + 1>(args...);
+template <typename M, std::size_t I, typename... S>
+inline constexpr std::size_t rm_compute_index(std::size_t first, std::size_t second, S... args) noexcept {
+    return matrix_subsize<M, I>::value * first + rm_compute_index<M, I + 1>(second, args...);
 }
 
-template <typename M, std::size_t I, typename S1>
-inline constexpr std::size_t cm_compute_index(S1 first) noexcept {
+template <typename M, std::size_t I>
+inline constexpr std::size_t cm_compute_index(std::size_t first) noexcept {
     return matrix_leadingsize<M, I>::value * first;
 }
 
-template <typename M, std::size_t I, typename S1, typename... S, cpp_enable_if((sizeof...(S) > 0))>
-inline constexpr std::size_t cm_compute_index(S1 first, S... args) noexcept {
-    return matrix_leadingsize<M, I>::value * first + cm_compute_index<M, I + 1>(args...);
+template <typename M, std::size_t I, typename... S>
+inline constexpr std::size_t cm_compute_index(std::size_t first, std::size_t second, S... args) noexcept {
+    return matrix_leadingsize<M, I>::value * first + cm_compute_index<M, I + 1>(second, args...);
 }
 
-template <typename M, std::size_t I, typename... S, cpp_enable_if(M::storage_order == order::RowMajor)>
+template <typename M, std::size_t I, typename... S>
 inline constexpr std::size_t compute_index(S... args) noexcept {
-    return rm_compute_index<M, I>(args...);
-}
-
-template <typename M, std::size_t I, typename... S, cpp_enable_if(M::storage_order == order::ColumnMajor)>
-inline constexpr std::size_t compute_index(S... args) noexcept {
-    return cm_compute_index<M, I>(args...);
+    return M::storage_order == order::ColumnMajor
+        ? cm_compute_index<M, I>(args...)
+        : rm_compute_index<M, I>(args...);
 }
 
 template <typename N>
@@ -82,6 +65,30 @@ struct is_vector<std::vector<N, A>> : std::true_type {};
 
 template <typename N>
 struct is_vector<std::vector<N>> : std::true_type {};
+
+template <typename T>
+struct iterator_type {
+    using iterator       = typename T::iterator;
+    using const_iterator = typename T::const_iterator;
+};
+
+template <typename T>
+struct iterator_type <T*> {
+    using iterator       = T*;
+    using const_iterator = const T*;
+};
+
+template <typename T>
+struct iterator_type <const T*> {
+    using iterator       = const T*;
+    using const_iterator = const T*;
+};
+
+template <typename T>
+using iterator_t = typename iterator_type<T>::iterator;
+
+template <typename T>
+using const_iterator_t = typename iterator_type<T>::const_iterator;
 
 } //end of namespace matrix_detail
 
@@ -100,19 +107,19 @@ public:
     static constexpr const order storage_order      = SO;                                   ///< The storage order
     static constexpr const bool array_impl          = !matrix_detail::is_vector<ST>::value; ///< true if the storage is an std::arraw, false otherwise
 
-    using value_type        = T;                                     ///< The value type
-    using storage_impl      = ST;                                    ///< The storage implementation
-    using iterator          = typename storage_impl::iterator;       ///< The iterator type
-    using const_iterator    = typename storage_impl::const_iterator; ///< The const iterator type
-    using this_type         = fast_matrix_impl<T, ST, SO, Dims...>;  ///< this type
-    using memory_type       = value_type*;                           ///< The memory type
-    using const_memory_type = const value_type*;                     ///< The const memory type
+    using value_type        = T;                                             ///< The value type
+    using storage_impl      = ST;                                            ///< The storage implementation
+    using iterator          = matrix_detail::iterator_t<storage_impl>;       ///< The iterator type
+    using const_iterator    = matrix_detail::const_iterator_t<storage_impl>; ///< The const iterator type
+    using this_type         = fast_matrix_impl<T, ST, SO, Dims...>;          ///< this type
+    using memory_type       = value_type*;                                   ///< The memory type
+    using const_memory_type = const value_type*;                             ///< The const memory type
 
     /*!
-     * The vectorization type for V
+     * \brief The vectorization type for V
      */
-    template<typename V = default_vec>
-    using vec_type               = typename V::template vec_type<T>;
+    template <typename V = default_vec>
+    using vec_type       = typename V::template vec_type<T>;
 
 private:
     storage_impl _data;
@@ -166,16 +173,34 @@ public:
         std::copy(l.begin(), l.end(), begin());
     }
 
+    fast_matrix_impl(storage_impl data) : _data(data) {
+        //Nothing else to init
+    }
+
     fast_matrix_impl(const fast_matrix_impl& rhs) noexcept {
         init();
+        standard_evaluator::direct_copy(rhs.memory_start(), rhs.memory_end(), memory_start());
+    }
+
+    fast_matrix_impl(fast_matrix_impl&& rhs) noexcept : _data(std::move(rhs._data)) {
+        //Nothing else to init
+    }
+
+    template <typename T2, typename ST2, order SO2, std::size_t... Dims2, cpp_enable_if(SO == SO2)>
+    fast_matrix_impl(const fast_matrix_impl<T2, ST2, SO2, Dims2...>& rhs) noexcept {
+        init();
+        validate_assign(*this, rhs);
+        standard_evaluator::direct_copy(rhs.memory_start(), rhs.memory_end(), memory_start());
+    }
+
+    template <typename T2, typename ST2, order SO2, std::size_t... Dims2, cpp_disable_if(SO == SO2)>
+    fast_matrix_impl(const fast_matrix_impl<T2, ST2, SO2, Dims2...>& rhs) noexcept {
+        init();
+        validate_assign(*this, rhs);
         assign_evaluate(rhs, *this);
     }
 
-    fast_matrix_impl(fast_matrix_impl&& rhs) noexcept {
-        _data = std::move(rhs._data);
-    }
-
-    template <typename E, cpp_enable_if(std::is_convertible<value_t<E>, value_type>::value, is_etl_expr<E>::value)>
+    template <typename E, cpp_enable_if(!is_fast_matrix<E>::value, std::is_convertible<value_t<E>, value_type>::value, is_etl_expr<E>::value)>
     explicit fast_matrix_impl(E&& e) {
         init();
         validate_assign(*this, e);
@@ -197,7 +222,7 @@ public:
 
     fast_matrix_impl& operator=(const fast_matrix_impl& rhs) noexcept {
         if (this != &rhs) {
-            assign_evaluate(rhs, *this);
+            standard_evaluator::direct_copy(rhs.memory_start(), rhs.memory_end(), memory_start());
         }
         return *this;
     }
@@ -220,7 +245,7 @@ public:
 
     //Construct from expression
 
-    template <typename E, cpp_enable_if(std::is_convertible<typename E::value_type, value_type>::value&& is_etl_expr<E>::value)>
+    template <typename E, cpp_enable_if(std::is_convertible<typename E::value_type, value_type>::value, is_etl_expr<E>::value)>
     fast_matrix_impl& operator=(E&& e) {
         validate_assign(*this, e);
         assign_evaluate(std::forward<E>(e), *this);
@@ -498,15 +523,17 @@ public:
     }
 };
 
-//TODO FIx the code so that these tests work on clang as well
-
-#ifndef __clang__
 static_assert(std::is_nothrow_default_constructible<fast_vector<double, 2>>::value, "fast_vector should be nothrow default constructible");
 static_assert(std::is_nothrow_copy_constructible<fast_vector<double, 2>>::value, "fast_vector should be nothrow copy constructible");
 static_assert(std::is_nothrow_move_constructible<fast_vector<double, 2>>::value, "fast_vector should be nothrow move constructible");
 static_assert(std::is_nothrow_copy_assignable<fast_vector<double, 2>>::value, "fast_vector should be nothrow copy assignable");
 static_assert(std::is_nothrow_move_assignable<fast_vector<double, 2>>::value, "fast_vector should be nothrow move assignable");
-#endif
+static_assert(std::is_nothrow_destructible<fast_vector<double, 2>>::value, "fast_vector should be nothrow destructible");
+
+template <std::size_t... Dims, typename T>
+fast_matrix_impl<T, cpp::array_wrapper<T>, order::RowMajor, Dims...> fast_matrix_over(T* memory){
+    return fast_matrix_impl<T, cpp::array_wrapper<T>, order::RowMajor, Dims...>(cpp::array_wrapper<T>(memory, mul_all<Dims...>::value));
+}
 
 /*!
  * \brief Swaps the given two matrices

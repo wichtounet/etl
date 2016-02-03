@@ -7,9 +7,8 @@
 
 #pragma once
 
-#include <complex>
-#include <vector>
-#include <array>
+//Common STL includes
+#include "etl/std.hpp"
 
 //Metaprogramming utilities
 #include "etl/tmp.hpp"
@@ -21,7 +20,7 @@
 #include "etl/vectorization.hpp"
 #include "etl/complex.hpp"
 #include "etl/random.hpp"
-#include "etl/compat.hpp"
+#include "etl/parallel.hpp"
 
 //Forward declarations
 #include "etl/value_fwd.hpp"
@@ -42,6 +41,16 @@
 //Global test functions
 #include "etl/globals.hpp"
 
+// The evaluator
+#include "etl/evaluator.hpp"
+
+// CRTP classes
+#include "etl/crtp/inplace_assignable.hpp"
+#include "etl/crtp/comparable.hpp"
+#include "etl/crtp/value_testable.hpp"
+#include "etl/crtp/dim_testable.hpp"
+#include "etl/crtp/gpu_able.hpp"
+
 // The expressions
 #include "etl/expr/binary_expr.hpp"
 #include "etl/expr/unary_expr.hpp"
@@ -53,11 +62,11 @@
 #include "etl/checks.hpp"
 #include "etl/builder/expression_builder.hpp"
 
-// The evaluator and optimizer
-#include "etl/evaluator.hpp"
+// The optimizer
 #include "etl/optimizer.hpp"
 
 // The value classes implementation
+#include "etl/crtp/expression_able.hpp"
 #include "etl/fast.hpp"
 #include "etl/dyn.hpp"
 #include "etl/sparse.hpp"

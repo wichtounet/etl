@@ -42,9 +42,7 @@ struct cuda_memory {
 
     cuda_memory& operator=(cuda_memory&& rhs) noexcept {
         if(this != &rhs){
-            if(memory){
-                cudaFree(memory);
-            }
+            free_memory();
 
             memory = rhs.memory;
             rhs.memory = nullptr;
@@ -54,9 +52,7 @@ struct cuda_memory {
     }
 
     cuda_memory& operator=(T* new_memory){
-        if(memory){
-            cudaFree(memory);
-        }
+        free_memory();
 
         memory = new_memory;
 
@@ -72,16 +68,19 @@ struct cuda_memory {
     }
 
     void reset(){
-        if(memory){
-            cudaFree(memory);
-        }
-
+        free_memory();
         memory = nullptr;
     }
 
     ~cuda_memory() {
+        free_memory();
+    }
+
+private:
+    void free_memory(){
         if(memory){
-            cudaFree(memory);
+            //Note: the const_cast is only here to allow compilation
+            cudaFree((reinterpret_cast<void*>(const_cast<std::remove_const_t<T>*>(memory))));
         }
     }
 };

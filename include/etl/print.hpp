@@ -9,8 +9,6 @@
 
 #include <string>
 
-#include "cpp_utils/tmp.hpp"
-
 namespace etl {
 
 /*!

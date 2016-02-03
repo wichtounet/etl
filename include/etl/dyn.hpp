@@ -12,22 +12,7 @@
 
 #pragma once
 
-#include <tuple>     //For TMP stuff
-#include <algorithm> //For std::find_if
-#include <iosfwd>    //For stream support
-
-#include "cpp_utils/assert.hpp"
-#include "cpp_utils/tmp.hpp"
-
 #include "etl/dyn_base.hpp"    //The base class and utilities
-
-// CRTP classes
-#include "etl/crtp/inplace_assignable.hpp"
-#include "etl/crtp/comparable.hpp"
-#include "etl/crtp/value_testable.hpp"
-#include "etl/crtp/dim_testable.hpp"
-#include "etl/crtp/expression_able.hpp"
-#include "etl/crtp/gpu_able.hpp"
 
 namespace etl {
 
@@ -50,13 +35,17 @@ struct dyn_matrix_impl final : dyn_base<T, D>, inplace_assignable<dyn_matrix_imp
     using iterator               = memory_type;                           ///< The type of iterator
     using const_iterator         = const_memory_type;                     ///< The type of const iterator
 
+    /*!
+     * \brief The vectorization type for V
+     */
     template<typename V = default_vec>
     using vec_type               = typename V::template vec_type<T>;
 
 private:
     using base_type::_size;
     using base_type::_dimensions;
-    memory_type _memory;
+    bool managed = true; ///< Tag indicating if we manage the memory
+    memory_type _memory; ///< Pointer to the allocated memory
 
     using base_type::release;
     using base_type::allocate;
@@ -74,20 +63,34 @@ public:
 
     //Copy constructor
     dyn_matrix_impl(const dyn_matrix_impl& rhs) noexcept : base_type(rhs), _memory(allocate(_size)) {
-        std::copy_n(rhs._memory, _size, _memory);
+        standard_evaluator::direct_copy(rhs.memory_start(), rhs.memory_end(), memory_start());
     }
 
-    //Copy constructor with different type
-    //This constructor is necessary because the one from expression is explicit
-    template <typename T2>
-    dyn_matrix_impl(const dyn_matrix_impl<T2, SO, D>& rhs) noexcept : base_type(rhs), _memory(allocate(_size)) {
+    //Move constructor
+    dyn_matrix_impl(dyn_matrix_impl&& rhs) noexcept : base_type(std::move(rhs)), managed(rhs.managed), _memory(rhs._memory) {
+        rhs._memory = nullptr;
+    }
+
+    //Copy constructors with different type
+
+    template <typename T2, order SO2, std::size_t D2, cpp_enable_if(SO2 == SO)>
+    dyn_matrix_impl(const dyn_matrix_impl<T2, SO2, D2>& rhs) noexcept : base_type(rhs), _memory(allocate(_size)) {
+        standard_evaluator::direct_copy(rhs.memory_start(), rhs.memory_end(), memory_start());
+    }
+
+    template <typename T2, order SO2, std::size_t D2, cpp_disable_if(SO2 == SO)>
+    dyn_matrix_impl(const dyn_matrix_impl<T2, SO2, D2>& rhs) noexcept : base_type(rhs), _memory(allocate(_size)) {
         //The type is different, so we must use assign
         assign_evaluate(rhs, *this);
     }
 
-    //Move constructor
-    dyn_matrix_impl(dyn_matrix_impl&& rhs) noexcept : base_type(std::move(rhs)), _memory(rhs._memory) {
-        rhs._memory = nullptr;
+    template <typename E, cpp_enable_if(
+                              std::is_convertible<value_t<E>, value_type>::value,
+                              is_etl_expr<E>::value,
+                              !is_dyn_matrix<E>::value)>
+    explicit dyn_matrix_impl(E&& e) noexcept
+            : base_type(e), _memory(allocate(_size)) {
+        assign_evaluate(std::forward<E>(e), *this);
     }
 
     //Initializer-list construction for vector
@@ -108,6 +111,16 @@ public:
         //Nothing to init
     }
 
+    //Constructor for unmanaged memory
+    template <typename... S, cpp_enable_if(
+                                 (sizeof...(S) == D),
+                                 cpp::all_convertible_to<std::size_t, S...>::value,
+                                 cpp::is_homogeneous<typename cpp::first_type<S...>::type, S...>::value)>
+    explicit dyn_matrix_impl(value_type* memory, S... sizes) noexcept : base_type(dyn_detail::size(sizes...), {{static_cast<std::size_t>(sizes)...}}),
+                                                    managed(false), _memory(memory) {
+        //Nothing to init
+    }
+
     //Sizes followed by an initializer list
     template <typename... S, cpp_enable_if(dyn_detail::is_initializer_list_constructor<S...>::value)>
     explicit dyn_matrix_impl(S... sizes) noexcept : base_type(dyn_detail::size(std::make_index_sequence<(sizeof...(S)-1)>(), sizes...),
@@ -120,10 +133,10 @@ public:
     }
 
     //Sizes followed by a values_t
-    template <typename S1, typename... S, cpp_enable_if(
+    template <typename... S, cpp_enable_if(
                                               (sizeof...(S) == D),
-                                              cpp::is_specialization_of<values_t, typename cpp::last_type<S1, S...>::type>::value)>
-    explicit dyn_matrix_impl(S1 s1, S... sizes) noexcept : base_type(dyn_detail::size(std::make_index_sequence<(sizeof...(S))>(), s1, sizes...),
+                                              cpp::is_specialization_of<values_t, typename cpp::last_type<std::size_t, S...>::type>::value)>
+    explicit dyn_matrix_impl(std::size_t s1, S... sizes) noexcept : base_type(dyn_detail::size(std::make_index_sequence<(sizeof...(S))>(), s1, sizes...),
                                                                      dyn_detail::sizes(std::make_index_sequence<(sizeof...(S))>(), s1, sizes...)),
                                                            _memory(allocate(_size)) {
         auto list = cpp::last_value(sizes...).template list<value_type>();
@@ -133,7 +146,7 @@ public:
     //Sizes followed by a value
     template <typename S1, typename... S, cpp_enable_if(
                                               (sizeof...(S) == D),
-                                              std::is_convertible<std::size_t, typename cpp::first_type<S1, S...>::type>::value, //The first type must be convertible to size_t
+                                              std::is_convertible<std::size_t, S1>::value, //The first type must be convertible to size_t
                                               cpp::is_sub_homogeneous<S1, S...>::value,                                          //The first N-1 types must homegeneous
                                               (std::is_arithmetic<typename cpp::last_type<S1, S...>::type>::value
                                                    ? std::is_convertible<value_type, typename cpp::last_type<S1, S...>::type>::value //The last type must be convertible to value_type
@@ -151,7 +164,7 @@ public:
     //Sizes followed by a generator_expr
     template <typename S1, typename... S, cpp_enable_if(
                                               (sizeof...(S) == D),
-                                              std::is_convertible<std::size_t, typename cpp::first_type<S1, S...>::type>::value,        //The first type must be convertible to size_t
+                                              std::is_convertible<std::size_t, S1>::value,        //The first type must be convertible to size_t
                                               cpp::is_sub_homogeneous<S1, S...>::value,                                                 //The first N-1 types must homegeneous
                                               cpp::is_specialization_of<generator_expr, typename cpp::last_type<S1, S...>::type>::value //The last type must be a generator expr
                                               )>
@@ -171,14 +184,6 @@ public:
         static_assert(sizeof...(S) == D + 2, "Invalid number of dimensions");
 
         std::fill(begin(), end(), cpp::last_value(sizes...));
-    }
-
-    template <typename E, cpp_enable_if(
-                              std::is_convertible<value_t<E>, value_type>::value,
-                              is_etl_expr<E>::value)>
-    explicit dyn_matrix_impl(E&& e) noexcept
-            : base_type(e), _memory(allocate(_size)) {
-        assign_evaluate(std::forward<E>(e), *this);
     }
 
     template <typename Container, cpp_enable_if(
@@ -204,11 +209,11 @@ public:
                 _size       = rhs._size;
                 _dimensions = rhs._dimensions;
                 _memory =   allocate(_size);
-                std::copy_n(rhs._memory, _size, _memory);
             } else {
                 validate_assign(*this, rhs);
-                assign_evaluate(rhs, *this);
             }
+
+            standard_evaluator::direct_copy(rhs.memory_start(), rhs.memory_end(), memory_start());
         }
 
         check_invariants();
@@ -238,7 +243,7 @@ public:
 
     //Construct from expression
 
-    template <typename E, cpp_enable_if(!std::is_same<std::decay_t<E>, dyn_matrix_impl<T, SO, D>>::value && std::is_convertible<value_t<E>, value_type>::value && is_etl_expr<E>::value)>
+    template <typename E, cpp_enable_if(!std::is_same<std::decay_t<E>, dyn_matrix_impl<T, SO, D>>::value, std::is_convertible<value_t<E>, value_type>::value, is_etl_expr<E>::value)>
     dyn_matrix_impl& operator=(E&& e) noexcept {
         validate_assign(*this, e);
 
@@ -273,8 +278,11 @@ public:
 
     //Destructor
 
+    /*!
+     * \brief Destruct the matrix and release all its memory
+     */
     ~dyn_matrix_impl() noexcept {
-        if(_memory){
+        if(managed && _memory){
             release(_memory, _size);
         }
     }
@@ -286,12 +294,17 @@ public:
         swap(_size, other._size);
         swap(_dimensions, other._dimensions);
         swap(_memory, other._memory);
+        swap(managed, other.managed);
 
         check_invariants();
     }
 
     // Accessors
 
+    /*!
+     * \brief Returns the number of dimensions of the matrix
+     * \return the number of dimensions of the matrix
+     */
     static constexpr std::size_t dimensions() noexcept {
         return n_dimensions;
     }
@@ -354,7 +367,7 @@ public:
         }
     }
 
-    template <typename... S, cpp_enable_if((sizeof...(S) > 0))>
+    template <typename... S>
     std::size_t index(S... sizes) const noexcept {
         //Note: Version with sizes moved to a std::array and accessed with
         //standard loop may be faster, but need some stack space (relevant ?)
@@ -567,6 +580,18 @@ public:
         return _dimensions[i];
     }
 };
+
+static_assert(std::is_nothrow_default_constructible<dyn_vector<double>>::value, "dyn_vector should be nothrow default constructible");
+static_assert(std::is_nothrow_copy_constructible<dyn_vector<double>>::value, "dyn_vector should be nothrow copy constructible");
+static_assert(std::is_nothrow_move_constructible<dyn_vector<double>>::value, "dyn_vector should be nothrow move constructible");
+static_assert(std::is_nothrow_copy_assignable<dyn_vector<double>>::value, "dyn_vector should be nothrow copy assignable");
+static_assert(std::is_nothrow_move_assignable<dyn_vector<double>>::value, "dyn_vector should be nothrow move assignable");
+static_assert(std::is_nothrow_destructible<dyn_vector<double>>::value, "dyn_vector should be nothrow destructible");
+
+template<typename T, typename... Sizes>
+dyn_matrix_impl<T, order::RowMajor, sizeof...(Sizes)> dyn_matrix_over(T* memory, Sizes... sizes){
+    return dyn_matrix_impl<T, order::RowMajor, sizeof...(Sizes)>(memory, sizes...);
+}
 
 template <typename T, order SO, std::size_t D>
 void swap(dyn_matrix_impl<T, SO, D>& lhs, dyn_matrix_impl<T, SO, D>& rhs) {

@@ -12,10 +12,6 @@
 
 #pragma once
 
-#include <algorithm>
-
-#include "etl/expr/detail.hpp"
-
 //Get the implementations
 #include "etl/impl/pooling.hpp"
 

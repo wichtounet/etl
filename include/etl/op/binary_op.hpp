@@ -248,8 +248,8 @@ struct mod_binary_op {
 template <typename T, typename E>
 struct ranged_noise_binary_op {
     static constexpr const bool vectorizable = false; ///< Indicates if the opeator is vectorizable or not
-    static constexpr const bool linear       = true; ///< Indicates if the operator is linear or not
-    static constexpr const bool desc_func    = true; ///< Indicates if the description must be printed as function
+    static constexpr const bool linear       = true;  ///< Indicates if the operator is linear or not
+    static constexpr const bool desc_func    = true;  ///< Indicates if the description must be printed as function
 
     /*!
      * \brief Apply the unary operator on lhs and rhs

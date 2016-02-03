@@ -13,8 +13,6 @@
 
 #pragma once
 
-#include "cpp_utils/parallel.hpp"
-
 #include "etl/visitor.hpp"        //visitor of the expressions
 #include "etl/threshold.hpp"      //parallel thresholds
 #include "etl/eval_selectors.hpp" //method selectors
@@ -23,6 +21,12 @@ namespace etl {
 
 namespace detail {
 
+/*!
+ * \brief Functor for simple assign
+ *
+ * The result is written to lhs with operator[] and read from rhs
+ * with read_flat
+ */
 template<typename V_T, typename V_Expr>
 struct Assign {
     mutable V_T* lhs;
@@ -36,6 +40,9 @@ struct Assign {
         //Nothing else
     }
 
+    /*!
+     * \brief Assign rhs to lhs
+     */
     void operator()() const {
         std::size_t iend = _first;
 
@@ -56,6 +63,9 @@ struct Assign {
     }
 };
 
+/*!
+ * \brief Common base for vectorized functors
+ */
 template<typename L_Expr, typename V_Expr, typename Base>
 struct vectorized_base {
     using derived_t = Base;
@@ -75,6 +85,9 @@ struct vectorized_base {
         //Nothing else
     }
 
+    /*!
+     * \brief Assign rhs to lhs
+     */
     void operator()() const {
         //1. Peel loop (if necessary)
         auto peeled = as_derived().peel_loop();
@@ -108,6 +121,12 @@ private:
     }
 };
 
+/*!
+ * \brief Functor for vectorized assign
+ *
+ * The result is computed in a vectorized fashion with several
+ * operations per cycle and written directly to the memory of lhs.
+ */
 template<typename L_Expr, typename V_Expr>
 struct VectorizedAssign : vectorized_base<L_Expr, V_Expr, VectorizedAssign<L_Expr, V_Expr>> {
     using base_t = vectorized_base<L_Expr, V_Expr, VectorizedAssign<L_Expr, V_Expr>>;
@@ -125,6 +144,10 @@ struct VectorizedAssign : vectorized_base<L_Expr, V_Expr, VectorizedAssign<L_Exp
 
     using base_t::operator();
 
+    /*!
+     * \brief Peel the loop to perform aligned store when possible
+     * \return the number of peeled iterations
+     */
     std::size_t peel_loop() const {
         std::size_t i = 0;
 
@@ -142,6 +165,10 @@ struct VectorizedAssign : vectorized_base<L_Expr, V_Expr, VectorizedAssign<L_Exp
         return i;
     }
 
+    /*!
+     * \brief Compute the vectorized iterations of the the loop using aligned store operations
+     * \param first The index when to start
+     */
     inline std::size_t aligned_main_loop(std::size_t first) const {
         std::size_t i = 0;
 
@@ -161,6 +188,10 @@ struct VectorizedAssign : vectorized_base<L_Expr, V_Expr, VectorizedAssign<L_Exp
         return i;
     }
 
+    /*!
+     * \brief Compute the vectorized iterations of the the loop using unaligned store operations
+     * \param first The index when to start
+     */
     inline std::size_t unaligned_main_loop(std::size_t first) const {
         std::size_t i;
 
@@ -180,6 +211,11 @@ struct VectorizedAssign : vectorized_base<L_Expr, V_Expr, VectorizedAssign<L_Exp
         return i;
     }
 
+    /*!
+     * \brief Compute the last iterations of the the loop that have
+     * not been vectorized
+     * \param first The index when to start
+     */
     void remainder_loop(std::size_t first) const {
         for (std::size_t i = first; i < _last; ++i) {
             lhs_m[i] = rhs[i];
@@ -187,6 +223,9 @@ struct VectorizedAssign : vectorized_base<L_Expr, V_Expr, VectorizedAssign<L_Exp
     }
 };
 
+/*!
+ * \brief Functor for simple compound assign add
+ */
 template<typename V_T, typename V_Expr>
 struct AssignAdd {
     mutable V_T* lhs;
@@ -200,6 +239,9 @@ struct AssignAdd {
         //Nothing else
     }
 
+    /*!
+     * \brief Assign rhs to lhs
+     */
     void operator()() const {
         std::size_t iend = _first;
 
@@ -220,6 +262,9 @@ struct AssignAdd {
     }
 };
 
+/*!
+ * \brief Functor for vectorized compound assign add
+ */
 template<typename L_Expr, typename V_Expr>
 struct VectorizedAssignAdd : vectorized_base<L_Expr, V_Expr, VectorizedAssignAdd<L_Expr, V_Expr>> {
     using base_t = vectorized_base<L_Expr, V_Expr, VectorizedAssignAdd<L_Expr, V_Expr>>;
@@ -238,6 +283,10 @@ struct VectorizedAssignAdd : vectorized_base<L_Expr, V_Expr, VectorizedAssignAdd
 
     using base_t::operator();
 
+    /*!
+     * \brief Peel the loop to perform aligned store when possible
+     * \return the number of peeled iterations
+     */
     std::size_t peel_loop() const {
         std::size_t i = 0;
 
@@ -255,6 +304,10 @@ struct VectorizedAssignAdd : vectorized_base<L_Expr, V_Expr, VectorizedAssignAdd
         return i;
     }
 
+    /*!
+     * \brief Compute the vectorized iterations of the the loop using aligned store operations
+     * \param first The index when to start
+     */
     inline std::size_t aligned_main_loop(std::size_t first) const {
         std::size_t i = 0;
 
@@ -274,6 +327,10 @@ struct VectorizedAssignAdd : vectorized_base<L_Expr, V_Expr, VectorizedAssignAdd
         return i;
     }
 
+    /*!
+     * \brief Compute the vectorized iterations of the the loop using unaligned store operations
+     * \param first The index when to start
+     */
     inline std::size_t unaligned_main_loop(std::size_t first) const {
         std::size_t i;
 
@@ -293,6 +350,11 @@ struct VectorizedAssignAdd : vectorized_base<L_Expr, V_Expr, VectorizedAssignAdd
         return i;
     }
 
+    /*!
+     * \brief Compute the last iterations of the the loop that have
+     * not been vectorized
+     * \param first The index when to start
+     */
     void remainder_loop(std::size_t first) const {
         for (std::size_t i = first; i < _last; ++i) {
             lhs_m[i] += rhs[i];
@@ -300,6 +362,9 @@ struct VectorizedAssignAdd : vectorized_base<L_Expr, V_Expr, VectorizedAssignAdd
     }
 };
 
+/*!
+ * \brief Functor for compound assign sub
+ */
 template<typename V_T, typename V_Expr>
 struct AssignSub {
     mutable V_T* lhs;
@@ -313,6 +378,9 @@ struct AssignSub {
         //Nothing else
     }
 
+    /*!
+     * \brief Assign rhs to lhs
+     */
     void operator()() const {
         std::size_t iend = _first;
 
@@ -333,6 +401,9 @@ struct AssignSub {
     }
 };
 
+/*!
+ * \brief Functor for vectorized compound assign sub
+ */
 template<typename L_Expr, typename V_Expr>
 struct VectorizedAssignSub : vectorized_base<L_Expr, V_Expr, VectorizedAssignSub<L_Expr, V_Expr>> {
     using base_t = vectorized_base<L_Expr, V_Expr, VectorizedAssignSub<L_Expr, V_Expr>>;
@@ -351,6 +422,10 @@ struct VectorizedAssignSub : vectorized_base<L_Expr, V_Expr, VectorizedAssignSub
 
     using base_t::operator();
 
+    /*!
+     * \brief Peel the loop to perform aligned store when possible
+     * \return the number of peeled iterations
+     */
     std::size_t peel_loop() const {
         std::size_t i = 0;
 
@@ -368,6 +443,10 @@ struct VectorizedAssignSub : vectorized_base<L_Expr, V_Expr, VectorizedAssignSub
         return i;
     }
 
+    /*!
+     * \brief Compute the vectorized iterations of the the loop using aligned store operations
+     * \param first The index when to start
+     */
     inline std::size_t aligned_main_loop(std::size_t first) const {
         std::size_t i = 0;
 
@@ -387,6 +466,10 @@ struct VectorizedAssignSub : vectorized_base<L_Expr, V_Expr, VectorizedAssignSub
         return i;
     }
 
+    /*!
+     * \brief Compute the vectorized iterations of the the loop using unaligned store operations
+     * \param first The index when to start
+     */
     inline std::size_t unaligned_main_loop(std::size_t first) const {
         std::size_t i;
 
@@ -406,6 +489,11 @@ struct VectorizedAssignSub : vectorized_base<L_Expr, V_Expr, VectorizedAssignSub
         return i;
     }
 
+    /*!
+     * \brief Compute the last iterations of the the loop that have
+     * not been vectorized
+     * \param first The index when to start
+     */
     void remainder_loop(std::size_t first) const {
         for (std::size_t i = first; i < _last; ++i) {
             lhs_m[i] -= rhs[i];
@@ -413,6 +501,9 @@ struct VectorizedAssignSub : vectorized_base<L_Expr, V_Expr, VectorizedAssignSub
     }
 };
 
+/*!
+ * \brief Functor for compound assign mul
+ */
 template<typename V_T, typename V_Expr>
 struct AssignMul {
     mutable V_T* lhs;
@@ -426,6 +517,9 @@ struct AssignMul {
         //Nothing else
     }
 
+    /*!
+     * \brief Assign rhs to lhs
+     */
     void operator()() const {
         std::size_t iend = _first;
 
@@ -446,6 +540,9 @@ struct AssignMul {
     }
 };
 
+/*!
+ * \brief Functor for vectorized compound assign mul
+ */
 template<typename L_Expr, typename V_Expr>
 struct VectorizedAssignMul : vectorized_base<L_Expr, V_Expr, VectorizedAssignMul<L_Expr, V_Expr>> {
     using base_t = vectorized_base<L_Expr, V_Expr, VectorizedAssignMul<L_Expr, V_Expr>>;
@@ -464,6 +561,10 @@ struct VectorizedAssignMul : vectorized_base<L_Expr, V_Expr, VectorizedAssignMul
 
     using base_t::operator();
 
+    /*!
+     * \brief Peel the loop to perform aligned store when possible
+     * \return the number of peeled iterations
+     */
     std::size_t peel_loop() const {
         std::size_t i = 0;
 
@@ -481,6 +582,10 @@ struct VectorizedAssignMul : vectorized_base<L_Expr, V_Expr, VectorizedAssignMul
         return i;
     }
 
+    /*!
+     * \brief Compute the vectorized iterations of the the loop using aligned store operations
+     * \param first The index when to start
+     */
     inline std::size_t aligned_main_loop(std::size_t first) const {
         std::size_t i = 0;
 
@@ -500,6 +605,10 @@ struct VectorizedAssignMul : vectorized_base<L_Expr, V_Expr, VectorizedAssignMul
         return i;
     }
 
+    /*!
+     * \brief Compute the vectorized iterations of the the loop using unaligned store operations
+     * \param first The index when to start
+     */
     inline std::size_t unaligned_main_loop(std::size_t first) const {
         std::size_t i;
 
@@ -519,6 +628,11 @@ struct VectorizedAssignMul : vectorized_base<L_Expr, V_Expr, VectorizedAssignMul
         return i;
     }
 
+    /*!
+     * \brief Compute the last iterations of the the loop that have
+     * not been vectorized
+     * \param first The index when to start
+     */
     void remainder_loop(std::size_t first) const {
         for (std::size_t i = first; i < _last; ++i) {
             lhs_m[i] *= rhs[i];
@@ -526,6 +640,9 @@ struct VectorizedAssignMul : vectorized_base<L_Expr, V_Expr, VectorizedAssignMul
     }
 };
 
+/*!
+ * \brief Functor for compound assign div
+ */
 template<typename V_T, typename V_Expr>
 struct AssignDiv {
     mutable V_T* lhs;
@@ -539,6 +656,9 @@ struct AssignDiv {
         //Nothing else
     }
 
+    /*!
+     * \brief Assign rhs to lhs
+     */
     void operator()() const {
         std::size_t iend = _first;
 
@@ -559,6 +679,9 @@ struct AssignDiv {
     }
 };
 
+/*!
+ * \brief Functor for vectorized compound assign div
+ */
 template<typename L_Expr, typename V_Expr>
 struct VectorizedAssignDiv : vectorized_base<L_Expr, V_Expr, VectorizedAssignDiv<L_Expr, V_Expr>> {
     using base_t = vectorized_base<L_Expr, V_Expr, VectorizedAssignDiv<L_Expr, V_Expr>>;
@@ -577,6 +700,10 @@ struct VectorizedAssignDiv : vectorized_base<L_Expr, V_Expr, VectorizedAssignDiv
 
     using base_t::operator();
 
+    /*!
+     * \brief Peel the loop to perform aligned store when possible
+     * \return the number of peeled iterations
+     */
     std::size_t peel_loop() const {
         std::size_t i = 0;
 
@@ -594,6 +721,10 @@ struct VectorizedAssignDiv : vectorized_base<L_Expr, V_Expr, VectorizedAssignDiv
         return i;
     }
 
+    /*!
+     * \brief Compute the vectorized iterations of the the loop using aligned store operations
+     * \param first The index when to start
+     */
     inline std::size_t aligned_main_loop(std::size_t first) const {
         std::size_t i = 0;
 
@@ -613,6 +744,10 @@ struct VectorizedAssignDiv : vectorized_base<L_Expr, V_Expr, VectorizedAssignDiv
         return i;
     }
 
+    /*!
+     * \brief Compute the vectorized iterations of the the loop using unaligned store operations
+     * \param first The index when to start
+     */
     inline std::size_t unaligned_main_loop(std::size_t first) const {
         std::size_t i;
 
@@ -632,6 +767,11 @@ struct VectorizedAssignDiv : vectorized_base<L_Expr, V_Expr, VectorizedAssignDiv
         return i;
     }
 
+    /*!
+     * \brief Compute the last iterations of the the loop that have
+     * not been vectorized
+     * \param first The index when to start
+     */
     void remainder_loop(std::size_t first) const {
         for (std::size_t i = first; i < _last; ++i) {
             lhs_m[i] /= rhs[i];

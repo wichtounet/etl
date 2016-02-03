@@ -22,7 +22,6 @@
 
 #pragma once
 
-#include "etl/parallel.hpp"       //Parallel helpers
 #include "etl/visitor.hpp"        //visitor of the expressions
 #include "etl/threshold.hpp"      //parallel thresholds
 #include "etl/eval_selectors.hpp" //method selectors
@@ -31,22 +30,42 @@
 
 namespace etl {
 
-template <typename Expr, typename Result>
-struct standard_evaluator {
+/*
+ * \brief The evaluator is responsible for assigning one expression to another.
+ *
+ * The implementation is chosen by SFINAE.
+ */
+namespace standard_evaluator {
+    /*!
+     * \brief Performs a direct memory copy
+     * \param first pointer to the first element to copy
+     * \param last pointer to the next-to-last element to copy
+     * \param target pointer to the first element of the result
+     */
+    template <typename S, typename T>
+    void direct_copy(const S* first, const S* last, T* target) {
+        std::copy(first, last, target);
+    }
+
     /*!
      * \brief Allocate temporaries and evaluate sub expressions
      * \param expr The expr to be visited
      */
     template <typename E>
-    static void evaluate_only(E&& expr) {
+    void evaluate_only(E&& expr) {
         apply_visitor<detail::temporary_allocator_static_visitor>(expr);
         apply_visitor<detail::evaluator_static_visitor>(expr);
     }
 
     //Standard assign version
 
+    /*!
+     * \brief Assign the result of the expression expression to the result
+     * \param expr The right hand side expression
+     * \param result The left hand side
+     */
     template <typename E, typename R, cpp_enable_if(detail::standard_assign<E, R>::value)>
-    static void assign_evaluate_impl(E&& expr, R&& result) {
+    void assign_evaluate_impl(E&& expr, R&& result) {
         for (std::size_t i = 0; i < etl::size(result); ++i) {
             result[i] = expr.read_flat(i);
         }
@@ -54,15 +73,18 @@ struct standard_evaluator {
 
     //Fast assign version (memory copy)
 
+    /*!
+     * \copydoc assign_evaluate_impl
+     */
     template <typename E, typename R, cpp_enable_if(detail::fast_assign<E, R>::value)>
-    static void assign_evaluate_impl(E&& expr, R&& result) {
-        std::copy(expr.memory_start(), expr.memory_end(), result.memory_start());
+    void assign_evaluate_impl(E&& expr, R&& result) {
+        direct_copy(expr.memory_start(), expr.memory_end(), result.memory_start());
     }
 
     //Direct assign version
 
     template <typename E, typename R>
-    static void direct_assign_evaluate(E&& expr, R&& result) {
+    void direct_assign_evaluate(E&& expr, R&& result) {
         auto m = result.memory_start();
 
         const std::size_t size = etl::size(result);
@@ -70,15 +92,21 @@ struct standard_evaluator {
         detail::Assign<value_t<R>,E>(m, expr, 0, size)();
     }
 
+    /*!
+     * \copydoc assign_evaluate_impl
+     */
     template <typename E, typename R, cpp_enable_if(detail::direct_assign<E, R>::value)>
-    static void assign_evaluate_impl(E&& expr, R&& result) {
+    void assign_evaluate_impl(E&& expr, R&& result) {
         direct_assign_evaluate(std::forward<E>(expr), std::forward<R>(result));
     }
 
     //Parallel assign version
 
+    /*!
+     * \copydoc assign_evaluate_impl
+     */
     template <typename E, typename R, cpp_enable_if(detail::parallel_assign<E, R>::value)>
-    static void assign_evaluate_impl(E&& expr, R&& result) {
+    void assign_evaluate_impl(E&& expr, R&& result) {
         const auto n = etl::size(result);
 
         if(n < parallel_threshold || threads < 2){
@@ -103,10 +131,28 @@ struct standard_evaluator {
         pool.wait();
     }
 
+    //Vectorized assign version
+
+    template <typename E, typename R>
+    void vectorized_assign_evaluate(E&& expr, R&& result) {
+        detail::VectorizedAssign<R, E>(result, expr, 0, etl::size(result))();
+    }
+
+    /*!
+     * \copydoc assign_evaluate_impl
+     */
+    template <typename E, typename R, cpp_enable_if(detail::vectorized_assign<E, R>::value)>
+    void assign_evaluate_impl(E&& expr, R&& result) {
+        vectorized_assign_evaluate(std::forward<E>(expr), std::forward<R>(result));
+    }
+
     //Parallel vectorized assign
 
+    /*!
+     * \copydoc assign_evaluate_impl
+     */
     template <typename E, typename R, cpp_enable_if(detail::parallel_vectorized_assign<E, R>::value)>
-    static void assign_evaluate_impl(E&& expr, R&& result) {
+    void assign_evaluate_impl(E&& expr, R&& result) {
         static cpp::default_thread_pool<> pool(threads - 1);
 
         const std::size_t size = etl::size(result);
@@ -130,22 +176,15 @@ struct standard_evaluator {
         pool.wait();
     }
 
-    //Vectorized assign version
-
-    template <typename E, typename R>
-    static void vectorized_assign_evaluate(E&& expr, R&& result) {
-        detail::VectorizedAssign<R, E>(result, expr, 0, etl::size(result))();
-    }
-
-    template <typename E, typename R, cpp_enable_if(detail::vectorized_assign<E, R>::value)>
-    static void assign_evaluate_impl(E&& expr, R&& result) {
-        vectorized_assign_evaluate(std::forward<E>(expr), std::forward<R>(result));
-    }
-
     //Standard Add Assign
 
+    /*!
+     * \brief Add the result of the expression expression to the result
+     * \param expr The right hand side expression
+     * \param result The left hand side
+     */
     template <typename E, typename R, cpp_enable_if(detail::standard_compound<E, R>::value)>
-    static void add_evaluate(E&& expr, R&& result) {
+    void add_evaluate(E&& expr, R&& result) {
         evaluate_only(expr);
 
         for (std::size_t i = 0; i < etl::size(result); ++i) {
@@ -153,10 +192,34 @@ struct standard_evaluator {
         }
     }
 
+    //Direct Add Assign
+
+    template <typename E, typename R>
+    void direct_add_evaluate(E&& expr, R&& result) {
+        evaluate_only(expr);
+
+        auto m = result.memory_start();
+
+        const std::size_t size = etl::size(result);
+
+        detail::AssignAdd<value_t<R>,E>(m, expr, 0, size)();
+    }
+
+    /*!
+     * \copydoc add_evaluate
+     */
+    template <typename E, typename R, cpp_enable_if(detail::direct_compound<E, R>::value)>
+    void add_evaluate(E&& expr, R&& result) {
+        direct_add_evaluate(std::forward<E>(expr), std::forward<R>(result));
+    }
+
     //Parallel direct add assign
 
+    /*!
+     * \copydoc add_evaluate
+     */
     template <typename E, typename R, cpp_enable_if(detail::parallel_compound<E, R>::value)>
-    static void add_evaluate(E&& expr, R&& result) {
+    void add_evaluate(E&& expr, R&& result) {
         const auto n = etl::size(result);
 
         if(n < parallel_threshold || threads < 2){
@@ -183,28 +246,30 @@ struct standard_evaluator {
         pool.wait();
     }
 
-    //Direct Add Assign
+    //Vectorized Add Assign
 
     template <typename E, typename R>
-    static void direct_add_evaluate(E&& expr, R&& result) {
+    void vectorized_add_evaluate(E&& expr, R&& result) {
         evaluate_only(expr);
 
-        auto m = result.memory_start();
-
-        const std::size_t size = etl::size(result);
-
-        detail::AssignAdd<value_t<R>,E>(m, expr, 0, size)();
+        detail::VectorizedAssignAdd<R, E>(result, expr, 0, etl::size(result))();
     }
 
-    template <typename E, typename R, cpp_enable_if(detail::direct_compound<E, R>::value)>
-    static void add_evaluate(E&& expr, R&& result) {
-        direct_add_evaluate(std::forward<E>(expr), std::forward<R>(result));
+    /*!
+     * \copydoc add_evaluate
+     */
+    template <typename E, typename R, cpp_enable_if(detail::vectorized_compound<E, R>::value)>
+    void add_evaluate(E&& expr, R&& result) {
+        vectorized_add_evaluate(std::forward<E>(expr), std::forward<R>(result));
     }
 
     //Parallel vectorized add assign
 
+    /*!
+     * \copydoc add_evaluate
+     */
     template <typename E, typename R, cpp_enable_if(detail::parallel_vectorized_compound<E, R>::value)>
-    static void add_evaluate(E&& expr, R&& result) {
+    void add_evaluate(E&& expr, R&& result) {
         static cpp::default_thread_pool<> pool(threads - 1);
 
         const std::size_t size = etl::size(result);
@@ -231,24 +296,15 @@ struct standard_evaluator {
         pool.wait();
     }
 
-    //Vectorized Add Assign
-
-    template <typename E, typename R>
-    static void vectorized_add_evaluate(E&& expr, R&& result) {
-        evaluate_only(expr);
-
-        detail::VectorizedAssignAdd<R, E>(result, expr, 0, etl::size(result))();
-    }
-
-    template <typename E, typename R, cpp_enable_if(detail::vectorized_compound<E, R>::value)>
-    static void add_evaluate(E&& expr, R&& result) {
-        vectorized_add_evaluate(std::forward<E>(expr), std::forward<R>(result));
-    }
-
     //Standard sub assign
 
+    /*!
+     * \brief Subtract the result of the expression expression from the result
+     * \param expr The right hand side expression
+     * \param result The left hand side
+     */
     template <typename E, typename R, cpp_enable_if(detail::standard_compound<E, R>::value)>
-    static void sub_evaluate(E&& expr, R&& result) {
+    void sub_evaluate(E&& expr, R&& result) {
         evaluate_only(expr);
 
         for (std::size_t i = 0; i < etl::size(result); ++i) {
@@ -256,10 +312,34 @@ struct standard_evaluator {
         }
     }
 
+    //Direct Sub Assign
+
+    template <typename E, typename R>
+    void direct_sub_evaluate(E&& expr, R&& result) {
+        evaluate_only(expr);
+
+        auto m = result.memory_start();
+
+        const std::size_t size = etl::size(result);
+
+        detail::AssignSub<value_t<R>,E>(m, expr, 0, size)();
+    }
+
+    /*!
+     * \copydoc sub_evaluate
+     */
+    template <typename E, typename R, cpp_enable_if(detail::direct_compound<E, R>::value)>
+    void sub_evaluate(E&& expr, R&& result) {
+        direct_sub_evaluate(std::forward<E>(expr), std::forward<R>(result));
+    }
+
     //Parallel direct sub assign
 
+    /*!
+     * \copydoc sub_evaluate
+     */
     template <typename E, typename R, cpp_enable_if(detail::parallel_compound<E, R>::value)>
-    static void sub_evaluate(E&& expr, R&& result) {
+    void sub_evaluate(E&& expr, R&& result) {
         const auto n = etl::size(result);
 
         if(n < parallel_threshold || threads < 2){
@@ -286,28 +366,30 @@ struct standard_evaluator {
         pool.wait();
     }
 
-    //Direct Sub Assign
+    //Vectorized Sub Assign
 
     template <typename E, typename R>
-    static void direct_sub_evaluate(E&& expr, R&& result) {
+    void vectorized_sub_evaluate(E&& expr, R&& result) {
         evaluate_only(expr);
 
-        auto m = result.memory_start();
-
-        const std::size_t size = etl::size(result);
-
-        detail::AssignSub<value_t<R>,E>(m, expr, 0, size)();
+        detail::VectorizedAssignSub<R, E>(result, expr, 0, etl::size(result))();
     }
 
-    template <typename E, typename R, cpp_enable_if(detail::direct_compound<E, R>::value)>
-    static void sub_evaluate(E&& expr, R&& result) {
-        direct_sub_evaluate(std::forward<E>(expr), std::forward<R>(result));
+    /*!
+     * \copydoc sub_evaluate
+     */
+    template <typename E, typename R, cpp_enable_if(detail::vectorized_compound<E, R>::value)>
+    void sub_evaluate(E&& expr, R&& result) {
+        vectorized_sub_evaluate(std::forward<E>(expr), std::forward<R>(result));
     }
 
     //Parallel vectorized sub assign
 
+    /*!
+     * \copydoc sub_evaluate
+     */
     template <typename E, typename R, cpp_enable_if(detail::parallel_vectorized_compound<E, R>::value)>
-    static void sub_evaluate(E&& expr, R&& result) {
+    void sub_evaluate(E&& expr, R&& result) {
         static cpp::default_thread_pool<> pool(threads - 1);
 
         const std::size_t size = etl::size(result);
@@ -334,24 +416,15 @@ struct standard_evaluator {
         pool.wait();
     }
 
-    //Vectorized Sub Assign
-
-    template <typename E, typename R>
-    static void vectorized_sub_evaluate(E&& expr, R&& result) {
-        evaluate_only(expr);
-
-        detail::VectorizedAssignSub<R, E>(result, expr, 0, etl::size(result))();
-    }
-
-    template <typename E, typename R, cpp_enable_if(detail::vectorized_compound<E, R>::value)>
-    static void sub_evaluate(E&& expr, R&& result) {
-        vectorized_sub_evaluate(std::forward<E>(expr), std::forward<R>(result));
-    }
-
     //Standard Mul Assign
 
+    /*!
+     * \brief Multiply the result by the result of the expression expression
+     * \param expr The right hand side expression
+     * \param result The left hand side
+     */
     template <typename E, typename R, cpp_enable_if(detail::standard_compound<E, R>::value)>
-    static void mul_evaluate(E&& expr, R&& result) {
+    void mul_evaluate(E&& expr, R&& result) {
         evaluate_only(expr);
 
         for (std::size_t i = 0; i < etl::size(result); ++i) {
@@ -359,10 +432,34 @@ struct standard_evaluator {
         }
     }
 
+    //Direct Mul Assign
+
+    template <typename E, typename R>
+    void direct_mul_evaluate(E&& expr, R&& result) {
+        evaluate_only(expr);
+
+        auto m = result.memory_start();
+
+        const std::size_t size = etl::size(result);
+
+        detail::AssignMul<value_t<R>,E>(m, expr, 0, size)();
+    }
+
+    /*!
+     * \copydoc mul_evaluate
+     */
+    template <typename E, typename R, cpp_enable_if(detail::direct_compound<E, R>::value)>
+    void mul_evaluate(E&& expr, R&& result) {
+        direct_mul_evaluate(std::forward<E>(expr), std::forward<R>(result));
+    }
+
     //Parallel direct mul assign
 
+    /*!
+     * \copydoc mul_evaluate
+     */
     template <typename E, typename R, cpp_enable_if(detail::parallel_compound<E, R>::value)>
-    static void mul_evaluate(E&& expr, R&& result) {
+    void mul_evaluate(E&& expr, R&& result) {
         const auto n = etl::size(result);
 
         if(n < parallel_threshold || threads < 2){
@@ -389,28 +486,30 @@ struct standard_evaluator {
         pool.wait();
     }
 
-    //Direct Mul Assign
+    //Vectorized Mul Assign
 
     template <typename E, typename R>
-    static void direct_mul_evaluate(E&& expr, R&& result) {
+    void vectorized_mul_evaluate(E&& expr, R&& result) {
         evaluate_only(expr);
 
-        auto m = result.memory_start();
-
-        const std::size_t size = etl::size(result);
-
-        detail::AssignMul<value_t<R>,E>(m, expr, 0, size)();
+        detail::VectorizedAssignMul<R, E>(result, expr, 0, etl::size(result))();
     }
 
-    template <typename E, typename R, cpp_enable_if(detail::direct_compound<E, R>::value)>
-    static void mul_evaluate(E&& expr, R&& result) {
-        direct_mul_evaluate(std::forward<E>(expr), std::forward<R>(result));
+    /*!
+     * \copydoc mul_evaluate
+     */
+    template <typename E, typename R, cpp_enable_if(detail::vectorized_compound<E, R>::value)>
+    void mul_evaluate(E&& expr, R&& result) {
+        vectorized_mul_evaluate(std::forward<E>(expr), std::forward<R>(result));
     }
 
     //Parallel vectorized mul assign
 
+    /*!
+     * \copydoc mul_evaluate
+     */
     template <typename E, typename R, cpp_enable_if(detail::parallel_vectorized_compound<E, R>::value)>
-    static void mul_evaluate(E&& expr, R&& result) {
+    void mul_evaluate(E&& expr, R&& result) {
         static cpp::default_thread_pool<> pool(threads - 1);
 
         const std::size_t size = etl::size(result);
@@ -437,24 +536,15 @@ struct standard_evaluator {
         pool.wait();
     }
 
-    //Vectorized Mul Assign
-
-    template <typename E, typename R>
-    static void vectorized_mul_evaluate(E&& expr, R&& result) {
-        evaluate_only(expr);
-
-        detail::VectorizedAssignMul<R, E>(result, expr, 0, etl::size(result))();
-    }
-
-    template <typename E, typename R, cpp_enable_if(detail::vectorized_compound<E, R>::value)>
-    static void mul_evaluate(E&& expr, R&& result) {
-        vectorized_mul_evaluate(std::forward<E>(expr), std::forward<R>(result));
-    }
-
     //Standard Div Assign
 
+    /*!
+     * \brief Divide the result by the result of the expression expression
+     * \param expr The right hand side expression
+     * \param result The left hand side
+     */
     template <typename E, typename R, cpp_enable_if(detail::standard_compound<E, R>::value)>
-    static void div_evaluate(E&& expr, R&& result) {
+    void div_evaluate(E&& expr, R&& result) {
         evaluate_only(expr);
 
         for (std::size_t i = 0; i < etl::size(result); ++i) {
@@ -462,10 +552,34 @@ struct standard_evaluator {
         }
     }
 
+    //Direct Div Assign
+
+    template <typename E, typename R>
+    void direct_div_evaluate(E&& expr, R&& result) {
+        evaluate_only(expr);
+
+        auto m = result.memory_start();
+
+        const std::size_t size = etl::size(result);
+
+        detail::AssignDiv<value_t<R>,E>(m, expr, 0, size)();
+    }
+
+    /*!
+     * \copydoc div_evaluate
+     */
+    template <typename E, typename R, cpp_enable_if(detail::direct_compound<E, R>::value)>
+    void div_evaluate(E&& expr, R&& result) {
+        direct_div_evaluate(std::forward<E>(expr), std::forward<R>(result));
+    }
+
     //Parallel direct Div assign
 
+    /*!
+     * \copydoc div_evaluate
+     */
     template <typename E, typename R, cpp_enable_if(detail::parallel_compound<E, R>::value)>
-    static void div_evaluate(E&& expr, R&& result) {
+    void div_evaluate(E&& expr, R&& result) {
         const auto n = etl::size(result);
 
         if(n < parallel_threshold || threads < 2){
@@ -492,28 +606,30 @@ struct standard_evaluator {
         pool.wait();
     }
 
-    //Direct Div Assign
+    //Vectorized Div Assign
 
     template <typename E, typename R>
-    static void direct_div_evaluate(E&& expr, R&& result) {
+    void vectorized_div_evaluate(E&& expr, R&& result) {
         evaluate_only(expr);
 
-        auto m = result.memory_start();
-
-        const std::size_t size = etl::size(result);
-
-        detail::AssignDiv<value_t<R>,E>(m, expr, 0, size)();
+        detail::VectorizedAssignDiv<R, E>(result, expr, 0, etl::size(result))();
     }
 
-    template <typename E, typename R, cpp_enable_if(detail::direct_compound<E, R>::value)>
-    static void div_evaluate(E&& expr, R&& result) {
-        direct_div_evaluate(std::forward<E>(expr), std::forward<R>(result));
+    /*!
+     * \copydoc div_evaluate
+     */
+    template <typename E, typename R, cpp_enable_if(detail::vectorized_compound<E, R>::value)>
+    void div_evaluate(E&& expr, R&& result) {
+        vectorized_div_evaluate(std::forward<E>(expr), std::forward<R>(result));
     }
 
     //Parallel vectorized div assign
 
+    /*!
+     * \copydoc div_evaluate
+     */
     template <typename E, typename R, cpp_enable_if(detail::parallel_vectorized_compound<E, R>::value)>
-    static void div_evaluate(E&& expr, R&& result) {
+    void div_evaluate(E&& expr, R&& result) {
         static cpp::default_thread_pool<> pool(threads - 1);
 
         const std::size_t size = etl::size(result);
@@ -540,24 +656,15 @@ struct standard_evaluator {
         pool.wait();
     }
 
-    //Vectorized Div Assign
-
-    template <typename E, typename R>
-    static void vectorized_div_evaluate(E&& expr, R&& result) {
-        evaluate_only(expr);
-
-        detail::VectorizedAssignDiv<R, E>(result, expr, 0, etl::size(result))();
-    }
-
-    template <typename E, typename R, cpp_enable_if(detail::vectorized_compound<E, R>::value)>
-    static void div_evaluate(E&& expr, R&& result) {
-        vectorized_div_evaluate(std::forward<E>(expr), std::forward<R>(result));
-    }
-
     //Standard Mod Evaluate (no optimized versions for mod)
 
+    /*!
+     * \brief Modulo the result by the result of the expression expression
+     * \param expr The right hand side expression
+     * \param result The left hand side
+     */
     template <typename E, typename R>
-    static void mod_evaluate(E&& expr, R&& result) {
+    void mod_evaluate(E&& expr, R&& result) {
         evaluate_only(expr);
 
         for (std::size_t i = 0; i < etl::size(result); ++i) {
@@ -569,12 +676,17 @@ struct standard_evaluator {
     //not beevaluated by the static_visitor, otherwise, the result would
     //be evaluated twice and a temporary would be allocated for nothing
 
+    /*!
+     * \brief Assign the result of the expression expression to the result
+     * \param expr The right hand side expression
+     * \param result The left hand side
+     */
     template <typename E, typename R, cpp_disable_if(is_temporary_expr<E>::value)>
-    static void assign_evaluate(E&& expr, R&& result) {
+    void assign_evaluate(E&& expr, R&& result) {
         //Evaluate sub parts, if any
         evaluate_only(expr);
 
-        constexpr bool linear = decay_traits<Expr>::is_linear;
+        constexpr bool linear = decay_traits<E>::is_linear;
 
         if(!linear && result.alias(expr)){
             auto tmp_result = force_temporary(result);
@@ -590,16 +702,22 @@ struct standard_evaluator {
         }
     }
 
+    /*!
+     * \copydoc assign_evaluate
+     */
     template <typename E, typename R, cpp_enable_if(is_temporary_unary_expr<E>::value)>
-    static void assign_evaluate(E&& expr, R&& result) {
+    void assign_evaluate(E&& expr, R&& result) {
         apply_visitor<detail::temporary_allocator_static_visitor>(expr.a());
         apply_visitor<detail::evaluator_static_visitor>(expr.a());
 
         expr.direct_evaluate(result);
     }
 
+    /*!
+     * \copydoc assign_evaluate
+     */
     template <typename E, typename R, cpp_enable_if(is_temporary_binary_expr<E>::value)>
-    static void assign_evaluate(E&& expr, R&& result) {
+    void assign_evaluate(E&& expr, R&& result) {
         apply_visitor<detail::temporary_allocator_static_visitor>(expr.a());
         apply_visitor<detail::temporary_allocator_static_visitor>(expr.b());
 
@@ -608,7 +726,8 @@ struct standard_evaluator {
 
         expr.direct_evaluate(result);
     }
-};
+
+} // end of namespace standard_evaluator
 
 //Only containers of the same storage order can be assigned directly
 //Generators can be assigned to everything
@@ -622,9 +741,9 @@ struct direct_assign_compatible : cpp::or_u<
  * \param expr The right hand side expression
  * \param result The left hand side
  */
-template <typename Expr, typename Result, cpp_enable_if(direct_assign_compatible<Expr, Result>::value && !is_optimized_expr<Expr>::value)>
+template <typename Expr, typename Result, cpp_enable_if(direct_assign_compatible<Expr, Result>::value, !is_optimized_expr<Expr>::value)>
 void assign_evaluate(Expr&& expr, Result&& result) {
-    standard_evaluator<Expr, Result>::assign_evaluate(std::forward<Expr>(expr), std::forward<Result>(result));
+    standard_evaluator::assign_evaluate(std::forward<Expr>(expr), std::forward<Result>(result));
 }
 
 /*!
@@ -632,9 +751,9 @@ void assign_evaluate(Expr&& expr, Result&& result) {
  * \param expr The right hand side expression
  * \param result The left hand side
  */
-template <typename Expr, typename Result, cpp_enable_if(!direct_assign_compatible<Expr, Result>::value && !is_optimized_expr<Expr>::value)>
+template <typename Expr, typename Result, cpp_enable_if(!direct_assign_compatible<Expr, Result>::value, !is_optimized_expr<Expr>::value)>
 void assign_evaluate(Expr&& expr, Result&& result) {
-    standard_evaluator<Expr, Result>::assign_evaluate(transpose(expr), std::forward<Result>(result));
+    standard_evaluator::assign_evaluate(transpose(expr), std::forward<Result>(result));
 }
 
 /*!
@@ -644,7 +763,10 @@ void assign_evaluate(Expr&& expr, Result&& result) {
  */
 template <typename Expr, typename Result, cpp_enable_if(is_optimized_expr<Expr>::value)>
 void assign_evaluate(Expr&& expr, Result&& result) {
-    optimized_forward(expr.value(), [&result](const auto& optimized) { assign_evaluate(optimized, std::forward<Result>(result)); });
+    optimized_forward(expr.value(),
+                      [&result](const auto& optimized) {
+                          assign_evaluate(optimized, std::forward<Result>(result));
+                      });
 }
 
 /*!
@@ -654,7 +776,7 @@ void assign_evaluate(Expr&& expr, Result&& result) {
  */
 template <typename Expr, typename Result, cpp_enable_if(direct_assign_compatible<Expr, Result>::value)>
 void add_evaluate(Expr&& expr, Result&& result) {
-    standard_evaluator<Expr, Result>::add_evaluate(std::forward<Expr>(expr), std::forward<Result>(result));
+    standard_evaluator::add_evaluate(std::forward<Expr>(expr), std::forward<Result>(result));
 }
 
 /*!
@@ -664,7 +786,7 @@ void add_evaluate(Expr&& expr, Result&& result) {
  */
 template <typename Expr, typename Result, cpp_disable_if(direct_assign_compatible<Expr, Result>::value)>
 void add_evaluate(Expr&& expr, Result&& result) {
-    standard_evaluator<Expr, Result>::add_evaluate(transpose(expr), std::forward<Result>(result));
+    standard_evaluator::add_evaluate(transpose(expr), std::forward<Result>(result));
 }
 
 /*!
@@ -674,7 +796,7 @@ void add_evaluate(Expr&& expr, Result&& result) {
  */
 template <typename Expr, typename Result, cpp_enable_if(direct_assign_compatible<Expr, Result>::value)>
 void sub_evaluate(Expr&& expr, Result&& result) {
-    standard_evaluator<Expr, Result>::sub_evaluate(std::forward<Expr>(expr), std::forward<Result>(result));
+    standard_evaluator::sub_evaluate(std::forward<Expr>(expr), std::forward<Result>(result));
 }
 
 /*!
@@ -684,7 +806,7 @@ void sub_evaluate(Expr&& expr, Result&& result) {
  */
 template <typename Expr, typename Result, cpp_disable_if(direct_assign_compatible<Expr, Result>::value)>
 void sub_evaluate(Expr&& expr, Result&& result) {
-    standard_evaluator<Expr, Result>::sub_evaluate(transpose(expr), std::forward<Result>(result));
+    standard_evaluator::sub_evaluate(transpose(expr), std::forward<Result>(result));
 }
 
 /*!
@@ -694,7 +816,7 @@ void sub_evaluate(Expr&& expr, Result&& result) {
  */
 template <typename Expr, typename Result, cpp_enable_if(direct_assign_compatible<Expr, Result>::value)>
 void mul_evaluate(Expr&& expr, Result&& result) {
-    standard_evaluator<Expr, Result>::mul_evaluate(std::forward<Expr>(expr), std::forward<Result>(result));
+    standard_evaluator::mul_evaluate(std::forward<Expr>(expr), std::forward<Result>(result));
 }
 
 /*!
@@ -704,7 +826,7 @@ void mul_evaluate(Expr&& expr, Result&& result) {
  */
 template <typename Expr, typename Result, cpp_disable_if(direct_assign_compatible<Expr, Result>::value)>
 void mul_evaluate(Expr&& expr, Result&& result) {
-    standard_evaluator<Expr, Result>::mul_evaluate(transpose(expr), std::forward<Result>(result));
+    standard_evaluator::mul_evaluate(transpose(expr), std::forward<Result>(result));
 }
 
 /*!
@@ -714,7 +836,7 @@ void mul_evaluate(Expr&& expr, Result&& result) {
  */
 template <typename Expr, typename Result, cpp_enable_if(direct_assign_compatible<Expr, Result>::value)>
 void div_evaluate(Expr&& expr, Result&& result) {
-    standard_evaluator<Expr, Result>::div_evaluate(std::forward<Expr>(expr), std::forward<Result>(result));
+    standard_evaluator::div_evaluate(std::forward<Expr>(expr), std::forward<Result>(result));
 }
 
 /*!
@@ -724,7 +846,7 @@ void div_evaluate(Expr&& expr, Result&& result) {
  */
 template <typename Expr, typename Result, cpp_disable_if(direct_assign_compatible<Expr, Result>::value)>
 void div_evaluate(Expr&& expr, Result&& result) {
-    standard_evaluator<Expr, Result>::div_evaluate(transpose(expr), std::forward<Result>(result));
+    standard_evaluator::div_evaluate(transpose(expr), std::forward<Result>(result));
 }
 
 /*!
@@ -734,7 +856,7 @@ void div_evaluate(Expr&& expr, Result&& result) {
  */
 template <typename Expr, typename Result, cpp_enable_if(direct_assign_compatible<Expr, Result>::value)>
 void mod_evaluate(Expr&& expr, Result&& result) {
-    standard_evaluator<Expr, Result>::mod_evaluate(std::forward<Expr>(expr), std::forward<Result>(result));
+    standard_evaluator::mod_evaluate(std::forward<Expr>(expr), std::forward<Result>(result));
 }
 
 /*!
@@ -744,7 +866,7 @@ void mod_evaluate(Expr&& expr, Result&& result) {
  */
 template <typename Expr, typename Result, cpp_disable_if(direct_assign_compatible<Expr, Result>::value)>
 void mod_evaluate(Expr&& expr, Result&& result) {
-    standard_evaluator<Expr, Result>::mod_evaluate(transpose(expr), std::forward<Result>(result));
+    standard_evaluator::mod_evaluate(transpose(expr), std::forward<Result>(result));
 }
 
 /*!
@@ -756,7 +878,7 @@ void mod_evaluate(Expr&& expr, Result&& result) {
  */
 template <typename Expr>
 void force(Expr&& expr) {
-    standard_evaluator<Expr, void>::evaluate_only(std::forward<Expr>(expr));
+    standard_evaluator::evaluate_only(std::forward<Expr>(expr));
 }
 
 } //end of namespace etl

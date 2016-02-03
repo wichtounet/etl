@@ -9,8 +9,6 @@
 
 #include <cmath>
 
-#include "cpp_utils/tmp.hpp"
-
 namespace etl {
 
 namespace math {
@@ -59,6 +57,15 @@ inline double softplus(double x) {
 template <typename W>
 inline constexpr double sign(W v) noexcept {
     return v == W(0) ? W(0) : (v > W(0) ? W(1) : W(-1));
+}
+
+/*!
+ * \brief Test if the given number is a power of two
+ * \param n The number to test
+ * \return true if the number is a power of two, false otherwise
+ */
+inline constexpr bool is_power_of_two(long n) {
+    return (n & (n - 1)) == 0;
 }
 
 } //end of namespace math

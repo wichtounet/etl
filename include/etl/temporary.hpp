@@ -46,14 +46,11 @@ decltype(auto) force_temporary(E&& expr) {
  * \param expr The expression to make a temporary from
  * \return a temporary of the expression
  */
-template <typename E, cpp_enable_if(!decay_traits<E>::is_fast && !is_sparse_matrix<E>::value)>
+template <typename E, cpp_enable_if(!decay_traits<E>::is_fast, !is_sparse_matrix<E>::value)>
 decltype(auto) force_temporary(E&& expr) {
     //Sizes will be directly propagated
     return dyn_matrix_impl<value_t<E>, decay_traits<E>::storage_order, decay_traits<E>::dimensions()>{std::forward<E>(expr)};
 }
-
-//TODO the traits should include and is_sparse value that should be
-//handled here
 
 /*!
  * \brief Force a temporary out of the expression
@@ -107,7 +104,7 @@ decltype(auto) make_temporary(E&& expr) {
  * \param expr The expression to make a temporary from
  * \return a temporary of the expression if necessary, otherwise the expression itself
  */
-template <typename E, cpp_enable_if(!has_direct_access<E>::value && create_temporary)>
+template <typename E, cpp_enable_if(!has_direct_access<E>::value, create_temporary)>
 decltype(auto) make_temporary(E&& expr) {
     return force_temporary(std::forward<E>(expr));
 }

@@ -23,7 +23,6 @@
 #pragma once
 
 #include "etl/threshold.hpp"
-#include "etl/parallel.hpp" //For parallel dispatching
 
 //Include the implementations
 #include "etl/impl/std/sum.hpp"
@@ -86,15 +85,15 @@ struct sum_impl {
         };
 
         if (impl == sum_imple::AVX) {
-            dispatch_1d_acc<value_t<E>>(parallel_dispatch, [&](std::size_t first, std::size_t last) -> value_t<E> {
+            dispatch_1d_acc<value_t<E>>(parallel_dispatch, [&e](std::size_t first, std::size_t last) -> value_t<E> {
                 return impl::avx::sum(e, first, last);
             }, acc_functor, 0, size(e));
         } else if (impl == sum_imple::SSE) {
-            dispatch_1d_acc<value_t<E>>(parallel_dispatch, [&](std::size_t first, std::size_t last) -> value_t<E> {
+            dispatch_1d_acc<value_t<E>>(parallel_dispatch, [&e](std::size_t first, std::size_t last) -> value_t<E> {
                 return impl::sse::sum(e, first, last);
             }, acc_functor, 0, size(e));
         } else {
-            dispatch_1d_acc<value_t<E>>(parallel_dispatch, [&](std::size_t first, std::size_t last) -> value_t<E> {
+            dispatch_1d_acc<value_t<E>>(parallel_dispatch, [&e](std::size_t first, std::size_t last) -> value_t<E> {
                 return impl::standard::sum(e, first, last);
             }, acc_functor, 0, size(e));
         }

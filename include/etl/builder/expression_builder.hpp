@@ -21,8 +21,6 @@
 
 namespace etl {
 
-//TODO Fix the false positives in sonar-cxx for these functions
-
 /*!
  * \brief Builds an expression representing the subtraction of lhs and rhs
  * \param lhs The left hand side expression
@@ -68,7 +66,7 @@ auto operator*(LE&& lhs, RE&& rhs) -> detail::left_binary_helper<LE, RE, mul_bin
  * \param rhs The right hand side expression
  * \return An expression representing the scalar multipliation of lhs and rhs
  */
-template <typename LE, typename RE, cpp_enable_if(is_etl_expr<LE>::value&& is_etl_expr<RE>::value)>
+template <typename LE, typename RE, cpp_enable_if(is_etl_expr<LE>::value, is_etl_expr<RE>::value)>
 auto operator>>(LE&& lhs, RE&& rhs) -> detail::left_binary_helper<LE, RE, mul_binary_op> {
     validate_expression(lhs, rhs);
 
@@ -81,11 +79,11 @@ auto operator>>(LE&& lhs, RE&& rhs) -> detail::left_binary_helper<LE, RE, mul_bi
  * \param rhs The right hand side expression
  * \return An expression representing the scalar multiplication of lhs and rhs
  */
-template <typename LE, typename RE, cpp_enable_if(is_etl_expr<LE>::value&& is_etl_expr<RE>::value)>
+template <typename LE, typename RE>
 auto scale(LE&& lhs, RE&& rhs) -> detail::left_binary_helper<LE, RE, mul_binary_op> {
     validate_expression(lhs, rhs);
 
-    return {lhs, rhs};
+    return detail::left_binary_helper<LE, RE, mul_binary_op>{lhs, rhs};
 }
 
 /*!
@@ -210,7 +208,7 @@ auto operator>>(LE lhs, RE&& rhs) -> detail::right_binary_helper<scalar<value_t<
  * \param rhs The right hand side expression
  * \return An expression representing the division of lhs and rhs (scalar)
  */
-template <typename LE, typename RE, cpp_enable_if(std::is_convertible<RE, value_t<LE>>::value&& is_etl_expr<LE>::value && (is_div_strict || !std::is_floating_point<RE>::value))>
+template <typename LE, typename RE, cpp_enable_if(std::is_convertible<RE, value_t<LE>>::value, is_etl_expr<LE>::value, (is_div_strict || !std::is_floating_point<RE>::value))>
 auto operator/(LE&& lhs, RE rhs) -> detail::left_binary_helper<LE, scalar<value_t<LE>>, div_binary_op> {
     return {lhs, scalar<value_t<LE>>(rhs)};
 }
@@ -221,7 +219,7 @@ auto operator/(LE&& lhs, RE rhs) -> detail::left_binary_helper<LE, scalar<value_
  * \param rhs The right hand side expression
  * \return An expression representing the division of lhs and rhs (scalar)
  */
-template <typename LE, typename RE, cpp_enable_if(std::is_convertible<RE, value_t<LE>>::value&& is_etl_expr<LE>::value && !is_div_strict && std::is_floating_point<RE>::value)>
+template <typename LE, typename RE, cpp_enable_if(std::is_convertible<RE, value_t<LE>>::value, is_etl_expr<LE>::value, !is_div_strict, std::is_floating_point<RE>::value)>
 auto operator/(LE&& lhs, RE rhs) -> detail::left_binary_helper<LE, scalar<value_t<LE>>, mul_binary_op> {
     return {lhs, scalar<value_t<LE>>(value_t<LE>(1.0) / rhs)};
 }
@@ -261,22 +259,13 @@ auto operator%(LE lhs, RE&& rhs) -> detail::right_binary_helper<scalar<value_t<R
 
 // Compound operators
 
-template <typename T, typename Enable = void>
-struct is_etl_assignable : std::false_type {};
-
-template <typename T>
-struct is_etl_assignable<T, std::enable_if_t<is_etl_value<T>::value>> : std::true_type {};
-
-template <typename T, typename Expr>
-struct is_etl_assignable<unary_expr<T, Expr, identity_op>> : std::true_type {};
-
 /*!
  * \brief Compound addition of the right hand side to the left hand side
  * \param lhs The left hand side, will be changed
  * \param rhs The right hand side
  * \return the left hand side
  */
-template <typename LE, typename RE, cpp_enable_if(std::is_arithmetic<RE>::value, is_etl_assignable<LE>::value)>
+template <typename LE, typename RE, cpp_enable_if(std::is_arithmetic<RE>::value, is_lhs<LE>::value)>
 LE& operator+=(LE&& lhs, RE rhs) {
     detail::scalar_add<LE>::apply(std::forward<LE>(lhs), rhs);
     return lhs;
@@ -288,7 +277,7 @@ LE& operator+=(LE&& lhs, RE rhs) {
  * \param rhs The right hand side
  * \return the left hand side
  */
-template <typename LE, typename RE, cpp_enable_if(is_etl_expr<RE>::value, is_etl_assignable<LE>::value)>
+template <typename LE, typename RE, cpp_enable_if(is_etl_expr<RE>::value, is_lhs<LE>::value)>
 LE& operator+=(LE&& lhs, RE&& rhs) {
     validate_expression(lhs, rhs);
     add_evaluate(std::forward<RE>(rhs), std::forward<LE>(lhs));
@@ -301,7 +290,7 @@ LE& operator+=(LE&& lhs, RE&& rhs) {
  * \param rhs The right hand side
  * \return the left hand side
  */
-template <typename LE, typename RE, cpp_enable_if(std::is_arithmetic<RE>::value, is_etl_assignable<LE>::value)>
+template <typename LE, typename RE, cpp_enable_if(std::is_arithmetic<RE>::value, is_lhs<LE>::value)>
 LE& operator-=(LE&& lhs, RE rhs) {
     detail::scalar_sub<LE>::apply(std::forward<LE>(lhs), rhs);
     return lhs;
@@ -313,7 +302,7 @@ LE& operator-=(LE&& lhs, RE rhs) {
  * \param rhs The right hand side
  * \return the left hand side
  */
-template <typename LE, typename RE, cpp_enable_if(is_etl_expr<RE>::value, is_etl_assignable<LE>::value)>
+template <typename LE, typename RE, cpp_enable_if(is_etl_expr<RE>::value, is_lhs<LE>::value)>
 LE& operator-=(LE&& lhs, RE&& rhs) {
     validate_expression(lhs, rhs);
     sub_evaluate(std::forward<RE>(rhs), std::forward<LE>(lhs));
@@ -326,7 +315,7 @@ LE& operator-=(LE&& lhs, RE&& rhs) {
  * \param rhs The right hand side
  * \return the left hand side
  */
-template <typename LE, typename RE, cpp_enable_if(std::is_arithmetic<RE>::value, is_etl_assignable<LE>::value)>
+template <typename LE, typename RE, cpp_enable_if(std::is_arithmetic<RE>::value, is_lhs<LE>::value)>
 LE& operator*=(LE&& lhs, RE rhs) {
     detail::scalar_mul<LE>::apply(std::forward<LE>(lhs), rhs);
     return lhs;
@@ -338,7 +327,7 @@ LE& operator*=(LE&& lhs, RE rhs) {
  * \param rhs The right hand side
  * \return the left hand side
  */
-template <typename LE, typename RE, cpp_enable_if(is_etl_expr<RE>::value, is_etl_assignable<LE>::value)>
+template <typename LE, typename RE, cpp_enable_if(is_etl_expr<RE>::value, is_lhs<LE>::value)>
 LE& operator*=(LE&& lhs, RE&& rhs) {
     validate_expression(lhs, rhs);
     mul_evaluate(std::forward<RE>(rhs), std::forward<LE>(lhs));
@@ -351,7 +340,7 @@ LE& operator*=(LE&& lhs, RE&& rhs) {
  * \param rhs The right hand side
  * \return the left hand side
  */
-template <typename LE, typename RE, cpp_enable_if(std::is_arithmetic<RE>::value, is_etl_assignable<LE>::value)>
+template <typename LE, typename RE, cpp_enable_if(std::is_arithmetic<RE>::value, is_lhs<LE>::value)>
 LE& operator>>=(LE&& lhs, RE rhs) {
     detail::scalar_mul<LE>::apply(std::forward<LE>(lhs), rhs);
     return lhs;
@@ -363,7 +352,7 @@ LE& operator>>=(LE&& lhs, RE rhs) {
  * \param rhs The right hand side
  * \return the left hand side
  */
-template <typename LE, typename RE, cpp_enable_if(is_etl_expr<RE>::value, is_etl_assignable<LE>::value)>
+template <typename LE, typename RE, cpp_enable_if(is_etl_expr<RE>::value, is_lhs<LE>::value)>
 LE& operator>>=(LE&& lhs, RE&& rhs) {
     validate_expression(lhs, rhs);
     mul_evaluate(std::forward<RE>(rhs), std::forward<LE>(lhs));
@@ -376,7 +365,7 @@ LE& operator>>=(LE&& lhs, RE&& rhs) {
  * \param rhs The right hand side
  * \return the left hand side
  */
-template <typename LE, typename RE, cpp_enable_if(std::is_arithmetic<RE>::value, is_etl_assignable<LE>::value)>
+template <typename LE, typename RE, cpp_enable_if(std::is_arithmetic<RE>::value, is_lhs<LE>::value)>
 LE& operator/=(LE&& lhs, RE rhs) {
     detail::scalar_div<LE>::apply(std::forward<LE>(lhs), rhs);
     return lhs;
@@ -388,7 +377,7 @@ LE& operator/=(LE&& lhs, RE rhs) {
  * \param rhs The right hand side
  * \return the left hand side
  */
-template <typename LE, typename RE, cpp_enable_if(is_etl_expr<RE>::value, is_etl_assignable<LE>::value)>
+template <typename LE, typename RE, cpp_enable_if(is_etl_expr<RE>::value, is_lhs<LE>::value)>
 LE& operator/=(LE&& lhs, RE&& rhs) {
     validate_expression(lhs, rhs);
     div_evaluate(std::forward<RE>(rhs), std::forward<LE>(lhs));
@@ -401,7 +390,7 @@ LE& operator/=(LE&& lhs, RE&& rhs) {
  * \param rhs The right hand side
  * \return the left hand side
  */
-template <typename LE, typename RE, cpp_enable_if(std::is_arithmetic<RE>::value, is_etl_assignable<LE>::value)>
+template <typename LE, typename RE, cpp_enable_if(std::is_arithmetic<RE>::value, is_lhs<LE>::value)>
 LE& operator%=(LE&& lhs, RE rhs) {
     detail::scalar_mod<LE>::apply(std::forward<LE>(lhs), rhs);
     return lhs;
@@ -413,7 +402,7 @@ LE& operator%=(LE&& lhs, RE rhs) {
  * \param rhs The right hand side
  * \return the left hand side
  */
-template <typename LE, typename RE, cpp_enable_if(is_etl_expr<RE>::value, is_etl_assignable<LE>::value)>
+template <typename LE, typename RE, cpp_enable_if(is_etl_expr<RE>::value, is_lhs<LE>::value)>
 LE& operator%=(LE&& lhs, RE&& rhs) {
     validate_expression(lhs, rhs);
     mod_evaluate(std::forward<RE>(rhs), std::forward<LE>(lhs));
@@ -422,12 +411,22 @@ LE& operator%=(LE&& lhs, RE&& rhs) {
 
 // Apply an unary expression on an ETL expression (vector,matrix,binary,unary)
 
-template <typename E, cpp_enable_if(is_etl_expr<E>::value)>
+/*!
+ * \Apply Unary minus on the expression
+ * \param value The expression on which to apply the operator
+ * \return an expression representing the unary minus of the given expression
+ */
+template <typename E>
 auto operator-(E&& value) -> detail::unary_helper<E, minus_unary_op> {
     return detail::unary_helper<E, minus_unary_op>{value};
 }
 
-template <typename E, cpp_enable_if(is_etl_expr<E>::value)>
+/*!
+ * \Apply Unary plus on the expression
+ * \param value The expression on which to apply the operator
+ * \return an expression representing the unary plus of the given expression
+ */
+template <typename E>
 auto operator+(E&& value) -> detail::unary_helper<E, plus_unary_op> {
     return detail::unary_helper<E, plus_unary_op>{value};
 }
@@ -461,7 +460,7 @@ auto max(E&& value, T v) {
  * \param rhs The right hand side ETL expression
  * \return an expression representing the max values from lhs and rhs
  */
-template <typename L, typename R, cpp_enable_if(!std::is_arithmetic<R>::value)>
+template <typename L, typename R, cpp_disable_if(std::is_arithmetic<R>::value)>
 auto max(L&& lhs, R&& rhs) -> detail::left_binary_helper_op<L, R, max_binary_op<value_t<L>, value_t<R>>> {
     static_assert(is_etl_expr<L>::value, "etl::max can only be used on ETL expressions");
     return {lhs, rhs};
@@ -485,7 +484,7 @@ auto min(E&& value, T v) {
  * \param rhs The right hand side ETL expression
  * \return an expression representing the min values from lhs and rhs
  */
-template <typename L, typename R, cpp_enable_if(!std::is_arithmetic<R>::value)>
+template <typename L, typename R, cpp_disable_if(std::is_arithmetic<R>::value)>
 auto min(L&& lhs, R&& rhs) -> detail::left_binary_helper_op<L, R, min_binary_op<value_t<L>, value_t<R>>> {
     static_assert(is_etl_expr<L>::value, "etl::max can only be used on ETL expressions");
     return {lhs, rhs};
@@ -666,18 +665,33 @@ auto conj(E&& value) -> unary_expr<value_t<E>, detail::build_type<E>, conj_unary
     return unary_expr<value_t<E>, detail::build_type<E>, conj_unary_op<value_t<E>>>{value};
 }
 
+/*!
+ * \brief Add some uniform noise (0, 1.0) to the given expression
+ * \param value The input ETL expression
+ * \return an expression representing the input expression plus noise
+ */
 template <typename E>
 auto uniform_noise(E&& value) -> detail::unary_helper<E, uniform_noise_unary_op> {
     static_assert(is_etl_expr<E>::value, "etl::uniform_noise can only be used on ETL expressions");
     return detail::unary_helper<E, uniform_noise_unary_op>{value};
 }
 
+/*!
+ * \brief Add some normal noise (0, 1.0) to the given expression
+ * \param value The input ETL expression
+ * \return an expression representing the input expression plus noise
+ */
 template <typename E>
 auto normal_noise(E&& value) -> detail::unary_helper<E, normal_noise_unary_op> {
     static_assert(is_etl_expr<E>::value, "etl::normal_noise can only be used on ETL expressions");
     return detail::unary_helper<E, normal_noise_unary_op>{value};
 }
 
+/*!
+ * \brief Add some normal noise (0, sigmoid(x)) to the given expression
+ * \param value The input ETL expression
+ * \return an expression representing the input expression plus noise
+ */
 template <typename E>
 auto logistic_noise(E&& value) -> detail::unary_helper<E, logistic_noise_unary_op> {
     static_assert(is_etl_expr<E>::value, "etl::logistic_noise can only be used on ETL expressions");
@@ -845,18 +859,33 @@ auto r_bernoulli(const E& value) -> detail::unary_helper<E, reverse_bernoulli_un
     return detail::unary_helper<E, reverse_bernoulli_unary_op>{value};
 }
 
+/*!
+ * \brief Return the derivative of the tanh function of the given ETL expression.
+ * \param value The ETL expression
+ * \return An ETL expression representing the derivative of the tanh function of the input.
+ */
 template <typename E>
 auto tanh_derivative(E&& value) -> decltype(1.0 - (value >> value)) {
     static_assert(is_etl_expr<E>::value, "etl::tanh_derivative can only be used on ETL expressions");
     return 1.0 - (value >> value);
 }
 
+/*!
+ * \brief Return the relu activation of the given ETL expression.
+ * \param value The ETL expression
+ * \return An ETL expression representing the relu activation of the input.
+ */
 template <typename E>
 auto relu(E&& value) -> decltype(max(value, 0.0)) {
     static_assert(is_etl_expr<E>::value, "etl::relu can only be used on ETL expressions");
     return max(value, 0.0);
 }
 
+/*!
+ * \brief Return the derivative of the relu function of the given ETL expression.
+ * \param value The ETL expression
+ * \return An ETL expression representing the derivative of the relu function of the input.
+ */
 template <typename E>
 auto relu_derivative(const E& value) -> detail::unary_helper<E, relu_derivative_op> {
     static_assert(is_etl_expr<E>::value, "etl::relu_derivative can only be used on ETL expressions");
@@ -964,21 +993,21 @@ auto rep_l(E&& value) -> unary_expr<value_t<E>, rep_l_transformer<detail::build_
     return unary_expr<value_t<E>, rep_l_transformer<detail::build_type<E>, D1, D...>, transform_op>{rep_l_transformer<detail::build_type<E>, D1, D...>(value)};
 }
 
-template <typename... D, typename E, cpp_enable_if(cpp::all_convertible_to<std::size_t, std::size_t, D...>::value)>
+template <typename... D, typename E>
 auto rep(E&& value, std::size_t d1, D... d) -> unary_expr<value_t<E>, dyn_rep_r_transformer<detail::build_type<E>, 1 + sizeof...(D)>, transform_op> {
     static_assert(is_etl_expr<E>::value, "etl::rep can only be used on ETL expressions");
     return unary_expr<value_t<E>, dyn_rep_r_transformer<detail::build_type<E>, 1 + sizeof...(D)>, transform_op>{
         dyn_rep_r_transformer<detail::build_type<E>, 1 + sizeof...(D)>(value, {{d1, static_cast<std::size_t>(d)...}})};
 }
 
-template <typename... D, typename E, cpp_enable_if(cpp::all_convertible_to<std::size_t, std::size_t, D...>::value)>
+template <typename... D, typename E>
 auto rep_r(E&& value, std::size_t d1, D... d) -> unary_expr<value_t<E>, dyn_rep_r_transformer<detail::build_type<E>, 1 + sizeof...(D)>, transform_op> {
     static_assert(is_etl_expr<E>::value, "etl::rep_r can only be used on ETL expressions");
     return unary_expr<value_t<E>, dyn_rep_r_transformer<detail::build_type<E>, 1 + sizeof...(D)>, transform_op>{
         dyn_rep_r_transformer<detail::build_type<E>, 1 + sizeof...(D)>(value, {{d1, static_cast<std::size_t>(d)...}})};
 }
 
-template <typename... D, typename E, cpp_enable_if(cpp::all_convertible_to<std::size_t, std::size_t, D...>::value)>
+template <typename... D, typename E>
 auto rep_l(E&& value, std::size_t d1, D... d) -> unary_expr<value_t<E>, dyn_rep_l_transformer<detail::build_type<E>, 1 + sizeof...(D)>, transform_op> {
     static_assert(is_etl_expr<E>::value, "etl::rep_l can only be used on ETL expressions");
     return unary_expr<value_t<E>, dyn_rep_l_transformer<detail::build_type<E>, 1 + sizeof...(D)>, transform_op>{
@@ -1099,7 +1128,6 @@ auto ctrans(const E& value){
  */
 template <typename A, typename B>
 value_t<A> dot(const A& a, const B& b) {
-    static_assert(is_etl_expr<A>::value && is_etl_expr<B>::value, "etl::dot can only be used on ETL expressions");
     validate_expression(a, b);
     return detail::dot_impl<A, B>::apply(a, b);
 }
@@ -1124,7 +1152,7 @@ value_t<E> sum(E&& values) {
  * \param values The expression to reduce
  * \return The mean of the values of the expression
  */
-template <typename E, cpp_enable_if(is_etl_expr<E>::value)>
+template <typename E>
 value_t<E> mean(E&& values) {
     static_assert(is_etl_expr<E>::value, "etl::mean can only be used on ETL expressions");
 

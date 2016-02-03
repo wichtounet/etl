@@ -144,7 +144,7 @@ void inplace_zifft2_kernel(A&& a, std::size_t d1, std::size_t d2) {
 
 template <typename A, typename C, cpp_enable_if(all_single_precision<A>::value)>
 void fft1(A&& a, C&& c) {
-    std::copy(a.begin(), a.end(), c.begin());
+    standard_evaluator::direct_copy(a.memory_start(), a.memory_end(), c.memory_start());
 
     c.gpu_allocate_copy_if_necessary();
 
@@ -156,7 +156,7 @@ void fft1(A&& a, C&& c) {
 
 template <typename A, typename C, cpp_enable_if(all_double_precision<A>::value)>
 void fft1(A&& a, C&& c) {
-    std::copy(a.begin(), a.end(), c.begin());
+    standard_evaluator::direct_copy(a.memory_start(), a.memory_end(), c.memory_start());
 
     c.gpu_allocate_copy_if_necessary();
 
@@ -195,7 +195,7 @@ void fft1_many(A&& a, C&& c) {
     std::size_t n     = etl::dim<N - 1>(a); //Size of the transform
     std::size_t batch = etl::size(a) / n;   //Number of batch
 
-    std::copy(a.begin(), a.end(), c.begin());
+    standard_evaluator::direct_copy(a.memory_start(), a.memory_end(), c.memory_start());
 
     c.gpu_allocate_copy_if_necessary();
 
@@ -212,7 +212,7 @@ void fft1_many(A&& a, C&& c) {
     std::size_t n     = etl::dim<N - 1>(a); //Size of the transform
     std::size_t batch = etl::size(a) / n;   //Number of batch
 
-    std::copy(a.begin(), a.end(), c.begin());
+    standard_evaluator::direct_copy(a.memory_start(), a.memory_end(), c.memory_start());
 
     c.gpu_allocate_copy_if_necessary();
 
@@ -320,8 +320,8 @@ void fft1_convolve(A&& a, B&& b, C&& c) {
     auto a_padded = allocate<std::complex<float>>(size);
     auto b_padded = allocate<std::complex<float>>(size);
 
-    std::copy(a.begin(), a.end(), a_padded.get());
-    std::copy(b.begin(), b.end(), b_padded.get());
+    standard_evaluator::direct_copy(a.memory_start(), a.memory_end(), a_padded.get());
+    standard_evaluator::direct_copy(b.memory_start(), b.memory_end(), b_padded.get());
 
     auto gpu_a = impl::cuda::cuda_allocate_copy(a_padded.get(), size);
     auto gpu_b = impl::cuda::cuda_allocate_copy(b_padded.get(), size);
@@ -359,8 +359,8 @@ void fft1_convolve(A&& a, B&& b, C&& c) {
     auto a_padded = allocate<std::complex<double>>(size);
     auto b_padded = allocate<std::complex<double>>(size);
 
-    std::copy(a.begin(), a.end(), a_padded.get());
-    std::copy(b.begin(), b.end(), b_padded.get());
+    standard_evaluator::direct_copy(a.memory_start(), a.memory_end(), a_padded.get());
+    standard_evaluator::direct_copy(b.memory_start(), b.memory_end(), b_padded.get());
 
     auto gpu_a = impl::cuda::cuda_allocate_copy(a_padded.get(), size);
     auto gpu_b = impl::cuda::cuda_allocate_copy(b_padded.get(), size);
@@ -390,7 +390,7 @@ void fft1_convolve(A&& a, B&& b, C&& c) {
 
 template <typename A, typename C, cpp_enable_if(all_single_precision<A>::value)>
 void fft2(A&& a, C&& c) {
-    std::copy(a.begin(), a.end(), c.begin());
+    standard_evaluator::direct_copy(a.memory_start(), a.memory_end(), c.memory_start());
 
     c.gpu_allocate_copy_if_necessary();
 
@@ -402,7 +402,7 @@ void fft2(A&& a, C&& c) {
 
 template <typename A, typename C, cpp_enable_if(all_double_precision<A>::value)>
 void fft2(A&& a, C&& c) {
-    std::copy(a.begin(), a.end(), c.begin());
+    standard_evaluator::direct_copy(a.memory_start(), a.memory_end(), c.memory_start());
 
     c.gpu_allocate_copy_if_necessary();
 
@@ -498,7 +498,7 @@ void fft2_many(A&& a, C&& c) {
     std::size_t n2    = etl::dim<N - 1>(a);       //Size of the transform
     std::size_t batch = etl::size(a) / (n1 * n2); //Number of batch
 
-    std::copy(a.begin(), a.end(), c.begin());
+    standard_evaluator::direct_copy(a.memory_start(), a.memory_end(), c.memory_start());
 
     c.gpu_allocate_copy_if_necessary();
 
@@ -516,7 +516,7 @@ void fft2_many(A&& a, C&& c) {
     std::size_t n2    = etl::dim<N - 1>(a);       //Size of the transform
     std::size_t batch = etl::size(a) / (n1 * n2); //Number of batch
 
-    std::copy(a.begin(), a.end(), c.begin());
+    standard_evaluator::direct_copy(a.memory_start(), a.memory_end(), c.memory_start());
 
     c.gpu_allocate_copy_if_necessary();
 
@@ -699,10 +699,10 @@ template <typename A, typename C>
 void fft2_many(A&& /*unused*/, C&& /*unused*/) {}
 
 template <typename A, typename B, typename C>
-void fft1_convolve(A&& /*unused*/, C&& /*unused*/) {}
+void fft1_convolve(A&& /*unused*/, B&& /*unused*/, C&& /*unused*/) {}
 
 template <typename A, typename B, typename C>
-void fft2_convolve(A&& /*unused*/, C&& /*unused*/) {}
+void fft2_convolve(A&& /*unused*/, B&& /*unused*/, C&& /*unused*/) {}
 
 #endif
 

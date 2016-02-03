@@ -27,7 +27,18 @@ using cdouble = std::complex<double>;
 
 inline void cublas_geam(cublasHandle_t handle, cublasOperation_t transa, cublasOperation_t transb, int m, int n,
                         const float* alpha, const float* A, int lda, const float* beta, const float* B, int ldb, float* C, int ldc) {
+    std::cout << "m:" << m << std::endl;
+    std::cout << "n:" << n << std::endl;
+    std::cout << "alpha:" << *alpha << std::endl;
+    std::cout << "A:" << A << std::endl;
+    std::cout << "lda:" << lda << std::endl;
+    std::cout << "beta:" << *beta << std::endl;
+    std::cout << "B:" << B << std::endl;
+    std::cout << "ldb:" << ldb << std::endl;
+    std::cout << "C:" << C << std::endl;
+    std::cout << "ldc:" << ldc << std::endl;
     cublasSgeam(handle, transa, transb, m, n, alpha, A, lda, beta, B, ldb, C, ldc);
+    std::cout << "after sgream" << std::endl;
 }
 
 inline void cublas_geam(cublasHandle_t handle, cublasOperation_t transa, cublasOperation_t transb, int m, int n,
@@ -52,57 +63,44 @@ inline void cublas_geam(cublasHandle_t handle, cublasOperation_t transa, cublasO
                 reinterpret_cast<cuDoubleComplex*>(C), ldc);
 }
 
+//Apparenttly, I'm way too stupid to handle xgeam from cublas, therefore I need to do it
+//by hand, very innefficiently
+
 template <typename C, typename T>
-void copy_matrix(cublas_handle& handle, impl::cuda::cuda_memory<T>& gpu, C&& c) {
+void copy_matrix(cublas_handle& , impl::cuda::cuda_memory<T>& gpu, C&& c) {
+    cudaMemcpy(c.memory_start(), gpu.get(), etl::size(c) * sizeof(T), cudaMemcpyDeviceToHost);
+
     if (decay_traits<C>::storage_order == order::RowMajor) {
-        auto gpu_d = impl::cuda::cuda_allocate(c);
+        auto tmp = force_temporary(c);
 
-        T alpha = 1.0;
-        T beta  = 0.0;
+        std::size_t oi = 0;
 
-        cublas_geam(
-            handle.get(),
-            CUBLAS_OP_T, CUBLAS_OP_N,
-            etl::rows(c), etl::columns(c),
-            &alpha,
-            gpu.get(), etl::columns(c),
-            &beta,
-            gpu_d.get(), etl::columns(c),
-            gpu_d.get(), etl::columns(c));
-
-        cudaMemcpy(c.memory_start(), gpu_d.get(), etl::size(c) * sizeof(T), cudaMemcpyDeviceToHost);
-    } else {
-        cudaMemcpy(c.memory_start(), gpu.get(), etl::size(c) * sizeof(T), cudaMemcpyDeviceToHost);
+        for(std::size_t j = 0; j < etl::columns(c); ++j){
+            for(std::size_t i = 0; i < etl::rows(c); ++i){
+                c[i * etl::columns(c) + j] = tmp[oi++];
+            }
+        }
     }
 }
 
 template <typename C>
-void copy_matrix(cublas_handle& handle, C&& c) {
-    using T = value_t<C>;
+void copy_matrix(cublas_handle& , C&& c) {
+    c.gpu_copy_from();
 
     if (decay_traits<C>::storage_order == order::RowMajor) {
-        auto gpu_d = impl::cuda::cuda_allocate(c);
+        auto tmp = force_temporary(c);
 
-        T alpha = 1.0;
-        T beta  = 0.0;
+        std::size_t oi = 0;
 
-        cublas_geam(
-            handle.get(),
-            CUBLAS_OP_T, CUBLAS_OP_N,
-            etl::rows(c), etl::columns(c),
-            &alpha,
-            c.gpu_memory(), etl::columns(c),
-            &beta,
-            gpu_d.get(), etl::columns(c),
-            gpu_d.get(), etl::columns(c));
-
-        c.gpu_reallocate(std::move(gpu_d));
+        for(std::size_t j = 0; j < etl::columns(c); ++j){
+            for(std::size_t i = 0; i < etl::rows(c); ++i){
+                c[i * etl::columns(c) + j] = tmp[oi++];
+            }
+        }
     }
-
-    c.gpu_copy_from();
 }
 
-template <typename A, typename B, typename C, cpp_enable_if(all_dma<A, B, C>::value&& all_single_precision<A, B, C>::value)>
+template <typename A, typename B, typename C, cpp_enable_if(all_dma<A, B, C>::value, all_single_precision<A, B, C>::value)>
 void gemm(A&& a, B&& b, C&& c) {
     cublas_handle handle = start_cublas();
 
@@ -150,7 +148,7 @@ void gemm(A&& a, B&& b, C&& c) {
     c.gpu_evict();
 }
 
-template <typename A, typename B, typename C, cpp_enable_if(all_dma<A, B, C>::value&& all_double_precision<A, B, C>::value)>
+template <typename A, typename B, typename C, cpp_enable_if(all_dma<A, B, C>::value, all_double_precision<A, B, C>::value)>
 void gemm(A&& a, B&& b, C&& c) {
     cublas_handle handle = start_cublas();
 
@@ -198,7 +196,7 @@ void gemm(A&& a, B&& b, C&& c) {
     c.gpu_evict();
 }
 
-template <typename A, typename B, typename C, cpp_enable_if(all_dma<A, B, C>::value&& all_complex_single_precision<A, B, C>::value)>
+template <typename A, typename B, typename C, cpp_enable_if(all_dma<A, B, C>::value, all_complex_single_precision<A, B, C>::value)>
 void gemm(A&& a, B&& b, C&& c) {
     cublas_handle handle = start_cublas();
 
@@ -246,7 +244,7 @@ void gemm(A&& a, B&& b, C&& c) {
     c.gpu_evict();
 }
 
-template <typename A, typename B, typename C, cpp_enable_if(all_dma<A, B, C>::value&& all_complex_double_precision<A, B, C>::value)>
+template <typename A, typename B, typename C, cpp_enable_if(all_dma<A, B, C>::value, all_complex_double_precision<A, B, C>::value)>
 void gemm(A&& a, B&& b, C&& c) {
     cublas_handle handle = start_cublas();
 
@@ -294,7 +292,7 @@ void gemm(A&& a, B&& b, C&& c) {
     c.gpu_evict();
 }
 
-template <typename A, typename B, typename C, cpp_enable_if(all_dma<A, B, C>::value&& all_single_precision<A, B, C>::value)>
+template <typename A, typename B, typename C, cpp_enable_if(all_dma<A, B, C>::value, all_single_precision<A, B, C>::value)>
 void gemv(A&& a, B&& b, C&& c) {
     cublas_handle handle = start_cublas();
 
@@ -340,7 +338,7 @@ void gemv(A&& a, B&& b, C&& c) {
     c.gpu_evict();
 }
 
-template <typename A, typename B, typename C, cpp_enable_if(all_dma<A, B, C>::value&& all_double_precision<A, B, C>::value)>
+template <typename A, typename B, typename C, cpp_enable_if(all_dma<A, B, C>::value, all_double_precision<A, B, C>::value)>
 void gemv(A&& a, B&& b, C&& c) {
     cublas_handle handle = start_cublas();
 
@@ -386,7 +384,7 @@ void gemv(A&& a, B&& b, C&& c) {
     c.gpu_evict();
 }
 
-template <typename A, typename B, typename C, cpp_enable_if(all_dma<A, B, C>::value&& all_complex_single_precision<A, B, C>::value)>
+template <typename A, typename B, typename C, cpp_enable_if(all_dma<A, B, C>::value, all_complex_single_precision<A, B, C>::value)>
 void gemv(A&& a, B&& b, C&& c) {
     cublas_handle handle = start_cublas();
 
@@ -432,7 +430,7 @@ void gemv(A&& a, B&& b, C&& c) {
     c.gpu_evict();
 }
 
-template <typename A, typename B, typename C, cpp_enable_if(all_dma<A, B, C>::value&& all_complex_double_precision<A, B, C>::value)>
+template <typename A, typename B, typename C, cpp_enable_if(all_dma<A, B, C>::value, all_complex_double_precision<A, B, C>::value)>
 void gemv(A&& a, B&& b, C&& c) {
     cublas_handle handle = start_cublas();
 
@@ -478,7 +476,7 @@ void gemv(A&& a, B&& b, C&& c) {
     c.gpu_evict();
 }
 
-template <typename A, typename B, typename C, cpp_enable_if(all_dma<A, B, C>::value&& all_single_precision<A, B, C>::value)>
+template <typename A, typename B, typename C, cpp_enable_if(all_dma<A, B, C>::value, all_single_precision<A, B, C>::value)>
 void gevm(A&& a, B&& b, C&& c) {
     cublas_handle handle = start_cublas();
 
@@ -524,7 +522,7 @@ void gevm(A&& a, B&& b, C&& c) {
     c.gpu_evict();
 }
 
-template <typename A, typename B, typename C, cpp_enable_if(all_dma<A, B, C>::value&& all_double_precision<A, B, C>::value)>
+template <typename A, typename B, typename C, cpp_enable_if(all_dma<A, B, C>::value, all_double_precision<A, B, C>::value)>
 void gevm(A&& a, B&& b, C&& c) {
     cublas_handle handle = start_cublas();
 
@@ -570,7 +568,7 @@ void gevm(A&& a, B&& b, C&& c) {
     c.gpu_evict();
 }
 
-template <typename A, typename B, typename C, cpp_enable_if(all_dma<A, B, C>::value&& all_complex_single_precision<A, B, C>::value)>
+template <typename A, typename B, typename C, cpp_enable_if(all_dma<A, B, C>::value, all_complex_single_precision<A, B, C>::value)>
 void gevm(A&& a, B&& b, C&& c) {
     cublas_handle handle = start_cublas();
 
@@ -616,7 +614,7 @@ void gevm(A&& a, B&& b, C&& c) {
     c.gpu_evict();
 }
 
-template <typename A, typename B, typename C, cpp_enable_if(all_dma<A, B, C>::value&& all_complex_double_precision<A, B, C>::value)>
+template <typename A, typename B, typename C, cpp_enable_if(all_dma<A, B, C>::value, all_complex_double_precision<A, B, C>::value)>
 void gevm(A&& a, B&& b, C&& c) {
     cublas_handle handle = start_cublas();
 

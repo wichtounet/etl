@@ -20,6 +20,9 @@ CXX_FLAGS += -pedantic -Werror -Winvalid-pch
 # Add includes
 CXX_FLAGS += -Ilib/include -ICatch/include -Itest/include
 
+# Support for extra flags
+CXX_FLAGS += $(EXTRA_CXX_FLAGS)
+
 ifneq (,$(ETL_MKL))
 CXX_FLAGS += -DETL_MKL_MODE $(shell pkg-config --cflags $(BLAS_PKG))
 LD_FLAGS += $(shell pkg-config --libs $(BLAS_PKG))
@@ -63,6 +66,11 @@ LD_FLAGS += -pthread
 # Enable coverage if not disabled by the user
 ifeq (,$(ETL_NO_COVERAGE))
 $(eval $(call enable_coverage))
+endif
+
+# Enable sonar workarounds
+ifeq (,$(ETL_SONAR))
+CXX_FLAGS += -DSONAR_ANALYSIS
 endif
 
 # Enable Clang sanitizers in debug mode
