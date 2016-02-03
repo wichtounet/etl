@@ -37,13 +37,13 @@ void check_conv_1d_sizes(const I& /*input*/, const K& /*kernel*/, const C& /*con
 
     static_assert(
         TT != conv_type::FULL || etl_traits<C>::template dim<0>() == etl_traits<I>::template dim<0>() + etl_traits<K>::template dim<0>() - 1,
-        "Invalid sizes for 'full'convolution");
+        "Invalid sizes for 'full' convolution");
     static_assert(
         TT != conv_type::SAME || etl_traits<C>::template dim<0>() == etl_traits<I>::template dim<0>(),
-        "Invalid sizes for 'same'convolution");
+        "Invalid sizes for 'same' convolution");
     static_assert(
         TT != conv_type::VALID || etl_traits<C>::template dim<0>() == etl_traits<I>::template dim<0>() - etl_traits<K>::template dim<0>() + 1,
-        "Invalid sizes for 'valid'convolution");
+        "Invalid sizes for 'valid' convolution");
 }
 
 template <conv_type TT, typename I, typename K, typename C, cpp_disable_if(all_fast<I, K, C>::value)>
@@ -73,13 +73,13 @@ void check_conv_2d_sizes(const I& /*input*/, const K& /*kernel*/, const C& /*con
 
     static_assert(
         TT != conv_type::FULL || (etl_traits<C>::template dim<0>() == etl_traits<I>::template dim<0>() + etl_traits<K>::template dim<0>() - 1 && etl_traits<C>::template dim<1>() == etl_traits<I>::template dim<1>() + etl_traits<K>::template dim<1>() - 1),
-        "Invalid sizes for 'full'convolution");
+        "Invalid sizes for 'full' convolution");
     static_assert(
         TT != conv_type::SAME || (etl_traits<C>::template dim<0>() == etl_traits<I>::template dim<0>() && etl_traits<C>::template dim<1>() == etl_traits<I>::template dim<1>()),
-        "Invalid sizes for 'same'convolution");
+        "Invalid sizes for 'same' convolution");
     static_assert(
         TT != conv_type::VALID || (etl_traits<C>::template dim<0>() == etl_traits<I>::template dim<0>() - etl_traits<K>::template dim<0>() + 1 && etl_traits<C>::template dim<1>() == etl_traits<I>::template dim<1>() - etl_traits<K>::template dim<1>() + 1),
-        "Invalid sizes for 'valid'convolution");
+        "Invalid sizes for 'valid' convolution");
 }
 
 template <conv_type TT, typename I, typename K, typename C, cpp_enable_if(etl_traits<I>::dimensions() == 3, all_fast<I, K, C>::value)>
