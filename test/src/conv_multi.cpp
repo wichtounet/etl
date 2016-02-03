@@ -105,5 +105,68 @@ TEMPLATE_TEST_CASE_2("conv_2d_valid_multi/5", "[conv] [conv2]", Z, double, float
     }
 }
 
-//TODO Add tests for conv_2d_valid_multi when neithe rthe kernel nor
-//the image are square.
+TEMPLATE_TEST_CASE_2("conv_2d_valid_multi/6", "[conv] [conv2]", Z, double, float) {
+    etl::fast_matrix<Z, 7, 7> I(etl::magic<Z>(7));
+    etl::fast_matrix<Z, 3, 5, 3> K;
+
+    K(0) = 1.5 * etl::sequence_generator(10);
+    K(0) = -2.5 * etl::sequence_generator(5);
+    K(0) = 1.3 * etl::sequence_generator(12);
+
+    etl::fast_matrix<Z, 3, 3, 5> c_1;
+    etl::fast_matrix<Z, 3, 3, 5> c_2;
+
+    c_1(0) = conv_2d_valid(I, K(0));
+    c_1(1) = conv_2d_valid(I, K(1));
+    c_1(2) = conv_2d_valid(I, K(2));
+
+    conv_2d_valid_multi(I, K, c_2);
+
+    for (std::size_t i = 0; i < etl::size(c_1); ++i) {
+        REQUIRE(c_1[i] == Approx(c_2[i]));
+    }
+}
+
+TEMPLATE_TEST_CASE_2("conv_2d_valid_multi/7", "[conv] [conv2]", Z, double, float) {
+    etl::fast_matrix<Z, 9, 7> I(0.5 * etl::sequence_generator(42));
+    etl::fast_matrix<Z, 3, 5, 5> K;
+
+    K(0) = 1.5 * etl::sequence_generator(10);
+    K(0) = -2.5 * etl::sequence_generator(5);
+    K(0) = 1.3 * etl::sequence_generator(12);
+
+    etl::fast_matrix<Z, 3, 5, 3> c_1;
+    etl::fast_matrix<Z, 3, 5, 3> c_2;
+
+    c_1(0) = conv_2d_valid(I, K(0));
+    c_1(1) = conv_2d_valid(I, K(1));
+    c_1(2) = conv_2d_valid(I, K(2));
+
+    conv_2d_valid_multi(I, K, c_2);
+
+    for (std::size_t i = 0; i < etl::size(c_1); ++i) {
+        REQUIRE(c_1[i] == Approx(c_2[i]));
+    }
+}
+
+TEMPLATE_TEST_CASE_2("conv_2d_valid_multi/8", "[conv] [conv2]", Z, double, float) {
+    etl::fast_matrix<Z, 9, 7> I(0.5 * etl::sequence_generator(42));
+    etl::fast_matrix<Z, 3, 3, 5> K;
+
+    K(0) = 1.5 * etl::sequence_generator(10);
+    K(0) = -1.5 * etl::sequence_generator(5);
+    K(0) = 1.3 * etl::sequence_generator(12);
+
+    etl::fast_matrix<Z, 3, 7, 3> c_1;
+    etl::fast_matrix<Z, 3, 7, 3> c_2;
+
+    c_1(0) = conv_2d_valid(I, K(0));
+    c_1(1) = conv_2d_valid(I, K(1));
+    c_1(2) = conv_2d_valid(I, K(2));
+
+    conv_2d_valid_multi(I, K, c_2);
+
+    for (std::size_t i = 0; i < etl::size(c_1); ++i) {
+        REQUIRE(c_1[i] == Approx(c_2[i]));
+    }
+}
