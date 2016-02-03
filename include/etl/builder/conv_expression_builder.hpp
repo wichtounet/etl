@@ -435,7 +435,7 @@ void conv_2d_valid_multi(A&& input, B&& kernels, C&& features) {
 
     //TODO This version of the implementation should only be used if very fast MMUL is available
 
-    if (input.is_square() && kernels.is_sub_square()) {
+    if (kernels.is_sub_square()) {
         const std::size_t v1 = etl::dim<0>(input);
         const std::size_t v2 = etl::dim<1>(input);
         const std::size_t k1 = etl::dim<1>(kernels);
@@ -454,7 +454,7 @@ void conv_2d_valid_multi(A&& input, B&& kernels, C&& features) {
 
 template <typename A, typename B, typename C, typename D>
 void conv_2d_valid_multi(A&& input, B&& kernels, C&& features, D&& input_col) {
-    cpp_assert(input.is_square() && kernels.is_sub_square(), "Only implemented for square input and kernels");
+    cpp_assert(kernels.is_sub_square(), "Only implemented for square input and kernels");
 
     //TODO Validate inputs
 
@@ -467,9 +467,9 @@ void conv_2d_valid_multi(A&& input, B&& kernels, C&& features, D&& input_col) {
     conv_2d_valid_multi_prepared(std::forward<A>(input), prepared_k, std::forward<C>(features), std::forward<D>(input_col));
 }
 
-template <typename A, typename B, typename C, typename D>
+template <typename A, typename B, typename C, typename D, cpp_enable_if(inplace_transpose_able<C>::value)>
 void conv_2d_valid_multi_prepared(A&& input, B&& kernels, C&& features, D&& input_col) {
-    cpp_assert(input.is_square() && kernels.is_sub_square(), "Only implemented for square input and kernels");
+    cpp_assert(kernels.is_sub_square(), "Only implemented for square input and kernels");
 
     //TODO Validate inputs
 
@@ -486,6 +486,34 @@ void conv_2d_valid_multi_prepared(A&& input, B&& kernels, C&& features, D&& inpu
 
     for (std::size_t k = 0; k < K; ++k) {
         features(k).transpose_inplace();
+    }
+}
+
+template <typename A, typename B, typename C, typename D, cpp_enable_if(!inplace_transpose_able<C>::value)>
+void conv_2d_valid_multi_prepared(A&& input, B&& kernels, C&& features, D&& input_col) {
+    static_assert(all_fast<C>::value, "inplace_transpose_able should only be false for rectangular fast matrices");
+    cpp_assert(kernels.is_sub_square(), "Only implemented for square input and kernels");
+
+    static constexpr const std::size_t K = decay_traits<C>::template dim<0>();
+    static constexpr const std::size_t F2 = decay_traits<C>::template dim<1>();
+    static constexpr const std::size_t F3 = decay_traits<C>::template dim<2>();
+
+    etl::fast_dyn_matrix<value_t<C>, K, F3, F2> features_t;
+
+    //TODO Validate inputs
+
+    const std::size_t k1 = etl::dim<1>(kernels);
+    const std::size_t k2 = etl::dim<2>(kernels);
+
+    im2col_direct(input_col, input, k1, k2);
+
+    *mul(
+        etl::reshape(kernels, K, k1 * k2),
+        input_col,
+        etl::reshape(features_t, K, F2 * F3));
+
+    for (std::size_t k = 0; k < K; ++k) {
+        features(k) = transpose(features_t(k));
     }
 }
 
