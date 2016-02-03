@@ -18,6 +18,7 @@
 #include <thread>
 
 // cpp_utils
+#include "cpp_utils/compat.hpp"
 #include "cpp_utils/tmp.hpp"
 #include "cpp_utils/likely.hpp"
 #include "cpp_utils/assert.hpp"
