@@ -81,7 +81,8 @@ struct cuda_memory {
 
     ~cuda_memory() {
         if(memory){
-            cudaFree(memory);
+            //Note: the const_cast is only here to allow compilation
+            cudaFree((reinterpret_cast<void*>(const_cast<std::remove_const_t<T>*>(memory))));
         }
     }
 };
