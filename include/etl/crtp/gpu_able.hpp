@@ -64,7 +64,10 @@ struct gpu_able {
      * \brief Evict the expression from GPU.
      */
     void gpu_evict() const noexcept {
-        gpu_memory_handler.reset();
+        if(is_gpu_allocated()){
+            std::cout << "gpu:: evict " << this << std::endl;
+            gpu_memory_handler.reset();
+        }
     }
 
     /*!
@@ -79,6 +82,7 @@ struct gpu_able {
      * \brief Allocate memory on the GPU for the expression
      */
     void gpu_allocate() const {
+        std::cout << "gpu:: allocate " << this << std::endl;
         gpu_memory_handler = impl::cuda::cuda_allocate(as_derived());
     }
 
@@ -95,6 +99,7 @@ struct gpu_able {
      * \brief Allocate memory on the GPU for the expression and copy the values into the GPU.
      */
     void gpu_allocate_copy() const {
+        std::cout << "gpu:: allocate_copy " << this << std::endl;
         gpu_memory_handler = impl::cuda::cuda_allocate_copy(as_derived());
     }
 
@@ -112,6 +117,7 @@ struct gpu_able {
      * \param memory The new GPU memory (will be moved)
      */
     void gpu_reallocate(impl::cuda::cuda_memory<T>&& memory){
+        std::cout << "gpu:: reallocate" << this << std::endl;
         gpu_memory_handler = std::move(memory);
     }
 
@@ -120,6 +126,7 @@ struct gpu_able {
      * \return A rvalue reference to the gpu_memory_handler.
      */
     impl::cuda::cuda_memory<T>&& gpu_release() const {
+        std::cout << "gpu:: release" << this << std::endl;
         return std::move(gpu_memory_handler);
     }
 
