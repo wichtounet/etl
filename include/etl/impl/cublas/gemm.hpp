@@ -63,33 +63,6 @@ inline void cublas_geam(cublasHandle_t handle, cublasOperation_t transa, cublasO
                 reinterpret_cast<cuDoubleComplex*>(C), ldc);
 }
 
-//Apparenttly, I'm way too stupid to handle xgeam from cublas, therefore I need to do it
-//by hand, very innefficiently
-
-template <typename CC>
-void copy_matrix(cublas_handle& handle, CC&& c) {
-    if (decay_traits<CC>::storage_order == order::RowMajor) {
-        auto gpu_tmp = impl::cuda::cuda_allocate(c);
-
-        auto alpha = value_t<CC>(1.0);
-        auto beta = value_t<CC>(0.0);
-
-        cublas_geam(handle.get(),
-                    CUBLAS_OP_T, CUBLAS_OP_N,
-                    etl::columns(c), etl::rows(c),
-                    &alpha,
-                    c.gpu_memory(), etl::rows(c), //a, lda
-                    &beta,
-                    c.gpu_memory(), etl::columns(c), //b, ldb
-                    gpu_tmp.get(), etl::columns(c)   //c, ldc
-                    );
-
-        c.gpu_reallocate(std::move(gpu_tmp));
-    }
-
-    c.gpu_copy_from();
-}
-
 template <typename A, typename B, typename C, cpp_enable_if(all_dma<A, B, C>::value, all_single_precision<A, B, C>::value)>
 void gemm(A&& a, B&& b, C&& c) {
     cublas_handle handle = start_cublas();
@@ -110,13 +83,13 @@ void gemm(A&& a, B&& b, C&& c) {
     if (row_major) {
         cublasSgemm(
             handle.get(),
-            CUBLAS_OP_T, CUBLAS_OP_T,
-            etl::rows(c), etl::columns(c), etl::columns(a),
+            CUBLAS_OP_N, CUBLAS_OP_N,
+            etl::columns(b), etl::rows(a), etl::columns(a),
             &alpha,
-            a.gpu_memory(), etl::columns(a),
             b.gpu_memory(), etl::columns(b),
+            a.gpu_memory(), etl::columns(a),
             &beta,
-            c.gpu_memory(), etl::rows(c));
+            c.gpu_memory(), etl::columns(b));
     } else {
         cublasSgemm(
             handle.get(),
@@ -131,7 +104,7 @@ void gemm(A&& a, B&& b, C&& c) {
 
     //Copy the result from GPU to CPU
 
-    copy_matrix(handle, c);
+    c.gpu_copy_from();
 
     a.gpu_evict();
     b.gpu_evict();
@@ -158,13 +131,13 @@ void gemm(A&& a, B&& b, C&& c) {
     if (row_major) {
         cublasDgemm(
             handle.get(),
-            CUBLAS_OP_T, CUBLAS_OP_T,
-            etl::rows(c), etl::columns(c), etl::columns(a),
+            CUBLAS_OP_N, CUBLAS_OP_N,
+            etl::columns(b), etl::rows(a), etl::columns(a),
             &alpha,
-            a.gpu_memory(), etl::columns(a),
             b.gpu_memory(), etl::columns(b),
+            a.gpu_memory(), etl::columns(a),
             &beta,
-            c.gpu_memory(), etl::rows(c));
+            c.gpu_memory(), etl::columns(b));
     } else {
         cublasDgemm(
             handle.get(),
@@ -179,7 +152,7 @@ void gemm(A&& a, B&& b, C&& c) {
 
     //Copy the result from GPU to CPU
 
-    copy_matrix(handle, c);
+    c.gpu_copy_from();
 
     a.gpu_evict();
     b.gpu_evict();
@@ -206,13 +179,13 @@ void gemm(A&& a, B&& b, C&& c) {
     if (row_major) {
         cublasCgemm(
             handle.get(),
-            CUBLAS_OP_T, CUBLAS_OP_T,
-            etl::rows(c), etl::columns(c), etl::columns(a),
+            CUBLAS_OP_N, CUBLAS_OP_N,
+            etl::columns(b), etl::rows(a), etl::columns(a),
             &alpha,
-            reinterpret_cast<cuComplex*>(a.gpu_memory()), etl::columns(a),
             reinterpret_cast<cuComplex*>(b.gpu_memory()), etl::columns(b),
+            reinterpret_cast<cuComplex*>(a.gpu_memory()), etl::columns(a),
             &beta,
-            reinterpret_cast<cuComplex*>(c.gpu_memory()), etl::rows(c));
+            reinterpret_cast<cuComplex*>(c.gpu_memory()), etl::columns(b));
     } else {
         cublasCgemm(
             handle.get(),
@@ -227,7 +200,7 @@ void gemm(A&& a, B&& b, C&& c) {
 
     //Copy the result from GPU to CPU
 
-    copy_matrix(handle, c);
+    c.gpu_copy_from();
 
     a.gpu_evict();
     b.gpu_evict();
@@ -254,13 +227,13 @@ void gemm(A&& a, B&& b, C&& c) {
     if (row_major) {
         cublasZgemm(
             handle.get(),
-            CUBLAS_OP_T, CUBLAS_OP_T,
-            etl::rows(c), etl::columns(c), etl::columns(a),
+            CUBLAS_OP_N, CUBLAS_OP_N,
+            etl::columns(b), etl::rows(a), etl::columns(a),
             &alpha,
-            reinterpret_cast<cuDoubleComplex*>(a.gpu_memory()), etl::columns(a),
             reinterpret_cast<cuDoubleComplex*>(b.gpu_memory()), etl::columns(b),
+            reinterpret_cast<cuDoubleComplex*>(a.gpu_memory()), etl::columns(a),
             &beta,
-            reinterpret_cast<cuDoubleComplex*>(c.gpu_memory()), etl::rows(c));
+            reinterpret_cast<cuDoubleComplex*>(c.gpu_memory()), etl::columns(b));
     } else {
         cublasZgemm(
             handle.get(),
@@ -275,7 +248,7 @@ void gemm(A&& a, B&& b, C&& c) {
 
     //Copy the result from GPU to CPU
 
-    copy_matrix(handle, c);
+    c.gpu_copy_from();
 
     a.gpu_evict();
     b.gpu_evict();
