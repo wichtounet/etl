@@ -381,6 +381,24 @@ using is_2d = cpp::bool_constant<decay_traits<T>::dimensions() == 2>;
 template <typename... E>
 using all_vectorizable = cpp::and_u<decay_traits<E>::vectorizable...>;
 
+template <typename T, typename Enable = void>
+struct inplace_transpose_able;
+
+template <typename T>
+struct inplace_transpose_able<T, std::enable_if_t<all_fast<T>::value && is_2d<T>::value>> {
+    static constexpr const bool value = decay_traits<T>::template dim<0>() == decay_traits<T>::template dim<1>();
+};
+
+template <typename T>
+struct inplace_transpose_able<T, std::enable_if_t<!all_fast<T>::value && is_2d<T>::value>> {
+    static constexpr const bool value = true;
+};
+
+template <typename T>
+struct inplace_transpose_able<T, std::enable_if_t<!is_2d<T>::value>> {
+    static constexpr const bool value = false;
+};
+
 /*!
  * \brief Specialization for value structures
  */
