@@ -66,21 +66,28 @@ inline void cublas_geam(cublasHandle_t handle, cublasOperation_t transa, cublasO
 //Apparenttly, I'm way too stupid to handle xgeam from cublas, therefore I need to do it
 //by hand, very innefficiently
 
-template <typename C>
-void copy_matrix(cublas_handle& , C&& c) {
-    c.gpu_copy_from();
+template <typename CC>
+void copy_matrix(cublas_handle& handle, CC&& c) {
+    if (decay_traits<CC>::storage_order == order::RowMajor) {
+        auto gpu_tmp = impl::cuda::cuda_allocate(c);
 
-    if (decay_traits<C>::storage_order == order::RowMajor) {
-        auto tmp = force_temporary(c);
+        auto alpha = value_t<CC>(1.0);
+        auto beta = value_t<CC>(0.0);
 
-        std::size_t oi = 0;
+        cublas_geam(handle.get(),
+                    CUBLAS_OP_T, CUBLAS_OP_N,
+                    etl::columns(c), etl::rows(c),
+                    &alpha,
+                    c.gpu_memory(), etl::rows(c), //a, lda
+                    &beta,
+                    c.gpu_memory(), etl::columns(c), //b, ldb
+                    gpu_tmp.get(), etl::columns(c)   //c, ldc
+                    );
 
-        for(std::size_t j = 0; j < etl::columns(c); ++j){
-            for(std::size_t i = 0; i < etl::rows(c); ++i){
-                c[i * etl::columns(c) + j] = tmp[oi++];
-            }
-        }
+        c.gpu_reallocate(std::move(gpu_tmp));
     }
+
+    c.gpu_copy_from();
 }
 
 template <typename A, typename B, typename C, cpp_enable_if(all_dma<A, B, C>::value, all_single_precision<A, B, C>::value)>
