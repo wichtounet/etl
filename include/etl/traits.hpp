@@ -375,6 +375,13 @@ template <typename T>
 using is_2d = cpp::bool_constant<decay_traits<T>::dimensions() == 2>;
 
 /*!
+ * \brief Traits to test if the given expression type is 3D
+ * \tparam T The ETL expression type
+ */
+template <typename T>
+using is_3d = cpp::bool_constant<decay_traits<T>::dimensions() == 3>;
+
+/*!
  * \brief Traits to test if all the given ETL expresion types are vectorizable.
  * \tparam E The ETL expression types.
  */
@@ -396,6 +403,24 @@ struct inplace_transpose_able<T, std::enable_if_t<!all_fast<T>::value && is_2d<T
 
 template <typename T>
 struct inplace_transpose_able<T, std::enable_if_t<!is_2d<T>::value>> {
+    static constexpr const bool value = false;
+};
+
+template <typename T, typename Enable = void>
+struct inplace_sub_transpose_able;
+
+template <typename T>
+struct inplace_sub_transpose_able<T, std::enable_if_t<all_fast<T>::value && is_3d<T>::value>> {
+    static constexpr const bool value = decay_traits<T>::template dim<1>() == decay_traits<T>::template dim<2>();
+};
+
+template <typename T>
+struct inplace_sub_transpose_able<T, std::enable_if_t<!all_fast<T>::value && is_3d<T>::value>> {
+    static constexpr const bool value = true;
+};
+
+template <typename T>
+struct inplace_sub_transpose_able<T, std::enable_if_t<!is_3d<T>::value>> {
     static constexpr const bool value = false;
 };
 
