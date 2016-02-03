@@ -320,8 +320,8 @@ void fft1_convolve(A&& a, B&& b, C&& c) {
     auto a_padded = allocate<std::complex<float>>(size);
     auto b_padded = allocate<std::complex<float>>(size);
 
-    standard_evaluator::direct_copy(a.memory_start(), a.memory_end(), a_padded.memory_start());
-    standard_evaluator::direct_copy(b.memory_start(), b.memory_end(), b_padded.memory_start());
+    standard_evaluator::direct_copy(a.memory_start(), a.memory_end(), a_padded.get());
+    standard_evaluator::direct_copy(b.memory_start(), b.memory_end(), b_padded.get());
 
     auto gpu_a = impl::cuda::cuda_allocate_copy(a_padded.get(), size);
     auto gpu_b = impl::cuda::cuda_allocate_copy(b_padded.get(), size);
@@ -359,8 +359,8 @@ void fft1_convolve(A&& a, B&& b, C&& c) {
     auto a_padded = allocate<std::complex<double>>(size);
     auto b_padded = allocate<std::complex<double>>(size);
 
-    standard_evaluator::direct_copy(a.memory_start(), a.memory_end(), a_padded.memory_start());
-    standard_evaluator::direct_copy(b.memory_start(), b.memory_end(), b_padded.memory_start());
+    standard_evaluator::direct_copy(a.memory_start(), a.memory_end(), a_padded.get());
+    standard_evaluator::direct_copy(b.memory_start(), b.memory_end(), b_padded.get());
 
     auto gpu_a = impl::cuda::cuda_allocate_copy(a_padded.get(), size);
     auto gpu_b = impl::cuda::cuda_allocate_copy(b_padded.get(), size);
