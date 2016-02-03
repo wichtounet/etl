@@ -80,13 +80,19 @@ struct is_cblas_enabled : std::true_type {};
 struct is_cblas_enabled : std::false_type {};
 #endif
 
+#ifdef ETL_CUDA
+static_assert(false, "ETL_CUDA should never be set directly");
+#endif
+
 #ifdef ETL_CUBLAS_MODE
 struct is_cublas_enabled : std::true_type {};
+#define ETL_CUDA
 #else
 struct is_cublas_enabled : std::false_type {};
 #endif
 
 #ifdef ETL_CUFFT_MODE
+#define ETL_CUDA
 struct is_cufft_enabled : std::true_type {};
 #else
 struct is_cufft_enabled : std::false_type {};

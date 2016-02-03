@@ -7,9 +7,8 @@
 
 #pragma once
 
-#ifdef ETL_CUBLAS_MODE
+#ifdef ETL_CUDA
 #include "etl/impl/cublas/cuda.hpp"
-#include "etl/impl/cublas/cublas.hpp"
 #endif
 
 /*!
@@ -20,7 +19,7 @@
 
 namespace etl {
 
-#ifdef ETL_CUBLAS_MODE
+#ifdef ETL_CUDA
 
 /*!
  * \brief CRTP class to inject GPU-related functions
