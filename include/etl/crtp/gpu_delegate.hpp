@@ -53,6 +53,10 @@ struct gpu_delegate {
         return as_derived().gpu_delegate();
     }
 
+    bool is_valid() const noexcept {
+        return as_derived().gpu_delegate_valid();
+    }
+
     /*!
      * \brief Indicates if the expression is allocated in GPU.
      * \return true if the expression is allocated in GPU, false otherwise
@@ -65,7 +69,9 @@ struct gpu_delegate {
      * \brief Evict the expression from GPU.
      */
     void gpu_evict() const noexcept {
-        delegate().gpu_evict();
+        if (is_valid()) {
+            delegate().gpu_evict();
+        }
     }
 
     /*!

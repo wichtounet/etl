@@ -63,7 +63,7 @@ struct evaluator_static_visitor : etl_visitor<evaluator_static_visitor, false, t
     }
 };
 
-struct gpu_clean_static_visitor : etl_visitor<gpu_clean_static_visitor, true, false> {
+struct gpu_clean_static_visitor : etl_visitor<gpu_clean_static_visitor, false, false> {
 #ifdef ETL_CUDA
     template <typename E>
     using enabled = cpp::bool_constant<true>;
@@ -72,7 +72,7 @@ struct gpu_clean_static_visitor : etl_visitor<gpu_clean_static_visitor, true, fa
     using enabled = cpp::bool_constant<false>;
 #endif
 
-    using etl_visitor<gpu_clean_static_visitor, true, false>::operator();
+    using etl_visitor<gpu_clean_static_visitor, false, false>::operator();
 
     template <typename T, cpp_enable_if(etl::is_etl_value<T>::value && !etl::is_sparse_matrix<T>::value)>
     void operator()(const T& value) const {
@@ -82,6 +82,21 @@ struct gpu_clean_static_visitor : etl_visitor<gpu_clean_static_visitor, true, fa
     template <typename T, cpp_enable_if(etl::is_sparse_matrix<T>::value)>
     void operator()(const T& /*value*/) const {
         //Nothing to do: no GPU support for sparse matrix
+    }
+
+    template <typename T, typename AExpr, typename Op, typename Forced>
+    void operator()(etl::temporary_unary_expr<T, AExpr, Op, Forced>& v) const {
+        (*this)(v.a());
+
+        v.gpu_evict();
+    }
+
+    template <typename T, typename AExpr, typename BExpr, typename Op, typename Forced>
+    void operator()(etl::temporary_binary_expr<T, AExpr, BExpr, Op, Forced>& v) const {
+        (*this)(v.a());
+        (*this)(v.b());
+
+        v.gpu_evict();
     }
 };
 
