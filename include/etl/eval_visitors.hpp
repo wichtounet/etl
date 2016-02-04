@@ -19,11 +19,11 @@ namespace etl {
 
 namespace detail {
 
-struct temporary_allocator_static_visitor : etl_visitor<temporary_allocator_static_visitor> {
+struct temporary_allocator_static_visitor : etl_visitor<temporary_allocator_static_visitor, false, true> {
     template <typename E>
     using enabled = cpp::bool_constant<decay_traits<E>::needs_temporary_visitor>;
 
-    using etl_visitor<temporary_allocator_static_visitor>::operator();
+    using etl_visitor<temporary_allocator_static_visitor, false, true>::operator();
 
     template <typename T, typename AExpr, typename Op, typename Forced>
     void operator()(etl::temporary_unary_expr<T, AExpr, Op, Forced>& v) const {
@@ -41,11 +41,11 @@ struct temporary_allocator_static_visitor : etl_visitor<temporary_allocator_stat
     }
 };
 
-struct evaluator_static_visitor : etl_visitor<evaluator_static_visitor> {
+struct evaluator_static_visitor : etl_visitor<evaluator_static_visitor, false, true> {
     template <typename E>
     using enabled = cpp::bool_constant<decay_traits<E>::needs_evaluator_visitor>;
 
-    using etl_visitor<evaluator_static_visitor>::operator();
+    using etl_visitor<evaluator_static_visitor, false, true>::operator();
 
     template <typename T, typename AExpr, typename Op, typename Forced>
     void operator()(etl::temporary_unary_expr<T, AExpr, Op, Forced>& v) const {
@@ -60,6 +60,28 @@ struct evaluator_static_visitor : etl_visitor<evaluator_static_visitor> {
         (*this)(v.b());
 
         v.evaluate();
+    }
+};
+
+struct gpu_clean_static_visitor : etl_visitor<gpu_clean_static_visitor, true, false> {
+#ifdef ETL_CUDA
+    template <typename E>
+    using enabled = cpp::bool_constant<true>;
+#else
+    template <typename E>
+    using enabled = cpp::bool_constant<false>;
+#endif
+
+    using etl_visitor<gpu_clean_static_visitor, true, false>::operator();
+
+    template <typename T, cpp_enable_if(etl::is_etl_value<T>::value && !etl::is_sparse_matrix<T>::value)>
+    void operator()(const T& value) const {
+        value.gpu_evict();
+    }
+
+    template <typename T, cpp_enable_if(etl::is_sparse_matrix<T>::value)>
+    void operator()(const T& /*value*/) const {
+        //Nothing to do: no GPU support for sparse matrix
     }
 };
 

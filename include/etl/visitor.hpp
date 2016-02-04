@@ -15,7 +15,7 @@ namespace etl {
  *
  * The default implementation is simply to visit the whole tree while not doing anything
  */
-template <typename D>
+template <typename D, bool V_T = true, bool V_V = true>
 struct etl_visitor {
     using derived_t = D; ///< The derived type
 
@@ -65,7 +65,6 @@ struct etl_visitor {
         as_derived()(transformer.rhs());
     }
 
-
     /*!
      * \brief Visit the given transformer
      * \param transformer The transformer
@@ -73,6 +72,17 @@ struct etl_visitor {
     template <typename T, cpp_enable_if(etl::is_transformer<T>::value)>
     void operator()(T& transformer) const {
         as_derived()(transformer.value());
+    }
+
+    template <typename T, cpp_enable_if_cst(V_T && is_temporary_unary_expr<T>::value)>
+    void operator()(T& v){
+        as_derived()(v.a());
+    }
+
+    template <typename T, cpp_enable_if_cst(V_T && is_temporary_binary_expr<T>::value)>
+    void operator()(T& v) const {
+        as_derived()(v.a());
+        as_derived()(v.b());
     }
 
     template <typename Generator>
@@ -85,7 +95,7 @@ struct etl_visitor {
         //Leaf
     }
 
-    template <typename T, cpp_enable_if(etl::is_etl_value<T>::value)>
+    template <typename T, cpp_enable_if(V_V && etl::is_etl_value<T>::value)>
     void operator()(const T& /*unused*/) const {
         //Leaf
     }
