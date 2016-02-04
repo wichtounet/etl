@@ -301,11 +301,8 @@ TEMPLATE_TEST_CASE_2("multiplication/expression_3", "expression", Z, double, flo
     etl::fast_matrix<Z, 3, 2> b = {7, 8, 9, 10, 11, 12};
     etl::fast_matrix<Z, 2, 2> c;
 
-    std::cout << "first" << std::endl;
     c = a * b;
-    std::cout << "second" << std::endl;
     c += a * b;
-    std::cout << "end" << std::endl;
 
     REQUIRE(c(0, 0) == 2 * 58);
     REQUIRE(c(0, 1) == 2 * 64);
