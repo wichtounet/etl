@@ -51,9 +51,9 @@ MUL_FUNCTOR(blas_gevm, etl::impl::blas::gevm(a, b, c))
 #endif
 
 #ifdef ETL_CUBLAS_MODE
-MUL_FUNCTOR(cublas_gemm, etl::impl::cublas::gemm(a, b, c))
-MUL_FUNCTOR(cublas_gemv, etl::impl::cublas::gemv(a, b, c))
-MUL_FUNCTOR(cublas_gevm, etl::impl::cublas::gevm(a, b, c))
+MUL_FUNCTOR(cublas_gemm, etl::impl::cublas::gemm(a, b, c); c.gpu_copy_from_if_necessary())
+MUL_FUNCTOR(cublas_gemv, etl::impl::cublas::gemv(a, b, c); c.gpu_copy_from_if_necessary())
+MUL_FUNCTOR(cublas_gevm, etl::impl::cublas::gevm(a, b, c); c.gpu_copy_from_if_necessary())
 #define GEMM_TEST_CASE_SECTION_CUBLAS MUL_TEST_CASE_SECTIONS(cublas_gemm, cublas_gemm)
 #define GEMV_TEST_CASE_SECTION_CUBLAS MUL_TEST_CASE_SECTIONS(cublas_gemv, cublas_gemv)
 #define GEVM_TEST_CASE_SECTION_CUBLAS MUL_TEST_CASE_SECTIONS(cublas_gevm, cublas_gevm)
