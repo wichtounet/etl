@@ -7,6 +7,8 @@
 
 #pragma once
 
+#include "etl/impl/cublas/cuda.hpp"
+
 /*!
  * \file
  * \brief Use CRTP technique to inject GPU-related functions to
@@ -14,8 +16,6 @@
  */
 
 namespace etl {
-
-#ifdef ETL_CUDA
 
 /*!
  * \brief CRTP class to inject GPU-related functions into
@@ -141,12 +141,5 @@ struct gpu_delegate {
         return delegate().gpu_copy_from();
     }
 };
-
-#else
-
-template <typename T, typename D>
-struct gpu_delegate {};
-
-#endif //ETL_CUBLAS_MODE
 
 } //end of namespace etl

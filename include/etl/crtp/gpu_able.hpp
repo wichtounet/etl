@@ -7,9 +7,7 @@
 
 #pragma once
 
-#ifdef ETL_CUDA
 #include "etl/impl/cublas/cuda.hpp"
-#endif
 
 /*!
  * \file
@@ -163,7 +161,75 @@ struct gpu_able {
 #else
 
 template <typename T, typename D>
-struct gpu_able {};
+struct gpu_able {
+    using value_type = T;
+
+    /*!
+     * \brief Indicates if the expression is allocated in GPU.
+     * \return true if the expression is allocated in GPU, false otherwise
+     */
+    bool is_gpu_allocated() const noexcept {
+        return false;
+    }
+
+    /*!
+     * \brief Evict the expression from GPU.
+     */
+    void gpu_evict() const noexcept {}
+
+    /*!
+     * \brief Return GPU memory of this expression, if any.
+     * \return a pointer to the GPU memory or nullptr if not allocated in GPU.
+     */
+    value_type* gpu_memory() const noexcept {
+        return nullptr;
+    }
+
+    /*!
+     * \brief Allocate memory on the GPU for the expression
+     */
+    void gpu_allocate() const {}
+
+    /*!
+     * \brief Allocate memory on the GPU for the expression, only if not already allocated
+     */
+    void gpu_allocate_if_necessary() const {}
+
+    /*!
+     * \brief Allocate memory on the GPU for the expression and copy the values into the GPU.
+     */
+    void gpu_allocate_copy() const {}
+
+    /*!
+     * \brief Allocate memory on the GPU for the expression and copy the values into the GPU, only if not already allocated.
+     */
+    void gpu_allocate_copy_if_necessary() const {}
+
+    /*!
+     * \brief Reallocate the GPU memory.
+     * \param memory The new GPU memory (will be moved)
+     */
+    void gpu_reallocate(impl::cuda::cuda_memory<T>&& memory){
+        cpp_unused(memory);
+    }
+
+    /*!
+     * \brief Release the GPU memory for another expression to use
+     * \return A rvalue reference to the gpu_memory_handler.
+     */
+    impl::cuda::cuda_memory<T>&& gpu_release() const {}
+
+    /*!
+     * \brief Copy back from the GPU to the expression memory if
+     * necessary.
+     */
+    void gpu_copy_from_if_necessary() const {}
+
+    /*!
+     * \brief Copy back from the GPU to the expression memory.
+     */
+    void gpu_copy_from() const {}
+};
 
 #endif //ETL_CUBLAS_MODE
 

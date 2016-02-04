@@ -7,13 +7,17 @@
 
 #pragma once
 
+#ifdef ETL_CUDA
 #include "cuda_runtime.h"
+#endif
 
 namespace etl {
 
 namespace impl {
 
 namespace cuda {
+
+#ifdef ETL_CUDA
 
 template <typename T>
 struct cuda_memory {
@@ -132,6 +136,15 @@ template <typename E>
 auto cuda_allocate_copy(E* ptr, std::size_t n) -> cuda_memory<E> {
     return cuda_allocate(ptr, n, true);
 }
+
+#else
+
+template <typename T>
+struct cuda_memory {
+    //Nothing is enought
+};
+
+#endif
 
 } //end of namespace cublas
 
