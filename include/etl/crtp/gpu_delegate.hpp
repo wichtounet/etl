@@ -130,14 +130,14 @@ struct gpu_delegate {
      * \brief Copy back from the GPU to the expression memory if
      * necessary.
      */
-    void gpu_copy_from_if_necessary(){
+    void gpu_copy_from_if_necessary() const {
         delegate().gpu_copy_from_if_necessary();
     }
 
     /*!
      * \brief Copy back from the GPU to the expression memory.
      */
-    void gpu_copy_from(){
+    void gpu_copy_from() const {
         return delegate().gpu_copy_from();
     }
 };

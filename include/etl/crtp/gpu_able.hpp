@@ -17,6 +17,12 @@
  * ETL value classes.
  */
 
+/*
+ * Notes
+ *  - The bad constness is mostly here to allow compilation without
+ *  too many tricks, it should be improved
+ */
+
 namespace etl {
 
 #ifdef ETL_CUDA
@@ -134,7 +140,7 @@ struct gpu_able {
      * \brief Copy back from the GPU to the expression memory if
      * necessary.
      */
-    void gpu_copy_from_if_necessary(){
+    void gpu_copy_from_if_necessary() const {
         if(is_gpu_allocated()){
             gpu_copy_from();
         }
@@ -143,10 +149,20 @@ struct gpu_able {
     /*!
      * \brief Copy back from the GPU to the expression memory.
      */
-    void gpu_copy_from(){
+    void gpu_copy_from() const {
         std::cout << "gpu:: copy_back" << this << std::endl;
         cpp_assert(is_gpu_allocated(), "Cannot copy from unallocated GPU memory()");
-        cudaMemcpy(as_derived().memory_start(), gpu_memory(), etl::size(as_derived()) * sizeof(T), cudaMemcpyDeviceToHost);
+
+        auto* gpu_ptr = gpu_memory();
+        auto* cpu_ptr = as_derived().memory_start();
+
+        cpp_assert(!std::is_const<std::remove_pointer_t<decltype(gpu_ptr)>>::value, "copy_from should not be used on const memory");
+        cpp_assert(!std::is_const<value_type>::value, "copy_from should not be used on const memory");
+
+        cudaMemcpy(
+            const_cast<std::remove_const_t<value_type>*>(cpu_ptr),
+            const_cast<std::remove_const_t<value_type>*>(gpu_ptr),
+            etl::size(as_derived()) * sizeof(T), cudaMemcpyDeviceToHost);
     }
 };
 

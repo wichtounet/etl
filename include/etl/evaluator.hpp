@@ -94,7 +94,7 @@ namespace standard_evaluator {
 
     template <typename E>
     void post_assign_force(E&& expr) {
-        apply_visitor<detail::gpu_clean_static_visitor>(expr);
+        post_assign_compound(expr);
     }
 
     //Standard assign version
