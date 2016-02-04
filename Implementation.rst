@@ -34,3 +34,12 @@ However, some things are harder than expected. For instance, it is
 not possible to remove SFINAE on the operator+ funtion because
 otherwise it would match etl::complex or iterators from dyn matrix.
 This because forwarding is "too perfect" and because ADL is used.
+
+Notes
+-----
+
+There are too many corner cases in evaluation of expressions:
+ * direct_evaluate
+ * compound expressions
+ * forced expressions
+ * reductions
