@@ -315,6 +315,10 @@ public:
     const result_type& gpu_delegate() const {
         return result();
     }
+
+    bool gpu_delegate_valid() const noexcept {
+        return evaluated && allocated;
+    }
 };
 
 /*!
@@ -494,6 +498,10 @@ public:
 
     const result_type& gpu_delegate() const {
         return result();
+    }
+
+    bool gpu_delegate_valid() const noexcept {
+        return evaluated && allocated;
     }
 };
 
