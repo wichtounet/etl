@@ -134,6 +134,7 @@ struct gpu_able {
      * \brief Copy back from the GPU to the expression memory.
      */
     void gpu_copy_from(){
+        std::cout << "gpu:: copy_back" << this << std::endl;
         cpp_assert(is_gpu_allocated(), "Cannot copy from unallocated GPU memory()");
         cudaMemcpy(as_derived().memory_start(), gpu_memory(), etl::size(as_derived()) * sizeof(T), cudaMemcpyDeviceToHost);
     }

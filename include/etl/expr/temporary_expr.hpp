@@ -19,7 +19,7 @@ namespace etl {
  * A temporary expression computes the expression directly and stores it into a temporary.
  */
 template <typename D, typename V>
-struct temporary_expr : comparable<D>, value_testable<D>, dim_testable<D> {
+struct temporary_expr : comparable<D>, value_testable<D>, dim_testable<D>, gpu_delegate<V, D> {
     using derived_t         = D;                 ///< The derived type
     using value_type        = V;                 ///< The value type
     using memory_type       = value_type*;       ///< The memory type
@@ -307,6 +307,14 @@ public:
         cpp_assert(allocated, "The result has not been allocated");
         return get_result_op::apply(_c);
     }
+
+    result_type& gpu_delegate(){
+        return result();
+    }
+
+    const result_type& gpu_delegate() const {
+        return result();
+    }
 };
 
 /*!
@@ -478,6 +486,14 @@ public:
         cpp_assert(evaluated, "The result has not been evaluated");
         cpp_assert(allocated, "The result has not been allocated");
         return get_result_op::apply(_c);
+    }
+
+    result_type& gpu_delegate(){
+        return result();
+    }
+
+    const result_type& gpu_delegate() const {
+        return result();
     }
 };
 
