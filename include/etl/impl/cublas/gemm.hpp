@@ -105,10 +105,6 @@ void gemm(A&& a, B&& b, C&& c) {
     //Copy the result from GPU to CPU
 
     c.gpu_copy_from();
-
-    a.gpu_evict();
-    b.gpu_evict();
-    c.gpu_evict();
 }
 
 template <typename A, typename B, typename C, cpp_enable_if(all_dma<A, B, C>::value, all_double_precision<A, B, C>::value)>
@@ -153,10 +149,6 @@ void gemm(A&& a, B&& b, C&& c) {
     //Copy the result from GPU to CPU
 
     c.gpu_copy_from();
-
-    a.gpu_evict();
-    b.gpu_evict();
-    c.gpu_evict();
 }
 
 template <typename A, typename B, typename C, cpp_enable_if(all_dma<A, B, C>::value, all_complex_single_precision<A, B, C>::value)>
@@ -201,10 +193,6 @@ void gemm(A&& a, B&& b, C&& c) {
     //Copy the result from GPU to CPU
 
     c.gpu_copy_from();
-
-    a.gpu_evict();
-    b.gpu_evict();
-    c.gpu_evict();
 }
 
 template <typename A, typename B, typename C, cpp_enable_if(all_dma<A, B, C>::value, all_complex_double_precision<A, B, C>::value)>
@@ -249,10 +237,6 @@ void gemm(A&& a, B&& b, C&& c) {
     //Copy the result from GPU to CPU
 
     c.gpu_copy_from();
-
-    a.gpu_evict();
-    b.gpu_evict();
-    c.gpu_evict();
 }
 
 template <typename A, typename B, typename C, cpp_enable_if(all_dma<A, B, C>::value, all_single_precision<A, B, C>::value)>
@@ -295,10 +279,6 @@ void gemv(A&& a, B&& b, C&& c) {
     //Copy the result from GPU to CPU
 
     c.gpu_copy_from();
-
-    a.gpu_evict();
-    b.gpu_evict();
-    c.gpu_evict();
 }
 
 template <typename A, typename B, typename C, cpp_enable_if(all_dma<A, B, C>::value, all_double_precision<A, B, C>::value)>
@@ -341,10 +321,6 @@ void gemv(A&& a, B&& b, C&& c) {
     //Copy the result from GPU to CPU
 
     c.gpu_copy_from();
-
-    a.gpu_evict();
-    b.gpu_evict();
-    c.gpu_evict();
 }
 
 template <typename A, typename B, typename C, cpp_enable_if(all_dma<A, B, C>::value, all_complex_single_precision<A, B, C>::value)>
@@ -387,10 +363,6 @@ void gemv(A&& a, B&& b, C&& c) {
     //Copy the result from GPU to CPU
 
     c.gpu_copy_from();
-
-    a.gpu_evict();
-    b.gpu_evict();
-    c.gpu_evict();
 }
 
 template <typename A, typename B, typename C, cpp_enable_if(all_dma<A, B, C>::value, all_complex_double_precision<A, B, C>::value)>
@@ -433,10 +405,6 @@ void gemv(A&& a, B&& b, C&& c) {
     //Copy the result from GPU to CPU
 
     c.gpu_copy_from();
-
-    a.gpu_evict();
-    b.gpu_evict();
-    c.gpu_evict();
 }
 
 template <typename A, typename B, typename C, cpp_enable_if(all_dma<A, B, C>::value, all_single_precision<A, B, C>::value)>
@@ -479,10 +447,6 @@ void gevm(A&& a, B&& b, C&& c) {
     //Copy the result from GPU to CPU
 
     c.gpu_copy_from();
-
-    a.gpu_evict();
-    b.gpu_evict();
-    c.gpu_evict();
 }
 
 template <typename A, typename B, typename C, cpp_enable_if(all_dma<A, B, C>::value, all_double_precision<A, B, C>::value)>
@@ -525,10 +489,6 @@ void gevm(A&& a, B&& b, C&& c) {
     //Copy the result from GPU to CPU
 
     c.gpu_copy_from();
-
-    a.gpu_evict();
-    b.gpu_evict();
-    c.gpu_evict();
 }
 
 template <typename A, typename B, typename C, cpp_enable_if(all_dma<A, B, C>::value, all_complex_single_precision<A, B, C>::value)>
@@ -571,10 +531,6 @@ void gevm(A&& a, B&& b, C&& c) {
     //Copy the result from GPU to CPU
 
     c.gpu_copy_from();
-
-    a.gpu_evict();
-    b.gpu_evict();
-    c.gpu_evict();
 }
 
 template <typename A, typename B, typename C, cpp_enable_if(all_dma<A, B, C>::value, all_complex_double_precision<A, B, C>::value)>
@@ -617,10 +573,6 @@ void gevm(A&& a, B&& b, C&& c) {
     //Copy the result from GPU to CPU
 
     c.gpu_copy_from();
-
-    a.gpu_evict();
-    b.gpu_evict();
-    c.gpu_evict();
 }
 
 template <typename A, typename B, typename C, cpp_enable_if(!all_dma<A, B, C>::value)>

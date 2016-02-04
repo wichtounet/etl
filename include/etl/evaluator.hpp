@@ -52,9 +52,24 @@ namespace standard_evaluator {
      * \param expr The expr to be visited
      */
     template <typename E>
-    void evaluate_only(E&& expr) {
+    void pre_assign(E&& expr) {
         apply_visitor<detail::temporary_allocator_static_visitor>(expr);
         apply_visitor<detail::evaluator_static_visitor>(expr);
+    }
+
+    /*!
+     * \brief Release memory
+     * \param expr The expr to be visited
+     */
+    template <typename E, typename R>
+    void post_assign(E&& expr, R&& result) {
+        apply_visitor<detail::gpu_clean_static_visitor>(expr);
+        apply_visitor<detail::gpu_clean_static_visitor>(result);
+    }
+
+    template <typename E>
+    void post_assign_force(E&& expr) {
+        apply_visitor<detail::gpu_clean_static_visitor>(expr);
     }
 
     //Standard assign version
@@ -185,24 +200,28 @@ namespace standard_evaluator {
      */
     template <typename E, typename R, cpp_enable_if(detail::standard_compound<E, R>::value)>
     void add_evaluate(E&& expr, R&& result) {
-        evaluate_only(expr);
+        pre_assign(expr);
 
         for (std::size_t i = 0; i < etl::size(result); ++i) {
             result[i] += expr[i];
         }
+
+        post_assign(expr, result);
     }
 
     //Direct Add Assign
 
     template <typename E, typename R>
     void direct_add_evaluate(E&& expr, R&& result) {
-        evaluate_only(expr);
+        pre_assign(expr);
 
         auto m = result.memory_start();
 
         const std::size_t size = etl::size(result);
 
         detail::AssignAdd<value_t<R>,E>(m, expr, 0, size)();
+
+        post_assign(expr, result);
     }
 
     /*!
@@ -227,7 +246,7 @@ namespace standard_evaluator {
             return;
         }
 
-        evaluate_only(expr);
+        pre_assign(expr);
 
         auto m = result.memory_start();
 
@@ -244,15 +263,19 @@ namespace standard_evaluator {
         detail::AssignAdd<value_t<R>,E>(m, expr, (threads - 1) * batch, n)();
 
         pool.wait();
+
+        post_assign(expr, result);
     }
 
     //Vectorized Add Assign
 
     template <typename E, typename R>
     void vectorized_add_evaluate(E&& expr, R&& result) {
-        evaluate_only(expr);
+        pre_assign(expr);
 
         detail::VectorizedAssignAdd<R, E>(result, expr, 0, etl::size(result))();
+
+        post_assign(expr, result);
     }
 
     /*!
@@ -280,7 +303,7 @@ namespace standard_evaluator {
         }
 
         //Evaluate the sub parts of the expression, if any
-        evaluate_only(expr);
+        pre_assign(expr);
 
         auto batch = size / threads;
 
@@ -294,6 +317,8 @@ namespace standard_evaluator {
 
         //Wait for the other threads
         pool.wait();
+
+        post_assign(expr, result);
     }
 
     //Standard sub assign
@@ -305,24 +330,28 @@ namespace standard_evaluator {
      */
     template <typename E, typename R, cpp_enable_if(detail::standard_compound<E, R>::value)>
     void sub_evaluate(E&& expr, R&& result) {
-        evaluate_only(expr);
+        pre_assign(expr);
 
         for (std::size_t i = 0; i < etl::size(result); ++i) {
             result[i] -= expr[i];
         }
+
+        post_assign(expr, result);
     }
 
     //Direct Sub Assign
 
     template <typename E, typename R>
     void direct_sub_evaluate(E&& expr, R&& result) {
-        evaluate_only(expr);
+        pre_assign(expr);
 
         auto m = result.memory_start();
 
         const std::size_t size = etl::size(result);
 
         detail::AssignSub<value_t<R>,E>(m, expr, 0, size)();
+
+        post_assign(expr, result);
     }
 
     /*!
@@ -347,7 +376,7 @@ namespace standard_evaluator {
             return;
         }
 
-        evaluate_only(expr);
+        pre_assign(expr);
 
         auto m = result.memory_start();
 
@@ -364,15 +393,19 @@ namespace standard_evaluator {
         detail::AssignSub<value_t<R>,E>(m, expr, (threads - 1) * batch, n)();
 
         pool.wait();
+
+        post_assign(expr, result);
     }
 
     //Vectorized Sub Assign
 
     template <typename E, typename R>
     void vectorized_sub_evaluate(E&& expr, R&& result) {
-        evaluate_only(expr);
+        pre_assign(expr);
 
         detail::VectorizedAssignSub<R, E>(result, expr, 0, etl::size(result))();
+
+        post_assign(expr, result);
     }
 
     /*!
@@ -400,7 +433,7 @@ namespace standard_evaluator {
         }
 
         //Evaluate the sub parts of the expression, if any
-        evaluate_only(expr);
+        pre_assign(expr);
 
         auto batch = size / threads;
 
@@ -414,6 +447,8 @@ namespace standard_evaluator {
 
         //Wait for the other threads
         pool.wait();
+
+        post_assign(expr, result);
     }
 
     //Standard Mul Assign
@@ -425,24 +460,28 @@ namespace standard_evaluator {
      */
     template <typename E, typename R, cpp_enable_if(detail::standard_compound<E, R>::value)>
     void mul_evaluate(E&& expr, R&& result) {
-        evaluate_only(expr);
+        pre_assign(expr);
 
         for (std::size_t i = 0; i < etl::size(result); ++i) {
             result[i] *= expr[i];
         }
+
+        post_assign(expr, result);
     }
 
     //Direct Mul Assign
 
     template <typename E, typename R>
     void direct_mul_evaluate(E&& expr, R&& result) {
-        evaluate_only(expr);
+        pre_assign(expr);
 
         auto m = result.memory_start();
 
         const std::size_t size = etl::size(result);
 
         detail::AssignMul<value_t<R>,E>(m, expr, 0, size)();
+
+        post_assign(expr, result);
     }
 
     /*!
@@ -467,7 +506,7 @@ namespace standard_evaluator {
             return;
         }
 
-        evaluate_only(expr);
+        pre_assign(expr);
 
         auto m = result.memory_start();
 
@@ -484,15 +523,19 @@ namespace standard_evaluator {
         detail::AssignMul<value_t<R>,E>(m, expr, (threads - 1) * batch, n)();
 
         pool.wait();
+
+        post_assign(expr, result);
     }
 
     //Vectorized Mul Assign
 
     template <typename E, typename R>
     void vectorized_mul_evaluate(E&& expr, R&& result) {
-        evaluate_only(expr);
+        pre_assign(expr);
 
         detail::VectorizedAssignMul<R, E>(result, expr, 0, etl::size(result))();
+
+        post_assign(expr, result);
     }
 
     /*!
@@ -520,7 +563,7 @@ namespace standard_evaluator {
         }
 
         //Evaluate the sub parts of the expression, if any
-        evaluate_only(expr);
+        pre_assign(expr);
 
         auto batch = size / threads;
 
@@ -534,6 +577,8 @@ namespace standard_evaluator {
 
         //Wait for the other threads
         pool.wait();
+
+        post_assign(expr, result);
     }
 
     //Standard Div Assign
@@ -545,24 +590,28 @@ namespace standard_evaluator {
      */
     template <typename E, typename R, cpp_enable_if(detail::standard_compound<E, R>::value)>
     void div_evaluate(E&& expr, R&& result) {
-        evaluate_only(expr);
+        pre_assign(expr);
 
         for (std::size_t i = 0; i < etl::size(result); ++i) {
             result[i] /= expr[i];
         }
+
+        post_assign(expr, result);
     }
 
     //Direct Div Assign
 
     template <typename E, typename R>
     void direct_div_evaluate(E&& expr, R&& result) {
-        evaluate_only(expr);
+        pre_assign(expr);
 
         auto m = result.memory_start();
 
         const std::size_t size = etl::size(result);
 
         detail::AssignDiv<value_t<R>,E>(m, expr, 0, size)();
+
+        post_assign(expr, result);
     }
 
     /*!
@@ -587,7 +636,7 @@ namespace standard_evaluator {
             return;
         }
 
-        evaluate_only(expr);
+        pre_assign(expr);
 
         auto m = result.memory_start();
 
@@ -604,15 +653,19 @@ namespace standard_evaluator {
         detail::AssignDiv<value_t<R>,E>(m, expr, (threads - 1) * batch, n)();
 
         pool.wait();
+
+        post_assign(expr, result);
     }
 
     //Vectorized Div Assign
 
     template <typename E, typename R>
     void vectorized_div_evaluate(E&& expr, R&& result) {
-        evaluate_only(expr);
+        pre_assign(expr);
 
         detail::VectorizedAssignDiv<R, E>(result, expr, 0, etl::size(result))();
+
+        post_assign(expr, result);
     }
 
     /*!
@@ -640,7 +693,7 @@ namespace standard_evaluator {
         }
 
         //Evaluate the sub parts of the expression, if any
-        evaluate_only(expr);
+        pre_assign(expr);
 
         auto batch = size / threads;
 
@@ -654,6 +707,8 @@ namespace standard_evaluator {
 
         //Wait for the other threads
         pool.wait();
+
+        post_assign(expr, result);
     }
 
     //Standard Mod Evaluate (no optimized versions for mod)
@@ -665,11 +720,13 @@ namespace standard_evaluator {
      */
     template <typename E, typename R>
     void mod_evaluate(E&& expr, R&& result) {
-        evaluate_only(expr);
+        pre_assign(expr);
 
         for (std::size_t i = 0; i < etl::size(result); ++i) {
             result[i] %= expr[i];
         }
+
+        post_assign(expr, result);
     }
 
     //Note: In case of direct evaluation, the temporary_expr itself must
@@ -684,7 +741,7 @@ namespace standard_evaluator {
     template <typename E, typename R, cpp_disable_if(is_temporary_expr<E>::value)>
     void assign_evaluate(E&& expr, R&& result) {
         //Evaluate sub parts, if any
-        evaluate_only(expr);
+        pre_assign(expr);
 
         constexpr bool linear = decay_traits<E>::is_linear;
 
@@ -700,6 +757,8 @@ namespace standard_evaluator {
             //Perform the real evaluation, selected by TMP
             assign_evaluate_impl(expr, result);
         }
+
+        post_assign(expr, result);
     }
 
     /*!
@@ -707,10 +766,11 @@ namespace standard_evaluator {
      */
     template <typename E, typename R, cpp_enable_if(is_temporary_unary_expr<E>::value)>
     void assign_evaluate(E&& expr, R&& result) {
-        apply_visitor<detail::temporary_allocator_static_visitor>(expr.a());
-        apply_visitor<detail::evaluator_static_visitor>(expr.a());
+        pre_assign(expr.a());
 
         expr.direct_evaluate(result);
+
+        post_assign(expr, result);
     }
 
     /*!
@@ -718,13 +778,12 @@ namespace standard_evaluator {
      */
     template <typename E, typename R, cpp_enable_if(is_temporary_binary_expr<E>::value)>
     void assign_evaluate(E&& expr, R&& result) {
-        apply_visitor<detail::temporary_allocator_static_visitor>(expr.a());
-        apply_visitor<detail::temporary_allocator_static_visitor>(expr.b());
-
-        apply_visitor<detail::evaluator_static_visitor>(expr.a());
-        apply_visitor<detail::evaluator_static_visitor>(expr.b());
+        pre_assign(expr.a());
+        pre_assign(expr.b());
 
         expr.direct_evaluate(result);
+
+        post_assign(expr, result);
     }
 
 } // end of namespace standard_evaluator
@@ -764,7 +823,7 @@ void assign_evaluate(Expr&& expr, Result&& result) {
 template <typename Expr, typename Result, cpp_enable_if(is_optimized_expr<Expr>::value)>
 void assign_evaluate(Expr&& expr, Result&& result) {
     optimized_forward(expr.value(),
-                      [&result](const auto& optimized) {
+                      [&result](auto& optimized) {
                           assign_evaluate(optimized, std::forward<Result>(result));
                       });
 }
@@ -878,7 +937,8 @@ void mod_evaluate(Expr&& expr, Result&& result) {
  */
 template <typename Expr>
 void force(Expr&& expr) {
-    standard_evaluator::evaluate_only(std::forward<Expr>(expr));
+    standard_evaluator::pre_assign(std::forward<Expr>(expr));
+    standard_evaluator::post_assign_force(std::forward<Expr>(expr));
 }
 
 } //end of namespace etl

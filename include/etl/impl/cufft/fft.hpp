@@ -151,7 +151,6 @@ void fft1(A&& a, C&& c) {
     detail::inplace_cfft1_kernel(c, etl::size(a));
 
     c.gpu_copy_from();
-    c.gpu_evict();
 }
 
 template <typename A, typename C, cpp_enable_if(all_double_precision<A>::value)>
@@ -163,7 +162,6 @@ void fft1(A&& a, C&& c) {
     detail::inplace_zfft1_kernel(c, etl::size(a));
 
     c.gpu_copy_from();
-    c.gpu_evict();
 }
 
 template <typename A, typename C, cpp_enable_if(all_complex_single_precision<A>::value)>
@@ -174,7 +172,6 @@ void fft1(A&& a, C&& c) {
 
     c.gpu_reallocate(a.gpu_release());
     c.gpu_copy_from();
-    c.gpu_evict();
 }
 
 template <typename A, typename C, cpp_enable_if(all_complex_double_precision<A>::value)>
@@ -185,7 +182,6 @@ void fft1(A&& a, C&& c) {
 
     c.gpu_reallocate(a.gpu_release());
     c.gpu_copy_from();
-    c.gpu_evict();
 }
 
 template <typename A, typename C, cpp_enable_if(all_single_precision<A>::value)>
@@ -202,7 +198,6 @@ void fft1_many(A&& a, C&& c) {
     detail::inplace_cfft1_many_kernel(c, batch, n);
 
     c.gpu_copy_from();
-    c.gpu_evict();
 }
 
 template <typename A, typename C, cpp_enable_if(all_double_precision<A>::value)>
@@ -219,7 +214,6 @@ void fft1_many(A&& a, C&& c) {
     detail::inplace_zfft1_many_kernel(c, batch, n);
 
     c.gpu_copy_from();
-    c.gpu_evict();
 }
 
 template <typename A, typename C, cpp_enable_if(all_complex_single_precision<A>::value)>
@@ -235,7 +229,6 @@ void fft1_many(A&& a, C&& c) {
 
     c.gpu_reallocate(a.gpu_release());
     c.gpu_copy_from();
-    c.gpu_evict();
 }
 
 template <typename A, typename C, cpp_enable_if(all_complex_double_precision<A>::value)>
@@ -251,7 +244,6 @@ void fft1_many(A&& a, C&& c) {
 
     c.gpu_reallocate(a.gpu_release());
     c.gpu_copy_from();
-    c.gpu_evict();
 }
 
 template <typename A, typename C, cpp_enable_if(all_complex_single_precision<A>::value)>
@@ -262,7 +254,6 @@ void ifft1(A&& a, C&& c) {
 
     c.gpu_reallocate(a.gpu_release());
     c.gpu_copy_from();
-    c.gpu_evict();
 
     c *= 1.0 / etl::size(c);
 }
@@ -275,7 +266,6 @@ void ifft1(A&& a, C&& c) {
 
     c.gpu_reallocate(a.gpu_release());
     c.gpu_copy_from();
-    c.gpu_evict();
 
     c *= 1.0 / etl::size(c);
 }
@@ -397,7 +387,6 @@ void fft2(A&& a, C&& c) {
     detail::inplace_cfft2_kernel(c, etl::dim<0>(a), etl::dim<1>(a));
 
     c.gpu_copy_from();
-    c.gpu_evict();
 }
 
 template <typename A, typename C, cpp_enable_if(all_double_precision<A>::value)>
@@ -409,7 +398,6 @@ void fft2(A&& a, C&& c) {
     detail::inplace_zfft2_kernel(c, etl::dim<0>(a), etl::dim<1>(a));
 
     c.gpu_copy_from();
-    c.gpu_evict();
 }
 
 template <typename A, typename C, cpp_enable_if(all_complex_single_precision<A>::value)>
@@ -420,7 +408,6 @@ void fft2(A&& a, C&& c) {
 
     c.gpu_reallocate(a.gpu_release());
     c.gpu_copy_from();
-    c.gpu_evict();
 }
 
 template <typename A, typename C, cpp_enable_if(all_complex_double_precision<A>::value)>
@@ -431,7 +418,6 @@ void fft2(A&& a, C&& c) {
 
     c.gpu_reallocate(a.gpu_release());
     c.gpu_copy_from();
-    c.gpu_evict();
 }
 
 template <typename A, typename C, cpp_enable_if(all_complex_single_precision<A>::value)>
@@ -442,7 +428,6 @@ void ifft2(A&& a, C&& c) {
 
     c.gpu_reallocate(a.gpu_release());
     c.gpu_copy_from();
-    c.gpu_evict();
 
     c *= 1.0 / etl::size(c);
 }
@@ -455,7 +440,6 @@ void ifft2(A&& a, C&& c) {
 
     c.gpu_reallocate(a.gpu_release());
     c.gpu_copy_from();
-    c.gpu_evict();
 
     c *= 1.0 / etl::size(c);
 }
@@ -505,7 +489,6 @@ void fft2_many(A&& a, C&& c) {
     detail::inplace_cfft2_many_kernel(c, batch, n1, n2);
 
     c.gpu_copy_from();
-    c.gpu_evict();
 }
 
 template <typename A, typename C, cpp_enable_if(all_double_precision<A>::value)>
@@ -523,7 +506,6 @@ void fft2_many(A&& a, C&& c) {
     detail::inplace_zfft2_many_kernel(c, batch, n1, n2);
 
     c.gpu_copy_from();
-    c.gpu_evict();
 }
 
 template <typename A, typename C, cpp_enable_if(all_complex_single_precision<A>::value)>
@@ -540,7 +522,6 @@ void fft2_many(A&& a, C&& c) {
 
     c.gpu_reallocate(a.gpu_release());
     c.gpu_copy_from();
-    c.gpu_evict();
 }
 
 template <typename A, typename C, cpp_enable_if(all_complex_double_precision<A>::value)>
@@ -557,7 +538,6 @@ void fft2_many(A&& a, C&& c) {
 
     c.gpu_reallocate(a.gpu_release());
     c.gpu_copy_from();
-    c.gpu_evict();
 }
 
 template <typename A, typename B, typename C, cpp_enable_if(all_single_precision<A>::value)>
