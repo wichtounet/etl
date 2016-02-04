@@ -136,6 +136,8 @@ struct inplace_assignable {
 
         detail::fft1_impl<derived_t, derived_t>::apply(mat, mat);
 
+        mat.gpu_copy_from_if_necessary();
+
         return mat;
     }
 
@@ -152,6 +154,8 @@ struct inplace_assignable {
 
         detail::fft1_many_impl<derived_t, derived_t>::apply(mat, mat);
 
+        mat.gpu_copy_from_if_necessary();
+
         return mat;
     }
 
@@ -166,6 +170,8 @@ struct inplace_assignable {
 
         detail::ifft1_impl<derived_t, derived_t>::apply(mat, mat);
 
+        mat.gpu_copy_from_if_necessary();
+
         return mat;
     }
 
@@ -179,6 +185,8 @@ struct inplace_assignable {
         decltype(auto) mat = as_derived();
 
         detail::fft2_impl<derived_t, derived_t>::apply(mat, mat);
+
+        mat.gpu_copy_from_if_necessary();
 
         return mat;
     }
@@ -196,6 +204,8 @@ struct inplace_assignable {
 
         detail::fft2_many_impl<derived_t, derived_t>::apply(mat, mat);
 
+        mat.gpu_copy_from_if_necessary();
+
         return mat;
     }
 
@@ -209,6 +219,8 @@ struct inplace_assignable {
         decltype(auto) mat = as_derived();
 
         detail::ifft2_impl<derived_t, derived_t>::apply(mat, mat);
+
+        mat.gpu_copy_from_if_necessary();
 
         return mat;
     }
