@@ -131,6 +131,16 @@ struct gpu_able {
     }
 
     /*!
+     * \brief Copy back from the GPU to the expression memory if
+     * necessary.
+     */
+    void gpu_copy_from_if_necessary(){
+        if(is_gpu_allocated()){
+            gpu_copy_from();
+        }
+    }
+
+    /*!
      * \brief Copy back from the GPU to the expression memory.
      */
     void gpu_copy_from(){

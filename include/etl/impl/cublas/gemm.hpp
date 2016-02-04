@@ -27,18 +27,7 @@ using cdouble = std::complex<double>;
 
 inline void cublas_geam(cublasHandle_t handle, cublasOperation_t transa, cublasOperation_t transb, int m, int n,
                         const float* alpha, const float* A, int lda, const float* beta, const float* B, int ldb, float* C, int ldc) {
-    std::cout << "m:" << m << std::endl;
-    std::cout << "n:" << n << std::endl;
-    std::cout << "alpha:" << *alpha << std::endl;
-    std::cout << "A:" << A << std::endl;
-    std::cout << "lda:" << lda << std::endl;
-    std::cout << "beta:" << *beta << std::endl;
-    std::cout << "B:" << B << std::endl;
-    std::cout << "ldb:" << ldb << std::endl;
-    std::cout << "C:" << C << std::endl;
-    std::cout << "ldc:" << ldc << std::endl;
     cublasSgeam(handle, transa, transb, m, n, alpha, A, lda, beta, B, ldb, C, ldc);
-    std::cout << "after sgream" << std::endl;
 }
 
 inline void cublas_geam(cublasHandle_t handle, cublasOperation_t transa, cublasOperation_t transb, int m, int n,
@@ -101,10 +90,6 @@ void gemm(A&& a, B&& b, C&& c) {
             &beta,
             c.gpu_memory(), etl::rows(c));
     }
-
-    //Copy the result from GPU to CPU
-
-    c.gpu_copy_from();
 }
 
 template <typename A, typename B, typename C, cpp_enable_if(all_dma<A, B, C>::value, all_double_precision<A, B, C>::value)>
@@ -145,10 +130,6 @@ void gemm(A&& a, B&& b, C&& c) {
             &beta,
             c.gpu_memory(), etl::rows(c));
     }
-
-    //Copy the result from GPU to CPU
-
-    c.gpu_copy_from();
 }
 
 template <typename A, typename B, typename C, cpp_enable_if(all_dma<A, B, C>::value, all_complex_single_precision<A, B, C>::value)>
@@ -189,10 +170,6 @@ void gemm(A&& a, B&& b, C&& c) {
             &beta,
             reinterpret_cast<cuComplex*>(c.gpu_memory()), etl::rows(c));
     }
-
-    //Copy the result from GPU to CPU
-
-    c.gpu_copy_from();
 }
 
 template <typename A, typename B, typename C, cpp_enable_if(all_dma<A, B, C>::value, all_complex_double_precision<A, B, C>::value)>
@@ -233,10 +210,6 @@ void gemm(A&& a, B&& b, C&& c) {
             &beta,
             reinterpret_cast<cuDoubleComplex*>(c.gpu_memory()), etl::rows(c));
     }
-
-    //Copy the result from GPU to CPU
-
-    c.gpu_copy_from();
 }
 
 template <typename A, typename B, typename C, cpp_enable_if(all_dma<A, B, C>::value, all_single_precision<A, B, C>::value)>

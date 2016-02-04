@@ -22,6 +22,8 @@
 
 #pragma once
 
+#include "cpp_utils/static_if.hpp"
+
 #include "etl/visitor.hpp"        //visitor of the expressions
 #include "etl/threshold.hpp"      //parallel thresholds
 #include "etl/eval_selectors.hpp" //method selectors
@@ -63,6 +65,14 @@ namespace standard_evaluator {
      */
     template <typename E, typename R>
     void post_assign(E&& expr, R&& result) {
+        //TODO This is probably a bit overcomplicated
+#ifdef ETL_CUDA
+        //If necessary copy the GPU result back to CPU
+        cpp::static_if<all_dma<R>::value && !etl::is_sparse_matrix<R>::value>([&](auto f){
+            f(result).gpu_copy_from_if_necessary();
+        });
+#endif
+
         apply_visitor<detail::gpu_clean_static_visitor>(expr);
         apply_visitor<detail::gpu_clean_static_visitor>(result);
     }
