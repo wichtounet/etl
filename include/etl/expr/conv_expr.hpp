@@ -140,6 +140,8 @@ struct basic_conv_expr : impl_expr<basic_conv_expr<T, D, TT, Impl>> {
     using value_type = T;
     using this_type  = basic_conv_expr<T, D, TT, Impl>;
 
+    static constexpr const bool is_gpu = false; //There are no GPU versions of convolution
+
     /*!
      * \brief The result type for given sub types
      * \tparam A The left hand side epxpression type

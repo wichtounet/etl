@@ -84,6 +84,8 @@ struct basic_mm_mul_expr : impl_expr<basic_mm_mul_expr<T, Impl>> {
     template <typename A, typename B>
     using result_type = detail::expr_result_t<this_type, A, B>;
 
+    static constexpr const bool is_gpu = is_cublas_enabled::value;
+
     template <typename A, typename B, typename C>
     static void apply(A&& a, B&& b, C&& c) {
         static_assert(all_etl_expr<A, B, C>::value, "Matrix multiplication only supported for ETL expressions");
@@ -155,6 +157,8 @@ struct basic_vm_mul_expr : impl_expr<basic_vm_mul_expr<T, Impl>> {
     using value_type = T;
     using this_type  = basic_vm_mul_expr<T, Impl>;
 
+    static constexpr const bool is_gpu = is_cublas_enabled::value;
+
     template <typename A, typename B>
     using result_type = detail::expr_result_t<this_type, A, B>;
 
@@ -221,6 +225,8 @@ template <typename T, template <typename...> class Impl>
 struct basic_mv_mul_expr : impl_expr<basic_mv_mul_expr<T, Impl>> {
     using value_type = T;
     using this_type  = basic_mv_mul_expr<T, Impl>;
+
+    static constexpr const bool is_gpu = is_cublas_enabled::value;
 
     template <typename A, typename B>
     using result_type = detail::expr_result_t<this_type, A, B>;
