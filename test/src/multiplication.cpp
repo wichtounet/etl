@@ -454,4 +454,22 @@ TEMPLATE_TEST_CASE_2("gpu/mmul_2", "lvalue sub mmul", Z, float, double) {
     REQUIRE(d(2, 2) == 268);
 }
 
+TEMPLATE_TEST_CASE_2("gpu/mmul_3", "lvalue sub mmul", Z, float, double) {
+    etl::fast_matrix<Z, 3, 3> a = {1, 2, 3, 4, 5, 6, 7, 8, 9};
+    etl::fast_matrix<Z, 3, 3> b = {7, 8, 9, 9, 10, 11, 11, 12, 13};
+    etl::fast_matrix<Z, 3, 3> d;
+
+    d = 2.0 * (a * b);
+
+    REQUIRE(d(0, 0) == 2 * 58);
+    REQUIRE(d(0, 1) == 2 * 64);
+    REQUIRE(d(0, 2) == 2 * 70);
+    REQUIRE(d(1, 0) == 2 * 139);
+    REQUIRE(d(1, 1) == 2 * 154);
+    REQUIRE(d(1, 2) == 2 * 169);
+    REQUIRE(d(2, 0) == 2 * 220);
+    REQUIRE(d(2, 1) == 2 * 244);
+    REQUIRE(d(2, 2) == 2 * 268);
+}
+
 #endif //ETL_CUDA
