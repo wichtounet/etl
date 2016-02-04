@@ -301,8 +301,11 @@ TEMPLATE_TEST_CASE_2("multiplication/expression_3", "expression", Z, double, flo
     etl::fast_matrix<Z, 3, 2> b = {7, 8, 9, 10, 11, 12};
     etl::fast_matrix<Z, 2, 2> c;
 
+    std::cout << "first" << std::endl;
     c = a * b;
+    std::cout << "second" << std::endl;
     c += a * b;
+    std::cout << "end" << std::endl;
 
     REQUIRE(c(0, 0) == 2 * 58);
     REQUIRE(c(0, 1) == 2 * 64);
@@ -411,3 +414,44 @@ TEMPLATE_TEST_CASE_2("lvalue/mmul2", "lvalue sub mmul", Z, float, double) {
     REQUIRE(c(1, 1, 0) == 139);
     REQUIRE(c(1, 1, 1) == 154);
 }
+
+#ifdef ETL_CUDA
+
+TEMPLATE_TEST_CASE_2("gpu/mmul_1", "lvalue sub mmul", Z, float, double) {
+    etl::fast_matrix<Z, 3, 3> a = {1, 2, 3, 4, 5, 6, 7, 8, 9};
+    etl::fast_matrix<Z, 3, 3> b = {7, 8, 9, 9, 10, 11, 11, 12, 13};
+    etl::fast_matrix<Z, 3, 3> c;
+
+    c = a * b;
+
+    REQUIRE(c(0, 0) == 58);
+    REQUIRE(c(0, 1) == 64);
+    REQUIRE(c(0, 2) == 70);
+    REQUIRE(c(1, 0) == 139);
+    REQUIRE(c(1, 1) == 154);
+    REQUIRE(c(1, 2) == 169);
+    REQUIRE(c(2, 0) == 220);
+    REQUIRE(c(2, 1) == 244);
+    REQUIRE(c(2, 2) == 268);
+}
+
+TEMPLATE_TEST_CASE_2("gpu/mmul_2", "lvalue sub mmul", Z, float, double) {
+    etl::fast_matrix<Z, 3, 3> a = {1, 2, 3, 4, 5, 6, 7, 8, 9};
+    etl::fast_matrix<Z, 3, 3> b = {7, 8, 9, 9, 10, 11, 11, 12, 13};
+    etl::fast_matrix<Z, 3, 3> c = {1, 0, 0, 0, 1, 0, 0, 0, 1};
+    etl::fast_matrix<Z, 3, 3> d;
+
+    d = a * b * c;
+
+    REQUIRE(d(0, 0) == 58);
+    REQUIRE(d(0, 1) == 64);
+    REQUIRE(d(0, 2) == 70);
+    REQUIRE(d(1, 0) == 139);
+    REQUIRE(d(1, 1) == 154);
+    REQUIRE(d(1, 2) == 169);
+    REQUIRE(d(2, 0) == 220);
+    REQUIRE(d(2, 1) == 244);
+    REQUIRE(d(2, 2) == 268);
+}
+
+#endif //ETL_CUDA
