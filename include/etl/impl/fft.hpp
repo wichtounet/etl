@@ -41,8 +41,8 @@ enum class precision {
  */
 inline cpp14_constexpr fft_impl select_fft1_impl(const std::size_t n) {
     //Note since these boolean will be known at compile time, the conditions will be a lot simplified
-    constexpr const bool mkl   = is_mkl_enabled::value;
-    constexpr const bool cufft = is_cufft_enabled::value;
+    constexpr const bool mkl   = is_mkl_enabled;
+    constexpr const bool cufft = is_cufft_enabled;
 
     if (cufft) {
         if (math::is_power_of_two(n)) {
@@ -87,8 +87,8 @@ inline cpp14_constexpr fft_impl select_fft1_many_impl(const std::size_t batch, c
     cpp_unused(batch);
 
     //Note since these boolean will be known at compile time, the conditions will be a lot simplified
-    constexpr const bool mkl   = is_mkl_enabled::value;
-    constexpr const bool cufft = is_cufft_enabled::value;
+    constexpr const bool mkl   = is_mkl_enabled;
+    constexpr const bool cufft = is_cufft_enabled;
 
     //Note: more testing would probably improve this selection
 
@@ -112,8 +112,8 @@ inline cpp14_constexpr fft_impl select_fft1_many_impl(const std::size_t batch, c
  */
 inline cpp14_constexpr fft_impl select_ifft1_impl(const std::size_t n) {
     //Note since these boolean will be known at compile time, the conditions will be a lot simplified
-    constexpr const bool mkl   = is_mkl_enabled::value;
-    constexpr const bool cufft = is_cufft_enabled::value;
+    constexpr const bool mkl   = is_mkl_enabled;
+    constexpr const bool cufft = is_cufft_enabled;
 
     if (cufft) {
         if (math::is_power_of_two(n)) {
@@ -151,8 +151,8 @@ inline cpp14_constexpr fft_impl select_ifft1_impl(const std::size_t n) {
  */
 inline cpp14_constexpr fft_impl select_fft2_impl(const std::size_t n1, std::size_t n2) {
     //Note since these boolean will be known at compile time, the conditions will be a lot simplified
-    constexpr const bool mkl   = is_mkl_enabled::value;
-    constexpr const bool cufft = is_cufft_enabled::value;
+    constexpr const bool mkl   = is_mkl_enabled;
+    constexpr const bool cufft = is_cufft_enabled;
 
     if (cufft) {
         if (math::is_power_of_two(n1) && math::is_power_of_two(n2)) {
@@ -192,8 +192,8 @@ inline cpp14_constexpr fft_impl select_fft2_many_impl(const std::size_t batch, c
     cpp_unused(batch);
 
     //Note since these boolean will be known at compile time, the conditions will be a lot simplified
-    constexpr const bool mkl   = is_mkl_enabled::value;
-    constexpr const bool cufft = is_cufft_enabled::value;
+    constexpr const bool mkl   = is_mkl_enabled;
+    constexpr const bool cufft = is_cufft_enabled;
 
     //Note: more testing would probably improve this selection
 
@@ -342,9 +342,9 @@ template <typename A, typename B, typename C, typename Enable = void>
 struct fft_conv1_full_impl {
     template <typename AA, typename BB, typename CC>
     static void apply(AA&& a, BB&& b, CC&& c) {
-        if(is_cufft_enabled::value){
+        if(is_cufft_enabled){
             etl::impl::cufft::fft1_convolve(std::forward<AA>(a), std::forward<BB>(b), std::forward<CC>(c));
-        } else if(is_mkl_enabled::value){
+        } else if(is_mkl_enabled){
             etl::impl::blas::fft1_convolve(std::forward<AA>(a), std::forward<BB>(b), std::forward<CC>(c));
         } else {
             etl::impl::standard::fft1_convolve(std::forward<AA>(a), std::forward<BB>(b), std::forward<CC>(c));
@@ -356,9 +356,9 @@ template <typename A, typename B, typename C, typename Enable = void>
 struct fft_conv2_full_impl {
     template <typename AA, typename BB, typename CC>
     static void apply(AA&& a, BB&& b, CC&& c) {
-        if(is_cufft_enabled::value){
+        if(is_cufft_enabled){
             etl::impl::cufft::fft2_convolve(std::forward<AA>(a), std::forward<BB>(b), std::forward<CC>(c));
-        } else if(is_mkl_enabled::value){
+        } else if(is_mkl_enabled){
             etl::impl::blas::fft2_convolve(std::forward<AA>(a), std::forward<BB>(b), std::forward<CC>(c));
         } else {
             etl::impl::standard::fft2_convolve(std::forward<AA>(a), std::forward<BB>(b), std::forward<CC>(c));

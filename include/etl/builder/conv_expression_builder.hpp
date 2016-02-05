@@ -130,7 +130,7 @@ auto fft_conv_1d_full(A&& a, B&& b, C&& c) -> detail::forced_temporary_binary_he
  * \param b The kernel expression
  * \return an expression representing the full 1D convolution of a and b
  */
-template <typename A, typename B, cpp_enable_if_cst(has_fast_fft::value)>
+template <typename A, typename B, cpp_enable_if_cst(has_fast_fft)>
 auto fast_conv_1d_full(A&& a, B&& b) {
     return fft_conv_1d_full(std::forward<A>(a), std::forward<B>(b));
 }
@@ -141,7 +141,7 @@ auto fast_conv_1d_full(A&& a, B&& b) {
  * \param b The kernel expression
  * \return an expression representing the full 1D convolution of a and b
  */
-template <typename A, typename B, cpp_disable_if_cst(has_fast_fft::value)>
+template <typename A, typename B, cpp_disable_if_cst(has_fast_fft)>
 auto fast_conv_1d_full(A&& a, B&& b) {
     return conv_1d_full(std::forward<A>(a), std::forward<B>(b));
 }
@@ -153,7 +153,7 @@ auto fast_conv_1d_full(A&& a, B&& b) {
  * \param c The result
  * \return an expression representing the full 1D convolution of a and b
  */
-template <typename A, typename B, typename C, cpp_enable_if_cst(has_fast_fft::value)>
+template <typename A, typename B, typename C, cpp_enable_if_cst(has_fast_fft)>
 auto fast_conv_1d_full(A&& a, B&& b, C&& c) {
     return fft_conv_1d_full(std::forward<A>(a), std::forward<B>(b), std::forward<C>(c));
 }
@@ -165,7 +165,7 @@ auto fast_conv_1d_full(A&& a, B&& b, C&& c) {
  * \param c The result
  * \return an expression representing the full 1D convolution of a and b
  */
-template <typename A, typename B, typename C, cpp_disable_if_cst(has_fast_fft::value)>
+template <typename A, typename B, typename C, cpp_disable_if_cst(has_fast_fft)>
 auto fast_conv_1d_full(A&& a, B&& b, C&& c) {
     return conv_1d_full(std::forward<A>(a), std::forward<B>(b), std::forward<C>(c));
 }
@@ -284,7 +284,7 @@ auto fft_conv_2d_full(A&& a, B&& b, C&& c) -> detail::forced_temporary_binary_he
  * \param b The kernel expression
  * \return an expression representing the full 2D convolution of a and b
  */
-template <typename A, typename B, cpp_enable_if_cst(has_fast_fft::value)>
+template <typename A, typename B, cpp_enable_if_cst(has_fast_fft)>
 auto fast_conv_2d_full(A&& a, B&& b) {
     return fft_conv_2d_full(std::forward<A>(a), std::forward<B>(b));
 }
@@ -295,7 +295,7 @@ auto fast_conv_2d_full(A&& a, B&& b) {
  * \param b The kernel expression
  * \return an expression representing the full 2D convolution of a and b
  */
-template <typename A, typename B, cpp_disable_if_cst(has_fast_fft::value)>
+template <typename A, typename B, cpp_disable_if_cst(has_fast_fft)>
 auto fast_conv_2d_full(A&& a, B&& b) {
     return conv_2d_full(std::forward<A>(a), std::forward<B>(b));
 }
@@ -307,7 +307,7 @@ auto fast_conv_2d_full(A&& a, B&& b) {
  * \param c The result
  * \return an expression representing the full 2D convolution of a and b
  */
-template <typename A, typename B, typename C, cpp_enable_if_cst(has_fast_fft::value)>
+template <typename A, typename B, typename C, cpp_enable_if_cst(has_fast_fft)>
 auto fast_conv_2d_full(A&& a, B&& b, C&& c) {
     return fft_conv_2d_full(std::forward<A>(a), std::forward<B>(b), std::forward<C>(c));
 }
@@ -319,7 +319,7 @@ auto fast_conv_2d_full(A&& a, B&& b, C&& c) {
  * \param c The result
  * \return an expression representing the full 2D convolution of a and b
  */
-template <typename A, typename B, typename C, cpp_disable_if_cst(has_fast_fft::value)>
+template <typename A, typename B, typename C, cpp_disable_if_cst(has_fast_fft)>
 auto fast_conv_2d_full(A&& a, B&& b, C&& c) {
     return conv_2d_full(std::forward<A>(a), std::forward<B>(b), std::forward<C>(c));
 }

@@ -63,21 +63,21 @@ constexpr const bool parallel = false; ///< Boolean flag indicating if expressio
 #define ETL_BLAS_MODE
 #endif
 
-struct is_mkl_enabled : std::true_type {};
-struct has_fast_fft : std::true_type {};
+constexpr const bool is_mkl_enabled = true;
+constexpr const bool has_fast_fft = true;
 
 #else
 
-struct is_mkl_enabled : std::false_type {};
-struct has_fast_fft : std::false_type {};
+constexpr const bool is_mkl_enabled = false;
+constexpr const bool has_fast_fft = false;
 
 #endif
 
 //Flag to enable the use of CBLAS library
 #ifdef ETL_BLAS_MODE
-struct is_cblas_enabled : std::true_type {};
+constexpr const bool is_cblas_enabled = true;
 #else
-struct is_cblas_enabled : std::false_type {};
+constexpr const bool is_cblas_enabled = false;
 #endif
 
 #ifdef ETL_CUDA
@@ -85,17 +85,17 @@ static_assert(false, "ETL_CUDA should never be set directly");
 #endif
 
 #ifdef ETL_CUBLAS_MODE
-struct is_cublas_enabled : std::true_type {};
+constexpr const bool is_cublas_enabled = true;
 #define ETL_CUDA
 #else
-struct is_cublas_enabled : std::false_type {};
+constexpr const bool is_cublas_enabled = false;
 #endif
 
 #ifdef ETL_CUFFT_MODE
 #define ETL_CUDA
-struct is_cufft_enabled : std::true_type {};
+constexpr const bool is_cufft_enabled = true;
 #else
-struct is_cufft_enabled : std::false_type {};
+constexpr const bool is_cufft_enabled = false;
 #endif
 
 //Flag to perform elementwise multiplication by default (operator*)

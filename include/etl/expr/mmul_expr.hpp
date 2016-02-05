@@ -84,7 +84,7 @@ struct basic_mm_mul_expr : impl_expr<basic_mm_mul_expr<T, Impl>> {
     template <typename A, typename B>
     using result_type = detail::expr_result_t<this_type, A, B>;
 
-    static constexpr const bool is_gpu = is_cublas_enabled::value;
+    static constexpr const bool is_gpu = is_cublas_enabled;
 
     template <typename A, typename B, typename C>
     static void apply(A&& a, B&& b, C&& c) {
@@ -157,7 +157,7 @@ struct basic_vm_mul_expr : impl_expr<basic_vm_mul_expr<T, Impl>> {
     using value_type = T;
     using this_type  = basic_vm_mul_expr<T, Impl>;
 
-    static constexpr const bool is_gpu = is_cublas_enabled::value;
+    static constexpr const bool is_gpu = is_cublas_enabled;
 
     template <typename A, typename B>
     using result_type = detail::expr_result_t<this_type, A, B>;
@@ -226,7 +226,7 @@ struct basic_mv_mul_expr : impl_expr<basic_mv_mul_expr<T, Impl>> {
     using value_type = T;
     using this_type  = basic_mv_mul_expr<T, Impl>;
 
-    static constexpr const bool is_gpu = is_cublas_enabled::value;
+    static constexpr const bool is_gpu = is_cublas_enabled;
 
     template <typename A, typename B>
     using result_type = detail::expr_result_t<this_type, A, B>;

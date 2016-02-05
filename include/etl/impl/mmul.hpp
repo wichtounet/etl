@@ -35,8 +35,8 @@ inline cpp14_constexpr gemm_impl select_gemm_impl(const std::size_t n1, const st
     }
 
     //Note since these boolean will be known at compile time, the conditions will be a lot simplified
-    constexpr const bool blas   = is_cblas_enabled::value;
-    constexpr const bool cublas = is_cublas_enabled::value;
+    constexpr const bool blas   = is_cblas_enabled;
+    constexpr const bool cublas = is_cublas_enabled;
 
     if (cublas) {
         if (n1 * n3 < gemm_cublas_min) {
@@ -69,8 +69,8 @@ inline cpp14_constexpr gemm_impl select_gemv_impl(const std::size_t n1, const st
     }
 
     //Note since these boolean will be known at compile time, the conditions will be a lot simplified
-    constexpr const bool blas   = is_cblas_enabled::value;
-    constexpr const bool cublas = is_cublas_enabled::value;
+    constexpr const bool blas   = is_cblas_enabled;
+    constexpr const bool cublas = is_cublas_enabled;
 
     if (blas) {
         return gemm_impl::BLAS;
@@ -93,8 +93,8 @@ inline cpp14_constexpr gemm_impl select_gevm_impl(const std::size_t n1, const st
     }
 
     //Note since these boolean will be known at compile time, the conditions will be a lot simplified
-    constexpr const bool blas   = is_cblas_enabled::value;
-    constexpr const bool cublas = is_cublas_enabled::value;
+    constexpr const bool blas   = is_cblas_enabled;
+    constexpr const bool cublas = is_cublas_enabled;
 
     if (blas) {
         return gemm_impl::BLAS;
