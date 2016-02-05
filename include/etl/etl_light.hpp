@@ -17,6 +17,7 @@
 #include "etl/order.hpp"
 #include "etl/sparse_storage.hpp"
 #include "etl/config.hpp"
+#include "etl/context.hpp"
 #include "etl/vectorization.hpp"
 #include "etl/complex.hpp"
 #include "etl/random.hpp"
@@ -58,6 +59,7 @@
 #include "etl/expr/generator_expr.hpp"
 #include "etl/expr/temporary_expr.hpp"
 #include "etl/expr/optimized_expr.hpp"
+#include "etl/expr/serial_expr.hpp"
 
 // The expressions building
 #include "etl/checks.hpp"

@@ -105,6 +105,13 @@ template <typename T>
 using is_optimized_expr = cpp::is_specialization_of<etl::optimized_expr, std::decay_t<T>>;
 
 /*!
+ * \brief Traits indicating if the given ETL type is a serial expression.
+ * \tparam T The type to test
+ */
+template <typename T>
+using is_serial_expr = cpp::is_specialization_of<etl::serial_expr, std::decay_t<T>>;
+
+/*!
  * \brief Traits indicating if the given ETL type is a temporary unary expression.
  * \tparam T The type to test
  */

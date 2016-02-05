@@ -833,6 +833,22 @@ void assign_evaluate(Expr&& expr, Result&& result) {
 }
 
 /*!
+ * \brief Evaluation of the expr into result
+ * \param expr The right hand side expression
+ * \param result The left hand side
+ */
+template <typename Expr, typename Result, cpp_enable_if(is_serial_expr<Expr>::value)>
+void assign_evaluate(Expr&& expr, Result&& result) {
+    auto old_serial = local_context().serial;
+
+    local_context().serial = false;
+
+    assign_evaluate(expr.value(), result);
+
+    local_context().serial = old_serial;
+}
+
+/*!
  * \brief Compound add evaluation of the expr into result
  * \param expr The right hand side expression
  * \param result The left hand side
