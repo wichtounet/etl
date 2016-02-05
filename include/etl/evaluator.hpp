@@ -864,7 +864,7 @@ void assign_evaluate(Expr&& expr, Result&& result) {
     auto end_time = etl::timer_clock::now();
     auto duration = std::chrono::duration_cast<resolution>(end_time - start_time);
 
-    std::cout << "timed: " << expr.value() << " took " << duration.count() << resolution_to_string<resolution>() << std::endl;
+    std::cout << "timed(=): " << expr.value() << " took " << duration.count() << resolution_to_string<resolution>() << std::endl;
 }
 
 /*!
@@ -917,6 +917,25 @@ void add_evaluate(Expr&& expr, Result&& result) {
 }
 
 /*!
+ * \brief Compound add evaluation of the expr into result
+ * \param expr The right hand side expression
+ * \param result The left hand side
+ */
+template <typename Expr, typename Result, cpp_enable_if(is_timed_expr<Expr>::value)>
+void add_evaluate(Expr&& expr, Result&& result) {
+    using resolution = typename std::decay_t<Expr>::clock_resolution;
+
+    auto start_time = etl::timer_clock::now();
+
+    add_evaluate(expr.value(), std::forward<Result>(result));
+
+    auto end_time = etl::timer_clock::now();
+    auto duration = std::chrono::duration_cast<resolution>(end_time - start_time);
+
+    std::cout << "timed(+=): " << expr.value() << " took " << duration.count() << resolution_to_string<resolution>() << std::endl;
+}
+
+/*!
  * \brief Compound subtract evaluation of the expr into result
  * \param expr The right hand side expression
  * \param result The left hand side
@@ -963,6 +982,25 @@ void sub_evaluate(Expr&& expr, Result&& result) {
     sub_evaluate(expr.value(), std::forward<Result>(result));
 
     local_context().serial = old_serial;
+}
+
+/*!
+ * \brief Compound sub evaluation of the expr into result
+ * \param expr The right hand side expression
+ * \param result The left hand side
+ */
+template <typename Expr, typename Result, cpp_enable_if(is_timed_expr<Expr>::value)>
+void sub_evaluate(Expr&& expr, Result&& result) {
+    using resolution = typename std::decay_t<Expr>::clock_resolution;
+
+    auto start_time = etl::timer_clock::now();
+
+    sub_evaluate(expr.value(), std::forward<Result>(result));
+
+    auto end_time = etl::timer_clock::now();
+    auto duration = std::chrono::duration_cast<resolution>(end_time - start_time);
+
+    std::cout << "timed(-=): " << expr.value() << " took " << duration.count() << resolution_to_string<resolution>() << std::endl;
 }
 
 /*!
@@ -1015,6 +1053,25 @@ void mul_evaluate(Expr&& expr, Result&& result) {
 }
 
 /*!
+ * \brief Compound mul evaluation of the expr into result
+ * \param expr The right hand side expression
+ * \param result The left hand side
+ */
+template <typename Expr, typename Result, cpp_enable_if(is_timed_expr<Expr>::value)>
+void mul_evaluate(Expr&& expr, Result&& result) {
+    using resolution = typename std::decay_t<Expr>::clock_resolution;
+
+    auto start_time = etl::timer_clock::now();
+
+    mul_evaluate(expr.value(), std::forward<Result>(result));
+
+    auto end_time = etl::timer_clock::now();
+    auto duration = std::chrono::duration_cast<resolution>(end_time - start_time);
+
+    std::cout << "timed(*=): " << expr.value() << " took " << duration.count() << resolution_to_string<resolution>() << std::endl;
+}
+
+/*!
  * \brief Compound divide evaluation of the expr into result
  * \param expr The right hand side expression
  * \param result The left hand side
@@ -1039,6 +1096,19 @@ void div_evaluate(Expr&& expr, Result&& result) {
  * \param expr The right hand side expression
  * \param result The left hand side
  */
+template <typename Expr, typename Result, cpp_enable_if(is_optimized_expr<Expr>::value)>
+void div_evaluate(Expr&& expr, Result&& result) {
+    optimized_forward(expr.value(),
+                      [&result](auto& optimized) {
+                          div_evaluate(optimized, std::forward<Result>(result));
+                      });
+}
+
+/*!
+ * \brief Compound div evaluation of the expr into result
+ * \param expr The right hand side expression
+ * \param result The left hand side
+ */
 template <typename Expr, typename Result, cpp_enable_if(is_serial_expr<Expr>::value)>
 void div_evaluate(Expr&& expr, Result&& result) {
     auto old_serial = local_context().serial;
@@ -1048,6 +1118,25 @@ void div_evaluate(Expr&& expr, Result&& result) {
     div_evaluate(expr.value(), std::forward<Result>(result));
 
     local_context().serial = old_serial;
+}
+
+/*!
+ * \brief Compound div evaluation of the expr into result
+ * \param expr The right hand side expression
+ * \param result The left hand side
+ */
+template <typename Expr, typename Result, cpp_enable_if(is_timed_expr<Expr>::value)>
+void div_evaluate(Expr&& expr, Result&& result) {
+    using resolution = typename std::decay_t<Expr>::clock_resolution;
+
+    auto start_time = etl::timer_clock::now();
+
+    div_evaluate(expr.value(), std::forward<Result>(result));
+
+    auto end_time = etl::timer_clock::now();
+    auto duration = std::chrono::duration_cast<resolution>(end_time - start_time);
+
+    std::cout << "timed(/=): " << expr.value() << " took " << duration.count() << resolution_to_string<resolution>() << std::endl;
 }
 
 /*!
@@ -1097,6 +1186,25 @@ void mod_evaluate(Expr&& expr, Result&& result) {
     mod_evaluate(expr.value(), std::forward<Result>(result));
 
     local_context().serial = old_serial;
+}
+
+/*!
+ * \brief Compound mod evaluation of the expr into result
+ * \param expr The right hand side expression
+ * \param result The left hand side
+ */
+template <typename Expr, typename Result, cpp_enable_if(is_timed_expr<Expr>::value)>
+void mod_evaluate(Expr&& expr, Result&& result) {
+    using resolution = typename std::decay_t<Expr>::clock_resolution;
+
+    auto start_time = etl::timer_clock::now();
+
+    mod_evaluate(expr.value(), std::forward<Result>(result));
+
+    auto end_time = etl::timer_clock::now();
+    auto duration = std::chrono::duration_cast<resolution>(end_time - start_time);
+
+    std::cout << "timed(%=): " << expr.value() << " took " << duration.count() << resolution_to_string<resolution>() << std::endl;
 }
 
 /*!
