@@ -7,6 +7,8 @@
 
 #pragma once
 
+namespace etl {
+
 using timer_clock = std::chrono::steady_clock;
 using seconds = std::chrono::seconds;
 using milliseconds = std::chrono::milliseconds;
