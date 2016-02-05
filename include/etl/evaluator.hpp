@@ -843,7 +843,7 @@ void assign_evaluate(Expr&& expr, Result&& result) {
 
     local_context().serial = false;
 
-    assign_evaluate(expr.value(), result);
+    assign_evaluate(expr.value(), std::forward<Result>(result));
 
     local_context().serial = old_serial;
 }
@@ -853,7 +853,7 @@ void assign_evaluate(Expr&& expr, Result&& result) {
  * \param expr The right hand side expression
  * \param result The left hand side
  */
-template <typename Expr, typename Result, cpp_enable_if(direct_assign_compatible<Expr, Result>::value)>
+template <typename Expr, typename Result, cpp_enable_if(direct_assign_compatible<Expr, Result>::value, !is_wrapper_expr<Expr>::value)>
 void add_evaluate(Expr&& expr, Result&& result) {
     standard_evaluator::add_evaluate(std::forward<Expr>(expr), std::forward<Result>(result));
 }
@@ -863,9 +863,38 @@ void add_evaluate(Expr&& expr, Result&& result) {
  * \param expr The right hand side expression
  * \param result The left hand side
  */
-template <typename Expr, typename Result, cpp_disable_if(direct_assign_compatible<Expr, Result>::value)>
+template <typename Expr, typename Result, cpp_enable_if(!direct_assign_compatible<Expr, Result>::value, !is_wrapper_expr<Expr>::value)>
 void add_evaluate(Expr&& expr, Result&& result) {
     standard_evaluator::add_evaluate(transpose(expr), std::forward<Result>(result));
+}
+
+/*!
+ * \brief Compound add evaluation of the expr into result
+ * \param expr The right hand side expression
+ * \param result The left hand side
+ */
+template <typename Expr, typename Result, cpp_enable_if(is_optimized_expr<Expr>::value)>
+void add_evaluate(Expr&& expr, Result&& result) {
+    optimized_forward(expr.value(),
+                      [&result](auto& optimized) {
+                          add_evaluate(optimized, std::forward<Result>(result));
+                      });
+}
+
+/*!
+ * \brief Compound add evaluation of the expr into result
+ * \param expr The right hand side expression
+ * \param result The left hand side
+ */
+template <typename Expr, typename Result, cpp_enable_if(is_serial_expr<Expr>::value)>
+void add_evaluate(Expr&& expr, Result&& result) {
+    auto old_serial = local_context().serial;
+
+    local_context().serial = false;
+
+    add_evaluate(expr.value(), std::forward<Result>(result));
+
+    local_context().serial = old_serial;
 }
 
 /*!
@@ -873,7 +902,7 @@ void add_evaluate(Expr&& expr, Result&& result) {
  * \param expr The right hand side expression
  * \param result The left hand side
  */
-template <typename Expr, typename Result, cpp_enable_if(direct_assign_compatible<Expr, Result>::value)>
+template <typename Expr, typename Result, cpp_enable_if(direct_assign_compatible<Expr, Result>::value, !is_wrapper_expr<Expr>::value)>
 void sub_evaluate(Expr&& expr, Result&& result) {
     standard_evaluator::sub_evaluate(std::forward<Expr>(expr), std::forward<Result>(result));
 }
@@ -883,9 +912,38 @@ void sub_evaluate(Expr&& expr, Result&& result) {
  * \param expr The right hand side expression
  * \param result The left hand side
  */
-template <typename Expr, typename Result, cpp_disable_if(direct_assign_compatible<Expr, Result>::value)>
+template <typename Expr, typename Result, cpp_enable_if(!direct_assign_compatible<Expr, Result>::value, !is_wrapper_expr<Expr>::value)>
 void sub_evaluate(Expr&& expr, Result&& result) {
     standard_evaluator::sub_evaluate(transpose(expr), std::forward<Result>(result));
+}
+
+/*!
+ * \brief Compound sub evaluation of the expr into result
+ * \param expr The right hand side expression
+ * \param result The left hand side
+ */
+template <typename Expr, typename Result, cpp_enable_if(is_optimized_expr<Expr>::value)>
+void sub_evaluate(Expr&& expr, Result&& result) {
+    optimized_forward(expr.value(),
+                      [&result](auto& optimized) {
+                          sub_evaluate(optimized, std::forward<Result>(result));
+                      });
+}
+
+/*!
+ * \brief Compound sub evaluation of the expr into result
+ * \param expr The right hand side expression
+ * \param result The left hand side
+ */
+template <typename Expr, typename Result, cpp_enable_if(is_serial_expr<Expr>::value)>
+void sub_evaluate(Expr&& expr, Result&& result) {
+    auto old_serial = local_context().serial;
+
+    local_context().serial = false;
+
+    sub_evaluate(expr.value(), std::forward<Result>(result));
+
+    local_context().serial = old_serial;
 }
 
 /*!
@@ -893,7 +951,7 @@ void sub_evaluate(Expr&& expr, Result&& result) {
  * \param expr The right hand side expression
  * \param result The left hand side
  */
-template <typename Expr, typename Result, cpp_enable_if(direct_assign_compatible<Expr, Result>::value)>
+template <typename Expr, typename Result, cpp_enable_if(direct_assign_compatible<Expr, Result>::value, !is_wrapper_expr<Expr>::value)>
 void mul_evaluate(Expr&& expr, Result&& result) {
     standard_evaluator::mul_evaluate(std::forward<Expr>(expr), std::forward<Result>(result));
 }
@@ -903,9 +961,38 @@ void mul_evaluate(Expr&& expr, Result&& result) {
  * \param expr The right hand side expression
  * \param result The left hand side
  */
-template <typename Expr, typename Result, cpp_disable_if(direct_assign_compatible<Expr, Result>::value)>
+template <typename Expr, typename Result, cpp_enable_if(!direct_assign_compatible<Expr, Result>::value, !is_wrapper_expr<Expr>::value)>
 void mul_evaluate(Expr&& expr, Result&& result) {
     standard_evaluator::mul_evaluate(transpose(expr), std::forward<Result>(result));
+}
+
+/*!
+ * \brief Compound mul evaluation of the expr into result
+ * \param expr The right hand side expression
+ * \param result The left hand side
+ */
+template <typename Expr, typename Result, cpp_enable_if(is_optimized_expr<Expr>::value)>
+void mul_evaluate(Expr&& expr, Result&& result) {
+    optimized_forward(expr.value(),
+                      [&result](auto& optimized) {
+                          mul_evaluate(optimized, std::forward<Result>(result));
+                      });
+}
+
+/*!
+ * \brief Compound mul evaluation of the expr into result
+ * \param expr The right hand side expression
+ * \param result The left hand side
+ */
+template <typename Expr, typename Result, cpp_enable_if(is_serial_expr<Expr>::value)>
+void mul_evaluate(Expr&& expr, Result&& result) {
+    auto old_serial = local_context().serial;
+
+    local_context().serial = false;
+
+    mul_evaluate(expr.value(), std::forward<Result>(result));
+
+    local_context().serial = old_serial;
 }
 
 /*!
@@ -913,7 +1000,7 @@ void mul_evaluate(Expr&& expr, Result&& result) {
  * \param expr The right hand side expression
  * \param result The left hand side
  */
-template <typename Expr, typename Result, cpp_enable_if(direct_assign_compatible<Expr, Result>::value)>
+template <typename Expr, typename Result, cpp_enable_if(direct_assign_compatible<Expr, Result>::value, !is_wrapper_expr<Expr>::value)>
 void div_evaluate(Expr&& expr, Result&& result) {
     standard_evaluator::div_evaluate(std::forward<Expr>(expr), std::forward<Result>(result));
 }
@@ -923,9 +1010,25 @@ void div_evaluate(Expr&& expr, Result&& result) {
  * \param expr The right hand side expression
  * \param result The left hand side
  */
-template <typename Expr, typename Result, cpp_disable_if(direct_assign_compatible<Expr, Result>::value)>
+template <typename Expr, typename Result, cpp_enable_if(!direct_assign_compatible<Expr, Result>::value, !is_wrapper_expr<Expr>::value)>
 void div_evaluate(Expr&& expr, Result&& result) {
     standard_evaluator::div_evaluate(transpose(expr), std::forward<Result>(result));
+}
+
+/*!
+ * \brief Compound div evaluation of the expr into result
+ * \param expr The right hand side expression
+ * \param result The left hand side
+ */
+template <typename Expr, typename Result, cpp_enable_if(is_serial_expr<Expr>::value)>
+void div_evaluate(Expr&& expr, Result&& result) {
+    auto old_serial = local_context().serial;
+
+    local_context().serial = false;
+
+    div_evaluate(expr.value(), std::forward<Result>(result));
+
+    local_context().serial = old_serial;
 }
 
 /*!
@@ -933,7 +1036,7 @@ void div_evaluate(Expr&& expr, Result&& result) {
  * \param expr The right hand side expression
  * \param result The left hand side
  */
-template <typename Expr, typename Result, cpp_enable_if(direct_assign_compatible<Expr, Result>::value)>
+template <typename Expr, typename Result, cpp_enable_if(direct_assign_compatible<Expr, Result>::value, !is_wrapper_expr<Expr>::value)>
 void mod_evaluate(Expr&& expr, Result&& result) {
     standard_evaluator::mod_evaluate(std::forward<Expr>(expr), std::forward<Result>(result));
 }
@@ -943,9 +1046,38 @@ void mod_evaluate(Expr&& expr, Result&& result) {
  * \param expr The right hand side expression
  * \param result The left hand side
  */
-template <typename Expr, typename Result, cpp_disable_if(direct_assign_compatible<Expr, Result>::value)>
+template <typename Expr, typename Result, cpp_enable_if(!direct_assign_compatible<Expr, Result>::value, !is_wrapper_expr<Expr>::value)>
 void mod_evaluate(Expr&& expr, Result&& result) {
     standard_evaluator::mod_evaluate(transpose(expr), std::forward<Result>(result));
+}
+
+/*!
+ * \brief Compound mod evaluation of the expr into result
+ * \param expr The right hand side expression
+ * \param result The left hand side
+ */
+template <typename Expr, typename Result, cpp_enable_if(is_optimized_expr<Expr>::value)>
+void mod_evaluate(Expr&& expr, Result&& result) {
+    optimized_forward(expr.value(),
+                      [&result](auto& optimized) {
+                          mod_evaluate(optimized, std::forward<Result>(result));
+                      });
+}
+
+/*!
+ * \brief Compound mod evaluation of the expr into result
+ * \param expr The right hand side expression
+ * \param result The left hand side
+ */
+template <typename Expr, typename Result, cpp_enable_if(is_serial_expr<Expr>::value)>
+void mod_evaluate(Expr&& expr, Result&& result) {
+    auto old_serial = local_context().serial;
+
+    local_context().serial = false;
+
+    mod_evaluate(expr.value(), std::forward<Result>(result));
+
+    local_context().serial = old_serial;
 }
 
 /*!
