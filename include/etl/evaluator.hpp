@@ -149,7 +149,7 @@ namespace standard_evaluator {
     void assign_evaluate_impl(E&& expr, R&& result) {
         const auto n = etl::size(result);
 
-        if(n < parallel_threshold || threads < 2){
+        if(n < parallel_threshold || threads < 2 || local_context().serial){
             direct_assign_evaluate(std::forward<E>(expr), std::forward<R>(result));
             return;
         }
@@ -197,7 +197,7 @@ namespace standard_evaluator {
 
         const std::size_t size = etl::size(result);
 
-        if(size < parallel_threshold || threads < 2){
+        if(size < parallel_threshold || threads < 2 || local_context().serial){
             vectorized_assign_evaluate(std::forward<E>(expr), std::forward<R>(result));
             return;
         }
@@ -264,7 +264,7 @@ namespace standard_evaluator {
     void add_evaluate(E&& expr, R&& result) {
         const auto n = etl::size(result);
 
-        if(n < parallel_threshold || threads < 2){
+        if(n < parallel_threshold || threads < 2 || local_context().serial){
             direct_add_evaluate(std::forward<E>(expr), std::forward<R>(result));
             return;
         }
@@ -318,7 +318,7 @@ namespace standard_evaluator {
 
         const std::size_t size = etl::size(result);
 
-        if(size < parallel_threshold || threads < 2){
+        if(size < parallel_threshold || threads < 2 || local_context().serial){
             vectorized_add_evaluate(std::forward<E>(expr), std::forward<R>(result));
             return;
         }
@@ -389,7 +389,7 @@ namespace standard_evaluator {
     void sub_evaluate(E&& expr, R&& result) {
         const auto n = etl::size(result);
 
-        if(n < parallel_threshold || threads < 2){
+        if(n < parallel_threshold || threads < 2 || local_context().serial){
             direct_sub_evaluate(std::forward<E>(expr), std::forward<R>(result));
             return;
         }
@@ -443,7 +443,7 @@ namespace standard_evaluator {
 
         const std::size_t size = etl::size(result);
 
-        if(size < parallel_threshold || threads < 2){
+        if(size < parallel_threshold || threads < 2 || local_context().serial){
             vectorized_sub_evaluate(std::forward<E>(expr), std::forward<R>(result));
             return;
         }
@@ -514,7 +514,7 @@ namespace standard_evaluator {
     void mul_evaluate(E&& expr, R&& result) {
         const auto n = etl::size(result);
 
-        if(n < parallel_threshold || threads < 2){
+        if(n < parallel_threshold || threads < 2 || local_context().serial){
             direct_mul_evaluate(std::forward<E>(expr), std::forward<R>(result));
             return;
         }
@@ -568,7 +568,7 @@ namespace standard_evaluator {
 
         const std::size_t size = etl::size(result);
 
-        if(size < parallel_threshold || threads < 2){
+        if(size < parallel_threshold || threads < 2 || local_context().serial){
             vectorized_mul_evaluate(std::forward<E>(expr), std::forward<R>(result));
             return;
         }
@@ -639,7 +639,7 @@ namespace standard_evaluator {
     void div_evaluate(E&& expr, R&& result) {
         const auto n = etl::size(result);
 
-        if(n < parallel_threshold || threads < 2){
+        if(n < parallel_threshold || threads < 2 || local_context().serial){
             direct_div_evaluate(std::forward<E>(expr), std::forward<R>(result));
             return;
         }
@@ -693,7 +693,7 @@ namespace standard_evaluator {
 
         const std::size_t size = etl::size(result);
 
-        if(size < parallel_threshold || threads < 2){
+        if(size < parallel_threshold || threads < 2 || local_context().serial){
             vectorized_div_evaluate(std::forward<E>(expr), std::forward<R>(result));
             return;
         }
