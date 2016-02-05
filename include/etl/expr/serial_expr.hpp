@@ -14,6 +14,8 @@
 
 #include <iosfwd> //For stream support
 
+#include "wrapper_traits.hpp"
+
 namespace etl {
 
 /*!
@@ -69,7 +71,7 @@ public:
  * Serial expression simply use the same traits as its expression
  */
 template <typename Expr>
-struct etl_traits<etl::serial_expr<Expr>> : etl_traits<Expr> {};
+struct etl_traits<etl::serial_expr<Expr>> : wrapper_traits<etl::serial_expr<Expr>> {};
 
 /*!
  * \brief Prints the type of the optimized expression to the stream

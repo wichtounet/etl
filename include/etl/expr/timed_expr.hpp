@@ -14,6 +14,8 @@
 
 #include <iosfwd> //For stream support
 
+#include "wrapper_traits.hpp"
+
 namespace etl {
 
 /*!
@@ -25,6 +27,7 @@ private:
     Expr _value;
 
 public:
+    using expr_t     = Expr;          ///< The wrapped expression type
     using value_type = value_t<Expr>; ///< The value type
 
     //Cannot be constructed with no args
@@ -69,7 +72,7 @@ public:
  * timed expression simply use the same traits as its expression
  */
 template <typename Expr>
-struct etl_traits<etl::timed_expr<Expr>> : etl_traits<Expr> {};
+struct etl_traits<etl::timed_expr<Expr>> : wrapper_traits<etl::timed_expr<Expr>> {};
 
 /*!
  * \brief Prints the type of the timed expression to the stream
