@@ -48,7 +48,7 @@ TEMPLATE_TEST_CASE_2("timed/2", "[dyn][serial]", Z, float, double) {
     auto text = buffer.str();
     std::cout.rdbuf(old);
 
-    REQUIRE(starts_with(text, "timed(+=): (V[10000] + V[10000]) took "));
+    REQUIRE(starts_with(text, "timed(=): (V[10000] + V[10000]) took "));
     REQUIRE(std::string(text.end() - 3, text.end() - 1) == "ns");
 
     REQUIRE(b[0] == 2.0);
