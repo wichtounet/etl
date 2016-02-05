@@ -27,7 +27,7 @@ TEMPLATE_TEST_CASE_2("timed/1", "[fast][serial]", Z, float, double) {
     auto text = buffer.str();
     std::cout.rdbuf(old);
 
-    REQUIRE(starts_with(text, "timed: (V[3] + V[3]) took "));
+    REQUIRE(starts_with(text, "timed(=): (V[3] + V[3]) took "));
     REQUIRE(std::string(text.end() - 3, text.end() - 1) == "ns");
 
     REQUIRE(b[0] == 2.0);
@@ -41,13 +41,14 @@ TEMPLATE_TEST_CASE_2("timed/2", "[dyn][serial]", Z, float, double) {
     etl::dyn_vector<Z> b(10000);
 
     a = 1.0;
+    b = 0.0;
 
     b = timed(a + a);
 
     auto text = buffer.str();
     std::cout.rdbuf(old);
 
-    REQUIRE(starts_with(text, "timed: (V[10000] + V[10000]) took "));
+    REQUIRE(starts_with(text, "timed(+=): (V[10000] + V[10000]) took "));
     REQUIRE(std::string(text.end() - 3, text.end() - 1) == "ns");
 
     REQUIRE(b[0] == 2.0);
@@ -67,7 +68,7 @@ TEMPLATE_TEST_CASE_2("timed/3", "[dyn][serial]", Z, float, double) {
     auto text = buffer.str();
     std::cout.rdbuf(old);
 
-    REQUIRE(text == "timed: (V[10000] + V[10000]) took 0ms\n");
+    REQUIRE(text == "timed(=): (V[10000] + V[10000]) took 0ms\n");
 
     REQUIRE(b[0] == 2.0);
 }
