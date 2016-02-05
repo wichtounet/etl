@@ -77,7 +77,7 @@ inline conv_impl select_conv_impl() {
 
 template <typename I, typename K, typename C>
 inline bool select_parallel(const I& /*input*/, const K& kernel, C&& conv) {
-    if(parallel){
+    if(parallel && !local_context().serial){
         return size(conv) >= conv1_parallel_threshold_conv && size(kernel) >= conv1_parallel_threshold_kernel;
     } else {
         return false;
