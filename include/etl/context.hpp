@@ -13,7 +13,7 @@ struct context {
     bool serial = false;
 };
 
-inline context local_context(){
+inline context& local_context(){
     static thread_local context local_context;
     return local_context;
 }
