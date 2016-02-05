@@ -33,6 +33,20 @@ TEST_CASE("serial_section/1", "[fast][serial]") {
     REQUIRE(b[0] == 4.0);
 }
 
+TEMPLATE_TEST_CASE_2("serial/2", "[dyn][serial][sum]", Z, float, double) {
+    etl::dyn_matrix<Z> a(5000, 5000);
+
+    a = 12.0;
+
+    double sum = 0.0;
+
+    SERIAL_SECTION {
+        sum = etl::sum(a);
+    }
+
+    REQUIRE(sum == 12.0 * 5000.0 * 5000.0);
+}
+
 TEST_CASE("serial_section/2", "[fast][serial]") {
     etl::fast_vector<double, 3> a({1.0, -2.0, 3.0});
     etl::fast_vector<double, 3> b;
