@@ -849,6 +849,23 @@ void assign_evaluate(Expr&& expr, Result&& result) {
 }
 
 /*!
+ * \brief Evaluation of the expr into result
+ * \param expr The right hand side expression
+ * \param result The left hand side
+ */
+template <typename Expr, typename Result, cpp_enable_if(is_timed_expr<Expr>::value)>
+void assign_evaluate(Expr&& expr, Result&& result) {
+    auto start_time = etl::timer_clock::now();
+
+    assign_evaluate(expr.value(), std::forward<Result>(result));
+
+    auto end_time = etl::timer_clock::now();
+    auto duration = std::chrono::duration_cast<etl::clock_resolution>(end_time - start_time);
+
+    std::cout << "timed: " << expr.value() << " took " << duration.count() << "ns" << std::endl;
+}
+
+/*!
  * \brief Compound add evaluation of the expr into result
  * \param expr The right hand side expression
  * \param result The left hand side

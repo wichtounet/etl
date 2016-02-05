@@ -31,6 +31,9 @@ struct optimized_expr;
 template <typename Expr>
 struct serial_expr;
 
+template <typename Expr>
+struct timed_expr;
+
 template <typename T, typename AExpr, typename Op, typename Forced>
 struct temporary_unary_expr;
 

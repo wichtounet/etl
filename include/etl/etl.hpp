@@ -61,6 +61,7 @@
 #include "etl/expr/temporary_expr.hpp"
 #include "etl/expr/optimized_expr.hpp"
 #include "etl/expr/serial_expr.hpp"
+#include "etl/expr/timed_expr.hpp"
 
 // The complex expressions
 #include "etl/expr/mmul_expr.hpp"

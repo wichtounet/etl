@@ -1248,6 +1248,13 @@ auto opt(Expr&& expr) -> optimized_expr<detail::build_type<Expr>> {
     return {expr};
 }
 
+//Time an expression
+
+template <typename Expr>
+auto timed(Expr&& expr) -> timed_expr<detail::build_type<Expr>> {
+    return {expr};
+}
+
 //Force serial execution of an expression
 
 template <typename Expr>

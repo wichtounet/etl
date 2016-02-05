@@ -7,7 +7,12 @@
 
 #pragma once
 
-namespace etl {
+using timer_clock = std::chrono::steady_clock;
+using seconds = std::chrono::seconds;
+using milliseconds = std::chrono::milliseconds;
+using microseconds = std::chrono::microseconds;
+using nanoseconds = std::chrono::nanoseconds;
+using clock_resolution = nanoseconds;
 
 #ifdef ETL_VECTORIZE_FULL
 
