@@ -79,3 +79,21 @@ TEMPLATE_TEST_CASE_2("serial_section/2", "[fast][serial]", Z, float, double) {
 
     REQUIRE(b[0] == 4.0);
 }
+
+TEMPLATE_TEST_CASE_2("serial_section/3", "[fast][serial]", Z, float, double) {
+    REQUIRE(!etl::local_context().serial);
+
+    SERIAL_SECTION {
+        REQUIRE(etl::local_context().serial);
+
+        etl::local_context().serial = false;
+
+        SERIAL_SECTION {
+            REQUIRE(etl::local_context().serial);
+        }
+
+        REQUIRE(!etl::local_context().serial);
+    }
+
+    REQUIRE(!etl::local_context().serial);
+}
