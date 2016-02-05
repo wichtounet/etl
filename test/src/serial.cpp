@@ -17,7 +17,7 @@ TEMPLATE_TEST_CASE_2("serial/1", "[fast][serial]", Z, float, double) {
 }
 
 TEMPLATE_TEST_CASE_2("serial/2", "[dyn][serial][sum]", Z, float, double) {
-    etl::dyn_matrix<Z> a(5000, 5000);
+    etl::dyn_matrix<Z> a(500, 500);
 
     a = 12.0;
 
@@ -27,7 +27,7 @@ TEMPLATE_TEST_CASE_2("serial/2", "[dyn][serial][sum]", Z, float, double) {
         sum = etl::sum(a);
     }
 
-    REQUIRE(sum == 12.0 * 5000.0 * 5000.0);
+    REQUIRE(sum == 12.0 * etl::size(a));
 }
 
 TEMPLATE_TEST_CASE_2("serial/3", "[fast][serial]", Z, float, double) {
