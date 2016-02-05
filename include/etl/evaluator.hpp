@@ -855,14 +855,16 @@ void assign_evaluate(Expr&& expr, Result&& result) {
  */
 template <typename Expr, typename Result, cpp_enable_if(is_timed_expr<Expr>::value)>
 void assign_evaluate(Expr&& expr, Result&& result) {
+    using resolution = typename std::decay_t<Expr>::clock_resolution;
+
     auto start_time = etl::timer_clock::now();
 
     assign_evaluate(expr.value(), std::forward<Result>(result));
 
     auto end_time = etl::timer_clock::now();
-    auto duration = std::chrono::duration_cast<etl::clock_resolution>(end_time - start_time);
+    auto duration = std::chrono::duration_cast<resolution>(end_time - start_time);
 
-    std::cout << "timed: " << expr.value() << " took " << duration.count() << "ns" << std::endl;
+    std::cout << "timed: " << expr.value() << " took " << duration.count() << resolution_to_string<resolution>() << std::endl;
 }
 
 /*!

@@ -1255,6 +1255,11 @@ auto timed(Expr&& expr) -> timed_expr<detail::build_type<Expr>> {
     return {expr};
 }
 
+template <typename R, typename Expr>
+auto timed_res(Expr&& expr) -> timed_expr<detail::build_type<Expr>, R> {
+    return {expr};
+}
+
 //Force serial execution of an expression
 
 template <typename Expr>

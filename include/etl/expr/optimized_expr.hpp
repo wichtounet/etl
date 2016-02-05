@@ -16,7 +16,7 @@
 
 #include <iosfwd> //For stream support
 
-#include "wrapper_traits.hpp"
+#include "etl/wrapper_traits.hpp"
 
 namespace etl {
 
@@ -29,6 +29,7 @@ private:
     Expr _value;
 
 public:
+    using expr_t     = Expr;          ///< The wrapped expression type
     using value_type = value_t<Expr>; ///< The value type
 
     //Cannot be constructed with no args

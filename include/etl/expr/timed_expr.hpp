@@ -14,21 +14,22 @@
 
 #include <iosfwd> //For stream support
 
-#include "wrapper_traits.hpp"
+#include "etl/wrapper_traits.hpp"
 
 namespace etl {
 
 /*!
  * \brief A wrapper for expressions that need to be timed
  */
-template <typename Expr>
+template <typename Expr, typename R>
 struct timed_expr final {
 private:
     Expr _value;
 
 public:
-    using expr_t     = Expr;          ///< The wrapped expression type
-    using value_type = value_t<Expr>; ///< The value type
+    using clock_resolution = R;             ///< The clock resolution
+    using expr_t           = Expr;          ///< The wrapped expression type
+    using value_type       = value_t<Expr>; ///< The value type
 
     //Cannot be constructed with no args
     timed_expr() = delete;
@@ -71,8 +72,8 @@ public:
  * \brief Specilization of the traits for timed_expr
  * timed expression simply use the same traits as its expression
  */
-template <typename Expr>
-struct etl_traits<etl::timed_expr<Expr>> : wrapper_traits<etl::timed_expr<Expr>> {};
+template <typename Expr, typename R>
+struct etl_traits<etl::timed_expr<Expr, R>> : wrapper_traits<etl::timed_expr<Expr, R>> {};
 
 /*!
  * \brief Prints the type of the timed expression to the stream
@@ -80,8 +81,8 @@ struct etl_traits<etl::timed_expr<Expr>> : wrapper_traits<etl::timed_expr<Expr>>
  * \param expr The expression to print
  * \return the output stream
  */
-template <typename Expr>
-std::ostream& operator<<(std::ostream& os, const timed_expr<Expr>& expr) {
+template <typename Expr, typename R>
+std::ostream& operator<<(std::ostream& os, const timed_expr<Expr, R>& expr) {
     return os << "timed(" << expr.value() << ")";
 }
 

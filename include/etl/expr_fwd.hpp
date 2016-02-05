@@ -31,7 +31,7 @@ struct optimized_expr;
 template <typename Expr>
 struct serial_expr;
 
-template <typename Expr>
+template <typename Expr, typename R = etl::nanoseconds>
 struct timed_expr;
 
 template <typename T, typename AExpr, typename Op, typename Forced>
