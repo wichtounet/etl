@@ -7,9 +7,9 @@
 
 #include "test_light.hpp"
 
-TEST_CASE("serial/1", "[fast][serial]") {
-    etl::fast_vector<double, 3> a({1.0, -2.0, 3.0});
-    etl::fast_vector<double, 3> b;
+TEMPLATE_TEST_CASE_2("serial/1", "[fast][serial]", Z, float, double) {
+    etl::fast_vector<Z, 3> a({1.0, -2.0, 3.0});
+    etl::fast_vector<Z, 3> b;
 
     b = serial(a + a);
 
@@ -21,7 +21,7 @@ TEMPLATE_TEST_CASE_2("serial/2", "[dyn][serial][sum]", Z, float, double) {
 
     a = 12.0;
 
-    double sum = 0.0;
+    Z sum = 0.0;
 
     SERIAL_SECTION {
         sum = etl::sum(a);
@@ -30,9 +30,19 @@ TEMPLATE_TEST_CASE_2("serial/2", "[dyn][serial][sum]", Z, float, double) {
     REQUIRE(sum == 12.0 * 5000.0 * 5000.0);
 }
 
-TEST_CASE("serial_section/1", "[fast][serial]") {
-    etl::fast_vector<double, 3> a({1.0, -2.0, 3.0});
-    etl::fast_vector<double, 3> b;
+TEMPLATE_TEST_CASE_2("serial/3", "[fast][serial]", Z, float, double) {
+    etl::fast_vector<Z, 3> a({1.0, -2.0, 3.0});
+    etl::fast_vector<Z, 3> b;
+
+    b = serial(a + a);
+    b += serial(a + a);
+
+    REQUIRE(b[0] == 4.0);
+}
+
+TEMPLATE_TEST_CASE_2("serial_section/1", "[fast][serial]", Z, float, double) {
+    etl::fast_vector<Z, 3> a({1.0, -2.0, 3.0});
+    etl::fast_vector<Z, 3> b;
 
     REQUIRE(!etl::local_context().serial);
 
@@ -47,9 +57,9 @@ TEST_CASE("serial_section/1", "[fast][serial]") {
     REQUIRE(b[0] == 4.0);
 }
 
-TEST_CASE("serial_section/2", "[fast][serial]") {
-    etl::fast_vector<double, 3> a({1.0, -2.0, 3.0});
-    etl::fast_vector<double, 3> b;
+TEMPLATE_TEST_CASE_2("serial_section/2", "[fast][serial]", Z, float, double) {
+    etl::fast_vector<Z, 3> a({1.0, -2.0, 3.0});
+    etl::fast_vector<Z, 3> b;
 
     REQUIRE(!etl::local_context().serial);
 
@@ -64,6 +74,8 @@ TEST_CASE("serial_section/2", "[fast][serial]") {
     }
 
     REQUIRE(etl::local_context().serial);
+
+    etl::local_context().serial = false;
 
     REQUIRE(b[0] == 4.0);
 }
