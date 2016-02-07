@@ -827,6 +827,11 @@ struct logistic_noise_unary_op {
     }
 };
 
+/*!
+ * \brief Unary operation applying the min between the value and a scalar
+ * \tparam T the type of value
+ * \tparam S the type of scalar
+ */
 template <typename T, typename S>
 struct min_scalar_op {
     /*!
@@ -836,9 +841,14 @@ struct min_scalar_op {
     using vec_type = typename V::template vec_type<T>;
 
     static constexpr const bool vectorizable = intel_compiler && !is_complex_t<T>::value; ///< Indicates if the opeator is vectorizable or not
-    static constexpr const bool linear       = true; ///< Indicates if the operator is linear or not
+    static constexpr const bool linear       = true;                                      ///< Indicates if the operator is linear or not
 
-    S s;
+    S s; ///< The scalar value
+
+    /*!
+     * \brief Construct a new min_scalar_op with the given value
+     * \param s The scalar value
+     */
     explicit min_scalar_op(S s)
             : s(s) {}
 
@@ -873,6 +883,12 @@ struct min_scalar_op {
     }
 };
 
+
+/*!
+ * \brief Unary operation applying the max between the value and a scalar
+ * \tparam T the type of value
+ * \tparam S the type of scalar
+ */
 template <typename T, typename S>
 struct max_scalar_op {
     /*!
@@ -884,7 +900,12 @@ struct max_scalar_op {
     static constexpr const bool vectorizable = intel_compiler && !is_complex_t<T>::value; ///< Indicates if the opeator is vectorizable or not
     static constexpr const bool linear       = true; ///< Indicates if the operator is linear or not
 
-    S s;
+    S s; ///< The scalar value
+
+    /*!
+     * \brief Construct a new max_scalar_op with the given value
+     * \param s The scalar value
+     */
     explicit max_scalar_op(S s)
             : s(s) {}
 
@@ -919,6 +940,11 @@ struct max_scalar_op {
     }
 };
 
+/*!
+ * \brief Unary operation that clips all values between two scalars
+ * \tparam T the type of value
+ * \tparam S the type of scalar
+ */
 template <typename T, typename S>
 struct clip_scalar_op {
     /*!
