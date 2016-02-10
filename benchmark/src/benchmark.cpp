@@ -177,7 +177,7 @@ CPM_BENCH() {
         );
 }
 
-CPM_DIRECT_SECTION_TWO_PASS_NS("ssum [std][sum][sse][s]",
+CPM_DIRECT_SECTION_TWO_PASS_NS("ssum [std][sum][s]",
     CPM_SECTION_INIT([](std::size_t d1){ return std::make_tuple(0.0f, svec(d1)); }),
     CPM_SECTION_FUNCTOR("default", [](float& r, svec& a){ r = etl::sum(a); }),
     CPM_SECTION_FUNCTOR("std", [](float& r, svec& a){ r = etl::detail::sum_direct(a, etl::detail::sum_imple::STD); })
@@ -185,7 +185,7 @@ CPM_DIRECT_SECTION_TWO_PASS_NS("ssum [std][sum][sse][s]",
     AVX_SECTION_FUNCTOR("avx", [](float& r, svec& a){ r = etl::detail::sum_direct(a, etl::detail::sum_imple::AVX); })
 )
 
-CPM_DIRECT_SECTION_TWO_PASS_NS("dsum [std][sum][sse][s]",
+CPM_DIRECT_SECTION_TWO_PASS_NS("dsum [std][sum][d]",
     CPM_SECTION_INIT([](std::size_t d1){ return std::make_tuple(0.0, dvec(d1)); }),
     CPM_SECTION_FUNCTOR("default", [](double& r, dvec& a){ r = etl::sum(a); }),
     CPM_SECTION_FUNCTOR("std", [](double& r, dvec& a){ r = etl::detail::sum_direct(a, etl::detail::sum_imple::STD); })
@@ -193,7 +193,7 @@ CPM_DIRECT_SECTION_TWO_PASS_NS("dsum [std][sum][sse][s]",
     AVX_SECTION_FUNCTOR("avx", [](double& r, dvec& a){ r = etl::detail::sum_direct(a, etl::detail::sum_imple::AVX); })
 )
 
-CPM_DIRECT_SECTION_TWO_PASS_NS_F("ssum_expr1 [std][sum][sse][s]",
+CPM_DIRECT_SECTION_TWO_PASS_NS_F("ssum_expr1 [std][sum][s]",
     FLOPS([](std::size_t d){ return 4 * d; }),
     CPM_SECTION_INIT([](std::size_t d1){ return std::make_tuple(0.0f, svec(d1)); }),
     CPM_SECTION_FUNCTOR("default", [](float& r, svec& a){ r = etl::sum((a >> a) + (a >> a)); }),
@@ -202,7 +202,7 @@ CPM_DIRECT_SECTION_TWO_PASS_NS_F("ssum_expr1 [std][sum][sse][s]",
     AVX_SECTION_FUNCTOR("avx", [](float& r, svec& a){ r = etl::detail::sum_direct((a >> a) + (a >> a), etl::detail::sum_imple::AVX); })
 )
 
-CPM_DIRECT_SECTION_TWO_PASS_NS_F("ssum_expr2 [std][sum][sse][s]",
+CPM_DIRECT_SECTION_TWO_PASS_NS_F("ssum_expr2 [std][sum][d]",
     FLOPS([](std::size_t d){ return 4 * d; }),
     CPM_SECTION_INIT([](std::size_t d1){ return std::make_tuple(0.0f, svec(d1), svec(d1)); }),
     CPM_SECTION_FUNCTOR("default", [](float& r, svec& a, svec& b){ r = etl::sum((a >> a) - (b >> b)); }),
