@@ -23,3 +23,18 @@
 #include "cpp_utils/likely.hpp"
 #include "cpp_utils/assert.hpp"
 #include "cpp_utils/parallel.hpp"
+
+// Macro to handle noexcept and cpp_assert
+
+namespace etl {
+#ifdef NDEBUG
+constexpr const bool assert_nothrow = true;
+#else
+#ifdef CPP_UTILS_ASSERT_EXCEPTION
+constexpr const bool assert_nothrow = false;
+#else
+constexpr const bool assert_nothrow = true;
+#endif
+#endif
+
+}
