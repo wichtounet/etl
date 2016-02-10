@@ -79,14 +79,6 @@ CPM_BENCH() {
         [](std::size_t d1, std::size_t d2){ return 2 * d1 * d2; }
         );
 
-    CPM_TWO_PASS_NS_P(
-        mat_policy_2d,
-        "R = A + B + C [std][add][s]",
-        [](auto d1, auto d2){ return std::make_tuple(dmat(d1, d2), dmat(d1, d2), dmat(d1, d2), dmat(d1, d2)); },
-        [](dmat& A, dmat& B, dmat& C, dmat& R){ R = A + B + C; },
-        [](std::size_t d1, std::size_t d2){ return 2 * d1 * d2; }
-        );
-
     CPM_TWO_PASS_NS(
         "r = a + b (c) [std][add][complex][c]",
         [](std::size_t d){ return std::make_tuple(cvec(d), cvec(d), cvec(d)); },
