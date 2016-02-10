@@ -5,12 +5,20 @@
 //  http://opensource.org/licenses/MIT)
 //=======================================================================
 
-#undef NDEBUG
-#define CPP_UTILS_ASSERT_EXCEPTION
+#ifndef NDEBUG
 
 #include "etl/etl_light.hpp"
 #include "catch.hpp"
 
+TEST_CASE("assert/nothrow/1", "[assert]") {
+#ifdef CPP_UTILS_ASSERT_EXCEPTION
+    REQUIRE(!etl::assert_nothrow);
+#else
+    REQUIRE(etl::assert_nothrow);
+#endif
+}
+
+#ifdef CPP_UTILS_ASSERT_EXCEPTION
 TEST_CASE("assert/sizes/1", "[assert]") {
     etl::dyn_vector<double> a = {-1.0, 2.0, 5.0};
     etl::dyn_vector<double> b = {2.5, 3.0, 4.0, 1.0};
@@ -63,3 +71,6 @@ TEST_CASE("assert/dim/4", "[assert]") {
     REQUIRE_THROWS(matrix(1, 5));
     REQUIRE_THROWS(matrix(3, 5));
 }
+#endif
+
+#endif
