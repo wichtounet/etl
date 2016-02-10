@@ -1241,34 +1241,65 @@ auto sequence_generator(T current = 0) -> generator_expr<sequence_generator_op<T
     return generator_expr<sequence_generator_op<T>>{current};
 }
 
-//Force optimization of an expression
-
+/*!
+ * \brief Create an optimized expression wrapping the given expression.
+ *
+ * The expression will be optimized before being evaluated.
+ * \param expr The expression to be wrapped
+ * \return an optimized expression wrapping the given expression
+ */
 template <typename Expr>
 auto opt(Expr&& expr) -> optimized_expr<detail::build_type<Expr>> {
     return {expr};
 }
 
-//Time an expression
-
+/*!
+ * \brief Create a timed expression wrapping the given expression.
+ *
+ * The evaluation (and assignment) of the expression will be timed.
+ *
+ * \param expr The expression to be wrapped
+ * \return a timed expression wrapping the given expression
+ */
 template <typename Expr>
 auto timed(Expr&& expr) -> timed_expr<detail::build_type<Expr>> {
     return {expr};
 }
 
+/*!
+ * \brief Create a timed expression wrapping the given expression with the given resolution.
+ *
+ * The evaluation (and assignment) of the expression will be timed.
+ *
+ * \tparam R The clock resolution (std::chrono resolutions)
+ * \param expr The expression to be wrapped
+ * \return a timed expression wrapping the given expression
+ */
 template <typename R, typename Expr>
 auto timed_res(Expr&& expr) -> timed_expr<detail::build_type<Expr>, R> {
     return {expr};
 }
 
-//Force serial execution of an expression
-
+/*!
+ * \brief Create a serial expression wrapping the given expression.
+ *
+ * The evaluation (and assignment) of the expression is guaranteed to be evaluated serially.
+ *
+ * \param expr The expression to be wrapped
+ * \return a serial expression wrapping the given expression
+ */
 template <typename Expr>
 auto serial(Expr&& expr) -> serial_expr<detail::build_type<Expr>> {
     return {expr};
 }
 
-//Force evaluation of an expression
-
+/*!
+ * \brief Force evaluation of an expression
+ *
+ * The temporary sub expressions will be evaluated and all the results are guaranteed to be in CPU.
+ *
+ * \return The expression
+ */
 template <typename Expr, cpp_enable_if(is_etl_expr<std::decay_t<Expr>>::value)>
 decltype(auto) operator*(Expr&& expr) {
     force(expr);
