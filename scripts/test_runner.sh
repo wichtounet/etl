@@ -13,6 +13,8 @@ export LD=$ETL_GPP
 
 echo "Test 1. GCC (debug default)"
 
+export ETL_DEFAULTS="-DCPP_UTILS_ASSERT_EXCEPTION"
+
 make clean
 make $ETL_THREADS debug/bin/etl_test
 ./debug/bin/etl_test
