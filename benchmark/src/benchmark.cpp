@@ -134,30 +134,29 @@ CPM_BENCH() {
 //Bench division
 CPM_BENCH() {
     CPM_TWO_PASS_NS(
-        "r = a / b",
+        "r = a / b (s) [std][div][s]",
+        [](std::size_t d){ return std::make_tuple(svec(d), svec(d), svec(d)); },
+        [](svec& a, svec& b, svec& r){ r = a / b; }
+        );
+
+    CPM_TWO_PASS_NS(
+        "r = a / b (d) [std][div][d]",
         [](std::size_t d){ return std::make_tuple(dvec(d), dvec(d), dvec(d)); },
         [](dvec& a, dvec& b, dvec& r){ r = a / b; }
         );
 
     CPM_TWO_PASS_NS(
-        "r = a / b (c)",
+        "r = a / b (c) [std][div][complex][c]",
         [](std::size_t d){ return std::make_tuple(cvec(d), cvec(d), cvec(d)); },
         [](cvec& a, cvec& b, cvec& r){ r = a / b; },
         [](std::size_t d){ return 6 * d; }
         );
 
     CPM_TWO_PASS_NS(
-        "r = a / b (z)",
+        "r = a / b (z) [std][div][complex][z]",
         [](std::size_t d){ return std::make_tuple(zvec(d), zvec(d), zvec(d)); },
         [](zvec& a, zvec& b, zvec& r){ r = a / b; },
         [](std::size_t d){ return 6 * d; }
-        );
-
-    CPM_TWO_PASS_NS_P(
-        mat_policy_2d,
-        "R = A / B",
-        [](auto d1, auto d2){ return std::make_tuple(dmat(d1, d2), dmat(d1, d2), dmat(d1, d2)); },
-        [](dmat& A, dmat& B, dmat& R){ R = A / B; }
         );
 }
 
