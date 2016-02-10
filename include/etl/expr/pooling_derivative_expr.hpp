@@ -27,6 +27,8 @@ struct basic_pool_derivative_2d_expr : impl_expr<basic_pool_derivative_2d_expr<T
     template <typename A, typename B>
     using result_type = detail::expr_result_t<this_type, A, B>;
 
+    static constexpr const bool is_gpu = false; ///< no GPU implementation
+
     template <typename A, typename B, typename C>
     static void apply(A&& a, B&& b, C&& c) {
         static_assert(all_etl_expr<A, B, C>::value, "pool_derivative_2d only supported for ETL expressions");
@@ -100,6 +102,8 @@ struct basic_pool_derivative_3d_expr : impl_expr<basic_pool_derivative_3d_expr<T
      */
     template <typename A, typename B>
     using result_type = detail::expr_result_t<this_type, A, B>;
+
+    static constexpr const bool is_gpu = false; ///< no GPU implementation
 
     template <typename A, typename B, typename C>
     static void apply(A&& a, B&& b, C&& c) {
