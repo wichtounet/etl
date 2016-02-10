@@ -25,6 +25,8 @@ struct outer_product_expr : impl_expr<outer_product_expr<T>> {
     template <typename A, typename B>
     using result_type = detail::expr_result_t<this_type, A, B>;
 
+    static constexpr const bool is_gpu = false; ///< outer product has no GPU implementation
+
     template <typename A, typename B, typename C>
     static void apply(A&& a, B&& b, C&& c) {
         static_assert(all_etl_expr<A, B, C>::value, "Outer product only supported for ETL expressions");
