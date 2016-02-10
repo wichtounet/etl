@@ -642,6 +642,38 @@ TEMPLATE_TEST_CASE_2("fast_vector/max_reduc_2", "max", Z, float, double) {
     REQUIRE(d == Z(3.2));
 }
 
+TEMPLATE_TEST_CASE_2("fast_vector/mean_1", "mean", Z, float, double) {
+    etl::fast_vector<Z, 3> a = {-1.5, 2.5, 8.0};
+
+    auto d = mean(a);
+
+    REQUIRE(d == Z(3.0));
+}
+
+TEMPLATE_TEST_CASE_2("fast_vector/mean_2", "mean", Z, float, double) {
+    etl::fast_vector<Z, 3> a = {-1.5, 2.5, 8.0};
+
+    auto d = mean(a + a);
+
+    REQUIRE(d == Z(6.0));
+}
+
+TEMPLATE_TEST_CASE_2("fast_vector/stddev_1", "stddev", Z, float, double) {
+    etl::fast_vector<Z, 3> a = {-1.5, 2.5, 8.0};
+
+    auto d = stddev(a);
+
+    REQUIRE(d == Approx(Z(3.89444)));
+}
+
+TEMPLATE_TEST_CASE_2("fast_vector/stddev_2", "stddev", Z, float, double) {
+    etl::fast_vector<Z, 3> a = {-1.5, 2.5, 8.0};
+
+    auto d = stddev(a + a);
+
+    REQUIRE(d == Approx(Z(7.78888)));
+}
+
 // Complex tests
 
 TEMPLATE_TEST_CASE_2("fast_vector/complex", "fast_vector::complex", Z, float, double) {
