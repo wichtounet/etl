@@ -102,21 +102,22 @@ $(eval $(call precompile_finalize))
 endif
 
 # Compile folders
-$(eval $(call auto_folder_compile,workbench/src,-Icpm/include))
+$(eval $(call auto_folder_compile,workbench/src))
+$(eval $(call auto_folder_compile,benchmark/src,-Ibenchmark/include -Icpm/include))
 $(eval $(call auto_folder_compile,test/src))
 
 # Collect files for the test executable
 CPP_FILES=$(wildcard test/src/*.cpp)
 TEST_FILES=$(CPP_FILES:test/%=%)
 
-BENCH_FILES=$(wildcard workbench/src/benchmark*cpp)
+BENCH_FILES=$(wildcard benchmark/src/benchmark*cpp)
 
 # Create executables
 $(eval $(call add_executable,test_asm_1,workbench/src/test.cpp))
 $(eval $(call add_executable,test_asm_2,workbench/src/test_dim.cpp))
-$(eval $(call add_executable,benchmark,$(BENCH_FILES)))
 $(eval $(call add_executable,mmul,workbench/src/mmul.cpp))
 $(eval $(call add_executable,parallel,workbench/src/parallel.cpp))
+$(eval $(call add_executable,benchmark,$(BENCH_FILES)))
 $(eval $(call add_test_executable,etl_test,$(TEST_FILES)))
 
 $(eval $(call add_executable_set,etl_test,etl_test))
@@ -153,7 +154,7 @@ full_bench:
 	bash scripts/bench_runner.sh
 
 cppcheck:
-	cppcheck -I include/ --platform=unix64 --suppress=missingIncludeSystem --enable=all --std=c++11 workbench/*.cpp include/etl/*.hpp
+	cppcheck -I include/ --platform=unix64 --suppress=missingIncludeSystem --enable=all --std=c++11 benchmark/*.cpp workbench/*.cpp include/etl/*.hpp
 
 coverage: debug_test
 	lcov -b . --directory debug/test --capture --output-file debug/bin/app.info
@@ -167,13 +168,13 @@ CLANG_FORMAT ?= clang-format-3.7
 CLANG_MODERNIZE ?= clang-modernize-3.7
 CLANG_TIDY ?= clang-tidy-3.7
 
-# Note: Workbench is no included on purpose because of poor macro alignment
+# Note: workbench / benchmark is no included on purpose because of poor macro alignment
 format:
 	find include test -name "*.hpp" -o -name "*.cpp" | xargs ${CLANG_FORMAT} -i -style=file
 
 # Note: test are not included on purpose (we want to force to test some operators on matrix/vector)
 modernize:
-	find include workbench -name "*.hpp" -o -name "*.cpp" > etl_file_list
+	find include benchmark workbench -name "*.hpp" -o -name "*.cpp" > etl_file_list
 	${CLANG_MODERNIZE} -add-override -loop-convert -pass-by-value -use-auto -use-nullptr -p ${PWD} -include-from=etl_file_list
 	rm etl_file_list
 
