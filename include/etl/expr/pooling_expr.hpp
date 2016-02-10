@@ -31,6 +31,8 @@ struct basic_pool_2d_expr : impl_expr<basic_pool_2d_expr<T, C1, C2, Impl>> {
     template <typename A>
     using result_type = detail::expr_result_t<this_type, A>;
 
+    static constexpr const bool is_gpu = false; ///< no GPU implementation
+
     template <typename A, typename C>
     static void apply(A&& a, C&& c) {
         static_assert(all_etl_expr<A, C>::value, "pool_2d only supported for ETL expressions");
@@ -110,6 +112,8 @@ struct basic_pool_3d_expr : impl_expr<basic_pool_3d_expr<T, C1, C2, C3, Impl>> {
 
     template <typename A>
     using result_type = detail::expr_result_t<this_type, A>;
+
+    static constexpr const bool is_gpu = false; ///< no GPU implementation
 
     template <typename A, typename C>
     static void apply(A&& a, C&& c) {

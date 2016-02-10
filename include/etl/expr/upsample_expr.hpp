@@ -27,6 +27,8 @@ struct basic_upsample_2d_expr : impl_expr<basic_upsample_2d_expr<T, C1, C2, Impl
     template <typename A>
     using result_type = detail::expr_result_t<this_type, A>;
 
+    static constexpr const bool is_gpu = false; ///< no GPU implementation
+
     /*!
      * \brief Apply the expression
      * \param a The sub expression
@@ -134,6 +136,8 @@ struct basic_upsample_3d_expr  : impl_expr<basic_upsample_3d_expr<T, C1, C2, C3,
      */
     template <typename A>
     using result_type = detail::expr_result_t<this_type, A>;
+
+    static constexpr const bool is_gpu = false; ///< no GPU implementation
 
     template <typename A, typename C>
     static void apply(A&& a, C&& c) {
