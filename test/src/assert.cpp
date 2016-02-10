@@ -11,9 +11,55 @@
 #include "etl/etl_light.hpp"
 #include "catch.hpp"
 
-TEST_CASE("dyn_vector/assert", "assert") {
+TEST_CASE("assert/sizes/1", "[assert]") {
     etl::dyn_vector<double> a = {-1.0, 2.0, 5.0};
     etl::dyn_vector<double> b = {2.5, 3.0, 4.0, 1.0};
 
     REQUIRE_THROWS(a + b);
+}
+
+TEST_CASE("assert/dim/1", "[assert]") {
+    etl::fast_matrix<double, 2, 3, 4> matrix;
+
+    REQUIRE_NOTHROW(matrix(1, 1, 1));
+    REQUIRE_THROWS(matrix(3, 2, 1));
+    REQUIRE_THROWS(matrix(2, 2, 1));
+    REQUIRE_THROWS(matrix(1, 5, 1));
+    REQUIRE_THROWS(matrix(1, 1, 5));
+    REQUIRE_THROWS(matrix(1, 1, 4));
+    REQUIRE_THROWS(matrix(3, 3, 4));
+}
+
+TEST_CASE("assert/dim/2", "[assert]") {
+    etl::fast_dyn_matrix<double, 2, 3, 4> matrix;
+
+    REQUIRE_NOTHROW(matrix(1, 1, 1));
+    REQUIRE_THROWS(matrix(3, 2, 1));
+    REQUIRE_THROWS(matrix(2, 2, 1));
+    REQUIRE_THROWS(matrix(1, 5, 1));
+    REQUIRE_THROWS(matrix(1, 1, 5));
+    REQUIRE_THROWS(matrix(1, 1, 4));
+    REQUIRE_THROWS(matrix(3, 3, 4));
+}
+
+TEST_CASE("assert/dim/3", "[assert]") {
+    etl::dyn_matrix<double, 3> matrix(2, 3, 4);
+
+    REQUIRE_NOTHROW(matrix(1, 1, 1));
+    REQUIRE_THROWS(matrix(3, 2, 1));
+    REQUIRE_THROWS(matrix(2, 2, 1));
+    REQUIRE_THROWS(matrix(1, 5, 1));
+    REQUIRE_THROWS(matrix(1, 1, 5));
+    REQUIRE_THROWS(matrix(1, 1, 4));
+    REQUIRE_THROWS(matrix(3, 3, 4));
+}
+
+TEST_CASE("assert/dim/4", "[assert]") {
+    etl::sparse_matrix<double> matrix(2, 3);
+
+    REQUIRE_NOTHROW(matrix(1, 1));
+    REQUIRE_THROWS(matrix(3, 2));
+    REQUIRE_THROWS(matrix(2, 2));
+    REQUIRE_THROWS(matrix(1, 5));
+    REQUIRE_THROWS(matrix(3, 5));
 }
