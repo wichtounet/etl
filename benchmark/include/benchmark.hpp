@@ -15,7 +15,7 @@
 
 #define CPM_NO_RANDOMIZATION            //Randomly initialize only once
 #define CPM_AUTO_STEPS                  //Enable steps estimation system
-#define CPM_STEP_ESTIMATION_MIN 0.05    //Run during 0.05 seconds for estimating steps
+#define CPM_STEP_ESTIMATION_MIN 0.025   //Run during 0.025 seconds for estimating steps
 #define CPM_RUNTIME_TARGET 0.9          //Run each test during 0.9 seconds
 
 #include "cpm/cpm.hpp"
