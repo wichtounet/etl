@@ -31,27 +31,31 @@ template <typename M>
 struct matrix_leadingsize<M, 0> : std::integral_constant<std::size_t, 1> {};
 
 template <typename M, std::size_t I>
-inline constexpr std::size_t rm_compute_index(std::size_t first) noexcept {
+inline cpp14_constexpr std::size_t rm_compute_index(std::size_t first) noexcept(assert_nothrow) {
+    cpp_assert(first < M::template dim<I>(), "Out of bounds");
     return first;
 }
 
 template <typename M, std::size_t I, typename... S>
-inline constexpr std::size_t rm_compute_index(std::size_t first, std::size_t second, S... args) noexcept {
+inline cpp14_constexpr std::size_t rm_compute_index(std::size_t first, std::size_t second, S... args) noexcept(assert_nothrow) {
+    cpp_assert(first < M::template dim<I>(), "Out of bounds");
     return matrix_subsize<M, I>::value * first + rm_compute_index<M, I + 1>(second, args...);
 }
 
 template <typename M, std::size_t I>
-inline constexpr std::size_t cm_compute_index(std::size_t first) noexcept {
+inline cpp14_constexpr std::size_t cm_compute_index(std::size_t first) noexcept(assert_nothrow) {
+    cpp_assert(first < M::template dim<I>(), "Out of bounds");
     return matrix_leadingsize<M, I>::value * first;
 }
 
 template <typename M, std::size_t I, typename... S>
-inline constexpr std::size_t cm_compute_index(std::size_t first, std::size_t second, S... args) noexcept {
+inline cpp14_constexpr std::size_t cm_compute_index(std::size_t first, std::size_t second, S... args) noexcept(assert_nothrow) {
+    cpp_assert(first < M::template dim<I>(), "Out of bounds");
     return matrix_leadingsize<M, I>::value * first + cm_compute_index<M, I + 1>(second, args...);
 }
 
 template <typename M, std::size_t I, typename... S>
-inline constexpr std::size_t compute_index(S... args) noexcept {
+inline constexpr std::size_t compute_index(S... args) noexcept(assert_nothrow) {
     return M::storage_order == order::ColumnMajor
         ? cm_compute_index<M, I>(args...)
         : rm_compute_index<M, I>(args...);
@@ -359,7 +363,7 @@ public:
      * \return The value of the element at (args...)
      */
     template <typename... S>
-    std::enable_if_t<sizeof...(S) == sizeof...(Dims), value_type&> operator()(S... args) noexcept {
+    std::enable_if_t<sizeof...(S) == sizeof...(Dims), value_type&> operator()(S... args) noexcept(assert_nothrow) {
         static_assert(cpp::all_convertible_to<std::size_t, S...>::value, "Invalid size types");
 
         return access(static_cast<std::size_t>(args)...);
@@ -371,7 +375,7 @@ public:
      * \return The value of the element at (args...)
      */
     template <typename... S>
-    std::enable_if_t<sizeof...(S) == sizeof...(Dims), const value_type&> operator()(S... args) const noexcept {
+    std::enable_if_t<sizeof...(S) == sizeof...(Dims), const value_type&> operator()(S... args) const noexcept(assert_nothrow) {
         static_assert(cpp::all_convertible_to<std::size_t, S...>::value, "Invalid size types");
 
         return access(static_cast<std::size_t>(args)...);
@@ -382,7 +386,7 @@ public:
      * \param i The index
      * \return a reference to the element at the given index.
      */
-    const value_type& operator[](std::size_t i) const noexcept {
+    const value_type& operator[](std::size_t i) const noexcept(assert_nothrow) {
         cpp_assert(i < size(), "Out of bounds");
 
         return _data[i];
@@ -393,7 +397,7 @@ public:
      * \param i The index
      * \return a reference to the element at the given index.
      */
-    value_type& operator[](std::size_t i) noexcept {
+    value_type& operator[](std::size_t i) noexcept(assert_nothrow) {
         cpp_assert(i < size(), "Out of bounds");
 
         return _data[i];
@@ -405,7 +409,7 @@ public:
      * \param i The index
      * \return the value at the given index.
      */
-    value_type read_flat(std::size_t i) const noexcept {
+    value_type read_flat(std::size_t i) const noexcept(assert_nothrow) {
         cpp_assert(i < size(), "Out of bounds");
 
         return _data[i];

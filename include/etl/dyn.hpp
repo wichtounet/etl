@@ -368,7 +368,7 @@ public:
     }
 
     template <typename... S>
-    std::size_t index(S... sizes) const noexcept {
+    std::size_t index(S... sizes) const noexcept(assert_nothrow) {
         //Note: Version with sizes moved to a std::array and accessed with
         //standard loop may be faster, but need some stack space (relevant ?)
 
@@ -380,6 +380,7 @@ public:
 
             cpp::for_each_in(
                 [&subsize, &index, &i, this](std::size_t s) {
+                    cpp_assert(s < dim(i), "Out of bounds");
                     subsize /= dim(i++);
                     index += subsize * s;
                 },
@@ -390,6 +391,7 @@ public:
 
             cpp::for_each_in(
                 [&subsize, &index, &i, this](std::size_t s) {
+                    cpp_assert(s < dim(i), "Out of bounds");
                     index += subsize * s;
                     subsize *= dim(i++);
                 },
@@ -408,7 +410,7 @@ public:
                                  (n_dimensions > 2),
                                  (sizeof...(S) == n_dimensions),
                                  cpp::all_convertible_to<std::size_t, S...>::value)>
-    const value_type& operator()(S... sizes) const noexcept {
+    const value_type& operator()(S... sizes) const noexcept(assert_nothrow) {
         static_assert(sizeof...(S) == n_dimensions, "Invalid number of parameters");
 
         return _memory[index(sizes...)];
@@ -423,7 +425,7 @@ public:
                                  (n_dimensions > 2),
                                  (sizeof...(S) == n_dimensions),
                                  cpp::all_convertible_to<std::size_t, S...>::value)>
-    value_type& operator()(S... sizes) noexcept {
+    value_type& operator()(S... sizes) noexcept(assert_nothrow) {
         static_assert(sizeof...(S) == n_dimensions, "Invalid number of parameters");
 
         return _memory[index(sizes...)];

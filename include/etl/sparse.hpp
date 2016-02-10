@@ -383,6 +383,7 @@ public:
     using base_type::dim;
     using base_type::rows;
     using base_type::columns;
+    using base_type::size;
 
     // Construction
 
@@ -445,7 +446,7 @@ public:
      *
      * \return The value at the (i,j) position.
      */
-    value_type get(std::size_t i, std::size_t j) const noexcept {
+    value_type get(std::size_t i, std::size_t j) const noexcept(assert_nothrow) {
         cpp_assert(i < dim(0), "Out of bounds");
         cpp_assert(j < dim(1), "Out of bounds");
 
@@ -459,7 +460,10 @@ public:
      * \param j The second index
      * \return a sparse reference (proxy reference) to the element at position (i,j)
      */
-    reference_type operator()(std::size_t i, std::size_t j) noexcept {
+    reference_type operator()(std::size_t i, std::size_t j) noexcept(assert_nothrow) {
+        cpp_assert(i < dim(0), "Out of bounds");
+        cpp_assert(j < dim(1), "Out of bounds");
+
         return {*this, i, j};
     }
 
@@ -469,7 +473,10 @@ public:
      * \param j The second index
      * \return a sparse reference (proxy reference) to the element at position (i,j)
      */
-    const_reference_type operator()(std::size_t i, std::size_t j) const noexcept {
+    const_reference_type operator()(std::size_t i, std::size_t j) const noexcept(assert_nothrow) {
+        cpp_assert(i < dim(0), "Out of bounds");
+        cpp_assert(j < dim(1), "Out of bounds");
+
         return {*this, i, j};
     }
 
@@ -480,7 +487,9 @@ public:
      * \param n The index
      * \return a reference to the element at the given index.
      */
-    reference_type operator[](std::size_t n) noexcept {
+    reference_type operator[](std::size_t n) noexcept(assert_nothrow) {
+        cpp_assert(n < size(), "Out of bounds");
+
         return {*this, n / columns(), n % columns()};
     }
 
@@ -491,7 +500,9 @@ public:
      * \param n The index
      * \return a reference to the element at the given index.
      */
-    const_reference_type operator[](std::size_t n) const noexcept {
+    const_reference_type operator[](std::size_t n) const noexcept(assert_nothrow) {
+        cpp_assert(n < size(), "Out of bounds");
+
         return {*this, n / columns(), n % columns()};
     }
 
@@ -524,6 +535,9 @@ public:
      * \param value The new value
      */
     void set(std::size_t i, std::size_t j, value_type value){
+        cpp_assert(i < dim(0), "Out of bounds");
+        cpp_assert(j < dim(1), "Out of bounds");
+
         auto n = find_n(i, j);
         set_hint(i, j, n, value);
     }
@@ -554,6 +568,9 @@ public:
      * \param j The second index
      */
     void erase(std::size_t i, std::size_t j) {
+        cpp_assert(i < dim(0), "Out of bounds");
+        cpp_assert(j < dim(1), "Out of bounds");
+
         auto n = find_n(i, j);
 
         if (n < nnz && _row_index[n] == i && _col_index[n] == j) {
