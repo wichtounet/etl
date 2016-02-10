@@ -1159,6 +1159,20 @@ value_t<E> mean(E&& values) {
     return sum(values) / size(values);
 }
 
+template <typename E>
+value_t<E> stddev(E&& values) {
+    static_assert(is_etl_expr<E>::value, "etl::stddev can only be used on ETL expressions");
+
+    auto mean = etl::mean(values);
+
+    double std = 0.0;
+    for (auto value : values) {
+        std += (value - mean) * (value - mean);
+    }
+
+    return std::sqrt(std / etl::size(values));
+}
+
 namespace detail {
 
 template <typename E>
