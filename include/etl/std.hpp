@@ -27,6 +27,7 @@
 // Macro to handle noexcept and cpp_assert
 
 namespace etl {
+
 #ifdef NDEBUG
 constexpr const bool assert_nothrow = true;
 #else
