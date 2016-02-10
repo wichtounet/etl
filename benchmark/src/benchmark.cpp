@@ -165,13 +165,15 @@ CPM_BENCH() {
     CPM_TWO_PASS_NS(
         "saxpy [std][axpy][s]",
         [](std::size_t d){ return std::make_tuple(svec(d), svec(d)); },
-        [](svec& a, svec& r){ r = a * 2.3 + r; }
+        [](svec& a, svec& r){ r = a * 2.3 + r; },
+        [](std::size_t d){ return 2 * d; }
         );
 
     CPM_TWO_PASS_NS(
         "daxpy [std][axpy][d]",
         [](std::size_t d){ return std::make_tuple(dvec(d), dvec(d)); },
-        [](dvec& a, dvec& r){ r = a * 2.3 + r; }
+        [](dvec& a, dvec& r){ r = a * 2.3 + r; },
+        [](std::size_t d){ return 2 * d; }
         );
 }
 
