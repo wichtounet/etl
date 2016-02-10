@@ -8,7 +8,7 @@
 #define CPM_LIB
 #include "benchmark.hpp"
 
-CPM_DIRECT_SECTION_TWO_PASS_NS_PF("A * B (s) [mul]", square_policy,
+CPM_DIRECT_SECTION_TWO_PASS_NS_PF("A * B (s) [gemm]", square_policy,
     FLOPS([](std::size_t d1, std::size_t d2){ return 2 * d1 * d2 * d2; }),
     CPM_SECTION_INIT([](std::size_t d1, std::size_t d2){ return std::make_tuple(smat(d1,d2), smat(d1,d2), smat(d1, d2)); }),
     CPM_SECTION_FUNCTOR("default", [](smat& a, smat& b, smat& c){ c = a * b; }),
@@ -18,7 +18,7 @@ CPM_DIRECT_SECTION_TWO_PASS_NS_PF("A * B (s) [mul]", square_policy,
     CUBLAS_SECTION_FUNCTOR("cublas", [](smat& a, smat& b, smat& c){ etl::impl::cublas::gemm(a, b, c); })
 )
 
-CPM_DIRECT_SECTION_TWO_PASS_NS_PF("A * B (cm/s) [mul]", square_policy,
+CPM_DIRECT_SECTION_TWO_PASS_NS_PF("A * B (cm/s) [gemm]", square_policy,
     FLOPS([](std::size_t d1, std::size_t d2){ return 2 * d1 * d2 * d2; }),
     CPM_SECTION_INIT([](std::size_t d1, std::size_t d2){ return std::make_tuple(smat_cm(d1,d2), smat_cm(d1,d2), smat_cm(d1, d2)); }),
     CPM_SECTION_FUNCTOR("default", [](smat_cm& a, smat_cm& b, smat_cm& c){ c = a * b; }),
@@ -28,7 +28,7 @@ CPM_DIRECT_SECTION_TWO_PASS_NS_PF("A * B (cm/s) [mul]", square_policy,
     CUBLAS_SECTION_FUNCTOR("cublas", [](smat_cm& a, smat_cm& b, smat_cm& c){ etl::impl::cublas::gemm(a, b, c); })
 )
 
-CPM_DIRECT_SECTION_TWO_PASS_NS_PF("A * B (d) [mul]", square_policy,
+CPM_DIRECT_SECTION_TWO_PASS_NS_PF("A * B (d) [gemm]", square_policy,
     FLOPS([](std::size_t d1, std::size_t d2){ return 2 * d1 * d2 * d2; }),
     CPM_SECTION_INIT([](std::size_t d1, std::size_t d2){ return std::make_tuple(dmat(d1,d2), dmat(d1,d2), dmat(d1, d2)); }),
     CPM_SECTION_FUNCTOR("default", [](dmat& a, dmat& b, dmat& c){ c = a * b; }),
@@ -38,7 +38,7 @@ CPM_DIRECT_SECTION_TWO_PASS_NS_PF("A * B (d) [mul]", square_policy,
     CUBLAS_SECTION_FUNCTOR("cublas", [](dmat& a, dmat& b, dmat& c){ etl::impl::cublas::gemm(a, b, c); })
 )
 
-CPM_DIRECT_SECTION_TWO_PASS_NS_PF("A * B (c) [mul]", small_square_policy,
+CPM_DIRECT_SECTION_TWO_PASS_NS_PF("A * B (c) [gemm]", small_square_policy,
     FLOPS([](std::size_t d1, std::size_t d2){ return 6 * 2 * d1 * d2 * d2; }),
     CPM_SECTION_INIT([](std::size_t d1, std::size_t d2){ return std::make_tuple(cmat(d1,d2), cmat(d1,d2), cmat(d1, d2)); }),
     CPM_SECTION_FUNCTOR("default", [](cmat& a, cmat& b, cmat& c){ c = a * b; }),
@@ -47,7 +47,7 @@ CPM_DIRECT_SECTION_TWO_PASS_NS_PF("A * B (c) [mul]", small_square_policy,
     CUBLAS_SECTION_FUNCTOR("cublas", [](cmat& a, cmat& b, cmat& c){ etl::impl::cublas::gemm(a, b, c); })
 )
 
-CPM_DIRECT_SECTION_TWO_PASS_NS_PF("A * B (z) [mul]", small_square_policy,
+CPM_DIRECT_SECTION_TWO_PASS_NS_PF("A * B (z) [gemm]", small_square_policy,
     FLOPS([](std::size_t d1, std::size_t d2){ return 6 * 2 * d1 * d2 * d2; }),
     CPM_SECTION_INIT([](std::size_t d1, std::size_t d2){ return std::make_tuple(zmat(d1,d2), zmat(d1,d2), zmat(d1, d2)); }),
     CPM_SECTION_FUNCTOR("default", [](zmat& a, zmat& b, zmat& c){ c = a * b; }),
@@ -56,7 +56,7 @@ CPM_DIRECT_SECTION_TWO_PASS_NS_PF("A * B (z) [mul]", small_square_policy,
     CUBLAS_SECTION_FUNCTOR("cublas", [](zmat& a, zmat& b, zmat& c){ etl::impl::cublas::gemm(a, b, c); })
 )
 
-CPM_DIRECT_SECTION_TWO_PASS_NS_PF("A * x (s) [mul]", gemv_policy,
+CPM_DIRECT_SECTION_TWO_PASS_NS_PF("A * x (s) [gemm]", gemv_policy,
     FLOPS([](std::size_t d1, std::size_t d2){ return 2 * d1 * d2; }),
     CPM_SECTION_INIT([](std::size_t d1, std::size_t d2){ return std::make_tuple(smat(d1,d2), svec(d2), svec(d1)); }),
     CPM_SECTION_FUNCTOR("default", [](smat& a, svec& b, svec& c){ c = a * b; }),
@@ -65,7 +65,7 @@ CPM_DIRECT_SECTION_TWO_PASS_NS_PF("A * x (s) [mul]", gemv_policy,
     CUBLAS_SECTION_FUNCTOR("cublas", [](smat& a, svec& b, svec& c){ etl::impl::cublas::gemv(a, b, c); })
 )
 
-CPM_DIRECT_SECTION_TWO_PASS_NS_PF("A * x (d) [mul]", gemv_policy,
+CPM_DIRECT_SECTION_TWO_PASS_NS_PF("A * x (d) [gemm]", gemv_policy,
     FLOPS([](std::size_t d1, std::size_t d2){ return 2 * d1 * d2; }),
     CPM_SECTION_INIT([](std::size_t d1, std::size_t d2){ return std::make_tuple(dmat(d1,d2), dvec(d2), dvec(d1)); }),
     CPM_SECTION_FUNCTOR("default", [](dmat& a, dvec& b, dvec& c){ c = a * b; }),
@@ -74,7 +74,7 @@ CPM_DIRECT_SECTION_TWO_PASS_NS_PF("A * x (d) [mul]", gemv_policy,
     CUBLAS_SECTION_FUNCTOR("cublas", [](dmat& a, dvec& b, dvec& c){ etl::impl::cublas::gemv(a, b, c); })
 )
 
-CPM_DIRECT_SECTION_TWO_PASS_NS_PF("A * x (c) [mul]", gemv_policy,
+CPM_DIRECT_SECTION_TWO_PASS_NS_PF("A * x (c) [gemm]", gemv_policy,
     FLOPS([](std::size_t d1, std::size_t d2){ return 6 * 2 * d1 * d2; }),
     CPM_SECTION_INIT([](std::size_t d1, std::size_t d2){ return std::make_tuple(cmat(d1,d2), cvec(d2), cvec(d1)); }),
     CPM_SECTION_FUNCTOR("default", [](cmat& a, cvec& b, cvec& c){ c = a * b; }),
@@ -83,7 +83,7 @@ CPM_DIRECT_SECTION_TWO_PASS_NS_PF("A * x (c) [mul]", gemv_policy,
     CUBLAS_SECTION_FUNCTOR("cublas", [](cmat& a, cvec& b, cvec& c){ etl::impl::cublas::gemv(a, b, c); })
 )
 
-CPM_DIRECT_SECTION_TWO_PASS_NS_PF("A * x (z) [mul]", gemv_policy,
+CPM_DIRECT_SECTION_TWO_PASS_NS_PF("A * x (z) [gemm]", gemv_policy,
     FLOPS([](std::size_t d1, std::size_t d2){ return 6 * 2 * d1 * d2; }),
     CPM_SECTION_INIT([](std::size_t d1, std::size_t d2){ return std::make_tuple(zmat(d1,d2), zvec(d2), zvec(d1)); }),
     CPM_SECTION_FUNCTOR("default", [](zmat& a, zvec& b, zvec& c){ c = a * b; }),
@@ -92,7 +92,7 @@ CPM_DIRECT_SECTION_TWO_PASS_NS_PF("A * x (z) [mul]", gemv_policy,
     CUBLAS_SECTION_FUNCTOR("cublas", [](zmat& a, zvec& b, zvec& c){ etl::impl::cublas::gemv(a, b, c); })
 )
 
-CPM_DIRECT_SECTION_TWO_PASS_NS_PF("x * A (s) [mul]", gemv_policy,
+CPM_DIRECT_SECTION_TWO_PASS_NS_PF("x * A (s) [gemm]", gemv_policy,
     FLOPS([](std::size_t d1, std::size_t d2){ return 2 * d1 * d2; }),
     CPM_SECTION_INIT([](std::size_t d1, std::size_t d2){ return std::make_tuple(svec(d1), smat(d1,d2), svec(d2)); }),
     CPM_SECTION_FUNCTOR("default", [](svec& a, smat& b, svec& c){ c = a * b; }),
@@ -101,7 +101,7 @@ CPM_DIRECT_SECTION_TWO_PASS_NS_PF("x * A (s) [mul]", gemv_policy,
     CUBLAS_SECTION_FUNCTOR("cublas", [](svec& a, smat& b, svec& c){ etl::impl::cublas::gevm(a, b, c); })
 )
 
-CPM_DIRECT_SECTION_TWO_PASS_NS_PF("x * A (d) [mul]", gemv_policy,
+CPM_DIRECT_SECTION_TWO_PASS_NS_PF("x * A (d) [gemm]", gemv_policy,
     FLOPS([](std::size_t d1, std::size_t d2){ return 2 * d1 * d2; }),
     CPM_SECTION_INIT([](std::size_t d1, std::size_t d2){ return std::make_tuple(dvec(d1), dmat(d1,d2), dvec(d2)); }),
     CPM_SECTION_FUNCTOR("default", [](dvec& a, dmat& b, dvec& c){ c = a * b; }),
@@ -110,7 +110,7 @@ CPM_DIRECT_SECTION_TWO_PASS_NS_PF("x * A (d) [mul]", gemv_policy,
     CUBLAS_SECTION_FUNCTOR("cublas", [](dvec& a, dmat& b, dvec& c){ etl::impl::cublas::gevm(a, b, c); })
 )
 
-CPM_DIRECT_SECTION_TWO_PASS_NS_PF("x * A (c) [mul]", gemv_policy,
+CPM_DIRECT_SECTION_TWO_PASS_NS_PF("x * A (c) [gemm]", gemv_policy,
     FLOPS([](std::size_t d1, std::size_t d2){ return 6 * 2 * d1 * d2; }),
     CPM_SECTION_INIT([](std::size_t d1, std::size_t d2){ return std::make_tuple(cvec(d1), cmat(d1,d2), cvec(d2)); }),
     CPM_SECTION_FUNCTOR("default", [](cvec& a, cmat& b, cvec& c){ c = a * b; }),
@@ -119,7 +119,7 @@ CPM_DIRECT_SECTION_TWO_PASS_NS_PF("x * A (c) [mul]", gemv_policy,
     CUBLAS_SECTION_FUNCTOR("cublas", [](cvec& a, cmat& b, cvec& c){ etl::impl::cublas::gevm(a, b, c); })
 )
 
-CPM_DIRECT_SECTION_TWO_PASS_NS_PF("x * A (z) [mul]", gemv_policy,
+CPM_DIRECT_SECTION_TWO_PASS_NS_PF("x * A (z) [gemm]", gemv_policy,
     FLOPS([](std::size_t d1, std::size_t d2){ return 6 * 2 * d1 * d2; }),
     CPM_SECTION_INIT([](std::size_t d1, std::size_t d2){ return std::make_tuple(zvec(d1), zmat(d1,d2), zvec(d2)); }),
     CPM_SECTION_FUNCTOR("default", [](zvec& a, zmat& b, zvec& c){ c = a * b; }),
@@ -131,7 +131,7 @@ CPM_DIRECT_SECTION_TWO_PASS_NS_PF("x * A (z) [mul]", gemv_policy,
 CPM_BENCH(){
     CPM_TWO_PASS_NS_P(
         VALUES_POLICY(10, 50, 100, 500, 1000, 2000, 3000, 4000, 5000),
-        "r = A * (a + b) [mul]",
+        "r = A * (a + b) [gemm]",
         [](std::size_t d){ return std::make_tuple(dmat(d,d), dvec(d), dvec(d), dvec(d)); },
         [](dmat& A, dvec& a, dvec& b, dvec& r){ r = A * (a + b); }
         , [](std::size_t d){ return d + 2 * d * d; }
@@ -141,7 +141,7 @@ CPM_BENCH(){
 CPM_BENCH(){
     CPM_TWO_PASS_NS_P(
         VALUES_POLICY(10, 50, 100, 500, 1000, 2000, 3000, 4000, 5000),
-        "r = A * (a + b + c) [mul]",
+        "r = A * (a + b + c) [gemm]",
         [](std::size_t d){ return std::make_tuple(dmat(d,d), dvec(d), dvec(d), dvec(d), dvec(d)); },
         [](dmat& A, dvec& a, dvec& b, dvec& c, dvec& r){ r = A * (a + b + c); }
         , [](std::size_t d){ return 2 * d + 2 * d * d; }
@@ -151,7 +151,7 @@ CPM_BENCH(){
 CPM_BENCH(){
     CPM_TWO_PASS_NS_P(
         square_policy,
-        "R = A * (B + C) [mul]",
+        "R = A * (B + C) [gemm]",
         [](std::size_t d1,std::size_t d2){ return std::make_tuple(dmat(d1,d2), dmat(d1,d2), dmat(d1,d2), dmat(d1,d2)); },
         [](dmat& A, dmat& B, dmat& C, dmat& R){ R = A * (B + C); }
         , [](std::size_t d1, std::size_t d2){ return d1 * d2  + 2 * d1 * d2 * d2; }
@@ -161,7 +161,7 @@ CPM_BENCH(){
 CPM_BENCH(){
     CPM_TWO_PASS_NS_P(
         square_policy,
-        "R = A * (B + C + D) [mul]",
+        "R = A * (B + C + D) [gemm]",
         [](std::size_t d1,std::size_t d2){ return std::make_tuple(dmat(d1,d2), dmat(d1,d2), dmat(d1,d2), dmat(d1,d2), dmat(d1,d2)); },
         [](dmat& A, dmat& B, dmat& C, dmat& D, dmat& R){ R = A * (B + C + D); }
         , [](std::size_t d1, std::size_t d2){ return 2 * d1 * d2  + 2 * d1 * d2 * d2; }
@@ -171,7 +171,7 @@ CPM_BENCH(){
 CPM_BENCH(){
     CPM_TWO_PASS_NS_P(
         square_policy,
-        "R = (A + B) * (C + D) [mul]",
+        "R = (A + B) * (C + D) [gemm]",
         [](std::size_t d1,std::size_t d2){ return std::make_tuple(dmat(d1,d2), dmat(d1,d2), dmat(d1,d2), dmat(d1,d2), dmat(d1,d2)); },
         [](dmat& A, dmat& B, dmat& C, dmat& D, dmat& R){ R = (A + B) * (C + D); }
         , [](std::size_t d1, std::size_t d2){ return d1 * d2  + d1 * d2 + 2 * d1 * d2 * d2; }
@@ -181,7 +181,7 @@ CPM_BENCH(){
 CPM_BENCH(){
     CPM_TWO_PASS_NS_P(
         square_policy,
-        "r = a * (A + B - C) [mul]",
+        "r = a * (A + B - C) [gemm]",
         [](std::size_t d1,std::size_t d2){ return std::make_tuple(dvec(d1), dmat(d1,d2), dmat(d1,d2), dmat(d1,d2), dvec(d2)); },
         [](dvec& a, dmat& A, dmat& B, dmat& C, dvec& r){ r = a * (A + B - C); }
         , [](std::size_t d1, std::size_t d2){ return 2 * d1 * d2 + 2 * d1 * d2; }
@@ -191,7 +191,7 @@ CPM_BENCH(){
 CPM_BENCH(){
     CPM_TWO_PASS_NS_P(
         square_policy,
-        "r = a * (A * B) [mul]",
+        "r = a * (A * B) [gemm]",
         [](std::size_t d1,std::size_t d2){ return std::make_tuple(dvec(d1), dmat(d1,d2), dmat(d1,d2), dvec(d2)); },
         [](dvec& a, dmat& A, dmat& B, dvec& r){ r = a * (A * B); }
         , [](std::size_t d1, std::size_t d2){ return 2 * d1 * d2 + 2 * d1 * d2; }
@@ -201,7 +201,7 @@ CPM_BENCH(){
 CPM_BENCH(){
     CPM_TWO_PASS_NS_P(
         square_policy,
-        "r = a * A * B [mul]",
+        "r = a * A * B [gemm]",
         [](std::size_t d1,std::size_t d2){ return std::make_tuple(dvec(d1), dmat(d1,d2), dmat(d1,d2), dvec(d2)); },
         [](dvec& a, dmat& A, dmat& B, dvec& r){ r = a * (A * B); }
         , [](std::size_t d1, std::size_t d2){ return 2 * d1 * d2 + 2 * d1 * d2 * d2; }
