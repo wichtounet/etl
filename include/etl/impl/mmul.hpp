@@ -54,7 +54,8 @@ inline cpp14_constexpr gemm_impl select_gemm_impl(const std::size_t n1, const st
         return gemm_impl::BLAS;
     }
 
-    if (n1 * n3 < gemm_std_max) {
+    //EBLAS has too much overhead for small matrices and does not handle complex numbers
+    if (n1 * n3 < gemm_std_max || is_complex_t<T>::value) {
         return gemm_impl::STD;
     } else {
         return gemm_impl::FAST;
