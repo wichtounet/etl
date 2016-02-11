@@ -696,34 +696,54 @@ void fft2_convolve(A&& a, B&& b, C&& c) {
 #else
 
 template <typename A, typename C>
-void fft1(A&& /*unused*/, C&& /*unused*/) {}
+void fft1(A&& /*unused*/, C&& /*unused*/) {
+    cpp_unreachable("Unsupported feature called: cufft fft");
+}
 
 template <typename A, typename C>
-void ifft1(A&& /*unused*/, C&& /*unused*/) {}
+void ifft1(A&& /*unused*/, C&& /*unused*/) {
+    cpp_unreachable("Unsupported feature called: cufft fft");
+}
 
 template <typename A, typename C>
-void ifft1_real(A&& /*unused*/, C&& /*unused*/) {}
+void ifft1_real(A&& /*unused*/, C&& /*unused*/) {
+    cpp_unreachable("Unsupported feature called: cufft fft");
+}
 
 template <typename A, typename C>
-void fft1_many(A&& /*unused*/, C&& /*unused*/) {}
+void fft1_many(A&& /*unused*/, C&& /*unused*/) {
+    cpp_unreachable("Unsupported feature called: cufft fft");
+}
 
 template <typename A, typename C>
-void fft2(A&& /*unused*/, C&& /*unused*/) {}
+void fft2(A&& /*unused*/, C&& /*unused*/) {
+    cpp_unreachable("Unsupported feature called: cufft fft");
+}
 
 template <typename A, typename C>
-void ifft2(A&& /*unused*/, C&& /*unused*/) {}
+void ifft2(A&& /*unused*/, C&& /*unused*/) {
+    cpp_unreachable("Unsupported feature called: cufft fft");
+}
 
 template <typename A, typename C>
-void ifft2_real(A&& /*unused*/, C&& /*unused*/) {}
+void ifft2_real(A&& /*unused*/, C&& /*unused*/) {
+    cpp_unreachable("Unsupported feature called: cufft fft");
+}
 
 template <typename A, typename C>
-void fft2_many(A&& /*unused*/, C&& /*unused*/) {}
+void fft2_many(A&& /*unused*/, C&& /*unused*/) {
+    cpp_unreachable("Unsupported feature called: cufft fft");
+}
 
 template <typename A, typename B, typename C>
-void fft1_convolve(A&& /*unused*/, B&& /*unused*/, C&& /*unused*/) {}
+void fft1_convolve(A&& /*unused*/, B&& /*unused*/, C&& /*unused*/) {
+    cpp_unreachable("Unsupported feature called: cufft fft");
+}
 
 template <typename A, typename B, typename C>
-void fft2_convolve(A&& /*unused*/, B&& /*unused*/, C&& /*unused*/) {}
+void fft2_convolve(A&& /*unused*/, B&& /*unused*/, C&& /*unused*/) {
+    cpp_unreachable("Unsupported feature called: cufft fft");
+}
 
 #endif
 

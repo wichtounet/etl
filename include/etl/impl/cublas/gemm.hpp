@@ -560,13 +560,19 @@ void gevm(A&&, B&& b, C&&);
 #else
 
 template <typename A, typename B, typename C>
-void gemm(A&&, B&&, C&&) {}
+void gemm(A&&, B&&, C&&) {
+    cpp_unreachable("Unsupported feature called: cublas gemm");
+}
 
 template <typename A, typename B, typename C>
-void gemv(A&&, B&&, C&&) {}
+void gemv(A&&, B&&, C&&) {
+    cpp_unreachable("Unsupported feature called: cublas gemm");
+}
 
 template <typename A, typename B, typename C>
-void gevm(A&&, B&&, C&&) {}
+void gevm(A&&, B&&, C&&) {
+    cpp_unreachable("Unsupported feature called: cublas gemm");
+}
 
 #endif
 

@@ -393,7 +393,9 @@ void gemm(A&& a, B&& b, C&& c) {
 }
 
 template <typename A, typename B, typename C, cpp_enable_if(!all_dma<A, B, C>::value || is_complex<A>::value)>
-void gemm(A&& /*a*/, B&& /*b*/, C&& /*c*/) {}
+void gemm(A&& /*a*/, B&& /*b*/, C&& /*c*/) {
+    cpp_unreachable("Unimplemented feature: gemm<complex>");
+}
 
 } //end of namespace eblas
 

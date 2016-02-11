@@ -233,13 +233,19 @@ void gevm(A&& a, B&& b, C&& c);
 #else
 
 template <typename A, typename B, typename C>
-void gemm(A&&, B&&, C&&) {}
+void gemm(A&&, B&&, C&&) {
+    cpp_unreachable("Unsupported feature called: blas gemm");
+}
 
 template <typename A, typename B, typename C>
-void gemv(A&&, B&&, C&&) {}
+void gemv(A&&, B&&, C&&) {
+    cpp_unreachable("Unsupported feature called: blas gemm");
+}
 
 template <typename A, typename B, typename C>
-void gevm(A&&, B&&, C&&) {}
+void gevm(A&&, B&&, C&&) {
+    cpp_unreachable("Unsupported feature called: blas gemm");
+}
 
 #endif
 
