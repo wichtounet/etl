@@ -28,8 +28,6 @@ double dsum_kernel(const E& in, std::size_t first, std::size_t last){
         acc += in[first++];
     }
 
-    double tmp_res[2] __attribute__((aligned(16)));
-
     __m128d ymm1;
     __m128d ymm2;
 
@@ -42,9 +40,10 @@ double dsum_kernel(const E& in, std::size_t first, std::size_t last){
         ymm2 = _mm_add_pd(ymm2, ymm1);
     }
 
-    _mm_store_pd(tmp_res, ymm2);
+    //Horizontal sum of the result
+    ymm2 = _mm_hadd_pd(ymm2, ymm2);
 
-    acc += tmp_res[0] + tmp_res[1];
+    acc += _mm_cvtsd_f64(ymm2);
 
     auto n = last - first;
     if (n % 2) {
@@ -62,8 +61,6 @@ float ssum_kernel(const E& in, std::size_t first, std::size_t last){
         acc += in[first++];
     }
 
-    float tmp_res[4] __attribute__((aligned(16)));
-
     __m128 ymm1;
     __m128 ymm2;
 
@@ -76,9 +73,11 @@ float ssum_kernel(const E& in, std::size_t first, std::size_t last){
         ymm2 = _mm_add_ps(ymm2, ymm1);
     }
 
-    _mm_store_ps(tmp_res, ymm2);
+    //Horizontal sum of the result
+    ymm2 = _mm_hadd_ps(ymm2, ymm2);
+    ymm2 = _mm_hadd_ps(ymm2, ymm2);
 
-    acc += tmp_res[0] + tmp_res[1] + tmp_res[2] + tmp_res[3];
+    acc += _mm_cvtss_f32(ymm2);
 
     auto n = last - first;
     if (n % 4) {

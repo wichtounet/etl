@@ -28,8 +28,6 @@ double dsum_kernel(const E& in, std::size_t first, std::size_t last){
         acc += in[first++];
     }
 
-    double tmp_res[4] __attribute__((aligned(32)));
-
     __m256d ymm1;
     __m256d ymm2;
 
@@ -42,9 +40,13 @@ double dsum_kernel(const E& in, std::size_t first, std::size_t last){
         ymm2 = _mm256_add_pd(ymm2, ymm1);
     }
 
-    _mm256_store_pd(tmp_res, ymm2);
+    //Horizontal sum of the result
+    ymm2 = _mm256_hadd_pd(ymm2, ymm2);
+    __m128d sum_low = _mm256_extractf128_pd(ymm2, 0);
+    __m128d sum_high = _mm256_extractf128_pd(ymm2, 1);
+    __m128d result = _mm_add_pd(sum_low, sum_high);
 
-    acc += tmp_res[0] + tmp_res[1] + tmp_res[2] + tmp_res[3];
+    acc += _mm_cvtsd_f64(result);
 
     auto n = last - first;
     if (n % 4) {
@@ -65,8 +67,6 @@ float ssum_kernel(const E& in, std::size_t first, std::size_t last){
         acc += in[first++];
     }
 
-    float tmp_res[8] __attribute__((aligned(32)));
-
     __m256 ymm1;
     __m256 ymm2;
 
@@ -79,9 +79,18 @@ float ssum_kernel(const E& in, std::size_t first, std::size_t last){
         ymm2 = _mm256_add_ps(ymm2, ymm1);
     }
 
-    _mm256_store_ps(tmp_res, ymm2);
+    // Horizontal sum of the vector...
+    __m128 hiQuad = _mm256_extractf128_ps(ymm2, 1);
+    __m128 loQuad = _mm256_castps256_ps128(ymm2);
+    __m128 sumQuad = _mm_add_ps(loQuad, hiQuad);
+    __m128 loDual = sumQuad;
+    __m128 hiDual = _mm_movehl_ps(sumQuad, sumQuad);
+    __m128 sumDual = _mm_add_ps(loDual, hiDual);
+    __m128 lo = sumDual;
+    __m128 hi = _mm_shuffle_ps(sumDual, sumDual, 0x1);
+    __m128 sum = _mm_add_ss(lo, hi);
 
-    acc += tmp_res[0] + tmp_res[1] + tmp_res[2] + tmp_res[3] + tmp_res[4] + tmp_res[5] + tmp_res[6] + tmp_res[7];
+    acc += _mm_cvtss_f32(sum);
 
     auto n = last - first;
     if (n % 8) {
