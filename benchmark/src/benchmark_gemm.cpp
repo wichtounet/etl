@@ -74,6 +74,7 @@ CPM_DIRECT_SECTION_TWO_PASS_NS_PF("A * x (d) [gemm]", gemv_policy,
     CUBLAS_SECTION_FUNCTOR("cublas", [](dmat& a, dvec& b, dvec& c){ etl::impl::cublas::gemv(a, b, c); })
 )
 
+#ifdef ETL_EXTENDED_BENCH
 CPM_DIRECT_SECTION_TWO_PASS_NS_PF("A * x (c) [gemm]", gemv_policy,
     FLOPS([](std::size_t d1, std::size_t d2){ return 6 * 2 * d1 * d2; }),
     CPM_SECTION_INIT([](std::size_t d1, std::size_t d2){ return std::make_tuple(cmat(d1,d2), cvec(d2), cvec(d1)); }),
@@ -91,6 +92,7 @@ CPM_DIRECT_SECTION_TWO_PASS_NS_PF("A * x (z) [gemm]", gemv_policy,
     BLAS_SECTION_FUNCTOR("blas", [](zmat& a, zvec& b, zvec& c){ etl::impl::blas::gemv(a, b, c); })
     CUBLAS_SECTION_FUNCTOR("cublas", [](zmat& a, zvec& b, zvec& c){ etl::impl::cublas::gemv(a, b, c); })
 )
+#endif
 
 CPM_DIRECT_SECTION_TWO_PASS_NS_PF("x * A (s) [gemm]", gemv_policy,
     FLOPS([](std::size_t d1, std::size_t d2){ return 2 * d1 * d2; }),
@@ -110,6 +112,7 @@ CPM_DIRECT_SECTION_TWO_PASS_NS_PF("x * A (d) [gemm]", gemv_policy,
     CUBLAS_SECTION_FUNCTOR("cublas", [](dvec& a, dmat& b, dvec& c){ etl::impl::cublas::gevm(a, b, c); })
 )
 
+#ifdef ETL_EXTENDED_BENCH
 CPM_DIRECT_SECTION_TWO_PASS_NS_PF("x * A (c) [gemm]", gemv_policy,
     FLOPS([](std::size_t d1, std::size_t d2){ return 6 * 2 * d1 * d2; }),
     CPM_SECTION_INIT([](std::size_t d1, std::size_t d2){ return std::make_tuple(cvec(d1), cmat(d1,d2), cvec(d2)); }),
@@ -127,6 +130,7 @@ CPM_DIRECT_SECTION_TWO_PASS_NS_PF("x * A (z) [gemm]", gemv_policy,
     BLAS_SECTION_FUNCTOR("blas", [](zvec& a, zmat& b, zvec& c){ etl::impl::blas::gevm(a, b, c); })
     CUBLAS_SECTION_FUNCTOR("cublas", [](zvec& a, zmat& b, zvec& c){ etl::impl::cublas::gevm(a, b, c); })
 )
+#endif
 
 CPM_BENCH(){
     CPM_TWO_PASS_NS_P(
