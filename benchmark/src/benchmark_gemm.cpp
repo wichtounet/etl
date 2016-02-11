@@ -195,19 +195,19 @@ CPM_BENCH(){
 CPM_BENCH(){
     CPM_TWO_PASS_NS_P(
         square_policy,
-        "r = a * (A * B) [gemm]",
+        "r = a * (A * B) [gemm][order]",
         [](std::size_t d1,std::size_t d2){ return std::make_tuple(dvec(d1), dmat(d1,d2), dmat(d1,d2), dvec(d2)); },
         [](dvec& a, dmat& A, dmat& B, dvec& r){ r = a * (A * B); }
-        , [](std::size_t d1, std::size_t d2){ return 2 * d1 * d2 + 2 * d1 * d2; }
+        , [](std::size_t d1, std::size_t d2){ return 2 * d1 * d2 + 2 * d1 * d2 * d2; }
         );
 }
 
 CPM_BENCH(){
     CPM_TWO_PASS_NS_P(
         square_policy,
-        "r = a * A * B [gemm]",
+        "r = a * A * B [gemm][order]",
         [](std::size_t d1,std::size_t d2){ return std::make_tuple(dvec(d1), dmat(d1,d2), dmat(d1,d2), dvec(d2)); },
-        [](dvec& a, dmat& A, dmat& B, dvec& r){ r = a * (A * B); }
-        , [](std::size_t d1, std::size_t d2){ return 2 * d1 * d2 + 2 * d1 * d2 * d2; }
+        [](dvec& a, dmat& A, dmat& B, dvec& r){ r = a * A * B; }
+        , [](std::size_t d1, std::size_t d2){ return 2 * d1 * d2 + 2 * d1 * d2; }
         );
 }
