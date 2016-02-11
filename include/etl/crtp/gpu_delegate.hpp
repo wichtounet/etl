@@ -45,11 +45,11 @@ struct gpu_delegate {
         return *static_cast<const derived_t*>(this);
     }
 
-    decltype(auto) delegate() const noexcept {
+    CPP_DEBUG_AUTO_TRICK decltype(auto) delegate() const noexcept {
         return as_derived().gpu_delegate();
     }
 
-    decltype(auto) delegate() noexcept {
+    CPP_DEBUG_AUTO_TRICK decltype(auto) delegate() noexcept {
         return as_derived().gpu_delegate();
     }
 
