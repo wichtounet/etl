@@ -5,6 +5,11 @@
 //  http://opensource.org/licenses/MIT)
 //=======================================================================
 
+/*!
+ * \file
+ * \brief Contains scalar expression implementation
+ */
+
 #pragma once
 
 namespace etl {
@@ -31,19 +36,41 @@ struct scalar {
     explicit constexpr scalar(T v)
             : value(v) {}
 
+    /*!
+     * \brief Returns the element at the given index
+     * \param i The index
+     * \return a reference to the element at the given index.
+     */
     constexpr T operator[](std::size_t /*d*/) const noexcept {
         return value;
     }
 
+    /*!
+     * \brief Returns the value at the given index
+     * This function never alters the state of the container.
+     * \param i The index
+     * \return the value at the given index.
+     */
     constexpr T read_flat(std::size_t /*d*/) const noexcept {
         return value;
     }
 
+    /*!
+     * \brief Load several elements of the matrix at once
+     * \param i The position at which to start. This will be aligned from the beginning (multiple of the vector size).
+     * \tparam V The vectorization mode to use
+     * \return a vector containing several elements of the matrix
+     */
     template<typename V = default_vec>
     constexpr const vec_type<V> load(std::size_t /*d*/) const noexcept {
         return V::set(value);
     }
 
+    /*!
+     * \brief Returns the value at the position (args...)
+     * \param args The indices
+     * \return The computed value at the position (args...)
+     */
     template <typename... S>
     constexpr T operator()(S... /*args*/) const noexcept {
         static_assert(cpp::all_convertible_to<std::size_t, S...>::value, "Invalid size types");
@@ -51,6 +78,10 @@ struct scalar {
         return value;
     }
 
+    /*!
+     * \brief Indicate if the expression aliases with the given expression.
+     * \return true if the expressions alias, false otherwise
+     */
     template<typename E>
     constexpr bool alias(const E& /*rhs*/) const noexcept {
         return false;
