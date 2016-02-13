@@ -5,6 +5,11 @@
 //  http://opensource.org/licenses/MIT)
 //=======================================================================
 
+/*!
+ * \file
+ * \brief Main header of the ETL library. Includes everything.
+ */
+
 #pragma once
 
 //Common STL includes
