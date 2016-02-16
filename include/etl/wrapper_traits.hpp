@@ -31,10 +31,15 @@ struct wrapper_traits {
     static constexpr const bool is_value                = sub_traits::is_value;                ///< Indicates if the expression is of value type
     static constexpr const bool is_linear               = sub_traits::is_linear;               ///< Indicates if the expression is linear
     static constexpr const bool is_generator            = sub_traits::is_generator;            ///< Indicates if the expression is a generator expression
-    static constexpr const bool vectorizable            = sub_traits::vectorizable;            ///< Indicates if the expression is vectorizable
     static constexpr const bool needs_temporary_visitor = sub_traits::needs_temporary_visitor; ///< Indicates if the expression needs a temporary visitor
     static constexpr const bool needs_evaluator_visitor = sub_traits::needs_evaluator_visitor; ///< Indicaes if the expression needs an evaluator visitor
     static constexpr const order storage_order          = sub_traits::storage_order;           ///< The expression storage order
+
+    /*!
+     * The vectorization type for V
+     */
+    template<typename V = default_vec>
+    using vec_type          = typename sub_traits::template vectorizable<V>;
 
     /*!
      * \brief Returns the size of the given expression
