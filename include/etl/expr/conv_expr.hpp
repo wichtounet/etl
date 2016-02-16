@@ -14,6 +14,12 @@ namespace etl {
 
 namespace detail {
 
+/*!
+ * \brief Assert for the validity of the 1D convolution
+ * \param input The input vector
+ * \param kernel The kernel vector
+ * \param conv The output convolution result
+ */
 template <conv_type TT, typename I, typename K, typename C, cpp_disable_if(all_fast<I, K, C>::value)>
 void check_conv_1d_sizes(const I& input, const K& kernel, const C& conv) {
     static_assert(etl_traits<I>::dimensions() == 1 && etl_traits<K>::dimensions() == 1 && etl_traits<C>::dimensions() == 1, "Invalid dimensions for 1D convolution");
@@ -31,6 +37,12 @@ void check_conv_1d_sizes(const I& input, const K& kernel, const C& conv) {
     cpp_unused(conv);
 }
 
+/*!
+ * \brief Assert for the validity of the 1D convolution
+ * \param input The input vector
+ * \param kernel The kernel vector
+ * \param conv The output convolution result
+ */
 template <conv_type TT, typename I, typename K, typename C, cpp_enable_if(all_fast<I, K, C>::value)>
 void check_conv_1d_sizes(const I& /*input*/, const K& /*kernel*/, const C& /*conv*/) {
     static_assert(etl_traits<I>::dimensions() == 1 && etl_traits<K>::dimensions() == 1 && etl_traits<C>::dimensions() == 1, "Invalid dimensions for 1D convolution");
@@ -46,6 +58,12 @@ void check_conv_1d_sizes(const I& /*input*/, const K& /*kernel*/, const C& /*con
         "Invalid sizes for 'valid' convolution");
 }
 
+/*!
+ * \brief Assert for the validity of the 2D convolution
+ * \param input The input matrix
+ * \param kernel The kernel matrix
+ * \param conv The output convolution result
+ */
 template <conv_type TT, typename I, typename K, typename C, cpp_disable_if(all_fast<I, K, C>::value)>
 void check_conv_2d_sizes(const I& input, const K& kernel, const C& conv) {
     static_assert(etl_traits<I>::dimensions() == 2 && etl_traits<K>::dimensions() == 2 && etl_traits<C>::dimensions() == 2, "Invalid dimensions for 2D convolution");
@@ -67,6 +85,12 @@ void check_conv_2d_sizes(const I& input, const K& kernel, const C& conv) {
     cpp_unused(conv);
 }
 
+/*!
+ * \brief Assert for the validity of the 2D convolution
+ * \param input The input matrix
+ * \param kernel The kernel matrix
+ * \param conv The output convolution result
+ */
 template <conv_type TT, typename I, typename K, typename C, cpp_enable_if(all_fast<I, K, C>::value)>
 void check_conv_2d_sizes(const I& /*input*/, const K& /*kernel*/, const C& /*conv*/) {
     static_assert(etl_traits<I>::dimensions() == 2 && etl_traits<K>::dimensions() == 2 && etl_traits<C>::dimensions() == 2, "Invalid dimensions for 2D convolution");
@@ -82,6 +106,12 @@ void check_conv_2d_sizes(const I& /*input*/, const K& /*kernel*/, const C& /*con
         "Invalid sizes for 'valid' convolution");
 }
 
+/*!
+ * \brief Assert for the validity of the >2D convolution
+ * \param input The input matrix
+ * \param kernel The kernel matrix
+ * \param conv The output convolution result
+ */
 template <conv_type TT, typename I, typename K, typename C, cpp_enable_if(etl_traits<I>::dimensions() == 3, all_fast<I, K, C>::value)>
 void check_conv_deep_sizes(const I& i, const K& k, const C& c) {
     static_assert(etl_traits<I>::dimensions() == 3 && etl_traits<K>::dimensions() == 3 && etl_traits<C>::dimensions() == 3, "Invalid dimensions for 3D convolution");
@@ -93,6 +123,12 @@ void check_conv_deep_sizes(const I& i, const K& k, const C& c) {
     detail::check_conv_2d_sizes<TT>(i(0), k(0), c(0));
 }
 
+/*!
+ * \brief Assert for the validity of the >2D convolution
+ * \param input The input matrix
+ * \param kernel The kernel matrix
+ * \param conv The output convolution result
+ */
 template <conv_type TT, typename I, typename K, typename C, cpp_enable_if((etl_traits<I>::dimensions() > 3), all_fast<I, K, C>::value)>
 void check_conv_deep_sizes(const I& i, const K& k, const C& c) {
     static_assert(etl_traits<I>::dimensions() == etl_traits<K>::dimensions() && etl_traits<K>::dimensions() == etl_traits<C>::dimensions(), "Invalid dimensions for 3D convolution");
@@ -104,6 +140,12 @@ void check_conv_deep_sizes(const I& i, const K& k, const C& c) {
     detail::check_conv_deep_sizes<TT>(i(0), k(0), c(0));
 }
 
+/*!
+ * \brief Assert for the validity of the >2D convolution
+ * \param input The input matrix
+ * \param kernel The kernel matrix
+ * \param conv The output convolution result
+ */
 template <conv_type TT, typename I, typename K, typename C, cpp_enable_if(etl_traits<I>::dimensions() == 3, !all_fast<I, K, C>::value)>
 void check_conv_deep_sizes(const I& i, const K& k, const C& c) {
     static_assert(etl_traits<I>::dimensions() == 3 && etl_traits<K>::dimensions() == 3 && etl_traits<C>::dimensions() == 3, "Invalid dimensions for 3D convolution");
@@ -115,6 +157,12 @@ void check_conv_deep_sizes(const I& i, const K& k, const C& c) {
     detail::check_conv_2d_sizes<TT>(i(0), k(0), c(0));
 }
 
+/*!
+ * \brief Assert for the validity of the >2D convolution
+ * \param input The input matrix
+ * \param kernel The kernel matrix
+ * \param conv The output convolution result
+ */
 template <conv_type TT, typename I, typename K, typename C, cpp_enable_if((etl_traits<I>::dimensions() > 3), !all_fast<I, K, C>::value)>
 void check_conv_deep_sizes(const I& i, const K& k, const C& c) {
     static_assert(etl_traits<I>::dimensions() == etl_traits<K>::dimensions() && etl_traits<K>::dimensions() == etl_traits<C>::dimensions(), "Invalid dimensions for 3D convolution");
@@ -219,6 +267,10 @@ struct basic_conv_expr : impl_expr<basic_conv_expr<T, D, TT, Impl>> {
         }
     }
 
+    /*!
+     * \brief Returns the DDth dimension of the expression
+     * \return the DDth dimension of the expression
+     */
     template <typename A, typename B, std::size_t DD>
     static constexpr std::size_t dim() {
         return (D > 2 && DD < (D - 2)) ? decay_traits<A>::template dim<DD>()
