@@ -178,7 +178,7 @@ struct etl_traits<etl::magic_view<V>> {
     /*!
      * \brief Indicates if the expression is vectorizable using the
      * given vector mode
-     * \tparam V The vector mode
+     * \tparam VV The vector mode
      */
     template<typename VV>
     using vectorizable = std::false_type;
@@ -231,7 +231,7 @@ struct etl_traits<etl::fast_magic_view<V, N>> {
     /*!
      * \brief Indicates if the expression is vectorizable using the
      * given vector mode
-     * \tparam V The vector mode
+     * \tparam VV The vector mode
      */
     template<typename VV>
     using vectorizable = std::false_type;

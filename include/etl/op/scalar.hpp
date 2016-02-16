@@ -38,7 +38,7 @@ struct scalar {
 
     /*!
      * \brief Returns the element at the given index
-     * \param i The index
+     * \param d The index
      * \return a reference to the element at the given index.
      */
     constexpr T operator[](std::size_t /*d*/) const noexcept {
@@ -110,7 +110,7 @@ struct etl_traits<etl::scalar<T>, void> {
      * given vector mode
      * \tparam V The vector mode
      */
-    template<typename VV>
+    template<typename V>
     using vectorizable = std::true_type;
 };
 
