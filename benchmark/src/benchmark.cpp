@@ -194,7 +194,7 @@ CPM_BENCH() {
         );
 
     CPM_TWO_PASS_NS(
-        "exp [std][exp][d]",
+        "exp_expr [std][exp][d]",
         [](std::size_t d){ return std::make_tuple(dvec(d), dvec(d), dvec(d)); },
         [](dvec& a, dvec& b, dvec& r){ r = exp(a * 2.3 + b); },
         [](std::size_t d){ return 105 * d; }
