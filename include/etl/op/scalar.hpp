@@ -41,18 +41,18 @@ struct scalar {
      * \param d The index
      * \return a reference to the element at the given index.
      */
-    constexpr T operator[](std::size_t /*d*/) const noexcept {
-        return value;
+    constexpr T operator[](std::size_t d) const noexcept {
+        return (void) d, value;
     }
 
     /*!
      * \brief Returns the value at the given index
      * This function never alters the state of the container.
-     * \param i The index
+     * \param d The index
      * \return the value at the given index.
      */
-    constexpr T read_flat(std::size_t /*d*/) const noexcept {
-        return value;
+    constexpr T read_flat(std::size_t d) const noexcept {
+        return (void) d, value;
     }
 
     /*!
@@ -62,8 +62,8 @@ struct scalar {
      * \return a vector containing several elements of the matrix
      */
     template<typename V = default_vec>
-    constexpr const vec_type<V> load(std::size_t /*d*/) const noexcept {
-        return V::set(value);
+    constexpr const vec_type<V> load(std::size_t d) const noexcept {
+        return (void) d, V::set(value);
     }
 
     /*!
