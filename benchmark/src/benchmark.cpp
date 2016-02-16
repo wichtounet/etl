@@ -187,14 +187,21 @@ CPM_BENCH() {
 //Bench exp
 CPM_BENCH() {
     CPM_TWO_PASS_NS(
-        "exp [std][exp][s]",
+        "sexp [std][exp][s]",
         [](std::size_t d){ return std::make_tuple(svec(d), svec(d)); },
         [](svec& a, svec& r){ r = exp(a); },
         [](std::size_t d){ return 100 * d; }
         );
 
     CPM_TWO_PASS_NS(
-        "exp_expr [std][exp][d]",
+        "dexp [std][exp][d]",
+        [](std::size_t d){ return std::make_tuple(dvec(d), dvec(d)); },
+        [](dvec& a, dvec& r){ r = exp(a); },
+        [](std::size_t d){ return 100 * d; }
+        );
+
+    CPM_TWO_PASS_NS(
+        "sexp_expr [std][exp][d]",
         [](std::size_t d){ return std::make_tuple(dvec(d), dvec(d), dvec(d)); },
         [](dvec& a, dvec& b, dvec& r){ r = exp(a * 2.3 + b); },
         [](std::size_t d){ return 105 * d; }
