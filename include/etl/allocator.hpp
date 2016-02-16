@@ -5,6 +5,11 @@
 //  http://opensource.org/licenses/MIT)
 //=======================================================================
 
+/*!
+ * \file
+ * \brief Contains allocation utilities
+ */
+
 #pragma once
 
 #include <memory>

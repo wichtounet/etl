@@ -1245,11 +1245,22 @@ detail::value_return_t<E> min(E&& values) {
 
 // Generate data
 
+/*!
+ * \brief Create an expression generating numbers from a normal distribution
+ * \param mean The mean of the distribution
+ * \param stddev The standard deviation of the distribution
+ * \return An expression generating numbers from the normal distribution
+ */
 template <typename T = double>
 auto normal_generator(T mean = 0.0, T stddev = 1.0) -> generator_expr<normal_generator_op<T>> {
     return generator_expr<normal_generator_op<T>>{mean, stddev};
 }
 
+/*!
+ * \brief Create an expression generating numbers from a consecutive sequence
+ * \param current The first number to generate
+ * \return an expression generating numbers from a consecutive sequence
+ */
 template <typename T = double>
 auto sequence_generator(T current = 0) -> generator_expr<sequence_generator_op<T>> {
     return generator_expr<sequence_generator_op<T>>{current};

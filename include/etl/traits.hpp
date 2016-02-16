@@ -270,11 +270,18 @@ struct has_direct_access : cpp::or_c<
                                is_etl_direct_value<DT>, is_temporary_unary_expr<DT>, is_temporary_binary_expr<DT>, is_direct_identity_view<DT>, is_direct_sub_view<DT>, is_direct_dim_view<DT>, is_direct_fast_matrix_view<DT>, is_direct_dyn_matrix_view<DT>, is_direct_dyn_vector_view<DT>> {};
 
 /*!
+ * \brief Traits to test if the given type is single precision type.
+ * \tparam T The type
+ */
+template <typename T>
+using is_single_precision_t = std::is_same<T, float>;
+
+/*!
  * \brief Traits to test if the given ETL expresion contains single precision numbers.
  * \tparam T The ETL expression type.
  */
 template <typename T>
-using is_single_precision = std::is_same<typename std::decay_t<T>::value_type, float>;
+using is_single_precision = is_single_precision_t<typename std::decay_t<T>::value_type>;
 
 /*!
  * \brief Traits to test if all the given ETL expresion types contains single precision numbers.
@@ -284,11 +291,18 @@ template <typename... E>
 using all_single_precision = cpp::and_c<is_single_precision<E>...>;
 
 /*!
+ * \brief Traits to test if the given type is double precision type.
+ * \tparam T The type
+ */
+template <typename T>
+using is_double_precision_t = std::is_same<T, double>;
+
+/*!
  * \brief Traits to test if the given ETL expresion contains double precision numbers.
  * \tparam T The ETL expression type.
  */
 template <typename T>
-using is_double_precision = std::is_same<typename std::decay_t<T>::value_type, double>;
+using is_double_precision = is_double_precision_t<typename std::decay_t<T>::value_type>;
 
 /*!
  * \brief Traits to test if all the given ETL expresion types contains double precision numbers.
@@ -458,10 +472,17 @@ struct etl_traits<T, std::enable_if_t<is_etl_value<T>::value>> {
     static constexpr const bool is_value                = true;                        ///< Indicates if the expression is of value type
     static constexpr const bool is_linear               = true;                        ///< Indicates if the expression is linear
     static constexpr const bool is_generator            = false;                       ///< Indicates if the expression is a generator expression
-    static constexpr const bool vectorizable            = !is_sparse_matrix<T>::value; ///< Indicates if the expression is vectorizable
     static constexpr const bool needs_temporary_visitor = false;                       ///< Indicates if the expression needs a temporary visitor
     static constexpr const bool needs_evaluator_visitor = false;                       ///< Indicaes if the expression needs an evaluator visitor
     static constexpr const order storage_order          = T::storage_order;            ///< The expression storage order
+
+    /*!
+     * \brief Indicates if the expression is vectorizable using the
+     * given vector mode
+     * \tparam V The vector mode
+     */
+    template<typename V>
+    using vectorizable = cpp::bool_constant<!is_sparse_matrix<T>::value>;
 
     static std::size_t size(const T& v) {
         return v.size();

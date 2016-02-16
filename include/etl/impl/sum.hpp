@@ -44,7 +44,7 @@ cpp14_constexpr sum_imple select_sum_impl() {
     //Note: since the constexpr values will be known at compile time, the
     //conditions will be a lot simplified
 
-    if(decay_traits<E>::vectorizable){
+    if(decay_traits<E>::template vectorizable<default_vec>::value){
         constexpr const bool sse = vectorize_impl && vector_mode == vector_mode_t::SSE3;
         constexpr const bool avx = vectorize_impl && vector_mode == vector_mode_t::AVX;
 

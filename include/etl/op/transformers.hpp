@@ -438,7 +438,7 @@ void convmtx2_direct_t(M& m, A&& sub, std::size_t k1, std::size_t k2) {
 
 //TODO Adapt this to an expression
 
-template <typename A, typename M, cpp_disable_if(has_direct_access<A>::value&& has_direct_access<M>::value)>
+template <typename A, typename M>
 void im2col_direct(M& m, A&& sub, std::size_t k1, std::size_t k2) {
     const std::size_t i1 = etl::dim<0>(sub);
     const std::size_t i2 = etl::dim<1>(sub);
@@ -452,30 +452,6 @@ void im2col_direct(M& m, A&& sub, std::size_t k1, std::size_t k2) {
         for (std::size_t b_i = 0; b_i < k1; ++b_i) {
             for (std::size_t b_j = 0; b_j < k2; ++b_j) {
                 m(b_j * k1 + b_i, b) = sub(s_i + b_i, s_j + b_j);
-            }
-        }
-    }
-}
-
-//TODO Find out why clang is unable to optimize the first version and then remove the second version
-
-template <typename A, typename M, cpp_enable_if(has_direct_access<A>::value, has_direct_access<M>::value)>
-void im2col_direct(M& m, A&& sub, std::size_t k1, std::size_t k2) {
-    const std::size_t i1 = etl::dim<0>(sub);
-    const std::size_t i2 = etl::dim<1>(sub);
-
-    const auto m_width = (i1 - k1 + 1) * (i2 - k2 + 1);
-
-    const auto mm = m.memory_start();
-    const auto ss = sub.memory_start();
-
-    for (std::size_t b = 0; b < m_width; ++b) {
-        auto s_i = b % (i1 - k1 + 1);
-        auto s_j = b / (i1 - k1 + 1);
-
-        for (std::size_t b_i = 0; b_i < k1; ++b_i) {
-            for (std::size_t b_j = 0; b_j < k2; ++b_j) {
-                mm[(b_j * k1 + b_i) * m_width + b] = ss[(s_i + b_i) * i2 + s_j + b_j];
             }
         }
     }
@@ -804,10 +780,17 @@ struct etl_traits<p_max_pool_p_transformer<T, C1, C2>> {
     static constexpr const bool is_linear               = false; ///< Indicates if the expression is linear
     static constexpr const bool is_value                = false; ///< Indicates if the expression is of value type
     static constexpr const bool is_generator            = false; ///< Indicates if the expression is a generated
-    static constexpr const bool vectorizable            = false; ///< Indicates if the expression is vectorizable
     static constexpr const bool needs_temporary_visitor = etl_traits<sub_expr_t>::needs_temporary_visitor; ///< Indicates if the expression needs a temporary visitor
     static constexpr const bool needs_evaluator_visitor = etl_traits<sub_expr_t>::needs_evaluator_visitor; ///< Indicaes if the expression needs an evaluator visitor
     static constexpr const order storage_order          = etl_traits<sub_expr_t>::storage_order;           ///< The expression storage order
+
+    /*!
+     * \brief Indicates if the expression is vectorizable using the
+     * given vector mode
+     * \tparam V The vector mode
+     */
+    template<typename V>
+    using vectorizable = std::false_type;
 
     /*!
      * \brief Returns the size of the given expression
@@ -879,10 +862,17 @@ struct etl_traits<transpose_transformer<T>> {
     static constexpr const bool is_linear               = false; ///< Indicates if the expression is linear
     static constexpr const bool is_value                = false; ///< Indicates if the expression is of value type
     static constexpr const bool is_generator            = false; ///< Indicates if the expression is a generated
-    static constexpr const bool vectorizable            = false; ///< Indicates if the expression is vectorizable
     static constexpr const bool needs_temporary_visitor = etl_traits<sub_expr_t>::needs_temporary_visitor; ///< Indicates if the expression needs a temporary visitor
     static constexpr const bool needs_evaluator_visitor = etl_traits<sub_expr_t>::needs_evaluator_visitor; ///< Indicaes if the expression needs an evaluator visitor
     static constexpr const order storage_order          = etl_traits<sub_expr_t>::storage_order;           ///< The expression storage order
+
+    /*!
+     * \brief Indicates if the expression is vectorizable using the
+     * given vector mode
+     * \tparam V The vector mode
+     */
+    template<typename V>
+    using vectorizable = std::false_type;
 
     /*!
      * \brief Returns the size of the given expression
@@ -947,12 +937,19 @@ struct etl_traits<mm_mul_transformer<LE, RE>> {
     static constexpr const bool is_linear               = false; ///< Indicates if the expression is linear
     static constexpr const bool is_value                = false; ///< Indicates if the expression is of value type
     static constexpr const bool is_generator            = false; ///< Indicates if the expression is a generated
-    static constexpr const bool vectorizable            = false; ///< Indicates if the expression is vectorizable
     static constexpr const bool needs_temporary_visitor =
         etl_traits<left_expr_t>::needs_temporary_visitor || etl_traits<right_expr_t>::needs_temporary_visitor;///< Indicates if the expression needs a temporary visitor
     static constexpr const bool needs_evaluator_visitor =
         etl_traits<left_expr_t>::needs_evaluator_visitor || etl_traits<right_expr_t>::needs_evaluator_visitor;///< Indicates if the expression needs an evaluator visitor
     static constexpr const order storage_order = etl_traits<left_expr_t>::is_generator ? etl_traits<right_expr_t>::storage_order : etl_traits<left_expr_t>::storage_order;
+
+    /*!
+     * \brief Indicates if the expression is vectorizable using the
+     * given vector mode
+     * \tparam V The vector mode
+     */
+    template<typename V>
+    using vectorizable = std::false_type;
 
     /*!
      * \brief Returns the size of the given expression
@@ -1024,10 +1021,17 @@ struct etl_traits<dyn_convmtx_transformer<E>> {
     static constexpr const bool is_linear               = false; ///< Indicates if the expression is linear
     static constexpr const bool is_value                = false; ///< Indicates if the expression is of value type
     static constexpr const bool is_generator            = false; ///< Indicates if the expression is a generated
-    static constexpr const bool vectorizable            = false; ///< Indicates if the expression is vectorizable
     static constexpr const bool needs_temporary_visitor = etl_traits<sub_expr_t>::needs_temporary_visitor; ///< Indicates if the expression needs a temporary visitor
     static constexpr const bool needs_evaluator_visitor = etl_traits<sub_expr_t>::needs_evaluator_visitor; ///< Indicaes if the expression needs an evaluator visitor
     static constexpr const order storage_order          = etl_traits<sub_expr_t>::storage_order;           ///< The expression storage order
+
+    /*!
+     * \brief Indicates if the expression is vectorizable using the
+     * given vector mode
+     * \tparam V The vector mode
+     */
+    template<typename V>
+    using vectorizable = std::false_type;
 
     /*!
      * \brief Returns the size of the given expression
@@ -1077,10 +1081,17 @@ struct etl_traits<dyn_convmtx2_transformer<E>> {
     static constexpr const bool is_linear               = false; ///< Indicates if the expression is linear
     static constexpr const bool is_value                = false; ///< Indicates if the expression is of value type
     static constexpr const bool is_generator            = false; ///< Indicates if the expression is a generated
-    static constexpr const bool vectorizable            = false; ///< Indicates if the expression is vectorizable
     static constexpr const bool needs_temporary_visitor = etl_traits<sub_expr_t>::needs_temporary_visitor; ///< Indicates if the expression needs a temporary visitor
     static constexpr const bool needs_evaluator_visitor = etl_traits<sub_expr_t>::needs_evaluator_visitor; ///< Indicaes if the expression needs an evaluator visitor
     static constexpr const order storage_order          = etl_traits<sub_expr_t>::storage_order;           ///< The expression storage order
+
+    /*!
+     * \brief Indicates if the expression is vectorizable using the
+     * given vector mode
+     * \tparam V The vector mode
+     */
+    template<typename V>
+    using vectorizable = std::false_type;
 
     /*!
      * \brief Returns the size of the given expression
@@ -1136,10 +1147,17 @@ struct etl_traits<T, std::enable_if_t<cpp::or_c<
     static constexpr const bool is_linear               = false; ///< Indicates if the expression is linear
     static constexpr const bool is_value                = false; ///< Indicates if the expression is of value type
     static constexpr const bool is_generator            = false; ///< Indicates if the expression is a generated
-    static constexpr const bool vectorizable            = false; ///< Indicates if the expression is vectorizable
     static constexpr const bool needs_temporary_visitor = etl_traits<sub_expr_t>::needs_temporary_visitor; ///< Indicates if the expression needs a temporary visitor
     static constexpr const bool needs_evaluator_visitor = etl_traits<sub_expr_t>::needs_evaluator_visitor; ///< Indicaes if the expression needs an evaluator visitor
     static constexpr const order storage_order          = etl_traits<sub_expr_t>::storage_order;           ///< The expression storage order
+
+    /*!
+     * \brief Indicates if the expression is vectorizable using the
+     * given vector mode
+     * \tparam V The vector mode
+     */
+    template<typename V>
+    using vectorizable = std::false_type;
 
     /*!
      * \brief Returns the size of the given expression
