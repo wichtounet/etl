@@ -147,6 +147,24 @@ constexpr const vector_mode_t vector_mode = vector_mode_t::SSE3;
 constexpr const vector_mode_t vector_mode = vector_mode_t::NONE; ///< The vector mode in use
 #endif
 
+#ifdef __AVX512F__
+constexpr const bool avx512_enabled = true;
+#else
+constexpr const bool avx512_enabled = false;
+#endif
+
+#ifdef __AVX__
+constexpr const bool avx_enabled = true;
+#else
+constexpr const bool avx_enabled = false;
+#endif
+
+#ifdef __SSE3__
+constexpr const bool sse3_enabled = true;
+#else
+constexpr const bool sse3_enabled = false;
+#endif
+
 #ifdef __INTEL_COMPILER
 constexpr const bool intel_compiler = true;
 #else
