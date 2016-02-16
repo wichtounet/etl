@@ -38,12 +38,15 @@ void check_mm_mul_sizes(const A& a, const B& b, C& c) {
  * \param c The result matrix
  */
 template <typename A, typename B, typename C, cpp_enable_if(all_fast<A, B, C>::value)>
-void check_mm_mul_sizes(const A& /*a*/, const B& /*b*/, C& /*c*/) {
+void check_mm_mul_sizes(const A& a, const B& b, C& c) {
     static_assert(
         etl_traits<A>::template dim<1>() == etl_traits<B>::template dim<0>()         //interior dimensions
             && etl_traits<A>::template dim<0>() == etl_traits<C>::template dim<0>()  //exterior dimension 1
             && etl_traits<B>::template dim<1>() == etl_traits<C>::template dim<1>(), //exterior dimension 2
         "Invalid sizes for multiplication");
+    cpp_unused(a);
+    cpp_unused(b);
+    cpp_unused(c);
 }
 
 /*!
@@ -70,11 +73,14 @@ void check_vm_mul_sizes(const A& a, const B& b, C& c) {
  * \param c The result matrix
  */
 template <typename A, typename B, typename C, cpp_enable_if(all_fast<A, B, C>::value)>
-void check_vm_mul_sizes(const A& /*a*/, const B& /*b*/, C& /*c*/) {
+void check_vm_mul_sizes(const A& a, const B& b, C& c) {
     static_assert(
         etl_traits<A>::template dim<0>() == etl_traits<B>::template dim<0>()         //exterior dimension 1
             && etl_traits<B>::template dim<1>() == etl_traits<C>::template dim<0>(), //exterior dimension 2
         "Invalid sizes for multiplication");
+    cpp_unused(a);
+    cpp_unused(b);
+    cpp_unused(c);
 }
 
 /*!
@@ -102,12 +108,15 @@ void check_mv_mul_sizes(const A& a, const B& b, C& c) {
  * \param c The result matrix
  */
 template <typename A, typename B, typename C, cpp_enable_if(all_fast<A, B, C>::value)>
-void check_mv_mul_sizes(const A& /*a*/, const B& /*b*/, C& /*c*/) {
+void check_mv_mul_sizes(const A& a, const B& b, C& c) {
     static_assert(
         etl_traits<A>::template dim<1>() == etl_traits<B>::template dim<0>()        //interior dimensions
             && etl_traits<A>::template dim<0>() == etl_traits<C>::template dim<0>() //exterior dimension 1
         ,
         "Invalid sizes for multiplication");
+    cpp_unused(a);
+    cpp_unused(b);
+    cpp_unused(c);
 }
 
 } //end of namespace detail
