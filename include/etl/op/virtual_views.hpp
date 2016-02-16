@@ -171,10 +171,17 @@ struct etl_traits<etl::magic_view<V>> {
     static constexpr const bool is_linear               = false;           ///< Indicates if the expression is linear
     static constexpr const bool is_value                = false;           ///< Indicates if the expression is of value type
     static constexpr const bool is_generator            = false;           ///< Indicates if the expression is a generator
-    static constexpr const bool vectorizable            = false;           ///< Indicates if the expression is vectorizale
     static constexpr const bool needs_temporary_visitor = false;           ///< Indicates if the expression needs a temporary visitor
     static constexpr const bool needs_evaluator_visitor = false;           ///< Indicates if the exxpression needs a evaluator visitor
     static constexpr const order storage_order          = order::RowMajor; ///< The expression's storage order
+
+    /*!
+     * \brief Indicates if the expression is vectorizable using the
+     * given vector mode
+     * \tparam V The vector mode
+     */
+    template<typename VV>
+    using vectorizable = std::false_type;
 
     /*!
      * \brief Returns the size of the given expression
@@ -217,10 +224,17 @@ struct etl_traits<etl::fast_magic_view<V, N>> {
     static constexpr const bool is_linear               = false;           ///< Indicates if the expression is linear
     static constexpr const bool is_value                = false;           ///< Indicates if the expression is of value type
     static constexpr const bool is_generator            = false;           ///< Indicates if the expression is a generator
-    static constexpr const bool vectorizable            = false;           ///< Indicates if the expression is vectorizale
     static constexpr const bool needs_temporary_visitor = false;           ///< Indicates if the expression needs a temporary visitor
     static constexpr const bool needs_evaluator_visitor = false;           ///< Indicates if the exxpression needs a evaluator visitor
     static constexpr const order storage_order          = order::RowMajor; ///< The expression's storage order
+
+    /*!
+     * \brief Indicates if the expression is vectorizable using the
+     * given vector mode
+     * \tparam V The vector mode
+     */
+    template<typename VV>
+    using vectorizable = std::false_type;
 
     /*!
      * \brief Returns the size of an expression of this fast type.

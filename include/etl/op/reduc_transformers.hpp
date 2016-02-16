@@ -325,10 +325,17 @@ struct etl_traits<T, std::enable_if_t<cpp::or_c<
     static constexpr const bool is_linear               = false;                                           ///< Indicates if the expression is linear
     static constexpr const bool is_value                = false;                                           ///< Indicates if the expression is of value type
     static constexpr const bool is_generator            = false;                                           ///< Indicates if the expression is a generated
-    static constexpr const bool vectorizable            = false;                                           ///< Indicates if the expression is vectorizable
     static constexpr const bool needs_temporary_visitor = etl_traits<sub_expr_t>::needs_temporary_visitor; ///< Indicates if the expression needs a temporary visitor
     static constexpr const bool needs_evaluator_visitor = etl_traits<sub_expr_t>::needs_evaluator_visitor; ///< Indicaes if the expression needs an evaluator visitor
     static constexpr const order storage_order          = etl_traits<sub_expr_t>::storage_order;           ///< The expression storage order
+
+    /*!
+     * \brief Indicates if the expression is vectorizable using the
+     * given vector mode
+     * \tparam V The vector mode
+     */
+    template<typename V>
+    using vectorizable = std::false_type;
 
     /*!
      * \brief Returns the size of the given expression
@@ -395,10 +402,17 @@ struct etl_traits<T, std::enable_if_t<cpp::or_c<
     static constexpr const bool is_linear               = false; ///< Indicates if the expression is linear
     static constexpr const bool is_value                = false; ///< Indicates if the expression is of value type
     static constexpr const bool is_generator            = false; ///< Indicates if the expression is a generated
-    static constexpr const bool vectorizable            = false; ///< Indicates if the expression is vectorizable
     static constexpr const bool needs_temporary_visitor = etl_traits<sub_expr_t>::needs_temporary_visitor; ///< Indicates if the expression needs a temporary visitor
     static constexpr const bool needs_evaluator_visitor = etl_traits<sub_expr_t>::needs_evaluator_visitor; ///< Indicaes if the expression needs an evaluator visitor
     static constexpr const order storage_order          = etl_traits<sub_expr_t>::storage_order;           ///< The expression storage order
+
+    /*!
+     * \brief Indicates if the expression is vectorizable using the
+     * given vector mode
+     * \tparam V The vector mode
+     */
+    template<typename V>
+    using vectorizable = std::false_type;
 
     /*!
      * \brief Returns the size of the given expression

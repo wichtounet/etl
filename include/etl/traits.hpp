@@ -472,10 +472,17 @@ struct etl_traits<T, std::enable_if_t<is_etl_value<T>::value>> {
     static constexpr const bool is_value                = true;                        ///< Indicates if the expression is of value type
     static constexpr const bool is_linear               = true;                        ///< Indicates if the expression is linear
     static constexpr const bool is_generator            = false;                       ///< Indicates if the expression is a generator expression
-    static constexpr const bool vectorizable            = !is_sparse_matrix<T>::value; ///< Indicates if the expression is vectorizable
     static constexpr const bool needs_temporary_visitor = false;                       ///< Indicates if the expression needs a temporary visitor
     static constexpr const bool needs_evaluator_visitor = false;                       ///< Indicaes if the expression needs an evaluator visitor
     static constexpr const order storage_order          = T::storage_order;            ///< The expression storage order
+
+    /*!
+     * \brief Indicates if the expression is vectorizable using the
+     * given vector mode
+     * \tparam V The vector mode
+     */
+    template<typename V>
+    using vectorizable = cpp::bool_constant<!is_sparse_matrix<T>::value>;
 
     static std::size_t size(const T& v) {
         return v.size();
