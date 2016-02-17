@@ -433,9 +433,7 @@ template <typename A, typename B, typename C>
 void conv_2d_valid_multi(A&& input, B&& kernels, C&& features) {
     //TODO Validate inputs
 
-    //TODO This version of the implementation should only be used if very fast MMUL is available
-
-    if (kernels.is_sub_square()) {
+    if (is_cblas_enabled || is_cublas_enabled) {
         const std::size_t v1 = etl::dim<0>(input);
         const std::size_t v2 = etl::dim<1>(input);
         const std::size_t k1 = etl::dim<1>(kernels);
@@ -454,8 +452,6 @@ void conv_2d_valid_multi(A&& input, B&& kernels, C&& features) {
 
 template <typename A, typename B, typename C, typename D>
 void conv_2d_valid_multi(A&& input, B&& kernels, C&& features, D&& input_col) {
-    cpp_assert(kernels.is_sub_square(), "Only implemented for square input and kernels");
-
     //TODO Validate inputs
 
     etl::dyn_matrix<value_t<B>, 3> prepared_k(etl::dim<0>(kernels), etl::dim<1>(kernels), etl::dim<2>(kernels));
@@ -469,8 +465,6 @@ void conv_2d_valid_multi(A&& input, B&& kernels, C&& features, D&& input_col) {
 
 template <typename A, typename B, typename C, typename D, cpp_enable_if(inplace_sub_transpose_able<C>::value)>
 void conv_2d_valid_multi_prepared(A&& input, B&& kernels, C&& features, D&& input_col) {
-    cpp_assert(kernels.is_sub_square(), "Only implemented for square input and kernels");
-
     //TODO Validate inputs
 
     const std::size_t K  = etl::dim<0>(kernels);
@@ -492,7 +486,6 @@ void conv_2d_valid_multi_prepared(A&& input, B&& kernels, C&& features, D&& inpu
 template <typename A, typename B, typename C, typename D, cpp_enable_if(!inplace_sub_transpose_able<C>::value)>
 void conv_2d_valid_multi_prepared(A&& input, B&& kernels, C&& features, D&& input_col) {
     static_assert(all_fast<C>::value, "inplace_sub_transpose_able should only be false for rectangular fast matrices");
-    cpp_assert(kernels.is_sub_square(), "Only implemented for square input and kernels");
 
     static constexpr const std::size_t K = decay_traits<C>::template dim<0>();
     static constexpr const std::size_t F2 = decay_traits<C>::template dim<1>();
