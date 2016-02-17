@@ -175,7 +175,7 @@ namespace standard_evaluator {
 
     template <typename E, typename R>
     void vectorized_assign_evaluate(E&& expr, R&& result) {
-        detail::VectorizedAssign<R, E>(result, expr, 0, etl::size(result))();
+        detail::VectorizedAssign<detail::select_vector_mode<E, R>(), R, E>(result, expr, 0, etl::size(result))();
     }
 
     /*!
@@ -206,11 +206,11 @@ namespace standard_evaluator {
 
         //Schedule threads - 1 tasks
         for(std::size_t t = 0; t < threads - 1; ++t){
-            pool.do_task(detail::VectorizedAssign<R, E>(result, expr, t * batch, (t+1) * batch));
+            pool.do_task(detail::VectorizedAssign<detail::select_vector_mode<E, R>(), R, E>(result, expr, t * batch, (t+1) * batch));
         }
 
         //Perform the last task on the current threads
-        detail::VectorizedAssign<R, E>(result, expr, (threads - 1) * batch, size)();
+        detail::VectorizedAssign<detail::select_vector_mode<E, R>(), R, E>(result, expr, (threads - 1) * batch, size)();
 
         //Wait for the other threads
         pool.wait();
@@ -296,7 +296,7 @@ namespace standard_evaluator {
         pre_assign(expr);
         post_assign_compound(expr);
 
-        detail::VectorizedAssignAdd<R, E>(result, expr, 0, etl::size(result))();
+        detail::VectorizedAssignAdd<detail::select_vector_mode<E, R>(), R, E>(result, expr, 0, etl::size(result))();
     }
 
     /*!
@@ -331,11 +331,11 @@ namespace standard_evaluator {
 
         //Schedule threads - 1 tasks
         for(std::size_t t = 0; t < threads - 1; ++t){
-            pool.do_task(detail::VectorizedAssignAdd<R, E>(result, expr, t * batch, (t+1) * batch));
+            pool.do_task(detail::VectorizedAssignAdd<detail::select_vector_mode<E, R>(), R, E>(result, expr, t * batch, (t+1) * batch));
         }
 
         //Perform the last task on the current threads
-        detail::VectorizedAssignAdd<R, E>(result, expr, (threads - 1) * batch, size)();
+        detail::VectorizedAssignAdd<detail::select_vector_mode<E, R>(), R, E>(result, expr, (threads - 1) * batch, size)();
 
         //Wait for the other threads
         pool.wait();
@@ -421,7 +421,7 @@ namespace standard_evaluator {
         pre_assign(expr);
         post_assign_compound(expr);
 
-        detail::VectorizedAssignSub<R, E>(result, expr, 0, etl::size(result))();
+        detail::VectorizedAssignSub<detail::select_vector_mode<E, R>(), R, E>(result, expr, 0, etl::size(result))();
     }
 
     /*!
@@ -456,11 +456,11 @@ namespace standard_evaluator {
 
         //Schedule threads - 1 tasks
         for(std::size_t t = 0; t < threads - 1; ++t){
-            pool.do_task(detail::VectorizedAssignSub<R, E>(result, expr, t * batch, (t+1) * batch));
+            pool.do_task(detail::VectorizedAssignSub<detail::select_vector_mode<E, R>(), R, E>(result, expr, t * batch, (t+1) * batch));
         }
 
         //Perform the last task on the current threads
-        detail::VectorizedAssignSub<R, E>(result, expr, (threads - 1) * batch, size)();
+        detail::VectorizedAssignSub<detail::select_vector_mode<E, R>(), R, E>(result, expr, (threads - 1) * batch, size)();
 
         //Wait for the other threads
         pool.wait();
@@ -546,7 +546,7 @@ namespace standard_evaluator {
         pre_assign(expr);
         post_assign_compound(expr);
 
-        detail::VectorizedAssignMul<R, E>(result, expr, 0, etl::size(result))();
+        detail::VectorizedAssignMul<detail::select_vector_mode<E, R>(), R, E>(result, expr, 0, etl::size(result))();
     }
 
     /*!
@@ -581,11 +581,11 @@ namespace standard_evaluator {
 
         //Schedule threads - 1 tasks
         for(std::size_t t = 0; t < threads - 1; ++t){
-            pool.do_task(detail::VectorizedAssignMul<R, E>(result, expr, t * batch, (t+1) * batch));
+            pool.do_task(detail::VectorizedAssignMul<detail::select_vector_mode<E, R>(), R, E>(result, expr, t * batch, (t+1) * batch));
         }
 
         //Perform the last task on the current threads
-        detail::VectorizedAssignMul<R, E>(result, expr, (threads - 1) * batch, size)();
+        detail::VectorizedAssignMul<detail::select_vector_mode<E, R>(), R, E>(result, expr, (threads - 1) * batch, size)();
 
         //Wait for the other threads
         pool.wait();
@@ -671,7 +671,7 @@ namespace standard_evaluator {
         pre_assign(expr);
         post_assign_compound(expr);
 
-        detail::VectorizedAssignDiv<R, E>(result, expr, 0, etl::size(result))();
+        detail::VectorizedAssignDiv<detail::select_vector_mode<E, R>(), R, E>(result, expr, 0, etl::size(result))();
     }
 
     /*!
@@ -706,11 +706,11 @@ namespace standard_evaluator {
 
         //Schedule threads - 1 tasks
         for(std::size_t t = 0; t < threads - 1; ++t){
-            pool.do_task(detail::VectorizedAssignDiv<R, E>(result, expr, t * batch, (t+1) * batch));
+            pool.do_task(detail::VectorizedAssignDiv<detail::select_vector_mode<E, R>(), R, E>(result, expr, t * batch, (t+1) * batch));
         }
 
         //Perform the last task on the current threads
-        detail::VectorizedAssignDiv<R, E>(result, expr, (threads - 1) * batch, size)();
+        detail::VectorizedAssignDiv<detail::select_vector_mode<E, R>(), R, E>(result, expr, (threads - 1) * batch, size)();
 
         //Wait for the other threads
         pool.wait();

@@ -17,6 +17,31 @@ namespace etl {
 
 namespace detail {
 
+// Utilities
+
+template <vector_mode_t V, typename E, typename R>
+using are_vectorizable_select = cpp::and_u<
+                               vectorize_expr,
+                               decay_traits<E>::template vectorizable<V>::value,
+                               intrinsic_traits<value_t<R>>::vectorizable, intrinsic_traits<value_t<E>>::vectorizable,
+                               std::is_same<intrinsic_type<value_t<R>>, intrinsic_type<value_t<E>>>::value>;
+
+template <typename E, typename R>
+using are_vectorizable = cpp::or_u<
+    avx512_enabled && are_vectorizable_select<vector_mode_t::AVX512, E, R>::value,
+    avx_enabled && are_vectorizable_select<vector_mode_t::AVX, E, R>::value,
+    sse3_enabled && are_vectorizable_select<vector_mode_t::SSE3, E, R>::value>;
+
+template <typename E, typename R>
+inline constexpr vector_mode_t select_vector_mode(){
+    return
+          (avx512_enabled && are_vectorizable_select<vector_mode_t::AVX512, E, R>::value) ? vector_mode_t::AVX512
+        : (avx_enabled && are_vectorizable_select<vector_mode_t::AVX, E, R>::value) ? vector_mode_t::AVX
+        : (sse3_enabled && are_vectorizable_select<vector_mode_t::SSE3, E, R>::value) ? vector_mode_t::SSE3
+                                                                                : vector_mode_t::NONE;
+}
+
+
 //Selectors for assign
 
 template <typename E, typename R>
@@ -24,13 +49,6 @@ using fast_assign = cpp::and_u<
                          has_direct_access<E>::value,
                          has_direct_access<R>::value
                          >;
-
-template <typename E, typename R>
-using are_vectorizable = cpp::and_u<
-                               vectorize_expr,
-                               decay_traits<E>::template vectorizable<vector_mode>::value,
-                               intrinsic_traits<value_t<R>>::vectorizable, intrinsic_traits<value_t<E>>::vectorizable,
-                               std::is_same<intrinsic_type<value_t<R>>, intrinsic_type<value_t<E>>>::value>;
 
 template <typename E, typename R>
 using parallel_vectorized_assign = cpp::and_u<

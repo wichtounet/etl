@@ -182,7 +182,9 @@ struct exp_unary_op {
      * \tparam V The vector mode
      */
     template<vector_mode_t V>
-    using vectorizable = cpp::bool_constant<intel_compiler && !is_complex_t<T>::value>;
+    using vectorizable = cpp::bool_constant<
+            (V == vector_mode_t::SSE3 && is_single_precision_t<T>::value)
+        ||  (intel_compiler && !is_complex_t<T>::value)>;
 
     /*!
      * \brief Apply the unary operator on x
@@ -193,7 +195,6 @@ struct exp_unary_op {
         return std::exp(x);
     }
 
-#if 0
     /*!
      * \brief Compute several applications of the operator at a time
      * \param x The vector on which to operate
@@ -204,7 +205,6 @@ struct exp_unary_op {
     static cpp14_constexpr vec_type<V> load(const vec_type<V>& x) noexcept {
         return V::exp(x);
     }
-#endif
 
     /*!
      * \brief Returns a textual representation of the operator
