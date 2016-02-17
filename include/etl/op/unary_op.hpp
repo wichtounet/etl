@@ -72,7 +72,9 @@ struct log_unary_op {
      * \tparam V The vector mode
      */
     template<vector_mode_t V>
-    using vectorizable = cpp::bool_constant<intel_compiler && !is_complex_t<T>::value>;
+    using vectorizable = cpp::bool_constant<
+            (V == vector_mode_t::SSE3 && is_single_precision_t<T>::value)
+        ||  (intel_compiler && !is_complex_t<T>::value)>;
 
     /*!
      * The vectorization type for V
@@ -89,7 +91,6 @@ struct log_unary_op {
         return std::log(x);
     }
 
-#ifdef __INTEL_COMPILER
     /*!
      * \brief Compute several applications of the operator at a time
      * \param x The vector on which to operate
@@ -100,7 +101,6 @@ struct log_unary_op {
     static cpp14_constexpr vec_type<V> load(const vec_type<V>& x) noexcept {
         return V::log(x);
     }
-#endif
 
     /*!
      * \brief Returns a textual representation of the operator
