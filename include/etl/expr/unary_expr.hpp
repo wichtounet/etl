@@ -5,6 +5,11 @@
 //  http://opensource.org/licenses/MIT)
 //=======================================================================
 
+/*!
+ * \file
+ * \brief Contains unary expression implementations
+ */
+
 #pragma once
 
 #include "etl/iterator.hpp"

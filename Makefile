@@ -23,6 +23,10 @@ CXX_FLAGS += -Ilib/include -ICatch/include -Itest/include
 # Support for extra flags
 CXX_FLAGS += $(EXTRA_CXX_FLAGS)
 
+ifneq (,$(findstring clang,$(CXX)))
+CXX_FLAGS += -Wno-error=documentation
+endif
+
 ifneq (,$(ETL_MKL))
 CXX_FLAGS += -DETL_MKL_MODE $(shell pkg-config --cflags $(BLAS_PKG))
 LD_FLAGS += $(shell pkg-config --libs $(BLAS_PKG))
