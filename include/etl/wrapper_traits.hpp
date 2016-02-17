@@ -38,8 +38,8 @@ struct wrapper_traits {
     /*!
      * The vectorization type for V
      */
-    template<typename V = default_vec>
-    using vec_type          = typename sub_traits::template vectorizable<V>;
+    template <vector_mode_t V>
+    using vectorizable = typename sub_traits::template vectorizable<V>;
 
     /*!
      * \brief Returns the size of the given expression
