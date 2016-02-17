@@ -481,7 +481,7 @@ struct etl_traits<T, std::enable_if_t<is_etl_value<T>::value>> {
      * given vector mode
      * \tparam V The vector mode
      */
-    template<typename V>
+    template<vector_mode_t V>
     using vectorizable = cpp::bool_constant<!is_sparse_matrix<T>::value>;
 
     static std::size_t size(const T& v) {

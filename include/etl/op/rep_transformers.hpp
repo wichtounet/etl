@@ -356,7 +356,7 @@ struct etl_traits<rep_r_transformer<T, D...>> {
      * given vector mode
      * \tparam V The vector mode
      */
-    template<typename V>
+    template<vector_mode_t V>
     using vectorizable = std::false_type;
 
     /*!
@@ -437,7 +437,7 @@ struct etl_traits<rep_l_transformer<T, D...>> {
      * given vector mode
      * \tparam V The vector mode
      */
-    template<typename V>
+    template<vector_mode_t V>
     using vectorizable = std::false_type;
 
     /*!
@@ -514,7 +514,7 @@ struct etl_traits<dyn_rep_r_transformer<T, D>> {
      * given vector mode
      * \tparam V The vector mode
      */
-    template<typename V>
+    template<vector_mode_t V>
     using vectorizable = std::false_type;
 
     /*!
@@ -570,7 +570,7 @@ struct etl_traits<dyn_rep_l_transformer<T, D>> {
      * given vector mode
      * \tparam V The vector mode
      */
-    template<typename V>
+    template<vector_mode_t V>
     using vectorizable = std::false_type;
 
     /*!

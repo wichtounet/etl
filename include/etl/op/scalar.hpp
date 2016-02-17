@@ -79,7 +79,7 @@ struct etl_traits<etl::scalar<T>, void> {
      * given vector mode
      * \tparam V The vector mode
      */
-    template<typename VV>
+    template<vector_mode_t VV>
     using vectorizable = std::true_type;
 };
 

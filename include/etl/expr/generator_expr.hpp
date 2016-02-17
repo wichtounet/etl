@@ -120,7 +120,7 @@ struct etl_traits<etl::generator_expr<Generator>> {
      * given vector mode
      * \tparam V The vector mode
      */
-    template<typename V>
+    template<vector_mode_t V>
     using vectorizable = std::false_type;
 };
 

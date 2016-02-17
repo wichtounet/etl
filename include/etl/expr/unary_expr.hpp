@@ -17,8 +17,15 @@ namespace etl {
  * Such an unary expr does not apply the operator but delegates to its sub expression.
  */
 struct identity_op {
-    static constexpr const bool vectorizable = true; ///< Indicates if the operator is vectorizable
     static constexpr const bool linear       = true; ///< Indicates if the operator is linear
+
+    /*!
+     * \brief Indicates if the expression is vectorizable using the
+     * given vector mode
+     * \tparam V The vector mode
+     */
+    template<vector_mode_t V>
+    using vectorizable = std::true_type;
 };
 
 /*!
@@ -27,8 +34,15 @@ struct identity_op {
  * Such an unary expr does not apply the operator but delegates to its sub expression.
  */
 struct transform_op {
-    static constexpr const bool vectorizable = false; ///< Indicates if the operator is vectorizable
     static constexpr const bool linear       = false; ///< Indicates if the operator is linear
+
+    /*!
+     * \brief Indicates if the expression is vectorizable using the
+     * given vector mode
+     * \tparam V The vector mode
+     */
+    template<vector_mode_t V>
+    using vectorizable = std::false_type;
 };
 
 /*!
@@ -40,9 +54,16 @@ struct transform_op {
  */
 template <typename Sub>
 struct stateful_op {
-    static constexpr const bool vectorizable = Sub::vectorizable; ///< Indicates if the operator is vectorizable
     static constexpr const bool linear       = Sub::linear;       ///< Indicates if the operator is linear
     using op                                 = Sub;               ///< The sub operator type
+
+    /*!
+     * \brief Indicates if the expression is vectorizable using the
+     * given vector mode
+     * \tparam V The vector mode
+     */
+    template<vector_mode_t V>
+    using vectorizable = typename Sub::template vectorizable<V>;
 };
 
 /*!
@@ -679,8 +700,10 @@ struct etl_traits<etl::unary_expr<T, Expr, UnaryOp>> {
      * given vector mode
      * \tparam V The vector mode
      */
-    template<typename V>
-    using vectorizable = cpp::bool_constant<etl_traits<sub_expr_t>::template vectorizable<V>::value && UnaryOp::vectorizable>;
+    template<vector_mode_t V>
+    using vectorizable = cpp::bool_constant<
+            etl_traits<sub_expr_t>::template vectorizable<V>::value
+        &&  UnaryOp::template vectorizable<V>::value>;
 
     /*!
      * \brief Returns the size of the given expression

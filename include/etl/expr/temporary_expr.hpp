@@ -530,7 +530,7 @@ struct etl_traits<etl::temporary_unary_expr<T, A, Op, Forced>> {
      * given vector mode
      * \tparam V The vector mode
      */
-    template<typename V>
+    template<vector_mode_t V>
     using vectorizable = std::true_type;
 
     /*!
@@ -605,7 +605,7 @@ struct etl_traits<etl::temporary_binary_expr<T, A, B, Op, Forced>> {
      * given vector mode
      * \tparam V The vector mode
      */
-    template<typename V>
+    template<vector_mode_t V>
     using vectorizable = std::true_type;
 
     /*!

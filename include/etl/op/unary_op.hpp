@@ -30,8 +30,15 @@ namespace etl {
  */
 template <typename T>
 struct abs_unary_op {
-    static constexpr const bool vectorizable = false; ///< Indicates if the operator is vectorizable
     static constexpr const bool linear       = true;  ///< Indicates if the operator is linear
+
+    /*!
+     * \brief Indicates if the expression is vectorizable using the
+     * given vector mode
+     * \tparam V The vector mode
+     */
+    template<vector_mode_t V>
+    using vectorizable = std::false_type;
 
     /*!
      * \brief Apply the unary operator on x
@@ -57,8 +64,15 @@ struct abs_unary_op {
  */
 template <typename T>
 struct log_unary_op {
-    static constexpr const bool vectorizable = intel_compiler && !is_complex_t<T>::value; ///< Indicates if the operator is vectorizable
     static constexpr const bool linear       = true;                                      ///< Indicates if the operator is linear
+
+    /*!
+     * \brief Indicates if the expression is vectorizable using the
+     * given vector mode
+     * \tparam V The vector mode
+     */
+    template<vector_mode_t V>
+    using vectorizable = cpp::bool_constant<intel_compiler && !is_complex_t<T>::value>;
 
     /*!
      * The vectorization type for V
@@ -109,8 +123,15 @@ struct sqrt_unary_op {
     template <typename V = default_vec>
     using vec_type       = typename V::template vec_type<T>;
 
-    static constexpr const bool vectorizable = !is_complex_t<T>::value; ///< Indicates if the operator is vectorizable
     static constexpr const bool linear       = true;                    ///< Indicates if the operator is linear
+
+    /*!
+     * \brief Indicates if the expression is vectorizable using the
+     * given vector mode
+     * \tparam V The vector mode
+     */
+    template<vector_mode_t V>
+    using vectorizable = cpp::bool_constant<!is_complex_t<T>::value>;
 
     /*!
      * \brief Apply the unary operator on x
@@ -153,8 +174,15 @@ struct exp_unary_op {
     template <typename V = default_vec>
     using vec_type       = typename V::template vec_type<T>;
 
-    static constexpr const bool vectorizable = intel_compiler && !is_complex_t<T>::value; ///< Indicates if the operator is vectorizable
     static constexpr const bool linear       = true;                                      ///< Indicates if the operator is linear
+
+    /*!
+     * \brief Indicates if the expression is vectorizable using the
+     * given vector mode
+     * \tparam V The vector mode
+     */
+    template<vector_mode_t V>
+    using vectorizable = cpp::bool_constant<intel_compiler && !is_complex_t<T>::value>;
 
     /*!
      * \brief Apply the unary operator on x
@@ -165,7 +193,7 @@ struct exp_unary_op {
         return std::exp(x);
     }
 
-#ifdef __INTEL_COMPILER
+#if 0
     /*!
      * \brief Compute several applications of the operator at a time
      * \param x The vector on which to operate
@@ -193,8 +221,15 @@ struct exp_unary_op {
  */
 template <typename T>
 struct sign_unary_op {
-    static constexpr const bool vectorizable = false; ///< Indicates if the operator is vectorizable
     static constexpr const bool linear       = true;  ///< Indicates if the operator is linear
+
+    /*!
+     * \brief Indicates if the expression is vectorizable using the
+     * given vector mode
+     * \tparam V The vector mode
+     */
+    template<vector_mode_t V>
+    using vectorizable = std::false_type;
 
     /*!
      * \brief Apply the unary operator on x
@@ -220,8 +255,15 @@ struct sign_unary_op {
  */
 template <typename T>
 struct sigmoid_unary_op {
-    static constexpr const bool vectorizable = false; ///< Indicates if the operator is vectorizable
     static constexpr const bool linear       = true;  ///< Indicates if the operator is linear
+
+    /*!
+     * \brief Indicates if the expression is vectorizable using the
+     * given vector mode
+     * \tparam V The vector mode
+     */
+    template<vector_mode_t V>
+    using vectorizable = std::false_type;
 
     /*!
      * \brief Apply the unary operator on x
@@ -247,8 +289,15 @@ struct sigmoid_unary_op {
  */
 template <typename T>
 struct softplus_unary_op {
-    static constexpr const bool vectorizable = false; ///< Indicates if the operator is vectorizable
     static constexpr const bool linear       = true;  ///< Indicates if the operator is linear
+
+    /*!
+     * \brief Indicates if the expression is vectorizable using the
+     * given vector mode
+     * \tparam V The vector mode
+     */
+    template<vector_mode_t V>
+    using vectorizable = std::false_type;
 
     /*!
      * \brief Apply the unary operator on x
@@ -280,8 +329,15 @@ struct minus_unary_op {
     template <typename V = default_vec>
     using vec_type       = typename V::template vec_type<T>;
 
-    static constexpr const bool vectorizable = !is_complex_t<T>::value; ///< Indicates if the operator is vectorizable
     static constexpr const bool linear       = true;                    ///< Indicates if the operator is linear
+
+    /*!
+     * \brief Indicates if the expression is vectorizable using the
+     * given vector mode
+     * \tparam V The vector mode
+     */
+    template<vector_mode_t V>
+    using vectorizable = cpp::bool_constant<!is_complex_t<T>::value>;
 
     /*!
      * \brief Apply the unary operator on x
@@ -324,8 +380,15 @@ struct plus_unary_op {
     template <typename V = default_vec>
     using vec_type       = typename V::template vec_type<T>;
 
-    static constexpr const bool vectorizable = true; ///< Indicates if the operator is vectorizable
     static constexpr const bool linear       = true; ///< Indicates if the operator is linear
+
+    /*!
+     * \brief Indicates if the expression is vectorizable using the
+     * given vector mode
+     * \tparam V The vector mode
+     */
+    template<vector_mode_t V>
+    using vectorizable = std::true_type;
 
     /*!
      * \brief Apply the unary operator on x
@@ -362,8 +425,15 @@ struct plus_unary_op {
  */
 template <typename T>
 struct fast_sigmoid_unary_op {
-    static constexpr const bool vectorizable = false; ///< Indicates if the operator is vectorizable
     static constexpr const bool linear       = true;  ///< Indicates if the operator is linear
+
+    /*!
+     * \brief Indicates if the expression is vectorizable using the
+     * given vector mode
+     * \tparam V The vector mode
+     */
+    template<vector_mode_t V>
+    using vectorizable = std::false_type;
 
     /*!
      * \brief Apply the unary operator on x
@@ -412,8 +482,15 @@ struct fast_sigmoid_unary_op {
  */
 template <typename T>
 struct tan_unary_op {
-    static constexpr const bool vectorizable = false; ///< Indicates if the operator is vectorizable
     static constexpr const bool linear       = true;  ///< Indicates if the operator is linear
+
+    /*!
+     * \brief Indicates if the expression is vectorizable using the
+     * given vector mode
+     * \tparam V The vector mode
+     */
+    template<vector_mode_t V>
+    using vectorizable = std::false_type;
 
     /*!
      * \brief Apply the unary operator on x
@@ -439,8 +516,15 @@ struct tan_unary_op {
  */
 template <typename T>
 struct cos_unary_op {
-    static constexpr const bool vectorizable = false; ///< Indicates if the operator is vectorizable
     static constexpr const bool linear       = true;  ///< Indicates if the operator is linear
+
+    /*!
+     * \brief Indicates if the expression is vectorizable using the
+     * given vector mode
+     * \tparam V The vector mode
+     */
+    template<vector_mode_t V>
+    using vectorizable = std::false_type;
 
     /*!
      * \brief Apply the unary operator on x
@@ -466,8 +550,15 @@ struct cos_unary_op {
  */
 template <typename T>
 struct sin_unary_op {
-    static constexpr const bool vectorizable = false; ///< Indicates if the operator is vectorizable
     static constexpr const bool linear       = true;  ///< Indicates if the operator is linear
+
+    /*!
+     * \brief Indicates if the expression is vectorizable using the
+     * given vector mode
+     * \tparam V The vector mode
+     */
+    template<vector_mode_t V>
+    using vectorizable = std::false_type;
 
     /*!
      * \brief Apply the unary operator on x
@@ -493,8 +584,15 @@ struct sin_unary_op {
  */
 template <typename T>
 struct tanh_unary_op {
-    static constexpr const bool vectorizable = false; ///< Indicates if the operator is vectorizable
     static constexpr const bool linear       = true;  ///< Indicates if the operator is linear
+
+    /*!
+     * \brief Indicates if the expression is vectorizable using the
+     * given vector mode
+     * \tparam V The vector mode
+     */
+    template<vector_mode_t V>
+    using vectorizable = std::false_type;
 
     /*!
      * \brief Apply the unary operator on x
@@ -520,8 +618,15 @@ struct tanh_unary_op {
  */
 template <typename T>
 struct cosh_unary_op {
-    static constexpr const bool vectorizable = false; ///< Indicates if the operator is vectorizable
     static constexpr const bool linear       = true;  ///< Indicates if the operator is linear
+
+    /*!
+     * \brief Indicates if the expression is vectorizable using the
+     * given vector mode
+     * \tparam V The vector mode
+     */
+    template<vector_mode_t V>
+    using vectorizable = std::false_type;
 
     /*!
      * \brief Apply the unary operator on x
@@ -547,8 +652,15 @@ struct cosh_unary_op {
  */
 template <typename T>
 struct sinh_unary_op {
-    static constexpr const bool vectorizable = false; ///< Indicates if the operator is vectorizable
     static constexpr const bool linear       = true;  ///< Indicates if the operator is linear
+
+    /*!
+     * \brief Indicates if the expression is vectorizable using the
+     * given vector mode
+     * \tparam V The vector mode
+     */
+    template<vector_mode_t V>
+    using vectorizable = std::false_type;
 
     /*!
      * \brief Apply the unary operator on x
@@ -574,8 +686,15 @@ struct sinh_unary_op {
  */
 template <typename T>
 struct real_unary_op {
-    static constexpr const bool vectorizable = false; ///< Indicates if the operator is vectorizable
     static constexpr const bool linear       = true;  ///< Indicates if the operator is linear
+
+    /*!
+     * \brief Indicates if the expression is vectorizable using the
+     * given vector mode
+     * \tparam V The vector mode
+     */
+    template<vector_mode_t V>
+    using vectorizable = std::false_type;
 
     /*!
      * \brief Apply the unary operator on x
@@ -601,8 +720,15 @@ struct real_unary_op {
  */
 template <typename T>
 struct imag_unary_op {
-    static constexpr const bool vectorizable = false; ///< Indicates if the operator is vectorizable
     static constexpr const bool linear       = true;  ///< Indicates if the operator is linear
+
+    /*!
+     * \brief Indicates if the expression is vectorizable using the
+     * given vector mode
+     * \tparam V The vector mode
+     */
+    template<vector_mode_t V>
+    using vectorizable = std::false_type;
 
     /*!
      * \brief Apply the unary operator on x
@@ -628,8 +754,15 @@ struct imag_unary_op {
  */
 template <typename T>
 struct conj_unary_op {
-    static constexpr const bool vectorizable = false; ///< Indicates if the operator is vectorizable
     static constexpr const bool linear       = true;  ///< Indicates if the operator is linear
+
+    /*!
+     * \brief Indicates if the expression is vectorizable using the
+     * given vector mode
+     * \tparam V The vector mode
+     */
+    template<vector_mode_t V>
+    using vectorizable = std::false_type;
 
     /*!
      * \brief Apply the unary operator on x
@@ -655,8 +788,15 @@ struct conj_unary_op {
  */
 template <typename T>
 struct relu_derivative_op {
-    static constexpr const bool vectorizable = false; ///< Indicates if the operator is vectorizable
     static constexpr const bool linear       = true;  ///< Indicates if the operator is linear
+
+    /*!
+     * \brief Indicates if the expression is vectorizable using the
+     * given vector mode
+     * \tparam V The vector mode
+     */
+    template<vector_mode_t V>
+    using vectorizable = std::false_type;
 
     /*!
      * \brief Apply the unary operator on x
@@ -682,8 +822,15 @@ struct relu_derivative_op {
  */
 template <typename T>
 struct bernoulli_unary_op {
-    static constexpr const bool vectorizable = false; ///< Indicates if the operator is vectorizable
     static constexpr const bool linear       = true;  ///< Indicates if the operator is linear
+
+    /*!
+     * \brief Indicates if the expression is vectorizable using the
+     * given vector mode
+     * \tparam V The vector mode
+     */
+    template<vector_mode_t V>
+    using vectorizable = std::false_type;
 
     /*!
      * \brief Apply the unary operator on x
@@ -712,8 +859,15 @@ struct bernoulli_unary_op {
  */
 template <typename T>
 struct reverse_bernoulli_unary_op {
-    static constexpr const bool vectorizable = false; ///< Indicates if the operator is vectorizable
     static constexpr const bool linear       = true;  ///< Indicates if the operator is linear
+
+    /*!
+     * \brief Indicates if the expression is vectorizable using the
+     * given vector mode
+     * \tparam V The vector mode
+     */
+    template<vector_mode_t V>
+    using vectorizable = std::false_type;
 
     /*!
      * \brief Apply the unary operator on x
@@ -742,8 +896,15 @@ struct reverse_bernoulli_unary_op {
  */
 template <typename T>
 struct uniform_noise_unary_op {
-    static constexpr const bool vectorizable = false; ///< Indicates if the operator is vectorizable
     static constexpr const bool linear       = true;  ///< Indicates if the operator is linear
+
+    /*!
+     * \brief Indicates if the expression is vectorizable using the
+     * given vector mode
+     * \tparam V The vector mode
+     */
+    template<vector_mode_t V>
+    using vectorizable = std::false_type;
 
     /*!
      * \brief Apply the unary operator on x
@@ -772,8 +933,15 @@ struct uniform_noise_unary_op {
  */
 template <typename T>
 struct normal_noise_unary_op {
-    static constexpr const bool vectorizable = false; ///< Indicates if the operator is vectorizable
     static constexpr const bool linear       = true;  ///< Indicates if the operator is linear
+
+    /*!
+     * \brief Indicates if the expression is vectorizable using the
+     * given vector mode
+     * \tparam V The vector mode
+     */
+    template<vector_mode_t V>
+    using vectorizable = std::false_type;
 
     /*!
      * \brief Apply the unary operator on x
@@ -802,8 +970,15 @@ struct normal_noise_unary_op {
  */
 template <typename T>
 struct logistic_noise_unary_op {
-    static constexpr const bool vectorizable = false; ///< Indicates if the operator is vectorizable
     static constexpr const bool linear       = true;  ///< Indicates if the operator is linear
+
+    /*!
+     * \brief Indicates if the expression is vectorizable using the
+     * given vector mode
+     * \tparam V The vector mode
+     */
+    template<vector_mode_t V>
+    using vectorizable = std::false_type;
 
     /*!
      * \brief Apply the unary operator on x
@@ -840,8 +1015,15 @@ struct min_scalar_op {
     template<typename V = default_vec>
     using vec_type = typename V::template vec_type<T>;
 
-    static constexpr const bool vectorizable = intel_compiler && !is_complex_t<T>::value; ///< Indicates if the opeator is vectorizable or not
     static constexpr const bool linear       = true;                                      ///< Indicates if the operator is linear or not
+
+    /*!
+     * \brief Indicates if the expression is vectorizable using the
+     * given vector mode
+     * \tparam V The vector mode
+     */
+    template<vector_mode_t V>
+    using vectorizable = cpp::bool_constant<intel_compiler && !is_complex_t<T>::value>;
 
     S s; ///< The scalar value
 
@@ -897,8 +1079,15 @@ struct max_scalar_op {
     template<typename V = default_vec>
     using vec_type = typename V::template vec_type<T>;
 
-    static constexpr const bool vectorizable = intel_compiler && !is_complex_t<T>::value; ///< Indicates if the opeator is vectorizable or not
     static constexpr const bool linear       = true; ///< Indicates if the operator is linear or not
+
+    /*!
+     * \brief Indicates if the expression is vectorizable using the
+     * given vector mode
+     * \tparam V The vector mode
+     */
+    template<vector_mode_t V>
+    using vectorizable = cpp::bool_constant<intel_compiler && !is_complex_t<T>::value>;
 
     S s; ///< The scalar value
 
@@ -953,8 +1142,15 @@ struct clip_scalar_op {
     template<typename V = default_vec>
     using vec_type = typename V::template vec_type<T>;
 
-    static constexpr const bool vectorizable = intel_compiler && !is_complex_t<T>::value; ///< Indicates if the opeator is vectorizable or not
     static constexpr const bool linear       = true; ///< Indicates if the operator is linear or not
+
+    /*!
+     * \brief Indicates if the expression is vectorizable using the
+     * given vector mode
+     * \tparam V The vector mode
+     */
+    template<vector_mode_t V>
+    using vectorizable = cpp::bool_constant<intel_compiler && !is_complex_t<T>::value>;
 
     S min; ///< The minimum for clipping
     S max; ///< The maximum for clipping

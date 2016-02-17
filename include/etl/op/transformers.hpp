@@ -789,7 +789,7 @@ struct etl_traits<p_max_pool_p_transformer<T, C1, C2>> {
      * given vector mode
      * \tparam V The vector mode
      */
-    template<typename V>
+    template<vector_mode_t V>
     using vectorizable = std::false_type;
 
     /*!
@@ -871,7 +871,7 @@ struct etl_traits<transpose_transformer<T>> {
      * given vector mode
      * \tparam V The vector mode
      */
-    template<typename V>
+    template<vector_mode_t V>
     using vectorizable = std::false_type;
 
     /*!
@@ -948,7 +948,7 @@ struct etl_traits<mm_mul_transformer<LE, RE>> {
      * given vector mode
      * \tparam V The vector mode
      */
-    template<typename V>
+    template<vector_mode_t V>
     using vectorizable = std::false_type;
 
     /*!
@@ -1030,7 +1030,7 @@ struct etl_traits<dyn_convmtx_transformer<E>> {
      * given vector mode
      * \tparam V The vector mode
      */
-    template<typename V>
+    template<vector_mode_t V>
     using vectorizable = std::false_type;
 
     /*!
@@ -1090,7 +1090,7 @@ struct etl_traits<dyn_convmtx2_transformer<E>> {
      * given vector mode
      * \tparam V The vector mode
      */
-    template<typename V>
+    template<vector_mode_t V>
     using vectorizable = std::false_type;
 
     /*!
@@ -1156,7 +1156,7 @@ struct etl_traits<T, std::enable_if_t<cpp::or_c<
      * given vector mode
      * \tparam V The vector mode
      */
-    template<typename V>
+    template<vector_mode_t V>
     using vectorizable = std::false_type;
 
     /*!

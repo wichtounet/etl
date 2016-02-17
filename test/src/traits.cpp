@@ -16,7 +16,7 @@ TEMPLATE_TEST_CASE_2("etl_traits/fast_vector_1", "etl_traits<fast_vector>", ZZZ,
     REQUIRE(etl::size(test_vector) == 4);
     REQUIRE(etl::etl_traits<type>::is_value);
     REQUIRE(etl::etl_traits<type>::is_fast);
-    REQUIRE(etl::etl_traits<type>::template vectorizable<etl::default_vec>::value);
+    REQUIRE(etl::etl_traits<type>::template vectorizable<etl::vector_mode>::value);
 
     constexpr const auto size_1 = etl::etl_traits<type>::size();
     REQUIRE(size_1 == 4);
@@ -46,7 +46,7 @@ TEMPLATE_TEST_CASE_2("etl_traits/fast_matrix_1", "etl_traits<fast_matrix>", Z, f
     REQUIRE(etl::dimensions(test_matrix) == 2);
     REQUIRE(etl::etl_traits<type>::is_value);
     REQUIRE(etl::etl_traits<type>::is_fast);
-    REQUIRE(etl::etl_traits<type>::template vectorizable<etl::default_vec>::value);
+    REQUIRE(etl::etl_traits<type>::template vectorizable<etl::vector_mode>::value);
 
     constexpr const auto size_1 = etl::etl_traits<type>::size();
     constexpr const auto dim_1  = etl::etl_traits<type>::dimensions();
@@ -83,7 +83,7 @@ TEMPLATE_TEST_CASE_2("etl_traits/fast_matrix_2", "etl_traits<fast_matrix>", Z, f
     REQUIRE(etl::dimensions(test_matrix) == 4);
     REQUIRE(etl::etl_traits<type>::is_value);
     REQUIRE(etl::etl_traits<type>::is_fast);
-    REQUIRE(etl::etl_traits<type>::template vectorizable<etl::default_vec>::value);
+    REQUIRE(etl::etl_traits<type>::template vectorizable<etl::vector_mode>::value);
 
     constexpr const auto size_1 = etl::etl_traits<type>::size();
     constexpr const auto dim_1  = etl::etl_traits<type>::dimensions();
@@ -123,7 +123,7 @@ TEMPLATE_TEST_CASE_2("etl_traits/dyn_vector_1", "etl_traits<dyn_vector>", Z, flo
     REQUIRE(etl::dimensions(test_vector) == 1);
     REQUIRE(etl::etl_traits<type>::is_value);
     REQUIRE(!etl::etl_traits<type>::is_fast);
-    REQUIRE(etl::etl_traits<type>::template vectorizable<etl::default_vec>::value);
+    REQUIRE(etl::etl_traits<type>::template vectorizable<etl::vector_mode>::value);
 }
 
 TEMPLATE_TEST_CASE_2("etl_traits/dyn_matrix_1", "etl_traits<dyn_matrix>", Z, float, double) {
@@ -140,7 +140,7 @@ TEMPLATE_TEST_CASE_2("etl_traits/dyn_matrix_1", "etl_traits<dyn_matrix>", Z, flo
     REQUIRE(etl::etl_traits<type>::dim(test_matrix, 1) == 2);
     REQUIRE(etl::etl_traits<type>::is_value);
     REQUIRE(!etl::etl_traits<type>::is_fast);
-    REQUIRE(etl::etl_traits<type>::template vectorizable<etl::default_vec>::value);
+    REQUIRE(etl::etl_traits<type>::template vectorizable<etl::vector_mode>::value);
 }
 
 TEMPLATE_TEST_CASE_2("etl_traits/unary_dyn_mat", "etl_traits<unary<dyn_mat>>", Z, float, double) {
@@ -179,7 +179,7 @@ TEMPLATE_TEST_CASE_2("etl_traits/binary_dyn_mat", "etl_traits<binary<dyn_mat, dy
     REQUIRE(etl::etl_traits<expr_type>::dim(expr, 1) == 2);
     REQUIRE(!etl::etl_traits<expr_type>::is_value);
     REQUIRE(!etl::etl_traits<expr_type>::is_fast);
-    REQUIRE(etl::etl_traits<expr_type>::template vectorizable<etl::default_vec>::value);
+    REQUIRE(etl::etl_traits<expr_type>::template vectorizable<etl::vector_mode>::value);
 }
 
 TEMPLATE_TEST_CASE_2("etl_traits/unary_fast_mat", "etl_traits<unary<fast_mat>>", Z, float, double) {
@@ -332,36 +332,36 @@ TEMPLATE_TEST_CASE_2("etl_traits/vectorizable", "vectorizable", Z, float, double
     mat_type_2 b(3, 2, 4, 5);
 
     //Values have direct access
-    REQUIRE(etl::etl_traits<mat_type_1>::template vectorizable<etl::default_vec>::value);
-    REQUIRE(etl::etl_traits<mat_type_2>::template vectorizable<etl::default_vec>::value);
+    REQUIRE(etl::etl_traits<mat_type_1>::template vectorizable<etl::vector_mode>::value);
+    REQUIRE(etl::etl_traits<mat_type_2>::template vectorizable<etl::vector_mode>::value);
 
     //Values have direct access
-    REQUIRE(etl::etl_traits<decltype(a)>::template vectorizable<etl::default_vec>::value);
-    REQUIRE(etl::etl_traits<decltype(b)>::template vectorizable<etl::default_vec>::value);
+    REQUIRE(etl::etl_traits<decltype(a)>::template vectorizable<etl::vector_mode>::value);
+    REQUIRE(etl::etl_traits<decltype(b)>::template vectorizable<etl::vector_mode>::value);
 
     //Sub have direct access
-    REQUIRE(etl::etl_traits<decltype(a(1))>::template vectorizable<etl::default_vec>::value);
-    REQUIRE(etl::etl_traits<decltype(b(2))>::template vectorizable<etl::default_vec>::value);
+    REQUIRE(etl::etl_traits<decltype(a(1))>::template vectorizable<etl::vector_mode>::value);
+    REQUIRE(etl::etl_traits<decltype(b(2))>::template vectorizable<etl::vector_mode>::value);
 
     //Sub have direct access
-    REQUIRE(etl::etl_traits<decltype(a(0)(1))>::template vectorizable<etl::default_vec>::value);
-    REQUIRE(etl::etl_traits<decltype(b(1)(2))>::template vectorizable<etl::default_vec>::value);
+    REQUIRE(etl::etl_traits<decltype(a(0)(1))>::template vectorizable<etl::vector_mode>::value);
+    REQUIRE(etl::etl_traits<decltype(b(1)(2))>::template vectorizable<etl::vector_mode>::value);
 
     //Sub have direct access
-    REQUIRE(etl::etl_traits<decltype(a(0)(1)(3))>::template vectorizable<etl::default_vec>::value);
-    REQUIRE(etl::etl_traits<decltype(b(1)(2)(0))>::template vectorizable<etl::default_vec>::value);
+    REQUIRE(etl::etl_traits<decltype(a(0)(1)(3))>::template vectorizable<etl::vector_mode>::value);
+    REQUIRE(etl::etl_traits<decltype(b(1)(2)(0))>::template vectorizable<etl::vector_mode>::value);
 
     //Temporary binary expressions have direct access
-    REQUIRE(etl::etl_traits<decltype(a(0)(0) * a(0)(0))>::template vectorizable<etl::default_vec>::value);
-    REQUIRE(etl::etl_traits<decltype(b(0)(0) * b(0)(0))>::template vectorizable<etl::default_vec>::value);
+    REQUIRE(etl::etl_traits<decltype(a(0)(0) * a(0)(0))>::template vectorizable<etl::vector_mode>::value);
+    REQUIRE(etl::etl_traits<decltype(b(0)(0) * b(0)(0))>::template vectorizable<etl::vector_mode>::value);
 
     //Binary do not have direct access
-    REQUIRE(etl::etl_traits<decltype(a + b)>::template vectorizable<etl::default_vec>::value);
-    REQUIRE(etl::etl_traits<decltype(b + b)>::template vectorizable<etl::default_vec>::value);
+    REQUIRE(etl::etl_traits<decltype(a + b)>::template vectorizable<etl::vector_mode>::value);
+    REQUIRE(etl::etl_traits<decltype(b + b)>::template vectorizable<etl::vector_mode>::value);
 
     //abs do not have direct access
-    REQUIRE(!etl::etl_traits<decltype(abs(a))>::template vectorizable<etl::default_vec>::value);
-    REQUIRE(!etl::etl_traits<decltype(abs(b))>::template vectorizable<etl::default_vec>::value);
+    REQUIRE(!etl::etl_traits<decltype(abs(a))>::template vectorizable<etl::vector_mode>::value);
+    REQUIRE(!etl::etl_traits<decltype(abs(b))>::template vectorizable<etl::vector_mode>::value);
 }
 
 template <typename Z, typename E>

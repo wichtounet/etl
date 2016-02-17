@@ -334,7 +334,7 @@ struct etl_traits<T, std::enable_if_t<cpp::or_c<
      * given vector mode
      * \tparam V The vector mode
      */
-    template<typename V>
+    template<vector_mode_t V>
     using vectorizable = std::false_type;
 
     /*!
@@ -411,7 +411,7 @@ struct etl_traits<T, std::enable_if_t<cpp::or_c<
      * given vector mode
      * \tparam V The vector mode
      */
-    template<typename V>
+    template<vector_mode_t V>
     using vectorizable = std::false_type;
 
     /*!

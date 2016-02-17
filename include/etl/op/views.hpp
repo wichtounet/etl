@@ -762,7 +762,7 @@ struct etl_traits<etl::dim_view<T, D>> {
      * given vector mode
      * \tparam V The vector mode
      */
-    template<typename V>
+    template<vector_mode_t V>
     using vectorizable = std::false_type;
 
     /*!
@@ -845,7 +845,7 @@ struct etl_traits<etl::sub_view<T>> {
      * given vector mode
      * \tparam V The vector mode
      */
-    template<typename V>
+    template<vector_mode_t V>
     using vectorizable = cpp::bool_constant<has_direct_access<sub_expr_t>::value && storage_order == order::RowMajor>;
 
     /*!
@@ -919,7 +919,7 @@ struct etl_traits<etl::fast_matrix_view<T, Dims...>> {
      * given vector mode
      * \tparam V The vector mode
      */
-    template<typename V>
+    template<vector_mode_t V>
     using vectorizable = std::false_type;
 
     static constexpr std::size_t size(const expr_t& /*unused*/) {
@@ -989,7 +989,7 @@ struct etl_traits<etl::dyn_matrix_view<T>> {
      * given vector mode
      * \tparam V The vector mode
      */
-    template<typename V>
+    template<vector_mode_t V>
     using vectorizable = std::false_type;
 
     /*!
@@ -1045,7 +1045,7 @@ struct etl_traits<etl::dyn_vector_view<T>> {
      * given vector mode
      * \tparam V The vector mode
      */
-    template<typename V>
+    template<vector_mode_t V>
     using vectorizable = std::false_type;
 
 

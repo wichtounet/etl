@@ -224,11 +224,11 @@ struct etl_traits<etl::binary_expr<T, LeftExpr, BinaryOp, RightExpr>> {
      * given vector mode
      * \tparam V The vector mode
      */
-    template<typename V>
+    template<vector_mode_t V>
     using vectorizable = cpp::bool_constant<
             etl_traits<left_expr_t>::template vectorizable<V>::value
         &&  etl_traits<right_expr_t>::template vectorizable<V>::value
-        &&  BinaryOp::vectorizable>;
+        &&  BinaryOp::template vectorizable<V>::value>;
 
 
     /*!

@@ -180,7 +180,7 @@ struct etl_traits<etl::magic_view<V>> {
      * given vector mode
      * \tparam V The vector mode
      */
-    template<typename VV>
+    template<vector_mode_t VV>
     using vectorizable = std::false_type;
 
     /*!
@@ -233,7 +233,7 @@ struct etl_traits<etl::fast_magic_view<V, N>> {
      * given vector mode
      * \tparam V The vector mode
      */
-    template<typename VV>
+    template<vector_mode_t VV>
     using vectorizable = std::false_type;
 
     /*!

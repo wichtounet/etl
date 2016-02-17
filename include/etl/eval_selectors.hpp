@@ -28,7 +28,7 @@ using fast_assign = cpp::and_u<
 template <typename E, typename R>
 using are_vectorizable = cpp::and_u<
                                vectorize_expr,
-                               decay_traits<E>::template vectorizable<default_vec>::value,
+                               decay_traits<E>::template vectorizable<vector_mode>::value,
                                intrinsic_traits<value_t<R>>::vectorizable, intrinsic_traits<value_t<E>>::vectorizable,
                                std::is_same<intrinsic_type<value_t<R>>, intrinsic_type<value_t<E>>>::value>;
 

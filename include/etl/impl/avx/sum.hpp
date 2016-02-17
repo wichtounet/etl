@@ -103,17 +103,17 @@ float ssum_kernel(const E& in, std::size_t first, std::size_t last){
     return acc;
 }
 
-template <typename I, cpp_enable_if(all_single_precision<I>::value, decay_traits<I>::template vectorizable<avx_vec>::value)>
+template <typename I, cpp_enable_if(all_single_precision<I>::value, decay_traits<I>::template vectorizable<vector_mode_t::AVX>::value)>
 value_t<I> sum(const I& input, std::size_t first, std::size_t last) {
     return ssum_kernel(input, first, last);
 }
 
-template <typename I, cpp_enable_if(all_double_precision<I>::value, decay_traits<I>::template vectorizable<avx_vec>::value)>
+template <typename I, cpp_enable_if(all_double_precision<I>::value, decay_traits<I>::template vectorizable<vector_mode_t::AVX>::value)>
 value_t<I> sum(const I& input, std::size_t first, std::size_t last) {
     return dsum_kernel(input, first, last);
 }
 
-template <typename I, cpp_disable_if(decay_traits<I>::template vectorizable<avx_vec>::value)>
+template <typename I, cpp_disable_if(decay_traits<I>::template vectorizable<vector_mode_t::AVX>::value)>
 value_t<I> sum(const I& /*input*/, std::size_t /*first*/, std::size_t /*last*/) {
     cpp_unreachable("AVX not available/enabled");
     return value_t<I>(0.0);
