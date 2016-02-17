@@ -259,6 +259,14 @@ struct sse_vec {
         return _mm_div_pd(lhs, rhs);
     }
 
+    ETL_INLINE_VEC_128 cos(__m128 x) {
+        return etl::cos_ps(x);
+    }
+
+    ETL_INLINE_VEC_128 sin(__m128 x) {
+        return etl::sin_ps(x);
+    }
+
 //The Intel C++ Compiler (icc) has more intrinsics.
 //ETL uses them when compiled with icc
 

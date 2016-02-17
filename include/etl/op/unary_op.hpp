@@ -516,7 +516,13 @@ struct tan_unary_op {
  */
 template <typename T>
 struct cos_unary_op {
-    static constexpr const bool linear       = true;  ///< Indicates if the operator is linear
+    /*!
+     * The vectorization type for V
+     */
+    template <typename V = default_vec>
+    using vec_type       = typename V::template vec_type<T>;
+
+    static constexpr const bool linear       = true;                                      ///< Indicates if the operator is linear
 
     /*!
      * \brief Indicates if the expression is vectorizable using the
@@ -524,7 +530,7 @@ struct cos_unary_op {
      * \tparam V The vector mode
      */
     template<vector_mode_t V>
-    using vectorizable = std::false_type;
+    using vectorizable = cpp::bool_constant<V == vector_mode_t::SSE3 && is_single_precision_t<T>::value>;
 
     /*!
      * \brief Apply the unary operator on x
@@ -533,6 +539,17 @@ struct cos_unary_op {
      */
     static constexpr T apply(const T& x) noexcept {
         return std::cos(x);
+    }
+
+    /*!
+     * \brief Compute several applications of the operator at a time
+     * \param x The vector on which to operate
+     * \tparam V The vectorization mode
+     * \return a vector containing several results of the operator
+     */
+    template <typename V = default_vec>
+    static cpp14_constexpr vec_type<V> load(const vec_type<V>& x) noexcept {
+        return V::cos(x);
     }
 
     /*!
@@ -550,7 +567,13 @@ struct cos_unary_op {
  */
 template <typename T>
 struct sin_unary_op {
-    static constexpr const bool linear       = true;  ///< Indicates if the operator is linear
+    /*!
+     * The vectorization type for V
+     */
+    template <typename V = default_vec>
+    using vec_type       = typename V::template vec_type<T>;
+
+    static constexpr const bool linear       = true;                                      ///< Indicates if the operator is linear
 
     /*!
      * \brief Indicates if the expression is vectorizable using the
@@ -558,7 +581,7 @@ struct sin_unary_op {
      * \tparam V The vector mode
      */
     template<vector_mode_t V>
-    using vectorizable = std::false_type;
+    using vectorizable = cpp::bool_constant<V == vector_mode_t::SSE3 && is_single_precision_t<T>::value>;
 
     /*!
      * \brief Apply the unary operator on x
@@ -567,6 +590,17 @@ struct sin_unary_op {
      */
     static constexpr T apply(const T& x) noexcept {
         return std::sin(x);
+    }
+
+    /*!
+     * \brief Compute several applications of the operator at a time
+     * \param x The vector on which to operate
+     * \tparam V The vectorization mode
+     * \return a vector containing several results of the operator
+     */
+    template <typename V = default_vec>
+    static cpp14_constexpr vec_type<V> load(const vec_type<V>& x) noexcept {
+        return V::sin(x);
     }
 
     /*!
