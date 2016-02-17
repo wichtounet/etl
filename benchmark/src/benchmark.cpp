@@ -208,6 +208,23 @@ CPM_BENCH() {
         );
 }
 
+//Bench log
+CPM_BENCH() {
+    CPM_TWO_PASS_NS(
+        "slog [std][log][s]",
+        [](std::size_t d){ return std::make_tuple(svec(d), svec(d)); },
+        [](svec& a, svec& r){ r = log(a); },
+        [](std::size_t d){ return 100 * d; }
+        );
+
+    CPM_TWO_PASS_NS(
+        "dlog [std][log][d]",
+        [](std::size_t d){ return std::make_tuple(dvec(d), dvec(d)); },
+        [](dvec& a, dvec& r){ r = log(a); },
+        [](std::size_t d){ return 100 * d; }
+        );
+}
+
 CPM_DIRECT_SECTION_TWO_PASS_NS("ssum [std][sum][s]",
     CPM_SECTION_INIT([](std::size_t d1){ return std::make_tuple(svec(d1)); }),
     CPM_SECTION_FUNCTOR("default", [](svec& a){ float_ref += etl::sum(a); }),
