@@ -14,7 +14,6 @@
 TEMPLATE_TEST_CASE_2("im2col/im2col_1", "im2col", Z, double, float) {
     etl::dyn_matrix<Z> I(4, 4, etl::values(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16));
     etl::dyn_matrix<Z> C(4, 9);
-    ;
 
     etl::im2col_direct(C, I, 2, 2);
 
@@ -42,7 +41,6 @@ TEMPLATE_TEST_CASE_2("im2col/im2col_1", "im2col", Z, double, float) {
 TEMPLATE_TEST_CASE_2("im2col/im2col_2", "im2col", Z, double, float) {
     etl::dyn_matrix<Z> I(3, 3, etl::values(1, 2, 3, 4, 5, 6, 7, 8, 9));
     etl::dyn_matrix<Z> C(4, 4);
-    ;
 
     etl::im2col_direct(C, I, 2, 2);
 
@@ -70,7 +68,6 @@ TEMPLATE_TEST_CASE_2("im2col/im2col_2", "im2col", Z, double, float) {
 TEMPLATE_TEST_CASE_2("im2col/im2col_3", "im2col", Z, double, float) {
     etl::dyn_matrix<Z> I(3, 3, etl::values(1, 2, 3, 4, 5, 6, 7, 8, 9));
     etl::dyn_matrix<Z> C(2, 6);
-    ;
 
     etl::im2col_direct(C, I, 2, 1);
 
@@ -96,7 +93,6 @@ TEMPLATE_TEST_CASE_2("im2col/im2col_3", "im2col", Z, double, float) {
 TEMPLATE_TEST_CASE_2("im2col/im2col_4", "im2col", Z, double, float) {
     etl::dyn_matrix<Z> I(3, 3, etl::values(1, 2, 3, 4, 5, 6, 7, 8, 9));
     etl::dyn_matrix<Z> C(2, 6);
-    ;
 
     etl::im2col_direct(C, I, 1, 2);
 
