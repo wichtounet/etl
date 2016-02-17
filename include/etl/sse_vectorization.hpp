@@ -16,6 +16,8 @@
 
 #include <immintrin.h>
 
+#include "etl/sse_exp.hpp"
+
 #ifdef VECT_DEBUG
 #include <iostream>
 #endif
@@ -260,7 +262,13 @@ struct sse_vec {
 //The Intel C++ Compiler (icc) has more intrinsics.
 //ETL uses them when compiled with icc
 
-#ifdef __INTEL_COMPILER
+#ifndef __INTEL_COMPILER
+
+    ETL_INLINE_VEC_128 exp(__m128 x) {
+        return etl::exp_ps(x);
+    }
+
+#else //__INTEL_COMPILER
 
     //Exponential
 
