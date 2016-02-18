@@ -37,6 +37,14 @@ TEMPLATE_TEST_CASE_2("sequence/fast_vector_3", "generator", Z, float, double) {
     REQUIRE(b[2] == 101.0);
 }
 
+TEMPLATE_TEST_CASE_2("sequence/fast_vector_4", "generator", Z, float, double) {
+    etl::fast_vector<Z, 3> b(0.5 * etl::sequence_generator(99.0));
+
+    REQUIRE(b[0] == 49.5);
+    REQUIRE(b[1] == 50.0);
+    REQUIRE(b[2] == 50.5);
+}
+
 TEMPLATE_TEST_CASE_2("sequence/fast_matrix_1", "generator", Z, float, double) {
     etl::fast_matrix<Z, 3, 2> b;
 
