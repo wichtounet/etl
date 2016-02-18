@@ -42,7 +42,8 @@ CPM_DIRECT_BENCH_TWO_PASS_NS_P(
             v_cv(1) += v_cv(0);
         }
 
-        h = etl::sigmoid(etl::rep(b, etl::dim<1>(h), etl::dim<2>(h)) + v_cv(1));
+        auto b_rep = etl::force_temporary(etl::rep(b, etl::dim<1>(h), etl::dim<2>(h)));
+        h = etl::sigmoid(b_rep + v_cv(1));
     }
 )
 
