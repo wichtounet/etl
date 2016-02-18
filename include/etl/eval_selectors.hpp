@@ -121,16 +121,19 @@ using standard_compound = cpp::and_u<
 // Selectors for optimized evaluation
 
 template <typename E, typename R>
-struct is_direct_transpose : std::false_type {};
+struct is_direct_transpose_impl : std::false_type {};
 
 template <typename T, typename E, typename R>
-struct is_direct_transpose<unary_expr<T, transpose_transformer<E>, transform_op>, R>
+struct is_direct_transpose_impl<unary_expr<T, transpose_transformer<E>, transform_op>, R>
     : cpp::and_u<
         has_direct_access<E>::value,
         decay_traits<unary_expr<T, transpose_transformer<E>, transform_op>>::storage_order == decay_traits<R>::storage_order> {};
 
-template <typename E, typename R, typename DE = std::decay_t<E>, typename DR = std::decay_t<R>>
-using has_optimized_evaluation = cpp::or_c<is_direct_transpose<DE, DR>>;
+template <typename E, typename R>
+using is_direct_transpose = is_direct_transpose_impl<std::decay_t<E>, std::decay_t<R>>;
+
+template <typename E, typename R>
+using has_optimized_evaluation = cpp::or_c<is_direct_transpose<E, R>>;
 
 } //end of namespace detail
 
