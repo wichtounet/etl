@@ -457,57 +457,28 @@ void conv_2d_valid_multi(A&& input, B&& kernels, C&& features, D&& input_col) {
     etl::dyn_matrix<value_t<B>, 3> prepared_k(etl::dim<0>(kernels), etl::dim<1>(kernels), etl::dim<2>(kernels));
 
     for (std::size_t i = 0; i < etl::dim<0>(kernels); ++i) {
-        prepared_k(i) = transpose(fflip(kernels(i)));
+        prepared_k(i) = fflip(kernels(i));
     }
 
     conv_2d_valid_multi_prepared(std::forward<A>(input), prepared_k, std::forward<C>(features), std::forward<D>(input_col));
 }
 
-template <typename A, typename B, typename C, typename D, cpp_enable_if(inplace_sub_transpose_able<C>::value)>
+template <typename A, typename B, typename C, typename D>
 void conv_2d_valid_multi_prepared(A&& input, B&& kernels, C&& features, D&& input_col) {
     //TODO Validate inputs
 
     const std::size_t K  = etl::dim<0>(kernels);
     const std::size_t k1 = etl::dim<1>(kernels);
     const std::size_t k2 = etl::dim<2>(kernels);
+    const std::size_t f1 = etl::dim<1>(features);
+    const std::size_t f2 = etl::dim<2>(features);
 
-    im2col_direct(input_col, input, k1, k2);
-
-    *mul(
-        etl::reshape(kernels, K, k1 * k2),
-        input_col,
-        etl::reshape(features, K, etl::dim<1>(features) * etl::dim<2>(features)));
-
-    for (std::size_t k = 0; k < K; ++k) {
-        features(k).transpose_inplace();
-    }
-}
-
-template <typename A, typename B, typename C, typename D, cpp_enable_if(!inplace_sub_transpose_able<C>::value)>
-void conv_2d_valid_multi_prepared(A&& input, B&& kernels, C&& features, D&& input_col) {
-    static_assert(all_fast<C>::value, "inplace_sub_transpose_able should only be false for rectangular fast matrices");
-
-    static constexpr const std::size_t K = decay_traits<C>::template dim<0>();
-    static constexpr const std::size_t F2 = decay_traits<C>::template dim<1>();
-    static constexpr const std::size_t F3 = decay_traits<C>::template dim<2>();
-
-    etl::fast_dyn_matrix<value_t<C>, K, F3, F2> features_t;
-
-    //TODO Validate inputs
-
-    const std::size_t k1 = etl::dim<1>(kernels);
-    const std::size_t k2 = etl::dim<2>(kernels);
-
-    im2col_direct(input_col, input, k1, k2);
+    im2col_direct_tr(input_col, input, k1, k2);
 
     *mul(
         etl::reshape(kernels, K, k1 * k2),
         input_col,
-        etl::reshape(features_t, K, F2 * F3));
-
-    for (std::size_t k = 0; k < K; ++k) {
-        features(k) = transpose(features_t(k));
-    }
+        etl::reshape(features, K, f1 * f2));
 }
 
 template <typename A>
