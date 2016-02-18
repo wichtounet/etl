@@ -427,7 +427,6 @@ auto conv_deep_full(A&& a, B&& b, C&& c) -> detail::dim_forced_temporary_binary_
 
 //TODO This should be moved
 //TODO This should be adapted to an expression
-//TODO For now, the fast version only works with square kernels
 
 template <typename A, typename B, typename C>
 void conv_2d_valid_multi(A&& input, B&& kernels, C&& features) {
@@ -454,29 +453,22 @@ template <typename A, typename B, typename C, typename D>
 void conv_2d_valid_multi(A&& input, B&& kernels, C&& features, D&& input_col) {
     //TODO Validate inputs
 
-    etl::dyn_matrix<value_t<B>, 3> prepared_k(etl::dim<0>(kernels), etl::dim<1>(kernels), etl::dim<2>(kernels));
-
-    for (std::size_t i = 0; i < etl::dim<0>(kernels); ++i) {
-        prepared_k(i) = fflip(kernels(i));
-    }
-
-    conv_2d_valid_multi_prepared(std::forward<A>(input), prepared_k, std::forward<C>(features), std::forward<D>(input_col));
-}
-
-template <typename A, typename B, typename C, typename D>
-void conv_2d_valid_multi_prepared(A&& input, B&& kernels, C&& features, D&& input_col) {
-    //TODO Validate inputs
-
     const std::size_t K  = etl::dim<0>(kernels);
     const std::size_t k1 = etl::dim<1>(kernels);
     const std::size_t k2 = etl::dim<2>(kernels);
     const std::size_t f1 = etl::dim<1>(features);
     const std::size_t f2 = etl::dim<2>(features);
 
+    etl::dyn_matrix<value_t<B>, 3> prepared_k(K, k1, k2);
+
+    for (std::size_t i = 0; i < K; ++i) {
+        prepared_k(i) = fflip(kernels(i));
+    }
+
     im2col_direct_tr(input_col, input, k1, k2);
 
     *mul(
-        etl::reshape(kernels, K, k1 * k2),
+        etl::reshape(prepared_k, K, k1 * k2),
         input_col,
         etl::reshape(features, K, f1 * f2));
 }
