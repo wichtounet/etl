@@ -32,20 +32,12 @@ CPM_DIRECT_BENCH_TWO_PASS_NS_P(
     "conv_rbm_hidden [crbm]",
     [](std::size_t nc, std::size_t k, std::size_t nv, std::size_t nh){
         auto nw = nv - nh + 1;
-        return std::make_tuple(dmat4(nc,k,nw,nw), dmat4(nc,k,nw,nw), dvec(k), dmat3(nc,nv,nv), dmat3(k, nh, nh), dmat4(2ul, k, nh, nh));},
-    [](dmat4& w, dmat4& w_t, dvec& b, dmat3& v, dmat3& h, dmat4 v_cv){
+        return std::make_tuple(dmat4(nc,k,nw,nw), dvec(k), dmat3(nc,nv,nv), dmat3(k, nh, nh), dmat4(2ul, k, nh, nh));},
+    [](dmat4& w, dvec& b, dmat3& v, dmat3& h, dmat4 v_cv){
         v_cv(1) = 0;
 
-        w_t = w;
-
-        for(std::size_t channel = 0; channel < etl::dim<0>(w_t); ++channel){
-            for(size_t k = 0; k < etl::dim<0>(b); ++k){
-                w_t(channel)(k).fflip_inplace();
-            }
-        }
-
-        for(std::size_t channel = 0; channel < etl::dim<0>(w_t); ++channel){
-            conv_2d_valid_multi(v(channel), w_t(channel), v_cv(0));
+        for(std::size_t channel = 0; channel < etl::dim<0>(w); ++channel){
+            conv_2d_valid_multi_flipped(v(channel), w(channel), v_cv(0));
 
             v_cv(1) += v_cv(0);
         }
