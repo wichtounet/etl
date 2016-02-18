@@ -118,6 +118,20 @@ using standard_compound = cpp::and_u<
                              !vectorized_compound<E, R>::value,
                              !direct_compound<E, R>::value>;
 
+// Selectors for optimized evaluation
+
+template <typename E, typename R>
+struct is_direct_transpose : std::false_type {};
+
+template <typename T, typename E, typename R>
+struct is_direct_transpose<unary_expr<T, transpose_transformer<E>, transform_op>, R>
+    : cpp::and_u<
+        has_direct_access<E>::value,
+        decay_traits<unary_expr<T, transpose_transformer<E>, transform_op>>::storage_order == decay_traits<R>::storage_order> {};
+
+template <typename E, typename R, typename DE = std::decay_t<E>, typename DR = std::decay_t<R>>
+using has_optimized_evaluation = cpp::or_c<is_direct_transpose<DE, DR>>;
+
 } //end of namespace detail
 
 } //end of namespace etl
