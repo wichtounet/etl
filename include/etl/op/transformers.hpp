@@ -482,6 +482,37 @@ void im2col_direct(M& m, A&& sub, std::size_t k1, std::size_t k2) {
     }
 }
 
+//im2col version without any need for transpose
+
+template <typename A, typename M>
+void im2col_direct_tr(M& m, A&& sub, std::size_t k1, std::size_t k2) {
+    static_assert(all_dma<A, M>::value, "im2col_direct_tr has only been implemented for direct memory access");
+
+    const std::size_t i1 = etl::dim<0>(sub);
+    const std::size_t i2 = etl::dim<1>(sub);
+
+    const auto height = i1 - k1 + 1;
+    const auto width  = i2 - k2 + 1;
+
+    const auto mm = m.memory_start();
+    const auto ss = sub.memory_start();
+
+    for (std::size_t c = 0; c < k1 * k2; ++c) {
+        const std::size_t w_source = c % k2;
+        const std::size_t h_source = (c / k2) % k1;
+        const std::size_t c_source = c / (k1 * k2);
+
+        for (std::size_t h = 0; h < height; ++h) {
+            const std::size_t block_source = (c_source * i1 + h + h_source) * i2 + w_source;
+            const std::size_t block_target = (c * height + h) * width;
+
+            for (std::size_t w = 0; w < width; ++w) {
+                mm[block_target + w] = ss[block_source + w];
+            }
+        }
+    }
+}
+
 /*!
  * \brief Transform that applies probabilistic max pooling on a expression
  * \tparam T The type on which the transformer is applied
