@@ -351,6 +351,22 @@ TEMPLATE_TEST_CASE_2("etl_traits/vectorizable", "vectorizable", Z, float, double
     REQUIRE(etl::etl_traits<decltype(a(0)(1)(3))>::template vectorizable<etl::vector_mode>::value);
     REQUIRE(etl::etl_traits<decltype(b(1)(2)(0))>::template vectorizable<etl::vector_mode>::value);
 
+    //Sub have direct access
+    REQUIRE(etl::etl_traits<decltype(a(1) + a(0))>::template vectorizable<etl::vector_mode>::value);
+    REQUIRE(etl::etl_traits<decltype(a(0) + a(1))>::template vectorizable<etl::vector_mode>::value);
+
+    //reshape have direct access
+    REQUIRE(etl::etl_traits<decltype(etl::reshape<8, 5>(a(1) + a(0)))>::template vectorizable<etl::vector_mode>::value);
+    REQUIRE(etl::etl_traits<decltype(etl::reshape<5>(a(1)(0) + a(0)(1)))>::template vectorizable<etl::vector_mode>::value);
+
+    //reshape have direct access
+    REQUIRE(etl::etl_traits<decltype(etl::reshape(a(1) + a(0), 5, 8))>::template vectorizable<etl::vector_mode>::value);
+    REQUIRE(etl::etl_traits<decltype(etl::reshape(a(1)(0) + a(0)(1), 5))>::template vectorizable<etl::vector_mode>::value);
+
+    //sub have direct access
+    REQUIRE(etl::etl_traits<decltype(etl::sub(a(1) + a(0), 0))>::template vectorizable<etl::vector_mode>::value);
+    REQUIRE(etl::etl_traits<decltype(etl::sub(a(1)(0) + a(0)(1), 1))>::template vectorizable<etl::vector_mode>::value);
+
     //Temporary binary expressions have direct access
     REQUIRE(etl::etl_traits<decltype(a(0)(0) * a(0)(0))>::template vectorizable<etl::vector_mode>::value);
     REQUIRE(etl::etl_traits<decltype(b(0)(0) * b(0)(0))>::template vectorizable<etl::vector_mode>::value);
