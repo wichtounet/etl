@@ -318,8 +318,8 @@ public:
      * \return a vector containing several elements of the matrix
      */
     template <typename V = default_vec>
-    vec_type<V> load(std::size_t i) const noexcept {
-        return V::loadu(memory_start() + i);
+    auto load(std::size_t i) const noexcept {
+        return value().template load<V>(i);
     }
 
     /*!

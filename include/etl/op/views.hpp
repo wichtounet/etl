@@ -263,6 +263,17 @@ struct sub_view {
     }
 
     /*!
+     * \brief Load several elements of the expression at once
+     * \param x The position at which to start. This will be aligned from the beginning (multiple of the vector size).
+     * \tparam V The vectorization mode to use
+     * \return a vector containing several elements of the expression
+     */
+    template<typename V = default_vec>
+    auto load(std::size_t x) const noexcept {
+        return sub.template load<V>(x + i * subsize(sub));
+    }
+
+    /*!
      * \brief Test if this expression aliases with the given expression
      * \param rhs The other expression to test
      * \return true if the two expressions aliases, false otherwise
@@ -426,6 +437,17 @@ struct fast_matrix_view {
     }
 
     /*!
+     * \brief Load several elements of the expression at once
+     * \param x The position at which to start. This will be aligned from the beginning (multiple of the vector size).
+     * \tparam V The vectorization mode to use
+     * \return a vector containing several elements of the expression
+     */
+    template<typename V = default_vec>
+    auto load(std::size_t x) const noexcept {
+        return sub.template load<V>(x);
+    }
+
+    /*!
      * \brief Test if this expression aliases with the given expression
      * \param rhs The other expression to test
      * \return true if the two expressions aliases, false otherwise
@@ -543,6 +565,17 @@ struct dyn_vector_view {
      */
     sub_type& value() {
         return sub;
+    }
+
+    /*!
+     * \brief Load several elements of the expression at once
+     * \param x The position at which to start. This will be aligned from the beginning (multiple of the vector size).
+     * \tparam V The vectorization mode to use
+     * \return a vector containing several elements of the expression
+     */
+    template<typename V = default_vec>
+    auto load(std::size_t x) const noexcept {
+        return sub.template load<V>(x);
     }
 
     /*!
@@ -688,6 +721,17 @@ struct dyn_matrix_view {
      */
     sub_type& value() {
         return sub;
+    }
+
+    /*!
+     * \brief Load several elements of the expression at once
+     * \param x The position at which to start. This will be aligned from the beginning (multiple of the vector size).
+     * \tparam V The vectorization mode to use
+     * \return a vector containing several elements of the expression
+     */
+    template<typename V = default_vec>
+    auto load(std::size_t x) const noexcept {
+        return sub.template load<V>(x);
     }
 
     /*!
@@ -846,7 +890,7 @@ struct etl_traits<etl::sub_view<T>> {
      * \tparam V The vector mode
      */
     template<vector_mode_t V>
-    using vectorizable = cpp::bool_constant<has_direct_access<sub_expr_t>::value && storage_order == order::RowMajor>;
+    using vectorizable = cpp::bool_constant<decay_traits<sub_expr_t>::template vectorizable<V>::value && storage_order == order::RowMajor>;
 
     /*!
      * \brief Returns the size of the given expression
@@ -920,7 +964,7 @@ struct etl_traits<etl::fast_matrix_view<T, Dims...>> {
      * \tparam V The vector mode
      */
     template<vector_mode_t V>
-    using vectorizable = std::false_type;
+    using vectorizable = cpp::bool_constant<etl_traits<sub_expr_t>::template vectorizable<V>::value && storage_order == order::RowMajor>;
 
     static constexpr std::size_t size(const expr_t& /*unused*/) {
         return mul_all<Dims...>::value;
@@ -990,7 +1034,7 @@ struct etl_traits<etl::dyn_matrix_view<T>> {
      * \tparam V The vector mode
      */
     template<vector_mode_t V>
-    using vectorizable = std::false_type;
+    using vectorizable = cpp::bool_constant<etl_traits<sub_expr_t>::template vectorizable<V>::value && storage_order == order::RowMajor>;
 
     /*!
      * \brief Returns the size of the given expression
@@ -1046,8 +1090,7 @@ struct etl_traits<etl::dyn_vector_view<T>> {
      * \tparam V The vector mode
      */
     template<vector_mode_t V>
-    using vectorizable = std::false_type;
-
+    using vectorizable = cpp::bool_constant<etl_traits<sub_expr_t>::template vectorizable<V>::value && storage_order == order::RowMajor>;
 
     /*!
      * \brief Returns the size of the given expression
