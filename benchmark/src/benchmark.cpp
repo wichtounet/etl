@@ -263,14 +263,14 @@ CPM_BENCH() {
     CPM_TWO_PASS_NS_P(
         trans_policy,
         "r = tranpose(a) (s) [transpose][s]",
-        [](std::size_t d1, std::size_t d2){ return std::make_tuple(smat(d1, d2), smat(d1, d2)); },
+        [](std::size_t d1, std::size_t d2){ return std::make_tuple(smat(d1, d2), smat(d2, d1)); },
         [](smat& a, smat& r){ r = a.transpose(); }
         );
 
     CPM_TWO_PASS_NS_P(
         trans_policy,
         "r = tranpose(a) (d) [transpose][d]",
-        [](std::size_t d1, std::size_t d2){ return std::make_tuple(dmat(d1, d2), dmat(d1, d2)); },
+        [](std::size_t d1, std::size_t d2){ return std::make_tuple(dmat(d1, d2), dmat(d2, d1)); },
         [](dmat& a, dmat& r){ r = a.transpose(); }
         );
 
