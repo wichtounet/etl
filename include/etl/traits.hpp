@@ -312,6 +312,20 @@ template <typename... E>
 using all_double_precision = cpp::and_c<is_double_precision<E>...>;
 
 /*!
+ * \brief Traits to test if the given ETL expresion contains floating point numbers.
+ * \tparam T The ETL expression type.
+ */
+template <typename T>
+using is_floating = cpp::or_c<is_single_precision<T>, is_double_precision<T>>;
+
+/*!
+ * \brief Traits to test if all the given ETL expresion types contains floating point numbers.
+ * \tparam E The ETL expression types.
+ */
+template <typename... E>
+using all_floating = cpp::and_c<is_floating<E>...>;
+
+/*!
  * \brief Traits to test if a type is a complex number type
  * \tparam T The type to test.
  */
