@@ -22,10 +22,8 @@ CPM_DIRECT_BENCH_TWO_PASS_NS_P(
     [](dvec& v, dvec& h, dvec& c, dvec& t, dmat& w){ v = etl::sigmoid(c + etl::mul(w, h, t)); }
 )
 
-//Small optimizations
-// 1. Some time can be saved by keeping one matrix for the im2col result and pass it to conv_2d_valid_multi
-// 2. fflip is already done in conv_2d_multi and fflip(fflip(A)) = A, therefore only tranpose is necessary.
-// This means calling the _prepared version of conv_2d_valid_multi
+//Possible optimizations
+// 1. Some time could be saved by keeping one matrix for the im2col result and pass it to conv_2d_valid_multi
 
 CPM_DIRECT_BENCH_TWO_PASS_NS_P(
     NARY_POLICY(VALUES_POLICY(1, 1, 1, 3, 3, 3, 30, 40), VALUES_POLICY(10, 10, 30, 30, 30, 40, 40, 40), VALUES_POLICY(28, 28, 28, 28, 36, 36, 36, 36), VALUES_POLICY(5, 11, 19, 19, 19, 19, 19, 19)),
