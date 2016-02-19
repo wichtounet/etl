@@ -91,6 +91,7 @@ public:
     using value_type        = T;    ///< The value type
     using memory_type       = void; ///< The memory type
     using const_memory_type = void; ///< The const memory type
+    using expr_t            = Expr; ///< The sub expression type
 
     /*!
      * The vectorization type for V
@@ -219,6 +220,7 @@ public:
     using const_memory_type = const_memory_t<Expr>;                                                ///< The const memory type
     using return_type       = std::conditional_t<non_const_return_ref, value_type&, value_type>;   ///< The type returned by the functions
     using const_return_type = std::conditional_t<const_return_ref, const value_type&, value_type>; ///< The const type returned by the const functions
+    using expr_t            = Expr; ///< The sub expression type
 
     /*!
      * The vectorization type for V
@@ -464,6 +466,7 @@ public:
     using value_type        = T;
     using memory_type       = void;
     using const_memory_type = void;
+    using expr_t            = Expr;
 
     //Construct a new expression
     explicit unary_expr(Expr l)
@@ -574,6 +577,7 @@ public:
     using value_type        = T;
     using memory_type       = void;
     using const_memory_type = void;
+    using expr_t            = Expr; ///< The sub expression type
 
     /*!
      * The vectorization type for V
