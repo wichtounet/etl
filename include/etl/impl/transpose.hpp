@@ -117,11 +117,55 @@ struct transpose {
 
 #ifdef ETL_MKL_MODE
 
+//Helpers for MKL
+
+template <typename A, typename C, cpp_enable_if(all_single_precision<A, C>::value)>
+void mkl_otrans(A&& a, C&& c){
+    auto mem_c = c.memory_start();
+    auto mem_a = a.memory_start();
+
+    if (decay_traits<A>::storage_order == order::RowMajor) {
+        mkl_somatcopy('R', 'T', etl::dim<0>(a), etl::dim<1>(a), 1.0f, mem_a, etl::dim<1>(a), mem_c, etl::dim<0>(a));
+    } else {
+        mkl_somatcopy('C', 'T', etl::dim<0>(a), etl::dim<1>(a), 1.0f, mem_a, etl::dim<0>(a), mem_c, etl::dim<1>(a));
+    }
+}
+
+template <typename A, typename C, cpp_enable_if(all_double_precision<A, C>::value)>
+void mkl_otrans(A&& a, C&& c){
+    auto mem_c = c.memory_start();
+    auto mem_a = a.memory_start();
+
+    if (decay_traits<A>::storage_order == order::RowMajor) {
+        mkl_domatcopy('R', 'T', etl::dim<0>(a), etl::dim<1>(a), 1.0, mem_a, etl::dim<1>(a), mem_c, etl::dim<0>(a));
+    } else {
+        mkl_domatcopy('C', 'T', etl::dim<0>(a), etl::dim<1>(a), 1.0, mem_a, etl::dim<0>(a), mem_c, etl::dim<1>(a));
+    }
+}
+
+template <typename C, cpp_enable_if(all_single_precision<C>::value)>
+void mkl_itrans(C&& c){
+    if (decay_traits<C>::storage_order == order::RowMajor) {
+        mkl_simatcopy('R', 'T', etl::dim<0>(c), etl::dim<1>(c), 1.0f, c.memory_start(), etl::dim<1>(c), etl::dim<0>(c));
+    } else {
+        mkl_simatcopy('C', 'T', etl::dim<0>(c), etl::dim<1>(c), 1.0f, c.memory_start(), etl::dim<0>(c), etl::dim<1>(c));
+    }
+}
+
+template <typename C, cpp_enable_if(all_double_precision<C>::value)>
+void mkl_itrans(C&& c){
+    if (decay_traits<C>::storage_order == order::RowMajor) {
+        mkl_dimatcopy('R', 'T', etl::dim<0>(c), etl::dim<1>(c), 1.0, c.memory_start(), etl::dim<1>(c), etl::dim<0>(c));
+    } else {
+        mkl_dimatcopy('C', 'T', etl::dim<0>(c), etl::dim<1>(c), 1.0, c.memory_start(), etl::dim<0>(c), etl::dim<1>(c));
+    }
+}
+
 template <typename C>
 struct inplace_square_transpose<C, std::enable_if_t<has_direct_access<C>::value && is_single_precision<C>::value>> {
     template <typename CC>
     static void apply(CC&& c) {
-        mkl_simatcopy('R', 'T', etl::dim<0>(c), etl::dim<1>(c), 1.0f, c.memory_start(), etl::dim<1>(c), etl::dim<0>(c));
+        mkl_itrans(c);
     }
 };
 
@@ -129,7 +173,7 @@ template <typename C>
 struct inplace_square_transpose<C, std::enable_if_t<has_direct_access<C>::value && is_double_precision<C>::value>> {
     template <typename CC>
     static void apply(CC&& c) {
-        mkl_dimatcopy('R', 'T', etl::dim<0>(c), etl::dim<1>(c), 1.0, c.memory_start(), etl::dim<1>(c), etl::dim<0>(c));
+        mkl_itrans(c);
     }
 };
 
@@ -137,8 +181,7 @@ template <typename C>
 struct inplace_rectangular_transpose<C, std::enable_if_t<has_direct_access<C>::value && is_single_precision<C>::value>> {
     template <typename CC>
     static void apply(CC&& c) {
-        auto copy = force_temporary(c);
-        mkl_somatcopy('R', 'T', etl::dim<0>(c), etl::dim<1>(c), 1.0, copy.memory_start(), etl::dim<1>(c), c.memory_start(), etl::dim<0>(c));
+        mkl_otrans(force_temporary(c), c);
     }
 };
 
@@ -146,8 +189,27 @@ template <typename C>
 struct inplace_rectangular_transpose<C, std::enable_if_t<has_direct_access<C>::value && is_double_precision<C>::value>> {
     template <typename CC>
     static void apply(CC&& c) {
-        auto copy = force_temporary(c);
-        mkl_domatcopy('R', 'T', etl::dim<0>(c), etl::dim<1>(c), 1.0, copy.memory_start(), etl::dim<1>(c), c.memory_start(), etl::dim<0>(c));
+        mkl_otrans(force_temporary(c), c);
+    }
+};
+
+template <typename A, typename C>
+struct transpose<A, C, std::enable_if_t<all_dma<A, C>::value && all_floating<A, C>::value>> {
+    template <typename AA, typename CC>
+    static void apply(AA&& a, CC&& c) {
+        auto mem_c = c.memory_start();
+        auto mem_a = a.memory_start();
+
+        // Delegate aliasing transpose to inplace algorithm
+        if (mem_c == mem_a) {
+            if (etl::dim<0>(a) == etl::dim<1>(a)) {
+                mkl_itrans(c);
+            } else {
+                mkl_otrans(force_temporary(c), c);
+            }
+        } else {
+            mkl_otrans(a, c);
+        }
     }
 };
 
