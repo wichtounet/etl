@@ -36,6 +36,9 @@
 #include "etl/eval_functors.hpp"  //Implementation functors
 #include "etl/eval_visitors.hpp"  //Evaluation visitors
 
+// Optimized evaluations
+#include "etl/impl/transpose.hpp"
+
 namespace etl {
 
 /*
@@ -804,7 +807,7 @@ struct direct_assign_compatible : cpp::or_u<
  * \param expr The right hand side expression
  * \param result The left hand side
  */
-template <typename Expr, typename Result, cpp_enable_if(direct_assign_compatible<Expr, Result>::value, !is_wrapper_expr<Expr>::value)>
+template <typename Expr, typename Result, cpp_enable_if(!detail::has_optimized_evaluation<Expr, Result>::value, direct_assign_compatible<Expr, Result>::value, !is_wrapper_expr<Expr>::value)>
 void assign_evaluate(Expr&& expr, Result&& result) {
     standard_evaluator::assign_evaluate(std::forward<Expr>(expr), std::forward<Result>(result));
 }
@@ -814,9 +817,24 @@ void assign_evaluate(Expr&& expr, Result&& result) {
  * \param expr The right hand side expression
  * \param result The left hand side
  */
-template <typename Expr, typename Result, cpp_enable_if(!direct_assign_compatible<Expr, Result>::value, !is_wrapper_expr<Expr>::value)>
+template <typename Expr, typename Result, cpp_enable_if(!detail::has_optimized_evaluation<Expr, Result>::value, !direct_assign_compatible<Expr, Result>::value, !is_wrapper_expr<Expr>::value)>
 void assign_evaluate(Expr&& expr, Result&& result) {
     standard_evaluator::assign_evaluate(transpose(expr), std::forward<Result>(result));
+}
+
+/*!
+ * \brief Evaluation of the expr into result
+ * \param expr The right hand side expression
+ * \param result The left hand side
+ */
+template <typename Expr, typename Result, cpp_enable_if(detail::is_direct_transpose<Expr, Result>::value)>
+void assign_evaluate(Expr&& expr, Result&& result) {
+    // Make sure we have the data in CPU
+    standard_evaluator::pre_assign(expr);
+    standard_evaluator::post_assign_force(expr);
+
+    // Perform transpose in memory
+    detail::transpose<typename std::decay_t<Expr>::expr_t::sub_type, Result>::apply(expr.value().value(), std::forward<Result>(result));
 }
 
 /*!

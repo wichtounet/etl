@@ -83,6 +83,38 @@ struct inplace_rectangular_transpose {
     }
 };
 
+template <typename A, typename C, typename Enable = void>
+struct transpose {
+    template <typename AA, typename CC>
+    static void apply(AA&& a, CC&& c) {
+        auto mem_c = c.memory_start();
+        auto mem_a = a.memory_start();
+
+        // Delegate aliasing transpose to inplace algorithm
+        if (mem_c == mem_a) {
+            if (etl::dim<0>(a) == etl::dim<1>(a)) {
+                inplace_square_transpose<C>::apply(c);
+            } else {
+                inplace_rectangular_transpose<C>::apply(c);
+            }
+        } else {
+            if (decay_traits<A>::storage_order == order::RowMajor) {
+                for (std::size_t i = 0; i < etl::dim<0>(a); ++i) {
+                    for (std::size_t j = 0; j < etl::dim<1>(a); ++j) {
+                        mem_c[j * etl::dim<1>(c) + i] = mem_a[i * etl::dim<1>(a) + j];
+                    }
+                }
+            } else {
+                for (std::size_t j = 0; j < etl::dim<1>(a); ++j) {
+                    for (std::size_t i = 0; i < etl::dim<0>(a); ++i) {
+                        mem_c[i * etl::dim<0>(c) + j] = mem_a[j * etl::dim<0>(a) + i];
+                    }
+                }
+            }
+        }
+    }
+};
+
 #ifdef ETL_MKL_MODE
 
 template <typename C>
