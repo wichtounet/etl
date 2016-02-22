@@ -964,6 +964,7 @@ TEMPLATE_TEST_CASE_2("fft_2d_many/2", "[fast][fft]", Z, float, double) {
     REQUIRE(a(1, 1, 1).real() == Approx(Z(-3.5)));
     REQUIRE(a(1, 1, 1).imag() == Approx(Z(1.0)));
 }
+
 TEMPLATE_TEST_CASE_2("fft_1d_many/4", "[fast][fft]", Z, float, double) {
     etl::fast_matrix<std::complex<Z>, 2, 5> a({MZ(1.0, 0.0), MZ(2.0, 0.0), MZ(3.0, 0.0), MZ(4.0, 0.0), MZ(5.0, 0.0), MZ(6.0, 0.0), MZ(7.0, 0.0), MZ(8.0, 0.0), MZ(9.0, 0.0), MZ(10.0, 0.0)});
 
@@ -990,4 +991,170 @@ TEMPLATE_TEST_CASE_2("fft_1d_many/4", "[fast][fft]", Z, float, double) {
     REQUIRE(a(1, 3).imag() == Approx(Z(-0.8123)));
     REQUIRE(a(1, 4).real() == Approx(Z(-2.5)));
     REQUIRE(a(1, 4).imag() == Approx(Z(-3.440955)));
+}
+
+//ifft many
+
+IFFT1_MANY_TEST_CASE("ifft_1d_many/1", "[fast][ifft]") {
+    etl::fast_matrix<std::complex<T>, 2, 4> a;
+    etl::fast_matrix<std::complex<T>, 2, 4> c;
+
+    a(0, 0) = std::complex<T>(1.0, 1.0);
+    a(0, 1) = std::complex<T>(2.0, 2.0);
+    a(0, 2) = std::complex<T>(-1.0, 0.0);
+    a(0, 3) = std::complex<T>(3.0, -3.0);
+
+    a(1, 0) = std::complex<T>(1.0, 1.0);
+    a(1, 1) = std::complex<T>(2.0, 2.0);
+    a(1, 2) = std::complex<T>(-1.0, 0.0);
+    a(1, 3) = std::complex<T>(3.0, -3.0);
+
+    Impl::apply(a, c);
+
+    REQUIRE(c(0, 0).real() == Approx(T(1.25)));
+    REQUIRE(c(0, 0).imag() == Approx(T(0.0)));
+    REQUIRE(c(0, 1).real() == Approx(T(-0.75)));
+    REQUIRE(c(0, 1).imag() == Approx(T(0.0)));
+    REQUIRE(c(0, 2).real() == Approx(T(-1.25)));
+    REQUIRE(c(0, 2).imag() == Approx(T(0.5)));
+    REQUIRE(c(0, 3).real() == Approx(T(1.75)));
+    REQUIRE(c(0, 3).imag() == Approx(T(0.5)));
+
+    REQUIRE(c(1, 0).real() == Approx(T(1.25)));
+    REQUIRE(c(1, 0).imag() == Approx(T(0.0)));
+    REQUIRE(c(1, 1).real() == Approx(T(-0.75)));
+    REQUIRE(c(1, 1).imag() == Approx(T(0.0)));
+    REQUIRE(c(1, 2).real() == Approx(T(-1.25)));
+    REQUIRE(c(1, 2).imag() == Approx(T(0.5)));
+    REQUIRE(c(1, 3).real() == Approx(T(1.75)));
+    REQUIRE(c(1, 3).imag() == Approx(T(0.5)));
+}
+
+IFFT1_MANY_TEST_CASE("ifft_1d_many/2", "[fast][ifft]") {
+    etl::fast_matrix<std::complex<T>, 2, 4> a;
+    etl::fast_matrix<std::complex<T>, 2, 4> c;
+
+    a(0, 0) = std::complex<T>(2.0, 1.0);
+    a(0, 1) = std::complex<T>(2.0, 3.0);
+    a(0, 2) = std::complex<T>(0.0, 4.0);
+    a(0, 3) = std::complex<T>(1.0, -2.0);
+
+    a(1, 0) = std::complex<T>(2.0, 0.0);
+    a(1, 1) = std::complex<T>(3.0, 1.0);
+    a(1, 2) = std::complex<T>(-2.0, 0.0);
+    a(1, 3) = std::complex<T>(1.5, -1.0);
+
+    Impl::apply(a, c);
+
+    CHECK(c(0, 0).real() == Approx(T(1.25)));
+    CHECK(c(0, 0).imag() == Approx(T(1.5)));
+    CHECK(c(0, 1).real() == Approx(T(-0.75)));
+    CHECK(c(0, 1).imag() == Approx(T(-0.5)));
+    CHECK(c(0, 2).real() == Approx(T(-0.25)));
+    CHECK(c(0, 2).imag() == Approx(T(1.0)));
+    CHECK(c(0, 3).real() == Approx(T(1.75)));
+    CHECK(c(0, 3).imag() == Approx(T(-1.0)));
+
+    CHECK(c(1, 0).real() == Approx(T(1.125)));
+    CHECK(c(1, 0).imag() == Approx(T(0.0)));
+    CHECK(c(1, 1).real() == Approx(T(0.5)));
+    CHECK(c(1, 1).imag() == Approx(T(0.375)));
+    CHECK(c(1, 2).real() == Approx(T(-1.125)));
+    CHECK(c(1, 2).imag() == Approx(T(0.0)));
+    CHECK(c(1, 3).real() == Approx(T(1.5)));
+    CHECK(c(1, 3).imag() == Approx(T(-0.375)));
+}
+
+IFFT2_MANY_TEST_CASE("ifft_2d_many/1", "[fast][ifft]") {
+    etl::fast_matrix<std::complex<T>, 2, 3, 2> a;
+    etl::fast_matrix<std::complex<T>, 2, 3, 2> c;
+
+    a(0, 0, 0) = std::complex<T>(1.0, 1.0);
+    a(0, 0, 1) = std::complex<T>(-2.0, 0.0);
+    a(0, 1, 0) = std::complex<T>(3.5, 1.5);
+    a(0, 1, 1) = std::complex<T>(-4.0, -4.0);
+    a(0, 2, 0) = std::complex<T>(5.0, 0.5);
+    a(0, 2, 1) = std::complex<T>(6.5, 1.25);
+
+    a(1, 0, 0) = std::complex<T>(1.0, 1.0);
+    a(1, 0, 1) = std::complex<T>(-2.0, 0.0);
+    a(1, 1, 0) = std::complex<T>(3.5, 1.5);
+    a(1, 1, 1) = std::complex<T>(-4.0, -4.0);
+    a(1, 2, 0) = std::complex<T>(5.0, 0.5);
+    a(1, 2, 1) = std::complex<T>(6.5, 1.25);
+
+    Impl::apply(a, c);
+
+    REQUIRE(c(0, 0, 0).real() == Approx(T(1.66667)));
+    REQUIRE(c(0, 0, 0).imag() == Approx(T(0.04167)));
+    REQUIRE(c(0, 0, 1).real() == Approx(T(1.5)));
+    REQUIRE(c(0, 0, 1).imag() == Approx(T(0.95833)));
+    REQUIRE(c(0, 1, 0).real() == Approx(T(-0.4699)));
+    REQUIRE(c(0, 1, 0).imag() == Approx(T(-1.5029)));
+    REQUIRE(c(0, 1, 1).real() == Approx(T(-0.9021)));
+    REQUIRE(c(0, 1, 1).imag() == Approx(T(1.06987)));
+    REQUIRE(c(0, 2, 0).real() == Approx(T(-1.6968)));
+    REQUIRE(c(0, 2, 0).imag() == Approx(T(1.9612)));
+    REQUIRE(c(0, 2, 1).real() == Approx(T(0.9021)));
+    REQUIRE(c(0, 2, 1).imag() == Approx(T(-1.5282)));
+
+    REQUIRE(c(1, 0, 0).real() == Approx(T(1.66667)));
+    REQUIRE(c(1, 0, 0).imag() == Approx(T(0.04167)));
+    REQUIRE(c(1, 0, 1).real() == Approx(T(1.5)));
+    REQUIRE(c(1, 0, 1).imag() == Approx(T(0.95833)));
+    REQUIRE(c(1, 1, 0).real() == Approx(T(-0.4699)));
+    REQUIRE(c(1, 1, 0).imag() == Approx(T(-1.5029)));
+    REQUIRE(c(1, 1, 1).real() == Approx(T(-0.9021)));
+    REQUIRE(c(1, 1, 1).imag() == Approx(T(1.06987)));
+    REQUIRE(c(1, 2, 0).real() == Approx(T(-1.6968)));
+    REQUIRE(c(1, 2, 0).imag() == Approx(T(1.9612)));
+    REQUIRE(c(1, 2, 1).real() == Approx(T(0.9021)));
+    REQUIRE(c(1, 2, 1).imag() == Approx(T(-1.5282)));
+}
+
+IFFT2_MANY_TEST_CASE("ifft_2d_many/2", "[fast][ifft]") {
+    etl::fast_matrix<std::complex<T>, 2, 3, 2> a;
+    etl::fast_matrix<std::complex<T>, 2, 3, 2> c;
+
+    a(0, 0, 0) = std::complex<T>(2.0, 1.0);
+    a(0, 0, 1) = std::complex<T>(-2.0, 1.0);
+    a(0, 1, 0) = std::complex<T>(0.5, 1.5);
+    a(0, 1, 1) = std::complex<T>(-4.0, -1.0);
+    a(0, 2, 0) = std::complex<T>(5.5, 1.5);
+    a(0, 2, 1) = std::complex<T>(2.5, 0.25);
+
+    a(1, 0, 0) = std::complex<T>(1.0, -1.0);
+    a(1, 0, 1) = std::complex<T>(2.0, 1.0);
+    a(1, 1, 0) = std::complex<T>(-3.5, -1.5);
+    a(1, 1, 1) = std::complex<T>(4.0, 4.0);
+    a(1, 2, 0) = std::complex<T>(3.0, -1.5);
+    a(1, 2, 1) = std::complex<T>(5.5, 0.25);
+
+    Impl::apply(a, c);
+
+    CHECK(c(0, 0, 0).real() == Approx(T(0.75)));
+    CHECK(c(0, 0, 0).imag() == Approx(T(0.70833)));
+    CHECK(c(0, 0, 1).real() == Approx(T(1.91666)));
+    CHECK(c(0, 0, 1).imag() == Approx(T(0.625)));
+    CHECK(c(0, 1, 0).real() == Approx(T(-0.194578)));
+    CHECK(c(0, 1, 0).imag() == Approx(T(-1.51404)));
+    CHECK(c(0, 1, 1).real() == Approx(T(-0.138755)));
+    CHECK(c(0, 1, 1).imag() == Approx(T(-0.09599)));
+    CHECK(c(0, 2, 0).real() == Approx(T(-0.55542)));
+    CHECK(c(0, 2, 0).imag() == Approx(T(1.80571)));
+    CHECK(c(0, 2, 1).real() == Approx(T(0.22208)));
+    CHECK(c(0, 2, 1).imag() == Approx(T(-0.5290)));
+
+    CHECK(c(1, 0, 0).real() == Approx(T(2.0)));
+    CHECK(c(1, 0, 0).imag() == Approx(T(0.20833)));
+    CHECK(c(1, 0, 1).real() == Approx(T(-1.83333)));
+    CHECK(c(1, 0, 1).imag() == Approx(T(-1.54167)));
+    CHECK(c(1, 1, 0).real() == Approx(T(-0.79127)));
+    CHECK(c(1, 1, 0).imag() == Approx(T(-1.25887)));
+    CHECK(c(1, 1, 1).real() == Approx(T(1.20793)));
+    CHECK(c(1, 1, 1).imag() == Approx(T(-0.45085)));
+    CHECK(c(1, 2, 0).real() == Approx(T(0.29127)));
+    CHECK(c(1, 2, 0).imag() == Approx(T(1.05053)));
+    CHECK(c(1, 2, 1).real() == Approx(T(0.1254)));
+    CHECK(c(1, 2, 1).imag() == Approx(T(0.99252)));
 }
