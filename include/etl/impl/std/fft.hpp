@@ -670,10 +670,13 @@ void ifft2(A&& a, C&& c) {
     }
 }
 
+template <typename A, typename C>
+void fft2_many(A&& a, C&& c);
+
 //complex<T> -> complex<T>
 template <typename A, typename C>
 void ifft2_many(A&& a, C&& c) {
-    std::size_t n = etl::dim<0>(a);
+    std::size_t n = etl::size(a);
 
     //Conjugate the complex numbers
     for (std::size_t i = 0; i < n; ++i) {
@@ -689,7 +692,7 @@ void ifft2_many(A&& a, C&& c) {
 
     //Scale the numbers
     for (std::size_t i = 0; i < n; ++i) {
-        c[i] /= double(n);
+        c[i] /= double(n / etl::dim<0>(a));
     }
 }
 
