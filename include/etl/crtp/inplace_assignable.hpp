@@ -261,6 +261,22 @@ struct inplace_assignable {
     }
 
     /*!
+     * \brief Perform many inplace 1D Inverse FFT of the vector.
+     */
+    derived_t& ifft_many_inplace() {
+        static_assert(is_complex<derived_t>::value, "Only complex vector can use inplace IFFT");
+        static_assert(etl_traits<derived_t>::dimensions() > 1, "Only matrices can use ifft_many_inplace");
+
+        decltype(auto) mat = as_derived();
+
+        detail::ifft1_many_impl<derived_t, derived_t>::apply(mat, mat);
+
+        mat.gpu_copy_from_if_necessary();
+
+        return mat;
+    }
+
+    /*!
      * \brief Perform inplace 2D FFT of the matrix.
      */
     derived_t& fft2_inplace() {
@@ -298,12 +314,28 @@ struct inplace_assignable {
      * \brief Perform inplace 2D Inverse FFT of the matrix.
      */
     derived_t& ifft2_inplace() {
-        static_assert(is_complex<derived_t>::value, "Only complex vector can use inplace IFFT");
+        static_assert(is_complex<derived_t>::value, "Only complex matrix can use inplace IFFT");
         static_assert(etl_traits<derived_t>::dimensions() == 2, "Only vector can use ifft_inplace, use ifft2_inplace for matrices");
 
         decltype(auto) mat = as_derived();
 
         detail::ifft2_impl<derived_t, derived_t>::apply(mat, mat);
+
+        mat.gpu_copy_from_if_necessary();
+
+        return mat;
+    }
+
+    /*!
+     * \brief Perform many inplace 2D Inverse FFT of the matrix.
+     */
+    derived_t& ifft2_many_inplace() {
+        static_assert(is_complex<derived_t>::value, "Only complex matrix can use inplace IFFT");
+        static_assert(etl_traits<derived_t>::dimensions() > 2, "Only matrix > 2D can use ifft2_many_inplace");
+
+        decltype(auto) mat = as_derived();
+
+        detail::ifft2_many_impl<derived_t, derived_t>::apply(mat, mat);
 
         mat.gpu_copy_from_if_necessary();
 
