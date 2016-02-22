@@ -571,12 +571,19 @@ public:
 
     /*!
      * \brief Returns a pointer to the past-the-end element in memory.
-     * \return a pointer tot the past-the-end element in memory.
+     * \return a pointer to the past-the-end element in memory.
      */
     const_memory_type memory_end() const noexcept {
         return _memory + _size;
     }
 
+    /*!
+     * \brief Returns a reference to the ith dimension value.
+     *
+     * This should only be used internally and with care
+     *
+     * \return a refernece to the ith dimension value.
+     */
     std::size_t& unsafe_dimension_access(std::size_t i) {
         cpp_assert(i < n_dimensions, "Out of bounds");
         return _dimensions[i];
