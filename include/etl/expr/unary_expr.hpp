@@ -323,6 +323,17 @@ public:
     }
 
     /*!
+     * \brief Returns a reference to the ith dimension value.
+     *
+     * This should only be used internally and with care
+     *
+     * \return a refernece to the ith dimension value.
+     */
+    std::size_t& unsafe_dimension_access(std::size_t i) {
+        return value().unsafe_dimension_access(i);
+    }
+
+    /*!
      * \brief Creates a sub view of the matrix, effectively removing the first dimension and fixing it to the given index.
      * \param i The index to use
      * \return a sub view of the matrix at position i.

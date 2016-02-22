@@ -318,6 +318,17 @@ struct sub_view {
         static_assert(has_direct_access<T>::value && decay_traits<sub_type>::storage_order == order::RowMajor, "This expression does not have direct memory access");
         return sub.memory_start() + (i + 1) * subsize(sub);
     }
+
+    /*!
+     * \brief Returns a reference to the ith dimension value.
+     *
+     * This should only be used internally and with care
+     *
+     * \return a refernece to the ith dimension value.
+     */
+    std::size_t& unsafe_dimension_access(std::size_t i) {
+        return sub.unsafe_dimension_access(i + 1);
+    }
 };
 
 namespace fast_matrix_view_detail {
