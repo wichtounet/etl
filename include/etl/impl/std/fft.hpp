@@ -579,6 +579,14 @@ void ifft1(A&& a, C&& c) {
     detail::ifft1_kernel(a.memory_start(), etl::size(a), c.memory_start());
 }
 
+//complex<T> -> complex<T>
+template <typename A, typename C>
+void ifft1_many(A&& a, C&& c) {
+    for(std::size_t k = 0; k < etl::dim<0>(a); ++k){
+        detail::ifft1_kernel(a(k).memory_start(), etl::dim<1>(a), c(k).memory_start());
+    }
+}
+
 //complex<T> -> T
 template <typename A, typename C>
 void ifft1_real(A&& a, C&& c) {
@@ -650,6 +658,29 @@ void ifft2(A&& a, C&& c) {
     }
 
     fft2(c, c);
+
+    //Conjugate the complex numbers again
+    for (std::size_t i = 0; i < n; ++i) {
+        c[i] = std::conj(c[i]);
+    }
+
+    //Scale the numbers
+    for (std::size_t i = 0; i < n; ++i) {
+        c[i] /= double(n);
+    }
+}
+
+//complex<T> -> complex<T>
+template <typename A, typename C>
+void ifft2_many(A&& a, C&& c) {
+    std::size_t n = etl::dim<0>(a);
+
+    //Conjugate the complex numbers
+    for (std::size_t i = 0; i < n; ++i) {
+        c[i] = std::conj(a[i]);
+    }
+
+    fft2_many(c, c);
 
     //Conjugate the complex numbers again
     for (std::size_t i = 0; i < n; ++i) {

@@ -338,6 +338,38 @@ struct fft2_many_impl {
     }
 };
 
+template <typename A, typename C>
+struct ifft1_many_impl {
+    template <typename AA, typename CC>
+    static void apply(AA&& a, CC&& c) {
+        fft_impl impl = select_fft1_many_impl(etl::dim<0>(c), etl::dim<1>(c));
+
+        if (impl == fft_impl::STD) {
+            etl::impl::standard::ifft1_many(std::forward<AA>(a), std::forward<CC>(c));
+        } else if (impl == fft_impl::MKL) {
+            etl::impl::blas::ifft1_many(std::forward<AA>(a), std::forward<CC>(c));
+        } else if (impl == fft_impl::CUFFT) {
+            etl::impl::cufft::ifft1_many(std::forward<AA>(a), std::forward<CC>(c));
+        }
+    }
+};
+
+template <typename A, typename C>
+struct ifft2_many_impl {
+    template <typename AA, typename CC>
+    static void apply(AA&& a, CC&& c) {
+        fft_impl impl = select_fft2_many_impl(etl::dim<0>(c), etl::dim<1>(c), etl::dim<2>(c));
+
+        if (impl == fft_impl::STD) {
+            etl::impl::standard::ifft2_many(std::forward<AA>(a), std::forward<CC>(c));
+        } else if (impl == fft_impl::MKL) {
+            etl::impl::blas::ifft2_many(std::forward<AA>(a), std::forward<CC>(c));
+        } else if (impl == fft_impl::CUFFT) {
+            etl::impl::cufft::ifft2_many(std::forward<AA>(a), std::forward<CC>(c));
+        }
+    }
+};
+
 template <typename A, typename B, typename C, typename Enable = void>
 struct fft_conv1_full_impl {
     template <typename AA, typename BB, typename CC>
