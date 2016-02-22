@@ -473,7 +473,7 @@ public:
      */
     template<typename V = default_vec>
     vec_type<V> load(std::size_t i) const noexcept {
-        return V::load(_memory + i);
+        return V::loadu(_memory + i);
     }
 
     /*!
