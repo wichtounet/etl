@@ -44,6 +44,13 @@ constexpr const bool create_temporary = false;
 constexpr const bool create_temporary = true; ///< Boolean flag indicating if temporaries are created
 #endif
 
+//Flag to allow conv_valid_multi to use FFT
+#ifdef ETL_CONV_VALID_FFT
+constexpr const bool conv_valid_fft = true;
+#else
+constexpr const bool conv_valid_fft = false; ///< Boolean flag indicating if temporaries are created
+#endif
+
 #ifdef ETL_PARALLEL_THREADS
 constexpr const std::size_t threads = ETL_PARALLEL_THREADS;
 #else

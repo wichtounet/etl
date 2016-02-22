@@ -425,6 +425,28 @@ auto conv_deep_full(A&& a, B&& b, C&& c) -> detail::dim_forced_temporary_binary_
 
 //Special convolutions
 
+template <typename F1, typename F2>
+void complex_pad_3d(const F1& in, F2& out) {
+    for (std::size_t outer = 0; outer < etl::dim<0>(in); ++outer) {
+        auto* direct = out(outer).memory_start();
+        for (std::size_t i = 0; i < etl::dim<1>(in); ++i) {
+            for (std::size_t j = 0; j < etl::dim<2>(in); ++j) {
+                direct[i * out.template dim<2>() + j] = in(outer, i, j);
+            }
+        }
+    }
+}
+
+template <typename F1, typename F2>
+void complex_pad_2d(const F1& in, F2& out) {
+    auto* direct = out.memory_start();
+    for (std::size_t i = 0; i < etl::dim<0>(in); ++i) {
+        for (std::size_t j = 0; j < etl::dim<1>(in); ++j) {
+            direct[i * out.template dim<1>() + j] = in(i, j);
+        }
+    }
+}
+
 //TODO This should be moved
 //TODO This should be adapted to an expression
 
@@ -432,7 +454,46 @@ template <typename A, typename B, typename C>
 void conv_2d_valid_multi(A&& input, B&& kernels, C&& features) {
     //TODO Validate inputs
 
-    if (is_cblas_enabled || is_cublas_enabled) {
+    if (is_mkl_enabled && conv_valid_fft){
+        const std::size_t K = etl::dim<0>(kernels);
+
+        const std::size_t i1 = etl::dim<0>(input);
+        const std::size_t i2 = etl::dim<1>(input);
+
+        const std::size_t k1 = etl::dim<1>(kernels);
+        const std::size_t k2 = etl::dim<2>(kernels);
+
+        const std::size_t v1 = i1 - k1 + 1;
+        const std::size_t v2 = i2 - k2 + 1;
+        const std::size_t t1 = i1 + k1 - 1;
+        const std::size_t t2 = i2 + k2 - 1;
+        const std::size_t b1 = (t1 - v1) / 2;
+        const std::size_t b2 = (t2 - v2) / 2;
+
+        etl::dyn_matrix<std::complex<value_t<A>>> input_padded(t1, t2);
+        etl::dyn_matrix<std::complex<value_t<A>>, 3> kernels_padded(K, t1, t2);
+        etl::dyn_matrix<std::complex<value_t<A>>, 3> tmp_result(K, t1, t2);
+
+        complex_pad_2d(input, input_padded);
+        complex_pad_3d(kernels, kernels_padded);
+
+        input_padded.fft2_inplace();
+        kernels_padded.fft2_many_inplace();
+
+        for (std::size_t k = 0; k < K; ++k) {
+            tmp_result(k) = input_padded >> kernels_padded(k);
+        }
+
+        tmp_result.ifft2_many_inplace();
+
+        for (std::size_t k = 0; k < K; ++k) {
+            for(std::size_t i = 0; i < v1; ++i){
+                for(std::size_t j = 0; j < v2; ++j){
+                    features(k, i, j) = tmp_result(k, i + b1, j + b2).real();
+                }
+            }
+        }
+    } else if (is_cblas_enabled || is_cublas_enabled) {
         const std::size_t v1 = etl::dim<0>(input);
         const std::size_t v2 = etl::dim<1>(input);
         const std::size_t k1 = etl::dim<1>(kernels);
@@ -477,7 +538,10 @@ template <typename A, typename B, typename C>
 void conv_2d_valid_multi_flipped(A&& input, B&& kernels, C&& features) {
     //TODO Validate inputs
 
-    if (is_cblas_enabled || is_cublas_enabled) {
+    if (is_mkl_enabled && conv_valid_fft){
+        //TODO Here we should flip
+        conv_2d_valid_multi(input, kernels, features);
+    } else if (is_cblas_enabled || is_cublas_enabled) {
         const std::size_t v1 = etl::dim<0>(input);
         const std::size_t v2 = etl::dim<1>(input);
         const std::size_t k1 = etl::dim<1>(kernels);
