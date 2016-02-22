@@ -297,45 +297,17 @@ void fft1_many(A&& a, C&& c) {
     c.gpu_reallocate(a.gpu_release());
 }
 
-template <typename A, typename C, cpp_enable_if(all_complex_single_precision<A>::value)>
-void ifft1_many(A&& a, C&& c) {
-    static constexpr const std::size_t N = decay_traits<A>::dimensions();
-
-    std::size_t n     = etl::dim<N - 1>(a); //Size of the transform
-    std::size_t batch = etl::size(a) / n;   //Number of batch
-
-    a.gpu_allocate_copy_if_necessary();
-
-    detail::inplace_cifft1_many_kernel(a, batch, n);
-
-    c.gpu_reallocate(a.gpu_release());
-}
-
-template <typename A, typename C, cpp_enable_if(all_complex_double_precision<A>::value)>
-void ifft1_many(A&& a, C&& c) {
-    static constexpr const std::size_t N = decay_traits<A>::dimensions();
-
-    std::size_t n     = etl::dim<N - 1>(a); //Size of the transform
-    std::size_t batch = etl::size(a) / n;   //Number of batch
-
-    a.gpu_allocate_copy_if_necessary();
-
-    detail::inplace_zifft1_many_kernel(a, batch, n);
-
-    c.gpu_reallocate(a.gpu_release());
-}
-
 template <typename C, cpp_enable_if(all_complex_single_precision<C>::value)>
-void scale_back(C&& c){
+void scale_back(C&& c, float factor){
 #ifdef ETL_CUBLAS_MODE
     impl::cublas::cublas_handle handle = impl::cublas::start_cublas();
 
-    cuComplex alpha = make_cuComplex(1.0 / etl::size(c), 0.0);
+    cuComplex alpha = make_cuComplex(factor, 0.0);
     cublasCscal(handle.get(), etl::size(c), &alpha, reinterpret_cast<cuComplex*>(c.gpu_memory()), 1);
 #else
     //Copy from GPU and scale on CPU
     c.gpu_copy_from();
-    c *= 1.0 / etl::size(c);
+    c *= factor;
 
     //The GPU memory is not up-to-date => throw it away
     c.gpu_evict();
@@ -343,20 +315,25 @@ void scale_back(C&& c){
 }
 
 template <typename C, cpp_enable_if(all_complex_double_precision<C>::value)>
-void scale_back(C&& c){
+void scale_back(C&& c, double factor){
 #ifdef ETL_CUBLAS_MODE
     impl::cublas::cublas_handle handle = impl::cublas::start_cublas();
 
-    cuDoubleComplex alpha = make_cuDoubleComplex(1.0 / etl::size(c), 0.0);
+    cuDoubleComplex alpha = make_cuDoubleComplex(factor, 0.0);
     cublasZscal(handle.get(), etl::size(c), &alpha, reinterpret_cast<cuDoubleComplex*>(c.gpu_memory()), 1);
 #else
     //Copy from GPU and scale on CPU
     c.gpu_copy_from();
-    c *= 1.0 / etl::size(c);
+    c *= factor;
 
     //The GPU memory is not up-to-date => throw it away
     c.gpu_evict();
 #endif
+}
+
+template <typename C>
+void scale_back(C&& c){
+    scale_back(std::forward<C>(c), 1.0 / etl::size(c));
 }
 
 template <typename A, typename C, cpp_enable_if(all_complex_single_precision<A>::value)>
@@ -446,6 +423,39 @@ void ifft1_real(A&& a, C&& c) {
 
     scale_back_real(a, c);
 }
+
+template <typename A, typename C, cpp_enable_if(all_complex_single_precision<A>::value)>
+void ifft1_many(A&& a, C&& c) {
+    static constexpr const std::size_t N = decay_traits<A>::dimensions();
+
+    std::size_t n     = etl::dim<N - 1>(a); //Size of the transform
+    std::size_t batch = etl::size(a) / n;   //Number of batch
+
+    a.gpu_allocate_copy_if_necessary();
+
+    detail::inplace_cifft1_many_kernel(a, batch, n);
+
+    c.gpu_reallocate(a.gpu_release());
+
+    scale_back(c, 1.0 / double(n));
+}
+
+template <typename A, typename C, cpp_enable_if(all_complex_double_precision<A>::value)>
+void ifft1_many(A&& a, C&& c) {
+    static constexpr const std::size_t N = decay_traits<A>::dimensions();
+
+    std::size_t n     = etl::dim<N - 1>(a); //Size of the transform
+    std::size_t batch = etl::size(a) / n;   //Number of batch
+
+    a.gpu_allocate_copy_if_necessary();
+
+    detail::inplace_zifft1_many_kernel(a, batch, n);
+
+    c.gpu_reallocate(a.gpu_release());
+
+    scale_back(c, 1.0 / double(n));
+}
+
 
 template <typename A, typename B, typename C, cpp_enable_if(all_single_precision<A>::value)>
 void fft1_convolve(A&& a, B&& b, C&& c) {
@@ -674,6 +684,8 @@ void ifft2_many(A&& a, C&& c) {
     detail::inplace_cifft2_many_kernel(a, batch, n1, n2);
 
     c.gpu_reallocate(a.gpu_release());
+
+    scale_back(c, 1.0 / double(n1 * n2));
 }
 
 template <typename A, typename C, cpp_enable_if(all_complex_double_precision<A>::value)>
@@ -689,6 +701,8 @@ void ifft2_many(A&& a, C&& c) {
     detail::inplace_zifft2_many_kernel(a, batch, n1, n2);
 
     c.gpu_reallocate(a.gpu_release());
+
+    scale_back(c, 1.0 / double(n1 * n2));
 }
 
 template <typename A, typename B, typename C, cpp_enable_if(all_single_precision<A>::value)>
