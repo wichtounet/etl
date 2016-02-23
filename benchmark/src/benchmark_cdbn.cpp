@@ -41,10 +41,10 @@ CPM_DIRECT_BENCH_TWO_PASS_NS_P(
     "conv_rbm_visible [crbm]",
     [](std::size_t nc, std::size_t k, std::size_t nv, std::size_t nh){
         auto nw = nv - nh + 1;
-        return std::make_tuple(dmat4(nc,k,nw,nw), dvec(k), dvec(nc), dmat3(nc,nv,nv), dmat3(k,nh,nh), dmat3(k,nv,nv));},
-    [](dmat4& w, dvec& b, dvec& c, dmat3& v, dmat3& h, dmat3& h_cv){
+        return std::make_tuple(dmat4(nc,k,nw,nw), dvec(nc), dmat3(nc,nv,nv), dmat3(k,nh,nh), dmat3(k,nv,nv));},
+    [](dmat4& w, dvec& c, dmat3& v, dmat3& h, dmat3& h_cv){
         for(std::size_t channel = 0; channel < etl::dim<0>(c); ++channel){
-            for(std::size_t k = 0; k < etl::dim<0>(b); ++k){
+            for(std::size_t k = 0; k < etl::dim<1>(w); ++k){
                 h_cv(k) = etl::conv_2d_full(h(k), w(channel)(k));
             }
 
@@ -76,15 +76,15 @@ CPM_DIRECT_BENCH_TWO_PASS_NS_P(
     "conv_rbm_visible_batch_64 [crbm]",
     [](std::size_t nc, std::size_t k, std::size_t nv, std::size_t nh) {
         auto nw = nv - nh + 1;
-        return std::make_tuple(dmat4(nc,k,nw,nw), dvec(k), dvec(nc), dmat4(64UL,nc,nv,nv), dmat4(64UL,k,nh,nh), dmat4(64UL,k,nv,nv)); },
-    [](dmat4& w, dvec& b, dvec& c, dmat4& v, dmat4& h, dmat4& h_cv) {
-        for (std::size_t batch = 0; batch < 64UL; ++batch) {
+        return std::make_tuple(dmat4(nc,k,nw,nw), dvec(nc), dmat4(64UL,nc,nv,nv), dmat4(64UL,k,nh,nh), dmat4(64UL,k,nv,nv)); },
+    [](dmat4& w, dvec& c, dmat4& v, dmat4& h, dmat4& h_cv) {
+        for (std::size_t b = 0; b < 64UL; ++b) {
             for (std::size_t channel = 0; channel < etl::dim<0>(c); ++channel) {
-                for (std::size_t k = 0; k < etl::dim<0>(b); ++k) {
-                    h_cv(batch)(k) = etl::conv_2d_full(h(batch)(k), w(channel)(k));
+                for (std::size_t k = 0; k < etl::dim<1>(w); ++k) {
+                    h_cv(b)(k) = etl::conv_2d_full(h(b)(k), w(channel)(k));
                 }
 
-                v(batch)(channel) = sigmoid(c(channel) + sum_l(h_cv(batch)));
+                v(b)(channel) = sigmoid(c(channel) + sum_l(h_cv(b)));
             }
         }
     }
