@@ -63,6 +63,7 @@ using dmat = etl::dyn_matrix<double>;
 using dmat2 = etl::dyn_matrix<double, 2>;
 using dmat3 = etl::dyn_matrix<double, 3>;
 using dmat4 = etl::dyn_matrix<double, 4>;
+using dmat5 = etl::dyn_matrix<double, 5>;
 
 using svec = etl::dyn_vector<float>;
 using smat = etl::dyn_matrix<float>;
