@@ -28,7 +28,7 @@ CPM_DIRECT_BENCH_TWO_PASS_NS_P(
     [](std::size_t nc, std::size_t k, std::size_t nv, std::size_t nh){
         auto nw = nv - nh + 1;
         return std::make_tuple(dmat4(nc,k,nw,nw), dvec(k), dmat3(nc,nv,nv), dmat3(k, nh, nh), dmat4(nc, k, nh, nh));},
-    [](dmat4& w, dvec& b, dmat3& v, dmat3& h, dmat4 v_cv){
+    [](dmat4& w, dvec& b, dmat3& v, dmat3& h, dmat4& v_cv){
         conv_3d_valid_multi_flipped(v, w, v_cv);
 
         auto b_rep = etl::force_temporary(etl::rep(b, etl::dim<1>(h), etl::dim<2>(h)));
