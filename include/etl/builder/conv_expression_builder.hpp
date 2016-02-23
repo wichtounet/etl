@@ -426,6 +426,20 @@ auto conv_deep_full(A&& a, B&& b, C&& c) -> detail::dim_forced_temporary_binary_
 //Special convolutions
 
 template <typename F1, typename F2>
+void complex_pad_4d(const F1& in, F2& out) {
+    for (std::size_t outer1 = 0; outer1 < etl::dim<0>(in); ++outer1) {
+        for (std::size_t outer2 = 0; outer2 < etl::dim<1>(in); ++outer2) {
+            auto* direct = out(outer1)(outer2).memory_start();
+            for (std::size_t i = 0; i < etl::dim<2>(in); ++i) {
+                for (std::size_t j = 0; j < etl::dim<3>(in); ++j) {
+                    direct[i * out.template dim<3>() + j] = in(outer1, outer2, i, j);
+                }
+            }
+        }
+    }
+}
+
+template <typename F1, typename F2>
 void complex_pad_3d(const F1& in, F2& out) {
     for (std::size_t outer = 0; outer < etl::dim<0>(in); ++outer) {
         auto* direct = out(outer).memory_start();
@@ -568,10 +582,63 @@ void conv_3d_valid_multi(A&& input, B&& kernels, C&& features) {
     }
 }
 
-template <typename A, typename B, typename C>
-void conv_3d_valid_multi_flipped(A&& input, B&& kernels, C&& features) {
-    for (size_t c = 0; c < etl::dim<0>(input); ++c) {
-        conv_2d_valid_multi_flipped(input(c), kernels(c), features(c));
+template <typename A, typename B, typename T_C>
+void conv_3d_valid_multi_flipped(A&& input, B&& kernels, T_C&& features) {
+    if (is_mkl_enabled && conv_valid_fft){
+        auto kernels_f = etl::force_temporary(kernels);
+
+        for (std::size_t i = 0; i < etl::dim<0>(kernels_f); ++i) {
+            for (std::size_t j = 0; j < etl::dim<1>(kernels_f); ++j) {
+                kernels_f(i)(j).fflip_inplace();
+            }
+        }
+
+        const std::size_t C = etl::dim<0>(kernels);
+        const std::size_t K = etl::dim<1>(kernels);
+        const std::size_t k1 = etl::dim<2>(kernels);
+        const std::size_t k2 = etl::dim<3>(kernels);
+
+        const std::size_t i1 = etl::dim<1>(input);
+        const std::size_t i2 = etl::dim<2>(input);
+
+        const std::size_t v1 = i1 - k1 + 1;
+        const std::size_t v2 = i2 - k2 + 1;
+        const std::size_t t1 = i1 + k1 - 1;
+        const std::size_t t2 = i2 + k2 - 1;
+        const std::size_t b1 = (t1 - v1) / 2;
+        const std::size_t b2 = (t2 - v2) / 2;
+
+        etl::dyn_matrix<std::complex<value_t<A>>, 3> input_padded(C, t1, t2);
+        etl::dyn_matrix<std::complex<value_t<A>>, 4> kernels_padded(C, K, t1, t2);
+        etl::dyn_matrix<std::complex<value_t<A>>, 4> tmp_result(C, K, t1, t2);
+
+        complex_pad_3d(input, input_padded);
+        complex_pad_4d(kernels, kernels_padded);
+
+        input_padded.fft2_many_inplace();
+        kernels_padded.fft2_many_inplace();
+
+        for (std::size_t c = 0; c < C; ++c) {
+            for (std::size_t k = 0; k < K; ++k) {
+                tmp_result(c)(k) = input_padded(c) >> kernels_padded(c)(k);
+            }
+        }
+
+        tmp_result.ifft2_many_inplace();
+
+        for (std::size_t c = 0; c < C; ++c) {
+            for (std::size_t k = 0; k < K; ++k) {
+                for(std::size_t i = 0; i < v1; ++i){
+                    for(std::size_t j = 0; j < v2; ++j){
+                        features(c, k, i, j) = tmp_result(c, k, i + b1, j + b2).real();
+                    }
+                }
+            }
+        }
+    } else {
+        for (size_t c = 0; c < etl::dim<0>(input); ++c) {
+            conv_2d_valid_multi_flipped(input(c), kernels(c), features(c));
+        }
     }
 }
 
