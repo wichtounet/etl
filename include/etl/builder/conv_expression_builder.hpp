@@ -494,44 +494,33 @@ void conv_2d_valid_multi(A&& input, B&& kernels, C&& features) {
             }
         }
     } else if (is_cblas_enabled || is_cublas_enabled) {
+        const std::size_t K  = etl::dim<0>(kernels);
         const std::size_t v1 = etl::dim<0>(input);
         const std::size_t v2 = etl::dim<1>(input);
         const std::size_t k1 = etl::dim<1>(kernels);
         const std::size_t k2 = etl::dim<2>(kernels);
+        const std::size_t f1 = etl::dim<1>(features);
+        const std::size_t f2 = etl::dim<2>(features);
+
+        etl::dyn_matrix<value_t<B>, 3> prepared_k(K, k1, k2);
+
+        for (std::size_t i = 0; i < K; ++i) {
+            prepared_k(i) = fflip(kernels(i));
+        }
 
         etl::dyn_matrix<value_t<A>, 2> input_col(k1 * k2, (v1 - k1 + 1) * (v2 - k2 + 1));
+        im2col_direct_tr(input_col, input, k1, k2);
 
-        conv_2d_valid_multi(std::forward<A>(input), std::forward<B>(kernels), std::forward<C>(features), input_col);
+        *mul(
+            etl::reshape(prepared_k, K, k1 * k2),
+            input_col,
+            etl::reshape(features, K, f1 * f2));
     } else {
         //Standard version
         for (size_t k = 0; k < etl::dim<0>(kernels); ++k) {
             features(k) = conv_2d_valid(input, kernels(k));
         }
     }
-}
-
-template <typename A, typename B, typename C, typename D>
-void conv_2d_valid_multi(A&& input, B&& kernels, C&& features, D&& input_col) {
-    //TODO Validate inputs
-
-    const std::size_t K  = etl::dim<0>(kernels);
-    const std::size_t k1 = etl::dim<1>(kernels);
-    const std::size_t k2 = etl::dim<2>(kernels);
-    const std::size_t f1 = etl::dim<1>(features);
-    const std::size_t f2 = etl::dim<2>(features);
-
-    etl::dyn_matrix<value_t<B>, 3> prepared_k(K, k1, k2);
-
-    for (std::size_t i = 0; i < K; ++i) {
-        prepared_k(i) = fflip(kernels(i));
-    }
-
-    im2col_direct_tr(input_col, input, k1, k2);
-
-    *mul(
-        etl::reshape(prepared_k, K, k1 * k2),
-        input_col,
-        etl::reshape(features, K, f1 * f2));
 }
 
 template <typename A, typename B, typename C>
@@ -542,14 +531,21 @@ void conv_2d_valid_multi_flipped(A&& input, B&& kernels, C&& features) {
         //TODO Here we should flip
         conv_2d_valid_multi(input, kernels, features);
     } else if (is_cblas_enabled || is_cublas_enabled) {
+        const std::size_t K  = etl::dim<0>(kernels);
         const std::size_t v1 = etl::dim<0>(input);
         const std::size_t v2 = etl::dim<1>(input);
+        const std::size_t f1 = etl::dim<1>(features);
+        const std::size_t f2 = etl::dim<2>(features);
         const std::size_t k1 = etl::dim<1>(kernels);
         const std::size_t k2 = etl::dim<2>(kernels);
 
         etl::dyn_matrix<value_t<A>, 2> input_col(k1 * k2, (v1 - k1 + 1) * (v2 - k2 + 1));
+        im2col_direct_tr(input_col, input, k1, k2);
 
-        conv_2d_valid_multi_flipped(std::forward<A>(input), std::forward<B>(kernels), std::forward<C>(features), input_col);
+        *mul(
+            etl::reshape(kernels, K, k1 * k2),
+            input_col,
+            etl::reshape(features, K, f1 * f2));
     } else {
         //TODO Here we should maybe display a warning because it is suboptimal to flip twice
 
@@ -558,24 +554,6 @@ void conv_2d_valid_multi_flipped(A&& input, B&& kernels, C&& features) {
             features(k) = conv_2d_valid(input, fflip(kernels(k)));
         }
     }
-}
-
-template <typename A, typename B, typename C, typename D>
-void conv_2d_valid_multi_flipped(A&& input, B&& kernels, C&& features, D&& input_col) {
-    //TODO Validate inputs
-
-    const std::size_t K  = etl::dim<0>(kernels);
-    const std::size_t k1 = etl::dim<1>(kernels);
-    const std::size_t k2 = etl::dim<2>(kernels);
-    const std::size_t f1 = etl::dim<1>(features);
-    const std::size_t f2 = etl::dim<2>(features);
-
-    im2col_direct_tr(input_col, input, k1, k2);
-
-    *mul(
-        etl::reshape(kernels, K, k1 * k2),
-        input_col,
-        etl::reshape(features, K, f1 * f2));
 }
 
 template <typename A>
