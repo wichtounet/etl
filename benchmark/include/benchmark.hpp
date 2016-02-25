@@ -82,7 +82,7 @@ using conv_2d_large_policy = NARY_POLICY(VALUES_POLICY(100, 105, 110, 115, 120, 
 
 using fft_1d_policy = VALUES_POLICY(10, 100, 1000, 10000, 100000, 500000);
 using fft_1d_policy_2 = VALUES_POLICY(16, 64, 256, 1024, 16384, 131072, 1048576, 2097152);
-using fft_1d_many_policy = VALUES_POLICY(10, 50, 100, 500, 1000, 5000, 10000);
+using fft_1d_many_policy = VALUES_POLICY(10, 50, 100, 500, 1000, 5000, 10000, 50000);
 
 using fft_2d_policy = NARY_POLICY(
     VALUES_POLICY(8, 16, 32, 64, 128, 256, 512, 1024, 2048),
