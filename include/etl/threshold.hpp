@@ -25,4 +25,7 @@ constexpr const std::size_t sum_parallel_threshold = 1024 * 32; ///< The minimum
 constexpr const std::size_t conv1_parallel_threshold_conv   = 100; ///< The mimum output size before considering parallel convolution
 constexpr const std::size_t conv1_parallel_threshold_kernel = 16;  ///< The mimum kernel size before considering parallel convolution
 
+constexpr const std::size_t fft1_many_threshold_transforms = 16;  ///< The mimum number of transforms to parallelize them
+constexpr const std::size_t fft1_many_threshold_n          = 768; ///< The mimum size of the transforms to parallelize them
+
 } //end of namespace etl

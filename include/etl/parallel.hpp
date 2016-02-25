@@ -13,6 +13,10 @@ inline bool select_parallel(std::size_t n, std::size_t threshold = parallel_thre
     return threads > 1 && (local_context().parallel || (parallel && n >= threshold && !local_context().serial));
 }
 
+inline bool select_parallel_2d(std::size_t n1, std::size_t t1, std::size_t n2, std::size_t t2){
+    return threads > 1 && (local_context().parallel || (parallel && n1 >= t1 && n2 >= t2 && !local_context().serial));
+}
+
 /*!
  * \brief Dispatch the elements of a range to a functor in a parallel manner
  * \param p Boolean tag to indicate if parallel dispatching must be done

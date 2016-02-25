@@ -310,12 +310,35 @@ template <typename A, typename C>
 struct fft1_many_impl {
     template <typename AA, typename CC>
     static void apply(AA&& a, CC&& c) {
-        fft_impl impl = select_fft1_many_impl(etl::dim<0>(c), etl::dim<1>(c));
+        const std::size_t transforms = etl::dim<0>(c);
+        const std::size_t n          = etl::dim<1>(c);
+
+        bool parallel_dispatch = select_parallel_2d(transforms, fft1_many_threshold_transforms, n, fft1_many_threshold_n);
+
+        fft_impl impl = select_fft1_many_impl(transforms, etl::dim<1>(c));
 
         if (impl == fft_impl::STD) {
-            etl::impl::standard::fft1_many(std::forward<AA>(a), std::forward<CC>(c));
+            if(parallel_dispatch){
+                dispatch_1d(parallel_dispatch, [&](std::size_t first, std::size_t last){
+                    //TODO Ideally here, we should use fft1_many on a slice
+                    for(std::size_t k = first; k < last; ++k){
+                        etl::impl::standard::fft1(a(k), c(k));
+                    }
+                }, 0, transforms);
+            } else {
+                etl::impl::standard::fft1_many(std::forward<AA>(a), std::forward<CC>(c));
+            }
         } else if (impl == fft_impl::MKL) {
-            etl::impl::blas::fft1_many(std::forward<AA>(a), std::forward<CC>(c));
+            if(parallel_dispatch){
+                dispatch_1d(parallel_dispatch, [&](std::size_t first, std::size_t last){
+                    //TODO Ideally here, we should use fft1_many on a slice
+                    for(std::size_t k = first; k < last; ++k){
+                        etl::impl::blas::fft1(a(k), c(k));
+                    }
+                }, 0, transforms);
+            } else {
+                etl::impl::blas::fft1_many(std::forward<AA>(a), std::forward<CC>(c));
+            }
         } else if (impl == fft_impl::CUFFT) {
             etl::impl::cufft::fft1_many(std::forward<AA>(a), std::forward<CC>(c));
         }
