@@ -60,7 +60,7 @@ cpp14_constexpr sum_imple select_sum_impl() {
 
 template <typename E>
 inline bool select_parallel(const E& e) {
-    if(parallel && !local_context().serial){
+    if((parallel && !local_context().serial) || local_context().parallel){
         return size(e) >= sum_parallel_threshold;
     } else {
         return false;
