@@ -112,6 +112,13 @@ template <typename T>
 using is_serial_expr = cpp::is_specialization_of<etl::serial_expr, std::decay_t<T>>;
 
 /*!
+ * \brief Traits indicating if the given ETL type is a parallel expression.
+ * \tparam T The type to test
+ */
+template <typename T>
+using is_parallel_expr = cpp::is_specialization_of<etl::parallel_expr, std::decay_t<T>>;
+
+/*!
  * \brief Traits indicating if the given ETL type is a timed expression.
  * \tparam T The type to test
  */
@@ -119,11 +126,11 @@ template <typename T>
 using is_timed_expr = cpp::is_specialization_of<etl::timed_expr, std::decay_t<T>>;
 
 /*!
- * \brief Traits indicating if the given ETL type is a wrapper expression (optimiized, serial, ...).
+ * \brief Traits indicating if the given ETL type is a wrapper expression (optimized, serial, ...).
  * \tparam T The type to test
  */
 template <typename T>
-using is_wrapper_expr = cpp::or_c<is_optimized_expr<T>, is_serial_expr<T>, is_timed_expr<T>>;
+using is_wrapper_expr = cpp::or_c<is_optimized_expr<T>, is_serial_expr<T>, is_parallel_expr<T>, is_timed_expr<T>>;
 
 /*!
  * \brief Traits indicating if the given ETL type is a temporary unary expression.

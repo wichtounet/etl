@@ -11,6 +11,7 @@ namespace etl {
 
 struct context {
     bool serial = false;
+    bool parallel = false;
 };
 
 inline context& local_context(){
@@ -37,8 +38,26 @@ struct serial_context {
     }
 };
 
+struct parallel_context {
+    bool old_parallel;
+
+    parallel_context(){
+        old_parallel = etl::local_context().parallel;
+        etl::local_context().parallel = true;
+    }
+
+    ~parallel_context(){
+        etl::local_context().parallel = old_parallel;
+    }
+
+    operator bool(){
+        return true;
+    }
+};
+
 } //end of namespace detail
 
 #define SERIAL_SECTION if(auto etl_serial_context__ = etl::detail::serial_context())
+#define PARALLEL_SECTION if(auto etl_parallel_context__ = etl::detail::parallel_context())
 
 } //end of namespace etl

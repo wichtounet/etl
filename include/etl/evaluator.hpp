@@ -871,6 +871,22 @@ void assign_evaluate(Expr&& expr, Result&& result) {
  * \param expr The right hand side expression
  * \param result The left hand side
  */
+template <typename Expr, typename Result, cpp_enable_if(is_parallel_expr<Expr>::value)>
+void assign_evaluate(Expr&& expr, Result&& result) {
+    auto old_parallel = local_context().parallel;
+
+    local_context().parallel = true;
+
+    assign_evaluate(expr.value(), std::forward<Result>(result));
+
+    local_context().parallel = old_parallel;
+}
+
+/*!
+ * \brief Evaluation of the expr into result
+ * \param expr The right hand side expression
+ * \param result The left hand side
+ */
 template <typename Expr, typename Result, cpp_enable_if(is_timed_expr<Expr>::value)>
 void assign_evaluate(Expr&& expr, Result&& result) {
     using resolution = typename std::decay_t<Expr>::clock_resolution;
