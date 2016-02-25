@@ -124,38 +124,11 @@ namespace standard_evaluator {
         direct_copy(expr.memory_start(), expr.memory_end(), result.memory_start());
     }
 
-    //Direct assign version
-
-    template <typename E, typename R>
-    void direct_assign_evaluate(E&& expr, R&& result) {
-        auto m = result.memory_start();
-
-        const std::size_t size = etl::size(result);
-
-        detail::Assign<value_t<R>,E>(m, expr, 0, size)();
-    }
-
-    /*!
-     * \copydoc assign_evaluate_impl
-     */
-    template <typename E, typename R, cpp_enable_if(detail::direct_assign<E, R>::value)>
-    void assign_evaluate_impl(E&& expr, R&& result) {
-        direct_assign_evaluate(std::forward<E>(expr), std::forward<R>(result));
-    }
-
     //Parallel assign version
 
-    /*!
-     * \copydoc assign_evaluate_impl
-     */
-    template <typename E, typename R, cpp_enable_if(detail::parallel_assign<E, R>::value)>
-    void assign_evaluate_impl(E&& expr, R&& result) {
+    template <typename E, typename R>
+    void par_assign_evaluate_impl(E&& expr, R&& result) {
         const auto n = etl::size(result);
-
-        if(n < parallel_threshold || threads < 2 || local_context().serial){
-            direct_assign_evaluate(std::forward<E>(expr), std::forward<R>(result));
-            return;
-        }
 
         auto m = result.memory_start();
 
@@ -174,36 +147,29 @@ namespace standard_evaluator {
         pool.wait();
     }
 
-    //Vectorized assign version
-
-    template <typename E, typename R>
-    void vectorized_assign_evaluate(E&& expr, R&& result) {
-        detail::VectorizedAssign<detail::select_vector_mode<E, R>(), R, E>(result, expr, 0, etl::size(result))();
+    static bool select_parallel(std::size_t n){
+        return threads > 1 && (local_context().parallel || (parallel && n >= parallel_threshold && !local_context().serial));
     }
 
     /*!
      * \copydoc assign_evaluate_impl
      */
-    template <typename E, typename R, cpp_enable_if(detail::vectorized_assign<E, R>::value)>
+    template <typename E, typename R, cpp_enable_if(detail::direct_assign<E, R>::value)>
     void assign_evaluate_impl(E&& expr, R&& result) {
-        vectorized_assign_evaluate(std::forward<E>(expr), std::forward<R>(result));
+        if(select_parallel(etl::size(result))){
+            par_assign_evaluate_impl(expr, result);
+        } else {
+            detail::Assign<value_t<R>,E>(result.memory_start(), expr, 0, etl::size(result))();
+        }
     }
 
     //Parallel vectorized assign
 
-    /*!
-     * \copydoc assign_evaluate_impl
-     */
-    template <typename E, typename R, cpp_enable_if(detail::parallel_vectorized_assign<E, R>::value)>
-    void assign_evaluate_impl(E&& expr, R&& result) {
+    template <typename E, typename R>
+    void par_vec_assign_evaluate_impl(E&& expr, R&& result) {
         static cpp::default_thread_pool<> pool(threads - 1);
 
         const std::size_t size = etl::size(result);
-
-        if(size < parallel_threshold || threads < 2 || local_context().serial){
-            vectorized_assign_evaluate(std::forward<E>(expr), std::forward<R>(result));
-            return;
-        }
 
         auto batch = size / threads;
 
@@ -217,6 +183,18 @@ namespace standard_evaluator {
 
         //Wait for the other threads
         pool.wait();
+    }
+
+    /*!
+     * \copydoc assign_evaluate_impl
+     */
+    template <typename E, typename R, cpp_enable_if(detail::vectorized_assign<E, R>::value)>
+    void assign_evaluate_impl(E&& expr, R&& result) {
+        if(select_parallel(etl::size(result))){
+            par_vec_assign_evaluate_impl(expr, result);
+        } else {
+            detail::VectorizedAssign<detail::select_vector_mode<E, R>(), R, E>(result, expr, 0, etl::size(result))();
+        }
     }
 
     //Standard Add Assign
@@ -236,44 +214,11 @@ namespace standard_evaluator {
         }
     }
 
-    //Direct Add Assign
-
-    template <typename E, typename R>
-    void direct_add_evaluate(E&& expr, R&& result) {
-        pre_assign(expr);
-        post_assign_compound(expr);
-
-        auto m = result.memory_start();
-
-        const std::size_t size = etl::size(result);
-
-        detail::AssignAdd<value_t<R>,E>(m, expr, 0, size)();
-    }
-
-    /*!
-     * \copydoc add_evaluate
-     */
-    template <typename E, typename R, cpp_enable_if(detail::direct_compound<E, R>::value)>
-    void add_evaluate(E&& expr, R&& result) {
-        direct_add_evaluate(std::forward<E>(expr), std::forward<R>(result));
-    }
-
     //Parallel direct add assign
 
-    /*!
-     * \copydoc add_evaluate
-     */
-    template <typename E, typename R, cpp_enable_if(detail::parallel_compound<E, R>::value)>
-    void add_evaluate(E&& expr, R&& result) {
+    template <typename E, typename R>
+    void par_add_evaluate(E&& expr, R&& result) {
         const auto n = etl::size(result);
-
-        if(n < parallel_threshold || threads < 2 || local_context().serial){
-            direct_add_evaluate(std::forward<E>(expr), std::forward<R>(result));
-            return;
-        }
-
-        pre_assign(expr);
-        post_assign_compound(expr);
 
         auto m = result.memory_start();
 
@@ -292,43 +237,28 @@ namespace standard_evaluator {
         pool.wait();
     }
 
-    //Vectorized Add Assign
-
-    template <typename E, typename R>
-    void vectorized_add_evaluate(E&& expr, R&& result) {
-        pre_assign(expr);
-        post_assign_compound(expr);
-
-        detail::VectorizedAssignAdd<detail::select_vector_mode<E, R>(), R, E>(result, expr, 0, etl::size(result))();
-    }
-
     /*!
      * \copydoc add_evaluate
      */
-    template <typename E, typename R, cpp_enable_if(detail::vectorized_compound<E, R>::value)>
+    template <typename E, typename R, cpp_enable_if(detail::direct_compound<E, R>::value)>
     void add_evaluate(E&& expr, R&& result) {
-        vectorized_add_evaluate(std::forward<E>(expr), std::forward<R>(result));
+        pre_assign(expr);
+        post_assign_compound(expr);
+
+        if(select_parallel(etl::size(result))){
+            par_add_evaluate(expr, result);
+        } else {
+            detail::AssignAdd<value_t<R>,E>(result.memory_start(), expr, 0, etl::size(result))();
+        }
     }
 
     //Parallel vectorized add assign
 
-    /*!
-     * \copydoc add_evaluate
-     */
-    template <typename E, typename R, cpp_enable_if(detail::parallel_vectorized_compound<E, R>::value)>
-    void add_evaluate(E&& expr, R&& result) {
+    template <typename E, typename R>
+    void par_vec_add_evaluate(E&& expr, R&& result) {
         static cpp::default_thread_pool<> pool(threads - 1);
 
         const std::size_t size = etl::size(result);
-
-        if(size < parallel_threshold || threads < 2 || local_context().serial){
-            vectorized_add_evaluate(std::forward<E>(expr), std::forward<R>(result));
-            return;
-        }
-
-        //Evaluate the sub parts of the expression, if any
-        pre_assign(expr);
-        post_assign_compound(expr);
 
         auto batch = size / threads;
 
@@ -342,6 +272,21 @@ namespace standard_evaluator {
 
         //Wait for the other threads
         pool.wait();
+    }
+
+    /*!
+     * \copydoc add_evaluate
+     */
+    template <typename E, typename R, cpp_enable_if(detail::vectorized_compound<E, R>::value)>
+    void add_evaluate(E&& expr, R&& result) {
+        pre_assign(expr);
+        post_assign_compound(expr);
+
+        if(select_parallel(etl::size(result))){
+            par_vec_add_evaluate(expr, result);
+        } else {
+            detail::VectorizedAssignAdd<detail::select_vector_mode<E, R>(), R, E>(result, expr, 0, etl::size(result))();
+        }
     }
 
     //Standard sub assign
@@ -361,44 +306,11 @@ namespace standard_evaluator {
         }
     }
 
-    //Direct Sub Assign
-
-    template <typename E, typename R>
-    void direct_sub_evaluate(E&& expr, R&& result) {
-        pre_assign(expr);
-        post_assign_compound(expr);
-
-        auto m = result.memory_start();
-
-        const std::size_t size = etl::size(result);
-
-        detail::AssignSub<value_t<R>,E>(m, expr, 0, size)();
-    }
-
-    /*!
-     * \copydoc sub_evaluate
-     */
-    template <typename E, typename R, cpp_enable_if(detail::direct_compound<E, R>::value)>
-    void sub_evaluate(E&& expr, R&& result) {
-        direct_sub_evaluate(std::forward<E>(expr), std::forward<R>(result));
-    }
-
     //Parallel direct sub assign
 
-    /*!
-     * \copydoc sub_evaluate
-     */
-    template <typename E, typename R, cpp_enable_if(detail::parallel_compound<E, R>::value)>
-    void sub_evaluate(E&& expr, R&& result) {
+    template <typename E, typename R>
+    void par_sub_evaluate(E&& expr, R&& result) {
         const auto n = etl::size(result);
-
-        if(n < parallel_threshold || threads < 2 || local_context().serial){
-            direct_sub_evaluate(std::forward<E>(expr), std::forward<R>(result));
-            return;
-        }
-
-        pre_assign(expr);
-        post_assign_compound(expr);
 
         auto m = result.memory_start();
 
@@ -417,43 +329,28 @@ namespace standard_evaluator {
         pool.wait();
     }
 
-    //Vectorized Sub Assign
-
-    template <typename E, typename R>
-    void vectorized_sub_evaluate(E&& expr, R&& result) {
-        pre_assign(expr);
-        post_assign_compound(expr);
-
-        detail::VectorizedAssignSub<detail::select_vector_mode<E, R>(), R, E>(result, expr, 0, etl::size(result))();
-    }
-
     /*!
      * \copydoc sub_evaluate
      */
-    template <typename E, typename R, cpp_enable_if(detail::vectorized_compound<E, R>::value)>
+    template <typename E, typename R, cpp_enable_if(detail::direct_compound<E, R>::value)>
     void sub_evaluate(E&& expr, R&& result) {
-        vectorized_sub_evaluate(std::forward<E>(expr), std::forward<R>(result));
+        pre_assign(expr);
+        post_assign_compound(expr);
+
+        if(select_parallel(etl::size(result))){
+            par_sub_evaluate(expr, result);
+        } else {
+            detail::AssignSub<value_t<R>,E>(result.memory_start(), expr, 0, etl::size(result))();
+        }
     }
 
     //Parallel vectorized sub assign
 
-    /*!
-     * \copydoc sub_evaluate
-     */
-    template <typename E, typename R, cpp_enable_if(detail::parallel_vectorized_compound<E, R>::value)>
-    void sub_evaluate(E&& expr, R&& result) {
+    template <typename E, typename R>
+    void par_vec_sub_evaluate(E&& expr, R&& result) {
         static cpp::default_thread_pool<> pool(threads - 1);
 
         const std::size_t size = etl::size(result);
-
-        if(size < parallel_threshold || threads < 2 || local_context().serial){
-            vectorized_sub_evaluate(std::forward<E>(expr), std::forward<R>(result));
-            return;
-        }
-
-        //Evaluate the sub parts of the expression, if any
-        pre_assign(expr);
-        post_assign_compound(expr);
 
         auto batch = size / threads;
 
@@ -467,6 +364,21 @@ namespace standard_evaluator {
 
         //Wait for the other threads
         pool.wait();
+    }
+
+    /*!
+     * \copydoc sub_evaluate
+     */
+    template <typename E, typename R, cpp_enable_if(detail::vectorized_compound<E, R>::value)>
+    void sub_evaluate(E&& expr, R&& result) {
+        pre_assign(expr);
+        post_assign_compound(expr);
+
+        if(select_parallel(etl::size(result))){
+            par_vec_sub_evaluate(expr, result);
+        } else {
+            detail::VectorizedAssignSub<detail::select_vector_mode<E, R>(), R, E>(result, expr, 0, etl::size(result))();
+        }
     }
 
     //Standard Mul Assign
@@ -486,44 +398,11 @@ namespace standard_evaluator {
         }
     }
 
-    //Direct Mul Assign
-
-    template <typename E, typename R>
-    void direct_mul_evaluate(E&& expr, R&& result) {
-        pre_assign(expr);
-        post_assign_compound(expr);
-
-        auto m = result.memory_start();
-
-        const std::size_t size = etl::size(result);
-
-        detail::AssignMul<value_t<R>,E>(m, expr, 0, size)();
-    }
-
-    /*!
-     * \copydoc mul_evaluate
-     */
-    template <typename E, typename R, cpp_enable_if(detail::direct_compound<E, R>::value)>
-    void mul_evaluate(E&& expr, R&& result) {
-        direct_mul_evaluate(std::forward<E>(expr), std::forward<R>(result));
-    }
-
     //Parallel direct mul assign
 
-    /*!
-     * \copydoc mul_evaluate
-     */
-    template <typename E, typename R, cpp_enable_if(detail::parallel_compound<E, R>::value)>
-    void mul_evaluate(E&& expr, R&& result) {
+    template <typename E, typename R>
+    void par_mul_evaluate(E&& expr, R&& result) {
         const auto n = etl::size(result);
-
-        if(n < parallel_threshold || threads < 2 || local_context().serial){
-            direct_mul_evaluate(std::forward<E>(expr), std::forward<R>(result));
-            return;
-        }
-
-        pre_assign(expr);
-        post_assign_compound(expr);
 
         auto m = result.memory_start();
 
@@ -542,43 +421,28 @@ namespace standard_evaluator {
         pool.wait();
     }
 
-    //Vectorized Mul Assign
-
-    template <typename E, typename R>
-    void vectorized_mul_evaluate(E&& expr, R&& result) {
-        pre_assign(expr);
-        post_assign_compound(expr);
-
-        detail::VectorizedAssignMul<detail::select_vector_mode<E, R>(), R, E>(result, expr, 0, etl::size(result))();
-    }
-
     /*!
      * \copydoc mul_evaluate
      */
-    template <typename E, typename R, cpp_enable_if(detail::vectorized_compound<E, R>::value)>
+    template <typename E, typename R, cpp_enable_if(detail::direct_compound<E, R>::value)>
     void mul_evaluate(E&& expr, R&& result) {
-        vectorized_mul_evaluate(std::forward<E>(expr), std::forward<R>(result));
+        pre_assign(expr);
+        post_assign_compound(expr);
+
+        if(select_parallel(etl::size(result))){
+            par_mul_evaluate(expr, result);
+        } else {
+            detail::AssignMul<value_t<R>,E>(result.memory_start(), expr, 0, etl::size(result))();
+        }
     }
 
     //Parallel vectorized mul assign
 
-    /*!
-     * \copydoc mul_evaluate
-     */
-    template <typename E, typename R, cpp_enable_if(detail::parallel_vectorized_compound<E, R>::value)>
-    void mul_evaluate(E&& expr, R&& result) {
+    template <typename E, typename R>
+    void par_vec_mul_evaluate(E&& expr, R&& result) {
         static cpp::default_thread_pool<> pool(threads - 1);
 
         const std::size_t size = etl::size(result);
-
-        if(size < parallel_threshold || threads < 2 || local_context().serial){
-            vectorized_mul_evaluate(std::forward<E>(expr), std::forward<R>(result));
-            return;
-        }
-
-        //Evaluate the sub parts of the expression, if any
-        pre_assign(expr);
-        post_assign_compound(expr);
 
         auto batch = size / threads;
 
@@ -592,6 +456,21 @@ namespace standard_evaluator {
 
         //Wait for the other threads
         pool.wait();
+    }
+
+    /*!
+     * \copydoc mul_evaluate
+     */
+    template <typename E, typename R, cpp_enable_if(detail::vectorized_compound<E, R>::value)>
+    void mul_evaluate(E&& expr, R&& result) {
+        pre_assign(expr);
+        post_assign_compound(expr);
+
+        if(select_parallel(etl::size(result))){
+            par_vec_mul_evaluate(expr, result);
+        } else {
+            detail::VectorizedAssignMul<detail::select_vector_mode<E, R>(), R, E>(result, expr, 0, etl::size(result))();
+        }
     }
 
     //Standard Div Assign
@@ -611,44 +490,11 @@ namespace standard_evaluator {
         }
     }
 
-    //Direct Div Assign
-
-    template <typename E, typename R>
-    void direct_div_evaluate(E&& expr, R&& result) {
-        pre_assign(expr);
-        post_assign_compound(expr);
-
-        auto m = result.memory_start();
-
-        const std::size_t size = etl::size(result);
-
-        detail::AssignDiv<value_t<R>,E>(m, expr, 0, size)();
-    }
-
-    /*!
-     * \copydoc div_evaluate
-     */
-    template <typename E, typename R, cpp_enable_if(detail::direct_compound<E, R>::value)>
-    void div_evaluate(E&& expr, R&& result) {
-        direct_div_evaluate(std::forward<E>(expr), std::forward<R>(result));
-    }
-
     //Parallel direct Div assign
 
-    /*!
-     * \copydoc div_evaluate
-     */
-    template <typename E, typename R, cpp_enable_if(detail::parallel_compound<E, R>::value)>
-    void div_evaluate(E&& expr, R&& result) {
+    template <typename E, typename R>
+    void par_div_evaluate(E&& expr, R&& result) {
         const auto n = etl::size(result);
-
-        if(n < parallel_threshold || threads < 2 || local_context().serial){
-            direct_div_evaluate(std::forward<E>(expr), std::forward<R>(result));
-            return;
-        }
-
-        pre_assign(expr);
-        post_assign_compound(expr);
 
         auto m = result.memory_start();
 
@@ -667,43 +513,28 @@ namespace standard_evaluator {
         pool.wait();
     }
 
-    //Vectorized Div Assign
-
-    template <typename E, typename R>
-    void vectorized_div_evaluate(E&& expr, R&& result) {
-        pre_assign(expr);
-        post_assign_compound(expr);
-
-        detail::VectorizedAssignDiv<detail::select_vector_mode<E, R>(), R, E>(result, expr, 0, etl::size(result))();
-    }
-
     /*!
      * \copydoc div_evaluate
      */
-    template <typename E, typename R, cpp_enable_if(detail::vectorized_compound<E, R>::value)>
+    template <typename E, typename R, cpp_enable_if(detail::direct_compound<E, R>::value)>
     void div_evaluate(E&& expr, R&& result) {
-        vectorized_div_evaluate(std::forward<E>(expr), std::forward<R>(result));
+        pre_assign(expr);
+        post_assign_compound(expr);
+
+        if(select_parallel(etl::size(result))){
+            par_div_evaluate(expr, result);
+        } else {
+            detail::AssignDiv<value_t<R>,E>(result.memory_start(), expr, 0, etl::size(result))();
+        }
     }
 
     //Parallel vectorized div assign
 
-    /*!
-     * \copydoc div_evaluate
-     */
-    template <typename E, typename R, cpp_enable_if(detail::parallel_vectorized_compound<E, R>::value)>
-    void div_evaluate(E&& expr, R&& result) {
+    template <typename E, typename R>
+    void par_vec_div_evaluate(E&& expr, R&& result) {
         static cpp::default_thread_pool<> pool(threads - 1);
 
         const std::size_t size = etl::size(result);
-
-        if(size < parallel_threshold || threads < 2 || local_context().serial){
-            vectorized_div_evaluate(std::forward<E>(expr), std::forward<R>(result));
-            return;
-        }
-
-        //Evaluate the sub parts of the expression, if any
-        pre_assign(expr);
-        post_assign_compound(expr);
 
         auto batch = size / threads;
 
@@ -717,6 +548,21 @@ namespace standard_evaluator {
 
         //Wait for the other threads
         pool.wait();
+    }
+
+    /*!
+     * \copydoc div_evaluate
+     */
+    template <typename E, typename R, cpp_enable_if(detail::vectorized_compound<E, R>::value)>
+    void div_evaluate(E&& expr, R&& result) {
+        pre_assign(expr);
+        post_assign_compound(expr);
+
+        if(select_parallel(etl::size(result))){
+            par_vec_div_evaluate(expr, result);
+        } else {
+            detail::VectorizedAssignDiv<detail::select_vector_mode<E, R>(), R, E>(result, expr, 0, etl::size(result))();
+        }
     }
 
     //Standard Mod Evaluate (no optimized versions for mod)
