@@ -45,7 +45,7 @@ CPM_DIRECT_BENCH_TWO_PASS_NS_P(
     [](dmat4& w, dvec& c, dmat3& v, dmat3& h, dmat3& h_cv){
         for(std::size_t channel = 0; channel < etl::dim<0>(c); ++channel){
             for(std::size_t k = 0; k < etl::dim<1>(w); ++k){
-                h_cv(k) = etl::conv_2d_full(h(k), w(channel)(k));
+                h_cv(k) = etl::fast_conv_2d_full(h(k), w(channel)(k));
             }
 
             v(channel) = sigmoid(c(channel) + sum_l(h_cv));
@@ -81,7 +81,7 @@ CPM_DIRECT_BENCH_TWO_PASS_NS_P(
         for (std::size_t b = 0; b < 64UL; ++b) {
             for (std::size_t channel = 0; channel < etl::dim<0>(c); ++channel) {
                 for (std::size_t k = 0; k < etl::dim<1>(w); ++k) {
-                    h_cv(b)(k) = etl::conv_2d_full(h(b)(k), w(channel)(k));
+                    h_cv(b)(k) = etl::fast_conv_2d_full(h(b)(k), w(channel)(k));
                 }
 
                 v(b)(channel) = sigmoid(c(channel) + sum_l(h_cv(b)));
