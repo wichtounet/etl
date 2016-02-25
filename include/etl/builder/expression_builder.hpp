@@ -937,6 +937,20 @@ auto sub(E&& value, std::size_t i) -> detail::identity_helper<E, sub_view<detail
     return detail::identity_helper<E, sub_view<detail::build_identity_type<E>>>{{value, i}};
 }
 
+/*!
+ * \brief Returns view representing a slice view of the given expression.
+ * \param value The ETL expression
+ * \param first The first index
+ * \param last The last index
+ * \return a view expression representing a sub dimensional view of the given expression
+ */
+template <typename E>
+auto slice(E&& value, std::size_t first, std::size_t last) -> detail::identity_helper<E, slice_view<detail::build_identity_type<E>>> {
+    static_assert(is_etl_expr<E>::value, "etl::slice can only be used on ETL expressions");
+    static_assert(etl_traits<std::decay_t<E>>::dimensions() > 1, "Cannot use slice on vector");
+    return detail::identity_helper<E, slice_view<detail::build_identity_type<E>>>{{value, first, last}};
+}
+
 template <std::size_t... Dims, typename E>
 auto reshape(E&& value) -> detail::identity_helper<E, fast_matrix_view<detail::build_identity_type<E>, Dims...>> {
     static_assert(is_etl_expr<E>::value, "etl::reshape can only be used on ETL expressions");

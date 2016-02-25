@@ -223,6 +223,19 @@ template <typename T>
 struct is_direct_sub_view<sub_view<T>> : cpp::and_u<has_direct_access<T>::value, decay_traits<T>::storage_order == order::RowMajor> {};
 
 /*!
+ * \brief Traits indicating if the given ETL type is a slice view with direct access to memory
+ * \tparam T The type to test
+ */
+template <typename T>
+struct is_direct_slice_view : std::false_type {};
+
+/*!
+ * \copydoc is_direct_slice_view
+ */
+template <typename T>
+struct is_direct_slice_view<slice_view<T>> : cpp::and_u<has_direct_access<T>::value, decay_traits<T>::storage_order == order::RowMajor> {};
+
+/*!
  * \brief Traits indicating if the given ETL type is a dim view with direct access to memory
  * \tparam T The type to test
  */
@@ -274,7 +287,7 @@ struct is_direct_identity_view<etl::unary_expr<T, V, identity_op>> : has_direct_
 
 template <typename T, typename DT>
 struct has_direct_access : cpp::or_c<
-                               is_etl_direct_value<DT>, is_temporary_unary_expr<DT>, is_temporary_binary_expr<DT>, is_direct_identity_view<DT>, is_direct_sub_view<DT>, is_direct_dim_view<DT>, is_direct_fast_matrix_view<DT>, is_direct_dyn_matrix_view<DT>, is_direct_dyn_vector_view<DT>> {};
+                               is_etl_direct_value<DT>, is_temporary_unary_expr<DT>, is_temporary_binary_expr<DT>, is_direct_identity_view<DT>, is_direct_sub_view<DT>, is_direct_slice_view<DT>, is_direct_dim_view<DT>, is_direct_fast_matrix_view<DT>, is_direct_dyn_matrix_view<DT>, is_direct_dyn_vector_view<DT>> {};
 
 /*!
  * \brief Traits to test if the given type is single precision type.

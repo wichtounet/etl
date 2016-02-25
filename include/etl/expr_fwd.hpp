@@ -49,6 +49,9 @@ struct dim_view;
 template <typename T>
 struct sub_view;
 
+template <typename T>
+struct slice_view;
+
 template <typename T, std::size_t... Dims>
 struct fast_matrix_view;
 

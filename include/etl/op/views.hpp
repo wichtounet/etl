@@ -331,6 +331,142 @@ struct sub_view {
     }
 };
 
+/*!
+ * \brief View that shows a slice of an expression
+ * \tparam T The type of expression on which the view is made
+ */
+template <typename T>
+struct slice_view {
+    T sub;                   ///< The Sub expression
+    const std::size_t first; ///< The index
+    const std::size_t last;  ///< The last index
+
+    using sub_type          = T;                                               ///< The sub type
+    using value_type        = value_t<sub_type>;                               ///< The value contained in the expression
+    using memory_type       = memory_t<sub_type>;                              ///< The memory acess type
+    using const_memory_type = const_memory_t<sub_type>;                        ///< The const memory access type
+    using return_type       = return_helper<sub_type, decltype(sub[0])>;       ///< The type returned by the view
+    using const_return_type = const_return_helper<sub_type, decltype(sub[0])>; ///< The const type return by the view
+
+    static_assert(decay_traits<sub_type>::storage_order == order::RowMajor, "slice only supported for row-major matrices");
+
+    slice_view(sub_type sub, std::size_t first, std::size_t last)
+            : sub(sub), first(first), last(last) {}
+
+    /*!
+     * \brief Returns the element at the given index
+     * \param j The index
+     * \return a reference to the element at the given index.
+     */
+    const_return_type operator[](std::size_t j) const {
+        return sub[first * (size(sub) / dim<0>(sub)) + j];
+    }
+
+    /*!
+     * \brief Returns the element at the given index
+     * \param j The index
+     * \return a reference to the element at the given index.
+     */
+    return_type operator[](std::size_t j) {
+        return sub[first * (size(sub) / dim<0>(sub)) + j];
+    }
+
+    /*!
+     * \brief Returns the value at the given index
+     * This function never has side effects.
+     * \param j The index
+     * \return the value at the given index.
+     */
+    value_type read_flat(std::size_t j) const noexcept {
+        return sub.read_flat(first * (size(sub) / dim<0>(sub)) + j);
+    }
+
+    /*!
+     * \brief Access to the element at the given (args...) position
+     * \param args The indices
+     * \return a reference to the element at the given position.
+     */
+    template <typename... S>
+    const_return_type operator()(std::size_t i, S... args) const {
+        return sub(i + first, static_cast<std::size_t>(args)...);
+    }
+
+    /*!
+     * \brief Access to the element at the given (args...) position
+     * \param args The indices
+     * \return a reference to the element at the given position.
+     */
+    template <typename... S>
+    return_type operator()(std::size_t i, S... args) {
+        return sub(i + first, static_cast<std::size_t>(args)...);
+    }
+
+    /*!
+     * \brief Returns the value on which the transformer is working.
+     * \return A reference  to the value on which the transformer is working.
+     */
+    sub_type& value() {
+        return sub;
+    }
+
+    /*!
+     * \brief Load several elements of the expression at once
+     * \param x The position at which to start. This will be aligned from the beginning (multiple of the vector size).
+     * \tparam V The vectorization mode to use
+     * \return a vector containing several elements of the expression
+     */
+    template<typename V = default_vec>
+    auto load(std::size_t x) const noexcept {
+        return sub.template load<V>(x + first * subsize(sub));
+    }
+
+    /*!
+     * \brief Test if this expression aliases with the given expression
+     * \param rhs The other expression to test
+     * \return true if the two expressions aliases, false otherwise
+     */
+    template<typename E>
+    bool alias(const E& rhs) const noexcept {
+        return sub.alias(rhs);
+    }
+
+    /*!
+     * \brief Returns a pointer to the first element in memory.
+     * \return a pointer tot the first element in memory.
+     */
+    memory_type memory_start() noexcept {
+        static_assert(has_direct_access<T>::value && decay_traits<sub_type>::storage_order == order::RowMajor, "This expression does not have direct memory access");
+        return sub.memory_start() + first * subsize(sub);
+    }
+
+    /*!
+     * \brief Returns a pointer to the first element in memory.
+     * \return a pointer tot the first element in memory.
+     */
+    const_memory_type memory_start() const noexcept {
+        static_assert(has_direct_access<T>::value && decay_traits<sub_type>::storage_order == order::RowMajor, "This expression does not have direct memory access");
+        return sub.memory_start() + first * subsize(sub);
+    }
+
+    /*!
+     * \brief Returns a pointer to the past-the-end element in memory.
+     * \return a pointer tot the past-the-end element in memory.
+     */
+    memory_type memory_end() noexcept {
+        static_assert(has_direct_access<T>::value && decay_traits<sub_type>::storage_order == order::RowMajor, "This expression does not have direct memory access");
+        return sub.memory_start() + last * subsize(sub);
+    }
+
+    /*!
+     * \brief Returns a pointer to the past-the-end element in memory.
+     * \return a pointer tot the past-the-end element in memory.
+     */
+    const_memory_type memory_end() const noexcept {
+        static_assert(has_direct_access<T>::value && decay_traits<sub_type>::storage_order == order::RowMajor, "This expression does not have direct memory access");
+        return sub.memory_start() + last * subsize(sub);
+    }
+};
+
 namespace fast_matrix_view_detail {
 
 template <typename M, std::size_t I, typename Enable = void>
@@ -946,6 +1082,66 @@ struct etl_traits<etl::sub_view<T>> {
      */
     static constexpr std::size_t dimensions() {
         return etl_traits<sub_expr_t>::dimensions() - 1;
+    }
+};
+
+/*!
+ * \brief Specialization for slice_view
+ */
+template <typename T>
+struct etl_traits<etl::slice_view<T>> {
+    using expr_t     = etl::slice_view<T>; ///< The expression type
+    using sub_expr_t = std::decay_t<T>; ///< The sub expression type
+
+    static constexpr const bool is_etl                  = true;  ///< Indicates if the type is an ETL expression
+    static constexpr const bool is_transformer          = false;  ///< Indicates if the type is a transformer
+    static constexpr const bool is_view                 = true; ///< Indicates if the type is a view
+    static constexpr const bool is_magic_view           = false; ///< Indicates if the type is a magic view
+    static constexpr const bool is_fast                 = false; ///< Indicates if the expression is fast
+    static constexpr const bool is_linear               = etl_traits<sub_expr_t>::is_linear; ///< Indicates if the expression is linear
+    static constexpr const bool is_value                = false; ///< Indicates if the expression is of value type
+    static constexpr const bool is_generator            = false; ///< Indicates if the expression is a generator
+    static constexpr const bool needs_temporary_visitor = etl_traits<sub_expr_t>::needs_temporary_visitor; ///< Indicates if the expression needs a temporary visitor
+    static constexpr const bool needs_evaluator_visitor = etl_traits<sub_expr_t>::needs_evaluator_visitor; ///< Indicates if the exxpression needs a evaluator visitor
+    static constexpr const order storage_order          = etl_traits<sub_expr_t>::storage_order;           ///< The expression's storage order
+
+    /*!
+     * \brief Indicates if the expression is vectorizable using the
+     * given vector mode
+     * \tparam V The vector mode
+     */
+    template<vector_mode_t V>
+    using vectorizable = cpp::bool_constant<decay_traits<sub_expr_t>::template vectorizable<V>::value && storage_order == order::RowMajor>;
+
+    /*!
+     * \brief Returns the size of the given expression
+     * \param v The expression to get the size for
+     * \returns the size of the given expression
+     */
+    static std::size_t size(const expr_t& v) {
+        return (etl_traits<sub_expr_t>::size(v.sub) / etl_traits<sub_expr_t>::dim(v.sub, 0)) * (v.last - v.first);
+    }
+
+    /*!
+     * \brief Returns the dth dimension of the given expression
+     * \param v The expression
+     * \param d The dimension to get
+     * \return The dth dimension of the given expression
+     */
+    static std::size_t dim(const expr_t& v, std::size_t d) {
+        if(d == 0){
+            return v.last - v.first;
+        } else {
+            return etl_traits<sub_expr_t>::dim(v.sub, d);
+        }
+    }
+
+    /*!
+     * \brief Returns the number of expressions for this type
+     * \return the number of dimensions of this type
+     */
+    static constexpr std::size_t dimensions() {
+        return etl_traits<sub_expr_t>::dimensions();
     }
 };
 
