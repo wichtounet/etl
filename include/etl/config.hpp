@@ -51,12 +51,14 @@ constexpr const bool conv_valid_fft = true;
 constexpr const bool conv_valid_fft = false; ///< Boolean flag indicating if temporaries are created
 #endif
 
+//Select the number of threads
 #ifdef ETL_PARALLEL_THREADS
 constexpr const std::size_t threads = ETL_PARALLEL_THREADS;
 #else
 const std::size_t threads = std::thread::hardware_concurrency(); ///< Number of threads
 #endif
 
+//Indicate that ETL should run in parallel
 #ifdef ETL_PARALLEL
 constexpr const bool parallel = true;
 #else
