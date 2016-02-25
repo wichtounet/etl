@@ -31,7 +31,6 @@
 #include "cpp_utils/static_if.hpp"
 
 #include "etl/visitor.hpp"        //visitor of the expressions
-#include "etl/threshold.hpp"      //parallel thresholds
 #include "etl/eval_selectors.hpp" //method selectors
 #include "etl/eval_functors.hpp"  //Implementation functors
 #include "etl/eval_visitors.hpp"  //Evaluation visitors
@@ -145,10 +144,6 @@ namespace standard_evaluator {
         detail::Assign<value_t<R>,E>(m, expr, (threads - 1) * batch, n)();
 
         pool.wait();
-    }
-
-    static bool select_parallel(std::size_t n){
-        return threads > 1 && (local_context().parallel || (parallel && n >= parallel_threshold && !local_context().serial));
     }
 
     /*!

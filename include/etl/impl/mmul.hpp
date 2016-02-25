@@ -7,8 +7,6 @@
 
 #pragma once
 
-#include "etl/threshold.hpp"
-
 //The implementations
 #include "etl/impl/std/mmul.hpp"
 #include "etl/impl/std/strassen_mmul.hpp"

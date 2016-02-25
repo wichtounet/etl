@@ -9,6 +9,10 @@
 
 namespace etl {
 
+inline bool select_parallel(std::size_t n, std::size_t threshold = parallel_threshold){
+    return threads > 1 && (local_context().parallel || (parallel && n >= threshold && !local_context().serial));
+}
+
 /*!
  * \brief Dispatch the elements of a range to a functor in a parallel manner
  * \param p Boolean tag to indicate if parallel dispatching must be done

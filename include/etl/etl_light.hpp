@@ -27,6 +27,7 @@
 #include "etl/complex.hpp"
 #include "etl/random.hpp"
 #include "etl/duration.hpp"
+#include "etl/threshold.hpp"
 #include "etl/parallel.hpp"
 
 //Forward declarations

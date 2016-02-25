@@ -22,8 +22,6 @@
 
 #pragma once
 
-#include "etl/threshold.hpp"
-
 //Include the implementations
 #include "etl/impl/std/sum.hpp"
 #include "etl/impl/sse/sum.hpp"
