@@ -320,10 +320,7 @@ struct fft1_many_impl {
         if (impl == fft_impl::STD) {
             if(parallel_dispatch){
                 dispatch_1d(parallel_dispatch, [&](std::size_t first, std::size_t last){
-                    //TODO Ideally here, we should use fft1_many on a slice
-                    for(std::size_t k = first; k < last; ++k){
-                        etl::impl::standard::fft1(a(k), c(k));
-                    }
+                    etl::impl::standard::fft1_many(a.slice(first, last), c.slice(first, last));
                 }, 0, transforms);
             } else {
                 etl::impl::standard::fft1_many(std::forward<AA>(a), std::forward<CC>(c));
@@ -331,10 +328,7 @@ struct fft1_many_impl {
         } else if (impl == fft_impl::MKL) {
             if(parallel_dispatch){
                 dispatch_1d(parallel_dispatch, [&](std::size_t first, std::size_t last){
-                    //TODO Ideally here, we should use fft1_many on a slice
-                    for(std::size_t k = first; k < last; ++k){
-                        etl::impl::blas::fft1(a(k), c(k));
-                    }
+                    etl::impl::blas::fft1_many(a.slice(first, last), c.slice(first, last));
                 }, 0, transforms);
             } else {
                 etl::impl::blas::fft1_many(std::forward<AA>(a), std::forward<CC>(c));
@@ -359,10 +353,7 @@ struct fft2_many_impl {
         if (impl == fft_impl::STD) {
             if(parallel_dispatch){
                 dispatch_1d(parallel_dispatch, [&](std::size_t first, std::size_t last){
-                    //TODO Ideally here, we should use fft2_many on a slice
-                    for(std::size_t k = first; k < last; ++k){
-                        etl::impl::standard::fft2(a(k), c(k));
-                    }
+                    etl::impl::standard::fft2_many(a.slice(first, last), c.slice(first, last));
                 }, 0, transforms);
             } else {
                 etl::impl::standard::fft2_many(std::forward<AA>(a), std::forward<CC>(c));
@@ -370,10 +361,7 @@ struct fft2_many_impl {
         } else if (impl == fft_impl::MKL) {
             if(parallel_dispatch){
                 dispatch_1d(parallel_dispatch, [&](std::size_t first, std::size_t last){
-                    //TODO Ideally here, we should use fft2_many on a slice
-                    for(std::size_t k = first; k < last; ++k){
-                        etl::impl::blas::fft2(a(k), c(k));
-                    }
+                    etl::impl::blas::fft2_many(a.slice(first, last), c.slice(first, last));
                 }, 0, transforms);
             } else {
                 etl::impl::blas::fft2_many(std::forward<AA>(a), std::forward<CC>(c));
