@@ -60,6 +60,10 @@
 #include "etl/crtp/gpu_able.hpp"
 #include "etl/crtp/gpu_delegate.hpp"
 
+// The expressions building
+#include "etl/checks.hpp"
+#include "etl/builder/expression_builder.hpp"
+
 // The expressions
 #include "etl/expr/binary_expr.hpp"
 #include "etl/expr/unary_expr.hpp"
@@ -69,10 +73,6 @@
 #include "etl/expr/serial_expr.hpp"
 #include "etl/expr/parallel_expr.hpp"
 #include "etl/expr/timed_expr.hpp"
-
-// The expressions building
-#include "etl/checks.hpp"
-#include "etl/builder/expression_builder.hpp"
 
 // The optimizer
 #include "etl/optimizer.hpp"

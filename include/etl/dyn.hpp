@@ -329,6 +329,26 @@ public:
         return sub(*this, i);
     }
 
+    /*!
+     * \brief Creates a slice view of the matrix, effectively reducing the first dimension.
+     * \param first The first index to use
+     * \param last The last index to use
+     * \return a slice view of the matrix at position i.
+     */
+    CPP_DEBUG_AUTO_TRICK auto slice(std::size_t first, std::size_t last) noexcept {
+        return etl::slice(*this, first, last);
+    }
+
+    /*!
+     * \brief Creates a slice view of the matrix, effectively reducing the first dimension.
+     * \param first The first index to use
+     * \param last The last index to use
+     * \return a slice view of the matrix at position i.
+     */
+    CPP_DEBUG_AUTO_TRICK auto slice(std::size_t first, std::size_t last) const noexcept {
+        return etl::slice(*this, first, last);
+    }
+
     template <bool B = n_dimensions == 1, cpp_enable_if(B)>
     value_type& operator()(std::size_t i) noexcept {
         cpp_assert(i < dim(0), "Out of bounds");
