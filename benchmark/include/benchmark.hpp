@@ -70,9 +70,11 @@ using smat = etl::dyn_matrix<float>;
 
 using cvec = etl::dyn_vector<std::complex<float>>;
 using cmat = etl::dyn_matrix<std::complex<float>>;
+using cmat3 = etl::dyn_matrix<std::complex<float>, 3>;
 
 using zvec = etl::dyn_vector<std::complex<double>>;
 using zmat = etl::dyn_matrix<std::complex<double>>;
+using zmat3 = etl::dyn_matrix<std::complex<double>, 3>;
 
 using mat_policy = VALUES_POLICY(10, 25, 50, 100, 200, 300, 400, 500, 600, 700, 800, 900, 1000, 2000,3000);
 using mat_policy_2d = NARY_POLICY(mat_policy, mat_policy);
@@ -87,6 +89,10 @@ using fft_1d_many_policy = VALUES_POLICY(10, 50, 100, 500, 1000, 5000, 10000, 50
 using fft_2d_policy = NARY_POLICY(
     VALUES_POLICY(8, 16, 32, 64, 128, 256, 512, 1024, 2048),
     VALUES_POLICY(8, 16, 32, 64, 128, 256, 512, 1024, 2048));
+
+using fft_2d_many_policy = NARY_POLICY(
+    VALUES_POLICY(4, 8, 16, 24, 32, 64, 96, 128, 256),
+    VALUES_POLICY(4, 8, 16, 24, 32, 64, 96, 128, 256));
 
 using square_policy = NARY_POLICY(
     VALUES_POLICY(100, 200, 300, 400, 500, 600, 700, 800, 900, 1000),

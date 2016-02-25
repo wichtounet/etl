@@ -97,3 +97,21 @@ CPM_DIRECT_SECTION_TWO_PASS_NS_PF("zfft_2d(2^b) [fft]", fft_2d_policy,
     MKL_SECTION_FUNCTOR("mkl", [](zmat& a, zmat& b){ etl::impl::blas::fft2(a, b); })
     CUFFT_SECTION_FUNCTOR("cufft", [](zmat& a, zmat& b){ etl::impl::cufft::fft2(a, b); })
 )
+
+CPM_DIRECT_SECTION_TWO_PASS_NS_PF("cfft_2d_many (512) [fft]", fft_2d_many_policy,
+    FLOPS([](std::size_t d1, std::size_t d2){ return 2 * 512 * d1 * d2 * std::log2(d1 * d2); }),
+    CPM_SECTION_INIT([](std::size_t d1, std::size_t d2){ return std::make_tuple(cmat3(512UL, d1,d2), cmat3(512UL, d1,d2)); }),
+    CPM_SECTION_FUNCTOR("default", [](cmat3& a, cmat3& b){ b = etl::fft_2d_many(a); }),
+    CPM_SECTION_FUNCTOR("std", [](cmat3& a, cmat3& b){ etl::impl::standard::fft2_many(a, b); })
+    MKL_SECTION_FUNCTOR("mkl", [](cmat3& a, cmat3& b){ etl::impl::blas::fft2_many(a, b); })
+    CUFFT_SECTION_FUNCTOR("cufft", [](cmat3& a, cmat3& b){ etl::impl::cufft::fft2_many(a, b); })
+)
+
+CPM_DIRECT_SECTION_TWO_PASS_NS_PF("zfft_2d_many (512) [fft]", fft_2d_many_policy,
+    FLOPS([](std::size_t d1, std::size_t d2){ return 2 * 512 * d1 * d2 * std::log2(d1 * d2); }),
+    CPM_SECTION_INIT([](std::size_t d1, std::size_t d2){ return std::make_tuple(zmat3(512UL, d1,d2), zmat3(512UL, d1,d2)); }),
+    CPM_SECTION_FUNCTOR("default", [](zmat3& a, zmat3& b){ b = etl::fft_2d_many(a); }),
+    CPM_SECTION_FUNCTOR("std", [](zmat3& a, zmat3& b){ etl::impl::standard::fft2_many(a, b); })
+    MKL_SECTION_FUNCTOR("mkl", [](zmat3& a, zmat3& b){ etl::impl::blas::fft2_many(a, b); })
+    CUFFT_SECTION_FUNCTOR("cufft", [](zmat3& a, zmat3& b){ etl::impl::cufft::fft2_many(a, b); })
+)
