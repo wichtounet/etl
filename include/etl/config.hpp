@@ -87,6 +87,13 @@ constexpr const bool is_cblas_enabled = true;
 constexpr const bool is_cblas_enabled = false;
 #endif
 
+//Flag to indicate that blas is multithreaded
+#ifdef ETL_BLAS_THREADS
+constexpr const bool is_blas_parallel = true;
+#else
+constexpr const bool is_blas_parallel = false;
+#endif
+
 #ifdef ETL_CUDA
 static_assert(false, "ETL_CUDA should never be set directly");
 #endif
