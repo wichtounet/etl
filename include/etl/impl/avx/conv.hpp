@@ -158,7 +158,7 @@ inline void sconv1_valid_micro_kernel(const float* in, const std::size_t n, cons
             r4  = _mm256_fmadd_ps(kernel_reverse[k+3], t4, r4);
 #else
             __m256 v1 = _mm256_mul_ps(kernel_reverse[k], t1);
-            r1  = _mm256_add_ps(r1, t1);
+            r1  = _mm256_add_ps(r1, v1);
             __m256 v2 = _mm256_mul_ps(kernel_reverse[k+1], t2);
             r2  = _mm256_add_ps(r2, v2);
             __m256 v3 = _mm256_mul_ps(kernel_reverse[k+2], t3);
