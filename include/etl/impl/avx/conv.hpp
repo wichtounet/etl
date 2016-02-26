@@ -454,27 +454,23 @@ void conv2_full(const I& input, const K& kernel, C&& conv) {
 }
 
 inline void sconv2_valid_micro_kernel(const float* in, std::size_t n1, std::size_t n2, const float* kernel, std::size_t m1, std::size_t m2, float* out) {
+    auto* kernel_reverse = aligned_allocate<float>(m1 * m2);
+    std::reverse_copy(kernel, kernel + m1 * m2, kernel_reverse);
+
     std::size_t c1 = n1 - m1 + 1;
     std::size_t c2 = n2 - m2 + 1;
-
-    __m256 tmp1;
-    __m256 tmp2;
-    __m256 tmp3;
-    __m256 tmp4;
-    __m256 res;
 
     float tmp_res[8] __attribute__((aligned(32)));
 
     for (std::size_t i = 0; i < c1; ++i) {
         for (std::size_t j = 0; j < c2; ++j) {
-            res = _mm256_setzero_ps();
+            __m256 res = _mm256_setzero_ps();
 
-            for (std::size_t k = i; k < i + m1; ++k) {
-                for (std::size_t l = j; l + 7 < j + m2; l += 8) {
-                    tmp1 = _mm256_loadu_ps(in + k * n2 + l);
-                    tmp2 = _mm256_loadu_ps(kernel + (i + m1 - 1 - k) * m2 + (j + m2 - 1 - (l + 7)));
-                    tmp3 = mm256_reverse_ps(tmp2);
-                    tmp4 = _mm256_mul_ps(tmp3, tmp1);
+            for (std::size_t k = 0; k < m1; ++k) {
+                for (std::size_t l = 0; l + 7 < m2; l += 8) {
+                    __m256 tmp1 = _mm256_loadu_ps(in + (i + k) * n2 + j + l);
+                    __m256 tmp3 = _mm256_loadu_ps(kernel_reverse + k * m2 + l);
+                    __m256 tmp4 = _mm256_mul_ps(tmp1, tmp3);
                     res  = _mm256_add_ps(res, tmp4);
                 }
             }
@@ -485,9 +481,9 @@ inline void sconv2_valid_micro_kernel(const float* in, std::size_t n1, std::size
 
             if (m2 % 8 != 0) {
                 auto rem = m2 % 8;
-                for (std::size_t k = i; k < i + m1; ++k) {
-                    for (std::size_t l = j + m2 - rem; l < j + m2; ++l) {
-                        temp += in[k * n2 + l] * kernel[(i + m1 - 1 - k) * m2 + (j + m2 - 1 - l)];
+                for (std::size_t k = 0; k < m1; ++k) {
+                    for (std::size_t l = m2 - rem; l < m2; ++l) {
+                        temp += in[(i + k) * n2 + j + l] * kernel_reverse[k * m2 + l];
                     }
                 }
             }
