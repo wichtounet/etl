@@ -317,9 +317,11 @@ struct fft1_many_impl {
 
         fft_impl impl = select_fft1_many_impl(transforms, etl::dim<1>(c));
 
+        static cpp::default_thread_pool<> pool(threads - 1);
+
         if (impl == fft_impl::STD) {
             if(parallel_dispatch){
-                dispatch_1d(parallel_dispatch, [&](std::size_t first, std::size_t last){
+                dispatch_1d(pool, parallel_dispatch, [&](std::size_t first, std::size_t last){
                     etl::impl::standard::fft1_many(a.slice(first, last), c.slice(first, last));
                 }, 0, transforms);
             } else {
@@ -327,7 +329,7 @@ struct fft1_many_impl {
             }
         } else if (impl == fft_impl::MKL) {
             if(parallel_dispatch){
-                dispatch_1d(parallel_dispatch, [&](std::size_t first, std::size_t last){
+                dispatch_1d(pool, parallel_dispatch, [&](std::size_t first, std::size_t last){
                     etl::impl::blas::fft1_many(a.slice(first, last), c.slice(first, last));
                 }, 0, transforms);
             } else {
@@ -350,9 +352,11 @@ struct fft2_many_impl {
 
         fft_impl impl = select_fft2_many_impl(etl::dim<0>(c), etl::dim<1>(c), etl::dim<2>(c));
 
+        static cpp::default_thread_pool<> pool(threads - 1);
+
         if (impl == fft_impl::STD) {
             if(parallel_dispatch){
-                dispatch_1d(parallel_dispatch, [&](std::size_t first, std::size_t last){
+                dispatch_1d(pool, parallel_dispatch, [&](std::size_t first, std::size_t last){
                     etl::impl::standard::fft2_many(a.slice(first, last), c.slice(first, last));
                 }, 0, transforms);
             } else {
@@ -360,7 +364,7 @@ struct fft2_many_impl {
             }
         } else if (impl == fft_impl::MKL) {
             if(parallel_dispatch){
-                dispatch_1d(parallel_dispatch, [&](std::size_t first, std::size_t last){
+                dispatch_1d(pool, parallel_dispatch, [&](std::size_t first, std::size_t last){
                     etl::impl::blas::fft2_many(a.slice(first, last), c.slice(first, last));
                 }, 0, transforms);
             } else {
