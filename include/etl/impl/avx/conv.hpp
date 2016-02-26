@@ -491,6 +491,8 @@ inline void sconv2_valid_micro_kernel(const float* in, std::size_t n1, std::size
             out[i * c2 + j] = temp + tmp_res[0] + tmp_res[1] + tmp_res[2] + tmp_res[3] + tmp_res[4] + tmp_res[5] + tmp_res[6] + tmp_res[7];
         }
     }
+
+    aligned_release(kernel_reverse);
 }
 
 template <typename I, typename K, typename C, cpp_enable_if((all_single_precision<I, K, C>::value))>
