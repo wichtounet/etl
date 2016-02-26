@@ -311,20 +311,25 @@ ETL_OUT_VEC_256 avx_vec::mul<true>(__m256 lhs, __m256 rhs) {
     //ymm1 = [y1.real, y1.real, y2.real, y2.real, ...]
     __m256 ymm1 = _mm256_moveldup_ps(rhs);
 
-    //ymm2 = lhs * ymm1
-    __m256 ymm2 = _mm256_mul_ps(lhs, ymm1);
+    //ymm2 = [x1.img, x1.real, x2.img, x2.real]
+    __m256 ymm2 = _mm256_permute_ps(lhs, 0b10110001);
 
-    //ymm3 = [x1.img, x1.real, x2.img, x2.real]
-    __m256 ymm3 = _mm256_permute_ps(lhs, 0b10110001);
+    //ymm3 = [y1.imag, y1.imag, y2.imag, y2.imag]
+    __m256 ymm3 = _mm256_movehdup_ps(rhs);
 
-    //ymm1 = [y1.imag, y1.imag, y2.imag, y2.imag]
-    ymm1 = _mm256_movehdup_ps(rhs);
+    //ymm4 = ymm2 * ymm3
+    __m256 ymm4 = _mm256_mul_ps(ymm2, ymm3);
 
-    //ymm4 = ymm3 * ymm1
-    __m256 ymm4 = _mm256_mul_ps(ymm3, ymm1);
+    //result = [(lhs * ymm1) -+ ymm4];
 
-    //result = [ymm2 -+ ymm4];
-    return _mm256_addsub_ps(ymm2, ymm4);
+#ifdef __FMA__
+    return  _mm256_fmaddsub_ps(lhs, ymm1, ymm4);
+#elif defined (__FMA4__)
+    return  _mm256_maddsub_ps(lhs, ymm1, ymm4);
+#else
+    __m256 tmp = _mm256_mul_ps(lhs, ymm1);
+    return _mm256_addsub_ps(tmp, ymm4);
+#endif
 }
 
 template <>
@@ -335,20 +340,25 @@ ETL_OUT_VEC_256D avx_vec::mul<true>(__m256d lhs, __m256d rhs) {
     //ymm1 = [y1.real, y1.real, y2.real, y2.real]
     __m256d ymm1 = _mm256_movedup_pd(rhs);
 
-    //ymm2 = lhs * ymm1
-    __m256d ymm2 = _mm256_mul_pd(lhs, ymm1);
+    //ymm2 = [x1.img, x1.real, x2.img, x2.real]
+    __m256d ymm2 = _mm256_permute_pd(lhs, 0b0101);
 
-    //ymm3 = [x1.img, x1.real, x2.img, x2.real]
-    __m256d ymm3 = _mm256_permute_pd(lhs, 0b0101);
+    //ymm3 = [y1.imag, y1.imag, y2.imag, y2.imag]
+    __m256d ymm3 = _mm256_permute_pd(rhs, 0b1111);
 
-    //ymm1 = [y1.imag, y1.imag, y2.imag, y2.imag]
-    ymm1 = _mm256_permute_pd(rhs, 0b1111);
+    //ymm4 = ymm2 * ymm3
+    __m256d ymm4 = _mm256_mul_pd(ymm2, ymm3);
 
-    //ymm4 = ymm3 * ymm1
-    __m256d ymm4 = _mm256_mul_pd(ymm3, ymm1);
+    //result = [(lhs * ymm1) -+ ymm4];
 
-    //result = [ymm2 -+ ymm4];
-    return _mm256_addsub_pd(ymm2, ymm4);
+#ifdef __FMA__
+    return  _mm256_fmaddsub_pd(lhs, ymm1, ymm4);
+#elif defined (__FMA4__)
+    return  _mm256_maddsub_pd(lhs, ymm1, ymm4);
+#else
+    __m256d tmp = _mm256_mul_pd(lhs, ymm1);
+    return _mm256_addsub_pd(tmp, ymm4);
+#endif
 }
 
 template <>
