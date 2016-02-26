@@ -372,30 +372,36 @@ ETL_OUT_VEC_256 avx_vec::div<true>(__m256 lhs, __m256 rhs) {
     //ymm1 = [y1.imag, y1.imag, y2.imag, y2.imag]
     __m256 ymm1 = _mm256_movehdup_ps(rhs);
 
-    //ymm2 = [x.real * y.real, x.img * y.real]
-    __m256 ymm2 = _mm256_mul_ps(lhs, ymm0);
-
-    //ymm3 = [x1.img, x1.real, x2.img, x2.real]
-    __m256 ymm3 = _mm256_permute_ps(lhs, 0b10110001);
+    //ymm2 = [x1.img, x1.real, x2.img, x2.real]
+    __m256 ymm2 = _mm256_permute_ps(lhs, 0b10110001);
 
     //ymm4 = [x.img * y.img, x.real * y.img]
-    __m256 ymm4 = _mm256_mul_ps(ymm3, ymm1);
+    __m256 ymm4 = _mm256_mul_ps(ymm2, ymm1);
 
-    //ymm4 = subadd(ymm2, ymm4)
-    ymm3 = _mm256_sub_ps(_mm256_set1_ps(0.0), ymm4);
-    ymm4 = _mm256_addsub_ps(ymm2, ymm3);
+    //ymm5 = subadd((lhs * ymm0), ymm4)
 
-    //ymm2 = [y.real^2, y.real^2]
-    ymm2 = _mm256_mul_ps(ymm0, ymm0);
+#ifdef __FMA__
+    __m256 ymm5 = _mm256_fmsubadd_ps(lhs, ymm0, ymm4);
+#else
+    __m256 t1 = _mm256_mul_ps(lhs, ymm0);
+    __m256 t2 = _mm256_sub_ps(_mm256_set1_ps(0.0), ymm4);
+    __m256 ymm5 = _mm256_addsub_ps(t1, t2);
+#endif
 
     //ymm3 = [y.imag^2, y.imag^2]
-    ymm3 = _mm256_mul_ps(ymm1, ymm1);
+    __m256 ymm3 = _mm256_mul_ps(ymm1, ymm1);
 
-    //ymm4 = [y.real^2 + y.imag^2, y.real^2 + y.imag^2]
-    ymm0 = _mm256_add_ps(ymm2, ymm3);
+    //ymm0 = (ymm0 * ymm0 + ymm3)
 
-    //result = ymm4 / ymm0
-    return _mm256_div_ps(ymm4, ymm0);
+#ifdef __FMA__
+    ymm0 = _mm256_fmadd_ps(ymm0, ymm0, ymm3);
+#else
+    __m256 t3 = _mm256_mul_ps(ymm0, ymm0);
+    ymm0 = _mm256_add_ps(t3, ymm3);
+#endif
+
+    //result = ymm5 / ymm0
+    return _mm256_div_ps(ymm5, ymm0);
 }
 
 template <>
@@ -409,30 +415,36 @@ ETL_OUT_VEC_256D avx_vec::div<true>(__m256d lhs, __m256d rhs) {
     //ymm1 = [y1.imag, y1.imag, y2.imag, y2.imag]
     __m256d ymm1 = _mm256_permute_pd(rhs, 0b1111);
 
-    //ymm2 = [x.real * y.real, x.img * y.real]
-    __m256d ymm2 = _mm256_mul_pd(lhs, ymm0);
-
-    //ymm3 = [x1.img, x1.real, x2.img, x2.real]
-    __m256d ymm3 = _mm256_permute_pd(lhs, 0b0101);
+    //ymm2 = [x1.img, x1.real, x2.img, x2.real]
+    __m256d ymm2 = _mm256_permute_pd(lhs, 0b0101);
 
     //ymm4 = [x.img * y.img, x.real * y.img]
-    __m256d ymm4 = _mm256_mul_pd(ymm3, ymm1);
+    __m256d ymm4 = _mm256_mul_pd(ymm2, ymm1);
 
-    //ymm4 = subadd(ymm2, ymm4)
-    ymm3 = _mm256_sub_pd(_mm256_set1_pd(0.0), ymm4);
-    ymm4 = _mm256_addsub_pd(ymm2, ymm3);
+    //ymm5 = subadd((lhs * ymm0), ymm4)
 
-    //ymm2 = [y.real^2, y.real^2]
-    ymm2 = _mm256_mul_pd(ymm0, ymm0);
+#ifdef __FMA__
+    __m256d ymm5 = _mm256_fmsubadd_pd(lhs, ymm0, ymm4);
+#else
+    __m256d t1 = _mm256_mul_pd(lhs, ymm0);
+    __m256d t2 = _mm256_sub_pd(_mm256_set1_pd(0.0), ymm4);
+    __m256d ymm5 = _mm256_addsub_pd(t1, t2);
+#endif
 
     //ymm3 = [y.imag^2, y.imag^2]
-    ymm3 = _mm256_mul_pd(ymm1, ymm1);
+    __m256d ymm3 = _mm256_mul_pd(ymm1, ymm1);
 
-    //ymm4 = [y.real^2 + y.imag^2, y.real^2 + y.imag^2]
-    ymm0 = _mm256_add_pd(ymm2, ymm3);
+    //ymm0 = (ymm0 * ymm0 + ymm3)
 
-    //result = ymm4 / ymm0
-    return _mm256_div_pd(ymm4, ymm0);
+#ifdef __FMA__
+    ymm0 = _mm256_fmadd_pd(ymm0, ymm0, ymm3);
+#else
+    __m256d t3 = _mm256_mul_pd(ymm0, ymm0);
+    ymm0 = _mm256_add_pd(t3, ymm3);
+#endif
+
+    //result = ymm5 / ymm0
+    return _mm256_div_pd(ymm5, ymm0);
 }
 
 } //end of namespace etl
