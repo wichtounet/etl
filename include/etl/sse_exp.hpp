@@ -191,7 +191,7 @@ PS_CONST(cephes_exp_p4, 1.6666665459E-1);
 PS_CONST(cephes_exp_p5, 5.0000001201E-1);
 
 ETL_INLINE_VEC_128 exp_ps(__m128 x) {
-  __m128 tmp = _mm_setzero_ps(), fx;
+  __m128 tmp, fx;
   __m128i emm0;
   __m128 one = *(__m128*)_ps_1;
 
@@ -282,7 +282,7 @@ PS_CONST(cephes_FOPI, 1.27323954473516); // 4 / M_PI
    deliver full speed.
 */
 ETL_INLINE_VEC_128 sin_ps(__m128 x) { // any x
-  __m128 xmm1, xmm2 = _mm_setzero_ps(), xmm3, sign_bit, y;
+  __m128 xmm1, xmm2, xmm3, sign_bit, y;
 
   __m128i emm0, emm2;
   sign_bit = x;
@@ -366,7 +366,7 @@ ETL_INLINE_VEC_128 sin_ps(__m128 x) { // any x
 
 /* almost the same as sin_ps */
 ETL_INLINE_VEC_128 cos_ps(__m128 x) { // any x
-  __m128 xmm1, xmm2 = _mm_setzero_ps(), xmm3, y;
+  __m128 xmm1, xmm2, xmm3, y;
   __m128i emm0, emm2;
   /* take the absolute value */
   x = _mm_and_ps(x, *(__m128*)_ps_inv_sign_mask);
