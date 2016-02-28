@@ -68,7 +68,7 @@ namespace etl {
 /* declare some SSE constants -- why can't I figure a better way to do that? */
 #define PS_CONST(Name, Val)                                            \
   static const ALIGN16_BEG float _ps_##Name[4] ALIGN16_END = { Val, Val, Val, Val }
-#define _PI32_CONST(Name, Val)                                            \
+#define PI32_CONST(Name, Val)                                            \
   static const ALIGN16_BEG int _pi32_##Name[4] ALIGN16_END = { Val, Val, Val, Val }
 #define PS_CONST_TYPE(Name, Type, Val)                                 \
   static const ALIGN16_BEG Type _ps_##Name[4] ALIGN16_END = { Val, Val, Val, Val }
@@ -83,11 +83,11 @@ PS_CONST_TYPE(inv_mant_mask, int, ~0x7f800000);
 PS_CONST_TYPE(sign_mask, int, (int)0x80000000);
 PS_CONST_TYPE(inv_sign_mask, int, ~0x80000000);
 
-_PI32_CONST(1, 1);
-_PI32_CONST(inv1, ~1);
-_PI32_CONST(2, 2);
-_PI32_CONST(4, 4);
-_PI32_CONST(0x7f, 0x7f);
+PI32_CONST(1, 1);
+PI32_CONST(inv1, ~1);
+PI32_CONST(2, 2);
+PI32_CONST(4, 4);
+PI32_CONST(0x7f, 0x7f);
 
 PS_CONST(cephes_SQRTHF, 0.707106781186547524);
 PS_CONST(cephes_log_p0, 7.0376836292E-2);
@@ -356,7 +356,7 @@ ETL_INLINE_VEC_128 sin_ps(__m128 x) { // any x
 
   /* select the correct result from the two polynoms */
   xmm3 = poly_mask;
-  y2 = _mm_and_ps(xmm3, y2); //, xmm3);
+  y2 = _mm_and_ps(xmm3, y2);
   y = _mm_andnot_ps(xmm3, y);
   y = _mm_add_ps(y,y2);
   /* update the sign */
@@ -432,7 +432,7 @@ ETL_INLINE_VEC_128 cos_ps(__m128 x) { // any x
 
   /* select the correct result from the two polynoms */
   xmm3 = poly_mask;
-  y2 = _mm_and_ps(xmm3, y2); //, xmm3);
+  y2 = _mm_and_ps(xmm3, y2);
   y = _mm_andnot_ps(xmm3, y);
   y = _mm_add_ps(y,y2);
   /* update the sign */
