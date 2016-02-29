@@ -131,7 +131,7 @@ struct aligned_ptr {
  */
 template <typename T>
 aligned_ptr<T> aligned_allocate_auto(std::size_t size) {
-    return {aligned_allocate(size)};
+    return {aligned_allocate<T>(size)};
 }
 
 } //end of namespace etl
