@@ -54,7 +54,6 @@ struct aligned_allocator {
     }
 };
 
-
 /*!
  * \brief Allocate an array of the given size for the given type
  * \param size The number of elements
@@ -82,6 +81,57 @@ T* aligned_allocate(std::size_t size) {
 template <typename T>
 void aligned_release(T* ptr) {
     return aligned_allocator<void, 32>::release<T>(ptr);
+}
+
+template <typename T>
+struct aligned_ptr {
+    T* ptr;
+
+    aligned_ptr(T* ptr) : ptr(ptr) {}
+
+    aligned_ptr(const aligned_ptr& rhs) = delete;
+    aligned_ptr& operator=(const aligned_ptr& rhs) = delete;
+
+    aligned_ptr(aligned_ptr&& rhs) : ptr(rhs.ptr) {
+        rhs.ptr = nullptr;
+    }
+
+    aligned_ptr& operator=(aligned_ptr&& rhs){
+        if(this != &rhs){
+            ptr = rhs.ptr;
+            rhs.ptr = nullptr;
+        }
+
+        return *this;
+    }
+
+    inline T& operator[](std::size_t i){
+        return ptr[i];
+    }
+
+    inline const T& operator[](std::size_t i) const {
+        return ptr[i];
+    }
+
+    ~aligned_ptr(){
+        if(ptr){
+            aligned_release(ptr);
+        }
+    }
+
+    T* get(){
+        return ptr;
+    }
+};
+
+/*!
+ * \brief Allocate an aligned rray of the given size for the given type
+ * \param size The number of elements
+ * \return A pointer to the aligned memory
+ */
+template <typename T>
+aligned_ptr<T> aligned_allocate_auto(std::size_t size) {
+    return {aligned_allocate(size)};
 }
 
 } //end of namespace etl
