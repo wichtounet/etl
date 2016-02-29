@@ -49,7 +49,7 @@ inline __m256 mm256_reverse_ps(__m256 m1) {
 }
 
 inline void dconv1_valid_micro_kernel(const double* in, const std::size_t n, const double* kernel, std::size_t m, double* out, std::size_t first, std::size_t last) {
-    auto* kernel_reverse = aligned_allocate<__m256d>(m);
+    auto kernel_reverse = aligned_allocate_auto<__m256d>(m);
 
     //Reverse the kernel
 
@@ -122,12 +122,10 @@ inline void dconv1_valid_micro_kernel(const double* in, const std::size_t n, con
             }
         }
     }
-
-    aligned_release(kernel_reverse);
 }
 
 inline void sconv1_valid_micro_kernel(const float* in, const std::size_t n, const float* kernel, std::size_t m, float* out, std::size_t first, std::size_t last) {
-    auto* kernel_reverse = aligned_allocate<__m256>(m);
+    auto kernel_reverse = aligned_allocate_auto<__m256>(m);
 
     //Reverse the kernel
 
@@ -199,8 +197,6 @@ inline void sconv1_valid_micro_kernel(const float* in, const std::size_t n, cons
             }
         }
     }
-
-    aligned_release(kernel_reverse);
 }
 
 template <typename I, typename K, typename C, cpp_enable_if((all_double_precision<I, K, C>::value))>
@@ -454,8 +450,9 @@ void conv2_full(const I& input, const K& kernel, C&& conv) {
 }
 
 inline void sconv2_valid_micro_kernel(const float* in, std::size_t n1, std::size_t n2, const float* kernel, std::size_t m1, std::size_t m2, float* out) {
-    auto* kernel_reverse = aligned_allocate<float>(m1 * m2);
-    std::reverse_copy(kernel, kernel + m1 * m2, kernel_reverse);
+    auto kernel_reverse = aligned_allocate_auto<float>(m1 * m2);
+
+    std::reverse_copy(kernel, kernel + m1 * m2, kernel_reverse.get());
 
     std::size_t c1 = n1 - m1 + 1;
     std::size_t c2 = n2 - m2 + 1;
@@ -469,7 +466,7 @@ inline void sconv2_valid_micro_kernel(const float* in, std::size_t n1, std::size
             for (std::size_t k = 0; k < m1; ++k) {
                 for (std::size_t l = 0; l + 7 < m2; l += 8) {
                     __m256 tmp1 = _mm256_loadu_ps(in + (i + k) * n2 + j + l);
-                    __m256 tmp3 = _mm256_loadu_ps(kernel_reverse + k * m2 + l);
+                    __m256 tmp3 = _mm256_loadu_ps(kernel_reverse.get() + k * m2 + l);
                     __m256 tmp4 = _mm256_mul_ps(tmp1, tmp3);
                     res  = _mm256_add_ps(res, tmp4);
                 }
@@ -491,8 +488,6 @@ inline void sconv2_valid_micro_kernel(const float* in, std::size_t n1, std::size
             out[i * c2 + j] = temp + tmp_res[0] + tmp_res[1] + tmp_res[2] + tmp_res[3] + tmp_res[4] + tmp_res[5] + tmp_res[6] + tmp_res[7];
         }
     }
-
-    aligned_release(kernel_reverse);
 }
 
 template <typename I, typename K, typename C, cpp_enable_if((all_single_precision<I, K, C>::value))>
