@@ -9,11 +9,18 @@
 
 namespace etl {
 
+/*!
+ * \brief The contextual configuration of ETL
+ */
 struct context {
     bool serial = false;
     bool parallel = false;
 };
 
+/*!
+ * \brief Return the configuration context of the current thread.
+ * \return the configuration context of the current thread
+ */
 inline context& local_context(){
     static thread_local context local_context;
     return local_context;
@@ -21,6 +28,9 @@ inline context& local_context(){
 
 namespace detail {
 
+/*!
+ * \brief RAII helper for setting the context to serial
+ */
 struct serial_context {
     bool old_serial;
 
@@ -38,6 +48,9 @@ struct serial_context {
     }
 };
 
+/*!
+ * \brief RAII helper for setting the context to parallel
+ */
 struct parallel_context {
     bool old_parallel;
 

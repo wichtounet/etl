@@ -11,8 +11,16 @@ namespace etl {
 
 namespace detail {
 
+/*!
+ * \brief Direct evaluation of conmtx2
+ */
 template <typename A, typename M>
 struct convmtx2_direct {
+    /*!
+     * \brief Apply the convmtx2 to sub into m
+     * \param sub The sub expression
+     * \param m The output matrix
+     */
     template <std::size_t K1, std::size_t K2>
     static void apply(A&& sub, M& m) {
         const std::size_t i1 = etl::dim<0>(sub);

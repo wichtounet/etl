@@ -28,11 +28,11 @@ namespace detail {
  */
 template<typename V_T, typename V_Expr>
 struct Assign {
-    mutable V_T* lhs;
-    V_Expr& rhs;
-    const std::size_t _first;
-    const std::size_t _last;
-    const std::size_t _size;
+    mutable V_T* lhs;         ///< The left hand side
+    V_Expr& rhs;              ///< The right hand side
+    const std::size_t _first; ///< The first index to assign
+    const std::size_t _last;  ///< The last index to assign
+    const std::size_t _size;  ///< The size to assign
 
     Assign(V_T* lhs, V_Expr& rhs, std::size_t first, std::size_t last)
             : lhs(lhs), rhs(rhs), _first(first), _last(last), _size(last - first) {
@@ -70,12 +70,12 @@ struct vectorized_base {
     using derived_t = Base;
     using memory_type = value_t<L_Expr>*;
 
-    L_Expr& lhs;
-    memory_type lhs_m;
-    V_Expr& rhs;
-    const std::size_t _first;
-    const std::size_t _last;
-    const std::size_t _size;
+    L_Expr& lhs;              ///< The left hand side
+    memory_type lhs_m;        ///< The left hand side memory
+    V_Expr& rhs;              ///< The right hand side
+    const std::size_t _first; ///< The first index to assign
+    const std::size_t _last;  ///< The last index to assign
+    const std::size_t _size;  ///< The size to assign
 
     template<typename T>
     using traits = typename get_intrinsic_traits<V>::template type<T>;
@@ -243,11 +243,11 @@ struct VectorizedAssign : vectorized_base<V, L_Expr, V_Expr, VectorizedAssign<V,
  */
 template<typename V_T, typename V_Expr>
 struct AssignAdd {
-    mutable V_T* lhs;
-    V_Expr& rhs;
-    const std::size_t _first;
-    const std::size_t _last;
-    const std::size_t _size;
+    mutable V_T* lhs;         ///< The left hand side
+    V_Expr& rhs;              ///< The right hand side
+    const std::size_t _first; ///< The first index to assign
+    const std::size_t _last;  ///< The last index to assign
+    const std::size_t _size;  ///< The size to assign
 
     AssignAdd(V_T* lhs, V_Expr& rhs, std::size_t first, std::size_t last)
             : lhs(lhs), rhs(rhs), _first(first), _last(last), _size(last - first) {
@@ -385,11 +385,11 @@ struct VectorizedAssignAdd : vectorized_base<V, L_Expr, V_Expr, VectorizedAssign
  */
 template<typename V_T, typename V_Expr>
 struct AssignSub {
-    mutable V_T* lhs;
-    V_Expr& rhs;
-    const std::size_t _first;
-    const std::size_t _last;
-    const std::size_t _size;
+    mutable V_T* lhs;         ///< The left hand side
+    V_Expr& rhs;              ///< The right hand side
+    const std::size_t _first; ///< The first index to assign
+    const std::size_t _last;  ///< The last index to assign
+    const std::size_t _size;  ///< The size to assign
 
     AssignSub(V_T* lhs, V_Expr& rhs, std::size_t first, std::size_t last)
             : lhs(lhs), rhs(rhs), _first(first), _last(last), _size(last - first) {
@@ -527,11 +527,11 @@ struct VectorizedAssignSub : vectorized_base<V, L_Expr, V_Expr, VectorizedAssign
  */
 template<typename V_T, typename V_Expr>
 struct AssignMul {
-    mutable V_T* lhs;
-    V_Expr& rhs;
-    const std::size_t _first;
-    const std::size_t _last;
-    const std::size_t _size;
+    mutable V_T* lhs;         ///< The left hand side
+    V_Expr& rhs;              ///< The right hand side
+    const std::size_t _first; ///< The first index to assign
+    const std::size_t _last;  ///< The last index to assign
+    const std::size_t _size;  ///< The size to assign
 
     AssignMul(V_T* lhs, V_Expr& rhs, std::size_t first, std::size_t last)
             : lhs(lhs), rhs(rhs), _first(first), _last(last), _size(last - first) {
@@ -669,11 +669,11 @@ struct VectorizedAssignMul : vectorized_base<V, L_Expr, V_Expr, VectorizedAssign
  */
 template<typename V_T, typename V_Expr>
 struct AssignDiv {
-    mutable V_T* lhs;
-    V_Expr& rhs;
-    const std::size_t _first;
-    const std::size_t _last;
-    const std::size_t _size;
+    mutable V_T* lhs;         ///< The left hand side
+    V_Expr& rhs;              ///< The right hand side
+    const std::size_t _first; ///< The first index to assign
+    const std::size_t _last;  ///< The last index to assign
+    const std::size_t _size;  ///< The size to assign
 
     AssignDiv(V_T* lhs, V_Expr& rhs, std::size_t first, std::size_t last)
             : lhs(lhs), rhs(rhs), _first(first), _last(last), _size(last - first) {
