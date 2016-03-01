@@ -16,6 +16,10 @@ using microseconds = std::chrono::microseconds;
 using nanoseconds = std::chrono::nanoseconds;
 using clock_resolution = nanoseconds;
 
+/*!
+ * \brief return the string representation of the given resolution
+ * \return the tring representation of the given resolution
+ */
 template<typename Resolution>
 std::string resolution_to_string(){
     if(std::is_same<Resolution, seconds>::value){

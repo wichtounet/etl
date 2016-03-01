@@ -6,7 +6,7 @@
 //=======================================================================
 
 /*!
- * \file globals.hpp
+ * \file
  * \brief Contains some global functions.
 */
 

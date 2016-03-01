@@ -13,8 +13,8 @@ namespace etl {
  * \brief The contextual configuration of ETL
  */
 struct context {
-    bool serial = false;
-    bool parallel = false;
+    bool serial = false;   ///< Force serial execution
+    bool parallel = false; ///< Force parallel execution
 };
 
 /*!
@@ -70,7 +70,14 @@ struct parallel_context {
 
 } //end of namespace detail
 
+/*!
+ * \brief Define the start of an ETL serial section
+ */
 #define SERIAL_SECTION if(auto etl_serial_context__ = etl::detail::serial_context())
+
+/*!
+ * \brief Define the start of an ETL parallel section
+ */
 #define PARALLEL_SECTION if(auto etl_parallel_context__ = etl::detail::parallel_context())
 
 } //end of namespace etl
