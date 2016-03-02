@@ -157,6 +157,12 @@ struct basic_upsample_3d_expr  : impl_expr<basic_upsample_3d_expr<T, C1, C2, C3,
         return "pool_3d";
     }
 
+    /*!
+     * \brief Returns the DDth dimension of the expression
+     * \tparam A The sub expression type
+     * \tparam DD The dimension to get
+     * \return the DDth dimension of the expression
+     */
     template <typename A, std::size_t DD>
     static constexpr std::size_t dim() {
         return DD == 0 ? decay_traits<A>::template dim<0>() * C1
@@ -164,6 +170,12 @@ struct basic_upsample_3d_expr  : impl_expr<basic_upsample_3d_expr<T, C1, C2, C3,
                                  : decay_traits<A>::template dim<2>() * C3;
     }
 
+    /*!
+     * \brief Returns the dth dimension of the expression
+     * \param a The sub expression
+     * \param d The dimension to get
+     * \return the dth dimension of the expression
+     */
     template <typename A>
     static std::size_t dim(const A& a, std::size_t d) {
         if (d == 0) {
@@ -175,11 +187,20 @@ struct basic_upsample_3d_expr  : impl_expr<basic_upsample_3d_expr<T, C1, C2, C3,
         }
     }
 
+    /*!
+     * \brief Returns the size of the expression
+     * \param a The sub expression
+     * \return the size of the expression
+     */
     template <typename A>
     static std::size_t size(const A& a) {
         return (etl::dim<0>(a) * C1) * (etl::dim<1>(a) * C2) * (etl::dim<2>(a) * C3);
     }
 
+    /*!
+     * \brief Returns the size of the expression
+     * \return the size of the expression
+     */
     template <typename A>
     static constexpr std::size_t size() {
         return this_type::template dim<A, 0>() * this_type::template dim<A, 1>() * this_type::template dim<A, 2>();
@@ -194,6 +215,10 @@ struct basic_upsample_3d_expr  : impl_expr<basic_upsample_3d_expr<T, C1, C2, C3,
         return etl::order::RowMajor;
     }
 
+    /*!
+     * \brief Returns the number of dimensions of the expression
+     * \return the number of dimensions of the expression
+     */
     static constexpr std::size_t dimensions() {
         return 3;
     }
