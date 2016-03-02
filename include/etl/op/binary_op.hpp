@@ -19,7 +19,7 @@
 
 namespace etl {
 
-/*
+/*!
  * \brief Binary operator for scalar addition
  */
 template <typename T>
@@ -74,7 +74,7 @@ struct plus_binary_op {
     }
 };
 
-/*
+/*!
  * \brief Binary operator for scalar subtraction
  */
 template <typename T>
@@ -129,7 +129,7 @@ struct minus_binary_op {
     }
 };
 
-/*
+/*!
  * \brief Binary operator for scalar multiplication
  */
 template <typename T>
@@ -184,7 +184,7 @@ struct mul_binary_op {
     }
 };
 
-/*
+/*!
  * \brief Binary operator for scalar division
  */
 template <typename T>
@@ -239,7 +239,7 @@ struct div_binary_op {
     }
 };
 
-/*
+/*!
  * \brief Binary operator for scalar modulo
  */
 template <typename T>
@@ -274,7 +274,7 @@ struct mod_binary_op {
     }
 };
 
-/*
+/*!
  * \brief Binary operator for ranged noise generation
  *
  * This operator adds noise from N(0,1) to x. If x is 0 or the rhs
@@ -320,7 +320,7 @@ struct ranged_noise_binary_op {
     }
 };
 
-/*
+/*!
  * \brief Binary operator for scalar maximum
  */
 template <typename T, typename E>
@@ -375,7 +375,7 @@ struct max_binary_op {
     }
 };
 
-/*
+/*!
  * \brief Binary operator for scalar minimum
  */
 template <typename T, typename E>
@@ -430,7 +430,7 @@ struct min_binary_op {
     }
 };
 
-/*
+/*!
  * \brief Binary operator for scalar power
  */
 template <typename T, typename E>
@@ -465,7 +465,7 @@ struct pow_binary_op {
     }
 };
 
-/*
+/*!
  * \brief Binary operator to get 1.0 if x equals to rhs value, 0 otherwise
  */
 template <typename T, typename E>
