@@ -242,6 +242,9 @@ struct is_direct_slice_view<slice_view<T>> : cpp::and_u<has_direct_access<T>::va
 template <typename T>
 struct is_direct_dim_view : std::false_type {};
 
+/*!
+ * \copydoc is_direct_dim_view
+ */
 template <typename T>
 struct is_direct_dim_view<dim_view<T, 1>> : has_direct_access<T> {};
 
@@ -252,6 +255,9 @@ struct is_direct_dim_view<dim_view<T, 1>> : has_direct_access<T> {};
 template <typename T>
 struct is_direct_fast_matrix_view : std::false_type {};
 
+/*!
+ * \copydoc is_direct_fast_matrix_view
+ */
 template <typename T, std::size_t... Dims>
 struct is_direct_fast_matrix_view<fast_matrix_view<T, Dims...>> : has_direct_access<T> {};
 
@@ -262,6 +268,9 @@ struct is_direct_fast_matrix_view<fast_matrix_view<T, Dims...>> : has_direct_acc
 template <typename T>
 struct is_direct_dyn_matrix_view : std::false_type {};
 
+/*!
+ * \copydoc is_direct_dyn_matrix_view
+ */
 template <typename T>
 struct is_direct_dyn_matrix_view<dyn_matrix_view<T>> : has_direct_access<T> {};
 
@@ -272,6 +281,9 @@ struct is_direct_dyn_matrix_view<dyn_matrix_view<T>> : has_direct_access<T> {};
 template <typename T>
 struct is_direct_dyn_vector_view : std::false_type {};
 
+/*!
+ * \copydoc is_direct_dyn_vector_view
+ */
 template <typename T>
 struct is_direct_dyn_vector_view<dyn_vector_view<T>> : has_direct_access<T> {};
 
@@ -282,9 +294,16 @@ struct is_direct_dyn_vector_view<dyn_vector_view<T>> : has_direct_access<T> {};
 template <typename T>
 struct is_direct_identity_view : std::false_type {};
 
+/*!
+ * \copydoc is_direct_identity_view
+ */
 template <typename T, typename V>
 struct is_direct_identity_view<etl::unary_expr<T, V, identity_op>> : has_direct_access<V> {};
 
+/*!
+ * \brief Tests if the given type has direct memory access
+ * \tparam T The type to test
+ */
 template <typename T, typename DT>
 struct has_direct_access : cpp::or_c<
                                is_etl_direct_value<DT>, is_temporary_unary_expr<DT>, is_temporary_binary_expr<DT>, is_direct_identity_view<DT>, is_direct_sub_view<DT>, is_direct_slice_view<DT>, is_direct_dim_view<DT>, is_direct_fast_matrix_view<DT>, is_direct_dyn_matrix_view<DT>, is_direct_dyn_vector_view<DT>> {};
@@ -457,37 +476,66 @@ using is_3d = cpp::bool_constant<decay_traits<T>::dimensions() == 3>;
 template <typename... E>
 using all_vectorizable = cpp::and_u<decay_traits<E>::vectorizable...>;
 
+/*!
+ * \brief Traits to test if an expression is inplace transpose-able
+ * \tparam T The type to test
+ */
 template <typename T, typename Enable = void>
 struct inplace_transpose_able;
 
+/*!
+ * \copydoc inplace_transpose_able
+ */
 template <typename T>
 struct inplace_transpose_able<T, std::enable_if_t<all_fast<T>::value && is_2d<T>::value>> {
     static constexpr const bool value = decay_traits<T>::template dim<0>() == decay_traits<T>::template dim<1>();
 };
 
+/*!
+ * \copydoc inplace_transpose_able
+ */
 template <typename T>
 struct inplace_transpose_able<T, std::enable_if_t<!all_fast<T>::value && is_2d<T>::value>> {
     static constexpr const bool value = true;
 };
 
+/*!
+ * \copydoc inplace_transpose_able
+ */
 template <typename T>
 struct inplace_transpose_able<T, std::enable_if_t<!is_2d<T>::value>> {
     static constexpr const bool value = false;
 };
 
+/*!
+ * \brief Traits to test if an expression is inplace sub transpose-able.
+ *
+ * Sub-transpose able means that the last two dimensions can be transposed in place.
+ *
+ * \tparam T The type to test
+ */
 template <typename T, typename Enable = void>
 struct inplace_sub_transpose_able;
 
+/*!
+ * \copydoc inplace_sub_transpose_able
+ */
 template <typename T>
 struct inplace_sub_transpose_able<T, std::enable_if_t<all_fast<T>::value && is_3d<T>::value>> {
     static constexpr const bool value = decay_traits<T>::template dim<1>() == decay_traits<T>::template dim<2>();
 };
 
+/*!
+ * \copydoc inplace_sub_transpose_able
+ */
 template <typename T>
 struct inplace_sub_transpose_able<T, std::enable_if_t<!all_fast<T>::value && is_3d<T>::value>> {
     static constexpr const bool value = true;
 };
 
+/*!
+ * \copydoc inplace_sub_transpose_able
+ */
 template <typename T>
 struct inplace_sub_transpose_able<T, std::enable_if_t<!is_3d<T>::value>> {
     static constexpr const bool value = false;

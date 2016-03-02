@@ -70,27 +70,42 @@ struct is_vector<std::vector<N, A>> : std::true_type {};
 template <typename N>
 struct is_vector<std::vector<N>> : std::true_type {};
 
+/*!
+ * \brief Traits to extract iterator types from a type
+ */
 template <typename T>
 struct iterator_type {
-    using iterator       = typename T::iterator;
-    using const_iterator = typename T::const_iterator;
+    using iterator       = typename T::iterator; ///< The iterator type
+    using const_iterator = typename T::const_iterator; ///< The const iterator type
 };
 
+/*!
+ * \copydoc iterator_type
+ */
 template <typename T>
 struct iterator_type <T*> {
-    using iterator       = T*;
-    using const_iterator = const T*;
+    using iterator       = T*; ///< The iterator type
+    using const_iterator = const T*; ///< The const iterator type
 };
 
+/*!
+ * \copydoc iterator_type
+ */
 template <typename T>
 struct iterator_type <const T*> {
-    using iterator       = const T*;
-    using const_iterator = const T*;
+    using iterator       = const T*; ///< The iterator type
+    using const_iterator = const T*; ///< The const iterator type
 };
 
+/*!
+ * \brief Helper to get the iterator type from a type
+ */
 template <typename T>
 using iterator_t = typename iterator_type<T>::iterator;
 
+/*!
+ * \brief Helper to get the const iterator type from a type
+ */
 template <typename T>
 using const_iterator_t = typename iterator_type<T>::const_iterator;
 
