@@ -592,7 +592,7 @@ struct etl_traits<T, std::enable_if_t<is_etl_value<T>::value>> {
     }
 };
 
-/*
+/*!
  * \brief Return the number of dimensions of the given ETL expression
  * \param expr The expression to get the number of dimensions for
  * \return The number of dimensions of the given expression.
@@ -602,7 +602,7 @@ constexpr std::size_t dimensions(const E& expr) noexcept {
     return (void) expr, etl_traits<E>::dimensions();
 }
 
-/*
+/*!
  * \brief Return the number of dimensions of the given ETL type
  * \tparam E The expression type to get the number of dimensions for
  * \return The number of dimensions of the given type.
