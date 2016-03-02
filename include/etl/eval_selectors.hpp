@@ -26,6 +26,9 @@ using are_vectorizable_select = cpp::and_u<
                                intrinsic_traits<value_t<R>>::vectorizable, intrinsic_traits<value_t<E>>::vectorizable,
                                std::is_same<intrinsic_type<value_t<R>>, intrinsic_type<value_t<E>>>::value>;
 
+/*!
+ * \brief Integral constant indicating if vectorization is possible
+ */
 template <typename E, typename R>
 using are_vectorizable = cpp::or_u<
     avx512_enabled && are_vectorizable_select<vector_mode_t::AVX512, E, R>::value,
@@ -41,27 +44,38 @@ inline constexpr vector_mode_t select_vector_mode(){
                                                                                 : vector_mode_t::NONE;
 }
 
-
 //Selectors for assign
 
+/*!
+ * \brief Integral constant indicating if a fast assign is possible
+ */
 template <typename E, typename R>
 using fast_assign = cpp::and_u<
                          has_direct_access<E>::value,
                          has_direct_access<R>::value
                          >;
 
+/*!
+ * \brief Integral constant indicating if a vectorized assign is possible
+ */
 template <typename E, typename R>
 using vectorized_assign = cpp::and_u<
                                !fast_assign<E, R>::value,
                                vectorize_expr,
                                are_vectorizable<E, R>::value>;
 
+/*!
+ * \brief Integral constant indicating if a direct assign is possible
+ */
 template <typename E, typename R>
 using direct_assign = cpp::and_u<
                            !fast_assign<E, R>::value,
                            !vectorized_assign<E, R>::value,
                            has_direct_access<R>::value>;
 
+/*!
+ * \brief Integral constant indicating if a standard assign is necessary
+ */
 template <typename E, typename R>
 using standard_assign = cpp::and_u<
                              !fast_assign<E, R>::value,
@@ -70,15 +84,24 @@ using standard_assign = cpp::and_u<
 
 //Selectors for compound operations
 
+/*!
+ * \brief Integral constant indicating if a vectorized compound assign is possible
+ */
 template <typename E, typename R>
 using vectorized_compound = cpp::and_u<
                                are_vectorizable<E, R>::value>;
 
+/*!
+ * \brief Integral constant indicating if a direct compound assign is possible
+ */
 template <typename E, typename R>
 using direct_compound = cpp::and_u<
                            !vectorized_compound<E, R>::value,
                            has_direct_access<R>::value>;
 
+/*!
+ * \brief Integral constant indicating if a standard compound assign is necessary
+ */
 template <typename E, typename R>
 using standard_compound = cpp::and_u<
                              !vectorized_compound<E, R>::value,
@@ -86,18 +109,34 @@ using standard_compound = cpp::and_u<
 
 // Selectors for optimized evaluation
 
+namespace detail {
+
+/*!
+ * \brief Implementation of an integral constant indicating if a direct transpose evaluation is possible.
+ */
 template <typename E, typename R>
 struct is_direct_transpose_impl : std::false_type {};
 
+/*!
+ * \copydoc is_direct_transpose_impl
+ */
 template <typename T, typename E, typename R>
 struct is_direct_transpose_impl<unary_expr<T, transpose_transformer<E>, transform_op>, R>
     : cpp::and_u<
         has_direct_access<E>::value,
         decay_traits<unary_expr<T, transpose_transformer<E>, transform_op>>::storage_order == decay_traits<R>::storage_order> {};
 
-template <typename E, typename R>
-using is_direct_transpose = is_direct_transpose_impl<std::decay_t<E>, std::decay_t<R>>;
+} //end of namespace detail
 
+/*!
+ * \brief Integral constant indicating if a direct transpose evaluation is possible.
+ */
+template <typename E, typename R>
+using is_direct_transpose = detail::is_direct_transpose_impl<std::decay_t<E>, std::decay_t<R>>;
+
+/*!
+ * \brief Integral constant indicating if an optimized evaluation is available
+ */
 template <typename E, typename R>
 using has_optimized_evaluation = cpp::or_c<is_direct_transpose<E, R>>;
 
