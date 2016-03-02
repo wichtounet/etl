@@ -83,9 +83,9 @@ private:
         is_etl_expr<Expr>::value || std::is_same<Expr, etl::scalar<T>>::value,
         "Only ETL expressions can be used in unary_expr");
 
-    using this_type = unary_expr<T, Expr, UnaryOp>;
+    using this_type = unary_expr<T, Expr, UnaryOp>; ///< The type of this expression
 
-    Expr _value;
+    Expr _value; ///< The sub expression
 
 public:
     using value_type        = T;    ///< The value type
@@ -197,14 +197,19 @@ public:
     }
 };
 
+/*!
+ * \brief Specialization of unary expression for identity op.
+ *
+ * This unary expression keeps access to data (can be edited)
+ */
 template <typename T, typename Expr>
 struct unary_expr<T, Expr, identity_op> : inplace_assignable<unary_expr<T, Expr, identity_op>>, comparable<unary_expr<T, Expr, identity_op>>, value_testable<unary_expr<T, Expr, identity_op>>, dim_testable<unary_expr<T, Expr, identity_op>>, gpu_able<T, unary_expr<T, Expr, identity_op>> {
 private:
     static_assert(is_etl_expr<Expr>::value, "Only ETL expressions can be used in unary_expr");
 
-    using this_type = unary_expr<T, Expr, identity_op>;
+    using this_type = unary_expr<T, Expr, identity_op>; ///< The type of this expression
 
-    Expr _value;
+    Expr _value; ///< The sub expression
 
     static constexpr const bool non_const_return_ref =
         cpp::and_c<
@@ -228,7 +233,10 @@ public:
     template<typename V = default_vec>
     using vec_type          = typename V::template vec_type<T>;
 
-    //Construct a new expression
+    /*!
+     * \brief Construct a new unary expression
+     * \param l The sub expression
+     */
     explicit unary_expr(Expr l) noexcept
             : _value(std::forward<Expr>(l)) {
         //Nothing else to init
@@ -237,8 +245,11 @@ public:
     unary_expr(const unary_expr& rhs) = default;
     unary_expr(unary_expr&& rhs) = default;
 
-    //Assign expressions to the unary expr
-
+    /*!
+     * \param Assign the given expression to the unary expression
+     * \brief e The expression to get the values from
+     * \return the unary expression
+     */
     template <typename E, cpp_enable_if(non_const_return_ref, is_etl_expr<E>::value)>
     unary_expr& operator=(E&& e) {
         validate_assign(*this, e);
@@ -246,9 +257,15 @@ public:
         return *this;
     }
 
+    /*!
+     * \param Assign the given value to each eleemnt of the unary expression
+     * \brief e The value
+     * \return the unary expression
+     */
     unary_expr& operator=(const value_type& e) {
         static_assert(non_const_return_ref, "Impossible to modify read-only unary_expr");
 
+        //TODO: This is not necessarily efficient
         for (std::size_t i = 0; i < size(*this); ++i) {
             (*this)[i] = e;
         }
@@ -256,6 +273,11 @@ public:
         return *this;
     }
 
+    /*!
+     * \param Assign the given container to the unary expression
+     * \brief vec The container to get the values from
+     * \return the unary expression
+     */
     template <typename Container, cpp_enable_if(!is_etl_expr<Container>::value, std::is_convertible<typename Container::value_type, value_type>::value)>
     unary_expr& operator=(const Container& vec) {
         validate_assign(*this, vec);
@@ -486,12 +508,15 @@ public:
     }
 };
 
+/*!
+ * \brief Specialization of unary expression for transform op.
+ */
 template <typename T, typename Expr>
 struct unary_expr<T, Expr, transform_op> : comparable<unary_expr<T, Expr, transform_op>>, value_testable<unary_expr<T, Expr, transform_op>>, dim_testable<unary_expr<T, Expr, transform_op>> {
 private:
-    using this_type = unary_expr<T, Expr, transform_op>;
+    using this_type = unary_expr<T, Expr, transform_op>; ///< The type of this expression
 
-    Expr _value;
+    Expr _value; ///< The sub expression
 
 public:
     using value_type        = T;
@@ -596,18 +621,24 @@ public:
     }
 };
 
+
+/*!
+ * \brief Specialization of unary expression for stateful op.
+ *
+ * This operator has some state and is constructed directly inside the expression
+ */
 template <typename T, typename Expr, typename Op>
 struct unary_expr<T, Expr, stateful_op<Op>> : comparable<unary_expr<T, Expr, stateful_op<Op>>>, value_testable<unary_expr<T, Expr, stateful_op<Op>>>, dim_testable<unary_expr<T, Expr, stateful_op<Op>>> {
 private:
-    using this_type = unary_expr<T, Expr, stateful_op<Op>>;
+    using this_type = unary_expr<T, Expr, stateful_op<Op>>; ///< The type of this expression
 
-    Expr _value;
-    Op op;
+    Expr _value; ///< The sub expression
+    Op op; ///< The operator state
 
 public:
-    using value_type        = T;
-    using memory_type       = void;
-    using const_memory_type = void;
+    using value_type        = T; ///< The value type
+    using memory_type       = void; ///< The memory type
+    using const_memory_type = void; ///< The const memory type
     using expr_t            = Expr; ///< The sub expression type
 
     /*!
@@ -720,8 +751,8 @@ public:
  */
 template <typename T, typename Expr, typename UnaryOp>
 struct etl_traits<etl::unary_expr<T, Expr, UnaryOp>> {
-    using expr_t     = etl::unary_expr<T, Expr, UnaryOp>;
-    using sub_expr_t = std::decay_t<Expr>;
+    using expr_t     = etl::unary_expr<T, Expr, UnaryOp>; ///< The expression type
+    using sub_expr_t = std::decay_t<Expr>; ///< The sub expression type
 
     static constexpr const bool is_etl                  = true;                                                          ///< Indicates if the type is an ETL expression
     static constexpr const bool is_transformer          = false;                                                         ///< Indicates if the type is a transformer

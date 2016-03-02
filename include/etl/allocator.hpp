@@ -83,19 +83,34 @@ void aligned_release(T* ptr) {
     return aligned_allocator<void, 32>::release<T>(ptr);
 }
 
+/*!
+ * \brief RAII wrapper for allocated aligned memory
+ */
 template <typename T>
 struct aligned_ptr {
-    T* ptr;
+    T* ptr; ///< The raw pointer
 
+    /*!
+     * \brief Build an aligned_ptr managing the given pointer
+     */
     aligned_ptr(T* ptr) : ptr(ptr) {}
 
     aligned_ptr(const aligned_ptr& rhs) = delete;
     aligned_ptr& operator=(const aligned_ptr& rhs) = delete;
 
+    /*!
+     * \brief Move construct an aligned_ptr
+     * \param rhs The pointer to move
+     */
     aligned_ptr(aligned_ptr&& rhs) : ptr(rhs.ptr) {
         rhs.ptr = nullptr;
     }
 
+    /*!
+     * \brief Move assign an aligned_ptr
+     * \param rhs The pointer to move
+     * \return the aligned_ptr
+     */
     aligned_ptr& operator=(aligned_ptr&& rhs){
         if(this != &rhs){
             ptr = rhs.ptr;
@@ -105,20 +120,32 @@ struct aligned_ptr {
         return *this;
     }
 
+    /*!
+     * \brief Returns a reference to the element at psition i
+     */
     inline T& operator[](std::size_t i){
         return ptr[i];
     }
 
+    /*!
+     * \brief Returns a reference to the element at psition i
+     */
     inline const T& operator[](std::size_t i) const {
         return ptr[i];
     }
 
+    /*!
+     * \brief Destruct the aligned_ptr and release the aligned memory
+     */
     ~aligned_ptr(){
         if(ptr){
             aligned_release(ptr);
         }
     }
 
+    /*!
+     * \brief Returns the raw underlying pointer
+     */
     T* get(){
         return ptr;
     }

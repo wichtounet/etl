@@ -328,14 +328,23 @@ public:
         return get_result_op::apply(_c);
     }
 
+    /*!
+     * \brief Return the GPU delegate
+     */
     result_type& gpu_delegate(){
         return result();
     }
 
+    /*!
+     * \brief Return the GPU delegate
+     */
     const result_type& gpu_delegate() const {
         return result();
     }
 
+    /*!
+     * \brief Indicate if the delegate is valid (allocated)
+     */
     bool gpu_delegate_valid() const noexcept {
         return evaluated && allocated;
     }

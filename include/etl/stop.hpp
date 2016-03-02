@@ -20,12 +20,18 @@ auto s(T&& value) {
     return dyn_matrix<typename T::value_type, etl_traits<T>::dimensions()>(std::forward<T>(value));
 }
 
+/*!
+ * \brief TMP struct to build fast matrix type from a fast expression type
+ */
 template <typename M, typename Sequence>
 struct build_matrix_type;
 
+/*!
+ * \copydoc build_matrix_type
+ */
 template <typename M, std::size_t... I>
 struct build_matrix_type<M, std::index_sequence<I...>> {
-    using type = fast_matrix<typename M::value_type, etl_traits<M>::template dim<I>()...>;
+    using type = fast_matrix<typename M::value_type, etl_traits<M>::template dim<I>()...>; ///< The fast matrix type
 };
 
 /*!

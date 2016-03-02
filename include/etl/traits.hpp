@@ -566,20 +566,41 @@ struct etl_traits<T, std::enable_if_t<is_etl_value<T>::value>> {
     template<vector_mode_t V>
     using vectorizable = cpp::bool_constant<!is_sparse_matrix<T>::value>;
 
+    /*!
+     * \brief Return the size of the given epxression
+     * \param v The expression to get the size from
+     * \return the size of the given expressio
+     */
     static std::size_t size(const T& v) {
         return v.size();
     }
 
+    /*!
+     * \brief Return the dth dimension of the given epxression
+     * \param v The expression to get the size from
+     * \param d The dimension to get
+     * \return the dth dimension of the given expressio
+     */
     static std::size_t dim(const T& v, std::size_t d) {
         return v.dim(d);
     }
 
+    /*!
+     * \brief Return the size of an expression of the given type
+     * \return the size of an expression of the given type
+     */
     static constexpr std::size_t size() {
         static_assert(is_fast, "Only fast_matrix have compile-time access to the dimensions");
 
         return T::size();
     }
 
+    /*!
+     * \brief Return the Dth dimension of the given epxression
+     * \param v The expression to get the size from
+     * \tparam D The dimension to get
+     * \return the Dth dimension of the given expressio
+     */
     template <std::size_t D>
     static constexpr std::size_t dim() {
         static_assert(is_fast, "Only fast_matrix have compile-time access to the dimensions");
@@ -587,6 +608,10 @@ struct etl_traits<T, std::enable_if_t<is_etl_value<T>::value>> {
         return T::template dim<D>();
     }
 
+    /*!
+     * \brief Return the number of dimensions of an expression of the given type
+     * \return the number of dimensions of an expression of the given type
+     */
     static constexpr std::size_t dimensions() {
         return T::n_dimensions;
     }

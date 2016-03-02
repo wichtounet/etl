@@ -31,12 +31,20 @@ namespace etl {
 
 namespace detail {
 
+/*!
+ * \brief Enumeration describing the different implementations of sum
+ */
 enum class sum_imple {
-    STD,
-    SSE,
-    AVX
+    STD, ///< Standard implementation
+    SSE, ///< SSE implementation
+    AVX ///< AVX implementation
 };
 
+/*!
+ * \brief Select the sum implementation for an expression of type E
+ * \tparam E The type of expression
+ * \return The implementation to use
+ */
 template <typename E>
 cpp14_constexpr sum_imple select_sum_impl() {
     //Note: since the constexpr values will be known at compile time, the
@@ -56,6 +64,11 @@ cpp14_constexpr sum_imple select_sum_impl() {
     return sum_imple::STD;
 }
 
+/*!
+ * \brief Indicate if the sum must run in parallel for the given expression
+ * \param e type The expression to sum
+ * \return true if the implementation must run in parallel or not (false).
+ */
 template <typename E>
 inline bool select_parallel(const E& e) {
     if((parallel && !local_context().serial) || local_context().parallel){
@@ -65,14 +78,23 @@ inline bool select_parallel(const E& e) {
     }
 }
 
+/*!
+ * \brief Sum operation implementation
+ */
 template <typename E>
 struct sum_impl {
+    /*!
+     * \brief Apply the functor to e
+     */
     static value_t<E> apply(const E& e) {
         cpp14_constexpr auto impl = select_sum_impl<E>();
 
         return selected_apply(e, impl);
     }
 
+    /*!
+     * \brief Apply the functor to e forcing the implementation
+     */
     static value_t<E> selected_apply(const E& e, sum_imple impl) {
         bool parallel_dispatch = select_parallel(e);
 
@@ -100,6 +122,12 @@ struct sum_impl {
     }
 };
 
+/*!
+ * \brief Compute the sum of the expression using the given sum implementation
+ * \param e The expression to sum
+ * \param impl The implementation to use
+ * \return The sum of the expression
+ */
 template <typename E>
 auto sum_direct(const E& e, sum_imple impl){
     return sum_impl<E>::selected_apply(e, impl);

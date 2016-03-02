@@ -13,10 +13,13 @@
 
 namespace etl {
 
+/*!
+ * \brief Expression of an outer product (temporary binary expression)
+ */
 template <typename T>
 struct outer_product_expr : impl_expr<outer_product_expr<T>> {
-    using value_type = T;
-    using this_type  = outer_product_expr<T>;
+    using value_type = T; ///< The value type
+    using this_type  = outer_product_expr<T>; ///< The type of this expression
 
     /*!
      * \brief The result type for given sub types
@@ -27,6 +30,9 @@ struct outer_product_expr : impl_expr<outer_product_expr<T>> {
 
     static constexpr const bool is_gpu = false; ///< outer product has no GPU implementation
 
+    /*!
+     * \brief Apply the outer product to a and b and store the result in c
+     */
     template <typename A, typename B, typename C>
     static void apply(A&& a, B&& b, C&& c) {
         static_assert(all_etl_expr<A, B, C>::value, "Outer product only supported for ETL expressions");
@@ -43,16 +49,25 @@ struct outer_product_expr : impl_expr<outer_product_expr<T>> {
         return "outer_product";
     }
 
+    /*!
+     * \brief Returns the size of the expression given a and b
+     */
     template <typename A, typename B>
     static std::size_t size(const A& a, const B& b) {
         return etl::dim<0>(a) * etl::dim<0>(b);
     }
 
+    /*!
+     * \brief Returns the dth of the expression given a and b
+     */
     template <typename A, typename B>
     static std::size_t dim(const A& a, const B& b, std::size_t d) {
         return d == 0 ? etl::dim<0>(a) : etl::dim<0>(b);
     }
 
+    /*!
+     * \brief Returns the size of the expression given the type of a and b
+     */
     template <typename A, typename B>
     static constexpr std::size_t size() {
         return etl_traits<A>::template dim<0>() * etl_traits<B>::template dim<0>();
@@ -67,11 +82,18 @@ struct outer_product_expr : impl_expr<outer_product_expr<T>> {
         return etl::order::RowMajor;
     }
 
+    /*!
+     * \brief Returns the Dth of the expression given a and b
+     */
     template <typename A, typename B, std::size_t D>
     static constexpr std::size_t dim() {
         return D == 0 ? decay_traits<A>::template dim<0>() : decay_traits<B>::template dim<0>();
     }
 
+    /*!
+     * \brief Return the number of dimensions of the expression
+     * \return the number of dimensions of the expression
+     */
     static constexpr std::size_t dimensions() {
         return 2;
     }

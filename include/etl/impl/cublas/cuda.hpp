@@ -19,6 +19,9 @@ namespace cuda {
 
 #ifdef ETL_CUDA
 
+/*!
+ * \brief Wrapper for CUDA memory
+ */
 template <typename T>
 struct cuda_memory {
     T* memory;
@@ -139,6 +142,9 @@ auto cuda_allocate_copy(E* ptr, std::size_t n) -> cuda_memory<E> {
 
 #else
 
+/*!
+ * \brief Wrapper for CUDA memory (when disabled CUDA support)
+ */
 template <typename T>
 struct cuda_memory {
     //Nothing is enought

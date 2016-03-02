@@ -26,8 +26,8 @@ namespace etl {
  */
 template <typename T, typename D>
 struct gpu_delegate {
-    using value_type = T;
-    using derived_t = D;
+    using value_type = T; ///< The value type
+    using derived_t = D; ///< The derived type
 
     /*!
      * \brief Returns a reference to the derived object, i.e. the object using the CRTP injector.
@@ -45,14 +45,23 @@ struct gpu_delegate {
         return *static_cast<const derived_t*>(this);
     }
 
+    /*!
+     * \brief Returns the GPU delegate.
+     */
     CPP_DEBUG_AUTO_TRICK decltype(auto) delegate() const noexcept {
         return as_derived().gpu_delegate();
     }
 
+    /*!
+     * \brief Returns the GPU delegate.
+     */
     CPP_DEBUG_AUTO_TRICK decltype(auto) delegate() noexcept {
         return as_derived().gpu_delegate();
     }
 
+    /*!
+     * \brief Indicate if the GPU memory is valid (allocated)
+     */
     bool is_valid() const noexcept {
         return as_derived().gpu_delegate_valid();
     }

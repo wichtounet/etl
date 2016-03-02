@@ -1328,27 +1328,56 @@ struct etl_traits<etl::dyn_vector_view<T>> {
     }
 };
 
-
+/*!
+ * \brief Print a representation of the view on the given stream
+ * \param os The output stream
+ * \param v The view to print
+ * \return the output stream
+ */
 template <typename T, std::size_t D>
 std::ostream& operator<<(std::ostream& os, const dim_view<T, D>& v) {
     return os << "dim[" << D << "](" << v.sub << ", " << v.i << ")";
 }
 
+/*!
+ * \brief Print a representation of the view on the given stream
+ * \param os The output stream
+ * \param v The view to print
+ * \return the output stream
+ */
 template <typename T>
 std::ostream& operator<<(std::ostream& os, const sub_view<T>& v) {
     return os << "sub(" << v.sub << ", " << v.i << ")";
 }
 
+/*!
+ * \brief Print a representation of the view on the given stream
+ * \param os The output stream
+ * \param v The view to print
+ * \return the output stream
+ */
 template <typename T, std::size_t Rows, std::size_t Columns>
 std::ostream& operator<<(std::ostream& os, const fast_matrix_view<T, Rows, Columns>& v) {
     return os << "reshape[" << Rows << "," << Columns << "](" << v.sub << ")";
 }
 
+/*!
+ * \brief Print a representation of the view on the given stream
+ * \param os The output stream
+ * \param v The view to print
+ * \return the output stream
+ */
 template <typename T>
 std::ostream& operator<<(std::ostream& os, const dyn_matrix_view<T>& v) {
     return os << "reshape[" << v.rows << "," << v.columns << "](" << v.sub << ")";
 }
 
+/*!
+ * \brief Print a representation of the view on the given stream
+ * \param os The output stream
+ * \param v The view to print
+ * \return the output stream
+ */
 template <typename T>
 std::ostream& operator<<(std::ostream& os, const dyn_vector_view<T>& v) {
     return os << "reshape[" << v.rows << "](" << v.sub << ")";

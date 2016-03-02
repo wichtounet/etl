@@ -9,10 +9,24 @@
 
 namespace etl {
 
+/*!
+ * \brief Indicates if an 1D evaluation should run in paralle
+ * \param n The size of the evaluation
+ * \param threshold The parallel threshold
+ * \return true if the evaluation should be done in paralle, false otherwise
+ */
 inline bool select_parallel(std::size_t n, std::size_t threshold = parallel_threshold){
     return threads > 1 && (local_context().parallel || (parallel && n >= threshold && !local_context().serial));
 }
 
+/*!
+ * \brief Indicates if an 2D evaluation should run in paralle
+ * \param n1 The first dimension of the evaluation
+ * \param t1 The first parallel threshold
+ * \param n2 The second dimension of the evaluation
+ * \param t2 The second parallel threshold
+ * \return true if the evaluation should be done in paralle, false otherwise
+ */
 inline bool select_parallel_2d(std::size_t n1, std::size_t t1, std::size_t n2, std::size_t t2){
     return threads > 1 && (local_context().parallel || (parallel && n1 >= t1 && n2 >= t2 && !local_context().serial));
 }
