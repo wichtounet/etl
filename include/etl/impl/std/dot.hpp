@@ -25,7 +25,7 @@ namespace standard {
  * \return the sum
  */
 template <typename A, typename B>
-auto dot(const A& a, const B& b) {
+value_t<A> dot(const A& a, const B& b) {
     return sum(scale(a, b));
 }
 

@@ -20,7 +20,9 @@ namespace standard {
 
 /*!
  * \brief Compute the outer product of a and b and store the result in c
- * \param input The input expression
+ * \param a The a expression
+ * \param b The b expression
+ * \param c The c expression
  */
 template <typename A, typename B, typename C>
 void outer(const A& a, const B& b, C&& c) {
