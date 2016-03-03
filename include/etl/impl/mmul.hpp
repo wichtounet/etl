@@ -108,8 +108,8 @@ inline cpp14_constexpr gemm_impl select_gevm_impl(const std::size_t n1, const st
     return gemm_impl::STD;
 }
 
-template <typename A, typename B, typename C>
 struct mm_mul_impl {
+    template <typename A, typename B, typename C>
     static void apply(A&& a, B&& b, C&& c) {
         gemm_impl impl = select_gemm_impl<all_dma<A, B, C>::value, value_t<A>>(etl::dim<0>(a), etl::dim<1>(a), etl::dim<1>(c));
 
@@ -125,8 +125,8 @@ struct mm_mul_impl {
     }
 };
 
-template <typename A, typename B, typename C>
 struct vm_mul_impl {
+    template <typename A, typename B, typename C>
     static void apply(A&& a, B&& b, C&& c) {
         gemm_impl impl = select_gevm_impl<all_dma<A, B, C>::value, value_t<A>>(etl::dim<0>(b), etl::dim<1>(b));
 
@@ -140,8 +140,8 @@ struct vm_mul_impl {
     }
 };
 
-template <typename A, typename B, typename C>
 struct mv_mul_impl {
+    template <typename A, typename B, typename C>
     static void apply(A&& a, B&& b, C&& c) {
         gemm_impl impl = select_gemv_impl<all_dma<A, B, C>::value, value_t<A>>(etl::dim<0>(a), etl::dim<1>(a));
 
@@ -155,8 +155,8 @@ struct mv_mul_impl {
     }
 };
 
-template <typename A, typename B, typename C>
 struct strassen_mm_mul_impl {
+    template <typename A, typename B, typename C>
     static void apply(A&& a, B&& b, C&& c) {
         etl::impl::standard::strassen_mm_mul(std::forward<A>(a), std::forward<B>(b), std::forward<C>(c));
     }

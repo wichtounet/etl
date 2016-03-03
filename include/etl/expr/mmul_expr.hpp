@@ -126,7 +126,7 @@ void check_mv_mul_sizes(const A& a, const B& b, C& c) {
  * \tparam T The value type
  * \tparam Impl The implementation class
  */
-template <typename T, template <typename...> class Impl>
+template <typename T, typename Impl>
 struct basic_mm_mul_expr : impl_expr<basic_mm_mul_expr<T, Impl>> {
     using value_type = T;
     using this_type  = basic_mm_mul_expr<T, Impl>;
@@ -142,7 +142,7 @@ struct basic_mm_mul_expr : impl_expr<basic_mm_mul_expr<T, Impl>> {
         static_assert(decay_traits<A>::dimensions() == 2 && decay_traits<B>::dimensions() == 2 && decay_traits<C>::dimensions() == 2, "Matrix multiplication only works in 2D");
         detail::check_mm_mul_sizes(a, b, c);
 
-        Impl<decltype(make_temporary(std::forward<A>(a))), decltype(make_temporary(std::forward<B>(b))), C>::apply(
+        Impl::apply(
             make_temporary(std::forward<A>(a)),
             make_temporary(std::forward<B>(b)),
             std::forward<C>(c));
@@ -228,7 +228,7 @@ using strassen_mm_mul_expr = basic_mm_mul_expr<T, detail::strassen_mm_mul_impl>;
  * \tparam T The value type
  * \tparam Impl The implementation class
  */
-template <typename T, template <typename...> class Impl>
+template <typename T, typename Impl>
 struct basic_vm_mul_expr : impl_expr<basic_vm_mul_expr<T, Impl>> {
     using value_type = T;
     using this_type  = basic_vm_mul_expr<T, Impl>;
@@ -244,7 +244,7 @@ struct basic_vm_mul_expr : impl_expr<basic_vm_mul_expr<T, Impl>> {
         static_assert(decay_traits<A>::dimensions() == 1 && decay_traits<B>::dimensions() == 2 && decay_traits<C>::dimensions() == 1, "Invalid dimensions for vecto-matrix multiplication");
         detail::check_vm_mul_sizes(a, b, c);
 
-        Impl<decltype(make_temporary(std::forward<A>(a))), decltype(make_temporary(std::forward<B>(b))), C>::apply(
+        Impl::apply(
             make_temporary(std::forward<A>(a)),
             make_temporary(std::forward<B>(b)),
             std::forward<C>(c));
@@ -329,7 +329,7 @@ using vm_mul_expr = basic_vm_mul_expr<T, detail::vm_mul_impl>;
  * \tparam T The value type
  * \tparam Impl The implementation class
  */
-template <typename T, template <typename...> class Impl>
+template <typename T, typename Impl>
 struct basic_mv_mul_expr : impl_expr<basic_mv_mul_expr<T, Impl>> {
     using value_type = T;
     using this_type  = basic_mv_mul_expr<T, Impl>;
@@ -345,7 +345,7 @@ struct basic_mv_mul_expr : impl_expr<basic_mv_mul_expr<T, Impl>> {
         static_assert(decay_traits<A>::dimensions() == 2 && decay_traits<B>::dimensions() == 1 && decay_traits<C>::dimensions() == 1, "Invalid dimensions for vecto-matrix multiplication");
         detail::check_mv_mul_sizes(a, b, c);
 
-        Impl<decltype(make_temporary(std::forward<A>(a))), decltype(make_temporary(std::forward<B>(b))), C>::apply(
+        Impl::apply(
             make_temporary(std::forward<A>(a)),
             make_temporary(std::forward<B>(b)),
             std::forward<C>(c));
