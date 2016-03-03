@@ -675,7 +675,7 @@ void assign_evaluate(Expr&& expr, Result&& result) {
     standard_evaluator::post_assign_force(expr);
 
     // Perform transpose in memory
-    detail::transpose<typename std::decay_t<Expr>::expr_t::sub_type, Result>::apply(expr.value().value(), std::forward<Result>(result));
+    detail::transpose::apply(expr.value().value(), std::forward<Result>(result));
 }
 
 /*!

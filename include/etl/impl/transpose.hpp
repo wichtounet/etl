@@ -6,214 +6,85 @@
 //=======================================================================
 
 /*!
- * \file transpose.hpp
+ * \file
  * \brief Implementations of inplace matrix transposition
- *
- * Implementations of inplace matrix transposition.
- *    1. Simple implementation using for loop
- *    2. Implementations using MKL
- *
- * Square and rectangular implementation are separated.
  */
 
 #pragma once
 
-#include "etl/temporary.hpp"
-
-#ifdef ETL_MKL_MODE
-#include "mkl_trans.h"
-#endif
+//Include the implementations
+#include "etl/impl/std/transpose.hpp"
+#include "etl/impl/blas/transpose.hpp"
 
 namespace etl {
 
 namespace detail {
 
-template <typename C, typename Enable = void>
-struct inplace_square_transpose {
-    template <typename CC>
-    static void apply(CC&& c) {
-        using std::swap;
-
-        const std::size_t N = etl::dim<0>(c);
-
-        for (std::size_t i = 0; i < N - 1; ++i) {
-            for (std::size_t j = i + 1; j < N; ++j) {
-                swap(c(i, j), c(j, i));
-            }
-        }
-    }
+/*!
+ * \brief Enumeration describing the different implementations of transpose
+ */
+enum class transpose_imple {
+    STD, ///< Standard implementation
+    MKL, ///< MKL implementation
 };
 
-template <typename C, typename Enable = void>
-struct inplace_rectangular_transpose {
-    template <typename CC>
-    static void apply(CC&& mat) {
-        auto copy = force_temporary(mat);
-
-        auto data = mat.memory_start();
-
-        //Dimensions prior to transposition
-        const std::size_t N = etl::dim<0>(mat);
-        const std::size_t M = etl::dim<1>(mat);
-
-        for (std::size_t i = 0; i < N; ++i) {
-            for (std::size_t j = 0; j < M; ++j) {
-                data[j * N + i] = copy(i, j);
-            }
-        }
-    }
-
-    //This implementation is really slow but has O(1) space
-    template <typename CC>
-    static void real_inplace(CC&& mat) {
-        using std::swap;
-
-        const std::size_t N = etl::dim<0>(mat);
-        const std::size_t M = etl::dim<1>(mat);
-
-        auto data = mat.memory_start();
-
-        for (std::size_t k = 0; k < N * M; k++) {
-            auto idx = k;
-            do {
-                idx = (idx % N) * M + (idx / N);
-            } while (idx < k);
-            std::swap(data[k], data[idx]);
-        }
-    }
-};
-
-template <typename A, typename C, typename Enable = void>
-struct transpose {
-    template <typename AA, typename CC>
-    static void apply(AA&& a, CC&& c) {
-        auto mem_c = c.memory_start();
-        auto mem_a = a.memory_start();
-
-        // Delegate aliasing transpose to inplace algorithm
-        if (mem_c == mem_a) {
-            if (etl::dim<0>(a) == etl::dim<1>(a)) {
-                inplace_square_transpose<C>::apply(c);
-            } else {
-                inplace_rectangular_transpose<C>::apply(c);
-            }
-        } else {
-            if (decay_traits<A>::storage_order == order::RowMajor) {
-                for (std::size_t i = 0; i < etl::dim<0>(a); ++i) {
-                    for (std::size_t j = 0; j < etl::dim<1>(a); ++j) {
-                        mem_c[j * etl::dim<1>(c) + i] = mem_a[i * etl::dim<1>(a) + j];
-                    }
-                }
-            } else {
-                for (std::size_t j = 0; j < etl::dim<1>(a); ++j) {
-                    for (std::size_t i = 0; i < etl::dim<0>(a); ++i) {
-                        mem_c[i * etl::dim<0>(c) + j] = mem_a[j * etl::dim<0>(a) + i];
-                    }
-                }
-            }
-        }
-    }
-};
-
-#ifdef ETL_MKL_MODE
-
-//Helpers for MKL
-
-template <typename A, typename C, cpp_enable_if(all_single_precision<A, C>::value)>
-void mkl_otrans(A&& a, C&& c){
-    auto mem_c = c.memory_start();
-    auto mem_a = a.memory_start();
-
-    if (decay_traits<A>::storage_order == order::RowMajor) {
-        mkl_somatcopy('R', 'T', etl::dim<0>(a), etl::dim<1>(a), 1.0f, mem_a, etl::dim<1>(a), mem_c, etl::dim<0>(a));
-    } else {
-        mkl_somatcopy('C', 'T', etl::dim<0>(a), etl::dim<1>(a), 1.0f, mem_a, etl::dim<0>(a), mem_c, etl::dim<1>(a));
-    }
-}
-
-template <typename A, typename C, cpp_enable_if(all_double_precision<A, C>::value)>
-void mkl_otrans(A&& a, C&& c){
-    auto mem_c = c.memory_start();
-    auto mem_a = a.memory_start();
-
-    if (decay_traits<A>::storage_order == order::RowMajor) {
-        mkl_domatcopy('R', 'T', etl::dim<0>(a), etl::dim<1>(a), 1.0, mem_a, etl::dim<1>(a), mem_c, etl::dim<0>(a));
-    } else {
-        mkl_domatcopy('C', 'T', etl::dim<0>(a), etl::dim<1>(a), 1.0, mem_a, etl::dim<0>(a), mem_c, etl::dim<1>(a));
-    }
-}
-
-template <typename C, cpp_enable_if(all_single_precision<C>::value)>
-void mkl_itrans(C&& c){
-    if (decay_traits<C>::storage_order == order::RowMajor) {
-        mkl_simatcopy('R', 'T', etl::dim<0>(c), etl::dim<1>(c), 1.0f, c.memory_start(), etl::dim<1>(c), etl::dim<0>(c));
-    } else {
-        mkl_simatcopy('C', 'T', etl::dim<0>(c), etl::dim<1>(c), 1.0f, c.memory_start(), etl::dim<0>(c), etl::dim<1>(c));
-    }
-}
-
-template <typename C, cpp_enable_if(all_double_precision<C>::value)>
-void mkl_itrans(C&& c){
-    if (decay_traits<C>::storage_order == order::RowMajor) {
-        mkl_dimatcopy('R', 'T', etl::dim<0>(c), etl::dim<1>(c), 1.0, c.memory_start(), etl::dim<1>(c), etl::dim<0>(c));
-    } else {
-        mkl_dimatcopy('C', 'T', etl::dim<0>(c), etl::dim<1>(c), 1.0, c.memory_start(), etl::dim<0>(c), etl::dim<1>(c));
-    }
-}
-
-template <typename C>
-struct inplace_square_transpose<C, std::enable_if_t<has_direct_access<C>::value && is_single_precision<C>::value>> {
-    template <typename CC>
-    static void apply(CC&& c) {
-        mkl_itrans(c);
-    }
-};
-
-template <typename C>
-struct inplace_square_transpose<C, std::enable_if_t<has_direct_access<C>::value && is_double_precision<C>::value>> {
-    template <typename CC>
-    static void apply(CC&& c) {
-        mkl_itrans(c);
-    }
-};
-
-template <typename C>
-struct inplace_rectangular_transpose<C, std::enable_if_t<has_direct_access<C>::value && is_single_precision<C>::value>> {
-    template <typename CC>
-    static void apply(CC&& c) {
-        mkl_otrans(force_temporary(c), c);
-    }
-};
-
-template <typename C>
-struct inplace_rectangular_transpose<C, std::enable_if_t<has_direct_access<C>::value && is_double_precision<C>::value>> {
-    template <typename CC>
-    static void apply(CC&& c) {
-        mkl_otrans(force_temporary(c), c);
-    }
-};
-
+/*!
+ * \brief Select the trnaspose implementation for an expression of type A and C
+ * \tparam A The type of rhs expression
+ * \tparam C The type of lhs expression
+ * \return The implementation to use
+ */
 template <typename A, typename C>
-struct transpose<A, C, std::enable_if_t<all_dma<A, C>::value && all_floating<A, C>::value>> {
-    template <typename AA, typename CC>
-    static void apply(AA&& a, CC&& c) {
-        auto mem_c = c.memory_start();
-        auto mem_a = a.memory_start();
-
-        // Delegate aliasing transpose to inplace algorithm
-        if (mem_c == mem_a) {
-            if (etl::dim<0>(a) == etl::dim<1>(a)) {
-                mkl_itrans(c);
-            } else {
-                mkl_otrans(force_temporary(c), c);
-            }
+cpp14_constexpr transpose_imple select_transpose_impl() {
+    if(all_dma<A, C>::value && all_floating<A, C>::value){
+        if (is_mkl_enabled) {
+            return transpose_imple::MKL;
         } else {
-            mkl_otrans(a, c);
+            return transpose_imple::STD;
+        }
+    }
+
+    return transpose_imple::STD;
+}
+
+struct inplace_square_transpose {
+    template <typename C>
+    static void apply(C&& c) {
+        cpp14_constexpr const auto impl = select_transpose_impl<C, C>();
+
+        if(impl == transpose_imple::MKL){
+            etl::impl::blas::inplace_square_transpose(c);
+        } else {
+            etl::impl::standard::inplace_square_transpose(c);
         }
     }
 };
 
-#endif
+struct inplace_rectangular_transpose {
+    template <typename C>
+    static void apply(C&& c) {
+        cpp14_constexpr const auto impl = select_transpose_impl<C, C>();
+
+        if(impl == transpose_imple::MKL){
+            etl::impl::blas::inplace_rectangular_transpose(c);
+        } else {
+            etl::impl::standard::inplace_rectangular_transpose(c);
+        }
+    }
+};
+
+struct transpose {
+    template <typename A, typename C>
+    static void apply(A&& a, C&& c) {
+        cpp14_constexpr const auto impl = select_transpose_impl<A, C>();
+
+        if(impl == transpose_imple::MKL){
+            etl::impl::blas::transpose(a, c);
+        } else {
+            etl::impl::standard::transpose(a, c);
+        }
+    }
+};
 
 } //end of namespace detail
 

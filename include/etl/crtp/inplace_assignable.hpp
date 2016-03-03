@@ -163,7 +163,7 @@ struct inplace_assignable {
         static_assert(etl_traits<derived_t>::dimensions() == 2, "Only 2D matrix can be transposed");
         cpp_assert(etl::dim<0>(as_derived()) == etl::dim<1>(as_derived()), "Only square fast matrices can be tranposed inplace");
 
-        detail::inplace_square_transpose<derived_t>::apply(as_derived());
+        detail::inplace_square_transpose::apply(as_derived());
 
         return as_derived();
     }
@@ -180,9 +180,9 @@ struct inplace_assignable {
         decltype(auto) mat = as_derived();
 
         if (etl::dim<0>(mat) == etl::dim<1>(mat)) {
-            detail::inplace_square_transpose<derived_t>::apply(mat);
+            detail::inplace_square_transpose::apply(mat);
         } else {
-            detail::inplace_rectangular_transpose<derived_t>::apply(mat);
+            detail::inplace_rectangular_transpose::apply(mat);
 
             using std::swap;
             swap(mat.unsafe_dimension_access(0), mat.unsafe_dimension_access(1));
@@ -202,9 +202,9 @@ struct inplace_assignable {
         decltype(auto) mat = as_derived();
 
         if (etl::dim<0>(mat) == etl::dim<1>(mat)) {
-            detail::inplace_square_transpose<derived_t>::apply(mat);
+            detail::inplace_square_transpose::apply(mat);
         } else {
-            detail::inplace_rectangular_transpose<derived_t>::apply(mat);
+            detail::inplace_rectangular_transpose::apply(mat);
         }
 
         return mat;
