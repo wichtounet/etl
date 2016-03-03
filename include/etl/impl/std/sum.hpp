@@ -19,7 +19,7 @@ namespace impl {
 namespace standard {
 
 /*!
- * \brief Compute the of the input in the given range
+ * \brief Compute the sum of the input in the given range
  * \param input The input expression
  * \param first The beginning of the range
  * \param last The end of the range
