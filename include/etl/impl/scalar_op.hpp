@@ -50,14 +50,26 @@ cpp14_constexpr scalar_impl select_scalar_impl() {
 struct scalar_add {
     template <typename T>
     static void apply(T&& lhs, value_t<T> rhs) {
-        etl::impl::standard::scalar_add(lhs, rhs);
+        cpp14_constexpr auto impl = select_scalar_impl<T>();
+
+        if (impl == scalar_impl::BLAS) {
+            return etl::impl::blas::scalar_add(lhs, rhs);
+        } else {
+            return etl::impl::standard::scalar_add(lhs, rhs);
+        }
     }
 };
 
 struct scalar_sub {
     template <typename T>
     static void apply(T&& lhs, value_t<T> rhs) {
-        etl::impl::standard::scalar_sub(lhs, rhs);
+        cpp14_constexpr auto impl = select_scalar_impl<T>();
+
+        if (impl == scalar_impl::BLAS) {
+            return etl::impl::blas::scalar_sub(lhs, rhs);
+        } else {
+            return etl::impl::standard::scalar_sub(lhs, rhs);
+        }
     }
 };
 
@@ -77,7 +89,13 @@ struct scalar_mul {
 struct scalar_div {
     template <typename T>
     static void apply(T&& lhs, value_t<T> rhs) {
-        etl::impl::standard::scalar_div(lhs, rhs);
+        cpp14_constexpr auto impl = select_scalar_impl<T>();
+
+        if (impl == scalar_impl::BLAS) {
+            return etl::impl::blas::scalar_div(lhs, rhs);
+        } else {
+            return etl::impl::standard::scalar_div(lhs, rhs);
+        }
     }
 };
 
