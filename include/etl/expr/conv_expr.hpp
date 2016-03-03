@@ -128,7 +128,7 @@ void check_conv_deep_sizes(const I& i, const K& k, const C& c) {
         decay_traits<I>::template dim<0>() == decay_traits<K>::template dim<0>() && decay_traits<K>::template dim<0>() == decay_traits<C>::template dim<0>(),
         "Deep convolution parameters need to have the same first dimension");
 
-    detail::check_conv_2d_sizes<TT>(i(0), k(0), c(0));
+    check_conv_2d_sizes<TT>(i(0), k(0), c(0));
 }
 
 /*!
@@ -145,7 +145,7 @@ void check_conv_deep_sizes(const I& i, const K& k, const C& c) {
         decay_traits<I>::template dim<0>() == decay_traits<K>::template dim<0>() && decay_traits<K>::template dim<0>() == decay_traits<C>::template dim<0>(),
         "Deep convolution parameters need to have the same first dimension");
 
-    detail::check_conv_deep_sizes<TT>(i(0), k(0), c(0));
+    check_conv_deep_sizes<TT>(i(0), k(0), c(0));
 }
 
 /*!
@@ -162,7 +162,7 @@ void check_conv_deep_sizes(const I& i, const K& k, const C& c) {
         decay_traits<I>::dim(i, 0) == decay_traits<K>::dim(k, 0) && decay_traits<K>::dim(k, 0) == decay_traits<C>::dim(c, 0),
         "Deep convolution parameters need to have the same first dimension");
 
-    detail::check_conv_2d_sizes<TT>(i(0), k(0), c(0));
+    check_conv_2d_sizes<TT>(i(0), k(0), c(0));
 }
 
 /*!
@@ -179,7 +179,7 @@ void check_conv_deep_sizes(const I& i, const K& k, const C& c) {
         decay_traits<I>::dim(i, 0) == decay_traits<K>::dim(k, 0) && decay_traits<K>::dim(k, 0) == decay_traits<C>::dim(c, 0),
         "Deep convolution parameters need to have the same first dimension");
 
-    detail::check_conv_deep_sizes<TT>(i(0), k(0), c(0));
+    check_conv_deep_sizes<TT>(i(0), k(0), c(0));
 }
 
 } //end of namespace detail
