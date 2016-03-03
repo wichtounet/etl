@@ -12,7 +12,7 @@
 
 namespace etl {
 
-template <typename T, std::size_t C1, std::size_t C2, template <typename...> class Impl>
+template <typename T, std::size_t C1, std::size_t C2, typename Impl>
 struct basic_upsample_2d_expr : impl_expr<basic_upsample_2d_expr<T, C1, C2, Impl>> {
     static_assert(C1 > 0, "C1 must be greater than 0");
     static_assert(C2 > 0, "C2 must be greater than 0");
@@ -39,7 +39,7 @@ struct basic_upsample_2d_expr : impl_expr<basic_upsample_2d_expr<T, C1, C2, Impl
         static_assert(all_etl_expr<A, C>::value, "pool_2d only supported for ETL expressions");
         static_assert(decay_traits<A>::dimensions() == 2 && decay_traits<C>::dimensions() == 2, "pool_2d needs 2D matrices");
 
-        Impl<decltype(make_temporary(std::forward<A>(a))), C>::template apply<C1, C2>(
+        Impl::template apply<C1, C2>(
             make_temporary(std::forward<A>(a)),
             std::forward<C>(c));
     }
@@ -121,7 +121,7 @@ struct basic_upsample_2d_expr : impl_expr<basic_upsample_2d_expr<T, C1, C2, Impl
 template <typename T, std::size_t C1, std::size_t C2>
 using upsample_2d_expr = basic_upsample_2d_expr<T, C1, C2, impl::upsample_2d>;
 
-template <typename T, std::size_t C1, std::size_t C2, std::size_t C3, template <typename...> class Impl>
+template <typename T, std::size_t C1, std::size_t C2, std::size_t C3, typename Impl>
 struct basic_upsample_3d_expr  : impl_expr<basic_upsample_3d_expr<T, C1, C2, C3, Impl>>{
     static_assert(C1 > 0, "C1 must be greater than 0");
     static_assert(C2 > 0, "C2 must be greater than 0");
@@ -144,7 +144,7 @@ struct basic_upsample_3d_expr  : impl_expr<basic_upsample_3d_expr<T, C1, C2, C3,
         static_assert(all_etl_expr<A, C>::value, "pool_3d only supported for ETL expressions");
         static_assert(decay_traits<A>::dimensions() == 3 && decay_traits<C>::dimensions() == 3, "pool_3d needs 3D matrices");
 
-        Impl<decltype(make_temporary(std::forward<A>(a))), C>::template apply<C1, C2, C3>(
+        Impl::template apply<C1, C2, C3>(
             make_temporary(std::forward<A>(a)),
             std::forward<C>(c));
     }

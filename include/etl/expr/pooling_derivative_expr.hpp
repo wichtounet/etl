@@ -12,7 +12,7 @@
 
 namespace etl {
 
-template <typename T, std::size_t C1, std::size_t C2, template <typename...> class Impl>
+template <typename T, std::size_t C1, std::size_t C2, typename Impl>
 struct basic_pool_derivative_2d_expr : impl_expr<basic_pool_derivative_2d_expr<T, C1, C2, Impl>> {
     static_assert(C1 > 0, "C1 must be greater than 0");
     static_assert(C2 > 0, "C2 must be greater than 0");
@@ -34,7 +34,7 @@ struct basic_pool_derivative_2d_expr : impl_expr<basic_pool_derivative_2d_expr<T
         static_assert(all_etl_expr<A, B, C>::value, "pool_derivative_2d only supported for ETL expressions");
         static_assert(decay_traits<A>::dimensions() == 2 && decay_traits<A>::dimensions() == 2 && decay_traits<C>::dimensions() == 2, "pool_derivative_2d needs 2D matrices");
 
-        Impl<A, B, C>::template apply<C1, C2>(
+        Impl::template apply<C1, C2>(
             std::forward<A>(a),
             std::forward<B>(b),
             std::forward<C>(c));
@@ -87,7 +87,7 @@ struct basic_pool_derivative_2d_expr : impl_expr<basic_pool_derivative_2d_expr<T
 template <typename T, std::size_t C1, std::size_t C2>
 using max_pool_derivative_2d_expr = basic_pool_derivative_2d_expr<T, C1, C2, impl::max_pool_derivative_2d>;
 
-template <typename T, std::size_t C1, std::size_t C2, std::size_t C3, template <typename...> class Impl>
+template <typename T, std::size_t C1, std::size_t C2, std::size_t C3, typename Impl>
 struct basic_pool_derivative_3d_expr : impl_expr<basic_pool_derivative_3d_expr<T, C1, C2, C3, Impl>> {
     static_assert(C1 > 0, "C1 must be greater than 0");
     static_assert(C2 > 0, "C2 must be greater than 0");
@@ -110,7 +110,7 @@ struct basic_pool_derivative_3d_expr : impl_expr<basic_pool_derivative_3d_expr<T
         static_assert(all_etl_expr<A, B, C>::value, "pool_derivative_2d only supported for ETL expressions");
         static_assert(decay_traits<A>::dimensions() == 3 && decay_traits<A>::dimensions() == 3 && decay_traits<C>::dimensions() == 3, "pool_derivative_2d needs 2D matrices");
 
-        Impl<A, B, C>::template apply<C1, C2, C3>(
+        Impl::template apply<C1, C2, C3>(
             std::forward<A>(a),
             std::forward<B>(b),
             std::forward<C>(c));

@@ -11,9 +11,8 @@ namespace etl {
 
 namespace impl {
 
-template <typename A, typename M>
 struct max_pool_2d {
-    template <std::size_t C1, std::size_t C2>
+    template <std::size_t C1, std::size_t C2, typename A>
     static auto pool_block(const A& sub, std::size_t j, std::size_t k){
         auto max = sub(j * C1, k * C2);
 
@@ -26,7 +25,7 @@ struct max_pool_2d {
         return max;
     }
 
-    template <std::size_t C1, std::size_t C2>
+    template <std::size_t C1, std::size_t C2, typename A, typename M>
     static void apply(A&& sub, M& m) {
         const std::size_t o1 = etl::dim<0>(sub) / C1;
         const std::size_t o2 = etl::dim<1>(sub) / C2;
@@ -39,9 +38,8 @@ struct max_pool_2d {
     }
 };
 
-template <typename A, typename M>
 struct avg_pool_2d {
-    template <std::size_t C1, std::size_t C2>
+    template <std::size_t C1, std::size_t C2, typename A>
     static auto pool_block(const A& sub, std::size_t j, std::size_t k){
         value_t<A> avg = 0;
 
@@ -54,7 +52,7 @@ struct avg_pool_2d {
         return avg / (C1 * C2);
     }
 
-    template <std::size_t C1, std::size_t C2>
+    template <std::size_t C1, std::size_t C2, typename A, typename M>
     static void apply(A&& sub, M& m) {
         const std::size_t o1 = etl::dim<0>(sub) / C1;
         const std::size_t o2 = etl::dim<1>(sub) / C2;
@@ -67,9 +65,8 @@ struct avg_pool_2d {
     }
 };
 
-template <typename A, typename M>
 struct max_pool_3d {
-    template <std::size_t C1, std::size_t C2, std::size_t C3>
+    template <std::size_t C1, std::size_t C2, std::size_t C3, typename A>
     static auto pool_block(const A& sub, std::size_t i, std::size_t j, std::size_t k){
         auto max = sub(i * C1, j * C2, k * C3);
 
@@ -84,7 +81,7 @@ struct max_pool_3d {
         return max;
     }
 
-    template <std::size_t C1, std::size_t C2, std::size_t C3>
+    template <std::size_t C1, std::size_t C2, std::size_t C3, typename A, typename M>
     static void apply(A&& sub, M& m) {
         const std::size_t o1 = etl::dim<0>(sub) / C1;
         const std::size_t o2 = etl::dim<1>(sub) / C2;
@@ -100,9 +97,8 @@ struct max_pool_3d {
     }
 };
 
-template <typename A, typename M>
 struct avg_pool_3d {
-    template <std::size_t C1, std::size_t C2, std::size_t C3>
+    template <std::size_t C1, std::size_t C2, std::size_t C3, typename A>
     static auto pool_block(const A& sub, std::size_t i, std::size_t j, std::size_t k){
         value_t<A> avg = 0;
 
@@ -117,7 +113,7 @@ struct avg_pool_3d {
         return avg / (C1 * C2 * C3);
     }
 
-    template <std::size_t C1, std::size_t C2, std::size_t C3>
+    template <std::size_t C1, std::size_t C2, std::size_t C3, typename A, typename M>
     static void apply(A&& sub, M& m) {
         const std::size_t o1 = etl::dim<0>(sub) / C1;
         const std::size_t o2 = etl::dim<1>(sub) / C2;
@@ -133,9 +129,8 @@ struct avg_pool_3d {
     }
 };
 
-template <typename A, typename B, typename M>
 struct max_pool_derivative_2d {
-    template <std::size_t C1, std::size_t C2>
+    template <std::size_t C1, std::size_t C2, typename A, typename B, typename M>
     static void pool_derivative_block(const A& in, const B& out, M& m, std::size_t j, std::size_t k){
         auto max = out(j, k);
 
@@ -151,7 +146,7 @@ struct max_pool_derivative_2d {
     }
 
 
-    template <std::size_t C1, std::size_t C2>
+    template <std::size_t C1, std::size_t C2, typename A, typename B, typename M>
     static void apply(A&& in, B&& out, M& m) {
         for (std::size_t j = 0; j < etl::dim<0>(out); ++j) {
             for (std::size_t k = 0; k < etl::dim<1>(out); ++k) {
@@ -161,9 +156,8 @@ struct max_pool_derivative_2d {
     }
 };
 
-template <typename A, typename B, typename M>
 struct max_pool_derivative_3d {
-    template <std::size_t C1, std::size_t C2, std::size_t C3>
+    template <std::size_t C1, std::size_t C2, std::size_t C3, typename A, typename B, typename M>
     static void pool_derivative_block(const A& in, const B& out, M& m, std::size_t i, std::size_t j, std::size_t k){
         auto max = out(i, j, k);
 
@@ -180,7 +174,7 @@ struct max_pool_derivative_3d {
         }
     }
 
-    template <std::size_t C1, std::size_t C2, std::size_t C3>
+    template <std::size_t C1, std::size_t C2, std::size_t C3, typename A, typename B, typename M>
     static void apply(A&& in, B&& out, M& m) {
         for (std::size_t i = 0; i < etl::dim<0>(out); ++i) {
             for (std::size_t j = 0; j < etl::dim<1>(out); ++j) {
@@ -192,9 +186,8 @@ struct max_pool_derivative_3d {
     }
 };
 
-template <typename A, typename M>
 struct upsample_2d {
-    template <std::size_t C1, std::size_t C2>
+    template <std::size_t C1, std::size_t C2, typename A, typename M>
     static void upsample_block(A&& in, M& m, std::size_t j, std::size_t k) {
         auto value = in(j, k);
 
@@ -205,7 +198,7 @@ struct upsample_2d {
         }
     }
 
-    template <std::size_t C1, std::size_t C2>
+    template <std::size_t C1, std::size_t C2, typename A, typename M>
     static void apply(A&& in, M& m) {
         for (std::size_t j = 0; j < etl::dim<0>(in); ++j) {
             for (std::size_t k = 0; k < etl::dim<1>(in); ++k) {
@@ -215,9 +208,8 @@ struct upsample_2d {
     }
 };
 
-template <typename A, typename M>
 struct upsample_3d {
-    template <std::size_t C1, std::size_t C2, std::size_t C3>
+    template <std::size_t C1, std::size_t C2, std::size_t C3, typename A, typename M>
     static void upsample_block(A&& in, M& m, std::size_t i, std::size_t j, std::size_t k) {
         auto value = in(i, j, k);
 
@@ -230,7 +222,7 @@ struct upsample_3d {
         }
     }
 
-    template <std::size_t C1, std::size_t C2, std::size_t C3>
+    template <std::size_t C1, std::size_t C2, std::size_t C3, typename A, typename M>
     static void apply(A&& in, M& m) {
         for (std::size_t i = 0; i < etl::dim<0>(in); ++i) {
             for (std::size_t j = 0; j < etl::dim<1>(in); ++j) {
