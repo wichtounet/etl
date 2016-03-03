@@ -101,7 +101,6 @@ inline bool select_parallel(const I& /*input*/, const K& kernel, C&& conv) {
 /*!
  * \brief The functor impl for 1D full conv
  */
-template <typename I, typename K, typename C, typename Enable = void>
 struct conv1_full_impl {
     /*!
      * \brief Apply the convolution
@@ -109,6 +108,7 @@ struct conv1_full_impl {
      * \param kernel The kernel expression
      * \param conv The output expression
      */
+    template <typename I, typename K, typename C>
     static void apply(const I& input, const K& kernel, C&& conv) {
         conv_impl impl = select_conv_impl<I, K, C>();
         selected_apply(input, kernel, std::forward<C>(conv), impl);
@@ -121,6 +121,7 @@ struct conv1_full_impl {
      * \param conv The output expression
      * \param impl The implementation to use
      */
+    template <typename I, typename K, typename C>
     static void selected_apply(const I& input, const K& kernel, C&& conv, conv_impl impl) {
         bool parallel_dispatch = select_parallel(input, kernel, conv);
 
@@ -143,7 +144,6 @@ struct conv1_full_impl {
 /*!
  * \brief The functor impl for 1D same conv
  */
-template <typename I, typename K, typename C, typename Enable = void>
 struct conv1_same_impl {
     /*!
      * \brief Apply the convolution
@@ -151,6 +151,7 @@ struct conv1_same_impl {
      * \param kernel The kernel expression
      * \param conv The output expression
      */
+    template <typename I, typename K, typename C>
     static void apply(const I& input, const K& kernel, C&& conv) {
         conv_impl impl = select_conv_impl<I, K, C>();
         selected_apply(input, kernel, std::forward<C>(conv), impl);
@@ -163,6 +164,7 @@ struct conv1_same_impl {
      * \param conv The output expression
      * \param impl The implementation to use
      */
+    template <typename I, typename K, typename C>
     static void selected_apply(const I& input, const K& kernel, C&& conv, conv_impl impl) {
         bool parallel_dispatch = select_parallel(input, kernel, conv);
 
@@ -185,7 +187,6 @@ struct conv1_same_impl {
 /*!
  * \brief The functor impl for 1D valid conv
  */
-template <typename I, typename K, typename C, typename Enable = void>
 struct conv1_valid_impl {
     /*!
      * \brief Apply the convolution
@@ -193,6 +194,7 @@ struct conv1_valid_impl {
      * \param kernel The kernel expression
      * \param conv The output expression
      */
+    template <typename I, typename K, typename C>
     static void apply(const I& input, const K& kernel, C&& conv) {
         conv_impl impl = select_conv_impl<I, K, C>();
         selected_apply(input, kernel, std::forward<C>(conv), impl);
@@ -205,6 +207,7 @@ struct conv1_valid_impl {
      * \param conv The output expression
      * \param impl The implementation to use
      */
+    template <typename I, typename K, typename C>
     static void selected_apply(const I& input, const K& kernel, C&& conv, conv_impl impl) {
         bool parallel_dispatch = select_parallel(input, kernel, conv);
 
@@ -227,25 +230,24 @@ struct conv1_valid_impl {
 //Should only be used by the benchmark
 template <typename I, typename K, typename C>
 void conv1_full_direct(const I& input, const K& kernel, C&& conv, conv_impl impl){
-    conv1_full_impl<I, K, C>::selected_apply(input, kernel, std::forward<C>(conv), impl);
+    conv1_full_impl::selected_apply(input, kernel, std::forward<C>(conv), impl);
 }
 
 //Should only be used by the benchmark
 template <typename I, typename K, typename C>
 void conv1_same_direct(const I& input, const K& kernel, C&& conv, conv_impl impl){
-    conv1_same_impl<I, K, C>::selected_apply(input, kernel, std::forward<C>(conv), impl);
+    conv1_same_impl::selected_apply(input, kernel, std::forward<C>(conv), impl);
 }
 
 //Should only be used by the benchmark
 template <typename I, typename K, typename C>
 void conv1_valid_direct(const I& input, const K& kernel, C&& conv, conv_impl impl){
-    conv1_valid_impl<I, K, C>::selected_apply(input, kernel, std::forward<C>(conv), impl);
+    conv1_valid_impl::selected_apply(input, kernel, std::forward<C>(conv), impl);
 }
 
 /*!
  * \brief The functor impl for 2D full conv
  */
-template <typename I, typename K, typename C, typename Enable = void>
 struct conv2_full_impl {
     /*!
      * \brief Apply the convolution
@@ -253,6 +255,7 @@ struct conv2_full_impl {
      * \param kernel The kernel expression
      * \param conv The output expression
      */
+    template <typename I, typename K, typename C>
     static void apply(const I& input, const K& kernel, C&& conv) {
         conv_impl impl = select_conv_impl<I, K, C>();
 
@@ -269,7 +272,6 @@ struct conv2_full_impl {
 /*!
  * \brief The functor impl for 2D same conv
  */
-template <typename I, typename K, typename C, typename Enable = void>
 struct conv2_same_impl {
     /*!
      * \brief Apply the convolution
@@ -277,6 +279,7 @@ struct conv2_same_impl {
      * \param kernel The kernel expression
      * \param conv The output expression
      */
+    template <typename I, typename K, typename C>
     static void apply(const I& input, const K& kernel, C&& conv) {
         conv_impl impl = select_conv_impl<I, K, C>();
 
@@ -293,7 +296,6 @@ struct conv2_same_impl {
 /*!
  * \brief The functor impl for 2D valid conv
  */
-template <typename I, typename K, typename C, typename Enable = void>
 struct conv2_valid_impl {
     /*!
      * \brief Apply the convolution
@@ -301,6 +303,7 @@ struct conv2_valid_impl {
      * \param kernel The kernel expression
      * \param conv The output expression
      */
+    template <typename I, typename K, typename C>
     static void apply(const I& input, const K& kernel, C&& conv) {
         conv_impl impl = select_conv_impl<I, K, C>();
 
@@ -317,41 +320,14 @@ struct conv2_valid_impl {
 /*!
  * \brief The functor impl for 2D+ conv.
  */
-template <conv_type TT, typename I, typename K, typename C, typename Enable = void>
-struct conv_deep_impl {
+struct conv_deep_valid_impl {
     /*!
      * \brief Apply the convolution
      * \param input The input expression
      * \param kernel The kernel expression
      * \param conv The output expression
      */
-    template <conv_type TT2 = TT, typename I2 = I, cpp_enable_if(decay_traits<I2>::dimensions() == 3, TT2 == conv_type::FULL)>
-    static void apply(const I& input, const K& kernel, C&& conv) {
-        for (std::size_t i = 0; i < dim<0>(input); ++i) {
-            conv(i) = conv_2d_full(input(i), kernel(i));
-        }
-    }
-
-    /*!
-     * \brief Apply the convolution
-     * \param input The input expression
-     * \param kernel The kernel expression
-     * \param conv The output expression
-     */
-    template <conv_type TT2 = TT, typename I2 = I, cpp_enable_if(decay_traits<I2>::dimensions() == 3, TT2 == conv_type::SAME)>
-    static void apply(const I& input, const K& kernel, C&& conv) {
-        for (std::size_t i = 0; i < dim<0>(input); ++i) {
-            conv(i) = conv_2d_same(input(i), kernel(i));
-        }
-    }
-
-    /*!
-     * \brief Apply the convolution
-     * \param input The input expression
-     * \param kernel The kernel expression
-     * \param conv The output expression
-     */
-    template <conv_type TT2 = TT, typename I2 = I, cpp_enable_if(decay_traits<I2>::dimensions() == 3, TT2 == conv_type::VALID)>
+    template <typename I, typename K, typename C, cpp_enable_if(decay_traits<I>::dimensions() == 3)>
     static void apply(const I& input, const K& kernel, C&& conv) {
         for (std::size_t i = 0; i < dim<0>(input); ++i) {
             conv(i) = conv_2d_valid(input(i), kernel(i));
@@ -364,31 +340,74 @@ struct conv_deep_impl {
      * \param kernel The kernel expression
      * \param conv The output expression
      */
-    template <typename I2 = I, cpp_enable_if((decay_traits<I2>::dimensions() > 3))>
+    template <typename I, typename K, typename C, cpp_enable_if((decay_traits<I>::dimensions() > 3))>
     static void apply(const I& input, const K& kernel, C&& conv) {
         for (std::size_t i = 0; i < dim<0>(input); ++i) {
-            conv_deep_impl<TT, decltype(input(i)), decltype(kernel(i)), decltype(conv(i))>::apply(input(i), kernel(i), conv(i));
+            apply(input(i), kernel(i), conv(i));
+        }
+    }
+};
+/*!
+ * \brief The functor impl for 2D+ conv.
+ */
+struct conv_deep_same_impl {
+    /*!
+     * \brief Apply the convolution
+     * \param input The input expression
+     * \param kernel The kernel expression
+     * \param conv The output expression
+     */
+    template <typename I, typename K, typename C, cpp_enable_if(decay_traits<I>::dimensions() == 3)>
+    static void apply(const I& input, const K& kernel, C&& conv) {
+        for (std::size_t i = 0; i < dim<0>(input); ++i) {
+            conv(i) = conv_2d_same(input(i), kernel(i));
+        }
+    }
+
+    /*!
+     * \brief Apply the convolution
+     * \param input The input expression
+     * \param kernel The kernel expression
+     * \param conv The output expression
+     */
+    template <typename I, typename K, typename C, cpp_enable_if((decay_traits<I>::dimensions() > 3))>
+    static void apply(const I& input, const K& kernel, C&& conv) {
+        for (std::size_t i = 0; i < dim<0>(input); ++i) {
+            apply(input(i), kernel(i), conv(i));
         }
     }
 };
 
 /*!
- * \brief The functor impl for 2D+ valid conv.
+ * \brief The functor impl for 2D+ conv.
  */
-template <typename I, typename K, typename C, typename = void>
-using conv_deep_valid_impl = conv_deep_impl<conv_type::VALID, I, K, C>;
+struct conv_deep_full_impl {
+    /*!
+     * \brief Apply the convolution
+     * \param input The input expression
+     * \param kernel The kernel expression
+     * \param conv The output expression
+     */
+    template <typename I, typename K, typename C, cpp_enable_if(decay_traits<I>::dimensions() == 3)>
+    static void apply(const I& input, const K& kernel, C&& conv) {
+        for (std::size_t i = 0; i < dim<0>(input); ++i) {
+            conv(i) = conv_2d_full(input(i), kernel(i));
+        }
+    }
 
-/*!
- * \brief The functor impl for 2D+ same conv.
- */
-template <typename I, typename K, typename C, typename = void>
-using conv_deep_same_impl = conv_deep_impl<conv_type::SAME, I, K, C>;
-
-/*!
- * \brief The functor impl for 2D+ full conv.
- */
-template <typename I, typename K, typename C, typename = void>
-using conv_deep_full_impl = conv_deep_impl<conv_type::FULL, I, K, C>;
+    /*!
+     * \brief Apply the convolution
+     * \param input The input expression
+     * \param kernel The kernel expression
+     * \param conv The output expression
+     */
+    template <typename I, typename K, typename C, cpp_enable_if((decay_traits<I>::dimensions() > 3))>
+    static void apply(const I& input, const K& kernel, C&& conv) {
+        for (std::size_t i = 0; i < dim<0>(input); ++i) {
+            apply(input(i), kernel(i), conv(i));
+        }
+    }
+};
 
 } //end of namespace detail
 

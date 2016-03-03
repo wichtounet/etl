@@ -191,7 +191,7 @@ void check_conv_deep_sizes(const I& i, const K& k, const C& c) {
  * \tparam TT The convolution type
  * \tparam Impl The implementation class
  */
-template <typename T, std::size_t D, conv_type TT, template <typename...> class Impl>
+template <typename T, std::size_t D, conv_type TT, typename Impl>
 struct basic_conv_expr : impl_expr<basic_conv_expr<T, D, TT, Impl>> {
     using value_type = T;
     using this_type  = basic_conv_expr<T, D, TT, Impl>;
@@ -252,12 +252,12 @@ struct basic_conv_expr : impl_expr<basic_conv_expr<T, D, TT, Impl>> {
         check(a, b, c);
 
         if (D == 1 || D == 2) {
-            Impl<decltype(make_temporary(std::forward<A>(a))), decltype(make_temporary(std::forward<B>(b))), C, void>::apply(
+            Impl::apply(
                 make_temporary(std::forward<A>(a)),
                 make_temporary(std::forward<B>(b)),
                 std::forward<C>(c));
         } else {
-            Impl<A, B, C, void>::apply(std::forward<A>(a), std::forward<B>(b), std::forward<C>(c));
+            Impl::apply(std::forward<A>(a), std::forward<B>(b), std::forward<C>(c));
         }
     }
 

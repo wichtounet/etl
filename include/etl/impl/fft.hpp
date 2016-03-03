@@ -398,7 +398,6 @@ struct ifft2_many_impl {
     }
 };
 
-template <typename A, typename B, typename C, typename Enable = void>
 struct fft_conv1_full_impl {
     template <typename AA, typename BB, typename CC>
     static void apply(AA&& a, BB&& b, CC&& c) {
@@ -412,7 +411,6 @@ struct fft_conv1_full_impl {
     }
 };
 
-template <typename A, typename B, typename C, typename Enable = void>
 struct fft_conv2_full_impl {
     template <typename AA, typename BB, typename CC>
     static void apply(AA&& a, BB&& b, CC&& c) {
