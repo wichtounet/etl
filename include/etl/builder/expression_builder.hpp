@@ -267,7 +267,7 @@ auto operator%(LE lhs, RE&& rhs) -> detail::right_binary_helper<scalar<value_t<R
  */
 template <typename LE, typename RE, cpp_enable_if(std::is_arithmetic<RE>::value, is_lhs<LE>::value)>
 LE& operator+=(LE&& lhs, RE rhs) {
-    detail::scalar_add<LE>::apply(std::forward<LE>(lhs), rhs);
+    detail::scalar_add::apply(std::forward<LE>(lhs), rhs);
     return lhs;
 }
 
@@ -292,7 +292,7 @@ LE& operator+=(LE&& lhs, RE&& rhs) {
  */
 template <typename LE, typename RE, cpp_enable_if(std::is_arithmetic<RE>::value, is_lhs<LE>::value)>
 LE& operator-=(LE&& lhs, RE rhs) {
-    detail::scalar_sub<LE>::apply(std::forward<LE>(lhs), rhs);
+    detail::scalar_sub::apply(std::forward<LE>(lhs), rhs);
     return lhs;
 }
 
@@ -317,7 +317,7 @@ LE& operator-=(LE&& lhs, RE&& rhs) {
  */
 template <typename LE, typename RE, cpp_enable_if(std::is_arithmetic<RE>::value, is_lhs<LE>::value)>
 LE& operator*=(LE&& lhs, RE rhs) {
-    detail::scalar_mul<LE>::apply(std::forward<LE>(lhs), rhs);
+    detail::scalar_mul::apply(std::forward<LE>(lhs), rhs);
     return lhs;
 }
 
@@ -342,7 +342,7 @@ LE& operator*=(LE&& lhs, RE&& rhs) {
  */
 template <typename LE, typename RE, cpp_enable_if(std::is_arithmetic<RE>::value, is_lhs<LE>::value)>
 LE& operator>>=(LE&& lhs, RE rhs) {
-    detail::scalar_mul<LE>::apply(std::forward<LE>(lhs), rhs);
+    detail::scalar_mul::apply(std::forward<LE>(lhs), rhs);
     return lhs;
 }
 
@@ -367,7 +367,7 @@ LE& operator>>=(LE&& lhs, RE&& rhs) {
  */
 template <typename LE, typename RE, cpp_enable_if(std::is_arithmetic<RE>::value, is_lhs<LE>::value)>
 LE& operator/=(LE&& lhs, RE rhs) {
-    detail::scalar_div<LE>::apply(std::forward<LE>(lhs), rhs);
+    detail::scalar_div::apply(std::forward<LE>(lhs), rhs);
     return lhs;
 }
 
@@ -392,7 +392,7 @@ LE& operator/=(LE&& lhs, RE&& rhs) {
  */
 template <typename LE, typename RE, cpp_enable_if(std::is_arithmetic<RE>::value, is_lhs<LE>::value)>
 LE& operator%=(LE&& lhs, RE rhs) {
-    detail::scalar_mod<LE>::apply(std::forward<LE>(lhs), rhs);
+    detail::scalar_mod::apply(std::forward<LE>(lhs), rhs);
     return lhs;
 }
 

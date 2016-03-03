@@ -12,93 +12,81 @@
 
 #pragma once
 
-#ifdef ETL_BLAS_MODE
-#include "cblas.h" //For dscal/sscal
-#endif
+//Include the implementations
+#include "etl/impl/std/scalar_op.hpp"
+#include "etl/impl/blas/scalar_op.hpp"
 
 namespace etl {
 
 namespace detail {
 
-template <typename T, typename Enable = void>
+/*!
+ * \brief Enumeration describing the different implementations of
+ * scalar operations
+ */
+enum class scalar_impl {
+    STD,  ///< Standard implementation
+    BLAS, ///< BLAS implementation
+};
+
+/*!
+ * \brief Select the scalar implementation for an expression of type A
+ * \tparam A The type of expression
+ * \return The implementation to use
+ */
+template <typename A>
+cpp14_constexpr scalar_impl select_scalar_impl() {
+    if(all_floating<A>::value){
+        if (is_cblas_enabled) {
+            return scalar_impl::BLAS;
+        } else {
+            return scalar_impl::STD;
+        }
+    }
+
+    return scalar_impl::STD;
+}
+
 struct scalar_add {
-    template <typename TT>
-    static void apply(TT&& lhs, value_t<TT> rhs) {
-        auto m = lhs.memory_start();
-
-        for (std::size_t i = 0; i < size(lhs); ++i) {
-            m[i] += rhs;
-        }
+    template <typename T>
+    static void apply(T&& lhs, value_t<T> rhs) {
+        etl::impl::standard::scalar_add(lhs, rhs);
     }
 };
 
-template <typename T, typename Enable = void>
 struct scalar_sub {
-    template <typename TT>
-    static void apply(TT&& lhs, value_t<TT> rhs) {
-        auto m = lhs.memory_start();
-
-        for (std::size_t i = 0; i < size(lhs); ++i) {
-            m[i] -= rhs;
-        }
+    template <typename T>
+    static void apply(T&& lhs, value_t<T> rhs) {
+        etl::impl::standard::scalar_sub(lhs, rhs);
     }
 };
 
-template <typename T, typename Enable = void>
 struct scalar_mul {
-    template <typename TT>
-    static void apply(TT&& lhs, value_t<TT> rhs) {
-        auto m = lhs.memory_start();
+    template <typename T>
+    static void apply(T&& lhs, value_t<T> rhs) {
+        cpp14_constexpr auto impl = select_scalar_impl<T>();
 
-        for (std::size_t i = 0; i < size(lhs); ++i) {
-            m[i] *= rhs;
+        if (impl == scalar_impl::BLAS) {
+            return etl::impl::blas::scalar_mul(lhs, rhs);
+        } else {
+            return etl::impl::standard::scalar_mul(lhs, rhs);
         }
     }
 };
 
-template <typename T, typename Enable = void>
 struct scalar_div {
-    template <typename TT>
-    static void apply(TT&& lhs, value_t<TT> rhs) {
-        auto m = lhs.memory_start();
-
-        for (std::size_t i = 0; i < size(lhs); ++i) {
-            m[i] /= rhs;
-        }
+    template <typename T>
+    static void apply(T&& lhs, value_t<T> rhs) {
+        etl::impl::standard::scalar_div(lhs, rhs);
     }
 };
 
-template <typename T, typename Enable = void>
 struct scalar_mod {
-    template <typename TT>
-    static void apply(TT&& lhs, value_t<TT> rhs) {
-        auto m = lhs.memory_start();
-
-        for (std::size_t i = 0; i < size(lhs); ++i) {
-            m[i] %= rhs;
-        }
+    template <typename T>
+    static void apply(T&& lhs, value_t<T> rhs) {
+        etl::impl::standard::scalar_mod(lhs, rhs);
     }
 };
-
-#ifdef ETL_BLAS_MODE
-
-template <typename T>
-struct scalar_mul<T, std::enable_if_t<is_single_precision<T>::value && has_direct_access<T>::value>> {
-    template <typename TT>
-    static void apply(TT&& lhs, value_t<TT> rhs) {
-        cblas_sscal(size(lhs), rhs, lhs.memory_start(), 1);
-    }
-};
-
-template <typename T>
-struct scalar_mul<T, std::enable_if_t<is_double_precision<T>::value && has_direct_access<T>::value>> {
-    template <typename TT>
-    static void apply(TT&& lhs, value_t<TT> rhs) {
-        cblas_dscal(size(lhs), rhs, lhs.memory_start(), 1);
-    }
-};
-
-#endif
 
 } //end of namespace detail
 
