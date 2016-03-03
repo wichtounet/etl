@@ -8,10 +8,6 @@
 /*!
  * \file dot.hpp
  * \brief Selector for the dot product
- *
- * Implementations of the dot product:
- *    1. Simple implementation using expressions
- *    2. Implementations using BLAS SDOT and DDOT
  */
 
 #pragma once
