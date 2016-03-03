@@ -219,7 +219,7 @@ struct inplace_assignable {
 
         decltype(auto) mat = as_derived();
 
-        detail::fft1_impl<derived_t, derived_t>::apply(mat, mat);
+        detail::fft1_impl::apply(mat, mat);
 
         mat.gpu_copy_from_if_necessary();
 
@@ -237,7 +237,7 @@ struct inplace_assignable {
 
         decltype(auto) mat = as_derived();
 
-        detail::fft1_many_impl<derived_t, derived_t>::apply(mat, mat);
+        detail::fft1_many_impl::apply(mat, mat);
 
         mat.gpu_copy_from_if_necessary();
 
@@ -253,7 +253,7 @@ struct inplace_assignable {
 
         decltype(auto) mat = as_derived();
 
-        detail::ifft1_impl<derived_t, derived_t>::apply(mat, mat);
+        detail::ifft1_impl::apply(mat, mat);
 
         mat.gpu_copy_from_if_necessary();
 
@@ -269,7 +269,7 @@ struct inplace_assignable {
 
         decltype(auto) mat = as_derived();
 
-        detail::ifft1_many_impl<derived_t, derived_t>::apply(mat, mat);
+        detail::ifft1_many_impl::apply(mat, mat);
 
         mat.gpu_copy_from_if_necessary();
 
@@ -285,7 +285,7 @@ struct inplace_assignable {
 
         decltype(auto) mat = as_derived();
 
-        detail::fft2_impl<derived_t, derived_t>::apply(mat, mat);
+        detail::fft2_impl::apply(mat, mat);
 
         mat.gpu_copy_from_if_necessary();
 
@@ -303,7 +303,7 @@ struct inplace_assignable {
 
         decltype(auto) mat = as_derived();
 
-        detail::fft2_many_impl<derived_t, derived_t>::apply(mat, mat);
+        detail::fft2_many_impl::apply(mat, mat);
 
         mat.gpu_copy_from_if_necessary();
 
@@ -319,7 +319,7 @@ struct inplace_assignable {
 
         decltype(auto) mat = as_derived();
 
-        detail::ifft2_impl<derived_t, derived_t>::apply(mat, mat);
+        detail::ifft2_impl::apply(mat, mat);
 
         mat.gpu_copy_from_if_necessary();
 
@@ -335,7 +335,7 @@ struct inplace_assignable {
 
         decltype(auto) mat = as_derived();
 
-        detail::ifft2_many_impl<derived_t, derived_t>::apply(mat, mat);
+        detail::ifft2_many_impl::apply(mat, mat);
 
         mat.gpu_copy_from_if_necessary();
 

@@ -17,7 +17,7 @@
 
 namespace etl {
 
-template <typename T, std::size_t D, template <typename...> class Impl>
+template <typename T, std::size_t D, typename Impl>
 struct basic_fft_expr : impl_expr<basic_fft_expr<T, D, Impl>> {
     using this_type  = basic_fft_expr<T, D, Impl>;
     using value_type = T;
@@ -40,7 +40,7 @@ struct basic_fft_expr : impl_expr<basic_fft_expr<T, D, Impl>> {
     static void apply(A&& a, C&& c) {
         static_assert(is_etl_expr<A>::value && is_etl_expr<C>::value, "Fast-Fourrier Transform only supported for ETL expressions");
 
-        Impl<decltype(make_temporary(std::forward<A>(a))), C>::apply(
+        Impl::apply(
             make_temporary(std::forward<A>(a)),
             std::forward<C>(c));
     }

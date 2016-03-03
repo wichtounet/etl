@@ -210,7 +210,6 @@ inline cpp14_constexpr fft_impl select_fft2_many_impl(const std::size_t batch, c
     }
 }
 
-template <typename A, typename C>
 struct fft1_impl {
     template <typename AA, typename CC>
     static void apply(AA&& a, CC&& c) {
@@ -226,7 +225,6 @@ struct fft1_impl {
     }
 };
 
-template <typename A, typename C>
 struct ifft1_impl {
     template <typename AA, typename CC>
     static void apply(AA&& a, CC&& c) {
@@ -242,7 +240,6 @@ struct ifft1_impl {
     }
 };
 
-template <typename A, typename C>
 struct ifft1_real_impl {
     template <typename AA, typename CC>
     static void apply(AA&& a, CC&& c) {
@@ -258,7 +255,6 @@ struct ifft1_real_impl {
     }
 };
 
-template <typename A, typename C>
 struct fft2_impl {
     template <typename AA, typename CC>
     static void apply(AA&& a, CC&& c) {
@@ -274,7 +270,6 @@ struct fft2_impl {
     }
 };
 
-template <typename A, typename C>
 struct ifft2_impl {
     template <typename AA, typename CC>
     static void apply(AA&& a, CC&& c) {
@@ -290,7 +285,6 @@ struct ifft2_impl {
     }
 };
 
-template <typename A, typename C>
 struct ifft2_real_impl {
     template <typename AA, typename CC>
     static void apply(AA&& a, CC&& c) {
@@ -306,7 +300,6 @@ struct ifft2_real_impl {
     }
 };
 
-template <typename A, typename C>
 struct fft1_many_impl {
     template <typename AA, typename CC>
     static void apply(AA&& a, CC&& c) {
@@ -341,7 +334,6 @@ struct fft1_many_impl {
     }
 };
 
-template <typename A, typename C>
 struct fft2_many_impl {
     template <typename AA, typename CC>
     static void apply(AA&& a, CC&& c) {
@@ -376,7 +368,6 @@ struct fft2_many_impl {
     }
 };
 
-template <typename A, typename C>
 struct ifft1_many_impl {
     template <typename AA, typename CC>
     static void apply(AA&& a, CC&& c) {
@@ -392,7 +383,6 @@ struct ifft1_many_impl {
     }
 };
 
-template <typename A, typename C>
 struct ifft2_many_impl {
     template <typename AA, typename CC>
     static void apply(AA&& a, CC&& c) {
