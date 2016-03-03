@@ -62,7 +62,7 @@ struct dot_impl {
      * \return the dot product of a and b
      */
     template <typename A, typename B>
-    static auto apply(const A& a, const B& b) {
+    static value_t<A> apply(const A& a, const B& b) {
         cpp14_constexpr auto impl = select_dot_impl<A, B>();
 
         if (impl == dot_imple::BLAS) {
