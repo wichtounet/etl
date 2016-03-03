@@ -38,7 +38,7 @@ struct outer_product_expr : impl_expr<outer_product_expr<T>> {
         static_assert(all_etl_expr<A, B, C>::value, "Outer product only supported for ETL expressions");
         static_assert(decay_traits<A>::dimensions() == 1 && decay_traits<B>::dimensions() == 1 && decay_traits<C>::dimensions() == 2, "Invalid dimensions for outer product");
 
-        detail::outer_product_impl<A, B, C>::apply(std::forward<A>(a), std::forward<B>(b), std::forward<C>(c));
+        detail::outer_product_impl::apply(std::forward<A>(a), std::forward<B>(b), std::forward<C>(c));
     }
 
     /*!

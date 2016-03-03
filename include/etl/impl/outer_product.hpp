@@ -7,24 +7,51 @@
 
 /*!
  * \file outer.hpp
- * \brief Contains implementations of the outer product
- *
- * Implementations of the outer product:
- *    1. Simple implementation using for loop
- *    2. Implementations using BLAS SGET and DGER
+ * \brief Selector for outer product implementations
  */
 
 #pragma once
+
+//Include the implementations
+#include "etl/impl/std/outer.hpp"
+#include "etl/impl/blas/outer.hpp"
 
 namespace etl {
 
 namespace detail {
 
+/*!
+ * \brief Enumeration describing the different implementations of
+ * outer product
+ */
+enum class outer_imple {
+    STD,  ///< Standard implementation
+    BLAS, ///< BLAS implementation
+};
+
+/*!
+ * \brief Select the outer product implementation for an expression of type A and B
+ * \tparam A The type of a expression
+ * \tparam B The type of b expression
+ * \tparam C The type of c expression
+ * \return The implementation to use
+ */
+template <typename A, typename B, typename C>
+cpp14_constexpr outer_imple select_outer_impl() {
+    if(all_dma<A, B, C>::value){
+        if (is_cblas_enabled) {
+            return outer_imple::BLAS;
+        } else {
+            return outer_imple::STD;
+        }
+    }
+
+    return outer_imple::STD;
+}
 
 /*!
  * \brief Functor for outer product
  */
-template <typename A, typename B, typename C, typename Enable = void>
 struct outer_product_impl {
     /*!
      * \brief Apply the functor to a and b and store the result in c
@@ -32,48 +59,17 @@ struct outer_product_impl {
      * \param b the left hand side
      * \param c the result
      */
+    template <typename A, typename B, typename C>
     static void apply(const A& a, const B& b, C&& c) {
-        for (std::size_t i = 0; i < etl::dim<0>(c); ++i) {
-            for (std::size_t j = 0; j < etl::dim<1>(c); ++j) {
-                c(i, j) = a(i) * b(j);
-            }
+        cpp14_constexpr auto impl = select_outer_impl<A, B, C>();
+
+        if (impl == outer_imple::BLAS) {
+            return etl::impl::blas::outer(a, b, c);
+        } else {
+            return etl::impl::standard::outer(a, b, c);
         }
     }
 };
-
-#ifdef ETL_BLAS_MODE
-
-template <typename A, typename B, typename C>
-struct outer_product_impl<A, B, C, std::enable_if_t<all_single_precision<A, B, C>::value && all_dma<A, B, C>::value>> {
-    static void apply(const A& a, const B& b, C&& c) {
-        c = 0;
-
-        cblas_sger(
-            CblasRowMajor,
-            etl::dim<0>(a), etl::dim<0>(b),
-            1.0,
-            a.memory_start(), 1,
-            b.memory_start(), 1,
-            c.memory_start(), etl::dim<0>(b));
-    }
-};
-
-template <typename A, typename B, typename C>
-struct outer_product_impl<A, B, C, std::enable_if_t<all_double_precision<A, B, C>::value && all_dma<A, B, C>::value>> {
-    static void apply(const A& a, const B& b, C&& c) {
-        c = 0;
-
-        cblas_dger(
-            CblasRowMajor,
-            etl::dim<0>(a), etl::dim<0>(b),
-            1.0,
-            a.memory_start(), 1,
-            b.memory_start(), 1,
-            c.memory_start(), etl::dim<0>(b));
-    }
-};
-
-#endif
 
 } //end of namespace detail
 
