@@ -1158,7 +1158,7 @@ value_t<E> sum(E&& values) {
     //Reduction force evaluation
     force(values);
 
-    return detail::sum_impl<E>::apply(values);
+    return detail::sum_impl::apply(values);
 }
 
 /*!

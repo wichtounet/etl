@@ -81,11 +81,11 @@ inline bool select_parallel(const E& e) {
 /*!
  * \brief Sum operation implementation
  */
-template <typename E>
 struct sum_impl {
     /*!
      * \brief Apply the functor to e
      */
+    template <typename E>
     static value_t<E> apply(const E& e) {
         cpp14_constexpr auto impl = select_sum_impl<E>();
 
@@ -95,6 +95,7 @@ struct sum_impl {
     /*!
      * \brief Apply the functor to e forcing the implementation
      */
+    template <typename E>
     static value_t<E> selected_apply(const E& e, sum_imple impl) {
         bool parallel_dispatch = select_parallel(e);
 
@@ -130,7 +131,7 @@ struct sum_impl {
  */
 template <typename E>
 auto sum_direct(const E& e, sum_imple impl){
-    return sum_impl<E>::selected_apply(e, impl);
+    return sum_impl::selected_apply(e, impl);
 }
 
 } //end of namespace detail
