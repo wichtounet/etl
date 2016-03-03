@@ -60,7 +60,7 @@ using stable_transform_binary_helper = unary_expr<value_t<LE>, OP<build_type<LE>
 
 template <typename E, template <typename> class OP, typename... Args>
 auto make_transform_expr(Args&&... args) {
-    return detail::stable_transform_helper<E, OP>{OP<detail::build_type<E>>(std::forward<Args>(args)...)};
+    return stable_transform_helper<E, OP>{OP<build_type<E>>(std::forward<Args>(args)...)};
 }
 
 template <typename E, typename OP, typename... Args>
