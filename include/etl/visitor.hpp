@@ -98,7 +98,8 @@ struct etl_visitor {
      * \param v The the generator expr
      */
     template <typename Generator>
-    void operator()(const generator_expr<Generator>& /*unused*/) const {
+    void operator()(const generator_expr<Generator>& v) const {
+        cpp_unused(v);
         //Leaf
     }
 
@@ -107,7 +108,8 @@ struct etl_visitor {
      * \param v The the magic view.
      */
     template <typename T, cpp_enable_if(etl::is_magic_view<T>::value)>
-    void operator()(const T& /*unused*/) const {
+    void operator()(const T& v) const {
+        cpp_unused(v);
         //Leaf
     }
 
@@ -116,7 +118,8 @@ struct etl_visitor {
      * \param v The the value class.
      */
     template <typename T, cpp_enable_if(V_V && etl::is_etl_value<T>::value)>
-    void operator()(const T& /*unused*/) const {
+    void operator()(const T& v) const {
+        cpp_unused(v);
         //Leaf
     }
 
@@ -125,7 +128,8 @@ struct etl_visitor {
      * \param v The the scalar.
      */
     template <typename T>
-    void operator()(const etl::scalar<T>& /*unused*/) const {
+    void operator()(const etl::scalar<T>& v) const {
+        cpp_unused(v);
         //Leaf
     }
 };

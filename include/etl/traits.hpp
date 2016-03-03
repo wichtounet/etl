@@ -597,7 +597,6 @@ struct etl_traits<T, std::enable_if_t<is_etl_value<T>::value>> {
 
     /*!
      * \brief Return the Dth dimension of the given epxression
-     * \param v The expression to get the size from
      * \tparam D The dimension to get
      * \return the Dth dimension of the given expressio
      */

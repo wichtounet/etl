@@ -57,7 +57,7 @@ struct scalar {
 
     /*!
      * \brief Load several elements of the matrix at once
-     * \param i The position at which to start. This will be aligned from the beginning (multiple of the vector size).
+     * \param d The position at which to start. This will be aligned from the beginning (multiple of the vector size).
      * \tparam V The vectorization mode to use
      * \return a vector containing several elements of the matrix
      */
@@ -72,7 +72,7 @@ struct scalar {
      * \return The computed value at the position (args...)
      */
     template <typename... S>
-    constexpr T operator()(S... /*args*/) const noexcept {
+    constexpr T operator()(__attribute__ ((unused)) S... args) const noexcept {
         static_assert(cpp::all_convertible_to<std::size_t, S...>::value, "Invalid size types");
 
         return value;
@@ -108,7 +108,7 @@ struct etl_traits<etl::scalar<T>, void> {
     /*!
      * \brief Indicates if the expression is vectorizable using the
      * given vector mode
-     * \tparam V The vector mode
+     * \tparam VV The vector mode
      */
     template<vector_mode_t VV>
     using vectorizable = std::true_type;

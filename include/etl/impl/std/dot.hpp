@@ -20,7 +20,8 @@ namespace standard {
 
 /*!
  * \brief Compute the dot product of a and b
- * \param input The input expression
+ * \param a The lhs expression
+ * \param b The rhs expression
  * \return the sum
  */
 template <typename A, typename B>

@@ -246,8 +246,8 @@ public:
     unary_expr(unary_expr&& rhs) = default;
 
     /*!
-     * \param Assign the given expression to the unary expression
-     * \brief e The expression to get the values from
+     * \brief Assign the given expression to the unary expression
+     * \param e The expression to get the values from
      * \return the unary expression
      */
     template <typename E, cpp_enable_if(non_const_return_ref, is_etl_expr<E>::value)>
@@ -258,8 +258,8 @@ public:
     }
 
     /*!
-     * \param Assign the given value to each eleemnt of the unary expression
-     * \brief e The value
+     * \brief Assign the given value to each eleemnt of the unary expression
+     * \param e The value
      * \return the unary expression
      */
     unary_expr& operator=(const value_type& e) {
@@ -274,8 +274,8 @@ public:
     }
 
     /*!
-     * \param Assign the given container to the unary expression
-     * \brief vec The container to get the values from
+     * \brief Assign the given container to the unary expression
+     * \param vec The container to get the values from
      * \return the unary expression
      */
     template <typename Container, cpp_enable_if(!is_etl_expr<Container>::value, std::is_convertible<typename Container::value_type, value_type>::value)>
