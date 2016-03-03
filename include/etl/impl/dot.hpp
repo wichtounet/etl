@@ -7,7 +7,7 @@
 
 /*!
  * \file dot.hpp
- * \brief Contains implementations of the dot product
+ * \brief Selector for the dot product
  *
  * Implementations of the dot product:
  *    1. Simple implementation using expressions
@@ -16,18 +16,44 @@
 
 #pragma once
 
-#ifdef ETL_BLAS_MODE
-#include "cblas.h" //For ddot/sdot
-#endif
+//Include the implementations
+#include "etl/impl/std/dot.hpp"
+#include "etl/impl/blas/dot.hpp"
 
 namespace etl {
 
 namespace detail {
 
 /*!
+ * \brief Enumeration describing the different implementations of dot
+ */
+enum class dot_imple {
+    STD,  ///< Standard implementation
+    BLAS, ///< BLAS implementation
+};
+
+/*!
+ * \brief Select the dot implementation for an expression of type A and B
+ * \tparam A The type of lhs expression
+ * \tparam B The type of rhs expression
+ * \return The implementation to use
+ */
+template <typename A, typename B>
+cpp14_constexpr dot_imple select_dot_impl() {
+    if(all_dma<A, B>::value){
+        if (is_cblas_enabled) {
+            return dot_imple::BLAS;
+        } else {
+            return dot_imple::STD;
+        }
+    }
+
+    return dot_imple::STD;
+}
+
+/*!
  * \brief Functor for dot product
  */
-template <typename A, typename B, typename Enable = void>
 struct dot_impl {
     /*!
      * \brief Apply the functor to a and b
@@ -35,34 +61,17 @@ struct dot_impl {
      * \param b the left hand side
      * \return the dot product of a and b
      */
+    template <typename A, typename B>
     static auto apply(const A& a, const B& b) {
-        return sum(scale(a, b));
+        cpp14_constexpr auto impl = select_dot_impl<A, B>();
+
+        if (impl == dot_imple::BLAS) {
+            return etl::impl::blas::dot(a, b);
+        } else {
+            return etl::impl::standard::dot(a, b);
+        }
     }
 };
-
-#ifdef ETL_BLAS_MODE
-
-template <typename A, typename B>
-struct dot_impl<A, B, std::enable_if_t<all_single_precision<A, B>::value && all_dma<A, B>::value>> {
-    static float apply(const A& a, const B& b) {
-        const float* m_a = a.memory_start();
-        const float* m_b = b.memory_start();
-
-        return cblas_sdot(etl::size(a), m_a, 1, m_b, 1);
-    }
-};
-
-template <typename A, typename B>
-struct dot_impl<A, B, std::enable_if_t<all_double_precision<A, B>::value && all_dma<A, B>::value>> {
-    static double apply(const A& a, const B& b) {
-        const double* m_a = a.memory_start();
-        const double* m_b = b.memory_start();
-
-        return cblas_ddot(etl::size(a), m_a, 1, m_b, 1);
-    }
-};
-
-#endif
 
 } //end of namespace detail
 

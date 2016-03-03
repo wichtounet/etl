@@ -1143,7 +1143,7 @@ auto ctrans(const E& value){
 template <typename A, typename B>
 value_t<A> dot(const A& a, const B& b) {
     validate_expression(a, b);
-    return detail::dot_impl<A, B>::apply(a, b);
+    return detail::dot_impl::apply(a, b);
 }
 
 /*!
