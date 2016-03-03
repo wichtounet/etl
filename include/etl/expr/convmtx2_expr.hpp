@@ -12,7 +12,7 @@
 
 namespace etl {
 
-template <typename T, std::size_t K1, std::size_t K2, template <typename...> class Impl>
+template <typename T, std::size_t K1, std::size_t K2, typename Impl>
 struct basic_convmtx2_expr : impl_expr<basic_convmtx2_expr<T, K1, K2, Impl>> {
     static_assert(K1 > 0, "K1 must be greater than 0");
     static_assert(K2 > 0, "K2 must be greater than 0");
@@ -32,7 +32,7 @@ struct basic_convmtx2_expr : impl_expr<basic_convmtx2_expr<T, K1, K2, Impl>> {
         static_assert(all_etl_expr<A, C>::value, "convmtx2 only supported for ETL expressions");
         static_assert(decay_traits<A>::dimensions() == 2 && decay_traits<C>::dimensions() == 2, "convmtx2 needs 2D matrices");
 
-        Impl<decltype(make_temporary(std::forward<A>(a))), C>::template apply<K1, K2>(
+        Impl::template apply<K1, K2>(
             make_temporary(std::forward<A>(a)),
             std::forward<C>(c));
     }
