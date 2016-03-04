@@ -712,6 +712,25 @@ void assign_evaluate(Expr&& expr, Result&& result) {
  * \param expr The right hand side expression
  * \param result The left hand side
  */
+template <typename Expr, typename Result, cpp_enable_if(is_selected_expr<Expr>::value)>
+void assign_evaluate(Expr&& expr, Result&& result) {
+    decltype(auto) forced = detail::get_forced_impl<typename std::decay_t<Expr>::selector_t>();
+
+    auto old_forced = forced;
+
+    forced.impl = std::decay_t<Expr>::selector_value;
+    forced.forced = true;
+
+    assign_evaluate(expr.value(), std::forward<Result>(result));
+
+    forced = old_forced;
+}
+
+/*!
+ * \brief Evaluation of the expr into result
+ * \param expr The right hand side expression
+ * \param result The left hand side
+ */
 template <typename Expr, typename Result, cpp_enable_if(is_parallel_expr<Expr>::value)>
 void assign_evaluate(Expr&& expr, Result&& result) {
     auto old_parallel = local_context().parallel;
@@ -796,6 +815,25 @@ void add_evaluate(Expr&& expr, Result&& result) {
  * \param expr The right hand side expression
  * \param result The left hand side
  */
+template <typename Expr, typename Result, cpp_enable_if(is_selected_expr<Expr>::value)>
+void add_evaluate(Expr&& expr, Result&& result) {
+    decltype(auto) forced = detail::get_forced_impl<typename std::decay_t<Expr>::selector_t>();
+
+    auto old_forced = forced;
+
+    forced.impl = std::decay_t<Expr>::selector_value;
+    forced.forced = true;
+
+    add_evaluate(expr.value(), std::forward<Result>(result));
+
+    forced = old_forced;
+}
+
+/*!
+ * \brief Compound add evaluation of the expr into result
+ * \param expr The right hand side expression
+ * \param result The left hand side
+ */
 template <typename Expr, typename Result, cpp_enable_if(is_timed_expr<Expr>::value)>
 void add_evaluate(Expr&& expr, Result&& result) {
     using resolution = typename std::decay_t<Expr>::clock_resolution;
@@ -857,6 +895,25 @@ void sub_evaluate(Expr&& expr, Result&& result) {
     sub_evaluate(expr.value(), std::forward<Result>(result));
 
     local_context().serial = old_serial;
+}
+
+/*!
+ * \brief Compound sub evaluation of the expr into result
+ * \param expr The right hand side expression
+ * \param result The left hand side
+ */
+template <typename Expr, typename Result, cpp_enable_if(is_selected_expr<Expr>::value)>
+void sub_evaluate(Expr&& expr, Result&& result) {
+    decltype(auto) forced = detail::get_forced_impl<typename std::decay_t<Expr>::selector_t>();
+
+    auto old_forced = forced;
+
+    forced.impl = std::decay_t<Expr>::selector_value;
+    forced.forced = true;
+
+    sub_evaluate(expr.value(), std::forward<Result>(result));
+
+    forced = old_forced;
 }
 
 /*!
@@ -932,6 +989,25 @@ void mul_evaluate(Expr&& expr, Result&& result) {
  * \param expr The right hand side expression
  * \param result The left hand side
  */
+template <typename Expr, typename Result, cpp_enable_if(is_selected_expr<Expr>::value)>
+void mul_evaluate(Expr&& expr, Result&& result) {
+    decltype(auto) forced = detail::get_forced_impl<typename std::decay_t<Expr>::selector_t>();
+
+    auto old_forced = forced;
+
+    forced.impl = std::decay_t<Expr>::selector_value;
+    forced.forced = true;
+
+    mul_evaluate(expr.value(), std::forward<Result>(result));
+
+    forced = old_forced;
+}
+
+/*!
+ * \brief Compound mul evaluation of the expr into result
+ * \param expr The right hand side expression
+ * \param result The left hand side
+ */
 template <typename Expr, typename Result, cpp_enable_if(is_timed_expr<Expr>::value)>
 void mul_evaluate(Expr&& expr, Result&& result) {
     using resolution = typename std::decay_t<Expr>::clock_resolution;
@@ -993,6 +1069,25 @@ void div_evaluate(Expr&& expr, Result&& result) {
     div_evaluate(expr.value(), std::forward<Result>(result));
 
     local_context().serial = old_serial;
+}
+
+/*!
+ * \brief Compound mul evaluation of the expr into result
+ * \param expr The right hand side expression
+ * \param result The left hand side
+ */
+template <typename Expr, typename Result, cpp_enable_if(is_selected_expr<Expr>::value)>
+void div_evaluate(Expr&& expr, Result&& result) {
+    decltype(auto) forced = detail::get_forced_impl<typename std::decay_t<Expr>::selector_t>();
+
+    auto old_forced = forced;
+
+    forced.impl = std::decay_t<Expr>::selector_value;
+    forced.forced = true;
+
+    div_evaluate(expr.value(), std::forward<Result>(result));
+
+    forced = old_forced;
 }
 
 /*!
@@ -1061,6 +1156,25 @@ void mod_evaluate(Expr&& expr, Result&& result) {
     mod_evaluate(expr.value(), std::forward<Result>(result));
 
     local_context().serial = old_serial;
+}
+
+/*!
+ * \brief Compound mul evaluation of the expr into result
+ * \param expr The right hand side expression
+ * \param result The left hand side
+ */
+template <typename Expr, typename Result, cpp_enable_if(is_selected_expr<Expr>::value)>
+void mod_evaluate(Expr&& expr, Result&& result) {
+    decltype(auto) forced = detail::get_forced_impl<typename std::decay_t<Expr>::selector_t>();
+
+    auto old_forced = forced;
+
+    forced.impl = std::decay_t<Expr>::selector_value;
+    forced.forced = true;
+
+    mod_evaluate(expr.value(), std::forward<Result>(result));
+
+    forced = old_forced;
 }
 
 /*!
