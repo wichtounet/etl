@@ -1333,6 +1333,19 @@ auto serial(Expr&& expr) -> serial_expr<detail::build_type<Expr>> {
 }
 
 /*!
+ * \brief Create selectedd serial expression wrapping the given expression.
+ *
+ * The evaluation (and assignment) of the expression is guaranteed to be evaluated serially.
+ *
+ * \param expr The expression to be wrapped
+ * \return a serial expression wrapping the given expression
+ */
+template <typename Selector, Selector V, typename Expr>
+auto selected(Expr&& expr) -> selected_expr<Selector, V, detail::build_type<Expr>> {
+    return {expr};
+}
+
+/*!
  * \brief Force evaluation of an expression
  *
  * The temporary sub expressions will be evaluated and all the results are guaranteed to be in CPU.

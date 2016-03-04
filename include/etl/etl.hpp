@@ -73,6 +73,7 @@
 #include "etl/expr/temporary_expr.hpp"
 #include "etl/expr/optimized_expr.hpp"
 #include "etl/expr/serial_expr.hpp"
+#include "etl/expr/selected_expr.hpp"
 #include "etl/expr/parallel_expr.hpp"
 #include "etl/expr/timed_expr.hpp"
 

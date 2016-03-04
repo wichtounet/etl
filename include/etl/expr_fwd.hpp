@@ -31,6 +31,9 @@ struct optimized_expr;
 template <typename Expr>
 struct serial_expr;
 
+template <typename Selector, Selector V, typename Expr>
+struct selected_expr;
+
 template <typename Expr>
 struct parallel_expr;
 

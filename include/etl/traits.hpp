@@ -29,6 +29,12 @@ struct is_sparse_matrix_impl : std::false_type {};
 template <typename V1, sparse_storage V2, std::size_t V3>
 struct is_sparse_matrix_impl<sparse_matrix_impl<V1, V2, V3>> : std::true_type {};
 
+template <typename T>
+struct is_selected_expr_impl : std::false_type {};
+
+template <typename Selector, Selector V, typename Expr>
+struct is_selected_expr_impl<selected_expr<Selector, V, Expr>> : std::true_type {};
+
 } //end of namespace traits_detail
 
 /*!
@@ -112,6 +118,13 @@ template <typename T>
 using is_serial_expr = cpp::is_specialization_of<etl::serial_expr, std::decay_t<T>>;
 
 /*!
+ * \brief Traits indicating if the given ETL type is a selector expression.
+ * \tparam T The type to test
+ */
+template <typename T>
+using is_selected_expr = traits_detail::is_selected_expr_impl<T>;
+
+/*!
  * \brief Traits indicating if the given ETL type is a parallel expression.
  * \tparam T The type to test
  */
@@ -130,7 +143,7 @@ using is_timed_expr = cpp::is_specialization_of<etl::timed_expr, std::decay_t<T>
  * \tparam T The type to test
  */
 template <typename T>
-using is_wrapper_expr = cpp::or_c<is_optimized_expr<T>, is_serial_expr<T>, is_parallel_expr<T>, is_timed_expr<T>>;
+using is_wrapper_expr = cpp::or_c<is_optimized_expr<T>, is_selected_expr<T>, is_serial_expr<T>, is_parallel_expr<T>, is_timed_expr<T>>;
 
 /*!
  * \brief Traits indicating if the given ETL type is a temporary unary expression.
