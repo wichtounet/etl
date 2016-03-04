@@ -10,11 +10,29 @@
 namespace etl {
 
 /*!
+ * \brief Wrapper used in the context to force an implementation to be used
+ */
+template<typename T>
+struct forced_impl {
+    T impl;              ///< The impl to be used (if forced == true)
+    bool forced = false; ///< Indicate if forced or default
+};
+
+/*!
  * \brief The contextual configuration of ETL
  */
 struct context {
     bool serial = false;   ///< Force serial execution
     bool parallel = false; ///< Force parallel execution
+
+    forced_impl<scalar_impl> scalar_selector;       ///< Force selector for scalar operations
+    forced_impl<sum_impl> sum_selector;             ///< Forced selector for sum
+    forced_impl<transpose_impl> transpose_selector; ///< Forced selector for transpose
+    forced_impl<dot_impl> dot_selector;             ///< Forced selector for dot
+    forced_impl<conv_impl> conv_selector;           ///< Forced selector for conv
+    forced_impl<gemm_impl> gemm_selector;           ///< Forced selector for gemm
+    forced_impl<outer_impl> outer_selector;         ///< Forced selector for outer product
+    forced_impl<fft_impl> fft_selector;             ///< Forced selector for fft
 };
 
 /*!
