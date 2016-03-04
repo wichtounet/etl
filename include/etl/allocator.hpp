@@ -93,7 +93,7 @@ struct aligned_ptr {
     /*!
      * \brief Build an aligned_ptr managing the given pointer
      */
-    aligned_ptr(T* ptr) : ptr(ptr) {}
+    explicit aligned_ptr(T* ptr) : ptr(ptr) {}
 
     aligned_ptr(const aligned_ptr& rhs) = delete;
     aligned_ptr& operator=(const aligned_ptr& rhs) = delete;
@@ -158,7 +158,7 @@ struct aligned_ptr {
  */
 template <typename T>
 aligned_ptr<T> aligned_allocate_auto(std::size_t size) {
-    return {aligned_allocate<T>(size)};
+    return aligned_ptr<T>{aligned_allocate<T>(size)};
 }
 
 } //end of namespace etl
