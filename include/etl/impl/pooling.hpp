@@ -11,7 +11,18 @@ namespace etl {
 
 namespace impl {
 
+/*!
+ * \brief Functor for 2D Max Pooling
+ */
 struct max_pool_2d {
+    /*!
+     * \brief Pool a block of the sub expression
+     * \param sub The sub expression
+     * \param j The first index of the block
+     * \param k The second index of the block
+     * \tparam C1 The first dimension pooling ratio
+     * \tparam C2 The second dimension pooling ratio
+     */
     template <std::size_t C1, std::size_t C2, typename A>
     static auto pool_block(const A& sub, std::size_t j, std::size_t k){
         auto max = sub(j * C1, k * C2);
@@ -25,6 +36,13 @@ struct max_pool_2d {
         return max;
     }
 
+    /*!
+     * \brief Apply the functor on sub and store the result in m
+     * \param sub The sub expression
+     * \param m The storage matrix
+     * \tparam C1 The first dimension pooling ratio
+     * \tparam C2 The second dimension pooling ratio
+     */
     template <std::size_t C1, std::size_t C2, typename A, typename M>
     static void apply(A&& sub, M& m) {
         const std::size_t o1 = etl::dim<0>(sub) / C1;
@@ -38,7 +56,18 @@ struct max_pool_2d {
     }
 };
 
+/*!
+ * \brief Functor for 2D Average Pooling
+ */
 struct avg_pool_2d {
+    /*!
+     * \brief Pool a block of the sub expression
+     * \param sub The sub expression
+     * \param j The first index of the block
+     * \param k The second index of the block
+     * \tparam C1 The first dimension pooling ratio
+     * \tparam C2 The second dimension pooling ratio
+     */
     template <std::size_t C1, std::size_t C2, typename A>
     static auto pool_block(const A& sub, std::size_t j, std::size_t k){
         value_t<A> avg = 0;
@@ -52,6 +81,13 @@ struct avg_pool_2d {
         return avg / (C1 * C2);
     }
 
+    /*!
+     * \brief Apply the functor on sub and store the result in m
+     * \param sub The sub expression
+     * \param m The storage matrix
+     * \tparam C1 The first dimension pooling ratio
+     * \tparam C2 The second dimension pooling ratio
+     */
     template <std::size_t C1, std::size_t C2, typename A, typename M>
     static void apply(A&& sub, M& m) {
         const std::size_t o1 = etl::dim<0>(sub) / C1;
@@ -65,7 +101,20 @@ struct avg_pool_2d {
     }
 };
 
+/*!
+ * \brief Functor for 3D Max Pooling
+ */
 struct max_pool_3d {
+    /*!
+     * \brief Pool a block of the sub expression
+     * \param sub The sub expression
+     * \param i The first index of the block
+     * \param j The second index of the block
+     * \param k The third index of the block
+     * \tparam C1 The first dimension pooling ratio
+     * \tparam C2 The second dimension pooling ratio
+     * \tparam C3 The third dimension pooling ratio
+     */
     template <std::size_t C1, std::size_t C2, std::size_t C3, typename A>
     static auto pool_block(const A& sub, std::size_t i, std::size_t j, std::size_t k){
         auto max = sub(i * C1, j * C2, k * C3);
@@ -81,6 +130,14 @@ struct max_pool_3d {
         return max;
     }
 
+    /*!
+     * \brief Apply the functor on sub and store the result in m
+     * \param sub The sub expression
+     * \param m The storage matrix
+     * \tparam C1 The first dimension pooling ratio
+     * \tparam C2 The second dimension pooling ratio
+     * \tparam C3 The third dimension pooling ratio
+     */
     template <std::size_t C1, std::size_t C2, std::size_t C3, typename A, typename M>
     static void apply(A&& sub, M& m) {
         const std::size_t o1 = etl::dim<0>(sub) / C1;
@@ -97,7 +154,20 @@ struct max_pool_3d {
     }
 };
 
+/*!
+ * \brief Functor for 3D Average Pooling
+ */
 struct avg_pool_3d {
+    /*!
+     * \brief Pool a block of the sub expression
+     * \param sub The sub expression
+     * \param i The first index of the block
+     * \param j The second index of the block
+     * \param k The third index of the block
+     * \tparam C1 The first dimension pooling ratio
+     * \tparam C2 The second dimension pooling ratio
+     * \tparam C3 The third dimension pooling ratio
+     */
     template <std::size_t C1, std::size_t C2, std::size_t C3, typename A>
     static auto pool_block(const A& sub, std::size_t i, std::size_t j, std::size_t k){
         value_t<A> avg = 0;
@@ -113,6 +183,14 @@ struct avg_pool_3d {
         return avg / (C1 * C2 * C3);
     }
 
+    /*!
+     * \brief Apply the functor on sub and store the result in m
+     * \param sub The sub expression
+     * \param m The storage matrix
+     * \tparam C1 The first dimension pooling ratio
+     * \tparam C2 The second dimension pooling ratio
+     * \tparam C3 The third dimension pooling ratio
+     */
     template <std::size_t C1, std::size_t C2, std::size_t C3, typename A, typename M>
     static void apply(A&& sub, M& m) {
         const std::size_t o1 = etl::dim<0>(sub) / C1;
@@ -129,7 +207,20 @@ struct avg_pool_3d {
     }
 };
 
+/*!
+ * \brief Functor for the derivative of 2D Max Pooling
+ */
 struct max_pool_derivative_2d {
+    /*!
+     * \brief Pool a block of the sub expression
+     * \param sub The sub expression
+     * \param out The out matrix
+     * \param m The storage matrix
+     * \param j The first index of the block
+     * \param k The second index of the block
+     * \tparam C1 The first dimension pooling ratio
+     * \tparam C2 The second dimension pooling ratio
+     */
     template <std::size_t C1, std::size_t C2, typename A, typename B, typename M>
     static void pool_derivative_block(const A& in, const B& out, M& m, std::size_t j, std::size_t k){
         auto max = out(j, k);
@@ -145,7 +236,14 @@ struct max_pool_derivative_2d {
         }
     }
 
-
+    /*!
+     * \brief Apply the functor on sub and store the result in m
+     * \param sub The sub expression
+     * \param out The out matrix
+     * \param m The storage matrix
+     * \tparam C1 The first dimension pooling ratio
+     * \tparam C2 The second dimension pooling ratio
+     */
     template <std::size_t C1, std::size_t C2, typename A, typename B, typename M>
     static void apply(A&& in, B&& out, M& m) {
         for (std::size_t j = 0; j < etl::dim<0>(out); ++j) {
@@ -156,7 +254,22 @@ struct max_pool_derivative_2d {
     }
 };
 
+/*!
+ * \brief Functor for the derivative of 3D Max Pooling
+ */
 struct max_pool_derivative_3d {
+    /*!
+     * \brief Pool a block of the sub expression
+     * \param sub The sub expression
+     * \param out The out matrix
+     * \param m The storage matrix
+     * \param i The first index of the block
+     * \param j The second index of the block
+     * \param k The third index of the block
+     * \tparam C1 The first dimension pooling ratio
+     * \tparam C2 The second dimension pooling ratio
+     * \tparam C3 The third dimension pooling ratio
+     */
     template <std::size_t C1, std::size_t C2, std::size_t C3, typename A, typename B, typename M>
     static void pool_derivative_block(const A& in, const B& out, M& m, std::size_t i, std::size_t j, std::size_t k){
         auto max = out(i, j, k);
@@ -174,6 +287,14 @@ struct max_pool_derivative_3d {
         }
     }
 
+    /*!
+     * \brief Apply the functor on sub and store the result in m
+     * \param sub The sub expression
+     * \param m The storage matrix
+     * \tparam C1 The first dimension pooling ratio
+     * \tparam C2 The second dimension pooling ratio
+     * \tparam C3 The third dimension pooling ratio
+     */
     template <std::size_t C1, std::size_t C2, std::size_t C3, typename A, typename B, typename M>
     static void apply(A&& in, B&& out, M& m) {
         for (std::size_t i = 0; i < etl::dim<0>(out); ++i) {
@@ -186,7 +307,18 @@ struct max_pool_derivative_3d {
     }
 };
 
+/*!
+ * \brief Functor for 2D Upsampling
+ */
 struct upsample_2d {
+    /*!
+     * \brief Upsample a block of the sub expression
+     * \param sub The sub expression
+     * \param j The first index of the block
+     * \param k The second index of the block
+     * \tparam C1 The first dimension pooling ratio
+     * \tparam C2 The second dimension pooling ratio
+     */
     template <std::size_t C1, std::size_t C2, typename A, typename M>
     static void upsample_block(A&& in, M& m, std::size_t j, std::size_t k) {
         auto value = in(j, k);
@@ -198,6 +330,13 @@ struct upsample_2d {
         }
     }
 
+    /*!
+     * \brief Apply the functor on sub and store the result in m
+     * \param sub The sub expression
+     * \param m The storage matrix
+     * \tparam C1 The first dimension pooling ratio
+     * \tparam C2 The second dimension pooling ratio
+     */
     template <std::size_t C1, std::size_t C2, typename A, typename M>
     static void apply(A&& in, M& m) {
         for (std::size_t j = 0; j < etl::dim<0>(in); ++j) {
@@ -208,7 +347,22 @@ struct upsample_2d {
     }
 };
 
+/*!
+ * \brief Functor for 3D Upsampling
+ */
 struct upsample_3d {
+    /*!
+     * \brief Upsample a block of the sub expression
+     * \param sub The sub expression
+     * \param out The out matrix
+     * \param m The storage matrix
+     * \param i The first index of the block
+     * \param j The second index of the block
+     * \param k The third index of the block
+     * \tparam C1 The first dimension pooling ratio
+     * \tparam C2 The second dimension pooling ratio
+     * \tparam C3 The third dimension pooling ratio
+     */
     template <std::size_t C1, std::size_t C2, std::size_t C3, typename A, typename M>
     static void upsample_block(A&& in, M& m, std::size_t i, std::size_t j, std::size_t k) {
         auto value = in(i, j, k);
@@ -222,6 +376,14 @@ struct upsample_3d {
         }
     }
 
+    /*!
+     * \brief Apply the functor on sub and store the result in m
+     * \param sub The sub expression
+     * \param m The storage matrix
+     * \tparam C1 The first dimension pooling ratio
+     * \tparam C2 The second dimension pooling ratio
+     * \tparam C3 The third dimension pooling ratio
+     */
     template <std::size_t C1, std::size_t C2, std::size_t C3, typename A, typename M>
     static void apply(A&& in, M& m) {
         for (std::size_t i = 0; i < etl::dim<0>(in); ++i) {
