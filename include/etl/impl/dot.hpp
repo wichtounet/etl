@@ -21,30 +21,22 @@ namespace etl {
 namespace detail {
 
 /*!
- * \brief Enumeration describing the different implementations of dot
- */
-enum class dot_imple {
-    STD,  ///< Standard implementation
-    BLAS, ///< BLAS implementation
-};
-
-/*!
  * \brief Select the dot implementation for an expression of type A and B
  * \tparam A The type of lhs expression
  * \tparam B The type of rhs expression
  * \return The implementation to use
  */
 template <typename A, typename B>
-cpp14_constexpr dot_imple select_dot_impl() {
+cpp14_constexpr etl::dot_impl select_dot_impl() {
     if(all_dma<A, B>::value){
         if (is_cblas_enabled) {
-            return dot_imple::BLAS;
+            return etl::dot_impl::BLAS;
         } else {
-            return dot_imple::STD;
+            return etl::dot_impl::STD;
         }
     }
 
-    return dot_imple::STD;
+    return etl::dot_impl::STD;
 }
 
 /*!
@@ -61,7 +53,7 @@ struct dot_impl {
     static value_t<A> apply(const A& a, const B& b) {
         cpp14_constexpr auto impl = select_dot_impl<A, B>();
 
-        if (impl == dot_imple::BLAS) {
+        if (impl == etl::dot_impl::BLAS) {
             return etl::impl::blas::dot(a, b);
         } else {
             return etl::impl::standard::dot(a, b);

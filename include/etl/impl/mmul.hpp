@@ -18,13 +18,6 @@ namespace etl {
 
 namespace detail {
 
-enum class gemm_impl {
-    STD,
-    FAST,
-    BLAS,
-    CUBLAS
-};
-
 template <bool DMA, typename T>
 inline cpp14_constexpr gemm_impl select_gemm_impl(const std::size_t n1, const std::size_t /*n2*/, const std::size_t n3) {
     //Only std implementation is able to handle non-dma expressions

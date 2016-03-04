@@ -16,15 +16,6 @@ namespace etl {
 namespace detail {
 
 /*!
- * \brief The different FFT implementations
- */
-enum class fft_impl {
-    STD,  ///< The standard implementation
-    MKL,  ///< The Intel MKL implementation
-    CUFFT ///< The NVidia CuFFT implementation
-};
-
-/*!
  * \brief The precision of the operation
  */
 enum class precision {

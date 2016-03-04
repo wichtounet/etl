@@ -19,6 +19,7 @@
 #include "etl/tmp.hpp"
 
 // Utilities
+#include "etl/impl_enums.hpp"
 #include "etl/order.hpp"
 #include "etl/sparse_storage.hpp"
 #include "etl/config.hpp"

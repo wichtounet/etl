@@ -21,15 +21,6 @@ namespace etl {
 namespace detail {
 
 /*!
- * \brief Enumeration describing the different implementations of
- * outer product
- */
-enum class outer_imple {
-    STD,  ///< Standard implementation
-    BLAS, ///< BLAS implementation
-};
-
-/*!
  * \brief Select the outer product implementation for an expression of type A and B
  * \tparam A The type of a expression
  * \tparam B The type of b expression
@@ -37,16 +28,16 @@ enum class outer_imple {
  * \return The implementation to use
  */
 template <typename A, typename B, typename C>
-cpp14_constexpr outer_imple select_outer_impl() {
+cpp14_constexpr etl::outer_impl select_outer_impl() {
     if(all_dma<A, B, C>::value){
         if (is_cblas_enabled) {
-            return outer_imple::BLAS;
+            return etl::outer_impl::BLAS;
         } else {
-            return outer_imple::STD;
+            return etl::outer_impl::STD;
         }
     }
 
-    return outer_imple::STD;
+    return etl::outer_impl::STD;
 }
 
 /*!
@@ -63,7 +54,7 @@ struct outer_product_impl {
     static void apply(const A& a, const B& b, C&& c) {
         cpp14_constexpr auto impl = select_outer_impl<A, B, C>();
 
-        if (impl == outer_imple::BLAS) {
+        if (impl == etl::outer_impl::BLAS) {
             return etl::impl::blas::outer(a, b, c);
         } else {
             return etl::impl::standard::outer(a, b, c);

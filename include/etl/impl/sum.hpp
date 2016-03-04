@@ -32,21 +32,12 @@ namespace etl {
 namespace detail {
 
 /*!
- * \brief Enumeration describing the different implementations of sum
- */
-enum class sum_imple {
-    STD, ///< Standard implementation
-    SSE, ///< SSE implementation
-    AVX ///< AVX implementation
-};
-
-/*!
  * \brief Select the sum implementation for an expression of type E
  * \tparam E The type of expression
  * \return The implementation to use
  */
 template <typename E>
-cpp14_constexpr sum_imple select_sum_impl() {
+cpp14_constexpr etl::sum_impl select_sum_impl() {
     //Note: since the constexpr values will be known at compile time, the
     //conditions will be a lot simplified
 
@@ -55,13 +46,13 @@ cpp14_constexpr sum_imple select_sum_impl() {
         constexpr const bool avx = vectorize_impl && vector_mode == vector_mode_t::AVX;
 
         if (avx) {
-            return sum_imple::AVX;
+            return etl::sum_impl::AVX;
         } else if (sse) {
-            return sum_imple::SSE;
+            return etl::sum_impl::SSE;
         }
     }
 
-    return sum_imple::STD;
+    return etl::sum_impl::STD;
 }
 
 /*!
@@ -96,7 +87,7 @@ struct sum_impl {
      * \brief Apply the functor to e forcing the implementation
      */
     template <typename E>
-    static value_t<E> selected_apply(const E& e, sum_imple impl) {
+    static value_t<E> selected_apply(const E& e, etl::sum_impl impl) {
         bool parallel_dispatch = select_parallel(e);
 
         value_t<E> acc(0);
@@ -105,11 +96,11 @@ struct sum_impl {
             acc += value;
         };
 
-        if (impl == sum_imple::AVX) {
+        if (impl == etl::sum_impl::AVX) {
             dispatch_1d_acc<value_t<E>>(parallel_dispatch, [&e](std::size_t first, std::size_t last) -> value_t<E> {
                 return impl::avx::sum(e, first, last);
             }, acc_functor, 0, size(e));
-        } else if (impl == sum_imple::SSE) {
+        } else if (impl == etl::sum_impl::SSE) {
             dispatch_1d_acc<value_t<E>>(parallel_dispatch, [&e](std::size_t first, std::size_t last) -> value_t<E> {
                 return impl::sse::sum(e, first, last);
             }, acc_functor, 0, size(e));
@@ -130,7 +121,7 @@ struct sum_impl {
  * \return The sum of the expression
  */
 template <typename E>
-auto sum_direct(const E& e, sum_imple impl){
+auto sum_direct(const E& e, etl::sum_impl impl){
     return sum_impl::selected_apply(e, impl);
 }
 

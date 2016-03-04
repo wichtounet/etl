@@ -21,15 +21,6 @@ namespace etl {
 namespace detail {
 
 /*!
- * \brief Enumeration describing the different implementations of
- * scalar operations
- */
-enum class scalar_impl {
-    STD,  ///< Standard implementation
-    BLAS, ///< BLAS implementation
-};
-
-/*!
  * \brief Select the scalar implementation for an expression of type A
  * \tparam A The type of expression
  * \return The implementation to use
