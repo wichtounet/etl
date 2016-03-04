@@ -46,6 +46,49 @@ inline context& local_context(){
 
 namespace detail {
 
+template<typename T>
+forced_impl<T>& get_forced_impl();
+
+template<>
+inline forced_impl<scalar_impl>& get_forced_impl(){
+    return local_context().scalar_selector;
+}
+
+template<>
+inline forced_impl<sum_impl>& get_forced_impl(){
+    return local_context().sum_selector;
+}
+
+template<>
+inline forced_impl<transpose_impl>& get_forced_impl(){
+    return local_context().transpose_selector;
+}
+
+template<>
+inline forced_impl<dot_impl>& get_forced_impl(){
+    return local_context().dot_selector;
+}
+
+template<>
+inline forced_impl<conv_impl>& get_forced_impl(){
+    return local_context().conv_selector;
+}
+
+template<>
+inline forced_impl<gemm_impl>& get_forced_impl(){
+    return local_context().gemm_selector;
+}
+
+template<>
+inline forced_impl<outer_impl>& get_forced_impl(){
+    return local_context().outer_selector;
+}
+
+template<>
+inline forced_impl<fft_impl>& get_forced_impl(){
+    return local_context().fft_selector;
+}
+
 /*!
  * \brief RAII helper for setting the context to serial
  */
