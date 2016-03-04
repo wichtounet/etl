@@ -1345,6 +1345,8 @@ auto selected(Expr&& expr) -> selected_expr<Selector, V, detail::build_type<Expr
     return {expr};
 }
 
+#define selected_helper(v, expr) etl::selected<decltype(v), v>(expr)
+
 /*!
  * \brief Force evaluation of an expression
  *
