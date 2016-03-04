@@ -210,7 +210,15 @@ inline cpp14_constexpr fft_impl select_fft2_many_impl(const std::size_t batch, c
     }
 }
 
+/*!
+ * \brief Functor for 1D FFT
+ */
 struct fft1_impl {
+    /*!
+     * \brief Apply the functor
+     * \param a The input sub expression
+     * \param c The output sub expression
+     */
     template <typename AA, typename CC>
     static void apply(AA&& a, CC&& c) {
         fft_impl impl = select_fft1_impl(etl::size(c));
@@ -225,7 +233,15 @@ struct fft1_impl {
     }
 };
 
+/*!
+ * \brief Functor for 1D IFFT
+ */
 struct ifft1_impl {
+    /*!
+     * \brief Apply the functor
+     * \param a The input sub expression
+     * \param c The output sub expression
+     */
     template <typename AA, typename CC>
     static void apply(AA&& a, CC&& c) {
         fft_impl impl = select_ifft1_impl(etl::size(c));
@@ -240,7 +256,15 @@ struct ifft1_impl {
     }
 };
 
+/*!
+ * \brief Functor for 1D IFFT (real)
+ */
 struct ifft1_real_impl {
+    /*!
+     * \brief Apply the functor
+     * \param a The input sub expression
+     * \param c The output sub expression
+     */
     template <typename AA, typename CC>
     static void apply(AA&& a, CC&& c) {
         fft_impl impl = select_ifft1_impl(etl::size(c));
@@ -255,7 +279,15 @@ struct ifft1_real_impl {
     }
 };
 
+/*!
+ * \brief Functor for 2D FFT
+ */
 struct fft2_impl {
+    /*!
+     * \brief Apply the functor
+     * \param a The input sub expression
+     * \param c The output sub expression
+     */
     template <typename AA, typename CC>
     static void apply(AA&& a, CC&& c) {
         fft_impl impl = select_fft2_impl(etl::dim<0>(c), etl::dim<1>(c));
@@ -270,7 +302,15 @@ struct fft2_impl {
     }
 };
 
+/*!
+ * \brief Functor for 2D IFFT
+ */
 struct ifft2_impl {
+    /*!
+     * \brief Apply the functor
+     * \param a The input sub expression
+     * \param c The output sub expression
+     */
     template <typename AA, typename CC>
     static void apply(AA&& a, CC&& c) {
         fft_impl impl = select_fft2_impl(etl::dim<0>(c), etl::dim<1>(c));
@@ -285,7 +325,15 @@ struct ifft2_impl {
     }
 };
 
+/*!
+ * \brief Functor for 2D IFFT (real)
+ */
 struct ifft2_real_impl {
+    /*!
+     * \brief Apply the functor
+     * \param a The input sub expression
+     * \param c The output sub expression
+     */
     template <typename AA, typename CC>
     static void apply(AA&& a, CC&& c) {
         fft_impl impl = select_fft2_impl(etl::dim<0>(c), etl::dim<1>(c));
@@ -300,7 +348,15 @@ struct ifft2_real_impl {
     }
 };
 
+/*!
+ * \brief Functor for Batched 1D FFT
+ */
 struct fft1_many_impl {
+    /*!
+     * \brief Apply the functor
+     * \param a The input sub expression
+     * \param c The output sub expression
+     */
     template <typename AA, typename CC>
     static void apply(AA&& a, CC&& c) {
         const std::size_t transforms = etl::dim<0>(c);
@@ -334,7 +390,15 @@ struct fft1_many_impl {
     }
 };
 
+/*!
+ * \brief Functor for Batched 2D FFT
+ */
 struct fft2_many_impl {
+    /*!
+     * \brief Apply the functor
+     * \param a The input sub expression
+     * \param c The output sub expression
+     */
     template <typename AA, typename CC>
     static void apply(AA&& a, CC&& c) {
         const std::size_t transforms = etl::dim<0>(c);
@@ -368,7 +432,15 @@ struct fft2_many_impl {
     }
 };
 
+/*!
+ * \brief Functor for Batched 1D IFFT
+ */
 struct ifft1_many_impl {
+    /*!
+     * \brief Apply the functor
+     * \param a The input sub expression
+     * \param c The output sub expression
+     */
     template <typename AA, typename CC>
     static void apply(AA&& a, CC&& c) {
         fft_impl impl = select_fft1_many_impl(etl::dim<0>(c), etl::dim<1>(c));
@@ -383,7 +455,15 @@ struct ifft1_many_impl {
     }
 };
 
+/*!
+ * \brief Functor for Batched 2D IFFT
+ */
 struct ifft2_many_impl {
+    /*!
+     * \brief Apply the functor
+     * \param a The input sub expression
+     * \param c The output sub expression
+     */
     template <typename AA, typename CC>
     static void apply(AA&& a, CC&& c) {
         fft_impl impl = select_fft2_many_impl(etl::dim<0>(c), etl::dim<1>(c), etl::dim<2>(c));
@@ -398,7 +478,16 @@ struct ifft2_many_impl {
     }
 };
 
+/*!
+ * \brief Functor for 1D 'full' Convolution performed with FFT
+ */
 struct fft_conv1_full_impl {
+    /*!
+     * \brief Apply the functor
+     * \param a The input matrix
+     * \param b The kernel matrix
+     * \param c The output sub expression
+     */
     template <typename AA, typename BB, typename CC>
     static void apply(AA&& a, BB&& b, CC&& c) {
         if(is_cufft_enabled){
@@ -411,7 +500,16 @@ struct fft_conv1_full_impl {
     }
 };
 
+/*!
+ * \brief Functor for 2D 'full' Convolution performed with FFT
+ */
 struct fft_conv2_full_impl {
+    /*!
+     * \brief Apply the functor
+     * \param a The input matrix
+     * \param b The kernel matrix
+     * \param c The output sub expression
+     */
     template <typename AA, typename BB, typename CC>
     static void apply(AA&& a, BB&& b, CC&& c) {
         if(is_cufft_enabled){
