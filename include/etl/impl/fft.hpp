@@ -219,16 +219,16 @@ struct fft1_impl {
      * \param a The input sub expression
      * \param c The output sub expression
      */
-    template <typename AA, typename CC>
-    static void apply(AA&& a, CC&& c) {
+    template <typename A, typename C>
+    static void apply(A&& a, C&& c) {
         fft_impl impl = select_fft1_impl(etl::size(c));
 
         if (impl == fft_impl::STD) {
-            etl::impl::standard::fft1(std::forward<AA>(a), std::forward<CC>(c));
+            etl::impl::standard::fft1(std::forward<A>(a), std::forward<C>(c));
         } else if (impl == fft_impl::MKL) {
-            etl::impl::blas::fft1(std::forward<AA>(a), std::forward<CC>(c));
+            etl::impl::blas::fft1(std::forward<A>(a), std::forward<C>(c));
         } else if (impl == fft_impl::CUFFT) {
-            etl::impl::cufft::fft1(std::forward<AA>(a), std::forward<CC>(c));
+            etl::impl::cufft::fft1(std::forward<A>(a), std::forward<C>(c));
         }
     }
 };
@@ -242,16 +242,16 @@ struct ifft1_impl {
      * \param a The input sub expression
      * \param c The output sub expression
      */
-    template <typename AA, typename CC>
-    static void apply(AA&& a, CC&& c) {
+    template <typename A, typename C>
+    static void apply(A&& a, C&& c) {
         fft_impl impl = select_ifft1_impl(etl::size(c));
 
         if (impl == fft_impl::STD) {
-            etl::impl::standard::ifft1(std::forward<AA>(a), std::forward<CC>(c));
+            etl::impl::standard::ifft1(std::forward<A>(a), std::forward<C>(c));
         } else if (impl == fft_impl::MKL) {
-            etl::impl::blas::ifft1(std::forward<AA>(a), std::forward<CC>(c));
+            etl::impl::blas::ifft1(std::forward<A>(a), std::forward<C>(c));
         } else if (impl == fft_impl::CUFFT) {
-            etl::impl::cufft::ifft1(std::forward<AA>(a), std::forward<CC>(c));
+            etl::impl::cufft::ifft1(std::forward<A>(a), std::forward<C>(c));
         }
     }
 };
@@ -265,16 +265,16 @@ struct ifft1_real_impl {
      * \param a The input sub expression
      * \param c The output sub expression
      */
-    template <typename AA, typename CC>
-    static void apply(AA&& a, CC&& c) {
+    template <typename A, typename C>
+    static void apply(A&& a, C&& c) {
         fft_impl impl = select_ifft1_impl(etl::size(c));
 
         if (impl == fft_impl::STD) {
-            etl::impl::standard::ifft1_real(std::forward<AA>(a), std::forward<CC>(c));
+            etl::impl::standard::ifft1_real(std::forward<A>(a), std::forward<C>(c));
         } else if (impl == fft_impl::MKL) {
-            etl::impl::blas::ifft1_real(std::forward<AA>(a), std::forward<CC>(c));
+            etl::impl::blas::ifft1_real(std::forward<A>(a), std::forward<C>(c));
         } else if (impl == fft_impl::CUFFT) {
-            etl::impl::cufft::ifft1_real(std::forward<AA>(a), std::forward<CC>(c));
+            etl::impl::cufft::ifft1_real(std::forward<A>(a), std::forward<C>(c));
         }
     }
 };
@@ -288,16 +288,16 @@ struct fft2_impl {
      * \param a The input sub expression
      * \param c The output sub expression
      */
-    template <typename AA, typename CC>
-    static void apply(AA&& a, CC&& c) {
+    template <typename A, typename C>
+    static void apply(A&& a, C&& c) {
         fft_impl impl = select_fft2_impl(etl::dim<0>(c), etl::dim<1>(c));
 
         if (impl == fft_impl::STD) {
-            etl::impl::standard::fft2(std::forward<AA>(a), std::forward<CC>(c));
+            etl::impl::standard::fft2(std::forward<A>(a), std::forward<C>(c));
         } else if (impl == fft_impl::MKL) {
-            etl::impl::blas::fft2(std::forward<AA>(a), std::forward<CC>(c));
+            etl::impl::blas::fft2(std::forward<A>(a), std::forward<C>(c));
         } else if (impl == fft_impl::CUFFT) {
-            etl::impl::cufft::fft2(std::forward<AA>(a), std::forward<CC>(c));
+            etl::impl::cufft::fft2(std::forward<A>(a), std::forward<C>(c));
         }
     }
 };
@@ -311,16 +311,16 @@ struct ifft2_impl {
      * \param a The input sub expression
      * \param c The output sub expression
      */
-    template <typename AA, typename CC>
-    static void apply(AA&& a, CC&& c) {
+    template <typename A, typename C>
+    static void apply(A&& a, C&& c) {
         fft_impl impl = select_fft2_impl(etl::dim<0>(c), etl::dim<1>(c));
 
         if (impl == fft_impl::STD) {
-            etl::impl::standard::ifft2(std::forward<AA>(a), std::forward<CC>(c));
+            etl::impl::standard::ifft2(std::forward<A>(a), std::forward<C>(c));
         } else if (impl == fft_impl::MKL) {
-            etl::impl::blas::ifft2(std::forward<AA>(a), std::forward<CC>(c));
+            etl::impl::blas::ifft2(std::forward<A>(a), std::forward<C>(c));
         } else if (impl == fft_impl::CUFFT) {
-            etl::impl::cufft::ifft2(std::forward<AA>(a), std::forward<CC>(c));
+            etl::impl::cufft::ifft2(std::forward<A>(a), std::forward<C>(c));
         }
     }
 };
@@ -334,16 +334,16 @@ struct ifft2_real_impl {
      * \param a The input sub expression
      * \param c The output sub expression
      */
-    template <typename AA, typename CC>
-    static void apply(AA&& a, CC&& c) {
+    template <typename A, typename C>
+    static void apply(A&& a, C&& c) {
         fft_impl impl = select_fft2_impl(etl::dim<0>(c), etl::dim<1>(c));
 
         if (impl == fft_impl::STD) {
-            etl::impl::standard::ifft2_real(std::forward<AA>(a), std::forward<CC>(c));
+            etl::impl::standard::ifft2_real(std::forward<A>(a), std::forward<C>(c));
         } else if (impl == fft_impl::MKL) {
-            etl::impl::blas::ifft2_real(std::forward<AA>(a), std::forward<CC>(c));
+            etl::impl::blas::ifft2_real(std::forward<A>(a), std::forward<C>(c));
         } else if (impl == fft_impl::CUFFT) {
-            etl::impl::cufft::ifft2_real(std::forward<AA>(a), std::forward<CC>(c));
+            etl::impl::cufft::ifft2_real(std::forward<A>(a), std::forward<C>(c));
         }
     }
 };
@@ -357,8 +357,8 @@ struct fft1_many_impl {
      * \param a The input sub expression
      * \param c The output sub expression
      */
-    template <typename AA, typename CC>
-    static void apply(AA&& a, CC&& c) {
+    template <typename A, typename C>
+    static void apply(A&& a, C&& c) {
         const std::size_t transforms = etl::dim<0>(c);
         const std::size_t n          = etl::dim<1>(c);
 
@@ -374,7 +374,7 @@ struct fft1_many_impl {
                     etl::impl::standard::fft1_many(a.slice(first, last), c.slice(first, last));
                 }, 0, transforms);
             } else {
-                etl::impl::standard::fft1_many(std::forward<AA>(a), std::forward<CC>(c));
+                etl::impl::standard::fft1_many(std::forward<A>(a), std::forward<C>(c));
             }
         } else if (impl == fft_impl::MKL) {
             if(parallel_dispatch){
@@ -382,10 +382,10 @@ struct fft1_many_impl {
                     etl::impl::blas::fft1_many(a.slice(first, last), c.slice(first, last));
                 }, 0, transforms);
             } else {
-                etl::impl::blas::fft1_many(std::forward<AA>(a), std::forward<CC>(c));
+                etl::impl::blas::fft1_many(std::forward<A>(a), std::forward<C>(c));
             }
         } else if (impl == fft_impl::CUFFT) {
-            etl::impl::cufft::fft1_many(std::forward<AA>(a), std::forward<CC>(c));
+            etl::impl::cufft::fft1_many(std::forward<A>(a), std::forward<C>(c));
         }
     }
 };
@@ -399,8 +399,8 @@ struct fft2_many_impl {
      * \param a The input sub expression
      * \param c The output sub expression
      */
-    template <typename AA, typename CC>
-    static void apply(AA&& a, CC&& c) {
+    template <typename A, typename C>
+    static void apply(A&& a, C&& c) {
         const std::size_t transforms = etl::dim<0>(c);
         const std::size_t n          = etl::size(c) / transforms;
 
@@ -416,7 +416,7 @@ struct fft2_many_impl {
                     etl::impl::standard::fft2_many(a.slice(first, last), c.slice(first, last));
                 }, 0, transforms);
             } else {
-                etl::impl::standard::fft2_many(std::forward<AA>(a), std::forward<CC>(c));
+                etl::impl::standard::fft2_many(std::forward<A>(a), std::forward<C>(c));
             }
         } else if (impl == fft_impl::MKL) {
             if(parallel_dispatch){
@@ -424,10 +424,10 @@ struct fft2_many_impl {
                     etl::impl::blas::fft2_many(a.slice(first, last), c.slice(first, last));
                 }, 0, transforms);
             } else {
-                etl::impl::blas::fft2_many(std::forward<AA>(a), std::forward<CC>(c));
+                etl::impl::blas::fft2_many(std::forward<A>(a), std::forward<C>(c));
             }
         } else if (impl == fft_impl::CUFFT) {
-            etl::impl::cufft::fft2_many(std::forward<AA>(a), std::forward<CC>(c));
+            etl::impl::cufft::fft2_many(std::forward<A>(a), std::forward<C>(c));
         }
     }
 };
@@ -441,16 +441,16 @@ struct ifft1_many_impl {
      * \param a The input sub expression
      * \param c The output sub expression
      */
-    template <typename AA, typename CC>
-    static void apply(AA&& a, CC&& c) {
+    template <typename A, typename C>
+    static void apply(A&& a, C&& c) {
         fft_impl impl = select_fft1_many_impl(etl::dim<0>(c), etl::dim<1>(c));
 
         if (impl == fft_impl::STD) {
-            etl::impl::standard::ifft1_many(std::forward<AA>(a), std::forward<CC>(c));
+            etl::impl::standard::ifft1_many(std::forward<A>(a), std::forward<C>(c));
         } else if (impl == fft_impl::MKL) {
-            etl::impl::blas::ifft1_many(std::forward<AA>(a), std::forward<CC>(c));
+            etl::impl::blas::ifft1_many(std::forward<A>(a), std::forward<C>(c));
         } else if (impl == fft_impl::CUFFT) {
-            etl::impl::cufft::ifft1_many(std::forward<AA>(a), std::forward<CC>(c));
+            etl::impl::cufft::ifft1_many(std::forward<A>(a), std::forward<C>(c));
         }
     }
 };
@@ -464,16 +464,16 @@ struct ifft2_many_impl {
      * \param a The input sub expression
      * \param c The output sub expression
      */
-    template <typename AA, typename CC>
-    static void apply(AA&& a, CC&& c) {
+    template <typename A, typename C>
+    static void apply(A&& a, C&& c) {
         fft_impl impl = select_fft2_many_impl(etl::dim<0>(c), etl::dim<1>(c), etl::dim<2>(c));
 
         if (impl == fft_impl::STD) {
-            etl::impl::standard::ifft2_many(std::forward<AA>(a), std::forward<CC>(c));
+            etl::impl::standard::ifft2_many(std::forward<A>(a), std::forward<C>(c));
         } else if (impl == fft_impl::MKL) {
-            etl::impl::blas::ifft2_many(std::forward<AA>(a), std::forward<CC>(c));
+            etl::impl::blas::ifft2_many(std::forward<A>(a), std::forward<C>(c));
         } else if (impl == fft_impl::CUFFT) {
-            etl::impl::cufft::ifft2_many(std::forward<AA>(a), std::forward<CC>(c));
+            etl::impl::cufft::ifft2_many(std::forward<A>(a), std::forward<C>(c));
         }
     }
 };
@@ -488,14 +488,14 @@ struct fft_conv1_full_impl {
      * \param b The kernel matrix
      * \param c The output sub expression
      */
-    template <typename AA, typename BB, typename CC>
-    static void apply(AA&& a, BB&& b, CC&& c) {
+    template <typename A, typename B, typename C>
+    static void apply(A&& a, B&& b, C&& c) {
         if(is_cufft_enabled){
-            etl::impl::cufft::fft1_convolve(std::forward<AA>(a), std::forward<BB>(b), std::forward<CC>(c));
+            etl::impl::cufft::fft1_convolve(std::forward<A>(a), std::forward<B>(b), std::forward<C>(c));
         } else if(is_mkl_enabled){
-            etl::impl::blas::fft1_convolve(std::forward<AA>(a), std::forward<BB>(b), std::forward<CC>(c));
+            etl::impl::blas::fft1_convolve(std::forward<A>(a), std::forward<B>(b), std::forward<C>(c));
         } else {
-            etl::impl::standard::fft1_convolve(std::forward<AA>(a), std::forward<BB>(b), std::forward<CC>(c));
+            etl::impl::standard::fft1_convolve(std::forward<A>(a), std::forward<B>(b), std::forward<C>(c));
         }
     }
 };
@@ -510,14 +510,14 @@ struct fft_conv2_full_impl {
      * \param b The kernel matrix
      * \param c The output sub expression
      */
-    template <typename AA, typename BB, typename CC>
-    static void apply(AA&& a, BB&& b, CC&& c) {
+    template <typename A, typename B, typename C>
+    static void apply(A&& a, B&& b, C&& c) {
         if(is_cufft_enabled){
-            etl::impl::cufft::fft2_convolve(std::forward<AA>(a), std::forward<BB>(b), std::forward<CC>(c));
+            etl::impl::cufft::fft2_convolve(std::forward<A>(a), std::forward<B>(b), std::forward<C>(c));
         } else if(is_mkl_enabled){
-            etl::impl::blas::fft2_convolve(std::forward<AA>(a), std::forward<BB>(b), std::forward<CC>(c));
+            etl::impl::blas::fft2_convolve(std::forward<A>(a), std::forward<B>(b), std::forward<C>(c));
         } else {
-            etl::impl::standard::fft2_convolve(std::forward<AA>(a), std::forward<BB>(b), std::forward<CC>(c));
+            etl::impl::standard::fft2_convolve(std::forward<A>(a), std::forward<B>(b), std::forward<C>(c));
         }
     }
 };
