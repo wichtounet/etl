@@ -56,34 +56,55 @@ public:
 
     // Construction
 
-    //Default constructor (constructs an empty matrix)
+    /*!
+     * \brief Construct an empty matrix
+     *
+     * This matrix don't have any memory nor dimensionsand most
+     * operations will likely fail on it
+     */
     dyn_matrix_impl() noexcept : base_type(), _memory(nullptr) {
         //Nothing else to init
     }
 
-    //Copy constructor
+    /*!
+     * \brief Copy construct a matrix
+     * \param rhs The matrix to copy
+     */
     dyn_matrix_impl(const dyn_matrix_impl& rhs) noexcept : base_type(rhs), _memory(allocate(_size)) {
         standard_evaluator::direct_copy(rhs.memory_start(), rhs.memory_end(), memory_start());
     }
 
-    //Move constructor
+    /*!
+     * \brief Move construct a matrix
+     * \param rhs The matrix to move
+     */
     dyn_matrix_impl(dyn_matrix_impl&& rhs) noexcept : base_type(std::move(rhs)), managed(rhs.managed), _memory(rhs._memory) {
         rhs._memory = nullptr;
     }
 
-    //Copy constructors with different type
-
+    /*!
+     * \brief Copy construct a matrix
+     * \param rhs The matrix to copy
+     */
     template <typename T2, order SO2, std::size_t D2, cpp_enable_if(SO2 == SO)>
     dyn_matrix_impl(const dyn_matrix_impl<T2, SO2, D2>& rhs) noexcept : base_type(rhs), _memory(allocate(_size)) {
         standard_evaluator::direct_copy(rhs.memory_start(), rhs.memory_end(), memory_start());
     }
 
+    /*!
+     * \brief Copy construct a matrix
+     * \param rhs The matrix to copy
+     */
     template <typename T2, order SO2, std::size_t D2, cpp_disable_if(SO2 == SO)>
     dyn_matrix_impl(const dyn_matrix_impl<T2, SO2, D2>& rhs) noexcept : base_type(rhs), _memory(allocate(_size)) {
         //The type is different, so we must use assign
         assign_evaluate(rhs, *this);
     }
 
+    /*!
+     * \brief Construct a matrix from an expression
+     * \param e The expression to initialize the matrix with
+     */
     template <typename E, cpp_enable_if(
                               std::is_convertible<value_t<E>, value_type>::value,
                               is_etl_expr<E>::value,
@@ -93,7 +114,10 @@ public:
         assign_evaluate(std::forward<E>(e), *this);
     }
 
-    //Initializer-list construction for vector
+    /*!
+     * \brief Construct a vector with the given values
+     * \param list Initializer list containing all the values of the vector
+     */
     dyn_matrix_impl(std::initializer_list<value_type> list) noexcept : base_type(list.size(), {{list.size()}}),
                                                                        _memory(allocate(_size)) {
         static_assert(n_dimensions == 1, "This constructor can only be used for 1D matrix");
@@ -101,7 +125,13 @@ public:
         std::copy(list.begin(), list.end(), begin());
     }
 
-    //Normal constructor with only sizes
+    /*!
+     * \brief Construct a matrix with the given dimensions
+     * \param sizes The dimensions of the matrix
+     *
+     * The number of dimesnions must be the same as the D template
+     * parameter of the matrix.
+     */
     template <typename... S, cpp_enable_if(
                                  (sizeof...(S) == D),
                                  cpp::all_convertible_to<std::size_t, S...>::value,
@@ -111,7 +141,17 @@ public:
         //Nothing to init
     }
 
-    //Constructor for unmanaged memory
+    /*!
+     * \brief Construct a matrix over existing memory
+     * \param memory Pointer to the memory
+     * \param sizes The dimensions of the matrix
+     *
+     * The number of dimesnions must be the same as the D template
+     * parameter of the matrix.
+     *
+     * The memory won't be managed, meaning that it won't be
+     * released once the matrix is destructed.
+     */
     template <typename... S, cpp_enable_if(
                                  (sizeof...(S) == D),
                                  cpp::all_convertible_to<std::size_t, S...>::value,
@@ -121,7 +161,10 @@ public:
         //Nothing to init
     }
 
-    //Sizes followed by an initializer list
+    /*!
+     * \brief Construct a matrix with the given dimensions and values
+     * \param sizes The dimensions of the matrix followed by an initializer_list
+     */
     template <typename... S, cpp_enable_if(dyn_detail::is_initializer_list_constructor<S...>::value)>
     explicit dyn_matrix_impl(S... sizes) noexcept : base_type(dyn_detail::size(std::make_index_sequence<(sizeof...(S)-1)>(), sizes...),
                                                               dyn_detail::sizes(std::make_index_sequence<(sizeof...(S)-1)>(), sizes...)),
@@ -132,7 +175,10 @@ public:
         std::copy(list.begin(), list.end(), begin());
     }
 
-    //Sizes followed by a values_t
+    /*!
+     * \brief Construct a matrix with the given dimensions and values
+     * \param sizes The dimensions of the matrix followed by a values_t
+     */
     template <typename... S, cpp_enable_if(
                                               (sizeof...(S) == D),
                                               cpp::is_specialization_of<values_t, typename cpp::last_type<std::size_t, S...>::type>::value)>
@@ -143,7 +189,12 @@ public:
         std::copy(list.begin(), list.end(), begin());
     }
 
-    //Sizes followed by a value
+    /*!
+     * \brief Construct a matrix with the given dimensions and a value
+     * \param sizes The dimensions of the matrix followed by a values
+     *
+     * Every element of the matrix will be set to this value.
+     */
     template <typename S1, typename... S, cpp_enable_if(
                                               (sizeof...(S) == D),
                                               std::is_convertible<std::size_t, S1>::value, //The first type must be convertible to size_t
@@ -161,7 +212,13 @@ public:
         std::fill(begin(), end(), value);
     }
 
-    //Sizes followed by a generator_expr
+    /*!
+     * \brief Construct a matrix with the given dimensions and a generator expression
+     * \param sizes The dimensions of the matrix followed by a values
+     *
+     * The generator expression will be used to initialize the
+     * elements of the matrix, in order.
+     */
     template <typename S1, typename... S, cpp_enable_if(
                                               (sizeof...(S) == D),
                                               std::is_convertible<std::size_t, S1>::value,        //The first type must be convertible to size_t
@@ -176,7 +233,15 @@ public:
         assign_evaluate(e, *this);
     }
 
-    //Sizes followed by an init flag followed by the value
+    /*!
+     * \brief Construct a matrix with the given dimensions and a generator expression
+     * \param sizes The dimensions of the matrix followed by an init_flag and a value
+     *
+     * Every element of the matrix will be set to this value.
+     *
+     * This constructor is necessary when the type of the matrix is
+     * std::size_t
+     */
     template <typename... S, cpp_enable_if(dyn_detail::is_init_constructor<S...>::value)>
     explicit dyn_matrix_impl(S... sizes) noexcept : base_type(dyn_detail::size(std::make_index_sequence<(sizeof...(S)-2)>(), sizes...),
                                                               dyn_detail::sizes(std::make_index_sequence<(sizeof...(S)-2)>(), sizes...)),
@@ -186,6 +251,12 @@ public:
         std::fill(begin(), end(), cpp::last_value(sizes...));
     }
 
+    /*!
+     * \brief Construct a vector from a Container
+     * \param vec A STL container
+     *
+     * Only possible for 1D matrices
+     */
     template <typename Container, cpp_enable_if(
                                       cpp::not_c<is_etl_expr<Container>>::value,
                                       std::is_convertible<typename Container::value_type, value_type>::value)>
