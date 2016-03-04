@@ -129,6 +129,32 @@ struct parallel_context {
     }
 };
 
+/*!
+ * \brief RAII helper for setting the context to a selected
+ * implementation
+ */
+template<typename Selector, Selector V>
+struct selected_context {
+    forced_impl<Selector> old_selector;
+
+    selected_context(){
+        decltype(auto) selector = get_forced_impl<Selector>();
+
+        old_selector = selector;
+
+        selector.impl = V;
+        selector.forced = true;
+    }
+
+    ~selected_context(){
+        get_forced_impl<Selector>() = old_selector;
+    }
+
+    operator bool(){
+        return true;
+    }
+};
+
 } //end of namespace detail
 
 /*!
@@ -140,5 +166,10 @@ struct parallel_context {
  * \brief Define the start of an ETL parallel section
  */
 #define PARALLEL_SECTION if(auto etl_parallel_context__ = etl::detail::parallel_context())
+
+/*!
+ * \brief Define the start of an ETL selected section
+ */
+#define SELECTED_SECTION(v) if(auto etl_selected_context__ = etl::detail::selected_context<decltype(v), v>())
 
 } //end of namespace etl
