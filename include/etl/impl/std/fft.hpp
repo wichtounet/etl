@@ -26,6 +26,14 @@ namespace detail {
  */
 constexpr const std::size_t MAX_FACTORS = 32;
 
+/*
+ * \brief Transform module for a FFT with 2 points
+ * \param in The input vector
+ * \param out The output vector
+ * \param product The current product
+ * \param n The size of the transform
+ * \param twiddle The first twiddle factors
+ */
 template <typename T>
 void fft_2_point(const etl::complex<T>* in, etl::complex<T>* out, const std::size_t product, const std::size_t n, const etl::complex<T>* twiddle) {
     static constexpr const std::size_t factor = 2;
@@ -51,6 +59,15 @@ void fft_2_point(const etl::complex<T>* in, etl::complex<T>* out, const std::siz
     }
 }
 
+/*
+ * \brief Transform module for a FFT with 3 points
+ * \param in The input vector
+ * \param out The output vector
+ * \param product The current product
+ * \param n The size of the transform
+ * \param twiddle1 The first twiddle factors
+ * \param twiddle2 The second twiddle factors
+ */
 template <typename T>
 void fft_3_point(const etl::complex<T>* in, etl::complex<T>* out, const std::size_t product, const std::size_t n, const etl::complex<T>* twiddle1, const etl::complex<T>* twiddle2) {
     static constexpr const std::size_t factor = 3;
@@ -86,6 +103,16 @@ void fft_3_point(const etl::complex<T>* in, etl::complex<T>* out, const std::siz
     }
 }
 
+/*
+ * \brief Transform module for a FFT with 4 points
+ * \param in The input vector
+ * \param out The output vector
+ * \param product The current product
+ * \param n The size of the transform
+ * \param twiddle1 The first twiddle factors
+ * \param twiddle2 The second twiddle factors
+ * \param twiddle3 The third twiddle factors
+ */
 template <typename T>
 void fft_4_point(const etl::complex<T>* in, etl::complex<T>* out, const std::size_t product, const std::size_t n, const etl::complex<T>* twiddle1, const etl::complex<T>* twiddle2, const etl::complex<T>* twiddle3) {
     static constexpr const std::size_t factor = 4;
@@ -124,6 +151,17 @@ void fft_4_point(const etl::complex<T>* in, etl::complex<T>* out, const std::siz
     }
 }
 
+/*
+ * \brief Transform module for a FFT with 5 points
+ * \param in The input vector
+ * \param out The output vector
+ * \param product The current product
+ * \param n The size of the transform
+ * \param twiddle1 The first twiddle factors
+ * \param twiddle2 The second twiddle factors
+ * \param twiddle3 The third twiddle factors
+ * \param twiddle4 The fourth twiddle factors
+ */
 template <typename T>
 void fft_5_point(const etl::complex<T>* in, etl::complex<T>* out, const std::size_t product, const std::size_t n, const etl::complex<T>* twiddle1, const etl::complex<T>* twiddle2, const etl::complex<T>* twiddle3, const etl::complex<T>* twiddle4) {
     static constexpr const std::size_t factor = 5;
@@ -176,6 +214,19 @@ void fft_5_point(const etl::complex<T>* in, etl::complex<T>* out, const std::siz
     }
 }
 
+/*
+ * \brief Transform module for a FFT with 7 points
+ * \param in The input vector
+ * \param out The output vector
+ * \param product The current product
+ * \param n The size of the transform
+ * \param twiddle1 The first twiddle factors
+ * \param twiddle2 The second twiddle factors
+ * \param twiddle3 The third twiddle factors
+ * \param twiddle4 The fourth twiddle factors
+ * \param twiddle5 The fifth twiddle factors
+ * \param twiddle6 The sixth twiddle factors
+ */
 template <typename T>
 void fft_7_point(const etl::complex<T>* in, etl::complex<T>* out, const std::size_t product, const std::size_t n, const etl::complex<T>* twiddle1, const etl::complex<T>* twiddle2, const etl::complex<T>* twiddle3, const etl::complex<T>* twiddle4, const etl::complex<T>* twiddle5, const etl::complex<T>* twiddle6) {
     static constexpr const std::size_t factor = 7;
@@ -256,6 +307,15 @@ void fft_7_point(const etl::complex<T>* in, etl::complex<T>* out, const std::siz
     }
 }
 
+/*
+ * \brief General Transform module for a FFT
+ * \param in The input vector
+ * \param out The output vector
+ * \param factor The factor
+ * \param product The current product
+ * \param n The size of the transform
+ * \param twiddle The twiddle factors
+ */
 template <typename T>
 void fft_n_point(etl::complex<T>* in, etl::complex<T>* out, const std::size_t factor, const std::size_t product, const std::size_t n, const etl::complex<T>* twiddle) {
     const std::size_t m            = n / factor;
@@ -320,6 +380,12 @@ void fft_n_point(etl::complex<T>* in, etl::complex<T>* out, const std::size_t fa
     }
 }
 
+/*
+ * \brief Factorize the FFT size into factors
+ * \param n The size of the transform
+ * \param factors The output factors
+ * \param n_factors The number of factors
+ */
 inline void fft_factorize(std::size_t n, std::size_t* factors, std::size_t& n_factors) {
     //0. Favour the factors with implemented transform modules
 
@@ -360,6 +426,14 @@ inline void fft_factorize(std::size_t n, std::size_t* factors, std::size_t& n_fa
     }
 }
 
+/*
+ * \brief Compute the twiddle factors
+ * \param n The size of the transform
+ * \param factors The factors
+ * \param n_factors The number of factors
+ * \param twiddle The output twiddle factors (pointers inside the main twiddle factors array)
+ * \return an array containing all the twiddle factors
+ */
 template <typename T>
 std::unique_ptr<etl::complex<T>[]> twiddle_compute(const std::size_t n, std::size_t* factors, std::size_t n_factors, etl::complex<T>** twiddle) {
     std::unique_ptr<etl::complex<T>[]> trig = etl::allocate<etl::complex<T>>(n);
@@ -393,6 +467,15 @@ std::unique_ptr<etl::complex<T>[]> twiddle_compute(const std::size_t n, std::siz
     return trig;
 }
 
+/*
+ * \brief Perform the FFT
+ * \param r_in The input
+ * \param r_out The output
+ * \param n The size of the transform
+ * \param factors The factors
+ * \param n_factors The number of factors
+ * \param twiddle The output twiddle factors (pointers inside the main twiddle factors array)
+ */
 template <typename In, typename T>
 void fft_perform(const In* r_in, etl::complex<T>* r_out, const std::size_t n, std::size_t* factors, std::size_t n_factors, etl::complex<T>** twiddle) {
     auto tmp = etl::allocate<etl::complex<T>>(n);
