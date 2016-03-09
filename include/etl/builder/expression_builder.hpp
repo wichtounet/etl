@@ -951,6 +951,12 @@ auto slice(E&& value, std::size_t first, std::size_t last) -> detail::identity_h
     return detail::identity_helper<E, slice_view<detail::build_identity_type<E>>>{{value, first, last}};
 }
 
+/*!
+ * \brief Returns view representing the reshape of another expression
+ * \param value The ETL expression
+ * \tparam Dims the reshape dimensions
+ * \return a view expression representing the same expression with a different shape
+ */
 template <std::size_t... Dims, typename E>
 auto reshape(E&& value) -> detail::identity_helper<E, fast_matrix_view<detail::build_identity_type<E>, Dims...>> {
     static_assert(is_etl_expr<E>::value, "etl::reshape can only be used on ETL expressions");
@@ -959,6 +965,13 @@ auto reshape(E&& value) -> detail::identity_helper<E, fast_matrix_view<detail::b
     return detail::identity_helper<E, fast_matrix_view<detail::build_identity_type<E>, Dims...>>{fast_matrix_view<detail::build_identity_type<E>, Dims...>(value)};
 }
 
+/*!
+ * \brief Returns view representing the reshape of another expression
+ * \param value The ETL expression
+ * \tparam rows The rows of the reshaped expression
+ * \tparam columns The columns of the reshaped expression
+ * \return a view expression representing the same expression with a different shape
+ */
 template <typename E>
 auto reshape(E&& value, std::size_t rows, std::size_t columns) -> detail::identity_helper<E, dyn_matrix_view<detail::build_identity_type<E>>> {
     static_assert(is_etl_expr<E>::value, "etl::reshape can only be used on ETL expressions");
@@ -967,6 +980,12 @@ auto reshape(E&& value, std::size_t rows, std::size_t columns) -> detail::identi
     return detail::identity_helper<E, dyn_matrix_view<detail::build_identity_type<E>>>{{value, rows, columns}};
 }
 
+/*!
+ * \brief Returns view representing the reshape of another expression
+ * \param value The ETL expression
+ * \tparam rows The rows of the reshaped expression
+ * \return a view expression representing the same expression with a different shape
+ */
 template <typename E>
 auto reshape(E&& value, std::size_t rows) -> detail::identity_helper<E, dyn_vector_view<detail::build_identity_type<E>>> {
     static_assert(is_etl_expr<E>::value, "etl::reshape can only be used on ETL expressions");
@@ -977,11 +996,21 @@ auto reshape(E&& value, std::size_t rows) -> detail::identity_helper<E, dyn_vect
 
 // Virtual Views that returns rvalues
 
+/*!
+ * \brief Returns a view representing the square magic matrix
+ * \param i The size of the matrix (one side)
+ * \return a virtual view expression representing the square magic matrix
+ */
 template <typename D = double>
 auto magic(std::size_t i) -> detail::virtual_helper<D, magic_view<D>> {
     return detail::virtual_helper<D, magic_view<D>>{magic_view<D>{i}};
 }
 
+/*!
+ * \brief Returns a view representing the square magic matrix
+ * \tparam N The size of the matrix (one side)
+ * \return a virtual view expression representing the square magic matrix
+ */
 template <std::size_t N, typename D = double>
 auto magic() -> detail::virtual_helper<D, fast_magic_view<D, N>> {
     return detail::virtual_helper<D, fast_magic_view<D, N>>{{}};
