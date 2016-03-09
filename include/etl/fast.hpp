@@ -141,28 +141,49 @@ public:
     using vec_type       = typename V::template vec_type<T>;
 
 private:
-    storage_impl _data;
+    storage_impl _data; ///< The storage container
 
+    /*!
+     * \brief Compute the 1D index from the given indices
+     * \param args The access indices
+     * \return The 1D index inside the storage container
+     */
     template <typename... S>
     static constexpr std::size_t index(S... args) {
         return matrix_detail::compute_index<this_type, 0>(args...);
     }
 
+    /*!
+     * \brief Return the value at the given indices
+     * \param args The access indices
+     * \return The value at the given indices
+     */
     template <typename... S>
     value_type& access(S... args) {
         return _data[index(args...)];
     }
 
+    /*!
+     * \brief Return the value at the given indices
+     * \param args The access indices
+     * \return The value at the given indices
+     */
     template <typename... S>
     const value_type& access(S... args) const {
         return _data[index(args...)];
     }
 
+    /*!
+     * \brief Init the container if necessary
+     */
     template <typename S = ST, cpp_enable_if(matrix_detail::is_vector<S>::value)>
     void init() {
         _data.resize(etl_size);
     }
 
+    /*!
+     * \copydoc init
+     */
     template <typename S = ST, cpp_disable_if(matrix_detail::is_vector<S>::value)>
     void init() noexcept {
         //Nothing to init
@@ -178,12 +199,20 @@ public:
         init();
     }
 
+    /*!
+     * \brief Construct a fast matrix filled with the same value
+     * \param value the value to fill the matrix with
+     */
     template <typename VT, cpp_enable_if_or(std::is_convertible<VT, value_type>::value, std::is_assignable<T&, VT>::value)>
     explicit fast_matrix_impl(const VT& value) noexcept {
         init();
         std::fill(_data.begin(), _data.end(), value);
     }
 
+    /*!
+     * \brief Construct a fast matrix filled with the given values
+     * \param l the list of values to fill the matrix with
+     */
     fast_matrix_impl(std::initializer_list<value_type> l) {
         init();
 
@@ -192,19 +221,35 @@ public:
         std::copy(l.begin(), l.end(), begin());
     }
 
+    /*!
+     * \brief Construct a fast matrix directly from storage
+     * \param data The storage container to copy
+     */
     fast_matrix_impl(storage_impl data) : _data(data) {
         //Nothing else to init
     }
 
+    /*!
+     * \brief Copy construct a fast matrix
+     * \param rhs The fast matrix to copy from
+     */
     fast_matrix_impl(const fast_matrix_impl& rhs) noexcept {
         init();
         standard_evaluator::direct_copy(rhs.memory_start(), rhs.memory_end(), memory_start());
     }
 
+    /*!
+     * \brief Move construct a fast matrix
+     * \param rhs The fast matrix to move from
+     */
     fast_matrix_impl(fast_matrix_impl&& rhs) noexcept : _data(std::move(rhs._data)) {
         //Nothing else to init
     }
 
+    /*!
+     * \brief Copy construct a fast matrix from a different matrix fast matrix type
+     * \param rhs The fast matrix to copy from
+     */
     template <typename T2, typename ST2, order SO2, std::size_t... Dims2, cpp_enable_if(SO == SO2)>
     fast_matrix_impl(const fast_matrix_impl<T2, ST2, SO2, Dims2...>& rhs) noexcept {
         init();
@@ -212,6 +257,10 @@ public:
         standard_evaluator::direct_copy(rhs.memory_start(), rhs.memory_end(), memory_start());
     }
 
+    /*!
+     * \brief Copy construct a fast matrix from a different matrix fast matrix type
+     * \param rhs The fast matrix to copy from
+     */
     template <typename T2, typename ST2, order SO2, std::size_t... Dims2, cpp_disable_if(SO == SO2)>
     fast_matrix_impl(const fast_matrix_impl<T2, ST2, SO2, Dims2...>& rhs) noexcept {
         init();
@@ -219,6 +268,10 @@ public:
         assign_evaluate(rhs, *this);
     }
 
+    /*!
+     * \brief Construct a fast matrix from the given ETL expression
+     * \param e The ETL expression
+     */
     template <typename E, cpp_enable_if(!is_fast_matrix<E>::value, std::is_convertible<value_t<E>, value_type>::value, is_etl_expr<E>::value)>
     explicit fast_matrix_impl(E&& e) {
         init();
@@ -226,26 +279,37 @@ public:
         assign_evaluate(std::forward<E>(e), *this);
     }
 
-    template <typename Container, cpp_enable_if(
-                                      std::is_convertible<typename Container::value_type, value_type>::value,
-                                      cpp::not_c<is_etl_expr<Container>>::value)>
-    explicit fast_matrix_impl(const Container& vec) {
+    /*!
+     * \brief Construct a fast matrix from the given STL container
+     * \param container The container to get values from
+     */
+    template <typename C, cpp_enable_if(std::is_convertible<value_t<C>, value_type>::value, !is_etl_expr<C>::value)>
+    explicit fast_matrix_impl(const C& container) {
         init();
-        validate_assign(*this, vec);
-        std::copy(vec.begin(), vec.end(), begin());
+        validate_assign(*this, container);
+        std::copy(container.begin(), container.end(), begin());
     }
 
     // Assignment
 
-    // Copy assignment operator
-
+    /*!
+     * \brief Copy assign a fast matrix
+     * \param rhs The fast matrix to copy from
+     * \return a reference to the fast matrix
+     */
     fast_matrix_impl& operator=(const fast_matrix_impl& rhs) noexcept {
         if (this != &rhs) {
             standard_evaluator::direct_copy(rhs.memory_start(), rhs.memory_end(), memory_start());
         }
+
         return *this;
     }
 
+    /*!
+     * \brief Copy assign a fast matrix from a different matrix fast matrix type
+     * \param rhs The fast matrix to copy from
+     * \return a reference to the fast matrix
+     */
     template <std::size_t... SDims>
     fast_matrix_impl& operator=(const fast_matrix_impl<T, ST, SO, SDims...>& rhs) noexcept {
         validate_assign(*this, rhs);
@@ -253,17 +317,23 @@ public:
         return *this;
     }
 
-    //Allow copy from other containers
-
-    template <typename Container, cpp_enable_if(!std::is_same<Container, value_type>::value, std::is_convertible<typename Container::value_type, value_type>::value)>
-    fast_matrix_impl& operator=(const Container& vec) noexcept {
-        validate_assign(*this, vec);
-        std::copy(vec.begin(), vec.end(), begin());
+    /*!
+     * \brief Assign the values of the STL container to the fast matrix
+     * \param container The STL container to get the values from
+     * \return a reference to the fast matrix
+     */
+    template <typename C, cpp_enable_if(!std::is_same<C, value_type>::value, std::is_convertible<value_t<C>, value_type>::value)>
+    fast_matrix_impl& operator=(const C& container) noexcept {
+        validate_assign(*this, container);
+        std::copy(container.begin(), container.end(), begin());
         return *this;
     }
 
-    //Construct from expression
-
+    /*!
+     * \brief Assign the values of the ETL expression to the fast matrix
+     * \param e The ETL expression to get the values from
+     * \return a reference to the fast matrix
+     */
     template <typename E, cpp_enable_if(std::is_convertible<typename E::value_type, value_type>::value, is_etl_expr<E>::value)>
     fast_matrix_impl& operator=(E&& e) {
         validate_assign(*this, e);
@@ -271,7 +341,11 @@ public:
         return *this;
     }
 
-    //Set the same value to each element of the matrix
+    /*!
+     * \brief Assign the value to each element
+     * \param value The value to assign to each element
+     * \return a reference to the fast matrix
+     */
     template <typename VT, cpp_enable_if_or(std::is_convertible<VT, value_type>::value, std::is_assignable<T&, VT>::value)>
     fast_matrix_impl& operator=(const VT& value) noexcept {
         std::fill(_data.begin(), _data.end(), value);
@@ -279,6 +353,11 @@ public:
         return *this;
     }
 
+    /*!
+     * \brief Move assign a fast matrix
+     * \param rhs The fast matrix to move from
+     * \return a reference to the fast matrix
+     */
     fast_matrix_impl& operator=(fast_matrix_impl&& rhs) noexcept {
         if (this != &rhs) {
             _data = std::move(rhs._data);
