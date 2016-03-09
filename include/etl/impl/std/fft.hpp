@@ -26,7 +26,7 @@ namespace detail {
  */
 constexpr const std::size_t MAX_FACTORS = 32;
 
-/*
+/*!
  * \brief Transform module for a FFT with 2 points
  * \param in The input vector
  * \param out The output vector
@@ -59,7 +59,7 @@ void fft_2_point(const etl::complex<T>* in, etl::complex<T>* out, const std::siz
     }
 }
 
-/*
+/*!
  * \brief Transform module for a FFT with 3 points
  * \param in The input vector
  * \param out The output vector
@@ -103,7 +103,7 @@ void fft_3_point(const etl::complex<T>* in, etl::complex<T>* out, const std::siz
     }
 }
 
-/*
+/*!
  * \brief Transform module for a FFT with 4 points
  * \param in The input vector
  * \param out The output vector
@@ -151,7 +151,7 @@ void fft_4_point(const etl::complex<T>* in, etl::complex<T>* out, const std::siz
     }
 }
 
-/*
+/*!
  * \brief Transform module for a FFT with 5 points
  * \param in The input vector
  * \param out The output vector
@@ -214,7 +214,7 @@ void fft_5_point(const etl::complex<T>* in, etl::complex<T>* out, const std::siz
     }
 }
 
-/*
+/*!
  * \brief Transform module for a FFT with 7 points
  * \param in The input vector
  * \param out The output vector
@@ -307,7 +307,7 @@ void fft_7_point(const etl::complex<T>* in, etl::complex<T>* out, const std::siz
     }
 }
 
-/*
+/*!
  * \brief General Transform module for a FFT
  * \param in The input vector
  * \param out The output vector
@@ -380,7 +380,7 @@ void fft_n_point(etl::complex<T>* in, etl::complex<T>* out, const std::size_t fa
     }
 }
 
-/*
+/*!
  * \brief Factorize the FFT size into factors
  * \param n The size of the transform
  * \param factors The output factors
@@ -426,7 +426,7 @@ inline void fft_factorize(std::size_t n, std::size_t* factors, std::size_t& n_fa
     }
 }
 
-/*
+/*!
  * \brief Compute the twiddle factors
  * \param n The size of the transform
  * \param factors The factors
@@ -467,7 +467,7 @@ std::unique_ptr<etl::complex<T>[]> twiddle_compute(const std::size_t n, std::siz
     return trig;
 }
 
-/*
+/*!
  * \brief Perform the FFT
  * \param r_in The input
  * \param r_out The output
