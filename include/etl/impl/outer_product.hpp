@@ -22,13 +22,16 @@ namespace detail {
 
 /*!
  * \brief Select the outer product implementation for an expression of type A and B
+ *
+ * This does not take the local context into account
+ *
  * \tparam A The type of a expression
  * \tparam B The type of b expression
  * \tparam C The type of c expression
  * \return The implementation to use
  */
 template <typename A, typename B, typename C>
-cpp14_constexpr etl::outer_impl select_outer_impl() {
+cpp14_constexpr etl::outer_impl select_default_outer_impl() {
     if(all_dma<A, B, C>::value){
         if (is_cblas_enabled) {
             return etl::outer_impl::BLAS;
@@ -38,6 +41,37 @@ cpp14_constexpr etl::outer_impl select_outer_impl() {
     }
 
     return etl::outer_impl::STD;
+}
+
+/*!
+ * \brief Select the outer product implementation for an expression of type A and B
+ * \tparam A The type of a expression
+ * \tparam B The type of b expression
+ * \tparam C The type of c expression
+ * \return The implementation to use
+ */
+template <typename A, typename B, typename C>
+cpp14_constexpr etl::outer_impl select_outer_impl() {
+    if(local_context().outer_selector.forced){
+        auto forced = local_context().outer_selector.impl;
+
+        switch (forced) {
+            //AVX cannot always be used
+            case outer_impl::BLAS:
+                if(!is_cblas_enabled || !all_dma<A, B, C>::value){
+                    std::cerr << "Forced selection to BLAS outer implementation, but not possible for this expression" << std::endl;
+                    return select_default_outer_impl<A, B, C>();
+                }
+
+                return forced;
+
+            //In other cases, simply use the forced impl
+            default:
+                return forced;
+        }
+    }
+
+    return select_default_outer_impl<A, B, C>();
 }
 
 /*!
