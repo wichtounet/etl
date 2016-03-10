@@ -474,3 +474,19 @@ TEMPLATE_TEST_CASE_2("etl_traits/inplace_transpose_able", "inplace_transpose_abl
     REQUIRE(!etl::inplace_transpose_able<mat_type_5>::value);
     REQUIRE(etl::inplace_transpose_able<mat_type_6>::value);
 }
+
+TEMPLATE_TEST_CASE_2("etl_traits/selected_expr", "[traits]", Z, float, double) {
+    using mat_type_1 = etl::fast_matrix<Z, 3, 3>;
+    mat_type_1 a;
+
+    using mat_type_2 = etl::dyn_matrix<Z, 2>;
+    mat_type_2 b(3, 3);
+
+    using selected_type_1 = decltype(etl::selected<etl::gemm_impl, etl::gemm_impl::STD>(a * b));
+    using selected_type_2 = decltype(selected_helper(etl::gemm_impl::STD, a * b));
+
+    REQUIRE(etl::is_selected_expr<selected_type_1>::value);
+    REQUIRE(etl::is_selected_expr<selected_type_1>::value);
+    REQUIRE(etl::is_wrapper_expr<selected_type_2>::value);
+    REQUIRE(etl::is_wrapper_expr<selected_type_2>::value);
+}
