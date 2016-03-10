@@ -27,7 +27,8 @@ enum class precision {
 
 /*!
  * \brief Select a 1D FFT implementation based on the operation size
- * \param n The size of the operation
+ * \param func The default fallback functor
+ * \param args The args to be passed to the default functor
  * \return The implementation to use
  */
 template<typename Functor, typename... Args>

@@ -354,7 +354,6 @@ struct upsample_3d {
     /*!
      * \brief Upsample a block of the sub expression
      * \param in The sub expression
-     * \param out The out matrix
      * \param m The storage matrix
      * \param i The first index of the block
      * \param j The second index of the block

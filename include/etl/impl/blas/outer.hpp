@@ -26,8 +26,9 @@ namespace blas {
 
 /*!
  * \brief Compute the outer product of a and b and store the result in c
- * \param input The input expression
- * \return the sum
+ * \param a The lhs expression
+ * \param b The rhs expression
+ * \param c The output expression
  */
 template <typename A, typename B, typename C, cpp_enable_if(all_dma<A, B, C>::value && all_single_precision<A, B, C>::value)>
 void outer(const A& a, const B& b, C&& c) {

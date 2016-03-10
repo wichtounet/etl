@@ -968,8 +968,8 @@ auto reshape(E&& value) -> detail::identity_helper<E, fast_matrix_view<detail::b
 /*!
  * \brief Returns view representing the reshape of another expression
  * \param value The ETL expression
- * \tparam rows The rows of the reshaped expression
- * \tparam columns The columns of the reshaped expression
+ * \param rows The rows of the reshaped expression
+ * \param columns The columns of the reshaped expression
  * \return a view expression representing the same expression with a different shape
  */
 template <typename E>
@@ -983,7 +983,7 @@ auto reshape(E&& value, std::size_t rows, std::size_t columns) -> detail::identi
 /*!
  * \brief Returns view representing the reshape of another expression
  * \param value The ETL expression
- * \tparam rows The rows of the reshaped expression
+ * \param rows The rows of the reshaped expression
  * \return a view expression representing the same expression with a different shape
  */
 template <typename E>
