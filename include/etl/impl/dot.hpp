@@ -49,7 +49,7 @@ cpp14_constexpr etl::dot_impl select_default_dot_impl() {
  * \return The implementation to use
  */
 template <typename A, typename B>
-cpp14_constexpr etl::dot_impl select_dot_impl() {
+etl::dot_impl select_dot_impl() {
     if(local_context().dot_selector.forced){
         auto forced = local_context().dot_selector.impl;
 
@@ -84,7 +84,7 @@ struct dot_impl {
      */
     template <typename A, typename B>
     static value_t<A> apply(const A& a, const B& b) {
-        cpp14_constexpr auto impl = select_dot_impl<A, B>();
+        auto impl = select_dot_impl<A, B>();
 
         if (impl == etl::dot_impl::BLAS) {
             return etl::impl::blas::dot(a, b);

@@ -51,7 +51,7 @@ cpp14_constexpr etl::outer_impl select_default_outer_impl() {
  * \return The implementation to use
  */
 template <typename A, typename B, typename C>
-cpp14_constexpr etl::outer_impl select_outer_impl() {
+etl::outer_impl select_outer_impl() {
     if(local_context().outer_selector.forced){
         auto forced = local_context().outer_selector.impl;
 
@@ -86,7 +86,7 @@ struct outer_product_impl {
      */
     template <typename A, typename B, typename C>
     static void apply(const A& a, const B& b, C&& c) {
-        cpp14_constexpr auto impl = select_outer_impl<A, B, C>();
+        auto impl = select_outer_impl<A, B, C>();
 
         if (impl == etl::outer_impl::BLAS) {
             return etl::impl::blas::outer(a, b, c);

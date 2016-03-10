@@ -31,7 +31,7 @@ enum class precision {
  * \return The implementation to use
  */
 template<typename Functor, typename... Args>
-inline cpp14_constexpr fft_impl select_forced_fft_impl(Functor func, Args&&... args) {
+inline fft_impl select_forced_fft_impl(Functor func, Args&&... args) {
     //Note since these boolean will be known at compile time, the conditions will be a lot simplified
     constexpr const bool mkl   = is_mkl_enabled;
     constexpr const bool cufft = is_cufft_enabled;
@@ -106,7 +106,7 @@ inline cpp14_constexpr fft_impl select_default_fft1_impl(const std::size_t n) {
     }
 }
 
-inline cpp14_constexpr fft_impl select_fft1_impl(const std::size_t n) {
+inline fft_impl select_fft1_impl(const std::size_t n) {
     if(local_context().fft_selector.forced){
         return select_forced_fft_impl([](std::size_t n){ return select_default_fft1_impl(n); }, n);
     }
@@ -142,7 +142,7 @@ inline cpp14_constexpr fft_impl select_default_fft1_many_impl(const std::size_t 
     }
 }
 
-inline cpp14_constexpr fft_impl select_fft1_many_impl(const std::size_t batch, const std::size_t n) {
+inline fft_impl select_fft1_many_impl(const std::size_t batch, const std::size_t n) {
     if(local_context().fft_selector.forced){
         return select_forced_fft_impl([](std::size_t batch, std::size_t n){ return select_default_fft1_many_impl(batch, n); }, batch, n);
     }
@@ -187,7 +187,7 @@ inline cpp14_constexpr fft_impl select_default_ifft1_impl(const std::size_t n) {
     }
 }
 
-inline cpp14_constexpr fft_impl select_ifft1_impl(const std::size_t n) {
+inline fft_impl select_ifft1_impl(const std::size_t n) {
     if(local_context().fft_selector.forced){
         return select_forced_fft_impl([](std::size_t n){ return select_default_ifft1_impl(n); }, n);
     }
@@ -233,7 +233,7 @@ inline cpp14_constexpr fft_impl select_default_fft2_impl(const std::size_t n1, s
     }
 }
 
-inline cpp14_constexpr fft_impl select_fft2_impl(const std::size_t n1, std::size_t n2) {
+inline fft_impl select_fft2_impl(const std::size_t n1, std::size_t n2) {
     if(local_context().fft_selector.forced){
         return select_forced_fft_impl([](std::size_t n1, std::size_t n2){ return select_default_fft2_impl(n1, n2); }, n1, n2);
     }
@@ -270,7 +270,7 @@ inline cpp14_constexpr fft_impl select_default_fft2_many_impl(const std::size_t 
     }
 }
 
-inline cpp14_constexpr fft_impl select_fft2_many_impl(const std::size_t batch, const std::size_t n1, const std::size_t n2) {
+inline fft_impl select_fft2_many_impl(const std::size_t batch, const std::size_t n1, const std::size_t n2) {
     if(local_context().fft_selector.forced){
         return select_forced_fft_impl([](std::size_t batch, std::size_t n1, std::size_t n2) {
             return select_default_fft2_many_impl(batch, n1, n2);

@@ -54,7 +54,7 @@ inline cpp14_constexpr gemm_impl select_default_gemm_impl(const std::size_t n1, 
 }
 
 template <bool DMA, typename T>
-inline cpp14_constexpr gemm_impl select_gemm_impl(const std::size_t n1, const std::size_t n2, const std::size_t n3) {
+inline gemm_impl select_gemm_impl(const std::size_t n1, const std::size_t n2, const std::size_t n3) {
     if(local_context().gemm_selector.forced){
         auto forced = local_context().gemm_selector.impl;
 
@@ -120,7 +120,7 @@ inline cpp14_constexpr gemm_impl select_default_gemv_impl(const std::size_t n1, 
 }
 
 template <bool DMA, typename T>
-inline cpp14_constexpr gemm_impl select_gemv_impl(const std::size_t n1, const std::size_t n2) {
+inline gemm_impl select_gemv_impl(const std::size_t n1, const std::size_t n2) {
     if(local_context().gemm_selector.forced){
         auto forced = local_context().gemm_selector.impl;
 
@@ -182,7 +182,7 @@ inline cpp14_constexpr gemm_impl select_default_gevm_impl(const std::size_t n1, 
 }
 
 template <bool DMA, typename T>
-inline cpp14_constexpr gemm_impl select_gevm_impl(const std::size_t n1, const std::size_t n2) {
+inline gemm_impl select_gevm_impl(const std::size_t n1, const std::size_t n2) {
     if(local_context().gemm_selector.forced){
         auto forced = local_context().gemm_selector.impl;
 

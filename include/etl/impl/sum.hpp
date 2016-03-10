@@ -64,7 +64,7 @@ cpp14_constexpr etl::sum_impl select_default_sum_impl() {
  * \return The implementation to use
  */
 template <typename E>
-cpp14_constexpr etl::sum_impl select_sum_impl() {
+etl::sum_impl select_sum_impl() {
     if(local_context().sum_selector.forced){
         auto forced = local_context().sum_selector.impl;
 
@@ -119,7 +119,7 @@ struct sum_impl {
      */
     template <typename E>
     static value_t<E> apply(const E& e) {
-        cpp14_constexpr auto impl = select_sum_impl<E>();
+        auto impl = select_sum_impl<E>();
 
         bool parallel_dispatch = select_parallel(e);
 
