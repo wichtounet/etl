@@ -145,18 +145,6 @@ struct conv1_full_impl {
     template <typename I, typename K, typename C>
     static void apply(const I& input, const K& kernel, C&& conv) {
         etl::conv_impl impl = select_conv_impl<I, K, C>();
-        selected_apply(input, kernel, std::forward<C>(conv), impl);
-    }
-
-    /*!
-     * \brief Apply the convolution with the given implementation
-     * \param input The input expression
-     * \param kernel The kernel expression
-     * \param conv The output expression
-     * \param impl The implementation to use
-     */
-    template <typename I, typename K, typename C>
-    static void selected_apply(const I& input, const K& kernel, C&& conv, etl::conv_impl impl) {
         bool parallel_dispatch = select_parallel(input, kernel, conv);
 
         if (impl == etl::conv_impl::AVX) {
@@ -188,18 +176,6 @@ struct conv1_same_impl {
     template <typename I, typename K, typename C>
     static void apply(const I& input, const K& kernel, C&& conv) {
         etl::conv_impl impl = select_conv_impl<I, K, C>();
-        selected_apply(input, kernel, std::forward<C>(conv), impl);
-    }
-
-    /*!
-     * \brief Apply the convolution with the given implementation
-     * \param input The input expression
-     * \param kernel The kernel expression
-     * \param conv The output expression
-     * \param impl The implementation to use
-     */
-    template <typename I, typename K, typename C>
-    static void selected_apply(const I& input, const K& kernel, C&& conv, etl::conv_impl impl) {
         bool parallel_dispatch = select_parallel(input, kernel, conv);
 
         if (impl == etl::conv_impl::AVX) {
@@ -231,18 +207,6 @@ struct conv1_valid_impl {
     template <typename I, typename K, typename C>
     static void apply(const I& input, const K& kernel, C&& conv) {
         etl::conv_impl impl = select_conv_impl<I, K, C>();
-        selected_apply(input, kernel, std::forward<C>(conv), impl);
-    }
-
-    /*!
-     * \brief Apply the convolution with the given implementation
-     * \param input The input expression
-     * \param kernel The kernel expression
-     * \param conv The output expression
-     * \param impl The implementation to use
-     */
-    template <typename I, typename K, typename C>
-    static void selected_apply(const I& input, const K& kernel, C&& conv, etl::conv_impl impl) {
         bool parallel_dispatch = select_parallel(input, kernel, conv);
 
         if (impl == etl::conv_impl::AVX) {
@@ -260,24 +224,6 @@ struct conv1_valid_impl {
         }
     }
 };
-
-//Should only be used by the benchmark
-template <typename I, typename K, typename C>
-void conv1_full_direct(const I& input, const K& kernel, C&& conv, etl::conv_impl impl){
-    conv1_full_impl::selected_apply(input, kernel, std::forward<C>(conv), impl);
-}
-
-//Should only be used by the benchmark
-template <typename I, typename K, typename C>
-void conv1_same_direct(const I& input, const K& kernel, C&& conv, etl::conv_impl impl){
-    conv1_same_impl::selected_apply(input, kernel, std::forward<C>(conv), impl);
-}
-
-//Should only be used by the benchmark
-template <typename I, typename K, typename C>
-void conv1_valid_direct(const I& input, const K& kernel, C&& conv, etl::conv_impl impl){
-    conv1_valid_impl::selected_apply(input, kernel, std::forward<C>(conv), impl);
-}
 
 /*!
  * \brief The functor impl for 2D full conv
