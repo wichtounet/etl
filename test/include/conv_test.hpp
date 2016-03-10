@@ -23,14 +23,14 @@
     };
 
 CONV_FUNCTOR(default_conv1_full, c = etl::conv_1d_full(a, b))
-CONV_FUNCTOR(std_conv1_full, etl::detail::conv1_full_direct(a, b, c, etl::conv_impl::STD))
+CONV_FUNCTOR(std_conv1_full, c = selected_helper(etl::conv_impl::STD, etl::conv_1d_full(a, b)))
 CONV_FUNCTOR(reduc_conv1_full, etl::impl::reduc::conv1_full(a, b, c))
 
 CONV_FUNCTOR(default_conv1_same, c = etl::conv_1d_same(a, b))
-CONV_FUNCTOR(std_conv1_same, etl::detail::conv1_same_direct(a, b, c, etl::conv_impl::STD))
+CONV_FUNCTOR(std_conv1_same, c = selected_helper(etl::conv_impl::STD, etl::conv_1d_same(a, b)))
 
 CONV_FUNCTOR(default_conv1_valid, c = etl::conv_1d_valid(a, b))
-CONV_FUNCTOR(std_conv1_valid, etl::detail::conv1_valid_direct(a, b, c, etl::conv_impl::STD))
+CONV_FUNCTOR(std_conv1_valid, c = selected_helper(etl::conv_impl::STD, etl::conv_1d_valid(a, b)))
 
 CONV_FUNCTOR(default_conv2_full, c = etl::conv_2d_full(a, b))
 CONV_FUNCTOR(std_conv2_full, etl::impl::standard::conv2_full(a, b, c))
@@ -73,13 +73,13 @@ CONV_FUNCTOR(fft_conv2_full, c = etl::fft_conv_2d_full(a, b))
 #endif
 
 #ifdef TEST_SSE
-CONV_FUNCTOR(sse_conv1_full, etl::detail::conv1_full_direct(a, b, c, etl::conv_impl::SSE))
-CONV_FUNCTOR(sse_conv1_same, etl::detail::conv1_same_direct(a, b, c, etl::conv_impl::SSE))
-CONV_FUNCTOR(sse_conv1_valid, etl::detail::conv1_valid_direct(a, b, c, etl::conv_impl::SSE))
+CONV_FUNCTOR(sse_conv1_full, c = selected_helper(etl::conv_impl::SSE, etl::conv_1d_full(a, b)))
+CONV_FUNCTOR(sse_conv1_same, c = selected_helper(etl::conv_impl::SSE, etl::conv_1d_full(a, b)))
+CONV_FUNCTOR(sse_conv1_valid, c = selected_helper(etl::conv_impl::SSE, etl::conv_1d_full(a, b)))
 
-CONV_FUNCTOR(sse_conv2_full, etl::impl::sse::conv2_full(a, b, c))
-CONV_FUNCTOR(sse_conv2_same, etl::impl::sse::conv2_same(a, b, c))
-CONV_FUNCTOR(sse_conv2_valid, etl::impl::sse::conv2_valid(a, b, c))
+CONV_FUNCTOR(sse_conv2_full, c = selected_helper(etl::conv_impl::SSE, etl::conv_2d_full(a, b)))
+CONV_FUNCTOR(sse_conv2_same, c = selected_helper(etl::conv_impl::SSE, etl::conv_2d_same(a, b)))
+CONV_FUNCTOR(sse_conv2_valid, c = selected_helper(etl::conv_impl::SSE, etl::conv_2d_valid(a, b)))
 
 #define CONV1_FULL_TEST_CASE_SECTION_SSE CONV_TEST_CASE_SECTIONS(sse_conv1_full, sse_conv1_full)
 #define CONV1_SAME_TEST_CASE_SECTION_SSE CONV_TEST_CASE_SECTIONS(sse_conv1_same, sse_conv1_same)
@@ -97,13 +97,13 @@ CONV_FUNCTOR(sse_conv2_valid, etl::impl::sse::conv2_valid(a, b, c))
 #endif
 
 #ifdef TEST_AVX
-CONV_FUNCTOR(avx_conv1_full, etl::detail::conv1_full_direct(a, b, c, etl::conv_impl::AVX))
-CONV_FUNCTOR(avx_conv1_same, etl::detail::conv1_same_direct(a, b, c, etl::conv_impl::AVX))
-CONV_FUNCTOR(avx_conv1_valid, etl::detail::conv1_valid_direct(a, b, c, etl::conv_impl::AVX))
+CONV_FUNCTOR(avx_conv1_full, c = selected_helper(etl::conv_impl::AVX, etl::conv_1d_full(a, b)))
+CONV_FUNCTOR(avx_conv1_same, c = selected_helper(etl::conv_impl::AVX, etl::conv_1d_same(a, b)))
+CONV_FUNCTOR(avx_conv1_valid, c = selected_helper(etl::conv_impl::AVX, etl::conv_1d_valid(a, b)))
 
-CONV_FUNCTOR(avx_conv2_full, etl::impl::avx::conv2_full(a, b, c))
-CONV_FUNCTOR(avx_conv2_same, etl::impl::avx::conv2_same(a, b, c))
-CONV_FUNCTOR(avx_conv2_valid, etl::impl::avx::conv2_valid(a, b, c))
+CONV_FUNCTOR(avx_conv2_full, c = selected_helper(etl::conv_impl::AVX, etl::conv_2d_full(a, b)))
+CONV_FUNCTOR(avx_conv2_same, c = selected_helper(etl::conv_impl::AVX, etl::conv_2d_same(a, b)))
+CONV_FUNCTOR(avx_conv2_valid, c = selected_helper(etl::conv_impl::AVX, etl::conv_2d_valid(a, b)))
 
 #define CONV1_FULL_TEST_CASE_SECTION_AVX CONV_TEST_CASE_SECTIONS(avx_conv1_full, avx_conv1_full)
 #define CONV1_SAME_TEST_CASE_SECTION_AVX CONV_TEST_CASE_SECTIONS(avx_conv1_same, avx_conv1_same)
