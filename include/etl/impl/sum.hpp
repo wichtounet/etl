@@ -121,14 +121,6 @@ struct sum_impl {
     static value_t<E> apply(const E& e) {
         cpp14_constexpr auto impl = select_sum_impl<E>();
 
-        return selected_apply(e, impl);
-    }
-
-    /*!
-     * \brief Apply the functor to e forcing the implementation
-     */
-    template <typename E>
-    static value_t<E> selected_apply(const E& e, etl::sum_impl impl) {
         bool parallel_dispatch = select_parallel(e);
 
         value_t<E> acc(0);
@@ -154,17 +146,6 @@ struct sum_impl {
         return acc;
     }
 };
-
-/*!
- * \brief Compute the sum of the expression using the given sum implementation
- * \param e The expression to sum
- * \param impl The implementation to use
- * \return The sum of the expression
- */
-template <typename E>
-auto sum_direct(const E& e, etl::sum_impl impl){
-    return sum_impl::selected_apply(e, impl);
-}
 
 } //end of namespace detail
 
