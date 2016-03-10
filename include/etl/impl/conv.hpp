@@ -42,13 +42,16 @@ namespace detail {
 
 /*!
  * \brief Select the implementation of the conv of I and K in C
+ *
+ * This does not take the local context into account.
+ *
  * \tparam I The input type
  * \tparam K The kernel type
  * \tparam C The conv type
  * \return the implementation to be used
  */
 template <typename I, typename K, typename C>
-inline etl::conv_impl select_conv_impl() {
+inline etl::conv_impl select_default_conv_impl() {
     //Note: since the constexpr values will be known at compile time, the
     //conditions will be a lot simplified
 
@@ -71,6 +74,46 @@ inline etl::conv_impl select_conv_impl() {
     } else {
         return etl::conv_impl::STD;
     }
+}
+
+/*!
+ * \brief Select the implementation of the conv of I and K in C
+ * \tparam I The input type
+ * \tparam K The kernel type
+ * \tparam C The conv type
+ * \return the implementation to be used
+ */
+template <typename I, typename K, typename C>
+inline etl::conv_impl select_conv_impl() {
+    if(local_context().conv_selector.forced){
+        auto forced = local_context().conv_selector.impl;
+
+        switch (forced) {
+            //AVX cannot always be used
+            case conv_impl::AVX:
+                if(!avx_enabled){
+                    std::cerr << "Forced selection to AVX sum implementation, but not possible for this expression" << std::endl;
+                    return select_default_conv_impl<I, K, C>();
+                }
+
+                return forced;
+
+            //SSE cannot always be used
+            case conv_impl::SSE:
+                if(!sse3_enabled){
+                    std::cerr << "Forced selection to SSE sum implementation, but not possible for this expression" << std::endl;
+                    return select_default_conv_impl<I, K, C>();
+                }
+
+                return forced;
+
+            //In other cases, simply use the forced impl
+            default:
+                return forced;
+        }
+    }
+
+    return select_default_conv_impl<I, K, C>();
 }
 
 /*!
