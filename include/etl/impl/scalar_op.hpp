@@ -22,11 +22,14 @@ namespace detail {
 
 /*!
  * \brief Select the scalar implementation for an expression of type A
+ *
+ * The local context is not taken into account
+ *
  * \tparam A The type of expression
  * \return The implementation to use
  */
 template <typename A>
-cpp14_constexpr scalar_impl select_scalar_impl() {
+cpp14_constexpr scalar_impl select_default_scalar_impl() {
     if(all_floating<A>::value){
         if (is_cblas_enabled) {
             return scalar_impl::BLAS;
@@ -36,6 +39,35 @@ cpp14_constexpr scalar_impl select_scalar_impl() {
     }
 
     return scalar_impl::STD;
+}
+
+/*!
+ * \brief Select the scalar implementation for an expression of type A
+ * \tparam A The type of expression
+ * \return The implementation to use
+ */
+template <typename A>
+cpp14_constexpr scalar_impl select_scalar_impl() {
+    if(local_context().scalar_selector.forced){
+        auto forced = local_context().scalar_selector.impl;
+
+        switch (forced) {
+            //BLAS cannot always be used
+            case scalar_impl::BLAS:
+                if(!is_cblas_enabled || !all_floating<A>::value){
+                    std::cerr << "Forced selection to BLAS scalar implementation, but not possible for this expression" << std::endl;
+                    return select_default_scalar_impl<A>();
+                }
+
+                return forced;
+
+            //In other cases, simply use the forced impl
+            default:
+                return forced;
+        }
+    }
+
+    return select_default_scalar_impl<A>();
 }
 
 struct scalar_add {
