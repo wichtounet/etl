@@ -489,4 +489,19 @@ TEMPLATE_TEST_CASE_2("etl_traits/selected_expr", "[traits]", Z, float, double) {
     REQUIRE(etl::is_selected_expr<selected_type_1>::value);
     REQUIRE(etl::is_wrapper_expr<selected_type_2>::value);
     REQUIRE(etl::is_wrapper_expr<selected_type_2>::value);
+
+    REQUIRE(etl::is_selected_expr<const selected_type_1>::value);
+    REQUIRE(etl::is_selected_expr<const selected_type_1>::value);
+    REQUIRE(etl::is_wrapper_expr<const selected_type_2>::value);
+    REQUIRE(etl::is_wrapper_expr<const selected_type_2>::value);
+
+    REQUIRE(etl::is_selected_expr<selected_type_1&>::value);
+    REQUIRE(etl::is_selected_expr<selected_type_1&>::value);
+    REQUIRE(etl::is_wrapper_expr<selected_type_2&>::value);
+    REQUIRE(etl::is_wrapper_expr<selected_type_2&>::value);
+
+    REQUIRE(etl::is_selected_expr<const selected_type_1&>::value);
+    REQUIRE(etl::is_selected_expr<const selected_type_1&>::value);
+    REQUIRE(etl::is_wrapper_expr<const selected_type_2&>::value);
+    REQUIRE(etl::is_wrapper_expr<const selected_type_2&>::value);
 }
