@@ -122,7 +122,7 @@ using is_serial_expr = cpp::is_specialization_of<etl::serial_expr, std::decay_t<
  * \tparam T The type to test
  */
 template <typename T>
-using is_selected_expr = traits_detail::is_selected_expr_impl<T>;
+using is_selected_expr = traits_detail::is_selected_expr_impl<std::decay_t<T>>;
 
 /*!
  * \brief Traits indicating if the given ETL type is a parallel expression.
