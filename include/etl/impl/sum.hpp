@@ -33,11 +33,14 @@ namespace detail {
 
 /*!
  * \brief Select the sum implementation for an expression of type E
+ *
+ * This does not consider the local context
+ *
  * \tparam E The type of expression
  * \return The implementation to use
  */
 template <typename E>
-cpp14_constexpr etl::sum_impl select_sum_impl() {
+cpp14_constexpr etl::sum_impl select_default_sum_impl() {
     //Note: since the constexpr values will be known at compile time, the
     //conditions will be a lot simplified
 
@@ -53,6 +56,44 @@ cpp14_constexpr etl::sum_impl select_sum_impl() {
     }
 
     return etl::sum_impl::STD;
+}
+
+/*!
+ * \brief Select the sum implementation for an expression of type E
+ * \tparam E The type of expression
+ * \return The implementation to use
+ */
+template <typename E>
+cpp14_constexpr etl::sum_impl select_sum_impl() {
+    if(local_context().sum_selector.forced){
+        auto forced = local_context().sum_selector.impl;
+
+        switch (forced) {
+            //AVX cannot always be used
+            case sum_impl::AVX:
+                if(!avx_enabled || !decay_traits<E>::template vectorizable<vector_mode_t::AVX>::value){
+                    std::cerr << "Forced selection to AVX sum implementation, but not possible for this expression" << std::endl;
+                    return select_default_sum_impl<E>();
+                }
+
+                return forced;
+
+            //SSE cannot always be used
+            case sum_impl::SSE:
+                if(!sse3_enabled || !decay_traits<E>::template vectorizable<vector_mode_t::SSE3>::value){
+                    std::cerr << "Forced selection to SSE sum implementation, but not possible for this expression" << std::endl;
+                    return select_default_sum_impl<E>();
+                }
+
+                return forced;
+
+            //In other cases, simply use the forced impl
+            default:
+                return forced;
+        }
+    }
+
+    return select_default_sum_impl<E>();
 }
 
 /*!
