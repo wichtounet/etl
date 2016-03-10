@@ -213,7 +213,7 @@ struct avg_pool_3d {
 struct max_pool_derivative_2d {
     /*!
      * \brief Pool a block of the sub expression
-     * \param sub The sub expression
+     * \param in The sub expression
      * \param out The out matrix
      * \param m The storage matrix
      * \param j The first index of the block
@@ -238,7 +238,7 @@ struct max_pool_derivative_2d {
 
     /*!
      * \brief Apply the functor on sub and store the result in m
-     * \param sub The sub expression
+     * \param in The sub expression
      * \param out The out matrix
      * \param m The storage matrix
      * \tparam C1 The first dimension pooling ratio
@@ -260,7 +260,7 @@ struct max_pool_derivative_2d {
 struct max_pool_derivative_3d {
     /*!
      * \brief Pool a block of the sub expression
-     * \param sub The sub expression
+     * \param in The sub expression
      * \param out The out matrix
      * \param m The storage matrix
      * \param i The first index of the block
@@ -289,7 +289,7 @@ struct max_pool_derivative_3d {
 
     /*!
      * \brief Apply the functor on sub and store the result in m
-     * \param sub The sub expression
+     * \param in The sub expression
      * \param m The storage matrix
      * \tparam C1 The first dimension pooling ratio
      * \tparam C2 The second dimension pooling ratio
@@ -313,7 +313,7 @@ struct max_pool_derivative_3d {
 struct upsample_2d {
     /*!
      * \brief Upsample a block of the sub expression
-     * \param sub The sub expression
+     * \param in The sub expression
      * \param j The first index of the block
      * \param k The second index of the block
      * \tparam C1 The first dimension pooling ratio
@@ -332,7 +332,7 @@ struct upsample_2d {
 
     /*!
      * \brief Apply the functor on sub and store the result in m
-     * \param sub The sub expression
+     * \param in The sub expression
      * \param m The storage matrix
      * \tparam C1 The first dimension pooling ratio
      * \tparam C2 The second dimension pooling ratio
@@ -353,7 +353,7 @@ struct upsample_2d {
 struct upsample_3d {
     /*!
      * \brief Upsample a block of the sub expression
-     * \param sub The sub expression
+     * \param in The sub expression
      * \param out The out matrix
      * \param m The storage matrix
      * \param i The first index of the block
@@ -378,7 +378,7 @@ struct upsample_3d {
 
     /*!
      * \brief Apply the functor on sub and store the result in m
-     * \param sub The sub expression
+     * \param in The sub expression
      * \param m The storage matrix
      * \tparam C1 The first dimension pooling ratio
      * \tparam C2 The second dimension pooling ratio
