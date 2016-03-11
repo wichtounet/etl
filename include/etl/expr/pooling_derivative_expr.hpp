@@ -12,23 +12,33 @@
 
 namespace etl {
 
+/*!
+ * \brief Base class for all 2D pooling derivative expressions
+ */
 template <typename T, std::size_t C1, std::size_t C2, typename Impl>
 struct basic_pool_derivative_2d_expr : impl_expr<basic_pool_derivative_2d_expr<T, C1, C2, Impl>> {
     static_assert(C1 > 0, "C1 must be greater than 0");
     static_assert(C2 > 0, "C2 must be greater than 0");
 
-    using this_type = basic_pool_derivative_2d_expr<T, C1, C2, Impl>;
-    using value_type = T;
+    using value_type = T;                                              ///< The type of values of this expression
+    using this_type  = basic_pool_derivative_2d_expr<T, C1, C2, Impl>; ///< The type of this expression
 
     /*!
      * \brief The result type for given sub types
-     * \tparam A The sub expression type
+     * \tparam A The in expression type
+     * \tparam B The out expression type
      */
     template <typename A, typename B>
     using result_type = detail::expr_result_t<this_type, A, B>;
 
     static constexpr const bool is_gpu = false; ///< no GPU implementation
 
+    /*!
+     * \brief Apply the expression on a and b and store the result in c
+     * \param a The in(in) expression
+     * \param b The in(out) expression
+     * \param c The output expression
+     */
     template <typename A, typename B, typename C>
     static void apply(A&& a, B&& b, C&& c) {
         static_assert(all_etl_expr<A, B, C>::value, "pool_derivative_2d only supported for ETL expressions");
@@ -48,21 +58,49 @@ struct basic_pool_derivative_2d_expr : impl_expr<basic_pool_derivative_2d_expr<T
         return "pool_derivative_2d";
     }
 
+    /*!
+     * \brief Return the DDth dim of the expression
+     * \tparam A The in(in) type
+     * \tparam B The in(out) type
+     * \tparam DD The dimension number
+     * \return The DDth dimension of the epxression
+     */
     template <typename A, typename B, std::size_t DD>
     static constexpr std::size_t dim() {
         return decay_traits<A>::template dim<DD>();
     }
 
+    /*!
+     * \brief Return the dth dim of the expression
+     * \param a The in(in) expression
+     * \param b The in(out) expression
+     * \param d The dimension to get
+     * \return The dth dimension
+     */
     template <typename A, typename B>
-    static std::size_t dim(const A& a, const B& /*b*/, std::size_t d) {
+    static std::size_t dim(const A& a, const B& b, std::size_t d) {
+        cpp_unused(b);
         return etl::dim(a, d);
     }
 
+    /*!
+     * \brief Return the size of the expression given the input expression
+     * \param a The in(in) expression
+     * \param b The in(out) expression
+     * \return the size of the expression given the input
+     */
     template <typename A, typename B>
-    static std::size_t size(const A& a, const B& /*b*/) {
+    static std::size_t size(const A& a, const B& b) {
+        cpp_unused(b);
         return etl::dim<0>(a) * etl::dim<1>(a);
     }
 
+    /*!
+     * \brief Return the size of the expression given the input expression types
+     * \tparam A The in(in) expression type
+     * \tparam B The in(out) expression type
+     * \return the size of the expression given the input types
+     */
     template <typename A, typename B>
     static constexpr std::size_t size() {
         return this_type::template dim<A, B, 0>() * this_type::template dim<A, B, 1>();
@@ -77,24 +115,32 @@ struct basic_pool_derivative_2d_expr : impl_expr<basic_pool_derivative_2d_expr<T
         return etl::order::RowMajor;
     }
 
+    /*!
+     * \brief Return the number of dimensions of the expression
+     * \return the nubmer of dimensions of the expression
+     */
     static constexpr std::size_t dimensions() {
         return 2;
     }
 };
 
-//Max Pool 2D
-
+/*!
+ * \brief Max Pooling Derivate 2D expression
+ */
 template <typename T, std::size_t C1, std::size_t C2>
 using max_pool_derivative_2d_expr = basic_pool_derivative_2d_expr<T, C1, C2, impl::max_pool_derivative_2d>;
 
+/*!
+ * \brief Base class for all 3D pooling derivative expressions
+ */
 template <typename T, std::size_t C1, std::size_t C2, std::size_t C3, typename Impl>
 struct basic_pool_derivative_3d_expr : impl_expr<basic_pool_derivative_3d_expr<T, C1, C2, C3, Impl>> {
     static_assert(C1 > 0, "C1 must be greater than 0");
     static_assert(C2 > 0, "C2 must be greater than 0");
     static_assert(C3 > 0, "C3 must be greater than 0");
 
-    using this_type = basic_pool_derivative_3d_expr<T, C1, C2, C3, Impl>;
-    using value_type = T;
+    using value_type = T;                                                  ///< The type of values of this expression
+    using this_type  = basic_pool_derivative_3d_expr<T, C1, C2, C3, Impl>; ///< The type of this expression
 
     /*!
      * \brief The result type for given sub types
@@ -105,6 +151,12 @@ struct basic_pool_derivative_3d_expr : impl_expr<basic_pool_derivative_3d_expr<T
 
     static constexpr const bool is_gpu = false; ///< no GPU implementation
 
+    /*!
+     * \brief Apply the expression on a and b and store the result in c
+     * \param a The in(in) expression
+     * \param b The in(out) expression
+     * \param c The output expression
+     */
     template <typename A, typename B, typename C>
     static void apply(A&& a, B&& b, C&& c) {
         static_assert(all_etl_expr<A, B, C>::value, "pool_derivative_2d only supported for ETL expressions");
@@ -124,21 +176,47 @@ struct basic_pool_derivative_3d_expr : impl_expr<basic_pool_derivative_3d_expr<T
         return "pool_derivative_2d";
     }
 
+    /*!
+     * \brief Return the DDth dim of the expression
+     * \tparam A The in(in) type
+     * \tparam B The in(out) type
+     * \tparam DD The dimension number
+     * \return The DDth dimension of the epxression
+     */
     template <typename A, typename B, std::size_t DD>
     static constexpr std::size_t dim() {
         return decay_traits<A>::template dim<DD>();
     }
 
+    /*!
+     * \brief Return the dth dim of the expression
+     * \param a The in(in) expression
+     * \param b The in(out) expression
+     * \param d The dimension to get
+     * \return The dth dimension
+     */
     template <typename A, typename B>
     static std::size_t dim(const A& a, const B& /*b*/, std::size_t d) {
         return etl::dim(a, d);
     }
 
+    /*!
+     * \brief Return the size of the expression given the input expression
+     * \param a The in(in) expression
+     * \param b The in(out) expression
+     * \return the size of the expression given the input
+     */
     template <typename A, typename B>
     static std::size_t size(const A& a, const B& /*b*/) {
         return etl::dim<0>(a) * etl::dim<1>(a) * etl::dim<2>(a);
     }
 
+    /*!
+     * \brief Return the size of the expression given the input expression types
+     * \tparam A The in(in) expression type
+     * \tparam B The in(out) expression type
+     * \return the size of the expression given the input types
+     */
     template <typename A, typename B>
     static constexpr std::size_t size() {
         return this_type::template dim<A, B, 0>() * this_type::template dim<A, B, 1>() * this_type::template dim<A, B, 2>();
@@ -153,13 +231,18 @@ struct basic_pool_derivative_3d_expr : impl_expr<basic_pool_derivative_3d_expr<T
         return etl::order::RowMajor;
     }
 
+    /*!
+     * \brief Return the number of dimensions of the expression
+     * \return the nubmer of dimensions of the expression
+     */
     static constexpr std::size_t dimensions() {
         return 3;
     }
 };
 
-//Max pool_derivative 2D
-
+/*!
+ * \brief Max Pooling Derivate 3D expression
+ */
 template <typename T, std::size_t C1, std::size_t C2, std::size_t C3>
 using max_pool_derivative_3d_expr = basic_pool_derivative_3d_expr<T, C1, C2, C3, impl::max_pool_derivative_3d>;
 
