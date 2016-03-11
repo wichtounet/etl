@@ -46,44 +46,73 @@ inline context& local_context(){
 
 namespace detail {
 
+/*!
+ * \brief Return the forced_impl of the local context for the given enumeration type
+ * \tparam T The type of enumeration of implmentation
+ * \return the forced_impl of the given type for the local context
+ */
 template<typename T>
 forced_impl<T>& get_forced_impl();
 
+/*!
+ * \copydoc get_forced_impl
+ */
 template<>
 inline forced_impl<scalar_impl>& get_forced_impl(){
     return local_context().scalar_selector;
 }
 
+/*!
+ * \copydoc get_forced_impl
+ */
 template<>
 inline forced_impl<sum_impl>& get_forced_impl(){
     return local_context().sum_selector;
 }
 
+/*!
+ * \copydoc get_forced_impl
+ */
 template<>
 inline forced_impl<transpose_impl>& get_forced_impl(){
     return local_context().transpose_selector;
 }
 
+/*!
+ * \copydoc get_forced_impl
+ */
 template<>
 inline forced_impl<dot_impl>& get_forced_impl(){
     return local_context().dot_selector;
 }
 
+/*!
+ * \copydoc get_forced_impl
+ */
 template<>
 inline forced_impl<conv_impl>& get_forced_impl(){
     return local_context().conv_selector;
 }
 
+/*!
+ * \copydoc get_forced_impl
+ */
 template<>
 inline forced_impl<gemm_impl>& get_forced_impl(){
     return local_context().gemm_selector;
 }
 
+/*!
+ * \copydoc get_forced_impl
+ */
 template<>
 inline forced_impl<outer_impl>& get_forced_impl(){
     return local_context().outer_selector;
 }
 
+/*!
+ * \copydoc get_forced_impl
+ */
 template<>
 inline forced_impl<fft_impl>& get_forced_impl(){
     return local_context().fft_selector;
@@ -93,17 +122,30 @@ inline forced_impl<fft_impl>& get_forced_impl(){
  * \brief RAII helper for setting the context to serial
  */
 struct serial_context {
-    bool old_serial;
+    bool old_serial; ///< The previous value of serial
 
+    /*!
+     * \brief Default construct a serial context
+     *
+     * This saves the previous serial value and sets serial to true
+     */
     serial_context(){
         old_serial = etl::local_context().serial;
         etl::local_context().serial = true;
     }
 
+    /*!
+     * \brief Destruct a serial context
+     *
+     * This restores the serial state
+     */
     ~serial_context(){
         etl::local_context().serial = old_serial;
     }
 
+    /*!
+     * \brief Does nothing, simple trick for section to be nice
+     */
     operator bool(){
         return true;
     }
@@ -113,17 +155,30 @@ struct serial_context {
  * \brief RAII helper for setting the context to parallel
  */
 struct parallel_context {
-    bool old_parallel;
+    bool old_parallel; ///< The previous value of parallel
 
+    /*!
+     * \brief Default construct a parallel context
+     *
+     * This saves the previous parallel value and sets parallel to true
+     */
     parallel_context(){
         old_parallel = etl::local_context().parallel;
         etl::local_context().parallel = true;
     }
 
+    /*!
+     * \brief Destruct a parallel context
+     *
+     * This restores the parallel state
+     */
     ~parallel_context(){
         etl::local_context().parallel = old_parallel;
     }
 
+    /*!
+     * \brief Does nothing, simple trick for section to be nice
+     */
     operator bool(){
         return true;
     }
@@ -135,8 +190,14 @@ struct parallel_context {
  */
 template<typename Selector, Selector V>
 struct selected_context {
-    forced_impl<Selector> old_selector;
+    forced_impl<Selector> old_selector; ///< The previous value of selector
 
+    /*!
+     * \brief Default construct a selected context
+     *
+     * This saves the previous selector value and sets selector to
+     * the specified implementation.
+     */
     selected_context(){
         decltype(auto) selector = get_forced_impl<Selector>();
 
@@ -146,10 +207,18 @@ struct selected_context {
         selector.forced = true;
     }
 
+    /*!
+     * \brief Destruct a selected context
+     *
+     * This restores the selector state
+     */
     ~selected_context(){
         get_forced_impl<Selector>() = old_selector;
     }
 
+    /*!
+     * \brief Does nothing, simple trick for section to be nice
+     */
     operator bool(){
         return true;
     }
