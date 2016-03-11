@@ -47,7 +47,7 @@ cpp14_constexpr scalar_impl select_default_scalar_impl() {
  * \return The implementation to use
  */
 template <typename A>
-cpp14_constexpr scalar_impl select_scalar_impl() {
+scalar_impl select_scalar_impl() {
     if(local_context().scalar_selector.forced){
         auto forced = local_context().scalar_selector.impl;
 
@@ -73,7 +73,7 @@ cpp14_constexpr scalar_impl select_scalar_impl() {
 struct scalar_add {
     template <typename T>
     static void apply(T&& lhs, value_t<T> rhs) {
-        cpp14_constexpr auto impl = select_scalar_impl<T>();
+        auto impl = select_scalar_impl<T>();
 
         if (impl == scalar_impl::BLAS) {
             return etl::impl::blas::scalar_add(lhs, rhs);
@@ -86,7 +86,7 @@ struct scalar_add {
 struct scalar_sub {
     template <typename T>
     static void apply(T&& lhs, value_t<T> rhs) {
-        cpp14_constexpr auto impl = select_scalar_impl<T>();
+        auto impl = select_scalar_impl<T>();
 
         if (impl == scalar_impl::BLAS) {
             return etl::impl::blas::scalar_sub(lhs, rhs);
@@ -99,7 +99,7 @@ struct scalar_sub {
 struct scalar_mul {
     template <typename T>
     static void apply(T&& lhs, value_t<T> rhs) {
-        cpp14_constexpr auto impl = select_scalar_impl<T>();
+        auto impl = select_scalar_impl<T>();
 
         if (impl == scalar_impl::BLAS) {
             return etl::impl::blas::scalar_mul(lhs, rhs);
@@ -112,7 +112,7 @@ struct scalar_mul {
 struct scalar_div {
     template <typename T>
     static void apply(T&& lhs, value_t<T> rhs) {
-        cpp14_constexpr auto impl = select_scalar_impl<T>();
+        auto impl = select_scalar_impl<T>();
 
         if (impl == scalar_impl::BLAS) {
             return etl::impl::blas::scalar_div(lhs, rhs);
