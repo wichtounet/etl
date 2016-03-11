@@ -67,6 +67,12 @@ namespace standard_evaluator {
         apply_visitor<detail::evaluator_static_visitor>(expr);
     }
 
+    /*!
+     * \Perform task after assign on the expression and the result
+     *
+     * For GPU, this means copying the memory back to GPU and
+     * released the GPU memory
+     */
     template <typename E, typename R>
     void post_assign(E&& expr, R&& result) {
         //TODO This is probably a bit overcomplicated
@@ -81,6 +87,12 @@ namespace standard_evaluator {
         apply_visitor<detail::gpu_clean_static_visitor>(result);
     }
 
+    /*!
+     * \Perform task after compound assign on the expression and the result
+     *
+     * For GPU, this means copying the memory back to GPU and
+     * released the GPU memory
+     */
     template <typename E>
     void post_assign_compound(E&& expr) {
         //TODO This is probably a bit overcomplicated
@@ -94,6 +106,12 @@ namespace standard_evaluator {
         apply_visitor<detail::gpu_clean_static_visitor>(expr);
     }
 
+    /*!
+     * \Perform task after assign on the expression and the result
+     *
+     * For GPU, this means copying the memory back to GPU and
+     * released the GPU memory
+     */
     template <typename E>
     void post_assign_force(E&& expr) {
         post_assign_compound(expr);
@@ -125,6 +143,11 @@ namespace standard_evaluator {
 
     //Parallel assign version
 
+    /*!
+     * \brief Assign the result of the expression expression to the result, in parallel.
+     * \param expr The right hand side expression
+     * \param result The left hand side
+     */
     template <typename E, typename R>
     void par_assign_evaluate_impl(E&& expr, R&& result) {
         const auto n = etl::size(result);
@@ -160,6 +183,11 @@ namespace standard_evaluator {
 
     //Parallel vectorized assign
 
+    /*!
+     * \brief Assign the result of the expression expression to the result, in parallel.and vectorized
+     * \param expr The right hand side expression
+     * \param result The left hand side
+     */
     template <typename E, typename R>
     void par_vec_assign_evaluate_impl(E&& expr, R&& result) {
         static cpp::default_thread_pool<> pool(threads - 1);
@@ -211,6 +239,11 @@ namespace standard_evaluator {
 
     //Parallel direct add assign
 
+    /*!
+     * \brief Add the result of the expression expression to the result, in parallel
+     * \param expr The right hand side expression
+     * \param result The left hand side
+     */
     template <typename E, typename R>
     void par_add_evaluate(E&& expr, R&& result) {
         const auto n = etl::size(result);
@@ -249,6 +282,11 @@ namespace standard_evaluator {
 
     //Parallel vectorized add assign
 
+    /*!
+     * \brief Add the result of the expression expression to the result, in parallel and vectorized
+     * \param expr The right hand side expression
+     * \param result The left hand side
+     */
     template <typename E, typename R>
     void par_vec_add_evaluate(E&& expr, R&& result) {
         static cpp::default_thread_pool<> pool(threads - 1);
@@ -303,6 +341,11 @@ namespace standard_evaluator {
 
     //Parallel direct sub assign
 
+    /*!
+     * \brief Substract the result of the expression expression from the result, in parallel
+     * \param expr The right hand side expression
+     * \param result The left hand side
+     */
     template <typename E, typename R>
     void par_sub_evaluate(E&& expr, R&& result) {
         const auto n = etl::size(result);
@@ -341,6 +384,11 @@ namespace standard_evaluator {
 
     //Parallel vectorized sub assign
 
+    /*!
+     * \brief Substract the result of the expression expression from the result, in parallel and vectorized
+     * \param expr The right hand side expression
+     * \param result The left hand side
+     */
     template <typename E, typename R>
     void par_vec_sub_evaluate(E&& expr, R&& result) {
         static cpp::default_thread_pool<> pool(threads - 1);
@@ -395,6 +443,11 @@ namespace standard_evaluator {
 
     //Parallel direct mul assign
 
+    /*!
+     * \brief Multiply the result of the expression expression by the result, in parallel
+     * \param expr The right hand side expression
+     * \param result The left hand side
+     */
     template <typename E, typename R>
     void par_mul_evaluate(E&& expr, R&& result) {
         const auto n = etl::size(result);
@@ -433,6 +486,11 @@ namespace standard_evaluator {
 
     //Parallel vectorized mul assign
 
+    /*!
+     * \brief Multiply the result of the expression expression by the result, in parallel and vectorized
+     * \param expr The right hand side expression
+     * \param result The left hand side
+     */
     template <typename E, typename R>
     void par_vec_mul_evaluate(E&& expr, R&& result) {
         static cpp::default_thread_pool<> pool(threads - 1);
@@ -487,6 +545,11 @@ namespace standard_evaluator {
 
     //Parallel direct Div assign
 
+    /*!
+     * \brief Divide the result of the expression expression by the result, in parallel
+     * \param expr The right hand side expression
+     * \param result The left hand side
+     */
     template <typename E, typename R>
     void par_div_evaluate(E&& expr, R&& result) {
         const auto n = etl::size(result);
@@ -525,6 +588,11 @@ namespace standard_evaluator {
 
     //Parallel vectorized div assign
 
+    /*!
+     * \brief Divide the result of the expression expression from the result, in parallel and vectorized
+     * \param expr The right hand side expression
+     * \param result The left hand side
+     */
     template <typename E, typename R>
     void par_vec_div_evaluate(E&& expr, R&& result) {
         static cpp::default_thread_pool<> pool(threads - 1);
