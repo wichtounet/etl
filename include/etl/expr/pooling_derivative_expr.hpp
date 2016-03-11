@@ -196,7 +196,8 @@ struct basic_pool_derivative_3d_expr : impl_expr<basic_pool_derivative_3d_expr<T
      * \return The dth dimension
      */
     template <typename A, typename B>
-    static std::size_t dim(const A& a, const B& /*b*/, std::size_t d) {
+    static std::size_t dim(const A& a, const B& b, std::size_t d) {
+        cpp_unused(b);
         return etl::dim(a, d);
     }
 
@@ -207,7 +208,8 @@ struct basic_pool_derivative_3d_expr : impl_expr<basic_pool_derivative_3d_expr<T
      * \return the size of the expression given the input
      */
     template <typename A, typename B>
-    static std::size_t size(const A& a, const B& /*b*/) {
+    static std::size_t size(const A& a, const B& b) {
+        cpp_unused(b);
         return etl::dim<0>(a) * etl::dim<1>(a) * etl::dim<2>(a);
     }
 
