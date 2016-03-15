@@ -43,6 +43,39 @@ struct normal_generator_op {
     }
 };
 
+template<typename T>
+using uniform_distribution = std::conditional_t<
+    std::is_floating_point<T>::value,
+    std::uniform_real_distribution<T>,
+    std::uniform_int_distribution<T>>;
+
+/*!
+ * \brief Generator from an uniform distribution
+ */
+template <typename T = double>
+struct uniform_generator_op {
+    using value_type = T; ///< The value type
+
+    random_engine rand_engine;                     ///< The random engine
+    uniform_distribution<value_type> distribution; ///< The used distribution
+
+    /*!
+     * \brief Construct a new generator with the given start and end of the range
+     * \param start The beginning of the range
+     * \param end The end of the range
+     */
+    uniform_generator_op(T start, T end)
+            : rand_engine(std::time(nullptr)), distribution(start, end) {}
+
+    /*!
+     * \brief Generate a new value
+     * \return the newly generated value
+     */
+    value_type operator()() {
+        return distribution(rand_engine);
+    }
+};
+
 /*!
  * \brief Generator from a sequence
  */

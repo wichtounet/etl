@@ -1300,6 +1300,17 @@ auto normal_generator(T mean = 0.0, T stddev = 1.0) -> generator_expr<normal_gen
 }
 
 /*!
+ * \brief Create an expression generating numbers from an uniform distribution
+ * \param start The beginning of the range
+ * \param end The end of the range
+ * \return An expression generating numbers from the uniform distribution
+ */
+template <typename T = double>
+auto uniform_generator(T start, T end) -> generator_expr<uniform_generator_op<T>> {
+    return generator_expr<uniform_generator_op<T>>{start, end};
+}
+
+/*!
  * \brief Create an expression generating numbers from a consecutive sequence
  * \param current The first number to generate
  * \return an expression generating numbers from a consecutive sequence
