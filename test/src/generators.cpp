@@ -144,3 +144,27 @@ TEMPLATE_TEST_CASE_2("normal/dyn_matrix_1", "generator", Z, float, double) {
 
     b = etl::normal_generator();
 }
+
+/// uniform_generator
+
+TEMPLATE_TEST_CASE_2("generators/uniform/1", "uniform", Z, float, double) {
+    etl::dyn_matrix<Z> b(3, 2);
+
+    b = etl::uniform_generator(-2.0, +2.0);
+
+    for(auto value : b){
+        REQUIRE(value >= -2.0);
+        REQUIRE(value <= +2.0);
+    }
+}
+
+TEMPLATE_TEST_CASE_2("generators/uniform/2", "uniform", Z, float, double) {
+    etl::dyn_matrix<Z> b(3, 2);
+
+    b = etl::uniform_generator(5.5, 8.0);
+
+    for(auto value : b){
+        REQUIRE(value >= 5.5);
+        REQUIRE(value <= 8.0);
+    }
+}
