@@ -193,10 +193,10 @@ void check_conv_deep_sizes(const I& i, const K& k, const C& c) {
  */
 template <typename T, std::size_t D, conv_type TT, typename Impl>
 struct basic_conv_expr : impl_expr<basic_conv_expr<T, D, TT, Impl>> {
-    using value_type = T;
-    using this_type  = basic_conv_expr<T, D, TT, Impl>;
+    using value_type = T;                               ///< The type of value of the expression
+    using this_type  = basic_conv_expr<T, D, TT, Impl>; ///< The type of this expression
 
-    static constexpr const bool is_gpu = false; //There are no GPU versions of convolution
+    static constexpr const bool is_gpu = false; ///< Indicates if the expression runs on GPU
 
     /*!
      * \brief The result type for given sub types
@@ -330,6 +330,10 @@ struct basic_conv_expr : impl_expr<basic_conv_expr<T, D, TT, Impl>> {
         }
     }
 
+    /*!
+     * \brief Returns the multiplicative sum of the dimensions at the given indices
+     * \return the multiplicative sum of the dimensions at the given indices
+     */
     template <typename A, typename B, std::size_t... I>
     static constexpr std::size_t size_mul(const std::index_sequence<I...>& /*seq*/) {
         return mul_all<this_type::dim<A, B, I>()...>::value;

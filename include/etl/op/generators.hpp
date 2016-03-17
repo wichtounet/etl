@@ -43,6 +43,10 @@ struct normal_generator_op {
     }
 };
 
+/*!
+ * \brief Selector helper to get an uniform_distribution based on the type (real or int)
+ * \tpara T The type of return of the distribution
+ */
 template<typename T>
 using uniform_distribution = std::conditional_t<
     std::is_floating_point<T>::value,

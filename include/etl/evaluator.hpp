@@ -704,8 +704,14 @@ namespace standard_evaluator {
 
 } // end of namespace standard_evaluator
 
-//Only containers of the same storage order can be assigned directly
-//Generators can be assigned to everything
+/*!
+ * \brief Traits indicating if a direct assign is possible
+ *
+ * A direct assign is a standard assign without any transposition
+ *
+ * \tparam Expr The type of expression (RHS)
+ * \tparam result The type of result (LHS)
+ */
 template <typename Expr, typename Result>
 struct direct_assign_compatible : cpp::or_u<
                                       decay_traits<Expr>::is_generator,

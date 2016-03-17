@@ -559,16 +559,37 @@ void gevm(A&&, B&& b, C&&);
 
 #else
 
+/*!
+ * \brief Compute the matrix mutplication of a and b and store the result in c
+ * param a The lhs of the multiplication
+ * param b The rhs of the multiplication
+ * param c The result
+ */
 template <typename A, typename B, typename C>
 void gemm(A&&, B&&, C&&) {
+    cpp_unused(a);
+    cpp_unused(b);
+    cpp_unused(c);
     cpp_unreachable("Unsupported feature called: cublas gemm");
 }
 
+/*!
+ * \brief Compute the matrix-vector mutplication of a and b and store the result in c
+ * param a The lhs of the multiplication
+ * param b The rhs of the multiplication
+ * param c The result
+ */
 template <typename A, typename B, typename C>
 void gemv(A&&, B&&, C&&) {
     cpp_unreachable("Unsupported feature called: cublas gemm");
 }
 
+/*!
+ * \brief Compute the vector-matrix mutplication of a and b and store the result in c
+ * param a The lhs of the multiplication
+ * param b The rhs of the multiplication
+ * param c The result
+ */
 template <typename A, typename B, typename C>
 void gevm(A&&, B&&, C&&) {
     cpp_unreachable("Unsupported feature called: cublas gemm");

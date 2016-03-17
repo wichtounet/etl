@@ -19,6 +19,12 @@ namespace detail {
 
 // Utilities
 
+/*!
+ * \brief Traits to test if the given assignment is vectorizable with the given vector mode
+ * \tparam V The vector mode to test
+ * \tparam E The Expression to assign to the result
+ * \tparam R The result type
+ */
 template <vector_mode_t V, typename E, typename R>
 using are_vectorizable_select = cpp::and_u<
                                vectorize_expr,
@@ -35,6 +41,11 @@ using are_vectorizable = cpp::or_u<
     avx_enabled && are_vectorizable_select<vector_mode_t::AVX, E, R>::value,
     sse3_enabled && are_vectorizable_select<vector_mode_t::SSE3, E, R>::value>;
 
+/*!
+ * \brief Select a vector mode for the given assignment type
+ * \tparam E The Expression to assign to the result
+ * \tparam R The result type
+ */
 template <typename E, typename R>
 inline constexpr vector_mode_t select_vector_mode(){
     return

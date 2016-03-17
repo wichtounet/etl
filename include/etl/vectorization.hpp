@@ -24,15 +24,27 @@
 
 namespace etl {
 
+/*!
+ * \brief Traits to get the intrinsic traits for a vector mode
+ * \tparam V The vector mode
+ */
 template<vector_mode_t V>
 struct get_intrinsic_traits {
+    /*!
+     * \brief The type of the intrinsic traits for T
+     * \tparam T The type to get the intrinsic traits for
+     */
     template<typename T>
     using type = no_intrinsic_traits<T>;
 };
 
+/*!
+ * \brief Traits to get the vector implementation for a vector mode
+ * \tparam V The vector mode
+ */
 template<vector_mode_t V>
 struct get_vector_impl {
-    using type = no_vec;
+    using type = no_vec; ///< The vector implementation
 };
 
 #ifdef __AVX512F__
