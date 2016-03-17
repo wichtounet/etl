@@ -79,7 +79,7 @@ inline gemm_impl select_gemm_impl(const std::size_t n1, const std::size_t n2, co
 
             //EBLAS cannot always be used
             case gemm_impl::FAST:
-                if(!is_cblas_enabled || !DMA || is_complex_t<T>::value){
+                if(!DMA || is_complex_t<T>::value){
                     std::cerr << "Forced selection to EBLAS gemm implementation, but not possible for this expression" << std::endl;
                     return select_default_gemm_impl<DMA, T>(n1, n2, n3);
                 }
