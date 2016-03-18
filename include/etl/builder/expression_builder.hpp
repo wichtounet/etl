@@ -18,6 +18,7 @@
 #include "etl/impl/dot.hpp"
 #include "etl/impl/scalar_op.hpp"
 #include "etl/impl/sum.hpp"
+#include "etl/impl/norm.hpp"
 
 namespace etl {
 
@@ -1161,6 +1162,16 @@ auto conj_transpose(const E& value){
 template <typename E>
 auto ctrans(const E& value){
     return conj(transpose(value));
+}
+
+/*!
+ * \brief Returns euclidean norm of the given expression.
+ * \param a The expression
+ * \return The euclidean norm of the expression
+ */
+template <typename A>
+value_t<A> norm(const A& a) {
+    return detail::norm_impl::apply(a);
 }
 
 /*!
