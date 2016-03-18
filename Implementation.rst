@@ -57,6 +57,8 @@ covered, for instance SFINAE selection is never meant to be
 How to improve coverage:
  * Improve the merge of multiple coverage profile
  * Remove some files from the coverage analysis
+ * Remove some lines from the coverage analysis (asserts) (not
+   possible in sonar unfortunately)
  * A parallel configuration should be added to the tests
  * A GPU configuration should be added to the tests
 
