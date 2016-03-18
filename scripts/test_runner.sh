@@ -70,4 +70,4 @@ gcovr -x -b -r . --object-directory=debug/test > coverage_6.xml
 
 echo "Merge the coverage reports"
 
-merger coverage_1.xml coverage_2.xml coverage_3.xml coverage_4.xml coverage_5.xml coverage_6.xml coverage_report.xml
+merge-xml-coverage.py -o coverage_report.xml coverage_1.xml coverage_2.xml coverage_3.xml coverage_4.xml coverage_5.xml coverage_6.xml
