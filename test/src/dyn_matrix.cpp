@@ -632,6 +632,14 @@ TEMPLATE_TEST_CASE_2("dyn_matrix/max_reduc", "max", Z, double, float) {
     REQUIRE(d == 8.5);
 }
 
+TEMPLATE_TEST_CASE_2("dyn_matrix/norm_1", "[dyn][reduc][norm]", Z, double, float) {
+    etl::dyn_matrix<Z> a{2, 2, std::initializer_list<Z>({-5.0, -7.0, -2.0, 8.0})};
+
+    auto d = norm(a);
+
+    REQUIRE(d == Approx(11.916375));
+}
+
 // is_finite tests
 
 TEMPLATE_TEST_CASE_2("dyn_matrix/is_finite_1", "dyn_matrix::is_finite", Z, double, float) {

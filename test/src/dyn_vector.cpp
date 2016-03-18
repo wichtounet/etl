@@ -475,6 +475,14 @@ TEMPLATE_TEST_CASE_2("dyn_vector/dot_2", "sum", Z, double, float) {
     REQUIRE(d == -21.0);
 }
 
+TEMPLATE_TEST_CASE_2("dyn_vector/norm_1", "[dyn][reduc][norm]", Z, double, float) {
+    etl::dyn_vector<Z> a{-1.0, 2.0, 8.0};
+
+    auto d = norm(a);
+
+    REQUIRE(d == Approx(8.30662));
+}
+
 // Complex tests
 
 TEMPLATE_TEST_CASE_2("dyn_vector/complex", "dyn_vector::complex", Z, double, float) {
