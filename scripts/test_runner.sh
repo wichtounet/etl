@@ -48,7 +48,17 @@ make $ETL_THREADS debug/bin/etl_test
 ./debug/bin/etl_test
 gcovr -x -b -r . --object-directory=debug/test > coverage_4.xml
 
-echo "Test 5. GCC (debug vectorize sse avx parallel)"
+echo "Test 5. GCC (debug parallel)"
+
+unset ETL_MKL
+export ETL_DEFAULTS="-DETL_PARALLEL"
+
+make clean
+make $ETL_THREADS debug/bin/etl_test
+./debug/bin/etl_test
+gcovr -x -b -r . --object-directory=debug/test > coverage_5.xml
+
+echo "Test 6. GCC (debug vectorize sse avx parallel)"
 
 unset ETL_MKL
 export ETL_DEFAULTS="-DETL_PARALLEL -DETL_VECTORIZE_FULL -msse3 -msse4 -mavx"
@@ -56,8 +66,8 @@ export ETL_DEFAULTS="-DETL_PARALLEL -DETL_VECTORIZE_FULL -msse3 -msse4 -mavx"
 make clean
 make $ETL_THREADS debug/bin/etl_test
 ./debug/bin/etl_test
-gcovr -x -b -r . --object-directory=debug/test > coverage_5.xml
+gcovr -x -b -r . --object-directory=debug/test > coverage_6.xml
 
 echo "Merge the coverage reports"
 
-merger coverage_1.xml coverage_2.xml coverage_3.xml coverage_4.xml coverage_5.xml coverage_report.xml
+merger coverage_1.xml coverage_2.xml coverage_3.xml coverage_4.xml coverage_5.xml coverage_6.xml coverage_report.xml
