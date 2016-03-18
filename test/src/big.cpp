@@ -68,7 +68,7 @@ TEMPLATE_TEST_CASE_2("big/compound/add", "[big][add]", Z, double, float) {
     c += a + b;
 
     for (std::size_t i = 0; i < c.size(); ++i) {
-        REQUIRE(c[i] == Approx(Z(1200.0 + a[i] + b[i])));
+        REQUIRE(c[i] == Approx(Z(1200.0) + a[i] + b[i]));
     }
 }
 
