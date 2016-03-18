@@ -1202,6 +1202,11 @@ value_t<E> mean(E&& values) {
     return sum(values) / size(values);
 }
 
+/*!
+ * \brief Returns the standard deviation of all the values contained in the given expression
+ * \param values The expression to reduce
+ * \return The standard deviation of the values of the expression
+ */
 template <typename E>
 value_t<E> stddev(E&& values) {
     static_assert(is_etl_expr<E>::value, "etl::stddev can only be used on ETL expressions");
