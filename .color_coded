@@ -1,0 +1,5 @@
+-std=c++1y
+-Iinclude
+-Ilib/include
+-ICatch/include
+-Itest/include
