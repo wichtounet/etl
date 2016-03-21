@@ -34,7 +34,7 @@ void inplace_square_transpose(C&& c) {
 }
 
 template <typename C>
-static void inplace_rectangular_transpose(C&& mat) {
+void inplace_rectangular_transpose(C&& mat) {
     auto copy = force_temporary(mat);
 
     auto data = mat.memory_start();
