@@ -104,18 +104,35 @@ void transpose(A&& /*a*/, C&& /*c*/) {}
 
 #else
 
+/*!
+ * \brief Inplace transposition of the square matrix c
+ * \param c The matrix to transpose
+ */
 template <typename C>
-void inplace_square_transpose(C&& /*c*/) {
+void inplace_square_transpose(C&& c) {
+    cpp_unused(c);
     cpp_unreachable("MKL not enabled/available");
 }
 
+/*!
+ * \brief Inplace transposition of the rectangular matrix c
+ * \param c The matrix to transpose
+ */
 template <typename C>
-void inplace_rectangular_transpose(C&& /*c*/) {
+void inplace_rectangular_transpose(C&& c) {
+    cpp_unused(c);
     cpp_unreachable("MKL not enabled/available");
 }
 
+/*!
+ * \brief Transpose the matrix a and the store the result in c
+ * \param a The matrix to transpose
+ * \param c The target matrix
+ */
 template <typename A, typename C>
-void transpose(A&& /*a*/, C&& /*c*/) {
+void transpose(A&& a, C&& c) {
+    cpp_unused(a);
+    cpp_unused(c);
     cpp_unreachable("MKL not enabled/available");
 }
 

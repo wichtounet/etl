@@ -20,6 +20,10 @@ namespace impl {
 
 namespace standard {
 
+/*!
+ * \brief Inplace transposition of the square matrix c
+ * \param c The matrix to transpose
+ */
 template <typename C>
 void inplace_square_transpose(C&& c) {
     using std::swap;
@@ -33,6 +37,10 @@ void inplace_square_transpose(C&& c) {
     }
 }
 
+/*!
+ * \brief Inplace transposition of the rectangular matrix c
+ * \param c The matrix to transpose
+ */
 template <typename C>
 void inplace_rectangular_transpose(C&& mat) {
     auto copy = force_temporary(mat);
@@ -50,7 +58,14 @@ void inplace_rectangular_transpose(C&& mat) {
     }
 }
 
-//This implementation is really slow but has O(1) space
+/*!
+ * \brief Perform an inplace matrix transposition in O(1).
+ *
+ * This implementation is quite slow and should only be used when space is of
+ * the essence.
+ *
+ * \param mat the matrix to transpose inplace
+ */
 template <typename C>
 void real_inplace(C&& mat) {
     using std::swap;
@@ -69,6 +84,11 @@ void real_inplace(C&& mat) {
     }
 }
 
+/*!
+ * \brief Transpose the matrix a and the store the result in c
+ * \param a The matrix to transpose
+ * \param c The target matrix
+ */
 template <typename A, typename C>
 void transpose(A&& a, C&& c) {
     auto mem_c = c.memory_start();

@@ -72,7 +72,14 @@ transpose_impl select_transpose_impl() {
     return select_default_transpose_impl<A, C>();
 }
 
+/*!
+ * \brief Functor for inplace square matrix transposition
+ */
 struct inplace_square_transpose {
+    /*!
+     * \brief Tranpose c inplace
+     * \param c The target matrix
+     */
     template <typename C>
     static void apply(C&& c) {
         const auto impl = select_transpose_impl<C, C>();
@@ -85,7 +92,14 @@ struct inplace_square_transpose {
     }
 };
 
+/*!
+ * \brief Functor for inplace rectangular matrix transposition
+ */
 struct inplace_rectangular_transpose {
+    /*!
+     * \brief Tranpose c inplace
+     * \param c The target matrix
+     */
     template <typename C>
     static void apply(C&& c) {
         const auto impl = select_transpose_impl<C, C>();
@@ -98,7 +112,15 @@ struct inplace_rectangular_transpose {
     }
 };
 
+/*!
+ * \brief Functor for general matrix transposition
+ */
 struct transpose {
+    /*!
+     * \brief Tranpose a and store the results in c
+     * \param a The source matrix
+     * \param c The target matrix
+     */
     template <typename A, typename C>
     static void apply(A&& a, C&& c) {
         const auto impl = select_transpose_impl<A, C>();
