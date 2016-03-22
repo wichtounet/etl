@@ -183,7 +183,7 @@ public:
      * \param last The last index to use
      * \return a slice view of the matrix at position i.
      */
-    CPP_DEBUG_AUTO_TRICK auto slice(std::size_t first, std::size_t last) noexcept {
+    auto slice(std::size_t first, std::size_t last) noexcept {
         return etl::slice(*this, first, last);
     }
 
@@ -193,7 +193,7 @@ public:
      * \param last The last index to use
      * \return a slice view of the matrix at position i.
      */
-    CPP_DEBUG_AUTO_TRICK auto slice(std::size_t first, std::size_t last) const noexcept {
+    auto slice(std::size_t first, std::size_t last) const noexcept {
         return etl::slice(*this, first, last);
     }
 

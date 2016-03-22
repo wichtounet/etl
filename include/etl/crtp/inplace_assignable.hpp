@@ -5,7 +5,8 @@
 //  http://opensource.org/licenses/MIT)
 //=======================================================================
 
-#pragma once
+#ifndef ASSFJj
+#define ASSFJj
 
 #include "etl/impl/transpose.hpp"
 #include "etl/impl/fft.hpp"
@@ -344,3 +345,5 @@ struct inplace_assignable {
 };
 
 } //end of namespace etl
+
+#endif

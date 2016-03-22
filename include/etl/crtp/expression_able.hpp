@@ -44,7 +44,7 @@ struct expression_able {
      * \brief Flip the matrix horizontally and vertically.
      * \return A new expression representing the horizontal and vertical flipping of the matrix.
      */
-    CPP_DEBUG_AUTO_TRICK auto fflip() {
+    auto fflip() {
         return etl::fflip(as_derived());
     }
 
@@ -52,7 +52,7 @@ struct expression_able {
      * \brief Flip the matrix horizontally.
      * \return A new expression representing the horizontal flipping of the matrix.
      */
-    CPP_DEBUG_AUTO_TRICK auto hflip() {
+    auto hflip() {
         return etl::hflip(as_derived());
     }
 
@@ -60,7 +60,7 @@ struct expression_able {
      * \brief Flip the matrix vertically.
      * \return A new expression representing the vertical flipping of the matrix.
      */
-    CPP_DEBUG_AUTO_TRICK auto vflip() {
+    auto vflip() {
         return etl::vflip(as_derived());
     }
 
@@ -68,7 +68,7 @@ struct expression_able {
      * \brief Transpose the matrix
      * \return A new expression representing the transposition of this expression.
      */
-    CPP_DEBUG_AUTO_TRICK auto transpose() {
+    auto transpose() {
         return etl::transpose(as_derived());
     }
 
@@ -76,7 +76,7 @@ struct expression_able {
      * \brief Extract the real part of a complex expression
      * \return A new expression representing only real part of this expression.
      */
-    CPP_DEBUG_AUTO_TRICK auto real() {
+    auto real() {
         return etl::real(as_derived());
     }
 
@@ -84,7 +84,7 @@ struct expression_able {
      * \brief Extract the imag part of a complex expression
      * \return A new expression representing only imag part of this expression.
      */
-    CPP_DEBUG_AUTO_TRICK auto imag() {
+    auto imag() {
         return etl::imag(as_derived());
     }
 
@@ -92,7 +92,7 @@ struct expression_able {
      * \brief Returns a new expression containg the conjugate of each value of the expression.
      * \return A new expression containing the conjugate of each complex value of the expression.
      */
-    CPP_DEBUG_AUTO_TRICK auto conj() {
+    auto conj() {
         return etl::conj(as_derived());
     }
 };

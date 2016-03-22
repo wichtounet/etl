@@ -48,14 +48,14 @@ struct gpu_delegate {
     /*!
      * \brief Returns the GPU delegate.
      */
-    CPP_DEBUG_AUTO_TRICK decltype(auto) delegate() const noexcept {
+    decltype(auto) delegate() const noexcept {
         return as_derived().gpu_delegate();
     }
 
     /*!
      * \brief Returns the GPU delegate.
      */
-    CPP_DEBUG_AUTO_TRICK decltype(auto) delegate() noexcept {
+    decltype(auto) delegate() noexcept {
         return as_derived().gpu_delegate();
     }
 
