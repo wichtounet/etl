@@ -39,7 +39,7 @@ void inplace_square_transpose(C&& c) {
 
 /*!
  * \brief Inplace transposition of the rectangular matrix c
- * \param c The matrix to transpose
+ * \param mat The matrix to transpose
  */
 template <typename C>
 void inplace_rectangular_transpose(C&& mat) {

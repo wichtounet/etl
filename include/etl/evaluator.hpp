@@ -710,7 +710,7 @@ namespace standard_evaluator {
  * A direct assign is a standard assign without any transposition
  *
  * \tparam Expr The type of expression (RHS)
- * \tparam result The type of result (LHS)
+ * \tparam Result The type of result (LHS)
  */
 template <typename Expr, typename Result>
 struct direct_assign_compatible : cpp::or_u<
