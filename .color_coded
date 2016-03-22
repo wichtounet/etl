@@ -3,3 +3,4 @@
 -Ilib/include
 -ICatch/include
 -Itest/include
+"-include /home/wichtounet/dev/etl/include/etl/etl.hpp"
