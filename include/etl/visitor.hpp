@@ -165,12 +165,21 @@ void apply_visitor(Expr& expr) {
     visitor(expr);
 }
 
+/*!
+ * \copydoc apply_visitor
+ */
 template <typename Visitor, typename Expr, cpp_disable_if(Visitor::template enabled<Expr>::value)>
 void apply_visitor(const Visitor& /*visitor*/, Expr& /*expr*/) {}
 
+/*!
+ * \copydoc apply_visitor
+ */
 template <typename Visitor, typename Expr, cpp_disable_if(Visitor::template enabled<Expr>::value)>
 void apply_visitor(Visitor& /*visitor*/, Expr& /*expr*/) {}
 
+/*!
+ * \copydoc apply_visitor
+ */
 template <typename Visitor, typename Expr, cpp_disable_if(Visitor::template enabled<Expr>::value)>
 void apply_visitor(Expr& /*expr*/) {}
 
