@@ -82,23 +82,51 @@ void scalar_div(T&& /*lhs*/, value_t<T> /*rhs*/) {}
 
 #else
 
+/*!
+ * \brief Add the rhs scalar value to each element of lhs
+ * \param lhs The matrix
+ * \param rhs The scalar
+ */
 template <typename T>
-void scalar_sub(T&& /*lhs*/, value_t<T> /*rhs*/) {
+void scalar_add(T&& lhs, value_t<T> rhs) {
+    cpp_unused(lhs);
+    cpp_unused(rhs);
     cpp_unreachable("CBLAS not available/enabled");
 }
 
+/*!
+ * \brief Subtract the rhs scalar value from each element of lhs
+ * \param lhs The matrix
+ * \param rhs The scalar
+ */
 template <typename T>
-void scalar_add(T&& /*lhs*/, value_t<T> /*rhs*/) {
+void scalar_sub(T&& lhs, value_t<T> rhs) {
+    cpp_unused(lhs);
+    cpp_unused(rhs);
     cpp_unreachable("CBLAS not available/enabled");
 }
 
+/*!
+ * \brief Multiply each element of lhs by the rhs scalar value
+ * \param lhs The matrix
+ * \param rhs The scalar
+ */
 template <typename T>
-void scalar_mul(T&& /*lhs*/, value_t<T> /*rhs*/) {
+void scalar_mul(T&& lhs, value_t<T> rhs) {
+    cpp_unused(lhs);
+    cpp_unused(rhs);
     cpp_unreachable("CBLAS not available/enabled");
 }
 
+/*!
+ * \brief Divide each element of lhs by the rhs scalar value
+ * \param lhs The matrix
+ * \param rhs The scalar
+ */
 template <typename T>
-void scalar_div(T&& /*lhs*/, value_t<T> /*rhs*/) {
+void scalar_div(T&& lhs, value_t<T> rhs) {
+    cpp_unused(lhs);
+    cpp_unused(rhs);
     cpp_unreachable("CBLAS not available/enabled");
 }
 
