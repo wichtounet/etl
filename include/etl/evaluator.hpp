@@ -724,7 +724,7 @@ struct direct_assign_compatible : cpp::or_u<
  */
 template <typename Expr, typename Result, cpp_enable_if(!detail::has_optimized_evaluation<Expr, Result>::value, direct_assign_compatible<Expr, Result>::value, !is_wrapper_expr<Expr>::value)>
 void assign_evaluate(Expr&& expr, Result&& result) {
-    standard_evaluator::assign_evaluate(std::forward<Expr>(expr), std::forward<Result>(result));
+    standard_evaluator::assign_evaluate(expr, result);
 }
 
 /*!
@@ -734,7 +734,7 @@ void assign_evaluate(Expr&& expr, Result&& result) {
  */
 template <typename Expr, typename Result, cpp_enable_if(!detail::has_optimized_evaluation<Expr, Result>::value, !direct_assign_compatible<Expr, Result>::value, !is_wrapper_expr<Expr>::value)>
 void assign_evaluate(Expr&& expr, Result&& result) {
-    standard_evaluator::assign_evaluate(transpose(expr), std::forward<Result>(result));
+    standard_evaluator::assign_evaluate(transpose(expr), result);
 }
 
 /*!
@@ -749,7 +749,7 @@ void assign_evaluate(Expr&& expr, Result&& result) {
     standard_evaluator::post_assign_force(expr);
 
     // Perform transpose in memory
-    detail::transpose::apply(expr.value().value(), std::forward<Result>(result));
+    detail::transpose::apply(expr.value().value(), result);
 }
 
 /*!
@@ -761,7 +761,7 @@ template <typename Expr, typename Result, cpp_enable_if(is_optimized_expr<Expr>:
 void assign_evaluate(Expr&& expr, Result&& result) {
     optimized_forward(expr.value(),
                       [&result](auto& optimized) {
-                          assign_evaluate(optimized, std::forward<Result>(result));
+                          assign_evaluate(optimized, result);
                       });
 }
 
@@ -776,7 +776,7 @@ void assign_evaluate(Expr&& expr, Result&& result) {
 
     local_context().serial = false;
 
-    assign_evaluate(expr.value(), std::forward<Result>(result));
+    assign_evaluate(expr.value(), result);
 
     local_context().serial = old_serial;
 }
@@ -795,7 +795,7 @@ void assign_evaluate(Expr&& expr, Result&& result) {
     forced.impl = std::decay_t<Expr>::selector_value;
     forced.forced = true;
 
-    assign_evaluate(expr.value(), std::forward<Result>(result));
+    assign_evaluate(expr.value(), result);
 
     forced = old_forced;
 }
@@ -811,7 +811,7 @@ void assign_evaluate(Expr&& expr, Result&& result) {
 
     local_context().parallel = true;
 
-    assign_evaluate(expr.value(), std::forward<Result>(result));
+    assign_evaluate(expr.value(), result);
 
     local_context().parallel = old_parallel;
 }
@@ -827,7 +827,7 @@ void assign_evaluate(Expr&& expr, Result&& result) {
 
     auto start_time = etl::timer_clock::now();
 
-    assign_evaluate(expr.value(), std::forward<Result>(result));
+    assign_evaluate(expr.value(), result);
 
     auto end_time = etl::timer_clock::now();
     auto duration = std::chrono::duration_cast<resolution>(end_time - start_time);
@@ -842,7 +842,7 @@ void assign_evaluate(Expr&& expr, Result&& result) {
  */
 template <typename Expr, typename Result, cpp_enable_if(direct_assign_compatible<Expr, Result>::value, !is_wrapper_expr<Expr>::value)>
 void add_evaluate(Expr&& expr, Result&& result) {
-    standard_evaluator::add_evaluate(std::forward<Expr>(expr), std::forward<Result>(result));
+    standard_evaluator::add_evaluate(expr, result);
 }
 
 /*!
@@ -852,7 +852,7 @@ void add_evaluate(Expr&& expr, Result&& result) {
  */
 template <typename Expr, typename Result, cpp_enable_if(!direct_assign_compatible<Expr, Result>::value, !is_wrapper_expr<Expr>::value)>
 void add_evaluate(Expr&& expr, Result&& result) {
-    standard_evaluator::add_evaluate(transpose(expr), std::forward<Result>(result));
+    standard_evaluator::add_evaluate(transpose(expr), result);
 }
 
 /*!
@@ -864,7 +864,7 @@ template <typename Expr, typename Result, cpp_enable_if(is_optimized_expr<Expr>:
 void add_evaluate(Expr&& expr, Result&& result) {
     optimized_forward(expr.value(),
                       [&result](auto& optimized) {
-                          add_evaluate(optimized, std::forward<Result>(result));
+                          add_evaluate(optimized, result);
                       });
 }
 
@@ -879,7 +879,7 @@ void add_evaluate(Expr&& expr, Result&& result) {
 
     local_context().serial = false;
 
-    add_evaluate(expr.value(), std::forward<Result>(result));
+    add_evaluate(expr.value(), result);
 
     local_context().serial = old_serial;
 }
@@ -898,7 +898,7 @@ void add_evaluate(Expr&& expr, Result&& result) {
     forced.impl = std::decay_t<Expr>::selector_value;
     forced.forced = true;
 
-    add_evaluate(expr.value(), std::forward<Result>(result));
+    add_evaluate(expr.value(), result);
 
     forced = old_forced;
 }
@@ -914,7 +914,7 @@ void add_evaluate(Expr&& expr, Result&& result) {
 
     auto start_time = etl::timer_clock::now();
 
-    add_evaluate(expr.value(), std::forward<Result>(result));
+    add_evaluate(expr.value(), result);
 
     auto end_time = etl::timer_clock::now();
     auto duration = std::chrono::duration_cast<resolution>(end_time - start_time);
@@ -929,7 +929,7 @@ void add_evaluate(Expr&& expr, Result&& result) {
  */
 template <typename Expr, typename Result, cpp_enable_if(direct_assign_compatible<Expr, Result>::value, !is_wrapper_expr<Expr>::value)>
 void sub_evaluate(Expr&& expr, Result&& result) {
-    standard_evaluator::sub_evaluate(std::forward<Expr>(expr), std::forward<Result>(result));
+    standard_evaluator::sub_evaluate(expr, result);
 }
 
 /*!
@@ -939,7 +939,7 @@ void sub_evaluate(Expr&& expr, Result&& result) {
  */
 template <typename Expr, typename Result, cpp_enable_if(!direct_assign_compatible<Expr, Result>::value, !is_wrapper_expr<Expr>::value)>
 void sub_evaluate(Expr&& expr, Result&& result) {
-    standard_evaluator::sub_evaluate(transpose(expr), std::forward<Result>(result));
+    standard_evaluator::sub_evaluate(transpose(expr), result);
 }
 
 /*!
@@ -951,7 +951,7 @@ template <typename Expr, typename Result, cpp_enable_if(is_optimized_expr<Expr>:
 void sub_evaluate(Expr&& expr, Result&& result) {
     optimized_forward(expr.value(),
                       [&result](auto& optimized) {
-                          sub_evaluate(optimized, std::forward<Result>(result));
+                          sub_evaluate(optimized, result);
                       });
 }
 
@@ -966,7 +966,7 @@ void sub_evaluate(Expr&& expr, Result&& result) {
 
     local_context().serial = false;
 
-    sub_evaluate(expr.value(), std::forward<Result>(result));
+    sub_evaluate(expr.value(), result);
 
     local_context().serial = old_serial;
 }
@@ -985,7 +985,7 @@ void sub_evaluate(Expr&& expr, Result&& result) {
     forced.impl = std::decay_t<Expr>::selector_value;
     forced.forced = true;
 
-    sub_evaluate(expr.value(), std::forward<Result>(result));
+    sub_evaluate(expr.value(), result);
 
     forced = old_forced;
 }
@@ -1001,7 +1001,7 @@ void sub_evaluate(Expr&& expr, Result&& result) {
 
     auto start_time = etl::timer_clock::now();
 
-    sub_evaluate(expr.value(), std::forward<Result>(result));
+    sub_evaluate(expr.value(), result);
 
     auto end_time = etl::timer_clock::now();
     auto duration = std::chrono::duration_cast<resolution>(end_time - start_time);
@@ -1016,7 +1016,7 @@ void sub_evaluate(Expr&& expr, Result&& result) {
  */
 template <typename Expr, typename Result, cpp_enable_if(direct_assign_compatible<Expr, Result>::value, !is_wrapper_expr<Expr>::value)>
 void mul_evaluate(Expr&& expr, Result&& result) {
-    standard_evaluator::mul_evaluate(std::forward<Expr>(expr), std::forward<Result>(result));
+    standard_evaluator::mul_evaluate(expr, result);
 }
 
 /*!
@@ -1026,7 +1026,7 @@ void mul_evaluate(Expr&& expr, Result&& result) {
  */
 template <typename Expr, typename Result, cpp_enable_if(!direct_assign_compatible<Expr, Result>::value, !is_wrapper_expr<Expr>::value)>
 void mul_evaluate(Expr&& expr, Result&& result) {
-    standard_evaluator::mul_evaluate(transpose(expr), std::forward<Result>(result));
+    standard_evaluator::mul_evaluate(transpose(expr), result);
 }
 
 /*!
@@ -1038,7 +1038,7 @@ template <typename Expr, typename Result, cpp_enable_if(is_optimized_expr<Expr>:
 void mul_evaluate(Expr&& expr, Result&& result) {
     optimized_forward(expr.value(),
                       [&result](auto& optimized) {
-                          mul_evaluate(optimized, std::forward<Result>(result));
+                          mul_evaluate(optimized, result);
                       });
 }
 
@@ -1053,7 +1053,7 @@ void mul_evaluate(Expr&& expr, Result&& result) {
 
     local_context().serial = false;
 
-    mul_evaluate(expr.value(), std::forward<Result>(result));
+    mul_evaluate(expr.value(), result);
 
     local_context().serial = old_serial;
 }
@@ -1072,7 +1072,7 @@ void mul_evaluate(Expr&& expr, Result&& result) {
     forced.impl = std::decay_t<Expr>::selector_value;
     forced.forced = true;
 
-    mul_evaluate(expr.value(), std::forward<Result>(result));
+    mul_evaluate(expr.value(), result);
 
     forced = old_forced;
 }
@@ -1088,7 +1088,7 @@ void mul_evaluate(Expr&& expr, Result&& result) {
 
     auto start_time = etl::timer_clock::now();
 
-    mul_evaluate(expr.value(), std::forward<Result>(result));
+    mul_evaluate(expr.value(), result);
 
     auto end_time = etl::timer_clock::now();
     auto duration = std::chrono::duration_cast<resolution>(end_time - start_time);
@@ -1103,7 +1103,7 @@ void mul_evaluate(Expr&& expr, Result&& result) {
  */
 template <typename Expr, typename Result, cpp_enable_if(direct_assign_compatible<Expr, Result>::value, !is_wrapper_expr<Expr>::value)>
 void div_evaluate(Expr&& expr, Result&& result) {
-    standard_evaluator::div_evaluate(std::forward<Expr>(expr), std::forward<Result>(result));
+    standard_evaluator::div_evaluate(expr, result);
 }
 
 /*!
@@ -1113,7 +1113,7 @@ void div_evaluate(Expr&& expr, Result&& result) {
  */
 template <typename Expr, typename Result, cpp_enable_if(!direct_assign_compatible<Expr, Result>::value, !is_wrapper_expr<Expr>::value)>
 void div_evaluate(Expr&& expr, Result&& result) {
-    standard_evaluator::div_evaluate(transpose(expr), std::forward<Result>(result));
+    standard_evaluator::div_evaluate(transpose(expr), result);
 }
 
 /*!
@@ -1125,7 +1125,7 @@ template <typename Expr, typename Result, cpp_enable_if(is_optimized_expr<Expr>:
 void div_evaluate(Expr&& expr, Result&& result) {
     optimized_forward(expr.value(),
                       [&result](auto& optimized) {
-                          div_evaluate(optimized, std::forward<Result>(result));
+                          div_evaluate(optimized, result);
                       });
 }
 
@@ -1140,7 +1140,7 @@ void div_evaluate(Expr&& expr, Result&& result) {
 
     local_context().serial = false;
 
-    div_evaluate(expr.value(), std::forward<Result>(result));
+    div_evaluate(expr.value(), result);
 
     local_context().serial = old_serial;
 }
@@ -1159,7 +1159,7 @@ void div_evaluate(Expr&& expr, Result&& result) {
     forced.impl = std::decay_t<Expr>::selector_value;
     forced.forced = true;
 
-    div_evaluate(expr.value(), std::forward<Result>(result));
+    div_evaluate(expr.value(), result);
 
     forced = old_forced;
 }
@@ -1175,7 +1175,7 @@ void div_evaluate(Expr&& expr, Result&& result) {
 
     auto start_time = etl::timer_clock::now();
 
-    div_evaluate(expr.value(), std::forward<Result>(result));
+    div_evaluate(expr.value(), result);
 
     auto end_time = etl::timer_clock::now();
     auto duration = std::chrono::duration_cast<resolution>(end_time - start_time);
@@ -1190,7 +1190,7 @@ void div_evaluate(Expr&& expr, Result&& result) {
  */
 template <typename Expr, typename Result, cpp_enable_if(direct_assign_compatible<Expr, Result>::value, !is_wrapper_expr<Expr>::value)>
 void mod_evaluate(Expr&& expr, Result&& result) {
-    standard_evaluator::mod_evaluate(std::forward<Expr>(expr), std::forward<Result>(result));
+    standard_evaluator::mod_evaluate(expr, result);
 }
 
 /*!
@@ -1200,7 +1200,7 @@ void mod_evaluate(Expr&& expr, Result&& result) {
  */
 template <typename Expr, typename Result, cpp_enable_if(!direct_assign_compatible<Expr, Result>::value, !is_wrapper_expr<Expr>::value)>
 void mod_evaluate(Expr&& expr, Result&& result) {
-    standard_evaluator::mod_evaluate(transpose(expr), std::forward<Result>(result));
+    standard_evaluator::mod_evaluate(transpose(expr), result);
 }
 
 /*!
@@ -1212,7 +1212,7 @@ template <typename Expr, typename Result, cpp_enable_if(is_optimized_expr<Expr>:
 void mod_evaluate(Expr&& expr, Result&& result) {
     optimized_forward(expr.value(),
                       [&result](auto& optimized) {
-                          mod_evaluate(optimized, std::forward<Result>(result));
+                          mod_evaluate(optimized, result);
                       });
 }
 
@@ -1227,7 +1227,7 @@ void mod_evaluate(Expr&& expr, Result&& result) {
 
     local_context().serial = false;
 
-    mod_evaluate(expr.value(), std::forward<Result>(result));
+    mod_evaluate(expr.value(), result);
 
     local_context().serial = old_serial;
 }
@@ -1246,7 +1246,7 @@ void mod_evaluate(Expr&& expr, Result&& result) {
     forced.impl = std::decay_t<Expr>::selector_value;
     forced.forced = true;
 
-    mod_evaluate(expr.value(), std::forward<Result>(result));
+    mod_evaluate(expr.value(), result);
 
     forced = old_forced;
 }
@@ -1262,7 +1262,7 @@ void mod_evaluate(Expr&& expr, Result&& result) {
 
     auto start_time = etl::timer_clock::now();
 
-    mod_evaluate(expr.value(), std::forward<Result>(result));
+    mod_evaluate(expr.value(), result);
 
     auto end_time = etl::timer_clock::now();
     auto duration = std::chrono::duration_cast<resolution>(end_time - start_time);
@@ -1279,8 +1279,8 @@ void mod_evaluate(Expr&& expr, Result&& result) {
  */
 template <typename Expr>
 void force(Expr&& expr) {
-    standard_evaluator::pre_assign(std::forward<Expr>(expr));
-    standard_evaluator::post_assign_force(std::forward<Expr>(expr));
+    standard_evaluator::pre_assign(expr);
+    standard_evaluator::post_assign_force(expr);
 }
 
 } //end of namespace etl

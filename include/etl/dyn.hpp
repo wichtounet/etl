@@ -111,7 +111,7 @@ public:
                               !is_dyn_matrix<E>::value)>
     explicit dyn_matrix_impl(E&& e) noexcept
             : base_type(e), _memory(allocate(_size)) {
-        assign_evaluate(std::forward<E>(e), *this);
+        assign_evaluate(e, *this);
     }
 
     /*!

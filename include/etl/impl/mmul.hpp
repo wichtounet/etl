@@ -225,13 +225,13 @@ struct mm_mul_impl {
         gemm_impl impl = select_gemm_impl<all_dma<A, B, C>::value, value_t<A>>(etl::dim<0>(a), etl::dim<1>(a), etl::dim<1>(c));
 
         if (impl == gemm_impl::STD) {
-            etl::impl::standard::mm_mul(std::forward<A>(a), std::forward<B>(b), std::forward<C>(c));
+            etl::impl::standard::mm_mul(a, b, c);
         } else if (impl == gemm_impl::FAST) {
-            etl::impl::eblas::gemm(std::forward<A>(a), std::forward<B>(b), std::forward<C>(c));
+            etl::impl::eblas::gemm(a, b, c);
         } else if (impl == gemm_impl::BLAS) {
-            etl::impl::blas::gemm(std::forward<A>(a), std::forward<B>(b), std::forward<C>(c));
+            etl::impl::blas::gemm(a, b, c);
         } else if (impl == gemm_impl::CUBLAS) {
-            etl::impl::cublas::gemm(std::forward<A>(a), std::forward<B>(b), std::forward<C>(c));
+            etl::impl::cublas::gemm(a, b, c);
         }
     }
 };
@@ -242,11 +242,11 @@ struct vm_mul_impl {
         gemm_impl impl = select_gevm_impl<all_dma<A, B, C>::value, value_t<A>>(etl::dim<0>(b), etl::dim<1>(b));
 
         if (impl == gemm_impl::STD) {
-            etl::impl::standard::vm_mul(std::forward<A>(a), std::forward<B>(b), std::forward<C>(c));
+            etl::impl::standard::vm_mul(a, b, c);
         } else if (impl == gemm_impl::BLAS) {
-            etl::impl::blas::gevm(std::forward<A>(a), std::forward<B>(b), std::forward<C>(c));
+            etl::impl::blas::gevm(a, b, c);
         } else if (impl == gemm_impl::CUBLAS) {
-            etl::impl::cublas::gevm(std::forward<A>(a), std::forward<B>(b), std::forward<C>(c));
+            etl::impl::cublas::gevm(a, b, c);
         }
     }
 };
@@ -257,11 +257,11 @@ struct mv_mul_impl {
         gemm_impl impl = select_gemv_impl<all_dma<A, B, C>::value, value_t<A>>(etl::dim<0>(a), etl::dim<1>(a));
 
         if (impl == gemm_impl::STD) {
-            etl::impl::standard::mv_mul(std::forward<A>(a), std::forward<B>(b), std::forward<C>(c));
+            etl::impl::standard::mv_mul(a, b, c);
         } else if (impl == gemm_impl::BLAS) {
-            etl::impl::blas::gemv(std::forward<A>(a), std::forward<B>(b), std::forward<C>(c));
+            etl::impl::blas::gemv(a, b, c);
         } else if (impl == gemm_impl::CUBLAS) {
-            etl::impl::cublas::gemv(std::forward<A>(a), std::forward<B>(b), std::forward<C>(c));
+            etl::impl::cublas::gemv(a, b, c);
         }
     }
 };
@@ -269,7 +269,7 @@ struct mv_mul_impl {
 struct strassen_mm_mul_impl {
     template <typename A, typename B, typename C>
     static void apply(A&& a, B&& b, C&& c) {
-        etl::impl::standard::strassen_mm_mul(std::forward<A>(a), std::forward<B>(b), std::forward<C>(c));
+        etl::impl::standard::strassen_mm_mul(a, b, c);
     }
 };
 
