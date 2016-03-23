@@ -27,6 +27,9 @@ enum class precision {
 
 /*!
  * \brief Select a 1D FFT implementation based on the operation size
+ *
+ * This does not consider the local context configuration.
+ *
  * \param func The default fallback functor
  * \param args The args to be passed to the default functor
  * \return The implementation to use
@@ -66,6 +69,9 @@ inline fft_impl select_forced_fft_impl(Functor func, Args&&... args) {
 
 /*!
  * \brief Select a 1D FFT implementation based on the operation size
+ *
+ * This does not consider the local context configuration.
+ *
  * \param n The size of the operation
  * \return The implementation to use
  */
@@ -107,6 +113,11 @@ inline cpp14_constexpr fft_impl select_default_fft1_impl(const std::size_t n) {
     }
 }
 
+/*!
+ * \brief Select a 1D FFT implementation based on the operation size
+ * \param n The size of the operation
+ * \return The implementation to use
+ */
 inline fft_impl select_fft1_impl(const std::size_t n) {
     if(local_context().fft_selector.forced){
         return select_forced_fft_impl([](std::size_t n){ return select_default_fft1_impl(n); }, n);
@@ -117,6 +128,9 @@ inline fft_impl select_fft1_impl(const std::size_t n) {
 
 /*!
  * \brief Select a Many-1D FFT implementation based on the operation size
+ *
+ * This does not consider the local context configuration.
+ *
  * \param batch The number of operations
  * \param n The size of the operation
  * \return The implementation to use
@@ -143,6 +157,12 @@ inline cpp14_constexpr fft_impl select_default_fft1_many_impl(const std::size_t 
     }
 }
 
+/*!
+ * \brief Select a Many-1D FFT implementation based on the operation size
+ * \param batch The number of operations
+ * \param n The size of the operation
+ * \return The implementation to use
+ */
 inline fft_impl select_fft1_many_impl(const std::size_t batch, const std::size_t n) {
     if(local_context().fft_selector.forced){
         return select_forced_fft_impl([](std::size_t batch, std::size_t n){ return select_default_fft1_many_impl(batch, n); }, batch, n);
@@ -153,6 +173,9 @@ inline fft_impl select_fft1_many_impl(const std::size_t batch, const std::size_t
 
 /*!
  * \brief Select a 1D IFFT implementation based on the operation size
+ *
+ * This does not consider the local context configuration.
+ *
  * \param n The size of the operation
  * \return The implementation to use
  */
@@ -188,6 +211,11 @@ inline cpp14_constexpr fft_impl select_default_ifft1_impl(const std::size_t n) {
     }
 }
 
+/*!
+ * \brief Select a 1D IFFT implementation based on the operation size
+ * \param n The size of the operation
+ * \return The implementation to use
+ */
 inline fft_impl select_ifft1_impl(const std::size_t n) {
     if(local_context().fft_selector.forced){
         return select_forced_fft_impl([](std::size_t n){ return select_default_ifft1_impl(n); }, n);
@@ -198,6 +226,9 @@ inline fft_impl select_ifft1_impl(const std::size_t n) {
 
 /*!
  * \brief Select a 2D FFT implementation based on the operation size
+ *
+ * This does not consider the local context configuration.
+ *
  * \param n1 The first dimension of the operation
  * \param n2 The second dimension of the operation
  * \return The implementation to use
@@ -234,6 +265,12 @@ inline cpp14_constexpr fft_impl select_default_fft2_impl(const std::size_t n1, s
     }
 }
 
+/*!
+ * \brief Select a 2D FFT implementation based on the operation size
+ * \param n1 The first dimension of the operation
+ * \param n2 The second dimension of the operation
+ * \return The implementation to use
+ */
 inline fft_impl select_fft2_impl(const std::size_t n1, std::size_t n2) {
     if(local_context().fft_selector.forced){
         return select_forced_fft_impl([](std::size_t n1, std::size_t n2){ return select_default_fft2_impl(n1, n2); }, n1, n2);
@@ -244,6 +281,9 @@ inline fft_impl select_fft2_impl(const std::size_t n1, std::size_t n2) {
 
 /*!
  * \brief Select a Many-2D FFT implementation based on the operation size
+ *
+ * This does not consider the local context configuration.
+ *
  * \param batch The number of operations
  * \param n1 The first dimension of the operation
  * \param n2 The second dimension of the operation
@@ -271,6 +311,13 @@ inline cpp14_constexpr fft_impl select_default_fft2_many_impl(const std::size_t 
     }
 }
 
+/*!
+ * \brief Select a Many-2D FFT implementation based on the operation size
+ * \param batch The number of operations
+ * \param n1 The first dimension of the operation
+ * \param n2 The second dimension of the operation
+ * \return The implementation to use
+ */
 inline fft_impl select_fft2_many_impl(const std::size_t batch, const std::size_t n1, const std::size_t n2) {
     if(local_context().fft_selector.forced){
         return select_forced_fft_impl([](std::size_t batch, std::size_t n1, std::size_t n2) {
