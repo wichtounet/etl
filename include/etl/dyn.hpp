@@ -269,11 +269,14 @@ public:
         }
     }
 
-    // Assignment
-
-    //Copy assignment operator
-
-    //Note: For now, this is the only constructor that is able to change the size and dimensions of the matrix
+    /*!
+     * \brief Copy assign from another matrix
+     *
+     * This operator can change the dimensions of the matrix
+     *
+     * \param rhs The matrix to copy from
+     * \return A reference to the matrix
+     */
     dyn_matrix_impl& operator=(const dyn_matrix_impl& rhs) noexcept {
         if (this != &rhs) {
             if (!_size) {
@@ -292,7 +295,14 @@ public:
         return *this;
     }
 
-    //Default move assignment operator
+    /*!
+     * \brief Move assign from another matrix
+     *
+     * The other matrix won't be usable after the move operation
+     *
+     * \param rhs The matrix to move from
+     * \return A reference to the matrix
+     */
     dyn_matrix_impl& operator=(dyn_matrix_impl&& rhs) noexcept {
         if (this != &rhs) {
             if(_memory){
@@ -312,8 +322,11 @@ public:
         return *this;
     }
 
-    //Construct from expression
-
+    /*!
+     * \brief Assign from an ETL expression.
+     * \param vec The container containing the values to assign to the matrix
+     * \return A reference to the matrix
+     */
     template <typename E, cpp_enable_if(!std::is_same<std::decay_t<E>, dyn_matrix_impl<T, SO, D>>::value, std::is_convertible<value_t<E>, value_type>::value, is_etl_expr<E>::value)>
     dyn_matrix_impl& operator=(E&& e) noexcept {
         validate_assign(*this, e);
@@ -325,8 +338,11 @@ public:
         return *this;
     }
 
-    //Allow copy from other containers
-
+    /*!
+     * \brief Assign from an STL container.
+     * \param vec The container containing the values to assign to the matrix
+     * \return A reference to the matrix
+     */
     template <typename Container, cpp_enable_if(!is_etl_expr<Container>::value, std::is_convertible<typename Container::value_type, value_type>::value)>
     dyn_matrix_impl& operator=(const Container& vec) {
         validate_assign(*this, vec);
@@ -338,7 +354,11 @@ public:
         return *this;
     }
 
-    //Set the same value to each element of the matrix
+    /*!
+     * \brief Assign the same value to each element of the matrix
+     * \param value The value to assign to each element of the matrix
+     * \return A reference to the matrix
+     */
     dyn_matrix_impl& operator=(const value_type& value) noexcept {
         std::fill(begin(), end(), value);
 
@@ -346,8 +366,6 @@ public:
 
         return *this;
     }
-
-    //Destructor
 
     /*!
      * \brief Destruct the matrix and release all its memory
@@ -358,8 +376,10 @@ public:
         }
     }
 
-    // Swap operations
-
+    /*!
+     * \brief Swap the content of the matrix with the content of the given matrix
+     * \param other The other matrix to swap content with
+     */
     void swap(dyn_matrix_impl& other) {
         using std::swap;
         swap(_size, other._size);
