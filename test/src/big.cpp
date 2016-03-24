@@ -63,12 +63,12 @@ TEMPLATE_TEST_CASE_2("big/compound/add", "[big][add]", Z, double, float) {
 
     a = etl::uniform_generator(-1000.0, 5000.0);
     b = etl::uniform_generator(-1000.0, 5000.0);
-    c = 1200.0;
+    c = 120.0;
 
     c += a + b;
 
     for (std::size_t i = 0; i < c.size(); ++i) {
-        REQUIRE(c[i] == Approx(Z(1200.0) + a[i] + b[i]));
+        REQUIRE(c[i] == Approx(Z(120.0) + a[i] + b[i]).epsilon(1e-1));
     }
 }
 
