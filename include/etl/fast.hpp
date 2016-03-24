@@ -651,7 +651,6 @@ static_assert(std::is_nothrow_destructible<fast_vector<double, 2>>::value, "fast
 /*!
  * \brief Create a fast_matrix of the given dimensions over the given memory
  * \param memory The memory
- * \param sizes The dimensions of the matrix
  * \return A fast_matrix using the given memory
  *
  * The memory must be large enough to hold the matrix
