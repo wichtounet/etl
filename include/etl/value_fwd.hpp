@@ -17,7 +17,6 @@ struct dyn_matrix_impl;
 
 template <typename T, std::size_t... Dims>
 using fast_matrix = fast_matrix_impl<T, std::array<T, mul_all<Dims...>::value>, order::RowMajor, Dims...>;
-
 template <typename T, std::size_t... Dims>
 using fast_matrix_cm = fast_matrix_impl<T, std::array<T, mul_all<Dims...>::value>, order::ColumnMajor, Dims...>;
 
@@ -47,5 +46,11 @@ struct sparse_matrix_impl;
 
 template <typename T, std::size_t D = 2>
 using sparse_matrix                 = sparse_matrix_impl<T, sparse_storage::COO, D>;
+
+template<typename Stream>
+struct serializer;
+
+template<typename Stream>
+struct deserializer;
 
 } //end of namespace etl

@@ -102,5 +102,9 @@
 #include "etl/dyn.hpp"
 #include "etl/sparse.hpp"
 
+// Serialization support
+#include "etl/serializer.hpp"
+#include "etl/deserializer.hpp"
+
 // to_string support
 #include "etl/print.hpp"
