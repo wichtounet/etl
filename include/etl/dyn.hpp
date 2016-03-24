@@ -440,6 +440,13 @@ public:
         return etl::slice(*this, first, last);
     }
 
+    /*!
+     * \brief Access the ith element of the matrix
+     * \param i The index of the element to search
+     * \return a reference to the ith element
+     *
+     * Accessing an element outside the matrix results in Undefined Behaviour.
+     */
     template <bool B = n_dimensions == 1, cpp_enable_if(B)>
     value_type& operator()(std::size_t i) noexcept {
         cpp_assert(i < dim(0), "Out of bounds");
@@ -447,6 +454,13 @@ public:
         return _memory[i];
     }
 
+    /*!
+     * \brief Access the ith element of the matrix
+     * \param i The index of the element to search
+     * \return a reference to the ith element
+     *
+     * Accessing an element outside the matrix results in Undefined Behaviour.
+     */
     template <bool B = n_dimensions == 1, cpp_enable_if(B)>
     const value_type& operator()(std::size_t i) const noexcept {
         cpp_assert(i < dim(0), "Out of bounds");
@@ -454,6 +468,14 @@ public:
         return _memory[i];
     }
 
+    /*!
+     * \brief Access the (i, j) element of the 2D matrix
+     * \param i The index of the first dimension
+     * \param j The index of the second dimension
+     * \return a reference to the (i,j) element
+     *
+     * Accessing an element outside the matrix results in Undefined Behaviour.
+     */
     template <bool B = n_dimensions == 2, cpp_enable_if(B)>
     value_type& operator()(std::size_t i, std::size_t j) noexcept {
         cpp_assert(i < dim(0), "Out of bounds");
@@ -466,6 +488,14 @@ public:
         }
     }
 
+    /*!
+     * \brief Access the (i, j) element of the 2D matrix
+     * \param i The index of the first dimension
+     * \param j The index of the second dimension
+     * \return a reference to the (i,j) element
+     *
+     * Accessing an element outside the matrix results in Undefined Behaviour.
+     */
     template <bool B = n_dimensions == 2, cpp_enable_if(B)>
     const value_type& operator()(std::size_t i, std::size_t j) const noexcept {
         cpp_assert(i < dim(0), "Out of bounds");

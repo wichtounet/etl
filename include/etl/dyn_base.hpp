@@ -95,6 +95,12 @@ protected:
     std::size_t _size;                  ///< The size of the matrix
     dimension_storage_impl _dimensions; ///< The dimensions of the matrix
 
+    /*!
+     * \brief Verify some invariants with assertions
+     *
+     * This function should only be used internally to ensure that
+     * no breaking changes are made.
+     */
     void check_invariants() {
         cpp_assert(_dimensions.size() == D, "Invalid dimensions");
 
@@ -142,15 +148,32 @@ protected:
         aligned_allocator<void, alignment>::template release<M>(ptr);
     }
 
+    /*!
+     * \brief Initialize the dyn_base with a size of 0
+     */
     dyn_base() noexcept : _size(0) {
         std::fill(_dimensions.begin(), _dimensions.end(), 0);
 
         check_invariants();
     }
 
+    /*!
+     * \brief Copy construct a dyn_base
+     * \param rhs The dyn_base to copy from
+     */
     dyn_base(const dyn_base& rhs) noexcept = default;
+
+    /*!
+     * \brief Move construct a dyn_base
+     * \param rhs The dyn_base to move from
+     */
     dyn_base(dyn_base&& rhs) noexcept = default;
 
+    /*!
+     * \brief Construct a dyn_base if the given size and dimensions
+     * \param size The size of the matrix
+     * \param dimensions The dimensions of the matrix
+     */
     dyn_base(std::size_t size, dimension_storage_impl dimensions) noexcept : _size(size), _dimensions(dimensions) {
         check_invariants();
     }
@@ -169,9 +192,6 @@ protected:
     }
 
 public:
-
-    // Accessors
-
     /*!
      * \brief Returns the size of the matrix, in O(1)
      * \return The size of the matrix
