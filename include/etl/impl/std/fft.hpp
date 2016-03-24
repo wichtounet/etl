@@ -650,19 +650,33 @@ void ifft1_kernel(const std::complex<T>* a, std::size_t n, std::complex<T>* c) {
 
 } //end of namespace detail
 
-//(T or complex<T>) -> complex<T>
+/*!
+ * \brief Perform the 1D FFT on a and store the result in c
+ * \param a The input expression
+ * \param c The output expression
+ */
 template <typename A, typename C>
 void fft1(A&& a, C&& c) {
     detail::fft1_kernel(a.memory_start(), etl::size(a), c.memory_start());
 }
 
-//complex<T> -> complex<T>
+/*!
+ * \brief Perform the 1D Inverse FFT on a and store the result in c
+ * \param a The input expression
+ * \param c The output expression
+ */
 template <typename A, typename C>
 void ifft1(A&& a, C&& c) {
     detail::ifft1_kernel(a.memory_start(), etl::size(a), c.memory_start());
 }
 
-//complex<T> -> complex<T>
+/*!
+ * \brief Perform many 1D Inverse FFT on a and store the result in c
+ * \param a The input expression
+ * \param c The output expression
+ *
+ * The first dimension of a and c are considered batch dimensions
+ */
 template <typename A, typename C>
 void ifft1_many(A&& a, C&& c) {
     for(std::size_t k = 0; k < etl::dim<0>(a); ++k){
@@ -670,7 +684,11 @@ void ifft1_many(A&& a, C&& c) {
     }
 }
 
-//complex<T> -> T
+/*!
+ * \brief Perform the 1D Inverse FFT on a and store the real part of the result in c
+ * \param a The input expression
+ * \param c The output expression
+ */
 template <typename A, typename C>
 void ifft1_real(A&& a, C&& c) {
     using complex_t = value_t<A>;
@@ -687,7 +705,13 @@ void ifft1_real(A&& a, C&& c) {
     }
 }
 
-//(T or complex<T>) -> complex<T>
+/*!
+ * \brief Perform many 1D FFT on a and store the result in c
+ * \param a The input expression
+ * \param c The output expression
+ *
+ * The first dimension of a and c are considered batch dimensions
+ */
 template <typename A, typename C>
 void fft1_many(A&& a, C&& c) {
     static constexpr const std::size_t N = decay_traits<A>::dimensions();
@@ -712,7 +736,11 @@ void fft1_many(A&& a, C&& c) {
     }
 }
 
-//(T or complex<T>) -> complex<T>
+/*!
+ * \brief Perform the 2D FFT on a and store the result in c
+ * \param a The input expression
+ * \param c The output expression
+ */
 template <typename A, typename C>
 void fft2(A&& a, C&& c) {
     auto w = etl::force_temporary_dyn(c);
@@ -730,7 +758,11 @@ void fft2(A&& a, C&& c) {
     c = w;
 }
 
-//complex<T> -> complex<T>
+/*!
+ * \brief Perform the 2D Inverse FFT on a and store the result in c
+ * \param a The input expression
+ * \param c The output expression
+ */
 template <typename A, typename C>
 void ifft2(A&& a, C&& c) {
     std::size_t n = etl::size(a);
@@ -753,10 +785,23 @@ void ifft2(A&& a, C&& c) {
     }
 }
 
+/*!
+ * \brief Perform many 2D FFT on a and store the result in c
+ * \param a The input expression
+ * \param c The output expression
+ *
+ * The first dimension of a and c are considered batch dimensions
+ */
 template <typename A, typename C>
 void fft2_many(A&& a, C&& c);
 
-//complex<T> -> complex<T>
+/*!
+ * \brief Perform many 2D Inverse FFT on a and store the result in c
+ * \param a The input expression
+ * \param c The output expression
+ *
+ * The first dimension of a and c are considered batch dimensions
+ */
 template <typename A, typename C>
 void ifft2_many(A&& a, C&& c) {
     std::size_t n = etl::size(a);
@@ -779,7 +824,11 @@ void ifft2_many(A&& a, C&& c) {
     }
 }
 
-//complex<T> -> T
+/*!
+ * \brief Perform the 2D Inverse FFT on a and store the real part of the result in c
+ * \param a The input expression
+ * \param c The output expression
+ */
 template <typename A, typename C>
 void ifft2_real(A&& a, C&& c) {
     auto w = etl::force_temporary(a);
@@ -791,7 +840,9 @@ void ifft2_real(A&& a, C&& c) {
     }
 }
 
-//(T or complex<T>) -> complex<T>
+/*!
+ * \copydoc fft2_many
+ */
 template <typename A, typename C>
 void fft2_many(A&& a, C&& c) {
     //Note: we need dyn matrix for inplace rectangular transpose
@@ -808,6 +859,12 @@ void fft2_many(A&& a, C&& c) {
     c = w;
 }
 
+/*!
+ * \brief Perform the 1D full convolution of a with b and store the result in c
+ * \param a The input matrix
+ * \param b The kernel matrix
+ * \param c The output matrix
+ */
 template <typename A, typename B, typename C>
 void fft1_convolve(A&& a, B&& b, C&& c) {
     const std::size_t m    = etl::size(a);
@@ -834,6 +891,12 @@ void fft1_convolve(A&& a, B&& b, C&& c) {
     }
 }
 
+/*!
+ * \brief Perform the 2D full convolution of a with b and store the result in c
+ * \param a The input matrix
+ * \param b The kernel matrix
+ * \param c The output matrix
+ */
 template <typename A, typename B, typename C>
 void fft2_convolve(A&& a, B&& b, C&& c) {
     const std::size_t m1 = etl::dim<0>(a);

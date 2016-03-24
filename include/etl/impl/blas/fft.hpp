@@ -759,63 +759,159 @@ void fft2_convolve(A&& a, B&& b, C&& c) {
 
 #else
 
+/*!
+ * \brief Perform the 1D FFT on a and store the result in c
+ * \param a The input expression
+ * \param c The output expression
+ */
 template <typename A, typename C>
-void fft1(A&& /*unused*/, C&& /*unused*/) {
+void fft1(A&& a, C&& c) {
+    cpp_unused(a);
+    cpp_unused(c);
     cpp_unreachable("Unsupported feature called: mkl fft");
 }
 
+/*!
+ * \brief Perform the 1D Inverse FFT on a and store the result in c
+ * \param a The input expression
+ * \param c The output expression
+ */
 template <typename A, typename C>
-void ifft1(A&& /*unused*/, C&& /*unused*/) {
+void ifft1(A&& a, C&& c) {
+    cpp_unused(a);
+    cpp_unused(c);
     cpp_unreachable("Unsupported feature called: mkl fft");
 }
 
+/*!
+ * \brief Perform the 1D Inverse FFT on a and store the real part of the result in c
+ * \param a The input expression
+ * \param c The output expression
+ */
 template <typename A, typename C>
-void ifft1_real(A&& /*unused*/, C&& /*unused*/) {
+void ifft1_real(A&& a, C&& c) {
+    cpp_unused(a);
+    cpp_unused(c);
     cpp_unreachable("Unsupported feature called: mkl fft");
 }
 
+/*!
+ * \brief Perform many 1D FFT on a and store the result in c
+ * \param a The input expression
+ * \param c The output expression
+ *
+ * The first dimension of a and c are considered batch dimensions
+ */
 template <typename A, typename C>
-void fft1_many(A&& /*unused*/, C&& /*unused*/) {
+void fft1_many(A&& a, C&& c) {
+    cpp_unused(a);
+    cpp_unused(c);
     cpp_unreachable("Unsupported feature called: mkl fft");
 }
 
+/*!
+ * \brief Perform many 1D Inverse FFT on a and store the result in c
+ * \param a The input expression
+ * \param c The output expression
+ *
+ * The first dimension of a and c are considered batch dimensions
+ */
 template <typename A, typename C>
-void ifft1_many(A&& /*unused*/, C&& /*unused*/) {
+void ifft1_many(A&& a, C&& c) {
+    cpp_unused(a);
+    cpp_unused(c);
     cpp_unreachable("Unsupported feature called: mkl fft");
 }
 
+/*!
+ * \brief Perform the 2D FFT on a and store the result in c
+ * \param a The input expression
+ * \param c The output expression
+ */
 template <typename A, typename C>
-void fft2(A&& /*unused*/, C&& /*unused*/) {
+void fft2(A&& a, C&& c) {
+    cpp_unused(a);
+    cpp_unused(c);
     cpp_unreachable("Unsupported feature called: mkl fft");
 }
 
+/*!
+ * \brief Perform the 2D Inverse FFT on a and store the result in c
+ * \param a The input expression
+ * \param c The output expression
+ */
 template <typename A, typename C>
-void ifft2(A&& /*unused*/, C&& /*unused*/) {
+void ifft2(A&& a, C&& c) {
+    cpp_unused(a);
+    cpp_unused(c);
     cpp_unreachable("Unsupported feature called: mkl fft");
 }
 
+/*!
+ * \brief Perform the 2D Inverse FFT on a and store the real part of the result in c
+ * \param a The input expression
+ * \param c The output expression
+ */
 template <typename A, typename C>
-void ifft2_real(A&& /*unused*/, C&& /*unused*/) {
+void ifft2_real(A&& a, C&& c) {
+    cpp_unused(a);
+    cpp_unused(c);
     cpp_unreachable("Unsupported feature called: mkl fft");
 }
 
+/*!
+ * \brief Perform many 2D FFT on a and store the result in c
+ * \param a The input expression
+ * \param c The output expression
+ *
+ * The first dimension of a and c are considered batch dimensions
+ */
 template <typename A, typename C>
-void fft2_many(A&& /*unused*/, C&& /*unused*/) {
+void fft2_many(A&& a, C&& c) {
+    cpp_unused(a);
+    cpp_unused(c);
     cpp_unreachable("Unsupported feature called: mkl fft");
 }
 
+/*!
+ * \brief Perform many 2D Inverse FFT on a and store the result in c
+ * \param a The input expression
+ * \param c The output expression
+ *
+ * The first dimension of a and c are considered batch dimensions
+ */
 template <typename A, typename C>
-void ifft2_many(A&& /*unused*/, C&& /*unused*/) {
+void ifft2_many(A&& a, C&& c) {
+    cpp_unused(a);
+    cpp_unused(c);
     cpp_unreachable("Unsupported feature called: mkl fft");
 }
 
+/*!
+ * \brief Perform the 1D full convolution of a with b and store the result in c
+ * \param a The input matrix
+ * \param b The kernel matrix
+ * \param c The output matrix
+ */
 template <typename A, typename B, typename C>
-void fft1_convolve(A&& /*unused*/, B&& /*unused*/, C&& /*unused*/) {
+void fft1_convolve(A&& a, B&& b, C&& c) {
+    cpp_unused(a);
+    cpp_unused(b);
+    cpp_unused(c);
     cpp_unreachable("Unsupported feature called: mkl fft");
 }
 
+/*!
+ * \brief Perform the 2D full convolution of a with b and store the result in c
+ * \param a The input matrix
+ * \param b The kernel matrix
+ * \param c The output matrix
+ */
 template <typename A, typename B, typename C>
-void fft2_convolve(A&& /*unused*/, B&& /*unused*/, C&& /*unused*/) {
+void fft2_convolve(A&& a, B&& b, C&& c) {
+    cpp_unused(a);
+    cpp_unused(b);
+    cpp_unused(c);
     cpp_unreachable("Unsupported feature called: mkl fft");
 }
 
