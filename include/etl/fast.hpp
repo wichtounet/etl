@@ -687,4 +687,18 @@ std::ostream& operator<<(std::ostream& os, const fast_matrix_impl<T, ST, SO, Dim
     return os << "M[" << concat_sizes(Dims...) << "]";
 }
 
+template <typename Stream, typename T, typename ST, order SO, std::size_t... Dims>
+void serialize(serializer<Stream>& os, const fast_matrix_impl<T, ST, SO, Dims...>& matrix){
+    for(const auto& value : matrix){
+        os << value;
+    }
+}
+
+template <typename Stream, typename T, typename ST, order SO, std::size_t... Dims>
+void deserialize(deserializer<Stream>& os, fast_matrix_impl<T, ST, SO, Dims...>& matrix){
+    for(auto& value : matrix){
+        os >> value;
+    }
+}
+
 } //end of namespace etl
