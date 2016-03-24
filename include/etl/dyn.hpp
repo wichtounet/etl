@@ -282,7 +282,7 @@ public:
             if (!_size) {
                 _size       = rhs._size;
                 _dimensions = rhs._dimensions;
-                _memory =   allocate(_size);
+                _memory     = allocate(_size);
             } else {
                 validate_assign(*this, rhs);
             }
@@ -320,6 +320,30 @@ public:
         check_invariants();
 
         return *this;
+    }
+
+    template<typename... Sizes>
+    void resize(Sizes... sizes){
+        static_assert(sizeof...(Sizes), "Cannot change number of dimensions");
+
+        auto new_size = dyn_detail::size(sizes...);
+
+        if(_memory){
+            auto new_memory = allocate(new_size);
+
+            for (std::size_t i = 0; i < std::min(_size, new_size); ++i) {
+                new_memory[i] = _memory[i];
+            }
+
+            release(_memory, _size);
+
+            _memory = new_memory;
+        } else {
+            _memory     = allocate(new_size);
+        }
+
+        _size       = new_size;
+        _dimensions = dyn_detail::sizes(std::make_index_sequence<D>(), sizes...);
     }
 
     /*!
@@ -636,7 +660,6 @@ public:
     bool alias(const E& rhs) const noexcept {
         return rhs.alias(*this);
     }
-
 
     /*!
      * \brief Return an iterator to the first element of the matrix
