@@ -708,6 +708,14 @@ static_assert(std::is_nothrow_copy_assignable<dyn_vector<double>>::value, "dyn_v
 static_assert(std::is_nothrow_move_assignable<dyn_vector<double>>::value, "dyn_vector should be nothrow move assignable");
 static_assert(std::is_nothrow_destructible<dyn_vector<double>>::value, "dyn_vector should be nothrow destructible");
 
+/*!
+ * \brief Create a dyn_matrix of the given dimensions over the given memory
+ * \param memory The memory
+ * \param sizes The dimensions of the matrix
+ * \return A dyn_matrix using the given memory
+ *
+ * The memory must be large enough to hold the matrix
+ */
 template<typename T, typename... Sizes>
 dyn_matrix_impl<T, order::RowMajor, sizeof...(Sizes)> dyn_matrix_over(T* memory, Sizes... sizes){
     return dyn_matrix_impl<T, order::RowMajor, sizeof...(Sizes)>(memory, sizes...);

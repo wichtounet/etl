@@ -648,6 +648,14 @@ static_assert(std::is_nothrow_copy_assignable<fast_vector<double, 2>>::value, "f
 static_assert(std::is_nothrow_move_assignable<fast_vector<double, 2>>::value, "fast_vector should be nothrow move assignable");
 static_assert(std::is_nothrow_destructible<fast_vector<double, 2>>::value, "fast_vector should be nothrow destructible");
 
+/*!
+ * \brief Create a fast_matrix of the given dimensions over the given memory
+ * \param memory The memory
+ * \param sizes The dimensions of the matrix
+ * \return A fast_matrix using the given memory
+ *
+ * The memory must be large enough to hold the matrix
+ */
 template <std::size_t... Dims, typename T>
 fast_matrix_impl<T, cpp::array_wrapper<T>, order::RowMajor, Dims...> fast_matrix_over(T* memory){
     return fast_matrix_impl<T, cpp::array_wrapper<T>, order::RowMajor, Dims...>(cpp::array_wrapper<T>(memory, mul_all<Dims...>::value));
