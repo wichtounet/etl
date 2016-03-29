@@ -800,6 +800,32 @@ void swap(dyn_matrix_impl<T, SO, D>& lhs, dyn_matrix_impl<T, SO, D>& rhs) {
     lhs.swap(rhs);
 }
 
+template <typename Stream, typename T, order SO, std::size_t D>
+void serialize(serializer<Stream>& os, const dyn_matrix_impl<T, SO, D>& matrix){
+    for(std::size_t i = 0; i < etl::dimensions(matrix); ++i){
+        os << matrix.dim(i);
+    }
+
+    for(const auto& value : matrix){
+        os << value;
+    }
+}
+
+template <typename Stream, typename T, order SO, std::size_t D>
+void deserialize(deserializer<Stream>& is, dyn_matrix_impl<T, SO, D>& matrix){
+    typename std::decay_t<decltype(matrix)>::dimension_storage_impl new_dimensions;
+
+    for(auto& value : new_dimensions){
+        is >> value;
+    }
+
+    matrix.resize_arr(new_dimensions);
+
+    for(auto& value : matrix){
+        is >> value;
+    }
+}
+
 template <typename T, order SO, std::size_t D>
 std::ostream& operator<<(std::ostream& os, const dyn_matrix_impl<T, SO, D>& mat) {
     if (D == 1) {
