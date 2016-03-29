@@ -330,3 +330,32 @@ TEST_CASE("globals/trace/2", "[globals]") {
 
     REQUIRE(trace(expr) == Approx(30.0));
 }
+
+TEST_CASE("globals/is_real_complex/1", "[globals]") {
+    etl::fast_matrix<double, 3, 3> a;
+    etl::fast_matrix<float, 3, 3> b;
+    etl::fast_matrix<int, 3, 3> c;
+    etl::fast_matrix<long, 3, 3> d;
+    etl::fast_matrix<std::complex<float>, 3, 3> e;
+    etl::fast_matrix<std::complex<double>, 3, 3> f;
+    etl::fast_matrix<etl::complex<float>, 3, 3> g;
+    etl::fast_matrix<etl::complex<double>, 3, 3> h;
+
+    REQUIRE(etl::is_real_matrix(a));
+    REQUIRE(etl::is_real_matrix(b));
+    REQUIRE(etl::is_real_matrix(c));
+    REQUIRE(etl::is_real_matrix(d));
+    REQUIRE(!etl::is_real_matrix(e));
+    REQUIRE(!etl::is_real_matrix(f));
+    REQUIRE(!etl::is_real_matrix(g));
+    REQUIRE(!etl::is_real_matrix(h));
+
+    REQUIRE(!etl::is_complex_matrix(a));
+    REQUIRE(!etl::is_complex_matrix(b));
+    REQUIRE(!etl::is_complex_matrix(c));
+    REQUIRE(!etl::is_complex_matrix(d));
+    REQUIRE(etl::is_complex_matrix(e));
+    REQUIRE(etl::is_complex_matrix(f));
+    REQUIRE(etl::is_complex_matrix(g));
+    REQUIRE(etl::is_complex_matrix(h));
+}
