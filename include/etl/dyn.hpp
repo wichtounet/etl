@@ -322,6 +322,27 @@ public:
         return *this;
     }
 
+    void resize_arr(const dimension_storage_impl& dimensions){
+        auto new_size = std::accumulate(dimensions.begin(), dimensions.end(), std::size_t(1), std::multiplies<std::size_t>());
+
+        if(_memory){
+            auto new_memory = allocate(new_size);
+
+            for (std::size_t i = 0; i < std::min(_size, new_size); ++i) {
+                new_memory[i] = _memory[i];
+            }
+
+            release(_memory, _size);
+
+            _memory = new_memory;
+        } else {
+            _memory     = allocate(new_size);
+        }
+
+        _size       = new_size;
+        _dimensions = dimensions;
+    }
+
     template<typename... Sizes>
     void resize(Sizes... sizes){
         static_assert(sizeof...(Sizes), "Cannot change number of dimensions");

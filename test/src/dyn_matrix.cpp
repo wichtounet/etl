@@ -866,6 +866,65 @@ TEST_CASE("dyn_matrix/resize/3", "[dyn][resize]") {
     }
 }
 
+TEST_CASE("dyn_matrix/resize_array/1", "[dyn][resize]") {
+    etl::dyn_matrix<float> a(10, 2);
+
+    for(std::size_t i = 0; i < 20; ++i){
+        a[i] = i * 5.0;
+    }
+
+    REQUIRE(a.size() == 20);
+    REQUIRE(etl::dim<0>(a) == 10);
+    REQUIRE(etl::dim<1>(a) == 2);
+
+    std::array<std::size_t, 2> dims{4, 4};
+    a.resize_arr(dims);
+
+    REQUIRE(a.size() == 16);
+    REQUIRE(etl::dim<0>(a) == 4);
+    REQUIRE(etl::dim<1>(a) == 4);
+
+    for(std::size_t i = 0; i < 16; ++i){
+        REQUIRE(a[i] == i * 5.0);
+    }
+}
+
+TEST_CASE("dyn_matrix/resize_array/2", "[dyn][resize]") {
+    etl::dyn_matrix<float> a;
+
+    a.resize_arr(std::array<std::size_t, 2>{10, 2});
+
+    for(std::size_t i = 0; i < 20; ++i){
+        a[i] = i * 5.0;
+    }
+
+    REQUIRE(a.size() == 20);
+    REQUIRE(etl::dim<0>(a) == 10);
+    REQUIRE(etl::dim<1>(a) == 2);
+}
+
+TEST_CASE("dyn_matrix/resize_array/3", "[dyn][resize]") {
+    etl::dyn_matrix<float> a(10, 2);
+
+    for(std::size_t i = 0; i < 20; ++i){
+        a[i] = i * 5.0;
+    }
+
+    REQUIRE(a.size() == 20);
+    REQUIRE(etl::dim<0>(a) == 10);
+    REQUIRE(etl::dim<1>(a) == 2);
+
+    a.resize_arr(std::array<std::size_t, 2>{5, 5});
+
+    REQUIRE(a.size() == 25);
+    REQUIRE(etl::dim<0>(a) == 5);
+    REQUIRE(etl::dim<1>(a) == 5);
+
+    for(std::size_t i = 0; i < 20; ++i){
+        REQUIRE(a[i] == i * 5.0);
+    }
+}
+
 TEST_CASE("dyn_matrix/default_constructor_2", "") {
     std::vector<etl::dyn_matrix<double>> values(10);
 
