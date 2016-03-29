@@ -235,6 +235,39 @@ bool is_uniform(E&& expr) {
 }
 
 /*!
+ * \brief Indicates if the given expression represents an hermitian matrix
+ * \param expr The expression to test
+ * \return true if the given expression is an hermitian matrix, false otherwise.
+ */
+template <typename E, cpp_enable_if(is_complex<E>::value)>
+bool is_hermitian(E&& expr){
+    if(!is_square(expr)){
+        return false;
+    }
+
+    for (std::size_t i = 0; i < etl::dim<0>(expr); ++i) {
+        for (std::size_t j = 0; j < etl::dim<0>(expr); ++j) {
+            if(i != j && expr(i, j) != get_conj(expr(j, i))){
+                return false;
+            }
+        }
+    }
+
+    return true;
+}
+
+/*!
+ * \brief Indicates if the given expression represents an hermitian matrix
+ * \param expr The expression to test
+ * \return true if the given expression is an hermitian matrix, false otherwise.
+ */
+template <typename E, cpp_disable_if(is_complex<E>::value)>
+bool is_hermitian(E&& expr){
+    cpp_unused(expr);
+    return false;
+}
+
+/*!
  * \brief Returns the trace of the given square matrix.
  *
  * If the given expression does not represent a square matrix, this function will fail
