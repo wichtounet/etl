@@ -53,7 +53,7 @@ struct value_testable {
      */
     bool is_zero() const noexcept {
         return std::all_of(as_derived().begin(), as_derived().end(),
-            [](value_t<derived_t> v) { return v == value_t<derived_t>(0); });
+                           [](value_t<derived_t> v) { return v == value_t<derived_t>(0); });
     }
 
     /*!

@@ -32,7 +32,7 @@ private:
     Expr _value;
 
 public:
-    using expr_t    = Expr;          ///< The wrapped expression type
+    using expr_t     = Expr;          ///< The wrapped expression type
     using value_type = value_t<Expr>; ///< The value type
 
     //Cannot be constructed with no args

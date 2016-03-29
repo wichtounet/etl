@@ -268,12 +268,12 @@ TEMPLATE_TEST_CASE_2("complex/real/1", "[complex]", Z, float, double) {
 
     b = etl::real(a);
 
-    REQUIRE(b(0,0) == 1);
-    REQUIRE(b(0,1) == -2);
-    REQUIRE(b(1,0) == 2);
-    REQUIRE(b(1,1) == 0);
-    REQUIRE(b(2,0) == 1);
-    REQUIRE(b(2,1) == 2);
+    REQUIRE(b(0, 0) == 1);
+    REQUIRE(b(0, 1) == -2);
+    REQUIRE(b(1, 0) == 2);
+    REQUIRE(b(1, 1) == 0);
+    REQUIRE(b(2, 0) == 1);
+    REQUIRE(b(2, 1) == 2);
 }
 
 TEMPLATE_TEST_CASE_2("complex/real/2", "[complex]", Z, float, double) {
@@ -283,12 +283,12 @@ TEMPLATE_TEST_CASE_2("complex/real/2", "[complex]", Z, float, double) {
 
     b = etl::real(a);
 
-    REQUIRE(b(0,0) == 1);
-    REQUIRE(b(0,1) == -2);
-    REQUIRE(b(1,0) == 2);
-    REQUIRE(b(1,1) == 0);
-    REQUIRE(b(2,0) == 1);
-    REQUIRE(b(2,1) == 2);
+    REQUIRE(b(0, 0) == 1);
+    REQUIRE(b(0, 1) == -2);
+    REQUIRE(b(1, 0) == 2);
+    REQUIRE(b(1, 1) == 0);
+    REQUIRE(b(2, 0) == 1);
+    REQUIRE(b(2, 1) == 2);
 }
 
 TEMPLATE_TEST_CASE_2("complex/real/3", "[complex]", Z, float, double) {
@@ -298,12 +298,12 @@ TEMPLATE_TEST_CASE_2("complex/real/3", "[complex]", Z, float, double) {
 
     b = a.real();
 
-    REQUIRE(b(0,0) == 1);
-    REQUIRE(b(0,1) == -2);
-    REQUIRE(b(1,0) == 2);
-    REQUIRE(b(1,1) == 0);
-    REQUIRE(b(2,0) == 1);
-    REQUIRE(b(2,1) == 2);
+    REQUIRE(b(0, 0) == 1);
+    REQUIRE(b(0, 1) == -2);
+    REQUIRE(b(1, 0) == 2);
+    REQUIRE(b(1, 1) == 0);
+    REQUIRE(b(2, 0) == 1);
+    REQUIRE(b(2, 1) == 2);
 }
 
 TEMPLATE_TEST_CASE_2("complex/imag/1", "[complex]", Z, float, double) {
@@ -313,12 +313,12 @@ TEMPLATE_TEST_CASE_2("complex/imag/1", "[complex]", Z, float, double) {
 
     b = etl::imag(a);
 
-    REQUIRE(b(0,0) == 1);
-    REQUIRE(b(0,1) == -2);
-    REQUIRE(b(1,0) == 3);
-    REQUIRE(b(1,1) == 0);
-    REQUIRE(b(2,0) == 1);
-    REQUIRE(b(2,1) == 2);
+    REQUIRE(b(0, 0) == 1);
+    REQUIRE(b(0, 1) == -2);
+    REQUIRE(b(1, 0) == 3);
+    REQUIRE(b(1, 1) == 0);
+    REQUIRE(b(2, 0) == 1);
+    REQUIRE(b(2, 1) == 2);
 }
 
 TEMPLATE_TEST_CASE_2("complex/imag/2", "[complex]", Z, float, double) {
@@ -328,12 +328,12 @@ TEMPLATE_TEST_CASE_2("complex/imag/2", "[complex]", Z, float, double) {
 
     b = etl::imag(a);
 
-    REQUIRE(b(0,0) == 1);
-    REQUIRE(b(0,1) == -2);
-    REQUIRE(b(1,0) == 3);
-    REQUIRE(b(1,1) == 0);
-    REQUIRE(b(2,0) == 1);
-    REQUIRE(b(2,1) == 2);
+    REQUIRE(b(0, 0) == 1);
+    REQUIRE(b(0, 1) == -2);
+    REQUIRE(b(1, 0) == 3);
+    REQUIRE(b(1, 1) == 0);
+    REQUIRE(b(2, 0) == 1);
+    REQUIRE(b(2, 1) == 2);
 }
 
 TEMPLATE_TEST_CASE_2("complex/imag/3", "[complex]", Z, float, double) {
@@ -343,12 +343,12 @@ TEMPLATE_TEST_CASE_2("complex/imag/3", "[complex]", Z, float, double) {
 
     b = a.imag();
 
-    REQUIRE(b(0,0) == 1);
-    REQUIRE(b(0,1) == -2);
-    REQUIRE(b(1,0) == 3);
-    REQUIRE(b(1,1) == 0);
-    REQUIRE(b(2,0) == 1);
-    REQUIRE(b(2,1) == 2);
+    REQUIRE(b(0, 0) == 1);
+    REQUIRE(b(0, 1) == -2);
+    REQUIRE(b(1, 0) == 3);
+    REQUIRE(b(1, 1) == 0);
+    REQUIRE(b(2, 0) == 1);
+    REQUIRE(b(2, 1) == 2);
 }
 
 TEMPLATE_TEST_CASE_2("complex/conj/1", "[complex]", Z, float, double) {
@@ -357,20 +357,20 @@ TEMPLATE_TEST_CASE_2("complex/conj/1", "[complex]", Z, float, double) {
 
     b = etl::conj(a);
 
-    REQUIRE(b(0,0).real() == 1);
-    REQUIRE(b(0,0).imag() == -1);
-    REQUIRE(b(0,1).real() == -2);
-    REQUIRE(b(0,1).imag() == 2);
+    REQUIRE(b(0, 0).real() == 1);
+    REQUIRE(b(0, 0).imag() == -1);
+    REQUIRE(b(0, 1).real() == -2);
+    REQUIRE(b(0, 1).imag() == 2);
 
-    REQUIRE(b(1,0).real() == 2);
-    REQUIRE(b(1,0).imag() == -3);
-    REQUIRE(b(1,1).real() == 0);
-    REQUIRE(b(1,1).imag() == 0);
+    REQUIRE(b(1, 0).real() == 2);
+    REQUIRE(b(1, 0).imag() == -3);
+    REQUIRE(b(1, 1).real() == 0);
+    REQUIRE(b(1, 1).imag() == 0);
 
-    REQUIRE(b(2,0).real() == 1);
-    REQUIRE(b(2,0).imag() == -1);
-    REQUIRE(b(2,1).real() == 2);
-    REQUIRE(b(2,1).imag() == -2);
+    REQUIRE(b(2, 0).real() == 1);
+    REQUIRE(b(2, 0).imag() == -1);
+    REQUIRE(b(2, 1).real() == 2);
+    REQUIRE(b(2, 1).imag() == -2);
 }
 
 TEMPLATE_TEST_CASE_2("complex/conj/2", "[complex]", Z, float, double) {
@@ -379,20 +379,20 @@ TEMPLATE_TEST_CASE_2("complex/conj/2", "[complex]", Z, float, double) {
 
     b = etl::conj(a);
 
-    REQUIRE(b(0,0).real == 1);
-    REQUIRE(b(0,0).imag == -1);
-    REQUIRE(b(0,1).real == -2);
-    REQUIRE(b(0,1).imag == 2);
+    REQUIRE(b(0, 0).real == 1);
+    REQUIRE(b(0, 0).imag == -1);
+    REQUIRE(b(0, 1).real == -2);
+    REQUIRE(b(0, 1).imag == 2);
 
-    REQUIRE(b(1,0).real == 2);
-    REQUIRE(b(1,0).imag == -3);
-    REQUIRE(b(1,1).real == 0);
-    REQUIRE(b(1,1).imag == 0);
+    REQUIRE(b(1, 0).real == 2);
+    REQUIRE(b(1, 0).imag == -3);
+    REQUIRE(b(1, 1).real == 0);
+    REQUIRE(b(1, 1).imag == 0);
 
-    REQUIRE(b(2,0).real == 1);
-    REQUIRE(b(2,0).imag == -1);
-    REQUIRE(b(2,1).real == 2);
-    REQUIRE(b(2,1).imag == -2);
+    REQUIRE(b(2, 0).real == 1);
+    REQUIRE(b(2, 0).imag == -1);
+    REQUIRE(b(2, 1).real == 2);
+    REQUIRE(b(2, 1).imag == -2);
 }
 
 TEMPLATE_TEST_CASE_2("complex/conj/3", "[complex]", Z, float, double) {
@@ -401,20 +401,20 @@ TEMPLATE_TEST_CASE_2("complex/conj/3", "[complex]", Z, float, double) {
 
     b = a.conj();
 
-    REQUIRE(b(0,0).real == 1);
-    REQUIRE(b(0,0).imag == -1);
-    REQUIRE(b(0,1).real == -2);
-    REQUIRE(b(0,1).imag == 2);
+    REQUIRE(b(0, 0).real == 1);
+    REQUIRE(b(0, 0).imag == -1);
+    REQUIRE(b(0, 1).real == -2);
+    REQUIRE(b(0, 1).imag == 2);
 
-    REQUIRE(b(1,0).real == 2);
-    REQUIRE(b(1,0).imag == -3);
-    REQUIRE(b(1,1).real == 0);
-    REQUIRE(b(1,1).imag == 0);
+    REQUIRE(b(1, 0).real == 2);
+    REQUIRE(b(1, 0).imag == -3);
+    REQUIRE(b(1, 1).real == 0);
+    REQUIRE(b(1, 1).imag == 0);
 
-    REQUIRE(b(2,0).real == 1);
-    REQUIRE(b(2,0).imag == -1);
-    REQUIRE(b(2,1).real == 2);
-    REQUIRE(b(2,1).imag == -2);
+    REQUIRE(b(2, 0).real == 1);
+    REQUIRE(b(2, 0).imag == -1);
+    REQUIRE(b(2, 1).real == 2);
+    REQUIRE(b(2, 1).imag == -2);
 }
 
 TEMPLATE_TEST_CASE_2("complex/ctrans/1", "[complex]", Z, float, double) {
@@ -423,19 +423,19 @@ TEMPLATE_TEST_CASE_2("complex/ctrans/1", "[complex]", Z, float, double) {
 
     b = etl::ctrans(a);
 
-    REQUIRE(b(0,0).real() == 1);
-    REQUIRE(b(0,0).imag() == -1);
-    REQUIRE(b(0,1).real() == 2);
-    REQUIRE(b(0,1).imag() == -3);
-    REQUIRE(b(0,2).real() == 1);
-    REQUIRE(b(0,2).imag() == -1);
+    REQUIRE(b(0, 0).real() == 1);
+    REQUIRE(b(0, 0).imag() == -1);
+    REQUIRE(b(0, 1).real() == 2);
+    REQUIRE(b(0, 1).imag() == -3);
+    REQUIRE(b(0, 2).real() == 1);
+    REQUIRE(b(0, 2).imag() == -1);
 
-    REQUIRE(b(1,0).real() == -2);
-    REQUIRE(b(1,0).imag() == 2);
-    REQUIRE(b(1,1).real() == 0);
-    REQUIRE(b(1,1).imag() == 0);
-    REQUIRE(b(1,2).real() == 2);
-    REQUIRE(b(1,2).imag() == -2);
+    REQUIRE(b(1, 0).real() == -2);
+    REQUIRE(b(1, 0).imag() == 2);
+    REQUIRE(b(1, 1).real() == 0);
+    REQUIRE(b(1, 1).imag() == 0);
+    REQUIRE(b(1, 2).real() == 2);
+    REQUIRE(b(1, 2).imag() == -2);
 }
 
 TEMPLATE_TEST_CASE_2("complex/ctrans/2", "[complex]", Z, float, double) {
@@ -444,17 +444,17 @@ TEMPLATE_TEST_CASE_2("complex/ctrans/2", "[complex]", Z, float, double) {
 
     b = etl::conj_transpose(a);
 
-    REQUIRE(b(0,0).real == 1);
-    REQUIRE(b(0,0).imag == -1);
-    REQUIRE(b(0,1).real == 2);
-    REQUIRE(b(0,1).imag == -3);
-    REQUIRE(b(0,2).real == 1);
-    REQUIRE(b(0,2).imag == -1);
+    REQUIRE(b(0, 0).real == 1);
+    REQUIRE(b(0, 0).imag == -1);
+    REQUIRE(b(0, 1).real == 2);
+    REQUIRE(b(0, 1).imag == -3);
+    REQUIRE(b(0, 2).real == 1);
+    REQUIRE(b(0, 2).imag == -1);
 
-    REQUIRE(b(1,0).real == -2);
-    REQUIRE(b(1,0).imag == 2);
-    REQUIRE(b(1,1).real == 0);
-    REQUIRE(b(1,1).imag == 0);
-    REQUIRE(b(1,2).real == 2);
-    REQUIRE(b(1,2).imag == -2);
+    REQUIRE(b(1, 0).real == -2);
+    REQUIRE(b(1, 0).imag == 2);
+    REQUIRE(b(1, 1).real == 0);
+    REQUIRE(b(1, 1).imag == 0);
+    REQUIRE(b(1, 2).real == 2);
+    REQUIRE(b(1, 2).imag == -2);
 }

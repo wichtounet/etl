@@ -93,7 +93,8 @@ struct aligned_ptr {
     /*!
      * \brief Build an aligned_ptr managing the given pointer
      */
-    explicit aligned_ptr(T* ptr) : ptr(ptr) {}
+    explicit aligned_ptr(T* ptr)
+            : ptr(ptr) {}
 
     aligned_ptr(const aligned_ptr& rhs) = delete;
     aligned_ptr& operator=(const aligned_ptr& rhs) = delete;
@@ -112,8 +113,8 @@ struct aligned_ptr {
      * \return the aligned_ptr
      */
     aligned_ptr& operator=(aligned_ptr&& rhs) noexcept {
-        if(this != &rhs){
-            ptr = rhs.ptr;
+        if (this != &rhs) {
+            ptr     = rhs.ptr;
             rhs.ptr = nullptr;
         }
 
@@ -123,7 +124,7 @@ struct aligned_ptr {
     /*!
      * \brief Returns a reference to the element at psition i
      */
-    inline T& operator[](std::size_t i){
+    inline T& operator[](std::size_t i) {
         return ptr[i];
     }
 
@@ -137,8 +138,8 @@ struct aligned_ptr {
     /*!
      * \brief Destruct the aligned_ptr and release the aligned memory
      */
-    ~aligned_ptr(){
-        if(ptr){
+    ~aligned_ptr() {
+        if (ptr) {
             aligned_release(ptr);
         }
     }
@@ -146,7 +147,7 @@ struct aligned_ptr {
     /*!
      * \brief Returns the raw underlying pointer
      */
-    T* get(){
+    T* get() {
         return ptr;
     }
 };

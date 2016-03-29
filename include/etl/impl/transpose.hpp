@@ -31,7 +31,7 @@ namespace detail {
  */
 template <typename A, typename C>
 cpp14_constexpr transpose_impl select_default_transpose_impl() {
-    if(all_dma<A, C>::value && all_floating<A, C>::value){
+    if (all_dma<A, C>::value && all_floating<A, C>::value) {
         if (is_mkl_enabled) {
             return transpose_impl::MKL;
         } else {
@@ -50,13 +50,13 @@ cpp14_constexpr transpose_impl select_default_transpose_impl() {
  */
 template <typename A, typename C>
 transpose_impl select_transpose_impl() {
-    if(local_context().transpose_selector.forced){
+    if (local_context().transpose_selector.forced) {
         auto forced = local_context().transpose_selector.impl;
 
         switch (forced) {
             //MKL cannot always be used
             case transpose_impl::MKL:
-                if(!is_mkl_enabled || !all_dma<A, C>::value || !all_floating<A, C>::value){
+                if (!is_mkl_enabled || !all_dma<A, C>::value || !all_floating<A, C>::value) {
                     std::cerr << "Forced selection to MKL transpose implementation, but not possible for this expression" << std::endl;
                     return select_default_transpose_impl<A, C>();
                 }
@@ -84,7 +84,7 @@ struct inplace_square_transpose {
     static void apply(C&& c) {
         const auto impl = select_transpose_impl<C, C>();
 
-        if(impl == transpose_impl::MKL){
+        if (impl == transpose_impl::MKL) {
             etl::impl::blas::inplace_square_transpose(c);
         } else {
             etl::impl::standard::inplace_square_transpose(c);
@@ -104,7 +104,7 @@ struct inplace_rectangular_transpose {
     static void apply(C&& c) {
         const auto impl = select_transpose_impl<C, C>();
 
-        if(impl == transpose_impl::MKL){
+        if (impl == transpose_impl::MKL) {
             etl::impl::blas::inplace_rectangular_transpose(c);
         } else {
             etl::impl::standard::inplace_rectangular_transpose(c);
@@ -125,7 +125,7 @@ struct transpose {
     static void apply(A&& a, C&& c) {
         const auto impl = select_transpose_impl<A, C>();
 
-        if(impl == transpose_impl::MKL){
+        if (impl == transpose_impl::MKL) {
             etl::impl::blas::transpose(a, c);
         } else {
             etl::impl::standard::transpose(a, c);

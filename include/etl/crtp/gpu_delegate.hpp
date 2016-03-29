@@ -27,7 +27,7 @@ namespace etl {
 template <typename T, typename D>
 struct gpu_delegate {
     using value_type = T; ///< The value type
-    using derived_t = D; ///< The derived type
+    using derived_t  = D; ///< The derived type
 
     /*!
      * \brief Returns a reference to the derived object, i.e. the object using the CRTP injector.
@@ -123,7 +123,7 @@ struct gpu_delegate {
      * \brief Reallocate the GPU memory.
      * \param memory The new GPU memory (will be moved)
      */
-    void gpu_reallocate(impl::cuda::cuda_memory<T>&& memory){
+    void gpu_reallocate(impl::cuda::cuda_memory<T>&& memory) {
         delegate().gpu_reallocate(std::move(memory));
     }
 

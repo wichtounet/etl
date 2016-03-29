@@ -10,53 +10,54 @@
 
 namespace {
 
-template<typename T>
+template <typename T>
 struct unaligned_ptr {
     T* base;
     T* frakked_up;
 
-    unaligned_ptr(T* base, T* frakked_up) : base(base), frakked_up(frakked_up) {}
+    unaligned_ptr(T* base, T* frakked_up)
+            : base(base), frakked_up(frakked_up) {}
 
     unaligned_ptr(const unaligned_ptr& rhs) = delete;
     unaligned_ptr& operator=(const unaligned_ptr& rhs) = delete;
 
-    unaligned_ptr(unaligned_ptr&& rhs){
-        base = rhs.base;
+    unaligned_ptr(unaligned_ptr&& rhs) {
+        base       = rhs.base;
         frakked_up = rhs.frakked_up;
 
-        rhs.base = nullptr;
+        rhs.base       = nullptr;
         rhs.frakked_up = nullptr;
     }
 
-    unaligned_ptr& operator=(unaligned_ptr&& rhs){
-        if(this != rhs){
-            if(base){
+    unaligned_ptr& operator=(unaligned_ptr&& rhs) {
+        if (this != rhs) {
+            if (base) {
                 free(base);
             }
 
-            base = rhs.base;
+            base       = rhs.base;
             frakked_up = rhs.frakked_up;
 
-            rhs.base = nullptr;
+            rhs.base       = nullptr;
             rhs.frakked_up = nullptr;
         }
 
         return this;
     }
 
-    ~unaligned_ptr(){
-        if(base){
+    ~unaligned_ptr() {
+        if (base) {
             free(base);
         }
     }
 
-    T* get(){
+    T* get() {
         return frakked_up;
     }
 };
 
-template<typename T>
-unaligned_ptr<T> get_unaligned_memory(std::size_t n){
+template <typename T>
+unaligned_ptr<T> get_unaligned_memory(std::size_t n) {
     auto required_bytes = (1 + sizeof(T)) * n;
     auto orig           = static_cast<T*>(malloc(required_bytes));
 
@@ -70,7 +71,6 @@ unaligned_ptr<T> get_unaligned_memory(std::size_t n){
         return {orig, orig};
     }
 }
-
 
 } // end of anonymous namespace
 

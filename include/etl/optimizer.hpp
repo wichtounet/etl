@@ -7,7 +7,7 @@
 
 #pragma once
 
-#include "etl/visitor.hpp"     //forward declaration of the traits
+#include "etl/visitor.hpp" //forward declaration of the traits
 
 namespace etl {
 

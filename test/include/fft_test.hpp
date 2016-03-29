@@ -5,21 +5,21 @@
 //  http://opensource.org/licenses/MIT)
 //=======================================================================
 
-#define FFT_FUNCTOR(name, ...)                        \
+#define FFT_FUNCTOR(name, ...)                                                                                                                                                                                                                                                                      \
     /*!                                               \
      * \brief name functor                            \
-     */                                               \
-    struct name {                                     \
+     */                                                                                                                                                                             \
+    struct name {                                                                                                                                                                                                                                                                                   \
         /*!                                           \
          * \brief Apply the functor                   \
          * \param a a                                 \
          * \param b a                                 \
          * \param c target                            \
-         */                                           \
-        template <typename A, typename C> \
-        static void apply(A&& a, C& c) {       \
-            __VA_ARGS__;                              \
-        }                                             \
+         */ \
+        template <typename A, typename C>                                                                                                                                                                                                                                                           \
+        static void apply(A&& a, C& c) {                                                                                                                                                                                                                                                            \
+            __VA_ARGS__;                                                                                                                                                                                                                                                                            \
+        }                                                                                                                                                                                                                                                                                           \
     };
 
 FFT_FUNCTOR(default_fft1, c = etl::fft_1d(a))
@@ -81,7 +81,6 @@ FFT_FUNCTOR(std_ifft2_many, c = selected_helper(etl::fft_impl::STD, etl::ifft_2d
 
 #define IFFT2_REAL_TEST_CASE_SECTION_DEFAULT FFT_TEST_CASE_SECTIONS(default_ifft2_real, default_ifft2_real)
 #define IFFT2_REAL_TEST_CASE_SECTION_STD FFT_TEST_CASE_SECTIONS(std_ifft2_real, std_ifft2_real)
-
 
 #ifdef ETL_MKL_MODE
 FFT_FUNCTOR(mkl_fft1, c = selected_helper(etl::fft_impl::MKL, etl::fft_1d(a)))
@@ -178,40 +177,40 @@ FFT_FUNCTOR(cufft_ifft2_many, c = selected_helper(etl::fft_impl::CUFFT, etl::iff
     }                                       \
     FFT_TEST_CASE_DEFN
 
-#define FFT1_MANY_TEST_CASE(name, description)   \
+#define FFT1_MANY_TEST_CASE(name, description) \
+    FFT_TEST_CASE_DECL(name, description) {    \
+        FFT1_MANY_TEST_CASE_SECTION_DEFAULT    \
+        FFT1_MANY_TEST_CASE_SECTION_STD        \
+        FFT1_MANY_TEST_CASE_SECTION_MKL        \
+        FFT1_MANY_TEST_CASE_SECTION_CUFFT      \
+    }                                          \
+    FFT_TEST_CASE_DEFN
+
+#define IFFT1_MANY_TEST_CASE(name, description) \
+    FFT_TEST_CASE_DECL(name, description) {     \
+        IFFT1_MANY_TEST_CASE_SECTION_DEFAULT    \
+        IFFT1_MANY_TEST_CASE_SECTION_STD        \
+        IFFT1_MANY_TEST_CASE_SECTION_MKL        \
+        IFFT1_MANY_TEST_CASE_SECTION_CUFFT      \
+    }                                           \
+    FFT_TEST_CASE_DEFN
+
+#define IFFT1_TEST_CASE(name, description)  \
     FFT_TEST_CASE_DECL(name, description) { \
-        FFT1_MANY_TEST_CASE_SECTION_DEFAULT      \
-        FFT1_MANY_TEST_CASE_SECTION_STD          \
-        FFT1_MANY_TEST_CASE_SECTION_MKL          \
-        FFT1_MANY_TEST_CASE_SECTION_CUFFT        \
+        IFFT1_TEST_CASE_SECTION_DEFAULT     \
+        IFFT1_TEST_CASE_SECTION_STD         \
+        IFFT1_TEST_CASE_SECTION_MKL         \
+        IFFT1_TEST_CASE_SECTION_CUFFT       \
     }                                       \
     FFT_TEST_CASE_DEFN
 
-#define IFFT1_MANY_TEST_CASE(name, description)   \
-    FFT_TEST_CASE_DECL(name, description) { \
-        IFFT1_MANY_TEST_CASE_SECTION_DEFAULT      \
-        IFFT1_MANY_TEST_CASE_SECTION_STD          \
-        IFFT1_MANY_TEST_CASE_SECTION_MKL          \
-        IFFT1_MANY_TEST_CASE_SECTION_CUFFT        \
-    }                                       \
-    FFT_TEST_CASE_DEFN
-
-#define IFFT1_TEST_CASE(name, description)   \
-    FFT_TEST_CASE_DECL(name, description) { \
-        IFFT1_TEST_CASE_SECTION_DEFAULT      \
-        IFFT1_TEST_CASE_SECTION_STD          \
-        IFFT1_TEST_CASE_SECTION_MKL          \
-        IFFT1_TEST_CASE_SECTION_CUFFT        \
-    }                                       \
-    FFT_TEST_CASE_DEFN
-
-#define IFFT1_REAL_TEST_CASE(name, description)   \
-    FFT_TEST_CASE_DECL(name, description) { \
-        IFFT1_REAL_TEST_CASE_SECTION_DEFAULT      \
-        IFFT1_REAL_TEST_CASE_SECTION_STD          \
-        IFFT1_REAL_TEST_CASE_SECTION_MKL          \
-        IFFT1_REAL_TEST_CASE_SECTION_CUFFT        \
-    }                                       \
+#define IFFT1_REAL_TEST_CASE(name, description) \
+    FFT_TEST_CASE_DECL(name, description) {     \
+        IFFT1_REAL_TEST_CASE_SECTION_DEFAULT    \
+        IFFT1_REAL_TEST_CASE_SECTION_STD        \
+        IFFT1_REAL_TEST_CASE_SECTION_MKL        \
+        IFFT1_REAL_TEST_CASE_SECTION_CUFFT      \
+    }                                           \
     FFT_TEST_CASE_DEFN
 
 #define FFT2_TEST_CASE(name, description)   \
@@ -223,38 +222,38 @@ FFT_FUNCTOR(cufft_ifft2_many, c = selected_helper(etl::fft_impl::CUFFT, etl::iff
     }                                       \
     FFT_TEST_CASE_DEFN
 
-#define FFT2_MANY_TEST_CASE(name, description)   \
+#define FFT2_MANY_TEST_CASE(name, description) \
+    FFT_TEST_CASE_DECL(name, description) {    \
+        FFT2_MANY_TEST_CASE_SECTION_DEFAULT    \
+        FFT2_MANY_TEST_CASE_SECTION_STD        \
+        FFT2_MANY_TEST_CASE_SECTION_MKL        \
+        FFT2_MANY_TEST_CASE_SECTION_CUFFT      \
+    }                                          \
+    FFT_TEST_CASE_DEFN
+
+#define IFFT2_MANY_TEST_CASE(name, description) \
+    FFT_TEST_CASE_DECL(name, description) {     \
+        IFFT2_MANY_TEST_CASE_SECTION_DEFAULT    \
+        IFFT2_MANY_TEST_CASE_SECTION_STD        \
+        IFFT2_MANY_TEST_CASE_SECTION_MKL        \
+        IFFT2_MANY_TEST_CASE_SECTION_CUFFT      \
+    }                                           \
+    FFT_TEST_CASE_DEFN
+
+#define IFFT2_TEST_CASE(name, description)  \
     FFT_TEST_CASE_DECL(name, description) { \
-        FFT2_MANY_TEST_CASE_SECTION_DEFAULT      \
-        FFT2_MANY_TEST_CASE_SECTION_STD          \
-        FFT2_MANY_TEST_CASE_SECTION_MKL          \
-        FFT2_MANY_TEST_CASE_SECTION_CUFFT        \
+        IFFT2_TEST_CASE_SECTION_DEFAULT     \
+        IFFT2_TEST_CASE_SECTION_STD         \
+        IFFT2_TEST_CASE_SECTION_MKL         \
+        IFFT2_TEST_CASE_SECTION_CUFFT       \
     }                                       \
     FFT_TEST_CASE_DEFN
 
-#define IFFT2_MANY_TEST_CASE(name, description)   \
-    FFT_TEST_CASE_DECL(name, description) { \
-        IFFT2_MANY_TEST_CASE_SECTION_DEFAULT      \
-        IFFT2_MANY_TEST_CASE_SECTION_STD          \
-        IFFT2_MANY_TEST_CASE_SECTION_MKL          \
-        IFFT2_MANY_TEST_CASE_SECTION_CUFFT        \
-    }                                       \
-    FFT_TEST_CASE_DEFN
-
-#define IFFT2_TEST_CASE(name, description)   \
-    FFT_TEST_CASE_DECL(name, description) { \
-        IFFT2_TEST_CASE_SECTION_DEFAULT      \
-        IFFT2_TEST_CASE_SECTION_STD          \
-        IFFT2_TEST_CASE_SECTION_MKL          \
-        IFFT2_TEST_CASE_SECTION_CUFFT        \
-    }                                       \
-    FFT_TEST_CASE_DEFN
-
-#define IFFT2_REAL_TEST_CASE(name, description)   \
-    FFT_TEST_CASE_DECL(name, description) { \
-        IFFT2_REAL_TEST_CASE_SECTION_DEFAULT      \
-        IFFT2_REAL_TEST_CASE_SECTION_STD          \
-        IFFT2_REAL_TEST_CASE_SECTION_MKL          \
-        IFFT2_REAL_TEST_CASE_SECTION_CUFFT        \
-    }                                       \
+#define IFFT2_REAL_TEST_CASE(name, description) \
+    FFT_TEST_CASE_DECL(name, description) {     \
+        IFFT2_REAL_TEST_CASE_SECTION_DEFAULT    \
+        IFFT2_REAL_TEST_CASE_SECTION_STD        \
+        IFFT2_REAL_TEST_CASE_SECTION_MKL        \
+        IFFT2_REAL_TEST_CASE_SECTION_CUFFT      \
+    }                                           \
     FFT_TEST_CASE_DEFN

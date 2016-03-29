@@ -74,19 +74,19 @@ inline void dconv1_valid_micro_kernel(const double* in, const std::size_t n, con
             __m256d t4 = _mm256_loadu_pd(in + i + k + 3);
 
 #ifdef __FMA__
-            r1  = _mm256_fmadd_pd(kernel_reverse[k], t1, r1);
-            r2  = _mm256_fmadd_pd(kernel_reverse[k+1], t2, r2);
-            r3  = _mm256_fmadd_pd(kernel_reverse[k+2], t3, r3);
-            r4  = _mm256_fmadd_pd(kernel_reverse[k+3], t4, r4);
+            r1 = _mm256_fmadd_pd(kernel_reverse[k], t1, r1);
+            r2 = _mm256_fmadd_pd(kernel_reverse[k + 1], t2, r2);
+            r3 = _mm256_fmadd_pd(kernel_reverse[k + 2], t3, r3);
+            r4 = _mm256_fmadd_pd(kernel_reverse[k + 3], t4, r4);
 #else
             __m256d v1 = _mm256_mul_pd(kernel_reverse[k], t1);
-            r1  = _mm256_add_pd(r1, v1);
-            __m256d v2 = _mm256_mul_pd(kernel_reverse[k+1], t2);
-            r2  = _mm256_add_pd(r2, v2);
-            __m256d v3 = _mm256_mul_pd(kernel_reverse[k+2], t3);
-            r3  = _mm256_add_pd(r3, v3);
-            __m256d v4 = _mm256_mul_pd(kernel_reverse[k+3], t4);
-            r4  = _mm256_add_pd(r4, v4);
+            r1         = _mm256_add_pd(r1, v1);
+            __m256d v2 = _mm256_mul_pd(kernel_reverse[k + 1], t2);
+            r2         = _mm256_add_pd(r2, v2);
+            __m256d v3 = _mm256_mul_pd(kernel_reverse[k + 2], t3);
+            r3         = _mm256_add_pd(r3, v3);
+            __m256d v4 = _mm256_mul_pd(kernel_reverse[k + 3], t4);
+            r4         = _mm256_add_pd(r4, v4);
 #endif
         }
 
@@ -94,16 +94,16 @@ inline void dconv1_valid_micro_kernel(const double* in, const std::size_t n, con
             __m256d t1 = _mm256_loadu_pd(in + i + k);
 
 #ifdef __FMA__
-            r1  = _mm256_fmadd_pd(kernel_reverse[k], t1, r1);
+            r1 = _mm256_fmadd_pd(kernel_reverse[k], t1, r1);
 #else
             __m256d v1 = _mm256_mul_pd(kernel_reverse[k], t1);
-            r1  = _mm256_add_pd(r1, v1);
+            r1         = _mm256_add_pd(r1, v1);
 #endif
         }
 
         __m256d res = _mm256_add_pd(r1, r2);
-        res = _mm256_add_pd(res, r3);
-        res = _mm256_add_pd(res, r4);
+        res         = _mm256_add_pd(res, r3);
+        res         = _mm256_add_pd(res, r4);
 
         _mm256_storeu_pd(out + i, res);
     }
@@ -150,19 +150,19 @@ inline void sconv1_valid_micro_kernel(const float* in, const std::size_t n, cons
             __m256 t4 = _mm256_loadu_ps(in + i + k + 3);
 
 #ifdef __FMA__
-            r1  = _mm256_fmadd_ps(kernel_reverse[k], t1, r1);
-            r2  = _mm256_fmadd_ps(kernel_reverse[k+1], t2, r2);
-            r3  = _mm256_fmadd_ps(kernel_reverse[k+2], t3, r3);
-            r4  = _mm256_fmadd_ps(kernel_reverse[k+3], t4, r4);
+            r1 = _mm256_fmadd_ps(kernel_reverse[k], t1, r1);
+            r2 = _mm256_fmadd_ps(kernel_reverse[k + 1], t2, r2);
+            r3 = _mm256_fmadd_ps(kernel_reverse[k + 2], t3, r3);
+            r4 = _mm256_fmadd_ps(kernel_reverse[k + 3], t4, r4);
 #else
-            __m256 v1 = _mm256_mul_ps(kernel_reverse[k], t1);
-            r1  = _mm256_add_ps(r1, v1);
-            __m256 v2 = _mm256_mul_ps(kernel_reverse[k+1], t2);
-            r2  = _mm256_add_ps(r2, v2);
-            __m256 v3 = _mm256_mul_ps(kernel_reverse[k+2], t3);
-            r3  = _mm256_add_ps(r3, v3);
-            __m256 v4 = _mm256_mul_ps(kernel_reverse[k+3], t4);
-            r4  = _mm256_add_ps(r4, v4);
+            __m256 v1  = _mm256_mul_ps(kernel_reverse[k], t1);
+            r1         = _mm256_add_ps(r1, v1);
+            __m256 v2  = _mm256_mul_ps(kernel_reverse[k + 1], t2);
+            r2         = _mm256_add_ps(r2, v2);
+            __m256 v3  = _mm256_mul_ps(kernel_reverse[k + 2], t3);
+            r3         = _mm256_add_ps(r3, v3);
+            __m256 v4  = _mm256_mul_ps(kernel_reverse[k + 3], t4);
+            r4         = _mm256_add_ps(r4, v4);
 #endif
         }
 
@@ -170,16 +170,16 @@ inline void sconv1_valid_micro_kernel(const float* in, const std::size_t n, cons
             __m256 t1 = _mm256_loadu_ps(in + i + k);
 
 #ifdef __FMA__
-            r1  = _mm256_fmadd_ps(kernel_reverse[k], t1, r1);
+            r1 = _mm256_fmadd_ps(kernel_reverse[k], t1, r1);
 #else
-            __m256 v1 = _mm256_mul_ps(kernel_reverse[k], t1);
-            r1  = _mm256_add_ps(r1, v1);
+            __m256 v1  = _mm256_mul_ps(kernel_reverse[k], t1);
+            r1         = _mm256_add_ps(r1, v1);
 #endif
         }
 
         __m256 res = _mm256_add_ps(r1, r2);
-        res = _mm256_add_ps(res, r3);
-        res = _mm256_add_ps(res, r4);
+        res        = _mm256_add_ps(res, r3);
+        res        = _mm256_add_ps(res, r4);
 
         _mm256_storeu_ps(out + i, res);
     }
@@ -199,7 +199,7 @@ inline void sconv1_valid_micro_kernel(const float* in, const std::size_t n, cons
     }
 }
 
-template <typename I, typename K, typename C, cpp_enable_if((all_dma<I,K,C>::value && all_double_precision<I, K, C>::value))>
+template <typename I, typename K, typename C, cpp_enable_if((all_dma<I, K, C>::value && all_double_precision<I, K, C>::value))>
 void conv1_full(const I& input, const K& kernel, C&& conv, std::size_t first, std::size_t last) {
     std::size_t left = size(kernel) - 1;
 
@@ -215,7 +215,7 @@ void conv1_full(const I& input, const K& kernel, C&& conv, std::size_t first, st
     dconv1_valid_micro_kernel(in, size(input), k, size(kernel), out + left, first, last);
 }
 
-template <typename I, typename K, typename C, cpp_enable_if((all_dma<I,K,C>::value && all_double_precision<I, K, C>::value))>
+template <typename I, typename K, typename C, cpp_enable_if((all_dma<I, K, C>::value && all_double_precision<I, K, C>::value))>
 void conv1_same(const I& input, const K& kernel, C&& conv, std::size_t first, std::size_t last) {
     std::size_t left = (size(kernel) - 1) / 2;
 
@@ -231,7 +231,7 @@ void conv1_same(const I& input, const K& kernel, C&& conv, std::size_t first, st
     dconv1_valid_micro_kernel(in, size(input), k, size(kernel), out + left, first, last);
 }
 
-template <typename I, typename K, typename C, cpp_enable_if((all_dma<I,K,C>::value && all_double_precision<I, K, C>::value))>
+template <typename I, typename K, typename C, cpp_enable_if((all_dma<I, K, C>::value && all_double_precision<I, K, C>::value))>
 void conv1_valid(const I& input, const K& kernel, C&& conv, std::size_t first, std::size_t last) {
     double* out      = conv.memory_start();
     const double* in = input.memory_start();
@@ -240,7 +240,7 @@ void conv1_valid(const I& input, const K& kernel, C&& conv, std::size_t first, s
     dconv1_valid_micro_kernel(in, size(input), k, size(kernel), out, first, last);
 }
 
-template <typename I, typename K, typename C, cpp_enable_if((all_dma<I,K,C>::value && all_single_precision<I, K, C>::value))>
+template <typename I, typename K, typename C, cpp_enable_if((all_dma<I, K, C>::value && all_single_precision<I, K, C>::value))>
 void conv1_full(const I& input, const K& kernel, C&& conv, std::size_t first, std::size_t last) {
     std::size_t left = size(kernel) - 1;
 
@@ -256,7 +256,7 @@ void conv1_full(const I& input, const K& kernel, C&& conv, std::size_t first, st
     sconv1_valid_micro_kernel(in, size(input), k, size(kernel), out + left, first, last);
 }
 
-template <typename I, typename K, typename C, cpp_enable_if((all_dma<I,K,C>::value && all_single_precision<I, K, C>::value))>
+template <typename I, typename K, typename C, cpp_enable_if((all_dma<I, K, C>::value && all_single_precision<I, K, C>::value))>
 void conv1_same(const I& input, const K& kernel, C&& conv, std::size_t first, std::size_t last) {
     std::size_t left = (size(kernel) - 1) / 2;
 
@@ -272,7 +272,7 @@ void conv1_same(const I& input, const K& kernel, C&& conv, std::size_t first, st
     sconv1_valid_micro_kernel(in, size(input), k, size(kernel), out + left, first, last);
 }
 
-template <typename I, typename K, typename C, cpp_enable_if((all_dma<I,K,C>::value && all_single_precision<I, K, C>::value))>
+template <typename I, typename K, typename C, cpp_enable_if((all_dma<I, K, C>::value && all_single_precision<I, K, C>::value))>
 void conv1_valid(const I& input, const K& kernel, C&& conv, std::size_t first, std::size_t last) {
     float* out      = conv.memory_start();
     const float* in = input.memory_start();
@@ -468,7 +468,7 @@ inline void sconv2_valid_micro_kernel(const float* in, std::size_t n1, std::size
                     __m256 tmp1 = _mm256_loadu_ps(in + (i + k) * n2 + j + l);
                     __m256 tmp3 = _mm256_loadu_ps(kernel_reverse.get() + k * m2 + l);
                     __m256 tmp4 = _mm256_mul_ps(tmp1, tmp3);
-                    res  = _mm256_add_ps(res, tmp4);
+                    res         = _mm256_add_ps(res, tmp4);
                 }
             }
 
@@ -652,17 +652,17 @@ void conv1_valid(const I& /*input*/, const K& /*kernel*/, C&& /*conv*/, std::siz
 }
 
 template <typename I, typename K, typename C>
-void conv2_valid(const I& /*input*/, const K& /*kernel*/, C&& /*conv*/){
+void conv2_valid(const I& /*input*/, const K& /*kernel*/, C&& /*conv*/) {
     cpp_unreachable("AVX not available/enabled");
 }
 
 template <typename I, typename K, typename C>
-void conv2_same(const I& /*input*/, const K& /*kernel*/, C&& /*conv*/){
+void conv2_same(const I& /*input*/, const K& /*kernel*/, C&& /*conv*/) {
     cpp_unreachable("AVX not available/enabled");
 }
 
 template <typename I, typename K, typename C>
-void conv2_full(const I& /*input*/, const K& /*kernel*/, C&& /*conv*/){
+void conv2_full(const I& /*input*/, const K& /*kernel*/, C&& /*conv*/) {
     cpp_unreachable("AVX not available/enabled");
 }
 

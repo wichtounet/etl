@@ -18,7 +18,7 @@ namespace etl {
  * \brief Enumeration for sparse storage formats
  */
 enum class sparse_storage {
-    COO     ///< Coordinate Format (COO)
+    COO ///< Coordinate Format (COO)
 };
 
 } //end of namespace etl

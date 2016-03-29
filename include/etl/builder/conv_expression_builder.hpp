@@ -468,7 +468,7 @@ template <typename A, typename B, typename C>
 void conv_2d_valid_multi(A&& input, B&& kernels, C&& features) {
     //TODO Validate inputs
 
-    if (is_mkl_enabled && conv_valid_fft){
+    if (is_mkl_enabled && conv_valid_fft) {
         const std::size_t K = etl::dim<0>(kernels);
 
         const std::size_t i1 = etl::dim<0>(input);
@@ -501,8 +501,8 @@ void conv_2d_valid_multi(A&& input, B&& kernels, C&& features) {
         tmp_result.ifft2_many_inplace();
 
         for (std::size_t k = 0; k < K; ++k) {
-            for(std::size_t i = 0; i < v1; ++i){
-                for(std::size_t j = 0; j < v2; ++j){
+            for (std::size_t i = 0; i < v1; ++i) {
+                for (std::size_t j = 0; j < v2; ++j) {
                     features(k, i, j) = tmp_result(k, i + b1, j + b2).real();
                 }
             }
@@ -541,7 +541,7 @@ template <typename A, typename B, typename C>
 void conv_2d_valid_multi_flipped(A&& input, B&& kernels, C&& features) {
     //TODO Validate inputs
 
-    if (is_mkl_enabled && conv_valid_fft){
+    if (is_mkl_enabled && conv_valid_fft) {
         auto kernels_f = etl::force_temporary(kernels);
 
         for (std::size_t i = 0; i < etl::dim<0>(kernels_f); ++i) {
@@ -584,7 +584,7 @@ void conv_3d_valid_multi(A&& input, B&& kernels, C&& features) {
 
 template <typename A, typename B, typename T_C>
 void conv_3d_valid_multi_flipped(A&& input, B&& kernels, T_C&& features) {
-    if (is_mkl_enabled && conv_valid_fft){
+    if (is_mkl_enabled && conv_valid_fft) {
         auto kernels_f = etl::force_temporary(kernels);
 
         for (std::size_t i = 0; i < etl::dim<0>(kernels_f); ++i) {
@@ -593,8 +593,8 @@ void conv_3d_valid_multi_flipped(A&& input, B&& kernels, T_C&& features) {
             }
         }
 
-        const std::size_t C = etl::dim<0>(kernels);
-        const std::size_t K = etl::dim<1>(kernels);
+        const std::size_t C  = etl::dim<0>(kernels);
+        const std::size_t K  = etl::dim<1>(kernels);
         const std::size_t k1 = etl::dim<2>(kernels);
         const std::size_t k2 = etl::dim<3>(kernels);
 
@@ -628,8 +628,8 @@ void conv_3d_valid_multi_flipped(A&& input, B&& kernels, T_C&& features) {
 
         for (std::size_t c = 0; c < C; ++c) {
             for (std::size_t k = 0; k < K; ++k) {
-                for(std::size_t i = 0; i < v1; ++i){
-                    for(std::size_t j = 0; j < v2; ++j){
+                for (std::size_t i = 0; i < v1; ++i) {
+                    for (std::size_t j = 0; j < v2; ++j) {
                         features(c, k, i, j) = tmp_result(c, k, i + b1, j + b2).real();
                     }
                 }

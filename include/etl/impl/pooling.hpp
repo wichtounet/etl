@@ -24,7 +24,7 @@ struct max_pool_2d {
      * \tparam C2 The second dimension pooling ratio
      */
     template <std::size_t C1, std::size_t C2, typename A>
-    static auto pool_block(const A& sub, std::size_t j, std::size_t k){
+    static auto pool_block(const A& sub, std::size_t j, std::size_t k) {
         auto max = sub(j * C1, k * C2);
 
         for (std::size_t jj = 0; jj < C1; ++jj) {
@@ -69,7 +69,7 @@ struct avg_pool_2d {
      * \tparam C2 The second dimension pooling ratio
      */
     template <std::size_t C1, std::size_t C2, typename A>
-    static auto pool_block(const A& sub, std::size_t j, std::size_t k){
+    static auto pool_block(const A& sub, std::size_t j, std::size_t k) {
         value_t<A> avg = 0;
 
         for (std::size_t jj = 0; jj < C1; ++jj) {
@@ -116,7 +116,7 @@ struct max_pool_3d {
      * \tparam C3 The third dimension pooling ratio
      */
     template <std::size_t C1, std::size_t C2, std::size_t C3, typename A>
-    static auto pool_block(const A& sub, std::size_t i, std::size_t j, std::size_t k){
+    static auto pool_block(const A& sub, std::size_t i, std::size_t j, std::size_t k) {
         auto max = sub(i * C1, j * C2, k * C3);
 
         for (std::size_t ii = 0; ii < C1; ++ii) {
@@ -169,7 +169,7 @@ struct avg_pool_3d {
      * \tparam C3 The third dimension pooling ratio
      */
     template <std::size_t C1, std::size_t C2, std::size_t C3, typename A>
-    static auto pool_block(const A& sub, std::size_t i, std::size_t j, std::size_t k){
+    static auto pool_block(const A& sub, std::size_t i, std::size_t j, std::size_t k) {
         value_t<A> avg = 0;
 
         for (std::size_t ii = 0; ii < C1; ++ii) {
@@ -222,7 +222,7 @@ struct max_pool_derivative_2d {
      * \tparam C2 The second dimension pooling ratio
      */
     template <std::size_t C1, std::size_t C2, typename A, typename B, typename M>
-    static void pool_derivative_block(const A& in, const B& out, M& m, std::size_t j, std::size_t k){
+    static void pool_derivative_block(const A& in, const B& out, M& m, std::size_t j, std::size_t k) {
         auto max = out(j, k);
 
         for (std::size_t jj = 0; jj < C1; ++jj) {
@@ -271,7 +271,7 @@ struct max_pool_derivative_3d {
      * \tparam C3 The third dimension pooling ratio
      */
     template <std::size_t C1, std::size_t C2, std::size_t C3, typename A, typename B, typename M>
-    static void pool_derivative_block(const A& in, const B& out, M& m, std::size_t i, std::size_t j, std::size_t k){
+    static void pool_derivative_block(const A& in, const B& out, M& m, std::size_t i, std::size_t j, std::size_t k) {
         auto max = out(i, j, k);
 
         for (std::size_t ii = 0; ii < C1; ++ii) {

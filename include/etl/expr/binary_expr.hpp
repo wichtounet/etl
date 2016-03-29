@@ -39,8 +39,8 @@ public:
     /*!
      * \brief The vectorization type for V
      */
-    template<typename V = default_vec>
-    using vec_type          = typename V::template vec_type<T>;
+    template <typename V = default_vec>
+    using vec_type       = typename V::template vec_type<T>;
 
     //Cannot be constructed with no args
     binary_expr() = delete;
@@ -108,7 +108,7 @@ public:
      * \param rhs The other expression to test
      * \return true if the two expressions aliases, false otherwise
      */
-    template<typename E>
+    template <typename E>
     bool alias(const E& rhs) const noexcept {
         return _lhs.alias(rhs) || _rhs.alias(rhs);
     }
@@ -140,7 +140,7 @@ public:
      * \tparam V The vectorization mode to use
      * \return a vector containing several results of the expression
      */
-    template<typename V = default_vec>
+    template <typename V = default_vec>
     vec_type<V> load(std::size_t i) const {
         return BinaryOp::template load<V>(lhs().template load<V>(i), rhs().template load<V>(i));
     }
@@ -227,29 +227,26 @@ struct etl_traits<etl::binary_expr<T, LeftExpr, BinaryOp, RightExpr>> {
 
     using sub_expr_t = std::conditional_t<left_directed, left_expr_t, right_expr_t>; ///< The type of sub expression
 
-    static constexpr const bool is_etl         = true;                                                                                          ///< Indicates if the type is an ETL expression
-    static constexpr const bool is_transformer = false;                                                                                         ///< Indicates if the type is a transformer
-    static constexpr const bool is_view        = false;                                                                                         ///< Indicates if the type is a view
-    static constexpr const bool is_magic_view  = false;                                                                                         ///< Indicates if the type is a magic view
-    static constexpr const bool is_fast        = etl_traits<sub_expr_t>::is_fast;                                                               ///< Indicates if the expression is fast
-    static constexpr const bool is_linear      = etl_traits<left_expr_t>::is_linear && etl_traits<right_expr_t>::is_linear && BinaryOp::linear; ///< Indicates if the expression is linear
-    static constexpr const bool is_value       = false;                                                                                         ///< Indicates if the expression is of value type
-    static constexpr const bool is_generator = etl_traits<left_expr_t>::is_generator && etl_traits<right_expr_t>::is_generator; ///< Indicates if the expression is a generator expression
-    static constexpr const bool needs_temporary_visitor = etl_traits<left_expr_t>::needs_temporary_visitor || etl_traits<right_expr_t>::needs_temporary_visitor; ///< Indicates if the expression needs a temporary visitor
-    static constexpr const bool needs_evaluator_visitor = etl_traits<left_expr_t>::needs_evaluator_visitor || etl_traits<right_expr_t>::needs_evaluator_visitor; ///< Indicaes if the expression needs an evaluator visitor
-    static constexpr const order storage_order = etl_traits<left_expr_t>::is_generator ? etl_traits<right_expr_t>::storage_order : etl_traits<left_expr_t>::storage_order; ///< The expression storage order
+    static constexpr const bool is_etl                  = true;                                                                                                                     ///< Indicates if the type is an ETL expression
+    static constexpr const bool is_transformer          = false;                                                                                                                    ///< Indicates if the type is a transformer
+    static constexpr const bool is_view                 = false;                                                                                                                    ///< Indicates if the type is a view
+    static constexpr const bool is_magic_view           = false;                                                                                                                    ///< Indicates if the type is a magic view
+    static constexpr const bool is_fast                 = etl_traits<sub_expr_t>::is_fast;                                                                                          ///< Indicates if the expression is fast
+    static constexpr const bool is_linear               = etl_traits<left_expr_t>::is_linear && etl_traits<right_expr_t>::is_linear && BinaryOp::linear;                            ///< Indicates if the expression is linear
+    static constexpr const bool is_value                = false;                                                                                                                    ///< Indicates if the expression is of value type
+    static constexpr const bool is_generator            = etl_traits<left_expr_t>::is_generator && etl_traits<right_expr_t>::is_generator;                                          ///< Indicates if the expression is a generator expression
+    static constexpr const bool needs_temporary_visitor = etl_traits<left_expr_t>::needs_temporary_visitor || etl_traits<right_expr_t>::needs_temporary_visitor;                    ///< Indicates if the expression needs a temporary visitor
+    static constexpr const bool needs_evaluator_visitor = etl_traits<left_expr_t>::needs_evaluator_visitor || etl_traits<right_expr_t>::needs_evaluator_visitor;                    ///< Indicaes if the expression needs an evaluator visitor
+    static constexpr const order storage_order          = etl_traits<left_expr_t>::is_generator ? etl_traits<right_expr_t>::storage_order : etl_traits<left_expr_t>::storage_order; ///< The expression storage order
 
     /*!
      * \brief Indicates if the expression is vectorizable using the
      * given vector mode
      * \tparam V The vector mode
      */
-    template<vector_mode_t V>
+    template <vector_mode_t V>
     using vectorizable = cpp::bool_constant<
-            etl_traits<left_expr_t>::template vectorizable<V>::value
-        &&  etl_traits<right_expr_t>::template vectorizable<V>::value
-        &&  BinaryOp::template vectorizable<V>::value>;
-
+        etl_traits<left_expr_t>::template vectorizable<V>::value && etl_traits<right_expr_t>::template vectorizable<V>::value && BinaryOp::template vectorizable<V>::value>;
 
     /*!
      * \brief Get reference to the main sub expression

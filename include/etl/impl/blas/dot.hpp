@@ -30,7 +30,7 @@ namespace blas {
  * \param b The rhs expression
  * \return the sum
  */
-template <typename A, typename B, cpp_enable_if(all_dma<A, B>::value && all_single_precision<A, B>::value)>
+template <typename A, typename B, cpp_enable_if(all_dma<A, B>::value&& all_single_precision<A, B>::value)>
 value_t<A> dot(const A& a, const B& b) {
     const float* m_a = a.memory_start();
     const float* m_b = b.memory_start();
@@ -41,7 +41,7 @@ value_t<A> dot(const A& a, const B& b) {
 /*!
  * \copydoc dot
  */
-template <typename A, typename B, cpp_enable_if(all_dma<A, B>::value && all_double_precision<A, B>::value)>
+template <typename A, typename B, cpp_enable_if(all_dma<A, B>::value&& all_double_precision<A, B>::value)>
 value_t<A> dot(const A& a, const B& b) {
     const double* m_a = a.memory_start();
     const double* m_b = b.memory_start();

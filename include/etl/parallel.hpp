@@ -15,7 +15,7 @@ namespace etl {
  * \param threshold The parallel threshold
  * \return true if the evaluation should be done in paralle, false otherwise
  */
-inline bool select_parallel(std::size_t n, std::size_t threshold = parallel_threshold){
+inline bool select_parallel(std::size_t n, std::size_t threshold = parallel_threshold) {
     return threads > 1 && (local_context().parallel || (parallel && n >= threshold && !local_context().serial));
 }
 
@@ -27,7 +27,7 @@ inline bool select_parallel(std::size_t n, std::size_t threshold = parallel_thre
  * \param t2 The second parallel threshold
  * \return true if the evaluation should be done in paralle, false otherwise
  */
-inline bool select_parallel_2d(std::size_t n1, std::size_t t1, std::size_t n2, std::size_t t2){
+inline bool select_parallel_2d(std::size_t n1, std::size_t t1, std::size_t n2, std::size_t t2) {
     return threads > 1 && (local_context().parallel || (parallel && n1 >= t1 && n2 >= t2 && !local_context().serial));
 }
 
@@ -40,13 +40,13 @@ inline bool select_parallel_2d(std::size_t n1, std::size_t t1, std::size_t n2, s
  * \param last The end of the range
  */
 template <typename Functor>
-inline void dispatch_1d(cpp::default_thread_pool<>& pool, bool p, Functor&& functor, std::size_t first, std::size_t last){
-    if(p){
-        auto n = last - first;
+inline void dispatch_1d(cpp::default_thread_pool<>& pool, bool p, Functor&& functor, std::size_t first, std::size_t last) {
+    if (p) {
+        auto n     = last - first;
         auto batch = n / threads;
 
-        for(std::size_t t = 0; t < threads - 1; ++t){
-            pool.do_task(functor, first + t * batch, first + (t+1) * batch);
+        for (std::size_t t = 0; t < threads - 1; ++t) {
+            pool.do_task(functor, first + t * batch, first + (t + 1) * batch);
         }
 
         functor(first + (threads - 1) * batch, last);
@@ -65,8 +65,8 @@ inline void dispatch_1d(cpp::default_thread_pool<>& pool, bool p, Functor&& func
  * \param last The end of the range
  */
 template <typename Functor>
-inline void dispatch_1d(bool p, Functor&& functor, std::size_t first, std::size_t last){
-    if(p){
+inline void dispatch_1d(bool p, Functor&& functor, std::size_t first, std::size_t last) {
+    if (p) {
         cpp::default_thread_pool<> pool(threads - 1);
         dispatch_1d(pool, p, std::forward<Functor>(functor), first, last);
     } else {
@@ -83,27 +83,27 @@ inline void dispatch_1d(bool p, Functor&& functor, std::size_t first, std::size_
  * \param last The end of the range
  */
 template <typename T, typename Functor, typename AccFunctor>
-inline void dispatch_1d_acc(bool p, Functor&& functor, AccFunctor&& acc_functor, std::size_t first, std::size_t last){
-    if(p){
+inline void dispatch_1d_acc(bool p, Functor&& functor, AccFunctor&& acc_functor, std::size_t first, std::size_t last) {
+    if (p) {
         std::vector<T> futures(threads - 1);
         cpp::default_thread_pool<> pool(threads - 1);
 
-        auto n = last - first;
+        auto n     = last - first;
         auto batch = n / threads;
 
-        auto sub_functor = [&futures, &functor](std::size_t t, std::size_t first, std::size_t last){
-            futures[t] = functor(first, last);
+        auto sub_functor = [&futures, &functor](std::size_t t, std::size_t first, std::size_t last) {
+            futures[t]   = functor(first, last);
         };
 
-        for(std::size_t t = 0; t < threads - 1; ++t){
-            pool.do_task(sub_functor, t, first + t * batch, first + (t+1) * batch);
+        for (std::size_t t = 0; t < threads - 1; ++t) {
+            pool.do_task(sub_functor, t, first + t * batch, first + (t + 1) * batch);
         }
 
         acc_functor(functor(first + (threads - 1) * batch, last));
 
         pool.wait();
 
-        for(auto fut : futures){
+        for (auto fut : futures) {
             acc_functor(fut);
         }
     } else {

@@ -31,7 +31,7 @@ namespace detail {
  */
 template <typename A, typename B>
 cpp14_constexpr etl::dot_impl select_default_dot_impl() {
-    if(all_dma<A, B>::value){
+    if (all_dma<A, B>::value) {
         if (is_cblas_enabled) {
             return etl::dot_impl::BLAS;
         } else {
@@ -50,13 +50,13 @@ cpp14_constexpr etl::dot_impl select_default_dot_impl() {
  */
 template <typename A, typename B>
 etl::dot_impl select_dot_impl() {
-    if(local_context().dot_selector.forced){
+    if (local_context().dot_selector.forced) {
         auto forced = local_context().dot_selector.impl;
 
         switch (forced) {
             //AVX cannot always be used
             case dot_impl::BLAS:
-                if(!is_cblas_enabled || !all_dma<A, B>::value){
+                if (!is_cblas_enabled || !all_dma<A, B>::value) {
                     std::cerr << "Forced selection to BLAS dot implementation, but not possible for this expression" << std::endl;
                     return select_default_dot_impl<A, B>();
                 }

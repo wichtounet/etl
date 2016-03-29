@@ -25,7 +25,7 @@ namespace blas {
 #ifdef ETL_MKL_MODE
 
 template <typename A, typename C, cpp_enable_if(all_single_precision<A, C>::value)>
-void mkl_otrans(A&& a, C&& c){
+void mkl_otrans(A&& a, C&& c) {
     auto mem_c = c.memory_start();
     auto mem_a = a.memory_start();
 
@@ -37,7 +37,7 @@ void mkl_otrans(A&& a, C&& c){
 }
 
 template <typename A, typename C, cpp_enable_if(all_double_precision<A, C>::value)>
-void mkl_otrans(A&& a, C&& c){
+void mkl_otrans(A&& a, C&& c) {
     auto mem_c = c.memory_start();
     auto mem_a = a.memory_start();
 
@@ -49,7 +49,7 @@ void mkl_otrans(A&& a, C&& c){
 }
 
 template <typename C, cpp_enable_if(all_single_precision<C>::value)>
-void mkl_itrans(C&& c){
+void mkl_itrans(C&& c) {
     if (decay_traits<C>::storage_order == order::RowMajor) {
         mkl_simatcopy('R', 'T', etl::dim<0>(c), etl::dim<1>(c), 1.0f, c.memory_start(), etl::dim<1>(c), etl::dim<0>(c));
     } else {
@@ -58,7 +58,7 @@ void mkl_itrans(C&& c){
 }
 
 template <typename C, cpp_enable_if(all_double_precision<C>::value)>
-void mkl_itrans(C&& c){
+void mkl_itrans(C&& c) {
     if (decay_traits<C>::storage_order == order::RowMajor) {
         mkl_dimatcopy('R', 'T', etl::dim<0>(c), etl::dim<1>(c), 1.0, c.memory_start(), etl::dim<1>(c), etl::dim<0>(c));
     } else {
@@ -66,17 +66,17 @@ void mkl_itrans(C&& c){
     }
 }
 
-template <typename C, cpp_enable_if(all_dma<C>::value && all_floating<C>::value)>
+template <typename C, cpp_enable_if(all_dma<C>::value&& all_floating<C>::value)>
 void inplace_square_transpose(C&& c) {
     mkl_itrans(c);
 }
 
-template <typename C, cpp_enable_if(all_dma<C>::value && all_floating<C>::value)>
+template <typename C, cpp_enable_if(all_dma<C>::value&& all_floating<C>::value)>
 void inplace_rectangular_transpose(C&& c) {
     mkl_otrans(force_temporary(c), c);
 }
 
-template <typename A, typename C, cpp_enable_if(all_dma<A, C>::value && all_floating<A, C>::value)>
+template <typename A, typename C, cpp_enable_if(all_dma<A, C>::value&& all_floating<A, C>::value)>
 void transpose(A&& a, C&& c) {
     auto mem_c = c.memory_start();
     auto mem_a = a.memory_start();
@@ -93,13 +93,13 @@ void transpose(A&& a, C&& c) {
     }
 }
 
-template <typename C, cpp_disable_if(all_dma<C>::value && all_floating<C>::value)>
+template <typename C, cpp_disable_if(all_dma<C>::value&& all_floating<C>::value)>
 void inplace_square_transpose(C&& /*c*/) {}
 
-template <typename C, cpp_disable_if(all_dma<C>::value && all_floating<C>::value)>
+template <typename C, cpp_disable_if(all_dma<C>::value&& all_floating<C>::value)>
 void inplace_rectangular_transpose(C&& /*c*/) {}
 
-template <typename A, typename C, cpp_disable_if(all_dma<A, C>::value && all_floating<A, C>::value)>
+template <typename A, typename C, cpp_disable_if(all_dma<A, C>::value&& all_floating<A, C>::value)>
 void transpose(A&& /*a*/, C&& /*c*/) {}
 
 #else

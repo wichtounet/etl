@@ -30,7 +30,7 @@ namespace blas {
  * \param b The rhs expression
  * \param c The output expression
  */
-template <typename A, typename B, typename C, cpp_enable_if(all_dma<A, B, C>::value && all_single_precision<A, B, C>::value)>
+template <typename A, typename B, typename C, cpp_enable_if(all_dma<A, B, C>::value&& all_single_precision<A, B, C>::value)>
 void outer(const A& a, const B& b, C&& c) {
     c = 0;
 
@@ -46,7 +46,7 @@ void outer(const A& a, const B& b, C&& c) {
 /*!
  * \copydoc outer
  */
-template <typename A, typename B, typename C, cpp_enable_if(all_dma<A, B, C>::value && all_double_precision<A, B, C>::value)>
+template <typename A, typename B, typename C, cpp_enable_if(all_dma<A, B, C>::value&& all_double_precision<A, B, C>::value)>
 void outer(const A& a, const B& b, C&& c) {
     c = 0;
 

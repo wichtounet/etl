@@ -20,11 +20,11 @@ namespace sse {
 
 #if defined(ETL_VECTORIZE_IMPL) && defined(__SSE3__)
 
-template<typename E>
-double dsum_kernel(const E& in, std::size_t first, std::size_t last){
+template <typename E>
+double dsum_kernel(const E& in, std::size_t first, std::size_t last) {
     double acc = 0.0;
 
-    while(first < last && first % 2 != 0){
+    while (first < last && first % 2 != 0) {
         acc += in[first++];
     }
 
@@ -53,11 +53,11 @@ double dsum_kernel(const E& in, std::size_t first, std::size_t last){
     return acc;
 }
 
-template<typename E>
-float ssum_kernel(const E& in, std::size_t first, std::size_t last){
+template <typename E>
+float ssum_kernel(const E& in, std::size_t first, std::size_t last) {
     float acc = 0.0;
 
-    while(first < last && first % 4 != 0){
+    while (first < last && first % 4 != 0) {
         acc += in[first++];
     }
 
@@ -82,7 +82,7 @@ float ssum_kernel(const E& in, std::size_t first, std::size_t last){
     auto n = last - first;
     if (n % 4) {
         auto rem = n % 4;
-        for(std::size_t i = last - rem; i < last; ++i){
+        for (std::size_t i = last - rem; i < last; ++i) {
             acc += in[i];
         }
     }

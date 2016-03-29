@@ -502,17 +502,17 @@ void conv1_valid(const I& /*input*/, const K& /*kernel*/, C&& /*conv*/, std::siz
 }
 
 template <typename I, typename K, typename C>
-void conv2_valid(const I& /*input*/, const K& /*kernel*/, C&& /*conv*/){
+void conv2_valid(const I& /*input*/, const K& /*kernel*/, C&& /*conv*/) {
     cpp_unreachable("SSE not available/enabled");
 }
 
 template <typename I, typename K, typename C>
-void conv2_same(const I& /*input*/, const K& /*kernel*/, C&& /*conv*/){
+void conv2_same(const I& /*input*/, const K& /*kernel*/, C&& /*conv*/) {
     cpp_unreachable("SSE not available/enabled");
 }
 
 template <typename I, typename K, typename C>
-void conv2_full(const I& /*input*/, const K& /*kernel*/, C&& /*conv*/){
+void conv2_full(const I& /*input*/, const K& /*kernel*/, C&& /*conv*/) {
     cpp_unreachable("SSE not available/enabled");
 }
 

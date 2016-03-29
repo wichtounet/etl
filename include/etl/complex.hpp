@@ -316,8 +316,8 @@ inline complex<T> conj(const complex<T>& c) {
  * \param c The complex number
  * \return the imaginary part of the given complex number
  */
-template<typename T>
-inline T get_imag(const std::complex<T>& c){
+template <typename T>
+inline T get_imag(const std::complex<T>& c) {
     return c.imag();
 }
 
@@ -326,8 +326,8 @@ inline T get_imag(const std::complex<T>& c){
  * \param c The complex number
  * \return the imaginary part of the given complex number
  */
-template<typename T>
-inline T get_imag(const etl::complex<T>& c){
+template <typename T>
+inline T get_imag(const etl::complex<T>& c) {
     return c.imag;
 }
 
@@ -336,8 +336,8 @@ inline T get_imag(const etl::complex<T>& c){
  * \param c The complex number
  * \return the real part of the given complex number
  */
-template<typename T>
-inline T get_real(const std::complex<T>& c){
+template <typename T>
+inline T get_real(const std::complex<T>& c) {
     return c.real();
 }
 
@@ -346,8 +346,8 @@ inline T get_real(const std::complex<T>& c){
  * \param c The complex number
  * \return the real part of the given complex number
  */
-template<typename T>
-inline T get_real(const etl::complex<T>& c){
+template <typename T>
+inline T get_real(const etl::complex<T>& c) {
     return c.real;
 }
 
@@ -356,8 +356,8 @@ inline T get_real(const etl::complex<T>& c){
  * \param c The complex number
  * \return the conjugate of the given complex number
  */
-template<typename T>
-inline std::complex<T> get_conj(const std::complex<T>& c){
+template <typename T>
+inline std::complex<T> get_conj(const std::complex<T>& c) {
     return std::conj(c);
 }
 
@@ -366,10 +366,9 @@ inline std::complex<T> get_conj(const std::complex<T>& c){
  * \param c The complex number
  * \return the conjugate of the given complex number
  */
-template<typename T>
-inline etl::complex<T> get_conj(const etl::complex<T>& c){
+template <typename T>
+inline etl::complex<T> get_conj(const etl::complex<T>& c) {
     return {c.real, -c.imag};
 }
-
 
 } //end of namespace etl

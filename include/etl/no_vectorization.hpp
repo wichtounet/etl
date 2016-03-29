@@ -30,13 +30,13 @@ struct no_vec {
     /*!
      * \brief The traits for this vectorization implementation
      */
-    template<typename T>
+    template <typename T>
     using traits = no_intrinsic_traits<T>;
 
     /*!
      * \brief The vector type for this vectorization implementation
      */
-    template<typename T>
+    template <typename T>
     using vec_type = typename traits<T>::intrinsic_type;
 
     /*!

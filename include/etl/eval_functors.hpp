@@ -26,7 +26,7 @@ namespace detail {
  * The result is written to lhs with operator[] and read from rhs
  * with read_flat
  */
-template<typename V_T, typename V_Expr>
+template <typename V_T, typename V_Expr>
 struct Assign {
     mutable V_T* lhs;         ///< The left hand side
     V_Expr& rhs;              ///< The right hand side
@@ -65,9 +65,9 @@ struct Assign {
 /*!
  * \brief Common base for vectorized functors
  */
-template<vector_mode_t V, typename L_Expr, typename V_Expr, typename Base>
+template <vector_mode_t V, typename L_Expr, typename V_Expr, typename Base>
 struct vectorized_base {
-    using derived_t = Base;
+    using derived_t   = Base;
     using memory_type = value_t<L_Expr>*;
 
     L_Expr& lhs;              ///< The left hand side
@@ -77,7 +77,7 @@ struct vectorized_base {
     const std::size_t _last;  ///< The last index to assign
     const std::size_t _size;  ///< The size to assign
 
-    template<typename T>
+    template <typename T>
     using traits = typename get_intrinsic_traits<V>::template type<T>;
 
     using IT = traits<value_t<V_Expr>>;
@@ -139,10 +139,10 @@ private:
  * The result is computed in a vectorized fashion with several
  * operations per cycle and written directly to the memory of lhs.
  */
-template<vector_mode_t V, typename L_Expr, typename V_Expr>
+template <vector_mode_t V, typename L_Expr, typename V_Expr>
 struct VectorizedAssign : vectorized_base<V, L_Expr, V_Expr, VectorizedAssign<V, L_Expr, V_Expr>> {
-    using base_t = vectorized_base<V, L_Expr, V_Expr, VectorizedAssign<V, L_Expr, V_Expr>>;
-    using IT = typename base_t::IT;
+    using base_t    = vectorized_base<V, L_Expr, V_Expr, VectorizedAssign<V, L_Expr, V_Expr>>;
+    using IT        = typename base_t::IT;
     using vect_impl = typename base_t::vect_impl;
 
     using base_t::lhs_m;
@@ -151,7 +151,8 @@ struct VectorizedAssign : vectorized_base<V, L_Expr, V_Expr, VectorizedAssign<V,
     using base_t::_size;
     using base_t::_last;
 
-    VectorizedAssign(L_Expr& lhs, V_Expr& rhs, std::size_t first, std::size_t last) : base_t(lhs, rhs, first, last) {
+    VectorizedAssign(L_Expr& lhs, V_Expr& rhs, std::size_t first, std::size_t last)
+            : base_t(lhs, rhs, first, last) {
         //Nothing else
     }
 
@@ -179,7 +180,6 @@ struct VectorizedAssign : vectorized_base<V, L_Expr, V_Expr, VectorizedAssign<V,
         return i;
     }
 
-
     /*!
      * \brief Compute the vectorized iterations of the the loop using aligned store operations
      * \param first The index when to start
@@ -187,15 +187,15 @@ struct VectorizedAssign : vectorized_base<V, L_Expr, V_Expr, VectorizedAssign<V,
     inline std::size_t aligned_main_loop(std::size_t first) const {
         std::size_t i = 0;
 
-        if(unroll_vectorized_loops && _last - first > IT::size * 4){
-            for(i = first; i + IT::size * 4 - 1 < _last; i += IT::size * 4){
+        if (unroll_vectorized_loops && _last - first > IT::size * 4) {
+            for (i = first; i + IT::size * 4 - 1 < _last; i += IT::size * 4) {
                 vect_impl::store(lhs_m + i, rhs_load(i));
                 vect_impl::store(lhs_m + i + 1 * IT::size, rhs_load(i + 1 * IT::size));
                 vect_impl::store(lhs_m + i + 2 * IT::size, rhs_load(i + 2 * IT::size));
                 vect_impl::store(lhs_m + i + 3 * IT::size, rhs_load(i + 3 * IT::size));
             }
         } else {
-            for(i = first; i + IT::size - 1 < _last; i += IT::size){
+            for (i = first; i + IT::size - 1 < _last; i += IT::size) {
                 vect_impl::store(lhs_m + i, rhs_load(i));
             }
         }
@@ -210,15 +210,15 @@ struct VectorizedAssign : vectorized_base<V, L_Expr, V_Expr, VectorizedAssign<V,
     inline std::size_t unaligned_main_loop(std::size_t first) const {
         std::size_t i;
 
-        if(unroll_vectorized_loops && _last - first > IT::size * 4){
-            for(i = first; i + IT::size * 4 - 1 < _last; i += IT::size * 4){
+        if (unroll_vectorized_loops && _last - first > IT::size * 4) {
+            for (i = first; i + IT::size * 4 - 1 < _last; i += IT::size * 4) {
                 vect_impl::storeu(lhs_m + i, rhs_load(i));
                 vect_impl::storeu(lhs_m + i + 1 * IT::size, rhs_load(i + 1 * IT::size));
                 vect_impl::storeu(lhs_m + i + 2 * IT::size, rhs_load(i + 2 * IT::size));
                 vect_impl::storeu(lhs_m + i + 3 * IT::size, rhs_load(i + 3 * IT::size));
             }
         } else {
-            for(i = first; i + IT::size - 1 < _last; i += IT::size){
+            for (i = first; i + IT::size - 1 < _last; i += IT::size) {
                 vect_impl::storeu(lhs_m + i, rhs_load(i));
             }
         }
@@ -241,7 +241,7 @@ struct VectorizedAssign : vectorized_base<V, L_Expr, V_Expr, VectorizedAssign<V,
 /*!
  * \brief Functor for simple compound assign add
  */
-template<typename V_T, typename V_Expr>
+template <typename V_T, typename V_Expr>
 struct AssignAdd {
     mutable V_T* lhs;         ///< The left hand side
     V_Expr& rhs;              ///< The right hand side
@@ -264,7 +264,7 @@ struct AssignAdd {
             iend = _first + (_size & std::size_t(-4));
 
             for (std::size_t i = _first; i < iend; i += 4) {
-                lhs[i]     += rhs[i];
+                lhs[i] += rhs[i];
                 lhs[i + 1] += rhs[i + 1];
                 lhs[i + 2] += rhs[i + 2];
                 lhs[i + 3] += rhs[i + 3];
@@ -280,10 +280,10 @@ struct AssignAdd {
 /*!
  * \brief Functor for vectorized compound assign add
  */
-template<vector_mode_t V, typename L_Expr, typename V_Expr>
+template <vector_mode_t V, typename L_Expr, typename V_Expr>
 struct VectorizedAssignAdd : vectorized_base<V, L_Expr, V_Expr, VectorizedAssignAdd<V, L_Expr, V_Expr>> {
-    using base_t = vectorized_base<V, L_Expr, V_Expr, VectorizedAssignAdd<V, L_Expr, V_Expr>>;
-    using IT = typename base_t::IT;
+    using base_t    = vectorized_base<V, L_Expr, V_Expr, VectorizedAssignAdd<V, L_Expr, V_Expr>>;
+    using IT        = typename base_t::IT;
     using vect_impl = typename base_t::vect_impl;
 
     using base_t::lhs;
@@ -293,7 +293,8 @@ struct VectorizedAssignAdd : vectorized_base<V, L_Expr, V_Expr, VectorizedAssign
     using base_t::_size;
     using base_t::_last;
 
-    VectorizedAssignAdd(L_Expr& lhs, V_Expr& rhs, std::size_t first, std::size_t last) : base_t(lhs, rhs, first, last) {
+    VectorizedAssignAdd(L_Expr& lhs, V_Expr& rhs, std::size_t first, std::size_t last)
+            : base_t(lhs, rhs, first, last) {
         //Nothing else
     }
 
@@ -329,15 +330,15 @@ struct VectorizedAssignAdd : vectorized_base<V, L_Expr, V_Expr, VectorizedAssign
     inline std::size_t aligned_main_loop(std::size_t first) const {
         std::size_t i = 0;
 
-        if(unroll_vectorized_loops && _last - first > IT::size * 4){
-            for(i = first; i + IT::size * 4 - 1 < _last; i += IT::size * 4){
-                vect_impl::store(lhs_m + i,                vect_impl::add(lhs_load(i), rhs_load(i)));
+        if (unroll_vectorized_loops && _last - first > IT::size * 4) {
+            for (i = first; i + IT::size * 4 - 1 < _last; i += IT::size * 4) {
+                vect_impl::store(lhs_m + i, vect_impl::add(lhs_load(i), rhs_load(i)));
                 vect_impl::store(lhs_m + i + 1 * IT::size, vect_impl::add(lhs_load(i + 1 * IT::size), rhs_load(i + 1 * IT::size)));
                 vect_impl::store(lhs_m + i + 2 * IT::size, vect_impl::add(lhs_load(i + 2 * IT::size), rhs_load(i + 2 * IT::size)));
                 vect_impl::store(lhs_m + i + 3 * IT::size, vect_impl::add(lhs_load(i + 3 * IT::size), rhs_load(i + 3 * IT::size)));
             }
         } else {
-            for(i = first; i + IT::size - 1 < _last; i += IT::size){
+            for (i = first; i + IT::size - 1 < _last; i += IT::size) {
                 vect_impl::store(lhs_m + i, vect_impl::add(lhs_load(i), rhs_load(i)));
             }
         }
@@ -352,15 +353,15 @@ struct VectorizedAssignAdd : vectorized_base<V, L_Expr, V_Expr, VectorizedAssign
     inline std::size_t unaligned_main_loop(std::size_t first) const {
         std::size_t i;
 
-        if(unroll_vectorized_loops && _last - first > IT::size * 4){
-            for(i = first; i + IT::size * 4 - 1 < _last; i += IT::size * 4){
-                vect_impl::storeu(lhs_m + i,                vect_impl::add(lhs_load(i), rhs_load(i)));
+        if (unroll_vectorized_loops && _last - first > IT::size * 4) {
+            for (i = first; i + IT::size * 4 - 1 < _last; i += IT::size * 4) {
+                vect_impl::storeu(lhs_m + i, vect_impl::add(lhs_load(i), rhs_load(i)));
                 vect_impl::storeu(lhs_m + i + 1 * IT::size, vect_impl::add(lhs_load(i + 1 * IT::size), rhs_load(i + 1 * IT::size)));
                 vect_impl::storeu(lhs_m + i + 2 * IT::size, vect_impl::add(lhs_load(i + 2 * IT::size), rhs_load(i + 2 * IT::size)));
                 vect_impl::storeu(lhs_m + i + 3 * IT::size, vect_impl::add(lhs_load(i + 3 * IT::size), rhs_load(i + 3 * IT::size)));
             }
         } else {
-            for(i = first; i + IT::size - 1 < _last; i += IT::size){
+            for (i = first; i + IT::size - 1 < _last; i += IT::size) {
                 vect_impl::storeu(lhs_m + i, vect_impl::add(lhs.load(i), rhs_load(i)));
             }
         }
@@ -383,7 +384,7 @@ struct VectorizedAssignAdd : vectorized_base<V, L_Expr, V_Expr, VectorizedAssign
 /*!
  * \brief Functor for compound assign sub
  */
-template<typename V_T, typename V_Expr>
+template <typename V_T, typename V_Expr>
 struct AssignSub {
     mutable V_T* lhs;         ///< The left hand side
     V_Expr& rhs;              ///< The right hand side
@@ -406,7 +407,7 @@ struct AssignSub {
             iend = _first + (_size & std::size_t(-4));
 
             for (std::size_t i = _first; i < iend; i += 4) {
-                lhs[i]     -= rhs[i];
+                lhs[i] -= rhs[i];
                 lhs[i + 1] -= rhs[i + 1];
                 lhs[i + 2] -= rhs[i + 2];
                 lhs[i + 3] -= rhs[i + 3];
@@ -422,10 +423,10 @@ struct AssignSub {
 /*!
  * \brief Functor for vectorized compound assign sub
  */
-template<vector_mode_t V, typename L_Expr, typename V_Expr>
+template <vector_mode_t V, typename L_Expr, typename V_Expr>
 struct VectorizedAssignSub : vectorized_base<V, L_Expr, V_Expr, VectorizedAssignSub<V, L_Expr, V_Expr>> {
-    using base_t = vectorized_base<V, L_Expr, V_Expr, VectorizedAssignSub<V, L_Expr, V_Expr>>;
-    using IT = typename base_t::IT;
+    using base_t    = vectorized_base<V, L_Expr, V_Expr, VectorizedAssignSub<V, L_Expr, V_Expr>>;
+    using IT        = typename base_t::IT;
     using vect_impl = typename base_t::vect_impl;
 
     using base_t::lhs;
@@ -435,7 +436,8 @@ struct VectorizedAssignSub : vectorized_base<V, L_Expr, V_Expr, VectorizedAssign
     using base_t::_size;
     using base_t::_last;
 
-    VectorizedAssignSub(L_Expr& lhs, V_Expr& rhs, std::size_t first, std::size_t last) : base_t(lhs, rhs, first, last) {
+    VectorizedAssignSub(L_Expr& lhs, V_Expr& rhs, std::size_t first, std::size_t last)
+            : base_t(lhs, rhs, first, last) {
         //Nothing else
     }
 
@@ -471,15 +473,15 @@ struct VectorizedAssignSub : vectorized_base<V, L_Expr, V_Expr, VectorizedAssign
     inline std::size_t aligned_main_loop(std::size_t first) const {
         std::size_t i = 0;
 
-        if(unroll_vectorized_loops && _last - first > IT::size * 4){
-            for(i = first; i + IT::size * 4 - 1 < _last; i += IT::size * 4){
-                vect_impl::store(lhs_m + i,                vect_impl::sub(lhs_load(i), rhs_load(i)));
+        if (unroll_vectorized_loops && _last - first > IT::size * 4) {
+            for (i = first; i + IT::size * 4 - 1 < _last; i += IT::size * 4) {
+                vect_impl::store(lhs_m + i, vect_impl::sub(lhs_load(i), rhs_load(i)));
                 vect_impl::store(lhs_m + i + 1 * IT::size, vect_impl::sub(lhs_load(i + 1 * IT::size), rhs_load(i + 1 * IT::size)));
                 vect_impl::store(lhs_m + i + 2 * IT::size, vect_impl::sub(lhs_load(i + 2 * IT::size), rhs_load(i + 2 * IT::size)));
                 vect_impl::store(lhs_m + i + 3 * IT::size, vect_impl::sub(lhs_load(i + 3 * IT::size), rhs_load(i + 3 * IT::size)));
             }
         } else {
-            for(i = first; i + IT::size - 1 < _last; i += IT::size){
+            for (i = first; i + IT::size - 1 < _last; i += IT::size) {
                 vect_impl::store(lhs_m + i, vect_impl::sub(lhs_load(i), rhs_load(i)));
             }
         }
@@ -494,15 +496,15 @@ struct VectorizedAssignSub : vectorized_base<V, L_Expr, V_Expr, VectorizedAssign
     inline std::size_t unaligned_main_loop(std::size_t first) const {
         std::size_t i;
 
-        if(unroll_vectorized_loops && _last - first > IT::size * 4){
-            for(i = first; i + IT::size * 4 - 1 < _last; i += IT::size * 4){
-                vect_impl::storeu(lhs_m + i,                vect_impl::sub(lhs_load(i), rhs_load(i)));
+        if (unroll_vectorized_loops && _last - first > IT::size * 4) {
+            for (i = first; i + IT::size * 4 - 1 < _last; i += IT::size * 4) {
+                vect_impl::storeu(lhs_m + i, vect_impl::sub(lhs_load(i), rhs_load(i)));
                 vect_impl::storeu(lhs_m + i + 1 * IT::size, vect_impl::sub(lhs_load(i + 1 * IT::size), rhs_load(i + 1 * IT::size)));
                 vect_impl::storeu(lhs_m + i + 2 * IT::size, vect_impl::sub(lhs_load(i + 2 * IT::size), rhs_load(i + 2 * IT::size)));
                 vect_impl::storeu(lhs_m + i + 3 * IT::size, vect_impl::sub(lhs_load(i + 3 * IT::size), rhs_load(i + 3 * IT::size)));
             }
         } else {
-            for(i = first; i + IT::size - 1 < _last; i += IT::size){
+            for (i = first; i + IT::size - 1 < _last; i += IT::size) {
                 vect_impl::storeu(lhs_m + i, vect_impl::sub(lhs_load(i), rhs_load(i)));
             }
         }
@@ -525,7 +527,7 @@ struct VectorizedAssignSub : vectorized_base<V, L_Expr, V_Expr, VectorizedAssign
 /*!
  * \brief Functor for compound assign mul
  */
-template<typename V_T, typename V_Expr>
+template <typename V_T, typename V_Expr>
 struct AssignMul {
     mutable V_T* lhs;         ///< The left hand side
     V_Expr& rhs;              ///< The right hand side
@@ -548,7 +550,7 @@ struct AssignMul {
             iend = _first + (_size & std::size_t(-4));
 
             for (std::size_t i = _first; i < iend; i += 4) {
-                lhs[i]     *= rhs[i];
+                lhs[i] *= rhs[i];
                 lhs[i + 1] *= rhs[i + 1];
                 lhs[i + 2] *= rhs[i + 2];
                 lhs[i + 3] *= rhs[i + 3];
@@ -564,10 +566,10 @@ struct AssignMul {
 /*!
  * \brief Functor for vectorized compound assign mul
  */
-template<vector_mode_t V, typename L_Expr, typename V_Expr>
+template <vector_mode_t V, typename L_Expr, typename V_Expr>
 struct VectorizedAssignMul : vectorized_base<V, L_Expr, V_Expr, VectorizedAssignMul<V, L_Expr, V_Expr>> {
-    using base_t = vectorized_base<V, L_Expr, V_Expr, VectorizedAssignMul<V, L_Expr, V_Expr>>;
-    using IT = typename base_t::IT;
+    using base_t    = vectorized_base<V, L_Expr, V_Expr, VectorizedAssignMul<V, L_Expr, V_Expr>>;
+    using IT        = typename base_t::IT;
     using vect_impl = typename base_t::vect_impl;
 
     using base_t::lhs;
@@ -577,7 +579,8 @@ struct VectorizedAssignMul : vectorized_base<V, L_Expr, V_Expr, VectorizedAssign
     using base_t::_size;
     using base_t::_last;
 
-    VectorizedAssignMul(L_Expr& lhs, V_Expr& rhs, std::size_t first, std::size_t last) : base_t(lhs, rhs, first, last) {
+    VectorizedAssignMul(L_Expr& lhs, V_Expr& rhs, std::size_t first, std::size_t last)
+            : base_t(lhs, rhs, first, last) {
         //Nothing else
     }
 
@@ -613,15 +616,15 @@ struct VectorizedAssignMul : vectorized_base<V, L_Expr, V_Expr, VectorizedAssign
     inline std::size_t aligned_main_loop(std::size_t first) const {
         std::size_t i = 0;
 
-        if(unroll_vectorized_loops && _last - first > IT::size * 4){
-            for(i = first; i + IT::size * 4 - 1 < _last; i += IT::size * 4){
-                vect_impl::store(lhs_m + i,                vect_impl::mul(lhs_load(i), rhs_load(i)));
+        if (unroll_vectorized_loops && _last - first > IT::size * 4) {
+            for (i = first; i + IT::size * 4 - 1 < _last; i += IT::size * 4) {
+                vect_impl::store(lhs_m + i, vect_impl::mul(lhs_load(i), rhs_load(i)));
                 vect_impl::store(lhs_m + i + 1 * IT::size, vect_impl::mul(lhs_load(i + 1 * IT::size), rhs_load(i + 1 * IT::size)));
                 vect_impl::store(lhs_m + i + 2 * IT::size, vect_impl::mul(lhs_load(i + 2 * IT::size), rhs_load(i + 2 * IT::size)));
                 vect_impl::store(lhs_m + i + 3 * IT::size, vect_impl::mul(lhs_load(i + 3 * IT::size), rhs_load(i + 3 * IT::size)));
             }
         } else {
-            for(i = first; i + IT::size - 1 < _last; i += IT::size){
+            for (i = first; i + IT::size - 1 < _last; i += IT::size) {
                 vect_impl::store(lhs_m + i, vect_impl::mul(lhs_load(i), rhs_load(i)));
             }
         }
@@ -636,15 +639,15 @@ struct VectorizedAssignMul : vectorized_base<V, L_Expr, V_Expr, VectorizedAssign
     inline std::size_t unaligned_main_loop(std::size_t first) const {
         std::size_t i;
 
-        if(unroll_vectorized_loops && _last - first > IT::size * 4){
-            for(i = first; i + IT::size * 4 - 1 < _last; i += IT::size * 4){
-                vect_impl::storeu(lhs_m + i,                vect_impl::mul(lhs_load(i), rhs_load(i)));
+        if (unroll_vectorized_loops && _last - first > IT::size * 4) {
+            for (i = first; i + IT::size * 4 - 1 < _last; i += IT::size * 4) {
+                vect_impl::storeu(lhs_m + i, vect_impl::mul(lhs_load(i), rhs_load(i)));
                 vect_impl::storeu(lhs_m + i + 1 * IT::size, vect_impl::mul(lhs_load(i + 1 * IT::size), rhs_load(i + 1 * IT::size)));
                 vect_impl::storeu(lhs_m + i + 2 * IT::size, vect_impl::mul(lhs_load(i + 2 * IT::size), rhs_load(i + 2 * IT::size)));
                 vect_impl::storeu(lhs_m + i + 3 * IT::size, vect_impl::mul(lhs_load(i + 3 * IT::size), rhs_load(i + 3 * IT::size)));
             }
         } else {
-            for(i = first; i + IT::size - 1 < _last; i += IT::size){
+            for (i = first; i + IT::size - 1 < _last; i += IT::size) {
                 vect_impl::storeu(lhs_m + i, vect_impl::mul(lhs_load(i), rhs_load(i)));
             }
         }
@@ -667,7 +670,7 @@ struct VectorizedAssignMul : vectorized_base<V, L_Expr, V_Expr, VectorizedAssign
 /*!
  * \brief Functor for compound assign div
  */
-template<typename V_T, typename V_Expr>
+template <typename V_T, typename V_Expr>
 struct AssignDiv {
     mutable V_T* lhs;         ///< The left hand side
     V_Expr& rhs;              ///< The right hand side
@@ -690,7 +693,7 @@ struct AssignDiv {
             iend = _first + (_size & std::size_t(-4));
 
             for (std::size_t i = _first; i < iend; i += 4) {
-                lhs[i]     /= rhs[i];
+                lhs[i] /= rhs[i];
                 lhs[i + 1] /= rhs[i + 1];
                 lhs[i + 2] /= rhs[i + 2];
                 lhs[i + 3] /= rhs[i + 3];
@@ -706,10 +709,10 @@ struct AssignDiv {
 /*!
  * \brief Functor for vectorized compound assign div
  */
-template<vector_mode_t V, typename L_Expr, typename V_Expr>
+template <vector_mode_t V, typename L_Expr, typename V_Expr>
 struct VectorizedAssignDiv : vectorized_base<V, L_Expr, V_Expr, VectorizedAssignDiv<V, L_Expr, V_Expr>> {
-    using base_t = vectorized_base<V, L_Expr, V_Expr, VectorizedAssignDiv<V, L_Expr, V_Expr>>;
-    using IT = typename base_t::IT;
+    using base_t    = vectorized_base<V, L_Expr, V_Expr, VectorizedAssignDiv<V, L_Expr, V_Expr>>;
+    using IT        = typename base_t::IT;
     using vect_impl = typename base_t::vect_impl;
 
     using base_t::lhs;
@@ -719,7 +722,8 @@ struct VectorizedAssignDiv : vectorized_base<V, L_Expr, V_Expr, VectorizedAssign
     using base_t::_size;
     using base_t::_last;
 
-    VectorizedAssignDiv(L_Expr& lhs, V_Expr& rhs, std::size_t first, std::size_t last) : base_t(lhs, rhs, first, last) {
+    VectorizedAssignDiv(L_Expr& lhs, V_Expr& rhs, std::size_t first, std::size_t last)
+            : base_t(lhs, rhs, first, last) {
         //Nothing else
     }
 
@@ -755,15 +759,15 @@ struct VectorizedAssignDiv : vectorized_base<V, L_Expr, V_Expr, VectorizedAssign
     inline std::size_t aligned_main_loop(std::size_t first) const {
         std::size_t i = 0;
 
-        if(unroll_vectorized_loops && _last - first > IT::size * 4){
-            for(i = first; i + IT::size * 4 - 1 < _last; i += IT::size * 4){
-                vect_impl::store(lhs_m + i,                vect_impl::div(lhs_load(i), rhs_load(i)));
+        if (unroll_vectorized_loops && _last - first > IT::size * 4) {
+            for (i = first; i + IT::size * 4 - 1 < _last; i += IT::size * 4) {
+                vect_impl::store(lhs_m + i, vect_impl::div(lhs_load(i), rhs_load(i)));
                 vect_impl::store(lhs_m + i + 1 * IT::size, vect_impl::div(lhs_load(i + 1 * IT::size), rhs_load(i + 1 * IT::size)));
                 vect_impl::store(lhs_m + i + 2 * IT::size, vect_impl::div(lhs_load(i + 2 * IT::size), rhs_load(i + 2 * IT::size)));
                 vect_impl::store(lhs_m + i + 3 * IT::size, vect_impl::div(lhs_load(i + 3 * IT::size), rhs_load(i + 3 * IT::size)));
             }
         } else {
-            for(i = first; i + IT::size - 1 < _last; i += IT::size){
+            for (i = first; i + IT::size - 1 < _last; i += IT::size) {
                 vect_impl::store(lhs_m + i, vect_impl::div(lhs_load(i), rhs_load(i)));
             }
         }
@@ -778,15 +782,15 @@ struct VectorizedAssignDiv : vectorized_base<V, L_Expr, V_Expr, VectorizedAssign
     inline std::size_t unaligned_main_loop(std::size_t first) const {
         std::size_t i;
 
-        if(unroll_vectorized_loops && _last - first > IT::size * 4){
-            for(i = first; i + IT::size * 4 - 1 < _last; i += IT::size * 4){
-                vect_impl::storeu(lhs_m + i,                vect_impl::div(lhs_load(i), rhs_load(i)));
+        if (unroll_vectorized_loops && _last - first > IT::size * 4) {
+            for (i = first; i + IT::size * 4 - 1 < _last; i += IT::size * 4) {
+                vect_impl::storeu(lhs_m + i, vect_impl::div(lhs_load(i), rhs_load(i)));
                 vect_impl::storeu(lhs_m + i + 1 * IT::size, vect_impl::div(lhs_load(i + 1 * IT::size), rhs_load(i + 1 * IT::size)));
                 vect_impl::storeu(lhs_m + i + 2 * IT::size, vect_impl::div(lhs_load(i + 2 * IT::size), rhs_load(i + 2 * IT::size)));
                 vect_impl::storeu(lhs_m + i + 3 * IT::size, vect_impl::div(lhs_load(i + 3 * IT::size), rhs_load(i + 3 * IT::size)));
             }
         } else {
-            for(i = first; i + IT::size - 1 < _last; i += IT::size){
+            for (i = first; i + IT::size - 1 < _last; i += IT::size) {
                 vect_impl::storeu(lhs_m + i, vect_impl::div(lhs_load(i), rhs_load(i)));
             }
         }

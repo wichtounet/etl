@@ -24,7 +24,7 @@ struct fast_result_type_builder;
 template <typename E, std::size_t... I, typename... Subs>
 struct fast_result_type_builder<E, std::index_sequence<I...>, Subs...> {
     using value_type = typename E::value_type;
-    using type = fast_matrix_impl<value_type, std::vector<value_type>, E::template order<Subs...>(), E::template dim<Subs..., I>()...>;
+    using type       = fast_matrix_impl<value_type, std::vector<value_type>, E::template order<Subs...>(), E::template dim<Subs..., I>()...>;
 };
 
 template <typename E, bool Fast, typename... Subs>
@@ -45,7 +45,7 @@ using expr_result_t = typename expr_result<E, all_fast<Subs...>::value, Subs...>
 
 } // end of namespace detail
 
-template<typename D>
+template <typename D>
 struct impl_expr {
     using derived_t = D;
 
@@ -58,7 +58,7 @@ struct impl_expr {
      * \return a pointer to the temporary
      */
     template <typename... Subs, cpp_enable_if(all_fast<Subs...>::value)>
-    static result_type<Subs...>* allocate(__attribute__ ((unused)) Subs&&... args) {
+    static result_type<Subs...>* allocate(__attribute__((unused)) Subs&&... args) {
         return new result_type<Subs...>();
     }
 

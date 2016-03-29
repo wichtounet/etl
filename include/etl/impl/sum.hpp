@@ -44,7 +44,7 @@ cpp14_constexpr etl::sum_impl select_default_sum_impl() {
     //Note: since the constexpr values will be known at compile time, the
     //conditions will be a lot simplified
 
-    if(decay_traits<E>::template vectorizable<vector_mode>::value){
+    if (decay_traits<E>::template vectorizable<vector_mode>::value) {
         constexpr const bool sse = vectorize_impl && vector_mode == vector_mode_t::SSE3;
         constexpr const bool avx = vectorize_impl && vector_mode == vector_mode_t::AVX;
 
@@ -65,13 +65,13 @@ cpp14_constexpr etl::sum_impl select_default_sum_impl() {
  */
 template <typename E>
 etl::sum_impl select_sum_impl() {
-    if(local_context().sum_selector.forced){
+    if (local_context().sum_selector.forced) {
         auto forced = local_context().sum_selector.impl;
 
         switch (forced) {
             //AVX cannot always be used
             case sum_impl::AVX:
-                if(!avx_enabled || !decay_traits<E>::template vectorizable<vector_mode_t::AVX>::value){
+                if (!avx_enabled || !decay_traits<E>::template vectorizable<vector_mode_t::AVX>::value) {
                     std::cerr << "Forced selection to AVX sum implementation, but not possible for this expression" << std::endl;
                     return select_default_sum_impl<E>();
                 }
@@ -80,7 +80,7 @@ etl::sum_impl select_sum_impl() {
 
             //SSE cannot always be used
             case sum_impl::SSE:
-                if(!sse3_enabled || !decay_traits<E>::template vectorizable<vector_mode_t::SSE3>::value){
+                if (!sse3_enabled || !decay_traits<E>::template vectorizable<vector_mode_t::SSE3>::value) {
                     std::cerr << "Forced selection to SSE sum implementation, but not possible for this expression" << std::endl;
                     return select_default_sum_impl<E>();
                 }
@@ -103,7 +103,7 @@ etl::sum_impl select_sum_impl() {
  */
 template <typename E>
 inline bool select_parallel(const E& e) {
-    if((parallel && !local_context().serial) || local_context().parallel){
+    if ((parallel && !local_context().serial) || local_context().parallel) {
         return size(e) >= sum_parallel_threshold;
     } else {
         return false;
@@ -125,7 +125,7 @@ struct sum_impl {
 
         value_t<E> acc(0);
 
-        auto acc_functor = [&acc](value_t<E> value){
+        auto acc_functor = [&acc](value_t<E> value) {
             acc += value;
         };
 

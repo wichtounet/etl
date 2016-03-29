@@ -110,21 +110,20 @@ protected:
 #endif
     }
 
-
     /*!
      * \brief Allocate aligned memory for n elements of the given type
      * \tparam M the type of objects to allocate
      * \param n The number of elements to allocate
      * \return The allocated memory
      */
-    template<typename M = value_type>
+    template <typename M = value_type>
     static M* allocate(std::size_t n) {
         M* memory = aligned_allocator<void, alignment>::template allocate<M>(n);
         cpp_assert(memory, "Impossible to allocate memory for dyn_matrix");
         cpp_assert(reinterpret_cast<uintptr_t>(memory) % alignment == 0, "Failed to align memory of matrix");
 
         //In case of non-trivial type, we need to call the constructors
-        if(!std::is_trivial<M>::value){
+        if (!std::is_trivial<M>::value) {
             new (memory) M[n]();
         }
 
@@ -136,11 +135,11 @@ protected:
      * \param ptr Pointer to the memory to release
      * \param n The number of elements to release
      */
-    template<typename M>
+    template <typename M>
     static void release(M* ptr, std::size_t n) {
         //In case of non-trivial type, we need to call the destructors
-        if(!std::is_trivial<M>::value){
-            for(std::size_t i = 0; i < n; ++i){
+        if (!std::is_trivial<M>::value) {
+            for (std::size_t i = 0; i < n; ++i) {
                 ptr[i].~M();
             }
         }
@@ -183,7 +182,8 @@ protected:
      * \param rhs The dyn_base to move from
      */
     template <typename E>
-    dyn_base(E&& rhs) : _size(etl::size(rhs)) {
+    dyn_base(E&& rhs)
+            : _size(etl::size(rhs)) {
         for (std::size_t d = 0; d < etl::dimensions(rhs); ++d) {
             _dimensions[d] = etl::dim(rhs, d);
         }

@@ -122,12 +122,12 @@ template <typename T, std::size_t C1, std::size_t C2>
 using upsample_2d_expr = basic_upsample_2d_expr<T, C1, C2, impl::upsample_2d>;
 
 template <typename T, std::size_t C1, std::size_t C2, std::size_t C3, typename Impl>
-struct basic_upsample_3d_expr  : impl_expr<basic_upsample_3d_expr<T, C1, C2, C3, Impl>>{
+struct basic_upsample_3d_expr : impl_expr<basic_upsample_3d_expr<T, C1, C2, C3, Impl>> {
     static_assert(C1 > 0, "C1 must be greater than 0");
     static_assert(C2 > 0, "C2 must be greater than 0");
     static_assert(C3 > 0, "C3 must be greater than 0");
 
-    using this_type = basic_upsample_3d_expr<T, C1, C2, C3, Impl>;
+    using this_type  = basic_upsample_3d_expr<T, C1, C2, C3, Impl>;
     using value_type = T;
 
     /*!

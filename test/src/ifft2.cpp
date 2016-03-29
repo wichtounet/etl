@@ -90,7 +90,7 @@ IFFT2_TEST_CASE("ifft_2d_c/4", "[fast][ifft]") {
 
 //ifft_2d (real)
 
-IFFT2_REAL_TEST_CASE("ifft_2d_c_real/1", "[fast][ifft]"){
+IFFT2_REAL_TEST_CASE("ifft_2d_c_real/1", "[fast][ifft]") {
     etl::fast_matrix<std::complex<T>, 3, 2> a;
     etl::fast_matrix<T, 3, 2> c;
 
@@ -111,7 +111,7 @@ IFFT2_REAL_TEST_CASE("ifft_2d_c_real/1", "[fast][ifft]"){
     REQUIRE(c(2, 1) == Approx(T(0.9021)));
 }
 
-IFFT2_REAL_TEST_CASE("ifft_2d_real_c/2", "[fast][ifft]"){
+IFFT2_REAL_TEST_CASE("ifft_2d_real_c/2", "[fast][ifft]") {
     etl::fast_matrix<std::complex<T>, 2, 2> a;
     etl::fast_matrix<T, 2, 2> c;
 

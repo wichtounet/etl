@@ -7,13 +7,12 @@
 
 #include "test_light.hpp"
 
-
 // stream
 
 namespace {
 
-template<typename T>
-std::string to_stream_string(const T& value){
+template <typename T>
+std::string to_stream_string(const T& value) {
     std::stringstream ss;
     ss << value;
     return ss.str();
@@ -21,7 +20,7 @@ std::string to_stream_string(const T& value){
 
 } //end of anonymous namespace
 
-TEST_CASE("print/expr/1", "[print][stream]"){
+TEST_CASE("print/expr/1", "[print][stream]") {
     etl::fast_vector<double, 3> a;
     etl::dyn_vector<double> b(3);
     etl::fast_matrix<double, 3, 4> c;
@@ -33,7 +32,7 @@ TEST_CASE("print/expr/1", "[print][stream]"){
     REQUIRE(to_stream_string(d) == "M[3,4]");
 }
 
-TEST_CASE("print/expr/2", "[print][stream]"){
+TEST_CASE("print/expr/2", "[print][stream]") {
     etl::fast_matrix<double, 3, 4> a;
 
     REQUIRE(to_stream_string(a + a) == "(M[3,4] + M[3,4])");

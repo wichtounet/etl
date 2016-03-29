@@ -85,13 +85,13 @@ inline etl::conv_impl select_default_conv_impl() {
  */
 template <typename I, typename K, typename C>
 inline etl::conv_impl select_conv_impl() {
-    if(local_context().conv_selector.forced){
+    if (local_context().conv_selector.forced) {
         auto forced = local_context().conv_selector.impl;
 
         switch (forced) {
             //AVX cannot always be used
             case conv_impl::AVX:
-                if(!avx_enabled){
+                if (!avx_enabled) {
                     std::cerr << "Forced selection to AVX sum implementation, but not possible for this expression" << std::endl;
                     return select_default_conv_impl<I, K, C>();
                 }
@@ -100,7 +100,7 @@ inline etl::conv_impl select_conv_impl() {
 
             //SSE cannot always be used
             case conv_impl::SSE:
-                if(!sse3_enabled){
+                if (!sse3_enabled) {
                     std::cerr << "Forced selection to SSE sum implementation, but not possible for this expression" << std::endl;
                     return select_default_conv_impl<I, K, C>();
                 }
@@ -125,7 +125,7 @@ inline etl::conv_impl select_conv_impl() {
  */
 template <typename I, typename K, typename C>
 inline bool select_parallel(const I& /*input*/, const K& kernel, C&& conv) {
-    if((parallel && !local_context().serial) || local_context().parallel){
+    if ((parallel && !local_context().serial) || local_context().parallel) {
         return size(conv) >= conv1_parallel_threshold_conv && size(kernel) >= conv1_parallel_threshold_kernel;
     } else {
         return false;
@@ -144,19 +144,19 @@ struct conv1_full_impl {
      */
     template <typename I, typename K, typename C>
     static void apply(const I& input, const K& kernel, C&& conv) {
-        etl::conv_impl impl = select_conv_impl<I, K, C>();
+        etl::conv_impl impl    = select_conv_impl<I, K, C>();
         bool parallel_dispatch = select_parallel(input, kernel, conv);
 
         if (impl == etl::conv_impl::AVX) {
-            dispatch_1d(parallel_dispatch, [&](std::size_t first, std::size_t last){
+            dispatch_1d(parallel_dispatch, [&](std::size_t first, std::size_t last) {
                 impl::avx::conv1_full(input, kernel, conv, first, last);
             }, 0, size(conv));
         } else if (impl == etl::conv_impl::SSE) {
-            dispatch_1d(parallel_dispatch, [&](std::size_t first, std::size_t last){
+            dispatch_1d(parallel_dispatch, [&](std::size_t first, std::size_t last) {
                 impl::sse::conv1_full(input, kernel, conv, first, last);
             }, 0, size(conv));
         } else if (impl == etl::conv_impl::STD) {
-            dispatch_1d(parallel_dispatch, [&](std::size_t first, std::size_t last){
+            dispatch_1d(parallel_dispatch, [&](std::size_t first, std::size_t last) {
                 impl::standard::conv1_full(input, kernel, conv, first, last);
             }, 0, size(conv));
         }
@@ -175,19 +175,19 @@ struct conv1_same_impl {
      */
     template <typename I, typename K, typename C>
     static void apply(const I& input, const K& kernel, C&& conv) {
-        etl::conv_impl impl = select_conv_impl<I, K, C>();
+        etl::conv_impl impl    = select_conv_impl<I, K, C>();
         bool parallel_dispatch = select_parallel(input, kernel, conv);
 
         if (impl == etl::conv_impl::AVX) {
-            dispatch_1d(parallel_dispatch, [&](std::size_t first, std::size_t last){
+            dispatch_1d(parallel_dispatch, [&](std::size_t first, std::size_t last) {
                 impl::avx::conv1_same(input, kernel, conv, first, last);
             }, 0, size(conv));
         } else if (impl == etl::conv_impl::SSE) {
-            dispatch_1d(parallel_dispatch, [&](std::size_t first, std::size_t last){
+            dispatch_1d(parallel_dispatch, [&](std::size_t first, std::size_t last) {
                 impl::sse::conv1_same(input, kernel, conv, first, last);
             }, 0, size(conv));
         } else if (impl == etl::conv_impl::STD) {
-            dispatch_1d(parallel_dispatch, [&](std::size_t first, std::size_t last){
+            dispatch_1d(parallel_dispatch, [&](std::size_t first, std::size_t last) {
                 impl::standard::conv1_same(input, kernel, conv, first, last);
             }, 0, size(conv));
         }
@@ -206,19 +206,19 @@ struct conv1_valid_impl {
      */
     template <typename I, typename K, typename C>
     static void apply(const I& input, const K& kernel, C&& conv) {
-        etl::conv_impl impl = select_conv_impl<I, K, C>();
+        etl::conv_impl impl    = select_conv_impl<I, K, C>();
         bool parallel_dispatch = select_parallel(input, kernel, conv);
 
         if (impl == etl::conv_impl::AVX) {
-            dispatch_1d(parallel_dispatch, [&](std::size_t first, std::size_t last){
+            dispatch_1d(parallel_dispatch, [&](std::size_t first, std::size_t last) {
                 impl::avx::conv1_valid(input, kernel, conv, first, last);
             }, 0, size(conv));
         } else if (impl == etl::conv_impl::SSE) {
-            dispatch_1d(parallel_dispatch, [&](std::size_t first, std::size_t last){
+            dispatch_1d(parallel_dispatch, [&](std::size_t first, std::size_t last) {
                 impl::sse::conv1_valid(input, kernel, conv, first, last);
             }, 0, size(conv));
         } else if (impl == etl::conv_impl::STD) {
-            dispatch_1d(parallel_dispatch, [&](std::size_t first, std::size_t last){
+            dispatch_1d(parallel_dispatch, [&](std::size_t first, std::size_t last) {
                 impl::standard::conv1_valid(input, kernel, conv, first, last);
             }, 0, size(conv));
         }

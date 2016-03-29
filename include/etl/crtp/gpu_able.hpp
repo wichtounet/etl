@@ -36,7 +36,7 @@ namespace etl {
 template <typename T, typename D>
 struct gpu_able {
     using value_type = T;
-    using derived_t = D;
+    using derived_t  = D;
 
     mutable impl::cuda::cuda_memory<value_type> gpu_memory_handler;
 
@@ -68,7 +68,7 @@ struct gpu_able {
      * \brief Evict the expression from GPU.
      */
     void gpu_evict() const noexcept {
-        if(is_gpu_allocated()){
+        if (is_gpu_allocated()) {
             gpu_memory_handler.reset();
         }
     }
@@ -92,7 +92,7 @@ struct gpu_able {
      * \brief Allocate memory on the GPU for the expression, only if not already allocated
      */
     void gpu_allocate_if_necessary() const {
-        if(!is_gpu_allocated()){
+        if (!is_gpu_allocated()) {
             gpu_allocate();
         }
     }
@@ -108,7 +108,7 @@ struct gpu_able {
      * \brief Allocate memory on the GPU for the expression and copy the values into the GPU, only if not already allocated.
      */
     void gpu_allocate_copy_if_necessary() const {
-        if(!is_gpu_allocated()){
+        if (!is_gpu_allocated()) {
             gpu_allocate_copy();
         }
     }
@@ -117,7 +117,7 @@ struct gpu_able {
      * \brief Reallocate the GPU memory.
      * \param memory The new GPU memory (will be moved)
      */
-    void gpu_reallocate(impl::cuda::cuda_memory<T>&& memory){
+    void gpu_reallocate(impl::cuda::cuda_memory<T>&& memory) {
         gpu_memory_handler = std::move(memory);
     }
 
@@ -134,7 +134,7 @@ struct gpu_able {
      * necessary.
      */
     void gpu_copy_from_if_necessary() const {
-        if(is_gpu_allocated()){
+        if (is_gpu_allocated()) {
             gpu_copy_from();
         }
     }
@@ -209,7 +209,7 @@ struct gpu_able {
      * \brief Reallocate the GPU memory.
      * \param memory The new GPU memory (will be moved)
      */
-    void gpu_reallocate(impl::cuda::cuda_memory<T>&& memory){
+    void gpu_reallocate(impl::cuda::cuda_memory<T>&& memory) {
         cpp_unused(memory);
     }
 

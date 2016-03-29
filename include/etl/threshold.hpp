@@ -28,7 +28,7 @@ constexpr const std::size_t conv1_parallel_threshold_kernel = 16;  ///< The mimu
 constexpr const std::size_t fft1_many_threshold_transforms = 16;  ///< The mimum number of transforms to parallelize them
 constexpr const std::size_t fft1_many_threshold_n          = 768; ///< The mimum size of the transforms to parallelize them
 
-constexpr const std::size_t fft2_many_threshold_transforms = 16;  ///< The mimum number of transforms to parallelize them
+constexpr const std::size_t fft2_many_threshold_transforms = 16;   ///< The mimum number of transforms to parallelize them
 constexpr const std::size_t fft2_many_threshold_n          = 1024; ///< The mimum size of the transforms to parallelize them
 
 } //end of namespace etl

@@ -18,7 +18,7 @@ namespace etl {
  */
 template <typename T>
 struct outer_product_expr : impl_expr<outer_product_expr<T>> {
-    using value_type = T; ///< The value type
+    using value_type = T;                     ///< The value type
     using this_type  = outer_product_expr<T>; ///< The type of this expression
 
     /*!

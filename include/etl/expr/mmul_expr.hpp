@@ -258,7 +258,6 @@ struct basic_vm_mul_expr : impl_expr<basic_vm_mul_expr<T, Impl>> {
         return "vm_mul";
     }
 
-
     /*!
      * \brief Returns the size of the expression given a and b
      * \param a The left hand side

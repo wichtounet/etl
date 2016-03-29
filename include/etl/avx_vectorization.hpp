@@ -85,10 +85,10 @@ struct avx_intrinsic_traits<std::complex<double>> {
 };
 
 struct avx_vec {
-    template<typename T>
+    template <typename T>
     using traits = avx_intrinsic_traits<T>;
 
-    template<typename T>
+    template <typename T>
     using vec_type = typename traits<T>::intrinsic_type;
 
 #ifdef VEC_DEBUG
@@ -320,12 +320,12 @@ ETL_OUT_VEC_256 avx_vec::mul<true>(__m256 lhs, __m256 rhs) {
     //ymm4 = ymm2 * ymm3
     __m256 ymm4 = _mm256_mul_ps(ymm2, ymm3);
 
-    //result = [(lhs * ymm1) -+ ymm4];
+//result = [(lhs * ymm1) -+ ymm4];
 
 #ifdef __FMA__
-    return  _mm256_fmaddsub_ps(lhs, ymm1, ymm4);
-#elif defined (__FMA4__)
-    return  _mm256_maddsub_ps(lhs, ymm1, ymm4);
+    return _mm256_fmaddsub_ps(lhs, ymm1, ymm4);
+#elif defined(__FMA4__)
+    return _mm256_maddsub_ps(lhs, ymm1, ymm4);
 #else
     __m256 tmp = _mm256_mul_ps(lhs, ymm1);
     return _mm256_addsub_ps(tmp, ymm4);
@@ -349,12 +349,12 @@ ETL_OUT_VEC_256D avx_vec::mul<true>(__m256d lhs, __m256d rhs) {
     //ymm4 = ymm2 * ymm3
     __m256d ymm4 = _mm256_mul_pd(ymm2, ymm3);
 
-    //result = [(lhs * ymm1) -+ ymm4];
+//result = [(lhs * ymm1) -+ ymm4];
 
 #ifdef __FMA__
-    return  _mm256_fmaddsub_pd(lhs, ymm1, ymm4);
-#elif defined (__FMA4__)
-    return  _mm256_maddsub_pd(lhs, ymm1, ymm4);
+    return _mm256_fmaddsub_pd(lhs, ymm1, ymm4);
+#elif defined(__FMA4__)
+    return _mm256_maddsub_pd(lhs, ymm1, ymm4);
 #else
     __m256d tmp = _mm256_mul_pd(lhs, ymm1);
     return _mm256_addsub_pd(tmp, ymm4);
@@ -378,26 +378,26 @@ ETL_OUT_VEC_256 avx_vec::div<true>(__m256 lhs, __m256 rhs) {
     //ymm4 = [x.img * y.img, x.real * y.img]
     __m256 ymm4 = _mm256_mul_ps(ymm2, ymm1);
 
-    //ymm5 = subadd((lhs * ymm0), ymm4)
+//ymm5 = subadd((lhs * ymm0), ymm4)
 
 #ifdef __FMA__
     __m256 ymm5 = _mm256_fmsubadd_ps(lhs, ymm0, ymm4);
 #else
-    __m256 t1 = _mm256_mul_ps(lhs, ymm0);
-    __m256 t2 = _mm256_sub_ps(_mm256_set1_ps(0.0), ymm4);
-    __m256 ymm5 = _mm256_addsub_ps(t1, t2);
+    __m256 t1    = _mm256_mul_ps(lhs, ymm0);
+    __m256 t2    = _mm256_sub_ps(_mm256_set1_ps(0.0), ymm4);
+    __m256 ymm5  = _mm256_addsub_ps(t1, t2);
 #endif
 
     //ymm3 = [y.imag^2, y.imag^2]
     __m256 ymm3 = _mm256_mul_ps(ymm1, ymm1);
 
-    //ymm0 = (ymm0 * ymm0 + ymm3)
+//ymm0 = (ymm0 * ymm0 + ymm3)
 
 #ifdef __FMA__
     ymm0 = _mm256_fmadd_ps(ymm0, ymm0, ymm3);
 #else
-    __m256 t3 = _mm256_mul_ps(ymm0, ymm0);
-    ymm0 = _mm256_add_ps(t3, ymm3);
+    __m256 t3    = _mm256_mul_ps(ymm0, ymm0);
+    ymm0         = _mm256_add_ps(t3, ymm3);
 #endif
 
     //result = ymm5 / ymm0
@@ -421,26 +421,26 @@ ETL_OUT_VEC_256D avx_vec::div<true>(__m256d lhs, __m256d rhs) {
     //ymm4 = [x.img * y.img, x.real * y.img]
     __m256d ymm4 = _mm256_mul_pd(ymm2, ymm1);
 
-    //ymm5 = subadd((lhs * ymm0), ymm4)
+//ymm5 = subadd((lhs * ymm0), ymm4)
 
 #ifdef __FMA__
     __m256d ymm5 = _mm256_fmsubadd_pd(lhs, ymm0, ymm4);
 #else
-    __m256d t1 = _mm256_mul_pd(lhs, ymm0);
-    __m256d t2 = _mm256_sub_pd(_mm256_set1_pd(0.0), ymm4);
+    __m256d t1   = _mm256_mul_pd(lhs, ymm0);
+    __m256d t2   = _mm256_sub_pd(_mm256_set1_pd(0.0), ymm4);
     __m256d ymm5 = _mm256_addsub_pd(t1, t2);
 #endif
 
     //ymm3 = [y.imag^2, y.imag^2]
     __m256d ymm3 = _mm256_mul_pd(ymm1, ymm1);
 
-    //ymm0 = (ymm0 * ymm0 + ymm3)
+//ymm0 = (ymm0 * ymm0 + ymm3)
 
 #ifdef __FMA__
     ymm0 = _mm256_fmadd_pd(ymm0, ymm0, ymm3);
 #else
-    __m256d t3 = _mm256_mul_pd(ymm0, ymm0);
-    ymm0 = _mm256_add_pd(t3, ymm3);
+    __m256d t3   = _mm256_mul_pd(ymm0, ymm0);
+    ymm0         = _mm256_add_pd(t3, ymm3);
 #endif
 
     //result = ymm5 / ymm0

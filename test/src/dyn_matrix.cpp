@@ -811,7 +811,7 @@ TEST_CASE("dyn_matrix/default_constructor_1", "") {
 TEST_CASE("dyn_matrix/resize/1", "[dyn][resize]") {
     etl::dyn_matrix<float> a(10, 2);
 
-    for(std::size_t i = 0; i < 20; ++i){
+    for (std::size_t i = 0; i < 20; ++i) {
         a[i] = i * 5.0;
     }
 
@@ -825,7 +825,7 @@ TEST_CASE("dyn_matrix/resize/1", "[dyn][resize]") {
     REQUIRE(etl::dim<0>(a) == 4);
     REQUIRE(etl::dim<1>(a) == 4);
 
-    for(std::size_t i = 0; i < 16; ++i){
+    for (std::size_t i = 0; i < 16; ++i) {
         REQUIRE(a[i] == i * 5.0);
     }
 }
@@ -835,7 +835,7 @@ TEST_CASE("dyn_matrix/resize/2", "[dyn][resize]") {
 
     a.resize(10, 2);
 
-    for(std::size_t i = 0; i < 20; ++i){
+    for (std::size_t i = 0; i < 20; ++i) {
         a[i] = i * 5.0;
     }
 
@@ -847,7 +847,7 @@ TEST_CASE("dyn_matrix/resize/2", "[dyn][resize]") {
 TEST_CASE("dyn_matrix/resize/3", "[dyn][resize]") {
     etl::dyn_matrix<float> a(10, 2);
 
-    for(std::size_t i = 0; i < 20; ++i){
+    for (std::size_t i = 0; i < 20; ++i) {
         a[i] = i * 5.0;
     }
 
@@ -861,7 +861,7 @@ TEST_CASE("dyn_matrix/resize/3", "[dyn][resize]") {
     REQUIRE(etl::dim<0>(a) == 5);
     REQUIRE(etl::dim<1>(a) == 5);
 
-    for(std::size_t i = 0; i < 20; ++i){
+    for (std::size_t i = 0; i < 20; ++i) {
         REQUIRE(a[i] == i * 5.0);
     }
 }
@@ -869,7 +869,7 @@ TEST_CASE("dyn_matrix/resize/3", "[dyn][resize]") {
 TEST_CASE("dyn_matrix/resize_array/1", "[dyn][resize]") {
     etl::dyn_matrix<float> a(10, 2);
 
-    for(std::size_t i = 0; i < 20; ++i){
+    for (std::size_t i = 0; i < 20; ++i) {
         a[i] = i * 5.0;
     }
 
@@ -884,7 +884,7 @@ TEST_CASE("dyn_matrix/resize_array/1", "[dyn][resize]") {
     REQUIRE(etl::dim<0>(a) == 4);
     REQUIRE(etl::dim<1>(a) == 4);
 
-    for(std::size_t i = 0; i < 16; ++i){
+    for (std::size_t i = 0; i < 16; ++i) {
         REQUIRE(a[i] == i * 5.0);
     }
 }
@@ -894,7 +894,7 @@ TEST_CASE("dyn_matrix/resize_array/2", "[dyn][resize]") {
 
     a.resize_arr(std::array<std::size_t, 2>{10, 2});
 
-    for(std::size_t i = 0; i < 20; ++i){
+    for (std::size_t i = 0; i < 20; ++i) {
         a[i] = i * 5.0;
     }
 
@@ -906,7 +906,7 @@ TEST_CASE("dyn_matrix/resize_array/2", "[dyn][resize]") {
 TEST_CASE("dyn_matrix/resize_array/3", "[dyn][resize]") {
     etl::dyn_matrix<float> a(10, 2);
 
-    for(std::size_t i = 0; i < 20; ++i){
+    for (std::size_t i = 0; i < 20; ++i) {
         a[i] = i * 5.0;
     }
 
@@ -920,7 +920,7 @@ TEST_CASE("dyn_matrix/resize_array/3", "[dyn][resize]") {
     REQUIRE(etl::dim<0>(a) == 5);
     REQUIRE(etl::dim<1>(a) == 5);
 
-    for(std::size_t i = 0; i < 20; ++i){
+    for (std::size_t i = 0; i < 20; ++i) {
         REQUIRE(a[i] == i * 5.0);
     }
 }

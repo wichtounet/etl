@@ -22,14 +22,14 @@ namespace etl {
  * Such an unary expr does not apply the operator but delegates to its sub expression.
  */
 struct identity_op {
-    static constexpr const bool linear       = true; ///< Indicates if the operator is linear
+    static constexpr const bool linear = true; ///< Indicates if the operator is linear
 
     /*!
      * \brief Indicates if the expression is vectorizable using the
      * given vector mode
      * \tparam V The vector mode
      */
-    template<vector_mode_t V>
+    template <vector_mode_t V>
     using vectorizable = std::true_type;
 };
 
@@ -39,14 +39,14 @@ struct identity_op {
  * Such an unary expr does not apply the operator but delegates to its sub expression.
  */
 struct transform_op {
-    static constexpr const bool linear       = false; ///< Indicates if the operator is linear
+    static constexpr const bool linear = false; ///< Indicates if the operator is linear
 
     /*!
      * \brief Indicates if the expression is vectorizable using the
      * given vector mode
      * \tparam V The vector mode
      */
-    template<vector_mode_t V>
+    template <vector_mode_t V>
     using vectorizable = std::false_type;
 };
 
@@ -59,15 +59,15 @@ struct transform_op {
  */
 template <typename Sub>
 struct stateful_op {
-    static constexpr const bool linear       = Sub::linear;       ///< Indicates if the operator is linear
-    using op                                 = Sub;               ///< The sub operator type
+    static constexpr const bool linear = Sub::linear; ///< Indicates if the operator is linear
+    using op                           = Sub;         ///< The sub operator type
 
     /*!
      * \brief Indicates if the expression is vectorizable using the
      * given vector mode
      * \tparam V The vector mode
      */
-    template<vector_mode_t V>
+    template <vector_mode_t V>
     using vectorizable = typename Sub::template vectorizable<V>;
 };
 
@@ -96,8 +96,8 @@ public:
     /*!
      * The vectorization type for V
      */
-    template<typename V = default_vec>
-    using vec_type          = typename V::template vec_type<T>;
+    template <typename V = default_vec>
+    using vec_type       = typename V::template vec_type<T>;
 
     //Construct a new expression
     explicit unary_expr(Expr l)
@@ -153,7 +153,7 @@ public:
      * \tparam V The vectorization mode to use
      * \return a vector containing several elements of the matrix
      */
-    template<typename V = default_vec>
+    template <typename V = default_vec>
     vec_type<V> load(std::size_t i) const {
         return UnaryOp::template load<V>(value().template load<V>(i));
     }
@@ -175,7 +175,7 @@ public:
      * \param rhs The other expression to test
      * \return true if the two expressions aliases, false otherwise
      */
-    template<typename E>
+    template <typename E>
     bool alias(const E& rhs) const noexcept {
         return _value.alias(rhs);
     }
@@ -225,20 +225,20 @@ public:
     using const_memory_type = const_memory_t<Expr>;                                                ///< The const memory type
     using return_type       = std::conditional_t<non_const_return_ref, value_type&, value_type>;   ///< The type returned by the functions
     using const_return_type = std::conditional_t<const_return_ref, const value_type&, value_type>; ///< The const type returned by the const functions
-    using expr_t            = Expr; ///< The sub expression type
+    using expr_t            = Expr;                                                                ///< The sub expression type
 
     /*!
      * The vectorization type for V
      */
-    template<typename V = default_vec>
-    using vec_type          = typename V::template vec_type<T>;
+    template <typename V = default_vec>
+    using vec_type       = typename V::template vec_type<T>;
 
     /*!
      * \brief Construct a new unary expression
      * \param l The sub expression
      */
     explicit unary_expr(Expr l) noexcept
-            : _value(std::forward<Expr>(l)) {
+        : _value(std::forward<Expr>(l)) {
         //Nothing else to init
     }
 
@@ -424,7 +424,7 @@ public:
      * \param rhs The other expression to test
      * \return true if the two expressions aliases, false otherwise
      */
-    template<typename E, cpp_enable_if(has_direct_access<Expr>::value, all_dma<E>::value)>
+    template <typename E, cpp_enable_if(has_direct_access<Expr>::value, all_dma<E>::value)>
     bool alias(const E& rhs) const noexcept {
         return memory_alias(memory_start(), memory_end(), rhs.memory_start(), rhs.memory_end());
     }
@@ -434,7 +434,7 @@ public:
      * \param rhs The other expression to test
      * \return true if the two expressions aliases, false otherwise
      */
-    template<typename E, cpp_disable_if(has_direct_access<Expr>::value && all_dma<E>::value)>
+    template <typename E, cpp_disable_if(has_direct_access<Expr>::value&& all_dma<E>::value)>
     bool alias(const E& rhs) const noexcept {
         return _value.alias(rhs);
     }
@@ -599,7 +599,7 @@ public:
      * \param rhs The other expression to test
      * \return true if the two expressions aliases, false otherwise
      */
-    template<typename E>
+    template <typename E>
     bool alias(const E& rhs) const noexcept {
         return _value.alias(rhs);
     }
@@ -621,7 +621,6 @@ public:
     }
 };
 
-
 /*!
  * \brief Specialization of unary expression for stateful op.
  *
@@ -633,10 +632,10 @@ private:
     using this_type = unary_expr<T, Expr, stateful_op<Op>>; ///< The type of this expression
 
     Expr _value; ///< The sub expression
-    Op op; ///< The operator state
+    Op op;       ///< The operator state
 
 public:
-    using value_type        = T; ///< The value type
+    using value_type        = T;    ///< The value type
     using memory_type       = void; ///< The memory type
     using const_memory_type = void; ///< The const memory type
     using expr_t            = Expr; ///< The sub expression type
@@ -644,8 +643,8 @@ public:
     /*!
      * The vectorization type for V
      */
-    template<typename V = default_vec>
-    using vec_type          = typename V::template vec_type<T>;
+    template <typename V = default_vec>
+    using vec_type       = typename V::template vec_type<T>;
 
     //Construct a new expression
     template <typename... Args>
@@ -702,7 +701,7 @@ public:
      * \tparam V The vectorization mode to use
      * \return a vector containing several elements of the matrix
      */
-    template<typename V = default_vec>
+    template <typename V = default_vec>
     vec_type<V> load(std::size_t i) const {
         return op.template load<V>(value().template load<V>(i));
     }
@@ -724,7 +723,7 @@ public:
      * \param rhs The other expression to test
      * \return true if the two expressions aliases, false otherwise
      */
-    template<typename E>
+    template <typename E>
     bool alias(const E& rhs) const noexcept {
         return _value.alias(rhs);
     }
@@ -752,29 +751,28 @@ public:
 template <typename T, typename Expr, typename UnaryOp>
 struct etl_traits<etl::unary_expr<T, Expr, UnaryOp>> {
     using expr_t     = etl::unary_expr<T, Expr, UnaryOp>; ///< The expression type
-    using sub_expr_t = std::decay_t<Expr>; ///< The sub expression type
+    using sub_expr_t = std::decay_t<Expr>;                ///< The sub expression type
 
-    static constexpr const bool is_etl                  = true;                                                          ///< Indicates if the type is an ETL expression
-    static constexpr const bool is_transformer          = false;                                                         ///< Indicates if the type is a transformer
-    static constexpr const bool is_view                 = false;                                                         ///< Indicates if the type is a view
-    static constexpr const bool is_magic_view           = false;                                                         ///< Indicates if the type is a magic view
-    static constexpr const bool is_fast                 = etl_traits<sub_expr_t>::is_fast;                               ///< Indicates if the expression is fast
-    static constexpr const bool is_value                = false;                                                         ///< Indicates if the expression is of value type
-    static constexpr const bool is_linear               = etl_traits<sub_expr_t>::is_linear && UnaryOp::linear;          ///< Indicates if the expression is linear
-    static constexpr const bool is_generator            = etl_traits<sub_expr_t>::is_generator;                          ///< Indicates if the expression is a generator expression
-    static constexpr const bool needs_temporary_visitor = etl_traits<sub_expr_t>::needs_temporary_visitor;               ///< Indicates if the expression needs a temporary visitor
-    static constexpr const bool needs_evaluator_visitor = etl_traits<sub_expr_t>::needs_evaluator_visitor;               ///< Indicaes if the expression needs an evaluator visitor
-    static constexpr const order storage_order          = etl_traits<sub_expr_t>::storage_order;                         ///< The expression storage order
+    static constexpr const bool is_etl                  = true;                                                 ///< Indicates if the type is an ETL expression
+    static constexpr const bool is_transformer          = false;                                                ///< Indicates if the type is a transformer
+    static constexpr const bool is_view                 = false;                                                ///< Indicates if the type is a view
+    static constexpr const bool is_magic_view           = false;                                                ///< Indicates if the type is a magic view
+    static constexpr const bool is_fast                 = etl_traits<sub_expr_t>::is_fast;                      ///< Indicates if the expression is fast
+    static constexpr const bool is_value                = false;                                                ///< Indicates if the expression is of value type
+    static constexpr const bool is_linear               = etl_traits<sub_expr_t>::is_linear && UnaryOp::linear; ///< Indicates if the expression is linear
+    static constexpr const bool is_generator            = etl_traits<sub_expr_t>::is_generator;                 ///< Indicates if the expression is a generator expression
+    static constexpr const bool needs_temporary_visitor = etl_traits<sub_expr_t>::needs_temporary_visitor;      ///< Indicates if the expression needs a temporary visitor
+    static constexpr const bool needs_evaluator_visitor = etl_traits<sub_expr_t>::needs_evaluator_visitor;      ///< Indicaes if the expression needs an evaluator visitor
+    static constexpr const order storage_order          = etl_traits<sub_expr_t>::storage_order;                ///< The expression storage order
 
     /*!
      * \brief Indicates if the expression is vectorizable using the
      * given vector mode
      * \tparam V The vector mode
      */
-    template<vector_mode_t V>
+    template <vector_mode_t V>
     using vectorizable = cpp::bool_constant<
-            etl_traits<sub_expr_t>::template vectorizable<V>::value
-        &&  UnaryOp::template vectorizable<V>::value>;
+        etl_traits<sub_expr_t>::template vectorizable<V>::value && UnaryOp::template vectorizable<V>::value>;
 
     /*!
      * \brief Returns the size of the given expression

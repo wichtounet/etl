@@ -679,7 +679,7 @@ void ifft1(A&& a, C&& c) {
  */
 template <typename A, typename C>
 void ifft1_many(A&& a, C&& c) {
-    for(std::size_t k = 0; k < etl::dim<0>(a); ++k){
+    for (std::size_t k = 0; k < etl::dim<0>(a); ++k) {
         detail::ifft1_kernel(a(k).memory_start(), etl::dim<1>(a), c(k).memory_start());
     }
 }

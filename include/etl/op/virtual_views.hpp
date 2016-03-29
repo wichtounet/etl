@@ -90,9 +90,9 @@ struct magic_view {
      * \param rhs The other expression to test
      * \return true if the two expressions aliases, false otherwise
      */
-    template<typename E>
+    template <typename E>
     constexpr bool alias(const E& rhs) const noexcept {
-        return (void) rhs, false;
+        return (void)rhs, false;
     }
 };
 
@@ -153,9 +153,9 @@ struct fast_magic_view {
      * \param rhs The other expression to test
      * \return true if the two expressions aliases, false otherwise
      */
-    template<typename E>
+    template <typename E>
     constexpr bool alias(const E& rhs) const noexcept {
-        return (void) rhs, false;
+        return (void)rhs, false;
     }
 };
 
@@ -180,7 +180,7 @@ struct etl_traits<etl::magic_view<V>> {
      * given vector mode
      * \tparam VV The vector mode
      */
-    template<vector_mode_t VV>
+    template <vector_mode_t VV>
     using vectorizable = std::false_type;
 
     /*!
@@ -233,7 +233,7 @@ struct etl_traits<etl::fast_magic_view<V, N>> {
      * given vector mode
      * \tparam VV The vector mode
      */
-    template<vector_mode_t VV>
+    template <vector_mode_t VV>
     using vectorizable = std::false_type;
 
     /*!
@@ -250,7 +250,7 @@ struct etl_traits<etl::fast_magic_view<V, N>> {
      * \returns the size of the given expression
      */
     static constexpr std::size_t size(const expr_t& v) {
-        return (void) v, N * N;
+        return (void)v, N * N;
     }
 
     /*!
@@ -270,7 +270,7 @@ struct etl_traits<etl::fast_magic_view<V, N>> {
      * \return The dth dimension of the given expression
      */
     static constexpr std::size_t dim(const expr_t& e, std::size_t d) {
-        return (void) e, (void) d, N;
+        return (void)e, (void)d, N;
     }
 
     /*!

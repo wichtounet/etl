@@ -35,7 +35,7 @@ namespace cufft {
 
 namespace detail {
 
-template<typename A>
+template <typename A>
 void inplace_cfft1_kernel(A&& a, std::size_t n) {
     cufft_handle handle = start_cufft();
 
@@ -43,7 +43,7 @@ void inplace_cfft1_kernel(A&& a, std::size_t n) {
     cufftExecC2C(handle.get(), complex_cast(a.gpu_memory()), complex_cast(a.gpu_memory()), CUFFT_FORWARD);
 }
 
-template<typename A>
+template <typename A>
 void inplace_zfft1_kernel(A&& a, std::size_t n) {
     cufft_handle handle = start_cufft();
 
@@ -51,7 +51,7 @@ void inplace_zfft1_kernel(A&& a, std::size_t n) {
     cufftExecZ2Z(handle.get(), complex_cast(a.gpu_memory()), complex_cast(a.gpu_memory()), CUFFT_FORWARD);
 }
 
-template<typename A>
+template <typename A>
 void inplace_cfft1_many_kernel(A&& a, std::size_t batch, std::size_t n) {
     cufft_handle handle = start_cufft();
 
@@ -65,7 +65,7 @@ void inplace_cfft1_many_kernel(A&& a, std::size_t batch, std::size_t n) {
     cufftExecC2C(handle.get(), complex_cast(a.gpu_memory()), complex_cast(a.gpu_memory()), CUFFT_FORWARD);
 }
 
-template<typename A>
+template <typename A>
 void inplace_zfft1_many_kernel(A&& a, std::size_t batch, std::size_t n) {
     cufft_handle handle = start_cufft();
 
@@ -79,7 +79,7 @@ void inplace_zfft1_many_kernel(A&& a, std::size_t batch, std::size_t n) {
     cufftExecZ2Z(handle.get(), complex_cast(a.gpu_memory()), complex_cast(a.gpu_memory()), CUFFT_FORWARD);
 }
 
-template<typename A>
+template <typename A>
 void inplace_cifft1_many_kernel(A&& a, std::size_t batch, std::size_t n) {
     cufft_handle handle = start_cufft();
 
@@ -93,7 +93,7 @@ void inplace_cifft1_many_kernel(A&& a, std::size_t batch, std::size_t n) {
     cufftExecC2C(handle.get(), complex_cast(a.gpu_memory()), complex_cast(a.gpu_memory()), CUFFT_INVERSE);
 }
 
-template<typename A>
+template <typename A>
 void inplace_zifft1_many_kernel(A&& a, std::size_t batch, std::size_t n) {
     cufft_handle handle = start_cufft();
 
@@ -107,7 +107,7 @@ void inplace_zifft1_many_kernel(A&& a, std::size_t batch, std::size_t n) {
     cufftExecZ2Z(handle.get(), complex_cast(a.gpu_memory()), complex_cast(a.gpu_memory()), CUFFT_INVERSE);
 }
 
-template<typename A>
+template <typename A>
 void inplace_cifft1_kernel(A&& a, std::size_t n) {
     cufft_handle handle = start_cufft();
 
@@ -115,7 +115,7 @@ void inplace_cifft1_kernel(A&& a, std::size_t n) {
     cufftExecC2C(handle.get(), complex_cast(a.gpu_memory()), complex_cast(a.gpu_memory()), CUFFT_INVERSE);
 }
 
-template<typename A>
+template <typename A>
 void inplace_zifft1_kernel(A&& a, std::size_t n) {
     cufft_handle handle = start_cufft();
 
@@ -123,7 +123,7 @@ void inplace_zifft1_kernel(A&& a, std::size_t n) {
     cufftExecZ2Z(handle.get(), complex_cast(a.gpu_memory()), complex_cast(a.gpu_memory()), CUFFT_INVERSE);
 }
 
-template<typename A>
+template <typename A>
 inline void inplace_cfft2_kernel(A&& a, std::size_t d1, std::size_t d2) {
     cufft_handle handle = start_cufft();
 
@@ -131,7 +131,7 @@ inline void inplace_cfft2_kernel(A&& a, std::size_t d1, std::size_t d2) {
     cufftExecC2C(handle.get(), complex_cast(a.gpu_memory()), complex_cast(a.gpu_memory()), CUFFT_FORWARD);
 }
 
-template<typename A>
+template <typename A>
 inline void inplace_zfft2_kernel(A&& a, std::size_t d1, std::size_t d2) {
     cufft_handle handle = start_cufft();
 
@@ -139,7 +139,7 @@ inline void inplace_zfft2_kernel(A&& a, std::size_t d1, std::size_t d2) {
     cufftExecZ2Z(handle.get(), complex_cast(a.gpu_memory()), complex_cast(a.gpu_memory()), CUFFT_FORWARD);
 }
 
-template<typename A>
+template <typename A>
 void inplace_cfft2_many_kernel(A&& a, std::size_t batch, std::size_t d1, std::size_t d2) {
     cufft_handle handle = start_cufft();
 
@@ -149,7 +149,7 @@ void inplace_cfft2_many_kernel(A&& a, std::size_t batch, std::size_t d1, std::si
     cufftExecC2C(handle.get(), complex_cast(a.gpu_memory()), complex_cast(a.gpu_memory()), CUFFT_FORWARD);
 }
 
-template<typename A>
+template <typename A>
 void inplace_zfft2_many_kernel(A&& a, std::size_t batch, std::size_t d1, std::size_t d2) {
     cufft_handle handle = start_cufft();
 
@@ -163,7 +163,7 @@ void inplace_zfft2_many_kernel(A&& a, std::size_t batch, std::size_t d1, std::si
     cufftExecZ2Z(handle.get(), complex_cast(a.gpu_memory()), complex_cast(a.gpu_memory()), CUFFT_FORWARD);
 }
 
-template<typename A>
+template <typename A>
 void inplace_cifft2_many_kernel(A&& a, std::size_t batch, std::size_t d1, std::size_t d2) {
     cufft_handle handle = start_cufft();
 
@@ -173,7 +173,7 @@ void inplace_cifft2_many_kernel(A&& a, std::size_t batch, std::size_t d1, std::s
     cufftExecC2C(handle.get(), complex_cast(a.gpu_memory()), complex_cast(a.gpu_memory()), CUFFT_INVERSE);
 }
 
-template<typename A>
+template <typename A>
 void inplace_zifft2_many_kernel(A&& a, std::size_t batch, std::size_t d1, std::size_t d2) {
     cufft_handle handle = start_cufft();
 
@@ -187,7 +187,7 @@ void inplace_zifft2_many_kernel(A&& a, std::size_t batch, std::size_t d1, std::s
     cufftExecZ2Z(handle.get(), complex_cast(a.gpu_memory()), complex_cast(a.gpu_memory()), CUFFT_INVERSE);
 }
 
-template<typename A>
+template <typename A>
 void inplace_cifft2_kernel(A&& a, std::size_t d1, std::size_t d2) {
     cufft_handle handle = start_cufft();
 
@@ -195,7 +195,7 @@ void inplace_cifft2_kernel(A&& a, std::size_t d1, std::size_t d2) {
     cufftExecC2C(handle.get(), complex_cast(a.gpu_memory()), complex_cast(a.gpu_memory()), CUFFT_INVERSE);
 }
 
-template<typename A>
+template <typename A>
 void inplace_zifft2_kernel(A&& a, std::size_t d1, std::size_t d2) {
     cufft_handle handle = start_cufft();
 
@@ -298,7 +298,7 @@ void fft1_many(A&& a, C&& c) {
 }
 
 template <typename C, cpp_enable_if(all_complex_single_precision<C>::value)>
-void scale_back(C&& c, float factor){
+void scale_back(C&& c, float factor) {
 #ifdef ETL_CUBLAS_MODE
     impl::cublas::cublas_handle handle = impl::cublas::start_cublas();
 
@@ -315,7 +315,7 @@ void scale_back(C&& c, float factor){
 }
 
 template <typename C, cpp_enable_if(all_complex_double_precision<C>::value)>
-void scale_back(C&& c, double factor){
+void scale_back(C&& c, double factor) {
 #ifdef ETL_CUBLAS_MODE
     impl::cublas::cublas_handle handle = impl::cublas::start_cublas();
 
@@ -332,12 +332,12 @@ void scale_back(C&& c, double factor){
 }
 
 template <typename C>
-void scale_back(C&& c){
+void scale_back(C&& c) {
     scale_back(std::forward<C>(c), 1.0 / etl::size(c));
 }
 
 template <typename A, typename C, cpp_enable_if(all_complex_single_precision<A>::value)>
-void scale_back_real(A&& a, C&& c){
+void scale_back_real(A&& a, C&& c) {
 #ifdef ETL_CUBLAS_MODE
     c.gpu_allocate_if_necessary();
 
@@ -361,7 +361,7 @@ void scale_back_real(A&& a, C&& c){
 }
 
 template <typename A, typename C, cpp_enable_if(all_complex_double_precision<A>::value)>
-void scale_back_real(A&& a, C&& c){
+void scale_back_real(A&& a, C&& c) {
 #ifdef ETL_CUBLAS_MODE
     c.gpu_allocate_if_necessary();
 
@@ -455,7 +455,6 @@ void ifft1_many(A&& a, C&& c) {
 
     scale_back(c, 1.0 / double(n));
 }
-
 
 template <typename A, typename B, typename C, cpp_enable_if(all_single_precision<A>::value)>
 void fft1_convolve(A&& a, B&& b, C&& c) {

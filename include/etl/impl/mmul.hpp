@@ -55,13 +55,13 @@ inline cpp14_constexpr gemm_impl select_default_gemm_impl(const std::size_t n1, 
 
 template <bool DMA, typename T>
 inline gemm_impl select_gemm_impl(const std::size_t n1, const std::size_t n2, const std::size_t n3) {
-    if(local_context().gemm_selector.forced){
+    if (local_context().gemm_selector.forced) {
         auto forced = local_context().gemm_selector.impl;
 
         switch (forced) {
             //CUBLAS cannot always be used
             case gemm_impl::CUBLAS:
-                if(!is_cublas_enabled || !DMA){
+                if (!is_cublas_enabled || !DMA) {
                     std::cerr << "Forced selection to CUBLAS gemm implementation, but not possible for this expression" << std::endl;
                     return select_default_gemm_impl<DMA, T>(n1, n2, n3);
                 }
@@ -70,7 +70,7 @@ inline gemm_impl select_gemm_impl(const std::size_t n1, const std::size_t n2, co
 
             //BLAS cannot always be used
             case gemm_impl::BLAS:
-                if(!is_cblas_enabled || !DMA){
+                if (!is_cblas_enabled || !DMA) {
                     std::cerr << "Forced selection to BLAS gemm implementation, but not possible for this expression" << std::endl;
                     return select_default_gemm_impl<DMA, T>(n1, n2, n3);
                 }
@@ -79,7 +79,7 @@ inline gemm_impl select_gemm_impl(const std::size_t n1, const std::size_t n2, co
 
             //EBLAS cannot always be used
             case gemm_impl::FAST:
-                if(!DMA || is_complex_t<T>::value){
+                if (!DMA || is_complex_t<T>::value) {
                     std::cerr << "Forced selection to EBLAS gemm implementation, but not possible for this expression" << std::endl;
                     return select_default_gemm_impl<DMA, T>(n1, n2, n3);
                 }
@@ -121,13 +121,13 @@ inline cpp14_constexpr gemm_impl select_default_gemv_impl(const std::size_t n1, 
 
 template <bool DMA, typename T>
 inline gemm_impl select_gemv_impl(const std::size_t n1, const std::size_t n2) {
-    if(local_context().gemm_selector.forced){
+    if (local_context().gemm_selector.forced) {
         auto forced = local_context().gemm_selector.impl;
 
         switch (forced) {
             //CUBLAS cannot always be used
             case gemm_impl::CUBLAS:
-                if(!is_cublas_enabled || !DMA){
+                if (!is_cublas_enabled || !DMA) {
                     std::cerr << "Forced selection to CUBLAS gemv implementation, but not possible for this expression" << std::endl;
                     return select_default_gemv_impl<DMA, T>(n1, n2);
                 }
@@ -136,7 +136,7 @@ inline gemm_impl select_gemv_impl(const std::size_t n1, const std::size_t n2) {
 
             //BLAS cannot always be used
             case gemm_impl::BLAS:
-                if(!is_cblas_enabled || !DMA){
+                if (!is_cblas_enabled || !DMA) {
                     std::cerr << "Forced selection to BLAS gemv implementation, but not possible for this expression" << std::endl;
                     return select_default_gemv_impl<DMA, T>(n1, n2);
                 }
@@ -183,13 +183,13 @@ inline cpp14_constexpr gemm_impl select_default_gevm_impl(const std::size_t n1, 
 
 template <bool DMA, typename T>
 inline gemm_impl select_gevm_impl(const std::size_t n1, const std::size_t n2) {
-    if(local_context().gemm_selector.forced){
+    if (local_context().gemm_selector.forced) {
         auto forced = local_context().gemm_selector.impl;
 
         switch (forced) {
             //CUBLAS cannot always be used
             case gemm_impl::CUBLAS:
-                if(!is_cublas_enabled || !DMA){
+                if (!is_cublas_enabled || !DMA) {
                     std::cerr << "Forced selection to CUBLAS gevm implementation, but not possible for this expression" << std::endl;
                     return select_default_gevm_impl<DMA, T>(n1, n2);
                 }
@@ -198,7 +198,7 @@ inline gemm_impl select_gevm_impl(const std::size_t n1, const std::size_t n2) {
 
             //BLAS cannot always be used
             case gemm_impl::BLAS:
-                if(!is_cblas_enabled || !DMA){
+                if (!is_cblas_enabled || !DMA) {
                     std::cerr << "Forced selection to BLAS gevm implementation, but not possible for this expression" << std::endl;
                     return select_default_gevm_impl<DMA, T>(n1, n2);
                 }

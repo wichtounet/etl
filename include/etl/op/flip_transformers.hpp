@@ -15,8 +15,8 @@ namespace etl {
  */
 template <typename T>
 struct hflip_transformer {
-    using sub_type   = T;           ///< The type on which the expression works
-    using value_type = value_t<T>;  ///< The type of valuie
+    using sub_type   = T;          ///< The type on which the expression works
+    using value_type = value_t<T>; ///< The type of valuie
 
     sub_type sub; ///< The subexpression
 
@@ -107,7 +107,7 @@ struct hflip_transformer {
      * \param rhs The other expression to test
      * \return true if the two expressions aliases, false otherwise
      */
-    template<typename E>
+    template <typename E>
     bool alias(const E& rhs) const noexcept {
         return sub.alias(rhs);
     }
@@ -119,8 +119,8 @@ struct hflip_transformer {
  */
 template <typename T>
 struct vflip_transformer {
-    using sub_type   = T;           ///< The type on which the expression works
-    using value_type = value_t<T>;  ///< The type of valuie
+    using sub_type   = T;          ///< The type on which the expression works
+    using value_type = value_t<T>; ///< The type of valuie
 
     sub_type sub; ///< The subexpression
 
@@ -211,7 +211,7 @@ struct vflip_transformer {
      * \param rhs The other expression to test
      * \return true if the two expressions aliases, false otherwise
      */
-    template<typename E>
+    template <typename E>
     bool alias(const E& rhs) const noexcept {
         return sub.alias(rhs);
     }
@@ -223,8 +223,8 @@ struct vflip_transformer {
  */
 template <typename T>
 struct fflip_transformer {
-    using sub_type   = T;           ///< The type on which the expression works
-    using value_type = value_t<T>;  ///< The type of valuie
+    using sub_type   = T;          ///< The type on which the expression works
+    using value_type = value_t<T>; ///< The type of valuie
 
     sub_type sub; ///< The subexpression
 
@@ -294,7 +294,7 @@ struct fflip_transformer {
      * \param rhs The other expression to test
      * \return true if the two expressions aliases, false otherwise
      */
-    template<typename E>
+    template <typename E>
     bool alias(const E& rhs) const noexcept {
         return sub.alias(rhs);
     }

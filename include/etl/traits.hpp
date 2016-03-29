@@ -559,24 +559,24 @@ struct inplace_sub_transpose_able<T, std::enable_if_t<!is_3d<T>::value>> {
  */
 template <typename T>
 struct etl_traits<T, std::enable_if_t<is_etl_value<T>::value>> {
-    static constexpr const bool is_etl                  = true;                        ///< Indicates if the type is an ETL expression
-    static constexpr const bool is_transformer          = false;                       ///< Indicates if the type is a transformer
-    static constexpr const bool is_view                 = false;                       ///< Indicates if the type is a view
-    static constexpr const bool is_magic_view           = false;                       ///< Indicates if the type is a magic view
-    static constexpr const bool is_fast                 = is_fast_matrix<T>::value;    ///< Indicates if the expression is fast
-    static constexpr const bool is_value                = true;                        ///< Indicates if the expression is of value type
-    static constexpr const bool is_linear               = true;                        ///< Indicates if the expression is linear
-    static constexpr const bool is_generator            = false;                       ///< Indicates if the expression is a generator expression
-    static constexpr const bool needs_temporary_visitor = false;                       ///< Indicates if the expression needs a temporary visitor
-    static constexpr const bool needs_evaluator_visitor = false;                       ///< Indicaes if the expression needs an evaluator visitor
-    static constexpr const order storage_order          = T::storage_order;            ///< The expression storage order
+    static constexpr const bool is_etl                  = true;                     ///< Indicates if the type is an ETL expression
+    static constexpr const bool is_transformer          = false;                    ///< Indicates if the type is a transformer
+    static constexpr const bool is_view                 = false;                    ///< Indicates if the type is a view
+    static constexpr const bool is_magic_view           = false;                    ///< Indicates if the type is a magic view
+    static constexpr const bool is_fast                 = is_fast_matrix<T>::value; ///< Indicates if the expression is fast
+    static constexpr const bool is_value                = true;                     ///< Indicates if the expression is of value type
+    static constexpr const bool is_linear               = true;                     ///< Indicates if the expression is linear
+    static constexpr const bool is_generator            = false;                    ///< Indicates if the expression is a generator expression
+    static constexpr const bool needs_temporary_visitor = false;                    ///< Indicates if the expression needs a temporary visitor
+    static constexpr const bool needs_evaluator_visitor = false;                    ///< Indicaes if the expression needs an evaluator visitor
+    static constexpr const order storage_order          = T::storage_order;         ///< The expression storage order
 
     /*!
      * \brief Indicates if the expression is vectorizable using the
      * given vector mode
      * \tparam V The vector mode
      */
-    template<vector_mode_t V>
+    template <vector_mode_t V>
     using vectorizable = cpp::bool_constant<!is_sparse_matrix<T>::value>;
 
     /*!
@@ -636,7 +636,7 @@ struct etl_traits<T, std::enable_if_t<is_etl_value<T>::value>> {
  */
 template <typename E>
 constexpr std::size_t dimensions(const E& expr) noexcept {
-    return (void) expr, etl_traits<E>::dimensions();
+    return (void)expr, etl_traits<E>::dimensions();
 }
 
 /*!
@@ -666,7 +666,7 @@ std::size_t rows(const E& expr) {
  */
 template <typename E, cpp_enable_if(etl_traits<E>::is_fast)>
 constexpr std::size_t rows(const E& expr) noexcept {
-    return (void) expr, etl_traits<E>::template dim<0>();
+    return (void)expr, etl_traits<E>::template dim<0>();
 }
 
 /*!
@@ -688,7 +688,7 @@ std::size_t columns(const E& expr) {
 template <typename E, cpp_enable_if(etl_traits<E>::is_fast)>
 constexpr std::size_t columns(const E& expr) noexcept {
     static_assert(etl_traits<E>::dimensions() > 1, "columns() can only be used on 2D+ matrices");
-    return (void) expr, etl_traits<E>::template dim<1>();
+    return (void)expr, etl_traits<E>::template dim<1>();
 }
 
 /*!
@@ -708,7 +708,7 @@ std::size_t size(const E& expr) {
  */
 template <typename E, cpp_enable_if(etl_traits<E>::is_fast)>
 constexpr std::size_t size(const E& expr) noexcept {
-    return (void) expr, etl_traits<E>::size();
+    return (void)expr, etl_traits<E>::size();
 }
 
 /*!
@@ -730,7 +730,7 @@ std::size_t subsize(const E& expr) {
 template <typename E, cpp_enable_if(etl_traits<E>::is_fast)>
 constexpr std::size_t subsize(const E& expr) noexcept {
     static_assert(etl_traits<E>::dimensions() > 1, "Only 2D+ matrices have a subsize");
-    return (void) expr, etl_traits<E>::size() / etl_traits<E>::template dim<0>();
+    return (void)expr, etl_traits<E>::size() / etl_traits<E>::template dim<0>();
 }
 
 /*!
@@ -763,7 +763,7 @@ std::size_t dim(const E& e, std::size_t d) {
  */
 template <std::size_t D, typename E, cpp_enable_if(etl_traits<E>::is_fast)>
 constexpr std::size_t dim(const E& e) noexcept {
-    return (void) e, etl_traits<E>::template dim<D>();
+    return (void)e, etl_traits<E>::template dim<D>();
 }
 
 /*!
@@ -787,8 +787,8 @@ struct sub_size_compare<E, cpp::disable_if_t<etl_traits<E>::is_generator>> : std
 template <typename E>
 constexpr std::pair<std::size_t, std::size_t> index_to_2d(E&& sub, std::size_t i) {
     return decay_traits<E>::storage_order == order::RowMajor
-        ? std::make_pair(i / dim<0>(sub), i % dim<0>(sub))
-        : std::make_pair(i % dim<0>(sub), i / dim<0>(sub));
+               ? std::make_pair(i / dim<0>(sub), i % dim<0>(sub))
+               : std::make_pair(i % dim<0>(sub), i / dim<0>(sub));
 }
 
 /*!
@@ -841,13 +841,12 @@ std::size_t major_stride(E&& expr) {
  *
  * \return true if the two ranges overlap, false otherwise
  */
-template<typename P1, typename P2>
-bool memory_alias(const P1* a_begin, const P1* a_end, const P2* b_begin, const P2* b_end){
+template <typename P1, typename P2>
+bool memory_alias(const P1* a_begin, const P1* a_end, const P2* b_begin, const P2* b_end) {
     cpp_assert(a_begin <= a_end, "memory_alias works on ordered ranges");
     cpp_assert(b_begin <= b_end, "memory_alias works on ordered ranges");
 
-    return reinterpret_cast<uintptr_t>(a_begin) < reinterpret_cast<uintptr_t>(b_end)
-        && reinterpret_cast<uintptr_t>(a_end) > reinterpret_cast<uintptr_t>(b_begin);
+    return reinterpret_cast<uintptr_t>(a_begin) < reinterpret_cast<uintptr_t>(b_end) && reinterpret_cast<uintptr_t>(a_end) > reinterpret_cast<uintptr_t>(b_begin);
 }
 
 } //end of namespace etl

@@ -266,7 +266,7 @@ struct basic_conv_expr : impl_expr<basic_conv_expr<T, D, TT, Impl>> {
      * \return a textual representation of the operation
      */
     static std::string desc() noexcept {
-        switch(TT){
+        switch (TT) {
             case conv_type::VALID:
                 return "conv_valid";
             case conv_type::SAME:

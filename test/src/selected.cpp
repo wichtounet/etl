@@ -81,7 +81,7 @@ TEMPLATE_TEST_CASE_2("selected/5", "[selected]", Z, float, double) {
     etl::fast_vector<Z, 3> a({1.0, -2.0, 3.0});
     etl::fast_vector<Z, 3> b;
 
-    SELECTED_SECTION(etl::dot_impl::STD){
+    SELECTED_SECTION(etl::dot_impl::STD) {
         b = a + a;
     }
 
@@ -94,7 +94,7 @@ TEMPLATE_TEST_CASE_2("selected/6", "[selected]", Z, float, double) {
     etl::fast_matrix<Z, 8> a({1.0, 1.0, 1.0, 1.0, 0.0, 0.0, 0.0, 0.0});
     etl::fast_matrix<std::complex<Z>, 8> c;
 
-    SELECTED_SECTION(etl::fft_impl::STD){
+    SELECTED_SECTION(etl::fft_impl::STD) {
         c = etl::fft_1d(a);
     }
 
@@ -124,7 +124,8 @@ TEMPLATE_TEST_CASE_2("selected/7", "[selected]", Z, float, double) {
         REQUIRE(etl::local_context().fft_selector.impl == etl::fft_impl::MKL);
 
         etl::local_context().fft_selector.forced = false;
-        etl::local_context().fft_selector.impl = etl::fft_impl::CUFFT;;
+        etl::local_context().fft_selector.impl = etl::fft_impl::CUFFT;
+        ;
 
         SELECTED_SECTION(etl::fft_impl::STD) {
             REQUIRE(etl::local_context().fft_selector.forced);

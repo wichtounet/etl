@@ -33,7 +33,7 @@ TEMPLATE_TEST_CASE_2("alias/traits/1", "[alias][traits]", Z, float, double) {
 
     //Test linear operations
     REQUIRE(etl::decay_traits<decltype(a)>::is_linear);
-    REQUIRE(etl::decay_traits<decltype(a * a)>::is_linear);
+    REQUIRE(etl::decay_traits<decltype(a* a)>::is_linear);
     REQUIRE(etl::decay_traits<decltype((a >> a) + a - a / a)>::is_linear);
     REQUIRE(etl::decay_traits<decltype(a)>::is_linear);
     REQUIRE(etl::decay_traits<decltype(a(0))>::is_linear);

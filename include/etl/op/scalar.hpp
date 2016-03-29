@@ -24,8 +24,8 @@ struct scalar {
     /*!
      * The vectorization type for V
      */
-    template<typename V = default_vec>
-    using vec_type   = typename V::template vec_type<T>;
+    template <typename V = default_vec>
+    using vec_type       = typename V::template vec_type<T>;
 
     const T value; ///< The scalar value
 
@@ -42,7 +42,7 @@ struct scalar {
      * \return a reference to the element at the given index.
      */
     constexpr T operator[](std::size_t d) const noexcept {
-        return (void) d, value;
+        return (void)d, value;
     }
 
     /*!
@@ -52,7 +52,7 @@ struct scalar {
      * \return the value at the given index.
      */
     constexpr T read_flat(std::size_t d) const noexcept {
-        return (void) d, value;
+        return (void)d, value;
     }
 
     /*!
@@ -61,9 +61,9 @@ struct scalar {
      * \tparam V The vectorization mode to use
      * \return a vector containing several elements of the matrix
      */
-    template<typename V = default_vec>
+    template <typename V = default_vec>
     constexpr const vec_type<V> load(std::size_t d) const noexcept {
-        return (void) d, V::set(value);
+        return (void)d, V::set(value);
     }
 
     /*!
@@ -72,7 +72,7 @@ struct scalar {
      * \return The computed value at the position (args...)
      */
     template <typename... S>
-    constexpr T operator()(__attribute__ ((unused)) S... args) const noexcept {
+    constexpr T operator()(__attribute__((unused)) S... args) const noexcept {
         static_assert(cpp::all_convertible_to<std::size_t, S...>::value, "Invalid size types");
 
         return value;
@@ -82,7 +82,7 @@ struct scalar {
      * \brief Indicate if the expression aliases with the given expression.
      * \return true if the expressions alias, false otherwise
      */
-    template<typename E>
+    template <typename E>
     constexpr bool alias(const E& /*rhs*/) const noexcept {
         return false;
     }
@@ -110,7 +110,7 @@ struct etl_traits<etl::scalar<T>, void> {
      * given vector mode
      * \tparam VV The vector mode
      */
-    template<vector_mode_t VV>
+    template <vector_mode_t VV>
     using vectorizable = std::true_type;
 };
 

@@ -57,8 +57,8 @@ inline cpp14_constexpr std::size_t cm_compute_index(std::size_t first, std::size
 template <typename M, std::size_t I, typename... S>
 inline constexpr std::size_t compute_index(S... args) noexcept(assert_nothrow) {
     return M::storage_order == order::ColumnMajor
-        ? cm_compute_index<M, I>(args...)
-        : rm_compute_index<M, I>(args...);
+               ? cm_compute_index<M, I>(args...)
+               : rm_compute_index<M, I>(args...);
 }
 
 template <typename N>
@@ -75,7 +75,7 @@ struct is_vector<std::vector<N>> : std::true_type {};
  */
 template <typename T>
 struct iterator_type {
-    using iterator       = typename T::iterator; ///< The iterator type
+    using iterator       = typename T::iterator;       ///< The iterator type
     using const_iterator = typename T::const_iterator; ///< The const iterator type
 };
 
@@ -83,8 +83,8 @@ struct iterator_type {
  * \copydoc iterator_type
  */
 template <typename T>
-struct iterator_type <T*> {
-    using iterator       = T*; ///< The iterator type
+struct iterator_type<T*> {
+    using iterator       = T*;       ///< The iterator type
     using const_iterator = const T*; ///< The const iterator type
 };
 
@@ -92,7 +92,7 @@ struct iterator_type <T*> {
  * \copydoc iterator_type
  */
 template <typename T>
-struct iterator_type <const T*> {
+struct iterator_type<const T*> {
     using iterator       = const T*; ///< The iterator type
     using const_iterator = const T*; ///< The const iterator type
 };
@@ -225,7 +225,8 @@ public:
      * \brief Construct a fast matrix directly from storage
      * \param data The storage container to copy
      */
-    fast_matrix_impl(storage_impl data) : _data(data) {
+    fast_matrix_impl(storage_impl data)
+            : _data(data) {
         //Nothing else to init
     }
 
@@ -534,7 +535,7 @@ public:
      * \param rhs The other expression to test
      * \return true if the two expressions aliases, false otherwise
      */
-    template<typename E, cpp_enable_if(all_dma<E>::value)>
+    template <typename E, cpp_enable_if(all_dma<E>::value)>
     bool alias(const E& rhs) const noexcept {
         return memory_alias(memory_start(), memory_end(), rhs.memory_start(), rhs.memory_end());
     }
@@ -544,7 +545,7 @@ public:
      * \param rhs The other expression to test
      * \return true if the two expressions aliases, false otherwise
      */
-    template<typename E, cpp_disable_if(all_dma<E>::value)>
+    template <typename E, cpp_disable_if(all_dma<E>::value)>
     bool alias(const E& rhs) const noexcept {
         return rhs.alias(*this);
     }
@@ -555,7 +556,7 @@ public:
      * \tparam V The vectorization mode to use
      * \return a vector containing several elements of the matrix
      */
-    template<typename V = default_vec>
+    template <typename V = default_vec>
     vec_type<V> load(std::size_t i) const noexcept {
         return V::loadu(memory_start() + i);
     }
@@ -656,7 +657,7 @@ static_assert(std::is_nothrow_destructible<fast_vector<double, 2>>::value, "fast
  * The memory must be large enough to hold the matrix
  */
 template <std::size_t... Dims, typename T>
-fast_matrix_impl<T, cpp::array_wrapper<T>, order::RowMajor, Dims...> fast_matrix_over(T* memory){
+fast_matrix_impl<T, cpp::array_wrapper<T>, order::RowMajor, Dims...> fast_matrix_over(T* memory) {
     return fast_matrix_impl<T, cpp::array_wrapper<T>, order::RowMajor, Dims...>(cpp::array_wrapper<T>(memory, mul_all<Dims...>::value));
 }
 
@@ -688,15 +689,15 @@ std::ostream& operator<<(std::ostream& os, const fast_matrix_impl<T, ST, SO, Dim
 }
 
 template <typename Stream, typename T, typename ST, order SO, std::size_t... Dims>
-void serialize(serializer<Stream>& os, const fast_matrix_impl<T, ST, SO, Dims...>& matrix){
-    for(const auto& value : matrix){
+void serialize(serializer<Stream>& os, const fast_matrix_impl<T, ST, SO, Dims...>& matrix) {
+    for (const auto& value : matrix) {
         os << value;
     }
 }
 
 template <typename Stream, typename T, typename ST, order SO, std::size_t... Dims>
-void deserialize(deserializer<Stream>& os, fast_matrix_impl<T, ST, SO, Dims...>& matrix){
-    for(auto& value : matrix){
+void deserialize(deserializer<Stream>& os, fast_matrix_impl<T, ST, SO, Dims...>& matrix) {
+    for (auto& value : matrix) {
         os >> value;
     }
 }

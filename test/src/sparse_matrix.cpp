@@ -252,12 +252,12 @@ TEMPLATE_TEST_CASE_2("sparse_matrix/add/1", "[mat][add][sparse]", Z, double, flo
 
     c = a + b;
 
-    REQUIRE(c.get(0,0) == 3.0);
-    REQUIRE(c.get(0,1) == 1.0);
-    REQUIRE(c.get(1,0) == 0.0);
-    REQUIRE(c.get(1,1) == 5.0);
-    REQUIRE(c.get(2,0) == 3.0);
-    REQUIRE(c.get(2,1) == 0.0);
+    REQUIRE(c.get(0, 0) == 3.0);
+    REQUIRE(c.get(0, 1) == 1.0);
+    REQUIRE(c.get(1, 0) == 0.0);
+    REQUIRE(c.get(1, 1) == 5.0);
+    REQUIRE(c.get(2, 0) == 3.0);
+    REQUIRE(c.get(2, 1) == 0.0);
 }
 
 TEMPLATE_TEST_CASE_2("sparse_matrix/sub/1", "[mat][sub][sparse]", Z, double, float) {
@@ -267,12 +267,12 @@ TEMPLATE_TEST_CASE_2("sparse_matrix/sub/1", "[mat][sub][sparse]", Z, double, flo
 
     c = a - b;
 
-    REQUIRE(c.get(0,0) == -1.0);
-    REQUIRE(c.get(0,1) == -1.0);
-    REQUIRE(c.get(1,0) == 0.0);
-    REQUIRE(c.get(1,1) == -1.0);
-    REQUIRE(c.get(2,0) == 3.0);
-    REQUIRE(c.get(2,1) == 1.0);
+    REQUIRE(c.get(0, 0) == -1.0);
+    REQUIRE(c.get(0, 1) == -1.0);
+    REQUIRE(c.get(1, 0) == 0.0);
+    REQUIRE(c.get(1, 1) == -1.0);
+    REQUIRE(c.get(2, 0) == 3.0);
+    REQUIRE(c.get(2, 1) == 1.0);
 }
 
 TEMPLATE_TEST_CASE_2("sparse_matrix/mul/1", "[mat][mul][sparse]", Z, double, float) {
@@ -282,12 +282,12 @@ TEMPLATE_TEST_CASE_2("sparse_matrix/mul/1", "[mat][mul][sparse]", Z, double, flo
 
     c = a >> b;
 
-    REQUIRE(c.get(0,0) == 2.0);
-    REQUIRE(c.get(0,1) == 0.0);
-    REQUIRE(c.get(1,0) == 0.0);
-    REQUIRE(c.get(1,1) == 6.0);
-    REQUIRE(c.get(2,0) == 0.0);
-    REQUIRE(c.get(2,1) == 0.0);
+    REQUIRE(c.get(0, 0) == 2.0);
+    REQUIRE(c.get(0, 1) == 0.0);
+    REQUIRE(c.get(1, 0) == 0.0);
+    REQUIRE(c.get(1, 1) == 6.0);
+    REQUIRE(c.get(2, 0) == 0.0);
+    REQUIRE(c.get(2, 1) == 0.0);
 }
 
 TEMPLATE_TEST_CASE_2("sparse_matrix/div/1", "[mat][div][sparse]", Z, double, float) {
@@ -297,10 +297,10 @@ TEMPLATE_TEST_CASE_2("sparse_matrix/div/1", "[mat][div][sparse]", Z, double, flo
 
     c = a / b;
 
-    REQUIRE(c.get(0,0) == Approx(Z(0.5)));
-    REQUIRE(c.get(0,1) == Approx(Z(0.0)));
-    REQUIRE(c.get(1,0) == Approx(Z(1.0)));
-    REQUIRE(c.get(1,1) == Approx(Z(0.666666)));
-    REQUIRE(c.get(2,0) == Approx(Z(3.0)));
-    REQUIRE(c.get(2,1) == Approx(Z(0.333333)));
+    REQUIRE(c.get(0, 0) == Approx(Z(0.5)));
+    REQUIRE(c.get(0, 1) == Approx(Z(0.0)));
+    REQUIRE(c.get(1, 0) == Approx(Z(1.0)));
+    REQUIRE(c.get(1, 1) == Approx(Z(0.666666)));
+    REQUIRE(c.get(2, 0) == Approx(Z(3.0)));
+    REQUIRE(c.get(2, 1) == Approx(Z(0.333333)));
 }

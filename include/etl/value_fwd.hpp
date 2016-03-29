@@ -47,10 +47,10 @@ struct sparse_matrix_impl;
 template <typename T, std::size_t D = 2>
 using sparse_matrix                 = sparse_matrix_impl<T, sparse_storage::COO, D>;
 
-template<typename Stream>
+template <typename Stream>
 struct serializer;
 
-template<typename Stream>
+template <typename Stream>
 struct deserializer;
 
 } //end of namespace etl

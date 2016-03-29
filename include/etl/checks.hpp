@@ -65,7 +65,7 @@ void validate_expression_impl(const LE& lhs, const RE& rhs) {
     cpp_unused(rhs);
 }
 
-#define validate_expression(lhs, rhs) \
+#define validate_expression(lhs, rhs)                                                                                                          \
     static_assert(is_etl_expr<decltype(lhs)>::value && is_etl_expr<decltype(rhs)>::value, "ETL functions are only made for ETL expressions "); \
     validate_expression_impl(lhs, rhs);
 
@@ -163,7 +163,7 @@ void validate_assign(const LE& lhs, const RE& rhs) {
  * \param expr The expression to assert
  */
 template <typename E, cpp_enable_if(all_fast<E>::value)>
-void assert_square(E&& expr){
+void assert_square(E&& expr) {
     static_assert(decay_traits<E>::dimensions() == 2, "Function undefined for non-square matrix");
     static_assert(decay_traits<E>::template dim<0>() == decay_traits<E>::template dim<1>(), "Function undefined for non-square matrix");
     cpp_unused(expr);
@@ -178,7 +178,7 @@ void assert_square(E&& expr){
  * \param expr The expression to assert
  */
 template <typename E, cpp_disable_if(all_fast<E>::value)>
-void assert_square(E&& expr){
+void assert_square(E&& expr) {
     static_assert(decay_traits<E>::dimensions() == 2, "Function undefined for non-square matrix");
     cpp_assert(etl::dim<0>(expr) == etl::dim<1>(expr), "Function undefined for non-square matrix");
     cpp_unused(expr);

@@ -76,9 +76,9 @@ public:
      * \param rhs The other expression to test
      * \return true if the two expressions aliases, false otherwise
      */
-    template<typename E>
+    template <typename E>
     constexpr bool alias(const E& rhs) const noexcept {
-        return (void) rhs, false;
+        return (void)rhs, false;
     }
 
     /*!
@@ -103,24 +103,24 @@ public:
  */
 template <typename Generator>
 struct etl_traits<etl::generator_expr<Generator>> {
-    static constexpr const bool is_etl                  = true;  ///< Indicates if the type is an ETL expression
-    static constexpr const bool is_transformer          = false;  ///< Indicates if the type is a transformer
-    static constexpr const bool is_view                 = false; ///< Indicates if the type is a view
-    static constexpr const bool is_magic_view           = false; ///< Indicates if the type is a magic view
-    static constexpr const bool is_linear               = true; ///< Indicates if the expression is linear
-    static constexpr const bool is_fast                 = true; ///< Indicates if the expression is fast
-    static constexpr const bool is_value                = false; ///< Indicates if the expression is of value type
-    static constexpr const bool is_generator            = true; ///< Indicates if the expression is a generator
-    static constexpr const bool needs_temporary_visitor = false; ///< Indicates if the expression needs a temporary visitor
-    static constexpr const bool needs_evaluator_visitor = false; ///< Indicates if the exxpression needs a evaluator visitor
-    static constexpr const order storage_order          = order::RowMajor;           ///< The expression's storage order
+    static constexpr const bool is_etl                  = true;            ///< Indicates if the type is an ETL expression
+    static constexpr const bool is_transformer          = false;           ///< Indicates if the type is a transformer
+    static constexpr const bool is_view                 = false;           ///< Indicates if the type is a view
+    static constexpr const bool is_magic_view           = false;           ///< Indicates if the type is a magic view
+    static constexpr const bool is_linear               = true;            ///< Indicates if the expression is linear
+    static constexpr const bool is_fast                 = true;            ///< Indicates if the expression is fast
+    static constexpr const bool is_value                = false;           ///< Indicates if the expression is of value type
+    static constexpr const bool is_generator            = true;            ///< Indicates if the expression is a generator
+    static constexpr const bool needs_temporary_visitor = false;           ///< Indicates if the expression needs a temporary visitor
+    static constexpr const bool needs_evaluator_visitor = false;           ///< Indicates if the exxpression needs a evaluator visitor
+    static constexpr const order storage_order          = order::RowMajor; ///< The expression's storage order
 
     /*!
      * \brief Indicates if the expression is vectorizable using the
      * given vector mode
      * \tparam V The vector mode
      */
-    template<vector_mode_t V>
+    template <vector_mode_t V>
     using vectorizable = std::false_type;
 };
 

@@ -35,7 +35,7 @@ struct cuda_memory {
     }
 
     cuda_memory& operator=(const cuda_memory& rhs) noexcept {
-        if(this != &rhs){
+        if (this != &rhs) {
             cpp_assert(!is_set(), "copy of cuda_memory is only possible when not allocated");
             cpp_assert(!rhs.is_set(), "copy of cuda_memory is only possible when not allocated");
         }
@@ -43,22 +43,22 @@ struct cuda_memory {
         return *this;
     }
 
-    cuda_memory(cuda_memory&& rhs) noexcept : memory(rhs.memory){
+    cuda_memory(cuda_memory&& rhs) noexcept : memory(rhs.memory) {
         rhs.memory = nullptr;
     }
 
     cuda_memory& operator=(cuda_memory&& rhs) noexcept {
-        if(this != &rhs){
+        if (this != &rhs) {
             free_memory();
 
-            memory = rhs.memory;
+            memory     = rhs.memory;
             rhs.memory = nullptr;
         }
 
         return *this;
     }
 
-    cuda_memory& operator=(T* new_memory){
+    cuda_memory& operator=(T* new_memory) {
         free_memory();
 
         memory = new_memory;
@@ -74,7 +74,7 @@ struct cuda_memory {
         return memory;
     }
 
-    void reset(){
+    void reset() {
         free_memory();
         memory = nullptr;
     }
@@ -84,8 +84,8 @@ struct cuda_memory {
     }
 
 private:
-    void free_memory(){
-        if(memory){
+    void free_memory() {
+        if (memory) {
             //Note: the const_cast is only here to allow compilation
             cudaFree((reinterpret_cast<void*>(const_cast<std::remove_const_t<T>*>(memory))));
         }

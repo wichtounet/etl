@@ -832,7 +832,7 @@ auto stable_softmax(E&& e) {
  * \return An ETL expression representing the derivative of the softmax function of the input.
  */
 template <typename E>
-auto softmax_derivative(E&& e){
+auto softmax_derivative(E&& e) {
     cpp_unused(e);
     return 1.0;
 }
@@ -1140,7 +1140,7 @@ auto transpose(const E& value) -> detail::stable_transform_helper<E, transpose_t
  * \return The transpose of the given expression.
  */
 template <typename E>
-auto trans(const E& value){
+auto trans(const E& value) {
     return transpose(value);
 }
 
@@ -1150,7 +1150,7 @@ auto trans(const E& value){
  * \return The conjugate transpose of the given expression.
  */
 template <typename E>
-auto conj_transpose(const E& value){
+auto conj_transpose(const E& value) {
     return conj(transpose(value));
 }
 
@@ -1160,7 +1160,7 @@ auto conj_transpose(const E& value){
  * \return The conjugate transpose of the given expression.
  */
 template <typename E>
-auto ctrans(const E& value){
+auto ctrans(const E& value) {
     return conj(transpose(value));
 }
 

@@ -28,8 +28,8 @@ struct temporary_expr : comparable<D>, value_testable<D>, dim_testable<D>, gpu_d
     /*!
      * \brief The vectorization type for V
      */
-    template<typename VV = default_vec>
-    using vec_type = typename VV::template vec_type<value_type>;
+    template <typename VV = default_vec>
+    using vec_type        = typename VV::template vec_type<value_type>;
 
     /*!
      * \brief Returns a reference to the derived object, i.e. the object using the CRTP injector.
@@ -116,7 +116,7 @@ struct temporary_expr : comparable<D>, value_testable<D>, dim_testable<D>, gpu_d
      * \tparam VV The vectorization mode to use
      * \return a vector containing several results of the expression
      */
-    template<typename VV = default_vec>
+    template <typename VV = default_vec>
     vec_type<VV> load(std::size_t i) const noexcept {
         return VV::loadu(memory_start() + i);
     }
@@ -181,7 +181,7 @@ template <typename T, typename AExpr, typename Op, typename Forced>
 struct temporary_unary_expr final : temporary_expr<temporary_unary_expr<T, AExpr, Op, Forced>, T> {
     static constexpr const bool is_not_forced = std::is_same<Forced, void>::value; ///< Indicate if the result is forced to an expression
 
-    using value_type  = T;                                                                               ///< The value type
+    using value_type  = T;                                                                                   ///< The value type
     using result_type = std::conditional_t<is_not_forced, typename Op::template result_type<AExpr>, Forced>; ///< The result type
     using data_type   = std::conditional_t<is_not_forced, std::shared_ptr<result_type>, result_type>;        ///< The data type
 
@@ -218,7 +218,10 @@ public:
 
     //Move an expression
     temporary_unary_expr(temporary_unary_expr&& e) noexcept
-            : _a(e._a), _c(optional_move<is_not_forced>(e._c)), allocated(e.allocated), evaluated(e.evaluated){
+        : _a(e._a),
+          _c(optional_move<is_not_forced>(e._c)),
+          allocated(e.allocated),
+          evaluated(e.evaluated) {
         e.evaluated = false;
     }
 
@@ -331,7 +334,7 @@ public:
     /*!
      * \brief Return the GPU delegate
      */
-    result_type& gpu_delegate(){
+    result_type& gpu_delegate() {
         return result();
     }
 
@@ -357,7 +360,7 @@ template <typename T, typename AExpr, typename BExpr, typename Op, typename Forc
 struct temporary_binary_expr final : temporary_expr<temporary_binary_expr<T, AExpr, BExpr, Op, Forced>, T> {
     static constexpr const bool is_not_forced = std::is_same<Forced, void>::value; ///< Indicate if the result is forced to an expression
 
-    using value_type  = T;                                                                                      ///< The value type
+    using value_type  = T;                                                                                          ///< The value type
     using result_type = std::conditional_t<is_not_forced, typename Op::template result_type<AExpr, BExpr>, Forced>; ///< The result type
     using data_type   = std::conditional_t<is_not_forced, std::shared_ptr<result_type>, result_type>;               ///< The data type
 
@@ -395,7 +398,11 @@ public:
 
     //Move an expression
     temporary_binary_expr(temporary_binary_expr&& e) noexcept
-            : _a(e._a), _b(e._b), _c(optional_move<is_not_forced>(e._c)), allocated(e.allocated), evaluated(e.evaluated) {
+        : _a(e._a),
+          _b(e._b),
+          _c(optional_move<is_not_forced>(e._c)),
+          allocated(e.allocated),
+          evaluated(e.evaluated) {
         e.evaluated = false;
     }
 
@@ -521,7 +528,7 @@ public:
         return get_result_op::apply(_c);
     }
 
-    result_type& gpu_delegate(){
+    result_type& gpu_delegate() {
         return result();
     }
 
@@ -559,7 +566,7 @@ struct etl_traits<etl::temporary_unary_expr<T, A, Op, Forced>> {
      * given vector mode
      * \tparam V The vector mode
      */
-    template<vector_mode_t V>
+    template <vector_mode_t V>
     using vectorizable = std::true_type;
 
     /*!
@@ -634,7 +641,7 @@ struct etl_traits<etl::temporary_binary_expr<T, A, B, Op, Forced>> {
      * given vector mode
      * \tparam V The vector mode
      */
-    template<vector_mode_t V>
+    template <vector_mode_t V>
     using vectorizable = std::true_type;
 
     /*!

@@ -20,7 +20,7 @@ namespace etl {
 enum class sum_impl {
     STD, ///< Standard implementation
     SSE, ///< SSE implementation
-    AVX ///< AVX implementation
+    AVX  ///< AVX implementation
 };
 
 } //end of namespace etl

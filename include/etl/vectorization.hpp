@@ -28,13 +28,13 @@ namespace etl {
  * \brief Traits to get the intrinsic traits for a vector mode
  * \tparam V The vector mode
  */
-template<vector_mode_t V>
+template <vector_mode_t V>
 struct get_intrinsic_traits {
     /*!
      * \brief The type of the intrinsic traits for T
      * \tparam T The type to get the intrinsic traits for
      */
-    template<typename T>
+    template <typename T>
     using type = no_intrinsic_traits<T>;
 };
 
@@ -42,21 +42,21 @@ struct get_intrinsic_traits {
  * \brief Traits to get the vector implementation for a vector mode
  * \tparam V The vector mode
  */
-template<vector_mode_t V>
+template <vector_mode_t V>
 struct get_vector_impl {
     using type = no_vec; ///< The vector implementation
 };
 
 #ifdef __AVX512F__
 
-template<>
-struct get_intrinsic_traits <vector_mode_t::AVX512> {
-    template<typename T>
+template <>
+struct get_intrinsic_traits<vector_mode_t::AVX512> {
+    template <typename T>
     using type = avx512_intrinsic_traits<T>;
 };
 
-template<>
-struct get_vector_impl <vector_mode_t::AVX512> {
+template <>
+struct get_vector_impl<vector_mode_t::AVX512> {
     using type = avx512_vec;
 };
 
@@ -64,14 +64,14 @@ struct get_vector_impl <vector_mode_t::AVX512> {
 
 #ifdef __AVX__
 
-template<>
-struct get_intrinsic_traits <vector_mode_t::AVX> {
-    template<typename T>
+template <>
+struct get_intrinsic_traits<vector_mode_t::AVX> {
+    template <typename T>
     using type = avx_intrinsic_traits<T>;
 };
 
-template<>
-struct get_vector_impl <vector_mode_t::AVX> {
+template <>
+struct get_vector_impl<vector_mode_t::AVX> {
     using type = avx_vec;
 };
 
@@ -79,14 +79,14 @@ struct get_vector_impl <vector_mode_t::AVX> {
 
 #ifdef __SSE3__
 
-template<>
-struct get_intrinsic_traits <vector_mode_t::SSE3> {
-    template<typename T>
+template <>
+struct get_intrinsic_traits<vector_mode_t::SSE3> {
+    template <typename T>
     using type = sse_intrinsic_traits<T>;
 };
 
-template<>
-struct get_vector_impl <vector_mode_t::SSE3> {
+template <>
+struct get_vector_impl<vector_mode_t::SSE3> {
     using type = sse_vec;
 };
 

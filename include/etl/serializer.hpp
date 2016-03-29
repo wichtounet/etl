@@ -9,15 +9,16 @@
 
 namespace etl {
 
-template<typename Stream>
+template <typename Stream>
 struct serializer {
     using stream_t = Stream;
-    using char_t = typename stream_t::char_type;
+    using char_t   = typename stream_t::char_type;
 
     stream_t stream;
 
-    template<typename... Args>
-    serializer(Args&&... args) : stream(std::forward<Args>(args)...) {}
+    template <typename... Args>
+    serializer(Args&&... args)
+            : stream(std::forward<Args>(args)...) {}
 
     template <typename T, cpp_enable_if(std::is_arithmetic<T>::value)>
     serializer& operator<<(const T& value) {

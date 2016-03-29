@@ -16,14 +16,14 @@
 MUL_FUNCTOR(default_gemm, c = etl::mul(a, b))
 MUL_FUNCTOR(lazy_gemm, c = etl::lazy_mul(a, b))
 MUL_FUNCTOR(strassen_gemm, c = etl::strassen_mul(a, b))
-MUL_FUNCTOR(std_gemm, c = selected_helper(etl::gemm_impl::STD, a * b))
-MUL_FUNCTOR(eblas_gemm, c = selected_helper(etl::gemm_impl::FAST, a * b))
+MUL_FUNCTOR(std_gemm, c = selected_helper(etl::gemm_impl::STD, a* b))
+MUL_FUNCTOR(eblas_gemm, c = selected_helper(etl::gemm_impl::FAST, a* b))
 
 MUL_FUNCTOR(default_gemv, c = etl::mul(a, b))
-MUL_FUNCTOR(std_gemv, c = selected_helper(etl::gemm_impl::STD, a * b))
+MUL_FUNCTOR(std_gemv, c = selected_helper(etl::gemm_impl::STD, a* b))
 
 MUL_FUNCTOR(default_gevm, c = etl::mul(a, b))
-MUL_FUNCTOR(std_gevm, c = selected_helper(etl::gemm_impl::STD, a * b))
+MUL_FUNCTOR(std_gevm, c = selected_helper(etl::gemm_impl::STD, a* b))
 
 #define GEMM_TEST_CASE_SECTION_DEFAULT MUL_TEST_CASE_SECTIONS(default_gemm, default_gemm)
 #define GEMM_TEST_CASE_SECTION_LAZY MUL_TEST_CASE_SECTIONS(lazy_gemm, lazy_gemm)
@@ -38,9 +38,9 @@ MUL_FUNCTOR(std_gevm, c = selected_helper(etl::gemm_impl::STD, a * b))
 #define GEVM_TEST_CASE_SECTION_STD MUL_TEST_CASE_SECTIONS(std_gevm, std_gevm)
 
 #ifdef ETL_BLAS_MODE
-MUL_FUNCTOR(blas_gemm, c = selected_helper(etl::gemm_impl::BLAS, a * b))
-MUL_FUNCTOR(blas_gemv, c = selected_helper(etl::gemm_impl::BLAS, a * b))
-MUL_FUNCTOR(blas_gevm, c = selected_helper(etl::gemm_impl::BLAS, a * b))
+MUL_FUNCTOR(blas_gemm, c = selected_helper(etl::gemm_impl::BLAS, a* b))
+MUL_FUNCTOR(blas_gemv, c = selected_helper(etl::gemm_impl::BLAS, a* b))
+MUL_FUNCTOR(blas_gevm, c = selected_helper(etl::gemm_impl::BLAS, a* b))
 #define GEMM_TEST_CASE_SECTION_BLAS MUL_TEST_CASE_SECTIONS(blas_gemm, blas_gemm)
 #define GEMV_TEST_CASE_SECTION_BLAS MUL_TEST_CASE_SECTIONS(blas_gemv, blas_gemv)
 #define GEVM_TEST_CASE_SECTION_BLAS MUL_TEST_CASE_SECTIONS(blas_gevm, blas_gevm)
@@ -51,9 +51,9 @@ MUL_FUNCTOR(blas_gevm, c = selected_helper(etl::gemm_impl::BLAS, a * b))
 #endif
 
 #ifdef ETL_CUBLAS_MODE
-MUL_FUNCTOR(cublas_gemm, c = selected_helper(etl::gemm_impl::CUBLAS, a * b))
-MUL_FUNCTOR(cublas_gemv, c = selected_helper(etl::gemm_impl::CUBLAS, a * b))
-MUL_FUNCTOR(cublas_gevm, c = selected_helper(etl::gemm_impl::CUBLAS, a * b))
+MUL_FUNCTOR(cublas_gemm, c = selected_helper(etl::gemm_impl::CUBLAS, a* b))
+MUL_FUNCTOR(cublas_gemv, c = selected_helper(etl::gemm_impl::CUBLAS, a* b))
+MUL_FUNCTOR(cublas_gevm, c = selected_helper(etl::gemm_impl::CUBLAS, a* b))
 #define GEMM_TEST_CASE_SECTION_CUBLAS MUL_TEST_CASE_SECTIONS(cublas_gemm, cublas_gemm)
 #define GEMV_TEST_CASE_SECTION_CUBLAS MUL_TEST_CASE_SECTIONS(cublas_gemv, cublas_gemv)
 #define GEVM_TEST_CASE_SECTION_CUBLAS MUL_TEST_CASE_SECTIONS(cublas_gevm, cublas_gevm)

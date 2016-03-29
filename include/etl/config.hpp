@@ -27,42 +27,42 @@ namespace etl {
 #ifdef ETL_VECTORIZE_EXPR
 constexpr const bool vectorize_expr = true;
 #else
-constexpr const bool vectorize_expr   = false; ///< Boolean flag indicating if the expression are automatically vectorized
+constexpr const bool vectorize_expr   = false;                               ///< Boolean flag indicating if the expression are automatically vectorized
 #endif
 
 //Flag to enable vectorized implementation of algorithms
 #ifdef ETL_VECTORIZE_IMPL
 constexpr const bool vectorize_impl = true;
 #else
-constexpr const bool vectorize_impl   = false; ///< Boolean flag indicating if the implementations are automatically vectorized
+constexpr const bool vectorize_impl   = false;                               ///< Boolean flag indicating if the implementations are automatically vectorized
 #endif
 
 //Flag to disable the creation of temporary in expressions
 #ifdef ETL_NO_TEMPORARY
 constexpr const bool create_temporary = false;
 #else
-constexpr const bool create_temporary = true; ///< Boolean flag indicating if temporaries are created
+constexpr const bool create_temporary = true;                                ///< Boolean flag indicating if temporaries are created
 #endif
 
 //Flag to allow conv_valid_multi to use FFT
 #ifdef ETL_CONV_VALID_FFT
 constexpr const bool conv_valid_fft = true;
 #else
-constexpr const bool conv_valid_fft = false; ///< Boolean flag indicating if temporaries are created
+constexpr const bool conv_valid_fft   = false;                               ///< Boolean flag indicating if temporaries are created
 #endif
 
 //Select the number of threads
 #ifdef ETL_PARALLEL_THREADS
 constexpr const std::size_t threads = ETL_PARALLEL_THREADS;
 #else
-const std::size_t threads = std::thread::hardware_concurrency(); ///< Number of threads
+const std::size_t threads             = std::thread::hardware_concurrency(); ///< Number of threads
 #endif
 
 //Indicate that ETL should run in parallel
 #ifdef ETL_PARALLEL
 constexpr const bool parallel = true;
 #else
-constexpr const bool parallel = false; ///< Boolean flag indicating if expressions and implementations are parallelized (alpha)
+constexpr const bool parallel         = false;                               ///< Boolean flag indicating if expressions and implementations are parallelized (alpha)
 #endif
 
 #ifdef ETL_MKL_MODE
@@ -73,12 +73,12 @@ constexpr const bool parallel = false; ///< Boolean flag indicating if expressio
 #endif
 
 constexpr const bool is_mkl_enabled = true;
-constexpr const bool has_fast_fft = true;
+constexpr const bool has_fast_fft   = true;
 
 #else
 
-constexpr const bool is_mkl_enabled = false;
-constexpr const bool has_fast_fft = false;
+constexpr const bool is_mkl_enabled              = false;
+constexpr const bool has_fast_fft                = false;
 
 #endif
 
@@ -86,14 +86,14 @@ constexpr const bool has_fast_fft = false;
 #ifdef ETL_BLAS_MODE
 constexpr const bool is_cblas_enabled = true;
 #else
-constexpr const bool is_cblas_enabled = false;
+constexpr const bool is_cblas_enabled            = false;
 #endif
 
 //Flag to indicate that blas is multithreaded
 #ifdef ETL_BLAS_THREADS
 constexpr const bool is_blas_parallel = true;
 #else
-constexpr const bool is_blas_parallel = false;
+constexpr const bool is_blas_parallel            = false;
 #endif
 
 #ifdef ETL_CUDA
@@ -104,14 +104,14 @@ static_assert(false, "ETL_CUDA should never be set directly");
 constexpr const bool is_cublas_enabled = true;
 #define ETL_CUDA
 #else
-constexpr const bool is_cublas_enabled = false;
+constexpr const bool is_cublas_enabled           = false;
 #endif
 
 #ifdef ETL_CUFFT_MODE
 #define ETL_CUDA
 constexpr const bool is_cufft_enabled = true;
 #else
-constexpr const bool is_cufft_enabled = false;
+constexpr const bool is_cufft_enabled            = false;
 #endif
 
 //Flag to perform elementwise multiplication by default (operator*)
@@ -133,14 +133,14 @@ constexpr const bool is_div_strict               = false; ///< Boolean flag indi
 #ifdef ETL_NO_UNROLL_VECT
 constexpr const bool unroll_vectorized_loops = false;
 #else
-constexpr const bool unroll_vectorized_loops     = true; ///< Boolean flag indicating if vectorized loops are getting unrolled
+constexpr const bool unroll_vectorized_loops     = true;  ///< Boolean flag indicating if vectorized loops are getting unrolled
 #endif
 
 //Flag to disable unrolling of non-vectorized loops
 #ifdef ETL_NO_UNROLL_NON_VECT
 constexpr const bool unroll_normal_loops = false;
 #else
-constexpr const bool unroll_normal_loops         = true; ///< Boolean flag indicating if normal loops are getting unrolled
+constexpr const bool unroll_normal_loops         = true;  ///< Boolean flag indicating if normal loops are getting unrolled
 #endif
 
 /*!
@@ -156,7 +156,7 @@ enum class vector_mode_t {
 #ifdef __AVX512F__
 constexpr const vector_mode_t vector_mode = vector_mode_t::AVX512;
 #elif defined(__AVX__)
-constexpr const vector_mode_t vector_mode = vector_mode_t::AVX;
+constexpr const vector_mode_t vector_mode        = vector_mode_t::AVX;
 #elif defined(__SSE3__)
 constexpr const vector_mode_t vector_mode = vector_mode_t::SSE3;
 #else
@@ -166,25 +166,25 @@ constexpr const vector_mode_t vector_mode = vector_mode_t::NONE; ///< The vector
 #ifdef __AVX512F__
 constexpr const bool avx512_enabled = true;
 #else
-constexpr const bool avx512_enabled = false;
+constexpr const bool avx512_enabled              = false;
 #endif
 
 #ifdef __AVX__
 constexpr const bool avx_enabled = true;
 #else
-constexpr const bool avx_enabled = false;
+constexpr const bool avx_enabled                 = false;
 #endif
 
 #ifdef __SSE3__
 constexpr const bool sse3_enabled = true;
 #else
-constexpr const bool sse3_enabled = false;
+constexpr const bool sse3_enabled                = false;
 #endif
 
 #ifdef __INTEL_COMPILER
 constexpr const bool intel_compiler = true;
 #else
-constexpr const bool intel_compiler = false; ///< Indicates if the project is compiled with intel
+constexpr const bool intel_compiler              = false; ///< Indicates if the project is compiled with intel
 #endif
 
 } //end of namespace etl

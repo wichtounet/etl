@@ -13,7 +13,7 @@
 
 #pragma once
 
-#include "etl/visitor.hpp"        //visitor of the expressions
+#include "etl/visitor.hpp" //visitor of the expressions
 
 namespace etl {
 
@@ -56,7 +56,7 @@ struct evaluator_static_visitor {
 
         v.evaluate();
 
-        if(old_need_value){
+        if (old_need_value) {
             v.gpu_copy_from_if_necessary();
         }
 
@@ -75,7 +75,7 @@ struct evaluator_static_visitor {
 
         v.evaluate();
 
-        if(old_need_value){
+        if (old_need_value) {
             v.gpu_copy_from_if_necessary();
         }
 

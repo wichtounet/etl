@@ -12,7 +12,7 @@
 #define ECZ(a, b) etl::complex<Z>(a, b)
 
 TEMPLATE_TEST_CASE_2("sparse/complex/init/1", "[mat][init][sparse]", Z, double, float) {
-    etl::sparse_matrix<std::complex<Z>> a(3, 2, std::initializer_list<std::complex<Z>>({CZ(1.0, 0.0), CZ(0.0, 0.0), CZ(0.0, 0.0), CZ(0.0, 0.0), CZ(-1.0, 2.0), CZ(0.0, 1.0)    }));
+    etl::sparse_matrix<std::complex<Z>> a(3, 2, std::initializer_list<std::complex<Z>>({CZ(1.0, 0.0), CZ(0.0, 0.0), CZ(0.0, 0.0), CZ(0.0, 0.0), CZ(-1.0, 2.0), CZ(0.0, 1.0)}));
 
     REQUIRE(a.rows() == 3);
     REQUIRE(a.columns() == 2);
@@ -28,7 +28,7 @@ TEMPLATE_TEST_CASE_2("sparse/complex/init/1", "[mat][init][sparse]", Z, double, 
     REQUIRE(a.get(1, 1).real() == Z(0.0));
     REQUIRE(a.get(1, 1).imag() == Z(0.0));
     REQUIRE(a.get(2, 0).real() == Z(-1.0));
-    REQUIRE(a.get(2, 0).imag() == Z( 2.0));
+    REQUIRE(a.get(2, 0).imag() == Z(2.0));
     REQUIRE(a.get(2, 1).real() == Z(0.0));
     REQUIRE(a.get(2, 1).imag() == Z(1.0));
 }
@@ -154,7 +154,7 @@ TEMPLATE_TEST_CASE_2("sparse/complex/reference/2", "[mat][reference][sparse]", Z
 }
 
 TEMPLATE_TEST_CASE_2("sparse/complex/erase/1", "[mat][erase][sparse]", Z, double, float) {
-    etl::sparse_matrix<std::complex<Z>> a(3, 2, std::initializer_list<std::complex<Z>>({CZ(1.0, 0.0), CZ(0.0, 0.0), CZ(0.0, 0.0), CZ(0.0, 0.0), CZ(-1.0, 2.0), CZ(0.0, 1.0)    }));
+    etl::sparse_matrix<std::complex<Z>> a(3, 2, std::initializer_list<std::complex<Z>>({CZ(1.0, 0.0), CZ(0.0, 0.0), CZ(0.0, 0.0), CZ(0.0, 0.0), CZ(-1.0, 2.0), CZ(0.0, 1.0)}));
 
     REQUIRE(a.non_zeros() == 3);
 
@@ -193,10 +193,10 @@ TEMPLATE_TEST_CASE_2("sparse/complex/add/1", "[mat][add][sparse]", Z, double, fl
 
     c = a + b;
 
-    REQUIRE(c.get(0,0) == CZ(3.0, -2.0));
-    REQUIRE(c.get(0,1) == CZ(1.0, 2.0));
-    REQUIRE(c.get(1,0) == CZ(0.0, 0.0));
-    REQUIRE(c.get(1,1) == CZ(4.0, 0.0));
+    REQUIRE(c.get(0, 0) == CZ(3.0, -2.0));
+    REQUIRE(c.get(0, 1) == CZ(1.0, 2.0));
+    REQUIRE(c.get(1, 0) == CZ(0.0, 0.0));
+    REQUIRE(c.get(1, 1) == CZ(4.0, 0.0));
     REQUIRE(c.non_zeros() == 3);
 }
 
@@ -207,10 +207,10 @@ TEMPLATE_TEST_CASE_2("sparse/complex/sub/1", "[mat][add][sparse]", Z, double, fl
 
     c = a - b;
 
-    REQUIRE(c.get(0,0) == CZ(-1.0, 2.0));
-    REQUIRE(c.get(0,1) == CZ(-1.0, -2.0));
-    REQUIRE(c.get(1,0) == CZ(0.0, 0.0));
-    REQUIRE(c.get(1,1) == CZ(0.0, 0.0));
+    REQUIRE(c.get(0, 0) == CZ(-1.0, 2.0));
+    REQUIRE(c.get(0, 1) == CZ(-1.0, -2.0));
+    REQUIRE(c.get(1, 0) == CZ(0.0, 0.0));
+    REQUIRE(c.get(1, 1) == CZ(0.0, 0.0));
     REQUIRE(c.non_zeros() == 2);
 }
 
@@ -221,10 +221,10 @@ TEMPLATE_TEST_CASE_2("sparse/complex/mul/1", "[mat][add][sparse]", Z, double, fl
 
     c = a >> b;
 
-    REQUIRE(c.get(0,0) == CZ(2.0, -2.0));
-    REQUIRE(c.get(0,1) == CZ(0.0, 0.0));
-    REQUIRE(c.get(1,0) == CZ(0.0, 0.0));
-    REQUIRE(c.get(1,1) == CZ(4.0, 0.0));
+    REQUIRE(c.get(0, 0) == CZ(2.0, -2.0));
+    REQUIRE(c.get(0, 1) == CZ(0.0, 0.0));
+    REQUIRE(c.get(1, 0) == CZ(0.0, 0.0));
+    REQUIRE(c.get(1, 1) == CZ(4.0, 0.0));
     REQUIRE(c.non_zeros() == 2);
 }
 
@@ -235,9 +235,9 @@ TEMPLATE_TEST_CASE_2("sparse/complex/div/1", "[mat][div][sparse]", Z, double, fl
 
     c = a / b;
 
-    REQUIRE(c.get(0,0) == CZ(0.25, 0.25));
-    REQUIRE(c.get(0,1) == CZ(0.0, 0.0));
-    REQUIRE(c.get(1,0) == CZ(0.0, 0.0));
-    REQUIRE(c.get(1,1) == CZ(1.0, 0.0));
+    REQUIRE(c.get(0, 0) == CZ(0.25, 0.25));
+    REQUIRE(c.get(0, 1) == CZ(0.0, 0.0));
+    REQUIRE(c.get(1, 0) == CZ(0.0, 0.0));
+    REQUIRE(c.get(1, 1) == CZ(1.0, 0.0));
     REQUIRE(c.non_zeros() == 2);
 }

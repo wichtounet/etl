@@ -27,19 +27,19 @@ struct plus_binary_op {
     /*!
      * The vectorization type for V
      */
-    template<typename V = default_vec>
-    using vec_type = typename V::template vec_type<T>;
+    template <typename V = default_vec>
+    using vec_type       = typename V::template vec_type<T>;
 
     /*!
      * \brief Indicates if the expression is vectorizable using the
      * given vector mode
      * \tparam V The vector mode
      */
-    template<vector_mode_t V>
+    template <vector_mode_t V>
     using vectorizable = std::true_type;
 
-    static constexpr const bool linear       = true;  ///< Indicates if the operator is linear or not
-    static constexpr const bool desc_func    = false; ///< Indicates if the description must be printed as function
+    static constexpr const bool linear    = true;  ///< Indicates if the operator is linear or not
+    static constexpr const bool desc_func = false; ///< Indicates if the description must be printed as function
 
     /*!
      * \brief Apply the unary operator on lhs and rhs
@@ -58,7 +58,7 @@ struct plus_binary_op {
      * \tparam V The vectorization mode
      * \return a vector containing several results of the operator
      */
-    template<typename V = default_vec>
+    template <typename V = default_vec>
     static cpp14_constexpr vec_type<V> load(const vec_type<V>& lhs, const vec_type<V>& rhs) noexcept {
         const vec_type<V> ymm1(lhs);
         const vec_type<V> ymm2(rhs);
@@ -82,19 +82,19 @@ struct minus_binary_op {
     /*!
      * The vectorization type for V
      */
-    template<typename V = default_vec>
-    using vec_type = typename V::template vec_type<T>;
+    template <typename V = default_vec>
+    using vec_type       = typename V::template vec_type<T>;
 
     /*!
      * \brief Indicates if the expression is vectorizable using the
      * given vector mode
      * \tparam V The vector mode
      */
-    template<vector_mode_t V>
+    template <vector_mode_t V>
     using vectorizable = std::true_type;
 
-    static constexpr const bool linear       = true; ///< Indicates if the operator is linear or not
-    static constexpr const bool desc_func    = false; ///< Indicates if the description must be printed as function
+    static constexpr const bool linear    = true;  ///< Indicates if the operator is linear or not
+    static constexpr const bool desc_func = false; ///< Indicates if the description must be printed as function
 
     /*!
      * \brief Apply the unary operator on lhs and rhs
@@ -113,7 +113,7 @@ struct minus_binary_op {
      * \tparam V The vectorization mode
      * \return a vector containing several results of the operator
      */
-    template<typename V = default_vec>
+    template <typename V = default_vec>
     static cpp14_constexpr vec_type<V> load(const vec_type<V>& lhs, const vec_type<V>& rhs) noexcept {
         const vec_type<V> ymm1(lhs);
         const vec_type<V> ymm2(rhs);
@@ -137,19 +137,19 @@ struct mul_binary_op {
     /*!
      * The vectorization type for V
      */
-    template<typename V = default_vec>
-    using vec_type = typename V::template vec_type<T>;
+    template <typename V = default_vec>
+    using vec_type       = typename V::template vec_type<T>;
 
     /*!
      * \brief Indicates if the expression is vectorizable using the
      * given vector mode
      * \tparam V The vector mode
      */
-    template<vector_mode_t V>
+    template <vector_mode_t V>
     using vectorizable = cpp::bool_constant<V == vector_mode_t::AVX512 ? !is_complex_t<T>::value : true>;
 
-    static constexpr const bool linear       = true; ///< Indicates if the operator is linear or not
-    static constexpr const bool desc_func    = false; ///< Indicates if the description must be printed as function
+    static constexpr const bool linear    = true;  ///< Indicates if the operator is linear or not
+    static constexpr const bool desc_func = false; ///< Indicates if the description must be printed as function
 
     /*!
      * \brief Apply the unary operator on lhs and rhs
@@ -168,7 +168,7 @@ struct mul_binary_op {
      * \tparam V The vectorization mode
      * \return a vector containing several results of the operator
      */
-    template<typename V = default_vec>
+    template <typename V = default_vec>
     static cpp14_constexpr vec_type<V> load(const vec_type<V>& lhs, const vec_type<V>& rhs) noexcept {
         const vec_type<V> ymm1(lhs);
         const vec_type<V> ymm2(rhs);
@@ -192,19 +192,19 @@ struct div_binary_op {
     /*!
      * The vectorization type for V
      */
-    template<typename V = default_vec>
-    using vec_type = typename V::template vec_type<T>;
+    template <typename V = default_vec>
+    using vec_type       = typename V::template vec_type<T>;
 
     /*!
      * \brief Indicates if the expression is vectorizable using the
      * given vector mode
      * \tparam V The vector mode
      */
-    template<vector_mode_t V>
+    template <vector_mode_t V>
     using vectorizable = cpp::bool_constant<V == vector_mode_t::AVX512 ? !is_complex_t<T>::value : true>;
 
-    static constexpr const bool linear       = true; ///< Indicates if the operator is linear or not
-    static constexpr const bool desc_func    = false; ///< Indicates if the description must be printed as function
+    static constexpr const bool linear    = true;  ///< Indicates if the operator is linear or not
+    static constexpr const bool desc_func = false; ///< Indicates if the description must be printed as function
 
     /*!
      * \brief Apply the unary operator on lhs and rhs
@@ -223,7 +223,7 @@ struct div_binary_op {
      * \tparam V The vectorization mode
      * \return a vector containing several results of the operator
      */
-    template<typename V = default_vec>
+    template <typename V = default_vec>
     static cpp14_constexpr vec_type<V> load(const vec_type<V>& lhs, const vec_type<V>& rhs) noexcept {
         const vec_type<V> ymm1(lhs);
         const vec_type<V> ymm2(rhs);
@@ -244,15 +244,15 @@ struct div_binary_op {
  */
 template <typename T>
 struct mod_binary_op {
-    static constexpr const bool linear       = true; ///< Indicates if the operator is linear or not
-    static constexpr const bool desc_func    = false; ///< Indicates if the description must be printed as function
+    static constexpr const bool linear    = true;  ///< Indicates if the operator is linear or not
+    static constexpr const bool desc_func = false; ///< Indicates if the description must be printed as function
 
     /*!
      * \brief Indicates if the expression is vectorizable using the
      * given vector mode
      * \tparam V The vector mode
      */
-    template<vector_mode_t V>
+    template <vector_mode_t V>
     using vectorizable = std::false_type;
 
     /*!
@@ -282,15 +282,15 @@ struct mod_binary_op {
  */
 template <typename T, typename E>
 struct ranged_noise_binary_op {
-    static constexpr const bool linear       = true;  ///< Indicates if the operator is linear or not
-    static constexpr const bool desc_func    = true;  ///< Indicates if the description must be printed as function
+    static constexpr const bool linear    = true; ///< Indicates if the operator is linear or not
+    static constexpr const bool desc_func = true; ///< Indicates if the description must be printed as function
 
     /*!
      * \brief Indicates if the expression is vectorizable using the
      * given vector mode
      * \tparam V The vector mode
      */
-    template<vector_mode_t V>
+    template <vector_mode_t V>
     using vectorizable = std::false_type;
 
     /*!
@@ -328,18 +328,18 @@ struct max_binary_op {
     /*!
      * The vectorization type for V
      */
-    template<typename V = default_vec>
-    using vec_type = typename V::template vec_type<T>;
+    template <typename V = default_vec>
+    using vec_type       = typename V::template vec_type<T>;
 
-    static constexpr const bool linear       = true; ///< Indicates if the operator is linear or not
-    static constexpr const bool desc_func    = true; ///< Indicates if the description must be printed as function
+    static constexpr const bool linear    = true; ///< Indicates if the operator is linear or not
+    static constexpr const bool desc_func = true; ///< Indicates if the description must be printed as function
 
     /*!
      * \brief Indicates if the expression is vectorizable using the
      * given vector mode
      * \tparam V The vector mode
      */
-    template<vector_mode_t V>
+    template <vector_mode_t V>
     using vectorizable = cpp::bool_constant<intel_compiler && !is_complex_t<T>::value>;
 
     /*!
@@ -360,7 +360,7 @@ struct max_binary_op {
      * \tparam V The vectorization mode
      * \return a vector containing several results of the operator
      */
-    template<typename V = default_vec>
+    template <typename V = default_vec>
     static cpp14_constexpr vec_type<V> load(const vec_type<V>& lhs, const vec_type<V>& rhs) noexcept {
         return V::max(lhs, rhs);
     }
@@ -383,18 +383,18 @@ struct min_binary_op {
     /*!
      * The vectorization type for V
      */
-    template<typename V = default_vec>
-    using vec_type = typename V::template vec_type<T>;
+    template <typename V = default_vec>
+    using vec_type       = typename V::template vec_type<T>;
 
-    static constexpr const bool linear       = true; ///< Indicates if the operator is linear or not
-    static constexpr const bool desc_func    = true; ///< Indicates if the description must be printed as function
+    static constexpr const bool linear    = true; ///< Indicates if the operator is linear or not
+    static constexpr const bool desc_func = true; ///< Indicates if the description must be printed as function
 
     /*!
      * \brief Indicates if the expression is vectorizable using the
      * given vector mode
      * \tparam V The vector mode
      */
-    template<vector_mode_t V>
+    template <vector_mode_t V>
     using vectorizable = cpp::bool_constant<intel_compiler && !is_complex_t<T>::value>;
 
     /*!
@@ -415,7 +415,7 @@ struct min_binary_op {
      * \tparam V The vectorization mode
      * \return a vector containing several results of the operator
      */
-    template<typename V = default_vec>
+    template <typename V = default_vec>
     static cpp14_constexpr vec_type<V> load(const vec_type<V>& lhs, const vec_type<V>& rhs) noexcept {
         return V::min(lhs, rhs);
     }
@@ -435,15 +435,15 @@ struct min_binary_op {
  */
 template <typename T, typename E>
 struct pow_binary_op {
-    static constexpr const bool linear       = true; ///< Indicates if the operator is linear or not
-    static constexpr const bool desc_func    = true; ///< Indicates if the description must be printed as function
+    static constexpr const bool linear    = true; ///< Indicates if the operator is linear or not
+    static constexpr const bool desc_func = true; ///< Indicates if the description must be printed as function
 
     /*!
      * \brief Indicates if the expression is vectorizable using the
      * given vector mode
      * \tparam V The vector mode
      */
-    template<vector_mode_t V>
+    template <vector_mode_t V>
     using vectorizable = std::false_type;
 
     /*!
@@ -470,15 +470,15 @@ struct pow_binary_op {
  */
 template <typename T, typename E>
 struct one_if_binary_op {
-    static constexpr const bool linear       = true;  ///< Indicates if the operator is linear or not
-    static constexpr const bool desc_func    = true;  ///< Indicates if the description must be printed as function
+    static constexpr const bool linear    = true; ///< Indicates if the operator is linear or not
+    static constexpr const bool desc_func = true; ///< Indicates if the description must be printed as function
 
     /*!
      * \brief Indicates if the expression is vectorizable using the
      * given vector mode
      * \tparam V The vector mode
      */
-    template<vector_mode_t V>
+    template <vector_mode_t V>
     using vectorizable = std::false_type;
 
     /*!
