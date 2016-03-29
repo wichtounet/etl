@@ -17,7 +17,7 @@ struct deserializer {
     stream_t stream;
 
     template<typename... Args>
-    deserializer(Args&&... args) : stream(std::forward<Args>(args)...) {}
+    explicit deserializer(Args&&... args) : stream(std::forward<Args>(args)...) {}
 
     template <typename T, cpp_enable_if(std::is_arithmetic<T>::value)>
     deserializer& operator>>(T& value) {

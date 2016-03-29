@@ -102,7 +102,7 @@ struct aligned_ptr {
      * \brief Move construct an aligned_ptr
      * \param rhs The pointer to move
      */
-    aligned_ptr(aligned_ptr&& rhs) : ptr(rhs.ptr) {
+    aligned_ptr(aligned_ptr&& rhs) noexcept : ptr(rhs.ptr) {
         rhs.ptr = nullptr;
     }
 
@@ -111,7 +111,7 @@ struct aligned_ptr {
      * \param rhs The pointer to move
      * \return the aligned_ptr
      */
-    aligned_ptr& operator=(aligned_ptr&& rhs){
+    aligned_ptr& operator=(aligned_ptr&& rhs) noexcept {
         if(this != &rhs){
             ptr = rhs.ptr;
             rhs.ptr = nullptr;

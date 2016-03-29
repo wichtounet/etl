@@ -266,12 +266,13 @@ struct basic_conv_expr : impl_expr<basic_conv_expr<T, D, TT, Impl>> {
      * \return a textual representation of the operation
      */
     static std::string desc() noexcept {
-        if (TT == conv_type::VALID) {
-            return "conv_valid";
-        } else if (TT == conv_type::SAME) {
-            return "conv_same";
-        } else {
-            return "conv_full";
+        switch(TT){
+            case conv_type::VALID:
+                return "conv_valid";
+            case conv_type::SAME:
+                return "conv_same";
+            case conv_type::FULL:
+                return "conv_full";
         }
     }
 

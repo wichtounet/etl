@@ -152,7 +152,7 @@ struct cuda_memory {
 
 #endif
 
-} //end of namespace cublas
+} //end of namespace cuda
 
 } //end of namespace impl
 
