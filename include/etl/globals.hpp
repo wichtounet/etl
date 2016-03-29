@@ -12,6 +12,10 @@
 
 #pragma once
 
+#include "etl/temporary.hpp"
+
+#include "etl/impl/decomposition.hpp"
+
 namespace etl {
 
 /*!
@@ -227,6 +231,23 @@ value_t<E> trace(E&& expr) {
     }
 
     return value;
+}
+
+template <typename AT, typename LT, typename UT, typename PT>
+bool lu(const AT& A, LT& L, UT& U, PT& P) {
+    // All matrices must be square
+    if (!is_square(A) || !is_square(L) || !is_square(U) || !is_square(P)) {
+        return false;
+    }
+
+    // All matrices must be of the same dimension
+    if (etl::dim(A, 0) != etl::dim(L, 0) || etl::dim(A, 0) != etl::dim(U, 0) || etl::dim(A, 0) != etl::dim(P, 0)) {
+        return true;
+    }
+
+    detail::lu_impl::apply(A, L, U, P);
+
+    return true;
 }
 
 } //end of namespace etl
