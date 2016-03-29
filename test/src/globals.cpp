@@ -359,3 +359,95 @@ TEST_CASE("globals/is_real_complex/1", "[globals]") {
     REQUIRE(etl::is_complex_matrix(g));
     REQUIRE(etl::is_complex_matrix(h));
 }
+
+TEST_CASE("globals/is_hermitian/1", "[globals]") {
+    etl::fast_matrix<double, 3, 3> a;
+    etl::fast_matrix<float, 3, 3> b;
+    etl::fast_matrix<int, 3, 3> c;
+    etl::fast_matrix<long, 3, 3> d;
+
+    REQUIRE(!is_hermitian(a));
+    REQUIRE(!is_hermitian(b));
+    REQUIRE(!is_hermitian(c));
+    REQUIRE(!is_hermitian(d));
+}
+
+TEST_CASE("globals/is_hermitian/2", "[globals]") {
+    etl::fast_matrix<std::complex<double>, 3, 3> a;
+    etl::fast_matrix<std::complex<float>, 3, 3> b;
+    etl::fast_matrix<etl::complex<double>, 3, 3> c;
+    etl::fast_matrix<etl::complex<float>, 3, 3> d;
+
+    a(0, 1) = std::complex<double>(1.0, 2.0);
+    a(0, 2) = std::complex<double>(2.0, -2.0);
+    a(1, 0) = std::complex<double>(3.0, 4.0);
+    a(1, 2) = std::complex<double>(0.0, 1.0);
+    a(2, 0) = std::complex<double>(3.0, 1.0);
+    a(2, 1) = std::complex<double>(4.0, 5.0);
+
+    b(0, 1) = std::complex<float>(2.0, 2.0);
+    b(0, 2) = std::complex<float>(2.0, -3.0);
+    b(1, 0) = std::complex<float>(3.0, 3.0);
+    b(1, 2) = std::complex<float>(0.0, 3.0);
+    b(2, 0) = std::complex<float>(-3.0, -1.0);
+    b(2, 1) = std::complex<float>(4.0, 5.0);
+
+    c(0, 1) = etl::complex<double>(2.0, 2.0);
+    c(0, 2) = etl::complex<double>(2.0, -3.0);
+    c(1, 0) = etl::complex<double>(3.0, 3.0);
+    c(1, 2) = etl::complex<double>(0.0, 3.0);
+    c(2, 0) = etl::complex<double>(-3.0, -1.0);
+    c(2, 1) = etl::complex<double>(4.0, 5.0);
+
+    d(0, 1) = etl::complex<float>(2.0, 2.0);
+    d(0, 2) = etl::complex<float>(2.0, -3.0);
+    d(1, 0) = etl::complex<float>(2.0, -2.0);
+    d(1, 2) = etl::complex<float>(0.0, 3.0);
+    d(2, 0) = etl::complex<float>(2.0, 3.0);
+    d(2, 1) = etl::complex<float>(0.0, 3.0);
+
+    REQUIRE(!is_hermitian(a));
+    REQUIRE(!is_hermitian(b));
+    REQUIRE(!is_hermitian(c));
+    REQUIRE(!is_hermitian(d));
+}
+
+TEST_CASE("globals/is_hermitian/3", "[globals]") {
+    etl::fast_matrix<std::complex<double>, 3, 3> a;
+    etl::fast_matrix<std::complex<float>, 3, 3> b;
+    etl::fast_matrix<etl::complex<double>, 3, 3> c;
+    etl::fast_matrix<etl::complex<float>, 3, 3> d;
+
+    a(0, 1) = std::complex<double>(1.0, 2.0);
+    a(0, 2) = std::complex<double>(2.0, -2.0);
+    a(1, 0) = std::complex<double>(1.0, -2.0);
+    a(1, 2) = std::complex<double>(0.0, 1.0);
+    a(2, 0) = std::complex<double>(2.0, 2.0);
+    a(2, 1) = std::complex<double>(0.0, -1.0);
+
+    b(0, 1) = std::complex<float>(2.0, 2.0);
+    b(0, 2) = std::complex<float>(2.0, -3.0);
+    b(1, 0) = std::complex<float>(2.0, -2.0);
+    b(1, 2) = std::complex<float>(0.0, 3.0);
+    b(2, 0) = std::complex<float>(2.0, 3.0);
+    b(2, 1) = std::complex<float>(0.0, -3.0);
+
+    c(0, 1) = etl::complex<double>(2.0, 2.0);
+    c(0, 2) = etl::complex<double>(2.0, -3.0);
+    c(1, 0) = etl::complex<double>(2.0, -2.0);
+    c(1, 2) = etl::complex<double>(0.0, 1.5);
+    c(2, 0) = etl::complex<double>(2.0, 3.0);
+    c(2, 1) = etl::complex<double>(0.0, -1.5);
+
+    d(0, 1) = etl::complex<float>(2.0, 2.0);
+    d(0, 2) = etl::complex<float>(1.0, 0.0);
+    d(1, 0) = etl::complex<float>(2.0, -2.0);
+    d(1, 2) = etl::complex<float>(0.0, 3.0);
+    d(2, 0) = etl::complex<float>(1.0, 0.0);
+    d(2, 1) = etl::complex<float>(0.0, -3.0);
+
+    REQUIRE(is_hermitian(a));
+    REQUIRE(is_hermitian(b));
+    REQUIRE(is_hermitian(c));
+    REQUIRE(is_hermitian(d));
+}
