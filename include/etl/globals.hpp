@@ -29,6 +29,28 @@ bool is_square(E&& expr) {
 }
 
 /*!
+ * \brief Indicates if the given expression is a real matrix or not.
+ * \param expr The expression to test
+ * \return true if the given expression is a real matrix, false otherwise.
+ */
+template <typename E>
+bool is_real_matrix(E&& expr) {
+    cpp_unused(expr);
+    return !is_complex<E>::value;
+}
+
+/*!
+ * \brief Indicates if the given expression is a complex matrix or not.
+ * \param expr The expression to test
+ * \return true if the given expression is a complex matrix, false otherwise.
+ */
+template <typename E>
+bool is_complex_matrix(E&& expr) {
+    cpp_unused(expr);
+    return is_complex<E>::value;
+}
+
+/*!
  * \brief Indicates if the given expression is a rectangular matrix or not.
  * \param expr The expression to test
  * \return true if the given expression is a rectangular matrix, false otherwise.
