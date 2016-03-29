@@ -35,12 +35,22 @@ struct comparable {
      * \return true if the expressions contains the same sequence of values, false othwerise.
      */
     template <typename E>
-    bool operator==(const E& rhs) {
-        if (etl::size(as_derived()) != etl::size(rhs)) {
+    bool operator==(E&& rhs) {
+        // Both expressions must have the same number of dimensions
+        if (etl::dimensions(as_derived()) != etl::dimensions(rhs)) {
             return false;
         }
 
-        //TODO DO a deep comparison of dimensions
+        // The dimensions must be the same
+        for(std::size_t i = 0; i < etl::dimensions(rhs); ++i){
+            if(etl::dim(as_derived(), i) != etl::dim(rhs, i)){
+                return false;
+            }
+        }
+
+        // At this point, the values are necessary for the comparison
+        etl::force(as_derived());
+        etl::force(rhs);
 
         return std::equal(as_derived().begin(), as_derived().end(), rhs.begin());
     }
@@ -51,7 +61,7 @@ struct comparable {
      * \return false if the expressions contains the same sequence of values, true othwerise.
      */
     template <typename E>
-    bool operator!=(const E& rhs) {
+    bool operator!=(E&& rhs) {
         return !(as_derived() == rhs);
     }
 };
