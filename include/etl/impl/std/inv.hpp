@@ -11,6 +11,9 @@
 
 namespace etl {
 
+template <typename AT, typename LT, typename UT, typename PT>
+bool lu(const AT& A, LT& L, UT& U, PT& P);
+
 namespace impl {
 
 namespace standard {
@@ -30,6 +33,7 @@ void inv(A&& a, C&& c) {
 
     const auto n = etl::dim<0>(a);
 
+    // Use forward propagation for lower triangular matrix
     if(is_lower_triangular(a)){
         c = 0;
 
@@ -46,7 +50,7 @@ void inv(A&& a, C&& c) {
 
                     // The column in a
                     for (std::size_t col = 0; col < row; ++col) {
-                        acc += a(row, col) * c(row - 1, s);
+                        acc += a(row, col) * c(col, s);
                     }
 
                     c(row, s) = (b - acc) / a(row, row);
@@ -57,7 +61,41 @@ void inv(A&& a, C&& c) {
         return;
     }
 
-    //TODO
+    // Use backward propagation for upper triangular matrix
+    if(is_upper_triangular(a)){
+        c = 0;
+
+        // The column in c
+        for (long s = n - 1; s >= 0; --s) {
+            // The row in a
+            for (long row = n - 1; row >= 0; --row) {
+                auto b = row == s ? 1.0 : 0.0;
+
+                if (row == long(n) - 1) {
+                    c(row, s) = b / a(row, row);
+                } else {
+                    value_t<A> acc(0);
+
+                    // The column in a
+                    for (long col = n - 1; col > row; --col) {
+                        acc += a(row, col) * c(col, s);
+                    }
+
+                    c(row, s) = (b - acc) / a(row, row);
+                }
+            }
+        }
+
+        return;
+    }
+
+    auto L = force_temporary_dyn(a);
+    auto U = force_temporary_dyn(a);
+    auto P = force_temporary_dyn(a);
+
+    etl::lu(a, L, U, P);
+
+    c = inv(U) * inv(L) * inv(P);
 }
 
 } //end of namespace standard
