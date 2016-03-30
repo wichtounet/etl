@@ -468,18 +468,23 @@ TEST_CASE("globals/is_permutation/1", "[globals]") {
     etl::fast_matrix<double, 2, 2> a{1.0, 0.0, 1.0, 0.0};
     etl::fast_matrix<double, 2, 2> b{1.0, 1.0, 1.0, 0.0};
     etl::fast_matrix<double, 2, 2> c{1.0, 0.0, 0.0, 0.0};
+    etl::fast_matrix<double, 2, 2> d{1.0, 0.0, 0.0, 1.0};
+    etl::fast_matrix<double, 2, 2> e{0.0, 1.0, 1.0, 0.0};
 
-    REQUIRE(is_permutation_matrix(a));
+    REQUIRE(!is_permutation_matrix(a));
     REQUIRE(!is_permutation_matrix(b));
     REQUIRE(!is_permutation_matrix(c));
+    REQUIRE(is_permutation_matrix(d));
+    REQUIRE(is_permutation_matrix(e));
 }
 
 TEST_CASE("globals/is_permutation/2", "[globals]") {
     etl::fast_matrix<double, 3, 3> a{1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 1.0, 0.0, 0.0};
     etl::fast_matrix<double, 3, 3> b{1.0, 0.0, 1.0, 0.0, 1.0, 0.0, 1.0, 0.0, 0.0};
     etl::fast_matrix<double, 3, 3> c{1.1, 0.0, 0.0, 0.0, 1.0, 0.0, 1.0, 0.0, 0.0};
+    etl::fast_matrix<double, 3, 3> d{1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 1.0, 0.0};
 
-    REQUIRE(is_permutation_matrix(a));
+    REQUIRE(!is_permutation_matrix(a));
     REQUIRE(!is_permutation_matrix(b));
     REQUIRE(!is_permutation_matrix(c));
 }

@@ -255,9 +255,13 @@ bool is_permutation_matrix(E&& expr){
         return false;
     }
 
-    auto sum = value_t<E>(0);
+    //Conditions:
+    //a) Must be a square matrix
+    //b) Every row must have one 1
+    //c) Every column must have one 1
 
     for (std::size_t i = 0; i < etl::dim<0>(expr); ++i) {
+        auto sum = value_t<E>(0);
         for (std::size_t j = 0; j < etl::dim<0>(expr); ++j) {
             if(expr(i, j) != value_t<E>(0) && expr(i, j) != value_t<E>(1)){
                 return false;
@@ -265,9 +269,24 @@ bool is_permutation_matrix(E&& expr){
 
             sum += expr(i, j);
         }
+
+        if(sum != value_t<E>(1)){
+            return false;
+        }
     }
 
-    return sum == etl::dim<0>(expr);
+    for (std::size_t j = 0; j < etl::dim<0>(expr); ++j) {
+        auto sum = value_t<E>(0);
+        for (std::size_t i = 0; i < etl::dim<0>(expr); ++i) {
+            sum += expr(i, j);
+        }
+
+        if(sum != value_t<E>(1)){
+            return false;
+        }
+    }
+
+    return true;
 }
 
 /*!
