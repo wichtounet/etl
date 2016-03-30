@@ -108,6 +108,14 @@ struct dim_testable {
     bool is_strictly_upper_triangular() const noexcept {
         return etl::is_strictly_upper_triangular(as_derived());
     }
+
+    /*!
+     * \brief Indicates if the given expression is a triangular matrix or not.
+     * \return true if the given expression is a triangular matrix, false otherwise.
+     */
+    bool is_triangular() const noexcept {
+        return etl::is_triangular(as_derived());
+    }
 };
 
 } //end of namespace etl

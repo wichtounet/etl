@@ -191,6 +191,16 @@ bool is_strictly_upper_triangular(E&& expr) {
 }
 
 /*!
+ * \brief Indicates if the given expression is a triangular matrix or not.
+ * \param expr The expression to test
+ * \return true if the given expression is a triangular matrix, false otherwise.
+ */
+template <typename E>
+bool is_triangular(E&& expr) {
+    return is_upper_triangular(expr) || is_lower_triangular(expr);
+}
+
+/*!
  * \brief Indicates if the given expression is a diagonal matrix or not.
  * \param expr The expression to test
  * \return true if the given expression is a diagonal matrix, false otherwise.
