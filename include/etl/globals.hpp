@@ -235,6 +235,32 @@ bool is_uniform(E&& expr) {
 }
 
 /*!
+ * \brief Indicates if the given expression represents a permutation matrix
+ * \param expr The expression to test
+ * \return true if the given expression is an hermitian matrix, false otherwise.
+ */
+template <typename E>
+bool is_permutation_matrix(E&& expr){
+    if(!is_square(expr)){
+        return false;
+    }
+
+    auto sum = value_t<E>(0);
+
+    for (std::size_t i = 0; i < etl::dim<0>(expr); ++i) {
+        for (std::size_t j = 0; j < etl::dim<0>(expr); ++j) {
+            if(expr(i, j) != value_t<E>(0) && expr(i, j) != value_t<E>(1)){
+                return false;
+            }
+
+            sum += expr(i, j);
+        }
+    }
+
+    return sum == etl::dim<0>(expr);
+}
+
+/*!
  * \brief Indicates if the given expression represents an hermitian matrix
  * \param expr The expression to test
  * \return true if the given expression is an hermitian matrix, false otherwise.
