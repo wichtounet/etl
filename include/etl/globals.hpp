@@ -15,6 +15,7 @@
 #include "etl/temporary.hpp"
 
 #include "etl/impl/decomposition.hpp"
+#include "etl/impl/det.hpp"
 
 namespace etl {
 
@@ -341,6 +342,21 @@ value_t<E> trace(E&& expr) {
     }
 
     return value;
+}
+
+/*!
+ * \brief Returns the determinant of the given square matrix.
+ *
+ * If the given expression does not represent a square matrix, this function will fail
+ *
+ * \param expr The expression to get the determinant from.
+ * \return The determinant of the given expression
+ */
+template <typename E>
+value_t<E> determinant(E&& expr) {
+    assert_square(expr);
+
+    return detail::det_impl::apply(expr);
 }
 
 template <typename AT, typename LT, typename UT, typename PT>
