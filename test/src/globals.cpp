@@ -488,3 +488,27 @@ TEST_CASE("globals/is_permutation/2", "[globals]") {
     REQUIRE(!is_permutation_matrix(b));
     REQUIRE(!is_permutation_matrix(c));
 }
+
+TEST_CASE("globals/determinant/1", "[globals]") {
+    etl::fast_matrix<double, 2, 2> a{1.0, 0.0, 0.0, 1.0};
+    etl::fast_matrix<double, 2, 2> b{0.0, 1.0, 1.0, 0.0};
+
+    REQUIRE(determinant(a) == 1.0);
+    REQUIRE(determinant(b) == -1.0);
+}
+
+TEST_CASE("globals/determinant/2", "[globals]") {
+    etl::fast_matrix<double, 2, 2> a{1.0, 2.0, 3.0, 4.0};
+    etl::fast_matrix<double, 2, 2> b{-2.0, 3.0, 5.0, -8.0};
+
+    REQUIRE(determinant(a) == Approx(-2.0));
+    REQUIRE(determinant(b) == Approx(1.0));
+}
+
+TEST_CASE("globals/determinant/3", "[globals]") {
+    etl::fast_matrix<double, 3, 3> a{-2, 3, 4, 5, -8, 1, 0, 2, 3};
+    etl::fast_matrix<double, 3, 3> b{-2, 0.5, 4, 5, -1.5, 1, 0, 2, 3};
+
+    REQUIRE(determinant(a) == Approx(47.0));
+    REQUIRE(determinant(b) == Approx(45.5));
+}
