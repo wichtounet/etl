@@ -81,6 +81,7 @@
 #include "etl/expr/mmul_expr.hpp"
 #include "etl/expr/outer_product_expr.hpp"
 #include "etl/expr/fft_expr.hpp"
+#include "etl/expr/inv_expr.hpp"
 #include "etl/expr/conv_expr.hpp"
 #include "etl/expr/convmtx2_expr.hpp"
 #include "etl/expr/pooling_expr.hpp"
@@ -91,6 +92,7 @@
 #include "etl/builder/mul_expression_builder.hpp"
 #include "etl/builder/conv_expression_builder.hpp"
 #include "etl/builder/fft_expression_builder.hpp"
+#include "etl/builder/inv_expression_builder.hpp"
 #include "etl/builder/pooling_expression_builder.hpp"
 
 // The optimizer
