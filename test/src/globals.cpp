@@ -124,11 +124,15 @@ TEST_CASE("globals/is_lower_triangular/1", "[globals]") {
 
     REQUIRE(a.is_lower_triangular());
     REQUIRE(is_lower_triangular(a));
+    REQUIRE(a.is_triangular());
+    REQUIRE(is_triangular(a));
 
     decltype(auto) expr = a + a;
 
     REQUIRE(expr.is_lower_triangular());
     REQUIRE(is_lower_triangular(expr));
+    REQUIRE(expr.is_triangular());
+    REQUIRE(is_triangular(expr));
 }
 
 TEST_CASE("globals/is_lower_triangular/2", "[globals]") {
@@ -136,11 +140,15 @@ TEST_CASE("globals/is_lower_triangular/2", "[globals]") {
 
     REQUIRE(a.is_lower_triangular());
     REQUIRE(is_lower_triangular(a));
+    REQUIRE(a.is_triangular());
+    REQUIRE(is_triangular(a));
 
     decltype(auto) expr = a + a;
 
     REQUIRE(expr.is_lower_triangular());
     REQUIRE(is_lower_triangular(expr));
+    REQUIRE(expr.is_triangular());
+    REQUIRE(is_triangular(expr));
 }
 
 TEST_CASE("globals/is_lower_triangular/3", "[globals]") {
@@ -148,11 +156,15 @@ TEST_CASE("globals/is_lower_triangular/3", "[globals]") {
 
     REQUIRE(!a.is_lower_triangular());
     REQUIRE(!is_lower_triangular(a));
+    REQUIRE(!a.is_triangular());
+    REQUIRE(!is_triangular(a));
 
     decltype(auto) expr = a + a;
 
     REQUIRE(!expr.is_lower_triangular());
     REQUIRE(!is_lower_triangular(expr));
+    REQUIRE(!expr.is_triangular());
+    REQUIRE(!is_triangular(expr));
 }
 
 TEST_CASE("globals/is_strictly_lower_triangular/1", "[globals]") {
