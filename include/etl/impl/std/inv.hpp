@@ -95,7 +95,7 @@ void inv(A&& a, C&& c) {
 
     etl::lu(a, L, U, P);
 
-    c = inv(U) * inv(L) * inv(P);
+    c = inv(U) * inv(L) * P;
 }
 
 } //end of namespace standard
