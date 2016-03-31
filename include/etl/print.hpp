@@ -16,8 +16,10 @@ namespace etl {
  * \param m The expression to transform
  * \return a string representing the contents of the expression
  */
-template <typename T, cpp_enable_if((etl_traits<T>::dimensions() > 1))>
-std::string to_string(const T& m) {
+template <typename T, cpp_enable_if((decay_traits<T>::dimensions() > 1))>
+std::string to_string(T&& m) {
+    etl::force(m);
+
     std::string v = "[";
     for (std::size_t i = 0; i < etl::dim<0>(m); ++i) {
         v += to_string(sub(m, i));
@@ -35,8 +37,8 @@ std::string to_string(const T& m) {
  * \param m The expression to transform
  * \return a string representing the contents of the expression
  */
-template <typename T, cpp_enable_if(etl_traits<T>::dimensions() == 1)>
-std::string to_string(const T& m) {
+template <typename T, cpp_enable_if(decay_traits<T>::dimensions() == 1)>
+std::string to_string(T&& m) {
     return to_octave(m);
 }
 
@@ -45,8 +47,10 @@ std::string to_string(const T& m) {
  * \param m The expression to transform
  * \return a string representing the contents of the expression
  */
-template <bool Sub = false, typename T, cpp_enable_if((etl_traits<T>::dimensions() > 1))>
-std::string to_octave(const T& m) {
+template <bool Sub = false, typename T, cpp_enable_if((decay_traits<T>::dimensions() > 1))>
+std::string to_octave(T&& m) {
+    etl::force(m);
+
     std::string v;
     if (!Sub) {
         v = "[";
@@ -72,8 +76,10 @@ std::string to_octave(const T& m) {
  * \param m The expression to transform
  * \return a string representing the contents of the expression
  */
-template <bool Sub = false, typename T, cpp_enable_if(etl_traits<T>::dimensions() == 1)>
-std::string to_octave(const T& m) {
+template <bool Sub = false, typename T, cpp_enable_if(decay_traits<T>::dimensions() == 1)>
+std::string to_octave(T&& m) {
+    etl::force(m);
+
     std::string v;
     if (!Sub) {
         v = "[";
