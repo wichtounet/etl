@@ -743,6 +743,7 @@ void fft1_many(A&& a, C&& c) {
  */
 template <typename A, typename C>
 void fft2(A&& a, C&& c) {
+    //Note: We need dyn here because of transposition inplace
     auto w = etl::force_temporary_dyn(c);
 
     //Perform FFT on each rows

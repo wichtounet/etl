@@ -49,7 +49,7 @@ void lu(const AT& A, LT& L, UT& U, PT& P) {
         }
     }
 
-    auto Ap = etl::force_temporary_dyn(P * A);
+    auto Ap = etl::force_temporary(P * A);
 
     for(std::size_t i = 0; i < n; ++i){
         L(i, i) = 1;
