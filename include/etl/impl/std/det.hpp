@@ -46,9 +46,9 @@ value_t<AT> det(const AT& A) {
         return det;
     }
 
-    auto L = force_temporary_dyn(A);
-    auto U = force_temporary_dyn(A);
-    auto P = force_temporary_dyn(A);
+    auto L = force_temporary_dim_only(A);
+    auto U = force_temporary_dim_only(A);
+    auto P = force_temporary_dim_only(A);
 
     etl::lu(A, L, U, P);
 

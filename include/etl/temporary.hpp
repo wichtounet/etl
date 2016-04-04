@@ -21,6 +21,11 @@ struct build_fast_dyn_matrix_type<E, std::index_sequence<I...>> {
     using type = fast_matrix_impl<value_t<E>, std::vector<value_t<E>>, decay_traits<E>::storage_order, decay_traits<E>::template dim<I>()...>;
 };
 
+template <typename E, std::size_t... I>
+decltype(auto) build_dyn_matrix_type(E&& expr, std::index_sequence<I...>){
+    return dyn_matrix_impl<value_t<E>, decay_traits<E>::storage_order, decay_traits<E>::dimensions()>{etl::dim<I>(expr)...};
+}
+
 } // end of namespace detail
 
 /*!
@@ -82,6 +87,33 @@ template <typename E>
 decltype(auto) force_temporary_dyn(E&& expr) {
     //Sizes will be directly propagated
     return dyn_matrix_impl<value_t<E>, decay_traits<E>::storage_order, decay_traits<E>::dimensions()>{std::forward<E>(expr)};
+}
+
+/*!
+ * \brief Force a temporary out of the expression with the same
+ * dimensions, but the content is not defined. The expression will
+ * not be evaluated.
+ *
+ * \param expr The expression to make a temporary from
+ * \return a temporary with the same dimensions as the expression
+ */
+template <typename E, cpp_enable_if(decay_traits<E>::is_fast)>
+decltype(auto) force_temporary_dim_only(E&& expr) {
+    cpp_unused(expr);
+    return typename detail::build_fast_dyn_matrix_type<E, std::make_index_sequence<decay_traits<E>::dimensions()>>::type{};
+}
+
+/*!
+ * \brief Force a temporary out of the expression with the same
+ * dimensions, but the content is not defined. The expression will
+ * not be evaluated.
+ *
+ * \param expr The expression to make a temporary from
+ * \return a temporary with the same dimensions as the expression
+ */
+template <typename E, cpp_enable_if(!decay_traits<E>::is_fast)>
+decltype(auto) force_temporary_dim_only(E&& expr) {
+    return detail::build_dyn_matrix_type(expr, std::make_index_sequence<decay_traits<E>::dimensions()>());
 }
 
 /*!

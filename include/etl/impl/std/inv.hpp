@@ -89,9 +89,9 @@ void inv(A&& a, C&& c) {
         return;
     }
 
-    auto L = force_temporary_dyn(a);
-    auto U = force_temporary_dyn(a);
-    auto P = force_temporary_dyn(a);
+    auto L = force_temporary_dim_only(a);
+    auto U = force_temporary_dim_only(a);
+    auto P = force_temporary_dim_only(a);
 
     etl::lu(a, L, U, P);
 
