@@ -135,6 +135,14 @@ struct dim_view {
     }
 
     /*!
+     * \brief Returns the value on which the transformer is working.
+     * \return A reference  to the value on which the transformer is working.
+     */
+    const sub_type& value() const {
+        return sub;
+    }
+
+    /*!
      * \brief Test if this expression aliases with the given expression
      * \param rhs The other expression to test
      * \return true if the two expressions aliases, false otherwise
@@ -259,6 +267,14 @@ struct sub_view {
      * \return A reference  to the value on which the transformer is working.
      */
     sub_type& value() {
+        return sub;
+    }
+
+    /*!
+     * \brief Returns the value on which the transformer is working.
+     * \return A reference  to the value on which the transformer is working.
+     */
+    const sub_type& value() const {
         return sub;
     }
 
@@ -406,6 +422,14 @@ struct slice_view {
      * \return A reference  to the value on which the transformer is working.
      */
     sub_type& value() {
+        return sub;
+    }
+
+    /*!
+     * \brief Returns the value on which the transformer is working.
+     * \return A reference  to the value on which the transformer is working.
+     */
+    const sub_type& value() const {
         return sub;
     }
 
@@ -574,6 +598,14 @@ struct fast_matrix_view {
     }
 
     /*!
+     * \brief Returns the value on which the transformer is working.
+     * \return A reference  to the value on which the transformer is working.
+     */
+    const sub_type& value() const {
+        return sub;
+    }
+
+    /*!
      * \brief Returns the Dth dimension of an expression of this type
      * \tparam D The dimension to get
      * \return the Dth dimension of an expression of this type
@@ -711,6 +743,14 @@ struct dyn_vector_view {
      * \return A reference  to the value on which the transformer is working.
      */
     sub_type& value() {
+        return sub;
+    }
+
+    /*!
+     * \brief Returns the value on which the transformer is working.
+     * \return A reference  to the value on which the transformer is working.
+     */
+    const sub_type& value() const {
         return sub;
     }
 
@@ -867,6 +907,14 @@ struct dyn_matrix_view {
      * \return A reference  to the value on which the transformer is working.
      */
     sub_type& value() {
+        return sub;
+    }
+
+    /*!
+     * \brief Returns the value on which the transformer is working.
+     * \return A reference  to the value on which the transformer is working.
+     */
+    const sub_type& value() const {
         return sub;
     }
 

@@ -101,6 +101,14 @@ struct transpose_transformer {
     }
 
     /*!
+     * \brief Returns the value on which the transformer is working.
+     * \return A reference  to the value on which the transformer is working.
+     */
+    const sub_type& value() const {
+        return sub;
+    }
+
+    /*!
      * \brief Test if this expression aliases with the given expression
      * \param rhs The other expression to test
      * \return true if the two expressions aliases, false otherwise
@@ -183,10 +191,26 @@ struct mm_mul_transformer {
     }
 
     /*!
+     * \brief Returns the left value on which the transformer is working.
+     * \return A reference to the left value on which the transformer is working.
+     */
+    const left_type& lhs() const {
+        return left;
+    }
+
+    /*!
      * \brief Returns the right value on which the transformer is working.
      * \return A reference to the right value on which the transformer is working.
      */
     right_type& rhs() {
+        return right;
+    }
+
+    /*!
+     * \brief Returns the right value on which the transformer is working.
+     * \return A reference to the right value on which the transformer is working.
+     */
+    const right_type& rhs() const {
         return right;
     }
 
@@ -294,6 +318,14 @@ struct dyn_convmtx_transformer {
     }
 
     /*!
+     * \brief Returns the value on which the transformer is working.
+     * \return A reference  to the value on which the transformer is working.
+     */
+    const sub_type& value() const {
+        return sub;
+    }
+
+    /*!
      * \brief Test if this expression aliases with the given expression
      * \param rhs The other expression to test
      * \return true if the two expressions aliases, false otherwise
@@ -388,6 +420,14 @@ struct dyn_convmtx2_transformer {
      * \return A reference  to the value on which the transformer is working.
      */
     sub_type& value() {
+        return sub;
+    }
+
+    /*!
+     * \brief Returns the value on which the transformer is working.
+     * \return A reference  to the value on which the transformer is working.
+     */
+    const sub_type& value() const {
         return sub;
     }
 
@@ -570,6 +610,14 @@ struct p_max_pool_transformer {
     }
 
     /*!
+     * \brief Returns the value on which the transformer is working.
+     * \return A reference  to the value on which the transformer is working.
+     */
+    const sub_type& value() const {
+        return sub;
+    }
+
+    /*!
      * \brief Test if this expression aliases with the given expression
      * \param rhs The other expression to test
      * \return true if the two expressions aliases, false otherwise
@@ -689,6 +737,14 @@ struct p_max_pool_h_transformer : p_max_pool_transformer<T, C1, C2> {
     }
 
     /*!
+     * \brief Returns the value on which the transformer is working.
+     * \return A reference  to the value on which the transformer is working.
+     */
+    const sub_type& value() const {
+        return sub;
+    }
+
+    /*!
      * \brief Test if this expression aliases with the given expression
      * \param rhs The other expression to test
      * \return true if the two expressions aliases, false otherwise
@@ -804,6 +860,14 @@ struct p_max_pool_p_transformer : p_max_pool_transformer<T, C1, C2> {
      * \return A reference  to the value on which the transformer is working.
      */
     sub_type& value() {
+        return sub;
+    }
+
+    /*!
+     * \brief Returns the value on which the transformer is working.
+     * \return A reference  to the value on which the transformer is working.
+     */
+    const sub_type& value() const {
         return sub;
     }
 

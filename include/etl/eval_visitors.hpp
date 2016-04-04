@@ -26,14 +26,14 @@ struct temporary_allocator_static_visitor : etl_visitor<temporary_allocator_stat
     using etl_visitor<temporary_allocator_static_visitor, false, true>::operator();
 
     template <typename T, typename AExpr, typename Op, typename Forced>
-    void operator()(etl::temporary_unary_expr<T, AExpr, Op, Forced>& v) const {
+    void operator()(const etl::temporary_unary_expr<T, AExpr, Op, Forced>& v) const {
         v.allocate_temporary();
 
         (*this)(v.a());
     }
 
     template <typename T, typename AExpr, typename BExpr, typename Op, typename Forced>
-    void operator()(etl::temporary_binary_expr<T, AExpr, BExpr, Op, Forced>& v) const {
+    void operator()(const etl::temporary_binary_expr<T, AExpr, BExpr, Op, Forced>& v) const {
         v.allocate_temporary();
 
         (*this)(v.a());
@@ -48,7 +48,7 @@ struct evaluator_static_visitor {
     mutable bool need_value = false;
 
     template <typename T, typename AExpr, typename Op, typename Forced>
-    void operator()(etl::temporary_unary_expr<T, AExpr, Op, Forced>& v) const {
+    void operator()(const etl::temporary_unary_expr<T, AExpr, Op, Forced>& v) const {
         bool old_need_value = need_value;
 
         need_value = Op::is_gpu;
@@ -64,7 +64,7 @@ struct evaluator_static_visitor {
     }
 
     template <typename T, typename AExpr, typename BExpr, typename Op, typename Forced>
-    void operator()(etl::temporary_binary_expr<T, AExpr, BExpr, Op, Forced>& v) const {
+    void operator()(const etl::temporary_binary_expr<T, AExpr, BExpr, Op, Forced>& v) const {
         bool old_need_value = need_value;
 
         need_value = Op::is_gpu;
@@ -87,7 +87,7 @@ struct evaluator_static_visitor {
      * \param v The unary expression
      */
     template <typename T, typename Expr, typename UnaryOp>
-    void operator()(etl::unary_expr<T, Expr, UnaryOp>& v) const {
+    void operator()(const etl::unary_expr<T, Expr, UnaryOp>& v) const {
         bool old_need_value = need_value;
         need_value = true;
         (*this)(v.value());
@@ -99,7 +99,7 @@ struct evaluator_static_visitor {
      * \param v The binary expression
      */
     template <typename T, typename LeftExpr, typename BinaryOp, typename RightExpr>
-    void operator()(etl::binary_expr<T, LeftExpr, BinaryOp, RightExpr>& v) const {
+    void operator()(const etl::binary_expr<T, LeftExpr, BinaryOp, RightExpr>& v) const {
         bool old_need_value = need_value;
         need_value = true;
         (*this)(v.lhs());
@@ -113,7 +113,7 @@ struct evaluator_static_visitor {
      * \param view The view
      */
     template <typename T, cpp_enable_if(etl::is_view<T>::value)>
-    void operator()(T& view) const {
+    void operator()(const T& view) const {
         bool old_need_value = need_value;
         need_value = true;
         (*this)(view.value());
@@ -125,7 +125,7 @@ struct evaluator_static_visitor {
      * \param transformer The matrix-multiplication transformer
      */
     template <typename L, typename R>
-    void operator()(mm_mul_transformer<L, R>& transformer) const {
+    void operator()(const mm_mul_transformer<L, R>& transformer) const {
         bool old_need_value = need_value;
         need_value = true;
         (*this)(transformer.lhs());
@@ -139,7 +139,7 @@ struct evaluator_static_visitor {
      * \param transformer The transformer
      */
     template <typename T, cpp_enable_if(etl::is_transformer<T>::value)>
-    void operator()(T& transformer) const {
+    void operator()(const T& transformer) const {
         bool old_need_value = need_value;
         need_value = true;
         (*this)(transformer.value());

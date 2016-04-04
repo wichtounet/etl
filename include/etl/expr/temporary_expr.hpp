@@ -174,8 +174,43 @@ struct temporary_expr : comparable<D>, value_testable<D>, dim_testable<D>, gpu_d
     }
 };
 
+template<typename T>
+struct mutable_shared_ptr {
+private:
+    mutable std::shared_ptr<T> ptr;
+
+public:
+    mutable_shared_ptr() = default;
+    mutable_shared_ptr(const mutable_shared_ptr& rhs) = default;
+    mutable_shared_ptr(mutable_shared_ptr&& rhs) = default;
+    mutable_shared_ptr& operator=(const mutable_shared_ptr& rhs) = default;
+    mutable_shared_ptr& operator=(mutable_shared_ptr&& rhs) = default;
+
+    mutable_shared_ptr(const std::shared_ptr<T>& ptr) : ptr(ptr) {}
+
+    void reset(T* new_value) const {
+        ptr.reset(new_value);
+    }
+
+    explicit operator bool() const {
+        return static_cast<bool>(ptr);
+    }
+
+    T& operator*() const {
+        return *ptr;
+    }
+
+    T* operator->() const {
+        return ptr.get();
+    }
+};
+
 /*!
  * \brief A temporary unary expression
+ *
+ * Evaluation is done at once, when access is made. This can be done
+ * on const reference, this is the reason why several fields are
+ * mutable.
  */
 template <typename T, typename AExpr, typename Op, typename Forced>
 struct temporary_unary_expr final : temporary_expr<temporary_unary_expr<T, AExpr, Op, Forced>, T> {
@@ -183,7 +218,7 @@ struct temporary_unary_expr final : temporary_expr<temporary_unary_expr<T, AExpr
 
     using value_type  = T;                                                                                   ///< The value type
     using result_type = std::conditional_t<is_not_forced, typename Op::template result_type<AExpr>, Forced>; ///< The result type
-    using data_type   = std::conditional_t<is_not_forced, std::shared_ptr<result_type>, result_type>;        ///< The data type
+    using data_type   = std::conditional_t<is_not_forced, mutable_shared_ptr<result_type>, result_type>;        ///< The data type
 
 private:
     static_assert(is_etl_expr<AExpr>::value, "The argument must be an ETL expr");
@@ -192,10 +227,10 @@ private:
 
     using get_result_op = std::conditional_t<is_not_forced, dereference_op, forward_op>;
 
-    AExpr _a;               ///< The sub expression reference
-    data_type _c;           ///< The result reference
-    bool allocated = false; ///< Indicates if the temporary has been allocated
-    bool evaluated = false; ///< Indicates if the expression has been evaluated
+    AExpr _a;                       ///< The sub expression reference
+    data_type _c;                   ///< The result reference
+    mutable bool allocated = false; ///< Indicates if the temporary has been allocated
+    mutable bool evaluated = false; ///< Indicates if the expression has been evaluated
 
 public:
     //Construct a new expression
@@ -252,7 +287,7 @@ public:
      *
      * Will fail if not previously allocated
      */
-    void evaluate() {
+    void evaluate() const {
         if (!evaluated) {
             cpp_assert(allocated, "The result has not been allocated");
             Op::apply(_a, get_result_op::apply(_c));
@@ -266,7 +301,7 @@ public:
      * Will fail if not previously allocated
      */
     template <typename Result, typename F = Forced, cpp_disable_if(std::is_same<F, void>::value)>
-    void direct_evaluate(Result&& r) {
+    void direct_evaluate(Result&& r) const {
         evaluate();
         r = result();
     }
@@ -277,7 +312,7 @@ public:
      * Will fail if not previously allocated
      */
     template <typename Result, typename F = Forced, cpp_enable_if(std::is_same<F, void>::value)>
-    void direct_evaluate(Result&& result) {
+    void direct_evaluate(Result&& result) const {
         Op::apply(_a, std::forward<Result>(result));
     }
 
@@ -285,7 +320,7 @@ public:
      * \brief Allocate the necessary temporaries, if necessary
      */
     template <typename F = Forced, cpp_disable_if(std::is_same<F, void>::value)>
-    void allocate_temporary() {
+    void allocate_temporary() const {
         allocated = true;
     }
 
@@ -293,7 +328,7 @@ public:
      * \brief Allocate the necessary temporaries, if necessary
      */
     template <typename F = Forced, cpp_enable_if(std::is_same<F, void>::value)>
-    void allocate_temporary() {
+    void allocate_temporary() const {
         if (!_c) {
             _c.reset(Op::allocate(_a));
         }
@@ -362,7 +397,7 @@ struct temporary_binary_expr final : temporary_expr<temporary_binary_expr<T, AEx
 
     using value_type  = T;                                                                                          ///< The value type
     using result_type = std::conditional_t<is_not_forced, typename Op::template result_type<AExpr, BExpr>, Forced>; ///< The result type
-    using data_type   = std::conditional_t<is_not_forced, std::shared_ptr<result_type>, result_type>;               ///< The data type
+    using data_type   = std::conditional_t<is_not_forced, mutable_shared_ptr<result_type>, result_type>;               ///< The data type
 
 private:
     static_assert(is_etl_expr<AExpr>::value && is_etl_expr<BExpr>::value, "Both arguments must be ETL expr");
@@ -370,12 +405,13 @@ private:
     using this_type = temporary_binary_expr<T, AExpr, BExpr, Op, Forced>;
 
     using get_result_op = std::conditional_t<is_not_forced, dereference_op, forward_op>;
+    using get_result_op_nc = std::conditional_t<is_not_forced, dereference_op, forward_op_nc>;
 
     AExpr _a;               ///< The left hand side expression reference
     BExpr _b;               ///< The right hand side expression reference
     data_type _c;           ///< The result reference
-    bool allocated = false; ///< Indicates if the temporary has been allocated
-    bool evaluated = false; ///< Indicates if the expression has been evaluated
+    mutable bool allocated = false; ///< Indicates if the temporary has been allocated
+    mutable bool evaluated = false; ///< Indicates if the expression has been evaluated
 
 public:
     //Construct a new expression
@@ -449,10 +485,10 @@ public:
      *
      * Will fail if not previously allocated
      */
-    void evaluate() {
+    void evaluate() const {
         if (!evaluated) {
             cpp_assert(allocated, "The result has not been allocated");
-            Op::apply(_a, _b, get_result_op::apply(_c));
+            Op::apply(_a, _b, get_result_op_nc::apply(_c));
             evaluated = true;
         }
     }
@@ -463,7 +499,7 @@ public:
      * Will fail if not previously allocated
      */
     template <typename Result, typename F = Forced, cpp_disable_if(std::is_same<F, void>::value)>
-    void direct_evaluate(Result&& r) {
+    void direct_evaluate(Result&& r) const {
         evaluate();
         r = result();
     }
@@ -474,7 +510,7 @@ public:
      * Will fail if not previously allocated
      */
     template <typename Result, typename F = Forced, cpp_enable_if(std::is_same<F, void>::value)>
-    void direct_evaluate(Result&& result) {
+    void direct_evaluate(Result&& result) const {
         Op::apply(_a, _b, std::forward<Result>(result));
     }
 
@@ -482,7 +518,7 @@ public:
      * \brief Allocate the necessary temporaries, if necessary
      */
     template <typename F = Forced, cpp_disable_if(std::is_same<F, void>::value)>
-    void allocate_temporary() {
+    void allocate_temporary() const {
         allocated = true;
     }
 
@@ -490,7 +526,7 @@ public:
      * \brief Allocate the necessary temporaries, if necessary
      */
     template <typename F = Forced, cpp_enable_if(std::is_same<F, void>::value)>
-    void allocate_temporary() {
+    void allocate_temporary() const {
         if (!_c) {
             _c.reset(Op::allocate(_a, _b));
         }
@@ -515,7 +551,7 @@ public:
     result_type& result() {
         cpp_assert(evaluated, "The result has not been evaluated");
         cpp_assert(allocated, "The result has not been allocated");
-        return get_result_op::apply(_c);
+        return get_result_op_nc::apply(_c);
     }
 
     /*!
@@ -525,7 +561,7 @@ public:
     const result_type& result() const {
         cpp_assert(evaluated, "The result has not been evaluated");
         cpp_assert(allocated, "The result has not been allocated");
-        return get_result_op::apply(_c);
+        return get_result_op_nc::apply(_c);
     }
 
     result_type& gpu_delegate() {

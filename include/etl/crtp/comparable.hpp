@@ -30,12 +30,20 @@ struct comparable {
     }
 
     /*!
+     * \brief Returns a const reference to the derived object, i.e. the object using the CRTP injector.
+     * \return a const reference to the derived object.
+     */
+    const derived_t& as_derived() const noexcept {
+        return *static_cast<const derived_t*>(this);
+    }
+
+    /*!
      * \brief Compare the expression with another expression.
      *
      * \return true if the expressions contains the same sequence of values, false othwerise.
      */
     template <typename E>
-    bool operator==(E&& rhs) {
+    bool operator==(const E& rhs) const {
         // Both expressions must have the same number of dimensions
         if (etl::dimensions(as_derived()) != etl::dimensions(rhs)) {
             return false;
@@ -61,7 +69,7 @@ struct comparable {
      * \return false if the expressions contains the same sequence of values, true othwerise.
      */
     template <typename E>
-    bool operator!=(E&& rhs) {
+    bool operator!=(const E& rhs) const {
         return !(as_derived() == rhs);
     }
 };

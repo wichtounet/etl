@@ -149,6 +149,21 @@ struct forward_op {
     }
 };
 
+template <typename T>
+using remove_const_deep =
+    std::conditional_t<
+        std::is_lvalue_reference<T>::value,
+        std::add_lvalue_reference_t<std::remove_const_t<std::remove_reference_t<T>>>,
+        std::remove_const_t<T>>;
+
+struct forward_op_nc {
+    template <typename T>
+    static decltype(auto) apply(T&& t) {
+        using real_type = decltype(std::forward<T>(t));
+        return const_cast<remove_const_deep<real_type>>(std::forward<T>(t));
+    }
+};
+
 /*!
  * \brief Function to move or forward depending on a constant boolean flag
  * \tparam B Decides if return is moving (true) or forwarding (false)

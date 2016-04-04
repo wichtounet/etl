@@ -37,11 +37,30 @@ struct etl_visitor {
     }
 
     /*!
+     * \brief Visit the given unary expression
+     * \param v The unary expression
+     */
+    template <typename T, typename Expr, typename UnaryOp>
+    void operator()(const etl::unary_expr<T, Expr, UnaryOp>& v) const {
+        as_derived()(v.value());
+    }
+
+    /*!
      * \brief Visit the given binary expression
      * \param v The binary expression
      */
     template <typename T, typename LeftExpr, typename BinaryOp, typename RightExpr>
     void operator()(etl::binary_expr<T, LeftExpr, BinaryOp, RightExpr>& v) const {
+        as_derived()(v.lhs());
+        as_derived()(v.rhs());
+    }
+
+    /*!
+     * \brief Visit the given binary expression
+     * \param v The binary expression
+     */
+    template <typename T, typename LeftExpr, typename BinaryOp, typename RightExpr>
+    void operator()(const etl::binary_expr<T, LeftExpr, BinaryOp, RightExpr>& v) const {
         as_derived()(v.lhs());
         as_derived()(v.rhs());
     }
@@ -61,6 +80,16 @@ struct etl_visitor {
      */
     template <typename L, typename R>
     void operator()(mm_mul_transformer<L, R>& transformer) const {
+        as_derived()(transformer.lhs());
+        as_derived()(transformer.rhs());
+    }
+
+    /*!
+     * \brief Visit the given matrix-multiplication transformer
+     * \param transformer The matrix-multiplication transformer
+     */
+    template <typename L, typename R>
+    void operator()(const mm_mul_transformer<L, R>& transformer) const {
         as_derived()(transformer.lhs());
         as_derived()(transformer.rhs());
     }
