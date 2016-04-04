@@ -70,7 +70,10 @@ decltype(auto) force_temporary(E&& expr) {
 /*!
  * \brief Force a dynamic temporary out of the expression
  *
- * This function will always return a dyn_matrix.
+ * This function will always return a dyn_matrix. This has the
+ * advantage of the matrix being able to change dimensions
+ * (transpose for instance). However, this cause fast matrix
+ * dimensions to decay.
  *
  * \param expr The expression to make a temporary from
  * \return a temporary of the expression
