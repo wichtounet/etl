@@ -129,22 +129,37 @@ inline bool is_zero(double a) {
     return a == 0.0;
 }
 
+/*!
+ * \copydoc is_zero
+ */
 inline bool is_zero(float a) {
     return a == 0.0f;
 }
 
+/*!
+ * \copydoc is_zero
+ */
 inline bool is_zero(std::complex<float> a) {
     return a.real() == 0.0f && a.imag() == 0.0f;
 }
 
+/*!
+ * \copydoc is_zero
+ */
 inline bool is_zero(std::complex<double> a) {
     return a.real() == 0.0 && a.imag() == 0.0;
 }
 
+/*!
+ * \copydoc is_zero
+ */
 inline bool is_zero(etl::complex<float> a) {
     return a.real == 0.0f && a.imag == 0.0f;
 }
 
+/*!
+ * \copydoc is_zero
+ */
 inline bool is_zero(etl::complex<double> a) {
     return a.real == 0.0 && a.imag == 0.0;
 }
