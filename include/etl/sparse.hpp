@@ -119,6 +119,12 @@ private:
     }
 };
 
+/*!
+ * \brief Utility function to test if a number is zero, overloaded for many
+ * types.
+ * \param a The number to test
+ * \return true if the number is zero, false otherwise.
+ */
 inline bool is_zero(double a) {
     return a == 0.0;
 }
