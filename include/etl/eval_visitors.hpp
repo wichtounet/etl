@@ -19,12 +19,21 @@ namespace etl {
 
 namespace detail {
 
+/*!
+ * \brief Visitor to allocate temporary when needed
+ */
 struct temporary_allocator_static_visitor : etl_visitor<temporary_allocator_static_visitor, false, true> {
+    /*!
+     * \brief Indicates if the visitor is necessary for the given expression
+     */
     template <typename E>
     using enabled = cpp::bool_constant<decay_traits<E>::needs_temporary_visitor>;
 
     using etl_visitor<temporary_allocator_static_visitor, false, true>::operator();
 
+    /*!
+     * \brief Visit the given temporary unary expression and allocate the necessary temporary.
+     */
     template <typename T, typename AExpr, typename Op, typename Forced>
     void operator()(const etl::temporary_unary_expr<T, AExpr, Op, Forced>& v) const {
         v.allocate_temporary();
@@ -32,6 +41,9 @@ struct temporary_allocator_static_visitor : etl_visitor<temporary_allocator_stat
         (*this)(v.a());
     }
 
+    /*!
+     * \brief Visit the given temporary binary expression and allocate the necessary temporary.
+     */
     template <typename T, typename AExpr, typename BExpr, typename Op, typename Forced>
     void operator()(const etl::temporary_binary_expr<T, AExpr, BExpr, Op, Forced>& v) const {
         v.allocate_temporary();
@@ -41,11 +53,17 @@ struct temporary_allocator_static_visitor : etl_visitor<temporary_allocator_stat
     }
 };
 
+/*!
+ * \brief Visitor to perform lcoal evaluation when necessary
+ */
 struct evaluator_static_visitor {
+    /*!
+     * \brief Indicates if the visitor is necessary for the given expression
+     */
     template <typename E>
     using enabled = cpp::bool_constant<decay_traits<E>::needs_evaluator_visitor>;
 
-    mutable bool need_value = false;
+    mutable bool need_value = false; ///< Indicates if the value if necessary for the next visits
 
     template <typename T, typename AExpr, typename Op, typename Forced>
     void operator()(const etl::temporary_unary_expr<T, AExpr, Op, Forced>& v) const {
@@ -169,27 +187,45 @@ struct evaluator_static_visitor {
     }
 };
 
+/*!
+ * \brief Visitor to evict GPU temporaries from the Expression tree
+ */
 struct gpu_clean_static_visitor : etl_visitor<gpu_clean_static_visitor, false, false> {
 #ifdef ETL_CUDA
+    /*!
+     * \brief Indicates if the visitor is necessary for the given expression
+     */
     template <typename E>
     using enabled = cpp::bool_constant<true>;
 #else
+    /*!
+     * \brief Indicates if the visitor is necessary for the given expression
+     */
     template <typename E>
     using enabled = cpp::bool_constant<false>;
 #endif
 
     using etl_visitor<gpu_clean_static_visitor, false, false>::operator();
 
+    /*!
+     * \brief Visit the given ETL value class and evicts its GPU temporaries
+     */
     template <typename T, cpp_enable_if(etl::is_etl_value<T>::value && !etl::is_sparse_matrix<T>::value)>
     void operator()(const T& value) const {
         value.gpu_evict();
     }
 
+    /*!
+     * \brief Visit the given sparse matrix
+     */
     template <typename T, cpp_enable_if(etl::is_sparse_matrix<T>::value)>
     void operator()(const T& /*value*/) const {
         //Nothing to do: no GPU support for sparse matrix
     }
 
+    /*!
+     * \brief Visit the given temporary unary expressions and evicts its GPU temporaries.
+     */
     template <typename T, typename AExpr, typename Op, typename Forced>
     void operator()(etl::temporary_unary_expr<T, AExpr, Op, Forced>& v) const {
         (*this)(v.a());
@@ -197,6 +233,9 @@ struct gpu_clean_static_visitor : etl_visitor<gpu_clean_static_visitor, false, f
         v.gpu_evict();
     }
 
+    /*!
+     * \brief Visit the given temporary binary expressions and evicts its GPU temporaries.
+     */
     template <typename T, typename AExpr, typename BExpr, typename Op, typename Forced>
     void operator()(etl::temporary_binary_expr<T, AExpr, BExpr, Op, Forced>& v) const {
         (*this)(v.a());
