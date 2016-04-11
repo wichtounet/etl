@@ -501,6 +501,9 @@ struct inplace_transpose_able;
  */
 template <typename T>
 struct inplace_transpose_able<T, std::enable_if_t<all_fast<T>::value && is_2d<T>::value>> {
+    /*!
+     * \brief Indicates if T is inplace transpose-able
+     */
     static constexpr const bool value = decay_traits<T>::template dim<0>() == decay_traits<T>::template dim<1>();
 };
 
@@ -509,6 +512,9 @@ struct inplace_transpose_able<T, std::enable_if_t<all_fast<T>::value && is_2d<T>
  */
 template <typename T>
 struct inplace_transpose_able<T, std::enable_if_t<!all_fast<T>::value && is_2d<T>::value>> {
+    /*!
+     * \brief Indicates if T is inplace transpose-able
+     */
     static constexpr const bool value = true;
 };
 
@@ -517,6 +523,9 @@ struct inplace_transpose_able<T, std::enable_if_t<!all_fast<T>::value && is_2d<T
  */
 template <typename T>
 struct inplace_transpose_able<T, std::enable_if_t<!is_2d<T>::value>> {
+    /*!
+     * \brief Indicates if T is inplace transpose-able
+     */
     static constexpr const bool value = false;
 };
 
@@ -535,6 +544,9 @@ struct inplace_sub_transpose_able;
  */
 template <typename T>
 struct inplace_sub_transpose_able<T, std::enable_if_t<all_fast<T>::value && is_3d<T>::value>> {
+    /*!
+     * \brief Indicates if T is inplace sub-transpose-able
+     */
     static constexpr const bool value = decay_traits<T>::template dim<1>() == decay_traits<T>::template dim<2>();
 };
 
@@ -543,6 +555,9 @@ struct inplace_sub_transpose_able<T, std::enable_if_t<all_fast<T>::value && is_3
  */
 template <typename T>
 struct inplace_sub_transpose_able<T, std::enable_if_t<!all_fast<T>::value && is_3d<T>::value>> {
+    /*!
+     * \brief Indicates if T is inplace sub-transpose-able
+     */
     static constexpr const bool value = true;
 };
 
@@ -551,6 +566,9 @@ struct inplace_sub_transpose_able<T, std::enable_if_t<!all_fast<T>::value && is_
  */
 template <typename T>
 struct inplace_sub_transpose_able<T, std::enable_if_t<!is_3d<T>::value>> {
+    /*!
+     * \brief Indicates if T is inplace sub-transpose-able
+     */
     static constexpr const bool value = false;
 };
 
