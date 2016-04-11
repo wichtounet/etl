@@ -359,6 +359,14 @@ value_t<E> determinant(E&& expr) {
     return detail::det_impl::apply(expr);
 }
 
+/*!
+ * \brief Decomposition the matrix so that P * A = L * U
+ * \param A The A matrix
+ * \param L The L matrix (Lower Diagonal)
+ * \param U The U matrix (Upper Diagonal)
+ * \param P The P matrix (Pivot Permutation Matrix)
+ * \return true if the decomposition suceeded, false otherwise
+ */
 template <typename AT, typename LT, typename UT, typename PT>
 bool lu(const AT& A, LT& L, UT& U, PT& P) {
     // All matrices must be square
