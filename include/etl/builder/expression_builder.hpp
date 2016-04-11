@@ -848,12 +848,22 @@ auto softplus(E&& value) -> decltype(log(1.0 + exp(value))) {
     return log(1.0 + exp(value));
 }
 
+/*!
+ * \brief Apply Bernoulli sampling to the values of the expression
+ * \param value the expression to sample
+ * \return an expression representing the Bernoulli sampling of the given expression
+ */
 template <typename E>
 auto bernoulli(const E& value) -> detail::unary_helper<E, bernoulli_unary_op> {
     static_assert(is_etl_expr<E>::value, "etl::bernoulli can only be used on ETL expressions");
     return detail::unary_helper<E, bernoulli_unary_op>{value};
 }
 
+/*!
+ * \brief Apply Reverse Bernoulli sampling to the values of the expression
+ * \param value the expression to sample
+ * \return an expression representing the Reverse Bernoulli sampling of the given expression
+ */
 template <typename E>
 auto r_bernoulli(const E& value) -> detail::unary_helper<E, reverse_bernoulli_unary_op> {
     static_assert(is_etl_expr<E>::value, "etl::r_bernoulli can only be used on ETL expressions");
@@ -893,8 +903,12 @@ auto relu_derivative(const E& value) -> detail::unary_helper<E, relu_derivative_
     return detail::unary_helper<E, relu_derivative_op>{value};
 }
 
-// Views that returns lvalues
-
+/*!
+ * \brief Return a view representing the ith Dth dimension.
+ * \param i The index to consider in the view
+ * \tparam D The dimension to consider
+ * \return a view representing the ith Dth dimension.
+ */
 template <std::size_t D, typename E>
 auto dim(E&& value, std::size_t i) -> detail::identity_helper<E, dim_view<detail::build_identity_type<E>, D>> {
     static_assert(is_etl_expr<E>::value, "etl::dim can only be used on ETL expressions");
