@@ -30,6 +30,12 @@ struct sparse_reference {
     std::size_t n;        ///< hint
     raw_pointer_type ptr; ///< Pointer to the element
 
+    /*!
+     * \brief Constructs a new sparse_reference
+     * \param matrix The source matrix
+     * \param i The index i of the first dimension
+     * \param j The index j of the second dimension
+     */
     sparse_reference(matrix_type& matrix, std::size_t i, std::size_t j)
             : matrix(matrix), i(i), j(j) {
         n = matrix.find_n(i, j);
@@ -164,6 +170,12 @@ inline bool is_zero(etl::complex<double> a) {
     return a.real == 0.0 && a.imag == 0.0;
 }
 
+/*!
+ * \brief Utility function to test if a number is not a zero, overloaded for many
+ * types.
+ * \param a The number to test
+ * \return true if the number is not a zero, false otherwise.
+ */
 template <typename T>
 bool is_non_zero(T value) {
     return !is_zero(value);
