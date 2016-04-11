@@ -17,23 +17,41 @@ namespace etl {
 enum class init_flag_t { DUMMY };
 constexpr const init_flag_t init_flag = init_flag_t::DUMMY;
 
+/*!
+ * \brief Simple collection of values to initialize a dyn matrix
+ */
 template <typename... V>
 struct values_t {
-    const std::tuple<V...> values;
+    const std::tuple<V...> values; ///< The contained values
+
+    /*!
+     * \brief Construct a new sequence of values.
+     */
     explicit values_t(V... v)
             : values(v...){};
 
-    template <typename T, std::size_t... I>
-    std::vector<T> list_sub(const std::index_sequence<I...>& /*i*/) const {
-        return {static_cast<T>(std::get<I>(values))...};
-    }
-
+    /*!
+     * \brief Returns the sequence of values as a std::vector
+     * \return a std::vector containing all the values
+     */
     template <typename T>
     std::vector<T> list() const {
         return list_sub<T>(std::make_index_sequence<sizeof...(V)>());
     }
+
+private:
+    /*!
+     * \brief Returns the sequence of values as a std::vector
+     */
+    template <typename T, std::size_t... I>
+    std::vector<T> list_sub(const std::index_sequence<I...>& /*i*/) const {
+        return {static_cast<T>(std::get<I>(values))...};
+    }
 };
 
+/*!
+ * \brief Create a list of values for initializing a dyn_matrix
+ */
 template <typename... V>
 values_t<V...> values(V... v) {
     return values_t<V...>{v...};
