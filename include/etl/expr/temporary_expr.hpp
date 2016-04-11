@@ -174,10 +174,16 @@ struct temporary_expr : comparable<D>, value_testable<D>, dim_testable<D>, gpu_d
     }
 };
 
+/*!
+ * \brief Simple utility wrapper for shared_ptr that is mutable.
+ *
+ * This is necessary because *mutable* references are not possible and therefore
+ * cannot simply put mutable DataType inside temporary expression.
+ */
 template<typename T>
 struct mutable_shared_ptr {
 private:
-    mutable std::shared_ptr<T> ptr;
+    mutable std::shared_ptr<T> ptr; ///< The pointer
 
 public:
     mutable_shared_ptr() = default;
@@ -186,20 +192,40 @@ public:
     mutable_shared_ptr& operator=(const mutable_shared_ptr& rhs) = default;
     mutable_shared_ptr& operator=(mutable_shared_ptr&& rhs) = default;
 
+    /*!
+     * \brief Constructs a new mutable_shared_ptr from a shared_ptr.
+     * \param ptr The pointer to copy inside mutable_shared_ptr
+     */
     mutable_shared_ptr(const std::shared_ptr<T>& ptr) : ptr(ptr) {}
 
+    /*!
+     * \brief Resets the pointer to a new value.
+     * \param new_value The new value of the pointer
+     */
     void reset(T* new_value) const {
         ptr.reset(new_value);
     }
 
+    /*!
+     * \brief Explicit conversion to bool
+     * \return false if the pointer is nullptr, false otherwise
+     */
     explicit operator bool() const {
         return static_cast<bool>(ptr);
     }
 
+    /*!
+     * \brief Returns the underlying object
+     * \param a reference to the underlying object
+     */
     T& operator*() const {
         return *ptr;
     }
 
+    /*!
+     * \brief Returns the underlying pointer
+     * \param a pointer to the underlying object
+     */
     T* operator->() const {
         return ptr.get();
     }
