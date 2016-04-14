@@ -12,13 +12,16 @@
 
 namespace etl {
 
+/*!
+ * \brief Upsample configurable expression, in two dimensions
+ */
 template <typename T, std::size_t C1, std::size_t C2, typename Impl>
 struct basic_upsample_2d_expr : impl_expr<basic_upsample_2d_expr<T, C1, C2, Impl>> {
     static_assert(C1 > 0, "C1 must be greater than 0");
     static_assert(C2 > 0, "C2 must be greater than 0");
 
-    using this_type  = basic_upsample_2d_expr<T, C1, C2, Impl>;
-    using value_type = T;
+    using this_type  = basic_upsample_2d_expr<T, C1, C2, Impl>; ///< The type of expression
+    using value_type = T;                                       ///< The value type
 
     /*!
      * \brief The result type for a given sub expression type
@@ -118,17 +121,23 @@ struct basic_upsample_2d_expr : impl_expr<basic_upsample_2d_expr<T, C1, C2, Impl
 
 //Max Pool 2D
 
+/*!
+ * \brief Default Upsample 2D expression
+ */
 template <typename T, std::size_t C1, std::size_t C2>
 using upsample_2d_expr = basic_upsample_2d_expr<T, C1, C2, impl::upsample_2d>;
 
+/*!
+ * \brief Upsample configurable expression, in three dimensions
+ */
 template <typename T, std::size_t C1, std::size_t C2, std::size_t C3, typename Impl>
 struct basic_upsample_3d_expr : impl_expr<basic_upsample_3d_expr<T, C1, C2, C3, Impl>> {
     static_assert(C1 > 0, "C1 must be greater than 0");
     static_assert(C2 > 0, "C2 must be greater than 0");
     static_assert(C3 > 0, "C3 must be greater than 0");
 
-    using this_type  = basic_upsample_3d_expr<T, C1, C2, C3, Impl>;
-    using value_type = T;
+    using this_type  = basic_upsample_3d_expr<T, C1, C2, C3, Impl>; ///< The type of expression
+    using value_type = T;                                           ///< The value type
 
     /*!
      * \brief The result type for a given sub expression type
@@ -139,6 +148,11 @@ struct basic_upsample_3d_expr : impl_expr<basic_upsample_3d_expr<T, C1, C2, C3, 
 
     static constexpr const bool is_gpu = false; ///< no GPU implementation
 
+    /*!
+     * \brief Apply the expression
+     * \param a The sub expression
+     * \param c The expression where to store the results
+     */
     template <typename A, typename C>
     static void apply(A&& a, C&& c) {
         static_assert(all_etl_expr<A, C>::value, "pool_3d only supported for ETL expressions");
@@ -224,6 +238,9 @@ struct basic_upsample_3d_expr : impl_expr<basic_upsample_3d_expr<T, C1, C2, C3, 
     }
 };
 
+/*!
+ * \brief Default Upsample dD expression
+ */
 template <typename T, std::size_t C1, std::size_t C2, std::size_t C3>
 using upsample_3d_expr = basic_upsample_3d_expr<T, C1, C2, C3, impl::upsample_3d>;
 
