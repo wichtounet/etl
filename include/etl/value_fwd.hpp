@@ -5,6 +5,12 @@
 //  http://opensource.org/licenses/MIT)
 //=======================================================================
 
+/*!
+ * \file
+ * \brief Contains forward declarations and using declarations for
+ * the various value types.
+ */
+
 #pragma once
 
 namespace etl {
@@ -15,42 +21,73 @@ struct fast_matrix_impl;
 template <typename T, order SO, std::size_t D = 2>
 struct dyn_matrix_impl;
 
-template <typename T, std::size_t... Dims>
-using fast_matrix = fast_matrix_impl<T, std::array<T, mul_all<Dims...>::value>, order::RowMajor, Dims...>;
-template <typename T, std::size_t... Dims>
-using fast_matrix_cm = fast_matrix_impl<T, std::array<T, mul_all<Dims...>::value>, order::ColumnMajor, Dims...>;
-
-template <typename T, std::size_t Rows>
-using fast_vector = fast_matrix_impl<T, std::array<T, Rows>, order::RowMajor, Rows>;
-
-template <typename T, std::size_t Rows>
-using fast_vector_cm = fast_matrix_impl<T, std::array<T, Rows>, order::ColumnMajor, Rows>;
-
-template <typename T, std::size_t Rows>
-using fast_dyn_vector = fast_matrix_impl<T, std::vector<T>, order::RowMajor, Rows>;
-
-template <typename T, std::size_t... Dims>
-using fast_dyn_matrix = fast_matrix_impl<T, std::vector<T>, order::RowMajor, Dims...>;
-
-template <typename T, std::size_t D = 2>
-using dyn_matrix                    = dyn_matrix_impl<T, order::RowMajor, D>;
-
-template <typename T, std::size_t D = 2>
-using dyn_matrix_cm                 = dyn_matrix_impl<T, order::ColumnMajor, D>;
-
-template <typename T>
-using dyn_vector = dyn_matrix_impl<T, order::RowMajor, 1>;
-
 template <typename T, sparse_storage SS, std::size_t D>
 struct sparse_matrix_impl;
-
-template <typename T, std::size_t D = 2>
-using sparse_matrix                 = sparse_matrix_impl<T, sparse_storage::COO, D>;
 
 template <typename Stream>
 struct serializer;
 
 template <typename Stream>
 struct deserializer;
+
+/*!
+ * \brief A static matrix with fixed dimensions, in row-major order
+ */
+template <typename T, std::size_t... Dims>
+using fast_matrix = fast_matrix_impl<T, std::array<T, mul_all<Dims...>::value>, order::RowMajor, Dims...>;
+
+/*!
+ * \brief A static matrix with fixed dimensions, in column-major order
+ */
+template <typename T, std::size_t... Dims>
+using fast_matrix_cm = fast_matrix_impl<T, std::array<T, mul_all<Dims...>::value>, order::ColumnMajor, Dims...>;
+
+/*!
+ * \brief A static vector with fixed dimensions, in row-major order
+ */
+template <typename T, std::size_t Rows>
+using fast_vector = fast_matrix_impl<T, std::array<T, Rows>, order::RowMajor, Rows>;
+
+/*!
+ * \brief A static vector with fixed dimensions, in column-major order
+ */
+template <typename T, std::size_t Rows>
+using fast_vector_cm = fast_matrix_impl<T, std::array<T, Rows>, order::ColumnMajor, Rows>;
+
+/*!
+ * \brief A hybrid vector with fixed dimensions, in row-major order
+ */
+template <typename T, std::size_t Rows>
+using fast_dyn_vector = fast_matrix_impl<T, std::vector<T>, order::RowMajor, Rows>;
+
+/*!
+ * \brief A hybrid matrix with fixed dimensions, in row-major order
+ */
+template <typename T, std::size_t... Dims>
+using fast_dyn_matrix = fast_matrix_impl<T, std::vector<T>, order::RowMajor, Dims...>;
+
+/*!
+ * \brief A dynamic matrix, in row-major order, of D dimensions
+ */
+template <typename T, std::size_t D = 2>
+using dyn_matrix                    = dyn_matrix_impl<T, order::RowMajor, D>;
+
+/*!
+ * \brief A dynamic matrix, in column-major order, of D dimensions
+ */
+template <typename T, std::size_t D = 2>
+using dyn_matrix_cm                 = dyn_matrix_impl<T, order::ColumnMajor, D>;
+
+/*!
+ * \brief A dynamic vector, in row-major order
+ */
+template <typename T>
+using dyn_vector = dyn_matrix_impl<T, order::RowMajor, 1>;
+
+/*!
+ * \brief A sparse matrix, of D dimensions
+ */
+template <typename T, std::size_t D = 2>
+using sparse_matrix                 = sparse_matrix_impl<T, sparse_storage::COO, D>;
 
 } //end of namespace etl
