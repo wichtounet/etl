@@ -77,8 +77,8 @@ constexpr const bool has_fast_fft   = true;
 
 #else
 
-constexpr const bool is_mkl_enabled              = false;
-constexpr const bool has_fast_fft                = false;
+constexpr const bool is_mkl_enabled              = false; ///< Boolean flag indicating if MKL is enabled
+constexpr const bool has_fast_fft                = false; ///< Boolean flag indicating if a fast FFT implementation is available
 
 #endif
 
@@ -86,14 +86,14 @@ constexpr const bool has_fast_fft                = false;
 #ifdef ETL_BLAS_MODE
 constexpr const bool is_cblas_enabled = true;
 #else
-constexpr const bool is_cblas_enabled            = false;
+constexpr const bool is_cblas_enabled            = false; ///< Boolean flag indicating if CBLAS is available
 #endif
 
 //Flag to indicate that blas is multithreaded
 #ifdef ETL_BLAS_THREADS
 constexpr const bool is_blas_parallel = true;
 #else
-constexpr const bool is_blas_parallel            = false;
+constexpr const bool is_blas_parallel            = false; ///< Boolean flag indicating if CBLAS is running parallel
 #endif
 
 #ifdef ETL_CUDA
@@ -104,14 +104,14 @@ static_assert(false, "ETL_CUDA should never be set directly");
 constexpr const bool is_cublas_enabled = true;
 #define ETL_CUDA
 #else
-constexpr const bool is_cublas_enabled           = false;
+constexpr const bool is_cublas_enabled           = false; ///< Boolean flag indicating if CUBLAS is available
 #endif
 
 #ifdef ETL_CUFFT_MODE
 #define ETL_CUDA
 constexpr const bool is_cufft_enabled = true;
 #else
-constexpr const bool is_cufft_enabled            = false;
+constexpr const bool is_cufft_enabled            = false; ///< Boolean flag indicating if CUFFT is available
 #endif
 
 //Flag to perform elementwise multiplication by default (operator*)
