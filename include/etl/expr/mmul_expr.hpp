@@ -128,14 +128,25 @@ void check_mv_mul_sizes(const A& a, const B& b, C& c) {
  */
 template <typename T, typename Impl>
 struct basic_mm_mul_expr : impl_expr<basic_mm_mul_expr<T, Impl>> {
-    using value_type = T;
-    using this_type  = basic_mm_mul_expr<T, Impl>;
+    using value_type = T; ///< The value type
+    using this_type  = basic_mm_mul_expr<T, Impl>; ///< This expression type
 
+    /*!
+     * \brief The result type for given sub types
+     * \tparam A The lhs expression type
+     * \tparam B The rhs expression type
+     */
     template <typename A, typename B>
     using result_type = detail::expr_result_t<this_type, A, B>;
 
-    static constexpr const bool is_gpu = is_cublas_enabled;
+    static constexpr const bool is_gpu = is_cublas_enabled; ///< Indicate if this expressions may run on GPU
 
+    /*!
+     * \brief Apply the expression
+     * \param a The lhs expression
+     * \param b The rhs expression
+     * \param c The expression where to store the results
+     */
     template <typename A, typename B, typename C>
     static void apply(A&& a, B&& b, C&& c) {
         static_assert(all_etl_expr<A, B, C>::value, "Matrix multiplication only supported for ETL expressions");
@@ -230,14 +241,25 @@ using strassen_mm_mul_expr = basic_mm_mul_expr<T, detail::strassen_mm_mul_impl>;
  */
 template <typename T, typename Impl>
 struct basic_vm_mul_expr : impl_expr<basic_vm_mul_expr<T, Impl>> {
-    using value_type = T;
-    using this_type  = basic_vm_mul_expr<T, Impl>;
+    using value_type = T; ///< The value type
+    using this_type  = basic_vm_mul_expr<T, Impl>; ///< This expression type
 
-    static constexpr const bool is_gpu = is_cublas_enabled;
+    static constexpr const bool is_gpu = is_cublas_enabled; ///< Indicate if this expressions may run on GPU
 
+    /*!
+     * \brief The result type for given sub types
+     * \tparam A The lhs expression type
+     * \tparam B The rhs expression type
+     */
     template <typename A, typename B>
     using result_type = detail::expr_result_t<this_type, A, B>;
 
+    /*!
+     * \brief Apply the expression
+     * \param a The lhs expression
+     * \param b The rhs expression
+     * \param c The expression where to store the results
+     */
     template <typename A, typename B, typename C>
     static void apply(A&& a, B&& b, C&& c) {
         static_assert(all_etl_expr<A, B, C>::value, "Vector-Matrix multiplication only supported for ETL expressions");
@@ -330,14 +352,25 @@ using vm_mul_expr = basic_vm_mul_expr<T, detail::vm_mul_impl>;
  */
 template <typename T, typename Impl>
 struct basic_mv_mul_expr : impl_expr<basic_mv_mul_expr<T, Impl>> {
-    using value_type = T;
-    using this_type  = basic_mv_mul_expr<T, Impl>;
+    using value_type = T;                          ///< The value type
+    using this_type  = basic_mv_mul_expr<T, Impl>; ///< This expression type
 
-    static constexpr const bool is_gpu = is_cublas_enabled;
+    static constexpr const bool is_gpu = is_cublas_enabled; ///< Indicate if this expressions may run on GPU
 
+    /*!
+     * \brief The result type for given sub types
+     * \tparam A The lhs expression type
+     * \tparam B The rhs expression type
+     */
     template <typename A, typename B>
     using result_type = detail::expr_result_t<this_type, A, B>;
 
+    /*!
+     * \brief Apply the expression
+     * \param a The lhs expression
+     * \param b The rhs expression
+     * \param c The expression where to store the results
+     */
     template <typename A, typename B, typename C>
     static void apply(A&& a, B&& b, C&& c) {
         static_assert(all_etl_expr<A, B, C>::value, "Vector-Matrix multiplication only supported for ETL expressions");
