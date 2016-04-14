@@ -166,19 +166,19 @@ constexpr const vector_mode_t vector_mode = vector_mode_t::NONE; ///< The vector
 #ifdef __AVX512F__
 constexpr const bool avx512_enabled = true;
 #else
-constexpr const bool avx512_enabled              = false;
+constexpr const bool avx512_enabled              = false; ///< Indicates if AVX512F is available
 #endif
 
 #ifdef __AVX__
 constexpr const bool avx_enabled = true;
 #else
-constexpr const bool avx_enabled                 = false;
+constexpr const bool avx_enabled                 = false; ///< Indicates if AVX is available
 #endif
 
 #ifdef __SSE3__
 constexpr const bool sse3_enabled = true;
 #else
-constexpr const bool sse3_enabled                = false;
+constexpr const bool sse3_enabled                = false; ///< Indicates if sse3 is available
 #endif
 
 #ifdef __INTEL_COMPILER
