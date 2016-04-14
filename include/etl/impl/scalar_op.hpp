@@ -6,7 +6,7 @@
 //=======================================================================
 
 /*!
- * \file scalar_op.hpp
+ * \file
  * \brief Implementations of vector/matrix scalar operations.
  */
 
@@ -70,7 +70,15 @@ scalar_impl select_scalar_impl() {
     return select_default_scalar_impl<A>();
 }
 
+/*!
+ * \brief Functor to add a scalar to each element of an expression
+ */
 struct scalar_add {
+    /*!
+     * \brief Apply the operation on the expression lhs and the scalar rhs
+     * \param lhs The expression
+     * \param rhs The scalar
+     */
     template <typename T>
     static void apply(T&& lhs, value_t<T> rhs) {
         auto impl = select_scalar_impl<T>();
@@ -83,7 +91,15 @@ struct scalar_add {
     }
 };
 
+/*!
+ * \brief Functor to remove a scalar from each element of an expression
+ */
 struct scalar_sub {
+    /*!
+     * \brief Apply the operation on the expression lhs and the scalar rhs
+     * \param lhs The expression
+     * \param rhs The scalar
+     */
     template <typename T>
     static void apply(T&& lhs, value_t<T> rhs) {
         auto impl = select_scalar_impl<T>();
@@ -96,7 +112,15 @@ struct scalar_sub {
     }
 };
 
+/*!
+ * \brief Functor to multiply each element of an expression by a scalar
+ */
 struct scalar_mul {
+    /*!
+     * \brief Apply the operation on the expression lhs and the scalar rhs
+     * \param lhs The expression
+     * \param rhs The scalar
+     */
     template <typename T>
     static void apply(T&& lhs, value_t<T> rhs) {
         auto impl = select_scalar_impl<T>();
@@ -109,7 +133,15 @@ struct scalar_mul {
     }
 };
 
+/*!
+ * \brief Functor to divide each element of an expression by a scalar
+ */
 struct scalar_div {
+    /*!
+     * \brief Apply the operation on the expression lhs and the scalar rhs
+     * \param lhs The expression
+     * \param rhs The scalar
+     */
     template <typename T>
     static void apply(T&& lhs, value_t<T> rhs) {
         auto impl = select_scalar_impl<T>();
@@ -122,7 +154,15 @@ struct scalar_div {
     }
 };
 
+/*!
+ * \brief Functor to modulo each element of an expression by a scalar
+ */
 struct scalar_mod {
+    /*!
+     * \brief Apply the operation on the expression lhs and the scalar rhs
+     * \param lhs The expression
+     * \param rhs The scalar
+     */
     template <typename T>
     static void apply(T&& lhs, value_t<T> rhs) {
         etl::impl::standard::scalar_mod(lhs, rhs);
