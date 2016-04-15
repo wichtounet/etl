@@ -178,7 +178,7 @@ struct VectorizedAssign : vectorized_base<V, L_Expr, V_Expr, VectorizedAssign<V,
     }
 
     /*!
-     * \brief Compute the vectorized iterations of the the loop using aligned store operations
+     * \brief Compute the vectorized iterations of the loop using aligned store operations
      * \param first The index when to start
      */
     inline std::size_t aligned_main_loop(std::size_t first) const {
@@ -201,7 +201,7 @@ struct VectorizedAssign : vectorized_base<V, L_Expr, V_Expr, VectorizedAssign<V,
     }
 
     /*!
-     * \brief Compute the vectorized iterations of the the loop using unaligned store operations
+     * \brief Compute the vectorized iterations of the loop using unaligned store operations
      * \param first The index when to start
      */
     inline std::size_t unaligned_main_loop(std::size_t first) const {
@@ -224,7 +224,7 @@ struct VectorizedAssign : vectorized_base<V, L_Expr, V_Expr, VectorizedAssign<V,
     }
 
     /*!
-     * \brief Compute the last iterations of the the loop that have
+     * \brief Compute the last iterations of the loop that have
      * not been vectorized
      * \param first The index when to start
      */
@@ -321,7 +321,7 @@ struct VectorizedAssignAdd : vectorized_base<V, L_Expr, V_Expr, VectorizedAssign
     }
 
     /*!
-     * \brief Compute the vectorized iterations of the the loop using aligned store operations
+     * \brief Compute the vectorized iterations of the loop using aligned store operations
      * \param first The index when to start
      */
     inline std::size_t aligned_main_loop(std::size_t first) const {
@@ -344,7 +344,7 @@ struct VectorizedAssignAdd : vectorized_base<V, L_Expr, V_Expr, VectorizedAssign
     }
 
     /*!
-     * \brief Compute the vectorized iterations of the the loop using unaligned store operations
+     * \brief Compute the vectorized iterations of the loop using unaligned store operations
      * \param first The index when to start
      */
     inline std::size_t unaligned_main_loop(std::size_t first) const {
@@ -367,7 +367,7 @@ struct VectorizedAssignAdd : vectorized_base<V, L_Expr, V_Expr, VectorizedAssign
     }
 
     /*!
-     * \brief Compute the last iterations of the the loop that have
+     * \brief Compute the last iterations of the loop that have
      * not been vectorized
      * \param first The index when to start
      */
@@ -464,7 +464,7 @@ struct VectorizedAssignSub : vectorized_base<V, L_Expr, V_Expr, VectorizedAssign
     }
 
     /*!
-     * \brief Compute the vectorized iterations of the the loop using aligned store operations
+     * \brief Compute the vectorized iterations of the loop using aligned store operations
      * \param first The index when to start
      */
     inline std::size_t aligned_main_loop(std::size_t first) const {
@@ -487,7 +487,7 @@ struct VectorizedAssignSub : vectorized_base<V, L_Expr, V_Expr, VectorizedAssign
     }
 
     /*!
-     * \brief Compute the vectorized iterations of the the loop using unaligned store operations
+     * \brief Compute the vectorized iterations of the loop using unaligned store operations
      * \param first The index when to start
      */
     inline std::size_t unaligned_main_loop(std::size_t first) const {
@@ -510,7 +510,7 @@ struct VectorizedAssignSub : vectorized_base<V, L_Expr, V_Expr, VectorizedAssign
     }
 
     /*!
-     * \brief Compute the last iterations of the the loop that have
+     * \brief Compute the last iterations of the loop that have
      * not been vectorized
      * \param first The index when to start
      */
@@ -607,7 +607,7 @@ struct VectorizedAssignMul : vectorized_base<V, L_Expr, V_Expr, VectorizedAssign
     }
 
     /*!
-     * \brief Compute the vectorized iterations of the the loop using aligned store operations
+     * \brief Compute the vectorized iterations of the loop using aligned store operations
      * \param first The index when to start
      */
     inline std::size_t aligned_main_loop(std::size_t first) const {
@@ -630,7 +630,7 @@ struct VectorizedAssignMul : vectorized_base<V, L_Expr, V_Expr, VectorizedAssign
     }
 
     /*!
-     * \brief Compute the vectorized iterations of the the loop using unaligned store operations
+     * \brief Compute the vectorized iterations of the loop using unaligned store operations
      * \param first The index when to start
      */
     inline std::size_t unaligned_main_loop(std::size_t first) const {
@@ -653,7 +653,7 @@ struct VectorizedAssignMul : vectorized_base<V, L_Expr, V_Expr, VectorizedAssign
     }
 
     /*!
-     * \brief Compute the last iterations of the the loop that have
+     * \brief Compute the last iterations of the loop that have
      * not been vectorized
      * \param first The index when to start
      */
@@ -750,7 +750,7 @@ struct VectorizedAssignDiv : vectorized_base<V, L_Expr, V_Expr, VectorizedAssign
     }
 
     /*!
-     * \brief Compute the vectorized iterations of the the loop using aligned store operations
+     * \brief Compute the vectorized iterations of the loop using aligned store operations
      * \param first The index when to start
      */
     inline std::size_t aligned_main_loop(std::size_t first) const {
@@ -773,7 +773,7 @@ struct VectorizedAssignDiv : vectorized_base<V, L_Expr, V_Expr, VectorizedAssign
     }
 
     /*!
-     * \brief Compute the vectorized iterations of the the loop using unaligned store operations
+     * \brief Compute the vectorized iterations of the loop using unaligned store operations
      * \param first The index when to start
      */
     inline std::size_t unaligned_main_loop(std::size_t first) const {
@@ -796,7 +796,7 @@ struct VectorizedAssignDiv : vectorized_base<V, L_Expr, V_Expr, VectorizedAssign
     }
 
     /*!
-     * \brief Compute the last iterations of the the loop that have
+     * \brief Compute the last iterations of the loop that have
      * not been vectorized
      * \param first The index when to start
      */
