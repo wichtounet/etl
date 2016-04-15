@@ -77,10 +77,7 @@ struct vectorized_base {
     const std::size_t _last;  ///< The last index to assign
     const std::size_t _size;  ///< The size to assign
 
-    template <typename T>
-    using traits = typename get_intrinsic_traits<V>::template type<T>;
-
-    using IT = traits<value_t<V_Expr>>;
+    using IT = typename get_intrinsic_traits<V>::template type<value_t<V_Expr>>;
 
     using vect_impl = typename get_vector_impl<V>::type;
 
