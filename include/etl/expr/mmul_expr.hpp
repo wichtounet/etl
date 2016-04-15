@@ -374,7 +374,7 @@ struct basic_mv_mul_expr : impl_expr<basic_mv_mul_expr<T, Impl>> {
     template <typename A, typename B, typename C>
     static void apply(A&& a, B&& b, C&& c) {
         static_assert(all_etl_expr<A, B, C>::value, "Vector-Matrix multiplication only supported for ETL expressions");
-        static_assert(decay_traits<A>::dimensions() == 2 && decay_traits<B>::dimensions() == 1 && decay_traits<C>::dimensions() == 1, "Invalid dimensions for vecto-matrix multiplication");
+        static_assert(decay_traits<A>::dimensions() == 2 && decay_traits<B>::dimensions() == 1 && decay_traits<C>::dimensions() == 1, "Invalid dimensions for vector-matrix multiplication");
         detail::check_mv_mul_sizes(a, b, c);
 
         Impl::apply(
