@@ -54,9 +54,15 @@ using memory_t = std::conditional_t<
 template <typename S>
 using const_memory_t = typename std::decay_t<S>::const_memory_type;
 
+/*!
+ * \brief Value traits to compute the multiplication of all the given values
+ */
 template <std::size_t F, std::size_t... Dims>
 struct mul_all final : std::integral_constant<std::size_t, F * mul_all<Dims...>::value> {};
 
+/*!
+ * \copydoc mul_all
+ */
 template <std::size_t F>
 struct mul_all<F> final : std::integral_constant<std::size_t, F> {};
 
@@ -84,20 +90,35 @@ std::size_t dyn_nth_size(std::size_t i) {
                : dyn_nth_size<D...>(i - 1);
 }
 
+/*!
+ * \brief Traits to test if two index_sequence are equal
+ */
 template <typename S1, typename S2, typename Enable = void>
 struct sequence_equal;
 
+/*!
+ * \copydoc sequence_equal
+ */
 template <>
 struct sequence_equal<std::index_sequence<>, std::index_sequence<>> : std::true_type {};
 
+/*!
+ * \copydoc sequence_equal
+ */
 template <std::size_t... I1, std::size_t... I2>
 struct sequence_equal<std::index_sequence<I1...>, std::index_sequence<I2...>,
                       std::enable_if_t<sizeof...(I1) != sizeof...(I2)>> : std::false_type {};
 
+/*!
+ * \copydoc sequence_equal
+ */
 template <std::size_t I, std::size_t... I1, std::size_t... I2>
 struct sequence_equal<std::index_sequence<I, I1...>, std::index_sequence<I, I2...>,
                       std::enable_if_t<sizeof...(I1) == sizeof...(I2)>> : sequence_equal<std::index_sequence<I1...>, std::index_sequence<I2...>> {};
 
+/*!
+ * \copydoc sequence_equal
+ */
 template <std::size_t I11, std::size_t I21, std::size_t... I1, std::size_t... I2>
 struct sequence_equal<std::index_sequence<I11, I1...>, std::index_sequence<I21, I2...>,
                       cpp::disable_if_t<I11 == I21>> : std::false_type {};
