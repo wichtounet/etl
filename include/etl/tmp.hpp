@@ -156,6 +156,9 @@ std::string concat_sizes(Dims... sizes) {
     return result;
 }
 
+/*!
+ * \brief Functor that dereference a pointer and return its value
+ */
 struct dereference_op {
     template <typename T>
     static decltype(auto) apply(T&& t) {
@@ -163,6 +166,9 @@ struct dereference_op {
     }
 };
 
+/*!
+ * \brief Functor that forwards a value
+ */
 struct forward_op {
     template <typename T>
     static decltype(auto) apply(T&& t) {
