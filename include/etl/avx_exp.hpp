@@ -361,11 +361,11 @@ ETL_INLINE_VEC_256 sin256_ps(__m256 x) { // any x
   /* j=(j+1) & (~1) (see the cephes sources) */
   // another two AVX2 instruction
   imm2 = _mm256_add_epi32(imm2, *(__m256i*)_pi32_256_1);
-  imm2 = _mm256_and_si128(imm2, *(__m256i*)_pi32_256_inv1);
+  imm2 = _mm256_and_si256(imm2, *(__m256i*)_pi32_256_inv1);
   y = _mm256_cvtepi32_ps(imm2);
 
   /* get the swap sign flag */
-  imm0 = _mm256_and_si128(imm2, *(__m256i*)_pi32_256_4);
+  imm0 = _mm256_and_si256(imm2, *(__m256i*)_pi32_256_4);
   imm0 = _mm256_slli_epi32(imm0, 29);
   /* get the polynom selection mask
      there is one polynom for 0 <= x <= Pi/4
@@ -373,7 +373,7 @@ ETL_INLINE_VEC_256 sin256_ps(__m256 x) { // any x
 
      Both branches will be computed.
   */
-  imm2 = _mm256_and_si128(imm2, *(__m256i*)_pi32_256_2);
+  imm2 = _mm256_and_si256(imm2, *(__m256i*)_pi32_256_2);
   imm2 = _mm256_cmpeq_epi32(imm2,*(__m256i*)_pi32_256_0);
 #else
   /* we use SSE2 routines to perform the integer ops */
@@ -478,15 +478,15 @@ ETL_INLINE_VEC_256 cos256_ps(__m256 x) { // any x
   imm2 = _mm256_cvttps_epi32(y);
   /* j=(j+1) & (~1) (see the cephes sources) */
   imm2 = _mm256_add_epi32(imm2, *(__m256i*)_pi32_256_1);
-  imm2 = _mm256_and_si128(imm2, *(__m256i*)_pi32_256_inv1);
+  imm2 = _mm256_and_si256(imm2, *(__m256i*)_pi32_256_inv1);
   y = _mm256_cvtepi32_ps(imm2);
   imm2 = _mm256_sub_epi32(imm2, *(__m256i*)_pi32_256_2);
 
   /* get the swap sign flag */
-  imm0 = _mm256_andnot_si128(imm2, *(__m256i*)_pi32_256_4);
+  imm0 = _mm256_andnot_si256(imm2, *(__m256i*)_pi32_256_4);
   imm0 = _mm256_slli_epi32(imm0, 29);
   /* get the polynom selection mask */
-  imm2 = _mm256_and_si128(imm2, *(__m256i*)_pi32_256_2);
+  imm2 = _mm256_and_si256(imm2, *(__m256i*)_pi32_256_2);
   imm2 = _mm256_cmpeq_epi32(imm2, *(__m256i*)_pi32_256_0);
 #else
 

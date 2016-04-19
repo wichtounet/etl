@@ -15,6 +15,8 @@
 #ifdef __AVX__
 
 #include <immintrin.h>
+#include <emmintrin.h>
+#include <xmmintrin.h>
 
 #include "etl/avx_exp.hpp"
 
