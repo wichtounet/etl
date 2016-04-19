@@ -73,7 +73,9 @@ struct log_unary_op {
      */
     template <vector_mode_t V>
     using vectorizable = cpp::bool_constant<
-        (V == vector_mode_t::SSE3 && is_single_precision_t<T>::value) || (intel_compiler && !is_complex_t<T>::value)>;
+            (V == vector_mode_t::SSE3 && is_single_precision_t<T>::value)
+        ||  (V == vector_mode_t::AVX && is_single_precision_t<T>::value)
+        ||  (intel_compiler && !is_complex_t<T>::value)>;
 
     /*!
      * The vectorization type for V
@@ -182,7 +184,9 @@ struct exp_unary_op {
      */
     template <vector_mode_t V>
     using vectorizable = cpp::bool_constant<
-        (V == vector_mode_t::SSE3 && is_single_precision_t<T>::value) || (intel_compiler && !is_complex_t<T>::value)>;
+            (V == vector_mode_t::SSE3 && is_single_precision_t<T>::value)
+        ||  (V == vector_mode_t::AVX && is_single_precision_t<T>::value)
+        ||  (intel_compiler && !is_complex_t<T>::value)>;
 
     /*!
      * \brief Apply the unary operator on x
@@ -528,7 +532,7 @@ struct cos_unary_op {
      * \tparam V The vector mode
      */
     template <vector_mode_t V>
-    using vectorizable = cpp::bool_constant<V == vector_mode_t::SSE3 && is_single_precision_t<T>::value>;
+    using vectorizable = cpp::bool_constant<(V == vector_mode_t::SSE3 || V == vector_mode_t::AVX)&& is_single_precision_t<T>::value>;
 
     /*!
      * \brief Apply the unary operator on x
@@ -579,7 +583,7 @@ struct sin_unary_op {
      * \tparam V The vector mode
      */
     template <vector_mode_t V>
-    using vectorizable = cpp::bool_constant<V == vector_mode_t::SSE3 && is_single_precision_t<T>::value>;
+    using vectorizable = cpp::bool_constant<(V == vector_mode_t::SSE3 || V == vector_mode_t::AVX)&& is_single_precision_t<T>::value>;
 
     /*!
      * \brief Apply the unary operator on x

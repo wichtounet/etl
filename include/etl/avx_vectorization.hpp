@@ -16,6 +16,8 @@
 
 #include <immintrin.h>
 
+#include "etl/avx_exp.hpp"
+
 #ifdef VECT_DEBUG
 #include <iostream>
 #endif
@@ -258,7 +260,27 @@ struct avx_vec {
         return _mm256_div_pd(lhs, rhs);
     }
 
-#ifdef __INTEL_COMPILER
+    ETL_INLINE_VEC_256 cos(__m256 x) {
+        return etl::cos256_ps(x);
+    }
+
+    ETL_INLINE_VEC_256 sin(__m256 x) {
+        return etl::sin256_ps(x);
+    }
+
+#ifndef __INTEL_COMPILER
+
+    //Exponential
+
+    ETL_INLINE_VEC_256 exp(__m256 x) {
+        return etl::exp256_ps(x);
+    }
+
+    ETL_INLINE_VEC_256 log(__m256 x) {
+        return etl::log256_ps(x);
+    }
+
+#else //__INTEL_COMPILER
 
     //Exponential
 
