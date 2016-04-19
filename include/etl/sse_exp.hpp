@@ -47,17 +47,11 @@
 #endif
 
 #ifdef __clang__
-#define ETL_INLINE_VEC_VOID static inline void __attribute__((__always_inline__, __nodebug__))
 #define ETL_INLINE_VEC_128 static inline __m128 __attribute__((__always_inline__, __nodebug__))
 #define ETL_INLINE_VEC_128D static inline __m128d __attribute__((__always_inline__, __nodebug__))
-#define ETL_OUT_VEC_128 inline __m128 __attribute__((__always_inline__, __nodebug__))
-#define ETL_OUT_VEC_128D inline __m128d __attribute__((__always_inline__, __nodebug__))
 #else
-#define ETL_INLINE_VEC_VOID static inline void __attribute__((__always_inline__))
 #define ETL_INLINE_VEC_128 static inline __m128 __attribute__((__always_inline__))
 #define ETL_INLINE_VEC_128D static inline __m128d __attribute__((__always_inline__))
-#define ETL_OUT_VEC_128 inline __m128 __attribute__((__always_inline__))
-#define ETL_OUT_VEC_128D inline __m128d __attribute__((__always_inline__))
 #endif
 
 namespace etl {
