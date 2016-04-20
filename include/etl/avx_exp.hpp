@@ -56,51 +56,51 @@ namespace etl {
 #define ALIGN32_BEG
 #define ALIGN32_END __attribute__((aligned(32)))
 
-#define _PI32AVX_CONST(Name, Val) \
+#define ETL_PI32_AVX_CONST(Name, Val) \
     static const ALIGN32_BEG int _pi32avx_##Name[4] ALIGN32_END = {Val, Val, Val, Val}
 
-_PI32AVX_CONST(1, 1);
-_PI32AVX_CONST(inv1, ~1);
-_PI32AVX_CONST(2, 2);
-_PI32AVX_CONST(4, 4);
+ETL_PI32_AVX_CONST(1, 1);
+ETL_PI32_AVX_CONST(inv1, ~1);
+ETL_PI32_AVX_CONST(2, 2);
+ETL_PI32_AVX_CONST(4, 4);
 
 /* declare some AVX constants -- why can't I figure a better way to do that? */
-#define _PS256_CONST(Name, Val) \
+#define ETL_PS_256_CONST(Name, Val) \
     static const ALIGN32_BEG float _ps256_##Name[8] ALIGN32_END = {Val, Val, Val, Val, Val, Val, Val, Val}
-#define _PI32_CONST256(Name, Val) \
+#define ETL_PI32_CONST256(Name, Val) \
     static const ALIGN32_BEG int _pi32_256_##Name[8] ALIGN32_END = {Val, Val, Val, Val, Val, Val, Val, Val}
-#define _PS256_CONST_TYPE(Name, Type, Val) \
+#define ETL_PS_256_CONST_TYPE(Name, Type, Val) \
     static const ALIGN32_BEG Type _ps256_##Name[8] ALIGN32_END = {Val, Val, Val, Val, Val, Val, Val, Val}
 
-_PS256_CONST(1, 1.0f);
-_PS256_CONST(0p5, 0.5f);
+ETL_PS_256_CONST(1, 1.0f);
+ETL_PS_256_CONST(0p5, 0.5f);
 /* the smallest non denormalized float number */
-_PS256_CONST_TYPE(min_norm_pos, int, 0x00800000);
-_PS256_CONST_TYPE(mant_mask, int, 0x7f800000);
-_PS256_CONST_TYPE(inv_mant_mask, int, ~0x7f800000);
+ETL_PS_256_CONST_TYPE(min_norm_pos, int, 0x00800000);
+ETL_PS_256_CONST_TYPE(mant_mask, int, 0x7f800000);
+ETL_PS_256_CONST_TYPE(inv_mant_mask, int, ~0x7f800000);
 
-_PS256_CONST_TYPE(sign_mask, int, (int)0x80000000);
-_PS256_CONST_TYPE(inv_sign_mask, int, ~0x80000000);
+ETL_PS_256_CONST_TYPE(sign_mask, int, (int)0x80000000);
+ETL_PS_256_CONST_TYPE(inv_sign_mask, int, ~0x80000000);
 
-_PI32_CONST256(0, 0);
-_PI32_CONST256(1, 1);
-_PI32_CONST256(inv1, ~1);
-_PI32_CONST256(2, 2);
-_PI32_CONST256(4, 4);
-_PI32_CONST256(0x7f, 0x7f);
+ETL_PI32_CONST256(0, 0);
+ETL_PI32_CONST256(1, 1);
+ETL_PI32_CONST256(inv1, ~1);
+ETL_PI32_CONST256(2, 2);
+ETL_PI32_CONST256(4, 4);
+ETL_PI32_CONST256(0x7f, 0x7f);
 
-_PS256_CONST(cephes_SQRTHF, 0.707106781186547524);
-_PS256_CONST(cephes_log_p0, 7.0376836292E-2);
-_PS256_CONST(cephes_log_p1, -1.1514610310E-1);
-_PS256_CONST(cephes_log_p2, 1.1676998740E-1);
-_PS256_CONST(cephes_log_p3, -1.2420140846E-1);
-_PS256_CONST(cephes_log_p4, +1.4249322787E-1);
-_PS256_CONST(cephes_log_p5, -1.6668057665E-1);
-_PS256_CONST(cephes_log_p6, +2.0000714765E-1);
-_PS256_CONST(cephes_log_p7, -2.4999993993E-1);
-_PS256_CONST(cephes_log_p8, +3.3333331174E-1);
-_PS256_CONST(cephes_log_q1, -2.12194440e-4);
-_PS256_CONST(cephes_log_q2, 0.693359375);
+ETL_PS_256_CONST(cephes_SQRTHF, 0.707106781186547524);
+ETL_PS_256_CONST(cephes_log_p0, 7.0376836292E-2);
+ETL_PS_256_CONST(cephes_log_p1, -1.1514610310E-1);
+ETL_PS_256_CONST(cephes_log_p2, 1.1676998740E-1);
+ETL_PS_256_CONST(cephes_log_p3, -1.2420140846E-1);
+ETL_PS_256_CONST(cephes_log_p4, +1.4249322787E-1);
+ETL_PS_256_CONST(cephes_log_p5, -1.6668057665E-1);
+ETL_PS_256_CONST(cephes_log_p6, +2.0000714765E-1);
+ETL_PS_256_CONST(cephes_log_p7, -2.4999993993E-1);
+ETL_PS_256_CONST(cephes_log_p8, +3.3333331174E-1);
+ETL_PS_256_CONST(cephes_log_q1, -2.12194440e-4);
+ETL_PS_256_CONST(cephes_log_q2, 0.693359375);
 
 #ifndef __AVX2__
 
@@ -225,19 +225,19 @@ ETL_INLINE_VEC_256 log256_ps(__m256 x) {
     return x;
 }
 
-_PS256_CONST(exp_hi, 88.3762626647949f);
-_PS256_CONST(exp_lo, -88.3762626647949f);
+ETL_PS_256_CONST(exp_hi, 88.3762626647949f);
+ETL_PS_256_CONST(exp_lo, -88.3762626647949f);
 
-_PS256_CONST(cephes_LOG2EF, 1.44269504088896341);
-_PS256_CONST(cephes_exp_C1, 0.693359375);
-_PS256_CONST(cephes_exp_C2, -2.12194440e-4);
+ETL_PS_256_CONST(cephes_LOG2EF, 1.44269504088896341);
+ETL_PS_256_CONST(cephes_exp_C1, 0.693359375);
+ETL_PS_256_CONST(cephes_exp_C2, -2.12194440e-4);
 
-_PS256_CONST(cephes_exp_p0, 1.9875691500E-4);
-_PS256_CONST(cephes_exp_p1, 1.3981999507E-3);
-_PS256_CONST(cephes_exp_p2, 8.3334519073E-3);
-_PS256_CONST(cephes_exp_p3, 4.1665795894E-2);
-_PS256_CONST(cephes_exp_p4, 1.6666665459E-1);
-_PS256_CONST(cephes_exp_p5, 5.0000001201E-1);
+ETL_PS_256_CONST(cephes_exp_p0, 1.9875691500E-4);
+ETL_PS_256_CONST(cephes_exp_p1, 1.3981999507E-3);
+ETL_PS_256_CONST(cephes_exp_p2, 8.3334519073E-3);
+ETL_PS_256_CONST(cephes_exp_p3, 4.1665795894E-2);
+ETL_PS_256_CONST(cephes_exp_p4, 1.6666665459E-1);
+ETL_PS_256_CONST(cephes_exp_p5, 5.0000001201E-1);
 
 ETL_INLINE_VEC_256 exp256_ps(__m256 x) {
     __m256 tmp = _mm256_setzero_ps(), fx;
@@ -290,16 +290,16 @@ ETL_INLINE_VEC_256 exp256_ps(__m256 x) {
     return y;
 }
 
-_PS256_CONST(minus_cephes_DP1, -0.78515625);
-_PS256_CONST(minus_cephes_DP2, -2.4187564849853515625e-4);
-_PS256_CONST(minus_cephes_DP3, -3.77489497744594108e-8);
-_PS256_CONST(sincof_p0, -1.9515295891E-4);
-_PS256_CONST(sincof_p1, 8.3321608736E-3);
-_PS256_CONST(sincof_p2, -1.6666654611E-1);
-_PS256_CONST(coscof_p0, 2.443315711809948E-005);
-_PS256_CONST(coscof_p1, -1.388731625493765E-003);
-_PS256_CONST(coscof_p2, 4.166664568298827E-002);
-_PS256_CONST(cephes_FOPI, 1.27323954473516); // 4 / M_PI
+ETL_PS_256_CONST(minus_cephes_DP1, -0.78515625);
+ETL_PS_256_CONST(minus_cephes_DP2, -2.4187564849853515625e-4);
+ETL_PS_256_CONST(minus_cephes_DP3, -3.77489497744594108e-8);
+ETL_PS_256_CONST(sincof_p0, -1.9515295891E-4);
+ETL_PS_256_CONST(sincof_p1, 8.3321608736E-3);
+ETL_PS_256_CONST(sincof_p2, -1.6666654611E-1);
+ETL_PS_256_CONST(coscof_p0, 2.443315711809948E-005);
+ETL_PS_256_CONST(coscof_p1, -1.388731625493765E-003);
+ETL_PS_256_CONST(coscof_p2, 4.166664568298827E-002);
+ETL_PS_256_CONST(cephes_FOPI, 1.27323954473516); // 4 / M_PI
 
 /* evaluation of 8 sines at onces using AVX intrisics
 
