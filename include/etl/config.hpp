@@ -147,10 +147,10 @@ constexpr const bool unroll_normal_loops         = true;  ///< Boolean flag indi
  * \brief Vectorization mode
  */
 enum class vector_mode_t {
-    NONE,
-    SSE3,
-    AVX,
-    AVX512
+    NONE,  ///< No vectorization is available
+    SSE3,  ///< SSE3 is the max vectorization available
+    AVX,   ///< AVX is the max vectorization available
+    AVX512 ///< AVX-512F is the max vectorization available
 };
 
 #ifdef __AVX512F__
