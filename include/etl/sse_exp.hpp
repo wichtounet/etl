@@ -96,10 +96,6 @@ PS_CONST(cephes_log_p8, +3.3333331174E-1);
 PS_CONST(cephes_log_q1, -2.12194440e-4);
 PS_CONST(cephes_log_q2, 0.693359375);
 
-/* natural logarithm computed for 4 simultaneous float
-   return NaN for x <= 0
-*/
-
 ETL_INLINE_VEC_128 log_ps(__m128 x) {
     __m128i emm0;
     __m128 one = *(__m128*)_ps_1;
@@ -119,12 +115,6 @@ ETL_INLINE_VEC_128 log_ps(__m128 x) {
 
     e = _mm_add_ps(e, one);
 
-    /* part2:
-     if( x < SQRTHF ) {
-       e -= 1;
-       x = x + x - 1.0;
-     } else { x = x - 1.0; }
-  */
     __m128 mask = _mm_cmplt_ps(x, *(__m128*)_ps_cephes_SQRTHF);
     __m128 tmp  = _mm_and_ps(x, mask);
     x           = _mm_sub_ps(x, one);
@@ -243,34 +233,6 @@ PS_CONST(coscof_p1, -1.388731625493765E-003);
 PS_CONST(coscof_p2, 4.166664568298827E-002);
 PS_CONST(cephes_FOPI, 1.27323954473516); // 4 / M_PI
 
-/* evaluation of 4 sines at onces, using only SSE1+MMX intrinsics so
-   it runs also on old athlons XPs and the pentium III of your grand
-   mother.
-
-   The code is the exact rewriting of the cephes sinf function.
-   Precision is excellent as long as x < 8192 (I did not bother to
-   take into account the special handling they have for greater values
-   -- it does not return garbage for arguments over 8192, though, but
-   the extra precision is missing).
-
-   Note that it is such that sinf((float)M_PI) = 8.74e-8, which is the
-   surprising but correct result.
-
-   Performance is also surprisingly good, 1.33 times faster than the
-   macos vsinf SSE2 function, and 1.5 times faster than the
-   __vrs4_sinf of amd's ACML (which is only available in 64 bits). Not
-   too bad for an SSE1 function (with no special tuning) !
-   However the latter libraries probably have a much better handling of NaN,
-   Inf, denormalized and other special arguments..
-
-   On my core 1 duo, the execution of this function takes approximately 95 cycles.
-
-   From what I have observed on the experiments with Intel AMath lib, switching to an
-   SSE2 version would improve the perf by only 10%.
-
-   Since it is based on SSE intrinsics, it has to be compiled at -O2 to
-   deliver full speed.
-*/
 ETL_INLINE_VEC_128 sin_ps(__m128 x) { // any x
     __m128 xmm1, xmm2, xmm3, sign_bit, y;
 
@@ -286,7 +248,6 @@ ETL_INLINE_VEC_128 sin_ps(__m128 x) { // any x
 
     /* store the integer part of y in mm0 */
     emm2 = _mm_cvttps_epi32(y);
-    /* j=(j+1) & (~1) (see the cephes sources) */
     emm2 = _mm_add_epi32(emm2, *(__m128i*)_pi32_1);
     emm2 = _mm_and_si128(emm2, *(__m128i*)_pi32_inv1);
     y    = _mm_cvtepi32_ps(emm2);
@@ -294,12 +255,7 @@ ETL_INLINE_VEC_128 sin_ps(__m128 x) { // any x
     /* get the swap sign flag */
     emm0 = _mm_and_si128(emm2, *(__m128i*)_pi32_4);
     emm0 = _mm_slli_epi32(emm0, 29);
-    /* get the polynom selection mask
-     there is one polynom for 0 <= x <= Pi/4
-     and another one for Pi/4<x<=Pi/2
 
-     Both branches will be computed.
-  */
     emm2 = _mm_and_si128(emm2, *(__m128i*)_pi32_2);
     emm2 = _mm_cmpeq_epi32(emm2, _mm_setzero_si128());
 
@@ -366,7 +322,6 @@ ETL_INLINE_VEC_128 cos_ps(__m128 x) { // any x
 
     /* store the integer part of y in mm0 */
     emm2 = _mm_cvttps_epi32(y);
-    /* j=(j+1) & (~1) (see the cephes sources) */
     emm2 = _mm_add_epi32(emm2, *(__m128i*)_pi32_1);
     emm2 = _mm_and_si128(emm2, *(__m128i*)_pi32_inv1);
     y    = _mm_cvtepi32_ps(emm2);
@@ -383,8 +338,7 @@ ETL_INLINE_VEC_128 cos_ps(__m128 x) { // any x
     __m128 sign_bit  = _mm_castsi128_ps(emm0);
     __m128 poly_mask = _mm_castsi128_ps(emm2);
 
-    /* The magic pass: "Extended precision modular arithmetic"
-     x = ((x - y * DP1) - y * DP2) - y * DP3; */
+    // The magic pass: "Extended precision modular arithmetic"
     xmm1 = *(__m128*)_ps_minus_cephes_DP1;
     xmm2 = *(__m128*)_ps_minus_cephes_DP2;
     xmm3 = *(__m128*)_ps_minus_cephes_DP3;

@@ -161,15 +161,10 @@ AVX2_INTOP_USING_SSE2(add_epi32)
 
 #endif /* __AVX2__ */
 
-
-/* natural logarithm computed for 8 simultaneous float
-   return NaN for x <= 0
-*/
 ETL_INLINE_VEC_256 log256_ps(__m256 x) {
   __m256i imm0;
   __m256 one = *(__m256*)_ps256_1;
 
-  //__m256 invalid_mask = _mm256_cmple_ps(x, _mm256_setzero_ps());
   __m256 invalid_mask = _mm256_cmp_ps(x, _mm256_setzero_ps(), _CMP_LE_OS);
 
   x = _mm256_max_ps(x, *(__m256*)_ps256_min_norm_pos);  /* cut off denormalized stuff */
@@ -187,13 +182,6 @@ ETL_INLINE_VEC_256 log256_ps(__m256 x) {
 
   e = _mm256_add_ps(e, one);
 
-  /* part2:
-     if( x < SQRTHF ) {
-       e -= 1;
-       x = x + x - 1.0;
-     } else { x = x - 1.0; }
-  */
-  //__m256 mask = _mm256_cmplt_ps(x, *(__m256*)_ps256_cephes_SQRTHF);
   __m256 mask = _mm256_cmp_ps(x, *(__m256*)_ps256_cephes_SQRTHF, _CMP_LT_OS);
   __m256 tmp = _mm256_and_ps(x, mask);
   x = _mm256_sub_ps(x, one);
@@ -263,14 +251,9 @@ ETL_INLINE_VEC_256 exp256_ps(__m256 x) {
   fx = _mm256_mul_ps(x, *(__m256*)_ps256_cephes_LOG2EF);
   fx = _mm256_add_ps(fx, *(__m256*)_ps256_0p5);
 
-  /* how to perform a floorf with SSE: just below */
-  //imm0 = _mm256_cvttps_epi32(fx);
-  //tmp  = _mm256_cvtepi32_ps(imm0);
-
   tmp = _mm256_floor_ps(fx);
 
   /* if greater, substract 1 */
-  //__m256 mask = _mm256_cmpgt_ps(tmp, fx);
   __m256 mask = _mm256_cmp_ps(tmp, fx, _CMP_GT_OS);
   mask = _mm256_and_ps(mask, one);
   fx = _mm256_sub_ps(tmp, mask);
@@ -409,8 +392,7 @@ ETL_INLINE_VEC_256 sin256_ps(__m256 x) { // any x
   __m256 poly_mask = _mm256_castsi256_ps(imm2);
   sign_bit = _mm256_xor_ps(sign_bit, swap_sign_bit);
 
-  /* The magic pass: "Extended precision modular arithmetic"
-     x = ((x - y * DP1) - y * DP2) - y * DP3; */
+  /* The magic pass: "Extended precision modular arithmetic */
   xmm1 = *(__m256*)_ps256_minus_cephes_DP1;
   xmm2 = *(__m256*)_ps256_minus_cephes_DP2;
   xmm3 = *(__m256*)_ps256_minus_cephes_DP3;
@@ -525,8 +507,7 @@ ETL_INLINE_VEC_256 cos256_ps(__m256 x) { // any x
   __m256 sign_bit = _mm256_castsi256_ps(imm0);
   __m256 poly_mask = _mm256_castsi256_ps(imm2);
 
-  /* The magic pass: "Extended precision modular arithmetic"
-     x = ((x - y * DP1) - y * DP2) - y * DP3; */
+  /* The magic pass: "Extended precision modular arithmetic" */
   xmm1 = *(__m256*)_ps256_minus_cephes_DP1;
   xmm2 = *(__m256*)_ps256_minus_cephes_DP2;
   xmm3 = *(__m256*)_ps256_minus_cephes_DP3;
@@ -564,7 +545,7 @@ ETL_INLINE_VEC_256 cos256_ps(__m256 x) { // any x
 
   /* select the correct result from the two polynoms */
   xmm3 = poly_mask;
-  y2 = _mm256_and_ps(xmm3, y2); //, xmm3);
+  y2 = _mm256_and_ps(xmm3, y2);
   y = _mm256_andnot_ps(xmm3, y);
   y = _mm256_add_ps(y,y2);
   /* update the sign */
