@@ -17,12 +17,18 @@
 
 namespace etl {
 
+/*!
+ * \brief A configurable expression for FFT
+ * \tparam T The value type
+ * \tparam D The number of dimensions of the FFT
+ * \tparam Impl The implementation to use
+ */
 template <typename T, std::size_t D, typename Impl>
 struct basic_fft_expr : impl_expr<basic_fft_expr<T, D, Impl>> {
-    using this_type  = basic_fft_expr<T, D, Impl>;
-    using value_type = T;
+    using this_type  = basic_fft_expr<T, D, Impl>; ///< The type of this expression
+    using value_type = T;                          ///< The value type
 
-    static constexpr const bool is_gpu = is_cufft_enabled;
+    static constexpr const bool is_gpu = is_cufft_enabled; ///< Indicate if the expression is executed on GPU
 
     /*!
      * \brief The result type for a given sub expression type
@@ -112,41 +118,63 @@ struct basic_fft_expr : impl_expr<basic_fft_expr<T, D, Impl>> {
     }
 };
 
-//1D FFT/IFFT
-
+/*!
+ * \brief Expression for 1D FFT
+ */
 template <typename T>
 using fft1_expr = basic_fft_expr<T, 1, detail::fft1_impl>;
 
+/*!
+ * \brief Expression for 1D Inverse FFT
+ */
 template <typename T>
 using ifft1_expr = basic_fft_expr<T, 1, detail::ifft1_impl>;
 
+/*!
+ * \brief Expression for 1D Inverse FFT in real
+ */
 template <typename T>
 using ifft1_real_expr = basic_fft_expr<T, 1, detail::ifft1_real_impl>;
 
-//2D FFT/IFFT
-
+/*!
+ * \brief Expression for 2D FFT
+ */
 template <typename T>
 using fft2_expr = basic_fft_expr<T, 2, detail::fft2_impl>;
 
+/*!
+ * \brief Expression for 2D Inverse FFT
+ */
 template <typename T>
 using ifft2_expr = basic_fft_expr<T, 2, detail::ifft2_impl>;
 
+/*!
+ * \brief Expression for 2D Inverse FFT in real
+ */
 template <typename T>
 using ifft2_real_expr = basic_fft_expr<T, 2, detail::ifft2_real_impl>;
 
-//Many 1D FFT/IFFT
-
+/*!
+ * \brief Expression for many 1D FFT done at once
+ */
 template <typename T>
 using fft1_many_expr = basic_fft_expr<T, 2, detail::fft1_many_impl>;
 
+/*!
+ * \brief Expression for many 1D Inverse FFT done at once
+ */
 template <typename T>
 using ifft1_many_expr = basic_fft_expr<T, 2, detail::ifft1_many_impl>;
 
-//Many 2D FFT/IFFT
-
+/*!
+ * \brief Expression for many 2D FFT done at once
+ */
 template <typename T>
 using fft2_many_expr = basic_fft_expr<T, 3, detail::fft2_many_impl>;
 
+/*!
+ * \brief Expression for many 2D Inverse FFT done at once
+ */
 template <typename T>
 using ifft2_many_expr = basic_fft_expr<T, 3, detail::ifft2_many_impl>;
 
