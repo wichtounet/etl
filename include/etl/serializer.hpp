@@ -9,23 +9,41 @@
 
 namespace etl {
 
+/*!
+ * \brief A serializer for ETL expressions
+ */
 template <typename Stream>
 struct serializer {
-    using stream_t = Stream;
-    using char_t   = typename stream_t::char_type;
+    using stream_t = Stream;                       ///< The type of stream to use
+    using char_t   = typename stream_t::char_type; ///< The char type of the stream
 
-    stream_t stream;
+    stream_t stream; ///< The stream
 
+    /*!
+     * \brief Construct the serializer by forwarding the arguments
+     * to the stream
+     * \param args The arguments to forward to the stream constructor
+     */
     template <typename... Args>
     serializer(Args&&... args)
             : stream(std::forward<Args>(args)...) {}
 
+    /*!
+     * \brief Outputs the given value to the stream
+     * \param value The value to write to the stream
+     * \return the serializer
+     */
     template <typename T, cpp_enable_if(std::is_arithmetic<T>::value)>
     serializer& operator<<(const T& value) {
         stream.write(reinterpret_cast<const char_t*>(&value), sizeof(T));
         return *this;
     }
 
+    /*!
+     * \brief Outputs the given ETL expression to the stream
+     * \param value The ETL expression to write to the stream
+     * \return the serializer
+     */
     template <typename T, cpp_disable_if(std::is_arithmetic<T>::value)>
     serializer& operator<<(const T& value) {
         serialize(*this, value);
