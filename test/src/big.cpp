@@ -130,3 +130,27 @@ TEMPLATE_TEST_CASE_2("big/sum/div", "[big][add]", Z, double, float) {
     REQUIRE(etl::sum(a) == 1.0 * etl::sum_parallel_threshold * 2.0);
     REQUIRE(etl::sum(b) == 2.5 * etl::sum_parallel_threshold * 2.0);
 }
+
+TEMPLATE_TEST_CASE_2("big/exp", "[big][exp]", Z, double, float) {
+    etl::dyn_matrix<Z> a(1024UL, 2UL);
+    etl::dyn_matrix<Z> c(1024UL, 2UL);
+
+    a = etl::uniform_generator(10.0, 50.0);
+    c = etl::exp(a);
+
+    for (std::size_t i = 0; i < c.size(); ++i) {
+        REQUIRE(c[i] == Approx(std::exp(a[i])));
+    }
+}
+
+TEMPLATE_TEST_CASE_2("big/log", "[big][log]", Z, double, float) {
+    etl::dyn_matrix<Z> a(1024UL, 2UL);
+    etl::dyn_matrix<Z> c(1024UL, 2UL);
+
+    a = etl::uniform_generator(10.0, 50.0);
+    c = etl::log(a);
+
+    for (std::size_t i = 0; i < c.size(); ++i) {
+        REQUIRE(c[i] == Approx(std::log(a[i])));
+    }
+}
