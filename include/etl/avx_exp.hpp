@@ -429,7 +429,7 @@ ETL_INLINE_VEC_256 sin256_ps(__m256 x) { // any x
 
     /* select the correct result from the two polynoms */
     xmm3 = poly_mask;
-    y2   = _mm256_and_ps(xmm3, y2); //, xmm3);
+    y2   = _mm256_and_ps(xmm3, y2);
     y    = _mm256_andnot_ps(xmm3, y);
     y    = _mm256_add_ps(y, y2);
     /* update the sign */
