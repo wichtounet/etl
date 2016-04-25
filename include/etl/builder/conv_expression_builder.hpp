@@ -425,6 +425,11 @@ auto conv_deep_full(A&& a, B&& b, C&& c) -> detail::dim_forced_temporary_binary_
 
 //Special convolutions
 
+/*!
+ * \brief Pad the input matrix in the output matrix for convolution as multiplication
+ * \param in The input matrix
+ * \param out The output matrix
+ */
 template <typename F1, typename F2>
 void complex_pad_4d(const F1& in, F2& out) {
     for (std::size_t outer1 = 0; outer1 < etl::dim<0>(in); ++outer1) {
@@ -439,6 +444,11 @@ void complex_pad_4d(const F1& in, F2& out) {
     }
 }
 
+/*!
+ * \brief Pad the input matrix in the output matrix for convolution as multiplication
+ * \param in The input matrix
+ * \param out The output matrix
+ */
 template <typename F1, typename F2>
 void complex_pad_3d(const F1& in, F2& out) {
     for (std::size_t outer = 0; outer < etl::dim<0>(in); ++outer) {
@@ -451,6 +461,11 @@ void complex_pad_3d(const F1& in, F2& out) {
     }
 }
 
+/*!
+ * \brief Pad the input matrix in the output matrix for convolution as multiplication
+ * \param in The input matrix
+ * \param out The output matrix
+ */
 template <typename F1, typename F2>
 void complex_pad_2d(const F1& in, F2& out) {
     auto* direct = out.memory_start();
