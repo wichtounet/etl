@@ -240,7 +240,7 @@ ETL_PS_256_CONST(cephes_exp_p4, 1.6666665459E-1);
 ETL_PS_256_CONST(cephes_exp_p5, 5.0000001201E-1);
 
 ETL_INLINE_VEC_256 exp256_ps(__m256 x) {
-    __m256 tmp = _mm256_setzero_ps(), fx;
+    __m256 tmp, fx;
     __m256i imm0;
     __m256 one = *(__m256*)_ps256_1;
 
@@ -314,7 +314,7 @@ ETL_PS_256_CONST(cephes_FOPI, 1.27323954473516); // 4 / M_PI
 
 */
 ETL_INLINE_VEC_256 sin256_ps(__m256 x) { // any x
-    __m256 xmm1, xmm2 = _mm256_setzero_ps(), xmm3, sign_bit, y;
+    __m256 xmm1, xmm2, xmm3, sign_bit, y;
     __m256i imm0, imm2;
 
 #ifndef __AVX2__
@@ -440,7 +440,7 @@ ETL_INLINE_VEC_256 sin256_ps(__m256 x) { // any x
 
 /* almost the same as sin_ps */
 ETL_INLINE_VEC_256 cos256_ps(__m256 x) { // any x
-    __m256 xmm1, xmm2 = _mm256_setzero_ps(), xmm3, y;
+    __m256 xmm1, xmm2, xmm3, y;
     __m256i imm0, imm2;
 
 #ifndef __AVX2__
