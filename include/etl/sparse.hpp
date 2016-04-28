@@ -173,7 +173,7 @@ inline bool is_zero(etl::complex<double> a) {
 /*!
  * \brief Utility function to test if a number is not a zero, overloaded for many
  * types.
- * \param a The number to test
+ * \param value The number to test
  * \return true if the number is not a zero, false otherwise.
  */
 template <typename T>
