@@ -699,6 +699,13 @@ auto logistic_noise(E&& value) -> detail::unary_helper<E, logistic_noise_unary_o
     return detail::unary_helper<E, logistic_noise_unary_op>{value};
 }
 
+/*!
+ * \brief Add some normal noise N(0,1) to x.
+ * No noise is added to values equal to zero or to given the value.
+ * \param value The value to add noise to
+ * \param v The value for the upper range limit
+ * \return An expression representing the left value plus the noise
+ */
 template <typename E, typename T>
 auto ranged_noise(E&& value, T v) -> detail::left_binary_helper_op<E, scalar<value_t<E>>, ranged_noise_binary_op<value_t<E>, value_t<E>>> {
     static_assert(is_etl_expr<E>::value, "etl::ranged_noise can only be used on ETL expressions");
@@ -1033,24 +1040,52 @@ auto magic() -> detail::virtual_helper<D, fast_magic_view<D, N>> {
 
 // Apply a stable transformation
 
+/*!
+ * \brief Repeats the expression to the right (adds dimension after existing)
+ * \param value The expression to repeat
+ * \tparam D1 The first repeat
+ * \tparam D The remaining repeated dimensions
+ * \return an expression representing the repeated expression
+ */
 template <std::size_t D1, std::size_t... D, typename E>
 auto rep(E&& value) -> unary_expr<value_t<E>, rep_r_transformer<detail::build_type<E>, D1, D...>, transform_op> {
     static_assert(is_etl_expr<E>::value, "etl::rep can only be used on ETL expressions");
     return unary_expr<value_t<E>, rep_r_transformer<detail::build_type<E>, D1, D...>, transform_op>{rep_r_transformer<detail::build_type<E>, D1, D...>(value)};
 }
 
+/*!
+ * \brief Repeats the expression to the right (adds dimension after existing)
+ * \param value The expression to repeat
+ * \tparam D1 The first repeat
+ * \tparam D The remaining repeated dimensions
+ * \return an expression representing the repeated expression
+ */
 template <std::size_t D1, std::size_t... D, typename E>
 auto rep_r(E&& value) -> unary_expr<value_t<E>, rep_r_transformer<detail::build_type<E>, D1, D...>, transform_op> {
     static_assert(is_etl_expr<E>::value, "etl::rep_r can only be used on ETL expressions");
     return unary_expr<value_t<E>, rep_r_transformer<detail::build_type<E>, D1, D...>, transform_op>{rep_r_transformer<detail::build_type<E>, D1, D...>(value)};
 }
 
+/*!
+ * \brief Repeats the expression to the left (adds dimension before existing)
+ * \param value The expression to repeat
+ * \tparam D1 The first repeat
+ * \tparam D The remaining repeated dimensions
+ * \return an expression representing the repeated expression
+ */
 template <std::size_t D1, std::size_t... D, typename E>
 auto rep_l(E&& value) -> unary_expr<value_t<E>, rep_l_transformer<detail::build_type<E>, D1, D...>, transform_op> {
     static_assert(is_etl_expr<E>::value, "etl::rep_l can only be used on ETL expressions");
     return unary_expr<value_t<E>, rep_l_transformer<detail::build_type<E>, D1, D...>, transform_op>{rep_l_transformer<detail::build_type<E>, D1, D...>(value)};
 }
 
+/*!
+ * \brief Repeats the expression to the right (adds dimension after existing)
+ * \param value The expression to repeat
+ * \param d1 The first repeat
+ * \param d The remaining repeated dimensions
+ * \return an expression representing the repeated expression
+ */
 template <typename... D, typename E>
 auto rep(E&& value, std::size_t d1, D... d) -> unary_expr<value_t<E>, dyn_rep_r_transformer<detail::build_type<E>, 1 + sizeof...(D)>, transform_op> {
     static_assert(is_etl_expr<E>::value, "etl::rep can only be used on ETL expressions");
@@ -1058,6 +1093,13 @@ auto rep(E&& value, std::size_t d1, D... d) -> unary_expr<value_t<E>, dyn_rep_r_
         dyn_rep_r_transformer<detail::build_type<E>, 1 + sizeof...(D)>(value, {{d1, static_cast<std::size_t>(d)...}})};
 }
 
+/*!
+ * \brief Repeats the expression to the right (adds dimension after existing)
+ * \param value The expression to repeat
+ * \param d1 The first repeat
+ * \param d The remaining repeated dimensions
+ * \return an expression representing the repeated expression
+ */
 template <typename... D, typename E>
 auto rep_r(E&& value, std::size_t d1, D... d) -> unary_expr<value_t<E>, dyn_rep_r_transformer<detail::build_type<E>, 1 + sizeof...(D)>, transform_op> {
     static_assert(is_etl_expr<E>::value, "etl::rep_r can only be used on ETL expressions");
@@ -1065,6 +1107,13 @@ auto rep_r(E&& value, std::size_t d1, D... d) -> unary_expr<value_t<E>, dyn_rep_
         dyn_rep_r_transformer<detail::build_type<E>, 1 + sizeof...(D)>(value, {{d1, static_cast<std::size_t>(d)...}})};
 }
 
+/*!
+ * \brief Repeats the expression to the left (adds dimension after existing)
+ * \param value The expression to repeat
+ * \param d1 The first repeat
+ * \param d The remaining repeated dimensions
+ * \return an expression representing the repeated expression
+ */
 template <typename... D, typename E>
 auto rep_l(E&& value, std::size_t d1, D... d) -> unary_expr<value_t<E>, dyn_rep_l_transformer<detail::build_type<E>, 1 + sizeof...(D)>, transform_op> {
     static_assert(is_etl_expr<E>::value, "etl::rep_l can only be used on ETL expressions");
@@ -1072,6 +1121,12 @@ auto rep_l(E&& value, std::size_t d1, D... d) -> unary_expr<value_t<E>, dyn_rep_
         dyn_rep_l_transformer<detail::build_type<E>, 1 + sizeof...(D)>(value, {{d1, static_cast<std::size_t>(d)...}})};
 }
 
+/*!
+ * \brief Aggregate (sum) a dimension from the right. This effectively removes
+ * the last dimension from the expression and sums its values to the left.
+ * \param value The value to aggregate
+ * \return an expression representing the aggregated expression
+ */
 template <typename E>
 auto sum_r(E&& value) -> detail::stable_transform_helper<E, sum_r_transformer> {
     static_assert(is_etl_expr<E>::value, "etl::sum_r can only be used on ETL expressions");
@@ -1079,6 +1134,12 @@ auto sum_r(E&& value) -> detail::stable_transform_helper<E, sum_r_transformer> {
     return detail::make_transform_expr<E, sum_r_transformer>(value);
 }
 
+/*!
+ * \brief Aggregate (sum) a dimension from the left. This effectively removes
+ * the first dimension from the expression and sums its values to the right.
+ * \param value The value to aggregate
+ * \return an expression representing the aggregated expression
+ */
 template <typename E>
 auto sum_l(E&& value) -> detail::stable_transform_helper<E, sum_l_transformer> {
     static_assert(is_etl_expr<E>::value, "etl::sum_l can only be used on ETL expressions");
@@ -1086,6 +1147,12 @@ auto sum_l(E&& value) -> detail::stable_transform_helper<E, sum_l_transformer> {
     return detail::make_transform_expr<E, sum_l_transformer>(value);
 }
 
+/*!
+ * \brief Aggregate (average) a dimension from the right. This effectively removes
+ * the last dimension from the expression and averages its values to the left.
+ * \param value The value to aggregate
+ * \return an expression representing the aggregated expression
+ */
 template <typename E>
 auto mean_r(E&& value) -> detail::stable_transform_helper<E, mean_r_transformer> {
     static_assert(is_etl_expr<E>::value, "etl::mean_r can only be used on ETL expressions");
@@ -1093,6 +1160,12 @@ auto mean_r(E&& value) -> detail::stable_transform_helper<E, mean_r_transformer>
     return detail::make_transform_expr<E, mean_r_transformer>(value);
 }
 
+/*!
+ * \brief Aggregate (average) a dimension from the left. This effectively removes
+ * the first dimension from the expression and averages its values to the right.
+ * \param value The value to aggregate
+ * \return an expression representing the aggregated expression
+ */
 template <typename E>
 auto mean_l(E&& value) -> detail::stable_transform_helper<E, mean_l_transformer> {
     static_assert(is_etl_expr<E>::value, "etl::mean_l can only be used on ETL expressions");
