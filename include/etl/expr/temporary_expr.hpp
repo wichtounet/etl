@@ -249,8 +249,6 @@ private:
 
     using this_type = temporary_unary_expr<T, AExpr, Op>;
 
-    using get_result_op = dereference_op;
-
     AExpr _a;                       ///< The sub expression reference
     data_type _c;                   ///< The result reference
     mutable bool allocated = false; ///< Indicates if the temporary has been allocated
@@ -314,7 +312,7 @@ public:
     void evaluate() const {
         if (!evaluated) {
             cpp_assert(allocated, "The result has not been allocated");
-            Op::apply(_a, get_result_op::apply(_c));
+            Op::apply(_a, *_c);
             evaluated = true;
         }
     }
@@ -357,7 +355,7 @@ public:
     result_type& result() {
         cpp_assert(evaluated, "The result has not been evaluated");
         cpp_assert(allocated, "The result has not been allocated");
-        return get_result_op::apply(_c);
+        return *_c;
     }
 
     /*!
@@ -367,7 +365,7 @@ public:
     const result_type& result() const {
         cpp_assert(evaluated, "The result has not been evaluated");
         cpp_assert(allocated, "The result has not been allocated");
-        return get_result_op::apply(_c);
+        return *_c;
     }
 
     /*!
@@ -405,9 +403,6 @@ private:
     static_assert(is_etl_expr<AExpr>::value && is_etl_expr<BExpr>::value, "Both arguments must be ETL expr");
 
     using this_type = temporary_binary_expr<T, AExpr, BExpr, Op>;
-
-    using get_result_op    = dereference_op;
-    using get_result_op_nc = dereference_op;
 
     AExpr _a;               ///< The left hand side expression reference
     BExpr _b;               ///< The right hand side expression reference
@@ -490,7 +485,7 @@ public:
     void evaluate() const {
         if (!evaluated) {
             cpp_assert(allocated, "The result has not been allocated");
-            Op::apply(_a, _b, get_result_op_nc::apply(_c));
+            Op::apply(_a, _b, *_c);
             evaluated = true;
         }
     }
@@ -533,7 +528,7 @@ public:
     result_type& result() {
         cpp_assert(evaluated, "The result has not been evaluated");
         cpp_assert(allocated, "The result has not been allocated");
-        return get_result_op_nc::apply(_c);
+        return *_c;
     }
 
     /*!
@@ -543,7 +538,7 @@ public:
     const result_type& result() const {
         cpp_assert(evaluated, "The result has not been evaluated");
         cpp_assert(allocated, "The result has not been allocated");
-        return get_result_op_nc::apply(_c);
+        return *_c;
     }
 
     result_type& gpu_delegate() {
