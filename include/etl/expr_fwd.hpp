@@ -40,6 +40,12 @@ struct parallel_expr;
 template <typename Expr, typename R = etl::nanoseconds>
 struct timed_expr;
 
+template <typename D, typename T, typename A, typename R>
+struct temporary_expr_un;
+
+template <typename D, typename T, typename A, typename B, typename R>
+struct temporary_expr_bin;
+
 template <typename T, typename AExpr, typename Op>
 struct temporary_unary_expr;
 

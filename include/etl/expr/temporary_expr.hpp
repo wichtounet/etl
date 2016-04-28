@@ -329,52 +329,39 @@ public:
     }
 };
 
-/*!
- * \brief A temporary unary expression
- *
- * Evaluation is done at once, when access is made. This can be done
- * on const reference, this is the reason why several fields are
- * mutable.
- */
-template <typename T, typename AExpr, typename Op>
-struct temporary_unary_expr final : temporary_expr<temporary_unary_expr<T, AExpr, Op>, T, typename Op::template result_type<AExpr>> {
-    using value_type  = T;                                                  ///< The value type
-    using result_type = typename Op::template result_type<AExpr>;           ///< The result type
-    using this_type   = temporary_unary_expr<T, AExpr, Op>;                 ///< The type of this expression
-    using base_type   = temporary_expr<this_type, value_type, result_type>; ///< The base type
+template <typename D, typename T, typename A, typename R>
+struct temporary_expr_un : temporary_expr<D, T, R> {
+    static_assert(is_etl_expr<A>::value, "The argument must be an ETL expr");
 
-private:
-    static_assert(is_etl_expr<AExpr>::value, "The argument must be an ETL expr");
+    using value_type  = T;
+    using result_type = R;
+    using this_type   = temporary_expr_un<D, value_type, A, result_type>;
+    using base_type   = temporary_expr<D, T, R>;
 
-    AExpr _a;                       ///< The sub expression reference
+    A _a;                       ///< The sub expression reference
 
-public:
+    static constexpr const bool is_gpu = D::is_gpu;
+
     //Construct a new expression
-    explicit temporary_unary_expr(AExpr a)
-            : _a(a) {
+    explicit temporary_expr_un(A a) : _a(a) {
         //Nothing else to init
     }
 
     //Copy an expression
-    temporary_unary_expr(const temporary_unary_expr& e)
-            : base_type(e), _a(e._a) {
+    temporary_expr_un(const temporary_expr_un& e) : base_type(e), _a(e._a) {
         //Nothing else to init
     }
 
     //Move an expression
-    temporary_unary_expr(temporary_unary_expr&& e) noexcept
-        : base_type(std::move(e)),
-          _a(e._a){
+    temporary_expr_un(temporary_expr_un&& e) noexcept : base_type(std::move(e)), _a(e._a){
         //Nothing else to init
     }
 
-    //Accessors
-
     /*!
      * \brief Returns the sub expression
      * \return a reference to the sub expression
      */
-    std::add_lvalue_reference_t<AExpr> a() {
+    std::add_lvalue_reference_t<A> a() {
         return _a;
     }
 
@@ -382,17 +369,8 @@ public:
      * \brief Returns the sub expression
      * \return a reference to the sub expression
      */
-    cpp::add_const_lvalue_t<AExpr> a() const {
+    cpp::add_const_lvalue_t<A> a() const {
         return _a;
-    }
-
-    template <typename Result>
-    void apply(Result&& result) const {
-        Op::apply(_a, std::forward<Result>(result));
-    }
-
-    auto allocate() const {
-        return Op::allocate(_a);
     }
 
     /*!
@@ -402,52 +380,45 @@ public:
      */
     template <typename E>
     bool alias(const E& rhs) const {
-        return _a.alias(rhs);
+        return a().alias(rhs);
     }
 };
 
-/*!
- * \brief A temporary binary expression
- */
-template <typename T, typename AExpr, typename BExpr, typename Op>
-struct temporary_binary_expr final : temporary_expr<temporary_binary_expr<T, AExpr, BExpr, Op>, T, typename Op::template result_type<AExpr, BExpr>> {
-    using value_type  = T;                                                  ///< The value type
-    using result_type = typename Op::template result_type<AExpr, BExpr>;    ///< The result type
-    using this_type   = temporary_binary_expr<T, AExpr, BExpr, Op>;         ///< The type of this expresion
-    using base_type   = temporary_expr<this_type, value_type, result_type>; ///< The base type
+template <typename D, typename T, typename A, typename B, typename R>
+struct temporary_expr_bin : temporary_expr<D, T, R> {
+    static_assert(is_etl_expr<A>::value, "The argument must be an ETL expr");
+    static_assert(is_etl_expr<B>::value, "The argument must be an ETL expr");
 
-private:
-    static_assert(is_etl_expr<AExpr>::value && is_etl_expr<BExpr>::value, "Both arguments must be ETL expr");
+    using value_type  = T;
+    using result_type = R;
+    using this_type   = temporary_expr_bin<D, value_type, A, B, result_type>;
+    using base_type   = temporary_expr<D, T, R>;
 
-    AExpr _a;               ///< The left hand side expression reference
-    BExpr _b;               ///< The right hand side expression reference
+    static constexpr const bool is_gpu = D::is_gpu;
 
-public:
+    A _a;                       ///< The sub expression reference
+    B _b;                       ///< The sub expression reference
+
     //Construct a new expression
-    temporary_binary_expr(AExpr a, BExpr b)
-            : _a(a), _b(b) {
+    explicit temporary_expr_bin(A a, B b) : _a(a), _b(b) {
         //Nothing else to init
     }
 
     //Copy an expression
-    temporary_binary_expr(const temporary_binary_expr& e)
-            : base_type(e), _a(e._a), _b(e._b) {
+    temporary_expr_bin(const temporary_expr_bin& e) : base_type(e), _a(e._a), _b(e._b) {
         //Nothing else to init
     }
 
     //Move an expression
-    temporary_binary_expr(temporary_binary_expr&& e) noexcept
-        : base_type(std::move(e)), _a(e._a), _b(e._b) {
+    temporary_expr_bin(temporary_expr_bin&& e) noexcept : base_type(std::move(e)), _a(e._a), _b(e._b) {
         //Nothing else to init
     }
 
-    //Accessors
-
     /*!
      * \brief Returns the left-hand-side expression
      * \return a reference to the left hand side expression
      */
-    std::add_lvalue_reference_t<AExpr> a() {
+    std::add_lvalue_reference_t<A> a() {
         return _a;
     }
 
@@ -455,7 +426,7 @@ public:
      * \brief Returns the left-hand-side expression
      * \return a reference to the left hand side expression
      */
-    cpp::add_const_lvalue_t<AExpr> a() const {
+    cpp::add_const_lvalue_t<A> a() const {
         return _a;
     }
 
@@ -463,7 +434,7 @@ public:
      * \brief Returns the right-hand-side expression
      * \return a reference to the right hand side expression
      */
-    std::add_lvalue_reference_t<BExpr> b() {
+    std::add_lvalue_reference_t<B> b() {
         return _b;
     }
 
@@ -471,17 +442,8 @@ public:
      * \brief Returns the right-hand-side expression
      * \return a reference to the right hand side expression
      */
-    cpp::add_const_lvalue_t<BExpr> b() const {
+    cpp::add_const_lvalue_t<B> b() const {
         return _b;
-    }
-
-    template <typename Result>
-    void apply(Result&& result) const {
-        Op::apply(_a, _b, std::forward<Result>(result));
-    }
-
-    auto allocate() const {
-        return Op::allocate(_a, _b);
     }
 
     /*!
@@ -492,6 +454,66 @@ public:
     template <typename E>
     bool alias(const E& rhs) const {
         return _a.alias(rhs) || _b.alias(rhs);
+    }
+};
+
+/*!
+ * \brief A temporary unary expression
+ *
+ * Evaluation is done at once, when access is made. This can be done
+ * on const reference, this is the reason why several fields are
+ * mutable.
+ */
+template <typename T, typename AExpr, typename Op>
+struct temporary_unary_expr final : temporary_expr_un<temporary_unary_expr<T, AExpr, Op>, T, AExpr, typename Op::template result_type<AExpr>> {
+    using value_type  = T;                                                ///< The value type
+    using result_type = typename Op::template result_type<AExpr>;         ///< The result type
+    using this_type   = temporary_unary_expr<T, AExpr, Op>;               ///< The type of this expression
+    using base_type   = temporary_expr_un<this_type, T, AExpr, result_type>; ///< The base type
+
+    static constexpr const bool is_gpu = Op::is_gpu;
+
+    //Construct a new expression
+    explicit temporary_unary_expr(AExpr a) : base_type(a) {
+        //Nothing else to init
+    }
+
+    //Accessors
+
+    template <typename Result>
+    void apply(Result&& result) const {
+        Op::apply(this->a(), std::forward<Result>(result));
+    }
+
+    auto allocate() const {
+        return Op::allocate(this->a());
+    }
+};
+
+/*!
+ * \brief A temporary binary expression
+ */
+template <typename T, typename AExpr, typename BExpr, typename Op>
+struct temporary_binary_expr final : temporary_expr_bin<temporary_binary_expr<T, AExpr, BExpr, Op>, T, AExpr, BExpr, typename Op::template result_type<AExpr, BExpr>> {
+    using value_type  = T;                                                  ///< The value type
+    using result_type = typename Op::template result_type<AExpr, BExpr>;    ///< The result type
+    using this_type   = temporary_binary_expr<T, AExpr, BExpr, Op>;         ///< The type of this expresion
+    using base_type   = temporary_expr_bin<this_type, value_type, AExpr, BExpr, result_type>; ///< The base type
+
+    static constexpr const bool is_gpu = Op::is_gpu;
+
+    //Construct a new expression
+    temporary_binary_expr(AExpr a, BExpr b) : base_type(a, b) {
+        //Nothing else to init
+    }
+
+    template <typename Result>
+    void apply(Result&& result) const {
+        Op::apply(this->a(), this->b(), std::forward<Result>(result));
+    }
+
+    auto allocate() const {
+        return Op::allocate(this->a(), this->b());
     }
 };
 
