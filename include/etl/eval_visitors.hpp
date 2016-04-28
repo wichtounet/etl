@@ -69,7 +69,7 @@ struct evaluator_static_visitor {
     void operator()(const etl::temporary_expr_un<D, T, A, R>& v) const {
         bool old_need_value = need_value;
 
-        need_value = etl::temporary_expr_un<D, T, A, R>::is_gpu;
+        need_value = decay_traits<D>::is_gpu;
         (*this)(v.a());
 
         v.evaluate();
@@ -85,10 +85,10 @@ struct evaluator_static_visitor {
     void operator()(const etl::temporary_expr_bin<D, T, A, B, R>& v) const {
         bool old_need_value = need_value;
 
-        need_value = etl::temporary_expr_bin<D, T, A, B, R>::is_gpu;
+        need_value = decay_traits<D>::is_gpu;
         (*this)(v.a());
 
-        need_value = etl::temporary_expr_bin<D, T, A, B, R>::is_gpu;
+        need_value = decay_traits<D>::is_gpu;
         (*this)(v.b());
 
         v.evaluate();

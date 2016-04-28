@@ -340,8 +340,6 @@ struct temporary_expr_un : temporary_expr<D, T, R> {
 
     A _a;                       ///< The sub expression reference
 
-    static constexpr const bool is_gpu = D::is_gpu;
-
     //Construct a new expression
     explicit temporary_expr_un(A a) : _a(a) {
         //Nothing else to init
@@ -393,8 +391,6 @@ struct temporary_expr_bin : temporary_expr<D, T, R> {
     using result_type = R;
     using this_type   = temporary_expr_bin<D, value_type, A, B, result_type>;
     using base_type   = temporary_expr<D, T, R>;
-
-    static constexpr const bool is_gpu = D::is_gpu;
 
     A _a;                       ///< The sub expression reference
     B _b;                       ///< The sub expression reference
@@ -471,8 +467,6 @@ struct temporary_unary_expr final : temporary_expr_un<temporary_unary_expr<T, AE
     using this_type   = temporary_unary_expr<T, AExpr, Op>;               ///< The type of this expression
     using base_type   = temporary_expr_un<this_type, T, AExpr, result_type>; ///< The base type
 
-    static constexpr const bool is_gpu = Op::is_gpu;
-
     //Construct a new expression
     explicit temporary_unary_expr(AExpr a) : base_type(a) {
         //Nothing else to init
@@ -499,8 +493,6 @@ struct temporary_binary_expr final : temporary_expr_bin<temporary_binary_expr<T,
     using result_type = typename Op::template result_type<AExpr, BExpr>;    ///< The result type
     using this_type   = temporary_binary_expr<T, AExpr, BExpr, Op>;         ///< The type of this expresion
     using base_type   = temporary_expr_bin<this_type, value_type, AExpr, BExpr, result_type>; ///< The base type
-
-    static constexpr const bool is_gpu = Op::is_gpu;
 
     //Construct a new expression
     temporary_binary_expr(AExpr a, BExpr b) : base_type(a, b) {
@@ -536,6 +528,7 @@ struct etl_traits<etl::temporary_unary_expr<T, A, Op>> {
     static constexpr const bool needs_temporary_visitor = true;                           ///< Indicates if the expression needs a temporary visitor
     static constexpr const bool needs_evaluator_visitor = true;                           ///< Indicaes if the expression needs an evaluator visitor
     static constexpr const order storage_order          = etl_traits<a_t>::storage_order; ///< The expression storage order
+    static constexpr const bool is_gpu                  = Op::is_gpu; ///< Indicate if the expression is computed on GPU
 
     /*!
      * \brief Indicates if the expression is vectorizable using the
@@ -611,6 +604,7 @@ struct etl_traits<etl::temporary_binary_expr<T, A, B, Op>> {
     static constexpr const bool needs_temporary_visitor = true;                                                                                            ///< Indicates if the expression needs a temporary visitor
     static constexpr const bool needs_evaluator_visitor = true;                                                                                            ///< Indicaes if the expression needs an evaluator visitor
     static constexpr const order storage_order          = etl_traits<a_t>::is_generator ? etl_traits<b_t>::storage_order : etl_traits<a_t>::storage_order; ///< The expression storage order
+    static constexpr const bool is_gpu                  = Op::is_gpu; ///< Indicate if the expression is computed on GPU
 
     /*!
      * \brief Indicates if the expression is vectorizable using the
