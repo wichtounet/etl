@@ -37,10 +37,10 @@ auto conv_1d_valid(A&& a, B&& b) -> detail::temporary_binary_helper<A, B, conv1_
  * \return an expression representing the valid 1D convolution of a and b
  */
 template <typename A, typename B, typename C>
-auto conv_1d_valid(A&& a, B&& b, C&& c) -> detail::forced_temporary_binary_helper<A, B, C, conv1_valid_expr> {
+auto conv_1d_valid(A&& a, B&& b, C&& c){
     static_assert(is_etl_expr<A>::value && is_etl_expr<B>::value && is_etl_expr<C>::value, "Convolution only supported for ETL expressions");
 
-    return {a, b, c};
+    return c = conv_1d_valid(a, b);
 }
 
 /*!
@@ -64,10 +64,10 @@ auto conv_1d_same(A&& a, B&& b) -> detail::temporary_binary_helper<A, B, conv1_s
  * \return an expression representing the same 1D convolution of a and b
  */
 template <typename A, typename B, typename C>
-auto conv_1d_same(A&& a, B&& b, C&& c) -> detail::forced_temporary_binary_helper<A, B, C, conv1_same_expr> {
+auto conv_1d_same(A&& a, B&& b, C&& c){
     static_assert(is_etl_expr<A>::value && is_etl_expr<B>::value && is_etl_expr<C>::value, "Convolution only supported for ETL expressions");
 
-    return {a, b, c};
+    return c = conv_1d_same(a, b);
 }
 
 /*!
@@ -91,10 +91,10 @@ auto conv_1d_full(A&& a, B&& b) -> detail::temporary_binary_helper<A, B, conv1_f
  * \return an expression representing the full 1D convolution of a and b
  */
 template <typename A, typename B, typename C>
-auto conv_1d_full(A&& a, B&& b, C&& c) -> detail::forced_temporary_binary_helper<A, B, C, conv1_full_expr> {
+auto conv_1d_full(A&& a, B&& b, C&& c) {
     static_assert(is_etl_expr<A>::value && is_etl_expr<B>::value && is_etl_expr<C>::value, "Convolution only supported for ETL expressions");
 
-    return {a, b, c};
+    return c = conv_1d_full(a, b);
 }
 
 /*!
@@ -118,10 +118,10 @@ auto fft_conv_1d_full(A&& a, B&& b) -> detail::temporary_binary_helper<A, B, fft
  * \return an expression representing the full 1D convolution of a and b
  */
 template <typename A, typename B, typename C>
-auto fft_conv_1d_full(A&& a, B&& b, C&& c) -> detail::forced_temporary_binary_helper<A, B, C, fft_conv1_full_expr> {
+auto fft_conv_1d_full(A&& a, B&& b, C&& c){
     static_assert(is_etl_expr<A>::value && is_etl_expr<B>::value && is_etl_expr<C>::value, "Convolution only supported for ETL expressions");
 
-    return {a, b, c};
+    return c = fft_conv_1d_full(a, b);
 }
 
 /*!
@@ -191,10 +191,10 @@ auto conv_2d_valid(A&& a, B&& b) -> detail::temporary_binary_helper<A, B, conv2_
  * \return an expression representing the valid 2D convolution of a and b
  */
 template <typename A, typename B, typename C>
-auto conv_2d_valid(A&& a, B&& b, C&& c) -> detail::forced_temporary_binary_helper<A, B, C, conv2_valid_expr> {
+auto conv_2d_valid(A&& a, B&& b, C&& c) {
     static_assert(is_etl_expr<A>::value && is_etl_expr<B>::value && is_etl_expr<C>::value, "Convolution only supported for ETL expressions");
 
-    return {a, b, c};
+    return c = conv_2d_valid(a, b);
 }
 
 /*!
@@ -218,10 +218,10 @@ auto conv_2d_same(A&& a, B&& b) -> detail::temporary_binary_helper<A, B, conv2_s
  * \return an expression representing the same 2D convolution of a and b
  */
 template <typename A, typename B, typename C>
-auto conv_2d_same(A&& a, B&& b, C&& c) -> detail::forced_temporary_binary_helper<A, B, C, conv2_same_expr> {
+auto conv_2d_same(A&& a, B&& b, C&& c) {
     static_assert(is_etl_expr<A>::value && is_etl_expr<B>::value && is_etl_expr<C>::value, "Convolution only supported for ETL expressions");
 
-    return {a, b, c};
+    return c = conv_2d_same(a, b);
 }
 
 /*!
@@ -245,10 +245,10 @@ auto conv_2d_full(A&& a, B&& b) -> detail::temporary_binary_helper<A, B, conv2_f
  * \return an expression representing the full 2D convolution of a and b
  */
 template <typename A, typename B, typename C>
-auto conv_2d_full(A&& a, B&& b, C&& c) -> detail::forced_temporary_binary_helper<A, B, C, conv2_full_expr> {
+auto conv_2d_full(A&& a, B&& b, C&& c) {
     static_assert(is_etl_expr<A>::value && is_etl_expr<B>::value && is_etl_expr<C>::value, "Convolution only supported for ETL expressions");
 
-    return {a, b, c};
+    return c = conv_2d_full(a, b);
 }
 
 /*!
@@ -272,10 +272,10 @@ auto fft_conv_2d_full(A&& a, B&& b) -> detail::temporary_binary_helper<A, B, fft
  * \return an expression representing the full 2D convolution of a and b
  */
 template <typename A, typename B, typename C>
-auto fft_conv_2d_full(A&& a, B&& b, C&& c) -> detail::forced_temporary_binary_helper<A, B, C, fft_conv2_full_expr> {
+auto fft_conv_2d_full(A&& a, B&& b, C&& c) {
     static_assert(is_etl_expr<A>::value && is_etl_expr<B>::value && is_etl_expr<C>::value, "Convolution only supported for ETL expressions");
 
-    return {a, b, c};
+    return c = fft_conv_2d_full(a, b);
 }
 
 /*!
@@ -351,10 +351,10 @@ auto conv_deep_valid(A&& a, B&& b) -> detail::dim_temporary_binary_helper<A, B, 
  * \return an expression representing many valid 2D convolution of a and b
  */
 template <typename A, typename B, typename C>
-auto conv_deep_valid(A&& a, B&& b, C&& c) -> detail::dim_forced_temporary_binary_helper<A, B, C, conv_deep_valid_expr, decay_traits<A>::dimensions()> {
+auto conv_deep_valid(A&& a, B&& b, C&& c) {
     static_assert(is_etl_expr<A>::value && is_etl_expr<B>::value && is_etl_expr<C>::value, "Convolution only supported for ETL expressions");
 
-    return {a, b, c};
+    return c = conv_deep_valid(a, b);
 }
 
 /*!
@@ -384,10 +384,10 @@ auto conv_deep_same(A&& a, B&& b) -> detail::dim_temporary_binary_helper<A, B, c
  * \return an expression representing many same 2D convolution of a and b
  */
 template <typename A, typename B, typename C>
-auto conv_deep_same(A&& a, B&& b, C&& c) -> detail::dim_forced_temporary_binary_helper<A, B, C, conv_deep_same_expr, decay_traits<A>::dimensions()> {
+auto conv_deep_same(A&& a, B&& b, C&& c) {
     static_assert(is_etl_expr<A>::value && is_etl_expr<B>::value && is_etl_expr<C>::value, "Convolution only supported for ETL expressions");
 
-    return {a, b, c};
+    return c = conv_deep_same(a, b);
 }
 
 /*!
@@ -417,10 +417,10 @@ auto conv_deep_full(A&& a, B&& b) -> detail::dim_temporary_binary_helper<A, B, c
  * \return an expression representing many full 2D convolution of a and b
  */
 template <typename A, typename B, typename C>
-auto conv_deep_full(A&& a, B&& b, C&& c) -> detail::dim_forced_temporary_binary_helper<A, B, C, conv_deep_full_expr, decay_traits<A>::dimensions()> {
+auto conv_deep_full(A&& a, B&& b, C&& c) {
     static_assert(is_etl_expr<A>::value && is_etl_expr<B>::value && is_etl_expr<C>::value, "Convolution only supported for ETL expressions");
 
-    return {a, b, c};
+    return c = conv_deep_full(a, b);
 }
 
 //Special convolutions

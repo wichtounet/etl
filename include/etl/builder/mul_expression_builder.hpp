@@ -74,11 +74,11 @@ auto mul(A&& a, B&& b) -> detail::temporary_binary_helper<A, B, mm_mul_expr> {
  * \return An expression representing the matrix-matrix multiplication of a and b
  */
 template <typename A, typename B, typename C, cpp_enable_if(is_2d<A>::value, is_2d<B>::value, is_2d<C>::value)>
-auto mul(A&& a, B&& b, C&& c) -> detail::forced_temporary_binary_helper<A, B, C, mm_mul_expr> {
+auto mul(A&& a, B&& b, C&& c) {
     static_assert(is_etl_expr<A>::value && is_etl_expr<B>::value && is_etl_expr<C>::value, "Matrix multiplication only supported for ETL expressions");
     static_assert(decay_traits<A>::dimensions() == 2 && decay_traits<B>::dimensions() == 2 && decay_traits<C>::dimensions() == 2, "Matrix multiplication only works in 2D");
 
-    return {a, b, c};
+    return c = mul(a, b);
 }
 
 /*!
@@ -114,8 +114,8 @@ auto mul(A&& a, B&& b) -> detail::temporary_binary_helper<A, B, vm_mul_expr> {
  * \return An expression representing the vector-matrix multiplication of a and b
  */
 template <typename A, typename B, typename C, cpp_enable_if(is_1d<A>::value, is_2d<B>::value)>
-auto mul(A&& a, B&& b, C& c) -> detail::forced_temporary_binary_helper<A, B, C, vm_mul_expr> {
-    return {a, b, c};
+auto mul(A&& a, B&& b, C& c){
+    return c = mul(a, b);
 }
 
 /*!
@@ -137,8 +137,8 @@ auto mul(A&& a, B&& b) -> detail::temporary_binary_helper<A, B, mv_mul_expr> {
  * \return An expression representing the matrix-vector multiplication of a and b
  */
 template <typename A, typename B, typename C, cpp_enable_if(is_2d<A>::value, is_1d<B>::value)>
-auto mul(A&& a, B&& b, C& c) -> detail::forced_temporary_binary_helper<A, B, C, mv_mul_expr> {
-    return {a, b, c};
+auto mul(A&& a, B&& b, C& c) {
+    return c = mul(a, b);
 }
 
 /*!
@@ -163,11 +163,11 @@ auto strassen_mul(A&& a, B&& b) -> detail::temporary_binary_helper<A, B, strasse
  * \return An expression representing the matrix-matrix multiplication of a and b
  */
 template <typename A, typename B, typename C>
-auto strassen_mul(A&& a, B&& b, C&& c) -> detail::forced_temporary_binary_helper<A, B, C, strassen_mm_mul_expr> {
+auto strassen_mul(A&& a, B&& b, C&& c) {
     static_assert(is_etl_expr<A>::value && is_etl_expr<B>::value && is_etl_expr<C>::value, "Matrix multiplication only supported for ETL expressions");
     static_assert(decay_traits<A>::dimensions() == 2 && decay_traits<B>::dimensions() == 2 && decay_traits<C>::dimensions() == 2, "Matrix multiplication only works in 2D");
 
-    return {a, b, c};
+    return c = mul(a,b);
 }
 
 /*!
@@ -189,8 +189,8 @@ auto outer(A&& a, B&& b) -> detail::temporary_binary_helper<A, B, outer_product_
  * \return An expression representing the matrix-matrix multiplication of a and b
  */
 template <typename A, typename B, typename C>
-auto outer(A&& a, B&& b, C&& c) -> detail::forced_temporary_binary_helper<A, B, C, outer_product_expr> {
-    return {std::forward<A>(a), std::forward<B>(b), std::forward<C>(c)};
+auto outer(A&& a, B&& b, C&& c){
+    return c = outer(std::forward<A>(a), std::forward<B>(b));
 }
 
 } //end of namespace etl

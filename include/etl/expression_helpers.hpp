@@ -77,20 +77,8 @@ using temporary_unary_helper = temporary_unary_expr<value_t<A>, build_type<A>, O
 template <typename T, typename A, template <typename> class OP>
 using temporary_unary_helper_type = temporary_unary_expr<T, build_type<A>, OP<T>, void>;
 
-template <typename A, typename B, typename C, template <typename> class OP>
-using forced_temporary_binary_helper = temporary_binary_expr<value_t<A>, build_type<A>, build_type<B>, OP<value_t<A>>, build_identity_type<C>>;
-
-template <typename A, typename C, template <typename> class OP>
-using forced_temporary_unary_helper = temporary_unary_expr<value_t<A>, build_type<A>, OP<value_t<A>>, build_identity_type<C>>;
-
-template <typename T, typename A, typename C, template <typename> class OP>
-using forced_temporary_unary_helper_type = temporary_unary_expr<T, build_type<A>, OP<T>, build_identity_type<C>>;
-
 template <typename A, typename B, template <typename, std::size_t> class OP, std::size_t D>
 using dim_temporary_binary_helper = temporary_binary_expr<value_t<A>, build_type<A>, build_type<B>, OP<value_t<A>, D>, void>;
-
-template <typename A, typename B, typename C, template <typename, std::size_t> class OP, std::size_t D>
-using dim_forced_temporary_binary_helper = temporary_binary_expr<value_t<A>, build_type<A>, build_type<B>, OP<value_t<A>, D>, build_identity_type<C>>;
 
 } //end of namespace detail
 
