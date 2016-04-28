@@ -261,12 +261,6 @@ public:
         //Nothing else to init
     }
 
-    //Construct a new expression
-    temporary_unary_expr(AExpr a, int c)
-            : _a(a), _c(c), allocated(true) {
-        //Nothing else to init
-    }
-
     //Copy an expression
     temporary_unary_expr(const temporary_unary_expr& e)
             : _a(e._a), _c(e._c), allocated(e.allocated), evaluated(e.evaluated) {
@@ -414,12 +408,6 @@ public:
     //Construct a new expression
     temporary_binary_expr(AExpr a, BExpr b)
             : _a(a), _b(b) {
-        //Nothing else to init
-    }
-
-    //Construct a new expression
-    temporary_binary_expr(AExpr a, BExpr b, int c)
-            : _a(a), _b(b), _c(c), allocated(true) {
         //Nothing else to init
     }
 
