@@ -76,12 +76,33 @@ public:
  *
  * A temporary expression computes the expression directly and stores it into a temporary.
  */
-template <typename D, typename V>
+template <typename D, typename V, typename R>
 struct temporary_expr : comparable<D>, value_testable<D>, dim_testable<D>, gpu_delegate<V, D> {
     using derived_t         = D;                 ///< The derived type
     using value_type        = V;                 ///< The value type
+    using result_type       = R;                 ///< The result type
     using memory_type       = value_type*;       ///< The memory type
     using const_memory_type = const value_type*; ///< The const memory type
+    using data_type   = mutable_shared_ptr<result_type>;                    ///< The data type
+
+protected:
+    mutable bool allocated = false; ///< Indicates if the temporary has been allocated
+    mutable bool evaluated = false; ///< Indicates if the expression has been evaluated
+
+    data_type _c;           ///< The result reference
+
+public:
+    temporary_expr() = default;
+
+    temporary_expr(const temporary_expr& expr) = default;
+
+    temporary_expr(temporary_expr&& rhs) : allocated(rhs.allocated), evaluated(rhs.evaluated), _c(std::move(rhs._c)) {
+        rhs.evaluated = false;
+    }
+
+    //Expressions are invariant
+    temporary_expr& operator=(const temporary_expr& /*e*/) = delete;
+    temporary_expr& operator=(temporary_expr&& /*e*/) = delete;
 
     /*!
      * \brief The vectorization type for V
@@ -105,6 +126,41 @@ struct temporary_expr : comparable<D>, value_testable<D>, dim_testable<D>, gpu_d
         return *static_cast<const derived_t*>(this);
     }
 
+    /*!
+     * \brief Evaluate the expression, if not evaluated
+     *
+     * Will fail if not previously allocated
+     */
+    void evaluate() const {
+        if (!evaluated) {
+            cpp_assert(allocated, "The result has not been allocated");
+            as_derived().apply(*_c);
+            evaluated = true;
+        }
+    }
+
+    /*!
+     * \brief Allocate the necessary temporaries, if necessary
+     */
+    void allocate_temporary() const {
+        if (!_c) {
+            _c.reset(as_derived().allocate());
+        }
+
+        allocated = true;
+    }
+
+
+    /*!
+     * \brief Evaluate the expression directly into the given result
+     *
+     * Will fail if not previously allocated
+     */
+    template <typename Result>
+    void direct_evaluate(Result&& result) const {
+        as_derived().apply(std::forward<Result>(result));
+    }
+
     //Apply the expression
 
     /*!
@@ -113,7 +169,7 @@ struct temporary_expr : comparable<D>, value_testable<D>, dim_testable<D>, gpu_d
      * \return a reference to the element at the given index.
      */
     value_type operator[](std::size_t i) const {
-        return as_derived().result()[i];
+        return result()[i];
     }
 
     /*!
@@ -123,7 +179,7 @@ struct temporary_expr : comparable<D>, value_testable<D>, dim_testable<D>, gpu_d
      * \return the value at the given index.
      */
     value_type read_flat(std::size_t i) const {
-        return as_derived().result().read_flat(i);
+        return result().read_flat(i);
     }
 
     /*!
@@ -135,7 +191,7 @@ struct temporary_expr : comparable<D>, value_testable<D>, dim_testable<D>, gpu_d
     value_type operator()(S... args) const {
         static_assert(cpp::all_convertible_to<std::size_t, S...>::value, "Invalid size types");
 
-        return as_derived().result()(args...);
+        return result()(args...);
     }
 
     /*!
@@ -204,7 +260,7 @@ struct temporary_expr : comparable<D>, value_testable<D>, dim_testable<D>, gpu_d
      * \return a pointer tot the first element in memory.
      */
     memory_type memory_start() noexcept {
-        return as_derived().result().memory_start();
+        return result().memory_start();
     }
 
     /*!
@@ -212,7 +268,7 @@ struct temporary_expr : comparable<D>, value_testable<D>, dim_testable<D>, gpu_d
      * \return a pointer tot the first element in memory.
      */
     const_memory_type memory_start() const noexcept {
-        return as_derived().result().memory_start();
+        return result().memory_start();
     }
 
     /*!
@@ -220,7 +276,7 @@ struct temporary_expr : comparable<D>, value_testable<D>, dim_testable<D>, gpu_d
      * \return a pointer tot the past-the-end element in memory.
      */
     memory_type memory_end() noexcept {
-        return as_derived().result().memory_end();
+        return result().memory_end();
     }
 
     /*!
@@ -228,139 +284,7 @@ struct temporary_expr : comparable<D>, value_testable<D>, dim_testable<D>, gpu_d
      * \return a pointer tot the past-the-end element in memory.
      */
     const_memory_type memory_end() const noexcept {
-        return as_derived().result().memory_end();
-    }
-};
-
-/*!
- * \brief A temporary unary expression
- *
- * Evaluation is done at once, when access is made. This can be done
- * on const reference, this is the reason why several fields are
- * mutable.
- */
-template <typename T, typename AExpr, typename Op>
-struct temporary_unary_expr final : temporary_expr<temporary_unary_expr<T, AExpr, Op>, T> {
-    using value_type  = T;                                        ///< The value type
-    using result_type = typename Op::template result_type<AExpr>; ///< The result type
-    using data_type   = mutable_shared_ptr<result_type>;          ///< The data type
-
-private:
-    static_assert(is_etl_expr<AExpr>::value, "The argument must be an ETL expr");
-
-    using this_type = temporary_unary_expr<T, AExpr, Op>;
-
-    AExpr _a;                       ///< The sub expression reference
-    data_type _c;                   ///< The result reference
-    mutable bool allocated = false; ///< Indicates if the temporary has been allocated
-    mutable bool evaluated = false; ///< Indicates if the expression has been evaluated
-
-public:
-    //Construct a new expression
-    explicit temporary_unary_expr(AExpr a)
-            : _a(a) {
-        //Nothing else to init
-    }
-
-    //Copy an expression
-    temporary_unary_expr(const temporary_unary_expr& e)
-            : _a(e._a), _c(e._c), allocated(e.allocated), evaluated(e.evaluated) {
-        //Nothing else to init
-    }
-
-    //Move an expression
-    temporary_unary_expr(temporary_unary_expr&& e) noexcept
-        : _a(e._a),
-          _c(std::move(e._c)),
-          allocated(e.allocated),
-          evaluated(e.evaluated) {
-        e.evaluated = false;
-    }
-
-    //Expressions are invariant
-    temporary_unary_expr& operator=(const temporary_unary_expr& /*e*/) = delete;
-    temporary_unary_expr& operator=(temporary_unary_expr&& /*e*/) = delete;
-
-    //Accessors
-
-    /*!
-     * \brief Returns the sub expression
-     * \return a reference to the sub expression
-     */
-    std::add_lvalue_reference_t<AExpr> a() {
-        return _a;
-    }
-
-    /*!
-     * \brief Returns the sub expression
-     * \return a reference to the sub expression
-     */
-    cpp::add_const_lvalue_t<AExpr> a() const {
-        return _a;
-    }
-
-    /*!
-     * \brief Evaluate the expression, if not evaluated
-     *
-     * Will fail if not previously allocated
-     */
-    void evaluate() const {
-        if (!evaluated) {
-            cpp_assert(allocated, "The result has not been allocated");
-            Op::apply(_a, *_c);
-            evaluated = true;
-        }
-    }
-
-    /*!
-     * \brief Evaluate the expression directly into the given result
-     *
-     * Will fail if not previously allocated
-     */
-    template <typename Result>
-    void direct_evaluate(Result&& result) const {
-        Op::apply(_a, std::forward<Result>(result));
-    }
-
-    /*!
-     * \brief Allocate the necessary temporaries, if necessary
-     */
-    void allocate_temporary() const {
-        if (!_c) {
-            _c.reset(Op::allocate(_a));
-        }
-
-        allocated = true;
-    }
-
-    /*!
-     * \brief Test if this expression aliases with the given expression
-     * \param rhs The other expression to test
-     * \return true if the two expressions aliases, false otherwise
-     */
-    template <typename E>
-    bool alias(const E& rhs) const {
-        return _a.alias(rhs);
-    }
-
-    /*!
-     * \brief Returns the expression containing the result of the expression.
-     * \return a const reference to the expression containing the result of the expression
-     */
-    result_type& result() {
-        cpp_assert(evaluated, "The result has not been evaluated");
-        cpp_assert(allocated, "The result has not been allocated");
-        return *_c;
-    }
-
-    /*!
-     * \brief Returns the expression containing the result of the expression.
-     * \return a const reference to the expression containing the result of the expression
-     */
-    const result_type& result() const {
-        cpp_assert(evaluated, "The result has not been evaluated");
-        cpp_assert(allocated, "The result has not been allocated");
-        return *_c;
+        return result().memory_end();
     }
 
     /*!
@@ -383,27 +307,120 @@ public:
     bool gpu_delegate_valid() const noexcept {
         return evaluated && allocated;
     }
+
+    /*!
+     * \brief Returns the expression containing the result of the expression.
+     * \return a reference to the expression containing the result of the expression
+     */
+    result_type& result() {
+        cpp_assert(evaluated, "The result has not been evaluated");
+        cpp_assert(allocated, "The result has not been allocated");
+        return *_c;
+    }
+
+    /*!
+     * \brief Returns the expression containing the result of the expression.
+     * \return a const reference to the expression containing the result of the expression
+     */
+    const result_type& result() const {
+        cpp_assert(evaluated, "The result has not been evaluated");
+        cpp_assert(allocated, "The result has not been allocated");
+        return *_c;
+    }
+};
+
+/*!
+ * \brief A temporary unary expression
+ *
+ * Evaluation is done at once, when access is made. This can be done
+ * on const reference, this is the reason why several fields are
+ * mutable.
+ */
+template <typename T, typename AExpr, typename Op>
+struct temporary_unary_expr final : temporary_expr<temporary_unary_expr<T, AExpr, Op>, T, typename Op::template result_type<AExpr>> {
+    using value_type  = T;                                                  ///< The value type
+    using result_type = typename Op::template result_type<AExpr>;           ///< The result type
+    using this_type   = temporary_unary_expr<T, AExpr, Op>;                 ///< The type of this expression
+    using base_type   = temporary_expr<this_type, value_type, result_type>; ///< The base type
+
+private:
+    static_assert(is_etl_expr<AExpr>::value, "The argument must be an ETL expr");
+
+    AExpr _a;                       ///< The sub expression reference
+
+public:
+    //Construct a new expression
+    explicit temporary_unary_expr(AExpr a)
+            : _a(a) {
+        //Nothing else to init
+    }
+
+    //Copy an expression
+    temporary_unary_expr(const temporary_unary_expr& e)
+            : base_type(e), _a(e._a) {
+        //Nothing else to init
+    }
+
+    //Move an expression
+    temporary_unary_expr(temporary_unary_expr&& e) noexcept
+        : base_type(std::move(e)),
+          _a(e._a){
+        //Nothing else to init
+    }
+
+    //Accessors
+
+    /*!
+     * \brief Returns the sub expression
+     * \return a reference to the sub expression
+     */
+    std::add_lvalue_reference_t<AExpr> a() {
+        return _a;
+    }
+
+    /*!
+     * \brief Returns the sub expression
+     * \return a reference to the sub expression
+     */
+    cpp::add_const_lvalue_t<AExpr> a() const {
+        return _a;
+    }
+
+    template <typename Result>
+    void apply(Result&& result) const {
+        Op::apply(_a, std::forward<Result>(result));
+    }
+
+    auto allocate() const {
+        return Op::allocate(_a);
+    }
+
+    /*!
+     * \brief Test if this expression aliases with the given expression
+     * \param rhs The other expression to test
+     * \return true if the two expressions aliases, false otherwise
+     */
+    template <typename E>
+    bool alias(const E& rhs) const {
+        return _a.alias(rhs);
+    }
 };
 
 /*!
  * \brief A temporary binary expression
  */
 template <typename T, typename AExpr, typename BExpr, typename Op>
-struct temporary_binary_expr final : temporary_expr<temporary_binary_expr<T, AExpr, BExpr, Op>, T> {
-    using value_type  = T;                                               ///< The value type
-    using result_type = typename Op::template result_type<AExpr, BExpr>; ///< The result type
-    using data_type   = mutable_shared_ptr<result_type>;                 ///< The data type
+struct temporary_binary_expr final : temporary_expr<temporary_binary_expr<T, AExpr, BExpr, Op>, T, typename Op::template result_type<AExpr, BExpr>> {
+    using value_type  = T;                                                  ///< The value type
+    using result_type = typename Op::template result_type<AExpr, BExpr>;    ///< The result type
+    using this_type   = temporary_binary_expr<T, AExpr, BExpr, Op>;         ///< The type of this expresion
+    using base_type   = temporary_expr<this_type, value_type, result_type>; ///< The base type
 
 private:
     static_assert(is_etl_expr<AExpr>::value && is_etl_expr<BExpr>::value, "Both arguments must be ETL expr");
 
-    using this_type = temporary_binary_expr<T, AExpr, BExpr, Op>;
-
     AExpr _a;               ///< The left hand side expression reference
     BExpr _b;               ///< The right hand side expression reference
-    data_type _c;           ///< The result reference
-    mutable bool allocated = false; ///< Indicates if the temporary has been allocated
-    mutable bool evaluated = false; ///< Indicates if the expression has been evaluated
 
 public:
     //Construct a new expression
@@ -414,23 +431,15 @@ public:
 
     //Copy an expression
     temporary_binary_expr(const temporary_binary_expr& e)
-            : _a(e._a), _b(e._b), _c(e._c), allocated(e.allocated), evaluated(e.evaluated) {
+            : base_type(e), _a(e._a), _b(e._b) {
         //Nothing else to init
     }
 
     //Move an expression
     temporary_binary_expr(temporary_binary_expr&& e) noexcept
-        : _a(e._a),
-          _b(e._b),
-          _c(std::move(e._c)),
-          allocated(e.allocated),
-          evaluated(e.evaluated) {
-        e.evaluated = false;
+        : base_type(std::move(e)), _a(e._a), _b(e._b) {
+        //Nothing else to init
     }
-
-    //Expressions are invariant
-    temporary_binary_expr& operator=(const temporary_binary_expr& /*e*/) = delete;
-    temporary_binary_expr& operator=(temporary_binary_expr&& /*e*/) = delete;
 
     //Accessors
 
@@ -466,38 +475,13 @@ public:
         return _b;
     }
 
-    /*!
-     * \brief Evaluate the expression, if not evaluated
-     *
-     * Will fail if not previously allocated
-     */
-    void evaluate() const {
-        if (!evaluated) {
-            cpp_assert(allocated, "The result has not been allocated");
-            Op::apply(_a, _b, *_c);
-            evaluated = true;
-        }
-    }
-
-    /*!
-     * \brief Evaluate the expression directly into the given result
-     *
-     * Will fail if not previously allocated
-     */
     template <typename Result>
-    void direct_evaluate(Result&& result) const {
+    void apply(Result&& result) const {
         Op::apply(_a, _b, std::forward<Result>(result));
     }
 
-    /*!
-     * \brief Allocate the necessary temporaries, if necessary
-     */
-    void allocate_temporary() const {
-        if (!_c) {
-            _c.reset(Op::allocate(_a, _b));
-        }
-
-        allocated = true;
+    auto allocate() const {
+        return Op::allocate(_a, _b);
     }
 
     /*!
@@ -508,38 +492,6 @@ public:
     template <typename E>
     bool alias(const E& rhs) const {
         return _a.alias(rhs) || _b.alias(rhs);
-    }
-
-    /*!
-     * \brief Returns the expression containing the result of the expression.
-     * \return a reference to the expression containing the result of the expression
-     */
-    result_type& result() {
-        cpp_assert(evaluated, "The result has not been evaluated");
-        cpp_assert(allocated, "The result has not been allocated");
-        return *_c;
-    }
-
-    /*!
-     * \brief Returns the expression containing the result of the expression.
-     * \return a const reference to the expression containing the result of the expression
-     */
-    const result_type& result() const {
-        cpp_assert(evaluated, "The result has not been evaluated");
-        cpp_assert(allocated, "The result has not been allocated");
-        return *_c;
-    }
-
-    result_type& gpu_delegate() {
-        return result();
-    }
-
-    const result_type& gpu_delegate() const {
-        return result();
-    }
-
-    bool gpu_delegate_valid() const noexcept {
-        return evaluated && allocated;
     }
 };
 
