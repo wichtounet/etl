@@ -17,12 +17,15 @@
 
 namespace etl {
 
+/*!
+ * \brief A basic configurable expression for matrix inversion
+ */
 template <typename T, typename Impl>
 struct basic_inv_expr : impl_expr<basic_inv_expr<T, Impl>> {
-    using this_type  = basic_inv_expr<T, Impl>;
-    using value_type = T;
+    using this_type  = basic_inv_expr<T, Impl>; ///< The type of the expression
+    using value_type = T;                       ///< The type of the values
 
-    static constexpr const bool is_gpu = false;
+    static constexpr const bool is_gpu = false; ///< Indicate if the expression can be computed on GPU
 
     /*!
      * \brief The result type for a given sub expression type
@@ -115,6 +118,9 @@ struct basic_inv_expr : impl_expr<basic_inv_expr<T, Impl>> {
 
 // Standard inversion
 
+/*!
+ * \brief Expression for matrix inversion
+ */
 template <typename T>
 using inv_expr = basic_inv_expr<T, detail::inv_impl>;
 

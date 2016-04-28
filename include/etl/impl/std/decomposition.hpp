@@ -18,6 +18,13 @@ namespace impl {
 
 namespace standard {
 
+/*!
+ * \brief Performs the PA=LU decomposition of the matrix A
+ * \param A The matrix to decompose
+ * \param L The resulting L matrix
+ * \param U The resulting U matrix
+ * \param P The resulting P matrix
+ */
 template <typename AT, typename LT, typename UT, typename PT>
 void lu(const AT& A, LT& L, UT& U, PT& P) {
     const auto n = etl::dim(A, 0);
