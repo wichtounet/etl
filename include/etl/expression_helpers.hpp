@@ -69,16 +69,16 @@ auto make_stateful_unary_expr(Args&&... args) {
 }
 
 template <typename A, typename B, template <typename> class OP>
-using temporary_binary_helper = temporary_binary_expr<value_t<A>, build_type<A>, build_type<B>, OP<value_t<A>>, void>;
+using temporary_binary_helper = temporary_binary_expr<value_t<A>, build_type<A>, build_type<B>, OP<value_t<A>>>;
 
 template <typename A, template <typename> class OP>
-using temporary_unary_helper = temporary_unary_expr<value_t<A>, build_type<A>, OP<value_t<A>>, void>;
+using temporary_unary_helper = temporary_unary_expr<value_t<A>, build_type<A>, OP<value_t<A>>>;
 
 template <typename T, typename A, template <typename> class OP>
-using temporary_unary_helper_type = temporary_unary_expr<T, build_type<A>, OP<T>, void>;
+using temporary_unary_helper_type = temporary_unary_expr<T, build_type<A>, OP<T>>;
 
 template <typename A, typename B, template <typename, std::size_t> class OP, std::size_t D>
-using dim_temporary_binary_helper = temporary_binary_expr<value_t<A>, build_type<A>, build_type<B>, OP<value_t<A>, D>, void>;
+using dim_temporary_binary_helper = temporary_binary_expr<value_t<A>, build_type<A>, build_type<B>, OP<value_t<A>, D>>;
 
 } //end of namespace detail
 

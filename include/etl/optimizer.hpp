@@ -188,15 +188,15 @@ struct optimizable<etl::binary_expr<T, LeftExpr, BinaryOp, RightExpr>> {
  *
  * Specialization for temporary_unary_expr
  */
-template <typename T, typename A, typename Op, typename Forced>
-struct optimizable<etl::temporary_unary_expr<T, A, Op, Forced>> {
+template <typename T, typename A, typename Op>
+struct optimizable<etl::temporary_unary_expr<T, A, Op>> {
     /*! \copydoc optimizable::is */
-    static bool is(const etl::temporary_unary_expr<T, A, Op, Forced>& /*unused*/) {
+    static bool is(const etl::temporary_unary_expr<T, A, Op>& /*unused*/) {
         return false;
     }
 
     /*! \copydoc optimizable::is_deep */
-    static bool is_deep(const etl::temporary_unary_expr<T, A, Op, Forced>& expr) {
+    static bool is_deep(const etl::temporary_unary_expr<T, A, Op>& expr) {
         return is_optimizable_deep(expr.a());
     }
 };
@@ -206,15 +206,15 @@ struct optimizable<etl::temporary_unary_expr<T, A, Op, Forced>> {
  *
  * Specialization for temporary_binary_expr
  */
-template <typename T, typename A, typename B, typename Op, typename Forced>
-struct optimizable<etl::temporary_binary_expr<T, A, B, Op, Forced>> {
+template <typename T, typename A, typename B, typename Op>
+struct optimizable<etl::temporary_binary_expr<T, A, B, Op>> {
     /*! \copydoc optimizable::is */
-    static bool is(const etl::temporary_binary_expr<T, A, B, Op, Forced>& /*unused*/) {
+    static bool is(const etl::temporary_binary_expr<T, A, B, Op>& /*unused*/) {
         return false;
     }
 
     /*! \copydoc optimizable::is_deep */
-    static bool is_deep(const etl::temporary_binary_expr<T, A, B, Op, Forced>& expr) {
+    static bool is_deep(const etl::temporary_binary_expr<T, A, B, Op>& expr) {
         return is_optimizable_deep(expr.a()) || is_optimizable_deep(expr.b());
     }
 };
@@ -390,13 +390,13 @@ struct optimizer<etl::binary_expr<T, LeftExpr, BinaryOp, RightExpr>> {
     }
 };
 
-template <typename T, typename A, typename Op, typename Forced>
-struct optimizer<etl::temporary_unary_expr<T, A, Op, Forced>> {
+template <typename T, typename A, typename Op>
+struct optimizer<etl::temporary_unary_expr<T, A, Op>> {
     template <typename Builder>
-    static void is(Builder parent_builder, etl::temporary_unary_expr<T, A, Op, Forced>& expr) {
+    static void is(Builder parent_builder, etl::temporary_unary_expr<T, A, Op>& expr) {
         if (is_optimizable_deep(expr.a())) {
             auto lhs_builder = [&](auto&& new_lhs) {
-                parent_builder(etl::temporary_unary_expr<T, etl::detail::build_type<decltype(new_lhs)>, Op, Forced>(new_lhs));
+                parent_builder(etl::temporary_unary_expr<T, etl::detail::build_type<decltype(new_lhs)>, Op>(new_lhs));
             };
 
             optimize(lhs_builder, expr.a());
@@ -406,19 +406,19 @@ struct optimizer<etl::temporary_unary_expr<T, A, Op, Forced>> {
     }
 };
 
-template <typename T, typename A, typename B, typename Op, typename Forced>
-struct optimizer<etl::temporary_binary_expr<T, A, B, Op, Forced>> {
+template <typename T, typename A, typename B, typename Op>
+struct optimizer<etl::temporary_binary_expr<T, A, B, Op>> {
     template <typename Builder>
-    static void apply(Builder parent_builder, etl::temporary_binary_expr<T, A, B, Op, Forced>& expr) {
+    static void apply(Builder parent_builder, etl::temporary_binary_expr<T, A, B, Op>& expr) {
         if (is_optimizable_deep(expr.a())) {
             auto lhs_builder = [&](auto&& new_lhs) {
-                parent_builder(etl::temporary_binary_expr<T, etl::detail::build_type<decltype(new_lhs)>, B, Op, Forced>(new_lhs));
+                parent_builder(etl::temporary_binary_expr<T, etl::detail::build_type<decltype(new_lhs)>, B, Op>(new_lhs));
             };
 
             optimize(lhs_builder, expr.a());
         } else if (is_optimizable_deep(expr.b())) {
             auto rhs_builder = [&](auto&& new_rhs) {
-                parent_builder(etl::temporary_binary_expr<T, A, etl::detail::build_type<decltype(new_rhs)>, Op, Forced>(new_rhs));
+                parent_builder(etl::temporary_binary_expr<T, A, etl::detail::build_type<decltype(new_rhs)>, Op>(new_rhs));
             };
 
             optimize(rhs_builder, expr.b());

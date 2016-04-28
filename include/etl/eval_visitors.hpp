@@ -34,8 +34,8 @@ struct temporary_allocator_static_visitor : etl_visitor<temporary_allocator_stat
     /*!
      * \brief Visit the given temporary unary expression and allocate the necessary temporary.
      */
-    template <typename T, typename AExpr, typename Op, typename Forced>
-    void operator()(const etl::temporary_unary_expr<T, AExpr, Op, Forced>& v) const {
+    template <typename T, typename AExpr, typename Op>
+    void operator()(const etl::temporary_unary_expr<T, AExpr, Op>& v) const {
         v.allocate_temporary();
 
         (*this)(v.a());
@@ -44,8 +44,8 @@ struct temporary_allocator_static_visitor : etl_visitor<temporary_allocator_stat
     /*!
      * \brief Visit the given temporary binary expression and allocate the necessary temporary.
      */
-    template <typename T, typename AExpr, typename BExpr, typename Op, typename Forced>
-    void operator()(const etl::temporary_binary_expr<T, AExpr, BExpr, Op, Forced>& v) const {
+    template <typename T, typename AExpr, typename BExpr, typename Op>
+    void operator()(const etl::temporary_binary_expr<T, AExpr, BExpr, Op>& v) const {
         v.allocate_temporary();
 
         (*this)(v.a());
@@ -65,8 +65,8 @@ struct evaluator_static_visitor {
 
     mutable bool need_value = false; ///< Indicates if the value if necessary for the next visits
 
-    template <typename T, typename AExpr, typename Op, typename Forced>
-    void operator()(const etl::temporary_unary_expr<T, AExpr, Op, Forced>& v) const {
+    template <typename T, typename AExpr, typename Op>
+    void operator()(const etl::temporary_unary_expr<T, AExpr, Op>& v) const {
         bool old_need_value = need_value;
 
         need_value = Op::is_gpu;
@@ -81,8 +81,8 @@ struct evaluator_static_visitor {
         need_value = old_need_value;
     }
 
-    template <typename T, typename AExpr, typename BExpr, typename Op, typename Forced>
-    void operator()(const etl::temporary_binary_expr<T, AExpr, BExpr, Op, Forced>& v) const {
+    template <typename T, typename AExpr, typename BExpr, typename Op>
+    void operator()(const etl::temporary_binary_expr<T, AExpr, BExpr, Op>& v) const {
         bool old_need_value = need_value;
 
         need_value = Op::is_gpu;
@@ -226,8 +226,8 @@ struct gpu_clean_static_visitor : etl_visitor<gpu_clean_static_visitor, false, f
     /*!
      * \brief Visit the given temporary unary expressions and evicts its GPU temporaries.
      */
-    template <typename T, typename AExpr, typename Op, typename Forced>
-    void operator()(etl::temporary_unary_expr<T, AExpr, Op, Forced>& v) const {
+    template <typename T, typename AExpr, typename Op>
+    void operator()(etl::temporary_unary_expr<T, AExpr, Op>& v) const {
         (*this)(v.a());
 
         v.gpu_evict();
@@ -236,8 +236,8 @@ struct gpu_clean_static_visitor : etl_visitor<gpu_clean_static_visitor, false, f
     /*!
      * \brief Visit the given temporary binary expressions and evicts its GPU temporaries.
      */
-    template <typename T, typename AExpr, typename BExpr, typename Op, typename Forced>
-    void operator()(etl::temporary_binary_expr<T, AExpr, BExpr, Op, Forced>& v) const {
+    template <typename T, typename AExpr, typename BExpr, typename Op>
+    void operator()(etl::temporary_binary_expr<T, AExpr, BExpr, Op>& v) const {
         (*this)(v.a());
         (*this)(v.b());
 

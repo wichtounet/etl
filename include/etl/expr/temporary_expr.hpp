@@ -238,20 +238,18 @@ public:
  * on const reference, this is the reason why several fields are
  * mutable.
  */
-template <typename T, typename AExpr, typename Op, typename Forced>
-struct temporary_unary_expr final : temporary_expr<temporary_unary_expr<T, AExpr, Op, Forced>, T> {
-    static constexpr const bool is_not_forced = std::is_same<Forced, void>::value; ///< Indicate if the result is forced to an expression
-
-    using value_type  = T;                                                                                   ///< The value type
-    using result_type = std::conditional_t<is_not_forced, typename Op::template result_type<AExpr>, Forced>; ///< The result type
-    using data_type   = std::conditional_t<is_not_forced, mutable_shared_ptr<result_type>, result_type>;        ///< The data type
+template <typename T, typename AExpr, typename Op>
+struct temporary_unary_expr final : temporary_expr<temporary_unary_expr<T, AExpr, Op>, T> {
+    using value_type  = T;                                        ///< The value type
+    using result_type = typename Op::template result_type<AExpr>; ///< The result type
+    using data_type   = mutable_shared_ptr<result_type>;          ///< The data type
 
 private:
     static_assert(is_etl_expr<AExpr>::value, "The argument must be an ETL expr");
 
-    using this_type = temporary_unary_expr<T, AExpr, Op, Forced>;
+    using this_type = temporary_unary_expr<T, AExpr, Op>;
 
-    using get_result_op = std::conditional_t<is_not_forced, dereference_op, forward_op>;
+    using get_result_op = dereference_op;
 
     AExpr _a;                       ///< The sub expression reference
     data_type _c;                   ///< The result reference
@@ -266,7 +264,7 @@ public:
     }
 
     //Construct a new expression
-    temporary_unary_expr(AExpr a, std::conditional_t<is_not_forced, int, Forced> c)
+    temporary_unary_expr(AExpr a, int c)
             : _a(a), _c(c), allocated(true) {
         //Nothing else to init
     }
@@ -280,7 +278,7 @@ public:
     //Move an expression
     temporary_unary_expr(temporary_unary_expr&& e) noexcept
         : _a(e._a),
-          _c(optional_move<is_not_forced>(e._c)),
+          _c(std::move(e._c)),
           allocated(e.allocated),
           evaluated(e.evaluated) {
         e.evaluated = false;
@@ -326,18 +324,7 @@ public:
      *
      * Will fail if not previously allocated
      */
-    template <typename Result, typename F = Forced, cpp_disable_if(std::is_same<F, void>::value)>
-    void direct_evaluate(Result&& r) const {
-        evaluate();
-        r = result();
-    }
-
-    /*!
-     * \brief Evaluate the expression directly into the given result
-     *
-     * Will fail if not previously allocated
-     */
-    template <typename Result, typename F = Forced, cpp_enable_if(std::is_same<F, void>::value)>
+    template <typename Result>
     void direct_evaluate(Result&& result) const {
         Op::apply(_a, std::forward<Result>(result));
     }
@@ -345,15 +332,6 @@ public:
     /*!
      * \brief Allocate the necessary temporaries, if necessary
      */
-    template <typename F = Forced, cpp_disable_if(std::is_same<F, void>::value)>
-    void allocate_temporary() const {
-        allocated = true;
-    }
-
-    /*!
-     * \brief Allocate the necessary temporaries, if necessary
-     */
-    template <typename F = Forced, cpp_enable_if(std::is_same<F, void>::value)>
     void allocate_temporary() const {
         if (!_c) {
             _c.reset(Op::allocate(_a));
@@ -417,21 +395,19 @@ public:
 /*!
  * \brief A temporary binary expression
  */
-template <typename T, typename AExpr, typename BExpr, typename Op, typename Forced>
-struct temporary_binary_expr final : temporary_expr<temporary_binary_expr<T, AExpr, BExpr, Op, Forced>, T> {
-    static constexpr const bool is_not_forced = std::is_same<Forced, void>::value; ///< Indicate if the result is forced to an expression
-
-    using value_type  = T;                                                                                          ///< The value type
-    using result_type = std::conditional_t<is_not_forced, typename Op::template result_type<AExpr, BExpr>, Forced>; ///< The result type
-    using data_type   = std::conditional_t<is_not_forced, mutable_shared_ptr<result_type>, result_type>;               ///< The data type
+template <typename T, typename AExpr, typename BExpr, typename Op>
+struct temporary_binary_expr final : temporary_expr<temporary_binary_expr<T, AExpr, BExpr, Op>, T> {
+    using value_type  = T;                                               ///< The value type
+    using result_type = typename Op::template result_type<AExpr, BExpr>; ///< The result type
+    using data_type   = mutable_shared_ptr<result_type>;                 ///< The data type
 
 private:
     static_assert(is_etl_expr<AExpr>::value && is_etl_expr<BExpr>::value, "Both arguments must be ETL expr");
 
-    using this_type = temporary_binary_expr<T, AExpr, BExpr, Op, Forced>;
+    using this_type = temporary_binary_expr<T, AExpr, BExpr, Op>;
 
-    using get_result_op = std::conditional_t<is_not_forced, dereference_op, forward_op>;
-    using get_result_op_nc = std::conditional_t<is_not_forced, dereference_op, forward_op_nc>;
+    using get_result_op    = dereference_op;
+    using get_result_op_nc = dereference_op;
 
     AExpr _a;               ///< The left hand side expression reference
     BExpr _b;               ///< The right hand side expression reference
@@ -447,7 +423,7 @@ public:
     }
 
     //Construct a new expression
-    temporary_binary_expr(AExpr a, BExpr b, std::conditional_t<is_not_forced, int, Forced> c)
+    temporary_binary_expr(AExpr a, BExpr b, int c)
             : _a(a), _b(b), _c(c), allocated(true) {
         //Nothing else to init
     }
@@ -462,7 +438,7 @@ public:
     temporary_binary_expr(temporary_binary_expr&& e) noexcept
         : _a(e._a),
           _b(e._b),
-          _c(optional_move<is_not_forced>(e._c)),
+          _c(std::move(e._c)),
           allocated(e.allocated),
           evaluated(e.evaluated) {
         e.evaluated = false;
@@ -524,18 +500,7 @@ public:
      *
      * Will fail if not previously allocated
      */
-    template <typename Result, typename F = Forced, cpp_disable_if(std::is_same<F, void>::value)>
-    void direct_evaluate(Result&& r) const {
-        evaluate();
-        r = result();
-    }
-
-    /*!
-     * \brief Evaluate the expression directly into the given result
-     *
-     * Will fail if not previously allocated
-     */
-    template <typename Result, typename F = Forced, cpp_enable_if(std::is_same<F, void>::value)>
+    template <typename Result>
     void direct_evaluate(Result&& result) const {
         Op::apply(_a, _b, std::forward<Result>(result));
     }
@@ -543,15 +508,6 @@ public:
     /*!
      * \brief Allocate the necessary temporaries, if necessary
      */
-    template <typename F = Forced, cpp_disable_if(std::is_same<F, void>::value)>
-    void allocate_temporary() const {
-        allocated = true;
-    }
-
-    /*!
-     * \brief Allocate the necessary temporaries, if necessary
-     */
-    template <typename F = Forced, cpp_enable_if(std::is_same<F, void>::value)>
     void allocate_temporary() const {
         if (!_c) {
             _c.reset(Op::allocate(_a, _b));
@@ -606,9 +562,9 @@ public:
 /*!
  * \brief Specialization for temporary_unary_expr.
  */
-template <typename T, typename A, typename Op, typename Forced>
-struct etl_traits<etl::temporary_unary_expr<T, A, Op, Forced>> {
-    using expr_t = etl::temporary_unary_expr<T, A, Op, Forced>;
+template <typename T, typename A, typename Op>
+struct etl_traits<etl::temporary_unary_expr<T, A, Op>> {
+    using expr_t = etl::temporary_unary_expr<T, A, Op>;
     using a_t    = std::decay_t<A>;
 
     static constexpr const bool is_etl                  = true;                           ///< Indicates if the type is an ETL type
@@ -680,9 +636,9 @@ struct etl_traits<etl::temporary_unary_expr<T, A, Op, Forced>> {
 /*!
  * \brief Specialization for temporary_binary_expr.
  */
-template <typename T, typename A, typename B, typename Op, typename Forced>
-struct etl_traits<etl::temporary_binary_expr<T, A, B, Op, Forced>> {
-    using expr_t = etl::temporary_binary_expr<T, A, B, Op, Forced>;
+template <typename T, typename A, typename B, typename Op>
+struct etl_traits<etl::temporary_binary_expr<T, A, B, Op>> {
+    using expr_t = etl::temporary_binary_expr<T, A, B, Op>;
     using a_t    = std::decay_t<A>;
     using b_t    = std::decay_t<B>;
 
@@ -758,8 +714,8 @@ struct etl_traits<etl::temporary_binary_expr<T, A, B, Op, Forced>> {
  * \param expr The expression to print
  * \return the output stream
  */
-template <typename T, typename AExpr, typename Op, typename Forced>
-std::ostream& operator<<(std::ostream& os, const temporary_unary_expr<T, AExpr, Op, Forced>& expr) {
+template <typename T, typename AExpr, typename Op>
+std::ostream& operator<<(std::ostream& os, const temporary_unary_expr<T, AExpr, Op>& expr) {
     return os << Op::desc() << "(" << expr.a() << ")";
 }
 
@@ -769,8 +725,8 @@ std::ostream& operator<<(std::ostream& os, const temporary_unary_expr<T, AExpr, 
  * \param expr The expression to print
  * \return the output stream
  */
-template <typename T, typename AExpr, typename BExpr, typename Op, typename Forced>
-std::ostream& operator<<(std::ostream& os, const temporary_binary_expr<T, AExpr, BExpr, Op, Forced>& expr) {
+template <typename T, typename AExpr, typename BExpr, typename Op>
+std::ostream& operator<<(std::ostream& os, const temporary_binary_expr<T, AExpr, BExpr, Op>& expr) {
     return os << Op::desc() << "(" << expr.a() << ", " << expr.b() << ")";
 }
 

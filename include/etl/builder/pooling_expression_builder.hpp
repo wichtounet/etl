@@ -25,7 +25,7 @@ namespace etl {
  */
 template <std::size_t C1, std::size_t C2, typename E>
 auto max_pool_2d(E&& value) {
-    return temporary_unary_expr<value_t<E>, detail::build_type<E>, max_pool_2d_expr<value_t<E>, C1, C2>, void>{value};
+    return temporary_unary_expr<value_t<E>, detail::build_type<E>, max_pool_2d_expr<value_t<E>, C1, C2>>{value};
 }
 
 /*!
@@ -37,7 +37,7 @@ auto max_pool_2d(E&& value) {
  */
 template <std::size_t C1, std::size_t C2, typename E>
 auto avg_pool_2d(E&& value) {
-    return temporary_unary_expr<value_t<E>, detail::build_type<E>, avg_pool_2d_expr<value_t<E>, C1, C2>, void>{value};
+    return temporary_unary_expr<value_t<E>, detail::build_type<E>, avg_pool_2d_expr<value_t<E>, C1, C2>>{value};
 }
 
 /*!
@@ -50,7 +50,7 @@ auto avg_pool_2d(E&& value) {
  */
 template <std::size_t C1, std::size_t C2, std::size_t C3, typename E>
 auto max_pool_3d(E&& value) {
-    return temporary_unary_expr<value_t<E>, detail::build_type<E>, max_pool_3d_expr<value_t<E>, C1, C2, C3>, void>{value};
+    return temporary_unary_expr<value_t<E>, detail::build_type<E>, max_pool_3d_expr<value_t<E>, C1, C2, C3>>{value};
 }
 
 /*!
@@ -63,7 +63,7 @@ auto max_pool_3d(E&& value) {
  */
 template <std::size_t C1, std::size_t C2, std::size_t C3, typename E>
 auto avg_pool_3d(E&& value) {
-    return temporary_unary_expr<value_t<E>, detail::build_type<E>, avg_pool_3d_expr<value_t<E>, C1, C2, C3>, void>{value};
+    return temporary_unary_expr<value_t<E>, detail::build_type<E>, avg_pool_3d_expr<value_t<E>, C1, C2, C3>>{value};
 }
 
 /*!
@@ -107,7 +107,7 @@ auto avg_pool_derivative_3d(E&& input, F&& output) {
  */
 template <std::size_t C1, std::size_t C2, typename E, typename F>
 auto max_pool_derivative_2d(E&& input, F&& output) {
-    return temporary_binary_expr<value_t<E>, detail::build_type<E>, detail::build_type<F>, max_pool_derivative_2d_expr<value_t<E>, C1, C2>, void>{input, output};
+    return temporary_binary_expr<value_t<E>, detail::build_type<E>, detail::build_type<F>, max_pool_derivative_2d_expr<value_t<E>, C1, C2>>{input, output};
 }
 
 /*!
@@ -121,7 +121,7 @@ auto max_pool_derivative_2d(E&& input, F&& output) {
  */
 template <std::size_t C1, std::size_t C2, std::size_t C3, typename E, typename F>
 auto max_pool_derivative_3d(E&& input, F&& output) {
-    return temporary_binary_expr<value_t<E>, detail::build_type<E>, detail::build_type<F>, max_pool_derivative_3d_expr<value_t<E>, C1, C2, C3>, void>{input, output};
+    return temporary_binary_expr<value_t<E>, detail::build_type<E>, detail::build_type<F>, max_pool_derivative_3d_expr<value_t<E>, C1, C2, C3>>{input, output};
 }
 
 /*!
@@ -133,7 +133,7 @@ auto max_pool_derivative_3d(E&& input, F&& output) {
  */
 template <std::size_t C1, std::size_t C2, typename E>
 auto upsample_2d(E&& value) {
-    return temporary_unary_expr<value_t<E>, detail::build_type<E>, upsample_2d_expr<value_t<E>, C1, C2>, void>{value};
+    return temporary_unary_expr<value_t<E>, detail::build_type<E>, upsample_2d_expr<value_t<E>, C1, C2>>{value};
 }
 
 /*!
@@ -146,7 +146,7 @@ auto upsample_2d(E&& value) {
  */
 template <std::size_t C1, std::size_t C2, std::size_t C3, typename E>
 auto upsample_3d(E&& value) {
-    return temporary_unary_expr<value_t<E>, detail::build_type<E>, upsample_3d_expr<value_t<E>, C1, C2, C3>, void>{value};
+    return temporary_unary_expr<value_t<E>, detail::build_type<E>, upsample_3d_expr<value_t<E>, C1, C2, C3>>{value};
 }
 
 /*!
