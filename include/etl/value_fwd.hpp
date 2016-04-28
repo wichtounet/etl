@@ -30,6 +30,9 @@ struct serializer;
 template <typename Stream>
 struct deserializer;
 
+template <typename Matrix>
+struct sym_matrix;
+
 /*!
  * \brief A static matrix with fixed dimensions, in row-major order
  */
