@@ -322,6 +322,10 @@ public:
         return *this;
     }
 
+    /*!
+     * \brief Resize with the new dimensions in the given array
+     * \param dimensions The new dimensions
+     */
     void resize_arr(const dimension_storage_impl& dimensions){
         auto new_size = std::accumulate(dimensions.begin(), dimensions.end(), std::size_t(1), std::multiplies<std::size_t>());
 
@@ -343,6 +347,10 @@ public:
         _dimensions = dimensions;
     }
 
+    /*!
+     * \brief Resize with the new given dimensions
+     * \param sizes The new dimensions
+     */
     template<typename... Sizes>
     void resize(Sizes... sizes){
         static_assert(sizeof...(Sizes), "Cannot change number of dimensions");
@@ -553,6 +561,11 @@ public:
         }
     }
 
+    /*!
+     * \brief Return the flat index for the element at the given position
+     * \param sizes The indices
+     * \return The flat index
+     */
     template <typename... S>
     std::size_t index(S... sizes) const noexcept(assert_nothrow) {
         //Note: Version with sizes moved to a std::array and accessed with
