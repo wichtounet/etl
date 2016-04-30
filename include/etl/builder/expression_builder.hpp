@@ -1321,6 +1321,9 @@ value_t<E> stddev(E&& values) {
 
 namespace detail {
 
+/*!
+ * \brief Helper to compute the return type for max/min operation
+ */
 template <typename E>
 struct value_return_type {
     using type =
@@ -1336,6 +1339,9 @@ struct value_return_type {
             value_t<E>>;
 };
 
+/*!
+ * \brief Helper to compute the return type for max/min operation
+ */
 template <typename E>
 using value_return_t = typename value_return_type<E>::type;
 
