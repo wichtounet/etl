@@ -1277,7 +1277,7 @@ struct etl_traits<etl::fast_matrix_view<T, Dims...>> {
      * \param v The expression to get the size for
      * \returns the size of the given expression
      */
-    static constexpr std::size_t size(const expr_t& v) {
+    static cpp14_constexpr std::size_t size(const expr_t& v) {
         cpp_unused(v);
         return mul_all<Dims...>::value;
     }
