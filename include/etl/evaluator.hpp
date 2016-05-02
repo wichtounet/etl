@@ -774,7 +774,7 @@ template <typename Expr, typename Result, cpp_enable_if(is_serial_expr<Expr>::va
 void assign_evaluate(Expr&& expr, Result&& result) {
     auto old_serial = local_context().serial;
 
-    local_context().serial = false;
+    local_context().serial = true;
 
     assign_evaluate(expr.value(), result);
 
@@ -877,7 +877,7 @@ template <typename Expr, typename Result, cpp_enable_if(is_serial_expr<Expr>::va
 void add_evaluate(Expr&& expr, Result&& result) {
     auto old_serial = local_context().serial;
 
-    local_context().serial = false;
+    local_context().serial = true;
 
     add_evaluate(expr.value(), result);
 
@@ -980,7 +980,7 @@ template <typename Expr, typename Result, cpp_enable_if(is_serial_expr<Expr>::va
 void sub_evaluate(Expr&& expr, Result&& result) {
     auto old_serial = local_context().serial;
 
-    local_context().serial = false;
+    local_context().serial = true;
 
     sub_evaluate(expr.value(), result);
 
@@ -1083,7 +1083,7 @@ template <typename Expr, typename Result, cpp_enable_if(is_serial_expr<Expr>::va
 void mul_evaluate(Expr&& expr, Result&& result) {
     auto old_serial = local_context().serial;
 
-    local_context().serial = false;
+    local_context().serial = true;
 
     mul_evaluate(expr.value(), result);
 
@@ -1186,7 +1186,7 @@ template <typename Expr, typename Result, cpp_enable_if(is_serial_expr<Expr>::va
 void div_evaluate(Expr&& expr, Result&& result) {
     auto old_serial = local_context().serial;
 
-    local_context().serial = false;
+    local_context().serial = true;
 
     div_evaluate(expr.value(), result);
 
@@ -1289,7 +1289,7 @@ template <typename Expr, typename Result, cpp_enable_if(is_serial_expr<Expr>::va
 void mod_evaluate(Expr&& expr, Result&& result) {
     auto old_serial = local_context().serial;
 
-    local_context().serial = false;
+    local_context().serial = true;
 
     mod_evaluate(expr.value(), result);
 
