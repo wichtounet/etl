@@ -99,7 +99,10 @@ public:
     template <typename V = default_vec>
     using vec_type       = typename V::template vec_type<T>;
 
-    //Construct a new expression
+    /*
+     * \brief Construct a new unary_expr with the given sub expression
+     * \param l The sub expression
+     */
     explicit unary_expr(Expr l)
             : _value(std::forward<Expr>(l)) {
         //Nothing else to init
@@ -214,10 +217,10 @@ private:
     static constexpr const bool non_const_return_ref =
         cpp::and_c<
             std::is_lvalue_reference<decltype(_value[0])>,
-            cpp::not_c<std::is_const<std::remove_reference_t<decltype(_value[0])>>>>::value;
+            cpp::not_c<std::is_const<std::remove_reference_t<decltype(_value[0])>>>>::value; ///< Indicates if the non-const functions returns a reference
 
     static constexpr const bool const_return_ref =
-        std::is_lvalue_reference<decltype(_value[0])>::value;
+        std::is_lvalue_reference<decltype(_value[0])>::value; ///< Indicates if the const functions returns a reference
 
 public:
     using value_type        = T;                                                                   ///< The value type
@@ -524,7 +527,10 @@ public:
     using const_memory_type = void;
     using expr_t            = Expr;
 
-    //Construct a new expression
+    /*!
+     * \brief Construct a new unary_expr from the given sub-expression
+     * \param l The sub expression
+     */
     explicit unary_expr(Expr l)
             : _value(std::forward<Expr>(l)) {
         //Nothing else to init
@@ -646,7 +652,11 @@ public:
     template <typename V = default_vec>
     using vec_type       = typename V::template vec_type<T>;
 
-    //Construct a new expression
+    /*!
+     * \brief Construct a new unary_expr from the given sub-expression and construct the op by forwarding it the given arguments
+     * \param l The sub expression
+     * \param args The arguments to forward to the op constructor
+     */
     template <typename... Args>
     explicit unary_expr(Expr l, Args&&... args)
             : _value(std::forward<Expr>(l)), op(std::forward<Args>(args)...) {

@@ -228,9 +228,15 @@ struct basic_mm_mul_expr : impl_expr<basic_mm_mul_expr<T, Impl>> {
     }
 };
 
+/*!
+ * \brief Expression for matrix-matrix multiplication
+ */
 template <typename T>
 using mm_mul_expr = basic_mm_mul_expr<T, detail::mm_mul_impl>;
 
+/*!
+ * \brief Expression for Strassen matrix-matrix multiplication
+ */
 template <typename T>
 using strassen_mm_mul_expr = basic_mm_mul_expr<T, detail::strassen_mm_mul_impl>;
 
@@ -342,6 +348,9 @@ struct basic_vm_mul_expr : impl_expr<basic_vm_mul_expr<T, Impl>> {
     }
 };
 
+/*!
+ * \brief Expression for vector-matrix multiplication
+ */
 template <typename T>
 using vm_mul_expr = basic_vm_mul_expr<T, detail::vm_mul_impl>;
 
@@ -450,6 +459,9 @@ struct basic_mv_mul_expr : impl_expr<basic_mv_mul_expr<T, Impl>> {
     }
 };
 
+/*!
+ * \brief Expression for matrix-vector multiplication
+ */
 template <typename T>
 using mv_mul_expr = basic_mv_mul_expr<T, detail::mv_mul_impl>;
 

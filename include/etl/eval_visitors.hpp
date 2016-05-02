@@ -65,6 +65,10 @@ struct evaluator_static_visitor {
 
     mutable bool need_value = false; ///< Indicates if the value if necessary for the next visits
 
+    /*!
+     * \brief Visit the given temporary unary expression
+     * \param v The temporary unary expression
+     */
     template <typename D, typename T, typename A, typename R>
     void operator()(const etl::temporary_expr_un<D, T, A, R>& v) const {
         bool old_need_value = need_value;
@@ -81,6 +85,10 @@ struct evaluator_static_visitor {
         need_value = old_need_value;
     }
 
+    /*!
+     * \brief Visit the given temporary binary expression
+     * \param v The temporary binary expression
+     */
     template <typename D, typename T, typename A, typename B, typename R>
     void operator()(const etl::temporary_expr_bin<D, T, A, B, R>& v) const {
         bool old_need_value = need_value;
@@ -166,23 +174,43 @@ struct evaluator_static_visitor {
 
     //The leaves don't need any special handling
 
+    /*!
+     * \brief Visit the given generator
+     * \param v The scalar
+     */
     template <typename Generator>
-    void operator()(const generator_expr<Generator>& /*unused*/) const {
+    void operator()(const generator_expr<Generator>& generator) const {
+        cpp_unused(generator);
         //Leaf
     }
 
+    /*!
+     * \brief Visit the given magic view
+     * \param v The magic view
+     */
     template <typename T, cpp_enable_if(etl::is_magic_view<T>::value)>
-    void operator()(const T& /*unused*/) const {
+    void operator()(const T& view) const {
+        cpp_unused(view);
         //Leaf
     }
 
+    /*!
+     * \brief Visit the given value class
+     * \param v The value class
+     */
     template <typename T, cpp_enable_if(etl::is_etl_value<T>::value)>
-    void operator()(const T& /*unused*/) const {
+    void operator()(const T& v) const {
+        cpp_unused(v);
         //Leaf
     }
 
+    /*!
+     * \brief Visit the given scalar
+     * \param s The scalar
+     */
     template <typename T>
-    void operator()(const etl::scalar<T>& /*unused*/) const {
+    void operator()(const etl::scalar<T>& s) const {
+        cpp_unused(s);
         //Leaf
     }
 };
