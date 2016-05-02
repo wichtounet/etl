@@ -156,8 +156,8 @@ struct sym_matrix final {
     static_assert(etl_traits<matrix_t>::dimensions() == 2, "Symmetric matrix must be two-dimensional");
     using scs = sym_detail::static_check_square<matrix_t>; ///< static_check trick
 
-    static constexpr const std::size_t n_dimensions = matrix_t::D;                           ///< The number of dimensions
-    static constexpr const order storage_order      = matrix_t::SO;                          ///< The storage order
+    static constexpr const std::size_t n_dimensions = etl_traits<matrix_t>::dimensions();    ///< The number of dimensions
+    static constexpr const order storage_order      = etl_traits<matrix_t>::storage_order; ///< The storage order
     static constexpr const std::size_t alignment    = intrinsic_traits<matrix_t>::alignment; ///< The memory alignment
 
     using value_type        = value_t<matrix_t>; ///< The value type
