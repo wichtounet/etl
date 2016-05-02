@@ -472,3 +472,35 @@ TEMPLATE_TEST_CASE_2("fft_1d_many/4", "[fast][fft]", Z, float, double) {
     REQUIRE(a(1, 4).real() == Approx(Z(-2.5)));
     REQUIRE(a(1, 4).imag() == Approx(Z(-3.440955)));
 }
+
+TEMPLATE_TEST_CASE_2("fft_1d_many/5", "[fast][fft]", Z, float, double) {
+    etl::fast_dyn_matrix<std::complex<Z>, 18, 1033> a;
+    etl::fast_dyn_matrix<std::complex<Z>, 18, 1033> c_1;
+    etl::fast_dyn_matrix<std::complex<Z>, 18, 1033> c_2;
+
+    c_1 = etl::fft_1d_many(a);
+
+    for(std::size_t i = 0; i < 18; ++i){
+        c_2(i) = etl::fft_1d(a(i));
+    }
+
+    for(std::size_t i = 0; i < a.size(); ++i){
+        REQUIRE(c_1[i] == c_2[i]);
+    }
+}
+
+TEMPLATE_TEST_CASE_2("fft_1d_many/6", "[fast][fft]", Z, float, double) {
+    etl::fast_dyn_matrix<std::complex<Z>, 18, 1045> a;
+    etl::fast_dyn_matrix<std::complex<Z>, 18, 1045> c_1;
+    etl::fast_dyn_matrix<std::complex<Z>, 18, 1045> c_2;
+
+    c_1 = etl::fft_1d_many(a);
+
+    for(std::size_t i = 0; i < 18; ++i){
+        c_2(i) = etl::fft_1d(a(i));
+    }
+
+    for(std::size_t i = 0; i < a.size(); ++i){
+        REQUIRE(c_1[i] == c_2[i]);
+    }
+}
