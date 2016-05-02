@@ -55,7 +55,7 @@ public:
 
     /*!
      * \brief Returns the underlying object
-     * \param a reference to the underlying object
+     * \return a reference to the underlying object
      */
     T& operator*() const {
         return *ptr;
@@ -63,7 +63,7 @@ public:
 
     /*!
      * \brief Returns the underlying pointer
-     * \param a pointer to the underlying object
+     * \return a pointer to the underlying object
      */
     T* operator->() const {
         return ptr.get();
