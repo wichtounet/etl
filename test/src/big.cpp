@@ -154,3 +154,27 @@ TEMPLATE_TEST_CASE_2("big/log", "[big][log]", Z, double, float) {
         REQUIRE(c[i] == Approx(std::log(a[i])));
     }
 }
+
+TEMPLATE_TEST_CASE_2("big/cos", "[big][cos]", Z, double, float) {
+    etl::dyn_matrix<Z> a(128UL, 2UL);
+    etl::dyn_matrix<Z> c(128UL, 2UL);
+
+    a = etl::uniform_generator(0.0, 360.0);
+    c = etl::cos(a);
+
+    for (std::size_t i = 0; i < c.size(); ++i) {
+        REQUIRE(c[i] == Approx(std::cos(a[i])));
+    }
+}
+
+TEMPLATE_TEST_CASE_2("big/sin", "[big][sin]", Z, double, float) {
+    etl::dyn_matrix<Z> a(128UL, 2UL);
+    etl::dyn_matrix<Z> c(128UL, 2UL);
+
+    a = etl::uniform_generator(0.0, 360.0);
+    c = etl::sin(a);
+
+    for (std::size_t i = 0; i < c.size(); ++i) {
+        REQUIRE(c[i] == Approx(std::sin(a[i])));
+    }
+}
