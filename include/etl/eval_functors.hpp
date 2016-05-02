@@ -34,6 +34,13 @@ struct Assign {
     const std::size_t _last;  ///< The last index to assign
     const std::size_t _size;  ///< The size to assign
 
+    /*!
+     * \brief Constuct a new Assign
+     * \param lhs The lhs memory
+     * \param rhs The rhs memory
+     * \param first Index to the first element to assign
+     * \param last Index to the last element to assign
+     */
     Assign(V_T* lhs, V_Expr& rhs, std::size_t first, std::size_t last)
             : lhs(lhs), rhs(rhs), _first(first), _last(last), _size(last - first) {
         //Nothing else
@@ -81,6 +88,13 @@ struct vectorized_base {
 
     using vect_impl = typename get_vector_impl<V>::type;
 
+    /*!
+     * \brief Constuct a new vectorized_base
+     * \param lhs The lhs expression
+     * \param rhs The rhs expression
+     * \param first Index to the first element to assign
+     * \param last Index to the last element to assign
+     */
     vectorized_base(L_Expr& lhs, V_Expr& rhs, std::size_t first, std::size_t last)
             : lhs(lhs), lhs_m(lhs.memory_start()), rhs(rhs), _first(first), _last(last), _size(last - first) {
         //Nothing else
@@ -148,6 +162,13 @@ struct VectorizedAssign : vectorized_base<V, L_Expr, V_Expr, VectorizedAssign<V,
     using base_t::_size;
     using base_t::_last;
 
+    /*!
+     * \brief Constuct a new VectorizedAssign
+     * \param lhs The lhs expression
+     * \param rhs The rhs expression
+     * \param first Index to the first element to assign
+     * \param last Index to the last element to assign
+     */
     VectorizedAssign(L_Expr& lhs, V_Expr& rhs, std::size_t first, std::size_t last)
             : base_t(lhs, rhs, first, last) {
         //Nothing else
@@ -246,6 +267,13 @@ struct AssignAdd {
     const std::size_t _last;  ///< The last index to assign
     const std::size_t _size;  ///< The size to assign
 
+    /*!
+     * \brief Constuct a new AssignAdd
+     * \param lhs The lhs memory
+     * \param rhs The rhs expression
+     * \param first Index to the first element to assign
+     * \param last Index to the last element to assign
+     */
     AssignAdd(V_T* lhs, V_Expr& rhs, std::size_t first, std::size_t last)
             : lhs(lhs), rhs(rhs), _first(first), _last(last), _size(last - first) {
         //Nothing else
@@ -290,6 +318,13 @@ struct VectorizedAssignAdd : vectorized_base<V, L_Expr, V_Expr, VectorizedAssign
     using base_t::_size;
     using base_t::_last;
 
+    /*!
+     * \brief Constuct a new VectorizedAssignAdd
+     * \param lhs The lhs expression
+     * \param rhs The rhs expression
+     * \param first Index to the first element to assign
+     * \param last Index to the last element to assign
+     */
     VectorizedAssignAdd(L_Expr& lhs, V_Expr& rhs, std::size_t first, std::size_t last)
             : base_t(lhs, rhs, first, last) {
         //Nothing else
@@ -389,6 +424,13 @@ struct AssignSub {
     const std::size_t _last;  ///< The last index to assign
     const std::size_t _size;  ///< The size to assign
 
+    /*!
+     * \brief Constuct a new AssignSub
+     * \param lhs The lhs memory
+     * \param rhs The rhs expression
+     * \param first Index to the first element to assign
+     * \param last Index to the last element to assign
+     */
     AssignSub(V_T* lhs, V_Expr& rhs, std::size_t first, std::size_t last)
             : lhs(lhs), rhs(rhs), _first(first), _last(last), _size(last - first) {
         //Nothing else
@@ -433,6 +475,13 @@ struct VectorizedAssignSub : vectorized_base<V, L_Expr, V_Expr, VectorizedAssign
     using base_t::_size;
     using base_t::_last;
 
+    /*!
+     * \brief Constuct a new VectorizedAssignSub
+     * \param lhs The lhs expression
+     * \param rhs The rhs expression
+     * \param first Index to the first element to assign
+     * \param last Index to the last element to assign
+     */
     VectorizedAssignSub(L_Expr& lhs, V_Expr& rhs, std::size_t first, std::size_t last)
             : base_t(lhs, rhs, first, last) {
         //Nothing else
@@ -532,6 +581,13 @@ struct AssignMul {
     const std::size_t _last;  ///< The last index to assign
     const std::size_t _size;  ///< The size to assign
 
+    /*!
+     * \brief Constuct a new AssignMul
+     * \param lhs The lhs memory
+     * \param rhs The rhs expression
+     * \param first Index to the first element to assign
+     * \param last Index to the last element to assign
+     */
     AssignMul(V_T* lhs, V_Expr& rhs, std::size_t first, std::size_t last)
             : lhs(lhs), rhs(rhs), _first(first), _last(last), _size(last - first) {
         //Nothing else
@@ -576,6 +632,13 @@ struct VectorizedAssignMul : vectorized_base<V, L_Expr, V_Expr, VectorizedAssign
     using base_t::_size;
     using base_t::_last;
 
+    /*!
+     * \brief Constuct a new VectorizedAssignMul
+     * \param lhs The lhs expression
+     * \param rhs The rhs expression
+     * \param first Index to the first element to assign
+     * \param last Index to the last element to assign
+     */
     VectorizedAssignMul(L_Expr& lhs, V_Expr& rhs, std::size_t first, std::size_t last)
             : base_t(lhs, rhs, first, last) {
         //Nothing else
@@ -675,6 +738,13 @@ struct AssignDiv {
     const std::size_t _last;  ///< The last index to assign
     const std::size_t _size;  ///< The size to assign
 
+    /*!
+     * \brief Constuct a new AssignDiv
+     * \param lhs The lhs memory
+     * \param rhs The rhs expression
+     * \param first Index to the first element to assign
+     * \param last Index to the last element to assign
+     */
     AssignDiv(V_T* lhs, V_Expr& rhs, std::size_t first, std::size_t last)
             : lhs(lhs), rhs(rhs), _first(first), _last(last), _size(last - first) {
         //Nothing else
@@ -719,6 +789,13 @@ struct VectorizedAssignDiv : vectorized_base<V, L_Expr, V_Expr, VectorizedAssign
     using base_t::_size;
     using base_t::_last;
 
+    /*!
+     * \brief Constuct a new VectorizedAssignDiv
+     * \param lhs The lhs expression
+     * \param rhs The rhs expression
+     * \param first Index to the first element to assign
+     * \param last Index to the last element to assign
+     */
     VectorizedAssignDiv(L_Expr& lhs, V_Expr& rhs, std::size_t first, std::size_t last)
             : base_t(lhs, rhs, first, last) {
         //Nothing else
