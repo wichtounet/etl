@@ -176,7 +176,7 @@ struct evaluator_static_visitor {
 
     /*!
      * \brief Visit the given generator
-     * \param v The scalar
+     * \param generator The generator
      */
     template <typename Generator>
     void operator()(const generator_expr<Generator>& generator) const {
@@ -186,7 +186,7 @@ struct evaluator_static_visitor {
 
     /*!
      * \brief Visit the given magic view
-     * \param v The magic view
+     * \param view The magic view
      */
     template <typename T, cpp_enable_if(etl::is_magic_view<T>::value)>
     void operator()(const T& view) const {
