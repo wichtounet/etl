@@ -1325,9 +1325,7 @@ namespace detail {
  * \brief Helper to compute the return type for max/min operation
  */
 template <typename E>
-struct value_return_type {
-    using type =
-        std::conditional_t<
+using value_return_t =std::conditional_t<
             decay_traits<E>::is_value,
             std::conditional_t<
                 std::is_lvalue_reference<E>::value,
@@ -1337,13 +1335,6 @@ struct value_return_type {
                     value_t<E>&>,
                 value_t<E>>,
             value_t<E>>;
-};
-
-/*!
- * \brief Helper to compute the return type for max/min operation
- */
-template <typename E>
-using value_return_t = typename value_return_type<E>::type;
 
 } //end of namespace detail
 
