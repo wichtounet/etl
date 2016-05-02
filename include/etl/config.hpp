@@ -60,9 +60,9 @@ const std::size_t threads             = std::thread::hardware_concurrency(); ///
 
 //Indicate that ETL should run in parallel
 #ifdef ETL_PARALLEL
-constexpr const bool parallel = true;
+constexpr const bool is_parallel = true;
 #else
-constexpr const bool parallel         = false;                               ///< Boolean flag indicating if expressions and implementations are parallelized (alpha)
+constexpr const bool is_parallel = false;                               ///< Boolean flag indicating if expressions and implementations are parallelized (alpha)
 #endif
 
 #ifdef ETL_MKL_MODE

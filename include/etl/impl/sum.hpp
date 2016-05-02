@@ -103,7 +103,7 @@ etl::sum_impl select_sum_impl() {
  */
 template <typename E>
 inline bool select_parallel(const E& e) {
-    if ((parallel && !local_context().serial) || local_context().parallel) {
+    if ((is_parallel && !local_context().serial) || local_context().parallel) {
         return size(e) >= sum_parallel_threshold;
     } else {
         return false;

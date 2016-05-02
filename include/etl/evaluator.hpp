@@ -889,6 +889,22 @@ void add_evaluate(Expr&& expr, Result&& result) {
  * \param expr The right hand side expression
  * \param result The left hand side
  */
+template <typename Expr, typename Result, cpp_enable_if(is_parallel_expr<Expr>::value)>
+void add_evaluate(Expr&& expr, Result&& result) {
+    auto old_parallel = local_context().parallel;
+
+    local_context().parallel = true;
+
+    add_evaluate(expr.value(), result);
+
+    local_context().parallel = old_parallel;
+}
+
+/*!
+ * \brief Compound add evaluation of the expr into result
+ * \param expr The right hand side expression
+ * \param result The left hand side
+ */
 template <typename Expr, typename Result, cpp_enable_if(is_selected_expr<Expr>::value)>
 void add_evaluate(Expr&& expr, Result&& result) {
     decltype(auto) forced = detail::get_forced_impl<typename std::decay_t<Expr>::selector_t>();
@@ -969,6 +985,22 @@ void sub_evaluate(Expr&& expr, Result&& result) {
     sub_evaluate(expr.value(), result);
 
     local_context().serial = old_serial;
+}
+
+/*!
+ * \brief Compound sub evaluation of the expr into result
+ * \param expr The right hand side expression
+ * \param result The left hand side
+ */
+template <typename Expr, typename Result, cpp_enable_if(is_parallel_expr<Expr>::value)>
+void sub_evaluate(Expr&& expr, Result&& result) {
+    auto old_parallel = local_context().parallel;
+
+    local_context().parallel = true;
+
+    sub_evaluate(expr.value(), result);
+
+    local_context().parallel = old_parallel;
 }
 
 /*!
@@ -1063,6 +1095,22 @@ void mul_evaluate(Expr&& expr, Result&& result) {
  * \param expr The right hand side expression
  * \param result The left hand side
  */
+template <typename Expr, typename Result, cpp_enable_if(is_parallel_expr<Expr>::value)>
+void mul_evaluate(Expr&& expr, Result&& result) {
+    auto old_parallel = local_context().parallel;
+
+    local_context().parallel = true;
+
+    mul_evaluate(expr.value(), result);
+
+    local_context().parallel = old_parallel;
+}
+
+/*!
+ * \brief Compound mul evaluation of the expr into result
+ * \param expr The right hand side expression
+ * \param result The left hand side
+ */
 template <typename Expr, typename Result, cpp_enable_if(is_selected_expr<Expr>::value)>
 void mul_evaluate(Expr&& expr, Result&& result) {
     decltype(auto) forced = detail::get_forced_impl<typename std::decay_t<Expr>::selector_t>();
@@ -1143,6 +1191,22 @@ void div_evaluate(Expr&& expr, Result&& result) {
     div_evaluate(expr.value(), result);
 
     local_context().serial = old_serial;
+}
+
+/*!
+ * \brief Compound div evaluation of the expr into result
+ * \param expr The right hand side expression
+ * \param result The left hand side
+ */
+template <typename Expr, typename Result, cpp_enable_if(is_parallel_expr<Expr>::value)>
+void div_evaluate(Expr&& expr, Result&& result) {
+    auto old_parallel = local_context().parallel;
+
+    local_context().parallel = true;
+
+    div_evaluate(expr.value(), result);
+
+    local_context().parallel = old_parallel;
 }
 
 /*!
@@ -1230,6 +1294,22 @@ void mod_evaluate(Expr&& expr, Result&& result) {
     mod_evaluate(expr.value(), result);
 
     local_context().serial = old_serial;
+}
+
+/*!
+ * \brief Compound mod evaluation of the expr into result
+ * \param expr The right hand side expression
+ * \param result The left hand side
+ */
+template <typename Expr, typename Result, cpp_enable_if(is_parallel_expr<Expr>::value)>
+void mod_evaluate(Expr&& expr, Result&& result) {
+    auto old_parallel = local_context().parallel;
+
+    local_context().parallel = true;
+
+    mod_evaluate(expr.value(), result);
+
+    local_context().parallel = old_parallel;
 }
 
 /*!

@@ -125,7 +125,7 @@ inline etl::conv_impl select_conv_impl() {
  */
 template <typename I, typename K, typename C>
 inline bool select_parallel(const I& /*input*/, const K& kernel, C&& conv) {
-    if ((parallel && !local_context().serial) || local_context().parallel) {
+    if ((is_parallel && !local_context().serial) || local_context().parallel) {
         return size(conv) >= conv1_parallel_threshold_conv && size(kernel) >= conv1_parallel_threshold_kernel;
     } else {
         return false;
@@ -183,9 +183,7 @@ struct conv1_same_impl {
                 impl::avx::conv1_same(input, kernel, conv, first, last);
             }, 0, size(conv));
         } else if (impl == etl::conv_impl::SSE) {
-            dispatch_1d(parallel_dispatch, [&](std::size_t first, std::size_t last) {
-                impl::sse::conv1_same(input, kernel, conv, first, last);
-            }, 0, size(conv));
+            dispatch_1d(parallel_dispatch, [&](std::size_t first, std::size_t last) { impl::sse::conv1_same(input, kernel, conv, first, last); }, 0, size(conv));
         } else if (impl == etl::conv_impl::STD) {
             dispatch_1d(parallel_dispatch, [&](std::size_t first, std::size_t last) {
                 impl::standard::conv1_same(input, kernel, conv, first, last);
