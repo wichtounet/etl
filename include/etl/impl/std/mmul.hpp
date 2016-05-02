@@ -13,6 +13,12 @@ namespace impl {
 
 namespace standard {
 
+/*!
+ * \brief Standard implementation of a matrix-matrix multiplication
+ * \param a The left input matrix
+ * \param b The right input matrix
+ * \param c The output matrix
+ */
 template <typename A, typename B, typename C>
 static void mm_mul(A&& a, B&& b, C&& c) {
     bool row_major = decay_traits<A>::storage_order == order::RowMajor;
@@ -66,6 +72,12 @@ inline void add_mul(std::complex<T>& c, std::complex<T> a, std::complex<T> b) {
     c.imag(c.imag() + abcd - ac - bd);
 }
 
+/*!
+ * \brief Standard implementation of a vector-matrix multiplication
+ * \param a The left vector matrix
+ * \param b The right input matrix
+ * \param c The output matrix
+ */
 template <typename A, typename B, typename C>
 static void vm_mul(A&& a, B&& b, C&& c) {
     bool row_major = decay_traits<B>::storage_order == order::RowMajor;
@@ -89,6 +101,12 @@ static void vm_mul(A&& a, B&& b, C&& c) {
     }
 }
 
+/*!
+ * \brief Standard implementation of a matrix-vector multiplication
+ * \param a The left input matrix
+ * \param b The right vector matrix
+ * \param c The output matrix
+ */
 template <typename A, typename B, typename C>
 static void mv_mul(A&& a, B&& b, C&& c) {
     bool row_major = decay_traits<A>::storage_order == order::RowMajor;

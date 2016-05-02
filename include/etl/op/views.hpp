@@ -57,6 +57,11 @@ struct dim_view {
     using return_type       = return_helper<sub_type, decltype(sub(0, 0))>;       ///< The type returned by the view
     using const_return_type = const_return_helper<sub_type, decltype(sub(0, 0))>; ///< The const type return by the view
 
+    /*!
+     * \brief Construct a new dim_view over the given sub expression
+     * \param sub The sub expression
+     * \param i The sub index
+     */
     dim_view(sub_type sub, std::size_t i)
             : sub(sub), i(i) {}
 
@@ -205,6 +210,11 @@ struct sub_view {
     using return_type       = return_helper<sub_type, decltype(sub[0])>;       ///< The type returned by the view
     using const_return_type = const_return_helper<sub_type, decltype(sub[0])>; ///< The const type return by the view
 
+    /*!
+     * \brief Construct a new sub_view over the given sub expression
+     * \param sub The sub expression
+     * \param i The sub index
+     */
     sub_view(sub_type sub, std::size_t i)
             : sub(sub), i(i) {}
 
@@ -366,6 +376,12 @@ struct slice_view {
 
     static_assert(decay_traits<sub_type>::storage_order == order::RowMajor, "slice only supported for row-major matrices");
 
+    /*!
+     * \brief Construct a new sub_view over the given sub expression
+     * \param sub The sub expression
+     * \param first The first index
+     * \param last The last index
+     */
     slice_view(sub_type sub, std::size_t first, std::size_t last)
             : sub(sub), first(first), last(last) {}
 
@@ -493,17 +509,34 @@ struct slice_view {
 
 namespace fast_matrix_view_detail {
 
+/*
+ * \brief Constant traits to get the subsize of a matrix for a fast_matrix_view
+ */
 template <typename M, std::size_t I, typename Enable = void>
 struct matrix_subsize : std::integral_constant<std::size_t, M::template dim<I + 1>() * matrix_subsize<M, I + 1>::value> {};
 
+/*
+ * \copydoc matrix_subsize
+ */
 template <typename M, std::size_t I>
 struct matrix_subsize<M, I, std::enable_if_t<I == M::n_dimensions - 1>> : std::integral_constant<std::size_t, 1> {};
 
+/*!
+ * \brief Compute the index for a fast matrix of the given type
+ * \param first The first index
+ * \return the index inside the matrix
+ */
 template <typename M, std::size_t I>
 inline constexpr std::size_t compute_index(std::size_t first) noexcept {
     return first;
 }
 
+/*!
+ * \brief Compute the index for a fast matrix of the given type
+ * \param first The first index
+ * \param args The following indices
+ * \return the index inside the matrix
+ */
 template <typename M, std::size_t I, typename... S, cpp_enable_if((sizeof...(S) > 0))>
 inline constexpr std::size_t compute_index(std::size_t first, S... args) noexcept {
     return matrix_subsize<M, I>::value * first + compute_index<M, I + 1>(args...);
@@ -529,9 +562,18 @@ struct fast_matrix_view {
 
     static constexpr std::size_t n_dimensions = sizeof...(Dims);
 
+    /*!
+     * \brief Construct a new fast_matrix_view over the given sub expression
+     * \param sub The sub expression
+     */
     explicit fast_matrix_view(sub_type sub)
             : sub(sub) {}
 
+    /*!
+     * \brief Compute the flat index for the given position.
+     * \param args The indices
+     * \return the index inside the matrix
+     */
     template <typename... S>
     static constexpr std::size_t index(S... args) {
         return fast_matrix_view_detail::compute_index<fast_matrix_view<T, Dims...>, 0>(args...);
@@ -689,6 +731,10 @@ struct dyn_vector_view {
     using return_type       = return_helper<sub_type, decltype(sub[0])>;       ///< The type returned by the view
     using const_return_type = const_return_helper<sub_type, decltype(sub[0])>; ///< The const type return by the view
 
+    /*!
+     * \brief Construct a new dyn_vector_view over the given sub expression
+     * \param rows The number of rows
+     */
     dyn_vector_view(sub_type sub, std::size_t rows)
             : sub(sub), rows(rows) {}
 
@@ -829,6 +875,11 @@ struct dyn_matrix_view {
     using return_type       = return_helper<sub_type, decltype(sub[0])>;       ///< The type returned by the view
     using const_return_type = const_return_helper<sub_type, decltype(sub[0])>; ///< The const type return by the view
 
+    /*!
+     * \brief Construct a new dyn_vector_view over the given sub expression
+     * \param rows The number of rows
+     * \param columns The number of columns
+     */
     dyn_matrix_view(sub_type sub, std::size_t rows, std::size_t columns)
             : sub(sub), rows(rows), columns(columns) {}
 
@@ -1221,7 +1272,13 @@ struct etl_traits<etl::fast_matrix_view<T, Dims...>> {
     template <vector_mode_t V>
     using vectorizable = cpp::bool_constant<etl_traits<sub_expr_t>::template vectorizable<V>::value && storage_order == order::RowMajor>;
 
-    static constexpr std::size_t size(const expr_t& /*unused*/) {
+    /*!
+     * \brief Returns the size of the given expression
+     * \param v The expression to get the size for
+     * \returns the size of the given expression
+     */
+    static constexpr std::size_t size(const expr_t& v) {
+        cpp_unused(v);
         return mul_all<Dims...>::value;
     }
 

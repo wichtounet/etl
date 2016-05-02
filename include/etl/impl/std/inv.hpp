@@ -11,6 +11,9 @@
 
 namespace etl {
 
+/*
+ * \copydoc etl::lu
+ */
 template <typename AT, typename LT, typename UT, typename PT>
 bool lu(const AT& A, LT& L, UT& U, PT& P);
 

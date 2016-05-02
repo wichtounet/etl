@@ -14,6 +14,9 @@
 
 namespace etl {
 
+/*
+ * \copydoc etl::lu
+ */
 template <typename AT, typename LT, typename UT, typename PT>
 bool lu(const AT& A, LT& L, UT& U, PT& P);
 
@@ -21,6 +24,10 @@ namespace impl {
 
 namespace standard {
 
+/*!
+ * \brief Compute the determinant of the given matrix
+ * \return The determinant of the given matrix
+ */
 template <typename AT>
 value_t<AT> det(const AT& A) {
     const auto n = etl::dim<0>(A);

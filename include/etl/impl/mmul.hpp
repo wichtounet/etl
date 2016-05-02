@@ -18,8 +18,17 @@ namespace etl {
 
 namespace detail {
 
+/*!
+ * \brief Select an implementation of GEMM, not considering local context
+ * \param n1 The left dimension of the  multiplication
+ * \param n2 The inner dimension of the  multiplication
+ * \param n3 The right dimension of the  multiplication
+ * \return The implementation to use
+ */
 template <bool DMA, typename T>
-inline cpp14_constexpr gemm_impl select_default_gemm_impl(const std::size_t n1, const std::size_t /*n2*/, const std::size_t n3) {
+inline cpp14_constexpr gemm_impl select_default_gemm_impl(const std::size_t n1, const std::size_t n2, const std::size_t n3) {
+    cpp_unused(n2);
+
     //Only std implementation is able to handle non-dma expressions
     if (!DMA) {
         return gemm_impl::STD;
@@ -53,6 +62,13 @@ inline cpp14_constexpr gemm_impl select_default_gemm_impl(const std::size_t n1, 
     }
 }
 
+/*!
+ * \brief Select an implementation of GEMM
+ * \param n1 The left dimension of the  multiplication
+ * \param n2 The inner dimension of the  multiplication
+ * \param n3 The right dimension of the  multiplication
+ * \return The implementation to use
+ */
 template <bool DMA, typename T>
 inline gemm_impl select_gemm_impl(const std::size_t n1, const std::size_t n2, const std::size_t n3) {
     if (local_context().gemm_selector.forced) {
@@ -95,6 +111,12 @@ inline gemm_impl select_gemm_impl(const std::size_t n1, const std::size_t n2, co
     return select_default_gemm_impl<DMA, T>(n1, n2, n3);
 }
 
+/*!
+ * \brief Select an implementation of GEMV, not considering local context
+ * \param n1 The left dimension of the  multiplication
+ * \param n2 The right dimension of the  multiplication
+ * \return The implementation to use
+ */
 template <bool DMA, typename T>
 inline cpp14_constexpr gemm_impl select_default_gemv_impl(const std::size_t n1, const std::size_t n2) {
     //Only std implementation is able to handle non-dma expressions
@@ -119,6 +141,12 @@ inline cpp14_constexpr gemm_impl select_default_gemv_impl(const std::size_t n1, 
     return gemm_impl::STD;
 }
 
+/*!
+ * \brief Select an implementation of GEMV
+ * \param n1 The left dimension of the  multiplication
+ * \param n2 The right dimension of the  multiplication
+ * \return The implementation to use
+ */
 template <bool DMA, typename T>
 inline gemm_impl select_gemv_impl(const std::size_t n1, const std::size_t n2) {
     if (local_context().gemm_selector.forced) {
@@ -157,6 +185,12 @@ inline gemm_impl select_gemv_impl(const std::size_t n1, const std::size_t n2) {
     return select_default_gemv_impl<DMA, T>(n1, n2);
 }
 
+/*!
+ * \brief Select an implementation of GEVM, not considering local context
+ * \param n1 The left dimension of the  multiplication
+ * \param n2 The right dimension of the  multiplication
+ * \return The implementation to use
+ */
 template <bool DMA, typename T>
 inline cpp14_constexpr gemm_impl select_default_gevm_impl(const std::size_t n1, const std::size_t n2) {
     //Only std implementation is able to handle non-dma expressions
@@ -181,6 +215,12 @@ inline cpp14_constexpr gemm_impl select_default_gevm_impl(const std::size_t n1, 
     return gemm_impl::STD;
 }
 
+/*!
+ * \brief Select an implementation of GEVM
+ * \param n1 The left dimension of the  multiplication
+ * \param n2 The right dimension of the  multiplication
+ * \return The implementation to use
+ */
 template <bool DMA, typename T>
 inline gemm_impl select_gevm_impl(const std::size_t n1, const std::size_t n2) {
     if (local_context().gemm_selector.forced) {
@@ -219,6 +259,9 @@ inline gemm_impl select_gevm_impl(const std::size_t n1, const std::size_t n2) {
     return select_default_gevm_impl<DMA, T>(n1, n2);
 }
 
+/*!
+ * \brief Functor for matrix-matrix multiplication
+ */
 struct mm_mul_impl {
     template <typename A, typename B, typename C>
     static void apply(A&& a, B&& b, C&& c) {
@@ -236,6 +279,9 @@ struct mm_mul_impl {
     }
 };
 
+/*!
+ * \brief Functor for vector-matrix multiplication
+ */
 struct vm_mul_impl {
     template <typename A, typename B, typename C>
     static void apply(A&& a, B&& b, C&& c) {
@@ -251,6 +297,9 @@ struct vm_mul_impl {
     }
 };
 
+/*!
+ * \brief Functor for matrix-vector multiplication
+ */
 struct mv_mul_impl {
     template <typename A, typename B, typename C>
     static void apply(A&& a, B&& b, C&& c) {
@@ -266,6 +315,9 @@ struct mv_mul_impl {
     }
 };
 
+/*!
+ * \brief Functor for Strassen matrix-matrix multiplication
+ */
 struct strassen_mm_mul_impl {
     template <typename A, typename B, typename C>
     static void apply(A&& a, B&& b, C&& c) {
