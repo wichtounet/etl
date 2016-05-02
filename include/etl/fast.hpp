@@ -64,11 +64,8 @@ inline constexpr std::size_t compute_index(S... args) noexcept(assert_nothrow) {
 template <typename N>
 struct is_vector : std::false_type {};
 
-template <typename N, typename A>
-struct is_vector<std::vector<N, A>> : std::true_type {};
-
-template <typename N>
-struct is_vector<std::vector<N>> : std::true_type {};
+template <typename... Args>
+struct is_vector<std::vector<Args...>> : std::true_type {};
 
 /*!
  * \brief Traits to extract iterator types from a type
