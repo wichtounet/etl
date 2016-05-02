@@ -157,7 +157,7 @@ struct sym_matrix final {
     using scs = sym_detail::static_check_square<matrix_t>; ///< static_check trick
 
     static constexpr const std::size_t n_dimensions = etl_traits<matrix_t>::dimensions();    ///< The number of dimensions
-    static constexpr const order storage_order      = etl_traits<matrix_t>::storage_order; ///< The storage order
+    static constexpr const order storage_order      = etl_traits<matrix_t>::storage_order;   ///< The storage order
     static constexpr const std::size_t alignment    = intrinsic_traits<matrix_t>::alignment; ///< The memory alignment
 
     using value_type        = value_t<matrix_t>; ///< The value type
