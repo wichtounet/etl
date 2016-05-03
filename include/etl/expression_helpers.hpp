@@ -16,6 +16,9 @@ namespace etl {
 
 namespace detail {
 
+/*!
+ * \brief Helper to build the type for a sub expression
+ */
 template <typename T>
 using build_type = std::conditional_t<
     is_etl_value<T>::value,
@@ -31,30 +34,59 @@ using build_identity_type = std::conditional_t<
         std::decay_t<T>&>,
     std::decay_t<T>>;
 
+/*!
+ * \brief Helper to create a binary expr with left typing
+ */
 template <typename LE, typename RE, template <typename> class OP>
 using left_binary_helper = binary_expr<value_t<LE>, build_type<LE>, OP<value_t<LE>>, build_type<RE>>;
 
+/*!
+ * \brief Helper to create a binary expr with left typing and a
+ * direct operation
+ */
 template <typename LE, typename RE, typename OP>
 using left_binary_helper_op = binary_expr<value_t<LE>, build_type<LE>, OP, build_type<RE>>;
 
+/*!
+ * \brief Helper to create a binary expr with right typing
+ */
 template <typename LE, typename RE, template <typename> class OP>
 using right_binary_helper = binary_expr<value_t<RE>, build_type<LE>, OP<value_t<RE>>, build_type<RE>>;
 
+/*!
+ * \brief Helper to create a binary expr with right typing and a
+ * direct operation
+ */
 template <typename LE, typename RE, typename OP>
 using right_binary_helper_op = binary_expr<value_t<RE>, build_type<LE>, OP, build_type<RE>>;
 
+/*!
+ * \brief Helper to create an unary expression
+ */
 template <typename E, template <typename> class OP>
 using unary_helper = unary_expr<value_t<E>, build_type<E>, OP<value_t<E>>>;
 
+/*!
+ * \brief Helper to create an identity unary expression
+ */
 template <typename E, typename OP>
 using identity_helper = unary_expr<value_t<E>, OP, identity_op>;
 
+/*!
+ * \brief Helper to create a virtual unary expression
+ */
 template <typename E, typename OP>
 using virtual_helper = unary_expr<E, OP, transform_op>;
 
+/*!
+ * \brief Helper to create a stable transform unary expression
+ */
 template <typename E, template <typename> class OP>
 using stable_transform_helper = unary_expr<value_t<E>, OP<build_type<E>>, transform_op>;
 
+/*!
+ * \brief Helper to create a stable binary transform unary expression
+ */
 template <typename LE, typename RE, template <typename, typename> class OP>
 using stable_transform_binary_helper = unary_expr<value_t<LE>, OP<build_type<LE>, build_type<RE>>, transform_op>;
 
