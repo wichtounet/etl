@@ -282,28 +282,25 @@ void conv1_valid(const I& input, const K& kernel, C&& conv, std::size_t first, s
 }
 
 inline void dconv2_valid_micro_kernel(const double* in, std::size_t n1, std::size_t n2, const double* kernel, std::size_t m1, std::size_t m2, double* out) {
+    auto kernel_reverse = aligned_allocate_auto<double>(m1 * m2);
+
+    std::reverse_copy(kernel, kernel + m1 * m2, kernel_reverse.get());
+
     std::size_t c1 = n1 - m1 + 1;
     std::size_t c2 = n2 - m2 + 1;
-
-    __m256d tmp1;
-    __m256d tmp2;
-    __m256d tmp3;
-    __m256d tmp4;
-    __m256d res;
 
     double tmp_res[4] __attribute__((aligned(32)));
 
     for (std::size_t i = 0; i < c1; ++i) {
         for (std::size_t j = 0; j < c2; ++j) {
-            res = _mm256_setzero_pd();
+            __m256d res = _mm256_setzero_pd();
 
-            for (std::size_t k = i; k < i + m1; ++k) {
-                for (std::size_t l = j; l + 3 < j + m2; l += 4) {
-                    tmp1 = _mm256_loadu_pd(in + k * n2 + l);
-                    tmp2 = _mm256_loadu_pd(kernel + ((i + m1 - 1 - k) * m2 + (j + m2 - 1 - (l + 3))));
-                    tmp3 = mm256_reverse_pd(tmp2);
-                    tmp4 = _mm256_mul_pd(tmp3, tmp1);
-                    res  = _mm256_add_pd(res, tmp4);
+            for (std::size_t k = 0; k < m1; ++k) {
+                for (std::size_t l = 0; l + 3 < m2; l += 4) {
+                    __m256d tmp1 = _mm256_loadu_pd(in + (i + k) * n2 + j + l);
+                    __m256d tmp3 = _mm256_loadu_pd(kernel_reverse.get() + k * m2 + l);
+                    __m256d tmp4 = _mm256_mul_pd(tmp1, tmp3);
+                    res         = _mm256_add_pd(res, tmp4);
                 }
             }
 
