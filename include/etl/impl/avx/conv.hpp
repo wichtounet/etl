@@ -282,6 +282,11 @@ void conv1_valid(const I& input, const K& kernel, C&& conv, std::size_t first, s
 }
 
 inline void dconv2_valid_micro_kernel(const double* in, std::size_t n1, std::size_t n2, const double* kernel, std::size_t m1, std::size_t m2, double* out) {
+    if(m2 < 4){
+        etl::impl::sse::conv2_valid_micro_kernel(in, n1, n2, kernel, m1, m2, out);
+        return;
+    }
+
     auto kernel_reverse = aligned_allocate_auto<double>(m1 * m2);
 
     std::reverse_copy(kernel, kernel + m1 * m2, kernel_reverse.get());
@@ -331,6 +336,11 @@ void conv2_valid(const I& input, const K& kernel, C&& conv) {
 }
 
 inline void dconv2_same_micro_kernel(const double* in, std::size_t n1, std::size_t n2, const double* kernel, std::size_t m1, std::size_t m2, double* out) {
+    if(m2 < 4){
+        etl::impl::sse::conv2_same_micro_kernel(in, n1, n2, kernel, m1, m2, out);
+        return;
+    }
+
     std::size_t c1 = n1;
     std::size_t c2 = n2;
 
@@ -389,6 +399,11 @@ void conv2_same(const I& input, const K& kernel, C&& conv) {
 }
 
 inline void dconv2_full_micro_kernel(const double* in, std::size_t n1, std::size_t n2, const double* kernel, std::size_t m1, std::size_t m2, double* out) {
+    if(m2 < 4){
+        etl::impl::sse::conv2_full_micro_kernel(in, n1, n2, kernel, m1, m2, out);
+        return;
+    }
+
     std::size_t c1 = n1 + m1 - 1;
     std::size_t c2 = n2 + m2 - 1;
 
@@ -447,6 +462,11 @@ void conv2_full(const I& input, const K& kernel, C&& conv) {
 }
 
 inline void sconv2_valid_micro_kernel(const float* in, std::size_t n1, std::size_t n2, const float* kernel, std::size_t m1, std::size_t m2, float* out) {
+    if(m2 < 8){
+        etl::impl::sse::conv2_valid_micro_kernel(in, n1, n2, kernel, m1, m2, out);
+        return;
+    }
+
     auto kernel_reverse = aligned_allocate_auto<float>(m1 * m2);
 
     std::reverse_copy(kernel, kernel + m1 * m2, kernel_reverse.get());
@@ -496,6 +516,11 @@ void conv2_valid(const I& input, const K& kernel, C&& conv) {
 }
 
 inline void sconv2_same_micro_kernel(const float* in, std::size_t n1, std::size_t n2, const float* kernel, std::size_t m1, std::size_t m2, float* out) {
+    if(m2 < 8){
+        etl::impl::sse::conv2_same_micro_kernel(in, n1, n2, kernel, m1, m2, out);
+        return;
+    }
+
     std::size_t c1 = n1;
     std::size_t c2 = n2;
 
@@ -554,6 +579,11 @@ void conv2_same(const I& input, const K& kernel, C&& conv) {
 }
 
 inline void sconv2_full_micro_kernel(const float* in, std::size_t n1, std::size_t n2, const float* kernel, std::size_t m1, std::size_t m2, float* out) {
+    if(m2 < 8){
+        etl::impl::sse::conv2_full_micro_kernel(in, n1, n2, kernel, m1, m2, out);
+        return;
+    }
+
     std::size_t c1 = n1 + m1 - 1;
     std::size_t c2 = n2 + m2 - 1;
 
