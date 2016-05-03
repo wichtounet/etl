@@ -100,10 +100,20 @@ struct vectorized_base {
         //Nothing else
     }
 
+    /*!
+     * \brief Load a vector from lhs at position i
+     * \param i The index where to start loading from
+     * \return a vector from lhs starting at position i
+     */
     inline auto lhs_load(std::size_t i) const {
         return lhs.template load<vect_impl>(i);
     }
 
+    /*!
+     * \brief Load a vector from rhs at position i
+     * \param i The index where to start loading from
+     * \return a vector from rhs starting at position i
+     */
     inline auto rhs_load(std::size_t i) const {
         return rhs.template load<vect_impl>(i);
     }
