@@ -183,7 +183,9 @@ struct conv1_same_impl {
                 impl::avx::conv1_same(input, kernel, conv, first, last);
             }, 0, size(conv));
         } else if (impl == etl::conv_impl::SSE) {
-            dispatch_1d(parallel_dispatch, [&](std::size_t first, std::size_t last) { impl::sse::conv1_same(input, kernel, conv, first, last); }, 0, size(conv));
+            dispatch_1d(parallel_dispatch, [&](std::size_t first, std::size_t last) {
+                impl::sse::conv1_same(input, kernel, conv, first, last);
+            }, 0, size(conv));
         } else if (impl == etl::conv_impl::STD) {
             dispatch_1d(parallel_dispatch, [&](std::size_t first, std::size_t last) {
                 impl::standard::conv1_same(input, kernel, conv, first, last);
