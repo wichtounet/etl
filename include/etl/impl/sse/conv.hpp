@@ -13,6 +13,9 @@
  * Ideas:
  *  * the tmp_res vectors could be avoided by using hadd instructions
  *  * 1D convolution with no memory allocation could probably be worked out (needs to be benchmarked)
+ *
+ *  Notes:
+ *  * FMA for the 1D convolution is making is slower for some reason
  */
 
 #if defined(ETL_VECTORIZE_IMPL) && defined(__SSE3__)
@@ -40,22 +43,41 @@ inline void conv1_valid_micro_kernel(const double* in, const std::size_t n, cons
         kernel_reverse[i] = _mm_load1_pd(kernel + m - i - 1);
     }
 
-    __m128d tmp1;
-    __m128d tmp2;
-    __m128d res;
-
     //Compute the convolution, 2 doubles at a time
 
     auto llast = std::min(n - m + 1, last);
 
     for (std::size_t i = first; i + 1 < llast; i += 2) {
-        res = _mm_setzero_pd();
+        __m128d r1 = _mm_setzero_pd();
+        __m128d r2 = _mm_setzero_pd();
+        __m128d r3 = _mm_setzero_pd();
+        __m128d r4 = _mm_setzero_pd();
 
-        for (std::size_t k = 0; k < m; k++) {
-            tmp1 = _mm_loadu_pd(in + i + k);
-            tmp2 = _mm_mul_pd(kernel_reverse[k], tmp1);
-            res  = _mm_add_pd(res, tmp2);
+        for (std::size_t k = 0; k + 3 < m; k += 4) {
+            __m128d t1 = _mm_loadu_pd(in + i + k);
+            __m128d t2 = _mm_loadu_pd(in + i + k + 1);
+            __m128d t3 = _mm_loadu_pd(in + i + k + 2);
+            __m128d t4 = _mm_loadu_pd(in + i + k + 3);
+
+            __m128d v1 = _mm_mul_pd(kernel_reverse[k], t1);
+            r1  = _mm_add_pd(r1, v1);
+            __m128d v2 = _mm_mul_pd(kernel_reverse[k+1], t2);
+            r2  = _mm_add_pd(r2, v2);
+            __m128d v3 = _mm_mul_pd(kernel_reverse[k+2], t3);
+            r3  = _mm_add_pd(r3, v3);
+            __m128d v4 = _mm_mul_pd(kernel_reverse[k+3], t4);
+            r4  = _mm_add_pd(r4, v4);
         }
+
+        for (std::size_t k = m - m % 4; k < m; k++) {
+            __m128d t1 = _mm_loadu_pd(in + i + k);
+            __m128d v1 = _mm_mul_pd(kernel_reverse[k], t1);
+            r1  = _mm_add_pd(r1, v1);
+        }
+
+        __m128d res = _mm_add_pd(r1, r2);
+        res         = _mm_add_pd(res, r3);
+        res         = _mm_add_pd(res, r4);
 
         _mm_storeu_pd(out + i, res);
     }
@@ -82,22 +104,41 @@ inline void conv1_valid_micro_kernel(const float* in, const std::size_t n, const
         kernel_reverse[i] = _mm_load1_ps(kernel + m - i - 1);
     }
 
-    __m128 tmp1;
-    __m128 tmp2;
-    __m128 res;
-
     //Compute the convolution 4 floats at a time
 
     auto llast = std::min(n - m + 1, last);
 
     for (std::size_t i = first; i + 3 < llast; i += 4) {
-        res = _mm_setzero_ps();
+        __m128 r1 = _mm_setzero_ps();
+        __m128 r2 = _mm_setzero_ps();
+        __m128 r3 = _mm_setzero_ps();
+        __m128 r4 = _mm_setzero_ps();
 
-        for (std::size_t k = 0; k < m; k++) {
-            tmp1 = _mm_loadu_ps(in + i + k);
-            tmp2 = _mm_mul_ps(kernel_reverse[k], tmp1);
-            res  = _mm_add_ps(res, tmp2);
+        for (std::size_t k = 0; k + 3 < m; k += 4) {
+            __m128 t1 = _mm_loadu_ps(in + i + k);
+            __m128 t2 = _mm_loadu_ps(in + i + k + 1);
+            __m128 t3 = _mm_loadu_ps(in + i + k + 2);
+            __m128 t4 = _mm_loadu_ps(in + i + k + 3);
+
+            __m128 v1 = _mm_mul_ps(kernel_reverse[k], t1);
+            r1  = _mm_add_ps(r1, v1);
+            __m128 v2 = _mm_mul_ps(kernel_reverse[k+1], t2);
+            r2  = _mm_add_ps(r2, v2);
+            __m128 v3 = _mm_mul_ps(kernel_reverse[k+2], t3);
+            r3  = _mm_add_ps(r3, v3);
+            __m128 v4 = _mm_mul_ps(kernel_reverse[k+3], t4);
+            r4  = _mm_add_ps(r4, v4);
         }
+
+        for (std::size_t k = m - m % 4; k < m; k++) {
+            __m128 t1 = _mm_loadu_ps(in + i + k);
+            __m128 v1 = _mm_mul_ps(kernel_reverse[k], t1);
+            r1  = _mm_add_ps(r1, v1);
+        }
+
+        __m128 res = _mm_add_ps(r1, r2);
+        res         = _mm_add_ps(res, r3);
+        res         = _mm_add_ps(res, r4);
 
         _mm_storeu_ps(out + i, res);
     }
