@@ -103,6 +103,14 @@ struct hflip_transformer {
     }
 
     /*!
+     * \brief Returns the value on which the transformer is working.
+     * \return A reference  to the value on which the transformer is working.
+     */
+    const sub_type& value() const {
+        return sub;
+    }
+
+    /*!
      * \brief Test if this expression aliases with the given expression
      * \param rhs The other expression to test
      * \return true if the two expressions aliases, false otherwise
@@ -207,6 +215,14 @@ struct vflip_transformer {
     }
 
     /*!
+     * \brief Returns the value on which the transformer is working.
+     * \return A reference  to the value on which the transformer is working.
+     */
+    const sub_type& value() const {
+        return sub;
+    }
+
+    /*!
      * \brief Test if this expression aliases with the given expression
      * \param rhs The other expression to test
      * \return true if the two expressions aliases, false otherwise
@@ -286,6 +302,14 @@ struct fflip_transformer {
      * \return A reference  to the value on which the transformer is working.
      */
     sub_type& value() {
+        return sub;
+    }
+
+    /*!
+     * \brief Returns the value on which the transformer is working.
+     * \return A reference  to the value on which the transformer is working.
+     */
+    const sub_type& value() const {
         return sub;
     }
 
