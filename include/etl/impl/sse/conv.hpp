@@ -60,19 +60,19 @@ inline void conv1_valid_micro_kernel(const double* in, const std::size_t n, cons
             __m128d t4 = _mm_loadu_pd(in + i + k + 3);
 
             __m128d v1 = _mm_mul_pd(kernel_reverse[k], t1);
-            r1  = _mm_add_pd(r1, v1);
-            __m128d v2 = _mm_mul_pd(kernel_reverse[k+1], t2);
-            r2  = _mm_add_pd(r2, v2);
-            __m128d v3 = _mm_mul_pd(kernel_reverse[k+2], t3);
-            r3  = _mm_add_pd(r3, v3);
-            __m128d v4 = _mm_mul_pd(kernel_reverse[k+3], t4);
-            r4  = _mm_add_pd(r4, v4);
+            r1         = _mm_add_pd(r1, v1);
+            __m128d v2 = _mm_mul_pd(kernel_reverse[k + 1], t2);
+            r2         = _mm_add_pd(r2, v2);
+            __m128d v3 = _mm_mul_pd(kernel_reverse[k + 2], t3);
+            r3         = _mm_add_pd(r3, v3);
+            __m128d v4 = _mm_mul_pd(kernel_reverse[k + 3], t4);
+            r4         = _mm_add_pd(r4, v4);
         }
 
         for (std::size_t k = m - m % 4; k < m; k++) {
             __m128d t1 = _mm_loadu_pd(in + i + k);
             __m128d v1 = _mm_mul_pd(kernel_reverse[k], t1);
-            r1  = _mm_add_pd(r1, v1);
+            r1         = _mm_add_pd(r1, v1);
         }
 
         __m128d res = _mm_add_pd(r1, r2);
@@ -121,24 +121,24 @@ inline void conv1_valid_micro_kernel(const float* in, const std::size_t n, const
             __m128 t4 = _mm_loadu_ps(in + i + k + 3);
 
             __m128 v1 = _mm_mul_ps(kernel_reverse[k], t1);
-            r1  = _mm_add_ps(r1, v1);
-            __m128 v2 = _mm_mul_ps(kernel_reverse[k+1], t2);
-            r2  = _mm_add_ps(r2, v2);
-            __m128 v3 = _mm_mul_ps(kernel_reverse[k+2], t3);
-            r3  = _mm_add_ps(r3, v3);
-            __m128 v4 = _mm_mul_ps(kernel_reverse[k+3], t4);
-            r4  = _mm_add_ps(r4, v4);
+            r1        = _mm_add_ps(r1, v1);
+            __m128 v2 = _mm_mul_ps(kernel_reverse[k + 1], t2);
+            r2        = _mm_add_ps(r2, v2);
+            __m128 v3 = _mm_mul_ps(kernel_reverse[k + 2], t3);
+            r3        = _mm_add_ps(r3, v3);
+            __m128 v4 = _mm_mul_ps(kernel_reverse[k + 3], t4);
+            r4        = _mm_add_ps(r4, v4);
         }
 
         for (std::size_t k = m - m % 4; k < m; k++) {
             __m128 t1 = _mm_loadu_ps(in + i + k);
             __m128 v1 = _mm_mul_ps(kernel_reverse[k], t1);
-            r1  = _mm_add_ps(r1, v1);
+            r1        = _mm_add_ps(r1, v1);
         }
 
         __m128 res = _mm_add_ps(r1, r2);
-        res         = _mm_add_ps(res, r3);
-        res         = _mm_add_ps(res, r4);
+        res        = _mm_add_ps(res, r3);
+        res        = _mm_add_ps(res, r4);
 
         _mm_storeu_ps(out + i, res);
     }

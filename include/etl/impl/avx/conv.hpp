@@ -305,7 +305,7 @@ inline void dconv2_valid_micro_kernel(const double* in, std::size_t n1, std::siz
                     __m256d tmp1 = _mm256_loadu_pd(in + (i + k) * n2 + j + l);
                     __m256d tmp3 = _mm256_loadu_pd(kernel_reverse.get() + k * m2 + l);
                     __m256d tmp4 = _mm256_mul_pd(tmp1, tmp3);
-                    res         = _mm256_add_pd(res, tmp4);
+                    res          = _mm256_add_pd(res, tmp4);
                 }
             }
 
