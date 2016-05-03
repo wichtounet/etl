@@ -685,6 +685,11 @@ std::ostream& operator<<(std::ostream& os, const fast_matrix_impl<T, ST, SO, Dim
     return os << "M[" << concat_sizes(Dims...) << "]";
 }
 
+/*!
+ * \brief Serialize the given matrix using the given serializer
+ * \param os The serializer
+ * \param matrix The matrix to serialize
+ */
 template <typename Stream, typename T, typename ST, order SO, std::size_t... Dims>
 void serialize(serializer<Stream>& os, const fast_matrix_impl<T, ST, SO, Dims...>& matrix) {
     for (const auto& value : matrix) {
@@ -692,6 +697,11 @@ void serialize(serializer<Stream>& os, const fast_matrix_impl<T, ST, SO, Dims...
     }
 }
 
+/*!
+ * \brief Deserialize the given matrix using the given serializer
+ * \param is The deserializer
+ * \param matrix The matrix to deserialize
+ */
 template <typename Stream, typename T, typename ST, order SO, std::size_t... Dims>
 void deserialize(deserializer<Stream>& os, fast_matrix_impl<T, ST, SO, Dims...>& matrix) {
     for (auto& value : matrix) {

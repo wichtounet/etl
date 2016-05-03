@@ -808,11 +808,21 @@ dyn_matrix_impl<T, order::RowMajor, sizeof...(Sizes)> dyn_matrix_over(T* memory,
     return dyn_matrix_impl<T, order::RowMajor, sizeof...(Sizes)>(memory, sizes...);
 }
 
+/*!
+ * \brief Swap two dyn matrix
+ * \param lhs The first matrix
+ * \param rhs The second matrix
+ */
 template <typename T, order SO, std::size_t D>
 void swap(dyn_matrix_impl<T, SO, D>& lhs, dyn_matrix_impl<T, SO, D>& rhs) {
     lhs.swap(rhs);
 }
 
+/*!
+ * \brief Serialize the given matrix using the given serializer
+ * \param os The serializer
+ * \param matrix The matrix to serialize
+ */
 template <typename Stream, typename T, order SO, std::size_t D>
 void serialize(serializer<Stream>& os, const dyn_matrix_impl<T, SO, D>& matrix){
     for(std::size_t i = 0; i < etl::dimensions(matrix); ++i){
@@ -824,6 +834,11 @@ void serialize(serializer<Stream>& os, const dyn_matrix_impl<T, SO, D>& matrix){
     }
 }
 
+/*!
+ * \brief Deserialize the given matrix using the given serializer
+ * \param is The deserializer
+ * \param matrix The matrix to deserialize
+ */
 template <typename Stream, typename T, order SO, std::size_t D>
 void deserialize(deserializer<Stream>& is, dyn_matrix_impl<T, SO, D>& matrix){
     typename std::decay_t<decltype(matrix)>::dimension_storage_impl new_dimensions;
