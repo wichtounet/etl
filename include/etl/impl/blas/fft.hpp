@@ -743,12 +743,12 @@ void fft2_convolve(A&& a, B&& b, C&& c) {
         }
     }
 
-    detail::inplace_zfft2_kernel(reinterpret_cast<std::complex<float>*>(a_padded.memory_start()), s1, s2);
-    detail::inplace_zfft2_kernel(reinterpret_cast<std::complex<float>*>(b_padded.memory_start()), s1, s2);
+    detail::inplace_zfft2_kernel(reinterpret_cast<std::complex<double>*>(a_padded.memory_start()), s1, s2);
+    detail::inplace_zfft2_kernel(reinterpret_cast<std::complex<double>*>(b_padded.memory_start()), s1, s2);
 
     a_padded *= b_padded;
 
-    detail::inplace_zifft2_kernel(reinterpret_cast<std::complex<float>*>(a_padded.memory_start()), s1, s2);
+    detail::inplace_zifft2_kernel(reinterpret_cast<std::complex<double>*>(a_padded.memory_start()), s1, s2);
 
     for (std::size_t i = 0; i < etl::size(c); ++i) {
         c[i] = a_padded[i].real;
