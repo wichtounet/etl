@@ -499,23 +499,22 @@ void fft1_convolve(A&& a, B&& b, C&& c) {
     const std::size_t n    = etl::size(b);
     const std::size_t size = m + n - 1;
 
-    auto a_padded = allocate<std::complex<float>>(size);
-    auto b_padded = allocate<std::complex<float>>(size);
+    //Note: use of value_t to make the type dependent!
+    dyn_vector<etl::complex<value_t<A>>> a_padded(etl::size(c));
+    dyn_vector<etl::complex<value_t<A>>> b_padded(etl::size(c));
 
-    standard_evaluator::direct_copy(a.memory_start(), a.memory_end(), a_padded.get());
-    standard_evaluator::direct_copy(b.memory_start(), b.memory_end(), b_padded.get());
+    standard_evaluator::direct_copy(a.memory_start(), a.memory_end(), a_padded.memory_start());
+    standard_evaluator::direct_copy(b.memory_start(), b.memory_end(), b_padded.memory_start());
 
-    detail::inplace_cfft_kernel(a_padded.get(), size);
-    detail::inplace_cfft_kernel(b_padded.get(), size);
+    detail::inplace_cfft_kernel(reinterpret_cast<std::complex<float>*>(a_padded.memory_start()), size);
+    detail::inplace_cfft_kernel(reinterpret_cast<std::complex<float>*>(b_padded.memory_start()), size);
+
+    a_padded *= b_padded;
+
+    detail::inplace_cifft_kernel(reinterpret_cast<std::complex<float>*>(a_padded.memory_start()), size);
 
     for (std::size_t i = 0; i < size; ++i) {
-        a_padded[i] *= b_padded[i];
-    }
-
-    detail::inplace_cifft_kernel(a_padded.get(), size);
-
-    for (std::size_t i = 0; i < size; ++i) {
-        c[i] = a_padded[i].real();
+        c[i] = a_padded[i].real;
     }
 }
 
@@ -525,23 +524,22 @@ void fft1_convolve(A&& a, B&& b, C&& c) {
     const std::size_t n    = etl::size(b);
     const std::size_t size = m + n - 1;
 
-    auto a_padded = allocate<std::complex<double>>(size);
-    auto b_padded = allocate<std::complex<double>>(size);
+    //Note: use of value_t to make the type dependent!
+    dyn_vector<etl::complex<value_t<A>>> a_padded(etl::size(c));
+    dyn_vector<etl::complex<value_t<A>>> b_padded(etl::size(c));
 
-    standard_evaluator::direct_copy(a.memory_start(), a.memory_end(), a_padded.get());
-    standard_evaluator::direct_copy(b.memory_start(), b.memory_end(), b_padded.get());
+    standard_evaluator::direct_copy(a.memory_start(), a.memory_end(), a_padded.memory_start());
+    standard_evaluator::direct_copy(b.memory_start(), b.memory_end(), b_padded.memory_start());
 
-    detail::inplace_zfft_kernel(a_padded.get(), size);
-    detail::inplace_zfft_kernel(b_padded.get(), size);
+    detail::inplace_zfft_kernel(reinterpret_cast<std::complex<double>*>(a_padded.memory_start()), size);
+    detail::inplace_zfft_kernel(reinterpret_cast<std::complex<double>*>(b_padded.memory_start()), size);
+
+    a_padded *= b_padded;
+
+    detail::inplace_zifft_kernel(reinterpret_cast<std::complex<double>*>(a_padded.memory_start()), size);
 
     for (std::size_t i = 0; i < size; ++i) {
-        a_padded[i] *= b_padded[i];
-    }
-
-    detail::inplace_zifft_kernel(a_padded.get(), size);
-
-    for (std::size_t i = 0; i < size; ++i) {
-        c[i] = a_padded[i].real();
+        c[i] = a_padded[i].real;
     }
 }
 
