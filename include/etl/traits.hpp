@@ -434,6 +434,13 @@ template <typename T>
 using is_complex = cpp::or_c<is_complex_single_precision<T>, is_complex_double_precision<T>>;
 
 /*!
+ * \brief Traits to test if all the given ETL expresion types contains complex numbers.
+ * \tparam E The ETL expression types.
+ */
+template <typename... E>
+using all_complex = cpp::and_c<is_complex<E>...>;
+
+/*!
  * \brief Traits to test if all the given ETL expresion types have direct memory access (DMA).
  * \tparam E The ETL expression types.
  */
