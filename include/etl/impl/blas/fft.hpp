@@ -689,8 +689,9 @@ void fft2_convolve(A&& a, B&& b, C&& c) {
     const std::size_t n2 = etl::dim<1>(b);
     const std::size_t s2 = m2 + n2 - 1;
 
-    auto a_padded = allocate<std::complex<float>>(etl::size(c));
-    auto b_padded = allocate<std::complex<float>>(etl::size(c));
+    //Note: use of value_t to make the type dependent!
+    dyn_vector<etl::complex<value_t<A>>> a_padded(etl::size(c));
+    dyn_vector<etl::complex<value_t<A>>> b_padded(etl::size(c));
 
     for (std::size_t i = 0; i < m1; ++i) {
         for (std::size_t j = 0; j < m2; ++j) {
@@ -704,17 +705,15 @@ void fft2_convolve(A&& a, B&& b, C&& c) {
         }
     }
 
-    detail::inplace_cfft2_kernel(a_padded.get(), s1, s2);
-    detail::inplace_cfft2_kernel(b_padded.get(), s1, s2);
+    detail::inplace_cfft2_kernel(reinterpret_cast<std::complex<float>*>(a_padded.memory_start()), s1, s2);
+    detail::inplace_cfft2_kernel(reinterpret_cast<std::complex<float>*>(b_padded.memory_start()), s1, s2);
+
+    a_padded *= b_padded;
+
+    detail::inplace_cifft2_kernel(reinterpret_cast<std::complex<float>*>(a_padded.memory_start()), s1, s2);
 
     for (std::size_t i = 0; i < etl::size(c); ++i) {
-        a_padded[i] *= b_padded[i];
-    }
-
-    detail::inplace_cifft2_kernel(a_padded.get(), s1, s2);
-
-    for (std::size_t i = 0; i < etl::size(c); ++i) {
-        c[i] = a_padded[i].real();
+        c[i] = a_padded[i].real;
     }
 }
 
@@ -728,8 +727,9 @@ void fft2_convolve(A&& a, B&& b, C&& c) {
     const std::size_t n2 = etl::dim<1>(b);
     const std::size_t s2 = m2 + n2 - 1;
 
-    auto a_padded = allocate<std::complex<double>>(etl::size(c));
-    auto b_padded = allocate<std::complex<double>>(etl::size(c));
+    //Note: use of value_t to make the type dependent!
+    dyn_vector<etl::complex<value_t<A>>> a_padded(etl::size(c));
+    dyn_vector<etl::complex<value_t<A>>> b_padded(etl::size(c));
 
     for (std::size_t i = 0; i < m1; ++i) {
         for (std::size_t j = 0; j < m2; ++j) {
@@ -743,17 +743,15 @@ void fft2_convolve(A&& a, B&& b, C&& c) {
         }
     }
 
-    detail::inplace_zfft2_kernel(a_padded.get(), s1, s2);
-    detail::inplace_zfft2_kernel(b_padded.get(), s1, s2);
+    detail::inplace_zfft2_kernel(reinterpret_cast<std::complex<float>*>(a_padded.memory_start()), s1, s2);
+    detail::inplace_zfft2_kernel(reinterpret_cast<std::complex<float>*>(b_padded.memory_start()), s1, s2);
+
+    a_padded *= b_padded;
+
+    detail::inplace_zifft2_kernel(reinterpret_cast<std::complex<float>*>(a_padded.memory_start()), s1, s2);
 
     for (std::size_t i = 0; i < etl::size(c); ++i) {
-        a_padded[i] *= b_padded[i];
-    }
-
-    detail::inplace_zifft2_kernel(a_padded.get(), s1, s2);
-
-    for (std::size_t i = 0; i < etl::size(c); ++i) {
-        c[i] = a_padded[i].real();
+        c[i] = a_padded[i].real;
     }
 }
 
