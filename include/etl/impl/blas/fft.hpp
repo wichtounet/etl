@@ -125,7 +125,7 @@ inline void ifft_kernel(const std::complex<double>* in, std::size_t s, std::comp
     DftiFreeDescriptor(&descriptor);                                    //Free the descriptor
 }
 
-inline void cifft_many_kernel(const std::complex<float>* in, std::size_t batch, std::size_t s, std::complex<float>* out) {
+inline void ifft_many_kernel(const std::complex<float>* in, std::size_t batch, std::size_t s, std::complex<float>* out) {
     DFTI_DESCRIPTOR_HANDLE descriptor;
 
     void* in_ptr = const_cast<void*>(static_cast<const void*>(in));
@@ -141,7 +141,7 @@ inline void cifft_many_kernel(const std::complex<float>* in, std::size_t batch, 
     DftiFreeDescriptor(&descriptor);                                    //Free the descriptor
 }
 
-inline void zifft_many_kernel(const std::complex<double>* in, std::size_t batch, std::size_t s, std::complex<double>* out) {
+inline void ifft_many_kernel(const std::complex<double>* in, std::size_t batch, std::size_t s, std::complex<double>* out) {
     DFTI_DESCRIPTOR_HANDLE descriptor;
 
     void* in_ptr = const_cast<void*>(static_cast<const void*>(in));
@@ -460,7 +460,7 @@ void ifft1_many(A&& a, C&& c) {
     std::size_t n     = etl::dim<N - 1>(a); //Size of the transform
     std::size_t batch = etl::size(a) / n;   //Number of batch
 
-    detail::zifft_many_kernel(a.memory_start(), batch, n, c.memory_start());
+    detail::ifft_many_kernel(a.memory_start(), batch, n, c.memory_start());
 }
 
 template <typename A, typename B, typename C>
@@ -572,7 +572,7 @@ void ifft2(A&& a, C&& c) {
 
 template <typename A, typename C>
 void ifft2_real(A&& a, C&& c) {
-    auto c_complex = allocate<std::complex<value_t<A>>>(etl::size(a));
+    auto c_complex = allocate<std::complex<value_t<C>>>(etl::size(a));
 
     detail::ifft2_kernel(a.memory_start(), etl::dim<0>(a), etl::dim<1>(a), c_complex.get());
 
