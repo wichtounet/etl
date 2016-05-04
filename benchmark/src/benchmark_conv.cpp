@@ -246,6 +246,17 @@ CPM_DIRECT_SECTION_TWO_PASS_NS_PF("sconv2_full [conv][conv2]", conv_2d_large_pol
      MC_SECTION_FUNCTOR("mmul", [](smat& a, smat& b, smat& r){ etl::impl::reduc::conv2_full(a, b, r); })
 )
 
+CPM_DIRECT_SECTION_TWO_PASS_NS_PF("sconv2_full_small [conv][conv2]", conv_2d_small_policy,
+    FLOPS([](std::size_t d1, std::size_t d2){ return 2 * d1 * d1 * d2 * d2; }),
+    CPM_SECTION_INIT([](std::size_t d1, std::size_t d2){ return std::make_tuple(smat(d1,d1), smat(d2,d2), smat(d1 + d2 - 1, d1 + d2 - 1)); }),
+    CPM_SECTION_FUNCTOR("default", [](smat& a, smat& b, smat& r){ r = etl::conv_2d_full(a, b); }),
+    CPM_SECTION_FUNCTOR("std", [](smat& a, smat& b, smat& r){ r = selected_helper(etl::conv_impl::STD, etl::conv_2d_full(a, b)); })
+    SSE_SECTION_FUNCTOR("sse", [](smat& a, smat& b, smat& r){ r = selected_helper(etl::conv_impl::SSE, etl::conv_2d_full(a, b)); })
+    AVX_SECTION_FUNCTOR("avx", [](smat& a, smat& b, smat& r){ r = selected_helper(etl::conv_impl::AVX, etl::conv_2d_full(a, b)); })
+    ,CPM_SECTION_FUNCTOR("fft", [](smat& a, smat& b, smat& r){ r = etl::fft_conv_2d_full(a, b); })
+     MC_SECTION_FUNCTOR("mmul", [](smat& a, smat& b, smat& r){ etl::impl::reduc::conv2_full(a, b, r); })
+)
+
 CPM_DIRECT_SECTION_TWO_PASS_NS_PF("dconv2_full [conv][conv2]", conv_2d_large_policy,
     FLOPS([](std::size_t d1, std::size_t d2){ return 2 * d1 * d1 * d2 * d2; }),
     CPM_SECTION_INIT([](std::size_t d1, std::size_t d2){ return std::make_tuple(dmat(d1,d1), dmat(d2,d2), dmat(d1 + d2 - 1, d1 + d2 - 1)); }),
