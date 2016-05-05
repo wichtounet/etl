@@ -186,23 +186,42 @@ void assert_square(E&& expr) {
 
 namespace detail {
 
+/*!
+ * \brief Make sure that the pooling ratios are correct and that the expression can be pooled from.
+ *
+ * This function uses assertion to validate the condition. If possible, the
+ * assertion is done at compile time.
+ *
+ * \tparam C1 The pooling ratio of the first dimension
+ * \tparam C2 The pooling ratio of the second dimension
+ * \param e The expression to assert
+ */
 template <std::size_t C1, std::size_t C2, typename E, cpp_enable_if(etl_traits<E>::dimensions() == 2, !etl_traits<E>::is_fast)>
 void validate_pmax_pooling_impl(const E& e) {
     cpp_assert(etl::template dim<0>(e) % C1 == 0 && etl::template dim<1>(e) % C2 == 0, "Dimensions not divisible by the pooling ratio");
     cpp_unused(e);
 }
 
+/*!
+ * \copydoc validate_pmax_pooling_impl
+ */
 template <std::size_t C1, std::size_t C2, typename E, cpp_enable_if(etl_traits<E>::dimensions() == 3, !etl_traits<E>::is_fast)>
 void validate_pmax_pooling_impl(const E& e) {
     cpp_assert(etl::template dim<1>(e) % C1 == 0 && etl::template dim<2>(e) % C2 == 0, "Dimensions not divisible by the pooling ratio");
     cpp_unused(e);
 }
 
+/*!
+ * \copydoc validate_pmax_pooling_impl
+ */
 template <std::size_t C1, std::size_t C2, typename E, cpp_enable_if(etl_traits<E>::dimensions() == 2, etl_traits<E>::is_fast)>
 void validate_pmax_pooling_impl(const E& /*unused*/) {
     static_assert(etl_traits<E>::template dim<0>() % C1 == 0 && etl_traits<E>::template dim<1>() % C2 == 0, "Dimensions not divisible by the pooling ratio");
 }
 
+/*!
+ * \copydoc validate_pmax_pooling_impl
+ */
 template <std::size_t C1, std::size_t C2, typename E, cpp_enable_if(etl_traits<E>::dimensions() == 3, etl_traits<E>::is_fast)>
 void validate_pmax_pooling_impl(const E& /*unused*/) {
     static_assert(etl_traits<E>::template dim<1>() % C1 == 0 && etl_traits<E>::template dim<2>() % C2 == 0, "Dimensions not divisible by the pooling ratio");
