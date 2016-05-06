@@ -657,6 +657,12 @@ void conv_3d_valid_multi_flipped(A&& input, B&& kernels, T_C&& features) {
     }
 }
 
+/*!
+ * \brief Construct a matrix to compute a convolution by matrix-matrix multiplication
+ * \param a The vector to transform (the input of the convolution)
+ * \param h The size of kernel
+ * \return a matrix expression for convolution
+ */
 template <typename A>
 auto convmtx(A&& a, std::size_t h) -> detail::stable_transform_helper<A, dyn_convmtx_transformer> {
     static_assert(is_etl_expr<A>::value, "Convolution matrices only supported for ETL expressions");
@@ -665,6 +671,13 @@ auto convmtx(A&& a, std::size_t h) -> detail::stable_transform_helper<A, dyn_con
     return detail::stable_transform_helper<A, dyn_convmtx_transformer>{dyn_convmtx_transformer<detail::build_type<A>>(a, h)};
 }
 
+/*!
+ * \brief Construct a matrix to compute a 2D convolution by matrix-matrix multiplication
+ * \param a The 2D matrix to transform (the input of the convolution)
+ * \param k1 The first dimension of the kernel
+ * \param k2 The second dimension of the kernel
+ * \return a matrix expression for convolution
+ */
 template <typename A>
 auto convmtx2(A&& a, std::size_t k1, std::size_t k2) -> detail::stable_transform_helper<A, dyn_convmtx2_transformer> {
     static_assert(is_etl_expr<A>::value, "Convolution matrices only supported for ETL expressions");
@@ -673,6 +686,13 @@ auto convmtx2(A&& a, std::size_t k1, std::size_t k2) -> detail::stable_transform
     return detail::stable_transform_helper<A, dyn_convmtx2_transformer>{dyn_convmtx2_transformer<detail::build_type<A>>(a, k1, k2)};
 }
 
+/*!
+ * \brief Construct a matrix to compute a 2D convolution by matrix-matrix multiplication
+ * \param a The 2D matrix to transform (the input of the convolution)
+ * \tparam K1 The first dimension of the kernel
+ * \tparam K2 The second dimension of the kernel
+ * \return a matrix expression for convolution
+ */
 template <std::size_t K1, std::size_t K2, typename A>
 auto convmtx2_direct(A&& a) -> temporary_unary_expr<value_t<A>, detail::build_type<A>, direct_convmtx2_expr<value_t<A>, K1, K2>> {
     static_assert(is_etl_expr<A>::value, "Convolution matrices only supported for ETL expressions");
