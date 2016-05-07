@@ -479,6 +479,12 @@ void complex_pad_2d(const F1& in, F2& out) {
 //TODO This should be moved
 //TODO This should be adapted to an expression
 
+/*!
+ * \brief Perform several valid convolution of the same input with different kernels
+ * \param input The input image
+ * \param kernels The kernels
+ * \param features The output features
+ */
 template <typename A, typename B, typename C>
 void conv_2d_valid_multi(A&& input, B&& kernels, C&& features) {
     //TODO Validate inputs
