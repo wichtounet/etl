@@ -558,6 +558,12 @@ void conv_2d_valid_multi(A&& input, B&& kernels, C&& features) {
     }
 }
 
+/*!
+ * \brief Perform several valid convolution of the same input, flipped vertically and horizontally, with different kernels
+ * \param input The input image, flipped vertically and horizontally
+ * \param kernels The kernels
+ * \param features The output features
+ */
 template <typename A, typename B, typename C>
 void conv_2d_valid_multi_flipped(A&& input, B&& kernels, C&& features) {
     //TODO Validate inputs
