@@ -13,6 +13,7 @@
  * Ideas:
  *  * 1D convolution with no memory allocation could probably be worked out (needs to be benchmarked)
  *  * Probably some other AVX2 instructions that could improve performances
+ *  * Use FMA for 2D convolutions
  *
  * Tested:
  *  * the tmp_res vectors could be avoided by using hadd instructions
