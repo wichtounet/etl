@@ -11,9 +11,13 @@
  * AVX implementation of 1D and 2D convolutions
  *
  * Ideas:
- *  * the tmp_res vectors could be avoided by using hadd instructions
  *  * 1D convolution with no memory allocation could probably be worked out (needs to be benchmarked)
  *  * Probably some other AVX2 instructions that could improve performances
+ *
+ * Tested:
+ *  * the tmp_res vectors could be avoided by using hadd instructions
+ *    => This is actually slightly slower because several operations are necessary for each hadd
+ *       Moreover, most of the time is spent doing the convolution itself
  */
 
 #if defined(ETL_VECTORIZE_IMPL) && defined(__AVX__)
@@ -474,35 +478,80 @@ inline void sconv2_valid_micro_kernel(const float* in, std::size_t n1, std::size
     std::size_t c1 = n1 - m1 + 1;
     std::size_t c2 = n2 - m2 + 1;
 
-    float tmp_res[8] __attribute__((aligned(32)));
+    float tmp_res_a[8] __attribute__((aligned(32)));
+    float tmp_res_b[8] __attribute__((aligned(32)));
+    float tmp_res_c[8] __attribute__((aligned(32)));
+    float tmp_res_d[8] __attribute__((aligned(32)));
 
     for (std::size_t i = 0; i < c1; ++i) {
-        for (std::size_t j = 0; j < c2; ++j) {
-            __m256 res = _mm256_setzero_ps();
+        for (std::size_t j = 0; j + 3 < c2; j += 4) {
+            __m256 res_a = _mm256_setzero_ps();
+            __m256 res_b = _mm256_setzero_ps();
+            __m256 res_c = _mm256_setzero_ps();
+            __m256 res_d = _mm256_setzero_ps();
+
+            for (std::size_t k = 0; k < m1; ++k) {
+                for (std::size_t l = 0; l + 7 < m2; l += 8) {
+                    __m256 k_tmp = _mm256_loadu_ps(kernel_reverse.get() + k * m2 + l);
+
+                    __m256 a_tmp1 = _mm256_loadu_ps(in + (i + k) * n2 + j + l);
+                    __m256 b_tmp1 = _mm256_loadu_ps(in + (i + k) * n2 + j + 1 + l);
+                    __m256 c_tmp1 = _mm256_loadu_ps(in + (i + k) * n2 + j + 2 + l);
+                    __m256 d_tmp1 = _mm256_loadu_ps(in + (i + k) * n2 + j + 3 + l);
+
+                    __m256 a_tmp4 = _mm256_mul_ps(a_tmp1, k_tmp);
+                    __m256 b_tmp4 = _mm256_mul_ps(b_tmp1, k_tmp);
+                    __m256 c_tmp4 = _mm256_mul_ps(c_tmp1, k_tmp);
+                    __m256 d_tmp4 = _mm256_mul_ps(d_tmp1, k_tmp);
+
+                    res_a = _mm256_add_ps(res_a, a_tmp4);
+                    res_b = _mm256_add_ps(res_b, b_tmp4);
+                    res_c = _mm256_add_ps(res_c, c_tmp4);
+                    res_d = _mm256_add_ps(res_d, d_tmp4);
+                }
+            }
+
+            _mm256_store_ps(tmp_res_a, res_a);
+            _mm256_store_ps(tmp_res_b, res_b);
+            _mm256_store_ps(tmp_res_c, res_c);
+            _mm256_store_ps(tmp_res_d, res_d);
+
+            out[i * c2 + j]     = tmp_res_a[0] + tmp_res_a[1] + tmp_res_a[2] + tmp_res_a[3] + tmp_res_a[4] + tmp_res_a[5] + tmp_res_a[6] + tmp_res_a[7];
+            out[i * c2 + j + 1] = tmp_res_b[0] + tmp_res_b[1] + tmp_res_b[2] + tmp_res_b[3] + tmp_res_b[4] + tmp_res_b[5] + tmp_res_b[6] + tmp_res_b[7];
+            out[i * c2 + j + 2] = tmp_res_c[0] + tmp_res_c[1] + tmp_res_c[2] + tmp_res_c[3] + tmp_res_c[4] + tmp_res_c[5] + tmp_res_c[6] + tmp_res_c[7];
+            out[i * c2 + j + 3] = tmp_res_d[0] + tmp_res_d[1] + tmp_res_d[2] + tmp_res_d[3] + tmp_res_d[4] + tmp_res_d[5] + tmp_res_d[6] + tmp_res_d[7];
+        }
+
+        for (std::size_t j = c2 - c2 % 4; j < c2; ++j) {
+            __m256 res_a = _mm256_setzero_ps();
 
             for (std::size_t k = 0; k < m1; ++k) {
                 for (std::size_t l = 0; l + 7 < m2; l += 8) {
                     __m256 tmp1 = _mm256_loadu_ps(in + (i + k) * n2 + j + l);
                     __m256 tmp3 = _mm256_loadu_ps(kernel_reverse.get() + k * m2 + l);
                     __m256 tmp4 = _mm256_mul_ps(tmp1, tmp3);
-                    res         = _mm256_add_ps(res, tmp4);
+                    res_a       = _mm256_add_ps(res_a, tmp4);
                 }
             }
 
-            _mm256_store_ps(tmp_res, res);
+            _mm256_store_ps(tmp_res_a, res_a);
 
-            float temp = 0.0;
+            out[i * c2 + j] = tmp_res_a[0] + tmp_res_a[1] + tmp_res_a[2] + tmp_res_a[3] + tmp_res_a[4] + tmp_res_a[5] + tmp_res_a[6] + tmp_res_a[7];
+        }
+    }
 
-            if (m2 % 8 != 0) {
-                auto rem = m2 % 8;
+    if (m2 % 8 != 0) {
+        auto rem = m2 % 8;
+        for (std::size_t i = 0; i < c1; ++i) {
+            for (std::size_t j = 0; j < c2; ++j) {
+                float temp = 0.0;
                 for (std::size_t k = 0; k < m1; ++k) {
                     for (std::size_t l = m2 - rem; l < m2; ++l) {
                         temp += in[(i + k) * n2 + j + l] * kernel_reverse[k * m2 + l];
                     }
                 }
+                out[i * c2 + j] += temp;
             }
-
-            out[i * c2 + j] = temp + tmp_res[0] + tmp_res[1] + tmp_res[2] + tmp_res[3] + tmp_res[4] + tmp_res[5] + tmp_res[6] + tmp_res[7];
         }
     }
 }
