@@ -699,7 +699,7 @@ void serialize(serializer<Stream>& os, const fast_matrix_impl<T, ST, SO, Dims...
 
 /*!
  * \brief Deserialize the given matrix using the given serializer
- * \param is The deserializer
+ * \param os The deserializer
  * \param matrix The matrix to deserialize
  */
 template <typename Stream, typename T, typename ST, order SO, std::size_t... Dims>
