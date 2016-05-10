@@ -499,7 +499,12 @@ inline void sconv2_valid_micro_kernel(const float* in, std::size_t n1, std::size
                     __m256 b_tmp1 = _mm256_loadu_ps(in + (i + k) * n2 + j + 1 + l);
                     __m256 c_tmp1 = _mm256_loadu_ps(in + (i + k) * n2 + j + 2 + l);
                     __m256 d_tmp1 = _mm256_loadu_ps(in + (i + k) * n2 + j + 3 + l);
-
+#ifdef __FMA__
+                    res_a = _mm256_fmadd_ps(a_tmp1, k_tmp, res_a);
+                    res_b = _mm256_fmadd_ps(b_tmp1, k_tmp, res_b);
+                    res_c = _mm256_fmadd_ps(c_tmp1, k_tmp, res_c);
+                    res_d = _mm256_fmadd_ps(d_tmp1, k_tmp, res_d);
+#else
                     __m256 a_tmp4 = _mm256_mul_ps(a_tmp1, k_tmp);
                     __m256 b_tmp4 = _mm256_mul_ps(b_tmp1, k_tmp);
                     __m256 c_tmp4 = _mm256_mul_ps(c_tmp1, k_tmp);
@@ -509,6 +514,7 @@ inline void sconv2_valid_micro_kernel(const float* in, std::size_t n1, std::size
                     res_b = _mm256_add_ps(res_b, b_tmp4);
                     res_c = _mm256_add_ps(res_c, c_tmp4);
                     res_d = _mm256_add_ps(res_d, d_tmp4);
+#endif
                 }
             }
 
