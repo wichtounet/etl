@@ -17,14 +17,17 @@ TEMPLATE_TEST_CASE_2("conv_2d_valid_multi/1", "[conv] [conv2]", Z, double, float
 
     etl::fast_matrix<Z, 2, 2, 2> c_1;
     etl::fast_matrix<Z, 2, 2, 2> c_2;
+    etl::fast_matrix<Z, 2, 2, 2> c_3;
 
     c_1(0) = conv_2d_valid(I, K(0));
     c_1(1) = conv_2d_valid(I, K(1));
 
     conv_2d_valid_multi(I, K, c_2);
+    c_3 = conv_2d_valid_multi(I, K);
 
     for (std::size_t i = 0; i < etl::size(c_1); ++i) {
         REQUIRE(c_1[i] == Approx(c_2[i]));
+        REQUIRE(c_1[i] == Approx(c_3[i]));
     }
 }
 
