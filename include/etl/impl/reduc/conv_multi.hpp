@@ -118,10 +118,7 @@ void blas_conv2_valid_multi(const I& input, const K_T& kernels, C&& conv) {
     etl::dyn_matrix<value_t<I>, 2> input_col(k1 * k2, (v1 - k1 + 1) * (v2 - k2 + 1));
     im2col_direct_tr(input_col, input, k1, k2);
 
-    *mul(
-        etl::reshape(prepared_k, K, k1 * k2),
-        input_col,
-        etl::reshape(conv, K, f1 * f2));
+    etl::reshape(conv, K, f1 * f2) = mul(etl::reshape(prepared_k, K, k1 * k2), input_col);
 }
 
 /*!
@@ -160,10 +157,7 @@ void blas_conv2_valid_multi_flipped(const I& input, const K_T& kernels, C&& conv
     etl::dyn_matrix<value_t<I>, 2> input_col(k1 * k2, (v1 - k1 + 1) * (v2 - k2 + 1));
     im2col_direct_tr(input_col, input, k1, k2);
 
-    *mul(
-        etl::reshape(kernels, K, k1 * k2),
-        input_col,
-        etl::reshape(conv, K, f1 * f2));
+    etl::reshape(conv, K, f1 * f2) = mul(etl::reshape(kernels, K, k1 * k2), input_col);
 }
 
 } //end of namespace reduc
