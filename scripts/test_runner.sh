@@ -70,18 +70,25 @@ make $ETL_THREADS debug/bin/etl_test
 ./debug/bin/etl_test
 gcovr -x -b -r . --object-directory=debug/test > coverage_6.xml
 
-echo "Test 7. GCC (debug cublas cufft)"
+if [ "$ETL_NO_GPU" == "" ]
+then
+    echo "Test 7. GCC (debug cublas cufft)"
 
-unset ETL_DEFAULTS
-unset ETL_MKL
-export ETL_CUBLAS=true
-export ETL_CUFFT=true
+    unset ETL_DEFAULTS
+    unset ETL_MKL
+    export ETL_CUBLAS=true
+    export ETL_CUFFT=true
 
-make clean
-make $ETL_THREADS debug/bin/etl_test
-./debug/bin/etl_test
-gcovr -x -b -r . --object-directory=debug/test > coverage_7.xml
+    make clean
+    make $ETL_THREADS debug/bin/etl_test
+    ./debug/bin/etl_test
+    gcovr -x -b -r . --object-directory=debug/test > coverage_7.xml
 
-echo "Merge the coverage reports"
+    echo "Merge the coverage reports"
 
-merge-xml-coverage.py -o coverage_report.xml coverage_1.xml coverage_2.xml coverage_3.xml coverage_4.xml coverage_5.xml coverage_6.xml coverage_7.xml
+    merge-xml-coverage.py -o coverage_report.xml coverage_1.xml coverage_2.xml coverage_3.xml coverage_4.xml coverage_5.xml coverage_6.xml coverage_7.xml
+else
+    echo "Merge the coverage reports"
+
+    merge-xml-coverage.py -o coverage_report.xml coverage_1.xml coverage_2.xml coverage_3.xml coverage_4.xml coverage_5.xml coverage_6.xml coverage_7.xml
+fi
