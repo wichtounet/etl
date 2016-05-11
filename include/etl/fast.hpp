@@ -233,7 +233,7 @@ public:
      */
     fast_matrix_impl(const fast_matrix_impl& rhs) noexcept {
         init();
-        standard_evaluator::direct_copy(rhs.memory_start(), rhs.memory_end(), memory_start());
+        direct_copy(rhs.memory_start(), rhs.memory_end(), memory_start());
     }
 
     /*!
@@ -252,7 +252,7 @@ public:
     fast_matrix_impl(const fast_matrix_impl<T2, ST2, SO2, Dims2...>& rhs) noexcept {
         init();
         validate_assign(*this, rhs);
-        standard_evaluator::direct_copy(rhs.memory_start(), rhs.memory_end(), memory_start());
+        direct_copy(rhs.memory_start(), rhs.memory_end(), memory_start());
     }
 
     /*!
@@ -297,7 +297,7 @@ public:
      */
     fast_matrix_impl& operator=(const fast_matrix_impl& rhs) noexcept {
         if (this != &rhs) {
-            standard_evaluator::direct_copy(rhs.memory_start(), rhs.memory_end(), memory_start());
+            direct_copy(rhs.memory_start(), rhs.memory_end(), memory_start());
         }
 
         return *this;

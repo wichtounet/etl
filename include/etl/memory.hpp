@@ -14,8 +14,6 @@
 
 namespace etl {
 
-namespace standard_evaluator {
-
 /*!
  * \brief Performs a direct memory copy
  * \param first pointer to the first element to copy
@@ -37,7 +35,5 @@ template <typename S, typename T>
 void direct_copy_n(const S* source, T* target, std::size_t n) {
     std::copy_n(source, n, target);
 }
-
-} //end of namespace standard_evaluator
 
 } //end of namespace etl
