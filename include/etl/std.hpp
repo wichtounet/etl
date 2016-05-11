@@ -38,4 +38,4 @@ constexpr const bool assert_nothrow = true;
 #endif
 #endif
 
-} //end of namespace std
+} //end of namespace etl
