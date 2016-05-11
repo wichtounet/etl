@@ -74,8 +74,8 @@ CONV_FUNCTOR(fft_conv2_full, c = etl::fft_conv_2d_full(a, b))
 
 #ifdef TEST_SSE
 CONV_FUNCTOR(sse_conv1_full, c = selected_helper(etl::conv_impl::SSE, etl::conv_1d_full(a, b)))
-CONV_FUNCTOR(sse_conv1_same, c = selected_helper(etl::conv_impl::SSE, etl::conv_1d_full(a, b)))
-CONV_FUNCTOR(sse_conv1_valid, c = selected_helper(etl::conv_impl::SSE, etl::conv_1d_full(a, b)))
+CONV_FUNCTOR(sse_conv1_same, c = selected_helper(etl::conv_impl::SSE, etl::conv_1d_same(a, b)))
+CONV_FUNCTOR(sse_conv1_valid, c = selected_helper(etl::conv_impl::SSE, etl::conv_1d_valid(a, b)))
 
 CONV_FUNCTOR(sse_conv2_full, c = selected_helper(etl::conv_impl::SSE, etl::conv_2d_full(a, b)))
 CONV_FUNCTOR(sse_conv2_same, c = selected_helper(etl::conv_impl::SSE, etl::conv_2d_same(a, b)))

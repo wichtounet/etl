@@ -167,7 +167,7 @@ CONV1_SAME_TEST_CASE("convolution_1d/same_1", "convolution_1d_same") {
     etl::fast_vector<T, 3> b = {0.0, 1.0, 0.5};
     etl::fast_vector<T, 3> c;
 
-    *etl::conv_1d_same(a, b, c);
+    Impl::apply(a, b, c);
 
     REQUIRE(c[0] == Approx(1.0));
     REQUIRE(c[1] == Approx(2.5));
@@ -179,7 +179,7 @@ CONV1_SAME_TEST_CASE("convolution_1d/same_2", "convolution_1d_same") {
     etl::fast_vector<T, 4> b = {0.0, 0.5, 1.0, 0.0};
     etl::fast_vector<T, 6> c;
 
-    *etl::conv_1d_same(a, b, c);
+    Impl::apply(a, b, c);
 
     REQUIRE(c[0] == Approx(2.0));
     REQUIRE(c[1] == Approx(3.5));
@@ -194,7 +194,7 @@ CONV1_SAME_TEST_CASE("convolution_1d/same_3", "convolution_1d_same") {
     etl::fast_vector<T, 4> b(etl::magic(2));
     etl::fast_vector<T, 9> c;
 
-    *etl::conv_1d_same(a, b, c);
+    Impl::apply(a, b, c);
 
     REQUIRE(c[0] == 41);
     REQUIRE(c[1] == 41);
@@ -212,7 +212,7 @@ CONV1_SAME_TEST_CASE("convolution_1d/same_4", "convolution_1d_same") {
     etl::fast_vector<T, 9> b(etl::magic(3));
     etl::fast_vector<T, 25> c;
 
-    *etl::conv_1d_same(a, b, c);
+    Impl::apply(a, b, c);
 
     REQUIRE(c[0] == 291);
     REQUIRE(c[1] == 489);
@@ -236,7 +236,7 @@ CONV1_SAME_TEST_CASE("convolution_1d/same_5", "convolution_1d_same") {
     etl::fast_vector<T, 3 * 3> b(etl::magic(3));
     etl::fast_vector<T, 17 * 17> c;
 
-    *etl::conv_1d_same(a, b, c);
+    Impl::apply(a, b, c);
 
     REQUIRE(c[4 - 4] == 4515);
     REQUIRE(c[5 - 4] == 6037);
@@ -260,7 +260,7 @@ CONV1_VALID_TEST_CASE("convolution_1d/valid_1", "convolution_1d_valid") {
     etl::fast_vector<T, 3> b = {0.0, 1.0, 0.5};
     etl::fast_vector<T, 1> c;
 
-    *etl::conv_1d_valid(a, b, c);
+    Impl::apply(a, b, c);
 
     REQUIRE(c[0] == 2.5);
 }
@@ -270,7 +270,7 @@ CONV1_VALID_TEST_CASE("convolution_1d/valid_2", "convolution_1d_valid") {
     etl::fast_vector<T, 3> b = {0.5, 1.0, 1.5};
     etl::fast_vector<T, 3> c;
 
-    *etl::conv_1d_valid(a, b, c);
+    Impl::apply(a, b, c);
 
     REQUIRE(c[0] == 5.0);
     REQUIRE(c[1] == 8.0);
@@ -282,7 +282,7 @@ CONV1_VALID_TEST_CASE("convolution_1d/valid_3", "convolution_1d_valid") {
     etl::fast_vector<T, 4> b(etl::magic(2));
     etl::fast_vector<T, 6> c;
 
-    *etl::conv_1d_valid(a, b, c);
+    Impl::apply(a, b, c);
 
     REQUIRE(c[0] == 41);
     REQUIRE(c[1] == 40);
@@ -297,7 +297,7 @@ CONV1_VALID_TEST_CASE("convolution_1d/valid_4", "convolution_1d_valid") {
     etl::fast_vector<T, 9> b(etl::magic(3));
     etl::fast_vector<T, 17> c;
 
-    *etl::conv_1d_valid(a, b, c);
+    Impl::apply(a, b, c);
 
     REQUIRE(c[0] == 603);
     REQUIRE(c[1] == 508);
@@ -323,7 +323,7 @@ CONV1_VALID_TEST_CASE("convolution_1d/valid_5", "convolution_1d_valid") {
     etl::fast_vector<T, 3 * 3> b(etl::magic(3));
     etl::fast_vector<T, 17 * 17 - 9 + 1> c;
 
-    *etl::conv_1d_valid(a, b, c);
+    Impl::apply(a, b, c);
 
     REQUIRE(c[0] == 7947);
     REQUIRE(c[1] == 8496);
