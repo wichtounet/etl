@@ -189,7 +189,8 @@ void check_conv_deep_sizes(const I& i, const K& k, const C& c) {
  */
 template <conv_type TT, typename I, typename K, typename C, cpp_enable_if(etl_traits<I>::dimensions() == 3, !all_fast<I, K, C>::value)>
 void check_conv_deep_sizes(const I& i, const K& k, const C& c) {
-    static_assert(etl_traits<I>::dimensions() == 3 && etl_traits<K>::dimensions() == 3 && etl_traits<C>::dimensions() == 3, "Invalid dimensions for 3D convolution");
+    static_assert(TT == conv_type::VALID_MULTI || (etl_traits<I>::dimensions() == 3 && etl_traits<K>::dimensions() == 3 && etl_traits<C>::dimensions() == 3),
+        "Invalid dimensions for 3D convolution");
 
     cpp_assert(
         decay_traits<I>::dim(i, 0) == decay_traits<K>::dim(k, 0) && decay_traits<K>::dim(k, 0) == decay_traits<C>::dim(c, 0),
