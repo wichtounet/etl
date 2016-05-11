@@ -7,8 +7,6 @@
 
 #include "test.hpp"
 
-#include "conv_test.hpp"
-
 //Note: The results of the tests have been validated with one of (octave/matlab/matlab)
 
 // convolution_deep_full

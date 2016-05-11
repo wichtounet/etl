@@ -7,8 +7,6 @@
 
 #include "test.hpp"
 
-#include "conv_test.hpp"
-
 //Note: The results of the tests have been validated with one of (octave/matlab/matlab)
 
 TEMPLATE_TEST_CASE_2("convmtx/convmtx_1", "convmtx", Z, float, double) {
