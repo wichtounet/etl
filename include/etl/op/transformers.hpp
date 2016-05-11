@@ -544,7 +544,7 @@ void im2col_direct_tr(M& m, A&& sub, std::size_t k1, std::size_t k2) {
             const std::size_t block_source = (c_source * i1 + h + h_source) * i2 + w_source;
             const std::size_t block_target = (c * height + h) * width;
 
-            direct_copy_n(mm + block_target, ss + block_source, width);
+            direct_copy_n(ss + block_source, mm + block_target, width);
         }
     }
 }
