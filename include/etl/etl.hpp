@@ -30,6 +30,7 @@
 #include "etl/duration.hpp"
 #include "etl/threshold.hpp"
 #include "etl/parallel.hpp"
+#include "etl/memory.hpp"
 
 //Forward declarations
 #include "etl/value_fwd.hpp"
