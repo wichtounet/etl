@@ -31,7 +31,7 @@ void check_conv_1d_sizes(const I& input, const K& kernel, const C& conv) {
     } else if (TT == conv_type::VALID) {
         cpp_assert(dim<0>(conv) == dim<0>(input) - dim<0>(kernel) + 1, "Invalid sizes for 'valid' convolution");
     } else if (TT == conv_type::VALID_MULTI) {
-        cpp_unreachable("VALID_MULTI is not support for 1D convolution");
+        cpp_unreachable("VALID_MULTI is not supported for 1D convolution");
     }
 
     cpp_unused(input);
