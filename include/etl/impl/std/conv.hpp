@@ -176,6 +176,19 @@ void conv2_valid_multi(const I& input, const K& kernels, C&& conv) {
     }
 }
 
+/*!
+ * \brief Standard implementation of a 2D 'valid' convolution C = I * K, with multiple flipped kernels
+ * \param input The input matrix
+ * \param kernel The kernel matrix
+ * \param conv The output matrix
+ */
+template <typename I, typename K, typename C>
+void conv2_valid_multi_flipped(const I& input, const K& kernels, C&& conv) {
+    for (size_t k = 0; k < etl::dim<0>(kernels); ++k) {
+        conv(k) = conv_2d_valid(input, fflip(kernels(k)));
+    }
+}
+
 } //end of namespace standard
 } //end of namespace impl
 } //end of namespace etl

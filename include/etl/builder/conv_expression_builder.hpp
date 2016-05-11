@@ -225,6 +225,33 @@ auto conv_2d_valid_multi(A&& a, B&& b, C&& c) {
 }
 
 /*!
+ * \brief Creates an expression representing the valid 2D convolution of a and multiple flipped kernels from b
+ * \param a The input expression
+ * \param b The kernel expression
+ * \return an expression representing the valid 2D convolution of a and multiple kernels from b
+ */
+template <typename A, typename B>
+auto conv_2d_valid_multi_flipped(A&& a, B&& b) -> detail::temporary_binary_helper<A, B, conv2_valid_multi_flipped_expr> {
+    static_assert(is_etl_expr<A>::value && is_etl_expr<B>::value, "Convolution only supported for ETL expressions");
+
+    return {a, b};
+}
+
+/*!
+ * \brief Creates an expression representing the valid 2D convolution of a and multiple flipped kernels from b, the result will be stored in c
+ * \param a The input expression
+ * \param b The kernel expressions
+ * \param c The result
+ * \return an expression representing the valid 2D convolution of a and multiple kernels from b
+ */
+template <typename A, typename B, typename C>
+auto conv_2d_valid_multi_flipped(A&& a, B&& b, C&& c) {
+    static_assert(is_etl_expr<A>::value && is_etl_expr<B>::value && is_etl_expr<C>::value, "Convolution only supported for ETL expressions");
+
+    return c = conv_2d_valid_multi_flipped(a, b);
+}
+
+/*!
  * \brief Creates an expression representing the same 2D convolution of a and b
  * \param a The input expression
  * \param b The kernel expression
@@ -490,50 +517,6 @@ void local_complex_pad_3d(const F1& in, F2& out) {
 
 //TODO This should be moved
 //TODO This should be adapted to an expression
-
-/*!
- * \brief Perform several valid convolution of the same input, flipped vertically and horizontally, with different kernels
- * \param input The input image, flipped vertically and horizontally
- * \param kernels The kernels
- * \param features The output features
- */
-template <typename A, typename B, typename C>
-void conv_2d_valid_multi_flipped(A&& input, B&& kernels, C&& features) {
-    //TODO Validate inputs
-
-    if (is_mkl_enabled && conv_valid_fft) {
-        auto kernels_f = etl::force_temporary(kernels);
-
-        for (std::size_t i = 0; i < etl::dim<0>(kernels_f); ++i) {
-            kernels_f(i).fflip_inplace();
-        }
-
-        conv_2d_valid_multi(input, kernels_f, features);
-    } else if (is_cblas_enabled || is_cublas_enabled) {
-        const std::size_t K  = etl::dim<0>(kernels);
-        const std::size_t v1 = etl::dim<0>(input);
-        const std::size_t v2 = etl::dim<1>(input);
-        const std::size_t f1 = etl::dim<1>(features);
-        const std::size_t f2 = etl::dim<2>(features);
-        const std::size_t k1 = etl::dim<1>(kernels);
-        const std::size_t k2 = etl::dim<2>(kernels);
-
-        etl::dyn_matrix<value_t<A>, 2> input_col(k1 * k2, (v1 - k1 + 1) * (v2 - k2 + 1));
-        im2col_direct_tr(input_col, input, k1, k2);
-
-        *mul(
-            etl::reshape(kernels, K, k1 * k2),
-            input_col,
-            etl::reshape(features, K, f1 * f2));
-    } else {
-        //TODO Here we should maybe display a warning because it is suboptimal to flip twice
-
-        //Standard version
-        for (size_t k = 0; k < etl::dim<0>(kernels); ++k) {
-            features(k) = conv_2d_valid(input, fflip(kernels(k)));
-        }
-    }
-}
 
 template <typename A, typename B, typename C>
 void conv_3d_valid_multi(A&& input, B&& kernels, C&& features) {

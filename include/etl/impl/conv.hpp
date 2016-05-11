@@ -375,6 +375,30 @@ struct conv2_valid_multi_impl {
 };
 
 /*!
+ * \brief The functor impl for 2D valid conv, with multiple kernels
+ */
+struct conv2_valid_multi_flipped_impl {
+    /*!
+     * \brief Apply the convolution
+     * \param input The input expression
+     * \param kernel The kernel expression
+     * \param conv The output expression
+     */
+    template <typename I, typename K, typename C>
+    static void apply(const I& input, const K& kernel, C&& conv) {
+        auto impl = select_conv_multi_impl<I, K, C>();
+
+        if (impl == etl::conv_multi_impl::BLAS) {
+            impl::reduc::blas_conv2_valid_multi_flipped(input, kernel, conv);
+        } else if (impl == etl::conv_multi_impl::FFT) {
+            impl::reduc::fft_conv2_valid_multi_flipped(input, kernel, conv);
+        } else {
+            impl::standard::conv2_valid_multi_flipped(input, kernel, conv);
+        }
+    }
+};
+
+/*!
  * \brief The functor impl for 2D+ conv.
  */
 struct conv_deep_valid_impl {

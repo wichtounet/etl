@@ -124,6 +124,48 @@ void blas_conv2_valid_multi(const I& input, const K_T& kernels, C&& conv) {
         etl::reshape(conv, K, f1 * f2));
 }
 
+/*!
+ * \brief Standard implementation of a 2D 'valid' convolution C = I * K, with multiple flipped kernels
+ * \param input The input matrix
+ * \param kernel The kernel matrix
+ * \param conv The output matrix
+ */
+template <typename I, typename K_T, typename C>
+void fft_conv2_valid_multi_flipped(const I& input, const K_T& kernels, C&& conv) {
+    auto kernels_f = etl::force_temporary(kernels);
+
+    for (std::size_t i = 0; i < etl::dim<0>(kernels_f); ++i) {
+        kernels_f(i).fflip_inplace();
+    }
+
+    fft_conv2_valid_multi(input, kernels_f, conv);
+}
+
+/*!
+ * \brief BLAS implementation of a 2D 'valid' convolution C = I * K, with multiple flipped kernels
+ * \param input The input matrix
+ * \param kernel The kernel matrix
+ * \param conv The output matrix
+ */
+template <typename I, typename K_T, typename C>
+void blas_conv2_valid_multi_flipped(const I& input, const K_T& kernels, C&& conv) {
+    const std::size_t K  = etl::dim<0>(kernels);
+    const std::size_t v1 = etl::dim<0>(input);
+    const std::size_t v2 = etl::dim<1>(input);
+    const std::size_t f1 = etl::dim<1>(conv);
+    const std::size_t f2 = etl::dim<2>(conv);
+    const std::size_t k1 = etl::dim<1>(kernels);
+    const std::size_t k2 = etl::dim<2>(kernels);
+
+    etl::dyn_matrix<value_t<I>, 2> input_col(k1 * k2, (v1 - k1 + 1) * (v2 - k2 + 1));
+    im2col_direct_tr(input_col, input, k1, k2);
+
+    *mul(
+        etl::reshape(kernels, K, k1 * k2),
+        input_col,
+        etl::reshape(conv, K, f1 * f2));
+}
+
 } //end of namespace reduc
 } //end of namespace impl
 } //end of namespace etl
