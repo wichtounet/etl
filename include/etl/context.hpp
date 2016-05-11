@@ -25,14 +25,15 @@ struct context {
     bool serial   = false; ///< Force serial execution
     bool parallel = false; ///< Force parallel execution
 
-    forced_impl<scalar_impl> scalar_selector;       ///< Force selector for scalar operations
-    forced_impl<sum_impl> sum_selector;             ///< Forced selector for sum
-    forced_impl<transpose_impl> transpose_selector; ///< Forced selector for transpose
-    forced_impl<dot_impl> dot_selector;             ///< Forced selector for dot
-    forced_impl<conv_impl> conv_selector;           ///< Forced selector for conv
-    forced_impl<gemm_impl> gemm_selector;           ///< Forced selector for gemm
-    forced_impl<outer_impl> outer_selector;         ///< Forced selector for outer product
-    forced_impl<fft_impl> fft_selector;             ///< Forced selector for fft
+    forced_impl<scalar_impl> scalar_selector;         ///< Force selector for scalar operations
+    forced_impl<sum_impl> sum_selector;               ///< Forced selector for sum
+    forced_impl<transpose_impl> transpose_selector;   ///< Forced selector for transpose
+    forced_impl<dot_impl> dot_selector;               ///< Forced selector for dot
+    forced_impl<conv_impl> conv_selector;             ///< Forced selector for conv
+    forced_impl<conv_multi_impl> conv_multi_selector; ///< Forced selector for conv
+    forced_impl<gemm_impl> gemm_selector;             ///< Forced selector for gemm
+    forced_impl<outer_impl> outer_selector;           ///< Forced selector for outer product
+    forced_impl<fft_impl> fft_selector;               ///< Forced selector for fft
 };
 
 /*!
@@ -92,6 +93,14 @@ inline forced_impl<dot_impl>& get_forced_impl() {
 template <>
 inline forced_impl<conv_impl>& get_forced_impl() {
     return local_context().conv_selector;
+}
+
+/*!
+ * \copydoc get_forced_impl
+ */
+template <>
+inline forced_impl<conv_multi_impl>& get_forced_impl() {
+    return local_context().conv_multi_selector;
 }
 
 /*!

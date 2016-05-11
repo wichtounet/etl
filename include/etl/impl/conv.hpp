@@ -26,6 +26,7 @@
 #include "etl/impl/sse/conv.hpp"
 #include "etl/impl/avx/conv.hpp"
 #include "etl/impl/reduc/conv_mmul.hpp"
+#include "etl/impl/reduc/conv_multi.hpp"
 
 namespace etl {
 
@@ -33,9 +34,10 @@ namespace etl {
  * \brief Enumeration describing the different types of convolution
  */
 enum class conv_type {
-    VALID, ///< Valid convolution
-    SAME,  ///< Same convolution
-    FULL   ///< Full convolution
+    VALID,       ///< Valid convolution
+    VALID_MULTI, ///< Valid convolution, with multiple kernels
+    SAME,        ///< Same convolution
+    FULL         ///< Full convolution
 };
 
 namespace detail {
@@ -114,6 +116,57 @@ inline etl::conv_impl select_conv_impl() {
     }
 
     return select_default_conv_impl<I, K, C>();
+}
+
+/*!
+ * \brief Select the implementation of the conv multi of I and K in C
+ *
+ * This does not take the local context into account.
+ *
+ * \tparam I The input type
+ * \tparam K The kernel type
+ * \tparam C The conv type
+ * \return the implementation to be used
+ */
+template <typename I, typename K, typename C>
+inline etl::conv_multi_impl select_default_conv_multi_impl() {
+    //Note: since the constexpr values will be known at compile time, the
+    //conditions will be a lot simplified
+
+    static constexpr const order input_order  = decay_traits<I>::storage_order;
+    static constexpr const order kernel_order = decay_traits<K>::storage_order;
+    static constexpr const order output_order = decay_traits<C>::storage_order;
+
+    //Only the standard implementation is able to handle column major
+    if (input_order == order::ColumnMajor || kernel_order == order::ColumnMajor || output_order == order::ColumnMajor) {
+        return etl::conv_multi_impl::STD;
+    }
+
+    if (is_mkl_enabled && conv_valid_fft) {
+        return etl::conv_multi_impl::FFT;
+    } else if (is_cblas_enabled || is_cublas_enabled) {
+        return etl::conv_multi_impl::BLAS;
+    } else {
+        return etl::conv_multi_impl::STD;
+    }
+}
+
+/*!
+ * \brief Select the implementation of the conv of I and K in C
+ * \tparam I The input type
+ * \tparam K The kernel type
+ * \tparam C The conv type
+ * \return the implementation to be used
+ */
+template <typename I, typename K, typename C>
+inline etl::conv_multi_impl select_conv_multi_impl() {
+    if (local_context().conv_multi_selector.forced) {
+        // Although it may be suboptimal the forced selection can
+        // always be achieved
+        return local_context().conv_multi_selector.impl;
+    }
+
+    return select_default_conv_multi_impl<I, K, C>();
 }
 
 /*!
@@ -293,6 +346,30 @@ struct conv2_valid_impl {
             impl::sse::conv2_valid(input, kernel, conv);
         } else if (impl == etl::conv_impl::STD) {
             impl::standard::conv2_valid(input, kernel, conv);
+        }
+    }
+};
+
+/*!
+ * \brief The functor impl for 2D valid conv, with multiple kernels
+ */
+struct conv2_valid_multi_impl {
+    /*!
+     * \brief Apply the convolution
+     * \param input The input expression
+     * \param kernel The kernel expression
+     * \param conv The output expression
+     */
+    template <typename I, typename K, typename C>
+    static void apply(const I& input, const K& kernel, C&& conv) {
+        auto impl = select_conv_multi_impl<I, K, C>();
+
+        if (impl == etl::conv_multi_impl::BLAS) {
+            impl::reduc::blas_conv2_valid_multi(input, kernel, conv);
+        } else if (impl == etl::conv_multi_impl::FFT) {
+            impl::reduc::fft_conv2_valid_multi(input, kernel, conv);
+        } else {
+            impl::standard::conv2_valid_multi(input, kernel, conv);
         }
     }
 };

@@ -198,6 +198,33 @@ auto conv_2d_valid(A&& a, B&& b, C&& c) {
 }
 
 /*!
+ * \brief Creates an expression representing the valid 2D convolution of a and multiple kernels from b
+ * \param a The input expression
+ * \param b The kernel expression
+ * \return an expression representing the valid 2D convolution of a and multiple kernels from b
+ */
+template <typename A, typename B>
+auto conv_2d_valid_multi(A&& a, B&& b) -> detail::temporary_binary_helper<A, B, conv2_valid_multi_expr> {
+    static_assert(is_etl_expr<A>::value && is_etl_expr<B>::value, "Convolution only supported for ETL expressions");
+
+    return {a, b};
+}
+
+/*!
+ * \brief Creates an expression representing the valid 2D convolution of a and multiple kernels from b, the result will be stored in c
+ * \param a The input expression
+ * \param b The kernel expressions
+ * \param c The result
+ * \return an expression representing the valid 2D convolution of a and multiple kernels from b
+ */
+template <typename A, typename B, typename C>
+auto conv_2d_valid_multi(A&& a, B&& b, C&& c) {
+    static_assert(is_etl_expr<A>::value && is_etl_expr<B>::value && is_etl_expr<C>::value, "Convolution only supported for ETL expressions");
+
+    return c = conv_2d_valid_multi(a, b);
+}
+
+/*!
  * \brief Creates an expression representing the same 2D convolution of a and b
  * \param a The input expression
  * \param b The kernel expression
@@ -450,7 +477,7 @@ void complex_pad_4d(const F1& in, F2& out) {
  * \param out The output matrix
  */
 template <typename F1, typename F2>
-void complex_pad_3d(const F1& in, F2& out) {
+void local_complex_pad_3d(const F1& in, F2& out) {
     for (std::size_t outer = 0; outer < etl::dim<0>(in); ++outer) {
         auto* direct = out(outer).memory_start();
         for (std::size_t i = 0; i < etl::dim<1>(in); ++i) {
@@ -461,102 +488,8 @@ void complex_pad_3d(const F1& in, F2& out) {
     }
 }
 
-/*!
- * \brief Pad the input matrix in the output matrix for convolution as multiplication
- * \param in The input matrix
- * \param out The output matrix
- */
-template <typename F1, typename F2>
-void complex_pad_2d(const F1& in, F2& out) {
-    auto* direct = out.memory_start();
-    for (std::size_t i = 0; i < etl::dim<0>(in); ++i) {
-        for (std::size_t j = 0; j < etl::dim<1>(in); ++j) {
-            direct[i * out.template dim<1>() + j] = in(i, j);
-        }
-    }
-}
-
 //TODO This should be moved
 //TODO This should be adapted to an expression
-
-/*!
- * \brief Perform several valid convolution of the same input with different kernels
- * \param input The input image
- * \param kernels The kernels
- * \param features The output features
- */
-template <typename A, typename B, typename C>
-void conv_2d_valid_multi(A&& input, B&& kernels, C&& features) {
-    //TODO Validate inputs
-
-    if (is_mkl_enabled && conv_valid_fft) {
-        const std::size_t K = etl::dim<0>(kernels);
-
-        const std::size_t i1 = etl::dim<0>(input);
-        const std::size_t i2 = etl::dim<1>(input);
-
-        const std::size_t k1 = etl::dim<1>(kernels);
-        const std::size_t k2 = etl::dim<2>(kernels);
-
-        const std::size_t v1 = i1 - k1 + 1;
-        const std::size_t v2 = i2 - k2 + 1;
-        const std::size_t t1 = i1 + k1 - 1;
-        const std::size_t t2 = i2 + k2 - 1;
-        const std::size_t b1 = (t1 - v1) / 2;
-        const std::size_t b2 = (t2 - v2) / 2;
-
-        etl::dyn_matrix<std::complex<value_t<A>>> input_padded(t1, t2);
-        etl::dyn_matrix<std::complex<value_t<A>>, 3> kernels_padded(K, t1, t2);
-        etl::dyn_matrix<std::complex<value_t<A>>, 3> tmp_result(K, t1, t2);
-
-        complex_pad_2d(input, input_padded);
-        complex_pad_3d(kernels, kernels_padded);
-
-        input_padded.fft2_inplace();
-        kernels_padded.fft2_many_inplace();
-
-        for (std::size_t k = 0; k < K; ++k) {
-            tmp_result(k) = input_padded >> kernels_padded(k);
-        }
-
-        tmp_result.ifft2_many_inplace();
-
-        for (std::size_t k = 0; k < K; ++k) {
-            for (std::size_t i = 0; i < v1; ++i) {
-                for (std::size_t j = 0; j < v2; ++j) {
-                    features(k, i, j) = tmp_result(k, i + b1, j + b2).real();
-                }
-            }
-        }
-    } else if (is_cblas_enabled || is_cublas_enabled) {
-        const std::size_t K  = etl::dim<0>(kernels);
-        const std::size_t v1 = etl::dim<0>(input);
-        const std::size_t v2 = etl::dim<1>(input);
-        const std::size_t k1 = etl::dim<1>(kernels);
-        const std::size_t k2 = etl::dim<2>(kernels);
-        const std::size_t f1 = etl::dim<1>(features);
-        const std::size_t f2 = etl::dim<2>(features);
-
-        auto prepared_k = force_temporary(kernels);
-
-        for (std::size_t i = 0; i < K; ++i) {
-            prepared_k(i).fflip_inplace();
-        }
-
-        etl::dyn_matrix<value_t<A>, 2> input_col(k1 * k2, (v1 - k1 + 1) * (v2 - k2 + 1));
-        im2col_direct_tr(input_col, input, k1, k2);
-
-        *mul(
-            etl::reshape(prepared_k, K, k1 * k2),
-            input_col,
-            etl::reshape(features, K, f1 * f2));
-    } else {
-        //Standard version
-        for (size_t k = 0; k < etl::dim<0>(kernels); ++k) {
-            features(k) = conv_2d_valid(input, kernels(k));
-        }
-    }
-}
 
 /*!
  * \brief Perform several valid convolution of the same input, flipped vertically and horizontally, with different kernels
@@ -639,7 +572,7 @@ void conv_3d_valid_multi_flipped(A&& input, B&& kernels, T_C&& features) {
         etl::dyn_matrix<std::complex<value_t<A>>, 4> kernels_padded(C, K, t1, t2);
         etl::dyn_matrix<std::complex<value_t<A>>, 4> tmp_result(C, K, t1, t2);
 
-        complex_pad_3d(input, input_padded);
+        local_complex_pad_3d(input, input_padded);
         complex_pad_4d(kernels, kernels_padded);
 
         input_padded.fft2_many_inplace();

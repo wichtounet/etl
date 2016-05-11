@@ -30,6 +30,8 @@ void check_conv_1d_sizes(const I& input, const K& kernel, const C& conv) {
         cpp_assert(dim<0>(conv) == dim<0>(input), "Invalid sizes for 'same' convolution");
     } else if (TT == conv_type::VALID) {
         cpp_assert(dim<0>(conv) == dim<0>(input) - dim<0>(kernel) + 1, "Invalid sizes for 'valid' convolution");
+    } else if (TT == conv_type::VALID_MULTI) {
+        cpp_unreachable("VALID_MULTI is not support for 1D convolution");
     }
 
     cpp_unused(input);
@@ -60,6 +62,9 @@ void check_conv_1d_sizes(const I& input, const K& kernel, const C& conv) {
     static_assert(
         TT != conv_type::VALID || etl_traits<C>::template dim<0>() == etl_traits<I>::template dim<0>() - etl_traits<K>::template dim<0>() + 1,
         "Invalid sizes for 'valid' convolution");
+    static_assert(
+        TT != conv_type::VALID_MULTI,
+        "valid_multi is not supported for 1D convolution");
 }
 
 /*!
@@ -70,7 +75,8 @@ void check_conv_1d_sizes(const I& input, const K& kernel, const C& conv) {
  */
 template <conv_type TT, typename I, typename K, typename C, cpp_disable_if(all_fast<I, K, C>::value)>
 void check_conv_2d_sizes(const I& input, const K& kernel, const C& conv) {
-    static_assert(etl_traits<I>::dimensions() == 2 && etl_traits<K>::dimensions() == 2 && etl_traits<C>::dimensions() == 2, "Invalid dimensions for 2D convolution");
+    static_assert(TT == conv_type::VALID_MULTI || (etl_traits<I>::dimensions() == 2 && etl_traits<K>::dimensions() == 2 && etl_traits<C>::dimensions() == 2), "Invalid dimensions for 2D convolution");
+    static_assert(TT != conv_type::VALID_MULTI || (etl_traits<I>::dimensions() == 2 && etl_traits<K>::dimensions() == 3 && etl_traits<C>::dimensions() == 3), "Invalid dimensions for 2D convolution");
 
     if (TT == conv_type::FULL) {
         cpp_assert(
@@ -82,6 +88,12 @@ void check_conv_2d_sizes(const I& input, const K& kernel, const C& conv) {
         cpp_assert(
             dim<0>(conv) == dim<0>(input) - dim<0>(kernel) + 1 && dim<1>(conv) == dim<1>(input) - dim<1>(kernel) + 1,
             "Invalid sizes for 'valid' convolution");
+    } else if (TT == conv_type::VALID_MULTI) {
+        cpp_assert(
+                dim<0>(kernel) == dim<0>(conv)
+            &&  dim<1>(conv) == dim<0>(input) - dim<1>(kernel) + 1
+            &&  dim<2>(conv) == dim<1>(input) - dim<2>(kernel) + 1
+            , "Invalid sizes for 'valid' convolution");
     }
 
     cpp_unused(input);
@@ -95,7 +107,7 @@ void check_conv_2d_sizes(const I& input, const K& kernel, const C& conv) {
  * \param kernel The kernel matrix
  * \param conv The output convolution result
  */
-template <conv_type TT, typename I, typename K, typename C, cpp_enable_if(all_fast<I, K, C>::value)>
+template <conv_type TT, typename I, typename K, typename C, cpp_enable_if(all_fast<I, K, C>::value && TT != conv_type::VALID_MULTI)>
 void check_conv_2d_sizes(const I& input, const K& kernel, const C& conv) {
     cpp_unused(input);
     cpp_unused(kernel);
@@ -112,6 +124,27 @@ void check_conv_2d_sizes(const I& input, const K& kernel, const C& conv) {
     static_assert(
         TT != conv_type::VALID || (etl_traits<C>::template dim<0>() == etl_traits<I>::template dim<0>() - etl_traits<K>::template dim<0>() + 1 && etl_traits<C>::template dim<1>() == etl_traits<I>::template dim<1>() - etl_traits<K>::template dim<1>() + 1),
         "Invalid sizes for 'valid' convolution");
+}
+
+/*!
+ * \brief Assert for the validity of the 2D convolution
+ * \param input The input matrix
+ * \param kernel The kernel matrix
+ * \param conv The output convolution result
+ */
+template <conv_type TT, typename I, typename K, typename C, cpp_enable_if(all_fast<I, K, C>::value && TT == conv_type::VALID_MULTI)>
+void check_conv_2d_sizes(const I& input, const K& kernel, const C& conv) {
+    cpp_unused(input);
+    cpp_unused(kernel);
+    cpp_unused(conv);
+
+    static_assert(etl_traits<I>::dimensions() == 2 && etl_traits<K>::dimensions() == 3 && etl_traits<C>::dimensions() == 3, "Invalid dimensions for 2D convolution");
+
+    static_assert(
+            etl_traits<C>::template dim<0>() == etl_traits<K>::template dim<0>()
+        &&  etl_traits<C>::template dim<1>() == etl_traits<I>::template dim<0>() - etl_traits<K>::template dim<1>() + 1
+        &&  etl_traits<C>::template dim<2>() == etl_traits<I>::template dim<1>() - etl_traits<K>::template dim<2>() + 1
+        , "Invalid sizes for 'valid' convolution");
 }
 
 /*!
@@ -269,6 +302,8 @@ struct basic_conv_expr : impl_expr<basic_conv_expr<T, D, TT, Impl>> {
         switch (TT) {
             case conv_type::VALID:
                 return "conv_valid";
+            case conv_type::VALID_MULTI:
+                return "conv_valid_multi";
             case conv_type::SAME:
                 return "conv_same";
             case conv_type::FULL:
@@ -280,12 +315,33 @@ struct basic_conv_expr : impl_expr<basic_conv_expr<T, D, TT, Impl>> {
      * \brief Returns the DDth dimension of the expression
      * \return the DDth dimension of the expression
      */
-    template <typename A, typename B, std::size_t DD>
+    template <typename A, typename B, std::size_t DD, cpp_disable_if_cst(TT == conv_type::VALID_MULTI)>
     static constexpr std::size_t dim() {
-        return (D > 2 && DD < (D - 2)) ? decay_traits<A>::template dim<DD>()
-                                       : TT == conv_type::VALID ? decay_traits<A>::template dim<DD>() - decay_traits<B>::template dim<DD>() + 1
-                                                                : TT == conv_type::SAME ? decay_traits<A>::template dim<DD>()
-                                                                                        : decay_traits<A>::template dim<DD>() + decay_traits<B>::template dim<DD>() - 1;
+        return (D > 2 && DD < (D - 2))
+            ? decay_traits<A>::template dim<DD>()
+            : TT == conv_type::VALID ?  decay_traits<A>::template dim<DD>() - decay_traits<B>::template dim<DD>() + 1
+            : TT == conv_type::SAME  ?  decay_traits<A>::template dim<DD>()
+            :                           decay_traits<A>::template dim<DD>() + decay_traits<B>::template dim<DD>() - 1;
+    }
+
+    //Note: Please give me static_if to solve this mess...
+
+    /*!
+     * \brief Returns the DDth dimension of the expression
+     * \return the DDth dimension of the expression
+     */
+    template <typename A, typename B, std::size_t DD, cpp_enable_if_cst(DD == 0 && TT == conv_type::VALID_MULTI)>
+    static constexpr std::size_t dim() {
+        return decay_traits<B>::template dim<DD>();
+    }
+
+    /*!
+     * \brief Returns the DDth dimension of the expression
+     * \return the DDth dimension of the expression
+     */
+    template <typename A, typename B, std::size_t DD, cpp_enable_if_cst(DD != 0 && TT == conv_type::VALID_MULTI)>
+    static constexpr std::size_t dim() {
+        return decay_traits<A>::template dim<DD - 1>() - decay_traits<B>::template dim<DD>() + 1;
     }
 
     /*!
@@ -297,15 +353,23 @@ struct basic_conv_expr : impl_expr<basic_conv_expr<T, D, TT, Impl>> {
      */
     template <typename A, typename B>
     static std::size_t dim(const A& a, const B& b, std::size_t d) {
-        if (D > 2 && d < (D - 2)) {
-            return etl_traits<A>::dim(a, d);
+        if (TT == conv_type::VALID_MULTI){
+            if (D == 0){
+                return etl_traits<B>::dim(b, 0);
+            } else {
+                return etl_traits<A>::dim(a, d - 1) - etl_traits<B>::dim(b, d) + 1;
+            }
         } else {
-            if (TT == conv_type::VALID) {
-                return etl_traits<A>::dim(a, d) - etl_traits<B>::dim(b, d) + 1;
-            } else if (TT == conv_type::SAME) {
+            if (D > 2 && d < (D - 2)) {
                 return etl_traits<A>::dim(a, d);
             } else {
-                return etl_traits<A>::dim(a, d) + etl_traits<B>::dim(b, d) - 1;
+                if (TT == conv_type::VALID) {
+                    return etl_traits<A>::dim(a, d) - etl_traits<B>::dim(b, d) + 1;
+                } else if (TT == conv_type::SAME) {
+                    return etl_traits<A>::dim(a, d);
+                } else {
+                    return etl_traits<A>::dim(a, d) + etl_traits<B>::dim(b, d) - 1;
+                }
             }
         }
     }
@@ -318,17 +382,11 @@ struct basic_conv_expr : impl_expr<basic_conv_expr<T, D, TT, Impl>> {
      */
     template <typename A, typename B>
     static std::size_t size(const A& a, const B& b) {
-        if (D > 2) {
-            std::size_t acc = 1;
-            for (std::size_t i = 0; i < D; ++i) {
-                acc *= this_type::dim(a, b, i);
-            }
-            return acc;
-        } else if (D == 1) {
-            return this_type::dim(a, b, 0);
-        } else { //D == 2
-            return this_type::dim(a, b, 0) * this_type::dim(a, b, 1);
+        std::size_t acc = 1;
+        for (std::size_t i = 0; i < dimensions(); ++i) {
+            acc *= this_type::dim(a, b, i);
         }
+        return acc;
     }
 
     /*!
@@ -346,7 +404,7 @@ struct basic_conv_expr : impl_expr<basic_conv_expr<T, D, TT, Impl>> {
      */
     template <typename A, typename B>
     static constexpr std::size_t size() {
-        return size_mul<A, B>(std::make_index_sequence<D>());
+        return size_mul<A, B>(std::make_index_sequence<dimensions()>());
     }
 
     /*!
@@ -363,7 +421,7 @@ struct basic_conv_expr : impl_expr<basic_conv_expr<T, D, TT, Impl>> {
      * \return the number of dimensions of the expression
      */
     static constexpr std::size_t dimensions() {
-        return D;
+        return TT == conv_type::VALID_MULTI ? D + 1 : D;
     }
 };
 
@@ -400,6 +458,12 @@ using fft_conv1_full_expr = basic_conv_expr<T, 1, conv_type::FULL, detail::fft_c
  */
 template <typename T>
 using conv2_valid_expr = basic_conv_expr<T, 2, conv_type::VALID, detail::conv2_valid_impl>;
+
+/*!
+ * \brief Expression for 2D valid convolution, with multiple kernels
+ */
+template <typename T>
+using conv2_valid_multi_expr = basic_conv_expr<T, 2, conv_type::VALID_MULTI, detail::conv2_valid_multi_impl>;
 
 /*!
  * \brief Expression for 2D same convolution

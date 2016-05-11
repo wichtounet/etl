@@ -23,4 +23,13 @@ enum class conv_impl {
     AVX  ///< Vectorized AVX implementation
 };
 
+/*!
+ * \brief Enumeration describing the different multiple convolution implementations
+ */
+enum class conv_multi_impl {
+    STD, ///< Standard implementation
+    FFT, ///< Reductiont too FFT
+    BLAS ///< Reduction to BLAS (GEMM)
+};
+
 } //end of namespace etl
