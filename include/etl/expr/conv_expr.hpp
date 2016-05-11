@@ -226,6 +226,8 @@ void check_conv_deep_sizes(const I& i, const K& k, const C& c) {
  */
 template <typename T, std::size_t D, conv_type TT, typename Impl>
 struct basic_conv_expr : impl_expr<basic_conv_expr<T, D, TT, Impl>> {
+    static_assert(D > 0, "0D convolution is not valid");
+
     using value_type = T;                               ///< The type of value of the expression
     using this_type  = basic_conv_expr<T, D, TT, Impl>; ///< The type of this expression
 
@@ -354,7 +356,7 @@ struct basic_conv_expr : impl_expr<basic_conv_expr<T, D, TT, Impl>> {
     template <typename A, typename B>
     static std::size_t dim(const A& a, const B& b, std::size_t d) {
         if (TT == conv_type::VALID_MULTI){
-            if (D == 0){
+            if (d == 0){
                 return etl_traits<B>::dim(b, 0);
             } else {
                 return etl_traits<A>::dim(a, d - 1) - etl_traits<B>::dim(b, d) + 1;
