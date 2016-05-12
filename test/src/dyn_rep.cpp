@@ -147,6 +147,34 @@ TEMPLATE_TEST_CASE_2("dyn_rep/dyn_matrix_4", "dyn_rep", Z, float, double) {
     }
 }
 
+TEMPLATE_TEST_CASE_2("dyn_rep/dyn_matrix_5", "dyn_rep", Z, float, double) {
+    etl::dyn_matrix<Z> a(2, 3);
+    a = 1.0;
+    a(1, 2) = 3.0;
+
+    etl::dyn_matrix<Z, 6> b(etl::rep(a, 3, 2, 5, 7));
+
+    REQUIRE(b.dim(0) == 2);
+    REQUIRE(b.dim(1) == 3);
+    REQUIRE(b.dim(2) == 3);
+    REQUIRE(b.dim(3) == 2);
+    REQUIRE(b.dim(4) == 5);
+    REQUIRE(b.dim(5) == 7);
+
+    REQUIRE(b(1, 2, 0, 0, 0, 0) == 3.0);
+    REQUIRE(b(0, 2, 0, 0, 0, 0) == 1.0);
+    REQUIRE(b(1, 2, 0, 1, 0, 0) == 3.0);
+    REQUIRE(b(0, 2, 0, 0, 1, 0) == 1.0);
+    REQUIRE(b(1, 2, 1, 0, 0, 0) == 3.0);
+    REQUIRE(b(0, 2, 1, 0, 0, 0) == 1.0);
+    REQUIRE(b(1, 2, 1, 1, 0, 0) == 3.0);
+    REQUIRE(b(0, 2, 1, 0, 1, 0) == 1.0);
+    REQUIRE(b(1, 2, 1, 0, 0, 6) == 3.0);
+    REQUIRE(b(0, 2, 1, 0, 0, 6) == 1.0);
+    REQUIRE(b(1, 2, 1, 1, 0, 6) == 3.0);
+    REQUIRE(b(0, 2, 1, 0, 1, 6) == 1.0);
+}
+
 // Tests for dyn_rep_l
 
 TEMPLATE_TEST_CASE_2("dyn_rep_l/fast_matrix_1", "dyn_rep", Z, float, double) {
@@ -283,6 +311,29 @@ TEMPLATE_TEST_CASE_2("dyn_rep_l/dyn_matrix_4", "dyn_rep", Z, float, double) {
     for (auto v : b) {
         REQUIRE(v == 1.0);
     }
+}
+
+TEMPLATE_TEST_CASE_2("dyn_rep_l/dyn_matrix_5", "dyn_rep", Z, float, double) {
+    etl::dyn_matrix<Z, 2> a(2, 2);
+    a = 2.0;
+
+    a(1, 1) = 1.0;
+
+    etl::dyn_matrix<Z, 6> b(etl::rep_l(a, 1, 2, 3, 4));
+
+    REQUIRE(b.dim(0) == 1);
+    REQUIRE(b.dim(1) == 2);
+    REQUIRE(b.dim(2) == 3);
+    REQUIRE(b.dim(3) == 4);
+    REQUIRE(b.dim(4) == 2);
+    REQUIRE(b.dim(5) == 2);
+
+    REQUIRE(b(0, 0, 0, 0, 1, 0) == 2.0);
+    REQUIRE(b(0, 0, 0, 0, 1, 1) == 1.0);
+    REQUIRE(b(0, 1, 0, 0, 1, 0) == 2.0);
+    REQUIRE(b(0, 1, 0, 0, 1, 0) == 2.0);
+    REQUIRE(b(0, 0, 1, 0, 1, 1) == 1.0);
+    REQUIRE(b(0, 0, 1, 0, 1, 1) == 1.0);
 }
 
 //TODO Add tests for dyn_rep_l and dyn_rep_r on matrices
