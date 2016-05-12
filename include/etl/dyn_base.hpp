@@ -136,7 +136,7 @@ protected:
      */
     template <typename M = value_type>
     static M* allocate(std::size_t n) {
-        M* memory = aligned_allocator<void, alignment>::template allocate<M>(n);
+        M* memory = aligned_allocator<alignment>::template allocate<M>(n);
         cpp_assert(memory, "Impossible to allocate memory for dyn_matrix");
         cpp_assert(reinterpret_cast<uintptr_t>(memory) % alignment == 0, "Failed to align memory of matrix");
 
@@ -162,7 +162,7 @@ protected:
             }
         }
 
-        aligned_allocator<void, alignment>::template release<M>(ptr);
+        aligned_allocator<alignment>::template release<M>(ptr);
     }
 
     /*!
