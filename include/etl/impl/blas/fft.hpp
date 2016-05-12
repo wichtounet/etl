@@ -7,8 +7,6 @@
 
 #pragma once
 
-#include "etl/allocator.hpp"
-
 #ifdef ETL_MKL_MODE
 #include "mkl_dfti.h"
 #endif

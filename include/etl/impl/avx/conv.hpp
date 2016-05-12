@@ -24,7 +24,6 @@
 #if defined(ETL_VECTORIZE_IMPL) && defined(__AVX__)
 #include <immintrin.h>
 
-#include "etl/allocator.hpp"
 #include "etl/impl/common/conv.hpp"
 
 #endif

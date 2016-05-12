@@ -7,8 +7,6 @@
 
 #pragma once
 
-#include "etl/allocator.hpp"
-
 namespace etl {
 
 namespace impl {

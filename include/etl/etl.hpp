@@ -31,6 +31,7 @@
 #include "etl/threshold.hpp"
 #include "etl/parallel.hpp"
 #include "etl/memory.hpp"
+#include "etl/allocator.hpp"
 
 //Forward declarations
 #include "etl/value_fwd.hpp"

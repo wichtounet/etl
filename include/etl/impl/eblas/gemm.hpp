@@ -19,8 +19,6 @@
 #include <immintrin.h>
 #endif
 
-#include "etl/allocator.hpp"
-
 namespace etl {
 
 namespace impl {

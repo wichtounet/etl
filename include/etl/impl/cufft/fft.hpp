@@ -7,8 +7,6 @@
 
 #pragma once
 
-#include "etl/allocator.hpp"
-
 #ifdef ETL_CUFFT_MODE
 #include "etl/impl/cublas/cuda.hpp"
 #include "etl/impl/cufft/cufft.hpp"
