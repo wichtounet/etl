@@ -268,10 +268,7 @@ public:
     unary_expr& operator=(const value_type& e) {
         static_assert(non_const_return_ref, "Impossible to modify read-only unary_expr");
 
-        //TODO: This is not necessarily efficient
-        for (std::size_t i = 0; i < size(*this); ++i) {
-            (*this)[i] = e;
-        }
+        memory_set(e);
 
         return *this;
     }
@@ -508,6 +505,29 @@ public:
     const_memory_type memory_end() const noexcept {
         static_assert(has_direct_access<Expr>::value, "This expression does not have direct memory access");
         return value().memory_end();
+    }
+
+private:
+    /*!
+     * \brief Assign the given value to each eleemnt of the unary expression
+     * \param e The value
+     * \return the unary expression
+     */
+    template<cpp_enable_if_cst(all_dma<Expr>::value)>
+    void memory_set(const value_type& e){
+        direct_fill(memory_start(), memory_end(), e);
+    }
+
+    /*!
+     * \brief Assign the given value to each eleemnt of the unary expression
+     * \param e The value
+     * \return the unary expression
+     */
+    template<cpp_enable_if_cst(!all_dma<Expr>::value)>
+    void memory_set(const value_type& e){
+        for (std::size_t i = 0; i < size(*this); ++i) {
+            (*this)[i] = e;
+        }
     }
 };
 

@@ -36,4 +36,26 @@ void direct_copy_n(const S* source, T* target, std::size_t n) {
     std::copy_n(source, n, target);
 }
 
+/*!
+ * \brief Fills the given memory with the given value
+ * \param first pointer to the first element to copy
+ * \param last pointer to the next-to-last element to copy
+ * \param value The value to fill the memory with
+ */
+template <typename S, typename T>
+void direct_fill(S* first, S* last, T value) {
+    std::fill(first, last, value);
+}
+
+/*!
+ * \brief Fills the given memory with the given value
+ * \param first pointer to the first element to copy
+ * \param n The number of elements to fill
+ * \param value The value to fill the memory with
+ */
+template <typename S, typename T>
+void direct_fill_n(S* first, std::size_t n, T value) {
+    std::fill_n(first, n, value);
+}
+
 } //end of namespace etl
