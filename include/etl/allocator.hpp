@@ -15,6 +15,26 @@
 #include <memory>
 
 namespace etl {
+/*
+ * GCC mangling of vector types (__m128, __m256, ...) is terribly
+ * broken. To avoid this, the chosen solution is to use special
+ * functions for allocations of these types
+ */
+
+template<std::size_t T>
+struct mangling_faker {};
+
+/*!
+ * \brief Test if the given type can be mangled correctly
+ *
+ */
+template<typename T>
+using is_mangle_able = cpp::or_c<
+    std::is_same<std::decay_t<T>, float>,
+    std::is_same<std::decay_t<T>, double>,
+    cpp::is_specialization_of<std::complex, std::decay_t<T>>,
+    cpp::is_specialization_of<etl::complex, std::decay_t<T>>
+    >;
 
 /*!
  * \brief Allocated for aligned memory
@@ -27,8 +47,8 @@ struct aligned_allocator {
      * \param size The number of elements
      * \return A pointer to the allocated memory
      */
-    template <typename T>
-    static T* allocate(std::size_t size) {
+    template <typename T, std::size_t S = sizeof(T)>
+    static T* allocate(std::size_t size, mangling_faker<S> = mangling_faker<S>()) {
         auto required_bytes = sizeof(T) * size;
         auto offset         = (A - 1) + sizeof(uintptr_t);
         auto orig           = malloc(required_bytes + offset);
@@ -46,8 +66,8 @@ struct aligned_allocator {
      * \brief Release the memory
      * \param ptr The pointer to the memory to be released
      */
-    template <typename T>
-    static void release(T* ptr) {
+    template <typename T, std::size_t S = sizeof(T)>
+    static void release(T* ptr, mangling_faker<S> = mangling_faker<S>()) {
         //Note the const_cast is only to allow compilation
         free((reinterpret_cast<void**>(const_cast<std::remove_const_t<T>*>(ptr)))[-1]);
     }
@@ -58,8 +78,9 @@ struct aligned_allocator {
  * \param size The number of elements
  * \return An unique pointer to the memory
  */
-template <typename T>
-auto allocate(std::size_t size) {
+template <typename T, std::size_t S = sizeof(T)>
+auto allocate(std::size_t size, mangling_faker<S> = mangling_faker<S>()) {
+    static_assert(is_mangle_able<T>::value, "allocate does not work with vector types");
     return std::make_unique<T[]>(size);
 }
 
@@ -68,8 +89,8 @@ auto allocate(std::size_t size) {
  * \param size The number of elements
  * \return A pointer to the aligned memory
  */
-template <typename T>
-T* aligned_allocate(std::size_t size) {
+template <typename T, std::size_t S = sizeof(T)>
+T* aligned_allocate(std::size_t size, mangling_faker<S> = mangling_faker<S>()) {
     return aligned_allocator<32>::allocate<T>(size);
 }
 
@@ -77,15 +98,15 @@ T* aligned_allocate(std::size_t size) {
  * \brief Release some aligned memory
  * \param ptr The ptr to the aligned memory
  */
-template <typename T>
-void aligned_release(T* ptr) {
+template <typename T, std::size_t S = sizeof(T)>
+void aligned_release(T* ptr, mangling_faker<S> = mangling_faker<S>()) {
     return aligned_allocator<32>::release<T>(ptr);
 }
 
 /*!
  * \brief RAII wrapper for allocated aligned memory
  */
-template <typename T>
+template <typename T, std::size_t S = sizeof(T)>
 struct aligned_ptr {
     T* ptr; ///< The raw pointer
 
@@ -156,8 +177,8 @@ struct aligned_ptr {
  * \param size The number of elements
  * \return A pointer to the aligned memory
  */
-template <typename T>
-aligned_ptr<T> aligned_allocate_auto(std::size_t size) {
+template <typename T, std::size_t S = sizeof(T)>
+aligned_ptr<T> aligned_allocate_auto(std::size_t size, mangling_faker<S> = mangling_faker<S>()) {
     return aligned_ptr<T>{aligned_allocate<T>(size)};
 }
 
