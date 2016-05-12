@@ -23,4 +23,7 @@ node {
 
    stage 'sonar'
    sh '/opt/sonar-runner/bin/sonar-runner'
+
+   stage 'bench'
+   build job: 'etl - benchmark', wait: false
 }
