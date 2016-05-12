@@ -31,6 +31,7 @@ struct cuda_memory {
 
     //Delete copy operations
     cuda_memory(const cuda_memory& rhs) noexcept : memory(nullptr) {
+        cpp_unused(rhs);
         cpp_assert(!rhs.is_set(), "copy of cuda_memory is only possible when not allocated");
     }
 
