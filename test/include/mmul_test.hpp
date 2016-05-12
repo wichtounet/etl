@@ -110,3 +110,31 @@ MUL_FUNCTOR(cublas_gevm, c = selected_helper(etl::gemm_impl::CUBLAS, a* b))
         GEVM_TEST_CASE_SECTION_CUBLAS       \
     }                                       \
     MUL_TEST_CASE_DEFN
+
+#define CGEMM_TEST_CASE(name, description)   \
+    MUL_TEST_CASE_DECL(name, description) { \
+        GEMM_TEST_CASE_SECTION_DEFAULT      \
+        GEMM_TEST_CASE_SECTION_STD          \
+        GEMM_TEST_CASE_SECTION_LAZY         \
+        GEMM_TEST_CASE_SECTION_BLAS         \
+        GEMM_TEST_CASE_SECTION_CUBLAS       \
+    }                                       \
+    MUL_TEST_CASE_DEFN
+
+#define CGEMV_TEST_CASE(name, description)   \
+    MUL_TEST_CASE_DECL(name, description) { \
+        GEMV_TEST_CASE_SECTION_DEFAULT      \
+        GEMV_TEST_CASE_SECTION_STD          \
+        GEMV_TEST_CASE_SECTION_BLAS         \
+        GEMV_TEST_CASE_SECTION_CUBLAS       \
+    }                                       \
+    MUL_TEST_CASE_DEFN
+
+#define CGEVM_TEST_CASE(name, description)   \
+    MUL_TEST_CASE_DECL(name, description) { \
+        GEVM_TEST_CASE_SECTION_DEFAULT      \
+        GEVM_TEST_CASE_SECTION_STD          \
+        GEVM_TEST_CASE_SECTION_BLAS         \
+        GEVM_TEST_CASE_SECTION_CUBLAS       \
+    }                                       \
+    MUL_TEST_CASE_DEFN

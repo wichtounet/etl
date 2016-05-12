@@ -7,6 +7,8 @@
 
 #include "test.hpp"
 
+#include "mmul_test.hpp"
+
 #define CZ(a, b) std::complex<Z>(a, b)
 #define ECZ(a, b) etl::complex<Z>(a, b)
 
@@ -180,12 +182,14 @@ TEMPLATE_TEST_CASE_2("complex/std/9", "[complex]", Z, float, double) {
     REQUIRE(c(0)[2] == a(0)[2] * b(0)[2]);
 }
 
-TEMPLATE_TEST_CASE_2("complex/std/10", "[mul][complex]", Z, float, double) {
+CGEMM_TEST_CASE("complex/std/10", "[mul][complex]") {
+    using Z = T;
+
     etl::fast_matrix<std::complex<Z>, 2, 3> a = {CZ(1, 1), CZ(-2, -2), CZ(2, 3), CZ(0, 0), CZ(1, 1), CZ(2, 2)};
     etl::fast_matrix<std::complex<Z>, 3, 2> b = {CZ(1, 1), CZ(2, 2), CZ(3, 2), CZ(1, 0), CZ(1, -1), CZ(2, 2)};
     etl::fast_matrix<std::complex<Z>, 2, 2> c;
 
-    c = a * b;
+    Impl::apply(a, b, c);
 
     REQUIRE(c(0, 0).real() == 3.0);
     REQUIRE(c(0, 0).imag() == -7.0);
@@ -197,12 +201,14 @@ TEMPLATE_TEST_CASE_2("complex/std/10", "[mul][complex]", Z, float, double) {
     REQUIRE(c(1, 1).imag() == 9.0);
 }
 
-TEMPLATE_TEST_CASE_2("complex/std/11", "[mul][complex]", Z, float, double) {
+CGEMV_TEST_CASE("complex/std/11", "[mul][complex]") {
+    using Z = T;
+
     etl::fast_matrix<std::complex<Z>, 2, 3> a = {CZ(1, 1), CZ(-2, -2), CZ(2, 3), CZ(0, 0), CZ(1, 1), CZ(2, 2)};
     etl::fast_vector<std::complex<Z>, 3> b    = {CZ(1, 1), CZ(-3, -3), CZ(5, 0.1)};
     etl::fast_matrix<std::complex<Z>, 2> c;
 
-    c = a * b;
+    Impl::apply(a, b, c);
 
     REQUIRE(c(0).real() == Approx(Z(9.7)));
     REQUIRE(c(0).imag() == Approx(Z(29.2)));
@@ -210,12 +216,14 @@ TEMPLATE_TEST_CASE_2("complex/std/11", "[mul][complex]", Z, float, double) {
     REQUIRE(c(1).imag() == Approx(Z(4.2)));
 }
 
-TEMPLATE_TEST_CASE_2("complex/std/12", "[mul][complex]", Z, float, double) {
+CGEVM_TEST_CASE("complex/std/12", "[mul][complex]") {
+    using Z = T;
+
     etl::fast_matrix<std::complex<Z>, 3, 2> a = {CZ(1, 1), CZ(-2, -2), CZ(2, 3), CZ(0, 0), CZ(1, 1), CZ(2, 2)};
     etl::fast_vector<std::complex<Z>, 3> b    = {CZ(1, 1), CZ(-3, -3), CZ(5, 0.1)};
     etl::fast_matrix<std::complex<Z>, 2> c;
 
-    c = b * a;
+    Impl::apply(b, a, c);
 
     REQUIRE(c(0).real() == Approx(Z(7.9)));
     REQUIRE(c(0).imag() == Approx(Z(-7.9)));
@@ -235,12 +243,14 @@ TEMPLATE_TEST_CASE_2("complex/etl/9", "[complex]", Z, float, double) {
     REQUIRE(c(0)[2] == a(0)[2] * b(0)[2]);
 }
 
-TEMPLATE_TEST_CASE_2("complex/etl/11", "[mul][complex]", Z, float, double) {
+CGEMV_TEST_CASE("complex/etl/11", "[mul][complex]") {
+    using Z = T;
+
     etl::fast_matrix<etl::complex<Z>, 2, 3> a = {ECZ(1, 1), ECZ(-2, -2), ECZ(2, 3), ECZ(0, 0), ECZ(1, 1), ECZ(2, 2)};
     etl::fast_vector<etl::complex<Z>, 3> b    = {ECZ(1, 1), ECZ(-3, -3), ECZ(5, 0.1)};
     etl::fast_matrix<etl::complex<Z>, 2> c;
 
-    c = a * b;
+    Impl::apply(a, b, c);
 
     REQUIRE(c(0).real == Approx(Z(9.7)));
     REQUIRE(c(0).imag == Approx(Z(29.2)));
@@ -248,12 +258,14 @@ TEMPLATE_TEST_CASE_2("complex/etl/11", "[mul][complex]", Z, float, double) {
     REQUIRE(c(1).imag == Approx(Z(4.2)));
 }
 
-TEMPLATE_TEST_CASE_2("complex/etl/12", "[mul][complex]", Z, float, double) {
+CGEVM_TEST_CASE("complex/etl/12", "[mul][complex]") {
+    using Z = T;
+
     etl::fast_matrix<etl::complex<Z>, 3, 2> a = {ECZ(1, 1), ECZ(-2, -2), ECZ(2, 3), ECZ(0, 0), ECZ(1, 1), ECZ(2, 2)};
     etl::fast_vector<etl::complex<Z>, 3> b    = {ECZ(1, 1), ECZ(-3, -3), ECZ(5, 0.1)};
     etl::fast_matrix<etl::complex<Z>, 2> c;
 
-    c = b * a;
+    Impl::apply(b, a, c);
 
     REQUIRE(c(0).real == Approx(Z(7.9)));
     REQUIRE(c(0).imag == Approx(Z(-7.9)));
