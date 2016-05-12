@@ -213,7 +213,7 @@ struct dyn_rep_r_transformer {
      * \return the value at the given index.
      */
     value_type operator[](std::size_t i) const {
-        return sub(i / m);
+        return sub[i / m];
     }
 
     /*!
@@ -223,7 +223,7 @@ struct dyn_rep_r_transformer {
      * \return the value at the given index.
      */
     value_type read_flat(std::size_t i) const noexcept {
-        return sub(i / m);
+        return sub.read_flat(i / m);
     }
 
     /*!
@@ -305,7 +305,7 @@ struct dyn_rep_l_transformer {
      * \return the value at the given index.
      */
     value_type operator[](std::size_t i) const {
-        return sub(i % size(sub));
+        return sub[i % size(sub)];
     }
 
     /*!
@@ -315,7 +315,7 @@ struct dyn_rep_l_transformer {
      * \return the value at the given index.
      */
     value_type read_flat(std::size_t i) const {
-        return sub(i % size(sub));
+        return sub.read_flat(i % size(sub));
     }
 
     /*!
