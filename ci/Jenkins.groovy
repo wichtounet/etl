@@ -11,8 +11,8 @@ node {
    env.CXX="g++-4.9.3"
    env.LD="g++-4.9.3"
    env.ETL_GPP="g++-4.9.3"
-   env.LD_LIBRARY_PATH="$LD_LIBRARY_PATH:/opt/intel/mkl/lib/intel64"
-   env.LD_LIBRARY_PATH="$LD_LIBRARY_PATH:/opt/intel/lib/intel64"
+   env.LD_LIBRARY_PATH="${env.LD_LIBRARY_PATH}:/opt/intel/mkl/lib/intel64"
+   env.LD_LIBRARY_PATH="${env.LD_LIBRARY_PATH}:/opt/intel/lib/intel64"
 
    stage 'build'
    sh 'make clean'
