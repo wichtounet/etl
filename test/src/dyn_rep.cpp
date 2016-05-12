@@ -335,5 +335,3 @@ TEMPLATE_TEST_CASE_2("dyn_rep_l/dyn_matrix_5", "dyn_rep", Z, float, double) {
     REQUIRE(b(0, 0, 1, 0, 1, 1) == 1.0);
     REQUIRE(b(0, 0, 1, 0, 1, 1) == 1.0);
 }
-
-//TODO Add tests for dyn_rep_l and dyn_rep_r on matrices
