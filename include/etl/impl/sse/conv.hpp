@@ -34,7 +34,7 @@ namespace sse {
 #if defined(ETL_VECTORIZE_IMPL) && defined(__SSE3__)
 
 inline void conv1_valid_micro_kernel(const double* in, const std::size_t n, const double* kernel, std::size_t m, double* out, std::size_t first, std::size_t last) {
-    auto kernel_reverse = allocate<__m128d>(m);
+    auto kernel_reverse = aligned_allocate_auto<__m128d>(m);
 
     //Reverse the kernel
 
@@ -95,7 +95,7 @@ inline void conv1_valid_micro_kernel(const double* in, const std::size_t n, cons
 }
 
 inline void conv1_valid_micro_kernel(const float* in, const std::size_t n, const float* kernel, std::size_t m, float* out, std::size_t first, std::size_t last) {
-    auto kernel_reverse = allocate<__m128>(m);
+    auto kernel_reverse = aligned_allocate_auto<__m128>(m);
 
     //Reverse the kernel
 
