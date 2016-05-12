@@ -333,6 +333,33 @@ auto conv_2d_same(A&& a, B&& b, C&& c) {
 }
 
 /*!
+ * \brief Creates an expression representing the same 2D convolution of a and multiple kernels from b
+ * \param a The input expression
+ * \param b The kernel expression
+ * \return an expression representing the same 2D convolution of a and multiple kernels from b
+ */
+template <typename A, typename B>
+auto conv_2d_same_multi(A&& a, B&& b) -> detail::temporary_binary_helper<A, B, conv2_same_multi_expr> {
+    static_assert(is_etl_expr<A>::value && is_etl_expr<B>::value, "Convolution only supported for ETL expressions");
+
+    return {a, b};
+}
+
+/*!
+ * \brief Creates an expression representing the same 2D convolution of a and multiple kernels from b, the result will be stored in c
+ * \param a The input expression
+ * \param b The kernel expressions
+ * \param c The result
+ * \return an expression representing the same 2D convolution of a and multiple kernels from b
+ */
+template <typename A, typename B, typename C>
+auto conv_2d_same_multi(A&& a, B&& b, C&& c) {
+    static_assert(is_etl_expr<A>::value && is_etl_expr<B>::value && is_etl_expr<C>::value, "Convolution only supported for ETL expressions");
+
+    return c = conv_2d_same_multi(a, b);
+}
+
+/*!
  * \brief Creates an expression representing the full 2D convolution of a and b
  * \param a The input expression
  * \param b The kernel expression
@@ -357,6 +384,33 @@ auto conv_2d_full(A&& a, B&& b, C&& c) {
     static_assert(is_etl_expr<A>::value && is_etl_expr<B>::value && is_etl_expr<C>::value, "Convolution only supported for ETL expressions");
 
     return c = conv_2d_full(a, b);
+}
+
+/*!
+ * \brief Creates an expression representing the full 2D convolution of a and multiple kernels from b
+ * \param a The input expression
+ * \param b The kernel expression
+ * \return an expression representing the full 2D convolution of a and multiple kernels from b
+ */
+template <typename A, typename B>
+auto conv_2d_full_multi(A&& a, B&& b) -> detail::temporary_binary_helper<A, B, conv2_full_multi_expr> {
+    static_assert(is_etl_expr<A>::value && is_etl_expr<B>::value, "Convolution only supported for ETL expressions");
+
+    return {a, b};
+}
+
+/*!
+ * \brief Creates an expression representing the full 2D convolution of a and multiple kernels from b, the result will be stored in c
+ * \param a The input expression
+ * \param b The kernel expressions
+ * \param c The result
+ * \return an expression representing the full 2D convolution of a and multiple kernels from b
+ */
+template <typename A, typename B, typename C>
+auto conv_2d_full_multi(A&& a, B&& b, C&& c) {
+    static_assert(is_etl_expr<A>::value && is_etl_expr<B>::value && is_etl_expr<C>::value, "Convolution only supported for ETL expressions");
+
+    return c = conv_2d_full_multi(a, b);
 }
 
 /*!
