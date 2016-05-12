@@ -18,16 +18,19 @@ TEMPLATE_TEST_CASE_2("conv_2d_valid_multi/1", "[conv] [conv2]", Z, double, float
     etl::fast_matrix<Z, 2, 2, 2> c_1;
     etl::fast_matrix<Z, 2, 2, 2> c_2;
     etl::fast_matrix<Z, 2, 2, 2> c_3;
+    etl::fast_matrix<Z, 2, 2, 2> c_4;
 
     c_1(0) = conv_2d_valid(I, K(0));
     c_1(1) = conv_2d_valid(I, K(1));
 
     conv_2d_valid_multi(I, K, c_2);
     c_3 = conv_2d_valid_multi(I, K);
+    c_4 = selected_helper(etl::conv_multi_impl::FFT, conv_2d_valid_multi(I, K));
 
     for (std::size_t i = 0; i < etl::size(c_1); ++i) {
         REQUIRE(c_1[i] == Approx(c_2[i]));
         REQUIRE(c_1[i] == Approx(c_3[i]));
+        REQUIRE(c_1[i] == Approx(c_4[i]));
     }
 }
 
@@ -37,14 +40,17 @@ TEMPLATE_TEST_CASE_2("conv_2d_valid_multi/2", "[conv] [conv2]", Z, double, float
 
     etl::fast_matrix<Z, 2, 2, 2> c_1;
     etl::fast_matrix<Z, 2, 2, 2> c_2;
+    etl::fast_matrix<Z, 2, 2, 2> c_3;
 
     c_1(0) = conv_2d_valid(I, K(0));
     c_1(1) = conv_2d_valid(I, K(1));
 
-    conv_2d_valid_multi(I, K, c_2);
+    c_2 = conv_2d_valid_multi(I, K);
+    c_3 = selected_helper(etl::conv_multi_impl::FFT, conv_2d_valid_multi(I, K));
 
     for (std::size_t i = 0; i < etl::size(c_1); ++i) {
         REQUIRE(c_1[i] == Approx(c_2[i]));
+        REQUIRE(c_1[i] == Approx(c_3[i]));
     }
 }
 
@@ -54,15 +60,18 @@ TEMPLATE_TEST_CASE_2("conv_2d_valid_multi/3", "[conv] [conv2]", Z, double, float
 
     etl::fast_matrix<Z, 3, 2, 2> c_1;
     etl::fast_matrix<Z, 3, 2, 2> c_2;
+    etl::fast_matrix<Z, 3, 2, 2> c_3;
 
     c_1(0) = conv_2d_valid(I, K(0));
     c_1(1) = conv_2d_valid(I, K(1));
     c_1(2) = conv_2d_valid(I, K(2));
 
-    conv_2d_valid_multi(I, K, c_2);
+    c_2 = conv_2d_valid_multi(I, K);
+    c_3 = selected_helper(etl::conv_multi_impl::FFT, conv_2d_valid_multi(I, K));
 
     for (std::size_t i = 0; i < etl::size(c_1); ++i) {
         REQUIRE(c_1[i] == Approx(c_2[i]));
+        REQUIRE(c_1[i] == Approx(c_3[i]));
     }
 }
 
@@ -72,15 +81,18 @@ TEMPLATE_TEST_CASE_2("conv_2d_valid_multi/4", "[conv] [conv2]", Z, double, float
 
     etl::fast_matrix<Z, 3, 4, 4> c_1;
     etl::fast_matrix<Z, 3, 4, 4> c_2;
+    etl::fast_matrix<Z, 3, 4, 4> c_3;
 
     c_1(0) = conv_2d_valid(I, K(0));
     c_1(1) = conv_2d_valid(I, K(1));
     c_1(2) = conv_2d_valid(I, K(2));
 
-    conv_2d_valid_multi(I, K, c_2);
+    c_2 = conv_2d_valid_multi(I, K);
+    c_3 = selected_helper(etl::conv_multi_impl::FFT, conv_2d_valid_multi(I, K));
 
     for (std::size_t i = 0; i < etl::size(c_1); ++i) {
         REQUIRE(c_1[i] == Approx(c_2[i]));
+        REQUIRE(c_1[i] == Approx(c_3[i]));
     }
 }
 
@@ -94,15 +106,18 @@ TEMPLATE_TEST_CASE_2("conv_2d_valid_multi/5", "[conv] [conv2]", Z, double, float
 
     etl::fast_matrix<Z, 3, 3, 3> c_1;
     etl::fast_matrix<Z, 3, 3, 3> c_2;
+    etl::fast_matrix<Z, 3, 3, 3> c_3;
 
     c_1(0) = conv_2d_valid(I, K(0));
     c_1(1) = conv_2d_valid(I, K(1));
     c_1(2) = conv_2d_valid(I, K(2));
 
-    conv_2d_valid_multi(I, K, c_2);
+    c_2 = conv_2d_valid_multi(I, K);
+    c_3 = selected_helper(etl::conv_multi_impl::FFT, conv_2d_valid_multi(I, K));
 
     for (std::size_t i = 0; i < etl::size(c_1); ++i) {
         REQUIRE(c_1[i] == Approx(c_2[i]));
+        REQUIRE(c_1[i] == Approx(c_3[i]));
     }
 }
 
@@ -116,15 +131,18 @@ TEMPLATE_TEST_CASE_2("conv_2d_valid_multi/6", "[conv] [conv2]", Z, double, float
 
     etl::fast_matrix<Z, 3, 3, 5> c_1;
     etl::fast_matrix<Z, 3, 3, 5> c_2;
+    etl::fast_matrix<Z, 3, 3, 5> c_3;
 
     c_1(0) = conv_2d_valid(I, K(0));
     c_1(1) = conv_2d_valid(I, K(1));
     c_1(2) = conv_2d_valid(I, K(2));
 
-    conv_2d_valid_multi(I, K, c_2);
+    c_2 = conv_2d_valid_multi(I, K);
+    c_3 = selected_helper(etl::conv_multi_impl::FFT, conv_2d_valid_multi(I, K));
 
     for (std::size_t i = 0; i < etl::size(c_1); ++i) {
         REQUIRE(c_1[i] == Approx(c_2[i]));
+        REQUIRE(c_1[i] == Approx(c_3[i]));
     }
 }
 
@@ -138,15 +156,18 @@ TEMPLATE_TEST_CASE_2("conv_2d_valid_multi/7", "[conv] [conv2]", Z, double, float
 
     etl::fast_matrix<Z, 3, 5, 3> c_1;
     etl::fast_matrix<Z, 3, 5, 3> c_2;
+    etl::fast_matrix<Z, 3, 5, 3> c_3;
 
     c_1(0) = conv_2d_valid(I, K(0));
     c_1(1) = conv_2d_valid(I, K(1));
     c_1(2) = conv_2d_valid(I, K(2));
 
-    conv_2d_valid_multi(I, K, c_2);
+    c_2 = conv_2d_valid_multi(I, K);
+    c_3 = selected_helper(etl::conv_multi_impl::FFT, conv_2d_valid_multi(I, K));
 
     for (std::size_t i = 0; i < etl::size(c_1); ++i) {
         REQUIRE(c_1[i] == Approx(c_2[i]));
+        REQUIRE(c_1[i] == Approx(c_3[i]));
     }
 }
 
@@ -160,15 +181,18 @@ TEMPLATE_TEST_CASE_2("conv_2d_valid_multi/8", "[conv] [conv2]", Z, double, float
 
     etl::fast_matrix<Z, 3, 7, 3> c_1;
     etl::fast_matrix<Z, 3, 7, 3> c_2;
+    etl::fast_matrix<Z, 3, 7, 3> c_3;
 
     c_1(0) = conv_2d_valid(I, K(0));
     c_1(1) = conv_2d_valid(I, K(1));
     c_1(2) = conv_2d_valid(I, K(2));
 
-    conv_2d_valid_multi(I, K, c_2);
+    c_2 = conv_2d_valid_multi(I, K);
+    c_3 = selected_helper(etl::conv_multi_impl::FFT, conv_2d_valid_multi(I, K));
 
     for (std::size_t i = 0; i < etl::size(c_1); ++i) {
         REQUIRE(c_1[i] == Approx(c_2[i]));
+        REQUIRE(c_1[i] == Approx(c_3[i]));
     }
 }
 
@@ -182,6 +206,7 @@ TEMPLATE_TEST_CASE_2("conv_2d_valid_multi/9", "[conv] [conv2]", Z, double, float
 
     etl::fast_matrix<Z, 3, 7, 3> c_1;
     etl::fast_matrix<Z, 3, 7, 3> c_2;
+    etl::fast_matrix<Z, 3, 7, 3> c_3;
 
     c_1(0) = conv_2d_valid(I, K(0));
     c_1(1) = conv_2d_valid(I, K(1));
@@ -191,9 +216,11 @@ TEMPLATE_TEST_CASE_2("conv_2d_valid_multi/9", "[conv] [conv2]", Z, double, float
     K(1).fflip_inplace();
     K(2).fflip_inplace();
 
-    conv_2d_valid_multi_flipped(I, K, c_2);
+    c_2 = conv_2d_valid_multi_flipped(I, K);
+    c_3 = selected_helper(etl::conv_multi_impl::FFT, conv_2d_valid_multi_flipped(I, K));
 
     for (std::size_t i = 0; i < etl::size(c_1); ++i) {
         REQUIRE(c_1[i] == Approx(c_2[i]));
+        REQUIRE(c_1[i] == Approx(c_3[i]));
     }
 }
