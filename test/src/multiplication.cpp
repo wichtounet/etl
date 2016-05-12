@@ -125,7 +125,7 @@ GEMV_TEST_CASE("multiplication/gemv/0", "[mul]") {
     etl::fast_vector<T, 3> b    = {7, 8, 9};
     etl::fast_matrix<T, 2> c;
 
-    c = etl::mul(a, b, c);
+    Impl::apply(a, b, c);
 
     REQUIRE(c(0) == 50);
     REQUIRE(c(1) == 122);
@@ -136,7 +136,7 @@ GEMV_TEST_CASE("multiplication/gemv/1", "[mul]") {
     etl::fast_vector<T, 5> b    = {7, 8, 9, 10, 11};
     etl::fast_matrix<T, 2> c;
 
-    c = etl::mul(a, b);
+    Impl::apply(a, b, c);
 
     REQUIRE(c(0) == 145);
     REQUIRE(c(1) == 370);
@@ -147,7 +147,7 @@ GEMV_TEST_CASE("multiplication/gemv/2", "[mul]") {
     etl::dyn_vector<T> b(3, etl::values(7, 8, 9));
     etl::dyn_vector<T> c(2);
 
-    etl::force(etl::mul(a, b, c));
+    Impl::apply(a, b, c);
 
     REQUIRE(c(0) == 50);
     REQUIRE(c(1) == 122);
@@ -158,7 +158,7 @@ GEMV_TEST_CASE("multiplication/gemv/3", "[mul]") {
     etl::dyn_vector<T> b(5, etl::values(7, 8, 9, 10, 11));
     etl::dyn_vector<T> c(2);
 
-    etl::force(etl::mul(a, b, c));
+    Impl::apply(a, b, c);
 
     REQUIRE(c(0) == 145);
     REQUIRE(c(1) == 370);
@@ -171,7 +171,7 @@ GEVM_TEST_CASE("multiplication/gevm/0", "[mul]") {
     etl::fast_vector<T, 3> b    = {7, 8, 9};
     etl::fast_matrix<T, 2> c;
 
-    etl::force(etl::mul(b, a, c));
+    Impl::apply(b, a, c);
 
     REQUIRE(c(0) == 76);
     REQUIRE(c(1) == 100);
@@ -182,7 +182,7 @@ GEVM_TEST_CASE("multiplication/gevm/1", "[mul]") {
     etl::dyn_vector<T> b(3, etl::values(7, 8, 9));
     etl::dyn_vector<T> c(2);
 
-    etl::force(etl::mul(b, a, c));
+    Impl::apply(b, a, c);
 
     REQUIRE(c(0) == 76);
     REQUIRE(c(1) == 100);
