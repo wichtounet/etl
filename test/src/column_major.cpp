@@ -11,6 +11,9 @@
 #include "mmul_test.hpp"
 #include "conv_test.hpp"
 
+#define CZ(a, b) std::complex<Z>(a, b)
+#define ECZ(a, b) etl::complex<Z>(a, b)
+
 TEMPLATE_TEST_CASE_2("column_major/1", "[fast][cm]", Z, int, long) {
     etl::fast_matrix_cm<Z, 2, 3> test_matrix(0);
 
@@ -375,4 +378,55 @@ TEMPLATE_TEST_CASE_2("column_major/compound/add_3", "[cm]", Z, float, double) {
     REQUIRE(a(0, 1) == 8.0);
     REQUIRE(a(1, 0) == 6.0);
     REQUIRE(a(1, 1) == 2.0);
+}
+
+// Complex multiplication tests
+
+CGEMM_TEST_CASE("column_major/complex/mul/0", "[mul][complex]") {
+    using Z = T;
+
+    etl::fast_matrix_cm<std::complex<Z>, 2, 3> a = {CZ(1, 1), CZ(0, 0), CZ(-2, -2),CZ(1, 1), CZ(2, 3), CZ(2, 2)};
+    etl::fast_matrix_cm<std::complex<Z>, 3, 2> b = {CZ(1, 1), CZ(3, 2), CZ(1, -1), CZ(2, 2),CZ(1, 0), CZ(2, 2)};
+    etl::fast_matrix_cm<std::complex<Z>, 2, 2> c;
+
+    Impl::apply(a, b, c);
+
+    REQUIRE(c(0, 0).real() == 3.0);
+    REQUIRE(c(0, 0).imag() == -7.0);
+    REQUIRE(c(0, 1).real() == -4.0);
+    REQUIRE(c(0, 1).imag() == 12.0);
+    REQUIRE(c(1, 0).real() == 5.0);
+    REQUIRE(c(1, 0).imag() == 5.0);
+    REQUIRE(c(1, 1).real() == 1.0);
+    REQUIRE(c(1, 1).imag() == 9.0);
+}
+
+CGEMV_TEST_CASE("column_major/complex/mul/1", "[mul][complex]") {
+    using Z = T;
+
+    etl::fast_matrix_cm<etl::complex<Z>, 2, 3> a = {ECZ(1, 1), ECZ(0, 0), ECZ(-2, -2),ECZ(1, 1), ECZ(2, 3), ECZ(2, 2)};
+    etl::fast_vector_cm<etl::complex<Z>, 3> b    = {ECZ(1, 1), ECZ(-3, -3), ECZ(5, 0.1)};
+    etl::fast_matrix_cm<etl::complex<Z>, 2> c;
+
+    Impl::apply(a, b, c);
+
+    REQUIRE(c(0).real == Approx(Z(9.7)));
+    REQUIRE(c(0).imag == Approx(Z(29.2)));
+    REQUIRE(c(1).real == Approx(Z(9.8)));
+    REQUIRE(c(1).imag == Approx(Z(4.2)));
+}
+
+CGEVM_TEST_CASE("column_major/complex/mul/2", "[mul][complex]") {
+    using Z = T;
+
+    etl::fast_matrix_cm<std::complex<Z>, 3, 2> a = {CZ(1, 1), CZ(2, 3), CZ(1, 1), CZ(-2, -2), CZ(0, 0), CZ(2, 2)};
+    etl::fast_vector_cm<std::complex<Z>, 3> b    = {CZ(1, 1), CZ(-3, -3), CZ(5, 0.1)};
+    etl::fast_matrix_cm<std::complex<Z>, 2> c;
+
+    Impl::apply(b, a, c);
+
+    REQUIRE(c(0).real() == Approx(Z(7.9)));
+    REQUIRE(c(0).imag() == Approx(Z(-7.9)));
+    REQUIRE(c(1).real() == Approx(Z(9.8)));
+    REQUIRE(c(1).imag() == Approx(Z(6.2)));
 }
