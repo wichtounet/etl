@@ -217,15 +217,26 @@ GEMM_TEST_CASE("column_major/mul/1", "mmul") {
     REQUIRE(c(1, 1) == 154);
 }
 
-TEMPLATE_TEST_CASE_2("column_major/gemv/1", "vmmul", Z, double, float) {
-    etl::fast_matrix_cm<Z, 2, 3> a = {1, 4, 2, 5, 3, 6};
-    etl::fast_vector_cm<Z, 3> b    = {7, 8, 9};
-    etl::fast_matrix_cm<Z, 2> c;
+GEMV_TEST_CASE("column_major/gemv/0", "[mul]") {
+    etl::fast_matrix_cm<T, 2, 3> a = {1, 4, 2, 5, 3, 6};
+    etl::fast_vector_cm<T, 3> b    = {7, 8, 9};
+    etl::fast_matrix_cm<T, 2> c;
 
-    c = etl::mul(a, b, c);
+    Impl::apply(a, b, c);
 
     REQUIRE(c(0) == 50);
     REQUIRE(c(1) == 122);
+}
+
+GEVM_TEST_CASE("column_major/gevm/0", "[mul]") {
+    etl::fast_matrix_cm<T, 3, 2> a = {1, 3, 5, 2, 4, 6};
+    etl::fast_vector_cm<T, 3> b    = {7, 8, 9};
+    etl::fast_matrix_cm<T, 2> c;
+
+    Impl::apply(b, a, c);
+
+    REQUIRE(c(0) == 76);
+    REQUIRE(c(1) == 100);
 }
 
 CONV1_FULL_TEST_CASE("column_major/conv/full_1", "[cm][conv]") {
