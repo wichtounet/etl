@@ -128,77 +128,111 @@ inline void dconv1_valid_micro_kernel(const double* in, const std::size_t n, con
     }
 }
 
-inline void sconv1_valid_micro_kernel(const float* in, const std::size_t n, const float* kernel, std::size_t m, float* out, std::size_t first, std::size_t last) {
-    auto kernel_reverse = aligned_allocate_auto<__m256>(m);
+inline float __attribute__((__always_inline__)) mm256_hadd_ss(__m256 in) {
+    const __m128 x128 = _mm_add_ps(_mm256_extractf128_ps(in, 1), _mm256_castps256_ps128(in));
+    const __m128 x64  = _mm_add_ps(x128, _mm_movehl_ps(x128, x128));
+    const __m128 x32  = _mm_add_ss(x64, _mm_shuffle_ps(x64, x64, 0x55));
+    return _mm_cvtss_f32(x32);
+}
 
-    //Reverse the kernel
-
-    for (std::size_t i = 0; i < m; i++) {
-        kernel_reverse[i] = _mm256_broadcast_ss(kernel + m - i - 1);
-    }
-
-    //Compute the convolution 8 floats at a time
-
+inline void sconv1_valid_micro_kernel(const float* __restrict__ in, const std::size_t n, const float* __restrict__ kernel, std::size_t m, float* __restrict__ out, std::size_t first, std::size_t last) {
     auto llast = std::min(n - m + 1, last);
 
-    for (std::size_t i = first; i + 7 < llast; i += 8) {
+    auto kernel_reverse = aligned_allocate_auto<float>(m);
+
+    std::reverse_copy(kernel, kernel + m, kernel_reverse.get());
+
+    // Loop over the input, 8 times unrolled
+
+    for (std::size_t j = first; j + 7 < llast; j += 8) {
         __m256 r1 = _mm256_setzero_ps();
         __m256 r2 = _mm256_setzero_ps();
         __m256 r3 = _mm256_setzero_ps();
         __m256 r4 = _mm256_setzero_ps();
+        __m256 r5 = _mm256_setzero_ps();
+        __m256 r6 = _mm256_setzero_ps();
+        __m256 r7 = _mm256_setzero_ps();
+        __m256 r8 = _mm256_setzero_ps();
 
-        for (std::size_t k = 0; k + 3 < m; k += 4) {
-            __m256 t1 = _mm256_loadu_ps(in + i + k);
-            __m256 t2 = _mm256_loadu_ps(in + i + k + 1);
-            __m256 t3 = _mm256_loadu_ps(in + i + k + 2);
-            __m256 t4 = _mm256_loadu_ps(in + i + k + 3);
+        // Compute the convolution with 8 floats of the kernel at once
 
-#ifdef __FMA__
-            r1 = _mm256_fmadd_ps(kernel_reverse[k], t1, r1);
-            r2 = _mm256_fmadd_ps(kernel_reverse[k + 1], t2, r2);
-            r3 = _mm256_fmadd_ps(kernel_reverse[k + 2], t3, r3);
-            r4 = _mm256_fmadd_ps(kernel_reverse[k + 3], t4, r4);
-#else
-            __m256 v1  = _mm256_mul_ps(kernel_reverse[k], t1);
-            r1         = _mm256_add_ps(r1, v1);
-            __m256 v2  = _mm256_mul_ps(kernel_reverse[k + 1], t2);
-            r2         = _mm256_add_ps(r2, v2);
-            __m256 v3  = _mm256_mul_ps(kernel_reverse[k + 2], t3);
-            r3         = _mm256_add_ps(r3, v3);
-            __m256 v4  = _mm256_mul_ps(kernel_reverse[k + 3], t4);
-            r4         = _mm256_add_ps(r4, v4);
-#endif
+        for (std::size_t l = 0; l + 7 < m; l += 8) {
+            __m256 k1 = _mm256_load_ps(kernel_reverse.get() + l);
+
+            __m256 i1 = _mm256_loadu_ps(in + (j + 0) + l);
+            __m256 i2 = _mm256_loadu_ps(in + (j + 1) + l);
+            __m256 i3 = _mm256_loadu_ps(in + (j + 2) + l);
+            __m256 i4 = _mm256_loadu_ps(in + (j + 3) + l);
+
+            __m256 t1  = _mm256_mul_ps(i1, k1);
+            __m256 t2  = _mm256_mul_ps(i2, k1);
+            __m256 t3  = _mm256_mul_ps(i3, k1);
+            __m256 t4  = _mm256_mul_ps(i4, k1);
+
+            __m256 i5 = _mm256_loadu_ps(in + (j + 4) + l);
+            __m256 i6 = _mm256_loadu_ps(in + (j + 5) + l);
+            __m256 i7 = _mm256_loadu_ps(in + (j + 6) + l);
+            __m256 i8 = _mm256_loadu_ps(in + (j + 7) + l);
+
+            __m256 t5  = _mm256_mul_ps(i5, k1);
+            __m256 t6  = _mm256_mul_ps(i6, k1);
+            __m256 t7  = _mm256_mul_ps(i7, k1);
+            __m256 t8  = _mm256_mul_ps(i8, k1);
+
+            r1         = _mm256_add_ps(r1, t1);
+            r2         = _mm256_add_ps(r2, t2);
+            r3         = _mm256_add_ps(r3, t3);
+            r4         = _mm256_add_ps(r4, t4);
+            r5         = _mm256_add_ps(r5, t5);
+            r6         = _mm256_add_ps(r6, t6);
+            r7         = _mm256_add_ps(r7, t7);
+            r8         = _mm256_add_ps(r8, t8);
         }
 
-        for (std::size_t k = m - m % 4; k < m; ++k) {
-            __m256 t1 = _mm256_loadu_ps(in + i + k);
+        out[j + 0] = mm256_hadd_ss(r1);
+        out[j + 1] = mm256_hadd_ss(r2);
+        out[j + 2] = mm256_hadd_ss(r3);
+        out[j + 3] = mm256_hadd_ss(r4);
+        out[j + 4] = mm256_hadd_ss(r5);
+        out[j + 5] = mm256_hadd_ss(r6);
+        out[j + 6] = mm256_hadd_ss(r7);
+        out[j + 7] = mm256_hadd_ss(r8);
 
-#ifdef __FMA__
-            r1 = _mm256_fmadd_ps(kernel_reverse[k], t1, r1);
-#else
-            __m256 v1  = _mm256_mul_ps(kernel_reverse[k], t1);
-            r1         = _mm256_add_ps(r1, v1);
-#endif
+        // Remainder loop
+
+        for (std::size_t l = m - m % 8; l < m; ++l) {
+            out[j + 0] += in[(j + 0) + l] * kernel_reverse[l];
+            out[j + 1] += in[(j + 1) + l] * kernel_reverse[l];
+            out[j + 2] += in[(j + 2) + l] * kernel_reverse[l];
+            out[j + 3] += in[(j + 3) + l] * kernel_reverse[l];
+            out[j + 4] += in[(j + 4) + l] * kernel_reverse[l];
+            out[j + 5] += in[(j + 5) + l] * kernel_reverse[l];
+            out[j + 6] += in[(j + 6) + l] * kernel_reverse[l];
+            out[j + 7] += in[(j + 7) + l] * kernel_reverse[l];
         }
-
-        __m256 res = _mm256_add_ps(r1, r2);
-        res        = _mm256_add_ps(res, r3);
-        res        = _mm256_add_ps(res, r4);
-
-        _mm256_storeu_ps(out + i, res);
     }
 
-    //Complete the last outputs which are not vectorized
+    // Remainder loop for the inputs
 
-    auto c = llast - first;
+    for (std::size_t j = llast - (llast - first) % 8; j < llast; ++j) {
+        __m256 r1 = _mm256_setzero_ps();
 
-    if (c % 8 != 0) {
-        auto rem = c % 8;
-        for (std::size_t i = c - rem; i < c; ++i) {
-            out[i] = 0.0;
-            for (std::size_t k = 0; k < m; k++) {
-                out[i] += in[i + k] * kernel[m - k - 1];
-            }
+        // Compute the convolution with 8 floats
+
+        for (std::size_t l = 0; l + 7 < m; l += 8) {
+            __m256 i1 = _mm256_loadu_ps(in + j + l);
+            __m256 k1 = _mm256_load_ps(kernel_reverse.get() + l);
+
+            __m256 t1  = _mm256_mul_ps(i1, k1);
+            r1         = _mm256_add_ps(r1, t1);
+        }
+
+        out[j + 0] = mm256_hadd_ss(r1);
+
+        // Remainder loop
+
+        for (std::size_t l = m - m % 8; l < m; ++l) {
+            out[j] += in[j + l] * kernel_reverse[l];
         }
     }
 }
