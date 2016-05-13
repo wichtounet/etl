@@ -24,19 +24,11 @@
 #include <iostream>
 #endif
 
-#ifdef __clang__
-#define ETL_INLINE_VEC_VOID static inline void __attribute__((__always_inline__, __nodebug__))
-#define ETL_INLINE_VEC_256 static inline __m256 __attribute__((__always_inline__, __nodebug__))
-#define ETL_INLINE_VEC_256D static inline __m256d __attribute__((__always_inline__, __nodebug__))
-#define ETL_OUT_VEC_256 inline __m256 __attribute__((__always_inline__, __nodebug__))
-#define ETL_OUT_VEC_256D inline __m256d __attribute__((__always_inline__, __nodebug__))
-#else
-#define ETL_INLINE_VEC_VOID static inline void __attribute__((__always_inline__))
-#define ETL_INLINE_VEC_256 static inline __m256 __attribute__((__always_inline__))
-#define ETL_INLINE_VEC_256D static inline __m256d __attribute__((__always_inline__))
-#define ETL_OUT_VEC_256 inline __m256 __attribute__((__always_inline__))
-#define ETL_OUT_VEC_256D inline __m256d __attribute__((__always_inline__))
-#endif
+#define ETL_INLINE_VEC_VOID ETL_STATIC_INLINE(void)
+#define ETL_INLINE_VEC_256 ETL_STATIC_INLINE(__m256)
+#define ETL_INLINE_VEC_256D ETL_STATIC_INLINE(__m256d)
+#define ETL_OUT_VEC_256 ETL_OUT_INLINE(__m256)
+#define ETL_OUT_VEC_256D ETL_OUT_INLINE(__m256d)
 
 namespace etl {
 
@@ -243,22 +235,22 @@ struct avx_vec {
     }
 
     template <bool Complex = false>
-    ETL_INLINE_VEC_256 mul(__m256 lhs, __m256 rhs) {
+    ETL_TMP_INLINE(__m256) mul(__m256 lhs, __m256 rhs) {
         return _mm256_mul_ps(lhs, rhs);
     }
 
     template <bool Complex = false>
-    ETL_INLINE_VEC_256D mul(__m256d lhs, __m256d rhs) {
+    ETL_TMP_INLINE(__m256d) mul(__m256d lhs, __m256d rhs) {
         return _mm256_mul_pd(lhs, rhs);
     }
 
     template <bool Complex = false>
-    ETL_INLINE_VEC_256 div(__m256 lhs, __m256 rhs) {
+    ETL_TMP_INLINE(__m256) div(__m256 lhs, __m256 rhs) {
         return _mm256_div_ps(lhs, rhs);
     }
 
     template <bool Complex = false>
-    ETL_INLINE_VEC_256D div(__m256d lhs, __m256d rhs) {
+    ETL_TMP_INLINE(__m256d) div(__m256d lhs, __m256d rhs) {
         return _mm256_div_pd(lhs, rhs);
     }
 

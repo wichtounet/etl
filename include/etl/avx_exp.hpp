@@ -43,13 +43,8 @@
 
 #ifdef __AVX__
 
-#ifdef __clang__
-#define ETL_INLINE_VEC_256 static inline __m256 __attribute__((__always_inline__, __nodebug__))
-#define ETL_INLINE_VEC_256D static inline __m256d __attribute__((__always_inline__, __nodebug__))
-#else
-#define ETL_INLINE_VEC_256 static inline __m256 __attribute__((__always_inline__))
-#define ETL_INLINE_VEC_256D static inline __m256d __attribute__((__always_inline__))
-#endif
+#define ETL_INLINE_VEC_256 ETL_STATIC_INLINE(__m256)
+#define ETL_INLINE_VEC_256D ETL_STATIC_INLINE(__m256d)
 
 namespace etl {
 

@@ -22,19 +22,11 @@
 #include <iostream>
 #endif
 
-#ifdef __clang__
-#define ETL_INLINE_VEC_VOID static inline void __attribute__((__always_inline__, __nodebug__))
-#define ETL_INLINE_VEC_512 static inline __m512 __attribute__((__always_inline__, __nodebug__))
-#define ETL_INLINE_VEC_512D static inline __m512d __attribute__((__always_inline__, __nodebug__))
-#define ETL_OUT_VEC_512 inline __m512 __attribute__((__always_inline__, __nodebug__))
-#define ETL_OUT_VEC_512D inline __m512d __attribute__((__always_inline__, __nodebug__))
-#else
-#define ETL_INLINE_VEC_VOID static inline void __attribute__((__always_inline__))
-#define ETL_INLINE_VEC_512 static inline __m512 __attribute__((__always_inline__))
-#define ETL_INLINE_VEC_512D static inline __m512d __attribute__((__always_inline__))
-#define ETL_OUT_VEC_512 inline __m512 __attribute__((__always_inline__))
-#define ETL_OUT_VEC_512D inline __m512d __attribute__((__always_inline__))
-#endif
+#define ETL_INLINE_VEC_VOID ETL_STATIC_INLINE(void)
+#define ETL_INLINE_VEC_512 ETL_STATIC_INLINE(__m512)
+#define ETL_INLINE_VEC_512D ETL_STATIC_INLINE(__m512d)
+#define ETL_OUT_VEC_2512ETL_OUT_INLINE(__m512)
+#define ETL_OUT_VEC_512D ETL_OUT_INLINE(__m512d)
 
 namespace etl {
 

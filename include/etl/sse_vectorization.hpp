@@ -22,19 +22,11 @@
 #include <iostream>
 #endif
 
-#ifdef __clang__
-#define ETL_INLINE_VEC_VOID static inline void __attribute__((__always_inline__, __nodebug__))
-#define ETL_INLINE_VEC_128 static inline __m128 __attribute__((__always_inline__, __nodebug__))
-#define ETL_INLINE_VEC_128D static inline __m128d __attribute__((__always_inline__, __nodebug__))
-#define ETL_OUT_VEC_128 inline __m128 __attribute__((__always_inline__, __nodebug__))
-#define ETL_OUT_VEC_128D inline __m128d __attribute__((__always_inline__, __nodebug__))
-#else
-#define ETL_INLINE_VEC_VOID static inline void __attribute__((__always_inline__))
-#define ETL_INLINE_VEC_128 static inline __m128 __attribute__((__always_inline__))
-#define ETL_INLINE_VEC_128D static inline __m128d __attribute__((__always_inline__))
-#define ETL_OUT_VEC_128 inline __m128 __attribute__((__always_inline__))
-#define ETL_OUT_VEC_128D inline __m128d __attribute__((__always_inline__))
-#endif
+#define ETL_INLINE_VEC_VOID ETL_STATIC_INLINE(void)
+#define ETL_INLINE_VEC_128 ETL_STATIC_INLINE(__m128)
+#define ETL_INLINE_VEC_128D ETL_STATIC_INLINE(__m128d)
+#define ETL_OUT_VEC_128 ETL_OUT_INLINE(__m128)
+#define ETL_OUT_VEC_128D ETL_OUT_INLINE(__m128d)
 
 namespace etl {
 
@@ -240,22 +232,22 @@ struct sse_vec {
     }
 
     template <bool Complex = false>
-    ETL_INLINE_VEC_128 mul(__m128 lhs, __m128 rhs) {
+    ETL_TMP_INLINE(__m128) mul(__m128 lhs, __m128 rhs) {
         return _mm_mul_ps(lhs, rhs);
     }
 
     template <bool Complex = false>
-    ETL_INLINE_VEC_128D mul(__m128d lhs, __m128d rhs) {
+    ETL_TMP_INLINE(__m128d) mul(__m128d lhs, __m128d rhs) {
         return _mm_mul_pd(lhs, rhs);
     }
 
     template <bool Complex = false>
-    ETL_INLINE_VEC_128 div(__m128 lhs, __m128 rhs) {
+    ETL_TMP_INLINE(__m128) div(__m128 lhs, __m128 rhs) {
         return _mm_div_ps(lhs, rhs);
     }
 
     template <bool Complex = false>
-    ETL_INLINE_VEC_128D div(__m128d lhs, __m128d rhs) {
+    ETL_TMP_INLINE(__m128d) div(__m128d lhs, __m128d rhs) {
         return _mm_div_pd(lhs, rhs);
     }
 
