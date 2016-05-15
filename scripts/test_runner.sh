@@ -8,7 +8,8 @@ function etl_run {
 
 if [ "$ETL_LCOV" == "" ]
 then
-    gcovr -x -b -r . --object-directory=debug/test > coverage_${1}.xml
+    gcovr -x -b -r . --object-directory=debug/test > coverage_${1}_raw.xml
+    cov_clean coverage_${1}_raw.xml coverage_${1}.xml
 else
     lcov --directory debug --rc lcov_branch_coverage=1 --capture --output-file coverage_${1}.dat
     lcov_cobertura.py -b debug -o coverage_${1}.xml coverage_${1}.dat
