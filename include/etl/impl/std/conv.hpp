@@ -166,7 +166,7 @@ void conv2_valid(const I& input, const K& kernel, C&& conv) {
 /*!
  * \brief Standard implementation of a 2D 'valid' convolution C = I * K, with multiple kernels
  * \param input The input matrix
- * \param kernel The kernel matrix
+ * \param kernels The kernel matrix
  * \param conv The output matrix
  */
 template <typename I, typename K, typename C>
@@ -179,7 +179,7 @@ void conv2_valid_multi(const I& input, const K& kernels, C&& conv) {
 /*!
  * \brief Standard implementation of a 2D 'valid' convolution C = I * K, with multiple flipped kernels
  * \param input The input matrix
- * \param kernel The kernel matrix
+ * \param kernels The kernel matrix
  * \param conv The output matrix
  */
 template <typename I, typename K, typename C>
@@ -192,7 +192,7 @@ void conv2_valid_multi_flipped(const I& input, const K& kernels, C&& conv) {
 /*!
  * \brief Standard implementation of multiple 2D 'valid' convolution C = I * K, with multiple kernels
  * \param input The input matrix
- * \param kernel The kernel matrix
+ * \param kernels The kernel matrix
  * \param conv The output matrix
  */
 template <typename I, typename K, typename C>
@@ -205,7 +205,7 @@ void conv3_valid_multi(const I& input, const K& kernels, C&& conv) {
 /*!
  * \brief Standard implementation of multiple 2D 'valid' convolution C = I * K, with multiple flipped kernels
  * \param input The input matrix
- * \param kernel The kernel matrix
+ * \param kernels The kernel matrix
  * \param conv The output matrix
  */
 template <typename I, typename K, typename C>
@@ -218,7 +218,7 @@ void conv3_valid_multi_flipped(const I& input, const K& kernels, C&& conv) {
 /*!
  * \brief Standard implementation of a 2D 'full' convolution C = I * K, with multiple kernels
  * \param input The input matrix
- * \param kernel The kernel matrix
+ * \param kernels The kernel matrix
  * \param conv The output matrix
  */
 template <typename I, typename K, typename C>
@@ -231,7 +231,7 @@ void conv2_full_multi(const I& input, const K& kernels, C&& conv) {
 /*!
  * \brief Standard implementation of a 2D 'same' convolution C = I * K, with multiple kernels
  * \param input The input matrix
- * \param kernel The kernel matrix
+ * \param kernels The kernel matrix
  * \param conv The output matrix
  */
 template <typename I, typename K, typename C>

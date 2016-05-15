@@ -67,7 +67,7 @@ void complex_pad_2d(const F1& in, F2& out) {
 /*!
  * \brief Standard implementation of a 2D 'valid' convolution C = I * K, with multiple kernels
  * \param input The input matrix
- * \param kernel The kernel matrix
+ * \param kernels The kernel matrix
  * \param conv The output matrix
  */
 template <typename I, typename K_T, typename C>
@@ -115,7 +115,7 @@ void fft_conv2_valid_multi(const I& input, const K_T& kernels, C&& conv) {
 /*!
  * \brief BLAS implementation of a 2D 'valid' convolution C = I * K, with multiple kernels
  * \param input The input matrix
- * \param kernel The kernel matrix
+ * \param kernels The kernel matrix
  * \param conv The output matrix
  */
 template <typename I, typename K_T, typename C>
@@ -143,7 +143,7 @@ void blas_conv2_valid_multi(const I& input, const K_T& kernels, C&& conv) {
 /*!
  * \brief Standard implementation of a 2D 'valid' convolution C = I * K, with multiple flipped kernels
  * \param input The input matrix
- * \param kernel The kernel matrix
+ * \param kernels The kernel matrix
  * \param conv The output matrix
  */
 template <typename I, typename K_T, typename C>
@@ -160,7 +160,7 @@ void fft_conv2_valid_multi_flipped(const I& input, const K_T& kernels, C&& conv)
 /*!
  * \brief BLAS implementation of a 2D 'valid' convolution C = I * K, with multiple flipped kernels
  * \param input The input matrix
- * \param kernel The kernel matrix
+ * \param kernels The kernel matrix
  * \param conv The output matrix
  */
 template <typename I, typename K_T, typename C>
@@ -182,7 +182,7 @@ void blas_conv2_valid_multi_flipped(const I& input, const K_T& kernels, C&& conv
 /*!
  * \brief Standard implementation of multiple 2D 'valid' convolution C = I * K, with multiple flipped kernels
  * \param input The input matrix
- * \param kernel The kernel matrix
+ * \param kernels The kernel matrix
  * \param conv The output matrix
  */
 template <typename I, typename K_T, typename C_T>

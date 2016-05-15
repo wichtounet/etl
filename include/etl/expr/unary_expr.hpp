@@ -511,7 +511,6 @@ private:
     /*!
      * \brief Assign the given value to each eleemnt of the unary expression
      * \param e The value
-     * \return the unary expression
      */
     template<cpp_enable_if_cst(all_dma<Expr>::value)>
     void memory_set(const value_type& e){
@@ -521,7 +520,6 @@ private:
     /*!
      * \brief Assign the given value to each eleemnt of the unary expression
      * \param e The value
-     * \return the unary expression
      */
     template<cpp_enable_if_cst(!all_dma<Expr>::value)>
     void memory_set(const value_type& e){
