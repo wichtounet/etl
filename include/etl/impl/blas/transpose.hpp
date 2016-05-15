@@ -104,6 +104,8 @@ void transpose(A&& /*a*/, C&& /*c*/) {}
 
 #else
 
+//COVERAGE_EXCLUDE_BEGIN
+
 /*!
  * \brief Inplace transposition of the square matrix c
  * \param c The matrix to transpose
@@ -135,6 +137,8 @@ void transpose(A&& a, C&& c) {
     cpp_unused(c);
     cpp_unreachable("MKL not enabled/available");
 }
+
+//COVERAGE_EXCLUDE_END
 
 #endif
 

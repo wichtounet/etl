@@ -816,6 +816,8 @@ void fft2_convolve(A&& a, B&& b, C&& c) {
 
 #else
 
+//COVERAGE_EXCLUDE_BEGIN
+
 /*!
  * \brief Perform the 1D FFT on a and store the result in c
  * \param a The input expression
@@ -971,6 +973,8 @@ void fft2_convolve(A&& a, B&& b, C&& c) {
     cpp_unused(c);
     cpp_unreachable("Unsupported feature called: mkl fft");
 }
+
+//COVERAGE_EXCLUDE_END
 
 #endif
 

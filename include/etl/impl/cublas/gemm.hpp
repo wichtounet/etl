@@ -559,6 +559,8 @@ void gevm(A&&, B&& b, C&&);
 
 #else
 
+//COVERAGE_EXCLUDE_BEGIN
+
 /*!
  * \brief Compute the matrix mutplication of a and b and store the result in c
  * param a The lhs of the multiplication
@@ -600,6 +602,8 @@ void gevm(A&& a, B&& b, C&& c) {
     cpp_unused(c);
     cpp_unreachable("Unsupported feature called: cublas gemm");
 }
+
+//COVERAGE_EXCLUDE_END
 
 #endif
 

@@ -752,6 +752,8 @@ void conv2_full(const I& /*input*/, const K& /*kernel*/, C&& /*conv*/) {}
 
 #else
 
+//COVERAGE_EXCLUDE_BEGIN
+
 template <typename I, typename K, typename C>
 void conv1_full(const I& /*input*/, const K& /*kernel*/, C&& /*conv*/, std::size_t /*first*/, std::size_t /*last*/) {
     cpp_unreachable("AVX not available/enabled");
@@ -781,6 +783,8 @@ template <typename I, typename K, typename C>
 void conv2_full(const I& /*input*/, const K& /*kernel*/, C&& /*conv*/) {
     cpp_unreachable("AVX not available/enabled");
 }
+
+//COVERAGE_EXCLUDE_END
 
 #endif
 

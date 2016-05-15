@@ -82,6 +82,8 @@ void scalar_div(T&& /*lhs*/, value_t<T> /*rhs*/) {}
 
 #else
 
+//COVERAGE_EXCLUDE_BEGIN
+
 /*!
  * \brief Add the rhs scalar value to each element of lhs
  * \param lhs The matrix
@@ -129,6 +131,8 @@ void scalar_div(T&& lhs, value_t<T> rhs) {
     cpp_unused(rhs);
     cpp_unreachable("CBLAS not available/enabled");
 }
+
+//COVERAGE_EXCLUDE_END
 
 #endif
 

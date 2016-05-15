@@ -49,6 +49,8 @@ value_t<A> dot(const A& a, const B& b) {
     return cblas_ddot(etl::size(a), m_a, 1, m_b, 1);
 }
 
+//COVERAGE_EXCLUDE_BEGIN
+
 /*!
  * \copydoc dot
  */
@@ -68,6 +70,8 @@ value_t<A> dot(const A& /*a*/, const B& /*b*/) {
     cpp_unreachable("BLAS not enabled/available");
     return 0.0;
 }
+
+//COVERAGE_EXCLUDE_END
 
 #endif
 

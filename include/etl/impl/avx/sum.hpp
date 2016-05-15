@@ -113,6 +113,8 @@ value_t<I> sum(const I& input, std::size_t first, std::size_t last) {
     return dsum_kernel(input, first, last);
 }
 
+//COVERAGE_EXCLUDE_BEGIN
+
 template <typename I, cpp_disable_if(decay_traits<I>::template vectorizable<vector_mode_t::AVX>::value)>
 value_t<I> sum(const I& /*input*/, std::size_t /*first*/, std::size_t /*last*/) {
     cpp_unreachable("AVX not available/enabled");
@@ -136,6 +138,8 @@ double sum(const I& input, std::size_t first, std::size_t last) {
     cpp_unreachable("AVX not available/enabled");
     return 0.0;
 }
+
+//COVERAGE_EXCLUDE_END
 
 #endif
 

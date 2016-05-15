@@ -232,6 +232,8 @@ void gevm(A&& a, B&& b, C&& c);
 
 #else
 
+//COVERAGE_EXCLUDE_BEGIN
+
 template <typename A, typename B, typename C>
 void gemm(A&&, B&&, C&&) {
     cpp_unreachable("Unsupported feature called: blas gemm");
@@ -246,6 +248,8 @@ template <typename A, typename B, typename C>
 void gevm(A&&, B&&, C&&) {
     cpp_unreachable("Unsupported feature called: blas gemm");
 }
+
+//COVERAGE_EXCLUDE_END
 
 #endif
 
