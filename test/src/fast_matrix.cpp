@@ -437,6 +437,21 @@ TEMPLATE_TEST_CASE_2("fast_matrix/minus_1", "fast_matrix::minus", Z, float, doub
     REQUIRE(d(1, 1) == -1.0);
 }
 
+TEMPLATE_TEST_CASE_2("fast_matrix/plus_1", "fast_matrix::plus", Z, float, double) {
+    etl::fast_matrix<Z, 2, 4> a = {-1.0, 2.0, 5.0, 1.0, 0.0, 3.3, 2.2, -1.4};
+
+    etl::fast_matrix<Z, 2, 4> d(+a);
+
+    REQUIRE(d(0, 0) == Z(-1.0));
+    REQUIRE(d(0, 1) == Z(2.0));
+    REQUIRE(d(0, 2) == Z(5.0));
+    REQUIRE(d(0, 3) == Z(1.0));
+    REQUIRE(d(1, 0) == Z(0.0));
+    REQUIRE(d(1, 1) == Z(3.3));
+    REQUIRE(d(1, 2) == Z(2.2));
+    REQUIRE(d(1, 3) == Z(-1.4));
+}
+
 TEMPLATE_TEST_CASE_2("fast_matrix/log_1", "fast_matrix::log", Z, float, double) {
     etl::fast_matrix<Z, 2, 2> a = {-1.0, 2.0, 5.0, 1.0};
 
