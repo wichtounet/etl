@@ -291,14 +291,6 @@ inline void conv2_same_micro_kernel(const double* in, std::size_t n1, std::size_
     std::size_t c1 = n1;
     std::size_t c2 = n2;
 
-    __m128d tmp1;
-    __m128d tmp2;
-    __m128d tmp3;
-    __m128d tmp4;
-    __m128d res;
-
-    double tmp_res[2] __attribute__((aligned(16)));
-
     for (std::size_t i = 0; i < c1; ++i) {
         std::size_t k_lo = std::max<int>(0, i - (m1 - 1) / 2);
         std::size_t k_hi = std::min<int>(n1 - 1, i + m1 / 2) + 1;
@@ -307,19 +299,21 @@ inline void conv2_same_micro_kernel(const double* in, std::size_t n1, std::size_
             std::size_t l_lo = std::max<int>(0, j - (m2 - 1) / 2);
             std::size_t l_hi = std::min<int>(n2 - 1, j + m2 / 2) + 1;
 
-            res = _mm_setzero_pd();
+            __m128d r1 = _mm_setzero_pd();
 
             for (std::size_t k = k_lo; k < k_hi; ++k) {
                 for (std::size_t l = l_lo; l + 1 < l_hi; l += 2) {
-                    tmp1 = _mm_loadu_pd(in + k * n2 + l);
-                    tmp2 = _mm_loadu_pd(kernel + (i - k + m1 / 2) * m2 + (j - (l + 1) + m2 / 2));
-                    tmp3 = _mm_shuffle_pd(tmp2, tmp2, _MM_SHUFFLE2(0, 1));
-                    tmp4 = _mm_mul_pd(tmp3, tmp1);
-                    res  = _mm_add_pd(res, tmp4);
+                    __m128d i1 = _mm_loadu_pd(in + k * n2 + l);
+
+                    __m128d tmp2 = _mm_loadu_pd(kernel + (i - k + m1 / 2) * m2 + (j - (l + 1) + m2 / 2));
+                    __m128d k1 = _mm_shuffle_pd(tmp2, tmp2, _MM_SHUFFLE2(0, 1));
+
+                    __m128d tmp4 = _mm_mul_pd(k1, i1);
+                    r1  = _mm_add_pd(r1, tmp4);
                 }
             }
 
-            _mm_store_pd(tmp_res, res);
+            out[i * c2 + j] = mm_hadd_sd(r1);
 
             double temp = 0.0;
 
@@ -331,7 +325,7 @@ inline void conv2_same_micro_kernel(const double* in, std::size_t n1, std::size_
                 }
             }
 
-            out[i * c2 + j] = temp + tmp_res[0] + tmp_res[1];
+            out[i * c2 + j] += temp;
         }
     }
 }
