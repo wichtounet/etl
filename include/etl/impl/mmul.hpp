@@ -263,6 +263,12 @@ inline gemm_impl select_gevm_impl(const std::size_t n1, const std::size_t n2) {
  * \brief Functor for matrix-matrix multiplication
  */
 struct mm_mul_impl {
+    /*!
+     * \brief Apply the function C = A * B
+     * \param a The lhs of the multiplication
+     * \param b The rhs of the multiplication
+     * \param c The target of the multiplication
+     */
     template <typename A, typename B, typename C>
     static void apply(A&& a, B&& b, C&& c) {
         gemm_impl impl = select_gemm_impl<all_dma<A, B, C>::value, value_t<A>>(etl::dim<0>(a), etl::dim<1>(a), etl::dim<1>(c));
@@ -283,6 +289,12 @@ struct mm_mul_impl {
  * \brief Functor for vector-matrix multiplication
  */
 struct vm_mul_impl {
+    /*!
+     * \brief Apply the function C = A * B
+     * \param a The lhs of the multiplication
+     * \param b The rhs of the multiplication
+     * \param c The target of the multiplication
+     */
     template <typename A, typename B, typename C>
     static void apply(A&& a, B&& b, C&& c) {
         gemm_impl impl = select_gevm_impl<all_dma<A, B, C>::value, value_t<A>>(etl::dim<0>(b), etl::dim<1>(b));
@@ -301,6 +313,12 @@ struct vm_mul_impl {
  * \brief Functor for matrix-vector multiplication
  */
 struct mv_mul_impl {
+    /*!
+     * \brief Apply the function C = A * B
+     * \param a The lhs of the multiplication
+     * \param b The rhs of the multiplication
+     * \param c The target of the multiplication
+     */
     template <typename A, typename B, typename C>
     static void apply(A&& a, B&& b, C&& c) {
         gemm_impl impl = select_gemv_impl<all_dma<A, B, C>::value, value_t<A>>(etl::dim<0>(a), etl::dim<1>(a));
@@ -319,6 +337,12 @@ struct mv_mul_impl {
  * \brief Functor for Strassen matrix-matrix multiplication
  */
 struct strassen_mm_mul_impl {
+    /*!
+     * \brief Apply the function C = A * B
+     * \param a The lhs of the multiplication
+     * \param b The rhs of the multiplication
+     * \param c The target of the multiplication
+     */
     template <typename A, typename B, typename C>
     static void apply(A&& a, B&& b, C&& c) {
         etl::impl::standard::strassen_mm_mul(a, b, c);
