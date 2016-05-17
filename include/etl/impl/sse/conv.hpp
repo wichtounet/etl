@@ -494,14 +494,6 @@ inline void conv2_full_micro_kernel(const float* in, std::size_t n1, std::size_t
     std::size_t c1 = n1 + m1 - 1;
     std::size_t c2 = n2 + m2 - 1;
 
-    __m128 tmp1;
-    __m128 tmp2;
-    __m128 tmp3;
-    __m128 tmp4;
-    __m128 res;
-
-    float tmp_res[4] __attribute__((aligned(16)));
-
     for (std::size_t i = 0; i < c1; ++i) {
         auto k_lo = std::max<int>(0, i - m1 + 1);
         auto k_hi = std::min(n1 - 1, i) + 1;
@@ -510,19 +502,19 @@ inline void conv2_full_micro_kernel(const float* in, std::size_t n1, std::size_t
             auto l_lo = std::max<int>(0, j - m2 + 1);
             auto l_hi = std::min(n2 - 1, j) + 1;
 
-            res = _mm_setzero_ps();
+            __m128 r1 = _mm_setzero_ps();
 
             for (std::size_t k = k_lo; k < k_hi; ++k) {
                 for (std::size_t l = l_lo; l + 3 < l_hi; l += 4) {
-                    tmp1 = _mm_loadu_ps(in + k * n2 + l);
-                    tmp2 = _mm_loadu_ps(kernel + (i - k) * m2 + (j - (l + 3)));
-                    tmp3 = _mm_shuffle_ps(tmp2, tmp2, _MM_SHUFFLE(0, 1, 2, 3));
-                    tmp4 = _mm_mul_ps(tmp3, tmp1);
-                    res  = _mm_add_ps(res, tmp4);
+                    __m128 i1 = _mm_loadu_ps(in + k * n2 + l);
+                    __m128 t2 = _mm_loadu_ps(kernel + (i - k) * m2 + (j - (l + 3)));
+                    __m128 k1 = _mm_shuffle_ps(t2, t2, _MM_SHUFFLE(0, 1, 2, 3));
+                    __m128 t1 = _mm_mul_ps(k1, i1);
+                    r1  = _mm_add_ps(r1, t1);
                 }
             }
 
-            _mm_store_ps(tmp_res, res);
+            out[i * c2 + j] = mm_hadd_ss(r1);
 
             double temp = 0.0;
 
@@ -535,7 +527,7 @@ inline void conv2_full_micro_kernel(const float* in, std::size_t n1, std::size_t
                 }
             }
 
-            out[i * c2 + j] = temp + tmp_res[0] + tmp_res[1] + tmp_res[2] + tmp_res[3];
+            out[i * c2 + j] += temp;
         }
     }
 }
