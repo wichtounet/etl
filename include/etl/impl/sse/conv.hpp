@@ -33,14 +33,14 @@ namespace sse {
 
 #if defined(ETL_VECTORIZE_IMPL) && defined(__SSE3__)
 
-double __attribute__((__always_inline__)) mm_hadd_sd(__m128d in) {
+ETL_INLINE(double) mm_hadd_sd(__m128d in) {
     __m128 undef   = _mm_undefined_ps();
     __m128 shuftmp = _mm_movehl_ps(undef, _mm_castpd_ps(in));
     __m128d shuf = _mm_castps_pd(shuftmp);
     return _mm_cvtsd_f64(_mm_add_sd(in, shuf));
 }
 
-inline float __attribute__((__always_inline__)) mm_hadd_ss(__m128 in) {
+ETL_INLINE(float) mm_hadd_ss(__m128 in) {
     __m128 shuf = _mm_movehdup_ps(in);
     __m128 sums = _mm_add_ps(in, shuf);
     shuf        = _mm_movehl_ps(shuf, sums);

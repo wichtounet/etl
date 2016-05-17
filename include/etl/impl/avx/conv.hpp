@@ -36,7 +36,7 @@ namespace avx {
 
 #if defined(ETL_VECTORIZE_IMPL) && defined(__AVX__)
 
-inline __m256d mm256_reverse_pd(__m256d m1) {
+ETL_INLINE(__m256d) mm256_reverse_pd(__m256d m1) {
 #ifdef __AVX2__
     return _mm256_permute4x64_pd(m1, 0b00011011);
 #else
@@ -46,10 +46,17 @@ inline __m256d mm256_reverse_pd(__m256d m1) {
 #endif
 }
 
-inline __m256 mm256_reverse_ps(__m256 m1) {
+ETL_INLINE(__m256) mm256_reverse_ps(__m256 m1) {
     __m256 tmp;
     tmp = _mm256_permute2f128_ps(m1, m1, 33);
     return _mm256_permute_ps(tmp, 27);
+}
+
+ETL_INLINE(float) mm256_hadd_ss(__m256 in) {
+    const __m128 x128 = _mm_add_ps(_mm256_extractf128_ps(in, 1), _mm256_castps256_ps128(in));
+    const __m128 x64  = _mm_add_ps(x128, _mm_movehl_ps(x128, x128));
+    const __m128 x32  = _mm_add_ss(x64, _mm_shuffle_ps(x64, x64, 0x55));
+    return _mm_cvtss_f32(x32);
 }
 
 inline void dconv1_valid_micro_kernel(const double* in, const std::size_t n, const double* kernel, std::size_t m, double* out, std::size_t first, std::size_t last) {
@@ -126,13 +133,6 @@ inline void dconv1_valid_micro_kernel(const double* in, const std::size_t n, con
             }
         }
     }
-}
-
-inline float __attribute__((__always_inline__)) mm256_hadd_ss(__m256 in) {
-    const __m128 x128 = _mm_add_ps(_mm256_extractf128_ps(in, 1), _mm256_castps256_ps128(in));
-    const __m128 x64  = _mm_add_ps(x128, _mm_movehl_ps(x128, x128));
-    const __m128 x32  = _mm_add_ss(x64, _mm_shuffle_ps(x64, x64, 0x55));
-    return _mm_cvtss_f32(x32);
 }
 
 inline void sconv1_valid_micro_kernel(const float* __restrict__ in, const std::size_t n, const float* __restrict__ kernel, std::size_t m, float* __restrict__ out, std::size_t first, std::size_t last) {
