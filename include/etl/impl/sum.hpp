@@ -71,19 +71,19 @@ etl::sum_impl select_sum_impl() {
         switch (forced) {
             //AVX cannot always be used
             case sum_impl::AVX:
-                if (!avx_enabled || !decay_traits<E>::template vectorizable<vector_mode_t::AVX>::value) {
-                    std::cerr << "Forced selection to AVX sum implementation, but not possible for this expression" << std::endl;
-                    return select_default_sum_impl<E>();
-                }
+                if (!avx_enabled || !decay_traits<E>::template vectorizable<vector_mode_t::AVX>::value) {                         //COVERAGE_EXCLUDE_LINE
+                    std::cerr << "Forced selection to AVX sum implementation, but not possible for this expression" << std::endl; //COVERAGE_EXCLUDE_LINE
+                    return select_default_sum_impl<E>();                                                                          //COVERAGE_EXCLUDE_LINE
+                }                                                                                                                 //COVERAGE_EXCLUDE_LINE
 
                 return forced;
 
             //SSE cannot always be used
             case sum_impl::SSE:
-                if (!sse3_enabled || !decay_traits<E>::template vectorizable<vector_mode_t::SSE3>::value) {
-                    std::cerr << "Forced selection to SSE sum implementation, but not possible for this expression" << std::endl;
-                    return select_default_sum_impl<E>();
-                }
+                if (!sse3_enabled || !decay_traits<E>::template vectorizable<vector_mode_t::SSE3>::value) {                       //COVERAGE_EXCLUDE_LINE
+                    std::cerr << "Forced selection to SSE sum implementation, but not possible for this expression" << std::endl; //COVERAGE_EXCLUDE_LINE
+                    return select_default_sum_impl<E>();                                                                          //COVERAGE_EXCLUDE_LINE
+                }                                                                                                                 //COVERAGE_EXCLUDE_LINE
 
                 return forced;
 
