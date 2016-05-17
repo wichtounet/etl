@@ -33,11 +33,19 @@ namespace sse {
 
 #if defined(ETL_VECTORIZE_IMPL) && defined(__SSE3__)
 
-inline double __attribute__((__always_inline__)) mm_hadd_sd(__m128d in) {
-    __m128 undef  = _mm_undefined_ps();
-    __m128 shuftmp= _mm_movehl_ps(undef, _mm_castpd_ps(in));
-    __m128d shuf  = _mm_castps_pd(shuftmp);
-    return  _mm_cvtsd_f64(_mm_add_sd(in, shuf));
+double __attribute__((__always_inline__)) mm_hadd_sd(__m128d in) {
+    __m128 undef   = _mm_undefined_ps();
+    __m128 shuftmp = _mm_movehl_ps(undef, _mm_castpd_ps(in));
+    __m128d shuf = _mm_castps_pd(shuftmp);
+    return _mm_cvtsd_f64(_mm_add_sd(in, shuf));
+}
+
+inline float __attribute__((__always_inline__)) mm_hadd_ss(__m128 in) {
+    __m128 shuf = _mm_movehdup_ps(in);
+    __m128 sums = _mm_add_ps(in, shuf);
+    shuf        = _mm_movehl_ps(shuf, sums);
+    sums = _mm_add_ss(sums, shuf);
+    return _mm_cvtss_f32(sums);
 }
 
 inline void conv1_valid_micro_kernel(const double* in, const std::size_t n, const double* kernel, std::size_t m, double* out, std::size_t first, std::size_t last) {
@@ -376,45 +384,79 @@ inline void conv2_full_micro_kernel(const double* in, std::size_t n1, std::size_
 }
 
 inline void conv2_valid_micro_kernel(const float* in, std::size_t n1, std::size_t n2, const float* kernel, std::size_t m1, std::size_t m2, float* out) {
+    auto kernel_reverse = aligned_allocate_auto<float>(m1 * m2);
+
+    std::reverse_copy(kernel, kernel + m1 * m2, kernel_reverse.get());
+
     std::size_t c1 = n1 - m1 + 1;
     std::size_t c2 = n2 - m2 + 1;
 
-    __m128 tmp1;
-    __m128 tmp2;
-    __m128 tmp3;
-    __m128 tmp4;
-    __m128 res;
-
-    float tmp_res[4] __attribute__((aligned(16)));
-
     for (std::size_t i = 0; i < c1; ++i) {
-        for (std::size_t j = 0; j < c2; ++j) {
-            res = _mm_setzero_ps();
+        for (std::size_t j = 0; j + 3 < c2; j += 4) {
+            __m128 r1 = _mm_setzero_ps();
+            __m128 r2 = _mm_setzero_ps();
+            __m128 r3 = _mm_setzero_ps();
+            __m128 r4 = _mm_setzero_ps();
 
-            for (std::size_t k = i; k < i + m1; ++k) {
-                for (std::size_t l = j; l + 3 < j + m2; l += 4) {
-                    tmp1 = _mm_loadu_ps(in + k * n2 + l);
-                    tmp2 = _mm_loadu_ps(kernel + (i + m1 - 1 - k) * m2 + (j + m2 - 1 - (l + 3)));
-                    tmp3 = _mm_shuffle_ps(tmp2, tmp2, _MM_SHUFFLE(0, 1, 2, 3));
-                    tmp4 = _mm_mul_ps(tmp3, tmp1);
-                    res  = _mm_add_ps(res, tmp4);
+            for (std::size_t k = 0; k < m1; ++k) {
+                for (std::size_t l = 0; l + 3 < m2; l += 4) {
+                    __m128 k1 = _mm_loadu_ps(kernel_reverse.get() + k * m2 + l);
+
+                    __m128 i1 = _mm_loadu_ps(in + (k + i) * n2 + l + j + 0);
+                    __m128 i2 = _mm_loadu_ps(in + (k + i) * n2 + l + j + 1);
+                    __m128 i3 = _mm_loadu_ps(in + (k + i) * n2 + l + j + 2);
+                    __m128 i4 = _mm_loadu_ps(in + (k + i) * n2 + l + j + 3);
+
+                    __m128 t1 = _mm_mul_ps(k1, i1);
+                    __m128 t2 = _mm_mul_ps(k1, i2);
+                    __m128 t3 = _mm_mul_ps(k1, i3);
+                    __m128 t4 = _mm_mul_ps(k1, i4);
+
+                    r1  = _mm_add_ps(r1, t1);
+                    r2  = _mm_add_ps(r2, t2);
+                    r3  = _mm_add_ps(r3, t3);
+                    r4  = _mm_add_ps(r4, t4);
                 }
             }
 
-            _mm_store_ps(tmp_res, res);
+            out[i * c2 + j + 0] = mm_hadd_ss(r1);
+            out[i * c2 + j + 1] = mm_hadd_ss(r2);
+            out[i * c2 + j + 2] = mm_hadd_ss(r3);
+            out[i * c2 + j + 3] = mm_hadd_ss(r4);
+        }
 
-            float temp = 0.0;
+        for (std::size_t j = c2 - c2 % 4; j < c2; ++j) {
+            __m128 r1 = _mm_setzero_ps();
 
-            if (m2 % 4 != 0) {
-                auto rem = m2 % 4;
-                for (std::size_t k = i; k < i + m1; ++k) {
-                    for (std::size_t l = j + m2 - rem; l < j + m2; ++l) {
-                        temp += in[k * n2 + l] * kernel[(i + m1 - 1 - k) * m2 + (j + m2 - 1 - l)];
+            for (std::size_t k = 0; k < m1; ++k) {
+                for (std::size_t l = 0; l + 3 < m2; l += 4) {
+                    __m128 k1 = _mm_loadu_ps(kernel_reverse.get() + k * m2 + l);
+
+                    __m128 i1 = _mm_loadu_ps(in + (k + i) * n2 + l + j);
+
+                    __m128 t1 = _mm_mul_ps(k1, i1);
+
+                    r1  = _mm_add_ps(r1, t1);
+                }
+            }
+
+            out[i * c2 + j] = mm_hadd_ss(r1);
+        }
+    }
+
+    if (m2 % 4 != 0) {
+        for (std::size_t i = 0; i < c1; ++i) {
+            for (std::size_t j = 0; j < c2; ++j) {
+                float temp = 0.0;
+
+                for (std::size_t k = 0; k < m1; ++k) {
+                    for (std::size_t l = m2 - m2 % 4; l < m2; ++l) {
+                        temp += in[(k + i) * n2 + l + j] * kernel_reverse[k * m2 + l];
                     }
                 }
-            }
 
-            out[i * c2 + j] = temp + tmp_res[0] + tmp_res[1] + tmp_res[2] + tmp_res[3];
+                out[i * c2 + j] += temp;
+            }
         }
     }
 }
