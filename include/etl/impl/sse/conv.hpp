@@ -33,6 +33,10 @@ namespace sse {
 
 #if defined(ETL_VECTORIZE_IMPL) && defined(__SSE3__)
 
+#ifdef __clang__
+#define _mm_undefined_ps _mm_setzero_ps
+#endif
+
 ETL_INLINE(double) mm_hadd_sd(__m128d in) {
     __m128 undef   = _mm_undefined_ps();
     __m128 shuftmp = _mm_movehl_ps(undef, _mm_castpd_ps(in));
