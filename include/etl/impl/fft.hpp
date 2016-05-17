@@ -45,19 +45,19 @@ inline fft_impl select_forced_fft_impl(Functor func, Args&&... args) {
     switch (forced) {
         //MKL cannot always be used
         case fft_impl::MKL:
-            if (!mkl) {
-                std::cerr << "Forced selection to MKL fft implementation, but not possible for this expression" << std::endl;
-                return func(args...);
-            }
+            if (!mkl) {                                                                                                       //COVERAGE_EXCLUDE_LINE
+                std::cerr << "Forced selection to MKL fft implementation, but not possible for this expression" << std::endl; //COVERAGE_EXCLUDE_LINE
+                return func(args...);                                                                                         //COVERAGE_EXCLUDE_LINE
+            }                                                                                                                 //COVERAGE_EXCLUDE_LINE
 
             return forced;
 
         //CUFFT cannot always be used
         case fft_impl::CUFFT:
-            if (!cufft) {
-                std::cerr << "Forced selection to CUFFT fft implementation, but not possible for this expression" << std::endl;
-                return func(args...);
-            }
+            if (!cufft) {                                                                                                       //COVERAGE_EXCLUDE_LINE
+                std::cerr << "Forced selection to CUFFT fft implementation, but not possible for this expression" << std::endl; //COVERAGE_EXCLUDE_LINE
+                return func(args...);                                                                                           //COVERAGE_EXCLUDE_LINE
+            }                                                                                                                   //COVERAGE_EXCLUDE_LINE
 
             return forced;
 

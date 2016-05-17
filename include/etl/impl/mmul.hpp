@@ -77,28 +77,28 @@ inline gemm_impl select_gemm_impl(const std::size_t n1, const std::size_t n2, co
         switch (forced) {
             //CUBLAS cannot always be used
             case gemm_impl::CUBLAS:
-                if (!is_cublas_enabled || !DMA) {
-                    std::cerr << "Forced selection to CUBLAS gemm implementation, but not possible for this expression" << std::endl;
-                    return select_default_gemm_impl<DMA, T>(n1, n2, n3);
-                }
+                if (!is_cublas_enabled || !DMA) {                                                                                     //COVERAGE_EXCLUDE_LINE
+                    std::cerr << "Forced selection to CUBLAS gemm implementation, but not possible for this expression" << std::endl; //COVERAGE_EXCLUDE_LINE
+                    return select_default_gemm_impl<DMA, T>(n1, n2, n3);                                                              //COVERAGE_EXCLUDE_LINE
+                }                                                                                                                     //COVERAGE_EXCLUDE_LINE
 
                 return forced;
 
             //BLAS cannot always be used
             case gemm_impl::BLAS:
-                if (!is_cblas_enabled || !DMA) {
-                    std::cerr << "Forced selection to BLAS gemm implementation, but not possible for this expression" << std::endl;
-                    return select_default_gemm_impl<DMA, T>(n1, n2, n3);
-                }
+                if (!is_cblas_enabled || !DMA) {                                                                                    //COVERAGE_EXCLUDE_LINE
+                    std::cerr << "Forced selection to BLAS gemm implementation, but not possible for this expression" << std::endl; //COVERAGE_EXCLUDE_LINE
+                    return select_default_gemm_impl<DMA, T>(n1, n2, n3);                                                            //COVERAGE_EXCLUDE_LINE
+                }                                                                                                                   //COVERAGE_EXCLUDE_LINE
 
                 return forced;
 
             //EBLAS cannot always be used
             case gemm_impl::FAST:
-                if (!DMA || is_complex_t<T>::value) {
-                    std::cerr << "Forced selection to EBLAS gemm implementation, but not possible for this expression" << std::endl;
-                    return select_default_gemm_impl<DMA, T>(n1, n2, n3);
-                }
+                if (!DMA || is_complex_t<T>::value) {                                                                                //COVERAGE_EXCLUDE_LINE
+                    std::cerr << "Forced selection to EBLAS gemm implementation, but not possible for this expression" << std::endl; //COVERAGE_EXCLUDE_LINE
+                    return select_default_gemm_impl<DMA, T>(n1, n2, n3);                                                             //COVERAGE_EXCLUDE_LINE
+                }                                                                                                                    //COVERAGE_EXCLUDE_LINE
 
                 return forced;
 
@@ -155,26 +155,26 @@ inline gemm_impl select_gemv_impl(const std::size_t n1, const std::size_t n2) {
         switch (forced) {
             //CUBLAS cannot always be used
             case gemm_impl::CUBLAS:
-                if (!is_cublas_enabled || !DMA) {
-                    std::cerr << "Forced selection to CUBLAS gemv implementation, but not possible for this expression" << std::endl;
-                    return select_default_gemv_impl<DMA, T>(n1, n2);
-                }
+                if (!is_cublas_enabled || !DMA) {                                                                                     //COVERAGE_EXCLUDE_LINE
+                    std::cerr << "Forced selection to CUBLAS gemv implementation, but not possible for this expression" << std::endl; //COVERAGE_EXCLUDE_LINE
+                    return select_default_gemv_impl<DMA, T>(n1, n2);                                                                  //COVERAGE_EXCLUDE_LINE
+                }                                                                                                                     //COVERAGE_EXCLUDE_LINE
 
                 return forced;
 
             //BLAS cannot always be used
             case gemm_impl::BLAS:
-                if (!is_cblas_enabled || !DMA) {
-                    std::cerr << "Forced selection to BLAS gemv implementation, but not possible for this expression" << std::endl;
-                    return select_default_gemv_impl<DMA, T>(n1, n2);
-                }
+                if (!is_cblas_enabled || !DMA) {                                                                                    //COVERAGE_EXCLUDE_LINE
+                    std::cerr << "Forced selection to BLAS gemv implementation, but not possible for this expression" << std::endl; //COVERAGE_EXCLUDE_LINE
+                    return select_default_gemv_impl<DMA, T>(n1, n2);                                                                //COVERAGE_EXCLUDE_LINE
+                }                                                                                                                   //COVERAGE_EXCLUDE_LINE
 
                 return forced;
 
             //EBLAS cannot always be used
             case gemm_impl::FAST:
-                std::cerr << "Forced selection to EBLAS gemv implementation, but there is no such implementation" << std::endl;
-                return select_default_gemv_impl<DMA, T>(n1, n2);
+                std::cerr << "Forced selection to EBLAS gemv implementation, but there is no such implementation" << std::endl; //COVERAGE_EXCLUDE_LINE
+                return select_default_gemv_impl<DMA, T>(n1, n2);                                                                //COVERAGE_EXCLUDE_LINE
 
             //In other cases, simply use the forced impl
             default:
@@ -229,26 +229,26 @@ inline gemm_impl select_gevm_impl(const std::size_t n1, const std::size_t n2) {
         switch (forced) {
             //CUBLAS cannot always be used
             case gemm_impl::CUBLAS:
-                if (!is_cublas_enabled || !DMA) {
-                    std::cerr << "Forced selection to CUBLAS gevm implementation, but not possible for this expression" << std::endl;
-                    return select_default_gevm_impl<DMA, T>(n1, n2);
-                }
+                if (!is_cublas_enabled || !DMA) {                                                                                     //COVERAGE_EXCLUDE_LINE
+                    std::cerr << "Forced selection to CUBLAS gevm implementation, but not possible for this expression" << std::endl; //COVERAGE_EXCLUDE_LINE
+                    return select_default_gevm_impl<DMA, T>(n1, n2);                                                                  //COVERAGE_EXCLUDE_LINE
+                }                                                                                                                     //COVERAGE_EXCLUDE_LINE
 
                 return forced;
 
             //BLAS cannot always be used
             case gemm_impl::BLAS:
-                if (!is_cblas_enabled || !DMA) {
-                    std::cerr << "Forced selection to BLAS gevm implementation, but not possible for this expression" << std::endl;
-                    return select_default_gevm_impl<DMA, T>(n1, n2);
-                }
+                if (!is_cblas_enabled || !DMA) {                                                                                    //COVERAGE_EXCLUDE_LINE
+                    std::cerr << "Forced selection to BLAS gevm implementation, but not possible for this expression" << std::endl; //COVERAGE_EXCLUDE_LINE
+                    return select_default_gevm_impl<DMA, T>(n1, n2);                                                                //COVERAGE_EXCLUDE_LINE
+                }                                                                                                                   //COVERAGE_EXCLUDE_LINE
 
                 return forced;
 
             //EBLAS cannot always be used
             case gemm_impl::FAST:
-                std::cerr << "Forced selection to EBLAS gevm implementation, but there is no such implementation" << std::endl;
-                return select_default_gevm_impl<DMA, T>(n1, n2);
+                std::cerr << "Forced selection to EBLAS gevm implementation, but there is no such implementation" << std::endl; //COVERAGE_EXCLUDE_LINE
+                return select_default_gevm_impl<DMA, T>(n1, n2);                                                                //COVERAGE_EXCLUDE_LINE
 
             //In other cases, simply use the forced impl
             default:

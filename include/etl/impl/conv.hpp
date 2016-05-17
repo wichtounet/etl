@@ -104,19 +104,19 @@ inline etl::conv_impl select_conv_impl() {
         switch (forced) {
             //AVX cannot always be used
             case conv_impl::AVX:
-                if (!avx_enabled) {
-                    std::cerr << "Forced selection to AVX sum implementation, but not possible for this expression" << std::endl;
-                    return select_default_conv_impl<I, K, C>();
-                }
+                if (!avx_enabled) {                                                                                               // COVERAGE_EXCLUDE_LINE
+                    std::cerr << "Forced selection to AVX sum implementation, but not possible for this expression" << std::endl; // COVERAGE_EXCLUDE_LINE
+                    return select_default_conv_impl<I, K, C>();                                                                   // COVERAGE_EXCLUDE_LINE
+                }                                                                                                                 // COVERAGE_EXCLUDE_LINE
 
                 return forced;
 
             //SSE cannot always be used
             case conv_impl::SSE:
-                if (!sse3_enabled) {
-                    std::cerr << "Forced selection to SSE sum implementation, but not possible for this expression" << std::endl;
-                    return select_default_conv_impl<I, K, C>();
-                }
+                if (!sse3_enabled) {                                                                                              //COVERAGE_EXCLUDE_LINE
+                    std::cerr << "Forced selection to SSE sum implementation, but not possible for this expression" << std::endl; //COVERAGE_EXCLUDE_LINE
+                    return select_default_conv_impl<I, K, C>();                                                                   //COVERAGE_EXCLUDE_LINE
+                }                                                                                                                 //COVERAGE_EXCLUDE_LINE
 
                 return forced;
 
