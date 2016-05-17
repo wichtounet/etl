@@ -59,78 +59,110 @@ ETL_INLINE(float) mm256_hadd_ss(__m256 in) {
     return _mm_cvtss_f32(x32);
 }
 
+ETL_INLINE(double) mm256_hadd_sd(__m256d in) {
+    const __m256d t1 = _mm256_hadd_pd(in, _mm256_permute2f128_pd(in, in, 1));
+    const __m256d t2 = _mm256_hadd_pd(t1, t1);
+    return _mm_cvtsd_f64(_mm256_castpd256_pd128(t2));
+}
+
 inline void dconv1_valid_micro_kernel(const double* in, const std::size_t n, const double* kernel, std::size_t m, double* out, std::size_t first, std::size_t last) {
-    auto kernel_reverse = aligned_allocate_auto<__m256d>(m);
-
-    //Reverse the kernel
-
-    for (std::size_t i = 0; i < m; i++) {
-        kernel_reverse[i] = _mm256_broadcast_sd(kernel + m - i - 1);
-    }
-
-    //Compute the convolution, 4 doubles at a time
-
     auto llast = std::min(n - m + 1, last);
 
-    for (std::size_t i = first; i + 3 < llast; i += 4) {
+    auto kernel_reverse = aligned_allocate_auto<double>(m);
+
+    std::reverse_copy(kernel, kernel + m, kernel_reverse.get());
+
+    // Loop over the input, 8 times unrolled
+
+    for (std::size_t j = first; j + 7 < llast; j += 8) {
         __m256d r1 = _mm256_setzero_pd();
         __m256d r2 = _mm256_setzero_pd();
         __m256d r3 = _mm256_setzero_pd();
         __m256d r4 = _mm256_setzero_pd();
+        __m256d r5 = _mm256_setzero_pd();
+        __m256d r6 = _mm256_setzero_pd();
+        __m256d r7 = _mm256_setzero_pd();
+        __m256d r8 = _mm256_setzero_pd();
 
-        for (std::size_t k = 0; k + 3 < m; k += 4) {
-            __m256d t1 = _mm256_loadu_pd(in + i + k);
-            __m256d t2 = _mm256_loadu_pd(in + i + k + 1);
-            __m256d t3 = _mm256_loadu_pd(in + i + k + 2);
-            __m256d t4 = _mm256_loadu_pd(in + i + k + 3);
+        // Compute the convolution with 4 doubles of the kernel at once
 
-#ifdef __FMA__
-            r1 = _mm256_fmadd_pd(kernel_reverse[k], t1, r1);
-            r2 = _mm256_fmadd_pd(kernel_reverse[k + 1], t2, r2);
-            r3 = _mm256_fmadd_pd(kernel_reverse[k + 2], t3, r3);
-            r4 = _mm256_fmadd_pd(kernel_reverse[k + 3], t4, r4);
-#else
-            __m256d v1 = _mm256_mul_pd(kernel_reverse[k], t1);
-            r1         = _mm256_add_pd(r1, v1);
-            __m256d v2 = _mm256_mul_pd(kernel_reverse[k + 1], t2);
-            r2         = _mm256_add_pd(r2, v2);
-            __m256d v3 = _mm256_mul_pd(kernel_reverse[k + 2], t3);
-            r3         = _mm256_add_pd(r3, v3);
-            __m256d v4 = _mm256_mul_pd(kernel_reverse[k + 3], t4);
-            r4         = _mm256_add_pd(r4, v4);
-#endif
+        for (std::size_t l = 0; l + 3 < m; l += 4) {
+            __m256d k1 = _mm256_load_pd(kernel_reverse.get() + l);
+
+            __m256d i1 = _mm256_loadu_pd(in + (j + 0) + l);
+            __m256d i2 = _mm256_loadu_pd(in + (j + 1) + l);
+            __m256d i3 = _mm256_loadu_pd(in + (j + 2) + l);
+            __m256d i4 = _mm256_loadu_pd(in + (j + 3) + l);
+
+            __m256d t1  = _mm256_mul_pd(i1, k1);
+            __m256d t2  = _mm256_mul_pd(i2, k1);
+            __m256d t3  = _mm256_mul_pd(i3, k1);
+            __m256d t4  = _mm256_mul_pd(i4, k1);
+
+            __m256d i5 = _mm256_loadu_pd(in + (j + 4) + l);
+            __m256d i6 = _mm256_loadu_pd(in + (j + 5) + l);
+            __m256d i7 = _mm256_loadu_pd(in + (j + 6) + l);
+            __m256d i8 = _mm256_loadu_pd(in + (j + 7) + l);
+
+            __m256d t5  = _mm256_mul_pd(i5, k1);
+            __m256d t6  = _mm256_mul_pd(i6, k1);
+            __m256d t7  = _mm256_mul_pd(i7, k1);
+            __m256d t8  = _mm256_mul_pd(i8, k1);
+
+            r1         = _mm256_add_pd(r1, t1);
+            r2         = _mm256_add_pd(r2, t2);
+            r3         = _mm256_add_pd(r3, t3);
+            r4         = _mm256_add_pd(r4, t4);
+            r5         = _mm256_add_pd(r5, t5);
+            r6         = _mm256_add_pd(r6, t6);
+            r7         = _mm256_add_pd(r7, t7);
+            r8         = _mm256_add_pd(r8, t8);
         }
 
-        for (std::size_t k = m - m % 4; k < m; ++k) {
-            __m256d t1 = _mm256_loadu_pd(in + i + k);
+        out[j + 0] = mm256_hadd_sd(r1);
+        out[j + 1] = mm256_hadd_sd(r2);
+        out[j + 2] = mm256_hadd_sd(r3);
+        out[j + 3] = mm256_hadd_sd(r4);
+        out[j + 4] = mm256_hadd_sd(r5);
+        out[j + 5] = mm256_hadd_sd(r6);
+        out[j + 6] = mm256_hadd_sd(r7);
+        out[j + 7] = mm256_hadd_sd(r8);
 
-#ifdef __FMA__
-            r1 = _mm256_fmadd_pd(kernel_reverse[k], t1, r1);
-#else
-            __m256d v1 = _mm256_mul_pd(kernel_reverse[k], t1);
-            r1         = _mm256_add_pd(r1, v1);
-#endif
+        // Remainder loop
+
+        for (std::size_t l = m - m % 4; l < m; ++l) {
+            out[j + 0] += in[(j + 0) + l] * kernel_reverse[l];
+            out[j + 1] += in[(j + 1) + l] * kernel_reverse[l];
+            out[j + 2] += in[(j + 2) + l] * kernel_reverse[l];
+            out[j + 3] += in[(j + 3) + l] * kernel_reverse[l];
+            out[j + 4] += in[(j + 4) + l] * kernel_reverse[l];
+            out[j + 5] += in[(j + 5) + l] * kernel_reverse[l];
+            out[j + 6] += in[(j + 6) + l] * kernel_reverse[l];
+            out[j + 7] += in[(j + 7) + l] * kernel_reverse[l];
         }
-
-        __m256d res = _mm256_add_pd(r1, r2);
-        res         = _mm256_add_pd(res, r3);
-        res         = _mm256_add_pd(res, r4);
-
-        _mm256_storeu_pd(out + i, res);
     }
 
-    //If the number of operations is not even, the last case must be
-    //computed separatly
+    // Remainder loop for the inputs
 
-    auto c = llast - first;
+    for (std::size_t j = llast - (llast - first) % 8; j < llast; ++j) {
+        __m256d r1 = _mm256_setzero_pd();
 
-    if (c % 4 != 0) {
-        auto rem = c % 4;
-        for (std::size_t i = c - rem; i < c; ++i) {
-            out[i] = 0.0;
-            for (std::size_t k = 0; k < m; k++) {
-                out[i] += in[i + k] * kernel[m - k - 1];
-            }
+        // Compute the convolution with 4 doubles
+
+        for (std::size_t l = 0; l + 3 < m; l += 4) {
+            __m256d i1 = _mm256_loadu_pd(in + j + l);
+            __m256d k1 = _mm256_load_pd(kernel_reverse.get() + l);
+
+            __m256d t1  = _mm256_mul_pd(i1, k1);
+            r1         = _mm256_add_pd(r1, t1);
+        }
+
+        out[j + 0] = mm256_hadd_sd(r1);
+
+        // Remainder loop
+
+        for (std::size_t l = m - m % 4; l < m; ++l) {
+            out[j] += in[j + l] * kernel_reverse[l];
         }
     }
 }
