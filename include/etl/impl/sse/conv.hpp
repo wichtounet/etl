@@ -202,25 +202,19 @@ inline void conv2_valid_micro_kernel(const double* in, std::size_t n1, std::size
     std::size_t c1 = n1 - m1 + 1;
     std::size_t c2 = n2 - m2 + 1;
 
-    __m128d tmp1;
-    __m128d tmp2;
-    __m128d tmp3;
-    __m128d tmp4;
-    __m128d res;
-
     double tmp_res[2] __attribute__((aligned(16)));
 
     for (std::size_t i = 0; i < c1; ++i) {
         for (std::size_t j = 0; j < c2; ++j) {
-            res = _mm_setzero_pd();
+            __m128d r1 = _mm_setzero_pd();
 
             for (std::size_t k = i; k < i + m1; ++k) {
                 for (std::size_t l = j; l + 1 < j + m2; l += 2) {
-                    tmp1 = _mm_loadu_pd(in + k * n2 + l);
-                    tmp2 = _mm_loadu_pd(kernel + ((i + m1 - 1 - k) * m2 + (j + m2 - 1 - (l + 1))));
-                    tmp3 = _mm_shuffle_pd(tmp2, tmp2, _MM_SHUFFLE2(0, 1));
-                    tmp4 = _mm_mul_pd(tmp3, tmp1);
-                    res  = _mm_add_pd(res, tmp4);
+                    __m128d tmp1 = _mm_loadu_pd(in + k * n2 + l);
+                    __m128d tmp2 = _mm_loadu_pd(kernel + ((i + m1 - 1 - k) * m2 + (j + m2 - 1 - (l + 1))));
+                    __m128d tmp3 = _mm_shuffle_pd(tmp2, tmp2, _MM_SHUFFLE2(0, 1));
+                    __m128d tmp4 = _mm_mul_pd(tmp3, tmp1);
+                    r1  = _mm_add_pd(r1, tmp4);
                 }
             }
 
