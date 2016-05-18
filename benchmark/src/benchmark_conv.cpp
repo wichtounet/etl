@@ -246,6 +246,7 @@ CPM_DIRECT_SECTION_TWO_PASS_NS_PF("sconv2_full [conv][conv2]", conv_2d_large_pol
     AVX_SECTION_FUNCTOR("avx", [](smat& a, smat& b, smat& r){ r = selected_helper(etl::conv_impl::AVX, etl::conv_2d_full(a, b)); })
     ,CPM_SECTION_FUNCTOR("fft", [](smat& a, smat& b, smat& r){ r = etl::fft_conv_2d_full(a, b); })
      MC_SECTION_FUNCTOR("mmul", [](smat& a, smat& b, smat& r){ etl::impl::reduc::conv2_full(a, b, r); })
+    CUDNN_SECTION_FUNCTOR("cudnn", [](smat& a, smat& b, smat& r){ r = selected_helper(etl::conv_impl::CUDNN, etl::conv_2d_full(a, b)); })
 )
 
 CPM_DIRECT_SECTION_TWO_PASS_NS_PF("sconv2_full_small [conv][conv2]", conv_2d_small_policy,
@@ -257,6 +258,7 @@ CPM_DIRECT_SECTION_TWO_PASS_NS_PF("sconv2_full_small [conv][conv2]", conv_2d_sma
     AVX_SECTION_FUNCTOR("avx", [](smat& a, smat& b, smat& r){ r = selected_helper(etl::conv_impl::AVX, etl::conv_2d_full(a, b)); })
     ,CPM_SECTION_FUNCTOR("fft", [](smat& a, smat& b, smat& r){ r = etl::fft_conv_2d_full(a, b); })
      MC_SECTION_FUNCTOR("mmul", [](smat& a, smat& b, smat& r){ etl::impl::reduc::conv2_full(a, b, r); })
+    CUDNN_SECTION_FUNCTOR("cudnn", [](smat& a, smat& b, smat& r){ r = selected_helper(etl::conv_impl::CUDNN, etl::conv_2d_full(a, b)); })
 )
 
 CPM_DIRECT_SECTION_TWO_PASS_NS_PF("dconv2_full [conv][conv2]", conv_2d_large_policy,
@@ -267,5 +269,6 @@ CPM_DIRECT_SECTION_TWO_PASS_NS_PF("dconv2_full [conv][conv2]", conv_2d_large_pol
     SSE_SECTION_FUNCTOR("sse", [](dmat& a, dmat& b, dmat& r){ r = selected_helper(etl::conv_impl::SSE, etl::conv_2d_full(a, b)); })
     AVX_SECTION_FUNCTOR("avx", [](dmat& a, dmat& b, dmat& r){ r = selected_helper(etl::conv_impl::AVX, etl::conv_2d_full(a, b)); })
     ,CPM_SECTION_FUNCTOR("fft", [](dmat& a, dmat& b, dmat& r){ r = etl::fft_conv_2d_full(a, b); })
-     MC_SECTION_FUNCTOR("mmul", [](dmat& a, dmat& b, dmat& r){ etl::impl::reduc::conv2_full(a, b, r); })
+    MC_SECTION_FUNCTOR("mmul", [](dmat& a, dmat& b, dmat& r){ etl::impl::reduc::conv2_full(a, b, r); })
+    CUDNN_SECTION_FUNCTOR("cudnn", [](dmat& a, dmat& b, dmat& r){ r = selected_helper(etl::conv_impl::CUDNN, etl::conv_2d_full(a, b)); })
 )
