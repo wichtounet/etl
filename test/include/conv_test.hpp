@@ -190,6 +190,7 @@ CONV_FUNCTOR(cudnn_conv2_valid, c = selected_helper(etl::conv_impl::CUDNN, etl::
         CONV2_FULL_TEST_CASE_SECTION_FFT        \
         CONV2_FULL_TEST_CASE_SECTION_SSE        \
         CONV2_FULL_TEST_CASE_SECTION_AVX        \
+        CONV2_FULL_TEST_CASE_SECTION_CUDNN      \
     }                                           \
     CONV_TEST_CASE_DEFN
 
