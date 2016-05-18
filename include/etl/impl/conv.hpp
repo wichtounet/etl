@@ -321,6 +321,8 @@ struct conv2_full_impl {
             impl::avx::conv2_full(input, kernel, conv);
         } else if (impl == etl::conv_impl::SSE) {
             impl::sse::conv2_full(input, kernel, conv);
+        } else if (impl == etl::conv_impl::CUDNN) {
+            impl::cudnn::conv2_full(input, kernel, conv);
         } else if (impl == etl::conv_impl::STD) {
             impl::standard::conv2_full(input, kernel, conv);
         }
