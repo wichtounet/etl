@@ -84,11 +84,11 @@ void conv2_valid(const I& input, const K& kernel, C&& conv) {
 
     // Perform the convolution
 
-    cudnnConvolutionForward(handle.get(),
+    cudnn_check(cudnnConvolutionForward(handle.get(),
         alpha, input_tensor, input.gpu_memory(),
         filter, kernel.gpu_memory(),
         convolution, conv_algo, workspace.get(), workspace_size,
-        beta, output_tensor, conv.gpu_memory());
+        beta, output_tensor, conv.gpu_memory()));
 
     // Release the resources
     cudnn_check(cudnnDestroyConvolutionDescriptor(convolution));
