@@ -46,6 +46,7 @@ ifneq (,$(ETL_PARALLEL))
 CXX_FLAGS += -DETL_PARALLEL
 endif
 
+# On demand activation of cublas support
 ifneq (,$(ETL_CUBLAS))
 CXX_FLAGS += -DETL_CUBLAS_MODE $(shell pkg-config --cflags cublas)
 LD_FLAGS += $(shell pkg-config --libs cublas)
@@ -63,6 +64,12 @@ LD_FLAGS += $(shell pkg-config --libs cufft)
 ifneq (,$(findstring clang,$(CXX)))
 CXX_FLAGS += -Wno-documentation
 endif
+endif
+
+# On demand activation of cudnn support
+ifneq (,$(ETL_CUDNN))
+CXX_FLAGS += -DETL_CUDNN_MODE $(shell pkg-config --cflags cudnn)
+LD_FLAGS += $(shell pkg-config --libs cudnn)
 endif
 
 LD_FLAGS += -pthread

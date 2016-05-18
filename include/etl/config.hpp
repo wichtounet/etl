@@ -114,6 +114,13 @@ constexpr const bool is_cufft_enabled = true;
 constexpr const bool is_cufft_enabled            = false; ///< Boolean flag indicating if CUFFT is available
 #endif
 
+#ifdef ETL_CUDNN_MODE
+constexpr const bool is_cudnn_enabled = true;
+#define ETL_CUDA
+#else
+constexpr const bool is_cudnn_enabled            = false; ///< Boolean flag indicating if CUDNN is available
+#endif
+
 //Flag to perform elementwise multiplication by default (operator*)
 //instead of matrix(vector) multiplication
 #ifdef ETL_ELEMENT_WISE_MULTIPLICATION
