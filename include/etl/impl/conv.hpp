@@ -64,7 +64,7 @@ namespace detail {
  * \tparam C The conv type
  * \return the implementation to be used
  */
-template <typename I, typename K, typename C>
+template <conv_type TT, typename I, typename K, typename C>
 inline etl::conv_impl select_default_conv_impl() {
     //Note: since the constexpr values will be known at compile time, the
     //conditions will be a lot simplified
@@ -82,13 +82,15 @@ inline etl::conv_impl select_default_conv_impl() {
     static constexpr const bool avx = vectorize_impl && vector_mode == vector_mode_t::AVX;
     static constexpr const bool cudnn = is_cudnn_enabled;
 
+    if(cudnn && TT == conv_type::VALID && decay_traits<I>::dimensions() == 2){
+        //TODO Should only be used with (very?) large sizes
+        return etl::conv_impl::CUDNN;
+    }
+
     if (avx) {
         return etl::conv_impl::AVX;
     } else if (sse) {
         return etl::conv_impl::SSE;
-    } else if (cudnn){
-        //TODO Put that in front with size check
-        return etl::conv_impl::CUDNN;
     } else {
         return etl::conv_impl::STD;
     }
@@ -101,7 +103,7 @@ inline etl::conv_impl select_default_conv_impl() {
  * \tparam C The conv type
  * \return the implementation to be used
  */
-template <typename I, typename K, typename C>
+template <conv_type TT, typename I, typename K, typename C>
 inline etl::conv_impl select_conv_impl() {
     if (local_context().conv_selector.forced) {
         auto forced = local_context().conv_selector.impl;
@@ -111,7 +113,7 @@ inline etl::conv_impl select_conv_impl() {
             case conv_impl::CUDNN:
                 if (!is_cudnn_enabled) {                                                                                               // COVERAGE_EXCLUDE_LINE
                     std::cerr << "Forced selection to CUDNN conv implementation, but not possible for this expression" << std::endl; // COVERAGE_EXCLUDE_LINE
-                    return select_default_conv_impl<I, K, C>();                                                                   // COVERAGE_EXCLUDE_LINE
+                    return select_default_conv_impl<TT, I, K, C>();                                                                   // COVERAGE_EXCLUDE_LINE
                 }                                                                                                                 // COVERAGE_EXCLUDE_LINE
 
                 return forced;
@@ -120,7 +122,7 @@ inline etl::conv_impl select_conv_impl() {
             case conv_impl::AVX:
                 if (!avx_enabled) {                                                                                               // COVERAGE_EXCLUDE_LINE
                     std::cerr << "Forced selection to AVX sum implementation, but not possible for this expression" << std::endl; // COVERAGE_EXCLUDE_LINE
-                    return select_default_conv_impl<I, K, C>();                                                                   // COVERAGE_EXCLUDE_LINE
+                    return select_default_conv_impl<TT, I, K, C>();                                                                   // COVERAGE_EXCLUDE_LINE
                 }                                                                                                                 // COVERAGE_EXCLUDE_LINE
 
                 return forced;
@@ -129,7 +131,7 @@ inline etl::conv_impl select_conv_impl() {
             case conv_impl::SSE:
                 if (!sse3_enabled) {                                                                                              //COVERAGE_EXCLUDE_LINE
                     std::cerr << "Forced selection to SSE sum implementation, but not possible for this expression" << std::endl; //COVERAGE_EXCLUDE_LINE
-                    return select_default_conv_impl<I, K, C>();                                                                   //COVERAGE_EXCLUDE_LINE
+                    return select_default_conv_impl<TT, I, K, C>();                                                                   //COVERAGE_EXCLUDE_LINE
                 }                                                                                                                 //COVERAGE_EXCLUDE_LINE
 
                 return forced;
@@ -140,7 +142,7 @@ inline etl::conv_impl select_conv_impl() {
         }
     }
 
-    return select_default_conv_impl<I, K, C>();
+    return select_default_conv_impl<TT, I, K, C>();
 }
 
 /*!
@@ -222,7 +224,7 @@ struct conv1_full_impl {
      */
     template <typename I, typename K, typename C>
     static void apply(const I& input, const K& kernel, C&& conv) {
-        etl::conv_impl impl    = select_conv_impl<I, K, C>();
+        etl::conv_impl impl    = select_conv_impl<conv_type::FULL, I, K, C>();
         bool parallel_dispatch = select_parallel(input, kernel, conv);
 
         if (impl == etl::conv_impl::AVX) {
@@ -253,7 +255,7 @@ struct conv1_same_impl {
      */
     template <typename I, typename K, typename C>
     static void apply(const I& input, const K& kernel, C&& conv) {
-        etl::conv_impl impl    = select_conv_impl<I, K, C>();
+        etl::conv_impl impl    = select_conv_impl<conv_type::SAME, I, K, C>();
         bool parallel_dispatch = select_parallel(input, kernel, conv);
 
         if (impl == etl::conv_impl::AVX) {
@@ -284,7 +286,7 @@ struct conv1_valid_impl {
      */
     template <typename I, typename K, typename C>
     static void apply(const I& input, const K& kernel, C&& conv) {
-        etl::conv_impl impl    = select_conv_impl<I, K, C>();
+        etl::conv_impl impl    = select_conv_impl<conv_type::VALID, I, K, C>();
         bool parallel_dispatch = select_parallel(input, kernel, conv);
 
         if (impl == etl::conv_impl::AVX) {
@@ -315,7 +317,7 @@ struct conv2_full_impl {
      */
     template <typename I, typename K, typename C>
     static void apply(const I& input, const K& kernel, C&& conv) {
-        etl::conv_impl impl = select_conv_impl<I, K, C>();
+        etl::conv_impl impl = select_conv_impl<conv_type::FULL, I, K, C>();
 
         if (impl == etl::conv_impl::AVX) {
             impl::avx::conv2_full(input, kernel, conv);
@@ -341,7 +343,7 @@ struct conv2_same_impl {
      */
     template <typename I, typename K, typename C>
     static void apply(const I& input, const K& kernel, C&& conv) {
-        etl::conv_impl impl = select_conv_impl<I, K, C>();
+        etl::conv_impl impl = select_conv_impl<conv_type::SAME, I, K, C>();
 
         if (impl == etl::conv_impl::AVX) {
             impl::avx::conv2_same(input, kernel, conv);
@@ -365,7 +367,7 @@ struct conv2_valid_impl {
      */
     template <typename I, typename K, typename C>
     static void apply(const I& input, const K& kernel, C&& conv) {
-        etl::conv_impl impl = select_conv_impl<I, K, C>();
+        etl::conv_impl impl = select_conv_impl<conv_type::VALID, I, K, C>();
 
         if (impl == etl::conv_impl::AVX) {
             impl::avx::conv2_valid(input, kernel, conv);
