@@ -14,11 +14,6 @@
  *  * 1D convolution with no memory allocation could probably be worked out (needs to be benchmarked)
  *  * Probably some other AVX2 instructions that could improve performances
  *  * Use FMA for 2D convolutions
- *
- * Tested:
- *  * the tmp_res vectors could be avoided by using hadd instructions
- *    => This is actually slightly slower because several operations are necessary for each hadd
- *       Moreover, most of the time is spent doing the convolution itself
  */
 
 #if defined(ETL_VECTORIZE_IMPL) && defined(__AVX__)
@@ -528,14 +523,6 @@ inline void dconv2_full_micro_kernel(const double* in, std::size_t n1, std::size
     std::size_t c1 = n1 + m1 - 1;
     std::size_t c2 = n2 + m2 - 1;
 
-    __m256d tmp1;
-    __m256d tmp2;
-    __m256d tmp3;
-    __m256d tmp4;
-    __m256d res;
-
-    double tmp_res[4] __attribute__((aligned(32)));
-
     for (std::size_t i = 0; i < c1; ++i) {
         auto k_lo = std::max<int>(0, i - m1 + 1);
         auto k_hi = std::min(n1 - 1, i) + 1;
@@ -544,19 +531,19 @@ inline void dconv2_full_micro_kernel(const double* in, std::size_t n1, std::size
             auto l_lo = std::max<int>(0, j - m2 + 1);
             auto l_hi = std::min(n2 - 1, j) + 1;
 
-            res = _mm256_setzero_pd();
+            __m256d r1 = _mm256_setzero_pd();
 
             for (std::size_t k = k_lo; k < k_hi; ++k) {
                 for (std::size_t l = l_lo; l + 3 < l_hi; l += 4) {
-                    tmp1 = _mm256_loadu_pd(in + k * n2 + l);
-                    tmp2 = _mm256_loadu_pd(kernel + (i - k) * m2 + (j - (l + 3)));
-                    tmp3 = mm256_reverse_pd(tmp2);
-                    tmp4 = _mm256_mul_pd(tmp3, tmp1);
-                    res  = _mm256_add_pd(res, tmp4);
+                    __m256d i1 = _mm256_loadu_pd(in + k * n2 + l);
+                    __m256d t2 = _mm256_loadu_pd(kernel + (i - k) * m2 + (j - (l + 3)));
+                    __m256d k1 = mm256_reverse_pd(t2);
+                    __m256d t1 = _mm256_mul_pd(k1, i1);
+                    r1         = _mm256_add_pd(r1, t1);
                 }
             }
 
-            _mm256_store_pd(tmp_res, res);
+            out[i * c2 + j] = mm256_hadd_sd(r1);
 
             double temp = 0.0;
 
@@ -569,7 +556,7 @@ inline void dconv2_full_micro_kernel(const double* in, std::size_t n1, std::size
                 }
             }
 
-            out[i * c2 + j] = temp + tmp_res[0] + tmp_res[1] + tmp_res[2] + tmp_res[3];
+            out[i * c2 + j] += temp;
         }
     }
 }
@@ -770,14 +757,6 @@ inline void sconv2_full_micro_kernel(const float* in, std::size_t n1, std::size_
     std::size_t c1 = n1 + m1 - 1;
     std::size_t c2 = n2 + m2 - 1;
 
-    __m256 tmp1;
-    __m256 tmp2;
-    __m256 tmp3;
-    __m256 tmp4;
-    __m256 res;
-
-    float tmp_res[8] __attribute__((aligned(32)));
-
     for (std::size_t i = 0; i < c1; ++i) {
         auto k_lo = std::max<int>(0, i - m1 + 1);
         auto k_hi = std::min(n1 - 1, i) + 1;
@@ -786,19 +765,19 @@ inline void sconv2_full_micro_kernel(const float* in, std::size_t n1, std::size_
             auto l_lo = std::max<int>(0, j - m2 + 1);
             auto l_hi = std::min(n2 - 1, j) + 1;
 
-            res = _mm256_setzero_ps();
+            __m256 r1 = _mm256_setzero_ps();
 
             for (std::size_t k = k_lo; k < k_hi; ++k) {
                 for (std::size_t l = l_lo; l + 7 < l_hi; l += 8) {
-                    tmp1 = _mm256_loadu_ps(in + k * n2 + l);
-                    tmp2 = _mm256_loadu_ps(kernel + (i - k) * m2 + (j - (l + 7)));
-                    tmp3 = mm256_reverse_ps(tmp2);
-                    tmp4 = _mm256_mul_ps(tmp3, tmp1);
-                    res  = _mm256_add_ps(res, tmp4);
+                    __m256 i1 = _mm256_loadu_ps(in + k * n2 + l);
+                    __m256 t2 = _mm256_loadu_ps(kernel + (i - k) * m2 + (j - (l + 7)));
+                    __m256 k1 = mm256_reverse_ps(t2);
+                    __m256 t1 = _mm256_mul_ps(k1, i1);
+                    r1        = _mm256_add_ps(r1, t1);
                 }
             }
 
-            _mm256_store_ps(tmp_res, res);
+            out[i * c2 + j] = mm256_hadd_ss(r1);
 
             double temp = 0.0;
 
@@ -811,7 +790,7 @@ inline void sconv2_full_micro_kernel(const float* in, std::size_t n1, std::size_
                 }
             }
 
-            out[i * c2 + j] = temp + tmp_res[0] + tmp_res[1] + tmp_res[2] + tmp_res[3] + tmp_res[4] + tmp_res[5] + tmp_res[6] + tmp_res[7];
+            out[i * c2 + j] += temp;
         }
     }
 }
