@@ -63,7 +63,8 @@ auto fft_1d(A&& a, C&& c){
     static_assert(is_etl_expr<A>::value && is_etl_expr<C>::value, "FFT only supported for ETL expressions");
     validate_assign(c, a);
 
-    return c = fft_1d(a);
+    c = fft_1d(a);
+    return std::forward<C>(c);
 }
 
 /*!
@@ -89,7 +90,8 @@ auto ifft_1d(A&& a, C&& c) {
     static_assert(is_etl_expr<A>::value && is_etl_expr<C>::value, "FFT only supported for ETL expressions");
     validate_assign(c, a);
 
-    return c = ifft_1d(a);
+    c = ifft_1d(a);
+    return std::forward<C>(c);
 }
 
 /*!
@@ -115,7 +117,8 @@ auto ifft_1d_real(A&& a, C&& c) {
     static_assert(is_etl_expr<A>::value && is_etl_expr<C>::value, "FFT only supported for ETL expressions");
     validate_assign(c, a);
 
-    return c = ifft_1d_real(a);
+    c = ifft_1d_real(a);
+    return std::forward<C>(c);
 }
 
 /*!
@@ -141,7 +144,8 @@ auto fft_2d(A&& a, C&& c){
     static_assert(is_etl_expr<A>::value && is_etl_expr<C>::value, "FFT only supported for ETL expressions");
     validate_assign(c, a);
 
-    return c = fft_2d(a);
+    c = fft_2d(a);
+    return std::forward<C>(c);
 }
 
 /*!
@@ -167,7 +171,8 @@ auto ifft_2d(A&& a, C&& c){
     static_assert(is_etl_expr<A>::value && is_etl_expr<C>::value, "FFT only supported for ETL expressions");
     validate_assign(c, a);
 
-    return c = ifft_2d(a);
+    c = ifft_2d(a);
+    return std::forward<C>(c);
 }
 
 /*!
@@ -193,7 +198,8 @@ auto ifft_2d_real(A&& a, C&& c) {
     static_assert(is_etl_expr<A>::value && is_etl_expr<C>::value, "FFT only supported for ETL expressions");
     validate_assign(c, a);
 
-    return c = ifft_2d_real(a);
+    c = ifft_2d_real(a);
+    return std::forward<C>(c);
 }
 
 /*!
@@ -227,7 +233,8 @@ auto fft_1d_many(A&& a, C&& c) {
     static_assert(decay_traits<A>::dimensions() >= 2 && decay_traits<C>::dimensions() >= 2, "fft_many requires at least 2D matrices");
     validate_assign(c, a);
 
-    return c = fft_1d_many(a);
+    c = fft_1d_many(a);
+    return std::forward<C>(c);
 }
 
 /*!
@@ -261,7 +268,8 @@ auto ifft_1d_many(A&& a, C&& c) {
     static_assert(decay_traits<A>::dimensions() >= 2 && decay_traits<C>::dimensions() >= 2, "ifft_many requires at least 2D matrices");
     validate_assign(c, a);
 
-    return c = ifft_1d_many(a);
+    c = ifft_1d_many(a);
+    return std::forward<C>(c);
 }
 
 /*!
@@ -295,7 +303,8 @@ auto fft_2d_many(A&& a, C&& c) {
     static_assert(decay_traits<A>::dimensions() >= 3 && decay_traits<C>::dimensions() >= 3, "fft_many requires at least 3D matrices");
     validate_assign(c, a);
 
-    return c = fft_2d_many(a);
+    c = fft_2d_many(a);
+    return std::forward<C>(c);
 }
 
 /*!
@@ -329,7 +338,8 @@ auto ifft_2d_many(A&& a, C&& c) {
     static_assert(decay_traits<A>::dimensions() >= 3 && decay_traits<C>::dimensions() >= 3, "ifft_many requires at least 3D matrices");
     validate_assign(c, a);
 
-    return c = ifft_2d_many(a);
+    c = ifft_2d_many(a);
+    return std::forward<C>(c);
 }
 
 } //end of namespace etl

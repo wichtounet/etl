@@ -40,7 +40,8 @@ template <typename A, typename B, typename C>
 auto conv_1d_valid(A&& a, B&& b, C&& c){
     static_assert(is_etl_expr<A>::value && is_etl_expr<B>::value && is_etl_expr<C>::value, "Convolution only supported for ETL expressions");
 
-    return c = conv_1d_valid(a, b);
+    c = conv_1d_valid(a, b);
+    return std::forward<C>(c);
 }
 
 /*!
@@ -67,7 +68,8 @@ template <typename A, typename B, typename C>
 auto conv_1d_same(A&& a, B&& b, C&& c){
     static_assert(is_etl_expr<A>::value && is_etl_expr<B>::value && is_etl_expr<C>::value, "Convolution only supported for ETL expressions");
 
-    return c = conv_1d_same(a, b);
+    c = conv_1d_same(a, b);
+    return std::forward<C>(c);
 }
 
 /*!
@@ -94,7 +96,8 @@ template <typename A, typename B, typename C>
 auto conv_1d_full(A&& a, B&& b, C&& c) {
     static_assert(is_etl_expr<A>::value && is_etl_expr<B>::value && is_etl_expr<C>::value, "Convolution only supported for ETL expressions");
 
-    return c = conv_1d_full(a, b);
+    c = conv_1d_full(a, b);
+    return std::forward<C>(c);
 }
 
 /*!
@@ -121,7 +124,8 @@ template <typename A, typename B, typename C>
 auto fft_conv_1d_full(A&& a, B&& b, C&& c){
     static_assert(is_etl_expr<A>::value && is_etl_expr<B>::value && is_etl_expr<C>::value, "Convolution only supported for ETL expressions");
 
-    return c = fft_conv_1d_full(a, b);
+    c = fft_conv_1d_full(a, b);
+    return std::forward<C>(c);
 }
 
 /*!
@@ -194,7 +198,8 @@ template <typename A, typename B, typename C>
 auto conv_2d_valid(A&& a, B&& b, C&& c) {
     static_assert(is_etl_expr<A>::value && is_etl_expr<B>::value && is_etl_expr<C>::value, "Convolution only supported for ETL expressions");
 
-    return c = conv_2d_valid(a, b);
+    c = conv_2d_valid(a, b);
+    return std::forward<C>(c);
 }
 
 /*!
@@ -221,7 +226,8 @@ template <typename A, typename B, typename C>
 auto conv_2d_valid_multi(A&& a, B&& b, C&& c) {
     static_assert(is_etl_expr<A>::value && is_etl_expr<B>::value && is_etl_expr<C>::value, "Convolution only supported for ETL expressions");
 
-    return c = conv_2d_valid_multi(a, b);
+    c = conv_2d_valid_multi(a, b);
+    return std::forward<C>(c);
 }
 
 /*!
@@ -248,7 +254,8 @@ template <typename A, typename B, typename C>
 auto conv_2d_valid_multi_flipped(A&& a, B&& b, C&& c) {
     static_assert(is_etl_expr<A>::value && is_etl_expr<B>::value && is_etl_expr<C>::value, "Convolution only supported for ETL expressions");
 
-    return c = conv_2d_valid_multi_flipped(a, b);
+    c = conv_2d_valid_multi_flipped(a, b);
+    return std::forward<C>(c);
 }
 
 /*!
@@ -275,7 +282,8 @@ template <typename A, typename B, typename C>
 auto conv_3d_valid_multi(A&& a, B&& b, C&& c) {
     static_assert(is_etl_expr<A>::value && is_etl_expr<B>::value && is_etl_expr<C>::value, "Convolution only supported for ETL expressions");
 
-    return c = conv_3d_valid_multi(a, b);
+    c = conv_3d_valid_multi(a, b);
+    return std::forward<C>(c);
 }
 
 /*!
@@ -302,7 +310,8 @@ template <typename A, typename B, typename C>
 auto conv_3d_valid_multi_flipped(A&& a, B&& b, C&& c) {
     static_assert(is_etl_expr<A>::value && is_etl_expr<B>::value && is_etl_expr<C>::value, "Convolution only supported for ETL expressions");
 
-    return c = conv_3d_valid_multi_flipped(a, b);
+    c = conv_3d_valid_multi_flipped(a, b);
+    return std::forward<C>(c);
 }
 
 /*!
@@ -329,7 +338,8 @@ template <typename A, typename B, typename C>
 auto conv_2d_same(A&& a, B&& b, C&& c) {
     static_assert(is_etl_expr<A>::value && is_etl_expr<B>::value && is_etl_expr<C>::value, "Convolution only supported for ETL expressions");
 
-    return c = conv_2d_same(a, b);
+    c = conv_2d_same(a, b);
+    return std::forward<C>(c);
 }
 
 /*!
@@ -356,7 +366,8 @@ template <typename A, typename B, typename C>
 auto conv_2d_same_multi(A&& a, B&& b, C&& c) {
     static_assert(is_etl_expr<A>::value && is_etl_expr<B>::value && is_etl_expr<C>::value, "Convolution only supported for ETL expressions");
 
-    return c = conv_2d_same_multi(a, b);
+    c = conv_2d_same_multi(a, b);
+    return std::forward<C>(c);
 }
 
 /*!
@@ -383,7 +394,8 @@ template <typename A, typename B, typename C>
 auto conv_2d_full(A&& a, B&& b, C&& c) {
     static_assert(is_etl_expr<A>::value && is_etl_expr<B>::value && is_etl_expr<C>::value, "Convolution only supported for ETL expressions");
 
-    return c = conv_2d_full(a, b);
+    c = conv_2d_full(a, b);
+    return std::forward<C>(c);
 }
 
 /*!
@@ -410,7 +422,8 @@ template <typename A, typename B, typename C>
 auto conv_2d_full_multi(A&& a, B&& b, C&& c) {
     static_assert(is_etl_expr<A>::value && is_etl_expr<B>::value && is_etl_expr<C>::value, "Convolution only supported for ETL expressions");
 
-    return c = conv_2d_full_multi(a, b);
+    c = conv_2d_full_multi(a, b);
+    return std::forward<C>(c);
 }
 
 /*!
@@ -437,7 +450,8 @@ template <typename A, typename B, typename C>
 auto fft_conv_2d_full(A&& a, B&& b, C&& c) {
     static_assert(is_etl_expr<A>::value && is_etl_expr<B>::value && is_etl_expr<C>::value, "Convolution only supported for ETL expressions");
 
-    return c = fft_conv_2d_full(a, b);
+    c = fft_conv_2d_full(a, b);
+    return std::forward<C>(c);
 }
 
 /*!
@@ -516,7 +530,8 @@ template <typename A, typename B, typename C>
 auto conv_deep_valid(A&& a, B&& b, C&& c) {
     static_assert(is_etl_expr<A>::value && is_etl_expr<B>::value && is_etl_expr<C>::value, "Convolution only supported for ETL expressions");
 
-    return c = conv_deep_valid(a, b);
+    c = conv_deep_valid(a, b);
+    return std::forward<C>(c);
 }
 
 /*!
@@ -549,7 +564,8 @@ template <typename A, typename B, typename C>
 auto conv_deep_same(A&& a, B&& b, C&& c) {
     static_assert(is_etl_expr<A>::value && is_etl_expr<B>::value && is_etl_expr<C>::value, "Convolution only supported for ETL expressions");
 
-    return c = conv_deep_same(a, b);
+    c = conv_deep_same(a, b);
+    return std::forward<C>(c);
 }
 
 /*!
@@ -582,7 +598,8 @@ template <typename A, typename B, typename C>
 auto conv_deep_full(A&& a, B&& b, C&& c) {
     static_assert(is_etl_expr<A>::value && is_etl_expr<B>::value && is_etl_expr<C>::value, "Convolution only supported for ETL expressions");
 
-    return c = conv_deep_full(a, b);
+    c = conv_deep_full(a, b);
+    return std::forward<C>(c);
 }
 
 //Special convolutions
