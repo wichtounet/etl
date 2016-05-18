@@ -364,35 +364,94 @@ inline void dconv2_valid_micro_kernel(const double* in, std::size_t n1, std::siz
     std::size_t c1 = n1 - m1 + 1;
     std::size_t c2 = n2 - m2 + 1;
 
-    double tmp_res[4] __attribute__((aligned(32)));
-
     for (std::size_t i = 0; i < c1; ++i) {
-        for (std::size_t j = 0; j < c2; ++j) {
-            __m256d res = _mm256_setzero_pd();
+        for (std::size_t j = 0; j + 7 < c2; j += 8) {
+            __m256d r1 = _mm256_setzero_pd();
+            __m256d r2 = _mm256_setzero_pd();
+            __m256d r3 = _mm256_setzero_pd();
+            __m256d r4 = _mm256_setzero_pd();
+
+            __m256d r5 = _mm256_setzero_pd();
+            __m256d r6 = _mm256_setzero_pd();
+            __m256d r7 = _mm256_setzero_pd();
+            __m256d r8 = _mm256_setzero_pd();
 
             for (std::size_t k = 0; k < m1; ++k) {
                 for (std::size_t l = 0; l + 3 < m2; l += 4) {
-                    __m256d tmp1 = _mm256_loadu_pd(in + (i + k) * n2 + j + l);
-                    __m256d tmp3 = _mm256_loadu_pd(kernel_reverse.get() + k * m2 + l);
-                    __m256d tmp4 = _mm256_mul_pd(tmp1, tmp3);
-                    res          = _mm256_add_pd(res, tmp4);
+                    __m256d k1 = _mm256_loadu_pd(kernel_reverse.get() + k * m2 + l);
+
+                    __m256d i1 = _mm256_loadu_pd(in + (i + k) * n2 + j + l + 0);
+                    __m256d i2 = _mm256_loadu_pd(in + (i + k) * n2 + j + l + 1);
+                    __m256d i3 = _mm256_loadu_pd(in + (i + k) * n2 + j + l + 2);
+                    __m256d i4 = _mm256_loadu_pd(in + (i + k) * n2 + j + l + 3);
+
+                    __m256d t1 = _mm256_mul_pd(i1, k1);
+                    __m256d t2 = _mm256_mul_pd(i2, k1);
+                    __m256d t3 = _mm256_mul_pd(i3, k1);
+                    __m256d t4 = _mm256_mul_pd(i4, k1);
+
+                    __m256d i5 = _mm256_loadu_pd(in + (i + k) * n2 + j + l + 4);
+                    __m256d i6 = _mm256_loadu_pd(in + (i + k) * n2 + j + l + 5);
+                    __m256d i7 = _mm256_loadu_pd(in + (i + k) * n2 + j + l + 6);
+                    __m256d i8 = _mm256_loadu_pd(in + (i + k) * n2 + j + l + 7);
+
+                    r1         = _mm256_add_pd(r1, t1);
+                    r2         = _mm256_add_pd(r2, t2);
+                    r3         = _mm256_add_pd(r3, t3);
+                    r4         = _mm256_add_pd(r4, t4);
+
+                    __m256d t5 = _mm256_mul_pd(i5, k1);
+                    __m256d t6 = _mm256_mul_pd(i6, k1);
+                    __m256d t7 = _mm256_mul_pd(i7, k1);
+                    __m256d t8 = _mm256_mul_pd(i8, k1);
+
+                    r5         = _mm256_add_pd(r5, t5);
+                    r6         = _mm256_add_pd(r6, t6);
+                    r7         = _mm256_add_pd(r7, t7);
+                    r8         = _mm256_add_pd(r8, t8);
                 }
             }
 
-            _mm256_store_pd(tmp_res, res);
+            out[i * c2 + j + 0] = mm256_hadd_sd(r1);
+            out[i * c2 + j + 1] = mm256_hadd_sd(r2);
+            out[i * c2 + j + 2] = mm256_hadd_sd(r3);
+            out[i * c2 + j + 3] = mm256_hadd_sd(r4);
+            out[i * c2 + j + 4] = mm256_hadd_sd(r5);
+            out[i * c2 + j + 5] = mm256_hadd_sd(r6);
+            out[i * c2 + j + 6] = mm256_hadd_sd(r7);
+            out[i * c2 + j + 7] = mm256_hadd_sd(r8);
+        }
 
-            double temp = 0.0;
+        for (std::size_t j = c2 - c2 % 8; j < c2; ++j) {
+            __m256d r1 = _mm256_setzero_pd();
 
-            if (m2 % 4 != 0) {
-                auto rem = m2 % 4;
-                for (std::size_t k = i; k < i + m1; ++k) {
-                    for (std::size_t l = j + m2 - rem; l < j + m2; ++l) {
-                        temp += in[k * n2 + l] * kernel[(i + m1 - 1 - k) * m2 + (j + m2 - 1 - l)];
+            for (std::size_t k = 0; k < m1; ++k) {
+                for (std::size_t l = 0; l + 3 < m2; l += 4) {
+                    __m256d k1 = _mm256_loadu_pd(kernel_reverse.get() + k * m2 + l);
+
+                    __m256d i1 = _mm256_loadu_pd(in + (i + k) * n2 + j + l);
+                    __m256d t1 = _mm256_mul_pd(i1, k1);
+                    r1         = _mm256_add_pd(r1, t1);
+                }
+            }
+
+            out[i * c2 + j] = mm256_hadd_sd(r1);
+        }
+    }
+
+    if (m2 % 4 != 0) {
+        for (std::size_t i = 0; i < c1; ++i) {
+            for (std::size_t j = 0; j < c2; ++j) {
+                double temp = 0.0;
+
+                for (std::size_t k = 0; k < m1; ++k) {
+                    for (std::size_t l = m2 - m2 % 4; l < m2; ++l) {
+                        temp += in[(k + i) * n2 + l + j] * kernel_reverse[k * m2 + l];
                     }
                 }
-            }
 
-            out[i * c2 + j] = temp + tmp_res[0] + tmp_res[1] + tmp_res[2] + tmp_res[3];
+                out[i * c2 + j] += temp;
+            }
         }
     }
 }
