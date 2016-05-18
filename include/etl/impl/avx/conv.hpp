@@ -715,14 +715,6 @@ inline void sconv2_same_micro_kernel(const float* in, std::size_t n1, std::size_
     std::size_t c1 = n1;
     std::size_t c2 = n2;
 
-    __m256 tmp1;
-    __m256 tmp2;
-    __m256 tmp3;
-    __m256 tmp4;
-    __m256 res;
-
-    float tmp_res[8] __attribute__((aligned(32)));
-
     for (std::size_t i = 0; i < c1; ++i) {
         auto k_lo        = std::max<int>(0, i - (m1 - 1) / 2);
         std::size_t k_hi = std::min<int>(n1 - 1, i + m1 / 2) + 1;
@@ -731,19 +723,19 @@ inline void sconv2_same_micro_kernel(const float* in, std::size_t n1, std::size_
             auto l_lo        = std::max<int>(0, j - (m2 - 1) / 2);
             std::size_t l_hi = std::min<int>(n2 - 1, j + m2 / 2) + 1;
 
-            res = _mm256_setzero_ps();
+            __m256 r1 = _mm256_setzero_ps();
 
             for (std::size_t k = k_lo; k < k_hi; ++k) {
                 for (std::size_t l = l_lo; l + 7 < l_hi; l += 8) {
-                    tmp1 = _mm256_loadu_ps(in + k * n2 + l);
-                    tmp2 = _mm256_loadu_ps(kernel + (i - k + m1 / 2) * m2 + (j - (l + 7) + m2 / 2));
-                    tmp3 = mm256_reverse_ps(tmp2);
-                    tmp4 = _mm256_mul_ps(tmp3, tmp1);
-                    res  = _mm256_add_ps(res, tmp4);
+                    __m256 i1 = _mm256_loadu_ps(in + k * n2 + l);
+                    __m256 t2 = _mm256_loadu_ps(kernel + (i - k + m1 / 2) * m2 + (j - (l + 7) + m2 / 2));
+                    __m256 k1 = mm256_reverse_ps(t2);
+                    __m256 t1 = _mm256_mul_ps(i1, k1);
+                    r1        = _mm256_add_ps(r1, t1);
                 }
             }
 
-            _mm256_store_ps(tmp_res, res);
+            out[i * c2 + j] = mm256_hadd_ss(r1);
 
             float temp = 0.0;
 
@@ -756,7 +748,7 @@ inline void sconv2_same_micro_kernel(const float* in, std::size_t n1, std::size_
                 }
             }
 
-            out[i * c2 + j] = temp + tmp_res[0] + tmp_res[1] + tmp_res[2] + tmp_res[3] + tmp_res[4] + tmp_res[5] + tmp_res[6] + tmp_res[7];
+            out[i * c2 + j] += temp;
         }
     }
 }
