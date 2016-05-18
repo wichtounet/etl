@@ -41,6 +41,10 @@
 #define TEST_CUFFT
 #endif
 
+#ifdef ETL_CUDNN_MODE
+#define TEST_CUDNN
+#endif
+
 #ifdef ETL_BLAS_MODE
 #define TEST_BLAS
 #endif
@@ -161,6 +165,12 @@ using small_kernel_policy_2d = NARY_POLICY(
 #define CUFFT_SECTION_FUNCTOR(name, ...) , CPM_SECTION_FUNCTOR(name, __VA_ARGS__)
 #else
 #define CUFFT_SECTION_FUNCTOR(name, ...)
+#endif
+
+#ifdef TEST_CUDNN
+#define CUDNN_SECTION_FUNCTOR(name, ...) , CPM_SECTION_FUNCTOR(name, __VA_ARGS__)
+#else
+#define CUDNN_SECTION_FUNCTOR(name, ...)
 #endif
 
 #ifdef TEST_MMUL_CONV

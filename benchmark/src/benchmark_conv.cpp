@@ -204,6 +204,7 @@ CPM_DIRECT_SECTION_TWO_PASS_NS_PF("sconv2_valid [conv][conv2]", conv_2d_large_po
     CPM_SECTION_FUNCTOR("std", [](smat& a, smat& b, smat& r){ r = selected_helper(etl::conv_impl::STD, etl::conv_2d_valid(a, b)); })
     SSE_SECTION_FUNCTOR("sse", [](smat& a, smat& b, smat& r){ r = selected_helper(etl::conv_impl::SSE, etl::conv_2d_valid(a, b)); })
     AVX_SECTION_FUNCTOR("avx", [](smat& a, smat& b, smat& r){ r = selected_helper(etl::conv_impl::AVX, etl::conv_2d_valid(a, b)); })
+    CUDNN_SECTION_FUNCTOR("cudnn", [](smat& a, smat& b, smat& r){ r = selected_helper(etl::conv_impl::CUDNN, etl::conv_2d_valid(a, b)); })
 )
 
 CPM_DIRECT_SECTION_TWO_PASS_NS_PF("dconv2_valid [conv][conv2]", conv_2d_large_policy,
@@ -213,6 +214,7 @@ CPM_DIRECT_SECTION_TWO_PASS_NS_PF("dconv2_valid [conv][conv2]", conv_2d_large_po
     CPM_SECTION_FUNCTOR("std", [](dmat& a, dmat& b, dmat& r){ r = selected_helper(etl::conv_impl::STD, etl::conv_2d_valid(a, b)); })
     SSE_SECTION_FUNCTOR("sse", [](dmat& a, dmat& b, dmat& r){ r = selected_helper(etl::conv_impl::SSE, etl::conv_2d_valid(a, b)); })
     AVX_SECTION_FUNCTOR("avx", [](dmat& a, dmat& b, dmat& r){ r = selected_helper(etl::conv_impl::AVX, etl::conv_2d_valid(a, b)); })
+    CUDNN_SECTION_FUNCTOR("cudnn", [](dmat& a, dmat& b, dmat& r){ r = selected_helper(etl::conv_impl::CUDNN, etl::conv_2d_valid(a, b)); })
 )
 
 #ifdef ETL_EXTENDED_BENCH
