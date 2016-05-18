@@ -18,9 +18,10 @@ namespace etl {
  * \brief Enumeration describing the different convolution implementations
  */
 enum class conv_impl {
-    STD, ///< Standard implementation
-    SSE, ///< Vectorized SSE implementation
-    AVX  ///< Vectorized AVX implementation
+    STD,  ///< Standard implementation
+    SSE,  ///< Vectorized SSE implementation
+    AVX,  ///< Vectorized AVX implementation
+    CUDNN ///< CUDNN implementation
 };
 
 /*!

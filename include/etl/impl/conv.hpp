@@ -27,6 +27,7 @@
 #include "etl/impl/avx/conv.hpp"
 #include "etl/impl/reduc/conv_mmul.hpp"
 #include "etl/impl/reduc/conv_multi.hpp"
+#include "etl/impl/cudnn/conv.hpp"
 
 namespace etl {
 
@@ -79,11 +80,15 @@ inline etl::conv_impl select_default_conv_impl() {
 
     static constexpr const bool sse = vectorize_impl && vector_mode == vector_mode_t::SSE3;
     static constexpr const bool avx = vectorize_impl && vector_mode == vector_mode_t::AVX;
+    static constexpr const bool cudnn = is_cudnn_enabled;
 
     if (avx) {
         return etl::conv_impl::AVX;
     } else if (sse) {
         return etl::conv_impl::SSE;
+    } else if (cudnn){
+        //TODO Put that in front with size check
+        return etl::conv_impl::CUDNN;
     } else {
         return etl::conv_impl::STD;
     }
@@ -102,6 +107,15 @@ inline etl::conv_impl select_conv_impl() {
         auto forced = local_context().conv_selector.impl;
 
         switch (forced) {
+            //CUDNN cannot always be used
+            case conv_impl::CUDNN:
+                if (!is_cudnn_enabled) {                                                                                               // COVERAGE_EXCLUDE_LINE
+                    std::cerr << "Forced selection to CUDNN conv implementation, but not possible for this expression" << std::endl; // COVERAGE_EXCLUDE_LINE
+                    return select_default_conv_impl<I, K, C>();                                                                   // COVERAGE_EXCLUDE_LINE
+                }                                                                                                                 // COVERAGE_EXCLUDE_LINE
+
+                return forced;
+
             //AVX cannot always be used
             case conv_impl::AVX:
                 if (!avx_enabled) {                                                                                               // COVERAGE_EXCLUDE_LINE
@@ -355,6 +369,8 @@ struct conv2_valid_impl {
             impl::avx::conv2_valid(input, kernel, conv);
         } else if (impl == etl::conv_impl::SSE) {
             impl::sse::conv2_valid(input, kernel, conv);
+        } else if (impl == etl::conv_impl::CUDNN) {
+            impl::cudnn::conv2_valid(input, kernel, conv);
         } else if (impl == etl::conv_impl::STD) {
             impl::standard::conv2_valid(input, kernel, conv);
         }
