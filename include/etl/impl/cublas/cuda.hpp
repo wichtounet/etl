@@ -94,6 +94,21 @@ private:
 };
 
 template <typename E>
+auto cuda_allocate_only(std::size_t size) -> cuda_memory<E> {
+    E* memory;
+
+    auto cuda_status = cudaMalloc(&memory, size * sizeof(E));
+
+    if (cuda_status != cudaSuccess) {
+        std::cout << "cuda: Failed to allocate GPU memory: " << cudaGetErrorString(cuda_status) << std::endl;
+        std::cout << "      Tried to allocate " << size * sizeof(E) << "B" << std::endl;
+        exit(EXIT_FAILURE);
+    }
+
+    return {memory};
+}
+
+template <typename E>
 auto cuda_allocate(const E& expr, bool copy = false) -> cuda_memory<value_t<E>> {
     value_t<E>* memory;
 
