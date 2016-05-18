@@ -14,6 +14,10 @@
 #endif
 #endif
 
+#ifdef ETL_CUDNN_MODE
+#define TEST_CUDNN
+#endif
+
 #define CONV_FUNCTOR(name, ...)                       \
     struct name {                                     \
         template <typename A, typename B, typename C> \
@@ -120,6 +124,17 @@ CONV_FUNCTOR(avx_conv2_valid, c = selected_helper(etl::conv_impl::AVX, etl::conv
 #define CONV2_VALID_TEST_CASE_SECTION_AVX
 #endif
 
+#ifdef TEST_CUDNN
+CONV_FUNCTOR(cudnn_conv2_full, c = selected_helper(etl::conv_impl::CUDNN, etl::conv_2d_full(a, b)))
+CONV_FUNCTOR(cudnn_conv2_valid, c = selected_helper(etl::conv_impl::CUDNN, etl::conv_2d_valid(a, b)))
+
+#define CONV2_FULL_TEST_CASE_SECTION_CUDNN CONV_TEST_CASE_SECTIONS(cudnn_conv2_full, cudnn_conv2_full)
+#define CONV2_VALID_TEST_CASE_SECTION_CUDNN CONV_TEST_CASE_SECTIONS(cudnn_conv2_valid, cudnn_conv2_valid)
+#else
+#define CONV2_FULL_TEST_CASE_SECTION_CUDNN
+#define CONV2_VALID_TEST_CASE_SECTION_CUDNN
+#endif
+
 #define CONV_TEST_CASE_DECL(name, description)                                                \
     template <typename T, typename Impl>                                                      \
     static void INTERNAL_CATCH_UNIQUE_NAME(____C_A_T_C_H____T_E_M_P_L_A_TE____T_E_S_T____)(); \
@@ -201,5 +216,6 @@ CONV_FUNCTOR(avx_conv2_valid, c = selected_helper(etl::conv_impl::AVX, etl::conv
         CONV2_VALID_TEST_CASE_SECTION_STD        \
         CONV2_VALID_TEST_CASE_SECTION_SSE        \
         CONV2_VALID_TEST_CASE_SECTION_AVX        \
+        CONV2_VALID_TEST_CASE_SECTION_CUDNN      \
     }                                            \
     CONV_TEST_CASE_DEFN
