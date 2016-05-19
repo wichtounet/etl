@@ -28,9 +28,10 @@ enum class conv_impl {
  * \brief Enumeration describing the different multiple convolution implementations
  */
 enum class conv_multi_impl {
-    STD, ///< Standard implementation
-    FFT, ///< Reductiont too FFT
-    BLAS ///< Reduction to BLAS (GEMM)
+    STD,  ///< Standard implementation
+    FFT,  ///< Reductiont too FFT
+    BLAS, ///< Reduction to BLAS (GEMM)
+    CUDNN ///< GPU with CUDNN
 };
 
 } //end of namespace etl

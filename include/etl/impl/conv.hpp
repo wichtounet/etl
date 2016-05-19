@@ -169,6 +169,13 @@ inline etl::conv_multi_impl select_default_conv_multi_impl() {
         return etl::conv_multi_impl::STD;
     }
 
+    static constexpr const bool cudnn = is_cudnn_enabled;
+
+    if(cudnn && decay_traits<I>::dimensions() == 2){
+        //TODO Should only be used with (very?) large sizes
+        return etl::conv_multi_impl::CUDNN;
+    }
+
     if (is_mkl_enabled && conv_valid_fft) {
         return etl::conv_multi_impl::FFT;
     } else if (is_cblas_enabled || is_cublas_enabled) {
@@ -188,9 +195,23 @@ inline etl::conv_multi_impl select_default_conv_multi_impl() {
 template <typename I, typename K, typename C>
 inline etl::conv_multi_impl select_conv_multi_impl() {
     if (local_context().conv_multi_selector.forced) {
-        // Although it may be suboptimal the forced selection can
-        // always be achieved
-        return local_context().conv_multi_selector.impl;
+        auto forced = local_context().conv_multi_selector.impl;
+
+        switch (forced) {
+            //CUDNN cannot always be used
+            case conv_multi_impl::CUDNN:
+                if (!is_cudnn_enabled) {                                                                                               // COVERAGE_EXCLUDE_LINE
+                    std::cerr << "Forced selection to CUDNN conv implementation, but not possible for this expression" << std::endl; // COVERAGE_EXCLUDE_LINE
+                    return select_default_conv_multi_impl<I, K, C>();                                                                   // COVERAGE_EXCLUDE_LINE
+                }                                                                                                                 // COVERAGE_EXCLUDE_LINE
+
+                return forced;
+
+                // Although it may be suboptimal the forced selection can
+                // always be achieved
+            default:
+                return forced;
+        }
     }
 
     return select_default_conv_multi_impl<I, K, C>();
@@ -399,6 +420,8 @@ struct conv2_valid_multi_impl {
             impl::reduc::blas_conv2_valid_multi(input, kernel, conv);
         } else if (impl == etl::conv_multi_impl::FFT) {
             impl::reduc::fft_conv2_valid_multi(input, kernel, conv);
+        } else if (impl == etl::conv_multi_impl::CUDNN) {
+            impl::cudnn::conv2_valid_multi(input, kernel, conv);
         } else {
             impl::standard::conv2_valid_multi(input, kernel, conv);
         }
