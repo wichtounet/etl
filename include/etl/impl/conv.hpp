@@ -146,6 +146,69 @@ inline etl::conv_impl select_conv_impl() {
 }
 
 /*!
+ * \brief Select the implementation of the 4D conv of I and K in C
+ *
+ * This does not take the local context into account.
+ *
+ * \tparam I The input type
+ * \tparam K The kernel type
+ * \tparam C The conv type
+ * \return the implementation to be used
+ */
+template <typename I, typename K, typename C>
+inline etl::conv4_impl select_default_conv4_impl() {
+    //Note: since the constexpr values will be known at compile time, the
+    //conditions will be a lot simplified
+
+    static constexpr const order input_order  = decay_traits<I>::storage_order;
+    static constexpr const order kernel_order = decay_traits<K>::storage_order;
+    static constexpr const order output_order = decay_traits<C>::storage_order;
+
+    //Only the standard implementation is able to handle column major
+    if (input_order == order::ColumnMajor || kernel_order == order::ColumnMajor || output_order == order::ColumnMajor) {
+        return etl::conv4_impl::STD;
+    }
+
+    static constexpr const bool cudnn = is_cudnn_enabled;
+
+    if(cudnn){
+        return etl::conv4_impl::CUDNN;
+    }
+
+    return etl::conv4_impl::STD;
+}
+
+/*!
+ * \brief Select the implementation of the conv of I and K in C
+ * \tparam I The input type
+ * \tparam K The kernel type
+ * \tparam C The conv type
+ * \return the implementation to be used
+ */
+template <typename I, typename K, typename C>
+inline etl::conv4_impl select_conv4_impl() {
+    if (local_context().conv4_selector.forced) {
+        auto forced = local_context().conv4_selector.impl;
+
+        switch (forced) {
+            //CUDNN cannot always be used
+            case conv4_impl::CUDNN:
+                if (!is_cudnn_enabled) {                                                                                               // COVERAGE_EXCLUDE_LINE
+                    std::cerr << "Forced selection to CUDNN conv implementation, but not possible for this expression" << std::endl; // COVERAGE_EXCLUDE_LINE
+                    return select_default_conv4_impl<I, K, C>();                                                                   // COVERAGE_EXCLUDE_LINE
+                }                                                                                                                 // COVERAGE_EXCLUDE_LINE
+
+                return forced;
+
+            default:
+                return forced;
+        }
+    }
+
+    return select_default_conv4_impl<I, K, C>();
+}
+
+/*!
  * \brief Select the implementation of the conv multi of I and K in C
  *
  * This does not take the local context into account.
@@ -408,6 +471,30 @@ struct conv2_valid_impl {
             impl::cudnn::conv2_valid(input, kernel, conv);
         } else if (impl == etl::conv_impl::STD) {
             impl::standard::conv2_valid(input, kernel, conv);
+        } else {
+            cpp_unreachable("Invalid conv implementation selection");
+        }
+    }
+};
+
+/*!
+ * \brief The functor impl for 2D valid conv
+ */
+struct conv4_valid_impl {
+    /*!
+     * \brief Apply the convolution
+     * \param input The input expression
+     * \param kernel The kernel expression
+     * \param conv The output expression
+     */
+    template <typename I, typename K, typename C>
+    static void apply(const I& input, const K& kernel, C&& conv) {
+        auto impl = select_conv4_impl<I, K, C>();
+
+        if (impl == etl::conv4_impl::CUDNN) {
+            impl::cudnn::conv4_valid(input, kernel, conv);
+        } else if (impl == etl::conv4_impl::STD) {
+            impl::standard::conv4_valid(input, kernel, conv);
         } else {
             cpp_unreachable("Invalid conv implementation selection");
         }

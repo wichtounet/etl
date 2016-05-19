@@ -25,6 +25,14 @@ enum class conv_impl {
 };
 
 /*!
+ * \brief Enumeration describing the different convolution implementations
+ */
+enum class conv4_impl {
+    STD,  ///< Standard implementation
+    CUDNN ///< CUDNN implementation
+};
+
+/*!
  * \brief Enumeration describing the different multiple convolution implementations
  */
 enum class conv_multi_impl {

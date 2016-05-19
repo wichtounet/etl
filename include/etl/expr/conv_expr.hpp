@@ -119,6 +119,33 @@ void check_conv_2d_sizes(const I& input, const K& kernel, const C& conv) {
  * \param kernel The kernel matrix
  * \param conv The output convolution result
  */
+template <conv_type TT, typename I, typename K, typename C, cpp_disable_if(all_fast<I, K, C>::value)>
+void check_conv_4d_sizes(const I& input, const K& kernel, const C& conv) {
+    static_assert(etl_traits<I>::dimensions() == 4 && etl_traits<K>::dimensions() == 4 && etl_traits<C>::dimensions() == 4, "Invalid dimensions for 4D convolution");
+
+    static_assert(TT != conv_type::SAME, "'same' 4D convolution not supported");
+
+    if (TT == conv_type::FULL) {
+        cpp_assert(
+            dim<2>(conv) == dim<2>(input) + dim<2>(kernel) - 1 && dim<3>(conv) == dim<3>(input) + dim<3>(kernel) - 1,
+            "Invalid sizes for 'full' convolution");
+    } else if (TT == conv_type::VALID) {
+        cpp_assert(
+            dim<2>(conv) == dim<2>(input) - dim<2>(kernel) + 1 && dim<3>(conv) == dim<3>(input) - dim<3>(kernel) + 1,
+            "Invalid sizes for 'valid' convolution");
+    }
+
+    cpp_unused(input);
+    cpp_unused(kernel);
+    cpp_unused(conv);
+}
+
+/*!
+ * \brief Assert for the validity of the 2D convolution
+ * \param input The input matrix
+ * \param kernel The kernel matrix
+ * \param conv The output convolution result
+ */
 template <conv_type TT, typename I, typename K, typename C, cpp_enable_if(all_fast<I, K, C>::value && !is_multi(TT))>
 void check_conv_2d_sizes(const I& input, const K& kernel, const C& conv) {
     cpp_unused(input);
@@ -136,6 +163,41 @@ void check_conv_2d_sizes(const I& input, const K& kernel, const C& conv) {
     static_assert(
         TT != conv_type::VALID || (etl_traits<C>::template dim<0>() == etl_traits<I>::template dim<0>() - etl_traits<K>::template dim<0>() + 1 && etl_traits<C>::template dim<1>() == etl_traits<I>::template dim<1>() - etl_traits<K>::template dim<1>() + 1),
         "Invalid sizes for 'valid' convolution");
+}
+
+/*!
+ * \brief Assert for the validity of the 4D convolution
+ * \param input The input matrix
+ * \param kernel The kernel matrix
+ * \param conv The output convolution result
+ */
+template <conv_type TT, typename I, typename K, typename C, cpp_enable_if(all_fast<I, K, C>::value)>
+void check_conv_4d_sizes(const I& input, const K& kernel, const C& conv) {
+    cpp_unused(input);
+    cpp_unused(kernel);
+    cpp_unused(conv);
+
+    static_assert(etl_traits<I>::dimensions() == 4 && etl_traits<K>::dimensions() == 4 && etl_traits<C>::dimensions() == 4, "Invalid dimensions for 4D convolution");
+
+    static_assert(TT != conv_type::SAME, "'same' 4D convolution not supported");
+
+    static_assert(
+        TT != conv_type::FULL || (
+                etl_traits<C>::template dim<2>() == etl_traits<I>::template dim<2>() + etl_traits<K>::template dim<2>() - 1
+            &&  etl_traits<C>::template dim<3>() == etl_traits<I>::template dim<3>() + etl_traits<K>::template dim<3>() - 1
+            &&  etl_traits<I>::template dim<0>() == etl_traits<C>::template dim<0>()
+            &&  etl_traits<I>::template dim<1>() == etl_traits<K>::template dim<1>()
+            &&  etl_traits<C>::template dim<1>() == etl_traits<K>::template dim<0>()
+        ), "Invalid sizes for 'full' convolution");
+
+    static_assert(
+        TT != conv_type::VALID || (
+                etl_traits<C>::template dim<2>() == etl_traits<I>::template dim<2>() - etl_traits<K>::template dim<2>() + 1
+            &&  etl_traits<C>::template dim<3>() == etl_traits<I>::template dim<3>() - etl_traits<K>::template dim<3>() + 1
+            &&  etl_traits<I>::template dim<0>() == etl_traits<C>::template dim<0>()
+            &&  etl_traits<I>::template dim<1>() == etl_traits<K>::template dim<1>()
+            &&  etl_traits<C>::template dim<1>() == etl_traits<K>::template dim<0>()
+        ), "Invalid sizes for 'valid' convolution");
 }
 
 /*!
@@ -250,12 +312,12 @@ void check_conv_deep_sizes(const I& i, const K& k, const C& c) {
  * \tparam TT The convolution type
  * \tparam Impl The implementation class
  */
-template <typename T, std::size_t D, conv_type TT, typename Impl>
-struct basic_conv_expr : impl_expr<basic_conv_expr<T, D, TT, Impl>> {
+template <typename T, std::size_t D, conv_type TT, typename Impl, bool C4 = false>
+struct basic_conv_expr : impl_expr<basic_conv_expr<T, D, TT, Impl, C4>> {
     static_assert(D > 0, "0D convolution is not valid");
 
-    using value_type = T;                               ///< The type of value of the expression
-    using this_type  = basic_conv_expr<T, D, TT, Impl>; ///< The type of this expression
+    using value_type = T;                                   ///< The type of value of the expression
+    using this_type  = basic_conv_expr<T, D, TT, Impl, C4>; ///< The type of this expression
 
     static constexpr const bool is_gpu = false; ///< Indicates if the expression runs on GPU
 
@@ -273,7 +335,7 @@ struct basic_conv_expr : impl_expr<basic_conv_expr<T, D, TT, Impl>> {
      * \þaram b The kernel matrix
      * \þaram c The output matrix
      */
-    template <typename A, typename B, typename C, std::size_t D2 = D, cpp_enable_if(D2 == 1)>
+    template <typename A, typename B, typename C, std::size_t D2 = D, cpp_enable_if(!C4 && D2 == 1)>
     static void check(const A& a, const B& b, const C& c) {
         detail::check_conv_1d_sizes<TT>(a, b, c);
     }
@@ -284,7 +346,7 @@ struct basic_conv_expr : impl_expr<basic_conv_expr<T, D, TT, Impl>> {
      * \þaram b The kernel matrix
      * \þaram c The output matrix
      */
-    template <typename A, typename B, typename C, std::size_t D2 = D, cpp_enable_if(D2 == 2)>
+    template <typename A, typename B, typename C, std::size_t D2 = D, cpp_enable_if(!C4 && D2 == 2)>
     static void check(const A& a, const B& b, const C& c) {
         detail::check_conv_2d_sizes<TT>(a, b, c);
     }
@@ -295,9 +357,20 @@ struct basic_conv_expr : impl_expr<basic_conv_expr<T, D, TT, Impl>> {
      * \þaram b The kernel matrix
      * \þaram c The output matrix
      */
-    template <typename A, typename B, typename C, std::size_t D2 = D, cpp_enable_if((D2 > 2))>
+    template <typename A, typename B, typename C, std::size_t D2 = D, cpp_enable_if((!C4 && D2 > 2))>
     static void check(const A& a, const B& b, const C& c) {
         detail::check_conv_deep_sizes<TT>(a, b, c);
+    }
+
+    /*!
+     * \brief Validate the convolutiond dimensions
+     * \param a The input matrix
+     * \þaram b The kernel matrix
+     * \þaram c The output matrix
+     */
+    template <typename A, typename B, typename C, bool CC4 = C4, cpp_enable_if(CC4)>
+    static void check(const A& a, const B& b, const C& c) {
+        detail::check_conv_4d_sizes<TT>(a, b, c);
     }
 
     /*!
@@ -312,7 +385,7 @@ struct basic_conv_expr : impl_expr<basic_conv_expr<T, D, TT, Impl>> {
 
         check(a, b, c);
 
-        if (D == 1 || D == 2) {
+        if (D == 1 || D == 2 || (D == 4 && (TT == conv_type::VALID || TT == conv_type::FULL))) {
             Impl::apply(
                 make_temporary(std::forward<A>(a)),
                 make_temporary(std::forward<B>(b)),
@@ -347,12 +420,24 @@ struct basic_conv_expr : impl_expr<basic_conv_expr<T, D, TT, Impl>> {
      * \brief Returns the DDth dimension of the expression
      * \return the DDth dimension of the expression
      */
-    template <typename A, typename B, std::size_t DD, cpp_disable_if_cst(is_multi(TT))>
+    template <typename A, typename B, std::size_t DD, cpp_disable_if_cst(C4 || is_multi(TT))>
     static constexpr std::size_t dim() {
         return (D > 2 && DD < (D - 2))
             ? decay_traits<A>::template dim<DD>()
             : TT == conv_type::VALID ?  decay_traits<A>::template dim<DD>() - decay_traits<B>::template dim<DD>() + 1
             : TT == conv_type::SAME  ?  decay_traits<A>::template dim<DD>()
+            :                           decay_traits<A>::template dim<DD>() + decay_traits<B>::template dim<DD>() - 1;
+    }
+
+    /*!
+     * \brief Returns the DDth dimension of the expression
+     * \return the DDth dimension of the expression
+     */
+    template <typename A, typename B, std::size_t DD, cpp_enable_if_cst(C4)>
+    static constexpr std::size_t dim() {
+        return DD == 0 ? decay_traits<A>::template dim<DD>()
+            :  DD == 1 ? decay_traits<B>::template dim<0>()
+            : TT == conv_type::VALID ?  decay_traits<A>::template dim<DD>() - decay_traits<B>::template dim<DD>() + 1
             :                           decay_traits<A>::template dim<DD>() + decay_traits<B>::template dim<DD>() - 1;
     }
 
@@ -500,6 +585,12 @@ using fft_conv1_full_expr = basic_conv_expr<T, 1, conv_type::FULL, detail::fft_c
  */
 template <typename T>
 using conv2_valid_expr = basic_conv_expr<T, 2, conv_type::VALID, detail::conv2_valid_impl>;
+
+/*!
+ * \brief Expression for 4D valid convolution
+ */
+template <typename T>
+using conv4_valid_expr = basic_conv_expr<T, 4, conv_type::VALID, detail::conv4_valid_impl, true>;
 
 /*!
  * \brief Expression for 2D valid convolution, with multiple kernels
