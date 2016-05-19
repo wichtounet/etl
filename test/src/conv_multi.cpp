@@ -187,9 +187,7 @@ CONV2_VALID_MULTI_FLIPPED_TEST_CASE("conv_2d/valid/multi_flipped/1", "[conv][con
     c_1(1) = conv_2d_valid(I, K(1));
     c_1(2) = conv_2d_valid(I, K(2));
 
-    K(0).fflip_inplace();
-    K(1).fflip_inplace();
-    K(2).fflip_inplace();
+    K.deep_fflip_inplace();
 
     Impl::apply(I, K, c_2);
 
@@ -215,10 +213,7 @@ CONV2_VALID_MULTI_FLIPPED_TEST_CASE("conv_2d/valid/multi_flipped/2", "[conv][con
     c_1(2) = conv_2d_valid(I, K(2));
     c_1(3) = conv_2d_valid(I, K(3));
 
-    K(0).fflip_inplace();
-    K(1).fflip_inplace();
-    K(2).fflip_inplace();
-    K(3).fflip_inplace();
+    K.deep_fflip_inplace();
 
     Impl::apply(I, K, c_2);
 

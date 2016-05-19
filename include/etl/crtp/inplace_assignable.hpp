@@ -60,6 +60,34 @@ struct inplace_assignable {
     }
 
     /*!
+     * \brief Fully flip each sub 2D matrix in place.
+     */
+    template <typename S = D, cpp_enable_if((etl_traits<S>::dimensions() > 3))>
+    derived_t& deep_fflip_inplace() {
+        decltype(auto) mat = as_derived();
+
+        for (std::size_t i = 0; i < etl::dim<0>(mat); ++i) {
+            mat(i).deep_fflip_inplace();
+        }
+
+        return mat;
+    }
+
+    /*!
+     * \brief Fully flip each sub 2D matrix in place.
+     */
+    template <typename S = D, cpp_enable_if((etl_traits<S>::dimensions() == 3))>
+    derived_t& deep_fflip_inplace() {
+        decltype(auto) mat = as_derived();
+
+        for (std::size_t i = 0; i < etl::dim<0>(mat); ++i) {
+            mat(i).fflip_inplace();
+        }
+
+        return mat;
+    }
+
+    /*!
      * \brief Transpose each sub 2D matrix in place.
      */
     template <typename S = D, cpp_enable_if(is_dyn_matrix<S>::value && (etl_traits<S>::dimensions() > 3))>

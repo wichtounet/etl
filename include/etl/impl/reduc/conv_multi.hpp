@@ -130,9 +130,7 @@ void blas_conv2_valid_multi(const I& input, const K_T& kernels, C&& conv) {
 
     auto prepared_k = force_temporary(kernels);
 
-    for (std::size_t i = 0; i < K; ++i) {
-        prepared_k(i).fflip_inplace();
-    }
+    prepared_k.deep_fflip_inplace();
 
     etl::dyn_matrix<value_t<I>, 2> input_col(k1 * k2, (v1 - k1 + 1) * (v2 - k2 + 1));
     im2col_direct_tr(input_col, input, k1, k2);
@@ -150,9 +148,7 @@ template <typename I, typename K_T, typename C>
 void fft_conv2_valid_multi_flipped(const I& input, const K_T& kernels, C&& conv) {
     auto kernels_f = etl::force_temporary(kernels);
 
-    for (std::size_t i = 0; i < etl::dim<0>(kernels_f); ++i) {
-        kernels_f(i).fflip_inplace();
-    }
+    kernels_f.deep_fflip_inplace();
 
     fft_conv2_valid_multi(input, kernels_f, conv);
 }
@@ -189,11 +185,7 @@ template <typename I, typename K_T, typename C_T>
 void fft_conv3_valid_multi_flipped(const I& input, const K_T& kernels, C_T&& conv) {
     auto kernels_f = etl::force_temporary(kernels);
 
-    for (std::size_t i = 0; i < etl::dim<0>(kernels_f); ++i) {
-        for (std::size_t j = 0; j < etl::dim<1>(kernels_f); ++j) {
-            kernels_f(i)(j).fflip_inplace();
-        }
-    }
+    kernels_f.deep_fflip_inplace();
 
     const std::size_t C  = etl::dim<0>(kernels);
     const std::size_t K  = etl::dim<1>(kernels);
