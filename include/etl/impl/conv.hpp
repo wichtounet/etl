@@ -446,6 +446,8 @@ struct conv2_valid_multi_flipped_impl {
             impl::reduc::blas_conv2_valid_multi_flipped(input, kernel, conv);
         } else if (impl == etl::conv_multi_impl::FFT) {
             impl::reduc::fft_conv2_valid_multi_flipped(input, kernel, conv);
+        } else if (impl == etl::conv_multi_impl::CUDNN) {
+            impl::cudnn::conv2_valid_multi_flipped(input, kernel, conv);
         } else {
             impl::standard::conv2_valid_multi_flipped(input, kernel, conv);
         }
