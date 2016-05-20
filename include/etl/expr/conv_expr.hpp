@@ -186,8 +186,8 @@ void check_conv_4d_sizes(const I& input, const K& kernel, const C& conv) {
                 etl_traits<C>::template dim<2>() == etl_traits<I>::template dim<2>() + etl_traits<K>::template dim<2>() - 1
             &&  etl_traits<C>::template dim<3>() == etl_traits<I>::template dim<3>() + etl_traits<K>::template dim<3>() - 1
             &&  etl_traits<I>::template dim<0>() == etl_traits<C>::template dim<0>()
-            &&  etl_traits<I>::template dim<1>() == etl_traits<K>::template dim<1>()
-            &&  etl_traits<C>::template dim<1>() == etl_traits<K>::template dim<0>()
+            &&  etl_traits<I>::template dim<1>() == etl_traits<K>::template dim<0>()
+            &&  etl_traits<C>::template dim<1>() == etl_traits<K>::template dim<1>()
         ), "Invalid sizes for 'full' convolution");
 
     static_assert(
@@ -435,8 +435,8 @@ struct basic_conv_expr : impl_expr<basic_conv_expr<T, D, TT, Impl, C4>> {
      */
     template <typename A, typename B, std::size_t DD, cpp_enable_if_cst(C4)>
     static constexpr std::size_t dim() {
-        return DD == 0 ? decay_traits<A>::template dim<DD>()
-            :  DD == 1 ? decay_traits<B>::template dim<0>()
+        return DD == 0 ? decay_traits<A>::template dim<0>()
+            :  DD == 1 ? (TT == conv_type::VALID ? decay_traits<B>::template dim<0>() : decay_traits<B>::template dim<1>())
             : TT == conv_type::VALID ?  decay_traits<A>::template dim<DD>() - decay_traits<B>::template dim<DD>() + 1
             :                           decay_traits<A>::template dim<DD>() + decay_traits<B>::template dim<DD>() - 1;
     }
@@ -591,6 +591,12 @@ using conv2_valid_expr = basic_conv_expr<T, 2, conv_type::VALID, detail::conv2_v
  */
 template <typename T>
 using conv4_valid_expr = basic_conv_expr<T, 4, conv_type::VALID, detail::conv4_valid_impl, true>;
+
+/*!
+ * \brief Expression for 4D valid convolution
+ */
+template <typename T>
+using conv4_full_expr = basic_conv_expr<T, 4, conv_type::FULL, detail::conv4_full_impl, true>;
 
 /*!
  * \brief Expression for 2D valid convolution, with multiple kernels
