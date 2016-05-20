@@ -264,7 +264,7 @@ inline void sconv1_valid_micro_kernel(const float* __restrict__ in, const std::s
     }
 }
 
-template <typename I, typename K, typename C, cpp_enable_if((all_dma<I, K, C>::value && all_double_precision<I, K, C>::value))>
+template <typename I, typename K, typename C, cpp_enable_if((all_double_precision<I, K, C>::value))>
 void conv1_full(const I& input, const K& kernel, C&& conv, std::size_t first, std::size_t last) {
     std::size_t left = size(kernel) - 1;
 
@@ -280,7 +280,7 @@ void conv1_full(const I& input, const K& kernel, C&& conv, std::size_t first, st
     dconv1_valid_micro_kernel(in, size(input), k, size(kernel), out + left, first, last);
 }
 
-template <typename I, typename K, typename C, cpp_enable_if((all_dma<I, K, C>::value && all_double_precision<I, K, C>::value))>
+template <typename I, typename K, typename C, cpp_enable_if((all_double_precision<I, K, C>::value))>
 void conv1_same(const I& input, const K& kernel, C&& conv, std::size_t first, std::size_t last) {
     std::size_t left = (size(kernel) - 1) / 2;
 
@@ -296,7 +296,7 @@ void conv1_same(const I& input, const K& kernel, C&& conv, std::size_t first, st
     dconv1_valid_micro_kernel(in, size(input), k, size(kernel), out + left, first, last);
 }
 
-template <typename I, typename K, typename C, cpp_enable_if((all_dma<I, K, C>::value && all_double_precision<I, K, C>::value))>
+template <typename I, typename K, typename C, cpp_enable_if((all_double_precision<I, K, C>::value))>
 void conv1_valid(const I& input, const K& kernel, C&& conv, std::size_t first, std::size_t last) {
     double* out      = conv.memory_start();
     const double* in = input.memory_start();
@@ -305,7 +305,7 @@ void conv1_valid(const I& input, const K& kernel, C&& conv, std::size_t first, s
     dconv1_valid_micro_kernel(in, size(input), k, size(kernel), out, first, last);
 }
 
-template <typename I, typename K, typename C, cpp_enable_if((all_dma<I, K, C>::value && all_single_precision<I, K, C>::value))>
+template <typename I, typename K, typename C, cpp_enable_if((all_single_precision<I, K, C>::value))>
 void conv1_full(const I& input, const K& kernel, C&& conv, std::size_t first, std::size_t last) {
     std::size_t left = size(kernel) - 1;
 
@@ -321,7 +321,7 @@ void conv1_full(const I& input, const K& kernel, C&& conv, std::size_t first, st
     sconv1_valid_micro_kernel(in, size(input), k, size(kernel), out + left, first, last);
 }
 
-template <typename I, typename K, typename C, cpp_enable_if((all_dma<I, K, C>::value && all_single_precision<I, K, C>::value))>
+template <typename I, typename K, typename C, cpp_enable_if((all_single_precision<I, K, C>::value))>
 void conv1_same(const I& input, const K& kernel, C&& conv, std::size_t first, std::size_t last) {
     std::size_t left = (size(kernel) - 1) / 2;
 
@@ -337,7 +337,7 @@ void conv1_same(const I& input, const K& kernel, C&& conv, std::size_t first, st
     sconv1_valid_micro_kernel(in, size(input), k, size(kernel), out + left, first, last);
 }
 
-template <typename I, typename K, typename C, cpp_enable_if((all_dma<I, K, C>::value && all_single_precision<I, K, C>::value))>
+template <typename I, typename K, typename C, cpp_enable_if((all_single_precision<I, K, C>::value))>
 void conv1_valid(const I& input, const K& kernel, C&& conv, std::size_t first, std::size_t last) {
     float* out      = conv.memory_start();
     const float* in = input.memory_start();
@@ -451,7 +451,7 @@ inline void dconv2_valid_micro_kernel(const double* in, std::size_t n1, std::siz
     }
 }
 
-template <typename I, typename K, typename C, cpp_enable_if((all_dma<I, K, C>::value && all_double_precision<I, K, C>::value))>
+template <typename I, typename K, typename C, cpp_enable_if((all_double_precision<I, K, C>::value))>
 void conv2_valid(const I& input, const K& kernel, C&& conv) {
     dconv2_valid_micro_kernel(
         input.memory_start(), etl::rows(input), etl::columns(input),
@@ -506,7 +506,7 @@ inline void dconv2_same_micro_kernel(const double* in, std::size_t n1, std::size
     }
 }
 
-template <typename I, typename K, typename C, cpp_enable_if((all_dma<I, K, C>::value && all_double_precision<I, K, C>::value))>
+template <typename I, typename K, typename C, cpp_enable_if((all_double_precision<I, K, C>::value))>
 void conv2_same(const I& input, const K& kernel, C&& conv) {
     dconv2_same_micro_kernel(
         input.memory_start(), etl::rows(input), etl::columns(input),
@@ -561,7 +561,7 @@ inline void dconv2_full_micro_kernel(const double* in, std::size_t n1, std::size
     }
 }
 
-template <typename I, typename K, typename C, cpp_enable_if((all_dma<I, K, C>::value && all_double_precision<I, K, C>::value))>
+template <typename I, typename K, typename C, cpp_enable_if((all_double_precision<I, K, C>::value))>
 void conv2_full(const I& input, const K& kernel, C&& conv) {
     dconv2_full_micro_kernel(
         input.memory_start(), etl::rows(input), etl::columns(input),
@@ -685,7 +685,7 @@ inline void sconv2_valid_micro_kernel(const float* in, std::size_t n1, std::size
     }
 }
 
-template <typename I, typename K, typename C, cpp_enable_if((all_dma<I, K, C>::value && all_single_precision<I, K, C>::value))>
+template <typename I, typename K, typename C, cpp_enable_if((all_single_precision<I, K, C>::value))>
 void conv2_valid(const I& input, const K& kernel, C&& conv) {
     sconv2_valid_micro_kernel(
         input.memory_start(), etl::rows(input), etl::columns(input),
@@ -740,7 +740,7 @@ inline void sconv2_same_micro_kernel(const float* in, std::size_t n1, std::size_
     }
 }
 
-template <typename I, typename K, typename C, cpp_enable_if((all_dma<I, K, C>::value && all_single_precision<I, K, C>::value))>
+template <typename I, typename K, typename C, cpp_enable_if((all_single_precision<I, K, C>::value))>
 void conv2_same(const I& input, const K& kernel, C&& conv) {
     sconv2_same_micro_kernel(
         input.memory_start(), etl::rows(input), etl::columns(input),
@@ -795,33 +795,13 @@ inline void sconv2_full_micro_kernel(const float* in, std::size_t n1, std::size_
     }
 }
 
-template <typename I, typename K, typename C, cpp_enable_if((all_dma<I, K, C>::value && all_single_precision<I, K, C>::value))>
+template <typename I, typename K, typename C, cpp_enable_if((all_single_precision<I, K, C>::value))>
 void conv2_full(const I& input, const K& kernel, C&& conv) {
     sconv2_full_micro_kernel(
         input.memory_start(), etl::rows(input), etl::columns(input),
         kernel.memory_start(), etl::rows(kernel), etl::columns(kernel),
         conv.memory_start());
 }
-
-//To allow compilation
-
-template <typename I, typename K, typename C, cpp_enable_if(!all_dma<I, K, C>::value)>
-void conv1_valid(const I& /*input*/, const K& /*kernel*/, C&& /*conv*/, std::size_t /*first*/, std::size_t /*last*/) {}
-
-template <typename I, typename K, typename C, cpp_enable_if(!all_dma<I, K, C>::value)>
-void conv1_same(const I& /*input*/, const K& /*kernel*/, C&& /*conv*/, std::size_t /*first*/, std::size_t /*last*/) {}
-
-template <typename I, typename K, typename C, cpp_enable_if(!all_dma<I, K, C>::value)>
-void conv1_full(const I& /*input*/, const K& /*kernel*/, C&& /*conv*/, std::size_t /*first*/, std::size_t /*last*/) {}
-
-template <typename I, typename K, typename C, cpp_enable_if(!all_dma<I, K, C>::value)>
-void conv2_valid(const I& /*input*/, const K& /*kernel*/, C&& /*conv*/) {}
-
-template <typename I, typename K, typename C, cpp_enable_if(!all_dma<I, K, C>::value)>
-void conv2_same(const I& /*input*/, const K& /*kernel*/, C&& /*conv*/) {}
-
-template <typename I, typename K, typename C, cpp_enable_if(!all_dma<I, K, C>::value)>
-void conv2_full(const I& /*input*/, const K& /*kernel*/, C&& /*conv*/) {}
 
 #else
 

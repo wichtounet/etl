@@ -31,7 +31,7 @@ namespace cudnn {
         }                                                                                                 \
     }
 
-template <typename I, typename K, typename C, cpp_enable_if((all_dma<I, K, C>::value))>
+template <typename I, typename K, typename C>
 void conv2_valid(const I& input, const K& kernel, C&& conv) {
     using type = value_t<I>;
 
@@ -98,7 +98,7 @@ void conv2_valid(const I& input, const K& kernel, C&& conv) {
     cudnn_check(cudnnDestroyTensorDescriptor(input_tensor));
 }
 
-template <typename I, typename K, typename C, cpp_enable_if((all_dma<I, K, C>::value))>
+template <typename I, typename K, typename C>
 void conv4_valid(const I& input, const K& kernel, C&& conv) {
     using type = value_t<I>;
 
@@ -168,7 +168,7 @@ void conv4_valid(const I& input, const K& kernel, C&& conv) {
     cudnn_check(cudnnDestroyTensorDescriptor(input_tensor));
 }
 
-template <typename I, typename K, typename C, cpp_enable_if((all_dma<I, K, C>::value))>
+template <typename I, typename K, typename C>
 void conv2_full(const I& input, const K& kernel, C&& conv) {
     using type = value_t<I>;
 
@@ -235,7 +235,7 @@ void conv2_full(const I& input, const K& kernel, C&& conv) {
     cudnn_check(cudnnDestroyTensorDescriptor(input_tensor));
 }
 
-template <typename I, typename K, typename C, cpp_enable_if((all_dma<I, K, C>::value))>
+template <typename I, typename K, typename C>
 void conv2_full_flipped(const I& input, const K& kernel, C&& conv) {
     using type = value_t<I>;
 
@@ -302,7 +302,7 @@ void conv2_full_flipped(const I& input, const K& kernel, C&& conv) {
     cudnn_check(cudnnDestroyTensorDescriptor(input_tensor));
 }
 
-template <typename I, typename K, typename C, cpp_enable_if((all_dma<I, K, C>::value))>
+template <typename I, typename K, typename C>
 void conv4_full(const I& input, const K& kernel, C&& conv) {
     using type = value_t<I>;
 
@@ -372,7 +372,7 @@ void conv4_full(const I& input, const K& kernel, C&& conv) {
     cudnn_check(cudnnDestroyTensorDescriptor(input_tensor));
 }
 
-template <typename I, typename K, typename C, cpp_enable_if((all_dma<I, K, C>::value))>
+template <typename I, typename K, typename C>
 void conv2_valid_multi(const I& input, const K& kernel, C&& conv) {
     using type = value_t<I>;
 
@@ -439,7 +439,7 @@ void conv2_valid_multi(const I& input, const K& kernel, C&& conv) {
     cudnn_check(cudnnDestroyTensorDescriptor(input_tensor));
 }
 
-template <typename I, typename K, typename C, cpp_enable_if((all_dma<I, K, C>::value))>
+template <typename I, typename K, typename C>
 void conv2_valid_multi_flipped(const I& input, const K& kernel, C&& conv) {
     using type = value_t<I>;
 
@@ -511,7 +511,7 @@ void conv2_valid_multi_flipped(const I& input, const K& kernel, C&& conv) {
 //number of feature maps, therefore, it is necessary to make many calls to sub
 //routines, which is highly inefficient and will result in many GPU allocations
 
-template <typename I, typename K, typename C, cpp_enable_if((all_dma<I, K, C>::value))>
+template <typename I, typename K, typename C>
 void conv2_full_multi(const I& input, const K& kernel, C&& conv) {
     for(std::size_t i = 0; i < etl::dim<0>(kernel); ++i){
         decltype(auto) result = conv(i);
@@ -521,7 +521,7 @@ void conv2_full_multi(const I& input, const K& kernel, C&& conv) {
     }
 }
 
-template <typename I, typename K, typename C, cpp_enable_if((all_dma<I, K, C>::value))>
+template <typename I, typename K, typename C>
 void conv2_full_multi_flipped(const I& input, const K& kernel, C&& conv) {
     for(std::size_t i = 0; i < etl::dim<0>(kernel); ++i){
         decltype(auto) result = conv(i);
@@ -533,7 +533,7 @@ void conv2_full_multi_flipped(const I& input, const K& kernel, C&& conv) {
 
 //COVERAGE_EXCLUDE_END
 
-template <typename I, typename K, typename C, cpp_enable_if((all_dma<I, K, C>::value))>
+template <typename I, typename K, typename C>
 void conv2_full_multi_real(const I& input, const K& kernel, C&& conv) {
     using type = value_t<I>;
 
@@ -600,7 +600,7 @@ void conv2_full_multi_real(const I& input, const K& kernel, C&& conv) {
     cudnn_check(cudnnDestroyTensorDescriptor(input_tensor));
 }
 
-template <typename I, typename K, typename C, cpp_enable_if((all_dma<I, K, C>::value))>
+template <typename I, typename K, typename C>
 void conv2_full_multi_flipped_real(const I& input, const K& kernel, C&& conv) {
     using type = value_t<I>;
 
@@ -668,30 +668,6 @@ void conv2_full_multi_flipped_real(const I& input, const K& kernel, C&& conv) {
 }
 
 //COVERAGE_EXCLUDE_END
-
-template <typename I, typename K, typename C, cpp_enable_if((!all_dma<I, K, C>::value))>
-void conv2_valid(const I& input, const K& kernel, C&& conv);
-
-template <typename I, typename K, typename C, cpp_enable_if((!all_dma<I, K, C>::value))>
-void conv4_valid(const I& input, const K& kernel, C&& conv);
-
-template <typename I, typename K, typename C, cpp_enable_if((!all_dma<I, K, C>::value))>
-void conv2_full(const I& input, const K& kernel, C&& conv);
-
-template <typename I, typename K, typename C, cpp_enable_if((!all_dma<I, K, C>::value))>
-void conv4_full(const I& input, const K& kernel, C&& conv);
-
-template <typename I, typename K, typename C, cpp_enable_if((!all_dma<I, K, C>::value))>
-void conv2_valid_multi(const I& input, const K& kernel, C&& conv);
-
-template <typename I, typename K, typename C, cpp_enable_if((!all_dma<I, K, C>::value))>
-void conv2_valid_multi_flipped(const I& input, const K& kernel, C&& conv);
-
-template <typename I, typename K, typename C, cpp_enable_if((!all_dma<I, K, C>::value))>
-void conv2_full_multi(const I& input, const K& kernel, C&& conv);
-
-template <typename I, typename K, typename C, cpp_enable_if((!all_dma<I, K, C>::value))>
-void conv2_full_multi_flipped(const I& input, const K& kernel, C&& conv);
 
 #else
 

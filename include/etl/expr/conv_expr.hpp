@@ -385,14 +385,10 @@ struct basic_conv_expr : impl_expr<basic_conv_expr<T, D, TT, Impl, C4>> {
 
         check(a, b, c);
 
-        if (D == 1 || D == 2 || (D == 4 && (TT == conv_type::VALID || TT == conv_type::FULL))) {
-            Impl::apply(
-                make_temporary(std::forward<A>(a)),
-                make_temporary(std::forward<B>(b)),
-                std::forward<C>(c));
-        } else {
-            Impl::apply(std::forward<A>(a), std::forward<B>(b), std::forward<C>(c));
-        }
+        Impl::apply(
+            make_temporary(std::forward<A>(a)),
+            make_temporary(std::forward<B>(b)),
+            std::forward<C>(c));
     }
 
     /*!
