@@ -140,13 +140,63 @@ void conv2_same(const I& input, const K& kernel, C&& conv) {
     }
 }
 
+template<typename T>
+void conv2_valid_kernel_rm(const T* input, std::size_t i1, std::size_t i2, const T* kernel, std::size_t k1, std::size_t k2, T* conv) {
+    const auto c1 = i1 - k1 + 1;
+    const auto c2 = i2 - k2 + 1;
+
+    for (std::size_t i = 0; i < c1; ++i) {
+        for (std::size_t j = 0; j < c2; ++j) {
+            T temp = 0.0;
+
+            for (std::size_t k = i; k < i + k1; ++k) {
+                for (std::size_t l = j; l < j + k2; ++l) {
+                    temp += input[k * i2 + l] * kernel[(i + k1 - 1 - k) * k2 + (j + k2 - 1 - l)];
+                }
+            }
+
+            conv[i * c2 + j] = temp;
+        }
+    }
+}
+
+template<typename T>
+void conv2_valid_kernel_cm(const T* input, std::size_t i1, std::size_t i2, const T* kernel, std::size_t k1, std::size_t k2, T* conv) {
+    const auto c1 = i1 - k1 + 1;
+    const auto c2 = i2 - k2 + 1;
+
+    for (std::size_t i = 0; i < c1; ++i) {
+        for (std::size_t j = 0; j < c2; ++j) {
+            T temp = 0.0;
+
+            for (std::size_t k = i; k < i + k1; ++k) {
+                for (std::size_t l = j; l < j + k2; ++l) {
+                    temp += input[k + i1 * l] * kernel[(i + k1 - 1 - k) + k1 * (j + k2 - 1 - l)];
+                }
+            }
+
+            conv[i + c1 * j] = temp;
+        }
+    }
+}
+
 /*!
  * \brief Standard implementation of a 2D 'valid' convolution C = I * K
  * \param input The input matrix
  * \param kernel The kernel matrix
  * \param conv The output matrix
  */
-template <typename I, typename K, typename C>
+template <typename I, typename K, typename C, cpp_enable_if(all_row_major<I,K,C>::value)>
+void conv2_valid(const I& input, const K& kernel, C&& conv) {
+    conv2_valid_kernel_rm(input.memory_start(), rows(input), columns(input), kernel.memory_start(), rows(kernel), columns(kernel), conv.memory_start());
+}
+
+template <typename I, typename K, typename C, cpp_enable_if(all_column_major<I,K,C>::value)>
+void conv2_valid(const I& input, const K& kernel, C&& conv) {
+    conv2_valid_kernel_cm(input.memory_start(), rows(input), columns(input), kernel.memory_start(), rows(kernel), columns(kernel), conv.memory_start());
+}
+
+template <typename I, typename K, typename C, cpp_enable_if(!all_row_major<I,K,C>::value && !all_column_major<I,K,C>::value)>
 void conv2_valid(const I& input, const K& kernel, C&& conv) {
     for (std::size_t i = 0; i < rows(conv); ++i) {
         for (std::size_t j = 0; j < columns(conv); ++j) {
