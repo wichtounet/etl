@@ -131,10 +131,13 @@ void conv4_valid(const I& input, const K& kernel, C&& conv) {
     cudnn_check(cudnnCreateConvolutionDescriptor(&convolution));
     cudnn_check(cudnnSetConvolution2dDescriptor(convolution, 0, 0, 1, 1, 1, 1, CUDNN_CONVOLUTION));
 
+    // 1GB limit for the workspace
+    static constexpr const std::size_t workspace_limit = 1024 * 1024 * 1024;
+
     // Find the algorithm to use
     cudnnConvolutionFwdAlgo_t conv_algo;
     cudnn_check(cudnnGetConvolutionForwardAlgorithm(handle.get(), input_tensor, filter, convolution,
-        output_tensor, CUDNN_CONVOLUTION_FWD_PREFER_FASTEST, 0, &conv_algo));
+        output_tensor, CUDNN_CONVOLUTION_FWD_SPECIFY_WORKSPACE_LIMIT, workspace_limit, &conv_algo));
 
     // Prepare the workspace
     std::size_t workspace_size = 0;
@@ -143,6 +146,7 @@ void conv4_valid(const I& input, const K& kernel, C&& conv) {
     impl::cuda::cuda_memory<type> workspace;
 
     if(workspace_size){
+        std::cout << workspace_size << std::endl;
         workspace = impl::cuda::cuda_allocate_only<type>(workspace_size);
     }
 
