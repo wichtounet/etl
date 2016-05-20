@@ -93,9 +93,14 @@ using conv_2d_multi_policy = NARY_POLICY(
     VALUES_POLICY(50, 50, 55, 55, 60, 60, 65, 65, 70),
     VALUES_POLICY(40, 40, 40, 40, 40, 40, 40, 40, 40)
     );
-using conv_4d_large_policy = NARY_POLICY(
+using conv_4d_valid_policy = NARY_POLICY(
     VALUES_POLICY(64, 64, 64, 64, 64, 64, 64, 64, 64),
     VALUES_POLICY(40, 40, 40, 40, 40, 40, 40, 40, 40),
+    VALUES_POLICY(50, 55, 60, 65, 70, 75, 80, 85, 90),
+    VALUES_POLICY(10, 15, 20, 25, 30, 35, 40, 45, 50));
+using conv_4d_full_policy = NARY_POLICY(
+    VALUES_POLICY(64, 64, 64, 64, 64, 64, 64, 64, 64),
+    VALUES_POLICY(10, 10, 10, 10, 10, 10, 10, 10, 10),
     VALUES_POLICY(50, 55, 60, 65, 70, 75, 80, 85, 90),
     VALUES_POLICY(10, 15, 20, 25, 30, 35, 40, 45, 50));
 
