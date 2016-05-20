@@ -221,3 +221,99 @@ CONV2_VALID_MULTI_FLIPPED_TEST_CASE("conv_2d/valid/multi_flipped/2", "[conv][con
         REQUIRE(c_2[i] == Approx(c_1[i]));
     }
 }
+
+//conv_2d_full_multi
+
+CONV2_FULL_MULTI_TEST_CASE("conv_2d/full/multi/1", "[conv][conv2][conv_multi]") {
+    etl::fast_matrix<T, 9, 7> I(0.5 * etl::sequence_generator(42.0));
+    etl::fast_matrix<T, 3, 5, 5> K;
+
+    K(0) = 1.5 * etl::sequence_generator(10.0);
+    K(1) = -2.5 * etl::sequence_generator(5.0);
+    K(2) = 1.3 * etl::sequence_generator(12.0);
+
+    etl::fast_matrix<T, 3, 13, 11> c_1;
+    etl::fast_matrix<T, 3, 13, 11> c_2;
+
+    c_1(0) = conv_2d_full(I, K(0));
+    c_1(1) = conv_2d_full(I, K(1));
+    c_1(2) = conv_2d_full(I, K(2));
+
+    Impl::apply(I, K, c_2);
+
+    for (std::size_t i = 0; i < etl::size(c_1); ++i) {
+        REQUIRE(c_2[i] == Approx(c_1[i]));
+    }
+}
+
+CONV2_FULL_MULTI_TEST_CASE("conv_2d/full/multi/2", "[conv][conv2][conv_multi]") {
+    etl::fast_matrix<T, 9, 7> I(0.5 * etl::sequence_generator(42.0));
+    etl::fast_matrix<T, 3, 3, 5> K;
+
+    K(0) = 1.5 * etl::sequence_generator(10.0);
+    K(1) = -1.5 * etl::sequence_generator(5.0);
+    K(2) = 1.3 * etl::sequence_generator(12.0);
+
+    etl::fast_matrix<T, 3, 11, 11> c_1;
+    etl::fast_matrix<T, 3, 11, 11> c_2;
+
+    c_1(0) = conv_2d_full(I, K(0));
+    c_1(1) = conv_2d_full(I, K(1));
+    c_1(2) = conv_2d_full(I, K(2));
+
+    Impl::apply(I, K, c_2);
+
+    for (std::size_t i = 0; i < etl::size(c_1); ++i) {
+        REQUIRE(c_2[i] == Approx(c_1[i]));
+    }
+}
+
+CONV2_FULL_MULTI_FLIPPED_TEST_CASE("conv_2d/full/multi_flipped/1", "[conv][conv2][conv_multi]") {
+    etl::fast_matrix<T, 9, 7> I(0.5 * etl::sequence_generator(42.0));
+    etl::fast_matrix<T, 3, 3, 5> K;
+
+    K(0) = 1.5 * etl::sequence_generator(10.0);
+    K(1) = -1.5 * etl::sequence_generator(5.0);
+    K(2) = 1.3 * etl::sequence_generator(12.0);
+
+    etl::fast_matrix<T, 3, 11, 11> c_1;
+    etl::fast_matrix<T, 3, 11, 11> c_2;
+
+    c_1(0) = conv_2d_full(I, K(0));
+    c_1(1) = conv_2d_full(I, K(1));
+    c_1(2) = conv_2d_full(I, K(2));
+
+    K.deep_fflip_inplace();
+
+    Impl::apply(I, K, c_2);
+
+    for (std::size_t i = 0; i < etl::size(c_1); ++i) {
+        REQUIRE(c_2[i] == Approx(c_1[i]));
+    }
+}
+
+CONV2_FULL_MULTI_FLIPPED_TEST_CASE("conv_2d/full/multi_flipped/2", "[conv][conv2][conv_multi]") {
+    etl::fast_matrix<T, 9, 7> I(0.5 * etl::sequence_generator(42.0));
+    etl::fast_matrix<T, 4, 3, 5> K;
+
+    K(0) = 0.5 * etl::sequence_generator(100.0);
+    K(1) = -1.3 * etl::sequence_generator(40.0);
+    K(2) = 2.5 * etl::sequence_generator(133.0);
+    K(3) = 666.666 * etl::sequence_generator(121.0);
+
+    etl::fast_matrix<T, 4, 11, 11> c_1;
+    etl::fast_matrix<T, 4, 11, 11> c_2;
+
+    c_1(0) = conv_2d_full(I, K(0));
+    c_1(1) = conv_2d_full(I, K(1));
+    c_1(2) = conv_2d_full(I, K(2));
+    c_1(3) = conv_2d_full(I, K(3));
+
+    K.deep_fflip_inplace();
+
+    Impl::apply(I, K, c_2);
+
+    for (std::size_t i = 0; i < etl::size(c_1); ++i) {
+        REQUIRE(c_2[i] == Approx(c_1[i]));
+    }
+}
