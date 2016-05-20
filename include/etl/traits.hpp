@@ -455,6 +455,13 @@ template <typename... E>
 using all_row_major = cpp::and_u<(decay_traits<E>::storage_order == order::RowMajor)...>;
 
 /*!
+ * \brief Traits to test if all the given ETL expresion types are column-major.
+ * \tparam E The ETL expression types.
+ */
+template <typename... E>
+using all_column_major = cpp::and_u<(decay_traits<E>::storage_order == order::ColumnMajor)...>;
+
+/*!
  * \brief Traits to test if all the given ETL expresion types are fast (sizes known at compile-time)
  * \tparam E The ETL expression types.
  */
