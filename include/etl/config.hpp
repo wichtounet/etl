@@ -37,13 +37,6 @@ constexpr const bool vectorize_impl = true;
 constexpr const bool vectorize_impl   = false;                               ///< Boolean flag indicating if the implementations are automatically vectorized
 #endif
 
-//Flag to disable the creation of temporary in expressions
-#ifdef ETL_NO_TEMPORARY
-constexpr const bool create_temporary = false;
-#else
-constexpr const bool create_temporary = true;                                ///< Boolean flag indicating if temporaries are created
-#endif
-
 //Flag to allow conv_valid_multi to use FFT
 #ifdef ETL_CONV_VALID_FFT
 constexpr const bool conv_valid_fft = true;
