@@ -70,6 +70,10 @@ endif
 ifneq (,$(ETL_CUDNN))
 CXX_FLAGS += -DETL_CUDNN_MODE $(shell pkg-config --cflags cudnn)
 LD_FLAGS += $(shell pkg-config --libs cudnn)
+
+ifneq (,$(findstring clang,$(CXX)))
+CXX_FLAGS += -Wno-documentation
+endif
 endif
 
 LD_FLAGS += -pthread
