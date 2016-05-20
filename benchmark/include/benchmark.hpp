@@ -72,6 +72,7 @@ using dmat5 = etl::dyn_matrix<double, 5>;
 using svec = etl::dyn_vector<float>;
 using smat = etl::dyn_matrix<float>;
 using smat3 = etl::dyn_matrix<float, 3>;
+using smat4 = etl::dyn_matrix<float, 4>;
 
 using cvec = etl::dyn_vector<std::complex<float>>;
 using cmat = etl::dyn_matrix<std::complex<float>>;
@@ -92,6 +93,11 @@ using conv_2d_multi_policy = NARY_POLICY(
     VALUES_POLICY(50, 50, 55, 55, 60, 60, 65, 65, 70),
     VALUES_POLICY(40, 40, 40, 40, 40, 40, 40, 40, 40)
     );
+using conv_4d_large_policy = NARY_POLICY(
+    VALUES_POLICY(64, 64, 64, 64, 64, 64, 64, 64, 64),
+    VALUES_POLICY(40, 40, 40, 40, 40, 40, 40, 40, 40),
+    VALUES_POLICY(50, 55, 60, 65, 70, 75, 80, 85, 90),
+    VALUES_POLICY(10, 15, 20, 25, 30, 35, 40, 45, 50));
 
 using fft_1d_policy = VALUES_POLICY(10, 100, 1000, 10000, 100000, 500000);
 using fft_1d_policy_2 = VALUES_POLICY(16, 64, 256, 1024, 16384, 131072, 1048576, 2097152);
