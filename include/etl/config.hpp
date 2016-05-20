@@ -150,6 +150,13 @@ constexpr const bool unroll_normal_loops = false;
 constexpr const bool unroll_normal_loops         = true;  ///< Boolean flag indicating if normal loops are getting unrolled
 #endif
 
+//Flag to configure the maximum workspace size for CUDA
+#ifdef ETL_CUDNN_MAX_WORKSPACE
+constexpr const std::size_t cudnn_max_workspace = ETL_CUDNN_MAX_WORKSPACE;
+#else
+constexpr const std::size_t cudnn_max_workspace = 2UL * 1024 * 1024 * 1024;
+#endif
+
 /*!
  * \brief Vectorization mode
  */
