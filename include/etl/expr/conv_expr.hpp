@@ -319,7 +319,7 @@ struct basic_conv_expr : impl_expr<basic_conv_expr<T, D, TT, Impl, C4>> {
     using value_type = T;                                   ///< The type of value of the expression
     using this_type  = basic_conv_expr<T, D, TT, Impl, C4>; ///< The type of this expression
 
-    static constexpr const bool is_gpu = false; ///< Indicates if the expression runs on GPU
+    static constexpr const bool is_gpu = is_cudnn_enabled; ///< Indicates if the expression runs on GPU
 
     /*!
      * \brief The result type for given sub types
