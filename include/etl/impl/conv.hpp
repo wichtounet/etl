@@ -281,6 +281,72 @@ inline etl::conv_multi_impl select_conv_multi_impl() {
 }
 
 /*!
+ * \brief Select the implementation of the conv multi of I and K in C
+ *
+ * This does not take the local context into account.
+ *
+ * \tparam I The input type
+ * \tparam K The kernel type
+ * \tparam C The conv type
+ * \return the implementation to be used
+ */
+template <typename I, typename K, typename C>
+inline etl::conv_multi_impl select_default_conv_full_multi_impl() {
+    //Note: since the constexpr values will be known at compile time, the
+    //conditions will be a lot simplified
+
+    static constexpr const order input_order  = decay_traits<I>::storage_order;
+    static constexpr const order kernel_order = decay_traits<K>::storage_order;
+    static constexpr const order output_order = decay_traits<C>::storage_order;
+
+    //Only the standard implementation is able to handle column major
+    if (input_order == order::ColumnMajor || kernel_order == order::ColumnMajor || output_order == order::ColumnMajor) {
+        return etl::conv_multi_impl::STD;
+    }
+
+    static constexpr const bool cudnn = is_cudnn_enabled;
+
+    if(cudnn && decay_traits<I>::dimensions() == 2){
+        //TODO Should only be used with (very?) large sizes
+        return etl::conv_multi_impl::CUDNN;
+    }
+
+    return etl::conv_multi_impl::STD;
+}
+
+/*!
+ * \brief Select the implementation of the conv of I and K in C
+ * \tparam I The input type
+ * \tparam K The kernel type
+ * \tparam C The conv type
+ * \return the implementation to be used
+ */
+template <typename I, typename K, typename C>
+inline etl::conv_multi_impl select_conv_full_multi_impl() {
+    if (local_context().conv_multi_selector.forced) {
+        auto forced = local_context().conv_multi_selector.impl;
+
+        switch (forced) {
+            //CUDNN cannot always be used
+            case conv_multi_impl::CUDNN:
+                if (!is_cudnn_enabled) {                                                                                               // COVERAGE_EXCLUDE_LINE
+                    std::cerr << "Forced selection to CUDNN conv implementation, but not possible for this expression" << std::endl; // COVERAGE_EXCLUDE_LINE
+                    return select_default_conv_full_multi_impl<I, K, C>();                                                                   // COVERAGE_EXCLUDE_LINE
+                }                                                                                                                 // COVERAGE_EXCLUDE_LINE
+
+                return forced;
+
+                // Although it may be suboptimal the forced selection can
+                // always be achieved
+            default:
+                return forced;
+        }
+    }
+
+    return select_default_conv_full_multi_impl<I, K, C>();
+}
+
+/*!
  * \brief Test if ETL should run in parallel for the conv of I and K in C
  * \tparam I The input type
  * \tparam K The kernel type
@@ -727,7 +793,15 @@ struct conv2_full_multi_impl {
      */
     template <typename I, typename K, typename C>
     static void apply(const I& input, const K& kernel, C&& conv) {
-        impl::standard::conv2_full_multi(input, kernel, conv);
+        auto impl = select_conv_full_multi_impl<I, K, C>();
+
+        if (impl == etl::conv_multi_impl::CUDNN) {
+            impl::cudnn::conv2_full_multi(input, kernel, conv);
+        } else if (impl == etl::conv_multi_impl::STD){
+            impl::standard::conv2_full_multi(input, kernel, conv);
+        } else {
+            cpp_unreachable("Invalid conv implementation selection");
+        }
     }
 };
 
@@ -743,7 +817,15 @@ struct conv2_full_multi_flipped_impl {
      */
     template <typename I, typename K, typename C>
     static void apply(const I& input, const K& kernel, C&& conv) {
-        impl::standard::conv2_full_multi_flipped(input, kernel, conv);
+        auto impl = select_conv_full_multi_impl<I, K, C>();
+
+        if (impl == etl::conv_multi_impl::CUDNN) {
+            impl::cudnn::conv2_full_multi_flipped(input, kernel, conv);
+        } else if (impl == etl::conv_multi_impl::STD){
+            impl::standard::conv2_full_multi_flipped(input, kernel, conv);
+        } else {
+            cpp_unreachable("Invalid conv implementation selection");
+        }
     }
 };
 
