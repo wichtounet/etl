@@ -635,6 +635,12 @@ template <typename T>
 using conv2_full_multi_expr = basic_conv_expr<T, 2, conv_type::FULL_MULTI, detail::conv2_full_multi_impl>;
 
 /*!
+ * \brief Expression for 2D full convolution, with multiple flipped kernels
+ */
+template <typename T>
+using conv2_full_multi_flipped_expr = basic_conv_expr<T, 2, conv_type::FULL_MULTI, detail::conv2_full_multi_flipped_impl>;
+
+/*!
  * \brief Expression for 2D same convolution
  */
 template <typename T>
