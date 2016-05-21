@@ -5,6 +5,11 @@
 //  http://opensource.org/licenses/MIT)
 //=======================================================================
 
+/*!
+ * \file
+ * \brief Convolution implementations with NVidia cuDNN library
+ */
+
 #pragma once
 
 #ifdef ETL_CUDNN_MODE
