@@ -678,6 +678,12 @@ void conv2_full_multi_flipped_real(const I& input, const K& kernel, C&& conv) {
 
 //COVERAGE_EXCLUDE_BEGIN
 
+/*!
+ * \brief cudnn implementation of a 2D 'valid' convolution C = I * K
+ * \param input The input matrix
+ * \param kernel The kernel matrix
+ * \param conv The output matrix
+ */
 template <typename I, typename K, typename C>
 void conv2_valid(const I& input, const K& kernel, C&& conv);
     cpp_unused(input);
@@ -694,6 +700,12 @@ void conv4_valid(const I& input, const K& kernel, C&& conv);
     cpp_unreachable("Unsupported feature called: cudnn conv4_valid");
 }
 
+/*!
+ * \brief cudnn implementation of a 2D 'full' convolution C = I * K
+ * \param input The input matrix
+ * \param kernel The kernel matrix
+ * \param conv The output matrix
+ */
 template <typename I, typename K, typename C>
 void conv2_full(const I& input, const K& kernel, C&& conv);
     cpp_unused(input);

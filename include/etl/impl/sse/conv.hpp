@@ -564,31 +564,73 @@ void conv2_full(const I& input, const K& kernel, C&& conv) {
 
 //COVERAGE_EXCLUDE_BEGIN
 
+/*!
+ * \brief SSE implementation of a 1D 'full' convolution C = I * K
+ * \param input The input matrix
+ * \param kernel The kernel matrix
+ * \param conv The output matrix
+ * \param first The index where to start in the output matrix
+ * \param last The index where to stop in the output matrix
+ */
 template <typename I, typename K, typename C>
 void conv1_full(const I& /*input*/, const K& /*kernel*/, C&& /*conv*/, std::size_t /*first*/, std::size_t /*last*/) {
     cpp_unreachable("SSE not available/enabled");
 }
 
+/*!
+ * \brief SSE implementation of a 1D 'same' convolution C = I * K
+ * \param input The input matrix
+ * \param kernel The kernel matrix
+ * \param conv The output matrix
+ * \param first The index where to start in the output matrix
+ * \param last The index where to stop in the output matrix
+ */
 template <typename I, typename K, typename C>
 void conv1_same(const I& /*input*/, const K& /*kernel*/, C&& /*conv*/, std::size_t /*first*/, std::size_t /*last*/) {
     cpp_unreachable("SSE not available/enabled");
 }
 
+/*!
+ * \brief SSE implementation of a 1D 'valid' convolution C = I * K
+ * \param input The input matrix
+ * \param kernel The kernel matrix
+ * \param conv The output matrix
+ * \param first The index where to start in the output matrix
+ * \param last The index where to stop in the output matrix
+ */
 template <typename I, typename K, typename C>
 void conv1_valid(const I& /*input*/, const K& /*kernel*/, C&& /*conv*/, std::size_t /*first*/, std::size_t /*last*/) {
     cpp_unreachable("SSE not available/enabled");
 }
 
+/*!
+ * \brief SSE implementation of a 2D 'valid' convolution C = I * K
+ * \param input The input matrix
+ * \param kernel The kernel matrix
+ * \param conv The output matrix
+ */
 template <typename I, typename K, typename C>
 void conv2_valid(const I& /*input*/, const K& /*kernel*/, C&& /*conv*/) {
     cpp_unreachable("SSE not available/enabled");
 }
 
+/*!
+ * \brief SSE implementation of a 2D 'same' convolution C = I * K
+ * \param input The input matrix
+ * \param kernel The kernel matrix
+ * \param conv The output matrix
+ */
 template <typename I, typename K, typename C>
 void conv2_same(const I& /*input*/, const K& /*kernel*/, C&& /*conv*/) {
     cpp_unreachable("SSE not available/enabled");
 }
 
+/*!
+ * \brief SSE implementation of a 2D 'full' convolution C = I * K
+ * \param input The input matrix
+ * \param kernel The kernel matrix
+ * \param conv The output matrix
+ */
 template <typename I, typename K, typename C>
 void conv2_full(const I& /*input*/, const K& /*kernel*/, C&& /*conv*/) {
     cpp_unreachable("SSE not available/enabled");
