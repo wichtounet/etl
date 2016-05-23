@@ -507,6 +507,24 @@ public:
         return value().memory_end();
     }
 
+    /*!
+     * \brief Returns the DDth dimension of the matrix
+     * \return The DDth dimension of the matrix
+     */
+    template <std::size_t DD, typename TT = this_type, cpp_enable_if(all_fast<TT>::value)>
+    static constexpr std::size_t dim() {
+        return etl_traits<TT>::template dim<DD>();
+    }
+
+    /*!
+     * \brief Returns the DDth dimension of the matrix
+     * \return The DDth dimension of the matrix
+     */
+    template <std::size_t DD, typename TT = this_type, cpp_disable_if(all_fast<TT>::value)>
+    std::size_t dim() const {
+        return etl_traits<TT>::dim(*this, DD);
+    }
+
 private:
     /*!
      * \brief Assign the given value to each eleemnt of the unary expression
