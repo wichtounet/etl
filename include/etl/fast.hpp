@@ -13,6 +13,7 @@
 #pragma once
 
 #include "cpp_utils/array_wrapper.hpp"
+#include "fast_memory.hpp"
 
 namespace etl {
 
@@ -640,6 +641,14 @@ public:
 
     gpu_helper<T> gpu_direct() const {
         return {gpu_able<T>::_gpu_memory_handler, etl_size, memory_start()};
+    }
+
+    fast_memory<T, n_dimensions, SO> direct(){
+        return {memory_start(), etl_size, {Dims...}};
+    }
+
+    fast_memory<const T, n_dimensions, SO> direct() const {
+        return {memory_start(), etl_size, {Dims...}};
     }
 };
 
