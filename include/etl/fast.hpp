@@ -114,7 +114,7 @@ using const_iterator_t = typename iterator_type<T>::const_iterator;
  * The matrix support an arbitrary number of dimensions.
  */
 template <typename T, typename ST, order SO, std::size_t... Dims>
-struct fast_matrix_impl final : inplace_assignable<fast_matrix_impl<T, ST, SO, Dims...>>, comparable<fast_matrix_impl<T, ST, SO, Dims...>>, expression_able<fast_matrix_impl<T, ST, SO, Dims...>>, value_testable<fast_matrix_impl<T, ST, SO, Dims...>>, dim_testable<fast_matrix_impl<T, ST, SO, Dims...>>, gpu_able<T, fast_matrix_impl<T, ST, SO, Dims...>> {
+struct fast_matrix_impl final : inplace_assignable<fast_matrix_impl<T, ST, SO, Dims...>>, comparable<fast_matrix_impl<T, ST, SO, Dims...>>, expression_able<fast_matrix_impl<T, ST, SO, Dims...>>, value_testable<fast_matrix_impl<T, ST, SO, Dims...>>, dim_testable<fast_matrix_impl<T, ST, SO, Dims...>>, gpu_able<T> {
     static_assert(sizeof...(Dims) > 0, "At least one dimension must be specified");
 
 public:
@@ -136,6 +136,8 @@ public:
      */
     template <typename V = default_vec>
     using vec_type       = typename V::template vec_type<T>;
+
+    using gpu_able<T>::gpu_set;
 
 private:
     storage_impl _data; ///< The storage container
@@ -176,6 +178,8 @@ private:
     template <typename S = ST, cpp_enable_if(matrix_detail::is_vector<S>::value)>
     void init() {
         _data.resize(etl_size);
+
+        gpu_set(etl_size, memory_start());
     }
 
     /*!
@@ -183,7 +187,7 @@ private:
      */
     template <typename S = ST, cpp_disable_if(matrix_detail::is_vector<S>::value)>
     void init() noexcept {
-        //Nothing to init
+        gpu_set(etl_size, memory_start());
     }
 
 public:
@@ -224,14 +228,14 @@ public:
      */
     fast_matrix_impl(storage_impl data)
             : _data(data) {
-        //Nothing else to init
+        gpu_set(etl_size, memory_start());
     }
 
     /*!
      * \brief Copy construct a fast matrix
      * \param rhs The fast matrix to copy from
      */
-    fast_matrix_impl(const fast_matrix_impl& rhs) noexcept {
+    fast_matrix_impl(const fast_matrix_impl& rhs) noexcept : gpu_able<T>() {
         init();
         direct_copy(rhs.memory_start(), rhs.memory_end(), memory_start());
     }
@@ -241,7 +245,7 @@ public:
      * \param rhs The fast matrix to move from
      */
     fast_matrix_impl(fast_matrix_impl&& rhs) noexcept : _data(std::move(rhs._data)) {
-        //Nothing else to init
+        gpu_set(etl_size, memory_start());
     }
 
     /*!
@@ -359,6 +363,7 @@ public:
     fast_matrix_impl& operator=(fast_matrix_impl&& rhs) noexcept {
         if (this != &rhs) {
             _data = std::move(rhs._data);
+            gpu_set(etl_size, memory_start());
         }
 
         return *this;
@@ -373,6 +378,8 @@ public:
     void swap(fast_matrix_impl& other) {
         using std::swap;
         swap(_data, other._data);
+
+        gpu_set(etl_size, memory_start());
     }
 
     // Accessors
@@ -636,6 +643,10 @@ public:
      */
     const_memory_type memory_end() const noexcept {
         return &_data[size()];
+    }
+
+    gpu_helper<T> gpu_direct() const {
+        return {gpu_able<T>::_gpu_memory_handler, etl_size, memory_start()};
     }
 };
 

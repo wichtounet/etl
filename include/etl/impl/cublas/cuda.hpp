@@ -151,8 +151,8 @@ auto cuda_allocate(E* ptr, std::size_t n, bool copy = false) -> cuda_memory<E> {
     return {memory};
 }
 
-template <typename E>
-auto cuda_allocate_copy(E* ptr, std::size_t n) -> cuda_memory<E> {
+template <typename T>
+auto cuda_allocate_copy(T* ptr, std::size_t n) -> cuda_memory<T> {
     return cuda_allocate(ptr, n, true);
 }
 

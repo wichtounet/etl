@@ -22,7 +22,7 @@ namespace etl {
  * The matrix support an arbitrary number of dimensions.
  */
 template <typename T, order SO, std::size_t D>
-struct dyn_matrix_impl final : dyn_base<T, D>, inplace_assignable<dyn_matrix_impl<T, SO, D>>, comparable<dyn_matrix_impl<T, SO, D>>, expression_able<dyn_matrix_impl<T, SO, D>>, value_testable<dyn_matrix_impl<T, SO, D>>, dim_testable<dyn_matrix_impl<T, SO, D>>, gpu_able<T, dyn_matrix_impl<T, SO, D>> {
+struct dyn_matrix_impl final : dyn_base<T, D>, inplace_assignable<dyn_matrix_impl<T, SO, D>>, comparable<dyn_matrix_impl<T, SO, D>>, expression_able<dyn_matrix_impl<T, SO, D>>, value_testable<dyn_matrix_impl<T, SO, D>>, dim_testable<dyn_matrix_impl<T, SO, D>>, gpu_able<T> {
     static constexpr const std::size_t n_dimensions = D;                              ///< The number of dimensions
     static constexpr const order storage_order      = SO;                             ///< The storage order
     static constexpr const std::size_t alignment    = intrinsic_traits<T>::alignment; ///< The memory alignment
@@ -51,6 +51,8 @@ private:
     using base_type::allocate;
     using base_type::check_invariants;
 
+    using gpu_able<T>::gpu_set;
+
 public:
     using base_type::dim;
 
@@ -70,8 +72,10 @@ public:
      * \brief Copy construct a matrix
      * \param rhs The matrix to copy
      */
-    dyn_matrix_impl(const dyn_matrix_impl& rhs) noexcept : base_type(rhs), _memory(allocate(_size)) {
+    dyn_matrix_impl(const dyn_matrix_impl& rhs) noexcept : base_type(rhs), gpu_able<T>(), _memory(allocate(_size)) {
         direct_copy(rhs.memory_start(), rhs.memory_end(), memory_start());
+
+        gpu_set(_size, memory_start());
     }
 
     /*!
@@ -80,6 +84,7 @@ public:
      */
     dyn_matrix_impl(dyn_matrix_impl&& rhs) noexcept : base_type(std::move(rhs)), managed(rhs.managed), _memory(rhs._memory) {
         rhs._memory = nullptr;
+        gpu_set(_size, memory_start());
     }
 
     /*!
@@ -89,6 +94,7 @@ public:
     template <typename T2, order SO2, std::size_t D2, cpp_enable_if(SO2 == SO)>
     dyn_matrix_impl(const dyn_matrix_impl<T2, SO2, D2>& rhs) noexcept : base_type(rhs), _memory(allocate(_size)) {
         direct_copy(rhs.memory_start(), rhs.memory_end(), memory_start());
+        gpu_set(_size, memory_start());
     }
 
     /*!
@@ -97,6 +103,7 @@ public:
      */
     template <typename T2, order SO2, std::size_t D2, cpp_disable_if(SO2 == SO)>
     dyn_matrix_impl(const dyn_matrix_impl<T2, SO2, D2>& rhs) noexcept : base_type(rhs), _memory(allocate(_size)) {
+        gpu_set(_size, memory_start());
         //The type is different, so we must use assign
         assign_evaluate(rhs, *this);
     }
@@ -111,6 +118,7 @@ public:
                               !is_dyn_matrix<E>::value)>
     explicit dyn_matrix_impl(E&& e) noexcept
             : base_type(e), _memory(allocate(_size)) {
+        gpu_set(_size, memory_start());
         assign_evaluate(e, *this);
     }
 
@@ -123,6 +131,7 @@ public:
         static_assert(n_dimensions == 1, "This constructor can only be used for 1D matrix");
 
         std::copy(list.begin(), list.end(), begin());
+        gpu_set(_size, memory_start());
     }
 
     /*!
@@ -138,7 +147,7 @@ public:
                                  cpp::is_homogeneous<typename cpp::first_type<S...>::type, S...>::value)>
     explicit dyn_matrix_impl(S... sizes) noexcept : base_type(dyn_detail::size(sizes...), {{static_cast<std::size_t>(sizes)...}}),
                                                     _memory(allocate(_size)) {
-        //Nothing to init
+        gpu_set(_size, memory_start());
     }
 
     /*!
@@ -158,7 +167,7 @@ public:
                                  cpp::is_homogeneous<typename cpp::first_type<S...>::type, S...>::value)>
     explicit dyn_matrix_impl(value_type* memory, S... sizes) noexcept : base_type(dyn_detail::size(sizes...), {{static_cast<std::size_t>(sizes)...}}),
                                                     managed(false), _memory(memory) {
-        //Nothing to init
+        gpu_set(_size, memory_start());
     }
 
     /*!
@@ -173,6 +182,7 @@ public:
 
         auto list = cpp::last_value(sizes...);
         std::copy(list.begin(), list.end(), begin());
+        gpu_set(_size, memory_start());
     }
 
     /*!
@@ -187,6 +197,7 @@ public:
                                                            _memory(allocate(_size)) {
         auto list = cpp::last_value(sizes...).template list<value_type>();
         std::copy(list.begin(), list.end(), begin());
+        gpu_set(_size, memory_start());
     }
 
     /*!
@@ -210,6 +221,7 @@ public:
                                                            _memory(allocate(_size)) {
         intel_decltype_auto value = cpp::last_value(s1, sizes...);
         std::fill(begin(), end(), value);
+        gpu_set(_size, memory_start());
     }
 
     /*!
@@ -230,6 +242,7 @@ public:
                                                            _memory(allocate(_size)) {
         intel_decltype_auto e = cpp::last_value(sizes...);
 
+        gpu_set(_size, memory_start());
         assign_evaluate(e, *this);
     }
 
@@ -249,6 +262,7 @@ public:
         static_assert(sizeof...(S) == D + 2, "Invalid number of dimensions");
 
         std::fill(begin(), end(), cpp::last_value(sizes...));
+        gpu_set(_size, memory_start());
     }
 
     /*!
@@ -263,6 +277,8 @@ public:
     explicit dyn_matrix_impl(const Container& vec)
             : base_type(vec.size(), {_size}), _memory(allocate(_size)) {
         static_assert(D == 1, "Only 1D matrix can be constructed from containers");
+
+        gpu_set(_size, memory_start());
 
         for (std::size_t i = 0; i < _size; ++i) {
             _memory[i] = vec[i];
@@ -283,6 +299,8 @@ public:
                 _size       = rhs._size;
                 _dimensions = rhs._dimensions;
                 _memory     = allocate(_size);
+
+                gpu_set(_size, memory_start());
             } else {
                 validate_assign(*this, rhs);
             }
@@ -315,6 +333,8 @@ public:
 
             rhs._size = 0;
             rhs._memory = nullptr;
+
+            gpu_set(_size, memory_start());
         }
 
         check_invariants();
@@ -345,6 +365,8 @@ public:
 
         _size       = new_size;
         _dimensions = dimensions;
+
+        gpu_set(_size, memory_start());
     }
 
     /*!
@@ -373,6 +395,8 @@ public:
 
         _size       = new_size;
         _dimensions = dyn_detail::sizes(std::make_index_sequence<D>(), sizes...);
+
+        gpu_set(_size, memory_start());
     }
 
     /*!
@@ -440,7 +464,12 @@ public:
         swap(_memory, other._memory);
         swap(managed, other.managed);
 
+        //TODO swap is likely screwing up memory!
+
         check_invariants();
+
+        gpu_set(_size, memory_start());
+        other.gpu_set(other._size, other.memory_start());
     }
 
     // Accessors
@@ -785,6 +814,10 @@ public:
     std::size_t& unsafe_dimension_access(std::size_t i) {
         cpp_assert(i < n_dimensions, "Out of bounds");
         return _dimensions[i];
+    }
+
+    gpu_helper<T> gpu_direct() const {
+        return gpu_helper<T>(this->_gpu_memory_handler, _size, memory_start());
     }
 };
 

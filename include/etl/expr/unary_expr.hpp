@@ -206,7 +206,7 @@ public:
  * This unary expression keeps access to data (can be edited)
  */
 template <typename T, typename Expr>
-struct unary_expr<T, Expr, identity_op> : inplace_assignable<unary_expr<T, Expr, identity_op>>, comparable<unary_expr<T, Expr, identity_op>>, value_testable<unary_expr<T, Expr, identity_op>>, dim_testable<unary_expr<T, Expr, identity_op>>, gpu_able<T, unary_expr<T, Expr, identity_op>> {
+struct unary_expr<T, Expr, identity_op> : inplace_assignable<unary_expr<T, Expr, identity_op>>, comparable<unary_expr<T, Expr, identity_op>>, value_testable<unary_expr<T, Expr, identity_op>>, dim_testable<unary_expr<T, Expr, identity_op>>, gpu_able<T> {
 private:
     static_assert(is_etl_expr<Expr>::value, "Only ETL expressions can be used in unary_expr");
 
@@ -240,9 +240,8 @@ public:
      * \brief Construct a new unary expression
      * \param l The sub expression
      */
-    explicit unary_expr(Expr l) noexcept
-        : _value(std::forward<Expr>(l)) {
-        //Nothing else to init
+    explicit unary_expr(Expr l) noexcept : _value(std::forward<Expr>(l)) {
+        //Nothing to init
     }
 
     unary_expr(const unary_expr& rhs) = default;
@@ -523,6 +522,10 @@ public:
     template <std::size_t DD, typename TT = this_type, cpp_disable_if(all_fast<TT>::value)>
     std::size_t dim() const {
         return etl_traits<TT>::dim(*this, DD);
+    }
+
+    gpu_helper<T> gpu_direct() const {
+        return {gpu_able<T>::_gpu_memory_handler, etl::size(value()), value().memory_start()};
     }
 
 private:

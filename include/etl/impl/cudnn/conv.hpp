@@ -84,17 +84,21 @@ void conv2_valid(const I& input, const K& kernel, C&& conv) {
 
     // Allocate GPU memory, if necessary
 
-    input.gpu_allocate_copy_if_necessary();
-    kernel.gpu_allocate_copy_if_necessary();
-    conv.gpu_allocate_if_necessary();
+    auto input_gpu = input.gpu_direct();
+    auto kernel_gpu = kernel.gpu_direct();
+    auto conv_gpu = conv.gpu_direct();
+
+    input_gpu.gpu_allocate_copy_if_necessary();
+    kernel_gpu.gpu_allocate_copy_if_necessary();
+    conv_gpu.gpu_allocate_if_necessary();
 
     // Perform the convolution
 
     cudnn_check(cudnnConvolutionForward(handle.get(),
-        alpha, input_tensor, input.gpu_memory(),
-        filter, kernel.gpu_memory(),
+        alpha, input_tensor, input_gpu.gpu_memory(),
+        filter, kernel_gpu.gpu_memory(),
         convolution, conv_algo, workspace.get(), workspace_size,
-        beta, output_tensor, conv.gpu_memory()));
+        beta, output_tensor, conv_gpu.gpu_memory()));
 
     // Release the resources
     cudnn_check(cudnnDestroyConvolutionDescriptor(convolution));
@@ -154,17 +158,21 @@ void conv4_valid(const I& input, const K& kernel, C&& conv) {
 
     // Allocate GPU memory, if necessary
 
-    input.gpu_allocate_copy_if_necessary();
-    kernel.gpu_allocate_copy_if_necessary();
-    conv.gpu_allocate_if_necessary();
+    auto input_gpu = input.gpu_direct();
+    auto kernel_gpu = kernel.gpu_direct();
+    auto conv_gpu = conv.gpu_direct();
+
+    input_gpu.gpu_allocate_copy_if_necessary();
+    kernel_gpu.gpu_allocate_copy_if_necessary();
+    conv_gpu.gpu_allocate_if_necessary();
 
     // Perform the convolution
 
     cudnn_check(cudnnConvolutionForward(handle.get(),
-        alpha, input_tensor, input.gpu_memory(),
-        filter, kernel.gpu_memory(),
+        alpha, input_tensor, input_gpu.gpu_memory(),
+        filter, kernel_gpu.gpu_memory(),
         convolution, conv_algo, workspace.get(), workspace_size,
-        beta, output_tensor, conv.gpu_memory()));
+        beta, output_tensor, conv_gpu.gpu_memory()));
 
     // Release the resources
     cudnn_check(cudnnDestroyConvolutionDescriptor(convolution));
@@ -221,17 +229,21 @@ void conv2_full(const I& input, const K& kernel, C&& conv) {
 
     // Allocate GPU memory, if necessary
 
-    input.gpu_allocate_copy_if_necessary();
-    kernel.gpu_allocate_copy_if_necessary();
-    conv.gpu_allocate_if_necessary();
+    auto input_gpu = input.gpu_direct();
+    auto kernel_gpu = kernel.gpu_direct();
+    auto conv_gpu = conv.gpu_direct();
+
+    input_gpu.gpu_allocate_copy_if_necessary();
+    kernel_gpu.gpu_allocate_copy_if_necessary();
+    conv_gpu.gpu_allocate_if_necessary();
 
     // Perform the convolution
 
     cudnn_check(cudnnConvolutionBackwardData(handle.get(),
-        alpha, filter, kernel.gpu_memory(),
-        input_tensor, input.gpu_memory(),
+        alpha, filter, kernel_gpu.gpu_memory(),
+        input_tensor, input_gpu.gpu_memory(),
         convolution, conv_algo, workspace.get(), workspace_size,
-        beta, output_tensor, conv.gpu_memory()));
+        beta, output_tensor, conv_gpu.gpu_memory()));
 
     // Release the resources
     cudnn_check(cudnnDestroyConvolutionDescriptor(convolution));
@@ -288,17 +300,21 @@ void conv2_full_flipped(const I& input, const K& kernel, C&& conv) {
 
     // Allocate GPU memory, if necessary
 
-    input.gpu_allocate_copy_if_necessary();
-    kernel.gpu_allocate_copy_if_necessary();
-    conv.gpu_allocate_if_necessary();
+    auto input_gpu = input.gpu_direct();
+    auto kernel_gpu = kernel.gpu_direct();
+    auto conv_gpu = conv.gpu_direct();
+
+    input_gpu.gpu_allocate_copy_if_necessary();
+    kernel_gpu.gpu_allocate_copy_if_necessary();
+    conv_gpu.gpu_allocate_if_necessary();
 
     // Perform the convolution
 
     cudnn_check(cudnnConvolutionBackwardData(handle.get(),
-        alpha, filter, kernel.gpu_memory(),
-        input_tensor, input.gpu_memory(),
+        alpha, filter, kernel_gpu.gpu_memory(),
+        input_tensor, input_gpu.gpu_memory(),
         convolution, conv_algo, workspace.get(), workspace_size,
-        beta, output_tensor, conv.gpu_memory()));
+        beta, output_tensor, conv_gpu.gpu_memory()));
 
     // Release the resources
     cudnn_check(cudnnDestroyConvolutionDescriptor(convolution));
@@ -358,17 +374,21 @@ void conv4_full(const I& input, const K& kernel, C&& conv) {
 
     // Allocate GPU memory, if necessary
 
-    input.gpu_allocate_copy_if_necessary();
-    kernel.gpu_allocate_copy_if_necessary();
-    conv.gpu_allocate_if_necessary();
+    auto input_gpu = input.gpu_direct();
+    auto kernel_gpu = kernel.gpu_direct();
+    auto conv_gpu = conv.gpu_direct();
+
+    input_gpu.gpu_allocate_copy_if_necessary();
+    kernel_gpu.gpu_allocate_copy_if_necessary();
+    conv_gpu.gpu_allocate_if_necessary();
 
     // Perform the convolution
 
     cudnn_check(cudnnConvolutionBackwardData(handle.get(),
-        alpha, filter, kernel.gpu_memory(),
-        input_tensor, input.gpu_memory(),
+        alpha, filter, kernel_gpu.gpu_memory(),
+        input_tensor, input_gpu.gpu_memory(),
         convolution, conv_algo, workspace.get(), workspace_size,
-        beta, output_tensor, conv.gpu_memory()));
+        beta, output_tensor, conv_gpu.gpu_memory()));
 
     // Release the resources
     cudnn_check(cudnnDestroyConvolutionDescriptor(convolution));
@@ -425,17 +445,21 @@ void conv2_valid_multi(const I& input, const K& kernel, C&& conv) {
 
     // Allocate GPU memory, if necessary
 
-    input.gpu_allocate_copy_if_necessary();
-    kernel.gpu_allocate_copy_if_necessary();
-    conv.gpu_allocate_if_necessary();
+    auto input_gpu = input.gpu_direct();
+    auto kernel_gpu = kernel.gpu_direct();
+    auto conv_gpu = conv.gpu_direct();
+
+    input_gpu.gpu_allocate_copy_if_necessary();
+    kernel_gpu.gpu_allocate_copy_if_necessary();
+    conv_gpu.gpu_allocate_if_necessary();
 
     // Perform the convolution
 
     cudnn_check(cudnnConvolutionForward(handle.get(),
-        alpha, input_tensor, input.gpu_memory(),
-        filter, kernel.gpu_memory(),
+        alpha, input_tensor, input_gpu.gpu_memory(),
+        filter, kernel_gpu.gpu_memory(),
         convolution, conv_algo, workspace.get(), workspace_size,
-        beta, output_tensor, conv.gpu_memory()));
+        beta, output_tensor, conv_gpu.gpu_memory()));
 
     // Release the resources
     cudnn_check(cudnnDestroyConvolutionDescriptor(convolution));
@@ -492,17 +516,21 @@ void conv2_valid_multi_flipped(const I& input, const K& kernel, C&& conv) {
 
     // Allocate GPU memory, if necessary
 
-    input.gpu_allocate_copy_if_necessary();
-    kernel.gpu_allocate_copy_if_necessary();
-    conv.gpu_allocate_if_necessary();
+    auto input_gpu = input.gpu_direct();
+    auto kernel_gpu = kernel.gpu_direct();
+    auto conv_gpu = conv.gpu_direct();
+
+    input_gpu.gpu_allocate_copy_if_necessary();
+    kernel_gpu.gpu_allocate_copy_if_necessary();
+    conv_gpu.gpu_allocate_if_necessary();
 
     // Perform the convolution
 
     cudnn_check(cudnnConvolutionForward(handle.get(),
-        alpha, input_tensor, input.gpu_memory(),
-        filter, kernel.gpu_memory(),
+        alpha, input_tensor, input_gpu.gpu_memory(),
+        filter, kernel_gpu.gpu_memory(),
         convolution, conv_algo, workspace.get(), workspace_size,
-        beta, output_tensor, conv.gpu_memory()));
+        beta, output_tensor, conv_gpu.gpu_memory()));
 
     // Release the resources
     cudnn_check(cudnnDestroyConvolutionDescriptor(convolution));
@@ -521,8 +549,9 @@ void conv2_full_multi(const I& input, const K& kernel, C&& conv) {
     for(std::size_t i = 0; i < kernel.template dim<0>(); ++i){
         decltype(auto) result = conv(i);
         conv2_full(input, kernel(i), result);
-        result.gpu_copy_from();
-        result.gpu_evict();
+        auto result_gpu = result.gpu_direct();
+        result_gpu.gpu_copy_from();
+        result_gpu.gpu_evict();
     }
 }
 
@@ -531,8 +560,9 @@ void conv2_full_multi_flipped(const I& input, const K& kernel, C&& conv) {
     for(std::size_t i = 0; i < kernel.template dim<0>(); ++i){
         decltype(auto) result = conv(i);
         conv2_full_flipped(input, kernel(i), result);
-        result.gpu_copy_from();
-        result.gpu_evict();
+        auto result_gpu = result.gpu_direct();
+        result_gpu.gpu_copy_from();
+        result_gpu.gpu_evict();
     }
 }
 
@@ -586,17 +616,21 @@ void conv2_full_multi_real(const I& input, const K& kernel, C&& conv) {
 
     // Allocate GPU memory, if necessary
 
-    input.gpu_allocate_copy_if_necessary();
-    kernel.gpu_allocate_copy_if_necessary();
-    conv.gpu_allocate_if_necessary();
+    auto input_gpu = input.gpu_direct();
+    auto kernel_gpu = kernel.gpu_direct();
+    auto conv_gpu = conv.gpu_direct();
+
+    input_gpu.gpu_allocate_copy_if_necessary();
+    kernel_gpu.gpu_allocate_copy_if_necessary();
+    conv_gpu.gpu_allocate_if_necessary();
 
     // Perform the convolution
 
     cudnn_check(cudnnConvolutionBackwardData(handle.get(),
-        alpha, filter, kernel.gpu_memory(),
-        input_tensor, input.gpu_memory(),
+        alpha, filter, kernel_gpu.gpu_memory(),
+        input_tensor, input_gpu.gpu_memory(),
         convolution, conv_algo, workspace.get(), workspace_size,
-        beta, output_tensor, conv.gpu_memory()));
+        beta, output_tensor, conv_gpu.gpu_memory()));
 
     // Release the resources
     cudnn_check(cudnnDestroyConvolutionDescriptor(convolution));
@@ -653,17 +687,21 @@ void conv2_full_multi_flipped_real(const I& input, const K& kernel, C&& conv) {
 
     // Allocate GPU memory, if necessary
 
-    input.gpu_allocate_copy_if_necessary();
-    kernel.gpu_allocate_copy_if_necessary();
-    conv.gpu_allocate_if_necessary();
+    auto input_gpu = input.gpu_direct();
+    auto kernel_gpu = kernel.gpu_direct();
+    auto conv_gpu = conv.gpu_direct();
+
+    input_gpu.gpu_allocate_copy_if_necessary();
+    kernel_gpu.gpu_allocate_copy_if_necessary();
+    conv_gpu.gpu_allocate_if_necessary();
 
     // Perform the convolution
 
     cudnn_check(cudnnConvolutionBackwardData(handle.get(),
-        alpha, filter, kernel.gpu_memory(),
-        input_tensor, input.gpu_memory(),
+        alpha, filter, kernel_gpu.gpu_memory(),
+        input_tensor, input_gpu.gpu_memory(),
         convolution, conv_algo, workspace.get(), workspace_size,
-        beta, output_tensor, conv.gpu_memory()));
+        beta, output_tensor, conv_gpu.gpu_memory()));
 
     // Release the resources
     cudnn_check(cudnnDestroyConvolutionDescriptor(convolution));
