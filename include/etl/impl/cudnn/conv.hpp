@@ -685,7 +685,7 @@ void conv2_full_multi_flipped_real(const I& input, const K& kernel, C&& conv) {
  * \param conv The output matrix
  */
 template <typename I, typename K, typename C>
-void conv2_valid(const I& input, const K& kernel, C&& conv);
+void conv2_valid(const I& input, const K& kernel, C&& conv){
     cpp_unused(input);
     cpp_unused(kernel);
     cpp_unused(conv);
@@ -693,7 +693,7 @@ void conv2_valid(const I& input, const K& kernel, C&& conv);
 }
 
 template <typename I, typename K, typename C>
-void conv4_valid(const I& input, const K& kernel, C&& conv);
+void conv4_valid(const I& input, const K& kernel, C&& conv){
     cpp_unused(input);
     cpp_unused(kernel);
     cpp_unused(conv);
@@ -707,7 +707,7 @@ void conv4_valid(const I& input, const K& kernel, C&& conv);
  * \param conv The output matrix
  */
 template <typename I, typename K, typename C>
-void conv2_full(const I& input, const K& kernel, C&& conv);
+void conv2_full(const I& input, const K& kernel, C&& conv){
     cpp_unused(input);
     cpp_unused(kernel);
     cpp_unused(conv);
@@ -715,7 +715,7 @@ void conv2_full(const I& input, const K& kernel, C&& conv);
 }
 
 template <typename I, typename K, typename C>
-void conv4_full(const I& input, const K& kernel, C&& conv);
+void conv4_full(const I& input, const K& kernel, C&& conv){
     cpp_unused(input);
     cpp_unused(kernel);
     cpp_unused(conv);
@@ -723,7 +723,7 @@ void conv4_full(const I& input, const K& kernel, C&& conv);
 }
 
 template <typename I, typename K, typename C>
-void conv2_valid_multi(const I& input, const K& kernel, C&& conv);
+void conv2_valid_multi(const I& input, const K& kernel, C&& conv){
     cpp_unused(input);
     cpp_unused(kernel);
     cpp_unused(conv);
@@ -731,7 +731,7 @@ void conv2_valid_multi(const I& input, const K& kernel, C&& conv);
 }
 
 template <typename I, typename K, typename C>
-void conv2_valid_multi_flipped(const I& input, const K& kernel, C&& conv);
+void conv2_valid_multi_flipped(const I& input, const K& kernel, C&& conv){
     cpp_unused(input);
     cpp_unused(kernel);
     cpp_unused(conv);
@@ -739,7 +739,7 @@ void conv2_valid_multi_flipped(const I& input, const K& kernel, C&& conv);
 }
 
 template <typename I, typename K, typename C>
-void conv2_full_multi(const I& input, const K& kernel, C&& conv);
+void conv2_full_multi(const I& input, const K& kernel, C&& conv){
     cpp_unused(input);
     cpp_unused(kernel);
     cpp_unused(conv);
@@ -747,7 +747,7 @@ void conv2_full_multi(const I& input, const K& kernel, C&& conv);
 }
 
 template <typename I, typename K, typename C>
-void conv2_full_multi_flipped(const I& input, const K& kernel, C&& conv);
+void conv2_full_multi_flipped(const I& input, const K& kernel, C&& conv){
     cpp_unused(input);
     cpp_unused(kernel);
     cpp_unused(conv);
