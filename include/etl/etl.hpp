@@ -61,7 +61,6 @@
 #include "etl/crtp/value_testable.hpp"
 #include "etl/crtp/dim_testable.hpp"
 #include "etl/crtp/gpu_able.hpp"
-#include "etl/crtp/gpu_delegate.hpp"
 
 // The expressions building
 #include "etl/checks.hpp"

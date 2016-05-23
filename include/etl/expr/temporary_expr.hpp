@@ -77,7 +77,7 @@ public:
  * A temporary expression computes the expression directly and stores it into a temporary.
  */
 template <typename D, typename V, typename R>
-struct temporary_expr : comparable<D>, value_testable<D>, dim_testable<D>, gpu_delegate<V, D>, gpu_able<V> {
+struct temporary_expr : comparable<D>, value_testable<D>, dim_testable<D>, gpu_able<V> {
     using derived_t         = D;                 ///< The derived type
     using value_type        = V;                 ///< The value type
     using result_type       = R;                 ///< The result type
@@ -287,35 +287,13 @@ public:
         return result().memory_end();
     }
 
-    /*!
-     * \brief Return the GPU delegate
-     */
-    result_type& gpu_delegate() {
-        return result();
-    }
-
-    /*!
-     * \brief Return the GPU delegate
-     */
-    const result_type& gpu_delegate() const {
-        cpp_assert(allocated, "The result has not been allocated");
-        return _c->result();
-    }
-
     gpu_helper<V> gpu_direct() const {
-        if(gpu_delegate_valid()){
+        if(evaluated && allocated){
             return result().gpu_direct();
         } else {
             //TODO This is an ugly trick
             return gpu_helper<V>(this->_gpu_memory_handler, 0, nullptr);
         }
-    }
-
-    /*!
-     * \brief Indicate if the delegate is valid (allocated)
-     */
-    bool gpu_delegate_valid() const noexcept {
-        return evaluated && allocated;
     }
 
     /*!
