@@ -27,12 +27,7 @@ namespace etl {
 
 template <typename T>
 struct gpu_able {
-    using value_type = T;
-    mutable impl::cuda::cuda_memory<value_type> _gpu_memory_handler;
-
-    void gpu_set(std::size_t , const T* ){
-        //TODO remove
-    }
+    mutable impl::cuda::cuda_memory<T> _gpu_memory_handler;
 };
 
 /*!
@@ -46,7 +41,6 @@ struct gpu_able {
 template <typename T>
 struct gpu_helper {
     using value_type = T;
-    //using derived_t  = D;
 
     impl::cuda::cuda_memory<value_type>& _gpu_memory_handler;
 
@@ -163,17 +157,11 @@ struct gpu_helper {
 template <typename T>
 struct gpu_able {
     mutable int _gpu_memory_handler;
-
-    void gpu_set(std::size_t size, const T* cpu){
-        //TODO remove
-    }
 };
 
 template <typename T>
 struct gpu_helper {
     using value_type = T;
-
-    void gpu_set(std::size_t , T* ){}
 
     gpu_helper(int& , std::size_t , T* ) {}
 

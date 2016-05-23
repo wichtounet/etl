@@ -137,8 +137,6 @@ public:
     template <typename V = default_vec>
     using vec_type       = typename V::template vec_type<T>;
 
-    using gpu_able<T>::gpu_set;
-
 private:
     storage_impl _data; ///< The storage container
 
@@ -178,8 +176,6 @@ private:
     template <typename S = ST, cpp_enable_if(matrix_detail::is_vector<S>::value)>
     void init() {
         _data.resize(etl_size);
-
-        gpu_set(etl_size, memory_start());
     }
 
     /*!
@@ -187,7 +183,7 @@ private:
      */
     template <typename S = ST, cpp_disable_if(matrix_detail::is_vector<S>::value)>
     void init() noexcept {
-        gpu_set(etl_size, memory_start());
+        //Nothing else to init
     }
 
 public:
@@ -228,7 +224,7 @@ public:
      */
     fast_matrix_impl(storage_impl data)
             : _data(data) {
-        gpu_set(etl_size, memory_start());
+        //Nothing else to init
     }
 
     /*!
@@ -245,7 +241,7 @@ public:
      * \param rhs The fast matrix to move from
      */
     fast_matrix_impl(fast_matrix_impl&& rhs) noexcept : _data(std::move(rhs._data)) {
-        gpu_set(etl_size, memory_start());
+        //Nothing else to init
     }
 
     /*!
@@ -363,7 +359,6 @@ public:
     fast_matrix_impl& operator=(fast_matrix_impl&& rhs) noexcept {
         if (this != &rhs) {
             _data = std::move(rhs._data);
-            gpu_set(etl_size, memory_start());
         }
 
         return *this;
@@ -378,8 +373,6 @@ public:
     void swap(fast_matrix_impl& other) {
         using std::swap;
         swap(_data, other._data);
-
-        gpu_set(etl_size, memory_start());
     }
 
     // Accessors
