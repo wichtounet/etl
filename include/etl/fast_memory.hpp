@@ -38,7 +38,7 @@ struct fast_memory {
      * \brief Returns the size of the matrix, in O(1)
      * \return The size of the matrix
      */
-    std::size_t size() noexcept {
+    std::size_t size() const noexcept {
         return etl_size;
     }
 
@@ -47,7 +47,7 @@ struct fast_memory {
      * \return The Dth dimension of the matrix
      */
     template <std::size_t DD>
-    std::size_t dim() noexcept {
+    std::size_t dim() const noexcept {
         return dims[DD];
     }
 
