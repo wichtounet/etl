@@ -9,8 +9,18 @@
 
 namespace etl {
 
+#ifdef ETL_CUDA
+template<typename T>
+using gpu_handler = impl::cuda::cuda_memory<T>;
+#else
+template<typename>
+using gpu_handler = int;
+#endif
+
+//TODO Remove the duplication of fields between both implementations
+
 template <typename T, std::size_t D, order SO>
-struct fast_memory {
+struct fast_memory : gpu_helper<std::remove_const_t<T>> {
     static constexpr const std::size_t n_dimensions = D;                      ///< The number of dimensions
     static constexpr const order storage_order      = SO;                                   ///< The storage order
 
@@ -22,7 +32,9 @@ struct fast_memory {
     const std::size_t etl_size;
     const std::array<std::size_t, D> dims;
 
-    fast_memory(T* memory, std::size_t size, const std::array<std::size_t, D>& dims) : memory(memory), etl_size(size), dims(dims) {
+    fast_memory(T* memory, std::size_t size, const std::array<std::size_t, D>& dims, const gpu_handler<std::remove_const_t<T>>& handler) :
+            gpu_helper<std::remove_const_t<T>>(handler, etl_size, memory),
+            memory(memory), etl_size(size), dims(dims) {
         //Nothing else to init
     }
 

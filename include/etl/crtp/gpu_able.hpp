@@ -47,8 +47,8 @@ struct gpu_helper {
     std::size_t _gpu_size;
     T* _gpu_cpu_pointer;
 
-    gpu_helper(impl::cuda::cuda_memory<value_type>& _gpu_memory_handler, std::size_t size, const T* cpu)
-        : _gpu_memory_handler(_gpu_memory_handler), _gpu_size(size), _gpu_cpu_pointer(const_cast<T*>(cpu)) {}
+    gpu_helper(const impl::cuda::cuda_memory<value_type>& _gpu_memory_handler, std::size_t size, const T* cpu)
+        : _gpu_memory_handler(const_cast<impl::cuda::cuda_memory<value_type>&>(_gpu_memory_handler)), _gpu_size(size), _gpu_cpu_pointer(const_cast<T*>(cpu)) {}
 
     /*!
      * \brief Indicates if the expression is allocated in GPU.
@@ -163,7 +163,7 @@ template <typename T>
 struct gpu_helper {
     using value_type = T;
 
-    gpu_helper(int& , std::size_t , T* ) {}
+    gpu_helper(const int& , std::size_t , T* ) {}
 
     /*!
      * \brief Indicates if the expression is allocated in GPU.

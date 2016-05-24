@@ -32,7 +32,6 @@
 #include "etl/parallel.hpp"
 #include "etl/memory.hpp"
 #include "etl/allocator.hpp"
-#include "etl/fast_memory.hpp"
 
 //Forward declarations
 #include "etl/value_fwd.hpp"
@@ -56,8 +55,10 @@
 // The evaluator
 #include "etl/evaluator.hpp"
 
-// CRTP classes
 #include "etl/crtp/gpu_able.hpp"
+#include "etl/fast_memory.hpp"
+
+// CRTP classes
 #include "etl/crtp/inplace_assignable.hpp"
 #include "etl/crtp/comparable.hpp"
 #include "etl/crtp/value_testable.hpp"
