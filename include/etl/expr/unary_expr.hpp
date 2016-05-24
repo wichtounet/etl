@@ -206,13 +206,15 @@ public:
  * This unary expression keeps access to data (can be edited)
  */
 template <typename T, typename Expr>
-struct unary_expr<T, Expr, identity_op> : inplace_assignable<unary_expr<T, Expr, identity_op>>, comparable<unary_expr<T, Expr, identity_op>>, value_testable<unary_expr<T, Expr, identity_op>>, dim_testable<unary_expr<T, Expr, identity_op>>, gpu_able<T> {
+struct unary_expr<T, Expr, identity_op> : inplace_assignable<unary_expr<T, Expr, identity_op>>, comparable<unary_expr<T, Expr, identity_op>>, value_testable<unary_expr<T, Expr, identity_op>>, dim_testable<unary_expr<T, Expr, identity_op>> {
 private:
     static_assert(is_etl_expr<Expr>::value, "Only ETL expressions can be used in unary_expr");
 
     using this_type = unary_expr<T, Expr, identity_op>; ///< The type of this expression
 
     Expr _value; ///< The sub expression
+
+    mutable gpu_handler<T> _gpu_memory_handler;
 
     static constexpr const bool non_const_return_ref =
         cpp::and_c<
@@ -524,8 +526,13 @@ public:
         return etl_traits<TT>::dim(*this, DD);
     }
 
-    gpu_helper<T> direct() const {
-        return {gpu_able<T>::_gpu_memory_handler, etl::size(value()), value().memory_start()};
+    template<std::size_t... I>
+    std::array<std::size_t, decay_traits<this_type>::dimensions()> dim_array(std::index_sequence<I...>) const {
+        return {this->template dim<I>()...};
+    }
+
+    opaque_memory<T, decay_traits<this_type>::dimensions(), decay_traits<this_type>::storage_order> direct() const {
+        return {memory_start(), etl::size(*this), dim_array(std::make_index_sequence<decay_traits<this_type>::dimensions()>()), _gpu_memory_handler};
     }
 
 private:

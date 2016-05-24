@@ -33,8 +33,17 @@ namespace cufft {
 
 namespace detail {
 
+template<typename T>
+using input_1d = etl::opaque_memory<T, 1, order::RowMajor>;
+
+template<typename T>
+using input_2d = etl::opaque_memory<T, 2, order::RowMajor>;
+
+template<typename T>
+using input_3d = etl::opaque_memory<T, 3, order::RowMajor>;
+
 template <typename T>
-void inplace_cfft1_kernel(gpu_helper<T>& a_gpu, std::size_t n) {
+void inplace_cfft1_kernel(input_1d<T>& a_gpu, std::size_t n) {
     cufft_handle handle = start_cufft();
 
     cufftPlan1d(&handle.get(), n, CUFFT_C2C, 1);
@@ -42,7 +51,7 @@ void inplace_cfft1_kernel(gpu_helper<T>& a_gpu, std::size_t n) {
 }
 
 template <typename T>
-void inplace_zfft1_kernel(gpu_helper<T>& a_gpu, std::size_t n) {
+void inplace_zfft1_kernel(input_1d<T>& a_gpu, std::size_t n) {
     cufft_handle handle = start_cufft();
 
     cufftPlan1d(&handle.get(), n, CUFFT_Z2Z, 1);
@@ -50,7 +59,7 @@ void inplace_zfft1_kernel(gpu_helper<T>& a_gpu, std::size_t n) {
 }
 
 template <typename T>
-void inplace_cfft1_many_kernel(gpu_helper<T>& a_gpu, std::size_t batch, std::size_t n) {
+void inplace_cfft1_many_kernel(input_2d<T>& a_gpu, std::size_t batch, std::size_t n) {
     cufft_handle handle = start_cufft();
 
     int dims[] = {int(n)};
@@ -64,7 +73,7 @@ void inplace_cfft1_many_kernel(gpu_helper<T>& a_gpu, std::size_t batch, std::siz
 }
 
 template <typename T>
-void inplace_zfft1_many_kernel(gpu_helper<T>& a_gpu, std::size_t batch, std::size_t n) {
+void inplace_zfft1_many_kernel(input_2d<T>& a_gpu, std::size_t batch, std::size_t n) {
     cufft_handle handle = start_cufft();
 
     int dims[] = {int(n)};
@@ -78,7 +87,7 @@ void inplace_zfft1_many_kernel(gpu_helper<T>& a_gpu, std::size_t batch, std::siz
 }
 
 template <typename T>
-void inplace_cifft1_many_kernel(gpu_helper<T>& a_gpu, std::size_t batch, std::size_t n) {
+void inplace_cifft1_many_kernel(input_2d<T>& a_gpu, std::size_t batch, std::size_t n) {
     cufft_handle handle = start_cufft();
 
     int dims[] = {int(n)};
@@ -92,7 +101,7 @@ void inplace_cifft1_many_kernel(gpu_helper<T>& a_gpu, std::size_t batch, std::si
 }
 
 template <typename T>
-void inplace_zifft1_many_kernel(gpu_helper<T>& a_gpu, std::size_t batch, std::size_t n) {
+void inplace_zifft1_many_kernel(input_2d<T>& a_gpu, std::size_t batch, std::size_t n) {
     cufft_handle handle = start_cufft();
 
     int dims[] = {int(n)};
@@ -106,7 +115,7 @@ void inplace_zifft1_many_kernel(gpu_helper<T>& a_gpu, std::size_t batch, std::si
 }
 
 template <typename T>
-void inplace_cifft1_kernel(gpu_helper<T>& a_gpu, std::size_t n) {
+void inplace_cifft1_kernel(input_1d<T>& a_gpu, std::size_t n) {
     cufft_handle handle = start_cufft();
 
     cufftPlan1d(&handle.get(), n, CUFFT_C2C, 1);
@@ -114,7 +123,7 @@ void inplace_cifft1_kernel(gpu_helper<T>& a_gpu, std::size_t n) {
 }
 
 template <typename T>
-void inplace_zifft1_kernel(gpu_helper<T>& a_gpu, std::size_t n) {
+void inplace_zifft1_kernel(input_1d<T>& a_gpu, std::size_t n) {
     cufft_handle handle = start_cufft();
 
     cufftPlan1d(&handle.get(), n, CUFFT_Z2Z, 1);
@@ -122,7 +131,7 @@ void inplace_zifft1_kernel(gpu_helper<T>& a_gpu, std::size_t n) {
 }
 
 template <typename T>
-inline void inplace_cfft2_kernel(gpu_helper<T>& a_gpu, std::size_t d1, std::size_t d2) {
+inline void inplace_cfft2_kernel(input_2d<T>& a_gpu, std::size_t d1, std::size_t d2) {
     cufft_handle handle = start_cufft();
 
     cufftPlan2d(&handle.get(), d1, d2, CUFFT_C2C);
@@ -130,7 +139,7 @@ inline void inplace_cfft2_kernel(gpu_helper<T>& a_gpu, std::size_t d1, std::size
 }
 
 template <typename T>
-inline void inplace_zfft2_kernel(gpu_helper<T>& a_gpu, std::size_t d1, std::size_t d2) {
+inline void inplace_zfft2_kernel(input_2d<T>& a_gpu, std::size_t d1, std::size_t d2) {
     cufft_handle handle = start_cufft();
 
     cufftPlan2d(&handle.get(), d1, d2, CUFFT_Z2Z);
@@ -138,7 +147,7 @@ inline void inplace_zfft2_kernel(gpu_helper<T>& a_gpu, std::size_t d1, std::size
 }
 
 template <typename T>
-void inplace_cfft2_many_kernel(gpu_helper<T>& a_gpu, std::size_t batch, std::size_t d1, std::size_t d2) {
+void inplace_cfft2_many_kernel(input_3d<T>& a_gpu, std::size_t batch, std::size_t d1, std::size_t d2) {
     cufft_handle handle = start_cufft();
 
     int dims[] = {int(d1), int(d2)};
@@ -148,7 +157,7 @@ void inplace_cfft2_many_kernel(gpu_helper<T>& a_gpu, std::size_t batch, std::siz
 }
 
 template <typename T>
-void inplace_zfft2_many_kernel(gpu_helper<T>& a_gpu, std::size_t batch, std::size_t d1, std::size_t d2) {
+void inplace_zfft2_many_kernel(input_3d<T>& a_gpu, std::size_t batch, std::size_t d1, std::size_t d2) {
     cufft_handle handle = start_cufft();
 
     int dims[] = {int(d1), int(d2)};
@@ -162,7 +171,7 @@ void inplace_zfft2_many_kernel(gpu_helper<T>& a_gpu, std::size_t batch, std::siz
 }
 
 template <typename T>
-void inplace_cifft2_many_kernel(gpu_helper<T>& a_gpu, std::size_t batch, std::size_t d1, std::size_t d2) {
+void inplace_cifft2_many_kernel(input_3d<T>& a_gpu, std::size_t batch, std::size_t d1, std::size_t d2) {
     cufft_handle handle = start_cufft();
 
     int dims[] = {int(d1), int(d2)};
@@ -172,7 +181,7 @@ void inplace_cifft2_many_kernel(gpu_helper<T>& a_gpu, std::size_t batch, std::si
 }
 
 template <typename T>
-void inplace_zifft2_many_kernel(gpu_helper<T>& a_gpu, std::size_t batch, std::size_t d1, std::size_t d2) {
+void inplace_zifft2_many_kernel(input_3d<T>& a_gpu, std::size_t batch, std::size_t d1, std::size_t d2) {
     cufft_handle handle = start_cufft();
 
     int dims[] = {int(d1), int(d2)};
@@ -186,7 +195,7 @@ void inplace_zifft2_many_kernel(gpu_helper<T>& a_gpu, std::size_t batch, std::si
 }
 
 template <typename T>
-void inplace_cifft2_kernel(gpu_helper<T>& a_gpu, std::size_t d1, std::size_t d2) {
+void inplace_cifft2_kernel(input_2d<T>& a_gpu, std::size_t d1, std::size_t d2) {
     cufft_handle handle = start_cufft();
 
     cufftPlan2d(&handle.get(), d1, d2, CUFFT_C2C);
@@ -194,7 +203,7 @@ void inplace_cifft2_kernel(gpu_helper<T>& a_gpu, std::size_t d1, std::size_t d2)
 }
 
 template <typename T>
-void inplace_zifft2_kernel(gpu_helper<T>& a_gpu, std::size_t d1, std::size_t d2) {
+void inplace_zifft2_kernel(input_2d<T>& a_gpu, std::size_t d1, std::size_t d2) {
     cufft_handle handle = start_cufft();
 
     cufftPlan2d(&handle.get(), d1, d2, CUFFT_Z2Z);

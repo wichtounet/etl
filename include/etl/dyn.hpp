@@ -22,7 +22,7 @@ namespace etl {
  * The matrix support an arbitrary number of dimensions.
  */
 template <typename T, order SO, std::size_t D>
-struct dyn_matrix_impl final : dyn_base<T, D>, inplace_assignable<dyn_matrix_impl<T, SO, D>>, comparable<dyn_matrix_impl<T, SO, D>>, expression_able<dyn_matrix_impl<T, SO, D>>, value_testable<dyn_matrix_impl<T, SO, D>>, dim_testable<dyn_matrix_impl<T, SO, D>>, gpu_able<T> {
+struct dyn_matrix_impl final : dyn_base<T, D>, inplace_assignable<dyn_matrix_impl<T, SO, D>>, comparable<dyn_matrix_impl<T, SO, D>>, expression_able<dyn_matrix_impl<T, SO, D>>, value_testable<dyn_matrix_impl<T, SO, D>>, dim_testable<dyn_matrix_impl<T, SO, D>> {
     static constexpr const std::size_t n_dimensions = D;                              ///< The number of dimensions
     static constexpr const order storage_order      = SO;                             ///< The storage order
     static constexpr const std::size_t alignment    = intrinsic_traits<T>::alignment; ///< The memory alignment
@@ -47,6 +47,8 @@ private:
     bool managed = true; ///< Tag indicating if we manage the memory
     memory_type _memory; ///< Pointer to the allocated memory
 
+    mutable gpu_handler<T> _gpu_memory_handler;
+
     using base_type::release;
     using base_type::allocate;
     using base_type::check_invariants;
@@ -70,7 +72,7 @@ public:
      * \brief Copy construct a matrix
      * \param rhs The matrix to copy
      */
-    dyn_matrix_impl(const dyn_matrix_impl& rhs) noexcept : base_type(rhs), gpu_able<T>(), _memory(allocate(_size)) {
+    dyn_matrix_impl(const dyn_matrix_impl& rhs) noexcept : base_type(rhs), _memory(allocate(_size)) {
         direct_copy(rhs.memory_start(), rhs.memory_end(), memory_start());
     }
 
@@ -789,8 +791,8 @@ public:
         return _dimensions[i];
     }
 
-    gpu_helper<T> direct() const {
-        return gpu_helper<T>(this->_gpu_memory_handler, _size, memory_start());
+    opaque_memory<T, n_dimensions, SO> direct() const {
+        return opaque_memory<T, n_dimensions, SO>(memory_start(), _size, _dimensions, _gpu_memory_handler);
     }
 };
 

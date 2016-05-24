@@ -40,6 +40,9 @@
 // The traits
 #include "etl/traits.hpp"
 
+// Opaque memory container
+#include "etl/opaque_memory.hpp"
+
 // The operators
 #include "etl/op/scalar.hpp"
 #include "etl/op/generators.hpp"
@@ -54,9 +57,6 @@
 
 // The evaluator
 #include "etl/evaluator.hpp"
-
-#include "etl/crtp/gpu_able.hpp"
-#include "etl/opaque_memory.hpp"
 
 // CRTP classes
 #include "etl/crtp/inplace_assignable.hpp"

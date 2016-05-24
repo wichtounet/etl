@@ -114,7 +114,7 @@ using const_iterator_t = typename iterator_type<T>::const_iterator;
  * The matrix support an arbitrary number of dimensions.
  */
 template <typename T, typename ST, order SO, std::size_t... Dims>
-struct fast_matrix_impl final : inplace_assignable<fast_matrix_impl<T, ST, SO, Dims...>>, comparable<fast_matrix_impl<T, ST, SO, Dims...>>, expression_able<fast_matrix_impl<T, ST, SO, Dims...>>, value_testable<fast_matrix_impl<T, ST, SO, Dims...>>, dim_testable<fast_matrix_impl<T, ST, SO, Dims...>>, gpu_able<T> {
+struct fast_matrix_impl final : inplace_assignable<fast_matrix_impl<T, ST, SO, Dims...>>, comparable<fast_matrix_impl<T, ST, SO, Dims...>>, expression_able<fast_matrix_impl<T, ST, SO, Dims...>>, value_testable<fast_matrix_impl<T, ST, SO, Dims...>>, dim_testable<fast_matrix_impl<T, ST, SO, Dims...>> {
     static_assert(sizeof...(Dims) > 0, "At least one dimension must be specified");
 
 public:
@@ -139,6 +139,8 @@ public:
 
 private:
     storage_impl _data; ///< The storage container
+
+    mutable gpu_handler<T> _gpu_memory_handler;
 
     /*!
      * \brief Compute the 1D index from the given indices
@@ -231,7 +233,7 @@ public:
      * \brief Copy construct a fast matrix
      * \param rhs The fast matrix to copy from
      */
-    fast_matrix_impl(const fast_matrix_impl& rhs) noexcept : gpu_able<T>() {
+    fast_matrix_impl(const fast_matrix_impl& rhs) noexcept {
         init();
         direct_copy(rhs.memory_start(), rhs.memory_end(), memory_start());
     }
@@ -638,12 +640,8 @@ public:
         return &_data[size()];
     }
 
-    opaque_memory<T, n_dimensions, SO> direct(){
-        return opaque_memory<T, n_dimensions, SO>(memory_start(), etl_size, {{Dims...}}, this->_gpu_memory_handler);
-    }
-
     opaque_memory<T, n_dimensions, SO> direct() const {
-        return opaque_memory<T, n_dimensions, SO>(memory_start(), etl_size, {{Dims...}}, this->_gpu_memory_handler);
+        return opaque_memory<T, n_dimensions, SO>(memory_start(), etl_size, {{Dims...}}, _gpu_memory_handler);
     }
 };
 

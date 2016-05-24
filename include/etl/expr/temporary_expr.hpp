@@ -77,7 +77,7 @@ public:
  * A temporary expression computes the expression directly and stores it into a temporary.
  */
 template <typename D, typename V, typename R>
-struct temporary_expr : comparable<D>, value_testable<D>, dim_testable<D>, gpu_able<V> {
+struct temporary_expr : comparable<D>, value_testable<D>, dim_testable<D> {
     using derived_t         = D;                 ///< The derived type
     using value_type        = V;                 ///< The value type
     using result_type       = R;                 ///< The result type
@@ -90,6 +90,9 @@ protected:
     mutable bool evaluated = false; ///< Indicates if the expression has been evaluated
 
     data_type _c;           ///< The result reference
+
+private:
+    mutable gpu_handler<V> _gpu_memory_handler;
 
 public:
     temporary_expr() = default;
@@ -287,12 +290,12 @@ public:
         return result().memory_end();
     }
 
-    gpu_helper<V> direct() const {
+    auto direct() const {
         if(evaluated && allocated){
             return result().direct();
         } else {
-            //TODO This is an ugly trick
-            return gpu_helper<V>(this->_gpu_memory_handler, 0, nullptr);
+            using result_type = decltype(result().direct());
+            return result_type(nullptr, 0, {{}}, _gpu_memory_handler);
         }
     }
 
