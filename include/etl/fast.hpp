@@ -13,7 +13,6 @@
 #pragma once
 
 #include "cpp_utils/array_wrapper.hpp"
-#include "fast_memory.hpp"
 
 namespace etl {
 

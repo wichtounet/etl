@@ -32,6 +32,7 @@
 #include "etl/parallel.hpp"
 #include "etl/memory.hpp"
 #include "etl/allocator.hpp"
+#include "etl/fast_memory.hpp"
 
 //Forward declarations
 #include "etl/value_fwd.hpp"
