@@ -480,7 +480,7 @@ struct conv2_full_impl {
         } else if (impl == etl::conv_impl::SSE) {
             impl::sse::conv2_full(input, kernel, conv);
         } else if (impl == etl::conv_impl::CUDNN) {
-            impl::cudnn::conv2_full(input, kernel, conv);
+            impl::cudnn::conv2_full(input.direct(), kernel.direct(), conv.direct());
         } else if (impl == etl::conv_impl::STD) {
             impl::standard::conv2_full(input, kernel, conv);
         } else {
@@ -534,7 +534,7 @@ struct conv2_valid_impl {
         } else if (impl == etl::conv_impl::SSE) {
             impl::sse::conv2_valid(input, kernel, conv);
         } else if (impl == etl::conv_impl::CUDNN) {
-            impl::cudnn::conv2_valid(input, kernel, conv);
+            impl::cudnn::conv2_valid(input.direct(), kernel.direct(), conv.direct());
         } else if (impl == etl::conv_impl::STD) {
             impl::standard::conv2_valid(input, kernel, conv);
         } else {
@@ -610,7 +610,7 @@ struct conv2_valid_multi_impl {
         } else if (impl == etl::conv_multi_impl::FFT) {
             impl::reduc::fft_conv2_valid_multi(input, kernel, conv);
         } else if (impl == etl::conv_multi_impl::CUDNN) {
-            impl::cudnn::conv2_valid_multi(input, kernel, conv);
+            impl::cudnn::conv2_valid_multi(input.direct(), kernel.direct(), conv.direct());
         } else if (impl == etl::conv_multi_impl::STD){
             impl::standard::conv2_valid_multi(input, kernel, conv);
         } else {
@@ -638,7 +638,7 @@ struct conv2_valid_multi_flipped_impl {
         } else if (impl == etl::conv_multi_impl::FFT) {
             impl::reduc::fft_conv2_valid_multi_flipped(input, kernel, conv);
         } else if (impl == etl::conv_multi_impl::CUDNN) {
-            impl::cudnn::conv2_valid_multi_flipped(input, kernel, conv);
+            impl::cudnn::conv2_valid_multi_flipped(input.direct(), kernel.direct(), conv.direct());
         } else if (impl == etl::conv_multi_impl::STD){
             impl::standard::conv2_valid_multi_flipped(input, kernel, conv);
         } else {

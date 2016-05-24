@@ -26,7 +26,13 @@ namespace impl {
 namespace cudnn {
 
 template<typename T>
-using conv4_input = etl::opaque_memory<T, 4, order::RowMajor>;
+using conv2_input = etl::opaque_memory<T, 2>;
+
+template<typename T>
+using conv3_input = etl::opaque_memory<T, 3>;
+
+template<typename T>
+using conv4_input = etl::opaque_memory<T, 4>;
 
 #ifdef ETL_CUDNN_MODE
 
@@ -39,9 +45,9 @@ using conv4_input = etl::opaque_memory<T, 4, order::RowMajor>;
         }                                                                                                 \
     }
 
-template <typename I, typename K, typename C>
-void conv2_valid(const I& input, const K& kernel, C&& conv) {
-    using type = value_t<I>;
+template <typename T>
+void conv2_valid(const conv2_input<T>& input, const conv2_input<T>& kernel, const conv2_input<T>& conv) {
+    using type = std::remove_const_t<T>;
 
     auto data_type = std::is_same<type, float>::value ? CUDNN_DATA_FLOAT : CUDNN_DATA_DOUBLE;
 
@@ -87,21 +93,17 @@ void conv2_valid(const I& input, const K& kernel, C&& conv) {
 
     // Allocate GPU memory, if necessary
 
-    auto input_gpu = input.direct();
-    auto kernel_gpu = kernel.direct();
-    auto conv_gpu = conv.direct();
-
-    input_gpu.gpu_allocate_copy_if_necessary();
-    kernel_gpu.gpu_allocate_copy_if_necessary();
-    conv_gpu.gpu_allocate_if_necessary();
+    input.gpu_allocate_copy_if_necessary();
+    kernel.gpu_allocate_copy_if_necessary();
+    conv.gpu_allocate_if_necessary();
 
     // Perform the convolution
 
     cudnn_check(cudnnConvolutionForward(handle.get(),
-        alpha, input_tensor, input_gpu.gpu_memory(),
-        filter, kernel_gpu.gpu_memory(),
+        alpha, input_tensor, input.gpu_memory(),
+        filter, kernel.gpu_memory(),
         convolution, conv_algo, workspace.get(), workspace_size,
-        beta, output_tensor, conv_gpu.gpu_memory()));
+        beta, output_tensor, conv.gpu_memory()));
 
     // Release the resources
     cudnn_check(cudnnDestroyConvolutionDescriptor(convolution));
@@ -180,9 +182,9 @@ void conv4_valid(const conv4_input<T>& input, const conv4_input<T>& kernel, cons
     cudnn_check(cudnnDestroyTensorDescriptor(input_tensor));
 }
 
-template <typename I, typename K, typename C>
-void conv2_full(const I& input, const K& kernel, C&& conv) {
-    using type = value_t<I>;
+template <typename T>
+void conv2_full(const conv2_input<T>& input, const conv2_input<T>& kernel, const conv2_input<T>& conv) {
+    using type = std::remove_const_t<T>;
 
     auto data_type = std::is_same<type, float>::value ? CUDNN_DATA_FLOAT : CUDNN_DATA_DOUBLE;
 
@@ -228,21 +230,17 @@ void conv2_full(const I& input, const K& kernel, C&& conv) {
 
     // Allocate GPU memory, if necessary
 
-    auto input_gpu = input.direct();
-    auto kernel_gpu = kernel.direct();
-    auto conv_gpu = conv.direct();
-
-    input_gpu.gpu_allocate_copy_if_necessary();
-    kernel_gpu.gpu_allocate_copy_if_necessary();
-    conv_gpu.gpu_allocate_if_necessary();
+    input.gpu_allocate_copy_if_necessary();
+    kernel.gpu_allocate_copy_if_necessary();
+    conv.gpu_allocate_if_necessary();
 
     // Perform the convolution
 
     cudnn_check(cudnnConvolutionBackwardData(handle.get(),
-        alpha, filter, kernel_gpu.gpu_memory(),
-        input_tensor, input_gpu.gpu_memory(),
+        alpha, filter, kernel.gpu_memory(),
+        input_tensor, input.gpu_memory(),
         convolution, conv_algo, workspace.get(), workspace_size,
-        beta, output_tensor, conv_gpu.gpu_memory()));
+        beta, output_tensor, conv.gpu_memory()));
 
     // Release the resources
     cudnn_check(cudnnDestroyConvolutionDescriptor(convolution));
@@ -251,9 +249,9 @@ void conv2_full(const I& input, const K& kernel, C&& conv) {
     cudnn_check(cudnnDestroyTensorDescriptor(input_tensor));
 }
 
-template <typename I, typename K, typename C>
-void conv2_full_flipped(const I& input, const K& kernel, C&& conv) {
-    using type = value_t<I>;
+template <typename T>
+void conv2_full_flipped(const conv2_input<T>& input, const conv2_input<T>& kernel, const conv2_input<T>& conv) {
+    using type = std::remove_const_t<T>;
 
     auto data_type = std::is_same<type, float>::value ? CUDNN_DATA_FLOAT : CUDNN_DATA_DOUBLE;
 
@@ -299,21 +297,17 @@ void conv2_full_flipped(const I& input, const K& kernel, C&& conv) {
 
     // Allocate GPU memory, if necessary
 
-    auto input_gpu = input.direct();
-    auto kernel_gpu = kernel.direct();
-    auto conv_gpu = conv.direct();
-
-    input_gpu.gpu_allocate_copy_if_necessary();
-    kernel_gpu.gpu_allocate_copy_if_necessary();
-    conv_gpu.gpu_allocate_if_necessary();
+    input.gpu_allocate_copy_if_necessary();
+    kernel.gpu_allocate_copy_if_necessary();
+    conv.gpu_allocate_if_necessary();
 
     // Perform the convolution
 
     cudnn_check(cudnnConvolutionBackwardData(handle.get(),
-        alpha, filter, kernel_gpu.gpu_memory(),
-        input_tensor, input_gpu.gpu_memory(),
+        alpha, filter, kernel.gpu_memory(),
+        input_tensor, input.gpu_memory(),
         convolution, conv_algo, workspace.get(), workspace_size,
-        beta, output_tensor, conv_gpu.gpu_memory()));
+        beta, output_tensor, conv.gpu_memory()));
 
     // Release the resources
     cudnn_check(cudnnDestroyConvolutionDescriptor(convolution));
@@ -392,9 +386,9 @@ void conv4_full(const conv4_input<T>& input, const conv4_input<T>& kernel, const
     cudnn_check(cudnnDestroyTensorDescriptor(input_tensor));
 }
 
-template <typename I, typename K, typename C>
-void conv2_valid_multi(const I& input, const K& kernel, C&& conv) {
-    using type = value_t<I>;
+template <typename T>
+void conv2_valid_multi(const conv2_input<T>& input, const conv3_input<T>& kernel, const conv3_input<T>& conv) {
+    using type = std::remove_const_t<T>;
 
     auto data_type = std::is_same<type, float>::value ? CUDNN_DATA_FLOAT : CUDNN_DATA_DOUBLE;
 
@@ -440,21 +434,17 @@ void conv2_valid_multi(const I& input, const K& kernel, C&& conv) {
 
     // Allocate GPU memory, if necessary
 
-    auto input_gpu = input.direct();
-    auto kernel_gpu = kernel.direct();
-    auto conv_gpu = conv.direct();
-
-    input_gpu.gpu_allocate_copy_if_necessary();
-    kernel_gpu.gpu_allocate_copy_if_necessary();
-    conv_gpu.gpu_allocate_if_necessary();
+    input.gpu_allocate_copy_if_necessary();
+    kernel.gpu_allocate_copy_if_necessary();
+    conv.gpu_allocate_if_necessary();
 
     // Perform the convolution
 
     cudnn_check(cudnnConvolutionForward(handle.get(),
-        alpha, input_tensor, input_gpu.gpu_memory(),
-        filter, kernel_gpu.gpu_memory(),
+        alpha, input_tensor, input.gpu_memory(),
+        filter, kernel.gpu_memory(),
         convolution, conv_algo, workspace.get(), workspace_size,
-        beta, output_tensor, conv_gpu.gpu_memory()));
+        beta, output_tensor, conv.gpu_memory()));
 
     // Release the resources
     cudnn_check(cudnnDestroyConvolutionDescriptor(convolution));
@@ -463,9 +453,9 @@ void conv2_valid_multi(const I& input, const K& kernel, C&& conv) {
     cudnn_check(cudnnDestroyTensorDescriptor(input_tensor));
 }
 
-template <typename I, typename K, typename C>
-void conv2_valid_multi_flipped(const I& input, const K& kernel, C&& conv) {
-    using type = value_t<I>;
+template <typename T>
+void conv2_valid_multi_flipped(const conv2_input<T>& input, const conv3_input<T>& kernel, const conv3_input<T>& conv) {
+    using type = std::remove_const_t<T>;
 
     auto data_type = std::is_same<type, float>::value ? CUDNN_DATA_FLOAT : CUDNN_DATA_DOUBLE;
 
@@ -511,21 +501,17 @@ void conv2_valid_multi_flipped(const I& input, const K& kernel, C&& conv) {
 
     // Allocate GPU memory, if necessary
 
-    auto input_gpu = input.direct();
-    auto kernel_gpu = kernel.direct();
-    auto conv_gpu = conv.direct();
-
-    input_gpu.gpu_allocate_copy_if_necessary();
-    kernel_gpu.gpu_allocate_copy_if_necessary();
-    conv_gpu.gpu_allocate_if_necessary();
+    input.gpu_allocate_copy_if_necessary();
+    kernel.gpu_allocate_copy_if_necessary();
+    conv.gpu_allocate_if_necessary();
 
     // Perform the convolution
 
     cudnn_check(cudnnConvolutionForward(handle.get(),
-        alpha, input_tensor, input_gpu.gpu_memory(),
-        filter, kernel_gpu.gpu_memory(),
+        alpha, input_tensor, input.gpu_memory(),
+        filter, kernel.gpu_memory(),
         convolution, conv_algo, workspace.get(), workspace_size,
-        beta, output_tensor, conv_gpu.gpu_memory()));
+        beta, output_tensor, conv.gpu_memory()));
 
     // Release the resources
     cudnn_check(cudnnDestroyConvolutionDescriptor(convolution));
@@ -541,10 +527,13 @@ void conv2_valid_multi_flipped(const I& input, const K& kernel, C&& conv) {
 
 template <typename I, typename K, typename C>
 void conv2_full_multi(const I& input, const K& kernel, C&& conv) {
+    auto input_gpu = input.direct();
+
     for(std::size_t i = 0; i < kernel.template dim<0>(); ++i){
         decltype(auto) result = conv(i);
-        conv2_full(input, kernel(i), result);
         auto result_gpu = result.direct();
+
+        conv2_full(input_gpu, kernel(i).direct(), result_gpu);
         result_gpu.gpu_copy_from();
         result_gpu.gpu_evict();
     }
@@ -552,10 +541,13 @@ void conv2_full_multi(const I& input, const K& kernel, C&& conv) {
 
 template <typename I, typename K, typename C>
 void conv2_full_multi_flipped(const I& input, const K& kernel, C&& conv) {
+    auto input_gpu = input.direct();
+
     for(std::size_t i = 0; i < kernel.template dim<0>(); ++i){
         decltype(auto) result = conv(i);
-        conv2_full_flipped(input, kernel(i), result);
         auto result_gpu = result.direct();
+
+        conv2_full_flipped(input_gpu, kernel(i).direct(), result_gpu);
         result_gpu.gpu_copy_from();
         result_gpu.gpu_evict();
     }
@@ -717,8 +709,8 @@ void conv2_full_multi_flipped_real(const I& input, const K& kernel, C&& conv) {
  * \param kernel The kernel matrix
  * \param conv The output matrix
  */
-template <typename I, typename K, typename C>
-void conv2_valid(const I& input, const K& kernel, C&& conv){
+template <typename T>
+void conv2_valid(const conv2_input<T>& input, const conv2_input<T>& kernel, const conv2_input<T>& conv) {
     cpp_unused(input);
     cpp_unused(kernel);
     cpp_unused(conv);
@@ -739,8 +731,8 @@ void conv4_valid(const conv4_input<T>& input, const conv4_input<T>& kernel, cons
  * \param kernel The kernel matrix
  * \param conv The output matrix
  */
-template <typename I, typename K, typename C>
-void conv2_full(const I& input, const K& kernel, C&& conv){
+template <typename T>
+void conv2_full(const conv2_input<T>& input, const conv2_input<T>& kernel, const conv2_input<T>& conv) {
     cpp_unused(input);
     cpp_unused(kernel);
     cpp_unused(conv);
@@ -755,16 +747,16 @@ void conv4_full(const conv4_input<T>& input, const conv4_input<T>& kernel, const
     cpp_unreachable("Unsupported feature called: cudnn conv4_full");
 }
 
-template <typename I, typename K, typename C>
-void conv2_valid_multi(const I& input, const K& kernel, C&& conv){
+template <typename T>
+void conv2_valid_multi(const conv2_input<T>& input, const conv3_input<T>& kernel, const conv3_input<T>& conv) {
     cpp_unused(input);
     cpp_unused(kernel);
     cpp_unused(conv);
     cpp_unreachable("Unsupported feature called: cudnn conv2_valid_multi");
 }
 
-template <typename I, typename K, typename C>
-void conv2_valid_multi_flipped(const I& input, const K& kernel, C&& conv){
+template <typename T>
+void conv2_valid_multi_flipped(const conv2_input<T>& input, const conv3_input<T>& kernel, const conv3_input<T>& conv) {
     cpp_unused(input);
     cpp_unused(kernel);
     cpp_unused(conv);

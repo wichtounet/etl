@@ -531,8 +531,10 @@ public:
         return {this->template dim<I>()...};
     }
 
-    opaque_memory<T, decay_traits<this_type>::dimensions(), decay_traits<this_type>::storage_order> direct() const {
-        return {memory_start(), etl::size(*this), dim_array(std::make_index_sequence<decay_traits<this_type>::dimensions()>()), _gpu_memory_handler};
+    opaque_memory<T, decay_traits<this_type>::dimensions()> direct() const {
+        return {memory_start(), etl::size(*this),
+            dim_array(std::make_index_sequence<decay_traits<this_type>::dimensions()>()),
+            _gpu_memory_handler, decay_traits<this_type>::storage_order};
     }
 
 private:

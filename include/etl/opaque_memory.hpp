@@ -21,10 +21,9 @@ using gpu_handler = int;
 
 //TODO Remove the duplication of fields between both implementations
 
-template <typename T, std::size_t D, order SO>
+template <typename T, std::size_t D>
 struct opaque_memory {
     static constexpr const std::size_t n_dimensions = D;                      ///< The number of dimensions
-    static constexpr const order storage_order      = SO;                                   ///< The storage order
 
     using value_type        = T;
     using memory_type       = T*;
@@ -34,9 +33,14 @@ struct opaque_memory {
     const std::size_t etl_size;
     const std::array<std::size_t, D> dims;
     gpu_handler<T>& _gpu_memory_handler;
+    const order storage_order; ///< The storage order
 
-    opaque_memory(const T* memory, std::size_t size, const std::array<std::size_t, D>& dims, const gpu_handler<T>& handler) :
-            memory(const_cast<T*>(memory)), etl_size(size), dims(dims), _gpu_memory_handler(const_cast<gpu_handler<T>&>(handler)) {
+    opaque_memory(const T* memory, std::size_t size, const std::array<std::size_t, D>& dims, const gpu_handler<T>& handler, order storage_order)
+            : memory(const_cast<T*>(memory)),
+              etl_size(size),
+              dims(dims),
+              _gpu_memory_handler(const_cast<gpu_handler<T>&>(handler)),
+              storage_order(storage_order) {
         //Nothing else to init
     }
 

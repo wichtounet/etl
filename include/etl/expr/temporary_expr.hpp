@@ -295,7 +295,7 @@ public:
             return result().direct();
         } else {
             using result_type = decltype(result().direct());
-            return result_type(nullptr, 0, {{}}, _gpu_memory_handler);
+            return result_type(nullptr, 0, {{}}, _gpu_memory_handler, decay_traits<R>::storage_order);
         }
     }
 

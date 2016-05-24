@@ -640,8 +640,8 @@ public:
         return &_data[size()];
     }
 
-    opaque_memory<T, n_dimensions, SO> direct() const {
-        return opaque_memory<T, n_dimensions, SO>(memory_start(), etl_size, {{Dims...}}, _gpu_memory_handler);
+    opaque_memory<T, n_dimensions> direct() const {
+        return opaque_memory<T, n_dimensions>(memory_start(), etl_size, {{Dims...}}, _gpu_memory_handler, SO);
     }
 };
 

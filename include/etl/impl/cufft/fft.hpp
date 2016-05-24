@@ -34,13 +34,13 @@ namespace cufft {
 namespace detail {
 
 template<typename T>
-using input_1d = etl::opaque_memory<T, 1, order::RowMajor>;
+using input_1d = etl::opaque_memory<T, 1>;
 
 template<typename T>
-using input_2d = etl::opaque_memory<T, 2, order::RowMajor>;
+using input_2d = etl::opaque_memory<T, 2>;
 
 template<typename T>
-using input_3d = etl::opaque_memory<T, 3, order::RowMajor>;
+using input_3d = etl::opaque_memory<T, 3>;
 
 template <typename T>
 void inplace_cfft1_kernel(input_1d<T>& a_gpu, std::size_t n) {
