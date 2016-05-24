@@ -63,9 +63,13 @@ void gemm(A&& a, B&& b, C&& c) {
     float alpha = 1.0;
     float beta  = 0.0;
 
-    a.gpu_allocate_copy_if_necessary();
-    b.gpu_allocate_copy_if_necessary();
-    c.gpu_allocate_if_necessary();
+    auto a_gpu = a.gpu_direct();
+    auto b_gpu = b.gpu_direct();
+    auto c_gpu = c.gpu_direct();
+
+    a_gpu.gpu_allocate_copy_if_necessary();
+    b_gpu.gpu_allocate_copy_if_necessary();
+    c_gpu.gpu_allocate_if_necessary();
 
     // Do the actual multiplication
 
@@ -75,20 +79,20 @@ void gemm(A&& a, B&& b, C&& c) {
             CUBLAS_OP_N, CUBLAS_OP_N,
             etl::columns(b), etl::rows(a), etl::columns(a),
             &alpha,
-            b.gpu_memory(), etl::columns(b),
-            a.gpu_memory(), etl::columns(a),
+            b_gpu.gpu_memory(), etl::columns(b),
+            a_gpu.gpu_memory(), etl::columns(a),
             &beta,
-            c.gpu_memory(), etl::columns(b));
+            c_gpu.gpu_memory(), etl::columns(b));
     } else {
         cublasSgemm(
             handle.get(),
             CUBLAS_OP_N, CUBLAS_OP_N,
             etl::rows(c), etl::columns(c), etl::columns(a),
             &alpha,
-            a.gpu_memory(), etl::rows(a),
-            b.gpu_memory(), etl::rows(b),
+            a_gpu.gpu_memory(), etl::rows(a),
+            b_gpu.gpu_memory(), etl::rows(b),
             &beta,
-            c.gpu_memory(), etl::rows(c));
+            c_gpu.gpu_memory(), etl::rows(c));
     }
 }
 
@@ -103,9 +107,13 @@ void gemm(A&& a, B&& b, C&& c) {
     double alpha = 1.0;
     double beta  = 0.0;
 
-    a.gpu_allocate_copy_if_necessary();
-    b.gpu_allocate_copy_if_necessary();
-    c.gpu_allocate_if_necessary();
+    auto a_gpu = a.gpu_direct();
+    auto b_gpu = b.gpu_direct();
+    auto c_gpu = c.gpu_direct();
+
+    a_gpu.gpu_allocate_copy_if_necessary();
+    b_gpu.gpu_allocate_copy_if_necessary();
+    c_gpu.gpu_allocate_if_necessary();
 
     // Do the actual multiplication
 
@@ -115,20 +123,20 @@ void gemm(A&& a, B&& b, C&& c) {
             CUBLAS_OP_N, CUBLAS_OP_N,
             etl::columns(b), etl::rows(a), etl::columns(a),
             &alpha,
-            b.gpu_memory(), etl::columns(b),
-            a.gpu_memory(), etl::columns(a),
+            b_gpu.gpu_memory(), etl::columns(b),
+            a_gpu.gpu_memory(), etl::columns(a),
             &beta,
-            c.gpu_memory(), etl::columns(b));
+            c_gpu.gpu_memory(), etl::columns(b));
     } else {
         cublasDgemm(
             handle.get(),
             CUBLAS_OP_N, CUBLAS_OP_N,
             etl::rows(c), etl::columns(c), etl::columns(a),
             &alpha,
-            a.gpu_memory(), etl::rows(a),
-            b.gpu_memory(), etl::rows(b),
+            a_gpu.gpu_memory(), etl::rows(a),
+            b_gpu.gpu_memory(), etl::rows(b),
             &beta,
-            c.gpu_memory(), etl::rows(c));
+            c_gpu.gpu_memory(), etl::rows(c));
     }
 }
 
@@ -140,9 +148,13 @@ void gemm(A&& a, B&& b, C&& c) {
 
     static_assert(decay_traits<A>::storage_order == decay_traits<B>::storage_order, "gemm only for same A/B storage order");
 
-    a.gpu_allocate_copy_if_necessary();
-    b.gpu_allocate_copy_if_necessary();
-    c.gpu_allocate_if_necessary();
+    auto a_gpu = a.gpu_direct();
+    auto b_gpu = b.gpu_direct();
+    auto c_gpu = c.gpu_direct();
+
+    a_gpu.gpu_allocate_copy_if_necessary();
+    b_gpu.gpu_allocate_copy_if_necessary();
+    c_gpu.gpu_allocate_if_necessary();
 
     cuComplex alpha = make_cuComplex(1.0, 0.0);
     cuComplex beta  = make_cuComplex(0.0, 0.0);
@@ -155,20 +167,20 @@ void gemm(A&& a, B&& b, C&& c) {
             CUBLAS_OP_N, CUBLAS_OP_N,
             etl::columns(b), etl::rows(a), etl::columns(a),
             &alpha,
-            reinterpret_cast<cuComplex*>(b.gpu_memory()), etl::columns(b),
-            reinterpret_cast<cuComplex*>(a.gpu_memory()), etl::columns(a),
+            reinterpret_cast<cuComplex*>(b_gpu.gpu_memory()), etl::columns(b),
+            reinterpret_cast<cuComplex*>(a_gpu.gpu_memory()), etl::columns(a),
             &beta,
-            reinterpret_cast<cuComplex*>(c.gpu_memory()), etl::columns(b));
+            reinterpret_cast<cuComplex*>(c_gpu.gpu_memory()), etl::columns(b));
     } else {
         cublasCgemm(
             handle.get(),
             CUBLAS_OP_N, CUBLAS_OP_N,
             etl::rows(c), etl::columns(c), etl::columns(a),
             &alpha,
-            reinterpret_cast<cuComplex*>(a.gpu_memory()), etl::rows(a),
-            reinterpret_cast<cuComplex*>(b.gpu_memory()), etl::rows(b),
+            reinterpret_cast<cuComplex*>(a_gpu.gpu_memory()), etl::rows(a),
+            reinterpret_cast<cuComplex*>(b_gpu.gpu_memory()), etl::rows(b),
             &beta,
-            reinterpret_cast<cuComplex*>(c.gpu_memory()), etl::rows(c));
+            reinterpret_cast<cuComplex*>(c_gpu.gpu_memory()), etl::rows(c));
     }
 }
 
@@ -180,9 +192,13 @@ void gemm(A&& a, B&& b, C&& c) {
 
     static_assert(decay_traits<A>::storage_order == decay_traits<B>::storage_order, "gemm only for same A/B storage order");
 
-    a.gpu_allocate_copy_if_necessary();
-    b.gpu_allocate_copy_if_necessary();
-    c.gpu_allocate_if_necessary();
+    auto a_gpu = a.gpu_direct();
+    auto b_gpu = b.gpu_direct();
+    auto c_gpu = c.gpu_direct();
+
+    a_gpu.gpu_allocate_copy_if_necessary();
+    b_gpu.gpu_allocate_copy_if_necessary();
+    c_gpu.gpu_allocate_if_necessary();
 
     cuDoubleComplex alpha = make_cuDoubleComplex(1.0, 0.0);
     cuDoubleComplex beta  = make_cuDoubleComplex(0.0, 0.0);
@@ -195,20 +211,20 @@ void gemm(A&& a, B&& b, C&& c) {
             CUBLAS_OP_N, CUBLAS_OP_N,
             etl::columns(b), etl::rows(a), etl::columns(a),
             &alpha,
-            reinterpret_cast<cuDoubleComplex*>(b.gpu_memory()), etl::columns(b),
-            reinterpret_cast<cuDoubleComplex*>(a.gpu_memory()), etl::columns(a),
+            reinterpret_cast<cuDoubleComplex*>(b_gpu.gpu_memory()), etl::columns(b),
+            reinterpret_cast<cuDoubleComplex*>(a_gpu.gpu_memory()), etl::columns(a),
             &beta,
-            reinterpret_cast<cuDoubleComplex*>(c.gpu_memory()), etl::columns(b));
+            reinterpret_cast<cuDoubleComplex*>(c_gpu.gpu_memory()), etl::columns(b));
     } else {
         cublasZgemm(
             handle.get(),
             CUBLAS_OP_N, CUBLAS_OP_N,
             etl::rows(c), etl::columns(c), etl::columns(a),
             &alpha,
-            reinterpret_cast<cuDoubleComplex*>(a.gpu_memory()), etl::rows(a),
-            reinterpret_cast<cuDoubleComplex*>(b.gpu_memory()), etl::rows(b),
+            reinterpret_cast<cuDoubleComplex*>(a_gpu.gpu_memory()), etl::rows(a),
+            reinterpret_cast<cuDoubleComplex*>(b_gpu.gpu_memory()), etl::rows(b),
             &beta,
-            reinterpret_cast<cuDoubleComplex*>(c.gpu_memory()), etl::rows(c));
+            reinterpret_cast<cuDoubleComplex*>(c_gpu.gpu_memory()), etl::rows(c));
     }
 }
 
@@ -218,9 +234,13 @@ void gemv(A&& a, B&& b, C&& c) {
 
     bool row_major = decay_traits<A>::storage_order == order::RowMajor;
 
-    a.gpu_allocate_copy_if_necessary();
-    b.gpu_allocate_copy_if_necessary();
-    c.gpu_allocate_if_necessary();
+    auto a_gpu = a.gpu_direct();
+    auto b_gpu = b.gpu_direct();
+    auto c_gpu = c.gpu_direct();
+
+    a_gpu.gpu_allocate_copy_if_necessary();
+    b_gpu.gpu_allocate_copy_if_necessary();
+    c_gpu.gpu_allocate_if_necessary();
 
     float alpha = 1.0;
     float beta  = 0.0;
@@ -233,25 +253,25 @@ void gemv(A&& a, B&& b, C&& c) {
             CUBLAS_OP_T,
             etl::columns(a), etl::rows(a),
             &alpha,
-            a.gpu_memory(), major_stride(a),
-            b.gpu_memory(), 1,
+            a_gpu.gpu_memory(), major_stride(a),
+            b_gpu.gpu_memory(), 1,
             &beta,
-            c.gpu_memory(), 1);
+            c_gpu.gpu_memory(), 1);
     } else {
         cublasSgemv(
             handle.get(),
             CUBLAS_OP_N,
             etl::rows(a), etl::columns(a),
             &alpha,
-            a.gpu_memory(), major_stride(a),
-            b.gpu_memory(), 1,
+            a_gpu.gpu_memory(), major_stride(a),
+            b_gpu.gpu_memory(), 1,
             &beta,
-            c.gpu_memory(), 1);
+            c_gpu.gpu_memory(), 1);
     }
 
     //Copy the result from GPU to CPU
 
-    c.gpu_copy_from();
+    c_gpu.gpu_copy_from();
 }
 
 template <typename A, typename B, typename C, cpp_enable_if(all_dma<A, B, C>::value, all_double_precision<A, B, C>::value)>
@@ -260,9 +280,13 @@ void gemv(A&& a, B&& b, C&& c) {
 
     bool row_major = decay_traits<A>::storage_order == order::RowMajor;
 
-    a.gpu_allocate_copy_if_necessary();
-    b.gpu_allocate_copy_if_necessary();
-    c.gpu_allocate_if_necessary();
+    auto a_gpu = a.gpu_direct();
+    auto b_gpu = b.gpu_direct();
+    auto c_gpu = c.gpu_direct();
+
+    a_gpu.gpu_allocate_copy_if_necessary();
+    b_gpu.gpu_allocate_copy_if_necessary();
+    c_gpu.gpu_allocate_if_necessary();
 
     double alpha = 1.0;
     double beta  = 0.0;
@@ -275,25 +299,25 @@ void gemv(A&& a, B&& b, C&& c) {
             CUBLAS_OP_T,
             etl::columns(a), etl::rows(a),
             &alpha,
-            a.gpu_memory(), major_stride(a),
-            b.gpu_memory(), 1,
+            a_gpu.gpu_memory(), major_stride(a),
+            b_gpu.gpu_memory(), 1,
             &beta,
-            c.gpu_memory(), 1);
+            c_gpu.gpu_memory(), 1);
     } else {
         cublasDgemv(
             handle.get(),
             CUBLAS_OP_N,
             etl::rows(a), etl::columns(a),
             &alpha,
-            a.gpu_memory(), major_stride(a),
-            b.gpu_memory(), 1,
+            a_gpu.gpu_memory(), major_stride(a),
+            b_gpu.gpu_memory(), 1,
             &beta,
-            c.gpu_memory(), 1);
+            c_gpu.gpu_memory(), 1);
     }
 
     //Copy the result from GPU to CPU
 
-    c.gpu_copy_from();
+    c_gpu.gpu_copy_from();
 }
 
 template <typename A, typename B, typename C, cpp_enable_if(all_dma<A, B, C>::value, all_complex_single_precision<A, B, C>::value)>
@@ -302,9 +326,13 @@ void gemv(A&& a, B&& b, C&& c) {
 
     bool row_major = decay_traits<A>::storage_order == order::RowMajor;
 
-    a.gpu_allocate_copy_if_necessary();
-    b.gpu_allocate_copy_if_necessary();
-    c.gpu_allocate_if_necessary();
+    auto a_gpu = a.gpu_direct();
+    auto b_gpu = b.gpu_direct();
+    auto c_gpu = c.gpu_direct();
+
+    a_gpu.gpu_allocate_copy_if_necessary();
+    b_gpu.gpu_allocate_copy_if_necessary();
+    c_gpu.gpu_allocate_if_necessary();
 
     cuComplex alpha = make_cuComplex(1.0, 0.0);
     cuComplex beta  = make_cuComplex(0.0, 0.0);
@@ -317,25 +345,25 @@ void gemv(A&& a, B&& b, C&& c) {
             CUBLAS_OP_T,
             etl::columns(a), etl::rows(a),
             &alpha,
-            reinterpret_cast<cuComplex*>(a.gpu_memory()), major_stride(a),
-            reinterpret_cast<cuComplex*>(b.gpu_memory()), 1,
+            reinterpret_cast<cuComplex*>(a_gpu.gpu_memory()), major_stride(a),
+            reinterpret_cast<cuComplex*>(b_gpu.gpu_memory()), 1,
             &beta,
-            reinterpret_cast<cuComplex*>(c.gpu_memory()), 1);
+            reinterpret_cast<cuComplex*>(c_gpu.gpu_memory()), 1);
     } else {
         cublasCgemv(
             handle.get(),
             CUBLAS_OP_N,
             etl::rows(a), etl::columns(a),
             &alpha,
-            reinterpret_cast<cuComplex*>(a.gpu_memory()), major_stride(a),
-            reinterpret_cast<cuComplex*>(b.gpu_memory()), 1,
+            reinterpret_cast<cuComplex*>(a_gpu.gpu_memory()), major_stride(a),
+            reinterpret_cast<cuComplex*>(b_gpu.gpu_memory()), 1,
             &beta,
-            reinterpret_cast<cuComplex*>(c.gpu_memory()), 1);
+            reinterpret_cast<cuComplex*>(c_gpu.gpu_memory()), 1);
     }
 
     //Copy the result from GPU to CPU
 
-    c.gpu_copy_from();
+    c_gpu.gpu_copy_from();
 }
 
 template <typename A, typename B, typename C, cpp_enable_if(all_dma<A, B, C>::value, all_complex_double_precision<A, B, C>::value)>
@@ -344,9 +372,13 @@ void gemv(A&& a, B&& b, C&& c) {
 
     bool row_major = decay_traits<A>::storage_order == order::RowMajor;
 
-    a.gpu_allocate_copy_if_necessary();
-    b.gpu_allocate_copy_if_necessary();
-    c.gpu_allocate_if_necessary();
+    auto a_gpu = a.gpu_direct();
+    auto b_gpu = b.gpu_direct();
+    auto c_gpu = c.gpu_direct();
+
+    a_gpu.gpu_allocate_copy_if_necessary();
+    b_gpu.gpu_allocate_copy_if_necessary();
+    c_gpu.gpu_allocate_if_necessary();
 
     cuDoubleComplex alpha = make_cuDoubleComplex(1.0, 0.0);
     cuDoubleComplex beta  = make_cuDoubleComplex(0.0, 0.0);
@@ -359,25 +391,25 @@ void gemv(A&& a, B&& b, C&& c) {
             CUBLAS_OP_T,
             etl::columns(a), etl::rows(a),
             &alpha,
-            reinterpret_cast<cuDoubleComplex*>(a.gpu_memory()), major_stride(a),
-            reinterpret_cast<cuDoubleComplex*>(b.gpu_memory()), 1,
+            reinterpret_cast<cuDoubleComplex*>(a_gpu.gpu_memory()), major_stride(a),
+            reinterpret_cast<cuDoubleComplex*>(b_gpu.gpu_memory()), 1,
             &beta,
-            reinterpret_cast<cuDoubleComplex*>(c.gpu_memory()), 1);
+            reinterpret_cast<cuDoubleComplex*>(c_gpu.gpu_memory()), 1);
     } else {
         cublasZgemv(
             handle.get(),
             CUBLAS_OP_N,
             etl::rows(a), etl::columns(a),
             &alpha,
-            reinterpret_cast<cuDoubleComplex*>(a.gpu_memory()), major_stride(a),
-            reinterpret_cast<cuDoubleComplex*>(b.gpu_memory()), 1,
+            reinterpret_cast<cuDoubleComplex*>(a_gpu.gpu_memory()), major_stride(a),
+            reinterpret_cast<cuDoubleComplex*>(b_gpu.gpu_memory()), 1,
             &beta,
-            reinterpret_cast<cuDoubleComplex*>(c.gpu_memory()), 1);
+            reinterpret_cast<cuDoubleComplex*>(c_gpu.gpu_memory()), 1);
     }
 
     //Copy the result from GPU to CPU
 
-    c.gpu_copy_from();
+    c_gpu.gpu_copy_from();
 }
 
 template <typename A, typename B, typename C, cpp_enable_if(all_dma<A, B, C>::value, all_single_precision<A, B, C>::value)>
@@ -386,9 +418,13 @@ void gevm(A&& a, B&& b, C&& c) {
 
     bool row_major = decay_traits<B>::storage_order == order::RowMajor;
 
-    a.gpu_allocate_copy_if_necessary();
-    b.gpu_allocate_copy_if_necessary();
-    c.gpu_allocate_if_necessary();
+    auto a_gpu = a.gpu_direct();
+    auto b_gpu = b.gpu_direct();
+    auto c_gpu = c.gpu_direct();
+
+    a_gpu.gpu_allocate_copy_if_necessary();
+    b_gpu.gpu_allocate_copy_if_necessary();
+    c_gpu.gpu_allocate_if_necessary();
 
     float alpha = 1.0;
     float beta  = 0.0;
@@ -401,25 +437,25 @@ void gevm(A&& a, B&& b, C&& c) {
             CUBLAS_OP_N,
             etl::columns(b), etl::rows(b),
             &alpha,
-            b.gpu_memory(), major_stride(b),
-            a.gpu_memory(), 1,
+            b_gpu.gpu_memory(), major_stride(b),
+            a_gpu.gpu_memory(), 1,
             &beta,
-            c.gpu_memory(), 1);
+            c_gpu.gpu_memory(), 1);
     } else {
         cublasSgemv(
             handle.get(),
             CUBLAS_OP_T,
             etl::rows(b), etl::columns(b),
             &alpha,
-            b.gpu_memory(), major_stride(b),
-            a.gpu_memory(), 1,
+            b_gpu.gpu_memory(), major_stride(b),
+            a_gpu.gpu_memory(), 1,
             &beta,
-            c.gpu_memory(), 1);
+            c_gpu.gpu_memory(), 1);
     }
 
     //Copy the result from GPU to CPU
 
-    c.gpu_copy_from();
+    c_gpu.gpu_copy_from();
 }
 
 template <typename A, typename B, typename C, cpp_enable_if(all_dma<A, B, C>::value, all_double_precision<A, B, C>::value)>
@@ -428,9 +464,13 @@ void gevm(A&& a, B&& b, C&& c) {
 
     bool row_major = decay_traits<B>::storage_order == order::RowMajor;
 
-    a.gpu_allocate_copy_if_necessary();
-    b.gpu_allocate_copy_if_necessary();
-    c.gpu_allocate_if_necessary();
+    auto a_gpu = a.gpu_direct();
+    auto b_gpu = b.gpu_direct();
+    auto c_gpu = c.gpu_direct();
+
+    a_gpu.gpu_allocate_copy_if_necessary();
+    b_gpu.gpu_allocate_copy_if_necessary();
+    c_gpu.gpu_allocate_if_necessary();
 
     double alpha = 1.0;
     double beta  = 0.0;
@@ -443,25 +483,25 @@ void gevm(A&& a, B&& b, C&& c) {
             CUBLAS_OP_N,
             etl::columns(b), etl::rows(b),
             &alpha,
-            b.gpu_memory(), major_stride(b),
-            a.gpu_memory(), 1,
+            b_gpu.gpu_memory(), major_stride(b),
+            a_gpu.gpu_memory(), 1,
             &beta,
-            c.gpu_memory(), 1);
+            c_gpu.gpu_memory(), 1);
     } else {
         cublasDgemv(
             handle.get(),
             CUBLAS_OP_T,
             etl::rows(b), etl::columns(b),
             &alpha,
-            b.gpu_memory(), major_stride(b),
-            a.gpu_memory(), 1,
+            b_gpu.gpu_memory(), major_stride(b),
+            a_gpu.gpu_memory(), 1,
             &beta,
-            c.gpu_memory(), 1);
+            c_gpu.gpu_memory(), 1);
     }
 
     //Copy the result from GPU to CPU
 
-    c.gpu_copy_from();
+    c_gpu.gpu_copy_from();
 }
 
 template <typename A, typename B, typename C, cpp_enable_if(all_dma<A, B, C>::value, all_complex_single_precision<A, B, C>::value)>
@@ -470,9 +510,13 @@ void gevm(A&& a, B&& b, C&& c) {
 
     bool row_major = decay_traits<A>::storage_order == order::RowMajor;
 
-    a.gpu_allocate_copy_if_necessary();
-    b.gpu_allocate_copy_if_necessary();
-    c.gpu_allocate_if_necessary();
+    auto a_gpu = a.gpu_direct();
+    auto b_gpu = b.gpu_direct();
+    auto c_gpu = c.gpu_direct();
+
+    a_gpu.gpu_allocate_copy_if_necessary();
+    b_gpu.gpu_allocate_copy_if_necessary();
+    c_gpu.gpu_allocate_if_necessary();
 
     cuComplex alpha = make_cuComplex(1.0, 0.0);
     cuComplex beta  = make_cuComplex(0.0, 0.0);
@@ -485,25 +529,25 @@ void gevm(A&& a, B&& b, C&& c) {
             CUBLAS_OP_N,
             etl::columns(b), etl::rows(b),
             &alpha,
-            reinterpret_cast<cuComplex*>(b.gpu_memory()), major_stride(b),
-            reinterpret_cast<cuComplex*>(a.gpu_memory()), 1,
+            reinterpret_cast<cuComplex*>(b_gpu.gpu_memory()), major_stride(b),
+            reinterpret_cast<cuComplex*>(a_gpu.gpu_memory()), 1,
             &beta,
-            reinterpret_cast<cuComplex*>(c.gpu_memory()), 1);
+            reinterpret_cast<cuComplex*>(c_gpu.gpu_memory()), 1);
     } else {
         cublasCgemv(
             handle.get(),
             CUBLAS_OP_T,
             etl::rows(b), etl::columns(b),
             &alpha,
-            reinterpret_cast<cuComplex*>(b.gpu_memory()), major_stride(b),
-            reinterpret_cast<cuComplex*>(a.gpu_memory()), 1,
+            reinterpret_cast<cuComplex*>(b_gpu.gpu_memory()), major_stride(b),
+            reinterpret_cast<cuComplex*>(a_gpu.gpu_memory()), 1,
             &beta,
-            reinterpret_cast<cuComplex*>(c.gpu_memory()), 1);
+            reinterpret_cast<cuComplex*>(c_gpu.gpu_memory()), 1);
     }
 
     //Copy the result from GPU to CPU
 
-    c.gpu_copy_from();
+    c_gpu.gpu_copy_from();
 }
 
 template <typename A, typename B, typename C, cpp_enable_if(all_dma<A, B, C>::value, all_complex_double_precision<A, B, C>::value)>
@@ -512,9 +556,13 @@ void gevm(A&& a, B&& b, C&& c) {
 
     bool row_major = decay_traits<A>::storage_order == order::RowMajor;
 
-    a.gpu_allocate_copy_if_necessary();
-    b.gpu_allocate_copy_if_necessary();
-    c.gpu_allocate_if_necessary();
+    auto a_gpu = a.gpu_direct();
+    auto b_gpu = b.gpu_direct();
+    auto c_gpu = c.gpu_direct();
+
+    a_gpu.gpu_allocate_copy_if_necessary();
+    b_gpu.gpu_allocate_copy_if_necessary();
+    c_gpu.gpu_allocate_if_necessary();
 
     cuDoubleComplex alpha = make_cuDoubleComplex(1.0, 0.0);
     cuDoubleComplex beta  = make_cuDoubleComplex(0.0, 0.0);
@@ -527,25 +575,25 @@ void gevm(A&& a, B&& b, C&& c) {
             CUBLAS_OP_N,
             etl::columns(b), etl::rows(b),
             &alpha,
-            reinterpret_cast<cuDoubleComplex*>(b.gpu_memory()), major_stride(b),
-            reinterpret_cast<cuDoubleComplex*>(a.gpu_memory()), 1,
+            reinterpret_cast<cuDoubleComplex*>(b_gpu.gpu_memory()), major_stride(b),
+            reinterpret_cast<cuDoubleComplex*>(a_gpu.gpu_memory()), 1,
             &beta,
-            reinterpret_cast<cuDoubleComplex*>(c.gpu_memory()), 1);
+            reinterpret_cast<cuDoubleComplex*>(c_gpu.gpu_memory()), 1);
     } else {
         cublasZgemv(
             handle.get(),
             CUBLAS_OP_T,
             etl::rows(b), etl::columns(b),
             &alpha,
-            reinterpret_cast<cuDoubleComplex*>(b.gpu_memory()), major_stride(b),
-            reinterpret_cast<cuDoubleComplex*>(a.gpu_memory()), 1,
+            reinterpret_cast<cuDoubleComplex*>(b_gpu.gpu_memory()), major_stride(b),
+            reinterpret_cast<cuDoubleComplex*>(a_gpu.gpu_memory()), 1,
             &beta,
-            reinterpret_cast<cuDoubleComplex*>(c.gpu_memory()), 1);
+            reinterpret_cast<cuDoubleComplex*>(c_gpu.gpu_memory()), 1);
     }
 
     //Copy the result from GPU to CPU
 
-    c.gpu_copy_from();
+    c_gpu.gpu_copy_from();
 }
 
 template <typename A, typename B, typename C, cpp_enable_if(!all_dma<A, B, C>::value)>
