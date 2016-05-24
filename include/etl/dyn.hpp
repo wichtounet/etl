@@ -789,7 +789,7 @@ public:
         return _dimensions[i];
     }
 
-    gpu_helper<T> gpu_direct() const {
+    gpu_helper<T> direct() const {
         return gpu_helper<T>(this->_gpu_memory_handler, _size, memory_start());
     }
 };

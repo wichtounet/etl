@@ -249,7 +249,7 @@ struct inplace_assignable {
 
         detail::fft1_impl::apply(mat, mat);
 
-        mat.gpu_direct().gpu_copy_from_if_necessary();
+        mat.direct().gpu_copy_from_if_necessary();
 
         return mat;
     }
@@ -267,7 +267,7 @@ struct inplace_assignable {
 
         detail::fft1_many_impl::apply(mat, mat);
 
-        mat.gpu_direct().gpu_copy_from_if_necessary();
+        mat.direct().gpu_copy_from_if_necessary();
 
         return mat;
     }
@@ -283,7 +283,7 @@ struct inplace_assignable {
 
         detail::ifft1_impl::apply(mat, mat);
 
-        mat.gpu_direct().gpu_copy_from_if_necessary();
+        mat.direct().gpu_copy_from_if_necessary();
 
         return mat;
     }
@@ -299,7 +299,7 @@ struct inplace_assignable {
 
         detail::ifft1_many_impl::apply(mat, mat);
 
-        mat.gpu_direct().gpu_copy_from_if_necessary();
+        mat.direct().gpu_copy_from_if_necessary();
 
         return mat;
     }
@@ -315,7 +315,7 @@ struct inplace_assignable {
 
         detail::fft2_impl::apply(mat, mat);
 
-        mat.gpu_direct().gpu_copy_from_if_necessary();
+        mat.direct().gpu_copy_from_if_necessary();
 
         return mat;
     }
@@ -333,7 +333,7 @@ struct inplace_assignable {
 
         detail::fft2_many_impl::apply(mat, mat);
 
-        mat.gpu_direct().gpu_copy_from_if_necessary();
+        mat.direct().gpu_copy_from_if_necessary();
 
         return mat;
     }
@@ -349,7 +349,7 @@ struct inplace_assignable {
 
         detail::ifft2_impl::apply(mat, mat);
 
-        mat.gpu_direct().gpu_copy_from_if_necessary();
+        mat.direct().gpu_copy_from_if_necessary();
 
         return mat;
     }
@@ -365,7 +365,7 @@ struct inplace_assignable {
 
         detail::ifft2_many_impl::apply(mat, mat);
 
-        mat.gpu_direct().gpu_copy_from_if_necessary();
+        mat.direct().gpu_copy_from_if_necessary();
 
         return mat;
     }

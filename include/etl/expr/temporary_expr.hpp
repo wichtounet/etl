@@ -287,9 +287,9 @@ public:
         return result().memory_end();
     }
 
-    gpu_helper<V> gpu_direct() const {
+    gpu_helper<V> direct() const {
         if(evaluated && allocated){
-            return result().gpu_direct();
+            return result().direct();
         } else {
             //TODO This is an ugly trick
             return gpu_helper<V>(this->_gpu_memory_handler, 0, nullptr);

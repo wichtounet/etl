@@ -63,9 +63,9 @@ void gemm(A&& a, B&& b, C&& c) {
     float alpha = 1.0;
     float beta  = 0.0;
 
-    auto a_gpu = a.gpu_direct();
-    auto b_gpu = b.gpu_direct();
-    auto c_gpu = c.gpu_direct();
+    auto a_gpu = a.direct();
+    auto b_gpu = b.direct();
+    auto c_gpu = c.direct();
 
     a_gpu.gpu_allocate_copy_if_necessary();
     b_gpu.gpu_allocate_copy_if_necessary();
@@ -107,9 +107,9 @@ void gemm(A&& a, B&& b, C&& c) {
     double alpha = 1.0;
     double beta  = 0.0;
 
-    auto a_gpu = a.gpu_direct();
-    auto b_gpu = b.gpu_direct();
-    auto c_gpu = c.gpu_direct();
+    auto a_gpu = a.direct();
+    auto b_gpu = b.direct();
+    auto c_gpu = c.direct();
 
     a_gpu.gpu_allocate_copy_if_necessary();
     b_gpu.gpu_allocate_copy_if_necessary();
@@ -148,9 +148,9 @@ void gemm(A&& a, B&& b, C&& c) {
 
     static_assert(decay_traits<A>::storage_order == decay_traits<B>::storage_order, "gemm only for same A/B storage order");
 
-    auto a_gpu = a.gpu_direct();
-    auto b_gpu = b.gpu_direct();
-    auto c_gpu = c.gpu_direct();
+    auto a_gpu = a.direct();
+    auto b_gpu = b.direct();
+    auto c_gpu = c.direct();
 
     a_gpu.gpu_allocate_copy_if_necessary();
     b_gpu.gpu_allocate_copy_if_necessary();
@@ -192,9 +192,9 @@ void gemm(A&& a, B&& b, C&& c) {
 
     static_assert(decay_traits<A>::storage_order == decay_traits<B>::storage_order, "gemm only for same A/B storage order");
 
-    auto a_gpu = a.gpu_direct();
-    auto b_gpu = b.gpu_direct();
-    auto c_gpu = c.gpu_direct();
+    auto a_gpu = a.direct();
+    auto b_gpu = b.direct();
+    auto c_gpu = c.direct();
 
     a_gpu.gpu_allocate_copy_if_necessary();
     b_gpu.gpu_allocate_copy_if_necessary();
@@ -234,9 +234,9 @@ void gemv(A&& a, B&& b, C&& c) {
 
     bool row_major = decay_traits<A>::storage_order == order::RowMajor;
 
-    auto a_gpu = a.gpu_direct();
-    auto b_gpu = b.gpu_direct();
-    auto c_gpu = c.gpu_direct();
+    auto a_gpu = a.direct();
+    auto b_gpu = b.direct();
+    auto c_gpu = c.direct();
 
     a_gpu.gpu_allocate_copy_if_necessary();
     b_gpu.gpu_allocate_copy_if_necessary();
@@ -280,9 +280,9 @@ void gemv(A&& a, B&& b, C&& c) {
 
     bool row_major = decay_traits<A>::storage_order == order::RowMajor;
 
-    auto a_gpu = a.gpu_direct();
-    auto b_gpu = b.gpu_direct();
-    auto c_gpu = c.gpu_direct();
+    auto a_gpu = a.direct();
+    auto b_gpu = b.direct();
+    auto c_gpu = c.direct();
 
     a_gpu.gpu_allocate_copy_if_necessary();
     b_gpu.gpu_allocate_copy_if_necessary();
@@ -326,9 +326,9 @@ void gemv(A&& a, B&& b, C&& c) {
 
     bool row_major = decay_traits<A>::storage_order == order::RowMajor;
 
-    auto a_gpu = a.gpu_direct();
-    auto b_gpu = b.gpu_direct();
-    auto c_gpu = c.gpu_direct();
+    auto a_gpu = a.direct();
+    auto b_gpu = b.direct();
+    auto c_gpu = c.direct();
 
     a_gpu.gpu_allocate_copy_if_necessary();
     b_gpu.gpu_allocate_copy_if_necessary();
@@ -372,9 +372,9 @@ void gemv(A&& a, B&& b, C&& c) {
 
     bool row_major = decay_traits<A>::storage_order == order::RowMajor;
 
-    auto a_gpu = a.gpu_direct();
-    auto b_gpu = b.gpu_direct();
-    auto c_gpu = c.gpu_direct();
+    auto a_gpu = a.direct();
+    auto b_gpu = b.direct();
+    auto c_gpu = c.direct();
 
     a_gpu.gpu_allocate_copy_if_necessary();
     b_gpu.gpu_allocate_copy_if_necessary();
@@ -418,9 +418,9 @@ void gevm(A&& a, B&& b, C&& c) {
 
     bool row_major = decay_traits<B>::storage_order == order::RowMajor;
 
-    auto a_gpu = a.gpu_direct();
-    auto b_gpu = b.gpu_direct();
-    auto c_gpu = c.gpu_direct();
+    auto a_gpu = a.direct();
+    auto b_gpu = b.direct();
+    auto c_gpu = c.direct();
 
     a_gpu.gpu_allocate_copy_if_necessary();
     b_gpu.gpu_allocate_copy_if_necessary();
@@ -464,9 +464,9 @@ void gevm(A&& a, B&& b, C&& c) {
 
     bool row_major = decay_traits<B>::storage_order == order::RowMajor;
 
-    auto a_gpu = a.gpu_direct();
-    auto b_gpu = b.gpu_direct();
-    auto c_gpu = c.gpu_direct();
+    auto a_gpu = a.direct();
+    auto b_gpu = b.direct();
+    auto c_gpu = c.direct();
 
     a_gpu.gpu_allocate_copy_if_necessary();
     b_gpu.gpu_allocate_copy_if_necessary();
@@ -510,9 +510,9 @@ void gevm(A&& a, B&& b, C&& c) {
 
     bool row_major = decay_traits<A>::storage_order == order::RowMajor;
 
-    auto a_gpu = a.gpu_direct();
-    auto b_gpu = b.gpu_direct();
-    auto c_gpu = c.gpu_direct();
+    auto a_gpu = a.direct();
+    auto b_gpu = b.direct();
+    auto c_gpu = c.direct();
 
     a_gpu.gpu_allocate_copy_if_necessary();
     b_gpu.gpu_allocate_copy_if_necessary();
@@ -556,9 +556,9 @@ void gevm(A&& a, B&& b, C&& c) {
 
     bool row_major = decay_traits<A>::storage_order == order::RowMajor;
 
-    auto a_gpu = a.gpu_direct();
-    auto b_gpu = b.gpu_direct();
-    auto c_gpu = c.gpu_direct();
+    auto a_gpu = a.direct();
+    auto b_gpu = b.direct();
+    auto c_gpu = c.direct();
 
     a_gpu.gpu_allocate_copy_if_necessary();
     b_gpu.gpu_allocate_copy_if_necessary();

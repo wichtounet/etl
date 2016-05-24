@@ -87,9 +87,9 @@ void conv2_valid(const I& input, const K& kernel, C&& conv) {
 
     // Allocate GPU memory, if necessary
 
-    auto input_gpu = input.gpu_direct();
-    auto kernel_gpu = kernel.gpu_direct();
-    auto conv_gpu = conv.gpu_direct();
+    auto input_gpu = input.direct();
+    auto kernel_gpu = kernel.direct();
+    auto conv_gpu = conv.direct();
 
     input_gpu.gpu_allocate_copy_if_necessary();
     kernel_gpu.gpu_allocate_copy_if_necessary();
@@ -111,7 +111,7 @@ void conv2_valid(const I& input, const K& kernel, C&& conv) {
 }
 
 template <typename T>
-void conv4_valid(const conv4_input<const T>& input, const conv4_input<const T>& kernel, const conv4_input<T>& conv) {
+void conv4_valid(const conv4_input<T>& input, const conv4_input<T>& kernel, const conv4_input<T>& conv) {
     using type = T;
 
     auto data_type = std::is_same<type, float>::value ? CUDNN_DATA_FLOAT : CUDNN_DATA_DOUBLE;
@@ -228,9 +228,9 @@ void conv2_full(const I& input, const K& kernel, C&& conv) {
 
     // Allocate GPU memory, if necessary
 
-    auto input_gpu = input.gpu_direct();
-    auto kernel_gpu = kernel.gpu_direct();
-    auto conv_gpu = conv.gpu_direct();
+    auto input_gpu = input.direct();
+    auto kernel_gpu = kernel.direct();
+    auto conv_gpu = conv.direct();
 
     input_gpu.gpu_allocate_copy_if_necessary();
     kernel_gpu.gpu_allocate_copy_if_necessary();
@@ -299,9 +299,9 @@ void conv2_full_flipped(const I& input, const K& kernel, C&& conv) {
 
     // Allocate GPU memory, if necessary
 
-    auto input_gpu = input.gpu_direct();
-    auto kernel_gpu = kernel.gpu_direct();
-    auto conv_gpu = conv.gpu_direct();
+    auto input_gpu = input.direct();
+    auto kernel_gpu = kernel.direct();
+    auto conv_gpu = conv.direct();
 
     input_gpu.gpu_allocate_copy_if_necessary();
     kernel_gpu.gpu_allocate_copy_if_necessary();
@@ -323,7 +323,7 @@ void conv2_full_flipped(const I& input, const K& kernel, C&& conv) {
 }
 
 template <typename T>
-void conv4_full(const conv4_input<const T>& input, const conv4_input<const T>& kernel, const conv4_input<T>& conv) {
+void conv4_full(const conv4_input<T>& input, const conv4_input<T>& kernel, const conv4_input<T>& conv) {
     using type = T;
 
     auto data_type = std::is_same<type, float>::value ? CUDNN_DATA_FLOAT : CUDNN_DATA_DOUBLE;
@@ -440,9 +440,9 @@ void conv2_valid_multi(const I& input, const K& kernel, C&& conv) {
 
     // Allocate GPU memory, if necessary
 
-    auto input_gpu = input.gpu_direct();
-    auto kernel_gpu = kernel.gpu_direct();
-    auto conv_gpu = conv.gpu_direct();
+    auto input_gpu = input.direct();
+    auto kernel_gpu = kernel.direct();
+    auto conv_gpu = conv.direct();
 
     input_gpu.gpu_allocate_copy_if_necessary();
     kernel_gpu.gpu_allocate_copy_if_necessary();
@@ -511,9 +511,9 @@ void conv2_valid_multi_flipped(const I& input, const K& kernel, C&& conv) {
 
     // Allocate GPU memory, if necessary
 
-    auto input_gpu = input.gpu_direct();
-    auto kernel_gpu = kernel.gpu_direct();
-    auto conv_gpu = conv.gpu_direct();
+    auto input_gpu = input.direct();
+    auto kernel_gpu = kernel.direct();
+    auto conv_gpu = conv.direct();
 
     input_gpu.gpu_allocate_copy_if_necessary();
     kernel_gpu.gpu_allocate_copy_if_necessary();
@@ -544,7 +544,7 @@ void conv2_full_multi(const I& input, const K& kernel, C&& conv) {
     for(std::size_t i = 0; i < kernel.template dim<0>(); ++i){
         decltype(auto) result = conv(i);
         conv2_full(input, kernel(i), result);
-        auto result_gpu = result.gpu_direct();
+        auto result_gpu = result.direct();
         result_gpu.gpu_copy_from();
         result_gpu.gpu_evict();
     }
@@ -555,7 +555,7 @@ void conv2_full_multi_flipped(const I& input, const K& kernel, C&& conv) {
     for(std::size_t i = 0; i < kernel.template dim<0>(); ++i){
         decltype(auto) result = conv(i);
         conv2_full_flipped(input, kernel(i), result);
-        auto result_gpu = result.gpu_direct();
+        auto result_gpu = result.direct();
         result_gpu.gpu_copy_from();
         result_gpu.gpu_evict();
     }
@@ -611,9 +611,9 @@ void conv2_full_multi_real(const I& input, const K& kernel, C&& conv) {
 
     // Allocate GPU memory, if necessary
 
-    auto input_gpu = input.gpu_direct();
-    auto kernel_gpu = kernel.gpu_direct();
-    auto conv_gpu = conv.gpu_direct();
+    auto input_gpu = input.direct();
+    auto kernel_gpu = kernel.direct();
+    auto conv_gpu = conv.direct();
 
     input_gpu.gpu_allocate_copy_if_necessary();
     kernel_gpu.gpu_allocate_copy_if_necessary();
@@ -682,9 +682,9 @@ void conv2_full_multi_flipped_real(const I& input, const K& kernel, C&& conv) {
 
     // Allocate GPU memory, if necessary
 
-    auto input_gpu = input.gpu_direct();
-    auto kernel_gpu = kernel.gpu_direct();
-    auto conv_gpu = conv.gpu_direct();
+    auto input_gpu = input.direct();
+    auto kernel_gpu = kernel.direct();
+    auto conv_gpu = conv.direct();
 
     input_gpu.gpu_allocate_copy_if_necessary();
     kernel_gpu.gpu_allocate_copy_if_necessary();
@@ -726,7 +726,7 @@ void conv2_valid(const I& input, const K& kernel, C&& conv){
 }
 
 template <typename T>
-void conv4_valid(const conv4_input<const T>& input, const conv4_input<const T>& kernel, const conv4_input<T>& conv) {
+void conv4_valid(const conv4_input<T>& input, const conv4_input<T>& kernel, const conv4_input<T>& conv) {
     cpp_unused(input);
     cpp_unused(kernel);
     cpp_unused(conv);
@@ -748,7 +748,7 @@ void conv2_full(const I& input, const K& kernel, C&& conv){
 }
 
 template <typename T>
-void conv4_full(const conv4_input<const T>& input, const conv4_input<const T>& kernel, const conv4_input<T>& conv) {
+void conv4_full(const conv4_input<T>& input, const conv4_input<T>& kernel, const conv4_input<T>& conv) {
     cpp_unused(input);
     cpp_unused(kernel);
     cpp_unused(conv);

@@ -69,7 +69,7 @@ namespace standard_evaluator {
 #ifdef ETL_CUDA
         //If necessary copy the GPU result back to CPU
         cpp::static_if<all_dma<R>::value && !etl::is_sparse_matrix<R>::value>([&](auto f){
-            f(result).gpu_direct().gpu_copy_from_if_necessary();
+            f(result).direct().gpu_copy_from_if_necessary();
         });
 #endif
 
@@ -89,7 +89,7 @@ namespace standard_evaluator {
 #ifdef ETL_CUDA
         //If necessary copy the GPU result back to CPU
         cpp::static_if<all_dma<E>::value && !etl::is_sparse_matrix<E>::value>([&](auto f){
-            f(expr).gpu_direct().gpu_copy_from_if_necessary();
+            f(expr).direct().gpu_copy_from_if_necessary();
         });
 #endif
 

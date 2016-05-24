@@ -79,7 +79,7 @@ struct evaluator_static_visitor {
         v.evaluate();
 
         if (old_need_value) {
-            v.gpu_direct().gpu_copy_from_if_necessary();
+            v.direct().gpu_copy_from_if_necessary();
         }
 
         need_value = old_need_value;
@@ -102,7 +102,7 @@ struct evaluator_static_visitor {
         v.evaluate();
 
         if (old_need_value) {
-            v.gpu_direct().gpu_copy_from_if_necessary();
+            v.direct().gpu_copy_from_if_necessary();
         }
 
         need_value = old_need_value;
@@ -240,7 +240,7 @@ struct gpu_clean_static_visitor : etl_visitor<gpu_clean_static_visitor, false, f
      */
     template <typename T, cpp_enable_if(etl::is_etl_value<T>::value && !etl::is_sparse_matrix<T>::value)>
     void operator()(const T& value) const {
-        value.gpu_direct().gpu_evict();
+        value.direct().gpu_evict();
     }
 
     /*!
@@ -258,7 +258,7 @@ struct gpu_clean_static_visitor : etl_visitor<gpu_clean_static_visitor, false, f
     void operator()(const etl::temporary_expr_un<D, T, A, R>& v) const {
         (*this)(v.a());
 
-        v.gpu_direct().gpu_evict();
+        v.direct().gpu_evict();
     }
 
     /*!
@@ -269,7 +269,7 @@ struct gpu_clean_static_visitor : etl_visitor<gpu_clean_static_visitor, false, f
         (*this)(v.a());
         (*this)(v.b());
 
-        v.gpu_direct().gpu_evict();
+        v.direct().gpu_evict();
     }
 };
 

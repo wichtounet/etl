@@ -524,7 +524,7 @@ public:
         return etl_traits<TT>::dim(*this, DD);
     }
 
-    gpu_helper<T> gpu_direct() const {
+    gpu_helper<T> direct() const {
         return {gpu_able<T>::_gpu_memory_handler, etl::size(value()), value().memory_start()};
     }
 

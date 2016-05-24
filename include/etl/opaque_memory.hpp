@@ -20,7 +20,7 @@ using gpu_handler = int;
 //TODO Remove the duplication of fields between both implementations
 
 template <typename T, std::size_t D, order SO>
-struct opaque_memory : gpu_helper<std::remove_const_t<T>> {
+struct opaque_memory : gpu_helper<T> {
     static constexpr const std::size_t n_dimensions = D;                      ///< The number of dimensions
     static constexpr const order storage_order      = SO;                                   ///< The storage order
 
@@ -32,9 +32,9 @@ struct opaque_memory : gpu_helper<std::remove_const_t<T>> {
     const std::size_t etl_size;
     const std::array<std::size_t, D> dims;
 
-    opaque_memory(T* memory, std::size_t size, const std::array<std::size_t, D>& dims, const gpu_handler<std::remove_const_t<T>>& handler) :
-            gpu_helper<std::remove_const_t<T>>(handler, size, memory),
-            memory(memory), etl_size(size), dims(dims) {
+    opaque_memory(const T* memory, std::size_t size, const std::array<std::size_t, D>& dims, const gpu_handler<T>& handler) :
+            gpu_helper<T>(handler, size, const_cast<T*>(memory)),
+            memory(const_cast<T*>(memory)), etl_size(size), dims(dims) {
         //Nothing else to init
     }
 

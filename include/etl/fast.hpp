@@ -638,16 +638,12 @@ public:
         return &_data[size()];
     }
 
-    gpu_helper<T> gpu_direct() const {
-        return {gpu_able<T>::_gpu_memory_handler, etl_size, memory_start()};
-    }
-
     opaque_memory<T, n_dimensions, SO> direct(){
-        return {memory_start(), etl_size, {{Dims...}}, gpu_able<T>::_gpu_memory_handler};
+        return opaque_memory<T, n_dimensions, SO>(memory_start(), etl_size, {{Dims...}}, this->_gpu_memory_handler);
     }
 
-    opaque_memory<const T, n_dimensions, SO> direct() const {
-        return {memory_start(), etl_size, {{Dims...}}, gpu_able<T>::_gpu_memory_handler};
+    opaque_memory<T, n_dimensions, SO> direct() const {
+        return opaque_memory<T, n_dimensions, SO>(memory_start(), etl_size, {{Dims...}}, this->_gpu_memory_handler);
     }
 };
 

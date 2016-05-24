@@ -207,7 +207,7 @@ template <typename A, typename C, cpp_enable_if(all_single_precision<A>::value)>
 void fft1(A&& a, C&& c) {
     direct_copy(a.memory_start(), a.memory_end(), c.memory_start());
 
-    auto c_gpu = c.gpu_direct();
+    auto c_gpu = c.direct();
 
     c_gpu.gpu_allocate_copy_if_necessary();
 
@@ -218,7 +218,7 @@ template <typename A, typename C, cpp_enable_if(all_double_precision<A>::value)>
 void fft1(A&& a, C&& c) {
     direct_copy(a.memory_start(), a.memory_end(), c.memory_start());
 
-    auto c_gpu = c.gpu_direct();
+    auto c_gpu = c.direct();
 
     c_gpu.gpu_allocate_copy_if_necessary();
 
@@ -227,8 +227,8 @@ void fft1(A&& a, C&& c) {
 
 template <typename A, typename C, cpp_enable_if(all_complex_single_precision<A>::value)>
 void fft1(A&& a, C&& c) {
-    auto a_gpu = a.gpu_direct();
-    auto c_gpu = c.gpu_direct();
+    auto a_gpu = a.direct();
+    auto c_gpu = c.direct();
 
     a_gpu.gpu_allocate_copy_if_necessary();
 
@@ -239,8 +239,8 @@ void fft1(A&& a, C&& c) {
 
 template <typename A, typename C, cpp_enable_if(all_complex_double_precision<A>::value)>
 void fft1(A&& a, C&& c) {
-    auto a_gpu = a.gpu_direct();
-    auto c_gpu = c.gpu_direct();
+    auto a_gpu = a.direct();
+    auto c_gpu = c.direct();
 
     a_gpu.gpu_allocate_copy_if_necessary();
 
@@ -253,7 +253,7 @@ template <typename A, typename C, cpp_enable_if(all_single_precision<A>::value)>
 void fft1_many(A&& a, C&& c) {
     static constexpr const std::size_t N = decay_traits<A>::dimensions();
 
-    auto c_gpu = c.gpu_direct();
+    auto c_gpu = c.direct();
 
     std::size_t n     = etl::dim<N - 1>(a); //Size of the transform
     std::size_t batch = etl::size(a) / n;   //Number of batch
@@ -269,7 +269,7 @@ template <typename A, typename C, cpp_enable_if(all_double_precision<A>::value)>
 void fft1_many(A&& a, C&& c) {
     static constexpr const std::size_t N = decay_traits<A>::dimensions();
 
-    auto c_gpu = c.gpu_direct();
+    auto c_gpu = c.direct();
 
     std::size_t n     = etl::dim<N - 1>(a); //Size of the transform
     std::size_t batch = etl::size(a) / n;   //Number of batch
@@ -285,8 +285,8 @@ template <typename A, typename C, cpp_enable_if(all_complex_single_precision<A>:
 void fft1_many(A&& a, C&& c) {
     static constexpr const std::size_t N = decay_traits<A>::dimensions();
 
-    auto a_gpu = a.gpu_direct();
-    auto c_gpu = c.gpu_direct();
+    auto a_gpu = a.direct();
+    auto c_gpu = c.direct();
 
     std::size_t n     = etl::dim<N - 1>(a); //Size of the transform
     std::size_t batch = etl::size(a) / n;   //Number of batch
@@ -302,8 +302,8 @@ template <typename A, typename C, cpp_enable_if(all_complex_double_precision<A>:
 void fft1_many(A&& a, C&& c) {
     static constexpr const std::size_t N = decay_traits<A>::dimensions();
 
-    auto a_gpu = a.gpu_direct();
-    auto c_gpu = c.gpu_direct();
+    auto a_gpu = a.direct();
+    auto c_gpu = c.direct();
 
     std::size_t n     = etl::dim<N - 1>(a); //Size of the transform
     std::size_t batch = etl::size(a) / n;   //Number of batch
@@ -317,7 +317,7 @@ void fft1_many(A&& a, C&& c) {
 
 template <typename C, cpp_enable_if(all_complex_single_precision<C>::value)>
 void scale_back(C&& c, float factor) {
-    auto c_gpu = c.gpu_direct();
+    auto c_gpu = c.direct();
 
 #ifdef ETL_CUBLAS_MODE
     impl::cublas::cublas_handle handle = impl::cublas::start_cublas();
@@ -336,7 +336,7 @@ void scale_back(C&& c, float factor) {
 
 template <typename C, cpp_enable_if(all_complex_double_precision<C>::value)>
 void scale_back(C&& c, double factor) {
-    auto c_gpu = c.gpu_direct();
+    auto c_gpu = c.direct();
 
 #ifdef ETL_CUBLAS_MODE
     impl::cublas::cublas_handle handle = impl::cublas::start_cublas();
@@ -360,8 +360,8 @@ void scale_back(C&& c) {
 
 template <typename A, typename C, cpp_enable_if(all_complex_single_precision<A>::value)>
 void scale_back_real(A&& a, C&& c) {
-    auto a_gpu = a.gpu_direct();
-    auto c_gpu = c.gpu_direct();
+    auto a_gpu = a.direct();
+    auto c_gpu = c.direct();
 
 #ifdef ETL_CUBLAS_MODE
     c_gpu.gpu_allocate_if_necessary();
@@ -387,8 +387,8 @@ void scale_back_real(A&& a, C&& c) {
 
 template <typename A, typename C, cpp_enable_if(all_complex_double_precision<A>::value)>
 void scale_back_real(A&& a, C&& c) {
-    auto a_gpu = a.gpu_direct();
-    auto c_gpu = c.gpu_direct();
+    auto a_gpu = a.direct();
+    auto c_gpu = c.direct();
 
 #ifdef ETL_CUBLAS_MODE
     c_gpu.gpu_allocate_if_necessary();
@@ -414,8 +414,8 @@ void scale_back_real(A&& a, C&& c) {
 
 template <typename A, typename C, cpp_enable_if(all_complex_single_precision<A>::value)>
 void ifft1(A&& a, C&& c) {
-    auto a_gpu = a.gpu_direct();
-    auto c_gpu = c.gpu_direct();
+    auto a_gpu = a.direct();
+    auto c_gpu = c.direct();
 
     a_gpu.gpu_allocate_copy_if_necessary();
 
@@ -428,8 +428,8 @@ void ifft1(A&& a, C&& c) {
 
 template <typename A, typename C, cpp_enable_if(all_complex_double_precision<A>::value)>
 void ifft1(A&& a, C&& c) {
-    auto a_gpu = a.gpu_direct();
-    auto c_gpu = c.gpu_direct();
+    auto a_gpu = a.direct();
+    auto c_gpu = c.direct();
 
     a_gpu.gpu_allocate_copy_if_necessary();
 
@@ -442,7 +442,7 @@ void ifft1(A&& a, C&& c) {
 
 template <typename A, typename C, cpp_enable_if(all_complex_single_precision<A>::value)>
 void ifft1_real(A&& a, C&& c) {
-    auto a_gpu = a.gpu_direct();
+    auto a_gpu = a.direct();
 
     a_gpu.gpu_allocate_copy_if_necessary();
 
@@ -453,7 +453,7 @@ void ifft1_real(A&& a, C&& c) {
 
 template <typename A, typename C, cpp_enable_if(all_complex_double_precision<A>::value)>
 void ifft1_real(A&& a, C&& c) {
-    auto a_gpu = a.gpu_direct();
+    auto a_gpu = a.direct();
 
     a_gpu.gpu_allocate_copy_if_necessary();
 
@@ -466,8 +466,8 @@ template <typename A, typename C, cpp_enable_if(all_complex_single_precision<A>:
 void ifft1_many(A&& a, C&& c) {
     static constexpr const std::size_t N = decay_traits<A>::dimensions();
 
-    auto a_gpu = a.gpu_direct();
-    auto c_gpu = c.gpu_direct();
+    auto a_gpu = a.direct();
+    auto c_gpu = c.direct();
 
     std::size_t n     = etl::dim<N - 1>(a); //Size of the transform
     std::size_t batch = etl::size(a) / n;   //Number of batch
@@ -485,8 +485,8 @@ template <typename A, typename C, cpp_enable_if(all_complex_double_precision<A>:
 void ifft1_many(A&& a, C&& c) {
     static constexpr const std::size_t N = decay_traits<A>::dimensions();
 
-    auto a_gpu = a.gpu_direct();
-    auto c_gpu = c.gpu_direct();
+    auto a_gpu = a.direct();
+    auto c_gpu = c.direct();
 
     std::size_t n     = etl::dim<N - 1>(a); //Size of the transform
     std::size_t batch = etl::size(a) / n;   //Number of batch
@@ -582,7 +582,7 @@ template <typename A, typename C, cpp_enable_if(all_single_precision<A>::value)>
 void fft2(A&& a, C&& c) {
     direct_copy(a.memory_start(), a.memory_end(), c.memory_start());
 
-    auto c_gpu = c.gpu_direct();
+    auto c_gpu = c.direct();
 
     c_gpu.gpu_allocate_copy_if_necessary();
 
@@ -593,7 +593,7 @@ template <typename A, typename C, cpp_enable_if(all_double_precision<A>::value)>
 void fft2(A&& a, C&& c) {
     direct_copy(a.memory_start(), a.memory_end(), c.memory_start());
 
-    auto c_gpu = c.gpu_direct();
+    auto c_gpu = c.direct();
 
     c_gpu.gpu_allocate_copy_if_necessary();
 
@@ -602,8 +602,8 @@ void fft2(A&& a, C&& c) {
 
 template <typename A, typename C, cpp_enable_if(all_complex_single_precision<A>::value)>
 void fft2(A&& a, C&& c) {
-    auto a_gpu = a.gpu_direct();
-    auto c_gpu = c.gpu_direct();
+    auto a_gpu = a.direct();
+    auto c_gpu = c.direct();
 
     a_gpu.gpu_allocate_copy_if_necessary();
 
@@ -614,8 +614,8 @@ void fft2(A&& a, C&& c) {
 
 template <typename A, typename C, cpp_enable_if(all_complex_double_precision<A>::value)>
 void fft2(A&& a, C&& c) {
-    auto a_gpu = a.gpu_direct();
-    auto c_gpu = c.gpu_direct();
+    auto a_gpu = a.direct();
+    auto c_gpu = c.direct();
 
     a_gpu.gpu_allocate_copy_if_necessary();
 
@@ -626,8 +626,8 @@ void fft2(A&& a, C&& c) {
 
 template <typename A, typename C, cpp_enable_if(all_complex_single_precision<A>::value)>
 void ifft2(A&& a, C&& c) {
-    auto a_gpu = a.gpu_direct();
-    auto c_gpu = c.gpu_direct();
+    auto a_gpu = a.direct();
+    auto c_gpu = c.direct();
 
     a_gpu.gpu_allocate_copy_if_necessary();
 
@@ -640,8 +640,8 @@ void ifft2(A&& a, C&& c) {
 
 template <typename A, typename C, cpp_enable_if(all_complex_double_precision<A>::value)>
 void ifft2(A&& a, C&& c) {
-    auto a_gpu = a.gpu_direct();
-    auto c_gpu = c.gpu_direct();
+    auto a_gpu = a.direct();
+    auto c_gpu = c.direct();
 
     a_gpu.gpu_allocate_copy_if_necessary();
 
@@ -654,7 +654,7 @@ void ifft2(A&& a, C&& c) {
 
 template <typename A, typename C, cpp_enable_if(all_complex_single_precision<A>::value)>
 void ifft2_real(A&& a, C&& c) {
-    auto a_gpu = a.gpu_direct();
+    auto a_gpu = a.direct();
 
     a_gpu.gpu_allocate_copy_if_necessary();
 
@@ -665,7 +665,7 @@ void ifft2_real(A&& a, C&& c) {
 
 template <typename A, typename C, cpp_enable_if(all_complex_double_precision<A>::value)>
 void ifft2_real(A&& a, C&& c) {
-    auto a_gpu = a.gpu_direct();
+    auto a_gpu = a.direct();
 
     a_gpu.gpu_allocate_copy_if_necessary();
 
@@ -678,7 +678,7 @@ template <typename A, typename C, cpp_enable_if(all_single_precision<A>::value)>
 void fft2_many(A&& a, C&& c) {
     static constexpr const std::size_t N = decay_traits<A>::dimensions();
 
-    auto c_gpu = c.gpu_direct();
+    auto c_gpu = c.direct();
 
     std::size_t n1    = etl::dim<N - 2>(a);       //Size of the transform
     std::size_t n2    = etl::dim<N - 1>(a);       //Size of the transform
@@ -695,7 +695,7 @@ template <typename A, typename C, cpp_enable_if(all_double_precision<A>::value)>
 void fft2_many(A&& a, C&& c) {
     static constexpr const std::size_t N = decay_traits<A>::dimensions();
 
-    auto c_gpu = c.gpu_direct();
+    auto c_gpu = c.direct();
 
     std::size_t n1    = etl::dim<N - 2>(a);       //Size of the transform
     std::size_t n2    = etl::dim<N - 1>(a);       //Size of the transform
@@ -712,8 +712,8 @@ template <typename A, typename C, cpp_enable_if(all_complex_single_precision<A>:
 void fft2_many(A&& a, C&& c) {
     static constexpr const std::size_t N = decay_traits<A>::dimensions();
 
-    auto a_gpu = a.gpu_direct();
-    auto c_gpu = c.gpu_direct();
+    auto a_gpu = a.direct();
+    auto c_gpu = c.direct();
 
     std::size_t n1    = etl::dim<N - 2>(a);       //Size of the transform
     std::size_t n2    = etl::dim<N - 1>(a);       //Size of the transform
@@ -730,8 +730,8 @@ template <typename A, typename C, cpp_enable_if(all_complex_double_precision<A>:
 void fft2_many(A&& a, C&& c) {
     static constexpr const std::size_t N = decay_traits<A>::dimensions();
 
-    auto a_gpu = a.gpu_direct();
-    auto c_gpu = c.gpu_direct();
+    auto a_gpu = a.direct();
+    auto c_gpu = c.direct();
 
     std::size_t n1    = etl::dim<N - 2>(a);       //Size of the transform
     std::size_t n2    = etl::dim<N - 1>(a);       //Size of the transform
@@ -748,8 +748,8 @@ template <typename A, typename C, cpp_enable_if(all_complex_single_precision<A>:
 void ifft2_many(A&& a, C&& c) {
     static constexpr const std::size_t N = decay_traits<A>::dimensions();
 
-    auto a_gpu = a.gpu_direct();
-    auto c_gpu = c.gpu_direct();
+    auto a_gpu = a.direct();
+    auto c_gpu = c.direct();
 
     std::size_t n1    = etl::dim<N - 2>(a);       //Size of the transform
     std::size_t n2    = etl::dim<N - 1>(a);       //Size of the transform
@@ -768,8 +768,8 @@ template <typename A, typename C, cpp_enable_if(all_complex_double_precision<A>:
 void ifft2_many(A&& a, C&& c) {
     static constexpr const std::size_t N = decay_traits<A>::dimensions();
 
-    auto a_gpu = a.gpu_direct();
-    auto c_gpu = c.gpu_direct();
+    auto a_gpu = a.direct();
+    auto c_gpu = c.direct();
 
     std::size_t n1    = etl::dim<N - 2>(a);       //Size of the transform
     std::size_t n2    = etl::dim<N - 1>(a);       //Size of the transform
