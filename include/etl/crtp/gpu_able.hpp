@@ -44,7 +44,7 @@ struct gpu_helper {
 
     impl::cuda::cuda_memory<value_type>& _gpu_memory_handler;
 
-    std::size_t _gpu_size;
+    const std::size_t _gpu_size;
     T* _gpu_cpu_pointer;
 
     gpu_helper(const impl::cuda::cuda_memory<value_type>& _gpu_memory_handler, std::size_t size, const T* cpu)
