@@ -582,7 +582,7 @@ struct conv4_full_impl {
         auto impl = select_conv4_impl<I, K, C>();
 
         if (impl == etl::conv4_impl::CUDNN) {
-            impl::cudnn::conv4_full(input, kernel, conv);
+            impl::cudnn::conv4_full(input.direct(), kernel.direct(), conv.direct());
         } else if (impl == etl::conv4_impl::STD) {
             impl::standard::conv4_full(input, kernel, conv);
         } else {

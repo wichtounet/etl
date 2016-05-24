@@ -25,6 +25,9 @@ namespace impl {
 
 namespace cudnn {
 
+template<typename T>
+using conv4_input = etl::opaque_memory<T, 4, order::RowMajor>;
+
 #ifdef ETL_CUDNN_MODE
 
 #define cudnn_check(call)                                                                                 \
@@ -107,9 +110,9 @@ void conv2_valid(const I& input, const K& kernel, C&& conv) {
     cudnn_check(cudnnDestroyTensorDescriptor(input_tensor));
 }
 
-template <typename I, typename K, typename C>
-void conv4_valid(const I& input, const K& kernel, C&& conv) {
-    using type = std::remove_const_t<value_t<I>>;
+template <typename T>
+void conv4_valid(const conv4_input<const T>& input, const conv4_input<const T>& kernel, const conv4_input<T>& conv) {
+    using type = T;
 
     auto data_type = std::is_same<type, float>::value ? CUDNN_DATA_FLOAT : CUDNN_DATA_DOUBLE;
 
@@ -319,9 +322,9 @@ void conv2_full_flipped(const I& input, const K& kernel, C&& conv) {
     cudnn_check(cudnnDestroyTensorDescriptor(input_tensor));
 }
 
-template <typename I, typename K, typename C>
-void conv4_full(const I& input, const K& kernel, C&& conv) {
-    using type = value_t<I>;
+template <typename T>
+void conv4_full(const conv4_input<const T>& input, const conv4_input<const T>& kernel, const conv4_input<T>& conv) {
+    using type = T;
 
     auto data_type = std::is_same<type, float>::value ? CUDNN_DATA_FLOAT : CUDNN_DATA_DOUBLE;
 
@@ -370,21 +373,17 @@ void conv4_full(const I& input, const K& kernel, C&& conv) {
 
     // Allocate GPU memory, if necessary
 
-    auto input_gpu = input.gpu_direct();
-    auto kernel_gpu = kernel.gpu_direct();
-    auto conv_gpu = conv.gpu_direct();
-
-    input_gpu.gpu_allocate_copy_if_necessary();
-    kernel_gpu.gpu_allocate_copy_if_necessary();
-    conv_gpu.gpu_allocate_if_necessary();
+    input.gpu_allocate_copy_if_necessary();
+    kernel.gpu_allocate_copy_if_necessary();
+    conv.gpu_allocate_if_necessary();
 
     // Perform the convolution
 
     cudnn_check(cudnnConvolutionBackwardData(handle.get(),
-        alpha, filter, kernel_gpu.gpu_memory(),
-        input_tensor, input_gpu.gpu_memory(),
+        alpha, filter, kernel.gpu_memory(),
+        input_tensor, input.gpu_memory(),
         convolution, conv_algo, workspace.get(), workspace_size,
-        beta, output_tensor, conv_gpu.gpu_memory()));
+        beta, output_tensor, conv.gpu_memory()));
 
     // Release the resources
     cudnn_check(cudnnDestroyConvolutionDescriptor(convolution));
@@ -726,8 +725,8 @@ void conv2_valid(const I& input, const K& kernel, C&& conv){
     cpp_unreachable("Unsupported feature called: cudnn conv2_valid");
 }
 
-template <typename I, typename K, typename C>
-void conv4_valid(const I& input, const K& kernel, C&& conv){
+template <typename T>
+void conv4_valid(const conv4_input<const T>& input, const conv4_input<const T>& kernel, const conv4_input<T>& conv) {
     cpp_unused(input);
     cpp_unused(kernel);
     cpp_unused(conv);
@@ -748,8 +747,8 @@ void conv2_full(const I& input, const K& kernel, C&& conv){
     cpp_unreachable("Unsupported feature called: cudnn conv2_full");
 }
 
-template <typename I, typename K, typename C>
-void conv4_full(const I& input, const K& kernel, C&& conv){
+template <typename T>
+void conv4_full(const conv4_input<const T>& input, const conv4_input<const T>& kernel, const conv4_input<T>& conv) {
     cpp_unused(input);
     cpp_unused(kernel);
     cpp_unused(conv);
