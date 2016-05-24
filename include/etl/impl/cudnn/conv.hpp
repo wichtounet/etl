@@ -25,15 +25,6 @@ namespace impl {
 
 namespace cudnn {
 
-template<typename T>
-using conv2_input = etl::opaque_memory<T, 2>;
-
-template<typename T>
-using conv3_input = etl::opaque_memory<T, 3>;
-
-template<typename T>
-using conv4_input = etl::opaque_memory<T, 4>;
-
 #ifdef ETL_CUDNN_MODE
 
 #define cudnn_check(call)                                                                                 \
@@ -46,7 +37,7 @@ using conv4_input = etl::opaque_memory<T, 4>;
     }
 
 template <typename T>
-void conv2_valid(const conv2_input<T>& input, const conv2_input<T>& kernel, const conv2_input<T>& conv) {
+void conv2_valid(const opaque_memory<T,2>& input, const opaque_memory<T,2>& kernel, const opaque_memory<T,2>& conv) {
     using type = std::remove_const_t<T>;
 
     auto data_type = std::is_same<type, float>::value ? CUDNN_DATA_FLOAT : CUDNN_DATA_DOUBLE;
@@ -113,7 +104,7 @@ void conv2_valid(const conv2_input<T>& input, const conv2_input<T>& kernel, cons
 }
 
 template <typename T>
-void conv4_valid(const conv4_input<T>& input, const conv4_input<T>& kernel, const conv4_input<T>& conv) {
+void conv4_valid(const opaque_memory<T,4>& input, const opaque_memory<T,4>& kernel, const opaque_memory<T,4>& conv) {
     using type = T;
 
     auto data_type = std::is_same<type, float>::value ? CUDNN_DATA_FLOAT : CUDNN_DATA_DOUBLE;
@@ -183,7 +174,7 @@ void conv4_valid(const conv4_input<T>& input, const conv4_input<T>& kernel, cons
 }
 
 template <typename T>
-void conv2_full(const conv2_input<T>& input, const conv2_input<T>& kernel, const conv2_input<T>& conv) {
+void conv2_full(const opaque_memory<T,2>& input, const opaque_memory<T,2>& kernel, const opaque_memory<T,2>& conv) {
     using type = std::remove_const_t<T>;
 
     auto data_type = std::is_same<type, float>::value ? CUDNN_DATA_FLOAT : CUDNN_DATA_DOUBLE;
@@ -250,7 +241,7 @@ void conv2_full(const conv2_input<T>& input, const conv2_input<T>& kernel, const
 }
 
 template <typename T>
-void conv2_full_flipped(const conv2_input<T>& input, const conv2_input<T>& kernel, const conv2_input<T>& conv) {
+void conv2_full_flipped(const opaque_memory<T,2>& input, const opaque_memory<T,2>& kernel, const opaque_memory<T,2>& conv) {
     using type = std::remove_const_t<T>;
 
     auto data_type = std::is_same<type, float>::value ? CUDNN_DATA_FLOAT : CUDNN_DATA_DOUBLE;
@@ -317,7 +308,7 @@ void conv2_full_flipped(const conv2_input<T>& input, const conv2_input<T>& kerne
 }
 
 template <typename T>
-void conv4_full(const conv4_input<T>& input, const conv4_input<T>& kernel, const conv4_input<T>& conv) {
+void conv4_full(const opaque_memory<T,4>& input, const opaque_memory<T,4>& kernel, const opaque_memory<T,4>& conv) {
     using type = T;
 
     auto data_type = std::is_same<type, float>::value ? CUDNN_DATA_FLOAT : CUDNN_DATA_DOUBLE;
@@ -387,7 +378,7 @@ void conv4_full(const conv4_input<T>& input, const conv4_input<T>& kernel, const
 }
 
 template <typename T>
-void conv2_valid_multi(const conv2_input<T>& input, const conv3_input<T>& kernel, const conv3_input<T>& conv) {
+void conv2_valid_multi(const opaque_memory<T,2>& input, const opaque_memory<T,3>& kernel, const opaque_memory<T,3>& conv) {
     using type = std::remove_const_t<T>;
 
     auto data_type = std::is_same<type, float>::value ? CUDNN_DATA_FLOAT : CUDNN_DATA_DOUBLE;
@@ -454,7 +445,7 @@ void conv2_valid_multi(const conv2_input<T>& input, const conv3_input<T>& kernel
 }
 
 template <typename T>
-void conv2_valid_multi_flipped(const conv2_input<T>& input, const conv3_input<T>& kernel, const conv3_input<T>& conv) {
+void conv2_valid_multi_flipped(const opaque_memory<T,2>& input, const opaque_memory<T,3>& kernel, const opaque_memory<T,3>& conv) {
     using type = std::remove_const_t<T>;
 
     auto data_type = std::is_same<type, float>::value ? CUDNN_DATA_FLOAT : CUDNN_DATA_DOUBLE;
@@ -710,7 +701,7 @@ void conv2_full_multi_flipped_real(const I& input, const K& kernel, C&& conv) {
  * \param conv The output matrix
  */
 template <typename T>
-void conv2_valid(const conv2_input<T>& input, const conv2_input<T>& kernel, const conv2_input<T>& conv) {
+void conv2_valid(const opaque_memory<T,2>& input, const opaque_memory<T,2>& kernel, const opaque_memory<T,2>& conv) {
     cpp_unused(input);
     cpp_unused(kernel);
     cpp_unused(conv);
@@ -718,7 +709,7 @@ void conv2_valid(const conv2_input<T>& input, const conv2_input<T>& kernel, cons
 }
 
 template <typename T>
-void conv4_valid(const conv4_input<T>& input, const conv4_input<T>& kernel, const conv4_input<T>& conv) {
+void conv4_valid(const opaque_memory<T,4>& input, const opaque_memory<T,4>& kernel, const opaque_memory<T,4>& conv) {
     cpp_unused(input);
     cpp_unused(kernel);
     cpp_unused(conv);
@@ -732,7 +723,7 @@ void conv4_valid(const conv4_input<T>& input, const conv4_input<T>& kernel, cons
  * \param conv The output matrix
  */
 template <typename T>
-void conv2_full(const conv2_input<T>& input, const conv2_input<T>& kernel, const conv2_input<T>& conv) {
+void conv2_full(const opaque_memory<T,2>& input, const opaque_memory<T,2>& kernel, const opaque_memory<T,2>& conv) {
     cpp_unused(input);
     cpp_unused(kernel);
     cpp_unused(conv);
@@ -740,7 +731,7 @@ void conv2_full(const conv2_input<T>& input, const conv2_input<T>& kernel, const
 }
 
 template <typename T>
-void conv4_full(const conv4_input<T>& input, const conv4_input<T>& kernel, const conv4_input<T>& conv) {
+void conv4_full(const opaque_memory<T,4>& input, const opaque_memory<T,4>& kernel, const opaque_memory<T,4>& conv) {
     cpp_unused(input);
     cpp_unused(kernel);
     cpp_unused(conv);
@@ -748,7 +739,7 @@ void conv4_full(const conv4_input<T>& input, const conv4_input<T>& kernel, const
 }
 
 template <typename T>
-void conv2_valid_multi(const conv2_input<T>& input, const conv3_input<T>& kernel, const conv3_input<T>& conv) {
+void conv2_valid_multi(const opaque_memory<T,2>& input, const opaque_memory<T,3>& kernel, const opaque_memory<T,3>& conv) {
     cpp_unused(input);
     cpp_unused(kernel);
     cpp_unused(conv);
@@ -756,7 +747,7 @@ void conv2_valid_multi(const conv2_input<T>& input, const conv3_input<T>& kernel
 }
 
 template <typename T>
-void conv2_valid_multi_flipped(const conv2_input<T>& input, const conv3_input<T>& kernel, const conv3_input<T>& conv) {
+void conv2_valid_multi_flipped(const opaque_memory<T,2>& input, const opaque_memory<T,3>& kernel, const opaque_memory<T,3>& conv) {
     cpp_unused(input);
     cpp_unused(kernel);
     cpp_unused(conv);
