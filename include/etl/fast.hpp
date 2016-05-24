@@ -639,15 +639,15 @@ public:
     }
 
     gpu_helper<T> gpu_direct() const {
-        return gpu_helper<T>(gpu_able<T>::_gpu_memory_handler, etl_size, memory_start());
+        return {gpu_able<T>::_gpu_memory_handler, etl_size, memory_start()};
     }
 
-    fast_memory<T, n_dimensions, SO> direct(){
-        return fast_memory<T, n_dimensions, SO>(memory_start(), etl_size, {Dims...}, gpu_able<T>::_gpu_memory_handler);
+    opaque_memory<T, n_dimensions, SO> direct(){
+        return {memory_start(), etl_size, {{Dims...}}, gpu_able<T>::_gpu_memory_handler};
     }
 
-    fast_memory<const T, n_dimensions, SO> direct() const {
-        return fast_memory<const T, n_dimensions, SO>(memory_start(), etl_size, {Dims...}, gpu_able<T>::_gpu_memory_handler);
+    opaque_memory<const T, n_dimensions, SO> direct() const {
+        return {memory_start(), etl_size, {{Dims...}}, gpu_able<T>::_gpu_memory_handler};
     }
 };
 

@@ -56,7 +56,7 @@
 #include "etl/evaluator.hpp"
 
 #include "etl/crtp/gpu_able.hpp"
-#include "etl/fast_memory.hpp"
+#include "etl/opaque_memory.hpp"
 
 // CRTP classes
 #include "etl/crtp/inplace_assignable.hpp"
