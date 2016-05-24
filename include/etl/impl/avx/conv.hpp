@@ -714,6 +714,9 @@ inline void conv2_full_micro_kernel(const float* in, std::size_t n1, std::size_t
     }
 }
 
+//TODO Ideally, these functions should take opaque_memory inputs, but it seems
+//to slow donw the compilation time
+
 template <typename I, typename K, typename C>
 void conv2_valid(const I& input, const K& kernel, C&& conv) {
     conv2_valid_micro_kernel(
