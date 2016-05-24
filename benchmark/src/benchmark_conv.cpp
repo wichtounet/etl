@@ -146,6 +146,30 @@ CPM_DIRECT_SECTION_TWO_PASS_NS_PF("sconv1_valid [conv][conv1]", conv_1d_large_po
     AVX_SECTION_FUNCTOR("avx", [](svec& a, svec& b, svec& r){ r = selected_helper(etl::conv_impl::AVX, etl::conv_1d_valid(a, b)); })
 )
 
+#ifdef ETL_EXTENDED_BENCH
+#define sdm_t1 etl::dyn_vector
+#define fdm_t1 etl::fast_dyn_matrix
+
+CPM_DIRECT_SECTION_TWO_PASS_NS_PF("sconv1_valid_dyn_1 [conv][conv1]", fast_policy,
+    FLOPS([](std::size_t){ return 2 * 10000 * 5000; }),
+    CPM_SECTION_INIT([](std::size_t){ return std::make_tuple(sdm_t1<float>(10000), sdm_t1<float>(5000), sdm_t1<float>(5001)); }),
+    CPM_SECTION_FUNCTOR("default", [](auto& a, auto& b, auto& r){ r = etl::conv_1d_valid(a, b); }),
+    CPM_SECTION_FUNCTOR("std", [](auto& a, auto& b, auto& r){ r = selected_helper(etl::conv_impl::STD, etl::conv_1d_valid(a, b)); })
+    SSE_SECTION_FUNCTOR("sse", [](auto& a, auto& b, auto& r){ r = selected_helper(etl::conv_impl::SSE, etl::conv_1d_valid(a, b)); })
+    AVX_SECTION_FUNCTOR("avx", [](auto& a, auto& b, auto& r){ r = selected_helper(etl::conv_impl::AVX, etl::conv_1d_valid(a, b)); })
+)
+
+CPM_DIRECT_SECTION_TWO_PASS_NS_PF("sconv1_valid_fast_1 [conv][conv1]", fast_policy,
+    FLOPS([](std::size_t){ return 2 * 10000 * 5000; }),
+    CPM_SECTION_INIT([](std::size_t){ return std::make_tuple(fdm_t1<float,10000>(), fdm_t1<float,5000>(), fdm_t1<float,5001>()); }),
+    CPM_SECTION_FUNCTOR("default", [](auto& a, auto& b, auto& r){ r = etl::conv_1d_valid(a, b); }),
+    CPM_SECTION_FUNCTOR("std", [](auto& a, auto& b, auto& r){ r = selected_helper(etl::conv_impl::STD, etl::conv_1d_valid(a, b)); })
+    SSE_SECTION_FUNCTOR("sse", [](auto& a, auto& b, auto& r){ r = selected_helper(etl::conv_impl::SSE, etl::conv_1d_valid(a, b)); })
+    AVX_SECTION_FUNCTOR("avx", [](auto& a, auto& b, auto& r){ r = selected_helper(etl::conv_impl::AVX, etl::conv_1d_valid(a, b)); })
+)
+
+#endif
+
 CPM_DIRECT_SECTION_TWO_PASS_NS_PF("dconv1_valid [conv][conv1]", conv_1d_large_policy,
     FLOPS([](std::size_t d1, std::size_t d2){ return 2 * d1 * d2; }),
     CPM_SECTION_INIT([](std::size_t d1, std::size_t d2){ return std::make_tuple(dvec(d1), dvec(d2), dvec(d1 - d2 + 1)); }),
