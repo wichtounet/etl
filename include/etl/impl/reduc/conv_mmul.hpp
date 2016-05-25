@@ -21,11 +21,9 @@ namespace reduc {
  */
 template <typename I, typename K, typename C>
 void conv1_full(const I& input, const K& kernel, C&& conv) {
-    conv = row(
-        mul(
-            reshape(kernel, 1, dim<0>(kernel)),
-            convmtx(input, dim<0>(kernel))),
-        0);
+    decltype(auto) input_mtx = etl::force_temporary(convmtx(input, dim<0>(kernel)));
+    decltype(auto) t = etl::force_temporary(mul(reshape(kernel, 1, dim<0>(kernel)), input_mtx));
+    conv = t(0);
 }
 
 /*!
