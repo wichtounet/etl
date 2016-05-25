@@ -351,7 +351,7 @@ TEMPLATE_TEST_CASE_2("convolution_1d/sub_1", "convolution_1d_full_sub", Z, float
     etl::fast_matrix<Z, 1, 3> b = {0.0, 1.0, 0.5};
     etl::fast_matrix<Z, 1, 5> c;
 
-    *etl::conv_1d_full(a(0), b(0), c(0));
+    etl::conv_1d_full(a(0), b(0), c(0));
 
     REQUIRE(c[0] == Approx(0.0));
     REQUIRE(c[1] == Approx(1.0));
@@ -365,7 +365,7 @@ TEMPLATE_TEST_CASE_2("convolution_1d/sub_2", "convolution_1d_same", Z, float, do
     etl::fast_matrix<Z, 1, 3> b = {0.0, 1.0, 0.5};
     etl::fast_matrix<Z, 1, 3> c;
 
-    *etl::conv_1d_same(a(0), b(0), c(0));
+    etl::conv_1d_same(a(0), b(0), c(0));
 
     REQUIRE(c[0] == Approx(1.0));
     REQUIRE(c[1] == Approx(2.5));
@@ -377,7 +377,7 @@ TEMPLATE_TEST_CASE_2("convolution_1d/sub_3", "convolution_1d_valid", Z, float, d
     etl::fast_matrix<Z, 1, 3> b = {0.0, 1.0, 0.5};
     etl::fast_matrix<Z, 1, 1> c;
 
-    *etl::conv_1d_valid(a(0), b(0), c(0));
+    etl::conv_1d_valid(a(0), b(0), c(0));
 
     REQUIRE(c[0] == 2.5);
 }
@@ -388,7 +388,7 @@ TEMPLATE_TEST_CASE_2("convolution_1d/expr_full_1", "convolution_1d_full", Z, flo
     etl::dyn_vector<Z> b({0.0, 1.0, 0.5});
     etl::dyn_vector<Z> c(5);
 
-    *etl::conv_1d_full(a + b - b, abs(b), c);
+    etl::conv_1d_full(a + b - b, abs(b), c);
 
     REQUIRE(c[0] == Approx(0.0));
     REQUIRE(c[1] == Approx(1.0));
@@ -402,7 +402,7 @@ TEMPLATE_TEST_CASE_2("convolution_1d/expr_full_2", "convolution_1d_full", Z, flo
     etl::dyn_vector<Z> b({0.5, 1.0, 1.5});
     etl::dyn_vector<Z> c(7);
 
-    *etl::conv_1d_full(a + a - a, b + b - b, c);
+    etl::conv_1d_full(a + a - a, b + b - b, c);
 
     REQUIRE(c[0] == Approx(0.5));
     REQUIRE(c[1] == Approx(2.0));

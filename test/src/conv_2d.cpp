@@ -590,7 +590,7 @@ TEMPLATE_TEST_CASE_2("convolution_2d/sub_1", "convolution_2d_full", Z, float, do
     etl::fast_matrix<Z, 1, 2, 2> b = {2.0, 0.0, 0.5, 0.5};
     etl::fast_matrix<Z, 1, 4, 4> c;
 
-    *etl::conv_2d_full(a(0), b(0), c(0));
+    etl::conv_2d_full(a(0), b(0), c(0));
 
     REQUIRE(c(0, 0, 0) == 2.0);
     REQUIRE(c(0, 0, 1) == 4.0);
@@ -618,7 +618,7 @@ TEMPLATE_TEST_CASE_2("convolution_2d/sub_2", "convolution_2d_same", Z, float, do
     etl::fast_matrix<Z, 1, 2, 2> b = {2.0, 0.0, 0.5, 0.5};
     etl::fast_matrix<Z, 1, 3, 3> c;
 
-    *etl::conv_2d_same(a(0), b(0), c(0));
+    etl::conv_2d_same(a(0), b(0), c(0));
 
     REQUIRE(c(0, 0, 0) == 3.5);
     REQUIRE(c(0, 0, 1) == 4.5);
@@ -638,7 +638,7 @@ TEMPLATE_TEST_CASE_2("convolution_2d/sub_3", "convolution_2d_valid", Z, float, d
     etl::fast_matrix<Z, 1, 2, 2> b = {2.0, 0.0, 0.5, 0.5};
     etl::fast_matrix<Z, 1, 2, 2> c;
 
-    *etl::conv_2d_valid(a(0), b(0), c(0));
+    etl::conv_2d_valid(a(0), b(0), c(0));
 
     REQUIRE(c(0, 0, 0) == 3.5);
     REQUIRE(c(0, 0, 1) == 4.5);
