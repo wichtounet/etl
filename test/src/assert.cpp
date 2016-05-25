@@ -7,14 +7,13 @@
 
 #ifndef NDEBUG
 
-#include "etl/etl_light.hpp"
-#include "catch.hpp"
+#include "test_light.hpp"
 
 TEST_CASE("assert/nothrow/1", "[assert]") {
 #ifdef CPP_UTILS_ASSERT_EXCEPTION
-    REQUIRE(!etl::assert_nothrow);
+    REQUIRE_DIRECT(!etl::assert_nothrow);
 #else
-    REQUIRE(etl::assert_nothrow);
+    REQUIRE_DIRECT(etl::assert_nothrow);
 #endif
 }
 

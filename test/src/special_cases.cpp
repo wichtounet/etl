@@ -14,7 +14,7 @@ TEMPLATE_TEST_CASE_2("deep_assign/vec<mat>", "deep_assign", Z, float, double) {
 
     for (auto& v : a) {
         for (auto& v2 : v) {
-            REQUIRE(v2 == 0.0);
+            REQUIRE_EQUALS(v2, 0.0);
         }
     }
 }
@@ -26,7 +26,7 @@ TEMPLATE_TEST_CASE_2("deep_assign/mat<vec>", "deep_assign", Z, float, double) {
 
     for (auto& v : a) {
         for (auto& v2 : v) {
-            REQUIRE(v2 == 0.0);
+            REQUIRE_EQUALS(v2, 0.0);
         }
     }
 }
@@ -38,7 +38,7 @@ TEMPLATE_TEST_CASE_2("deep_assign/mat<mat>", "deep_assign", Z, float, double) {
 
     for (auto& v : a) {
         for (auto& v2 : v) {
-            REQUIRE(v2 == 0.0);
+            REQUIRE_EQUALS(v2, 0.0);
         }
     }
 }

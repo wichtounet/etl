@@ -13,7 +13,7 @@ TEST_CASE("optimize/1", "[fast][optimizer]") {
 
     b = opt(a + a);
 
-    REQUIRE(b[0] == 2.0);
+    REQUIRE_EQUALS(b[0], 2.0);
 }
 
 TEST_CASE("optimize/2", "[fast][optimizer]") {
@@ -22,7 +22,7 @@ TEST_CASE("optimize/2", "[fast][optimizer]") {
 
     b = opt(a * 1.0);
 
-    REQUIRE(b[0] == 1.0);
+    REQUIRE_EQUALS(b[0], 1.0);
 }
 
 TEST_CASE("optimize/3", "[fast][optimizer]") {
@@ -31,7 +31,7 @@ TEST_CASE("optimize/3", "[fast][optimizer]") {
 
     b = opt(a + a * 1.0);
 
-    REQUIRE(b[0] == 2.0);
+    REQUIRE_EQUALS(b[0], 2.0);
 }
 
 TEST_CASE("optimize/4", "[fast][optimizer]") {
@@ -40,7 +40,7 @@ TEST_CASE("optimize/4", "[fast][optimizer]") {
 
     b = opt(a + 1.0 * a);
 
-    REQUIRE(b[0] == 2.0);
+    REQUIRE_EQUALS(b[0], 2.0);
 }
 
 TEST_CASE("optimize/5", "[fast][optimizer]") {
@@ -49,5 +49,5 @@ TEST_CASE("optimize/5", "[fast][optimizer]") {
 
     b = opt(a * 1.0 + 1.0 * a);
 
-    REQUIRE(b[0] == 2.0);
+    REQUIRE_EQUALS(b[0], 2.0);
 }

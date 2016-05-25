@@ -13,9 +13,9 @@ TEMPLATE_TEST_CASE_2("selected/1", "[selected]", Z, float, double) {
 
     b = etl::selected<etl::sum_impl, etl::sum_impl::STD>(a + a);
 
-    REQUIRE(b[0] == 2.0);
-    REQUIRE(b[1] == -4.0);
-    REQUIRE(b[2] == 6.0);
+    REQUIRE_EQUALS(b[0], 2.0);
+    REQUIRE_EQUALS(b[1], -4.0);
+    REQUIRE_EQUALS(b[2], 6.0);
 }
 
 TEMPLATE_TEST_CASE_2("selected/2", "[selected]", Z, float, double) {
@@ -24,22 +24,22 @@ TEMPLATE_TEST_CASE_2("selected/2", "[selected]", Z, float, double) {
 
     c = etl::selected<etl::fft_impl, etl::fft_impl::STD>(etl::fft_1d(a));
 
-    REQUIRE(c(0).real() == Approx(Z(4.0)));
-    REQUIRE(c(0).imag() == Approx(Z(0.0)));
-    REQUIRE(c(1).real() == Approx(Z(1.0)));
-    REQUIRE(c(1).imag() == Approx(Z(-2.41421)));
-    REQUIRE(c(2).real() == Approx(Z(0.0)));
-    REQUIRE(c(2).imag() == Approx(Z(0.0)));
-    REQUIRE(c(3).real() == Approx(Z(1.0)));
-    REQUIRE(c(3).imag() == Approx(Z(-0.41421)));
-    REQUIRE(c(4).real() == Approx(Z(0.0)));
-    REQUIRE(c(4).imag() == Approx(Z(0.0)));
-    REQUIRE(c(5).real() == Approx(Z(1.0)));
-    REQUIRE(c(5).imag() == Approx(Z(0.41421)));
-    REQUIRE(c(6).real() == Approx(Z(0.0)));
-    REQUIRE(c(6).imag() == Approx(Z(0.0)));
-    REQUIRE(c(7).real() == Approx(Z(1.0)));
-    REQUIRE(c(7).imag() == Approx(Z(2.41421)));
+    REQUIRE_EQUALS_APPROX(c(0).real(), Z(4.0));
+    REQUIRE_EQUALS_APPROX(c(0).imag(), Z(0.0));
+    REQUIRE_EQUALS_APPROX(c(1).real(), Z(1.0));
+    REQUIRE_EQUALS_APPROX(c(1).imag(), Z(-2.41421));
+    REQUIRE_EQUALS_APPROX(c(2).real(), Z(0.0));
+    REQUIRE_EQUALS_APPROX(c(2).imag(), Z(0.0));
+    REQUIRE_EQUALS_APPROX(c(3).real(), Z(1.0));
+    REQUIRE_EQUALS_APPROX(c(3).imag(), Z(-0.41421));
+    REQUIRE_EQUALS_APPROX(c(4).real(), Z(0.0));
+    REQUIRE_EQUALS_APPROX(c(4).imag(), Z(0.0));
+    REQUIRE_EQUALS_APPROX(c(5).real(), Z(1.0));
+    REQUIRE_EQUALS_APPROX(c(5).imag(), Z(0.41421));
+    REQUIRE_EQUALS_APPROX(c(6).real(), Z(0.0));
+    REQUIRE_EQUALS_APPROX(c(6).imag(), Z(0.0));
+    REQUIRE_EQUALS_APPROX(c(7).real(), Z(1.0));
+    REQUIRE_EQUALS_APPROX(c(7).imag(), Z(2.41421));
 }
 
 TEMPLATE_TEST_CASE_2("selected/3", "[selected]", Z, float, double) {
@@ -48,9 +48,9 @@ TEMPLATE_TEST_CASE_2("selected/3", "[selected]", Z, float, double) {
 
     b = selected_helper(etl::conv_impl::SSE, a + a);
 
-    REQUIRE(b[0] == 2.0);
-    REQUIRE(b[1] == -4.0);
-    REQUIRE(b[2] == 6.0);
+    REQUIRE_EQUALS(b[0], 2.0);
+    REQUIRE_EQUALS(b[1], -4.0);
+    REQUIRE_EQUALS(b[2], 6.0);
 }
 
 TEMPLATE_TEST_CASE_2("selected/4", "[selected]", Z, float, double) {
@@ -59,22 +59,22 @@ TEMPLATE_TEST_CASE_2("selected/4", "[selected]", Z, float, double) {
 
     c = selected_helper(etl::fft_impl::STD, etl::fft_1d(a));
 
-    REQUIRE(c(0).real() == Approx(Z(4.0)));
-    REQUIRE(c(0).imag() == Approx(Z(0.0)));
-    REQUIRE(c(1).real() == Approx(Z(1.0)));
-    REQUIRE(c(1).imag() == Approx(Z(-2.41421)));
-    REQUIRE(c(2).real() == Approx(Z(0.0)));
-    REQUIRE(c(2).imag() == Approx(Z(0.0)));
-    REQUIRE(c(3).real() == Approx(Z(1.0)));
-    REQUIRE(c(3).imag() == Approx(Z(-0.41421)));
-    REQUIRE(c(4).real() == Approx(Z(0.0)));
-    REQUIRE(c(4).imag() == Approx(Z(0.0)));
-    REQUIRE(c(5).real() == Approx(Z(1.0)));
-    REQUIRE(c(5).imag() == Approx(Z(0.41421)));
-    REQUIRE(c(6).real() == Approx(Z(0.0)));
-    REQUIRE(c(6).imag() == Approx(Z(0.0)));
-    REQUIRE(c(7).real() == Approx(Z(1.0)));
-    REQUIRE(c(7).imag() == Approx(Z(2.41421)));
+    REQUIRE_EQUALS_APPROX(c(0).real(), Z(4.0));
+    REQUIRE_EQUALS_APPROX(c(0).imag(), Z(0.0));
+    REQUIRE_EQUALS_APPROX(c(1).real(), Z(1.0));
+    REQUIRE_EQUALS_APPROX(c(1).imag(), Z(-2.41421));
+    REQUIRE_EQUALS_APPROX(c(2).real(), Z(0.0));
+    REQUIRE_EQUALS_APPROX(c(2).imag(), Z(0.0));
+    REQUIRE_EQUALS_APPROX(c(3).real(), Z(1.0));
+    REQUIRE_EQUALS_APPROX(c(3).imag(), Z(-0.41421));
+    REQUIRE_EQUALS_APPROX(c(4).real(), Z(0.0));
+    REQUIRE_EQUALS_APPROX(c(4).imag(), Z(0.0));
+    REQUIRE_EQUALS_APPROX(c(5).real(), Z(1.0));
+    REQUIRE_EQUALS_APPROX(c(5).imag(), Z(0.41421));
+    REQUIRE_EQUALS_APPROX(c(6).real(), Z(0.0));
+    REQUIRE_EQUALS_APPROX(c(6).imag(), Z(0.0));
+    REQUIRE_EQUALS_APPROX(c(7).real(), Z(1.0));
+    REQUIRE_EQUALS_APPROX(c(7).imag(), Z(2.41421));
 }
 
 TEMPLATE_TEST_CASE_2("selected/5", "[selected]", Z, float, double) {
@@ -85,9 +85,9 @@ TEMPLATE_TEST_CASE_2("selected/5", "[selected]", Z, float, double) {
         b = a + a;
     }
 
-    REQUIRE(b[0] == 2.0);
-    REQUIRE(b[1] == -4.0);
-    REQUIRE(b[2] == 6.0);
+    REQUIRE_EQUALS(b[0], 2.0);
+    REQUIRE_EQUALS(b[1], -4.0);
+    REQUIRE_EQUALS(b[2], 6.0);
 }
 
 TEMPLATE_TEST_CASE_2("selected/6", "[selected]", Z, float, double) {
@@ -98,43 +98,43 @@ TEMPLATE_TEST_CASE_2("selected/6", "[selected]", Z, float, double) {
         c = etl::fft_1d(a);
     }
 
-    REQUIRE(c(0).real() == Approx(Z(4.0)));
-    REQUIRE(c(0).imag() == Approx(Z(0.0)));
-    REQUIRE(c(1).real() == Approx(Z(1.0)));
-    REQUIRE(c(1).imag() == Approx(Z(-2.41421)));
-    REQUIRE(c(2).real() == Approx(Z(0.0)));
-    REQUIRE(c(2).imag() == Approx(Z(0.0)));
-    REQUIRE(c(3).real() == Approx(Z(1.0)));
-    REQUIRE(c(3).imag() == Approx(Z(-0.41421)));
-    REQUIRE(c(4).real() == Approx(Z(0.0)));
-    REQUIRE(c(4).imag() == Approx(Z(0.0)));
-    REQUIRE(c(5).real() == Approx(Z(1.0)));
-    REQUIRE(c(5).imag() == Approx(Z(0.41421)));
-    REQUIRE(c(6).real() == Approx(Z(0.0)));
-    REQUIRE(c(6).imag() == Approx(Z(0.0)));
-    REQUIRE(c(7).real() == Approx(Z(1.0)));
-    REQUIRE(c(7).imag() == Approx(Z(2.41421)));
+    REQUIRE_EQUALS_APPROX(c(0).real(), Z(4.0));
+    REQUIRE_EQUALS_APPROX(c(0).imag(), Z(0.0));
+    REQUIRE_EQUALS_APPROX(c(1).real(), Z(1.0));
+    REQUIRE_EQUALS_APPROX(c(1).imag(), Z(-2.41421));
+    REQUIRE_EQUALS_APPROX(c(2).real(), Z(0.0));
+    REQUIRE_EQUALS_APPROX(c(2).imag(), Z(0.0));
+    REQUIRE_EQUALS_APPROX(c(3).real(), Z(1.0));
+    REQUIRE_EQUALS_APPROX(c(3).imag(), Z(-0.41421));
+    REQUIRE_EQUALS_APPROX(c(4).real(), Z(0.0));
+    REQUIRE_EQUALS_APPROX(c(4).imag(), Z(0.0));
+    REQUIRE_EQUALS_APPROX(c(5).real(), Z(1.0));
+    REQUIRE_EQUALS_APPROX(c(5).imag(), Z(0.41421));
+    REQUIRE_EQUALS_APPROX(c(6).real(), Z(0.0));
+    REQUIRE_EQUALS_APPROX(c(6).imag(), Z(0.0));
+    REQUIRE_EQUALS_APPROX(c(7).real(), Z(1.0));
+    REQUIRE_EQUALS_APPROX(c(7).imag(), Z(2.41421));
 }
 
 TEMPLATE_TEST_CASE_2("selected/7", "[selected]", Z, float, double) {
-    REQUIRE(!etl::local_context().fft_selector.forced);
+    REQUIRE_DIRECT(!etl::local_context().fft_selector.forced);
 
     SELECTED_SECTION(etl::fft_impl::MKL) {
-        REQUIRE(etl::local_context().fft_selector.forced);
-        REQUIRE(etl::local_context().fft_selector.impl == etl::fft_impl::MKL);
+        REQUIRE_DIRECT(etl::local_context().fft_selector.forced);
+        REQUIRE_EQUALS(etl::local_context().fft_selector.impl, etl::fft_impl::MKL);
 
         etl::local_context().fft_selector.forced = false;
         etl::local_context().fft_selector.impl = etl::fft_impl::CUFFT;
         ;
 
         SELECTED_SECTION(etl::fft_impl::STD) {
-            REQUIRE(etl::local_context().fft_selector.forced);
-            REQUIRE(etl::local_context().fft_selector.impl == etl::fft_impl::STD);
+            REQUIRE_DIRECT(etl::local_context().fft_selector.forced);
+            REQUIRE_EQUALS(etl::local_context().fft_selector.impl, etl::fft_impl::STD);
         }
 
-        REQUIRE(!etl::local_context().fft_selector.forced);
-        REQUIRE(etl::local_context().fft_selector.impl == etl::fft_impl::CUFFT);
+        REQUIRE_DIRECT(!etl::local_context().fft_selector.forced);
+        REQUIRE_EQUALS(etl::local_context().fft_selector.impl, etl::fft_impl::CUFFT);
     }
 
-    REQUIRE(!etl::local_context().fft_selector.forced);
+    REQUIRE_DIRECT(!etl::local_context().fft_selector.forced);
 }

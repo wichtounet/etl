@@ -14,33 +14,33 @@ TEMPLATE_TEST_CASE_2("convmtx/convmtx_1", "convmtx", Z, float, double) {
 
     auto c = convmtx(a, 4);
 
-    REQUIRE(c(0, 0) == 1);
-    REQUIRE(c(0, 1) == 2);
-    REQUIRE(c(0, 2) == 3);
-    REQUIRE(c(0, 3) == 0);
-    REQUIRE(c(0, 4) == 0);
-    REQUIRE(c(0, 5) == 0);
+    REQUIRE_EQUALS(c(0, 0), 1);
+    REQUIRE_EQUALS(c(0, 1), 2);
+    REQUIRE_EQUALS(c(0, 2), 3);
+    REQUIRE_EQUALS(c(0, 3), 0);
+    REQUIRE_EQUALS(c(0, 4), 0);
+    REQUIRE_EQUALS(c(0, 5), 0);
 
-    REQUIRE(c(1, 0) == 0);
-    REQUIRE(c(1, 1) == 1);
-    REQUIRE(c(1, 2) == 2);
-    REQUIRE(c(1, 3) == 3);
-    REQUIRE(c(1, 4) == 0);
-    REQUIRE(c(1, 5) == 0);
+    REQUIRE_EQUALS(c(1, 0), 0);
+    REQUIRE_EQUALS(c(1, 1), 1);
+    REQUIRE_EQUALS(c(1, 2), 2);
+    REQUIRE_EQUALS(c(1, 3), 3);
+    REQUIRE_EQUALS(c(1, 4), 0);
+    REQUIRE_EQUALS(c(1, 5), 0);
 
-    REQUIRE(c(2, 0) == 0);
-    REQUIRE(c(2, 1) == 0);
-    REQUIRE(c(2, 2) == 1);
-    REQUIRE(c(2, 3) == 2);
-    REQUIRE(c(2, 4) == 3);
-    REQUIRE(c(2, 5) == 0);
+    REQUIRE_EQUALS(c(2, 0), 0);
+    REQUIRE_EQUALS(c(2, 1), 0);
+    REQUIRE_EQUALS(c(2, 2), 1);
+    REQUIRE_EQUALS(c(2, 3), 2);
+    REQUIRE_EQUALS(c(2, 4), 3);
+    REQUIRE_EQUALS(c(2, 5), 0);
 
-    REQUIRE(c(3, 0) == 0);
-    REQUIRE(c(3, 1) == 0);
-    REQUIRE(c(3, 2) == 0);
-    REQUIRE(c(3, 3) == 1);
-    REQUIRE(c(3, 4) == 2);
-    REQUIRE(c(3, 5) == 3);
+    REQUIRE_EQUALS(c(3, 0), 0);
+    REQUIRE_EQUALS(c(3, 1), 0);
+    REQUIRE_EQUALS(c(3, 2), 0);
+    REQUIRE_EQUALS(c(3, 3), 1);
+    REQUIRE_EQUALS(c(3, 4), 2);
+    REQUIRE_EQUALS(c(3, 5), 3);
 }
 
 TEMPLATE_TEST_CASE_2("convmtx/convmtx_2", "convmtx", Z, float, double) {
@@ -49,33 +49,33 @@ TEMPLATE_TEST_CASE_2("convmtx/convmtx_2", "convmtx", Z, float, double) {
 
     c = convmtx(a, 4);
 
-    REQUIRE(c(0, 0) == 1);
-    REQUIRE(c(0, 1) == 2);
-    REQUIRE(c(0, 2) == 3);
-    REQUIRE(c(0, 3) == 0);
-    REQUIRE(c(0, 4) == 0);
-    REQUIRE(c(0, 5) == 0);
+    REQUIRE_EQUALS(c(0, 0), 1);
+    REQUIRE_EQUALS(c(0, 1), 2);
+    REQUIRE_EQUALS(c(0, 2), 3);
+    REQUIRE_EQUALS(c(0, 3), 0);
+    REQUIRE_EQUALS(c(0, 4), 0);
+    REQUIRE_EQUALS(c(0, 5), 0);
 
-    REQUIRE(c(1, 0) == 0);
-    REQUIRE(c(1, 1) == 1);
-    REQUIRE(c(1, 2) == 2);
-    REQUIRE(c(1, 3) == 3);
-    REQUIRE(c(1, 4) == 0);
-    REQUIRE(c(1, 5) == 0);
+    REQUIRE_EQUALS(c(1, 0), 0);
+    REQUIRE_EQUALS(c(1, 1), 1);
+    REQUIRE_EQUALS(c(1, 2), 2);
+    REQUIRE_EQUALS(c(1, 3), 3);
+    REQUIRE_EQUALS(c(1, 4), 0);
+    REQUIRE_EQUALS(c(1, 5), 0);
 
-    REQUIRE(c(2, 0) == 0);
-    REQUIRE(c(2, 1) == 0);
-    REQUIRE(c(2, 2) == 1);
-    REQUIRE(c(2, 3) == 2);
-    REQUIRE(c(2, 4) == 3);
-    REQUIRE(c(2, 5) == 0);
+    REQUIRE_EQUALS(c(2, 0), 0);
+    REQUIRE_EQUALS(c(2, 1), 0);
+    REQUIRE_EQUALS(c(2, 2), 1);
+    REQUIRE_EQUALS(c(2, 3), 2);
+    REQUIRE_EQUALS(c(2, 4), 3);
+    REQUIRE_EQUALS(c(2, 5), 0);
 
-    REQUIRE(c(3, 0) == 0);
-    REQUIRE(c(3, 1) == 0);
-    REQUIRE(c(3, 2) == 0);
-    REQUIRE(c(3, 3) == 1);
-    REQUIRE(c(3, 4) == 2);
-    REQUIRE(c(3, 5) == 3);
+    REQUIRE_EQUALS(c(3, 0), 0);
+    REQUIRE_EQUALS(c(3, 1), 0);
+    REQUIRE_EQUALS(c(3, 2), 0);
+    REQUIRE_EQUALS(c(3, 3), 1);
+    REQUIRE_EQUALS(c(3, 4), 2);
+    REQUIRE_EQUALS(c(3, 5), 3);
 }
 
 TEMPLATE_TEST_CASE_2("convmtx/convmtx_3", "convmtx", Z, float, double) {
@@ -83,33 +83,33 @@ TEMPLATE_TEST_CASE_2("convmtx/convmtx_3", "convmtx", Z, float, double) {
     etl::fast_matrix_cm<Z, 4, 6> c;
     c = convmtx(a, 4);
 
-    REQUIRE(c(0, 0) == 1);
-    REQUIRE(c(0, 1) == 2);
-    REQUIRE(c(0, 2) == 3);
-    REQUIRE(c(0, 3) == 0);
-    REQUIRE(c(0, 4) == 0);
-    REQUIRE(c(0, 5) == 0);
+    REQUIRE_EQUALS(c(0, 0), 1);
+    REQUIRE_EQUALS(c(0, 1), 2);
+    REQUIRE_EQUALS(c(0, 2), 3);
+    REQUIRE_EQUALS(c(0, 3), 0);
+    REQUIRE_EQUALS(c(0, 4), 0);
+    REQUIRE_EQUALS(c(0, 5), 0);
 
-    REQUIRE(c(1, 0) == 0);
-    REQUIRE(c(1, 1) == 1);
-    REQUIRE(c(1, 2) == 2);
-    REQUIRE(c(1, 3) == 3);
-    REQUIRE(c(1, 4) == 0);
-    REQUIRE(c(1, 5) == 0);
+    REQUIRE_EQUALS(c(1, 0), 0);
+    REQUIRE_EQUALS(c(1, 1), 1);
+    REQUIRE_EQUALS(c(1, 2), 2);
+    REQUIRE_EQUALS(c(1, 3), 3);
+    REQUIRE_EQUALS(c(1, 4), 0);
+    REQUIRE_EQUALS(c(1, 5), 0);
 
-    REQUIRE(c(2, 0) == 0);
-    REQUIRE(c(2, 1) == 0);
-    REQUIRE(c(2, 2) == 1);
-    REQUIRE(c(2, 3) == 2);
-    REQUIRE(c(2, 4) == 3);
-    REQUIRE(c(2, 5) == 0);
+    REQUIRE_EQUALS(c(2, 0), 0);
+    REQUIRE_EQUALS(c(2, 1), 0);
+    REQUIRE_EQUALS(c(2, 2), 1);
+    REQUIRE_EQUALS(c(2, 3), 2);
+    REQUIRE_EQUALS(c(2, 4), 3);
+    REQUIRE_EQUALS(c(2, 5), 0);
 
-    REQUIRE(c(3, 0) == 0);
-    REQUIRE(c(3, 1) == 0);
-    REQUIRE(c(3, 2) == 0);
-    REQUIRE(c(3, 3) == 1);
-    REQUIRE(c(3, 4) == 2);
-    REQUIRE(c(3, 5) == 3);
+    REQUIRE_EQUALS(c(3, 0), 0);
+    REQUIRE_EQUALS(c(3, 1), 0);
+    REQUIRE_EQUALS(c(3, 2), 0);
+    REQUIRE_EQUALS(c(3, 3), 1);
+    REQUIRE_EQUALS(c(3, 4), 2);
+    REQUIRE_EQUALS(c(3, 5), 3);
 }
 
 TEMPLATE_TEST_CASE_2("convmtx2/convmtx2_1", "convmtx conv", Z, double, float) {
@@ -121,17 +121,17 @@ TEMPLATE_TEST_CASE_2("convmtx2/convmtx2_1", "convmtx conv", Z, double, float) {
     C1 = etl::convmtx2(I, 1, 1);
     C2 = etl::convmtx2_direct<1, 1>(I);
 
-    REQUIRE(C1(0, 0) == 8);
-    REQUIRE(C1(1, 0) == 3);
-    REQUIRE(C1(2, 0) == 4);
-    REQUIRE(C1(3, 0) == 1);
-    REQUIRE(C1(4, 0) == 5);
-    REQUIRE(C1(5, 0) == 9);
-    REQUIRE(C1(6, 0) == 6);
-    REQUIRE(C1(7, 0) == 7);
-    REQUIRE(C1(8, 0) == 2);
+    REQUIRE_EQUALS(C1(0, 0), 8);
+    REQUIRE_EQUALS(C1(1, 0), 3);
+    REQUIRE_EQUALS(C1(2, 0), 4);
+    REQUIRE_EQUALS(C1(3, 0), 1);
+    REQUIRE_EQUALS(C1(4, 0), 5);
+    REQUIRE_EQUALS(C1(5, 0), 9);
+    REQUIRE_EQUALS(C1(6, 0), 6);
+    REQUIRE_EQUALS(C1(7, 0), 7);
+    REQUIRE_EQUALS(C1(8, 0), 2);
 
-    REQUIRE(C1 == C2);
+    REQUIRE_EQUALS(C1, C2);
 }
 
 TEMPLATE_TEST_CASE_2("convmtx2/convmtx2_2", "convmtx conv", Z, double, float) {
@@ -143,37 +143,37 @@ TEMPLATE_TEST_CASE_2("convmtx2/convmtx2_2", "convmtx conv", Z, double, float) {
     C1 = etl::convmtx2(I, 2, 2);
     C2 = etl::convmtx2_direct<2, 2>(I);
 
-    REQUIRE(C1(0, 0) == 8);
-    REQUIRE(C1(0, 1) == 0);
-    REQUIRE(C1(0, 2) == 0);
-    REQUIRE(C1(0, 3) == 0);
+    REQUIRE_EQUALS(C1(0, 0), 8);
+    REQUIRE_EQUALS(C1(0, 1), 0);
+    REQUIRE_EQUALS(C1(0, 2), 0);
+    REQUIRE_EQUALS(C1(0, 3), 0);
 
-    REQUIRE(C1(1, 0) == 3);
-    REQUIRE(C1(1, 1) == 8);
-    REQUIRE(C1(1, 2) == 0);
-    REQUIRE(C1(1, 3) == 0);
+    REQUIRE_EQUALS(C1(1, 0), 3);
+    REQUIRE_EQUALS(C1(1, 1), 8);
+    REQUIRE_EQUALS(C1(1, 2), 0);
+    REQUIRE_EQUALS(C1(1, 3), 0);
 
-    REQUIRE(C1(2, 0) == 4);
-    REQUIRE(C1(2, 1) == 3);
-    REQUIRE(C1(2, 2) == 0);
-    REQUIRE(C1(2, 3) == 0);
+    REQUIRE_EQUALS(C1(2, 0), 4);
+    REQUIRE_EQUALS(C1(2, 1), 3);
+    REQUIRE_EQUALS(C1(2, 2), 0);
+    REQUIRE_EQUALS(C1(2, 3), 0);
 
-    REQUIRE(C1(3, 0) == 0);
-    REQUIRE(C1(3, 1) == 4);
-    REQUIRE(C1(3, 2) == 0);
-    REQUIRE(C1(3, 3) == 0);
+    REQUIRE_EQUALS(C1(3, 0), 0);
+    REQUIRE_EQUALS(C1(3, 1), 4);
+    REQUIRE_EQUALS(C1(3, 2), 0);
+    REQUIRE_EQUALS(C1(3, 3), 0);
 
-    REQUIRE(C1(10, 0) == 2);
-    REQUIRE(C1(10, 1) == 7);
-    REQUIRE(C1(10, 2) == 9);
-    REQUIRE(C1(10, 3) == 5);
+    REQUIRE_EQUALS(C1(10, 0), 2);
+    REQUIRE_EQUALS(C1(10, 1), 7);
+    REQUIRE_EQUALS(C1(10, 2), 9);
+    REQUIRE_EQUALS(C1(10, 3), 5);
 
-    REQUIRE(C1(15, 0) == 0);
-    REQUIRE(C1(15, 1) == 0);
-    REQUIRE(C1(15, 2) == 0);
-    REQUIRE(C1(15, 3) == 2);
+    REQUIRE_EQUALS(C1(15, 0), 0);
+    REQUIRE_EQUALS(C1(15, 1), 0);
+    REQUIRE_EQUALS(C1(15, 2), 0);
+    REQUIRE_EQUALS(C1(15, 3), 2);
 
-    REQUIRE(C1 == C2);
+    REQUIRE_EQUALS(C1, C2);
 }
 
 TEMPLATE_TEST_CASE_2("convmtx2/convmtx2_3", "convmtx conv", Z, double, float) {
@@ -191,8 +191,8 @@ TEMPLATE_TEST_CASE_2("convmtx2/convmtx2_3", "convmtx conv", Z, double, float) {
 
     etl::fast_matrix<Z, 4, 4> ref(etl::conv_2d_full(I, K));
 
-    REQUIRE(ref == b1);
-    REQUIRE(ref == b2);
+    REQUIRE_EQUALS(ref, b1);
+    REQUIRE_EQUALS(ref, b2);
 }
 
 TEMPLATE_TEST_CASE_2("convmtx2/convmtx2_4", "convmtx conv", Z, double, float) {
@@ -210,6 +210,6 @@ TEMPLATE_TEST_CASE_2("convmtx2/convmtx2_4", "convmtx conv", Z, double, float) {
 
     etl::dyn_matrix<Z> ref(etl::conv_2d_full(I, K));
 
-    REQUIRE(ref == b1);
-    REQUIRE(ref == b2);
+    REQUIRE_EQUALS(ref, b1);
+    REQUIRE_EQUALS(ref, b2);
 }

@@ -20,22 +20,22 @@ FFT1_TEST_CASE("fft_1d_r/0", "[fast][fft]") {
 
     Impl::apply(a, c);
 
-    REQUIRE(c(0).real() == Approx(T(4.0)));
-    REQUIRE(c(0).imag() == Approx(T(0.0)));
-    REQUIRE(c(1).real() == Approx(T(1.0)));
-    REQUIRE(c(1).imag() == Approx(T(-2.41421)));
-    REQUIRE(c(2).real() == Approx(T(0.0)));
-    REQUIRE(c(2).imag() == Approx(T(0.0)));
-    REQUIRE(c(3).real() == Approx(T(1.0)));
-    REQUIRE(c(3).imag() == Approx(T(-0.41421)));
-    REQUIRE(c(4).real() == Approx(T(0.0)));
-    REQUIRE(c(4).imag() == Approx(T(0.0)));
-    REQUIRE(c(5).real() == Approx(T(1.0)));
-    REQUIRE(c(5).imag() == Approx(T(0.41421)));
-    REQUIRE(c(6).real() == Approx(T(0.0)));
-    REQUIRE(c(6).imag() == Approx(T(0.0)));
-    REQUIRE(c(7).real() == Approx(T(1.0)));
-    REQUIRE(c(7).imag() == Approx(T(2.41421)));
+    REQUIRE_EQUALS_APPROX(c(0).real(), T(4.0));
+    REQUIRE_EQUALS_APPROX(c(0).imag(), T(0.0));
+    REQUIRE_EQUALS_APPROX(c(1).real(), T(1.0));
+    REQUIRE_EQUALS_APPROX(c(1).imag(), T(-2.41421));
+    REQUIRE_EQUALS_APPROX(c(2).real(), T(0.0));
+    REQUIRE_EQUALS_APPROX(c(2).imag(), T(0.0));
+    REQUIRE_EQUALS_APPROX(c(3).real(), T(1.0));
+    REQUIRE_EQUALS_APPROX(c(3).imag(), T(-0.41421));
+    REQUIRE_EQUALS_APPROX(c(4).real(), T(0.0));
+    REQUIRE_EQUALS_APPROX(c(4).imag(), T(0.0));
+    REQUIRE_EQUALS_APPROX(c(5).real(), T(1.0));
+    REQUIRE_EQUALS_APPROX(c(5).imag(), T(0.41421));
+    REQUIRE_EQUALS_APPROX(c(6).real(), T(0.0));
+    REQUIRE_EQUALS_APPROX(c(6).imag(), T(0.0));
+    REQUIRE_EQUALS_APPROX(c(7).real(), T(1.0));
+    REQUIRE_EQUALS_APPROX(c(7).imag(), T(2.41421));
 }
 
 FFT1_TEST_CASE("fft_1d_r/1", "[fast][fft]") {
@@ -44,16 +44,16 @@ FFT1_TEST_CASE("fft_1d_r/1", "[fast][fft]") {
 
     Impl::apply(a, c);
 
-    REQUIRE(c(0).real() == Approx(T(15.0)));
-    REQUIRE(c(0).imag() == Approx(T(0.0)));
-    REQUIRE(c(1).real() == Approx(T(-2.5)));
-    REQUIRE(c(1).imag() == Approx(T(3.440955)));
-    REQUIRE(c(2).real() == Approx(T(-2.5)));
-    REQUIRE(c(2).imag() == Approx(T(0.8123)));
-    REQUIRE(c(3).real() == Approx(T(-2.5)));
-    REQUIRE(c(3).imag() == Approx(T(-0.8123)));
-    REQUIRE(c(4).real() == Approx(T(-2.5)));
-    REQUIRE(c(4).imag() == Approx(T(-3.440955)));
+    REQUIRE_EQUALS_APPROX(c(0).real(), T(15.0));
+    REQUIRE_EQUALS_APPROX(c(0).imag(), T(0.0));
+    REQUIRE_EQUALS_APPROX(c(1).real(), T(-2.5));
+    REQUIRE_EQUALS_APPROX(c(1).imag(), T(3.440955));
+    REQUIRE_EQUALS_APPROX(c(2).real(), T(-2.5));
+    REQUIRE_EQUALS_APPROX(c(2).imag(), T(0.8123));
+    REQUIRE_EQUALS_APPROX(c(3).real(), T(-2.5));
+    REQUIRE_EQUALS_APPROX(c(3).imag(), T(-0.8123));
+    REQUIRE_EQUALS_APPROX(c(4).real(), T(-2.5));
+    REQUIRE_EQUALS_APPROX(c(4).imag(), T(-3.440955));
 }
 
 FFT1_TEST_CASE("fft_1d_r/2", "[fast][fft]") {
@@ -62,18 +62,18 @@ FFT1_TEST_CASE("fft_1d_r/2", "[fast][fft]") {
 
     Impl::apply(a, c);
 
-    REQUIRE(c(0).real() == Approx(T(2.4)));
-    REQUIRE(c(0).imag() == Approx(T(0.0)));
-    REQUIRE(c(1).real() == Approx(T(-3.7)));
-    REQUIRE(c(1).imag() == Approx(T(-5.71577)));
-    REQUIRE(c(2).real() == Approx(T(-2.7)));
-    REQUIRE(c(2).imag() == Approx(T(-6.40859)));
-    REQUIRE(c(3).real() == Approx(T(13.4)));
-    REQUIRE(c(3).imag() == Approx(T(0)));
-    REQUIRE(c(4).real() == Approx(T(-2.7)));
-    REQUIRE(c(4).imag() == Approx(T(6.40859)));
-    REQUIRE(c(5).real() == Approx(T(-3.7)));
-    REQUIRE(c(5).imag() == Approx(T(5.71577)));
+    REQUIRE_EQUALS_APPROX(c(0).real(), T(2.4));
+    REQUIRE_EQUALS_APPROX(c(0).imag(), T(0.0));
+    REQUIRE_EQUALS_APPROX(c(1).real(), T(-3.7));
+    REQUIRE_EQUALS_APPROX(c(1).imag(), T(-5.71577));
+    REQUIRE_EQUALS_APPROX(c(2).real(), T(-2.7));
+    REQUIRE_EQUALS_APPROX(c(2).imag(), T(-6.40859));
+    REQUIRE_EQUALS_APPROX(c(3).real(), T(13.4));
+    REQUIRE_EQUALS_APPROX(c(3).imag(), T(0));
+    REQUIRE_EQUALS_APPROX(c(4).real(), T(-2.7));
+    REQUIRE_EQUALS_APPROX(c(4).imag(), T(6.40859));
+    REQUIRE_EQUALS_APPROX(c(5).real(), T(-3.7));
+    REQUIRE_EQUALS_APPROX(c(5).imag(), T(5.71577));
 }
 
 FFT1_TEST_CASE("fft_1d_r/3", "[fast][fft]") {
@@ -82,32 +82,32 @@ FFT1_TEST_CASE("fft_1d_r/3", "[fast][fft]") {
 
     Impl::apply(a, c);
 
-    REQUIRE(c(0).real() == Approx(T(8.0)));
-    REQUIRE(c(0).imag() == Approx(T(0.0)));
-    REQUIRE(c(1).real() == Approx(T(3.23205)));
-    REQUIRE(c(1).imag() == Approx(T(0.86603)));
-    REQUIRE(c(2).real() == Approx(T(-1.5)));
-    REQUIRE(c(2).imag() == Approx(T(-0.86603)));
-    REQUIRE(c(3).real() == Approx(T(0.0)));
-    REQUIRE(c(3).imag() == Approx(T(0.0)));
-    REQUIRE(c(4).real() == Approx(T(0.5)));
-    REQUIRE(c(4).imag() == Approx(T(0.86603)));
-    REQUIRE(c(5).real() == Approx(T(-0.23205)));
-    REQUIRE(c(5).imag() == Approx(T(-0.86603)));
-    REQUIRE(c(6).real() == Approx(T(0.0)));
-    REQUIRE(c(6).imag() == Approx(T(0.0)));
+    REQUIRE_EQUALS_APPROX(c(0).real(), T(8.0));
+    REQUIRE_EQUALS_APPROX(c(0).imag(), T(0.0));
+    REQUIRE_EQUALS_APPROX(c(1).real(), T(3.23205));
+    REQUIRE_EQUALS_APPROX(c(1).imag(), T(0.86603));
+    REQUIRE_EQUALS_APPROX(c(2).real(), T(-1.5));
+    REQUIRE_EQUALS_APPROX(c(2).imag(), T(-0.86603));
+    REQUIRE_EQUALS_APPROX(c(3).real(), T(0.0));
+    REQUIRE_EQUALS_APPROX(c(3).imag(), T(0.0));
+    REQUIRE_EQUALS_APPROX(c(4).real(), T(0.5));
+    REQUIRE_EQUALS_APPROX(c(4).imag(), T(0.86603));
+    REQUIRE_EQUALS_APPROX(c(5).real(), T(-0.23205));
+    REQUIRE_EQUALS_APPROX(c(5).imag(), T(-0.86603));
+    REQUIRE_EQUALS_APPROX(c(6).real(), T(0.0));
+    REQUIRE_EQUALS_APPROX(c(6).imag(), T(0.0));
 
-    REQUIRE(c(7).real() == Approx(T(-0.23205)));
-    REQUIRE(c(7).imag() == Approx(T(0.86603)));
-    REQUIRE(c(8).real() == Approx(T(0.5)));
-    REQUIRE(c(8).imag() == Approx(T(-0.86603)));
-    REQUIRE(c(9).real() == Approx(T(0.0)));
-    REQUIRE(c(9).imag() == Approx(T(0.0)));
+    REQUIRE_EQUALS_APPROX(c(7).real(), T(-0.23205));
+    REQUIRE_EQUALS_APPROX(c(7).imag(), T(0.86603));
+    REQUIRE_EQUALS_APPROX(c(8).real(), T(0.5));
+    REQUIRE_EQUALS_APPROX(c(8).imag(), T(-0.86603));
+    REQUIRE_EQUALS_APPROX(c(9).real(), T(0.0));
+    REQUIRE_EQUALS_APPROX(c(9).imag(), T(0.0));
 
-    REQUIRE(c(10).real() == Approx(T(-1.5)));
-    REQUIRE(c(10).imag() == Approx(T(0.86603)));
-    REQUIRE(c(11).real() == Approx(T(3.23205)));
-    REQUIRE(c(11).imag() == Approx(T(-.86603)));
+    REQUIRE_EQUALS_APPROX(c(10).real(), T(-1.5));
+    REQUIRE_EQUALS_APPROX(c(10).imag(), T(0.86603));
+    REQUIRE_EQUALS_APPROX(c(11).real(), T(3.23205));
+    REQUIRE_EQUALS_APPROX(c(11).imag(), T(-.86603));
 }
 
 //fft_1d (complex)
@@ -124,16 +124,16 @@ FFT1_TEST_CASE("fft_1d_c/1", "[fast][fft]") {
 
     Impl::apply(a, c);
 
-    REQUIRE(c(0).real() == Approx(T(0.5)));
-    REQUIRE(c(0).imag() == Approx(T(5.5)));
-    REQUIRE(c(1).real() == Approx(T(5.626178)));
-    REQUIRE(c(1).imag() == Approx(T(0.376206)));
-    REQUIRE(c(2).real() == Approx(T(-1.067916)));
-    REQUIRE(c(2).imag() == Approx(T(-2.571198)));
-    REQUIRE(c(3).real() == Approx(T(-2.831271)));
-    REQUIRE(c(3).imag() == Approx(T(-2.709955)));
-    REQUIRE(c(4).real() == Approx(T(2.773009)));
-    REQUIRE(c(4).imag() == Approx(T(4.404947)));
+    REQUIRE_EQUALS_APPROX(c(0).real(), T(0.5));
+    REQUIRE_EQUALS_APPROX(c(0).imag(), T(5.5));
+    REQUIRE_EQUALS_APPROX(c(1).real(), T(5.626178));
+    REQUIRE_EQUALS_APPROX(c(1).imag(), T(0.376206));
+    REQUIRE_EQUALS_APPROX(c(2).real(), T(-1.067916));
+    REQUIRE_EQUALS_APPROX(c(2).imag(), T(-2.571198));
+    REQUIRE_EQUALS_APPROX(c(3).real(), T(-2.831271));
+    REQUIRE_EQUALS_APPROX(c(3).imag(), T(-2.709955));
+    REQUIRE_EQUALS_APPROX(c(4).real(), T(2.773009));
+    REQUIRE_EQUALS_APPROX(c(4).imag(), T(4.404947));
 }
 
 FFT1_TEST_CASE("fft_1d_c/2", "[fast][fft]") {
@@ -149,18 +149,18 @@ FFT1_TEST_CASE("fft_1d_c/2", "[fast][fft]") {
 
     Impl::apply(a, c);
 
-    REQUIRE(c(0).real() == Approx(T(1.0)));
-    REQUIRE(c(0).imag() == Approx(T(6.0)));
-    REQUIRE(c(1).real() == Approx(T(5.366025)));
-    REQUIRE(c(1).imag() == Approx(T(2.0)));
-    REQUIRE(c(2).real() == Approx(T(1.464102)));
-    REQUIRE(c(2).imag() == Approx(T(-4.098076)));
-    REQUIRE(c(3).real() == Approx(T(0)));
-    REQUIRE(c(3).imag() == Approx(T(-1.0)));
-    REQUIRE(c(4).real() == Approx(T(-5.464102)));
-    REQUIRE(c(4).imag() == Approx(T(1.098076)));
-    REQUIRE(c(5).real() == Approx(T(3.633975)));
-    REQUIRE(c(5).imag() == Approx(T(2.0)));
+    REQUIRE_EQUALS_APPROX(c(0).real(), T(1.0));
+    REQUIRE_EQUALS_APPROX(c(0).imag(), T(6.0));
+    REQUIRE_EQUALS_APPROX(c(1).real(), T(5.366025));
+    REQUIRE_EQUALS_APPROX(c(1).imag(), T(2.0));
+    REQUIRE_EQUALS_APPROX(c(2).real(), T(1.464102));
+    REQUIRE_EQUALS_APPROX(c(2).imag(), T(-4.098076));
+    REQUIRE_EQUALS_APPROX(c(3).real(), T(0));
+    REQUIRE_EQUALS_APPROX(c(3).imag(), T(-1.0));
+    REQUIRE_EQUALS_APPROX(c(4).real(), T(-5.464102));
+    REQUIRE_EQUALS_APPROX(c(4).imag(), T(1.098076));
+    REQUIRE_EQUALS_APPROX(c(5).real(), T(3.633975));
+    REQUIRE_EQUALS_APPROX(c(5).imag(), T(2.0));
 }
 
 FFT1_TEST_CASE("fft_1d_c/4", "[fast][fft]") {
@@ -174,16 +174,16 @@ FFT1_TEST_CASE("fft_1d_c/4", "[fast][fft]") {
 
     Impl::apply(a, a);
 
-    REQUIRE(a(0).real() == Approx(T(0.5)));
-    REQUIRE(a(0).imag() == Approx(T(5.5)));
-    REQUIRE(a(1).real() == Approx(T(5.626178)));
-    REQUIRE(a(1).imag() == Approx(T(0.376206)));
-    REQUIRE(a(2).real() == Approx(T(-1.067916)));
-    REQUIRE(a(2).imag() == Approx(T(-2.571198)));
-    REQUIRE(a(3).real() == Approx(T(-2.831271)));
-    REQUIRE(a(3).imag() == Approx(T(-2.709955)));
-    REQUIRE(a(4).real() == Approx(T(2.773009)));
-    REQUIRE(a(4).imag() == Approx(T(4.404947)));
+    REQUIRE_EQUALS_APPROX(a(0).real(), T(0.5));
+    REQUIRE_EQUALS_APPROX(a(0).imag(), T(5.5));
+    REQUIRE_EQUALS_APPROX(a(1).real(), T(5.626178));
+    REQUIRE_EQUALS_APPROX(a(1).imag(), T(0.376206));
+    REQUIRE_EQUALS_APPROX(a(2).real(), T(-1.067916));
+    REQUIRE_EQUALS_APPROX(a(2).imag(), T(-2.571198));
+    REQUIRE_EQUALS_APPROX(a(3).real(), T(-2.831271));
+    REQUIRE_EQUALS_APPROX(a(3).imag(), T(-2.709955));
+    REQUIRE_EQUALS_APPROX(a(4).real(), T(2.773009));
+    REQUIRE_EQUALS_APPROX(a(4).imag(), T(4.404947));
 }
 
 FFT1_TEST_CASE("fft_1d/5", "[fast][fft]") {
@@ -195,8 +195,8 @@ FFT1_TEST_CASE("fft_1d/5", "[fast][fft]") {
 
     Impl::apply(a, c);
 
-    REQUIRE(c(0) == std::complex<T>(3.0, 4.0));
-    REQUIRE(c(1) == std::complex<T>(-1.0, -2.0));
+    REQUIRE_EQUALS(c(0), std::complex<T>(3.0, 4.0));
+    REQUIRE_EQUALS(c(1), std::complex<T>(-1.0, -2.0));
 }
 
 FFT1_TEST_CASE("fft_1d/6", "[fast][fft]") {
@@ -209,9 +209,9 @@ FFT1_TEST_CASE("fft_1d/6", "[fast][fft]") {
 
     Impl::apply(a, c);
 
-    REQUIRE(c(0) == ComplexApprox<T>(6.0, 1.0));
-    REQUIRE(c(1) == ComplexApprox<T>(3.69615, 1.86603));
-    REQUIRE(c(2) == ComplexApprox<T>(-6.69615, 0.133975));
+    REQUIRE_EQUALS(c(0), ComplexApprox<T>(6.0, 1.0));
+    REQUIRE_EQUALS(c(1), ComplexApprox<T>(3.69615, 1.86603));
+    REQUIRE_EQUALS(c(2), ComplexApprox<T>(-6.69615, 0.133975));
 }
 
 FFT1_TEST_CASE("fft_1d/7", "[fast][fft]") {
@@ -225,10 +225,10 @@ FFT1_TEST_CASE("fft_1d/7", "[fast][fft]") {
 
     Impl::apply(a, c);
 
-    REQUIRE(c(0) == ComplexApprox<T>(9.0, 6.0));
-    REQUIRE(c(1) == ComplexApprox<T>(-1.0, 4.0));
-    REQUIRE(c(2) == ComplexApprox<T>(-3.0, -6.0));
-    REQUIRE(c(3) == ComplexApprox<T>(-1.0, 0.0));
+    REQUIRE_EQUALS(c(0), ComplexApprox<T>(9.0, 6.0));
+    REQUIRE_EQUALS(c(1), ComplexApprox<T>(-1.0, 4.0));
+    REQUIRE_EQUALS(c(2), ComplexApprox<T>(-3.0, -6.0));
+    REQUIRE_EQUALS(c(3), ComplexApprox<T>(-1.0, 0.0));
 }
 
 FFT1_TEST_CASE("fft_1d/8", "[fast][fft]") {
@@ -246,14 +246,14 @@ FFT1_TEST_CASE("fft_1d/8", "[fast][fft]") {
 
     Impl::apply(a, c);
 
-    REQUIRE(c(0) == ComplexApprox<T>(18.0, 12.0));
-    REQUIRE(c(1) == ComplexApprox<T>(0.0, 0.0));
-    REQUIRE(c(2) == ComplexApprox<T>(-2.0, 8.0));
-    REQUIRE(c(3) == ComplexApprox<T>(0.0, 0.0));
-    REQUIRE(c(4) == ComplexApprox<T>(-6.0, -12.0));
-    REQUIRE(c(5) == ComplexApprox<T>(0.0, 0.0));
-    REQUIRE(c(6) == ComplexApprox<T>(-2.0, 0.0));
-    REQUIRE(c(7) == ComplexApprox<T>(0.0, 0.0));
+    REQUIRE_EQUALS(c(0), ComplexApprox<T>(18.0, 12.0));
+    REQUIRE_EQUALS(c(1), ComplexApprox<T>(0.0, 0.0));
+    REQUIRE_EQUALS(c(2), ComplexApprox<T>(-2.0, 8.0));
+    REQUIRE_EQUALS(c(3), ComplexApprox<T>(0.0, 0.0));
+    REQUIRE_EQUALS(c(4), ComplexApprox<T>(-6.0, -12.0));
+    REQUIRE_EQUALS(c(5), ComplexApprox<T>(0.0, 0.0));
+    REQUIRE_EQUALS(c(6), ComplexApprox<T>(-2.0, 0.0));
+    REQUIRE_EQUALS(c(7), ComplexApprox<T>(0.0, 0.0));
 }
 
 FFT1_TEST_CASE("fft_1d/9", "[fast][fft]") {
@@ -269,12 +269,12 @@ FFT1_TEST_CASE("fft_1d/9", "[fast][fft]") {
 
     Impl::apply(a, c);
 
-    REQUIRE(c(0) == ComplexApprox<T>(12.0, 10.0));
-    REQUIRE(c(1) == ComplexApprox<T>(-4.23205, 0.133975));
-    REQUIRE(c(2) == ComplexApprox<T>(3.232051, 1.866025));
-    REQUIRE(c(3) == ComplexApprox<T>(-4.0, -8.0));
-    REQUIRE(c(4) == ComplexApprox<T>(-0.232051, 0.133975));
-    REQUIRE(c(5) == ComplexApprox<T>(-0.767949, 1.866025));
+    REQUIRE_EQUALS(c(0), ComplexApprox<T>(12.0, 10.0));
+    REQUIRE_EQUALS(c(1), ComplexApprox<T>(-4.23205, 0.133975));
+    REQUIRE_EQUALS(c(2), ComplexApprox<T>(3.232051, 1.866025));
+    REQUIRE_EQUALS(c(3), ComplexApprox<T>(-4.0, -8.0));
+    REQUIRE_EQUALS(c(4), ComplexApprox<T>(-0.232051, 0.133975));
+    REQUIRE_EQUALS(c(5), ComplexApprox<T>(-0.767949, 1.866025));
 }
 
 FFT1_TEST_CASE("fft_1d/10", "[fast][fft]") {
@@ -295,17 +295,17 @@ FFT1_TEST_CASE("fft_1d/10", "[fast][fft]") {
 
     Impl::apply(a, c);
 
-    REQUIRE(c(0) == ComplexApprox<T>(22.0, 17.0));
-    REQUIRE(c(1) == ComplexApprox<T>(0.773306, -1.773203));
-    REQUIRE(c(2) == ComplexApprox<T>(-6.775364, 2.944859));
-    REQUIRE(c(3) == ComplexApprox<T>(-2.233971, +0.139025));
-    REQUIRE(c(4) == ComplexApprox<T>(6.847435, -5.023187));
-    REQUIRE(c(5) == ComplexApprox<T>(9.607112, -6.146752));
-    REQUIRE(c(6) == ComplexApprox<T>(-9.488755, 3.401181));
-    REQUIRE(c(7) == ComplexApprox<T>(-3.653803, 0.227432));
-    REQUIRE(c(8) == ComplexApprox<T>(-2.030497, 0.037287));
-    REQUIRE(c(9) == ComplexApprox<T>(-3.910758, 1.512556));
-    REQUIRE(c(10) == ComplexApprox<T>(-0.134705, -1.319198));
+    REQUIRE_EQUALS(c(0), ComplexApprox<T>(22.0, 17.0));
+    REQUIRE_EQUALS(c(1), ComplexApprox<T>(0.773306, -1.773203));
+    REQUIRE_EQUALS(c(2), ComplexApprox<T>(-6.775364, 2.944859));
+    REQUIRE_EQUALS(c(3), ComplexApprox<T>(-2.233971, +0.139025));
+    REQUIRE_EQUALS(c(4), ComplexApprox<T>(6.847435, -5.023187));
+    REQUIRE_EQUALS(c(5), ComplexApprox<T>(9.607112, -6.146752));
+    REQUIRE_EQUALS(c(6), ComplexApprox<T>(-9.488755, 3.401181));
+    REQUIRE_EQUALS(c(7), ComplexApprox<T>(-3.653803, 0.227432));
+    REQUIRE_EQUALS(c(8), ComplexApprox<T>(-2.030497, 0.037287));
+    REQUIRE_EQUALS(c(9), ComplexApprox<T>(-3.910758, 1.512556));
+    REQUIRE_EQUALS(c(10), ComplexApprox<T>(-0.134705, -1.319198));
 }
 
 FFT1_TEST_CASE("fft_1d/11", "[fast][fft]") {
@@ -322,13 +322,13 @@ FFT1_TEST_CASE("fft_1d/11", "[fast][fft]") {
 
     Impl::apply(a, c);
 
-    REQUIRE(c(0) == ComplexApprox<T>(2.5, 7.5));
-    REQUIRE(c(1) == ComplexApprox<T>(4.679386, 4.499176));
-    REQUIRE(c(2) == ComplexApprox<T>(2.588507, -2.609462));
-    REQUIRE(c(3) == ComplexApprox<T>(-2.552005, -2.028766));
-    REQUIRE(c(4) == ComplexApprox<T>(-1.710704, -4.124027));
-    REQUIRE(c(5) == ComplexApprox<T>(-3.115654, 3.576274));
-    REQUIRE(c(6) == ComplexApprox<T>(4.61047, 0.186805));
+    REQUIRE_EQUALS(c(0), ComplexApprox<T>(2.5, 7.5));
+    REQUIRE_EQUALS(c(1), ComplexApprox<T>(4.679386, 4.499176));
+    REQUIRE_EQUALS(c(2), ComplexApprox<T>(2.588507, -2.609462));
+    REQUIRE_EQUALS(c(3), ComplexApprox<T>(-2.552005, -2.028766));
+    REQUIRE_EQUALS(c(4), ComplexApprox<T>(-1.710704, -4.124027));
+    REQUIRE_EQUALS(c(5), ComplexApprox<T>(-3.115654, 3.576274));
+    REQUIRE_EQUALS(c(6), ComplexApprox<T>(4.61047, 0.186805));
 }
 
 /* fft_many tests */
@@ -339,27 +339,27 @@ FFT1_MANY_TEST_CASE("fft_1d_many/1", "[fast][fft]") {
 
     Impl::apply(a, c);
 
-    REQUIRE(c(0, 0).real() == Approx(T(15.0)));
-    REQUIRE(c(0, 0).imag() == Approx(T(0.0)));
-    REQUIRE(c(0, 1).real() == Approx(T(-2.5)));
-    REQUIRE(c(0, 1).imag() == Approx(T(3.440955)));
-    REQUIRE(c(0, 2).real() == Approx(T(-2.5)));
-    REQUIRE(c(0, 2).imag() == Approx(T(0.8123)));
-    REQUIRE(c(0, 3).real() == Approx(T(-2.5)));
-    REQUIRE(c(0, 3).imag() == Approx(T(-0.8123)));
-    REQUIRE(c(0, 4).real() == Approx(T(-2.5)));
-    REQUIRE(c(0, 4).imag() == Approx(T(-3.440955)));
+    REQUIRE_EQUALS_APPROX(c(0, 0).real(), T(15.0));
+    REQUIRE_EQUALS_APPROX(c(0, 0).imag(), T(0.0));
+    REQUIRE_EQUALS_APPROX(c(0, 1).real(), T(-2.5));
+    REQUIRE_EQUALS_APPROX(c(0, 1).imag(), T(3.440955));
+    REQUIRE_EQUALS_APPROX(c(0, 2).real(), T(-2.5));
+    REQUIRE_EQUALS_APPROX(c(0, 2).imag(), T(0.8123));
+    REQUIRE_EQUALS_APPROX(c(0, 3).real(), T(-2.5));
+    REQUIRE_EQUALS_APPROX(c(0, 3).imag(), T(-0.8123));
+    REQUIRE_EQUALS_APPROX(c(0, 4).real(), T(-2.5));
+    REQUIRE_EQUALS_APPROX(c(0, 4).imag(), T(-3.440955));
 
-    REQUIRE(c(1, 0).real() == Approx(T(15.0)));
-    REQUIRE(c(1, 0).imag() == Approx(T(0.0)));
-    REQUIRE(c(1, 1).real() == Approx(T(-2.5)));
-    REQUIRE(c(1, 1).imag() == Approx(T(3.440955)));
-    REQUIRE(c(1, 2).real() == Approx(T(-2.5)));
-    REQUIRE(c(1, 2).imag() == Approx(T(0.8123)));
-    REQUIRE(c(1, 3).real() == Approx(T(-2.5)));
-    REQUIRE(c(1, 3).imag() == Approx(T(-0.8123)));
-    REQUIRE(c(1, 4).real() == Approx(T(-2.5)));
-    REQUIRE(c(1, 4).imag() == Approx(T(-3.440955)));
+    REQUIRE_EQUALS_APPROX(c(1, 0).real(), T(15.0));
+    REQUIRE_EQUALS_APPROX(c(1, 0).imag(), T(0.0));
+    REQUIRE_EQUALS_APPROX(c(1, 1).real(), T(-2.5));
+    REQUIRE_EQUALS_APPROX(c(1, 1).imag(), T(3.440955));
+    REQUIRE_EQUALS_APPROX(c(1, 2).real(), T(-2.5));
+    REQUIRE_EQUALS_APPROX(c(1, 2).imag(), T(0.8123));
+    REQUIRE_EQUALS_APPROX(c(1, 3).real(), T(-2.5));
+    REQUIRE_EQUALS_APPROX(c(1, 3).imag(), T(-0.8123));
+    REQUIRE_EQUALS_APPROX(c(1, 4).real(), T(-2.5));
+    REQUIRE_EQUALS_APPROX(c(1, 4).imag(), T(-3.440955));
 }
 
 FFT1_MANY_TEST_CASE("fft_1d_many/2", "[fast][fft]") {
@@ -368,27 +368,27 @@ FFT1_MANY_TEST_CASE("fft_1d_many/2", "[fast][fft]") {
 
     Impl::apply(a, c);
 
-    REQUIRE(c(0, 0).real() == Approx(T(15.0)));
-    REQUIRE(c(0, 0).imag() == Approx(T(0.0)));
-    REQUIRE(c(0, 1).real() == Approx(T(-2.5)));
-    REQUIRE(c(0, 1).imag() == Approx(T(3.440955)));
-    REQUIRE(c(0, 2).real() == Approx(T(-2.5)));
-    REQUIRE(c(0, 2).imag() == Approx(T(0.8123)));
-    REQUIRE(c(0, 3).real() == Approx(T(-2.5)));
-    REQUIRE(c(0, 3).imag() == Approx(T(-0.8123)));
-    REQUIRE(c(0, 4).real() == Approx(T(-2.5)));
-    REQUIRE(c(0, 4).imag() == Approx(T(-3.440955)));
+    REQUIRE_EQUALS_APPROX(c(0, 0).real(), T(15.0));
+    REQUIRE_EQUALS_APPROX(c(0, 0).imag(), T(0.0));
+    REQUIRE_EQUALS_APPROX(c(0, 1).real(), T(-2.5));
+    REQUIRE_EQUALS_APPROX(c(0, 1).imag(), T(3.440955));
+    REQUIRE_EQUALS_APPROX(c(0, 2).real(), T(-2.5));
+    REQUIRE_EQUALS_APPROX(c(0, 2).imag(), T(0.8123));
+    REQUIRE_EQUALS_APPROX(c(0, 3).real(), T(-2.5));
+    REQUIRE_EQUALS_APPROX(c(0, 3).imag(), T(-0.8123));
+    REQUIRE_EQUALS_APPROX(c(0, 4).real(), T(-2.5));
+    REQUIRE_EQUALS_APPROX(c(0, 4).imag(), T(-3.440955));
 
-    REQUIRE(c(1, 0).real() == Approx(T(40.0)));
-    REQUIRE(c(1, 0).imag() == Approx(T(0.0)));
-    REQUIRE(c(1, 1).real() == Approx(T(-2.5)));
-    REQUIRE(c(1, 1).imag() == Approx(T(3.440955)));
-    REQUIRE(c(1, 2).real() == Approx(T(-2.5)));
-    REQUIRE(c(1, 2).imag() == Approx(T(0.8123)));
-    REQUIRE(c(1, 3).real() == Approx(T(-2.5)));
-    REQUIRE(c(1, 3).imag() == Approx(T(-0.8123)));
-    REQUIRE(c(1, 4).real() == Approx(T(-2.5)));
-    REQUIRE(c(1, 4).imag() == Approx(T(-3.440955)));
+    REQUIRE_EQUALS_APPROX(c(1, 0).real(), T(40.0));
+    REQUIRE_EQUALS_APPROX(c(1, 0).imag(), T(0.0));
+    REQUIRE_EQUALS_APPROX(c(1, 1).real(), T(-2.5));
+    REQUIRE_EQUALS_APPROX(c(1, 1).imag(), T(3.440955));
+    REQUIRE_EQUALS_APPROX(c(1, 2).real(), T(-2.5));
+    REQUIRE_EQUALS_APPROX(c(1, 2).imag(), T(0.8123));
+    REQUIRE_EQUALS_APPROX(c(1, 3).real(), T(-2.5));
+    REQUIRE_EQUALS_APPROX(c(1, 3).imag(), T(-0.8123));
+    REQUIRE_EQUALS_APPROX(c(1, 4).real(), T(-2.5));
+    REQUIRE_EQUALS_APPROX(c(1, 4).imag(), T(-3.440955));
 }
 
 FFT1_MANY_TEST_CASE("fft_1d_many/3", "[fast][fft]") {
@@ -397,27 +397,27 @@ FFT1_MANY_TEST_CASE("fft_1d_many/3", "[fast][fft]") {
 
     Impl::apply(a, c);
 
-    REQUIRE(c(0, 0).real() == Approx(T(15.0)));
-    REQUIRE(c(0, 0).imag() == Approx(T(0.0)));
-    REQUIRE(c(0, 1).real() == Approx(T(-2.5)));
-    REQUIRE(c(0, 1).imag() == Approx(T(3.440955)));
-    REQUIRE(c(0, 2).real() == Approx(T(-2.5)));
-    REQUIRE(c(0, 2).imag() == Approx(T(0.8123)));
-    REQUIRE(c(0, 3).real() == Approx(T(-2.5)));
-    REQUIRE(c(0, 3).imag() == Approx(T(-0.8123)));
-    REQUIRE(c(0, 4).real() == Approx(T(-2.5)));
-    REQUIRE(c(0, 4).imag() == Approx(T(-3.440955)));
+    REQUIRE_EQUALS_APPROX(c(0, 0).real(), T(15.0));
+    REQUIRE_EQUALS_APPROX(c(0, 0).imag(), T(0.0));
+    REQUIRE_EQUALS_APPROX(c(0, 1).real(), T(-2.5));
+    REQUIRE_EQUALS_APPROX(c(0, 1).imag(), T(3.440955));
+    REQUIRE_EQUALS_APPROX(c(0, 2).real(), T(-2.5));
+    REQUIRE_EQUALS_APPROX(c(0, 2).imag(), T(0.8123));
+    REQUIRE_EQUALS_APPROX(c(0, 3).real(), T(-2.5));
+    REQUIRE_EQUALS_APPROX(c(0, 3).imag(), T(-0.8123));
+    REQUIRE_EQUALS_APPROX(c(0, 4).real(), T(-2.5));
+    REQUIRE_EQUALS_APPROX(c(0, 4).imag(), T(-3.440955));
 
-    REQUIRE(c(1, 0).real() == Approx(T(40.0)));
-    REQUIRE(c(1, 0).imag() == Approx(T(0.0)));
-    REQUIRE(c(1, 1).real() == Approx(T(-2.5)));
-    REQUIRE(c(1, 1).imag() == Approx(T(3.440955)));
-    REQUIRE(c(1, 2).real() == Approx(T(-2.5)));
-    REQUIRE(c(1, 2).imag() == Approx(T(0.8123)));
-    REQUIRE(c(1, 3).real() == Approx(T(-2.5)));
-    REQUIRE(c(1, 3).imag() == Approx(T(-0.8123)));
-    REQUIRE(c(1, 4).real() == Approx(T(-2.5)));
-    REQUIRE(c(1, 4).imag() == Approx(T(-3.440955)));
+    REQUIRE_EQUALS_APPROX(c(1, 0).real(), T(40.0));
+    REQUIRE_EQUALS_APPROX(c(1, 0).imag(), T(0.0));
+    REQUIRE_EQUALS_APPROX(c(1, 1).real(), T(-2.5));
+    REQUIRE_EQUALS_APPROX(c(1, 1).imag(), T(3.440955));
+    REQUIRE_EQUALS_APPROX(c(1, 2).real(), T(-2.5));
+    REQUIRE_EQUALS_APPROX(c(1, 2).imag(), T(0.8123));
+    REQUIRE_EQUALS_APPROX(c(1, 3).real(), T(-2.5));
+    REQUIRE_EQUALS_APPROX(c(1, 3).imag(), T(-0.8123));
+    REQUIRE_EQUALS_APPROX(c(1, 4).real(), T(-2.5));
+    REQUIRE_EQUALS_APPROX(c(1, 4).imag(), T(-3.440955));
 }
 
 // In place operations
@@ -433,16 +433,16 @@ TEMPLATE_TEST_CASE_2("fft_1d_c/3", "[fast][fft]", Z, float, double) {
 
     a.fft_inplace();
 
-    REQUIRE(a(0).real() == Approx(Z(0.5)));
-    REQUIRE(a(0).imag() == Approx(Z(5.5)));
-    REQUIRE(a(1).real() == Approx(Z(5.626178)));
-    REQUIRE(a(1).imag() == Approx(Z(0.376206)));
-    REQUIRE(a(2).real() == Approx(Z(-1.067916)));
-    REQUIRE(a(2).imag() == Approx(Z(-2.571198)));
-    REQUIRE(a(3).real() == Approx(Z(-2.831271)));
-    REQUIRE(a(3).imag() == Approx(Z(-2.709955)));
-    REQUIRE(a(4).real() == Approx(Z(2.773009)));
-    REQUIRE(a(4).imag() == Approx(Z(4.404947)));
+    REQUIRE_EQUALS_APPROX(a(0).real(), Z(0.5));
+    REQUIRE_EQUALS_APPROX(a(0).imag(), Z(5.5));
+    REQUIRE_EQUALS_APPROX(a(1).real(), Z(5.626178));
+    REQUIRE_EQUALS_APPROX(a(1).imag(), Z(0.376206));
+    REQUIRE_EQUALS_APPROX(a(2).real(), Z(-1.067916));
+    REQUIRE_EQUALS_APPROX(a(2).imag(), Z(-2.571198));
+    REQUIRE_EQUALS_APPROX(a(3).real(), Z(-2.831271));
+    REQUIRE_EQUALS_APPROX(a(3).imag(), Z(-2.709955));
+    REQUIRE_EQUALS_APPROX(a(4).real(), Z(2.773009));
+    REQUIRE_EQUALS_APPROX(a(4).imag(), Z(4.404947));
 }
 
 TEMPLATE_TEST_CASE_2("fft_1d_many/4", "[fast][fft]", Z, float, double) {
@@ -450,27 +450,27 @@ TEMPLATE_TEST_CASE_2("fft_1d_many/4", "[fast][fft]", Z, float, double) {
 
     a.fft_many_inplace();
 
-    REQUIRE(a(0, 0).real() == Approx(Z(15.0)));
-    REQUIRE(a(0, 0).imag() == Approx(Z(0.0)));
-    REQUIRE(a(0, 1).real() == Approx(Z(-2.5)));
-    REQUIRE(a(0, 1).imag() == Approx(Z(3.440955)));
-    REQUIRE(a(0, 2).real() == Approx(Z(-2.5)));
-    REQUIRE(a(0, 2).imag() == Approx(Z(0.8123)));
-    REQUIRE(a(0, 3).real() == Approx(Z(-2.5)));
-    REQUIRE(a(0, 3).imag() == Approx(Z(-0.8123)));
-    REQUIRE(a(0, 4).real() == Approx(Z(-2.5)));
-    REQUIRE(a(0, 4).imag() == Approx(Z(-3.440955)));
+    REQUIRE_EQUALS_APPROX(a(0, 0).real(), Z(15.0));
+    REQUIRE_EQUALS_APPROX(a(0, 0).imag(), Z(0.0));
+    REQUIRE_EQUALS_APPROX(a(0, 1).real(), Z(-2.5));
+    REQUIRE_EQUALS_APPROX(a(0, 1).imag(), Z(3.440955));
+    REQUIRE_EQUALS_APPROX(a(0, 2).real(), Z(-2.5));
+    REQUIRE_EQUALS_APPROX(a(0, 2).imag(), Z(0.8123));
+    REQUIRE_EQUALS_APPROX(a(0, 3).real(), Z(-2.5));
+    REQUIRE_EQUALS_APPROX(a(0, 3).imag(), Z(-0.8123));
+    REQUIRE_EQUALS_APPROX(a(0, 4).real(), Z(-2.5));
+    REQUIRE_EQUALS_APPROX(a(0, 4).imag(), Z(-3.440955));
 
-    REQUIRE(a(1, 0).real() == Approx(Z(40.0)));
-    REQUIRE(a(1, 0).imag() == Approx(Z(0.0)));
-    REQUIRE(a(1, 1).real() == Approx(Z(-2.5)));
-    REQUIRE(a(1, 1).imag() == Approx(Z(3.440955)));
-    REQUIRE(a(1, 2).real() == Approx(Z(-2.5)));
-    REQUIRE(a(1, 2).imag() == Approx(Z(0.8123)));
-    REQUIRE(a(1, 3).real() == Approx(Z(-2.5)));
-    REQUIRE(a(1, 3).imag() == Approx(Z(-0.8123)));
-    REQUIRE(a(1, 4).real() == Approx(Z(-2.5)));
-    REQUIRE(a(1, 4).imag() == Approx(Z(-3.440955)));
+    REQUIRE_EQUALS_APPROX(a(1, 0).real(), Z(40.0));
+    REQUIRE_EQUALS_APPROX(a(1, 0).imag(), Z(0.0));
+    REQUIRE_EQUALS_APPROX(a(1, 1).real(), Z(-2.5));
+    REQUIRE_EQUALS_APPROX(a(1, 1).imag(), Z(3.440955));
+    REQUIRE_EQUALS_APPROX(a(1, 2).real(), Z(-2.5));
+    REQUIRE_EQUALS_APPROX(a(1, 2).imag(), Z(0.8123));
+    REQUIRE_EQUALS_APPROX(a(1, 3).real(), Z(-2.5));
+    REQUIRE_EQUALS_APPROX(a(1, 3).imag(), Z(-0.8123));
+    REQUIRE_EQUALS_APPROX(a(1, 4).real(), Z(-2.5));
+    REQUIRE_EQUALS_APPROX(a(1, 4).imag(), Z(-3.440955));
 }
 
 TEMPLATE_TEST_CASE_2("fft_1d_many/5", "[fast][fft]", Z, float, double) {
@@ -485,7 +485,7 @@ TEMPLATE_TEST_CASE_2("fft_1d_many/5", "[fast][fft]", Z, float, double) {
     }
 
     for(std::size_t i = 0; i < a.size(); ++i){
-        REQUIRE(c_1[i] == c_2[i]);
+        REQUIRE_EQUALS(c_1[i], c_2[i]);
     }
 }
 
@@ -501,6 +501,6 @@ TEMPLATE_TEST_CASE_2("fft_1d_many/6", "[fast][fft]", Z, float, double) {
     }
 
     for(std::size_t i = 0; i < a.size(); ++i){
-        REQUIRE(c_1[i] == c_2[i]);
+        REQUIRE_EQUALS(c_1[i], c_2[i]);
     }
 }

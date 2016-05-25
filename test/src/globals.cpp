@@ -10,368 +10,368 @@
 TEST_CASE("globals/1", "[globals]") {
     etl::fast_matrix<double, 2, 2> a;
 
-    REQUIRE(a.is_square());
-    REQUIRE(is_square(a));
+    REQUIRE_DIRECT(a.is_square());
+    REQUIRE_DIRECT(is_square(a));
 
-    REQUIRE(!a.is_rectangular());
-    REQUIRE(!is_rectangular(a));
+    REQUIRE_DIRECT(!a.is_rectangular());
+    REQUIRE_DIRECT(!is_rectangular(a));
 
     decltype(auto) expr = a + a;
 
-    REQUIRE(expr.is_square());
-    REQUIRE(is_square(a + a));
+    REQUIRE_DIRECT(expr.is_square());
+    REQUIRE_DIRECT(is_square(a + a));
 
-    REQUIRE(!expr.is_rectangular());
-    REQUIRE(!is_rectangular(a + a));
+    REQUIRE_DIRECT(!expr.is_rectangular());
+    REQUIRE_DIRECT(!is_rectangular(a + a));
 }
 
 TEST_CASE("globals/2", "[globals]") {
     etl::fast_matrix<double, 3, 2> a;
 
-    REQUIRE(!a.is_square());
-    REQUIRE(!is_square(a));
+    REQUIRE_DIRECT(!a.is_square());
+    REQUIRE_DIRECT(!is_square(a));
 
-    REQUIRE(a.is_rectangular());
-    REQUIRE(is_rectangular(a));
+    REQUIRE_DIRECT(a.is_rectangular());
+    REQUIRE_DIRECT(is_rectangular(a));
 
     decltype(auto) expr = a + a;
 
-    REQUIRE(!expr.is_square());
-    REQUIRE(!is_square(a + a));
+    REQUIRE_DIRECT(!expr.is_square());
+    REQUIRE_DIRECT(!is_square(a + a));
 
-    REQUIRE(expr.is_rectangular());
-    REQUIRE(is_rectangular(a + a));
+    REQUIRE_DIRECT(expr.is_rectangular());
+    REQUIRE_DIRECT(is_rectangular(a + a));
 }
 
 TEST_CASE("globals/3", "[globals]") {
     etl::fast_matrix<double, 3, 2, 2> a;
 
-    REQUIRE(a.is_sub_square());
-    REQUIRE(is_sub_square(a));
+    REQUIRE_DIRECT(a.is_sub_square());
+    REQUIRE_DIRECT(is_sub_square(a));
 
-    REQUIRE(is_square(a(1)));
+    REQUIRE_DIRECT(is_square(a(1)));
 
-    REQUIRE(!a.is_sub_rectangular());
-    REQUIRE(!is_sub_rectangular(a));
+    REQUIRE_DIRECT(!a.is_sub_rectangular());
+    REQUIRE_DIRECT(!is_sub_rectangular(a));
 
     decltype(auto) expr = a + a;
 
-    REQUIRE(expr.is_sub_square());
-    REQUIRE(is_sub_square(a + a));
+    REQUIRE_DIRECT(expr.is_sub_square());
+    REQUIRE_DIRECT(is_sub_square(a + a));
 
-    REQUIRE(!expr.is_sub_rectangular());
-    REQUIRE(!is_sub_rectangular(a + a));
+    REQUIRE_DIRECT(!expr.is_sub_rectangular());
+    REQUIRE_DIRECT(!is_sub_rectangular(a + a));
 }
 
 TEST_CASE("globals/4", "[globals]") {
     etl::fast_matrix<double, 3, 2, 3> a;
 
-    REQUIRE(!a.is_sub_square());
-    REQUIRE(!is_sub_square(a));
+    REQUIRE_DIRECT(!a.is_sub_square());
+    REQUIRE_DIRECT(!is_sub_square(a));
 
-    REQUIRE(is_rectangular(a(1)));
+    REQUIRE_DIRECT(is_rectangular(a(1)));
 
-    REQUIRE(a.is_sub_rectangular());
-    REQUIRE(is_sub_rectangular(a));
+    REQUIRE_DIRECT(a.is_sub_rectangular());
+    REQUIRE_DIRECT(is_sub_rectangular(a));
 
     decltype(auto) expr = a + a;
 
-    REQUIRE(!expr.is_sub_square());
-    REQUIRE(!is_sub_square(a + a));
+    REQUIRE_DIRECT(!expr.is_sub_square());
+    REQUIRE_DIRECT(!is_sub_square(a + a));
 
-    REQUIRE(expr.is_sub_rectangular());
-    REQUIRE(is_sub_rectangular(a + a));
+    REQUIRE_DIRECT(expr.is_sub_rectangular());
+    REQUIRE_DIRECT(is_sub_rectangular(a + a));
 }
 
 TEST_CASE("globals/is_symmetric/1", "[globals]") {
     etl::fast_matrix<double, 2, 2> a{1.0, 2.0, 2.0, 1.0};
 
-    REQUIRE(a.is_symmetric());
-    REQUIRE(is_symmetric(a));
+    REQUIRE_DIRECT(a.is_symmetric());
+    REQUIRE_DIRECT(is_symmetric(a));
 
     decltype(auto) expr = a + a;
 
-    REQUIRE(expr.is_symmetric());
-    REQUIRE(is_symmetric(expr));
+    REQUIRE_DIRECT(expr.is_symmetric());
+    REQUIRE_DIRECT(is_symmetric(expr));
 }
 
 TEST_CASE("globals/is_symmetric/2", "[globals]") {
     etl::fast_matrix<double, 3, 3> a{1.0, 2.0, 3.0, 2.0, 2.0, 4.0, 3.0, 4.0, 3.0};
 
-    REQUIRE(a.is_symmetric());
-    REQUIRE(is_symmetric(a));
+    REQUIRE_DIRECT(a.is_symmetric());
+    REQUIRE_DIRECT(is_symmetric(a));
 
     decltype(auto) expr = a + a;
 
-    REQUIRE(expr.is_symmetric());
-    REQUIRE(is_symmetric(expr));
+    REQUIRE_DIRECT(expr.is_symmetric());
+    REQUIRE_DIRECT(is_symmetric(expr));
 }
 
 TEST_CASE("globals/is_symmetric/3", "[globals]") {
     etl::fast_matrix<double, 3, 3> a{2.0, 2.0, 3.0, 5.0, 2.0, 4.0, 3.0, 4.0, 3.0};
     etl::fast_matrix<double, 9, 1> b{2.0, 2.0, 3.0, 5.0, 2.0, 4.0, 3.0, 4.0, 3.0};
 
-    REQUIRE(!a.is_symmetric());
-    REQUIRE(!is_symmetric(a));
+    REQUIRE_DIRECT(!a.is_symmetric());
+    REQUIRE_DIRECT(!is_symmetric(a));
 
     decltype(auto) expr = a + a;
 
-    REQUIRE(!expr.is_symmetric());
-    REQUIRE(!is_symmetric(expr));
+    REQUIRE_DIRECT(!expr.is_symmetric());
+    REQUIRE_DIRECT(!is_symmetric(expr));
 
-    REQUIRE(!b.is_symmetric());
-    REQUIRE(!is_symmetric(b));
+    REQUIRE_DIRECT(!b.is_symmetric());
+    REQUIRE_DIRECT(!is_symmetric(b));
 }
 
 TEST_CASE("globals/is_lower_triangular/1", "[globals]") {
     etl::fast_matrix<double, 2, 2> a{1.0, 0.0, 2.0, 1.0};
 
-    REQUIRE(a.is_lower_triangular());
-    REQUIRE(is_lower_triangular(a));
-    REQUIRE(a.is_triangular());
-    REQUIRE(is_triangular(a));
+    REQUIRE_DIRECT(a.is_lower_triangular());
+    REQUIRE_DIRECT(is_lower_triangular(a));
+    REQUIRE_DIRECT(a.is_triangular());
+    REQUIRE_DIRECT(is_triangular(a));
 
     decltype(auto) expr = a + a;
 
-    REQUIRE(expr.is_lower_triangular());
-    REQUIRE(is_lower_triangular(expr));
-    REQUIRE(expr.is_triangular());
-    REQUIRE(is_triangular(expr));
+    REQUIRE_DIRECT(expr.is_lower_triangular());
+    REQUIRE_DIRECT(is_lower_triangular(expr));
+    REQUIRE_DIRECT(expr.is_triangular());
+    REQUIRE_DIRECT(is_triangular(expr));
 }
 
 TEST_CASE("globals/is_lower_triangular/2", "[globals]") {
     etl::fast_matrix<double, 3, 3> a{1.0, 0.0, 0.0, 2.0, 2.0, 0.0, 3.0, 4.0, 3.0};
 
-    REQUIRE(a.is_lower_triangular());
-    REQUIRE(is_lower_triangular(a));
-    REQUIRE(a.is_triangular());
-    REQUIRE(is_triangular(a));
+    REQUIRE_DIRECT(a.is_lower_triangular());
+    REQUIRE_DIRECT(is_lower_triangular(a));
+    REQUIRE_DIRECT(a.is_triangular());
+    REQUIRE_DIRECT(is_triangular(a));
 
     decltype(auto) expr = a + a;
 
-    REQUIRE(expr.is_lower_triangular());
-    REQUIRE(is_lower_triangular(expr));
-    REQUIRE(expr.is_triangular());
-    REQUIRE(is_triangular(expr));
+    REQUIRE_DIRECT(expr.is_lower_triangular());
+    REQUIRE_DIRECT(is_lower_triangular(expr));
+    REQUIRE_DIRECT(expr.is_triangular());
+    REQUIRE_DIRECT(is_triangular(expr));
 }
 
 TEST_CASE("globals/is_lower_triangular/3", "[globals]") {
     etl::fast_matrix<double, 3, 3> a{2.0, 2.0, 3.0, 5.0, 2.0, 4.0, 3.0, 4.0, 3.0};
     etl::fast_matrix<double, 1, 9> b{2.0, 2.0, 3.0, 5.0, 2.0, 4.0, 3.0, 4.0, 3.0};
 
-    REQUIRE(!a.is_lower_triangular());
-    REQUIRE(!is_lower_triangular(a));
-    REQUIRE(!a.is_triangular());
-    REQUIRE(!is_triangular(a));
+    REQUIRE_DIRECT(!a.is_lower_triangular());
+    REQUIRE_DIRECT(!is_lower_triangular(a));
+    REQUIRE_DIRECT(!a.is_triangular());
+    REQUIRE_DIRECT(!is_triangular(a));
 
     decltype(auto) expr = a + a;
 
-    REQUIRE(!expr.is_lower_triangular());
-    REQUIRE(!is_lower_triangular(expr));
-    REQUIRE(!expr.is_triangular());
-    REQUIRE(!is_triangular(expr));
+    REQUIRE_DIRECT(!expr.is_lower_triangular());
+    REQUIRE_DIRECT(!is_lower_triangular(expr));
+    REQUIRE_DIRECT(!expr.is_triangular());
+    REQUIRE_DIRECT(!is_triangular(expr));
 
-    REQUIRE(!b.is_lower_triangular());
-    REQUIRE(!is_lower_triangular(b));
-    REQUIRE(!b.is_triangular());
-    REQUIRE(!is_triangular(b));
+    REQUIRE_DIRECT(!b.is_lower_triangular());
+    REQUIRE_DIRECT(!is_lower_triangular(b));
+    REQUIRE_DIRECT(!b.is_triangular());
+    REQUIRE_DIRECT(!is_triangular(b));
 }
 
 TEST_CASE("globals/is_strictly_lower_triangular/1", "[globals]") {
     etl::fast_matrix<double, 2, 2> a{0.0, 0.0, 2.0, 0.0};
 
-    REQUIRE(a.is_strictly_lower_triangular());
-    REQUIRE(is_strictly_lower_triangular(a));
+    REQUIRE_DIRECT(a.is_strictly_lower_triangular());
+    REQUIRE_DIRECT(is_strictly_lower_triangular(a));
 
     decltype(auto) expr = a + a;
 
-    REQUIRE(expr.is_strictly_lower_triangular());
-    REQUIRE(is_strictly_lower_triangular(expr));
+    REQUIRE_DIRECT(expr.is_strictly_lower_triangular());
+    REQUIRE_DIRECT(is_strictly_lower_triangular(expr));
 }
 
 TEST_CASE("globals/is_strictly_lower_triangular/2", "[globals]") {
     etl::fast_matrix<double, 3, 3> a{0.0, 0.0, 0.0, 2.0, 0.0, 0.0, 3.0, 4.0, 0.0};
 
-    REQUIRE(a.is_strictly_lower_triangular());
-    REQUIRE(is_strictly_lower_triangular(a));
+    REQUIRE_DIRECT(a.is_strictly_lower_triangular());
+    REQUIRE_DIRECT(is_strictly_lower_triangular(a));
 
     decltype(auto) expr = a + a;
 
-    REQUIRE(expr.is_strictly_lower_triangular());
-    REQUIRE(is_strictly_lower_triangular(expr));
+    REQUIRE_DIRECT(expr.is_strictly_lower_triangular());
+    REQUIRE_DIRECT(is_strictly_lower_triangular(expr));
 }
 
 TEST_CASE("globals/is_strictly_lower_triangular/3", "[globals]") {
     etl::fast_matrix<double, 3, 3> a{2.0, 2.0, 3.0, 5.0, 2.0, 4.0, 3.0, 4.0, 3.0};
     etl::fast_matrix<double, 9, 1> b{2.0, 2.0, 3.0, 5.0, 2.0, 4.0, 3.0, 4.0, 3.0};
 
-    REQUIRE(!a.is_strictly_lower_triangular());
-    REQUIRE(!is_strictly_lower_triangular(a));
+    REQUIRE_DIRECT(!a.is_strictly_lower_triangular());
+    REQUIRE_DIRECT(!is_strictly_lower_triangular(a));
 
     decltype(auto) expr = a + a;
 
-    REQUIRE(!expr.is_strictly_lower_triangular());
-    REQUIRE(!is_strictly_lower_triangular(expr));
+    REQUIRE_DIRECT(!expr.is_strictly_lower_triangular());
+    REQUIRE_DIRECT(!is_strictly_lower_triangular(expr));
 
-    REQUIRE(!b.is_strictly_lower_triangular());
-    REQUIRE(!is_strictly_lower_triangular(b));
+    REQUIRE_DIRECT(!b.is_strictly_lower_triangular());
+    REQUIRE_DIRECT(!is_strictly_lower_triangular(b));
 }
 
 TEST_CASE("globals/is_upper_triangular/1", "[globals]") {
     etl::fast_matrix<double, 2, 2> a{1.0, 1.0, 0.0, 1.0};
 
-    REQUIRE(a.is_upper_triangular());
-    REQUIRE(is_upper_triangular(a));
+    REQUIRE_DIRECT(a.is_upper_triangular());
+    REQUIRE_DIRECT(is_upper_triangular(a));
 
     decltype(auto) expr = a + a;
 
-    REQUIRE(expr.is_upper_triangular());
-    REQUIRE(is_upper_triangular(expr));
+    REQUIRE_DIRECT(expr.is_upper_triangular());
+    REQUIRE_DIRECT(is_upper_triangular(expr));
 }
 
 TEST_CASE("globals/is_upper_triangular/2", "[globals]") {
     etl::fast_matrix<double, 3, 3> a{1.0, 2.0, 3.0, 0.0, 2.0, 1.0, 0.0, 0.0, 3.0};
 
-    REQUIRE(a.is_upper_triangular());
-    REQUIRE(is_upper_triangular(a));
+    REQUIRE_DIRECT(a.is_upper_triangular());
+    REQUIRE_DIRECT(is_upper_triangular(a));
 
     decltype(auto) expr = a + a;
 
-    REQUIRE(expr.is_upper_triangular());
-    REQUIRE(is_upper_triangular(expr));
+    REQUIRE_DIRECT(expr.is_upper_triangular());
+    REQUIRE_DIRECT(is_upper_triangular(expr));
 }
 
 TEST_CASE("globals/is_upper_triangular/3", "[globals]") {
     etl::fast_matrix<double, 3, 3> a{2.0, 2.0, 3.0, 5.0, 2.0, 4.0, 3.0, 4.0, 3.0};
     etl::fast_matrix<double, 9, 1> b{2.0, 2.0, 3.0, 5.0, 2.0, 4.0, 3.0, 4.0, 3.0};
 
-    REQUIRE(!a.is_upper_triangular());
-    REQUIRE(!is_upper_triangular(a));
+    REQUIRE_DIRECT(!a.is_upper_triangular());
+    REQUIRE_DIRECT(!is_upper_triangular(a));
 
     decltype(auto) expr = a + a;
 
-    REQUIRE(!expr.is_upper_triangular());
-    REQUIRE(!is_upper_triangular(expr));
+    REQUIRE_DIRECT(!expr.is_upper_triangular());
+    REQUIRE_DIRECT(!is_upper_triangular(expr));
 
-    REQUIRE(!b.is_upper_triangular());
-    REQUIRE(!is_upper_triangular(b));
+    REQUIRE_DIRECT(!b.is_upper_triangular());
+    REQUIRE_DIRECT(!is_upper_triangular(b));
 }
 
 TEST_CASE("globals/is_strictly_upper_triangular/1", "[globals]") {
     etl::fast_matrix<double, 2, 2> a{0.0, 1.0, 0.0, 0.0};
 
-    REQUIRE(a.is_strictly_upper_triangular());
-    REQUIRE(is_strictly_upper_triangular(a));
+    REQUIRE_DIRECT(a.is_strictly_upper_triangular());
+    REQUIRE_DIRECT(is_strictly_upper_triangular(a));
 
     decltype(auto) expr = a + a;
 
-    REQUIRE(expr.is_strictly_upper_triangular());
-    REQUIRE(is_strictly_upper_triangular(expr));
+    REQUIRE_DIRECT(expr.is_strictly_upper_triangular());
+    REQUIRE_DIRECT(is_strictly_upper_triangular(expr));
 }
 
 TEST_CASE("globals/is_strictly_upper_triangular/2", "[globals]") {
     etl::fast_matrix<double, 3, 3> a{0.0, 2.0, 3.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0};
 
-    REQUIRE(a.is_strictly_upper_triangular());
-    REQUIRE(is_strictly_upper_triangular(a));
+    REQUIRE_DIRECT(a.is_strictly_upper_triangular());
+    REQUIRE_DIRECT(is_strictly_upper_triangular(a));
 
     decltype(auto) expr = a + a;
 
-    REQUIRE(expr.is_strictly_upper_triangular());
-    REQUIRE(is_strictly_upper_triangular(expr));
+    REQUIRE_DIRECT(expr.is_strictly_upper_triangular());
+    REQUIRE_DIRECT(is_strictly_upper_triangular(expr));
 }
 
 TEST_CASE("globals/is_strictly_upper_triangular/3", "[globals]") {
     etl::fast_matrix<double, 3, 3> a{2.0, 2.0, 3.0, 5.0, 2.0, 4.0, 3.0, 4.0, 3.0};
     etl::fast_matrix<double, 9, 1> b{2.0, 2.0, 3.0, 5.0, 2.0, 4.0, 3.0, 4.0, 3.0};
 
-    REQUIRE(!a.is_strictly_upper_triangular());
-    REQUIRE(!is_strictly_upper_triangular(a));
+    REQUIRE_DIRECT(!a.is_strictly_upper_triangular());
+    REQUIRE_DIRECT(!is_strictly_upper_triangular(a));
 
     decltype(auto) expr = a + a;
 
-    REQUIRE(!expr.is_strictly_upper_triangular());
-    REQUIRE(!is_strictly_upper_triangular(expr));
+    REQUIRE_DIRECT(!expr.is_strictly_upper_triangular());
+    REQUIRE_DIRECT(!is_strictly_upper_triangular(expr));
 
-    REQUIRE(!b.is_strictly_upper_triangular());
-    REQUIRE(!is_strictly_upper_triangular(b));
+    REQUIRE_DIRECT(!b.is_strictly_upper_triangular());
+    REQUIRE_DIRECT(!is_strictly_upper_triangular(b));
 }
 
 TEST_CASE("globals/is_uniform/1", "[globals]") {
     etl::fast_matrix<double, 3, 3> a(1.0);
 
-    REQUIRE(a.is_uniform());
-    REQUIRE(is_uniform(a));
+    REQUIRE_DIRECT(a.is_uniform());
+    REQUIRE_DIRECT(is_uniform(a));
 
     decltype(auto) expr = a + a;
 
-    REQUIRE(expr.is_uniform());
-    REQUIRE(is_uniform(expr));
+    REQUIRE_DIRECT(expr.is_uniform());
+    REQUIRE_DIRECT(is_uniform(expr));
 }
 
 TEST_CASE("globals/is_uniform/2", "[globals]") {
     etl::fast_matrix<double, 3, 3> a{2.0, 2.0, 3.0, 5.0, 2.0, 4.0, 3.0, 4.0, 3.0};
 
-    REQUIRE(!a.is_uniform());
-    REQUIRE(!is_uniform(a));
+    REQUIRE_DIRECT(!a.is_uniform());
+    REQUIRE_DIRECT(!is_uniform(a));
 
     decltype(auto) expr = a + a;
 
-    REQUIRE(!expr.is_uniform());
-    REQUIRE(!is_uniform(expr));
+    REQUIRE_DIRECT(!expr.is_uniform());
+    REQUIRE_DIRECT(!is_uniform(expr));
 }
 
 TEST_CASE("globals/is_diagonal/1", "[globals]") {
     etl::fast_matrix<double, 3, 3> a{1.0, 0.0, 0.0, 0.0, 2.0, 0.0, 0.0, 0.0, -1.0};
     etl::fast_matrix<double, 2, 4> b;
 
-    REQUIRE(a.is_diagonal());
-    REQUIRE(is_diagonal(a));
+    REQUIRE_DIRECT(a.is_diagonal());
+    REQUIRE_DIRECT(is_diagonal(a));
 
     decltype(auto) c = a + a;
 
-    REQUIRE(c.is_diagonal());
-    REQUIRE(is_diagonal(c));
+    REQUIRE_DIRECT(c.is_diagonal());
+    REQUIRE_DIRECT(is_diagonal(c));
 
-    REQUIRE(!b.is_diagonal());
-    REQUIRE(!is_diagonal(b));
+    REQUIRE_DIRECT(!b.is_diagonal());
+    REQUIRE_DIRECT(!is_diagonal(b));
 
     decltype(auto) d = b + b;
 
-    REQUIRE(!d.is_diagonal());
-    REQUIRE(!is_diagonal(d));
+    REQUIRE_DIRECT(!d.is_diagonal());
+    REQUIRE_DIRECT(!is_diagonal(d));
 }
 
 TEST_CASE("globals/is_diagonal/2", "[globals]") {
     etl::fast_matrix<double, 3, 3> a{1.0, 0.0, 0.0, 0.0, 2.0, 0.0, 1.0, 0.0, -1.0};
 
-    REQUIRE(!a.is_diagonal());
-    REQUIRE(!is_diagonal(a));
+    REQUIRE_DIRECT(!a.is_diagonal());
+    REQUIRE_DIRECT(!is_diagonal(a));
 
     decltype(auto) expr = a + a;
 
-    REQUIRE(!expr.is_diagonal());
-    REQUIRE(!is_diagonal(expr));
+    REQUIRE_DIRECT(!expr.is_diagonal());
+    REQUIRE_DIRECT(!is_diagonal(expr));
 }
 
 TEST_CASE("globals/trace/1", "[globals]") {
     etl::fast_matrix<double, 2, 2> a{1.0, 2.0, 3.0, 4.0};
 
-    REQUIRE(trace(a) == Approx(5.0));
+    REQUIRE_EQUALS_APPROX(trace(a), 5.0);
 
     decltype(auto) expr = a + a;
 
-    REQUIRE(trace(expr) == Approx(10.0));
+    REQUIRE_EQUALS_APPROX(trace(expr), 10.0);
 }
 
 TEST_CASE("globals/trace/2", "[globals]") {
     etl::fast_matrix<double, 3, 3> a{1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0};
 
-    REQUIRE(trace(a) == Approx(15.0));
+    REQUIRE_EQUALS_APPROX(trace(a), 15.0);
 
     decltype(auto) expr = a + a;
 
-    REQUIRE(trace(expr) == Approx(30.0));
+    REQUIRE_EQUALS_APPROX(trace(expr), 30.0);
 }
 
 TEST_CASE("globals/is_real_complex/1", "[globals]") {
@@ -384,23 +384,23 @@ TEST_CASE("globals/is_real_complex/1", "[globals]") {
     etl::fast_matrix<etl::complex<float>, 3, 3> g;
     etl::fast_matrix<etl::complex<double>, 3, 3> h;
 
-    REQUIRE(etl::is_real_matrix(a));
-    REQUIRE(etl::is_real_matrix(b));
-    REQUIRE(etl::is_real_matrix(c));
-    REQUIRE(etl::is_real_matrix(d));
-    REQUIRE(!etl::is_real_matrix(e));
-    REQUIRE(!etl::is_real_matrix(f));
-    REQUIRE(!etl::is_real_matrix(g));
-    REQUIRE(!etl::is_real_matrix(h));
+    REQUIRE_DIRECT(etl::is_real_matrix(a));
+    REQUIRE_DIRECT(etl::is_real_matrix(b));
+    REQUIRE_DIRECT(etl::is_real_matrix(c));
+    REQUIRE_DIRECT(etl::is_real_matrix(d));
+    REQUIRE_DIRECT(!etl::is_real_matrix(e));
+    REQUIRE_DIRECT(!etl::is_real_matrix(f));
+    REQUIRE_DIRECT(!etl::is_real_matrix(g));
+    REQUIRE_DIRECT(!etl::is_real_matrix(h));
 
-    REQUIRE(!etl::is_complex_matrix(a));
-    REQUIRE(!etl::is_complex_matrix(b));
-    REQUIRE(!etl::is_complex_matrix(c));
-    REQUIRE(!etl::is_complex_matrix(d));
-    REQUIRE(etl::is_complex_matrix(e));
-    REQUIRE(etl::is_complex_matrix(f));
-    REQUIRE(etl::is_complex_matrix(g));
-    REQUIRE(etl::is_complex_matrix(h));
+    REQUIRE_DIRECT(!etl::is_complex_matrix(a));
+    REQUIRE_DIRECT(!etl::is_complex_matrix(b));
+    REQUIRE_DIRECT(!etl::is_complex_matrix(c));
+    REQUIRE_DIRECT(!etl::is_complex_matrix(d));
+    REQUIRE_DIRECT(etl::is_complex_matrix(e));
+    REQUIRE_DIRECT(etl::is_complex_matrix(f));
+    REQUIRE_DIRECT(etl::is_complex_matrix(g));
+    REQUIRE_DIRECT(etl::is_complex_matrix(h));
 }
 
 TEST_CASE("globals/is_hermitian/1", "[globals]") {
@@ -410,11 +410,11 @@ TEST_CASE("globals/is_hermitian/1", "[globals]") {
     etl::fast_matrix<long, 3, 3> d;
     etl::fast_matrix<long, 4, 3> e;
 
-    REQUIRE(!is_hermitian(a));
-    REQUIRE(!is_hermitian(b));
-    REQUIRE(!is_hermitian(c));
-    REQUIRE(!is_hermitian(d));
-    REQUIRE(!is_hermitian(e));
+    REQUIRE_DIRECT(!is_hermitian(a));
+    REQUIRE_DIRECT(!is_hermitian(b));
+    REQUIRE_DIRECT(!is_hermitian(c));
+    REQUIRE_DIRECT(!is_hermitian(d));
+    REQUIRE_DIRECT(!is_hermitian(e));
 }
 
 TEST_CASE("globals/is_hermitian/2", "[globals]") {
@@ -452,11 +452,11 @@ TEST_CASE("globals/is_hermitian/2", "[globals]") {
     d(2, 0) = etl::complex<float>(2.0, 3.0);
     d(2, 1) = etl::complex<float>(0.0, 3.0);
 
-    REQUIRE(!is_hermitian(a));
-    REQUIRE(!is_hermitian(b));
-    REQUIRE(!is_hermitian(c));
-    REQUIRE(!is_hermitian(d));
-    REQUIRE(!is_hermitian(e));
+    REQUIRE_DIRECT(!is_hermitian(a));
+    REQUIRE_DIRECT(!is_hermitian(b));
+    REQUIRE_DIRECT(!is_hermitian(c));
+    REQUIRE_DIRECT(!is_hermitian(d));
+    REQUIRE_DIRECT(!is_hermitian(e));
 }
 
 TEST_CASE("globals/is_hermitian/3", "[globals]") {
@@ -493,10 +493,10 @@ TEST_CASE("globals/is_hermitian/3", "[globals]") {
     d(2, 0) = etl::complex<float>(1.0, 0.0);
     d(2, 1) = etl::complex<float>(0.0, -3.0);
 
-    REQUIRE(is_hermitian(a));
-    REQUIRE(is_hermitian(b));
-    REQUIRE(is_hermitian(c));
-    REQUIRE(is_hermitian(d));
+    REQUIRE_DIRECT(is_hermitian(a));
+    REQUIRE_DIRECT(is_hermitian(b));
+    REQUIRE_DIRECT(is_hermitian(c));
+    REQUIRE_DIRECT(is_hermitian(d));
 }
 
 TEST_CASE("globals/is_permutation/1", "[globals]") {
@@ -507,12 +507,12 @@ TEST_CASE("globals/is_permutation/1", "[globals]") {
     etl::fast_matrix<double, 2, 2> e{0.0, 1.0, 1.0, 0.0};
     etl::fast_matrix<double, 3, 2> f;
 
-    REQUIRE(!is_permutation_matrix(a));
-    REQUIRE(!is_permutation_matrix(b));
-    REQUIRE(!is_permutation_matrix(c));
-    REQUIRE(is_permutation_matrix(d));
-    REQUIRE(is_permutation_matrix(e));
-    REQUIRE(!is_permutation_matrix(f));
+    REQUIRE_DIRECT(!is_permutation_matrix(a));
+    REQUIRE_DIRECT(!is_permutation_matrix(b));
+    REQUIRE_DIRECT(!is_permutation_matrix(c));
+    REQUIRE_DIRECT(is_permutation_matrix(d));
+    REQUIRE_DIRECT(is_permutation_matrix(e));
+    REQUIRE_DIRECT(!is_permutation_matrix(f));
 }
 
 TEST_CASE("globals/is_permutation/2", "[globals]") {
@@ -521,31 +521,31 @@ TEST_CASE("globals/is_permutation/2", "[globals]") {
     etl::fast_matrix<double, 3, 3> c{1.1, 0.0, 0.0, 0.0, 1.0, 0.0, 1.0, 0.0, 0.0};
     etl::fast_matrix<double, 3, 3> d{1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 1.0, 0.0};
 
-    REQUIRE(!is_permutation_matrix(a));
-    REQUIRE(!is_permutation_matrix(b));
-    REQUIRE(!is_permutation_matrix(c));
+    REQUIRE_DIRECT(!is_permutation_matrix(a));
+    REQUIRE_DIRECT(!is_permutation_matrix(b));
+    REQUIRE_DIRECT(!is_permutation_matrix(c));
 }
 
 TEST_CASE("globals/determinant/1", "[globals]") {
     etl::fast_matrix<double, 2, 2> a{1.0, 0.0, 0.0, 1.0};
     etl::fast_matrix<double, 2, 2> b{0.0, 1.0, 1.0, 0.0};
 
-    REQUIRE(determinant(a) == 1.0);
-    REQUIRE(determinant(b) == -1.0);
+    REQUIRE_EQUALS(determinant(a), 1.0);
+    REQUIRE_EQUALS(determinant(b), -1.0);
 }
 
 TEST_CASE("globals/determinant/2", "[globals]") {
     etl::fast_matrix<double, 2, 2> a{1.0, 2.0, 3.0, 4.0};
     etl::fast_matrix<double, 2, 2> b{-2.0, 3.0, 5.0, -8.0};
 
-    REQUIRE(determinant(a) == Approx(-2.0));
-    REQUIRE(determinant(b) == Approx(1.0));
+    REQUIRE_EQUALS_APPROX(determinant(a), -2.0);
+    REQUIRE_EQUALS_APPROX(determinant(b), 1.0);
 }
 
 TEST_CASE("globals/determinant/3", "[globals]") {
     etl::fast_matrix<double, 3, 3> a{-2, 3, 4, 5, -8, 1, 0, 2, 3};
     etl::fast_matrix<double, 3, 3> b{-2, 0.5, 4, 5, -1.5, 1, 0, 2, 3};
 
-    REQUIRE(determinant(a) == Approx(47.0));
-    REQUIRE(determinant(b) == Approx(45.5));
+    REQUIRE_EQUALS_APPROX(determinant(a), 47.0);
+    REQUIRE_EQUALS_APPROX(determinant(b), 45.5);
 }

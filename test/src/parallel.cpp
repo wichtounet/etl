@@ -13,7 +13,7 @@ TEMPLATE_TEST_CASE_2("parallel/1", "[fast][parallel]", Z, float, double) {
 
     b = parallel(a + a);
 
-    REQUIRE(b[0] == 2.0);
+    REQUIRE_EQUALS(b[0], 2.0);
 }
 
 TEMPLATE_TEST_CASE_2("parallel/2", "[dyn][parallel][sum]", Z, float, double) {
@@ -27,7 +27,7 @@ TEMPLATE_TEST_CASE_2("parallel/2", "[dyn][parallel][sum]", Z, float, double) {
         sum = etl::sum(a);
     }
 
-    REQUIRE(sum == 12.0 * etl::size(a));
+    REQUIRE_EQUALS(sum, 12.0 * etl::size(a));
 }
 
 TEMPLATE_TEST_CASE_2("parallel/3", "[fast][parallel]", Z, float, double) {
@@ -37,63 +37,63 @@ TEMPLATE_TEST_CASE_2("parallel/3", "[fast][parallel]", Z, float, double) {
     b = parallel(a + a);
     b += parallel(a + a);
 
-    REQUIRE(b[0] == 4.0);
+    REQUIRE_EQUALS(b[0], 4.0);
 }
 
 TEMPLATE_TEST_CASE_2("parallel_section/1", "[fast][parallel]", Z, float, double) {
     etl::fast_vector<Z, 3> a({1.0, -2.0, 3.0});
     etl::fast_vector<Z, 3> b;
 
-    REQUIRE(!etl::local_context().parallel);
+    REQUIRE_DIRECT(!etl::local_context().parallel);
 
     PARALLEL_SECTION {
-        REQUIRE(etl::local_context().parallel);
+        REQUIRE_DIRECT(etl::local_context().parallel);
         b = a + a;
         b += a + a;
     }
 
-    REQUIRE(!etl::local_context().parallel);
+    REQUIRE_DIRECT(!etl::local_context().parallel);
 
-    REQUIRE(b[0] == 4.0);
+    REQUIRE_EQUALS(b[0], 4.0);
 }
 
 TEMPLATE_TEST_CASE_2("parallel_section/2", "[fast][parallel]", Z, float, double) {
     etl::fast_vector<Z, 3> a({1.0, -2.0, 3.0});
     etl::fast_vector<Z, 3> b;
 
-    REQUIRE(!etl::local_context().parallel);
+    REQUIRE_DIRECT(!etl::local_context().parallel);
 
     etl::local_context().parallel = true;
 
     PARALLEL_SECTION {
-        REQUIRE(etl::local_context().parallel);
+        REQUIRE_DIRECT(etl::local_context().parallel);
         b = a + a;
         b += a + a;
 
         etl::local_context().parallel = false;
     }
 
-    REQUIRE(etl::local_context().parallel);
+    REQUIRE_DIRECT(etl::local_context().parallel);
 
     etl::local_context().parallel = false;
 
-    REQUIRE(b[0] == 4.0);
+    REQUIRE_EQUALS(b[0], 4.0);
 }
 
 TEMPLATE_TEST_CASE_2("parallel_section/3", "[fast][parallel]", Z, float, double) {
-    REQUIRE(!etl::local_context().parallel);
+    REQUIRE_DIRECT(!etl::local_context().parallel);
 
     PARALLEL_SECTION {
-        REQUIRE(etl::local_context().parallel);
+        REQUIRE_DIRECT(etl::local_context().parallel);
 
         etl::local_context().parallel = false;
 
         PARALLEL_SECTION {
-            REQUIRE(etl::local_context().parallel);
+            REQUIRE_DIRECT(etl::local_context().parallel);
         }
 
-        REQUIRE(!etl::local_context().parallel);
+        REQUIRE_DIRECT(!etl::local_context().parallel);
     }
 
-    REQUIRE(!etl::local_context().parallel);
+    REQUIRE_DIRECT(!etl::local_context().parallel);
 }

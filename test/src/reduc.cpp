@@ -13,9 +13,9 @@ TEMPLATE_TEST_CASE_2("sum_r/fast_matrix_1", "sum_r", Z, float, double) {
     etl::fast_matrix<Z, 3, 4> a({1, 2, 3, 4, 0, 0, 1, 1, 4, 5, 6, 7});
     etl::fast_matrix<Z, 3> b(etl::sum_r(a));
 
-    REQUIRE(b(0) == 10);
-    REQUIRE(b(1) == 2);
-    REQUIRE(b(2) == 22);
+    REQUIRE_EQUALS(b(0), 10);
+    REQUIRE_EQUALS(b(1), 2);
+    REQUIRE_EQUALS(b(2), 22);
 }
 
 TEMPLATE_TEST_CASE_2("sum_r/fast_matrix_2", "sum_r", Z, float, double) {
@@ -24,9 +24,9 @@ TEMPLATE_TEST_CASE_2("sum_r/fast_matrix_2", "sum_r", Z, float, double) {
 
     b = etl::sum_r(a);
 
-    REQUIRE(b(0) == 10);
-    REQUIRE(b(1) == 2);
-    REQUIRE(b(2) == 22);
+    REQUIRE_EQUALS(b(0), 10);
+    REQUIRE_EQUALS(b(1), 2);
+    REQUIRE_EQUALS(b(2), 22);
 }
 
 TEMPLATE_TEST_CASE_2("sum_r/fast_matrix_3", "sum_r", Z, float, double) {
@@ -35,9 +35,9 @@ TEMPLATE_TEST_CASE_2("sum_r/fast_matrix_3", "sum_r", Z, float, double) {
 
     b = etl::sum_r(a) * 2.5;
 
-    REQUIRE(b(0) == 25.0);
-    REQUIRE(b(1) == 5.0);
-    REQUIRE(b(2) == 55.0);
+    REQUIRE_EQUALS(b(0), 25.0);
+    REQUIRE_EQUALS(b(1), 5.0);
+    REQUIRE_EQUALS(b(2), 55.0);
 }
 
 TEMPLATE_TEST_CASE_2("sum_r/fast_matrix_4", "sum_r", Z, float, double) {
@@ -46,9 +46,9 @@ TEMPLATE_TEST_CASE_2("sum_r/fast_matrix_4", "sum_r", Z, float, double) {
 
     b = (etl::sum_r(a) - etl::sum_r(a)) + 2.5;
 
-    REQUIRE(b(0) == 2.5);
-    REQUIRE(b(1) == 2.5);
-    REQUIRE(b(2) == 2.5);
+    REQUIRE_EQUALS(b(0), 2.5);
+    REQUIRE_EQUALS(b(1), 2.5);
+    REQUIRE_EQUALS(b(2), 2.5);
 }
 
 // Tests for mean_r
@@ -57,9 +57,9 @@ TEMPLATE_TEST_CASE_2("mean_r/fast_matrix_1", "mean_r", Z, float, double) {
     etl::fast_matrix<Z, 3, 4> a({1, 2, 3, 4, 0, 0, 1, 1, 4, 5, 6, 7});
     etl::fast_matrix<Z, 3> b(etl::mean_r(a));
 
-    REQUIRE(b(0) == 2.5);
-    REQUIRE(b(1) == 0.5);
-    REQUIRE(b(2) == 5.5);
+    REQUIRE_EQUALS(b(0), 2.5);
+    REQUIRE_EQUALS(b(1), 0.5);
+    REQUIRE_EQUALS(b(2), 5.5);
 }
 
 TEMPLATE_TEST_CASE_2("mean_r/fast_matrix_2", "mean_r", Z, float, double) {
@@ -68,9 +68,9 @@ TEMPLATE_TEST_CASE_2("mean_r/fast_matrix_2", "mean_r", Z, float, double) {
 
     b = etl::mean_r(a);
 
-    REQUIRE(b(0) == 2.5);
-    REQUIRE(b(1) == 0.5);
-    REQUIRE(b(2) == 5.5);
+    REQUIRE_EQUALS(b(0), 2.5);
+    REQUIRE_EQUALS(b(1), 0.5);
+    REQUIRE_EQUALS(b(2), 5.5);
 }
 
 TEMPLATE_TEST_CASE_2("mean_r/fast_matrix_3", "mean_r", Z, float, double) {
@@ -79,9 +79,9 @@ TEMPLATE_TEST_CASE_2("mean_r/fast_matrix_3", "mean_r", Z, float, double) {
 
     b = etl::mean_r(a) * 2.5;
 
-    REQUIRE(b(0) == 6.25);
-    REQUIRE(b(1) == 1.25);
-    REQUIRE(b(2) == 13.75);
+    REQUIRE_EQUALS(b(0), 6.25);
+    REQUIRE_EQUALS(b(1), 1.25);
+    REQUIRE_EQUALS(b(2), 13.75);
 }
 
 TEMPLATE_TEST_CASE_2("mean_r/fast_matrix_4", "mean_r", Z, float, double) {
@@ -90,9 +90,9 @@ TEMPLATE_TEST_CASE_2("mean_r/fast_matrix_4", "mean_r", Z, float, double) {
 
     b = (etl::mean_r(a) - etl::mean_r(a)) + 2.5;
 
-    REQUIRE(b(0) == 2.5);
-    REQUIRE(b(1) == 2.5);
-    REQUIRE(b(2) == 2.5);
+    REQUIRE_EQUALS(b(0), 2.5);
+    REQUIRE_EQUALS(b(1), 2.5);
+    REQUIRE_EQUALS(b(2), 2.5);
 }
 
 TEMPLATE_TEST_CASE_2("mean_r/fast_matrix_5", "mean_r", Z, float, double) {
@@ -101,9 +101,9 @@ TEMPLATE_TEST_CASE_2("mean_r/fast_matrix_5", "mean_r", Z, float, double) {
 
     b = etl::mean_r(a);
 
-    REQUIRE(b(0) == 2.5);
-    REQUIRE(b(1) == 0.5);
-    REQUIRE(b(2) == 5.5);
+    REQUIRE_EQUALS(b(0), 2.5);
+    REQUIRE_EQUALS(b(1), 0.5);
+    REQUIRE_EQUALS(b(2), 5.5);
 }
 
 TEMPLATE_TEST_CASE_2("mean_r/fast_matrix_6", "mean_r", Z, float, double) {
@@ -112,18 +112,18 @@ TEMPLATE_TEST_CASE_2("mean_r/fast_matrix_6", "mean_r", Z, float, double) {
 
     b = etl::mean_r(a);
 
-    REQUIRE(b(0) == 2.5);
-    REQUIRE(b(1) == 0.5);
-    REQUIRE(b(2) == 5.5);
+    REQUIRE_EQUALS(b(0), 2.5);
+    REQUIRE_EQUALS(b(1), 0.5);
+    REQUIRE_EQUALS(b(2), 5.5);
 }
 
 TEMPLATE_TEST_CASE_2("mean_r/dyn_matrix_1", "mean_r", Z, float, double) {
     etl::dyn_matrix<Z> a(3, 4, etl::values(1, 2, 3, 4, 0, 0, 1, 1, 4, 5, 6, 7));
     etl::dyn_vector<Z> b(etl::mean_r(a));
 
-    REQUIRE(b(0) == 2.5);
-    REQUIRE(b(1) == 0.5);
-    REQUIRE(b(2) == 5.5);
+    REQUIRE_EQUALS(b(0), 2.5);
+    REQUIRE_EQUALS(b(1), 0.5);
+    REQUIRE_EQUALS(b(2), 5.5);
 }
 
 TEMPLATE_TEST_CASE_2("mean_r/dyn_matrix_2", "mean_r", Z, float, double) {
@@ -132,9 +132,9 @@ TEMPLATE_TEST_CASE_2("mean_r/dyn_matrix_2", "mean_r", Z, float, double) {
 
     b = etl::mean_r(a);
 
-    REQUIRE(b(0) == 2.5);
-    REQUIRE(b(1) == 0.5);
-    REQUIRE(b(2) == 5.5);
+    REQUIRE_EQUALS(b(0), 2.5);
+    REQUIRE_EQUALS(b(1), 0.5);
+    REQUIRE_EQUALS(b(2), 5.5);
 }
 
 // Tests for mean_l
@@ -143,9 +143,9 @@ TEMPLATE_TEST_CASE_2("mean_l/fast_matrix_1", "mean_l", Z, float, double) {
     etl::fast_matrix<Z, 3, 4> a({1, 2, 3, 4, 0, 0, 1, 1, 4, 5, 6, 7});
     etl::fast_matrix<Z, 4> b(etl::mean_l(a));
 
-    REQUIRE(b(0) == Approx(1.666666));
-    REQUIRE(b(1) == Approx(2.333333));
-    REQUIRE(b(2) == Approx(3.333333));
+    REQUIRE_EQUALS_APPROX(b(0), 1.666666);
+    REQUIRE_EQUALS_APPROX(b(1), 2.333333);
+    REQUIRE_EQUALS_APPROX(b(2), 3.333333);
 }
 
 TEMPLATE_TEST_CASE_2("mean_l/fast_matrix_2", "mean_l", Z, float, double) {
@@ -154,9 +154,9 @@ TEMPLATE_TEST_CASE_2("mean_l/fast_matrix_2", "mean_l", Z, float, double) {
 
     b = etl::mean_l(a);
 
-    REQUIRE(b(0) == Approx(1.666666));
-    REQUIRE(b(1) == Approx(2.333333));
-    REQUIRE(b(2) == Approx(3.333333));
+    REQUIRE_EQUALS_APPROX(b(0), 1.666666);
+    REQUIRE_EQUALS_APPROX(b(1), 2.333333);
+    REQUIRE_EQUALS_APPROX(b(2), 3.333333);
 }
 
 TEMPLATE_TEST_CASE_2("mean_l/fast_matrix_3", "mean_l", Z, float, double) {
@@ -165,9 +165,9 @@ TEMPLATE_TEST_CASE_2("mean_l/fast_matrix_3", "mean_l", Z, float, double) {
 
     b = etl::mean_l(a) * 2.5;
 
-    REQUIRE(b(0) == Approx(4.1666666));
-    REQUIRE(b(1) == Approx(5.8333333));
-    REQUIRE(b(2) == Approx(8.333333));
+    REQUIRE_EQUALS_APPROX(b(0), 4.1666666);
+    REQUIRE_EQUALS_APPROX(b(1), 5.8333333);
+    REQUIRE_EQUALS_APPROX(b(2), 8.333333);
 }
 
 TEMPLATE_TEST_CASE_2("mean_l/fast_matrix_4", "mean_l", Z, float, double) {
@@ -176,9 +176,9 @@ TEMPLATE_TEST_CASE_2("mean_l/fast_matrix_4", "mean_l", Z, float, double) {
 
     b = (etl::mean_l(a) - etl::mean_l(a)) + 2.5;
 
-    REQUIRE(b(0) == Approx(Z(2.5)));
-    REQUIRE(b(1) == Approx(Z(2.5)));
-    REQUIRE(b(2) == Approx(Z(2.5)));
+    REQUIRE_EQUALS_APPROX(b(0), Z(2.5));
+    REQUIRE_EQUALS_APPROX(b(1), Z(2.5));
+    REQUIRE_EQUALS_APPROX(b(2), Z(2.5));
 }
 
 TEMPLATE_TEST_CASE_2("mean_l/fast_matrix_5", "mean_l", Z, float, double) {
@@ -187,9 +187,9 @@ TEMPLATE_TEST_CASE_2("mean_l/fast_matrix_5", "mean_l", Z, float, double) {
 
     b = etl::mean_l(a);
 
-    REQUIRE(b(0, 0) == Approx(1.666666));
-    REQUIRE(b(1, 0) == Approx(2.333333));
-    REQUIRE(b(2, 0) == Approx(3.333333));
+    REQUIRE_EQUALS_APPROX(b(0, 0), 1.666666);
+    REQUIRE_EQUALS_APPROX(b(1, 0), 2.333333);
+    REQUIRE_EQUALS_APPROX(b(2, 0), 3.333333);
 }
 
 TEMPLATE_TEST_CASE_2("mean_l/fast_matrix_6", "mean_l", Z, float, double) {
@@ -198,23 +198,23 @@ TEMPLATE_TEST_CASE_2("mean_l/fast_matrix_6", "mean_l", Z, float, double) {
 
     b = etl::mean_l(a);
 
-    REQUIRE(b(0, 0) == Approx(9.0));
-    REQUIRE(b(0, 1) == Approx(10.0));
-    REQUIRE(b(1, 0) == Approx(11.0));
-    REQUIRE(b(1, 1) == Approx(12.0));
-    REQUIRE(b(2, 0) == Approx(13.0));
-    REQUIRE(b(2, 1) == Approx(14.0));
-    REQUIRE(b(3, 0) == Approx(15.0));
-    REQUIRE(b(3, 1) == Approx(16.0));
+    REQUIRE_EQUALS_APPROX(b(0, 0), 9.0);
+    REQUIRE_EQUALS_APPROX(b(0, 1), 10.0);
+    REQUIRE_EQUALS_APPROX(b(1, 0), 11.0);
+    REQUIRE_EQUALS_APPROX(b(1, 1), 12.0);
+    REQUIRE_EQUALS_APPROX(b(2, 0), 13.0);
+    REQUIRE_EQUALS_APPROX(b(2, 1), 14.0);
+    REQUIRE_EQUALS_APPROX(b(3, 0), 15.0);
+    REQUIRE_EQUALS_APPROX(b(3, 1), 16.0);
 }
 
 TEMPLATE_TEST_CASE_2("mean_l/dyn_matrix_1", "mean_l", Z, float, double) {
     etl::dyn_matrix<Z> a(3, 4, etl::values(1, 2, 3, 4, 0, 0, 1, 1, 4, 5, 6, 7));
     etl::dyn_vector<Z> b(etl::mean_l(a));
 
-    REQUIRE(b(0) == Approx(1.666666));
-    REQUIRE(b(1) == Approx(2.333333));
-    REQUIRE(b(2) == Approx(3.333333));
+    REQUIRE_EQUALS_APPROX(b(0), 1.666666);
+    REQUIRE_EQUALS_APPROX(b(1), 2.333333);
+    REQUIRE_EQUALS_APPROX(b(2), 3.333333);
 }
 
 TEMPLATE_TEST_CASE_2("mean_l/dyn_matrix_2", "mean_l", Z, float, double) {
@@ -223,9 +223,9 @@ TEMPLATE_TEST_CASE_2("mean_l/dyn_matrix_2", "mean_l", Z, float, double) {
 
     b = etl::mean_l(a);
 
-    REQUIRE(b(0) == Approx(1.666666));
-    REQUIRE(b(1) == Approx(2.333333));
-    REQUIRE(b(2) == Approx(3.333333));
+    REQUIRE_EQUALS_APPROX(b(0), 1.666666);
+    REQUIRE_EQUALS_APPROX(b(1), 2.333333);
+    REQUIRE_EQUALS_APPROX(b(2), 3.333333);
 }
 
 TEMPLATE_TEST_CASE_2("mean_l/fast_matrix_7", "mean_l/mean_r", Z, float, double) {
@@ -234,10 +234,10 @@ TEMPLATE_TEST_CASE_2("mean_l/fast_matrix_7", "mean_l/mean_r", Z, float, double) 
 
     b = etl::mean_r(etl::mean_l(a));
 
-    REQUIRE(b(0) == Approx(9.5));
-    REQUIRE(b(1) == Approx(11.5));
-    REQUIRE(b(2) == Approx(13.5));
-    REQUIRE(b(3) == Approx(15.5));
+    REQUIRE_EQUALS_APPROX(b(0), 9.5);
+    REQUIRE_EQUALS_APPROX(b(1), 11.5);
+    REQUIRE_EQUALS_APPROX(b(2), 13.5);
+    REQUIRE_EQUALS_APPROX(b(3), 15.5);
 }
 
 // Tests for sum_l
@@ -246,9 +246,9 @@ TEMPLATE_TEST_CASE_2("sum_l/fast_matrix_1", "sum_l", Z, float, double) {
     etl::fast_matrix<Z, 3, 4> a({1, 2, 3, 4, 0, 0, 1, 1, 4, 5, 6, 7});
     etl::fast_matrix<Z, 4> b(etl::sum_l(a));
 
-    REQUIRE(b(0) == Approx(5.0));
-    REQUIRE(b(1) == Approx(7.0));
-    REQUIRE(b(2) == Approx(10.0));
+    REQUIRE_EQUALS_APPROX(b(0), 5.0);
+    REQUIRE_EQUALS_APPROX(b(1), 7.0);
+    REQUIRE_EQUALS_APPROX(b(2), 10.0);
 }
 
 TEMPLATE_TEST_CASE_2("sum_l/fast_matrix_6", "sum_l", Z, float, double) {
@@ -257,12 +257,12 @@ TEMPLATE_TEST_CASE_2("sum_l/fast_matrix_6", "sum_l", Z, float, double) {
 
     b = etl::sum_l(a);
 
-    REQUIRE(b(0, 0) == Approx(27.0));
-    REQUIRE(b(0, 1) == Approx(30.0));
-    REQUIRE(b(1, 0) == Approx(33.0));
-    REQUIRE(b(1, 1) == Approx(36.0));
-    REQUIRE(b(2, 0) == Approx(39.0));
-    REQUIRE(b(2, 1) == Approx(42.0));
-    REQUIRE(b(3, 0) == Approx(45.0));
-    REQUIRE(b(3, 1) == Approx(48.0));
+    REQUIRE_EQUALS_APPROX(b(0, 0), 27.0);
+    REQUIRE_EQUALS_APPROX(b(0, 1), 30.0);
+    REQUIRE_EQUALS_APPROX(b(1, 0), 33.0);
+    REQUIRE_EQUALS_APPROX(b(1, 1), 36.0);
+    REQUIRE_EQUALS_APPROX(b(2, 0), 39.0);
+    REQUIRE_EQUALS_APPROX(b(2, 1), 42.0);
+    REQUIRE_EQUALS_APPROX(b(3, 0), 45.0);
+    REQUIRE_EQUALS_APPROX(b(3, 1), 48.0);
 }

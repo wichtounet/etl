@@ -13,53 +13,53 @@
 #define ECZ(a, b) etl::complex<Z>(a, b)
 
 TEST_CASE("etl_complex/1", "[complex]") {
-    REQUIRE(sizeof(etl::complex<float>) == sizeof(std::complex<float>));
-    REQUIRE(sizeof(etl::complex<double>) == sizeof(std::complex<double>));
+    REQUIRE_EQUALS(sizeof(etl::complex<float>), sizeof(std::complex<float>));
+    REQUIRE_EQUALS(sizeof(etl::complex<double>), sizeof(std::complex<double>));
 
     etl::complex<float> a(3.3, 5.5);
 
-    REQUIRE(reinterpret_cast<float(&)[2]>(a)[0] == float(3.3));
-    REQUIRE(reinterpret_cast<float(&)[2]>(a)[1] == float(5.5));
+    REQUIRE_EQUALS(reinterpret_cast<float(&)[2]>(a)[0], float(3.3));
+    REQUIRE_EQUALS(reinterpret_cast<float(&)[2]>(a)[1], float(5.5));
 
     etl::complex<double> b(-2.3, 4.1);
 
-    REQUIRE(reinterpret_cast<double(&)[2]>(b)[0] == double(-2.3));
-    REQUIRE(reinterpret_cast<double(&)[2]>(b)[1] == double(4.1));
+    REQUIRE_EQUALS(reinterpret_cast<double(&)[2]>(b)[0], double(-2.3));
+    REQUIRE_EQUALS(reinterpret_cast<double(&)[2]>(b)[1], double(4.1));
 }
 
 TEMPLATE_TEST_CASE_2("complex/std/1", "[complex]", Z, float, double) {
     etl::fast_vector<std::complex<Z>, 3> a = {-1.0, 2.0, 5.0};
 
-    REQUIRE(a[0].real() == Approx(Z(-1.0)));
-    REQUIRE(a[0].imag() == Approx(Z(0.0)));
-    REQUIRE(a[1].real() == Approx(Z(2.0)));
-    REQUIRE(a[2].imag() == Approx(Z(0.0)));
-    REQUIRE(a[2].real() == Approx(Z(5.0)));
-    REQUIRE(a[2].imag() == Approx(Z(0.0)));
+    REQUIRE_EQUALS_APPROX(a[0].real(), Z(-1.0));
+    REQUIRE_EQUALS_APPROX(a[0].imag(), Z(0.0));
+    REQUIRE_EQUALS_APPROX(a[1].real(), Z(2.0));
+    REQUIRE_EQUALS_APPROX(a[2].imag(), Z(0.0));
+    REQUIRE_EQUALS_APPROX(a[2].real(), Z(5.0));
+    REQUIRE_EQUALS_APPROX(a[2].imag(), Z(0.0));
 
     a[0] = 33.0;
 
-    REQUIRE(a[0].real() == Approx(Z(33.0)));
-    REQUIRE(a[0].imag() == Approx(Z(0.0)));
+    REQUIRE_EQUALS_APPROX(a[0].real(), Z(33.0));
+    REQUIRE_EQUALS_APPROX(a[0].imag(), Z(0.0));
 
     a[0].imag(12.0);
 
-    REQUIRE(a[0].real() == Approx(Z(33.0)));
-    REQUIRE(a[0].imag() == Approx(Z(12.0)));
+    REQUIRE_EQUALS_APPROX(a[0].real(), Z(33.0));
+    REQUIRE_EQUALS_APPROX(a[0].imag(), Z(12.0));
 
     a[0] = std::complex<Z>(1.0, 2.0);
 
-    REQUIRE(a[0].real() == Approx(Z(1.0)));
-    REQUIRE(a[0].imag() == Approx(Z(2.0)));
+    REQUIRE_EQUALS_APPROX(a[0].real(), Z(1.0));
+    REQUIRE_EQUALS_APPROX(a[0].imag(), Z(2.0));
 
     a = std::complex<Z>(3.0, -2.0);
 
-    REQUIRE(a[0].real() == Approx(Z(3.0)));
-    REQUIRE(a[0].imag() == Approx(Z(-2.0)));
-    REQUIRE(a[1].real() == Approx(Z(3.0)));
-    REQUIRE(a[1].imag() == Approx(Z(-2.0)));
-    REQUIRE(a[2].real() == Approx(Z(3.0)));
-    REQUIRE(a[2].imag() == Approx(Z(-2.0)));
+    REQUIRE_EQUALS_APPROX(a[0].real(), Z(3.0));
+    REQUIRE_EQUALS_APPROX(a[0].imag(), Z(-2.0));
+    REQUIRE_EQUALS_APPROX(a[1].real(), Z(3.0));
+    REQUIRE_EQUALS_APPROX(a[1].imag(), Z(-2.0));
+    REQUIRE_EQUALS_APPROX(a[2].real(), Z(3.0));
+    REQUIRE_EQUALS_APPROX(a[2].imag(), Z(-2.0));
 }
 
 TEMPLATE_TEST_CASE_2("complex/std/2", "[complex]", Z, float, double) {
@@ -69,9 +69,9 @@ TEMPLATE_TEST_CASE_2("complex/std/2", "[complex]", Z, float, double) {
 
     c = a >> b;
 
-    REQUIRE(c[0] == a[0] * b[0]);
-    REQUIRE(c[1] == a[1] * b[1]);
-    REQUIRE(c[2] == a[2] * b[2]);
+    REQUIRE_EQUALS(c[0], a[0] * b[0]);
+    REQUIRE_EQUALS(c[1], a[1] * b[1]);
+    REQUIRE_EQUALS(c[2], a[2] * b[2]);
 }
 
 TEMPLATE_TEST_CASE_2("complex/std/3", "[complex]", Z, float, double) {
@@ -81,12 +81,12 @@ TEMPLATE_TEST_CASE_2("complex/std/3", "[complex]", Z, float, double) {
 
     c = a + b;
 
-    REQUIRE(c[0].real() == Approx(Z(1.33)));
-    REQUIRE(c[0].imag() == Approx(Z(2.66)));
-    REQUIRE(c[1].real() == Approx(Z(-2.5)));
-    REQUIRE(c[1].imag() == Approx(Z(-2.0)));
-    REQUIRE(c[2].real() == Approx(Z(0.5)));
-    REQUIRE(c[2].imag() == Approx(Z(1.25)));
+    REQUIRE_EQUALS_APPROX(c[0].real(), Z(1.33));
+    REQUIRE_EQUALS_APPROX(c[0].imag(), Z(2.66));
+    REQUIRE_EQUALS_APPROX(c[1].real(), Z(-2.5));
+    REQUIRE_EQUALS_APPROX(c[1].imag(), Z(-2.0));
+    REQUIRE_EQUALS_APPROX(c[2].real(), Z(0.5));
+    REQUIRE_EQUALS_APPROX(c[2].imag(), Z(1.25));
 }
 
 TEMPLATE_TEST_CASE_2("complex/std/4", "[complex]", Z, float, double) {
@@ -96,12 +96,12 @@ TEMPLATE_TEST_CASE_2("complex/std/4", "[complex]", Z, float, double) {
 
     c = a - b;
 
-    REQUIRE(c[0].real() == Approx(Z(0.67)));
-    REQUIRE(c[0].imag() == Approx(Z(1.34)));
-    REQUIRE(c[1].real() == Approx(Z(0.5)));
-    REQUIRE(c[1].imag() == Approx(Z(-2.0)));
-    REQUIRE(c[2].real() == Approx(Z(-0.5)));
-    REQUIRE(c[2].imag() == Approx(Z(-0.25)));
+    REQUIRE_EQUALS_APPROX(c[0].real(), Z(0.67));
+    REQUIRE_EQUALS_APPROX(c[0].imag(), Z(1.34));
+    REQUIRE_EQUALS_APPROX(c[1].real(), Z(0.5));
+    REQUIRE_EQUALS_APPROX(c[1].imag(), Z(-2.0));
+    REQUIRE_EQUALS_APPROX(c[2].real(), Z(-0.5));
+    REQUIRE_EQUALS_APPROX(c[2].imag(), Z(-0.25));
 }
 
 TEMPLATE_TEST_CASE_2("complex/std/5", "[complex]", Z, float, double) {
@@ -111,12 +111,12 @@ TEMPLATE_TEST_CASE_2("complex/std/5", "[complex]", Z, float, double) {
 
     c = a >> b;
 
-    REQUIRE(c[0].real() == Approx(Z(-0.99)));
-    REQUIRE(c[0].imag() == Approx(Z(1.32)));
-    REQUIRE(c[1].real() == Approx(Z(1.5)));
-    REQUIRE(c[1].imag() == Approx(Z(3.0)));
-    REQUIRE(c[2].real() == Approx(Z(-0.375)));
-    REQUIRE(c[2].imag() == Approx(Z(0.25)));
+    REQUIRE_EQUALS_APPROX(c[0].real(), Z(-0.99));
+    REQUIRE_EQUALS_APPROX(c[0].imag(), Z(1.32));
+    REQUIRE_EQUALS_APPROX(c[1].real(), Z(1.5));
+    REQUIRE_EQUALS_APPROX(c[1].imag(), Z(3.0));
+    REQUIRE_EQUALS_APPROX(c[2].real(), Z(-0.375));
+    REQUIRE_EQUALS_APPROX(c[2].imag(), Z(0.25));
 }
 
 TEMPLATE_TEST_CASE_2("complex/std/6", "[complex]", Z, float, double) {
@@ -126,12 +126,12 @@ TEMPLATE_TEST_CASE_2("complex/std/6", "[complex]", Z, float, double) {
 
     c = a / b;
 
-    REQUIRE(c[0].real() == Approx(Z(3.0303030)));
-    REQUIRE(c[0].imag() == Approx(Z(0.0)));
-    REQUIRE(c[1].real() == Approx(Z(0.6666666)));
-    REQUIRE(c[1].imag() == Approx(Z(1.3333333)));
-    REQUIRE(c[2].real() == Approx(Z(0.461538)));
-    REQUIRE(c[2].imag() == Approx(Z(0.3076923)));
+    REQUIRE_EQUALS_APPROX(c[0].real(), Z(3.0303030));
+    REQUIRE_EQUALS_APPROX(c[0].imag(), Z(0.0));
+    REQUIRE_EQUALS_APPROX(c[1].real(), Z(0.6666666));
+    REQUIRE_EQUALS_APPROX(c[1].imag(), Z(1.3333333));
+    REQUIRE_EQUALS_APPROX(c[2].real(), Z(0.461538));
+    REQUIRE_EQUALS_APPROX(c[2].imag(), Z(0.3076923));
 }
 
 TEMPLATE_TEST_CASE_2("complex/std/7", "[complex]", Z, float, double) {
@@ -147,8 +147,8 @@ TEMPLATE_TEST_CASE_2("complex/std/7", "[complex]", Z, float, double) {
     c = a >> b;
 
     for (std::size_t i = 0; i < 1024; ++i) {
-        REQUIRE(c[i].real() == Approx((a[i] * b[i]).real()));
-        REQUIRE(c[i].imag() == Approx((a[i] * b[i]).imag()));
+        REQUIRE_EQUALS_APPROX(c[i].real(), (a[i] * b[i]).real());
+        REQUIRE_EQUALS_APPROX(c[i].imag(), (a[i] * b[i]).imag());
     }
 }
 
@@ -165,8 +165,8 @@ TEMPLATE_TEST_CASE_2("complex/std/8", "[complex]", Z, float, double) {
     c = a / b;
 
     for (std::size_t i = 0; i < 1024; ++i) {
-        REQUIRE(c[i].real() == Approx((a[i] / b[i]).real()));
-        REQUIRE(c[i].imag() == Approx((a[i] / b[i]).imag()));
+        REQUIRE_EQUALS_APPROX(c[i].real(), (a[i] / b[i]).real());
+        REQUIRE_EQUALS_APPROX(c[i].imag(), (a[i] / b[i]).imag());
     }
 }
 
@@ -177,9 +177,9 @@ TEMPLATE_TEST_CASE_2("complex/std/9", "[complex]", Z, float, double) {
 
     c(0) = a(0) >> b(0);
 
-    REQUIRE(c(0)[0] == a(0)[0] * b(0)[0]);
-    REQUIRE(c(0)[1] == a(0)[1] * b(0)[1]);
-    REQUIRE(c(0)[2] == a(0)[2] * b(0)[2]);
+    REQUIRE_EQUALS(c(0)[0], a(0)[0] * b(0)[0]);
+    REQUIRE_EQUALS(c(0)[1], a(0)[1] * b(0)[1]);
+    REQUIRE_EQUALS(c(0)[2], a(0)[2] * b(0)[2]);
 }
 
 CGEMM_TEST_CASE("complex/std/10", "[mul][complex]") {
@@ -191,14 +191,14 @@ CGEMM_TEST_CASE("complex/std/10", "[mul][complex]") {
 
     Impl::apply(a, b, c);
 
-    REQUIRE(c(0, 0).real() == 3.0);
-    REQUIRE(c(0, 0).imag() == -7.0);
-    REQUIRE(c(0, 1).real() == -4.0);
-    REQUIRE(c(0, 1).imag() == 12.0);
-    REQUIRE(c(1, 0).real() == 5.0);
-    REQUIRE(c(1, 0).imag() == 5.0);
-    REQUIRE(c(1, 1).real() == 1.0);
-    REQUIRE(c(1, 1).imag() == 9.0);
+    REQUIRE_EQUALS(c(0, 0).real(), 3.0);
+    REQUIRE_EQUALS(c(0, 0).imag(), -7.0);
+    REQUIRE_EQUALS(c(0, 1).real(), -4.0);
+    REQUIRE_EQUALS(c(0, 1).imag(), 12.0);
+    REQUIRE_EQUALS(c(1, 0).real(), 5.0);
+    REQUIRE_EQUALS(c(1, 0).imag(), 5.0);
+    REQUIRE_EQUALS(c(1, 1).real(), 1.0);
+    REQUIRE_EQUALS(c(1, 1).imag(), 9.0);
 }
 
 CGEMV_TEST_CASE("complex/std/11", "[mul][complex]") {
@@ -210,10 +210,10 @@ CGEMV_TEST_CASE("complex/std/11", "[mul][complex]") {
 
     Impl::apply(a, b, c);
 
-    REQUIRE(c(0).real() == Approx(Z(9.7)));
-    REQUIRE(c(0).imag() == Approx(Z(29.2)));
-    REQUIRE(c(1).real() == Approx(Z(9.8)));
-    REQUIRE(c(1).imag() == Approx(Z(4.2)));
+    REQUIRE_EQUALS_APPROX(c(0).real(), Z(9.7));
+    REQUIRE_EQUALS_APPROX(c(0).imag(), Z(29.2));
+    REQUIRE_EQUALS_APPROX(c(1).real(), Z(9.8));
+    REQUIRE_EQUALS_APPROX(c(1).imag(), Z(4.2));
 }
 
 CGEVM_TEST_CASE("complex/std/12", "[mul][complex]") {
@@ -225,10 +225,10 @@ CGEVM_TEST_CASE("complex/std/12", "[mul][complex]") {
 
     Impl::apply(b, a, c);
 
-    REQUIRE(c(0).real() == Approx(Z(7.9)));
-    REQUIRE(c(0).imag() == Approx(Z(-7.9)));
-    REQUIRE(c(1).real() == Approx(Z(9.8)));
-    REQUIRE(c(1).imag() == Approx(Z(6.2)));
+    REQUIRE_EQUALS_APPROX(c(0).real(), Z(7.9));
+    REQUIRE_EQUALS_APPROX(c(0).imag(), Z(-7.9));
+    REQUIRE_EQUALS_APPROX(c(1).real(), Z(9.8));
+    REQUIRE_EQUALS_APPROX(c(1).imag(), Z(6.2));
 }
 
 TEMPLATE_TEST_CASE_2("complex/etl/9", "[complex]", Z, float, double) {
@@ -238,9 +238,9 @@ TEMPLATE_TEST_CASE_2("complex/etl/9", "[complex]", Z, float, double) {
 
     c(0) = a(0) >> b(0);
 
-    REQUIRE(c(0)[0] == a(0)[0] * b(0)[0]);
-    REQUIRE(c(0)[1] == a(0)[1] * b(0)[1]);
-    REQUIRE(c(0)[2] == a(0)[2] * b(0)[2]);
+    REQUIRE_EQUALS(c(0)[0], a(0)[0] * b(0)[0]);
+    REQUIRE_EQUALS(c(0)[1], a(0)[1] * b(0)[1]);
+    REQUIRE_EQUALS(c(0)[2], a(0)[2] * b(0)[2]);
 }
 
 CGEMV_TEST_CASE("complex/etl/11", "[mul][complex]") {
@@ -252,10 +252,10 @@ CGEMV_TEST_CASE("complex/etl/11", "[mul][complex]") {
 
     Impl::apply(a, b, c);
 
-    REQUIRE(c(0).real == Approx(Z(9.7)));
-    REQUIRE(c(0).imag == Approx(Z(29.2)));
-    REQUIRE(c(1).real == Approx(Z(9.8)));
-    REQUIRE(c(1).imag == Approx(Z(4.2)));
+    REQUIRE_EQUALS_APPROX(c(0).real, Z(9.7));
+    REQUIRE_EQUALS_APPROX(c(0).imag, Z(29.2));
+    REQUIRE_EQUALS_APPROX(c(1).real, Z(9.8));
+    REQUIRE_EQUALS_APPROX(c(1).imag, Z(4.2));
 }
 
 CGEVM_TEST_CASE("complex/etl/12", "[mul][complex]") {
@@ -267,10 +267,10 @@ CGEVM_TEST_CASE("complex/etl/12", "[mul][complex]") {
 
     Impl::apply(b, a, c);
 
-    REQUIRE(c(0).real == Approx(Z(7.9)));
-    REQUIRE(c(0).imag == Approx(Z(-7.9)));
-    REQUIRE(c(1).real == Approx(Z(9.8)));
-    REQUIRE(c(1).imag == Approx(Z(6.2)));
+    REQUIRE_EQUALS_APPROX(c(0).real, Z(7.9));
+    REQUIRE_EQUALS_APPROX(c(0).imag, Z(-7.9));
+    REQUIRE_EQUALS_APPROX(c(1).real, Z(9.8));
+    REQUIRE_EQUALS_APPROX(c(1).imag, Z(6.2));
 }
 
 TEMPLATE_TEST_CASE_2("complex/real/1", "[complex]", Z, float, double) {
@@ -280,12 +280,12 @@ TEMPLATE_TEST_CASE_2("complex/real/1", "[complex]", Z, float, double) {
 
     b = etl::real(a);
 
-    REQUIRE(b(0, 0) == 1);
-    REQUIRE(b(0, 1) == -2);
-    REQUIRE(b(1, 0) == 2);
-    REQUIRE(b(1, 1) == 0);
-    REQUIRE(b(2, 0) == 1);
-    REQUIRE(b(2, 1) == 2);
+    REQUIRE_EQUALS(b(0, 0), 1);
+    REQUIRE_EQUALS(b(0, 1), -2);
+    REQUIRE_EQUALS(b(1, 0), 2);
+    REQUIRE_EQUALS(b(1, 1), 0);
+    REQUIRE_EQUALS(b(2, 0), 1);
+    REQUIRE_EQUALS(b(2, 1), 2);
 }
 
 TEMPLATE_TEST_CASE_2("complex/real/2", "[complex]", Z, float, double) {
@@ -295,12 +295,12 @@ TEMPLATE_TEST_CASE_2("complex/real/2", "[complex]", Z, float, double) {
 
     b = etl::real(a);
 
-    REQUIRE(b(0, 0) == 1);
-    REQUIRE(b(0, 1) == -2);
-    REQUIRE(b(1, 0) == 2);
-    REQUIRE(b(1, 1) == 0);
-    REQUIRE(b(2, 0) == 1);
-    REQUIRE(b(2, 1) == 2);
+    REQUIRE_EQUALS(b(0, 0), 1);
+    REQUIRE_EQUALS(b(0, 1), -2);
+    REQUIRE_EQUALS(b(1, 0), 2);
+    REQUIRE_EQUALS(b(1, 1), 0);
+    REQUIRE_EQUALS(b(2, 0), 1);
+    REQUIRE_EQUALS(b(2, 1), 2);
 }
 
 TEMPLATE_TEST_CASE_2("complex/real/3", "[complex]", Z, float, double) {
@@ -310,12 +310,12 @@ TEMPLATE_TEST_CASE_2("complex/real/3", "[complex]", Z, float, double) {
 
     b = a.real();
 
-    REQUIRE(b(0, 0) == 1);
-    REQUIRE(b(0, 1) == -2);
-    REQUIRE(b(1, 0) == 2);
-    REQUIRE(b(1, 1) == 0);
-    REQUIRE(b(2, 0) == 1);
-    REQUIRE(b(2, 1) == 2);
+    REQUIRE_EQUALS(b(0, 0), 1);
+    REQUIRE_EQUALS(b(0, 1), -2);
+    REQUIRE_EQUALS(b(1, 0), 2);
+    REQUIRE_EQUALS(b(1, 1), 0);
+    REQUIRE_EQUALS(b(2, 0), 1);
+    REQUIRE_EQUALS(b(2, 1), 2);
 }
 
 TEMPLATE_TEST_CASE_2("complex/imag/1", "[complex]", Z, float, double) {
@@ -325,12 +325,12 @@ TEMPLATE_TEST_CASE_2("complex/imag/1", "[complex]", Z, float, double) {
 
     b = etl::imag(a);
 
-    REQUIRE(b(0, 0) == 1);
-    REQUIRE(b(0, 1) == -2);
-    REQUIRE(b(1, 0) == 3);
-    REQUIRE(b(1, 1) == 0);
-    REQUIRE(b(2, 0) == 1);
-    REQUIRE(b(2, 1) == 2);
+    REQUIRE_EQUALS(b(0, 0), 1);
+    REQUIRE_EQUALS(b(0, 1), -2);
+    REQUIRE_EQUALS(b(1, 0), 3);
+    REQUIRE_EQUALS(b(1, 1), 0);
+    REQUIRE_EQUALS(b(2, 0), 1);
+    REQUIRE_EQUALS(b(2, 1), 2);
 }
 
 TEMPLATE_TEST_CASE_2("complex/imag/2", "[complex]", Z, float, double) {
@@ -340,12 +340,12 @@ TEMPLATE_TEST_CASE_2("complex/imag/2", "[complex]", Z, float, double) {
 
     b = etl::imag(a);
 
-    REQUIRE(b(0, 0) == 1);
-    REQUIRE(b(0, 1) == -2);
-    REQUIRE(b(1, 0) == 3);
-    REQUIRE(b(1, 1) == 0);
-    REQUIRE(b(2, 0) == 1);
-    REQUIRE(b(2, 1) == 2);
+    REQUIRE_EQUALS(b(0, 0), 1);
+    REQUIRE_EQUALS(b(0, 1), -2);
+    REQUIRE_EQUALS(b(1, 0), 3);
+    REQUIRE_EQUALS(b(1, 1), 0);
+    REQUIRE_EQUALS(b(2, 0), 1);
+    REQUIRE_EQUALS(b(2, 1), 2);
 }
 
 TEMPLATE_TEST_CASE_2("complex/imag/3", "[complex]", Z, float, double) {
@@ -355,12 +355,12 @@ TEMPLATE_TEST_CASE_2("complex/imag/3", "[complex]", Z, float, double) {
 
     b = a.imag();
 
-    REQUIRE(b(0, 0) == 1);
-    REQUIRE(b(0, 1) == -2);
-    REQUIRE(b(1, 0) == 3);
-    REQUIRE(b(1, 1) == 0);
-    REQUIRE(b(2, 0) == 1);
-    REQUIRE(b(2, 1) == 2);
+    REQUIRE_EQUALS(b(0, 0), 1);
+    REQUIRE_EQUALS(b(0, 1), -2);
+    REQUIRE_EQUALS(b(1, 0), 3);
+    REQUIRE_EQUALS(b(1, 1), 0);
+    REQUIRE_EQUALS(b(2, 0), 1);
+    REQUIRE_EQUALS(b(2, 1), 2);
 }
 
 TEMPLATE_TEST_CASE_2("complex/conj/1", "[complex]", Z, float, double) {
@@ -369,20 +369,20 @@ TEMPLATE_TEST_CASE_2("complex/conj/1", "[complex]", Z, float, double) {
 
     b = etl::conj(a);
 
-    REQUIRE(b(0, 0).real() == 1);
-    REQUIRE(b(0, 0).imag() == -1);
-    REQUIRE(b(0, 1).real() == -2);
-    REQUIRE(b(0, 1).imag() == 2);
+    REQUIRE_EQUALS(b(0, 0).real(), 1);
+    REQUIRE_EQUALS(b(0, 0).imag(), -1);
+    REQUIRE_EQUALS(b(0, 1).real(), -2);
+    REQUIRE_EQUALS(b(0, 1).imag(), 2);
 
-    REQUIRE(b(1, 0).real() == 2);
-    REQUIRE(b(1, 0).imag() == -3);
-    REQUIRE(b(1, 1).real() == 0);
-    REQUIRE(b(1, 1).imag() == 0);
+    REQUIRE_EQUALS(b(1, 0).real(), 2);
+    REQUIRE_EQUALS(b(1, 0).imag(), -3);
+    REQUIRE_EQUALS(b(1, 1).real(), 0);
+    REQUIRE_EQUALS(b(1, 1).imag(), 0);
 
-    REQUIRE(b(2, 0).real() == 1);
-    REQUIRE(b(2, 0).imag() == -1);
-    REQUIRE(b(2, 1).real() == 2);
-    REQUIRE(b(2, 1).imag() == -2);
+    REQUIRE_EQUALS(b(2, 0).real(), 1);
+    REQUIRE_EQUALS(b(2, 0).imag(), -1);
+    REQUIRE_EQUALS(b(2, 1).real(), 2);
+    REQUIRE_EQUALS(b(2, 1).imag(), -2);
 }
 
 TEMPLATE_TEST_CASE_2("complex/conj/2", "[complex]", Z, float, double) {
@@ -391,20 +391,20 @@ TEMPLATE_TEST_CASE_2("complex/conj/2", "[complex]", Z, float, double) {
 
     b = etl::conj(a);
 
-    REQUIRE(b(0, 0).real == 1);
-    REQUIRE(b(0, 0).imag == -1);
-    REQUIRE(b(0, 1).real == -2);
-    REQUIRE(b(0, 1).imag == 2);
+    REQUIRE_EQUALS(b(0, 0).real, 1);
+    REQUIRE_EQUALS(b(0, 0).imag, -1);
+    REQUIRE_EQUALS(b(0, 1).real, -2);
+    REQUIRE_EQUALS(b(0, 1).imag, 2);
 
-    REQUIRE(b(1, 0).real == 2);
-    REQUIRE(b(1, 0).imag == -3);
-    REQUIRE(b(1, 1).real == 0);
-    REQUIRE(b(1, 1).imag == 0);
+    REQUIRE_EQUALS(b(1, 0).real, 2);
+    REQUIRE_EQUALS(b(1, 0).imag, -3);
+    REQUIRE_EQUALS(b(1, 1).real, 0);
+    REQUIRE_EQUALS(b(1, 1).imag, 0);
 
-    REQUIRE(b(2, 0).real == 1);
-    REQUIRE(b(2, 0).imag == -1);
-    REQUIRE(b(2, 1).real == 2);
-    REQUIRE(b(2, 1).imag == -2);
+    REQUIRE_EQUALS(b(2, 0).real, 1);
+    REQUIRE_EQUALS(b(2, 0).imag, -1);
+    REQUIRE_EQUALS(b(2, 1).real, 2);
+    REQUIRE_EQUALS(b(2, 1).imag, -2);
 }
 
 TEMPLATE_TEST_CASE_2("complex/conj/3", "[complex]", Z, float, double) {
@@ -413,20 +413,20 @@ TEMPLATE_TEST_CASE_2("complex/conj/3", "[complex]", Z, float, double) {
 
     b = a.conj();
 
-    REQUIRE(b(0, 0).real == 1);
-    REQUIRE(b(0, 0).imag == -1);
-    REQUIRE(b(0, 1).real == -2);
-    REQUIRE(b(0, 1).imag == 2);
+    REQUIRE_EQUALS(b(0, 0).real, 1);
+    REQUIRE_EQUALS(b(0, 0).imag, -1);
+    REQUIRE_EQUALS(b(0, 1).real, -2);
+    REQUIRE_EQUALS(b(0, 1).imag, 2);
 
-    REQUIRE(b(1, 0).real == 2);
-    REQUIRE(b(1, 0).imag == -3);
-    REQUIRE(b(1, 1).real == 0);
-    REQUIRE(b(1, 1).imag == 0);
+    REQUIRE_EQUALS(b(1, 0).real, 2);
+    REQUIRE_EQUALS(b(1, 0).imag, -3);
+    REQUIRE_EQUALS(b(1, 1).real, 0);
+    REQUIRE_EQUALS(b(1, 1).imag, 0);
 
-    REQUIRE(b(2, 0).real == 1);
-    REQUIRE(b(2, 0).imag == -1);
-    REQUIRE(b(2, 1).real == 2);
-    REQUIRE(b(2, 1).imag == -2);
+    REQUIRE_EQUALS(b(2, 0).real, 1);
+    REQUIRE_EQUALS(b(2, 0).imag, -1);
+    REQUIRE_EQUALS(b(2, 1).real, 2);
+    REQUIRE_EQUALS(b(2, 1).imag, -2);
 }
 
 TEMPLATE_TEST_CASE_2("complex/ctrans/1", "[complex]", Z, float, double) {
@@ -435,19 +435,19 @@ TEMPLATE_TEST_CASE_2("complex/ctrans/1", "[complex]", Z, float, double) {
 
     b = etl::ctrans(a);
 
-    REQUIRE(b(0, 0).real() == 1);
-    REQUIRE(b(0, 0).imag() == -1);
-    REQUIRE(b(0, 1).real() == 2);
-    REQUIRE(b(0, 1).imag() == -3);
-    REQUIRE(b(0, 2).real() == 1);
-    REQUIRE(b(0, 2).imag() == -1);
+    REQUIRE_EQUALS(b(0, 0).real(), 1);
+    REQUIRE_EQUALS(b(0, 0).imag(), -1);
+    REQUIRE_EQUALS(b(0, 1).real(), 2);
+    REQUIRE_EQUALS(b(0, 1).imag(), -3);
+    REQUIRE_EQUALS(b(0, 2).real(), 1);
+    REQUIRE_EQUALS(b(0, 2).imag(), -1);
 
-    REQUIRE(b(1, 0).real() == -2);
-    REQUIRE(b(1, 0).imag() == 2);
-    REQUIRE(b(1, 1).real() == 0);
-    REQUIRE(b(1, 1).imag() == 0);
-    REQUIRE(b(1, 2).real() == 2);
-    REQUIRE(b(1, 2).imag() == -2);
+    REQUIRE_EQUALS(b(1, 0).real(), -2);
+    REQUIRE_EQUALS(b(1, 0).imag(), 2);
+    REQUIRE_EQUALS(b(1, 1).real(), 0);
+    REQUIRE_EQUALS(b(1, 1).imag(), 0);
+    REQUIRE_EQUALS(b(1, 2).real(), 2);
+    REQUIRE_EQUALS(b(1, 2).imag(), -2);
 }
 
 TEMPLATE_TEST_CASE_2("complex/ctrans/2", "[complex]", Z, float, double) {
@@ -456,17 +456,17 @@ TEMPLATE_TEST_CASE_2("complex/ctrans/2", "[complex]", Z, float, double) {
 
     b = etl::conj_transpose(a);
 
-    REQUIRE(b(0, 0).real == 1);
-    REQUIRE(b(0, 0).imag == -1);
-    REQUIRE(b(0, 1).real == 2);
-    REQUIRE(b(0, 1).imag == -3);
-    REQUIRE(b(0, 2).real == 1);
-    REQUIRE(b(0, 2).imag == -1);
+    REQUIRE_EQUALS(b(0, 0).real, 1);
+    REQUIRE_EQUALS(b(0, 0).imag, -1);
+    REQUIRE_EQUALS(b(0, 1).real, 2);
+    REQUIRE_EQUALS(b(0, 1).imag, -3);
+    REQUIRE_EQUALS(b(0, 2).real, 1);
+    REQUIRE_EQUALS(b(0, 2).imag, -1);
 
-    REQUIRE(b(1, 0).real == -2);
-    REQUIRE(b(1, 0).imag == 2);
-    REQUIRE(b(1, 1).real == 0);
-    REQUIRE(b(1, 1).imag == 0);
-    REQUIRE(b(1, 2).real == 2);
-    REQUIRE(b(1, 2).imag == -2);
+    REQUIRE_EQUALS(b(1, 0).real, -2);
+    REQUIRE_EQUALS(b(1, 0).imag, 2);
+    REQUIRE_EQUALS(b(1, 1).real, 0);
+    REQUIRE_EQUALS(b(1, 1).imag, 0);
+    REQUIRE_EQUALS(b(1, 2).real, 2);
+    REQUIRE_EQUALS(b(1, 2).imag, -2);
 }

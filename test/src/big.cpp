@@ -22,7 +22,7 @@ TEMPLATE_TEST_CASE_2("big/add", "[big][add]", Z, double, float) {
     c = a + b;
 
     for (std::size_t i = 0; i < c.size(); ++i) {
-        REQUIRE(c[i] == Approx(Z(a[i] + b[i])));
+        REQUIRE_EQUALS_APPROX(c[i], Z(a[i] + b[i]));
     }
 }
 
@@ -37,7 +37,7 @@ TEMPLATE_TEST_CASE_2("big/sub", "[big][sub]", Z, double, float) {
     c = a - b;
 
     for (std::size_t i = 0; i < c.size(); ++i) {
-        REQUIRE(c[i] == Approx(Z(a[i] - b[i])));
+        REQUIRE_EQUALS_APPROX(c[i], Z(a[i] - b[i]));
     }
 }
 
@@ -52,7 +52,7 @@ TEMPLATE_TEST_CASE_2("big/mul", "[big][sub]", Z, double, float) {
     c = a >> b;
 
     for (std::size_t i = 0; i < c.size(); ++i) {
-        REQUIRE(c[i] == Approx(Z(a[i] * b[i])));
+        REQUIRE_EQUALS_APPROX(c[i], Z(a[i] * b[i]));
     }
 }
 
@@ -68,7 +68,7 @@ TEMPLATE_TEST_CASE_2("big/compound/add", "[big][add]", Z, double, float) {
     c += a + b;
 
     for (std::size_t i = 0; i < c.size(); ++i) {
-        REQUIRE(c[i] == Approx(Z(120.0) + a[i] + b[i]).epsilon(1e-1));
+        REQUIRE_EQUALS_APPROX_E(c[i], Z(120.0) + a[i] + b[i], 1e-1);
     }
 }
 
@@ -84,7 +84,7 @@ TEMPLATE_TEST_CASE_2("big/compound/sub", "[big][add]", Z, double, float) {
     c -= a + b;
 
     for (std::size_t i = 0; i < c.size(); ++i) {
-        REQUIRE(c[i] == Approx(Z(1200.0 - (a[i] + b[i]))));
+        REQUIRE_EQUALS_APPROX(c[i], Z(1200.0 - (a[i] + b[i])));
     }
 }
 
@@ -100,7 +100,7 @@ TEMPLATE_TEST_CASE_2("big/compound/mul", "[big][add]", Z, double, float) {
     c *= a + b;
 
     for (std::size_t i = 0; i < c.size(); ++i) {
-        REQUIRE(c[i] == Approx(Z(1200.0 * (a[i] + b[i]))));
+        REQUIRE_EQUALS_APPROX(c[i], Z(1200.0 * (a[i] + b[i])));
     }
 }
 
@@ -116,7 +116,7 @@ TEMPLATE_TEST_CASE_2("big/compound/div", "[big][add]", Z, double, float) {
     c /= a + b;
 
     for (std::size_t i = 0; i < c.size(); ++i) {
-        REQUIRE(c[i] == Approx(Z(1200.0 / (a[i] + b[i]))));
+        REQUIRE_EQUALS_APPROX(c[i], Z(1200.0 / (a[i] + b[i])));
     }
 }
 
@@ -127,8 +127,8 @@ TEMPLATE_TEST_CASE_2("big/sum/div", "[big][add]", Z, double, float) {
     a = 1.0;
     b = 2.5;
 
-    REQUIRE(etl::sum(a) == 1.0 * etl::sum_parallel_threshold * 2.0);
-    REQUIRE(etl::sum(b) == 2.5 * etl::sum_parallel_threshold * 2.0);
+    REQUIRE_EQUALS(etl::sum(a), 1.0 * etl::sum_parallel_threshold * 2.0);
+    REQUIRE_EQUALS(etl::sum(b), 2.5 * etl::sum_parallel_threshold * 2.0);
 }
 
 TEMPLATE_TEST_CASE_2("big/exp", "[big][exp]", Z, double, float) {
@@ -139,7 +139,7 @@ TEMPLATE_TEST_CASE_2("big/exp", "[big][exp]", Z, double, float) {
     c = etl::exp(a);
 
     for (std::size_t i = 0; i < c.size(); ++i) {
-        REQUIRE(c[i] == Approx(std::exp(a[i])));
+        REQUIRE_EQUALS_APPROX(c[i], std::exp(a[i]));
     }
 }
 
@@ -151,7 +151,7 @@ TEMPLATE_TEST_CASE_2("big/log", "[big][log]", Z, double, float) {
     c = etl::log(a);
 
     for (std::size_t i = 0; i < c.size(); ++i) {
-        REQUIRE(c[i] == Approx(std::log(a[i])));
+        REQUIRE_EQUALS_APPROX(c[i], std::log(a[i]));
     }
 }
 
@@ -163,7 +163,7 @@ TEMPLATE_TEST_CASE_2("big/cos", "[big][cos]", Z, double, float) {
     c = etl::cos(a);
 
     for (std::size_t i = 0; i < c.size(); ++i) {
-        REQUIRE(c[i] == Approx(std::cos(a[i])));
+        REQUIRE_EQUALS_APPROX(c[i], std::cos(a[i]));
     }
 }
 
@@ -175,6 +175,6 @@ TEMPLATE_TEST_CASE_2("big/sin", "[big][sin]", Z, double, float) {
     c = etl::sin(a);
 
     for (std::size_t i = 0; i < c.size(); ++i) {
-        REQUIRE(c[i] == Approx(std::sin(a[i])));
+        REQUIRE_EQUALS_APPROX(c[i], std::sin(a[i]));
     }
 }

@@ -17,23 +17,23 @@
 TEMPLATE_TEST_CASE_2("column_major/1", "[fast][cm]", Z, int, long) {
     etl::fast_matrix_cm<Z, 2, 3> test_matrix(0);
 
-    REQUIRE(test_matrix.size() == 6);
+    REQUIRE_EQUALS(test_matrix.size(), 6UL);
 
-    REQUIRE(test_matrix.template dim<0>() == 2);
-    REQUIRE(test_matrix.template dim<1>() == 3);
-    REQUIRE(test_matrix.dim(0) == 2);
-    REQUIRE(test_matrix.dim(1) == 3);
+    REQUIRE_EQUALS(test_matrix.template dim<0>(), 2UL);
+    REQUIRE_EQUALS(test_matrix.template dim<1>(), 3UL);
+    REQUIRE_EQUALS(test_matrix.dim(0), 2UL);
+    REQUIRE_EQUALS(test_matrix.dim(1), 3UL);
 
     for (std::size_t i = 0; i < test_matrix.size(); ++i) {
         test_matrix[i] = i + 1;
     }
 
-    REQUIRE(test_matrix(0, 0) == 1);
-    REQUIRE(test_matrix(0, 1) == 3);
-    REQUIRE(test_matrix(0, 2) == 5);
-    REQUIRE(test_matrix(1, 0) == 2);
-    REQUIRE(test_matrix(1, 1) == 4);
-    REQUIRE(test_matrix(1, 2) == 6);
+    REQUIRE_EQUALS(test_matrix(0, 0), 1);
+    REQUIRE_EQUALS(test_matrix(0, 1), 3);
+    REQUIRE_EQUALS(test_matrix(0, 2), 5);
+    REQUIRE_EQUALS(test_matrix(1, 0), 2);
+    REQUIRE_EQUALS(test_matrix(1, 1), 4);
+    REQUIRE_EQUALS(test_matrix(1, 2), 6);
 }
 
 TEMPLATE_TEST_CASE_2("column_major/2", "[dyn][cm]", Z, int, long) {
@@ -41,23 +41,23 @@ TEMPLATE_TEST_CASE_2("column_major/2", "[dyn][cm]", Z, int, long) {
 
     test_matrix = 0;
 
-    REQUIRE(test_matrix.size() == 6);
+    REQUIRE_EQUALS(test_matrix.size(), 6UL);
 
-    REQUIRE(test_matrix.template dim<0>() == 2);
-    REQUIRE(test_matrix.template dim<1>() == 3);
-    REQUIRE(test_matrix.dim(0) == 2);
-    REQUIRE(test_matrix.dim(1) == 3);
+    REQUIRE_EQUALS(test_matrix.template dim<0>(), 2UL);
+    REQUIRE_EQUALS(test_matrix.template dim<1>(), 3UL);
+    REQUIRE_EQUALS(test_matrix.dim(0), 2UL);
+    REQUIRE_EQUALS(test_matrix.dim(1), 3UL);
 
     for (std::size_t i = 0; i < test_matrix.size(); ++i) {
         test_matrix[i] = i + 1;
     }
 
-    REQUIRE(test_matrix(0, 0) == 1);
-    REQUIRE(test_matrix(0, 1) == 3);
-    REQUIRE(test_matrix(0, 2) == 5);
-    REQUIRE(test_matrix(1, 0) == 2);
-    REQUIRE(test_matrix(1, 1) == 4);
-    REQUIRE(test_matrix(1, 2) == 6);
+    REQUIRE_EQUALS(test_matrix(0, 0), 1);
+    REQUIRE_EQUALS(test_matrix(0, 1), 3);
+    REQUIRE_EQUALS(test_matrix(0, 2), 5);
+    REQUIRE_EQUALS(test_matrix(1, 0), 2);
+    REQUIRE_EQUALS(test_matrix(1, 1), 4);
+    REQUIRE_EQUALS(test_matrix(1, 2), 6);
 }
 
 TEMPLATE_TEST_CASE_2("column_major/3", "[fast][cm]", Z, int, long) {
@@ -67,30 +67,30 @@ TEMPLATE_TEST_CASE_2("column_major/3", "[fast][cm]", Z, int, long) {
         test_matrix[i] = i + 1;
     }
 
-    REQUIRE(test_matrix(0, 0, 0) == 1);
-    REQUIRE(test_matrix(0, 0, 1) == 7);
-    REQUIRE(test_matrix(0, 0, 2) == 13);
-    REQUIRE(test_matrix(0, 0, 3) == 19);
-    REQUIRE(test_matrix(0, 1, 0) == 3);
-    REQUIRE(test_matrix(0, 1, 1) == 9);
-    REQUIRE(test_matrix(0, 1, 2) == 15);
-    REQUIRE(test_matrix(0, 1, 3) == 21);
-    REQUIRE(test_matrix(0, 2, 0) == 5);
-    REQUIRE(test_matrix(0, 2, 1) == 11);
-    REQUIRE(test_matrix(0, 2, 2) == 17);
-    REQUIRE(test_matrix(0, 2, 3) == 23);
-    REQUIRE(test_matrix(1, 0, 0) == 2);
-    REQUIRE(test_matrix(1, 0, 1) == 8);
-    REQUIRE(test_matrix(1, 0, 2) == 14);
-    REQUIRE(test_matrix(1, 0, 3) == 20);
-    REQUIRE(test_matrix(1, 1, 0) == 4);
-    REQUIRE(test_matrix(1, 1, 1) == 10);
-    REQUIRE(test_matrix(1, 1, 2) == 16);
-    REQUIRE(test_matrix(1, 1, 3) == 22);
-    REQUIRE(test_matrix(1, 2, 0) == 6);
-    REQUIRE(test_matrix(1, 2, 1) == 12);
-    REQUIRE(test_matrix(1, 2, 2) == 18);
-    REQUIRE(test_matrix(1, 2, 3) == 24);
+    REQUIRE_EQUALS(test_matrix(0, 0, 0), 1);
+    REQUIRE_EQUALS(test_matrix(0, 0, 1), 7);
+    REQUIRE_EQUALS(test_matrix(0, 0, 2), 13);
+    REQUIRE_EQUALS(test_matrix(0, 0, 3), 19);
+    REQUIRE_EQUALS(test_matrix(0, 1, 0), 3);
+    REQUIRE_EQUALS(test_matrix(0, 1, 1), 9);
+    REQUIRE_EQUALS(test_matrix(0, 1, 2), 15);
+    REQUIRE_EQUALS(test_matrix(0, 1, 3), 21);
+    REQUIRE_EQUALS(test_matrix(0, 2, 0), 5);
+    REQUIRE_EQUALS(test_matrix(0, 2, 1), 11);
+    REQUIRE_EQUALS(test_matrix(0, 2, 2), 17);
+    REQUIRE_EQUALS(test_matrix(0, 2, 3), 23);
+    REQUIRE_EQUALS(test_matrix(1, 0, 0), 2);
+    REQUIRE_EQUALS(test_matrix(1, 0, 1), 8);
+    REQUIRE_EQUALS(test_matrix(1, 0, 2), 14);
+    REQUIRE_EQUALS(test_matrix(1, 0, 3), 20);
+    REQUIRE_EQUALS(test_matrix(1, 1, 0), 4);
+    REQUIRE_EQUALS(test_matrix(1, 1, 1), 10);
+    REQUIRE_EQUALS(test_matrix(1, 1, 2), 16);
+    REQUIRE_EQUALS(test_matrix(1, 1, 3), 22);
+    REQUIRE_EQUALS(test_matrix(1, 2, 0), 6);
+    REQUIRE_EQUALS(test_matrix(1, 2, 1), 12);
+    REQUIRE_EQUALS(test_matrix(1, 2, 2), 18);
+    REQUIRE_EQUALS(test_matrix(1, 2, 3), 24);
 }
 
 TEMPLATE_TEST_CASE_2("column_major/4", "[dyn][cm]", Z, int, long) {
@@ -100,82 +100,82 @@ TEMPLATE_TEST_CASE_2("column_major/4", "[dyn][cm]", Z, int, long) {
         test_matrix[i] = i + 1;
     }
 
-    REQUIRE(test_matrix(0, 0, 0) == 1);
-    REQUIRE(test_matrix(0, 0, 1) == 7);
-    REQUIRE(test_matrix(0, 0, 2) == 13);
-    REQUIRE(test_matrix(0, 0, 3) == 19);
-    REQUIRE(test_matrix(0, 1, 0) == 3);
-    REQUIRE(test_matrix(0, 1, 1) == 9);
-    REQUIRE(test_matrix(0, 1, 2) == 15);
-    REQUIRE(test_matrix(0, 1, 3) == 21);
-    REQUIRE(test_matrix(0, 2, 0) == 5);
-    REQUIRE(test_matrix(0, 2, 1) == 11);
-    REQUIRE(test_matrix(0, 2, 2) == 17);
-    REQUIRE(test_matrix(0, 2, 3) == 23);
-    REQUIRE(test_matrix(1, 0, 0) == 2);
-    REQUIRE(test_matrix(1, 0, 1) == 8);
-    REQUIRE(test_matrix(1, 0, 2) == 14);
-    REQUIRE(test_matrix(1, 0, 3) == 20);
-    REQUIRE(test_matrix(1, 1, 0) == 4);
-    REQUIRE(test_matrix(1, 1, 1) == 10);
-    REQUIRE(test_matrix(1, 1, 2) == 16);
-    REQUIRE(test_matrix(1, 1, 3) == 22);
-    REQUIRE(test_matrix(1, 2, 0) == 6);
-    REQUIRE(test_matrix(1, 2, 1) == 12);
-    REQUIRE(test_matrix(1, 2, 2) == 18);
-    REQUIRE(test_matrix(1, 2, 3) == 24);
+    REQUIRE_EQUALS(test_matrix(0, 0, 0), 1);
+    REQUIRE_EQUALS(test_matrix(0, 0, 1), 7);
+    REQUIRE_EQUALS(test_matrix(0, 0, 2), 13);
+    REQUIRE_EQUALS(test_matrix(0, 0, 3), 19);
+    REQUIRE_EQUALS(test_matrix(0, 1, 0), 3);
+    REQUIRE_EQUALS(test_matrix(0, 1, 1), 9);
+    REQUIRE_EQUALS(test_matrix(0, 1, 2), 15);
+    REQUIRE_EQUALS(test_matrix(0, 1, 3), 21);
+    REQUIRE_EQUALS(test_matrix(0, 2, 0), 5);
+    REQUIRE_EQUALS(test_matrix(0, 2, 1), 11);
+    REQUIRE_EQUALS(test_matrix(0, 2, 2), 17);
+    REQUIRE_EQUALS(test_matrix(0, 2, 3), 23);
+    REQUIRE_EQUALS(test_matrix(1, 0, 0), 2);
+    REQUIRE_EQUALS(test_matrix(1, 0, 1), 8);
+    REQUIRE_EQUALS(test_matrix(1, 0, 2), 14);
+    REQUIRE_EQUALS(test_matrix(1, 0, 3), 20);
+    REQUIRE_EQUALS(test_matrix(1, 1, 0), 4);
+    REQUIRE_EQUALS(test_matrix(1, 1, 1), 10);
+    REQUIRE_EQUALS(test_matrix(1, 1, 2), 16);
+    REQUIRE_EQUALS(test_matrix(1, 1, 3), 22);
+    REQUIRE_EQUALS(test_matrix(1, 2, 0), 6);
+    REQUIRE_EQUALS(test_matrix(1, 2, 1), 12);
+    REQUIRE_EQUALS(test_matrix(1, 2, 2), 18);
+    REQUIRE_EQUALS(test_matrix(1, 2, 3), 24);
 }
 
 TEMPLATE_TEST_CASE_2("column_major/transpose/1", "[fast][cm]", Z, int, long) {
     etl::fast_matrix_cm<Z, 2, 3> a(etl::sequence_generator(1));
 
-    REQUIRE(a(0, 0) == 1);
-    REQUIRE(a(0, 1) == 3);
-    REQUIRE(a(0, 2) == 5);
-    REQUIRE(a(1, 0) == 2);
-    REQUIRE(a(1, 1) == 4);
-    REQUIRE(a(1, 2) == 6);
+    REQUIRE_EQUALS(a(0, 0), 1);
+    REQUIRE_EQUALS(a(0, 1), 3);
+    REQUIRE_EQUALS(a(0, 2), 5);
+    REQUIRE_EQUALS(a(1, 0), 2);
+    REQUIRE_EQUALS(a(1, 1), 4);
+    REQUIRE_EQUALS(a(1, 2), 6);
 
     etl::fast_matrix_cm<Z, 3, 2> b(etl::transpose(a));
 
-    REQUIRE(b(0, 0) == 1);
-    REQUIRE(b(1, 0) == 3);
-    REQUIRE(b(2, 0) == 5);
-    REQUIRE(b(0, 1) == 2);
-    REQUIRE(b(1, 1) == 4);
-    REQUIRE(b(2, 1) == 6);
+    REQUIRE_EQUALS(b(0, 0), 1);
+    REQUIRE_EQUALS(b(1, 0), 3);
+    REQUIRE_EQUALS(b(2, 0), 5);
+    REQUIRE_EQUALS(b(0, 1), 2);
+    REQUIRE_EQUALS(b(1, 1), 4);
+    REQUIRE_EQUALS(b(2, 1), 6);
 }
 
 TEMPLATE_TEST_CASE_2("column_major/tranpose/2", "[fast][cm]", Z, int, long) {
     etl::fast_matrix_cm<Z, 3, 2> a(etl::sequence_generator(1));
 
-    REQUIRE(a(0, 0) == 1);
-    REQUIRE(a(0, 1) == 4);
-    REQUIRE(a(1, 0) == 2);
-    REQUIRE(a(1, 1) == 5);
-    REQUIRE(a(2, 0) == 3);
-    REQUIRE(a(2, 1) == 6);
+    REQUIRE_EQUALS(a(0, 0), 1);
+    REQUIRE_EQUALS(a(0, 1), 4);
+    REQUIRE_EQUALS(a(1, 0), 2);
+    REQUIRE_EQUALS(a(1, 1), 5);
+    REQUIRE_EQUALS(a(2, 0), 3);
+    REQUIRE_EQUALS(a(2, 1), 6);
 
     etl::fast_matrix_cm<Z, 2, 3> b(etl::transpose(a));
 
-    REQUIRE(b(0, 0) == 1);
-    REQUIRE(b(0, 1) == 2);
-    REQUIRE(b(0, 2) == 3);
-    REQUIRE(b(1, 0) == 4);
-    REQUIRE(b(1, 1) == 5);
-    REQUIRE(b(1, 2) == 6);
+    REQUIRE_EQUALS(b(0, 0), 1);
+    REQUIRE_EQUALS(b(0, 1), 2);
+    REQUIRE_EQUALS(b(0, 2), 3);
+    REQUIRE_EQUALS(b(1, 0), 4);
+    REQUIRE_EQUALS(b(1, 1), 5);
+    REQUIRE_EQUALS(b(1, 2), 6);
 }
 
 TEMPLATE_TEST_CASE_2("column_major/binary/1", "[fast][cm]", Z, int, long) {
     etl::fast_matrix_cm<Z, 3, 2> a(etl::sequence_generator(1));
     etl::fast_matrix_cm<Z, 3, 2> b(a + a - a + a);
 
-    REQUIRE(a(0, 0) == 1);
-    REQUIRE(a(0, 1) == 4);
-    REQUIRE(a(1, 0) == 2);
-    REQUIRE(a(1, 1) == 5);
-    REQUIRE(a(2, 0) == 3);
-    REQUIRE(a(2, 1) == 6);
+    REQUIRE_EQUALS(a(0, 0), 1);
+    REQUIRE_EQUALS(a(0, 1), 4);
+    REQUIRE_EQUALS(a(1, 0), 2);
+    REQUIRE_EQUALS(a(1, 1), 5);
+    REQUIRE_EQUALS(a(2, 0), 3);
+    REQUIRE_EQUALS(a(2, 1), 6);
 }
 
 TEMPLATE_TEST_CASE_2("column_major/sub/1", "[fast][cm]", Z, int, long) {
@@ -187,19 +187,19 @@ TEMPLATE_TEST_CASE_2("column_major/sub/1", "[fast][cm]", Z, int, long) {
 
     etl::fast_matrix_cm<Z, 3, 2> b(a(1));
 
-    REQUIRE(a(0)(0, 0) == 1);
-    REQUIRE(a(0)(0, 1) == 4);
-    REQUIRE(a(0)(1, 0) == 2);
-    REQUIRE(a(0)(1, 1) == 5);
-    REQUIRE(a(0)(2, 0) == 3);
-    REQUIRE(a(0)(2, 1) == 6);
+    REQUIRE_EQUALS(a(0)(0, 0), 1);
+    REQUIRE_EQUALS(a(0)(0, 1), 4);
+    REQUIRE_EQUALS(a(0)(1, 0), 2);
+    REQUIRE_EQUALS(a(0)(1, 1), 5);
+    REQUIRE_EQUALS(a(0)(2, 0), 3);
+    REQUIRE_EQUALS(a(0)(2, 1), 6);
 
-    REQUIRE(b(0, 0) == 7);
-    REQUIRE(b(0, 1) == 10);
-    REQUIRE(b(1, 0) == 8);
-    REQUIRE(b(1, 1) == 11);
-    REQUIRE(b(2, 0) == 9);
-    REQUIRE(b(2, 1) == 12);
+    REQUIRE_EQUALS(b(0, 0), 7);
+    REQUIRE_EQUALS(b(0, 1), 10);
+    REQUIRE_EQUALS(b(1, 0), 8);
+    REQUIRE_EQUALS(b(1, 1), 11);
+    REQUIRE_EQUALS(b(2, 0), 9);
+    REQUIRE_EQUALS(b(2, 1), 12);
 }
 
 GEMM_TEST_CASE("column_major/mul/1", "mmul") {
@@ -207,17 +207,17 @@ GEMM_TEST_CASE("column_major/mul/1", "mmul") {
     etl::fast_matrix_cm<T, 3, 2> b = {7, 9, 11, 8, 10, 12};
     etl::fast_matrix_cm<T, 2, 2> c;
 
-    REQUIRE(etl::rows(a) == 2);
-    REQUIRE(etl::columns(a) == 3);
-    REQUIRE(etl::rows(b) == 3);
-    REQUIRE(etl::columns(b) == 2);
+    REQUIRE_EQUALS(etl::rows(a), 2UL);
+    REQUIRE_EQUALS(etl::columns(a), 3UL);
+    REQUIRE_EQUALS(etl::rows(b), 3UL);
+    REQUIRE_EQUALS(etl::columns(b), 2UL);
 
     Impl::apply(a, b, c);
 
-    REQUIRE(c(0, 0) == 58);
-    REQUIRE(c(0, 1) == 64);
-    REQUIRE(c(1, 0) == 139);
-    REQUIRE(c(1, 1) == 154);
+    REQUIRE_EQUALS(c(0, 0), 58);
+    REQUIRE_EQUALS(c(0, 1), 64);
+    REQUIRE_EQUALS(c(1, 0), 139);
+    REQUIRE_EQUALS(c(1, 1), 154);
 }
 
 GEMV_TEST_CASE("column_major/gemv/0", "[mul]") {
@@ -227,8 +227,8 @@ GEMV_TEST_CASE("column_major/gemv/0", "[mul]") {
 
     Impl::apply(a, b, c);
 
-    REQUIRE(c(0) == 50);
-    REQUIRE(c(1) == 122);
+    REQUIRE_EQUALS(c(0), 50);
+    REQUIRE_EQUALS(c(1), 122);
 }
 
 GEVM_TEST_CASE("column_major/gevm/0", "[mul]") {
@@ -238,8 +238,8 @@ GEVM_TEST_CASE("column_major/gevm/0", "[mul]") {
 
     Impl::apply(b, a, c);
 
-    REQUIRE(c(0) == 76);
-    REQUIRE(c(1) == 100);
+    REQUIRE_EQUALS(c(0), 76);
+    REQUIRE_EQUALS(c(1), 100);
 }
 
 CONV1_FULL_TEST_CASE("column_major/conv/full_1", "[cm][conv]") {
@@ -249,11 +249,11 @@ CONV1_FULL_TEST_CASE("column_major/conv/full_1", "[cm][conv]") {
 
     Impl::apply(a, b, c);
 
-    REQUIRE(c[0] == Approx(0.0));
-    REQUIRE(c[1] == Approx(1.0));
-    REQUIRE(c[2] == Approx(2.5));
-    REQUIRE(c[3] == Approx(4.0));
-    REQUIRE(c[4] == Approx(1.5));
+    REQUIRE_EQUALS_APPROX(c[0], 0.0);
+    REQUIRE_EQUALS_APPROX(c[1], 1.0);
+    REQUIRE_EQUALS_APPROX(c[2], 2.5);
+    REQUIRE_EQUALS_APPROX(c[3], 4.0);
+    REQUIRE_EQUALS_APPROX(c[4], 1.5);
 }
 
 CONV2_FULL_TEST_CASE_CM("column_major/conv2/full_1", "[cm][conv2]") {
@@ -263,25 +263,25 @@ CONV2_FULL_TEST_CASE_CM("column_major/conv2/full_1", "[cm][conv2]") {
 
     Impl::apply(a, b, c);
 
-    REQUIRE(c(0, 0) == Approx(T(2.0)));
-    REQUIRE(c(0, 1) == Approx(T(4.0)));
-    REQUIRE(c(0, 2) == Approx(T(6.0)));
-    REQUIRE(c(0, 3) == Approx(T(0.0)));
+    REQUIRE_EQUALS_APPROX(c(0, 0), T(2.0));
+    REQUIRE_EQUALS_APPROX(c(0, 1), T(4.0));
+    REQUIRE_EQUALS_APPROX(c(0, 2), T(6.0));
+    REQUIRE_EQUALS_APPROX(c(0, 3), T(0.0));
 
-    REQUIRE(c(1, 0) == Approx(T(0.5)));
-    REQUIRE(c(1, 1) == Approx(T(3.5)));
-    REQUIRE(c(1, 2) == Approx(T(4.5)));
-    REQUIRE(c(1, 3) == Approx(T(1.5)));
+    REQUIRE_EQUALS_APPROX(c(1, 0), T(0.5));
+    REQUIRE_EQUALS_APPROX(c(1, 1), T(3.5));
+    REQUIRE_EQUALS_APPROX(c(1, 2), T(4.5));
+    REQUIRE_EQUALS_APPROX(c(1, 3), T(1.5));
 
-    REQUIRE(c(2, 0) == Approx(T(6.0)));
-    REQUIRE(c(2, 1) == Approx(T(4.5)));
-    REQUIRE(c(2, 2) == Approx(T(3.0)));
-    REQUIRE(c(2, 3) == Approx(T(0.5)));
+    REQUIRE_EQUALS_APPROX(c(2, 0), T(6.0));
+    REQUIRE_EQUALS_APPROX(c(2, 1), T(4.5));
+    REQUIRE_EQUALS_APPROX(c(2, 2), T(3.0));
+    REQUIRE_EQUALS_APPROX(c(2, 3), T(0.5));
 
-    REQUIRE(c(3, 0) == Approx(T(1.5)));
-    REQUIRE(c(3, 1) == Approx(T(2.5)));
-    REQUIRE(c(3, 2) == Approx(T(1.5)));
-    REQUIRE(c(3, 3) == Approx(T(0.5)));
+    REQUIRE_EQUALS_APPROX(c(3, 0), T(1.5));
+    REQUIRE_EQUALS_APPROX(c(3, 1), T(2.5));
+    REQUIRE_EQUALS_APPROX(c(3, 2), T(1.5));
+    REQUIRE_EQUALS_APPROX(c(3, 3), T(0.5));
 }
 
 CONV2_FULL_TEST_CASE_CM("column_major/conv2/full_2", "[cm][conv2]") {
@@ -291,25 +291,25 @@ CONV2_FULL_TEST_CASE_CM("column_major/conv2/full_2", "[cm][conv2]") {
 
     Impl::apply(a, b, c);
 
-    REQUIRE(c(0, 0) == Approx(T(8)));
-    REQUIRE(c(0, 1) == Approx(T(25)));
-    REQUIRE(c(0, 2) == Approx(T(9)));
-    REQUIRE(c(0, 3) == Approx(T(18)));
+    REQUIRE_EQUALS_APPROX(c(0, 0), T(8));
+    REQUIRE_EQUALS_APPROX(c(0, 1), T(25));
+    REQUIRE_EQUALS_APPROX(c(0, 2), T(9));
+    REQUIRE_EQUALS_APPROX(c(0, 3), T(18));
 
-    REQUIRE(c(1, 0) == Approx(T(35)));
-    REQUIRE(c(1, 1) == Approx(T(34)));
-    REQUIRE(c(1, 2) == Approx(T(48)));
-    REQUIRE(c(1, 3) == Approx(T(33)));
+    REQUIRE_EQUALS_APPROX(c(1, 0), T(35));
+    REQUIRE_EQUALS_APPROX(c(1, 1), T(34));
+    REQUIRE_EQUALS_APPROX(c(1, 2), T(48));
+    REQUIRE_EQUALS_APPROX(c(1, 3), T(33));
 
-    REQUIRE(c(2, 0) == Approx(T(16)));
-    REQUIRE(c(2, 1) == Approx(T(47)));
-    REQUIRE(c(2, 2) == Approx(T(67)));
-    REQUIRE(c(2, 3) == Approx(T(20)));
+    REQUIRE_EQUALS_APPROX(c(2, 0), T(16));
+    REQUIRE_EQUALS_APPROX(c(2, 1), T(47));
+    REQUIRE_EQUALS_APPROX(c(2, 2), T(67));
+    REQUIRE_EQUALS_APPROX(c(2, 3), T(20));
 
-    REQUIRE(c(3, 0) == Approx(T(16)));
-    REQUIRE(c(3, 1) == Approx(T(44)));
-    REQUIRE(c(3, 2) == Approx(T(26)));
-    REQUIRE(c(3, 3) == Approx(T(4)));
+    REQUIRE_EQUALS_APPROX(c(3, 0), T(16));
+    REQUIRE_EQUALS_APPROX(c(3, 1), T(44));
+    REQUIRE_EQUALS_APPROX(c(3, 2), T(26));
+    REQUIRE_EQUALS_APPROX(c(3, 3), T(4));
 }
 
 CONV2_FULL_TEST_CASE_CM("column_major/conv2/full_3", "[cm][conv2]") {
@@ -319,29 +319,29 @@ CONV2_FULL_TEST_CASE_CM("column_major/conv2/full_3", "[cm][conv2]") {
 
     Impl::apply(a, b, c);
 
-    REQUIRE(c(0, 0) == Approx(T(1)));
-    REQUIRE(c(0, 1) == Approx(T(4)));
-    REQUIRE(c(0, 2) == Approx(T(7)));
-    REQUIRE(c(0, 3) == Approx(T(10)));
-    REQUIRE(c(0, 4) == Approx(T(13)));
-    REQUIRE(c(0, 5) == Approx(T(16)));
-    REQUIRE(c(0, 6) == Approx(T(12)));
+    REQUIRE_EQUALS_APPROX(c(0, 0), T(1));
+    REQUIRE_EQUALS_APPROX(c(0, 1), T(4));
+    REQUIRE_EQUALS_APPROX(c(0, 2), T(7));
+    REQUIRE_EQUALS_APPROX(c(0, 3), T(10));
+    REQUIRE_EQUALS_APPROX(c(0, 4), T(13));
+    REQUIRE_EQUALS_APPROX(c(0, 5), T(16));
+    REQUIRE_EQUALS_APPROX(c(0, 6), T(12));
 
-    REQUIRE(c(1, 0) == Approx(T(10)));
-    REQUIRE(c(1, 1) == Approx(T(32)));
-    REQUIRE(c(1, 2) == Approx(T(42)));
-    REQUIRE(c(1, 3) == Approx(T(52)));
-    REQUIRE(c(1, 4) == Approx(T(62)));
-    REQUIRE(c(1, 5) == Approx(T(72)));
-    REQUIRE(c(1, 6) == Approx(T(48)));
+    REQUIRE_EQUALS_APPROX(c(1, 0), T(10));
+    REQUIRE_EQUALS_APPROX(c(1, 1), T(32));
+    REQUIRE_EQUALS_APPROX(c(1, 2), T(42));
+    REQUIRE_EQUALS_APPROX(c(1, 3), T(52));
+    REQUIRE_EQUALS_APPROX(c(1, 4), T(62));
+    REQUIRE_EQUALS_APPROX(c(1, 5), T(72));
+    REQUIRE_EQUALS_APPROX(c(1, 6), T(48));
 
-    REQUIRE(c(2, 0) == Approx(T(21)));
-    REQUIRE(c(2, 1) == Approx(T(52)));
-    REQUIRE(c(2, 2) == Approx(T(59)));
-    REQUIRE(c(2, 3) == Approx(T(66)));
-    REQUIRE(c(2, 4) == Approx(T(73)));
-    REQUIRE(c(2, 5) == Approx(T(80)));
-    REQUIRE(c(2, 6) == Approx(T(48)));
+    REQUIRE_EQUALS_APPROX(c(2, 0), T(21));
+    REQUIRE_EQUALS_APPROX(c(2, 1), T(52));
+    REQUIRE_EQUALS_APPROX(c(2, 2), T(59));
+    REQUIRE_EQUALS_APPROX(c(2, 3), T(66));
+    REQUIRE_EQUALS_APPROX(c(2, 4), T(73));
+    REQUIRE_EQUALS_APPROX(c(2, 5), T(80));
+    REQUIRE_EQUALS_APPROX(c(2, 6), T(48));
 }
 
 TEMPLATE_TEST_CASE_2("column_major/compound/add_1", "[cm]", Z, float, double) {
@@ -350,10 +350,10 @@ TEMPLATE_TEST_CASE_2("column_major/compound/add_1", "[cm]", Z, float, double) {
 
     a += b;
 
-    REQUIRE(a(0, 0) == 1.5);
-    REQUIRE(a(0, 1) == 9.0);
-    REQUIRE(a(1, 0) == 5.0);
-    REQUIRE(a(1, 1) == 2.0);
+    REQUIRE_EQUALS(a(0, 0), 1.5);
+    REQUIRE_EQUALS(a(0, 1), 9.0);
+    REQUIRE_EQUALS(a(1, 0), 5.0);
+    REQUIRE_EQUALS(a(1, 1), 2.0);
 }
 
 TEMPLATE_TEST_CASE_2("column_major/compound/add_2", "[cm]", Z, float, double) {
@@ -362,10 +362,10 @@ TEMPLATE_TEST_CASE_2("column_major/compound/add_2", "[cm]", Z, float, double) {
 
     a += b;
 
-    REQUIRE(a(0, 0) == 1.5);
-    REQUIRE(a(0, 1) == 6.0);
-    REQUIRE(a(1, 0) == 8.0);
-    REQUIRE(a(1, 1) == 2.0);
+    REQUIRE_EQUALS(a(0, 0), 1.5);
+    REQUIRE_EQUALS(a(0, 1), 6.0);
+    REQUIRE_EQUALS(a(1, 0), 8.0);
+    REQUIRE_EQUALS(a(1, 1), 2.0);
 }
 
 TEMPLATE_TEST_CASE_2("column_major/compound/add_3", "[cm]", Z, float, double) {
@@ -374,10 +374,10 @@ TEMPLATE_TEST_CASE_2("column_major/compound/add_3", "[cm]", Z, float, double) {
 
     a += b;
 
-    REQUIRE(a(0, 0) == 1.5);
-    REQUIRE(a(0, 1) == 8.0);
-    REQUIRE(a(1, 0) == 6.0);
-    REQUIRE(a(1, 1) == 2.0);
+    REQUIRE_EQUALS(a(0, 0), 1.5);
+    REQUIRE_EQUALS(a(0, 1), 8.0);
+    REQUIRE_EQUALS(a(1, 0), 6.0);
+    REQUIRE_EQUALS(a(1, 1), 2.0);
 }
 
 // Complex multiplication tests
@@ -391,14 +391,14 @@ CGEMM_TEST_CASE("column_major/complex/mul/0", "[mul][complex]") {
 
     Impl::apply(a, b, c);
 
-    REQUIRE(c(0, 0).real() == 3.0);
-    REQUIRE(c(0, 0).imag() == -7.0);
-    REQUIRE(c(0, 1).real() == -4.0);
-    REQUIRE(c(0, 1).imag() == 12.0);
-    REQUIRE(c(1, 0).real() == 5.0);
-    REQUIRE(c(1, 0).imag() == 5.0);
-    REQUIRE(c(1, 1).real() == 1.0);
-    REQUIRE(c(1, 1).imag() == 9.0);
+    REQUIRE_EQUALS(c(0, 0).real(), 3.0);
+    REQUIRE_EQUALS(c(0, 0).imag(), -7.0);
+    REQUIRE_EQUALS(c(0, 1).real(), -4.0);
+    REQUIRE_EQUALS(c(0, 1).imag(), 12.0);
+    REQUIRE_EQUALS(c(1, 0).real(), 5.0);
+    REQUIRE_EQUALS(c(1, 0).imag(), 5.0);
+    REQUIRE_EQUALS(c(1, 1).real(), 1.0);
+    REQUIRE_EQUALS(c(1, 1).imag(), 9.0);
 }
 
 CGEMV_TEST_CASE("column_major/complex/mul/1", "[mul][complex]") {
@@ -410,10 +410,10 @@ CGEMV_TEST_CASE("column_major/complex/mul/1", "[mul][complex]") {
 
     Impl::apply(a, b, c);
 
-    REQUIRE(c(0).real == Approx(Z(9.7)));
-    REQUIRE(c(0).imag == Approx(Z(29.2)));
-    REQUIRE(c(1).real == Approx(Z(9.8)));
-    REQUIRE(c(1).imag == Approx(Z(4.2)));
+    REQUIRE_EQUALS_APPROX(c(0).real, Z(9.7));
+    REQUIRE_EQUALS_APPROX(c(0).imag, Z(29.2));
+    REQUIRE_EQUALS_APPROX(c(1).real, Z(9.8));
+    REQUIRE_EQUALS_APPROX(c(1).imag, Z(4.2));
 }
 
 CGEVM_TEST_CASE("column_major/complex/mul/2", "[mul][complex]") {
@@ -425,8 +425,8 @@ CGEVM_TEST_CASE("column_major/complex/mul/2", "[mul][complex]") {
 
     Impl::apply(b, a, c);
 
-    REQUIRE(c(0).real() == Approx(Z(7.9)));
-    REQUIRE(c(0).imag() == Approx(Z(-7.9)));
-    REQUIRE(c(1).real() == Approx(Z(9.8)));
-    REQUIRE(c(1).imag() == Approx(Z(6.2)));
+    REQUIRE_EQUALS_APPROX(c(0).real(), Z(7.9));
+    REQUIRE_EQUALS_APPROX(c(0).imag(), Z(-7.9));
+    REQUIRE_EQUALS_APPROX(c(1).real(), Z(9.8));
+    REQUIRE_EQUALS_APPROX(c(1).imag(), Z(6.2));
 }

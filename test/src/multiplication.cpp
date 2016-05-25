@@ -19,10 +19,10 @@ GEMM_TEST_CASE("multiplication/mm_mul_1", "mmul") {
 
     Impl::apply(a, b, c);
 
-    REQUIRE(c(0, 0) == 58);
-    REQUIRE(c(0, 1) == 64);
-    REQUIRE(c(1, 0) == 139);
-    REQUIRE(c(1, 1) == 154);
+    REQUIRE_EQUALS(c(0, 0), 58);
+    REQUIRE_EQUALS(c(0, 1), 64);
+    REQUIRE_EQUALS(c(1, 0), 139);
+    REQUIRE_EQUALS(c(1, 1), 154);
 }
 
 GEMM_TEST_CASE("multiplication/mm_mul_2", "mmul") {
@@ -32,15 +32,15 @@ GEMM_TEST_CASE("multiplication/mm_mul_2", "mmul") {
 
     Impl::apply(a, b, c);
 
-    REQUIRE(c(0, 0) == 58);
-    REQUIRE(c(0, 1) == 64);
-    REQUIRE(c(0, 2) == 70);
-    REQUIRE(c(1, 0) == 139);
-    REQUIRE(c(1, 1) == 154);
-    REQUIRE(c(1, 2) == 169);
-    REQUIRE(c(2, 0) == 220);
-    REQUIRE(c(2, 1) == 244);
-    REQUIRE(c(2, 2) == 268);
+    REQUIRE_EQUALS(c(0, 0), 58);
+    REQUIRE_EQUALS(c(0, 1), 64);
+    REQUIRE_EQUALS(c(0, 2), 70);
+    REQUIRE_EQUALS(c(1, 0), 139);
+    REQUIRE_EQUALS(c(1, 1), 154);
+    REQUIRE_EQUALS(c(1, 2), 169);
+    REQUIRE_EQUALS(c(2, 0), 220);
+    REQUIRE_EQUALS(c(2, 1), 244);
+    REQUIRE_EQUALS(c(2, 2), 268);
 }
 
 GEMM_TEST_CASE("multiplication/mm_mul_3", "mmul") {
@@ -50,14 +50,14 @@ GEMM_TEST_CASE("multiplication/mm_mul_3", "mmul") {
 
     Impl::apply(a, b, c);
 
-    REQUIRE(c(0, 0) == 90);
-    REQUIRE(c(0, 1) == 100);
-    REQUIRE(c(1, 0) == 202);
-    REQUIRE(c(1, 1) == 228);
-    REQUIRE(c(2, 0) == 314);
-    REQUIRE(c(2, 1) == 356);
-    REQUIRE(c(3, 0) == 426);
-    REQUIRE(c(3, 1) == 484);
+    REQUIRE_EQUALS(c(0, 0), 90);
+    REQUIRE_EQUALS(c(0, 1), 100);
+    REQUIRE_EQUALS(c(1, 0), 202);
+    REQUIRE_EQUALS(c(1, 1), 228);
+    REQUIRE_EQUALS(c(2, 0), 314);
+    REQUIRE_EQUALS(c(2, 1), 356);
+    REQUIRE_EQUALS(c(3, 0), 426);
+    REQUIRE_EQUALS(c(3, 1), 484);
 }
 
 GEMM_TEST_CASE("multiplication/mm_mul_4", "mmul") {
@@ -67,10 +67,10 @@ GEMM_TEST_CASE("multiplication/mm_mul_4", "mmul") {
 
     Impl::apply(a, b, c);
 
-    REQUIRE(c(0, 0) == 7);
-    REQUIRE(c(0, 1) == 10);
-    REQUIRE(c(1, 0) == 15);
-    REQUIRE(c(1, 1) == 22);
+    REQUIRE_EQUALS(c(0, 0), 7);
+    REQUIRE_EQUALS(c(0, 1), 10);
+    REQUIRE_EQUALS(c(1, 0), 15);
+    REQUIRE_EQUALS(c(1, 1), 22);
 }
 
 GEMM_TEST_CASE("multiplication/mm_mul_5", "mmul") {
@@ -80,15 +80,15 @@ GEMM_TEST_CASE("multiplication/mm_mul_5", "mmul") {
 
     Impl::apply(a, b, c);
 
-    REQUIRE(c(0, 0) == 58);
-    REQUIRE(c(0, 1) == 64);
-    REQUIRE(c(0, 2) == 70);
-    REQUIRE(c(1, 0) == 139);
-    REQUIRE(c(1, 1) == 154);
-    REQUIRE(c(1, 2) == 169);
-    REQUIRE(c(2, 0) == 220);
-    REQUIRE(c(2, 1) == 244);
-    REQUIRE(c(2, 2) == 268);
+    REQUIRE_EQUALS(c(0, 0), 58);
+    REQUIRE_EQUALS(c(0, 1), 64);
+    REQUIRE_EQUALS(c(0, 2), 70);
+    REQUIRE_EQUALS(c(1, 0), 139);
+    REQUIRE_EQUALS(c(1, 1), 154);
+    REQUIRE_EQUALS(c(1, 2), 169);
+    REQUIRE_EQUALS(c(2, 0), 220);
+    REQUIRE_EQUALS(c(2, 1), 244);
+    REQUIRE_EQUALS(c(2, 2), 268);
 }
 
 GEMM_TEST_CASE("multiplication/mm_mul_6", "mmul") {
@@ -98,11 +98,11 @@ GEMM_TEST_CASE("multiplication/mm_mul_6", "mmul") {
 
     Impl::apply(a, b, c);
 
-    REQUIRE(c(0, 0) == 828343);
-    REQUIRE(c(1, 1) == 825360);
-    REQUIRE(c(2, 2) == 826253);
-    REQUIRE(c(3, 3) == 824524);
-    REQUIRE(c(18, 18) == 828343);
+    REQUIRE_EQUALS(c(0, 0), 828343);
+    REQUIRE_EQUALS(c(1, 1), 825360);
+    REQUIRE_EQUALS(c(2, 2), 826253);
+    REQUIRE_EQUALS(c(3, 3), 824524);
+    REQUIRE_EQUALS(c(18, 18), 828343);
 }
 
 TEMPLATE_TEST_CASE_2("multiplication/mm_mul_7", "mmul", Z, double, float) {
@@ -112,10 +112,10 @@ TEMPLATE_TEST_CASE_2("multiplication/mm_mul_7", "mmul", Z, double, float) {
 
     c(0) = a(0) * b(0);
 
-    REQUIRE(c(0, 0, 0) == 58);
-    REQUIRE(c(0, 0, 1) == 64);
-    REQUIRE(c(0, 1, 0) == 139);
-    REQUIRE(c(0, 1, 1) == 154);
+    REQUIRE_EQUALS(c(0, 0, 0), 58);
+    REQUIRE_EQUALS(c(0, 0, 1), 64);
+    REQUIRE_EQUALS(c(0, 1, 0), 139);
+    REQUIRE_EQUALS(c(0, 1, 1), 154);
 }
 
 // Matrix-Vector Multiplication
@@ -127,8 +127,8 @@ GEMV_TEST_CASE("multiplication/gemv/0", "[mul]") {
 
     Impl::apply(a, b, c);
 
-    REQUIRE(c(0) == 50);
-    REQUIRE(c(1) == 122);
+    REQUIRE_EQUALS(c(0), 50);
+    REQUIRE_EQUALS(c(1), 122);
 }
 
 GEMV_TEST_CASE("multiplication/gemv/1", "[mul]") {
@@ -138,8 +138,8 @@ GEMV_TEST_CASE("multiplication/gemv/1", "[mul]") {
 
     Impl::apply(a, b, c);
 
-    REQUIRE(c(0) == 145);
-    REQUIRE(c(1) == 370);
+    REQUIRE_EQUALS(c(0), 145);
+    REQUIRE_EQUALS(c(1), 370);
 }
 
 GEMV_TEST_CASE("multiplication/gemv/2", "[mul]") {
@@ -149,8 +149,8 @@ GEMV_TEST_CASE("multiplication/gemv/2", "[mul]") {
 
     Impl::apply(a, b, c);
 
-    REQUIRE(c(0) == 50);
-    REQUIRE(c(1) == 122);
+    REQUIRE_EQUALS(c(0), 50);
+    REQUIRE_EQUALS(c(1), 122);
 }
 
 GEMV_TEST_CASE("multiplication/gemv/3", "[mul]") {
@@ -160,8 +160,8 @@ GEMV_TEST_CASE("multiplication/gemv/3", "[mul]") {
 
     Impl::apply(a, b, c);
 
-    REQUIRE(c(0) == 145);
-    REQUIRE(c(1) == 370);
+    REQUIRE_EQUALS(c(0), 145);
+    REQUIRE_EQUALS(c(1), 370);
 }
 
 // Vector-Matrix Multiplication
@@ -173,8 +173,8 @@ GEVM_TEST_CASE("multiplication/gevm/0", "[mul]") {
 
     Impl::apply(b, a, c);
 
-    REQUIRE(c(0) == 76);
-    REQUIRE(c(1) == 100);
+    REQUIRE_EQUALS(c(0), 76);
+    REQUIRE_EQUALS(c(1), 100);
 }
 
 GEVM_TEST_CASE("multiplication/gevm/1", "[mul]") {
@@ -184,8 +184,8 @@ GEVM_TEST_CASE("multiplication/gevm/1", "[mul]") {
 
     Impl::apply(b, a, c);
 
-    REQUIRE(c(0) == 76);
-    REQUIRE(c(1) == 100);
+    REQUIRE_EQUALS(c(0), 76);
+    REQUIRE_EQUALS(c(1), 100);
 }
 
 //Test using expressions directly
@@ -195,15 +195,15 @@ TEMPLATE_TEST_CASE_2("multiplication/expression", "expression mmul", Z, double, 
 
     auto c = *etl::mul(a, b);
 
-    REQUIRE(c(0, 0) == 58);
-    REQUIRE(c(0, 1) == 64);
-    REQUIRE(c(0, 2) == 70);
-    REQUIRE(c(1, 0) == 139);
-    REQUIRE(c(1, 1) == 154);
-    REQUIRE(c(1, 2) == 169);
-    REQUIRE(c(2, 0) == 220);
-    REQUIRE(c(2, 1) == 244);
-    REQUIRE(c(2, 2) == 268);
+    REQUIRE_EQUALS(c(0, 0), 58);
+    REQUIRE_EQUALS(c(0, 1), 64);
+    REQUIRE_EQUALS(c(0, 2), 70);
+    REQUIRE_EQUALS(c(1, 0), 139);
+    REQUIRE_EQUALS(c(1, 1), 154);
+    REQUIRE_EQUALS(c(1, 2), 169);
+    REQUIRE_EQUALS(c(2, 0), 220);
+    REQUIRE_EQUALS(c(2, 1), 244);
+    REQUIRE_EQUALS(c(2, 2), 268);
 }
 
 TEMPLATE_TEST_CASE_2("multiplication/expr_mmul_1", "mmul", Z, double, float) {
@@ -213,15 +213,15 @@ TEMPLATE_TEST_CASE_2("multiplication/expr_mmul_1", "mmul", Z, double, float) {
 
     etl::force(etl::mul(a + b - b, a + b - a, c));
 
-    REQUIRE(c(0, 0) == 58);
-    REQUIRE(c(0, 1) == 64);
-    REQUIRE(c(0, 2) == 70);
-    REQUIRE(c(1, 0) == 139);
-    REQUIRE(c(1, 1) == 154);
-    REQUIRE(c(1, 2) == 169);
-    REQUIRE(c(2, 0) == 220);
-    REQUIRE(c(2, 1) == 244);
-    REQUIRE(c(2, 2) == 268);
+    REQUIRE_EQUALS(c(0, 0), 58);
+    REQUIRE_EQUALS(c(0, 1), 64);
+    REQUIRE_EQUALS(c(0, 2), 70);
+    REQUIRE_EQUALS(c(1, 0), 139);
+    REQUIRE_EQUALS(c(1, 1), 154);
+    REQUIRE_EQUALS(c(1, 2), 169);
+    REQUIRE_EQUALS(c(2, 0), 220);
+    REQUIRE_EQUALS(c(2, 1), 244);
+    REQUIRE_EQUALS(c(2, 2), 268);
 }
 
 TEMPLATE_TEST_CASE_2("multiplication/expr_mmul_2", "mmul", Z, double, float) {
@@ -231,15 +231,15 @@ TEMPLATE_TEST_CASE_2("multiplication/expr_mmul_2", "mmul", Z, double, float) {
 
     etl::force(etl::mul(abs(a), abs(b), c));
 
-    REQUIRE(c(0, 0) == 58);
-    REQUIRE(c(0, 1) == 64);
-    REQUIRE(c(0, 2) == 70);
-    REQUIRE(c(1, 0) == 139);
-    REQUIRE(c(1, 1) == 154);
-    REQUIRE(c(1, 2) == 169);
-    REQUIRE(c(2, 0) == 220);
-    REQUIRE(c(2, 1) == 244);
-    REQUIRE(c(2, 2) == 268);
+    REQUIRE_EQUALS(c(0, 0), 58);
+    REQUIRE_EQUALS(c(0, 1), 64);
+    REQUIRE_EQUALS(c(0, 2), 70);
+    REQUIRE_EQUALS(c(1, 0), 139);
+    REQUIRE_EQUALS(c(1, 1), 154);
+    REQUIRE_EQUALS(c(1, 2), 169);
+    REQUIRE_EQUALS(c(2, 0), 220);
+    REQUIRE_EQUALS(c(2, 1), 244);
+    REQUIRE_EQUALS(c(2, 2), 268);
 }
 
 TEMPLATE_TEST_CASE_2("multiplication/stop_mmul_1", "mmul", Z, double, float) {
@@ -249,15 +249,15 @@ TEMPLATE_TEST_CASE_2("multiplication/stop_mmul_1", "mmul", Z, double, float) {
 
     c = etl::mul(s(abs(a)), s(abs(b)));
 
-    REQUIRE(c(0, 0) == 58);
-    REQUIRE(c(0, 1) == 64);
-    REQUIRE(c(0, 2) == 70);
-    REQUIRE(c(1, 0) == 139);
-    REQUIRE(c(1, 1) == 154);
-    REQUIRE(c(1, 2) == 169);
-    REQUIRE(c(2, 0) == 220);
-    REQUIRE(c(2, 1) == 244);
-    REQUIRE(c(2, 2) == 268);
+    REQUIRE_EQUALS(c(0, 0), 58);
+    REQUIRE_EQUALS(c(0, 1), 64);
+    REQUIRE_EQUALS(c(0, 2), 70);
+    REQUIRE_EQUALS(c(1, 0), 139);
+    REQUIRE_EQUALS(c(1, 1), 154);
+    REQUIRE_EQUALS(c(1, 2), 169);
+    REQUIRE_EQUALS(c(2, 0), 220);
+    REQUIRE_EQUALS(c(2, 1), 244);
+    REQUIRE_EQUALS(c(2, 2), 268);
 }
 
 // Expressions
@@ -269,14 +269,14 @@ TEMPLATE_TEST_CASE_2("multiplication/expression_1", "expression", Z, double, flo
 
     c = 2.0 * mul(a, b) + mul(a, b) / 1.1;
 
-    REQUIRE(c(0, 0) == Approx((2.0 + 1.0 / 1.1) * 90));
-    REQUIRE(c(0, 1) == Approx((2.0 + 1.0 / 1.1) * 100));
-    REQUIRE(c(1, 0) == Approx((2.0 + 1.0 / 1.1) * 202));
-    REQUIRE(c(1, 1) == Approx((2.0 + 1.0 / 1.1) * 228));
-    REQUIRE(c(2, 0) == Approx((2.0 + 1.0 / 1.1) * 314));
-    REQUIRE(c(2, 1) == Approx((2.0 + 1.0 / 1.1) * 356));
-    REQUIRE(c(3, 0) == Approx((2.0 + 1.0 / 1.1) * 426));
-    REQUIRE(c(3, 1) == Approx((2.0 + 1.0 / 1.1) * 484));
+    REQUIRE_EQUALS_APPROX(c(0, 0), (2.0 + 1.0 / 1.1) * 90);
+    REQUIRE_EQUALS_APPROX(c(0, 1), (2.0 + 1.0 / 1.1) * 100);
+    REQUIRE_EQUALS_APPROX(c(1, 0), (2.0 + 1.0 / 1.1) * 202);
+    REQUIRE_EQUALS_APPROX(c(1, 1), (2.0 + 1.0 / 1.1) * 228);
+    REQUIRE_EQUALS_APPROX(c(2, 0), (2.0 + 1.0 / 1.1) * 314);
+    REQUIRE_EQUALS_APPROX(c(2, 1), (2.0 + 1.0 / 1.1) * 356);
+    REQUIRE_EQUALS_APPROX(c(3, 0), (2.0 + 1.0 / 1.1) * 426);
+    REQUIRE_EQUALS_APPROX(c(3, 1), (2.0 + 1.0 / 1.1) * 484);
 }
 
 TEMPLATE_TEST_CASE_2("multiplication/expression_2", "expression", Z, double, float) {
@@ -286,14 +286,14 @@ TEMPLATE_TEST_CASE_2("multiplication/expression_2", "expression", Z, double, flo
 
     c = 2.0 * etl::lazy_mul(a, b) + etl::lazy_mul(a, b) / 1.1;
 
-    REQUIRE(c(0, 0) == Approx((2.0 + 1.0 / 1.1) * 90));
-    REQUIRE(c(0, 1) == Approx((2.0 + 1.0 / 1.1) * 100));
-    REQUIRE(c(1, 0) == Approx((2.0 + 1.0 / 1.1) * 202));
-    REQUIRE(c(1, 1) == Approx((2.0 + 1.0 / 1.1) * 228));
-    REQUIRE(c(2, 0) == Approx((2.0 + 1.0 / 1.1) * 314));
-    REQUIRE(c(2, 1) == Approx((2.0 + 1.0 / 1.1) * 356));
-    REQUIRE(c(3, 0) == Approx((2.0 + 1.0 / 1.1) * 426));
-    REQUIRE(c(3, 1) == Approx((2.0 + 1.0 / 1.1) * 484));
+    REQUIRE_EQUALS_APPROX(c(0, 0), (2.0 + 1.0 / 1.1) * 90);
+    REQUIRE_EQUALS_APPROX(c(0, 1), (2.0 + 1.0 / 1.1) * 100);
+    REQUIRE_EQUALS_APPROX(c(1, 0), (2.0 + 1.0 / 1.1) * 202);
+    REQUIRE_EQUALS_APPROX(c(1, 1), (2.0 + 1.0 / 1.1) * 228);
+    REQUIRE_EQUALS_APPROX(c(2, 0), (2.0 + 1.0 / 1.1) * 314);
+    REQUIRE_EQUALS_APPROX(c(2, 1), (2.0 + 1.0 / 1.1) * 356);
+    REQUIRE_EQUALS_APPROX(c(3, 0), (2.0 + 1.0 / 1.1) * 426);
+    REQUIRE_EQUALS_APPROX(c(3, 1), (2.0 + 1.0 / 1.1) * 484);
 }
 
 TEMPLATE_TEST_CASE_2("multiplication/expression_3", "expression", Z, double, float) {
@@ -304,10 +304,10 @@ TEMPLATE_TEST_CASE_2("multiplication/expression_3", "expression", Z, double, flo
     c = a * b;
     c += a * b;
 
-    REQUIRE(c(0, 0) == 2 * 58);
-    REQUIRE(c(0, 1) == 2 * 64);
-    REQUIRE(c(1, 0) == 2 * 139);
-    REQUIRE(c(1, 1) == 2 * 154);
+    REQUIRE_EQUALS(c(0, 0), 2 * 58);
+    REQUIRE_EQUALS(c(0, 1), 2 * 64);
+    REQUIRE_EQUALS(c(1, 0), 2 * 139);
+    REQUIRE_EQUALS(c(1, 1), 2 * 154);
 }
 
 // outer product
@@ -319,17 +319,17 @@ TEMPLATE_TEST_CASE_2("fast_vector/outer_1", "sum", Z, float, double) {
 
     c = outer(a, b);
 
-    REQUIRE(c(0, 0) == 4.0);
-    REQUIRE(c(0, 1) == 5.0);
-    REQUIRE(c(0, 2) == 6.0);
+    REQUIRE_EQUALS(c(0, 0), 4.0);
+    REQUIRE_EQUALS(c(0, 1), 5.0);
+    REQUIRE_EQUALS(c(0, 2), 6.0);
 
-    REQUIRE(c(1, 0) == 8.0);
-    REQUIRE(c(1, 1) == 10.0);
-    REQUIRE(c(1, 2) == 12.0);
+    REQUIRE_EQUALS(c(1, 0), 8.0);
+    REQUIRE_EQUALS(c(1, 1), 10.0);
+    REQUIRE_EQUALS(c(1, 2), 12.0);
 
-    REQUIRE(c(2, 0) == 12.0);
-    REQUIRE(c(2, 1) == 15.0);
-    REQUIRE(c(2, 2) == 18.0);
+    REQUIRE_EQUALS(c(2, 0), 12.0);
+    REQUIRE_EQUALS(c(2, 1), 15.0);
+    REQUIRE_EQUALS(c(2, 2), 18.0);
 }
 
 TEMPLATE_TEST_CASE_2("fast_vector/outer_2", "sum", Z, float, double) {
@@ -339,15 +339,15 @@ TEMPLATE_TEST_CASE_2("fast_vector/outer_2", "sum", Z, float, double) {
 
     c = outer(a, b);
 
-    REQUIRE(c(0, 0) == 2);
-    REQUIRE(c(0, 1) == 3);
-    REQUIRE(c(0, 2) == 4);
-    REQUIRE(c(0, 3) == 5);
+    REQUIRE_EQUALS(c(0, 0), 2);
+    REQUIRE_EQUALS(c(0, 1), 3);
+    REQUIRE_EQUALS(c(0, 2), 4);
+    REQUIRE_EQUALS(c(0, 3), 5);
 
-    REQUIRE(c(1, 0) == 4);
-    REQUIRE(c(1, 1) == 6);
-    REQUIRE(c(1, 2) == 8);
-    REQUIRE(c(1, 3) == 10);
+    REQUIRE_EQUALS(c(1, 0), 4);
+    REQUIRE_EQUALS(c(1, 1), 6);
+    REQUIRE_EQUALS(c(1, 2), 8);
+    REQUIRE_EQUALS(c(1, 3), 10);
 }
 
 TEMPLATE_TEST_CASE_2("fast_vector/outer_3", "sum", Z, float, double) {
@@ -357,15 +357,15 @@ TEMPLATE_TEST_CASE_2("fast_vector/outer_3", "sum", Z, float, double) {
 
     c = outer(a, b);
 
-    REQUIRE(c(0, 0) == 2);
-    REQUIRE(c(0, 1) == 3);
-    REQUIRE(c(0, 2) == 4);
-    REQUIRE(c(0, 3) == 5);
+    REQUIRE_EQUALS(c(0, 0), 2);
+    REQUIRE_EQUALS(c(0, 1), 3);
+    REQUIRE_EQUALS(c(0, 2), 4);
+    REQUIRE_EQUALS(c(0, 3), 5);
 
-    REQUIRE(c(1, 0) == 4);
-    REQUIRE(c(1, 1) == 6);
-    REQUIRE(c(1, 2) == 8);
-    REQUIRE(c(1, 3) == 10);
+    REQUIRE_EQUALS(c(1, 0), 4);
+    REQUIRE_EQUALS(c(1, 1), 6);
+    REQUIRE_EQUALS(c(1, 2), 8);
+    REQUIRE_EQUALS(c(1, 3), 10);
 }
 
 TEMPLATE_TEST_CASE_2("lvalue/mmul1", "lvalue sub mmul", Z, float, double) {
@@ -379,17 +379,17 @@ TEMPLATE_TEST_CASE_2("lvalue/mmul1", "lvalue sub mmul", Z, float, double) {
 
     etl::force(etl::mul(etl::sub(a, 0), etl::sub(b, 0), s));
 
-    REQUIRE(c(0, 0, 0) == 58);
-    REQUIRE(c(0, 0, 1) == 64);
-    REQUIRE(c(0, 1, 0) == 139);
-    REQUIRE(c(0, 1, 1) == 154);
+    REQUIRE_EQUALS(c(0, 0, 0), 58);
+    REQUIRE_EQUALS(c(0, 0, 1), 64);
+    REQUIRE_EQUALS(c(0, 1, 0), 139);
+    REQUIRE_EQUALS(c(0, 1, 1), 154);
 
     etl::sub(c, 1) = etl::sub(c, 0);
 
-    REQUIRE(c(1, 0, 0) == 58);
-    REQUIRE(c(1, 0, 1) == 64);
-    REQUIRE(c(1, 1, 0) == 139);
-    REQUIRE(c(1, 1, 1) == 154);
+    REQUIRE_EQUALS(c(1, 0, 0), 58);
+    REQUIRE_EQUALS(c(1, 0, 1), 64);
+    REQUIRE_EQUALS(c(1, 1, 0), 139);
+    REQUIRE_EQUALS(c(1, 1, 1), 154);
 }
 
 TEMPLATE_TEST_CASE_2("lvalue/mmul2", "lvalue sub mmul", Z, float, double) {
@@ -399,17 +399,17 @@ TEMPLATE_TEST_CASE_2("lvalue/mmul2", "lvalue sub mmul", Z, float, double) {
 
     etl::force(etl::mul(etl::sub(a, 0), etl::sub(b, 0), etl::sub(c, 0)));
 
-    REQUIRE(c(0, 0, 0) == 58);
-    REQUIRE(c(0, 0, 1) == 64);
-    REQUIRE(c(0, 1, 0) == 139);
-    REQUIRE(c(0, 1, 1) == 154);
+    REQUIRE_EQUALS(c(0, 0, 0), 58);
+    REQUIRE_EQUALS(c(0, 0, 1), 64);
+    REQUIRE_EQUALS(c(0, 1, 0), 139);
+    REQUIRE_EQUALS(c(0, 1, 1), 154);
 
     etl::sub(c, 1) = etl::sub(c, 0);
 
-    REQUIRE(c(1, 0, 0) == 58);
-    REQUIRE(c(1, 0, 1) == 64);
-    REQUIRE(c(1, 1, 0) == 139);
-    REQUIRE(c(1, 1, 1) == 154);
+    REQUIRE_EQUALS(c(1, 0, 0), 58);
+    REQUIRE_EQUALS(c(1, 0, 1), 64);
+    REQUIRE_EQUALS(c(1, 1, 0), 139);
+    REQUIRE_EQUALS(c(1, 1, 1), 154);
 }
 
 #ifdef ETL_CUDA
@@ -421,15 +421,15 @@ TEMPLATE_TEST_CASE_2("gpu/mmul_1", "lvalue sub mmul", Z, float, double) {
 
     c = a * b;
 
-    REQUIRE(c(0, 0) == 58);
-    REQUIRE(c(0, 1) == 64);
-    REQUIRE(c(0, 2) == 70);
-    REQUIRE(c(1, 0) == 139);
-    REQUIRE(c(1, 1) == 154);
-    REQUIRE(c(1, 2) == 169);
-    REQUIRE(c(2, 0) == 220);
-    REQUIRE(c(2, 1) == 244);
-    REQUIRE(c(2, 2) == 268);
+    REQUIRE_EQUALS(c(0, 0), 58);
+    REQUIRE_EQUALS(c(0, 1), 64);
+    REQUIRE_EQUALS(c(0, 2), 70);
+    REQUIRE_EQUALS(c(1, 0), 139);
+    REQUIRE_EQUALS(c(1, 1), 154);
+    REQUIRE_EQUALS(c(1, 2), 169);
+    REQUIRE_EQUALS(c(2, 0), 220);
+    REQUIRE_EQUALS(c(2, 1), 244);
+    REQUIRE_EQUALS(c(2, 2), 268);
 }
 
 TEMPLATE_TEST_CASE_2("gpu/mmul_2", "lvalue sub mmul", Z, float, double) {
@@ -440,15 +440,15 @@ TEMPLATE_TEST_CASE_2("gpu/mmul_2", "lvalue sub mmul", Z, float, double) {
 
     d = a * b * c;
 
-    REQUIRE(d(0, 0) == 58);
-    REQUIRE(d(0, 1) == 64);
-    REQUIRE(d(0, 2) == 70);
-    REQUIRE(d(1, 0) == 139);
-    REQUIRE(d(1, 1) == 154);
-    REQUIRE(d(1, 2) == 169);
-    REQUIRE(d(2, 0) == 220);
-    REQUIRE(d(2, 1) == 244);
-    REQUIRE(d(2, 2) == 268);
+    REQUIRE_EQUALS(d(0, 0), 58);
+    REQUIRE_EQUALS(d(0, 1), 64);
+    REQUIRE_EQUALS(d(0, 2), 70);
+    REQUIRE_EQUALS(d(1, 0), 139);
+    REQUIRE_EQUALS(d(1, 1), 154);
+    REQUIRE_EQUALS(d(1, 2), 169);
+    REQUIRE_EQUALS(d(2, 0), 220);
+    REQUIRE_EQUALS(d(2, 1), 244);
+    REQUIRE_EQUALS(d(2, 2), 268);
 }
 
 TEMPLATE_TEST_CASE_2("gpu/mmul_3", "lvalue sub mmul", Z, float, double) {
@@ -458,15 +458,15 @@ TEMPLATE_TEST_CASE_2("gpu/mmul_3", "lvalue sub mmul", Z, float, double) {
 
     d = 2.0 * (a * b);
 
-    REQUIRE(d(0, 0) == 2 * 58);
-    REQUIRE(d(0, 1) == 2 * 64);
-    REQUIRE(d(0, 2) == 2 * 70);
-    REQUIRE(d(1, 0) == 2 * 139);
-    REQUIRE(d(1, 1) == 2 * 154);
-    REQUIRE(d(1, 2) == 2 * 169);
-    REQUIRE(d(2, 0) == 2 * 220);
-    REQUIRE(d(2, 1) == 2 * 244);
-    REQUIRE(d(2, 2) == 2 * 268);
+    REQUIRE_EQUALS(d(0, 0), 2 * 58);
+    REQUIRE_EQUALS(d(0, 1), 2 * 64);
+    REQUIRE_EQUALS(d(0, 2), 2 * 70);
+    REQUIRE_EQUALS(d(1, 0), 2 * 139);
+    REQUIRE_EQUALS(d(1, 1), 2 * 154);
+    REQUIRE_EQUALS(d(1, 2), 2 * 169);
+    REQUIRE_EQUALS(d(2, 0), 2 * 220);
+    REQUIRE_EQUALS(d(2, 1), 2 * 244);
+    REQUIRE_EQUALS(d(2, 2), 2 * 268);
 }
 
 #endif //ETL_CUDA
