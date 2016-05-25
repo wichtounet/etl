@@ -207,25 +207,25 @@ CONV2_FULL_TEST_CASE("convolution_2d/full_8", "convolution_2d_full") {
 
     Impl::apply(a, b, c);
 
-    CHECK(c(0, 0) == Approx(T(26461)).epsilon(5.0));
-    CHECK(c(0, 1) == Approx(T(60760)).epsilon(5.0));
-    CHECK(c(0, 2) == Approx(T(103282)).epsilon(5.0));
-    CHECK(c(0, 3) == Approx(T(154412)).epsilon(5.0));
+    REQUIRE(c(0, 0) == Approx(T(26461)).epsilon(5.0));
+    REQUIRE(c(0, 1) == Approx(T(60760)).epsilon(5.0));
+    REQUIRE(c(0, 2) == Approx(T(103282)).epsilon(5.0));
+    REQUIRE(c(0, 3) == Approx(T(154412)).epsilon(5.0));
 
-    CHECK(c(1, 0) == Approx(T(60150)).epsilon(5.0));
-    CHECK(c(1, 1) == Approx(T(136700)).epsilon(5.0));
-    CHECK(c(1, 2) == Approx(T(230420)).epsilon(5.0));
-    CHECK(c(1, 3) == Approx(T(296477)).epsilon(5.0));
+    REQUIRE(c(1, 0) == Approx(T(60150)).epsilon(5.0));
+    REQUIRE(c(1, 1) == Approx(T(136700)).epsilon(5.0));
+    REQUIRE(c(1, 2) == Approx(T(230420)).epsilon(5.0));
+    REQUIRE(c(1, 3) == Approx(T(296477)).epsilon(5.0));
 
-    CHECK(c(2, 0) == Approx(T(101407)).epsilon(5.0));
-    CHECK(c(2, 1) == Approx(T(228500)).epsilon(5.0));
-    CHECK(c(2, 2) == Approx(T(336831)).epsilon(5.0));
-    CHECK(c(2, 3) == Approx(T(416899)).epsilon(5.0));
+    REQUIRE(c(2, 0) == Approx(T(101407)).epsilon(5.0));
+    REQUIRE(c(2, 1) == Approx(T(228500)).epsilon(5.0));
+    REQUIRE(c(2, 2) == Approx(T(336831)).epsilon(5.0));
+    REQUIRE(c(2, 3) == Approx(T(416899)).epsilon(5.0));
 
-    CHECK(c(3, 0) == Approx(T(150572)).epsilon(5.0));
-    CHECK(c(3, 1) == Approx(T(291237)).epsilon(5.0));
-    CHECK(c(3, 2) == Approx(T(417946)).epsilon(5.0));
-    CHECK(c(3, 3) == Approx(T(516210)).epsilon(5.0));
+    REQUIRE(c(3, 0) == Approx(T(150572)).epsilon(5.0));
+    REQUIRE(c(3, 1) == Approx(T(291237)).epsilon(5.0));
+    REQUIRE(c(3, 2) == Approx(T(417946)).epsilon(5.0));
+    REQUIRE(c(3, 3) == Approx(T(516210)).epsilon(5.0));
 }
 
 // convolution_2d_same
@@ -386,25 +386,25 @@ CONV2_SAME_TEST_CASE("convolution_2d/same_8", "convolution_2d_same") {
 
     Impl::apply(a, b, c);
 
-    CHECK(c(0, 0) == 676494);
-    CHECK(c(0, 1) == 806569);
-    CHECK(c(0, 2) == 976949);
-    CHECK(c(0, 3) == 1179119);
+    REQUIRE(c(0, 0) == 676494);
+    REQUIRE(c(0, 1) == 806569);
+    REQUIRE(c(0, 2) == 976949);
+    REQUIRE(c(0, 3) == 1179119);
 
-    CHECK(c(1, 0) == 808354);
-    CHECK(c(1, 1) == 984480);
-    CHECK(c(1, 2) == 1206077);
-    CHECK(c(1, 3) == 1469155);
+    REQUIRE(c(1, 0) == 808354);
+    REQUIRE(c(1, 1) == 984480);
+    REQUIRE(c(1, 2) == 1206077);
+    REQUIRE(c(1, 3) == 1469155);
 
-    CHECK(c(2, 0) == 971394);
-    CHECK(c(2, 1) == 1202744);
-    CHECK(c(2, 2) == 1485149);
-    CHECK(c(2, 3) == 1773847);
+    REQUIRE(c(2, 0) == 971394);
+    REQUIRE(c(2, 1) == 1202744);
+    REQUIRE(c(2, 2) == 1485149);
+    REQUIRE(c(2, 3) == 1773847);
 
-    CHECK(c(3, 0) == 1173020);
-    CHECK(c(3, 1) == 1464355);
-    CHECK(c(3, 2) == 1771896);
-    CHECK(c(3, 3) == 2091280);
+    REQUIRE(c(3, 0) == 1173020);
+    REQUIRE(c(3, 1) == 1464355);
+    REQUIRE(c(3, 2) == 1771896);
+    REQUIRE(c(3, 3) == 2091280);
 }
 
 // convolution_2d_valid
