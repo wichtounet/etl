@@ -708,6 +708,12 @@ void conv2_valid(const opaque_memory<T,2>& input, const opaque_memory<T,2>& kern
     cpp_unreachable("Unsupported feature called: cudnn conv2_valid");
 }
 
+/*!
+ * \brief cudnn implementation of a 4D 'valid' convolution C = I * K
+ * \param input The input matrix
+ * \param kernel The kernel matrix
+ * \param conv The output matrix
+ */
 template <typename T>
 void conv4_valid(const opaque_memory<T,4>& input, const opaque_memory<T,4>& kernel, const opaque_memory<T,4>& conv) {
     cpp_unused(input);
