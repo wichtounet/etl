@@ -736,6 +736,12 @@ void conv2_full(const opaque_memory<T,2>& input, const opaque_memory<T,2>& kerne
     cpp_unreachable("Unsupported feature called: cudnn conv2_full");
 }
 
+/*!
+ * \brief cudnn implementation of a 4D 'full' convolution C = I * K
+ * \param input The input matrix
+ * \param kernel The kernel matrix
+ * \param conv The output matrix
+ */
 template <typename T>
 void conv4_full(const opaque_memory<T,4>& input, const opaque_memory<T,4>& kernel, const opaque_memory<T,4>& conv) {
     cpp_unused(input);
