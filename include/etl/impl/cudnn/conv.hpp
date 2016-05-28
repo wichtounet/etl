@@ -750,6 +750,12 @@ void conv4_full(const opaque_memory<T,4>& input, const opaque_memory<T,4>& kerne
     cpp_unreachable("Unsupported feature called: cudnn conv4_full");
 }
 
+/*!
+ * \brief cudnn implementation of a 2D 'valid' convolution C = I * K, with multiple kernels
+ * \param input The input matrix
+ * \param kernels The kernel matrix
+ * \param conv The output matrix
+ */
 template <typename T>
 void conv2_valid_multi(const opaque_memory<T,2>& input, const opaque_memory<T,3>& kernel, const opaque_memory<T,3>& conv) {
     cpp_unused(input);
@@ -758,6 +764,12 @@ void conv2_valid_multi(const opaque_memory<T,2>& input, const opaque_memory<T,3>
     cpp_unreachable("Unsupported feature called: cudnn conv2_valid_multi");
 }
 
+/*!
+ * \brief Standard implementation of a 2D 'valid' convolution C = I * K, with multiple flipped kernels
+ * \param input The input matrix
+ * \param kernels The kernel matrix
+ * \param conv The output matrix
+ */
 template <typename T>
 void conv2_valid_multi_flipped(const opaque_memory<T,2>& input, const opaque_memory<T,3>& kernel, const opaque_memory<T,3>& conv) {
     cpp_unused(input);
@@ -766,6 +778,12 @@ void conv2_valid_multi_flipped(const opaque_memory<T,2>& input, const opaque_mem
     cpp_unreachable("Unsupported feature called: cudnn conv2_valid_multi_flipped");
 }
 
+/*!
+ * \brief Standard implementation of a 2D 'full' convolution C = I * K, with multiple kernels
+ * \param input The input matrix
+ * \param kernels The kernel matrix
+ * \param conv The output matrix
+ */
 template <typename I, typename K, typename C>
 void conv2_full_multi(const I& input, const K& kernel, C&& conv){
     cpp_unused(input);
@@ -774,6 +792,12 @@ void conv2_full_multi(const I& input, const K& kernel, C&& conv){
     cpp_unreachable("Unsupported feature called: cudnn conv2_full_multi");
 }
 
+/*!
+ * \brief Standard implementation of a 2D 'full' convolution C = I * K, with multiple kernels
+ * \param input The input matrix
+ * \param kernels The kernel matrix
+ * \param conv The output matrix
+ */
 template <typename I, typename K, typename C>
 void conv2_full_multi_flipped(const I& input, const K& kernel, C&& conv){
     cpp_unused(input);
