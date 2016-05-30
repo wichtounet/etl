@@ -366,3 +366,37 @@ TEMPLATE_TEST_CASE_2("rep_l/dyn_matrix_4", "rep", Z, float, double) {
         REQUIRE_EQUALS(v, 1.0);
     }
 }
+
+TEMPLATE_TEST_CASE_2("rep/mixed/1", "[rep]", Z, float, double) {
+    etl::fast_vector<Z, 2> a{Z(2.0), Z(3.0)};
+    etl::fast_matrix<Z, 3, 2, 4, 5> b;
+
+    b = etl::rep_l<3>(etl::rep<4, 5>(a));
+
+    REQUIRE_EQUALS(b(0, 0, 0, 0), 2.0);
+    REQUIRE_EQUALS(b(0, 1, 0, 0), 3.0);
+}
+
+TEMPLATE_TEST_CASE_2("rep/mixed/2", "[rep]", Z, float, double) {
+    etl::fast_vector<Z, 2> a{Z(2.0), Z(3.0)};
+    etl::fast_matrix<Z, 3, 2, 4, 5> b;
+
+    b = etl::rep<4, 5>(etl::rep_l<3>(a));
+
+    REQUIRE_EQUALS(b(0, 0, 0, 0), 2.0);
+    REQUIRE_EQUALS(b(0, 1, 0, 0), 3.0);
+}
+
+TEMPLATE_TEST_CASE_2("rep/mixed/3", "[rep]", Z, float, double) {
+    etl::fast_vector<Z, 2> a{Z(2.0), Z(3.0)};
+
+    auto b = etl::force_temporary(etl::rep<4, 5>(etl::rep_l<3>(a)));
+
+    REQUIRE_EQUALS(etl::decay_traits<decltype(b)>::template dim<0>(), 3UL);
+    REQUIRE_EQUALS(etl::decay_traits<decltype(b)>::template dim<1>(), 2UL);
+    REQUIRE_EQUALS(etl::decay_traits<decltype(b)>::template dim<2>(), 4UL);
+    REQUIRE_EQUALS(etl::decay_traits<decltype(b)>::template dim<3>(), 5UL);
+
+    REQUIRE_EQUALS(b(0, 0, 0, 0), 2.0);
+    REQUIRE_EQUALS(b(0, 1, 0, 0), 3.0);
+}
