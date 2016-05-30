@@ -208,6 +208,50 @@ void conv4_full(const I& input, const K& kernel, C&& conv) {
 }
 
 /*!
+ * \brief Standard implementation of a 4D 'valid' convolution C = I * K
+ * \param input The input matrix
+ * \param kernel The kernel matrix
+ * \param conv The output matrix
+ */
+template <typename I, typename K, typename C>
+void conv4_valid_flipped(const I& input, const K& kernel, C&& conv) {
+    cpp_assert(etl::dim<1>(input) == etl::dim<1>(kernel), "Invalid number of channels");
+    cpp_assert(etl::dim<0>(input) == etl::dim<0>(conv), "Invalid number of images");
+
+    conv = 0.0;
+
+    for(std::size_t i = 0; i < etl::dim<0>(input); ++i){
+        for(std::size_t k = 0; k < etl::dim<0>(kernel); ++k){
+            for(std::size_t c = 0; c < etl::dim<1>(kernel); ++c){
+                conv(i)(k) += conv_2d_valid(input(i)(c), fflip(kernel(k)(c)));
+            }
+        }
+    }
+}
+
+/*!
+ * \brief Standard implementation of a 4D 'valid' convolution C = I * K
+ * \param input The input matrix
+ * \param kernel The kernel matrix
+ * \param conv The output matrix
+ */
+template <typename I, typename K, typename C>
+void conv4_full_flipped(const I& input, const K& kernel, C&& conv) {
+    cpp_assert(etl::dim<1>(input) == etl::dim<0>(kernel), "Invalid number of channels");
+    cpp_assert(etl::dim<0>(input) == etl::dim<0>(conv), "Invalid number of images");
+
+    conv = 0.0;
+
+    for(std::size_t i = 0; i < etl::dim<0>(input); ++i){
+        for(std::size_t k = 0; k < etl::dim<0>(kernel); ++k){
+            for(std::size_t c = 0; c < etl::dim<1>(kernel); ++c){
+                conv(i)(c) += conv_2d_full(input(i)(k), fflip(kernel(k)(c)));
+            }
+        }
+    }
+}
+
+/*!
  * \brief Standard implementation of a 2D 'valid' convolution C = I * K, with multiple kernels
  * \param input The input matrix
  * \param kernels The kernel matrix

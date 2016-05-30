@@ -595,6 +595,18 @@ template <typename T>
 using conv4_full_expr = basic_conv_expr<T, 4, conv_type::FULL, detail::conv4_full_impl, true>;
 
 /*!
+ * \brief Expression for 4D valid convolution
+ */
+template <typename T>
+using conv4_valid_flipped_expr = basic_conv_expr<T, 4, conv_type::VALID, detail::conv4_valid_flipped_impl, true>;
+
+/*!
+ * \brief Expression for 4D valid convolution
+ */
+template <typename T>
+using conv4_full_flipped_expr = basic_conv_expr<T, 4, conv_type::FULL, detail::conv4_full_flipped_impl, true>;
+
+/*!
  * \brief Expression for 2D valid convolution, with multiple kernels
  */
 template <typename T>
