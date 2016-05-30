@@ -750,3 +750,85 @@ CONV2_VALID_FLIPPED_TEST_CASE("conv/2d/flipped/valid/2", "[conv][conv2][valid]")
     REQUIRE_EQUALS(c(3, 2), 9312);
     REQUIRE_EQUALS(c(3, 3), 5832);
 }
+
+// conv_2d_full_flipped
+
+CONV2_FULL_FLIPPED_TEST_CASE("conv/2d/full/flipped/1", "[conv][conv2][full]") {
+    etl::fast_matrix<T, 3, 3> a = {1.0, 2.0, 3.0, 0.0, 1.0, 1.0, 3.0, 2.0, 1.0};
+    etl::fast_matrix<T, 2, 2> b = {0.5, 0.5, 0.0, 2.0};
+    etl::fast_matrix<T, 4, 4> c;
+
+    Impl::apply(a, b, c);
+
+    REQUIRE_EQUALS_APPROX(c(0, 0), T(2.0));
+    REQUIRE_EQUALS_APPROX(c(0, 1), T(4.0));
+    REQUIRE_EQUALS_APPROX(c(0, 2), T(6.0));
+    REQUIRE_EQUALS_APPROX(c(0, 3), T(0.0));
+
+    REQUIRE_EQUALS_APPROX(c(1, 0), T(0.5));
+    REQUIRE_EQUALS_APPROX(c(1, 1), T(3.5));
+    REQUIRE_EQUALS_APPROX(c(1, 2), T(4.5));
+    REQUIRE_EQUALS_APPROX(c(1, 3), T(1.5));
+
+    REQUIRE_EQUALS_APPROX(c(2, 0), T(6.0));
+    REQUIRE_EQUALS_APPROX(c(2, 1), T(4.5));
+    REQUIRE_EQUALS_APPROX(c(2, 2), T(3.0));
+    REQUIRE_EQUALS_APPROX(c(2, 3), T(0.5));
+
+    REQUIRE_EQUALS_APPROX(c(3, 0), T(1.5));
+    REQUIRE_EQUALS_APPROX(c(3, 1), T(2.5));
+    REQUIRE_EQUALS_APPROX(c(3, 2), T(1.5));
+    REQUIRE_EQUALS_APPROX(c(3, 3), T(0.5));
+}
+
+CONV2_FULL_FLIPPED_TEST_CASE("conv/2d/full/flipped/2", "[conv][conv2][full]") {
+    etl::fast_matrix<T, 3, 2> a = {1.0, 2.0, 0.0, 1.0, 3.0, 2.0};
+    etl::fast_matrix<T, 2, 2> b = {0.5, 0.5, 0.0, 2.0};
+    etl::fast_matrix<T, 4, 3> c;
+
+    Impl::apply(a, b, c);
+
+    REQUIRE_EQUALS_APPROX(c(0, 0), T(2.0));
+    REQUIRE_EQUALS_APPROX(c(0, 1), T(4.0));
+    REQUIRE_EQUALS_APPROX(c(0, 2), T(0.0));
+
+    REQUIRE_EQUALS_APPROX(c(1, 0), T(0.5));
+    REQUIRE_EQUALS_APPROX(c(1, 1), T(3.5));
+    REQUIRE_EQUALS_APPROX(c(1, 2), T(1.0));
+
+    REQUIRE_EQUALS_APPROX(c(2, 0), T(6.0));
+    REQUIRE_EQUALS_APPROX(c(2, 1), T(4.5));
+    REQUIRE_EQUALS_APPROX(c(2, 2), T(0.5));
+
+    REQUIRE_EQUALS_APPROX(c(3, 0), T(1.5));
+    REQUIRE_EQUALS_APPROX(c(3, 1), T(2.5));
+    REQUIRE_EQUALS_APPROX(c(3, 2), T(1.0));
+}
+
+CONV2_FULL_FLIPPED_TEST_CASE("conv/2d/full/flipped/3", "convolution_2d_full") {
+    etl::fast_matrix<T, 33, 33> a(etl::magic(33));
+    etl::fast_matrix<T, 9, 9> b(fflip(etl::magic(9)));
+    etl::fast_matrix<T, 41, 41> c;
+
+    Impl::apply(a, b, c);
+
+    REQUIRE_EQUALS_APPROX_E(c(0, 0), T(26461), std::numeric_limits<float>::epsilon() * 10000);
+    REQUIRE_EQUALS_APPROX_E(c(0, 1), T(60760), std::numeric_limits<float>::epsilon() * 10000);
+    REQUIRE_EQUALS_APPROX_E(c(0, 2), T(103282), std::numeric_limits<float>::epsilon() * 10000);
+    REQUIRE_EQUALS_APPROX_E(c(0, 3), T(154412), std::numeric_limits<float>::epsilon() * 10000);
+
+    REQUIRE_EQUALS_APPROX_E(c(1, 0), T(60150), std::numeric_limits<float>::epsilon() * 10000);
+    REQUIRE_EQUALS_APPROX_E(c(1, 1), T(136700), std::numeric_limits<float>::epsilon() * 10000);
+    REQUIRE_EQUALS_APPROX_E(c(1, 2), T(230420), std::numeric_limits<float>::epsilon() * 10000);
+    REQUIRE_EQUALS_APPROX_E(c(1, 3), T(296477), std::numeric_limits<float>::epsilon() * 10000);
+
+    REQUIRE_EQUALS_APPROX_E(c(2, 0), T(101407), std::numeric_limits<float>::epsilon() * 10000);
+    REQUIRE_EQUALS_APPROX_E(c(2, 1), T(228500), std::numeric_limits<float>::epsilon() * 10000);
+    REQUIRE_EQUALS_APPROX_E(c(2, 2), T(336831), std::numeric_limits<float>::epsilon() * 10000);
+    REQUIRE_EQUALS_APPROX_E(c(2, 3), T(416899), std::numeric_limits<float>::epsilon() * 10000);
+
+    REQUIRE_EQUALS_APPROX_E(c(3, 0), T(150572), std::numeric_limits<float>::epsilon() * 10000);
+    REQUIRE_EQUALS_APPROX_E(c(3, 1), T(291237), std::numeric_limits<float>::epsilon() * 10000);
+    REQUIRE_EQUALS_APPROX_E(c(3, 2), T(417946), std::numeric_limits<float>::epsilon() * 10000);
+    REQUIRE_EQUALS_APPROX_E(c(3, 3), T(516210), std::numeric_limits<float>::epsilon() * 10000);
+}

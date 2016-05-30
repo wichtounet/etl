@@ -377,6 +377,44 @@ inline void conv2_full_micro_kernel(const double* in, std::size_t n1, std::size_
     }
 }
 
+inline void conv2_full_flipped_micro_kernel(const double* in, std::size_t n1, std::size_t n2, const double* kernel, std::size_t m1, std::size_t m2, double* out) {
+    std::size_t c1 = n1 + m1 - 1;
+    std::size_t c2 = n2 + m2 - 1;
+
+    for (std::size_t i = 0; i < c1; ++i) {
+        auto k_lo = std::max<int>(0, i - m1 + 1);
+        auto k_hi = std::min(n1 - 1, i) + 1;
+
+        for (std::size_t j = 0; j < c2; ++j) {
+            auto l_lo = std::max<int>(0, j - m2 + 1);
+            auto l_hi = std::min(n2 - 1, j) + 1;
+
+            __m128d r1 = _mm_setzero_pd();
+
+            for (std::size_t k = k_lo; k < k_hi; ++k) {
+                for (std::size_t l = l_lo; l + 1 < l_hi; l += 2) {
+                    __m128d i1 = _mm_loadu_pd(in + k * n2 + l);
+                    __m128d k1 = _mm_loadu_pd(kernel + (m1 - 1 - (i - k)) * m2 + (m2 - 1 - (j - l)));
+                    __m128d t1 = _mm_mul_pd(k1, i1);
+                    r1  = _mm_add_pd(r1, t1);
+                }
+            }
+
+            out[i * c2 + j] = mm_hadd_sd(r1);
+
+            double temp = 0.0;
+
+            if ((l_hi - l_lo) % 2 != 0) {
+                for (std::size_t k = k_lo; k < k_hi; ++k) {
+                    temp += in[k * n2 + l_hi - 1] * kernel[(m1 - 1 - (i - k)) * m2 + (m2 - 1 - (j - (l_hi - 1)))];
+                }
+            }
+
+            out[i * c2 + j] += temp;
+        }
+    }
+}
+
 inline void conv2_valid_flipped_micro_kernel(const float* in, std::size_t n1, std::size_t n2, const float* kernel, std::size_t m1, std::size_t m2, float* out) {
     std::size_t c1 = n1 - m1 + 1;
     std::size_t c2 = n2 - m2 + 1;
@@ -544,6 +582,47 @@ inline void conv2_full_micro_kernel(const float* in, std::size_t n1, std::size_t
     }
 }
 
+inline void conv2_full_flipped_micro_kernel(const float* in, std::size_t n1, std::size_t n2, const float* kernel, std::size_t m1, std::size_t m2, float* out) {
+    std::size_t c1 = n1 + m1 - 1;
+    std::size_t c2 = n2 + m2 - 1;
+
+    for (std::size_t i = 0; i < c1; ++i) {
+        auto k_lo = std::max<int>(0, i - m1 + 1);
+        auto k_hi = std::min(n1 - 1, i) + 1;
+
+        for (std::size_t j = 0; j < c2; ++j) {
+            auto l_lo = std::max<int>(0, j - m2 + 1);
+            auto l_hi = std::min(n2 - 1, j) + 1;
+
+            __m128 r1 = _mm_setzero_ps();
+
+            for (std::size_t k = k_lo; k < k_hi; ++k) {
+                for (std::size_t l = l_lo; l + 3 < l_hi; l += 4) {
+                    __m128 i1 = _mm_loadu_ps(in + k * n2 + l);
+                    __m128 k1 = _mm_loadu_ps(kernel + (m1 - 1 - (i - k)) * m2 + (m2 - 1 - (j - l)));
+                    __m128 t1 = _mm_mul_ps(k1, i1);
+                    r1  = _mm_add_ps(r1, t1);
+                }
+            }
+
+            out[i * c2 + j] = mm_hadd_ss(r1);
+
+            double temp = 0.0;
+
+            if ((l_hi - l_lo) % 4 != 0) {
+                auto rem = (l_hi - l_lo) % 4;
+                for (std::size_t k = k_lo; k < k_hi; ++k) {
+                    for (std::size_t l = l_hi - rem; l < l_hi; ++l) {
+                        temp += in[k * n2 + l] * kernel[(m1 - 1 - (i - k)) * m2 + (m2 - 1 - (j - l))];
+                    }
+                }
+            }
+
+            out[i * c2 + j] += temp;
+        }
+    }
+}
+
 template <typename I, typename K, typename C>
 void conv2_valid(const I& input, const K& kernel, C&& conv) {
     conv2_valid_micro_kernel(
@@ -571,6 +650,14 @@ void conv2_same(const I& input, const K& kernel, C&& conv) {
 template <typename I, typename K, typename C>
 void conv2_full(const I& input, const K& kernel, C&& conv) {
     conv2_full_micro_kernel(
+        input.memory_start(), etl::rows(input), etl::columns(input),
+        kernel.memory_start(), etl::rows(kernel), etl::columns(kernel),
+        conv.memory_start());
+}
+
+template <typename I, typename K, typename C>
+void conv2_full_flipped(const I& input, const K& kernel, C&& conv) {
+    conv2_full_flipped_micro_kernel(
         input.memory_start(), etl::rows(input), etl::columns(input),
         kernel.memory_start(), etl::rows(kernel), etl::columns(kernel),
         conv.memory_start());
@@ -660,6 +747,17 @@ void conv2_same(const I& /*input*/, const K& /*kernel*/, C&& /*conv*/) {
  */
 template <typename I, typename K, typename C>
 void conv2_full(const I& /*input*/, const K& /*kernel*/, C&& /*conv*/) {
+    cpp_unreachable("SSE not available/enabled");
+}
+
+/*!
+ * \brief SSE implementation of a 2D 'full' convolution C = I * K
+ * \param input The input matrix
+ * \param kernel The kernel matrix
+ * \param conv The output matrix
+ */
+template <typename I, typename K, typename C>
+void conv2_full_flipped(const I& /*input*/, const K& /*kernel*/, C&& /*conv*/) {
     cpp_unreachable("SSE not available/enabled");
 }
 

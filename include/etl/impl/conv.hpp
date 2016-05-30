@@ -475,6 +475,9 @@ struct conv2_full_impl {
     static void apply(const I& input, const K& kernel, C&& conv) {
         etl::conv_impl impl = select_conv_impl<conv_type::FULL, I, K, C>();
 
+        //TODO We should probably be able to use FFT directly here and remove
+        //fast_conv_2d_full thingy
+
         if (impl == etl::conv_impl::AVX) {
             impl::avx::conv2_full(input, kernel, conv);
         } else if (impl == etl::conv_impl::SSE) {
@@ -483,6 +486,34 @@ struct conv2_full_impl {
             impl::cudnn::conv2_full(input.direct(), kernel.direct(), conv.direct());
         } else if (impl == etl::conv_impl::STD) {
             impl::standard::conv2_full(input, kernel, conv);
+        } else {
+            cpp_unreachable("Invalid conv implementation selection");
+        }
+    }
+};
+
+/*!
+ * \brief The functor impl for 2D full conv
+ */
+struct conv2_full_flipped_impl {
+    /*!
+     * \brief Apply the convolution
+     * \param input The input expression
+     * \param kernel The kernel expression
+     * \param conv The output expression
+     */
+    template <typename I, typename K, typename C>
+    static void apply(const I& input, const K& kernel, C&& conv) {
+        etl::conv_impl impl = select_conv_impl<conv_type::FULL, I, K, C>();
+
+        if (impl == etl::conv_impl::AVX) {
+            impl::avx::conv2_full_flipped(input, kernel, conv);
+        } else if (impl == etl::conv_impl::SSE) {
+            impl::sse::conv2_full_flipped(input, kernel, conv);
+        } else if (impl == etl::conv_impl::CUDNN) {
+            impl::cudnn::conv2_full_flipped(input.direct(), kernel.direct(), conv.direct());
+        } else if (impl == etl::conv_impl::STD) {
+            impl::standard::conv2_full_flipped(input, kernel, conv);
         } else {
             cpp_unreachable("Invalid conv implementation selection");
         }

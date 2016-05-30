@@ -112,6 +112,35 @@ void conv2_full(const I& input, const K& kernel, C&& conv) {
 }
 
 /*!
+ * \brief Standard implementation of a 2D 'full' convolution C = I * K
+ * \param input The input matrix
+ * \param kernel The kernel matrix
+ * \param conv The output matrix
+ */
+template <typename I, typename K, typename C>
+void conv2_full_flipped(const I& input, const K& kernel, C&& conv) {
+    for (std::size_t i = 0; i < rows(conv); ++i) {
+        auto k_lo = std::max<int>(0, i - rows(kernel) + 1);
+        auto k_hi = std::min(rows(input) - 1, i) + 1;
+
+        for (std::size_t j = 0; j < columns(conv); ++j) {
+            auto l_lo = std::max<int>(0, j - columns(kernel) + 1);
+            auto l_hi = std::min(columns(input) - 1, j) + 1;
+
+            typename I::value_type temp = 0.0;
+
+            for (std::size_t k = k_lo; k < k_hi; ++k) {
+                for (std::size_t l = l_lo; l < l_hi; ++l) {
+                    temp += input(k, l) * kernel(rows(kernel) - 1 - (i - k), columns(kernel) - 1 - (j - l));
+                }
+            }
+
+            conv(i, j) = temp;
+        }
+    }
+}
+
+/*!
  * \brief Standard implementation of a 2D 'same' convolution C = I * K
  * \param input The input matrix
  * \param kernel The kernel matrix
