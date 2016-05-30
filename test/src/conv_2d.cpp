@@ -207,25 +207,25 @@ CONV2_FULL_TEST_CASE("convolution_2d/full_8", "convolution_2d_full") {
 
     Impl::apply(a, b, c);
 
-    REQUIRE_EQUALS_APPROX_E(c(0, 0), T(26461), 5.0);
-    REQUIRE_EQUALS_APPROX_E(c(0, 1), T(60760), 5.0);
-    REQUIRE_EQUALS_APPROX_E(c(0, 2), T(103282), 5.0);
-    REQUIRE_EQUALS_APPROX_E(c(0, 3), T(154412), 5.0);
+    REQUIRE_EQUALS_APPROX_E(c(0, 0), T(26461), base_eps * 10);
+    REQUIRE_EQUALS_APPROX_E(c(0, 1), T(60760), base_eps * 10);
+    REQUIRE_EQUALS_APPROX_E(c(0, 2), T(103282), base_eps * 10);
+    REQUIRE_EQUALS_APPROX_E(c(0, 3), T(154412), base_eps * 10);
 
-    REQUIRE_EQUALS_APPROX_E(c(1, 0), T(60150), 5.0);
-    REQUIRE_EQUALS_APPROX_E(c(1, 1), T(136700), 5.0);
-    REQUIRE_EQUALS_APPROX_E(c(1, 2), T(230420), 5.0);
-    REQUIRE_EQUALS_APPROX_E(c(1, 3), T(296477), 5.0);
+    REQUIRE_EQUALS_APPROX_E(c(1, 0), T(60150), base_eps * 10);
+    REQUIRE_EQUALS_APPROX_E(c(1, 1), T(136700), base_eps * 10);
+    REQUIRE_EQUALS_APPROX_E(c(1, 2), T(230420), base_eps * 10);
+    REQUIRE_EQUALS_APPROX_E(c(1, 3), T(296477), base_eps * 10);
 
-    REQUIRE_EQUALS_APPROX_E(c(2, 0), T(101407), 5.0);
-    REQUIRE_EQUALS_APPROX_E(c(2, 1), T(228500), 5.0);
-    REQUIRE_EQUALS_APPROX_E(c(2, 2), T(336831), 5.0);
-    REQUIRE_EQUALS_APPROX_E(c(2, 3), T(416899), 5.0);
+    REQUIRE_EQUALS_APPROX_E(c(2, 0), T(101407), base_eps * 10);
+    REQUIRE_EQUALS_APPROX_E(c(2, 1), T(228500), base_eps * 10);
+    REQUIRE_EQUALS_APPROX_E(c(2, 2), T(336831), base_eps * 10);
+    REQUIRE_EQUALS_APPROX_E(c(2, 3), T(416899), base_eps * 10);
 
-    REQUIRE_EQUALS_APPROX_E(c(3, 0), T(150572), 5.0);
-    REQUIRE_EQUALS_APPROX_E(c(3, 1), T(291237), 5.0);
-    REQUIRE_EQUALS_APPROX_E(c(3, 2), T(417946), 5.0);
-    REQUIRE_EQUALS_APPROX_E(c(3, 3), T(516210), 5.0);
+    REQUIRE_EQUALS_APPROX_E(c(3, 0), T(150572), base_eps * 10);
+    REQUIRE_EQUALS_APPROX_E(c(3, 1), T(291237), base_eps * 10);
+    REQUIRE_EQUALS_APPROX_E(c(3, 2), T(417946), base_eps * 10);
+    REQUIRE_EQUALS_APPROX_E(c(3, 3), T(516210), base_eps * 10);
 }
 
 // convolution_2d_same
@@ -812,23 +812,23 @@ CONV2_FULL_FLIPPED_TEST_CASE("conv/2d/full/flipped/3", "convolution_2d_full") {
 
     Impl::apply(a, b, c);
 
-    REQUIRE_EQUALS_APPROX_E(c(0, 0), T(26461), std::numeric_limits<float>::epsilon() * 10000);
-    REQUIRE_EQUALS_APPROX_E(c(0, 1), T(60760), std::numeric_limits<float>::epsilon() * 10000);
-    REQUIRE_EQUALS_APPROX_E(c(0, 2), T(103282), std::numeric_limits<float>::epsilon() * 10000);
-    REQUIRE_EQUALS_APPROX_E(c(0, 3), T(154412), std::numeric_limits<float>::epsilon() * 10000);
+    REQUIRE_EQUALS_APPROX_E(c(0, 0), T(26461), base_eps * 10);
+    REQUIRE_EQUALS_APPROX_E(c(0, 1), T(60760), base_eps * 10);
+    REQUIRE_EQUALS_APPROX_E(c(0, 2), T(103282), base_eps * 10);
+    REQUIRE_EQUALS_APPROX_E(c(0, 3), T(154412), base_eps * 10);
 
-    REQUIRE_EQUALS_APPROX_E(c(1, 0), T(60150), std::numeric_limits<float>::epsilon() * 10000);
-    REQUIRE_EQUALS_APPROX_E(c(1, 1), T(136700), std::numeric_limits<float>::epsilon() * 10000);
-    REQUIRE_EQUALS_APPROX_E(c(1, 2), T(230420), std::numeric_limits<float>::epsilon() * 10000);
-    REQUIRE_EQUALS_APPROX_E(c(1, 3), T(296477), std::numeric_limits<float>::epsilon() * 10000);
+    REQUIRE_EQUALS_APPROX_E(c(1, 0), T(60150), base_eps * 10);
+    REQUIRE_EQUALS_APPROX_E(c(1, 1), T(136700), base_eps * 10);
+    REQUIRE_EQUALS_APPROX_E(c(1, 2), T(230420), base_eps * 10);
+    REQUIRE_EQUALS_APPROX_E(c(1, 3), T(296477), base_eps * 10);
 
-    REQUIRE_EQUALS_APPROX_E(c(2, 0), T(101407), std::numeric_limits<float>::epsilon() * 10000);
-    REQUIRE_EQUALS_APPROX_E(c(2, 1), T(228500), std::numeric_limits<float>::epsilon() * 10000);
-    REQUIRE_EQUALS_APPROX_E(c(2, 2), T(336831), std::numeric_limits<float>::epsilon() * 10000);
-    REQUIRE_EQUALS_APPROX_E(c(2, 3), T(416899), std::numeric_limits<float>::epsilon() * 10000);
+    REQUIRE_EQUALS_APPROX_E(c(2, 0), T(101407), base_eps * 10);
+    REQUIRE_EQUALS_APPROX_E(c(2, 1), T(228500), base_eps * 10);
+    REQUIRE_EQUALS_APPROX_E(c(2, 2), T(336831), base_eps * 10);
+    REQUIRE_EQUALS_APPROX_E(c(2, 3), T(416899), base_eps * 10);
 
-    REQUIRE_EQUALS_APPROX_E(c(3, 0), T(150572), std::numeric_limits<float>::epsilon() * 10000);
-    REQUIRE_EQUALS_APPROX_E(c(3, 1), T(291237), std::numeric_limits<float>::epsilon() * 10000);
-    REQUIRE_EQUALS_APPROX_E(c(3, 2), T(417946), std::numeric_limits<float>::epsilon() * 10000);
-    REQUIRE_EQUALS_APPROX_E(c(3, 3), T(516210), std::numeric_limits<float>::epsilon() * 10000);
+    REQUIRE_EQUALS_APPROX_E(c(3, 0), T(150572), base_eps * 10);
+    REQUIRE_EQUALS_APPROX_E(c(3, 1), T(291237), base_eps * 10);
+    REQUIRE_EQUALS_APPROX_E(c(3, 2), T(417946), base_eps * 10);
+    REQUIRE_EQUALS_APPROX_E(c(3, 3), T(516210), base_eps * 10);
 }

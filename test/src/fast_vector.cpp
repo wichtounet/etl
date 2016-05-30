@@ -391,9 +391,9 @@ TEMPLATE_TEST_CASE_2("fast_sigmoid/1", "[sigmoid]", Z, float, double) {
 
     etl::fast_vector<Z, 3> d(etl::fast_sigmoid(a));
 
-    REQUIRE_EQUALS_APPROX_E(d[0], etl::math::logistic_sigmoid(Z(-1.0)), 0.05);
-    REQUIRE_EQUALS_APPROX_E(d[1], etl::math::logistic_sigmoid(Z(2.0)), 0.05);
-    REQUIRE_EQUALS_APPROX_E(d[2], etl::math::logistic_sigmoid(Z(0.0)), 0.05);
+    REQUIRE_EQUALS_APPROX_E(d[0], etl::math::logistic_sigmoid(Z(-1.0)), base_eps * 10000);
+    REQUIRE_EQUALS_APPROX_E(d[1], etl::math::logistic_sigmoid(Z(2.0)), base_eps * 10000);
+    REQUIRE_EQUALS_APPROX_E(d[2], etl::math::logistic_sigmoid(Z(0.0)), base_eps * 10000);
 }
 
 TEMPLATE_TEST_CASE_2("hard_sigmoid/1", "[sigmoid]", Z, float, double) {
@@ -401,9 +401,9 @@ TEMPLATE_TEST_CASE_2("hard_sigmoid/1", "[sigmoid]", Z, float, double) {
 
     etl::fast_vector<Z, 3> d(etl::hard_sigmoid(a));
 
-    REQUIRE_EQUALS_APPROX_E(d[0], etl::math::logistic_sigmoid(Z(-1.0)), 0.05);
-    REQUIRE_EQUALS_APPROX_E(d[1], etl::math::logistic_sigmoid(Z(2.0)), 0.05);
-    REQUIRE_EQUALS_APPROX_E(d[2], etl::math::logistic_sigmoid(Z(0.0)), 0.05);
+    REQUIRE_EQUALS_APPROX_E(d[0], etl::math::logistic_sigmoid(Z(-1.0)), base_eps * 10000);
+    REQUIRE_EQUALS_APPROX_E(d[1], etl::math::logistic_sigmoid(Z(2.0)), base_eps * 10000);
+    REQUIRE_EQUALS_APPROX_E(d[2], etl::math::logistic_sigmoid(Z(0.0)), base_eps * 10000);
 }
 
 TEMPLATE_TEST_CASE_2("fast_vector/softmax_1", "fast_vector::softmax", Z, float, double) {

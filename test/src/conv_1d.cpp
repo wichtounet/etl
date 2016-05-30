@@ -97,23 +97,23 @@ CONV1_FULL_TEST_CASE("convolution_1d/full_5", "convolution_1d_full") {
 
     Impl::apply(a, b, c);
 
-    REQUIRE_EQUALS_APPROX_E(c[0], 1240, 1.0);
-    REQUIRE_EQUALS_APPROX_E(c[1], 1547, 1.0);
-    REQUIRE_EQUALS_APPROX_E(c[2], 2648, 1.0);
-    REQUIRE_EQUALS_APPROX_E(c[3], 3398, 1.0);
-    REQUIRE_EQUALS_APPROX_E(c[4], 4515, 1.0);
-    REQUIRE_EQUALS_APPROX_E(c[5], 6037, 1.0);
-    REQUIRE_EQUALS_APPROX_E(c[6], 7227, 1.0);
-    REQUIRE_EQUALS_APPROX_E(c[7], 9268, 1.0);
-    REQUIRE_EQUALS_APPROX_E(c[8], 7947, 1.0);
-    REQUIRE_EQUALS_APPROX_E(c[9], 8496, 1.0);
-    REQUIRE_EQUALS_APPROX_E(c[10], 7515, 1.0);
-    REQUIRE_EQUALS_APPROX_E(c[11], 7452, 1.0);
-    REQUIRE_EQUALS_APPROX_E(c[12], 6777, 1.0);
-    REQUIRE_EQUALS_APPROX_E(c[13], 5490, 1.0);
-    REQUIRE_EQUALS_APPROX_E(c[14], 5121, 1.0);
-    REQUIRE_EQUALS_APPROX_E(c[15], 3222, 1.0);
-    REQUIRE_EQUALS_APPROX_E(c[16], 3465, 1.0);
+    REQUIRE_EQUALS_APPROX_E(c[0], 1240, base_eps * 10);
+    REQUIRE_EQUALS_APPROX_E(c[1], 1547, base_eps * 10);
+    REQUIRE_EQUALS_APPROX_E(c[2], 2648, base_eps * 10);
+    REQUIRE_EQUALS_APPROX_E(c[3], 3398, base_eps * 10);
+    REQUIRE_EQUALS_APPROX_E(c[4], 4515, base_eps * 10);
+    REQUIRE_EQUALS_APPROX_E(c[5], 6037, base_eps * 10);
+    REQUIRE_EQUALS_APPROX_E(c[6], 7227, base_eps * 10);
+    REQUIRE_EQUALS_APPROX_E(c[7], 9268, base_eps * 10);
+    REQUIRE_EQUALS_APPROX_E(c[8], 7947, base_eps * 10);
+    REQUIRE_EQUALS_APPROX_E(c[9], 8496, base_eps * 10);
+    REQUIRE_EQUALS_APPROX_E(c[10], 7515, base_eps * 10);
+    REQUIRE_EQUALS_APPROX_E(c[11], 7452, base_eps * 10);
+    REQUIRE_EQUALS_APPROX_E(c[12], 6777, base_eps * 10);
+    REQUIRE_EQUALS_APPROX_E(c[13], 5490, base_eps * 10);
+    REQUIRE_EQUALS_APPROX_E(c[14], 5121, base_eps * 10);
+    REQUIRE_EQUALS_APPROX_E(c[15], 3222, base_eps * 10);
+    REQUIRE_EQUALS_APPROX_E(c[16], 3465, base_eps * 10);
 }
 
 CONV1_FULL_TEST_CASE("convolution_1d/full_6", "reduc_conv1_full") {
