@@ -15,7 +15,7 @@ $(eval $(call use_libcxx))
 endif
 
 # Be stricter
-CXX_FLAGS += -pedantic -Werror -Winvalid-pch
+CXX_FLAGS += -pedantic -Werror -Winvalid-pch -Wno-uninitialized
 
 # Add includes
 CXX_FLAGS += -Ilib/include -ICatch/include -Itest/include
