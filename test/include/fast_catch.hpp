@@ -10,6 +10,7 @@ inline void evaluate_result_direct(Catch::ResultBuilder&& __result, bool value){
     __result.setLhs(value ? "true" : "false");
     __result.setOp("");
     __result.endExpression();
+    __result.react();
 }
 
 template<typename L, typename R>
@@ -19,6 +20,7 @@ void evaluate_result(Catch::ResultBuilder&& __result, L lhs, R rhs){
     __result.setRhs(Catch::toString(rhs));
     __result.setOp("==");
     __result.endExpression();
+    __result.react();
 }
 
 template<typename L, typename R>
@@ -28,6 +30,7 @@ void evaluate_result_approx(Catch::ResultBuilder&& __result, L lhs, R rhs, doubl
     __result.setRhs("Approx(" + Catch::toString(rhs) + ")");
     __result.setOp("==");
     __result.endExpression();
+    __result.react();
 }
 
 #define REQUIRE_DIRECT(value) \
