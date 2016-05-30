@@ -164,6 +164,29 @@ void conv2_valid(const I& input, const K& kernel, C&& conv) {
 }
 
 /*!
+ * \brief Standard implementation of a 2D 'valid' convolution C = I * K
+ * \param input The input matrix
+ * \param kernel The kernel matrix
+ * \param conv The output matrix
+ */
+template <typename I, typename K, typename C>
+void conv2_valid_flipped(const I& input, const K& kernel, C&& conv) {
+    for (std::size_t i = 0; i < rows(conv); ++i) {
+        for (std::size_t j = 0; j < columns(conv); ++j) {
+            typename I::value_type temp = 0.0;
+
+            for (std::size_t k = i; k < i + rows(kernel); ++k) {
+                for (std::size_t l = j; l < j + columns(kernel); ++l) {
+                    temp += input(k, l) * kernel(k - i, l - j);
+                }
+            }
+
+            conv(i, j) = temp;
+        }
+    }
+}
+
+/*!
  * \brief Standard implementation of a 4D 'valid' convolution C = I * K
  * \param input The input matrix
  * \param kernel The kernel matrix

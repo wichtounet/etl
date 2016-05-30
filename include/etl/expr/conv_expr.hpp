@@ -583,6 +583,12 @@ template <typename T>
 using conv2_valid_expr = basic_conv_expr<T, 2, conv_type::VALID, detail::conv2_valid_impl>;
 
 /*!
+ * \brief Expression for 2D valid convolution
+ */
+template <typename T>
+using conv2_valid_flipped_expr = basic_conv_expr<T, 2, conv_type::VALID, detail::conv2_valid_flipped_impl>;
+
+/*!
  * \brief Expression for 4D valid convolution
  */
 template <typename T>

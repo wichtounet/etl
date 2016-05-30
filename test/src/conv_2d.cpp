@@ -706,3 +706,47 @@ TEMPLATE_TEST_CASE_2("convolution/2", "[conv][dyn]", Z, float, double) {
     REQUIRE_EQUALS(c(3, 2), 4.5);
     REQUIRE_EQUALS(c(3, 3), 1.5);
 }
+
+// conv_2d_valid_flipped
+
+CONV2_VALID_FLIPPED_TEST_CASE("conv/2d/flipped/valid/1", "[conv][conv2][valid]") {
+    etl::fast_matrix<T, 3, 3> a = {1.0, 2.0, 3.0, 0.0, 1.0, 1.0, 3.0, 2.0, 1.0};
+    etl::fast_matrix<T, 2, 2> b = {0.5, 0.5, 0.0, 2.0};
+    etl::fast_matrix<T, 2, 2> c;
+
+    Impl::apply(a, b, c);
+
+    REQUIRE_EQUALS(c(0, 0), 3.5);
+    REQUIRE_EQUALS(c(0, 1), 4.5);
+
+    REQUIRE_EQUALS(c(1, 0), 4.5);
+    REQUIRE_EQUALS(c(1, 1), 3.0);
+}
+
+CONV2_VALID_FLIPPED_TEST_CASE("conv/2d/flipped/valid/2", "[conv][conv2][valid]") {
+    etl::fast_matrix<T, 17, 17> a(etl::magic(17));
+    etl::fast_matrix<T, 3, 3> b(fflip(etl::magic(3)));
+    etl::fast_matrix<T, 15, 15> c;
+
+    Impl::apply(a, b, c);
+
+    REQUIRE_EQUALS(c(0, 0), 8640);
+    REQUIRE_EQUALS(c(0, 1), 9495);
+    REQUIRE_EQUALS(c(0, 2), 10350);
+    REQUIRE_EQUALS(c(0, 3), 11205);
+
+    REQUIRE_EQUALS(c(1, 0), 9450);
+    REQUIRE_EQUALS(c(1, 1), 10305);
+    REQUIRE_EQUALS(c(1, 2), 11160);
+    REQUIRE_EQUALS(c(1, 3), 9703);
+
+    REQUIRE_EQUALS(c(2, 0), 10260);
+    REQUIRE_EQUALS(c(2, 1), 11115);
+    REQUIRE_EQUALS(c(2, 2), 9658);
+    REQUIRE_EQUALS(c(2, 3), 9357);
+
+    REQUIRE_EQUALS(c(3, 0), 11070);
+    REQUIRE_EQUALS(c(3, 1), 9613);
+    REQUIRE_EQUALS(c(3, 2), 9312);
+    REQUIRE_EQUALS(c(3, 3), 5832);
+}

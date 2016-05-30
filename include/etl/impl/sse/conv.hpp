@@ -217,11 +217,7 @@ void conv1_valid(const I& input, const K& kernel, C&& conv, std::size_t first, s
     conv1_valid_micro_kernel(in, size(input), k, size(kernel), out, first, last);
 }
 
-inline void conv2_valid_micro_kernel(const double* in, std::size_t n1, std::size_t n2, const double* kernel, std::size_t m1, std::size_t m2, double* out) {
-    auto kernel_reverse = aligned_allocate_auto<double>(m1 * m2);
-
-    std::reverse_copy(kernel, kernel + m1 * m2, kernel_reverse.get());
-
+inline void conv2_valid_flipped_micro_kernel(const double* in, std::size_t n1, std::size_t n2, const double* kernel, std::size_t m1, std::size_t m2, double* out) {
     std::size_t c1 = n1 - m1 + 1;
     std::size_t c2 = n2 - m2 + 1;
 
@@ -234,7 +230,7 @@ inline void conv2_valid_micro_kernel(const double* in, std::size_t n1, std::size
 
             for (std::size_t k = 0; k < m1; ++k) {
                 for (std::size_t l = 0; l + 1 < m2; l += 2) {
-                    __m128d k1 = _mm_loadu_pd(kernel_reverse.get() + k * m2 + l);
+                    __m128d k1 = _mm_loadu_pd(kernel + k * m2 + l);
 
                     __m128d i1 = _mm_loadu_pd(in + (i + k) * n2 + j + 0 + l);
                     __m128d i2 = _mm_loadu_pd(in + (i + k) * n2 + j + 1 + l);
@@ -265,7 +261,7 @@ inline void conv2_valid_micro_kernel(const double* in, std::size_t n1, std::size
             for (std::size_t k = 0; k < m1; ++k) {
                 for (std::size_t l = 0; l + 1 < m2; l += 2) {
                     __m128d tmp1 = _mm_loadu_pd(in + (i + k) * n2 + j + l);
-                    __m128d tmp2 = _mm_loadu_pd(kernel_reverse.get() + k * m2 + l);
+                    __m128d tmp2 = _mm_loadu_pd(kernel + k * m2 + l);
                     __m128d tmp4 = _mm_mul_pd(tmp2, tmp1);
                     r1  = _mm_add_pd(r1, tmp4);
                 }
@@ -282,13 +278,21 @@ inline void conv2_valid_micro_kernel(const double* in, std::size_t n1, std::size
 
                 for (std::size_t k = 0; k < m1; ++k) {
                     const auto l = m2 - 1;
-                    temp += in[(i + k) * n2 + j + l] * kernel_reverse[k * m2 + l];
+                    temp += in[(i + k) * n2 + j + l] * kernel[k * m2 + l];
                 }
 
                 out[i * c2 + j] += temp;
             }
         }
     }
+}
+
+inline void conv2_valid_micro_kernel(const double* in, std::size_t n1, std::size_t n2, const double* kernel, std::size_t m1, std::size_t m2, double* out) {
+    auto kernel_reverse = aligned_allocate_auto<double>(m1 * m2);
+
+    std::reverse_copy(kernel, kernel + m1 * m2, kernel_reverse.get());
+
+    conv2_valid_flipped_micro_kernel(in, n1, n2, kernel_reverse.get(), m1, m2, out);
 }
 
 inline void conv2_same_micro_kernel(const double* in, std::size_t n1, std::size_t n2, const double* kernel, std::size_t m1, std::size_t m2, double* out) {
@@ -373,11 +377,7 @@ inline void conv2_full_micro_kernel(const double* in, std::size_t n1, std::size_
     }
 }
 
-inline void conv2_valid_micro_kernel(const float* in, std::size_t n1, std::size_t n2, const float* kernel, std::size_t m1, std::size_t m2, float* out) {
-    auto kernel_reverse = aligned_allocate_auto<float>(m1 * m2);
-
-    std::reverse_copy(kernel, kernel + m1 * m2, kernel_reverse.get());
-
+inline void conv2_valid_flipped_micro_kernel(const float* in, std::size_t n1, std::size_t n2, const float* kernel, std::size_t m1, std::size_t m2, float* out) {
     std::size_t c1 = n1 - m1 + 1;
     std::size_t c2 = n2 - m2 + 1;
 
@@ -390,7 +390,7 @@ inline void conv2_valid_micro_kernel(const float* in, std::size_t n1, std::size_
 
             for (std::size_t k = 0; k < m1; ++k) {
                 for (std::size_t l = 0; l + 3 < m2; l += 4) {
-                    __m128 k1 = _mm_loadu_ps(kernel_reverse.get() + k * m2 + l);
+                    __m128 k1 = _mm_loadu_ps(kernel + k * m2 + l);
 
                     __m128 i1 = _mm_loadu_ps(in + (k + i) * n2 + l + j + 0);
                     __m128 i2 = _mm_loadu_ps(in + (k + i) * n2 + l + j + 1);
@@ -420,7 +420,7 @@ inline void conv2_valid_micro_kernel(const float* in, std::size_t n1, std::size_
 
             for (std::size_t k = 0; k < m1; ++k) {
                 for (std::size_t l = 0; l + 3 < m2; l += 4) {
-                    __m128 k1 = _mm_loadu_ps(kernel_reverse.get() + k * m2 + l);
+                    __m128 k1 = _mm_loadu_ps(kernel + k * m2 + l);
 
                     __m128 i1 = _mm_loadu_ps(in + (k + i) * n2 + l + j);
 
@@ -441,7 +441,7 @@ inline void conv2_valid_micro_kernel(const float* in, std::size_t n1, std::size_
 
                 for (std::size_t k = 0; k < m1; ++k) {
                     for (std::size_t l = m2 - m2 % 4; l < m2; ++l) {
-                        temp += in[(k + i) * n2 + l + j] * kernel_reverse[k * m2 + l];
+                        temp += in[(k + i) * n2 + l + j] * kernel[k * m2 + l];
                     }
                 }
 
@@ -449,6 +449,14 @@ inline void conv2_valid_micro_kernel(const float* in, std::size_t n1, std::size_
             }
         }
     }
+}
+
+inline void conv2_valid_micro_kernel(const float* in, std::size_t n1, std::size_t n2, const float* kernel, std::size_t m1, std::size_t m2, float* out) {
+    auto kernel_reverse = aligned_allocate_auto<float>(m1 * m2);
+
+    std::reverse_copy(kernel, kernel + m1 * m2, kernel_reverse.get());
+
+    conv2_valid_flipped_micro_kernel(in, n1, n2, kernel_reverse.get(), m1, m2, out);
 }
 
 inline void conv2_same_micro_kernel(const float* in, std::size_t n1, std::size_t n2, const float* kernel, std::size_t m1, std::size_t m2, float* out) {
@@ -545,6 +553,14 @@ void conv2_valid(const I& input, const K& kernel, C&& conv) {
 }
 
 template <typename I, typename K, typename C>
+void conv2_valid_flipped(const I& input, const K& kernel, C&& conv) {
+    conv2_valid_flipped_micro_kernel(
+        input.memory_start(), etl::rows(input), etl::columns(input),
+        kernel.memory_start(), etl::rows(kernel), etl::columns(kernel),
+        conv.memory_start());
+}
+
+template <typename I, typename K, typename C>
 void conv2_same(const I& input, const K& kernel, C&& conv) {
     conv2_same_micro_kernel(
         input.memory_start(), etl::rows(input), etl::columns(input),
@@ -611,6 +627,17 @@ void conv1_valid(const I& /*input*/, const K& /*kernel*/, C&& /*conv*/, std::siz
  */
 template <typename I, typename K, typename C>
 void conv2_valid(const I& /*input*/, const K& /*kernel*/, C&& /*conv*/) {
+    cpp_unreachable("SSE not available/enabled");
+}
+
+/*!
+ * \brief SSE implementation of a 2D 'valid' convolution C = I * K
+ * \param input The input matrix
+ * \param kernel The kernel matrix
+ * \param conv The output matrix
+ */
+template <typename I, typename K, typename C>
+void conv2_valid_flipped(const I& /*input*/, const K& /*kernel*/, C&& /*conv*/) {
     cpp_unreachable("SSE not available/enabled");
 }
 
