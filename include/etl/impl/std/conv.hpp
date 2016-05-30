@@ -246,7 +246,7 @@ void conv4_valid_flipped(const I& input, const K& kernel, C&& conv) {
     for(std::size_t i = 0; i < etl::dim<0>(input); ++i){
         for(std::size_t k = 0; k < etl::dim<0>(kernel); ++k){
             for(std::size_t c = 0; c < etl::dim<1>(kernel); ++c){
-                conv(i)(k) += conv_2d_valid(input(i)(c), fflip(kernel(k)(c)));
+                conv(i)(k) += conv_2d_valid_flipped(input(i)(c), kernel(k)(c));
             }
         }
     }
@@ -296,7 +296,7 @@ void conv2_valid_multi(const I& input, const K& kernels, C&& conv) {
 template <typename I, typename K, typename C>
 void conv2_valid_multi_flipped(const I& input, const K& kernels, C&& conv) {
     for (size_t k = 0; k < etl::dim<0>(kernels); ++k) {
-        conv(k) = conv_2d_valid(input, fflip(kernels(k)));
+        conv(k) = conv_2d_valid_flipped(input, kernels(k));
     }
 }
 
