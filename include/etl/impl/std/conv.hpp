@@ -297,7 +297,7 @@ void conv4_full_flipped(const I& input, const K& kernel, C&& conv) {
     for(std::size_t i = 0; i < etl::dim<0>(input); ++i){
         for(std::size_t k = 0; k < etl::dim<0>(kernel); ++k){
             for(std::size_t c = 0; c < etl::dim<1>(kernel); ++c){
-                conv(i)(c) += conv_2d_full(input(i)(k), fflip(kernel(k)(c)));
+                conv(i)(c) += conv_2d_full_flipped(input(i)(k), kernel(k)(c));
             }
         }
     }
@@ -377,7 +377,7 @@ void conv2_full_multi(const I& input, const K& kernels, C&& conv) {
 template <typename I, typename K, typename C>
 void conv2_full_multi_flipped(const I& input, const K& kernels, C&& conv) {
     for (size_t k = 0; k < etl::dim<0>(kernels); ++k) {
-        conv(k) = conv_2d_full(input, fflip(kernels(k)));
+        conv(k) = conv_2d_full_flipped(input, kernels(k));
     }
 }
 
