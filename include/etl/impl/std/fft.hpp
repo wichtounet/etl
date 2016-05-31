@@ -710,13 +710,11 @@ void ifft1_real(A&& a, C&& c) {
  *
  * The first dimension of a and c are considered batch dimensions
  */
-template <typename A, typename C>
-void fft1_many(A&& a, C&& c) {
-    static constexpr const std::size_t N = decay_traits<A>::dimensions();
-
-    std::size_t n        = etl::dim<N - 1>(a); //Size of the transform
-    std::size_t batch    = etl::size(a) / n;   //Number of batch
-    std::size_t distance = n;                  //Distance between samples
+template <std::size_t N, typename A, typename C>
+void fft1_many(const opaque_memory<A, N>& a, const opaque_memory<C, N>& c) {
+    std::size_t n        = a.template dim<N - 1>(); //Size of the transform
+    std::size_t batch    = a.size() / n;            //Number of batch
+    std::size_t distance = n;                       //Distance between samples
 
     if (n <= 65536 && math::is_power_of_two(n)) {
         //Copy a -> c (if not aliasing)
@@ -727,10 +725,10 @@ void fft1_many(A&& a, C&& c) {
         auto* m = c.memory_start();
 
         for (std::size_t i = 0; i < batch; ++i) {
-            detail::inplace_radix2_fft1(reinterpret_cast<etl::complex<typename value_t<C>::value_type>*>(m + i * distance), n);
+            detail::inplace_radix2_fft1(reinterpret_cast<etl::complex<typename C::value_type>*>(m + i * distance), n);
         }
     } else {
-        detail::fft_n_many(a.memory_start(), reinterpret_cast<etl::complex<typename value_t<C>::value_type>*>(c.memory_start()), batch, n);
+        detail::fft_n_many(a.memory_start(), reinterpret_cast<etl::complex<typename C::value_type>*>(c.memory_start()), batch, n);
     }
 }
 
@@ -745,12 +743,12 @@ void fft2(A&& a, C&& c) {
     auto w = etl::force_temporary_dyn(c);
 
     //Perform FFT on each rows
-    fft1_many(a, w);
+    fft1_many(a.direct(), w.direct());
 
     w.transpose_inplace();
 
     //Perform FFT on each columns
-    fft1_many(w, w);
+    fft1_many(w.direct(), w.direct());
 
     w.transpose_inplace();
 
@@ -847,11 +845,11 @@ void fft2_many(A&& a, C&& c) {
     //Note: we need dyn matrix for inplace rectangular transpose
     auto w = etl::force_temporary_dyn(c);
 
-    fft1_many(a, w);
+    fft1_many(a.direct(), w.direct());
 
     w.deep_transpose_inplace();
 
-    fft1_many(w, w);
+    fft1_many(w.direct(), w.direct());
 
     w.deep_transpose_inplace();
 
