@@ -227,11 +227,11 @@ void conv4_valid(const opaque_memory<T,4>& input, const opaque_memory<T,4>& kern
 
     // Perform the convolution
 
-    cudnnConvolutionForward(handle.get(),
+    cudnn_check(cudnnConvolutionForward(handle.get(),
         alpha, input_tensor, input.gpu_memory(),
         filter, kernel.gpu_memory(),
         convolution, conv_algo, workspace.get(), workspace_size,
-        beta, output_tensor, conv.gpu_memory());
+        beta, output_tensor, conv.gpu_memory()));
 
     // Release the resources
     cudnn_check(cudnnDestroyConvolutionDescriptor(convolution));
@@ -297,11 +297,11 @@ void conv4_valid_flipped(const opaque_memory<T,4>& input, const opaque_memory<T,
 
     // Perform the convolution
 
-    cudnnConvolutionForward(handle.get(),
+    cudnn_check(cudnnConvolutionForward(handle.get(),
         alpha, input_tensor, input.gpu_memory(),
         filter, kernel.gpu_memory(),
         convolution, conv_algo, workspace.get(), workspace_size,
-        beta, output_tensor, conv.gpu_memory());
+        beta, output_tensor, conv.gpu_memory()));
 
     // Release the resources
     cudnn_check(cudnnDestroyConvolutionDescriptor(convolution));
