@@ -36,11 +36,23 @@ struct cudnn_handle {
     cudnnHandle_t handle; ///< The raw cudnn handle
 
     /*!
+     * \brief Construct the helper and create the handle directly
+     */
+    cudnn_handle(){
+        cudnn_check(cudnnCreate(&handle));
+    }
+
+    /*!
      * \brief Construct the helper from the raw handle
      * \param handle The raw cudnn handle
      */
-    cudnn_handle(cudnnHandle_t handle)
-            : handle(handle) {}
+    cudnn_handle(cudnnHandle_t handle) : handle(handle) {}
+
+    cudnn_handle(const cudnn_handle& rhs) = delete;
+    cudnn_handle& operator=(const cudnn_handle& rhs) = delete;
+
+    cudnn_handle(cudnn_handle&& rhs) = default;
+    cudnn_handle& operator=(cudnn_handle&& rhs) = default;
 
     /*!
      * \brief Get the cudnn handle
@@ -54,7 +66,7 @@ struct cudnn_handle {
      * \brief Destruct the helper and release the raw cudnn handle
      */
     ~cudnn_handle() {
-        cudnnDestroy(handle);
+        cudnn_check(cudnnDestroy(handle));
     }
 };
 
@@ -63,9 +75,7 @@ struct cudnn_handle {
  * \return RTTI helper over a raw cudnn handle
  */
 inline cudnn_handle start_cudnn() {
-    cudnnHandle_t handle;
-    cudnnCreate(&handle);
-    return {handle};
+    return {};
 }
 
 } //end of namespace cudnn
