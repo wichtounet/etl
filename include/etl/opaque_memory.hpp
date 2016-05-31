@@ -19,8 +19,6 @@ template<typename>
 using gpu_handler = int;
 #endif
 
-//TODO Remove the duplication of fields between both implementations
-
 template <typename T, std::size_t D>
 struct opaque_memory {
     static constexpr const std::size_t n_dimensions = D;                      ///< The number of dimensions
