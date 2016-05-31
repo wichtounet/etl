@@ -311,6 +311,147 @@ void conv4_valid_flipped(const opaque_memory<T,4>& input, const opaque_memory<T,
 }
 
 template <typename T>
+void conv4_valid_filter(const opaque_memory<T,4>& input, const opaque_memory<T,4>& kernel, const opaque_memory<T,4>& conv) {
+    using type = T;
+
+    auto data_type = std::is_same<type, float>::value ? CUDNN_DATA_FLOAT : CUDNN_DATA_DOUBLE;
+
+    type alpha[] = {1.0f};
+    type beta[] = {0.0f};
+
+    cudnn_handle handle = start_cudnn();
+
+    // Prepare the input tensor
+    cudnnTensorDescriptor_t input_tensor;
+    cudnn_check(cudnnCreateTensorDescriptor(&input_tensor));
+    cudnn_check(cudnnSetTensor4dDescriptor(input_tensor, CUDNN_TENSOR_NCHW, data_type,
+        input.template dim<0>(), input.template dim<1>(), input.template dim<2>(), input.template dim<3>()));
+
+    // Prepare the input kernel tensor
+    cudnnTensorDescriptor_t output_tensor;
+    cudnn_check(cudnnCreateTensorDescriptor(&output_tensor));
+    cudnn_check(cudnnSetTensor4dDescriptor(output_tensor, CUDNN_TENSOR_NCHW, data_type,
+        kernel.template dim<0>(), kernel.template dim<1>(), kernel.template dim<2>(), kernel.template dim<3>()));
+
+    // Prepare the output filter
+    cudnnFilterDescriptor_t filter;
+    cudnn_check(cudnnCreateFilterDescriptor(&filter));
+    cudnn_check(cudnnSetFilter4dDescriptor(filter, data_type, CUDNN_TENSOR_NCHW,
+        conv.template dim<0>(), conv.template dim<1>(), conv.template dim<2>(), conv.template dim<3>()));
+
+    // Prepare the convolution
+    cudnnConvolutionDescriptor_t convolution;
+    cudnn_check(cudnnCreateConvolutionDescriptor(&convolution));
+    cudnn_check(cudnnSetConvolution2dDescriptor(convolution, 0, 0, 1, 1, 1, 1, CUDNN_CONVOLUTION));
+
+    // Find the algorithm to use
+    cudnnConvolutionBwdFilterAlgo_t conv_algo;
+    cudnn_check(cudnnGetConvolutionBackwardFilterAlgorithm(handle.get(), input_tensor, output_tensor, convolution,
+        filter, CUDNN_CONVOLUTION_BWD_FILTER_SPECIFY_WORKSPACE_LIMIT, cudnn_max_workspace, &conv_algo));
+
+    // Prepare the workspace
+    std::size_t workspace_size = 0;
+    cudnn_check(cudnnGetConvolutionBackwardFilterWorkspaceSize(handle.get(), input_tensor, output_tensor, convolution, filter, conv_algo, &workspace_size));
+
+    impl::cuda::cuda_memory<type> workspace;
+
+    if(workspace_size){
+        workspace = impl::cuda::cuda_allocate_only<type>(workspace_size);
+    }
+
+    // Allocate GPU memory, if necessary
+
+    input.gpu_allocate_copy_if_necessary();
+    kernel.gpu_allocate_copy_if_necessary();
+    conv.gpu_allocate_if_necessary();
+
+    // Perform the convolution
+
+    cudnn_check(cudnnConvolutionBackwardFilter(handle.get(),
+        alpha, input_tensor, input.gpu_memory(),
+        output_tensor, kernel.gpu_memory(),
+        convolution, conv_algo, workspace.get(), workspace_size,
+        beta, filter, conv.gpu_memory()));
+
+    // Release the resources
+    cudnn_check(cudnnDestroyConvolutionDescriptor(convolution));
+    cudnn_check(cudnnDestroyFilterDescriptor(filter));
+    cudnn_check(cudnnDestroyTensorDescriptor(output_tensor));
+    cudnn_check(cudnnDestroyTensorDescriptor(input_tensor));
+}
+
+template <typename T>
+void conv4_valid_filter_flipped(const opaque_memory<T,4>& input, const opaque_memory<T,4>& kernel, const opaque_memory<T,4>& conv) {
+    using type = T;
+
+    auto data_type = std::is_same<type, float>::value ? CUDNN_DATA_FLOAT : CUDNN_DATA_DOUBLE;
+
+    type alpha[] = {1.0f};
+    type beta[] = {0.0f};
+
+    cudnn_handle handle = start_cudnn();
+
+    // Prepare the input tensor
+    cudnnTensorDescriptor_t input_tensor;
+    cudnn_check(cudnnCreateTensorDescriptor(&input_tensor));
+    cudnn_check(cudnnSetTensor4dDescriptor(input_tensor, CUDNN_TENSOR_NCHW, data_type,
+        input.template dim<0>(), input.template dim<1>(), input.template dim<2>(), input.template dim<3>()));
+
+    // Prepare the input kernel tensor
+    cudnnTensorDescriptor_t output_tensor;
+    cudnn_check(cudnnCreateTensorDescriptor(&output_tensor));
+    cudnn_check(cudnnSetTensor4dDescriptor(output_tensor, CUDNN_TENSOR_NCHW, data_type,
+        kernel.template dim<0>(), kernel.template dim<1>(), kernel.template dim<2>(), kernel.template dim<3>()));
+
+    // Prepare the output filter
+    cudnnFilterDescriptor_t filter;
+    cudnn_check(cudnnCreateFilterDescriptor(&filter));
+    cudnn_check(cudnnSetFilter4dDescriptor(filter, data_type, CUDNN_TENSOR_NCHW,
+        conv.template dim<0>(), conv.template dim<1>(), conv.template dim<2>(), conv.template dim<3>()));
+
+    // Prepare the convolution
+    cudnnConvolutionDescriptor_t convolution;
+    cudnn_check(cudnnCreateConvolutionDescriptor(&convolution));
+    cudnn_check(cudnnSetConvolution2dDescriptor(convolution, 0, 0, 1, 1, 1, 1, CUDNN_CROSS_CORRELATION));
+
+    // Find the algorithm to use
+    cudnnConvolutionBwdFilterAlgo_t conv_algo;
+    cudnn_check(cudnnGetConvolutionBackwardFilterAlgorithm(handle.get(), input_tensor, output_tensor, convolution,
+        filter, CUDNN_CONVOLUTION_BWD_FILTER_SPECIFY_WORKSPACE_LIMIT, cudnn_max_workspace, &conv_algo));
+
+    // Prepare the workspace
+    std::size_t workspace_size = 0;
+    cudnn_check(cudnnGetConvolutionBackwardFilterWorkspaceSize(handle.get(), input_tensor, output_tensor, convolution, filter, conv_algo, &workspace_size));
+
+    impl::cuda::cuda_memory<type> workspace;
+
+    if(workspace_size){
+        workspace = impl::cuda::cuda_allocate_only<type>(workspace_size);
+    }
+
+    // Allocate GPU memory, if necessary
+
+    input.gpu_allocate_copy_if_necessary();
+    kernel.gpu_allocate_copy_if_necessary();
+    conv.gpu_allocate_if_necessary();
+
+    // Perform the convolution
+
+    cudnn_check(cudnnConvolutionBackwardFilter(handle.get(),
+        alpha, input_tensor, input.gpu_memory(),
+        output_tensor, kernel.gpu_memory(),
+        convolution, conv_algo, workspace.get(), workspace_size,
+        beta, filter, conv.gpu_memory()));
+
+    // Release the resources
+    cudnn_check(cudnnDestroyConvolutionDescriptor(convolution));
+    cudnn_check(cudnnDestroyFilterDescriptor(filter));
+    cudnn_check(cudnnDestroyTensorDescriptor(output_tensor));
+    cudnn_check(cudnnDestroyTensorDescriptor(input_tensor));
+}
+
+
+template <typename T>
 void conv2_full(const opaque_memory<T,2>& input, const opaque_memory<T,2>& kernel, const opaque_memory<T,2>& conv) {
     using type = std::remove_const_t<T>;
 
@@ -950,6 +1091,22 @@ void conv4_valid_flipped(const opaque_memory<T,4>& input, const opaque_memory<T,
     cpp_unused(kernel);
     cpp_unused(conv);
     cpp_unreachable("Unsupported feature called: cudnn conv4_valid_flipped");
+}
+
+template <typename T>
+void conv4_valid_filter(const opaque_memory<T,4>& input, const opaque_memory<T,4>& kernel, const opaque_memory<T,4>& conv) {
+    cpp_unused(input);
+    cpp_unused(kernel);
+    cpp_unused(conv);
+    cpp_unreachable("Unsupported feature called: cudnn conv4_valid_filter");
+}
+
+template <typename T>
+void conv4_valid_filter_flipped(const opaque_memory<T,4>& input, const opaque_memory<T,4>& kernel, const opaque_memory<T,4>& conv) {
+    cpp_unused(input);
+    cpp_unused(kernel);
+    cpp_unused(conv);
+    cpp_unreachable("Unsupported feature called: cudnn conv4_valid_filter_flipped");
 }
 
 /*!

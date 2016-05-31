@@ -244,6 +244,52 @@ void conv4_valid(const I& input, const K& kernel, C&& conv) {
  * \param conv The output matrix
  */
 template <typename I, typename K, typename C>
+void conv4_valid_filter(const I& input, const K& kernel, C&& conv) {
+    cpp_assert(etl::dim<0>(input) == etl::dim<0>(kernel), "Invalid number of channels");
+    cpp_assert(etl::dim<1>(input) == etl::dim<1>(conv), "Invalid number of images");
+    cpp_assert(etl::dim<1>(kernel) == etl::dim<0>(conv), "Invalid number of images");
+
+    conv = 0.0;
+
+    for(std::size_t i = 0; i < etl::dim<0>(input); ++i){
+        for (std::size_t k = 0; k < etl::dim<1>(kernel); ++k) {
+            for (std::size_t c = 0; c < etl::dim<1>(input); ++c) {
+                conv(k)(c) += conv_2d_valid(input(i)(c), kernel(i)(k));
+            }
+        }
+    };
+}
+
+/*!
+ * \brief Standard implementation of a 4D 'valid' convolution C = I * K
+ * \param input The input matrix
+ * \param kernel The kernel matrix
+ * \param conv The output matrix
+ */
+template <typename I, typename K, typename C>
+void conv4_valid_filter_flipped(const I& input, const K& kernel, C&& conv) {
+    cpp_assert(etl::dim<0>(input) == etl::dim<0>(kernel), "Invalid number of channels");
+    cpp_assert(etl::dim<1>(input) == etl::dim<1>(conv), "Invalid number of images");
+    cpp_assert(etl::dim<1>(kernel) == etl::dim<0>(conv), "Invalid number of images");
+
+    conv = 0.0;
+
+    for(std::size_t i = 0; i < etl::dim<0>(input); ++i){
+        for (std::size_t k = 0; k < etl::dim<1>(kernel); ++k) {
+            for (std::size_t c = 0; c < etl::dim<1>(input); ++c) {
+                conv(k)(c) += conv_2d_valid_flipped(input(i)(c), kernel(i)(k));
+            }
+        }
+    };
+}
+
+/*!
+ * \brief Standard implementation of a 4D 'valid' convolution C = I * K
+ * \param input The input matrix
+ * \param kernel The kernel matrix
+ * \param conv The output matrix
+ */
+template <typename I, typename K, typename C>
 void conv4_full(const I& input, const K& kernel, C&& conv) {
     cpp_assert(etl::dim<1>(input) == etl::dim<0>(kernel), "Invalid number of channels");
     cpp_assert(etl::dim<0>(input) == etl::dim<0>(conv), "Invalid number of images");

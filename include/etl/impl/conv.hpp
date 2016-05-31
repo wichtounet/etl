@@ -627,6 +627,54 @@ struct conv4_valid_impl {
 };
 
 /*!
+ * \brief The functor impl for 4D valid conv
+ */
+struct conv4_valid_filter_impl {
+    /*!
+     * \brief Apply the convolution
+     * \param input The input expression
+     * \param kernel The kernel expression
+     * \param conv The output expression
+     */
+    template <typename I, typename K, typename C>
+    static void apply(const I& input, const K& kernel, C&& conv) {
+        auto impl = select_conv4_impl<I, K, C>();
+
+        if (impl == etl::conv4_impl::CUDNN) {
+            impl::cudnn::conv4_valid_filter(input.direct(), kernel.direct(), conv.direct());
+        } else if (impl == etl::conv4_impl::STD) {
+            impl::standard::conv4_valid_filter(input, kernel, conv);
+        } else {
+            cpp_unreachable("Invalid conv implementation selection");
+        }
+    }
+};
+
+/*!
+ * \brief The functor impl for 4D valid conv
+ */
+struct conv4_valid_filter_flipped_impl {
+    /*!
+     * \brief Apply the convolution
+     * \param input The input expression
+     * \param kernel The kernel expression
+     * \param conv The output expression
+     */
+    template <typename I, typename K, typename C>
+    static void apply(const I& input, const K& kernel, C&& conv) {
+        auto impl = select_conv4_impl<I, K, C>();
+
+        if (impl == etl::conv4_impl::CUDNN) {
+            impl::cudnn::conv4_valid_filter_flipped(input.direct(), kernel.direct(), conv.direct());
+        } else if (impl == etl::conv4_impl::STD) {
+            impl::standard::conv4_valid_filter_flipped(input, kernel, conv);
+        } else {
+            cpp_unreachable("Invalid conv implementation selection");
+        }
+    }
+};
+
+/*!
  * \brief The functor impl for 4D full conv
  */
 struct conv4_full_impl {
