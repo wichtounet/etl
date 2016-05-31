@@ -70,6 +70,19 @@ struct cudnn_handle {
     }
 };
 
+#ifdef ETL_CUDNN_GLOBAL_HANDLE
+
+/*!
+ * \brief Start cudnn and return a RTTI helper over a raw cudnn handle
+ * \return RTTI helper over a raw cudnn handle
+ */
+inline cudnn_handle& start_cudnn() {
+    static cudnn_handle handle;
+    return handle;
+}
+
+#else
+
 /*!
  * \brief Start cudnn and return a RTTI helper over a raw cudnn handle
  * \return RTTI helper over a raw cudnn handle
@@ -77,6 +90,8 @@ struct cudnn_handle {
 inline cudnn_handle start_cudnn() {
     return {};
 }
+
+#endif
 
 } //end of namespace cudnn
 

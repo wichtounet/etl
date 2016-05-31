@@ -36,7 +36,7 @@ void conv2_valid(const opaque_memory<T,2>& input, const opaque_memory<T,2>& kern
     type alpha[] = {1.0f};
     type beta[] = {0.0f};
 
-    cudnn_handle handle = start_cudnn();
+    decltype(auto) handle = start_cudnn();
 
     // Prepare the input tensor
     cudnnTensorDescriptor_t input_tensor;
@@ -103,7 +103,7 @@ void conv2_valid_flipped(const opaque_memory<T,2>& input, const opaque_memory<T,
     type alpha[] = {1.0f};
     type beta[] = {0.0f};
 
-    cudnn_handle handle = start_cudnn();
+    decltype(auto) handle = start_cudnn();
 
     // Prepare the input tensor
     cudnnTensorDescriptor_t input_tensor;
@@ -170,7 +170,7 @@ void conv4_valid(const opaque_memory<T,4>& input, const opaque_memory<T,4>& kern
     type alpha[] = {1.0f};
     type beta[] = {0.0f};
 
-    cudnn_handle handle = start_cudnn();
+    decltype(auto) handle = start_cudnn();
 
     // Prepare the input tensor
     cudnnTensorDescriptor_t input_tensor;
@@ -240,7 +240,7 @@ void conv4_valid_flipped(const opaque_memory<T,4>& input, const opaque_memory<T,
     type alpha[] = {1.0f};
     type beta[] = {0.0f};
 
-    cudnn_handle handle = start_cudnn();
+    decltype(auto) handle = start_cudnn();
 
     // Prepare the input tensor
     cudnnTensorDescriptor_t input_tensor;
@@ -310,7 +310,7 @@ void conv4_valid_filter(const opaque_memory<T,4>& input, const opaque_memory<T,4
     type alpha[] = {1.0f};
     type beta[] = {0.0f};
 
-    cudnn_handle handle = start_cudnn();
+    decltype(auto) handle = start_cudnn();
 
     // Prepare the input tensor
     cudnnTensorDescriptor_t input_tensor;
@@ -380,7 +380,7 @@ void conv4_valid_filter_flipped(const opaque_memory<T,4>& input, const opaque_me
     type alpha[] = {1.0f};
     type beta[] = {0.0f};
 
-    cudnn_handle handle = start_cudnn();
+    decltype(auto) handle = start_cudnn();
 
     // Prepare the input tensor
     cudnnTensorDescriptor_t input_tensor;
@@ -451,7 +451,7 @@ void conv2_full(const opaque_memory<T,2>& input, const opaque_memory<T,2>& kerne
     type alpha[] = {1.0f};
     type beta[] = {0.0f};
 
-    cudnn_handle handle = start_cudnn();
+    decltype(auto) handle = start_cudnn();
 
     // Prepare the input tensor
     cudnnTensorDescriptor_t input_tensor;
@@ -518,7 +518,7 @@ void conv2_full_flipped(const opaque_memory<T,2>& input, const opaque_memory<T,2
     type alpha[] = {1.0f};
     type beta[] = {0.0f};
 
-    cudnn_handle handle = start_cudnn();
+    decltype(auto) handle = start_cudnn();
 
     // Prepare the input tensor
     cudnnTensorDescriptor_t input_tensor;
@@ -585,7 +585,7 @@ void conv4_full(const opaque_memory<T,4>& input, const opaque_memory<T,4>& kerne
     type alpha[] = {1.0f};
     type beta[] = {0.0f};
 
-    cudnn_handle handle = start_cudnn();
+    decltype(auto) handle = start_cudnn();
 
     // Prepare the input tensor
     cudnnTensorDescriptor_t input_tensor;
@@ -655,7 +655,7 @@ void conv4_full_flipped(const opaque_memory<T,4>& input, const opaque_memory<T,4
     type alpha[] = {1.0f};
     type beta[] = {0.0f};
 
-    cudnn_handle handle = start_cudnn();
+    decltype(auto) handle = start_cudnn();
 
     // Prepare the input tensor
     cudnnTensorDescriptor_t input_tensor;
@@ -725,7 +725,7 @@ void conv2_valid_multi(const opaque_memory<T,2>& input, const opaque_memory<T,3>
     type alpha[] = {1.0f};
     type beta[] = {0.0f};
 
-    cudnn_handle handle = start_cudnn();
+    decltype(auto) handle = start_cudnn();
 
     // Prepare the input tensor
     cudnnTensorDescriptor_t input_tensor;
@@ -792,7 +792,7 @@ void conv2_valid_multi_flipped(const opaque_memory<T,2>& input, const opaque_mem
     type alpha[] = {1.0f};
     type beta[] = {0.0f};
 
-    cudnn_handle handle = start_cudnn();
+    decltype(auto) handle = start_cudnn();
 
     // Prepare the input tensor
     cudnnTensorDescriptor_t input_tensor;
@@ -894,7 +894,7 @@ void conv2_full_multi_real(const I& input, const K& kernel, C&& conv) {
     type alpha[] = {1.0f};
     type beta[] = {0.0f};
 
-    cudnn_handle handle = start_cudnn();
+    decltype(auto) handle = start_cudnn();
 
     // Prepare the input tensor
     cudnnTensorDescriptor_t input_tensor;
@@ -965,7 +965,7 @@ void conv2_full_multi_flipped_real(const I& input, const K& kernel, C&& conv) {
     type alpha[] = {1.0f};
     type beta[] = {0.0f};
 
-    cudnn_handle handle = start_cudnn();
+    decltype(auto) handle = start_cudnn();
 
     // Prepare the input tensor
     cudnnTensorDescriptor_t input_tensor;
