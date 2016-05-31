@@ -14,6 +14,15 @@
 
 #include "cudnn.h"
 
+#define cudnn_check(call)                                                                                 \
+    {                                                                                                     \
+        cudnnStatus_t status = call;                                                                      \
+        if (status != CUDNN_STATUS_SUCCESS) {                                                             \
+            std::cerr << "CUDNN error: " << cudnnGetErrorString(status) << " from " << #call << std::endl \
+                      << "from " << __FILE__ << ":" << __LINE__ << std::endl;                             \
+        }                                                                                                 \
+    }
+
 namespace etl {
 
 namespace impl {

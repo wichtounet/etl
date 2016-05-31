@@ -27,15 +27,6 @@ namespace cudnn {
 
 #ifdef ETL_CUDNN_MODE
 
-#define cudnn_check(call)                                                                                 \
-    {                                                                                                     \
-        cudnnStatus_t status = call;                                                                      \
-        if (status != CUDNN_STATUS_SUCCESS) {                                                             \
-            std::cerr << "CUDNN error: " << cudnnGetErrorString(status) << " from " << #call << std::endl \
-                      << "from " << __FILE__ << ":" << __LINE__ << std::endl;                             \
-        }                                                                                                 \
-    }
-
 template <typename T>
 void conv2_valid(const opaque_memory<T,2>& input, const opaque_memory<T,2>& kernel, const opaque_memory<T,2>& conv) {
     using type = std::remove_const_t<T>;
