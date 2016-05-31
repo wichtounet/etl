@@ -363,27 +363,25 @@ inline void inplace_ifft2_kernel(std::complex<double>* in, std::size_t d1, std::
 
 } //End of namespace detail
 
-template <typename A, typename C, cpp_enable_if(all_single_precision<A>::value)>
-void fft1(A&& a, C&& c) {
-    auto a_complex = allocate<std::complex<float>>(etl::size(a));
+inline void fft1(const opaque_memory<float,1>& a, const opaque_memory<std::complex<float>,1>& c) {
+    auto a_complex = allocate<std::complex<float>>(a.size());
 
     direct_copy(a.memory_start(), a.memory_end(), a_complex.get());
 
-    detail::fft_kernel(a_complex.get(), etl::size(a), c.memory_start());
+    detail::fft_kernel(a_complex.get(), a.size(), c.memory_start());
 }
 
-template <typename A, typename C, cpp_enable_if(all_double_precision<A>::value)>
-void fft1(A&& a, C&& c) {
-    auto a_complex = allocate<std::complex<double>>(etl::size(a));
+inline void fft1(const opaque_memory<double,1>& a, const opaque_memory<std::complex<double>,1>& c) {
+    auto a_complex = allocate<std::complex<double>>(a.size());
 
     direct_copy(a.memory_start(), a.memory_end(), a_complex.get());
 
-    detail::fft_kernel(a_complex.get(), etl::size(a), c.memory_start());
+    detail::fft_kernel(a_complex.get(), a.size(), c.memory_start());
 }
 
-template <typename A, typename C, cpp_enable_if(all_complex<A>::value)>
-void fft1(A&& a, C&& c) {
-    detail::fft_kernel(a.memory_start(), etl::size(a), c.memory_start());
+template <typename T>
+void fft1(const opaque_memory<std::complex<T>,1>& a, const opaque_memory<std::complex<T>,1>& c) {
+    detail::fft_kernel(a.memory_start(), a.size(), c.memory_start());
 }
 
 template <typename A, typename C>
@@ -413,40 +411,22 @@ void ifft1_real(A&& a, C&& c) {
     }
 }
 
-template <typename A, typename C, cpp_enable_if(all_single_precision<A>::value)>
-void fft1_many(A&& a, C&& c) {
-    static constexpr const std::size_t N = decay_traits<A>::dimensions();
+template<std::size_t N, typename T>
+void fft1_many(const opaque_memory<T, N>& a, const opaque_memory<std::complex<T>, N>& c) {
+    std::size_t n     = a.template dim<N - 1>(); //Size of the transform
+    std::size_t batch = a.size() / n;            //Number of batch
 
-    std::size_t n     = etl::dim<N - 1>(a); //Size of the transform
-    std::size_t batch = etl::size(a) / n;   //Number of batch
-
-    auto a_complex = allocate<std::complex<float>>(etl::size(a));
+    auto a_complex = allocate<std::complex<T>>(a.size());
 
     direct_copy(a.memory_start(), a.memory_end(), a_complex.get());
 
     detail::fft_many_kernel(a_complex.get(), batch, n, c.memory_start());
 }
 
-template <typename A, typename C, cpp_enable_if(all_double_precision<A>::value)>
-void fft1_many(A&& a, C&& c) {
-    static constexpr const std::size_t N = decay_traits<A>::dimensions();
-
-    std::size_t n     = etl::dim<N - 1>(a); //Size of the transform
-    std::size_t batch = etl::size(a) / n;   //Number of batch
-
-    auto a_complex = allocate<std::complex<double>>(etl::size(a));
-
-    direct_copy(a.memory_start(), a.memory_end(), a_complex.get());
-
-    detail::fft_many_kernel(a_complex.get(), batch, n, c.memory_start());
-}
-
-template <typename A, typename C, cpp_enable_if(all_complex<A>::value)>
-void fft1_many(A&& a, C&& c) {
-    static constexpr const std::size_t N = decay_traits<A>::dimensions();
-
-    std::size_t n     = etl::dim<N - 1>(a); //Size of the transform
-    std::size_t batch = etl::size(a) / n;   //Number of batch
+template<std::size_t N, typename T>
+void fft1_many(const opaque_memory<std::complex<T>, N>& a, const opaque_memory<std::complex<T>, N>& c) {
+    std::size_t n     = a.template dim<N - 1>(); //Size of the transform
+    std::size_t batch = a.size() / n;            //Number of batch
 
     detail::fft_many_kernel(a.memory_start(), batch, n, c.memory_start());
 }
