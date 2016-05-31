@@ -396,6 +396,22 @@ TEMPLATE_TEST_CASE_2("rep/mixed/3", "[rep]", Z, float, double) {
     REQUIRE_EQUALS(etl::decay_traits<decltype(b)>::template dim<1>(), 2UL);
     REQUIRE_EQUALS(etl::decay_traits<decltype(b)>::template dim<2>(), 4UL);
     REQUIRE_EQUALS(etl::decay_traits<decltype(b)>::template dim<3>(), 5UL);
+    REQUIRE_EQUALS(etl::decay_traits<decltype(b)>::size(), 120UL);
+
+    REQUIRE_EQUALS(b(0, 0, 0, 0), 2.0);
+    REQUIRE_EQUALS(b(0, 1, 0, 0), 3.0);
+}
+
+TEMPLATE_TEST_CASE_2("rep/mixed/4", "[rep]", Z, float, double) {
+    etl::fast_vector<Z, 2> a{Z(2.0), Z(3.0)};
+
+    auto b = etl::force_temporary(etl::rep_l<3>(etl::rep<4, 5>(a)));
+
+    REQUIRE_EQUALS(etl::decay_traits<decltype(b)>::template dim<0>(), 3UL);
+    REQUIRE_EQUALS(etl::decay_traits<decltype(b)>::template dim<1>(), 2UL);
+    REQUIRE_EQUALS(etl::decay_traits<decltype(b)>::template dim<2>(), 4UL);
+    REQUIRE_EQUALS(etl::decay_traits<decltype(b)>::template dim<3>(), 5UL);
+    REQUIRE_EQUALS(etl::decay_traits<decltype(b)>::size(), 120UL);
 
     REQUIRE_EQUALS(b(0, 0, 0, 0), 2.0);
     REQUIRE_EQUALS(b(0, 1, 0, 0), 3.0);
