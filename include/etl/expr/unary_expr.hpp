@@ -528,7 +528,7 @@ public:
 
     template<std::size_t... I>
     std::array<std::size_t, decay_traits<this_type>::dimensions()> dim_array(std::index_sequence<I...>) const {
-        return {this->template dim<I>()...};
+        return {{this->template dim<I>()...}};
     }
 
     opaque_memory<T, decay_traits<this_type>::dimensions()> direct() const {
