@@ -1145,7 +1145,7 @@ void conv4_full(const opaque_memory<T,4>& input, const opaque_memory<T,4>& kerne
 /*!
  * \brief cudnn implementation of a 2D 'valid' convolution C = I * K, with multiple kernels
  * \param input The input matrix
- * \param kernels The kernel matrix
+ * \param kernel The kernel matrix
  * \param conv The output matrix
  */
 template <typename T>
@@ -1167,7 +1167,7 @@ void conv2_valid_multi(const opaque_memory<T,2>& input, const opaque_memory<T,3>
 /*!
  * \brief Standard implementation of a 2D 'valid' convolution C = I * K, with multiple flipped kernels
  * \param input The input matrix
- * \param kernels The kernel matrix
+ * \param kernel The kernel matrix
  * \param conv The output matrix
  */
 template <typename T>
@@ -1181,7 +1181,7 @@ void conv2_valid_multi_flipped(const opaque_memory<T,2>& input, const opaque_mem
 /*!
  * \brief Standard implementation of a 2D 'full' convolution C = I * K, with multiple kernels
  * \param input The input matrix
- * \param kernels The kernel matrix
+ * \param kernel The kernel matrix
  * \param conv The output matrix
  */
 template <typename I, typename K, typename C>
@@ -1195,7 +1195,7 @@ void conv2_full_multi(const I& input, const K& kernel, C&& conv){
 /*!
  * \brief Standard implementation of a 2D 'full' convolution C = I * K, with multiple kernels
  * \param input The input matrix
- * \param kernels The kernel matrix
+ * \param kernel The kernel matrix
  * \param conv The output matrix
  */
 template <typename I, typename K, typename C>
