@@ -922,9 +922,13 @@ void fft2_convolve(A&& a, B&& b, C&& c) {
     fft2(a_padded, a_padded);
     fft2(b_padded, b_padded);
 
-    a_padded *= b_padded;
+    a_padded >>= b_padded;
 
-    ifft2_real(a_padded, c);
+    ifft2(a_padded, a_padded);
+
+    for (std::size_t i = 0; i < s1 * s2; ++i) {
+        c[i] = a_padded[i].real();
+    }
 }
 
 } //end of namespace standard
