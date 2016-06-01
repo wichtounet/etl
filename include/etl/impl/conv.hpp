@@ -81,15 +81,12 @@ inline etl::conv_impl select_default_conv_impl() {
     static constexpr const bool avx = vectorize_impl && vector_mode == vector_mode_t::AVX;
     static constexpr const bool cudnn = is_cudnn_enabled;
 
-    if(cudnn && TT == conv_type::VALID && decay_traits<I>::dimensions() == 2){
-        //TODO Should only be used with (very?) large sizes
-        return etl::conv_impl::CUDNN;
-    }
-
     if (avx) {
         return etl::conv_impl::AVX;
     } else if (sse) {
         return etl::conv_impl::SSE;
+    } else if(cudnn && (TT == conv_type::VALID || TT == conv_type::FULL) && decay_traits<I>::dimensions() == 2){
+        return etl::conv_impl::CUDNN;
     } else {
         return etl::conv_impl::STD;
     }
