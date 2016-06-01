@@ -46,6 +46,24 @@ inline cufft_handle start_cufft() {
 }
 
 /*!
+ * \brief cast a etl::complex to its CUFFT equivalent
+ * \param ptr Pointer the memory to cast
+ * \return Pointer to the same memory but casted to CUFFT equivalent
+ */
+inline cufftComplex* complex_cast(etl::complex<float>* ptr) {
+    return reinterpret_cast<cufftComplex*>(ptr);
+}
+
+/*!
+ * \brief cast a etl::complex to its CUFFT equivalent
+ * \param ptr Pointer the memory to cast
+ * \return Pointer to the same memory but casted to CUFFT equivalent
+ */
+inline cufftDoubleComplex* complex_cast(etl::complex<double>* ptr) {
+    return reinterpret_cast<cufftDoubleComplex*>(ptr);
+}
+
+/*!
  * \brief cast a std::complex to its CUFFT equivalent
  * \param ptr Pointer the memory to cast
  * \return Pointer to the same memory but casted to CUFFT equivalent
