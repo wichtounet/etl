@@ -52,35 +52,35 @@ FFT_FUNCTOR(std_fft2_many, c = selected_helper(etl::fft_impl::STD, etl::fft_2d_m
 FFT_FUNCTOR(default_ifft2_many, c = etl::ifft_2d_many(a))
 FFT_FUNCTOR(std_ifft2_many, c = selected_helper(etl::fft_impl::STD, etl::ifft_2d_many(a)))
 
-#define FFT1_TEST_CASE_SECTION_DEFAULT FFT_TEST_CASE_SECTIONS(default_fft1, default_fft1)
-#define FFT1_TEST_CASE_SECTION_STD FFT_TEST_CASE_SECTIONS(std_fft1, std_fft1)
+#define FFT1_TEST_CASE_SECTION_DEFAULT FFT_TEST_CASE_SECTIONS(default_fft1)
+#define FFT1_TEST_CASE_SECTION_STD FFT_TEST_CASE_SECTIONS(std_fft1)
 
-#define FFT1_MANY_TEST_CASE_SECTION_DEFAULT FFT_TEST_CASE_SECTIONS(default_fft1_many, default_fft1_many)
-#define FFT1_MANY_TEST_CASE_SECTION_STD FFT_TEST_CASE_SECTIONS(std_fft1_many, std_fft1_many)
+#define FFT1_MANY_TEST_CASE_SECTION_DEFAULT FFT_TEST_CASE_SECTIONS(default_fft1_many)
+#define FFT1_MANY_TEST_CASE_SECTION_STD FFT_TEST_CASE_SECTIONS(std_fft1_many)
 
-#define IFFT1_MANY_TEST_CASE_SECTION_DEFAULT FFT_TEST_CASE_SECTIONS(default_ifft1_many, default_ifft1_many)
-#define IFFT1_MANY_TEST_CASE_SECTION_STD FFT_TEST_CASE_SECTIONS(std_ifft1_many, std_ifft1_many)
+#define IFFT1_MANY_TEST_CASE_SECTION_DEFAULT FFT_TEST_CASE_SECTIONS(default_ifft1_many)
+#define IFFT1_MANY_TEST_CASE_SECTION_STD FFT_TEST_CASE_SECTIONS(std_ifft1_many)
 
-#define IFFT1_TEST_CASE_SECTION_DEFAULT FFT_TEST_CASE_SECTIONS(default_ifft1, default_ifft1)
-#define IFFT1_TEST_CASE_SECTION_STD FFT_TEST_CASE_SECTIONS(std_ifft1, std_ifft1)
+#define IFFT1_TEST_CASE_SECTION_DEFAULT FFT_TEST_CASE_SECTIONS(default_ifft1)
+#define IFFT1_TEST_CASE_SECTION_STD FFT_TEST_CASE_SECTIONS(std_ifft1)
 
-#define IFFT1_REAL_TEST_CASE_SECTION_DEFAULT FFT_TEST_CASE_SECTIONS(default_ifft1_real, default_ifft1_real)
-#define IFFT1_REAL_TEST_CASE_SECTION_STD FFT_TEST_CASE_SECTIONS(std_ifft1_real, std_ifft1_real)
+#define IFFT1_REAL_TEST_CASE_SECTION_DEFAULT FFT_TEST_CASE_SECTIONS(default_ifft1_real)
+#define IFFT1_REAL_TEST_CASE_SECTION_STD FFT_TEST_CASE_SECTIONS(std_ifft1_real)
 
-#define FFT2_TEST_CASE_SECTION_DEFAULT FFT_TEST_CASE_SECTIONS(default_fft2, default_fft2)
-#define FFT2_TEST_CASE_SECTION_STD FFT_TEST_CASE_SECTIONS(std_fft2, std_fft2)
+#define FFT2_TEST_CASE_SECTION_DEFAULT FFT_TEST_CASE_SECTIONS(default_fft2)
+#define FFT2_TEST_CASE_SECTION_STD FFT_TEST_CASE_SECTIONS(std_fft2)
 
-#define FFT2_MANY_TEST_CASE_SECTION_DEFAULT FFT_TEST_CASE_SECTIONS(default_fft2_many, default_fft2_many)
-#define FFT2_MANY_TEST_CASE_SECTION_STD FFT_TEST_CASE_SECTIONS(std_fft2_many, std_fft2_many)
+#define FFT2_MANY_TEST_CASE_SECTION_DEFAULT FFT_TEST_CASE_SECTIONS(default_fft2_many)
+#define FFT2_MANY_TEST_CASE_SECTION_STD FFT_TEST_CASE_SECTIONS(std_fft2_many)
 
-#define IFFT2_MANY_TEST_CASE_SECTION_DEFAULT FFT_TEST_CASE_SECTIONS(default_ifft2_many, default_ifft2_many)
-#define IFFT2_MANY_TEST_CASE_SECTION_STD FFT_TEST_CASE_SECTIONS(std_ifft2_many, std_ifft2_many)
+#define IFFT2_MANY_TEST_CASE_SECTION_DEFAULT FFT_TEST_CASE_SECTIONS(default_ifft2_many)
+#define IFFT2_MANY_TEST_CASE_SECTION_STD FFT_TEST_CASE_SECTIONS(std_ifft2_many)
 
-#define IFFT2_TEST_CASE_SECTION_DEFAULT FFT_TEST_CASE_SECTIONS(default_ifft2, default_ifft2)
-#define IFFT2_TEST_CASE_SECTION_STD FFT_TEST_CASE_SECTIONS(std_ifft2, std_ifft2)
+#define IFFT2_TEST_CASE_SECTION_DEFAULT FFT_TEST_CASE_SECTIONS(default_ifft2)
+#define IFFT2_TEST_CASE_SECTION_STD FFT_TEST_CASE_SECTIONS(std_ifft2)
 
-#define IFFT2_REAL_TEST_CASE_SECTION_DEFAULT FFT_TEST_CASE_SECTIONS(default_ifft2_real, default_ifft2_real)
-#define IFFT2_REAL_TEST_CASE_SECTION_STD FFT_TEST_CASE_SECTIONS(std_ifft2_real, std_ifft2_real)
+#define IFFT2_REAL_TEST_CASE_SECTION_DEFAULT FFT_TEST_CASE_SECTIONS(default_ifft2_real)
+#define IFFT2_REAL_TEST_CASE_SECTION_STD FFT_TEST_CASE_SECTIONS(std_ifft2_real)
 
 #ifdef ETL_MKL_MODE
 FFT_FUNCTOR(mkl_fft1, c = selected_helper(etl::fft_impl::MKL, etl::fft_1d(a)))
@@ -93,16 +93,16 @@ FFT_FUNCTOR(mkl_ifft2, c = selected_helper(etl::fft_impl::MKL, etl::ifft_2d(a)))
 FFT_FUNCTOR(mkl_ifft2_real, c = selected_helper(etl::fft_impl::MKL, etl::ifft_2d_real(a)))
 FFT_FUNCTOR(mkl_fft2_many, c = selected_helper(etl::fft_impl::MKL, etl::fft_2d_many(a)))
 FFT_FUNCTOR(mkl_ifft2_many, c = selected_helper(etl::fft_impl::MKL, etl::ifft_2d_many(a)))
-#define FFT1_TEST_CASE_SECTION_MKL FFT_TEST_CASE_SECTIONS(mkl_fft1, mkl_fft1)
-#define FFT2_TEST_CASE_SECTION_MKL FFT_TEST_CASE_SECTIONS(mkl_fft2, mkl_fft2)
-#define FFT1_MANY_TEST_CASE_SECTION_MKL FFT_TEST_CASE_SECTIONS(mkl_fft1_many, mkl_fft1_many)
-#define FFT2_MANY_TEST_CASE_SECTION_MKL FFT_TEST_CASE_SECTIONS(mkl_fft2_many, mkl_fft2_many)
-#define IFFT1_MANY_TEST_CASE_SECTION_MKL FFT_TEST_CASE_SECTIONS(mkl_ifft1_many, mkl_ifft1_many)
-#define IFFT2_MANY_TEST_CASE_SECTION_MKL FFT_TEST_CASE_SECTIONS(mkl_ifft2_many, mkl_ifft2_many)
-#define IFFT1_TEST_CASE_SECTION_MKL FFT_TEST_CASE_SECTIONS(mkl_ifft1, mkl_ifft1)
-#define IFFT2_TEST_CASE_SECTION_MKL FFT_TEST_CASE_SECTIONS(mkl_ifft2, mkl_ifft2)
-#define IFFT1_REAL_TEST_CASE_SECTION_MKL FFT_TEST_CASE_SECTIONS(mkl_ifft1_real, mkl_ifft1_real)
-#define IFFT2_REAL_TEST_CASE_SECTION_MKL FFT_TEST_CASE_SECTIONS(mkl_ifft2_real, mkl_ifft2_real)
+#define FFT1_TEST_CASE_SECTION_MKL FFT_TEST_CASE_SECTIONS(mkl_fft1)
+#define FFT2_TEST_CASE_SECTION_MKL FFT_TEST_CASE_SECTIONS(mkl_fft2)
+#define FFT1_MANY_TEST_CASE_SECTION_MKL FFT_TEST_CASE_SECTIONS(mkl_fft1_many)
+#define FFT2_MANY_TEST_CASE_SECTION_MKL FFT_TEST_CASE_SECTIONS(mkl_fft2_many)
+#define IFFT1_MANY_TEST_CASE_SECTION_MKL FFT_TEST_CASE_SECTIONS(mkl_ifft1_many)
+#define IFFT2_MANY_TEST_CASE_SECTION_MKL FFT_TEST_CASE_SECTIONS(mkl_ifft2_many)
+#define IFFT1_TEST_CASE_SECTION_MKL FFT_TEST_CASE_SECTIONS(mkl_ifft1)
+#define IFFT2_TEST_CASE_SECTION_MKL FFT_TEST_CASE_SECTIONS(mkl_ifft2)
+#define IFFT1_REAL_TEST_CASE_SECTION_MKL FFT_TEST_CASE_SECTIONS(mkl_ifft1_real)
+#define IFFT2_REAL_TEST_CASE_SECTION_MKL FFT_TEST_CASE_SECTIONS(mkl_ifft2_real)
 #else
 #define FFT1_TEST_CASE_SECTION_MKL
 #define FFT2_TEST_CASE_SECTION_MKL
@@ -127,16 +127,16 @@ FFT_FUNCTOR(cufft_ifft2, c = selected_helper(etl::fft_impl::CUFFT, etl::ifft_2d(
 FFT_FUNCTOR(cufft_ifft2_real, c = selected_helper(etl::fft_impl::CUFFT, etl::ifft_2d_real(a)))
 FFT_FUNCTOR(cufft_fft2_many, c = selected_helper(etl::fft_impl::CUFFT, etl::fft_2d_many(a)))
 FFT_FUNCTOR(cufft_ifft2_many, c = selected_helper(etl::fft_impl::CUFFT, etl::ifft_2d_many(a)))
-#define FFT1_TEST_CASE_SECTION_CUFFT FFT_TEST_CASE_SECTIONS(cufft_fft1, cufft_fft1)
-#define FFT2_TEST_CASE_SECTION_CUFFT FFT_TEST_CASE_SECTIONS(cufft_fft2, cufft_fft2)
-#define FFT1_MANY_TEST_CASE_SECTION_CUFFT FFT_TEST_CASE_SECTIONS(cufft_fft1_many, cufft_fft1_many)
-#define FFT2_MANY_TEST_CASE_SECTION_CUFFT FFT_TEST_CASE_SECTIONS(cufft_fft2_many, cufft_fft2_many)
-#define IFFT1_MANY_TEST_CASE_SECTION_CUFFT FFT_TEST_CASE_SECTIONS(cufft_ifft1_many, cufft_ifft1_many)
-#define IFFT2_MANY_TEST_CASE_SECTION_CUFFT FFT_TEST_CASE_SECTIONS(cufft_ifft2_many, cufft_ifft2_many)
-#define IFFT1_TEST_CASE_SECTION_CUFFT FFT_TEST_CASE_SECTIONS(cufft_ifft1, cufft_ifft1)
-#define IFFT2_TEST_CASE_SECTION_CUFFT FFT_TEST_CASE_SECTIONS(cufft_ifft2, cufft_ifft2)
-#define IFFT1_REAL_TEST_CASE_SECTION_CUFFT FFT_TEST_CASE_SECTIONS(cufft_ifft1_real, cufft_ifft1_real)
-#define IFFT2_REAL_TEST_CASE_SECTION_CUFFT FFT_TEST_CASE_SECTIONS(cufft_ifft2_real, cufft_ifft2_real)
+#define FFT1_TEST_CASE_SECTION_CUFFT FFT_TEST_CASE_SECTIONS(cufft_fft1)
+#define FFT2_TEST_CASE_SECTION_CUFFT FFT_TEST_CASE_SECTIONS(cufft_fft2)
+#define FFT1_MANY_TEST_CASE_SECTION_CUFFT FFT_TEST_CASE_SECTIONS(cufft_fft1_many)
+#define FFT2_MANY_TEST_CASE_SECTION_CUFFT FFT_TEST_CASE_SECTIONS(cufft_fft2_many)
+#define IFFT1_MANY_TEST_CASE_SECTION_CUFFT FFT_TEST_CASE_SECTIONS(cufft_ifft1_many)
+#define IFFT2_MANY_TEST_CASE_SECTION_CUFFT FFT_TEST_CASE_SECTIONS(cufft_ifft2_many)
+#define IFFT1_TEST_CASE_SECTION_CUFFT FFT_TEST_CASE_SECTIONS(cufft_ifft1)
+#define IFFT2_TEST_CASE_SECTION_CUFFT FFT_TEST_CASE_SECTIONS(cufft_ifft2)
+#define IFFT1_REAL_TEST_CASE_SECTION_CUFFT FFT_TEST_CASE_SECTIONS(cufft_ifft1_real)
+#define IFFT2_REAL_TEST_CASE_SECTION_CUFFT FFT_TEST_CASE_SECTIONS(cufft_ifft2_real)
 #else
 #define FFT1_TEST_CASE_SECTION_CUFFT
 #define FFT2_TEST_CASE_SECTION_CUFFT
@@ -164,9 +164,9 @@ FFT_FUNCTOR(cufft_ifft2_many, c = selected_helper(etl::fft_impl::CUFFT, etl::iff
     template <typename T, typename Impl> \
     static void INTERNAL_CATCH_UNIQUE_NAME(____C_A_T_C_H____T_E_M_P_L_A_TE____T_E_S_T____)()
 
-#define FFT_TEST_CASE_SECTIONS(S1, S2) \
+#define FFT_TEST_CASE_SECTIONS(S1) \
     FFT_TEST_CASE_SECTION(float, S1)   \
-    FFT_TEST_CASE_SECTION(double, S2)
+    FFT_TEST_CASE_SECTION(double, S1)
 
 #define FFT1_TEST_CASE(name, description)   \
     FFT_TEST_CASE_DECL(name, description) { \
