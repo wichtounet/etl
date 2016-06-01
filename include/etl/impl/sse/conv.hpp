@@ -676,7 +676,10 @@ void conv2_full_flipped(const I& input, const K& kernel, C&& conv) {
  * \param last The index where to stop in the output matrix
  */
 template <typename I, typename K, typename C>
-void conv1_full(const I& /*input*/, const K& /*kernel*/, C&& /*conv*/, std::size_t /*first*/, std::size_t /*last*/) {
+void conv1_full(const I& input, const K& kernel, C&& conv) {
+    cpp_unused(input);
+    cpp_unused(kernel);
+    cpp_unused(conv);
     cpp_unreachable("SSE not available/enabled");
 }
 
@@ -689,7 +692,10 @@ void conv1_full(const I& /*input*/, const K& /*kernel*/, C&& /*conv*/, std::size
  * \param last The index where to stop in the output matrix
  */
 template <typename I, typename K, typename C>
-void conv1_same(const I& /*input*/, const K& /*kernel*/, C&& /*conv*/, std::size_t /*first*/, std::size_t /*last*/) {
+void conv1_same(const I& input, const K& kernel, C&& conv) {
+    cpp_unused(input);
+    cpp_unused(kernel);
+    cpp_unused(conv);
     cpp_unreachable("SSE not available/enabled");
 }
 
@@ -702,7 +708,10 @@ void conv1_same(const I& /*input*/, const K& /*kernel*/, C&& /*conv*/, std::size
  * \param last The index where to stop in the output matrix
  */
 template <typename I, typename K, typename C>
-void conv1_valid(const I& /*input*/, const K& /*kernel*/, C&& /*conv*/, std::size_t /*first*/, std::size_t /*last*/) {
+void conv1_valid(const I& input, const K& kernel, C&& conv) {
+    cpp_unused(input);
+    cpp_unused(kernel);
+    cpp_unused(conv);
     cpp_unreachable("SSE not available/enabled");
 }
 
@@ -713,7 +722,10 @@ void conv1_valid(const I& /*input*/, const K& /*kernel*/, C&& /*conv*/, std::siz
  * \param conv The output matrix
  */
 template <typename I, typename K, typename C>
-void conv2_valid(const I& /*input*/, const K& /*kernel*/, C&& /*conv*/) {
+void conv2_valid(const I& input, const K& kernel, C&& conv) {
+    cpp_unused(input);
+    cpp_unused(kernel);
+    cpp_unused(conv);
     cpp_unreachable("SSE not available/enabled");
 }
 
@@ -724,7 +736,10 @@ void conv2_valid(const I& /*input*/, const K& /*kernel*/, C&& /*conv*/) {
  * \param conv The output matrix
  */
 template <typename I, typename K, typename C>
-void conv2_valid_flipped(const I& /*input*/, const K& /*kernel*/, C&& /*conv*/) {
+void conv2_valid_flipped(const I& input, const K& kernel, C&& conv) {
+    cpp_unused(input);
+    cpp_unused(kernel);
+    cpp_unused(conv);
     cpp_unreachable("SSE not available/enabled");
 }
 
@@ -735,7 +750,10 @@ void conv2_valid_flipped(const I& /*input*/, const K& /*kernel*/, C&& /*conv*/) 
  * \param conv The output matrix
  */
 template <typename I, typename K, typename C>
-void conv2_same(const I& /*input*/, const K& /*kernel*/, C&& /*conv*/) {
+void conv2_same(const I& input, const K& kernel, C&& conv) {
+    cpp_unused(input);
+    cpp_unused(kernel);
+    cpp_unused(conv);
     cpp_unreachable("SSE not available/enabled");
 }
 
@@ -746,7 +764,10 @@ void conv2_same(const I& /*input*/, const K& /*kernel*/, C&& /*conv*/) {
  * \param conv The output matrix
  */
 template <typename I, typename K, typename C>
-void conv2_full(const I& /*input*/, const K& /*kernel*/, C&& /*conv*/) {
+void conv2_full(const I& input, const K& kernel, C&& conv) {
+    cpp_unused(input);
+    cpp_unused(kernel);
+    cpp_unused(conv);
     cpp_unreachable("SSE not available/enabled");
 }
 
@@ -757,7 +778,10 @@ void conv2_full(const I& /*input*/, const K& /*kernel*/, C&& /*conv*/) {
  * \param conv The output matrix
  */
 template <typename I, typename K, typename C>
-void conv2_full_flipped(const I& /*input*/, const K& /*kernel*/, C&& /*conv*/) {
+void conv2_full_flipped(const I& input, const K& kernel, C&& conv) {
+    cpp_unused(input);
+    cpp_unused(kernel);
+    cpp_unused(conv);
     cpp_unreachable("SSE not available/enabled");
 }
 
