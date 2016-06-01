@@ -638,12 +638,6 @@ using conv1_same_expr = basic_conv_expr<T, 1, conv_type::SAME, detail::conv1_sam
 template <typename T>
 using conv1_full_expr = basic_conv_expr<T, 1, conv_type::FULL, detail::conv1_full_impl>;
 
-/*!
- * \brief Expression for 1D full by fft convolution
- */
-template <typename T>
-using fft_conv1_full_expr = basic_conv_expr<T, 1, conv_type::FULL, detail::fft_conv1_full_impl>;
-
 //2D convolutions
 
 /*!
@@ -753,12 +747,6 @@ using conv2_full_expr = basic_conv_expr<T, 2, conv_type::FULL, detail::conv2_ful
  */
 template <typename T>
 using conv2_full_flipped_expr = basic_conv_expr<T, 2, conv_type::FULL, detail::conv2_full_flipped_impl>;
-
-/*!
- * \brief Expression for 2D full by fft convolution
- */
-template <typename T>
-using fft_conv2_full_expr = basic_conv_expr<T, 2, conv_type::FULL, detail::fft_conv2_full_impl>;
 
 //>2D convolutions
 

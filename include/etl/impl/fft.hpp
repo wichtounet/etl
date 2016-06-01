@@ -596,50 +596,6 @@ struct ifft2_many_impl {
     }
 };
 
-/*!
- * \brief Functor for 1D 'full' Convolution performed with FFT
- */
-struct fft_conv1_full_impl {
-    /*!
-     * \brief Apply the functor
-     * \param a The input matrix
-     * \param b The kernel matrix
-     * \param c The output sub expression
-     */
-    template <typename A, typename B, typename C>
-    static void apply(A&& a, B&& b, C&& c) {
-        if (is_cufft_enabled) {
-            etl::impl::cufft::fft1_convolve(a, b, c);
-        } else if (is_mkl_enabled) {
-            etl::impl::blas::fft1_convolve(a, b, c);
-        } else {
-            etl::impl::standard::fft1_convolve(a, b, c);
-        }
-    }
-};
-
-/*!
- * \brief Functor for 2D 'full' Convolution performed with FFT
- */
-struct fft_conv2_full_impl {
-    /*!
-     * \brief Apply the functor
-     * \param a The input matrix
-     * \param b The kernel matrix
-     * \param c The output sub expression
-     */
-    template <typename A, typename B, typename C>
-    static void apply(A&& a, B&& b, C&& c) {
-        if (is_cufft_enabled) {
-            etl::impl::cufft::fft2_convolve(a, b, c);
-        } else if (is_mkl_enabled) {
-            etl::impl::blas::fft2_convolve(a, b, c);
-        } else {
-            etl::impl::standard::fft2_convolve(a, b, c);
-        }
-    }
-};
-
 } //end of namespace detail
 
 } //end of namespace etl
