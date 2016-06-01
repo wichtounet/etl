@@ -585,12 +585,12 @@ CONV2_VALID_TEST_CASE("convolution_2d/valid_11", "convolution_2d_valid") {
 
 // convolution_subs
 
-TEMPLATE_TEST_CASE_2("convolution_2d/sub_1", "convolution_2d_full", Z, float, double) {
-    etl::fast_matrix<Z, 1, 3, 3> a = {1.0, 2.0, 3.0, 0.0, 1.0, 1.0, 3.0, 2.0, 1.0};
-    etl::fast_matrix<Z, 1, 2, 2> b = {2.0, 0.0, 0.5, 0.5};
-    etl::fast_matrix<Z, 1, 4, 4> c;
+CONV2_FULL_TEST_CASE("convolution_2d/sub_1", "convolution_2d_full") {
+    etl::fast_matrix<T, 1, 3, 3> a = {1.0, 2.0, 3.0, 0.0, 1.0, 1.0, 3.0, 2.0, 1.0};
+    etl::fast_matrix<T, 1, 2, 2> b = {2.0, 0.0, 0.5, 0.5};
+    etl::fast_matrix<T, 1, 4, 4> c;
 
-    etl::conv_2d_full(a(0), b(0), c(0));
+    Impl::apply(a(0), b(0), c(0));
 
     REQUIRE_EQUALS(c(0, 0, 0), 2.0);
     REQUIRE_EQUALS(c(0, 0, 1), 4.0);
@@ -613,12 +613,12 @@ TEMPLATE_TEST_CASE_2("convolution_2d/sub_1", "convolution_2d_full", Z, float, do
     REQUIRE_EQUALS(c(0, 3, 3), 0.5);
 }
 
-TEMPLATE_TEST_CASE_2("convolution_2d/sub_2", "convolution_2d_same", Z, float, double) {
-    etl::fast_matrix<Z, 1, 3, 3> a = {1.0, 2.0, 3.0, 0.0, 1.0, 1.0, 3.0, 2.0, 1.0};
-    etl::fast_matrix<Z, 1, 2, 2> b = {2.0, 0.0, 0.5, 0.5};
-    etl::fast_matrix<Z, 1, 3, 3> c;
+CONV2_SAME_TEST_CASE("convolution_2d/sub_2", "convolution_2d_same") {
+    etl::fast_matrix<T, 1, 3, 3> a = {1.0, 2.0, 3.0, 0.0, 1.0, 1.0, 3.0, 2.0, 1.0};
+    etl::fast_matrix<T, 1, 2, 2> b = {2.0, 0.0, 0.5, 0.5};
+    etl::fast_matrix<T, 1, 3, 3> c;
 
-    etl::conv_2d_same(a(0), b(0), c(0));
+    Impl::apply(a(0), b(0), c(0));
 
     REQUIRE_EQUALS(c(0, 0, 0), 3.5);
     REQUIRE_EQUALS(c(0, 0, 1), 4.5);
@@ -633,12 +633,12 @@ TEMPLATE_TEST_CASE_2("convolution_2d/sub_2", "convolution_2d_same", Z, float, do
     REQUIRE_EQUALS(c(0, 2, 2), 0.5);
 }
 
-TEMPLATE_TEST_CASE_2("convolution_2d/sub_3", "convolution_2d_valid", Z, float, double) {
-    etl::fast_matrix<Z, 1, 3, 3> a = {1.0, 2.0, 3.0, 0.0, 1.0, 1.0, 3.0, 2.0, 1.0};
-    etl::fast_matrix<Z, 1, 2, 2> b = {2.0, 0.0, 0.5, 0.5};
-    etl::fast_matrix<Z, 1, 2, 2> c;
+CONV2_VALID_TEST_CASE("convolution_2d/sub_3", "convolution_2d_valid") {
+    etl::fast_matrix<T, 1, 3, 3> a = {1.0, 2.0, 3.0, 0.0, 1.0, 1.0, 3.0, 2.0, 1.0};
+    etl::fast_matrix<T, 1, 2, 2> b = {2.0, 0.0, 0.5, 0.5};
+    etl::fast_matrix<T, 1, 2, 2> c;
 
-    etl::conv_2d_valid(a(0), b(0), c(0));
+    Impl::apply(a(0), b(0), c(0));
 
     REQUIRE_EQUALS(c(0, 0, 0), 3.5);
     REQUIRE_EQUALS(c(0, 0, 1), 4.5);

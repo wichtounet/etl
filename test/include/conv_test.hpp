@@ -21,7 +21,7 @@
 #define CONV_FUNCTOR(name, ...)                       \
     struct name {                                     \
         template <typename A, typename B, typename C> \
-        static void apply(A&& a, B&& b, C& c) {       \
+        static void apply(A&& a, B&& b, C&& c) {       \
             __VA_ARGS__;                              \
         }                                             \
     };
