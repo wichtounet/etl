@@ -6,6 +6,7 @@
 //=======================================================================
 
 #include "catch.hpp"
+#include "fast_catch.hpp"
 #include "template_test.hpp"
 
 #include "cpp_utils/tmp.hpp"
