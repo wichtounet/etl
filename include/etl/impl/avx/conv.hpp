@@ -880,10 +880,12 @@ void conv2_full_flipped(const I& input, const K& kernel, C&& conv) {
  * \param last The index where to stop in the output matrix
  */
 template <typename I, typename K, typename C>
-void conv1_full(const I& input, const K& kernel, C&& conv) {
+void conv1_full(const I& input, const K& kernel, C&& conv, std::size_t first, std::size_t last) {
     cpp_unused(input);
     cpp_unused(kernel);
     cpp_unused(conv);
+    cpp_unused(first);
+    cpp_unused(last);
     cpp_unreachable("AVX not available/enabled");
 }
 
@@ -896,10 +898,12 @@ void conv1_full(const I& input, const K& kernel, C&& conv) {
  * \param last The index where to stop in the output matrix
  */
 template <typename I, typename K, typename C>
-void conv1_same(const I& input, const K& kernel, C&& conv) {
+void conv1_same(const I& input, const K& kernel, C&& conv, std::size_t first, std::size_t last) {
     cpp_unused(input);
     cpp_unused(kernel);
     cpp_unused(conv);
+    cpp_unused(first);
+    cpp_unused(last);
     cpp_unreachable("AVX not available/enabled");
 }
 
@@ -912,10 +916,12 @@ void conv1_same(const I& input, const K& kernel, C&& conv) {
  * \param last The index where to stop in the output matrix
  */
 template <typename I, typename K, typename C>
-void conv1_valid(const I& input, const K& kernel, C&& conv) {
+void conv1_valid(const I& input, const K& kernel, C&& conv, std::size_t first, std::size_t last) {
     cpp_unused(input);
     cpp_unused(kernel);
     cpp_unused(conv);
+    cpp_unused(first);
+    cpp_unused(last);
     cpp_unreachable("AVX not available/enabled");
 }
 
