@@ -79,13 +79,12 @@ inline etl::conv_impl select_default_conv_impl() {
 
     static constexpr const bool sse = vectorize_impl && vector_mode == vector_mode_t::SSE3;
     static constexpr const bool avx = vectorize_impl && vector_mode == vector_mode_t::AVX;
-    static constexpr const bool cudnn = is_cudnn_enabled;
 
     if (avx) {
         return etl::conv_impl::AVX;
     } else if (sse) {
         return etl::conv_impl::SSE;
-    } else if(cudnn && (TT == conv_type::VALID || TT == conv_type::FULL) && decay_traits<I>::dimensions() == 2){
+    } else if(is_cudnn_enabled && (TT == conv_type::VALID || TT == conv_type::FULL) && decay_traits<I>::dimensions() == 2){
         return etl::conv_impl::CUDNN;
     } else {
         return etl::conv_impl::STD;
@@ -105,6 +104,24 @@ inline etl::conv_impl select_conv_impl() {
         auto forced = local_context().conv_selector.impl;
 
         switch (forced) {
+            //MKL cannot always be used
+            case conv_impl::FFT_MKL:
+                if (!is_mkl_enabled) {                                                                                               // COVERAGE_EXCLUDE_LINE
+                    std::cerr << "Forced selection to MKL fft_conv implementation, but not possible for this expression" << std::endl; // COVERAGE_EXCLUDE_LINE
+                    return select_default_conv_impl<TT, I, K, C>();                                                                   // COVERAGE_EXCLUDE_LINE
+                }                                                                                                                 // COVERAGE_EXCLUDE_LINE
+
+                return forced;
+
+            //CUFFT cannot always be used
+            case conv_impl::FFT_CUFFT:
+                if (!is_cudnn_enabled) {                                                                                               // COVERAGE_EXCLUDE_LINE
+                    std::cerr << "Forced selection to CUFFT fft_conv implementation, but not possible for this expression" << std::endl; // COVERAGE_EXCLUDE_LINE
+                    return select_default_conv_impl<TT, I, K, C>();                                                                   // COVERAGE_EXCLUDE_LINE
+                }                                                                                                                 // COVERAGE_EXCLUDE_LINE
+
+                return forced;
+
             //CUDNN cannot always be used
             case conv_impl::CUDNN:
                 if (!is_cudnn_enabled) {                                                                                               // COVERAGE_EXCLUDE_LINE
@@ -385,6 +402,12 @@ struct conv1_full_impl {
             dispatch_1d(parallel_dispatch, [&](std::size_t first, std::size_t last) {
                 impl::standard::conv1_full(input, kernel, conv, first, last);
             }, 0, size(conv));
+        } else if (impl == etl::conv_impl::FFT_STD) {
+            impl::standard::fft1_convolve(input, kernel, conv);
+        } else if (impl == etl::conv_impl::FFT_MKL) {
+            impl::blas::fft1_convolve(input, kernel, conv);
+        } else if (impl == etl::conv_impl::FFT_CUFFT) {
+            impl::cufft::fft1_convolve(input, kernel, conv);
         } else {
             cpp_unreachable("Invalid conv implementation selection");
         }
@@ -471,9 +494,6 @@ struct conv2_full_impl {
     static void apply(const I& input, const K& kernel, C&& conv) {
         etl::conv_impl impl = select_conv_impl<conv_type::FULL, I, K, C>();
 
-        //TODO We should probably be able to use FFT directly here and remove
-        //fast_conv_2d_full thingy
-
         if (impl == etl::conv_impl::AVX) {
             impl::avx::conv2_full(input, kernel, conv);
         } else if (impl == etl::conv_impl::SSE) {
@@ -482,6 +502,12 @@ struct conv2_full_impl {
             impl::cudnn::conv2_full(input.direct(), kernel.direct(), conv.direct());
         } else if (impl == etl::conv_impl::STD) {
             impl::standard::conv2_full(input, kernel, conv);
+        } else if (impl == etl::conv_impl::FFT_STD) {
+            impl::standard::fft2_convolve(input, kernel, conv);
+        } else if (impl == etl::conv_impl::FFT_MKL) {
+            impl::blas::fft2_convolve(input, kernel, conv);
+        } else if (impl == etl::conv_impl::FFT_CUFFT) {
+            impl::cufft::fft2_convolve(input, kernel, conv);
         } else {
             cpp_unreachable("Invalid conv implementation selection");
         }
