@@ -24,6 +24,7 @@ unset ETL_MKL
 unset ETL_BLAS
 unset ETL_CUBLAS
 unset ETL_CUFFT
+unset ETL_CUDNN
 
 # Use gcc
 export CXX=$ETL_GPP
@@ -76,6 +77,7 @@ then
     unset ETL_MKL
     export ETL_CUBLAS=true
     export ETL_CUFFT=true
+    export ETL_CUDNN=true
 
     etl_run 7
 
