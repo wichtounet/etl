@@ -53,10 +53,6 @@
 #define TEST_STRASSEN
 #endif
 
-#ifdef ETL_BENCH_MMUL_CONV
-#define TEST_MMUL_CONV
-#endif
-
 using smat_cm = etl::dyn_matrix_cm<float>;
 using dmat_cm = etl::dyn_matrix_cm<double>;
 using cmat_cm = etl::dyn_matrix_cm<std::complex<float>>;
@@ -190,10 +186,4 @@ using small_kernel_policy_2d = NARY_POLICY(
 #define CUDNN_SECTION_FUNCTOR(name, ...) , CPM_SECTION_FUNCTOR(name, __VA_ARGS__)
 #else
 #define CUDNN_SECTION_FUNCTOR(name, ...)
-#endif
-
-#ifdef TEST_MMUL_CONV
-#define MC_SECTION_FUNCTOR(name, ...) , CPM_SECTION_FUNCTOR(name, __VA_ARGS__)
-#else
-#define MC_SECTION_FUNCTOR(name, ...)
 #endif

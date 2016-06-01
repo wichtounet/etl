@@ -25,7 +25,6 @@
 #include "etl/impl/std/conv.hpp"
 #include "etl/impl/sse/conv.hpp"
 #include "etl/impl/avx/conv.hpp"
-#include "etl/impl/reduc/conv_mmul.hpp"
 #include "etl/impl/reduc/conv_multi.hpp"
 #include "etl/impl/cudnn/conv.hpp"
 
