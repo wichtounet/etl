@@ -339,6 +339,22 @@ TEMPLATE_TEST_CASE_2("fast_matrix/mul/3", "fast_matrix::operator*=", Z, float, d
     REQUIRE_EQUALS(a[8], 36.0);
 }
 
+TEMPLATE_TEST_CASE_2("fast_matrix/mul/4", "fast_matrix::operator*=", Z, float, double) {
+    etl::fast_matrix<Z, 3, 3> a = {-1.0, 2.0, 5.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0};
+
+    a >>= a;
+
+    REQUIRE_EQUALS(a[0], 1.0);
+    REQUIRE_EQUALS(a[1], 4.0);
+    REQUIRE_EQUALS(a[2], 25.0);
+    REQUIRE_EQUALS(a[3], 1.0);
+    REQUIRE_EQUALS(a[4], 4.0);
+    REQUIRE_EQUALS(a[5], 9.0);
+    REQUIRE_EQUALS(a[6], 16.0);
+    REQUIRE_EQUALS(a[7], 25.0);
+    REQUIRE_EQUALS(a[8], 36.0);
+}
+
 TEMPLATE_TEST_CASE_2("fast_matrix/mul_1", "fast_matrix::operator*", Z, float, double) {
     etl::fast_matrix<Z, 2, 2> a = {-1.0, 2.0, 5.0, 1.0};
     etl::fast_matrix<Z, 2, 2> b = {2.5, 3.0, 4.0, 1.0};
