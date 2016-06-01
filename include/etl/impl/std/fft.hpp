@@ -864,27 +864,27 @@ void fft2_many(A&& a, C&& c) {
  */
 template <typename A, typename B, typename C>
 void fft1_convolve(A&& a, B&& b, C&& c) {
+    using type = value_t<A>;
+
     const std::size_t m    = etl::size(a);
     const std::size_t n    = etl::size(b);
     const std::size_t size = m + n - 1;
 
-    auto a_padded = allocate<std::complex<value_t<A>>>(size);
-    auto b_padded = allocate<std::complex<value_t<A>>>(size);
+    dyn_matrix<etl::complex<type>, 1> a_padded(size);
+    dyn_matrix<etl::complex<type>, 1> b_padded(size);
 
-    direct_copy(a.memory_start(), a.memory_end(), a_padded.get());
-    direct_copy(b.memory_start(), b.memory_end(), b_padded.get());
+    direct_copy(a.memory_start(), a.memory_end(), a_padded.memory_start());
+    direct_copy(b.memory_start(), b.memory_end(), b_padded.memory_start());
 
-    detail::fft1_kernel(a_padded.get(), size, a_padded.get());
-    detail::fft1_kernel(b_padded.get(), size, b_padded.get());
+    detail::fft1_kernel(reinterpret_cast<std::complex<type>*>(a_padded.memory_start()), size, reinterpret_cast<std::complex<type>*>(a_padded.memory_start()));
+    detail::fft1_kernel(reinterpret_cast<std::complex<type>*>(b_padded.memory_start()), size, reinterpret_cast<std::complex<type>*>(b_padded.memory_start()));
 
-    for (std::size_t i = 0; i < size; ++i) {
-        a_padded[i] *= b_padded[i];
-    }
+    a_padded *= b_padded;
 
-    detail::ifft1_kernel(a_padded.get(), size, a_padded.get());
+    detail::ifft1_kernel(reinterpret_cast<std::complex<type>*>(a_padded.memory_start()), size, reinterpret_cast<std::complex<type>*>(a_padded.memory_start()));
 
     for (std::size_t i = 0; i < size; ++i) {
-        c[i] = a_padded[i].real();
+        c[i] = a_padded[i].real;
     }
 }
 
