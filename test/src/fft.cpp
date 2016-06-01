@@ -15,7 +15,7 @@
 //fft_1d (real)
 
 FFT1_TEST_CASE("fft_1d_r/0", "[fast][fft]") {
-    etl::fast_matrix<T, 8> a({1.0, 1.0, 1.0, 1.0, 0.0, 0.0, 0.0, 0.0});
+    etl::fast_matrix<T, 8> a{1.0, 1.0, 1.0, 1.0, 0.0, 0.0, 0.0, 0.0};
     etl::fast_matrix<std::complex<T>, 8> c;
 
     Impl::apply(a, c);
@@ -39,7 +39,7 @@ FFT1_TEST_CASE("fft_1d_r/0", "[fast][fft]") {
 }
 
 FFT1_TEST_CASE("fft_1d_r/1", "[fast][fft]") {
-    etl::fast_matrix<T, 5> a({1.0, 2.0, 3.0, 4.0, 5.0});
+    etl::fast_matrix<T, 5> a{1.0, 2.0, 3.0, 4.0, 5.0};
     etl::fast_matrix<std::complex<T>, 5> c;
 
     Impl::apply(a, c);
@@ -57,7 +57,7 @@ FFT1_TEST_CASE("fft_1d_r/1", "[fast][fft]") {
 }
 
 FFT1_TEST_CASE("fft_1d_r/2", "[fast][fft]") {
-    etl::fast_matrix<T, 6> a({0.5, 1.5, 3.5, -1.5, 3.9, -5.5});
+    etl::fast_matrix<T, 6> a{0.5, 1.5, 3.5, -1.5, 3.9, -5.5};
     etl::fast_matrix<std::complex<T>, 6> c;
 
     Impl::apply(a, c);
@@ -77,7 +77,7 @@ FFT1_TEST_CASE("fft_1d_r/2", "[fast][fft]") {
 }
 
 FFT1_TEST_CASE("fft_1d_r/3", "[fast][fft]") {
-    etl::fast_matrix<T, 12> a({1.0, 1.0, 1.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 1.0, 1.0, 1.0});
+    etl::fast_matrix<T, 12> a{1.0, 1.0, 1.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 1.0, 1.0, 1.0};
     etl::fast_matrix<std::complex<T>, 12> c;
 
     Impl::apply(a, c);
@@ -334,7 +334,7 @@ FFT1_TEST_CASE("fft_1d/11", "[fast][fft]") {
 /* fft_many tests */
 
 FFT1_MANY_TEST_CASE("fft_1d_many/1", "[fast][fft]") {
-    etl::fast_matrix<T, 2, 5> a({1.0, 2.0, 3.0, 4.0, 5.0, 1.0, 2.0, 3.0, 4.0, 5.0});
+    etl::fast_matrix<T, 2, 5> a{1.0, 2.0, 3.0, 4.0, 5.0, 1.0, 2.0, 3.0, 4.0, 5.0};
     etl::fast_matrix<std::complex<T>, 2, 5> c;
 
     Impl::apply(a, c);
@@ -363,7 +363,7 @@ FFT1_MANY_TEST_CASE("fft_1d_many/1", "[fast][fft]") {
 }
 
 FFT1_MANY_TEST_CASE("fft_1d_many/2", "[fast][fft]") {
-    etl::fast_matrix<T, 2, 5> a({1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0});
+    etl::fast_matrix<T, 2, 5> a{1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0};
     etl::fast_matrix<std::complex<T>, 2, 5> c;
 
     Impl::apply(a, c);
@@ -392,7 +392,7 @@ FFT1_MANY_TEST_CASE("fft_1d_many/2", "[fast][fft]") {
 }
 
 FFT1_MANY_TEST_CASE("fft_1d_many/3", "[fast][fft]") {
-    etl::fast_matrix<std::complex<T>, 2, 5> a({MC(1.0, 0.0), MC(2.0, 0.0), MC(3.0, 0.0), MC(4.0, 0.0), MC(5.0, 0.0), MC(6.0, 0.0), MC(7.0, 0.0), MC(8.0, 0.0), MC(9.0, 0.0), MC(10.0, 0.0)});
+    etl::fast_matrix<std::complex<T>, 2, 5> a{MC(1.0, 0.0), MC(2.0, 0.0), MC(3.0, 0.0), MC(4.0, 0.0), MC(5.0, 0.0), MC(6.0, 0.0), MC(7.0, 0.0), MC(8.0, 0.0), MC(9.0, 0.0), MC(10.0, 0.0)};
     etl::fast_matrix<std::complex<T>, 2, 5> c;
 
     Impl::apply(a, c);
@@ -446,7 +446,7 @@ TEMPLATE_TEST_CASE_2("fft_1d_c/3", "[fast][fft]", Z, float, double) {
 }
 
 TEMPLATE_TEST_CASE_2("fft_1d_many/4", "[fast][fft]", Z, float, double) {
-    etl::fast_matrix<std::complex<Z>, 2, 5> a({MZ(1.0, 0.0), MZ(2.0, 0.0), MZ(3.0, 0.0), MZ(4.0, 0.0), MZ(5.0, 0.0), MZ(6.0, 0.0), MZ(7.0, 0.0), MZ(8.0, 0.0), MZ(9.0, 0.0), MZ(10.0, 0.0)});
+    etl::fast_matrix<std::complex<Z>, 2, 5> a{MZ(1.0, 0.0), MZ(2.0, 0.0), MZ(3.0, 0.0), MZ(4.0, 0.0), MZ(5.0, 0.0), MZ(6.0, 0.0), MZ(7.0, 0.0), MZ(8.0, 0.0), MZ(9.0, 0.0), MZ(10.0, 0.0)};
 
     a.fft_many_inplace();
 
