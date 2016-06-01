@@ -188,6 +188,21 @@ struct opaque_memory {
             const_cast<std::remove_const_t<value_type>*>(gpu_ptr),
             etl_size * sizeof(T), cudaMemcpyDeviceToHost);
     }
+
+    /*!
+     * \brief Copy back from the GPU to the expression memory.
+     */
+    void gpu_copy_to() const {
+        cpp_assert(is_gpu_allocated(), "Cannot copy to unallocated GPU memory()");
+
+        auto* gpu_ptr = gpu_memory();
+        auto* cpu_ptr = memory;
+
+        cudaMemcpy(
+            const_cast<std::remove_const_t<value_type>*>(gpu_ptr),
+            const_cast<std::remove_const_t<value_type>*>(cpu_ptr),
+            etl_size * sizeof(T), cudaMemcpyHostToDevice);
+    }
 #else
     /*!
      * \brief Indicates if the expression is allocated in GPU.
