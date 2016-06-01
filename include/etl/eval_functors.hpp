@@ -631,6 +631,8 @@ struct AssignMul {
  */
 template <vector_mode_t V, typename L_Expr, typename V_Expr>
 struct VectorizedAssignMul : vectorized_base<V, L_Expr, V_Expr, VectorizedAssignMul<V, L_Expr, V_Expr>> {
+    static constexpr const bool Cx = is_complex_t<value_t<L_Expr>>::value;
+
     using base_t    = vectorized_base<V, L_Expr, V_Expr, VectorizedAssignMul<V, L_Expr, V_Expr>>;
     using IT        = typename base_t::IT;
     using vect_impl = typename base_t::vect_impl;
@@ -688,14 +690,14 @@ struct VectorizedAssignMul : vectorized_base<V, L_Expr, V_Expr, VectorizedAssign
 
         if (unroll_vectorized_loops && _last - first > IT::size * 4) {
             for (i = first; i + IT::size * 4 - 1 < _last; i += IT::size * 4) {
-                vect_impl::store(lhs_m + i, vect_impl::mul(lhs_load(i), rhs_load(i)));
-                vect_impl::store(lhs_m + i + 1 * IT::size, vect_impl::mul(lhs_load(i + 1 * IT::size), rhs_load(i + 1 * IT::size)));
-                vect_impl::store(lhs_m + i + 2 * IT::size, vect_impl::mul(lhs_load(i + 2 * IT::size), rhs_load(i + 2 * IT::size)));
-                vect_impl::store(lhs_m + i + 3 * IT::size, vect_impl::mul(lhs_load(i + 3 * IT::size), rhs_load(i + 3 * IT::size)));
+                vect_impl::store(lhs_m + i, vect_impl::template mul<Cx>(lhs_load(i), rhs_load(i)));
+                vect_impl::store(lhs_m + i + 1 * IT::size, vect_impl::template mul<Cx>(lhs_load(i + 1 * IT::size), rhs_load(i + 1 * IT::size)));
+                vect_impl::store(lhs_m + i + 2 * IT::size, vect_impl::template mul<Cx>(lhs_load(i + 2 * IT::size), rhs_load(i + 2 * IT::size)));
+                vect_impl::store(lhs_m + i + 3 * IT::size, vect_impl::template mul<Cx>(lhs_load(i + 3 * IT::size), rhs_load(i + 3 * IT::size)));
             }
         } else {
             for (i = first; i + IT::size - 1 < _last; i += IT::size) {
-                vect_impl::store(lhs_m + i, vect_impl::mul(lhs_load(i), rhs_load(i)));
+                vect_impl::store(lhs_m + i, vect_impl::template mul<Cx>(lhs_load(i), rhs_load(i)));
             }
         }
 
@@ -711,14 +713,14 @@ struct VectorizedAssignMul : vectorized_base<V, L_Expr, V_Expr, VectorizedAssign
 
         if (unroll_vectorized_loops && _last - first > IT::size * 4) {
             for (i = first; i + IT::size * 4 - 1 < _last; i += IT::size * 4) {
-                vect_impl::storeu(lhs_m + i, vect_impl::mul(lhs_load(i), rhs_load(i)));
-                vect_impl::storeu(lhs_m + i + 1 * IT::size, vect_impl::mul(lhs_load(i + 1 * IT::size), rhs_load(i + 1 * IT::size)));
-                vect_impl::storeu(lhs_m + i + 2 * IT::size, vect_impl::mul(lhs_load(i + 2 * IT::size), rhs_load(i + 2 * IT::size)));
-                vect_impl::storeu(lhs_m + i + 3 * IT::size, vect_impl::mul(lhs_load(i + 3 * IT::size), rhs_load(i + 3 * IT::size)));
+                vect_impl::storeu(lhs_m + i, vect_impl::template mul<Cx>(lhs_load(i), rhs_load(i)));
+                vect_impl::storeu(lhs_m + i + 1 * IT::size, vect_impl::template mul<Cx>(lhs_load(i + 1 * IT::size), rhs_load(i + 1 * IT::size)));
+                vect_impl::storeu(lhs_m + i + 2 * IT::size, vect_impl::template mul<Cx>(lhs_load(i + 2 * IT::size), rhs_load(i + 2 * IT::size)));
+                vect_impl::storeu(lhs_m + i + 3 * IT::size, vect_impl::template mul<Cx>(lhs_load(i + 3 * IT::size), rhs_load(i + 3 * IT::size)));
             }
         } else {
             for (i = first; i + IT::size - 1 < _last; i += IT::size) {
-                vect_impl::storeu(lhs_m + i, vect_impl::mul(lhs_load(i), rhs_load(i)));
+                vect_impl::storeu(lhs_m + i, vect_impl::template mul<Cx>(lhs_load(i), rhs_load(i)));
             }
         }
 
@@ -788,6 +790,8 @@ struct AssignDiv {
  */
 template <vector_mode_t V, typename L_Expr, typename V_Expr>
 struct VectorizedAssignDiv : vectorized_base<V, L_Expr, V_Expr, VectorizedAssignDiv<V, L_Expr, V_Expr>> {
+    static constexpr const bool Cx = is_complex_t<value_t<L_Expr>>::value;
+
     using base_t    = vectorized_base<V, L_Expr, V_Expr, VectorizedAssignDiv<V, L_Expr, V_Expr>>;
     using IT        = typename base_t::IT;
     using vect_impl = typename base_t::vect_impl;
@@ -845,14 +849,14 @@ struct VectorizedAssignDiv : vectorized_base<V, L_Expr, V_Expr, VectorizedAssign
 
         if (unroll_vectorized_loops && _last - first > IT::size * 4) {
             for (i = first; i + IT::size * 4 - 1 < _last; i += IT::size * 4) {
-                vect_impl::store(lhs_m + i, vect_impl::div(lhs_load(i), rhs_load(i)));
-                vect_impl::store(lhs_m + i + 1 * IT::size, vect_impl::div(lhs_load(i + 1 * IT::size), rhs_load(i + 1 * IT::size)));
-                vect_impl::store(lhs_m + i + 2 * IT::size, vect_impl::div(lhs_load(i + 2 * IT::size), rhs_load(i + 2 * IT::size)));
-                vect_impl::store(lhs_m + i + 3 * IT::size, vect_impl::div(lhs_load(i + 3 * IT::size), rhs_load(i + 3 * IT::size)));
+                vect_impl::store(lhs_m + i, vect_impl::template div<Cx>(lhs_load(i), rhs_load(i)));
+                vect_impl::store(lhs_m + i + 1 * IT::size, vect_impl::template div<Cx>(lhs_load(i + 1 * IT::size), rhs_load(i + 1 * IT::size)));
+                vect_impl::store(lhs_m + i + 2 * IT::size, vect_impl::template div<Cx>(lhs_load(i + 2 * IT::size), rhs_load(i + 2 * IT::size)));
+                vect_impl::store(lhs_m + i + 3 * IT::size, vect_impl::template div<Cx>(lhs_load(i + 3 * IT::size), rhs_load(i + 3 * IT::size)));
             }
         } else {
             for (i = first; i + IT::size - 1 < _last; i += IT::size) {
-                vect_impl::store(lhs_m + i, vect_impl::div(lhs_load(i), rhs_load(i)));
+                vect_impl::store(lhs_m + i, vect_impl::template div<Cx>(lhs_load(i), rhs_load(i)));
             }
         }
 
@@ -868,14 +872,14 @@ struct VectorizedAssignDiv : vectorized_base<V, L_Expr, V_Expr, VectorizedAssign
 
         if (unroll_vectorized_loops && _last - first > IT::size * 4) {
             for (i = first; i + IT::size * 4 - 1 < _last; i += IT::size * 4) {
-                vect_impl::storeu(lhs_m + i, vect_impl::div(lhs_load(i), rhs_load(i)));
-                vect_impl::storeu(lhs_m + i + 1 * IT::size, vect_impl::div(lhs_load(i + 1 * IT::size), rhs_load(i + 1 * IT::size)));
-                vect_impl::storeu(lhs_m + i + 2 * IT::size, vect_impl::div(lhs_load(i + 2 * IT::size), rhs_load(i + 2 * IT::size)));
-                vect_impl::storeu(lhs_m + i + 3 * IT::size, vect_impl::div(lhs_load(i + 3 * IT::size), rhs_load(i + 3 * IT::size)));
+                vect_impl::storeu(lhs_m + i, vect_impl::template div<Cx>(lhs_load(i), rhs_load(i)));
+                vect_impl::storeu(lhs_m + i + 1 * IT::size, vect_impl::template div<Cx>(lhs_load(i + 1 * IT::size), rhs_load(i + 1 * IT::size)));
+                vect_impl::storeu(lhs_m + i + 2 * IT::size, vect_impl::template div<Cx>(lhs_load(i + 2 * IT::size), rhs_load(i + 2 * IT::size)));
+                vect_impl::storeu(lhs_m + i + 3 * IT::size, vect_impl::template div<Cx>(lhs_load(i + 3 * IT::size), rhs_load(i + 3 * IT::size)));
             }
         } else {
             for (i = first; i + IT::size - 1 < _last; i += IT::size) {
-                vect_impl::storeu(lhs_m + i, vect_impl::div(lhs_load(i), rhs_load(i)));
+                vect_impl::storeu(lhs_m + i, vect_impl::template div<Cx>(lhs_load(i), rhs_load(i)));
             }
         }
 
