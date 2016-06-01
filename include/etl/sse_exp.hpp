@@ -42,10 +42,6 @@
 #include <xmmintrin.h>
 #include <emmintrin.h>
 
-#ifdef VECT_DEBUG
-#include <iostream>
-#endif
-
 #define ETL_INLINE_VEC_128 ETL_STATIC_INLINE(__m128)
 #define ETL_INLINE_VEC_128D ETL_STATIC_INLINE(__m128d)
 
