@@ -32,15 +32,11 @@ namespace detail {
  */
 template <typename A, typename B, typename C>
 cpp14_constexpr etl::outer_impl select_default_outer_impl() {
-    if (all_dma<A, B, C>::value) {
-        if (is_cblas_enabled) {
-            return etl::outer_impl::BLAS;
-        } else {
-            return etl::outer_impl::STD;
-        }
+    if (is_cblas_enabled) {
+        return etl::outer_impl::BLAS;
+    } else {
+        return etl::outer_impl::STD;
     }
-
-    return etl::outer_impl::STD;
 }
 
 /*!
@@ -58,7 +54,7 @@ etl::outer_impl select_outer_impl() {
         switch (forced) {
             //AVX cannot always be used
             case outer_impl::BLAS:
-                if (!is_cblas_enabled || !all_dma<A, B, C>::value) {
+                if (!is_cblas_enabled) {
                     std::cerr << "Forced selection to BLAS outer implementation, but not possible for this expression" << std::endl;
                     return select_default_outer_impl<A, B, C>();
                 }
