@@ -476,8 +476,8 @@ public:
      * \param args The position indices
      * \return The value of the element at (args...)
      */
-    template <typename... S>
-    std::enable_if_t<sizeof...(S) == sizeof...(Dims), value_type&> operator()(S... args) noexcept(assert_nothrow) {
+    template <typename... S, cpp_enable_if(sizeof...(S) == sizeof...(Dims))>
+    value_type& operator()(S... args) noexcept(assert_nothrow) {
         static_assert(cpp::all_convertible_to<std::size_t, S...>::value, "Invalid size types");
 
         return access(static_cast<std::size_t>(args)...);
@@ -488,8 +488,8 @@ public:
      * \param args The position indices
      * \return The value of the element at (args...)
      */
-    template <typename... S>
-    std::enable_if_t<sizeof...(S) == sizeof...(Dims), const value_type&> operator()(S... args) const noexcept(assert_nothrow) {
+    template <typename... S, cpp_enable_if(sizeof...(S) == sizeof...(Dims))>
+    const value_type& operator()(S... args) const noexcept(assert_nothrow) {
         static_assert(cpp::all_convertible_to<std::size_t, S...>::value, "Invalid size types");
 
         return access(static_cast<std::size_t>(args)...);
