@@ -231,6 +231,62 @@ CGEVM_TEST_CASE("complex/std/12", "[mul][complex]") {
     REQUIRE_EQUALS_APPROX(c(1).imag(), Z(6.2));
 }
 
+TEMPLATE_TEST_CASE_2("complex/std/13", "[complex]", Z, float, double) {
+    etl::fast_vector<std::complex<Z>, 3> a = {std::complex<Z>(1.0, 2.0), std::complex<Z>(-1.0, -2.0), std::complex<Z>(0.0, 0.5)};
+    etl::fast_vector<std::complex<Z>, 3> b = {std::complex<Z>(0.33, 0.66), std::complex<Z>(-1.5, 0.0), std::complex<Z>(0.5, 0.75)};
+
+    a >>= b;
+
+    REQUIRE_EQUALS_APPROX(a[0].real(), Z(-0.99));
+    REQUIRE_EQUALS_APPROX(a[0].imag(), Z(1.32));
+    REQUIRE_EQUALS_APPROX(a[1].real(), Z(1.5));
+    REQUIRE_EQUALS_APPROX(a[1].imag(), Z(3.0));
+    REQUIRE_EQUALS_APPROX(a[2].real(), Z(-0.375));
+    REQUIRE_EQUALS_APPROX(a[2].imag(), Z(0.25));
+}
+
+TEMPLATE_TEST_CASE_2("complex/std/14", "[complex]", Z, float, double) {
+    etl::fast_vector<std::complex<Z>, 3> a = {std::complex<Z>(1.0, 2.0), std::complex<Z>(-1.0, -2.0), std::complex<Z>(0.0, 0.5)};
+    etl::fast_vector<std::complex<Z>, 3> b = {std::complex<Z>(0.33, 0.66), std::complex<Z>(-1.5, 0.0), std::complex<Z>(0.5, 0.75)};
+
+    a = a >> b;
+
+    REQUIRE_EQUALS_APPROX(a[0].real(), Z(-0.99));
+    REQUIRE_EQUALS_APPROX(a[0].imag(), Z(1.32));
+    REQUIRE_EQUALS_APPROX(a[1].real(), Z(1.5));
+    REQUIRE_EQUALS_APPROX(a[1].imag(), Z(3.0));
+    REQUIRE_EQUALS_APPROX(a[2].real(), Z(-0.375));
+    REQUIRE_EQUALS_APPROX(a[2].imag(), Z(0.25));
+}
+
+TEMPLATE_TEST_CASE_2("complex/etl/13", "[complex]", Z, float, double) {
+    etl::fast_vector<etl::complex<Z>, 3> a = {etl::complex<Z>(1.0, 2.0), etl::complex<Z>(-1.0, -2.0), etl::complex<Z>(0.0, 0.5)};
+    etl::fast_vector<etl::complex<Z>, 3> b = {etl::complex<Z>(0.33, 0.66), etl::complex<Z>(-1.5, 0.0), etl::complex<Z>(0.5, 0.75)};
+
+    a >>= b;
+
+    REQUIRE_EQUALS_APPROX(a[0].real, Z(-0.99));
+    REQUIRE_EQUALS_APPROX(a[0].imag, Z(1.32));
+    REQUIRE_EQUALS_APPROX(a[1].real, Z(1.5));
+    REQUIRE_EQUALS_APPROX(a[1].imag, Z(3.0));
+    REQUIRE_EQUALS_APPROX(a[2].real, Z(-0.375));
+    REQUIRE_EQUALS_APPROX(a[2].imag, Z(0.25));
+}
+
+TEMPLATE_TEST_CASE_2("complex/etl/14", "[complex]", Z, float, double) {
+    etl::fast_vector<etl::complex<Z>, 3> a = {etl::complex<Z>(1.0, 2.0), etl::complex<Z>(-1.0, -2.0), etl::complex<Z>(0.0, 0.5)};
+    etl::fast_vector<etl::complex<Z>, 3> b = {etl::complex<Z>(0.33, 0.66), etl::complex<Z>(-1.5, 0.0), etl::complex<Z>(0.5, 0.75)};
+
+    a = a >> b;
+
+    REQUIRE_EQUALS_APPROX(a[0].real, Z(-0.99));
+    REQUIRE_EQUALS_APPROX(a[0].imag, Z(1.32));
+    REQUIRE_EQUALS_APPROX(a[1].real, Z(1.5));
+    REQUIRE_EQUALS_APPROX(a[1].imag, Z(3.0));
+    REQUIRE_EQUALS_APPROX(a[2].real, Z(-0.375));
+    REQUIRE_EQUALS_APPROX(a[2].imag, Z(0.25));
+}
+
 TEMPLATE_TEST_CASE_2("complex/etl/9", "[complex]", Z, float, double) {
     etl::fast_matrix<etl::complex<Z>, 1, 3> a = {etl::complex<Z>(1.0, 2.0), etl::complex<Z>(-1.0, -2.0), etl::complex<Z>(0.0, 0.5)};
     etl::fast_matrix<etl::complex<Z>, 1, 3> b = {etl::complex<Z>(0.33, 0.66), etl::complex<Z>(-1.5, 0.0), etl::complex<Z>(0.5, 0.75)};
