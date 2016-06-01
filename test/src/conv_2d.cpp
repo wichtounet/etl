@@ -592,25 +592,25 @@ CONV2_FULL_TEST_CASE("convolution_2d/sub_1", "convolution_2d_full") {
 
     Impl::apply(a(0), b(0), c(0));
 
-    REQUIRE_EQUALS(c(0, 0, 0), 2.0);
-    REQUIRE_EQUALS(c(0, 0, 1), 4.0);
-    REQUIRE_EQUALS(c(0, 0, 2), 6.0);
-    REQUIRE_EQUALS(c(0, 0, 3), 0.0);
+    REQUIRE_EQUALS_APPROX(c(0, 0, 0), T(2.0));
+    REQUIRE_EQUALS_APPROX(c(0, 0, 1), T(4.0));
+    REQUIRE_EQUALS_APPROX(c(0, 0, 2), T(6.0));
+    REQUIRE_EQUALS_APPROX(c(0, 0, 3), T(0.0));
 
-    REQUIRE_EQUALS(c(0, 1, 0), 0.5);
-    REQUIRE_EQUALS(c(0, 1, 1), 3.5);
-    REQUIRE_EQUALS(c(0, 1, 2), 4.5);
-    REQUIRE_EQUALS(c(0, 1, 3), 1.5);
+    REQUIRE_EQUALS_APPROX(c(0, 1, 0), T(0.5));
+    REQUIRE_EQUALS_APPROX(c(0, 1, 1), T(3.5));
+    REQUIRE_EQUALS_APPROX(c(0, 1, 2), T(4.5));
+    REQUIRE_EQUALS_APPROX(c(0, 1, 3), T(1.5));
 
-    REQUIRE_EQUALS(c(0, 2, 0), 6.0);
-    REQUIRE_EQUALS(c(0, 2, 1), 4.5);
-    REQUIRE_EQUALS(c(0, 2, 2), 3.0);
-    REQUIRE_EQUALS(c(0, 2, 3), 0.5);
+    REQUIRE_EQUALS_APPROX(c(0, 2, 0), T(6.0));
+    REQUIRE_EQUALS_APPROX(c(0, 2, 1), T(4.5));
+    REQUIRE_EQUALS_APPROX(c(0, 2, 2), T(3.0));
+    REQUIRE_EQUALS_APPROX(c(0, 2, 3), T(0.5));
 
-    REQUIRE_EQUALS(c(0, 3, 0), 1.5);
-    REQUIRE_EQUALS(c(0, 3, 1), 2.5);
-    REQUIRE_EQUALS(c(0, 3, 2), 1.5);
-    REQUIRE_EQUALS(c(0, 3, 3), 0.5);
+    REQUIRE_EQUALS_APPROX(c(0, 3, 0), T(1.5));
+    REQUIRE_EQUALS_APPROX(c(0, 3, 1), T(2.5));
+    REQUIRE_EQUALS_APPROX(c(0, 3, 2), T(1.5));
+    REQUIRE_EQUALS_APPROX(c(0, 3, 3), T(0.5));
 }
 
 CONV2_SAME_TEST_CASE("convolution_2d/sub_2", "convolution_2d_same") {
@@ -620,17 +620,17 @@ CONV2_SAME_TEST_CASE("convolution_2d/sub_2", "convolution_2d_same") {
 
     Impl::apply(a(0), b(0), c(0));
 
-    REQUIRE_EQUALS(c(0, 0, 0), 3.5);
-    REQUIRE_EQUALS(c(0, 0, 1), 4.5);
-    REQUIRE_EQUALS(c(0, 0, 2), 1.5);
+    REQUIRE_EQUALS(c(0, 0, 0), T(3.5));
+    REQUIRE_EQUALS(c(0, 0, 1), T(4.5));
+    REQUIRE_EQUALS(c(0, 0, 2), T(1.5));
 
-    REQUIRE_EQUALS(c(0, 1, 0), 4.5);
-    REQUIRE_EQUALS(c(0, 1, 1), 3.0);
-    REQUIRE_EQUALS(c(0, 1, 2), 0.5);
+    REQUIRE_EQUALS(c(0, 1, 0), T(4.5));
+    REQUIRE_EQUALS(c(0, 1, 1), T(3.0));
+    REQUIRE_EQUALS(c(0, 1, 2), T(0.5));
 
-    REQUIRE_EQUALS(c(0, 2, 0), 2.5);
-    REQUIRE_EQUALS(c(0, 2, 1), 1.5);
-    REQUIRE_EQUALS(c(0, 2, 2), 0.5);
+    REQUIRE_EQUALS(c(0, 2, 0), T(2.5));
+    REQUIRE_EQUALS(c(0, 2, 1), T(1.5));
+    REQUIRE_EQUALS(c(0, 2, 2), T(0.5));
 }
 
 CONV2_VALID_TEST_CASE("convolution_2d/sub_3", "convolution_2d_valid") {
