@@ -5,8 +5,6 @@
 //  http://opensource.org/licenses/MIT)
 //=======================================================================
 
-#include "fast_catch.hpp"
-
 #define INTERNAL_CATCH_TEMPLATE_TEST_CASE_DECL(name, description, T)                          \
     template <typename T>                                                                     \
     static void INTERNAL_CATCH_UNIQUE_NAME(____C_A_T_C_H____T_E_M_P_L_A_TE____T_E_S_T____)(); \

@@ -7,4 +7,5 @@
 
 #include "etl/etl_light.hpp"
 #include "catch.hpp"
+#include "fast_catch.hpp"
 #include "template_test.hpp"
