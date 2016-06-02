@@ -100,52 +100,55 @@ inline etl::conv_impl select_default_conv_impl() {
  */
 template <conv_type TT, typename I, typename K, typename C>
 inline etl::conv_impl select_conv_impl() {
+    auto default_impl = select_default_conv_impl<TT, I, K, C>();
+
+    //COVERAGE_EXCLUDE_BEGIN
     if (local_context().conv_selector.forced) {
         auto forced = local_context().conv_selector.impl;
 
         switch (forced) {
             //MKL cannot always be used
             case conv_impl::FFT_MKL:
-                if (!is_mkl_enabled) {                                                                                               // COVERAGE_EXCLUDE_LINE
-                    std::cerr << "Forced selection to MKL fft_conv implementation, but not possible for this expression" << std::endl; // COVERAGE_EXCLUDE_LINE
-                    return select_default_conv_impl<TT, I, K, C>();                                                                   // COVERAGE_EXCLUDE_LINE
-                }                                                                                                                 // COVERAGE_EXCLUDE_LINE
+                if (!is_mkl_enabled) {
+                    std::cerr << "Forced selection to MKL fft_conv implementation, but not possible for this expression" << std::endl;
+                    return default_impl;
+                }
 
                 return forced;
 
             //CUFFT cannot always be used
             case conv_impl::FFT_CUFFT:
-                if (!is_cufft_enabled) {                                                                                               // COVERAGE_EXCLUDE_LINE
-                    std::cerr << "Forced selection to CUFFT fft_conv implementation, but not possible for this expression" << std::endl; // COVERAGE_EXCLUDE_LINE
-                    return select_default_conv_impl<TT, I, K, C>();                                                                   // COVERAGE_EXCLUDE_LINE
-                }                                                                                                                 // COVERAGE_EXCLUDE_LINE
+                if (!is_cufft_enabled) {
+                    std::cerr << "Forced selection to CUFFT fft_conv implementation, but not possible for this expression" << std::endl;
+                    return default_impl;
+                }
 
                 return forced;
 
             //CUDNN cannot always be used
             case conv_impl::CUDNN:
-                if (!is_cudnn_enabled) {                                                                                               // COVERAGE_EXCLUDE_LINE
-                    std::cerr << "Forced selection to CUDNN conv implementation, but not possible for this expression" << std::endl; // COVERAGE_EXCLUDE_LINE
-                    return select_default_conv_impl<TT, I, K, C>();                                                                   // COVERAGE_EXCLUDE_LINE
-                }                                                                                                                 // COVERAGE_EXCLUDE_LINE
+                if (!is_cudnn_enabled) {
+                    std::cerr << "Forced selection to CUDNN conv implementation, but not possible for this expression" << std::endl;
+                    return default_impl;
+                }
 
                 return forced;
 
             //AVX cannot always be used
             case conv_impl::AVX:
-                if (!avx_enabled) {                                                                                               // COVERAGE_EXCLUDE_LINE
-                    std::cerr << "Forced selection to AVX sum implementation, but not possible for this expression" << std::endl; // COVERAGE_EXCLUDE_LINE
-                    return select_default_conv_impl<TT, I, K, C>();                                                                   // COVERAGE_EXCLUDE_LINE
-                }                                                                                                                 // COVERAGE_EXCLUDE_LINE
+                if (!avx_enabled) {
+                    std::cerr << "Forced selection to AVX sum implementation, but not possible for this expression" << std::endl;
+                    return default_impl;
+                }
 
                 return forced;
 
             //SSE cannot always be used
             case conv_impl::SSE:
-                if (!sse3_enabled) {                                                                                              //COVERAGE_EXCLUDE_LINE
-                    std::cerr << "Forced selection to SSE sum implementation, but not possible for this expression" << std::endl; //COVERAGE_EXCLUDE_LINE
-                    return select_default_conv_impl<TT, I, K, C>();                                                                   //COVERAGE_EXCLUDE_LINE
-                }                                                                                                                 //COVERAGE_EXCLUDE_LINE
+                if (!sse3_enabled) {
+                    std::cerr << "Forced selection to SSE sum implementation, but not possible for this expression" << std::endl;
+                    return default_impl;
+                }
 
                 return forced;
 
@@ -154,8 +157,9 @@ inline etl::conv_impl select_conv_impl() {
                 return forced;
         }
     }
+    //COVERAGE_EXCLUDE_END
 
-    return select_default_conv_impl<TT, I, K, C>();
+    return default_impl;
 }
 
 /*!
