@@ -329,6 +329,8 @@ CPM_DIRECT_SECTION_TWO_PASS_NS_PF("sconv4_valid [conv][conv4]", conv_4d_valid_po
         return std::make_tuple(smat4(d1, d2, d3, d3), smat4(d1, d2, d4, d4), smat4(d1, d1, d3 - d4 + 1, d3 - d4 + 1)); }),
     CPM_SECTION_FUNCTOR("default", [](smat4& a, smat4& b, smat4& r){ r = etl::conv_4d_valid(a, b); }),
     CPM_SECTION_FUNCTOR("std", [](smat4& a, smat4& b, smat4& r){ r = selected_helper(etl::conv4_impl::STD, etl::conv_4d_valid(a, b)); })
+    SSE_SECTION_FUNCTOR("sse", [](smat4& a, smat4& b, smat4& r){ r = selected_helper(etl::conv4_impl::SSE, etl::conv_4d_valid(a, b)); })
+    AVX_SECTION_FUNCTOR("avx", [](smat4& a, smat4& b, smat4& r){ r = selected_helper(etl::conv4_impl::AVX, etl::conv_4d_valid(a, b)); })
     CUDNN_SECTION_FUNCTOR("cudnn", [](smat4& a, smat4& b, smat4& r){ r = selected_helper(etl::conv4_impl::CUDNN, etl::conv_4d_valid(a, b)); })
 )
 
