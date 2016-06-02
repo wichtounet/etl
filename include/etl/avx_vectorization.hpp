@@ -80,6 +80,24 @@ struct avx_intrinsic_traits<std::complex<double>> {
     using intrinsic_type = __m256d;
 };
 
+template <>
+struct avx_intrinsic_traits<etl::complex<float>> {
+    static constexpr const bool vectorizable     = true;
+    static constexpr const std::size_t size      = 4;
+    static constexpr const std::size_t alignment = 32;
+
+    using intrinsic_type = __m256;
+};
+
+template <>
+struct avx_intrinsic_traits<etl::complex<double>> {
+    static constexpr const bool vectorizable     = true;
+    static constexpr const std::size_t size      = 2;
+    static constexpr const std::size_t alignment = 32;
+
+    using intrinsic_type = __m256d;
+};
+
 struct avx_vec {
     template <typename T>
     using traits = avx_intrinsic_traits<T>;
@@ -146,6 +164,14 @@ struct avx_vec {
         _mm256_storeu_pd(reinterpret_cast<double*>(memory), value);
     }
 
+    ETL_INLINE_VEC_VOID storeu(etl::complex<float>* memory, __m256 value) {
+        _mm256_storeu_ps(reinterpret_cast<float*>(memory), value);
+    }
+
+    ETL_INLINE_VEC_VOID storeu(etl::complex<double>* memory, __m256d value) {
+        _mm256_storeu_pd(reinterpret_cast<double*>(memory), value);
+    }
+
     ETL_INLINE_VEC_VOID store(float* memory, __m256 value) {
         _mm256_store_ps(memory, value);
     }
@@ -159,6 +185,14 @@ struct avx_vec {
     }
 
     ETL_INLINE_VEC_VOID store(std::complex<double>* memory, __m256d value) {
+        _mm256_store_pd(reinterpret_cast<double*>(memory), value);
+    }
+
+    ETL_INLINE_VEC_VOID store(etl::complex<float>* memory, __m256 value) {
+        _mm256_store_ps(reinterpret_cast<float*>(memory), value);
+    }
+
+    ETL_INLINE_VEC_VOID store(etl::complex<double>* memory, __m256d value) {
         _mm256_store_pd(reinterpret_cast<double*>(memory), value);
     }
 
@@ -178,6 +212,14 @@ struct avx_vec {
         return _mm256_load_pd(reinterpret_cast<const double*>(memory));
     }
 
+    ETL_INLINE_VEC_256 load(const etl::complex<float>* memory) {
+        return _mm256_load_ps(reinterpret_cast<const float*>(memory));
+    }
+
+    ETL_INLINE_VEC_256D load(const etl::complex<double>* memory) {
+        return _mm256_load_pd(reinterpret_cast<const double*>(memory));
+    }
+
     ETL_INLINE_VEC_256 loadu(const float* memory) {
         return _mm256_loadu_ps(memory);
     }
@@ -191,6 +233,14 @@ struct avx_vec {
     }
 
     ETL_INLINE_VEC_256D loadu(const std::complex<double>* memory) {
+        return _mm256_loadu_pd(reinterpret_cast<const double*>(memory));
+    }
+
+    ETL_INLINE_VEC_256 loadu(const etl::complex<float>* memory) {
+        return _mm256_loadu_ps(reinterpret_cast<const float*>(memory));
+    }
+
+    ETL_INLINE_VEC_256D loadu(const etl::complex<double>* memory) {
         return _mm256_loadu_pd(reinterpret_cast<const double*>(memory));
     }
 

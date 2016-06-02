@@ -78,6 +78,24 @@ struct sse_intrinsic_traits<std::complex<double>> {
     using intrinsic_type = __m128d;
 };
 
+template <>
+struct sse_intrinsic_traits<etl::complex<float>> {
+    static constexpr const bool vectorizable     = true;
+    static constexpr const std::size_t size      = 2;
+    static constexpr const std::size_t alignment = 16;
+
+    using intrinsic_type = __m128;
+};
+
+template <>
+struct sse_intrinsic_traits<etl::complex<double>> {
+    static constexpr const bool vectorizable     = true;
+    static constexpr const std::size_t size      = 1;
+    static constexpr const std::size_t alignment = 16;
+
+    using intrinsic_type = __m128d;
+};
+
 struct sse_vec {
     template <typename T>
     using traits = sse_intrinsic_traits<T>;
@@ -143,6 +161,14 @@ struct sse_vec {
         _mm_storeu_pd(reinterpret_cast<double*>(memory), value);
     }
 
+    ETL_INLINE_VEC_VOID storeu(etl::complex<float>* memory, __m128 value) {
+        _mm_storeu_ps(reinterpret_cast<float*>(memory), value);
+    }
+
+    ETL_INLINE_VEC_VOID storeu(etl::complex<double>* memory, __m128d value) {
+        _mm_storeu_pd(reinterpret_cast<double*>(memory), value);
+    }
+
     ETL_INLINE_VEC_VOID store(float* memory, __m128 value) {
         _mm_store_ps(memory, value);
     }
@@ -156,6 +182,14 @@ struct sse_vec {
     }
 
     ETL_INLINE_VEC_VOID store(std::complex<double>* memory, __m128d value) {
+        _mm_store_pd(reinterpret_cast<double*>(memory), value);
+    }
+
+    ETL_INLINE_VEC_VOID store(etl::complex<float>* memory, __m128 value) {
+        _mm_store_ps(reinterpret_cast<float*>(memory), value);
+    }
+
+    ETL_INLINE_VEC_VOID store(etl::complex<double>* memory, __m128d value) {
         _mm_store_pd(reinterpret_cast<double*>(memory), value);
     }
 
@@ -175,6 +209,14 @@ struct sse_vec {
         return _mm_load_pd(reinterpret_cast<const double*>(memory));
     }
 
+    ETL_INLINE_VEC_128 load(const etl::complex<float>* memory) {
+        return _mm_load_ps(reinterpret_cast<const float*>(memory));
+    }
+
+    ETL_INLINE_VEC_128D load(const etl::complex<double>* memory) {
+        return _mm_load_pd(reinterpret_cast<const double*>(memory));
+    }
+
     ETL_INLINE_VEC_128 loadu(const float* memory) {
         return _mm_loadu_ps(memory);
     }
@@ -188,6 +230,14 @@ struct sse_vec {
     }
 
     ETL_INLINE_VEC_128D loadu(const std::complex<double>* memory) {
+        return _mm_loadu_pd(reinterpret_cast<const double*>(memory));
+    }
+
+    ETL_INLINE_VEC_128 loadu(const etl::complex<float>* memory) {
+        return _mm_loadu_ps(reinterpret_cast<const float*>(memory));
+    }
+
+    ETL_INLINE_VEC_128D loadu(const etl::complex<double>* memory) {
         return _mm_loadu_pd(reinterpret_cast<const double*>(memory));
     }
 
