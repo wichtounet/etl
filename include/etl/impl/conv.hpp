@@ -503,11 +503,11 @@ struct conv2_full_impl {
         } else if (impl == etl::conv_impl::STD) {
             impl::standard::conv2_full(input, kernel, conv);
         } else if (impl == etl::conv_impl::FFT_STD) {
-            impl::standard::fft2_convolve(input, kernel, conv);
+            impl::standard::fft2_convolve(input.direct(), kernel.direct(), conv.direct());
         } else if (impl == etl::conv_impl::FFT_MKL) {
-            impl::blas::fft2_convolve(input, kernel, conv);
+            impl::blas::fft2_convolve(input.direct(), kernel.direct(), conv.direct());
         } else if (impl == etl::conv_impl::FFT_CUFFT) {
-            impl::cufft::fft2_convolve(input, kernel, conv);
+            impl::cufft::fft2_convolve(input.direct(), kernel.direct(), conv.direct());
         } else {
             cpp_unreachable("Invalid conv implementation selection");
         }

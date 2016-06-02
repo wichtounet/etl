@@ -559,43 +559,39 @@ void ifft2_real(A&& a, C&& c) {
     }
 }
 
-template <typename A, typename B, typename C>
-void fft2_convolve(A&& a, B&& b, C&& c) {
-    using type = value_t<A>;
-
-    const std::size_t m1 = etl::dim<0>(a);
-    const std::size_t n1 = etl::dim<0>(b);
+template <typename T>
+void fft2_convolve(const opaque_memory<T, 2>& a, const opaque_memory<T, 2>& b, const opaque_memory<T, 2>& c) {
+    const std::size_t m1 = a.template dim<0>();
+    const std::size_t n1 = b.template dim<0>();
     const std::size_t s1 = m1 + n1 - 1;
 
-    const std::size_t m2 = etl::dim<1>(a);
-    const std::size_t n2 = etl::dim<1>(b);
+    const std::size_t m2 = a.template dim<1>();
+    const std::size_t n2 = b.template dim<1>();
     const std::size_t s2 = m2 + n2 - 1;
 
-    //Note: use of value_t to make the type dependent!
-    dyn_vector<etl::complex<type>> a_padded(etl::size(c));
-    dyn_vector<etl::complex<type>> b_padded(etl::size(c));
+    const std::size_t size = s1 * s2;
+
+    dyn_vector<etl::complex<T>> a_padded(size);
+    dyn_vector<etl::complex<T>> b_padded(size);
 
     for (std::size_t i = 0; i < m1; ++i) {
-        for (std::size_t j = 0; j < m2; ++j) {
-            a_padded[i * s2 + j] = a(i, j);
-        }
+        direct_copy_n(a.memory_start() + i * m2, a_padded.memory_start() + i * s2, m2);
     }
 
     for (std::size_t i = 0; i < n1; ++i) {
-        for (std::size_t j = 0; j < n2; ++j) {
-            b_padded[i * s2 + j] = b(i, j);
-        }
+        direct_copy_n(b.memory_start() + i * n2, b_padded.memory_start() + i * s2, n2);
     }
 
-    detail::inplace_fft2_kernel(reinterpret_cast<std::complex<type>*>(a_padded.memory_start()), s1, s2);
-    detail::inplace_fft2_kernel(reinterpret_cast<std::complex<type>*>(b_padded.memory_start()), s1, s2);
+    detail::inplace_fft2_kernel(reinterpret_cast<std::complex<T>*>(a_padded.memory_start()), s1, s2);
+    detail::inplace_fft2_kernel(reinterpret_cast<std::complex<T>*>(b_padded.memory_start()), s1, s2);
 
     a_padded *= b_padded;
 
-    detail::inplace_ifft2_kernel(reinterpret_cast<std::complex<type>*>(a_padded.memory_start()), s1, s2);
+    detail::inplace_ifft2_kernel(reinterpret_cast<std::complex<T>*>(a_padded.memory_start()), s1, s2);
 
-    for (std::size_t i = 0; i < etl::size(c); ++i) {
-        c[i] = a_padded[i].real;
+    auto c_m = c.memory_start();
+    for (std::size_t i = 0; i < size; ++i) {
+        c_m[i] = a_padded[i].real;
     }
 }
 

@@ -894,29 +894,25 @@ void fft1_convolve(A&& a, B&& b, C&& c) {
  * \param b The kernel matrix
  * \param c The output matrix
  */
-template <typename A, typename B, typename C>
-void fft2_convolve(A&& a, B&& b, C&& c) {
-    const std::size_t m1 = etl::dim<0>(a);
-    const std::size_t n1 = etl::dim<0>(b);
+template <typename T>
+void fft2_convolve(const opaque_memory<T, 2>& a, const opaque_memory<T, 2>& b, const opaque_memory<T, 2>& c) {
+    const std::size_t m1 = a.template dim<0>();
+    const std::size_t n1 = b.template dim<0>();
     const std::size_t s1 = m1 + n1 - 1;
 
-    const std::size_t m2 = etl::dim<1>(a);
-    const std::size_t n2 = etl::dim<1>(b);
+    const std::size_t m2 = a.template dim<1>();
+    const std::size_t n2 = b.template dim<1>();
     const std::size_t s2 = m2 + n2 - 1;
 
-    dyn_matrix<std::complex<value_t<A>>, 2> a_padded(s1, s2);
-    dyn_matrix<std::complex<value_t<A>>, 2> b_padded(s1, s2);
+    dyn_matrix<std::complex<T>, 2> a_padded(s1, s2);
+    dyn_matrix<std::complex<T>, 2> b_padded(s1, s2);
 
     for (std::size_t i = 0; i < m1; ++i) {
-        for (std::size_t j = 0; j < m2; ++j) {
-            a_padded(i, j) = a(i, j);
-        }
+        direct_copy_n(a.memory_start() + i * m2, a_padded.memory_start() + i * s2, m2);
     }
 
     for (std::size_t i = 0; i < n1; ++i) {
-        for (std::size_t j = 0; j < n2; ++j) {
-            b_padded(i, j) = b(i, j);
-        }
+        direct_copy_n(b.memory_start() + i * n2, b_padded.memory_start() + i * s2, n2);
     }
 
     fft2(a_padded, a_padded);
@@ -926,8 +922,9 @@ void fft2_convolve(A&& a, B&& b, C&& c) {
 
     ifft2(a_padded, a_padded);
 
+    auto c_m = c.memory_start();
     for (std::size_t i = 0; i < s1 * s2; ++i) {
-        c[i] = a_padded[i].real();
+        c_m[i] = a_padded[i].real();
     }
 }
 
