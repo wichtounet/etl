@@ -115,7 +115,7 @@ inline etl::conv_impl select_conv_impl() {
 
             //CUFFT cannot always be used
             case conv_impl::FFT_CUFFT:
-                if (!is_cudnn_enabled) {                                                                                               // COVERAGE_EXCLUDE_LINE
+                if (!is_cufft_enabled) {                                                                                               // COVERAGE_EXCLUDE_LINE
                     std::cerr << "Forced selection to CUFFT fft_conv implementation, but not possible for this expression" << std::endl; // COVERAGE_EXCLUDE_LINE
                     return select_default_conv_impl<TT, I, K, C>();                                                                   // COVERAGE_EXCLUDE_LINE
                 }                                                                                                                 // COVERAGE_EXCLUDE_LINE
