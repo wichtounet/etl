@@ -800,6 +800,9 @@ void ifft2_many(A&& a, C&& c) {
 
 template <typename A, typename B, typename C, cpp_enable_if(all_single_precision<A>::value)>
 void fft2_convolve(A&& a, B&& b, C&& c) {
+    //Note: use of value_t to make the type dependent!
+    using type = value_t<A>;
+
     const std::size_t m1 = etl::dim<0>(a);
     const std::size_t n1 = etl::dim<0>(b);
     const std::size_t s1 = m1 + n1 - 1;
@@ -811,10 +814,9 @@ void fft2_convolve(A&& a, B&& b, C&& c) {
     auto handle = start_cufft();
 
     const std::size_t size     = etl::size(c);
-    const std::size_t mem_size = size * sizeof(std::complex<float>);
 
-    auto a_padded = allocate<std::complex<float>>(size);
-    auto b_padded = allocate<std::complex<float>>(size);
+    dyn_vector<etl::complex<type>> a_padded(size);
+    dyn_vector<etl::complex<type>> b_padded(size);
 
     for (std::size_t i = 0; i < m1; ++i) {
         for (std::size_t j = 0; j < m2; ++j) {
@@ -828,34 +830,38 @@ void fft2_convolve(A&& a, B&& b, C&& c) {
         }
     }
 
-    auto gpu_a = impl::cuda::cuda_allocate_copy(a_padded.get(), size);
-    auto gpu_b = impl::cuda::cuda_allocate_copy(b_padded.get(), size);
+    auto gpu_a = a_padded.direct();
+    auto gpu_b = b_padded.direct();
+
+    gpu_a.gpu_allocate_copy();
+    gpu_b.gpu_allocate_copy();
 
     cufftPlan2d(&handle.get(), s1, s2, CUFFT_C2C);
 
-    cufftExecC2C(handle.get(), complex_cast(gpu_a.get()), complex_cast(gpu_a.get()), CUFFT_FORWARD);
-    cufftExecC2C(handle.get(), complex_cast(gpu_b.get()), complex_cast(gpu_b.get()), CUFFT_FORWARD);
+    cufftExecC2C(handle.get(), complex_cast(gpu_a.gpu_memory()), complex_cast(gpu_a.gpu_memory()), CUFFT_FORWARD);
+    cufftExecC2C(handle.get(), complex_cast(gpu_b.gpu_memory()), complex_cast(gpu_b.gpu_memory()), CUFFT_FORWARD);
 
-    cudaMemcpy(a_padded.get(), gpu_a.get(), mem_size, cudaMemcpyDeviceToHost);
-    cudaMemcpy(b_padded.get(), gpu_b.get(), mem_size, cudaMemcpyDeviceToHost);
+    gpu_a.gpu_copy_from();
+    gpu_b.gpu_copy_from();
 
-    for (std::size_t i = 0; i < size; ++i) {
-        a_padded[i] *= b_padded[i];
-    }
+    a_padded *= b_padded;
 
-    auto gpu_c = impl::cuda::cuda_allocate_copy(a_padded.get(), size);
+    gpu_a.gpu_copy_to(); //Refresh the GPU memory
 
-    cufftExecC2C(handle.get(), complex_cast(gpu_c.get()), complex_cast(gpu_c.get()), CUFFT_INVERSE);
+    cufftExecC2C(handle.get(), complex_cast(gpu_a.gpu_memory()), complex_cast(gpu_a.gpu_memory()), CUFFT_INVERSE);
 
-    cudaMemcpy(a_padded.get(), gpu_c.get(), mem_size, cudaMemcpyDeviceToHost);
+    gpu_a.gpu_copy_from();
 
     for (std::size_t i = 0; i < size; ++i) {
-        c[i] = a_padded[i].real() * (1.0f / size);
+        c[i] = a_padded[i].real * (1.0f / size);
     }
 }
 
 template <typename A, typename B, typename C, cpp_enable_if(all_double_precision<A>::value)>
 void fft2_convolve(A&& a, B&& b, C&& c) {
+    //Note: use of value_t to make the type dependent!
+    using type = value_t<A>;
+
     const std::size_t m1 = etl::dim<0>(a);
     const std::size_t n1 = etl::dim<0>(b);
     const std::size_t s1 = m1 + n1 - 1;
@@ -867,10 +873,9 @@ void fft2_convolve(A&& a, B&& b, C&& c) {
     auto handle = start_cufft();
 
     const std::size_t size     = etl::size(c);
-    const std::size_t mem_size = size * sizeof(std::complex<double>);
 
-    auto a_padded = allocate<std::complex<double>>(size);
-    auto b_padded = allocate<std::complex<double>>(size);
+    dyn_vector<etl::complex<type>> a_padded(size);
+    dyn_vector<etl::complex<type>> b_padded(size);
 
     for (std::size_t i = 0; i < m1; ++i) {
         for (std::size_t j = 0; j < m2; ++j) {
@@ -884,29 +889,30 @@ void fft2_convolve(A&& a, B&& b, C&& c) {
         }
     }
 
-    auto gpu_a = impl::cuda::cuda_allocate_copy(a_padded.get(), size);
-    auto gpu_b = impl::cuda::cuda_allocate_copy(b_padded.get(), size);
+    auto gpu_a = a_padded.direct();
+    auto gpu_b = b_padded.direct();
+
+    gpu_a.gpu_allocate_copy();
+    gpu_b.gpu_allocate_copy();
 
     cufftPlan2d(&handle.get(), s1, s2, CUFFT_Z2Z);
 
-    cufftExecZ2Z(handle.get(), complex_cast(gpu_a.get()), complex_cast(gpu_a.get()), CUFFT_FORWARD);
-    cufftExecZ2Z(handle.get(), complex_cast(gpu_b.get()), complex_cast(gpu_b.get()), CUFFT_FORWARD);
+    cufftExecZ2Z(handle.get(), complex_cast(gpu_a.gpu_memory()), complex_cast(gpu_a.gpu_memory()), CUFFT_FORWARD);
+    cufftExecZ2Z(handle.get(), complex_cast(gpu_b.gpu_memory()), complex_cast(gpu_b.gpu_memory()), CUFFT_FORWARD);
 
-    cudaMemcpy(a_padded.get(), gpu_a.get(), mem_size, cudaMemcpyDeviceToHost);
-    cudaMemcpy(b_padded.get(), gpu_b.get(), mem_size, cudaMemcpyDeviceToHost);
+    gpu_a.gpu_copy_from();
+    gpu_b.gpu_copy_from();
 
-    for (std::size_t i = 0; i < size; ++i) {
-        a_padded[i] *= b_padded[i];
-    }
+    a_padded *= b_padded;
 
-    auto gpu_c = impl::cuda::cuda_allocate_copy(a_padded.get(), size);
+    gpu_a.gpu_copy_to(); //Refresh the GPU memory
 
-    cufftExecZ2Z(handle.get(), complex_cast(gpu_c.get()), complex_cast(gpu_c.get()), CUFFT_INVERSE);
+    cufftExecZ2Z(handle.get(), complex_cast(gpu_a.gpu_memory()), complex_cast(gpu_a.gpu_memory()), CUFFT_INVERSE);
 
-    cudaMemcpy(a_padded.get(), gpu_c.get(), mem_size, cudaMemcpyDeviceToHost);
+    gpu_a.gpu_copy_from();
 
     for (std::size_t i = 0; i < size; ++i) {
-        c[i] = a_padded[i].real() * (1.0 / size);
+        c[i] = a_padded[i].real * (1.0 / size);
     }
 }
 
