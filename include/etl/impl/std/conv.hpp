@@ -228,10 +228,22 @@ void conv4_valid(const I& input, const K& kernel, C&& conv) {
 
     conv = 0.0;
 
-    for(std::size_t i = 0; i < etl::dim<0>(input); ++i){
-        for(std::size_t k = 0; k < etl::dim<0>(kernel); ++k){
-            for(std::size_t c = 0; c < etl::dim<1>(kernel); ++c){
-                conv(i)(k) += conv_2d_valid(input(i)(c), kernel(k)(c));
+    for(std::size_t ii = 0; ii < etl::dim<0>(input); ++ii){
+        for(std::size_t kk = 0; kk < etl::dim<0>(kernel); ++kk){
+            for(std::size_t cc = 0; cc < etl::dim<1>(kernel); ++cc){
+                for (std::size_t i = 0; i < etl::dim<2>(conv); ++i) {
+                    for (std::size_t j = 0; j < etl::dim<3>(conv); ++j) {
+                        typename I::value_type temp = 0.0;
+
+                        for (std::size_t k = i; k < i + etl::dim<2>(kernel); ++k) {
+                            for (std::size_t l = j; l < j + etl::dim<3>(kernel); ++l) {
+                                temp += input(ii, cc, k, l) * kernel(kk, cc, (i + etl::dim<2>(kernel) - 1 - k), (j + etl::dim<3>(kernel) - 1 - l));
+                            }
+                        }
+
+                        conv(ii, kk, i, j) += temp;
+                    }
+                }
             }
         }
     }
