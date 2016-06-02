@@ -305,3 +305,24 @@ CPM_DIRECT_SECTION_TWO_PASS_NS_F("a = sigmoid(b) (d) [std][sigmoid][d]",
     CPM_SECTION_FUNCTOR("fast", [](dvec& a, dvec& b){ a = etl::fast_sigmoid(b); }),
     CPM_SECTION_FUNCTOR("hard", [](dvec& a, dvec& b){ a = etl::hard_sigmoid(b); })
 )
+
+#ifdef ETL_EXTENDED_BENCH
+
+//Bench etl_complex
+CPM_BENCH() {
+    CPM_TWO_PASS_NS(
+        "r = a >> b (ec) [std][mul][etl_complex][c]",
+        [](std::size_t d){ return std::make_tuple(ecvec(d), ecvec(d), ecvec(d)); },
+        [](ecvec& a, ecvec& b, ecvec& r){ r = a >> b; },
+        [](std::size_t d){ return 6 * d; }
+        );
+
+    CPM_TWO_PASS_NS(
+        "r = a >> b (ez) [std][mul][etl_complex][z]",
+        [](std::size_t d){ return std::make_tuple(ezvec(d), ezvec(d), ezvec(d)); },
+        [](ezvec& a, ezvec& b, ezvec& r){ r = a >> b; },
+        [](std::size_t d){ return 6 * d; }
+        );
+}
+
+#endif

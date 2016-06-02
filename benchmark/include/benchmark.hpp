@@ -73,10 +73,12 @@ using smat4 = etl::dyn_matrix<float, 4>;
 using cvec = etl::dyn_vector<std::complex<float>>;
 using cmat = etl::dyn_matrix<std::complex<float>>;
 using cmat3 = etl::dyn_matrix<std::complex<float>, 3>;
+using ecvec = etl::dyn_vector<etl::complex<float>>;
 
 using zvec = etl::dyn_vector<std::complex<double>>;
 using zmat = etl::dyn_matrix<std::complex<double>>;
 using zmat3 = etl::dyn_matrix<std::complex<double>, 3>;
+using ezvec = etl::dyn_vector<etl::complex<double>>;
 
 using mat_policy = VALUES_POLICY(10, 25, 50, 100, 200, 300, 400, 500, 600, 700, 800, 900, 1000, 2000,3000);
 using mat_policy_2d = NARY_POLICY(mat_policy, mat_policy);
