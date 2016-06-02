@@ -7,6 +7,10 @@
 
 #pragma once
 
+//TODO STD conv algorithms must only call std algorithms
+//Otherwise, it'll involve redoing the selection and all the template
+//instantiations that goes with it
+
 namespace etl {
 
 namespace impl {
