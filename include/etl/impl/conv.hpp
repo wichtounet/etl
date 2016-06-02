@@ -494,20 +494,24 @@ struct conv2_full_impl {
     static void apply(const I& input, const K& kernel, C&& conv) {
         etl::conv_impl impl = select_conv_impl<conv_type::FULL, I, K, C>();
 
+        auto i = input.direct();
+        auto k = kernel.direct();
+        auto c = conv.direct();
+
         if (impl == etl::conv_impl::AVX) {
-            impl::avx::conv2_full(input, kernel, conv);
+            impl::avx::conv2_full(i, k, c);
         } else if (impl == etl::conv_impl::SSE) {
-            impl::sse::conv2_full(input, kernel, conv);
+            impl::sse::conv2_full(i, k, c);
         } else if (impl == etl::conv_impl::CUDNN) {
-            impl::cudnn::conv2_full(input.direct(), kernel.direct(), conv.direct());
+            impl::cudnn::conv2_full(i, k, c);
         } else if (impl == etl::conv_impl::STD) {
             impl::standard::conv2_full(input, kernel, conv);
         } else if (impl == etl::conv_impl::FFT_STD) {
-            impl::standard::fft2_convolve(input.direct(), kernel.direct(), conv.direct());
+            impl::standard::fft2_convolve(i, k, c);
         } else if (impl == etl::conv_impl::FFT_MKL) {
-            impl::blas::fft2_convolve(input.direct(), kernel.direct(), conv.direct());
+            impl::blas::fft2_convolve(i, k, c);
         } else if (impl == etl::conv_impl::FFT_CUFFT) {
-            impl::cufft::fft2_convolve(input.direct(), kernel.direct(), conv.direct());
+            impl::cufft::fft2_convolve(i, k, c);
         } else {
             cpp_unreachable("Invalid conv implementation selection");
         }
@@ -528,12 +532,16 @@ struct conv2_full_flipped_impl {
     static void apply(const I& input, const K& kernel, C&& conv) {
         etl::conv_impl impl = select_conv_impl<conv_type::FULL, I, K, C>();
 
+        auto i = input.direct();
+        auto k = kernel.direct();
+        auto c = conv.direct();
+
         if (impl == etl::conv_impl::AVX) {
-            impl::avx::conv2_full_flipped(input, kernel, conv);
+            impl::avx::conv2_full_flipped(i, k, c);
         } else if (impl == etl::conv_impl::SSE) {
-            impl::sse::conv2_full_flipped(input, kernel, conv);
+            impl::sse::conv2_full_flipped(i, k, c);
         } else if (impl == etl::conv_impl::CUDNN) {
-            impl::cudnn::conv2_full_flipped(input.direct(), kernel.direct(), conv.direct());
+            impl::cudnn::conv2_full_flipped(i, k, c);
         } else if (impl == etl::conv_impl::STD) {
             impl::standard::conv2_full_flipped(input, kernel, conv);
         } else {
@@ -556,10 +564,14 @@ struct conv2_same_impl {
     static void apply(const I& input, const K& kernel, C&& conv) {
         etl::conv_impl impl = select_conv_impl<conv_type::SAME, I, K, C>();
 
+        auto i = input.direct();
+        auto k = kernel.direct();
+        auto c = conv.direct();
+
         if (impl == etl::conv_impl::AVX) {
-            impl::avx::conv2_same(input, kernel, conv);
+            impl::avx::conv2_same(i, k, c);
         } else if (impl == etl::conv_impl::SSE) {
-            impl::sse::conv2_same(input, kernel, conv);
+            impl::sse::conv2_same(i, k, c);
         } else if (impl == etl::conv_impl::STD) {
             impl::standard::conv2_same(input, kernel, conv);
         } else {
@@ -582,12 +594,16 @@ struct conv2_valid_impl {
     static void apply(const I& input, const K& kernel, C&& conv) {
         etl::conv_impl impl = select_conv_impl<conv_type::VALID, I, K, C>();
 
+        auto i = input.direct();
+        auto k = kernel.direct();
+        auto c = conv.direct();
+
         if (impl == etl::conv_impl::AVX) {
-            impl::avx::conv2_valid(input, kernel, conv);
+            impl::avx::conv2_valid(i, k, c);
         } else if (impl == etl::conv_impl::SSE) {
-            impl::sse::conv2_valid(input, kernel, conv);
+            impl::sse::conv2_valid(i, k, c);
         } else if (impl == etl::conv_impl::CUDNN) {
-            impl::cudnn::conv2_valid(input.direct(), kernel.direct(), conv.direct());
+            impl::cudnn::conv2_valid(i, k, c);
         } else if (impl == etl::conv_impl::STD) {
             impl::standard::conv2_valid(input, kernel, conv);
         } else {
@@ -610,12 +626,16 @@ struct conv2_valid_flipped_impl {
     static void apply(const I& input, const K& kernel, C&& conv) {
         etl::conv_impl impl = select_conv_impl<conv_type::VALID, I, K, C>();
 
+        auto i = input.direct();
+        auto k = kernel.direct();
+        auto c = conv.direct();
+
         if (impl == etl::conv_impl::AVX) {
-            impl::avx::conv2_valid_flipped(input, kernel, conv);
+            impl::avx::conv2_valid_flipped(i, k, c);
         } else if (impl == etl::conv_impl::SSE) {
-            impl::sse::conv2_valid_flipped(input, kernel, conv);
+            impl::sse::conv2_valid_flipped(i, k, c);
         } else if (impl == etl::conv_impl::CUDNN) {
-            impl::cudnn::conv2_valid_flipped(input.direct(), kernel.direct(), conv.direct());
+            impl::cudnn::conv2_valid_flipped(i, k, c);
         } else if (impl == etl::conv_impl::STD) {
             impl::standard::conv2_valid_flipped(input, kernel, conv);
         } else {

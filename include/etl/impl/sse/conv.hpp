@@ -623,43 +623,43 @@ inline void conv2_full_flipped_micro_kernel(const float* in, std::size_t n1, std
     }
 }
 
-template <typename I, typename K, typename C>
-void conv2_valid(const I& input, const K& kernel, C&& conv) {
+template <typename T>
+void conv2_valid(const opaque_memory<T, 2>& input, const opaque_memory<T, 2>& kernel, const opaque_memory<T, 2>& conv) {
     conv2_valid_micro_kernel(
-        input.memory_start(), etl::rows(input), etl::columns(input),
-        kernel.memory_start(), etl::rows(kernel), etl::columns(kernel),
+        input.memory_start(), input.template dim<0>(), input.template dim<1>(),
+        kernel.memory_start(), kernel.template dim<0>(), kernel.template dim<1>(),
         conv.memory_start());
 }
 
-template <typename I, typename K, typename C>
-void conv2_valid_flipped(const I& input, const K& kernel, C&& conv) {
+template <typename T>
+void conv2_valid_flipped(const opaque_memory<T, 2>& input, const opaque_memory<T, 2>& kernel, const opaque_memory<T, 2>& conv) {
     conv2_valid_flipped_micro_kernel(
-        input.memory_start(), etl::rows(input), etl::columns(input),
-        kernel.memory_start(), etl::rows(kernel), etl::columns(kernel),
+        input.memory_start(), input.template dim<0>(), input.template dim<1>(),
+        kernel.memory_start(), kernel.template dim<0>(), kernel.template dim<1>(),
         conv.memory_start());
 }
 
-template <typename I, typename K, typename C>
-void conv2_same(const I& input, const K& kernel, C&& conv) {
+template <typename T>
+void conv2_same(const opaque_memory<T, 2>& input, const opaque_memory<T, 2>& kernel, const opaque_memory<T, 2>& conv) {
     conv2_same_micro_kernel(
-        input.memory_start(), etl::rows(input), etl::columns(input),
-        kernel.memory_start(), etl::rows(kernel), etl::columns(kernel),
+        input.memory_start(), input.template dim<0>(), input.template dim<1>(),
+        kernel.memory_start(), kernel.template dim<0>(), kernel.template dim<1>(),
         conv.memory_start());
 }
 
-template <typename I, typename K, typename C>
-void conv2_full(const I& input, const K& kernel, C&& conv) {
+template <typename T>
+void conv2_full(const opaque_memory<T, 2>& input, const opaque_memory<T, 2>& kernel, const opaque_memory<T, 2>& conv) {
     conv2_full_micro_kernel(
-        input.memory_start(), etl::rows(input), etl::columns(input),
-        kernel.memory_start(), etl::rows(kernel), etl::columns(kernel),
+        input.memory_start(), input.template dim<0>(), input.template dim<1>(),
+        kernel.memory_start(), kernel.template dim<0>(), kernel.template dim<1>(),
         conv.memory_start());
 }
 
-template <typename I, typename K, typename C>
-void conv2_full_flipped(const I& input, const K& kernel, C&& conv) {
+template <typename T>
+void conv2_full_flipped(const opaque_memory<T, 2>& input, const opaque_memory<T, 2>& kernel, const opaque_memory<T, 2>& conv) {
     conv2_full_flipped_micro_kernel(
-        input.memory_start(), etl::rows(input), etl::columns(input),
-        kernel.memory_start(), etl::rows(kernel), etl::columns(kernel),
+        input.memory_start(), input.template dim<0>(), input.template dim<1>(),
+        kernel.memory_start(), kernel.template dim<0>(), kernel.template dim<1>(),
         conv.memory_start());
 }
 
