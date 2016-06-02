@@ -187,9 +187,15 @@ inline etl::conv4_impl select_default_conv4_impl() {
     }
 
     static constexpr const bool cudnn = is_cudnn_enabled;
+    static constexpr const bool avx = vectorize_impl && vector_mode == vector_mode_t::AVX;
+    static constexpr const bool sse = vectorize_impl && vector_mode == vector_mode_t::SSE3;
 
     if(cudnn){
         return etl::conv4_impl::CUDNN;
+    } else if(avx){
+        return etl::conv4_impl::AVX;
+    } else if(sse){
+        return etl::conv4_impl::SSE;
     }
 
     return etl::conv4_impl::STD;
@@ -208,6 +214,22 @@ inline etl::conv4_impl select_conv4_impl() {
         auto forced = local_context().conv4_selector.impl;
 
         switch (forced) {
+            //SSE cannot always be used
+            case conv4_impl::SSE:
+                if (!sse3_enabled) {                                                                                               // COVERAGE_EXCLUDE_LINE
+                    std::cerr << "Forced selection to SSE conv implementation, but not possible for this expression" << std::endl; // COVERAGE_EXCLUDE_LINE
+                    return select_default_conv4_impl<I, K, C>();                                                                   // COVERAGE_EXCLUDE_LINE
+                }                                                                                                                 // COVERAGE_EXCLUDE_LINE
+
+            //AVX cannot always be used
+            case conv4_impl::AVX:
+                if (!avx_enabled) {                                                                                               // COVERAGE_EXCLUDE_LINE
+                    std::cerr << "Forced selection to AVX conv implementation, but not possible for this expression" << std::endl; // COVERAGE_EXCLUDE_LINE
+                    return select_default_conv4_impl<I, K, C>();                                                                   // COVERAGE_EXCLUDE_LINE
+                }                                                                                                                 // COVERAGE_EXCLUDE_LINE
+
+                return forced;
+
             //CUDNN cannot always be used
             case conv4_impl::CUDNN:
                 if (!is_cudnn_enabled) {                                                                                               // COVERAGE_EXCLUDE_LINE
@@ -664,6 +686,8 @@ struct conv4_valid_impl {
 
         if (impl == etl::conv4_impl::CUDNN) {
             impl::cudnn::conv4_valid(input.direct(), kernel.direct(), conv.direct());
+        } else if (impl == etl::conv4_impl::AVX) {
+            impl::avx::conv4_valid(input.direct(), kernel.direct(), conv.direct());
         } else if (impl == etl::conv4_impl::STD) {
             impl::standard::conv4_valid(input, kernel, conv);
         } else {

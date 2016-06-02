@@ -305,87 +305,164 @@ void conv1_valid(const I& input, const K& kernel, C&& conv, std::size_t first, s
     conv1_valid_micro_kernel(in, size(input), k, size(kernel), out, first, last);
 }
 
-inline void conv2_valid_flipped_micro_kernel(const double* in, std::size_t n1, std::size_t n2, const double* kernel, std::size_t m1, std::size_t m2, double* out) {
+inline void conv2_valid_flipped_micro_kernel(const double* in, std::size_t n1, std::size_t n2, const double* kernel, std::size_t m1, std::size_t m2, double* out, double beta) {
     if(m2 < 4){
-        etl::impl::sse::conv2_valid_flipped_micro_kernel(in, n1, n2, kernel, m1, m2, out);
+        etl::impl::sse::conv2_valid_flipped_micro_kernel(in, n1, n2, kernel, m1, m2, out, beta);
         return;
     }
 
     std::size_t c1 = n1 - m1 + 1;
     std::size_t c2 = n2 - m2 + 1;
 
-    for (std::size_t i = 0; i < c1; ++i) {
-        for (std::size_t j = 0; j + 7 < c2; j += 8) {
-            __m256d r1 = _mm256_setzero_pd();
-            __m256d r2 = _mm256_setzero_pd();
-            __m256d r3 = _mm256_setzero_pd();
-            __m256d r4 = _mm256_setzero_pd();
+    if(beta == 0.0){
+        for (std::size_t i = 0; i < c1; ++i) {
+            for (std::size_t j = 0; j + 7 < c2; j += 8) {
+                __m256d r1 = _mm256_setzero_pd();
+                __m256d r2 = _mm256_setzero_pd();
+                __m256d r3 = _mm256_setzero_pd();
+                __m256d r4 = _mm256_setzero_pd();
 
-            __m256d r5 = _mm256_setzero_pd();
-            __m256d r6 = _mm256_setzero_pd();
-            __m256d r7 = _mm256_setzero_pd();
-            __m256d r8 = _mm256_setzero_pd();
+                __m256d r5 = _mm256_setzero_pd();
+                __m256d r6 = _mm256_setzero_pd();
+                __m256d r7 = _mm256_setzero_pd();
+                __m256d r8 = _mm256_setzero_pd();
 
-            for (std::size_t k = 0; k < m1; ++k) {
-                for (std::size_t l = 0; l + 3 < m2; l += 4) {
-                    __m256d k1 = _mm256_loadu_pd(kernel + k * m2 + l);
+                for (std::size_t k = 0; k < m1; ++k) {
+                    for (std::size_t l = 0; l + 3 < m2; l += 4) {
+                        __m256d k1 = _mm256_loadu_pd(kernel + k * m2 + l);
 
-                    __m256d i1 = _mm256_loadu_pd(in + (i + k) * n2 + j + l + 0);
-                    __m256d i2 = _mm256_loadu_pd(in + (i + k) * n2 + j + l + 1);
-                    __m256d i3 = _mm256_loadu_pd(in + (i + k) * n2 + j + l + 2);
-                    __m256d i4 = _mm256_loadu_pd(in + (i + k) * n2 + j + l + 3);
+                        __m256d i1 = _mm256_loadu_pd(in + (i + k) * n2 + j + l + 0);
+                        __m256d i2 = _mm256_loadu_pd(in + (i + k) * n2 + j + l + 1);
+                        __m256d i3 = _mm256_loadu_pd(in + (i + k) * n2 + j + l + 2);
+                        __m256d i4 = _mm256_loadu_pd(in + (i + k) * n2 + j + l + 3);
 
-                    __m256d t1 = _mm256_mul_pd(i1, k1);
-                    __m256d t2 = _mm256_mul_pd(i2, k1);
-                    __m256d t3 = _mm256_mul_pd(i3, k1);
-                    __m256d t4 = _mm256_mul_pd(i4, k1);
+                        __m256d t1 = _mm256_mul_pd(i1, k1);
+                        __m256d t2 = _mm256_mul_pd(i2, k1);
+                        __m256d t3 = _mm256_mul_pd(i3, k1);
+                        __m256d t4 = _mm256_mul_pd(i4, k1);
 
-                    __m256d i5 = _mm256_loadu_pd(in + (i + k) * n2 + j + l + 4);
-                    __m256d i6 = _mm256_loadu_pd(in + (i + k) * n2 + j + l + 5);
-                    __m256d i7 = _mm256_loadu_pd(in + (i + k) * n2 + j + l + 6);
-                    __m256d i8 = _mm256_loadu_pd(in + (i + k) * n2 + j + l + 7);
+                        __m256d i5 = _mm256_loadu_pd(in + (i + k) * n2 + j + l + 4);
+                        __m256d i6 = _mm256_loadu_pd(in + (i + k) * n2 + j + l + 5);
+                        __m256d i7 = _mm256_loadu_pd(in + (i + k) * n2 + j + l + 6);
+                        __m256d i8 = _mm256_loadu_pd(in + (i + k) * n2 + j + l + 7);
 
-                    r1         = _mm256_add_pd(r1, t1);
-                    r2         = _mm256_add_pd(r2, t2);
-                    r3         = _mm256_add_pd(r3, t3);
-                    r4         = _mm256_add_pd(r4, t4);
+                        r1         = _mm256_add_pd(r1, t1);
+                        r2         = _mm256_add_pd(r2, t2);
+                        r3         = _mm256_add_pd(r3, t3);
+                        r4         = _mm256_add_pd(r4, t4);
 
-                    __m256d t5 = _mm256_mul_pd(i5, k1);
-                    __m256d t6 = _mm256_mul_pd(i6, k1);
-                    __m256d t7 = _mm256_mul_pd(i7, k1);
-                    __m256d t8 = _mm256_mul_pd(i8, k1);
+                        __m256d t5 = _mm256_mul_pd(i5, k1);
+                        __m256d t6 = _mm256_mul_pd(i6, k1);
+                        __m256d t7 = _mm256_mul_pd(i7, k1);
+                        __m256d t8 = _mm256_mul_pd(i8, k1);
 
-                    r5         = _mm256_add_pd(r5, t5);
-                    r6         = _mm256_add_pd(r6, t6);
-                    r7         = _mm256_add_pd(r7, t7);
-                    r8         = _mm256_add_pd(r8, t8);
+                        r5         = _mm256_add_pd(r5, t5);
+                        r6         = _mm256_add_pd(r6, t6);
+                        r7         = _mm256_add_pd(r7, t7);
+                        r8         = _mm256_add_pd(r8, t8);
+                    }
                 }
+
+                out[i * c2 + j + 0] = mm256_hadd_sd(r1);
+                out[i * c2 + j + 1] = mm256_hadd_sd(r2);
+                out[i * c2 + j + 2] = mm256_hadd_sd(r3);
+                out[i * c2 + j + 3] = mm256_hadd_sd(r4);
+                out[i * c2 + j + 4] = mm256_hadd_sd(r5);
+                out[i * c2 + j + 5] = mm256_hadd_sd(r6);
+                out[i * c2 + j + 6] = mm256_hadd_sd(r7);
+                out[i * c2 + j + 7] = mm256_hadd_sd(r8);
             }
 
-            out[i * c2 + j + 0] = mm256_hadd_sd(r1);
-            out[i * c2 + j + 1] = mm256_hadd_sd(r2);
-            out[i * c2 + j + 2] = mm256_hadd_sd(r3);
-            out[i * c2 + j + 3] = mm256_hadd_sd(r4);
-            out[i * c2 + j + 4] = mm256_hadd_sd(r5);
-            out[i * c2 + j + 5] = mm256_hadd_sd(r6);
-            out[i * c2 + j + 6] = mm256_hadd_sd(r7);
-            out[i * c2 + j + 7] = mm256_hadd_sd(r8);
+            for (std::size_t j = c2 - c2 % 8; j < c2; ++j) {
+                __m256d r1 = _mm256_setzero_pd();
+
+                for (std::size_t k = 0; k < m1; ++k) {
+                    for (std::size_t l = 0; l + 3 < m2; l += 4) {
+                        __m256d k1 = _mm256_loadu_pd(kernel + k * m2 + l);
+
+                        __m256d i1 = _mm256_loadu_pd(in + (i + k) * n2 + j + l);
+                        __m256d t1 = _mm256_mul_pd(i1, k1);
+                        r1         = _mm256_add_pd(r1, t1);
+                    }
+                }
+
+                out[i * c2 + j] = mm256_hadd_sd(r1);
+            }
         }
+    } else {
+        for (std::size_t i = 0; i < c1; ++i) {
+            for (std::size_t j = 0; j + 7 < c2; j += 8) {
+                __m256d r1 = _mm256_setzero_pd();
+                __m256d r2 = _mm256_setzero_pd();
+                __m256d r3 = _mm256_setzero_pd();
+                __m256d r4 = _mm256_setzero_pd();
 
-        for (std::size_t j = c2 - c2 % 8; j < c2; ++j) {
-            __m256d r1 = _mm256_setzero_pd();
+                __m256d r5 = _mm256_setzero_pd();
+                __m256d r6 = _mm256_setzero_pd();
+                __m256d r7 = _mm256_setzero_pd();
+                __m256d r8 = _mm256_setzero_pd();
 
-            for (std::size_t k = 0; k < m1; ++k) {
-                for (std::size_t l = 0; l + 3 < m2; l += 4) {
-                    __m256d k1 = _mm256_loadu_pd(kernel + k * m2 + l);
+                for (std::size_t k = 0; k < m1; ++k) {
+                    for (std::size_t l = 0; l + 3 < m2; l += 4) {
+                        __m256d k1 = _mm256_loadu_pd(kernel + k * m2 + l);
 
-                    __m256d i1 = _mm256_loadu_pd(in + (i + k) * n2 + j + l);
-                    __m256d t1 = _mm256_mul_pd(i1, k1);
-                    r1         = _mm256_add_pd(r1, t1);
+                        __m256d i1 = _mm256_loadu_pd(in + (i + k) * n2 + j + l + 0);
+                        __m256d i2 = _mm256_loadu_pd(in + (i + k) * n2 + j + l + 1);
+                        __m256d i3 = _mm256_loadu_pd(in + (i + k) * n2 + j + l + 2);
+                        __m256d i4 = _mm256_loadu_pd(in + (i + k) * n2 + j + l + 3);
+
+                        __m256d t1 = _mm256_mul_pd(i1, k1);
+                        __m256d t2 = _mm256_mul_pd(i2, k1);
+                        __m256d t3 = _mm256_mul_pd(i3, k1);
+                        __m256d t4 = _mm256_mul_pd(i4, k1);
+
+                        __m256d i5 = _mm256_loadu_pd(in + (i + k) * n2 + j + l + 4);
+                        __m256d i6 = _mm256_loadu_pd(in + (i + k) * n2 + j + l + 5);
+                        __m256d i7 = _mm256_loadu_pd(in + (i + k) * n2 + j + l + 6);
+                        __m256d i8 = _mm256_loadu_pd(in + (i + k) * n2 + j + l + 7);
+
+                        r1         = _mm256_add_pd(r1, t1);
+                        r2         = _mm256_add_pd(r2, t2);
+                        r3         = _mm256_add_pd(r3, t3);
+                        r4         = _mm256_add_pd(r4, t4);
+
+                        __m256d t5 = _mm256_mul_pd(i5, k1);
+                        __m256d t6 = _mm256_mul_pd(i6, k1);
+                        __m256d t7 = _mm256_mul_pd(i7, k1);
+                        __m256d t8 = _mm256_mul_pd(i8, k1);
+
+                        r5         = _mm256_add_pd(r5, t5);
+                        r6         = _mm256_add_pd(r6, t6);
+                        r7         = _mm256_add_pd(r7, t7);
+                        r8         = _mm256_add_pd(r8, t8);
+                    }
                 }
+
+                out[i * c2 + j + 0] = beta * out[i * c2 + j + 0] + mm256_hadd_sd(r1);
+                out[i * c2 + j + 1] = beta * out[i * c2 + j + 1] + mm256_hadd_sd(r2);
+                out[i * c2 + j + 2] = beta * out[i * c2 + j + 2] + mm256_hadd_sd(r3);
+                out[i * c2 + j + 3] = beta * out[i * c2 + j + 3] + mm256_hadd_sd(r4);
+                out[i * c2 + j + 4] = beta * out[i * c2 + j + 4] + mm256_hadd_sd(r5);
+                out[i * c2 + j + 5] = beta * out[i * c2 + j + 5] + mm256_hadd_sd(r6);
+                out[i * c2 + j + 6] = beta * out[i * c2 + j + 6] + mm256_hadd_sd(r7);
+                out[i * c2 + j + 7] = beta * out[i * c2 + j + 7] + mm256_hadd_sd(r8);
             }
 
-            out[i * c2 + j] = mm256_hadd_sd(r1);
+            for (std::size_t j = c2 - c2 % 8; j < c2; ++j) {
+                __m256d r1 = _mm256_setzero_pd();
+
+                for (std::size_t k = 0; k < m1; ++k) {
+                    for (std::size_t l = 0; l + 3 < m2; l += 4) {
+                        __m256d k1 = _mm256_loadu_pd(kernel + k * m2 + l);
+
+                        __m256d i1 = _mm256_loadu_pd(in + (i + k) * n2 + j + l);
+                        __m256d t1 = _mm256_mul_pd(i1, k1);
+                        r1         = _mm256_add_pd(r1, t1);
+                    }
+                }
+
+                out[i * c2 + j] = beta * out[i * c2 + j] + mm256_hadd_sd(r1);
+            }
         }
     }
 
@@ -406,9 +483,9 @@ inline void conv2_valid_flipped_micro_kernel(const double* in, std::size_t n1, s
     }
 }
 
-inline void conv2_valid_micro_kernel(const double* in, std::size_t n1, std::size_t n2, const double* kernel, std::size_t m1, std::size_t m2, double* out) {
+inline void conv2_valid_micro_kernel(const double* in, std::size_t n1, std::size_t n2, const double* kernel, std::size_t m1, std::size_t m2, double* out, double beta) {
     if(m2 < 4){
-        etl::impl::sse::conv2_valid_micro_kernel(in, n1, n2, kernel, m1, m2, out);
+        etl::impl::sse::conv2_valid_micro_kernel(in, n1, n2, kernel, m1, m2, out, beta);
         return;
     }
 
@@ -416,7 +493,7 @@ inline void conv2_valid_micro_kernel(const double* in, std::size_t n1, std::size
 
     std::reverse_copy(kernel, kernel + m1 * m2, kernel_reverse.get());
 
-    conv2_valid_flipped_micro_kernel(in, n1, n2, kernel_reverse.get(), m1, m2, out);
+    conv2_valid_flipped_micro_kernel(in, n1, n2, kernel_reverse.get(), m1, m2, out, beta);
 }
 
 inline void conv2_same_micro_kernel(const double* in, std::size_t n1, std::size_t n2, const double* kernel, std::size_t m1, std::size_t m2, double* out) {
@@ -559,99 +636,188 @@ inline void conv2_full_flipped_micro_kernel(const double* in, std::size_t n1, st
     }
 }
 
-inline void conv2_valid_flipped_micro_kernel(const float* in, std::size_t n1, std::size_t n2, const float* kernel, std::size_t m1, std::size_t m2, float* out) {
+inline void conv2_valid_flipped_micro_kernel(const float* in, std::size_t n1, std::size_t n2, const float* kernel, std::size_t m1, std::size_t m2, float* out, float beta) {
     if(m2 < 8){
-        etl::impl::sse::conv2_valid_flipped_micro_kernel(in, n1, n2, kernel, m1, m2, out);
+        etl::impl::sse::conv2_valid_flipped_micro_kernel(in, n1, n2, kernel, m1, m2, out, beta);
         return;
     }
 
     std::size_t c1 = n1 - m1 + 1;
     std::size_t c2 = n2 - m2 + 1;
 
-    for (std::size_t i = 0; i < c1; ++i) {
-        for (std::size_t j = 0; j + 7 < c2; j += 8) {
-            __m256 r1 = _mm256_setzero_ps();
-            __m256 r2 = _mm256_setzero_ps();
-            __m256 r3 = _mm256_setzero_ps();
-            __m256 r4 = _mm256_setzero_ps();
-            __m256 r5 = _mm256_setzero_ps();
-            __m256 r6 = _mm256_setzero_ps();
-            __m256 r7 = _mm256_setzero_ps();
-            __m256 r8 = _mm256_setzero_ps();
+    if(beta == 0.0f){
+        for (std::size_t i = 0; i < c1; ++i) {
+            for (std::size_t j = 0; j + 7 < c2; j += 8) {
+                __m256 r1 = _mm256_setzero_ps();
+                __m256 r2 = _mm256_setzero_ps();
+                __m256 r3 = _mm256_setzero_ps();
+                __m256 r4 = _mm256_setzero_ps();
+                __m256 r5 = _mm256_setzero_ps();
+                __m256 r6 = _mm256_setzero_ps();
+                __m256 r7 = _mm256_setzero_ps();
+                __m256 r8 = _mm256_setzero_ps();
 
-            for (std::size_t k = 0; k < m1; ++k) {
-                for (std::size_t l = 0; l + 7 < m2; l += 8) {
-                    __m256 k1 = _mm256_loadu_ps(kernel + k * m2 + l);
+                for (std::size_t k = 0; k < m1; ++k) {
+                    for (std::size_t l = 0; l + 7 < m2; l += 8) {
+                        __m256 k1 = _mm256_loadu_ps(kernel + k * m2 + l);
 
-                    __m256 i1 = _mm256_loadu_ps(in + (i + k) * n2 + j + 0 + l);
-                    __m256 i2 = _mm256_loadu_ps(in + (i + k) * n2 + j + 1 + l);
-                    __m256 i3 = _mm256_loadu_ps(in + (i + k) * n2 + j + 2 + l);
-                    __m256 i4 = _mm256_loadu_ps(in + (i + k) * n2 + j + 3 + l);
-
-#ifdef __FMA__
-                    r1 = _mm256_fmadd_ps(i1, k1, r1);
-                    r2 = _mm256_fmadd_ps(i2, k1, r2);
-                    r3 = _mm256_fmadd_ps(i3, k1, r3);
-                    r4 = _mm256_fmadd_ps(i4, k1, r4);
-#else
-                    __m256 t1 = _mm256_mul_ps(i1, k1);
-                    __m256 t2 = _mm256_mul_ps(i2, k1);
-                    __m256 t3 = _mm256_mul_ps(i3, k1);
-                    __m256 t4 = _mm256_mul_ps(i4, k1);
-
-                    r1 = _mm256_add_ps(r1, t1);
-                    r2 = _mm256_add_ps(r2, t2);
-                    r3 = _mm256_add_ps(r3, t3);
-                    r4 = _mm256_add_ps(r4, t4);
-#endif
-
-                    __m256 i5 = _mm256_loadu_ps(in + (i + k) * n2 + j + 4 + l);
-                    __m256 i6 = _mm256_loadu_ps(in + (i + k) * n2 + j + 5 + l);
-                    __m256 i7 = _mm256_loadu_ps(in + (i + k) * n2 + j + 6 + l);
-                    __m256 i8 = _mm256_loadu_ps(in + (i + k) * n2 + j + 7 + l);
+                        __m256 i1 = _mm256_loadu_ps(in + (i + k) * n2 + j + 0 + l);
+                        __m256 i2 = _mm256_loadu_ps(in + (i + k) * n2 + j + 1 + l);
+                        __m256 i3 = _mm256_loadu_ps(in + (i + k) * n2 + j + 2 + l);
+                        __m256 i4 = _mm256_loadu_ps(in + (i + k) * n2 + j + 3 + l);
 
 #ifdef __FMA__
-                    r5 = _mm256_fmadd_ps(i5, k1, r5);
-                    r6 = _mm256_fmadd_ps(i6, k1, r6);
-                    r7 = _mm256_fmadd_ps(i7, k1, r7);
-                    r8 = _mm256_fmadd_ps(i8, k1, r8);
+                        r1 = _mm256_fmadd_ps(i1, k1, r1);
+                        r2 = _mm256_fmadd_ps(i2, k1, r2);
+                        r3 = _mm256_fmadd_ps(i3, k1, r3);
+                        r4 = _mm256_fmadd_ps(i4, k1, r4);
 #else
-                    __m256 t5 = _mm256_mul_ps(i5, k1);
-                    __m256 t6 = _mm256_mul_ps(i6, k1);
-                    __m256 t7 = _mm256_mul_ps(i7, k1);
-                    __m256 t8 = _mm256_mul_ps(i8, k1);
+                        __m256 t1 = _mm256_mul_ps(i1, k1);
+                        __m256 t2 = _mm256_mul_ps(i2, k1);
+                        __m256 t3 = _mm256_mul_ps(i3, k1);
+                        __m256 t4 = _mm256_mul_ps(i4, k1);
 
-                    r5 = _mm256_add_ps(r5, t5);
-                    r6 = _mm256_add_ps(r6, t6);
-                    r7 = _mm256_add_ps(r7, t7);
-                    r8 = _mm256_add_ps(r8, t8);
+                        r1 = _mm256_add_ps(r1, t1);
+                        r2 = _mm256_add_ps(r2, t2);
+                        r3 = _mm256_add_ps(r3, t3);
+                        r4 = _mm256_add_ps(r4, t4);
 #endif
+
+                        __m256 i5 = _mm256_loadu_ps(in + (i + k) * n2 + j + 4 + l);
+                        __m256 i6 = _mm256_loadu_ps(in + (i + k) * n2 + j + 5 + l);
+                        __m256 i7 = _mm256_loadu_ps(in + (i + k) * n2 + j + 6 + l);
+                        __m256 i8 = _mm256_loadu_ps(in + (i + k) * n2 + j + 7 + l);
+
+#ifdef __FMA__
+                        r5 = _mm256_fmadd_ps(i5, k1, r5);
+                        r6 = _mm256_fmadd_ps(i6, k1, r6);
+                        r7 = _mm256_fmadd_ps(i7, k1, r7);
+                        r8 = _mm256_fmadd_ps(i8, k1, r8);
+#else
+                        __m256 t5 = _mm256_mul_ps(i5, k1);
+                        __m256 t6 = _mm256_mul_ps(i6, k1);
+                        __m256 t7 = _mm256_mul_ps(i7, k1);
+                        __m256 t8 = _mm256_mul_ps(i8, k1);
+
+                        r5 = _mm256_add_ps(r5, t5);
+                        r6 = _mm256_add_ps(r6, t6);
+                        r7 = _mm256_add_ps(r7, t7);
+                        r8 = _mm256_add_ps(r8, t8);
+#endif
+                    }
                 }
+
+                out[i * c2 + j + 0] = mm256_hadd_ss(r1);
+                out[i * c2 + j + 1] = mm256_hadd_ss(r2);
+                out[i * c2 + j + 2] = mm256_hadd_ss(r3);
+                out[i * c2 + j + 3] = mm256_hadd_ss(r4);
+                out[i * c2 + j + 4] = mm256_hadd_ss(r5);
+                out[i * c2 + j + 5] = mm256_hadd_ss(r6);
+                out[i * c2 + j + 6] = mm256_hadd_ss(r7);
+                out[i * c2 + j + 7] = mm256_hadd_ss(r8);
             }
 
-            out[i * c2 + j + 0] = mm256_hadd_ss(r1);
-            out[i * c2 + j + 1] = mm256_hadd_ss(r2);
-            out[i * c2 + j + 2] = mm256_hadd_ss(r3);
-            out[i * c2 + j + 3] = mm256_hadd_ss(r4);
-            out[i * c2 + j + 4] = mm256_hadd_ss(r5);
-            out[i * c2 + j + 5] = mm256_hadd_ss(r6);
-            out[i * c2 + j + 6] = mm256_hadd_ss(r7);
-            out[i * c2 + j + 7] = mm256_hadd_ss(r8);
+            for (std::size_t j = c2 - c2 % 8; j < c2; ++j) {
+                __m256 r1 = _mm256_setzero_ps();
+
+                for (std::size_t k = 0; k < m1; ++k) {
+                    for (std::size_t l = 0; l + 7 < m2; l += 8) {
+                        __m256 tmp1 = _mm256_loadu_ps(in + (i + k) * n2 + j + l);
+                        __m256 tmp3 = _mm256_loadu_ps(kernel + k * m2 + l);
+                        __m256 tmp4 = _mm256_mul_ps(tmp1, tmp3);
+                        r1          = _mm256_add_ps(r1, tmp4);
+                    }
+                }
+
+                out[i * c2 + j] = mm256_hadd_ss(r1);
+            }
         }
+    } else {
+        for (std::size_t i = 0; i < c1; ++i) {
+            for (std::size_t j = 0; j + 7 < c2; j += 8) {
+                __m256 r1 = _mm256_setzero_ps();
+                __m256 r2 = _mm256_setzero_ps();
+                __m256 r3 = _mm256_setzero_ps();
+                __m256 r4 = _mm256_setzero_ps();
+                __m256 r5 = _mm256_setzero_ps();
+                __m256 r6 = _mm256_setzero_ps();
+                __m256 r7 = _mm256_setzero_ps();
+                __m256 r8 = _mm256_setzero_ps();
 
-        for (std::size_t j = c2 - c2 % 8; j < c2; ++j) {
-            __m256 r1 = _mm256_setzero_ps();
+                for (std::size_t k = 0; k < m1; ++k) {
+                    for (std::size_t l = 0; l + 7 < m2; l += 8) {
+                        __m256 k1 = _mm256_loadu_ps(kernel + k * m2 + l);
 
-            for (std::size_t k = 0; k < m1; ++k) {
-                for (std::size_t l = 0; l + 7 < m2; l += 8) {
-                    __m256 tmp1 = _mm256_loadu_ps(in + (i + k) * n2 + j + l);
-                    __m256 tmp3 = _mm256_loadu_ps(kernel + k * m2 + l);
-                    __m256 tmp4 = _mm256_mul_ps(tmp1, tmp3);
-                    r1          = _mm256_add_ps(r1, tmp4);
+                        __m256 i1 = _mm256_loadu_ps(in + (i + k) * n2 + j + 0 + l);
+                        __m256 i2 = _mm256_loadu_ps(in + (i + k) * n2 + j + 1 + l);
+                        __m256 i3 = _mm256_loadu_ps(in + (i + k) * n2 + j + 2 + l);
+                        __m256 i4 = _mm256_loadu_ps(in + (i + k) * n2 + j + 3 + l);
+
+#ifdef __FMA__
+                        r1 = _mm256_fmadd_ps(i1, k1, r1);
+                        r2 = _mm256_fmadd_ps(i2, k1, r2);
+                        r3 = _mm256_fmadd_ps(i3, k1, r3);
+                        r4 = _mm256_fmadd_ps(i4, k1, r4);
+#else
+                        __m256 t1 = _mm256_mul_ps(i1, k1);
+                        __m256 t2 = _mm256_mul_ps(i2, k1);
+                        __m256 t3 = _mm256_mul_ps(i3, k1);
+                        __m256 t4 = _mm256_mul_ps(i4, k1);
+
+                        r1 = _mm256_add_ps(r1, t1);
+                        r2 = _mm256_add_ps(r2, t2);
+                        r3 = _mm256_add_ps(r3, t3);
+                        r4 = _mm256_add_ps(r4, t4);
+#endif
+
+                        __m256 i5 = _mm256_loadu_ps(in + (i + k) * n2 + j + 4 + l);
+                        __m256 i6 = _mm256_loadu_ps(in + (i + k) * n2 + j + 5 + l);
+                        __m256 i7 = _mm256_loadu_ps(in + (i + k) * n2 + j + 6 + l);
+                        __m256 i8 = _mm256_loadu_ps(in + (i + k) * n2 + j + 7 + l);
+
+#ifdef __FMA__
+                        r5 = _mm256_fmadd_ps(i5, k1, r5);
+                        r6 = _mm256_fmadd_ps(i6, k1, r6);
+                        r7 = _mm256_fmadd_ps(i7, k1, r7);
+                        r8 = _mm256_fmadd_ps(i8, k1, r8);
+#else
+                        __m256 t5 = _mm256_mul_ps(i5, k1);
+                        __m256 t6 = _mm256_mul_ps(i6, k1);
+                        __m256 t7 = _mm256_mul_ps(i7, k1);
+                        __m256 t8 = _mm256_mul_ps(i8, k1);
+
+                        r5 = _mm256_add_ps(r5, t5);
+                        r6 = _mm256_add_ps(r6, t6);
+                        r7 = _mm256_add_ps(r7, t7);
+                        r8 = _mm256_add_ps(r8, t8);
+#endif
+                    }
                 }
+
+                out[i * c2 + j + 0] = beta * out[i * c2 + j + 0] + mm256_hadd_ss(r1);
+                out[i * c2 + j + 1] = beta * out[i * c2 + j + 1] + mm256_hadd_ss(r2);
+                out[i * c2 + j + 2] = beta * out[i * c2 + j + 2] + mm256_hadd_ss(r3);
+                out[i * c2 + j + 3] = beta * out[i * c2 + j + 3] + mm256_hadd_ss(r4);
+                out[i * c2 + j + 4] = beta * out[i * c2 + j + 4] + mm256_hadd_ss(r5);
+                out[i * c2 + j + 5] = beta * out[i * c2 + j + 5] + mm256_hadd_ss(r6);
+                out[i * c2 + j + 6] = beta * out[i * c2 + j + 6] + mm256_hadd_ss(r7);
+                out[i * c2 + j + 7] = beta * out[i * c2 + j + 7] + mm256_hadd_ss(r8);
             }
 
-            out[i * c2 + j] = mm256_hadd_ss(r1);
+            for (std::size_t j = c2 - c2 % 8; j < c2; ++j) {
+                __m256 r1 = _mm256_setzero_ps();
+
+                for (std::size_t k = 0; k < m1; ++k) {
+                    for (std::size_t l = 0; l + 7 < m2; l += 8) {
+                        __m256 tmp1 = _mm256_loadu_ps(in + (i + k) * n2 + j + l);
+                        __m256 tmp3 = _mm256_loadu_ps(kernel + k * m2 + l);
+                        __m256 tmp4 = _mm256_mul_ps(tmp1, tmp3);
+                        r1          = _mm256_add_ps(r1, tmp4);
+                    }
+                }
+
+                out[i * c2 + j] = beta * out[i * c2 + j] + mm256_hadd_ss(r1);
+            }
         }
     }
 
@@ -671,9 +837,9 @@ inline void conv2_valid_flipped_micro_kernel(const float* in, std::size_t n1, st
     }
 }
 
-inline void conv2_valid_micro_kernel(const float* in, std::size_t n1, std::size_t n2, const float* kernel, std::size_t m1, std::size_t m2, float* out) {
+inline void conv2_valid_micro_kernel(const float* in, std::size_t n1, std::size_t n2, const float* kernel, std::size_t m1, std::size_t m2, float* out, float beta) {
     if(m2 < 8){
-        etl::impl::sse::conv2_valid_micro_kernel(in, n1, n2, kernel, m1, m2, out);
+        etl::impl::sse::conv2_valid_micro_kernel(in, n1, n2, kernel, m1, m2, out, beta);
         return;
     }
 
@@ -681,7 +847,7 @@ inline void conv2_valid_micro_kernel(const float* in, std::size_t n1, std::size_
 
     std::reverse_copy(kernel, kernel + m1 * m2, kernel_reverse.get());
 
-    conv2_valid_flipped_micro_kernel(in, n1, n2, kernel_reverse.get(), m1, m2, out);
+    conv2_valid_flipped_micro_kernel(in, n1, n2, kernel_reverse.get(), m1, m2, out, beta);
 }
 
 inline void conv2_same_micro_kernel(const float* in, std::size_t n1, std::size_t n2, const float* kernel, std::size_t m1, std::size_t m2, float* out) {
@@ -829,7 +995,7 @@ void conv2_valid(const opaque_memory<T, 2>& input, const opaque_memory<T, 2>& ke
     conv2_valid_micro_kernel(
         input.memory_start(), input.template dim<0>(), input.template dim<1>(),
         kernel.memory_start(), kernel.template dim<0>(), kernel.template dim<1>(),
-        conv.memory_start());
+        conv.memory_start(), 0.0);
 }
 
 template <typename T>
@@ -837,7 +1003,37 @@ void conv2_valid_flipped(const opaque_memory<T, 2>& input, const opaque_memory<T
     conv2_valid_flipped_micro_kernel(
         input.memory_start(), input.template dim<0>(), input.template dim<1>(),
         kernel.memory_start(), kernel.template dim<0>(), kernel.template dim<1>(),
-        conv.memory_start());
+        conv.memory_start(), 0.0);
+}
+
+template <typename T>
+void conv4_valid(const opaque_memory<T, 4>& input, const opaque_memory<T, 4>& kernel, const opaque_memory<T, 4>& conv) {
+    if(kernel.dim(1) > 0){
+        auto conv_i_inc = conv.dim(1) * conv.dim(2) * conv.dim(3);
+        auto conv_k_inc = conv.dim(2) * conv.dim(3);
+
+        auto kernel_k_inc = kernel.dim(1) * kernel.dim(2) * kernel.dim(3);
+        auto kernel_c_inc = kernel.dim(2) * kernel.dim(3);
+
+        auto input_i_inc = input.dim(1) * input.dim(2) * input.dim(3);
+        auto input_c_inc = input.dim(2) * input.dim(3);
+
+        for(std::size_t i = 0; i < input.dim(0); ++i){
+            for(std::size_t k = 0; k < kernel.dim(0); ++k){
+                conv2_valid_micro_kernel(
+                    input.memory_start() + i * input_i_inc, input.dim(2), input.dim(3),
+                    kernel.memory_start() + k * kernel_k_inc, kernel.dim(2), kernel.dim(3),
+                    conv.memory_start() + i * conv_i_inc + k * conv_k_inc, 0.0);
+
+                for(std::size_t c = 1; c < kernel.dim(1); ++c){
+                    conv2_valid_micro_kernel(
+                        input.memory_start() + i * input_i_inc + c * input_c_inc, input.dim(2), input.dim(3),
+                        kernel.memory_start() + k * kernel_k_inc + c * kernel_c_inc, kernel.dim(2), kernel.dim(3),
+                        conv.memory_start() + i * conv_i_inc + k * conv_k_inc, 1.0);
+                }
+            }
+        }
+    }
 }
 
 template <typename T>
@@ -986,6 +1182,14 @@ void conv2_full(const I& input, const K& kernel, C&& conv) {
  */
 template <typename I, typename K, typename C>
 void conv2_full_flipped(const I& input, const K& kernel, C&& conv) {
+    cpp_unused(input);
+    cpp_unused(kernel);
+    cpp_unused(conv);
+    cpp_unreachable("AVX not available/enabled");
+}
+
+template <typename T>
+void conv4_valid(const opaque_memory<T, 4>& input, const opaque_memory<T, 4>& kernel, const opaque_memory<T, 4>& conv){
     cpp_unused(input);
     cpp_unused(kernel);
     cpp_unused(conv);

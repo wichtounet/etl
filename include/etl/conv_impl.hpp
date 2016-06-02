@@ -32,6 +32,8 @@ enum class conv_impl {
  */
 enum class conv4_impl {
     STD,  ///< Standard implementation
+    SSE,  ///< SSE implementation
+    AVX,  ///< AVX implementation
     CUDNN ///< CUDNN implementation
 };
 
