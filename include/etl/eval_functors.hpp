@@ -122,8 +122,10 @@ struct vectorized_base {
      * \brief Assign rhs to lhs
      */
     void operator()() const {
+        decltype(auto) d = as_derived();
+
         //1. Peel loop (if necessary)
-        auto peeled = as_derived().peel_loop();
+        auto peeled = d.peel_loop();
 
         //2. Main vectorized loop
 
@@ -131,9 +133,9 @@ struct vectorized_base {
 
         if (_size - peeled >= IT::size) {
             if (reinterpret_cast<uintptr_t>(lhs_m + _first + peeled) % IT::alignment == 0) {
-                first = as_derived().aligned_main_loop(_first + peeled);
+                first = d.aligned_main_loop(_first + peeled);
             } else {
-                first = as_derived().unaligned_main_loop(_first + peeled);
+                first = d.unaligned_main_loop(_first + peeled);
             }
         } else {
             first += _first;
@@ -141,7 +143,7 @@ struct vectorized_base {
 
         //3. Remainder loop (non-vectorized)
 
-        as_derived().remainder_loop(first);
+        d.remainder_loop(first);
     }
 
 private:
