@@ -1037,6 +1037,36 @@ void conv4_valid(const opaque_memory<T, 4>& input, const opaque_memory<T, 4>& ke
 }
 
 template <typename T>
+void conv4_valid_flipped(const opaque_memory<T, 4>& input, const opaque_memory<T, 4>& kernel, const opaque_memory<T, 4>& conv) {
+    if(kernel.dim(1) > 0){
+        auto conv_i_inc = conv.dim(1) * conv.dim(2) * conv.dim(3);
+        auto conv_k_inc = conv.dim(2) * conv.dim(3);
+
+        auto kernel_k_inc = kernel.dim(1) * kernel.dim(2) * kernel.dim(3);
+        auto kernel_c_inc = kernel.dim(2) * kernel.dim(3);
+
+        auto input_i_inc = input.dim(1) * input.dim(2) * input.dim(3);
+        auto input_c_inc = input.dim(2) * input.dim(3);
+
+        for(std::size_t i = 0; i < input.dim(0); ++i){
+            for(std::size_t k = 0; k < kernel.dim(0); ++k){
+                conv2_valid_flipped_micro_kernel(
+                    input.memory_start() + i * input_i_inc, input.dim(2), input.dim(3),
+                    kernel.memory_start() + k * kernel_k_inc, kernel.dim(2), kernel.dim(3),
+                    conv.memory_start() + i * conv_i_inc + k * conv_k_inc, 0.0);
+
+                for(std::size_t c = 1; c < kernel.dim(1); ++c){
+                    conv2_valid_flipped_micro_kernel(
+                        input.memory_start() + i * input_i_inc + c * input_c_inc, input.dim(2), input.dim(3),
+                        kernel.memory_start() + k * kernel_k_inc + c * kernel_c_inc, kernel.dim(2), kernel.dim(3),
+                        conv.memory_start() + i * conv_i_inc + k * conv_k_inc, 1.0);
+                }
+            }
+        }
+    }
+}
+
+template <typename T>
 void conv2_same(const opaque_memory<T, 2>& input, const opaque_memory<T, 2>& kernel, const opaque_memory<T, 2>& conv) {
     conv2_same_micro_kernel(
         input.memory_start(), input.template dim<0>(), input.template dim<1>(),
@@ -1190,6 +1220,14 @@ void conv2_full_flipped(const I& input, const K& kernel, C&& conv) {
 
 template <typename T>
 void conv4_valid(const opaque_memory<T, 4>& input, const opaque_memory<T, 4>& kernel, const opaque_memory<T, 4>& conv){
+    cpp_unused(input);
+    cpp_unused(kernel);
+    cpp_unused(conv);
+    cpp_unreachable("AVX not available/enabled");
+}
+
+template <typename T>
+void conv4_valid_flipped(const opaque_memory<T, 4>& input, const opaque_memory<T, 4>& kernel, const opaque_memory<T, 4>& conv){
     cpp_unused(input);
     cpp_unused(kernel);
     cpp_unused(conv);
