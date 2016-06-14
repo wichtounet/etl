@@ -12,10 +12,7 @@
 
 #pragma once
 
-#include "internal/catch_tostring.h"
-
 #include <cmath>
-#include <limits>
 
 /*!
  * \brief Utility class to compare two complex numbers with a margin of error
@@ -89,7 +86,7 @@ struct ComplexApprox {
      */
     std::string toString() const {
         std::ostringstream oss;
-        oss << "ComplexApprox(" << Catch::toString(value) << ")";
+        oss << "ComplexApprox(" << value << ")";
         return oss.str();
     }
 
@@ -97,6 +94,8 @@ private:
     double eps;            ///< The epsilon for comparison
     std::complex<T> value; ///< The expected value
 };
+
+#ifndef ETL_DOCTEST
 
 namespace Catch {
 
@@ -117,3 +116,5 @@ inline std::string toString<ComplexApprox<double>>(const ComplexApprox<double>& 
 }
 
 } // end of namespace Catch
+
+#endif
