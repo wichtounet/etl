@@ -430,7 +430,7 @@ TEMPLATE_TEST_CASE_2("fast_matrix/div_2", "fast_matrix::operator/", Z, float, do
     REQUIRE_EQUALS_APPROX(a[2], 5.0 / 4.0);
 }
 
-TEST_CASE("fast_matrix/mod_scalar_1", "fast_matrix::operator%") {
+ETL_TEST_CASE("fast_matrix/mod_scalar_1", "fast_matrix::operator%") {
     etl::fast_matrix<int, 2, 2> test_matrix = {-1, 2, 5, 1};
 
     test_matrix = test_matrix % 2;
@@ -440,7 +440,7 @@ TEST_CASE("fast_matrix/mod_scalar_1", "fast_matrix::operator%") {
     REQUIRE_EQUALS(test_matrix[2], 5 % 2);
 }
 
-TEST_CASE("fast_matrix/mod_scalar_2", "fast_matrix::operator%") {
+ETL_TEST_CASE("fast_matrix/mod_scalar_2", "fast_matrix::operator%") {
     etl::fast_matrix<int, 2, 2> test_matrix = {-1, 2, 5, 1};
 
     test_matrix = 2 % test_matrix;
@@ -450,7 +450,7 @@ TEST_CASE("fast_matrix/mod_scalar_2", "fast_matrix::operator%") {
     REQUIRE_EQUALS(test_matrix[2], 2 % 5);
 }
 
-TEST_CASE("fast_matrix/mod_scalar_3", "fast_matrix::operator%=") {
+ETL_TEST_CASE("fast_matrix/mod_scalar_3", "fast_matrix::operator%=") {
     etl::fast_matrix<int, 2, 2> test_matrix = {-1, 2, 5, 1};
 
     test_matrix %= 2;
@@ -460,7 +460,7 @@ TEST_CASE("fast_matrix/mod_scalar_3", "fast_matrix::operator%=") {
     REQUIRE_EQUALS(test_matrix[2], 5 % 2);
 }
 
-TEST_CASE("fast_matrix/mod_1", "fast_matrix::operator%") {
+ETL_TEST_CASE("fast_matrix/mod_1", "fast_matrix::operator%") {
     etl::fast_matrix<int, 2, 2> a = {-1, 2, 5, 1};
     etl::fast_matrix<int, 2, 2> b = {2, 3, 4, 1};
 
@@ -471,7 +471,7 @@ TEST_CASE("fast_matrix/mod_1", "fast_matrix::operator%") {
     REQUIRE_EQUALS(c[2], 5 % 4);
 }
 
-TEST_CASE("fast_matrix/mod_2", "fast_matrix::operator%=") {
+ETL_TEST_CASE("fast_matrix/mod_2", "fast_matrix::operator%=") {
     etl::fast_matrix<int, 2, 2> a = {-1, 2, 5, 1};
     etl::fast_matrix<int, 2, 2> b = {2, 3, 4, 1};
 

@@ -368,7 +368,7 @@ TEMPLATE_TEST_CASE_2("dyn_matrix/div_2", "dyn_matrix::operator/", Z, double, flo
     REQUIRE_EQUALS_APPROX(a[2], 5.0 / 4.0);
 }
 
-TEST_CASE("dyn_matrix/mod_scalar_1", "dyn_matrix::operator%") {
+ETL_TEST_CASE("dyn_matrix/mod_scalar_1", "dyn_matrix::operator%") {
     etl::dyn_matrix<int> test_matrix(2, 2, std::initializer_list<int>({-1, 2, 5, 1}));
 
     test_matrix = test_matrix % 2;
@@ -378,7 +378,7 @@ TEST_CASE("dyn_matrix/mod_scalar_1", "dyn_matrix::operator%") {
     REQUIRE_EQUALS(test_matrix[2], 5 % 2);
 }
 
-TEST_CASE("dyn_matrix/mod_scalar_2", "dyn_matrix::operator%") {
+ETL_TEST_CASE("dyn_matrix/mod_scalar_2", "dyn_matrix::operator%") {
     etl::dyn_matrix<int> test_matrix(2, 2, std::initializer_list<int>({-1, 2, 5, 1}));
 
     test_matrix = 2 % test_matrix;
@@ -388,7 +388,7 @@ TEST_CASE("dyn_matrix/mod_scalar_2", "dyn_matrix::operator%") {
     REQUIRE_EQUALS(test_matrix[2], 2 % 5);
 }
 
-TEST_CASE("dyn_matrix/mod_scalar_3", "dyn_matrix::operator%=") {
+ETL_TEST_CASE("dyn_matrix/mod_scalar_3", "dyn_matrix::operator%=") {
     etl::dyn_matrix<int> test_matrix(2, 2, std::initializer_list<int>({-1, 2, 5, 1}));
 
     test_matrix %= 2;
@@ -398,7 +398,7 @@ TEST_CASE("dyn_matrix/mod_scalar_3", "dyn_matrix::operator%=") {
     REQUIRE_EQUALS(test_matrix[2], 5 % 2);
 }
 
-TEST_CASE("dyn_matrix/mod_1", "dyn_matrix::operator%") {
+ETL_TEST_CASE("dyn_matrix/mod_1", "dyn_matrix::operator%") {
     etl::dyn_matrix<int> a(2, 2, std::initializer_list<int>({-1, 2, 5, 1}));
     etl::dyn_matrix<int> b(2, 2, std::initializer_list<int>({2, 3, 4, 1}));
 
@@ -409,7 +409,7 @@ TEST_CASE("dyn_matrix/mod_1", "dyn_matrix::operator%") {
     REQUIRE_EQUALS(c[2], 5 % 4);
 }
 
-TEST_CASE("dyn_matrix/mod_2", "dyn_matrix::operator%=") {
+ETL_TEST_CASE("dyn_matrix/mod_2", "dyn_matrix::operator%=") {
     etl::dyn_matrix<int> a(2, 2, std::initializer_list<int>({-1, 2, 5, 1}));
     etl::dyn_matrix<int> b(2, 2, std::initializer_list<int>({2, 3, 4, 1}));
 
@@ -768,7 +768,7 @@ TEMPLATE_TEST_CASE_2("dyn_matrix/swap_3", "", Z, float, double) {
 
 //Make sure assign between matrices of different are compiling correctly
 
-TEST_CASE("dyn_matrix/assign_two_types", "") {
+ETL_TEST_CASE("dyn_matrix/assign_two_types", "") {
     etl::dyn_matrix<double> a(3, 2, etl::values(-1.0, 2.0, 5.0, 1.0, 1.1, 1.9));
     etl::dyn_matrix<float> b(3, 2, etl::values(1.0, 3.3, 4.4, 9, 10.1, -1.1));
 
@@ -785,7 +785,7 @@ TEST_CASE("dyn_matrix/assign_two_types", "") {
 
 //Make sure default construction is possible and then size is modifiable
 
-TEST_CASE("dyn_matrix/default_constructor_1", "") {
+ETL_TEST_CASE("dyn_matrix/default_constructor_1", "") {
     etl::dyn_matrix<double> def_a;
     etl::dyn_matrix<float> def_b;
 
@@ -808,7 +808,7 @@ TEST_CASE("dyn_matrix/default_constructor_1", "") {
     REQUIRE_EQUALS(def_b(1, 1), 9.0);
 }
 
-TEST_CASE("dyn_matrix/resize/1", "[dyn][resize]") {
+ETL_TEST_CASE("dyn_matrix/resize/1", "[dyn][resize]") {
     etl::dyn_matrix<float> a(10, 2);
 
     for (std::size_t i = 0; i < 20; ++i) {
@@ -830,7 +830,7 @@ TEST_CASE("dyn_matrix/resize/1", "[dyn][resize]") {
     }
 }
 
-TEST_CASE("dyn_matrix/resize/2", "[dyn][resize]") {
+ETL_TEST_CASE("dyn_matrix/resize/2", "[dyn][resize]") {
     etl::dyn_matrix<float> a;
 
     a.resize(10, 2);
@@ -844,7 +844,7 @@ TEST_CASE("dyn_matrix/resize/2", "[dyn][resize]") {
     REQUIRE_EQUALS(etl::dim<1>(a), 2UL);
 }
 
-TEST_CASE("dyn_matrix/resize/3", "[dyn][resize]") {
+ETL_TEST_CASE("dyn_matrix/resize/3", "[dyn][resize]") {
     etl::dyn_matrix<float> a(10, 2);
 
     for (std::size_t i = 0; i < 20; ++i) {
@@ -866,7 +866,7 @@ TEST_CASE("dyn_matrix/resize/3", "[dyn][resize]") {
     }
 }
 
-TEST_CASE("dyn_matrix/resize_array/1", "[dyn][resize]") {
+ETL_TEST_CASE("dyn_matrix/resize_array/1", "[dyn][resize]") {
     etl::dyn_matrix<float> a(10, 2);
 
     for (std::size_t i = 0; i < 20; ++i) {
@@ -889,7 +889,7 @@ TEST_CASE("dyn_matrix/resize_array/1", "[dyn][resize]") {
     }
 }
 
-TEST_CASE("dyn_matrix/resize_array/2", "[dyn][resize]") {
+ETL_TEST_CASE("dyn_matrix/resize_array/2", "[dyn][resize]") {
     etl::dyn_matrix<float> a;
 
     a.resize_arr(std::array<std::size_t, 2>{{10, 2}});
@@ -903,7 +903,7 @@ TEST_CASE("dyn_matrix/resize_array/2", "[dyn][resize]") {
     REQUIRE_EQUALS(etl::dim<1>(a), 2UL);
 }
 
-TEST_CASE("dyn_matrix/resize_array/3", "[dyn][resize]") {
+ETL_TEST_CASE("dyn_matrix/resize_array/3", "[dyn][resize]") {
     etl::dyn_matrix<float> a(10, 2);
 
     for (std::size_t i = 0; i < 20; ++i) {
@@ -925,7 +925,7 @@ TEST_CASE("dyn_matrix/resize_array/3", "[dyn][resize]") {
     }
 }
 
-TEST_CASE("dyn_matrix/default_constructor_2", "") {
+ETL_TEST_CASE("dyn_matrix/default_constructor_2", "") {
     std::vector<etl::dyn_matrix<double>> values(10);
 
     REQUIRE_EQUALS(values[0].size(), 0UL);
@@ -941,7 +941,7 @@ etl::dyn_matrix<double, 3> test_return() {
     return etl::dyn_matrix<double, 3>(3, 8, 1);
 }
 
-TEST_CASE("dyn_matrix/default_constructor_3", "") {
+ETL_TEST_CASE("dyn_matrix/default_constructor_3", "") {
     std::vector<etl::dyn_matrix<double, 3>> values;
 
     values.emplace_back();
@@ -996,7 +996,7 @@ bool one_of(T first, T v1, T v2, T v3, T v4, T v5) {
     return first == v1 || first == v2 || first == v3 || first == v4 || first == v5;
 }
 
-TEST_CASE("dyn_matrix/vector_shuffle", "") {
+ETL_TEST_CASE("dyn_matrix/vector_shuffle", "") {
     std::vector<etl::dyn_matrix<double, 3>> values;
 
     values.emplace_back(5, 5, 1, 1.0);
@@ -1023,7 +1023,7 @@ TEST_CASE("dyn_matrix/vector_shuffle", "") {
     REQUIRE_DIRECT(one_of(etl::size(values[4]), 25UL, 8UL, 6Ul, 1000UL, 1UL));
 }
 
-TEST_CASE("dyn_matrix/parallel_vector_shuffle", "") {
+ETL_TEST_CASE("dyn_matrix/parallel_vector_shuffle", "") {
     std::vector<etl::dyn_matrix<double, 3>> values_1;
     std::vector<etl::dyn_matrix<double, 3>> values_2;
 

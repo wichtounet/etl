@@ -5,15 +5,13 @@
 //  http://opensource.org/licenses/MIT)
 //=======================================================================
 
-#include "catch.hpp"
-#include "fast_catch.hpp"
-#include "template_test.hpp"
+#include "compat.hpp"
 
 #include "cpp_utils/tmp.hpp"
 #include "cpp_utils/assert.hpp"
 #include "etl/tmp.hpp"
 
-TEST_CASE("tmp/sequence_equal/1", "[tmp]") {
+ETL_TEST_CASE("tmp/sequence_equal/1", "[tmp]") {
     REQUIRE_DIRECT((etl::sequence_equal<std::index_sequence<2>, std::index_sequence<2>>::value));
     REQUIRE_DIRECT((etl::sequence_equal<std::index_sequence<>, std::index_sequence<>>::value));
     REQUIRE_DIRECT((etl::sequence_equal<std::index_sequence<1, 2>, std::index_sequence<1, 2>>::value));

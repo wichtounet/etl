@@ -7,7 +7,7 @@
 
 #include "test.hpp"
 
-TEST_CASE("inv/1", "[inv]") {
+ETL_TEST_CASE("inv/1", "[inv]") {
     etl::fast_matrix<double, 3, 3> a{0.0, 1.0, 0.0, 0.0, 0.0, 1.0, 1.0, 0.0, 0.0};
     etl::fast_matrix<double, 3, 3> c;
 
@@ -24,7 +24,7 @@ TEST_CASE("inv/1", "[inv]") {
     REQUIRE_EQUALS(c[8], 0.0);
 }
 
-TEST_CASE("inv/2", "[inv]") {
+ETL_TEST_CASE("inv/2", "[inv]") {
     etl::fast_matrix<double, 3, 3> a{1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0};
     etl::fast_matrix<double, 3, 3> c;
 
@@ -41,7 +41,7 @@ TEST_CASE("inv/2", "[inv]") {
     REQUIRE_EQUALS(c[8], 1.0);
 }
 
-TEST_CASE("inv/3", "[inv]") {
+ETL_TEST_CASE("inv/3", "[inv]") {
     etl::fast_matrix<double, 2, 2> a{1.0, 0.0, 2.0, 3.0};
     etl::fast_matrix<double, 2, 2> c;
 
@@ -53,7 +53,7 @@ TEST_CASE("inv/3", "[inv]") {
     REQUIRE_EQUALS_APPROX(c[3], 0.3333333);
 }
 
-TEST_CASE("inv/4", "[inv]") {
+ETL_TEST_CASE("inv/4", "[inv]") {
     etl::fast_matrix<double, 3, 3> a{1.0, 0.0, 0.0, 2.0, 3.0, 0.0, 4.0, 5.0, 6.0};
     etl::fast_matrix<double, 3, 3> c;
 
@@ -72,7 +72,7 @@ TEST_CASE("inv/4", "[inv]") {
     REQUIRE_EQUALS_APPROX(c[8], 0.1666667);
 }
 
-TEST_CASE("inv/5", "[inv]") {
+ETL_TEST_CASE("inv/5", "[inv]") {
     etl::fast_matrix<double, 2, 2> a{1.0, 2.0, 0.0, 3.0};
     etl::fast_matrix<double, 2, 2> c;
 
@@ -84,7 +84,7 @@ TEST_CASE("inv/5", "[inv]") {
     REQUIRE_EQUALS_APPROX(c[3], 0.3333333);
 }
 
-TEST_CASE("inv/6", "[inv]") {
+ETL_TEST_CASE("inv/6", "[inv]") {
     etl::fast_matrix<double, 3, 3> a{1.0, 2.0, 3.0, 0.0, 4.0, 5.0, 0.0, 0.0, 6.0};
     etl::fast_matrix<double, 3, 3> c;
 
@@ -103,7 +103,7 @@ TEST_CASE("inv/6", "[inv]") {
     REQUIRE_EQUALS_APPROX(c[8], 0.1666667);
 }
 
-TEST_CASE("inv/7", "[inv]") {
+ETL_TEST_CASE("inv/7", "[inv]") {
     etl::fast_matrix<double, 3, 3> a{1.0, 2.0, 3.0, 4.0, 4.0, 5.0, 4.0, 5.0, 6.0};
     etl::fast_matrix<double, 3, 3> c;
 

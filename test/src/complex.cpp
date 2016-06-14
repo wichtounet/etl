@@ -12,7 +12,7 @@
 #define CZ(a, b) std::complex<Z>(a, b)
 #define ECZ(a, b) etl::complex<Z>(a, b)
 
-TEST_CASE("etl_complex/1", "[complex]") {
+ETL_TEST_CASE("etl_complex/1", "[complex]") {
     REQUIRE_EQUALS(sizeof(etl::complex<float>), sizeof(std::complex<float>));
     REQUIRE_EQUALS(sizeof(etl::complex<double>), sizeof(std::complex<double>));
 

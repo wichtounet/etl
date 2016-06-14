@@ -7,7 +7,7 @@
 
 #include "test_light.hpp"
 
-TEST_CASE("optimize/6", "[fast][optimizer]") {
+ETL_TEST_CASE("optimize/6", "[fast][optimizer]") {
     etl::fast_vector<double, 3> a({1.0, -2.0, 3.0});
     etl::fast_vector<double, 3> b;
 
@@ -16,7 +16,7 @@ TEST_CASE("optimize/6", "[fast][optimizer]") {
     REQUIRE_EQUALS(b[0], 0.0);
 }
 
-TEST_CASE("optimize/7", "[fast][optimizer]") {
+ETL_TEST_CASE("optimize/7", "[fast][optimizer]") {
     etl::fast_vector<double, 3> a({1.0, -2.0, 3.0});
     etl::fast_vector<double, 3> b;
 
@@ -25,7 +25,7 @@ TEST_CASE("optimize/7", "[fast][optimizer]") {
     REQUIRE_EQUALS(b[0], 1.0);
 }
 
-TEST_CASE("optimize/8", "[fast][optimizer]") {
+ETL_TEST_CASE("optimize/8", "[fast][optimizer]") {
     etl::fast_vector<double, 3> a({1.0, -2.0, 3.0});
     etl::fast_vector<double, 3> b;
 
@@ -34,7 +34,7 @@ TEST_CASE("optimize/8", "[fast][optimizer]") {
     REQUIRE_EQUALS(b[0], 2.0);
 }
 
-TEST_CASE("optimize/10", "[fast][optimizer]") {
+ETL_TEST_CASE("optimize/10", "[fast][optimizer]") {
     etl::fast_vector<double, 3> a({1.0, -2.0, 3.0});
     etl::fast_vector<double, 3> b;
 

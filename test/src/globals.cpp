@@ -7,7 +7,7 @@
 
 #include "test.hpp"
 
-TEST_CASE("globals/1", "[globals]") {
+ETL_TEST_CASE("globals/1", "[globals]") {
     etl::fast_matrix<double, 2, 2> a;
 
     REQUIRE_DIRECT(a.is_square());
@@ -25,7 +25,7 @@ TEST_CASE("globals/1", "[globals]") {
     REQUIRE_DIRECT(!is_rectangular(a + a));
 }
 
-TEST_CASE("globals/2", "[globals]") {
+ETL_TEST_CASE("globals/2", "[globals]") {
     etl::fast_matrix<double, 3, 2> a;
 
     REQUIRE_DIRECT(!a.is_square());
@@ -43,7 +43,7 @@ TEST_CASE("globals/2", "[globals]") {
     REQUIRE_DIRECT(is_rectangular(a + a));
 }
 
-TEST_CASE("globals/3", "[globals]") {
+ETL_TEST_CASE("globals/3", "[globals]") {
     etl::fast_matrix<double, 3, 2, 2> a;
 
     REQUIRE_DIRECT(a.is_sub_square());
@@ -63,7 +63,7 @@ TEST_CASE("globals/3", "[globals]") {
     REQUIRE_DIRECT(!is_sub_rectangular(a + a));
 }
 
-TEST_CASE("globals/4", "[globals]") {
+ETL_TEST_CASE("globals/4", "[globals]") {
     etl::fast_matrix<double, 3, 2, 3> a;
 
     REQUIRE_DIRECT(!a.is_sub_square());
@@ -83,7 +83,7 @@ TEST_CASE("globals/4", "[globals]") {
     REQUIRE_DIRECT(is_sub_rectangular(a + a));
 }
 
-TEST_CASE("globals/is_symmetric/1", "[globals]") {
+ETL_TEST_CASE("globals/is_symmetric/1", "[globals]") {
     etl::fast_matrix<double, 2, 2> a{1.0, 2.0, 2.0, 1.0};
 
     REQUIRE_DIRECT(a.is_symmetric());
@@ -95,7 +95,7 @@ TEST_CASE("globals/is_symmetric/1", "[globals]") {
     REQUIRE_DIRECT(is_symmetric(expr));
 }
 
-TEST_CASE("globals/is_symmetric/2", "[globals]") {
+ETL_TEST_CASE("globals/is_symmetric/2", "[globals]") {
     etl::fast_matrix<double, 3, 3> a{1.0, 2.0, 3.0, 2.0, 2.0, 4.0, 3.0, 4.0, 3.0};
 
     REQUIRE_DIRECT(a.is_symmetric());
@@ -107,7 +107,7 @@ TEST_CASE("globals/is_symmetric/2", "[globals]") {
     REQUIRE_DIRECT(is_symmetric(expr));
 }
 
-TEST_CASE("globals/is_symmetric/3", "[globals]") {
+ETL_TEST_CASE("globals/is_symmetric/3", "[globals]") {
     etl::fast_matrix<double, 3, 3> a{2.0, 2.0, 3.0, 5.0, 2.0, 4.0, 3.0, 4.0, 3.0};
     etl::fast_matrix<double, 9, 1> b{2.0, 2.0, 3.0, 5.0, 2.0, 4.0, 3.0, 4.0, 3.0};
 
@@ -123,7 +123,7 @@ TEST_CASE("globals/is_symmetric/3", "[globals]") {
     REQUIRE_DIRECT(!is_symmetric(b));
 }
 
-TEST_CASE("globals/is_lower_triangular/1", "[globals]") {
+ETL_TEST_CASE("globals/is_lower_triangular/1", "[globals]") {
     etl::fast_matrix<double, 2, 2> a{1.0, 0.0, 2.0, 1.0};
 
     REQUIRE_DIRECT(a.is_lower_triangular());
@@ -139,7 +139,7 @@ TEST_CASE("globals/is_lower_triangular/1", "[globals]") {
     REQUIRE_DIRECT(is_triangular(expr));
 }
 
-TEST_CASE("globals/is_lower_triangular/2", "[globals]") {
+ETL_TEST_CASE("globals/is_lower_triangular/2", "[globals]") {
     etl::fast_matrix<double, 3, 3> a{1.0, 0.0, 0.0, 2.0, 2.0, 0.0, 3.0, 4.0, 3.0};
 
     REQUIRE_DIRECT(a.is_lower_triangular());
@@ -155,7 +155,7 @@ TEST_CASE("globals/is_lower_triangular/2", "[globals]") {
     REQUIRE_DIRECT(is_triangular(expr));
 }
 
-TEST_CASE("globals/is_lower_triangular/3", "[globals]") {
+ETL_TEST_CASE("globals/is_lower_triangular/3", "[globals]") {
     etl::fast_matrix<double, 3, 3> a{2.0, 2.0, 3.0, 5.0, 2.0, 4.0, 3.0, 4.0, 3.0};
     etl::fast_matrix<double, 1, 9> b{2.0, 2.0, 3.0, 5.0, 2.0, 4.0, 3.0, 4.0, 3.0};
 
@@ -177,7 +177,7 @@ TEST_CASE("globals/is_lower_triangular/3", "[globals]") {
     REQUIRE_DIRECT(!is_triangular(b));
 }
 
-TEST_CASE("globals/is_strictly_lower_triangular/1", "[globals]") {
+ETL_TEST_CASE("globals/is_strictly_lower_triangular/1", "[globals]") {
     etl::fast_matrix<double, 2, 2> a{0.0, 0.0, 2.0, 0.0};
 
     REQUIRE_DIRECT(a.is_strictly_lower_triangular());
@@ -189,7 +189,7 @@ TEST_CASE("globals/is_strictly_lower_triangular/1", "[globals]") {
     REQUIRE_DIRECT(is_strictly_lower_triangular(expr));
 }
 
-TEST_CASE("globals/is_strictly_lower_triangular/2", "[globals]") {
+ETL_TEST_CASE("globals/is_strictly_lower_triangular/2", "[globals]") {
     etl::fast_matrix<double, 3, 3> a{0.0, 0.0, 0.0, 2.0, 0.0, 0.0, 3.0, 4.0, 0.0};
 
     REQUIRE_DIRECT(a.is_strictly_lower_triangular());
@@ -201,7 +201,7 @@ TEST_CASE("globals/is_strictly_lower_triangular/2", "[globals]") {
     REQUIRE_DIRECT(is_strictly_lower_triangular(expr));
 }
 
-TEST_CASE("globals/is_strictly_lower_triangular/3", "[globals]") {
+ETL_TEST_CASE("globals/is_strictly_lower_triangular/3", "[globals]") {
     etl::fast_matrix<double, 3, 3> a{2.0, 2.0, 3.0, 5.0, 2.0, 4.0, 3.0, 4.0, 3.0};
     etl::fast_matrix<double, 9, 1> b{2.0, 2.0, 3.0, 5.0, 2.0, 4.0, 3.0, 4.0, 3.0};
 
@@ -217,7 +217,7 @@ TEST_CASE("globals/is_strictly_lower_triangular/3", "[globals]") {
     REQUIRE_DIRECT(!is_strictly_lower_triangular(b));
 }
 
-TEST_CASE("globals/is_upper_triangular/1", "[globals]") {
+ETL_TEST_CASE("globals/is_upper_triangular/1", "[globals]") {
     etl::fast_matrix<double, 2, 2> a{1.0, 1.0, 0.0, 1.0};
 
     REQUIRE_DIRECT(a.is_upper_triangular());
@@ -229,7 +229,7 @@ TEST_CASE("globals/is_upper_triangular/1", "[globals]") {
     REQUIRE_DIRECT(is_upper_triangular(expr));
 }
 
-TEST_CASE("globals/is_upper_triangular/2", "[globals]") {
+ETL_TEST_CASE("globals/is_upper_triangular/2", "[globals]") {
     etl::fast_matrix<double, 3, 3> a{1.0, 2.0, 3.0, 0.0, 2.0, 1.0, 0.0, 0.0, 3.0};
 
     REQUIRE_DIRECT(a.is_upper_triangular());
@@ -241,7 +241,7 @@ TEST_CASE("globals/is_upper_triangular/2", "[globals]") {
     REQUIRE_DIRECT(is_upper_triangular(expr));
 }
 
-TEST_CASE("globals/is_upper_triangular/3", "[globals]") {
+ETL_TEST_CASE("globals/is_upper_triangular/3", "[globals]") {
     etl::fast_matrix<double, 3, 3> a{2.0, 2.0, 3.0, 5.0, 2.0, 4.0, 3.0, 4.0, 3.0};
     etl::fast_matrix<double, 9, 1> b{2.0, 2.0, 3.0, 5.0, 2.0, 4.0, 3.0, 4.0, 3.0};
 
@@ -257,7 +257,7 @@ TEST_CASE("globals/is_upper_triangular/3", "[globals]") {
     REQUIRE_DIRECT(!is_upper_triangular(b));
 }
 
-TEST_CASE("globals/is_strictly_upper_triangular/1", "[globals]") {
+ETL_TEST_CASE("globals/is_strictly_upper_triangular/1", "[globals]") {
     etl::fast_matrix<double, 2, 2> a{0.0, 1.0, 0.0, 0.0};
 
     REQUIRE_DIRECT(a.is_strictly_upper_triangular());
@@ -269,7 +269,7 @@ TEST_CASE("globals/is_strictly_upper_triangular/1", "[globals]") {
     REQUIRE_DIRECT(is_strictly_upper_triangular(expr));
 }
 
-TEST_CASE("globals/is_strictly_upper_triangular/2", "[globals]") {
+ETL_TEST_CASE("globals/is_strictly_upper_triangular/2", "[globals]") {
     etl::fast_matrix<double, 3, 3> a{0.0, 2.0, 3.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0};
 
     REQUIRE_DIRECT(a.is_strictly_upper_triangular());
@@ -281,7 +281,7 @@ TEST_CASE("globals/is_strictly_upper_triangular/2", "[globals]") {
     REQUIRE_DIRECT(is_strictly_upper_triangular(expr));
 }
 
-TEST_CASE("globals/is_strictly_upper_triangular/3", "[globals]") {
+ETL_TEST_CASE("globals/is_strictly_upper_triangular/3", "[globals]") {
     etl::fast_matrix<double, 3, 3> a{2.0, 2.0, 3.0, 5.0, 2.0, 4.0, 3.0, 4.0, 3.0};
     etl::fast_matrix<double, 9, 1> b{2.0, 2.0, 3.0, 5.0, 2.0, 4.0, 3.0, 4.0, 3.0};
 
@@ -297,7 +297,7 @@ TEST_CASE("globals/is_strictly_upper_triangular/3", "[globals]") {
     REQUIRE_DIRECT(!is_strictly_upper_triangular(b));
 }
 
-TEST_CASE("globals/is_uniform/1", "[globals]") {
+ETL_TEST_CASE("globals/is_uniform/1", "[globals]") {
     etl::fast_matrix<double, 3, 3> a(1.0);
 
     REQUIRE_DIRECT(a.is_uniform());
@@ -309,7 +309,7 @@ TEST_CASE("globals/is_uniform/1", "[globals]") {
     REQUIRE_DIRECT(is_uniform(expr));
 }
 
-TEST_CASE("globals/is_uniform/2", "[globals]") {
+ETL_TEST_CASE("globals/is_uniform/2", "[globals]") {
     etl::fast_matrix<double, 3, 3> a{2.0, 2.0, 3.0, 5.0, 2.0, 4.0, 3.0, 4.0, 3.0};
 
     REQUIRE_DIRECT(!a.is_uniform());
@@ -321,7 +321,7 @@ TEST_CASE("globals/is_uniform/2", "[globals]") {
     REQUIRE_DIRECT(!is_uniform(expr));
 }
 
-TEST_CASE("globals/is_diagonal/1", "[globals]") {
+ETL_TEST_CASE("globals/is_diagonal/1", "[globals]") {
     etl::fast_matrix<double, 3, 3> a{1.0, 0.0, 0.0, 0.0, 2.0, 0.0, 0.0, 0.0, -1.0};
     etl::fast_matrix<double, 2, 4> b;
 
@@ -342,7 +342,7 @@ TEST_CASE("globals/is_diagonal/1", "[globals]") {
     REQUIRE_DIRECT(!is_diagonal(d));
 }
 
-TEST_CASE("globals/is_diagonal/2", "[globals]") {
+ETL_TEST_CASE("globals/is_diagonal/2", "[globals]") {
     etl::fast_matrix<double, 3, 3> a{1.0, 0.0, 0.0, 0.0, 2.0, 0.0, 1.0, 0.0, -1.0};
 
     REQUIRE_DIRECT(!a.is_diagonal());
@@ -354,7 +354,7 @@ TEST_CASE("globals/is_diagonal/2", "[globals]") {
     REQUIRE_DIRECT(!is_diagonal(expr));
 }
 
-TEST_CASE("globals/trace/1", "[globals]") {
+ETL_TEST_CASE("globals/trace/1", "[globals]") {
     etl::fast_matrix<double, 2, 2> a{1.0, 2.0, 3.0, 4.0};
 
     REQUIRE_EQUALS_APPROX(trace(a), 5.0);
@@ -364,7 +364,7 @@ TEST_CASE("globals/trace/1", "[globals]") {
     REQUIRE_EQUALS_APPROX(trace(expr), 10.0);
 }
 
-TEST_CASE("globals/trace/2", "[globals]") {
+ETL_TEST_CASE("globals/trace/2", "[globals]") {
     etl::fast_matrix<double, 3, 3> a{1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0};
 
     REQUIRE_EQUALS_APPROX(trace(a), 15.0);
@@ -374,7 +374,7 @@ TEST_CASE("globals/trace/2", "[globals]") {
     REQUIRE_EQUALS_APPROX(trace(expr), 30.0);
 }
 
-TEST_CASE("globals/is_real_complex/1", "[globals]") {
+ETL_TEST_CASE("globals/is_real_complex/1", "[globals]") {
     etl::fast_matrix<double, 3, 3> a;
     etl::fast_matrix<float, 3, 3> b;
     etl::fast_matrix<int, 3, 3> c;
@@ -403,7 +403,7 @@ TEST_CASE("globals/is_real_complex/1", "[globals]") {
     REQUIRE_DIRECT(etl::is_complex_matrix(h));
 }
 
-TEST_CASE("globals/is_hermitian/1", "[globals]") {
+ETL_TEST_CASE("globals/is_hermitian/1", "[globals]") {
     etl::fast_matrix<double, 3, 3> a;
     etl::fast_matrix<float, 3, 3> b;
     etl::fast_matrix<int, 3, 3> c;
@@ -417,7 +417,7 @@ TEST_CASE("globals/is_hermitian/1", "[globals]") {
     REQUIRE_DIRECT(!is_hermitian(e));
 }
 
-TEST_CASE("globals/is_hermitian/2", "[globals]") {
+ETL_TEST_CASE("globals/is_hermitian/2", "[globals]") {
     etl::fast_matrix<std::complex<double>, 3, 3> a;
     etl::fast_matrix<std::complex<float>, 3, 3> b;
     etl::fast_matrix<etl::complex<double>, 3, 3> c;
@@ -459,7 +459,7 @@ TEST_CASE("globals/is_hermitian/2", "[globals]") {
     REQUIRE_DIRECT(!is_hermitian(e));
 }
 
-TEST_CASE("globals/is_hermitian/3", "[globals]") {
+ETL_TEST_CASE("globals/is_hermitian/3", "[globals]") {
     etl::fast_matrix<std::complex<double>, 3, 3> a;
     etl::fast_matrix<std::complex<float>, 3, 3> b;
     etl::fast_matrix<etl::complex<double>, 3, 3> c;
@@ -499,7 +499,7 @@ TEST_CASE("globals/is_hermitian/3", "[globals]") {
     REQUIRE_DIRECT(is_hermitian(d));
 }
 
-TEST_CASE("globals/is_permutation/1", "[globals]") {
+ETL_TEST_CASE("globals/is_permutation/1", "[globals]") {
     etl::fast_matrix<double, 2, 2> a{1.0, 0.0, 1.0, 0.0};
     etl::fast_matrix<double, 2, 2> b{1.0, 1.0, 1.0, 0.0};
     etl::fast_matrix<double, 2, 2> c{1.0, 0.0, 0.0, 0.0};
@@ -515,7 +515,7 @@ TEST_CASE("globals/is_permutation/1", "[globals]") {
     REQUIRE_DIRECT(!is_permutation_matrix(f));
 }
 
-TEST_CASE("globals/is_permutation/2", "[globals]") {
+ETL_TEST_CASE("globals/is_permutation/2", "[globals]") {
     etl::fast_matrix<double, 3, 3> a{1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 1.0, 0.0, 0.0};
     etl::fast_matrix<double, 3, 3> b{1.0, 0.0, 1.0, 0.0, 1.0, 0.0, 1.0, 0.0, 0.0};
     etl::fast_matrix<double, 3, 3> c{1.1, 0.0, 0.0, 0.0, 1.0, 0.0, 1.0, 0.0, 0.0};
@@ -526,7 +526,7 @@ TEST_CASE("globals/is_permutation/2", "[globals]") {
     REQUIRE_DIRECT(!is_permutation_matrix(c));
 }
 
-TEST_CASE("globals/determinant/1", "[globals]") {
+ETL_TEST_CASE("globals/determinant/1", "[globals]") {
     etl::fast_matrix<double, 2, 2> a{1.0, 0.0, 0.0, 1.0};
     etl::fast_matrix<double, 2, 2> b{0.0, 1.0, 1.0, 0.0};
 
@@ -534,7 +534,7 @@ TEST_CASE("globals/determinant/1", "[globals]") {
     REQUIRE_EQUALS(determinant(b), -1.0);
 }
 
-TEST_CASE("globals/determinant/2", "[globals]") {
+ETL_TEST_CASE("globals/determinant/2", "[globals]") {
     etl::fast_matrix<double, 2, 2> a{1.0, 2.0, 3.0, 4.0};
     etl::fast_matrix<double, 2, 2> b{-2.0, 3.0, 5.0, -8.0};
 
@@ -542,7 +542,7 @@ TEST_CASE("globals/determinant/2", "[globals]") {
     REQUIRE_EQUALS_APPROX(determinant(b), 1.0);
 }
 
-TEST_CASE("globals/determinant/3", "[globals]") {
+ETL_TEST_CASE("globals/determinant/3", "[globals]") {
     etl::fast_matrix<double, 3, 3> a{-2, 3, 4, 5, -8, 1, 0, 2, 3};
     etl::fast_matrix<double, 3, 3> b{-2, 0.5, 4, 5, -1.5, 1, 0, 2, 3};
 

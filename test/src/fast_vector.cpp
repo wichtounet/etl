@@ -262,7 +262,7 @@ TEMPLATE_TEST_CASE_2("fast_vector/div_2", "fast_vector::operator/=", Z, float, d
     REQUIRE_EQUALS_APPROX(a[2], 5.0 / 4.0);
 }
 
-TEST_CASE("fast_vector/mod_scalar_1", "fast_vector::operator%") {
+ETL_TEST_CASE("fast_vector/mod_scalar_1", "fast_vector::operator%") {
     etl::fast_vector<int, 3> test_vector = {-1, 2, 5};
 
     test_vector = test_vector % 2;
@@ -272,7 +272,7 @@ TEST_CASE("fast_vector/mod_scalar_1", "fast_vector::operator%") {
     REQUIRE_EQUALS(test_vector[2], 5 % 2);
 }
 
-TEST_CASE("fast_vector/mod_scalar_2", "fast_vector::operator%") {
+ETL_TEST_CASE("fast_vector/mod_scalar_2", "fast_vector::operator%") {
     etl::fast_vector<int, 3> test_vector = {-1, 2, 5};
 
     test_vector = 2 % test_vector;
@@ -282,7 +282,7 @@ TEST_CASE("fast_vector/mod_scalar_2", "fast_vector::operator%") {
     REQUIRE_EQUALS(test_vector[2], 2 % 5);
 }
 
-TEST_CASE("fast_vector/mod_scalar_3", "fast_vector::operator%=") {
+ETL_TEST_CASE("fast_vector/mod_scalar_3", "fast_vector::operator%=") {
     etl::fast_vector<int, 3> test_vector = {-1, 2, 5};
 
     test_vector %= 2;
@@ -292,7 +292,7 @@ TEST_CASE("fast_vector/mod_scalar_3", "fast_vector::operator%=") {
     REQUIRE_EQUALS(test_vector[2], 5 % 2);
 }
 
-TEST_CASE("fast_vector/mod_1", "fast_vector::operator%") {
+ETL_TEST_CASE("fast_vector/mod_1", "fast_vector::operator%") {
     etl::fast_vector<int, 3> a = {-1, 2, 5};
     etl::fast_vector<int, 3> b = {2, 3, 4};
 
@@ -303,7 +303,7 @@ TEST_CASE("fast_vector/mod_1", "fast_vector::operator%") {
     REQUIRE_EQUALS(c[2], 5 % 4);
 }
 
-TEST_CASE("fast_vector/mod_2", "fast_vector::operator%") {
+ETL_TEST_CASE("fast_vector/mod_2", "fast_vector::operator%") {
     etl::fast_vector<int, 3> a = {-1, 2, 5};
     etl::fast_vector<int, 3> b = {2, 3, 4};
 
