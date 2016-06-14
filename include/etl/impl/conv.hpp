@@ -431,11 +431,11 @@ struct conv1_full_impl {
                 impl::standard::conv1_full(input, kernel, conv, first, last);
             }, 0, size(conv));
         } else if (impl == etl::conv_impl::FFT_STD) {
-            impl::standard::fft1_convolve(input, kernel, conv);
+            impl::standard::conv1_full_fft(input, kernel, conv);
         } else if (impl == etl::conv_impl::FFT_MKL) {
-            impl::blas::fft1_convolve(input, kernel, conv);
+            impl::blas::conv1_full(input, kernel, conv);
         } else if (impl == etl::conv_impl::FFT_CUFFT) {
-            impl::cufft::fft1_convolve(input, kernel, conv);
+            impl::cufft::conv1_full(input, kernel, conv);
         } else {
             cpp_unreachable("Invalid conv implementation selection");
         }
@@ -535,11 +535,11 @@ struct conv2_full_impl {
         } else if (impl == etl::conv_impl::STD) {
             impl::standard::conv2_full(input, kernel, conv);
         } else if (impl == etl::conv_impl::FFT_STD) {
-            impl::standard::fft2_convolve(i, k, c);
+            impl::standard::conv2_full_fft(i, k, c);
         } else if (impl == etl::conv_impl::FFT_MKL) {
-            impl::blas::fft2_convolve(i, k, c);
+            impl::blas::conv2_full(i, k, c);
         } else if (impl == etl::conv_impl::FFT_CUFFT) {
-            impl::cufft::fft2_convolve(i, k, c);
+            impl::cufft::conv2_full(i, k, c);
         } else {
             cpp_unreachable("Invalid conv implementation selection");
         }

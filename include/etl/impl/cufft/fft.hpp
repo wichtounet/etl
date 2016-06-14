@@ -501,7 +501,7 @@ void ifft1_many(A&& a, C&& c) {
 }
 
 template <typename A, typename B, typename C, cpp_enable_if(all_single_precision<A>::value)>
-void fft1_convolve(A&& a, B&& b, C&& c) {
+void conv1_full(A&& a, B&& b, C&& c) {
     using type = value_t<A>;
 
     auto handle = start_cufft();
@@ -547,7 +547,7 @@ void fft1_convolve(A&& a, B&& b, C&& c) {
 }
 
 template <typename A, typename B, typename C, cpp_enable_if(all_double_precision<A>::value)>
-void fft1_convolve(A&& a, B&& b, C&& c) {
+void conv1_full(A&& a, B&& b, C&& c) {
     using type = value_t<A>;
 
     auto handle = start_cufft();
@@ -807,7 +807,7 @@ inline cufftResult cufft_exec_c2c(cufftHandle plan, cufftDoubleComplex* idata, c
 }
 
 template <typename T>
-void fft2_convolve(const opaque_memory<T, 2>& a, const opaque_memory<T, 2>& b, const opaque_memory<T, 2>& c) {
+void conv2_full(const opaque_memory<T, 2>& a, const opaque_memory<T, 2>& b, const opaque_memory<T, 2>& c) {
     const std::size_t m1 = a.template dim<0>();
     const std::size_t n1 = b.template dim<0>();
     const std::size_t s1 = m1 + n1 - 1;
@@ -998,7 +998,7 @@ void ifft2_many(A&& a, C&& c) {
  * \param c The output matrix
  */
 template <typename A, typename B, typename C>
-void fft1_convolve(A&& a, B&& b, C&& c) {
+void conv1_full(A&& a, B&& b, C&& c) {
     cpp_unused(a);
     cpp_unused(b);
     cpp_unused(c);
@@ -1012,7 +1012,7 @@ void fft1_convolve(A&& a, B&& b, C&& c) {
  * \param c The output matrix
  */
 template <typename A, typename B, typename C>
-void fft2_convolve(A&& a, B&& b, C&& c) {
+void conv2_full(A&& a, B&& b, C&& c) {
     cpp_unused(a);
     cpp_unused(b);
     cpp_unused(c);
