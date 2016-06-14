@@ -301,10 +301,22 @@ void conv4_valid_filter(const I& input, const K& kernel, C&& conv) {
 
     conv = 0.0;
 
-    for(std::size_t i = 0; i < etl::dim<0>(input); ++i){
-        for (std::size_t k = 0; k < etl::dim<1>(kernel); ++k) {
-            for (std::size_t c = 0; c < etl::dim<1>(input); ++c) {
-                conv(k)(c) += conv_2d_valid(input(i)(c), kernel(i)(k));
+    for(std::size_t ii = 0; ii < etl::dim<0>(input); ++ii){
+        for (std::size_t kk = 0; kk < etl::dim<1>(kernel); ++kk) {
+            for (std::size_t cc = 0; cc < etl::dim<1>(input); ++cc) {
+                for (std::size_t i = 0; i < etl::dim<2>(conv); ++i) {
+                    for (std::size_t j = 0; j < etl::dim<3>(conv); ++j) {
+                        typename I::value_type temp = 0.0;
+
+                        for (std::size_t k = i; k < i + etl::dim<2>(kernel); ++k) {
+                            for (std::size_t l = j; l < j + etl::dim<3>(kernel); ++l) {
+                                temp += input(ii, cc, k, l) * kernel(ii, kk, (i + etl::dim<2>(kernel) - 1 - k), (j + etl::dim<3>(kernel) - 1 - l));
+                            }
+                        }
+
+                        conv(kk, cc, i, j) += temp;
+                    }
+                }
             }
         }
     };

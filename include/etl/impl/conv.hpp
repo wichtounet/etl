@@ -221,6 +221,8 @@ inline etl::conv4_impl select_conv4_impl() {
                     return select_default_conv4_impl<I, K, C>();                                                                   // COVERAGE_EXCLUDE_LINE
                 }                                                                                                                 // COVERAGE_EXCLUDE_LINE
 
+                return forced;
+
             //AVX cannot always be used
             case conv4_impl::AVX:
                 if (!avx_enabled) {                                                                                               // COVERAGE_EXCLUDE_LINE
@@ -742,11 +744,14 @@ struct conv4_valid_filter_impl {
 
         if (impl == etl::conv4_impl::CUDNN) {
             impl::cudnn::conv4_valid_filter(input.direct(), kernel.direct(), conv.direct());
+        } else if (impl == etl::conv4_impl::AVX) {
+            impl::avx::conv4_valid_filter(input.direct(), kernel.direct(), conv.direct());
+        } else if (impl == etl::conv4_impl::SSE) {
+            impl::sse::conv4_valid_filter(input.direct(), kernel.direct(), conv.direct());
         } else if (impl == etl::conv4_impl::STD) {
             impl::standard::conv4_valid_filter(input, kernel, conv);
         } else {
-            impl::standard::conv4_valid_filter(input, kernel, conv);
-            //TODO cpp_unreachable("Invalid conv implementation selection");
+            cpp_unreachable("Invalid conv implementation selection");
         }
     }
 };

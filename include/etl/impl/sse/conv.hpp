@@ -793,7 +793,7 @@ void conv4_valid(const opaque_memory<T, 4>& input, const opaque_memory<T, 4>& ke
                     conv2_valid_micro_kernel(
                         input.memory_start() + i * input_i_inc + c * input_c_inc, input.dim(2), input.dim(3),
                         kernel.memory_start() + k * kernel_k_inc + c * kernel_c_inc, kernel.dim(2), kernel.dim(3),
-                        conv.memory_start() + i * conv_i_inc + k * conv_k_inc, 0.0);
+                        conv.memory_start() + i * conv_i_inc + k * conv_k_inc, 1.0);
                 }
             }
         }
@@ -814,6 +814,7 @@ void conv4_valid_flipped(const opaque_memory<T, 4>& input, const opaque_memory<T
 
         for(std::size_t i = 0; i < input.dim(0); ++i){
             for(std::size_t k = 0; k < kernel.dim(0); ++k){
+                //c = 0
                 conv2_valid_flipped_micro_kernel(
                     input.memory_start() + i * input_i_inc, input.dim(2), input.dim(3),
                     kernel.memory_start() + k * kernel_k_inc, kernel.dim(2), kernel.dim(3),
@@ -823,7 +824,42 @@ void conv4_valid_flipped(const opaque_memory<T, 4>& input, const opaque_memory<T
                     conv2_valid_flipped_micro_kernel(
                         input.memory_start() + i * input_i_inc + c * input_c_inc, input.dim(2), input.dim(3),
                         kernel.memory_start() + k * kernel_k_inc + c * kernel_c_inc, kernel.dim(2), kernel.dim(3),
-                        conv.memory_start() + i * conv_i_inc + k * conv_k_inc, 0.0);
+                        conv.memory_start() + i * conv_i_inc + k * conv_k_inc, 1.0);
+                }
+            }
+        }
+    }
+}
+
+template <typename T>
+void conv4_valid_filter(const opaque_memory<T, 4>& input, const opaque_memory<T, 4>& kernel, const opaque_memory<T, 4>& conv) {
+    if (input.dim(0) > 0) {
+        auto conv_k_inc = conv.dim(1) * conv.dim(2) * conv.dim(3);
+        auto conv_c_inc = conv.dim(2) * conv.dim(3);
+
+        auto kernel_i_inc = kernel.dim(1) * kernel.dim(2) * kernel.dim(3);
+        auto kernel_k_inc = kernel.dim(2) * kernel.dim(3);
+
+        auto input_i_inc = input.dim(1) * input.dim(2) * input.dim(3);
+        auto input_c_inc = input.dim(2) * input.dim(3);
+
+        //i = 0
+        for (std::size_t k = 0; k < kernel.dim(1); ++k) {
+            for(std::size_t c = 0; c < input.dim(1); ++c){
+                conv2_valid_micro_kernel(
+                    input.memory_start() + 0 * input_i_inc + c * input_c_inc, input.dim(2), input.dim(3),
+                    kernel.memory_start() + 0 * kernel_i_inc + k * kernel_k_inc, kernel.dim(2), kernel.dim(3),
+                    conv.memory_start() + k * conv_k_inc + c * conv_c_inc, 0.0);
+            }
+        }
+
+        for (std::size_t i = 1; i < input.dim(0); ++i) {
+            for (std::size_t k = 0; k < kernel.dim(1); ++k) {
+                for(std::size_t c = 0; c < input.dim(1); ++c){
+                    conv2_valid_micro_kernel(
+                        input.memory_start() + i * input_i_inc + c * input_c_inc, input.dim(2), input.dim(3),
+                        kernel.memory_start() + i * kernel_i_inc + k * kernel_k_inc, kernel.dim(2), kernel.dim(3),
+                        conv.memory_start() + k * conv_k_inc + c * conv_c_inc, 1.0);
                 }
             }
         }
@@ -968,6 +1004,14 @@ void conv4_valid(const opaque_memory<T, 4>& input, const opaque_memory<T, 4>& ke
 
 template <typename T>
 void conv4_valid_flipped(const opaque_memory<T, 4>& input, const opaque_memory<T, 4>& kernel, const opaque_memory<T, 4>& conv){
+    cpp_unused(input);
+    cpp_unused(kernel);
+    cpp_unused(conv);
+    cpp_unreachable("SSE not available/enabled");
+}
+
+template <typename T>
+void conv4_valid_filter(const opaque_memory<T, 4>& input, const opaque_memory<T, 4>& kernel, const opaque_memory<T, 4>& conv){
     cpp_unused(input);
     cpp_unused(kernel);
     cpp_unused(conv);
