@@ -65,17 +65,17 @@ MUL_FUNCTOR(cublas_gevm, c = selected_helper(etl::gemm_impl::CUBLAS, a* b))
 
 #define MUL_TEST_CASE_DECL(name, description)                                                 \
     template <typename T, typename Impl>                                                      \
-    static void INTERNAL_CATCH_UNIQUE_NAME(____C_A_T_C_H____T_E_M_P_L_A_TE____T_E_S_T____)(); \
-    TEST_CASE(name, description)
+    static void UNIQUE_NAME(____C_A_T_C_H____T_E_M_P_L_A_TE____T_E_S_T____)(); \
+    ETL_TEST_CASE(name, description)
 
 #define MUL_TEST_CASE_SECTION(Tn, Impln)                                                         \
-    SECTION(#Tn "_" #Impln) {                                                                    \
-        INTERNAL_CATCH_UNIQUE_NAME(____C_A_T_C_H____T_E_M_P_L_A_TE____T_E_S_T____)<Tn, Impln>(); \
+    ETL_SECTION(#Tn "_" #Impln) {                                                                    \
+        UNIQUE_NAME(____C_A_T_C_H____T_E_M_P_L_A_TE____T_E_S_T____)<Tn, Impln>(); \
     }
 
 #define MUL_TEST_CASE_DEFN               \
     template <typename T, typename Impl> \
-    static void INTERNAL_CATCH_UNIQUE_NAME(____C_A_T_C_H____T_E_M_P_L_A_TE____T_E_S_T____)()
+    static void UNIQUE_NAME(____C_A_T_C_H____T_E_M_P_L_A_TE____T_E_S_T____)()
 
 #define MUL_TEST_CASE_SECTIONS(S1, S2) \
     MUL_TEST_CASE_SECTION(float, S1)   \

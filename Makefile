@@ -18,7 +18,7 @@ endif
 CXX_FLAGS += -pedantic -Werror -Winvalid-pch -Wno-uninitialized
 
 # Add includes
-CXX_FLAGS += -Ilib/include -ICatch/include -Itest/include
+CXX_FLAGS += -Ilib/include -Idoctest -ICatch/include -Itest/include
 
 # Support for extra flags
 CXX_FLAGS += $(EXTRA_CXX_FLAGS)

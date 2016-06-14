@@ -152,17 +152,17 @@ FFT_FUNCTOR(cufft_ifft2_many, c = selected_helper(etl::fft_impl::CUFFT, etl::iff
 
 #define FFT_TEST_CASE_DECL(name, description)                                                 \
     template <typename T, typename Impl>                                                      \
-    static void INTERNAL_CATCH_UNIQUE_NAME(____C_A_T_C_H____T_E_M_P_L_A_TE____T_E_S_T____)(); \
-    TEST_CASE(name, description)
+    static void UNIQUE_NAME(____C_A_T_C_H____T_E_M_P_L_A_TE____T_E_S_T____)(); \
+    ETL_TEST_CASE(name, description)
 
 #define FFT_TEST_CASE_SECTION(Tn, Impln)                                                         \
-    SECTION(#Tn "_" #Impln) {                                                                    \
-        INTERNAL_CATCH_UNIQUE_NAME(____C_A_T_C_H____T_E_M_P_L_A_TE____T_E_S_T____)<Tn, Impln>(); \
+    ETL_SECTION(#Tn "_" #Impln) {                                                                    \
+        UNIQUE_NAME(____C_A_T_C_H____T_E_M_P_L_A_TE____T_E_S_T____)<Tn, Impln>(); \
     }
 
 #define FFT_TEST_CASE_DEFN               \
     template <typename T, typename Impl> \
-    static void INTERNAL_CATCH_UNIQUE_NAME(____C_A_T_C_H____T_E_M_P_L_A_TE____T_E_S_T____)()
+    static void UNIQUE_NAME(____C_A_T_C_H____T_E_M_P_L_A_TE____T_E_S_T____)()
 
 #define FFT_TEST_CASE_SECTIONS(S1) \
     FFT_TEST_CASE_SECTION(float, S1)   \

@@ -5,7 +5,7 @@
 //  http://opensource.org/licenses/MIT)
 //=======================================================================
 
-constexpr const auto base_eps = std::numeric_limits<float>::epsilon()*100;
+#ifdef ETL_FAST_CATCH
 
 inline void evaluate_result_direct(const char* file, std::size_t line, const char* exp, bool value){
     Catch::ResultBuilder result("REQUIRE", {file, line}, exp, Catch::ResultDisposition::Flags::Normal);
@@ -49,3 +49,12 @@ void evaluate_result_approx(const char* file, std::size_t line, const char* exp,
 
 #define REQUIRE_EQUALS_APPROX_E(lhs, rhs, eps) \
     evaluate_result_approx(__FILE__, __LINE__, #lhs " == " #rhs, lhs, rhs, eps);
+
+#else
+
+#define REQUIRE_DIRECT(value) REQUIRE(value)
+#define REQUIRE_EQUALS(lhs, rhs) REQUIRE(lhs == rhs)
+#define REQUIRE_EQUALS_APPROX(lhs, rhs) REQUIRE(lhs == Approx(rhs))
+#define REQUIRE_EQUALS_APPROX_E(lhs, rhs, eps) REQUIRE(lhs == Approx(rhs).epsilon(eps))
+
+#endif
