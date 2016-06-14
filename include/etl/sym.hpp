@@ -32,10 +32,11 @@ struct static_check_square<Matrix, std::enable_if_t<all_fast<Matrix>::value && i
  */
 template <typename M>
 struct symmetric_reference {
-    using matrix_type        = M;                                ///< The matrix type
-    using value_type         = typename matrix_type::value_type; ///< The value type
-    using raw_pointer_type   = value_type*;                      ///< A raw pointer type
-    using raw_reference_type = value_type&;                      ///< A raw reference type
+    using matrix_type              = M;                                ///< The matrix type
+    using value_type               = typename matrix_type::value_type; ///< The value type
+    using raw_pointer_type         = value_type*;                      ///< A raw pointer type
+    using raw_reference_type       = value_type&;                      ///< A raw reference type
+    using const_raw_reference_type = std::add_const_t<value_type>&;    ///< A raw reference type
 
     matrix_type& matrix;   ///< Reference to the matrix
     std::size_t i;         ///< The first index
@@ -136,7 +137,7 @@ struct symmetric_reference {
      * \brief Casts the proxy reference to the raw reference type
      * \return a raw reference to the element
      */
-    operator const value_type&() {
+    operator const_raw_reference_type&() const {
         return value;
     }
 };

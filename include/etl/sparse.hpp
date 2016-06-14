@@ -19,10 +19,11 @@ namespace sparse_detail {
  */
 template <typename M>
 struct sparse_reference {
-    using matrix_type        = M;                                ///< The matrix type
-    using value_type         = typename matrix_type::value_type; ///< The value type
-    using raw_pointer_type   = value_type*;                      ///< A raw pointer type
-    using raw_reference_type = value_type&;                      ///< A raw reference type
+    using matrix_type              = M;                                ///< The matrix type
+    using value_type               = typename matrix_type::value_type; ///< The value type
+    using raw_pointer_type         = value_type*;                      ///< A raw pointer type
+    using raw_reference_type       = value_type&;                      ///< A raw reference type
+    using const_raw_reference_type = std::add_const_t<value_type>&;    ///< A raw const reference type
 
     matrix_type& matrix;  ///< Reference to the matrix
     std::size_t i;        ///< The first index
@@ -119,8 +120,20 @@ struct sparse_reference {
         return get();
     }
 
+    /*!
+     * \brief Casts the proxy reference to the raw reference type
+     * \return a raw reference to the element
+     */
+    operator const_raw_reference_type() const {
+        return get();
+    }
+
 private:
     raw_reference_type get() {
+        return *ptr;
+    }
+
+    const_raw_reference_type get() const {
         return *ptr;
     }
 };
