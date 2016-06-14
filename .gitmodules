@@ -14,3 +14,7 @@
 [submodule "cpm"]
 	path = cpm
 	url = https://github.com/wichtounet/cpm.git
+[submodule "doctest"]
+	path = doctest
+	url = https://github.com/onqtam/doctest.git
+	branch = dev
