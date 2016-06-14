@@ -717,7 +717,8 @@ struct conv4_valid_filter_impl {
         } else if (impl == etl::conv4_impl::STD) {
             impl::standard::conv4_valid_filter(input, kernel, conv);
         } else {
-            cpp_unreachable("Invalid conv implementation selection");
+            impl::standard::conv4_valid_filter(input, kernel, conv);
+            //TODO cpp_unreachable("Invalid conv implementation selection");
         }
     }
 };
@@ -741,7 +742,8 @@ struct conv4_valid_filter_flipped_impl {
         } else if (impl == etl::conv4_impl::STD) {
             impl::standard::conv4_valid_filter_flipped(input, kernel, conv);
         } else {
-            cpp_unreachable("Invalid conv implementation selection");
+            impl::standard::conv4_valid_filter_flipped(input, kernel, conv);
+            //TODO cpp_unreachable("Invalid conv implementation selection");
         }
     }
 };
@@ -765,7 +767,8 @@ struct conv4_full_impl {
         } else if (impl == etl::conv4_impl::STD) {
             impl::standard::conv4_full(input, kernel, conv);
         } else {
-            cpp_unreachable("Invalid conv implementation selection");
+            impl::standard::conv4_full(input, kernel, conv);
+            //TODO cpp_unreachable("Invalid conv implementation selection");
         }
     }
 };
@@ -789,7 +792,8 @@ struct conv4_valid_flipped_impl {
         } else if (impl == etl::conv4_impl::STD) {
             impl::standard::conv4_valid_flipped(input, kernel, conv);
         } else {
-            cpp_unreachable("Invalid conv implementation selection");
+            impl::standard::conv4_valid_flipped(input, kernel, conv);
+            //TODO cpp_unreachable("Invalid conv implementation selection");
         }
     }
 };
@@ -813,7 +817,8 @@ struct conv4_full_flipped_impl {
         } else if (impl == etl::conv4_impl::STD) {
             impl::standard::conv4_full_flipped(input, kernel, conv);
         } else {
-            cpp_unreachable("Invalid conv implementation selection");
+            impl::standard::conv4_full_flipped(input, kernel, conv);
+            //TODO cpp_unreachable("Invalid conv implementation selection");
         }
     }
 };
