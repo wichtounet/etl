@@ -688,6 +688,8 @@ struct conv4_valid_impl {
             impl::cudnn::conv4_valid(input.direct(), kernel.direct(), conv.direct());
         } else if (impl == etl::conv4_impl::AVX) {
             impl::avx::conv4_valid(input.direct(), kernel.direct(), conv.direct());
+        } else if (impl == etl::conv4_impl::SSE) {
+            impl::sse::conv4_valid(input.direct(), kernel.direct(), conv.direct());
         } else if (impl == etl::conv4_impl::STD) {
             impl::standard::conv4_valid(input, kernel, conv);
         } else {
