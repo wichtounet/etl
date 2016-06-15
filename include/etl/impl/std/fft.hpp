@@ -669,7 +669,7 @@ void conv1_full_kernel(const T* a, std::size_t m, const T* b, std::size_t n, T* 
 }
 
 template<typename T>
-void conv2_full_kernel(const T* a, std::size_t m1, std::size_t m2, const T* b, std::size_t n1, std::size_t n2, T* c){
+void conv2_full_kernel(const T* a, std::size_t m1, std::size_t m2, const T* b, std::size_t n1, std::size_t n2, T* c, T beta){
     const std::size_t s1 = m1 + n1 - 1;
     const std::size_t s2 = m2 + n2 - 1;
     const std::size_t n = s1 * s2;
@@ -722,8 +722,14 @@ void conv2_full_kernel(const T* a, std::size_t m1, std::size_t m2, const T* b, s
 
     // c = real(conj(a) / n)
     // Note: Since the conjugate does not change the real part, it is not necessary
-    for (std::size_t i = 0; i < n; ++i) {
-        c[i] = a_padded[i].real / T(n);
+    if(beta == T(0.0)){
+        for (std::size_t i = 0; i < n; ++i) {
+            c[i] = a_padded[i].real / T(n);
+        }
+    } else {
+        for (std::size_t i = 0; i < n; ++i) {
+            c[i] = beta * c[i] + a_padded[i].real / T(n);
+        }
     }
 }
 
@@ -956,7 +962,7 @@ void conv1_full_fft(A&& a, B&& b, C&& c) {
  */
 template <typename T>
 void conv2_full_fft(const opaque_memory<T, 2>& a, const opaque_memory<T, 2>& b, const opaque_memory<T, 2>& c) {
-    detail::conv2_full_kernel(a.memory_start(), a.dim(0), a.dim(1), b.memory_start(), b.dim(0), b.dim(1), c.memory_start());
+    detail::conv2_full_kernel(a.memory_start(), a.dim(0), a.dim(1), b.memory_start(), b.dim(0), b.dim(1), c.memory_start(), T(0.0));
 }
 
 } //end of namespace standard
