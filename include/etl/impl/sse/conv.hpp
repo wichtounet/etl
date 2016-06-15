@@ -390,79 +390,150 @@ inline void conv2_same_micro_kernel(const double* in, std::size_t n1, std::size_
     }
 }
 
-inline void conv2_full_micro_kernel(const double* in, std::size_t n1, std::size_t n2, const double* kernel, std::size_t m1, std::size_t m2, double* out) {
+inline void conv2_full_micro_kernel(const double* in, std::size_t n1, std::size_t n2, const double* kernel, std::size_t m1, std::size_t m2, double* out, double beta) {
     std::size_t c1 = n1 + m1 - 1;
     std::size_t c2 = n2 + m2 - 1;
 
-    for (std::size_t i = 0; i < c1; ++i) {
-        auto k_lo = std::max<int>(0, i - m1 + 1);
-        auto k_hi = std::min(n1 - 1, i) + 1;
+    if(beta == 0.0){
+        for (std::size_t i = 0; i < c1; ++i) {
+            auto k_lo = std::max<int>(0, i - m1 + 1);
+            auto k_hi = std::min(n1 - 1, i) + 1;
 
-        for (std::size_t j = 0; j < c2; ++j) {
-            auto l_lo = std::max<int>(0, j - m2 + 1);
-            auto l_hi = std::min(n2 - 1, j) + 1;
+            for (std::size_t j = 0; j < c2; ++j) {
+                auto l_lo = std::max<int>(0, j - m2 + 1);
+                auto l_hi = std::min(n2 - 1, j) + 1;
 
-            __m128d r1 = _mm_setzero_pd();
+                __m128d r1 = _mm_setzero_pd();
 
-            for (std::size_t k = k_lo; k < k_hi; ++k) {
-                for (std::size_t l = l_lo; l + 1 < l_hi; l += 2) {
-                    __m128d i1 = _mm_loadu_pd(in + k * n2 + l);
-                    __m128d t2 = _mm_loadu_pd(kernel + (i - k) * m2 + (j - (l + 1)));
-                    __m128d k1 = _mm_shuffle_pd(t2, t2, _MM_SHUFFLE2(0, 1));
-                    __m128d t1 = _mm_mul_pd(k1, i1);
-                    r1  = _mm_add_pd(r1, t1);
-                }
-            }
-
-            out[i * c2 + j] = mm_hadd_sd(r1);
-
-            double temp = 0.0;
-
-            if ((l_hi - l_lo) % 2 != 0) {
                 for (std::size_t k = k_lo; k < k_hi; ++k) {
-                    temp += in[k * n2 + l_hi - 1] * kernel[(i - k) * m2 + (j - (l_hi - 1))];
+                    for (std::size_t l = l_lo; l + 1 < l_hi; l += 2) {
+                        __m128d i1 = _mm_loadu_pd(in + k * n2 + l);
+                        __m128d t2 = _mm_loadu_pd(kernel + (i - k) * m2 + (j - (l + 1)));
+                        __m128d k1 = _mm_shuffle_pd(t2, t2, _MM_SHUFFLE2(0, 1));
+                        __m128d t1 = _mm_mul_pd(k1, i1);
+                        r1  = _mm_add_pd(r1, t1);
+                    }
                 }
-            }
 
-            out[i * c2 + j] += temp;
+                out[i * c2 + j] = mm_hadd_sd(r1);
+
+                double temp = 0.0;
+
+                if ((l_hi - l_lo) % 2 != 0) {
+                    for (std::size_t k = k_lo; k < k_hi; ++k) {
+                        temp += in[k * n2 + l_hi - 1] * kernel[(i - k) * m2 + (j - (l_hi - 1))];
+                    }
+                }
+
+                out[i * c2 + j] += temp;
+            }
+        }
+    } else {
+        for (std::size_t i = 0; i < c1; ++i) {
+            auto k_lo = std::max<int>(0, i - m1 + 1);
+            auto k_hi = std::min(n1 - 1, i) + 1;
+
+            for (std::size_t j = 0; j < c2; ++j) {
+                auto l_lo = std::max<int>(0, j - m2 + 1);
+                auto l_hi = std::min(n2 - 1, j) + 1;
+
+                __m128d r1 = _mm_setzero_pd();
+
+                for (std::size_t k = k_lo; k < k_hi; ++k) {
+                    for (std::size_t l = l_lo; l + 1 < l_hi; l += 2) {
+                        __m128d i1 = _mm_loadu_pd(in + k * n2 + l);
+                        __m128d t2 = _mm_loadu_pd(kernel + (i - k) * m2 + (j - (l + 1)));
+                        __m128d k1 = _mm_shuffle_pd(t2, t2, _MM_SHUFFLE2(0, 1));
+                        __m128d t1 = _mm_mul_pd(k1, i1);
+                        r1  = _mm_add_pd(r1, t1);
+                    }
+                }
+
+                out[i * c2 + j] = beta * out[i * c2 + j] + mm_hadd_sd(r1);
+
+                double temp = 0.0;
+
+                if ((l_hi - l_lo) % 2 != 0) {
+                    for (std::size_t k = k_lo; k < k_hi; ++k) {
+                        temp += in[k * n2 + l_hi - 1] * kernel[(i - k) * m2 + (j - (l_hi - 1))];
+                    }
+                }
+
+                out[i * c2 + j] += temp;
+            }
         }
     }
 }
 
-inline void conv2_full_flipped_micro_kernel(const double* in, std::size_t n1, std::size_t n2, const double* kernel, std::size_t m1, std::size_t m2, double* out) {
+inline void conv2_full_flipped_micro_kernel(const double* in, std::size_t n1, std::size_t n2, const double* kernel, std::size_t m1, std::size_t m2, double* out, double beta) {
     std::size_t c1 = n1 + m1 - 1;
     std::size_t c2 = n2 + m2 - 1;
 
-    for (std::size_t i = 0; i < c1; ++i) {
-        auto k_lo = std::max<int>(0, i - m1 + 1);
-        auto k_hi = std::min(n1 - 1, i) + 1;
+    if (beta == 0.0) {
+        for (std::size_t i = 0; i < c1; ++i) {
+            auto k_lo = std::max<int>(0, i - m1 + 1);
+            auto k_hi = std::min(n1 - 1, i) + 1;
 
-        for (std::size_t j = 0; j < c2; ++j) {
-            auto l_lo = std::max<int>(0, j - m2 + 1);
-            auto l_hi = std::min(n2 - 1, j) + 1;
+            for (std::size_t j = 0; j < c2; ++j) {
+                auto l_lo = std::max<int>(0, j - m2 + 1);
+                auto l_hi = std::min(n2 - 1, j) + 1;
 
-            __m128d r1 = _mm_setzero_pd();
+                __m128d r1 = _mm_setzero_pd();
 
-            for (std::size_t k = k_lo; k < k_hi; ++k) {
-                for (std::size_t l = l_lo; l + 1 < l_hi; l += 2) {
-                    __m128d i1 = _mm_loadu_pd(in + k * n2 + l);
-                    __m128d k1 = _mm_loadu_pd(kernel + (m1 - 1 - (i - k)) * m2 + (m2 - 1 - (j - l)));
-                    __m128d t1 = _mm_mul_pd(k1, i1);
-                    r1  = _mm_add_pd(r1, t1);
-                }
-            }
-
-            out[i * c2 + j] = mm_hadd_sd(r1);
-
-            double temp = 0.0;
-
-            if ((l_hi - l_lo) % 2 != 0) {
                 for (std::size_t k = k_lo; k < k_hi; ++k) {
-                    temp += in[k * n2 + l_hi - 1] * kernel[(m1 - 1 - (i - k)) * m2 + (m2 - 1 - (j - (l_hi - 1)))];
+                    for (std::size_t l = l_lo; l + 1 < l_hi; l += 2) {
+                        __m128d i1 = _mm_loadu_pd(in + k * n2 + l);
+                        __m128d k1 = _mm_loadu_pd(kernel + (m1 - 1 - (i - k)) * m2 + (m2 - 1 - (j - l)));
+                        __m128d t1 = _mm_mul_pd(k1, i1);
+                        r1         = _mm_add_pd(r1, t1);
+                    }
                 }
-            }
 
-            out[i * c2 + j] += temp;
+                out[i * c2 + j] = mm_hadd_sd(r1);
+
+                double temp = 0.0;
+
+                if ((l_hi - l_lo) % 2 != 0) {
+                    for (std::size_t k = k_lo; k < k_hi; ++k) {
+                        temp += in[k * n2 + l_hi - 1] * kernel[(m1 - 1 - (i - k)) * m2 + (m2 - 1 - (j - (l_hi - 1)))];
+                    }
+                }
+
+                out[i * c2 + j] += temp;
+            }
+        }
+    } else {
+        for (std::size_t i = 0; i < c1; ++i) {
+            auto k_lo = std::max<int>(0, i - m1 + 1);
+            auto k_hi = std::min(n1 - 1, i) + 1;
+
+            for (std::size_t j = 0; j < c2; ++j) {
+                auto l_lo = std::max<int>(0, j - m2 + 1);
+                auto l_hi = std::min(n2 - 1, j) + 1;
+
+                __m128d r1 = _mm_setzero_pd();
+
+                for (std::size_t k = k_lo; k < k_hi; ++k) {
+                    for (std::size_t l = l_lo; l + 1 < l_hi; l += 2) {
+                        __m128d i1 = _mm_loadu_pd(in + k * n2 + l);
+                        __m128d k1 = _mm_loadu_pd(kernel + (m1 - 1 - (i - k)) * m2 + (m2 - 1 - (j - l)));
+                        __m128d t1 = _mm_mul_pd(k1, i1);
+                        r1         = _mm_add_pd(r1, t1);
+                    }
+                }
+
+                out[i * c2 + j] = beta * out[i * c2 + j] + mm_hadd_sd(r1);
+
+                double temp = 0.0;
+
+                if ((l_hi - l_lo) % 2 != 0) {
+                    for (std::size_t k = k_lo; k < k_hi; ++k) {
+                        temp += in[k * n2 + l_hi - 1] * kernel[(m1 - 1 - (i - k)) * m2 + (m2 - 1 - (j - (l_hi - 1)))];
+                    }
+                }
+
+                out[i * c2 + j] += temp;
+            }
         }
     }
 }
@@ -647,85 +718,162 @@ inline void conv2_same_micro_kernel(const float* in, std::size_t n1, std::size_t
     }
 }
 
-inline void conv2_full_micro_kernel(const float* in, std::size_t n1, std::size_t n2, const float* kernel, std::size_t m1, std::size_t m2, float* out) {
+inline void conv2_full_micro_kernel(const float* in, std::size_t n1, std::size_t n2, const float* kernel, std::size_t m1, std::size_t m2, float* out, float beta) {
     std::size_t c1 = n1 + m1 - 1;
     std::size_t c2 = n2 + m2 - 1;
 
-    for (std::size_t i = 0; i < c1; ++i) {
-        auto k_lo = std::max<int>(0, i - m1 + 1);
-        auto k_hi = std::min(n1 - 1, i) + 1;
+    if(beta == 0.0){
+        for (std::size_t i = 0; i < c1; ++i) {
+            auto k_lo = std::max<int>(0, i - m1 + 1);
+            auto k_hi = std::min(n1 - 1, i) + 1;
 
-        for (std::size_t j = 0; j < c2; ++j) {
-            auto l_lo = std::max<int>(0, j - m2 + 1);
-            auto l_hi = std::min(n2 - 1, j) + 1;
+            for (std::size_t j = 0; j < c2; ++j) {
+                auto l_lo = std::max<int>(0, j - m2 + 1);
+                auto l_hi = std::min(n2 - 1, j) + 1;
 
-            __m128 r1 = _mm_setzero_ps();
+                __m128 r1 = _mm_setzero_ps();
 
-            for (std::size_t k = k_lo; k < k_hi; ++k) {
-                for (std::size_t l = l_lo; l + 3 < l_hi; l += 4) {
-                    __m128 i1 = _mm_loadu_ps(in + k * n2 + l);
-                    __m128 t2 = _mm_loadu_ps(kernel + (i - k) * m2 + (j - (l + 3)));
-                    __m128 k1 = _mm_shuffle_ps(t2, t2, _MM_SHUFFLE(0, 1, 2, 3));
-                    __m128 t1 = _mm_mul_ps(k1, i1);
-                    r1  = _mm_add_ps(r1, t1);
-                }
-            }
-
-            out[i * c2 + j] = mm_hadd_ss(r1);
-
-            double temp = 0.0;
-
-            if ((l_hi - l_lo) % 4 != 0) {
-                auto rem = (l_hi - l_lo) % 4;
                 for (std::size_t k = k_lo; k < k_hi; ++k) {
-                    for (std::size_t l = l_hi - rem; l < l_hi; ++l) {
-                        temp += in[k * n2 + l] * kernel[(i - k) * m2 + (j - l)];
+                    for (std::size_t l = l_lo; l + 3 < l_hi; l += 4) {
+                        __m128 i1 = _mm_loadu_ps(in + k * n2 + l);
+                        __m128 t2 = _mm_loadu_ps(kernel + (i - k) * m2 + (j - (l + 3)));
+                        __m128 k1 = _mm_shuffle_ps(t2, t2, _MM_SHUFFLE(0, 1, 2, 3));
+                        __m128 t1 = _mm_mul_ps(k1, i1);
+                        r1        = _mm_add_ps(r1, t1);
                     }
                 }
-            }
 
-            out[i * c2 + j] += temp;
+                out[i * c2 + j] = mm_hadd_ss(r1);
+
+                double temp = 0.0;
+
+                if ((l_hi - l_lo) % 4 != 0) {
+                    auto rem = (l_hi - l_lo) % 4;
+                    for (std::size_t k = k_lo; k < k_hi; ++k) {
+                        for (std::size_t l = l_hi - rem; l < l_hi; ++l) {
+                            temp += in[k * n2 + l] * kernel[(i - k) * m2 + (j - l)];
+                        }
+                    }
+                }
+
+                out[i * c2 + j] += temp;
+            }
+        }
+    } else {
+        for (std::size_t i = 0; i < c1; ++i) {
+            auto k_lo = std::max<int>(0, i - m1 + 1);
+            auto k_hi = std::min(n1 - 1, i) + 1;
+
+            for (std::size_t j = 0; j < c2; ++j) {
+                auto l_lo = std::max<int>(0, j - m2 + 1);
+                auto l_hi = std::min(n2 - 1, j) + 1;
+
+                __m128 r1 = _mm_setzero_ps();
+
+                for (std::size_t k = k_lo; k < k_hi; ++k) {
+                    for (std::size_t l = l_lo; l + 3 < l_hi; l += 4) {
+                        __m128 i1 = _mm_loadu_ps(in + k * n2 + l);
+                        __m128 t2 = _mm_loadu_ps(kernel + (i - k) * m2 + (j - (l + 3)));
+                        __m128 k1 = _mm_shuffle_ps(t2, t2, _MM_SHUFFLE(0, 1, 2, 3));
+                        __m128 t1 = _mm_mul_ps(k1, i1);
+                        r1        = _mm_add_ps(r1, t1);
+                    }
+                }
+
+                out[i * c2 + j] = beta * out[i * c2 + j] + mm_hadd_ss(r1);
+
+                double temp = 0.0;
+
+                if ((l_hi - l_lo) % 4 != 0) {
+                    auto rem = (l_hi - l_lo) % 4;
+                    for (std::size_t k = k_lo; k < k_hi; ++k) {
+                        for (std::size_t l = l_hi - rem; l < l_hi; ++l) {
+                            temp += in[k * n2 + l] * kernel[(i - k) * m2 + (j - l)];
+                        }
+                    }
+                }
+
+                out[i * c2 + j] += temp;
+            }
         }
     }
 }
 
-inline void conv2_full_flipped_micro_kernel(const float* in, std::size_t n1, std::size_t n2, const float* kernel, std::size_t m1, std::size_t m2, float* out) {
+inline void conv2_full_flipped_micro_kernel(const float* in, std::size_t n1, std::size_t n2, const float* kernel, std::size_t m1, std::size_t m2, float* out, float beta) {
     std::size_t c1 = n1 + m1 - 1;
     std::size_t c2 = n2 + m2 - 1;
 
-    for (std::size_t i = 0; i < c1; ++i) {
-        auto k_lo = std::max<int>(0, i - m1 + 1);
-        auto k_hi = std::min(n1 - 1, i) + 1;
+    if(beta == 0.0){
+        for (std::size_t i = 0; i < c1; ++i) {
+            auto k_lo = std::max<int>(0, i - m1 + 1);
+            auto k_hi = std::min(n1 - 1, i) + 1;
 
-        for (std::size_t j = 0; j < c2; ++j) {
-            auto l_lo = std::max<int>(0, j - m2 + 1);
-            auto l_hi = std::min(n2 - 1, j) + 1;
+            for (std::size_t j = 0; j < c2; ++j) {
+                auto l_lo = std::max<int>(0, j - m2 + 1);
+                auto l_hi = std::min(n2 - 1, j) + 1;
 
-            __m128 r1 = _mm_setzero_ps();
+                __m128 r1 = _mm_setzero_ps();
 
-            for (std::size_t k = k_lo; k < k_hi; ++k) {
-                for (std::size_t l = l_lo; l + 3 < l_hi; l += 4) {
-                    __m128 i1 = _mm_loadu_ps(in + k * n2 + l);
-                    __m128 k1 = _mm_loadu_ps(kernel + (m1 - 1 - (i - k)) * m2 + (m2 - 1 - (j - l)));
-                    __m128 t1 = _mm_mul_ps(k1, i1);
-                    r1  = _mm_add_ps(r1, t1);
-                }
-            }
-
-            out[i * c2 + j] = mm_hadd_ss(r1);
-
-            double temp = 0.0;
-
-            if ((l_hi - l_lo) % 4 != 0) {
-                auto rem = (l_hi - l_lo) % 4;
                 for (std::size_t k = k_lo; k < k_hi; ++k) {
-                    for (std::size_t l = l_hi - rem; l < l_hi; ++l) {
-                        temp += in[k * n2 + l] * kernel[(m1 - 1 - (i - k)) * m2 + (m2 - 1 - (j - l))];
+                    for (std::size_t l = l_lo; l + 3 < l_hi; l += 4) {
+                        __m128 i1 = _mm_loadu_ps(in + k * n2 + l);
+                        __m128 k1 = _mm_loadu_ps(kernel + (m1 - 1 - (i - k)) * m2 + (m2 - 1 - (j - l)));
+                        __m128 t1 = _mm_mul_ps(k1, i1);
+                        r1        = _mm_add_ps(r1, t1);
                     }
                 }
-            }
 
-            out[i * c2 + j] += temp;
+                out[i * c2 + j] = mm_hadd_ss(r1);
+
+                double temp = 0.0;
+
+                if ((l_hi - l_lo) % 4 != 0) {
+                    auto rem = (l_hi - l_lo) % 4;
+                    for (std::size_t k = k_lo; k < k_hi; ++k) {
+                        for (std::size_t l = l_hi - rem; l < l_hi; ++l) {
+                            temp += in[k * n2 + l] * kernel[(m1 - 1 - (i - k)) * m2 + (m2 - 1 - (j - l))];
+                        }
+                    }
+                }
+
+                out[i * c2 + j] += temp;
+            }
+        }
+    } else {
+        for (std::size_t i = 0; i < c1; ++i) {
+            auto k_lo = std::max<int>(0, i - m1 + 1);
+            auto k_hi = std::min(n1 - 1, i) + 1;
+
+            for (std::size_t j = 0; j < c2; ++j) {
+                auto l_lo = std::max<int>(0, j - m2 + 1);
+                auto l_hi = std::min(n2 - 1, j) + 1;
+
+                __m128 r1 = _mm_setzero_ps();
+
+                for (std::size_t k = k_lo; k < k_hi; ++k) {
+                    for (std::size_t l = l_lo; l + 3 < l_hi; l += 4) {
+                        __m128 i1 = _mm_loadu_ps(in + k * n2 + l);
+                        __m128 k1 = _mm_loadu_ps(kernel + (m1 - 1 - (i - k)) * m2 + (m2 - 1 - (j - l)));
+                        __m128 t1 = _mm_mul_ps(k1, i1);
+                        r1        = _mm_add_ps(r1, t1);
+                    }
+                }
+
+                out[i * c2 + j] = beta * out[i * c2 + j] + mm_hadd_ss(r1);
+
+                double temp = 0.0;
+
+                if ((l_hi - l_lo) % 4 != 0) {
+                    auto rem = (l_hi - l_lo) % 4;
+                    for (std::size_t k = k_lo; k < k_hi; ++k) {
+                        for (std::size_t l = l_hi - rem; l < l_hi; ++l) {
+                            temp += in[k * n2 + l] * kernel[(m1 - 1 - (i - k)) * m2 + (m2 - 1 - (j - l))];
+                        }
+                    }
+                }
+
+                out[i * c2 + j] += temp;
+            }
         }
     }
 }
@@ -759,7 +907,7 @@ void conv2_full(const opaque_memory<T, 2>& input, const opaque_memory<T, 2>& ker
     conv2_full_micro_kernel(
         input.memory_start(), input.template dim<0>(), input.template dim<1>(),
         kernel.memory_start(), kernel.template dim<0>(), kernel.template dim<1>(),
-        conv.memory_start());
+        conv.memory_start(), 0.0);
 }
 
 template <typename T>
@@ -767,7 +915,7 @@ void conv2_full_flipped(const opaque_memory<T, 2>& input, const opaque_memory<T,
     conv2_full_flipped_micro_kernel(
         input.memory_start(), input.template dim<0>(), input.template dim<1>(),
         kernel.memory_start(), kernel.template dim<0>(), kernel.template dim<1>(),
-        conv.memory_start());
+        conv.memory_start(), 0.0);
 }
 
 template <typename T>
