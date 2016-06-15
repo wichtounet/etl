@@ -676,8 +676,8 @@ void conv2_full_kernel(const T* a, std::size_t m1, std::size_t m2, const T* b, s
 
     // 0. Pad a and b to the size of c
 
-    dyn_matrix<std::complex<T>, 2> a_padded(s1, s2);
-    dyn_matrix<std::complex<T>, 2> b_padded(s1, s2);
+    dyn_matrix<etl::complex<T>, 2> a_padded(s1, s2);
+    dyn_matrix<etl::complex<T>, 2> b_padded(s1, s2);
 
     for (std::size_t i = 0; i < m1; ++i) {
         direct_copy_n(a + i * m2, a_padded.memory_start() + i * s2, m2);
@@ -689,16 +689,16 @@ void conv2_full_kernel(const T* a, std::size_t m1, std::size_t m2, const T* b, s
 
     // 1. FFT of a and b
 
-    //a = fft2(a)
-    detail::fft_n_many(a_padded.memory_start(), reinterpret_cast<etl::complex<T>*>(a_padded.memory_start()), s1, s2);
+    // a = fft2(a)
+    detail::fft_n_many(a_padded.memory_start(), a_padded.memory_start(), s1, s2);
     a_padded.transpose_inplace();
-    detail::fft_n_many(a_padded.memory_start(), reinterpret_cast<etl::complex<T>*>(a_padded.memory_start()), s2, s1);
+    detail::fft_n_many(a_padded.memory_start(), a_padded.memory_start(), s2, s1);
     a_padded.transpose_inplace();
 
-    //b = fft2(b)
-    detail::fft_n_many(b_padded.memory_start(), reinterpret_cast<etl::complex<T>*>(b_padded.memory_start()), s1, s2);
+    // b = fft2(b)
+    detail::fft_n_many(b_padded.memory_start(), b_padded.memory_start(), s1, s2);
     b_padded.transpose_inplace();
-    detail::fft_n_many(b_padded.memory_start(), reinterpret_cast<etl::complex<T>*>(b_padded.memory_start()), s2, s1);
+    detail::fft_n_many(b_padded.memory_start(), b_padded.memory_start(), s2, s1);
     b_padded.transpose_inplace();
 
     // 2. Elementwise multiplication of and b
@@ -707,31 +707,23 @@ void conv2_full_kernel(const T* a, std::size_t m1, std::size_t m2, const T* b, s
 
     // 3. Inverse FFT of a
 
-    //a = conj(a)
+    // a = conj(a)
     for (std::size_t i = 0; i < n; ++i) {
-        a_padded[i] = std::conj(a_padded[i]);
+        a_padded[i] = etl::conj(a_padded[i]);
     }
 
-    //a = fft2(a)
-    detail::fft_n_many(a_padded.memory_start(), reinterpret_cast<etl::complex<T>*>(a_padded.memory_start()), s1, s2);
+    // a = fft2(a)
+    detail::fft_n_many(a_padded.memory_start(), a_padded.memory_start(), s1, s2);
     a_padded.transpose_inplace();
-    detail::fft_n_many(a_padded.memory_start(), reinterpret_cast<etl::complex<T>*>(a_padded.memory_start()), s2, s1);
+    detail::fft_n_many(a_padded.memory_start(), a_padded.memory_start(), s2, s1);
     a_padded.transpose_inplace();
 
-    //a = conj(a)
+    // 4. Keep only the real part of the inverse FFT
+
+    // c = real(conj(a) / n)
+    // Note: Since the conjugate does not change the real part, it is not necessary
     for (std::size_t i = 0; i < n; ++i) {
-        a_padded[i] = std::conj(a_padded[i]);
-    }
-
-    //a = a / n
-    for (std::size_t i = 0; i < n; ++i) {
-        a_padded[i] /= double(n);
-    }
-
-    // 4. Keep only the real part
-
-    for (std::size_t i = 0; i < s1 * s2; ++i) {
-        c[i] = a_padded[i].real();
+        c[i] = a_padded[i].real / T(n);
     }
 }
 
