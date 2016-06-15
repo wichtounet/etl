@@ -1049,6 +1049,39 @@ void conv4_valid_filter(const opaque_memory<T, 4>& input, const opaque_memory<T,
     }
 }
 
+template <typename T>
+void conv4_full(const opaque_memory<T, 4>& input, const opaque_memory<T, 4>& kernel, const opaque_memory<T, 4>& conv) {
+    if (kernel.dim(1) > 0) {
+        auto conv_i_inc = conv.dim(1) * conv.dim(2) * conv.dim(3);
+        auto conv_c_inc = conv.dim(2) * conv.dim(3);
+
+        auto kernel_k_inc = kernel.dim(1) * kernel.dim(2) * kernel.dim(3);
+        auto kernel_c_inc = kernel.dim(2) * kernel.dim(3);
+
+        auto input_i_inc = input.dim(1) * input.dim(2) * input.dim(3);
+        auto input_k_inc = input.dim(2) * input.dim(3);
+
+        for (std::size_t i = 0; i < input.dim(0); ++i) {
+            //k = 0
+            for (std::size_t c = 0; c < kernel.dim(1); ++c) {
+                conv2_full_micro_kernel(
+                    input.memory_start() + i * input_i_inc + 0 * input_k_inc, input.dim(2), input.dim(3),
+                    kernel.memory_start() + 0 * kernel_k_inc + c * kernel_c_inc, kernel.dim(2), kernel.dim(3),
+                    conv.memory_start() + i * conv_i_inc + c * conv_c_inc, 0.0);
+            }
+
+            for (std::size_t k = 1; k < kernel.dim(0); ++k) {
+                for (std::size_t c = 0; c < kernel.dim(1); ++c) {
+                    conv2_full_micro_kernel(
+                        input.memory_start() + i * input_i_inc + k * input_k_inc, input.dim(2), input.dim(3),
+                        kernel.memory_start() + k * kernel_k_inc + c * kernel_c_inc, kernel.dim(2), kernel.dim(3),
+                        conv.memory_start() + i * conv_i_inc + c * conv_c_inc, 1.0);
+                }
+            }
+        }
+    }
+}
+
 #else
 
 //COVERAGE_EXCLUDE_BEGIN
@@ -1203,6 +1236,14 @@ void conv4_valid_filter(const opaque_memory<T, 4>& input, const opaque_memory<T,
 
 template <typename T>
 void conv4_valid_filter_flipped(const opaque_memory<T, 4>& input, const opaque_memory<T, 4>& kernel, const opaque_memory<T, 4>& conv){
+    cpp_unused(input);
+    cpp_unused(kernel);
+    cpp_unused(conv);
+    cpp_unreachable("SSE not available/enabled");
+}
+
+template <typename T>
+void conv4_full(const opaque_memory<T, 4>& input, const opaque_memory<T, 4>& kernel, const opaque_memory<T, 4>& conv){
     cpp_unused(input);
     cpp_unused(kernel);
     cpp_unused(conv);

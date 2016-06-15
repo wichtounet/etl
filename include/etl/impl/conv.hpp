@@ -800,8 +800,10 @@ struct conv4_full_impl {
 
         if (impl == etl::conv4_impl::CUDNN) {
             impl::cudnn::conv4_full(input.direct(), kernel.direct(), conv.direct());
-        } else if (impl == etl::conv4_impl::STD) {
-            impl::standard::conv4_full(input, kernel, conv);
+        } else if (impl == etl::conv4_impl::AVX) {
+            impl::avx::conv4_full(input.direct(), kernel.direct(), conv.direct());
+        } else if (impl == etl::conv4_impl::SSE) {
+            impl::sse::conv4_full(input.direct(), kernel.direct(), conv.direct());
         } else {
             impl::standard::conv4_full(input, kernel, conv);
             //TODO cpp_unreachable("Invalid conv implementation selection");
