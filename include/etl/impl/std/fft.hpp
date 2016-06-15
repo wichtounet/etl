@@ -646,6 +646,95 @@ void ifft1_kernel(const std::complex<T>* a, std::size_t n, std::complex<T>* c) {
     }
 }
 
+template<typename T>
+void conv1_full_kernel(const T* a, std::size_t m, const T* b, std::size_t n, T* c){
+    const std::size_t size = m + n - 1;
+
+    dyn_matrix<etl::complex<T>, 1> a_padded(size);
+    dyn_matrix<etl::complex<T>, 1> b_padded(size);
+
+    direct_copy(a, a + m, a_padded.memory_start());
+    direct_copy(b, b + n, b_padded.memory_start());
+
+    detail::fft1_kernel(reinterpret_cast<std::complex<T>*>(a_padded.memory_start()), size, reinterpret_cast<std::complex<T>*>(a_padded.memory_start()));
+    detail::fft1_kernel(reinterpret_cast<std::complex<T>*>(b_padded.memory_start()), size, reinterpret_cast<std::complex<T>*>(b_padded.memory_start()));
+
+    a_padded *= b_padded;
+
+    detail::ifft1_kernel(reinterpret_cast<std::complex<T>*>(a_padded.memory_start()), size, reinterpret_cast<std::complex<T>*>(a_padded.memory_start()));
+
+    for (std::size_t i = 0; i < size; ++i) {
+        c[i] = a_padded[i].real;
+    }
+}
+
+template<typename T>
+void conv2_full_kernel(const T* a, std::size_t m1, std::size_t m2, const T* b, std::size_t n1, std::size_t n2, T* c){
+    const std::size_t s1 = m1 + n1 - 1;
+    const std::size_t s2 = m2 + n2 - 1;
+    const std::size_t n = s1 * s2;
+
+    // 0. Pad a and b to the size of c
+
+    dyn_matrix<std::complex<T>, 2> a_padded(s1, s2);
+    dyn_matrix<std::complex<T>, 2> b_padded(s1, s2);
+
+    for (std::size_t i = 0; i < m1; ++i) {
+        direct_copy_n(a + i * m2, a_padded.memory_start() + i * s2, m2);
+    }
+
+    for (std::size_t i = 0; i < n1; ++i) {
+        direct_copy_n(b + i * n2, b_padded.memory_start() + i * s2, n2);
+    }
+
+    // 1. FFT of a and b
+
+    //a = fft2(a)
+    detail::fft_n_many(a_padded.memory_start(), reinterpret_cast<etl::complex<T>*>(a_padded.memory_start()), s1, s2);
+    a_padded.transpose_inplace();
+    detail::fft_n_many(a_padded.memory_start(), reinterpret_cast<etl::complex<T>*>(a_padded.memory_start()), s2, s1);
+    a_padded.transpose_inplace();
+
+    //b = fft2(b)
+    detail::fft_n_many(b_padded.memory_start(), reinterpret_cast<etl::complex<T>*>(b_padded.memory_start()), s1, s2);
+    b_padded.transpose_inplace();
+    detail::fft_n_many(b_padded.memory_start(), reinterpret_cast<etl::complex<T>*>(b_padded.memory_start()), s2, s1);
+    b_padded.transpose_inplace();
+
+    // 2. Elementwise multiplication of and b
+
+    a_padded >>= b_padded;
+
+    // 3. Inverse FFT of a
+
+    //a = conj(a)
+    for (std::size_t i = 0; i < n; ++i) {
+        a_padded[i] = std::conj(a_padded[i]);
+    }
+
+    //a = fft2(a)
+    detail::fft_n_many(a_padded.memory_start(), reinterpret_cast<etl::complex<T>*>(a_padded.memory_start()), s1, s2);
+    a_padded.transpose_inplace();
+    detail::fft_n_many(a_padded.memory_start(), reinterpret_cast<etl::complex<T>*>(a_padded.memory_start()), s2, s1);
+    a_padded.transpose_inplace();
+
+    //a = conj(a)
+    for (std::size_t i = 0; i < n; ++i) {
+        a_padded[i] = std::conj(a_padded[i]);
+    }
+
+    //a = a / n
+    for (std::size_t i = 0; i < n; ++i) {
+        a_padded[i] /= double(n);
+    }
+
+    // 4. Keep only the real part
+
+    for (std::size_t i = 0; i < s1 * s2; ++i) {
+        c[i] = a_padded[i].real();
+    }
+}
+
 } //end of namespace detail
 
 /*!
@@ -864,28 +953,7 @@ void fft2_many(A&& a, C&& c) {
  */
 template <typename A, typename B, typename C>
 void conv1_full_fft(A&& a, B&& b, C&& c) {
-    using type = value_t<A>;
-
-    const std::size_t m    = etl::size(a);
-    const std::size_t n    = etl::size(b);
-    const std::size_t size = m + n - 1;
-
-    dyn_matrix<etl::complex<type>, 1> a_padded(size);
-    dyn_matrix<etl::complex<type>, 1> b_padded(size);
-
-    direct_copy(a.memory_start(), a.memory_end(), a_padded.memory_start());
-    direct_copy(b.memory_start(), b.memory_end(), b_padded.memory_start());
-
-    detail::fft1_kernel(reinterpret_cast<std::complex<type>*>(a_padded.memory_start()), size, reinterpret_cast<std::complex<type>*>(a_padded.memory_start()));
-    detail::fft1_kernel(reinterpret_cast<std::complex<type>*>(b_padded.memory_start()), size, reinterpret_cast<std::complex<type>*>(b_padded.memory_start()));
-
-    a_padded *= b_padded;
-
-    detail::ifft1_kernel(reinterpret_cast<std::complex<type>*>(a_padded.memory_start()), size, reinterpret_cast<std::complex<type>*>(a_padded.memory_start()));
-
-    for (std::size_t i = 0; i < size; ++i) {
-        c[i] = a_padded[i].real;
-    }
+    detail::conv1_full_kernel(a.memory_start(), etl::size(a), b.memory_start(), etl::size(b), c.memory_start());
 }
 
 /*!
@@ -896,36 +964,7 @@ void conv1_full_fft(A&& a, B&& b, C&& c) {
  */
 template <typename T>
 void conv2_full_fft(const opaque_memory<T, 2>& a, const opaque_memory<T, 2>& b, const opaque_memory<T, 2>& c) {
-    const std::size_t m1 = a.template dim<0>();
-    const std::size_t n1 = b.template dim<0>();
-    const std::size_t s1 = m1 + n1 - 1;
-
-    const std::size_t m2 = a.template dim<1>();
-    const std::size_t n2 = b.template dim<1>();
-    const std::size_t s2 = m2 + n2 - 1;
-
-    dyn_matrix<std::complex<T>, 2> a_padded(s1, s2);
-    dyn_matrix<std::complex<T>, 2> b_padded(s1, s2);
-
-    for (std::size_t i = 0; i < m1; ++i) {
-        direct_copy_n(a.memory_start() + i * m2, a_padded.memory_start() + i * s2, m2);
-    }
-
-    for (std::size_t i = 0; i < n1; ++i) {
-        direct_copy_n(b.memory_start() + i * n2, b_padded.memory_start() + i * s2, n2);
-    }
-
-    fft2(a_padded, a_padded);
-    fft2(b_padded, b_padded);
-
-    a_padded >>= b_padded;
-
-    ifft2(a_padded, a_padded);
-
-    auto c_m = c.memory_start();
-    for (std::size_t i = 0; i < s1 * s2; ++i) {
-        c_m[i] = a_padded[i].real();
-    }
+    detail::conv2_full_kernel(a.memory_start(), a.dim(0), a.dim(1), b.memory_start(), b.dim(0), b.dim(1), c.memory_start());
 }
 
 } //end of namespace standard
