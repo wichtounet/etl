@@ -841,8 +841,7 @@ struct conv4_full_flipped_impl {
         } else if (impl == etl::conv4_impl::STD) {
             impl::standard::conv4_full_flipped(input, kernel, conv);
         } else {
-            impl::standard::conv4_full_flipped(input, kernel, conv);
-            //TODO cpp_unreachable("Invalid conv implementation selection");
+            cpp_unreachable("Invalid conv implementation selection");
         }
     }
 };
