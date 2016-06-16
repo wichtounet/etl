@@ -834,6 +834,10 @@ struct conv4_full_flipped_impl {
 
         if (impl == etl::conv4_impl::CUDNN) {
             impl::cudnn::conv4_full_flipped(input.direct(), kernel.direct(), conv.direct());
+        } else if (impl == etl::conv4_impl::AVX) {
+            impl::avx::conv4_full_flipped(input.direct(), kernel.direct(), conv.direct());
+        } else if (impl == etl::conv4_impl::SSE) {
+            impl::sse::conv4_full_flipped(input.direct(), kernel.direct(), conv.direct());
         } else if (impl == etl::conv4_impl::STD) {
             impl::standard::conv4_full_flipped(input, kernel, conv);
         } else {
