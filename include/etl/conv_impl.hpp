@@ -31,12 +31,13 @@ enum class conv_impl {
  * \brief Enumeration describing the different convolution implementations
  */
 enum class conv4_impl {
-    STD,     ///< Standard implementation
-    SSE,     ///< SSE implementation
-    AVX,     ///< AVX implementation
-    CUDNN,   ///< CUDNN implementation
-    FFT_STD, ///< FFT reduction (with STD impl)
-    FFT_MKL  ///< FFT reduction (with MKL impl)
+    STD,      ///< Standard implementation
+    SSE,      ///< SSE implementation
+    AVX,      ///< AVX implementation
+    CUDNN,    ///< CUDNN implementation
+    FFT_STD,  ///< FFT reduction (with STD impl)
+    FFT_MKL,  ///< FFT reduction (with MKL impl)
+    FFT_CUFFT ///< FFT reduction (with CUFFT impl)
 };
 
 /*!

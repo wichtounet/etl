@@ -201,6 +201,66 @@ void inplace_zifft2_kernel(opaque_memory<T,2>& a_gpu, std::size_t d1, std::size_
     cufftExecZ2Z(handle.get(), complex_cast(a_gpu.gpu_memory()), complex_cast(a_gpu.gpu_memory()), CUFFT_INVERSE);
 }
 
+inline cufftResult cufft_exec_c2c(cufftHandle plan, cufftComplex* idata, cufftComplex* odata, int direction){
+    return cufftExecC2C(plan, idata, odata, direction);
+}
+
+inline cufftResult cufft_exec_c2c(cufftHandle plan, cufftDoubleComplex* idata, cufftDoubleComplex* odata, int direction){
+    return cufftExecZ2Z(plan, idata, odata, direction);
+}
+
+template <typename T>
+void conv2_full_kernel(const T* a, std::size_t m1, std::size_t m2, const T* b, std::size_t n1, std::size_t n2, T* c, T beta) {
+    const std::size_t s1 = m1 + n1 - 1;
+    const std::size_t s2 = m2 + n2 - 1;
+    const std::size_t size = s1 * s2;
+
+    auto handle = start_cufft();
+
+    dyn_vector<etl::complex<T>> a_padded(size);
+    dyn_vector<etl::complex<T>> b_padded(size);
+
+    for (std::size_t i = 0; i < m1; ++i) {
+        direct_copy_n(a + i * m2, a_padded.memory_start() + i * s2, m2);
+    }
+
+    for (std::size_t i = 0; i < n1; ++i) {
+        direct_copy_n(b + i * n2, b_padded.memory_start() + i * s2, n2);
+    }
+
+    auto gpu_a = a_padded.direct();
+    auto gpu_b = b_padded.direct();
+
+    gpu_a.gpu_allocate_copy();
+    gpu_b.gpu_allocate_copy();
+
+    cufftPlan2d(&handle.get(), s1, s2, is_single_precision_t<T>::value ? CUFFT_C2C : CUFFT_Z2Z);
+
+    cufft_exec_c2c(handle.get(), complex_cast(gpu_a.gpu_memory()), complex_cast(gpu_a.gpu_memory()), CUFFT_FORWARD);
+    cufft_exec_c2c(handle.get(), complex_cast(gpu_b.gpu_memory()), complex_cast(gpu_b.gpu_memory()), CUFFT_FORWARD);
+
+    gpu_a.gpu_copy_from();
+    gpu_b.gpu_copy_from();
+
+    a_padded *= b_padded;
+
+    gpu_a.gpu_copy_to(); //Refresh the GPU memory
+
+    cufft_exec_c2c(handle.get(), complex_cast(gpu_a.gpu_memory()), complex_cast(gpu_a.gpu_memory()), CUFFT_INVERSE);
+
+    gpu_a.gpu_copy_from();
+
+    if(beta == T(0.0)){
+        for (std::size_t i = 0; i < size; ++i) {
+            c[i] = a_padded[i].real * (T(1.0) / size);
+        }
+    } else {
+        for (std::size_t i = 0; i < size; ++i) {
+            c[i] = beta * c[i] + a_padded[i].real * (T(1.0) / size);
+        }
+    }
+}
+
 } //End of namespace detail
 
 template <typename A, typename C, cpp_enable_if(all_single_precision<A>::value)>
@@ -361,9 +421,10 @@ void scale_back(C&& c) {
 template <typename A, typename C, cpp_enable_if(all_complex_single_precision<A>::value)>
 void scale_back_real(A&& a, C&& c) {
     auto a_gpu = a.direct();
-    auto c_gpu = c.direct();
 
 #ifdef ETL_CUBLAS_MODE
+    auto c_gpu = c.direct();
+
     c_gpu.gpu_allocate_if_necessary();
 
     impl::cublas::cublas_handle handle = impl::cublas::start_cublas();
@@ -388,9 +449,10 @@ void scale_back_real(A&& a, C&& c) {
 template <typename A, typename C, cpp_enable_if(all_complex_double_precision<A>::value)>
 void scale_back_real(A&& a, C&& c) {
     auto a_gpu = a.direct();
-    auto c_gpu = c.direct();
 
 #ifdef ETL_CUBLAS_MODE
+    auto c_gpu = c.direct();
+
     c_gpu.gpu_allocate_if_necessary();
 
     impl::cublas::cublas_handle handle = impl::cublas::start_cublas();
@@ -798,64 +860,41 @@ void ifft2_many(A&& a, C&& c) {
     scale_back(c, 1.0 / double(n1 * n2));
 }
 
-inline cufftResult cufft_exec_c2c(cufftHandle plan, cufftComplex* idata, cufftComplex* odata, int direction){
-    return cufftExecC2C(plan, idata, odata, direction);
-}
-
-inline cufftResult cufft_exec_c2c(cufftHandle plan, cufftDoubleComplex* idata, cufftDoubleComplex* odata, int direction){
-    return cufftExecZ2Z(plan, idata, odata, direction);
+template <typename T>
+void conv2_full(const opaque_memory<T, 2>& a, const opaque_memory<T, 2>& b, const opaque_memory<T, 2>& c) {
+    detail::conv2_full_kernel(a.memory_start(), a.dim(0), a.dim(1), b.memory_start(), b.dim(0), b.dim(1), c.memory_start(), T(0.0));
 }
 
 template <typename T>
-void conv2_full(const opaque_memory<T, 2>& a, const opaque_memory<T, 2>& b, const opaque_memory<T, 2>& c) {
-    const std::size_t m1 = a.template dim<0>();
-    const std::size_t n1 = b.template dim<0>();
-    const std::size_t s1 = m1 + n1 - 1;
+void conv4_full(const opaque_memory<T, 4>& input, const opaque_memory<T, 4>& kernel, const opaque_memory<T, 4>& conv) {
+    if (kernel.dim(1) > 0) {
+        auto conv_i_inc = conv.dim(1) * conv.dim(2) * conv.dim(3);
+        auto conv_c_inc = conv.dim(2) * conv.dim(3);
 
-    const std::size_t m2 = a.template dim<1>();
-    const std::size_t n2 = b.template dim<1>();
-    const std::size_t s2 = m2 + n2 - 1;
+        auto kernel_k_inc = kernel.dim(1) * kernel.dim(2) * kernel.dim(3);
+        auto kernel_c_inc = kernel.dim(2) * kernel.dim(3);
 
-    const std::size_t size = s1 * s2;
+        auto input_i_inc = input.dim(1) * input.dim(2) * input.dim(3);
+        auto input_k_inc = input.dim(2) * input.dim(3);
 
-    auto handle = start_cufft();
+        for (std::size_t i = 0; i < input.dim(0); ++i) {
+            //k = 0
+            for (std::size_t c = 0; c < kernel.dim(1); ++c) {
+                detail::conv2_full_kernel(
+                    input.memory_start() + i * input_i_inc + 0 * input_k_inc, input.dim(2), input.dim(3),
+                    kernel.memory_start() + 0 * kernel_k_inc + c * kernel_c_inc, kernel.dim(2), kernel.dim(3),
+                    conv.memory_start() + i * conv_i_inc + c * conv_c_inc, T(0.0));
+            }
 
-    dyn_vector<etl::complex<T>> a_padded(size);
-    dyn_vector<etl::complex<T>> b_padded(size);
-
-    for (std::size_t i = 0; i < m1; ++i) {
-        direct_copy_n(a.memory_start() + i * m2, a_padded.memory_start() + i * s2, m2);
-    }
-
-    for (std::size_t i = 0; i < n1; ++i) {
-        direct_copy_n(b.memory_start() + i * n2, b_padded.memory_start() + i * s2, n2);
-    }
-
-    auto gpu_a = a_padded.direct();
-    auto gpu_b = b_padded.direct();
-
-    gpu_a.gpu_allocate_copy();
-    gpu_b.gpu_allocate_copy();
-
-    cufftPlan2d(&handle.get(), s1, s2, is_single_precision_t<T>::value ? CUFFT_C2C : CUFFT_Z2Z);
-
-    cufft_exec_c2c(handle.get(), complex_cast(gpu_a.gpu_memory()), complex_cast(gpu_a.gpu_memory()), CUFFT_FORWARD);
-    cufft_exec_c2c(handle.get(), complex_cast(gpu_b.gpu_memory()), complex_cast(gpu_b.gpu_memory()), CUFFT_FORWARD);
-
-    gpu_a.gpu_copy_from();
-    gpu_b.gpu_copy_from();
-
-    a_padded *= b_padded;
-
-    gpu_a.gpu_copy_to(); //Refresh the GPU memory
-
-    cufft_exec_c2c(handle.get(), complex_cast(gpu_a.gpu_memory()), complex_cast(gpu_a.gpu_memory()), CUFFT_INVERSE);
-
-    gpu_a.gpu_copy_from();
-
-    auto c_m = c.memory_start();
-    for (std::size_t i = 0; i < size; ++i) {
-        c_m[i] = a_padded[i].real * (T(1.0) / size);
+            for (std::size_t k = 1; k < kernel.dim(0); ++k) {
+                for (std::size_t c = 0; c < kernel.dim(1); ++c) {
+                    detail::conv2_full_kernel(
+                        input.memory_start() + i * input_i_inc + k * input_k_inc, input.dim(2), input.dim(3),
+                        kernel.memory_start() + k * kernel_k_inc + c * kernel_c_inc, kernel.dim(2), kernel.dim(3),
+                        conv.memory_start() + i * conv_i_inc + c * conv_c_inc, T(1.0));
+                }
+            }
+        }
     }
 }
 
@@ -1013,6 +1052,14 @@ void conv1_full(A&& a, B&& b, C&& c) {
  */
 template <typename A, typename B, typename C>
 void conv2_full(A&& a, B&& b, C&& c) {
+    cpp_unused(a);
+    cpp_unused(b);
+    cpp_unused(c);
+    cpp_unreachable("Unsupported feature called: mkl fft");
+}
+
+template <typename A, typename B, typename C>
+void conv4_full(A&& a, B&& b, C&& c) {
     cpp_unused(a);
     cpp_unused(b);
     cpp_unused(c);

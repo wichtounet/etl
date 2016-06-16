@@ -164,11 +164,14 @@ CONV_FUNCTOR(fft_mkl_conv4_full, c = selected_helper(etl::conv4_impl::FFT_MKL, e
 #ifdef ETL_CUFFT_MODE
 CONV_FUNCTOR(fft_cufft_conv1_full, c = selected_helper(etl::conv_impl::FFT_CUFFT, etl::conv_1d_full(a, b)))
 CONV_FUNCTOR(fft_cufft_conv2_full, c = selected_helper(etl::conv_impl::FFT_CUFFT, etl::conv_2d_full(a, b)))
+CONV_FUNCTOR(fft_cufft_conv4_full, c = selected_helper(etl::conv_impl::FFT_CUFFT, etl::conv_4d_full(a, b)))
 #define CONV1_FULL_TEST_CASE_SECTION_FFT_CUFFT CONV_TEST_CASE_SECTIONS(fft_cufft_conv1_full)
 #define CONV2_FULL_TEST_CASE_SECTION_FFT_CUFFT CONV_TEST_CASE_SECTIONS(fft_cufft_conv2_full)
+#define CONV4_FULL_TEST_CASE_SECTION_FFT_CUFFT CONV_TEST_CASE_SECTIONS(fft_cufft_conv4_full)
 #else
 #define CONV1_FULL_TEST_CASE_SECTION_FFT_CUFFT
 #define CONV2_FULL_TEST_CASE_SECTION_FFT_CUFFT
+#define CONV4_FULL_TEST_CASE_SECTION_FFT_CUFFT
 #endif
 
 #ifdef TEST_SSE
@@ -461,6 +464,7 @@ CONV_FUNCTOR(cudnn_conv2_valid_multi_flipped, c = selected_helper(etl::conv_mult
         CONV4_FULL_TEST_CASE_SECTION_AVX        \
         CONV4_FULL_TEST_CASE_SECTION_FFT_STD    \
         CONV4_FULL_TEST_CASE_SECTION_FFT_MKL    \
+        CONV4_FULL_TEST_CASE_SECTION_FFT_CUFFT  \
         CONV4_FULL_TEST_CASE_SECTION_CUDNN      \
     }                                           \
     CONV_TEST_CASE_DEFN
