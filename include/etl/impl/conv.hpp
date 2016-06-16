@@ -806,6 +806,8 @@ struct conv4_full_impl {
             impl::sse::conv4_full(input.direct(), kernel.direct(), conv.direct());
         } else if (impl == etl::conv4_impl::FFT_STD) {
             impl::standard::conv4_full_fft(input.direct(), kernel.direct(), conv.direct());
+        } else if (impl == etl::conv4_impl::FFT_MKL) {
+            impl::blas::conv4_full(input.direct(), kernel.direct(), conv.direct());
         } else if (impl == etl::conv4_impl::STD) {
             impl::standard::conv4_full(input, kernel, conv);
         } else {

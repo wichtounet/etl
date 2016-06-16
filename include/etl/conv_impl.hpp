@@ -35,7 +35,8 @@ enum class conv4_impl {
     SSE,     ///< SSE implementation
     AVX,     ///< AVX implementation
     CUDNN,   ///< CUDNN implementation
-    FFT_STD  ///< FFT reduction (with STD impl)
+    FFT_STD, ///< FFT reduction (with STD impl)
+    FFT_MKL  ///< FFT reduction (with MKL impl)
 };
 
 /*!
