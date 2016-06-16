@@ -410,10 +410,28 @@ void conv4_full_flipped(const I& input, const K& kernel, C&& conv) {
 
     conv = 0.0;
 
-    for(std::size_t i = 0; i < etl::dim<0>(input); ++i){
-        for(std::size_t k = 0; k < etl::dim<0>(kernel); ++k){
-            for(std::size_t c = 0; c < etl::dim<1>(kernel); ++c){
-                conv(i)(c) += conv_2d_full_flipped(input(i)(k), kernel(k)(c));
+    for(std::size_t ii = 0; ii < etl::dim<0>(input); ++ii){
+        for(std::size_t kk = 0; kk < etl::dim<0>(kernel); ++kk){
+            for(std::size_t cc = 0; cc < etl::dim<1>(kernel); ++cc){
+                for (std::size_t i = 0; i < etl::dim<2>(conv); ++i) {
+                    auto k_lo = std::max<int>(0, i - etl::dim<2>(kernel) + 1);
+                    auto k_hi = std::min(etl::dim<2>(input) - 1, i) + 1;
+
+                    for (std::size_t j = 0; j < etl::dim<3>(conv); ++j) {
+                        auto l_lo = std::max<int>(0, j - etl::dim<3>(kernel) + 1);
+                        auto l_hi = std::min(etl::dim<3>(input) - 1, j) + 1;
+
+                        typename I::value_type temp = 0.0;
+
+                        for (std::size_t k = k_lo; k < k_hi; ++k) {
+                            for (std::size_t l = l_lo; l < l_hi; ++l) {
+                                temp += input(ii, kk, k, l) * kernel(kk, cc, etl::dim<2>(kernel) - 1 - (i - k), etl::dim<3>(kernel) - 1 - (j - l));
+                            }
+                        }
+
+                        conv(ii, cc, i, j) += temp;
+                    }
+                }
             }
         }
     }
