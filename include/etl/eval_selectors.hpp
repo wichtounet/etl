@@ -61,37 +61,25 @@ inline constexpr vector_mode_t select_vector_mode(){
  * \brief Integral constant indicating if a fast assign is possible
  */
 template <typename E, typename R>
-using fast_assign = cpp::and_u<
-                         has_direct_access<E>::value,
-                         has_direct_access<R>::value
-                         >;
+using fast_assign = cpp::and_c<has_direct_access<E>, has_direct_access<R>>;
 
 /*!
  * \brief Integral constant indicating if a vectorized assign is possible
  */
 template <typename E, typename R>
-using vectorized_assign = cpp::and_u<
-                               !fast_assign<E, R>::value,
-                               vectorize_expr,
-                               are_vectorizable<E, R>::value>;
+using vectorized_assign = cpp::and_u<!fast_assign<E, R>::value, are_vectorizable<E, R>::value>;
 
 /*!
  * \brief Integral constant indicating if a direct assign is possible
  */
 template <typename E, typename R>
-using direct_assign = cpp::and_u<
-                           !fast_assign<E, R>::value,
-                           !vectorized_assign<E, R>::value,
-                           has_direct_access<R>::value>;
+using direct_assign = cpp::and_u<!are_vectorizable<E, R>::value, !has_direct_access<E>::value, has_direct_access<R>::value>;
 
 /*!
  * \brief Integral constant indicating if a standard assign is necessary
  */
 template <typename E, typename R>
-using standard_assign = cpp::and_u<
-                             !fast_assign<E, R>::value,
-                             !vectorized_assign<E, R>::value,
-                             !has_direct_access<R>::value>;
+using standard_assign = cpp::not_c<has_direct_access<R>>;
 
 //Selectors for compound operations
 
