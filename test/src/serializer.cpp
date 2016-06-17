@@ -5,9 +5,9 @@
 //  http://opensource.org/licenses/MIT)
 //=======================================================================
 
-#include <fstream>
-
 #include "test_light.hpp"
+
+#include <fstream>
 
 TEMPLATE_TEST_CASE_2("serializer/1", "[serializer]", Z, float, double) {
     {
