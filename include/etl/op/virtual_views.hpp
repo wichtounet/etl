@@ -170,6 +170,7 @@ struct etl_traits<etl::magic_view<V>> {
     static constexpr const bool is_fast                 = false;           ///< Indicates if the expression is fast
     static constexpr const bool is_linear               = false;           ///< Indicates if the expression is linear
     static constexpr const bool is_value                = false;           ///< Indicates if the expression is of value type
+    static constexpr const bool is_direct               = false;           ///< Indicates if the expression has direct memory access
     static constexpr const bool is_generator            = false;           ///< Indicates if the expression is a generator
     static constexpr const bool needs_temporary_visitor = false;           ///< Indicates if the expression needs a temporary visitor
     static constexpr const bool needs_evaluator_visitor = false;           ///< Indicates if the exxpression needs a evaluator visitor
@@ -223,6 +224,7 @@ struct etl_traits<etl::fast_magic_view<V, N>> {
     static constexpr const bool is_fast                 = true;            ///< Indicates if the expression is fast
     static constexpr const bool is_linear               = false;           ///< Indicates if the expression is linear
     static constexpr const bool is_value                = false;           ///< Indicates if the expression is of value type
+    static constexpr const bool is_direct               = false;           ///< Indicates if the expression has direct memory access
     static constexpr const bool is_generator            = false;           ///< Indicates if the expression is a generator
     static constexpr const bool needs_temporary_visitor = false;           ///< Indicates if the expression needs a temporary visitor
     static constexpr const bool needs_evaluator_visitor = false;           ///< Indicates if the exxpression needs a evaluator visitor

@@ -515,6 +515,7 @@ struct etl_traits<etl::temporary_unary_expr<T, A, Op>> {
     static constexpr const bool is_fast                 = etl_traits<a_t>::is_fast;       ///< Indicates if the expression is fast
     static constexpr const bool is_linear               = true;                           ///< Indicates if the expression is linear
     static constexpr const bool is_value                = false;                          ///< Indicates if the expression is of value type
+    static constexpr const bool is_direct               = true;                           ///< Indicates if the expression has direct memory access
     static constexpr const bool is_generator            = false;                          ///< Indicates if the expression is a generated
     static constexpr const bool needs_temporary_visitor = true;                           ///< Indicates if the expression needs a temporary visitor
     static constexpr const bool needs_evaluator_visitor = true;                           ///< Indicaes if the expression needs an evaluator visitor
@@ -589,6 +590,7 @@ struct etl_traits<etl::temporary_binary_expr<T, A, B, Op>> {
     static constexpr const bool is_view                 = false;                                                                                           ///< Indicates if the type is a view
     static constexpr const bool is_magic_view           = false;                                                                                           ///< Indicates if the type is a magic view
     static constexpr const bool is_fast                 = etl_traits<a_t>::is_fast && etl_traits<b_t>::is_fast;                                            ///< Indicates if the expression is fast
+    static constexpr const bool is_direct               = true;                                                                                            ///< Indicates if the expression has direct memory access
     static constexpr const bool is_linear               = true;                                                                                            ///< Indicates if the expression is linear
     static constexpr const bool is_value                = false;                                                                                           ///< Indicates if the expression is of value type
     static constexpr const bool is_generator            = false;                                                                                           ///< Indicates if the expression is a generated

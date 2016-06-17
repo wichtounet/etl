@@ -219,107 +219,8 @@ using is_lhs = cpp::or_c<is_etl_value<T>, is_unary_expr<T>>;
  * \brief Traits indicating if the given ETL type has direct memory access.
  * \tparam T The type to test
  */
-template <typename T, typename DT = std::decay_t<T>>
-struct has_direct_access;
-
-/*!
- * \brief Traits indicating if the given ETL type is a sub view with direct access to memory
- * \tparam T The type to test
- */
 template <typename T>
-struct is_direct_sub_view : std::false_type {};
-
-/*!
- * \copydoc is_direct_sub_view
- */
-template <typename T>
-struct is_direct_sub_view<sub_view<T>> : cpp::and_u<has_direct_access<T>::value, decay_traits<T>::storage_order == order::RowMajor> {};
-
-/*!
- * \brief Traits indicating if the given ETL type is a slice view with direct access to memory
- * \tparam T The type to test
- */
-template <typename T>
-struct is_direct_slice_view : std::false_type {};
-
-/*!
- * \copydoc is_direct_slice_view
- */
-template <typename T>
-struct is_direct_slice_view<slice_view<T>> : cpp::and_u<has_direct_access<T>::value, decay_traits<T>::storage_order == order::RowMajor> {};
-
-/*!
- * \brief Traits indicating if the given ETL type is a dim view with direct access to memory
- * \tparam T The type to test
- */
-template <typename T>
-struct is_direct_dim_view : std::false_type {};
-
-/*!
- * \copydoc is_direct_dim_view
- */
-template <typename T>
-struct is_direct_dim_view<dim_view<T, 1>> : has_direct_access<T> {};
-
-/*!
- * \brief Traits indicating if the given ETL type is a fast matrix view with direct access to memory
- * \tparam T The type to test
- */
-template <typename T>
-struct is_direct_fast_matrix_view : std::false_type {};
-
-/*!
- * \copydoc is_direct_fast_matrix_view
- */
-template <typename T, std::size_t... Dims>
-struct is_direct_fast_matrix_view<fast_matrix_view<T, Dims...>> : has_direct_access<T> {};
-
-/*!
- * \brief Traits indicating if the given ETL type is a dyn matrix view with direct access to memory
- * \tparam T The type to test
- */
-template <typename T>
-struct is_direct_dyn_matrix_view : std::false_type {};
-
-/*!
- * \copydoc is_direct_dyn_matrix_view
- */
-template <typename T>
-struct is_direct_dyn_matrix_view<dyn_matrix_view<T>> : has_direct_access<T> {};
-
-/*!
- * \brief Traits indicating if the given ETL type is a dyn vector view with direct access to memory
- * \tparam T The type to test
- */
-template <typename T>
-struct is_direct_dyn_vector_view : std::false_type {};
-
-/*!
- * \copydoc is_direct_dyn_vector_view
- */
-template <typename T>
-struct is_direct_dyn_vector_view<dyn_vector_view<T>> : has_direct_access<T> {};
-
-/*!
- * \brief Traits indicating if the given ETL type is an identity view with direct access to memory
- * \tparam T The type to test
- */
-template <typename T>
-struct is_direct_identity_view : std::false_type {};
-
-/*!
- * \copydoc is_direct_identity_view
- */
-template <typename T, typename V>
-struct is_direct_identity_view<etl::unary_expr<T, V, identity_op>> : has_direct_access<V> {};
-
-/*!
- * \brief Tests if the given type has direct memory access
- * \tparam T The type to test
- */
-template <typename T, typename DT>
-struct has_direct_access : cpp::or_c<
-                               is_etl_direct_value<DT>, is_temporary_unary_expr<DT>, is_temporary_binary_expr<DT>, is_direct_identity_view<DT>, is_direct_sub_view<DT>, is_direct_slice_view<DT>, is_direct_dim_view<DT>, is_direct_fast_matrix_view<DT>, is_direct_dyn_matrix_view<DT>, is_direct_dyn_vector_view<DT>> {};
+using has_direct_access = cpp::bool_constant<decay_traits<T>::is_direct>;
 
 /*!
  * \brief Traits to test if the given type is single precision type.
@@ -597,6 +498,7 @@ struct etl_traits<T, std::enable_if_t<is_etl_value<T>::value>> {
     static constexpr const bool is_magic_view           = false;                    ///< Indicates if the type is a magic view
     static constexpr const bool is_fast                 = is_fast_matrix<T>::value; ///< Indicates if the expression is fast
     static constexpr const bool is_value                = true;                     ///< Indicates if the expression is of value type
+    static constexpr const bool is_direct               = !is_sparse_matrix<T>::value; ///< Indicates if the expression has direct memory access
     static constexpr const bool is_linear               = true;                     ///< Indicates if the expression is linear
     static constexpr const bool is_generator            = false;                    ///< Indicates if the expression is a generator expression
     static constexpr const bool needs_temporary_visitor = false;                    ///< Indicates if the expression needs a temporary visitor

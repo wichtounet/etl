@@ -817,6 +817,7 @@ struct etl_traits<etl::unary_expr<T, Expr, UnaryOp>> {
     static constexpr const bool is_magic_view           = false;                                                ///< Indicates if the type is a magic view
     static constexpr const bool is_fast                 = etl_traits<sub_expr_t>::is_fast;                      ///< Indicates if the expression is fast
     static constexpr const bool is_value                = false;                                                ///< Indicates if the expression is of value type
+    static constexpr const bool is_direct                = std::is_same<UnaryOp, identity_op>::value && etl_traits<sub_expr_t>::is_direct;                                                ///< Indicates if the expression has direct memory access
     static constexpr const bool is_linear               = etl_traits<sub_expr_t>::is_linear && UnaryOp::linear; ///< Indicates if the expression is linear
     static constexpr const bool is_generator            = etl_traits<sub_expr_t>::is_generator;                 ///< Indicates if the expression is a generator expression
     static constexpr const bool needs_temporary_visitor = etl_traits<sub_expr_t>::needs_temporary_visitor;      ///< Indicates if the expression needs a temporary visitor
