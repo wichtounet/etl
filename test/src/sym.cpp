@@ -13,10 +13,25 @@ TEMPLATE_TEST_CASE_2("sym/fast_matrix/1", "[sym][fast]", Z, float, double) {
     etl::sym_matrix<etl::fast_dyn_matrix<Z, 1,1>> c(Z(0.0));
     etl::sym_matrix<etl::dyn_matrix<Z>> d(3, Z(1.0));
 
+    using a_t = decltype(a);
+    using b_t = decltype(b);
+    using c_t = decltype(c);
+    using d_t = decltype(d);
+
     REQUIRE_EQUALS(a.dimensions(), 2UL);
     REQUIRE_EQUALS(b.dimensions(), 2UL);
     REQUIRE_EQUALS(c.dimensions(), 2UL);
     REQUIRE_EQUALS(d.dimensions(), 2UL);
+
+    REQUIRE_DIRECT(etl::etl_traits<a_t>::is_fast);
+    REQUIRE_DIRECT(etl::etl_traits<b_t>::is_fast);
+    REQUIRE_DIRECT(etl::etl_traits<c_t>::is_fast);
+    REQUIRE_DIRECT(!etl::etl_traits<d_t>::is_fast);
+
+    REQUIRE_EQUALS(etl::etl_traits<a_t>::size(a), 4UL);
+    REQUIRE_EQUALS(etl::etl_traits<b_t>::size(b), 1UL);
+    REQUIRE_EQUALS(etl::etl_traits<c_t>::size(c), 1UL);
+    REQUIRE_EQUALS(etl::etl_traits<d_t>::size(d), 9UL);
 }
 
 TEMPLATE_TEST_CASE_2("sym/fast_matrix/2", "[sym][fast]", Z, float, double) {
