@@ -12,8 +12,6 @@
 
 #pragma once
 
-#include <memory>
-
 namespace etl {
 /*
  * GCC mangling of vector types (__m128, __m256, ...) is terribly

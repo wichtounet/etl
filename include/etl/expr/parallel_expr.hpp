@@ -16,8 +16,6 @@
 
 #pragma once
 
-#include <iosfwd> //For stream support
-
 #include "etl/wrapper_traits.hpp"
 
 namespace etl {

@@ -11,7 +11,7 @@
 #include <complex>
 #include <vector>
 #include <array>
-#include <algorithm>   //For std::find_if
+#include <algorithm>   //For value_testable
 #include <iosfwd>      //For stream support
 #include <type_traits> //For static assertions tests
 #include <tuple>       //For TMP stuff

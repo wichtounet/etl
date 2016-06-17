@@ -16,8 +16,6 @@
 
 #pragma once
 
-#include <iosfwd> //For stream support
-
 namespace etl {
 
 /*!
