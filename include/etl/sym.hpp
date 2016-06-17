@@ -151,7 +151,8 @@ struct symmetric_reference {
  */
 template <typename Matrix>
 struct sym_matrix final {
-    using matrix_t = Matrix; ///< The adapted matrix type
+    using matrix_t = Matrix;   ///< The adapted matrix type
+    using expr_t   = matrix_t; ///< The wrapped expression type
 
     static_assert(etl_traits<matrix_t>::is_value, "Symmetric matrix only works with value classes");
     static_assert(etl_traits<matrix_t>::dimensions() == 2, "Symmetric matrix must be two-dimensional");
@@ -240,9 +241,13 @@ public:
     value_type read_flat(std::size_t i) const noexcept {
         return matrix.read_flat(i);
     }
+
+    const expr_t& value() const noexcept {
+        return matrix;
+    }
 };
 
 template <typename Matrix>
-struct etl_traits<sym_matrix<Matrix>> : etl_traits<Matrix> {};
+struct etl_traits<sym_matrix<Matrix>> : wrapper_traits<sym_matrix<Matrix>> {};
 
 } //end of namespace etl
