@@ -27,10 +27,10 @@ void evaluate_result(const char* file, std::size_t line, const char* exp, L lhs,
     result.react();
 }
 
-template<typename L, typename R>
-void evaluate_result_approx(const char* file, std::size_t line, const char* exp, L lhs, R rhs, double eps = base_eps){
+template<typename L>
+void evaluate_result_approx(const char* file, std::size_t line, const char* exp, L lhs, decltype(lhs) rhs, double eps = base_eps){
     Catch::ResultBuilder result("REQUIRE", {file, line}, exp, Catch::ResultDisposition::Flags::Normal);
-    result.setResultType(fabs(lhs - rhs) < eps * (1.0 + std::max(fabs(lhs), fabs(rhs))));
+    result.setResultType(std::abs(lhs - rhs) < eps * (1.0 + std::max(std::abs(lhs), std::abs(rhs))));
     result.setLhs(Catch::toString(lhs));
     result.setRhs("Approx(" + Catch::toString(rhs) + ")");
     result.setOp("==");

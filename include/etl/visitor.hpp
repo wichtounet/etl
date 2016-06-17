@@ -107,7 +107,7 @@ struct etl_visitor {
      * \brief Visit the given temporary unary expr
      * \param v The temporary unary expr
      */
-    template <typename T, cpp_enable_if_cst(V_T&& is_temporary_unary_expr<T>::value)>
+    template <typename T, cpp_enable_if(V_T && is_temporary_unary_expr<T>::value)>
     void operator()(T& v) {
         as_derived()(v.a());
     }
@@ -116,7 +116,7 @@ struct etl_visitor {
      * \brief Visit the given temporary binary expr
      * \param v The temporary binary expr
      */
-    template <typename T, cpp_enable_if_cst(V_T&& is_temporary_binary_expr<T>::value)>
+    template <typename T, cpp_enable_if(V_T && is_temporary_binary_expr<T>::value)>
     void operator()(T& v) const {
         as_derived()(v.a());
         as_derived()(v.b());
@@ -137,7 +137,7 @@ struct etl_visitor {
      * \param v The the magic view.
      */
     template <typename T, cpp_enable_if(etl::is_magic_view<T>::value)>
-    void operator()(const T& v) const {
+    void operator()(T& v) const {
         cpp_unused(v);
         //Leaf
     }
