@@ -84,7 +84,7 @@ $(eval $(call enable_coverage))
 endif
 
 # Enable sonar workarounds
-ifeq (,$(ETL_SONAR))
+ifneq (,$(ETL_SONAR))
 CXX_FLAGS += -DSONAR_ANALYSIS
 endif
 
