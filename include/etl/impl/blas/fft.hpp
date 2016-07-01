@@ -207,6 +207,14 @@ inline void fft2_kernel(const std::complex<double>* in, std::size_t d1, std::siz
     DftiFreeDescriptor(&descriptor);                                      //Free the descriptor
 }
 
+inline void fft2_kernel(const etl::complex<float>* in, std::size_t d1, std::size_t d2, etl::complex<float>* out) {
+    fft2_kernel(reinterpret_cast<const std::complex<float>*>(in), d1, d2, reinterpret_cast<std::complex<float>*>(out));
+}
+
+inline void fft2_kernel(const etl::complex<double>* in, std::size_t d1, std::size_t d2, etl::complex<double>* out) {
+    fft2_kernel(reinterpret_cast<const std::complex<double>*>(in), d1, d2, reinterpret_cast<std::complex<double>*>(out));
+}
+
 inline void fft2_many_kernel(const std::complex<float>* in, std::size_t batch, std::size_t d1, std::size_t d2, std::complex<float>* out) {
     DFTI_DESCRIPTOR_HANDLE descriptor;
 
@@ -239,6 +247,14 @@ inline void fft2_many_kernel(const std::complex<double>* in, std::size_t batch, 
     DftiCommitDescriptor(descriptor);                                     //Finalize the descriptor
     DftiComputeForward(descriptor, in_ptr, out);                          //Compute the Forward FFT
     DftiFreeDescriptor(&descriptor);                                      //Free the descriptor
+}
+
+inline void fft2_many_kernel(const etl::complex<float>* in, std::size_t batch, std::size_t d1, std::size_t d2, etl::complex<float>* out) {
+    fft2_many_kernel(reinterpret_cast<const std::complex<float>*>(in), batch, d1, d2, reinterpret_cast<std::complex<float>*>(out));
+}
+
+inline void fft2_many_kernel(const etl::complex<double>* in, std::size_t batch, std::size_t d1, std::size_t d2, etl::complex<double>* out) {
+    fft2_many_kernel(reinterpret_cast<const std::complex<double>*>(in), batch, d1, d2, reinterpret_cast<std::complex<double>*>(out));
 }
 
 inline void inplace_fft2_kernel(std::complex<float>* in, std::size_t d1, std::size_t d2) {
