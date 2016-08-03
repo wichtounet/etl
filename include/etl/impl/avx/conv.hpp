@@ -1404,6 +1404,32 @@ void conv2_full_flipped(const opaque_memory<T, 2>& input, const opaque_memory<T,
         conv.memory_start(), 0.0);
 }
 
+template <typename T>
+void conv2_full_multi(const opaque_memory<T, 2>& input, const opaque_memory<T, 3>& kernel, const opaque_memory<T, 3>& conv) {
+    for(std::size_t k = 0; k < kernel.template dim<0>(); ++k){
+        auto kk = kernel.template dim<1>() * kernel.template dim<2>();
+        auto cc = conv.template dim<1>() * conv.template dim<2>();
+
+        conv2_full_micro_kernel(
+            input.memory_start(), input.template dim<0>(), input.template dim<1>(),
+            kernel.memory_start() + k * kk, kernel.template dim<1>(), kernel.template dim<2>(),
+            conv.memory_start() + k * cc, 0.0);
+    }
+}
+
+template <typename T>
+void conv2_full_multi_flipped(const opaque_memory<T, 2>& input, const opaque_memory<T, 3>& kernel, const opaque_memory<T, 3>& conv) {
+    for(std::size_t k = 0; k < kernel.template dim<0>(); ++k){
+        auto kk = kernel.template dim<1>() * kernel.template dim<2>();
+        auto cc = conv.template dim<1>() * conv.template dim<2>();
+
+        conv2_full_flipped_micro_kernel(
+            input.memory_start(), input.template dim<0>(), input.template dim<1>(),
+            kernel.memory_start() + k * kk, kernel.template dim<1>(), kernel.template dim<2>(),
+            conv.memory_start() + k * cc, 0.0);
+    }
+}
+
 #else
 
 //COVERAGE_EXCLUDE_BEGIN
@@ -1540,6 +1566,34 @@ void conv2_full(const I& input, const K& kernel, C&& conv) {
  */
 template <typename I, typename K, typename C>
 void conv2_full_flipped(const I& input, const K& kernel, C&& conv) {
+    cpp_unused(input);
+    cpp_unused(kernel);
+    cpp_unused(conv);
+    cpp_unreachable("AVX not available/enabled");
+}
+
+/*!
+ * \brief AVX implementation of a 2D 'full' convolution C = I * K, with multiple kernels
+ * \param input The input matrix
+ * \param kernel The kernel matrix
+ * \param conv The output matrix
+ */
+template <typename I, typename K, typename C>
+void conv2_full_multi(const I& input, const K& kernel, C&& conv) {
+    cpp_unused(input);
+    cpp_unused(kernel);
+    cpp_unused(conv);
+    cpp_unreachable("AVX not available/enabled");
+}
+
+/*!
+ * \brief AVX implementation of a 2D 'full' convolution C = I * K, with multiple flipped kernels
+ * \param input The input matrix
+ * \param kernel The kernel matrix
+ * \param conv The output matrix
+ */
+template <typename I, typename K, typename C>
+void conv2_full_multi_flipped(const I& input, const K& kernel, C&& conv) {
     cpp_unused(input);
     cpp_unused(kernel);
     cpp_unused(conv);

@@ -45,7 +45,9 @@ enum class conv4_impl {
  */
 enum class conv_multi_impl {
     STD,  ///< Standard implementation
-    FFT,  ///< Reductiont too FFT
+    SSE,  ///< SSE implementation
+    AVX,  ///< AVX implementation
+    FFT,  ///< Reductiont to FFT
     BLAS, ///< Reduction to BLAS (GEMM)
     CUDNN ///< GPU with CUDNN
 };
