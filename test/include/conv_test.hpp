@@ -49,6 +49,12 @@ CONV_FUNCTOR(std_conv2_same, etl::impl::standard::conv2_same(a, b, c))
 CONV_FUNCTOR(default_conv2_same_flipped, c = etl::conv_2d_same_flipped(a, b))
 CONV_FUNCTOR(std_conv2_same_flipped, etl::impl::standard::conv2_same_flipped(a, b, c))
 
+CONV_FUNCTOR(default_conv2_same_multi, c = etl::conv_2d_same_multi(a, b))
+CONV_FUNCTOR(std_conv2_same_multi, etl::impl::standard::conv2_same_multi(a, b, c))
+
+CONV_FUNCTOR(default_conv2_same_multi_flipped, c = etl::conv_2d_same_multi_flipped(a, b))
+CONV_FUNCTOR(std_conv2_same_multi_flipped, etl::impl::standard::conv2_same_multi_flipped(a, b, c))
+
 CONV_FUNCTOR(default_conv2_valid, c = etl::conv_2d_valid(a, b))
 CONV_FUNCTOR(std_conv2_valid, etl::impl::standard::conv2_valid(a, b, c))
 
@@ -112,6 +118,12 @@ CONV_FUNCTOR(std_conv2_full_multi_flipped, c = selected_helper(etl::conv_multi_i
 
 #define CONV2_SAME_FLIPPED_TEST_CASE_SECTION_DEFAULT CONV_TEST_CASE_SECTIONS(default_conv2_same_flipped)
 #define CONV2_SAME_FLIPPED_TEST_CASE_SECTION_STD CONV_TEST_CASE_SECTIONS(std_conv2_same_flipped)
+
+#define CONV2_SAME_MULTI_TEST_CASE_SECTION_DEFAULT CONV_TEST_CASE_SECTIONS(default_conv2_same_multi)
+#define CONV2_SAME_MULTI_TEST_CASE_SECTION_STD CONV_TEST_CASE_SECTIONS(std_conv2_same_multi)
+
+#define CONV2_SAME_MULTI_FLIPPED_TEST_CASE_SECTION_DEFAULT CONV_TEST_CASE_SECTIONS(default_conv2_same_multi_flipped)
+#define CONV2_SAME_MULTI_FLIPPED_TEST_CASE_SECTION_STD CONV_TEST_CASE_SECTIONS(std_conv2_same_multi_flipped)
 
 #define CONV2_VALID_TEST_CASE_SECTION_DEFAULT CONV_TEST_CASE_SECTIONS(default_conv2_valid)
 #define CONV2_VALID_TEST_CASE_SECTION_STD CONV_TEST_CASE_SECTIONS(std_conv2_valid)
@@ -584,4 +596,18 @@ CONV_FUNCTOR(cudnn_conv2_valid_multi_flipped, c = selected_helper(etl::conv_mult
         CONV2_FULL_MULTI_FLIPPED_TEST_CASE_SECTION_SSE        \
         CONV2_FULL_MULTI_FLIPPED_TEST_CASE_SECTION_AVX        \
     }                                                         \
+    CONV_TEST_CASE_DEFN
+
+#define CONV2_SAME_MULTI_TEST_CASE(name, description) \
+    CONV_TEST_CASE_DECL(name, description) {           \
+        CONV2_SAME_MULTI_TEST_CASE_SECTION_DEFAULT    \
+        CONV2_SAME_MULTI_TEST_CASE_SECTION_STD        \
+    }                                                  \
+    CONV_TEST_CASE_DEFN
+
+#define CONV2_SAME_MULTI_FLIPPED_TEST_CASE(name, description) \
+    CONV_TEST_CASE_DECL(name, description) {           \
+        CONV2_SAME_MULTI_FLIPPED_TEST_CASE_SECTION_DEFAULT    \
+        CONV2_SAME_MULTI_FLIPPED_TEST_CASE_SECTION_STD        \
+    }                                                  \
     CONV_TEST_CASE_DEFN

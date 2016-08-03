@@ -1159,6 +1159,22 @@ struct conv2_same_multi_impl {
     }
 };
 
+/*!
+ * \brief The functor impl for 2D same conv, with multiple flipped kernels
+ */
+struct conv2_same_multi_flipped_impl {
+    /*!
+     * \brief Apply the convolution
+     * \param input The input expression
+     * \param kernel The kernel expression
+     * \param conv The output expression
+     */
+    template <typename I, typename K, typename C>
+    static void apply(const I& input, const K& kernel, C&& conv) {
+        impl::standard::conv2_same_multi_flipped(input, kernel, conv);
+    }
+};
+
 } //end of namespace detail
 
 } //end of namespace etl
