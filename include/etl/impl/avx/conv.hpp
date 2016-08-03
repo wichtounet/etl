@@ -543,6 +543,14 @@ inline void conv2_same_micro_kernel(const double* in, std::size_t n1, std::size_
     }
 }
 
+inline void conv2_same_flipped_micro_kernel(const double* in, std::size_t n1, std::size_t n2, const double* kernel, std::size_t m1, std::size_t m2, double* out) {
+    auto kernel_reverse = aligned_allocate_auto<double>(m1 * m2);
+
+    std::reverse_copy(kernel, kernel + m1 * m2, kernel_reverse.get());
+
+    conv2_same_micro_kernel(in, n1, n2, kernel_reverse.get(), m1, m2, out);
+}
+
 inline void conv2_full_micro_kernel(const double* in, std::size_t n1, std::size_t n2, const double* kernel, std::size_t m1, std::size_t m2, double* out, double beta) {
     if(m2 < 4){
         etl::impl::sse::conv2_full_micro_kernel(in, n1, n2, kernel, m1, m2, out, beta);
@@ -974,6 +982,14 @@ inline void conv2_same_micro_kernel(const float* in, std::size_t n1, std::size_t
     }
 }
 
+inline void conv2_same_flipped_micro_kernel(const float* in, std::size_t n1, std::size_t n2, const float* kernel, std::size_t m1, std::size_t m2, float* out) {
+    auto kernel_reverse = aligned_allocate_auto<float>(m1 * m2);
+
+    std::reverse_copy(kernel, kernel + m1 * m2, kernel_reverse.get());
+
+    conv2_same_micro_kernel(in, n1, n2, kernel_reverse.get(), m1, m2, out);
+}
+
 inline void conv2_full_micro_kernel(const float* in, std::size_t n1, std::size_t n2, const float* kernel, std::size_t m1, std::size_t m2, float* out, float beta) {
     if(m2 < 8){
         etl::impl::sse::conv2_full_micro_kernel(in, n1, n2, kernel, m1, m2, out, beta);
@@ -1362,7 +1378,14 @@ void conv2_same(const opaque_memory<T, 2>& input, const opaque_memory<T, 2>& ker
         input.memory_start(), input.template dim<0>(), input.template dim<1>(),
         kernel.memory_start(), kernel.template dim<0>(), kernel.template dim<1>(),
         conv.memory_start());
+}
 
+template <typename T>
+void conv2_same_flipped(const opaque_memory<T, 2>& input, const opaque_memory<T, 2>& kernel, const opaque_memory<T, 2>& conv) {
+    conv2_same_flipped_micro_kernel(
+        input.memory_start(), input.template dim<0>(), input.template dim<1>(),
+        kernel.memory_start(), kernel.template dim<0>(), kernel.template dim<1>(),
+        conv.memory_start());
 }
 
 template <typename T>
@@ -1475,6 +1498,20 @@ void conv2_valid_flipped(const I& input, const K& kernel, C&& conv) {
  */
 template <typename I, typename K, typename C>
 void conv2_same(const I& input, const K& kernel, C&& conv) {
+    cpp_unused(input);
+    cpp_unused(kernel);
+    cpp_unused(conv);
+    cpp_unreachable("AVX not available/enabled");
+}
+
+/*!
+ * \brief AVX implementation of a 2D 'same' convolution C = I * K
+ * \param input The input matrix
+ * \param kernel The kernel matrix
+ * \param conv The output matrix
+ */
+template <typename I, typename K, typename C>
+void conv2_same_flipped(const I& input, const K& kernel, C&& conv) {
     cpp_unused(input);
     cpp_unused(kernel);
     cpp_unused(conv);

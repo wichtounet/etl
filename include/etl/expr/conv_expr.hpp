@@ -725,6 +725,12 @@ template <typename T>
 using conv2_same_expr = basic_conv_expr<T, 2, conv_type::SAME, detail::conv2_same_impl>;
 
 /*!
+ * \brief Expression for 2D same convolution
+ */
+template <typename T>
+using conv2_same_flipped_expr = basic_conv_expr<T, 2, conv_type::SAME, detail::conv2_same_flipped_impl>;
+
+/*!
  * \brief Expression for 2D full convolution
  */
 template <typename T>

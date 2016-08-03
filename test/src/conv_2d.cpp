@@ -407,6 +407,58 @@ CONV2_SAME_TEST_CASE("convolution_2d/same_8", "convolution_2d_same") {
     REQUIRE_EQUALS(c(3, 3), 2091280);
 }
 
+// convolution_2d_same_flipped
+
+CONV2_SAME_FLIPPED_TEST_CASE("convolution_2d_flipped/same_1", "convolution_2d_same") {
+    etl::fast_matrix<T, 2, 6> a = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12};
+    etl::fast_matrix<T, 2, 2> b = {4, 3, 2, 1};
+    etl::fast_matrix<T, 2, 6> c;
+
+    Impl::apply(a, b, c);
+
+    REQUIRE_EQUALS(c(0, 0), 32);
+    REQUIRE_EQUALS(c(0, 1), 42);
+    REQUIRE_EQUALS(c(0, 2), 52);
+    REQUIRE_EQUALS(c(0, 3), 62);
+    REQUIRE_EQUALS(c(0, 4), 72);
+    REQUIRE_EQUALS(c(0, 5), 48);
+
+    REQUIRE_EQUALS(c(1, 0), 52);
+    REQUIRE_EQUALS(c(1, 1), 59);
+    REQUIRE_EQUALS(c(1, 2), 66);
+    REQUIRE_EQUALS(c(1, 3), 73);
+    REQUIRE_EQUALS(c(1, 4), 80);
+    REQUIRE_EQUALS(c(1, 5), 48);
+}
+
+CONV2_SAME_FLIPPED_TEST_CASE("convolution_2d_flipped/same_2", "convolution_2d_same") {
+    etl::fast_matrix<T, 33, 33> a(etl::magic(33));
+    etl::fast_matrix<T, 9, 9> b(fflip(etl::magic(9)));
+    etl::fast_matrix<T, 33, 33> c;
+
+    Impl::apply(a, b, c);
+
+    REQUIRE_EQUALS(c(0, 0), 676494);
+    REQUIRE_EQUALS(c(0, 1), 806569);
+    REQUIRE_EQUALS(c(0, 2), 976949);
+    REQUIRE_EQUALS(c(0, 3), 1179119);
+
+    REQUIRE_EQUALS(c(1, 0), 808354);
+    REQUIRE_EQUALS(c(1, 1), 984480);
+    REQUIRE_EQUALS(c(1, 2), 1206077);
+    REQUIRE_EQUALS(c(1, 3), 1469155);
+
+    REQUIRE_EQUALS(c(2, 0), 971394);
+    REQUIRE_EQUALS(c(2, 1), 1202744);
+    REQUIRE_EQUALS(c(2, 2), 1485149);
+    REQUIRE_EQUALS(c(2, 3), 1773847);
+
+    REQUIRE_EQUALS(c(3, 0), 1173020);
+    REQUIRE_EQUALS(c(3, 1), 1464355);
+    REQUIRE_EQUALS(c(3, 2), 1771896);
+    REQUIRE_EQUALS(c(3, 3), 2091280);
+}
+
 // convolution_2d_valid
 
 CONV2_VALID_TEST_CASE("convolution_2d/valid_1", "convolution_2d_valid") {
