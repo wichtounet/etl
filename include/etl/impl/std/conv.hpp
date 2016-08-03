@@ -530,7 +530,7 @@ void conv2_full_multi_flipped(const I& input, const K& kernels, C&& conv) {
 template <typename I, typename K, typename C>
 void conv2_same_multi(const I& input, const K& kernels, C&& conv) {
     for (size_t k = 0; k < etl::dim<0>(kernels); ++k) {
-        conv(k) = conv_2d_same(input, kernels(k));
+        conv2_same(input, kernels(k), conv(k));
     }
 }
 
@@ -543,7 +543,7 @@ void conv2_same_multi(const I& input, const K& kernels, C&& conv) {
 template <typename I, typename K, typename C>
 void conv2_same_multi_flipped(const I& input, const K& kernels, C&& conv) {
     for (size_t k = 0; k < etl::dim<0>(kernels); ++k) {
-        conv(k) = conv_2d_same_flipped(input, kernels(k));
+        conv2_same_flipped(input, kernels(k), conv(k));
     }
 }
 
