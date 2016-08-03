@@ -1177,6 +1177,32 @@ void conv2_valid_flipped(const opaque_memory<T, 2>& input, const opaque_memory<T
 }
 
 template <typename T>
+void conv2_valid_multi(const opaque_memory<T, 2>& input, const opaque_memory<T, 3>& kernel, const opaque_memory<T, 3>& conv) {
+    for(std::size_t k = 0; k < kernel.template dim<0>(); ++k){
+        auto kk = kernel.template dim<1>() * kernel.template dim<2>();
+        auto cc = conv.template dim<1>() * conv.template dim<2>();
+
+        conv2_valid_micro_kernel(
+            input.memory_start(), input.template dim<0>(), input.template dim<1>(),
+            kernel.memory_start() + k * kk, kernel.template dim<1>(), kernel.template dim<2>(),
+            conv.memory_start() + k * cc, 0.0);
+    }
+}
+
+template <typename T>
+void conv2_valid_multi_flipped(const opaque_memory<T, 2>& input, const opaque_memory<T, 3>& kernel, const opaque_memory<T, 3>& conv) {
+    for(std::size_t k = 0; k < kernel.template dim<0>(); ++k){
+        auto kk = kernel.template dim<1>() * kernel.template dim<2>();
+        auto cc = conv.template dim<1>() * conv.template dim<2>();
+
+        conv2_valid_flipped_micro_kernel(
+            input.memory_start(), input.template dim<0>(), input.template dim<1>(),
+            kernel.memory_start() + k * kk, kernel.template dim<1>(), kernel.template dim<2>(),
+            conv.memory_start() + k * cc, 0.0);
+    }
+}
+
+template <typename T>
 void conv4_valid(const opaque_memory<T, 4>& input, const opaque_memory<T, 4>& kernel, const opaque_memory<T, 4>& conv) {
     if(kernel.dim(1) > 0){
         auto conv_i_inc = conv.dim(1) * conv.dim(2) * conv.dim(3);
@@ -1510,6 +1536,34 @@ void conv2_valid(const I& input, const K& kernel, C&& conv) {
  */
 template <typename I, typename K, typename C>
 void conv2_valid_flipped(const I& input, const K& kernel, C&& conv) {
+    cpp_unused(input);
+    cpp_unused(kernel);
+    cpp_unused(conv);
+    cpp_unreachable("AVX not available/enabled");
+}
+
+/*!
+ * \brief AVX implementation of a 2D 'valid' convolution C = I * K
+ * \param input The input matrix
+ * \param kernel The kernel matrix
+ * \param conv The output matrix
+ */
+template <typename I, typename K, typename C>
+void conv2_valid_multi(const I& input, const K& kernel, C&& conv) {
+    cpp_unused(input);
+    cpp_unused(kernel);
+    cpp_unused(conv);
+    cpp_unreachable("AVX not available/enabled");
+}
+
+/*!
+ * \brief AVX implementation of a 2D 'valid' convolution C = I * K
+ * \param input The input matrix
+ * \param kernel The kernel matrix
+ * \param conv The output matrix
+ */
+template <typename I, typename K, typename C>
+void conv2_valid_multi_flipped(const I& input, const K& kernel, C&& conv) {
     cpp_unused(input);
     cpp_unused(kernel);
     cpp_unused(conv);

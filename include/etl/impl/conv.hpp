@@ -277,6 +277,8 @@ inline etl::conv_multi_impl select_default_conv_multi_impl() {
     }
 
     static constexpr const bool cudnn = is_cudnn_enabled;
+    static constexpr const bool sse = vectorize_impl && vector_mode == vector_mode_t::SSE3;
+    static constexpr const bool avx = vectorize_impl && vector_mode == vector_mode_t::AVX;
 
     if(cudnn && decay_traits<I>::dimensions() == 2){
         //TODO Should only be used with (very?) large sizes
@@ -287,9 +289,15 @@ inline etl::conv_multi_impl select_default_conv_multi_impl() {
         return etl::conv_multi_impl::FFT;
     } else if (is_cblas_enabled || is_cublas_enabled) {
         return etl::conv_multi_impl::BLAS;
-    } else {
-        return etl::conv_multi_impl::STD;
     }
+
+    if (avx) {
+        return etl::conv_multi_impl::AVX;
+    } else if (sse) {
+        return etl::conv_multi_impl::SSE;
+    }
+
+    return etl::conv_multi_impl::STD;
 }
 
 /*!
@@ -311,6 +319,24 @@ inline etl::conv_multi_impl select_conv_multi_impl() {
                     std::cerr << "Forced selection to CUDNN conv implementation, but not possible for this expression" << std::endl; // COVERAGE_EXCLUDE_LINE
                     return select_default_conv_multi_impl<I, K, C>();                                                                   // COVERAGE_EXCLUDE_LINE
                 }                                                                                                                 // COVERAGE_EXCLUDE_LINE
+
+                return forced;
+
+            //AVX cannot always be used
+            case conv_multi_impl::AVX:
+                if (!avx_enabled) {
+                    std::cerr << "Forced selection to AVX conv implementation, but not possible for this expression" << std::endl;
+                    return select_default_conv_multi_impl<I, K, C>();                                                                   // COVERAGE_EXCLUDE_LINE
+                }
+
+                return forced;
+
+            //SSE cannot always be used
+            case conv_multi_impl::SSE:
+                if (!sse3_enabled) {
+                    std::cerr << "Forced selection to SSE conv implementation, but not possible for this expression" << std::endl;
+                    return select_default_conv_multi_impl<I, K, C>();                                                                   // COVERAGE_EXCLUDE_LINE
+                }
 
                 return forced;
 
@@ -925,6 +951,10 @@ struct conv2_valid_multi_impl {
             impl::reduc::fft_conv2_valid_multi(input, kernel, conv);
         } else if (impl == etl::conv_multi_impl::CUDNN) {
             impl::cudnn::conv2_valid_multi(input.direct(), kernel.direct(), conv.direct());
+        } else if (impl == etl::conv_multi_impl::AVX) {
+            impl::avx::conv2_valid_multi(input.direct(), kernel.direct(), conv.direct());
+        } else if (impl == etl::conv_multi_impl::SSE) {
+            impl::sse::conv2_valid_multi(input.direct(), kernel.direct(), conv.direct());
         } else if (impl == etl::conv_multi_impl::STD){
             impl::standard::conv2_valid_multi(input, kernel, conv);
         } else {
@@ -953,6 +983,10 @@ struct conv2_valid_multi_flipped_impl {
             impl::reduc::fft_conv2_valid_multi_flipped(input, kernel, conv);
         } else if (impl == etl::conv_multi_impl::CUDNN) {
             impl::cudnn::conv2_valid_multi_flipped(input.direct(), kernel.direct(), conv.direct());
+        } else if (impl == etl::conv_multi_impl::AVX) {
+            impl::avx::conv2_valid_multi_flipped(input.direct(), kernel.direct(), conv.direct());
+        } else if (impl == etl::conv_multi_impl::SSE) {
+            impl::sse::conv2_valid_multi_flipped(input.direct(), kernel.direct(), conv.direct());
         } else if (impl == etl::conv_multi_impl::STD){
             impl::standard::conv2_valid_multi_flipped(input, kernel, conv);
         } else {

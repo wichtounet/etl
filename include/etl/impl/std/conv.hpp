@@ -478,7 +478,7 @@ void conv4_full_flipped(const I& input, const K& kernel, C&& conv) {
 template <typename I, typename K, typename C>
 void conv2_valid_multi(const I& input, const K& kernels, C&& conv) {
     for (size_t k = 0; k < etl::dim<0>(kernels); ++k) {
-        conv(k) = conv_2d_valid(input, kernels(k));
+        conv2_valid(input, kernels(k), conv(k));
     }
 }
 
@@ -491,7 +491,7 @@ void conv2_valid_multi(const I& input, const K& kernels, C&& conv) {
 template <typename I, typename K, typename C>
 void conv2_valid_multi_flipped(const I& input, const K& kernels, C&& conv) {
     for (size_t k = 0; k < etl::dim<0>(kernels); ++k) {
-        conv(k) = conv_2d_valid_flipped(input, kernels(k));
+        conv2_valid_flipped(input, kernels(k), conv(k));
     }
 }
 
