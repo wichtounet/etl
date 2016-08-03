@@ -29,7 +29,9 @@ CPM_DIRECT_BENCH_TWO_PASS_NS_P(
         auto nw = nv - nh + 1;
         return std::make_tuple(dmat4(nc,k,nw,nw), dvec(k), dmat3(nc,nv,nv), dmat3(k, nh, nh), dmat4(nc, k, nh, nh));},
     [](dmat4& w, dvec& b, dmat3& v, dmat3& h, dmat4& v_cv){
-        conv_3d_valid_multi_flipped(v, w, v_cv);
+        for (size_t k = 0; k < etl::dim<0>(w); ++k) {
+            v_cv(k) = conv_2d_valid_multi_flipped(v(k), w(k));
+        }
 
         auto b_rep = etl::force_temporary(etl::rep(b, etl::dim<1>(h), etl::dim<2>(h)));
         h = etl::sigmoid(b_rep + etl::sum_l(v_cv));
@@ -64,7 +66,9 @@ CPM_DIRECT_BENCH_TWO_PASS_NS_P(
         auto b_rep = etl::force_temporary(etl::rep(b, etl::dim<1>(h), etl::dim<2>(h)));
 
         for(std::size_t b = 0; b < 64UL; ++b){
-            conv_3d_valid_multi_flipped(v(b), w, v_cv(b));
+            for (size_t k = 0; k < etl::dim<0>(w); ++k) {
+                v_cv(b)(k) = conv_2d_valid_multi_flipped(v(b)(k), w(k));
+            }
 
             h(b) = etl::sigmoid(b_rep + etl::sum_l(v_cv(b)));
         }

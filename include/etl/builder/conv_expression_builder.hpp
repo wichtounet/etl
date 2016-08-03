@@ -213,62 +213,6 @@ auto conv_2d_valid_multi_flipped(A&& a, B&& b, C&& c) {
 }
 
 /*!
- * \brief Creates an expression representing multiple valid 2D convolution of a and multiple kernels from b
- * \param a The input expression
- * \param b The kernel expression
- * \return an expression representing multiple valid 2D convolution of a and multiple kernels from b
- */
-template <typename A, typename B>
-auto conv_3d_valid_multi(A&& a, B&& b) -> detail::temporary_binary_helper<A, B, conv3_valid_multi_expr> {
-    static_assert(is_etl_expr<A>::value && is_etl_expr<B>::value, "Convolution only supported for ETL expressions");
-
-    return {a, b};
-}
-
-/*!
- * \brief Creates an expression representing the valid 2D convolution of a and multiple kernels from b, the result will be stored in c
- * \param a The input expression
- * \param b The kernel expressions
- * \param c The result
- * \return an expression representing the valid 2D convolution of a and multiple kernels from b
- */
-template <typename A, typename B, typename C>
-auto conv_3d_valid_multi(A&& a, B&& b, C&& c) {
-    static_assert(is_etl_expr<A>::value && is_etl_expr<B>::value && is_etl_expr<C>::value, "Convolution only supported for ETL expressions");
-
-    c = conv_3d_valid_multi(a, b);
-    return std::forward<C>(c);
-}
-
-/*!
- * \brief Creates an expression representing the multiple 2D convolution of a and multiple flipped kernels from b
- * \param a The input expression
- * \param b The kernel expression
- * \return an expression representing multiple valid 2D convolution of a and multiple kernels from b
- */
-template <typename A, typename B>
-auto conv_3d_valid_multi_flipped(A&& a, B&& b) -> detail::temporary_binary_helper<A, B, conv3_valid_multi_flipped_expr> {
-    static_assert(is_etl_expr<A>::value && is_etl_expr<B>::value, "Convolution only supported for ETL expressions");
-
-    return {a, b};
-}
-
-/*!
- * \brief Creates an expression representing multiple valid 2D convolution of a and multiple flipped kernels from b, the result will be stored in c
- * \param a The input expression
- * \param b The kernel expressions
- * \param c The result
- * \return an expression representing multiple valid 2D convolution of a and multiple kernels from b
- */
-template <typename A, typename B, typename C>
-auto conv_3d_valid_multi_flipped(A&& a, B&& b, C&& c) {
-    static_assert(is_etl_expr<A>::value && is_etl_expr<B>::value && is_etl_expr<C>::value, "Convolution only supported for ETL expressions");
-
-    c = conv_3d_valid_multi_flipped(a, b);
-    return std::forward<C>(c);
-}
-
-/*!
  * \brief Generic 4D convolution of a with the kernels from b
  *
  * The 4D matrix a is assumed to be of [N, C, H, W] dimensions.

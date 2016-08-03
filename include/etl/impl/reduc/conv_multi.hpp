@@ -175,62 +175,6 @@ void blas_conv2_valid_multi_flipped(const I& input, const K_T& kernels, C&& conv
     etl::reshape(conv, K, f1 * f2) = mul(etl::reshape(kernels, K, k1 * k2), input_col);
 }
 
-/*!
- * \brief Standard implementation of multiple 2D 'valid' convolution C = I * K, with multiple flipped kernels
- * \param input The input matrix
- * \param kernels The kernel matrix
- * \param conv The output matrix
- */
-template <typename I, typename K_T, typename C_T>
-void fft_conv3_valid_multi_flipped(const I& input, const K_T& kernels, C_T&& conv) {
-    auto kernels_f = etl::force_temporary(kernels);
-
-    kernels_f.deep_fflip_inplace();
-
-    const std::size_t C  = etl::dim<0>(kernels);
-    const std::size_t K  = etl::dim<1>(kernels);
-    const std::size_t k1 = etl::dim<2>(kernels);
-    const std::size_t k2 = etl::dim<3>(kernels);
-
-    const std::size_t i1 = etl::dim<1>(input);
-    const std::size_t i2 = etl::dim<2>(input);
-
-    const std::size_t v1 = i1 - k1 + 1;
-    const std::size_t v2 = i2 - k2 + 1;
-    const std::size_t t1 = i1 + k1 - 1;
-    const std::size_t t2 = i2 + k2 - 1;
-    const std::size_t b1 = (t1 - v1) / 2;
-    const std::size_t b2 = (t2 - v2) / 2;
-
-    etl::dyn_matrix<std::complex<value_t<I>>, 3> input_padded(C, t1, t2);
-    etl::dyn_matrix<std::complex<value_t<I>>, 4> kernels_padded(C, K, t1, t2);
-    etl::dyn_matrix<std::complex<value_t<I>>, 4> tmp_result(C, K, t1, t2);
-
-    complex_pad_3d(input, input_padded);
-    complex_pad_4d(kernels, kernels_padded);
-
-    input_padded.fft2_many_inplace();
-    kernels_padded.fft2_many_inplace();
-
-    for (std::size_t c = 0; c < C; ++c) {
-        for (std::size_t k = 0; k < K; ++k) {
-            tmp_result(c)(k) = input_padded(c) >> kernels_padded(c)(k);
-        }
-    }
-
-    tmp_result.ifft2_many_inplace();
-
-    for (std::size_t c = 0; c < C; ++c) {
-        for (std::size_t k = 0; k < K; ++k) {
-            for (std::size_t i = 0; i < v1; ++i) {
-                for (std::size_t j = 0; j < v2; ++j) {
-                    conv(c, k, i, j) = tmp_result(c, k, i + b1, j + b2).real();
-                }
-            }
-        }
-    }
-}
-
 } //end of namespace reduc
 } //end of namespace impl
 } //end of namespace etl
