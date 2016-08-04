@@ -78,4 +78,43 @@ struct impl_expr {
     }
 };
 
+template <typename D>
+struct dyn_impl_expr {
+    using derived_t = D;
+
+    template <typename... Subs>
+    using result_type = detail::expr_result_t<derived_t, Subs...>;
+
+    /*!
+     * \brief Returns a reference to the derived object, i.e. the object using the CRTP injector.
+     * \return a reference to the derived object.
+     */
+    derived_t& as_derived() noexcept {
+        return *static_cast<derived_t*>(this);
+    }
+
+    /*!
+     * \brief Returns a const reference to the derived object, i.e. the object using the CRTP injector.
+     * \return a const reference to the derived object.
+     */
+    const derived_t& as_derived() const noexcept {
+        return *static_cast<const derived_t*>(this);
+    }
+
+    template <typename... Subs, std::size_t... I>
+    result_type<Subs...>* dyn_allocate(std::index_sequence<I...> /*seq*/, Subs&&... subs) const {
+        return new result_type<Subs...>(as_derived().dim(subs..., I)...);
+    }
+
+    /*!
+     * \brief Allocate the temporary for the expression
+     * \param args The sub expressions
+     * \return a pointer to the temporary
+     */
+    template <typename... Subs>
+    result_type<Subs...>* allocate(Subs&&... args) const  {
+        return dyn_allocate(std::make_index_sequence<derived_t::dimensions()>(), std::forward<Subs>(args)...);
+    }
+};
+
 } //end of namespace etl
