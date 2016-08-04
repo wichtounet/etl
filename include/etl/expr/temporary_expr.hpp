@@ -476,6 +476,39 @@ struct temporary_unary_expr final : temporary_expr_un<temporary_unary_expr<T, AE
 };
 
 /*!
+ * \brief A temporary unary expression
+ *
+ * Evaluation is done at once, when access is made. This can be done
+ * on const reference, this is the reason why several fields are
+ * mutable.
+ */
+template <typename T, typename AExpr, typename Op>
+struct temporary_unary_expr_state final : temporary_expr_un<temporary_unary_expr_state<T, AExpr, Op>, T, AExpr, typename Op::template result_type<AExpr>> {
+    using value_type  = T;                                                ///< The value type
+    using result_type = typename Op::template result_type<AExpr>;         ///< The result type
+    using this_type   = temporary_unary_expr_state<T, AExpr, Op>;               ///< The type of this expression
+    using base_type   = temporary_expr_un<this_type, T, AExpr, result_type>; ///< The base type
+
+    Op op;
+
+    //Construct a new expression
+    explicit temporary_unary_expr_state(Op op, AExpr a) : base_type(a), op(op) {
+        //Nothing else to init
+    }
+
+    //Accessors
+
+    template <typename Result>
+    void apply(Result&& result) const {
+        op.apply(this->a(), std::forward<Result>(result));
+    }
+
+    auto allocate() const {
+        return op.allocate(this->a());
+    }
+};
+
+/*!
  * \brief A temporary binary expression
  */
 template <typename T, typename AExpr, typename BExpr, typename Op>
@@ -497,6 +530,33 @@ struct temporary_binary_expr final : temporary_expr_bin<temporary_binary_expr<T,
 
     auto allocate() const {
         return Op::allocate(this->a(), this->b());
+    }
+};
+
+/*!
+ * \brief A temporary binary expression
+ */
+template <typename T, typename AExpr, typename BExpr, typename Op>
+struct temporary_binary_expr_state final : temporary_expr_bin<temporary_binary_expr_state<T, AExpr, BExpr, Op>, T, AExpr, BExpr, typename Op::template result_type<AExpr, BExpr>> {
+    using value_type  = T;                                                  ///< The value type
+    using result_type = typename Op::template result_type<AExpr, BExpr>;    ///< The result type
+    using this_type   = temporary_binary_expr_state<T, AExpr, BExpr, Op>;         ///< The type of this expresion
+    using base_type   = temporary_expr_bin<this_type, value_type, AExpr, BExpr, result_type>; ///< The base type
+
+    Op op;
+
+    //Construct a new expression
+    temporary_binary_expr_state(Op op, AExpr a, BExpr b) : base_type(a, b), op(op) {
+        //Nothing else to init
+    }
+
+    template <typename Result>
+    void apply(Result&& result) const {
+        op.apply(this->a(), this->b(), std::forward<Result>(result));
+    }
+
+    auto allocate() const {
+        return op.allocate(this->a(), this->b());
     }
 };
 
