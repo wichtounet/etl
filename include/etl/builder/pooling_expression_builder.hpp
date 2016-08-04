@@ -296,6 +296,19 @@ auto p_max_pool_h(E&& value) {
 }
 
 /*!
+ * \brief Probabilistic Max Pooling for hidden units
+ * \param value The input expression
+ * \param c1 The first pooling ratio
+ * \param c2 The second pooling ratio
+ * \return A expression representing the Probabilistic Max Pooling of hidden units
+ */
+template <typename E, cpp_enable_if(is_etl_expr<E>::value)>
+auto p_max_pool_h(E&& value, std::size_t c1, std::size_t c2) {
+    validate_pmax_pooling(value, c1, c2);
+    return unary_expr<value_t<E>, dyn_p_max_pool_h_transformer<detail::build_type<E>>, transform_op>{dyn_p_max_pool_h_transformer<detail::build_type<E>>(value, c1, c2)};
+}
+
+/*!
  * \brief Probabilistic Max Pooling for pooling units
  * \param value The input expression
  * \tparam C1 The first pooling ratio
@@ -306,6 +319,19 @@ template <std::size_t C1, std::size_t C2, typename E, cpp_enable_if(is_etl_expr<
 auto p_max_pool_p(E&& value) {
     validate_pmax_pooling<C1, C2>(value);
     return unary_expr<value_t<E>, p_max_pool_p_transformer<detail::build_type<E>, C1, C2>, transform_op>{p_max_pool_p_transformer<detail::build_type<E>, C1, C2>(value)};
+}
+
+/*!
+ * \brief Probabilistic Max Pooling for pooling units
+ * \param value The input expression
+ * \tparam C1 The first pooling ratio
+ * \tparam C2 The second pooling ratio
+ * \return A expression representing the Probabilistic Max Pooling of pooling units
+ */
+template <typename E, cpp_enable_if(is_etl_expr<E>::value)>
+auto p_max_pool_p(E&& value, std::size_t c1, std::size_t c2) {
+    validate_pmax_pooling(value, c1, c2);
+    return unary_expr<value_t<E>, dyn_p_max_pool_p_transformer<detail::build_type<E>>, transform_op>{dyn_p_max_pool_p_transformer<detail::build_type<E>>(value, c1, c2)};
 }
 
 } //end of namespace etl
