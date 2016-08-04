@@ -241,6 +241,8 @@ template <typename E, cpp_enable_if(etl_traits<E>::dimensions() == 2)>
 void validate_pmax_pooling_impl(const E& e, std::size_t c1, std::size_t c2) {
     cpp_assert(etl::template dim<0>(e) % c1 == 0 && etl::template dim<1>(e) % c2 == 0, "Dimensions not divisible by the pooling ratio");
     cpp_unused(e);
+    cpp_unused(c1);
+    cpp_unused(c2);
 }
 
 /*!
@@ -250,6 +252,8 @@ template <typename E, cpp_enable_if(etl_traits<E>::dimensions() == 3)>
 void validate_pmax_pooling_impl(const E& e, std::size_t c1, std::size_t c2) {
     cpp_assert(etl::template dim<1>(e) % c1 == 0 && etl::template dim<2>(e) % c2 == 0, "Dimensions not divisible by the pooling ratio");
     cpp_unused(e);
+    cpp_unused(c1);
+    cpp_unused(c2);
 }
 
 } //end of namespace detail
