@@ -29,6 +29,18 @@ auto max_pool_2d(E&& value) {
 }
 
 /*!
+ * \brief 2D Max Pooling of the given matrix expression
+ * \param value The matrix expression
+ * \tparam C1 The first pooling ratio
+ * \tparam C2 The second pooling ratio
+ * \return A expression representing the 2D Max Pooling of the input expression.
+ */
+template <typename E>
+auto max_pool_2d(E&& value, std::size_t c1, std::size_t c2) {
+    return temporary_unary_expr_state<value_t<E>, detail::build_type<E>, dyn_max_pool_2d_expr<value_t<E>>>{{c1, c2}, value};
+}
+
+/*!
  * \brief 2D Average Pooling of the given matrix expression
  * \param value The matrix expression
  * \tparam C1 The first pooling ratio
@@ -38,6 +50,18 @@ auto max_pool_2d(E&& value) {
 template <std::size_t C1, std::size_t C2, typename E>
 auto avg_pool_2d(E&& value) {
     return temporary_unary_expr<value_t<E>, detail::build_type<E>, avg_pool_2d_expr<value_t<E>, C1, C2>>{value};
+}
+
+/*!
+ * \brief 2D Average Pooling of the given matrix expression
+ * \param value The matrix expression
+ * \param c1 The first pooling ratio
+ * \param c2 The second pooling ratio
+ * \return A expression representing the 2D Average Pooling of the input expression.
+ */
+template <typename E>
+auto avg_pool_2d(E&& value, std::size_t c1, std::size_t c2) {
+    return temporary_unary_expr_state<value_t<E>, detail::build_type<E>, dyn_avg_pool_2d_expr<value_t<E>>>{{c1, c2}, value};
 }
 
 /*!
@@ -54,6 +78,19 @@ auto max_pool_3d(E&& value) {
 }
 
 /*!
+ * \brief 3D Max Pooling of the given matrix expression
+ * \param value The matrix expression
+ * \param c1 The first pooling ratio
+ * \param c2 The second pooling ratio
+ * \param c3 The third pooling ratio
+ * \return A expression representing the 3D Max Pooling of the input expression.
+ */
+template <typename E>
+auto max_pool_3d(E&& value, std::size_t c1, std::size_t c2, std::size_t c3) {
+    return temporary_unary_expr_state<value_t<E>, detail::build_type<E>, dyn_max_pool_3d_expr<value_t<E>>>{{c1, c2, c3}, value};
+}
+
+/*!
  * \brief 3D Average Pooling of the given matrix expression
  * \param value The matrix expression
  * \tparam C1 The first pooling ratio
@@ -64,6 +101,19 @@ auto max_pool_3d(E&& value) {
 template <std::size_t C1, std::size_t C2, std::size_t C3, typename E>
 auto avg_pool_3d(E&& value) {
     return temporary_unary_expr<value_t<E>, detail::build_type<E>, avg_pool_3d_expr<value_t<E>, C1, C2, C3>>{value};
+}
+
+/*!
+ * \brief 3D Average Pooling of the given matrix expression
+ * \param value The matrix expression
+ * \param C1 The first pooling ratio
+ * \param C2 The second pooling ratio
+ * \param C3 The third pooling ratio
+ * \return A expression representing the 3D Average Pooling of the input expression.
+ */
+template <typename E>
+auto avg_pool_3d(E&& value, std::size_t c1, std::size_t c2, std::size_t c3) {
+    return temporary_unary_expr_state<value_t<E>, detail::build_type<E>, dyn_avg_pool_3d_expr<value_t<E>>>{{c1, c2, c3}, value};
 }
 
 /*!
@@ -79,6 +129,21 @@ auto avg_pool_derivative_2d(E&& input, F&& output) {
     cpp_unused(input);
     cpp_unused(output);
     return 1.0 / (C1 * C2);
+}
+
+/*!
+ * \brief Derivative of the 2D Average Pooling of the given matrix expression
+ * \param input The input
+ * \param output The output
+ * \param c1 the first pooling ratio
+ * \param c2 the second pooling ratio
+ * \return A expression representing the Derivative of 2D Average Pooling of the input expression.
+ */
+template <typename E, typename F>
+auto avg_pool_derivative_2d(E&& input, F&& output, std::size_t c1, std::size_t c2) {
+    cpp_unused(input);
+    cpp_unused(output);
+    return 1.0 / (c1 * c2);
 }
 
 /*!
@@ -98,6 +163,22 @@ auto avg_pool_derivative_3d(E&& input, F&& output) {
 }
 
 /*!
+ * \brief Derivative of the 3D Average Pooling of the given matrix expression
+ * \param input The input
+ * \param output The output
+ * \param c1 the first pooling ratio
+ * \param c2 the second pooling ratio
+ * \param c3 the third pooling ratio
+ * \return A expression representing the Derivative of 3D Average Pooling of the input expression.
+ */
+template <typename E, typename F>
+auto avg_pool_derivative_3d(E&& input, F&& output, std::size_t c1, std::size_t c2, std::size_t c3) {
+    cpp_unused(input);
+    cpp_unused(output);
+    return 1.0 / (c1 * c2 * c3);
+}
+
+/*!
  * \brief Derivative of the 2D Max Pooling of the given matrix expression
  * \param input The input
  * \param output The output
@@ -108,6 +189,19 @@ auto avg_pool_derivative_3d(E&& input, F&& output) {
 template <std::size_t C1, std::size_t C2, typename E, typename F>
 auto max_pool_derivative_2d(E&& input, F&& output) {
     return temporary_binary_expr<value_t<E>, detail::build_type<E>, detail::build_type<F>, max_pool_derivative_2d_expr<value_t<E>, C1, C2>>{input, output};
+}
+
+/*!
+ * \brief Derivative of the 2D Max Pooling of the given matrix expression
+ * \param input The input
+ * \param output The output
+ * \param c1 The first pooling ratio
+ * \param c2 The second pooling ratio
+ * \return A expression representing the Derivative of 2D Max Pooling of the input expression.
+ */
+template <typename E, typename F>
+auto max_pool_derivative_2d(E&& input, F&& output, std::size_t c1, std::size_t c2) {
+    return temporary_binary_expr_state<value_t<E>, detail::build_type<E>, detail::build_type<F>, dyn_max_pool_derivative_2d_expr<value_t<E>>>{{c1, c2}, input, output};
 }
 
 /*!
@@ -125,6 +219,20 @@ auto max_pool_derivative_3d(E&& input, F&& output) {
 }
 
 /*!
+ * \brief Derivative of the 3D Max Pooling of the given matrix expression
+ * \param input The input
+ * \param output The output
+ * \param c1 The first pooling ratio
+ * \param c2 The second pooling ratio
+ * \param c3 The third pooling ratio
+ * \return A expression representing the Derivative of 3D Max Pooling of the input expression.
+ */
+template <typename E, typename F>
+auto max_pool_derivative_3d(E&& input, F&& output, std::size_t c1, std::size_t c2, std::size_t c3) {
+    return temporary_binary_expr_state<value_t<E>, detail::build_type<E>, detail::build_type<F>, dyn_max_pool_derivative_3d_expr<value_t<E>>>{{c1, c2, c3}, input, output};
+}
+
+/*!
  * \brief Upsample the given 2D matrix expression
  * \param value The input expression
  * \tparam C1 The first pooling ratio
@@ -134,6 +242,18 @@ auto max_pool_derivative_3d(E&& input, F&& output) {
 template <std::size_t C1, std::size_t C2, typename E>
 auto upsample_2d(E&& value) {
     return temporary_unary_expr<value_t<E>, detail::build_type<E>, upsample_2d_expr<value_t<E>, C1, C2>>{value};
+}
+
+/*!
+ * \brief Upsample the given 2D matrix expression
+ * \param value The input expression
+ * \param c1 The first pooling ratio
+ * \param c2 The second pooling ratio
+ * \return A expression representing the Upsampling of the given expression
+ */
+template <typename E>
+auto upsample_2d(E&& value, std::size_t c1, std::size_t c2) {
+    return temporary_unary_expr_state<value_t<E>, detail::build_type<E>, dyn_upsample_2d_expr<value_t<E>>>{{c1, c2}, value};
 }
 
 /*!
@@ -147,6 +267,19 @@ auto upsample_2d(E&& value) {
 template <std::size_t C1, std::size_t C2, std::size_t C3, typename E>
 auto upsample_3d(E&& value) {
     return temporary_unary_expr<value_t<E>, detail::build_type<E>, upsample_3d_expr<value_t<E>, C1, C2, C3>>{value};
+}
+
+/*!
+ * \brief Upsample the given 3D matrix expression
+ * \param value The input expression
+ * \param c1 The first pooling ratio
+ * \param c2 The second pooling ratio
+ * \param c3 The third pooling ratio
+ * \return A expression representing the Upsampling of the given expression
+ */
+template <typename E>
+auto upsample_3d(E&& value, std::size_t c1, std::size_t c2, std::size_t c3) {
+    return temporary_unary_expr_state<value_t<E>, detail::build_type<E>, dyn_upsample_3d_expr<value_t<E>>>{{c1, c2, c3}, value};
 }
 
 /*!
