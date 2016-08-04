@@ -714,6 +714,123 @@ struct etl_traits<etl::temporary_binary_expr<T, A, B, Op>> {
 };
 
 /*!
+ * \brief Specialization for temporary_unary_expr_state.
+ */
+template <typename T, typename A, typename Op>
+struct etl_traits<etl::temporary_unary_expr_state<T, A, Op>> {
+    using expr_t = etl::temporary_unary_expr_state<T, A, Op>;
+    using a_t    = std::decay_t<A>;
+
+    static constexpr const bool is_etl                  = true;                           ///< Indicates if the type is an ETL type
+    static constexpr const bool is_transformer          = false;                          ///< Indicates if the type is a transformer
+    static constexpr const bool is_view                 = false;                          ///< Indicates if the type is a view
+    static constexpr const bool is_magic_view           = false;                          ///< Indicates if the type is a magic view
+    static constexpr const bool is_fast                 = false;       ///< Indicates if the expression is fast
+    static constexpr const bool is_linear               = true;                           ///< Indicates if the expression is linear
+    static constexpr const bool is_value                = false;                          ///< Indicates if the expression is of value type
+    static constexpr const bool is_direct               = true;                           ///< Indicates if the expression has direct memory access
+    static constexpr const bool is_generator            = false;                          ///< Indicates if the expression is a generated
+    static constexpr const bool needs_temporary_visitor = true;                           ///< Indicates if the expression needs a temporary visitor
+    static constexpr const bool needs_evaluator_visitor = true;                           ///< Indicaes if the expression needs an evaluator visitor
+    static constexpr const order storage_order          = etl_traits<a_t>::storage_order; ///< The expression storage order
+    static constexpr const bool is_gpu                  = Op::is_gpu; ///< Indicate if the expression is computed on GPU
+
+    /*!
+     * \brief Indicates if the expression is vectorizable using the
+     * given vector mode
+     * \tparam V The vector mode
+     */
+    template <vector_mode_t V>
+    using vectorizable = std::true_type;
+
+    /*!
+     * \brief Returns the size of the given expression
+     * \param v The expression to get the size for
+     * \returns the size of the given expression
+     */
+    static std::size_t size(const expr_t& v) {
+        return v.op.size(v.a());
+    }
+
+    /*!
+     * \brief Returns the dth dimension of the given expression
+     * \param v The expression
+     * \param d The dimension to get
+     * \return The dth dimension of the given expression
+     */
+    static std::size_t dim(const expr_t& v, std::size_t d) {
+        return v.op.dim(v.a(), d);
+    }
+
+    /*!
+     * \brief Returns the number of expressions for this type
+     * \return the number of dimensions of this type
+     */
+    static constexpr std::size_t dimensions() {
+        return Op::dimensions();
+    }
+};
+
+/*!
+ * \brief Specialization for temporary_binary_expr_state.
+ */
+template <typename T, typename A, typename B, typename Op>
+struct etl_traits<etl::temporary_binary_expr_state<T, A, B, Op>> {
+    using expr_t = etl::temporary_binary_expr_state<T, A, B, Op>;
+    using a_t    = std::decay_t<A>;
+    using b_t    = std::decay_t<B>;
+
+    static constexpr const bool is_etl                  = true;                                                                                            ///< Indicates if the type is an ETL type
+    static constexpr const bool is_transformer          = false;                                                                                           ///< Indicates if the type is a transformer
+    static constexpr const bool is_view                 = false;                                                                                           ///< Indicates if the type is a view
+    static constexpr const bool is_magic_view           = false;                                                                                           ///< Indicates if the type is a magic view
+    static constexpr const bool is_fast                 = false;                                            ///< Indicates if the expression is fast
+    static constexpr const bool is_direct               = true;                                                                                            ///< Indicates if the expression has direct memory access
+    static constexpr const bool is_linear               = true;                                                                                            ///< Indicates if the expression is linear
+    static constexpr const bool is_value                = false;                                                                                           ///< Indicates if the expression is of value type
+    static constexpr const bool is_generator            = false;                                                                                           ///< Indicates if the expression is a generated
+    static constexpr const bool needs_temporary_visitor = true;                                                                                            ///< Indicates if the expression needs a temporary visitor
+    static constexpr const bool needs_evaluator_visitor = true;                                                                                            ///< Indicaes if the expression needs an evaluator visitor
+    static constexpr const order storage_order          = etl_traits<a_t>::is_generator ? etl_traits<b_t>::storage_order : etl_traits<a_t>::storage_order; ///< The expression storage order
+    static constexpr const bool is_gpu                  = Op::is_gpu; ///< Indicate if the expression is computed on GPU
+
+    /*!
+     * \brief Indicates if the expression is vectorizable using the
+     * given vector mode
+     * \tparam V The vector mode
+     */
+    template <vector_mode_t V>
+    using vectorizable = std::true_type;
+
+    /*!
+     * \brief Returns the size of the given expression
+     * \param v The expression to get the size for
+     * \returns the size of the given expression
+     */
+    static std::size_t size(const expr_t& v) {
+        return v.op.size(v.a(), v.b());
+    }
+
+    /*!
+     * \brief Returns the dth dimension of the given expression
+     * \param v The expression
+     * \param d The dimension to get
+     * \return The dth dimension of the given expression
+     */
+    static std::size_t dim(const expr_t& v, std::size_t d) {
+        return v.op.dim(v.a(), v.b(), d);
+    }
+
+    /*!
+     * \brief Returns the number of expressions for this type
+     * \return the number of dimensions of this type
+     */
+    static constexpr std::size_t dimensions() {
+        return Op::dimensions();
+    }
+};
+
+/*!
  * \brief Prints a description of the temporary unary expr to the given stream
  * \param os The output stream
  * \param expr The expression to print
