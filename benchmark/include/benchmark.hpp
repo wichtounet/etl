@@ -102,6 +102,8 @@ using conv_4d_full_policy = NARY_POLICY(
     VALUES_POLICY(50, 55, 60, 65, 70, 75, 80, 85, 90),
     VALUES_POLICY(10, 15, 20, 25, 30, 35, 40, 45, 50));
 
+using pmp_policy = VALUES_POLICY(100, 120, 140, 160, 180, 200);
+
 using fast_policy = VALUES_POLICY(1);
 
 using fft_1d_policy = VALUES_POLICY(10, 100, 1000, 10000, 100000, 500000);

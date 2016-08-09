@@ -326,3 +326,69 @@ CPM_BENCH() {
 }
 
 #endif
+
+CPM_BENCH() {
+    CPM_TWO_PASS_NS_P(
+        pmp_policy,
+        "pmp_h(c=2) (s) [pmp][s]",
+        [](std::size_t d){ return std::make_tuple(smat(d, d), smat(d/2,d/2)); },
+        [](smat& a, smat& r){ r = etl::p_max_pool_h<2,2>(a); },
+        [](std::size_t d){ return 2 * d * d * 2 * 2; }
+        );
+
+    CPM_TWO_PASS_NS_P(
+        pmp_policy,
+        "pmp_p(c=2) (s) [pmp][s]",
+        [](std::size_t d){ return std::make_tuple(smat(d, d), smat(d/2,d/2)); },
+        [](smat& a, smat& r){ r = etl::p_max_pool_p<2,2>(a); },
+        [](std::size_t d){ return 2 * d * d * 2 * 2; }
+        );
+
+    CPM_TWO_PASS_NS_P(
+        pmp_policy,
+        "pmp_h(c=4) (s) [pmp][s]",
+        [](std::size_t d){ return std::make_tuple(smat(d, d), smat(d/4,d/4)); },
+        [](smat& a, smat& r){ r = etl::p_max_pool_h<4,4>(a); },
+        [](std::size_t d){ return 2 * d * d * 4 * 4; }
+        );
+
+    CPM_TWO_PASS_NS_P(
+        pmp_policy,
+        "pmp_p(c=4) (s) [pmp][s]",
+        [](std::size_t d){ return std::make_tuple(smat(d, d), smat(d/4,d/4)); },
+        [](smat& a, smat& r){ r = etl::p_max_pool_p<4,4>(a); },
+        [](std::size_t d){ return 2 * d * d * 4 * 4; }
+        );
+
+    CPM_TWO_PASS_NS_P(
+        pmp_policy,
+        "pmp_h(c=2) (d) [pmp][s]",
+        [](std::size_t d){ return std::make_tuple(dmat(d, d), dmat(d/2,d/2)); },
+        [](dmat& a, dmat& r){ r = etl::p_max_pool_h<2,2>(a); },
+        [](std::size_t d){ return 2 * d * d * 2 * 2; }
+        );
+
+    CPM_TWO_PASS_NS_P(
+        pmp_policy,
+        "pmp_p(c=2) (d) [pmp][s]",
+        [](std::size_t d){ return std::make_tuple(dmat(d, d), dmat(d/2,d/2)); },
+        [](dmat& a, dmat& r){ r = etl::p_max_pool_p<2,2>(a); },
+        [](std::size_t d){ return 2 * d * d * 2 * 2; }
+        );
+
+    CPM_TWO_PASS_NS_P(
+        pmp_policy,
+        "pmp_h(c=4) (d) [pmp][s]",
+        [](std::size_t d){ return std::make_tuple(dmat(d, d), dmat(d/4,d/4)); },
+        [](dmat& a, dmat& r){ r = etl::p_max_pool_h<4,4>(a); },
+        [](std::size_t d){ return 2 * d * d * 4 * 4; }
+        );
+
+    CPM_TWO_PASS_NS_P(
+        pmp_policy,
+        "pmp_p(c=4) (d) [pmp][s]",
+        [](std::size_t d){ return std::make_tuple(dmat(d, d), dmat(d/4,d/4)); },
+        [](dmat& a, dmat& r){ r = etl::p_max_pool_p<4,4>(a); },
+        [](std::size_t d){ return 2 * d * d * 4 * 4; }
+        );
+}
