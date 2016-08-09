@@ -561,13 +561,15 @@ struct p_max_pool_transformer {
     using value_type = value_t<T>; ///< The type of valuie
 
     sub_type sub; ///< The subexpression
+    decltype(force_temporary(sub)) exp_sub;
 
     /*!
      * \brief Construct a new transformer around the given expression
      * \param expr The sub expression
      */
-    explicit p_max_pool_transformer(sub_type expr)
-            : sub(expr) {}
+    explicit p_max_pool_transformer(sub_type expr) : sub(expr) {
+        exp_sub = exp(sub);
+    }
 
     value_type pool(std::size_t i, std::size_t j) const {
         value_type p = 0;
@@ -577,7 +579,7 @@ struct p_max_pool_transformer {
 
         for (std::size_t ii = start_ii; ii < start_ii + C1; ++ii) {
             for (std::size_t jj = start_jj; jj < start_jj + C2; ++jj) {
-                p += std::exp(sub(ii, jj));
+                p += exp_sub(ii, jj);
             }
         }
 
@@ -592,7 +594,7 @@ struct p_max_pool_transformer {
 
         for (std::size_t ii = start_ii; ii < start_ii + C1; ++ii) {
             for (std::size_t jj = start_jj; jj < start_jj + C2; ++jj) {
-                p += std::exp(sub(k, ii, jj));
+                p += exp_sub(k, ii, jj);
             }
         }
 
