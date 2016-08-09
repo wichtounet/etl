@@ -23,7 +23,7 @@ struct build_fast_dyn_matrix_type<E, std::index_sequence<I...>> {
 
 template <typename E, std::size_t... I>
 decltype(auto) build_dyn_matrix_type(E&& expr, std::index_sequence<I...>){
-    return dyn_matrix_impl<value_t<E>, decay_traits<E>::storage_order, decay_traits<E>::dimensions()>{etl::dim<I>(expr)...};
+    return dyn_matrix_impl<value_t<E>, decay_traits<E>::storage_order, decay_traits<E>::dimensions()>(etl::dim<I>(expr)...);
 }
 
 } // end of namespace detail
