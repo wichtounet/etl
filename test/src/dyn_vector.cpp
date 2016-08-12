@@ -7,6 +7,10 @@
 
 #include "test_light.hpp"
 
+#include <vector>
+#include <list>
+#include <deque>
+
 // Init tests
 
 TEMPLATE_TEST_CASE_2("dyn_vector/init_1", "dyn_vector::dyn_vector(T)", Z, double, float) {
@@ -41,6 +45,58 @@ TEMPLATE_TEST_CASE_2("dyn_vector/init_3", "dyn_vector::dyn_vector(initializer_li
     REQUIRE_EQUALS(test_vector[0], 1.0);
     REQUIRE_EQUALS(test_vector[1], 2.0);
     REQUIRE_EQUALS(test_vector[2], 3.0);
+}
+
+TEMPLATE_TEST_CASE_2("dyn_vector/init_4", "dyn_vector::dyn_vector(initializer_list)", Z, double, float) {
+    std::vector<Z> vec{1.0, 2.0, 3.0};
+    std::list<Z> list{1.0, 2.0, 3.0};
+    std::deque<Z> deq{1.0, 2.0, 3.0};
+
+    etl::dyn_vector<Z> a(vec);
+    etl::dyn_vector<Z> b(list);
+    etl::dyn_vector<Z> c(deq);
+
+    REQUIRE_EQUALS(a.size(), 3UL);
+    REQUIRE_EQUALS(b.size(), 3UL);
+    REQUIRE_EQUALS(c.size(), 3UL);
+
+    REQUIRE_EQUALS(a[0], 1.0);
+    REQUIRE_EQUALS(a[1], 2.0);
+    REQUIRE_EQUALS(a[2], 3.0);
+
+    REQUIRE_EQUALS(b[0], 1.0);
+    REQUIRE_EQUALS(b[1], 2.0);
+    REQUIRE_EQUALS(b[2], 3.0);
+
+    REQUIRE_EQUALS(c[0], 1.0);
+    REQUIRE_EQUALS(c[1], 2.0);
+    REQUIRE_EQUALS(c[2], 3.0);
+}
+
+TEMPLATE_TEST_CASE_2("dyn_vector/init_5", "dyn_vector::dyn_vector(initializer_list)", Z, double, float) {
+    etl::dyn_vector<Z> a(3);
+    etl::dyn_vector<Z> b(3);
+    etl::dyn_vector<Z> c(3);
+
+    std::vector<Z> vec{1.0, 2.0, 3.0};
+    std::list<Z> list{1.0, 2.0, 3.0};
+    std::deque<Z> deq{1.0, 2.0, 3.0};
+
+    a = vec;
+    b = list;
+    c = deq;
+
+    REQUIRE_EQUALS(a[0], 1.0);
+    REQUIRE_EQUALS(a[1], 2.0);
+    REQUIRE_EQUALS(a[2], 3.0);
+
+    REQUIRE_EQUALS(b[0], 1.0);
+    REQUIRE_EQUALS(b[1], 2.0);
+    REQUIRE_EQUALS(b[2], 3.0);
+
+    REQUIRE_EQUALS(c[0], 1.0);
+    REQUIRE_EQUALS(c[1], 2.0);
+    REQUIRE_EQUALS(c[2], 3.0);
 }
 
 // Binary operators test
