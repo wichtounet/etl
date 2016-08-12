@@ -263,7 +263,7 @@ public:
                                       cpp::not_c<is_etl_expr<Container>>::value,
                                       std::is_convertible<typename Container::value_type, value_type>::value)>
     explicit dyn_matrix_impl(const Container& vec)
-            : base_type(vec.size(), {_size}), _memory(allocate(_size)) {
+            : base_type(vec.size(), {vec.size()}), _memory(allocate(vec.size())) {
         static_assert(D == 1, "Only 1D matrix can be constructed from containers");
 
         for (std::size_t i = 0; i < _size; ++i) {
