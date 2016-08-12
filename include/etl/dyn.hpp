@@ -255,20 +255,19 @@ public:
 
     /*!
      * \brief Construct a vector from a Container
-     * \param vec A STL container
+     * \param container A STL container
      *
      * Only possible for 1D matrices
      */
     template <typename Container, cpp_enable_if(
                                       cpp::not_c<is_etl_expr<Container>>::value,
                                       std::is_convertible<typename Container::value_type, value_type>::value)>
-    explicit dyn_matrix_impl(const Container& vec)
-            : base_type(vec.size(), {vec.size()}), _memory(allocate(vec.size())) {
+    explicit dyn_matrix_impl(const Container& container)
+            : base_type(container.size(), {container.size()}), _memory(allocate(container.size())) {
         static_assert(D == 1, "Only 1D matrix can be constructed from containers");
 
-        for (std::size_t i = 0; i < _size; ++i) {
-            _memory[i] = vec[i];
-        }
+        // Copy the container directly inside the allocated memory
+        std::copy_n(container.begin(), _size, _memory);
     }
 
     /*!
