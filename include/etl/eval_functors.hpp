@@ -74,8 +74,8 @@ struct Assign {
  */
 template <vector_mode_t V, typename L_Expr, typename V_Expr, typename Base>
 struct vectorized_base {
-    using derived_t   = Base;
-    using memory_type = value_t<L_Expr>*;
+    using derived_t   = Base;             ///< The derived type
+    using memory_type = value_t<L_Expr>*; ///< The memory type
 
     L_Expr& lhs;              ///< The left hand side
     memory_type lhs_m;        ///< The left hand side memory
@@ -84,8 +84,14 @@ struct vectorized_base {
     const std::size_t _last;  ///< The last index to assign
     const std::size_t _size;  ///< The size to assign
 
+    /*!
+     * \brief The intrinsic type for the value type
+     */
     using IT = typename get_intrinsic_traits<V>::template type<value_t<V_Expr>>;
 
+    /*!
+     * \brief The vector implementation to use
+     */
     using vect_impl = typename get_vector_impl<V>::type;
 
     /*!
@@ -164,9 +170,9 @@ private:
  */
 template <vector_mode_t V, typename L_Expr, typename V_Expr>
 struct VectorizedAssign : vectorized_base<V, L_Expr, V_Expr, VectorizedAssign<V, L_Expr, V_Expr>> {
-    using base_t    = vectorized_base<V, L_Expr, V_Expr, VectorizedAssign<V, L_Expr, V_Expr>>;
-    using IT        = typename base_t::IT;
-    using vect_impl = typename base_t::vect_impl;
+    using base_t    = vectorized_base<V, L_Expr, V_Expr, VectorizedAssign<V, L_Expr, V_Expr>>; ///< The base type
+    using IT        = typename base_t::IT;                                                     ///< The intrisic type
+    using vect_impl = typename base_t::vect_impl;                                              ///< The vector implementation
 
     using base_t::lhs_m;
     using base_t::rhs;
@@ -319,9 +325,9 @@ struct AssignAdd {
  */
 template <vector_mode_t V, typename L_Expr, typename V_Expr>
 struct VectorizedAssignAdd : vectorized_base<V, L_Expr, V_Expr, VectorizedAssignAdd<V, L_Expr, V_Expr>> {
-    using base_t    = vectorized_base<V, L_Expr, V_Expr, VectorizedAssignAdd<V, L_Expr, V_Expr>>;
-    using IT        = typename base_t::IT;
-    using vect_impl = typename base_t::vect_impl;
+    using base_t    = vectorized_base<V, L_Expr, V_Expr, VectorizedAssignAdd<V, L_Expr, V_Expr>>; ///< The base type
+    using IT        = typename base_t::IT;                                                        ///< The intrisic type
+    using vect_impl = typename base_t::vect_impl;                                                 ///< The vector implementation
 
     using base_t::lhs;
     using base_t::lhs_m;
@@ -476,9 +482,9 @@ struct AssignSub {
  */
 template <vector_mode_t V, typename L_Expr, typename V_Expr>
 struct VectorizedAssignSub : vectorized_base<V, L_Expr, V_Expr, VectorizedAssignSub<V, L_Expr, V_Expr>> {
-    using base_t    = vectorized_base<V, L_Expr, V_Expr, VectorizedAssignSub<V, L_Expr, V_Expr>>;
-    using IT        = typename base_t::IT;
-    using vect_impl = typename base_t::vect_impl;
+    using base_t    = vectorized_base<V, L_Expr, V_Expr, VectorizedAssignSub<V, L_Expr, V_Expr>>; ///< The base type
+    using IT        = typename base_t::IT;                                                        ///< The intrisic type
+    using vect_impl = typename base_t::vect_impl;                                                 ///< The vector implementation
 
     using base_t::lhs;
     using base_t::lhs_m;
@@ -633,11 +639,11 @@ struct AssignMul {
  */
 template <vector_mode_t V, typename L_Expr, typename V_Expr>
 struct VectorizedAssignMul : vectorized_base<V, L_Expr, V_Expr, VectorizedAssignMul<V, L_Expr, V_Expr>> {
-    static constexpr const bool Cx = is_complex_t<value_t<L_Expr>>::value;
+    static constexpr const bool Cx = is_complex_t<value_t<L_Expr>>::value; ///< Indicates it is a complex multiplication
 
-    using base_t    = vectorized_base<V, L_Expr, V_Expr, VectorizedAssignMul<V, L_Expr, V_Expr>>;
-    using IT        = typename base_t::IT;
-    using vect_impl = typename base_t::vect_impl;
+    using base_t    = vectorized_base<V, L_Expr, V_Expr, VectorizedAssignMul<V, L_Expr, V_Expr>>; ///< The base type
+    using IT        = typename base_t::IT;                                                        ///< The intrisic type
+    using vect_impl = typename base_t::vect_impl;                                                 ///< The vector implementation
 
     using base_t::lhs;
     using base_t::lhs_m;
@@ -792,11 +798,11 @@ struct AssignDiv {
  */
 template <vector_mode_t V, typename L_Expr, typename V_Expr>
 struct VectorizedAssignDiv : vectorized_base<V, L_Expr, V_Expr, VectorizedAssignDiv<V, L_Expr, V_Expr>> {
-    static constexpr const bool Cx = is_complex_t<value_t<L_Expr>>::value;
+    static constexpr const bool Cx = is_complex_t<value_t<L_Expr>>::value; ///< Indicates if it is a complex division
 
-    using base_t    = vectorized_base<V, L_Expr, V_Expr, VectorizedAssignDiv<V, L_Expr, V_Expr>>;
-    using IT        = typename base_t::IT;
-    using vect_impl = typename base_t::vect_impl;
+    using base_t    = vectorized_base<V, L_Expr, V_Expr, VectorizedAssignDiv<V, L_Expr, V_Expr>>; ///< The base type
+    using IT        = typename base_t::IT;                                                        ///< The intrisic type
+    using vect_impl = typename base_t::vect_impl;                                                 ///< The vector implementation
 
     using base_t::lhs;
     using base_t::lhs_m;

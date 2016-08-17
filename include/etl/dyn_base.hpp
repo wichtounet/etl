@@ -14,7 +14,14 @@
 
 namespace etl {
 
+/*!
+ * \brief A simple type to use as init flag to constructor
+ */
 enum class init_flag_t { DUMMY };
+
+/*!
+ * \brief A simple value to use as init flag to constructor
+ */
 constexpr const init_flag_t init_flag = init_flag_t::DUMMY;
 
 /*!
@@ -59,32 +66,56 @@ values_t<V...> values(V... v) {
 
 namespace dyn_detail {
 
+/*!
+ * \brief Traits to test if the constructor is an init constructor
+ */
 template <typename... S>
 struct is_init_constructor : std::false_type {};
 
+/*!
+ * \copydoc is_init_list_constructor
+ */
 template <typename S1, typename S2, typename S3, typename... S>
 struct is_init_constructor<S1, S2, S3, S...> : std::is_same<init_flag_t, typename cpp::nth_type<sizeof...(S), S2, S3, S...>::type> {};
 
+/*!
+ * \brief Traits to test if the constructor is an initializer list constructor
+ */
 template <typename... S>
 struct is_initializer_list_constructor : std::false_type {};
 
+/*!
+ * \copydoc is_initializer_list_constructor
+ */
 template <typename S1, typename S2, typename... S>
 struct is_initializer_list_constructor<S1, S2, S...> : cpp::is_specialization_of<std::initializer_list, typename cpp::last_type<S2, S...>::type> {};
 
+/*!
+ * \brief Returns the size of a matrix given its dimensions
+ */
 inline std::size_t size(std::size_t first) {
     return first;
 }
 
+/*!
+ * \brief Returns the size of a matrix given its dimensions
+ */
 template <typename... T>
 inline std::size_t size(std::size_t first, T... args) {
     return first * size(args...);
 }
 
+/*!
+ * \brief Returns the size of a matrix given its dimensions
+ */
 template <std::size_t... I, typename... T>
 inline std::size_t size(const std::index_sequence<I...>& /*i*/, const T&... args) {
     return size((cpp::nth_value<I>(args...))...);
 }
 
+/*!
+ * \brief Returns a collection of dimensions of the matrix.
+ */
 template <std::size_t... I, typename... T>
 inline std::array<std::size_t, sizeof...(I)> sizes(const std::index_sequence<I...>& /*i*/, const T&... args) {
     return {{static_cast<std::size_t>(cpp::nth_value<I>(args...))...}};
