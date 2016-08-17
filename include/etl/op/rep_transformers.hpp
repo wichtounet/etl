@@ -10,17 +10,14 @@
 namespace etl {
 
 /*!
- * \brief Transform that repeats the expression to the right
+ * \brief Abstract repeat Transformer that repeats the expression to the right
  * \tparam T The type on which the transformer is applied
- * \tparam D The new dimensions
  */
-template <typename T, std::size_t... D>
-struct rep_r_transformer {
+template <typename T, typename D>
+struct rep_transformer {
+    using derived_t  = D;          ///< The derived type
     using sub_type   = T;          ///< The type on which the expression works
     using value_type = value_t<T>; ///< The type of valuie
-
-    static constexpr const std::size_t sub_d      = decay_traits<sub_type>::dimensions(); ///< The number of dimensions of the sub type
-    static constexpr const std::size_t dimensions = sizeof...(D) + sub_d;                 ///< The number of dimensions of the transformer
 
     sub_type sub; ///< The subexpression
 
@@ -28,27 +25,8 @@ struct rep_r_transformer {
      * \brief Construct a new transformer around the given expression
      * \param expr The sub expression
      */
-    explicit rep_r_transformer(sub_type expr)
+    explicit rep_transformer(sub_type expr)
             : sub(expr) {}
-
-    /*!
-     * \brief Returns the value at the given index
-     * \param i The index
-     * \return the value at the given index.
-     */
-    value_type operator[](std::size_t i) const {
-        return sub[i / mul_all<D...>::value];
-    }
-
-    /*!
-     * \brief Returns the value at the given index
-     * This function never has side effects.
-     * \param i The index
-     * \return the value at the given index.
-     */
-    value_type read_flat(std::size_t i) const noexcept {
-        return sub.read_flat(i / mul_all<D...>::value);
-    }
 
     /*!
      * \brief Access to the value at the given (args...) position
@@ -57,7 +35,7 @@ struct rep_r_transformer {
      */
     template <typename... Sizes>
     value_type operator()(Sizes... args) const {
-        return selected_only(std::make_index_sequence<sub_d>(), args...);
+        return as_derived().selected_only(make_index_range<derived_t::dim_start, derived_t::dim_end>(), args...);
     }
 
     /*!
@@ -87,9 +65,64 @@ struct rep_r_transformer {
     }
 
 private:
+    /*!
+     * \brief Returns a const reference to the derived object, i.e. the object using the CRTP injector.
+     * \return a const reference to the derived object.
+     */
+    const derived_t& as_derived() const noexcept {
+        return *static_cast<const derived_t*>(this);
+    }
+};
+
+/*!
+ * \brief Transform that repeats the expression to the right
+ * \tparam T The type on which the transformer is applied
+ * \tparam D The new dimensions
+ */
+template <typename T, std::size_t... D>
+struct rep_r_transformer : rep_transformer<T, rep_r_transformer<T,D...>> {
+    using this_type  = rep_r_transformer<T, D...>;     ///< This type
+    using base_type  = rep_transformer<T, this_type>;  ///< The base type
+    using sub_type   = typename base_type::sub_type;   ///< The type on which the expression works
+    using value_type = typename base_type::value_type; ///< The type of value
+
+    static constexpr const std::size_t sub_d      = decay_traits<sub_type>::dimensions(); ///< The number of dimensions of the sub type
+    static constexpr const std::size_t dimensions = sizeof...(D) + sub_d;                 ///< The number of dimensions of the transformer
+    static constexpr const std::size_t dim_start  = 0; ///< First dimension to take into account
+    static constexpr const std::size_t dim_end    = sub_d; ///< Last dimension to take into account
+
+    /*!
+     * \brief Construct a new transformer around the given expression
+     * \param expr The sub expression
+     */
+    explicit rep_r_transformer(sub_type expr)
+            : base_type(expr) {}
+
+    /*!
+     * \brief Returns the value at the given index
+     * \param i The index
+     * \return the value at the given index.
+     */
+    value_type operator[](std::size_t i) const {
+        return this->sub[i / mul_all<D...>::value];
+    }
+
+    /*!
+     * \brief Returns the value at the given index
+     * This function never has side effects.
+     * \param i The index
+     * \return the value at the given index.
+     */
+    value_type read_flat(std::size_t i) const noexcept {
+        return this->sub.read_flat(i / mul_all<D...>::value);
+    }
+
+    /*!
+     * \brief Returns the value at the given indices inside the range
+     */
     template <typename... Sizes, std::size_t... I>
     value_type selected_only(const std::index_sequence<I...>& /*seq*/, Sizes... sizes) const {
-        return sub(cpp::nth_value<I>(sizes...)...);
+        return this->sub(cpp::nth_value<I>(sizes...)...);
     }
 };
 
@@ -99,21 +132,23 @@ private:
  * \tparam D The new dimensions
  */
 template <typename T, std::size_t... D>
-struct rep_l_transformer {
-    using sub_type   = T;          ///< The type on which the expression works
-    using value_type = value_t<T>; ///< The type of valuie
+struct rep_l_transformer : rep_transformer<T, rep_l_transformer<T,D...>> {
+    using this_type  = rep_l_transformer<T, D...>;     ///< This type
+    using base_type  = rep_transformer<T, this_type>;  ///< The base type
+    using sub_type   = typename base_type::sub_type;   ///< The type on which the expression works
+    using value_type = typename base_type::value_type; ///< The type of value
 
     static constexpr const std::size_t sub_d      = decay_traits<sub_type>::dimensions(); ///< The number of dimensions of the sub type
     static constexpr const std::size_t dimensions = sizeof...(D) + sub_d;                 ///< The number of dimensions of the transformer
-
-    sub_type sub; ///< The subexpression
+    static constexpr const std::size_t dim_start  = sizeof...(D); ///< Last dimension to take into account
+    static constexpr const std::size_t dim_end    = dimensions; ///< Last dimension to take into account
 
     /*!
      * \brief Construct a new transformer around the given expression
      * \param expr The sub expression
      */
     explicit rep_l_transformer(sub_type expr)
-            : sub(expr) {}
+            : base_type(expr) {}
 
     /*!
      * \brief Returns the value at the given index
@@ -121,7 +156,7 @@ struct rep_l_transformer {
      * \return the value at the given index.
      */
     value_type operator[](std::size_t i) const {
-        return sub[i % size(sub)];
+        return this->sub[i % size(this->sub)];
     }
 
     /*!
@@ -131,49 +166,15 @@ struct rep_l_transformer {
      * \return the value at the given index.
      */
     value_type read_flat(std::size_t i) const noexcept {
-        return sub.read_flat(i % size(sub));
+        return this->sub.read_flat(i % size(this->sub));
     }
 
     /*!
-     * \brief Access to the value at the given (args...) position
-     * \param args The indices
-     * \return The value at the position (args...)
+     * \brief Returns the value at the given indices inside the range
      */
-    template <typename... Sizes>
-    value_type operator()(Sizes... args) const {
-        return selected_only(make_index_range<sizeof...(D), dimensions>(), args...);
-    }
-
-    /*!
-     * \brief Returns the value on which the transformer is working.
-     * \return A reference  to the value on which the transformer is working.
-     */
-    sub_type& value() {
-        return sub;
-    }
-
-    /*!
-     * \brief Returns the value on which the transformer is working.
-     * \return A reference  to the value on which the transformer is working.
-     */
-    const sub_type& value() const {
-        return sub;
-    }
-
-    /*!
-     * \brief Test if this expression aliases with the given expression
-     * \param rhs The other expression to test
-     * \return true if the two expressions aliases, false otherwise
-     */
-    template <typename E>
-    bool alias(const E& rhs) const noexcept {
-        return sub.alias(rhs);
-    }
-
-private:
     template <typename... Sizes, std::size_t... I>
     value_type selected_only(const std::index_sequence<I...>& /*seq*/, Sizes... sizes) const {
-        return sub(cpp::nth_value<I>(sizes...)...);
+        return this->sub(cpp::nth_value<I>(sizes...)...);
     }
 };
 
@@ -183,14 +184,17 @@ private:
  * \tparam D The number of new dimensions
  */
 template <typename T, std::size_t D>
-struct dyn_rep_r_transformer {
-    using sub_type   = T;          ///< The type on which the expression works
-    using value_type = value_t<T>; ///< The type of valuie
+struct dyn_rep_r_transformer : rep_transformer<T, dyn_rep_r_transformer<T, D>> {
+    using this_type  = dyn_rep_r_transformer<T, D>;    ///< This type
+    using base_type  = rep_transformer<T, this_type>;  ///< The base type
+    using sub_type   = typename base_type::sub_type;   ///< The type on which the expression works
+    using value_type = typename base_type::value_type; ///< The type of value
 
     static constexpr const std::size_t sub_d      = decay_traits<sub_type>::dimensions(); ///< The number of dimensions of the sub type
     static constexpr const std::size_t dimensions = D + sub_d;                            ///< The number of dimensions of the transformer
+    static constexpr const std::size_t dim_start  = 0;                                    ///< First dimension to take into account
+    static constexpr const std::size_t dim_end    = sub_d;                                ///< Last dimension to take into account
 
-    sub_type sub;                    ///< The subexpression
     std::array<std::size_t, D> reps; ///< The repeated dimensions
     std::size_t m;                   ///< The repeated size
 
@@ -200,7 +204,7 @@ struct dyn_rep_r_transformer {
      * \param reps_a The repeated dimensions
      */
     dyn_rep_r_transformer(sub_type expr, std::array<std::size_t, D> reps_a)
-            : sub(expr), reps(reps_a) {
+            : base_type(expr), reps(reps_a) {
         m = std::accumulate(reps.begin(), reps.end(), 1UL,
                             [](std::size_t a, std::size_t b) {
                                 return a * b;
@@ -213,7 +217,7 @@ struct dyn_rep_r_transformer {
      * \return the value at the given index.
      */
     value_type operator[](std::size_t i) const {
-        return sub[i / m];
+        return this->sub[i / m];
     }
 
     /*!
@@ -223,46 +227,12 @@ struct dyn_rep_r_transformer {
      * \return the value at the given index.
      */
     value_type read_flat(std::size_t i) const noexcept {
-        return sub.read_flat(i / m);
+        return this->sub.read_flat(i / m);
     }
 
     /*!
-     * \brief Access to the value at the given (args...) position
-     * \param args The indices
-     * \return The value at the position (args...)
+     * \brief Returns the value at the given indices inside the range
      */
-    template <typename... Sizes>
-    value_type operator()(Sizes... args) const {
-        return selected_only(std::make_index_sequence<sub_d>(), args...);
-    }
-
-    /*!
-     * \brief Returns the value on which the transformer is working.
-     * \return A reference  to the value on which the transformer is working.
-     */
-    sub_type& value() {
-        return sub;
-    }
-
-    /*!
-     * \brief Returns the value on which the transformer is working.
-     * \return A reference  to the value on which the transformer is working.
-     */
-    const sub_type& value() const {
-        return sub;
-    }
-
-    /*!
-     * \brief Test if this expression aliases with the given expression
-     * \param rhs The other expression to test
-     * \return true if the two expressions aliases, false otherwise
-     */
-    template <typename E>
-    bool alias(const E& rhs) const noexcept {
-        return sub.alias(rhs);
-    }
-
-private:
     template <typename... Sizes, std::size_t... I>
     value_type selected_only(const std::index_sequence<I...>& /*seq*/, Sizes... sizes) const {
         return sub(cpp::nth_value<I>(sizes...)...);
@@ -275,14 +245,17 @@ private:
  * \tparam D The number of new dimensions
  */
 template <typename T, std::size_t D>
-struct dyn_rep_l_transformer {
-    using sub_type   = T;          ///< The type on which the expression works
-    using value_type = value_t<T>; ///< The type of valuie
+struct dyn_rep_l_transformer : rep_transformer<T, dyn_rep_l_transformer<T, D>> {
+    using this_type  = dyn_rep_l_transformer<T, D>;    ///< This type
+    using base_type  = rep_transformer<T, this_type>;  ///< The base type
+    using sub_type   = typename base_type::sub_type;   ///< The type on which the expression works
+    using value_type = typename base_type::value_type; ///< The type of value
 
     static constexpr const std::size_t sub_d      = decay_traits<sub_type>::dimensions(); ///< The number of dimensions of the sub type
     static constexpr const std::size_t dimensions = D + sub_d;                            ///< The number of dimensions of the transformer
+    static constexpr const std::size_t dim_start  = D;                                    ///< First dimension to take into account
+    static constexpr const std::size_t dim_end    = dimensions;                           ///< Last dimension to take into account
 
-    sub_type sub;                    ///< The subexpression
     std::array<std::size_t, D> reps; ///< The repeated dimensions
     std::size_t m;                   ///< The repeated size
 
@@ -292,7 +265,7 @@ struct dyn_rep_l_transformer {
      * \param reps_a The repeated dimensions
      */
     dyn_rep_l_transformer(sub_type expr, std::array<std::size_t, D> reps_a)
-            : sub(expr), reps(reps_a) {
+            : base_type(expr), reps(reps_a) {
         m = std::accumulate(reps.begin(), reps.end(), 1UL,
                             [](std::size_t a, std::size_t b) {
                                 return a * b;
@@ -305,7 +278,7 @@ struct dyn_rep_l_transformer {
      * \return the value at the given index.
      */
     value_type operator[](std::size_t i) const {
-        return sub[i % size(sub)];
+        return this->sub[i % size(this->sub)];
     }
 
     /*!
@@ -315,49 +288,15 @@ struct dyn_rep_l_transformer {
      * \return the value at the given index.
      */
     value_type read_flat(std::size_t i) const {
-        return sub.read_flat(i % size(sub));
+        return this->sub.read_flat(i % size(this->sub));
     }
 
     /*!
-     * \brief Access to the value at the given (args...) position
-     * \param args The indices
-     * \return The value at the position (args...)
+     * \brief Returns the value at the given indices inside the range
      */
-    template <typename... Sizes>
-    value_type operator()(Sizes... args) const {
-        return selected_only(make_index_range<D, dimensions>(), args...);
-    }
-
-    /*!
-     * \brief Returns the value on which the transformer is working.
-     * \return A reference  to the value on which the transformer is working.
-     */
-    sub_type& value() {
-        return sub;
-    }
-
-    /*!
-     * \brief Returns the value on which the transformer is working.
-     * \return A reference  to the value on which the transformer is working.
-     */
-    const sub_type& value() const {
-        return sub;
-    }
-
-    /*!
-     * \brief Test if this expression aliases with the given expression
-     * \param rhs The other expression to test
-     * \return true if the two expressions aliases, false otherwise
-     */
-    template <typename E>
-    bool alias(const E& rhs) const noexcept {
-        return sub.alias(rhs);
-    }
-
-private:
     template <typename... Sizes, std::size_t... I>
     value_type selected_only(const std::index_sequence<I...>& /*seq*/, Sizes... sizes) const {
-        return sub(cpp::nth_value<I>(sizes...)...);
+        return this->sub(cpp::nth_value<I>(sizes...)...);
     }
 };
 
