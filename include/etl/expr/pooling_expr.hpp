@@ -278,8 +278,8 @@ struct basic_dyn_pool_2d_expr : dyn_impl_expr<basic_dyn_pool_2d_expr<T, Impl>> {
 
     static constexpr const bool is_gpu = false; ///< no GPU implementation
 
-    std::size_t c1;
-    std::size_t c2;
+    const std::size_t c1; ///< First dimension pooling ratio
+    const std::size_t c2; ///< Second dimension pooling ratio
 
     basic_dyn_pool_2d_expr(std::size_t c1, std::size_t c2) : c1(c1), c2(c2) {
         // Nothing else to init
@@ -381,9 +381,9 @@ struct basic_dyn_pool_3d_expr : dyn_impl_expr<basic_dyn_pool_3d_expr<T, Impl>> {
 
     static constexpr const bool is_gpu = false; ///< no GPU implementation
 
-    std::size_t c1;
-    std::size_t c2;
-    std::size_t c3;
+    const std::size_t c1; ///< First dimension pooling ratio
+    const std::size_t c2; ///< Second dimension pooling ratio
+    const std::size_t c3; ///< Third dimension pooling ratio
 
     basic_dyn_pool_3d_expr(std::size_t c1, std::size_t c2, std::size_t c3) : c1(c1), c2(c2), c3(c3) {
         // Nothing else to init
