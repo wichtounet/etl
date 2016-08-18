@@ -115,7 +115,7 @@ auto mul(A&& a, B&& b) -> detail::temporary_binary_helper<A, B, vm_mul_expr> {
  * \return An expression representing the vector-matrix multiplication of a and b
  */
 template <typename A, typename B, typename C, cpp_enable_if(is_1d<A>::value, is_2d<B>::value)>
-auto mul(A&& a, B&& b, C& c){
+auto mul(A&& a, B&& b, C&& c){
     c = mul(a, b);
     return std::forward<C>(c);
 }
@@ -139,7 +139,7 @@ auto mul(A&& a, B&& b) -> detail::temporary_binary_helper<A, B, mv_mul_expr> {
  * \return An expression representing the matrix-vector multiplication of a and b
  */
 template <typename A, typename B, typename C, cpp_enable_if(is_2d<A>::value, is_1d<B>::value)>
-auto mul(A&& a, B&& b, C& c) {
+auto mul(A&& a, B&& b, C&& c) {
     c = mul(a, b);
     return std::forward<C>(c);
 }
