@@ -18,7 +18,7 @@ struct no_intrinsic_traits {
     static constexpr const std::size_t size      = 1;          ///< Numbers of elements done at once
     static constexpr const std::size_t alignment = alignof(T); ///< Necessary number of bytes of alignment for this type
 
-    using intrinsic_type = T;
+    using intrinsic_type = T; ///< The intrinsic type
 };
 
 /*!

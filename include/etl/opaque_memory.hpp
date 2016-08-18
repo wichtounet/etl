@@ -19,20 +19,29 @@ template<typename>
 using gpu_handler = int;
 #endif
 
+/*!
+ * \brief Wrapper for opaque memory.
+ *
+ * This is used to give direct memory access to any expressions
+ * without showing the complete type, acting as a form of type
+ * erasure
+ */
 template <typename T, std::size_t D>
 struct opaque_memory {
-    static constexpr const std::size_t n_dimensions = D;                      ///< The number of dimensions
+    static constexpr const std::size_t n_dimensions = D; ///< The number of dimensions
 
-    using value_type        = T;
-    using memory_type       = T*;
-    using const_memory_type = std::add_const_t<T>*;
+    using value_type        = T;                    ///< The type of value
+    using memory_type       = T*;                   ///< The type of memory
+    using const_memory_type = std::add_const_t<T>*; ///< The type of const memory
 
-    T* memory;
+private:
+    T* memory; ///< The memory pointer
     const std::size_t etl_size;
     const std::array<std::size_t, D> dims;
     gpu_handler<T>& _gpu_memory_handler;
     const order storage_order; ///< The storage order
 
+public:
     opaque_memory(const T* memory, std::size_t size, const std::array<std::size_t, D>& dims, const gpu_handler<T>& handler, order storage_order)
             : memory(const_cast<T*>(memory)),
               etl_size(size),
