@@ -1027,8 +1027,6 @@ void conv2_full_multi_flipped_real(const I& input, const K& kernel, C&& conv) {
     cudnn_check(cudnnDestroyTensorDescriptor(input_tensor));
 }
 
-//COVERAGE_EXCLUDE_END
-
 #else
 
 //COVERAGE_EXCLUDE_BEGIN
