@@ -332,7 +332,7 @@ CPM_BENCH() {
         pmp_policy,
         "pmp_h(c=2) (s) [pmp][s]",
         [](std::size_t d){ return std::make_tuple(smat(d, d), smat(d,d)); },
-        [](smat& a, smat& r){ std::cout << r.memory_start() << std::endl; r = etl::p_max_pool_h<2,2>(a); },
+        [](smat& a, smat& r){ r = etl::p_max_pool_h<2,2>(a); },
         [](std::size_t d){ return 2 * d * d * 2 * 2; }
         );
 
