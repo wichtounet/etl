@@ -60,8 +60,8 @@ struct max_pool_2d {
      * \param sub The sub expression
      * \param j The first index of the block
      * \param k The second index of the block
-     * \param C1 The first dimension pooling ratio
-     * \param C2 The second dimension pooling ratio
+     * \param c1 The first dimension pooling ratio
+     * \param c2 The second dimension pooling ratio
      */
     template <typename A>
     static auto pool_block(const A& sub, std::size_t j, std::size_t k, std::size_t c1, std::size_t c2) {

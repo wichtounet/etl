@@ -31,8 +31,8 @@ auto max_pool_2d(E&& value) {
 /*!
  * \brief 2D Max Pooling of the given matrix expression
  * \param value The matrix expression
- * \tparam C1 The first pooling ratio
- * \tparam C2 The second pooling ratio
+ * \param c1 The first pooling ratio
+ * \param c2 The second pooling ratio
  * \return A expression representing the 2D Max Pooling of the input expression.
  */
 template <typename E>
@@ -106,9 +106,9 @@ auto avg_pool_3d(E&& value) {
 /*!
  * \brief 3D Average Pooling of the given matrix expression
  * \param value The matrix expression
- * \param C1 The first pooling ratio
- * \param C2 The second pooling ratio
- * \param C3 The third pooling ratio
+ * \param c1 The first pooling ratio
+ * \param c2 The second pooling ratio
+ * \param c3 The third pooling ratio
  * \return A expression representing the 3D Average Pooling of the input expression.
  */
 template <typename E>
@@ -324,8 +324,8 @@ auto p_max_pool_p(E&& value) {
 /*!
  * \brief Probabilistic Max Pooling for pooling units
  * \param value The input expression
- * \tparam C1 The first pooling ratio
- * \tparam C2 The second pooling ratio
+ * \param c1 The first pooling ratio
+ * \param c2 The second pooling ratio
  * \return A expression representing the Probabilistic Max Pooling of pooling units
  */
 template <typename E, cpp_enable_if(is_etl_expr<E>::value)>

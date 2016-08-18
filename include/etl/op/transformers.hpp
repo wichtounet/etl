@@ -1043,8 +1043,6 @@ struct etl_traits<transpose_transformer<T>> {
 /*!
  * \brief Transform that applies probabilistic max pooling on a expression
  * \tparam T The type on which the transformer is applied
- * \tparam C1 The shrink factor of the first dimension
- * \tparam C2 The shrink factor of the second dimension
  */
 template <typename T>
 struct dyn_p_max_pool_transformer {
@@ -1123,8 +1121,6 @@ struct dyn_p_max_pool_transformer {
 /*!
  * \brief Transform that applies probabilistic max pooling on a expression (for hidden units)
  * \tparam T The type on which the transformer is applied
- * \tparam C1 The shrink factor of the first dimension
- * \tparam C2 The shrink factor of the second dimension
  */
 template <typename T>
 struct dyn_p_max_pool_h_transformer : dyn_p_max_pool_transformer<T> {
@@ -1250,8 +1246,6 @@ struct dyn_p_max_pool_h_transformer : dyn_p_max_pool_transformer<T> {
 /*!
  * \brief Transform that applies probabilistic max pooling on a expression (for pooling units)
  * \tparam T The type on which the transformer is applied
- * \tparam C1 The shrink factor of the first dimension
- * \tparam C2 The shrink factor of the second dimension
  */
 template <typename T>
 struct dyn_p_max_pool_p_transformer : dyn_p_max_pool_transformer<T> {
