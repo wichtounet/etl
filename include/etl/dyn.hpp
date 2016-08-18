@@ -376,6 +376,27 @@ public:
         _dimensions = dyn_detail::sizes(std::make_index_sequence<D>(), sizes...);
     }
 
+    template <typename E, cpp_enable_if(etl::decay_traits<E>::is_generator)>
+    void inherit(E&& e){
+        cpp_assert(false, "Impossible to inherit dimensions from generators");
+        cpp_unused(e);
+    }
+
+    template <typename E, cpp_disable_if(etl::decay_traits<E>::is_generator)>
+    void inherit(E&& e){
+        cpp_assert(n_dimensions == etl::dimensions(e), "Invalid number of dimensions");
+
+        // Compute the size and new dimensions
+        _size = 1;
+        for (std::size_t d = 0; d < n_dimensions; ++d) {
+            _dimensions[d] = etl::dim(e, d);
+            _size *= _dimensions[d];
+        }
+
+        // Allocate the new memory
+        _memory = allocate(_size);
+    }
+
     /*!
      * \brief Assign from an ETL expression.
      * \param e The expression containing the values to assign to the matrix
@@ -383,7 +404,14 @@ public:
      */
     template <typename E, cpp_enable_if(!std::is_same<std::decay_t<E>, dyn_matrix_impl<T, SO, D>>::value, std::is_convertible<value_t<E>, value_type>::value, is_etl_expr<E>::value)>
     dyn_matrix_impl& operator=(E&& e) noexcept {
-        validate_assign(*this, e);
+        // It is possible that the matrix was not initialized before
+        // In the case, get the the dimensions from the expression and
+        // initialize the matrix
+        if(!_memory){
+            inherit(e);
+        } else {
+            validate_assign(*this, e);
+        }
 
         assign_evaluate(e, *this);
 
