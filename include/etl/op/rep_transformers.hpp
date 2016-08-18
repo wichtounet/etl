@@ -347,8 +347,11 @@ struct etl_traits<rep_r_transformer<T, D...>> {
      * \return The dth dimension of the given expression
      */
     static std::size_t dim(const expr_t& v, std::size_t d) {
-        static_assert(sizeof...(D) == 1, "dim(d) is uninmplemented for rep<T, D1, D...>");
-        return d == 0 ? etl_traits<sub_expr_t>::dim(v.sub, 0) : nth_size<0, 0, D...>::value;
+        if(d < sub_d){
+            return etl_traits<sub_expr_t>::dim(v.sub, d);
+        } else {
+            return dyn_nth_size<D...>(d - sub_d);
+        }
     }
 
     /*!
@@ -429,8 +432,11 @@ struct etl_traits<rep_l_transformer<T, D...>> {
      * \return The dth dimension of the given expression
      */
     static std::size_t dim(const expr_t& v, std::size_t d) {
-        static_assert(sizeof...(D) == 1, "dim(d) is uninmplemented for rep<T, D1, D...>");
-        return d == dimensions() - 1 ? etl_traits<sub_expr_t>::dim(v.sub, 0) : nth_size<0, 0, D...>::value;
+        if(d >= sizeof...(D)){
+            return etl_traits<sub_expr_t>::dim(v.sub, d - sizeof...(D));
+        } else {
+            return dyn_nth_size<D...>(d);
+        }
     }
 
     /*!
