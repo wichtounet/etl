@@ -783,6 +783,25 @@ ETL_TEST_CASE("dyn_matrix/assign_two_types", "") {
     etl::dyn_matrix<float> bbb(a);
 }
 
+//Make sure dyn matrix can inherit from expression
+
+ETL_TEST_CASE("dyn_matrix/inherit", "") {
+    etl::dyn_matrix<double, 3> a;
+
+    etl::dyn_matrix<double, 3> b(3, 4, 5);
+
+    a = b + b;
+
+    REQUIRE_EQUALS(a.size(), b.size());
+    REQUIRE_EQUALS(etl::dim<0>(a), etl::dim<0>(b));
+    REQUIRE_EQUALS(etl::dim<1>(a), etl::dim<1>(b));
+    REQUIRE_EQUALS(etl::dim<2>(a), etl::dim<2>(b));
+
+    REQUIRE_EQUALS(etl::dim<0>(a), 3UL);
+    REQUIRE_EQUALS(etl::dim<1>(a), 4UL);
+    REQUIRE_EQUALS(etl::dim<2>(a), 5UL);
+}
+
 //Make sure default construction is possible and then size is modifiable
 
 ETL_TEST_CASE("dyn_matrix/default_constructor_1", "") {
