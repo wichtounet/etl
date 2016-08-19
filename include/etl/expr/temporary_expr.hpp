@@ -290,6 +290,9 @@ public:
         return result().memory_end();
     }
 
+    /*!
+     * \brief Return an opaque direct access to the memory
+     */
     auto direct() const {
         if(evaluated && allocated){
             return result().direct();
@@ -320,28 +323,44 @@ public:
     }
 };
 
+/*!
+ * \brief Abstrct base class for temporary unary expression
+ * \tparam D The derived type
+ * \tparam T The value type
+ * \tparam A The sub type
+ * \tparam R The result type, if forced (void otherwise)
+ */
 template <typename D, typename T, typename A, typename R>
 struct temporary_expr_un : temporary_expr<D, T, R> {
     static_assert(is_etl_expr<A>::value, "The argument must be an ETL expr");
 
-    using value_type  = T;
-    using result_type = R;
-    using this_type   = temporary_expr_un<D, value_type, A, result_type>;
-    using base_type   = temporary_expr<D, T, R>;
+    using value_type  = T;                                                ///< The type of value
+    using result_type = R;                                                ///< The result type
+    using this_type   = temporary_expr_un<D, value_type, A, result_type>; ///< This type
+    using base_type   = temporary_expr<D, T, R>;                          ///< The base type
 
     A _a;                       ///< The sub expression reference
 
-    //Construct a new expression
+    /*!
+     * \brief Construct a new expression
+     * \param a The sub expression
+     */
     explicit temporary_expr_un(A a) : _a(a) {
         //Nothing else to init
     }
 
-    //Copy an expression
+    /*!
+     * \brief Construct a new expression by copy
+     * \param e The expression to copy
+     */
     temporary_expr_un(const temporary_expr_un& e) : base_type(e), _a(e._a) {
         //Nothing else to init
     }
 
-    //Move an expression
+    /*!
+     * \brief Construct a new expression by move
+     * \param e The expression to move
+     */
     temporary_expr_un(temporary_expr_un&& e) noexcept : base_type(std::move(e)), _a(e._a){
         //Nothing else to init
     }
@@ -373,30 +392,48 @@ struct temporary_expr_un : temporary_expr<D, T, R> {
     }
 };
 
+/*!
+ * \brief Abstrct base class for temporary binary expression
+ * \tparam D The derived type
+ * \tparam T The value type
+ * \tparam A The left sub expression type
+ * \tparam B The right sub expression type
+ * \tparam R The result type, if forced (void otherwise)
+ */
 template <typename D, typename T, typename A, typename B, typename R>
 struct temporary_expr_bin : temporary_expr<D, T, R> {
     static_assert(is_etl_expr<A>::value, "The argument must be an ETL expr");
     static_assert(is_etl_expr<B>::value, "The argument must be an ETL expr");
 
-    using value_type  = T;
-    using result_type = R;
-    using this_type   = temporary_expr_bin<D, value_type, A, B, result_type>;
-    using base_type   = temporary_expr<D, T, R>;
+    using value_type  = T;                                                    ///< The type of value
+    using result_type = R;                                                    ///< The result type
+    using this_type   = temporary_expr_bin<D, value_type, A, B, result_type>; ///< This type
+    using base_type   = temporary_expr<D, T, R>;                              ///< The base type
 
     A _a;                       ///< The sub expression reference
     B _b;                       ///< The sub expression reference
 
-    //Construct a new expression
+    /*!
+     * \brief Construct a new expression
+     * \param a The left sub expression
+     * \param b The right sub expression
+     */
     explicit temporary_expr_bin(A a, B b) : _a(a), _b(b) {
         //Nothing else to init
     }
 
-    //Copy an expression
+    /*!
+     * \brief Construct a new expression by copy
+     * \param e The expression to copy
+     */
     temporary_expr_bin(const temporary_expr_bin& e) : base_type(e), _a(e._a), _b(e._b) {
         //Nothing else to init
     }
 
-    //Move an expression
+    /*!
+     * \brief Construct a new expression by move
+     * \param e The expression to move
+     */
     temporary_expr_bin(temporary_expr_bin&& e) noexcept : base_type(std::move(e)), _a(e._a), _b(e._b) {
         //Nothing else to init
     }
@@ -453,30 +490,39 @@ struct temporary_expr_bin : temporary_expr<D, T, R> {
  */
 template <typename T, typename AExpr, typename Op>
 struct temporary_unary_expr final : temporary_expr_un<temporary_unary_expr<T, AExpr, Op>, T, AExpr, typename Op::template result_type<AExpr>> {
-    using value_type  = T;                                                ///< The value type
-    using result_type = typename Op::template result_type<AExpr>;         ///< The result type
-    using this_type   = temporary_unary_expr<T, AExpr, Op>;               ///< The type of this expression
+    using value_type  = T;                                                   ///< The value type
+    using result_type = typename Op::template result_type<AExpr>;            ///< The result type
+    using this_type   = temporary_unary_expr<T, AExpr, Op>;                  ///< The type of this expression
     using base_type   = temporary_expr_un<this_type, T, AExpr, result_type>; ///< The base type
 
-    //Construct a new expression
+    /*!
+     * \brief Construct a new expression
+     * \param a The left expression
+     */
     explicit temporary_unary_expr(AExpr a) : base_type(a) {
         //Nothing else to init
     }
 
-    //Accessors
-
+    /*!
+     * \brief Apply the op and store the result in result
+     * \param result The expressio where to store the result
+     */
     template <typename Result>
     void apply(Result&& result) const {
         Op::apply(this->a(), std::forward<Result>(result));
     }
 
+    /*!
+     * \brief Allocate memory for this operation
+     * \return an allocated ETL expression
+     */
     auto allocate() const {
         return Op::allocate(this->a());
     }
 };
 
 /*!
- * \brief A temporary unary expression
+ * \brief A temporary unary expression with state
  *
  * Evaluation is done at once, when access is made. This can be done
  * on const reference, this is the reason why several fields are
@@ -484,25 +530,35 @@ struct temporary_unary_expr final : temporary_expr_un<temporary_unary_expr<T, AE
  */
 template <typename T, typename AExpr, typename Op>
 struct temporary_unary_expr_state final : temporary_expr_un<temporary_unary_expr_state<T, AExpr, Op>, T, AExpr, typename Op::template result_type<AExpr>> {
-    using value_type  = T;                                                ///< The value type
-    using result_type = typename Op::template result_type<AExpr>;         ///< The result type
-    using this_type   = temporary_unary_expr_state<T, AExpr, Op>;               ///< The type of this expression
+    using value_type  = T;                                                   ///< The value type
+    using result_type = typename Op::template result_type<AExpr>;            ///< The result type
+    using this_type   = temporary_unary_expr_state<T, AExpr, Op>;            ///< The type of this expression
     using base_type   = temporary_expr_un<this_type, T, AExpr, result_type>; ///< The base type
 
-    Op op;
+    Op op; ///< The stateful operator
 
-    //Construct a new expression
+    /*!
+     * \brief Construct a new expression
+     * \param op The operator
+     * \param a The left expression
+     */
     explicit temporary_unary_expr_state(Op op, AExpr a) : base_type(a), op(op) {
         //Nothing else to init
     }
 
-    //Accessors
-
+    /*!
+     * \brief Apply the op and store the result in result
+     * \param result The expressio where to store the result
+     */
     template <typename Result>
     void apply(Result&& result) const {
         op.apply(this->a(), std::forward<Result>(result));
     }
 
+    /*!
+     * \brief Allocate memory for this operation
+     * \return an allocated ETL expression
+     */
     auto allocate() const {
         return op.allocate(this->a());
     }
@@ -513,48 +569,73 @@ struct temporary_unary_expr_state final : temporary_expr_un<temporary_unary_expr
  */
 template <typename T, typename AExpr, typename BExpr, typename Op>
 struct temporary_binary_expr final : temporary_expr_bin<temporary_binary_expr<T, AExpr, BExpr, Op>, T, AExpr, BExpr, typename Op::template result_type<AExpr, BExpr>> {
-    using value_type  = T;                                                  ///< The value type
-    using result_type = typename Op::template result_type<AExpr, BExpr>;    ///< The result type
-    using this_type   = temporary_binary_expr<T, AExpr, BExpr, Op>;         ///< The type of this expresion
+    using value_type  = T;                                                                    ///< The value type
+    using result_type = typename Op::template result_type<AExpr, BExpr>;                      ///< The result type
+    using this_type   = temporary_binary_expr<T, AExpr, BExpr, Op>;                           ///< The type of this expresion
     using base_type   = temporary_expr_bin<this_type, value_type, AExpr, BExpr, result_type>; ///< The base type
 
-    //Construct a new expression
+    /*!
+     * \brief Construct a new expression
+     * \param a The left expression
+     * \param b The right expression
+     */
     temporary_binary_expr(AExpr a, BExpr b) : base_type(a, b) {
         //Nothing else to init
     }
 
+    /*!
+     * \brief Apply the op and store the result in result
+     * \param result The expressio where to store the result
+     */
     template <typename Result>
     void apply(Result&& result) const {
         Op::apply(this->a(), this->b(), std::forward<Result>(result));
     }
 
+    /*!
+     * \brief Allocate memory for this operation
+     * \return an allocated ETL expression
+     */
     auto allocate() const {
         return Op::allocate(this->a(), this->b());
     }
 };
 
 /*!
- * \brief A temporary binary expression
+ * \brief A temporary binary expression with state
  */
 template <typename T, typename AExpr, typename BExpr, typename Op>
 struct temporary_binary_expr_state final : temporary_expr_bin<temporary_binary_expr_state<T, AExpr, BExpr, Op>, T, AExpr, BExpr, typename Op::template result_type<AExpr, BExpr>> {
-    using value_type  = T;                                                  ///< The value type
-    using result_type = typename Op::template result_type<AExpr, BExpr>;    ///< The result type
-    using this_type   = temporary_binary_expr_state<T, AExpr, BExpr, Op>;         ///< The type of this expresion
+    using value_type  = T;                                                                    ///< The value type
+    using result_type = typename Op::template result_type<AExpr, BExpr>;                      ///< The result type
+    using this_type   = temporary_binary_expr_state<T, AExpr, BExpr, Op>;                     ///< The type of this expresion
     using base_type   = temporary_expr_bin<this_type, value_type, AExpr, BExpr, result_type>; ///< The base type
 
-    Op op;
+    Op op; ///< The stateful operation
 
-    //Construct a new expression
+    /*!
+     * \brief Construct a new expression
+     * \param op The operator
+     * \param a The left expression
+     * \param b The right expression
+     */
     temporary_binary_expr_state(Op op, AExpr a, BExpr b) : base_type(a, b), op(op) {
         //Nothing else to init
     }
 
+    /*!
+     * \brief Apply the op and store the result in result
+     * \param result The expressio where to store the result
+     */
     template <typename Result>
     void apply(Result&& result) const {
         op.apply(this->a(), this->b(), std::forward<Result>(result));
     }
 
+    /*!
+     * \brief Allocate memory for this operation
+     * \return an allocated ETL expression
+     */
     auto allocate() const {
         return op.allocate(this->a(), this->b());
     }
@@ -565,8 +646,8 @@ struct temporary_binary_expr_state final : temporary_expr_bin<temporary_binary_e
  */
 template <typename T, typename A, typename Op>
 struct etl_traits<etl::temporary_unary_expr<T, A, Op>> {
-    using expr_t = etl::temporary_unary_expr<T, A, Op>;
-    using a_t    = std::decay_t<A>;
+    using expr_t = etl::temporary_unary_expr<T, A, Op>; ///< The expression type
+    using a_t    = std::decay_t<A>;                     ///< The decayed left expression type
 
     static constexpr const bool is_etl                  = true;                           ///< Indicates if the type is an ETL type
     static constexpr const bool is_transformer          = false;                          ///< Indicates if the type is a transformer
@@ -641,9 +722,9 @@ struct etl_traits<etl::temporary_unary_expr<T, A, Op>> {
  */
 template <typename T, typename A, typename B, typename Op>
 struct etl_traits<etl::temporary_binary_expr<T, A, B, Op>> {
-    using expr_t = etl::temporary_binary_expr<T, A, B, Op>;
-    using a_t    = std::decay_t<A>;
-    using b_t    = std::decay_t<B>;
+    using expr_t = etl::temporary_binary_expr<T, A, B, Op>; ///< The expression type
+    using a_t    = std::decay_t<A>;                         ///< The decayed left expression type
+    using b_t    = std::decay_t<B>;                         ///< The decayed right expression type
 
     static constexpr const bool is_etl                  = true;                                                                                            ///< Indicates if the type is an ETL type
     static constexpr const bool is_transformer          = false;                                                                                           ///< Indicates if the type is a transformer
@@ -718,8 +799,8 @@ struct etl_traits<etl::temporary_binary_expr<T, A, B, Op>> {
  */
 template <typename T, typename A, typename Op>
 struct etl_traits<etl::temporary_unary_expr_state<T, A, Op>> {
-    using expr_t = etl::temporary_unary_expr_state<T, A, Op>;
-    using a_t    = std::decay_t<A>;
+    using expr_t = etl::temporary_unary_expr_state<T, A, Op>; ///< The type of expression
+    using a_t    = std::decay_t<A>;                           ///< The decayed left expression type
 
     static constexpr const bool is_etl                  = true;                           ///< Indicates if the type is an ETL type
     static constexpr const bool is_transformer          = false;                          ///< Indicates if the type is a transformer
@@ -776,9 +857,9 @@ struct etl_traits<etl::temporary_unary_expr_state<T, A, Op>> {
  */
 template <typename T, typename A, typename B, typename Op>
 struct etl_traits<etl::temporary_binary_expr_state<T, A, B, Op>> {
-    using expr_t = etl::temporary_binary_expr_state<T, A, B, Op>;
-    using a_t    = std::decay_t<A>;
-    using b_t    = std::decay_t<B>;
+    using expr_t = etl::temporary_binary_expr_state<T, A, B, Op>; ///< The type of expression
+    using a_t    = std::decay_t<A>;                               ///< The decayed left expression type
+    using b_t    = std::decay_t<B>;                               ///< The decayed right expression type
 
     static constexpr const bool is_etl                  = true;                                                                                            ///< Indicates if the type is an ETL type
     static constexpr const bool is_transformer          = false;                                                                                           ///< Indicates if the type is a transformer

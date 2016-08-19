@@ -17,7 +17,9 @@ namespace etl {
 /*!
  * \brief A simple type to use as init flag to constructor
  */
-enum class init_flag_t { DUMMY };
+enum class init_flag_t {
+    DUMMY  ///< Dummy value for the flag
+};
 
 /*!
  * \brief A simple value to use as init flag to constructor

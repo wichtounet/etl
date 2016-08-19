@@ -261,9 +261,14 @@ struct basic_dyn_upsample_2d_expr : dyn_impl_expr<basic_dyn_upsample_2d_expr<T, 
 
     static constexpr const bool is_gpu = false; ///< no GPU implementation
 
-    std::size_t c1;
-    std::size_t c2;
+    std::size_t c1; ///< The first dimension upsampling factor
+    std::size_t c2; ///< The second dimension upsampling factor
 
+    /*!
+     * \brief Create a new expression
+     * \param c1 The first upsampling factor
+     * \param c2 The second upsampling factor
+     */
     basic_dyn_upsample_2d_expr(std::size_t c1, std::size_t c2) : c1(c1), c2(c2) {
         // Nothing else to init
     }
@@ -358,10 +363,16 @@ struct basic_dyn_upsample_3d_expr : dyn_impl_expr<basic_dyn_upsample_3d_expr<T, 
 
     static constexpr const bool is_gpu = false; ///< no GPU implementation
 
-    std::size_t c1;
-    std::size_t c2;
-    std::size_t c3;
+    std::size_t c1; ///< The first dimension upsampling factor
+    std::size_t c2; ///< The second dimension upsampling factor
+    std::size_t c3; ///< The third dimension upsampling factor
 
+    /*!
+     * \brief Create a new expression
+     * \param c1 The first upsampling factor
+     * \param c2 The second upsampling factor
+     * \param c3 The third upsampling factor
+     */
     basic_dyn_upsample_3d_expr(std::size_t c1, std::size_t c2, std::size_t c3) : c1(c1), c2(c2), c3(c3) {
         // Nothing else to init
     }

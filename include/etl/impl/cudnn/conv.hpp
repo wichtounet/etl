@@ -974,7 +974,6 @@ void conv2_valid_flipped(const opaque_memory<T,2>& input, const opaque_memory<T,
     cpp_unreachable("Unsupported feature called: cudnn conv2_valid_flipped");
 }
 
-
 /*!
  * \brief cudnn implementation of a 4D 'valid' convolution C = I * K
  * \param input The input matrix
@@ -989,6 +988,12 @@ void conv4_valid(const opaque_memory<T,4>& input, const opaque_memory<T,4>& kern
     cpp_unreachable("Unsupported feature called: cudnn conv4_valid");
 }
 
+/*!
+ * \brief cudnn implementation of a 4D 'valid' convolution C = I * K, with flipped weights
+ * \param input The input matrix
+ * \param kernel The kernel matrix
+ * \param conv The output matrix
+ */
 template <typename T>
 void conv4_valid_flipped(const opaque_memory<T,4>& input, const opaque_memory<T,4>& kernel, const opaque_memory<T,4>& conv) {
     cpp_unused(input);
@@ -997,6 +1002,14 @@ void conv4_valid_flipped(const opaque_memory<T,4>& input, const opaque_memory<T,
     cpp_unreachable("Unsupported feature called: cudnn conv4_valid_flipped");
 }
 
+/*!
+ * \brief AVX implementation of a 4D 'valid' convolution C = I * K, where the output
+ * are considered to be kernels
+ *
+ * \param input The input matrix
+ * \param kernel The kernel matrix
+ * \param conv The output matrix
+ */
 template <typename T>
 void conv4_valid_filter(const opaque_memory<T,4>& input, const opaque_memory<T,4>& kernel, const opaque_memory<T,4>& conv) {
     cpp_unused(input);
@@ -1005,6 +1018,14 @@ void conv4_valid_filter(const opaque_memory<T,4>& input, const opaque_memory<T,4
     cpp_unreachable("Unsupported feature called: cudnn conv4_valid_filter");
 }
 
+/*!
+ * \brief AVX implementation of a 4D 'valid' convolution C = I * K, where the output
+ * are considered to be kernels, with flipped weights
+ *
+ * \param input The input matrix
+ * \param kernel The kernel matrix
+ * \param conv The output matrix
+ */
 template <typename T>
 void conv4_valid_filter_flipped(const opaque_memory<T,4>& input, const opaque_memory<T,4>& kernel, const opaque_memory<T,4>& conv) {
     cpp_unused(input);

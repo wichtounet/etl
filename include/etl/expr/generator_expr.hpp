@@ -29,7 +29,7 @@ private:
     mutable Generator generator;
 
 public:
-    using value_type = typename Generator::value_type;
+    using value_type = typename Generator::value_type; ///< The type of value generated
 
     /*!
      * \brief Construct a generator expression and forward the arguments to the generator

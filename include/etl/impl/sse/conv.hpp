@@ -1445,6 +1445,12 @@ void conv2_full_multi_flipped(const I& input, const K& kernel, C&& conv) {
     cpp_unreachable("SSE not available/enabled");
 }
 
+/*!
+ * \brief SSE implementation of a 4D 'valid' convolution C = I * K
+ * \param input The input matrix
+ * \param kernel The kernel matrix
+ * \param conv The output matrix
+ */
 template <typename T>
 void conv4_valid(const opaque_memory<T, 4>& input, const opaque_memory<T, 4>& kernel, const opaque_memory<T, 4>& conv){
     cpp_unused(input);
@@ -1453,6 +1459,12 @@ void conv4_valid(const opaque_memory<T, 4>& input, const opaque_memory<T, 4>& ke
     cpp_unreachable("SSE not available/enabled");
 }
 
+/*!
+ * \brief SSE implementation of a 4D 'valid' convolution C = I * K, with flipped weights
+ * \param input The input matrix
+ * \param kernel The kernel matrix
+ * \param conv The output matrix
+ */
 template <typename T>
 void conv4_valid_flipped(const opaque_memory<T, 4>& input, const opaque_memory<T, 4>& kernel, const opaque_memory<T, 4>& conv){
     cpp_unused(input);
@@ -1461,6 +1473,13 @@ void conv4_valid_flipped(const opaque_memory<T, 4>& input, const opaque_memory<T
     cpp_unreachable("SSE not available/enabled");
 }
 
+/*!
+ * \brief SSE implementation of a 4D 'valid' convolution C = I * K, where the output are considered to be kernels
+ *
+ * \param input The input matrix
+ * \param kernel The kernel matrix
+ * \param conv The output matrix
+ */
 template <typename T>
 void conv4_valid_filter(const opaque_memory<T, 4>& input, const opaque_memory<T, 4>& kernel, const opaque_memory<T, 4>& conv){
     cpp_unused(input);
@@ -1469,14 +1488,27 @@ void conv4_valid_filter(const opaque_memory<T, 4>& input, const opaque_memory<T,
     cpp_unreachable("SSE not available/enabled");
 }
 
+/*!
+ * \brief SSE implementation of a 4D 'valid' convolution C = I * K, where the output
+ * are considered to be kernels, with flipped weights
+ *
+ * \param input The input matrix
+ * \param kernel The kernel matrix
+ * \param conv The output matrix
+ */
 template <typename T>
 void conv4_valid_filter_flipped(const opaque_memory<T, 4>& input, const opaque_memory<T, 4>& kernel, const opaque_memory<T, 4>& conv){
     cpp_unused(input);
     cpp_unused(kernel);
-    cpp_unused(conv);
-    cpp_unreachable("SSE not available/enabled");
+    cpp_unused(conv); cpp_unreachable("SSE not available/enabled");
 }
 
+/*!
+ * \brief SSE implementation of a 4D 'full' convolution C = I * K
+ * \param input The input matrix
+ * \param kernel The kernel matrix
+ * \param conv The output matrix
+ */
 template <typename T>
 void conv4_full(const opaque_memory<T, 4>& input, const opaque_memory<T, 4>& kernel, const opaque_memory<T, 4>& conv){
     cpp_unused(input);
@@ -1485,6 +1517,14 @@ void conv4_full(const opaque_memory<T, 4>& input, const opaque_memory<T, 4>& ker
     cpp_unreachable("SSE not available/enabled");
 }
 
+/*!
+ * \brief SSE implementation of a 4D 'full' convolution C = I * K,
+ * with flipped weights
+ *
+ * \param input The input matrix
+ * \param kernel The kernel matrix
+ * \param conv The output matrix
+ */
 template <typename T>
 void conv4_full_flipped(const opaque_memory<T, 4>& input, const opaque_memory<T, 4>& kernel, const opaque_memory<T, 4>& conv){
     cpp_unused(input);

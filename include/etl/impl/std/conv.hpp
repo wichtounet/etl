@@ -320,7 +320,7 @@ void conv4_valid_flipped(const I& input, const K& kernel, C&& conv) {
 }
 
 /*!
- * \brief Standard implementation of a 4D 'valid' convolution C = I * K
+ * \brief Standard implementation of a 4D 'valid' convolution C = I * K, where the output are considered to be kernels
  * \param input The input matrix
  * \param kernel The kernel matrix
  * \param conv The output matrix

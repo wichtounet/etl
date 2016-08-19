@@ -904,6 +904,12 @@ void deserialize(deserializer<Stream>& is, dyn_matrix_impl<T, SO, D>& matrix){
     }
 }
 
+/*!
+ * \brief Print the description of the matrix to the given stream
+ * \param os The output stream
+ * \param mat The matrix to output the description to the stream
+ * \return The given output stream
+ */
 template <typename T, order SO, std::size_t D>
 std::ostream& operator<<(std::ostream& os, const dyn_matrix_impl<T, SO, D>& mat) {
     if (D == 1) {
