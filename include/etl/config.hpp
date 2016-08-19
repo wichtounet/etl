@@ -147,7 +147,7 @@ constexpr const bool unroll_normal_loops         = true;  ///< Boolean flag indi
 #ifdef ETL_CUDNN_MAX_WORKSPACE
 constexpr const std::size_t cudnn_max_workspace = ETL_CUDNN_MAX_WORKSPACE;
 #else
-constexpr const std::size_t cudnn_max_workspace = 2UL * 1024 * 1024 * 1024;
+constexpr const std::size_t cudnn_max_workspace = 2UL * 1024 * 1024 * 1024; ///< The max workspace we allocate for CUDNN (2GiB by default)
 #endif
 
 /*!

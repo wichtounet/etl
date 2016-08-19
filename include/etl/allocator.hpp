@@ -19,6 +19,10 @@ namespace etl {
  * functions for allocations of these types
  */
 
+/*!
+ * \brief Use of this type in the parameter with the size of
+ * a vector type fakes mangling
+ */
 template<std::size_t T>
 struct mangling_faker {};
 
