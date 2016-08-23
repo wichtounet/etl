@@ -88,8 +88,8 @@ struct rep_r_transformer : rep_transformer<T, rep_r_transformer<T,D...>> {
 
     static constexpr const std::size_t sub_d      = decay_traits<sub_type>::dimensions(); ///< The number of dimensions of the sub type
     static constexpr const std::size_t dimensions = sizeof...(D) + sub_d;                 ///< The number of dimensions of the transformer
-    static constexpr const std::size_t dim_start  = 0; ///< First dimension to take into account
-    static constexpr const std::size_t dim_end    = sub_d; ///< Last dimension to take into account
+    static constexpr const std::size_t dim_start  = 0;                                    ///< First dimension to take into account
+    static constexpr const std::size_t dim_end    = sub_d;                                ///< Last dimension to take into account
 
     /*!
      * \brief Construct a new transformer around the given expression
@@ -140,8 +140,8 @@ struct rep_l_transformer : rep_transformer<T, rep_l_transformer<T,D...>> {
 
     static constexpr const std::size_t sub_d      = decay_traits<sub_type>::dimensions(); ///< The number of dimensions of the sub type
     static constexpr const std::size_t dimensions = sizeof...(D) + sub_d;                 ///< The number of dimensions of the transformer
-    static constexpr const std::size_t dim_start  = sizeof...(D); ///< Last dimension to take into account
-    static constexpr const std::size_t dim_end    = dimensions; ///< Last dimension to take into account
+    static constexpr const std::size_t dim_start  = sizeof...(D);                         ///< Last dimension to take into account
+    static constexpr const std::size_t dim_end    = dimensions;                           ///< Last dimension to take into account
 
     /*!
      * \brief Construct a new transformer around the given expression
