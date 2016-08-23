@@ -80,31 +80,33 @@ void check_conv_2d_sizes(const I& input, const K& kernel, const C& conv) {
 
     if (TT == conv_type::FULL) {
         cpp_assert(
-            dim<0>(conv) == dim<0>(input) + dim<0>(kernel) - 1 && dim<1>(conv) == dim<1>(input) + dim<1>(kernel) - 1,
+            dim(conv, 0) == dim(input, 0) + dim(kernel, 0) - 1 && dim(conv, 1) == dim(input, 1) + dim(kernel, 1) - 1,
             "Invalid sizes for 'full' convolution");
     } else if (TT == conv_type::SAME) {
-        cpp_assert(dim<0>(conv) == dim<0>(input) && dim<1>(conv) == dim<1>(input), "Invalid sizes for 'same' convolution");
+        cpp_assert(
+            dim(conv, 0) == dim(input, 0) && dim(conv, 1) == dim(input, 1),
+            "Invalid sizes for 'same' convolution");
     } else if (TT == conv_type::VALID) {
         cpp_assert(
-            dim<0>(conv) == dim<0>(input) - dim<0>(kernel) + 1 && dim<1>(conv) == dim<1>(input) - dim<1>(kernel) + 1,
+            dim(conv, 0) == dim(input, 0) - dim(kernel, 0) + 1 && dim(conv, 1) == dim(input, 1) - dim(kernel, 1) + 1,
             "Invalid sizes for 'valid' convolution");
     } else if (TT == conv_type::VALID_MULTI) {
         cpp_assert(
-                dim<0>(kernel) == dim<0>(conv)
-            &&  dim<1>(conv) == dim<0>(input) - dim<1>(kernel) + 1
-            &&  dim<2>(conv) == dim<1>(input) - dim<2>(kernel) + 1
+                dim(kernel, 0) == dim(conv, 0)
+            &&  dim(conv, 1) == dim(input, 0) - dim(kernel, 1) + 1
+            &&  dim(conv, 2) == dim(input, 1) - dim(kernel, 2) + 1
             , "Invalid sizes for 'valid' convolution");
     } else if (TT == conv_type::SAME_MULTI) {
         cpp_assert(
-                dim<0>(kernel) == dim<0>(conv)
-            &&  dim<1>(conv) == dim<0>(input)
-            &&  dim<2>(conv) == dim<1>(input)
+                dim(kernel, 0) == dim(conv, 0)
+            &&  dim(conv, 1) == dim(input, 1)
+            &&  dim(conv, 2) == dim(input, 1)
             , "Invalid sizes for 'same' convolution");
     } else if (TT == conv_type::FULL_MULTI) {
         cpp_assert(
-                dim<0>(kernel) == dim<0>(conv)
-            &&  dim<1>(conv) == dim<0>(input) + dim<1>(kernel) - 1
-            &&  dim<2>(conv) == dim<1>(input) + dim<2>(kernel) - 1
+                dim(kernel, 0) == dim(conv, 0)
+            &&  dim(conv, 1) == dim(input, 0) + dim(kernel, 1) - 1
+            &&  dim(conv, 2) == dim(input, 1) + dim(kernel, 2) - 1
             , "Invalid sizes for 'full' convolution");
     }
 
