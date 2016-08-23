@@ -235,7 +235,7 @@ struct dyn_rep_r_transformer : rep_transformer<T, dyn_rep_r_transformer<T, D>> {
      */
     template <typename... Sizes, std::size_t... I>
     value_type selected_only(const std::index_sequence<I...>& /*seq*/, Sizes... sizes) const {
-        return sub(cpp::nth_value<I>(sizes...)...);
+        return this->sub(cpp::nth_value<I>(sizes...)...);
     }
 };
 
