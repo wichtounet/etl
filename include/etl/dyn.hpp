@@ -805,6 +805,21 @@ public:
         return opaque_memory<T, n_dimensions>(memory_start(), _size, _dimensions, _gpu_memory_handler, SO);
     }
 
+    /*!
+     * \brief Inherit the dimensions of an ETL expressions, if the matrix has no
+     * dimensions.
+     * \param e The expression to get the dimensions from.
+     */
+    template <typename E>
+    void inherit_if_null(const E& e){
+        static_assert(n_dimensions == etl::dimensions(e), "Cannot inherit from an expression with different number of dimensions");
+        static_assert(!etl::decay_traits<E>::is_generator, "Cannot inherit dimensions from a generator expression");
+
+        if(!_memory){
+            inherit(e);
+        }
+    }
+
 private:
     /*!
      * \brief Inherit the dimensions of an ETL expressions.
@@ -812,7 +827,7 @@ private:
      * \param e The expression to get the dimensions from.
      */
     template <typename E, cpp_enable_if(etl::decay_traits<E>::is_generator)>
-    void inherit(E&& e){
+    void inherit(const E& e){
         cpp_assert(false, "Impossible to inherit dimensions from generators");
         cpp_unused(e);
     }
@@ -823,7 +838,7 @@ private:
      * \param e The expression to get the dimensions from.
      */
     template <typename E, cpp_disable_if(etl::decay_traits<E>::is_generator)>
-    void inherit(E&& e){
+    void inherit(const E& e){
         cpp_assert(n_dimensions == etl::dimensions(e), "Invalid number of dimensions");
 
         // Compute the size and new dimensions
