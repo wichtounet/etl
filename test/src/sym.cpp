@@ -85,3 +85,24 @@ TEMPLATE_TEST_CASE_2("sym/fast_matrix/3", "[sym][fast]", Z, float, double) {
     REQUIRE_EQUALS(a(2, 0), Z(3.0));
     REQUIRE_EQUALS(a(0, 2), Z(3.0));
 }
+
+TEMPLATE_TEST_CASE_2("sym/fast_matrix/4", "[sym][fast]", Z, float, double) {
+    etl::fast_matrix<Z, 3, 3> a = {0.0, 1.0, 2.0, 1.0, 1.0, 3.0, 2.0, 3.0, 2.0};;
+    etl::sym_matrix<etl::fast_matrix<Z, 3, 3>> b;
+    b = a;
+
+    REQUIRE_EQUALS(a(0, 0), 0.0);
+    REQUIRE_EQUALS(a(0, 1), 1.0);
+    REQUIRE_EQUALS(a(0, 2), 2.0);
+
+    REQUIRE_EQUALS(a(1, 0), 1.0);
+    REQUIRE_EQUALS(a(1, 1), 1.0);
+    REQUIRE_EQUALS(a(1, 2), 3.0);
+
+    REQUIRE_EQUALS(a(2, 0), 2.0);
+    REQUIRE_EQUALS(a(2, 1), 3.0);
+    REQUIRE_EQUALS(a(2, 2), 2.0);
+
+    REQUIRE_DIRECT(b == a);
+    REQUIRE_DIRECT(a == b);
+}
