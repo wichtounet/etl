@@ -572,6 +572,13 @@ struct conv1_full_impl {
             cpp_unreachable("Invalid conv implementation selection");
         }
     }
+
+    /*!
+     * \brief Returns the description of the operation
+     */
+    static constexpr const char* desc(){
+        return "conv1_full";
+    }
 };
 
 /*!
@@ -605,6 +612,13 @@ struct conv1_same_impl {
             cpp_unreachable("Invalid conv implementation selection");
         }
     }
+
+    /*!
+     * \brief Returns the description of the operation
+     */
+    static constexpr const char* desc(){
+        return "conv1_same";
+    }
 };
 
 /*!
@@ -637,6 +651,13 @@ struct conv1_valid_impl {
         } else {
             cpp_unreachable("Invalid conv implementation selection");
         }
+    }
+
+    /*!
+     * \brief Returns the description of the operation
+     */
+    static constexpr const char* desc(){
+        return "conv1_valid";
     }
 };
 
@@ -676,6 +697,13 @@ struct conv2_full_impl {
             cpp_unreachable("Invalid conv implementation selection");
         }
     }
+
+    /*!
+     * \brief Returns the description of the operation
+     */
+    static constexpr const char* desc(){
+        return "conv2_full";
+    }
 };
 
 /*!
@@ -708,6 +736,13 @@ struct conv2_full_flipped_impl {
             cpp_unreachable("Invalid conv implementation selection");
         }
     }
+
+    /*!
+     * \brief Returns the description of the operation
+     */
+    static constexpr const char* desc(){
+        return "conv2_full_flipped";
+    }
 };
 
 /*!
@@ -737,6 +772,13 @@ struct conv2_same_impl {
         } else {
             cpp_unreachable("Invalid conv implementation selection");
         }
+    }
+
+    /*!
+     * \brief Returns the description of the operation
+     */
+    static constexpr const char* desc(){
+        return "conv2_same";
     }
 };
 
@@ -801,6 +843,13 @@ struct conv2_valid_impl {
             cpp_unreachable("Invalid conv implementation selection");
         }
     }
+
+    /*!
+     * \brief Returns the description of the operation
+     */
+    static constexpr const char* desc(){
+        return "conv2_valid";
+    }
 };
 
 /*!
@@ -833,6 +882,13 @@ struct conv2_valid_flipped_impl {
             cpp_unreachable("Invalid conv implementation selection");
         }
     }
+
+    /*!
+     * \brief Returns the description of the operation
+     */
+    static constexpr const char* desc(){
+        return "conv2_valid_flipped";
+    }
 };
 
 /*!
@@ -860,6 +916,13 @@ struct conv4_valid_impl {
         } else {
             cpp_unreachable("Invalid conv implementation selection");
         }
+    }
+
+    /*!
+     * \brief Returns the description of the operation
+     */
+    static constexpr const char* desc(){
+        return "conv4_valid";
     }
 };
 
@@ -889,6 +952,13 @@ struct conv4_valid_flipped_impl {
             cpp_unreachable("Invalid conv implementation selection");
         }
     }
+
+    /*!
+     * \brief Returns the description of the operation
+     */
+    static constexpr const char* desc(){
+        return "conv4_valid_flipped";
+    }
 };
 
 /*!
@@ -917,6 +987,13 @@ struct conv4_valid_filter_impl {
             cpp_unreachable("Invalid conv implementation selection");
         }
     }
+
+    /*!
+     * \brief Returns the description of the operation
+     */
+    static constexpr const char* desc(){
+        return "conv4_valid_filter";
+    }
 };
 
 /*!
@@ -944,6 +1021,13 @@ struct conv4_valid_filter_flipped_impl {
         } else {
             cpp_unreachable("Invalid conv implementation selection");
         }
+    }
+
+    /*!
+     * \brief Returns the description of the operation
+     */
+    static constexpr const char* desc(){
+        return "conv4_valid_filter_flipped";
     }
 };
 
@@ -979,6 +1063,13 @@ struct conv4_full_impl {
             cpp_unreachable("Invalid conv implementation selection");
         }
     }
+
+    /*!
+     * \brief Returns the description of the operation
+     */
+    static constexpr const char* desc(){
+        return "conv4_full";
+    }
 };
 
 /*!
@@ -1006,6 +1097,13 @@ struct conv4_full_flipped_impl {
         } else {
             cpp_unreachable("Invalid conv implementation selection");
         }
+    }
+
+    /*!
+     * \brief Returns the description of the operation
+     */
+    static constexpr const char* desc(){
+        return "conv4_full_flipped";
     }
 };
 
@@ -1039,6 +1137,13 @@ struct conv2_valid_multi_impl {
             cpp_unreachable("Invalid conv implementation selection");
         }
     }
+
+    /*!
+     * \brief Returns the description of the operation
+     */
+    static constexpr const char* desc(){
+        return "conv2_valid_multi";
+    }
 };
 
 /*!
@@ -1071,6 +1176,13 @@ struct conv2_valid_multi_flipped_impl {
             cpp_unreachable("Invalid conv implementation selection");
         }
     }
+
+    /*!
+     * \brief Returns the description of the operation
+     */
+    static constexpr const char* desc(){
+        return "conv2_valid_multi_flipped";
+    }
 };
 
 /*!
@@ -1102,6 +1214,13 @@ struct conv_deep_valid_impl {
             apply(input(i), kernel(i), conv(i));
         }
     }
+
+    /*!
+     * \brief Returns the description of the operation
+     */
+    static constexpr const char* desc(){
+        return "conv_deep_valid";
+    }
 };
 /*!
  * \brief The functor impl for 2D+ conv.
@@ -1131,6 +1250,13 @@ struct conv_deep_same_impl {
         for (std::size_t i = 0; i < dim<0>(input); ++i) {
             apply(input(i), kernel(i), conv(i));
         }
+    }
+
+    /*!
+     * \brief Returns the description of the operation
+     */
+    static constexpr const char* desc(){
+        return "conv_deep_same";
     }
 };
 
@@ -1163,6 +1289,13 @@ struct conv_deep_full_impl {
             apply(input(i), kernel(i), conv(i));
         }
     }
+
+    /*!
+     * \brief Returns the description of the operation
+     */
+    static constexpr const char* desc(){
+        return "conv_deep_full";
+    }
 };
 
 /*!
@@ -1191,6 +1324,13 @@ struct conv2_full_multi_impl {
             cpp_unreachable("Invalid conv implementation selection");
         }
     }
+
+    /*!
+     * \brief Returns the description of the operation
+     */
+    static constexpr const char* desc(){
+        return "conv2_full_multi";
+    }
 };
 
 /*!
@@ -1218,6 +1358,13 @@ struct conv2_full_multi_flipped_impl {
         } else {
             cpp_unreachable("Invalid conv implementation selection");
         }
+    }
+
+    /*!
+     * \brief Returns the description of the operation
+     */
+    static constexpr const char* desc(){
+        return "conv2_full_multi_flipped";
     }
 };
 
@@ -1270,6 +1417,13 @@ struct conv2_same_multi_flipped_impl {
         } else {
             cpp_unreachable("Invalid conv implementation selection");
         }
+    }
+
+    /*!
+     * \brief Returns the description of the operation
+     */
+    static constexpr const char* desc(){
+        return "conv2_same_multi";
     }
 };
 

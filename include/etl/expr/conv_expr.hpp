@@ -454,21 +454,8 @@ struct basic_conv_expr : impl_expr<basic_conv_expr<T, D, TT, Impl, C4>> {
      * \brief Returns a textual representation of the operation
      * \return a textual representation of the operation
      */
-    static std::string desc() noexcept {
-        switch (TT) {
-            case conv_type::VALID:
-                return "conv_valid";
-            case conv_type::VALID_MULTI:
-                return "conv_valid_multi";
-            case conv_type::SAME:
-                return "conv_same";
-            case conv_type::SAME_MULTI:
-                return "conv_same_multi";
-            case conv_type::FULL:
-                return "conv_full";
-            case conv_type::FULL_MULTI:
-                return "conv_full_multi";
-        }
+    static constexpr const char* desc() noexcept {
+        return Impl::desc();
     }
 
     /*!
