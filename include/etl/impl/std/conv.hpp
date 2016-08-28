@@ -211,7 +211,7 @@ void conv2_same_flipped(const I& input, const K& kernel, C&& conv) {
  * \param kernel The kernel matrix
  * \param conv The output matrix
  */
-template <size_t S1 = 0, size_t S2 = 0, size_t P1 = 0, size_t P2 = 0, typename I, typename K, typename C>
+template <size_t S1 = 1, size_t S2 = 1, size_t P1 = 0, size_t P2 = 0, typename I, typename K, typename C>
 void conv2_valid(const I& input, const K& kernel, C&& conv) {
     constexpr size_t stride_h = S1 == 0 ? 1 : S1;
     constexpr size_t stride_v = S2 == 0 ? 1 : S2;
