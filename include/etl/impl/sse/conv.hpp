@@ -932,12 +932,12 @@ void conv2_valid(const opaque_memory<T, 2>& input, const opaque_memory<T, 2>& ke
         conv.memory_start(), 0.0, S1, S2);
 }
 
-template <typename T>
+template <size_t S1 = 1, size_t S2 = 1, size_t P1 = 0, size_t P2 = 0, typename T>
 void conv2_valid_flipped(const opaque_memory<T, 2>& input, const opaque_memory<T, 2>& kernel, const opaque_memory<T, 2>& conv) {
     conv2_valid_flipped_micro_kernel(
         input.memory_start(), input.template dim<0>(), input.template dim<1>(),
         kernel.memory_start(), kernel.template dim<0>(), kernel.template dim<1>(),
-        conv.memory_start(), 0.0, 1, 1);
+        conv.memory_start(), 0.0, S1, S2);
 }
 
 template <typename T>
@@ -1325,7 +1325,7 @@ void conv2_valid(const I& input, const K& kernel, C&& conv) {
  * \param kernel The kernel matrix
  * \param conv The output matrix
  */
-template <typename I, typename K, typename C>
+template <size_t S1 = 1, size_t S2 = 1, size_t P1 = 0, size_t P2 = 0, typename T>
 void conv2_valid_flipped(const I& input, const K& kernel, C&& conv) {
     cpp_unused(input);
     cpp_unused(kernel);

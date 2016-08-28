@@ -1221,11 +1221,11 @@ struct conv2_valid_flipped_impl : conv2_valid_impl<S1, S2, P1, P2> {
         auto c = conv.direct();
 
         if (impl == etl::conv_impl::AVX) {
-            impl::avx::conv2_valid_flipped(i, k, c);
+            impl::avx::conv2_valid_flipped<S1, S2, P1, P2>(i, k, c);
         } else if (impl == etl::conv_impl::SSE) {
-            impl::sse::conv2_valid_flipped(i, k, c);
+            impl::sse::conv2_valid_flipped<S1, S2, P1, P2>(i, k, c);
         } else if (impl == etl::conv_impl::CUDNN) {
-            impl::cudnn::conv2_valid_flipped(i, k, c);
+            impl::cudnn::conv2_valid_flipped<S1, S2, P1, P2>(i, k, c);
         } else if (impl == etl::conv_impl::STD) {
             impl::standard::conv2_valid_flipped<S1, S2, P1, P2>(input, kernel, conv);
         } else {

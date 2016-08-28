@@ -164,7 +164,7 @@ void conv2_valid(const opaque_memory<T,2>& input, const opaque_memory<T,2>& kern
     cudnn_check(cudnnDestroyConvolutionDescriptor(convolution));
 }
 
-template <typename T>
+template <size_t S1 = 1, size_t S2 = 1, size_t P1 = 0, size_t P2 = 0, typename T>
 void conv2_valid_flipped(const opaque_memory<T,2>& input, const opaque_memory<T,2>& kernel, const opaque_memory<T,2>& conv) {
     using type = std::remove_const_t<T>;
 
@@ -181,7 +181,7 @@ void conv2_valid_flipped(const opaque_memory<T,2>& input, const opaque_memory<T,
     // Prepare the convolution
     cudnnConvolutionDescriptor_t convolution;
     cudnn_check(cudnnCreateConvolutionDescriptor(&convolution));
-    cudnn_check(cudnnSetConvolution2dDescriptor(convolution, 0, 0, 1, 1, 1, 1, CUDNN_CROSS_CORRELATION));
+    cudnn_check(cudnnSetConvolution2dDescriptor(convolution, 0, 0, S1, S2, 1, 1, CUDNN_CROSS_CORRELATION));
 
     // Find the algorithm to use
     cudnnConvolutionFwdAlgo_t conv_algo;
@@ -966,7 +966,7 @@ void conv2_valid(const opaque_memory<T,2>& input, const opaque_memory<T,2>& kern
  * \param kernel The kernel matrix
  * \param conv The output matrix
  */
-template <typename T>
+template <size_t S1 = 1, size_t S2 = 1, size_t P1 = 0, size_t P2 = 0, typename T>
 void conv2_valid_flipped(const opaque_memory<T,2>& input, const opaque_memory<T,2>& kernel, const opaque_memory<T,2>& conv) {
     cpp_unused(input);
     cpp_unused(kernel);
