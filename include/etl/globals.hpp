@@ -88,6 +88,11 @@ bool is_sub_rectangular(E&& expr) {
  */
 template <typename E>
 bool is_symmetric(E&& expr) {
+    // sym_matrix<E> is already enforced to be symmetric
+    if (is_symmetric_matrix<E>::value) {
+        return true;
+    }
+
     if (is_square(expr)) {
         for (std::size_t i = 0; i < etl::dim<0>(expr) - 1; ++i) {
             for (std::size_t j = i + 1; j < etl::dim<0>(expr); ++j) {

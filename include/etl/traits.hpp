@@ -83,6 +83,13 @@ template <typename T>
 using is_sparse_matrix = traits_detail::is_sparse_matrix_impl<std::decay_t<T>>;
 
 /*!
+ * \brief Traits indicating if the given ETL type is a symmetric matrix
+ * \tparam T The type to test
+ */
+template <typename T>
+using is_symmetric_matrix = cpp::is_specialization_of<etl::sym_matrix, std::decay_t<T>>;
+
+/*!
  * \brief Traits indicating if the given ETL type is a unary expression.
  * \tparam T The type to test
  */
