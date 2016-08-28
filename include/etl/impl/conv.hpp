@@ -2405,32 +2405,6 @@ struct conv2_same_multi_impl {
             cpp_unreachable("Invalid conv implementation selection");
         }
     }
-};
-
-/*!
- * \brief The functor impl for 2D same conv, with multiple flipped kernels
- */
-struct conv2_same_multi_flipped_impl {
-    /*!
-     * \brief Apply the convolution
-     * \param input The input expression
-     * \param kernel The kernel expression
-     * \param conv The output expression
-     */
-    template <typename I, typename K, typename C>
-    static void apply(const I& input, const K& kernel, C&& conv) {
-        auto impl = select_conv_same_multi_impl<I, K, C>();
-
-        if (impl == etl::conv_multi_impl::AVX){
-            impl::avx::conv2_same_multi_flipped(input.direct(), kernel.direct(), conv.direct());
-        } else if (impl == etl::conv_multi_impl::SSE){
-            impl::sse::conv2_same_multi_flipped(input.direct(), kernel.direct(), conv.direct());
-        } else if (impl == etl::conv_multi_impl::STD){
-            impl::standard::conv2_same_multi_flipped(input, kernel, conv);
-        } else {
-            cpp_unreachable("Invalid conv implementation selection");
-        }
-    }
 
     /*!
      * \brief Returns the description of the operation
@@ -2494,6 +2468,39 @@ struct conv2_same_multi_flipped_impl {
 
         return D == 0 ? etl::dim<0,K>()
             : etl::safe_dim<D - 1,I>();
+    }
+};
+
+/*!
+ * \brief The functor impl for 2D same conv, with multiple flipped kernels
+ */
+struct conv2_same_multi_flipped_impl : conv2_same_multi_impl {
+    /*!
+     * \brief Apply the convolution
+     * \param input The input expression
+     * \param kernel The kernel expression
+     * \param conv The output expression
+     */
+    template <typename I, typename K, typename C>
+    static void apply(const I& input, const K& kernel, C&& conv) {
+        auto impl = select_conv_same_multi_impl<I, K, C>();
+
+        if (impl == etl::conv_multi_impl::AVX){
+            impl::avx::conv2_same_multi_flipped(input.direct(), kernel.direct(), conv.direct());
+        } else if (impl == etl::conv_multi_impl::SSE){
+            impl::sse::conv2_same_multi_flipped(input.direct(), kernel.direct(), conv.direct());
+        } else if (impl == etl::conv_multi_impl::STD){
+            impl::standard::conv2_same_multi_flipped(input, kernel, conv);
+        } else {
+            cpp_unreachable("Invalid conv implementation selection");
+        }
+    }
+
+    /*!
+     * \brief Returns the description of the operation
+     */
+    static constexpr const char* desc(){
+        return "conv2_same_multi";
     }
 };
 

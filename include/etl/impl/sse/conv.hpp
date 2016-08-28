@@ -949,7 +949,7 @@ void conv2_valid_multi(const opaque_memory<T, 2>& input, const opaque_memory<T, 
         conv2_valid_micro_kernel(
             input.memory_start(), input.template dim<0>(), input.template dim<1>(),
             kernel.memory_start() + k * kk, kernel.template dim<1>(), kernel.template dim<2>(),
-            conv.memory_start() + k * cc, 0.0);
+            conv.memory_start() + k * cc, 0.0, 1, 1);
     }
 }
 
@@ -962,7 +962,7 @@ void conv2_valid_multi_flipped(const opaque_memory<T, 2>& input, const opaque_me
         conv2_valid_flipped_micro_kernel(
             input.memory_start(), input.template dim<0>(), input.template dim<1>(),
             kernel.memory_start() + k * kk, kernel.template dim<1>(), kernel.template dim<2>(),
-            conv.memory_start() + k * cc, 0.0);
+            conv.memory_start() + k * cc, 0.0, 1, 1);
     }
 }
 
