@@ -1079,7 +1079,7 @@ struct conv2_same_impl {
 /*!
  * \brief The functor impl for 2D same conv
  */
-struct conv2_same_flipped_impl {
+struct conv2_same_flipped_impl : conv2_same_impl {
     /*!
      * \brief Apply the convolution
      * \param input The input expression
@@ -1103,6 +1103,13 @@ struct conv2_same_flipped_impl {
         } else {
             cpp_unreachable("Invalid conv implementation selection");
         }
+    }
+
+    /*!
+     * \brief Returns the description of the operation
+     */
+    static constexpr const char* desc(){
+        return "conv2_same";
     }
 };
 
