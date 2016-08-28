@@ -12,6 +12,8 @@
 
 #pragma once
 
+#include <exception>
+
 #include "etl/dyn_base.hpp"    //The base class and utilities
 
 namespace etl {
@@ -145,28 +147,41 @@ struct symmetric_reference {
 } //end of namespace sym_detail
 
 /*!
+ * \brief Exception that is thrown when an operation is made to
+ * a symmetric matrix that would render it non-symmetric.
+ */
+struct symmetric_exception : std::exception {
+    /*!
+     * \brief Returns a description of the exception
+     */
+    virtual const char* what() const noexcept {
+        return "Invalid assignment to a symmetric matrix";
+    }
+};
+
+/*!
  * \brief A symmetric matrix adapter.
  *
  * This is only a prototype.
  */
 template <typename Matrix>
-struct sym_matrix final {
+struct sym_matrix final : comparable<sym_matrix<Matrix>> {
     using matrix_t = Matrix;   ///< The adapted matrix type
     using expr_t   = matrix_t; ///< The wrapped expression type
 
     static_assert(etl_traits<matrix_t>::is_value, "Symmetric matrix only works with value classes");
     static_assert(etl_traits<matrix_t>::dimensions() == 2, "Symmetric matrix must be two-dimensional");
+
     using scs = sym_detail::static_check_square<matrix_t>; ///< static_check trick
 
     static constexpr const std::size_t n_dimensions = etl_traits<matrix_t>::dimensions();    ///< The number of dimensions
     static constexpr const order storage_order      = etl_traits<matrix_t>::storage_order;   ///< The storage order
     static constexpr const std::size_t alignment    = intrinsic_traits<matrix_t>::alignment; ///< The memory alignment
 
-    using value_type        = value_t<matrix_t>; ///< The value type
-    using memory_type       = value_type*;       ///< The memory type
-    using const_memory_type = const value_type*; ///< The const memory type
-    using iterator          = memory_type;       ///< The type of iterator
-    using const_iterator    = const_memory_type; ///< The type of const iterator
+    using value_type        = value_t<matrix_t>;                 ///< The value type
+    using memory_type       = value_type*;                       ///< The memory type
+    using const_memory_type = const value_type*;                 ///< The const memory type
+    using const_iterator    = typename matrix_t::const_iterator; ///< The type of const iterator
 
     /*!
      * \brief The vectorization type for V
@@ -199,6 +214,27 @@ public:
 
     sym_matrix(sym_matrix&& rhs) = default;
     sym_matrix& operator=(sym_matrix&& rhs) = default;
+
+    /*!
+     * \brief Assign the values of the ETL expression to the symmetric matrix
+     * \param e The ETL expression to get the values from
+     * \return a reference to the fast matrix
+     */
+    template <typename E, cpp_enable_if(std::is_convertible<value_t<E>, value_type>::value, is_etl_expr<E>::value)>
+    sym_matrix& operator=(E&& e) noexcept(false) {
+        // Make sure the other matrix is symmetric
+
+        if(!is_symmetric(e)){
+            throw symmetric_exception();
+        }
+
+        // Perform the real assign
+
+        validate_assign(*this, e);
+        assign_evaluate(std::forward<E>(e), *this);
+
+        return *this;
+    }
 
     /*!
      * \brief Returns the number of dimensions of the matrix
@@ -242,8 +278,89 @@ public:
         return matrix.read_flat(i);
     }
 
+    /*!
+     * \brief Returns a reference to the underlying matrix
+     *
+     * This should only be used by ETL itself.
+     */
     const expr_t& value() const noexcept {
         return matrix;
+    }
+
+    /*!
+     * \brief Return an iterator to the first element of the matrix
+     * \return a const iterator pointing to the first element of the matrix
+     */
+    const_iterator begin() const noexcept(noexcept(matrix.cbegin())) {
+        return matrix.cbegin();
+    }
+
+    /*!
+     * \brief Return an iterator to the past-the-end element of the matrix
+     * \return a const iterator pointing to the past-the-end element of the matrix
+     */
+    const_iterator end() const noexcept(noexcept(matrix.end())) {
+        return matrix.cend();
+    }
+
+    /*!
+     * \brief Return a const iterator to the first element of the matrix
+     * \return an const iterator pointing to the first element of the matrix
+     */
+    const_iterator cbegin() const noexcept(noexcept(matrix.cbegin())) {
+        return matrix.cbegin();
+    }
+
+    /*!
+     * \brief Return a const iterator to the past-the-end element of the matrix
+     * \return a const iterator pointing to the past-the-end element of the matrix
+     */
+    const_iterator cend() const noexcept(noexcept(matrix.end())) {
+        return matrix.cend();
+    }
+
+    /*!
+     * \brief Returns a pointer to the first element in memory.
+     * \return a pointer tot the first element in memory.
+     *
+     * This should only be used by ETL itself in order not to void
+     * the symmetric guarantee.
+     */
+    memory_type memory_start() noexcept {
+        return matrix.memory_start();
+    }
+
+    /*!
+     * \brief Returns a pointer to the first element in memory.
+     * \return a pointer tot the first element in memory.
+     *
+     * This should only be used by ETL itself in order not to void
+     * the symmetric guarantee.
+     */
+    const_memory_type memory_start() const noexcept {
+        return matrix.memory_start();
+    }
+
+    /*!
+     * \brief Returns a pointer to the past-the-end element in memory.
+     * \return a pointer tot the past-the-end element in memory.
+     *
+     * This should only be used by ETL itself in order not to void
+     * the symmetric guarantee.
+     */
+    memory_type memory_end() noexcept {
+        return matrix.memory_end();
+    }
+
+    /*!
+     * \brief Returns a pointer to the past-the-end element in memory.
+     * \return a pointer tot the past-the-end element in memory.
+     *
+     * This should only be used by ETL itself in order not to void
+     * the symmetric guarantee.
+     */
+    const_memory_type memory_end() const noexcept {
+        return matrix.memory_end();
     }
 };
 
