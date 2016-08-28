@@ -773,6 +773,7 @@ struct conv2_same_flipped_impl {
 /*!
  * \brief The functor impl for 2D valid conv
  */
+template<size_t S1 = 0, size_t S2 = 0, size_t P1 = 0, size_t P2 = 0>
 struct conv2_valid_impl {
     /*!
      * \brief Apply the convolution
@@ -795,7 +796,7 @@ struct conv2_valid_impl {
         } else if (impl == etl::conv_impl::CUDNN) {
             impl::cudnn::conv2_valid(i, k, c);
         } else if (impl == etl::conv_impl::STD) {
-            impl::standard::conv2_valid(input, kernel, conv);
+            impl::standard::conv2_valid<S1, S2, P1, P2>(input, kernel, conv);
         } else {
             cpp_unreachable("Invalid conv implementation selection");
         }

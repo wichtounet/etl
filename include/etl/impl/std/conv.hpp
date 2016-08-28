@@ -211,15 +211,21 @@ void conv2_same_flipped(const I& input, const K& kernel, C&& conv) {
  * \param kernel The kernel matrix
  * \param conv The output matrix
  */
-template <typename I, typename K, typename C>
+template <size_t S1 = 0, size_t S2 = 0, size_t P1 = 0, size_t P2 = 0, typename I, typename K, typename C>
 void conv2_valid(const I& input, const K& kernel, C&& conv) {
+    constexpr size_t stride_h = S1 == 0 ? 1 : S1;
+    constexpr size_t stride_v = S2 == 0 ? 1 : S2;
+
     for (std::size_t i = 0; i < rows(conv); ++i) {
         for (std::size_t j = 0; j < columns(conv); ++j) {
+            auto i_i = i * stride_h;
+            auto i_j = j * stride_v;
+
             typename I::value_type temp = 0.0;
 
-            for (std::size_t k = i; k < i + rows(kernel); ++k) {
-                for (std::size_t l = j; l < j + columns(kernel); ++l) {
-                    temp += input(k, l) * kernel((i + rows(kernel) - 1 - k), (j + columns(kernel) - 1 - l));
+            for (std::size_t k = 0; k < rows(kernel); ++k) {
+                for (std::size_t l = 0; l < columns(kernel); ++l) {
+                    temp += input(i_i + k, i_j + l) * kernel(rows(kernel) - 1 - k, columns(kernel) - 1 - l);
                 }
             }
 

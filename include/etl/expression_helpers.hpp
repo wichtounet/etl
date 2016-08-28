@@ -112,6 +112,9 @@ using temporary_unary_helper_type = temporary_unary_expr<T, build_type<A>, OP<T>
 template <typename A, typename B, template <typename, std::size_t> class OP, std::size_t D>
 using dim_temporary_binary_helper = temporary_binary_expr<value_t<A>, build_type<A>, build_type<B>, OP<value_t<A>, D>>;
 
+template <typename A, typename B, typename OP>
+using temporary_binary_helper_op = temporary_binary_expr<value_t<A>, build_type<A>, build_type<B>, OP>;
+
 } //end of namespace detail
 
 } //end of namespace etl

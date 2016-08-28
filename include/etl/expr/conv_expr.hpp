@@ -645,8 +645,8 @@ using conv1_full_expr = basic_conv_expr<T, 1, conv_type::FULL, detail::conv1_ful
 /*!
  * \brief Expression for 2D valid convolution
  */
-template <typename T>
-using conv2_valid_expr = basic_conv_expr<T, 2, conv_type::VALID, detail::conv2_valid_impl>;
+template<typename T, size_t S1 = 0, size_t S2 = 0, size_t P1 = 0, size_t P2 = 0>
+using conv2_valid_expr = basic_conv_expr<T, 2, conv_type::VALID, detail::conv2_valid_impl<S1, S2, P1, P2>>;
 
 /*!
  * \brief Expression for 2D valid convolution
