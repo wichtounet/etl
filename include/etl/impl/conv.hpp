@@ -1205,7 +1205,7 @@ struct conv2_valid_impl {
  * \brief The functor impl for 2D valid conv
  */
 template<size_t S1 = 1, size_t S2 = 1, size_t P1 = 0, size_t P2 = 0>
-struct conv2_valid_flipped_impl {
+struct conv2_valid_flipped_impl : conv2_valid_impl<S1, S2, P1, P2> {
     /*!
      * \brief Apply the convolution
      * \param input The input expression
@@ -1238,38 +1238,6 @@ struct conv2_valid_flipped_impl {
      */
     static constexpr const char* desc(){
         return "conv2_valid_flipped";
-    }
-
-    /*!
-     * \brief Assert that the convolution is done on correct dimensions
-     */
-    template <typename I, typename K, typename C>
-    static void check(const I& input, const K& kernel, const C& conv){
-        conv2_valid_impl<S1, S2, P1, P2>::check(input, kernel, conv);
-    }
-
-    /*!
-     * \brief Assert that the convolution is done on correct dimensions
-     */
-    template <typename I, typename K, typename C>
-    static void check(){
-        conv2_valid_impl<S1, S2, P1, P2>::template check<I, K, C>();
-    }
-
-    /*!
-     * \brief Returns the dth dimension of the result of the convolution
-     */
-    template <typename I, typename K>
-    static size_t dim(size_t d, const I& input, const K& kernel){
-        return conv2_valid_impl<S1, S2, P1, P2>::dim(d, input, kernel);
-    }
-
-    /*!
-     * \brief Returns the Dth dimension of the result of the convolution
-     */
-    template <size_t D, typename I, typename K>
-    static constexpr size_t dim(){
-        return conv2_valid_impl<S1, S2, P1, P2>::template dim<D, I, K>();
     }
 };
 
