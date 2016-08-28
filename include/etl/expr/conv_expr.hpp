@@ -92,61 +92,9 @@ struct basic_conv_expr : impl_expr<basic_conv_expr<T, D, TT, Impl, C4>> {
      * \brief Returns the DDth dimension of the expression
      * \return the DDth dimension of the expression
      */
-    template <typename A, typename B, std::size_t DD, cpp_disable_if_cst(C4 || is_multi(TT))>
+    template <typename A, typename B, std::size_t DD>
     static constexpr std::size_t dim() {
-        return (D > 2 && DD < (D - 2))
-            ? decay_traits<A>::template dim<DD>()
-            : TT == conv_type::VALID ?  decay_traits<A>::template dim<DD>() - decay_traits<B>::template dim<DD>() + 1
-            : TT == conv_type::SAME  ?  decay_traits<A>::template dim<DD>()
-            :                           decay_traits<A>::template dim<DD>() + decay_traits<B>::template dim<DD>() - 1;
-    }
-
-    /*!
-     * \brief Returns the DDth dimension of the expression
-     * \return the DDth dimension of the expression
-     */
-    template <typename A, typename B, std::size_t DD, cpp_enable_if_cst(C4 == 1)>
-    static constexpr std::size_t dim() {
-        return DD == 0 ? decay_traits<A>::template dim<0>()
-            :  DD == 1 ? (TT == conv_type::VALID ? decay_traits<B>::template dim<0>() : decay_traits<B>::template dim<1>())
-            : TT == conv_type::VALID ?  decay_traits<A>::template dim<DD>() - decay_traits<B>::template dim<DD>() + 1
-            :                           decay_traits<A>::template dim<DD>() + decay_traits<B>::template dim<DD>() - 1;
-    }
-
-    /*!
-     * \brief Returns the DDth dimension of the expression
-     * \return the DDth dimension of the expression
-     */
-    template <typename A, typename B, std::size_t DD, cpp_enable_if_cst(C4 == 2)>
-    static constexpr std::size_t dim() {
-        return DD == 0 ? decay_traits<B>::template dim<1>()
-            :  DD == 1 ? decay_traits<A>::template dim<1>()
-            : TT == conv_type::VALID ?  decay_traits<A>::template dim<DD>() - decay_traits<B>::template dim<DD>() + 1
-            :                           decay_traits<A>::template dim<DD>() + decay_traits<B>::template dim<DD>() - 1;
-    }
-
-    //Note: Please give me static_if to solve this mess...
-
-    /*!
-     * \brief Returns the DDth dimension of the expression
-     * \return the DDth dimension of the expression
-     */
-    template <typename A, typename B, std::size_t DD, cpp_enable_if_cst(DD == 0 && is_multi(TT))>
-    static constexpr std::size_t dim() {
-        return decay_traits<B>::template dim<DD>();
-    }
-
-    /*!
-     * \brief Returns the DDth dimension of the expression
-     * \return the DDth dimension of the expression
-     */
-    template <typename A, typename B, std::size_t DD, cpp_enable_if_cst(DD != 0 && is_multi(TT))>
-    static constexpr std::size_t dim() {
-        return
-              TT == conv_type::VALID_MULTI      ? decay_traits<A>::template dim<DD - 1>() - decay_traits<B>::template dim<DD>() + 1
-            : TT == conv_type::SAME_MULTI       ? decay_traits<A>::template dim<DD - 1>()
-              /*TT == conv_type::FULL_MULTI*/   : decay_traits<A>::template dim<DD - 1>() + decay_traits<B>::template dim<DD>() - 1;
-
+        return Impl::template dim<DD, A, B>();
     }
 
     /*!
@@ -158,32 +106,7 @@ struct basic_conv_expr : impl_expr<basic_conv_expr<T, D, TT, Impl, C4>> {
      */
     template <typename A, typename B>
     static std::size_t dim(const A& a, const B& b, std::size_t d) {
-        if (is_multi(TT)){
-            if (d == 0){
-                return etl_traits<B>::dim(b, 0);
-            }
-
-            if(TT == conv_type::VALID_MULTI){
-                return etl_traits<A>::dim(a, d - 1) - etl_traits<B>::dim(b, d) + 1;
-            } else if(TT == conv_type::SAME_MULTI){
-                return etl_traits<A>::dim(a, d - 1);
-            } else {
-                return etl_traits<A>::dim(a, d - 1) + etl_traits<B>::dim(b, d) - 1;
-            }
-        } else {
-            //TODO This is incorrect for C4 == 1 and C4 == 2
-            if (D > 2 && d < (D - 2)) {
-                return etl_traits<A>::dim(a, d);
-            } else {
-                if (TT == conv_type::VALID) {
-                    return etl_traits<A>::dim(a, d) - etl_traits<B>::dim(b, d) + 1;
-                } else if (TT == conv_type::SAME) {
-                    return etl_traits<A>::dim(a, d);
-                } else {
-                    return etl_traits<A>::dim(a, d) + etl_traits<B>::dim(b, d) - 1;
-                }
-            }
-        }
+        return Impl::dim(d, a, b);
     }
 
     /*!

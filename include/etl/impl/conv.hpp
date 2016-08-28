@@ -34,6 +34,26 @@
 namespace etl {
 
 /*!
+ * \brief Constexpr min between two values
+ */
+template<std::size_t A, std::size_t B>
+struct c_min {
+    static constexpr size_t value = A < B ? A : B; ///< The resulting value
+};
+
+/*!
+ * \brief Return safely the D dimension of E.
+ *
+ * Once C++ offers a real static_if, this needs to be removed
+ *
+ * \return the Dth dimension of E
+ */
+template <std::size_t D, typename E>
+constexpr std::size_t safe_dim() noexcept {
+    return decay_traits<E>::template dim<c_min<D, etl::dimensions<E>() - 1>::value>();
+}
+
+/*!
  * \brief Enumeration describing the different types of convolution
  */
 enum class conv_type {
@@ -605,6 +625,26 @@ struct conv1_full_impl {
         static_assert(etl::dim<0, C>() == etl::dim<0, I>() + etl::dim<0, K>() - 1, "Invalid dimensions for conv1_full");
         static_assert(etl::dim<0, I>() >= etl::dim<0, K>(), "Invalid dimensions for conv1_full");
     }
+
+    /*!
+     * \brief Returns the dth dimension of the result of the convolution
+     */
+    template <typename I, typename K>
+    static size_t dim(size_t d, const I& input, const K& kernel){
+        cpp_assert(d == 0, "Invalid dimensions access");
+
+        return etl::dim(input, 0) + etl::dim(kernel, 0) - 1;
+    }
+
+    /*!
+     * \brief Returns the Dth dimension of the result of the convolution
+     */
+    template <size_t D, typename I, typename K>
+    static constexpr size_t dim(){
+        static_assert(D == 0, "Invalid dimension access");
+
+        return etl::dim<0, I>() + etl::dim<0, K>() - 1;
+    }
 };
 
 /*!
@@ -671,6 +711,26 @@ struct conv1_same_impl {
         static_assert(etl::dim<0, C>() == etl::dim<0, I>(), "Invalid dimensions for conv1_same");
         static_assert(etl::dim<0, I>() >= etl::dim<0, K>(), "Invalid dimensions for conv1_same");
     }
+
+    /*!
+     * \brief Returns the dth dimension of the result of the convolution
+     */
+    template <typename I, typename K>
+    static size_t dim(size_t d, const I& input, const K& kernel){
+        cpp_assert(d == 0, "Invalid dimensions access");
+
+        return etl::dim(input, 0);
+    }
+
+    /*!
+     * \brief Returns the Dth dimension of the result of the convolution
+     */
+    template <size_t D, typename I, typename K>
+    static constexpr size_t dim(){
+        static_assert(D == 0, "Invalid dimension access");
+
+        return etl::dim<0, I>();
+    }
 };
 
 /*!
@@ -736,6 +796,26 @@ struct conv1_valid_impl {
 
         static_assert(etl::dim<0, C>() == etl::dim<0, I>() - etl::dim<0, K>() + 1, "Invalid dimensions for conv1_valid");
         static_assert(etl::dim<0, I>() >= etl::dim<0, K>(), "Invalid dimensions for conv1_valid");
+    }
+
+    /*!
+     * \brief Returns the dth dimension of the result of the convolution
+     */
+    template <typename I, typename K>
+    static size_t dim(size_t d, const I& input, const K& kernel){
+        cpp_assert(d == 0, "Invalid dimensions access");
+
+        return etl::dim(input, 0) - etl::dim(kernel, 0) + 1;
+    }
+
+    /*!
+     * \brief Returns the Dth dimension of the result of the convolution
+     */
+    template <size_t D, typename I, typename K>
+    static constexpr size_t dim(){
+        static_assert(D == 0, "Invalid dimension access");
+
+        return etl::dim<0, I>() - etl::dim<0, K>() + 1;
     }
 };
 
@@ -812,6 +892,26 @@ struct conv2_full_impl {
         static_assert(etl::dim<0,I>() >= etl::dim<0,K>(), "Invalid dimensions for conv2_full");
         static_assert(etl::dim<1,I>() >= etl::dim<1,K>(), "Invalid dimensions for conv2_full");
     }
+
+    /*!
+     * \brief Returns the dth dimension of the result of the convolution
+     */
+    template <typename I, typename K>
+    static size_t dim(size_t d, const I& input, const K& kernel){
+        cpp_assert(d < 2, "Invalid dimensions access");
+
+        return etl::dim(input, d) + etl::dim(kernel, d) - 1;
+    }
+
+    /*!
+     * \brief Returns the Dth dimension of the result of the convolution
+     */
+    template <size_t D, typename I, typename K>
+    static constexpr size_t dim(){
+        static_assert(D < 2, "Invalid dimension access");
+
+        return etl::dim<D, I>() + etl::dim<D, K>() - 1;
+    }
 };
 
 /*!
@@ -866,6 +966,26 @@ struct conv2_full_flipped_impl {
     template <typename I, typename K, typename C>
     static void check(){
         conv2_full_impl::template check<I, K, C>();
+    }
+
+    /*!
+     * \brief Returns the dth dimension of the result of the convolution
+     */
+    template <typename I, typename K>
+    static size_t dim(size_t d, const I& input, const K& kernel){
+        cpp_assert(d < 2, "Invalid dimensions access");
+
+        return etl::dim(input, d) + etl::dim(kernel, d) - 1;
+    }
+
+    /*!
+     * \brief Returns the Dth dimension of the result of the convolution
+     */
+    template <size_t D, typename I, typename K>
+    static constexpr size_t dim(){
+        static_assert(D < 2, "Invalid dimension access");
+
+        return etl::dim<D, I>() + etl::dim<D, K>() - 1;
     }
 };
 
@@ -933,6 +1053,26 @@ struct conv2_same_impl {
         static_assert(etl::dim<1,C>() == etl::dim<1,I>(), "Invalid dimensions for conv2_same");
         static_assert(etl::dim<0,I>() >= etl::dim<0,K>(), "Invalid dimensions for conv2_same");
         static_assert(etl::dim<1,I>() >= etl::dim<1,K>(), "Invalid dimensions for conv2_same");
+    }
+
+    /*!
+     * \brief Returns the dth dimension of the result of the convolution
+     */
+    template <typename I, typename K>
+    static size_t dim(size_t d, const I& input, const K& kernel){
+        cpp_assert(d < 2, "Invalid dimensions access");
+
+        return etl::dim(input, d);
+    }
+
+    /*!
+     * \brief Returns the Dth dimension of the result of the convolution
+     */
+    template <size_t D, typename I, typename K>
+    static constexpr size_t dim(){
+        static_assert(D < 2, "Invalid dimension access");
+
+        return etl::dim<D, I>();
     }
 };
 
@@ -1034,6 +1174,26 @@ struct conv2_valid_impl {
         static_assert(etl::dim<0,I>() >= etl::dim<0,K>(), "Invalid dimensions for conv2_valid");
         static_assert(etl::dim<1,I>() >= etl::dim<1,K>(), "Invalid dimensions for conv2_valid");
     }
+
+    /*!
+     * \brief Returns the dth dimension of the result of the convolution
+     */
+    template <typename I, typename K>
+    static size_t dim(size_t d, const I& input, const K& kernel){
+        cpp_assert(d < 2, "Invalid dimensions access");
+
+        return etl::dim(input, d) - etl::dim(kernel, d) + 1;
+    }
+
+    /*!
+     * \brief Returns the Dth dimension of the result of the convolution
+     */
+    template <size_t D, typename I, typename K>
+    static constexpr size_t dim(){
+        static_assert(D < 2, "Invalid dimension access");
+
+        return etl::dim<D, I>() - etl::dim<D, K>() + 1;
+    }
 };
 
 /*!
@@ -1102,6 +1262,26 @@ struct conv2_valid_flipped_impl {
         static_assert(etl::dim<1,C>() == etl::dim<1,I>() - etl::dim<1,K>() + 1, "Invalid dimensions for conv2_valid_flipped");
         static_assert(etl::dim<0,I>() >= etl::dim<0,K>(), "Invalid dimensions for conv2_valid_flipped");
         static_assert(etl::dim<1,I>() >= etl::dim<1,K>(), "Invalid dimensions for conv2_valid_flipped");
+    }
+
+    /*!
+     * \brief Returns the dth dimension of the result of the convolution
+     */
+    template <typename I, typename K>
+    static size_t dim(size_t d, const I& input, const K& kernel){
+        cpp_assert(d < 2, "Invalid dimensions access");
+
+        return etl::dim(input, d) - etl::dim(kernel, d) + 1;
+    }
+
+    /*!
+     * \brief Returns the Dth dimension of the result of the convolution
+     */
+    template <size_t D, typename I, typename K>
+    static constexpr size_t dim(){
+        static_assert(D < 2, "Invalid dimension access");
+
+        return etl::dim<D, I>() - etl::dim<D, K>() + 1;
     }
 };
 
@@ -1172,6 +1352,34 @@ struct conv4_valid_impl {
         static_assert(etl::dim<2,I>() >= etl::dim<2,K>(), "Invalid dimensions for conv4_valid");
         static_assert(etl::dim<3,I>() >= etl::dim<3,K>(), "Invalid dimensions for conv4_valid");
     }
+
+    /*!
+     * \brief Returns the dth dimension of the result of the convolution
+     */
+    template <typename I, typename K>
+    static size_t dim(size_t d, const I& input, const K& kernel){
+        cpp_assert(d < 4, "Invalid dimensions access");
+
+        if(d == 0){
+            return etl::dim(input, 0);
+        } else if(d == 1){
+            return etl::dim(kernel, 0);
+        } else {
+            return etl::dim(input, d) - etl::dim(kernel, d) + 1;
+        }
+    }
+
+    /*!
+     * \brief Returns the Dth dimension of the result of the convolution
+     */
+    template <size_t D, typename I, typename K>
+    static constexpr size_t dim(){
+        static_assert(D < 4, "Invalid dimension access");
+
+        return D == 0 ? etl::dim<0,I>()
+            :  D == 1 ? etl::dim<0,K>()
+            : etl::dim<D,I>() - etl::dim<D,K>() + 1;
+    }
 };
 
 /*!
@@ -1222,6 +1430,34 @@ struct conv4_valid_flipped_impl {
     template <typename I, typename K, typename C>
     static void check(){
         conv4_valid_impl::template check<I, K, C>();
+    }
+
+    /*!
+     * \brief Returns the dth dimension of the result of the convolution
+     */
+    template <typename I, typename K>
+    static size_t dim(size_t d, const I& input, const K& kernel){
+        cpp_assert(d < 4, "Invalid dimensions access");
+
+        if(d == 0){
+            return etl::dim(input, 0);
+        } else if(d == 1){
+            return etl::dim(kernel, 0);
+        } else {
+            return etl::dim(input, d) - etl::dim(kernel, d) + 1;
+        }
+    }
+
+    /*!
+     * \brief Returns the Dth dimension of the result of the convolution
+     */
+    template <size_t D, typename I, typename K>
+    static constexpr size_t dim(){
+        static_assert(D < 4, "Invalid dimension access");
+
+        return D == 0 ? etl::dim<0,I>()
+            :  D == 1 ? etl::dim<0,K>()
+            : etl::dim<D,I>() - etl::dim<D,K>() + 1;
     }
 };
 
@@ -1274,6 +1510,34 @@ struct conv4_valid_filter_impl {
     static void check(){
         conv4_valid_impl::template check<I, K, C>();
     }
+
+    /*!
+     * \brief Returns the dth dimension of the result of the convolution
+     */
+    template <typename I, typename K>
+    static size_t dim(size_t d, const I& input, const K& kernel){
+        cpp_assert(d < 4, "Invalid dimensions access");
+
+        if(d == 0){
+            return etl::dim(kernel, 1);
+        } else if(d == 1){
+            return etl::dim(input, 1);
+        } else {
+            return etl::dim(input, d) - etl::dim(kernel, d) + 1;
+        }
+    }
+
+    /*!
+     * \brief Returns the Dth dimension of the result of the convolution
+     */
+    template <size_t D, typename I, typename K>
+    static constexpr size_t dim(){
+        static_assert(D < 4, "Invalid dimension access");
+
+        return D == 0 ? etl::dim<1,K>()
+            :  D == 1 ? etl::dim<1,I>()
+            : etl::dim<D,I>() - etl::dim<D,K>() + 1;
+    }
 };
 
 /*!
@@ -1324,6 +1588,34 @@ struct conv4_valid_filter_flipped_impl {
     template <typename I, typename K, typename C>
     static void check(){
         conv4_valid_impl::template check<I, K, C>();
+    }
+
+    /*!
+     * \brief Returns the dth dimension of the result of the convolution
+     */
+    template <typename I, typename K>
+    static size_t dim(size_t d, const I& input, const K& kernel){
+        cpp_assert(d < 4, "Invalid dimensions access");
+
+        if(d == 0){
+            return etl::dim(kernel, 1);
+        } else if(d == 1){
+            return etl::dim(input, 1);
+        } else {
+            return etl::dim(input, d) - etl::dim(kernel, d) + 1;
+        }
+    }
+
+    /*!
+     * \brief Returns the Dth dimension of the result of the convolution
+     */
+    template <size_t D, typename I, typename K>
+    static constexpr size_t dim(){
+        static_assert(D < 4, "Invalid dimension access");
+
+        return D == 0 ? etl::dim<1,K>()
+            :  D == 1 ? etl::dim<1,I>()
+            : etl::dim<D,I>() - etl::dim<D,K>() + 1;
     }
 };
 
@@ -1400,6 +1692,34 @@ struct conv4_full_impl {
         static_assert(etl::dim<2,I>() >= etl::dim<2,K>(), "Invalid dimensions for conv4_full");
         static_assert(etl::dim<3,I>() >= etl::dim<3,K>(), "Invalid dimensions for conv4_full");
     }
+
+    /*!
+     * \brief Returns the dth dimension of the result of the convolution
+     */
+    template <typename I, typename K>
+    static size_t dim(size_t d, const I& input, const K& kernel){
+        cpp_assert(d < 4, "Invalid dimensions access");
+
+        if(d == 0){
+            return etl::dim(input, 0);
+        } else if(d == 1){
+            return etl::dim(kernel, 1);
+        } else {
+            return etl::dim(input, d) + etl::dim(kernel, d) - 1;
+        }
+    }
+
+    /*!
+     * \brief Returns the Dth dimension of the result of the convolution
+     */
+    template <size_t D, typename I, typename K>
+    static constexpr size_t dim(){
+        static_assert(D < 4, "Invalid dimension access");
+
+        return D == 0 ? etl::dim<0,I>()
+            :  D == 1 ? etl::dim<1,K>()
+            : etl::dim<D,I>() + etl::dim<D,K>() - 1;
+    }
 };
 
 /*!
@@ -1450,6 +1770,34 @@ struct conv4_full_flipped_impl {
     template <typename I, typename K, typename C>
     static void check(){
         conv4_full_impl::template check<I, K, C>();
+    }
+
+    /*!
+     * \brief Returns the dth dimension of the result of the convolution
+     */
+    template <typename I, typename K>
+    static size_t dim(size_t d, const I& input, const K& kernel){
+        cpp_assert(d < 4, "Invalid dimensions access");
+
+        if(d == 0){
+            return etl::dim(input, 0);
+        } else if(d == 1){
+            return etl::dim(kernel, 1);
+        } else {
+            return etl::dim(input, d) + etl::dim(kernel, d) - 1;
+        }
+    }
+
+    /*!
+     * \brief Returns the Dth dimension of the result of the convolution
+     */
+    template <size_t D, typename I, typename K>
+    static constexpr size_t dim(){
+        static_assert(D < 4, "Invalid dimension access");
+
+        return D == 0 ? etl::dim<0,I>()
+            :  D == 1 ? etl::dim<1,K>()
+            : etl::dim<D,I>() + etl::dim<D,K>() - 1;
     }
 };
 
@@ -1522,6 +1870,31 @@ struct conv2_valid_multi_impl {
         static_assert(etl::dim<0,I>() >= etl::dim<1,K>(), "Invalid dimensions for conv2_valid_multi");
         static_assert(etl::dim<1,I>() >= etl::dim<2,K>(), "Invalid dimensions for conv2_valid_multi");
     }
+
+    /*!
+     * \brief Returns the dth dimension of the result of the convolution
+     */
+    template <typename I, typename K>
+    static size_t dim(size_t d, const I& input, const K& kernel){
+        cpp_assert(d < 4, "Invalid dimensions access");
+
+        if(d == 0){
+            return etl::dim(kernel, 0);
+        } else {
+            return etl::dim(input, d - 1) - etl::dim(kernel, d) + 1;
+        }
+    }
+
+    /*!
+     * \brief Returns the Dth dimension of the result of the convolution
+     */
+    template <size_t D, typename I, typename K>
+    static constexpr size_t dim(){
+        static_assert(D < 3, "Invalid dimension access");
+
+        return D == 0 ? etl::dim<0,K>()
+            : etl::safe_dim<D - 1,I>() - etl::dim<D,K>() + 1;
+    }
 };
 
 /*!
@@ -1577,6 +1950,31 @@ struct conv2_valid_multi_flipped_impl {
     static void check(){
         conv2_valid_multi_impl::template check<I, K, C>();
     }
+
+    /*!
+     * \brief Returns the dth dimension of the result of the convolution
+     */
+    template <typename I, typename K>
+    static size_t dim(size_t d, const I& input, const K& kernel){
+        cpp_assert(d < 3, "Invalid dimensions access");
+
+        if(d == 0){
+            return etl::dim(kernel, 0);
+        } else {
+            return etl::dim(input, d - 1) - etl::dim(kernel, d) + 1;
+        }
+    }
+
+    /*!
+     * \brief Returns the Dth dimension of the result of the convolution
+     */
+    template <size_t D, typename I, typename K>
+    static constexpr size_t dim(){
+        static_assert(D < 3, "Invalid dimension access");
+
+        return D == 0 ? etl::dim<0,K>()
+            : etl::safe_dim<D - 1,I>() - etl::dim<D,K>() + 1;
+    }
 };
 
 /*!
@@ -1591,7 +1989,7 @@ struct conv_deep_valid_impl {
      */
     template <typename I, typename K, typename C, cpp_enable_if(decay_traits<I>::dimensions() == 3)>
     static void apply(const I& input, const K& kernel, C&& conv) {
-        for (std::size_t i = 0; i < dim<0>(input); ++i) {
+        for (std::size_t i = 0; i < etl::dim<0>(input); ++i) {
             conv(i) = conv_2d_valid(input(i), kernel(i));
         }
     }
@@ -1604,7 +2002,7 @@ struct conv_deep_valid_impl {
      */
     template <typename I, typename K, typename C, cpp_enable_if((decay_traits<I>::dimensions() > 3))>
     static void apply(const I& input, const K& kernel, C&& conv) {
-        for (std::size_t i = 0; i < dim<0>(input); ++i) {
+        for (std::size_t i = 0; i < etl::dim<0>(input); ++i) {
             apply(input(i), kernel(i), conv(i));
         }
     }
@@ -1649,6 +2047,27 @@ struct conv_deep_valid_impl {
         static_assert(etl::dim<n-1,I>() >= etl::dim<n-1,K>(), "Invalid dimensions for conv_deep_valid");
         static_assert(etl::dim<n-2,I>() >= etl::dim<n-2,K>(), "Invalid dimensions for conv_deep_valid");
     }
+
+    /*!
+     * \brief Returns the dth dimension of the result of the convolution
+     */
+    template <typename I, typename K>
+    static size_t dim(size_t d, const I& input, const K& kernel){
+        if(d < etl::dimensions<I>() - 2){
+            return etl::dim(input, d);
+        } else {
+            return etl::dim(input, d) - etl::dim(kernel) + 1;
+        }
+    }
+
+    /*!
+     * \brief Returns the Dth dimension of the result of the convolution
+     */
+    template <size_t D, typename I, typename K>
+    static constexpr size_t dim(){
+        return D < etl::dimensions<I>() - 2 ? etl::dim<D,I>()
+            : etl::dim<D,I>() - etl::dim<D, K>() + 1;
+    }
 };
 /*!
  * \brief The functor impl for 2D+ conv.
@@ -1662,7 +2081,7 @@ struct conv_deep_same_impl {
      */
     template <typename I, typename K, typename C, cpp_enable_if(decay_traits<I>::dimensions() == 3)>
     static void apply(const I& input, const K& kernel, C&& conv) {
-        for (std::size_t i = 0; i < dim<0>(input); ++i) {
+        for (std::size_t i = 0; i < etl::dim<0>(input); ++i) {
             conv(i) = conv_2d_same(input(i), kernel(i));
         }
     }
@@ -1675,7 +2094,7 @@ struct conv_deep_same_impl {
      */
     template <typename I, typename K, typename C, cpp_enable_if((decay_traits<I>::dimensions() > 3))>
     static void apply(const I& input, const K& kernel, C&& conv) {
-        for (std::size_t i = 0; i < dim<0>(input); ++i) {
+        for (std::size_t i = 0; i < etl::dim<0>(input); ++i) {
             apply(input(i), kernel(i), conv(i));
         }
     }
@@ -1720,6 +2139,22 @@ struct conv_deep_same_impl {
         static_assert(etl::dim<n-1,I>() >= etl::dim<n-1,K>(), "Invalid dimensions for conv_deep_valid");
         static_assert(etl::dim<n-2,I>() >= etl::dim<n-2,K>(), "Invalid dimensions for conv_deep_valid");
     }
+
+    /*!
+     * \brief Returns the dth dimension of the result of the convolution
+     */
+    template <typename I, typename K>
+    static size_t dim(size_t d, const I& input, const K& kernel){
+        return etl::dim(input, d);
+    }
+
+    /*!
+     * \brief Returns the Dth dimension of the result of the convolution
+     */
+    template <size_t D, typename I, typename K>
+    static constexpr size_t dim(){
+        return etl::dim<D,I>();
+    }
 };
 
 /*!
@@ -1734,7 +2169,7 @@ struct conv_deep_full_impl {
      */
     template <typename I, typename K, typename C, cpp_enable_if(decay_traits<I>::dimensions() == 3)>
     static void apply(const I& input, const K& kernel, C&& conv) {
-        for (std::size_t i = 0; i < dim<0>(input); ++i) {
+        for (std::size_t i = 0; i < etl::dim<0>(input); ++i) {
             conv(i) = conv_2d_full(input(i), kernel(i));
         }
     }
@@ -1747,7 +2182,7 @@ struct conv_deep_full_impl {
      */
     template <typename I, typename K, typename C, cpp_enable_if((decay_traits<I>::dimensions() > 3))>
     static void apply(const I& input, const K& kernel, C&& conv) {
-        for (std::size_t i = 0; i < dim<0>(input); ++i) {
+        for (std::size_t i = 0; i < etl::dim<0>(input); ++i) {
             apply(input(i), kernel(i), conv(i));
         }
     }
@@ -1791,6 +2226,27 @@ struct conv_deep_full_impl {
         static_assert(etl::dim<n-2,C>() == etl::dim<n-2,I>() + etl::dim<n-2,K>() - 1, "Invalid dimensions for conv_deep_valid");
         static_assert(etl::dim<n-1,I>() >= etl::dim<n-1,K>(), "Invalid dimensions for conv_deep_valid");
         static_assert(etl::dim<n-2,I>() >= etl::dim<n-2,K>(), "Invalid dimensions for conv_deep_valid");
+    }
+
+    /*!
+     * \brief Returns the dth dimension of the result of the convolution
+     */
+    template <typename I, typename K>
+    static size_t dim(size_t d, const I& input, const K& kernel){
+        if(d < etl::dimensions<I>() - 2){
+            return etl::dim(input, d);
+        } else {
+            return etl::dim(input, d) + etl::dim(kernel) - 1;
+        }
+    }
+
+    /*!
+     * \brief Returns the Dth dimension of the result of the convolution
+     */
+    template <size_t D, typename I, typename K>
+    static constexpr size_t dim(){
+        return D < etl::dimensions<I>() - 2 ? etl::dim<D,I>()
+            : etl::dim<D,I>() + etl::dim<D, K>() - 1;
     }
 };
 
@@ -1859,6 +2315,31 @@ struct conv2_full_multi_impl {
         static_assert(etl::dim<0,I>() >= etl::dim<1,K>(), "Invalid dimensions for conv2_full_multi");
         static_assert(etl::dim<1,I>() >= etl::dim<2,K>(), "Invalid dimensions for conv2_full_multi");
     }
+
+    /*!
+     * \brief Returns the dth dimension of the result of the convolution
+     */
+    template <typename I, typename K>
+    static size_t dim(size_t d, const I& input, const K& kernel){
+        cpp_assert(d < 3, "Invalid dimensions access");
+
+        if(d == 0){
+            return etl::dim(kernel, 0);
+        } else {
+            return etl::dim(input, d - 1) + etl::dim(kernel, d) - 1;
+        }
+    }
+
+    /*!
+     * \brief Returns the Dth dimension of the result of the convolution
+     */
+    template <size_t D, typename I, typename K>
+    static constexpr size_t dim(){
+        static_assert(D < 3, "Invalid dimension access");
+
+        return D == 0 ? etl::dim<0,K>()
+            : etl::safe_dim<D - 1,I>() + etl::dim<D,K>() - 1;
+    }
 };
 
 /*!
@@ -1909,6 +2390,31 @@ struct conv2_full_multi_flipped_impl {
     template <typename I, typename K, typename C>
     static void check(){
         conv2_full_multi_impl::template check<I, K, C>();
+    }
+
+    /*!
+     * \brief Returns the dth dimension of the result of the convolution
+     */
+    template <typename I, typename K>
+    static size_t dim(size_t d, const I& input, const K& kernel){
+        cpp_assert(d < 3, "Invalid dimensions access");
+
+        if(d == 0){
+            return etl::dim(kernel, 0);
+        } else {
+            return etl::dim(input, d - 1) + etl::dim(kernel, d) - 1;
+        }
+    }
+
+    /*!
+     * \brief Returns the Dth dimension of the result of the convolution
+     */
+    template <size_t D, typename I, typename K>
+    static constexpr size_t dim(){
+        static_assert(D < 3, "Invalid dimension access");
+
+        return D == 0 ? etl::dim<0,K>()
+            : etl::safe_dim<D - 1,I>() + etl::dim<D,K>() - 1;
     }
 };
 
@@ -2000,6 +2506,31 @@ struct conv2_same_multi_flipped_impl {
         static_assert(etl::dim<2,C>() == etl::dim<1,I>(), "Invalid dimensions for conv2_same_multi");
         static_assert(etl::dim<0,I>() >= etl::dim<1,K>(), "Invalid dimensions for conv2_same_multi");
         static_assert(etl::dim<1,I>() >= etl::dim<2,K>(), "Invalid dimensions for conv2_same_multi");
+    }
+
+    /*!
+     * \brief Returns the dth dimension of the result of the convolution
+     */
+    template <typename I, typename K>
+    static size_t dim(size_t d, const I& input, const K& kernel){
+        cpp_assert(d < 3, "Invalid dimensions access");
+
+        if(d == 0){
+            return etl::dim(kernel, 0);
+        } else {
+            return etl::dim(input, d - 1);
+        }
+    }
+
+    /*!
+     * \brief Returns the Dth dimension of the result of the convolution
+     */
+    template <size_t D, typename I, typename K>
+    static constexpr size_t dim(){
+        static_assert(D < 3, "Invalid dimension access");
+
+        return D == 0 ? etl::dim<0,K>()
+            : etl::safe_dim<D - 1,I>();
     }
 };
 
