@@ -129,7 +129,7 @@ void conv2_valid(const opaque_memory<T,2>& input, const opaque_memory<T,2>& kern
     // Prepare the convolution
     cudnnConvolutionDescriptor_t convolution;
     cudnn_check(cudnnCreateConvolutionDescriptor(&convolution));
-    cudnn_check(cudnnSetConvolution2dDescriptor(convolution, 0, 0, S1, S1, 1, 1, CUDNN_CONVOLUTION));
+    cudnn_check(cudnnSetConvolution2dDescriptor(convolution, 0, 0, S1, S2, 1, 1, CUDNN_CONVOLUTION));
 
     // Find the algorithm to use
     cudnnConvolutionFwdAlgo_t conv_algo;
