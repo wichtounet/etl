@@ -588,7 +588,7 @@ constexpr std::size_t dimensions() noexcept {
  * \param expr The expression to get the number of rows from.
  * \return The number of rows of the given expression.
  */
-template <typename E, cpp_disable_if(etl_traits<E>::is_fast)>
+template <typename E, cpp_disable_if(decay_traits<E>::is_fast)>
 std::size_t rows(const E& expr) {
     return etl_traits<E>::dim(expr, 0);
 }
@@ -598,7 +598,7 @@ std::size_t rows(const E& expr) {
  * \param expr The expression to get the number of rows from.
  * \return The number of rows of the given expression.
  */
-template <typename E, cpp_enable_if(etl_traits<E>::is_fast)>
+template <typename E, cpp_enable_if(decay_traits<E>::is_fast)>
 constexpr std::size_t rows(const E& expr) noexcept {
     return (void)expr, etl_traits<E>::template dim<0>();
 }
@@ -608,7 +608,7 @@ constexpr std::size_t rows(const E& expr) noexcept {
  * \param expr The expression to get the number of columns from.
  * \return The number of columns of the given expression.
  */
-template <typename E, cpp_disable_if(etl_traits<E>::is_fast)>
+template <typename E, cpp_disable_if(decay_traits<E>::is_fast)>
 std::size_t columns(const E& expr) {
     static_assert(etl_traits<E>::dimensions() > 1, "columns() can only be used on 2D+ matrices");
     return etl_traits<E>::dim(expr, 1);
@@ -619,7 +619,7 @@ std::size_t columns(const E& expr) {
  * \param expr The expression to get the number of columns from.
  * \return The number of columns of the given expression.
  */
-template <typename E, cpp_enable_if(etl_traits<E>::is_fast)>
+template <typename E, cpp_enable_if(decay_traits<E>::is_fast)>
 constexpr std::size_t columns(const E& expr) noexcept {
     static_assert(etl_traits<E>::dimensions() > 1, "columns() can only be used on 2D+ matrices");
     return (void)expr, etl_traits<E>::template dim<1>();
@@ -630,7 +630,7 @@ constexpr std::size_t columns(const E& expr) noexcept {
  * \param expr The expression to get the size from.
  * \return The size of the given expression.
  */
-template <typename E, cpp_disable_if(etl_traits<E>::is_fast)>
+template <typename E, cpp_disable_if(decay_traits<E>::is_fast)>
 std::size_t size(const E& expr) {
     return etl_traits<E>::size(expr);
 }
@@ -640,7 +640,7 @@ std::size_t size(const E& expr) {
  * \param expr The expression to get the size from.
  * \return The size of the given expression.
  */
-template <typename E, cpp_enable_if(etl_traits<E>::is_fast)>
+template <typename E, cpp_enable_if(decay_traits<E>::is_fast)>
 constexpr std::size_t size(const E& expr) noexcept {
     return (void)expr, etl_traits<E>::size();
 }
@@ -650,7 +650,7 @@ constexpr std::size_t size(const E& expr) noexcept {
  * \param expr The expression to get the sub-size from.
  * \return The sub-size of the given expression.
  */
-template <typename E, cpp_disable_if(etl_traits<E>::is_fast)>
+template <typename E, cpp_disable_if(decay_traits<E>::is_fast)>
 std::size_t subsize(const E& expr) {
     static_assert(etl_traits<E>::dimensions() > 1, "Only 2D+ matrices have a subsize");
     return etl_traits<E>::size(expr) / etl_traits<E>::dim(expr, 0);
@@ -661,7 +661,7 @@ std::size_t subsize(const E& expr) {
  * \param expr The expression to get the sub-size from.
  * \return The sub-size of the given expression.
  */
-template <typename E, cpp_enable_if(etl_traits<E>::is_fast)>
+template <typename E, cpp_enable_if(decay_traits<E>::is_fast)>
 constexpr std::size_t subsize(const E& expr) noexcept {
     static_assert(etl_traits<E>::dimensions() > 1, "Only 2D+ matrices have a subsize");
     return (void)expr, etl_traits<E>::size() / etl_traits<E>::template dim<0>();
@@ -673,7 +673,7 @@ constexpr std::size_t subsize(const E& expr) noexcept {
  * \tparam D The dimension to get
  * \return the Dth dimension of e
  */
-template <std::size_t D, typename E, cpp_disable_if(etl_traits<E>::is_fast)>
+template <std::size_t D, typename E, cpp_disable_if(decay_traits<E>::is_fast)>
 std::size_t dim(const E& e) {
     return etl_traits<E>::dim(e, D);
 }
@@ -695,7 +695,7 @@ std::size_t dim(const E& e, std::size_t d) {
  * \tparam D The dimension to get
  * \return the Dth dimension of e
  */
-template <std::size_t D, typename E, cpp_enable_if(etl_traits<E>::is_fast)>
+template <std::size_t D, typename E, cpp_enable_if(decay_traits<E>::is_fast)>
 constexpr std::size_t dim(const E& e) noexcept {
     return (void)e, etl_traits<E>::template dim<D>();
 }
@@ -704,7 +704,7 @@ constexpr std::size_t dim(const E& e) noexcept {
  * \brief Return the D dimension of E
  * \return the Dth dimension of E
  */
-template <std::size_t D, typename E, cpp_enable_if(etl_traits<E>::is_fast)>
+template <std::size_t D, typename E, cpp_enable_if(decay_traits<E>::is_fast)>
 constexpr std::size_t dim() noexcept {
     return decay_traits<E>::template dim<D>();
 }
