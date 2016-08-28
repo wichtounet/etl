@@ -579,6 +579,32 @@ struct conv1_full_impl {
     static constexpr const char* desc(){
         return "conv1_full";
     }
+
+    /*!
+     * \brief Assert that the convolution is done on correct dimensions
+     */
+    template <typename I, typename K, typename C>
+    static void check(const I& input, const K& kernel, const C& conv){
+        static_assert(etl::dimensions<I>() == 1, "Invalid number of dimensions for input of conv1_full");
+        static_assert(etl::dimensions<K>() == 1, "Invalid number of dimensions for kernel of conv1_full");
+        static_assert(etl::dimensions<C>() == 1, "Invalid number of dimensions for conv of conv1_full");
+
+        cpp_assert(etl::dim(conv, 0) == etl::dim(input, 0) + etl::dim(kernel, 0) - 1, "Invalid dimensions for conv1_full");
+        cpp_assert(etl::dim(input, 0) >= etl::dim(kernel, 0), "Invalid dimensions for conv1_full");
+    }
+
+    /*!
+     * \brief Assert that the convolution is done on correct dimensions
+     */
+    template <typename I, typename K, typename C>
+    static void check(){
+        static_assert(etl::dimensions<I>() == 1, "Invalid number of dimensions for input of conv1_full");
+        static_assert(etl::dimensions<K>() == 1, "Invalid number of dimensions for kernel of conv1_full");
+        static_assert(etl::dimensions<C>() == 1, "Invalid number of dimensions for conv of conv1_full");
+
+        static_assert(etl::dim<0, C>() == etl::dim<0, I>() + etl::dim<0, K>() - 1, "Invalid dimensions for conv1_full");
+        static_assert(etl::dim<0, I>() >= etl::dim<0, K>(), "Invalid dimensions for conv1_full");
+    }
 };
 
 /*!
@@ -619,6 +645,32 @@ struct conv1_same_impl {
     static constexpr const char* desc(){
         return "conv1_same";
     }
+
+    /*!
+     * \brief Assert that the convolution is done on correct dimensions
+     */
+    template <typename I, typename K, typename C>
+    static void check(const I& input, const K& kernel, const C& conv){
+        static_assert(etl::dimensions<I>() == 1, "Invalid number of dimensions for input of conv1_same");
+        static_assert(etl::dimensions<K>() == 1, "Invalid number of dimensions for kernel of conv1_same");
+        static_assert(etl::dimensions<C>() == 1, "Invalid number of dimensions for conv of conv1_same");
+
+        cpp_assert(etl::dim(conv, 0) == etl::dim(input, 0), "Invalid dimensions for conv1_same");
+        cpp_assert(etl::dim(input, 0) >= etl::dim(kernel, 0), "Invalid dimensions for conv1_same");
+    }
+
+    /*!
+     * \brief Assert that the convolution is done on correct dimensions
+     */
+    template <typename I, typename K, typename C>
+    static void check(){
+        static_assert(etl::dimensions<I>() == 1, "Invalid number of dimensions for input of conv1_same");
+        static_assert(etl::dimensions<K>() == 1, "Invalid number of dimensions for kernel of conv1_same");
+        static_assert(etl::dimensions<C>() == 1, "Invalid number of dimensions for conv of conv1_same");
+
+        static_assert(etl::dim<0, C>() == etl::dim<0, I>(), "Invalid dimensions for conv1_same");
+        static_assert(etl::dim<0, I>() >= etl::dim<0, K>(), "Invalid dimensions for conv1_same");
+    }
 };
 
 /*!
@@ -658,6 +710,32 @@ struct conv1_valid_impl {
      */
     static constexpr const char* desc(){
         return "conv1_valid";
+    }
+
+    /*!
+     * \brief Assert that the convolution is done on correct dimensions
+     */
+    template <typename I, typename K, typename C>
+    static void check(const I& input, const K& kernel, const C& conv){
+        static_assert(etl::dimensions<I>() == 1, "Invalid number of dimensions for input of conv1_valid");
+        static_assert(etl::dimensions<K>() == 1, "Invalid number of dimensions for kernel of conv1_valid");
+        static_assert(etl::dimensions<C>() == 1, "Invalid number of dimensions for conv of conv1_valid");
+
+        cpp_assert(etl::dim(conv, 0) == etl::dim(input, 0) - etl::dim(kernel, 0) + 1, "Invalid dimensions for conv1_valid");
+        cpp_assert(etl::dim(input, 0) >= etl::dim(kernel, 0), "Invalid dimensions for conv1_valid");
+    }
+
+    /*!
+     * \brief Assert that the convolution is done on correct dimensions
+     */
+    template <typename I, typename K, typename C>
+    static void check(){
+        static_assert(etl::dimensions<I>() == 1, "Invalid number of dimensions for input of conv1_valid");
+        static_assert(etl::dimensions<K>() == 1, "Invalid number of dimensions for kernel of conv1_valid");
+        static_assert(etl::dimensions<C>() == 1, "Invalid number of dimensions for conv of conv1_valid");
+
+        static_assert(etl::dim<0, C>() == etl::dim<0, I>() - etl::dim<0, K>() + 1, "Invalid dimensions for conv1_valid");
+        static_assert(etl::dim<0, I>() >= etl::dim<0, K>(), "Invalid dimensions for conv1_valid");
     }
 };
 
@@ -704,6 +782,36 @@ struct conv2_full_impl {
     static constexpr const char* desc(){
         return "conv2_full";
     }
+
+    /*!
+     * \brief Assert that the convolution is done on correct dimensions
+     */
+    template <typename I, typename K, typename C>
+    static void check(const I& input, const K& kernel, const C& conv){
+        static_assert(etl::dimensions<I>() == 2, "Invalid number of dimensions for input of conv2_full");
+        static_assert(etl::dimensions<K>() == 2, "Invalid number of dimensions for kernel of conv2_full");
+        static_assert(etl::dimensions<C>() == 2, "Invalid number of dimensions for conv of conv2_full");
+
+        cpp_assert(etl::dim(conv, 0) == etl::dim(input, 0) + etl::dim(kernel, 0) - 1, "Invalid dimensions for conv2_full");
+        cpp_assert(etl::dim(conv, 1) == etl::dim(input, 1) + etl::dim(kernel, 1) - 1, "Invalid dimensions for conv2_full");
+        cpp_assert(etl::dim(input, 0) >= etl::dim(kernel, 0), "Invalid dimensions for conv2_full");
+        cpp_assert(etl::dim(input, 1) >= etl::dim(kernel, 1), "Invalid dimensions for conv2_full");
+    }
+
+    /*!
+     * \brief Assert that the convolution is done on correct dimensions
+     */
+    template <typename I, typename K, typename C>
+    static void check(){
+        static_assert(etl::dimensions<I>() == 2, "Invalid number of dimensions for input of conv2_full");
+        static_assert(etl::dimensions<K>() == 2, "Invalid number of dimensions for kernel of conv2_full");
+        static_assert(etl::dimensions<C>() == 2, "Invalid number of dimensions for conv of conv2_full");
+
+        static_assert(etl::dim<0,C>() == etl::dim<0,I>() + etl::dim<0,K>() - 1, "Invalid dimensions for conv2_full");
+        static_assert(etl::dim<1,C>() == etl::dim<1,I>() + etl::dim<1,K>() - 1, "Invalid dimensions for conv2_full");
+        static_assert(etl::dim<0,I>() >= etl::dim<0,K>(), "Invalid dimensions for conv2_full");
+        static_assert(etl::dim<1,I>() >= etl::dim<1,K>(), "Invalid dimensions for conv2_full");
+    }
 };
 
 /*!
@@ -743,6 +851,22 @@ struct conv2_full_flipped_impl {
     static constexpr const char* desc(){
         return "conv2_full_flipped";
     }
+
+    /*!
+     * \brief Assert that the convolution is done on correct dimensions
+     */
+    template <typename I, typename K, typename C>
+    static void check(const I& input, const K& kernel, const C& conv){
+        conv2_full_impl::check(input, kernel, conv);
+    }
+
+    /*!
+     * \brief Assert that the convolution is done on correct dimensions
+     */
+    template <typename I, typename K, typename C>
+    static void check(){
+        conv2_full_impl::template check<I, K, C>();
+    }
 };
 
 /*!
@@ -779,6 +903,36 @@ struct conv2_same_impl {
      */
     static constexpr const char* desc(){
         return "conv2_same";
+    }
+
+    /*!
+     * \brief Assert that the convolution is done on correct dimensions
+     */
+    template <typename I, typename K, typename C>
+    static void check(const I& input, const K& kernel, const C& conv){
+        static_assert(etl::dimensions<I>() == 2, "Invalid number of dimensions for input of conv2_same");
+        static_assert(etl::dimensions<K>() == 2, "Invalid number of dimensions for kernel of conv2_same");
+        static_assert(etl::dimensions<C>() == 2, "Invalid number of dimensions for conv of conv2_same");
+
+        cpp_assert(etl::dim(conv, 0) == etl::dim(input, 0), "Invalid dimensions for conv2_same");
+        cpp_assert(etl::dim(conv, 1) == etl::dim(input, 1), "Invalid dimensions for conv2_same");
+        cpp_assert(etl::dim(input, 0) >= etl::dim(kernel, 0), "Invalid dimensions for conv2_same");
+        cpp_assert(etl::dim(input, 1) >= etl::dim(kernel, 1), "Invalid dimensions for conv2_same");
+    }
+
+    /*!
+     * \brief Assert that the convolution is done on correct dimensions
+     */
+    template <typename I, typename K, typename C>
+    static void check(){
+        static_assert(etl::dimensions<I>() == 2, "Invalid number of dimensions for input of conv2_same");
+        static_assert(etl::dimensions<K>() == 2, "Invalid number of dimensions for kernel of conv2_same");
+        static_assert(etl::dimensions<C>() == 2, "Invalid number of dimensions for conv of conv2_same");
+
+        static_assert(etl::dim<0,C>() == etl::dim<0,I>(), "Invalid dimensions for conv2_same");
+        static_assert(etl::dim<1,C>() == etl::dim<1,I>(), "Invalid dimensions for conv2_same");
+        static_assert(etl::dim<0,I>() >= etl::dim<0,K>(), "Invalid dimensions for conv2_same");
+        static_assert(etl::dim<1,I>() >= etl::dim<1,K>(), "Invalid dimensions for conv2_same");
     }
 };
 
@@ -850,6 +1004,36 @@ struct conv2_valid_impl {
     static constexpr const char* desc(){
         return "conv2_valid";
     }
+
+    /*!
+     * \brief Assert that the convolution is done on correct dimensions
+     */
+    template <typename I, typename K, typename C>
+    static void check(const I& input, const K& kernel, const C& conv){
+        static_assert(etl::dimensions<I>() == 2, "Invalid number of dimensions for input of conv2_valid");
+        static_assert(etl::dimensions<K>() == 2, "Invalid number of dimensions for kernel of conv2_valid");
+        static_assert(etl::dimensions<C>() == 2, "Invalid number of dimensions for conv of conv2_valid");
+
+        cpp_assert(etl::dim(conv, 0) == etl::dim(input, 0) - etl::dim(kernel, 0) + 1, "Invalid dimensions for conv2_valid");
+        cpp_assert(etl::dim(conv, 1) == etl::dim(input, 1) - etl::dim(kernel, 1) + 1, "Invalid dimensions for conv2_valid");
+        cpp_assert(etl::dim(input, 0) >= etl::dim(kernel, 0), "Invalid dimensions for conv2_valid");
+        cpp_assert(etl::dim(input, 1) >= etl::dim(kernel, 1), "Invalid dimensions for conv2_valid");
+    }
+
+    /*!
+     * \brief Assert that the convolution is done on correct dimensions
+     */
+    template <typename I, typename K, typename C>
+    static void check(){
+        static_assert(etl::dimensions<I>() == 2, "Invalid number of dimensions for input of conv2_valid");
+        static_assert(etl::dimensions<K>() == 2, "Invalid number of dimensions for kernel of conv2_valid");
+        static_assert(etl::dimensions<C>() == 2, "Invalid number of dimensions for conv of conv2_valid");
+
+        static_assert(etl::dim<0,C>() == etl::dim<0,I>() - etl::dim<0,K>() + 1, "Invalid dimensions for conv2_valid");
+        static_assert(etl::dim<1,C>() == etl::dim<1,I>() - etl::dim<1,K>() + 1, "Invalid dimensions for conv2_valid");
+        static_assert(etl::dim<0,I>() >= etl::dim<0,K>(), "Invalid dimensions for conv2_valid");
+        static_assert(etl::dim<1,I>() >= etl::dim<1,K>(), "Invalid dimensions for conv2_valid");
+    }
 };
 
 /*!
@@ -889,6 +1073,36 @@ struct conv2_valid_flipped_impl {
     static constexpr const char* desc(){
         return "conv2_valid_flipped";
     }
+
+    /*!
+     * \brief Assert that the convolution is done on correct dimensions
+     */
+    template <typename I, typename K, typename C>
+    static void check(const I& input, const K& kernel, const C& conv){
+        static_assert(etl::dimensions<I>() == 2, "Invalid number of dimensions for input of conv2_valid_flipped");
+        static_assert(etl::dimensions<K>() == 2, "Invalid number of dimensions for kernel of conv2_valid_flipped");
+        static_assert(etl::dimensions<C>() == 2, "Invalid number of dimensions for conv of conv2_valid_flipped");
+
+        cpp_assert(etl::dim(conv, 0) == etl::dim(input, 0) - etl::dim(kernel, 0) + 1, "Invalid dimensions for conv2_valid_flipped");
+        cpp_assert(etl::dim(conv, 1) == etl::dim(input, 1) - etl::dim(kernel, 1) + 1, "Invalid dimensions for conv2_valid_flipped");
+        cpp_assert(etl::dim(input, 0) >= etl::dim(kernel, 0), "Invalid dimensions for conv2_valid_flipped");
+        cpp_assert(etl::dim(input, 1) >= etl::dim(kernel, 1), "Invalid dimensions for conv2_valid_flipped");
+    }
+
+    /*!
+     * \brief Assert that the convolution is done on correct dimensions
+     */
+    template <typename I, typename K, typename C>
+    static void check(){
+        static_assert(etl::dimensions<I>() == 2, "Invalid number of dimensions for input of conv2_valid_flipped");
+        static_assert(etl::dimensions<K>() == 2, "Invalid number of dimensions for kernel of conv2_valid_flipped");
+        static_assert(etl::dimensions<C>() == 2, "Invalid number of dimensions for conv of conv2_valid_flipped");
+
+        static_assert(etl::dim<0,C>() == etl::dim<0,I>() - etl::dim<0,K>() + 1, "Invalid dimensions for conv2_valid_flipped");
+        static_assert(etl::dim<1,C>() == etl::dim<1,I>() - etl::dim<1,K>() + 1, "Invalid dimensions for conv2_valid_flipped");
+        static_assert(etl::dim<0,I>() >= etl::dim<0,K>(), "Invalid dimensions for conv2_valid_flipped");
+        static_assert(etl::dim<1,I>() >= etl::dim<1,K>(), "Invalid dimensions for conv2_valid_flipped");
+    }
 };
 
 /*!
@@ -923,6 +1137,40 @@ struct conv4_valid_impl {
      */
     static constexpr const char* desc(){
         return "conv4_valid";
+    }
+
+    /*!
+     * \brief Assert that the convolution is done on correct dimensions
+     */
+    template <typename I, typename K, typename C>
+    static void check(const I& input, const K& kernel, const C& conv){
+        static_assert(etl::dimensions<I>() == 4, "Invalid number of dimensions for input of conv4_valid");
+        static_assert(etl::dimensions<K>() == 4, "Invalid number of dimensions for kernel of conv4_valid");
+        static_assert(etl::dimensions<C>() == 4, "Invalid number of dimensions for conv of conv4_valid");
+
+        // TODO Not complete
+
+        cpp_assert(etl::dim(conv, 2) == etl::dim(input, 2) - etl::dim(kernel, 2) + 1, "Invalid dimensions for conv4_valid");
+        cpp_assert(etl::dim(conv, 3) == etl::dim(input, 3) - etl::dim(kernel, 3) + 1, "Invalid dimensions for conv4_valid");
+        cpp_assert(etl::dim(input, 2) >= etl::dim(kernel, 2), "Invalid dimensions for conv4_valid");
+        cpp_assert(etl::dim(input, 3) >= etl::dim(kernel, 3), "Invalid dimensions for conv4_valid");
+    }
+
+    /*!
+     * \brief Assert that the convolution is done on correct dimensions
+     */
+    template <typename I, typename K, typename C>
+    static void check(){
+        static_assert(etl::dimensions<I>() == 4, "Invalid number of dimensions for input of conv4_valid");
+        static_assert(etl::dimensions<K>() == 4, "Invalid number of dimensions for kernel of conv4_valid");
+        static_assert(etl::dimensions<C>() == 4, "Invalid number of dimensions for conv of conv4_valid");
+
+        // TODO Not complete
+
+        static_assert(etl::dim<2,C>() == etl::dim<2,I>() - etl::dim<2,K>() + 1, "Invalid dimensions for conv4_valid");
+        static_assert(etl::dim<3,C>() == etl::dim<3,I>() - etl::dim<3,K>() + 1, "Invalid dimensions for conv4_valid");
+        static_assert(etl::dim<2,I>() >= etl::dim<2,K>(), "Invalid dimensions for conv4_valid");
+        static_assert(etl::dim<3,I>() >= etl::dim<3,K>(), "Invalid dimensions for conv4_valid");
     }
 };
 
@@ -959,6 +1207,22 @@ struct conv4_valid_flipped_impl {
     static constexpr const char* desc(){
         return "conv4_valid_flipped";
     }
+
+    /*!
+     * \brief Assert that the convolution is done on correct dimensions
+     */
+    template <typename I, typename K, typename C>
+    static void check(const I& input, const K& kernel, const C& conv){
+        conv4_valid_impl::check(input, kernel, conv);
+    }
+
+    /*!
+     * \brief Assert that the convolution is done on correct dimensions
+     */
+    template <typename I, typename K, typename C>
+    static void check(){
+        conv4_valid_impl::template check<I, K, C>();
+    }
 };
 
 /*!
@@ -994,6 +1258,22 @@ struct conv4_valid_filter_impl {
     static constexpr const char* desc(){
         return "conv4_valid_filter";
     }
+
+    /*!
+     * \brief Assert that the convolution is done on correct dimensions
+     */
+    template <typename I, typename K, typename C>
+    static void check(const I& input, const K& kernel, const C& conv){
+        conv4_valid_impl::check(input, kernel, conv);
+    }
+
+    /*!
+     * \brief Assert that the convolution is done on correct dimensions
+     */
+    template <typename I, typename K, typename C>
+    static void check(){
+        conv4_valid_impl::template check<I, K, C>();
+    }
 };
 
 /*!
@@ -1028,6 +1308,22 @@ struct conv4_valid_filter_flipped_impl {
      */
     static constexpr const char* desc(){
         return "conv4_valid_filter_flipped";
+    }
+
+    /*!
+     * \brief Assert that the convolution is done on correct dimensions
+     */
+    template <typename I, typename K, typename C>
+    static void check(const I& input, const K& kernel, const C& conv){
+        conv4_valid_impl::check(input, kernel, conv);
+    }
+
+    /*!
+     * \brief Assert that the convolution is done on correct dimensions
+     */
+    template <typename I, typename K, typename C>
+    static void check(){
+        conv4_valid_impl::template check<I, K, C>();
     }
 };
 
@@ -1070,6 +1366,40 @@ struct conv4_full_impl {
     static constexpr const char* desc(){
         return "conv4_full";
     }
+
+    /*!
+     * \brief Assert that the convolution is done on correct dimensions
+     */
+    template <typename I, typename K, typename C>
+    static void check(const I& input, const K& kernel, const C& conv){
+        static_assert(etl::dimensions<I>() == 4, "Invalid number of dimensions for input of conv4_full");
+        static_assert(etl::dimensions<K>() == 4, "Invalid number of dimensions for kernel of conv4_full");
+        static_assert(etl::dimensions<C>() == 4, "Invalid number of dimensions for conv of conv4_full");
+
+        // TODO Not complete
+
+        cpp_assert(etl::dim(conv, 2) == etl::dim(input, 2) + etl::dim(kernel, 2) - 1, "Invalid dimensions for conv4_full");
+        cpp_assert(etl::dim(conv, 3) == etl::dim(input, 3) + etl::dim(kernel, 3) - 1, "Invalid dimensions for conv4_full");
+        cpp_assert(etl::dim(input, 2) >= etl::dim(kernel, 2), "Invalid dimensions for conv4_full");
+        cpp_assert(etl::dim(input, 3) >= etl::dim(kernel, 3), "Invalid dimensions for conv4_full");
+    }
+
+    /*!
+     * \brief Assert that the convolution is done on correct dimensions
+     */
+    template <typename I, typename K, typename C>
+    static void check(){
+        static_assert(etl::dimensions<I>() == 4, "Invalid number of dimensions for input of conv4_full");
+        static_assert(etl::dimensions<K>() == 4, "Invalid number of dimensions for kernel of conv4_full");
+        static_assert(etl::dimensions<C>() == 4, "Invalid number of dimensions for conv of conv4_full");
+
+        // TODO Not complete
+
+        static_assert(etl::dim<2,C>() == etl::dim<2,I>() + etl::dim<2,K>() - 1, "Invalid dimensions for conv4_full");
+        static_assert(etl::dim<3,C>() == etl::dim<3,I>() + etl::dim<3,K>() - 1, "Invalid dimensions for conv4_full");
+        static_assert(etl::dim<2,I>() >= etl::dim<2,K>(), "Invalid dimensions for conv4_full");
+        static_assert(etl::dim<3,I>() >= etl::dim<3,K>(), "Invalid dimensions for conv4_full");
+    }
 };
 
 /*!
@@ -1104,6 +1434,22 @@ struct conv4_full_flipped_impl {
      */
     static constexpr const char* desc(){
         return "conv4_full_flipped";
+    }
+
+    /*!
+     * \brief Assert that the convolution is done on correct dimensions
+     */
+    template <typename I, typename K, typename C>
+    static void check(const I& input, const K& kernel, const C& conv){
+        conv4_full_impl::check(input, kernel, conv);
+    }
+
+    /*!
+     * \brief Assert that the convolution is done on correct dimensions
+     */
+    template <typename I, typename K, typename C>
+    static void check(){
+        conv4_full_impl::template check<I, K, C>();
     }
 };
 
@@ -1144,6 +1490,38 @@ struct conv2_valid_multi_impl {
     static constexpr const char* desc(){
         return "conv2_valid_multi";
     }
+
+    /*!
+     * \brief Assert that the convolution is done on correct dimensions
+     */
+    template <typename I, typename K, typename C>
+    static void check(const I& input, const K& kernel, const C& conv){
+        static_assert(etl::dimensions<I>() == 2, "Invalid number of dimensions for input of conv2_valid_multi");
+        static_assert(etl::dimensions<K>() == 3, "Invalid number of dimensions for kernel of conv2_valid_multi");
+        static_assert(etl::dimensions<C>() == 3, "Invalid number of dimensions for conv of conv2_valid_multi");
+
+        cpp_assert(etl::dim(conv, 0) == etl::dim(kernel, 0), "Invalid dimensions for conv2_valid_multi");
+        cpp_assert(etl::dim(conv, 1) == etl::dim(input, 0) - etl::dim(kernel, 1) + 1, "Invalid dimensions for conv2_valid_multi");
+        cpp_assert(etl::dim(conv, 2) == etl::dim(input, 1) - etl::dim(kernel, 2) + 1, "Invalid dimensions for conv2_valid_multi");
+        cpp_assert(etl::dim(input, 0) >= etl::dim(kernel, 1), "Invalid dimensions for conv2_valid_multi");
+        cpp_assert(etl::dim(input, 1) >= etl::dim(kernel, 2), "Invalid dimensions for conv2_valid_multi");
+    }
+
+    /*!
+     * \brief Assert that the convolution is done on correct dimensions
+     */
+    template <typename I, typename K, typename C>
+    static void check(){
+        static_assert(etl::dimensions<I>() == 2, "Invalid number of dimensions for input of conv2_valid_multi");
+        static_assert(etl::dimensions<K>() == 3, "Invalid number of dimensions for kernel of conv2_valid_multi");
+        static_assert(etl::dimensions<C>() == 3, "Invalid number of dimensions for conv of conv2_valid_multi");
+
+        static_assert(etl::dim<0,C>() == etl::dim<0,K>(), "Invalid dimensions for conv2_valid_multi");
+        static_assert(etl::dim<1,C>() == etl::dim<0,I>() - etl::dim<1,K>() + 1, "Invalid dimensions for conv2_valid_multi");
+        static_assert(etl::dim<2,C>() == etl::dim<1,I>() - etl::dim<2,K>() + 1, "Invalid dimensions for conv2_valid_multi");
+        static_assert(etl::dim<0,I>() >= etl::dim<1,K>(), "Invalid dimensions for conv2_valid_multi");
+        static_assert(etl::dim<1,I>() >= etl::dim<2,K>(), "Invalid dimensions for conv2_valid_multi");
+    }
 };
 
 /*!
@@ -1183,6 +1561,22 @@ struct conv2_valid_multi_flipped_impl {
     static constexpr const char* desc(){
         return "conv2_valid_multi_flipped";
     }
+
+    /*!
+     * \brief Assert that the convolution is done on correct dimensions
+     */
+    template <typename I, typename K, typename C>
+    static void check(const I& input, const K& kernel, const C& conv){
+        conv2_valid_multi_impl::check(input, kernel, conv);
+    }
+
+    /*!
+     * \brief Assert that the convolution is done on correct dimensions
+     */
+    template <typename I, typename K, typename C>
+    static void check(){
+        conv2_valid_multi_impl::template check<I, K, C>();
+    }
 };
 
 /*!
@@ -1221,6 +1615,40 @@ struct conv_deep_valid_impl {
     static constexpr const char* desc(){
         return "conv_deep_valid";
     }
+
+    /*!
+     * \brief Assert that the convolution is done on correct dimensions
+     */
+    template <typename I, typename K, typename C>
+    static void check(const I& input, const K& kernel, const C& conv){
+        constexpr const size_t n = etl::dimensions<I>();
+
+        static_assert(etl::dimensions<I>() == n, "Invalid number of dimensions for input of conv_deep_valid");
+        static_assert(etl::dimensions<K>() == n, "Invalid number of dimensions for kernel of conv_deep_valid");
+        static_assert(etl::dimensions<C>() == n, "Invalid number of dimensions for conv of conv_deep_valid");
+
+        cpp_assert(etl::dim(conv, n - 1) == etl::dim(input, n - 1) - etl::dim(kernel, n - 1) + 1, "Invalid dimensions for conv_deep_valid");
+        cpp_assert(etl::dim(conv, n - 2) == etl::dim(input, n - 2) - etl::dim(kernel, n - 2) + 1, "Invalid dimensions for conv_deep_valid");
+        cpp_assert(etl::dim(input, n - 1) >= etl::dim(kernel, n - 1), "Invalid dimensions for conv_deep_valid");
+        cpp_assert(etl::dim(input, n - 2) >= etl::dim(kernel, n - 2), "Invalid dimensions for conv_deep_valid");
+    }
+
+    /*!
+     * \brief Assert that the convolution is done on correct dimensions
+     */
+    template <typename I, typename K, typename C>
+    static void check(){
+        constexpr const size_t n = etl::dimensions<I>();
+
+        static_assert(etl::dimensions<I>() == n, "Invalid number of dimensions for input of conv_deep_valid");
+        static_assert(etl::dimensions<K>() == n, "Invalid number of dimensions for kernel of conv_deep_valid");
+        static_assert(etl::dimensions<C>() == n, "Invalid number of dimensions for conv of conv_deep_valid");
+
+        static_assert(etl::dim<n-1,C>() == etl::dim<n-1,I>() - etl::dim<n-1,K>() + 1, "Invalid dimensions for conv_deep_valid");
+        static_assert(etl::dim<n-2,C>() == etl::dim<n-2,I>() - etl::dim<n-2,K>() + 1, "Invalid dimensions for conv_deep_valid");
+        static_assert(etl::dim<n-1,I>() >= etl::dim<n-1,K>(), "Invalid dimensions for conv_deep_valid");
+        static_assert(etl::dim<n-2,I>() >= etl::dim<n-2,K>(), "Invalid dimensions for conv_deep_valid");
+    }
 };
 /*!
  * \brief The functor impl for 2D+ conv.
@@ -1257,6 +1685,40 @@ struct conv_deep_same_impl {
      */
     static constexpr const char* desc(){
         return "conv_deep_same";
+    }
+
+    /*!
+     * \brief Assert that the convolution is done on correct dimensions
+     */
+    template <typename I, typename K, typename C>
+    static void check(const I& input, const K& kernel, const C& conv){
+        constexpr const size_t n = etl::dimensions<I>();
+
+        static_assert(etl::dimensions<I>() == n, "Invalid number of dimensions for input of conv_deep_same");
+        static_assert(etl::dimensions<K>() == n, "Invalid number of dimensions for kernel of conv_deep_same");
+        static_assert(etl::dimensions<C>() == n, "Invalid number of dimensions for conv of conv_deep_same");
+
+        cpp_assert(etl::dim(conv, n - 1) == etl::dim(input, n - 1), "Invalid dimensions for conv_deep_same");
+        cpp_assert(etl::dim(conv, n - 2) == etl::dim(input, n - 2), "Invalid dimensions for conv_deep_same");
+        cpp_assert(etl::dim(input, n - 1) >= etl::dim(kernel, n - 1), "Invalid dimensions for conv_deep_same");
+        cpp_assert(etl::dim(input, n - 2) >= etl::dim(kernel, n - 2), "Invalid dimensions for conv_deep_same");
+    }
+
+    /*!
+     * \brief Assert that the convolution is done on correct dimensions
+     */
+    template <typename I, typename K, typename C>
+    static void check(){
+        constexpr const size_t n = etl::dimensions<I>();
+
+        static_assert(etl::dimensions<I>() == n, "Invalid number of dimensions for input of conv_deep_valid");
+        static_assert(etl::dimensions<K>() == n, "Invalid number of dimensions for kernel of conv_deep_valid");
+        static_assert(etl::dimensions<C>() == n, "Invalid number of dimensions for conv of conv_deep_valid");
+
+        static_assert(etl::dim<n-1,C>() == etl::dim<n-1,I>(), "Invalid dimensions for conv_deep_valid");
+        static_assert(etl::dim<n-2,C>() == etl::dim<n-2,I>(), "Invalid dimensions for conv_deep_valid");
+        static_assert(etl::dim<n-1,I>() >= etl::dim<n-1,K>(), "Invalid dimensions for conv_deep_valid");
+        static_assert(etl::dim<n-2,I>() >= etl::dim<n-2,K>(), "Invalid dimensions for conv_deep_valid");
     }
 };
 
@@ -1296,6 +1758,40 @@ struct conv_deep_full_impl {
     static constexpr const char* desc(){
         return "conv_deep_full";
     }
+
+    /*!
+     * \brief Assert that the convolution is done on correct dimensions
+     */
+    template <typename I, typename K, typename C>
+    static void check(const I& input, const K& kernel, const C& conv){
+        constexpr const size_t n = etl::dimensions<I>();
+
+        static_assert(etl::dimensions<I>() == n, "Invalid number of dimensions for input of conv_deep_full");
+        static_assert(etl::dimensions<K>() == n, "Invalid number of dimensions for kernel of conv_deep_full");
+        static_assert(etl::dimensions<C>() == n, "Invalid number of dimensions for conv of conv_deep_full");
+
+        cpp_assert(etl::dim(conv, n - 1) == etl::dim(input, n - 1) + etl::dim(kernel, n - 1) - 1, "Invalid dimensions for conv_deep_full");
+        cpp_assert(etl::dim(conv, n - 2) == etl::dim(input, n - 2) + etl::dim(kernel, n - 2) - 1, "Invalid dimensions for conv_deep_full");
+        cpp_assert(etl::dim(input, n - 1) >= etl::dim(kernel, n - 1), "Invalid dimensions for conv_deep_full");
+        cpp_assert(etl::dim(input, n - 2) >= etl::dim(kernel, n - 2), "Invalid dimensions for conv_deep_full");
+    }
+
+    /*!
+     * \brief Assert that the convolution is done on correct dimensions
+     */
+    template <typename I, typename K, typename C>
+    static void check(){
+        constexpr const size_t n = etl::dimensions<I>();
+
+        static_assert(etl::dimensions<I>() == n, "Invalid number of dimensions for input of conv_deep_valid");
+        static_assert(etl::dimensions<K>() == n, "Invalid number of dimensions for kernel of conv_deep_valid");
+        static_assert(etl::dimensions<C>() == n, "Invalid number of dimensions for conv of conv_deep_valid");
+
+        static_assert(etl::dim<n-1,C>() == etl::dim<n-1,I>() + etl::dim<n-1,K>() - 1, "Invalid dimensions for conv_deep_valid");
+        static_assert(etl::dim<n-2,C>() == etl::dim<n-2,I>() + etl::dim<n-2,K>() - 1, "Invalid dimensions for conv_deep_valid");
+        static_assert(etl::dim<n-1,I>() >= etl::dim<n-1,K>(), "Invalid dimensions for conv_deep_valid");
+        static_assert(etl::dim<n-2,I>() >= etl::dim<n-2,K>(), "Invalid dimensions for conv_deep_valid");
+    }
 };
 
 /*!
@@ -1331,6 +1827,38 @@ struct conv2_full_multi_impl {
     static constexpr const char* desc(){
         return "conv2_full_multi";
     }
+
+    /*!
+     * \brief Assert that the convolution is done on correct dimensions
+     */
+    template <typename I, typename K, typename C>
+    static void check(const I& input, const K& kernel, const C& conv){
+        static_assert(etl::dimensions<I>() == 2, "Invalid number of dimensions for input of conv2_full_multi");
+        static_assert(etl::dimensions<K>() == 3, "Invalid number of dimensions for kernel of conv2_full_multi");
+        static_assert(etl::dimensions<C>() == 3, "Invalid number of dimensions for conv of conv2_full_multi");
+
+        cpp_assert(etl::dim(conv, 0) == etl::dim(kernel, 0), "Invalid dimensions for conv2_full_multi");
+        cpp_assert(etl::dim(conv, 1) == etl::dim(input, 0) + etl::dim(kernel, 1) - 1, "Invalid dimensions for conv2_full_multi");
+        cpp_assert(etl::dim(conv, 2) == etl::dim(input, 1) + etl::dim(kernel, 2) - 1, "Invalid dimensions for conv2_full_multi");
+        cpp_assert(etl::dim(input, 0) >= etl::dim(kernel, 1), "Invalid dimensions for conv2_full_multi");
+        cpp_assert(etl::dim(input, 1) >= etl::dim(kernel, 2), "Invalid dimensions for conv2_full_multi");
+    }
+
+    /*!
+     * \brief Assert that the convolution is done on correct dimensions
+     */
+    template <typename I, typename K, typename C>
+    static void check(){
+        static_assert(etl::dimensions<I>() == 2, "Invalid number of dimensions for input of conv2_full_multi");
+        static_assert(etl::dimensions<K>() == 3, "Invalid number of dimensions for kernel of conv2_full_multi");
+        static_assert(etl::dimensions<C>() == 3, "Invalid number of dimensions for conv of conv2_full_multi");
+
+        static_assert(etl::dim<0,C>() == etl::dim<0,K>(), "Invalid dimensions for conv2_full_multi");
+        static_assert(etl::dim<1,C>() == etl::dim<0,I>() + etl::dim<1,K>() - 1, "Invalid dimensions for conv2_full_multi");
+        static_assert(etl::dim<2,C>() == etl::dim<1,I>() + etl::dim<2,K>() - 1, "Invalid dimensions for conv2_full_multi");
+        static_assert(etl::dim<0,I>() >= etl::dim<1,K>(), "Invalid dimensions for conv2_full_multi");
+        static_assert(etl::dim<1,I>() >= etl::dim<2,K>(), "Invalid dimensions for conv2_full_multi");
+    }
 };
 
 /*!
@@ -1365,6 +1893,22 @@ struct conv2_full_multi_flipped_impl {
      */
     static constexpr const char* desc(){
         return "conv2_full_multi_flipped";
+    }
+
+    /*!
+     * \brief Assert that the convolution is done on correct dimensions
+     */
+    template <typename I, typename K, typename C>
+    static void check(const I& input, const K& kernel, const C& conv){
+        conv2_full_multi_impl::check(input, kernel, conv);
+    }
+
+    /*!
+     * \brief Assert that the convolution is done on correct dimensions
+     */
+    template <typename I, typename K, typename C>
+    static void check(){
+        conv2_full_multi_impl::template check<I, K, C>();
     }
 };
 
@@ -1424,6 +1968,38 @@ struct conv2_same_multi_flipped_impl {
      */
     static constexpr const char* desc(){
         return "conv2_same_multi";
+    }
+
+    /*!
+     * \brief Assert that the convolution is done on correct dimensions
+     */
+    template <typename I, typename K, typename C>
+    static void check(const I& input, const K& kernel, const C& conv){
+        static_assert(etl::dimensions<I>() == 2, "Invalid number of dimensions for input of conv2_same_multi");
+        static_assert(etl::dimensions<K>() == 3, "Invalid number of dimensions for kernel of conv2_same_multi");
+        static_assert(etl::dimensions<C>() == 3, "Invalid number of dimensions for conv of conv2_same_multi");
+
+        cpp_assert(etl::dim(conv, 0) == etl::dim(kernel, 0), "Invalid dimensions for conv2_same_multi");
+        cpp_assert(etl::dim(conv, 1) == etl::dim(input, 0), "Invalid dimensions for conv2_same_multi");
+        cpp_assert(etl::dim(conv, 2) == etl::dim(input, 1), "Invalid dimensions for conv2_same_multi");
+        cpp_assert(etl::dim(input, 0) >= etl::dim(kernel, 1), "Invalid dimensions for conv2_same_multi");
+        cpp_assert(etl::dim(input, 1) >= etl::dim(kernel, 2), "Invalid dimensions for conv2_same_multi");
+    }
+
+    /*!
+     * \brief Assert that the convolution is done on correct dimensions
+     */
+    template <typename I, typename K, typename C>
+    static void check(){
+        static_assert(etl::dimensions<I>() == 2, "Invalid number of dimensions for input of conv2_same_multi");
+        static_assert(etl::dimensions<K>() == 3, "Invalid number of dimensions for kernel of conv2_same_multi");
+        static_assert(etl::dimensions<C>() == 3, "Invalid number of dimensions for conv of conv2_same_multi");
+
+        static_assert(etl::dim<0,C>() == etl::dim<0,K>(), "Invalid dimensions for conv2_same_multi");
+        static_assert(etl::dim<1,C>() == etl::dim<0,I>(), "Invalid dimensions for conv2_same_multi");
+        static_assert(etl::dim<2,C>() == etl::dim<1,I>(), "Invalid dimensions for conv2_same_multi");
+        static_assert(etl::dim<0,I>() >= etl::dim<1,K>(), "Invalid dimensions for conv2_same_multi");
+        static_assert(etl::dim<1,I>() >= etl::dim<2,K>(), "Invalid dimensions for conv2_same_multi");
     }
 };
 

@@ -549,7 +549,7 @@ struct etl_traits<T, std::enable_if_t<is_etl_value<T>::value>> {
      */
     template <std::size_t D>
     static constexpr std::size_t dim() {
-        static_assert(is_fast, "Only fast_matrix have compile-time access to the dimensions");
+        //static_assert(is_fast, "Only fast_matrix have compile-time access to the dimensions");
 
         return T::template dim<D>();
     }
