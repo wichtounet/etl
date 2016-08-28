@@ -120,11 +120,11 @@ auto conv_2d_valid(A&& a, B&& b) -> detail::temporary_binary_helper_op<A, B, con
  * \param c The result
  * \return an expression representing the valid 2D convolution of a and b
  */
-template <typename A, typename B, typename C>
+template <size_t S1 = 1, size_t S2 = 1, size_t P1 = 0, size_t P2 = 0, typename A, typename B, typename C>
 auto conv_2d_valid(A&& a, B&& b, C&& c) {
     static_assert(is_etl_expr<A>::value && is_etl_expr<B>::value && is_etl_expr<C>::value, "Convolution only supported for ETL expressions");
 
-    c = conv_2d_valid(a, b);
+    c = conv_2d_valid<S1, S2, P1, P2>(a, b);
     return std::forward<C>(c);
 }
 
@@ -134,8 +134,8 @@ auto conv_2d_valid(A&& a, B&& b, C&& c) {
  * \param b The kernel expression
  * \return an expression representing the valid 2D convolution of a and b
  */
-template <typename A, typename B>
-auto conv_2d_valid_flipped(A&& a, B&& b) -> detail::temporary_binary_helper<A, B, conv2_valid_flipped_expr> {
+template <size_t S1 = 1, size_t S2 = 1, size_t P1 = 0, size_t P2 = 0, typename A, typename B>
+auto conv_2d_valid_flipped(A&& a, B&& b) -> detail::temporary_binary_helper_op<A, B, conv2_valid_flipped_expr<value_t<A>, S1, S2, P1, P2>> {
     static_assert(is_etl_expr<A>::value && is_etl_expr<B>::value, "Convolution only supported for ETL expressions");
 
     return {a, b};
@@ -148,11 +148,11 @@ auto conv_2d_valid_flipped(A&& a, B&& b) -> detail::temporary_binary_helper<A, B
  * \param c The result
  * \return an expression representing the valid 2D convolution of a and b
  */
-template <typename A, typename B, typename C>
+template <size_t S1 = 1, size_t S2 = 1, size_t P1 = 0, size_t P2 = 0, typename A, typename B, typename C>
 auto conv_2d_valid_flipped(A&& a, B&& b, C&& c) {
     static_assert(is_etl_expr<A>::value && is_etl_expr<B>::value && is_etl_expr<C>::value, "Convolution only supported for ETL expressions");
 
-    c = conv_2d_valid_flipped(a, b);
+    c = conv_2d_valid_flipped<S1, S2, P1, P2>(a, b);
     return std::forward<C>(c);
 }
 

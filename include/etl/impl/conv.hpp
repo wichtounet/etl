@@ -1204,6 +1204,7 @@ struct conv2_valid_impl {
 /*!
  * \brief The functor impl for 2D valid conv
  */
+template<size_t S1 = 1, size_t S2 = 1, size_t P1 = 0, size_t P2 = 0>
 struct conv2_valid_flipped_impl {
     /*!
      * \brief Apply the convolution
@@ -1226,7 +1227,7 @@ struct conv2_valid_flipped_impl {
         } else if (impl == etl::conv_impl::CUDNN) {
             impl::cudnn::conv2_valid_flipped(i, k, c);
         } else if (impl == etl::conv_impl::STD) {
-            impl::standard::conv2_valid_flipped(input, kernel, conv);
+            impl::standard::conv2_valid_flipped<S1, S2, P1, P2>(input, kernel, conv);
         } else {
             cpp_unreachable("Invalid conv implementation selection");
         }
@@ -1244,14 +1245,7 @@ struct conv2_valid_flipped_impl {
      */
     template <typename I, typename K, typename C>
     static void check(const I& input, const K& kernel, const C& conv){
-        static_assert(etl::dimensions<I>() == 2, "Invalid number of dimensions for input of conv2_valid_flipped");
-        static_assert(etl::dimensions<K>() == 2, "Invalid number of dimensions for kernel of conv2_valid_flipped");
-        static_assert(etl::dimensions<C>() == 2, "Invalid number of dimensions for conv of conv2_valid_flipped");
-
-        cpp_assert(etl::dim(conv, 0) == etl::dim(input, 0) - etl::dim(kernel, 0) + 1, "Invalid dimensions for conv2_valid_flipped");
-        cpp_assert(etl::dim(conv, 1) == etl::dim(input, 1) - etl::dim(kernel, 1) + 1, "Invalid dimensions for conv2_valid_flipped");
-        cpp_assert(etl::dim(input, 0) >= etl::dim(kernel, 0), "Invalid dimensions for conv2_valid_flipped");
-        cpp_assert(etl::dim(input, 1) >= etl::dim(kernel, 1), "Invalid dimensions for conv2_valid_flipped");
+        conv2_valid_impl<S1, S2, P1, P2>::check(input, kernel, conv);
     }
 
     /*!
@@ -1259,14 +1253,7 @@ struct conv2_valid_flipped_impl {
      */
     template <typename I, typename K, typename C>
     static void check(){
-        static_assert(etl::dimensions<I>() == 2, "Invalid number of dimensions for input of conv2_valid_flipped");
-        static_assert(etl::dimensions<K>() == 2, "Invalid number of dimensions for kernel of conv2_valid_flipped");
-        static_assert(etl::dimensions<C>() == 2, "Invalid number of dimensions for conv of conv2_valid_flipped");
-
-        static_assert(etl::dim<0,C>() == etl::dim<0,I>() - etl::dim<0,K>() + 1, "Invalid dimensions for conv2_valid_flipped");
-        static_assert(etl::dim<1,C>() == etl::dim<1,I>() - etl::dim<1,K>() + 1, "Invalid dimensions for conv2_valid_flipped");
-        static_assert(etl::dim<0,I>() >= etl::dim<0,K>(), "Invalid dimensions for conv2_valid_flipped");
-        static_assert(etl::dim<1,I>() >= etl::dim<1,K>(), "Invalid dimensions for conv2_valid_flipped");
+        conv2_valid_impl<S1, S2, P1, P2>::template check<I, K, C>();
     }
 
     /*!
@@ -1274,9 +1261,7 @@ struct conv2_valid_flipped_impl {
      */
     template <typename I, typename K>
     static size_t dim(size_t d, const I& input, const K& kernel){
-        cpp_assert(d < 2, "Invalid dimensions access");
-
-        return etl::dim(input, d) - etl::dim(kernel, d) + 1;
+        return conv2_valid_impl<S1, S2, P1, P2>::dim(d, input, kernel);
     }
 
     /*!
@@ -1284,9 +1269,7 @@ struct conv2_valid_flipped_impl {
      */
     template <size_t D, typename I, typename K>
     static constexpr size_t dim(){
-        static_assert(D < 2, "Invalid dimension access");
-
-        return etl::dim<D, I>() - etl::dim<D, K>() + 1;
+        return conv2_valid_impl<S1, S2, P1, P2>::template dim<D, I, K>();
     }
 };
 
