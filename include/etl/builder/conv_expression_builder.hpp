@@ -106,7 +106,7 @@ auto conv_1d_full(A&& a, B&& b, C&& c) {
  * \param b The kernel expression
  * \return an expression representing the valid 2D convolution of a and b
  */
-template <size_t S1 = 0, size_t S2 = 0, size_t P1 = 0, size_t P2 = 0, typename A, typename B>
+template <size_t S1 = 1, size_t S2 = 1, size_t P1 = 0, size_t P2 = 0, typename A, typename B>
 auto conv_2d_valid(A&& a, B&& b) -> detail::temporary_binary_helper_op<A, B, conv2_valid_expr<value_t<A>, S1, S2, P1, P2>> {
     static_assert(is_etl_expr<A>::value && is_etl_expr<B>::value, "Convolution only supported for ETL expressions");
 
