@@ -200,14 +200,9 @@ CONV_FUNCTOR(sse_conv1_valid, c = selected_helper(etl::conv_impl::SSE, etl::conv
 CONV_FUNCTOR(sse_conv2_full, c = selected_helper(etl::conv_impl::SSE, etl::conv_2d_full(a, b)))
 CONV_FUNCTOR(sse_conv2_full_flipped, c = selected_helper(etl::conv_impl::SSE, etl::conv_2d_full_flipped(a, b)))
 CONV_FUNCTOR(sse_conv2_same, c = selected_helper(etl::conv_impl::SSE, etl::conv_2d_same(a, b)))
-<<<<<<< efccf2d4b2b4ebe213125a0c582239a91bb8df4c
 CONV_FUNCTOR(sse_conv2_same_flipped, c = selected_helper(etl::conv_impl::SSE, etl::conv_2d_same_flipped(a, b)))
-CONV_FUNCTOR(sse_conv2_valid, c = selected_helper(etl::conv_impl::SSE, etl::conv_2d_valid(a, b)))
-CONV_FUNCTOR(sse_conv2_valid_flipped, c = selected_helper(etl::conv_impl::SSE, etl::conv_2d_valid_flipped(a, b)))
-=======
 CONV_FUNCTOR(sse_conv2_valid, c = selected_helper(etl::conv_impl::SSE, (etl::conv_2d_valid<S1, S2>(a, b))))
 CONV_FUNCTOR(sse_conv2_valid_flipped, c = selected_helper(etl::conv_impl::SSE, (etl::conv_2d_valid_flipped<S1, S2>(a, b))))
->>>>>>> Enhance conv_test features
 
 CONV_FUNCTOR(sse_conv2_full_multi, c = selected_helper(etl::conv_impl::SSE, etl::conv_2d_full_multi(a, b)))
 CONV_FUNCTOR(sse_conv2_full_multi_flipped, c = selected_helper(etl::conv_impl::SSE, etl::conv_2d_full_multi_flipped(a, b)))
@@ -282,14 +277,9 @@ CONV_FUNCTOR(avx_conv1_valid, c = selected_helper(etl::conv_impl::AVX, etl::conv
 CONV_FUNCTOR(avx_conv2_full, c = selected_helper(etl::conv_impl::AVX, etl::conv_2d_full(a, b)))
 CONV_FUNCTOR(avx_conv2_full_flipped, c = selected_helper(etl::conv_impl::AVX, etl::conv_2d_full_flipped(a, b)))
 CONV_FUNCTOR(avx_conv2_same, c = selected_helper(etl::conv_impl::AVX, etl::conv_2d_same(a, b)))
-<<<<<<< efccf2d4b2b4ebe213125a0c582239a91bb8df4c
 CONV_FUNCTOR(avx_conv2_same_flipped, c = selected_helper(etl::conv_impl::AVX, etl::conv_2d_same_flipped(a, b)))
-CONV_FUNCTOR(avx_conv2_valid, c = selected_helper(etl::conv_impl::AVX, etl::conv_2d_valid(a, b)))
-CONV_FUNCTOR(avx_conv2_valid_flipped, c = selected_helper(etl::conv_impl::AVX, etl::conv_2d_valid_flipped(a, b)))
-=======
 CONV_FUNCTOR(avx_conv2_valid, c = selected_helper(etl::conv_impl::AVX, (etl::conv_2d_valid<S1, S2>(a, b))))
 CONV_FUNCTOR(avx_conv2_valid_flipped, c = selected_helper(etl::conv_impl::AVX, (etl::conv_2d_valid_flipped<S1, S2>(a, b))))
->>>>>>> Enhance conv_test features
 
 CONV_FUNCTOR(avx_conv2_full_multi, c = selected_helper(etl::conv_impl::AVX, etl::conv_2d_full_multi(a, b)))
 CONV_FUNCTOR(avx_conv2_full_multi_flipped, c = selected_helper(etl::conv_impl::AVX, etl::conv_2d_full_multi_flipped(a, b)))
