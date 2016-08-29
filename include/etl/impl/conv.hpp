@@ -19,9 +19,6 @@
  *  * Parallel dispatching for SSE/AVX implementation is not perfect, it should be done inside the micro kernel main loop
  */
 
-//TODO conv_X_multi should follow the same principle as the other convolutions
-//and have dedicated SSE/AVX/... kernels
-
 #pragma once
 
 //Include the implementations
