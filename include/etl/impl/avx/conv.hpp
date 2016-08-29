@@ -1577,7 +1577,7 @@ void conv1_valid(const I& input, const K& kernel, C&& conv, std::size_t first, s
  * \param kernel The kernel matrix
  * \param conv The output matrix
  */
-template <size_t S1 = 1, size_t S2 = 1, size_t P1 = 0, size_t P2 = 0, typename T>
+template <size_t S1 = 1, size_t S2 = 1, size_t P1 = 0, size_t P2 = 0, typename I, typename K, typename C>
 void conv2_valid(const I& input, const K& kernel, C&& conv) {
     cpp_unused(input);
     cpp_unused(kernel);
@@ -1591,7 +1591,7 @@ void conv2_valid(const I& input, const K& kernel, C&& conv) {
  * \param kernel The kernel matrix
  * \param conv The output matrix
  */
-template <size_t S1 = 1, size_t S2 = 1, size_t P1 = 0, size_t P2 = 0, typename T>
+template <size_t S1 = 1, size_t S2 = 1, size_t P1 = 0, size_t P2 = 0, typename I, typename K, typename C>
 void conv2_valid_flipped(const I& input, const K& kernel, C&& conv) {
     cpp_unused(input);
     cpp_unused(kernel);
