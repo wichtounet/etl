@@ -26,8 +26,7 @@ CONV2_VALID_TEST_CASE("conv/2/stride/valid/2", "[conv][stride]") {
     etl::fast_matrix<T, 2, 2> b = {1.0, 0.0, 0.5, 0.5};
     etl::fast_matrix<T, 4, 4> c;
 
-    c = selected_helper(etl::conv_impl::STD, (etl::conv_2d_valid<1,1,1,1>(a, b)));
-    //Impl::template apply<1, 1, 1, 1>(a, b, c);
+    Impl::template apply<1, 1, 1, 1>(a, b, c);
 
     REQUIRE_EQUALS_APPROX(c(0, 0), T(1.0));
     REQUIRE_EQUALS_APPROX(c(0, 1), T(2.0));
@@ -55,8 +54,7 @@ CONV2_VALID_TEST_CASE("conv/2/stride/valid/3", "[conv][stride]") {
     etl::fast_matrix<T, 2, 2> b = {1.0, 0.0, 0.5, 0.5};
     etl::fast_matrix<T, 2, 2> c;
 
-    c = selected_helper(etl::conv_impl::STD, (etl::conv_2d_valid<2,2,1,1>(a, b)));
-    //Impl::template apply<2, 2, 1, 1>(a, b, c);
+    Impl::template apply<2, 2, 1, 1>(a, b, c);
 
     REQUIRE_EQUALS_APPROX(c(0, 0), T(1.0));
     REQUIRE_EQUALS_APPROX(c(0, 1), T(0.0));
@@ -83,8 +81,7 @@ CONV2_VALID_FLIPPED_TEST_CASE("conv/2/stride/valid/flipped/2", "[conv][stride]")
     etl::fast_matrix<T, 2, 2> b = {0.5, 0.5, 0.0, 1.0};
     etl::fast_matrix<T, 4, 4> c;
 
-    c = selected_helper(etl::conv_impl::STD, (etl::conv_2d_valid_flipped<1,1,1,1>(a, b)));
-    //Impl::template apply<1, 1, 1, 1>(a, b, c);
+    Impl::template apply<1, 1, 1, 1>(a, b, c);
 
     REQUIRE_EQUALS_APPROX(c(0, 0), T(1.0));
     REQUIRE_EQUALS_APPROX(c(0, 1), T(2.0));
@@ -112,8 +109,7 @@ CONV2_VALID_FLIPPED_TEST_CASE("conv/2/stride/valid/flipped/3", "[conv][stride]")
     etl::fast_matrix<T, 2, 2> b = {0.5, 0.5, 0.0, 1.0};
     etl::fast_matrix<T, 2, 2> c;
 
-    c = selected_helper(etl::conv_impl::STD, (etl::conv_2d_valid_flipped<2,2,1,1>(a, b)));
-    //Impl::template apply<2, 2, 1, 1>(a, b, c);
+    Impl::template apply<2, 2, 1, 1>(a, b, c);
 
     REQUIRE_EQUALS_APPROX(c(0, 0), T(1.0));
     REQUIRE_EQUALS_APPROX(c(0, 1), T(0.0));
