@@ -18,6 +18,9 @@ namespace detail {
 
 /*!
  * \brief Helper to build the type for a sub expression
+ *
+ * This means a reference for a value type and a copy for another
+ * expression.
  */
 template <typename T>
 using build_type = std::conditional_t<
@@ -25,6 +28,12 @@ using build_type = std::conditional_t<
     const std::decay_t<T>&,
     std::decay_t<T>>;
 
+/*!
+ * \brief Helper to build the identity type for a sub expression
+ *
+ * This means a reference for a value type (preserving constness)
+ * and a copy for another expression.
+ */
 template <typename T>
 using build_identity_type = std::conditional_t<
     is_etl_value<T>::value,
@@ -90,28 +99,56 @@ using stable_transform_helper = unary_expr<value_t<E>, OP<build_type<E>>, transf
 template <typename LE, typename RE, template <typename, typename> class OP>
 using stable_transform_binary_helper = unary_expr<value_t<LE>, OP<build_type<LE>, build_type<RE>>, transform_op>;
 
+/*!
+ * \brief Make a stable unary transform unary expression
+ * \param args Arguments to be forward to the op.
+ */
 template <typename E, template <typename> class OP, typename... Args>
 auto make_transform_expr(Args&&... args) {
     return stable_transform_helper<E, OP>{OP<build_type<E>>(std::forward<Args>(args)...)};
 }
 
+/*!
+ * \brief Make a stable unary transform unary expression for
+ * a stateful op.
+ * \param args Arguments to be forward to the op.
+ */
 template <typename E, typename OP, typename... Args>
 auto make_stateful_unary_expr(Args&&... args) {
     return unary_expr<value_t<E>, build_type<E>, stateful_op<OP>>(std::forward<Args>(args)...);
 }
 
+/*!
+ * \brief Helper to create a temporary binary expression.
+ */
 template <typename A, typename B, template <typename> class OP>
 using temporary_binary_helper = temporary_binary_expr<value_t<A>, build_type<A>, build_type<B>, OP<value_t<A>>>;
 
+/*!
+ * \brief Helper to create a temporary unary expression.
+ */
 template <typename A, template <typename> class OP>
 using temporary_unary_helper = temporary_unary_expr<value_t<A>, build_type<A>, OP<value_t<A>>>;
 
+/*!
+ * \brief Helper to create a temporary unary expression with
+ * a forced value type.
+ */
 template <typename T, typename A, template <typename> class OP>
 using temporary_unary_helper_type = temporary_unary_expr<T, build_type<A>, OP<T>>;
 
+/*!
+ * \brief Helper to create a temporary binary expression with an
+ * operation that takes a number of dimensions as input template
+ * type.
+ */
 template <typename A, typename B, template <typename, std::size_t> class OP, std::size_t D>
 using dim_temporary_binary_helper = temporary_binary_expr<value_t<A>, build_type<A>, build_type<B>, OP<value_t<A>, D>>;
 
+/*!
+ * \brief Helper to create a temporary binary expression with
+ * a direct op.
+ */
 template <typename A, typename B, typename OP>
 using temporary_binary_helper_op = temporary_binary_expr<value_t<A>, build_type<A>, build_type<B>, OP>;
 

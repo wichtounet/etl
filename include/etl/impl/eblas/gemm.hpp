@@ -25,16 +25,23 @@ namespace impl {
 
 namespace eblas {
 
+
+/*!
+ * \brief Configuration of the EBLAS gemm operation for a type T
+ */
 template <typename T>
 struct gemm_config {
     static constexpr const std::size_t MC = 384;
     static constexpr const std::size_t KC = 384;
     static constexpr const std::size_t NC = 4096;
 
-    static constexpr const std::size_t MR = 4;
-    static constexpr const std::size_t NR = 4;
+    static constexpr const std::size_t MR = 4; ///< The first dimension of the micro matrix
+    static constexpr const std::size_t NR = 4; ///< The second dimension of the micro matrix
 };
 
+/*!
+ * \brief Copy row panels from matrix blocks of A into _A
+ */
 template <typename D>
 void pack_MRxk(std::size_t k, const D* A, std::size_t a_row_stride, std::size_t a_col_stride, double* buffer) {
     constexpr const std::size_t MR = gemm_config<D>::MR;
@@ -46,6 +53,9 @@ void pack_MRxk(std::size_t k, const D* A, std::size_t a_row_stride, std::size_t 
     }
 }
 
+/*!
+ * \brief Copy row panels from matrix blocks of A into _A
+ */
 template <typename D>
 void pack_A(std::size_t mc, std::size_t kc, const D* A, std::size_t a_row_stride, std::size_t a_col_stride, double* buffer) {
     constexpr const std::size_t MR = gemm_config<D>::MR;
@@ -70,6 +80,9 @@ void pack_A(std::size_t mc, std::size_t kc, const D* A, std::size_t a_row_stride
     }
 }
 
+/*!
+ * \brief Copy row panels from matrix blocks of B into _B
+ */
 template <typename D>
 void pack_kxNR(std::size_t k, const D* B, std::size_t b_row_stride, std::size_t b_col_stride, double* buffer) {
     constexpr const std::size_t NR = gemm_config<D>::NR;
@@ -83,6 +96,9 @@ void pack_kxNR(std::size_t k, const D* B, std::size_t b_row_stride, std::size_t 
     }
 }
 
+/*!
+ * \brief Copy row panels from matrix blocks of B into _B
+ */
 template <typename D>
 void pack_B(std::size_t kc, std::size_t nc, const D* B, std::size_t b_row_stride, std::size_t b_col_stride, double* buffer) {
     constexpr const std::size_t NR = gemm_config<D>::NR;
@@ -379,6 +395,12 @@ void gemm_nn(std::size_t m, std::size_t n, std::size_t k, D alpha, const D* A, s
     }
 }
 
+/*!
+ * \brief Compute the matrix mutplication of a and b and store the result in c
+ * param a The lhs of the multiplication
+ * param b The rhs of the multiplication
+ * param c The result
+ */
 template <typename A, typename B, typename C, cpp_enable_if(!is_complex<A>::value)>
 void gemm(A&& a, B&& b, C&& c) {
     gemm_nn(
@@ -390,9 +412,18 @@ void gemm(A&& a, B&& b, C&& c) {
         c.memory_start(), row_stride(c), col_stride(c));
 }
 
+/*!
+ * \brief Compute the matrix mutplication of a and b and store the result in c
+ * param a The lhs of the multiplication
+ * param b The rhs of the multiplication
+ * param c The result
+ */
 template <typename A, typename B, typename C, cpp_enable_if(is_complex<A>::value)>
-void gemm(A&& /*a*/, B&& /*b*/, C&& /*c*/) {
-    cpp_unreachable("Unimplemented feature: gemm<complex>");
+void gemm(A&& a, B&& b, C&& c) {
+    cpp_unused(a);
+    cpp_unused(b);
+    cpp_unused(c);
+    cpp_unreachable("Unsupported feature called: eblas gemm complex");
 }
 
 } //end of namespace eblas

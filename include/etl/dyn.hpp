@@ -47,7 +47,7 @@ private:
     bool managed = true; ///< Tag indicating if we manage the memory
     memory_type _memory; ///< Pointer to the allocated memory
 
-    mutable gpu_handler<T> _gpu_memory_handler;
+    mutable gpu_handler<T> _gpu_memory_handler; ///< The GPU memory handler
 
     using base_type::release;
     using base_type::allocate;

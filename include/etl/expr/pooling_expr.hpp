@@ -281,6 +281,11 @@ struct basic_dyn_pool_2d_expr : dyn_impl_expr<basic_dyn_pool_2d_expr<T, Impl>> {
     const std::size_t c1; ///< First dimension pooling ratio
     const std::size_t c2; ///< Second dimension pooling ratio
 
+    /*!
+     * \brief Construct a new basic 2d pooling expression
+     * \param c1 The first pooling factor
+     * \param c2 The second pooling factor
+     */
     basic_dyn_pool_2d_expr(std::size_t c1, std::size_t c2) : c1(c1), c2(c2) {
         // Nothing else to init
     }
@@ -385,6 +390,12 @@ struct basic_dyn_pool_3d_expr : dyn_impl_expr<basic_dyn_pool_3d_expr<T, Impl>> {
     const std::size_t c2; ///< Second dimension pooling ratio
     const std::size_t c3; ///< Third dimension pooling ratio
 
+    /*!
+     * \brief Construct a new basic 3d pooling expression
+     * \param c1 The first pooling factor
+     * \param c2 The second pooling factor
+     * \param c3 The third pooling factor
+     */
     basic_dyn_pool_3d_expr(std::size_t c1, std::size_t c2, std::size_t c3) : c1(c1), c2(c2), c3(c3) {
         // Nothing else to init
     }

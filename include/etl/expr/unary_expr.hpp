@@ -99,7 +99,7 @@ public:
     template <typename V = default_vec>
     using vec_type       = typename V::template vec_type<T>;
 
-    /*
+    /*!
      * \brief Construct a new unary_expr with the given sub expression
      * \param l The sub expression
      */

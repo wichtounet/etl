@@ -35,11 +35,11 @@ struct opaque_memory {
     using const_memory_type = std::add_const_t<T>*; ///< The type of const memory
 
 private:
-    T* memory; ///< The memory pointer
-    const std::size_t etl_size;
-    const std::array<std::size_t, D> dims;
-    gpu_handler<T>& _gpu_memory_handler;
-    const order storage_order; ///< The storage order
+    T* memory;                             ///< The memory pointer
+    const std::size_t etl_size;            ///< The full size of the matrix
+    const std::array<std::size_t, D> dims; ///< The dimensions of the matrix
+    gpu_handler<T>& _gpu_memory_handler;   ///< The GPU memory handler
+    const order storage_order;             ///< The storage order
 
 public:
     /*!
