@@ -159,6 +159,107 @@ struct basic_conv_expr : impl_expr<basic_conv_expr<T, D, Impl>> {
     }
 };
 
+/*!
+ * \brief A basic configurable dynamic convolution expr
+ * \tparam T The value type
+ * \tparam D The dimensions of convolution
+ * \tparam Impl The implementation class
+ */
+template <typename T, std::size_t D, typename Impl>
+struct dyn_basic_conv_expr : impl_expr<dyn_basic_conv_expr<T, D, Impl>> {
+    static_assert(D > 0, "0D convolution is not valid");
+
+    using value_type = T;                               ///< The type of value of the expression
+    using this_type  = dyn_basic_conv_expr<T, D, Impl>; ///< The type of this expression
+
+    static constexpr const bool is_gpu = is_cufft_enabled || is_cudnn_enabled; ///< Indicates if the expression runs on GPU
+
+    Impl impl;
+
+    /*!
+     * \brief The result type for given sub types
+     * \tparam A The left hand side epxpression type
+     * \tparam B The right hand side epxpression type
+     */
+    template <typename A, typename B>
+    using result_type = detail::dyn_expr_result_t<this_type, A, B>;
+
+    template<typename... Args>
+    dyn_basic_conv_expr(Args&&... args) : impl(std::forward<Args>(args)...){
+        //Nothing else to init
+    }
+
+    /*!
+     * \brief Apply the expression
+     * \param a The left hand side
+     * \param b The right hand side
+     * \param c The expression where to store the results
+     */
+    template <typename A, typename B, typename C>
+    void apply(A&& a, B&& b, C&& c) const {
+        static_assert(all_etl_expr<A, B, C>::value, "Convolution only supported for ETL expressions");
+
+        impl.check(a, b, c);
+
+        impl.apply(
+            make_temporary(std::forward<A>(a)),
+            make_temporary(std::forward<B>(b)),
+            std::forward<C>(c));
+    }
+
+    /*!
+     * \brief Returns a textual representation of the operation
+     * \return a textual representation of the operation
+     */
+    static constexpr const char* desc() noexcept {
+        return Impl::desc();
+    }
+
+    /*!
+     * \brief Returns the dth dimension of the expression
+     * \param a The left hand side
+     * \param b The right hand side
+     * \param d The dimension to get
+     * \return the dth dimension of the expression
+     */
+    template <typename A, typename B>
+    std::size_t dim(const A& a, const B& b, std::size_t d) const noexcept {
+        return impl.dim(d, a, b);
+    }
+
+    /*!
+     * \brief Returns the size of the expression
+     * \param a The left hand side
+     * \param b The right hand side
+     * \return the size of the expression
+     */
+    template <typename A, typename B>
+    std::size_t size(const A& a, const B& b) const {
+        std::size_t acc = 1;
+        for (std::size_t i = 0; i < dimensions(); ++i) {
+            acc *= this_type::dim(a, b, i);
+        }
+        return acc;
+    }
+
+    /*!
+     * \brief Returns the storage order of the expression.
+     * \return the storage order of the expression
+     */
+    template <typename A, typename B>
+    static constexpr etl::order order() {
+        return etl::order::RowMajor;
+    }
+
+    /*!
+     * \brief Returns the number of dimensions of the expression
+     * \return the number of dimensions of the expression
+     */
+    static constexpr std::size_t dimensions() {
+        return D;
+    }
+};
+
 //1D convolution
 
 /*!
