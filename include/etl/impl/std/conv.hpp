@@ -224,6 +224,24 @@ inline void conv2_valid_border(const I& input, const K& kernel, C&& conv, std::s
     conv(i, j) = temp;
 }
 
+template <size_t S1 = 1, size_t S2 = 1, size_t P1 = 0, size_t P2 = 0, typename I, typename K, typename C>
+inline void conv2_valid_flipped_border(const I& input, const K& kernel, C&& conv, std::size_t i, std::size_t j) {
+    typename I::value_type temp = 0.0;
+
+    for (std::size_t k = 0; k < rows(kernel); ++k) {
+        for (std::size_t l = 0; l < columns(kernel); ++l) {
+            if(i + k >= P1 && (i + k) - P1 < rows(input) && j + l >= P2 && (j + l) - P2 < columns(input)){
+                size_t i_i = (i * S1 + k) - P1;
+                size_t i_j = (j * S2 + l) - P2;
+
+                temp += input(i_i, i_j) * kernel(k, l);
+            }
+        }
+    }
+
+    conv(i, j) = temp;
+}
+
 /*!
  * \brief Standard implementation of a 2D 'valid' convolution C = I * K
  * \param input The input matrix
@@ -261,6 +279,7 @@ void conv2_valid(const I& input, const K& kernel, C&& conv) {
     }
 
     // Do the central part of the valid convolution (no padding)
+
     for (std::size_t i = P1; i < rows(conv) - P1; ++i) {
         for (std::size_t j = P2; j < columns(conv) - P2; ++j) {
             auto i_i = i * S1;
@@ -287,8 +306,38 @@ void conv2_valid(const I& input, const K& kernel, C&& conv) {
  */
 template <size_t S1 = 1, size_t S2 = 1, size_t P1 = 0, size_t P2 = 0, typename I, typename K, typename C>
 void conv2_valid_flipped(const I& input, const K& kernel, C&& conv) {
-    for (std::size_t i = 0; i < rows(conv); ++i) {
-        for (std::size_t j = 0; j < columns(conv); ++j) {
+    // Do the outer parts of the convolution
+
+    if(P1 || P2){
+        for (std::size_t i = 0; i < P1; ++i) {
+            for (std::size_t j = 0; j < columns(conv); ++j) {
+                conv2_valid_flipped_border<S1, S2, P1, P2>(input, kernel, conv, i, j);
+            }
+        }
+
+        for (std::size_t i = rows(conv) - P1; i < rows(conv); ++i) {
+            for (std::size_t j = 0; j < columns(conv); ++j) {
+                conv2_valid_flipped_border<S1, S2, P1, P2>(input, kernel, conv, i, j);
+            }
+        }
+
+        for (std::size_t j = 0; j < P2; ++j) {
+            for (std::size_t i = P1; i < rows(conv) - P1; ++i) {
+                conv2_valid_flipped_border<S1, S2, P1, P2>(input, kernel, conv, i, j);
+            }
+        }
+
+        for (std::size_t j = columns(conv) - P2; j < columns(conv); ++j) {
+            for (std::size_t i = P1; i < rows(conv) - P1; ++i) {
+                conv2_valid_flipped_border<S1, S2, P1, P2>(input, kernel, conv, i, j);
+            }
+        }
+    }
+
+    // Do the central part of the valid convolution (no padding)
+
+    for (std::size_t i = P1; i < rows(conv) - P1; ++i) {
+        for (std::size_t j = P2; j < columns(conv) - P2; ++j) {
             auto i_i = i * S1;
             auto i_j = j * S2;
 
@@ -296,7 +345,7 @@ void conv2_valid_flipped(const I& input, const K& kernel, C&& conv) {
 
             for (std::size_t k = 0; k < rows(kernel); ++k) {
                 for (std::size_t l = 0; l < columns(kernel); ++l) {
-                    temp += input(i_i + k, i_j + l) * kernel(k, l);
+                    temp += input(i_i + k - P1, i_j + l - P2) * kernel(k, l);
                 }
             }
 
