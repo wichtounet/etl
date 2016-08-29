@@ -202,18 +202,18 @@ template <typename T>
 using is_etl_expr = cpp::bool_constant<decay_traits<T>::is_etl>;
 
 /*!
- * \brief Traits indicating if the given ETL type is a value type with direct access.
- * \tparam T The type to test
- */
-template <typename T>
-using is_etl_direct_value = cpp::or_c<is_fast_matrix<T>, is_dyn_matrix<T>>;
-
-/*!
  * \brief Traits indicating if the given ETL type is a value type.
  * \tparam T The type to test
  */
 template <typename T>
-using is_etl_value = cpp::or_c<is_fast_matrix<T>, is_dyn_matrix<T>, is_sparse_matrix<T>>;
+using is_etl_value = cpp::bool_constant<decay_traits<T>::is_value>;
+
+/*!
+ * \brief Traits indicating if the given ETL type is from a value class.
+ * \tparam T The type to test
+ */
+template <typename T>
+using is_etl_value_class = cpp::or_c<is_fast_matrix<T>, is_dyn_matrix<T>, is_sparse_matrix<T>>;
 
 /*!
  * \brief Traits indicating if the given ETL type can be left hand side type
@@ -498,7 +498,7 @@ struct inplace_sub_transpose_able<T, std::enable_if_t<!is_3d<T>::value>> {
  * \brief Specialization for value structures
  */
 template <typename T>
-struct etl_traits<T, std::enable_if_t<is_etl_value<T>::value>> {
+struct etl_traits<T, std::enable_if_t<is_etl_value_class<T>::value>> {
     static constexpr const bool is_etl                  = true;                     ///< Indicates if the type is an ETL expression
     static constexpr const bool is_transformer          = false;                    ///< Indicates if the type is a transformer
     static constexpr const bool is_view                 = false;                    ///< Indicates if the type is a view
