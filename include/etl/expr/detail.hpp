@@ -80,6 +80,14 @@ struct expr_result<E, true, Subs...> {
 template <typename E, typename... Subs>
 using expr_result_t = typename expr_result<E, all_fast<Subs...>::value, Subs...>::type;
 
+/*!
+ * \brief Helper traits to directly get the result type for an impl_expr. The result is forced to be dynamic.
+ * \tparam E The temporary expression type
+ * \tparam Subs The sub expressions
+ */
+template <typename E, typename... Subs>
+using dyn_expr_result_t = typename expr_result<E, false, Subs...>::type;
+
 } // end of namespace detail
 
 /*!
