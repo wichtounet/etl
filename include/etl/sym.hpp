@@ -193,18 +193,40 @@ private:
     matrix_t matrix; ///< The adapted matrix
 
 public:
+    /*!
+     * \brief Construct a new sym matrix and fill it with zeros
+     *
+     * This constructor can only be used when the matrix is fast
+     */
     sym_matrix() noexcept : matrix(value_type()) {
         //Nothing else to init
     }
 
+    /*!
+     * \brief Construct a new sym matrix and fill it witht the given value
+     *
+     * \param value The value to fill the matrix with
+     *
+     * This constructor can only be used when the matrix is fast
+     */
     sym_matrix(value_type value) noexcept : matrix(value) {
         //Nothing else to init
     }
 
+    /*!
+     * \brief Construct a new sym matrix and fill it with zeros
+     * \param dim The dimension of the matrix
+     */
     sym_matrix(std::size_t dim) noexcept : matrix(dim, dim, value_type()) {
         //Nothing else to init
     }
 
+    /*!
+     * \brief Construct a new sym matrix and fill it witht the given value
+     *
+     * \param value The value to fill the matrix with
+     * \param dim The dimension of the matrix
+     */
     sym_matrix(std::size_t dim, value_type value) noexcept : matrix(dim, dim, value) {
         //Nothing else to init
     }

@@ -42,6 +42,14 @@ private:
     const order storage_order; ///< The storage order
 
 public:
+    /*!
+     * \brief Create a new opaque memory
+     * \param memory The pointer to memory
+     * \param size The size of the memory
+     * \param dims The dimensions
+     * \param hander The GPU memory handler
+     * \param storage_order The Storage order
+     */
     opaque_memory(const T* memory, std::size_t size, const std::array<std::size_t, D>& dims, const gpu_handler<T>& handler, order storage_order)
             : memory(const_cast<T*>(memory)),
               etl_size(size),
@@ -76,6 +84,10 @@ public:
         return dims[DD];
     }
 
+    /*!
+     * \brief Returns the DDth dimension of the matrix
+     * \return The DDth dimension of the matrix
+     */
     std::size_t dim(std::size_t DD) const noexcept {
         return dims[DD];
     }
