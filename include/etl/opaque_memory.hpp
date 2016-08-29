@@ -47,7 +47,7 @@ public:
      * \param memory The pointer to memory
      * \param size The size of the memory
      * \param dims The dimensions
-     * \param hander The GPU memory handler
+     * \param handler The GPU memory handler
      * \param storage_order The Storage order
      */
     opaque_memory(const T* memory, std::size_t size, const std::array<std::size_t, D>& dims, const gpu_handler<T>& handler, order storage_order)
