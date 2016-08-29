@@ -362,6 +362,14 @@ public:
     const_memory_type memory_end() const noexcept {
         return matrix.memory_end();
     }
+
+    /*!
+     * \brief Return an opaque (type-erased) access to the memory of the matrix
+     * \return a structure containing the dimensions, the storage order and the memory pointers of the matrix
+     */
+    opaque_memory<T, n_dimensions> direct() const {
+        return matrix.direct();
+    }
 };
 
 template <typename Matrix>
