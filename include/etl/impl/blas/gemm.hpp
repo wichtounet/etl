@@ -225,18 +225,45 @@ void gevm(A&& a, B&& b, C&& c) {
 
 //COVERAGE_EXCLUDE_BEGIN
 
+/*!
+ * \brief Compute the matrix mutplication of a and b and store the result in c
+ * param a The lhs of the multiplication
+ * param b The rhs of the multiplication
+ * param c The result
+ */
 template <typename A, typename B, typename C>
-void gemm(A&&, B&&, C&&) {
+void gemm(A&& a, B&& b, C&& c) {
+    cpp_unused(a);
+    cpp_unused(b);
+    cpp_unused(c);
     cpp_unreachable("Unsupported feature called: blas gemm");
 }
 
+/*!
+ * \brief Compute the matrix-vector mutplication of a and b and store the result in c
+ * param a The lhs of the multiplication
+ * param b The rhs of the multiplication
+ * param c The result
+ */
 template <typename A, typename B, typename C>
-void gemv(A&&, B&&, C&&) {
+void gemv(A&& a, B&& b, C&& c) {
+    cpp_unused(a);
+    cpp_unused(b);
+    cpp_unused(c);
     cpp_unreachable("Unsupported feature called: blas gemm");
 }
 
+/*!
+ * \brief Compute the vector-matrix mutplication of a and b and store the result in c
+ * param a The lhs of the multiplication
+ * param b The rhs of the multiplication
+ * param c The result
+ */
 template <typename A, typename B, typename C>
-void gevm(A&&, B&&, C&&) {
+void gevm(A&& a, B&& b, C&& c) {
+    cpp_unused(a);
+    cpp_unused(b);
+    cpp_unused(c);
     cpp_unreachable("Unsupported feature called: blas gemm");
 }
 

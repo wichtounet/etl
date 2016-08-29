@@ -965,6 +965,12 @@ void conv2_full_fft(const opaque_memory<T, 2>& a, const opaque_memory<T, 2>& b, 
     detail::conv2_full_kernel(a.memory_start(), a.dim(0), a.dim(1), b.memory_start(), b.dim(0), b.dim(1), c.memory_start(), T(0.0));
 }
 
+/*!
+ * \brief Perform the 4D full convolution of a with b and store the result in c
+ * \param input The input matrix
+ * \param kernel The kernel matrix
+ * \param conv The output matrix
+ */
 template <typename T>
 void conv4_full_fft(const opaque_memory<T, 4>& input, const opaque_memory<T, 4>& kernel, const opaque_memory<T, 4>& conv) {
     if (kernel.dim(1) > 0) {

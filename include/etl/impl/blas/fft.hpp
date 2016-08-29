@@ -808,6 +808,12 @@ void conv2_full(A&& a, B&& b, C&& c) {
     cpp_unreachable("Unsupported feature called: mkl fft");
 }
 
+/*!
+ * \brief Perform the 4D full convolution of a with b and store the result in c
+ * \param a The input matrix
+ * \param b The kernel matrix
+ * \param c The output matrix
+ */
 template <typename A, typename B, typename C>
 void conv4_full(A&& a, B&& b, C&& c) {
     cpp_unused(a);

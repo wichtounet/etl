@@ -526,11 +526,19 @@ public:
         return etl_traits<TT>::dim(*this, DD);
     }
 
+    /*!
+     * \brief Returns all the Ith... dimensions in array
+     * \return an array containing the Ith... dimensions of the expression.
+     */
     template<std::size_t... I>
     std::array<std::size_t, decay_traits<this_type>::dimensions()> dim_array(std::index_sequence<I...>) const {
         return {{this->template dim<I>()...}};
     }
 
+    /*!
+     * \brief Return an opaque (type-erased) access to the memory of the matrix
+     * \return a structure containing the dimensions, the storage order and the memory pointers of the matrix
+     */
     opaque_memory<T, decay_traits<this_type>::dimensions()> direct() const {
         return {memory_start(), etl::size(*this),
             dim_array(std::make_index_sequence<decay_traits<this_type>::dimensions()>()),
@@ -570,10 +578,10 @@ private:
     Expr _value; ///< The sub expression
 
 public:
-    using value_type        = T;
-    using memory_type       = void;
-    using const_memory_type = void;
-    using expr_t            = Expr;
+    using value_type        = T;    ///< The value type of the expression
+    using memory_type       = void; ///< The memory type of the expression
+    using const_memory_type = void; ///< The const memory type of the expression
+    using expr_t            = Expr; ///< The sub expression type
 
     /*!
      * \brief Construct a new unary_expr from the given sub-expression
