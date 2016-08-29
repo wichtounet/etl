@@ -611,6 +611,10 @@ struct conv1_full_impl {
 
         cpp_assert(etl::dim(conv, 0) == etl::dim(input, 0) + etl::dim(kernel, 0) - 1, "Invalid dimensions for conv1_full");
         cpp_assert(etl::dim(input, 0) >= etl::dim(kernel, 0), "Invalid dimensions for conv1_full");
+
+        cpp_unused(input);
+        cpp_unused(kernel);
+        cpp_unused(conv);
     }
 
     /*!
@@ -633,7 +637,7 @@ struct conv1_full_impl {
     static size_t dim(size_t d, const I& input, const K& kernel){
         cpp_assert(d == 0, "Invalid dimensions access");
 
-        return etl::dim(input, 0) + etl::dim(kernel, 0) - 1;
+        return etl::dim(input, d) + etl::dim(kernel, d) - 1;
     }
 
     /*!
@@ -697,6 +701,10 @@ struct conv1_same_impl {
 
         cpp_assert(etl::dim(conv, 0) == etl::dim(input, 0), "Invalid dimensions for conv1_same");
         cpp_assert(etl::dim(input, 0) >= etl::dim(kernel, 0), "Invalid dimensions for conv1_same");
+
+        cpp_unused(input);
+        cpp_unused(kernel);
+        cpp_unused(conv);
     }
 
     /*!
@@ -718,8 +726,9 @@ struct conv1_same_impl {
     template <typename I, typename K>
     static size_t dim(size_t d, const I& input, const K& kernel){
         cpp_assert(d == 0, "Invalid dimensions access");
+        cpp_unused(kernel);
 
-        return etl::dim(input, 0);
+        return etl::dim(input, d);
     }
 
     /*!
@@ -783,6 +792,10 @@ struct conv1_valid_impl {
 
         cpp_assert(etl::dim(conv, 0) == etl::dim(input, 0) - etl::dim(kernel, 0) + 1, "Invalid dimensions for conv1_valid");
         cpp_assert(etl::dim(input, 0) >= etl::dim(kernel, 0), "Invalid dimensions for conv1_valid");
+
+        cpp_unused(input);
+        cpp_unused(kernel);
+        cpp_unused(conv);
     }
 
     /*!
@@ -805,7 +818,7 @@ struct conv1_valid_impl {
     static size_t dim(size_t d, const I& input, const K& kernel){
         cpp_assert(d == 0, "Invalid dimensions access");
 
-        return etl::dim(input, 0) - etl::dim(kernel, 0) + 1;
+        return etl::dim(input, d) - etl::dim(kernel, d) + 1;
     }
 
     /*!
@@ -876,6 +889,10 @@ struct conv2_full_impl {
         cpp_assert(etl::dim(conv, 1) == etl::dim(input, 1) + etl::dim(kernel, 1) - 1, "Invalid dimensions for conv2_full");
         cpp_assert(etl::dim(input, 0) >= etl::dim(kernel, 0), "Invalid dimensions for conv2_full");
         cpp_assert(etl::dim(input, 1) >= etl::dim(kernel, 1), "Invalid dimensions for conv2_full");
+
+        cpp_unused(input);
+        cpp_unused(kernel);
+        cpp_unused(conv);
     }
 
     /*!
@@ -1038,6 +1055,10 @@ struct conv2_same_impl {
         cpp_assert(etl::dim(conv, 1) == etl::dim(input, 1), "Invalid dimensions for conv2_same");
         cpp_assert(etl::dim(input, 0) >= etl::dim(kernel, 0), "Invalid dimensions for conv2_same");
         cpp_assert(etl::dim(input, 1) >= etl::dim(kernel, 1), "Invalid dimensions for conv2_same");
+
+        cpp_unused(input);
+        cpp_unused(kernel);
+        cpp_unused(conv);
     }
 
     /*!
@@ -1061,6 +1082,7 @@ struct conv2_same_impl {
     template <typename I, typename K>
     static size_t dim(size_t d, const I& input, const K& kernel){
         cpp_assert(d < 2, "Invalid dimensions access");
+        cpp_unused(kernel);
 
         return etl::dim(input, d);
     }
@@ -1165,6 +1187,10 @@ struct conv2_valid_impl {
         cpp_assert(etl::dim(conv, 1) == (etl::dim(input, 1) - etl::dim(kernel, 1)) / S2 + 1, "Invalid dimensions for conv2_valid");
         cpp_assert(etl::dim(input, 0) >= etl::dim(kernel, 0), "Invalid dimensions for conv2_valid");
         cpp_assert(etl::dim(input, 1) >= etl::dim(kernel, 1), "Invalid dimensions for conv2_valid");
+
+        cpp_unused(input);
+        cpp_unused(kernel);
+        cpp_unused(conv);
     }
 
     /*!
@@ -1297,6 +1323,10 @@ struct conv4_valid_impl {
         cpp_assert(etl::dim(conv, 3) == etl::dim(input, 3) - etl::dim(kernel, 3) + 1, "Invalid dimensions for conv4_valid");
         cpp_assert(etl::dim(input, 2) >= etl::dim(kernel, 2), "Invalid dimensions for conv4_valid");
         cpp_assert(etl::dim(input, 3) >= etl::dim(kernel, 3), "Invalid dimensions for conv4_valid");
+
+        cpp_unused(input);
+        cpp_unused(kernel);
+        cpp_unused(conv);
     }
 
     /*!
@@ -1637,6 +1667,10 @@ struct conv4_full_impl {
         cpp_assert(etl::dim(conv, 3) == etl::dim(input, 3) + etl::dim(kernel, 3) - 1, "Invalid dimensions for conv4_full");
         cpp_assert(etl::dim(input, 2) >= etl::dim(kernel, 2), "Invalid dimensions for conv4_full");
         cpp_assert(etl::dim(input, 3) >= etl::dim(kernel, 3), "Invalid dimensions for conv4_full");
+
+        cpp_unused(input);
+        cpp_unused(kernel);
+        cpp_unused(conv);
     }
 
     /*!
@@ -1816,6 +1850,10 @@ struct conv2_valid_multi_impl {
         cpp_assert(etl::dim(conv, 2) == etl::dim(input, 1) - etl::dim(kernel, 2) + 1, "Invalid dimensions for conv2_valid_multi");
         cpp_assert(etl::dim(input, 0) >= etl::dim(kernel, 1), "Invalid dimensions for conv2_valid_multi");
         cpp_assert(etl::dim(input, 1) >= etl::dim(kernel, 2), "Invalid dimensions for conv2_valid_multi");
+
+        cpp_unused(input);
+        cpp_unused(kernel);
+        cpp_unused(conv);
     }
 
     /*!
@@ -1992,6 +2030,10 @@ struct conv_deep_valid_impl {
         cpp_assert(etl::dim(conv, n - 2) == etl::dim(input, n - 2) - etl::dim(kernel, n - 2) + 1, "Invalid dimensions for conv_deep_valid");
         cpp_assert(etl::dim(input, n - 1) >= etl::dim(kernel, n - 1), "Invalid dimensions for conv_deep_valid");
         cpp_assert(etl::dim(input, n - 2) >= etl::dim(kernel, n - 2), "Invalid dimensions for conv_deep_valid");
+
+        cpp_unused(input);
+        cpp_unused(kernel);
+        cpp_unused(conv);
     }
 
     /*!
@@ -2084,6 +2126,10 @@ struct conv_deep_same_impl {
         cpp_assert(etl::dim(conv, n - 2) == etl::dim(input, n - 2), "Invalid dimensions for conv_deep_same");
         cpp_assert(etl::dim(input, n - 1) >= etl::dim(kernel, n - 1), "Invalid dimensions for conv_deep_same");
         cpp_assert(etl::dim(input, n - 2) >= etl::dim(kernel, n - 2), "Invalid dimensions for conv_deep_same");
+
+        cpp_unused(input);
+        cpp_unused(kernel);
+        cpp_unused(conv);
     }
 
     /*!
@@ -2108,6 +2154,7 @@ struct conv_deep_same_impl {
      */
     template <typename I, typename K>
     static size_t dim(size_t d, const I& input, const K& kernel){
+        cpp_unused(kernel);
         return etl::dim(input, d);
     }
 
@@ -2172,6 +2219,10 @@ struct conv_deep_full_impl {
         cpp_assert(etl::dim(conv, n - 2) == etl::dim(input, n - 2) + etl::dim(kernel, n - 2) - 1, "Invalid dimensions for conv_deep_full");
         cpp_assert(etl::dim(input, n - 1) >= etl::dim(kernel, n - 1), "Invalid dimensions for conv_deep_full");
         cpp_assert(etl::dim(input, n - 2) >= etl::dim(kernel, n - 2), "Invalid dimensions for conv_deep_full");
+
+        cpp_unused(input);
+        cpp_unused(kernel);
+        cpp_unused(conv);
     }
 
     /*!
@@ -2261,6 +2312,10 @@ struct conv2_full_multi_impl {
         cpp_assert(etl::dim(conv, 2) == etl::dim(input, 1) + etl::dim(kernel, 2) - 1, "Invalid dimensions for conv2_full_multi");
         cpp_assert(etl::dim(input, 0) >= etl::dim(kernel, 1), "Invalid dimensions for conv2_full_multi");
         cpp_assert(etl::dim(input, 1) >= etl::dim(kernel, 2), "Invalid dimensions for conv2_full_multi");
+
+        cpp_unused(input);
+        cpp_unused(kernel);
+        cpp_unused(conv);
     }
 
     /*!
@@ -2427,6 +2482,10 @@ struct conv2_same_multi_impl {
         cpp_assert(etl::dim(conv, 2) == etl::dim(input, 1), "Invalid dimensions for conv2_same_multi");
         cpp_assert(etl::dim(input, 0) >= etl::dim(kernel, 1), "Invalid dimensions for conv2_same_multi");
         cpp_assert(etl::dim(input, 1) >= etl::dim(kernel, 2), "Invalid dimensions for conv2_same_multi");
+
+        cpp_unused(input);
+        cpp_unused(kernel);
+        cpp_unused(conv);
     }
 
     /*!
