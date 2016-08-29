@@ -18,12 +18,12 @@
 #define TEST_CUDNN
 #endif
 
-#define CONV_FUNCTOR(name, ...)                                                     \
-    struct name {                                                                   \
-        template <size_t S1 = 1, size_t S2 = 1, typename A, typename B, typename C> \
-        static void apply(A&& a, B&& b, C&& c) {                                    \
-            __VA_ARGS__;                                                            \
-        }                                                                           \
+#define CONV_FUNCTOR(name, ...)                                                                                   \
+    struct name {                                                                                                 \
+        template <size_t S1 = 1, size_t S2 = 1, size_t P1 = 0, size_t P2 = 0, typename A, typename B, typename C> \
+        static void apply(A&& a, B&& b, C&& c) {                                                                  \
+            __VA_ARGS__;                                                                                          \
+        }                                                                                                         \
     };
 
 CONV_FUNCTOR(default_conv1_full, c = etl::conv_1d_full(a, b))
@@ -55,11 +55,11 @@ CONV_FUNCTOR(std_conv2_same_multi, etl::impl::standard::conv2_same_multi(a, b, c
 CONV_FUNCTOR(default_conv2_same_multi_flipped, c = etl::conv_2d_same_multi_flipped(a, b))
 CONV_FUNCTOR(std_conv2_same_multi_flipped, etl::impl::standard::conv2_same_multi_flipped(a, b, c))
 
-CONV_FUNCTOR(default_conv2_valid, c = etl::conv_2d_valid<S1, S2>(a, b))
-CONV_FUNCTOR(std_conv2_valid, c = selected_helper(etl::conv_impl::STD, (etl::conv_2d_valid<S1, S2>(a, b))))
+CONV_FUNCTOR(default_conv2_valid, c = etl::conv_2d_valid<S1, S2, P1, P2>(a, b))
+CONV_FUNCTOR(std_conv2_valid, c = selected_helper(etl::conv_impl::STD, (etl::conv_2d_valid<S1, S2, P1, P2>(a, b))))
 
-CONV_FUNCTOR(default_conv2_valid_flipped, c = etl::conv_2d_valid_flipped<S1, S2>(a, b))
-CONV_FUNCTOR(std_conv2_valid_flipped, c = selected_helper(etl::conv_impl::STD, (etl::conv_2d_valid_flipped<S1, S2>(a, b))))
+CONV_FUNCTOR(default_conv2_valid_flipped, c = etl::conv_2d_valid_flipped<S1, S2, P1, P2>(a, b))
+CONV_FUNCTOR(std_conv2_valid_flipped, c = selected_helper(etl::conv_impl::STD, (etl::conv_2d_valid_flipped<S1, S2, P1, P2>(a, b))))
 
 CONV_FUNCTOR(default_conv4_valid, c = etl::conv_4d_valid(a, b))
 CONV_FUNCTOR(std_conv4_valid, c = selected_helper(etl::conv4_impl::STD, etl::conv_4d_valid(a, b)))
@@ -201,8 +201,8 @@ CONV_FUNCTOR(sse_conv2_full, c = selected_helper(etl::conv_impl::SSE, etl::conv_
 CONV_FUNCTOR(sse_conv2_full_flipped, c = selected_helper(etl::conv_impl::SSE, etl::conv_2d_full_flipped(a, b)))
 CONV_FUNCTOR(sse_conv2_same, c = selected_helper(etl::conv_impl::SSE, etl::conv_2d_same(a, b)))
 CONV_FUNCTOR(sse_conv2_same_flipped, c = selected_helper(etl::conv_impl::SSE, etl::conv_2d_same_flipped(a, b)))
-CONV_FUNCTOR(sse_conv2_valid, c = selected_helper(etl::conv_impl::SSE, (etl::conv_2d_valid<S1, S2>(a, b))))
-CONV_FUNCTOR(sse_conv2_valid_flipped, c = selected_helper(etl::conv_impl::SSE, (etl::conv_2d_valid_flipped<S1, S2>(a, b))))
+CONV_FUNCTOR(sse_conv2_valid, c = selected_helper(etl::conv_impl::SSE, (etl::conv_2d_valid<S1, S2, P1, P2>(a, b))))
+CONV_FUNCTOR(sse_conv2_valid_flipped, c = selected_helper(etl::conv_impl::SSE, (etl::conv_2d_valid_flipped<S1, S2, P1, P2>(a, b))))
 
 CONV_FUNCTOR(sse_conv2_full_multi, c = selected_helper(etl::conv_impl::SSE, etl::conv_2d_full_multi(a, b)))
 CONV_FUNCTOR(sse_conv2_full_multi_flipped, c = selected_helper(etl::conv_impl::SSE, etl::conv_2d_full_multi_flipped(a, b)))
@@ -278,8 +278,8 @@ CONV_FUNCTOR(avx_conv2_full, c = selected_helper(etl::conv_impl::AVX, etl::conv_
 CONV_FUNCTOR(avx_conv2_full_flipped, c = selected_helper(etl::conv_impl::AVX, etl::conv_2d_full_flipped(a, b)))
 CONV_FUNCTOR(avx_conv2_same, c = selected_helper(etl::conv_impl::AVX, etl::conv_2d_same(a, b)))
 CONV_FUNCTOR(avx_conv2_same_flipped, c = selected_helper(etl::conv_impl::AVX, etl::conv_2d_same_flipped(a, b)))
-CONV_FUNCTOR(avx_conv2_valid, c = selected_helper(etl::conv_impl::AVX, (etl::conv_2d_valid<S1, S2>(a, b))))
-CONV_FUNCTOR(avx_conv2_valid_flipped, c = selected_helper(etl::conv_impl::AVX, (etl::conv_2d_valid_flipped<S1, S2>(a, b))))
+CONV_FUNCTOR(avx_conv2_valid, c = selected_helper(etl::conv_impl::AVX, (etl::conv_2d_valid<S1, S2, P1, P2>(a, b))))
+CONV_FUNCTOR(avx_conv2_valid_flipped, c = selected_helper(etl::conv_impl::AVX, (etl::conv_2d_valid_flipped<S1, S2, P1, P2>(a, b))))
 
 CONV_FUNCTOR(avx_conv2_full_multi, c = selected_helper(etl::conv_impl::AVX, etl::conv_2d_full_multi(a, b)))
 CONV_FUNCTOR(avx_conv2_full_multi_flipped, c = selected_helper(etl::conv_impl::AVX, etl::conv_2d_full_multi_flipped(a, b)))
@@ -349,8 +349,8 @@ CONV_FUNCTOR(avx_conv4_full_flipped, c = selected_helper(etl::conv4_impl::AVX, e
 #ifdef TEST_CUDNN
 CONV_FUNCTOR(cudnn_conv2_full, c = selected_helper(etl::conv_impl::CUDNN, etl::conv_2d_full(a, b)))
 CONV_FUNCTOR(cudnn_conv2_full_flipped, c = selected_helper(etl::conv_impl::CUDNN, etl::conv_2d_full_flipped(a, b)))
-CONV_FUNCTOR(cudnn_conv2_valid, c = selected_helper(etl::conv_impl::CUDNN, (etl::conv_2d_valid<S1, S2>(a, b))))
-CONV_FUNCTOR(cudnn_conv2_valid_flipped, c = selected_helper(etl::conv_impl::CUDNN, (etl::conv_2d_valid_flipped<S1, S2>(a, b))))
+CONV_FUNCTOR(cudnn_conv2_valid, c = selected_helper(etl::conv_impl::CUDNN, (etl::conv_2d_valid<S1, S2, P1, P2>(a, b))))
+CONV_FUNCTOR(cudnn_conv2_valid_flipped, c = selected_helper(etl::conv_impl::CUDNN, (etl::conv_2d_valid_flipped<S1, S2, P1, P2>(a, b))))
 CONV_FUNCTOR(cudnn_conv4_valid, c = selected_helper(etl::conv4_impl::CUDNN, etl::conv_4d_valid(a, b)))
 CONV_FUNCTOR(cudnn_conv4_valid_flipped, c = selected_helper(etl::conv4_impl::CUDNN, etl::conv_4d_valid_flipped(a, b)))
 CONV_FUNCTOR(cudnn_conv4_valid_filter, c = selected_helper(etl::conv4_impl::CUDNN, etl::conv_4d_valid_filter(a, b)))
