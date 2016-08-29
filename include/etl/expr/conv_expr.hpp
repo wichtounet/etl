@@ -19,12 +19,12 @@ namespace etl {
  * \tparam TT The convolution type
  * \tparam Impl The implementation class
  */
-template <typename T, std::size_t D, conv_type TT, typename Impl, std::size_t C4 = 0>
-struct basic_conv_expr : impl_expr<basic_conv_expr<T, D, TT, Impl, C4>> {
+template <typename T, std::size_t D, conv_type TT, typename Impl>
+struct basic_conv_expr : impl_expr<basic_conv_expr<T, D, TT, Impl>> {
     static_assert(D > 0, "0D convolution is not valid");
 
     using value_type = T;                                   ///< The type of value of the expression
-    using this_type  = basic_conv_expr<T, D, TT, Impl, C4>; ///< The type of this expression
+    using this_type  = basic_conv_expr<T, D, TT, Impl>; ///< The type of this expression
 
     static constexpr const bool is_gpu = is_cufft_enabled || is_cudnn_enabled; ///< Indicates if the expression runs on GPU
 
@@ -156,7 +156,7 @@ struct basic_conv_expr : impl_expr<basic_conv_expr<T, D, TT, Impl, C4>> {
      * \return the number of dimensions of the expression
      */
     static constexpr std::size_t dimensions() {
-        return is_multi(TT) ? D + 1 : D;
+        return D;
     }
 };
 
@@ -198,73 +198,73 @@ using conv2_valid_flipped_expr = basic_conv_expr<T, 2, conv_type::VALID, detail:
  * \brief Expression for 4D valid convolution
  */
 template <typename T>
-using conv4_valid_expr = basic_conv_expr<T, 4, conv_type::VALID, detail::conv4_valid_impl, 1>;
+using conv4_valid_expr = basic_conv_expr<T, 4, conv_type::VALID, detail::conv4_valid_impl>;
 
 /*!
  * \brief Expression for 4D valid convolution
  */
 template <typename T>
-using conv4_valid_filter_expr = basic_conv_expr<T, 4, conv_type::VALID, detail::conv4_valid_filter_impl, 2>;
+using conv4_valid_filter_expr = basic_conv_expr<T, 4, conv_type::VALID, detail::conv4_valid_filter_impl>;
 
 /*!
  * \brief Expression for 4D valid convolution
  */
 template <typename T>
-using conv4_valid_filter_flipped_expr = basic_conv_expr<T, 4, conv_type::VALID, detail::conv4_valid_filter_flipped_impl, 2>;
+using conv4_valid_filter_flipped_expr = basic_conv_expr<T, 4, conv_type::VALID, detail::conv4_valid_filter_flipped_impl>;
 
 /*!
  * \brief Expression for 4D valid convolution
  */
 template <typename T>
-using conv4_full_expr = basic_conv_expr<T, 4, conv_type::FULL, detail::conv4_full_impl, 1>;
+using conv4_full_expr = basic_conv_expr<T, 4, conv_type::FULL, detail::conv4_full_impl>;
 
 /*!
  * \brief Expression for 4D valid convolution
  */
 template <typename T>
-using conv4_valid_flipped_expr = basic_conv_expr<T, 4, conv_type::VALID, detail::conv4_valid_flipped_impl, 1>;
+using conv4_valid_flipped_expr = basic_conv_expr<T, 4, conv_type::VALID, detail::conv4_valid_flipped_impl>;
 
 /*!
  * \brief Expression for 4D valid convolution
  */
 template <typename T>
-using conv4_full_flipped_expr = basic_conv_expr<T, 4, conv_type::FULL, detail::conv4_full_flipped_impl, 1>;
+using conv4_full_flipped_expr = basic_conv_expr<T, 4, conv_type::FULL, detail::conv4_full_flipped_impl>;
 
 /*!
  * \brief Expression for 2D valid convolution, with multiple kernels
  */
 template <typename T>
-using conv2_valid_multi_expr = basic_conv_expr<T, 2, conv_type::VALID_MULTI, detail::conv2_valid_multi_impl>;
+using conv2_valid_multi_expr = basic_conv_expr<T, 3, conv_type::VALID_MULTI, detail::conv2_valid_multi_impl>;
 
 /*!
  * \brief Expression for 2D valid convolution, with multiple flipped kernels
  */
 template <typename T>
-using conv2_valid_multi_flipped_expr = basic_conv_expr<T, 2, conv_type::VALID_MULTI, detail::conv2_valid_multi_flipped_impl>;
+using conv2_valid_multi_flipped_expr = basic_conv_expr<T, 3, conv_type::VALID_MULTI, detail::conv2_valid_multi_flipped_impl>;
 
 /*!
  * \brief Expression for 2D same convolution, with multiple kernels
  */
 template <typename T>
-using conv2_same_multi_expr = basic_conv_expr<T, 2, conv_type::SAME_MULTI, detail::conv2_same_multi_impl>;
+using conv2_same_multi_expr = basic_conv_expr<T, 3, conv_type::SAME_MULTI, detail::conv2_same_multi_impl>;
 
 /*!
  * \brief Expression for 2D same convolution, with multiple flipped kernels
  */
 template <typename T>
-using conv2_same_multi_flipped_expr = basic_conv_expr<T, 2, conv_type::SAME_MULTI, detail::conv2_same_multi_flipped_impl>;
+using conv2_same_multi_flipped_expr = basic_conv_expr<T, 3, conv_type::SAME_MULTI, detail::conv2_same_multi_flipped_impl>;
 
 /*!
  * \brief Expression for 2D full convolution, with multiple kernels
  */
 template <typename T>
-using conv2_full_multi_expr = basic_conv_expr<T, 2, conv_type::FULL_MULTI, detail::conv2_full_multi_impl>;
+using conv2_full_multi_expr = basic_conv_expr<T, 3, conv_type::FULL_MULTI, detail::conv2_full_multi_impl>;
 
 /*!
  * \brief Expression for 2D full convolution, with multiple flipped kernels
  */
 template <typename T>
-using conv2_full_multi_flipped_expr = basic_conv_expr<T, 2, conv_type::FULL_MULTI, detail::conv2_full_multi_flipped_impl>;
+using conv2_full_multi_flipped_expr = basic_conv_expr<T, 3, conv_type::FULL_MULTI, detail::conv2_full_multi_flipped_impl>;
 
 /*!
  * \brief Expression for 2D same convolution
