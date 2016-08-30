@@ -451,7 +451,7 @@ struct optimizer<etl::binary_expr<T, LeftExpr, BinaryOp, RightExpr>> {
 template <typename T, typename A, typename Op>
 struct optimizer<etl::temporary_unary_expr<T, A, Op>> {
     template <typename Builder>
-    static void is(Builder parent_builder, etl::temporary_unary_expr<T, A, Op>& expr) {
+    static void apply(Builder parent_builder, etl::temporary_unary_expr<T, A, Op>& expr) {
         if (is_optimizable_deep(expr.a())) {
             auto lhs_builder = [&](auto&& new_lhs) {
                 parent_builder(etl::temporary_unary_expr<T, etl::detail::build_type<decltype(new_lhs)>, Op>(new_lhs));
