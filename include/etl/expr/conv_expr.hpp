@@ -68,15 +68,15 @@ struct basic_conv_expr : impl_expr<basic_conv_expr<T, D, Impl>> {
      * \param c The expression where to store the results
      */
     template <typename A, typename B, typename C>
-    static void apply(A&& a, B&& b, C&& c) {
+    static void apply(const A& a, const B& b, C& c) {
         static_assert(all_etl_expr<A, B, C>::value, "Convolution only supported for ETL expressions");
 
         check(a, b, c);
 
         Impl::apply(
-            make_temporary(std::forward<A>(a)),
-            make_temporary(std::forward<B>(b)),
-            std::forward<C>(c));
+            make_temporary(a),
+            make_temporary(b),
+            c);
     }
 
     /*!
@@ -224,15 +224,15 @@ struct dyn_basic_conv_expr {
      * \param c The expression where to store the results
      */
     template <typename A, typename B, typename C>
-    void apply(A&& a, B&& b, C&& c) const {
+    void apply(const A& a, const B& b, C& c) const {
         static_assert(all_etl_expr<A, B, C>::value, "Convolution only supported for ETL expressions");
 
         impl.check(a, b, c);
 
         impl.apply(
-            make_temporary(std::forward<A>(a)),
-            make_temporary(std::forward<B>(b)),
-            std::forward<C>(c));
+            make_temporary(a),
+            make_temporary(b),
+            c);
     }
 
     /*!

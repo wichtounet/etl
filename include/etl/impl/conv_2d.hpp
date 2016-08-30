@@ -27,7 +27,7 @@ struct conv2_full_impl {
      * \param conv The output expression
      */
     template <typename I, typename K, typename C>
-    static void apply(const I& input, const K& kernel, C&& conv) {
+    static void apply(const I& input, const K& kernel, C& conv) {
         etl::conv_impl impl = select_conv_impl<conv_type::FULL, I, K, C>();
 
         auto i = input.direct();
@@ -126,7 +126,7 @@ struct conv2_full_flipped_impl {
      * \param conv The output expression
      */
     template <typename I, typename K, typename C>
-    static void apply(const I& input, const K& kernel, C&& conv) {
+    static void apply(const I& input, const K& kernel, C& conv) {
         etl::conv_impl impl = select_conv_impl<conv_type::FULL, I, K, C>();
 
         auto i = input.direct();
@@ -201,7 +201,7 @@ struct conv2_same_impl {
      * \param conv The output expression
      */
     template <typename I, typename K, typename C>
-    static void apply(const I& input, const K& kernel, C&& conv) {
+    static void apply(const I& input, const K& kernel, C& conv) {
         etl::conv_impl impl = select_conv_impl<conv_type::SAME, I, K, C>();
 
         auto i = input.direct();
@@ -293,7 +293,7 @@ struct conv2_same_flipped_impl : conv2_same_impl {
      * \param conv The output expression
      */
     template <typename I, typename K, typename C>
-    static void apply(const I& input, const K& kernel, C&& conv) {
+    static void apply(const I& input, const K& kernel, C& conv) {
         etl::conv_impl impl = select_conv_impl<conv_type::SAME, I, K, C>();
 
         auto i = input.direct();
@@ -331,7 +331,7 @@ struct conv2_valid_impl {
      * \param conv The output expression
      */
     template <typename I, typename K, typename C>
-    static void apply(const I& input, const K& kernel, C&& conv) {
+    static void apply(const I& input, const K& kernel, C& conv) {
         etl::conv_impl impl = select_conv_impl<conv_type::VALID, I, K, C>();
 
         auto i = input.direct();
@@ -430,7 +430,7 @@ struct conv2_valid_flipped_impl : conv2_valid_impl<S1, S2, P1, P2> {
      * \param conv The output expression
      */
     template <typename I, typename K, typename C>
-    static void apply(const I& input, const K& kernel, C&& conv) {
+    static void apply(const I& input, const K& kernel, C& conv) {
         etl::conv_impl impl = select_conv_impl<conv_type::VALID, I, K, C>();
 
         auto i = input.direct();
@@ -485,7 +485,7 @@ struct dyn_conv2_valid_impl {
      * \param conv The output expression
      */
     template <typename I, typename K, typename C>
-    void apply(const I& input, const K& kernel, C&& conv) const {
+    void apply(const I& input, const K& kernel, C& conv) const {
         etl::conv_impl impl = select_conv_impl<conv_type::VALID, I, K, C>();
 
         auto i = input.direct();
@@ -573,7 +573,7 @@ struct dyn_conv2_valid_flipped_impl {
      * \param conv The output expression
      */
     template <typename I, typename K, typename C>
-    void apply(const I& input, const K& kernel, C&& conv) const {
+    void apply(const I& input, const K& kernel, C& conv) const {
         etl::conv_impl impl = select_conv_impl<conv_type::VALID, I, K, C>();
 
         auto i = input.direct();
