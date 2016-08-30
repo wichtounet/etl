@@ -57,7 +57,9 @@ struct conv4_valid_impl {
         static_assert(etl::dimensions<K>() == 4, "Invalid number of dimensions for kernel of conv4_valid");
         static_assert(etl::dimensions<C>() == 4, "Invalid number of dimensions for conv of conv4_valid");
 
-        // TODO Not complete
+        cpp_assert(etl::dim(conv, 0) == etl::dim(input, 0), "Invalid dimensions for conv4_valid");
+        cpp_assert(etl::dim(conv, 1) == etl::dim(kernel, 0), "Invalid dimensions for conv4_valid");
+        cpp_assert(etl::dim(input, 1) == etl::dim(kernel, 1), "Invalid dimensions for conv4_valid");
 
         cpp_assert(etl::dim(conv, 2) == etl::dim(input, 2) - etl::dim(kernel, 2) + 1, "Invalid dimensions for conv4_valid");
         cpp_assert(etl::dim(conv, 3) == etl::dim(input, 3) - etl::dim(kernel, 3) + 1, "Invalid dimensions for conv4_valid");
@@ -78,7 +80,9 @@ struct conv4_valid_impl {
         static_assert(etl::dimensions<K>() == 4, "Invalid number of dimensions for kernel of conv4_valid");
         static_assert(etl::dimensions<C>() == 4, "Invalid number of dimensions for conv of conv4_valid");
 
-        // TODO Not complete
+        static_assert(etl::dim<0,C>() == etl::dim<0,I>(), "Invalid dimensions for conv4_valid");
+        static_assert(etl::dim<1,C>() == etl::dim<0,K>(), "Invalid dimensions for conv4_valid");
+        static_assert(etl::dim<1,I>() == etl::dim<1,K>(), "Invalid dimensions for conv4_valid");
 
         static_assert(etl::dim<2,C>() == etl::dim<2,I>() - etl::dim<2,K>() + 1, "Invalid dimensions for conv4_valid");
         static_assert(etl::dim<3,C>() == etl::dim<3,I>() - etl::dim<3,K>() + 1, "Invalid dimensions for conv4_valid");
@@ -233,7 +237,22 @@ struct conv4_valid_filter_impl {
      */
     template <typename I, typename K, typename C>
     static void check(const I& input, const K& kernel, const C& conv){
-        conv4_valid_impl::check(input, kernel, conv);
+        static_assert(etl::dimensions<I>() == 4, "Invalid number of dimensions for input of conv4_valid");
+        static_assert(etl::dimensions<K>() == 4, "Invalid number of dimensions for kernel of conv4_valid");
+        static_assert(etl::dimensions<C>() == 4, "Invalid number of dimensions for conv of conv4_valid");
+
+        cpp_assert(etl::dim(conv, 0) == etl::dim(kernel, 1), "Invalid dimensions for conv4_valid");
+        cpp_assert(etl::dim(conv, 1) == etl::dim(input, 1), "Invalid dimensions for conv4_valid");
+        cpp_assert(etl::dim(input, 0) == etl::dim(kernel, 0), "Invalid dimensions for conv4_valid");
+
+        cpp_assert(etl::dim(conv, 2) == etl::dim(input, 2) - etl::dim(kernel, 2) + 1, "Invalid dimensions for conv4_valid");
+        cpp_assert(etl::dim(conv, 3) == etl::dim(input, 3) - etl::dim(kernel, 3) + 1, "Invalid dimensions for conv4_valid");
+        cpp_assert(etl::dim(input, 2) >= etl::dim(kernel, 2), "Invalid dimensions for conv4_valid");
+        cpp_assert(etl::dim(input, 3) >= etl::dim(kernel, 3), "Invalid dimensions for conv4_valid");
+
+        cpp_unused(input);
+        cpp_unused(kernel);
+        cpp_unused(conv);
     }
 
     /*!
@@ -241,7 +260,18 @@ struct conv4_valid_filter_impl {
      */
     template <typename I, typename K, typename C>
     static void check(){
-        conv4_valid_impl::template check<I, K, C>();
+        static_assert(etl::dimensions<I>() == 4, "Invalid number of dimensions for input of conv4_valid");
+        static_assert(etl::dimensions<K>() == 4, "Invalid number of dimensions for kernel of conv4_valid");
+        static_assert(etl::dimensions<C>() == 4, "Invalid number of dimensions for conv of conv4_valid");
+
+        static_assert(etl::dim<0,C>() == etl::dim<1,K>(), "Invalid dimensions for conv4_valid");
+        static_assert(etl::dim<1,C>() == etl::dim<1,I>(), "Invalid dimensions for conv4_valid");
+        static_assert(etl::dim<0,I>() == etl::dim<0,K>(), "Invalid dimensions for conv4_valid");
+
+        static_assert(etl::dim<2,C>() == etl::dim<2,I>() - etl::dim<2,K>() + 1, "Invalid dimensions for conv4_valid");
+        static_assert(etl::dim<3,C>() == etl::dim<3,I>() - etl::dim<3,K>() + 1, "Invalid dimensions for conv4_valid");
+        static_assert(etl::dim<2,I>() >= etl::dim<2,K>(), "Invalid dimensions for conv4_valid");
+        static_assert(etl::dim<3,I>() >= etl::dim<3,K>(), "Invalid dimensions for conv4_valid");
     }
 
     /*!
@@ -312,7 +342,7 @@ struct conv4_valid_filter_flipped_impl {
      */
     template <typename I, typename K, typename C>
     static void check(const I& input, const K& kernel, const C& conv){
-        conv4_valid_impl::check(input, kernel, conv);
+        conv4_valid_filter_impl::check(input, kernel, conv);
     }
 
     /*!
@@ -320,7 +350,7 @@ struct conv4_valid_filter_flipped_impl {
      */
     template <typename I, typename K, typename C>
     static void check(){
-        conv4_valid_impl::template check<I, K, C>();
+        conv4_valid_filter_impl::template check<I, K, C>();
     }
 
     /*!
@@ -401,7 +431,9 @@ struct conv4_full_impl {
         static_assert(etl::dimensions<K>() == 4, "Invalid number of dimensions for kernel of conv4_full");
         static_assert(etl::dimensions<C>() == 4, "Invalid number of dimensions for conv of conv4_full");
 
-        // TODO Not complete
+        cpp_assert(etl::dim(conv, 0) == etl::dim(input, 0), "Invalid dimensions for conv4_full");
+        cpp_assert(etl::dim(conv, 1) == etl::dim(kernel, 1), "Invalid dimensions for conv4_full");
+        cpp_assert(etl::dim(input, 1) == etl::dim(kernel, 0), "Invalid dimensions for conv4_full");
 
         cpp_assert(etl::dim(conv, 2) == etl::dim(input, 2) + etl::dim(kernel, 2) - 1, "Invalid dimensions for conv4_full");
         cpp_assert(etl::dim(conv, 3) == etl::dim(input, 3) + etl::dim(kernel, 3) - 1, "Invalid dimensions for conv4_full");
@@ -422,7 +454,9 @@ struct conv4_full_impl {
         static_assert(etl::dimensions<K>() == 4, "Invalid number of dimensions for kernel of conv4_full");
         static_assert(etl::dimensions<C>() == 4, "Invalid number of dimensions for conv of conv4_full");
 
-        // TODO Not complete
+        static_assert(etl::dim<0,C>() == etl::dim<0,I>(), "Invalid dimensions for conv4_full");
+        static_assert(etl::dim<1,C>() == etl::dim<1,K>(), "Invalid dimensions for conv4_full");
+        static_assert(etl::dim<1,I>() == etl::dim<0,K>(), "Invalid dimensions for conv4_full");
 
         static_assert(etl::dim<2,C>() == etl::dim<2,I>() + etl::dim<2,K>() - 1, "Invalid dimensions for conv4_full");
         static_assert(etl::dim<3,C>() == etl::dim<3,I>() + etl::dim<3,K>() - 1, "Invalid dimensions for conv4_full");
