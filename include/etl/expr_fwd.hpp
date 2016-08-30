@@ -49,8 +49,14 @@ struct temporary_expr_bin;
 template <typename T, typename AExpr, typename Op>
 struct temporary_unary_expr;
 
+template <typename T, typename AExpr, typename Op>
+struct temporary_unary_expr_state;
+
 template <typename T, typename AExpr, typename BExpr, typename Op>
 struct temporary_binary_expr;
+
+template <typename T, typename AExpr, typename BExpr, typename Op>
+struct temporary_binary_expr_state;
 
 template <typename T, std::size_t D>
 struct dim_view;

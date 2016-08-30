@@ -157,14 +157,18 @@ using is_wrapper_expr = cpp::or_c<is_optimized_expr<T>, is_selected_expr<T>, is_
  * \tparam T The type to test
  */
 template <typename T>
-using is_temporary_unary_expr = cpp::is_specialization_of<etl::temporary_unary_expr, std::decay_t<T>>;
+using is_temporary_unary_expr = cpp::or_c<
+    cpp::is_specialization_of<etl::temporary_unary_expr, std::decay_t<T>>,
+    cpp::is_specialization_of<etl::temporary_unary_expr_state, std::decay_t<T>>>;
 
 /*!
  * \brief Traits indicating if the given ETL type is a temporary binary expression.
  * \tparam T The type to test
  */
 template <typename T>
-using is_temporary_binary_expr = cpp::is_specialization_of<etl::temporary_binary_expr, std::decay_t<T>>;
+using is_temporary_binary_expr = cpp::or_c<
+    cpp::is_specialization_of<etl::temporary_binary_expr, std::decay_t<T>>,
+    cpp::is_specialization_of<etl::temporary_binary_expr_state, std::decay_t<T>>>;
 
 /*!
  * \brief Traits indicating if the given ETL type is a temporary expression.
