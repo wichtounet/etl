@@ -201,7 +201,20 @@ void conv2_same_flipped(const I& input, const K& kernel, C&& conv) {
     }
 }
 
-
+/*!
+ * \brief Compute the value of a border pixel for a 2d valid
+ * convolution. This is only used with padding.
+ *
+ * \param input The input matrix
+ * \param kernel The kernel matrix
+ * \param conv The output matrix
+ * \param i The first index of the pixel to compute
+ * \param j The second index of the pixel to compute
+ * \param s1 The first dimension stride
+ * \param s2 The second dimension stride
+ * \param p1 The first dimension padding
+ * \param p2 The second dimension padding
+ */
 template <typename I, typename K, typename C>
 inline void conv2_valid_border(const I& input, const K& kernel, C&& conv, std::size_t i, std::size_t j, size_t s1, size_t s2, size_t p1, size_t p2) {
     typename I::value_type temp = 0.0;
@@ -223,6 +236,21 @@ inline void conv2_valid_border(const I& input, const K& kernel, C&& conv, std::s
     conv(i, j) = temp;
 }
 
+
+/*!
+ * \brief Compute the value of a border pixel for a 2d valid
+ * convolution, with flipped kernels. This is only used with padding.
+ *
+ * \param input The input matrix
+ * \param kernel The kernel matrix
+ * \param conv The output matrix
+ * \param i The first index of the pixel to compute
+ * \param j The second index of the pixel to compute
+ * \param s1 The first dimension stride
+ * \param s2 The second dimension stride
+ * \param p1 The first dimension padding
+ * \param p2 The second dimension padding
+ */
 template <typename I, typename K, typename C>
 inline void conv2_valid_flipped_border(const I& input, const K& kernel, C&& conv, std::size_t i, std::size_t j, size_t s1, size_t s2, size_t p1, size_t p2) {
     typename I::value_type temp = 0.0;
