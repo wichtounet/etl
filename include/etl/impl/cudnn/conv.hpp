@@ -1106,6 +1106,12 @@ void conv4_full_flipped(const opaque_memory<T,4>& input, const opaque_memory<T,4
     cpp_unreachable("Unsupported feature called: cudnn conv4_ful_flippedl");
 }
 
+/*!
+ * \brief CUDNN implementation of a 2D 'valid' convolution C = I * K
+ * \param input The input matrix
+ * \param kernel The kernel matrix
+ * \param conv The output matrix
+ */
 template <typename T>
 void conv2_valid_multi(const opaque_memory<T,2>& input, const opaque_memory<T,3>& kernel, const opaque_memory<T,3>& conv) {
     cpp_unused(input);

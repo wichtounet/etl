@@ -28,12 +28,19 @@ V compute(std::size_t n, std::size_t i, std::size_t j) {
 
 //Note: Matrix of even order > 2 are only pseudo-magic
 //TODO Add algorithm for even order
+
+/*!
+ * \brief A view (virtual) of a dynamic magic matrix
+ */
 template <typename V>
 struct magic_view {
-    using value_type = V;
+    using value_type = V; ///< The value type in the matrix
 
-    const std::size_t n;
+    const std::size_t n; ///< The dimensions of the magic matrix
 
+    /*!
+     * \brief Construct a new magic_view with the given dimension
+     */
     explicit magic_view(std::size_t n)
             : n(n) {}
 
@@ -96,9 +103,12 @@ struct magic_view {
     }
 };
 
+/*!
+ * \brief A view (virtual) of a static magic matrix
+ */
 template <typename V, std::size_t N>
 struct fast_magic_view {
-    using value_type = V;
+    using value_type = V; ///< The value type
 
     /*!
      * \brief Returns the element at the given index
@@ -161,7 +171,7 @@ struct fast_magic_view {
 
 template <typename V>
 struct etl_traits<etl::magic_view<V>> {
-    using expr_t = etl::magic_view<V>;
+    using expr_t = etl::magic_view<V>; ///< The inspected expression type
 
     static constexpr const bool is_etl                  = true;            ///< Indicates if the type is an ETL expression
     static constexpr const bool is_transformer          = false;           ///< Indicates if the type is a transformer
@@ -215,7 +225,7 @@ struct etl_traits<etl::magic_view<V>> {
 
 template <std::size_t N, typename V>
 struct etl_traits<etl::fast_magic_view<V, N>> {
-    using expr_t = etl::fast_magic_view<V, N>;
+    using expr_t = etl::fast_magic_view<V, N>; ///< The inspected expression type
 
     static constexpr const bool is_etl                  = true;            ///< Indicates if the type is an ETL expression
     static constexpr const bool is_transformer          = false;           ///< Indicates if the type is a transformer
