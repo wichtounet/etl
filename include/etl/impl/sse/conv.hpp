@@ -1650,7 +1650,8 @@ template <typename T>
 void conv4_valid_filter_flipped(const opaque_memory<T, 4>& input, const opaque_memory<T, 4>& kernel, const opaque_memory<T, 4>& conv){
     cpp_unused(input);
     cpp_unused(kernel);
-    cpp_unused(conv); cpp_unreachable("SSE not available/enabled");
+    cpp_unused(conv);
+    cpp_unreachable("SSE not available/enabled");
 }
 
 /*!
