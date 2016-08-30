@@ -180,13 +180,18 @@ struct dyn_basic_conv_expr {
 
     static constexpr const bool is_gpu = is_cufft_enabled || is_cudnn_enabled; ///< Indicates if the expression runs on GPU
 
-    Impl impl;
+    Impl impl; ///< The implementation operator
 
     // Necessary to avoid ambiguity with the forwarding constructor
     dyn_basic_conv_expr(const dyn_basic_conv_expr& rhs) = default;
     dyn_basic_conv_expr(dyn_basic_conv_expr& rhs) = default;
     dyn_basic_conv_expr(dyn_basic_conv_expr&& rhs) = default;
 
+    /*!
+     * \brief Construct a new dyn_basic_conv_expr and forward all
+     * the arguments to the implementation
+     * \param args The arguments to forward
+     */
     template<typename... Args>
     explicit dyn_basic_conv_expr(Args&&... args) : impl(std::forward<Args>(args)...){
         //Nothing else to init

@@ -214,13 +214,19 @@ private:
 
     Expr _value; ///< The sub expression
 
-    mutable gpu_handler<T> _gpu_memory_handler;
+    mutable gpu_handler<T> _gpu_memory_handler; ///< The GPU memory handler
 
+    /*!
+     * \brief Indicates if the non-const functions returns a reference
+     */
     static constexpr const bool non_const_return_ref =
         cpp::and_c<
             std::is_lvalue_reference<decltype(_value[0])>,
-            cpp::not_c<std::is_const<std::remove_reference_t<decltype(_value[0])>>>>::value; ///< Indicates if the non-const functions returns a reference
+            cpp::not_c<std::is_const<std::remove_reference_t<decltype(_value[0])>>>>::value;
 
+    /*!
+     * \brief Indicates if the const functions returns a reference
+     */
     static constexpr const bool const_return_ref =
         std::is_lvalue_reference<decltype(_value[0])>::value; ///< Indicates if the const functions returns a reference
 
