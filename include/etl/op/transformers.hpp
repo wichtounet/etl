@@ -444,6 +444,13 @@ struct dyn_convmtx2_transformer {
 
 //TODO Make a temporary_expr out of this
 
+/*!
+ * \brief Compute the convolution matrix of sub into m for a kernel of size (k1,k2)
+ * \param m The output matrix
+ * \param sub The input matrix
+ * \param k1 The first dimension of ther kernel
+ * \param k1 The second dimension of ther kernel
+ */
 template <typename A, typename M>
 void convmtx2_direct_t(M& m, A&& sub, std::size_t k1, std::size_t k2) {
     const std::size_t i1 = etl::dim<0>(sub);
@@ -476,6 +483,13 @@ void convmtx2_direct_t(M& m, A&& sub, std::size_t k1, std::size_t k2) {
 
 //TODO Adapt this to an expression
 
+/*!
+ * \brief Convert an image to a sequence of image columns to be multiplied by kernels of size (k1,k2)
+ * \param m The output matrix
+ * \param sub The input image
+ * \param k1 The first dimension of ther kernel
+ * \param k1 The second dimension of ther kernel
+ */
 template <typename A, typename M, cpp_disable_if(all_dma<A, M>::value)>
 void im2col_direct(M& m, A&& sub, std::size_t k1, std::size_t k2) {
     const std::size_t i1 = etl::dim<0>(sub);
@@ -498,6 +512,13 @@ void im2col_direct(M& m, A&& sub, std::size_t k1, std::size_t k2) {
 // This is a direct memory version
 // On gcc and clang, this is significantly faster
 
+/*!
+ * \brief Convert an image to a sequence of image columns to be multiplied by kernels of size (k1,k2)
+ * \param m The output matrix
+ * \param sub The input image
+ * \param k1 The first dimension of ther kernel
+ * \param k1 The second dimension of ther kernel
+ */
 template <typename A, typename M, cpp_enable_if(all_dma<A, M>::value)>
 void im2col_direct(M& m, A&& sub, std::size_t k1, std::size_t k2) {
     const std::size_t i1 = etl::dim<0>(sub);
@@ -522,6 +543,16 @@ void im2col_direct(M& m, A&& sub, std::size_t k1, std::size_t k2) {
 
 //im2col version without any need for transpose
 
+/*!
+ * \brief Convert an image to a sequence of image columns to be multiplied by kernels of size (k1,k2).
+ *
+ * This special version does not require any transposition when used.
+ *
+ * \param m The output matrix
+ * \param sub The input image
+ * \param k1 The first dimension of ther kernel
+ * \param k1 The second dimension of ther kernel
+ */
 template <typename A, typename M>
 void im2col_direct_tr(M& m, A&& sub, std::size_t k1, std::size_t k2) {
     static_assert(all_dma<A, M>::value, "im2col_direct_tr has only been implemented for direct memory access");
@@ -561,7 +592,7 @@ struct p_max_pool_transformer {
     using value_type = value_t<T>; ///< The type of valuie
 
     sub_type sub; ///< The subexpression
-    decltype(force_temporary(sub)) exp_sub;
+    decltype(force_temporary(sub)) exp_sub; ///< The exponentials of the sub expression
 
     /*!
      * \brief Construct a new transformer around the given expression
@@ -571,6 +602,10 @@ struct p_max_pool_transformer {
         exp_sub = exp(sub);
     }
 
+    /*!
+     * \brief Pool around (i,j)
+     * \return the pooled input value for (i,j)
+     */
     value_type pool(std::size_t i, std::size_t j) const {
         value_type p = 0;
 
@@ -586,6 +621,10 @@ struct p_max_pool_transformer {
         return p;
     }
 
+    /*!
+     * \brief Pool around (k,i,j)
+     * \return the pooled input value for (k,i,j)
+     */
     value_type pool(std::size_t k, std::size_t i, std::size_t j) const {
         value_type p = 0;
 
@@ -642,7 +681,7 @@ struct p_max_pool_h_transformer : p_max_pool_transformer<T, C1, C2> {
 
     using base_type::sub;
 
-    static constexpr const bool d2d = etl_traits<std::decay_t<sub_type>>::dimensions() == 2;
+    static constexpr const bool d2d = etl_traits<std::decay_t<sub_type>>::dimensions() == 2; ///< Constant indicating if the sub expression is 2D
 
     /*!
      * \brief Construct a new transformer around the given expression
@@ -1051,8 +1090,8 @@ struct dyn_p_max_pool_transformer {
 
     sub_type sub; ///< The subexpression
 
-    std::size_t c1;
-    std::size_t c2;
+    std::size_t c1; ///< The first dimension pooling ratio
+    std::size_t c2; ///< The second dimension pooling ratio
 
     /*!
      * \brief Construct a new transformer around the given expression
@@ -1495,8 +1534,8 @@ struct etl_traits<dyn_p_max_pool_h_transformer<T>> {
 template <typename LE, typename RE>
 struct etl_traits<mm_mul_transformer<LE, RE>> {
     using expr_t       = etl::mm_mul_transformer<LE, RE>; ///< The expression type
-    using left_expr_t  = std::decay_t<LE>;
-    using right_expr_t = std::decay_t<RE>;
+    using left_expr_t  = std::decay_t<LE>; ///< The left hand side expression type
+    using right_expr_t = std::decay_t<RE>; ///< The right hand side expression type
 
     static constexpr const bool is_etl         = true;                                                                  ///< Indicates if the type is an ETL expression
     static constexpr const bool is_transformer = true;                                                                  ///< Indicates if the type is a transformer

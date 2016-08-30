@@ -9,27 +9,51 @@
 
 namespace etl {
 
+/*!
+ * \brief Traits to test if T is a specialization of TT<T, size_t>
+ */
 template <template <typename, std::size_t> class TT, typename T>
 struct is_2 : std::false_type {};
 
+/*!
+ * \copydoc is_2
+ */
 template <template <typename, std::size_t> class TT, typename V1, std::size_t R>
 struct is_2<TT, TT<V1, R>> : std::true_type {};
 
+/*!
+ * \brief Traits to test if T is a specialization of TT<T, size_t, size_t>
+ */
 template <template <typename, std::size_t, std::size_t> class TT, typename T>
 struct is_3 : std::false_type {};
 
+/*!
+ * \copydoc is_3
+ */
 template <template <typename, std::size_t, std::size_t> class TT, typename V1, std::size_t R1, std::size_t R2>
 struct is_3<TT, TT<V1, R1, R2>> : std::true_type {};
 
+/*!
+ * \brief Traits to test if T is a specialization of TT<T, size_t...>
+ */
 template <template <typename, std::size_t...> class TT, typename T>
 struct is_var : std::false_type {};
 
+/*!
+ * \copydoc is_var
+ */
 template <template <typename, std::size_t...> class TT, typename V1, std::size_t... R>
 struct is_var<TT, TT<V1, R...>> : std::true_type {};
 
+/*!
+ * \brief Traits to test if T is a specialization of TT<T1, T2, size_t...>
+ */
 template <template <typename, typename, std::size_t...> class TT, typename T>
 struct is_var_2 : std::false_type {};
 
+/*!
+ * \copydoc is_var_2
+ */
 template <template <typename, typename, std::size_t...> class TT, typename V1, typename V2, std::size_t... R>
 struct is_var_2<TT, TT<V1, V2, R...>> : std::true_type {};
 
@@ -77,12 +101,21 @@ struct nth_size final {
     static constexpr const std::size_t value = nth_size_int<S, I>::value;
 };
 
+/*!
+ * \brief Returns the dth (dynamic) dimension from the variadic list D
+ * \tparam D The list of dimensions
+ * \param d The index of the dimension to get
+ */
 template <std::size_t... D, cpp_enable_if(sizeof...(D) == 0)>
-std::size_t dyn_nth_size(std::size_t /*d*/) {
+std::size_t dyn_nth_size(std::size_t d) {
+    cpp_unused(d);
     cpp_assert(false, "Should never be called");
     return 0;
 }
 
+/*!
+ * \copydoc dyn_nth_size
+ */
 template <std::size_t D1, std::size_t... D>
 std::size_t dyn_nth_size(std::size_t i) {
     return i == 0
@@ -143,6 +176,9 @@ using make_integer_range = typename integer_range_impl<Int, std::make_integer_se
 template <std::size_t Begin, std::size_t End>
 using make_index_range = make_integer_range<std::size_t, Begin, End>;
 
+/*!
+ * \brief Returns a string representation of the given dimensions
+ */
 template <typename... Dims>
 std::string concat_sizes(Dims... sizes) {
     std::array<std::size_t, sizeof...(Dims)> tmp{{sizes...}};
@@ -160,6 +196,9 @@ std::string concat_sizes(Dims... sizes) {
  * \brief Functor that dereference a pointer and return its value
  */
 struct dereference_op {
+    /*!
+     * \brief Apply the functor on t
+     */
     template <typename T>
     static decltype(auto) apply(T&& t) {
         return *(std::forward<T>(t));
@@ -170,6 +209,9 @@ struct dereference_op {
  * \brief Functor that forwards a value
  */
 struct forward_op {
+    /*!
+     * \brief Apply the functor on t
+     */
     template <typename T>
     static decltype(auto) apply(T&& t) {
         return std::forward<T>(t);
@@ -183,7 +225,14 @@ using remove_const_deep =
         std::add_lvalue_reference_t<std::remove_const_t<std::remove_reference_t<T>>>,
         std::remove_const_t<T>>;
 
+/*!
+ * \brief Functor that forwards a value and removes the constness of
+ * it.
+ */
 struct forward_op_nc {
+    /*!
+     * \brief Apply the functor on t
+     */
     template <typename T>
     static decltype(auto) apply(T&& t) {
         using real_type = decltype(std::forward<T>(t));

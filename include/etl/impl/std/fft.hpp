@@ -516,6 +516,12 @@ void fft_perform(const In* r_in, etl::complex<T>* r_out, const std::size_t n, st
     }
 }
 
+/*!
+ * \brief Compute the general FFT of r_in
+ * \param r_in The input signal
+ * \param r_out The output signal
+ * \param n The size of the tranform
+ */
 template <typename In, typename T>
 void fft_n(const In* r_in, etl::complex<T>* r_out, const std::size_t n) {
     //0. Factorize
@@ -536,6 +542,13 @@ void fft_n(const In* r_in, etl::complex<T>* r_out, const std::size_t n) {
     fft_perform(r_in, r_out, n, factors, n_factors, twiddle);
 }
 
+/*!
+ * \brief Compute many general FFT of all the signals in r_in
+ * \param r_in The input signal
+ * \param r_out The output signal
+ * \param batch The number of signals
+ * \param n The size of the tranform
+ */
 template <typename In, typename T>
 void fft_n_many(const In* r_in, etl::complex<T>* r_out, const std::size_t batch, const std::size_t n) {
     const std::size_t distance = n; //in/out distance between samples
@@ -599,6 +612,13 @@ void inplace_radix2_fft1(etl::complex<T>* x, std::size_t N) {
     }
 }
 
+/*!
+ * \brief Kernel for 1D FFT. This kernel selects the best
+ * implementation between general FFT and radix 2 FFT
+ * \param a The input signal
+ * \param n The size of the tranform
+ * \param c The output signal
+ */
 template <typename T1, typename T>
 void fft1_kernel(const T1* a, std::size_t n, std::complex<T>* c) {
     if (n <= 131072 && math::is_power_of_two(n)) {
@@ -610,6 +630,13 @@ void fft1_kernel(const T1* a, std::size_t n, std::complex<T>* c) {
     }
 }
 
+/*!
+ * \brief Kernel for Inverse 1D FFT. This kernel selects the best
+ * implementation between general FFT and radix 2 FFT
+ * \param a The input signal
+ * \param n The size of the tranform
+ * \param c The output signal
+ */
 template <typename T>
 void ifft1_kernel(const std::complex<T>* a, std::size_t n, std::complex<T>* c) {
     using complex_t = std::complex<T>;
@@ -646,6 +673,14 @@ void ifft1_kernel(const std::complex<T>* a, std::size_t n, std::complex<T>* c) {
     }
 }
 
+/*!
+ * \brief Performs a 1D full convolution using FFT
+ * \param a The input
+ * \param m The size of the input
+ * \param b The kernel
+ * \param n The size of the kernel
+ * \param c The output
+ */
 template<typename T>
 void conv1_full_kernel(const T* a, std::size_t m, const T* b, std::size_t n, T* c){
     const std::size_t size = m + n - 1;
@@ -668,6 +703,17 @@ void conv1_full_kernel(const T* a, std::size_t m, const T* b, std::size_t n, T* 
     }
 }
 
+/*!
+ * \brief Performs a 2D full convolution using FFT
+ * \param a The input
+ * \param m1 The first dimension of the input
+ * \param m2 The second dimension of the input
+ * \param b The kernel
+ * \param n1 The first dimension of the kernel
+ * \param n2 The second dimension of the kernel
+ * \param c The output
+ * \param beta Indicates how the output is modified c = beta * c + o
+ */
 template<typename T>
 void conv2_full_kernel(const T* a, std::size_t m1, std::size_t m2, const T* b, std::size_t n1, std::size_t n2, T* c, T beta){
     const std::size_t s1 = m1 + n1 - 1;

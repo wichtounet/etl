@@ -92,13 +92,18 @@ protected:
     data_type _c;           ///< The result reference
 
 private:
-    mutable gpu_handler<V> _gpu_memory_handler;
+    mutable gpu_handler<V> _gpu_memory_handler; ///< The GPU memory handler
 
 public:
     temporary_expr() = default;
 
     temporary_expr(const temporary_expr& expr) = default;
 
+    /*!
+     * \brief Move construct a temporary_expr
+     * The right hand side cannot be used anymore after ths move.
+     * \param rhs The expression to move from.
+     */
     temporary_expr(temporary_expr&& rhs) : allocated(rhs.allocated), evaluated(rhs.evaluated), _c(std::move(rhs._c)) {
         rhs.evaluated = false;
     }

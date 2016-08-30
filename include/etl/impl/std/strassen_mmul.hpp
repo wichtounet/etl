@@ -13,6 +13,9 @@ namespace impl {
 
 namespace standard {
 
+/*!
+ * \brief Strassen multiplication step
+ */
 template <typename A, typename B, typename C>
 void strassen_mm_mul_r(const A& a, const B& b, C& c) {
     using value_type = value_t<A>;
@@ -186,10 +189,19 @@ void strassen_mm_mul_r(const A& a, const B& b, C& c) {
     }
 }
 
+/*!
+ * \brief Returns the next power of two of n
+ */
 inline std::size_t nextPowerOfTwo(std::size_t n) {
     return std::pow(2, static_cast<std::size_t>(std::ceil(std::log2(n))));
 }
 
+/*!
+ * \brief Strassen multiplication of a and b into c
+ * \param a The left hand side of the multiplication
+ * \param b The right hand side of the multiplication
+ * \param c The output matrix
+ */
 template <typename A, typename B, typename C>
 void strassen_mm_mul(const A& a, const B& b, C& c) {
     c = 0;

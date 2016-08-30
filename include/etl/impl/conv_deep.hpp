@@ -112,6 +112,7 @@ struct conv_deep_valid_impl {
             : etl::dim<D,I>() - etl::dim<D, K>() + 1;
     }
 };
+
 /*!
  * \brief The functor impl for 2D+ conv.
  */
