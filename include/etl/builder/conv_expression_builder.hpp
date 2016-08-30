@@ -132,6 +132,43 @@ auto conv_2d_valid(A&& a, B&& b, C&& c) {
  * \brief Creates an expression representing the valid 2D convolution of a and b
  * \param a The input expression
  * \param b The kernel expression
+ * \param s1 The first dimension stride
+ * \param s2 The second dimension stride
+ * \param p1 The first dimension padding (left and right)
+ * \param p2 The second dimension padding (top and bottom)
+ * \return an expression representing the valid 2D convolution of a and b
+ */
+template <typename A, typename B>
+auto conv_2d_valid(A&& a, B&& b, size_t s1, size_t s2, size_t p1 = 0, size_t p2 = 0){
+    static_assert(is_etl_expr<A>::value && is_etl_expr<B>::value, "Convolution only supported for ETL expressions");
+
+    using op_t = dyn_conv2_valid_expr<value_t<A>>;
+    return temporary_binary_expr_state<value_t<A>, detail::build_type<A>, detail::build_type<B>, op_t>{op_t(s1, s2, p1, p2), a, b};
+}
+
+/*!
+ * \brief Creates an expression representing the valid 2D convolution of a and b, the result will be stored in c
+ * \param a The input expression
+ * \param b The kernel expression
+ * \param c The result
+ * \param s1 The first dimension stride
+ * \param s2 The second dimension stride
+ * \param p1 The first dimension padding (left and right)
+ * \param p2 The second dimension padding (top and bottom)
+ * \return an expression representing the valid 2D convolution of a and b
+ */
+template <typename A, typename B, typename C>
+auto conv_2d_valid(A&& a, B&& b, C&& c, size_t s1 = 1, size_t s2 = 1, size_t p1 = 0, size_t p2 = 0){
+    static_assert(is_etl_expr<A>::value && is_etl_expr<B>::value && is_etl_expr<C>::value, "Convolution only supported for ETL expressions");
+
+    c = conv_2d_valid(a, b, s1, s2, p1, p2);
+    return std::forward<C>(c);
+}
+
+/*!
+ * \brief Creates an expression representing the valid 2D convolution of a and b
+ * \param a The input expression
+ * \param b The kernel expression
  * \return an expression representing the valid 2D convolution of a and b
  */
 template <size_t S1 = 1, size_t S2 = 1, size_t P1 = 0, size_t P2 = 0, typename A, typename B>
@@ -153,6 +190,43 @@ auto conv_2d_valid_flipped(A&& a, B&& b, C&& c) {
     static_assert(is_etl_expr<A>::value && is_etl_expr<B>::value && is_etl_expr<C>::value, "Convolution only supported for ETL expressions");
 
     c = conv_2d_valid_flipped<S1, S2, P1, P2>(a, b);
+    return std::forward<C>(c);
+}
+
+/*!
+ * \brief Creates an expression representing the valid 2D convolution of a and b
+ * \param a The input expression
+ * \param b The kernel expression
+ * \param s1 The first dimension stride
+ * \param s2 The second dimension stride
+ * \param p1 The first dimension padding (left and right)
+ * \param p2 The second dimension padding (top and bottom)
+ * \return an expression representing the valid 2D convolution of a and b
+ */
+template <typename A, typename B>
+auto conv_2d_valid_flipped(A&& a, B&& b, size_t s1, size_t s2, size_t p1 = 0, size_t p2 = 0){
+    static_assert(is_etl_expr<A>::value && is_etl_expr<B>::value, "Convolution only supported for ETL expressions");
+
+    using op_t = dyn_conv2_valid_flipped_expr<value_t<A>>;
+    return temporary_binary_expr_state<value_t<A>, detail::build_type<A>, detail::build_type<B>, op_t>{op_t(s1, s2, p1, p2), a, b};
+}
+
+/*!
+ * \brief Creates an expression representing the valid 2D convolution of a and b, the result will be stored in c
+ * \param a The input expression
+ * \param b The kernel expression
+ * \param c The result
+ * \param s1 The first dimension stride
+ * \param s2 The second dimension stride
+ * \param p1 The first dimension padding (left and right)
+ * \param p2 The second dimension padding (top and bottom)
+ * \return an expression representing the valid 2D convolution of a and b
+ */
+template <typename A, typename B, typename C>
+auto conv_2d_valid_flipped(A&& a, B&& b, C&& c, size_t s1 = 1, size_t s2 = 1, size_t p1 = 0, size_t p2 = 0){
+    static_assert(is_etl_expr<A>::value && is_etl_expr<B>::value && is_etl_expr<C>::value, "Convolution only supported for ETL expressions");
+
+    c = conv_2d_valid_flipped(a, b, s1, s2, p1, p2);
     return std::forward<C>(c);
 }
 

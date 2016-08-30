@@ -166,27 +166,50 @@ struct basic_conv_expr : impl_expr<basic_conv_expr<T, D, Impl>> {
  * \tparam Impl The implementation class
  */
 template <typename T, std::size_t D, typename Impl>
-struct dyn_basic_conv_expr : impl_expr<dyn_basic_conv_expr<T, D, Impl>> {
+struct dyn_basic_conv_expr {
     static_assert(D > 0, "0D convolution is not valid");
 
     using value_type = T;                               ///< The type of value of the expression
     using this_type  = dyn_basic_conv_expr<T, D, Impl>; ///< The type of this expression
 
+    /*!
+     * \brief Helper traits to get the result type of this expression
+     */
+    template <typename... Subs>
+    using result_type = detail::dyn_expr_result_t<this_type, Subs...>;
+
     static constexpr const bool is_gpu = is_cufft_enabled || is_cudnn_enabled; ///< Indicates if the expression runs on GPU
 
     Impl impl;
 
-    /*!
-     * \brief The result type for given sub types
-     * \tparam A The left hand side epxpression type
-     * \tparam B The right hand side epxpression type
-     */
-    template <typename A, typename B>
-    using result_type = detail::dyn_expr_result_t<this_type, A, B>;
+    // Necessary to avoid ambiguity with the forwarding constructor
+    dyn_basic_conv_expr(const dyn_basic_conv_expr& rhs) = default;
+    dyn_basic_conv_expr(dyn_basic_conv_expr& rhs) = default;
+    dyn_basic_conv_expr(dyn_basic_conv_expr&& rhs) = default;
 
     template<typename... Args>
-    dyn_basic_conv_expr(Args&&... args) : impl(std::forward<Args>(args)...){
+    explicit dyn_basic_conv_expr(Args&&... args) : impl(std::forward<Args>(args)...){
         //Nothing else to init
+    }
+
+    /*!
+     * \brief Allocate the dynamic temporary for the expression
+     * \param subs The sub expressions
+     * \return a pointer to the temporary
+     */
+    template <typename... Subs, std::size_t... I>
+    result_type<Subs...>* dyn_allocate(std::index_sequence<I...> /*seq*/, Subs&&... subs) const {
+        return new result_type<Subs...>(this->dim(subs..., I)...);
+    }
+
+    /*!
+     * \brief Allocate the temporary for the expression
+     * \param args The sub expressions
+     * \return a pointer to the temporary
+     */
+    template <typename... Subs>
+    result_type<Subs...>* allocate(Subs&&... args) const  {
+        return dyn_allocate(std::make_index_sequence<this_type::dimensions()>(), std::forward<Subs>(args)...);
     }
 
     /*!
@@ -293,6 +316,18 @@ using conv2_valid_expr = basic_conv_expr<T, 2, detail::conv2_valid_impl<S1, S2, 
  */
 template<typename T, size_t S1 = 0, size_t S2 = 0, size_t P1 = 0, size_t P2 = 0>
 using conv2_valid_flipped_expr = basic_conv_expr<T, 2, detail::conv2_valid_flipped_impl<S1, S2, P1, P2>>;
+
+/*!
+ * \brief Expression for 2D valid convolution
+ */
+template<typename T>
+using dyn_conv2_valid_expr = dyn_basic_conv_expr<T, 2, detail::dyn_conv2_valid_impl>;
+
+/*!
+ * \brief Expression for 2D valid convolution
+ */
+template<typename T>
+using dyn_conv2_valid_flipped_expr = dyn_basic_conv_expr<T, 2, detail::dyn_conv2_valid_flipped_impl>;
 
 /*!
  * \brief Expression for 4D valid convolution
