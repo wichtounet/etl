@@ -1295,20 +1295,20 @@ inline void conv2_full_flipped_micro_kernel(const float* in, std::size_t n1, std
     }
 }
 
-template <size_t S1 = 1, size_t S2 = 1, size_t P1 = 0, size_t P2 = 0, typename T>
-void conv2_valid(const opaque_memory<T, 2>& input, const opaque_memory<T, 2>& kernel, const opaque_memory<T, 2>& conv) {
+template <typename T>
+void conv2_valid(const opaque_memory<T, 2>& input, const opaque_memory<T, 2>& kernel, const opaque_memory<T, 2>& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
     conv2_valid_micro_kernel(
         input.memory_start(), input.template dim<0>(), input.template dim<1>(),
         kernel.memory_start(), kernel.template dim<0>(), kernel.template dim<1>(),
-        conv.memory_start(), 0.0, S1, S2, P1, P2);
+        conv.memory_start(), 0.0, s1, s2, p1, p2);
 }
 
-template <size_t S1 = 1, size_t S2 = 1, size_t P1 = 0, size_t P2 = 0, typename T>
-void conv2_valid_flipped(const opaque_memory<T, 2>& input, const opaque_memory<T, 2>& kernel, const opaque_memory<T, 2>& conv) {
+template <typename T>
+void conv2_valid_flipped(const opaque_memory<T, 2>& input, const opaque_memory<T, 2>& kernel, const opaque_memory<T, 2>& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
     conv2_valid_flipped_micro_kernel(
         input.memory_start(), input.template dim<0>(), input.template dim<1>(),
         kernel.memory_start(), kernel.template dim<0>(), kernel.template dim<1>(),
-        conv.memory_start(), 0.0, S1, S2, P1, P2);
+        conv.memory_start(), 0.0, s1, s2, p1, p2);
 }
 
 template <typename T>
@@ -1680,12 +1680,20 @@ void conv1_valid(const I& input, const K& kernel, C&& conv, std::size_t first, s
  * \param input The input matrix
  * \param kernel The kernel matrix
  * \param conv The output matrix
+ * \param s1 The first dimension stride
+ * \param s2 The second dimension stride
+ * \param p1 The first dimension padding (left and right)
+ * \param p2 The second dimension padding (top and bottom)
  */
-template <size_t S1 = 1, size_t S2 = 1, size_t P1 = 0, size_t P2 = 0, typename I, typename K, typename C>
-void conv2_valid(const I& input, const K& kernel, C&& conv) {
+template <typename I, typename K, typename C>
+void conv2_valid(const I& input, const K& kernel, C&& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
     cpp_unused(input);
     cpp_unused(kernel);
     cpp_unused(conv);
+    cpp_unused(s1);
+    cpp_unused(s2);
+    cpp_unused(p1);
+    cpp_unused(p2);
     cpp_unreachable("AVX not available/enabled");
 }
 
@@ -1694,12 +1702,20 @@ void conv2_valid(const I& input, const K& kernel, C&& conv) {
  * \param input The input matrix
  * \param kernel The kernel matrix
  * \param conv The output matrix
+ * \param s1 The first dimension stride
+ * \param s2 The second dimension stride
+ * \param p1 The first dimension padding (left and right)
+ * \param p2 The second dimension padding (top and bottom)
  */
-template <size_t S1 = 1, size_t S2 = 1, size_t P1 = 0, size_t P2 = 0, typename I, typename K, typename C>
-void conv2_valid_flipped(const I& input, const K& kernel, C&& conv) {
+template <typename I, typename K, typename C>
+void conv2_valid_flipped(const I& input, const K& kernel, C&& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
     cpp_unused(input);
     cpp_unused(kernel);
     cpp_unused(conv);
+    cpp_unused(s1);
+    cpp_unused(s2);
+    cpp_unused(p1);
+    cpp_unused(p2);
     cpp_unreachable("AVX not available/enabled");
 }
 

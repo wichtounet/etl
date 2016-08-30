@@ -112,8 +112,8 @@ cudnn_wrapper<cudnnFilterDescriptor_t> create_filter(const opaque_memory<T, 4>& 
     return cudnn_wrapper<cudnnFilterDescriptor_t>{filter};
 }
 
-template <size_t S1 = 1, size_t S2 = 1, size_t P1 = 0, size_t P2 = 0, typename T>
-void conv2_valid(const opaque_memory<T,2>& input, const opaque_memory<T,2>& kernel, const opaque_memory<T,2>& conv) {
+template <typename T>
+void conv2_valid(const opaque_memory<T,2>& input, const opaque_memory<T,2>& kernel, const opaque_memory<T,2>& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
     using type = std::remove_const_t<T>;
 
     type alpha[] = {1.0f};
@@ -129,7 +129,7 @@ void conv2_valid(const opaque_memory<T,2>& input, const opaque_memory<T,2>& kern
     // Prepare the convolution
     cudnnConvolutionDescriptor_t convolution;
     cudnn_check(cudnnCreateConvolutionDescriptor(&convolution));
-    cudnn_check(cudnnSetConvolution2dDescriptor(convolution, P1, P2, S1, S2, 1, 1, CUDNN_CONVOLUTION));
+    cudnn_check(cudnnSetConvolution2dDescriptor(convolution, p1, p2, s1, s2, 1, 1, CUDNN_CONVOLUTION));
 
     // Find the algorithm to use
     cudnnConvolutionFwdAlgo_t conv_algo;
@@ -164,8 +164,8 @@ void conv2_valid(const opaque_memory<T,2>& input, const opaque_memory<T,2>& kern
     cudnn_check(cudnnDestroyConvolutionDescriptor(convolution));
 }
 
-template <size_t S1 = 1, size_t S2 = 1, size_t P1 = 0, size_t P2 = 0, typename T>
-void conv2_valid_flipped(const opaque_memory<T,2>& input, const opaque_memory<T,2>& kernel, const opaque_memory<T,2>& conv) {
+template <typename T>
+void conv2_valid_flipped(const opaque_memory<T,2>& input, const opaque_memory<T,2>& kernel, const opaque_memory<T,2>& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
     using type = std::remove_const_t<T>;
 
     type alpha[] = {1.0f};
@@ -181,7 +181,7 @@ void conv2_valid_flipped(const opaque_memory<T,2>& input, const opaque_memory<T,
     // Prepare the convolution
     cudnnConvolutionDescriptor_t convolution;
     cudnn_check(cudnnCreateConvolutionDescriptor(&convolution));
-    cudnn_check(cudnnSetConvolution2dDescriptor(convolution, P1, P2, S1, S2, 1, 1, CUDNN_CROSS_CORRELATION));
+    cudnn_check(cudnnSetConvolution2dDescriptor(convolution, p1, p2, s1, s2, 1, 1, CUDNN_CROSS_CORRELATION));
 
     // Find the algorithm to use
     cudnnConvolutionFwdAlgo_t conv_algo;
@@ -947,31 +947,47 @@ void conv2_full_multi_flipped_real(const I& input, const K& kernel, C&& conv) {
 //COVERAGE_EXCLUDE_BEGIN
 
 /*!
- * \brief cudnn implementation of a 2D 'valid' convolution C = I * K
+ * \brief CUDNN implementation of a 2D 'valid' convolution C = I * K
  * \param input The input matrix
  * \param kernel The kernel matrix
  * \param conv The output matrix
+ * \param s1 The first dimension stride
+ * \param s2 The second dimension stride
+ * \param p1 The first dimension padding (left and right)
+ * \param p2 The second dimension padding (top and bottom)
  */
-template <size_t S1 = 1, size_t S2 = 1, size_t P1 = 0, size_t P2 = 0, typename T>
-void conv2_valid(const opaque_memory<T,2>& input, const opaque_memory<T,2>& kernel, const opaque_memory<T,2>& conv) {
+template <typename T>
+void conv2_valid(const opaque_memory<T,2>& input, const opaque_memory<T,2>& kernel, const opaque_memory<T,2>& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
     cpp_unused(input);
     cpp_unused(kernel);
     cpp_unused(conv);
-    cpp_unreachable("Unsupported feature called: cudnn conv2_valid");
+    cpp_unused(s1);
+    cpp_unused(s2);
+    cpp_unused(p1);
+    cpp_unused(p2);
+    cpp_unreachable("AVX not available/enabled");
 }
 
 /*!
- * \brief cudnn implementation of a 2D 'valid' convolution C = I * K
+ * \brief CUDNN implementation of a 2D 'valid' convolution C = I * K
  * \param input The input matrix
  * \param kernel The kernel matrix
  * \param conv The output matrix
+ * \param s1 The first dimension stride
+ * \param s2 The second dimension stride
+ * \param p1 The first dimension padding (left and right)
+ * \param p2 The second dimension padding (top and bottom)
  */
-template <size_t S1 = 1, size_t S2 = 1, size_t P1 = 0, size_t P2 = 0, typename T>
-void conv2_valid_flipped(const opaque_memory<T,2>& input, const opaque_memory<T,2>& kernel, const opaque_memory<T,2>& conv) {
+template <typename T>
+void conv2_valid_flipped(const opaque_memory<T,2>& input, const opaque_memory<T,2>& kernel, const opaque_memory<T,2>& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
     cpp_unused(input);
     cpp_unused(kernel);
     cpp_unused(conv);
-    cpp_unreachable("Unsupported feature called: cudnn conv2_valid_flipped");
+    cpp_unused(s1);
+    cpp_unused(s2);
+    cpp_unused(p1);
+    cpp_unused(p2);
+    cpp_unreachable("AVX not available/enabled");
 }
 
 /*!

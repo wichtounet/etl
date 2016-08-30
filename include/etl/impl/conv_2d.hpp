@@ -339,13 +339,13 @@ struct conv2_valid_impl {
         auto c = conv.direct();
 
         if (impl == etl::conv_impl::AVX) {
-            impl::avx::conv2_valid<S1, S2, P1, P2>(i, k, c);
+            impl::avx::conv2_valid(i, k, c, S1, S2, P1, P2);
         } else if (impl == etl::conv_impl::SSE) {
-            impl::sse::conv2_valid<S1, S2, P1, P2>(i, k, c);
+            impl::sse::conv2_valid(i, k, c, S1, S2, P1, P2);
         } else if (impl == etl::conv_impl::CUDNN) {
-            impl::cudnn::conv2_valid<S1, S2, P1, P2>(i, k, c);
+            impl::cudnn::conv2_valid(i, k, c, S1, S2, P1, P2);
         } else if (impl == etl::conv_impl::STD) {
-            impl::standard::conv2_valid<S1, S2, P1, P2>(input, kernel, conv);
+            impl::standard::conv2_valid(input, kernel, conv, S1, S2, P1, P2);
         } else {
             cpp_unreachable("Invalid conv implementation selection");
         }
@@ -438,13 +438,13 @@ struct conv2_valid_flipped_impl : conv2_valid_impl<S1, S2, P1, P2> {
         auto c = conv.direct();
 
         if (impl == etl::conv_impl::AVX) {
-            impl::avx::conv2_valid_flipped<S1, S2, P1, P2>(i, k, c);
+            impl::avx::conv2_valid_flipped(i, k, c, S1, S2, P1, P2);
         } else if (impl == etl::conv_impl::SSE) {
-            impl::sse::conv2_valid_flipped<S1, S2, P1, P2>(i, k, c);
+            impl::sse::conv2_valid_flipped(i, k, c, S1, S2, P1, P2);
         } else if (impl == etl::conv_impl::CUDNN) {
-            impl::cudnn::conv2_valid_flipped<S1, S2, P1, P2>(i, k, c);
+            impl::cudnn::conv2_valid_flipped(i, k, c, S1, S2, P1, P2);
         } else if (impl == etl::conv_impl::STD) {
-            impl::standard::conv2_valid_flipped<S1, S2, P1, P2>(input, kernel, conv);
+            impl::standard::conv2_valid_flipped(input, kernel, conv, S1, S2, P1, P2);
         } else {
             cpp_unreachable("Invalid conv implementation selection");
         }
