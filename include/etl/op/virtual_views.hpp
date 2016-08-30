@@ -169,6 +169,9 @@ struct fast_magic_view {
     }
 };
 
+/*!
+ * \brief traits speciflization for magic_view
+ */
 template <typename V>
 struct etl_traits<etl::magic_view<V>> {
     using expr_t = etl::magic_view<V>; ///< The inspected expression type
@@ -223,6 +226,9 @@ struct etl_traits<etl::magic_view<V>> {
     }
 };
 
+/*!
+ * \brief traits speciflization for fast_magic_view
+ */
 template <std::size_t N, typename V>
 struct etl_traits<etl::fast_magic_view<V, N>> {
     using expr_t = etl::fast_magic_view<V, N>; ///< The inspected expression type

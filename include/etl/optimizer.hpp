@@ -450,6 +450,11 @@ struct optimizer<etl::binary_expr<T, LeftExpr, BinaryOp, RightExpr>> {
  */
 template <typename T, typename A, typename Op>
 struct optimizer<etl::temporary_unary_expr<T, A, Op>> {
+    /*!
+     * \brief Optimize the expression using the given builder
+     * \param parent_builder The builder to use
+     * \param expr The expression to optimize
+     */
     template <typename Builder>
     static void apply(Builder parent_builder, etl::temporary_unary_expr<T, A, Op>& expr) {
         if (is_optimizable_deep(expr.a())) {

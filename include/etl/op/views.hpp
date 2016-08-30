@@ -509,13 +509,13 @@ struct slice_view {
 
 namespace fast_matrix_view_detail {
 
-/*
+/*!
  * \brief Constant traits to get the subsize of a matrix for a fast_matrix_view
  */
 template <typename M, std::size_t I, typename Enable = void>
 struct matrix_subsize : std::integral_constant<std::size_t, M::template dim<I + 1>() * matrix_subsize<M, I + 1>::value> {};
 
-/*
+/*!
  * \copydoc matrix_subsize
  */
 template <typename M, std::size_t I>
@@ -560,7 +560,7 @@ struct fast_matrix_view {
     using return_type       = return_helper<sub_type, decltype(sub[0])>;       ///< The type returned by the view
     using const_return_type = const_return_helper<sub_type, decltype(sub[0])>; ///< The const type return by the view
 
-    static constexpr std::size_t n_dimensions = sizeof...(Dims);
+    static constexpr std::size_t n_dimensions = sizeof...(Dims); ///< The number of dimensions of the view
 
     /*!
      * \brief Construct a new fast_matrix_view over the given sub expression
