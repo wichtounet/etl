@@ -39,6 +39,7 @@ namespace detail {
 /*!
  * \brief The functor impl for 2D valid conv, with multiple kernels
  */
+template<size_t S1 = 1, size_t S2 = 1, size_t P1 = 0, size_t P2 = 0>
 struct conv2_valid_multi_impl {
     /*!
      * \brief Apply the convolution
@@ -139,7 +140,8 @@ struct conv2_valid_multi_impl {
 /*!
  * \brief The functor impl for 2D valid conv, with multiple kernels
  */
-struct conv2_valid_multi_flipped_impl {
+template<size_t S1 = 1, size_t S2 = 1, size_t P1 = 0, size_t P2 = 0>
+struct conv2_valid_multi_flipped_impl : conv2_valid_multi_impl<S1, S2, P1, P2> {
     /*!
      * \brief Apply the convolution
      * \param input The input expression
@@ -172,47 +174,6 @@ struct conv2_valid_multi_flipped_impl {
      */
     static constexpr const char* desc(){
         return "conv2_valid_multi_flipped";
-    }
-
-    /*!
-     * \brief Assert that the convolution is done on correct dimensions
-     */
-    template <typename I, typename K, typename C>
-    static void check(const I& input, const K& kernel, const C& conv){
-        conv2_valid_multi_impl::check(input, kernel, conv);
-    }
-
-    /*!
-     * \brief Assert that the convolution is done on correct dimensions
-     */
-    template <typename I, typename K, typename C>
-    static void check(){
-        conv2_valid_multi_impl::template check<I, K, C>();
-    }
-
-    /*!
-     * \brief Returns the dth dimension of the result of the convolution
-     */
-    template <typename I, typename K>
-    static size_t dim(size_t d, const I& input, const K& kernel){
-        cpp_assert(d < 3, "Invalid dimensions access");
-
-        if(d == 0){
-            return etl::dim(kernel, 0);
-        } else {
-            return etl::dim(input, d - 1) - etl::dim(kernel, d) + 1;
-        }
-    }
-
-    /*!
-     * \brief Returns the Dth dimension of the result of the convolution
-     */
-    template <size_t D, typename I, typename K>
-    static constexpr size_t dim(){
-        static_assert(D < 3, "Invalid dimension access");
-
-        return D == 0 ? etl::dim<0,K>()
-            : etl::safe_dim<D - 1,I>() - etl::dim<D,K>() + 1;
     }
 };
 
