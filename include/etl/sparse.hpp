@@ -245,6 +245,10 @@ private:
     using base_type::allocate;
     using base_type::check_invariants;
 
+    /*!
+     * \brief Build the content of the sparse matrix from an
+     * iterable collection
+     */
     template <typename It>
     void build_from_iterable(const It& iterable) {
         nnz = 0;
@@ -278,6 +282,9 @@ private:
         }
     }
 
+    /*!
+     * \brief Reserve enough space to put a value in position hint
+     */
     void reserve_hint(std::size_t hint) {
         cpp_assert(hint < nnz + 1, "Invalid hint for reserve_hint");
 
@@ -321,6 +328,9 @@ private:
         ++nnz;
     }
 
+    /*!
+     * \brief Erase the value in position n
+     */
     void erase_hint(std::size_t n) {
         cpp_assert(nnz > 0, "Invalid erase_hint call (no non-zero elements");
 
@@ -363,6 +373,11 @@ private:
         --nnz;
     }
 
+    /*!
+     * \brief Find the position of the value at (i,j). Returns nnz
+     * if the position is not found. Can also return a position
+     * already taken if its place of insertion is already taken.
+     */
     std::size_t find_n(std::size_t i, std::size_t j) const noexcept {
         for (std::size_t n = 0; n < nnz; ++n) {
             //The value exists, modify it
@@ -379,6 +394,10 @@ private:
         return nnz;
     }
 
+    /*!
+     * \brief Set the value at index (i,j) and position n
+     * \param value The new value to set
+     */
     void unsafe_set_hint(std::size_t i, std::size_t j, std::size_t n, value_type value) {
         //The value exists, modify it
         if (n < nnz && _row_index[n] == i && _col_index[n] == j) {
@@ -393,6 +412,9 @@ private:
         _col_index[n] = j;
     }
 
+    /*!
+     * \brief Get the value at index (i,j) and position n
+     */
     template <bool B = n_dimensions == 2, cpp_enable_if(B)>
     value_type get_hint(std::size_t i, std::size_t j, std::size_t n) const noexcept {
         if (n < nnz && _row_index[n] == i && _col_index[n] == j) {
@@ -402,6 +424,9 @@ private:
         return 0.0;
     }
 
+    /*!
+     * \brief Set the value at index (i,j) and position n.
+     */
     void set_hint(std::size_t i, std::size_t j, std::size_t n, value_type value) {
         if (n < nnz) {
             if (_row_index[n] == i && _col_index[n] == j) {
@@ -428,10 +453,16 @@ private:
         }
     }
 
+    /*!
+     * \brief Get a direct reference to the element at position n
+     */
     value_type& unsafe_ref_hint(std::size_t n) {
         return _memory[n];
     }
 
+    /*!
+     * \brief Get a direct const reference to the element at position n
+     */
     const value_type& unsafe_ref_hint(std::size_t n) const {
         return _memory[n];
     }

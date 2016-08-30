@@ -90,15 +90,32 @@ struct mul_all final : std::integral_constant<std::size_t, F * mul_all<Dims...>:
 template <std::size_t F>
 struct mul_all<F> final : std::integral_constant<std::size_t, F> {};
 
+/*!
+ * \brief Traits to get the Sth dimension in Dims..
+ * \tparam S The searched dimension
+ * \tparam I The current index (start at zero)
+ */
 template <std::size_t S, std::size_t I, std::size_t F, std::size_t... Dims>
 struct nth_size final {
+    /*!
+     * \brief Helper traits to get the S2th dimension in Dims... (of
+     * the parent class)
+     * \tparam S2 The searched dimension
+     * \tparam I2 The current index (start at zero)
+     */
     template <std::size_t S2, std::size_t I2, typename Enable = void>
     struct nth_size_int : std::integral_constant<std::size_t, nth_size<S, I + 1, Dims...>::value> {};
 
+    /*!
+     * \brief Helper traits to get the S2th dimension in Dims... (of
+     * the parent class)
+     * \tparam S2 The searched dimension
+     * \tparam I2 The current index (start at zero)
+     */
     template <std::size_t S2, std::size_t I2>
     struct nth_size_int<S2, I2, std::enable_if_t<S2 == I2>> : std::integral_constant<std::size_t, F> {};
 
-    static constexpr const std::size_t value = nth_size_int<S, I>::value;
+    static constexpr const std::size_t value = nth_size_int<S, I>::value; ///< The result value
 };
 
 /*!
