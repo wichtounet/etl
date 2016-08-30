@@ -609,9 +609,9 @@ void conv4_full_flipped(const I& input, const K& kernel, C&& conv) {
  * \param conv The output matrix
  */
 template <typename I, typename K, typename C>
-void conv2_valid_multi(const I& input, const K& kernels, C&& conv) {
+void conv2_valid_multi(const I& input, const K& kernels, C&& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
     for (size_t k = 0; k < etl::dim<0>(kernels); ++k) {
-        conv2_valid(input, kernels(k), conv(k), 1, 1, 0, 0);
+        conv2_valid(input, kernels(k), conv(k), s1, s2, p1, p2);
     }
 }
 
@@ -622,9 +622,9 @@ void conv2_valid_multi(const I& input, const K& kernels, C&& conv) {
  * \param conv The output matrix
  */
 template <typename I, typename K, typename C>
-void conv2_valid_multi_flipped(const I& input, const K& kernels, C&& conv) {
+void conv2_valid_multi_flipped(const I& input, const K& kernels, C&& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
     for (size_t k = 0; k < etl::dim<0>(kernels); ++k) {
-        conv2_valid_flipped(input, kernels(k), conv(k), 1, 1, 0, 0);
+        conv2_valid_flipped(input, kernels(k), conv(k), s1, s2, p1, p2);
     }
 }
 
