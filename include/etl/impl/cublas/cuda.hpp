@@ -9,6 +9,16 @@
 
 #ifdef ETL_CUDA
 #include "cuda_runtime.h"
+
+#define cuda_check(call)                                                                                \
+    {                                                                                                   \
+        auto status = call;                                                                             \
+        if (status != cudaSuccess) {                                                                    \
+            std::cerr << "CUDA error: " << cudaGetErrorString(status) << " from " << #call << std::endl \
+                      << "from " << __FILE__ << ":" << __LINE__ << std::endl;                           \
+        }                                                                                               \
+    }
+
 #endif
 
 namespace etl {
@@ -88,7 +98,7 @@ private:
     void free_memory() {
         if (memory) {
             //Note: the const_cast is only here to allow compilation
-            cudaFree((reinterpret_cast<void*>(const_cast<std::remove_const_t<T>*>(memory))));
+            cuda_check(cudaFree((reinterpret_cast<void*>(const_cast<std::remove_const_t<T>*>(memory)))));
         }
     }
 };
@@ -121,7 +131,7 @@ auto cuda_allocate(const E& expr, bool copy = false) -> cuda_memory<value_t<E>> 
     }
 
     if (copy) {
-        cudaMemcpy(memory, expr.memory_start(), etl::size(expr) * sizeof(value_t<E>), cudaMemcpyHostToDevice);
+        cuda_check(cudaMemcpy(memory, expr.memory_start(), etl::size(expr) * sizeof(value_t<E>), cudaMemcpyHostToDevice));
     }
 
     return {memory};
@@ -145,7 +155,7 @@ auto cuda_allocate(E* ptr, std::size_t n, bool copy = false) -> cuda_memory<E> {
     }
 
     if (copy) {
-        cudaMemcpy(memory, ptr, n * sizeof(E), cudaMemcpyHostToDevice);
+        cuda_check(cudaMemcpy(memory, ptr, n * sizeof(E), cudaMemcpyHostToDevice));
     }
 
     return {memory};

@@ -204,10 +204,10 @@ public:
         cpp_assert(!std::is_const<std::remove_pointer_t<decltype(gpu_ptr)>>::value, "copy_from should not be used on const memory");
         cpp_assert(!std::is_const<value_type>::value, "copy_from should not be used on const memory");
 
-        cudaMemcpy(
+        cuda_check(cudaMemcpy(
             const_cast<std::remove_const_t<value_type>*>(cpu_ptr),
             const_cast<std::remove_const_t<value_type>*>(gpu_ptr),
-            etl_size * sizeof(T), cudaMemcpyDeviceToHost);
+            etl_size * sizeof(T), cudaMemcpyDeviceToHost));
     }
 
     /*!
@@ -219,10 +219,10 @@ public:
         auto* gpu_ptr = gpu_memory();
         auto* cpu_ptr = memory;
 
-        cudaMemcpy(
+        cuda_check(cudaMemcpy(
             const_cast<std::remove_const_t<value_type>*>(gpu_ptr),
             const_cast<std::remove_const_t<value_type>*>(cpu_ptr),
-            etl_size * sizeof(T), cudaMemcpyHostToDevice);
+            etl_size * sizeof(T), cudaMemcpyHostToDevice));
     }
 #else
     /*!

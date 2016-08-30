@@ -438,7 +438,7 @@ void scale_back_real(A&& a, C&& c) {
 #else
     auto tmp = allocate<std::complex<float>>(etl::size(a));
 
-    cudaMemcpy(tmp.get(), a_gpu.gpu_memory(), etl::size(c) * sizeof(value_t<A>), cudaMemcpyDeviceToHost);
+    cuda_check(cudaMemcpy(tmp.get(), a_gpu.gpu_memory(), etl::size(c) * sizeof(value_t<A>), cudaMemcpyDeviceToHost));
 
     for (std::size_t i = 0; i < etl::size(a); ++i) {
         c[i] = tmp[i].real() / etl::size(a);
@@ -466,7 +466,7 @@ void scale_back_real(A&& a, C&& c) {
 #else
     auto tmp = allocate<std::complex<double>>(etl::size(a));
 
-    cudaMemcpy(tmp.get(), a_gpu.gpu_memory(), etl::size(c) * sizeof(value_t<A>), cudaMemcpyDeviceToHost);
+    cuda_check(cudaMemcpy(tmp.get(), a_gpu.gpu_memory(), etl::size(c) * sizeof(value_t<A>), cudaMemcpyDeviceToHost));
 
     for (std::size_t i = 0; i < etl::size(a); ++i) {
         c[i] = tmp[i].real() / etl::size(a);
