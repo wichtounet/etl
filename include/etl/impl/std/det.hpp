@@ -14,7 +14,7 @@
 
 namespace etl {
 
-/*
+/*!
  * \copydoc etl::lu
  */
 template <typename AT, typename LT, typename UT, typename PT>
