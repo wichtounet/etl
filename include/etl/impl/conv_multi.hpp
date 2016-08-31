@@ -123,7 +123,7 @@ struct conv2_valid_multi_impl {
         } else if(d == 1){
             return (etl::dim(input, d - 1) - etl::dim(kernel, d) + 2 * P1) / S1  + 1;
         } else {
-            return (etl::dim(input, d - 1) - etl::dim(kernel, d) + 2 * P1) / S2  + 1;
+            return (etl::dim(input, d - 1) - etl::dim(kernel, d) + 2 * P2) / S2  + 1;
         }
     }
 
@@ -136,7 +136,7 @@ struct conv2_valid_multi_impl {
 
         return D == 0 ? etl::dim<0,K>()
             : D == 1 ? (etl::safe_dim<0,I>() - etl::dim<1,K>() + 2 * P1) / S1 + 1
-            : (etl::safe_dim<1,I>() - etl::dim<2,K>() + 2 * P1) / S2 + 1;
+            : (etl::safe_dim<1,I>() - etl::dim<2,K>() + 2 * P2) / S2 + 1;
     }
 };
 
@@ -259,7 +259,7 @@ struct dyn_conv2_valid_multi_impl {
         } else if(d == 1){
             return (etl::dim(input, d - 1) - etl::dim(kernel, d) + 2 * p1) / s1  + 1;
         } else {
-            return (etl::dim(input, d - 1) - etl::dim(kernel, d) + 2 * p1) / s2  + 1;
+            return (etl::dim(input, d - 1) - etl::dim(kernel, d) + 2 * p2) / s2  + 1;
         }
     }
 };
