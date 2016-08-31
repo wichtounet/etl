@@ -128,12 +128,21 @@ void fft_conv2_valid_multi(const I& input, const K_T& kernels, C&& conv, size_t 
  * \param conv The output matrix
  */
 template <typename I, typename K_T, typename C>
-void blas_conv2_valid_multi(const I& input, const K_T& kernels, C&& conv) {
+void blas_conv2_valid_multi(const I& input, const K_T& kernels, C&& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
+    cpp_unused(p1);
+    cpp_unused(p2);
+
     const std::size_t K  = etl::dim<0>(kernels);
-    const std::size_t v1 = etl::dim<0>(input);
-    const std::size_t v2 = etl::dim<1>(input);
+    const std::size_t i1 = etl::dim<0>(input);
+    const std::size_t i2 = etl::dim<1>(input);
     const std::size_t k1 = etl::dim<1>(kernels);
     const std::size_t k2 = etl::dim<2>(kernels);
+
+    // unit-strided result dimensions
+    const std::size_t c1 = (i1 - k1) + 1;
+    const std::size_t c2 = (i2 - k2) + 1;
+
+    // real final dimensions
     const std::size_t f1 = etl::dim<1>(conv);
     const std::size_t f2 = etl::dim<2>(conv);
 
@@ -141,10 +150,25 @@ void blas_conv2_valid_multi(const I& input, const K_T& kernels, C&& conv) {
 
     prepared_k.deep_fflip_inplace();
 
-    etl::dyn_matrix<value_t<I>, 2> input_col(k1 * k2, (v1 - k1 + 1) * (v2 - k2 + 1));
+    etl::dyn_matrix<value_t<I>, 2> input_col(k1 * k2, c1 * c2);
     im2col_direct_tr(input_col, input, k1, k2);
 
-    etl::reshape(conv, K, f1 * f2) = mul(etl::reshape(prepared_k, K, k1 * k2), input_col);
+    if(s1 > 1 || s2 > 1){
+        etl::dyn_matrix<value_t<I>, 3> tmp_result(K, c1, c2);
+
+        etl::reshape(tmp_result, K, c1 * c2) = mul(etl::reshape(prepared_k, K, k1 * k2), input_col);
+
+        // Strided copy of the large result into the small result
+        for (std::size_t k = 0; k < K; ++k) {
+            for (std::size_t i = 0; i < f1; ++i) {
+                for (std::size_t j = 0; j < f2; ++j) {
+                    conv(k, i, j) = tmp_result(k, i * s1, j * s2);
+                }
+            }
+        }
+    } else {
+        etl::reshape(conv, K, f1 * f2) = mul(etl::reshape(prepared_k, K, k1 * k2), input_col);
+    }
 }
 
 /*!
@@ -169,19 +193,45 @@ void fft_conv2_valid_multi_flipped(const I& input, const K_T& kernels, C&& conv,
  * \param conv The output matrix
  */
 template <typename I, typename K_T, typename C>
-void blas_conv2_valid_multi_flipped(const I& input, const K_T& kernels, C&& conv) {
+void blas_conv2_valid_multi_flipped(const I& input, const K_T& kernels, C&& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
+    cpp_unused(p1);
+    cpp_unused(p2);
+
     const std::size_t K  = etl::dim<0>(kernels);
-    const std::size_t v1 = etl::dim<0>(input);
-    const std::size_t v2 = etl::dim<1>(input);
-    const std::size_t f1 = etl::dim<1>(conv);
-    const std::size_t f2 = etl::dim<2>(conv);
+    const std::size_t i1 = etl::dim<0>(input);
+    const std::size_t i2 = etl::dim<1>(input);
     const std::size_t k1 = etl::dim<1>(kernels);
     const std::size_t k2 = etl::dim<2>(kernels);
 
-    etl::dyn_matrix<value_t<I>, 2> input_col(k1 * k2, (v1 - k1 + 1) * (v2 - k2 + 1));
+    // unit-strided result dimensions
+    const std::size_t c1 = (i1 - k1) + 1;
+    const std::size_t c2 = (i2 - k2) + 1;
+
+    // real final dimensions
+    const std::size_t f1 = etl::dim<1>(conv);
+    const std::size_t f2 = etl::dim<2>(conv);
+
+    auto prepared_k = force_temporary(kernels);
+
+    etl::dyn_matrix<value_t<I>, 2> input_col(k1 * k2, c1 * c2);
     im2col_direct_tr(input_col, input, k1, k2);
 
-    etl::reshape(conv, K, f1 * f2) = mul(etl::reshape(kernels, K, k1 * k2), input_col);
+    if(s1 > 1 || s2 > 1){
+        etl::dyn_matrix<value_t<I>, 3> tmp_result(K, c1, c2);
+
+        etl::reshape(tmp_result, K, c1 * c2) = mul(etl::reshape(prepared_k, K, k1 * k2), input_col);
+
+        // Strided copy of the large result into the small result
+        for (std::size_t k = 0; k < K; ++k) {
+            for (std::size_t i = 0; i < f1; ++i) {
+                for (std::size_t j = 0; j < f2; ++j) {
+                    conv(k, i, j) = tmp_result(k, i * s1, j * s2);
+                }
+            }
+        }
+    } else {
+        etl::reshape(conv, K, f1 * f2) = mul(etl::reshape(prepared_k, K, k1 * k2), input_col);
+    }
 }
 
 } //end of namespace reduc
