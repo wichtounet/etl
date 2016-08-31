@@ -1117,6 +1117,10 @@ void conv2_valid_multi(const opaque_memory<T,2>& input, const opaque_memory<T,3>
     cpp_unused(input);
     cpp_unused(kernel);
     cpp_unused(conv);
+    cpp_unused(s1);
+    cpp_unused(s2);
+    cpp_unused(p1);
+    cpp_unused(p2);
     cpp_unreachable("Unsupported feature called: cudnn conv2_valid_multi");
 }
 
@@ -1131,6 +1135,10 @@ void conv2_valid_multi_flipped(const opaque_memory<T,2>& input, const opaque_mem
     cpp_unused(input);
     cpp_unused(kernel);
     cpp_unused(conv);
+    cpp_unused(s1);
+    cpp_unused(s2);
+    cpp_unused(p1);
+    cpp_unused(p2);
     cpp_unreachable("Unsupported feature called: cudnn conv2_valid_multi_flipped");
 }
 
