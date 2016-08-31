@@ -133,9 +133,6 @@ void fft_conv2_valid_multi(const I& input, const K_T& kernels, C&& conv, size_t 
  */
 template <typename I, typename K_T, typename C>
 void blas_conv2_valid_multi(const I& input, const K_T& kernels, C&& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
-    cpp_unused(p1);
-    cpp_unused(p2);
-
     const std::size_t K  = etl::dim<0>(kernels);
     const std::size_t i1 = etl::dim<0>(input);
     const std::size_t i2 = etl::dim<1>(input);
@@ -143,8 +140,8 @@ void blas_conv2_valid_multi(const I& input, const K_T& kernels, C&& conv, size_t
     const std::size_t k2 = etl::dim<2>(kernels);
 
     // unit-strided result dimensions
-    const std::size_t c1 = (i1 - k1) + 1;
-    const std::size_t c2 = (i2 - k2) + 1;
+    const std::size_t c1 = (i1 - k1 + 2 * p1) + 1;
+    const std::size_t c2 = (i2 - k2 + 2 * p2) + 1;
 
     // real final dimensions
     const std::size_t f1 = etl::dim<1>(conv);
@@ -152,10 +149,21 @@ void blas_conv2_valid_multi(const I& input, const K_T& kernels, C&& conv, size_t
 
     auto prepared_k = force_temporary(kernels);
 
+    // Flip the kernels
     prepared_k.deep_fflip_inplace();
 
     etl::dyn_matrix<value_t<I>, 2> input_col(k1 * k2, c1 * c2);
-    im2col_direct_tr(input_col, input, k1, k2);
+
+    if(p1 || p2){
+        etl::dyn_matrix<value_t<I>, 2> input_padded(i1 + 2 * p1, i2 + 2 * p2);
+        input_padded = value_t<I>(0);
+
+        pad_2d_input(input, input_padded, p1, p2);
+
+        im2col_direct_tr(input_col, input_padded, k1, k2);
+    } else {
+        im2col_direct_tr(input_col, input, k1, k2);
+    }
 
     if(s1 > 1 || s2 > 1){
         etl::dyn_matrix<value_t<I>, 3> tmp_result(K, c1, c2);
@@ -198,9 +206,6 @@ void fft_conv2_valid_multi_flipped(const I& input, const K_T& kernels, C&& conv,
  */
 template <typename I, typename K_T, typename C>
 void blas_conv2_valid_multi_flipped(const I& input, const K_T& kernels, C&& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
-    cpp_unused(p1);
-    cpp_unused(p2);
-
     const std::size_t K  = etl::dim<0>(kernels);
     const std::size_t i1 = etl::dim<0>(input);
     const std::size_t i2 = etl::dim<1>(input);
@@ -208,8 +213,8 @@ void blas_conv2_valid_multi_flipped(const I& input, const K_T& kernels, C&& conv
     const std::size_t k2 = etl::dim<2>(kernels);
 
     // unit-strided result dimensions
-    const std::size_t c1 = (i1 - k1) + 1;
-    const std::size_t c2 = (i2 - k2) + 1;
+    const std::size_t c1 = (i1 - k1 + 2 * p1) + 1;
+    const std::size_t c2 = (i2 - k2 + 2 * p2) + 1;
 
     // real final dimensions
     const std::size_t f1 = etl::dim<1>(conv);
@@ -218,7 +223,17 @@ void blas_conv2_valid_multi_flipped(const I& input, const K_T& kernels, C&& conv
     auto prepared_k = force_temporary(kernels);
 
     etl::dyn_matrix<value_t<I>, 2> input_col(k1 * k2, c1 * c2);
-    im2col_direct_tr(input_col, input, k1, k2);
+
+    if(p1 || p2){
+        etl::dyn_matrix<value_t<I>, 2> input_padded(i1 + 2 * p1, i2 + 2 * p2);
+        input_padded = value_t<I>(0);
+
+        pad_2d_input(input, input_padded, p1, p2);
+
+        im2col_direct_tr(input_col, input_padded, k1, k2);
+    } else {
+        im2col_direct_tr(input_col, input, k1, k2);
+    }
 
     if(s1 > 1 || s2 > 1){
         etl::dyn_matrix<value_t<I>, 3> tmp_result(K, c1, c2);
