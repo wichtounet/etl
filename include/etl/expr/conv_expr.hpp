@@ -337,8 +337,14 @@ using dyn_conv2_valid_flipped_expr = dyn_basic_conv_expr<T, 2, detail::dyn_conv2
 /*!
  * \brief Expression for 4D valid convolution
  */
-template <typename T>
-using conv4_valid_expr = basic_conv_expr<T, 4, detail::conv4_valid_impl>;
+template<typename T, size_t S1 = 0, size_t S2 = 0, size_t P1 = 0, size_t P2 = 0>
+using conv4_valid_expr = basic_conv_expr<T, 4, detail::conv4_valid_impl<S1, S2, P1, P2>>;
+
+/*!
+ * \brief Expression for 4D valid convolution
+ */
+template<typename T, size_t S1 = 0, size_t S2 = 0, size_t P1 = 0, size_t P2 = 0>
+using conv4_valid_flipped_expr = basic_conv_expr<T, 4, detail::conv4_valid_flipped_impl<S1, S2, P1, P2>>;
 
 /*!
  * \brief Expression for 4D valid convolution
@@ -357,12 +363,6 @@ using conv4_valid_filter_flipped_expr = basic_conv_expr<T, 4, detail::conv4_vali
  */
 template <typename T>
 using conv4_full_expr = basic_conv_expr<T, 4, detail::conv4_full_impl>;
-
-/*!
- * \brief Expression for 4D valid convolution
- */
-template <typename T>
-using conv4_valid_flipped_expr = basic_conv_expr<T, 4, detail::conv4_valid_flipped_impl>;
 
 /*!
  * \brief Expression for 4D valid convolution

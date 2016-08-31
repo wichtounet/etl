@@ -391,9 +391,14 @@ void conv2_valid_flipped(const I& input, const K& kernel, C&& conv, size_t s1, s
  * \param conv The output matrix
  */
 template <typename I, typename K, typename C>
-void conv4_valid(const I& input, const K& kernel, C&& conv) {
+void conv4_valid(const I& input, const K& kernel, C&& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
     cpp_assert(etl::dim<1>(input) == etl::dim<1>(kernel), "Invalid number of channels");
     cpp_assert(etl::dim<0>(input) == etl::dim<0>(conv), "Invalid number of images");
+
+    cpp_unused(s1);
+    cpp_unused(s2);
+    cpp_unused(p1);
+    cpp_unused(p2);
 
     conv = 0.0;
 
@@ -425,9 +430,14 @@ void conv4_valid(const I& input, const K& kernel, C&& conv) {
  * \param conv The output matrix
  */
 template <typename I, typename K, typename C>
-void conv4_valid_flipped(const I& input, const K& kernel, C&& conv) {
+void conv4_valid_flipped(const I& input, const K& kernel, C&& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
     cpp_assert(etl::dim<1>(input) == etl::dim<1>(kernel), "Invalid number of channels");
     cpp_assert(etl::dim<0>(input) == etl::dim<0>(conv), "Invalid number of images");
+
+    cpp_unused(s1);
+    cpp_unused(s2);
+    cpp_unused(p1);
+    cpp_unused(p2);
 
     conv = 0.0;
 

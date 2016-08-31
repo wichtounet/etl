@@ -85,11 +85,11 @@ DYN_CONV_FUNCTOR(std_dyn_conv2_valid_multi_flipped, c = selected_helper(etl::con
 DYN_CONV_FUNCTOR(fft_dyn_conv2_valid_multi_flipped, c = selected_helper(etl::conv_multi_impl::FFT, (etl::conv_2d_valid_multi_flipped(a, b, s1, s2, p1, p2))))
 DYN_CONV_FUNCTOR(blas_dyn_conv2_valid_multi_flipped, c = selected_helper(etl::conv_multi_impl::BLAS, (etl::conv_2d_valid_multi_flipped(a, b, s1, s2, p1, p2))))
 
-CONV_FUNCTOR(default_conv4_valid, c = etl::conv_4d_valid(a, b))
-CONV_FUNCTOR(std_conv4_valid, c = selected_helper(etl::conv4_impl::STD, etl::conv_4d_valid(a, b)))
+CONV_FUNCTOR(default_conv4_valid, c = (etl::conv_4d_valid<S1,S2,P1,P2>(a, b)))
+CONV_FUNCTOR(std_conv4_valid, c = selected_helper(etl::conv4_impl::STD, (etl::conv_4d_valid<S1,S2,P1,P2>(a, b))))
 
-CONV_FUNCTOR(default_conv4_valid_flipped, c = etl::conv_4d_valid_flipped(a, b))
-CONV_FUNCTOR(std_conv4_valid_flipped, c = selected_helper(etl::conv4_impl::STD, etl::conv_4d_valid_flipped(a, b)))
+CONV_FUNCTOR(default_conv4_valid_flipped, c = (etl::conv_4d_valid_flipped<S1,S2,P1,P2>(a, b)))
+CONV_FUNCTOR(std_conv4_valid_flipped, c = selected_helper(etl::conv4_impl::STD, (etl::conv_4d_valid_flipped<S1,S2,P1,P2>(a, b))))
 
 CONV_FUNCTOR(default_conv4_valid_filter, c = etl::conv_4d_valid_filter(a, b))
 CONV_FUNCTOR(std_conv4_valid_filter, c = selected_helper(etl::conv4_impl::STD, etl::conv_4d_valid_filter(a, b)))
@@ -257,8 +257,8 @@ CONV_FUNCTOR(sse_conv2_valid_multi_flipped, c = selected_helper(etl::conv_multi_
 CONV_FUNCTOR(sse_conv2_same_multi, c = selected_helper(etl::conv_multi_impl::SSE, etl::conv_2d_same_multi(a, b)))
 CONV_FUNCTOR(sse_conv2_same_multi_flipped, c = selected_helper(etl::conv_multi_impl::SSE, etl::conv_2d_same_multi_flipped(a, b)))
 
-CONV_FUNCTOR(sse_conv4_valid, c = selected_helper(etl::conv4_impl::SSE, etl::conv_4d_valid(a, b)))
-CONV_FUNCTOR(sse_conv4_valid_flipped, c = selected_helper(etl::conv4_impl::SSE, etl::conv_4d_valid_flipped(a, b)))
+CONV_FUNCTOR(sse_conv4_valid, c = selected_helper(etl::conv4_impl::SSE, (etl::conv_4d_valid<S1,S2,P1,P2>(a, b))))
+CONV_FUNCTOR(sse_conv4_valid_flipped, c = selected_helper(etl::conv4_impl::SSE, (etl::conv_4d_valid_flipped<S1,S2,P1,P2>(a, b))))
 CONV_FUNCTOR(sse_conv4_valid_filter, c = selected_helper(etl::conv4_impl::SSE, etl::conv_4d_valid_filter(a, b)))
 CONV_FUNCTOR(sse_conv4_valid_filter_flipped, c = selected_helper(etl::conv4_impl::SSE, etl::conv_4d_valid_filter_flipped(a, b)))
 CONV_FUNCTOR(sse_conv4_full, c = selected_helper(etl::conv4_impl::SSE, etl::conv_4d_full(a, b)))
@@ -349,8 +349,8 @@ CONV_FUNCTOR(avx_conv2_valid_multi_flipped, c = selected_helper(etl::conv_multi_
 CONV_FUNCTOR(avx_conv2_same_multi, c = selected_helper(etl::conv_multi_impl::AVX, etl::conv_2d_same_multi(a, b)))
 CONV_FUNCTOR(avx_conv2_same_multi_flipped, c = selected_helper(etl::conv_multi_impl::AVX, etl::conv_2d_same_multi_flipped(a, b)))
 
-CONV_FUNCTOR(avx_conv4_valid, c = selected_helper(etl::conv4_impl::AVX, etl::conv_4d_valid(a, b)))
-CONV_FUNCTOR(avx_conv4_valid_flipped, c = selected_helper(etl::conv4_impl::AVX, etl::conv_4d_valid_flipped(a, b)))
+CONV_FUNCTOR(avx_conv4_valid, c = selected_helper(etl::conv4_impl::AVX, (etl::conv_4d_valid<S1,S2,P1,P2>(a, b))))
+CONV_FUNCTOR(avx_conv4_valid_flipped, c = selected_helper(etl::conv4_impl::AVX, (etl::conv_4d_valid_flipped<S1,S2,P1,P2>(a, b))))
 CONV_FUNCTOR(avx_conv4_valid_filter, c = selected_helper(etl::conv4_impl::AVX, etl::conv_4d_valid_filter(a, b)))
 CONV_FUNCTOR(avx_conv4_valid_filter_flipped, c = selected_helper(etl::conv4_impl::AVX, etl::conv_4d_valid_filter_flipped(a, b)))
 CONV_FUNCTOR(avx_conv4_full, c = selected_helper(etl::conv4_impl::AVX, etl::conv_4d_full(a, b)))
@@ -425,8 +425,8 @@ DYN_CONV_FUNCTOR(cudnn_dyn_conv2_valid_flipped, c = selected_helper(etl::conv_im
 DYN_CONV_FUNCTOR(cudnn_dyn_conv2_valid_multi, c = selected_helper(etl::conv_impl::CUDNN, (etl::conv_2d_valid_multi(a, b, s1, s2, p1, p2))))
 DYN_CONV_FUNCTOR(cudnn_dyn_conv2_valid_multi_flipped, c = selected_helper(etl::conv_impl::CUDNN, (etl::conv_2d_valid_multi_flipped(a, b, s1, s2, p1, p2))))
 
-CONV_FUNCTOR(cudnn_conv4_valid, c = selected_helper(etl::conv4_impl::CUDNN, etl::conv_4d_valid(a, b)))
-CONV_FUNCTOR(cudnn_conv4_valid_flipped, c = selected_helper(etl::conv4_impl::CUDNN, etl::conv_4d_valid_flipped(a, b)))
+CONV_FUNCTOR(cudnn_conv4_valid, c = selected_helper(etl::conv4_impl::CUDNN, (etl::conv_4d_valid<S1,S2,P1,P2>(a, b))))
+CONV_FUNCTOR(cudnn_conv4_valid_flipped, c = selected_helper(etl::conv4_impl::CUDNN, (etl::conv_4d_valid_flipped<S1,S2,P1,P2>(a, b))))
 CONV_FUNCTOR(cudnn_conv4_valid_filter, c = selected_helper(etl::conv4_impl::CUDNN, etl::conv_4d_valid_filter(a, b)))
 CONV_FUNCTOR(cudnn_conv4_valid_filter_flipped, c = selected_helper(etl::conv4_impl::CUDNN, etl::conv_4d_valid_filter_flipped(a, b)))
 CONV_FUNCTOR(cudnn_conv4_full, c = selected_helper(etl::conv4_impl::CUDNN, etl::conv_4d_full(a, b)))
