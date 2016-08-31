@@ -30,11 +30,11 @@ struct conv4_valid_impl {
         auto impl = select_conv4_impl<I, K, C>();
 
         if (impl == etl::conv4_impl::CUDNN) {
-            impl::cudnn::conv4_valid(input.direct(), kernel.direct(), conv.direct());
+            impl::cudnn::conv4_valid(input.direct(), kernel.direct(), conv.direct(), S1, S2, P1, P2);
         } else if (impl == etl::conv4_impl::AVX) {
-            impl::avx::conv4_valid(input.direct(), kernel.direct(), conv.direct());
+            impl::avx::conv4_valid(input.direct(), kernel.direct(), conv.direct(), S1, S2, P1, P2);
         } else if (impl == etl::conv4_impl::SSE) {
-            impl::sse::conv4_valid(input.direct(), kernel.direct(), conv.direct());
+            impl::sse::conv4_valid(input.direct(), kernel.direct(), conv.direct(), S1, S2, P1, P2);
         } else if (impl == etl::conv4_impl::STD) {
             impl::standard::conv4_valid(input, kernel, conv, S1, S2, P1, P2);
         } else {
@@ -139,11 +139,11 @@ struct conv4_valid_flipped_impl : conv4_valid_impl<S1, S2, P1, P2> {
         auto impl = select_conv4_impl<I, K, C>();
 
         if (impl == etl::conv4_impl::CUDNN) {
-            impl::cudnn::conv4_valid_flipped(input.direct(), kernel.direct(), conv.direct());
+            impl::cudnn::conv4_valid_flipped(input.direct(), kernel.direct(), conv.direct(), S1, S2, P1, P2);
         } else if (impl == etl::conv4_impl::AVX) {
-            impl::avx::conv4_valid_flipped(input.direct(), kernel.direct(), conv.direct());
+            impl::avx::conv4_valid_flipped(input.direct(), kernel.direct(), conv.direct(), S1, S2, P1, P2);
         } else if (impl == etl::conv4_impl::SSE) {
-            impl::sse::conv4_valid_flipped(input.direct(), kernel.direct(), conv.direct());
+            impl::sse::conv4_valid_flipped(input.direct(), kernel.direct(), conv.direct(), S1, S2, P1, P2);
         } else if (impl == etl::conv4_impl::STD) {
             impl::standard::conv4_valid_flipped(input, kernel, conv, S1, S2, P1, P2);
         } else {

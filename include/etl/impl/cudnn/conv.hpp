@@ -217,7 +217,7 @@ void conv2_valid_flipped(const opaque_memory<T,2>& input, const opaque_memory<T,
 }
 
 template <typename T>
-void conv4_valid(const opaque_memory<T,4>& input, const opaque_memory<T,4>& kernel, const opaque_memory<T,4>& conv) {
+void conv4_valid(const opaque_memory<T,4>& input, const opaque_memory<T,4>& kernel, const opaque_memory<T,4>& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
     using type = T;
 
     type alpha[] = {1.0f};
@@ -233,7 +233,7 @@ void conv4_valid(const opaque_memory<T,4>& input, const opaque_memory<T,4>& kern
     // Prepare the convolution
     cudnnConvolutionDescriptor_t convolution;
     cudnn_check(cudnnCreateConvolutionDescriptor(&convolution));
-    cudnn_check(cudnnSetConvolution2dDescriptor(convolution, 0, 0, 1, 1, 1, 1, CUDNN_CONVOLUTION));
+    cudnn_check(cudnnSetConvolution2dDescriptor(convolution, p1, p2, s1, s2, 1, 1, CUDNN_CONVOLUTION));
 
     // Find the algorithm to use
     cudnnConvolutionFwdAlgo_t conv_algo;
@@ -269,7 +269,7 @@ void conv4_valid(const opaque_memory<T,4>& input, const opaque_memory<T,4>& kern
 }
 
 template <typename T>
-void conv4_valid_flipped(const opaque_memory<T,4>& input, const opaque_memory<T,4>& kernel, const opaque_memory<T,4>& conv) {
+void conv4_valid_flipped(const opaque_memory<T,4>& input, const opaque_memory<T,4>& kernel, const opaque_memory<T,4>& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
     using type = T;
 
     type alpha[] = {1.0f};
@@ -285,7 +285,7 @@ void conv4_valid_flipped(const opaque_memory<T,4>& input, const opaque_memory<T,
     // Prepare the convolution
     cudnnConvolutionDescriptor_t convolution;
     cudnn_check(cudnnCreateConvolutionDescriptor(&convolution));
-    cudnn_check(cudnnSetConvolution2dDescriptor(convolution, 0, 0, 1, 1, 1, 1, CUDNN_CROSS_CORRELATION));
+    cudnn_check(cudnnSetConvolution2dDescriptor(convolution, p1, p2, s1, s2, 1, 1, CUDNN_CROSS_CORRELATION));
 
     // Find the algorithm to use
     cudnnConvolutionFwdAlgo_t conv_algo;
@@ -997,10 +997,14 @@ void conv2_valid_flipped(const opaque_memory<T,2>& input, const opaque_memory<T,
  * \param conv The output matrix
  */
 template <typename T>
-void conv4_valid(const opaque_memory<T,4>& input, const opaque_memory<T,4>& kernel, const opaque_memory<T,4>& conv) {
+void conv4_valid(const opaque_memory<T,4>& input, const opaque_memory<T,4>& kernel, const opaque_memory<T,4>& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
     cpp_unused(input);
     cpp_unused(kernel);
     cpp_unused(conv);
+    cpp_unused(s1);
+    cpp_unused(s2);
+    cpp_unused(p1);
+    cpp_unused(p2);
     cpp_unreachable("Unsupported feature called: cudnn conv4_valid");
 }
 
@@ -1011,10 +1015,14 @@ void conv4_valid(const opaque_memory<T,4>& input, const opaque_memory<T,4>& kern
  * \param conv The output matrix
  */
 template <typename T>
-void conv4_valid_flipped(const opaque_memory<T,4>& input, const opaque_memory<T,4>& kernel, const opaque_memory<T,4>& conv) {
+void conv4_valid_flipped(const opaque_memory<T,4>& input, const opaque_memory<T,4>& kernel, const opaque_memory<T,4>& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
     cpp_unused(input);
     cpp_unused(kernel);
     cpp_unused(conv);
+    cpp_unused(s1);
+    cpp_unused(s2);
+    cpp_unused(p1);
+    cpp_unused(p2);
     cpp_unreachable("Unsupported feature called: cudnn conv4_valid_flipped");
 }
 

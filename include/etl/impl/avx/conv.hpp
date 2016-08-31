@@ -1338,7 +1338,7 @@ void conv2_valid_multi_flipped(const opaque_memory<T, 2>& input, const opaque_me
 }
 
 template <typename T>
-void conv4_valid(const opaque_memory<T, 4>& input, const opaque_memory<T, 4>& kernel, const opaque_memory<T, 4>& conv) {
+void conv4_valid(const opaque_memory<T, 4>& input, const opaque_memory<T, 4>& kernel, const opaque_memory<T, 4>& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
     if(kernel.dim(1) > 0){
         auto conv_i_inc = conv.dim(1) * conv.dim(2) * conv.dim(3);
         auto conv_k_inc = conv.dim(2) * conv.dim(3);
@@ -1354,13 +1354,13 @@ void conv4_valid(const opaque_memory<T, 4>& input, const opaque_memory<T, 4>& ke
                 conv2_valid_micro_kernel(
                     input.memory_start() + i * input_i_inc, input.dim(2), input.dim(3),
                     kernel.memory_start() + k * kernel_k_inc, kernel.dim(2), kernel.dim(3),
-                    conv.memory_start() + i * conv_i_inc + k * conv_k_inc, 0.0, 1, 1, 0, 0);
+                    conv.memory_start() + i * conv_i_inc + k * conv_k_inc, 0.0, s1, s2, p1, p2);
 
                 for(std::size_t c = 1; c < kernel.dim(1); ++c){
                     conv2_valid_micro_kernel(
                         input.memory_start() + i * input_i_inc + c * input_c_inc, input.dim(2), input.dim(3),
                         kernel.memory_start() + k * kernel_k_inc + c * kernel_c_inc, kernel.dim(2), kernel.dim(3),
-                        conv.memory_start() + i * conv_i_inc + k * conv_k_inc, 1.0, 1, 1, 0, 0);
+                        conv.memory_start() + i * conv_i_inc + k * conv_k_inc, 1.0, s1, s2, p1, p2);
                 }
             }
         }
@@ -1368,7 +1368,7 @@ void conv4_valid(const opaque_memory<T, 4>& input, const opaque_memory<T, 4>& ke
 }
 
 template <typename T>
-void conv4_valid_flipped(const opaque_memory<T, 4>& input, const opaque_memory<T, 4>& kernel, const opaque_memory<T, 4>& conv) {
+void conv4_valid_flipped(const opaque_memory<T, 4>& input, const opaque_memory<T, 4>& kernel, const opaque_memory<T, 4>& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
     if(kernel.dim(1) > 0){
         auto conv_i_inc = conv.dim(1) * conv.dim(2) * conv.dim(3);
         auto conv_k_inc = conv.dim(2) * conv.dim(3);
@@ -1384,13 +1384,13 @@ void conv4_valid_flipped(const opaque_memory<T, 4>& input, const opaque_memory<T
                 conv2_valid_flipped_micro_kernel(
                     input.memory_start() + i * input_i_inc, input.dim(2), input.dim(3),
                     kernel.memory_start() + k * kernel_k_inc, kernel.dim(2), kernel.dim(3),
-                    conv.memory_start() + i * conv_i_inc + k * conv_k_inc, 0.0, 1, 1, 0, 0);
+                    conv.memory_start() + i * conv_i_inc + k * conv_k_inc, 0.0, s1, s2, p1, p2);
 
                 for(std::size_t c = 1; c < kernel.dim(1); ++c){
                     conv2_valid_flipped_micro_kernel(
                         input.memory_start() + i * input_i_inc + c * input_c_inc, input.dim(2), input.dim(3),
                         kernel.memory_start() + k * kernel_k_inc + c * kernel_c_inc, kernel.dim(2), kernel.dim(3),
-                        conv.memory_start() + i * conv_i_inc + k * conv_k_inc, 1.0, 1, 1, 0, 0);
+                        conv.memory_start() + i * conv_i_inc + k * conv_k_inc, 1.0, s1, s2, p1, p2);
                 }
             }
         }
@@ -1866,10 +1866,14 @@ void conv2_full_multi_flipped(const I& input, const K& kernel, C&& conv) {
  * \param conv The output matrix
  */
 template <typename T>
-void conv4_valid(const opaque_memory<T, 4>& input, const opaque_memory<T, 4>& kernel, const opaque_memory<T, 4>& conv){
+void conv4_valid(const opaque_memory<T, 4>& input, const opaque_memory<T, 4>& kernel, const opaque_memory<T, 4>& conv, size_t s1, size_t s2, size_t p1, size_t p2){
     cpp_unused(input);
     cpp_unused(kernel);
     cpp_unused(conv);
+    cpp_unused(s1);
+    cpp_unused(s2);
+    cpp_unused(p1);
+    cpp_unused(p2);
     cpp_unreachable("AVX not available/enabled");
 }
 
@@ -1880,10 +1884,14 @@ void conv4_valid(const opaque_memory<T, 4>& input, const opaque_memory<T, 4>& ke
  * \param conv The output matrix
  */
 template <typename T>
-void conv4_valid_flipped(const opaque_memory<T, 4>& input, const opaque_memory<T, 4>& kernel, const opaque_memory<T, 4>& conv){
+void conv4_valid_flipped(const opaque_memory<T, 4>& input, const opaque_memory<T, 4>& kernel, const opaque_memory<T, 4>& conv, size_t s1, size_t s2, size_t p1, size_t p2){
     cpp_unused(input);
     cpp_unused(kernel);
     cpp_unused(conv);
+    cpp_unused(s1);
+    cpp_unused(s2);
+    cpp_unused(p1);
+    cpp_unused(p2);
     cpp_unreachable("AVX not available/enabled");
 }
 

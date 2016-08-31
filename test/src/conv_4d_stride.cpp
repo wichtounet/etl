@@ -29,7 +29,7 @@ CONV4_VALID_TEST_CASE("conv/4d/stride/valid_1", "[conv][conv4][valid]") {
     Impl::template apply<2, 2, 0, 0>(I, K, c);
 
     for(std::size_t i = 0; i < ref.size(); ++i){
-        REQUIRE_EQUALS_APPROX(c[i], ref[i]);
+        REQUIRE_EQUALS_APPROX_E(c[i], ref[i], 0.1);
     }
 }
 
@@ -52,7 +52,7 @@ CONV4_VALID_TEST_CASE("conv/4d/stride/valid_2", "[conv][conv4][valid]") {
     Impl::template apply<2, 2, 0, 0>(I, K, c);
 
     for(std::size_t i = 0; i < ref.size(); ++i){
-        REQUIRE_EQUALS_APPROX(c[i], ref[i]);
+        REQUIRE_EQUALS_APPROX_E(c[i], ref[i], 0.1);
     }
 }
 
