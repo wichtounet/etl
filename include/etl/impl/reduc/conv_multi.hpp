@@ -53,13 +53,15 @@ void complex_pad_3d(const F1& in, F2& out) {
  * \brief Pad the input matrix in the output matrix for convolution as multiplication
  * \param in The input matrix
  * \param out The output matrix
+ * \param p1 The first dimension extra padding of the convolution
+ * \param p2 The second dimension extra padding of the convolution
  */
 template <typename F1, typename F2>
-void complex_pad_2d(const F1& in, F2& out) {
+void pad_2d_input(const F1& in, F2& out, size_t p1, size_t p2) {
     auto* direct = out.memory_start();
     for (std::size_t i = 0; i < etl::dim<0>(in); ++i) {
         for (std::size_t j = 0; j < etl::dim<1>(in); ++j) {
-            direct[i * out.template dim<1>() + j] = in(i, j);
+            direct[(i + p1) * out.template dim<1>() + (j + p2)] = in(i, j);
         }
     }
 }
@@ -76,23 +78,25 @@ void complex_pad_2d(const F1& in, F2& out) {
  */
 template <typename I, typename K_T, typename C>
 void fft_conv2_valid_multi(const I& input, const K_T& kernels, C&& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
-    cpp_unused(p1);
-    cpp_unused(p2);
-
     const std::size_t K = etl::dim<0>(kernels);
-
     const std::size_t i1 = etl::dim<0>(input);
     const std::size_t i2 = etl::dim<1>(input);
-
     const std::size_t k1 = etl::dim<1>(kernels);
     const std::size_t k2 = etl::dim<2>(kernels);
 
-    const std::size_t c1 = (i1 - k1) / s1 + 1;
-    const std::size_t c2 = (i2 - k2) / s1 + 1;
-    const std::size_t v1 = i1 - k1 + 1;
-    const std::size_t v2 = i2 - k2 + 1;
-    const std::size_t t1 = i1 + k1 - 1;
-    const std::size_t t2 = i2 + k2 - 1;
+    // Dimensions of the final valid convolution (stride,padding)
+    const std::size_t c1 = (i1 - k1 + 2 * p1) / s1 + 1;
+    const std::size_t c2 = (i2 - k2 + 2 * p2) / s1 + 1;
+
+    //Dimensions of the valid convolution (unit strided)
+    const std::size_t v1 = (i1 - k1 + 2 * p1) + 1;
+    const std::size_t v2 = (i2 - k2 + 2 * p2) + 1;
+
+    // Dimensions of the full convolution
+    const std::size_t t1 = (i1 + k1 + 2 * p1) - 1;
+    const std::size_t t2 = (i2 + k2 + 2 * p2) - 1;
+
+    // Dimensions of the 'full' borders
     const std::size_t b1 = (t1 - v1) / 2;
     const std::size_t b2 = (t2 - v2) / 2;
 
@@ -100,7 +104,7 @@ void fft_conv2_valid_multi(const I& input, const K_T& kernels, C&& conv, size_t 
     etl::dyn_matrix<std::complex<value_t<I>>, 3> kernels_padded(K, t1, t2);
     etl::dyn_matrix<std::complex<value_t<I>>, 3> tmp_result(K, t1, t2);
 
-    complex_pad_2d(input, input_padded);
+    pad_2d_input(input, input_padded, p1, p2);
     complex_pad_3d(kernels, kernels_padded);
 
     input_padded.fft2_inplace();

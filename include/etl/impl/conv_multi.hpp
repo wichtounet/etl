@@ -85,8 +85,8 @@ struct conv2_valid_multi_impl {
         static_assert(etl::dimensions<C>() == 3, "Invalid number of dimensions for conv of conv2_valid_multi");
 
         cpp_assert(etl::dim(conv, 0) == etl::dim(kernel, 0), "Invalid dimensions for conv2_valid_multi");
-        cpp_assert(etl::dim(conv, 1) == (etl::dim(input, 0) - etl::dim(kernel, 1)) / S1 + 1, "Invalid dimensions for conv2_valid_multi");
-        cpp_assert(etl::dim(conv, 2) == (etl::dim(input, 1) - etl::dim(kernel, 2)) / S2 + 1, "Invalid dimensions for conv2_valid_multi");
+        cpp_assert(etl::dim(conv, 1) == (etl::dim(input, 0) - etl::dim(kernel, 1) + 2 * P1) / S1 + 1, "Invalid dimensions for conv2_valid_multi");
+        cpp_assert(etl::dim(conv, 2) == (etl::dim(input, 1) - etl::dim(kernel, 2) + 2 * P2) / S2 + 1, "Invalid dimensions for conv2_valid_multi");
         cpp_assert(etl::dim(input, 0) >= etl::dim(kernel, 1), "Invalid dimensions for conv2_valid_multi");
         cpp_assert(etl::dim(input, 1) >= etl::dim(kernel, 2), "Invalid dimensions for conv2_valid_multi");
 
@@ -105,8 +105,8 @@ struct conv2_valid_multi_impl {
         static_assert(etl::dimensions<C>() == 3, "Invalid number of dimensions for conv of conv2_valid_multi");
 
         static_assert(etl::dim<0,C>() == etl::dim<0,K>(), "Invalid dimensions for conv2_valid_multi");
-        static_assert(etl::dim<1,C>() == (etl::dim<0,I>() - etl::dim<1,K>()) / S1 + 1, "Invalid dimensions for conv2_valid_multi");
-        static_assert(etl::dim<2,C>() == (etl::dim<1,I>() - etl::dim<2,K>()) / S2 + 1, "Invalid dimensions for conv2_valid_multi");
+        static_assert(etl::dim<1,C>() == (etl::dim<0,I>() - etl::dim<1,K>() + 2 * P1) / S1 + 1, "Invalid dimensions for conv2_valid_multi");
+        static_assert(etl::dim<2,C>() == (etl::dim<1,I>() - etl::dim<2,K>() + 2 * P2) / S2 + 1, "Invalid dimensions for conv2_valid_multi");
         static_assert(etl::dim<0,I>() >= etl::dim<1,K>(), "Invalid dimensions for conv2_valid_multi");
         static_assert(etl::dim<1,I>() >= etl::dim<2,K>(), "Invalid dimensions for conv2_valid_multi");
     }
@@ -121,9 +121,9 @@ struct conv2_valid_multi_impl {
         if(d == 0){
             return etl::dim(kernel, 0);
         } else if(d == 1){
-            return (etl::dim(input, d - 1) - etl::dim(kernel, d)) / S1  + 1;
+            return (etl::dim(input, d - 1) - etl::dim(kernel, d) + 2 * P1) / S1  + 1;
         } else {
-            return (etl::dim(input, d - 1) - etl::dim(kernel, d)) / S2  + 1;
+            return (etl::dim(input, d - 1) - etl::dim(kernel, d) + 2 * P1) / S2  + 1;
         }
     }
 
@@ -135,8 +135,8 @@ struct conv2_valid_multi_impl {
         static_assert(D < 3, "Invalid dimension access");
 
         return D == 0 ? etl::dim<0,K>()
-            : D == 1 ? (etl::safe_dim<0,I>() - etl::dim<1,K>()) / S1 + 1
-            : (etl::safe_dim<1,I>() - etl::dim<2,K>()) / S2 + 1;
+            : D == 1 ? (etl::safe_dim<0,I>() - etl::dim<1,K>() + 2 * P1) / S1 + 1
+            : (etl::safe_dim<1,I>() - etl::dim<2,K>() + 2 * P1) / S2 + 1;
     }
 };
 
