@@ -634,7 +634,7 @@ void conv4_full_flipped(const opaque_memory<T,4>& input, const opaque_memory<T,4
 }
 
 template <typename T>
-void conv2_valid_multi(const opaque_memory<T,2>& input, const opaque_memory<T,3>& kernel, const opaque_memory<T,3>& conv) {
+void conv2_valid_multi(const opaque_memory<T,2>& input, const opaque_memory<T,3>& kernel, const opaque_memory<T,3>& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
     using type = std::remove_const_t<T>;
 
     auto data_type = std::is_same<type, float>::value ? CUDNN_DATA_FLOAT : CUDNN_DATA_DOUBLE;
@@ -662,7 +662,7 @@ void conv2_valid_multi(const opaque_memory<T,2>& input, const opaque_memory<T,3>
     // Prepare the convolution
     cudnnConvolutionDescriptor_t convolution;
     cudnn_check(cudnnCreateConvolutionDescriptor(&convolution));
-    cudnn_check(cudnnSetConvolution2dDescriptor(convolution, 0, 0, 1, 1, 1, 1, CUDNN_CONVOLUTION));
+    cudnn_check(cudnnSetConvolution2dDescriptor(convolution, p1, p2, s1, s2, 1, 1, CUDNN_CONVOLUTION));
 
     // Find the algorithm to use
     cudnnConvolutionFwdAlgo_t conv_algo;
@@ -701,7 +701,7 @@ void conv2_valid_multi(const opaque_memory<T,2>& input, const opaque_memory<T,3>
 }
 
 template <typename T>
-void conv2_valid_multi_flipped(const opaque_memory<T,2>& input, const opaque_memory<T,3>& kernel, const opaque_memory<T,3>& conv) {
+void conv2_valid_multi_flipped(const opaque_memory<T,2>& input, const opaque_memory<T,3>& kernel, const opaque_memory<T,3>& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
     using type = std::remove_const_t<T>;
 
     auto data_type = std::is_same<type, float>::value ? CUDNN_DATA_FLOAT : CUDNN_DATA_DOUBLE;
@@ -729,7 +729,7 @@ void conv2_valid_multi_flipped(const opaque_memory<T,2>& input, const opaque_mem
     // Prepare the convolution
     cudnnConvolutionDescriptor_t convolution;
     cudnn_check(cudnnCreateConvolutionDescriptor(&convolution));
-    cudnn_check(cudnnSetConvolution2dDescriptor(convolution, 0, 0, 1, 1, 1, 1, CUDNN_CROSS_CORRELATION));
+    cudnn_check(cudnnSetConvolution2dDescriptor(convolution, p1, p2, s1, s2, 1, 1, CUDNN_CROSS_CORRELATION));
 
     // Find the algorithm to use
     cudnnConvolutionFwdAlgo_t conv_algo;
@@ -1113,7 +1113,7 @@ void conv4_full_flipped(const opaque_memory<T,4>& input, const opaque_memory<T,4
  * \param conv The output matrix
  */
 template <typename T>
-void conv2_valid_multi(const opaque_memory<T,2>& input, const opaque_memory<T,3>& kernel, const opaque_memory<T,3>& conv) {
+void conv2_valid_multi(const opaque_memory<T,2>& input, const opaque_memory<T,3>& kernel, const opaque_memory<T,3>& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
     cpp_unused(input);
     cpp_unused(kernel);
     cpp_unused(conv);
@@ -1127,7 +1127,7 @@ void conv2_valid_multi(const opaque_memory<T,2>& input, const opaque_memory<T,3>
  * \param conv The output matrix
  */
 template <typename T>
-void conv2_valid_multi_flipped(const opaque_memory<T,2>& input, const opaque_memory<T,3>& kernel, const opaque_memory<T,3>& conv) {
+void conv2_valid_multi_flipped(const opaque_memory<T,2>& input, const opaque_memory<T,3>& kernel, const opaque_memory<T,3>& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
     cpp_unused(input);
     cpp_unused(kernel);
     cpp_unused(conv);
