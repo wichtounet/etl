@@ -216,7 +216,7 @@ void conv2_same_flipped(const I& input, const K& kernel, C&& conv) {
  * \param p2 The second dimension padding
  */
 template <typename I, typename K, typename C>
-inline void conv2_valid_border(const I& input, const K& kernel, C&& conv, std::size_t i, std::size_t j, size_t s1, size_t s2, size_t p1, size_t p2) {
+inline void conv2_valid_border(const I& input, const K& kernel, C&& conv, std::size_t i, std::size_t j, size_t s1, size_t s2, size_t p1, size_t p2, value_t<I> beta = value_t<I>(0.0)) {
     typename I::value_type temp = 0.0;
 
     const auto s_i = i * s1;
@@ -233,7 +233,11 @@ inline void conv2_valid_border(const I& input, const K& kernel, C&& conv, std::s
         }
     }
 
-    conv(i, j) = temp;
+    if(beta == value_t<I>(0.0)){
+        conv(i, j) = temp;
+    } else {
+        conv(i, j) = beta * conv(i, j) + temp;
+    }
 }
 
 
@@ -252,7 +256,7 @@ inline void conv2_valid_border(const I& input, const K& kernel, C&& conv, std::s
  * \param p2 The second dimension padding
  */
 template <typename I, typename K, typename C>
-inline void conv2_valid_flipped_border(const I& input, const K& kernel, C&& conv, std::size_t i, std::size_t j, size_t s1, size_t s2, size_t p1, size_t p2) {
+inline void conv2_valid_flipped_border(const I& input, const K& kernel, C&& conv, std::size_t i, std::size_t j, size_t s1, size_t s2, size_t p1, size_t p2, value_t<I> beta = value_t<I>(0.0)) {
     typename I::value_type temp = 0.0;
 
     const auto s_i = i * s1;
@@ -269,7 +273,11 @@ inline void conv2_valid_flipped_border(const I& input, const K& kernel, C&& conv
         }
     }
 
-    conv(i, j) = temp;
+    if(beta == value_t<I>(0.0)){
+        conv(i, j) = temp;
+    } else {
+        conv(i, j) = beta * conv(i, j) + temp;
+    }
 }
 
 /*!
@@ -279,31 +287,31 @@ inline void conv2_valid_flipped_border(const I& input, const K& kernel, C&& conv
  * \param conv The output matrix
  */
 template <typename I, typename K, typename C>
-void conv2_valid(const I& input, const K& kernel, C&& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
+void conv2_valid(const I& input, const K& kernel, C&& conv, size_t s1, size_t s2, size_t p1, size_t p2, value_t<I> beta = value_t<I>(0.0)) {
     // Do the outer parts of the convolution
 
     if(p1 || p2){
         for (std::size_t i = 0; i < p1; ++i) {
             for (std::size_t j = 0; j < columns(conv); ++j) {
-                conv2_valid_border(input, kernel, conv, i, j, s1, s2, p1, p2);
+                conv2_valid_border(input, kernel, conv, i, j, s1, s2, p1, p2, beta);
             }
         }
 
         for (std::size_t i = rows(conv) - p1; i < rows(conv); ++i) {
             for (std::size_t j = 0; j < columns(conv); ++j) {
-                conv2_valid_border(input, kernel, conv, i, j, s1, s2, p1, p2);
+                conv2_valid_border(input, kernel, conv, i, j, s1, s2, p1, p2, beta);
             }
         }
 
         for (std::size_t j = 0; j < p2; ++j) {
             for (std::size_t i = p1; i < rows(conv) - p1; ++i) {
-                conv2_valid_border(input, kernel, conv, i, j, s1, s2, p1, p2);
+                conv2_valid_border(input, kernel, conv, i, j, s1, s2, p1, p2, beta);
             }
         }
 
         for (std::size_t j = columns(conv) - p2; j < columns(conv); ++j) {
             for (std::size_t i = p1; i < rows(conv) - p1; ++i) {
-                conv2_valid_border(input, kernel, conv, i, j, s1, s2, p1, p2);
+                conv2_valid_border(input, kernel, conv, i, j, s1, s2, p1, p2, beta);
             }
         }
     }
@@ -323,7 +331,11 @@ void conv2_valid(const I& input, const K& kernel, C&& conv, size_t s1, size_t s2
                 }
             }
 
-            conv(i, j) = temp;
+            if(beta == value_t<I>(0.0)){
+                conv(i, j) = temp;
+            } else {
+                conv(i, j) = beta * conv(i, j) + temp;
+            }
         }
     }
 }
@@ -335,31 +347,31 @@ void conv2_valid(const I& input, const K& kernel, C&& conv, size_t s1, size_t s2
  * \param conv The output matrix
  */
 template <typename I, typename K, typename C>
-void conv2_valid_flipped(const I& input, const K& kernel, C&& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
+void conv2_valid_flipped(const I& input, const K& kernel, C&& conv, size_t s1, size_t s2, size_t p1, size_t p2, value_t<I> beta = value_t<I>(0.0)) {
     // Do the outer parts of the convolution
 
     if(p1 || p2){
         for (std::size_t i = 0; i < p1; ++i) {
             for (std::size_t j = 0; j < columns(conv); ++j) {
-                conv2_valid_flipped_border(input, kernel, conv, i, j, s1, s2, p1, p2);
+                conv2_valid_flipped_border(input, kernel, conv, i, j, s1, s2, p1, p2, beta);
             }
         }
 
         for (std::size_t i = rows(conv) - p1; i < rows(conv); ++i) {
             for (std::size_t j = 0; j < columns(conv); ++j) {
-                conv2_valid_flipped_border(input, kernel, conv, i, j, s1, s2, p1, p2);
+                conv2_valid_flipped_border(input, kernel, conv, i, j, s1, s2, p1, p2, beta);
             }
         }
 
         for (std::size_t j = 0; j < p2; ++j) {
             for (std::size_t i = p1; i < rows(conv) - p1; ++i) {
-                conv2_valid_flipped_border(input, kernel, conv, i, j, s1, s2, p1, p2);
+                conv2_valid_flipped_border(input, kernel, conv, i, j, s1, s2, p1, p2, beta);
             }
         }
 
         for (std::size_t j = columns(conv) - p2; j < columns(conv); ++j) {
             for (std::size_t i = p1; i < rows(conv) - p1; ++i) {
-                conv2_valid_flipped_border(input, kernel, conv, i, j, s1, s2, p1, p2);
+                conv2_valid_flipped_border(input, kernel, conv, i, j, s1, s2, p1, p2, beta);
             }
         }
     }
@@ -379,7 +391,11 @@ void conv2_valid_flipped(const I& input, const K& kernel, C&& conv, size_t s1, s
                 }
             }
 
-            conv(i, j) = temp;
+            if(beta == value_t<I>(0.0)){
+                conv(i, j) = temp;
+            } else {
+                conv(i, j) = beta * conv(i, j) + temp;
+            }
         }
     }
 }
@@ -395,28 +411,13 @@ void conv4_valid(const I& input, const K& kernel, C&& conv, size_t s1, size_t s2
     cpp_assert(etl::dim<1>(input) == etl::dim<1>(kernel), "Invalid number of channels");
     cpp_assert(etl::dim<0>(input) == etl::dim<0>(conv), "Invalid number of images");
 
-    cpp_unused(s1);
-    cpp_unused(s2);
-    cpp_unused(p1);
-    cpp_unused(p2);
+    if(kernel.dim(1) > 0){
+        for(std::size_t i = 0; i < etl::dim<0>(input); ++i){
+            for(std::size_t k = 0; k < etl::dim<0>(kernel); ++k){
+                conv2_valid(input(i)(0), kernel(k)(0), conv(i)(k), s1, s2, p1, p2, 0.0);
 
-    conv = 0.0;
-
-    for(std::size_t ii = 0; ii < etl::dim<0>(input); ++ii){
-        for(std::size_t kk = 0; kk < etl::dim<0>(kernel); ++kk){
-            for(std::size_t cc = 0; cc < etl::dim<1>(kernel); ++cc){
-                for (std::size_t i = 0; i < etl::dim<2>(conv); ++i) {
-                    for (std::size_t j = 0; j < etl::dim<3>(conv); ++j) {
-                        typename I::value_type temp = 0.0;
-
-                        for (std::size_t k = i; k < i + etl::dim<2>(kernel); ++k) {
-                            for (std::size_t l = j; l < j + etl::dim<3>(kernel); ++l) {
-                                temp += input(ii, cc, k, l) * kernel(kk, cc, (i + etl::dim<2>(kernel) - 1 - k), (j + etl::dim<3>(kernel) - 1 - l));
-                            }
-                        }
-
-                        conv(ii, kk, i, j) += temp;
-                    }
+                for(std::size_t c = 1; c < etl::dim<1>(kernel); ++c){
+                    conv2_valid(input(i)(c), kernel(k)(c), conv(i)(k), s1, s2, p1, p2, 1.0);
                 }
             }
         }
@@ -434,28 +435,13 @@ void conv4_valid_flipped(const I& input, const K& kernel, C&& conv, size_t s1, s
     cpp_assert(etl::dim<1>(input) == etl::dim<1>(kernel), "Invalid number of channels");
     cpp_assert(etl::dim<0>(input) == etl::dim<0>(conv), "Invalid number of images");
 
-    cpp_unused(s1);
-    cpp_unused(s2);
-    cpp_unused(p1);
-    cpp_unused(p2);
+    if(kernel.dim(1) > 0){
+        for(std::size_t i = 0; i < etl::dim<0>(input); ++i){
+            for(std::size_t k = 0; k < etl::dim<0>(kernel); ++k){
+                conv2_valid_flipped(input(i)(0), kernel(k)(0), conv(i)(k), s1, s2, p1, p2, 0.0);
 
-    conv = 0.0;
-
-    for(std::size_t ii = 0; ii < etl::dim<0>(input); ++ii){
-        for(std::size_t kk = 0; kk < etl::dim<0>(kernel); ++kk){
-            for(std::size_t cc = 0; cc < etl::dim<1>(kernel); ++cc){
-                for (std::size_t i = 0; i < etl::dim<2>(conv); ++i) {
-                    for (std::size_t j = 0; j < etl::dim<3>(conv); ++j) {
-                        typename I::value_type temp = 0.0;
-
-                        for (std::size_t k = i; k < i + etl::dim<2>(kernel); ++k) {
-                            for (std::size_t l = j; l < j + etl::dim<3>(kernel); ++l) {
-                                temp += input(ii, cc, k, l) * kernel(kk, cc, k - i, l - j);
-                            }
-                        }
-
-                        conv(ii, kk, i, j) += temp;
-                    }
+                for(std::size_t c = 1; c < etl::dim<1>(kernel); ++c){
+                    conv2_valid_flipped(input(i)(c), kernel(k)(c), conv(i)(k), s1, s2, p1, p2, 1.0);
                 }
             }
         }
