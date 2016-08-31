@@ -65,13 +65,20 @@ void complex_pad_2d(const F1& in, F2& out) {
 }
 
 /*!
- * \brief Standard implementation of a 2D 'valid' convolution C = I * K, with multiple kernels
+ * \brief FFT implementation of a 2D 'valid' convolution C = I * K, with multiple kernels.
+ *
+ * This works by doing a full convolution by FFT and then extracting
+ * only the valid part of the convolution.
+ *
  * \param input The input matrix
  * \param kernels The kernel matrix
  * \param conv The output matrix
  */
 template <typename I, typename K_T, typename C>
-void fft_conv2_valid_multi(const I& input, const K_T& kernels, C&& conv) {
+void fft_conv2_valid_multi(const I& input, const K_T& kernels, C&& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
+    cpp_unused(p1);
+    cpp_unused(p2);
+
     const std::size_t K = etl::dim<0>(kernels);
 
     const std::size_t i1 = etl::dim<0>(input);
@@ -80,6 +87,8 @@ void fft_conv2_valid_multi(const I& input, const K_T& kernels, C&& conv) {
     const std::size_t k1 = etl::dim<1>(kernels);
     const std::size_t k2 = etl::dim<2>(kernels);
 
+    const std::size_t c1 = (i1 - k1) / s1 + 1;
+    const std::size_t c2 = (i2 - k2) / s1 + 1;
     const std::size_t v1 = i1 - k1 + 1;
     const std::size_t v2 = i2 - k2 + 1;
     const std::size_t t1 = i1 + k1 - 1;
@@ -104,9 +113,9 @@ void fft_conv2_valid_multi(const I& input, const K_T& kernels, C&& conv) {
     tmp_result.ifft2_many_inplace();
 
     for (std::size_t k = 0; k < K; ++k) {
-        for (std::size_t i = 0; i < v1; ++i) {
-            for (std::size_t j = 0; j < v2; ++j) {
-                conv(k, i, j) = tmp_result(k, i + b1, j + b2).real();
+        for (std::size_t i = 0; i < c1; ++i) {
+            for (std::size_t j = 0; j < c2; ++j) {
+                conv(k, i, j) = tmp_result(k, i * s1 + b1, j * s2 + b2).real();
             }
         }
     }
@@ -145,12 +154,12 @@ void blas_conv2_valid_multi(const I& input, const K_T& kernels, C&& conv) {
  * \param conv The output matrix
  */
 template <typename I, typename K_T, typename C>
-void fft_conv2_valid_multi_flipped(const I& input, const K_T& kernels, C&& conv) {
+void fft_conv2_valid_multi_flipped(const I& input, const K_T& kernels, C&& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
     auto kernels_f = etl::force_temporary(kernels);
 
     kernels_f.deep_fflip_inplace();
 
-    fft_conv2_valid_multi(input, kernels_f, conv);
+    fft_conv2_valid_multi(input, kernels_f, conv, s1, s2, p1, p2);
 }
 
 /*!
