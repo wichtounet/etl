@@ -250,3 +250,71 @@ CONV2_VALID_MULTI_TEST_CASE("conv/2/stride/valid/multi/1", "[conv][stride]") {
     REQUIRE_EQUALS_APPROX(c(2, 1, 0), T(3.0 * 23.5));
     REQUIRE_EQUALS_APPROX(c(2, 1, 1), T(3.0 * 27.5));
 }
+
+CONV2_VALID_MULTI_TEST_CASE("conv/2/stride/valid/multi/2", "[conv][stride]") {
+    etl::fast_matrix<T, 3, 3> a = {1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0};
+    etl::fast_matrix<T, 3, 2, 2> b = {1.0, 0.0, 0.5, 0.5, 2.0, 0.0, 1.0, 1.0, 3.0, 0.0, 1.5, 1.5};
+    etl::fast_matrix<T, 3, 4, 4> c;
+
+    Impl::template apply<1, 1, 1, 1>(a, b, c);
+
+    REQUIRE_EQUALS_APPROX(c(0, 0, 0), T(1.0));
+    REQUIRE_EQUALS_APPROX(c(0, 0, 1), T(2.0));
+    REQUIRE_EQUALS_APPROX(c(0, 0, 2), T(3.0));
+    REQUIRE_EQUALS_APPROX(c(0, 0, 3), T(0.0));
+
+    REQUIRE_EQUALS_APPROX(c(0, 1, 0), T(4.5));
+    REQUIRE_EQUALS_APPROX(c(0, 1, 1), T(6.5));
+    REQUIRE_EQUALS_APPROX(c(0, 1, 2), T(8.5));
+    REQUIRE_EQUALS_APPROX(c(0, 1, 3), T(1.5));
+
+    REQUIRE_EQUALS_APPROX(c(0, 2, 0), T(9.0));
+    REQUIRE_EQUALS_APPROX(c(0, 2, 1), T(12.5));
+    REQUIRE_EQUALS_APPROX(c(0, 2, 2), T(14.5));
+    REQUIRE_EQUALS_APPROX(c(0, 2, 3), T(3.0));
+
+    REQUIRE_EQUALS_APPROX(c(0, 3, 0), T(3.5));
+    REQUIRE_EQUALS_APPROX(c(0, 3, 1), T(7.5));
+    REQUIRE_EQUALS_APPROX(c(0, 3, 2), T(8.5));
+    REQUIRE_EQUALS_APPROX(c(0, 3, 3), T(4.5));
+
+    REQUIRE_EQUALS_APPROX(c(1, 0, 0), T(2.0 * 1.0));
+    REQUIRE_EQUALS_APPROX(c(1, 0, 1), T(2.0 * 2.0));
+    REQUIRE_EQUALS_APPROX(c(1, 0, 2), T(2.0 * 3.0));
+    REQUIRE_EQUALS_APPROX(c(1, 0, 3), T(2.0 * 0.0));
+
+    REQUIRE_EQUALS_APPROX(c(1, 1, 0), T(2.0 * 4.5));
+    REQUIRE_EQUALS_APPROX(c(1, 1, 1), T(2.0 * 6.5));
+    REQUIRE_EQUALS_APPROX(c(1, 1, 2), T(2.0 * 8.5));
+    REQUIRE_EQUALS_APPROX(c(1, 1, 3), T(2.0 * 1.5));
+
+    REQUIRE_EQUALS_APPROX(c(1, 2, 0), T(2.0 * 9.0));
+    REQUIRE_EQUALS_APPROX(c(1, 2, 1), T(2.0 * 12.5));
+    REQUIRE_EQUALS_APPROX(c(1, 2, 2), T(2.0 * 14.5));
+    REQUIRE_EQUALS_APPROX(c(1, 2, 3), T(2.0 * 3.0));
+
+    REQUIRE_EQUALS_APPROX(c(1, 3, 0), T(2.0 * 3.5));
+    REQUIRE_EQUALS_APPROX(c(1, 3, 1), T(2.0 * 7.5));
+    REQUIRE_EQUALS_APPROX(c(1, 3, 2), T(2.0 * 8.5));
+    REQUIRE_EQUALS_APPROX(c(1, 3, 3), T(2.0 * 4.5));
+
+    REQUIRE_EQUALS_APPROX(c(2, 0, 0), T(3.0 * 1.0));
+    REQUIRE_EQUALS_APPROX(c(2, 0, 1), T(3.0 * 2.0));
+    REQUIRE_EQUALS_APPROX(c(2, 0, 2), T(3.0 * 3.0));
+    REQUIRE_EQUALS_APPROX(c(2, 0, 3), T(3.0 * 0.0));
+
+    REQUIRE_EQUALS_APPROX(c(2, 1, 0), T(3.0 * 4.5));
+    REQUIRE_EQUALS_APPROX(c(2, 1, 1), T(3.0 * 6.5));
+    REQUIRE_EQUALS_APPROX(c(2, 1, 2), T(3.0 * 8.5));
+    REQUIRE_EQUALS_APPROX(c(2, 1, 3), T(3.0 * 1.5));
+
+    REQUIRE_EQUALS_APPROX(c(2, 2, 0), T(3.0 * 9.0));
+    REQUIRE_EQUALS_APPROX(c(2, 2, 1), T(3.0 * 12.5));
+    REQUIRE_EQUALS_APPROX(c(2, 2, 2), T(3.0 * 14.5));
+    REQUIRE_EQUALS_APPROX(c(2, 2, 3), T(3.0 * 3.0));
+
+    REQUIRE_EQUALS_APPROX(c(2, 3, 0), T(3.0 * 3.5));
+    REQUIRE_EQUALS_APPROX(c(2, 3, 1), T(3.0 * 7.5));
+    REQUIRE_EQUALS_APPROX(c(2, 3, 2), T(3.0 * 8.5));
+    REQUIRE_EQUALS_APPROX(c(2, 3, 3), T(3.0 * 4.5));
+}
