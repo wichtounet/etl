@@ -145,7 +145,7 @@ struct conv4_valid_flipped_impl : conv4_valid_impl<S1, S2, P1, P2> {
         } else if (impl == etl::conv4_impl::SSE) {
             impl::sse::conv4_valid_flipped(input.direct(), kernel.direct(), conv.direct());
         } else if (impl == etl::conv4_impl::STD) {
-            impl::standard::conv4_valid_flipped(input, kernel, conv, S1, S2, P1, P);
+            impl::standard::conv4_valid_flipped(input, kernel, conv, S1, S2, P1, P2);
         } else {
             cpp_unreachable("Invalid conv implementation selection");
         }
