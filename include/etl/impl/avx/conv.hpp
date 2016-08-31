@@ -1312,7 +1312,7 @@ void conv2_valid_flipped(const opaque_memory<T, 2>& input, const opaque_memory<T
 }
 
 template <typename T>
-void conv2_valid_multi(const opaque_memory<T, 2>& input, const opaque_memory<T, 3>& kernel, const opaque_memory<T, 3>& conv) {
+void conv2_valid_multi(const opaque_memory<T, 2>& input, const opaque_memory<T, 3>& kernel, const opaque_memory<T, 3>& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
     for(std::size_t k = 0; k < kernel.template dim<0>(); ++k){
         auto kk = kernel.template dim<1>() * kernel.template dim<2>();
         auto cc = conv.template dim<1>() * conv.template dim<2>();
@@ -1320,12 +1320,12 @@ void conv2_valid_multi(const opaque_memory<T, 2>& input, const opaque_memory<T, 
         conv2_valid_micro_kernel(
             input.memory_start(), input.template dim<0>(), input.template dim<1>(),
             kernel.memory_start() + k * kk, kernel.template dim<1>(), kernel.template dim<2>(),
-            conv.memory_start() + k * cc, 0.0, 1, 1, 0, 0);
+            conv.memory_start() + k * cc, 0.0, s1, s2, p1, p2);
     }
 }
 
 template <typename T>
-void conv2_valid_multi_flipped(const opaque_memory<T, 2>& input, const opaque_memory<T, 3>& kernel, const opaque_memory<T, 3>& conv) {
+void conv2_valid_multi_flipped(const opaque_memory<T, 2>& input, const opaque_memory<T, 3>& kernel, const opaque_memory<T, 3>& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
     for(std::size_t k = 0; k < kernel.template dim<0>(); ++k){
         auto kk = kernel.template dim<1>() * kernel.template dim<2>();
         auto cc = conv.template dim<1>() * conv.template dim<2>();
@@ -1333,7 +1333,7 @@ void conv2_valid_multi_flipped(const opaque_memory<T, 2>& input, const opaque_me
         conv2_valid_flipped_micro_kernel(
             input.memory_start(), input.template dim<0>(), input.template dim<1>(),
             kernel.memory_start() + k * kk, kernel.template dim<1>(), kernel.template dim<2>(),
-            conv.memory_start() + k * cc, 0.0, 1, 1, 0, 0);
+            conv.memory_start() + k * cc, 0.0, s1, s2, p1, p2);
     }
 }
 
