@@ -184,11 +184,18 @@ struct conv2_valid_multi_flipped_impl : conv2_valid_multi_impl<S1, S2, P1, P2> {
  * \brief The functor impl for 2D valid conv, with multiple kernels
  */
 struct dyn_conv2_valid_multi_impl {
-    const std::size_t s1;
-    const std::size_t s2;
-    const std::size_t p1;
-    const std::size_t p2;
+    const std::size_t s1; ///< The first dimension stride
+    const std::size_t s2; ///< The second dimension stride
+    const std::size_t p1; ///< The first dimension padding
+    const std::size_t p2; ///< The second dimension padding
 
+    /*!
+     * \brief Construct a new dyn_conv2_valid_multi_impl
+     * \param s1 The first dimension stride
+     * \param s2 The second dimension stride
+     * \param p1 The first dimension padding
+     * \param p2 The second dimension padding
+     */
     dyn_conv2_valid_multi_impl(std::size_t s1, std::size_t s2, std::size_t p1, std::size_t p2) : s1(s1), s2(s2), p1(p1), p2(p2) {
         //Nothing else to init
     }
@@ -268,9 +275,17 @@ struct dyn_conv2_valid_multi_impl {
  * \brief The functor impl for 2D valid conv, with multiple kernels
  */
 struct dyn_conv2_valid_multi_flipped_impl : dyn_conv2_valid_multi_impl {
+    /*!
+     * \brief Construct a new dyn_conv2_valid_multi_flipped_impl
+     * \param s1 The first dimension stride
+     * \param s2 The second dimension stride
+     * \param p1 The first dimension padding
+     * \param p2 The second dimension padding
+     */
     dyn_conv2_valid_multi_flipped_impl(std::size_t s1, std::size_t s2, std::size_t p1, std::size_t p2) : dyn_conv2_valid_multi_impl(s1, s2, p1, p2) {
         //Nothing else to init
     }
+
      /*!
      * \brief Apply the convolution
      * \param input The input expression
