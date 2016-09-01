@@ -178,8 +178,8 @@ CONV4_VALID_FILTER_TEST_CASE("conv/4d/valid/filter/1", "[conv][conv4][valid]") {
 // conv_4d_valid_filter_flipped
 
 CONV4_VALID_FILTER_FLIPPED_TEST_CASE("conv/4d/valid/filter/flipped/1", "[conv][conv4][valid]") {
-    etl::fast_matrix<T, 10, 3, 5, 5> I(etl::sequence_generator(3.0) * 0.04);
-    etl::fast_matrix<T, 10, 4, 3, 3> K(etl::sequence_generator(2.0) * 0.3);
+    etl::fast_matrix<T, 10, 3, 5, 5> I(etl::sequence_generator(3.0) * 2.4);
+    etl::fast_matrix<T, 10, 4, 3, 3> K(etl::sequence_generator(2.0) * 4.3);
 
     etl::fast_matrix<T, 4, 3, 3, 3> ref;
     etl::fast_matrix<T, 4, 3, 3, 3> c;
