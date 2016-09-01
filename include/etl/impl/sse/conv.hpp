@@ -1029,7 +1029,38 @@ inline void conv2_full_flipped_micro_kernel(const float* in, std::size_t n1, std
 }
 
 template <typename T>
+void pad_2d_input(const opaque_memory<T, 2>& in, opaque_memory<T, 2>& out, size_t p1, size_t p2) {
+    auto in_m = in.memory_start();
+    auto out_m = out.memory_start();
+
+    for (std::size_t i = 0; i < in.template dim<0>(); ++i) {
+        for (std::size_t j = 0; j < in.template dim<1>(); ++j) {
+            out_m[(i + p1) * out.template dim<1>() + (j + p2)] = in_m[i * in.template dim<1>() + j];
+        }
+    }
+}
+
+template <typename T>
 void conv2_valid(const opaque_memory<T, 2>& input, const opaque_memory<T, 2>& kernel, const opaque_memory<T, 2>& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
+    if(p1 || p1){
+        const auto ws_h = input.template dim<0>() + 2 * p1;
+        const auto ws_w = input.template dim<1>() + 2 * p2;
+
+        if(ws_h * ws_w * sizeof(T) < max_workspace){
+            etl::dyn_matrix<T, 2> workspace(ws_h, ws_w, T(0));
+            auto ws_direct = workspace.direct();
+
+            pad_2d_input(input, ws_direct, p1, p2);
+
+            conv2_valid_micro_kernel(
+                workspace.memory_start(), ws_h, ws_w,
+                kernel.memory_start(), kernel.template dim<0>(), kernel.template dim<1>(),
+                conv.memory_start(), 0.0, s1, s2, 0, 0);
+
+            return;
+        }
+    }
+
     conv2_valid_micro_kernel(
         input.memory_start(), input.template dim<0>(), input.template dim<1>(),
         kernel.memory_start(), kernel.template dim<0>(), kernel.template dim<1>(),
