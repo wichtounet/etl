@@ -106,6 +106,7 @@ struct etl_traits<etl::generator_expr<Generator>> {
     static constexpr const bool is_view                 = false;           ///< Indicates if the type is a view
     static constexpr const bool is_magic_view           = false;           ///< Indicates if the type is a magic view
     static constexpr const bool is_linear               = true;            ///< Indicates if the expression is linear
+    static constexpr const bool is_thread_safe          = false;           ///< Indicates if the expression is thread safe
     static constexpr const bool is_fast                 = true;            ///< Indicates if the expression is fast
     static constexpr const bool is_value                = false;           ///< Indicates if the expression is of value type
     static constexpr const bool is_direct               = false;           ///< Indicates if the expression has direct memory access

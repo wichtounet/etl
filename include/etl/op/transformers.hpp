@@ -935,6 +935,7 @@ struct etl_traits<p_max_pool_p_transformer<T, C1, C2>> {
     static constexpr const bool is_magic_view           = false;                                           ///< Indicates if the type is a magic view
     static constexpr const bool is_fast                 = etl_traits<sub_expr_t>::is_fast;                 ///< Indicates if the expression is fast
     static constexpr const bool is_linear               = false;                                           ///< Indicates if the expression is linear
+    static constexpr const bool is_thread_safe          = true;                                            ///< Indicates if the expression is thread safe
     static constexpr const bool is_value                = false;                                           ///< Indicates if the expression is of value type
     static constexpr const bool is_direct               = false;           ///< Indicates if the expression has direct memory access
     static constexpr const bool is_generator            = false;                                           ///< Indicates if the expression is a generated
@@ -1018,6 +1019,7 @@ struct etl_traits<transpose_transformer<T>> {
     static constexpr const bool is_magic_view           = false;                                           ///< Indicates if the type is a magic view
     static constexpr const bool is_fast                 = etl_traits<sub_expr_t>::is_fast;                 ///< Indicates if the expression is fast
     static constexpr const bool is_linear               = false;                                           ///< Indicates if the expression is linear
+    static constexpr const bool is_thread_safe          = true;                                            ///< Indicates if the expression is thread safe
     static constexpr const bool is_value                = false;                                           ///< Indicates if the expression is of value type
     static constexpr const bool is_direct               = false;           ///< Indicates if the expression has direct memory access
     static constexpr const bool is_generator            = false;                                           ///< Indicates if the expression is a generated
@@ -1421,6 +1423,7 @@ struct etl_traits<dyn_p_max_pool_p_transformer<T>> {
     static constexpr const bool is_magic_view           = false;                                           ///< Indicates if the type is a magic view
     static constexpr const bool is_fast                 = false;                 ///< Indicates if the expression is fast
     static constexpr const bool is_linear               = false;                                           ///< Indicates if the expression is linear
+    static constexpr const bool is_thread_safe          = true;                                            ///< Indicates if the expression is thread safe
     static constexpr const bool is_value                = false;                                           ///< Indicates if the expression is of value type
     static constexpr const bool is_direct               = false;           ///< Indicates if the expression has direct memory access
     static constexpr const bool is_generator            = false;                                           ///< Indicates if the expression is a generated
@@ -1485,6 +1488,7 @@ struct etl_traits<dyn_p_max_pool_h_transformer<T>> {
     static constexpr const bool is_magic_view           = false;                                           ///< Indicates if the type is a magic view
     static constexpr const bool is_fast                 = false;                 ///< Indicates if the expression is fast
     static constexpr const bool is_linear               = false;                                           ///< Indicates if the expression is linear
+    static constexpr const bool is_thread_safe          = true;                                            ///< Indicates if the expression is thread safe
     static constexpr const bool is_value                = false;                                           ///< Indicates if the expression is of value type
     static constexpr const bool is_direct               = false;           ///< Indicates if the expression has direct memory access
     static constexpr const bool is_generator            = false;                                           ///< Indicates if the expression is a generated
@@ -1543,6 +1547,7 @@ struct etl_traits<mm_mul_transformer<LE, RE>> {
     static constexpr const bool is_magic_view  = false;                                                                 ///< Indicates if the type is a magic view
     static constexpr const bool is_fast        = etl_traits<left_expr_t>::is_fast && etl_traits<right_expr_t>::is_fast; ///< Indicates if the expression is fast
     static constexpr const bool is_linear      = false;                                                                 ///< Indicates if the expression is linear
+    static constexpr const bool is_thread_safe          = true;                                            ///< Indicates if the expression is thread safe
     static constexpr const bool is_value       = false;                                                                 ///< Indicates if the expression is of value type
     static constexpr const bool is_direct       = false;                                                                 ///< Indicates if the expression has direct memory access
     static constexpr const bool is_generator = false;                                                                   ///< Indicates if the expression is a generated
@@ -1628,6 +1633,7 @@ struct etl_traits<dyn_convmtx_transformer<E>> {
     static constexpr const bool is_magic_view           = false;                                           ///< Indicates if the type is a magic view
     static constexpr const bool is_fast                 = false;                                           ///< Indicates if the expression is fast
     static constexpr const bool is_linear               = false;                                           ///< Indicates if the expression is linear
+    static constexpr const bool is_thread_safe          = true;                                            ///< Indicates if the expression is thread safe
     static constexpr const bool is_value                = false;                                           ///< Indicates if the expression is of value type
     static constexpr const bool is_direct               = false;           ///< Indicates if the expression has direct memory access
     static constexpr const bool is_generator            = false;                                           ///< Indicates if the expression is a generated
@@ -1689,6 +1695,7 @@ struct etl_traits<dyn_convmtx2_transformer<E>> {
     static constexpr const bool is_magic_view           = false;                                           ///< Indicates if the type is a magic view
     static constexpr const bool is_fast                 = false;                                           ///< Indicates if the expression is fast
     static constexpr const bool is_linear               = false;                                           ///< Indicates if the expression is linear
+    static constexpr const bool is_thread_safe          = true;                                            ///< Indicates if the expression is thread safe
     static constexpr const bool is_value                = false;                                           ///< Indicates if the expression is of value type
     static constexpr const bool is_direct               = false;           ///< Indicates if the expression has direct memory access
     static constexpr const bool is_generator            = false;                                           ///< Indicates if the expression is a generated
@@ -1756,6 +1763,7 @@ struct etl_traits<T, std::enable_if_t<cpp::or_c<
     static constexpr const bool is_magic_view           = false;                                           ///< Indicates if the type is a magic view
     static constexpr const bool is_fast                 = etl_traits<sub_expr_t>::is_fast;                 ///< Indicates if the expression is fast
     static constexpr const bool is_linear               = false;                                           ///< Indicates if the expression is linear
+    static constexpr const bool is_thread_safe          = true;                                            ///< Indicates if the expression is thread safe
     static constexpr const bool is_value                = false;                                           ///< Indicates if the expression is of value type
     static constexpr const bool is_direct               = false;           ///< Indicates if the expression has direct memory access
     static constexpr const bool is_generator            = false;                                           ///< Indicates if the expression is a generated

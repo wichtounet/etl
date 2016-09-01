@@ -1041,6 +1041,7 @@ struct etl_traits<etl::dim_view<T, D>> {
     static constexpr const bool is_magic_view           = false;                                           ///< Indicates if the type is a magic view
     static constexpr const bool is_fast                 = etl_traits<sub_expr_t>::is_fast;                 ///< Indicates if the expression is fast
     static constexpr const bool is_linear               = false;                                           ///< Indicates if the expression is linear
+    static constexpr const bool is_thread_safe          = etl_traits<sub_expr_t>::is_thread_safe;          ///< Indicates if the expression is thread safe
     static constexpr const bool is_value                = false;                                           ///< Indicates if the expression is of value type
     static constexpr const bool is_direct               = etl_traits<sub_expr_t>::is_direct && D == 1;     ///< Indicates if the expression has direct memory access
     static constexpr const bool is_generator            = false;                                           ///< Indicates if the expression is a generator
@@ -1125,6 +1126,7 @@ struct etl_traits<etl::sub_view<T>> {
     static constexpr const bool is_magic_view           = false;                                           ///< Indicates if the type is a magic view
     static constexpr const bool is_fast                 = etl_traits<sub_expr_t>::is_fast;                 ///< Indicates if the expression is fast
     static constexpr const bool is_linear               = etl_traits<sub_expr_t>::is_linear;               ///< Indicates if the expression is linear
+    static constexpr const bool is_thread_safe          = etl_traits<sub_expr_t>::is_thread_safe;          ///< Indicates if the expression is thread safe
     static constexpr const bool is_value                = false;                                           ///< Indicates if the expression is of value type
     static constexpr const bool is_direct               = etl_traits<sub_expr_t>::is_direct && etl_traits<sub_expr_t>::storage_order == order::RowMajor;               ///< Indicates if the expression has direct memory access
     static constexpr const bool is_generator            = false;                                           ///< Indicates if the expression is a generator
@@ -1200,6 +1202,7 @@ struct etl_traits<etl::slice_view<T>> {
     static constexpr const bool is_magic_view           = false;                                           ///< Indicates if the type is a magic view
     static constexpr const bool is_fast                 = false;                                           ///< Indicates if the expression is fast
     static constexpr const bool is_linear               = etl_traits<sub_expr_t>::is_linear;               ///< Indicates if the expression is linear
+    static constexpr const bool is_thread_safe          = etl_traits<sub_expr_t>::is_thread_safe;          ///< Indicates if the expression is thread safe
     static constexpr const bool is_value                = false;                                           ///< Indicates if the expression is of value type
     static constexpr const bool is_direct               = etl_traits<sub_expr_t>::is_direct && etl_traits<sub_expr_t>::storage_order == order::RowMajor;               ///< Indicates if the expression has direct memory access
     static constexpr const bool is_generator            = false;                                           ///< Indicates if the expression is a generator
@@ -1260,6 +1263,7 @@ struct etl_traits<etl::fast_matrix_view<T, Dims...>> {
     static constexpr const bool is_view                 = true;                                            ///< Indicates if the type is a view
     static constexpr const bool is_magic_view           = false;                                           ///< Indicates if the type is a magic view
     static constexpr const bool is_linear               = etl_traits<sub_expr_t>::is_linear;               ///< Indicates if the expression is linear
+    static constexpr const bool is_thread_safe          = etl_traits<sub_expr_t>::is_thread_safe;          ///< Indicates if the expression is thread safe
     static constexpr const bool is_fast                 = true;                                            ///< Indicates if the expression is fast
     static constexpr const bool is_value                = false;                                           ///< Indicates if the expression is of value type
     static constexpr const bool is_direct               = etl_traits<sub_expr_t>::is_direct;               ///< Indicates if the expression has direct memory access
@@ -1337,6 +1341,7 @@ struct etl_traits<etl::dyn_matrix_view<T>> {
     static constexpr const bool is_view                 = true;                                            ///< Indicates if the type is a view
     static constexpr const bool is_magic_view           = false;                                           ///< Indicates if the type is a magic view
     static constexpr const bool is_linear               = etl_traits<sub_expr_t>::is_linear;               ///< Indicates if the expression is linear
+    static constexpr const bool is_thread_safe          = etl_traits<sub_expr_t>::is_thread_safe;          ///< Indicates if the expression is thread safe
     static constexpr const bool is_fast                 = false;                                           ///< Indicates if the expression is fast
     static constexpr const bool is_value                = false;                                           ///< Indicates if the expression is of value type
     static constexpr const bool is_direct               = etl_traits<sub_expr_t>::is_direct;               ///< Indicates if the expression has direct memory access
@@ -1395,6 +1400,7 @@ struct etl_traits<etl::dyn_vector_view<T>> {
     static constexpr const bool is_magic_view           = false;                                           ///< Indicates if the type is a magic view
     static constexpr const bool is_fast                 = false;                                           ///< Indicates if the expression is fast
     static constexpr const bool is_linear               = etl_traits<sub_expr_t>::is_linear;               ///< Indicates if the expression is linear
+    static constexpr const bool is_thread_safe          = etl_traits<sub_expr_t>::is_thread_safe;          ///< Indicates if the expression is thread safe
     static constexpr const bool is_value                = false;                                           ///< Indicates if the expression is of value type
     static constexpr const bool is_direct               = etl_traits<sub_expr_t>::is_direct;               ///< Indicates if the expression has direct memory access
     static constexpr const bool is_generator            = false;                                           ///< Indicates if the expression is a generator

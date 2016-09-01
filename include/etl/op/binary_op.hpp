@@ -38,8 +38,9 @@ struct plus_binary_op {
     template <vector_mode_t V>
     using vectorizable = std::true_type;
 
-    static constexpr const bool linear    = true;  ///< Indicates if the operator is linear or not
-    static constexpr const bool desc_func = false; ///< Indicates if the description must be printed as function
+    static constexpr const bool linear      = true;  ///< Indicates if the operator is linear or not
+    static constexpr const bool thread_safe = true;  ///< Indicates if the operator is thread safe or not
+    static constexpr const bool desc_func   = false; ///< Indicates if the description must be printed as function
 
     /*!
      * \brief Apply the unary operator on lhs and rhs
@@ -94,6 +95,7 @@ struct minus_binary_op {
     using vectorizable = std::true_type;
 
     static constexpr const bool linear    = true;  ///< Indicates if the operator is linear or not
+    static constexpr const bool thread_safe = true;  ///< Indicates if the operator is thread safe or not
     static constexpr const bool desc_func = false; ///< Indicates if the description must be printed as function
 
     /*!
@@ -149,6 +151,7 @@ struct mul_binary_op {
     using vectorizable = cpp::bool_constant<V == vector_mode_t::AVX512 ? !is_complex_t<T>::value : true>;
 
     static constexpr const bool linear    = true;  ///< Indicates if the operator is linear or not
+    static constexpr const bool thread_safe = true;  ///< Indicates if the operator is thread safe or not
     static constexpr const bool desc_func = false; ///< Indicates if the description must be printed as function
 
     /*!
@@ -204,6 +207,7 @@ struct div_binary_op {
     using vectorizable = cpp::bool_constant<V == vector_mode_t::AVX512 ? !is_complex_t<T>::value : true>;
 
     static constexpr const bool linear    = true;  ///< Indicates if the operator is linear or not
+    static constexpr const bool thread_safe = true;  ///< Indicates if the operator is thread safe or not
     static constexpr const bool desc_func = false; ///< Indicates if the description must be printed as function
 
     /*!
@@ -245,6 +249,7 @@ struct div_binary_op {
 template <typename T>
 struct mod_binary_op {
     static constexpr const bool linear    = true;  ///< Indicates if the operator is linear or not
+    static constexpr const bool thread_safe = true;  ///< Indicates if the operator is thread safe or not
     static constexpr const bool desc_func = false; ///< Indicates if the description must be printed as function
 
     /*!
@@ -282,8 +287,9 @@ struct mod_binary_op {
  */
 template <typename T, typename E>
 struct ranged_noise_binary_op {
-    static constexpr const bool linear    = true; ///< Indicates if the operator is linear or not
-    static constexpr const bool desc_func = true; ///< Indicates if the description must be printed as function
+    static constexpr const bool linear      = true;  ///< Indicates if the operator is linear or not
+    static constexpr const bool thread_safe = false; ///< Indicates if the operator is thread safe or not
+    static constexpr const bool desc_func   = true;  ///< Indicates if the description must be printed as function
 
     /*!
      * \brief Indicates if the expression is vectorizable using the
@@ -332,6 +338,7 @@ struct max_binary_op {
     using vec_type       = typename V::template vec_type<T>;
 
     static constexpr const bool linear    = true; ///< Indicates if the operator is linear or not
+    static constexpr const bool thread_safe = true;  ///< Indicates if the operator is thread safe or not
     static constexpr const bool desc_func = true; ///< Indicates if the description must be printed as function
 
     /*!
@@ -387,6 +394,7 @@ struct min_binary_op {
     using vec_type       = typename V::template vec_type<T>;
 
     static constexpr const bool linear    = true; ///< Indicates if the operator is linear or not
+    static constexpr const bool thread_safe = true;  ///< Indicates if the operator is thread safe or not
     static constexpr const bool desc_func = true; ///< Indicates if the description must be printed as function
 
     /*!
@@ -436,6 +444,7 @@ struct min_binary_op {
 template <typename T, typename E>
 struct pow_binary_op {
     static constexpr const bool linear    = true; ///< Indicates if the operator is linear or not
+    static constexpr const bool thread_safe = true;  ///< Indicates if the operator is thread safe or not
     static constexpr const bool desc_func = true; ///< Indicates if the description must be printed as function
 
     /*!
@@ -471,6 +480,7 @@ struct pow_binary_op {
 template <typename T, typename E>
 struct one_if_binary_op {
     static constexpr const bool linear    = true; ///< Indicates if the operator is linear or not
+    static constexpr const bool thread_safe = true;  ///< Indicates if the operator is thread safe or not
     static constexpr const bool desc_func = true; ///< Indicates if the description must be printed as function
 
     /*!

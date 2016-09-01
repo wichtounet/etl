@@ -101,6 +101,7 @@ struct etl_traits<etl::scalar<T>, void> {
     static constexpr const bool is_value                = false;           ///< Indicates if the expression is of value type
     static constexpr const bool is_direct               = false;           ///< Indicates if the expression has direct memory access
     static constexpr const bool is_linear               = true;            ///< Indicates if the expression is linear
+    static constexpr const bool is_thread_safe          = true;            ///< Indicates if the expression is thread safe
     static constexpr const bool is_generator            = true;            ///< Indicates if the expression is a generator expression
     static constexpr const bool needs_temporary_visitor = false;           ///< Indicates if the expression needs a temporary visitor
     static constexpr const bool needs_evaluator_visitor = false;           ///< Indicaes if the expression needs an evaluator visitor

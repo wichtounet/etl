@@ -31,6 +31,7 @@ namespace etl {
 template <typename T>
 struct abs_unary_op {
     static constexpr const bool linear = true; ///< Indicates if the operator is linear
+    static constexpr const bool thread_safe = true;  ///< Indicates if the operator is thread safe or not
 
     /*!
      * \brief Indicates if the expression is vectorizable using the
@@ -65,6 +66,7 @@ struct abs_unary_op {
 template <typename T>
 struct log_unary_op {
     static constexpr const bool linear = true; ///< Indicates if the operator is linear
+    static constexpr const bool thread_safe = true;  ///< Indicates if the operator is thread safe or not
 
     /*!
      * \brief Indicates if the expression is vectorizable using the
@@ -125,6 +127,7 @@ struct sqrt_unary_op {
     using vec_type       = typename V::template vec_type<T>;
 
     static constexpr const bool linear = true; ///< Indicates if the operator is linear
+    static constexpr const bool thread_safe = true;  ///< Indicates if the operator is thread safe or not
 
     /*!
      * \brief Indicates if the expression is vectorizable using the
@@ -176,6 +179,7 @@ struct exp_unary_op {
     using vec_type       = typename V::template vec_type<T>;
 
     static constexpr const bool linear = true; ///< Indicates if the operator is linear
+    static constexpr const bool thread_safe = true;  ///< Indicates if the operator is thread safe or not
 
     /*!
      * \brief Indicates if the expression is vectorizable using the
@@ -224,6 +228,7 @@ struct exp_unary_op {
 template <typename T>
 struct sign_unary_op {
     static constexpr const bool linear = true; ///< Indicates if the operator is linear
+    static constexpr const bool thread_safe = true;  ///< Indicates if the operator is thread safe or not
 
     /*!
      * \brief Indicates if the expression is vectorizable using the
@@ -258,6 +263,7 @@ struct sign_unary_op {
 template <typename T>
 struct sigmoid_unary_op {
     static constexpr const bool linear = true; ///< Indicates if the operator is linear
+    static constexpr const bool thread_safe = true;  ///< Indicates if the operator is thread safe or not
 
     /*!
      * \brief Indicates if the expression is vectorizable using the
@@ -292,6 +298,7 @@ struct sigmoid_unary_op {
 template <typename T>
 struct softplus_unary_op {
     static constexpr const bool linear = true; ///< Indicates if the operator is linear
+    static constexpr const bool thread_safe = true;  ///< Indicates if the operator is thread safe or not
 
     /*!
      * \brief Indicates if the expression is vectorizable using the
@@ -332,6 +339,7 @@ struct minus_unary_op {
     using vec_type       = typename V::template vec_type<T>;
 
     static constexpr const bool linear = true; ///< Indicates if the operator is linear
+    static constexpr const bool thread_safe = true;  ///< Indicates if the operator is thread safe or not
 
     /*!
      * \brief Indicates if the expression is vectorizable using the
@@ -383,6 +391,7 @@ struct plus_unary_op {
     using vec_type       = typename V::template vec_type<T>;
 
     static constexpr const bool linear = true; ///< Indicates if the operator is linear
+    static constexpr const bool thread_safe = true;  ///< Indicates if the operator is thread safe or not
 
     /*!
      * \brief Indicates if the expression is vectorizable using the
@@ -428,6 +437,7 @@ struct plus_unary_op {
 template <typename T>
 struct fast_sigmoid_unary_op {
     static constexpr const bool linear = true; ///< Indicates if the operator is linear
+    static constexpr const bool thread_safe = true;  ///< Indicates if the operator is thread safe or not
 
     /*!
      * \brief Indicates if the expression is vectorizable using the
@@ -485,6 +495,7 @@ struct fast_sigmoid_unary_op {
 template <typename T>
 struct tan_unary_op {
     static constexpr const bool linear = true; ///< Indicates if the operator is linear
+    static constexpr const bool thread_safe = true;  ///< Indicates if the operator is thread safe or not
 
     /*!
      * \brief Indicates if the expression is vectorizable using the
@@ -525,6 +536,7 @@ struct cos_unary_op {
     using vec_type       = typename V::template vec_type<T>;
 
     static constexpr const bool linear = true; ///< Indicates if the operator is linear
+    static constexpr const bool thread_safe = true;  ///< Indicates if the operator is thread safe or not
 
     /*!
      * \brief Indicates if the expression is vectorizable using the
@@ -576,6 +588,7 @@ struct sin_unary_op {
     using vec_type       = typename V::template vec_type<T>;
 
     static constexpr const bool linear = true; ///< Indicates if the operator is linear
+    static constexpr const bool thread_safe = true;  ///< Indicates if the operator is thread safe or not
 
     /*!
      * \brief Indicates if the expression is vectorizable using the
@@ -621,6 +634,7 @@ struct sin_unary_op {
 template <typename T>
 struct tanh_unary_op {
     static constexpr const bool linear = true; ///< Indicates if the operator is linear
+    static constexpr const bool thread_safe = true;  ///< Indicates if the operator is thread safe or not
 
     /*!
      * \brief Indicates if the expression is vectorizable using the
@@ -655,6 +669,7 @@ struct tanh_unary_op {
 template <typename T>
 struct cosh_unary_op {
     static constexpr const bool linear = true; ///< Indicates if the operator is linear
+    static constexpr const bool thread_safe = true;  ///< Indicates if the operator is thread safe or not
 
     /*!
      * \brief Indicates if the expression is vectorizable using the
@@ -689,6 +704,7 @@ struct cosh_unary_op {
 template <typename T>
 struct sinh_unary_op {
     static constexpr const bool linear = true; ///< Indicates if the operator is linear
+    static constexpr const bool thread_safe = true;  ///< Indicates if the operator is thread safe or not
 
     /*!
      * \brief Indicates if the expression is vectorizable using the
@@ -723,6 +739,7 @@ struct sinh_unary_op {
 template <typename T>
 struct real_unary_op {
     static constexpr const bool linear = true; ///< Indicates if the operator is linear
+    static constexpr const bool thread_safe = true;  ///< Indicates if the operator is thread safe or not
 
     /*!
      * \brief Indicates if the expression is vectorizable using the
@@ -757,6 +774,7 @@ struct real_unary_op {
 template <typename T>
 struct imag_unary_op {
     static constexpr const bool linear = true; ///< Indicates if the operator is linear
+    static constexpr const bool thread_safe = true;  ///< Indicates if the operator is thread safe or not
 
     /*!
      * \brief Indicates if the expression is vectorizable using the
@@ -791,6 +809,7 @@ struct imag_unary_op {
 template <typename T>
 struct conj_unary_op {
     static constexpr const bool linear = true; ///< Indicates if the operator is linear
+    static constexpr const bool thread_safe = true;  ///< Indicates if the operator is thread safe or not
 
     /*!
      * \brief Indicates if the expression is vectorizable using the
@@ -825,6 +844,7 @@ struct conj_unary_op {
 template <typename T>
 struct relu_derivative_op {
     static constexpr const bool linear = true; ///< Indicates if the operator is linear
+    static constexpr const bool thread_safe = true;  ///< Indicates if the operator is thread safe or not
 
     /*!
      * \brief Indicates if the expression is vectorizable using the
@@ -859,6 +879,7 @@ struct relu_derivative_op {
 template <typename T>
 struct bernoulli_unary_op {
     static constexpr const bool linear = true; ///< Indicates if the operator is linear
+    static constexpr const bool thread_safe = false;  ///< Indicates if the operator is thread safe or not
 
     /*!
      * \brief Indicates if the expression is vectorizable using the
@@ -896,6 +917,7 @@ struct bernoulli_unary_op {
 template <typename T>
 struct reverse_bernoulli_unary_op {
     static constexpr const bool linear = true; ///< Indicates if the operator is linear
+    static constexpr const bool thread_safe = false;  ///< Indicates if the operator is thread safe or not
 
     /*!
      * \brief Indicates if the expression is vectorizable using the
@@ -933,6 +955,7 @@ struct reverse_bernoulli_unary_op {
 template <typename T>
 struct uniform_noise_unary_op {
     static constexpr const bool linear = true; ///< Indicates if the operator is linear
+    static constexpr const bool thread_safe = false;  ///< Indicates if the operator is thread safe or not
 
     /*!
      * \brief Indicates if the expression is vectorizable using the
@@ -970,6 +993,7 @@ struct uniform_noise_unary_op {
 template <typename T>
 struct normal_noise_unary_op {
     static constexpr const bool linear = true; ///< Indicates if the operator is linear
+    static constexpr const bool thread_safe = false;  ///< Indicates if the operator is thread safe or not
 
     /*!
      * \brief Indicates if the expression is vectorizable using the
@@ -1007,6 +1031,7 @@ struct normal_noise_unary_op {
 template <typename T>
 struct logistic_noise_unary_op {
     static constexpr const bool linear = true; ///< Indicates if the operator is linear
+    static constexpr const bool thread_safe = false;  ///< Indicates if the operator is thread safe or not
 
     /*!
      * \brief Indicates if the expression is vectorizable using the
@@ -1052,6 +1077,7 @@ struct min_scalar_op {
     using vec_type       = typename V::template vec_type<T>;
 
     static constexpr const bool linear = true; ///< Indicates if the operator is linear or not
+    static constexpr const bool thread_safe = true;  ///< Indicates if the operator is thread safe or not
 
     /*!
      * \brief Indicates if the expression is vectorizable using the
@@ -1115,6 +1141,7 @@ struct max_scalar_op {
     using vec_type       = typename V::template vec_type<T>;
 
     static constexpr const bool linear = true; ///< Indicates if the operator is linear or not
+    static constexpr const bool thread_safe = true;  ///< Indicates if the operator is thread safe or not
 
     /*!
      * \brief Indicates if the expression is vectorizable using the
@@ -1178,6 +1205,7 @@ struct clip_scalar_op {
     using vec_type       = typename V::template vec_type<T>;
 
     static constexpr const bool linear = true; ///< Indicates if the operator is linear or not
+    static constexpr const bool thread_safe = true;  ///< Indicates if the operator is thread safe or not
 
     /*!
      * \brief Indicates if the expression is vectorizable using the

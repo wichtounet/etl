@@ -22,7 +22,8 @@ namespace etl {
  * Such an unary expr does not apply the operator but delegates to its sub expression.
  */
 struct identity_op {
-    static constexpr const bool linear = true; ///< Indicates if the operator is linear
+    static constexpr const bool linear      = true; ///< Indicates if the operator is linear
+    static constexpr const bool thread_safe = true; ///< Indicates if the operator is thread safe
 
     /*!
      * \brief Indicates if the expression is vectorizable using the
@@ -40,6 +41,7 @@ struct identity_op {
  */
 struct transform_op {
     static constexpr const bool linear = false; ///< Indicates if the operator is linear
+    static constexpr const bool thread_safe = true; ///< Indicates if the operator is thread safe
 
     /*!
      * \brief Indicates if the expression is vectorizable using the
@@ -59,8 +61,10 @@ struct transform_op {
  */
 template <typename Sub>
 struct stateful_op {
-    static constexpr const bool linear = Sub::linear; ///< Indicates if the operator is linear
-    using op                           = Sub;         ///< The sub operator type
+    static constexpr const bool linear      = Sub::linear;      ///< Indicates if the operator is linear
+    static constexpr const bool thread_safe = Sub::thread_safe; ///< Indicates if the operator is thread safe
+
+    using op = Sub; ///< The sub operator type
 
     /*!
      * \brief Indicates if the expression is vectorizable using the
@@ -833,6 +837,7 @@ struct etl_traits<etl::unary_expr<T, Expr, UnaryOp>> {
     static constexpr const bool is_value                = false;                                                ///< Indicates if the expression is of value type
     static constexpr const bool is_direct                = std::is_same<UnaryOp, identity_op>::value && etl_traits<sub_expr_t>::is_direct;                                                ///< Indicates if the expression has direct memory access
     static constexpr const bool is_linear               = etl_traits<sub_expr_t>::is_linear && UnaryOp::linear; ///< Indicates if the expression is linear
+    static constexpr const bool is_thread_safe           = etl_traits<sub_expr_t>::is_thread_safe && UnaryOp::thread_safe;                                                                ///< Indicates if the expression is linear
     static constexpr const bool is_generator            = etl_traits<sub_expr_t>::is_generator;                 ///< Indicates if the expression is a generator expression
     static constexpr const bool needs_temporary_visitor = etl_traits<sub_expr_t>::needs_temporary_visitor;      ///< Indicates if the expression needs a temporary visitor
     static constexpr const bool needs_evaluator_visitor = etl_traits<sub_expr_t>::needs_evaluator_visitor;      ///< Indicaes if the expression needs an evaluator visitor
