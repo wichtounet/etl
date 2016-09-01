@@ -188,7 +188,7 @@ CONV4_VALID_FILTER_FLIPPED_TEST_CASE("conv/4d/valid/filter/flipped/1", "[conv][c
     for(std::size_t i = 0; i < etl::dim<0>(I); ++i){
         for (std::size_t k = 0; k < etl::dim<1>(K); ++k) {
             for (std::size_t c = 0; c < etl::dim<1>(I); ++c) {
-                ref(k)(c) += conv_2d_valid(I(i)(c), fflip(K(i)(k)));
+                ref(k)(c) += conv_2d_valid_flipped(I(i)(c), fflip(K(i)(k)));
             }
         }
     };
@@ -196,6 +196,6 @@ CONV4_VALID_FILTER_FLIPPED_TEST_CASE("conv/4d/valid/filter/flipped/1", "[conv][c
     Impl::apply(I, K, c);
 
     for(std::size_t i = 0; i < ref.size(); ++i){
-        REQUIRE_EQUALS_APPROX(c[i], ref[i]);
+        REQUIRE_EQUALS_APPROX_E(c[i], ref[i], 0.05);
     }
 }
