@@ -288,7 +288,13 @@ struct conv4_valid_filter_flipped_impl : conv4_valid_filter_impl<S1, S2, P1, P2>
                 // For some reasons, CUDNN backward filter cross correlation does
                 // not work correclty (or does not work the way I expect it to work)
                 // The padding may not be done as I thought
-                impl::avx::conv4_valid_filter_flipped(input.direct(), kernel.direct(), conv.direct(), S1, S2, P1, P2);
+                if(etl::avx_enabled){
+                    impl::avx::conv4_valid_filter_flipped(input.direct(), kernel.direct(), conv.direct(), S1, S2, P1, P2);
+                } else if(etl::sse_enabled){
+                    impl::sse::conv4_valid_filter_flipped(input.direct(), kernel.direct(), conv.direct(), S1, S2, P1, P2);
+                } else {
+                    impl::standard::conv4_valid_filter_flipped(input, kernel, conv, S1, S2, P1, P2);
+                }
             } else {
                 impl::cudnn::conv4_valid_filter_flipped(input.direct(), kernel.direct(), conv.direct(), S1, S2, P1, P2);
             }
