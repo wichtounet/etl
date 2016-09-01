@@ -289,6 +289,7 @@ CPM_DIRECT_SECTION_TWO_PASS_NS_PF("sconv2_full_small [conv][conv2]", conv_2d_sma
     CUFFT_SECTION_FUNCTOR("fft_cufft", [](smat& a, smat& b, smat& r){ r = selected_helper(etl::conv_impl::FFT_CUFFT, etl::conv_2d_full(a, b)); })
 )
 
+#ifdef ETL_EXTENDED_BENCH
 CPM_DIRECT_SECTION_TWO_PASS_NS_PF("dconv2_full [conv][conv2]", conv_2d_large_policy,
     FLOPS([](std::size_t d1, std::size_t d2){ return 2 * d1 * d1 * d2 * d2; }),
     CPM_SECTION_INIT([](std::size_t d1, std::size_t d2){ return std::make_tuple(dmat(d1,d1), dmat(d2,d2), dmat(d1 + d2 - 1, d1 + d2 - 1)); }),
@@ -301,6 +302,7 @@ CPM_DIRECT_SECTION_TWO_PASS_NS_PF("dconv2_full [conv][conv2]", conv_2d_large_pol
     MKL_SECTION_FUNCTOR("fft_mkl", [](dmat& a, dmat& b, dmat& r){ r = selected_helper(etl::conv_impl::FFT_MKL, etl::conv_2d_full(a, b)); })
     CUFFT_SECTION_FUNCTOR("fft_cufft", [](dmat& a, dmat& b, dmat& r){ r = selected_helper(etl::conv_impl::FFT_CUFFT, etl::conv_2d_full(a, b)); })
 )
+#endif
 
 CPM_DIRECT_SECTION_TWO_PASS_NS_PF("sconv2_valid_multi [conv][conv2]", conv_2d_multi_policy,
     FLOPS([](std::size_t d1, std::size_t d2, std::size_t d3){ return 2 * d1 * d1 * d2 * d2 * d3; }),
