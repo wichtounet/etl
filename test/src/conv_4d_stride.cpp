@@ -10,7 +10,7 @@
 
 // conv_4d_valid
 
-CONV4_VALID_TEST_CASE("conv/4d/stride/valid_1", "[conv][conv4][valid]") {
+CONV4_VALID_TEST_CASE("conv/4d/stride/valid/1", "[conv][conv4][valid]") {
     etl::fast_matrix<T, 10, 2, 9, 9> I(etl::sequence_generator(10.0) * 4.0);
     etl::fast_matrix<T, 12, 2, 3, 3> K(etl::sequence_generator(2.0) * 0.3);
 
@@ -33,7 +33,7 @@ CONV4_VALID_TEST_CASE("conv/4d/stride/valid_1", "[conv][conv4][valid]") {
     }
 }
 
-CONV4_VALID_TEST_CASE("conv/4d/stride/valid_2", "[conv][conv4][valid]") {
+CONV4_VALID_TEST_CASE("conv/4d/stride/valid/2", "[conv][conv4][valid]") {
     etl::fast_matrix<T, 9, 4, 4, 4> I(etl::sequence_generator(-10.0) * 0.04);
     etl::fast_matrix<T, 10, 4, 2, 2> K(etl::sequence_generator(-2.0) * 1.56);
 
@@ -50,6 +50,52 @@ CONV4_VALID_TEST_CASE("conv/4d/stride/valid_2", "[conv][conv4][valid]") {
     }
 
     Impl::template apply<2, 2, 0, 0>(I, K, c);
+
+    for(std::size_t i = 0; i < ref.size(); ++i){
+        REQUIRE_EQUALS_APPROX_E(c[i], ref[i], 0.1);
+    }
+}
+
+CONV4_VALID_TEST_CASE("conv/4d/stride/valid/3", "[conv][conv4][valid]") {
+    etl::fast_matrix<T, 9, 4, 4, 4> I(etl::sequence_generator(-10.0) * 0.04);
+    etl::fast_matrix<T, 10, 4, 2, 2> K(etl::sequence_generator(-2.0) * 1.56);
+
+    etl::fast_matrix<T, 9, 10, 5, 5> ref;
+    etl::fast_matrix<T, 9, 10, 5, 5> c;
+
+    ref = 0.0;
+    for(std::size_t i = 0; i < etl::dim<0>(I); ++i){
+        for(std::size_t c = 0; c < etl::dim<1>(K); ++c){
+            for(std::size_t k = 0; k < etl::dim<0>(K); ++k){
+                ref(i)(k) += etl::conv_2d_valid<1, 1, 1, 1>(I(i)(c), K(k)(c));
+            }
+        }
+    }
+
+    Impl::template apply<1, 1, 1, 1>(I, K, c);
+
+    for(std::size_t i = 0; i < ref.size(); ++i){
+        REQUIRE_EQUALS_APPROX_E(c[i], ref[i], 0.1);
+    }
+}
+
+CONV4_VALID_TEST_CASE("conv/4d/stride/valid/4", "[conv][conv4][valid]") {
+    etl::fast_matrix<T, 10, 2, 9, 9> I(etl::sequence_generator(10.0) * 4.0);
+    etl::fast_matrix<T, 12, 2, 3, 3> K(etl::sequence_generator(2.0) * 0.3);
+
+    etl::fast_matrix<T, 10, 12, 11, 11> ref;
+    etl::fast_matrix<T, 10, 12, 11, 11> c;
+
+    ref = 0.0;
+    for(std::size_t i = 0; i < etl::dim<0>(I); ++i){
+        for(std::size_t c = 0; c < etl::dim<1>(K); ++c){
+            for(std::size_t k = 0; k < etl::dim<0>(K); ++k){
+                ref(i)(k) += etl::conv_2d_valid<1, 1, 2, 2>(I(i)(c), K(k)(c));
+            }
+        }
+    }
+
+    Impl::template apply<1, 1, 2, 2>(I, K, c);
 
     for(std::size_t i = 0; i < ref.size(); ++i){
         REQUIRE_EQUALS_APPROX_E(c[i], ref[i], 0.1);
@@ -98,6 +144,52 @@ CONV4_VALID_FLIPPED_TEST_CASE("conv/4d/stride/valid/flipped/2", "[conv][conv4][v
     }
 
     Impl::template apply<2,2,0,0>(I, K, c);
+
+    for(std::size_t i = 0; i < ref.size(); ++i){
+        REQUIRE_EQUALS_APPROX_E(c[i], ref[i], 0.1);
+    }
+}
+
+CONV4_VALID_FLIPPED_TEST_CASE("conv/4d/stride/valid/flipped/3", "[conv][conv4][valid]") {
+    etl::fast_matrix<T, 9, 4, 4, 4> I(etl::sequence_generator(-10.0) * 0.04);
+    etl::fast_matrix<T, 10, 4, 2, 2> K(etl::sequence_generator(-2.0) * 1.56);
+
+    etl::fast_matrix<T, 9, 10, 5, 5> ref;
+    etl::fast_matrix<T, 9, 10, 5, 5> c;
+
+    ref = 0.0;
+    for(std::size_t i = 0; i < etl::dim<0>(I); ++i){
+        for(std::size_t c = 0; c < etl::dim<1>(K); ++c){
+            for(std::size_t k = 0; k < etl::dim<0>(K); ++k){
+                ref(i)(k) += etl::conv_2d_valid_flipped<1, 1, 1, 1>(I(i)(c), K(k)(c));
+            }
+        }
+    }
+
+    Impl::template apply<1, 1, 1, 1>(I, K, c);
+
+    for(std::size_t i = 0; i < ref.size(); ++i){
+        REQUIRE_EQUALS_APPROX_E(c[i], ref[i], 0.1);
+    }
+}
+
+CONV4_VALID_FLIPPED_TEST_CASE("conv/4d/stride/valid/flipped/4", "[conv][conv4][valid]") {
+    etl::fast_matrix<T, 10, 2, 9, 9> I(etl::sequence_generator(10.0) * 4.0);
+    etl::fast_matrix<T, 12, 2, 3, 3> K(etl::sequence_generator(2.0) * 0.3);
+
+    etl::fast_matrix<T, 10, 12, 11, 11> ref;
+    etl::fast_matrix<T, 10, 12, 11, 11> c;
+
+    ref = 0.0;
+    for(std::size_t i = 0; i < etl::dim<0>(I); ++i){
+        for(std::size_t c = 0; c < etl::dim<1>(K); ++c){
+            for(std::size_t k = 0; k < etl::dim<0>(K); ++k){
+                ref(i)(k) += etl::conv_2d_valid_flipped<1, 1, 2, 2>(I(i)(c), K(k)(c));
+            }
+        }
+    }
+
+    Impl::template apply<1, 1, 2, 2>(I, K, c);
 
     for(std::size_t i = 0; i < ref.size(); ++i){
         REQUIRE_EQUALS_APPROX_E(c[i], ref[i], 0.1);
