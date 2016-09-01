@@ -47,6 +47,7 @@ CPM_DIRECT_SECTION_TWO_PASS_NS_PF("A * B (c) [gemm]", small_square_policy,
     CUBLAS_SECTION_FUNCTOR("cublas", [](cmat& a, cmat& b, cmat& c){ c = selected_helper(etl::gemm_impl::CUBLAS, a * b); })
 )
 
+#ifdef ETL_EXTENDED_BENCH
 CPM_DIRECT_SECTION_TWO_PASS_NS_PF("A * B (z) [gemm]", small_square_policy,
     FLOPS([](std::size_t d1, std::size_t d2){ return 6 * 2 * d1 * d2 * d2; }),
     CPM_SECTION_INIT([](std::size_t d1, std::size_t d2){ return std::make_tuple(zmat(d1,d2), zmat(d1,d2), zmat(d1, d2)); }),
@@ -55,6 +56,7 @@ CPM_DIRECT_SECTION_TWO_PASS_NS_PF("A * B (z) [gemm]", small_square_policy,
     BLAS_SECTION_FUNCTOR("blas", [](zmat& a, zmat& b, zmat& c){ c = selected_helper(etl::gemm_impl::BLAS, a * b); })
     CUBLAS_SECTION_FUNCTOR("cublas", [](zmat& a, zmat& b, zmat& c){ c = selected_helper(etl::gemm_impl::CUBLAS, a * b); })
 )
+#endif
 
 CPM_DIRECT_SECTION_TWO_PASS_NS_PF("A * x (s) [gemm]", gemv_policy,
     FLOPS([](std::size_t d1, std::size_t d2){ return 2 * d1 * d2; }),

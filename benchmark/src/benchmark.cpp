@@ -51,6 +51,7 @@ CPM_BENCH() {
 
 //Bench addition
 CPM_BENCH() {
+#ifdef ETL_EXTENDED_BENCH
     CPM_TWO_PASS_NS(
         "r = a + b [std][add][d]",
         [](std::size_t d){ return std::make_tuple(dvec(d), dvec(d), dvec(d)); },
@@ -63,6 +64,7 @@ CPM_BENCH() {
         [](dvec& a, dvec& b, dvec& c, dvec& r){ r = a + b + c; },
         [](std::size_t d){ return 2 * d; }
         );
+#endif
 
     CPM_TWO_PASS_NS_P(
         mat_policy_2d,
@@ -250,12 +252,14 @@ CPM_BENCH() {
         [](std::size_t d){ return 4 * d; }
         );
 
+#ifdef ETL_EXTENDED_BENCH
     CPM_TWO_PASS_NS(
         "ssum_expr2 [std][sum][s]",
         [](std::size_t d){ return std::make_tuple(svec(d), svec(d)); },
         [](svec& a, svec& b){ float_ref += etl::sum((a >> a) - (b >> b)); },
         [](std::size_t d){ return 4 * d; }
         );
+#endif
 }
 
 //Bench transposition
