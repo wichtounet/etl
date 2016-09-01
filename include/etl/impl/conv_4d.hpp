@@ -175,13 +175,13 @@ struct conv4_valid_filter_impl {
         auto impl = select_conv4_impl<I, K, C>();
 
         if (impl == etl::conv4_impl::CUDNN) {
-            impl::cudnn::conv4_valid_filter(input.direct(), kernel.direct(), conv.direct());
+            impl::cudnn::conv4_valid_filter(input.direct(), kernel.direct(), conv.direct(), S1, S2, P1, P2);
         } else if (impl == etl::conv4_impl::AVX) {
-            impl::avx::conv4_valid_filter(input.direct(), kernel.direct(), conv.direct());
+            impl::avx::conv4_valid_filter(input.direct(), kernel.direct(), conv.direct(), S1, S2, P1, P2);
         } else if (impl == etl::conv4_impl::SSE) {
-            impl::sse::conv4_valid_filter(input.direct(), kernel.direct(), conv.direct());
+            impl::sse::conv4_valid_filter(input.direct(), kernel.direct(), conv.direct(), S1, S2, P1, P2);
         } else if (impl == etl::conv4_impl::STD) {
-            impl::standard::conv4_valid_filter(input, kernel, conv);
+            impl::standard::conv4_valid_filter(input, kernel, conv, S1, S2, P1, P2);
         } else {
             cpp_unreachable("Invalid conv implementation selection");
         }
@@ -284,13 +284,20 @@ struct conv4_valid_filter_flipped_impl : conv4_valid_filter_impl<S1, S2, P1, P2>
         auto impl = select_conv4_impl<I, K, C>();
 
         if (impl == etl::conv4_impl::CUDNN) {
-            impl::cudnn::conv4_valid_filter_flipped(input.direct(), kernel.direct(), conv.direct());
+            if(S1 > 1 || S2 > 1 || P1 || P2){
+                // For some reasons, CUDNN backward filter cross correlation does
+                // not work correclty (or does not work the way I expect it to work)
+                // The padding may not be done as I thought
+                impl::avx::conv4_valid_filter_flipped(input.direct(), kernel.direct(), conv.direct(), S1, S2, P1, P2);
+            } else {
+                impl::cudnn::conv4_valid_filter_flipped(input.direct(), kernel.direct(), conv.direct(), S1, S2, P1, P2);
+            }
         } else if (impl == etl::conv4_impl::AVX) {
-            impl::avx::conv4_valid_filter_flipped(input.direct(), kernel.direct(), conv.direct());
+            impl::avx::conv4_valid_filter_flipped(input.direct(), kernel.direct(), conv.direct(), S1, S2, P1, P2);
         } else if (impl == etl::conv4_impl::SSE) {
-            impl::sse::conv4_valid_filter_flipped(input.direct(), kernel.direct(), conv.direct());
+            impl::sse::conv4_valid_filter_flipped(input.direct(), kernel.direct(), conv.direct(), S1, S2, P1, P2);
         } else if (impl == etl::conv4_impl::STD) {
-            impl::standard::conv4_valid_filter_flipped(input, kernel, conv);
+            impl::standard::conv4_valid_filter_flipped(input, kernel, conv, S1, S2, P1, P2);
         } else {
             cpp_unreachable("Invalid conv implementation selection");
         }

@@ -455,7 +455,7 @@ void conv4_valid_flipped(const I& input, const K& kernel, C&& conv, size_t s1, s
  * \param conv The output matrix
  */
 template <typename I, typename K, typename C>
-void conv4_valid_filter(const I& input, const K& kernel, C&& conv) {
+void conv4_valid_filter(const I& input, const K& kernel, C&& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
     cpp_assert(etl::dim<0>(input) == etl::dim<0>(kernel), "Invalid number of channels");
     cpp_assert(etl::dim<1>(input) == etl::dim<1>(conv), "Invalid number of images");
     cpp_assert(etl::dim<1>(kernel) == etl::dim<0>(conv), "Invalid number of images");
@@ -464,14 +464,14 @@ void conv4_valid_filter(const I& input, const K& kernel, C&& conv) {
         //i = 0
         for (std::size_t k = 0; k < kernel.dim(1); ++k) {
             for(std::size_t c = 0; c < input.dim(1); ++c){
-                conv2_valid(input(0)(c), kernel(0)(k), conv(k)(c), 1, 1, 0, 0, 0.0);
+                conv2_valid(input(0)(c), kernel(0)(k), conv(k)(c), s1, s2, p1, p2, 0.0);
             }
         }
 
         for (std::size_t i = 1; i < input.dim(0); ++i) {
             for (std::size_t k = 0; k < kernel.dim(1); ++k) {
                 for(std::size_t c = 0; c < input.dim(1); ++c){
-                    conv2_valid(input(i)(c), kernel(i)(k), conv(k)(c), 1, 1, 0, 0, 1.0);
+                    conv2_valid(input(i)(c), kernel(i)(k), conv(k)(c), s1, s2, p1, p2, 1.0);
                 }
             }
         }
@@ -485,7 +485,7 @@ void conv4_valid_filter(const I& input, const K& kernel, C&& conv) {
  * \param conv The output matrix
  */
 template <typename I, typename K, typename C>
-void conv4_valid_filter_flipped(const I& input, const K& kernel, C&& conv) {
+void conv4_valid_filter_flipped(const I& input, const K& kernel, C&& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
     cpp_assert(etl::dim<0>(input) == etl::dim<0>(kernel), "Invalid number of channels");
     cpp_assert(etl::dim<1>(input) == etl::dim<1>(conv), "Invalid number of images");
     cpp_assert(etl::dim<1>(kernel) == etl::dim<0>(conv), "Invalid number of images");
@@ -494,14 +494,14 @@ void conv4_valid_filter_flipped(const I& input, const K& kernel, C&& conv) {
         //i = 0
         for (std::size_t k = 0; k < kernel.dim(1); ++k) {
             for(std::size_t c = 0; c < input.dim(1); ++c){
-                conv2_valid_flipped(input(0)(c), kernel(0)(k), conv(k)(c), 1, 1, 0, 0, 0.0);
+                conv2_valid_flipped(input(0)(c), kernel(0)(k), conv(k)(c), s1, s2, p1, p2, 0.0);
             }
         }
 
         for (std::size_t i = 1; i < input.dim(0); ++i) {
             for (std::size_t k = 0; k < kernel.dim(1); ++k) {
                 for(std::size_t c = 0; c < input.dim(1); ++c){
-                    conv2_valid_flipped(input(i)(c), kernel(i)(k), conv(k)(c), 1, 1, 0, 0, 1.0);
+                    conv2_valid_flipped(input(i)(c), kernel(i)(k), conv(k)(c), s1, s2, p1, p2, 1.0);
                 }
             }
         }
