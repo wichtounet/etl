@@ -153,8 +153,8 @@ CONV4_FULL_FLIPPED_TEST_CASE("conv_4d/full_3", "[conv][conv4][valid]") {
 // conv_4d_valid_filter
 
 CONV4_VALID_FILTER_TEST_CASE("conv/4d/valid/filter/1", "[conv][conv4][valid]") {
-    etl::fast_matrix<T, 10, 3, 5, 5> I(etl::sequence_generator(-10.0) * 0.01);
-    etl::fast_matrix<T, 10, 4, 3, 3> K(etl::sequence_generator(-20.0) * 0.03);
+    etl::fast_matrix<T, 10, 3, 5, 5> I(etl::sequence_generator(-1.0) * 0.01);
+    etl::fast_matrix<T, 10, 4, 3, 3> K(etl::sequence_generator(-2.0) * 0.03);
 
     etl::fast_matrix<T, 4, 3, 3, 3> ref;
     etl::fast_matrix<T, 4, 3, 3, 3> c;
@@ -171,15 +171,15 @@ CONV4_VALID_FILTER_TEST_CASE("conv/4d/valid/filter/1", "[conv][conv4][valid]") {
     Impl::apply(I, K, c);
 
     for(std::size_t i = 0; i < ref.size(); ++i){
-        REQUIRE_EQUALS_APPROX_E(c[i], ref[i], base_eps * 10000);
+        REQUIRE_EQUALS_APPROX_E(c[i], ref[i], 0.05);
     }
 }
 
 // conv_4d_valid_filter_flipped
 
 CONV4_VALID_FILTER_FLIPPED_TEST_CASE("conv/4d/valid/filter/flipped/1", "[conv][conv4][valid]") {
-    etl::fast_matrix<T, 10, 3, 5, 5> I(etl::sequence_generator(3.0) * 2.4);
-    etl::fast_matrix<T, 10, 4, 3, 3> K(etl::sequence_generator(2.0) * 4.3);
+    etl::fast_matrix<T, 10, 3, 5, 5> I(etl::sequence_generator(3.0) * 0.024);
+    etl::fast_matrix<T, 10, 4, 3, 3> K(etl::sequence_generator(2.0) * 0.043);
 
     etl::fast_matrix<T, 4, 3, 3, 3> ref;
     etl::fast_matrix<T, 4, 3, 3, 3> c;
