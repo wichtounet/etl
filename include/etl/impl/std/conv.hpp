@@ -320,14 +320,14 @@ void conv2_valid(const I& input, const K& kernel, C&& conv, size_t s1, size_t s2
 
     for (std::size_t i = p1; i < rows(conv) - p1; ++i) {
         for (std::size_t j = p2; j < columns(conv) - p2; ++j) {
-            const auto i_i = i * s1;
-            const auto i_j = j * s2;
+            const auto i_i = i * s1 - p1;
+            const auto i_j = j * s2 - p2;
 
             typename I::value_type temp = 0.0;
 
             for (std::size_t k = 0; k < rows(kernel); ++k) {
                 for (std::size_t l = 0; l < columns(kernel); ++l) {
-                    temp += input(i_i + k - p1, i_j + l - p2) * kernel(rows(kernel) - 1 - k, columns(kernel) - 1 - l);
+                    temp += input(i_i + k, i_j + l) * kernel(rows(kernel) - 1 - k, columns(kernel) - 1 - l);
                 }
             }
 
@@ -380,14 +380,14 @@ void conv2_valid_flipped(const I& input, const K& kernel, C&& conv, size_t s1, s
 
     for (std::size_t i = p1; i < rows(conv) - p1; ++i) {
         for (std::size_t j = p2; j < columns(conv) - p2; ++j) {
-            const auto i_i = i * s1;
-            const auto i_j = j * s2;
+            const auto i_i = i * s1 - p1;
+            const auto i_j = j * s2 - p2;
 
             typename I::value_type temp = 0.0;
 
             for (std::size_t k = 0; k < rows(kernel); ++k) {
                 for (std::size_t l = 0; l < columns(kernel); ++l) {
-                    temp += input(i_i + k - p1, i_j + l - p2) * kernel(k, l);
+                    temp += input(i_i + k, i_j + l) * kernel(k, l);
                 }
             }
 

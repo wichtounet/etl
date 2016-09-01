@@ -281,17 +281,17 @@ inline void conv2_valid_flipped_micro_kernel(const double* in, std::size_t n1, s
                 __m128d r3 = _mm_setzero_pd();
                 __m128d r4 = _mm_setzero_pd();
 
-                const auto i_i = i * s1;
-                const auto i_j = j * s2;
+                const auto i_i = i * s1 - p1;
+                const auto i_j = j * s2 - p2;
 
                 for (std::size_t k = 0; k < m1; ++k) {
                     for (std::size_t l = 0; l + 1 < m2; l += 2) {
                         __m128d k1 = _mm_loadu_pd(kernel + k * m2 + l);
 
-                        __m128d i1 = _mm_loadu_pd(in + (i_i + k - p1) * n2 + i_j - p2 + 0 + l);
-                        __m128d i2 = _mm_loadu_pd(in + (i_i + k - p1) * n2 + i_j - p2 + 1 + l);
-                        __m128d i3 = _mm_loadu_pd(in + (i_i + k - p1) * n2 + i_j - p2 + 2 + l);
-                        __m128d i4 = _mm_loadu_pd(in + (i_i + k - p1) * n2 + i_j - p2 + 3 + l);
+                        __m128d i1 = _mm_loadu_pd(in + (i_i + k) * n2 + i_j + 0 + l);
+                        __m128d i2 = _mm_loadu_pd(in + (i_i + k) * n2 + i_j + 1 + l);
+                        __m128d i3 = _mm_loadu_pd(in + (i_i + k) * n2 + i_j + 2 + l);
+                        __m128d i4 = _mm_loadu_pd(in + (i_i + k) * n2 + i_j + 3 + l);
 
                         __m128d t1 = _mm_mul_pd(k1, i1);
                         __m128d t2 = _mm_mul_pd(k1, i2);
@@ -314,12 +314,12 @@ inline void conv2_valid_flipped_micro_kernel(const double* in, std::size_t n1, s
             for (std::size_t j = (c2 - p2) - (c2 - 2 * p2) % 4; j < c2 - p2; ++j) {
                 __m128d r1 = _mm_setzero_pd();
 
-                const auto i_i = i * s1;
-                const auto i_j = j * s2;
+                const auto i_i = i * s1 - p1;
+                const auto i_j = j * s2 - p2;
 
                 for (std::size_t k = 0; k < m1; ++k) {
                     for (std::size_t l = 0; l + 1 < m2; l += 2) {
-                        __m128d tmp1 = _mm_loadu_pd(in + (i_i + k -  p1) * n2 + i_j - p2 + l);
+                        __m128d tmp1 = _mm_loadu_pd(in + (i_i + k) * n2 + i_j + l);
                         __m128d tmp2 = _mm_loadu_pd(kernel + k * m2 + l);
                         __m128d tmp4 = _mm_mul_pd(tmp2, tmp1);
                         r1  = _mm_add_pd(r1, tmp4);
@@ -337,17 +337,17 @@ inline void conv2_valid_flipped_micro_kernel(const double* in, std::size_t n1, s
                 __m128d r3 = _mm_setzero_pd();
                 __m128d r4 = _mm_setzero_pd();
 
-                const auto i_i = i * s1;
-                const auto i_j = j * s2;
+                const auto i_i = i * s1 - p1;
+                const auto i_j = j * s2 - p2;
 
                 for (std::size_t k = 0; k < m1; ++k) {
                     for (std::size_t l = 0; l + 1 < m2; l += 2) {
                         __m128d k1 = _mm_loadu_pd(kernel + k * m2 + l);
 
-                        __m128d i1 = _mm_loadu_pd(in + (i_i + k - p1) * n2 + i_j - p2 + 0 + l);
-                        __m128d i2 = _mm_loadu_pd(in + (i_i + k - p1) * n2 + i_j - p2 + 1 + l);
-                        __m128d i3 = _mm_loadu_pd(in + (i_i + k - p1) * n2 + i_j - p2 + 2 + l);
-                        __m128d i4 = _mm_loadu_pd(in + (i_i + k - p1) * n2 + i_j - p2 + 3 + l);
+                        __m128d i1 = _mm_loadu_pd(in + (i_i + k) * n2 + i_j + 0 + l);
+                        __m128d i2 = _mm_loadu_pd(in + (i_i + k) * n2 + i_j + 1 + l);
+                        __m128d i3 = _mm_loadu_pd(in + (i_i + k) * n2 + i_j + 2 + l);
+                        __m128d i4 = _mm_loadu_pd(in + (i_i + k) * n2 + i_j + 3 + l);
 
                         __m128d t1 = _mm_mul_pd(k1, i1);
                         __m128d t2 = _mm_mul_pd(k1, i2);
@@ -370,12 +370,12 @@ inline void conv2_valid_flipped_micro_kernel(const double* in, std::size_t n1, s
             for (std::size_t j = (c2 - p2) - (c2 - 2 * p2) % 4; j < c2 - p2; ++j) {
                 __m128d r1 = _mm_setzero_pd();
 
-                const auto i_i = i * s1;
-                const auto i_j = j * s2;
+                const auto i_i = i * s1 - p1;
+                const auto i_j = j * s2 - p2;
 
                 for (std::size_t k = 0; k < m1; ++k) {
                     for (std::size_t l = 0; l + 1 < m2; l += 2) {
-                        __m128d tmp1 = _mm_loadu_pd(in + (i_i + k - p1) * n2 + i_j - p2 + l);
+                        __m128d tmp1 = _mm_loadu_pd(in + (i_i + k) * n2 + i_j + l);
                         __m128d tmp2 = _mm_loadu_pd(kernel + k * m2 + l);
                         __m128d tmp4 = _mm_mul_pd(tmp2, tmp1);
                         r1  = _mm_add_pd(r1, tmp4);
@@ -392,12 +392,12 @@ inline void conv2_valid_flipped_micro_kernel(const double* in, std::size_t n1, s
             for (std::size_t j = p2; j < c2 - p2; ++j) {
                 double temp = 0.0;
 
-                const auto i_i = i * s1;
-                const auto i_j = j * s2;
+                const auto i_i = i * s1 - p1;
+                const auto i_j = j * s2 - p2;
 
                 for (std::size_t k = 0; k < m1; ++k) {
                     const auto l = m2 - 1;
-                    temp += in[(i_i - p1 + k) * n2 + i_j - p2 + l] * kernel[k * m2 + l];
+                    temp += in[(i_i + k) * n2 + i_j + l] * kernel[k * m2 + l];
                 }
 
                 out[i * c2 + j] += temp;
@@ -677,17 +677,17 @@ inline void conv2_valid_flipped_micro_kernel(const float* in, std::size_t n1, st
                 __m128 r3 = _mm_setzero_ps();
                 __m128 r4 = _mm_setzero_ps();
 
-                const auto i_i = i * s1;
-                const auto i_j = j * s2;
+                const auto i_i = i * s1 - p1;
+                const auto i_j = j * s2 - p2;
 
                 for (std::size_t k = 0; k < m1; ++k) {
                     for (std::size_t l = 0; l + 3 < m2; l += 4) {
                         __m128 k1 = _mm_loadu_ps(kernel + k * m2 + l);
 
-                        __m128 i1 = _mm_loadu_ps(in + (k + i_i - p1) * n2 + l + i_j - p2 + 0);
-                        __m128 i2 = _mm_loadu_ps(in + (k + i_i - p1) * n2 + l + i_j - p2 + 1);
-                        __m128 i3 = _mm_loadu_ps(in + (k + i_i - p1) * n2 + l + i_j - p2 + 2);
-                        __m128 i4 = _mm_loadu_ps(in + (k + i_i - p1) * n2 + l + i_j - p2 + 3);
+                        __m128 i1 = _mm_loadu_ps(in + (k + i_i) * n2 + l + i_j + 0);
+                        __m128 i2 = _mm_loadu_ps(in + (k + i_i) * n2 + l + i_j + 1);
+                        __m128 i3 = _mm_loadu_ps(in + (k + i_i) * n2 + l + i_j + 2);
+                        __m128 i4 = _mm_loadu_ps(in + (k + i_i) * n2 + l + i_j + 3);
 
                         __m128 t1 = _mm_mul_ps(k1, i1);
                         __m128 t2 = _mm_mul_ps(k1, i2);
@@ -710,14 +710,14 @@ inline void conv2_valid_flipped_micro_kernel(const float* in, std::size_t n1, st
             for (std::size_t j = (c2 - p2) - (c2 - 2 * p2) % 4; j < c2 - p2; ++j) {
                 __m128 r1 = _mm_setzero_ps();
 
-                const auto i_i = i * s1;
-                const auto i_j = j * s2;
+                const auto i_i = i * s1 - p1;
+                const auto i_j = j * s2 - p2;
 
                 for (std::size_t k = 0; k < m1; ++k) {
                     for (std::size_t l = 0; l + 3 < m2; l += 4) {
                         __m128 k1 = _mm_loadu_ps(kernel + k * m2 + l);
 
-                        __m128 i1 = _mm_loadu_ps(in + (k + i_i - p1) * n2 + l + i_j - p2);
+                        __m128 i1 = _mm_loadu_ps(in + (k + i_i) * n2 + l + i_j);
 
                         __m128 t1 = _mm_mul_ps(k1, i1);
 
@@ -736,17 +736,17 @@ inline void conv2_valid_flipped_micro_kernel(const float* in, std::size_t n1, st
                 __m128 r3 = _mm_setzero_ps();
                 __m128 r4 = _mm_setzero_ps();
 
-                const auto i_i = i * s1;
-                const auto i_j = j * s2;
+                const auto i_i = i * s1 - p1;
+                const auto i_j = j * s2 - p2;
 
                 for (std::size_t k = 0; k < m1; ++k) {
                     for (std::size_t l = 0; l + 3 < m2; l += 4) {
                         __m128 k1 = _mm_loadu_ps(kernel + k * m2 + l);
 
-                        __m128 i1 = _mm_loadu_ps(in + (k + i_i - p1) * n2 + l + i_j - p2 + 0);
-                        __m128 i2 = _mm_loadu_ps(in + (k + i_i - p1) * n2 + l + i_j - p2 + 1);
-                        __m128 i3 = _mm_loadu_ps(in + (k + i_i - p1) * n2 + l + i_j - p2 + 2);
-                        __m128 i4 = _mm_loadu_ps(in + (k + i_i - p1) * n2 + l + i_j - p2 + 3);
+                        __m128 i1 = _mm_loadu_ps(in + (k + i_i) * n2 + l + i_j + 0);
+                        __m128 i2 = _mm_loadu_ps(in + (k + i_i) * n2 + l + i_j + 1);
+                        __m128 i3 = _mm_loadu_ps(in + (k + i_i) * n2 + l + i_j + 2);
+                        __m128 i4 = _mm_loadu_ps(in + (k + i_i) * n2 + l + i_j + 3);
 
                         __m128 t1 = _mm_mul_ps(k1, i1);
                         __m128 t2 = _mm_mul_ps(k1, i2);
@@ -769,14 +769,14 @@ inline void conv2_valid_flipped_micro_kernel(const float* in, std::size_t n1, st
             for (std::size_t j = (c2 - p2) - (c2 - 2 * p2) % 4; j < c2 - p2; ++j) {
                 __m128 r1 = _mm_setzero_ps();
 
-                const auto i_i = i * s1;
-                const auto i_j = j * s2;
+                const auto i_i = i * s1 - p1;
+                const auto i_j = j * s2 - p2;
 
                 for (std::size_t k = 0; k < m1; ++k) {
                     for (std::size_t l = 0; l + 3 < m2; l += 4) {
                         __m128 k1 = _mm_loadu_ps(kernel + k * m2 + l);
 
-                        __m128 i1 = _mm_loadu_ps(in + (k + i_i - p1) * n2 + l + i_j - p2);
+                        __m128 i1 = _mm_loadu_ps(in + (k + i_i) * n2 + l + i_j);
 
                         __m128 t1 = _mm_mul_ps(k1, i1);
 
@@ -794,12 +794,12 @@ inline void conv2_valid_flipped_micro_kernel(const float* in, std::size_t n1, st
             for (std::size_t j = p2; j < c2 - p2; ++j) {
                 float temp = 0.0;
 
-                const auto i_i = i * s1;
-                const auto i_j = j * s2;
+                const auto i_i = i * s1 - p1;
+                const auto i_j = j * s2 - p2;
 
                 for (std::size_t k = 0; k < m1; ++k) {
                     for (std::size_t l = m2 - m2 % 4; l < m2; ++l) {
-                        temp += in[(k + i_i - p1) * n2 + l + i_j - p2] * kernel[k * m2 + l];
+                        temp += in[(k + i_i) * n2 + l + i_j] * kernel[k * m2 + l];
                     }
                 }
 

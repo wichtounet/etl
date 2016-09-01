@@ -379,27 +379,27 @@ inline void conv2_valid_flipped_micro_kernel(const double* in, std::size_t n1, s
                 __m256d r7 = _mm256_setzero_pd();
                 __m256d r8 = _mm256_setzero_pd();
 
-                const auto i_i = i * s1;
-                const auto i_j = j * s2;
+                const auto i_i = i * s1 - p1;
+                const auto i_j = j * s2 - p2;
 
                 for (std::size_t k = 0; k < m1; ++k) {
                     for (std::size_t l = 0; l + 3 < m2; l += 4) {
                         __m256d k1 = _mm256_loadu_pd(kernel + k * m2 + l);
 
-                        __m256d i1 = _mm256_loadu_pd(in + (i_i + k - p1) * n2 + i_j + l - p2 + 0);
-                        __m256d i2 = _mm256_loadu_pd(in + (i_i + k - p1) * n2 + i_j + l - p2 + 1);
-                        __m256d i3 = _mm256_loadu_pd(in + (i_i + k - p1) * n2 + i_j + l - p2 + 2);
-                        __m256d i4 = _mm256_loadu_pd(in + (i_i + k - p1) * n2 + i_j + l - p2 + 3);
+                        __m256d i1 = _mm256_loadu_pd(in + (i_i + k) * n2 + i_j + l + 0);
+                        __m256d i2 = _mm256_loadu_pd(in + (i_i + k) * n2 + i_j + l + 1);
+                        __m256d i3 = _mm256_loadu_pd(in + (i_i + k) * n2 + i_j + l + 2);
+                        __m256d i4 = _mm256_loadu_pd(in + (i_i + k) * n2 + i_j + l + 3);
 
                         __m256d t1 = _mm256_mul_pd(i1, k1);
                         __m256d t2 = _mm256_mul_pd(i2, k1);
                         __m256d t3 = _mm256_mul_pd(i3, k1);
                         __m256d t4 = _mm256_mul_pd(i4, k1);
 
-                        __m256d i5 = _mm256_loadu_pd(in + (i_i + k - p1) * n2 + i_j + l - p2 + 4);
-                        __m256d i6 = _mm256_loadu_pd(in + (i_i + k - p1) * n2 + i_j + l - p2 + 5);
-                        __m256d i7 = _mm256_loadu_pd(in + (i_i + k - p1) * n2 + i_j + l - p2 + 6);
-                        __m256d i8 = _mm256_loadu_pd(in + (i_i + k - p1) * n2 + i_j + l - p2 + 7);
+                        __m256d i5 = _mm256_loadu_pd(in + (i_i + k) * n2 + i_j + l + 4);
+                        __m256d i6 = _mm256_loadu_pd(in + (i_i + k) * n2 + i_j + l + 5);
+                        __m256d i7 = _mm256_loadu_pd(in + (i_i + k) * n2 + i_j + l + 6);
+                        __m256d i8 = _mm256_loadu_pd(in + (i_i + k) * n2 + i_j + l + 7);
 
                         r1         = _mm256_add_pd(r1, t1);
                         r2         = _mm256_add_pd(r2, t2);
@@ -431,8 +431,8 @@ inline void conv2_valid_flipped_micro_kernel(const double* in, std::size_t n1, s
             for (std::size_t j = (c2 - p2) - (c2 - 2 * p2) % 8; j < c2 - p2; ++j) {
                 __m256d r1 = _mm256_setzero_pd();
 
-                const auto i_i = i * s1;
-                const auto i_j = j * s2;
+                const auto i_i = i * s1 - p1;
+                const auto i_j = j * s2 - p2;
 
                 for (std::size_t k = 0; k < m1; ++k) {
                     for (std::size_t l = 0; l + 3 < m2; l += 4) {
