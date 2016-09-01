@@ -164,7 +164,7 @@ namespace standard_evaluator {
      */
     template <typename E, typename R, cpp_enable_if(detail::direct_assign<E, R>::value)>
     void assign_evaluate_impl(E&& expr, R&& result) {
-        if(select_parallel(etl::size(result))){
+        if(all_thread_safe<E>::value && select_parallel(etl::size(result))){
             par_assign_evaluate_impl(expr, result);
         } else {
             detail::Assign<value_t<R>,E>(result.memory_start(), expr, 0, etl::size(result))();
@@ -203,7 +203,7 @@ namespace standard_evaluator {
      */
     template <typename E, typename R, cpp_enable_if(detail::vectorized_assign<E, R>::value)>
     void assign_evaluate_impl(E&& expr, R&& result) {
-        if(select_parallel(etl::size(result))){
+        if(all_thread_safe<E>::value && select_parallel(etl::size(result))){
             par_vec_assign_evaluate_impl(expr, result);
         } else {
             detail::VectorizedAssign<detail::select_vector_mode<E, R>(), R, E>(result, expr, 0, etl::size(result))();
@@ -263,7 +263,7 @@ namespace standard_evaluator {
         pre_assign(expr);
         post_assign_compound(expr);
 
-        if(select_parallel(etl::size(result))){
+        if(all_thread_safe<E>::value && select_parallel(etl::size(result))){
             par_add_evaluate(expr, result);
         } else {
             detail::AssignAdd<value_t<R>,E>(result.memory_start(), expr, 0, etl::size(result))();
@@ -305,7 +305,7 @@ namespace standard_evaluator {
         pre_assign(expr);
         post_assign_compound(expr);
 
-        if(select_parallel(etl::size(result))){
+        if(all_thread_safe<E>::value && select_parallel(etl::size(result))){
             par_vec_add_evaluate(expr, result);
         } else {
             detail::VectorizedAssignAdd<detail::select_vector_mode<E, R>(), R, E>(result, expr, 0, etl::size(result))();
@@ -365,7 +365,7 @@ namespace standard_evaluator {
         pre_assign(expr);
         post_assign_compound(expr);
 
-        if(select_parallel(etl::size(result))){
+        if(all_thread_safe<E>::value && select_parallel(etl::size(result))){
             par_sub_evaluate(expr, result);
         } else {
             detail::AssignSub<value_t<R>,E>(result.memory_start(), expr, 0, etl::size(result))();
@@ -407,7 +407,7 @@ namespace standard_evaluator {
         pre_assign(expr);
         post_assign_compound(expr);
 
-        if(select_parallel(etl::size(result))){
+        if(all_thread_safe<E>::value && select_parallel(etl::size(result))){
             par_vec_sub_evaluate(expr, result);
         } else {
             detail::VectorizedAssignSub<detail::select_vector_mode<E, R>(), R, E>(result, expr, 0, etl::size(result))();
@@ -467,7 +467,7 @@ namespace standard_evaluator {
         pre_assign(expr);
         post_assign_compound(expr);
 
-        if(select_parallel(etl::size(result))){
+        if(all_thread_safe<E>::value && select_parallel(etl::size(result))){
             par_mul_evaluate(expr, result);
         } else {
             detail::AssignMul<value_t<R>,E>(result.memory_start(), expr, 0, etl::size(result))();
@@ -509,7 +509,7 @@ namespace standard_evaluator {
         pre_assign(expr);
         post_assign_compound(expr);
 
-        if(select_parallel(etl::size(result))){
+        if(all_thread_safe<E>::value && select_parallel(etl::size(result))){
             par_vec_mul_evaluate(expr, result);
         } else {
             detail::VectorizedAssignMul<detail::select_vector_mode<E, R>(), R, E>(result, expr, 0, etl::size(result))();
@@ -569,7 +569,7 @@ namespace standard_evaluator {
         pre_assign(expr);
         post_assign_compound(expr);
 
-        if(select_parallel(etl::size(result))){
+        if(all_thread_safe<E>::value && select_parallel(etl::size(result))){
             par_div_evaluate(expr, result);
         } else {
             detail::AssignDiv<value_t<R>,E>(result.memory_start(), expr, 0, etl::size(result))();
@@ -611,7 +611,7 @@ namespace standard_evaluator {
         pre_assign(expr);
         post_assign_compound(expr);
 
-        if(select_parallel(etl::size(result))){
+        if(all_thread_safe<E>::value && select_parallel(etl::size(result))){
             par_vec_div_evaluate(expr, result);
         } else {
             detail::VectorizedAssignDiv<detail::select_vector_mode<E, R>(), R, E>(result, expr, 0, etl::size(result))();
