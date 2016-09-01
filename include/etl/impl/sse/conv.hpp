@@ -1034,15 +1034,13 @@ void pad_2d_input(const opaque_memory<T, 2>& in, opaque_memory<T, 2>& out, size_
     auto out_m = out.memory_start();
 
     for (std::size_t i = 0; i < in.template dim<0>(); ++i) {
-        for (std::size_t j = 0; j < in.template dim<1>(); ++j) {
-            out_m[(i + p1) * out.template dim<1>() + (j + p2)] = in_m[i * in.template dim<1>() + j];
-        }
+        direct_copy_n(in_m + i * in.template dim<1>(), out_m + (i + p1) * out.template dim<1>() + p2, in.template dim<1>());
     }
 }
 
 template <typename T>
 void conv2_valid(const opaque_memory<T, 2>& input, const opaque_memory<T, 2>& kernel, const opaque_memory<T, 2>& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
-    if(p1 || p1){
+    if(p1 || p2){
         const auto ws_h = input.template dim<0>() + 2 * p1;
         const auto ws_w = input.template dim<1>() + 2 * p2;
 
