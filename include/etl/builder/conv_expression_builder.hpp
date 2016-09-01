@@ -490,8 +490,8 @@ auto conv_4d_full(A&& a, B&& b, C&& c) {
  *
  * \return an expression representing the results of the convolutions.
  */
-template <typename A, typename B>
-auto conv_4d_valid_filter(A&& a, B&& b) -> detail::temporary_binary_helper<A, B, conv4_valid_filter_expr> {
+template <size_t S1 = 1, size_t S2 = 1, size_t P1 = 0, size_t P2 = 0, typename A, typename B>
+auto conv_4d_valid_filter(A&& a, B&& b) -> detail::temporary_binary_helper_op<A, B, conv4_valid_filter_expr<value_t<A>, S1, S2, P1, P2>> {
     static_assert(is_etl_expr<A>::value && is_etl_expr<B>::value, "Convolution only supported for ETL expressions");
 
     return {a, b};
@@ -511,11 +511,11 @@ auto conv_4d_valid_filter(A&& a, B&& b) -> detail::temporary_binary_helper<A, B,
  *
  * \return an expression representing the results of the convolutions.
  */
-template <typename A, typename B, typename C>
+template <size_t S1 = 1, size_t S2 = 1, size_t P1 = 0, size_t P2 = 0, typename A, typename B, typename C>
 auto conv_4d_valid_filter(A&& a, B&& b, C&& c) {
     static_assert(is_etl_expr<A>::value && is_etl_expr<B>::value && is_etl_expr<C>::value, "Convolution only supported for ETL expressions");
 
-    c = conv_4d_valid_filter(a, b);
+    c = conv_4d_valid_filter<S1, S2, P1, P2>(a, b);
     return std::forward<C>(c);
 }
 
@@ -532,8 +532,8 @@ auto conv_4d_valid_filter(A&& a, B&& b, C&& c) {
  *
  * \return an expression representing the results of the convolutions.
  */
-template <typename A, typename B>
-auto conv_4d_valid_filter_flipped(A&& a, B&& b) -> detail::temporary_binary_helper<A, B, conv4_valid_filter_flipped_expr> {
+template <size_t S1 = 1, size_t S2 = 1, size_t P1 = 0, size_t P2 = 0, typename A, typename B>
+auto conv_4d_valid_filter_flipped(A&& a, B&& b) -> detail::temporary_binary_helper_op<A, B, conv4_valid_filter_flipped_expr<value_t<A>, S1, S2, P1, P2>> {
     static_assert(is_etl_expr<A>::value && is_etl_expr<B>::value, "Convolution only supported for ETL expressions");
 
     return {a, b};
@@ -553,11 +553,11 @@ auto conv_4d_valid_filter_flipped(A&& a, B&& b) -> detail::temporary_binary_help
  *
  * \return an expression representing the results of the convolutions.
  */
-template <typename A, typename B, typename C>
+template <size_t S1 = 1, size_t S2 = 1, size_t P1 = 0, size_t P2 = 0, typename A, typename B, typename C>
 auto conv_4d_valid_filter_flipped(A&& a, B&& b, C&& c) {
     static_assert(is_etl_expr<A>::value && is_etl_expr<B>::value && is_etl_expr<C>::value, "Convolution only supported for ETL expressions");
 
-    c = conv_4d_valid_filter_flipped(a, b);
+    c = conv_4d_valid_filter_flipped<S1, S2, P1, P2>(a, b);
     return std::forward<C>(c);
 }
 
