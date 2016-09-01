@@ -290,7 +290,7 @@ struct conv4_valid_filter_flipped_impl : conv4_valid_filter_impl<S1, S2, P1, P2>
                 // The padding may not be done as I thought
                 if(etl::avx_enabled){
                     impl::avx::conv4_valid_filter_flipped(input.direct(), kernel.direct(), conv.direct(), S1, S2, P1, P2);
-                } else if(etl::sse_enabled){
+                } else if(etl::sse3_enabled){
                     impl::sse::conv4_valid_filter_flipped(input.direct(), kernel.direct(), conv.direct(), S1, S2, P1, P2);
                 } else {
                     impl::standard::conv4_valid_filter_flipped(input, kernel, conv, S1, S2, P1, P2);
