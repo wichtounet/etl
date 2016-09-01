@@ -217,7 +217,7 @@ CONV4_VALID_FILTER_TEST_CASE("conv/4d/stride/valid/filter/1", "[conv][conv4][val
     Impl::template apply<2,2,0,0>(I, K, c);
 
     for(std::size_t i = 0; i < ref.size(); ++i){
-        REQUIRE_EQUALS_APPROX_E(c[i], ref[i], 0.05);
+        REQUIRE_EQUALS_APPROX_E(c[i], ref[i], 0.1);
     }
 }
 
@@ -242,6 +242,6 @@ CONV4_VALID_FILTER_FLIPPED_TEST_CASE("conv/4d/stride/valid/filter/flipped/1", "[
     Impl::template apply<2,2,0,0>(I, K, c);
 
     for(std::size_t i = 0; i < ref.size(); ++i){
-        REQUIRE_EQUALS_APPROX_E(c[i], ref[i], 0.05);
+        REQUIRE_EQUALS_APPROX_E(c[i], ref[i], 0.1);
     }
 }
