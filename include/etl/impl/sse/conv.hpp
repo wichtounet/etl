@@ -1468,6 +1468,10 @@ void conv2_valid_multi(const I& input, const K& kernel, C&& conv, size_t s1, siz
     cpp_unused(input);
     cpp_unused(kernel);
     cpp_unused(conv);
+    cpp_unused(s1);
+    cpp_unused(s2);
+    cpp_unused(p1);
+    cpp_unused(p2);
     cpp_unreachable("SSE not available/enabled");
 }
 
@@ -1486,6 +1490,10 @@ void conv2_valid_multi_flipped(const I& input, const K& kernel, C&& conv, size_t
     cpp_unused(input);
     cpp_unused(kernel);
     cpp_unused(conv);
+    cpp_unused(s1);
+    cpp_unused(s2);
+    cpp_unused(p1);
+    cpp_unused(p2);
     cpp_unreachable("SSE not available/enabled");
 }
 

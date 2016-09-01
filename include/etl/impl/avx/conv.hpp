@@ -1726,10 +1726,14 @@ void conv2_valid_flipped(const I& input, const K& kernel, C&& conv, size_t s1, s
  * \param conv The output matrix
  */
 template <typename I, typename K, typename C>
-void conv2_valid_multi(const I& input, const K& kernel, C&& conv) {
+void conv2_valid_multi(const I& input, const K& kernel, C&& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
     cpp_unused(input);
     cpp_unused(kernel);
     cpp_unused(conv);
+    cpp_unused(s1);
+    cpp_unused(s2);
+    cpp_unused(p1);
+    cpp_unused(p2);
     cpp_unreachable("AVX not available/enabled");
 }
 
@@ -1740,10 +1744,14 @@ void conv2_valid_multi(const I& input, const K& kernel, C&& conv) {
  * \param conv The output matrix
  */
 template <typename I, typename K, typename C>
-void conv2_valid_multi_flipped(const I& input, const K& kernel, C&& conv) {
+void conv2_valid_multi_flipped(const I& input, const K& kernel, C&& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
     cpp_unused(input);
     cpp_unused(kernel);
     cpp_unused(conv);
+    cpp_unused(s1);
+    cpp_unused(s2);
+    cpp_unused(p1);
+    cpp_unused(p2);
     cpp_unreachable("AVX not available/enabled");
 }
 
