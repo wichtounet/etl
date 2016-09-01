@@ -460,27 +460,22 @@ void conv4_valid_filter(const I& input, const K& kernel, C&& conv) {
     cpp_assert(etl::dim<1>(input) == etl::dim<1>(conv), "Invalid number of images");
     cpp_assert(etl::dim<1>(kernel) == etl::dim<0>(conv), "Invalid number of images");
 
-    conv = 0.0;
+    if (etl::dim<0>(input) > 0) {
+        //i = 0
+        for (std::size_t k = 0; k < kernel.dim(1); ++k) {
+            for(std::size_t c = 0; c < input.dim(1); ++c){
+                conv2_valid(input(0)(c), kernel(0)(k), conv(k)(c), 1, 1, 0, 0, 0.0);
+            }
+        }
 
-    for(std::size_t ii = 0; ii < etl::dim<0>(input); ++ii){
-        for (std::size_t kk = 0; kk < etl::dim<1>(kernel); ++kk) {
-            for (std::size_t cc = 0; cc < etl::dim<1>(input); ++cc) {
-                for (std::size_t i = 0; i < etl::dim<2>(conv); ++i) {
-                    for (std::size_t j = 0; j < etl::dim<3>(conv); ++j) {
-                        typename I::value_type temp = 0.0;
-
-                        for (std::size_t k = i; k < i + etl::dim<2>(kernel); ++k) {
-                            for (std::size_t l = j; l < j + etl::dim<3>(kernel); ++l) {
-                                temp += input(ii, cc, k, l) * kernel(ii, kk, (i + etl::dim<2>(kernel) - 1 - k), (j + etl::dim<3>(kernel) - 1 - l));
-                            }
-                        }
-
-                        conv(kk, cc, i, j) += temp;
-                    }
+        for (std::size_t i = 1; i < input.dim(0); ++i) {
+            for (std::size_t k = 0; k < kernel.dim(1); ++k) {
+                for(std::size_t c = 0; c < input.dim(1); ++c){
+                    conv2_valid(input(i)(c), kernel(i)(k), conv(k)(c), 1, 1, 0, 0, 1.0);
                 }
             }
         }
-    };
+    }
 }
 
 /*!
@@ -495,27 +490,22 @@ void conv4_valid_filter_flipped(const I& input, const K& kernel, C&& conv) {
     cpp_assert(etl::dim<1>(input) == etl::dim<1>(conv), "Invalid number of images");
     cpp_assert(etl::dim<1>(kernel) == etl::dim<0>(conv), "Invalid number of images");
 
-    conv = 0.0;
+    if (etl::dim<0>(input) > 0) {
+        //i = 0
+        for (std::size_t k = 0; k < kernel.dim(1); ++k) {
+            for(std::size_t c = 0; c < input.dim(1); ++c){
+                conv2_valid_flipped(input(0)(c), kernel(0)(k), conv(k)(c), 1, 1, 0, 0, 0.0);
+            }
+        }
 
-    for(std::size_t ii = 0; ii < etl::dim<0>(input); ++ii){
-        for (std::size_t kk = 0; kk < etl::dim<1>(kernel); ++kk) {
-            for (std::size_t cc = 0; cc < etl::dim<1>(input); ++cc) {
-                for (std::size_t i = 0; i < etl::dim<2>(conv); ++i) {
-                    for (std::size_t j = 0; j < etl::dim<3>(conv); ++j) {
-                        typename I::value_type temp = 0.0;
-
-                        for (std::size_t k = i; k < i + etl::dim<2>(kernel); ++k) {
-                            for (std::size_t l = j; l < j + etl::dim<3>(kernel); ++l) {
-                                temp += input(ii, cc, k, l) * kernel(ii, kk, k - i, l - j);
-                            }
-                        }
-
-                        conv(kk, cc, i, j) += temp;
-                    }
+        for (std::size_t i = 1; i < input.dim(0); ++i) {
+            for (std::size_t k = 0; k < kernel.dim(1); ++k) {
+                for(std::size_t c = 0; c < input.dim(1); ++c){
+                    conv2_valid_flipped(input(i)(c), kernel(i)(k), conv(k)(c), 1, 1, 0, 0, 1.0);
                 }
             }
         }
-    };
+    }
 }
 
 /*!
