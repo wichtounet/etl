@@ -411,6 +411,138 @@ public:
         return *this;
     }
 
+    /*!
+     * \brief Multiply each element by the right hand side scalar
+     * \param rhs The right hand side scalar
+     * \return a reference to the matrix
+     */
+    fast_matrix_impl& operator+=(const value_type& rhs) noexcept {
+        detail::scalar_add::apply(*this, rhs);
+        return *this;
+    }
+
+    /*!
+     * \brief Multiply each element by the value of the elements in the right hand side expression
+     * \param rhs The right hand side
+     * \return a reference to the matrix
+     */
+    template<typename R, cpp_enable_if(is_etl_expr<R>::value)>
+    fast_matrix_impl& operator+=(const R& rhs) noexcept {
+        validate_expression(*this, rhs);
+        add_evaluate(rhs, *this);
+        return *this;
+    }
+
+    /*!
+     * \brief Multiply each element by the right hand side scalar
+     * \param rhs The right hand side scalar
+     * \return a reference to the matrix
+     */
+    fast_matrix_impl& operator-=(const value_type& rhs) noexcept {
+        detail::scalar_sub::apply(*this, rhs);
+        return *this;
+    }
+
+    /*!
+     * \brief Multiply each element by the value of the elements in the right hand side expression
+     * \param rhs The right hand side
+     * \return a reference to the matrix
+     */
+    template<typename R, cpp_enable_if(is_etl_expr<R>::value)>
+    fast_matrix_impl& operator-=(const R& rhs) noexcept {
+        validate_expression(*this, rhs);
+        sub_evaluate(rhs, *this);
+        return *this;
+    }
+
+    /*!
+     * \brief Multiply each element by the right hand side scalar
+     * \param rhs The right hand side scalar
+     * \return a reference to the matrix
+     */
+    fast_matrix_impl& operator*=(const value_type& rhs) noexcept {
+        detail::scalar_mul::apply(*this, rhs);
+        return *this;
+    }
+
+    /*!
+     * \brief Multiply each element by the value of the elements in the right hand side expression
+     * \param rhs The right hand side
+     * \return a reference to the matrix
+     */
+    template<typename R, cpp_enable_if(is_etl_expr<R>::value)>
+    fast_matrix_impl& operator*=(const R& rhs) noexcept {
+        validate_expression(*this, rhs);
+        mul_evaluate(rhs, *this);
+        return *this;
+    }
+
+    /*!
+     * \brief Multiply each element by the right hand side scalar
+     * \param rhs The right hand side scalar
+     * \return a reference to the matrix
+     */
+    fast_matrix_impl& operator>>=(const value_type& rhs) noexcept {
+        detail::scalar_mul::apply(*this, rhs);
+        return *this;
+    }
+
+    /*!
+     * \brief Multiply each element by the value of the elements in the right hand side expression
+     * \param rhs The right hand side
+     * \return a reference to the matrix
+     */
+    template<typename R, cpp_enable_if(is_etl_expr<R>::value)>
+    fast_matrix_impl& operator>>=(const R& rhs) noexcept {
+        validate_expression(*this, rhs);
+        mul_evaluate(rhs, *this);
+        return *this;
+    }
+
+    /*!
+     * \brief Divide each element by the right hand side scalar
+     * \param rhs The right hand side scalar
+     * \return a reference to the matrix
+     */
+    fast_matrix_impl& operator/=(const value_type& rhs) noexcept {
+        detail::scalar_div::apply(*this, rhs);
+        return *this;
+    }
+
+    /*!
+     * \brief Modulo each element by the value of the elements in the right hand side expression
+     * \param rhs The right hand side
+     * \return a reference to the matrix
+     */
+    template<typename R, cpp_enable_if(is_etl_expr<R>::value)>
+    fast_matrix_impl& operator/=(const R& rhs) noexcept {
+        validate_expression(*this, rhs);
+        div_evaluate(rhs, *this);
+        return *this;
+    }
+
+    /*!
+     * \brief Modulo each element by the right hand side scalar
+     * \param rhs The right hand side scalar
+     * \return a reference to the matrix
+     */
+    fast_matrix_impl& operator%=(const value_type& rhs) noexcept {
+        detail::scalar_mod::apply(*this, rhs);
+        return *this;
+    }
+
+    /*!
+     * \brief Modulo each element by the value of the elements in the right hand side expression
+     * \param rhs The right hand side
+     * \return a reference to the matrix
+     */
+    template<typename R, cpp_enable_if(is_etl_expr<R>::value)>
+    fast_matrix_impl& operator%=(const R& rhs) noexcept {
+        validate_expression(*this, rhs);
+        mod_evaluate(rhs, *this);
+        return *this;
+    }
+
     // Swap operations
 
     /*!
