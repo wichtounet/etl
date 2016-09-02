@@ -16,6 +16,15 @@ runtime-sized matrix and vector with all element-wise operations implemented. It
 also supports 1D and 2D convolution, matrix multiplication (naive algorithm and
 Strassen) and FFT.
 
+You can clone this repository directly to get all ETL features. I advice using
+it as a submodule of your current project, but you can install it anywhere you
+like. There are several branches you can chose from
+
+* *master*: The main development branch
+* *stable*: The last stable version
+
+You can also access by tag to a fixed version such as the tag *1.0*.
+
 Usage
 -----
 
