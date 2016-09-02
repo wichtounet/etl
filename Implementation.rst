@@ -45,22 +45,21 @@ This because forwarding is "too perfect" and because ADL is used.
 Coverage
 --------
 
-Coverage is quite low (less than 40%). The biggest problem now is
-that it is not possible to merge the coverage statistics of several
-runs correctly. The merge process only takes the maximum coverage
-from each profile, but does not merge individual functions meaning
-that a lot of information is lost. One other problems is that some
-files are polluting the results since they are not meant to be
-covered, for instance SFINAE selection is never meant to be
-"executed" and no_vectorization as well.
+Coverage is quite low (less than 50%). The biggest problem now is that it is not
+possible to merge the coverage statistics of several runs correctly. I do
+believe that the real coverage is in fact higher than this. The merge process
+only takes the maximum coverage from each profile, but does not merge individual
+functions meaning that a lot of information is lost. One other problems is that
+some files are polluting the results since they are not meant to be covered, for
+instance SFINAE selection is never meant to be "executed" and no_vectorization
+as well.
 
 How to improve coverage:
  * Improve the merge of multiple coverage profile
  * Remove some files from the coverage analysis
  * Remove some lines from the coverage analysis (asserts) (not
    possible in sonar unfortunately)
- * A parallel configuration should be added to the tests
- * A GPU configuration should be added to the tests
+ * Test more things, obviously
 
 Notes
 -----
