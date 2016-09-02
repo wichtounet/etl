@@ -186,8 +186,8 @@ struct sym_matrix final : comparable<sym_matrix<Matrix>> {
     /*!
      * \brief The vectorization type for V
      */
-    template<typename V = default_vec>
-    using vec_type               = typename V::template vec_type<value_t>;
+    template <typename V = default_vec>
+    using vec_type       = typename V::template vec_type<value_type>;
 
 private:
     matrix_t matrix; ///< The adapted matrix
@@ -291,6 +291,24 @@ public:
     }
 
     /*!
+     * \brief Returns the element at the given index
+     * \param i The index
+     * \return a reference to the element at the given index.
+     */
+    const value_type& operator[](std::size_t i) const noexcept {
+        return matrix[i];
+    }
+
+    /*!
+     * \brief Returns the element at the given index
+     * \param i The index
+     * \return a reference to the element at the given index.
+     */
+    value_type& operator[](std::size_t i) noexcept {
+        return matrix[i];
+    }
+
+    /*!
      * \returns the value at the given index
      * This function never alters the state of the container.
      * \param i The index
@@ -383,6 +401,17 @@ public:
      */
     const_memory_type memory_end() const noexcept {
         return matrix.memory_end();
+    }
+
+    /*!
+     * \brief Load several elements of the matrix at once
+     * \param i The position at which to start. This will be aligned from the beginning (multiple of the vector size).
+     * \tparam V The vectorization mode to use
+     * \return a vector containing several elements of the matrix
+     */
+    template<typename V = default_vec>
+    vec_type<V> load(std::size_t i) const noexcept {
+        return matrix.load(i);
     }
 
     /*!
