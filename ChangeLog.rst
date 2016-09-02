@@ -1,5 +1,5 @@
-ETL 1.0
-+++++++
+ETL 1.0 - 02.09.2016
+++++++++++++++++++++
 
 Initial version (was rolling released before) with the following main features:
 
