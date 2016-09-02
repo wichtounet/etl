@@ -7,47 +7,59 @@ Expression Templates Library (ETL)
 .. image:: https://codedocs.xyz/wichtounet/etl.svg
    :target: https://codedocs.xyz/wichtounet/etl/
 
-ETL is a header only library for cC+ that provides vector and
-matrix classes with support for Expression Templates to perform very
+ETL is a header only library for C++ that provides vector and matrix
+classes with support for Expression Templates to perform very
 efficient operations on them.
 
-At this time, the library support compile-time sized matrix and vector
-and runtime-sized matrix and vector with all element-wise operations
-implemented. It also supports 1D and 2D convolution and matrix
-multiplication (naive algorithm and strassen).
+At this time, the library support compile-time sized matrix and
+vector and runtime-sized matrix and vector with all element-wise
+operations implemented. It also supports 1D and 2D convolution,
+matrix multiplication (naive algorithm and Strassen) and FFT.
 
 Usage
 -----
 
+The `Reference Documentation <https://github.com/wichtounet/etl/wiki>`_ is always available on
+the wiki. This document contains the most basic information that
+should be enough to get you started.
+
 The library is header-only and does not need to be built it at all,
 you just have to include its header files.
 
-Most of the headers are not meant to be included directly inside a problem. Here are the header that are made to be included:
+Most of the headers are not meant to be included directly inside
+a program. Here are the header that are made to be included:
 
 * etl.hpp: Contains all the features of the library
 * etl_light.hpp: Contains the basic features of the library (no matrix multiplication, no convolution, no FFT)
 
-You should always include on of these headers in your program.
+You should always include one of these headers in your program. You
+should never include any other header from the library.
 
 Data structures
 ***************
 
-Several structures are available:
+Several data structures are available:
 
 * fast_matrix<T, Dim...>: A matrix of variadic size with elements of type T.
   This must be used when you know the size of the vector at compile-time. The
-  number of dimensions can be anything.
+  number of dimensions can be anything. The data is stored is stored
+  directly inside the matrix.
+* fast_dyn_matrix<T, Dim...>: Variant of fast_matrix where the data
+  is stored on the heap.
 * dyn_matrix<T, D>: A matrix with element of type T. The size of the
   matrix can be set at runtime.  The matrix can have D dimensions.
 
 There also exists typedefs for vectors:
 
-* fast_vector<T, Rows>
+* fast_vector<T, Rows>>
+* fast_dyn_vector<T, Rows>>
 * dyn_vector<T>
 
-You have to keep in mind that fast_matrix directly store its values inside it,
-therefore, it can be very large and should rarely be stored on the stack. Moreover,
-that also makes it very expensive to move and copy.
+You have to keep in mind that fast_matrix directly store its values
+inside it, therefore, it can be very large and should rarely be
+stored on the stack. Moreover, that also makes it very expensive to
+move and copy. This is why fast_dyn_matrix may be an interesting
+alternative.
 
 Element-wise operations
 ***********************
@@ -65,7 +77,7 @@ added,subtracted,divided, ... by scalars.
 
 
 All the operations are only executed once the expression is
-evaluated to construct the dyn_vector.
+evaluated to be assigned to a data structure.
 
 Unary operators
 ***************
@@ -91,25 +103,13 @@ Several transformations are also available:
 
 * hflip: Flip the vector or the matrix horizontally
 * vflip: Flip the vector or the matrix vertically
-* fflip: Flip the vector or the matrix horizontally and verticaly. It is the
+* fflip: Flip the vector or the matrix horizontally and vertically. It is the
   equivalent of hflip(vflip(x))
 * sub: Return a sub part of the matrix. The first dimension is forced to a
   special value. It works with matrices of any dimension.
 * dim/row/col: Return a vector representing a sub part of a matrix (a row or a
   col)
-* reshape: Interpet a vector as a matrix
-
-Lazy evaluation
-***************
-
-All binary and unary operations are applied lazily, only when they are assigned
-to a concrete vector or matrix class.
-
-The expression can be evaluated using the :code:`s(x)` function that returns a
-concrete class (fast_matrix or dyn_matrix) based on the expression.
-
-Multiplication, convolution and all reductions are not lazily
-evaluated.
+* reshape: Interpret a vector as a matrix
 
 Reduction
 *********
@@ -151,25 +151,6 @@ For now, two generators are available:
 All sequences are considered to have infinite size, therefore, they
 can be used to initialize or modify any containers or expressions.
 
-Why compile-time sizes ?
-************************
-
-Some people have asked me why I bothered at all to create the fast_matrix
-template, where all the dimensions are fixed at compile-time. There are several
-reasons for that:
-
- * It improves data locality since the data can be directly stored inside the
-   structure and not with one level of indirection to the heap
- * It makes vectorization easier for the compiler. All the sizes and therefore
-   the number of iterations of the lopp are known at compile-time, which is a
-   really great information for the compiler who can optimize each loop very
-   well and doesn't have to rely on estimating the number of iterations.
- * Better diagnostics. It makes all the errors come at compile-time. If you try
-   to add two matrices of different sizes, the error won't come at runtime, but
-   at compile-time, which makes it much better.
- * I knew the sizes of the matrices I was working for at compile-time
- * It is more fun to implement. Yes, I love templates and TMP :)
-
 Building
 --------
 
@@ -182,9 +163,10 @@ tested on the following compilers:
  * CLang 3.7 and greater
  * icc 15.0.2 and greater
 
-Although compilation should work on all these compilers, for some reason clang
-has huge memory consumption on this library. icc produces the fastest executable
-but it is quite slow to compile. Compilation on clang <3.7 should work, but only
+Although compilation should work on all these compilers, I advice to
+use GCC >= 4.9.1. For some reason clang has huge memory consumption
+on this library. icc produces the fastest executable but it is quite
+slow to compile. Compilation on clang <3.7 should work, but only
 without debug symbols.
 
 The library has never been tested on Windows.
