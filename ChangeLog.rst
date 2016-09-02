@@ -1,8 +1,7 @@
-ETL 0.1
+ETL 1.0
 +++++++
 
-Initial version (was not using versioning before) with the following main
-features.
+Initial version (was rolling released before) with the following main features:
 
 * Smart Expression Templates
 * Matrix and vector (runtime-sized and compile-time-sized)

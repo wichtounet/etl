@@ -1,5 +1,5 @@
-Expression Templates Library (ETL)
-==================================
+Expression Templates Library (ETL) 1.0
+======================================
 
 .. image:: https://img.shields.io/sonar/https/sonar.baptiste-wicht.ch/etl/coverage.svg
 .. image:: https://img.shields.io/jenkins/s/https/jenkins.baptiste-wicht.ch/etl.svg
