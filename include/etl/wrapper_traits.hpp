@@ -29,8 +29,9 @@ struct wrapper_traits {
     static constexpr const bool is_magic_view           = sub_traits::is_magic_view;           ///< Indicates if the type is a magic view
     static constexpr const bool is_fast                 = sub_traits::is_fast;                 ///< Indicates if the expression is fast
     static constexpr const bool is_value                = sub_traits::is_value;                ///< Indicates if the expression is of value type
-    static constexpr const bool is_direct                = sub_traits::is_direct;                ///< Indicates if the expression has direct memory access
+    static constexpr const bool is_direct               = sub_traits::is_direct;               ///< Indicates if the expression has direct memory access
     static constexpr const bool is_linear               = sub_traits::is_linear;               ///< Indicates if the expression is linear
+    static constexpr const bool is_thread_safe          = sub_traits::is_thread_safe;          ///< Indicates if the expression is thread safe
     static constexpr const bool is_generator            = sub_traits::is_generator;            ///< Indicates if the expression is a generator expression
     static constexpr const bool needs_temporary_visitor = sub_traits::needs_temporary_visitor; ///< Indicates if the expression needs a temporary visitor
     static constexpr const bool needs_evaluator_visitor = sub_traits::needs_evaluator_visitor; ///< Indicaes if the expression needs an evaluator visitor
