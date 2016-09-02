@@ -7,14 +7,14 @@ Expression Templates Library (ETL)
 .. image:: https://codedocs.xyz/wichtounet/etl.svg
    :target: https://codedocs.xyz/wichtounet/etl/
 
-ETL is a header only library for C++ that provides vector and matrix
-classes with support for Expression Templates to perform very
-efficient operations on them.
+ETL is a header only library for C++ that provides vector and matrix classes
+with support for Expression Templates to perform very efficient operations on
+them.
 
-At this time, the library support compile-time sized matrix and
-vector and runtime-sized matrix and vector with all element-wise
-operations implemented. It also supports 1D and 2D convolution,
-matrix multiplication (naive algorithm and Strassen) and FFT.
+At this time, the library support compile-time sized matrix and vector and
+runtime-sized matrix and vector with all element-wise operations implemented. It
+also supports 1D and 2D convolution, matrix multiplication (naive algorithm and
+Strassen) and FFT.
 
 Usage
 -----
