@@ -1,8 +1,8 @@
 Expression Templates Library (ETL)
 ==================================
 
-.. image:: https://img.shields.io/sonar/https/baptiste-wicht.ch/sonar/etl/coverage.svg
-.. image:: https://img.shields.io/jenkins/s/https/baptiste-wicht.ch/jenkins/etl.svg
+.. image:: https://img.shields.io/sonar/https/sonar.baptiste-wicht.ch/etl/coverage.svg
+.. image:: https://img.shields.io/jenkins/s/https/jenkins.baptiste-wicht.ch/etl.svg
 .. image:: https://img.shields.io/github/license/mashape/apistatus.svg
 .. image:: https://codedocs.xyz/wichtounet/etl.svg
    :target: https://codedocs.xyz/wichtounet/etl/
