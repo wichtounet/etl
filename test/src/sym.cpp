@@ -91,17 +91,17 @@ TEMPLATE_TEST_CASE_2("sym/fast_matrix/4", "[sym][fast]", Z, float, double) {
     etl::sym_matrix<etl::fast_matrix<Z, 3, 3>> b;
     b = a;
 
-    REQUIRE_EQUALS(a(0, 0), 0.0);
-    REQUIRE_EQUALS(a(0, 1), 1.0);
-    REQUIRE_EQUALS(a(0, 2), 2.0);
+    REQUIRE_EQUALS(b(0, 0), 0.0);
+    REQUIRE_EQUALS(b(0, 1), 1.0);
+    REQUIRE_EQUALS(b(0, 2), 2.0);
 
-    REQUIRE_EQUALS(a(1, 0), 1.0);
-    REQUIRE_EQUALS(a(1, 1), 1.0);
-    REQUIRE_EQUALS(a(1, 2), 3.0);
+    REQUIRE_EQUALS(b(1, 0), 1.0);
+    REQUIRE_EQUALS(b(1, 1), 1.0);
+    REQUIRE_EQUALS(b(1, 2), 3.0);
 
-    REQUIRE_EQUALS(a(2, 0), 2.0);
-    REQUIRE_EQUALS(a(2, 1), 3.0);
-    REQUIRE_EQUALS(a(2, 2), 2.0);
+    REQUIRE_EQUALS(b(2, 0), 2.0);
+    REQUIRE_EQUALS(b(2, 1), 3.0);
+    REQUIRE_EQUALS(b(2, 2), 2.0);
 
     REQUIRE_DIRECT(b == a);
     REQUIRE_DIRECT(a == b);
@@ -153,4 +153,46 @@ TEMPLATE_TEST_CASE_2("sym/fast_matrix/6", "[sym][fast]", Z, float, double) {
     REQUIRE_EQUALS(c(2, 0), 4.0);
     REQUIRE_EQUALS(c(2, 1), 6.0);
     REQUIRE_EQUALS(c(2, 2), 4.0);
+}
+
+TEMPLATE_TEST_CASE_2("sym/fast_matrix/7", "[sym][fast]", Z, float, double) {
+    etl::fast_matrix<Z, 3, 3> a = {0.0, 2.0, 2.0, 1.0, 1.0, 3.0, 2.0, 3.0, 2.0};;
+    etl::sym_matrix<etl::fast_matrix<Z, 3, 3>> b;
+
+    REQUIRE_THROWS(b = a);
+
+    REQUIRE_EQUALS(b(0, 0), 0.0);
+    REQUIRE_EQUALS(b(0, 1), 0.0);
+    REQUIRE_EQUALS(b(0, 2), 0.0);
+
+    REQUIRE_EQUALS(b(1, 0), 0.0);
+    REQUIRE_EQUALS(b(1, 1), 0.0);
+    REQUIRE_EQUALS(b(1, 2), 0.0);
+
+    REQUIRE_EQUALS(b(2, 0), 0.0);
+    REQUIRE_EQUALS(b(2, 1), 0.0);
+    REQUIRE_EQUALS(b(2, 2), 0.0);
+}
+
+TEMPLATE_TEST_CASE_2("sym/fast_matrix/8", "[sym][fast]", Z, float, double) {
+    etl::fast_matrix<Z, 3, 3> a = {0.0, 1.0, 2.0, 1.0, 1.0, 3.0, 2.0, 3.0, 2.0};;
+
+    etl::sym_matrix<etl::dyn_matrix<Z>> c(3UL);
+    c = a;
+
+    a(0,1) = 2.0;
+
+    REQUIRE_THROWS(c += a);
+
+    REQUIRE_EQUALS(c(0, 0), 0.0);
+    REQUIRE_EQUALS(c(0, 1), 1.0);
+    REQUIRE_EQUALS(c(0, 2), 2.0);
+
+    REQUIRE_EQUALS(c(1, 0), 1.0);
+    REQUIRE_EQUALS(c(1, 1), 1.0);
+    REQUIRE_EQUALS(c(1, 2), 3.0);
+
+    REQUIRE_EQUALS(c(2, 0), 2.0);
+    REQUIRE_EQUALS(c(2, 1), 3.0);
+    REQUIRE_EQUALS(c(2, 2), 2.0);
 }
