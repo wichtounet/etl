@@ -245,7 +245,6 @@ public:
     template <typename E, cpp_enable_if(std::is_convertible<value_t<E>, value_type>::value, is_etl_expr<E>::value)>
     sym_matrix& operator=(E&& e) noexcept(false) {
         // Make sure the other matrix is symmetric
-
         if(!is_symmetric(e)){
             throw symmetric_exception();
         }
@@ -274,7 +273,12 @@ public:
      * \return a reference to the matrix
      */
     template<typename R, cpp_enable_if(is_etl_expr<R>::value)>
-    sym_matrix& operator+=(const R& rhs) noexcept {
+    sym_matrix& operator+=(const R& rhs){
+        // Make sure the other matrix is symmetric
+        if(!is_symmetric(rhs)){
+            throw symmetric_exception();
+        }
+
         validate_expression(*this, rhs);
         add_evaluate(rhs, *this);
         return *this;
@@ -296,7 +300,12 @@ public:
      * \return a reference to the matrix
      */
     template<typename R, cpp_enable_if(is_etl_expr<R>::value)>
-    sym_matrix& operator-=(const R& rhs) noexcept {
+    sym_matrix& operator-=(const R& rhs){
+        // Make sure the other matrix is symmetric
+        if(!is_symmetric(rhs)){
+            throw symmetric_exception();
+        }
+
         validate_expression(*this, rhs);
         sub_evaluate(rhs, *this);
         return *this;
@@ -318,7 +327,12 @@ public:
      * \return a reference to the matrix
      */
     template<typename R, cpp_enable_if(is_etl_expr<R>::value)>
-    sym_matrix& operator*=(const R& rhs) noexcept {
+    sym_matrix& operator*=(const R& rhs) {
+        // Make sure the other matrix is symmetric
+        if(!is_symmetric(rhs)){
+            throw symmetric_exception();
+        }
+
         validate_expression(*this, rhs);
         mul_evaluate(rhs, *this);
         return *this;
@@ -340,7 +354,12 @@ public:
      * \return a reference to the matrix
      */
     template<typename R, cpp_enable_if(is_etl_expr<R>::value)>
-    sym_matrix& operator>>=(const R& rhs) noexcept {
+    sym_matrix& operator>>=(const R& rhs) {
+        // Make sure the other matrix is symmetric
+        if(!is_symmetric(rhs)){
+            throw symmetric_exception();
+        }
+
         validate_expression(*this, rhs);
         mul_evaluate(rhs, *this);
         return *this;
@@ -362,7 +381,12 @@ public:
      * \return a reference to the matrix
      */
     template<typename R, cpp_enable_if(is_etl_expr<R>::value)>
-    sym_matrix& operator/=(const R& rhs) noexcept {
+    sym_matrix& operator/=(const R& rhs) {
+        // Make sure the other matrix is symmetric
+        if(!is_symmetric(rhs)){
+            throw symmetric_exception();
+        }
+
         validate_expression(*this, rhs);
         div_evaluate(rhs, *this);
         return *this;
@@ -384,7 +408,12 @@ public:
      * \return a reference to the matrix
      */
     template<typename R, cpp_enable_if(is_etl_expr<R>::value)>
-    sym_matrix& operator%=(const R& rhs) noexcept {
+    sym_matrix& operator%=(const R& rhs){
+        // Make sure the other matrix is symmetric
+        if(!is_symmetric(rhs)){
+            throw symmetric_exception();
+        }
+
         validate_expression(*this, rhs);
         mod_evaluate(rhs, *this);
         return *this;
