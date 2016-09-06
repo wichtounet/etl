@@ -27,7 +27,7 @@ struct max_pool_2d {
      */
     template <std::size_t C1, std::size_t C2, std::size_t S1, std::size_t S2, typename A>
     static auto pool_block(const A& sub, std::size_t j, std::size_t k) {
-        auto max = sub(j * C1, k * C2);
+        auto max = sub(j * S1, k * S2);
 
         for (std::size_t jj = 0; jj < C1; ++jj) {
             for (std::size_t kk = 0; kk < C2; ++kk) {
