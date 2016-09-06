@@ -22,14 +22,16 @@ struct max_pool_2d {
      * \param k The second index of the block
      * \tparam C1 The first dimension pooling ratio
      * \tparam C2 The second dimension pooling ratio
+     * \tparam S1 The first dimension stride
+     * \tparam S2 The second dimension stride
      */
-    template <std::size_t C1, std::size_t C2, typename A>
+    template <std::size_t C1, std::size_t C2, std::size_t S1, std::size_t S2, typename A>
     static auto pool_block(const A& sub, std::size_t j, std::size_t k) {
         auto max = sub(j * C1, k * C2);
 
         for (std::size_t jj = 0; jj < C1; ++jj) {
             for (std::size_t kk = 0; kk < C2; ++kk) {
-                max = std::max(max, sub(j * C1 + jj, k * C2 + kk));
+                max = std::max(max, sub(j * S1 + jj, k * S2 + kk));
             }
         }
 
@@ -42,15 +44,17 @@ struct max_pool_2d {
      * \param m The storage matrix
      * \tparam C1 The first dimension pooling ratio
      * \tparam C2 The second dimension pooling ratio
+     * \tparam S1 The first dimension stride
+     * \tparam S2 The second dimension stride
      */
-    template <std::size_t C1, std::size_t C2, typename A, typename M>
+    template <std::size_t C1, std::size_t C2, std::size_t S1, std::size_t S2, typename A, typename M>
     static void apply(A&& sub, M& m) {
-        const std::size_t o1 = etl::dim<0>(sub) / C1;
-        const std::size_t o2 = etl::dim<1>(sub) / C2;
+        const std::size_t o1 = (etl::dim<0>(sub) - C1) / S1 + 1;
+        const std::size_t o2 = (etl::dim<1>(sub) - C2) / S2 + 1;
 
         for (std::size_t j = 0; j < o1; ++j) {
             for (std::size_t k = 0; k < o2; ++k) {
-                m(j, k) = pool_block<C1, C2>(sub, j, k);
+                m(j, k) = pool_block<C1, C2, S1, S2>(sub, j, k);
             }
         }
     }
@@ -108,13 +112,13 @@ struct avg_pool_2d {
      * \tparam C1 The first dimension pooling ratio
      * \tparam C2 The second dimension pooling ratio
      */
-    template <std::size_t C1, std::size_t C2, typename A>
+    template <std::size_t C1, std::size_t C2, std::size_t S1, std::size_t S2, typename A>
     static auto pool_block(const A& sub, std::size_t j, std::size_t k) {
         value_t<A> avg = 0;
 
         for (std::size_t jj = 0; jj < C1; ++jj) {
             for (std::size_t kk = 0; kk < C2; ++kk) {
-                avg += sub(j * C1 + jj, k * C2 + kk);
+                avg += sub(j * S1 + jj, k * S2 + kk);
             }
         }
 
@@ -128,14 +132,14 @@ struct avg_pool_2d {
      * \tparam C1 The first dimension pooling ratio
      * \tparam C2 The second dimension pooling ratio
      */
-    template <std::size_t C1, std::size_t C2, typename A, typename M>
+    template <std::size_t C1, std::size_t C2, std::size_t S1, std::size_t S2, typename A, typename M>
     static void apply(A&& sub, M& m) {
-        const std::size_t o1 = etl::dim<0>(sub) / C1;
-        const std::size_t o2 = etl::dim<1>(sub) / C2;
+        const std::size_t o1 = (etl::dim<0>(sub) - C1) / S1 + 1;
+        const std::size_t o2 = (etl::dim<1>(sub) - C2) / S2 + 1;
 
         for (std::size_t j = 0; j < o1; ++j) {
             for (std::size_t k = 0; k < o2; ++k) {
-                m(j, k) = pool_block<C1, C2>(sub, j, k);
+                m(j, k) = pool_block<C1, C2, S1, S2>(sub, j, k);
             }
         }
     }
