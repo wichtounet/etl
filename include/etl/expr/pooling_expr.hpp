@@ -173,8 +173,30 @@ struct basic_deep_pool_2d_expr : impl_expr<basic_deep_pool_2d_expr<T, C1, C2, S1
 
         decltype(auto) a_t = make_temporary(a);
 
+        apply_impl(a_t, c);
+    }
+
+    /*!
+     * \brief Apply the expression on a and store the result in c
+     * \param a The input expression
+     * \param c The output expression
+     */
+    template <typename A, typename C, cpp_enable_if((etl::decay_traits<A>::dimensions() == 3))>
+    static void apply_impl(const A& a, C&& c) {
         for(std::size_t i = 0; i < etl::dim<0>(a); ++i){
-            Impl::template apply<C1, C2, S1, S2>(a_t(i), c(i));
+            Impl::template apply<C1, C2, S1, S2>(a(i), c(i));
+        }
+    }
+
+    /*!
+     * \brief Apply the expression on a and store the result in c
+     * \param a The input expression
+     * \param c The output expression
+     */
+    template <typename A, typename C, cpp_enable_if((etl::decay_traits<A>::dimensions() > 3))>
+    static void apply_impl(const A& a, C&& c) {
+        for(std::size_t i = 0; i < etl::dim<0>(a); ++i){
+            apply_impl(a(i), c(i));
         }
     }
 
