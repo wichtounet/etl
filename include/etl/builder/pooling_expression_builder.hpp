@@ -72,9 +72,9 @@ auto avg_pool_2d(E&& value, std::size_t c1, std::size_t c2) {
  * \tparam C3 The third pooling ratio
  * \return A expression representing the 3D Max Pooling of the input expression.
  */
-template <std::size_t C1, std::size_t C2, std::size_t C3, typename E>
+template <std::size_t C1, std::size_t C2, std::size_t C3, std::size_t S1 = C1, std::size_t S2 = C2, std::size_t S3 = C3, typename E>
 auto max_pool_3d(E&& value) {
-    return temporary_unary_expr<value_t<E>, detail::build_type<E>, max_pool_3d_expr<value_t<E>, C1, C2, C3>>{value};
+    return temporary_unary_expr<value_t<E>, detail::build_type<E>, max_pool_3d_expr<value_t<E>, C1, C2, C3, S1, S2, S3>>{value};
 }
 
 /*!
@@ -98,9 +98,9 @@ auto max_pool_3d(E&& value, std::size_t c1, std::size_t c2, std::size_t c3) {
  * \tparam C3 The third pooling ratio
  * \return A expression representing the 3D Average Pooling of the input expression.
  */
-template <std::size_t C1, std::size_t C2, std::size_t C3, typename E>
+template <std::size_t C1, std::size_t C2, std::size_t C3, std::size_t S1 = C1, std::size_t S2 = C2, std::size_t S3 = C3, typename E>
 auto avg_pool_3d(E&& value) {
-    return temporary_unary_expr<value_t<E>, detail::build_type<E>, avg_pool_3d_expr<value_t<E>, C1, C2, C3>>{value};
+    return temporary_unary_expr<value_t<E>, detail::build_type<E>, avg_pool_3d_expr<value_t<E>, C1, C2, C3, S1, S2, S3>>{value};
 }
 
 /*!

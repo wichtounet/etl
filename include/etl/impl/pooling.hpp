@@ -199,14 +199,14 @@ struct max_pool_3d {
      * \tparam C2 The second dimension pooling ratio
      * \tparam C3 The third dimension pooling ratio
      */
-    template <std::size_t C1, std::size_t C2, std::size_t C3, typename A>
+    template <std::size_t C1, std::size_t C2, std::size_t C3, std::size_t S1, std::size_t S2, std::size_t S3, typename A>
     static auto pool_block(const A& sub, std::size_t i, std::size_t j, std::size_t k) {
-        auto max = sub(i * C1, j * C2, k * C3);
+        auto max = sub(i * S1, j * S2, k * S3);
 
         for (std::size_t ii = 0; ii < C1; ++ii) {
             for (std::size_t jj = 0; jj < C2; ++jj) {
                 for (std::size_t kk = 0; kk < C3; ++kk) {
-                    max = std::max(max, sub(i * C1 + ii, j * C2 + jj, k * C3 + kk));
+                    max = std::max(max, sub(i * S1 + ii, j * S2 + jj, k * S3 + kk));
                 }
             }
         }
@@ -222,16 +222,16 @@ struct max_pool_3d {
      * \tparam C2 The second dimension pooling ratio
      * \tparam C3 The third dimension pooling ratio
      */
-    template <std::size_t C1, std::size_t C2, std::size_t C3, typename A, typename M>
+    template <std::size_t C1, std::size_t C2, std::size_t C3,std::size_t S1, std::size_t S2, std::size_t S3, typename A, typename M>
     static void apply(A&& sub, M& m) {
-        const std::size_t o1 = etl::dim<0>(sub) / C1;
-        const std::size_t o2 = etl::dim<1>(sub) / C2;
-        const std::size_t o3 = etl::dim<2>(sub) / C3;
+        const std::size_t o1 = (etl::dim<0>(sub) - C1) / S1 + 1;
+        const std::size_t o2 = (etl::dim<1>(sub) - C2) / S2 + 1;
+        const std::size_t o3 = (etl::dim<2>(sub) - C3) / S3 + 1;
 
         for (std::size_t i = 0; i < o1; ++i) {
             for (std::size_t j = 0; j < o2; ++j) {
                 for (std::size_t k = 0; k < o3; ++k) {
-                    m(i, j, k) = pool_block<C1, C2, C3>(sub, i, j, k);
+                    m(i, j, k) = pool_block<C1, C2, C3, S1, S2, S3>(sub, i, j, k);
                 }
             }
         }
@@ -300,14 +300,14 @@ struct avg_pool_3d {
      * \tparam C2 The second dimension pooling ratio
      * \tparam C3 The third dimension pooling ratio
      */
-    template <std::size_t C1, std::size_t C2, std::size_t C3, typename A>
+    template <std::size_t C1, std::size_t C2, std::size_t C3,std::size_t S1, std::size_t S2, std::size_t S3, typename A>
     static auto pool_block(const A& sub, std::size_t i, std::size_t j, std::size_t k) {
         value_t<A> avg = 0;
 
         for (std::size_t ii = 0; ii < C1; ++ii) {
             for (std::size_t jj = 0; jj < C2; ++jj) {
                 for (std::size_t kk = 0; kk < C3; ++kk) {
-                    avg += sub(i * C1 + ii, j * C2 + jj, k * C3 + kk);
+                    avg += sub(i * S1 + ii, j * S2 + jj, k * S3 + kk);
                 }
             }
         }
@@ -323,16 +323,16 @@ struct avg_pool_3d {
      * \tparam C2 The second dimension pooling ratio
      * \tparam C3 The third dimension pooling ratio
      */
-    template <std::size_t C1, std::size_t C2, std::size_t C3, typename A, typename M>
+    template <std::size_t C1, std::size_t C2, std::size_t C3,std::size_t S1, std::size_t S2, std::size_t S3, typename A, typename M>
     static void apply(A&& sub, M& m) {
-        const std::size_t o1 = etl::dim<0>(sub) / C1;
-        const std::size_t o2 = etl::dim<1>(sub) / C2;
-        const std::size_t o3 = etl::dim<2>(sub) / C3;
+        const std::size_t o1 = (etl::dim<0>(sub) - C1) / S1 + 1;
+        const std::size_t o2 = (etl::dim<1>(sub) - C2) / S2 + 1;
+        const std::size_t o3 = (etl::dim<2>(sub) - C3) / S3 + 1;
 
         for (std::size_t i = 0; i < o1; ++i) {
             for (std::size_t j = 0; j < o2; ++j) {
                 for (std::size_t k = 0; k < o3; ++k) {
-                    m(i, j, k) = pool_block<C1, C2, C3>(sub, i, j, k);
+                    m(i, j, k) = pool_block<C1, C2, C3, S1, S2, S3>(sub, i, j, k);
                 }
             }
         }

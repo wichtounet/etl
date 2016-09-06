@@ -142,14 +142,14 @@ using avg_pool_2d_expr = basic_pool_2d_expr<T, C1, C2, S1, S2, impl::avg_pool_2d
 /*!
  * \brief Base class for all 3D pooling expressions
  */
-template <typename T, std::size_t C1, std::size_t C2, std::size_t C3, typename Impl>
-struct basic_pool_3d_expr : impl_expr<basic_pool_3d_expr<T, C1, C2, C3, Impl>> {
+template <typename T, std::size_t C1, std::size_t C2, std::size_t C3, std::size_t S1, std::size_t S2, std::size_t S3, typename Impl>
+struct basic_pool_3d_expr : impl_expr<basic_pool_3d_expr<T, C1, C2, C3, S1, S2, S3, Impl>> {
     static_assert(C1 > 0, "C1 must be greater than 0");
     static_assert(C2 > 0, "C2 must be greater than 0");
     static_assert(C3 > 0, "C3 must be greater than 0");
 
-    using value_type = T;                                       ///< The type of values of the expression
-    using this_type  = basic_pool_3d_expr<T, C1, C2, C3, Impl>; ///< The type of this expression
+    using value_type = T;                                                   ///< The type of values of the expression
+    using this_type  = basic_pool_3d_expr<T, C1, C2, C3, S1, S2, S3, Impl>; ///< The type of this expression
 
     /*!
      * \brief Compute the result type given the input type
@@ -170,7 +170,7 @@ struct basic_pool_3d_expr : impl_expr<basic_pool_3d_expr<T, C1, C2, C3, Impl>> {
         static_assert(all_etl_expr<A, C>::value, "pool_3d only supported for ETL expressions");
         static_assert(decay_traits<A>::dimensions() == 3 && decay_traits<C>::dimensions() == 3, "pool_3d needs 3D matrices");
 
-        Impl::template apply<C1, C2, C3>(
+        Impl::template apply<C1, C2, C3, S1, S2, S3>(
             make_temporary(std::forward<A>(a)),
             std::forward<C>(c));
     }
@@ -191,9 +191,9 @@ struct basic_pool_3d_expr : impl_expr<basic_pool_3d_expr<T, C1, C2, C3, Impl>> {
      */
     template <typename A, std::size_t DD>
     static constexpr std::size_t dim() {
-        return DD == 0 ? decay_traits<A>::template dim<0>() / C1
-                       : DD == 1 ? decay_traits<A>::template dim<1>() / C2
-                                 : decay_traits<A>::template dim<2>() / C3;
+        return DD == 0 ? (decay_traits<A>::template dim<0>() - C1) / S1 + 1
+             : DD == 1 ? (decay_traits<A>::template dim<1>() - C2) / S2 + 1
+                       : (decay_traits<A>::template dim<2>() - C3) / S3 + 1;
     }
 
     /*!
@@ -205,11 +205,11 @@ struct basic_pool_3d_expr : impl_expr<basic_pool_3d_expr<T, C1, C2, C3, Impl>> {
     template <typename A>
     static std::size_t dim(const A& a, std::size_t d) {
         if (d == 0) {
-            return etl::dim<0>(a) / C1;
+            return (etl::dim<0>(a) - C1) / S1 + 1;
         } else if (d == 1) {
-            return etl::dim<1>(a) / C2;
+            return (etl::dim<1>(a) - C2) / S2 + 1;
         } else {
-            return etl::dim<2>(a) / C3;
+            return (etl::dim<2>(a) - C3) / S3 + 1;
         }
     }
 
@@ -220,7 +220,7 @@ struct basic_pool_3d_expr : impl_expr<basic_pool_3d_expr<T, C1, C2, C3, Impl>> {
      */
     template <typename A>
     static std::size_t size(const A& a) {
-        return (etl::dim<0>(a) / C1) * (etl::dim<1>(a) / C2) * (etl::dim<2>(a) / C3);
+        return this_type::dim(a, 0) * this_type::dim(a, 1) * this_type::dim(a, 2);
     }
 
     /*!
@@ -254,14 +254,14 @@ struct basic_pool_3d_expr : impl_expr<basic_pool_3d_expr<T, C1, C2, C3, Impl>> {
 /*!
  * \brief Max Pooling 3D expression type
  */
-template <typename T, std::size_t C1, std::size_t C2, std::size_t C3>
-using max_pool_3d_expr = basic_pool_3d_expr<T, C1, C2, C3, impl::max_pool_3d>;
+template <typename T, std::size_t C1, std::size_t C2, std::size_t C3, std::size_t S1, std::size_t S2, std::size_t S3>
+using max_pool_3d_expr = basic_pool_3d_expr<T, C1, C2, C3, S1, S2, S3, impl::max_pool_3d>;
 
 /*!
  * \brief Average Pooling 3D expression type
  */
-template <typename T, std::size_t C1, std::size_t C2, std::size_t C3>
-using avg_pool_3d_expr = basic_pool_3d_expr<T, C1, C2, C3, impl::avg_pool_3d>;
+template <typename T, std::size_t C1, std::size_t C2, std::size_t C3, std::size_t S1, std::size_t S2, std::size_t S3>
+using avg_pool_3d_expr = basic_pool_3d_expr<T, C1, C2, C3, S1, S2, S3, impl::avg_pool_3d>;
 
 /*!
  * \brief Base class for all dynamic 2D pooling expressions
