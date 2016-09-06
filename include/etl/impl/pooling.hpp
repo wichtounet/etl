@@ -25,7 +25,7 @@ struct max_pool_2d {
         for (std::size_t jj = 0; jj < c1; ++jj) {
             for (std::size_t kk = 0; kk < c2; ++kk) {
                 if(s_j + jj >= p1 && (s_j + jj) - p1 < etl::dim<0>(sub) && s_k + kk >= p2 && (s_k + kk) - p2 < etl::dim<1>(sub)){
-                    max = std::max(max, sub(s_j + jj, s_k + kk));
+                    max = std::max(max, sub(s_j + jj - p1, s_k + kk - p2));
                 }
             }
         }
@@ -49,7 +49,7 @@ struct max_pool_2d {
 
         for (std::size_t jj = 0; jj < C1; ++jj) {
             for (std::size_t kk = 0; kk < C2; ++kk) {
-                max = std::max(max, sub(j * S1 + jj, k * S2 + kk));
+                max = std::max(max, sub(j * S1 - P1 + jj, k * S2 - P2 + kk));
             }
         }
 
