@@ -23,9 +23,9 @@ namespace etl {
  * \tparam C2 The second pooling ratio
  * \return A expression representing the 2D Max Pooling of the input expression.
  */
-template <size_t C1, size_t C2, size_t S1 = C1, size_t S2 = C2, typename E, cpp_enable_if((etl::decay_traits<E>::dimensions() == 2))>
+template <size_t C1, size_t C2, size_t S1 = C1, size_t S2 = C2, size_t P1 = 0, size_t P2 = 0, typename E, cpp_enable_if((etl::decay_traits<E>::dimensions() == 2))>
 auto max_pool_2d(E&& value) {
-    return temporary_unary_expr<value_t<E>, detail::build_type<E>, max_pool_2d_expr<value_t<E>, C1, C2, S1, S2>>{value};
+    return temporary_unary_expr<value_t<E>, detail::build_type<E>, max_pool_2d_expr<value_t<E>, C1, C2, S1, S2, P1, P2>>{value};
 }
 
 /*!
@@ -35,9 +35,9 @@ auto max_pool_2d(E&& value) {
  * \tparam C2 The second pooling ratio
  * \return A expression representing the 2D Max Pooling of the input expression.
  */
-template <size_t C1, size_t C2, size_t S1 = C1, size_t S2 = C2, typename E, cpp_enable_if((etl::decay_traits<E>::dimensions() > 2))>
+template <size_t C1, size_t C2, size_t S1 = C1, size_t S2 = C2, size_t P1 = 0, size_t P2 = 0, typename E, cpp_enable_if((etl::decay_traits<E>::dimensions() > 2))>
 auto max_pool_2d(E&& value) {
-    return temporary_unary_expr<value_t<E>, detail::build_type<E>, deep_max_pool_2d_expr<value_t<E>, C1, C2, S1, S2, etl::decay_traits<E>::dimensions()>>{value};
+    return temporary_unary_expr<value_t<E>, detail::build_type<E>, deep_max_pool_2d_expr<value_t<E>, C1, C2, S1, S2, P1, P2,  etl::decay_traits<E>::dimensions()>>{value};
 }
 
 /*!
@@ -59,9 +59,9 @@ auto max_pool_2d(E&& value, size_t c1, size_t c2) {
  * \tparam C2 The second pooling ratio
  * \return A expression representing the 2D Average Pooling of the input expression.
  */
-template <size_t C1, size_t C2, size_t S1 = C1, size_t S2 = C2, typename E>
+template <size_t C1, size_t C2, size_t S1 = C1, size_t S2 = C2, size_t P1 = 0, size_t P2 = 0, typename E>
 auto avg_pool_2d(E&& value) {
-    return temporary_unary_expr<value_t<E>, detail::build_type<E>, avg_pool_2d_expr<value_t<E>, C1, C2, S1, S2>>{value};
+    return temporary_unary_expr<value_t<E>, detail::build_type<E>, avg_pool_2d_expr<value_t<E>, C1, C2, S1, S2, P1, P2>>{value};
 }
 
 /*!
