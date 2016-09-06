@@ -140,6 +140,145 @@ template <typename T, std::size_t C1, std::size_t C2, std::size_t S1, std::size_
 using avg_pool_2d_expr = basic_pool_2d_expr<T, C1, C2, S1, S2, impl::avg_pool_2d>;
 
 /*!
+ * \brief Base class for all 2D pooling expressions
+ */
+template <typename T, std::size_t C1, std::size_t C2, std::size_t S1, std::size_t S2, std::size_t D, typename Impl>
+struct basic_deep_pool_2d_expr : impl_expr<basic_deep_pool_2d_expr<T, C1, C2, S1, S2, D, Impl>> {
+    static_assert(C1 > 0, "C1 must be greater than 0");
+    static_assert(C2 > 0, "C2 must be greater than 0");
+    static_assert(S1 > 0, "S1 must be greater than 0");
+    static_assert(S2 > 0, "S2 must be greater than 0");
+
+    using value_type = T;                                           ///< Type of values of the expression
+    using this_type  = basic_deep_pool_2d_expr<T, C1, C2, S1, S2, D, Impl>; ///< The type of this expression
+
+    /*!
+     * \brief Compute the result type given the input type
+     * \tparam A the input type
+     */
+    template <typename A>
+    using result_type = detail::expr_result_t<this_type, A>;
+
+    static constexpr const bool is_gpu = false; ///< no GPU implementation
+
+    /*!
+     * \brief Apply the expression on a and store the result in c
+     * \param a The input expression
+     * \param c The output expression
+     */
+    template <typename A, typename C>
+    static void apply(const A& a, C& c) {
+        static_assert(all_etl_expr<A, C>::value, "pool_2d only supported for ETL expressions");
+        static_assert(decay_traits<A>::dimensions() == D && decay_traits<C>::dimensions() == D, "pool_2d needs 2D matrices");
+
+        decltype(auto) a_t = make_temporary(a);
+
+        for(std::size_t i = 0; i < etl::dim<0>(a); ++i){
+            Impl::template apply<C1, C2, S1, S2>(a_t(i), c(i));
+        }
+    }
+
+    /*!
+     * \brief Returns a textual representation of the operation
+     * \return a textual representation of the operation
+     */
+    static std::string desc() noexcept {
+        return "pool_2d";
+    }
+
+    /*!
+     * \brief Return the DDth dim of the expression
+     * \tparam A The input type
+     * \tparam DD The dimension number
+     * \return The DDth dimension of the epxression
+     */
+    template <typename A, std::size_t DD>
+    static constexpr std::size_t dim() {
+        return DD == 0 ? (decay_traits<A>::template dim<0>() - C1) / S1 + 1
+             : DD == 1 ? (decay_traits<A>::template dim<1>() - C2) / S2 + 1
+                       : decay_traits<A>::template dim<DD>();
+    }
+
+    /*!
+     * \brief Return the dth dim of the expression
+     * \param a The input expression
+     * \param d The dimension to get
+     * \return The dth dimension
+     */
+    template <typename A>
+    static std::size_t dim(const A& a, std::size_t d) {
+        if (d == 0) {
+            return (etl::dim<0>(a) - C1) / S1 + 1;
+        } else if (d == 1){
+            return (etl::dim<1>(a) - C2) / S2 + 1;
+        } else {
+            return etl::dim(a, d);
+        }
+    }
+
+    /*!
+     * \brief Return the size of the expression given the input expression
+     * \param a The in expression
+     * \return the size of the expression given the input
+     */
+    template <typename A>
+    static std::size_t size(const A& a) {
+        std::size_t acc = 1;
+        for (std::size_t i = 0; i < dimensions(); ++i) {
+            acc *= this_type::dim(a, i);
+        }
+        return acc;
+    }
+
+    /*!
+     * \brief Returns the multiplicative sum of the dimensions at the given indices
+     * \return the multiplicative sum of the dimensions at the given indices
+     */
+    template <typename A, std::size_t... I>
+    static constexpr std::size_t size_mul(const std::index_sequence<I...>& /*seq*/) {
+        return mul_all<this_type::dim<A, I>()...>::value;
+    }
+
+    /*!
+     * \brief Returns the size of the expression
+     * \return the size of the expression
+     */
+    template <typename A>
+    static constexpr std::size_t size() {
+        return size_mul<A>(std::make_index_sequence<dimensions()>());
+    }
+
+    /*!
+     * \brief Returns the storage order of the expression.
+     * \return the storage order of the expression
+     */
+    template <typename A>
+    static constexpr etl::order order() {
+        return etl::order::RowMajor;
+    }
+
+    /*!
+     * \brief Return the number of dimensions of the expression
+     * \return the nubmer of dimensions of the expression
+     */
+    static constexpr std::size_t dimensions() {
+        return D;
+    }
+};
+
+/*!
+ * \brief Max Pooling 2D expression type
+ */
+template <typename T, std::size_t C1, std::size_t C2, std::size_t S1, std::size_t S2, std::size_t D>
+using deep_max_pool_2d_expr = basic_deep_pool_2d_expr<T, C1, C2, S1, S2, D, impl::max_pool_2d>;
+
+/*!
+ * \brief Average Pooling 2D expression type
+ */
+template <typename T, std::size_t C1, std::size_t C2, std::size_t S1, std::size_t S2, std::size_t D>
+using deep_avg_pool_2d_expr = basic_deep_pool_2d_expr<T, C1, C2, S1, S2, D, impl::avg_pool_2d>;
+
+/*!
  * \brief Base class for all 3D pooling expressions
  */
 template <typename T, std::size_t C1, std::size_t C2, std::size_t C3, std::size_t S1, std::size_t S2, std::size_t S3, typename Impl>

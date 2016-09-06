@@ -48,7 +48,7 @@ struct max_pool_2d {
      * \tparam S2 The second dimension stride
      */
     template <std::size_t C1, std::size_t C2, std::size_t S1, std::size_t S2, typename A, typename M>
-    static void apply(A&& sub, M& m) {
+    static void apply(const A& sub, M&& m) {
         const std::size_t o1 = (etl::dim<0>(sub) - C1) / S1 + 1;
         const std::size_t o2 = (etl::dim<1>(sub) - C2) / S2 + 1;
 
