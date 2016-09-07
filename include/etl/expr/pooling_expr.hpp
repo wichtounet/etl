@@ -425,6 +425,160 @@ template <typename T, size_t C1, size_t C2, size_t C3, size_t S1, size_t S2, siz
 using avg_pool_3d_expr = basic_pool_3d_expr<T, C1, C2, C3, S1, S2, S3, P1, P2, P3, impl::avg_pool_3d>;
 
 /*!
+ * \brief Base class for all deep 3D pooling expressions
+ */
+template <typename T, size_t C1, size_t C2, size_t C3, size_t S1, size_t S2, size_t S3, size_t P1, size_t P2, size_t P3, size_t D, typename Impl>
+struct basic_pool_deep_3d_expr : impl_expr<basic_pool_deep_3d_expr<T, C1, C2, C3, S1, S2, S3, P1, P2, P3, D, Impl>> {
+    static_assert(C1 > 0, "C1 must be greater than 0");
+    static_assert(C2 > 0, "C2 must be greater than 0");
+    static_assert(C3 > 0, "C3 must be greater than 0");
+    static_assert(S1 > 0, "S1 must be greater than 0");
+    static_assert(S2 > 0, "S2 must be greater than 0");
+    static_assert(S3 > 0, "S3 must be greater than 0");
+
+    using value_type = T;                                                   ///< The type of values of the expression
+    using this_type  = basic_pool_deep_3d_expr<T, C1, C2, C3, S1, S2, S3, P1, P2, P3, D, Impl>; ///< The type of this expression
+
+    /*!
+     * \brief Compute the result type given the input type
+     * \tparam A the input type
+     */
+    template <typename A>
+    using result_type = detail::expr_result_t<this_type, A>;
+
+    static constexpr const bool is_gpu = false; ///< no GPU implementation
+
+    /*!
+     * \brief Apply the expression on a and store the result in c
+     * \param a The input expression
+     * \param c The output expression
+     */
+    template <typename A, typename C>
+    static void apply(const A& a, C& c) {
+        static_assert(all_etl_expr<A, C>::value, "pool_2d only supported for ETL expressions");
+        static_assert(decay_traits<A>::dimensions() == D && decay_traits<C>::dimensions() == D, "pool_2d needs 2D matrices");
+
+        decltype(auto) a_t = make_temporary(a);
+
+        apply_impl(a_t, c);
+    }
+
+    /*!
+     * \brief Apply the expression on a and store the result in c
+     * \param a The input expression
+     * \param c The output expression
+     */
+    template <typename A, typename C, cpp_enable_if((etl::decay_traits<A>::dimensions() == 4))>
+    static void apply_impl(const A& a, C&& c) {
+        for(size_t i = 0; i < etl::dim<0>(a); ++i){
+            Impl::template apply<C1, C2, S1, S2, P1, P2>(a(i), c(i));
+        }
+    }
+
+    /*!
+     * \brief Apply the expression on a and store the result in c
+     * \param a The input expression
+     * \param c The output expression
+     */
+    template <typename A, typename C, cpp_enable_if((etl::decay_traits<A>::dimensions() > 4))>
+    static void apply_impl(const A& a, C&& c) {
+        for(size_t i = 0; i < etl::dim<0>(a); ++i){
+            apply_impl(a(i), c(i));
+        }
+    }
+
+    /*!
+     * \brief Returns a textual representation of the operation
+     * \return a textual representation of the operation
+     */
+    static std::string desc() noexcept {
+        return "pool_3d";
+    }
+
+    /*!
+     * \brief Return the DDth dim of the expression
+     * \tparam A The input type
+     * \tparam DD The dimension number
+     * \return The DDth dimension of the epxression
+     */
+    template <typename A, size_t DD>
+    static constexpr size_t dim() {
+        return DD == 0 ? (decay_traits<A>::template dim<0>() - C1 + 2 * P1) / S1 + 1
+             : DD == 1 ? (decay_traits<A>::template dim<1>() - C2 + 2 * P2) / S2 + 1
+             : DD == 2 ? (decay_traits<A>::template dim<2>() - C3 + 2 * P3) / S3 + 1
+                       : decay_traits<A>::template dim<DD>();
+    }
+
+    /*!
+     * \brief Return the dth dim of the expression
+     * \param a The input expression
+     * \param d The dimension to get
+     * \return The dth dimension
+     */
+    template <typename A>
+    static size_t dim(const A& a, size_t d) {
+        if (d == 0) {
+            return (etl::dim<0>(a) - C1 + 2 * P1) / S1 + 1;
+        } else if (d == 1) {
+            return (etl::dim<1>(a) - C2 + 2 * P2) / S2 + 1;
+        } else if(d == 2){
+            return (etl::dim<2>(a) - C3 + 2 * P3) / S3 + 1;
+        } else {
+            return etl::dim(a, d);
+        }
+    }
+
+    /*!
+     * \brief Return the size of the expression given the input expression
+     * \param a The in expression
+     * \return the size of the expression given the input
+     */
+    template <typename A>
+    static size_t size(const A& a) {
+        return this_type::dim(a, 0) * this_type::dim(a, 1) * this_type::dim(a, 2);
+    }
+
+    /*!
+     * \brief Return the size of the expression given the input expression type
+     * \tparam A The in expression type
+     * \return the size of the expression given the input type
+     */
+    template <typename A>
+    static constexpr size_t size() {
+        return this_type::template dim<A, 0>() * this_type::template dim<A, 1>() * this_type::template dim<A, 2>();
+    }
+
+    /*!
+     * \brief Returns the storage order of the expression.
+     * \return the storage order of the expression
+     */
+    template <typename A>
+    static constexpr etl::order order() {
+        return etl::order::RowMajor;
+    }
+
+    /*!
+     * \brief Return the number of dimensions of the expression
+     * \return the nubmer of dimensions of the expression
+     */
+    static constexpr size_t dimensions() {
+        return D;
+    }
+};
+
+/*!
+ * \brief Max Pooling 3D expression type
+ */
+template <typename T, size_t C1, size_t C2, size_t C3, size_t S1, size_t S2, size_t S3, size_t P1, size_t P2, size_t P3, size_t D>
+using deep_max_pool_3d_expr = basic_pool_deep_3d_expr<T, C1, C2, C3, S1, S2, S3, P1, P2, P3, D, impl::max_pool_3d>;
+
+/*!
+ * \brief Average Pooling 3D expression type
+ */
+template <typename T, size_t C1, size_t C2, size_t C3, size_t S1, size_t S2, size_t S3, size_t P1, size_t P2, size_t P3, size_t D>
+using deep_avg_pool_3d_expr = basic_pool_deep_3d_expr<T, C1, C2, C3, S1, S2, S3, P1, P2, P3, D, impl::avg_pool_3d>;
+
+/*!
  * \brief Base class for all dynamic 2D pooling expressions
  */
 template <typename T, typename Impl>
