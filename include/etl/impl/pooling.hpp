@@ -195,7 +195,7 @@ struct avg_pool_2d {
      * \tparam C2 The second dimension pooling ratio
      */
     template <size_t C1, size_t C2, size_t S1, size_t S2, size_t P1, size_t P2, typename A, typename M>
-    static void apply(A&& sub, M& m) {
+    static void apply(const A& sub, M&& m) {
         const size_t o1 = (etl::dim<0>(sub) - C1 + 2 * P1) / S1 + 1;
         const size_t o2 = (etl::dim<1>(sub) - C2 + 2 * P2) / S2 + 1;
 
