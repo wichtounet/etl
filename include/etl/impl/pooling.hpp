@@ -112,12 +112,12 @@ struct max_pool_2d {
      * \param c2 The second dimension pooling ratio
      */
     template <typename A>
-    static auto pool_block(const A& sub, size_t j, size_t k, size_t c1, size_t c2) {
-        auto max = sub(j * c1, k * c2);
+    static auto pool_block(const A& sub, size_t j, size_t k, size_t c1, size_t c2, size_t s1, size_t s2, size_t p1, size_t p2) {
+        auto max = sub(j * s1 - p1, k * s2 - p2);
 
         for (size_t jj = 0; jj < c1; ++jj) {
             for (size_t kk = 0; kk < c2; ++kk) {
-                max = std::max(max, sub(j * c1 + jj, k * c2 + kk));
+                max = std::max(max, sub(j * s1 + jj - p1, k * s2 + kk - p2));
             }
         }
 
@@ -132,13 +132,39 @@ struct max_pool_2d {
      * \param c2 The second dimension pooling ratio
      */
     template <typename A, typename M>
-    static void apply(A&& sub, M& m, size_t c1, size_t c2) {
-        const size_t o1 = etl::dim<0>(sub) / c1;
-        const size_t o2 = etl::dim<1>(sub) / c2;
+    static void apply(A&& sub, M& m, size_t c1, size_t c2, size_t s1, size_t s2, size_t p1, size_t p2) {
+        const size_t o1 = (etl::dim<0>(sub) - c1 + 2 * p1) / s1 + 1;
+        const size_t o2 = (etl::dim<1>(sub) - c2 + 2 * p2) / s2 + 1;
 
-        for (size_t j = 0; j < o1; ++j) {
-            for (size_t k = 0; k < o2; ++k) {
-                m(j, k) = pool_block(sub, j, k, c1, c2);
+        if(p1 || p2){
+            for (size_t i = 0; i < p1; ++i) {
+                for (size_t j = 0; j < o2; ++j) {
+                    m(i, j) = pool_block_border(sub, i, j, c1, c2, s1, s2, p1, p2);
+                }
+            }
+
+            for (size_t i = o1 - p1; i < o1; ++i) {
+                for (size_t j = 0; j < o2; ++j) {
+                    m(i, j) = pool_block_border(sub, i, j, c1, c2, s1, s2, p1, p2);
+                }
+            }
+
+            for (size_t j = 0; j < p2; ++j) {
+                for (size_t i = p1; i < o1 - p1; ++i) {
+                    m(i, j) = pool_block_border(sub, i, j, c1, c2, s1, s2, p1, p2);
+                }
+            }
+
+            for (size_t j = o2 - p2; j < o2; ++j) {
+                for (size_t i = p1; i < o1 - p1; ++i) {
+                    m(i, j) = pool_block_border(sub, i, j, c1, c2, s1, s2, p1, p2);
+                }
+            }
+        }
+
+        for (size_t j = p1; j < o1 - p1; ++j) {
+            for (size_t k = p2; k < o2 - p2; ++k) {
+                m(j, k) = pool_block(sub, j, k, c1, c2, s1, s2, p1, p2);
             }
         }
     }
@@ -241,12 +267,12 @@ struct avg_pool_2d {
      * \param c2 The second dimension pooling ratio
      */
     template <typename A>
-    static auto pool_block(const A& sub, size_t j, size_t k, size_t c1, size_t c2) {
+    static auto pool_block(const A& sub, size_t j, size_t k, size_t c1, size_t c2, size_t s1, size_t s2, size_t p1, size_t p2) {
         value_t<A> avg = 0;
 
         for (size_t jj = 0; jj < c1; ++jj) {
             for (size_t kk = 0; kk < c2; ++kk) {
-                avg += sub(j * c1 + jj, k * c2 + kk);
+                avg += sub(j * s1 + jj - p1, k * s2 + kk - p2);
             }
         }
 
@@ -261,13 +287,39 @@ struct avg_pool_2d {
      * \param c2 The second dimension pooling ratio
      */
     template <typename A, typename M>
-    static void apply(A&& sub, M& m, size_t c1, size_t c2) {
-        const size_t o1 = etl::dim<0>(sub) / c1;
-        const size_t o2 = etl::dim<1>(sub) / c2;
+    static void apply(A&& sub, M& m, size_t c1, size_t c2, size_t s1, size_t s2, size_t p1, size_t p2) {
+        const size_t o1 = (etl::dim<0>(sub) - c1 + 2 * p1) / s1 + 1;
+        const size_t o2 = (etl::dim<1>(sub) - c2 + 2 * p2) / s2 + 1;
 
-        for (size_t j = 0; j < o1; ++j) {
-            for (size_t k = 0; k < o2; ++k) {
-                m(j, k) = pool_block(sub, j, k, c1, c2);
+        if(p1 || p2){
+            for (size_t i = 0; i < p1; ++i) {
+                for (size_t j = 0; j < o2; ++j) {
+                    m(i, j) = pool_block_border(sub, i, j, c1, c2, s1, s2, p1, p2);
+                }
+            }
+
+            for (size_t i = o1 - p1; i < o1; ++i) {
+                for (size_t j = 0; j < o2; ++j) {
+                    m(i, j) = pool_block_border(sub, i, j, c1, c2, s1, s2, p1, p2);
+                }
+            }
+
+            for (size_t j = 0; j < p2; ++j) {
+                for (size_t i = p1; i < o1 - p1; ++i) {
+                    m(i, j) = pool_block_border(sub, i, j, c1, c2, s1, s2, p1, p2);
+                }
+            }
+
+            for (size_t j = o2 - p2; j < o2; ++j) {
+                for (size_t i = p1; i < o1 - p1; ++i) {
+                    m(i, j) = pool_block_border(sub, i, j, c1, c2, s1, s2, p1, p2);
+                }
+            }
+        }
+
+        for (size_t j = p1; j < o1 - p1; ++j) {
+            for (size_t k = p2; k < o2 - p2; ++k) {
+                m(j, k) = pool_block(sub, j, k, c1, c2, s1, s2, p1, p2);
             }
         }
     }

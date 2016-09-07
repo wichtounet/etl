@@ -597,13 +597,17 @@ struct basic_dyn_pool_2d_expr : dyn_impl_expr<basic_dyn_pool_2d_expr<T, Impl>> {
 
     const size_t c1; ///< First dimension pooling ratio
     const size_t c2; ///< Second dimension pooling ratio
+    const size_t s1; ///< First dimension stride
+    const size_t s2; ///< Second dimension stride
+    const size_t p1; ///< First dimension padding
+    const size_t p2; ///< Second dimension padding
 
     /*!
      * \brief Construct a new basic 2d pooling expression
      * \param c1 The first pooling factor
      * \param c2 The second pooling factor
      */
-    basic_dyn_pool_2d_expr(size_t c1, size_t c2) : c1(c1), c2(c2) {
+    basic_dyn_pool_2d_expr(size_t c1, size_t c2, size_t s1, size_t s2, size_t p1, size_t p2) : c1(c1), c2(c2), s1(s1), s2(s2), p1(p1), p2(p2) {
         // Nothing else to init
     }
 
@@ -620,7 +624,7 @@ struct basic_dyn_pool_2d_expr : dyn_impl_expr<basic_dyn_pool_2d_expr<T, Impl>> {
         Impl::apply(
             make_temporary(std::forward<A>(a)),
             std::forward<C>(c),
-            c1, c2);
+            c1, c2, s1, s2, p1, p2);
     }
 
     /*!
@@ -640,9 +644,9 @@ struct basic_dyn_pool_2d_expr : dyn_impl_expr<basic_dyn_pool_2d_expr<T, Impl>> {
     template <typename A>
     size_t dim(const A& a, size_t d) const {
         if (d == 0) {
-            return etl::dim<0>(a) / c1;
+            return (etl::dim<0>(a) - c1 + 2 * p1) / s1 + 1;
         } else {
-            return etl::dim<1>(a) / c2;
+            return (etl::dim<1>(a) - c2 + 2 * p2) / s2 + 1;
         }
     }
 
@@ -653,7 +657,7 @@ struct basic_dyn_pool_2d_expr : dyn_impl_expr<basic_dyn_pool_2d_expr<T, Impl>> {
      */
     template <typename A>
     size_t size(const A& a) const {
-        return (etl::dim<0>(a) / c1) * (etl::dim<1>(a) / c2);
+        return dim(a, 0) * dim(a, 1);
     }
 
     /*!
