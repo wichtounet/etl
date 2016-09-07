@@ -115,3 +115,57 @@ TEMPLATE_TEST_CASE_2("pooling/dyn/deep/avg2/2", "[pooling]", Z, float, double) {
     REQUIRE_EQUALS(b(1, 1, 1, 0), 11.5);
     REQUIRE_EQUALS(b(1, 1, 1, 1), 13.5);
 }
+
+TEMPLATE_TEST_CASE_2("pooling/dyn/deep/max3/1", "[pooling]", Z, float, double) {
+    etl::fast_matrix<Z, 2, 2, 2, 2> a({1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0});
+    etl::fast_matrix<Z, 2, 2, 2, 2> b;
+
+    b = etl::max_pool_3d(a, 2, 2, 2,  2, 2, 2,  1, 1, 1);
+
+    REQUIRE_EQUALS(b(0, 0, 0, 0), 1.0);
+    REQUIRE_EQUALS(b(0, 0, 0, 1), 2.0);
+    REQUIRE_EQUALS(b(0, 0, 1, 0), 3.0);
+    REQUIRE_EQUALS(b(0, 0, 1, 1), 4.0);
+
+    REQUIRE_EQUALS(b(0, 1, 0, 0), 5.0);
+    REQUIRE_EQUALS(b(0, 1, 0, 1), 6.0);
+    REQUIRE_EQUALS(b(0, 1, 1, 0), 7.0);
+    REQUIRE_EQUALS(b(0, 1, 1, 1), 8.0);
+
+    REQUIRE_EQUALS(b(1, 0, 0, 0), 1.0);
+    REQUIRE_EQUALS(b(1, 0, 0, 1), 2.0);
+    REQUIRE_EQUALS(b(1, 0, 1, 0), 3.0);
+    REQUIRE_EQUALS(b(1, 0, 1, 1), 4.0);
+
+    REQUIRE_EQUALS(b(1, 1, 0, 0), 5.0);
+    REQUIRE_EQUALS(b(1, 1, 0, 1), 6.0);
+    REQUIRE_EQUALS(b(1, 1, 1, 0), 7.0);
+    REQUIRE_EQUALS(b(1, 1, 1, 1), 8.0);
+}
+
+TEMPLATE_TEST_CASE_2("pooling/dyn/deep/avg3/1", "[pooling]", Z, float, double) {
+    etl::fast_matrix<Z, 2, 2, 2, 2> a({1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0});
+    etl::fast_matrix<Z, 2, 2, 2, 2> b;
+
+    b = etl::avg_pool_3d(a, 2, 2, 2,  2, 2, 2,  1, 1, 1);
+
+    REQUIRE_EQUALS(b(0, 0, 0, 0), 0.5 * 0.25);
+    REQUIRE_EQUALS(b(0, 0, 0, 1), 0.5 * 0.5);
+    REQUIRE_EQUALS(b(0, 0, 1, 0), 0.5 * 0.75);
+    REQUIRE_EQUALS(b(0, 0, 1, 1), 0.5 * 1.0);
+
+    REQUIRE_EQUALS(b(0, 1, 0, 0), 0.625);
+    REQUIRE_EQUALS(b(0, 1, 0, 1), 0.75);
+    REQUIRE_EQUALS(b(0, 1, 1, 0), 0.875);
+    REQUIRE_EQUALS(b(0, 1, 1, 1), 1.0);
+
+    REQUIRE_EQUALS(b(1, 0, 0, 0), 0.5 * 0.25);
+    REQUIRE_EQUALS(b(1, 0, 0, 1), 0.5 * 0.5);
+    REQUIRE_EQUALS(b(1, 0, 1, 0), 0.5 * 0.75);
+    REQUIRE_EQUALS(b(1, 0, 1, 1), 0.5 * 1.0);
+
+    REQUIRE_EQUALS(b(1, 1, 0, 0), 0.625);
+    REQUIRE_EQUALS(b(1, 1, 0, 1), 0.75);
+    REQUIRE_EQUALS(b(1, 1, 1, 0), 0.875);
+    REQUIRE_EQUALS(b(1, 1, 1, 1), 1.0);
+}
