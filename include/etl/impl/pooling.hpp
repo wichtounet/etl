@@ -463,13 +463,13 @@ struct max_pool_3d {
      * \param c3 The third dimension pooling ratio
      */
     template <typename A>
-    static auto pool_block(const A& sub, size_t i, size_t j, size_t k, size_t c1, size_t c2, size_t c3) {
-        auto max = sub(i * c1, j * c2, k * c3);
+    static auto pool_block(const A& sub, size_t i, size_t j, size_t k, size_t c1, size_t c2, size_t c3, size_t s1, size_t s2, size_t s3, size_t p1, size_t p2, size_t p3) {
+        auto max = sub(i * s1 - p1, j * s2 - p2, k * s3 - p3);
 
         for (size_t ii = 0; ii < c1; ++ii) {
             for (size_t jj = 0; jj < c2; ++jj) {
                 for (size_t kk = 0; kk < c3; ++kk) {
-                    max = std::max(max, sub(i * c1 + ii, j * c2 + jj, k * c3 + kk));
+                    max = std::max(max, sub(i * s1 + ii - p1, j * s2 + jj - p2, k * s3 + kk - p3));
                 }
             }
         }
@@ -486,15 +486,65 @@ struct max_pool_3d {
      * \param c3 The third dimension pooling ratio
      */
     template <typename A, typename M>
-    static void apply(A&& sub, M& m, size_t c1, size_t c2, size_t c3) {
-        const size_t o1 = etl::dim<0>(sub) / c1;
-        const size_t o2 = etl::dim<1>(sub) / c2;
-        const size_t o3 = etl::dim<2>(sub) / c3;
+    static void apply(A&& sub, M& m, size_t c1, size_t c2, size_t c3, size_t s1, size_t s2, size_t s3, size_t p1, size_t p2, size_t p3) {
+        const size_t o1 = (etl::dim<0>(sub) - c1 + 2 * p1) / s1 + 1;
+        const size_t o2 = (etl::dim<1>(sub) - c2 + 2 * p2) / s2 + 1;
+        const size_t o3 = (etl::dim<2>(sub) - c3 + 2 * p3) / s3 + 1;
 
-        for (size_t i = 0; i < o1; ++i) {
-            for (size_t j = 0; j < o2; ++j) {
-                for (size_t k = 0; k < o3; ++k) {
-                    m(i, j, k) = pool_block(sub, i, j, k, c1, c2, c3);
+        if(p1 || p2 || p1){
+            for (size_t i = 0; i < p1; ++i) {
+                for (size_t j = 0; j < o2; ++j) {
+                    for (size_t k = 0; k < o3; ++k) {
+                        m(i, j, k) = pool_block_border(sub, i, j, k, c1, c2, c3, s1, s2, s3, p1, p2, p3);
+                    }
+                }
+            }
+
+            for (size_t i = o1 - p1; i < o1; ++i) {
+                for (size_t j = 0; j < o2; ++j) {
+                    for (size_t k = 0; k < o3; ++k) {
+                        m(i, j, k) = pool_block_border(sub, i, j, k, c1, c2, c3, s1, s2, s3, p1, p2, p3);
+                    }
+                }
+            }
+
+            for (size_t j = 0; j < p2; ++j) {
+                for (size_t i = p1; i < o1 - p1; ++i) {
+                    for (size_t k = 0; k < o3; ++k) {
+                        m(i, j, k) = pool_block_border(sub, i, j, k, c1, c2, c3, s1, s2, s3, p1, p2, p3);
+                    }
+                }
+            }
+
+            for (size_t j = o2 - p2; j < o2; ++j) {
+                for (size_t i = p1; i < o1 - p1; ++i) {
+                    for (size_t k = 0; k < o3; ++k) {
+                        m(i, j, k) = pool_block_border(sub, i, j, k, c1, c2, c3, s1, s2, s3, p1, p2, p3);
+                    }
+                }
+            }
+
+            for (size_t k = 0; k < p3; ++k) {
+                for (size_t i = p1; i < o1 - p1; ++i) {
+                    for (size_t j = p2; j < o2 - p2; ++j) {
+                        m(i, j, k) = pool_block_border(sub, i, j, k, c1, c2, c3, s1, s2, s3, p1, p2, p3);
+                    }
+                }
+            }
+
+            for (size_t k = o3 - p3; k < o3; ++k) {
+                for (size_t i = p1; i < o1 - p1; ++i) {
+                    for (size_t j = p2; j < o2 - p2; ++j) {
+                        m(i, j, k) = pool_block_border(sub, i, j, k, c1, c2, c3, s1, s2, s3, p1, p2, p3);
+                    }
+                }
+            }
+        }
+
+        for (size_t i = p1; i < o1 - p1; ++i) {
+            for (size_t j = p2; j < o2 - p2; ++j) {
+                for (size_t k = p3; k < o3 - p3; ++k) {
+                    m(i, j, k) = pool_block(sub, i, j, k, c1, c2, c3, s1, s2, s3, p1, p2, p3);
                 }
             }
         }
@@ -635,13 +685,13 @@ struct avg_pool_3d {
      * \param c3 The third dimension pooling ratio
      */
     template <typename A>
-    static auto pool_block(const A& sub, size_t i, size_t j, size_t k, size_t c1, size_t c2, size_t c3) {
+    static auto pool_block(const A& sub, size_t i, size_t j, size_t k, size_t c1, size_t c2, size_t c3, size_t s1, size_t s2, size_t s3, size_t p1, size_t p2, size_t p3) {
         value_t<A> avg = 0;
 
         for (size_t ii = 0; ii < c1; ++ii) {
             for (size_t jj = 0; jj < c2; ++jj) {
                 for (size_t kk = 0; kk < c3; ++kk) {
-                    avg += sub(i * c1 + ii, j * c2 + jj, k * c3 + kk);
+                    avg += sub(i * s1 + ii - p1, j * s2 + jj - p2, k * s3 + kk - p3);
                 }
             }
         }
@@ -658,15 +708,65 @@ struct avg_pool_3d {
      * \param c3 The third dimension pooling ratio
      */
     template <typename A, typename M>
-    static void apply(A&& sub, M& m, size_t c1, size_t c2, size_t c3) {
-        const size_t o1 = etl::dim<0>(sub) / c1;
-        const size_t o2 = etl::dim<1>(sub) / c2;
-        const size_t o3 = etl::dim<2>(sub) / c3;
+    static void apply(A&& sub, M& m, size_t c1, size_t c2, size_t c3, size_t s1, size_t s2, size_t s3, size_t p1, size_t p2, size_t p3) {
+        const size_t o1 = (etl::dim<0>(sub) - c1 + 2 * p1) / s1 + 1;
+        const size_t o2 = (etl::dim<1>(sub) - c2 + 2 * p2) / s2 + 1;
+        const size_t o3 = (etl::dim<2>(sub) - c3 + 2 * p3) / s3 + 1;
 
-        for (size_t i = 0; i < o1; ++i) {
-            for (size_t j = 0; j < o2; ++j) {
-                for (size_t k = 0; k < o3; ++k) {
-                    m(i, j, k) = pool_block(sub, i, j, k, c1, c2, c3);
+        if(p1 || p2 || p1){
+            for (size_t i = 0; i < p1; ++i) {
+                for (size_t j = 0; j < o2; ++j) {
+                    for (size_t k = 0; k < o3; ++k) {
+                        m(i, j, k) = pool_block_border(sub, i, j, k, c1, c2, c3, s1, s2, s3, p1, p2, p3);
+                    }
+                }
+            }
+
+            for (size_t i = o1 - p1; i < o1; ++i) {
+                for (size_t j = 0; j < o2; ++j) {
+                    for (size_t k = 0; k < o3; ++k) {
+                        m(i, j, k) = pool_block_border(sub, i, j, k, c1, c2, c3, s1, s2, s3, p1, p2, p3);
+                    }
+                }
+            }
+
+            for (size_t j = 0; j < p2; ++j) {
+                for (size_t i = p1; i < o1 - p1; ++i) {
+                    for (size_t k = 0; k < o3; ++k) {
+                        m(i, j, k) = pool_block_border(sub, i, j, k, c1, c2, c3, s1, s2, s3, p1, p2, p3);
+                    }
+                }
+            }
+
+            for (size_t j = o2 - p2; j < o2; ++j) {
+                for (size_t i = p1; i < o1 - p1; ++i) {
+                    for (size_t k = 0; k < o3; ++k) {
+                        m(i, j, k) = pool_block_border(sub, i, j, k, c1, c2, c3, s1, s2, s3, p1, p2, p3);
+                    }
+                }
+            }
+
+            for (size_t k = 0; k < p3; ++k) {
+                for (size_t i = p1; i < o1 - p1; ++i) {
+                    for (size_t j = p2; j < o2 - p2; ++j) {
+                        m(i, j, k) = pool_block_border(sub, i, j, k, c1, c2, c3, s1, s2, s3, p1, p2, p3);
+                    }
+                }
+            }
+
+            for (size_t k = o3 - p3; k < o3; ++k) {
+                for (size_t i = p1; i < o1 - p1; ++i) {
+                    for (size_t j = p2; j < o2 - p2; ++j) {
+                        m(i, j, k) = pool_block_border(sub, i, j, k, c1, c2, c3, s1, s2, s3, p1, p2, p3);
+                    }
+                }
+            }
+        }
+
+        for (size_t i = p1; i < o1 - p1; ++i) {
+            for (size_t j = p2; j < o2 - p2; ++j) {
+                for (size_t k = p3; k < o3 - p3; ++k) {
+                    m(i, j, k) = pool_block(sub, i, j, k, c1, c2, c3, s1, s2, s3, p1, p2, p3);
                 }
             }
         }

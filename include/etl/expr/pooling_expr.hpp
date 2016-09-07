@@ -703,13 +703,19 @@ struct basic_dyn_pool_3d_expr : dyn_impl_expr<basic_dyn_pool_3d_expr<T, Impl>> {
      * \tparam A the input type
      */
     template <typename A>
-    using result_type = detail::expr_result_t<this_type, A>;
+    using result_type = detail::dyn_expr_result_t<this_type, A>;
 
     static constexpr const bool is_gpu = false; ///< no GPU implementation
 
     const size_t c1; ///< First dimension pooling ratio
     const size_t c2; ///< Second dimension pooling ratio
     const size_t c3; ///< Third dimension pooling ratio
+    const size_t s1; ///< First dimension stride
+    const size_t s2; ///< Second dimension stride
+    const size_t s3; ///< Third dimension stride
+    const size_t p1; ///< First dimension padding
+    const size_t p2; ///< Second dimension padding
+    const size_t p3; ///< Third dimension padding
 
     /*!
      * \brief Construct a new basic 3d pooling expression
@@ -717,7 +723,7 @@ struct basic_dyn_pool_3d_expr : dyn_impl_expr<basic_dyn_pool_3d_expr<T, Impl>> {
      * \param c2 The second pooling factor
      * \param c3 The third pooling factor
      */
-    basic_dyn_pool_3d_expr(size_t c1, size_t c2, size_t c3) : c1(c1), c2(c2), c3(c3) {
+    basic_dyn_pool_3d_expr(size_t c1, size_t c2, size_t c3, size_t s1, size_t s2, size_t s3, size_t p1, size_t p2, size_t p3) : c1(c1), c2(c2), c3(c3), s1(s1), s2(s2), s3(s3), p1(p1), p2(p2), p3(p3) {
         // Nothing else to init
     }
 
@@ -734,7 +740,7 @@ struct basic_dyn_pool_3d_expr : dyn_impl_expr<basic_dyn_pool_3d_expr<T, Impl>> {
         Impl::apply(
             make_temporary(std::forward<A>(a)),
             std::forward<C>(c),
-            c1, c2, c3);
+            c1, c2, c3, s1, s2, s3, p1, p2, p3);
     }
 
     /*!
@@ -754,11 +760,11 @@ struct basic_dyn_pool_3d_expr : dyn_impl_expr<basic_dyn_pool_3d_expr<T, Impl>> {
     template <typename A>
     size_t dim(const A& a, size_t d) const {
         if (d == 0) {
-            return etl::dim<0>(a) / c1;
+            return (etl::dim<0>(a) - c1 + 2 * p1) / s1 + 1;
         } else if (d == 1) {
-            return etl::dim<1>(a) / c2;
+            return (etl::dim<1>(a) - c2 + 2 * p2) / s2 + 1;
         } else {
-            return etl::dim<2>(a) / c3;
+            return (etl::dim<2>(a) - c3 + 2 * p3) / s3 + 1;
         }
     }
 
@@ -769,7 +775,7 @@ struct basic_dyn_pool_3d_expr : dyn_impl_expr<basic_dyn_pool_3d_expr<T, Impl>> {
      */
     template <typename A>
     size_t size(const A& a) const {
-        return (etl::dim<0>(a) / c1) * (etl::dim<1>(a) / c2) * (etl::dim<2>(a) / c3);
+        return dim(a, 0) * dim(a, 1) * dim(a, 2);
     }
 
     /*!
