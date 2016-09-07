@@ -443,7 +443,7 @@ struct basic_pool_deep_3d_expr : impl_expr<basic_pool_deep_3d_expr<T, C1, C2, C3
     template <typename A, typename C, cpp_enable_if((etl::decay_traits<A>::dimensions() == 4))>
     static void apply_impl(const A& a, C&& c) {
         for(size_t i = 0; i < etl::dim<0>(a); ++i){
-            Impl::template apply<C1, C2, S1, S2, P1, P2>(a(i), c(i));
+            Impl::template apply<C1, C2, C3, S1, S2, S3, P1, P2, P3>(a(i), c(i));
         }
     }
 
@@ -507,17 +507,29 @@ struct basic_pool_deep_3d_expr : impl_expr<basic_pool_deep_3d_expr<T, C1, C2, C3
      */
     template <typename A>
     static size_t size(const A& a) {
-        return this_type::dim(a, 0) * this_type::dim(a, 1) * this_type::dim(a, 2);
+        size_t acc = 1;
+        for (size_t i = 0; i < dimensions(); ++i) {
+            acc *= this_type::dim(a, i);
+        }
+        return acc;
     }
 
     /*!
-     * \brief Return the size of the expression given the input expression type
-     * \tparam A The in expression type
-     * \return the size of the expression given the input type
+     * \brief Returns the multiplicative sum of the dimensions at the given indices
+     * \return the multiplicative sum of the dimensions at the given indices
+     */
+    template <typename A, size_t... I>
+    static constexpr size_t size_mul(const std::index_sequence<I...>& /*seq*/) {
+        return mul_all<this_type::dim<A, I>()...>::value;
+    }
+
+    /*!
+     * \brief Returns the size of the expression
+     * \return the size of the expression
      */
     template <typename A>
     static constexpr size_t size() {
-        return this_type::template dim<A, 0>() * this_type::template dim<A, 1>() * this_type::template dim<A, 2>();
+        return size_mul<A>(std::make_index_sequence<dimensions()>());
     }
 
     /*!
