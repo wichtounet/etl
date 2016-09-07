@@ -168,7 +168,7 @@ auto avg_pool_2d(E&& value, size_t c1, size_t c2, size_t s1, size_t s2, size_t p
  * \tparam C3 The third pooling ratio
  * \return A expression representing the 3D Max Pooling of the input expression.
  */
-template <size_t C1, size_t C2, size_t C3, size_t S1 = C1, size_t S2 = C2, size_t S3 = C3, size_t P1 = 0, size_t P2 = 0, size_t P3 = 0, typename E, cpp_enable_if((etl::decay_traits<E>::dimensions() == 2))>
+template <size_t C1, size_t C2, size_t C3, size_t S1 = C1, size_t S2 = C2, size_t S3 = C3, size_t P1 = 0, size_t P2 = 0, size_t P3 = 0, typename E, cpp_enable_if((etl::decay_traits<E>::dimensions() == 3))>
 auto max_pool_3d(E&& value) {
     return temporary_unary_expr<value_t<E>, detail::build_type<E>, max_pool_3d_expr<value_t<E>, C1, C2, C3, S1, S2, S3, P1, P2, P3>>{value};
 }
@@ -181,7 +181,7 @@ auto max_pool_3d(E&& value) {
  * \tparam C3 The third pooling ratio
  * \return A expression representing the 3D Max Pooling of the input expression.
  */
-template <size_t C1, size_t C2, size_t C3, size_t S1 = C1, size_t S2 = C2, size_t S3 = C3, size_t P1 = 0, size_t P2 = 0, size_t P3 = 0, typename E, cpp_enable_if((etl::decay_traits<E>::dimensions() > 2))>
+template <size_t C1, size_t C2, size_t C3, size_t S1 = C1, size_t S2 = C2, size_t S3 = C3, size_t P1 = 0, size_t P2 = 0, size_t P3 = 0, typename E, cpp_enable_if((etl::decay_traits<E>::dimensions() > 3))>
 auto max_pool_3d(E&& value) {
     return temporary_unary_expr<value_t<E>, detail::build_type<E>, deep_max_pool_3d_expr<value_t<E>, C1, C2, C3, S1, S2, S3, P1, P2, P3, etl::decay_traits<E>::dimensions()>>{value};
 }
@@ -194,7 +194,7 @@ auto max_pool_3d(E&& value) {
  * \param c3 The third pooling ratio
  * \return A expression representing the 3D Max Pooling of the input expression.
  */
-template <typename E>
+template <typename E, cpp_enable_if((etl::decay_traits<E>::dimensions() == 3))>
 auto max_pool_3d(E&& value, size_t c1, size_t c2, size_t c3) {
     return temporary_unary_expr_state<value_t<E>, detail::build_type<E>, dyn_max_pool_3d_expr<value_t<E>>>{{c1, c2, c3, c1, c2, c3, 0, 0, 0}, value};
 }
@@ -207,9 +207,35 @@ auto max_pool_3d(E&& value, size_t c1, size_t c2, size_t c3) {
  * \param c3 The third pooling ratio
  * \return A expression representing the 3D Max Pooling of the input expression.
  */
-template <typename E>
+template <typename E, cpp_enable_if((etl::decay_traits<E>::dimensions() > 3))>
+auto max_pool_3d(E&& value, size_t c1, size_t c2, size_t c3) {
+    return temporary_unary_expr_state<value_t<E>, detail::build_type<E>, dyn_deep_max_pool_3d_expr<value_t<E>, etl::decay_traits<E>::dimensions()>>{{c1, c2, c3, c1, c2, c3, 0, 0, 0}, value};
+}
+
+/*!
+ * \brief 3D Max Pooling of the given matrix expression
+ * \param value The matrix expression
+ * \param c1 The first pooling ratio
+ * \param c2 The second pooling ratio
+ * \param c3 The third pooling ratio
+ * \return A expression representing the 3D Max Pooling of the input expression.
+ */
+template <typename E, cpp_enable_if((etl::decay_traits<E>::dimensions() == 3))>
 auto max_pool_3d(E&& value, size_t c1, size_t c2, size_t c3, size_t s1, size_t s2, size_t s3, size_t p1 = 0, size_t p2 = 0, size_t p3 = 0) {
     return temporary_unary_expr_state<value_t<E>, detail::build_type<E>, dyn_max_pool_3d_expr<value_t<E>>>{{c1, c2, c3, s1, s2, s3, p1, p2, p3}, value};
+}
+
+/*!
+ * \brief 3D Max Pooling of the given matrix expression
+ * \param value The matrix expression
+ * \param c1 The first pooling ratio
+ * \param c2 The second pooling ratio
+ * \param c3 The third pooling ratio
+ * \return A expression representing the 3D Max Pooling of the input expression.
+ */
+template <typename E, cpp_enable_if((etl::decay_traits<E>::dimensions() > 3))>
+auto max_pool_3d(E&& value, size_t c1, size_t c2, size_t c3, size_t s1, size_t s2, size_t s3, size_t p1 = 0, size_t p2 = 0, size_t p3 = 0) {
+    return temporary_unary_expr_state<value_t<E>, detail::build_type<E>, dyn_deep_max_pool_3d_expr<value_t<E>, etl::decay_traits<E>::dimensions()>>{{c1, c2, c3, s1, s2, s3, p1, p2, p3}, value};
 }
 
 /*!
@@ -220,7 +246,7 @@ auto max_pool_3d(E&& value, size_t c1, size_t c2, size_t c3, size_t s1, size_t s
  * \tparam C3 The third pooling ratio
  * \return A expression representing the 3D Average Pooling of the input expression.
  */
-template <size_t C1, size_t C2, size_t C3, size_t S1 = C1, size_t S2 = C2, size_t S3 = C3, size_t P1 = 0, size_t P2 = 0, size_t P3 = 0, typename E, cpp_enable_if((etl::decay_traits<E>::dimensions() == 2))>
+template <size_t C1, size_t C2, size_t C3, size_t S1 = C1, size_t S2 = C2, size_t S3 = C3, size_t P1 = 0, size_t P2 = 0, size_t P3 = 0, typename E, cpp_enable_if((etl::decay_traits<E>::dimensions() == 3))>
 auto avg_pool_3d(E&& value) {
     return temporary_unary_expr<value_t<E>, detail::build_type<E>, avg_pool_3d_expr<value_t<E>, C1, C2, C3, S1, S2, S3, P1, P2, P3>>{value};
 }
@@ -233,7 +259,7 @@ auto avg_pool_3d(E&& value) {
  * \tparam C3 The third pooling ratio
  * \return A expression representing the 3D Average Pooling of the input expression.
  */
-template <size_t C1, size_t C2, size_t C3, size_t S1 = C1, size_t S2 = C2, size_t S3 = C3, size_t P1 = 0, size_t P2 = 0, size_t P3 = 0, typename E, cpp_enable_if((etl::decay_traits<E>::dimensions() > 2))>
+template <size_t C1, size_t C2, size_t C3, size_t S1 = C1, size_t S2 = C2, size_t S3 = C3, size_t P1 = 0, size_t P2 = 0, size_t P3 = 0, typename E, cpp_enable_if((etl::decay_traits<E>::dimensions() > 3))>
 auto avg_pool_3d(E&& value) {
     return temporary_unary_expr<value_t<E>, detail::build_type<E>, deep_avg_pool_3d_expr<value_t<E>, C1, C2, C3, S1, S2, S3, P1, P2, P3, etl::decay_traits<E>::dimensions()>>{value};
 }
@@ -246,7 +272,7 @@ auto avg_pool_3d(E&& value) {
  * \param c3 The third pooling ratio
  * \return A expression representing the 3D Average Pooling of the input expression.
  */
-template <typename E>
+template <typename E, cpp_enable_if((etl::decay_traits<E>::dimensions() == 3))>
 auto avg_pool_3d(E&& value, size_t c1, size_t c2, size_t c3) {
     return temporary_unary_expr_state<value_t<E>, detail::build_type<E>, dyn_avg_pool_3d_expr<value_t<E>>>{{c1, c2, c3, c1, c2, c3, 0, 0, 0}, value};
 }
@@ -259,9 +285,35 @@ auto avg_pool_3d(E&& value, size_t c1, size_t c2, size_t c3) {
  * \param c3 The third pooling ratio
  * \return A expression representing the 3D Average Pooling of the input expression.
  */
-template <typename E>
+template <typename E, cpp_enable_if((etl::decay_traits<E>::dimensions() > 3))>
+auto avg_pool_3d(E&& value, size_t c1, size_t c2, size_t c3) {
+    return temporary_unary_expr_state<value_t<E>, detail::build_type<E>, dyn_deep_avg_pool_3d_expr<value_t<E>, etl::decay_traits<E>::dimensions()>>{{c1, c2, c3, c1, c2, c3, 0, 0, 0}, value};
+}
+
+/*!
+ * \brief 3D Average Pooling of the given matrix expression
+ * \param value The matrix expression
+ * \param c1 The first pooling ratio
+ * \param c2 The second pooling ratio
+ * \param c3 The third pooling ratio
+ * \return A expression representing the 3D Average Pooling of the input expression.
+ */
+template <typename E, cpp_enable_if((etl::decay_traits<E>::dimensions() == 3))>
 auto avg_pool_3d(E&& value, size_t c1, size_t c2, size_t c3, size_t s1, size_t s2, size_t s3, size_t p1 = 0, size_t p2 = 0, size_t p3 = 0) {
     return temporary_unary_expr_state<value_t<E>, detail::build_type<E>, dyn_avg_pool_3d_expr<value_t<E>>>{{c1, c2, c3, s1, s2, s3, p1, p2, p3}, value};
+}
+
+/*!
+ * \brief 3D Average Pooling of the given matrix expression
+ * \param value The matrix expression
+ * \param c1 The first pooling ratio
+ * \param c2 The second pooling ratio
+ * \param c3 The third pooling ratio
+ * \return A expression representing the 3D Average Pooling of the input expression.
+ */
+template <typename E, cpp_enable_if((etl::decay_traits<E>::dimensions() > 3))>
+auto avg_pool_3d(E&& value, size_t c1, size_t c2, size_t c3, size_t s1, size_t s2, size_t s3, size_t p1 = 0, size_t p2 = 0, size_t p3 = 0) {
+    return temporary_unary_expr_state<value_t<E>, detail::build_type<E>, dyn_deep_avg_pool_3d_expr<value_t<E>, etl::decay_traits<E>::dimensions()>>{{c1, c2, c3, s1, s2, s3, p1, p2, p3}, value};
 }
 
 /*!
