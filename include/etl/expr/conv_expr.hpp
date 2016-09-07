@@ -166,17 +166,11 @@ struct basic_conv_expr : impl_expr<basic_conv_expr<T, D, Impl>> {
  * \tparam Impl The implementation class
  */
 template <typename T, std::size_t D, typename Impl>
-struct dyn_basic_conv_expr {
+struct dyn_basic_conv_expr : dyn_impl_expr<dyn_basic_conv_expr<T, D, Impl>> {
     static_assert(D > 0, "0D convolution is not valid");
 
     using value_type = T;                               ///< The type of value of the expression
     using this_type  = dyn_basic_conv_expr<T, D, Impl>; ///< The type of this expression
-
-    /*!
-     * \brief Helper traits to get the result type of this expression
-     */
-    template <typename... Subs>
-    using result_type = detail::dyn_expr_result_t<this_type, Subs...>;
 
     static constexpr const bool is_gpu = is_cufft_enabled || is_cudnn_enabled; ///< Indicates if the expression runs on GPU
 
@@ -195,26 +189,6 @@ struct dyn_basic_conv_expr {
     template<typename... Args>
     explicit dyn_basic_conv_expr(Args&&... args) : impl(std::forward<Args>(args)...){
         //Nothing else to init
-    }
-
-    /*!
-     * \brief Allocate the dynamic temporary for the expression
-     * \param subs The sub expressions
-     * \return a pointer to the temporary
-     */
-    template <typename... Subs, std::size_t... I>
-    result_type<Subs...>* dyn_allocate(std::index_sequence<I...> /*seq*/, Subs&&... subs) const {
-        return new result_type<Subs...>(this->dim(subs..., I)...);
-    }
-
-    /*!
-     * \brief Allocate the temporary for the expression
-     * \param args The sub expressions
-     * \return a pointer to the temporary
-     */
-    template <typename... Subs>
-    result_type<Subs...>* allocate(Subs&&... args) const  {
-        return dyn_allocate(std::make_index_sequence<this_type::dimensions()>(), std::forward<Subs>(args)...);
     }
 
     /*!

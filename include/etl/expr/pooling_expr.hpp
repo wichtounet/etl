@@ -30,13 +30,6 @@ struct basic_pool_2d_expr : impl_expr<basic_pool_2d_expr<T, C1, C2, S1, S2, P1, 
     using value_type = T;                                           ///< Type of values of the expression
     using this_type  = basic_pool_2d_expr<T, C1, C2, S1, S2, P1, P2, Impl>; ///< The type of this expression
 
-    /*!
-     * \brief Compute the result type given the input type
-     * \tparam A the input type
-     */
-    template <typename A>
-    using result_type = detail::expr_result_t<this_type, A>;
-
     static constexpr const bool is_gpu = false; ///< no GPU implementation
 
     /*!
@@ -151,13 +144,6 @@ struct basic_deep_pool_2d_expr : impl_expr<basic_deep_pool_2d_expr<T, C1, C2, S1
 
     using value_type = T;                                           ///< Type of values of the expression
     using this_type  = basic_deep_pool_2d_expr<T, C1, C2, S1, S2, P1, P2, D, Impl>; ///< The type of this expression
-
-    /*!
-     * \brief Compute the result type given the input type
-     * \tparam A the input type
-     */
-    template <typename A>
-    using result_type = detail::expr_result_t<this_type, A>;
 
     static constexpr const bool is_gpu = false; ///< no GPU implementation
 
@@ -312,13 +298,6 @@ struct basic_pool_3d_expr : impl_expr<basic_pool_3d_expr<T, C1, C2, C3, S1, S2, 
     using value_type = T;                                                   ///< The type of values of the expression
     using this_type  = basic_pool_3d_expr<T, C1, C2, C3, S1, S2, S3, P1, P2, P3, Impl>; ///< The type of this expression
 
-    /*!
-     * \brief Compute the result type given the input type
-     * \tparam A the input type
-     */
-    template <typename A>
-    using result_type = detail::expr_result_t<this_type, A>;
-
     static constexpr const bool is_gpu = false; ///< no GPU implementation
 
     /*!
@@ -438,13 +417,6 @@ struct basic_pool_deep_3d_expr : impl_expr<basic_pool_deep_3d_expr<T, C1, C2, C3
 
     using value_type = T;                                                   ///< The type of values of the expression
     using this_type  = basic_pool_deep_3d_expr<T, C1, C2, C3, S1, S2, S3, P1, P2, P3, D, Impl>; ///< The type of this expression
-
-    /*!
-     * \brief Compute the result type given the input type
-     * \tparam A the input type
-     */
-    template <typename A>
-    using result_type = detail::expr_result_t<this_type, A>;
 
     static constexpr const bool is_gpu = false; ///< no GPU implementation
 
@@ -697,13 +669,6 @@ template <typename T, typename Impl>
 struct basic_dyn_pool_3d_expr : dyn_impl_expr<basic_dyn_pool_3d_expr<T, Impl>> {
     using value_type = T;                                       ///< The type of values of the expression
     using this_type  = basic_dyn_pool_3d_expr<T, Impl>; ///< The type of this expression
-
-    /*!
-     * \brief Compute the result type given the input type
-     * \tparam A the input type
-     */
-    template <typename A>
-    using result_type = detail::dyn_expr_result_t<this_type, A>;
 
     static constexpr const bool is_gpu = false; ///< no GPU implementation
 
