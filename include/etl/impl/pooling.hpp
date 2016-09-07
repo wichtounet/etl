@@ -132,7 +132,7 @@ struct max_pool_2d {
      * \param c2 The second dimension pooling ratio
      */
     template <typename A, typename M>
-    static void apply(A&& sub, M& m, size_t c1, size_t c2, size_t s1, size_t s2, size_t p1, size_t p2) {
+    static void apply(const A& sub, M&& m, size_t c1, size_t c2, size_t s1, size_t s2, size_t p1, size_t p2) {
         const size_t o1 = (etl::dim<0>(sub) - c1 + 2 * p1) / s1 + 1;
         const size_t o2 = (etl::dim<1>(sub) - c2 + 2 * p2) / s2 + 1;
 
@@ -287,7 +287,7 @@ struct avg_pool_2d {
      * \param c2 The second dimension pooling ratio
      */
     template <typename A, typename M>
-    static void apply(A&& sub, M& m, size_t c1, size_t c2, size_t s1, size_t s2, size_t p1, size_t p2) {
+    static void apply(const A& sub, M&& m, size_t c1, size_t c2, size_t s1, size_t s2, size_t p1, size_t p2) {
         const size_t o1 = (etl::dim<0>(sub) - c1 + 2 * p1) / s1 + 1;
         const size_t o2 = (etl::dim<1>(sub) - c2 + 2 * p2) / s2 + 1;
 
@@ -388,7 +388,7 @@ struct max_pool_3d {
      * \tparam C3 The third dimension pooling ratio
      */
     template <size_t C1, size_t C2, size_t C3,size_t S1, size_t S2, size_t S3, size_t P1, size_t P2, size_t P3, typename A, typename M>
-    static void apply(A&& sub, M& m) {
+    static void apply(const A& sub, M&& m) {
         const size_t o1 = (etl::dim<0>(sub) - C1 + 2 * P1) / S1 + 1;
         const size_t o2 = (etl::dim<1>(sub) - C2 + 2 * P2) / S2 + 1;
         const size_t o3 = (etl::dim<2>(sub) - C3 + 2 * P3) / S3 + 1;
@@ -486,7 +486,7 @@ struct max_pool_3d {
      * \param c3 The third dimension pooling ratio
      */
     template <typename A, typename M>
-    static void apply(A&& sub, M& m, size_t c1, size_t c2, size_t c3, size_t s1, size_t s2, size_t s3, size_t p1, size_t p2, size_t p3) {
+    static void apply(const A& sub, M&& m, size_t c1, size_t c2, size_t c3, size_t s1, size_t s2, size_t s3, size_t p1, size_t p2, size_t p3) {
         const size_t o1 = (etl::dim<0>(sub) - c1 + 2 * p1) / s1 + 1;
         const size_t o2 = (etl::dim<1>(sub) - c2 + 2 * p2) / s2 + 1;
         const size_t o3 = (etl::dim<2>(sub) - c3 + 2 * p3) / s3 + 1;
@@ -610,7 +610,7 @@ struct avg_pool_3d {
      * \tparam C3 The third dimension pooling ratio
      */
     template <size_t C1, size_t C2, size_t C3,size_t S1, size_t S2, size_t S3, size_t P1, size_t P2, size_t P3, typename A, typename M>
-    static void apply(A&& sub, M& m) {
+    static void apply(const A& sub, M&& m) {
         const size_t o1 = (etl::dim<0>(sub) - C1 + 2 * P1) / S1 + 1;
         const size_t o2 = (etl::dim<1>(sub) - C2 + 2 * P2) / S2 + 1;
         const size_t o3 = (etl::dim<2>(sub) - C3 + 2 * P3) / S3 + 1;
@@ -708,7 +708,7 @@ struct avg_pool_3d {
      * \param c3 The third dimension pooling ratio
      */
     template <typename A, typename M>
-    static void apply(A&& sub, M& m, size_t c1, size_t c2, size_t c3, size_t s1, size_t s2, size_t s3, size_t p1, size_t p2, size_t p3) {
+    static void apply(const A& sub, M&& m, size_t c1, size_t c2, size_t c3, size_t s1, size_t s2, size_t s3, size_t p1, size_t p2, size_t p3) {
         const size_t o1 = (etl::dim<0>(sub) - c1 + 2 * p1) / s1 + 1;
         const size_t o2 = (etl::dim<1>(sub) - c2 + 2 * p2) / s2 + 1;
         const size_t o3 = (etl::dim<2>(sub) - c3 + 2 * p3) / s3 + 1;

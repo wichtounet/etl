@@ -47,7 +47,7 @@ auto max_pool_2d(E&& value) {
  * \param c2 The second pooling ratio
  * \return A expression representing the 2D Max Pooling of the input expression.
  */
-template <typename E>
+template <typename E, cpp_enable_if((etl::decay_traits<E>::dimensions() == 2))>
 auto max_pool_2d(E&& value, size_t c1, size_t c2) {
     return temporary_unary_expr_state<value_t<E>, detail::build_type<E>, dyn_max_pool_2d_expr<value_t<E>>>{{c1, c2, c1, c2, 0, 0}, value};
 }
@@ -59,9 +59,33 @@ auto max_pool_2d(E&& value, size_t c1, size_t c2) {
  * \param c2 The second pooling ratio
  * \return A expression representing the 2D Max Pooling of the input expression.
  */
-template <typename E>
+template <typename E, cpp_enable_if((etl::decay_traits<E>::dimensions() > 2))>
+auto max_pool_2d(E&& value, size_t c1, size_t c2) {
+    return temporary_unary_expr_state<value_t<E>, detail::build_type<E>, dyn_deep_max_pool_2d_expr<value_t<E>, etl::decay_traits<E>::dimensions()>>{{c1, c2, c1, c2, 0, 0}, value};
+}
+
+/*!
+ * \brief 2D Max Pooling of the given matrix expression
+ * \param value The matrix expression
+ * \param c1 The first pooling ratio
+ * \param c2 The second pooling ratio
+ * \return A expression representing the 2D Max Pooling of the input expression.
+ */
+template <typename E, cpp_enable_if((etl::decay_traits<E>::dimensions() == 2))>
 auto max_pool_2d(E&& value, size_t c1, size_t c2, size_t s1, size_t s2, size_t p1 = 0, size_t p2 = 0) {
     return temporary_unary_expr_state<value_t<E>, detail::build_type<E>, dyn_max_pool_2d_expr<value_t<E>>>{{c1, c2, s1, s2, p1, p2}, value};
+}
+
+/*!
+ * \brief 2D Max Pooling of the given matrix expression
+ * \param value The matrix expression
+ * \param c1 The first pooling ratio
+ * \param c2 The second pooling ratio
+ * \return A expression representing the 2D Max Pooling of the input expression.
+ */
+template <typename E, cpp_enable_if((etl::decay_traits<E>::dimensions() > 2))>
+auto max_pool_2d(E&& value, size_t c1, size_t c2, size_t s1, size_t s2, size_t p1 = 0, size_t p2 = 0) {
+    return temporary_unary_expr_state<value_t<E>, detail::build_type<E>, dyn_deep_max_pool_2d_expr<value_t<E>, etl::decay_traits<E>::dimensions()>>{{c1, c2, s1, s2, p1, p2}, value};
 }
 
 /*!
@@ -95,7 +119,7 @@ auto avg_pool_2d(E&& value) {
  * \param c2 The second pooling ratio
  * \return A expression representing the 2D Average Pooling of the input expression.
  */
-template <typename E>
+template <typename E, cpp_enable_if((etl::decay_traits<E>::dimensions() == 2))>
 auto avg_pool_2d(E&& value, size_t c1, size_t c2) {
     return temporary_unary_expr_state<value_t<E>, detail::build_type<E>, dyn_avg_pool_2d_expr<value_t<E>>>{{c1, c2, c1, c2, 0, 0}, value};
 }
@@ -107,9 +131,33 @@ auto avg_pool_2d(E&& value, size_t c1, size_t c2) {
  * \param c2 The second pooling ratio
  * \return A expression representing the 2D Average Pooling of the input expression.
  */
-template <typename E>
+template <typename E, cpp_enable_if((etl::decay_traits<E>::dimensions() > 2))>
+auto avg_pool_2d(E&& value, size_t c1, size_t c2) {
+    return temporary_unary_expr_state<value_t<E>, detail::build_type<E>, dyn_deep_avg_pool_2d_expr<value_t<E>, etl::decay_traits<E>::dimensions()>>{{c1, c2, c1, c2, 0, 0}, value};
+}
+
+/*!
+ * \brief 2D Average Pooling of the given matrix expression
+ * \param value The matrix expression
+ * \param c1 The first pooling ratio
+ * \param c2 The second pooling ratio
+ * \return A expression representing the 2D Average Pooling of the input expression.
+ */
+template <typename E, cpp_enable_if((etl::decay_traits<E>::dimensions() == 2))>
 auto avg_pool_2d(E&& value, size_t c1, size_t c2, size_t s1, size_t s2, size_t p1 = 0, size_t p2 = 0) {
     return temporary_unary_expr_state<value_t<E>, detail::build_type<E>, dyn_avg_pool_2d_expr<value_t<E>>>{{c1, c2, s1, s2, p1, p2}, value};
+}
+
+/*!
+ * \brief 2D Average Pooling of the given matrix expression
+ * \param value The matrix expression
+ * \param c1 The first pooling ratio
+ * \param c2 The second pooling ratio
+ * \return A expression representing the 2D Average Pooling of the input expression.
+ */
+template <typename E, cpp_enable_if((etl::decay_traits<E>::dimensions() > 2))>
+auto avg_pool_2d(E&& value, size_t c1, size_t c2, size_t s1, size_t s2, size_t p1 = 0, size_t p2 = 0) {
+    return temporary_unary_expr_state<value_t<E>, detail::build_type<E>, dyn_deep_avg_pool_2d_expr<value_t<E>, etl::decay_traits<E>::dimensions()>>{{c1, c2, s1, s2, p1, p2}, value};
 }
 
 /*!
