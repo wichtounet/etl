@@ -148,6 +148,7 @@ struct dyn_impl_expr {
      */
     template <typename... Subs>
     using result_type = detail::expr_result_t<derived_t, Subs...>;
+    //TODO Why not dyn here ?????
 
     /*!
      * \brief Returns a reference to the derived object, i.e. the object using the CRTP injector.
