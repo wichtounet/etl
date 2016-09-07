@@ -277,6 +277,27 @@ struct avg_pool_2d {
  * \brief Functor for 3D Max Pooling
  */
 struct max_pool_3d {
+    template <typename A>
+    static auto pool_block_border(const A& sub, size_t i, size_t j, size_t k, size_t c1, size_t c2, size_t c3, size_t s1, size_t s2, size_t s3, size_t p1, size_t p2, size_t p3) {
+        auto max = value_t<A>(0);
+
+        const auto s_i = i * s1;
+        const auto s_j = j * s2;
+        const auto s_k = k * s3;
+
+        for (size_t ii = 0; ii < c1; ++ii) {
+            for (size_t jj = 0; jj < c2; ++jj) {
+                for (size_t kk = 0; kk < c3; ++kk) {
+                    if(s_i + ii >= p1 && (s_i + ii) - p1 < etl::dim<0>(sub) && s_j + jj >= p2 && (s_j + jj) - p2 < etl::dim<1>(sub) && s_k + kk >= p3 && (s_k + kk) - p3 < etl::dim<2>(sub)){
+                        max = std::max(max, sub(s_i + ii - p1, s_j + jj - p2, s_k + kk - p3));
+                    }
+                }
+            }
+        }
+
+        return max;
+    }
+
     /*!
      * \brief Pool a block of the sub expression
      * \param sub The sub expression
@@ -287,14 +308,18 @@ struct max_pool_3d {
      * \tparam C2 The second dimension pooling ratio
      * \tparam C3 The third dimension pooling ratio
      */
-    template <size_t C1, size_t C2, size_t C3, size_t S1, size_t S2, size_t S3, typename A>
+    template <size_t C1, size_t C2, size_t C3, size_t S1, size_t S2, size_t S3, size_t P1, size_t P2, size_t P3, typename A>
     static auto pool_block(const A& sub, size_t i, size_t j, size_t k) {
-        auto max = sub(i * S1, j * S2, k * S3);
+        const auto s_i = i * S1 - P1;
+        const auto s_j = j * S2 - P2;
+        const auto s_k = k * S3 - P3;
+
+        auto max = sub(s_i, s_j, s_k);
 
         for (size_t ii = 0; ii < C1; ++ii) {
             for (size_t jj = 0; jj < C2; ++jj) {
                 for (size_t kk = 0; kk < C3; ++kk) {
-                    max = std::max(max, sub(i * S1 + ii, j * S2 + jj, k * S3 + kk));
+                    max = std::max(max, sub(s_i + ii, s_j + jj, s_k + kk));
                 }
             }
         }
@@ -310,16 +335,66 @@ struct max_pool_3d {
      * \tparam C2 The second dimension pooling ratio
      * \tparam C3 The third dimension pooling ratio
      */
-    template <size_t C1, size_t C2, size_t C3,size_t S1, size_t S2, size_t S3, typename A, typename M>
+    template <size_t C1, size_t C2, size_t C3,size_t S1, size_t S2, size_t S3, size_t P1, size_t P2, size_t P3, typename A, typename M>
     static void apply(A&& sub, M& m) {
-        const size_t o1 = (etl::dim<0>(sub) - C1) / S1 + 1;
-        const size_t o2 = (etl::dim<1>(sub) - C2) / S2 + 1;
-        const size_t o3 = (etl::dim<2>(sub) - C3) / S3 + 1;
+        const size_t o1 = (etl::dim<0>(sub) - C1 + 2 * P1) / S1 + 1;
+        const size_t o2 = (etl::dim<1>(sub) - C2 + 2 * P2) / S2 + 1;
+        const size_t o3 = (etl::dim<2>(sub) - C3 + 2 * P3) / S3 + 1;
 
-        for (size_t i = 0; i < o1; ++i) {
-            for (size_t j = 0; j < o2; ++j) {
-                for (size_t k = 0; k < o3; ++k) {
-                    m(i, j, k) = pool_block<C1, C2, C3, S1, S2, S3>(sub, i, j, k);
+        if(P1 || P2 || P1){
+            for (size_t i = 0; i < P1; ++i) {
+                for (size_t j = 0; j < o2; ++j) {
+                    for (size_t k = 0; k < o3; ++k) {
+                        m(i, j, k) = pool_block_border(sub, i, j, k, C1, C2, C3, S1, S2, S3, P1, P2, P3);
+                    }
+                }
+            }
+
+            for (size_t i = o1 - P1; i < o1; ++i) {
+                for (size_t j = 0; j < o2; ++j) {
+                    for (size_t k = 0; k < o3; ++k) {
+                        m(i, j, k) = pool_block_border(sub, i, j, k, C1, C2, C3, S1, S2, S3, P1, P2, P3);
+                    }
+                }
+            }
+
+            for (size_t j = 0; j < P2; ++j) {
+                for (size_t i = P1; i < o1 - P1; ++i) {
+                    for (size_t k = 0; k < o3; ++k) {
+                        m(i, j, k) = pool_block_border(sub, i, j, k, C1, C2, C3, S1, S2, S3, P1, P2, P3);
+                    }
+                }
+            }
+
+            for (size_t j = o2 - P2; j < o2; ++j) {
+                for (size_t i = P1; i < o1 - P1; ++i) {
+                    for (size_t k = 0; k < o3; ++k) {
+                        m(i, j, k) = pool_block_border(sub, i, j, k, C1, C2, C3, S1, S2, S3, P1, P2, P3);
+                    }
+                }
+            }
+
+            for (size_t k = 0; k < P3; ++k) {
+                for (size_t i = P1; i < o1 - P1; ++i) {
+                    for (size_t j = P2; j < o2 - P2; ++j) {
+                        m(i, j, k) = pool_block_border(sub, i, j, k, C1, C2, C3, S1, S2, S3, P1, P2, P3);
+                    }
+                }
+            }
+
+            for (size_t k = o3 - P3; k < o3; ++k) {
+                for (size_t i = P1; i < o1 - P1; ++i) {
+                    for (size_t j = P2; j < o2 - P2; ++j) {
+                        m(i, j, k) = pool_block_border(sub, i, j, k, C1, C2, C3, S1, S2, S3, P1, P2, P3);
+                    }
+                }
+            }
+        }
+
+        for (size_t i = P1; i < o1 - P1; ++i) {
+            for (size_t j = P2; j < o2 - P2; ++j) {
+                for (size_t k = P3; k < o3 - P3; ++k) {
+                    m(i, j, k) = pool_block<C1, C2, C3, S1, S2, S3, P1, P2, P3>(sub, i, j, k);
                 }
             }
         }
@@ -388,14 +463,14 @@ struct avg_pool_3d {
      * \tparam C2 The second dimension pooling ratio
      * \tparam C3 The third dimension pooling ratio
      */
-    template <size_t C1, size_t C2, size_t C3,size_t S1, size_t S2, size_t S3, typename A>
+    template <size_t C1, size_t C2, size_t C3,size_t S1, size_t S2, size_t S3, size_t P1, size_t P2, size_t P3, typename A>
     static auto pool_block(const A& sub, size_t i, size_t j, size_t k) {
         value_t<A> avg = 0;
 
         for (size_t ii = 0; ii < C1; ++ii) {
             for (size_t jj = 0; jj < C2; ++jj) {
                 for (size_t kk = 0; kk < C3; ++kk) {
-                    avg += sub(i * S1 + ii, j * S2 + jj, k * S3 + kk);
+                    avg += sub(i * S1 + ii - P1, j * S2 + jj - P2, k * S3 + kk - P3);
                 }
             }
         }
@@ -411,16 +486,16 @@ struct avg_pool_3d {
      * \tparam C2 The second dimension pooling ratio
      * \tparam C3 The third dimension pooling ratio
      */
-    template <size_t C1, size_t C2, size_t C3,size_t S1, size_t S2, size_t S3, typename A, typename M>
+    template <size_t C1, size_t C2, size_t C3,size_t S1, size_t S2, size_t S3, size_t P1, size_t P2, size_t P3, typename A, typename M>
     static void apply(A&& sub, M& m) {
-        const size_t o1 = (etl::dim<0>(sub) - C1) / S1 + 1;
-        const size_t o2 = (etl::dim<1>(sub) - C2) / S2 + 1;
-        const size_t o3 = (etl::dim<2>(sub) - C3) / S3 + 1;
+        const size_t o1 = (etl::dim<0>(sub) - C1 + 2 * P1) / S1 + 1;
+        const size_t o2 = (etl::dim<1>(sub) - C2 + 2 * P2) / S2 + 1;
+        const size_t o3 = (etl::dim<2>(sub) - C3 + 2 * P3) / S3 + 1;
 
         for (size_t i = 0; i < o1; ++i) {
             for (size_t j = 0; j < o2; ++j) {
                 for (size_t k = 0; k < o3; ++k) {
-                    m(i, j, k) = pool_block<C1, C2, C3, S1, S2, S3>(sub, i, j, k);
+                    m(i, j, k) = pool_block<C1, C2, C3, S1, S2, S3, P1, P2, P3>(sub, i, j, k);
                 }
             }
         }
