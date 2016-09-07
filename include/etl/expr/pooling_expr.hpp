@@ -20,7 +20,7 @@ namespace etl {
 /*!
  * \brief Base class for all 2D pooling expressions
  */
-template <typename T, std::size_t C1, std::size_t C2, std::size_t S1, std::size_t S2, std::size_t P1, std::size_t P2, typename Impl>
+template <typename T, size_t C1, size_t C2, size_t S1, size_t S2, size_t P1, size_t P2, typename Impl>
 struct basic_pool_2d_expr : impl_expr<basic_pool_2d_expr<T, C1, C2, S1, S2, P1, P2, Impl>> {
     static_assert(C1 > 0, "C1 must be greater than 0");
     static_assert(C2 > 0, "C2 must be greater than 0");
@@ -68,8 +68,8 @@ struct basic_pool_2d_expr : impl_expr<basic_pool_2d_expr<T, C1, C2, S1, S2, P1, 
      * \tparam DD The dimension number
      * \return The DDth dimension of the epxression
      */
-    template <typename A, std::size_t DD>
-    static constexpr std::size_t dim() {
+    template <typename A, size_t DD>
+    static constexpr size_t dim() {
         return DD == 0 ? (decay_traits<A>::template dim<0>() - C1 + 2 * P1) / S1 + 1
                        : (decay_traits<A>::template dim<1>() - C2 + 2 * P2) / S2 + 1;
     }
@@ -81,7 +81,7 @@ struct basic_pool_2d_expr : impl_expr<basic_pool_2d_expr<T, C1, C2, S1, S2, P1, 
      * \return The dth dimension
      */
     template <typename A>
-    static std::size_t dim(const A& a, std::size_t d) {
+    static size_t dim(const A& a, size_t d) {
         if (d == 0) {
             return (etl::dim<0>(a) - C1 + 2 * P1) / S1 + 1;
         } else {
@@ -95,7 +95,7 @@ struct basic_pool_2d_expr : impl_expr<basic_pool_2d_expr<T, C1, C2, S1, S2, P1, 
      * \return the size of the expression given the input
      */
     template <typename A>
-    static std::size_t size(const A& a) {
+    static size_t size(const A& a) {
         return this_type::dim(a, 0) * this_type::dim(a, 1);
     }
 
@@ -105,7 +105,7 @@ struct basic_pool_2d_expr : impl_expr<basic_pool_2d_expr<T, C1, C2, S1, S2, P1, 
      * \return the size of the expression given the input type
      */
     template <typename A>
-    static constexpr std::size_t size() {
+    static constexpr size_t size() {
         return this_type::template dim<A, 0>() * this_type::template dim<A, 1>();
     }
 
@@ -122,7 +122,7 @@ struct basic_pool_2d_expr : impl_expr<basic_pool_2d_expr<T, C1, C2, S1, S2, P1, 
      * \brief Return the number of dimensions of the expression
      * \return the nubmer of dimensions of the expression
      */
-    static constexpr std::size_t dimensions() {
+    static constexpr size_t dimensions() {
         return 2;
     }
 };
@@ -130,19 +130,19 @@ struct basic_pool_2d_expr : impl_expr<basic_pool_2d_expr<T, C1, C2, S1, S2, P1, 
 /*!
  * \brief Max Pooling 2D expression type
  */
-template <typename T, std::size_t C1, std::size_t C2, std::size_t S1, std::size_t S2, std::size_t P1, std::size_t P2>
+template <typename T, size_t C1, size_t C2, size_t S1, size_t S2, size_t P1, size_t P2>
 using max_pool_2d_expr = basic_pool_2d_expr<T, C1, C2, S1, S2, P1, P2, impl::max_pool_2d>;
 
 /*!
  * \brief Average Pooling 2D expression type
  */
-template <typename T, std::size_t C1, std::size_t C2, std::size_t S1, std::size_t S2, std::size_t P1, std::size_t P2>
+template <typename T, size_t C1, size_t C2, size_t S1, size_t S2, size_t P1, size_t P2>
 using avg_pool_2d_expr = basic_pool_2d_expr<T, C1, C2, S1, S2, P1, P2, impl::avg_pool_2d>;
 
 /*!
  * \brief Base class for all 2D pooling expressions
  */
-template <typename T, std::size_t C1, std::size_t C2, std::size_t S1, std::size_t S2, std::size_t P1, std::size_t P2, std::size_t D, typename Impl>
+template <typename T, size_t C1, size_t C2, size_t S1, size_t S2, size_t P1, size_t P2, size_t D, typename Impl>
 struct basic_deep_pool_2d_expr : impl_expr<basic_deep_pool_2d_expr<T, C1, C2, S1, S2, P1, P2, D, Impl>> {
     static_assert(C1 > 0, "C1 must be greater than 0");
     static_assert(C2 > 0, "C2 must be greater than 0");
@@ -183,7 +183,7 @@ struct basic_deep_pool_2d_expr : impl_expr<basic_deep_pool_2d_expr<T, C1, C2, S1
      */
     template <typename A, typename C, cpp_enable_if((etl::decay_traits<A>::dimensions() == 3))>
     static void apply_impl(const A& a, C&& c) {
-        for(std::size_t i = 0; i < etl::dim<0>(a); ++i){
+        for(size_t i = 0; i < etl::dim<0>(a); ++i){
             Impl::template apply<C1, C2, S1, S2, P1, P2>(a(i), c(i));
         }
     }
@@ -195,7 +195,7 @@ struct basic_deep_pool_2d_expr : impl_expr<basic_deep_pool_2d_expr<T, C1, C2, S1
      */
     template <typename A, typename C, cpp_enable_if((etl::decay_traits<A>::dimensions() > 3))>
     static void apply_impl(const A& a, C&& c) {
-        for(std::size_t i = 0; i < etl::dim<0>(a); ++i){
+        for(size_t i = 0; i < etl::dim<0>(a); ++i){
             apply_impl(a(i), c(i));
         }
     }
@@ -214,8 +214,8 @@ struct basic_deep_pool_2d_expr : impl_expr<basic_deep_pool_2d_expr<T, C1, C2, S1
      * \tparam DD The dimension number
      * \return The DDth dimension of the epxression
      */
-    template <typename A, std::size_t DD>
-    static constexpr std::size_t dim() {
+    template <typename A, size_t DD>
+    static constexpr size_t dim() {
         return DD == 0 ? (decay_traits<A>::template dim<0>() - C1 + 2 * P1) / S1 + 1
              : DD == 1 ? (decay_traits<A>::template dim<1>() - C2 + 2 * P2) / S2 + 1
                        : decay_traits<A>::template dim<DD>();
@@ -228,7 +228,7 @@ struct basic_deep_pool_2d_expr : impl_expr<basic_deep_pool_2d_expr<T, C1, C2, S1
      * \return The dth dimension
      */
     template <typename A>
-    static std::size_t dim(const A& a, std::size_t d) {
+    static size_t dim(const A& a, size_t d) {
         if (d == 0) {
             return (etl::dim<0>(a) - C1 + 2 * P1) / S1 + 1;
         } else if (d == 1){
@@ -244,9 +244,9 @@ struct basic_deep_pool_2d_expr : impl_expr<basic_deep_pool_2d_expr<T, C1, C2, S1
      * \return the size of the expression given the input
      */
     template <typename A>
-    static std::size_t size(const A& a) {
-        std::size_t acc = 1;
-        for (std::size_t i = 0; i < dimensions(); ++i) {
+    static size_t size(const A& a) {
+        size_t acc = 1;
+        for (size_t i = 0; i < dimensions(); ++i) {
             acc *= this_type::dim(a, i);
         }
         return acc;
@@ -256,8 +256,8 @@ struct basic_deep_pool_2d_expr : impl_expr<basic_deep_pool_2d_expr<T, C1, C2, S1
      * \brief Returns the multiplicative sum of the dimensions at the given indices
      * \return the multiplicative sum of the dimensions at the given indices
      */
-    template <typename A, std::size_t... I>
-    static constexpr std::size_t size_mul(const std::index_sequence<I...>& /*seq*/) {
+    template <typename A, size_t... I>
+    static constexpr size_t size_mul(const std::index_sequence<I...>& /*seq*/) {
         return mul_all<this_type::dim<A, I>()...>::value;
     }
 
@@ -266,7 +266,7 @@ struct basic_deep_pool_2d_expr : impl_expr<basic_deep_pool_2d_expr<T, C1, C2, S1
      * \return the size of the expression
      */
     template <typename A>
-    static constexpr std::size_t size() {
+    static constexpr size_t size() {
         return size_mul<A>(std::make_index_sequence<dimensions()>());
     }
 
@@ -283,7 +283,7 @@ struct basic_deep_pool_2d_expr : impl_expr<basic_deep_pool_2d_expr<T, C1, C2, S1
      * \brief Return the number of dimensions of the expression
      * \return the nubmer of dimensions of the expression
      */
-    static constexpr std::size_t dimensions() {
+    static constexpr size_t dimensions() {
         return D;
     }
 };
@@ -291,19 +291,19 @@ struct basic_deep_pool_2d_expr : impl_expr<basic_deep_pool_2d_expr<T, C1, C2, S1
 /*!
  * \brief Max Pooling 2D expression type
  */
-template <typename T, std::size_t C1, std::size_t C2, std::size_t S1, std::size_t S2, std::size_t P1, std::size_t P2, std::size_t D>
+template <typename T, size_t C1, size_t C2, size_t S1, size_t S2, size_t P1, size_t P2, size_t D>
 using deep_max_pool_2d_expr = basic_deep_pool_2d_expr<T, C1, C2, S1, S2, P1, P2, D, impl::max_pool_2d>;
 
 /*!
  * \brief Average Pooling 2D expression type
  */
-template <typename T, std::size_t C1, std::size_t C2, std::size_t S1, std::size_t S2, std::size_t P1, std::size_t P2, std::size_t D>
+template <typename T, size_t C1, size_t C2, size_t S1, size_t S2, size_t P1, size_t P2, size_t D>
 using deep_avg_pool_2d_expr = basic_deep_pool_2d_expr<T, C1, C2, S1, S2, P1, P2, D, impl::avg_pool_2d>;
 
 /*!
  * \brief Base class for all 3D pooling expressions
  */
-template <typename T, std::size_t C1, std::size_t C2, std::size_t C3, std::size_t S1, std::size_t S2, std::size_t S3, typename Impl>
+template <typename T, size_t C1, size_t C2, size_t C3, size_t S1, size_t S2, size_t S3, typename Impl>
 struct basic_pool_3d_expr : impl_expr<basic_pool_3d_expr<T, C1, C2, C3, S1, S2, S3, Impl>> {
     static_assert(C1 > 0, "C1 must be greater than 0");
     static_assert(C2 > 0, "C2 must be greater than 0");
@@ -350,8 +350,8 @@ struct basic_pool_3d_expr : impl_expr<basic_pool_3d_expr<T, C1, C2, C3, S1, S2, 
      * \tparam DD The dimension number
      * \return The DDth dimension of the epxression
      */
-    template <typename A, std::size_t DD>
-    static constexpr std::size_t dim() {
+    template <typename A, size_t DD>
+    static constexpr size_t dim() {
         return DD == 0 ? (decay_traits<A>::template dim<0>() - C1) / S1 + 1
              : DD == 1 ? (decay_traits<A>::template dim<1>() - C2) / S2 + 1
                        : (decay_traits<A>::template dim<2>() - C3) / S3 + 1;
@@ -364,7 +364,7 @@ struct basic_pool_3d_expr : impl_expr<basic_pool_3d_expr<T, C1, C2, C3, S1, S2, 
      * \return The dth dimension
      */
     template <typename A>
-    static std::size_t dim(const A& a, std::size_t d) {
+    static size_t dim(const A& a, size_t d) {
         if (d == 0) {
             return (etl::dim<0>(a) - C1) / S1 + 1;
         } else if (d == 1) {
@@ -380,7 +380,7 @@ struct basic_pool_3d_expr : impl_expr<basic_pool_3d_expr<T, C1, C2, C3, S1, S2, 
      * \return the size of the expression given the input
      */
     template <typename A>
-    static std::size_t size(const A& a) {
+    static size_t size(const A& a) {
         return this_type::dim(a, 0) * this_type::dim(a, 1) * this_type::dim(a, 2);
     }
 
@@ -390,7 +390,7 @@ struct basic_pool_3d_expr : impl_expr<basic_pool_3d_expr<T, C1, C2, C3, S1, S2, 
      * \return the size of the expression given the input type
      */
     template <typename A>
-    static constexpr std::size_t size() {
+    static constexpr size_t size() {
         return this_type::template dim<A, 0>() * this_type::template dim<A, 1>() * this_type::template dim<A, 2>();
     }
 
@@ -407,7 +407,7 @@ struct basic_pool_3d_expr : impl_expr<basic_pool_3d_expr<T, C1, C2, C3, S1, S2, 
      * \brief Return the number of dimensions of the expression
      * \return the nubmer of dimensions of the expression
      */
-    static constexpr std::size_t dimensions() {
+    static constexpr size_t dimensions() {
         return 3;
     }
 };
@@ -415,13 +415,13 @@ struct basic_pool_3d_expr : impl_expr<basic_pool_3d_expr<T, C1, C2, C3, S1, S2, 
 /*!
  * \brief Max Pooling 3D expression type
  */
-template <typename T, std::size_t C1, std::size_t C2, std::size_t C3, std::size_t S1, std::size_t S2, std::size_t S3>
+template <typename T, size_t C1, size_t C2, size_t C3, size_t S1, size_t S2, size_t S3>
 using max_pool_3d_expr = basic_pool_3d_expr<T, C1, C2, C3, S1, S2, S3, impl::max_pool_3d>;
 
 /*!
  * \brief Average Pooling 3D expression type
  */
-template <typename T, std::size_t C1, std::size_t C2, std::size_t C3, std::size_t S1, std::size_t S2, std::size_t S3>
+template <typename T, size_t C1, size_t C2, size_t C3, size_t S1, size_t S2, size_t S3>
 using avg_pool_3d_expr = basic_pool_3d_expr<T, C1, C2, C3, S1, S2, S3, impl::avg_pool_3d>;
 
 /*!
@@ -441,15 +441,15 @@ struct basic_dyn_pool_2d_expr : dyn_impl_expr<basic_dyn_pool_2d_expr<T, Impl>> {
 
     static constexpr const bool is_gpu = false; ///< no GPU implementation
 
-    const std::size_t c1; ///< First dimension pooling ratio
-    const std::size_t c2; ///< Second dimension pooling ratio
+    const size_t c1; ///< First dimension pooling ratio
+    const size_t c2; ///< Second dimension pooling ratio
 
     /*!
      * \brief Construct a new basic 2d pooling expression
      * \param c1 The first pooling factor
      * \param c2 The second pooling factor
      */
-    basic_dyn_pool_2d_expr(std::size_t c1, std::size_t c2) : c1(c1), c2(c2) {
+    basic_dyn_pool_2d_expr(size_t c1, size_t c2) : c1(c1), c2(c2) {
         // Nothing else to init
     }
 
@@ -484,7 +484,7 @@ struct basic_dyn_pool_2d_expr : dyn_impl_expr<basic_dyn_pool_2d_expr<T, Impl>> {
      * \return The dth dimension
      */
     template <typename A>
-    std::size_t dim(const A& a, std::size_t d) const {
+    size_t dim(const A& a, size_t d) const {
         if (d == 0) {
             return etl::dim<0>(a) / c1;
         } else {
@@ -498,7 +498,7 @@ struct basic_dyn_pool_2d_expr : dyn_impl_expr<basic_dyn_pool_2d_expr<T, Impl>> {
      * \return the size of the expression given the input
      */
     template <typename A>
-    std::size_t size(const A& a) const {
+    size_t size(const A& a) const {
         return (etl::dim<0>(a) / c1) * (etl::dim<1>(a) / c2);
     }
 
@@ -515,7 +515,7 @@ struct basic_dyn_pool_2d_expr : dyn_impl_expr<basic_dyn_pool_2d_expr<T, Impl>> {
      * \brief Return the number of dimensions of the expression
      * \return the nubmer of dimensions of the expression
      */
-    static constexpr std::size_t dimensions() {
+    static constexpr size_t dimensions() {
         return 2;
     }
 };
@@ -549,9 +549,9 @@ struct basic_dyn_pool_3d_expr : dyn_impl_expr<basic_dyn_pool_3d_expr<T, Impl>> {
 
     static constexpr const bool is_gpu = false; ///< no GPU implementation
 
-    const std::size_t c1; ///< First dimension pooling ratio
-    const std::size_t c2; ///< Second dimension pooling ratio
-    const std::size_t c3; ///< Third dimension pooling ratio
+    const size_t c1; ///< First dimension pooling ratio
+    const size_t c2; ///< Second dimension pooling ratio
+    const size_t c3; ///< Third dimension pooling ratio
 
     /*!
      * \brief Construct a new basic 3d pooling expression
@@ -559,7 +559,7 @@ struct basic_dyn_pool_3d_expr : dyn_impl_expr<basic_dyn_pool_3d_expr<T, Impl>> {
      * \param c2 The second pooling factor
      * \param c3 The third pooling factor
      */
-    basic_dyn_pool_3d_expr(std::size_t c1, std::size_t c2, std::size_t c3) : c1(c1), c2(c2), c3(c3) {
+    basic_dyn_pool_3d_expr(size_t c1, size_t c2, size_t c3) : c1(c1), c2(c2), c3(c3) {
         // Nothing else to init
     }
 
@@ -594,7 +594,7 @@ struct basic_dyn_pool_3d_expr : dyn_impl_expr<basic_dyn_pool_3d_expr<T, Impl>> {
      * \return The dth dimension
      */
     template <typename A>
-    std::size_t dim(const A& a, std::size_t d) const {
+    size_t dim(const A& a, size_t d) const {
         if (d == 0) {
             return etl::dim<0>(a) / c1;
         } else if (d == 1) {
@@ -610,7 +610,7 @@ struct basic_dyn_pool_3d_expr : dyn_impl_expr<basic_dyn_pool_3d_expr<T, Impl>> {
      * \return the size of the expression given the input
      */
     template <typename A>
-    std::size_t size(const A& a) const {
+    size_t size(const A& a) const {
         return (etl::dim<0>(a) / c1) * (etl::dim<1>(a) / c2) * (etl::dim<2>(a) / c3);
     }
 
@@ -627,7 +627,7 @@ struct basic_dyn_pool_3d_expr : dyn_impl_expr<basic_dyn_pool_3d_expr<T, Impl>> {
      * \brief Return the number of dimensions of the expression
      * \return the nubmer of dimensions of the expression
      */
-    static constexpr std::size_t dimensions() {
+    static constexpr size_t dimensions() {
         return 3;
     }
 };
