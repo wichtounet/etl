@@ -6,6 +6,8 @@
 //=======================================================================
 
 #ifdef ETL_DOCTEST
+#define DOCTEST_CONFIG_ASSERTION_PARAMETERS_BY_VALUE
+#define DOCTEST_CONFIG_SUPER_FAST_ASSERTS
 #define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
 #include "doctest/doctest.h"
 #else
