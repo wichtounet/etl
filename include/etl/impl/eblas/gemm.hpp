@@ -349,7 +349,7 @@ void gemm_macro_kernel(std::size_t mc, std::size_t nc, std::size_t kc, D alpha, 
     }
 }
 
-template <typename D>
+template<typename D>
 void gemm_nn(std::size_t m, std::size_t n, std::size_t k, D alpha, const D* A, std::size_t a_row_stride, std::size_t a_col_stride, const D* B, std::size_t b_row_stride, std::size_t b_col_stride, D beta, D* C, std::size_t c_row_stride, std::size_t c_col_stride) {
     if (alpha == 0.0 || k == 0) {
         dgescal(m, n, beta, C, c_row_stride, c_col_stride);
@@ -401,7 +401,7 @@ void gemm_nn(std::size_t m, std::size_t n, std::size_t k, D alpha, const D* A, s
  * param b The rhs of the multiplication
  * param c The result
  */
-template <typename A, typename B, typename C, cpp_enable_if(!is_complex<A>::value)>
+template <typename A, typename B, typename C, cpp_enable_if(is_double_precision<A>::value)>
 void gemm(A&& a, B&& b, C&& c) {
     gemm_nn(
         etl::dim<0>(a), etl::dim<1>(b), etl::dim<1>(a),
@@ -410,6 +410,33 @@ void gemm(A&& a, B&& b, C&& c) {
         b.memory_start(), row_stride(b), col_stride(b),
         value_t<A>(0.0),
         c.memory_start(), row_stride(c), col_stride(c));
+}
+
+/*!
+ * \brief Compute the matrix mutplication of a and b and store the result in c
+ * param a The lhs of the multiplication
+ * param b The rhs of the multiplication
+ * param c The result
+ */
+template <typename A, typename B, typename C, cpp_enable_if(is_single_precision<A>::value)>
+void gemm(A&& a_s, B&& b_s, C&& c_s) {
+    auto a = allocate<double>(etl::size(a_s));
+    auto b = allocate<double>(etl::size(b_s));
+    auto c = allocate<double>(etl::size(c_s));
+
+    direct_copy_n(a_s.memory_start(), a.get(), etl::size(a_s));
+    direct_copy_n(b_s.memory_start(), b.get(), etl::size(b_s));
+    direct_copy_n(c_s.memory_start(), c.get(), etl::size(c_s));
+
+    gemm_nn(
+        etl::dim<0>(a_s), etl::dim<1>(b_s), etl::dim<1>(a_s),
+        double(1.0),
+        a.get(), row_stride(a_s), col_stride(a_s),
+        b.get(), row_stride(b_s), col_stride(b_s),
+        double(0.0),
+        c.get(), row_stride(c_s), col_stride(c_s));
+
+    direct_copy_n(c.get(), c_s.memory_start(), etl::size(c_s));
 }
 
 /*!
