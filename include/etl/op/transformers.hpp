@@ -449,7 +449,7 @@ struct dyn_convmtx2_transformer {
  * \param m The output matrix
  * \param sub The input matrix
  * \param k1 The first dimension of ther kernel
- * \param k1 The second dimension of ther kernel
+ * \param k2 The second dimension of ther kernel
  */
 template <typename A, typename M>
 void convmtx2_direct_t(M& m, A&& sub, std::size_t k1, std::size_t k2) {
@@ -488,7 +488,7 @@ void convmtx2_direct_t(M& m, A&& sub, std::size_t k1, std::size_t k2) {
  * \param m The output matrix
  * \param sub The input image
  * \param k1 The first dimension of ther kernel
- * \param k1 The second dimension of ther kernel
+ * \param k2 The second dimension of ther kernel
  */
 template <typename A, typename M, cpp_disable_if(all_dma<A, M>::value)>
 void im2col_direct(M& m, A&& sub, std::size_t k1, std::size_t k2) {
@@ -517,7 +517,7 @@ void im2col_direct(M& m, A&& sub, std::size_t k1, std::size_t k2) {
  * \param m The output matrix
  * \param sub The input image
  * \param k1 The first dimension of ther kernel
- * \param k1 The second dimension of ther kernel
+ * \param k2 The second dimension of ther kernel
  */
 template <typename A, typename M, cpp_enable_if(all_dma<A, M>::value)>
 void im2col_direct(M& m, A&& sub, std::size_t k1, std::size_t k2) {
@@ -551,7 +551,7 @@ void im2col_direct(M& m, A&& sub, std::size_t k1, std::size_t k2) {
  * \param m The output matrix
  * \param sub The input image
  * \param k1 The first dimension of ther kernel
- * \param k1 The second dimension of ther kernel
+ * \param k2 The second dimension of ther kernel
  */
 template <typename A, typename M>
 void im2col_direct_tr(M& m, A&& sub, std::size_t k1, std::size_t k2) {
