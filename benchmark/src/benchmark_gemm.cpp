@@ -82,7 +82,7 @@ CPM_DIRECT_SECTION_TWO_PASS_NS_PF("A * x (c) [gemm]", gemv_policy,
     CPM_SECTION_INIT([](std::size_t d1, std::size_t d2){ return std::make_tuple(cmat(d1,d2), cvec(d2), cvec(d1)); }),
     CPM_SECTION_FUNCTOR("default", [](cmat& a, cvec& b, cvec& c){ c = a * b; }),
     CPM_SECTION_FUNCTOR("std", [](cmat& a, cvec& b, cvec& c){ c = selected_helper(etl::gemm_impl::STD, a * b); })
-    BLAS_SECTION_FUNCTOR("blas", [](cmat& a, cvec& b, cvec& c){ c = selected_helper(etl::gemm_impl::BLAS, a * b) })
+    BLAS_SECTION_FUNCTOR("blas", [](cmat& a, cvec& b, cvec& c){ c = selected_helper(etl::gemm_impl::BLAS, a * b); })
     CUBLAS_SECTION_FUNCTOR("cublas", [](cmat& a, cvec& b, cvec& c){ c = selected_helper(etl::gemm_impl::CUBLAS, a * b); })
 )
 
