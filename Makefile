@@ -46,6 +46,10 @@ ifneq (,$(ETL_PARALLEL))
 CXX_FLAGS += -DETL_PARALLEL
 endif
 
+ifneq (,$(ETL_EXTENDED))
+CXX_FLAGS += -DETL_EXTENDED_BENCH
+endif
+
 # On demand activation of cublas support
 ifneq (,$(ETL_CUBLAS))
 CXX_FLAGS += -DETL_CUBLAS_MODE $(shell pkg-config --cflags cublas)
