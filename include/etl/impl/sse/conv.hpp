@@ -1380,32 +1380,42 @@ void conv4_valid_flipped(const opaque_memory<T, 4>& input, const opaque_memory<T
 template <typename T>
 void conv4_valid_filter_flipped(const opaque_memory<T, 4>& input, const opaque_memory<T, 4>& kernel, const opaque_memory<T, 4>& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
     if (input.dim(0) > 0) {
-        auto conv_k_inc = conv.dim(1) * conv.dim(2) * conv.dim(3);
-        auto conv_c_inc = conv.dim(2) * conv.dim(3);
+        const auto conv_k_inc = conv.dim(1) * conv.dim(2) * conv.dim(3);
+        const auto conv_c_inc = conv.dim(2) * conv.dim(3);
 
-        auto kernel_i_inc = kernel.dim(1) * kernel.dim(2) * kernel.dim(3);
-        auto kernel_k_inc = kernel.dim(2) * kernel.dim(3);
+        const auto kernel_i_inc = kernel.dim(1) * kernel.dim(2) * kernel.dim(3);
+        const auto kernel_k_inc = kernel.dim(2) * kernel.dim(3);
 
-        auto input_i_inc = input.dim(1) * input.dim(2) * input.dim(3);
-        auto input_c_inc = input.dim(2) * input.dim(3);
+        const auto input_i_inc = input.dim(1) * input.dim(2) * input.dim(3);
+        const auto input_c_inc = input.dim(2) * input.dim(3);
+
+        const auto n1 = input.dim(2);
+        const auto n2 = input.dim(3);
+
+        const auto m1 = kernel.dim(2);
+        const auto m2 = kernel.dim(3);
+
+        const auto* input_mem  = input.memory_start();
+        const auto* kernel_mem = kernel.memory_start();
+        auto* conv_mem         = conv.memory_start();
 
         //i = 0
         for (std::size_t k = 0; k < kernel.dim(1); ++k) {
-            for(std::size_t c = 0; c < input.dim(1); ++c){
+            for (std::size_t c = 0; c < input.dim(1); ++c) {
                 conv2_valid_flipped_micro_kernel(
-                    input.memory_start() + 0 * input_i_inc + c * input_c_inc, input.dim(2), input.dim(3),
-                    kernel.memory_start() + 0 * kernel_i_inc + k * kernel_k_inc, kernel.dim(2), kernel.dim(3),
-                    conv.memory_start() + k * conv_k_inc + c * conv_c_inc, 0.0, s1, s2, p1, p2);
+                    input_mem + 0 * input_i_inc + c * input_c_inc, n1, n2,
+                    kernel_mem + 0 * kernel_i_inc + k * kernel_k_inc, m1, m2,
+                    conv_mem + k * conv_k_inc + c * conv_c_inc, 0.0, s1, s2, p1, p2);
             }
         }
 
         for (std::size_t i = 1; i < input.dim(0); ++i) {
             for (std::size_t k = 0; k < kernel.dim(1); ++k) {
-                for(std::size_t c = 0; c < input.dim(1); ++c){
+                for (std::size_t c = 0; c < input.dim(1); ++c) {
                     conv2_valid_flipped_micro_kernel(
-                        input.memory_start() + i * input_i_inc + c * input_c_inc, input.dim(2), input.dim(3),
-                        kernel.memory_start() + i * kernel_i_inc + k * kernel_k_inc, kernel.dim(2), kernel.dim(3),
-                        conv.memory_start() + k * conv_k_inc + c * conv_c_inc, 1.0, s1, s2, p1, p2);
+                        input_mem + i * input_i_inc + c * input_c_inc, n1, n2,
+                        kernel_mem + i * kernel_i_inc + k * kernel_k_inc, m1, m2,
+                        conv_mem + k * conv_k_inc + c * conv_c_inc, 1.0, s1, s2, p1, p2);
                 }
             }
         }
@@ -1415,32 +1425,42 @@ void conv4_valid_filter_flipped(const opaque_memory<T, 4>& input, const opaque_m
 template <typename T>
 void conv4_valid_filter(const opaque_memory<T, 4>& input, const opaque_memory<T, 4>& kernel, const opaque_memory<T, 4>& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
     if (input.dim(0) > 0) {
-        auto conv_k_inc = conv.dim(1) * conv.dim(2) * conv.dim(3);
-        auto conv_c_inc = conv.dim(2) * conv.dim(3);
+        const auto conv_k_inc = conv.dim(1) * conv.dim(2) * conv.dim(3);
+        const auto conv_c_inc = conv.dim(2) * conv.dim(3);
 
-        auto kernel_i_inc = kernel.dim(1) * kernel.dim(2) * kernel.dim(3);
-        auto kernel_k_inc = kernel.dim(2) * kernel.dim(3);
+        const auto kernel_i_inc = kernel.dim(1) * kernel.dim(2) * kernel.dim(3);
+        const auto kernel_k_inc = kernel.dim(2) * kernel.dim(3);
 
-        auto input_i_inc = input.dim(1) * input.dim(2) * input.dim(3);
-        auto input_c_inc = input.dim(2) * input.dim(3);
+        const auto input_i_inc = input.dim(1) * input.dim(2) * input.dim(3);
+        const auto input_c_inc = input.dim(2) * input.dim(3);
+
+        const auto n1 = input.dim(2);
+        const auto n2 = input.dim(3);
+
+        const auto m1 = kernel.dim(2);
+        const auto m2 = kernel.dim(3);
+
+        const auto* input_mem  = input.memory_start();
+        const auto* kernel_mem = kernel.memory_start();
+        auto* conv_mem         = conv.memory_start();
 
         //i = 0
         for (std::size_t k = 0; k < kernel.dim(1); ++k) {
-            for(std::size_t c = 0; c < input.dim(1); ++c){
+            for (std::size_t c = 0; c < input.dim(1); ++c) {
                 conv2_valid_micro_kernel(
-                    input.memory_start() + 0 * input_i_inc + c * input_c_inc, input.dim(2), input.dim(3),
-                    kernel.memory_start() + 0 * kernel_i_inc + k * kernel_k_inc, kernel.dim(2), kernel.dim(3),
-                    conv.memory_start() + k * conv_k_inc + c * conv_c_inc, 0.0, s1, s2, p1, p2);
+                    input_mem + 0 * input_i_inc + c * input_c_inc, n1, n2,
+                    kernel_mem + 0 * kernel_i_inc + k * kernel_k_inc, m1, m2,
+                    conv_mem + k * conv_k_inc + c * conv_c_inc, 0.0, s1, s2, p1, p2);
             }
         }
 
         for (std::size_t i = 1; i < input.dim(0); ++i) {
             for (std::size_t k = 0; k < kernel.dim(1); ++k) {
-                for(std::size_t c = 0; c < input.dim(1); ++c){
+                for (std::size_t c = 0; c < input.dim(1); ++c) {
                     conv2_valid_micro_kernel(
-                        input.memory_start() + i * input_i_inc + c * input_c_inc, input.dim(2), input.dim(3),
-                        kernel.memory_start() + i * kernel_i_inc + k * kernel_k_inc, kernel.dim(2), kernel.dim(3),
-                        conv.memory_start() + k * conv_k_inc + c * conv_c_inc, 1.0, s1, s2, p1, p2);
+                        input_mem + i * input_i_inc + c * input_c_inc, n1, n2,
+                        kernel_mem + i * kernel_i_inc + k * kernel_k_inc, m1, m2,
+                        conv_mem + k * conv_k_inc + c * conv_c_inc, 1.0, s1, s2, p1, p2);
                 }
             }
         }
