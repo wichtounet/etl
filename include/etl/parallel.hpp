@@ -42,14 +42,15 @@ inline bool select_parallel_2d(std::size_t n1, std::size_t t1, std::size_t n2, s
 template <typename Functor>
 inline void dispatch_1d(cpp::default_thread_pool<>& pool, bool p, Functor&& functor, std::size_t first, std::size_t last) {
     if (p) {
-        auto n     = last - first;
-        auto batch = n / threads;
+        const auto T     = pool.size();
+        const auto n     = last - first;
+        const auto batch = n / T;
 
-        for (std::size_t t = 0; t < threads - 1; ++t) {
+        for (std::size_t t = 0; t < T - 1; ++t) {
             pool.do_task(functor, first + t * batch, first + (t + 1) * batch);
         }
 
-        functor(first + (threads - 1) * batch, last);
+        functor(first + (T - 1) * batch, last);
 
         pool.wait();
     } else {
@@ -68,6 +69,25 @@ template <typename Functor>
 inline void dispatch_1d(bool p, Functor&& functor, std::size_t first, std::size_t last) {
     if (p) {
         cpp::default_thread_pool<> pool(threads - 1);
+        dispatch_1d(pool, p, std::forward<Functor>(functor), first, last);
+    } else {
+        functor(first, last);
+    }
+}
+
+/*!
+ * \brief Dispatch the elements of a range to a functor in a parallel manner
+ * \param p Boolean tag to indicate if parallel dispatching must be done
+ * \param functor The functor to execute
+ * \param first The beginning of the range
+ * \param last The end of the range
+ */
+template <typename Functor>
+inline void dispatch_1d_any(bool p, Functor&& functor, std::size_t first, std::size_t last) {
+    if (p) {
+        auto n = last - first;
+        size_t T = std::min(n, threads);
+        cpp::default_thread_pool<> pool(T - 1);
         dispatch_1d(pool, p, std::forward<Functor>(functor), first, last);
     } else {
         functor(first, last);
