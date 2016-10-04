@@ -849,6 +849,8 @@ inline void conv2_valid_flipped_micro_kernel(const float* in, std::size_t n1, st
         }
     }
 
+    // TODO The unrolling factor of 8 is too much for several architectures
+
     if(beta == 0.0f){
         for (std::size_t i = p1; i < c1 - p1; ++i) {
             for (std::size_t j = p2; j + 7 < c2 - p2; j += 8) {
