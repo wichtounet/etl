@@ -1291,19 +1291,86 @@ void conv4_valid_flipped(const opaque_memory<T, 4>& input, const opaque_memory<T
         auto input_i_inc = input.dim(1) * input.dim(2) * input.dim(3);
         auto input_c_inc = input.dim(2) * input.dim(3);
 
-        for(std::size_t i = 0; i < input.dim(0); ++i){
-            for(std::size_t k = 0; k < kernel.dim(0); ++k){
-                //c = 0
-                conv2_valid_flipped_micro_kernel(
-                    input.memory_start() + i * input_i_inc, input.dim(2), input.dim(3),
-                    kernel.memory_start() + k * kernel_k_inc, kernel.dim(2), kernel.dim(3),
-                    conv.memory_start() + i * conv_i_inc + k * conv_k_inc, 0.0, s1, s2, p1, p2);
+        const auto N = input.dim(0);  // The number of images
+        const auto K = kernel.dim(0); // The number of kernels
+        const auto C = input.dim(1);  // The number of channels
 
-                for(std::size_t c = 1; c < kernel.dim(1); ++c){
+        const auto m1 = kernel.dim(2);
+        const auto m2 = kernel.dim(3);
+
+        const auto n1 = input.dim(2);
+        const auto n2 = input.dim(3);
+
+        if(etl::is_parallel){
+            const auto* input_mem  = input.memory_start();
+            const auto* kernel_mem = kernel.memory_start();
+            auto* conv_mem         = conv.memory_start();
+
+            if(K > N){
+                auto batch_fun_k = [=](const size_t first, const size_t last) {
+                    if (last - first) {
+                        for (std::size_t i = 0; i < N; ++i) {
+                            for (std::size_t k = first; k < last; ++k) {
+                                //c = 0
+                                conv2_valid_flipped_micro_kernel(
+                                    input_mem + i * input_i_inc, n1, n2,
+                                    kernel_mem + k * kernel_k_inc, m1, m2,
+                                    conv_mem + i * conv_i_inc + k * conv_k_inc, 0.0, s1, s2, p1, p2);
+
+                                // c = [1, C]
+                                for (std::size_t c = 1; c < C; ++c) {
+                                    conv2_valid_flipped_micro_kernel(
+                                        input_mem + i * input_i_inc + c * input_c_inc, n1, n2,
+                                        kernel_mem + k * kernel_k_inc + c * kernel_c_inc, m1, m2,
+                                        conv_mem + i * conv_i_inc + k * conv_k_inc, 1.0, s1, s2, p1, p2);
+                                }
+                            }
+                        }
+                    }
+                };
+
+                etl::dispatch_1d_any(select_parallel(C, 2), batch_fun_k, 0, K);
+            } else {
+                auto batch_fun_n = [=](const size_t first, const size_t last) {
+                    if (last - first) {
+                        for (std::size_t i = first; i < last; ++i) {
+                            for (std::size_t k = 0; k < K; ++k) {
+                                //c = 0
+                                conv2_valid_flipped_micro_kernel(
+                                    input_mem + i * input_i_inc, n1, n2,
+                                    kernel_mem + k * kernel_k_inc, m1, m2,
+                                    conv_mem + i * conv_i_inc + k * conv_k_inc, 0.0, s1, s2, p1, p2);
+
+                                // c = [1, C]
+                                for (std::size_t c = 1; c < C; ++c) {
+                                    conv2_valid_flipped_micro_kernel(
+                                        input_mem + i * input_i_inc + c * input_c_inc, n1, n2,
+                                        kernel_mem + k * kernel_k_inc + c * kernel_c_inc, m1, m2,
+                                        conv_mem + i * conv_i_inc + k * conv_k_inc, 1.0, s1, s2, p1, p2);
+                                }
+                            }
+                        }
+                    }
+                };
+
+                etl::dispatch_1d_any(select_parallel(N, 2), batch_fun_n, 0, N);
+            }
+        } else {
+            for(std::size_t i = 0; i < N; ++i){
+                for(std::size_t k = 0; k < K; ++k){
+                    //c = 0
                     conv2_valid_flipped_micro_kernel(
-                        input.memory_start() + i * input_i_inc + c * input_c_inc, input.dim(2), input.dim(3),
-                        kernel.memory_start() + k * kernel_k_inc + c * kernel_c_inc, kernel.dim(2), kernel.dim(3),
-                        conv.memory_start() + i * conv_i_inc + k * conv_k_inc, 1.0, s1, s2, p1, p2);
+                        input.memory_start() + i * input_i_inc, n1, n2,
+                        kernel.memory_start() + k * kernel_k_inc, m1, m2,
+                        conv.memory_start() + i * conv_i_inc + k * conv_k_inc, 0.0, s1, s2, p1, p2);
+
+                    // c = [1, C]
+                    for(std::size_t c = 1; c < C; ++c){
+                        conv2_valid_flipped_micro_kernel(
+                            input.memory_start() + i * input_i_inc + c * input_c_inc, n1, n2,
+                            kernel.memory_start() + k * kernel_k_inc + c * kernel_c_inc, m1, m2,
+                            conv.memory_start() + i * conv_i_inc + k * conv_k_inc, 1.0, s1, s2, p1, p2);
+                    }
                 }
             }
         }
