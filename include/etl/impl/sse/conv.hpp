@@ -1234,7 +1234,7 @@ void conv4_valid(const opaque_memory<T, 4>& input, const opaque_memory<T, 4>& ke
                     }
                 };
 
-                etl::dispatch_1d_any(select_parallel(C, 2), batch_fun_k, 0, K);
+                etl::dispatch_1d_any(select_parallel(K, 2), batch_fun_k, 0, K);
             } else {
                 auto batch_fun_n = [=](const size_t first, const size_t last) {
                     if (last - first) {
@@ -1329,7 +1329,7 @@ void conv4_valid_flipped(const opaque_memory<T, 4>& input, const opaque_memory<T
                     }
                 };
 
-                etl::dispatch_1d_any(select_parallel(C, 2), batch_fun_k, 0, K);
+                etl::dispatch_1d_any(select_parallel(K, 2), batch_fun_k, 0, K);
             } else {
                 auto batch_fun_n = [=](const size_t first, const size_t last) {
                     if (last - first) {
