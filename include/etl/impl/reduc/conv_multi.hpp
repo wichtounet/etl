@@ -220,7 +220,7 @@ void blas_conv2_valid_multi_flipped(const I& input, const K_T& kernels, C&& conv
     const std::size_t f1 = etl::dim<1>(conv);
     const std::size_t f2 = etl::dim<2>(conv);
 
-    auto prepared_k = force_temporary(kernels);
+    //auto prepared_k = force_temporary(kernels);
 
     etl::dyn_matrix<value_t<I>, 2> input_col(k1 * k2, c1 * c2);
 
@@ -238,7 +238,7 @@ void blas_conv2_valid_multi_flipped(const I& input, const K_T& kernels, C&& conv
     if(s1 > 1 || s2 > 1){
         etl::dyn_matrix<value_t<I>, 3> tmp_result(K, c1, c2);
 
-        etl::reshape(tmp_result, K, c1 * c2) = mul(etl::reshape(prepared_k, K, k1 * k2), input_col);
+        etl::reshape(tmp_result, K, c1 * c2) = mul(etl::reshape(kernels, K, k1 * k2), input_col);
 
         // Strided copy of the large result into the small result
         for (std::size_t k = 0; k < K; ++k) {
@@ -249,7 +249,50 @@ void blas_conv2_valid_multi_flipped(const I& input, const K_T& kernels, C&& conv
             }
         }
     } else {
-        etl::reshape(conv, K, f1 * f2) = mul(etl::reshape(prepared_k, K, k1 * k2), input_col);
+        etl::reshape(conv, K, f1 * f2) = mul(etl::reshape(kernels, K, k1 * k2), input_col);
+    }
+}
+
+template <typename I_T, typename K_T, typename C_T>
+void blas_conv4_valid(const I_T& input, const K_T& kernel, C_T&& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
+    const auto N = etl::dim<0>(input);  // The number of images
+    const auto K = etl::dim<0>(kernel); // The number of kernels
+    const auto C = etl::dim<1>(input);  // The number of channels
+
+    const auto m1 = etl::dim<2>(kernel);
+    const auto m2 = etl::dim<3>(kernel);
+
+    const auto c1 = etl::dim<2>(conv);
+    const auto c2 = etl::dim<3>(conv);
+
+    etl::dyn_matrix<value_t<I_T>, 4> kernels(C, K, m1, m2);
+
+    for(std::size_t c = 0; c < C; ++c){
+        for(std::size_t k = 0; k < K; ++k){
+            kernels(c)(k) = fflip(kernel(k)(c));
+        }
+    }
+
+    conv = value_t<I_T>(0.0);
+
+    auto batch_fun_n = [&](const size_t first, const size_t last) {
+        if(last - first){
+            etl::dyn_matrix<value_t<I_T>, 3> tmp_result(K, c1, c2);
+
+            for (std::size_t i = first; i < last; ++i) {
+                for (std::size_t c = 0; c < C; ++c) {
+                    blas_conv2_valid_multi_flipped(input(i)(c), kernels(c), tmp_result, s1, s2, p1, p2);
+
+                    conv(i) += tmp_result;
+                }
+            }
+        }
+    };
+
+    if(etl::is_parallel){
+        dispatch_1d_any(select_parallel(N, 2), batch_fun_n, 0, N);
+    } else {
+        batch_fun_n(0, N);
     }
 }
 
