@@ -253,8 +253,8 @@ void blas_conv2_valid_multi_flipped(const I& input, const K_T& kernels, C&& conv
     }
 }
 
-template <typename I_T, typename K_T, typename C_T>
-void blas_conv4_valid(const I_T& input, const K_T& kernel, C_T&& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
+template <typename I_T, typename K_T, typename KS_T, typename C_T>
+void blas_conv4_valid_prepared(const I_T& input, const K_T& kernel, const KS_T& kernels, C_T&& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
     const auto N = etl::dim<0>(input);  // The number of images
     const auto K = etl::dim<0>(kernel); // The number of kernels
     const auto C = etl::dim<1>(input);  // The number of channels
@@ -267,14 +267,6 @@ void blas_conv4_valid(const I_T& input, const K_T& kernel, C_T&& conv, size_t s1
 
     const auto c1 = etl::dim<2>(conv);
     const auto c2 = etl::dim<3>(conv);
-
-    etl::dyn_matrix<value_t<I_T>, 4> kernels(C, K, m1, m2);
-
-    for(std::size_t c = 0; c < C; ++c){
-        for(std::size_t k = 0; k < K; ++k){
-            kernels(c)(k) = fflip(kernel(k)(c));
-        }
-    }
 
     conv = value_t<I_T>(0.0);
 
@@ -337,6 +329,44 @@ void blas_conv4_valid(const I_T& input, const K_T& kernel, C_T&& conv, size_t s1
     } else {
         batch_fun_n(0, N);
     }
+}
+
+template <typename I_T, typename K_T, typename C_T>
+void blas_conv4_valid(const I_T& input, const K_T& kernel, C_T&& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
+    const auto K = etl::dim<0>(kernel); // The number of kernels
+    const auto C = etl::dim<1>(input);  // The number of channels
+
+    const auto m1 = etl::dim<2>(kernel);
+    const auto m2 = etl::dim<3>(kernel);
+
+    etl::dyn_matrix<value_t<I_T>, 4> kernels(C, K, m1, m2);
+
+    for(std::size_t c = 0; c < C; ++c){
+        for(std::size_t k = 0; k < K; ++k){
+            kernels(c)(k) = fflip(kernel(k)(c));
+        }
+    }
+
+    blas_conv4_valid_prepared(input, kernel, kernels, conv, s1, s2, p1, p2);
+}
+
+template <typename I_T, typename K_T, typename C_T>
+void blas_conv4_valid_flipped(const I_T& input, const K_T& kernel, C_T&& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
+    const auto K = etl::dim<0>(kernel); // The number of kernels
+    const auto C = etl::dim<1>(input);  // The number of channels
+
+    const auto m1 = etl::dim<2>(kernel);
+    const auto m2 = etl::dim<3>(kernel);
+
+    etl::dyn_matrix<value_t<I_T>, 4> kernels(C, K, m1, m2);
+
+    for(std::size_t c = 0; c < C; ++c){
+        for(std::size_t k = 0; k < K; ++k){
+            kernels(c)(k) = kernel(k)(c);
+        }
+    }
+
+    blas_conv4_valid_prepared(input, kernel, kernels, conv, s1, s2, p1, p2);
 }
 
 } //end of namespace reduc
