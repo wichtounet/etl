@@ -316,9 +316,9 @@ void blas_conv4_valid(const I_T& input, const K_T& kernel, C_T&& conv, size_t s1
 
                                 // Strided copy of the large result into the small result
                                 for (std::size_t k = 0; k < K; ++k) {
-                                    for (std::size_t i = 0; i < c1; ++i) {
+                                    for (std::size_t ii = 0; ii < c1; ++ii) {
                                         for (std::size_t j = 0; j < c2; ++j) {
-                                            conv(i, k, i, j) += tmp_result(k, i * s1, j * s2);
+                                            conv(i, k, ii, j) += tmp_result(k, ii * s1, j * s2);
                                         }
                                     }
                                 }
