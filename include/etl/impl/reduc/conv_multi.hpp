@@ -259,6 +259,9 @@ void blas_conv4_valid(const I_T& input, const K_T& kernel, C_T&& conv, size_t s1
     const auto K = etl::dim<0>(kernel); // The number of kernels
     const auto C = etl::dim<1>(input);  // The number of channels
 
+    const auto n1 = etl::dim<2>(input);
+    const auto n2 = etl::dim<3>(input);
+
     const auto m1 = etl::dim<2>(kernel);
     const auto m2 = etl::dim<3>(kernel);
 
@@ -276,14 +279,54 @@ void blas_conv4_valid(const I_T& input, const K_T& kernel, C_T&& conv, size_t s1
     conv = value_t<I_T>(0.0);
 
     auto batch_fun_n = [&](const size_t first, const size_t last) {
-        if(last - first){
-            etl::dyn_matrix<value_t<I_T>, 3> tmp_result(K, c1, c2);
+        if (last - first) {
+            SERIAL_SECTION {
+                // unit-strided result dimensions
+                const std::size_t sc1 = (n1 - m1 + 2 * p1) + 1;
+                const std::size_t sc2 = (n2 - m2 + 2 * p2) + 1;
 
-            for (std::size_t i = first; i < last; ++i) {
-                for (std::size_t c = 0; c < C; ++c) {
-                    blas_conv2_valid_multi_flipped(input(i)(c), kernels(c), tmp_result, s1, s2, p1, p2);
+                etl::dyn_matrix<value_t<I_T>, 2> input_col(m1 * m2, sc1 * sc2);
 
-                    conv(i) += tmp_result;
+                // Optimize for the most common case
+                if (cpp_likely(!p1 && !p2 && s1 == 1 && s2 == 1)) {
+                    for (std::size_t i = first; i < last; ++i) {
+                        for (std::size_t c = 0; c < C; ++c) {
+                            im2col_direct_tr(input_col, input(i)(c), m1, m2);
+                            etl::reshape(conv(i), K, c1 * c2) += mul(etl::reshape(kernels(c), K, m1 * m2), input_col);
+                        }
+                    }
+                } else {
+                    etl::dyn_matrix<value_t<I_T>, 2> input_padded(n1 + 2 * p1, n2 + 2 * p2);
+                    etl::dyn_matrix<value_t<I_T>, 3> tmp_result(K, sc1, sc2);
+
+                    for (std::size_t i = first; i < last; ++i) {
+                        for (std::size_t c = 0; c < C; ++c) {
+                            if (p1 || p2) {
+                                input_padded = value_t<I_T>(0.0);
+
+                                pad_2d_input(input(i)(c), input_padded, p1, p2);
+
+                                im2col_direct_tr(input_col, input_padded, m1, m2);
+                            } else {
+                                im2col_direct_tr(input_col, input(i)(c), m1, m2);
+                            }
+
+                            if (s1 > 1 || s2 > 1) {
+                                etl::reshape(tmp_result, K, sc1 * sc2) = mul(etl::reshape(kernels(c), K, m1 * m2), input_col);
+
+                                // Strided copy of the large result into the small result
+                                for (std::size_t k = 0; k < K; ++k) {
+                                    for (std::size_t i = 0; i < c1; ++i) {
+                                        for (std::size_t j = 0; j < c2; ++j) {
+                                            conv(i, k, i, j) += tmp_result(k, i * s1, j * s2);
+                                        }
+                                    }
+                                }
+                            } else {
+                                etl::reshape(conv(i), K, c1 * c2) += mul(etl::reshape(kernels(c), K, m1 * m2), input_col);
+                            }
+                        }
+                    }
                 }
             }
         }
