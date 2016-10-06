@@ -85,9 +85,19 @@ struct vectorized_base {
     const std::size_t _size;  ///< The size to assign
 
     /*!
+     * \brief The RHS value type
+     */
+    using lhs_value_type = value_t<L_Expr>;
+
+    /*!
+     * \brief The RHS value type
+     */
+    using rhs_value_type = value_t<V_Expr>;
+
+    /*!
      * \brief The intrinsic type for the value type
      */
-    using IT = typename get_intrinsic_traits<V>::template type<value_t<V_Expr>>;
+    using IT = typename get_intrinsic_traits<V>::template type<rhs_value_type>;
 
     /*!
      * \brief The vector implementation to use
