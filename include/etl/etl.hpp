@@ -108,6 +108,7 @@
 #include "etl/sparse.hpp"
 #include "etl/sym.hpp"
 #include "etl/custom_dyn.hpp"
+#include "etl/custom_fast.hpp"
 
 // Serialization support
 #include "etl/serializer.hpp"

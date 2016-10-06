@@ -62,7 +62,7 @@ TEMPLATE_TEST_CASE_2("unmanaged/dyn_2", "[dyn][unmanaged]", Z, double, float) {
 TEMPLATE_TEST_CASE_2("unmanaged/fast_1", "[dyn][unmanaged]", Z, double, float) {
     std::vector<Z> raw_vector(8);
 
-    auto vector = etl::fast_matrix_over<8>(raw_vector.data());
+    etl::custom_fast_matrix<Z, 8> vector(raw_vector.data());
 
     vector = 3.3;
 
@@ -84,9 +84,9 @@ TEMPLATE_TEST_CASE_2("unmanaged/fast_2", "[dyn][unmanaged]", Z, double, float) {
 
     const auto* data_a = raw_a.data();
 
-    auto v_a = etl::fast_matrix_over<4>(data_a);
-    auto v_b = etl::fast_matrix_over<4>(raw_b.data());
-    auto v_c = etl::fast_matrix_over<4>(raw_c.data());
+    etl::custom_fast_matrix<const Z, 4> v_a(data_a);
+    etl::custom_fast_matrix<Z, 4> v_b(raw_b.data());
+    etl::custom_fast_matrix<Z, 4> v_c(raw_c.data());
 
     v_b[0] = -0.5;
     v_b[1] = 4.5;

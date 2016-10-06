@@ -12,8 +12,6 @@
 
 #pragma once
 
-#include "cpp_utils/array_wrapper.hpp"
-
 namespace etl {
 
 namespace matrix_detail {

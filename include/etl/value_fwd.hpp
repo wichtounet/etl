@@ -13,10 +13,15 @@
 
 #pragma once
 
+#include "cpp_utils/array_wrapper.hpp"
+
 namespace etl {
 
 template <typename T, typename ST, order SO, std::size_t... Dims>
 struct fast_matrix_impl;
+
+template <typename T, typename ST, order SO, std::size_t... Dims>
+struct custom_fast_matrix_impl;
 
 template <typename T, order SO, std::size_t D = 2>
 struct dyn_matrix_impl;
@@ -107,6 +112,18 @@ using custom_dyn_matrix_cm                 = custom_dyn_matrix_impl<T, order::Co
  */
 template <typename T>
 using custom_dyn_vector = custom_dyn_matrix_impl<T, order::RowMajor, 1>;
+
+/*!
+ * \brief A hybrid vector with fixed dimensions, in row-major order
+ */
+template <typename T, std::size_t Rows>
+using custom_fast_vector = custom_fast_matrix_impl<T, cpp::array_wrapper<T>, order::RowMajor, Rows>;
+
+/*!
+ * \brief A hybrid matrix with fixed dimensions, in row-major order
+ */
+template <typename T, std::size_t... Dims>
+using custom_fast_matrix = custom_fast_matrix_impl<T, cpp::array_wrapper<T>, order::RowMajor, Dims...>;
 
 /*!
  * \brief A sparse matrix, of D dimensions
