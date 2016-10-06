@@ -582,6 +582,16 @@ public:
     opaque_memory<value_type, n_dimensions> direct() const {
         return matrix.direct();
     }
+
+    /*!
+     * \brief Test if this expression aliases with the given expression
+     * \param rhs The other expression to test
+     * \return true if the two expressions aliases, false otherwise
+     */
+    template<typename E>
+    bool alias(const E& rhs) const noexcept {
+        return matrix.alias(rhs);
+    }
 };
 
 template <typename Matrix>
