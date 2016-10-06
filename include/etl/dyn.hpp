@@ -22,18 +22,23 @@ namespace etl {
  * The matrix support an arbitrary number of dimensions.
  */
 template <typename T, order SO, std::size_t D>
-struct dyn_matrix_impl final : dyn_base<T, D>, inplace_assignable<dyn_matrix_impl<T, SO, D>>, comparable<dyn_matrix_impl<T, SO, D>>, expression_able<dyn_matrix_impl<T, SO, D>>, value_testable<dyn_matrix_impl<T, SO, D>>, dim_testable<dyn_matrix_impl<T, SO, D>> {
+struct dyn_matrix_impl final : dense_dyn_base<dyn_matrix_impl<T, SO, D>, T, SO, D>,
+                               inplace_assignable<dyn_matrix_impl<T, SO, D>>,
+                               comparable<dyn_matrix_impl<T, SO, D>>,
+                               expression_able<dyn_matrix_impl<T, SO, D>>,
+                               value_testable<dyn_matrix_impl<T, SO, D>>,
+                               dim_testable<dyn_matrix_impl<T, SO, D>> {
     static constexpr const std::size_t n_dimensions = D;                              ///< The number of dimensions
     static constexpr const order storage_order      = SO;                             ///< The storage order
     static constexpr const std::size_t alignment    = intrinsic_traits<T>::alignment; ///< The memory alignment
 
-    using base_type              = dyn_base<T, D>;                        ///< The base type
-    using value_type             = T;                                     ///< The value type
-    using dimension_storage_impl = std::array<std::size_t, n_dimensions>; ///< The type used to store the dimensions
-    using memory_type            = value_type*;                           ///< The memory type
-    using const_memory_type      = const value_type*;                     ///< The const memory type
-    using iterator               = memory_type;                           ///< The type of iterator
-    using const_iterator         = const_memory_type;                     ///< The type of const iterator
+    using base_type              = dense_dyn_base<dyn_matrix_impl<T, SO, D>, T, SO, D>; ///< The base type
+    using value_type             = T;                                               ///< The value type
+    using dimension_storage_impl = std::array<std::size_t, n_dimensions>;           ///< The type used to store the dimensions
+    using memory_type            = value_type*;                                     ///< The memory type
+    using const_memory_type      = const value_type*;                               ///< The const memory type
+    using iterator               = memory_type;                                     ///< The type of iterator
+    using const_iterator         = const_memory_type;                               ///< The type of const iterator
 
     /*!
      * \brief The vectorization type for V
@@ -44,17 +49,23 @@ struct dyn_matrix_impl final : dyn_base<T, D>, inplace_assignable<dyn_matrix_imp
 private:
     using base_type::_size;
     using base_type::_dimensions;
+    using base_type::_memory;
+
     bool managed = true; ///< Tag indicating if we manage the memory
-    memory_type _memory; ///< Pointer to the allocated memory
 
     mutable gpu_handler<T> _gpu_memory_handler; ///< The GPU memory handler
 
     using base_type::release;
     using base_type::allocate;
     using base_type::check_invariants;
+    using base_type::index;
 
 public:
     using base_type::dim;
+    using base_type::memory_start;
+    using base_type::memory_end;
+    using base_type::begin;
+    using base_type::end;
 
     // Construction
 
@@ -64,7 +75,7 @@ public:
      * This matrix don't have any memory nor dimensionsand most
      * operations will likely fail on it
      */
-    dyn_matrix_impl() noexcept : base_type(), _memory(nullptr) {
+    dyn_matrix_impl() noexcept : base_type() {
         //Nothing else to init
     }
 
@@ -72,7 +83,9 @@ public:
      * \brief Copy construct a matrix
      * \param rhs The matrix to copy
      */
-    dyn_matrix_impl(const dyn_matrix_impl& rhs) noexcept : base_type(rhs), _memory(allocate(_size)) {
+    dyn_matrix_impl(const dyn_matrix_impl& rhs) noexcept : base_type(rhs) {
+        _memory = allocate(_size);
+
         direct_copy(rhs.memory_start(), rhs.memory_end(), memory_start());
     }
 
@@ -80,7 +93,8 @@ public:
      * \brief Move construct a matrix
      * \param rhs The matrix to move
      */
-    dyn_matrix_impl(dyn_matrix_impl&& rhs) noexcept : base_type(std::move(rhs)), managed(rhs.managed), _memory(rhs._memory) {
+    dyn_matrix_impl(dyn_matrix_impl&& rhs) noexcept : base_type(std::move(rhs)), managed(rhs.managed) {
+        _memory = rhs._memory;
         rhs._memory = nullptr;
     }
 
@@ -89,7 +103,9 @@ public:
      * \param rhs The matrix to copy
      */
     template <typename T2, order SO2, std::size_t D2, cpp_enable_if(SO2 == SO)>
-    dyn_matrix_impl(const dyn_matrix_impl<T2, SO2, D2>& rhs) noexcept : base_type(rhs), _memory(allocate(_size)) {
+    dyn_matrix_impl(const dyn_matrix_impl<T2, SO2, D2>& rhs) noexcept : base_type(rhs){
+        _memory = allocate(_size);
+
         direct_copy(rhs.memory_start(), rhs.memory_end(), memory_start());
     }
 
@@ -98,7 +114,9 @@ public:
      * \param rhs The matrix to copy
      */
     template <typename T2, order SO2, std::size_t D2, cpp_disable_if(SO2 == SO)>
-    dyn_matrix_impl(const dyn_matrix_impl<T2, SO2, D2>& rhs) noexcept : base_type(rhs), _memory(allocate(_size)) {
+    dyn_matrix_impl(const dyn_matrix_impl<T2, SO2, D2>& rhs) noexcept : base_type(rhs){
+        _memory = allocate(_size);
+
         //The type is different, so we must use assign
         assign_evaluate(rhs, *this);
     }
@@ -112,7 +130,9 @@ public:
                               is_etl_expr<E>::value,
                               !is_dyn_matrix<E>::value)>
     explicit dyn_matrix_impl(E&& e) noexcept
-            : base_type(e), _memory(allocate(_size)) {
+            : base_type(e){
+        _memory = allocate(_size);
+
         assign_evaluate(e, *this);
     }
 
@@ -120,8 +140,9 @@ public:
      * \brief Construct a vector with the given values
      * \param list Initializer list containing all the values of the vector
      */
-    dyn_matrix_impl(std::initializer_list<value_type> list) noexcept : base_type(list.size(), {{list.size()}}),
-                                                                       _memory(allocate(_size)) {
+    dyn_matrix_impl(std::initializer_list<value_type> list) noexcept : base_type(list.size(), {{list.size()}}) {
+        _memory = allocate(_size);
+
         static_assert(n_dimensions == 1, "This constructor can only be used for 1D matrix");
 
         std::copy(list.begin(), list.end(), begin());
@@ -138,9 +159,8 @@ public:
                                  (sizeof...(S) == D),
                                  cpp::all_convertible_to<std::size_t, S...>::value,
                                  cpp::is_homogeneous<typename cpp::first_type<S...>::type, S...>::value)>
-    explicit dyn_matrix_impl(S... sizes) noexcept : base_type(dyn_detail::size(sizes...), {{static_cast<std::size_t>(sizes)...}}),
-                                                    _memory(allocate(_size)) {
-        //Nothing else to init
+    explicit dyn_matrix_impl(S... sizes) noexcept : base_type(dyn_detail::size(sizes...), {{static_cast<std::size_t>(sizes)...}}) {
+        _memory = allocate(_size);
     }
 
     /*!
@@ -159,8 +179,8 @@ public:
                                  cpp::all_convertible_to<std::size_t, S...>::value,
                                  cpp::is_homogeneous<typename cpp::first_type<S...>::type, S...>::value)>
     explicit dyn_matrix_impl(value_type* memory, S... sizes) noexcept : base_type(dyn_detail::size(sizes...), {{static_cast<std::size_t>(sizes)...}}),
-                                                    managed(false), _memory(memory) {
-        //Nothing else to init
+                                                    managed(false){
+        _memory = memory;
     }
 
     /*!
@@ -169,8 +189,9 @@ public:
      */
     template <typename... S, cpp_enable_if(dyn_detail::is_initializer_list_constructor<S...>::value)>
     explicit dyn_matrix_impl(S... sizes) noexcept : base_type(dyn_detail::size(std::make_index_sequence<(sizeof...(S)-1)>(), sizes...),
-                                                              dyn_detail::sizes(std::make_index_sequence<(sizeof...(S)-1)>(), sizes...)),
-                                                    _memory(allocate(_size)) {
+                                                              dyn_detail::sizes(std::make_index_sequence<(sizeof...(S)-1)>(), sizes...)) {
+        _memory = allocate(_size);
+
         static_assert(sizeof...(S) == D + 1, "Invalid number of dimensions");
 
         auto list = cpp::last_value(sizes...);
@@ -182,11 +203,12 @@ public:
      * \param sizes The dimensions of the matrix followed by a values_t
      */
     template <typename... S, cpp_enable_if(
-                                              (sizeof...(S) == D),
-                                              cpp::is_specialization_of<values_t, typename cpp::last_type<std::size_t, S...>::type>::value)>
+                                 (sizeof...(S) == D),
+                                 cpp::is_specialization_of<values_t, typename cpp::last_type<std::size_t, S...>::type>::value)>
     explicit dyn_matrix_impl(std::size_t s1, S... sizes) noexcept : base_type(dyn_detail::size(std::make_index_sequence<(sizeof...(S))>(), s1, sizes...),
-                                                                     dyn_detail::sizes(std::make_index_sequence<(sizeof...(S))>(), s1, sizes...)),
-                                                           _memory(allocate(_size)) {
+                                                                              dyn_detail::sizes(std::make_index_sequence<(sizeof...(S))>(), s1, sizes...)) {
+        _memory = allocate(_size);
+
         auto list = cpp::last_value(sizes...).template list<value_type>();
         std::copy(list.begin(), list.end(), begin());
     }
@@ -208,8 +230,9 @@ public:
     explicit dyn_matrix_impl(S1 s1, S... sizes) noexcept : base_type(
                                                                dyn_detail::size(std::make_index_sequence<(sizeof...(S))>(), s1, sizes...),
                                                                dyn_detail::sizes(std::make_index_sequence<(sizeof...(S))>(), s1, sizes...)
-                                                            ),
-                                                           _memory(allocate(_size)) {
+                                                            ){
+        _memory = allocate(_size);
+
         intel_decltype_auto value = cpp::last_value(s1, sizes...);
         std::fill(begin(), end(), value);
     }
@@ -223,13 +246,14 @@ public:
      */
     template <typename S1, typename... S, cpp_enable_if(
                                               (sizeof...(S) == D),
-                                              std::is_convertible<std::size_t, S1>::value,        //The first type must be convertible to size_t
+                                              std::is_convertible<std::size_t, S1>::value,                                              //The first type must be convertible to size_t
                                               cpp::is_sub_homogeneous<S1, S...>::value,                                                 //The first N-1 types must homegeneous
                                               cpp::is_specialization_of<generator_expr, typename cpp::last_type<S1, S...>::type>::value //The last type must be a generator expr
                                               )>
     explicit dyn_matrix_impl(S1 s1, S... sizes) noexcept : base_type(dyn_detail::size(std::make_index_sequence<(sizeof...(S))>(), s1, sizes...),
-                                                                     dyn_detail::sizes(std::make_index_sequence<(sizeof...(S))>(), s1, sizes...)),
-                                                           _memory(allocate(_size)) {
+                                                                     dyn_detail::sizes(std::make_index_sequence<(sizeof...(S))>(), s1, sizes...)) {
+        _memory = allocate(_size);
+
         intel_decltype_auto e = cpp::last_value(sizes...);
 
         assign_evaluate(e, *this);
@@ -246,8 +270,9 @@ public:
      */
     template <typename... S, cpp_enable_if(dyn_detail::is_init_constructor<S...>::value)>
     explicit dyn_matrix_impl(S... sizes) noexcept : base_type(dyn_detail::size(std::make_index_sequence<(sizeof...(S)-2)>(), sizes...),
-                                                              dyn_detail::sizes(std::make_index_sequence<(sizeof...(S)-2)>(), sizes...)),
-                                                    _memory(allocate(_size)) {
+                                                              dyn_detail::sizes(std::make_index_sequence<(sizeof...(S)-2)>(), sizes...)) {
+        _memory = allocate(_size);
+
         static_assert(sizeof...(S) == D + 2, "Invalid number of dimensions");
 
         std::fill(begin(), end(), cpp::last_value(sizes...));
@@ -263,7 +288,9 @@ public:
                                       cpp::not_c<is_etl_expr<Container>>::value,
                                       std::is_convertible<typename Container::value_type, value_type>::value)>
     explicit dyn_matrix_impl(const Container& container)
-            : base_type(container.size(), {{container.size()}}), _memory(allocate(container.size())) {
+            : base_type(container.size(), {{container.size()}}){
+        _memory = allocate(_size);
+
         static_assert(D == 1, "Only 1D matrix can be constructed from containers");
 
         // Copy the container directly inside the allocated memory
@@ -438,138 +465,6 @@ public:
     }
 
     /*!
-     * \brief Multiply each element by the right hand side scalar
-     * \param rhs The right hand side scalar
-     * \return a reference to the matrix
-     */
-    dyn_matrix_impl& operator+=(const value_type& rhs) noexcept {
-        detail::scalar_add::apply(*this, rhs);
-        return *this;
-    }
-
-    /*!
-     * \brief Multiply each element by the value of the elements in the right hand side expression
-     * \param rhs The right hand side
-     * \return a reference to the matrix
-     */
-    template<typename R, cpp_enable_if(is_etl_expr<R>::value)>
-    dyn_matrix_impl& operator+=(const R& rhs) noexcept {
-        validate_expression(*this, rhs);
-        add_evaluate(rhs, *this);
-        return *this;
-    }
-
-    /*!
-     * \brief Multiply each element by the right hand side scalar
-     * \param rhs The right hand side scalar
-     * \return a reference to the matrix
-     */
-    dyn_matrix_impl& operator-=(const value_type& rhs) noexcept {
-        detail::scalar_sub::apply(*this, rhs);
-        return *this;
-    }
-
-    /*!
-     * \brief Multiply each element by the value of the elements in the right hand side expression
-     * \param rhs The right hand side
-     * \return a reference to the matrix
-     */
-    template<typename R, cpp_enable_if(is_etl_expr<R>::value)>
-    dyn_matrix_impl& operator-=(const R& rhs) noexcept {
-        validate_expression(*this, rhs);
-        sub_evaluate(rhs, *this);
-        return *this;
-    }
-
-    /*!
-     * \brief Multiply each element by the right hand side scalar
-     * \param rhs The right hand side scalar
-     * \return a reference to the matrix
-     */
-    dyn_matrix_impl& operator*=(const value_type& rhs) noexcept {
-        detail::scalar_mul::apply(*this, rhs);
-        return *this;
-    }
-
-    /*!
-     * \brief Multiply each element by the value of the elements in the right hand side expression
-     * \param rhs The right hand side
-     * \return a reference to the matrix
-     */
-    template<typename R, cpp_enable_if(is_etl_expr<R>::value)>
-    dyn_matrix_impl& operator*=(const R& rhs) noexcept {
-        validate_expression(*this, rhs);
-        mul_evaluate(rhs, *this);
-        return *this;
-    }
-
-    /*!
-     * \brief Multiply each element by the right hand side scalar
-     * \param rhs The right hand side scalar
-     * \return a reference to the matrix
-     */
-    dyn_matrix_impl& operator>>=(const value_type& rhs) noexcept {
-        detail::scalar_mul::apply(*this, rhs);
-        return *this;
-    }
-
-    /*!
-     * \brief Multiply each element by the value of the elements in the right hand side expression
-     * \param rhs The right hand side
-     * \return a reference to the matrix
-     */
-    template<typename R, cpp_enable_if(is_etl_expr<R>::value)>
-    dyn_matrix_impl& operator>>=(const R& rhs) noexcept {
-        validate_expression(*this, rhs);
-        mul_evaluate(rhs, *this);
-        return *this;
-    }
-
-    /*!
-     * \brief Divide each element by the right hand side scalar
-     * \param rhs The right hand side scalar
-     * \return a reference to the matrix
-     */
-    dyn_matrix_impl& operator/=(const value_type& rhs) noexcept {
-        detail::scalar_div::apply(*this, rhs);
-        return *this;
-    }
-
-    /*!
-     * \brief Modulo each element by the value of the elements in the right hand side expression
-     * \param rhs The right hand side
-     * \return a reference to the matrix
-     */
-    template<typename R, cpp_enable_if(is_etl_expr<R>::value)>
-    dyn_matrix_impl& operator/=(const R& rhs) noexcept {
-        validate_expression(*this, rhs);
-        div_evaluate(rhs, *this);
-        return *this;
-    }
-
-    /*!
-     * \brief Modulo each element by the right hand side scalar
-     * \param rhs The right hand side scalar
-     * \return a reference to the matrix
-     */
-    dyn_matrix_impl& operator%=(const value_type& rhs) noexcept {
-        detail::scalar_mod::apply(*this, rhs);
-        return *this;
-    }
-
-    /*!
-     * \brief Modulo each element by the value of the elements in the right hand side expression
-     * \param rhs The right hand side
-     * \return a reference to the matrix
-     */
-    template<typename R, cpp_enable_if(is_etl_expr<R>::value)>
-    dyn_matrix_impl& operator%=(const R& rhs) noexcept {
-        validate_expression(*this, rhs);
-        mod_evaluate(rhs, *this);
-        return *this;
-    }
-
-    /*!
      * \brief Swap the content of the matrix with the content of the given matrix
      * \param other The other matrix to swap content with
      */
@@ -588,217 +483,6 @@ public:
     // Accessors
 
     /*!
-     * \brief Creates a sub view of the matrix, effectively removing the first dimension and fixing it to the given index.
-     * \param i The index to use
-     * \return a sub view of the matrix at position i.
-     */
-    template <bool B = (n_dimensions > 1), cpp_enable_if(B)>
-    auto operator()(std::size_t i) noexcept {
-        return sub(*this, i);
-    }
-
-    /*!
-     * \brief Creates a sub view of the matrix, effectively removing the first dimension and fixing it to the given index.
-     * \param i The index to use
-     * \return a sub view of the matrix at position i.
-     */
-    template <bool B = (n_dimensions > 1), cpp_enable_if(B)>
-    auto operator()(std::size_t i) const noexcept {
-        return sub(*this, i);
-    }
-
-    /*!
-     * \brief Creates a slice view of the matrix, effectively reducing the first dimension.
-     * \param first The first index to use
-     * \param last The last index to use
-     * \return a slice view of the matrix at position i.
-     */
-    auto slice(std::size_t first, std::size_t last) noexcept {
-        return etl::slice(*this, first, last);
-    }
-
-    /*!
-     * \brief Creates a slice view of the matrix, effectively reducing the first dimension.
-     * \param first The first index to use
-     * \param last The last index to use
-     * \return a slice view of the matrix at position i.
-     */
-    auto slice(std::size_t first, std::size_t last) const noexcept {
-        return etl::slice(*this, first, last);
-    }
-
-    /*!
-     * \brief Access the ith element of the matrix
-     * \param i The index of the element to search
-     * \return a reference to the ith element
-     *
-     * Accessing an element outside the matrix results in Undefined Behaviour.
-     */
-    template <bool B = n_dimensions == 1, cpp_enable_if(B)>
-    value_type& operator()(std::size_t i) noexcept {
-        cpp_assert(i < dim(0), "Out of bounds");
-
-        return _memory[i];
-    }
-
-    /*!
-     * \brief Access the ith element of the matrix
-     * \param i The index of the element to search
-     * \return a reference to the ith element
-     *
-     * Accessing an element outside the matrix results in Undefined Behaviour.
-     */
-    template <bool B = n_dimensions == 1, cpp_enable_if(B)>
-    const value_type& operator()(std::size_t i) const noexcept {
-        cpp_assert(i < dim(0), "Out of bounds");
-
-        return _memory[i];
-    }
-
-    /*!
-     * \brief Access the (i, j) element of the 2D matrix
-     * \param i The index of the first dimension
-     * \param j The index of the second dimension
-     * \return a reference to the (i,j) element
-     *
-     * Accessing an element outside the matrix results in Undefined Behaviour.
-     */
-    template <bool B = n_dimensions == 2, cpp_enable_if(B)>
-    value_type& operator()(std::size_t i, std::size_t j) noexcept {
-        cpp_assert(i < dim(0), "Out of bounds");
-        cpp_assert(j < dim(1), "Out of bounds");
-
-        if (storage_order == order::RowMajor) {
-            return _memory[i * dim(1) + j];
-        } else {
-            return _memory[j * dim(0) + i];
-        }
-    }
-
-    /*!
-     * \brief Access the (i, j) element of the 2D matrix
-     * \param i The index of the first dimension
-     * \param j The index of the second dimension
-     * \return a reference to the (i,j) element
-     *
-     * Accessing an element outside the matrix results in Undefined Behaviour.
-     */
-    template <bool B = n_dimensions == 2, cpp_enable_if(B)>
-    const value_type& operator()(std::size_t i, std::size_t j) const noexcept {
-        cpp_assert(i < dim(0), "Out of bounds");
-        cpp_assert(j < dim(1), "Out of bounds");
-
-        if (storage_order == order::RowMajor) {
-            return _memory[i * dim(1) + j];
-        } else {
-            return _memory[j * dim(0) + i];
-        }
-    }
-
-    /*!
-     * \brief Return the flat index for the element at the given position
-     * \param sizes The indices
-     * \return The flat index
-     */
-    template <typename... S>
-    std::size_t index(S... sizes) const noexcept(assert_nothrow) {
-        //Note: Version with sizes moved to a std::array and accessed with
-        //standard loop may be faster, but need some stack space (relevant ?)
-
-        std::size_t index = 0;
-
-        if (storage_order == order::RowMajor) {
-            std::size_t subsize = _size;
-            std::size_t i       = 0;
-
-            cpp::for_each_in(
-                [&subsize, &index, &i, this](std::size_t s) {
-                    cpp_assert(s < dim(i), "Out of bounds");
-                    subsize /= dim(i++);
-                    index += subsize * s;
-                },
-                sizes...);
-        } else {
-            std::size_t subsize = 1;
-            std::size_t i       = 0;
-
-            cpp::for_each_in(
-                [&subsize, &index, &i, this](std::size_t s) {
-                    cpp_assert(s < dim(i), "Out of bounds");
-                    index += subsize * s;
-                    subsize *= dim(i++);
-                },
-                sizes...);
-        }
-
-        return index;
-    }
-
-    /*!
-     * \brief Returns the value at the position (sizes...)
-     * \param sizes The indices
-     * \return The value at the position (sizes...)
-     */
-    template <typename... S, cpp_enable_if(
-                                 (n_dimensions > 2),
-                                 (sizeof...(S) == n_dimensions),
-                                 cpp::all_convertible_to<std::size_t, S...>::value)>
-    const value_type& operator()(S... sizes) const noexcept(assert_nothrow) {
-        static_assert(sizeof...(S) == n_dimensions, "Invalid number of parameters");
-
-        return _memory[index(sizes...)];
-    }
-
-    /*!
-     * \brief Returns the value at the position (sizes...)
-     * \param sizes The indices
-     * \return The value at the position (sizes...)
-     */
-    template <typename... S, cpp_enable_if(
-                                 (n_dimensions > 2),
-                                 (sizeof...(S) == n_dimensions),
-                                 cpp::all_convertible_to<std::size_t, S...>::value)>
-    value_type& operator()(S... sizes) noexcept(assert_nothrow) {
-        static_assert(sizeof...(S) == n_dimensions, "Invalid number of parameters");
-
-        return _memory[index(sizes...)];
-    }
-
-    /*!
-     * \brief Returns the element at the given index
-     * \param i The index
-     * \return a reference to the element at the given index.
-     */
-    const value_type& operator[](std::size_t i) const noexcept {
-        cpp_assert(i < _size, "Out of bounds");
-
-        return _memory[i];
-    }
-
-    /*!
-     * \brief Returns the element at the given index
-     * \param i The index
-     * \return a reference to the element at the given index.
-     */
-    value_type& operator[](std::size_t i) noexcept {
-        cpp_assert(i < _size, "Out of bounds");
-
-        return _memory[i];
-    }
-
-    /*!
-     * \returns the value at the given index
-     * This function never alters the state of the container.
-     * \param i The index
-     * \return the value at the given index.
-     */
-    value_type read_flat(std::size_t i) const noexcept {
-        cpp_assert(i < _size, "Out of bounds");
-
-        return _memory[i];
-    }
-
-    /*!
      * \brief Load several elements of the matrix at once
      * \param i The position at which to start. This will be aligned from the beginning (multiple of the vector size).
      * \tparam V The vectorization mode to use
@@ -807,106 +491,6 @@ public:
     template<typename V = default_vec>
     vec_type<V> load(std::size_t i) const noexcept {
         return V::loadu(_memory + i);
-    }
-
-    /*!
-     * \brief Test if this expression aliases with the given expression
-     * \param rhs The other expression to test
-     * \return true if the two expressions aliases, false otherwise
-     */
-    template<typename E, cpp_enable_if(all_dma<E>::value)>
-    bool alias(const E& rhs) const noexcept {
-        return memory_alias(memory_start(), memory_end(), rhs.memory_start(), rhs.memory_end());
-    }
-
-    /*!
-     * \brief Test if this expression aliases with the given expression
-     * \param rhs The other expression to test
-     * \return true if the two expressions aliases, false otherwise
-     */
-    template<typename E, cpp_disable_if(all_dma<E>::value)>
-    bool alias(const E& rhs) const noexcept {
-        return rhs.alias(*this);
-    }
-
-    /*!
-     * \brief Return an iterator to the first element of the matrix
-     * \return an iterator pointing to the first element of the matrix
-     */
-    iterator begin() noexcept {
-        return _memory;
-    }
-
-    /*!
-     * \brief Return an iterator to the past-the-end element of the matrix
-     * \return an iterator pointing to the past-the-end element of the matrix
-     */
-    iterator end() noexcept {
-        return _memory + _size;
-    }
-
-    /*!
-     * \brief Return an iterator to the first element of the matrix
-     * \return an iterator pointing to the first element of the matrix
-     */
-    const_iterator begin() const noexcept {
-        return _memory;
-    }
-
-    /*!
-     * \brief Return an iterator to the past-the-end element of the matrix
-     * \return an iterator pointing to the past-the-end element of the matrix
-     */
-    const_iterator end() const noexcept {
-        return _memory + _size;
-    }
-
-    /*!
-     * \brief Return a const iterator to the first element of the matrix
-     * \return an const iterator pointing to the first element of the matrix
-     */
-    const_iterator cbegin() const noexcept {
-        return _memory;
-    }
-
-    /*!
-     * \brief Return a const iterator to the past-the-end element of the matrix
-     * \return a const iterator pointing to the past-the-end element of the matrix
-     */
-    const_iterator cend() const noexcept {
-        return _memory + _size;
-    }
-
-    /*!
-     * \brief Returns a pointer to the first element in memory.
-     * \return a pointer tot the first element in memory.
-     */
-    inline memory_type memory_start() noexcept {
-        return _memory;
-    }
-
-    /*!
-     * \brief Returns a pointer to the first element in memory.
-     * \return a pointer tot the first element in memory.
-     */
-    inline const_memory_type memory_start() const noexcept {
-        return _memory;
-    }
-
-    /*!
-     * \brief Returns a pointer to the past-the-end element in memory.
-     * \return a pointer tot the past-the-end element in memory.
-     */
-    memory_type memory_end() noexcept {
-        return _memory + _size;
-    }
-
-    /*!
-     * \brief Returns a pointer to the past-the-end element in memory.
-     * \return a pointer to the past-the-end element in memory.
-     */
-    const_memory_type memory_end() const noexcept {
-        return _memory + _size;
     }
 
     /*!
