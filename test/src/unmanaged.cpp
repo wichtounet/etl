@@ -10,7 +10,7 @@
 TEMPLATE_TEST_CASE_2("unmanaged/dyn_1", "[dyn][unmanaged]", Z, double, float) {
     std::vector<Z> raw_vector(8);
 
-    auto vector = etl::dyn_matrix_over(raw_vector.data(), 8);
+    etl::custom_dyn_matrix<Z, 1> vector(raw_vector.data(), 8);
 
     vector = 3.3;
 
@@ -32,9 +32,9 @@ TEMPLATE_TEST_CASE_2("unmanaged/dyn_2", "[dyn][unmanaged]", Z, double, float) {
 
     const auto* data_a = raw_a.data();
 
-    auto v_a = etl::dyn_matrix_over(data_a, 4);
-    auto v_b = etl::dyn_matrix_over(raw_b.data(), 4);
-    auto v_c = etl::dyn_matrix_over(raw_c.data(), 4);
+    etl::custom_dyn_matrix<const Z, 1> v_a(data_a, 4UL);
+    etl::custom_dyn_matrix<Z, 1> v_b(raw_b.data(), 4UL);
+    etl::custom_dyn_matrix<Z, 1> v_c(raw_c.data(), 4UL);
 
     v_b[0] = -0.5;
     v_b[1] = 4.5;

@@ -82,9 +82,9 @@ TEMPLATE_TEST_CASE_2("unaligned/assign", "[unaligned][assign]", Z, double, float
     auto mem_b = get_unaligned_memory<Z>(etl::parallel_threshold * 2UL);
     auto mem_c = get_unaligned_memory<Z>(etl::parallel_threshold * 2UL);
 
-    auto a = etl::dyn_matrix_over(mem_a.get(), etl::parallel_threshold, 2UL);
-    auto b = etl::dyn_matrix_over(mem_b.get(), etl::parallel_threshold, 2UL);
-    auto c = etl::dyn_matrix_over(mem_c.get(), etl::parallel_threshold, 2UL);
+    etl::custom_dyn_matrix<Z> a(mem_a.get(), etl::parallel_threshold, 2UL);
+    etl::custom_dyn_matrix<Z> b(mem_b.get(), etl::parallel_threshold, 2UL);
+    etl::custom_dyn_matrix<Z> c(mem_c.get(), etl::parallel_threshold, 2UL);
 
     a = etl::uniform_generator(-1000.0, 5000.0);
     b = etl::uniform_generator(-1000.0, 5000.0);
@@ -101,9 +101,9 @@ TEMPLATE_TEST_CASE_2("unaligned/add", "[unaligned][add]", Z, double, float) {
     auto mem_b = get_unaligned_memory<Z>(etl::parallel_threshold * 2UL);
     auto mem_c = get_unaligned_memory<Z>(etl::parallel_threshold * 2UL);
 
-    auto a = etl::dyn_matrix_over(mem_a.get(), etl::parallel_threshold, 2UL);
-    auto b = etl::dyn_matrix_over(mem_b.get(), etl::parallel_threshold, 2UL);
-    auto c = etl::dyn_matrix_over(mem_c.get(), etl::parallel_threshold, 2UL);
+    etl::custom_dyn_matrix<Z> a(mem_a.get(), etl::parallel_threshold, 2UL);
+    etl::custom_dyn_matrix<Z> b(mem_b.get(), etl::parallel_threshold, 2UL);
+    etl::custom_dyn_matrix<Z> c(mem_c.get(), etl::parallel_threshold, 2UL);
 
     a = etl::uniform_generator(-1000.0, 5000.0);
     b = etl::uniform_generator(-1000.0, 5000.0);
@@ -121,9 +121,9 @@ TEMPLATE_TEST_CASE_2("unaligned/sub", "[unaligned][add]", Z, double, float) {
     auto mem_b = get_unaligned_memory<Z>(etl::parallel_threshold * 2UL);
     auto mem_c = get_unaligned_memory<Z>(etl::parallel_threshold * 2UL);
 
-    auto a = etl::dyn_matrix_over(mem_a.get(), etl::parallel_threshold, 2UL);
-    auto b = etl::dyn_matrix_over(mem_b.get(), etl::parallel_threshold, 2UL);
-    auto c = etl::dyn_matrix_over(mem_c.get(), etl::parallel_threshold, 2UL);
+    etl::custom_dyn_matrix<Z> a(mem_a.get(), etl::parallel_threshold, 2UL);
+    etl::custom_dyn_matrix<Z> b(mem_b.get(), etl::parallel_threshold, 2UL);
+    etl::custom_dyn_matrix<Z> c(mem_c.get(), etl::parallel_threshold, 2UL);
 
     a = etl::uniform_generator(-1000.0, 5000.0);
     b = etl::uniform_generator(-1000.0, 5000.0);
@@ -141,9 +141,9 @@ TEMPLATE_TEST_CASE_2("unaligned/mul", "[unaligned][add]", Z, double, float) {
     auto mem_b = get_unaligned_memory<Z>(etl::parallel_threshold * 2UL);
     auto mem_c = get_unaligned_memory<Z>(etl::parallel_threshold * 2UL);
 
-    auto a = etl::dyn_matrix_over(mem_a.get(), etl::parallel_threshold, 2UL);
-    auto b = etl::dyn_matrix_over(mem_b.get(), etl::parallel_threshold, 2UL);
-    auto c = etl::dyn_matrix_over(mem_c.get(), etl::parallel_threshold, 2UL);
+    etl::custom_dyn_matrix<Z> a(mem_a.get(), etl::parallel_threshold, 2UL);
+    etl::custom_dyn_matrix<Z> b(mem_b.get(), etl::parallel_threshold, 2UL);
+    etl::custom_dyn_matrix<Z> c(mem_c.get(), etl::parallel_threshold, 2UL);
 
     a = etl::uniform_generator(-1000.0, 5000.0);
     b = etl::uniform_generator(-1000.0, 5000.0);
@@ -161,9 +161,9 @@ TEMPLATE_TEST_CASE_2("unaligned/div", "[unaligned][add]", Z, double, float) {
     auto mem_b = get_unaligned_memory<Z>(etl::parallel_threshold * 2UL);
     auto mem_c = get_unaligned_memory<Z>(etl::parallel_threshold * 2UL);
 
-    auto a = etl::dyn_matrix_over(mem_a.get(), etl::parallel_threshold, 2UL);
-    auto b = etl::dyn_matrix_over(mem_b.get(), etl::parallel_threshold, 2UL);
-    auto c = etl::dyn_matrix_over(mem_c.get(), etl::parallel_threshold, 2UL);
+    etl::custom_dyn_matrix<Z> a(mem_a.get(), etl::parallel_threshold, 2UL);
+    etl::custom_dyn_matrix<Z> b(mem_b.get(), etl::parallel_threshold, 2UL);
+    etl::custom_dyn_matrix<Z> c(mem_c.get(), etl::parallel_threshold, 2UL);
 
     a = etl::uniform_generator(1000.0, 5000.0);
     b = etl::uniform_generator(1000.0, 5000.0);
