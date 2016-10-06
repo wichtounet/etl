@@ -588,14 +588,6 @@ public:
     // Accessors
 
     /*!
-     * \brief Returns the number of dimensions of the matrix
-     * \return the number of dimensions of the matrix
-     */
-    static constexpr std::size_t dimensions() noexcept {
-        return n_dimensions;
-    }
-
-    /*!
      * \brief Creates a sub view of the matrix, effectively removing the first dimension and fixing it to the given index.
      * \param i The index to use
      * \return a sub view of the matrix at position i.

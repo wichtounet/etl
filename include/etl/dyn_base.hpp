@@ -244,6 +244,14 @@ protected:
 
 public:
     /*!
+     * \brief Returns the number of dimensions of the matrix
+     * \return the number of dimensions of the matrix
+     */
+    static constexpr std::size_t dimensions() noexcept {
+        return n_dimensions;
+    }
+
+    /*!
      * \brief Returns the size of the matrix, in O(1)
      * \return The size of the matrix
      */
