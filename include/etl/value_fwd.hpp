@@ -21,6 +21,9 @@ struct fast_matrix_impl;
 template <typename T, order SO, std::size_t D = 2>
 struct dyn_matrix_impl;
 
+template <typename T, order SO, std::size_t D = 2>
+struct custom_dyn_matrix_impl;
+
 template <typename T, sparse_storage SS, std::size_t D>
 struct sparse_matrix_impl;
 
@@ -86,6 +89,24 @@ using dyn_matrix_cm                 = dyn_matrix_impl<T, order::ColumnMajor, D>;
  */
 template <typename T>
 using dyn_vector = dyn_matrix_impl<T, order::RowMajor, 1>;
+
+/*!
+ * \brief A dynamic matrix, in row-major order, of D dimensions
+ */
+template <typename T, std::size_t D = 2>
+using custom_dyn_matrix                    = custom_dyn_matrix_impl<T, order::RowMajor, D>;
+
+/*!
+ * \brief A dynamic matrix, in column-major order, of D dimensions
+ */
+template <typename T, std::size_t D = 2>
+using custom_dyn_matrix_cm                 = custom_dyn_matrix_impl<T, order::ColumnMajor, D>;
+
+/*!
+ * \brief A dynamic vector, in row-major order
+ */
+template <typename T>
+using custom_dyn_vector = custom_dyn_matrix_impl<T, order::RowMajor, 1>;
 
 /*!
  * \brief A sparse matrix, of D dimensions

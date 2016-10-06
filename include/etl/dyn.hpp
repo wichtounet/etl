@@ -51,8 +51,6 @@ private:
     using base_type::_dimensions;
     using base_type::_memory;
 
-    bool managed = true; ///< Tag indicating if we manage the memory
-
     mutable gpu_handler<T> _gpu_memory_handler; ///< The GPU memory handler
 
     using base_type::release;
@@ -93,7 +91,7 @@ public:
      * \brief Move construct a matrix
      * \param rhs The matrix to move
      */
-    dyn_matrix_impl(dyn_matrix_impl&& rhs) noexcept : base_type(std::move(rhs)), managed(rhs.managed) {
+    dyn_matrix_impl(dyn_matrix_impl&& rhs) noexcept : base_type(std::move(rhs)) {
         _memory = rhs._memory;
         rhs._memory = nullptr;
     }
@@ -161,26 +159,6 @@ public:
                                  cpp::is_homogeneous<typename cpp::first_type<S...>::type, S...>::value)>
     explicit dyn_matrix_impl(S... sizes) noexcept : base_type(dyn_detail::size(sizes...), {{static_cast<std::size_t>(sizes)...}}) {
         _memory = allocate(_size);
-    }
-
-    /*!
-     * \brief Construct a matrix over existing memory
-     * \param memory Pointer to the memory
-     * \param sizes The dimensions of the matrix
-     *
-     * The number of dimesnions must be the same as the D template
-     * parameter of the matrix.
-     *
-     * The memory won't be managed, meaning that it won't be
-     * released once the matrix is destructed.
-     */
-    template <typename... S, cpp_enable_if(
-                                 (sizeof...(S) == D),
-                                 cpp::all_convertible_to<std::size_t, S...>::value,
-                                 cpp::is_homogeneous<typename cpp::first_type<S...>::type, S...>::value)>
-    explicit dyn_matrix_impl(value_type* memory, S... sizes) noexcept : base_type(dyn_detail::size(sizes...), {{static_cast<std::size_t>(sizes)...}}),
-                                                    managed(false){
-        _memory = memory;
     }
 
     /*!
@@ -459,7 +437,7 @@ public:
      * \brief Destruct the matrix and release all its memory
      */
     ~dyn_matrix_impl() noexcept {
-        if(managed && _memory){
+        if(_memory){
             release(_memory, _size);
         }
     }
@@ -473,7 +451,6 @@ public:
         swap(_size, other._size);
         swap(_dimensions, other._dimensions);
         swap(_memory, other._memory);
-        swap(managed, other.managed);
 
         //TODO swap is likely screwing up GPU memory!
 
@@ -567,19 +544,6 @@ static_assert(std::is_nothrow_move_constructible<dyn_vector<double>>::value, "dy
 static_assert(std::is_nothrow_copy_assignable<dyn_vector<double>>::value, "dyn_vector should be nothrow copy assignable");
 static_assert(std::is_nothrow_move_assignable<dyn_vector<double>>::value, "dyn_vector should be nothrow move assignable");
 static_assert(std::is_nothrow_destructible<dyn_vector<double>>::value, "dyn_vector should be nothrow destructible");
-
-/*!
- * \brief Create a dyn_matrix of the given dimensions over the given memory
- * \param memory The memory
- * \param sizes The dimensions of the matrix
- * \return A dyn_matrix using the given memory
- *
- * The memory must be large enough to hold the matrix
- */
-template<typename T, typename... Sizes>
-dyn_matrix_impl<T, order::RowMajor, sizeof...(Sizes)> dyn_matrix_over(T* memory, Sizes... sizes){
-    return dyn_matrix_impl<T, order::RowMajor, sizeof...(Sizes)>(memory, sizes...);
-}
 
 /*!
  * \brief Swap two dyn matrix

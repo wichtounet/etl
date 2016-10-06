@@ -24,6 +24,12 @@ template <typename V1, order V2, std::size_t V3>
 struct is_dyn_matrix_impl<dyn_matrix_impl<V1, V2, V3>> : std::true_type {};
 
 template <typename T>
+struct is_custom_dyn_matrix_impl : std::false_type {};
+
+template <typename V1, order V2, std::size_t V3>
+struct is_custom_dyn_matrix_impl<custom_dyn_matrix_impl<V1, V2, V3>> : std::true_type {};
+
+template <typename T>
 struct is_sparse_matrix_impl : std::false_type {};
 
 template <typename V1, sparse_storage V2, std::size_t V3>
@@ -74,6 +80,13 @@ using is_fast_matrix = traits_detail::is_fast_matrix_impl<std::decay_t<T>>;
  */
 template <typename T>
 using is_dyn_matrix = traits_detail::is_dyn_matrix_impl<std::decay_t<T>>;
+
+/*!
+ * \brief Traits indicating if the given ETL type is a custom dyn matrix
+ * \tparam T The type to test
+ */
+template <typename T>
+using is_custom_dyn_matrix = traits_detail::is_custom_dyn_matrix_impl<std::decay_t<T>>;
 
 /*!
  * \brief Traits indicating if the given ETL type is a sparse matrix
@@ -217,7 +230,7 @@ using is_etl_value = cpp::bool_constant<decay_traits<T>::is_value>;
  * \tparam T The type to test
  */
 template <typename T>
-using is_etl_value_class = cpp::or_c<is_fast_matrix<T>, is_dyn_matrix<T>, is_sparse_matrix<T>>;
+using is_etl_value_class = cpp::or_c<is_fast_matrix<T>, is_dyn_matrix<T>, is_custom_dyn_matrix<T>, is_sparse_matrix<T>>;
 
 /*!
  * \brief Traits indicating if the given ETL type can be left hand side type
