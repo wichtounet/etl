@@ -201,6 +201,30 @@ struct avx512_vec {
         _mm512_store_pd(reinterpret_cast<double*>(memory), value);
     }
 
+    ETL_INLINE_VEC_VOID stream(float* memory, __m512 value) {
+        _mm512_stream_ps(memory, value);
+    }
+
+    ETL_INLINE_VEC_VOID stream(double* memory, __m512d value) {
+        _mm512_stream_pd(memory, value);
+    }
+
+    ETL_INLINE_VEC_VOID stream(std::complex<float>* memory, __m512 value) {
+        _mm512_stream_ps(reinterpret_cast<float*>(memory), value);
+    }
+
+    ETL_INLINE_VEC_VOID stream(std::complex<double>* memory, __m512d value) {
+        _mm512_stream_pd(reinterpret_cast<double*>(memory), value);
+    }
+
+    ETL_INLINE_VEC_VOID stream(etl::complex<float>* memory, __m512 value) {
+        _mm512_stream_ps(reinterpret_cast<float*>(memory), value);
+    }
+
+    ETL_INLINE_VEC_VOID stream(etl::complex<double>* memory, __m512d value) {
+        _mm512_stream_pd(reinterpret_cast<double*>(memory), value);
+    }
+
     ETL_INLINE_VEC_512 load(const float* memory) {
         return _mm512_load_ps(memory);
     }

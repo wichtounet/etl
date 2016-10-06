@@ -172,6 +172,30 @@ struct avx_vec {
         _mm256_storeu_pd(reinterpret_cast<double*>(memory), value);
     }
 
+    ETL_INLINE_VEC_VOID stream(float* memory, __m256 value) {
+        _mm256_stream_ps(memory, value);
+    }
+
+    ETL_INLINE_VEC_VOID stream(double* memory, __m256d value) {
+        _mm256_stream_pd(memory, value);
+    }
+
+    ETL_INLINE_VEC_VOID stream(std::complex<float>* memory, __m256 value) {
+        _mm256_stream_ps(reinterpret_cast<float*>(memory), value);
+    }
+
+    ETL_INLINE_VEC_VOID stream(std::complex<double>* memory, __m256d value) {
+        _mm256_stream_pd(reinterpret_cast<double*>(memory), value);
+    }
+
+    ETL_INLINE_VEC_VOID stream(etl::complex<float>* memory, __m256 value) {
+        _mm256_stream_ps(reinterpret_cast<float*>(memory), value);
+    }
+
+    ETL_INLINE_VEC_VOID stream(etl::complex<double>* memory, __m256d value) {
+        _mm256_stream_pd(reinterpret_cast<double*>(memory), value);
+    }
+
     ETL_INLINE_VEC_VOID store(float* memory, __m256 value) {
         _mm256_store_ps(memory, value);
     }

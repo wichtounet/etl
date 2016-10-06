@@ -193,6 +193,30 @@ struct sse_vec {
         _mm_store_pd(reinterpret_cast<double*>(memory), value);
     }
 
+    ETL_INLINE_VEC_VOID stream(float* memory, __m128 value) {
+        _mm_stream_ps(memory, value);
+    }
+
+    ETL_INLINE_VEC_VOID stream(double* memory, __m128d value) {
+        _mm_stream_pd(memory, value);
+    }
+
+    ETL_INLINE_VEC_VOID stream(std::complex<float>* memory, __m128 value) {
+        _mm_stream_ps(reinterpret_cast<float*>(memory), value);
+    }
+
+    ETL_INLINE_VEC_VOID stream(std::complex<double>* memory, __m128d value) {
+        _mm_stream_pd(reinterpret_cast<double*>(memory), value);
+    }
+
+    ETL_INLINE_VEC_VOID stream(etl::complex<float>* memory, __m128 value) {
+        _mm_stream_ps(reinterpret_cast<float*>(memory), value);
+    }
+
+    ETL_INLINE_VEC_VOID stream(etl::complex<double>* memory, __m128d value) {
+        _mm_stream_pd(reinterpret_cast<double*>(memory), value);
+    }
+
     ETL_INLINE_VEC_128 load(const float* memory) {
         return _mm_load_ps(memory);
     }
