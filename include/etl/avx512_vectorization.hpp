@@ -78,6 +78,24 @@ struct avx512_intrinsic_traits<std::complex<double>> {
     using intrinsic_type = __m512d;
 };
 
+template <>
+struct avx512_intrinsic_traits<etl::complex<float>> {
+    static constexpr const bool vectorizable     = true;
+    static constexpr const std::size_t size      = 8;
+    static constexpr const std::size_t alignment = 64;
+
+    using intrinsic_type = __m512;
+};
+
+template <>
+struct avx512_intrinsic_traits<etl::complex<double>> {
+    static constexpr const bool vectorizable     = true;
+    static constexpr const std::size_t size      = 4;
+    static constexpr const std::size_t alignment = 64;
+
+    using intrinsic_type = __m512d;
+};
+
 struct avx512_vec {
     template <typename T>
     using traits = avx512_intrinsic_traits<T>;
@@ -151,6 +169,14 @@ struct avx512_vec {
         _mm512_storeu_pd(reinterpret_cast<double*>(memory), value);
     }
 
+    ETL_INLINE_VEC_VOID storeu(etl::complex<float>* memory, __m512 value) {
+        _mm512_storeu_ps(reinterpret_cast<float*>(memory), value);
+    }
+
+    ETL_INLINE_VEC_VOID storeu(etl::complex<double>* memory, __m512d value) {
+        _mm512_storeu_pd(reinterpret_cast<double*>(memory), value);
+    }
+
     ETL_INLINE_VEC_VOID store(float* memory, __m512 value) {
         _mm512_store_ps(memory, value);
     }
@@ -164,6 +190,14 @@ struct avx512_vec {
     }
 
     ETL_INLINE_VEC_VOID store(std::complex<double>* memory, __m512d value) {
+        _mm512_store_pd(reinterpret_cast<double*>(memory), value);
+    }
+
+    ETL_INLINE_VEC_VOID store(etl::complex<float>* memory, __m512 value) {
+        _mm512_store_ps(reinterpret_cast<float*>(memory), value);
+    }
+
+    ETL_INLINE_VEC_VOID store(etl::complex<double>* memory, __m512d value) {
         _mm512_store_pd(reinterpret_cast<double*>(memory), value);
     }
 
@@ -183,6 +217,14 @@ struct avx512_vec {
         return _mm512_load_pd(reinterpret_cast<const double*>(memory));
     }
 
+    ETL_INLINE_VEC_512 load(const etl::complex<float>* memory) {
+        return _mm512_load_ps(reinterpret_cast<const float*>(memory));
+    }
+
+    ETL_INLINE_VEC_512D load(const etl::complex<double>* memory) {
+        return _mm512_load_pd(reinterpret_cast<const double*>(memory));
+    }
+
     ETL_INLINE_VEC_512 loadu(const float* memory) {
         return _mm512_loadu_ps(memory);
     }
@@ -196,6 +238,14 @@ struct avx512_vec {
     }
 
     ETL_INLINE_VEC_512D loadu(const std::complex<double>* memory) {
+        return _mm512_loadu_pd(reinterpret_cast<const double*>(memory));
+    }
+
+    ETL_INLINE_VEC_512 loadu(const etl::complex<float>* memory) {
+        return _mm512_loadu_ps(reinterpret_cast<const float*>(memory));
+    }
+
+    ETL_INLINE_VEC_512D loadu(const etl::complex<double>* memory) {
         return _mm512_loadu_pd(reinterpret_cast<const double*>(memory));
     }
 
