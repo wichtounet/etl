@@ -129,6 +129,20 @@ constexpr const bool is_div_strict = true;
 constexpr const bool is_div_strict               = false; ///< Boolean flag indicating if division can be done by multiplication (false) or not (true)
 #endif
 
+// Flag to disable streaming operations
+#ifdef ETL_NO_STREAMING
+constexpr const bool streaming = false;
+#else
+constexpr const bool streaming = true;
+#endif
+
+// Flag to set the cache size
+#ifdef ETL_CACHE_SIZE
+constexpr const size_t cache_size = ETL_CACHE_SIZE;
+#else
+constexpr const size_t cache_size = 3 * 1024 * 1024;
+#endif
+
 //Flag to disable unrolling of vectorized loops
 #ifdef ETL_NO_UNROLL_VECT
 constexpr const bool unroll_vectorized_loops = false;
