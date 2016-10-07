@@ -527,21 +527,19 @@ struct VectorizedAssignMul : vectorized_base<V, L_Expr, V_Expr, VectorizedAssign
                 lhs_m[i] *= rhs[i];
             }
         } else {
-            if (unroll_vectorized_loops && _last - _first > IT::size * 4) {
-                for (; i + IT::size * 4 - 1 < _last; i += IT::size * 4) {
-                    lhs.template store<vect_impl>(vect_impl::template mul<Cx>(lhs_load(i), rhs_load(i)), i);
-                    lhs.template store<vect_impl>(vect_impl::template mul<Cx>(lhs_load(i + 1 * IT::size), rhs_load(i + 1 * IT::size)), i + 1 * IT::size);
-                    lhs.template store<vect_impl>(vect_impl::template mul<Cx>(lhs_load(i + 2 * IT::size), rhs_load(i + 2 * IT::size)), i + 2 * IT::size);
-                    lhs.template store<vect_impl>(vect_impl::template mul<Cx>(lhs_load(i + 3 * IT::size), rhs_load(i + 3 * IT::size)), i + 3 * IT::size);
-                }
+            for (; i + IT::size * 4 - 1 < _last; i += IT::size * 4) {
+                lhs.template store<vect_impl>(vect_impl::template mul<Cx>(lhs_load(i), rhs_load(i)), i);
+                lhs.template store<vect_impl>(vect_impl::template mul<Cx>(lhs_load(i + 1 * IT::size), rhs_load(i + 1 * IT::size)), i + 1 * IT::size);
+                lhs.template store<vect_impl>(vect_impl::template mul<Cx>(lhs_load(i + 2 * IT::size), rhs_load(i + 2 * IT::size)), i + 2 * IT::size);
+                lhs.template store<vect_impl>(vect_impl::template mul<Cx>(lhs_load(i + 3 * IT::size), rhs_load(i + 3 * IT::size)), i + 3 * IT::size);
+            }
 
-                for (; i + IT::size - 1 < _last; i += IT::size) {
-                    lhs.template store<vect_impl>(vect_impl::template mul<Cx>(lhs_load(i), rhs_load(i)), i);
-                }
+            for (; i + IT::size - 1 < _last; i += IT::size) {
+                lhs.template store<vect_impl>(vect_impl::template mul<Cx>(lhs_load(i), rhs_load(i)), i);
+            }
 
-                for (; i < _last; ++i) {
-                    lhs_m[i] *= rhs[i];
-                }
+            for (; i < _last; ++i) {
+                lhs_m[i] *= rhs[i];
             }
         }
     }
