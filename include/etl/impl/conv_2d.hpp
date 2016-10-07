@@ -71,8 +71,6 @@ struct conv2_full_impl {
 
         cpp_assert(etl::dim(conv, 0) == etl::dim(input, 0) + etl::dim(kernel, 0) - 1, "Invalid dimensions for conv2_full");
         cpp_assert(etl::dim(conv, 1) == etl::dim(input, 1) + etl::dim(kernel, 1) - 1, "Invalid dimensions for conv2_full");
-        cpp_assert(etl::dim(input, 0) >= etl::dim(kernel, 0), "Invalid dimensions for conv2_full");
-        cpp_assert(etl::dim(input, 1) >= etl::dim(kernel, 1), "Invalid dimensions for conv2_full");
 
         cpp_unused(input);
         cpp_unused(kernel);
@@ -90,8 +88,6 @@ struct conv2_full_impl {
 
         static_assert(etl::dim<0,C>() == etl::dim<0,I>() + etl::dim<0,K>() - 1, "Invalid dimensions for conv2_full");
         static_assert(etl::dim<1,C>() == etl::dim<1,I>() + etl::dim<1,K>() - 1, "Invalid dimensions for conv2_full");
-        static_assert(etl::dim<0,I>() >= etl::dim<0,K>(), "Invalid dimensions for conv2_full");
-        static_assert(etl::dim<1,I>() >= etl::dim<1,K>(), "Invalid dimensions for conv2_full");
     }
 
     /*!
