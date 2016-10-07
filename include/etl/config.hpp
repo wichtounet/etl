@@ -136,6 +136,13 @@ constexpr const bool streaming = false;
 constexpr const bool streaming = true;
 #endif
 
+// Flag to disable streaming operations
+#ifdef ETL_NO_PADDING
+constexpr const bool padding = false;
+#else
+constexpr const bool padding = true;
+#endif
+
 // Flag to set the cache size
 #ifdef ETL_CACHE_SIZE
 constexpr const size_t cache_size = ETL_CACHE_SIZE;
