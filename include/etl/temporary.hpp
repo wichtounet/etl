@@ -18,7 +18,7 @@ struct build_fast_dyn_matrix_type;
 
 template <typename E, std::size_t... I>
 struct build_fast_dyn_matrix_type<E, std::index_sequence<I...>> {
-    using type = fast_matrix_impl<value_t<E>, std::vector<value_t<E>>, decay_traits<E>::storage_order, decay_traits<E>::template dim<I>()...>;
+    using type = fast_matrix_impl<value_t<E>, cpp::aligned_vector<value_t<E>, intrinsic_traits<value_t<E>>::alignment>, decay_traits<E>::storage_order, decay_traits<E>::template dim<I>()...>;
 };
 
 template <typename E, std::size_t... I>

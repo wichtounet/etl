@@ -13,7 +13,10 @@
 
 #pragma once
 
+#include <cstddef>
 #include "cpp_utils/array_wrapper.hpp"
+#include "cpp_utils/aligned_vector.hpp"
+#include "cpp_utils/aligned_array.hpp"
 
 namespace etl {
 
@@ -45,37 +48,37 @@ struct sym_matrix;
  * \brief A static matrix with fixed dimensions, in row-major order
  */
 template <typename T, std::size_t... Dims>
-using fast_matrix = fast_matrix_impl<T, std::array<T, mul_all<Dims...>::value>, order::RowMajor, Dims...>;
+using fast_matrix = fast_matrix_impl<T, cpp::aligned_array<T, mul_all<Dims...>::value, intrinsic_traits<T>::alignment>, order::RowMajor, Dims...>;
 
 /*!
  * \brief A static matrix with fixed dimensions, in column-major order
  */
 template <typename T, std::size_t... Dims>
-using fast_matrix_cm = fast_matrix_impl<T, std::array<T, mul_all<Dims...>::value>, order::ColumnMajor, Dims...>;
+using fast_matrix_cm = fast_matrix_impl<T, cpp::aligned_array<T, mul_all<Dims...>::value, intrinsic_traits<T>::alignment>, order::ColumnMajor, Dims...>;
 
 /*!
  * \brief A static vector with fixed dimensions, in row-major order
  */
 template <typename T, std::size_t Rows>
-using fast_vector = fast_matrix_impl<T, std::array<T, Rows>, order::RowMajor, Rows>;
+using fast_vector = fast_matrix_impl<T, cpp::aligned_array<T, Rows, intrinsic_traits<T>::alignment>, order::RowMajor, Rows>;
 
 /*!
  * \brief A static vector with fixed dimensions, in column-major order
  */
 template <typename T, std::size_t Rows>
-using fast_vector_cm = fast_matrix_impl<T, std::array<T, Rows>, order::ColumnMajor, Rows>;
+using fast_vector_cm = fast_matrix_impl<T, cpp::aligned_array<T, Rows, intrinsic_traits<T>::alignment>, order::ColumnMajor, Rows>;
 
 /*!
  * \brief A hybrid vector with fixed dimensions, in row-major order
  */
 template <typename T, std::size_t Rows>
-using fast_dyn_vector = fast_matrix_impl<T, std::vector<T>, order::RowMajor, Rows>;
+using fast_dyn_vector = fast_matrix_impl<T, cpp::aligned_vector<T, intrinsic_traits<T>::alignment>, order::RowMajor, Rows>;
 
 /*!
  * \brief A hybrid matrix with fixed dimensions, in row-major order
  */
 template <typename T, std::size_t... Dims>
-using fast_dyn_matrix = fast_matrix_impl<T, std::vector<T>, order::RowMajor, Dims...>;
+using fast_dyn_matrix = fast_matrix_impl<T, cpp::aligned_vector<T, intrinsic_traits<T>::alignment>, order::RowMajor, Dims...>;
 
 /*!
  * \brief A dynamic matrix, in row-major order, of D dimensions
