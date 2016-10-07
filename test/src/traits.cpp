@@ -16,6 +16,7 @@ TEMPLATE_TEST_CASE_2("etl_traits/fast_vector_1", "etl_traits<fast_vector>", ZZZ,
     REQUIRE_EQUALS(etl::size(test_vector), 4UL);
     REQUIRE_DIRECT(etl::etl_traits<type>::is_value);
     REQUIRE_DIRECT(etl::etl_traits<type>::is_fast);
+    REQUIRE_DIRECT(etl::etl_traits<type>::is_padded);
     REQUIRE_DIRECT(etl::etl_traits<type>::template vectorizable<etl::vector_mode>::value);
 
     constexpr const auto size_1 = etl::etl_traits<type>::size();
@@ -46,6 +47,7 @@ TEMPLATE_TEST_CASE_2("etl_traits/fast_matrix_1", "etl_traits<fast_matrix>", Z, f
     REQUIRE_EQUALS(etl::dimensions(test_matrix), 2UL);
     REQUIRE_DIRECT(etl::etl_traits<type>::is_value);
     REQUIRE_DIRECT(etl::etl_traits<type>::is_fast);
+    REQUIRE_DIRECT(etl::etl_traits<type>::is_padded);
     REQUIRE_DIRECT(etl::etl_traits<type>::template vectorizable<etl::vector_mode>::value);
 
     constexpr const auto size_1 = etl::etl_traits<type>::size();
@@ -83,6 +85,7 @@ TEMPLATE_TEST_CASE_2("etl_traits/fast_matrix_2", "etl_traits<fast_matrix>", Z, f
     REQUIRE_EQUALS(etl::dimensions(test_matrix), 4UL);
     REQUIRE_DIRECT(etl::etl_traits<type>::is_value);
     REQUIRE_DIRECT(etl::etl_traits<type>::is_fast);
+    REQUIRE_DIRECT(etl::etl_traits<type>::is_padded);
     REQUIRE_DIRECT(etl::etl_traits<type>::template vectorizable<etl::vector_mode>::value);
 
     constexpr const auto size_1 = etl::etl_traits<type>::size();
@@ -123,6 +126,7 @@ TEMPLATE_TEST_CASE_2("etl_traits/dyn_vector_1", "etl_traits<dyn_vector>", Z, flo
     REQUIRE_EQUALS(etl::dimensions(test_vector), 1UL);
     REQUIRE_DIRECT(etl::etl_traits<type>::is_value);
     REQUIRE_DIRECT(!etl::etl_traits<type>::is_fast);
+    REQUIRE_DIRECT(etl::etl_traits<type>::is_padded);
     REQUIRE_DIRECT(etl::etl_traits<type>::template vectorizable<etl::vector_mode>::value);
 }
 
@@ -140,6 +144,7 @@ TEMPLATE_TEST_CASE_2("etl_traits/dyn_matrix_1", "etl_traits<dyn_matrix>", Z, flo
     REQUIRE_EQUALS(etl::etl_traits<type>::dim(test_matrix, 1), 2UL);
     REQUIRE_DIRECT(etl::etl_traits<type>::is_value);
     REQUIRE_DIRECT(!etl::etl_traits<type>::is_fast);
+    REQUIRE_DIRECT(etl::etl_traits<type>::is_padded);
     REQUIRE_DIRECT(etl::etl_traits<type>::template vectorizable<etl::vector_mode>::value);
 }
 
@@ -160,6 +165,7 @@ TEMPLATE_TEST_CASE_2("etl_traits/unary_dyn_mat", "etl_traits<unary<dyn_mat>>", Z
     REQUIRE_EQUALS(etl::dimensions(expr), 2UL);
     REQUIRE_DIRECT(!etl::etl_traits<expr_type>::is_value);
     REQUIRE_DIRECT(!etl::etl_traits<expr_type>::is_fast);
+    REQUIRE_DIRECT(etl::etl_traits<expr_type>::is_padded);
 }
 
 TEMPLATE_TEST_CASE_2("etl_traits/binary_dyn_mat", "etl_traits<binary<dyn_mat, dyn_mat>>", Z, float, double) {
@@ -179,6 +185,7 @@ TEMPLATE_TEST_CASE_2("etl_traits/binary_dyn_mat", "etl_traits<binary<dyn_mat, dy
     REQUIRE_EQUALS(etl::etl_traits<expr_type>::dim(expr, 1), 2UL);
     REQUIRE_DIRECT(!etl::etl_traits<expr_type>::is_value);
     REQUIRE_DIRECT(!etl::etl_traits<expr_type>::is_fast);
+    REQUIRE_DIRECT(etl::etl_traits<expr_type>::is_padded);
     REQUIRE_DIRECT(etl::etl_traits<expr_type>::template vectorizable<etl::vector_mode>::value);
 }
 
@@ -197,6 +204,7 @@ TEMPLATE_TEST_CASE_2("etl_traits/unary_fast_mat", "etl_traits<unary<fast_mat>>",
     REQUIRE_EQUALS(etl::dimensions(expr), 2UL);
     REQUIRE_DIRECT(!etl::etl_traits<expr_type>::is_value);
     REQUIRE_DIRECT(etl::etl_traits<expr_type>::is_fast);
+    REQUIRE_DIRECT(etl::etl_traits<expr_type>::is_padded);
 
     constexpr const auto size_1 = etl::etl_traits<expr_type>::size();
     constexpr const auto dim_1  = etl::etl_traits<expr_type>::dimensions();
@@ -236,6 +244,7 @@ TEMPLATE_TEST_CASE_2("etl_traits/binary_fast_mat", "etl_traits<binary<fast_mat, 
     REQUIRE_EQUALS(etl::dimensions(expr), 2UL);
     REQUIRE_DIRECT(!etl::etl_traits<expr_type>::is_value);
     REQUIRE_DIRECT(etl::etl_traits<expr_type>::is_fast);
+    REQUIRE_DIRECT(etl::etl_traits<expr_type>::is_padded);
 
     constexpr const auto size_1 = etl::etl_traits<expr_type>::size();
     constexpr const auto dim_1  = etl::etl_traits<expr_type>::dimensions();

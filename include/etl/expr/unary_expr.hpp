@@ -1016,10 +1016,11 @@ struct etl_traits<etl::unary_expr<T, Expr, UnaryOp>> {
     static constexpr const bool is_value                = false;                                                ///< Indicates if the expression is of value type
     static constexpr const bool is_direct                = std::is_same<UnaryOp, identity_op>::value && etl_traits<sub_expr_t>::is_direct;                                                ///< Indicates if the expression has direct memory access
     static constexpr const bool is_linear               = etl_traits<sub_expr_t>::is_linear && UnaryOp::linear; ///< Indicates if the expression is linear
-    static constexpr const bool is_thread_safe           = etl_traits<sub_expr_t>::is_thread_safe && UnaryOp::thread_safe;                                                                ///< Indicates if the expression is linear
+    static constexpr const bool is_thread_safe          = etl_traits<sub_expr_t>::is_thread_safe && UnaryOp::thread_safe;                                                                ///< Indicates if the expression is linear
     static constexpr const bool is_generator            = etl_traits<sub_expr_t>::is_generator;                 ///< Indicates if the expression is a generator expression
     static constexpr const bool needs_temporary_visitor = etl_traits<sub_expr_t>::needs_temporary_visitor;      ///< Indicates if the expression needs a temporary visitor
     static constexpr const bool needs_evaluator_visitor = etl_traits<sub_expr_t>::needs_evaluator_visitor;      ///< Indicaes if the expression needs an evaluator visitor
+    static constexpr const bool is_padded                = is_linear && etl_traits<sub_expr_t>::is_padded;                                                                                ///< Indicates if the expression is padded
     static constexpr const order storage_order          = etl_traits<sub_expr_t>::storage_order;                ///< The expression storage order
 
     /*!

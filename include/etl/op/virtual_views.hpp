@@ -188,6 +188,7 @@ struct etl_traits<etl::magic_view<V>> {
     static constexpr const bool is_generator            = false;           ///< Indicates if the expression is a generator
     static constexpr const bool needs_temporary_visitor = false;           ///< Indicates if the expression needs a temporary visitor
     static constexpr const bool needs_evaluator_visitor = false;           ///< Indicates if the exxpression needs a evaluator visitor
+    static constexpr const bool is_padded               = false;                          ///< Indicates if the expression is padded
     static constexpr const order storage_order          = order::RowMajor; ///< The expression's storage order
 
     /*!
@@ -246,6 +247,7 @@ struct etl_traits<etl::fast_magic_view<V, N>> {
     static constexpr const bool is_generator            = false;           ///< Indicates if the expression is a generator
     static constexpr const bool needs_temporary_visitor = false;           ///< Indicates if the expression needs a temporary visitor
     static constexpr const bool needs_evaluator_visitor = false;           ///< Indicates if the exxpression needs a evaluator visitor
+    static constexpr const bool is_padded               = false;                          ///< Indicates if the expression is padded
     static constexpr const order storage_order          = order::RowMajor; ///< The expression's storage order
 
     /*!
