@@ -156,13 +156,13 @@ struct fast_matrix_base {
     static constexpr const std::size_t n_dimensions = sizeof...(Dims);
     static constexpr const std::size_t etl_size     = mul_all<Dims...>::value;              ///< The size of the matrix
 
-    using value_type     = T;
-    using derived_t      = D;
-    using storage_impl   = ST;                                            ///< The storage implementation
-    using iterator       = matrix_detail::iterator_t<storage_impl>;       ///< The iterator type
-    using const_iterator = matrix_detail::const_iterator_t<storage_impl>; ///< The const iterator type
-    using memory_type       = value_type*;                                   ///< The memory type
-    using const_memory_type = const value_type*;                             ///< The const memory type
+    using value_type        = T;
+    using derived_t         = D;
+    using storage_impl      = ST;                ///< The storage implementation
+    using iterator          = value_type*;       ///< The iterator type
+    using const_iterator    = const value_type*; ///< The const iterator type
+    using memory_type       = value_type*;       ///< The memory type
+    using const_memory_type = const value_type*; ///< The const memory type
 
 protected:
     storage_impl _data; ///< The storage container
@@ -347,48 +347,48 @@ public:
      * \brief Return an iterator to the first element of the matrix
      * \return an iterator pointing to the first element of the matrix
      */
-    iterator begin() noexcept(noexcept(_data.begin())) {
-        return _data.begin();
+    iterator begin() noexcept {
+        return memory_start();
     }
 
     /*!
      * \brief Return an iterator to the past-the-end element of the matrix
      * \return an iterator pointing to the past-the-end element of the matrix
      */
-    iterator end() noexcept(noexcept(_data.end())) {
-        return _data.end();
+    iterator end() noexcept {
+        return memory_end();
     }
 
     /*!
      * \brief Return an iterator to the first element of the matrix
      * \return a const iterator pointing to the first element of the matrix
      */
-    const_iterator begin() const noexcept(noexcept(_data.cbegin())) {
-        return _data.cbegin();
+    const_iterator begin() const noexcept {
+        return memory_start();
     }
 
     /*!
      * \brief Return an iterator to the past-the-end element of the matrix
      * \return a const iterator pointing to the past-the-end element of the matrix
      */
-    const_iterator end() const noexcept(noexcept(_data.end())) {
-        return _data.cend();
+    const_iterator end() const noexcept {
+        return memory_end();
     }
 
     /*!
      * \brief Return a const iterator to the first element of the matrix
      * \return an const iterator pointing to the first element of the matrix
      */
-    const_iterator cbegin() const noexcept(noexcept(_data.cbegin())) {
-        return _data.cbegin();
+    const_iterator cbegin() const noexcept {
+        return memory_start();
     }
 
     /*!
      * \brief Return a const iterator to the past-the-end element of the matrix
      * \return a const iterator pointing to the past-the-end element of the matrix
      */
-    const_iterator cend() const noexcept(noexcept(_data.end())) {
-        return _data.cend();
+    const_iterator cend() const noexcept {
+        return memory_end();
     }
 
     /*!

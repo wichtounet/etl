@@ -20,6 +20,11 @@
 
 namespace etl {
 
+template <typename T>
+static constexpr size_t alloc_size(size_t size) {
+    return padding ? size + ((intrinsic_traits<T>::size * sizeof(T)) - (size % (intrinsic_traits<T>::size * sizeof(T)))) : size;
+}
+
 template <typename T, typename ST, order SO, std::size_t... Dims>
 struct fast_matrix_impl;
 
@@ -48,25 +53,25 @@ struct sym_matrix;
  * \brief A static matrix with fixed dimensions, in row-major order
  */
 template <typename T, std::size_t... Dims>
-using fast_matrix = fast_matrix_impl<T, cpp::aligned_array<T, mul_all<Dims...>::value, intrinsic_traits<T>::alignment>, order::RowMajor, Dims...>;
+using fast_matrix = fast_matrix_impl<T, cpp::aligned_array<T, alloc_size<T>(mul_all<Dims...>::value), intrinsic_traits<T>::alignment>, order::RowMajor, Dims...>;
 
 /*!
  * \brief A static matrix with fixed dimensions, in column-major order
  */
 template <typename T, std::size_t... Dims>
-using fast_matrix_cm = fast_matrix_impl<T, cpp::aligned_array<T, mul_all<Dims...>::value, intrinsic_traits<T>::alignment>, order::ColumnMajor, Dims...>;
+using fast_matrix_cm = fast_matrix_impl<T, cpp::aligned_array<T, alloc_size<T>(mul_all<Dims...>::value), intrinsic_traits<T>::alignment>, order::ColumnMajor, Dims...>;
 
 /*!
  * \brief A static vector with fixed dimensions, in row-major order
  */
 template <typename T, std::size_t Rows>
-using fast_vector = fast_matrix_impl<T, cpp::aligned_array<T, Rows, intrinsic_traits<T>::alignment>, order::RowMajor, Rows>;
+using fast_vector = fast_matrix_impl<T, cpp::aligned_array<T, alloc_size<T>(Rows), intrinsic_traits<T>::alignment>, order::RowMajor, Rows>;
 
 /*!
  * \brief A static vector with fixed dimensions, in column-major order
  */
 template <typename T, std::size_t Rows>
-using fast_vector_cm = fast_matrix_impl<T, cpp::aligned_array<T, Rows, intrinsic_traits<T>::alignment>, order::ColumnMajor, Rows>;
+using fast_vector_cm = fast_matrix_impl<T, cpp::aligned_array<T, alloc_size<T>(Rows), intrinsic_traits<T>::alignment>, order::ColumnMajor, Rows>;
 
 /*!
  * \brief A hybrid vector with fixed dimensions, in row-major order

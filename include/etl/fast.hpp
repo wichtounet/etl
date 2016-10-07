@@ -67,7 +67,7 @@ private:
      */
     template <typename S = ST, cpp_enable_if(matrix_detail::is_vector<S>::value)>
     void init() {
-        _data.resize(etl_size);
+        _data.resize(alloc_size<value_type>(etl_size));
     }
 
     /*!
@@ -95,7 +95,7 @@ public:
     template <typename VT, cpp_enable_if_or(std::is_convertible<VT, value_type>::value, std::is_assignable<T&, VT>::value)>
     explicit fast_matrix_impl(const VT& value) noexcept: base_type()  {
         init();
-        std::fill(_data.begin(), _data.end(), value);
+        std::fill(begin(), end(), value);
     }
 
     /*!
@@ -237,7 +237,7 @@ public:
      */
     template <typename VT, cpp_enable_if_or(std::is_convertible<VT, value_type>::value, std::is_assignable<T&, VT>::value)>
     fast_matrix_impl& operator=(const VT& value) noexcept {
-        std::fill(_data.begin(), _data.end(), value);
+        std::fill(begin(), end(), value);
 
         return *this;
     }
