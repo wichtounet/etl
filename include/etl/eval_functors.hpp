@@ -140,21 +140,17 @@ struct vectorized_base {
     void operator()() const {
         decltype(auto) d = as_derived();
 
-        //1. Peel loop (if necessary)
-        auto peeled = d.peel_loop();
-
         //2. Main vectorized loop
 
-        std::size_t first = peeled;
-
-        if (_size - peeled >= IT::size) {
-            if (reinterpret_cast<uintptr_t>(lhs_m + _first + peeled) % IT::alignment == 0) {
-                first = d.aligned_main_loop(_first + peeled);
+        std::size_t first;
+        if (_size >= IT::size) {
+            if (reinterpret_cast<uintptr_t>(lhs_m + _first) % IT::alignment == 0) {
+                first = d.aligned_main_loop(_first);
             } else {
-                first = d.unaligned_main_loop(_first + peeled);
+                first = d.unaligned_main_loop(_first);
             }
         } else {
-            first += _first;
+            first = _first;
         }
 
         //3. Remainder loop (non-vectorized)
@@ -205,32 +201,6 @@ struct VectorizedAssign : vectorized_base<V, L_Expr, V_Expr, VectorizedAssign<V,
 
     using base_t::operator();
     using base_t::rhs_load;
-
-    /*!
-     * \brief Peel the loop to perform aligned store when possible
-     * \return the number of peeled iterations
-     */
-    std::size_t peel_loop() const {
-        // If already aligned, return directly
-        if (cpp_likely(reinterpret_cast<uintptr_t>(lhs_m + _first) % IT::alignment == 0)) {
-            return 0;
-        }
-
-        std::size_t i = 0;
-
-        constexpr const auto size_1 = sizeof(value_t<V_Expr>);
-        auto u_bytes                = (reinterpret_cast<uintptr_t>(lhs_m + _first) % IT::alignment);
-
-        if (u_bytes >= size_1 && u_bytes % size_1 == 0) {
-            auto u_loads = std::min(u_bytes / size_1, _size);
-
-            for (; i < u_loads; ++i) {
-                lhs_m[_first + i] = rhs[_first + i];
-            }
-        }
-
-        return i;
-    }
 
     /*!
      * \brief Compute the vectorized iterations of the loop using aligned store operations
@@ -375,27 +345,6 @@ struct VectorizedAssignAdd : vectorized_base<V, L_Expr, V_Expr, VectorizedAssign
     using base_t::rhs_load;
 
     /*!
-     * \brief Peel the loop to perform aligned store when possible
-     * \return the number of peeled iterations
-     */
-    std::size_t peel_loop() const {
-        std::size_t i = 0;
-
-        constexpr const auto size_1 = sizeof(value_t<V_Expr>);
-        auto u_bytes                = (reinterpret_cast<uintptr_t>(lhs_m + _first) % IT::alignment);
-
-        if (u_bytes >= size_1 && u_bytes % size_1 == 0) {
-            auto u_loads = std::min(u_bytes / size_1, _size);
-
-            for (; i < u_loads; ++i) {
-                lhs_m[_first + i] += rhs[_first + i];
-            }
-        }
-
-        return i;
-    }
-
-    /*!
      * \brief Compute the vectorized iterations of the loop using aligned store operations
      * \param first The index when to start
      */
@@ -536,27 +485,6 @@ struct VectorizedAssignSub : vectorized_base<V, L_Expr, V_Expr, VectorizedAssign
     using base_t::operator();
     using base_t::lhs_load;
     using base_t::rhs_load;
-
-    /*!
-     * \brief Peel the loop to perform aligned store when possible
-     * \return the number of peeled iterations
-     */
-    std::size_t peel_loop() const {
-        std::size_t i = 0;
-
-        constexpr const auto size_1 = sizeof(value_t<V_Expr>);
-        auto u_bytes                = (reinterpret_cast<uintptr_t>(lhs_m + _first) % IT::alignment);
-
-        if (u_bytes >= size_1 && u_bytes % size_1 == 0) {
-            auto u_loads = std::min(u_bytes / size_1, _size);
-
-            for (; i < u_loads; ++i) {
-                lhs_m[_first + i] -= rhs[_first + i];
-            }
-        }
-
-        return i;
-    }
 
     /*!
      * \brief Compute the vectorized iterations of the loop using aligned store operations
@@ -703,27 +631,6 @@ struct VectorizedAssignMul : vectorized_base<V, L_Expr, V_Expr, VectorizedAssign
     using base_t::rhs_load;
 
     /*!
-     * \brief Peel the loop to perform aligned store when possible
-     * \return the number of peeled iterations
-     */
-    std::size_t peel_loop() const {
-        std::size_t i = 0;
-
-        constexpr const auto size_1 = sizeof(value_t<V_Expr>);
-        auto u_bytes                = (reinterpret_cast<uintptr_t>(lhs_m + _first) % IT::alignment);
-
-        if (u_bytes >= size_1 && u_bytes % size_1 == 0) {
-            auto u_loads = std::min(u_bytes / size_1, _size);
-
-            for (; i < u_loads; ++i) {
-                lhs_m[_first + i] *= rhs[_first + i];
-            }
-        }
-
-        return i;
-    }
-
-    /*!
      * \brief Compute the vectorized iterations of the loop using aligned store operations
      * \param first The index when to start
      */
@@ -866,27 +773,6 @@ struct VectorizedAssignDiv : vectorized_base<V, L_Expr, V_Expr, VectorizedAssign
     using base_t::operator();
     using base_t::lhs_load;
     using base_t::rhs_load;
-
-    /*!
-     * \brief Peel the loop to perform aligned store when possible
-     * \return the number of peeled iterations
-     */
-    std::size_t peel_loop() const {
-        std::size_t i = 0;
-
-        constexpr const auto size_1 = sizeof(value_t<V_Expr>);
-        auto u_bytes                = (reinterpret_cast<uintptr_t>(lhs_m + _first) % IT::alignment);
-
-        if (u_bytes >= size_1 && u_bytes % size_1 == 0) {
-            auto u_loads = std::min(u_bytes / size_1, _size);
-
-            for (; i < u_loads; ++i) {
-                lhs_m[_first + i] /= rhs[_first + i];
-            }
-        }
-
-        return i;
-    }
 
     /*!
      * \brief Compute the vectorized iterations of the loop using aligned store operations
