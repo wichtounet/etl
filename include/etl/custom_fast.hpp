@@ -66,8 +66,8 @@ public:
     /// Construction
 
     /*!
-     * \brief Construct a fast matrix directly from storage
-     * \param data The storage container to copy
+     * \brief Construct a fast matrix directly from storage memory
+     * \param memory The unmanaged memory
      */
     custom_fast_matrix_impl(memory_type memory) : base_type(storage_impl{memory, etl_size}) {
         //Nothing else to init
