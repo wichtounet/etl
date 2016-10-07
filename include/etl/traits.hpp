@@ -450,6 +450,20 @@ template <typename... E>
 using all_thread_safe = cpp::and_u<decay_traits<E>::is_thread_safe...>;
 
 /*!
+ * \brief Traits to test if all the given ETL expresion types are padded.
+ * \tparam E The ETL expression types.
+ */
+template <typename T>
+using is_padded_value = cpp::or_u<is_dyn_matrix<T>::value, is_fast_matrix<T>::value>;
+
+/*!
+ * \brief Traits to test if all the given ETL expresion types are padded.
+ * \tparam E The ETL expression types.
+ */
+template <typename... E>
+using all_padded = cpp::and_u<decay_traits<E>::is_padded...>;
+
+/*!
  * \brief Traits to test if an expression is inplace transpose-able
  * \tparam T The type to test
  */
@@ -548,7 +562,8 @@ struct etl_traits<T, std::enable_if_t<is_etl_value_class<T>::value>> {
     static constexpr const bool is_linear               = true;                        ///< Indicates if the expression is linear
     static constexpr const bool is_generator            = false;                       ///< Indicates if the expression is a generator expression
     static constexpr const bool needs_temporary_visitor = false;                       ///< Indicates if the expression needs a temporary visitor
-    static constexpr const bool needs_evaluator_visitor = false;                       ///< Indicaes if the expression needs an evaluator visitor
+    static constexpr const bool needs_evaluator_visitor = false;                       ///< Indicates if the expression needs an evaluator visitor
+    static constexpr const bool is_padded               = is_padded_value<T>::value;   ///< Indicates if the expression is padded
     static constexpr const order storage_order          = T::storage_order;            ///< The expression storage order
 
     /*!
