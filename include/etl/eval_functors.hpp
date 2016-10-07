@@ -134,30 +134,6 @@ struct vectorized_base {
         return rhs.template load<vect_impl>(i);
     }
 
-    /*!
-     * \brief Assign rhs to lhs
-     */
-    void operator()() const {
-        decltype(auto) d = as_derived();
-
-        //2. Main vectorized loop
-
-        std::size_t first;
-        if (_size >= IT::size) {
-            if (reinterpret_cast<uintptr_t>(lhs_m + _first) % IT::alignment == 0) {
-                first = d.aligned_main_loop(_first);
-            } else {
-                first = d.unaligned_main_loop(_first);
-            }
-        } else {
-            first = _first;
-        }
-
-        //3. Remainder loop (non-vectorized)
-
-        d.remainder_loop(first);
-    }
-
 private:
     /*!
      * \brief Returns a reference to the derived object, i.e. the object using the CRTP injector.
@@ -199,68 +175,35 @@ struct VectorizedAssign : vectorized_base<V, L_Expr, V_Expr, VectorizedAssign<V,
         //Nothing else
     }
 
-    using base_t::operator();
     using base_t::rhs_load;
 
     /*!
      * \brief Compute the vectorized iterations of the loop using aligned store operations
      * \param first The index when to start
      */
-    inline std::size_t aligned_main_loop(std::size_t first) const {
-        std::size_t i = 0;
+    void operator()() const {
+        std::size_t i = _first;
 
         if(streaming && _size > cache_size / (sizeof(typename base_t::lhs_value_type) * 3) && !rhs.alias(lhs)){
-            for (i = first; i + IT::size - 1 < _last; i += IT::size) {
+            for (; i + IT::size - 1 < _last; i += IT::size) {
                 lhs.template stream<vect_impl>(rhs_load(i), i);
             }
         } else {
-            if (unroll_vectorized_loops && _last - first > IT::size * 4) {
-                for (i = first; i + IT::size * 4 - 1 < _last; i += IT::size * 4) {
+            if (unroll_vectorized_loops && _last - _first > IT::size * 4) {
+                for (; i + IT::size * 4 - 1 < _last; i += IT::size * 4) {
                     lhs.template store<vect_impl>(rhs_load(i), i);
                     lhs.template store<vect_impl>(rhs_load(i + 1 * IT::size), i + 1 * IT::size);
                     lhs.template store<vect_impl>(rhs_load(i + 2 * IT::size), i + 2 * IT::size);
                     lhs.template store<vect_impl>(rhs_load(i + 3 * IT::size), i + 3 * IT::size);
                 }
             } else {
-                for (i = first; i + IT::size - 1 < _last; i += IT::size) {
+                for (; i + IT::size - 1 < _last; i += IT::size) {
                     lhs.template store<vect_impl>(rhs_load(i), i);
                 }
             }
         }
 
-        return i;
-    }
-
-    /*!
-     * \brief Compute the vectorized iterations of the loop using unaligned store operations
-     * \param first The index when to start
-     */
-    inline std::size_t unaligned_main_loop(std::size_t first) const {
-        std::size_t i;
-
-        if (unroll_vectorized_loops && _last - first > IT::size * 4) {
-            for (i = first; i + IT::size * 4 - 1 < _last; i += IT::size * 4) {
-                vect_impl::storeu(lhs_m + i, rhs_load(i));
-                vect_impl::storeu(lhs_m + i + 1 * IT::size, rhs_load(i + 1 * IT::size));
-                vect_impl::storeu(lhs_m + i + 2 * IT::size, rhs_load(i + 2 * IT::size));
-                vect_impl::storeu(lhs_m + i + 3 * IT::size, rhs_load(i + 3 * IT::size));
-            }
-        } else {
-            for (i = first; i + IT::size - 1 < _last; i += IT::size) {
-                vect_impl::storeu(lhs_m + i, rhs_load(i));
-            }
-        }
-
-        return i;
-    }
-
-    /*!
-     * \brief Compute the last iterations of the loop that have
-     * not been vectorized
-     * \param first The index when to start
-     */
-    void remainder_loop(std::size_t first) const {
-        for (std::size_t i = first; i < _last; ++i) {
+        for (; i < _last; ++i) {
             lhs_m[i] = rhs[i];
         }
     }
@@ -340,7 +283,6 @@ struct VectorizedAssignAdd : vectorized_base<V, L_Expr, V_Expr, VectorizedAssign
         //Nothing else
     }
 
-    using base_t::operator();
     using base_t::lhs_load;
     using base_t::rhs_load;
 
@@ -348,61 +290,29 @@ struct VectorizedAssignAdd : vectorized_base<V, L_Expr, V_Expr, VectorizedAssign
      * \brief Compute the vectorized iterations of the loop using aligned store operations
      * \param first The index when to start
      */
-    inline std::size_t aligned_main_loop(std::size_t first) const {
-        std::size_t i = 0;
+    void operator()() const {
+        std::size_t i = _first;
 
         if(streaming && _size > cache_size / (sizeof(typename base_t::lhs_value_type) * 3) && !rhs.alias(lhs)){
-            for (i = first; i + IT::size - 1 < _last; i += IT::size) {
+            for (; i + IT::size - 1 < _last; i += IT::size) {
                 lhs.template stream<vect_impl>(vect_impl::add(lhs_load(i), rhs_load(i)), i);
             }
         } else {
-            if (unroll_vectorized_loops && _last - first > IT::size * 4) {
-                for (i = first; i + IT::size * 4 - 1 < _last; i += IT::size * 4) {
+            if (unroll_vectorized_loops && _last - _first > IT::size * 4) {
+                for (; i + IT::size * 4 - 1 < _last; i += IT::size * 4) {
                     lhs.template store<vect_impl>(vect_impl::add(lhs_load(i), rhs_load(i)), i);
                     lhs.template store<vect_impl>(vect_impl::add(lhs_load(i + 1 * IT::size), rhs_load(i + 1 * IT::size)), i + 1 * IT::size);
                     lhs.template store<vect_impl>(vect_impl::add(lhs_load(i + 2 * IT::size), rhs_load(i + 2 * IT::size)), i + 2 * IT::size);
                     lhs.template store<vect_impl>(vect_impl::add(lhs_load(i + 3 * IT::size), rhs_load(i + 3 * IT::size)), i + 3 * IT::size);
                 }
             } else {
-                for (i = first; i + IT::size - 1 < _last; i += IT::size) {
+                for (; i + IT::size - 1 < _last; i += IT::size) {
                     lhs.template store<vect_impl>(vect_impl::add(lhs_load(i), rhs_load(i)), i);
                 }
             }
         }
 
-        return i;
-    }
-
-    /*!
-     * \brief Compute the vectorized iterations of the loop using unaligned store operations
-     * \param first The index when to start
-     */
-    inline std::size_t unaligned_main_loop(std::size_t first) const {
-        std::size_t i;
-
-        if (unroll_vectorized_loops && _last - first > IT::size * 4) {
-            for (i = first; i + IT::size * 4 - 1 < _last; i += IT::size * 4) {
-                vect_impl::storeu(lhs_m + i, vect_impl::add(lhs_load(i), rhs_load(i)));
-                vect_impl::storeu(lhs_m + i + 1 * IT::size, vect_impl::add(lhs_load(i + 1 * IT::size), rhs_load(i + 1 * IT::size)));
-                vect_impl::storeu(lhs_m + i + 2 * IT::size, vect_impl::add(lhs_load(i + 2 * IT::size), rhs_load(i + 2 * IT::size)));
-                vect_impl::storeu(lhs_m + i + 3 * IT::size, vect_impl::add(lhs_load(i + 3 * IT::size), rhs_load(i + 3 * IT::size)));
-            }
-        } else {
-            for (i = first; i + IT::size - 1 < _last; i += IT::size) {
-                vect_impl::storeu(lhs_m + i, vect_impl::add(lhs.load(i), rhs_load(i)));
-            }
-        }
-
-        return i;
-    }
-
-    /*!
-     * \brief Compute the last iterations of the loop that have
-     * not been vectorized
-     * \param first The index when to start
-     */
-    void remainder_loop(std::size_t first) const {
-        for (std::size_t i = first; i < _last; ++i) {
+        for (; i < _last; ++i) {
             lhs_m[i] += rhs[i];
         }
     }
@@ -482,7 +392,6 @@ struct VectorizedAssignSub : vectorized_base<V, L_Expr, V_Expr, VectorizedAssign
         //Nothing else
     }
 
-    using base_t::operator();
     using base_t::lhs_load;
     using base_t::rhs_load;
 
@@ -490,61 +399,29 @@ struct VectorizedAssignSub : vectorized_base<V, L_Expr, V_Expr, VectorizedAssign
      * \brief Compute the vectorized iterations of the loop using aligned store operations
      * \param first The index when to start
      */
-    inline std::size_t aligned_main_loop(std::size_t first) const {
-        std::size_t i = 0;
+    void operator()() const {
+        std::size_t i = _first;
 
         if(streaming && _size > cache_size / (sizeof(typename base_t::lhs_value_type) * 3) && !rhs.alias(lhs)){
-            for (i = first; i + IT::size - 1 < _last; i += IT::size) {
+            for (; i + IT::size - 1 < _last; i += IT::size) {
                 lhs.template stream<vect_impl>(vect_impl::sub(lhs_load(i), rhs_load(i)), i);
             }
         } else {
-            if (unroll_vectorized_loops && _last - first > IT::size * 4) {
-                for (i = first; i + IT::size * 4 - 1 < _last; i += IT::size * 4) {
+            if (unroll_vectorized_loops && _last - _first > IT::size * 4) {
+                for (; i + IT::size * 4 - 1 < _last; i += IT::size * 4) {
                     lhs.template store<vect_impl>(vect_impl::sub(lhs_load(i), rhs_load(i)), i);
                     lhs.template store<vect_impl>(vect_impl::sub(lhs_load(i + 1 * IT::size), rhs_load(i + 1 * IT::size)), i + 1 * IT::size);
                     lhs.template store<vect_impl>(vect_impl::sub(lhs_load(i + 2 * IT::size), rhs_load(i + 2 * IT::size)), i + 2 * IT::size);
                     lhs.template store<vect_impl>(vect_impl::sub(lhs_load(i + 3 * IT::size), rhs_load(i + 3 * IT::size)), i + 3 * IT::size);
                 }
             } else {
-                for (i = first; i + IT::size - 1 < _last; i += IT::size) {
+                for (; i + IT::size - 1 < _last; i += IT::size) {
                     lhs.template store<vect_impl>(vect_impl::sub(lhs_load(i), rhs_load(i)), i);
                 }
             }
         }
 
-        return i;
-    }
-
-    /*!
-     * \brief Compute the vectorized iterations of the loop using unaligned store operations
-     * \param first The index when to start
-     */
-    inline std::size_t unaligned_main_loop(std::size_t first) const {
-        std::size_t i;
-
-        if (unroll_vectorized_loops && _last - first > IT::size * 4) {
-            for (i = first; i + IT::size * 4 - 1 < _last; i += IT::size * 4) {
-                vect_impl::storeu(lhs_m + i, vect_impl::sub(lhs_load(i), rhs_load(i)));
-                vect_impl::storeu(lhs_m + i + 1 * IT::size, vect_impl::sub(lhs_load(i + 1 * IT::size), rhs_load(i + 1 * IT::size)));
-                vect_impl::storeu(lhs_m + i + 2 * IT::size, vect_impl::sub(lhs_load(i + 2 * IT::size), rhs_load(i + 2 * IT::size)));
-                vect_impl::storeu(lhs_m + i + 3 * IT::size, vect_impl::sub(lhs_load(i + 3 * IT::size), rhs_load(i + 3 * IT::size)));
-            }
-        } else {
-            for (i = first; i + IT::size - 1 < _last; i += IT::size) {
-                vect_impl::storeu(lhs_m + i, vect_impl::sub(lhs_load(i), rhs_load(i)));
-            }
-        }
-
-        return i;
-    }
-
-    /*!
-     * \brief Compute the last iterations of the loop that have
-     * not been vectorized
-     * \param first The index when to start
-     */
-    void remainder_loop(std::size_t first) const {
-        for (std::size_t i = first; i < _last; ++i) {
+        for (; i < _last; ++i) {
             lhs_m[i] -= rhs[i];
         }
     }
@@ -626,7 +503,6 @@ struct VectorizedAssignMul : vectorized_base<V, L_Expr, V_Expr, VectorizedAssign
         //Nothing else
     }
 
-    using base_t::operator();
     using base_t::lhs_load;
     using base_t::rhs_load;
 
@@ -634,61 +510,29 @@ struct VectorizedAssignMul : vectorized_base<V, L_Expr, V_Expr, VectorizedAssign
      * \brief Compute the vectorized iterations of the loop using aligned store operations
      * \param first The index when to start
      */
-    inline std::size_t aligned_main_loop(std::size_t first) const {
-        std::size_t i = 0;
+    void operator()() const {
+        std::size_t i = _first;
 
         if(streaming && _size > cache_size / (sizeof(typename base_t::lhs_value_type) * 3) && !rhs.alias(lhs)){
-            for (i = first; i + IT::size - 1 < _last; i += IT::size) {
+            for (; i + IT::size - 1 < _last; i += IT::size) {
                 lhs.template stream<vect_impl>(vect_impl::template mul<Cx>(lhs_load(i), rhs_load(i)), i);
             }
         } else {
-            if (unroll_vectorized_loops && _last - first > IT::size * 4) {
-                for (i = first; i + IT::size * 4 - 1 < _last; i += IT::size * 4) {
+            if (unroll_vectorized_loops && _last - _first > IT::size * 4) {
+                for (; i + IT::size * 4 - 1 < _last; i += IT::size * 4) {
                     lhs.template store<vect_impl>(vect_impl::template mul<Cx>(lhs_load(i), rhs_load(i)), i);
                     lhs.template store<vect_impl>(vect_impl::template mul<Cx>(lhs_load(i + 1 * IT::size), rhs_load(i + 1 * IT::size)), i + 1 * IT::size);
                     lhs.template store<vect_impl>(vect_impl::template mul<Cx>(lhs_load(i + 2 * IT::size), rhs_load(i + 2 * IT::size)), i + 2 * IT::size);
                     lhs.template store<vect_impl>(vect_impl::template mul<Cx>(lhs_load(i + 3 * IT::size), rhs_load(i + 3 * IT::size)), i + 3 * IT::size);
                 }
             } else {
-                for (i = first; i + IT::size - 1 < _last; i += IT::size) {
+                for (; i + IT::size - 1 < _last; i += IT::size) {
                     lhs.template store<vect_impl>(vect_impl::template mul<Cx>(lhs_load(i), rhs_load(i)), i);
                 }
             }
         }
 
-        return i;
-    }
-
-    /*!
-     * \brief Compute the vectorized iterations of the loop using unaligned store operations
-     * \param first The index when to start
-     */
-    inline std::size_t unaligned_main_loop(std::size_t first) const {
-        std::size_t i;
-
-        if (unroll_vectorized_loops && _last - first > IT::size * 4) {
-            for (i = first; i + IT::size * 4 - 1 < _last; i += IT::size * 4) {
-                vect_impl::storeu(lhs_m + i, vect_impl::template mul<Cx>(lhs_load(i), rhs_load(i)));
-                vect_impl::storeu(lhs_m + i + 1 * IT::size, vect_impl::template mul<Cx>(lhs_load(i + 1 * IT::size), rhs_load(i + 1 * IT::size)));
-                vect_impl::storeu(lhs_m + i + 2 * IT::size, vect_impl::template mul<Cx>(lhs_load(i + 2 * IT::size), rhs_load(i + 2 * IT::size)));
-                vect_impl::storeu(lhs_m + i + 3 * IT::size, vect_impl::template mul<Cx>(lhs_load(i + 3 * IT::size), rhs_load(i + 3 * IT::size)));
-            }
-        } else {
-            for (i = first; i + IT::size - 1 < _last; i += IT::size) {
-                vect_impl::storeu(lhs_m + i, vect_impl::template mul<Cx>(lhs_load(i), rhs_load(i)));
-            }
-        }
-
-        return i;
-    }
-
-    /*!
-     * \brief Compute the last iterations of the loop that have
-     * not been vectorized
-     * \param first The index when to start
-     */
-    void remainder_loop(std::size_t first) const {
-        for (std::size_t i = first; i < _last; ++i) {
+        for (; i < _last; ++i) {
             lhs_m[i] *= rhs[i];
         }
     }
@@ -770,7 +614,6 @@ struct VectorizedAssignDiv : vectorized_base<V, L_Expr, V_Expr, VectorizedAssign
         //Nothing else
     }
 
-    using base_t::operator();
     using base_t::lhs_load;
     using base_t::rhs_load;
 
@@ -778,61 +621,29 @@ struct VectorizedAssignDiv : vectorized_base<V, L_Expr, V_Expr, VectorizedAssign
      * \brief Compute the vectorized iterations of the loop using aligned store operations
      * \param first The index when to start
      */
-    inline std::size_t aligned_main_loop(std::size_t first) const {
-        std::size_t i = 0;
+    void operator()() const {
+        std::size_t i = _first;
 
         if(streaming && _size > cache_size / (sizeof(typename base_t::lhs_value_type) * 3) && !rhs.alias(lhs)){
-            for (i = first; i + IT::size - 1 < _last; i += IT::size) {
+            for (; i + IT::size - 1 < _last; i += IT::size) {
                 lhs.template stream<vect_impl>(vect_impl::template div<Cx>(lhs_load(i), rhs_load(i)), i);
             }
         } else {
-            if (unroll_vectorized_loops && _last - first > IT::size * 4) {
-                for (i = first; i + IT::size * 4 - 1 < _last; i += IT::size * 4) {
+            if (unroll_vectorized_loops && _last - _first > IT::size * 4) {
+                for (; i + IT::size * 4 - 1 < _last; i += IT::size * 4) {
                     lhs.template store<vect_impl>(vect_impl::template div<Cx>(lhs_load(i), rhs_load(i)), i);
                     lhs.template store<vect_impl>(vect_impl::template div<Cx>(lhs_load(i + 1 * IT::size), rhs_load(i + 1 * IT::size)), i + 1 * IT::size);
                     lhs.template store<vect_impl>(vect_impl::template div<Cx>(lhs_load(i + 2 * IT::size), rhs_load(i + 2 * IT::size)), i + 2 * IT::size);
                     lhs.template store<vect_impl>(vect_impl::template div<Cx>(lhs_load(i + 3 * IT::size), rhs_load(i + 3 * IT::size)), i + 3 * IT::size);
                 }
             } else {
-                for (i = first; i + IT::size - 1 < _last; i += IT::size) {
+                for (; i + IT::size - 1 < _last; i += IT::size) {
                     lhs.template store<vect_impl>(vect_impl::template div<Cx>(lhs_load(i), rhs_load(i)), i);
                 }
             }
         }
 
-        return i;
-    }
-
-    /*!
-     * \brief Compute the vectorized iterations of the loop using unaligned store operations
-     * \param first The index when to start
-     */
-    inline std::size_t unaligned_main_loop(std::size_t first) const {
-        std::size_t i;
-
-        if (unroll_vectorized_loops && _last - first > IT::size * 4) {
-            for (i = first; i + IT::size * 4 - 1 < _last; i += IT::size * 4) {
-                vect_impl::storeu(lhs_m + i, vect_impl::template div<Cx>(lhs_load(i), rhs_load(i)));
-                vect_impl::storeu(lhs_m + i + 1 * IT::size, vect_impl::template div<Cx>(lhs_load(i + 1 * IT::size), rhs_load(i + 1 * IT::size)));
-                vect_impl::storeu(lhs_m + i + 2 * IT::size, vect_impl::template div<Cx>(lhs_load(i + 2 * IT::size), rhs_load(i + 2 * IT::size)));
-                vect_impl::storeu(lhs_m + i + 3 * IT::size, vect_impl::template div<Cx>(lhs_load(i + 3 * IT::size), rhs_load(i + 3 * IT::size)));
-            }
-        } else {
-            for (i = first; i + IT::size - 1 < _last; i += IT::size) {
-                vect_impl::storeu(lhs_m + i, vect_impl::template div<Cx>(lhs_load(i), rhs_load(i)));
-            }
-        }
-
-        return i;
-    }
-
-    /*!
-     * \brief Compute the last iterations of the loop that have
-     * not been vectorized
-     * \param first The index when to start
-     */
-    void remainder_loop(std::size_t first) const {
-        for (std::size_t i = first; i < _last; ++i) {
+        for (; i < _last; ++i) {
             lhs_m[i] /= rhs[i];
         }
     }
