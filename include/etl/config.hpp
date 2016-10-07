@@ -143,13 +143,6 @@ constexpr const size_t cache_size = ETL_CACHE_SIZE;
 constexpr const size_t cache_size = 3 * 1024 * 1024;
 #endif
 
-//Flag to disable unrolling of vectorized loops
-#ifdef ETL_NO_UNROLL_VECT
-constexpr const bool unroll_vectorized_loops = false;
-#else
-constexpr const bool unroll_vectorized_loops     = true;  ///< Boolean flag indicating if vectorized loops are getting unrolled
-#endif
-
 //Flag to disable unrolling of non-vectorized loops
 #ifdef ETL_NO_UNROLL_NON_VECT
 constexpr const bool unroll_normal_loops = false;
