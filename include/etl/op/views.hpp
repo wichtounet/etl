@@ -616,6 +616,12 @@ struct fast_matrix_view {
     static constexpr std::size_t n_dimensions = sizeof...(Dims); ///< The number of dimensions of the view
 
     /*!
+     * \brief The vectorization type for V
+     */
+    template<typename V = default_vec>
+    using vec_type               = typename V::template vec_type<value_type>;
+
+    /*!
      * \brief Construct a new fast_matrix_view over the given sub expression
      * \param sub The sub expression
      */
@@ -722,6 +728,53 @@ struct fast_matrix_view {
     }
 
     /*!
+     * \brief Load several elements of the expression at once
+     * \param x The position at which to start. This will be aligned from the beginning (multiple of the vector size).
+     * \tparam V The vectorization mode to use
+     * \return a vector containing several elements of the expression
+     */
+    template <typename V = default_vec>
+    auto loadu(std::size_t x) const noexcept {
+        return sub.template loadu<V>(x);
+    }
+
+    /*!
+     * \brief Store several elements in the matrix at once
+     * \param in The several elements to store
+     * \param i The position at which to start. This will be aligned from the beginning (multiple of the vector size).
+     * \tparam V The vectorization mode to use
+     * \return a vector containing several elements of the matrix
+     */
+    template <typename V = default_vec>
+    void store(vec_type<V> in, std::size_t i) noexcept {
+        sub.template store<V>(in, i);
+    }
+
+    /*!
+     * \brief Store several elements in the matrix at once
+     * \param in The several elements to store
+     * \param i The position at which to start. This will be aligned from the beginning (multiple of the vector size).
+     * \tparam V The vectorization mode to use
+     * \return a vector containing several elements of the matrix
+     */
+    template <typename V = default_vec>
+    void storeu(vec_type<V> in, std::size_t i) noexcept {
+        sub.template storeu<V>(in, i);
+    }
+
+    /*!
+     * \brief Store several elements in the matrix at once, using non-temporal store
+     * \param in The several elements to store
+     * \param i The position at which to start. This will be aligned from the beginning (multiple of the vector size).
+     * \tparam V The vectorization mode to use
+     * \return a vector containing several elements of the matrix
+     */
+    template <typename V = default_vec>
+    void stream(vec_type<V> in, std::size_t i) noexcept {
+        sub.template stream<V>(in, i);
+    }
+
+    /*!
      * \brief Test if this expression aliases with the given expression
      * \param rhs The other expression to test
      * \return true if the two expressions aliases, false otherwise
@@ -783,6 +836,12 @@ struct dyn_vector_view {
     using const_memory_type = const_memory_t<sub_type>;                        ///< The const memory access type
     using return_type       = return_helper<sub_type, decltype(sub[0])>;       ///< The type returned by the view
     using const_return_type = const_return_helper<sub_type, decltype(sub[0])>; ///< The const type return by the view
+
+    /*!
+     * \brief The vectorization type for V
+     */
+    template<typename V = default_vec>
+    using vec_type               = typename V::template vec_type<value_type>;
 
     /*!
      * \brief Construct a new dyn_vector_view over the given sub expression
@@ -865,6 +924,53 @@ struct dyn_vector_view {
     }
 
     /*!
+     * \brief Load several elements of the expression at once
+     * \param x The position at which to start. This will be aligned from the beginning (multiple of the vector size).
+     * \tparam V The vectorization mode to use
+     * \return a vector containing several elements of the expression
+     */
+    template <typename V = default_vec>
+    auto loadu(std::size_t x) const noexcept {
+        return sub.template loadu<V>(x);
+    }
+
+    /*!
+     * \brief Store several elements in the matrix at once
+     * \param in The several elements to store
+     * \param i The position at which to start. This will be aligned from the beginning (multiple of the vector size).
+     * \tparam V The vectorization mode to use
+     * \return a vector containing several elements of the matrix
+     */
+    template <typename V = default_vec>
+    void store(vec_type<V> in, std::size_t i) noexcept {
+        sub.template store<V>(in, i);
+    }
+
+    /*!
+     * \brief Store several elements in the matrix at once
+     * \param in The several elements to store
+     * \param i The position at which to start. This will be aligned from the beginning (multiple of the vector size).
+     * \tparam V The vectorization mode to use
+     * \return a vector containing several elements of the matrix
+     */
+    template <typename V = default_vec>
+    void storeu(vec_type<V> in, std::size_t i) noexcept {
+        sub.template storeu<V>(in, i);
+    }
+
+    /*!
+     * \brief Store several elements in the matrix at once, using non-temporal store
+     * \param in The several elements to store
+     * \param i The position at which to start. This will be aligned from the beginning (multiple of the vector size).
+     * \tparam V The vectorization mode to use
+     * \return a vector containing several elements of the matrix
+     */
+    template <typename V = default_vec>
+    void stream(vec_type<V> in, std::size_t i) noexcept {
+        sub.template stream<V>(in, i);
+    }
+
+    /*!
      * \brief Test if this expression aliases with the given expression
      * \param rhs The other expression to test
      * \return true if the two expressions aliases, false otherwise
@@ -927,6 +1033,12 @@ struct dyn_matrix_view {
     using const_memory_type = const_memory_t<sub_type>;                        ///< The const memory access type
     using return_type       = return_helper<sub_type, decltype(sub[0])>;       ///< The type returned by the view
     using const_return_type = const_return_helper<sub_type, decltype(sub[0])>; ///< The const type return by the view
+
+    /*!
+     * \brief The vectorization type for V
+     */
+    template<typename V = default_vec>
+    using vec_type               = typename V::template vec_type<value_type>;
 
     /*!
      * \brief Construct a new dyn_vector_view over the given sub expression
@@ -1031,6 +1143,53 @@ struct dyn_matrix_view {
     template <typename V = default_vec>
     auto load(std::size_t x) const noexcept {
         return sub.template load<V>(x);
+    }
+
+    /*!
+     * \brief Load several elements of the expression at once
+     * \param x The position at which to start. This will be aligned from the beginning (multiple of the vector size).
+     * \tparam V The vectorization mode to use
+     * \return a vector containing several elements of the expression
+     */
+    template <typename V = default_vec>
+    auto loadu(std::size_t x) const noexcept {
+        return sub.template loadu<V>(x);
+    }
+
+    /*!
+     * \brief Store several elements in the matrix at once, using non-temporal store
+     * \param in The several elements to store
+     * \param i The position at which to start. This will be aligned from the beginning (multiple of the vector size).
+     * \tparam V The vectorization mode to use
+     * \return a vector containing several elements of the matrix
+     */
+    template <typename V = default_vec>
+    void stream(vec_type<V> in, std::size_t i) noexcept {
+        sub.template stream<V>(in, i);
+    }
+
+    /*!
+     * \brief Store several elements in the matrix at once
+     * \param in The several elements to store
+     * \param i The position at which to start. This will be aligned from the beginning (multiple of the vector size).
+     * \tparam V The vectorization mode to use
+     * \return a vector containing several elements of the matrix
+     */
+    template <typename V = default_vec>
+    void store(vec_type<V> in, std::size_t i) noexcept {
+        sub.template store<V>(in, i);
+    }
+
+    /*!
+     * \brief Store several elements in the matrix at once
+     * \param in The several elements to store
+     * \param i The position at which to start. This will be aligned from the beginning (multiple of the vector size).
+     * \tparam V The vectorization mode to use
+     * \return a vector containing several elements of the matrix
+     */
+    template <typename V = default_vec>
+    void storeu(vec_type<V> in, std::size_t i) noexcept {
+        sub.template storeu<V>(in, i);
     }
 
     /*!

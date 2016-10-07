@@ -572,7 +572,7 @@ public:
      */
     template<typename V = default_vec>
     vec_type<V> load(std::size_t i) const noexcept {
-        return matrix.load(i);
+        return matrix.template load<V>(i);
     }
 
     /*!
@@ -583,7 +583,19 @@ public:
      */
     template<typename V = default_vec>
     vec_type<V> loadu(std::size_t i) const noexcept {
-        return matrix.loadu(i);
+        return matrix.template loadu<V>(i);
+    }
+
+    /*!
+     * \brief Store several elements in the matrix at once, using non-temporal stores
+     * \param in The several elements to store
+     * \param i The position at which to start. This will be aligned from the beginning (multiple of the vector size).
+     * \tparam V The vectorization mode to use
+     * \return a vector containing several elements of the matrix
+     */
+    template <typename V = default_vec>
+    void stream(vec_type<V> in, std::size_t i) noexcept {
+        matrix.template stream<V>(in, i);
     }
 
     /*!
@@ -595,7 +607,7 @@ public:
      */
     template <typename V = default_vec>
     void store(vec_type<V> in, std::size_t i) noexcept {
-        matrix.store(in, i);
+        matrix.template store<V>(in, i);
     }
 
     /*!
@@ -607,7 +619,7 @@ public:
      */
     template <typename V = default_vec>
     void storeu(vec_type<V> in, std::size_t i) noexcept {
-        matrix.storeu(in, i);
+        matrix.template storeu<V>(in, i);
     }
 
     /*!
