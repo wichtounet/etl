@@ -21,7 +21,7 @@ struct outer {
 
 } // end of anonymous namespace
 
-TEMPLATE_TEST_CASE_2("alignment/fast/1", "etl_traits<fast_vector>", ZZZ, double, float) {
+TEMPLATE_TEST_CASE_4("alignment/fast/1", "etl_traits<fast_vector>", ZZZ, double, float, std::complex<float>, std::complex<double>) {
     using type = etl::fast_vector<ZZZ, 5>;
 
     type a;
@@ -33,7 +33,7 @@ TEMPLATE_TEST_CASE_2("alignment/fast/1", "etl_traits<fast_vector>", ZZZ, double,
     REQUIRE_DIRECT(reinterpret_cast<size_t>(c->memory_start()) % etl::intrinsic_traits<ZZZ>::alignment == 0);
 }
 
-TEMPLATE_TEST_CASE_2("alignment/fast/2", "etl_traits<fast_vector>", ZZZ, double, float) {
+TEMPLATE_TEST_CASE_4("alignment/fast/2", "etl_traits<fast_vector>", ZZZ, double, float, std::complex<float>, std::complex<double>) {
     using type = etl::fast_vector<ZZZ, 5>;
 
     outer<type> a;
@@ -45,7 +45,7 @@ TEMPLATE_TEST_CASE_2("alignment/fast/2", "etl_traits<fast_vector>", ZZZ, double,
     REQUIRE_DIRECT(reinterpret_cast<size_t>(c->inner.memory_start()) % etl::intrinsic_traits<ZZZ>::alignment == 0);
 }
 
-TEMPLATE_TEST_CASE_2("alignment/fast_dyn/1", "etl_traits<fast_vector>", ZZZ, double, float) {
+TEMPLATE_TEST_CASE_4("alignment/fast_dyn/1", "etl_traits<fast_vector>", ZZZ, double, float, std::complex<float>, std::complex<double>) {
     using type = etl::fast_dyn_vector<ZZZ, 5>;
 
     type a;
@@ -57,7 +57,7 @@ TEMPLATE_TEST_CASE_2("alignment/fast_dyn/1", "etl_traits<fast_vector>", ZZZ, dou
     REQUIRE_DIRECT(reinterpret_cast<size_t>(c->memory_start()) % etl::intrinsic_traits<ZZZ>::alignment == 0);
 }
 
-TEMPLATE_TEST_CASE_2("alignment/fast_dyn/2", "etl_traits<fast_vector>", ZZZ, double, float) {
+TEMPLATE_TEST_CASE_4("alignment/fast_dyn/2", "etl_traits<fast_vector>", ZZZ, double, float, std::complex<float>, std::complex<double>) {
     using type = etl::fast_dyn_vector<ZZZ, 5>;
 
     outer<type> a;
@@ -69,7 +69,7 @@ TEMPLATE_TEST_CASE_2("alignment/fast_dyn/2", "etl_traits<fast_vector>", ZZZ, dou
     REQUIRE_DIRECT(reinterpret_cast<size_t>(c->inner.memory_start()) % etl::intrinsic_traits<ZZZ>::alignment == 0);
 }
 
-TEMPLATE_TEST_CASE_2("alignment/dyn/1", "etl_traits<fast_vector>", ZZZ, double, float) {
+TEMPLATE_TEST_CASE_4("alignment/dyn/1", "etl_traits<fast_vector>", ZZZ, double, float, std::complex<float>, std::complex<double>) {
     using type = etl::dyn_vector<ZZZ>;
 
     type a(5);
@@ -81,7 +81,7 @@ TEMPLATE_TEST_CASE_2("alignment/dyn/1", "etl_traits<fast_vector>", ZZZ, double, 
     REQUIRE_DIRECT(reinterpret_cast<size_t>(c->memory_start()) % etl::intrinsic_traits<ZZZ>::alignment == 0);
 }
 
-TEMPLATE_TEST_CASE_2("alignment/dyn/2", "etl_traits<fast_vector>", ZZZ, double, float) {
+TEMPLATE_TEST_CASE_4("alignment/dyn/2", "etl_traits<fast_vector>", ZZZ, double, float, std::complex<float>, std::complex<double>) {
     using type = etl::dyn_vector<ZZZ>;
 
     outer<type> a(5);
