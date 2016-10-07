@@ -310,7 +310,7 @@ public:
      */
     template <typename V = default_vec>
     vec_type<V> load(std::size_t i) const noexcept {
-        return V::loadu(memory_start() + i);
+        return V::load(memory_start() + i);
     }
 
     /*!
