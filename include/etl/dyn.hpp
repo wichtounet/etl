@@ -457,7 +457,41 @@ public:
         check_invariants();
     }
 
-    // Accessors
+    /*!
+     * \brief Store several elements in the matrix at once
+     * \param in The several elements to store
+     * \param i The position at which to start. This will be aligned from the beginning (multiple of the vector size).
+     * \tparam V The vectorization mode to use
+     * \return a vector containing several elements of the matrix
+     */
+    template <typename V = default_vec>
+    void store(vec_type<V> in, std::size_t i) noexcept {
+        V::store(memory_start() + i, in);
+    }
+
+    /*!
+     * \brief Store several elements in the matrix at once
+     * \param in The several elements to store
+     * \param i The position at which to start. This will be aligned from the beginning (multiple of the vector size).
+     * \tparam V The vectorization mode to use
+     * \return a vector containing several elements of the matrix
+     */
+    template <typename V = default_vec>
+    void storeu(vec_type<V> in, std::size_t i) noexcept {
+        V::storeu(memory_start() + i, in);
+    }
+
+    /*!
+     * \brief Store several elements in the matrix at once, using non-temporal store
+     * \param in The several elements to store
+     * \param i The position at which to start. This will be aligned from the beginning (multiple of the vector size).
+     * \tparam V The vectorization mode to use
+     * \return a vector containing several elements of the matrix
+     */
+    template <typename V = default_vec>
+    void stream(vec_type<V> in, std::size_t i) noexcept {
+        V::stream(memory_start() + i, in);
+    }
 
     /*!
      * \brief Load several elements of the matrix at once
@@ -467,6 +501,17 @@ public:
      */
     template<typename V = default_vec>
     vec_type<V> load(std::size_t i) const noexcept {
+        return V::loadu(_memory + i);
+    }
+
+    /*!
+     * \brief Load several elements of the matrix at once
+     * \param i The position at which to start. This will be aligned from the beginning (multiple of the vector size).
+     * \tparam V The vectorization mode to use
+     * \return a vector containing several elements of the matrix
+     */
+    template<typename V = default_vec>
+    vec_type<V> loadu(std::size_t i) const noexcept {
         return V::loadu(_memory + i);
     }
 

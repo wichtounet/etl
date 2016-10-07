@@ -67,6 +67,17 @@ struct scalar {
     }
 
     /*!
+     * \brief Load several elements of the matrix at once
+     * \param d The position at which to start. This will be aligned from the beginning (multiple of the vector size).
+     * \tparam V The vectorization mode to use
+     * \return a vector containing several elements of the matrix
+     */
+    template <typename V = default_vec>
+    constexpr const vec_type<V> loadu(std::size_t d) const noexcept {
+        return (void)d, V::set(value);
+    }
+
+    /*!
      * \brief Returns the value at the position (args...)
      * \param args The indices
      * \return The computed value at the position (args...)

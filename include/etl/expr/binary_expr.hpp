@@ -146,6 +146,17 @@ public:
     }
 
     /*!
+     * \brief Perform several operations at once.
+     * \param i The index at which to perform the operation
+     * \tparam V The vectorization mode to use
+     * \return a vector containing several results of the expression
+     */
+    template <typename V = default_vec>
+    vec_type<V> loadu(std::size_t i) const {
+        return BinaryOp::template load<V>(lhs().template loadu<V>(i), rhs().template loadu<V>(i));
+    }
+
+    /*!
      * \brief Returns the value at the given position (args...)
      * \param args The position indices
      * \return The value at the given position (args...)

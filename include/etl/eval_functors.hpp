@@ -241,19 +241,19 @@ struct VectorizedAssign : vectorized_base<V, L_Expr, V_Expr, VectorizedAssign<V,
 
         if(streaming && _size > cache_size / (sizeof(typename base_t::lhs_value_type) * 3) && !rhs.alias(lhs)){
             for (i = first; i + IT::size - 1 < _last; i += IT::size) {
-                vect_impl::stream(lhs_m + i, rhs_load(i));
+                lhs.template stream<vect_impl>(rhs_load(i), i);
             }
         } else {
             if (unroll_vectorized_loops && _last - first > IT::size * 4) {
                 for (i = first; i + IT::size * 4 - 1 < _last; i += IT::size * 4) {
-                    vect_impl::store(lhs_m + i, rhs_load(i));
-                    vect_impl::store(lhs_m + i + 1 * IT::size, rhs_load(i + 1 * IT::size));
-                    vect_impl::store(lhs_m + i + 2 * IT::size, rhs_load(i + 2 * IT::size));
-                    vect_impl::store(lhs_m + i + 3 * IT::size, rhs_load(i + 3 * IT::size));
+                    lhs.template store<vect_impl>(rhs_load(i), i);
+                    lhs.template store<vect_impl>(rhs_load(i + 1 * IT::size), i + 1 * IT::size);
+                    lhs.template store<vect_impl>(rhs_load(i + 2 * IT::size), i + 2 * IT::size);
+                    lhs.template store<vect_impl>(rhs_load(i + 3 * IT::size), i + 3 * IT::size);
                 }
             } else {
                 for (i = first; i + IT::size - 1 < _last; i += IT::size) {
-                    vect_impl::store(lhs_m + i, rhs_load(i));
+                    lhs.template store<vect_impl>(rhs_load(i), i);
                 }
             }
         }

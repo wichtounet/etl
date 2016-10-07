@@ -576,6 +576,41 @@ public:
     }
 
     /*!
+     * \brief Load several elements of the matrix at once
+     * \param i The position at which to start. This will be aligned from the beginning (multiple of the vector size).
+     * \tparam V The vectorization mode to use
+     * \return a vector containing several elements of the matrix
+     */
+    template<typename V = default_vec>
+    vec_type<V> loadu(std::size_t i) const noexcept {
+        return matrix.loadu(i);
+    }
+
+    /*!
+     * \brief Store several elements in the matrix at once
+     * \param in The several elements to store
+     * \param i The position at which to start. This will be aligned from the beginning (multiple of the vector size).
+     * \tparam V The vectorization mode to use
+     * \return a vector containing several elements of the matrix
+     */
+    template <typename V = default_vec>
+    void store(vec_type<V> in, std::size_t i) noexcept {
+        matrix.store(in, i);
+    }
+
+    /*!
+     * \brief Store several elements in the matrix at once
+     * \param in The several elements to store
+     * \param i The position at which to start. This will be aligned from the beginning (multiple of the vector size).
+     * \tparam V The vectorization mode to use
+     * \return a vector containing several elements of the matrix
+     */
+    template <typename V = default_vec>
+    void storeu(vec_type<V> in, std::size_t i) noexcept {
+        matrix.storeu(in, i);
+    }
+
+    /*!
      * \brief Return an opaque (type-erased) access to the memory of the matrix
      * \return a structure containing the dimensions, the storage order and the memory pointers of the matrix
      */
