@@ -296,28 +296,20 @@ struct VectorizedAssignAdd : vectorized_base<V, L_Expr, V_Expr, VectorizedAssign
     void operator()() const {
         std::size_t i = _first;
 
-        if(streaming && _size > cache_size / (sizeof(typename base_t::lhs_value_type) * 3) && !rhs.alias(lhs)){
-            for (; i + IT::size - 1 < _last; i += IT::size) {
-                lhs.template stream<vect_impl>(vect_impl::add(lhs_load(i), rhs_load(i)), i);
-            }
-            for (; i < _last; ++i) {
-                lhs_m[i] += rhs[i];
-            }
-        } else {
-            for (; i + IT::size * 4 - 1 < _last; i += IT::size * 4) {
-                lhs.template store<vect_impl>(vect_impl::add(lhs_load(i), rhs_load(i)), i);
-                lhs.template store<vect_impl>(vect_impl::add(lhs_load(i + 1 * IT::size), rhs_load(i + 1 * IT::size)), i + 1 * IT::size);
-                lhs.template store<vect_impl>(vect_impl::add(lhs_load(i + 2 * IT::size), rhs_load(i + 2 * IT::size)), i + 2 * IT::size);
-                lhs.template store<vect_impl>(vect_impl::add(lhs_load(i + 3 * IT::size), rhs_load(i + 3 * IT::size)), i + 3 * IT::size);
-            }
-            for (; i + IT::size - 1 < _last; i += IT::size) {
-                lhs.template store<vect_impl>(vect_impl::add(lhs_load(i), rhs_load(i)), i);
-            }
-            for (; i < _last; ++i) {
-                lhs_m[i] += rhs[i];
-            }
+        for (; i + IT::size * 4 - 1 < _last; i += IT::size * 4) {
+            lhs.template store<vect_impl>(vect_impl::add(lhs_load(i), rhs_load(i)), i);
+            lhs.template store<vect_impl>(vect_impl::add(lhs_load(i + 1 * IT::size), rhs_load(i + 1 * IT::size)), i + 1 * IT::size);
+            lhs.template store<vect_impl>(vect_impl::add(lhs_load(i + 2 * IT::size), rhs_load(i + 2 * IT::size)), i + 2 * IT::size);
+            lhs.template store<vect_impl>(vect_impl::add(lhs_load(i + 3 * IT::size), rhs_load(i + 3 * IT::size)), i + 3 * IT::size);
         }
 
+        for (; i + IT::size - 1 < _last; i += IT::size) {
+            lhs.template store<vect_impl>(vect_impl::add(lhs_load(i), rhs_load(i)), i);
+        }
+
+        for (; i < _last; ++i) {
+            lhs_m[i] += rhs[i];
+        }
     }
 };
 
@@ -405,29 +397,19 @@ struct VectorizedAssignSub : vectorized_base<V, L_Expr, V_Expr, VectorizedAssign
     void operator()() const {
         std::size_t i = _first;
 
-        if(streaming && _size > cache_size / (sizeof(typename base_t::lhs_value_type) * 3) && !rhs.alias(lhs)){
-            for (; i + IT::size - 1 < _last; i += IT::size) {
-                lhs.template stream<vect_impl>(vect_impl::sub(lhs_load(i), rhs_load(i)), i);
-            }
+        for (; i + IT::size * 4 - 1 < _last; i += IT::size * 4) {
+            lhs.template store<vect_impl>(vect_impl::sub(lhs_load(i), rhs_load(i)), i);
+            lhs.template store<vect_impl>(vect_impl::sub(lhs_load(i + 1 * IT::size), rhs_load(i + 1 * IT::size)), i + 1 * IT::size);
+            lhs.template store<vect_impl>(vect_impl::sub(lhs_load(i + 2 * IT::size), rhs_load(i + 2 * IT::size)), i + 2 * IT::size);
+            lhs.template store<vect_impl>(vect_impl::sub(lhs_load(i + 3 * IT::size), rhs_load(i + 3 * IT::size)), i + 3 * IT::size);
+        }
 
-            for (; i < _last; ++i) {
-                lhs_m[i] -= rhs[i];
-            }
-        } else {
-            for (; i + IT::size * 4 - 1 < _last; i += IT::size * 4) {
-                lhs.template store<vect_impl>(vect_impl::sub(lhs_load(i), rhs_load(i)), i);
-                lhs.template store<vect_impl>(vect_impl::sub(lhs_load(i + 1 * IT::size), rhs_load(i + 1 * IT::size)), i + 1 * IT::size);
-                lhs.template store<vect_impl>(vect_impl::sub(lhs_load(i + 2 * IT::size), rhs_load(i + 2 * IT::size)), i + 2 * IT::size);
-                lhs.template store<vect_impl>(vect_impl::sub(lhs_load(i + 3 * IT::size), rhs_load(i + 3 * IT::size)), i + 3 * IT::size);
-            }
+        for (; i + IT::size - 1 < _last; i += IT::size) {
+            lhs.template store<vect_impl>(vect_impl::sub(lhs_load(i), rhs_load(i)), i);
+        }
 
-            for (; i + IT::size - 1 < _last; i += IT::size) {
-                lhs.template store<vect_impl>(vect_impl::sub(lhs_load(i), rhs_load(i)), i);
-            }
-
-            for (; i < _last; ++i) {
-                lhs_m[i] -= rhs[i];
-            }
+        for (; i < _last; ++i) {
+            lhs_m[i] -= rhs[i];
         }
     }
 };
@@ -518,29 +500,19 @@ struct VectorizedAssignMul : vectorized_base<V, L_Expr, V_Expr, VectorizedAssign
     void operator()() const {
         std::size_t i = _first;
 
-        if (streaming && _size > cache_size / (sizeof(typename base_t::lhs_value_type) * 3) && !rhs.alias(lhs)) {
-            for (; i + IT::size - 1 < _last; i += IT::size) {
-                lhs.template stream<vect_impl>(vect_impl::template mul<Cx>(lhs_load(i), rhs_load(i)), i);
-            }
+        for (; i + IT::size * 4 - 1 < _last; i += IT::size * 4) {
+            lhs.template store<vect_impl>(vect_impl::template mul<Cx>(lhs_load(i), rhs_load(i)), i);
+            lhs.template store<vect_impl>(vect_impl::template mul<Cx>(lhs_load(i + 1 * IT::size), rhs_load(i + 1 * IT::size)), i + 1 * IT::size);
+            lhs.template store<vect_impl>(vect_impl::template mul<Cx>(lhs_load(i + 2 * IT::size), rhs_load(i + 2 * IT::size)), i + 2 * IT::size);
+            lhs.template store<vect_impl>(vect_impl::template mul<Cx>(lhs_load(i + 3 * IT::size), rhs_load(i + 3 * IT::size)), i + 3 * IT::size);
+        }
 
-            for (; i < _last; ++i) {
-                lhs_m[i] *= rhs[i];
-            }
-        } else {
-            for (; i + IT::size * 4 - 1 < _last; i += IT::size * 4) {
-                lhs.template store<vect_impl>(vect_impl::template mul<Cx>(lhs_load(i), rhs_load(i)), i);
-                lhs.template store<vect_impl>(vect_impl::template mul<Cx>(lhs_load(i + 1 * IT::size), rhs_load(i + 1 * IT::size)), i + 1 * IT::size);
-                lhs.template store<vect_impl>(vect_impl::template mul<Cx>(lhs_load(i + 2 * IT::size), rhs_load(i + 2 * IT::size)), i + 2 * IT::size);
-                lhs.template store<vect_impl>(vect_impl::template mul<Cx>(lhs_load(i + 3 * IT::size), rhs_load(i + 3 * IT::size)), i + 3 * IT::size);
-            }
+        for (; i + IT::size - 1 < _last; i += IT::size) {
+            lhs.template store<vect_impl>(vect_impl::template mul<Cx>(lhs_load(i), rhs_load(i)), i);
+        }
 
-            for (; i + IT::size - 1 < _last; i += IT::size) {
-                lhs.template store<vect_impl>(vect_impl::template mul<Cx>(lhs_load(i), rhs_load(i)), i);
-            }
-
-            for (; i < _last; ++i) {
-                lhs_m[i] *= rhs[i];
-            }
+        for (; i < _last; ++i) {
+            lhs_m[i] *= rhs[i];
         }
     }
 };
@@ -631,29 +603,19 @@ struct VectorizedAssignDiv : vectorized_base<V, L_Expr, V_Expr, VectorizedAssign
     void operator()() const {
         std::size_t i = _first;
 
-        if (streaming && _size > cache_size / (sizeof(typename base_t::lhs_value_type) * 3) && !rhs.alias(lhs)) {
-            for (; i + IT::size - 1 < _last; i += IT::size) {
-                lhs.template stream<vect_impl>(vect_impl::template div<Cx>(lhs_load(i), rhs_load(i)), i);
-            }
+        for (; i + IT::size * 4 - 1 < _last; i += IT::size * 4) {
+            lhs.template store<vect_impl>(vect_impl::template div<Cx>(lhs_load(i), rhs_load(i)), i);
+            lhs.template store<vect_impl>(vect_impl::template div<Cx>(lhs_load(i + 1 * IT::size), rhs_load(i + 1 * IT::size)), i + 1 * IT::size);
+            lhs.template store<vect_impl>(vect_impl::template div<Cx>(lhs_load(i + 2 * IT::size), rhs_load(i + 2 * IT::size)), i + 2 * IT::size);
+            lhs.template store<vect_impl>(vect_impl::template div<Cx>(lhs_load(i + 3 * IT::size), rhs_load(i + 3 * IT::size)), i + 3 * IT::size);
+        }
 
-            for (; i < _last; ++i) {
-                lhs_m[i] /= rhs[i];
-            }
-        } else {
-            for (; i + IT::size * 4 - 1 < _last; i += IT::size * 4) {
-                lhs.template store<vect_impl>(vect_impl::template div<Cx>(lhs_load(i), rhs_load(i)), i);
-                lhs.template store<vect_impl>(vect_impl::template div<Cx>(lhs_load(i + 1 * IT::size), rhs_load(i + 1 * IT::size)), i + 1 * IT::size);
-                lhs.template store<vect_impl>(vect_impl::template div<Cx>(lhs_load(i + 2 * IT::size), rhs_load(i + 2 * IT::size)), i + 2 * IT::size);
-                lhs.template store<vect_impl>(vect_impl::template div<Cx>(lhs_load(i + 3 * IT::size), rhs_load(i + 3 * IT::size)), i + 3 * IT::size);
-            }
+        for (; i + IT::size - 1 < _last; i += IT::size) {
+            lhs.template store<vect_impl>(vect_impl::template div<Cx>(lhs_load(i), rhs_load(i)), i);
+        }
 
-            for (; i + IT::size - 1 < _last; i += IT::size) {
-                lhs.template store<vect_impl>(vect_impl::template div<Cx>(lhs_load(i), rhs_load(i)), i);
-            }
-
-            for (; i < _last; ++i) {
-                lhs_m[i] /= rhs[i];
-            }
+        for (; i < _last; ++i) {
+            lhs_m[i] /= rhs[i];
         }
     }
 };
