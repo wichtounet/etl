@@ -22,7 +22,9 @@ namespace etl {
 
 template <typename T>
 static constexpr size_t alloc_size(size_t size) {
-    return padding ? size + ((intrinsic_traits<T>::size * sizeof(T)) - (size % (intrinsic_traits<T>::size * sizeof(T)))) : size;
+    return padding
+        ? size + (size % intrinsic_traits<T>::size == 0 ? 0 : (intrinsic_traits<T>::size - (size % intrinsic_traits<T>::size)))
+        : size;
 }
 
 template <typename T, typename ST, order SO, std::size_t... Dims>
