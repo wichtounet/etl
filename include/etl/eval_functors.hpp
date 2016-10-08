@@ -184,31 +184,31 @@ struct VectorizedAssign : vectorized_base<V, L_Expr, V_Expr, VectorizedAssign<V,
     void operator()() const {
         constexpr const bool remainder = !padding || !all_padded<L_Expr, V_Expr>::value;
 
-        const size_t last = remainder ? _last : _first + alloc_size<typename base_t::lhs_value_type>(_size);
+        const size_t last = remainder ? _first + (_size & size_t(-IT::size)) : _last;
 
         std::size_t i = _first;
 
         if(streaming && _size > cache_size / (sizeof(typename base_t::lhs_value_type) * 3) && !rhs.alias(lhs)){
-            for (; i + IT::size - 1 < last; i += IT::size) {
+            for (; i < last; i += IT::size) {
                 lhs.template stream<vect_impl>(rhs_load(i), i);
             }
 
-            for (; remainder && i < last; ++i) {
+            for (; remainder && i < _last; ++i) {
                 lhs_m[i] = rhs[i];
             }
         } else {
-            for (; i + IT::size * 4 - 1 < last; ) {
+            for (; i + (IT::size * 3) < last; ) {
                 lhs.template store<vect_impl>(rhs_load(i), i); i += IT::size;
                 lhs.template store<vect_impl>(rhs_load(i), i); i += IT::size;
                 lhs.template store<vect_impl>(rhs_load(i), i); i += IT::size;
                 lhs.template store<vect_impl>(rhs_load(i), i); i += IT::size;
             }
 
-            for (; i + IT::size - 1 < last; i += IT::size) {
+            for (; i < last; i += IT::size) {
                 lhs.template store<vect_impl>(rhs_load(i), i);
             }
 
-            for (; remainder && i < last; ++i) {
+            for (; remainder && i < _last; ++i) {
                 lhs_m[i] = rhs[i];
             }
         }
