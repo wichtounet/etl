@@ -197,11 +197,11 @@ struct VectorizedAssign : vectorized_base<V, L_Expr, V_Expr, VectorizedAssign<V,
                 lhs_m[i] = rhs[i];
             }
         } else {
-            for (; i + (IT::size * 3) < last; ) {
-                lhs.template store<vect_impl>(rhs_load(i), i); i += IT::size;
-                lhs.template store<vect_impl>(rhs_load(i), i); i += IT::size;
-                lhs.template store<vect_impl>(rhs_load(i), i); i += IT::size;
-                lhs.template store<vect_impl>(rhs_load(i), i); i += IT::size;
+            for (; i + (IT::size * 3) < last; i += 4 * IT::size) {
+                lhs.template store<vect_impl>(rhs_load(i + 0 * IT::size), i + 0 * IT::size);
+                lhs.template store<vect_impl>(rhs_load(i + 1 * IT::size), i + 1 * IT::size);
+                lhs.template store<vect_impl>(rhs_load(i + 2 * IT::size), i + 2 * IT::size);
+                lhs.template store<vect_impl>(rhs_load(i + 3 * IT::size), i + 3 * IT::size);
             }
 
             for (; i < last; i += IT::size) {
@@ -212,7 +212,6 @@ struct VectorizedAssign : vectorized_base<V, L_Expr, V_Expr, VectorizedAssign<V,
                 lhs_m[i] = rhs[i];
             }
         }
-
     }
 };
 
