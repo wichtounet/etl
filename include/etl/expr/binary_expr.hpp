@@ -141,7 +141,7 @@ public:
      * \return a vector containing several results of the expression
      */
     template <typename V = default_vec>
-    vec_type<V> load(std::size_t i) const {
+    ETL_STRONG_INLINE(vec_type<V>) load(std::size_t i) const {
         return BinaryOp::template load<V>(lhs().template load<V>(i), rhs().template load<V>(i));
     }
 
@@ -152,7 +152,7 @@ public:
      * \return a vector containing several results of the expression
      */
     template <typename V = default_vec>
-    vec_type<V> loadu(std::size_t i) const {
+    ETL_STRONG_INLINE(vec_type<V>) loadu(std::size_t i) const {
         return BinaryOp::template load<V>(lhs().template loadu<V>(i), rhs().template loadu<V>(i));
     }
 

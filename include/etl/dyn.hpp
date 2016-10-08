@@ -500,7 +500,7 @@ public:
      * \return a vector containing several elements of the matrix
      */
     template<typename V = default_vec>
-    vec_type<V> load(std::size_t i) const noexcept {
+    ETL_STRONG_INLINE(vec_type<V>) load(std::size_t i) const noexcept {
         return V::load(_memory + i);
     }
 
@@ -511,7 +511,7 @@ public:
      * \return a vector containing several elements of the matrix
      */
     template<typename V = default_vec>
-    vec_type<V> loadu(std::size_t i) const noexcept {
+    ETL_STRONG_INLINE(vec_type<V>) loadu(std::size_t i) const noexcept {
         return V::loadu(_memory + i);
     }
 

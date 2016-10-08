@@ -60,7 +60,7 @@ struct plus_binary_op {
      * \return a vector containing several results of the operator
      */
     template <typename V = default_vec>
-    static cpp14_constexpr vec_type<V> load(const vec_type<V>& lhs, const vec_type<V>& rhs) noexcept {
+    static ETL_STRONG_INLINE(vec_type<V>) load(const vec_type<V>& lhs, const vec_type<V>& rhs) noexcept {
         return V::add(lhs, rhs);
     }
 
