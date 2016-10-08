@@ -465,8 +465,8 @@ public:
      * \return a vector containing several elements of the matrix
      */
     template <typename V = default_vec>
-    void store(vec_type<V> in, std::size_t i) noexcept {
-        V::store(memory_start() + i, in);
+    ETL_STRONG_INLINE(void) store(const vec_type<V> in, std::size_t i) noexcept {
+        V::store(_memory + i, in);
     }
 
     /*!
@@ -477,8 +477,8 @@ public:
      * \return a vector containing several elements of the matrix
      */
     template <typename V = default_vec>
-    void storeu(vec_type<V> in, std::size_t i) noexcept {
-        V::storeu(memory_start() + i, in);
+    ETL_STRONG_INLINE(void) storeu(const vec_type<V> in, std::size_t i) noexcept {
+        V::storeu(_memory + i, in);
     }
 
     /*!
@@ -489,8 +489,8 @@ public:
      * \return a vector containing several elements of the matrix
      */
     template <typename V = default_vec>
-    void stream(vec_type<V> in, std::size_t i) noexcept {
-        V::stream(memory_start() + i, in);
+    ETL_STRONG_INLINE(void) stream(const vec_type<V> in, std::size_t i) noexcept {
+        V::stream(_memory + i, in);
     }
 
     /*!
