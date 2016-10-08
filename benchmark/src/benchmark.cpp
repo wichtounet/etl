@@ -53,9 +53,15 @@ CPM_BENCH() {
 CPM_BENCH() {
 #ifdef ETL_EXTENDED_BENCH
     CPM_TWO_PASS_NS(
-        "r = a + b [std][add][d]",
+        "r = a + b (d) [std][add][d]",
         [](std::size_t d){ return std::make_tuple(dvec(d), dvec(d), dvec(d)); },
         [](dvec& a, dvec& b, dvec& r){ r = a + b; }
+        );
+
+    CPM_TWO_PASS_NS(
+        "r = a + b (s) [std][add][d]",
+        [](std::size_t d){ return std::make_tuple(svec(d), svec(d), svec(d)); },
+        [](svec& a, svec& b, svec& r){ r = a + b; }
         );
 
     CPM_TWO_PASS_NS(
