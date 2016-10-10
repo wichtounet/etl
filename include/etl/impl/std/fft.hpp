@@ -1029,23 +1029,95 @@ void conv4_full_fft(const opaque_memory<T, 4>& input, const opaque_memory<T, 4>&
         auto input_i_inc = input.dim(1) * input.dim(2) * input.dim(3);
         auto input_k_inc = input.dim(2) * input.dim(3);
 
-        for (std::size_t i = 0; i < input.dim(0); ++i) {
-            //k = 0
-            for (std::size_t c = 0; c < kernel.dim(1); ++c) {
-                detail::conv2_full_kernel(
-                    input.memory_start() + i * input_i_inc + 0 * input_k_inc, input.dim(2), input.dim(3),
-                    kernel.memory_start() + 0 * kernel_k_inc + c * kernel_c_inc, kernel.dim(2), kernel.dim(3),
-                    conv.memory_start() + i * conv_i_inc + c * conv_c_inc, T(0.0));
-            }
+        std::size_t m1 = input.dim(2);
+        std::size_t m2 = input.dim(3);
 
-            for (std::size_t k = 1; k < kernel.dim(0); ++k) {
-                for (std::size_t c = 0; c < kernel.dim(1); ++c) {
-                    detail::conv2_full_kernel(
-                        input.memory_start() + i * input_i_inc + k * input_k_inc, input.dim(2), input.dim(3),
-                        kernel.memory_start() + k * kernel_k_inc + c * kernel_c_inc, kernel.dim(2), kernel.dim(3),
-                        conv.memory_start() + i * conv_i_inc + c * conv_c_inc, T(1.0));
+        std::size_t n1 = kernel.dim(2);
+        std::size_t n2 = kernel.dim(3);
+
+        const std::size_t s1 = m1 + n1 - 1;
+        const std::size_t s2 = m2 + n2 - 1;
+        const std::size_t n  = s1 * s2;
+
+        const std::size_t N = input.dim(0);
+
+        std::fill(conv.memory_start(), conv.memory_end(), 0);
+
+        auto batch_fun_n = [&](const size_t first, const size_t last) {
+            if (last - first) {
+                SERIAL_SECTION {
+                    for (std::size_t i = first; i < last; ++i) {
+                        for (std::size_t k = 0; k < kernel.dim(0); ++k) {
+                            const T* a = input.memory_start() + i * input_i_inc + k * input_k_inc; //input(i)(k)
+
+                            dyn_matrix<etl::complex<T>, 2> a_padded(s1, s2);
+                            dyn_matrix<etl::complex<T>, 2> b_padded(s1, s2);
+                            dyn_matrix<etl::complex<T>, 2> tmp(s1, s2);
+
+                            a_padded = 0;
+
+                            for (std::size_t i = 0; i < m1; ++i) {
+                                direct_copy_n(a + i * m2, a_padded.memory_start() + i * s2, m2);
+                            }
+
+                            // a = fft2(a)
+                            detail::fft_n_many(a_padded.memory_start(), a_padded.memory_start(), s1, s2);
+                            a_padded.transpose_inplace();
+                            detail::fft_n_many(a_padded.memory_start(), a_padded.memory_start(), s2, s1);
+                            a_padded.transpose_inplace();
+
+                            for (std::size_t c = 0; c < kernel.dim(1); ++c) {
+                                const T* b = kernel.memory_start() + k * kernel_k_inc + c * kernel_c_inc; //kernel(k)(c)
+                                T* cc      = conv.memory_start() + i * conv_i_inc + c * conv_c_inc;       //conv(i)(c)
+
+                                // 0. Pad a and b to the size of cc
+
+                                b_padded = 0;
+                                for (std::size_t i = 0; i < n1; ++i) {
+                                    direct_copy_n(b + i * n2, b_padded.memory_start() + i * s2, n2);
+                                }
+
+                                // 1. FFT of a and b
+
+                                // b = fft2(b)
+                                detail::fft_n_many(b_padded.memory_start(), b_padded.memory_start(), s1, s2);
+                                b_padded.transpose_inplace();
+                                detail::fft_n_many(b_padded.memory_start(), b_padded.memory_start(), s2, s1);
+                                b_padded.transpose_inplace();
+
+                                // 2. Elementwise multiplication of and b
+
+                                tmp = a_padded >> b_padded;
+
+                                // 3. Inverse FFT of a
+
+                                // a = conj(a)
+                                for (std::size_t i = 0; i < n; ++i) {
+                                    tmp[i] = etl::conj(tmp[i]);
+                                }
+
+                                // a = fft2(a)
+                                detail::fft_n_many(tmp.memory_start(), tmp.memory_start(), s1, s2);
+                                tmp.transpose_inplace();
+                                detail::fft_n_many(tmp.memory_start(), tmp.memory_start(), s2, s1);
+                                tmp.transpose_inplace();
+
+                                // 4. Keep only the real part of the inverse FFT
+
+                                for (std::size_t i = 0; i < n; ++i) {
+                                    cc[i] += tmp[i].real / T(n);
+                                }
+                            }
+                        }
+                    }
                 }
             }
+        };
+
+        if (etl::is_parallel) {
+            dispatch_1d_any(select_parallel(N, 2), batch_fun_n, 0, N);
+        } else {
+            batch_fun_n(0, N);
         }
     }
 }
