@@ -126,6 +126,10 @@ struct etl_traits<etl::scalar<T>, void> {
      */
     template <vector_mode_t VV>
     using vectorizable = std::true_type;
+
+    static constexpr std::size_t size() {
+        return 0;
+    }
 };
 
 /*!

@@ -123,6 +123,10 @@ struct etl_traits<etl::generator_expr<Generator>> {
      */
     template <vector_mode_t V>
     using vectorizable = std::false_type;
+
+    static constexpr std::size_t size() {
+        return 0;
+    }
 };
 
 /*!
