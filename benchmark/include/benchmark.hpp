@@ -98,11 +98,14 @@ using conv_4d_valid_policy = NARY_POLICY(
     /* I */ VALUES_POLICY(28, 28, 28, 28, 28, 28, 28, 28, 28),
     /* W */ VALUES_POLICY(16, 16, 16, 16, 16, 16, 16, 16, 16)
     );
+
 using conv_4d_full_policy = NARY_POLICY(
-    VALUES_POLICY(64, 64, 64, 64, 64, 64, 64, 64, 64),
-    VALUES_POLICY(10, 10, 10, 10, 10, 10, 10, 10, 10),
-    VALUES_POLICY(50, 55, 60, 65, 70, 75, 80, 85, 90),
-    VALUES_POLICY(10, 15, 20, 25, 30, 35, 40, 45, 50));
+    /* N */ VALUES_POLICY(2, 4, 6, 8, 10, 12, 14, 16, 18),
+    /* K */ VALUES_POLICY(6, 8, 10, 12, 14, 16, 18, 20, 22),
+    /* C */ VALUES_POLICY(3, 5, 7, 9, 11, 13, 15, 17, 19),
+    /* I */ VALUES_POLICY(28, 28, 28, 28, 28, 28, 28, 28, 28),
+    /* W */ VALUES_POLICY(16, 16, 16, 16, 16, 16, 16, 16, 16)
+    );
 
 using pmp_policy = VALUES_POLICY(100, 120, 140, 160, 180, 200);
 
