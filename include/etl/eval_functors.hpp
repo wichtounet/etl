@@ -26,13 +26,13 @@ namespace detail {
  * The result is written to lhs with operator[] and read from rhs
  * with read_flat
  */
-template <typename V_T, typename V_Expr>
+template <typename L_Expr, typename R_Expr>
 struct Assign {
-    mutable V_T* lhs;         ///< The left hand side
-    V_Expr& rhs;              ///< The right hand side
-    const std::size_t _first; ///< The first index to assign
-    const std::size_t _last;  ///< The last index to assign
-    const std::size_t _size;  ///< The size to assign
+    using value_type = value_t<L_Expr>;
+
+    mutable value_type* lhs; ///< The left hand side
+    R_Expr rhs;              ///< The right hand side
+    const std::size_t _size; ///< The size to assign
 
     /*!
      * \brief Constuct a new Assign
@@ -41,8 +41,7 @@ struct Assign {
      * \param first Index to the first element to assign
      * \param last Index to the last element to assign
      */
-    Assign(V_T* lhs, V_Expr& rhs, std::size_t first, std::size_t last)
-            : lhs(lhs), rhs(rhs), _first(first), _last(last), _size(last - first) {
+    Assign(L_Expr lhs, R_Expr rhs) : lhs(lhs.memory_start()), rhs(rhs), _size(etl::size(lhs)) {
         //Nothing else
     }
 
@@ -50,12 +49,12 @@ struct Assign {
      * \brief Assign rhs to lhs
      */
     void operator()() const {
-        std::size_t iend = _first;
+        std::size_t iend = 0;
 
         if (unroll_normal_loops) {
-            iend = _first + (_size & std::size_t(-4));
+            iend = _size & std::size_t(-4);
 
-            for (std::size_t i = _first; i < iend; i += 4) {
+            for (std::size_t i = 0; i < iend; i += 4) {
                 lhs[i]     = rhs.read_flat(i);
                 lhs[i + 1] = rhs.read_flat(i + 1);
                 lhs[i + 2] = rhs.read_flat(i + 2);
@@ -63,7 +62,7 @@ struct Assign {
             }
         }
 
-        for (std::size_t i = iend; i < _last; ++i) {
+        for (std::size_t i = iend; i < _size; ++i) {
             lhs[i] = rhs.read_flat(i);
         }
     }
@@ -72,14 +71,14 @@ struct Assign {
 /*!
  * \brief Common base for vectorized functors
  */
-template <vector_mode_t V, typename L_Expr, typename V_Expr, typename Base>
+template <vector_mode_t V, typename L_Expr, typename R_Expr, typename Base>
 struct vectorized_base {
     using derived_t   = Base;             ///< The derived type
     using memory_type = value_t<L_Expr>*; ///< The memory type
 
     L_Expr& lhs;              ///< The left hand side
     memory_type lhs_m;        ///< The left hand side memory
-    V_Expr& rhs;              ///< The right hand side
+    R_Expr& rhs;              ///< The right hand side
     const std::size_t _first; ///< The first index to assign
     const std::size_t _last;  ///< The last index to assign
     const std::size_t _size;  ///< The size to assign
@@ -92,7 +91,7 @@ struct vectorized_base {
     /*!
      * \brief The RHS value type
      */
-    using rhs_value_type = value_t<V_Expr>;
+    using rhs_value_type = value_t<R_Expr>;
 
     /*!
      * \brief The intrinsic type for the value type
@@ -111,7 +110,7 @@ struct vectorized_base {
      * \param first Index to the first element to assign
      * \param last Index to the last element to assign
      */
-    vectorized_base(L_Expr& lhs, V_Expr& rhs, std::size_t first, std::size_t last)
+    vectorized_base(L_Expr& lhs, R_Expr& rhs, std::size_t first, std::size_t last)
             : lhs(lhs), lhs_m(lhs.memory_start()), rhs(rhs), _first(first), _last(last), _size(last - first) {
         //Nothing else
     }
@@ -150,9 +149,9 @@ private:
  * The result is computed in a vectorized fashion with several
  * operations per cycle and written directly to the memory of lhs.
  */
-template <vector_mode_t V, typename L_Expr, typename V_Expr>
-struct VectorizedAssign : vectorized_base<V, L_Expr, V_Expr, VectorizedAssign<V, L_Expr, V_Expr>> {
-    using base_t    = vectorized_base<V, L_Expr, V_Expr, VectorizedAssign<V, L_Expr, V_Expr>>; ///< The base type
+template <vector_mode_t V, typename L_Expr, typename R_Expr>
+struct VectorizedAssign : vectorized_base<V, L_Expr, R_Expr, VectorizedAssign<V, L_Expr, R_Expr>> {
+    using base_t    = vectorized_base<V, L_Expr, R_Expr, VectorizedAssign<V, L_Expr, R_Expr>>; ///< The base type
     using IT        = typename base_t::IT;                                                     ///< The intrisic type
     using vect_impl = typename base_t::vect_impl;                                              ///< The vector implementation
 
@@ -170,7 +169,7 @@ struct VectorizedAssign : vectorized_base<V, L_Expr, V_Expr, VectorizedAssign<V,
      * \param first Index to the first element to assign
      * \param last Index to the last element to assign
      */
-    VectorizedAssign(L_Expr& lhs, V_Expr& rhs, std::size_t first, std::size_t last)
+    VectorizedAssign(L_Expr& lhs, R_Expr& rhs, std::size_t first, std::size_t last)
             : base_t(lhs, rhs, first, last) {
         //Nothing else
     }
@@ -182,7 +181,7 @@ struct VectorizedAssign : vectorized_base<V, L_Expr, V_Expr, VectorizedAssign<V,
      * \param first The index when to start
      */
     void operator()() const {
-        constexpr const bool remainder = !padding || !all_padded<L_Expr, V_Expr>::value;
+        constexpr const bool remainder = !padding || !all_padded<L_Expr, R_Expr>::value;
 
         const size_t last = remainder ? _first + (_size & size_t(-IT::size)) : _last;
 
@@ -218,10 +217,12 @@ struct VectorizedAssign : vectorized_base<V, L_Expr, V_Expr, VectorizedAssign<V,
 /*!
  * \brief Functor for simple compound assign add
  */
-template <typename V_T, typename V_Expr>
+template <typename L_Expr, typename R_Expr>
 struct AssignAdd {
-    mutable V_T* lhs;         ///< The left hand side
-    V_Expr& rhs;              ///< The right hand side
+    using value_type = value_t<L_Expr>;
+
+    mutable value_type* lhs;         ///< The left hand side
+    R_Expr& rhs;              ///< The right hand side
     const std::size_t _first; ///< The first index to assign
     const std::size_t _last;  ///< The last index to assign
     const std::size_t _size;  ///< The size to assign
@@ -233,8 +234,8 @@ struct AssignAdd {
      * \param first Index to the first element to assign
      * \param last Index to the last element to assign
      */
-    AssignAdd(V_T* lhs, V_Expr& rhs, std::size_t first, std::size_t last)
-            : lhs(lhs), rhs(rhs), _first(first), _last(last), _size(last - first) {
+    AssignAdd(L_Expr& lhs, R_Expr& rhs, std::size_t first, std::size_t last)
+            : lhs(lhs.memory_start()), rhs(rhs), _first(first), _last(last), _size(last - first) {
         //Nothing else
     }
 
@@ -264,9 +265,9 @@ struct AssignAdd {
 /*!
  * \brief Functor for vectorized compound assign add
  */
-template <vector_mode_t V, typename L_Expr, typename V_Expr>
-struct VectorizedAssignAdd : vectorized_base<V, L_Expr, V_Expr, VectorizedAssignAdd<V, L_Expr, V_Expr>> {
-    using base_t    = vectorized_base<V, L_Expr, V_Expr, VectorizedAssignAdd<V, L_Expr, V_Expr>>; ///< The base type
+template <vector_mode_t V, typename L_Expr, typename R_Expr>
+struct VectorizedAssignAdd : vectorized_base<V, L_Expr, R_Expr, VectorizedAssignAdd<V, L_Expr, R_Expr>> {
+    using base_t    = vectorized_base<V, L_Expr, R_Expr, VectorizedAssignAdd<V, L_Expr, R_Expr>>; ///< The base type
     using IT        = typename base_t::IT;                                                        ///< The intrisic type
     using vect_impl = typename base_t::vect_impl;                                                 ///< The vector implementation
 
@@ -284,7 +285,7 @@ struct VectorizedAssignAdd : vectorized_base<V, L_Expr, V_Expr, VectorizedAssign
      * \param first Index to the first element to assign
      * \param last Index to the last element to assign
      */
-    VectorizedAssignAdd(L_Expr& lhs, V_Expr& rhs, std::size_t first, std::size_t last)
+    VectorizedAssignAdd(L_Expr& lhs, R_Expr& rhs, std::size_t first, std::size_t last)
             : base_t(lhs, rhs, first, last) {
         //Nothing else
     }
@@ -297,7 +298,7 @@ struct VectorizedAssignAdd : vectorized_base<V, L_Expr, V_Expr, VectorizedAssign
      * \param first The index when to start
      */
     void operator()() const {
-        constexpr const bool remainder = !padding || !all_padded<L_Expr, V_Expr>::value;
+        constexpr const bool remainder = !padding || !all_padded<L_Expr, R_Expr>::value;
 
         const size_t last = remainder ? _last : _first + alloc_size<typename base_t::lhs_value_type>(_size);
 
@@ -323,10 +324,12 @@ struct VectorizedAssignAdd : vectorized_base<V, L_Expr, V_Expr, VectorizedAssign
 /*!
  * \brief Functor for compound assign sub
  */
-template <typename V_T, typename V_Expr>
+template <typename L_Expr, typename R_Expr>
 struct AssignSub {
-    mutable V_T* lhs;         ///< The left hand side
-    V_Expr& rhs;              ///< The right hand side
+    using value_type = value_t<L_Expr>;
+
+    mutable value_type* lhs;         ///< The left hand side
+    R_Expr& rhs;              ///< The right hand side
     const std::size_t _first; ///< The first index to assign
     const std::size_t _last;  ///< The last index to assign
     const std::size_t _size;  ///< The size to assign
@@ -338,8 +341,8 @@ struct AssignSub {
      * \param first Index to the first element to assign
      * \param last Index to the last element to assign
      */
-    AssignSub(V_T* lhs, V_Expr& rhs, std::size_t first, std::size_t last)
-            : lhs(lhs), rhs(rhs), _first(first), _last(last), _size(last - first) {
+    AssignSub(L_Expr& lhs, R_Expr& rhs, std::size_t first, std::size_t last)
+            : lhs(lhs.memory_start()), rhs(rhs), _first(first), _last(last), _size(last - first) {
         //Nothing else
     }
 
@@ -369,9 +372,9 @@ struct AssignSub {
 /*!
  * \brief Functor for vectorized compound assign sub
  */
-template <vector_mode_t V, typename L_Expr, typename V_Expr>
-struct VectorizedAssignSub : vectorized_base<V, L_Expr, V_Expr, VectorizedAssignSub<V, L_Expr, V_Expr>> {
-    using base_t    = vectorized_base<V, L_Expr, V_Expr, VectorizedAssignSub<V, L_Expr, V_Expr>>; ///< The base type
+template <vector_mode_t V, typename L_Expr, typename R_Expr>
+struct VectorizedAssignSub : vectorized_base<V, L_Expr, R_Expr, VectorizedAssignSub<V, L_Expr, R_Expr>> {
+    using base_t    = vectorized_base<V, L_Expr, R_Expr, VectorizedAssignSub<V, L_Expr, R_Expr>>; ///< The base type
     using IT        = typename base_t::IT;                                                        ///< The intrisic type
     using vect_impl = typename base_t::vect_impl;                                                 ///< The vector implementation
 
@@ -389,7 +392,7 @@ struct VectorizedAssignSub : vectorized_base<V, L_Expr, V_Expr, VectorizedAssign
      * \param first Index to the first element to assign
      * \param last Index to the last element to assign
      */
-    VectorizedAssignSub(L_Expr& lhs, V_Expr& rhs, std::size_t first, std::size_t last)
+    VectorizedAssignSub(L_Expr& lhs, R_Expr& rhs, std::size_t first, std::size_t last)
             : base_t(lhs, rhs, first, last) {
         //Nothing else
     }
@@ -402,7 +405,7 @@ struct VectorizedAssignSub : vectorized_base<V, L_Expr, V_Expr, VectorizedAssign
      * \param first The index when to start
      */
     void operator()() const {
-        constexpr const bool remainder = !padding || !all_padded<L_Expr, V_Expr>::value;
+        constexpr const bool remainder = !padding || !all_padded<L_Expr, R_Expr>::value;
 
         const size_t last = remainder ? _last : _first + alloc_size<typename base_t::lhs_value_type>(_size);
 
@@ -428,10 +431,12 @@ struct VectorizedAssignSub : vectorized_base<V, L_Expr, V_Expr, VectorizedAssign
 /*!
  * \brief Functor for compound assign mul
  */
-template <typename V_T, typename V_Expr>
+template <typename L_Expr, typename R_Expr>
 struct AssignMul {
-    mutable V_T* lhs;         ///< The left hand side
-    V_Expr& rhs;              ///< The right hand side
+    using value_type = value_t<L_Expr>;
+
+    mutable value_type* lhs;         ///< The left hand side
+    R_Expr& rhs;              ///< The right hand side
     const std::size_t _first; ///< The first index to assign
     const std::size_t _last;  ///< The last index to assign
     const std::size_t _size;  ///< The size to assign
@@ -443,8 +448,8 @@ struct AssignMul {
      * \param first Index to the first element to assign
      * \param last Index to the last element to assign
      */
-    AssignMul(V_T* lhs, V_Expr& rhs, std::size_t first, std::size_t last)
-            : lhs(lhs), rhs(rhs), _first(first), _last(last), _size(last - first) {
+    AssignMul(L_Expr& lhs, R_Expr& rhs, std::size_t first, std::size_t last)
+            : lhs(lhs.memory_start()), rhs(rhs), _first(first), _last(last), _size(last - first) {
         //Nothing else
     }
 
@@ -474,11 +479,11 @@ struct AssignMul {
 /*!
  * \brief Functor for vectorized compound assign mul
  */
-template <vector_mode_t V, typename L_Expr, typename V_Expr>
-struct VectorizedAssignMul : vectorized_base<V, L_Expr, V_Expr, VectorizedAssignMul<V, L_Expr, V_Expr>> {
+template <vector_mode_t V, typename L_Expr, typename R_Expr>
+struct VectorizedAssignMul : vectorized_base<V, L_Expr, R_Expr, VectorizedAssignMul<V, L_Expr, R_Expr>> {
     static constexpr const bool Cx = is_complex_t<value_t<L_Expr>>::value; ///< Indicates it is a complex multiplication
 
-    using base_t    = vectorized_base<V, L_Expr, V_Expr, VectorizedAssignMul<V, L_Expr, V_Expr>>; ///< The base type
+    using base_t    = vectorized_base<V, L_Expr, R_Expr, VectorizedAssignMul<V, L_Expr, R_Expr>>; ///< The base type
     using IT        = typename base_t::IT;                                                        ///< The intrisic type
     using vect_impl = typename base_t::vect_impl;                                                 ///< The vector implementation
 
@@ -496,7 +501,7 @@ struct VectorizedAssignMul : vectorized_base<V, L_Expr, V_Expr, VectorizedAssign
      * \param first Index to the first element to assign
      * \param last Index to the last element to assign
      */
-    VectorizedAssignMul(L_Expr& lhs, V_Expr& rhs, std::size_t first, std::size_t last)
+    VectorizedAssignMul(L_Expr& lhs, R_Expr& rhs, std::size_t first, std::size_t last)
             : base_t(lhs, rhs, first, last) {
         //Nothing else
     }
@@ -509,7 +514,7 @@ struct VectorizedAssignMul : vectorized_base<V, L_Expr, V_Expr, VectorizedAssign
      * \param first The index when to start
      */
     void operator()() const {
-        constexpr const bool remainder = !padding || !all_padded<L_Expr, V_Expr>::value;
+        constexpr const bool remainder = !padding || !all_padded<L_Expr, R_Expr>::value;
 
         const size_t last = remainder ? _last : _first + alloc_size<typename base_t::lhs_value_type>(_size);
 
@@ -535,10 +540,12 @@ struct VectorizedAssignMul : vectorized_base<V, L_Expr, V_Expr, VectorizedAssign
 /*!
  * \brief Functor for compound assign div
  */
-template <typename V_T, typename V_Expr>
+template <typename L_Expr, typename R_Expr>
 struct AssignDiv {
-    mutable V_T* lhs;         ///< The left hand side
-    V_Expr& rhs;              ///< The right hand side
+    using value_type = value_t<L_Expr>;
+
+    mutable value_type* lhs;         ///< The left hand side
+    R_Expr& rhs;              ///< The right hand side
     const std::size_t _first; ///< The first index to assign
     const std::size_t _last;  ///< The last index to assign
     const std::size_t _size;  ///< The size to assign
@@ -550,8 +557,8 @@ struct AssignDiv {
      * \param first Index to the first element to assign
      * \param last Index to the last element to assign
      */
-    AssignDiv(V_T* lhs, V_Expr& rhs, std::size_t first, std::size_t last)
-            : lhs(lhs), rhs(rhs), _first(first), _last(last), _size(last - first) {
+    AssignDiv(L_Expr& lhs, R_Expr& rhs, std::size_t first, std::size_t last)
+            : lhs(lhs.memory_start()), rhs(rhs), _first(first), _last(last), _size(last - first) {
         //Nothing else
     }
 
@@ -581,11 +588,11 @@ struct AssignDiv {
 /*!
  * \brief Functor for vectorized compound assign div
  */
-template <vector_mode_t V, typename L_Expr, typename V_Expr>
-struct VectorizedAssignDiv : vectorized_base<V, L_Expr, V_Expr, VectorizedAssignDiv<V, L_Expr, V_Expr>> {
+template <vector_mode_t V, typename L_Expr, typename R_Expr>
+struct VectorizedAssignDiv : vectorized_base<V, L_Expr, R_Expr, VectorizedAssignDiv<V, L_Expr, R_Expr>> {
     static constexpr const bool Cx = is_complex_t<value_t<L_Expr>>::value; ///< Indicates if it is a complex division
 
-    using base_t    = vectorized_base<V, L_Expr, V_Expr, VectorizedAssignDiv<V, L_Expr, V_Expr>>; ///< The base type
+    using base_t    = vectorized_base<V, L_Expr, R_Expr, VectorizedAssignDiv<V, L_Expr, R_Expr>>; ///< The base type
     using IT        = typename base_t::IT;                                                        ///< The intrisic type
     using vect_impl = typename base_t::vect_impl;                                                 ///< The vector implementation
 
@@ -603,7 +610,7 @@ struct VectorizedAssignDiv : vectorized_base<V, L_Expr, V_Expr, VectorizedAssign
      * \param first Index to the first element to assign
      * \param last Index to the last element to assign
      */
-    VectorizedAssignDiv(L_Expr& lhs, V_Expr& rhs, std::size_t first, std::size_t last)
+    VectorizedAssignDiv(L_Expr& lhs, R_Expr& rhs, std::size_t first, std::size_t last)
             : base_t(lhs, rhs, first, last) {
         //Nothing else
     }
@@ -616,7 +623,7 @@ struct VectorizedAssignDiv : vectorized_base<V, L_Expr, V_Expr, VectorizedAssign
      * \param first The index when to start
      */
     void operator()() const {
-        constexpr const bool remainder = !padding || !all_padded<L_Expr, V_Expr>::value;
+        constexpr const bool remainder = !padding || !all_padded<L_Expr, R_Expr>::value;
 
         const size_t last = remainder ? _last : _first + alloc_size<typename base_t::lhs_value_type>(_size);
 

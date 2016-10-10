@@ -138,11 +138,15 @@ namespace standard_evaluator {
      * \param expr The right hand side expression
      * \param result The left hand side
      */
-    template <typename E, typename R>
-    void par_assign_evaluate_impl(E&& expr, R&& result) {
+    template <template <typename, typename> class Fun, typename E, typename R>
+    void par_linear(E&& expr, R&& result) {
         const auto n = etl::size(result);
 
-        auto m = result.memory_start();
+        auto result_view = reshape(result, n, 1);
+        auto expr_view   = reshape(expr, n, 1);
+
+        using RS = decltype(slice(result_view, 0, n));
+        using ES = decltype(slice(expr_view, 0, n));
 
         static cpp::default_thread_pool<> pool(threads - 1);
 
@@ -151,10 +155,10 @@ namespace standard_evaluator {
         auto batch = n / threads;
 
         for(std::size_t t = 0; t < threads - 1; ++t){
-            pool.do_task(detail::Assign<value_t<R>,E>(m, expr, t * batch, (t+1) * batch));
+            pool.do_task(Fun<RS,ES>(slice(result_view, t * batch, (t+1) * batch), slice(expr_view, t * batch, (t+1) * batch)));
         }
 
-        detail::Assign<value_t<R>,E>(m, expr, (threads - 1) * batch, n)();
+        Fun<RS,ES>(slice(result_view, (threads - 1) * batch, n), slice(expr_view, (threads - 1) * batch, n))();
 
         pool.wait();
     }
@@ -165,9 +169,9 @@ namespace standard_evaluator {
     template <typename E, typename R, cpp_enable_if(detail::direct_assign<E, R>::value)>
     void assign_evaluate_impl(E&& expr, R&& result) {
         if(all_thread_safe<E>::value && select_parallel(etl::size(result))){
-            par_assign_evaluate_impl(expr, result);
+            par_linear<detail::Assign>(expr, result);
         } else {
-            detail::Assign<value_t<R>,E>(result.memory_start(), expr, 0, etl::size(result))();
+            detail::Assign<R&,E&>(result, expr)();
         }
     }
 
@@ -238,8 +242,6 @@ namespace standard_evaluator {
     void par_add_evaluate(E&& expr, R&& result) {
         const auto n = etl::size(result);
 
-        auto m = result.memory_start();
-
         static cpp::default_thread_pool<> pool(threads - 1);
 
         //Distribute evenly the batches
@@ -247,10 +249,10 @@ namespace standard_evaluator {
         auto batch = n / threads;
 
         for(std::size_t t = 0; t < threads - 1; ++t){
-            pool.do_task(detail::AssignAdd<value_t<R>,E>(m, expr, t * batch, (t+1) * batch));
+            pool.do_task(detail::AssignAdd<R,E>(result, expr, t * batch, (t+1) * batch));
         }
 
-        detail::AssignAdd<value_t<R>,E>(m, expr, (threads - 1) * batch, n)();
+        detail::AssignAdd<R,E>(result, expr, (threads - 1) * batch, n)();
 
         pool.wait();
     }
@@ -266,7 +268,7 @@ namespace standard_evaluator {
         if(all_thread_safe<E>::value && select_parallel(etl::size(result))){
             par_add_evaluate(expr, result);
         } else {
-            detail::AssignAdd<value_t<R>,E>(result.memory_start(), expr, 0, etl::size(result))();
+            detail::AssignAdd<R,E>(result, expr, 0, etl::size(result))();
         }
     }
 
@@ -340,8 +342,6 @@ namespace standard_evaluator {
     void par_sub_evaluate(E&& expr, R&& result) {
         const auto n = etl::size(result);
 
-        auto m = result.memory_start();
-
         static cpp::default_thread_pool<> pool(threads - 1);
 
         //Distribute evenly the batches
@@ -349,10 +349,10 @@ namespace standard_evaluator {
         auto batch = n / threads;
 
         for(std::size_t t = 0; t < threads - 1; ++t){
-            pool.do_task(detail::AssignSub<value_t<R>,E>(m, expr, t * batch, (t+1) * batch));
+            pool.do_task(detail::AssignSub<R,E>(result, expr, t * batch, (t+1) * batch));
         }
 
-        detail::AssignSub<value_t<R>,E>(m, expr, (threads - 1) * batch, n)();
+        detail::AssignSub<R,E>(result, expr, (threads - 1) * batch, n)();
 
         pool.wait();
     }
@@ -368,7 +368,7 @@ namespace standard_evaluator {
         if(all_thread_safe<E>::value && select_parallel(etl::size(result))){
             par_sub_evaluate(expr, result);
         } else {
-            detail::AssignSub<value_t<R>,E>(result.memory_start(), expr, 0, etl::size(result))();
+            detail::AssignSub<R,E>(result, expr, 0, etl::size(result))();
         }
     }
 
@@ -442,8 +442,6 @@ namespace standard_evaluator {
     void par_mul_evaluate(E&& expr, R&& result) {
         const auto n = etl::size(result);
 
-        auto m = result.memory_start();
-
         static cpp::default_thread_pool<> pool(threads - 1);
 
         //Distribute evenly the batches
@@ -451,10 +449,10 @@ namespace standard_evaluator {
         auto batch = n / threads;
 
         for(std::size_t t = 0; t < threads - 1; ++t){
-            pool.do_task(detail::AssignMul<value_t<R>,E>(m, expr, t * batch, (t+1) * batch));
+            pool.do_task(detail::AssignMul<R,E>(result, expr, t * batch, (t+1) * batch));
         }
 
-        detail::AssignMul<value_t<R>,E>(m, expr, (threads - 1) * batch, n)();
+        detail::AssignMul<R,E>(result, expr, (threads - 1) * batch, n)();
 
         pool.wait();
     }
@@ -470,7 +468,7 @@ namespace standard_evaluator {
         if(all_thread_safe<E>::value && select_parallel(etl::size(result))){
             par_mul_evaluate(expr, result);
         } else {
-            detail::AssignMul<value_t<R>,E>(result.memory_start(), expr, 0, etl::size(result))();
+            detail::AssignMul<R,E>(result, expr, 0, etl::size(result))();
         }
     }
 
@@ -544,8 +542,6 @@ namespace standard_evaluator {
     void par_div_evaluate(E&& expr, R&& result) {
         const auto n = etl::size(result);
 
-        auto m = result.memory_start();
-
         static cpp::default_thread_pool<> pool(threads - 1);
 
         //Distribute evenly the batches
@@ -553,10 +549,10 @@ namespace standard_evaluator {
         auto batch = n / threads;
 
         for(std::size_t t = 0; t < threads - 1; ++t){
-            pool.do_task(detail::AssignDiv<value_t<R>,E>(m, expr, t * batch, (t+1) * batch));
+            pool.do_task(detail::AssignDiv<R,E>(result, expr, t * batch, (t+1) * batch));
         }
 
-        detail::AssignDiv<value_t<R>,E>(m, expr, (threads - 1) * batch, n)();
+        detail::AssignDiv<R,E>(result, expr, (threads - 1) * batch, n)();
 
         pool.wait();
     }
@@ -572,7 +568,7 @@ namespace standard_evaluator {
         if(all_thread_safe<E>::value && select_parallel(etl::size(result))){
             par_div_evaluate(expr, result);
         } else {
-            detail::AssignDiv<value_t<R>,E>(result.memory_start(), expr, 0, etl::size(result))();
+            detail::AssignDiv<R,E>(result, expr, 0, etl::size(result))();
         }
     }
 
