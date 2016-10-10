@@ -95,9 +95,11 @@ CONV_FUNCTOR(blas_conv4_valid_flipped, c = selected_helper(etl::conv4_impl::BLAS
 
 CONV_FUNCTOR(default_conv4_valid_filter, c = (etl::conv_4d_valid_filter<S1, S2, P1, P2>(a, b)))
 CONV_FUNCTOR(std_conv4_valid_filter, c = selected_helper(etl::conv4_impl::STD, (etl::conv_4d_valid_filter<S1, S2, P1, P2>(a, b))))
+CONV_FUNCTOR(blas_conv4_valid_filter, c = selected_helper(etl::conv4_impl::BLAS, (etl::conv_4d_valid_filter<S1, S2, P1, P2>(a, b))))
 
 CONV_FUNCTOR(default_conv4_valid_filter_flipped, c = (etl::conv_4d_valid_filter_flipped<S1, S2, P1, P2>(a, b)))
 CONV_FUNCTOR(std_conv4_valid_filter_flipped, c = selected_helper(etl::conv4_impl::STD, (etl::conv_4d_valid_filter_flipped<S1, S2, P1, P2>(a, b))))
+CONV_FUNCTOR(blas_conv4_valid_filter_flipped, c = selected_helper(etl::conv4_impl::BLAS, (etl::conv_4d_valid_filter_flipped<S1, S2, P1, P2>(a, b))))
 
 CONV_FUNCTOR(default_conv4_full, c = etl::conv_4d_full(a, b))
 CONV_FUNCTOR(std_conv4_full, c = selected_helper(etl::conv4_impl::STD, etl::conv_4d_full(a, b)))
@@ -173,9 +175,11 @@ CONV_FUNCTOR(std_conv2_full_multi_flipped, c = selected_helper(etl::conv_multi_i
 
 #define CONV4_VALID_FILTER_TEST_CASE_SECTION_DEFAULT CONV_TEST_CASE_SECTIONS(default_conv4_valid_filter)
 #define CONV4_VALID_FILTER_TEST_CASE_SECTION_STD CONV_TEST_CASE_SECTIONS(std_conv4_valid_filter)
+#define CONV4_VALID_FILTER_TEST_CASE_SECTION_BLAS CONV_TEST_CASE_SECTIONS(blas_conv4_valid_filter)
 
 #define CONV4_VALID_FILTER_FLIPPED_TEST_CASE_SECTION_DEFAULT CONV_TEST_CASE_SECTIONS(default_conv4_valid_filter_flipped)
 #define CONV4_VALID_FILTER_FLIPPED_TEST_CASE_SECTION_STD CONV_TEST_CASE_SECTIONS(std_conv4_valid_filter_flipped)
+#define CONV4_VALID_FILTER_FLIPPED_TEST_CASE_SECTION_BLAS CONV_TEST_CASE_SECTIONS(blas_conv4_valid_filter_flipped)
 
 #define CONV4_FULL_TEST_CASE_SECTION_DEFAULT CONV_TEST_CASE_SECTIONS(default_conv4_full)
 #define CONV4_FULL_TEST_CASE_SECTION_STD CONV_TEST_CASE_SECTIONS(std_conv4_full)
@@ -637,6 +641,7 @@ CONV_FUNCTOR(cudnn_conv2_valid_multi_flipped, c = selected_helper(etl::conv_mult
     CONV_TEST_CASE_DECL(name, description) {            \
         CONV4_VALID_FILTER_TEST_CASE_SECTION_DEFAULT    \
         CONV4_VALID_FILTER_TEST_CASE_SECTION_STD        \
+        CONV4_VALID_FILTER_TEST_CASE_SECTION_BLAS       \
         CONV4_VALID_FILTER_TEST_CASE_SECTION_SSE        \
         CONV4_VALID_FILTER_TEST_CASE_SECTION_AVX        \
         CONV4_VALID_FILTER_TEST_CASE_SECTION_CUDNN      \
@@ -647,6 +652,7 @@ CONV_FUNCTOR(cudnn_conv2_valid_multi_flipped, c = selected_helper(etl::conv_mult
     CONV_TEST_CASE_DECL(name, description) {                    \
         CONV4_VALID_FILTER_FLIPPED_TEST_CASE_SECTION_DEFAULT    \
         CONV4_VALID_FILTER_FLIPPED_TEST_CASE_SECTION_STD        \
+        CONV4_VALID_FILTER_FLIPPED_TEST_CASE_SECTION_BLAS       \
         CONV4_VALID_FILTER_FLIPPED_TEST_CASE_SECTION_SSE        \
         CONV4_VALID_FILTER_FLIPPED_TEST_CASE_SECTION_AVX        \
         CONV4_VALID_FILTER_FLIPPED_TEST_CASE_SECTION_CUDNN      \
