@@ -369,6 +369,34 @@ void blas_conv4_valid_flipped(const I_T& input, const K_T& kernel, C_T&& conv, s
     blas_conv4_valid_prepared(input, kernel, kernels, conv, s1, s2, p1, p2);
 }
 
+template <typename I_T, typename K_T, typename C_T>
+void blas_conv4_valid_filter(const I_T& input, const K_T& kernel, C_T&& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
+    const auto I = etl::dim<0>(input);
+    const auto K = etl::dim<0>(conv);
+    const auto C = etl::dim<1>(conv);
+
+    const auto c1 = etl::dim<2>(conv);
+    const auto c2 = etl::dim<3>(conv);
+
+    etl::dyn_matrix<value_t<I_T>, 4> conv_temp(C, K, c1, c2);
+    etl::dyn_matrix<value_t<I_T>, 3> temp(K, c1, c2);
+
+    for (std::size_t i = 0; i < I; ++i) {
+        for (std::size_t k = 0; k < K; ++k) {
+            for (std::size_t c = 0; c < C; ++c) {
+                blas_conv2_valid_multi(input(i)(c), kernel(i), temp, s1, s2, p1, p2);
+                conv_temp(C) += temp;
+            }
+        }
+    }
+
+    for(std::size_t c = 0; c < C; ++c){
+        for(std::size_t k = 0; k < K; ++k){
+            conv(k)(c) = conv_temp(c)(k);
+        }
+    }
+}
+
 } //end of namespace reduc
 } //end of namespace impl
 } //end of namespace etl
