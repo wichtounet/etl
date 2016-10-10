@@ -51,6 +51,7 @@ CPM_BENCH() {
 
 //Bench addition
 CPM_BENCH() {
+    // TODO Find out why this is not as fast as Blaze
 #ifdef ETL_EXTENDED_BENCH
     CPM_TWO_PASS_NS(
         "r = a + b (d) [std][add][d]",
