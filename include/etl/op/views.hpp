@@ -1562,21 +1562,22 @@ template <typename T>
 struct etl_traits<etl::slice_view<T>> {
     using expr_t     = etl::slice_view<T>; ///< The expression type
     using sub_expr_t = std::decay_t<T>;    ///< The sub expression type
+    using sub_traits = etl_traits<sub_expr_t>; ///< The traits of the sub expression
 
     static constexpr const bool is_etl                  = true;                                            ///< Indicates if the type is an ETL expression
     static constexpr const bool is_transformer          = false;                                           ///< Indicates if the type is a transformer
     static constexpr const bool is_view                 = true;                                            ///< Indicates if the type is a view
     static constexpr const bool is_magic_view           = false;                                           ///< Indicates if the type is a magic view
     static constexpr const bool is_fast                 = false;                                           ///< Indicates if the expression is fast
-    static constexpr const bool is_linear               = etl_traits<sub_expr_t>::is_linear;               ///< Indicates if the expression is linear
-    static constexpr const bool is_thread_safe          = etl_traits<sub_expr_t>::is_thread_safe;          ///< Indicates if the expression is thread safe
+    static constexpr const bool is_linear               = sub_traits::is_linear;               ///< Indicates if the expression is linear
+    static constexpr const bool is_thread_safe          = sub_traits::is_thread_safe;          ///< Indicates if the expression is thread safe
     static constexpr const bool is_value                = false;                                           ///< Indicates if the expression is of value type
-    static constexpr const bool is_direct               = etl_traits<sub_expr_t>::is_direct && etl_traits<sub_expr_t>::storage_order == order::RowMajor;               ///< Indicates if the expression has direct memory access
+    static constexpr const bool is_direct               = sub_traits::is_direct && sub_traits::storage_order == order::RowMajor;               ///< Indicates if the expression has direct memory access
     static constexpr const bool is_generator            = false;                                           ///< Indicates if the expression is a generator
     static constexpr const bool is_padded               = false;                          ///< Indicates if the expression is padded
-    static constexpr const bool needs_temporary_visitor = etl_traits<sub_expr_t>::needs_temporary_visitor; ///< Indicates if the expression needs a temporary visitor
-    static constexpr const bool needs_evaluator_visitor = etl_traits<sub_expr_t>::needs_evaluator_visitor; ///< Indicates if the exxpression needs a evaluator visitor
-    static constexpr const order storage_order          = etl_traits<sub_expr_t>::storage_order;           ///< The expression's storage order
+    static constexpr const bool needs_temporary_visitor = sub_traits::needs_temporary_visitor; ///< Indicates if the expression needs a temporary visitor
+    static constexpr const bool needs_evaluator_visitor = sub_traits::needs_evaluator_visitor; ///< Indicates if the exxpression needs a evaluator visitor
+    static constexpr const order storage_order          = sub_traits::storage_order;           ///< The expression's storage order
 
     /*!
      * \brief Indicates if the expression is vectorizable using the
@@ -1584,7 +1585,7 @@ struct etl_traits<etl::slice_view<T>> {
      * \tparam V The vector mode
      */
     template <vector_mode_t V>
-    using vectorizable = cpp::bool_constant<decay_traits<sub_expr_t>::template vectorizable<V>::value && storage_order == order::RowMajor>;
+    using vectorizable = cpp::bool_constant<sub_traits::template vectorizable<V>::value && storage_order == order::RowMajor>;
 
     /*!
      * \brief Returns the size of the given expression
@@ -1592,7 +1593,7 @@ struct etl_traits<etl::slice_view<T>> {
      * \returns the size of the given expression
      */
     static std::size_t size(const expr_t& v) {
-        return (etl_traits<sub_expr_t>::size(v.sub) / etl_traits<sub_expr_t>::dim(v.sub, 0)) * (v.last - v.first);
+        return (sub_traits::size(v.sub) / sub_traits::dim(v.sub, 0)) * (v.last - v.first);
     }
 
     /*!
@@ -1605,7 +1606,7 @@ struct etl_traits<etl::slice_view<T>> {
         if (d == 0) {
             return v.last - v.first;
         } else {
-            return etl_traits<sub_expr_t>::dim(v.sub, d);
+            return sub_traits::dim(v.sub, d);
         }
     }
 
@@ -1614,7 +1615,7 @@ struct etl_traits<etl::slice_view<T>> {
      * \return the number of dimensions of this type
      */
     static constexpr std::size_t dimensions() {
-        return etl_traits<sub_expr_t>::dimensions();
+        return sub_traits::dimensions();
     }
 };
 
