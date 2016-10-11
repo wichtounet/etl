@@ -656,23 +656,19 @@ void conv4_full(const opaque_memory<T, 4>& input, const opaque_memory<T, 4>& ker
 
         dyn_matrix<etl::complex<T>, 3> b_padded(K, C, size);
 
-        auto batch_fun_kc = [&](const size_t first, const size_t last){
-            if (last - first) {
-                SERIAL_SECTION {
-                    for (std::size_t kc = first; kc < last; ++kc) {
-                        size_t k = kc / C;
-                        size_t c = kc % C;
+        auto batch_fun_kc = [&](const size_t first, const size_t last) {
+            for (std::size_t kc = first; kc < last; ++kc) {
+                size_t k = kc / C;
+                size_t c = kc % C;
 
-                        const T* b = kernel.memory_start() + k * kernel_k_inc + c * kernel_c_inc; // kernel(k)(c)
+                const T* b = kernel.memory_start() + k * kernel_k_inc + c * kernel_c_inc; // kernel(k)(c)
 
-                        b_padded(k)(c) = 0;
-                        for (std::size_t i = 0; i < n1; ++i) {
-                            direct_copy_n(b + i * n2, b_padded(k)(c).memory_start() + i * s2, n2);
-                        }
-
-                        mkl_detail::inplace_fft2_kernel(reinterpret_cast<std::complex<T>*>(b_padded(k)(c).memory_start()), s1, s2);
-                    }
+                b_padded(k)(c) = 0;
+                for (std::size_t i = 0; i < n1; ++i) {
+                    direct_copy_n(b + i * n2, b_padded(k)(c).memory_start() + i * s2, n2);
                 }
+
+                mkl_detail::inplace_fft2_kernel(reinterpret_cast<std::complex<T>*>(b_padded(k)(c).memory_start()), s1, s2);
             }
         };
 
