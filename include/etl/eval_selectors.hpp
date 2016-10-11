@@ -28,7 +28,9 @@ namespace detail {
 template <vector_mode_t V, typename E, typename R>
 using are_vectorizable_select = cpp::and_u<
                                vectorize_expr,
+                               decay_traits<R>::template vectorizable<V>::value,
                                decay_traits<E>::template vectorizable<V>::value,
+                               decay_traits<E>::storage_order == decay_traits<R>::storage_order,
                                intrinsic_traits<value_t<R>>::vectorizable, intrinsic_traits<value_t<E>>::vectorizable,
                                std::is_same<intrinsic_type<value_t<R>>, intrinsic_type<value_t<E>>>::value>;
 
