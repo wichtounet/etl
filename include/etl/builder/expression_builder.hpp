@@ -822,6 +822,19 @@ auto slice(E&& value, std::size_t first, std::size_t last) -> detail::identity_h
 }
 
 /*!
+ * \brief Returns view representing a memory slice view of the given expression.
+ * \param value The ETL expression
+ * \param first The first index
+ * \param last The last index
+ * \return a view expression representing a sub dimensional view of the given expression
+ */
+template <typename E>
+auto memory_slice(E&& value, std::size_t first, std::size_t last) -> detail::identity_helper<E, memory_slice_view<detail::build_identity_type<E>>> {
+    static_assert(is_etl_expr<E>::value, "etl::memory_slice can only be used on ETL expressions");
+    return detail::identity_helper<E, memory_slice_view<detail::build_identity_type<E>>>{{value, first, last}};
+}
+
+/*!
  * \brief Returns view representing the reshape of another expression
  * \param value The ETL expression
  * \tparam Dims the reshape dimensions
