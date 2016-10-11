@@ -638,23 +638,85 @@ void conv4_full(const opaque_memory<T, 4>& input, const opaque_memory<T, 4>& ker
         auto input_i_inc = input.dim(1) * input.dim(2) * input.dim(3);
         auto input_k_inc = input.dim(2) * input.dim(3);
 
-        for (std::size_t i = 0; i < input.dim(0); ++i) {
-            //k = 0
-            for (std::size_t c = 0; c < kernel.dim(1); ++c) {
-                mkl_detail::conv2_full_kernel(
-                    input.memory_start() + i * input_i_inc + 0 * input_k_inc, input.dim(2), input.dim(3),
-                    kernel.memory_start() + 0 * kernel_k_inc + c * kernel_c_inc, kernel.dim(2), kernel.dim(3),
-                    conv.memory_start() + i * conv_i_inc + c * conv_c_inc, T(0.0));
-            }
+        const auto N = input.dim(0);
+        const auto K = kernel.dim(0);
+        const auto C = kernel.dim(1);
 
-            for (std::size_t k = 1; k < kernel.dim(0); ++k) {
-                for (std::size_t c = 0; c < kernel.dim(1); ++c) {
-                    mkl_detail::conv2_full_kernel(
-                        input.memory_start() + i * input_i_inc + k * input_k_inc, input.dim(2), input.dim(3),
-                        kernel.memory_start() + k * kernel_k_inc + c * kernel_c_inc, kernel.dim(2), kernel.dim(3),
-                        conv.memory_start() + i * conv_i_inc + c * conv_c_inc, T(1.0));
+        const auto m1 = input.dim(2);
+        const auto m2 = input.dim(3);
+
+        const auto n1 = kernel.dim(2);
+        const auto n2 = kernel.dim(3);
+
+        const auto s1   = m1 + n1 - 1;
+        const auto s2   = m2 + n2 - 1;
+        const auto size = s1 * s2;
+
+        std::fill(conv.memory_start(), conv.memory_end(), 0);
+
+        dyn_matrix<etl::complex<T>, 3> b_padded(K, C, size);
+
+        auto batch_fun_kc = [&](const size_t first, const size_t last){
+            if (last - first) {
+                SERIAL_SECTION {
+                    for (std::size_t kc = first; kc < last; ++kc) {
+                        size_t k = kc / C;
+                        size_t c = kc % C;
+
+                        const T* b = kernel.memory_start() + k * kernel_k_inc + c * kernel_c_inc; // kernel(k)(c)
+
+                        b_padded(k)(c) = 0;
+                        for (std::size_t i = 0; i < n1; ++i) {
+                            direct_copy_n(b + i * n2, b_padded(k)(c).memory_start() + i * s2, n2);
+                        }
+
+                        mkl_detail::inplace_fft2_kernel(reinterpret_cast<std::complex<T>*>(b_padded(k)(c).memory_start()), s1, s2);
+                    }
                 }
             }
+        };
+
+        auto batch_fun_n = [&](const size_t first, const size_t last) {
+            if (last - first) {
+                SERIAL_SECTION {
+                    for (std::size_t i = first; i < last; ++i) {
+                        for (std::size_t k = 0; k < K; ++k) {
+                            const T* a = input.memory_start() + i * input_i_inc + k * input_k_inc; // input(i)(k)
+
+                            dyn_vector<etl::complex<T>> a_padded(size);
+                            dyn_vector<etl::complex<T>> tmp(size);
+
+                            a_padded = 0;
+
+                            for (std::size_t i = 0; i < m1; ++i) {
+                                direct_copy_n(a + i * m2, a_padded.memory_start() + i * s2, m2);
+                            }
+
+                            mkl_detail::inplace_fft2_kernel(reinterpret_cast<std::complex<T>*>(a_padded.memory_start()), s1, s2);
+
+                            for (std::size_t c = 0; c < C; ++c) {
+                                T* cc      = conv.memory_start() + i * conv_i_inc + c * conv_c_inc;       // conv(i)(c)
+
+                                tmp = a_padded >> b_padded(k)(c);
+
+                                mkl_detail::inplace_ifft2_kernel(reinterpret_cast<std::complex<T>*>(tmp.memory_start()), s1, s2);
+
+                                for (std::size_t i = 0; i < size; ++i) {
+                                    cc[i] += tmp[i].real;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        };
+
+        if (etl::is_parallel) {
+            dispatch_1d_any(select_parallel(K * C, 2), batch_fun_kc, 0, K * C);
+            dispatch_1d_any(select_parallel(N, 2), batch_fun_n, 0, N);
+        } else {
+            batch_fun_kc(0, K * C);
+            batch_fun_n(0, N);
         }
     }
 }
