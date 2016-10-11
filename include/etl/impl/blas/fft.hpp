@@ -659,6 +659,19 @@ void conv4_full(const opaque_memory<T, 4>& input, const opaque_memory<T, 4>& ker
     }
 }
 
+template <typename T>
+void conv4_full_flipped(const opaque_memory<T, 4>& input, const opaque_memory<T, 4>& kernel, const opaque_memory<T, 4>& conv) {
+    if (kernel.dim(1) > 0) {
+        etl::dyn_matrix<T, 4> prepared_k(kernel.dim(0), kernel.dim(1), kernel.dim(2), kernel.dim(3));
+
+        std::copy(kernel.memory_start(), kernel.memory_end(), prepared_k.memory_start());
+
+        prepared_k.deep_fflip_inplace();
+
+        conv4_full(input, prepared_k.direct(), conv);
+    }
+}
+
 #else
 
 //COVERAGE_EXCLUDE_BEGIN

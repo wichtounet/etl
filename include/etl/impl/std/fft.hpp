@@ -1141,6 +1141,25 @@ void conv4_full_fft(const opaque_memory<T, 4>& input, const opaque_memory<T, 4>&
     }
 }
 
+/*!
+ * \brief Perform the 4D full convolution of a with b and store the result in c
+ * \param input The input matrix
+ * \param kernel The kernel matrix
+ * \param conv The output matrix
+ */
+template <typename T>
+void conv4_full_fft_flipped(const opaque_memory<T, 4>& input, const opaque_memory<T, 4>& kernel, const opaque_memory<T, 4>& conv) {
+    if (kernel.dim(1) > 0) {
+        etl::dyn_matrix<T, 4> prepared_k(kernel.dim(0), kernel.dim(1), kernel.dim(2), kernel.dim(3));
+
+        std::copy(kernel.memory_start(), kernel.memory_end(), prepared_k.memory_start());
+
+        prepared_k.deep_fflip_inplace();
+
+        conv4_full_fft(input, prepared_k.direct(), conv);
+    }
+}
+
 } //end of namespace standard
 
 } //end of namespace impl

@@ -108,6 +108,7 @@ CONV_FUNCTOR(fft_std_conv4_full, c = selected_helper(etl::conv4_impl::FFT_STD, e
 
 CONV_FUNCTOR(default_conv4_full_flipped, c = etl::conv_4d_full_flipped(a, b))
 CONV_FUNCTOR(std_conv4_full_flipped, c = selected_helper(etl::conv4_impl::STD, etl::conv_4d_full_flipped(a, b)))
+CONV_FUNCTOR(fft_std_conv4_full_flipped, c = selected_helper(etl::conv4_impl::FFT_STD, etl::conv_4d_full_flipped(a, b)))
 
 CONV_FUNCTOR(default_conv2_valid_multi, c = (etl::conv_2d_valid_multi<S1, S2, P1, P2>(a, b)))
 CONV_FUNCTOR(std_conv2_valid_multi, c = selected_helper(etl::conv_multi_impl::STD, (etl::conv_2d_valid_multi<S1, S2, P1, P2>(a, b))))
@@ -189,6 +190,7 @@ CONV_FUNCTOR(std_conv2_full_multi_flipped, c = selected_helper(etl::conv_multi_i
 
 #define CONV4_FULL_FLIPPED_TEST_CASE_SECTION_DEFAULT CONV_TEST_CASE_SECTIONS(default_conv4_full_flipped)
 #define CONV4_FULL_FLIPPED_TEST_CASE_SECTION_STD CONV_TEST_CASE_SECTIONS(std_conv4_full_flipped)
+#define CONV4_FULL_FLIPPED_TEST_CASE_SECTION_FFT_STD CONV_TEST_CASE_SECTIONS(fft_std_conv4_full_flipped)
 
 #define CONV2_VALID_MULTI_TEST_CASE_SECTION_DEFAULT CONV_TEST_CASE_SECTIONS(default_conv2_valid_multi)
 #define CONV2_VALID_MULTI_TEST_CASE_SECTION_STD CONV_TEST_CASE_SECTIONS(std_conv2_valid_multi)
@@ -221,16 +223,19 @@ CONV_FUNCTOR(fft_mkl_conv1_full, c = selected_helper(etl::conv_impl::FFT_MKL, et
 CONV_FUNCTOR(fft_mkl_conv2_full, c = selected_helper(etl::conv_impl::FFT_MKL, etl::conv_2d_full(a, b)))
 CONV_FUNCTOR(fft_mkl_conv2_full_flipped, c = selected_helper(etl::conv_impl::FFT_MKL, etl::conv_2d_full_flipped(a, b)))
 CONV_FUNCTOR(fft_mkl_conv4_full, c = selected_helper(etl::conv4_impl::FFT_MKL, etl::conv_4d_full(a, b)))
+CONV_FUNCTOR(fft_mkl_conv4_full_flipped, c = selected_helper(etl::conv4_impl::FFT_MKL, etl::conv_4d_full_flipped(a, b)))
 
 #define CONV1_FULL_TEST_CASE_SECTION_FFT_MKL CONV_TEST_CASE_SECTIONS(fft_mkl_conv1_full)
 #define CONV2_FULL_TEST_CASE_SECTION_FFT_MKL CONV_TEST_CASE_SECTIONS(fft_mkl_conv2_full)
 #define CONV2_FULL_FLIPPED_TEST_CASE_SECTION_FFT_MKL CONV_TEST_CASE_SECTIONS(fft_mkl_conv2_full_flipped)
 #define CONV4_FULL_TEST_CASE_SECTION_FFT_MKL CONV_TEST_CASE_SECTIONS(fft_mkl_conv4_full)
+#define CONV4_FULL_FLIPPED_TEST_CASE_SECTION_FFT_MKL CONV_TEST_CASE_SECTIONS(fft_mkl_conv4_full_flipped)
 #else
 #define CONV1_FULL_TEST_CASE_SECTION_FFT_MKL
 #define CONV2_FULL_TEST_CASE_SECTION_FFT_MKL
 #define CONV2_FULL_FLIPPED_TEST_CASE_SECTION_FFT_MKL
 #define CONV4_FULL_TEST_CASE_SECTION_FFT_MKL
+#define CONV4_FULL_FLIPPED_TEST_CASE_SECTION_FFT_MKL
 #endif
 
 #ifdef ETL_CUFFT_MODE
@@ -238,16 +243,19 @@ CONV_FUNCTOR(fft_cufft_conv1_full, c = selected_helper(etl::conv_impl::FFT_CUFFT
 CONV_FUNCTOR(fft_cufft_conv2_full, c = selected_helper(etl::conv_impl::FFT_CUFFT, etl::conv_2d_full(a, b)))
 CONV_FUNCTOR(fft_cufft_conv2_full_flipped, c = selected_helper(etl::conv_impl::FFT_CUFFT, etl::conv_2d_full_flipped(a, b)))
 CONV_FUNCTOR(fft_cufft_conv4_full, c = selected_helper(etl::conv_impl::FFT_CUFFT, etl::conv_4d_full(a, b)))
+CONV_FUNCTOR(fft_cufft_conv4_full_flipped, c = selected_helper(etl::conv_impl::FFT_CUFFT, etl::conv_4d_full_flipped(a, b)))
 
 #define CONV1_FULL_TEST_CASE_SECTION_FFT_CUFFT CONV_TEST_CASE_SECTIONS(fft_cufft_conv1_full)
 #define CONV2_FULL_TEST_CASE_SECTION_FFT_CUFFT CONV_TEST_CASE_SECTIONS(fft_cufft_conv2_full)
 #define CONV2_FULL_FLIPPED_TEST_CASE_SECTION_FFT_CUFFT CONV_TEST_CASE_SECTIONS(fft_cufft_conv2_full_flipped)
 #define CONV4_FULL_TEST_CASE_SECTION_FFT_CUFFT CONV_TEST_CASE_SECTIONS(fft_cufft_conv4_full)
+#define CONV4_FULL_FLIPPED_TEST_CASE_SECTION_FFT_CUFFT CONV_TEST_CASE_SECTIONS(fft_cufft_conv4_full_flipped)
 #else
 #define CONV1_FULL_TEST_CASE_SECTION_FFT_CUFFT
 #define CONV2_FULL_TEST_CASE_SECTION_FFT_CUFFT
 #define CONV2_FULL_FLIPPED_TEST_CASE_SECTION_FFT_CUFFT
 #define CONV4_FULL_TEST_CASE_SECTION_FFT_CUFFT
+#define CONV4_FULL_FLIPPED_TEST_CASE_SECTION_FFT_CUFFT
 #endif
 
 #ifdef TEST_SSE
@@ -691,6 +699,9 @@ CONV_FUNCTOR(cudnn_conv2_valid_multi_flipped, c = selected_helper(etl::conv_mult
         CONV4_FULL_FLIPPED_TEST_CASE_SECTION_STD        \
         CONV4_FULL_FLIPPED_TEST_CASE_SECTION_SSE        \
         CONV4_FULL_FLIPPED_TEST_CASE_SECTION_AVX        \
+        CONV4_FULL_FLIPPED_TEST_CASE_SECTION_FFT_STD    \
+        CONV4_FULL_FLIPPED_TEST_CASE_SECTION_FFT_MKL    \
+        CONV4_FULL_FLIPPED_TEST_CASE_SECTION_FFT_CUFFT  \
         CONV4_FULL_FLIPPED_TEST_CASE_SECTION_CUDNN      \
     }                                                   \
     CONV_TEST_CASE_DEFN
