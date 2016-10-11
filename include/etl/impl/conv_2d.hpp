@@ -137,6 +137,12 @@ struct conv2_full_flipped_impl {
             impl::cudnn::conv2_full_flipped(i, k, c);
         } else if (impl == etl::conv_impl::STD) {
             impl::standard::conv2_full_flipped(input, kernel, conv);
+        } else if (impl == etl::conv_impl::FFT_STD) {
+            impl::standard::conv2_full_fft_flipped(i, k, c);
+        } else if (impl == etl::conv_impl::FFT_MKL) {
+            impl::blas::conv2_full_flipped(i, k, c);
+        } else if (impl == etl::conv_impl::FFT_CUFFT) {
+            impl::cufft::conv2_full_flipped(i, k, c);
         } else {
             cpp_unreachable("Invalid conv implementation selection");
         }
