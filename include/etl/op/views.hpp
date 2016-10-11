@@ -532,6 +532,17 @@ struct slice_view {
     }
 
     /*!
+     * \brief Load several elements of the expression at once
+     * \param x The position at which to start. This will be aligned from the beginning (multiple of the vector size).
+     * \tparam V The vectorization mode to use
+     * \return a vector containing several elements of the expression
+     */
+    template <typename V = default_vec>
+    auto loadu(std::size_t x) const noexcept {
+        return sub.template loadu<V>(x + first * subsize(sub));
+    }
+
+    /*!
      * \brief Test if this expression aliases with the given expression
      * \param rhs The other expression to test
      * \return true if the two expressions aliases, false otherwise
