@@ -267,31 +267,6 @@ namespace standard_evaluator {
     //Parallel vectorized add assign
 
     /*!
-     * \brief Add the result of the expression expression to the result, in parallel and vectorized
-     * \param expr The right hand side expression
-     * \param result The left hand side
-     */
-    template <typename E, typename R>
-    void par_vec_add_evaluate(E&& expr, R&& result) {
-        static cpp::default_thread_pool<> pool(threads - 1);
-
-        const std::size_t size = etl::size(result);
-
-        auto batch = size / threads;
-
-        //Schedule threads - 1 tasks
-        for(std::size_t t = 0; t < threads - 1; ++t){
-            pool.do_task(detail::VectorizedAssignAdd<detail::select_vector_mode<E, R>(), R, E>(result, expr, t * batch, (t+1) * batch));
-        }
-
-        //Perform the last task on the current threads
-        detail::VectorizedAssignAdd<detail::select_vector_mode<E, R>(), R, E>(result, expr, (threads - 1) * batch, size)();
-
-        //Wait for the other threads
-        pool.wait();
-    }
-
-    /*!
      * \copydoc add_evaluate
      */
     template <typename E, typename R, cpp_enable_if(detail::vectorized_compound<E, R>::value)>
@@ -343,31 +318,6 @@ namespace standard_evaluator {
     }
 
     //Parallel vectorized sub assign
-
-    /*!
-     * \brief Substract the result of the expression expression from the result, in parallel and vectorized
-     * \param expr The right hand side expression
-     * \param result The left hand side
-     */
-    template <typename E, typename R>
-    void par_vec_sub_evaluate(E&& expr, R&& result) {
-        static cpp::default_thread_pool<> pool(threads - 1);
-
-        const std::size_t size = etl::size(result);
-
-        auto batch = size / threads;
-
-        //Schedule threads - 1 tasks
-        for(std::size_t t = 0; t < threads - 1; ++t){
-            pool.do_task(detail::VectorizedAssignSub<detail::select_vector_mode<E, R>(), R, E>(result, expr, t * batch, (t+1) * batch));
-        }
-
-        //Perform the last task on the current threads
-        detail::VectorizedAssignSub<detail::select_vector_mode<E, R>(), R, E>(result, expr, (threads - 1) * batch, size)();
-
-        //Wait for the other threads
-        pool.wait();
-    }
 
     /*!
      * \copydoc sub_evaluate
@@ -423,31 +373,6 @@ namespace standard_evaluator {
     //Parallel vectorized mul assign
 
     /*!
-     * \brief Multiply the result of the expression expression by the result, in parallel and vectorized
-     * \param expr The right hand side expression
-     * \param result The left hand side
-     */
-    template <typename E, typename R>
-    void par_vec_mul_evaluate(E&& expr, R&& result) {
-        static cpp::default_thread_pool<> pool(threads - 1);
-
-        const std::size_t size = etl::size(result);
-
-        auto batch = size / threads;
-
-        //Schedule threads - 1 tasks
-        for(std::size_t t = 0; t < threads - 1; ++t){
-            pool.do_task(detail::VectorizedAssignMul<detail::select_vector_mode<E, R>(), R, E>(result, expr, t * batch, (t+1) * batch));
-        }
-
-        //Perform the last task on the current threads
-        detail::VectorizedAssignMul<detail::select_vector_mode<E, R>(), R, E>(result, expr, (threads - 1) * batch, size)();
-
-        //Wait for the other threads
-        pool.wait();
-    }
-
-    /*!
      * \copydoc mul_evaluate
      */
     template <typename E, typename R, cpp_enable_if(detail::vectorized_compound<E, R>::value)>
@@ -499,31 +424,6 @@ namespace standard_evaluator {
     }
 
     //Parallel vectorized div assign
-
-    /*!
-     * \brief Divide the result of the expression expression from the result, in parallel and vectorized
-     * \param expr The right hand side expression
-     * \param result The left hand side
-     */
-    template <typename E, typename R>
-    void par_vec_div_evaluate(E&& expr, R&& result) {
-        static cpp::default_thread_pool<> pool(threads - 1);
-
-        const std::size_t size = etl::size(result);
-
-        auto batch = size / threads;
-
-        //Schedule threads - 1 tasks
-        for(std::size_t t = 0; t < threads - 1; ++t){
-            pool.do_task(detail::VectorizedAssignDiv<detail::select_vector_mode<E, R>(), R, E>(result, expr, t * batch, (t+1) * batch));
-        }
-
-        //Perform the last task on the current threads
-        detail::VectorizedAssignDiv<detail::select_vector_mode<E, R>(), R, E>(result, expr, (threads - 1) * batch, size)();
-
-        //Wait for the other threads
-        pool.wait();
-    }
 
     /*!
      * \copydoc div_evaluate
