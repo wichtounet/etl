@@ -429,8 +429,6 @@ struct slice_view {
     using return_type       = return_helper<sub_type, decltype(sub[0])>;       ///< The type returned by the view
     using const_return_type = const_return_helper<sub_type, decltype(sub[0])>; ///< The const type return by the view
 
-    static_assert(decay_traits<sub_type>::storage_order == order::RowMajor, "slice only supported for row-major matrices");
-
     /*!
      * \brief Construct a new sub_view over the given sub expression
      * \param sub The sub expression
@@ -446,7 +444,13 @@ struct slice_view {
      * \return a reference to the element at the given index.
      */
     const_return_type operator[](std::size_t j) const {
-        return sub[first * (size(sub) / dim<0>(sub)) + j];
+        if(decay_traits<sub_type>::storage_order == order::RowMajor){
+            return sub[first * (size(sub) / dim<0>(sub)) + j];
+        } else {
+            const auto sa = dim<0>(sub);
+            const auto ss = (size(sub) / sa);
+            return sub[(j % ss) * sa + j / ss + first];
+        }
     }
 
     /*!
@@ -455,7 +459,13 @@ struct slice_view {
      * \return a reference to the element at the given index.
      */
     return_type operator[](std::size_t j) {
-        return sub[first * (size(sub) / dim<0>(sub)) + j];
+        if(decay_traits<sub_type>::storage_order == order::RowMajor){
+            return sub[first * (size(sub) / dim<0>(sub)) + j];
+        } else {
+            const auto sa = dim<0>(sub);
+            const auto ss = (size(sub) / sa);
+            return sub[(j % ss) * sa + j / ss + first];
+        }
     }
 
     /*!
@@ -465,7 +475,13 @@ struct slice_view {
      * \return the value at the given index.
      */
     value_type read_flat(std::size_t j) const noexcept {
-        return sub.read_flat(first * (size(sub) / dim<0>(sub)) + j);
+        if(decay_traits<sub_type>::storage_order == order::RowMajor){
+            return sub.read_flat(first * (size(sub) / dim<0>(sub)) + j);
+        } else {
+            const auto sa = dim<0>(sub);
+            const auto ss = (size(sub) / sa);
+            return sub.read_flat((j % ss) * sa + j / ss + first);
+        }
     }
 
     /*!
