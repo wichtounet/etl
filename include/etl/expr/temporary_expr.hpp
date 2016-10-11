@@ -243,6 +243,17 @@ public:
         return VV::loadu(memory_start() + i);
     }
 
+    /*!
+     * \brief Perform several operations at once.
+     * \param i The index at which to perform the operation
+     * \tparam VV The vectorization mode to use
+     * \return a vector containing several results of the expression
+     */
+    template <typename VV = default_vec>
+    vec_type<VV> loadu(std::size_t i) const noexcept {
+        return VV::loadu(memory_start() + i);
+    }
+
     // Iterator
 
     /*!

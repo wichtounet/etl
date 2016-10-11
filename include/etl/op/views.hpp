@@ -607,6 +607,12 @@ struct memory_slice_view {
     using const_return_type = const_return_helper<sub_type, decltype(sub[0])>; ///< The const type return by the view
 
     /*!
+     * \brief The vectorization type for V
+     */
+    template<typename V = default_vec>
+    using vec_type               = typename V::template vec_type<value_type>;
+
+    /*!
      * \brief Construct a new sub_view over the given sub expression
      * \param sub The sub expression
      * \param first The first index
@@ -679,6 +685,42 @@ struct memory_slice_view {
     template <typename V = default_vec>
     auto loadu(std::size_t x) const noexcept {
         return sub.template loadu<V>(x + first );
+    }
+
+    /*!
+     * \brief Store several elements in the matrix at once
+     * \param in The several elements to store
+     * \param i The position at which to start. This will be aligned from the beginning (multiple of the vector size).
+     * \tparam V The vectorization mode to use
+     * \return a vector containing several elements of the matrix
+     */
+    template <typename V = default_vec>
+    void store(vec_type<V> in, std::size_t i) noexcept {
+        sub.template storeu<V>(in, first + i);
+    }
+
+    /*!
+     * \brief Store several elements in the matrix at once
+     * \param in The several elements to store
+     * \param i The position at which to start. This will be aligned from the beginning (multiple of the vector size).
+     * \tparam V The vectorization mode to use
+     * \return a vector containing several elements of the matrix
+     */
+    template <typename V = default_vec>
+    void storeu(vec_type<V> in, std::size_t i) noexcept {
+        sub.template storeu<V>(in, first + i);
+    }
+
+    /*!
+     * \brief Store several elements in the matrix at once, using non-temporal store
+     * \param in The several elements to store
+     * \param i The position at which to start. This will be aligned from the beginning (multiple of the vector size).
+     * \tparam V The vectorization mode to use
+     * \return a vector containing several elements of the matrix
+     */
+    template <typename V = default_vec>
+    void stream(vec_type<V> in, std::size_t i) noexcept {
+        sub.template storeu<V>(in, first + i);
     }
 
     /*!

@@ -166,6 +166,17 @@ public:
     }
 
     /*!
+     * \brief Load several elements of the matrix at once
+     * \param i The position at which to start. This will be aligned from the beginning (multiple of the vector size).
+     * \tparam V The vectorization mode to use
+     * \return a vector containing several elements of the matrix
+     */
+    template <typename V = default_vec>
+    vec_type<V> loadu(std::size_t i) const {
+        return UnaryOp::template load<V>(value().template loadu<V>(i));
+    }
+
+    /*!
      * \brief Returns the value at the position (args...)
      * \param args The indices
      * \return The computed value at the position (args...)
@@ -959,6 +970,17 @@ public:
     template <typename V = default_vec>
     vec_type<V> load(std::size_t i) const {
         return op.template load<V>(value().template load<V>(i));
+    }
+
+    /*!
+     * \brief Load several elements of the matrix at once
+     * \param i The position at which to start. This will be aligned from the beginning (multiple of the vector size).
+     * \tparam V The vectorization mode to use
+     * \return a vector containing several elements of the matrix
+     */
+    template <typename V = default_vec>
+    vec_type<V> loadu(std::size_t i) const {
+        return op.template load<V>(value().template loadu<V>(i));
     }
 
     /*!
