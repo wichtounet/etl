@@ -284,22 +284,22 @@ struct VectorizedAssignAdd : vectorized_base<V, L_Expr, R_Expr, VectorizedAssign
     void operator()(){
         constexpr const bool remainder = !padding || !all_padded<L_Expr, R_Expr>::value;
 
-        const size_t last = remainder ? _size : alloc_size<typename base_t::lhs_value_type>(_size);
+        const size_t last = remainder ? (_size & size_t(-IT::size)) : _size;
 
         std::size_t i = 0;
 
-        for (; i + IT::size * 4 - 1 < last; i += IT::size * 4) {
-            lhs.template store<vect_impl>(vect_impl::add(lhs_load(i), rhs_load(i)), i);
+        for (; i + (IT::size * 3) < last; i += 4 * IT::size) {
+            lhs.template store<vect_impl>(vect_impl::add(lhs_load(i + 0 * IT::size), rhs_load(i + 0 * IT::size)), i + 0 * IT::size);
             lhs.template store<vect_impl>(vect_impl::add(lhs_load(i + 1 * IT::size), rhs_load(i + 1 * IT::size)), i + 1 * IT::size);
             lhs.template store<vect_impl>(vect_impl::add(lhs_load(i + 2 * IT::size), rhs_load(i + 2 * IT::size)), i + 2 * IT::size);
             lhs.template store<vect_impl>(vect_impl::add(lhs_load(i + 3 * IT::size), rhs_load(i + 3 * IT::size)), i + 3 * IT::size);
         }
 
-        for (; i + IT::size - 1 < last; i += IT::size) {
+        for (; i < last; i += IT::size) {
             lhs.template store<vect_impl>(vect_impl::add(lhs_load(i), rhs_load(i)), i);
         }
 
-        for (; remainder && i < last; ++i) {
+        for (; remainder && i < _size; ++i) {
             lhs_m[i] += rhs[i];
         }
     }
@@ -382,22 +382,22 @@ struct VectorizedAssignSub : vectorized_base<V, L_Expr, R_Expr, VectorizedAssign
     void operator()() {
         constexpr const bool remainder = !padding || !all_padded<L_Expr, R_Expr>::value;
 
-        const size_t last = remainder ? _size : alloc_size<typename base_t::lhs_value_type>(_size);
+        const size_t last = remainder ? (_size & size_t(-IT::size)) : _size;
 
         std::size_t i = 0;
 
-        for (; i + IT::size * 4 - 1 < last; i += IT::size * 4) {
-            lhs.template store<vect_impl>(vect_impl::sub(lhs_load(i), rhs_load(i)), i);
+        for (; i + (IT::size * 3) < last; i += 4 * IT::size) {
+            lhs.template store<vect_impl>(vect_impl::sub(lhs_load(i + 0 * IT::size), rhs_load(i + 0 * IT::size)), i + 0 * IT::size);
             lhs.template store<vect_impl>(vect_impl::sub(lhs_load(i + 1 * IT::size), rhs_load(i + 1 * IT::size)), i + 1 * IT::size);
             lhs.template store<vect_impl>(vect_impl::sub(lhs_load(i + 2 * IT::size), rhs_load(i + 2 * IT::size)), i + 2 * IT::size);
             lhs.template store<vect_impl>(vect_impl::sub(lhs_load(i + 3 * IT::size), rhs_load(i + 3 * IT::size)), i + 3 * IT::size);
         }
 
-        for (; i + IT::size - 1 < last; i += IT::size) {
+        for (; i < last; i += IT::size) {
             lhs.template store<vect_impl>(vect_impl::sub(lhs_load(i), rhs_load(i)), i);
         }
 
-        for (; remainder && i < last; ++i) {
+        for (; remainder && i < _size; ++i) {
             lhs_m[i] -= rhs[i];
         }
     }
@@ -482,22 +482,22 @@ struct VectorizedAssignMul : vectorized_base<V, L_Expr, R_Expr, VectorizedAssign
     void operator()(){
         constexpr const bool remainder = !padding || !all_padded<L_Expr, R_Expr>::value;
 
-        const size_t last = remainder ? _size : alloc_size<typename base_t::lhs_value_type>(_size);
+        const size_t last = remainder ? (_size & size_t(-IT::size)) : _size;
 
         std::size_t i = 0;
 
-        for (; i + IT::size * 4 - 1 < last; i += IT::size * 4) {
-            lhs.template store<vect_impl>(vect_impl::template mul<Cx>(lhs_load(i), rhs_load(i)), i);
+        for (; i + (IT::size * 3) < last; i += 4 * IT::size) {
+            lhs.template store<vect_impl>(vect_impl::template mul<Cx>(lhs_load(i + 0 * IT::size), rhs_load(i + 0 * IT::size)), i + 0 * IT::size);
             lhs.template store<vect_impl>(vect_impl::template mul<Cx>(lhs_load(i + 1 * IT::size), rhs_load(i + 1 * IT::size)), i + 1 * IT::size);
             lhs.template store<vect_impl>(vect_impl::template mul<Cx>(lhs_load(i + 2 * IT::size), rhs_load(i + 2 * IT::size)), i + 2 * IT::size);
             lhs.template store<vect_impl>(vect_impl::template mul<Cx>(lhs_load(i + 3 * IT::size), rhs_load(i + 3 * IT::size)), i + 3 * IT::size);
         }
 
-        for (; i + IT::size - 1 < last; i += IT::size) {
+        for (; i < last; i += IT::size) {
             lhs.template store<vect_impl>(vect_impl::template mul<Cx>(lhs_load(i), rhs_load(i)), i);
         }
 
-        for (; remainder && i < last; ++i) {
+        for (; remainder && i < _size; ++i) {
             lhs_m[i] *= rhs[i];
         }
     }
@@ -584,22 +584,22 @@ struct VectorizedAssignDiv : vectorized_base<V, L_Expr, R_Expr, VectorizedAssign
     void operator()(){
         constexpr const bool remainder = !padding || !all_padded<L_Expr, R_Expr>::value;
 
-        const size_t last = remainder ? _size : alloc_size<typename base_t::lhs_value_type>(_size);
+        const size_t last = remainder ? (_size & size_t(-IT::size)) : _size;
 
         std::size_t i = 0;
 
-        for (; i + IT::size * 4 - 1 < last; i += IT::size * 4) {
-            lhs.template store<vect_impl>(vect_impl::template div<Cx>(lhs_load(i), rhs_load(i)), i);
+        for (; i + (IT::size * 3) < last; i += 4 * IT::size) {
+            lhs.template store<vect_impl>(vect_impl::template div<Cx>(lhs_load(i + 0 * IT::size), rhs_load(i + 0 * IT::size)), i + 0 * IT::size);
             lhs.template store<vect_impl>(vect_impl::template div<Cx>(lhs_load(i + 1 * IT::size), rhs_load(i + 1 * IT::size)), i + 1 * IT::size);
             lhs.template store<vect_impl>(vect_impl::template div<Cx>(lhs_load(i + 2 * IT::size), rhs_load(i + 2 * IT::size)), i + 2 * IT::size);
             lhs.template store<vect_impl>(vect_impl::template div<Cx>(lhs_load(i + 3 * IT::size), rhs_load(i + 3 * IT::size)), i + 3 * IT::size);
         }
 
-        for (; i + IT::size - 1 < last; i += IT::size) {
+        for (; i < last; i += IT::size) {
             lhs.template store<vect_impl>(vect_impl::template div<Cx>(lhs_load(i), rhs_load(i)), i);
         }
 
-        for (; remainder && i < last; ++i) {
+        for (; remainder && i < _size; ++i) {
             lhs_m[i] /= rhs[i];
         }
     }
