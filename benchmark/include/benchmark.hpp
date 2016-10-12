@@ -85,7 +85,11 @@ using mat_policy_2d = NARY_POLICY(mat_policy, mat_policy);
 
 using conv_1d_large_policy = NARY_POLICY(VALUES_POLICY(1000, 2000, 3000, 4000, 5000, 6000, 7000, 8000, 9000, 10000), VALUES_POLICY(500, 1000, 1500, 2000, 2500, 3000, 3500, 4000, 4500, 5000));
 using conv_2d_large_policy = NARY_POLICY(VALUES_POLICY(100, 105, 110, 115, 120, 125, 130, 135, 140), VALUES_POLICY(50, 50, 55, 55, 60, 60, 65, 65, 70));
-using conv_2d_small_policy = NARY_POLICY(VALUES_POLICY(10, 10, 12, 12, 16, 16, 20, 20, 28, 28, 28, 100), VALUES_POLICY(5, 9, 5, 9, 5, 9, 5, 9, 5, 9, 17, 5, 9, 17));
+
+using conv_2d_small_policy = NARY_POLICY(
+    VALUES_POLICY(10, 10, 12, 12, 16, 16, 20, 20, 28, 28, 28, 32, 100),
+    VALUES_POLICY(5,  9,  5,  9,  5,  9,  5,  9,  5,  9,  17, 16, 24));
+
 using conv_2d_multi_policy = NARY_POLICY(
     VALUES_POLICY(32, 32, 32, 32, 32, 32, 32, 32, 32, 32),
     VALUES_POLICY(16, 16, 16, 16, 16, 16, 16, 16, 16, 16),
