@@ -636,15 +636,57 @@ template <typename T>
 void conv2_full_multi(const opaque_memory<T, 2>& input, const opaque_memory<T, 3>& kernel, const opaque_memory<T, 3>& conv) {
     const auto K = kernel.dim(0);
 
-    if(K){
+    if (K) {
         const auto k_s = kernel.dim(1) * kernel.dim(2);
         const auto c_s = conv.dim(1) * conv.dim(2);
 
-        for(std::size_t k = 0; k < K; ++k){
-            const T* b = kernel.memory_start() + k * k_s;
-            T* c       = conv.memory_start() + k * c_s;
+        const auto m1 = input.dim(0);
+        const auto m2 = input.dim(1);
 
-            mkl_detail::conv2_full_kernel(input.memory_start(), input.dim(0), input.dim(1), b, kernel.dim(1), kernel.dim(2), c, T(0.0));
+        const auto n1 = kernel.dim(1);
+        const auto n2 = kernel.dim(2);
+
+        const std::size_t s1   = m1 + n1 - 1;
+        const std::size_t s2   = m2 + n2 - 1;
+        const std::size_t size = s1 * s2;
+
+        dyn_vector<etl::complex<T>> a_padded(size);
+
+        for (std::size_t i = 0; i < m1; ++i) {
+            direct_copy_n(input.memory_start() + i * m2, a_padded.memory_start() + i * s2, m2);
+        }
+
+        mkl_detail::inplace_fft2_kernel(reinterpret_cast<std::complex<T>*>(a_padded.memory_start()), s1, s2);
+
+        auto batch_fun_k = [&](const size_t first, const size_t last) {
+            SERIAL_SECTION {
+                for (std::size_t k = first; k < last; ++k) {
+                    const T* b = kernel.memory_start() + k * k_s;
+                    T* c       = conv.memory_start() + k * c_s;
+
+                    dyn_vector<etl::complex<T>> b_padded(size);
+
+                    for (std::size_t i = 0; i < n1; ++i) {
+                        direct_copy_n(b + i * n2, b_padded.memory_start() + i * s2, n2);
+                    }
+
+                    mkl_detail::inplace_fft2_kernel(reinterpret_cast<std::complex<T>*>(b_padded.memory_start()), s1, s2);
+
+                    b_padded >>= a_padded;
+
+                    mkl_detail::inplace_ifft2_kernel(reinterpret_cast<std::complex<T>*>(b_padded.memory_start()), s1, s2);
+
+                    for (std::size_t i = 0; i < size; ++i) {
+                        c[i] = b_padded[i].real;
+                    }
+                }
+            }
+        };
+
+        if (etl::is_parallel) {
+            dispatch_1d_any(select_parallel(K, 2), batch_fun_k, 0, K);
+        } else {
+            batch_fun_k(0, K);
         }
     }
 }
