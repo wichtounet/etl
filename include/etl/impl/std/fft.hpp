@@ -1055,7 +1055,6 @@ void conv2_full_multi_fft(const opaque_memory<T, 2>& input, const opaque_memory<
         const auto n   = s1 * s2;
 
         dyn_matrix<etl::complex<T>, 2> a_padded(s1, s2);
-        dyn_matrix<etl::complex<T>, 2> tmp(s1, s2);
 
         for (std::size_t i = 0; i < m1; ++i) {
             direct_copy_n(input.memory_start() + i * m2, a_padded.memory_start() + i * s2, m2);
@@ -1091,20 +1090,20 @@ void conv2_full_multi_fft(const opaque_memory<T, 2>& input, const opaque_memory<
 
                     // 2. Elementwise multiplication of and b
 
-                    tmp = a_padded >> b_padded;
+                    b_padded >>= a_padded;
 
                     // 3. Inverse FFT of a
 
                     // a = conj(a)
                     for (std::size_t i = 0; i < n; ++i) {
-                        tmp[i] = etl::conj(tmp[i]);
+                        b_padded[i] = etl::conj(b_padded[i]);
                     }
 
                     // a = fft2(a)
-                    detail::fft_n_many(tmp.memory_start(), tmp.memory_start(), s1, s2);
-                    tmp.transpose_inplace();
-                    detail::fft_n_many(tmp.memory_start(), tmp.memory_start(), s2, s1);
-                    tmp.transpose_inplace();
+                    detail::fft_n_many(b_padded.memory_start(), b_padded.memory_start(), s1, s2);
+                    b_padded.transpose_inplace();
+                    detail::fft_n_many(b_padded.memory_start(), b_padded.memory_start(), s2, s1);
+                    b_padded.transpose_inplace();
 
                     // 4. Keep only the real part of the inverse FFT
 
@@ -1112,7 +1111,7 @@ void conv2_full_multi_fft(const opaque_memory<T, 2>& input, const opaque_memory<
                     // Note: Since the conjugate does not change the real part, it is not necessary
 
                     for (std::size_t i = 0; i < n; ++i) {
-                        c[i] = tmp[i].real / T(n);
+                        c[i] = b_padded[i].real / T(n);
                     }
                 }
             }
