@@ -878,6 +878,8 @@ void conv2_full_flipped(const opaque_memory<T, 2>& a, const opaque_memory<T, 2>&
 
 template <typename T>
 void conv4_full(const opaque_memory<T, 4>& input, const opaque_memory<T, 4>& kernel, const opaque_memory<T, 4>& conv) {
+    using detail::cufft_exec_c2c;
+
     if (kernel.dim(1) > 0) {
         auto conv_i_inc = conv.dim(1) * conv.dim(2) * conv.dim(3);
         auto conv_c_inc = conv.dim(2) * conv.dim(3);
@@ -888,21 +890,118 @@ void conv4_full(const opaque_memory<T, 4>& input, const opaque_memory<T, 4>& ker
         auto input_i_inc = input.dim(1) * input.dim(2) * input.dim(3);
         auto input_k_inc = input.dim(2) * input.dim(3);
 
-        for (std::size_t i = 0; i < input.dim(0); ++i) {
-            //k = 0
+        const auto N = input.dim(0);
+        const auto K = kernel.dim(0);
+        const auto C = kernel.dim(1);
+
+        const auto m1 = input.dim(2);
+        const auto m2 = input.dim(3);
+
+        const auto n1 = kernel.dim(2);
+        const auto n2 = kernel.dim(3);
+
+        const std::size_t s1   = m1 + n1 - 1;
+        const std::size_t s2   = m2 + n2 - 1;
+        const std::size_t size = s1 * s2;
+
+        std::fill(conv.memory_start(), conv.memory_end(), 0);
+
+        auto handle = start_cufft();
+
+        dyn_matrix<etl::complex<T>, 3> b_padded(K, C, size);
+        std::fill(b_padded.memory_start(), b_padded.memory_end(), 0);
+
+        dyn_matrix<etl::complex<T>, 3> a_padded(N, K, size);
+        std::fill(a_padded.memory_start(), a_padded.memory_end(), 0);
+
+        // Fully pad the inputs
+
+        for (std::size_t i = 0; i < N; ++i) {
+            for (std::size_t k = 0; k < K; ++k) {
+                const T* a = input.memory_start() + i * input_i_inc + k * input_k_inc;    // input(i)(k)
+
+                for (std::size_t ii = 0; ii < m1; ++ii) {
+                    direct_copy_n(a + ii * m2, a_padded(i)(k).memory_start() + ii * s2, m2);
+                }
+            }
+        }
+
+        // Fully pad the kernels
+
+        for (std::size_t k = 0; k < kernel.dim(0); ++k) {
             for (std::size_t c = 0; c < kernel.dim(1); ++c) {
-                detail::conv2_full_kernel(
-                    input.memory_start() + i * input_i_inc + 0 * input_k_inc, input.dim(2), input.dim(3),
-                    kernel.memory_start() + 0 * kernel_k_inc + c * kernel_c_inc, kernel.dim(2), kernel.dim(3),
-                    conv.memory_start() + i * conv_i_inc + c * conv_c_inc, T(0.0));
+                const T* b = kernel.memory_start() + k * kernel_k_inc + c * kernel_c_inc; // kernel(k)(c)
+
+                for (std::size_t i = 0; i < n1; ++i) {
+                    direct_copy_n(b + i * n2, b_padded(k)(c).memory_start() + i * s2, n2);
+                }
+            }
+        }
+
+        // Compute all the FFT of the inputs at once
+
+
+        auto cufft_type = is_single_precision_t<T>::value ? CUFFT_C2C : CUFFT_Z2Z;
+
+        {
+            auto a_gpu = a_padded.direct();
+
+            a_gpu.gpu_allocate_copy();
+
+            int dims[] = {int(s1), int(s2)};
+
+            cufftPlanMany(&handle.get(), 2, dims, nullptr, 1, s1 * s2, nullptr, 1, s1 * s2, cufft_type, N * K);
+            cufft_exec_c2c(handle.get(), complex_cast(a_gpu.gpu_memory()), complex_cast(a_gpu.gpu_memory()), CUFFT_FORWARD);
+
+            a_gpu.gpu_copy_from();
+        }
+
+        // Compute all the FFT of the kernels at once
+
+        {
+            auto b_gpu = b_padded.direct();
+
+            b_gpu.gpu_allocate_copy();
+
+            int dims[] = {int(s1), int(s2)};
+
+            cufftPlanMany(&handle.get(), 2, dims, nullptr, 1, s1 * s2, nullptr, 1, s1 * s2, cufft_type, K * C);
+            cufft_exec_c2c(handle.get(), complex_cast(b_gpu.gpu_memory()), complex_cast(b_gpu.gpu_memory()), CUFFT_FORWARD);
+
+            b_gpu.gpu_copy_from();
+        }
+
+        // TODO For maximum performance
+        // - tmp should have one more dimensions
+        // - All the Inverse FFT should be done in one pass
+        // - The multiplications and the conversion to real should be done in parallel
+
+        dyn_matrix<etl::complex<T>, 3> tmp(C, K, size);
+
+        for (std::size_t i = 0; i < N; ++i) {
+            for (std::size_t c = 0; c < C; ++c) {
+                for (std::size_t k = 0; k < K; ++k) {
+                    tmp(c)(k) = a_padded(i)(k) >> b_padded(k)(c);
+                }
             }
 
-            for (std::size_t k = 1; k < kernel.dim(0); ++k) {
-                for (std::size_t c = 0; c < kernel.dim(1); ++c) {
-                    detail::conv2_full_kernel(
-                        input.memory_start() + i * input_i_inc + k * input_k_inc, input.dim(2), input.dim(3),
-                        kernel.memory_start() + k * kernel_k_inc + c * kernel_c_inc, kernel.dim(2), kernel.dim(3),
-                        conv.memory_start() + i * conv_i_inc + c * conv_c_inc, T(1.0));
+            auto gpu_tmp = tmp.direct();
+            gpu_tmp.gpu_allocate_copy();
+
+            int dims[] = {int(s1), int(s2)};
+
+            cufftPlanMany(&handle.get(), 2, dims, nullptr, 1, s1 * s2, nullptr, 1, s1 * s2, cufft_type, C * K);
+            cufft_exec_c2c(handle.get(), complex_cast(gpu_tmp.gpu_memory()), complex_cast(gpu_tmp.gpu_memory()), CUFFT_INVERSE);
+
+            gpu_tmp.gpu_copy_from();
+
+            for (std::size_t c = 0; c < C; ++c) {
+                for (std::size_t k = 0; k < K; ++k) {
+                    T* cc = conv.memory_start() + i * conv_i_inc + c * conv_c_inc; // conv(i)(c)
+
+                    for (std::size_t i = 0; i < size; ++i) {
+                        cc[i] += tmp(c, k, i).real * (T(1.0) / size);
+                    }
                 }
             }
         }
