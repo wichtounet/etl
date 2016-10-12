@@ -445,6 +445,12 @@ struct conv2_full_multi_flipped_impl {
             impl::sse::conv2_full_multi_flipped(input.direct(), kernel.direct(), conv.direct());
         } else if (impl == etl::conv_multi_impl::STD){
             impl::standard::conv2_full_multi_flipped(input, kernel, conv);
+        } else if (impl == etl::conv_multi_impl::FFT_STD) {
+            impl::standard::conv2_full_multi_flipped_fft(input.direct(), kernel.direct(), conv.direct());
+        } else if (impl == etl::conv_multi_impl::FFT_MKL) {
+            impl::blas::conv2_full_multi_flipped(input.direct(), kernel.direct(), conv.direct());
+        } else if (impl == etl::conv_multi_impl::FFT_CUFFT) {
+            impl::cufft::conv2_full_multi_flipped(input.direct(), kernel.direct(), conv.direct());
         } else {
             cpp_unreachable("Invalid conv implementation selection");
         }

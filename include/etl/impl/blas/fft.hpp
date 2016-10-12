@@ -692,6 +692,17 @@ void conv2_full_multi(const opaque_memory<T, 2>& input, const opaque_memory<T, 3
 }
 
 template <typename T>
+void conv2_full_multi_flipped(const opaque_memory<T, 2>& input, const opaque_memory<T, 3>& kernel, const opaque_memory<T, 3>& conv) {
+    etl::dyn_matrix<T, 3> prepared_k(kernel.dim(0), kernel.dim(1), kernel.dim(2));
+
+    std::copy(kernel.memory_start(), kernel.memory_end(), prepared_k.memory_start());
+
+    prepared_k.deep_fflip_inplace();
+
+    conv2_full_multi(input, prepared_k.direct(), conv);
+}
+
+template <typename T>
 void conv4_full(const opaque_memory<T, 4>& input, const opaque_memory<T, 4>& kernel, const opaque_memory<T, 4>& conv) {
     if (kernel.dim(1) > 0) {
         auto conv_i_inc = conv.dim(1) * conv.dim(2) * conv.dim(3);
@@ -963,6 +974,20 @@ void conv2_full(A&& a, B&& b, C&& c) {
  */
 template <typename A, typename B, typename C>
 void conv2_full_multi(A&& a, B&& b, C&& c) {
+    cpp_unused(a);
+    cpp_unused(b);
+    cpp_unused(c);
+    cpp_unreachable("Unsupported feature called: mkl fft");
+}
+
+/*!
+ * \brief Perform the 2D full convolution of a with multiple kernels of b and store the result in c
+ * \param a The input matrix
+ * \param b The kernel matrix
+ * \param c The output matrix
+ */
+template <typename A, typename B, typename C>
+void conv2_full_multi_flipped(A&& a, B&& b, C&& c) {
     cpp_unused(a);
     cpp_unused(b);
     cpp_unused(c);

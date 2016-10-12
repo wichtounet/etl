@@ -1212,6 +1212,20 @@ void conv2_full_multi(A&& a, B&& b, C&& c) {
 }
 
 /*!
+ * \brief Perform the 2D full convolution of a with multiple kernels of b and store the result in c
+ * \param a The input matrix
+ * \param b The kernel matrix
+ * \param c The output matrix
+ */
+template <typename A, typename B, typename C>
+void conv2_full_multi_flipped(A&& a, B&& b, C&& c) {
+    cpp_unused(a);
+    cpp_unused(b);
+    cpp_unused(c);
+    cpp_unreachable("Unsupported feature called: mkl fft");
+}
+
+/*!
  * \brief Perform the 4D full convolution of a with b and store the result in c
  * \param a The input matrix
  * \param b The kernel matrix
