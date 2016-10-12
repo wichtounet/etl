@@ -1159,14 +1159,24 @@ void conv2_full_flipped(const opaque_memory<T, 2>& input, const opaque_memory<T,
 
 template <typename T>
 void conv2_full_multi(const opaque_memory<T, 2>& input, const opaque_memory<T, 3>& kernel, const opaque_memory<T, 3>& conv) {
-    for(std::size_t k = 0; k < kernel.template dim<0>(); ++k){
-        auto kk = kernel.template dim<1>() * kernel.template dim<2>();
-        auto cc = conv.template dim<1>() * conv.template dim<2>();
+    const auto K = kernel.dim(0);
 
-        conv2_full_micro_kernel(
-            input.memory_start(), input.template dim<0>(), input.template dim<1>(),
-            kernel.memory_start() + k * kk, kernel.template dim<1>(), kernel.template dim<2>(),
-            conv.memory_start() + k * cc, 0.0);
+    auto batch_fun_k = [=](const size_t first, const size_t last) {
+        for (std::size_t k = first; k < last; ++k) {
+            auto kk = kernel.template dim<1>() * kernel.template dim<2>();
+            auto cc = conv.template dim<1>() * conv.template dim<2>();
+
+            conv2_full_micro_kernel(
+                input.memory_start(), input.template dim<0>(), input.template dim<1>(),
+                kernel.memory_start() + k * kk, kernel.template dim<1>(), kernel.template dim<2>(),
+                conv.memory_start() + k * cc, 0.0);
+        }
+    };
+
+    if (etl::is_parallel) {
+        dispatch_1d_any(select_parallel(K, 2), batch_fun_k, 0, K);
+    } else {
+        batch_fun_k(0, K);
     }
 }
 
