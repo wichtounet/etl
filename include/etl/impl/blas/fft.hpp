@@ -626,6 +626,29 @@ void conv2_full_flipped(const opaque_memory<T, 2>& a, const opaque_memory<T, 2>&
     mkl_detail::conv2_full_kernel(a.memory_start(), a.dim(0), a.dim(1), prepared_b.memory_start(), b.dim(0), b.dim(1), c.memory_start(), T(0.0));
 }
 
+/*!
+ * \brief Perform the 2D full convolution of a with multiple kernels of b and store the result in c
+ * \param a The input matrix
+ * \param b The kernel matrix
+ * \param c The output matrix
+ */
+template <typename T>
+void conv2_full_multi(const opaque_memory<T, 2>& input, const opaque_memory<T, 3>& kernel, const opaque_memory<T, 3>& conv) {
+    const auto K = kernel.dim(0);
+
+    if(K){
+        const auto k_s = kernel.dim(1) * kernel.dim(2);
+        const auto c_s = conv.dim(1) * conv.dim(2);
+
+        for(std::size_t k = 0; k < K; ++k){
+            const T* b = kernel.memory_start() + k * k_s;
+            T* c       = conv.memory_start() + k * c_s;
+
+            mkl_detail::conv2_full_kernel(input.memory_start(), input.dim(0), input.dim(1), b, kernel.dim(1), kernel.dim(2), c, T(0.0));
+        }
+    }
+}
+
 template <typename T>
 void conv4_full(const opaque_memory<T, 4>& input, const opaque_memory<T, 4>& kernel, const opaque_memory<T, 4>& conv) {
     if (kernel.dim(1) > 0) {
@@ -884,6 +907,20 @@ void conv1_full(A&& a, B&& b, C&& c) {
  */
 template <typename A, typename B, typename C>
 void conv2_full(A&& a, B&& b, C&& c) {
+    cpp_unused(a);
+    cpp_unused(b);
+    cpp_unused(c);
+    cpp_unreachable("Unsupported feature called: mkl fft");
+}
+
+/*!
+ * \brief Perform the 2D full convolution of a with multiple kernels of b and store the result in c
+ * \param a The input matrix
+ * \param b The kernel matrix
+ * \param c The output matrix
+ */
+template <typename A, typename B, typename C>
+void conv2_full_multi(A&& a, B&& b, C&& c) {
     cpp_unused(a);
     cpp_unused(b);
     cpp_unused(c);

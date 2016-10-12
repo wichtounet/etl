@@ -1031,6 +1031,29 @@ void conv2_full_fft_flipped(const opaque_memory<T, 2>& a, const opaque_memory<T,
 }
 
 /*!
+ * \brief Perform the 2D full convolution of a with multiple kernels of b and store the result in c
+ * \param a The input matrix
+ * \param b The kernel matrix
+ * \param c The output matrix
+ */
+template <typename T>
+void conv2_full_multi_fft(const opaque_memory<T, 2>& input, const opaque_memory<T, 3>& kernel, const opaque_memory<T, 3>& conv) {
+    const auto K = kernel.dim(0);
+
+    if(K){
+        const auto k_s = kernel.dim(1) * kernel.dim(2);
+        const auto c_s = conv.dim(1) * conv.dim(2);
+
+        for(std::size_t k = 0; k < K; ++k){
+            const T* b = kernel.memory_start() + k * k_s;
+            T* c       = conv.memory_start() + k * c_s;
+
+            detail::conv2_full_kernel(input.memory_start(), input.dim(0), input.dim(1), b, kernel.dim(1), kernel.dim(2), c, T(0.0));
+        }
+    }
+}
+
+/*!
  * \brief Perform the 4D full convolution of a with b and store the result in c
  * \param input The input matrix
  * \param kernel The kernel matrix
