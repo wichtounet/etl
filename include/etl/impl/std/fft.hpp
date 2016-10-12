@@ -1068,53 +1068,51 @@ void conv2_full_multi_fft(const opaque_memory<T, 2>& input, const opaque_memory<
         a_padded.transpose_inplace();
 
         auto batch_fun_k = [&](const size_t first, const size_t last) {
-            if (last - first) {
-                SERIAL_SECTION {
-                    for (std::size_t k = first; k < last; ++k) {
-                        const T* b = kernel.memory_start() + k * k_s;
-                        T* c       = conv.memory_start() + k * c_s;
+            SERIAL_SECTION {
+                for (std::size_t k = first; k < last; ++k) {
+                    const T* b = kernel.memory_start() + k * k_s;
+                    T* c       = conv.memory_start() + k * c_s;
 
-                        // 0. Pad a and b to the size of c
+                    // 0. Pad a and b to the size of c
 
-                        dyn_matrix<etl::complex<T>, 2> b_padded(s1, s2);
+                    dyn_matrix<etl::complex<T>, 2> b_padded(s1, s2);
 
-                        for (std::size_t i = 0; i < n1; ++i) {
-                            direct_copy_n(b + i * n2, b_padded.memory_start() + i * s2, n2);
-                        }
+                    for (std::size_t i = 0; i < n1; ++i) {
+                        direct_copy_n(b + i * n2, b_padded.memory_start() + i * s2, n2);
+                    }
 
-                        // 1. FFT of a and b
+                    // 1. FFT of a and b
 
-                        // b = fft2(b)
-                        detail::fft_n_many(b_padded.memory_start(), b_padded.memory_start(), s1, s2);
-                        b_padded.transpose_inplace();
-                        detail::fft_n_many(b_padded.memory_start(), b_padded.memory_start(), s2, s1);
-                        b_padded.transpose_inplace();
+                    // b = fft2(b)
+                    detail::fft_n_many(b_padded.memory_start(), b_padded.memory_start(), s1, s2);
+                    b_padded.transpose_inplace();
+                    detail::fft_n_many(b_padded.memory_start(), b_padded.memory_start(), s2, s1);
+                    b_padded.transpose_inplace();
 
-                        // 2. Elementwise multiplication of and b
+                    // 2. Elementwise multiplication of and b
 
-                        tmp = a_padded >> b_padded;
+                    tmp = a_padded >> b_padded;
 
-                        // 3. Inverse FFT of a
+                    // 3. Inverse FFT of a
 
-                        // a = conj(a)
-                        for (std::size_t i = 0; i < n; ++i) {
-                            tmp[i] = etl::conj(tmp[i]);
-                        }
+                    // a = conj(a)
+                    for (std::size_t i = 0; i < n; ++i) {
+                        tmp[i] = etl::conj(tmp[i]);
+                    }
 
-                        // a = fft2(a)
-                        detail::fft_n_many(tmp.memory_start(), tmp.memory_start(), s1, s2);
-                        tmp.transpose_inplace();
-                        detail::fft_n_many(tmp.memory_start(), tmp.memory_start(), s2, s1);
-                        tmp.transpose_inplace();
+                    // a = fft2(a)
+                    detail::fft_n_many(tmp.memory_start(), tmp.memory_start(), s1, s2);
+                    tmp.transpose_inplace();
+                    detail::fft_n_many(tmp.memory_start(), tmp.memory_start(), s2, s1);
+                    tmp.transpose_inplace();
 
-                        // 4. Keep only the real part of the inverse FFT
+                    // 4. Keep only the real part of the inverse FFT
 
-                        // c = real(conj(a) / n)
-                        // Note: Since the conjugate does not change the real part, it is not necessary
+                    // c = real(conj(a) / n)
+                    // Note: Since the conjugate does not change the real part, it is not necessary
 
-                        for (std::size_t i = 0; i < n; ++i) {
-                            c[i] = tmp[i].real / T(n);
-                        }
+                    for (std::size_t i = 0; i < n; ++i) {
+                        c[i] = tmp[i].real / T(n);
                     }
                 }
             }
