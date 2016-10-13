@@ -201,9 +201,9 @@ struct conv2_valid_multi_multi_impl {
             //impl::reduc::fft_conv2_valid_multi(input, kernel, conv, S1, S2, P1, P2);
         //} else if (impl == etl::conv_multi_impl::CUDNN) {
             //impl::cudnn::conv2_valid_multi(input.direct(), kernel.direct(), conv.direct(), S1, S2, P1, P2);
-        //} else if (impl == etl::conv_multi_impl::AVX) {
-            //impl::avx::conv2_valid_multi(input.direct(), kernel.direct(), conv.direct(), S1, S2, P1, P2);
-        if (impl == etl::conv_multi_impl::SSE) {
+        if (impl == etl::conv_multi_impl::AVX) {
+            impl::avx::conv2_valid_multi_multi(input.direct(), kernel.direct(), conv.direct(), S1, S2, P1, P2);
+        } else if (impl == etl::conv_multi_impl::SSE) {
             impl::sse::conv2_valid_multi_multi(input.direct(), kernel.direct(), conv.direct(), S1, S2, P1, P2);
         } else if (impl == etl::conv_multi_impl::STD){
             impl::standard::conv2_valid_multi_multi(input, kernel, conv, S1, S2, P1, P2);
@@ -311,9 +311,9 @@ struct conv2_valid_multi_multi_flipped_impl : conv2_valid_multi_multi_impl<S1, S
             //impl::reduc::fft_conv2_valid_multi_flipped(input, kernel, conv, S1, S2, P1, P2);
         //} else if (impl == etl::conv_multi_impl::CUDNN) {
             //impl::cudnn::conv2_valid_multi_flipped(input.direct(), kernel.direct(), conv.direct(), S1, S2, P1, P2);
-        //} else if (impl == etl::conv_multi_impl::AVX) {
-            //impl::avx::conv2_valid_multi_flipped(input.direct(), kernel.direct(), conv.direct(), S1, S2, P1, P2);
-        if (impl == etl::conv_multi_impl::SSE) {
+        if (impl == etl::conv_multi_impl::AVX) {
+            impl::avx::conv2_valid_multi_multi_flipped(input.direct(), kernel.direct(), conv.direct(), S1, S2, P1, P2);
+        } else if (impl == etl::conv_multi_impl::SSE) {
             impl::sse::conv2_valid_multi_multi_flipped(input.direct(), kernel.direct(), conv.direct(), S1, S2, P1, P2);
         } else if (impl == etl::conv_multi_impl::STD){
             impl::standard::conv2_valid_multi_multi_flipped(input, kernel, conv, S1, S2, P1, P2);
