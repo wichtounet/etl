@@ -877,6 +877,54 @@ void conv2_full_flipped(const opaque_memory<T, 2>& a, const opaque_memory<T, 2>&
 }
 
 template <typename T>
+void conv2_full_multi(const opaque_memory<T, 2>& input, const opaque_memory<T, 3>& kernel, const opaque_memory<T, 3>& conv) {
+    const auto K = kernel.dim(0);
+
+    const auto k1 = kernel.dim(1);
+    const auto k2 = kernel.dim(2);
+
+    const auto c1 = conv.dim(1);
+    const auto c2 = conv.dim(2);
+
+    for(size_t k = 0; k < K; ++k){
+        const auto k_s = k1 * k2;
+        const auto c_s = c1 * c2;
+
+        const T* b = kernel.memory_start() + k * k_s;
+        T* c       = conv.memory_start() + k * c_s;
+
+        detail::conv2_full_kernel(input.memory_start(), input.dim(0), input.dim(1), b, k1, k2, c, T(0.0));
+    }
+}
+
+template <typename T>
+void conv2_full_multi_flipped(const opaque_memory<T, 2>& input, const opaque_memory<T, 3>& kernel, const opaque_memory<T, 3>& conv) {
+    const auto K = kernel.dim(0);
+
+    const auto k1 = kernel.dim(1);
+    const auto k2 = kernel.dim(2);
+
+    const auto c1 = conv.dim(1);
+    const auto c2 = conv.dim(2);
+
+    for(size_t k = 0; k < K; ++k){
+        const auto k_s = k1 * k2;
+        const auto c_s = c1 * c2;
+
+        const T* b = kernel.memory_start() + k * k_s;
+        T* c       = conv.memory_start() + k * c_s;
+
+        etl::dyn_matrix<T, 2> prepared_b(k1, k2);
+
+        std::copy(b, b + k_s, prepared_b.memory_start());
+
+        prepared_b.fflip_inplace();
+
+        detail::conv2_full_kernel(input.memory_start(), input.dim(0), input.dim(1), prepared_b.memory_start(), k1, k2, c, T(0.0));
+    }
+}
+
+template <typename T>
 void conv4_full(const opaque_memory<T, 4>& input, const opaque_memory<T, 4>& kernel, const opaque_memory<T, 4>& conv) {
     using detail::cufft_exec_c2c;
 
