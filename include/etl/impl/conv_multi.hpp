@@ -269,9 +269,9 @@ struct conv2_valid_multi_multi_impl {
         } else if(d == 1){
             return etl::dim(input, 0);
         } else if(d == 2){
-            return (etl::dim(input, d - 1) - etl::dim(kernel, d) + 2 * P1) / S1  + 1;
+            return (etl::dim(input, d - 1) - etl::dim(kernel, d - 1 ) + 2 * P1) / S1  + 1;
         } else {
-            return (etl::dim(input, d - 1) - etl::dim(kernel, d) + 2 * P2) / S2  + 1;
+            return (etl::dim(input, d - 1) - etl::dim(kernel, d - 1 ) + 2 * P2) / S2  + 1;
         }
     }
 
