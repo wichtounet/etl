@@ -57,7 +57,7 @@ void complex_pad_3d(const F1& in, F2& out) {
  * \param p2 The second dimension extra padding of the convolution
  */
 template <typename F1, typename F2>
-void pad_2d_input(const F1& in, F2& out, size_t p1, size_t p2) {
+void pad_2d_input(const F1& in, F2&& out, size_t p1, size_t p2) {
     auto* direct = out.memory_start();
     for (std::size_t i = 0; i < etl::dim<0>(in); ++i) {
         for (std::size_t j = 0; j < etl::dim<1>(in); ++j) {
@@ -180,6 +180,129 @@ void blas_conv2_valid_multi(const I& input, const K_T& kernels, C&& conv, size_t
         }
     } else {
         etl::reshape(conv, K, f1 * f2) = mul(etl::reshape(prepared_k, K, k1 * k2), input_col);
+    }
+}
+
+/*!
+ * \brief BLAS implementation of a 2D 'valid' convolution C = I * K, with multiple images and multiple kernels
+ * \param input The input matrix
+ * \param kernels The kernel matrix
+ * \param conv The output matrix
+ */
+template <typename I, typename K_T, typename C>
+void blas_conv2_valid_multi_multi(const I& input, const K_T& kernels, C&& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
+    const std::size_t N  = etl::dim<0>(input);
+    const std::size_t i1 = etl::dim<1>(input);
+    const std::size_t i2 = etl::dim<2>(input);
+
+    const std::size_t K  = etl::dim<0>(kernels);
+    const std::size_t k1 = etl::dim<1>(kernels);
+    const std::size_t k2 = etl::dim<2>(kernels);
+
+    // unit-strided result dimensions
+    const std::size_t c1 = (i1 - k1 + 2 * p1) + 1;
+    const std::size_t c2 = (i2 - k2 + 2 * p2) + 1;
+
+    // real final dimensions
+    const std::size_t f1 = etl::dim<2>(conv);
+    const std::size_t f2 = etl::dim<3>(conv);
+
+    auto prepared_k = force_temporary(kernels);
+
+    // Flip the kernels
+    prepared_k.deep_fflip_inplace();
+
+    etl::dyn_matrix<value_t<I>, 2> input_col(k1 * k2, N * c1 * c2);
+
+    if(p1 || p2){
+        etl::dyn_matrix<value_t<I>, 3> input_padded(N, i1 + 2 * p1, i2 + 2 * p2);
+        input_padded = value_t<I>(0);
+
+        for(std::size_t i = 0; i < N; ++i){
+            pad_2d_input(input(i), input_padded(i), p1, p2);
+        }
+
+        im2col_direct_tr_multi(input_col, input_padded, k1, k2);
+    } else {
+        im2col_direct_tr_multi(input_col, input, k1, k2);
+    }
+
+    if(s1 > 1 || s2 > 1){
+        etl::dyn_matrix<value_t<I>, 4> tmp_result(K, N, c1, c2);
+
+        etl::reshape(tmp_result, K, N * c1 * c2) = mul(etl::reshape(prepared_k, K, k1 * k2), input_col);
+
+        // Strided copy of the large result into the small result
+        for (std::size_t k = 0; k < K; ++k) {
+            for (std::size_t i = 0; i < N; ++i) {
+                for (std::size_t ii = 0; ii < f1; ++ii) {
+                    for (std::size_t j = 0; j < f2; ++j) {
+                        conv(k, i, ii, j) = tmp_result(k, i, ii * s1, j * s2);
+                    }
+                }
+            }
+        }
+    } else {
+        etl::reshape(conv, K, N * f1 * f2) = mul(etl::reshape(prepared_k, K, k1 * k2), input_col);
+    }
+}
+
+/*!
+ * \brief BLAS implementation of a 2D 'valid' convolution C = I * K, with multiple images and multiple kernels
+ * \param input The input matrix
+ * \param kernels The kernel matrix
+ * \param conv The output matrix
+ */
+template <typename I, typename K_T, typename C>
+void blas_conv2_valid_multi_multi_flipped(const I& input, const K_T& kernels, C&& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
+    const std::size_t N  = etl::dim<0>(input);
+    const std::size_t i1 = etl::dim<1>(input);
+    const std::size_t i2 = etl::dim<2>(input);
+
+    const std::size_t K  = etl::dim<0>(kernels);
+    const std::size_t k1 = etl::dim<1>(kernels);
+    const std::size_t k2 = etl::dim<2>(kernels);
+
+    // unit-strided result dimensions
+    const std::size_t c1 = (i1 - k1 + 2 * p1) + 1;
+    const std::size_t c2 = (i2 - k2 + 2 * p2) + 1;
+
+    // real final dimensions
+    const std::size_t f1 = etl::dim<2>(conv);
+    const std::size_t f2 = etl::dim<3>(conv);
+
+    etl::dyn_matrix<value_t<I>, 2> input_col(k1 * k2, N * c1 * c2);
+
+    if(p1 || p2){
+        etl::dyn_matrix<value_t<I>, 3> input_padded(N, i1 + 2 * p1, i2 + 2 * p2);
+        input_padded = value_t<I>(0);
+
+        for(std::size_t i = 0; i < N; ++i){
+            pad_2d_input(input(i), input_padded(i), p1, p2);
+        }
+
+        im2col_direct_tr_multi(input_col, input_padded, k1, k2);
+    } else {
+        im2col_direct_tr_multi(input_col, input, k1, k2);
+    }
+
+    if(s1 > 1 || s2 > 1){
+        etl::dyn_matrix<value_t<I>, 4> tmp_result(K, N, c1, c2);
+
+        etl::reshape(tmp_result, K, N * c1 * c2) = mul(etl::reshape(kernels, K, k1 * k2), input_col);
+
+        // Strided copy of the large result into the small result
+        for (std::size_t k = 0; k < K; ++k) {
+            for (std::size_t i = 0; i < N; ++i) {
+                for (std::size_t ii = 0; ii < f1; ++ii) {
+                    for (std::size_t j = 0; j < f2; ++j) {
+                        conv(k, i, ii, j) = tmp_result(k, i, ii * s1, j * s2);
+                    }
+                }
+            }
+        }
+    } else {
+        etl::reshape(conv, K, N * f1 * f2) = mul(etl::reshape(kernels, K, k1 * k2), input_col);
     }
 }
 

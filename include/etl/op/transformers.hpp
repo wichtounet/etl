@@ -581,6 +581,46 @@ void im2col_direct_tr(M& m, A&& sub, std::size_t k1, std::size_t k2) {
 }
 
 /*!
+ * \brief Convert a sequence of images to a sequence of image columns to be multiplied by kernels of size (k1,k2).
+ *
+ * This special version does not require any transposition when used.
+ *
+ * \param m The output matrix
+ * \param sub The input image
+ * \param k1 The first dimension of ther kernel
+ * \param k2 The second dimension of ther kernel
+ */
+template <typename A, typename M>
+void im2col_direct_tr_multi(M& m, A&& sub, std::size_t k1, std::size_t k2) {
+    static_assert(all_dma<A, M>::value, "im2col_direct_tr has only been implemented for direct memory access");
+
+    const auto N  = etl::dim<0>(sub);
+    const auto i1 = etl::dim<1>(sub);
+    const auto i2 = etl::dim<2>(sub);
+
+    const auto height = i1 - k1 + 1;
+    const auto width  = i2 - k2 + 1;
+
+    const auto mm = m.memory_start();
+    const auto ss = sub.memory_start();
+
+    for (std::size_t w = 0; w < k1 * k2; ++w) {
+        const auto w_source = w % k2;
+        const auto h_source = (w / k2) % k1;
+        const auto c_source = w / (k1 * k2);
+
+        for (std::size_t i = 0; i < N; ++i) {
+            for (std::size_t h = 0; h < height; ++h) {
+                const auto block_source = ((c_source * i1 + h + h_source) * i2 + w_source) + (i) * (i1 * i2);
+                const auto block_target = (w * N + i) * (height * width) + h * width;
+
+                etl::direct_copy_n(ss + block_source, mm + block_target, width);
+            }
+        }
+    }
+}
+
+/*!
  * \brief Transform that applies probabilistic max pooling on a expression
  * \tparam T The type on which the transformer is applied
  * \tparam C1 The shrink factor of the first dimension

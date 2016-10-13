@@ -122,9 +122,11 @@ CONV_FUNCTOR(blas_conv2_valid_multi_flipped, c = selected_helper(etl::conv_multi
 
 CONV_FUNCTOR(default_conv2_valid_multi_multi, c = (etl::conv_2d_valid_multi_multi<S1, S2, P1, P2>(a, b)))
 CONV_FUNCTOR(std_conv2_valid_multi_multi, c = selected_helper(etl::conv_multi_impl::STD, (etl::conv_2d_valid_multi_multi<S1, S2, P1, P2>(a, b))))
+CONV_FUNCTOR(blas_conv2_valid_multi_multi, c = selected_helper(etl::conv_multi_impl::BLAS, (etl::conv_2d_valid_multi_multi<S1, S2, P1, P2>(a, b))))
 
 CONV_FUNCTOR(default_conv2_valid_multi_multi_flipped, c = (etl::conv_2d_valid_multi_multi_flipped<S1, S2, P1, P2>(a, b)))
 CONV_FUNCTOR(std_conv2_valid_multi_multi_flipped, c = selected_helper(etl::conv_multi_impl::STD, (etl::conv_2d_valid_multi_multi_flipped<S1, S2, P1, P2>(a, b))))
+CONV_FUNCTOR(blas_conv2_valid_multi_multi_flipped, c = selected_helper(etl::conv_multi_impl::BLAS, (etl::conv_2d_valid_multi_multi_flipped<S1, S2, P1, P2>(a, b))))
 
 CONV_FUNCTOR(default_conv2_full_multi, c = etl::conv_2d_full_multi(a, b))
 CONV_FUNCTOR(std_conv2_full_multi, c = selected_helper(etl::conv_multi_impl::STD, etl::conv_2d_full_multi(a, b)))
@@ -222,9 +224,11 @@ CONV_FUNCTOR(fft_std_conv2_full_multi_flipped, c = selected_helper(etl::conv_mul
 
 #define CONV2_VALID_MULTI_MULTI_TEST_CASE_SECTION_DEFAULT CONV_TEST_CASE_SECTIONS(default_conv2_valid_multi_multi)
 #define CONV2_VALID_MULTI_MULTI_TEST_CASE_SECTION_STD CONV_TEST_CASE_SECTIONS(std_conv2_valid_multi_multi)
+#define CONV2_VALID_MULTI_MULTI_TEST_CASE_SECTION_BLAS CONV_TEST_CASE_SECTIONS(blas_conv2_valid_multi_multi)
 
 #define CONV2_VALID_MULTI_MULTI_FLIPPED_TEST_CASE_SECTION_DEFAULT CONV_TEST_CASE_SECTIONS(default_conv2_valid_multi_multi_flipped)
 #define CONV2_VALID_MULTI_MULTI_FLIPPED_TEST_CASE_SECTION_STD CONV_TEST_CASE_SECTIONS(std_conv2_valid_multi_multi_flipped)
+#define CONV2_VALID_MULTI_MULTI_FLIPPED_TEST_CASE_SECTION_BLAS CONV_TEST_CASE_SECTIONS(blas_conv2_valid_multi_multi_flipped)
 
 #define CONV2_FULL_MULTI_TEST_CASE_SECTION_DEFAULT CONV_TEST_CASE_SECTIONS(default_conv2_full_multi)
 #define CONV2_FULL_MULTI_TEST_CASE_SECTION_STD CONV_TEST_CASE_SECTIONS(std_conv2_full_multi)
@@ -800,6 +804,7 @@ CONV_FUNCTOR(cudnn_conv2_valid_multi_flipped, c = selected_helper(etl::conv_mult
         CONV2_VALID_MULTI_MULTI_TEST_CASE_SECTION_STD        \
         CONV2_VALID_MULTI_MULTI_TEST_CASE_SECTION_SSE        \
         CONV2_VALID_MULTI_MULTI_TEST_CASE_SECTION_AVX        \
+        CONV2_VALID_MULTI_MULTI_TEST_CASE_SECTION_BLAS       \
     }                                                        \
     CONV_TEST_CASE_DEFN
 
@@ -809,6 +814,7 @@ CONV_FUNCTOR(cudnn_conv2_valid_multi_flipped, c = selected_helper(etl::conv_mult
         CONV2_VALID_MULTI_MULTI_FLIPPED_TEST_CASE_SECTION_STD        \
         CONV2_VALID_MULTI_MULTI_FLIPPED_TEST_CASE_SECTION_SSE        \
         CONV2_VALID_MULTI_MULTI_FLIPPED_TEST_CASE_SECTION_AVX        \
+        CONV2_VALID_MULTI_MULTI_FLIPPED_TEST_CASE_SECTION_BLAS       \
     }                                                                \
     CONV_TEST_CASE_DEFN
 
