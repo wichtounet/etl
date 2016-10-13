@@ -528,7 +528,7 @@ struct slice_view {
      */
     template <typename V = default_vec>
     auto load(std::size_t x) const noexcept {
-        return sub.template load<V>(x + first * subsize(sub));
+        return sub.template loadu<V>(x + first * subsize(sub));
     }
 
     /*!
