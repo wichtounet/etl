@@ -615,6 +615,36 @@ void conv2_valid_multi_flipped(const I& input, const K& kernels, C&& conv, size_
 }
 
 /*!
+ * \brief Standard implementation of a 2D 'valid' convolution C = I * K, with multiple images and multiple kernels
+ * \param input The input matrix
+ * \param kernels The kernel matrix
+ * \param conv The output matrix
+ */
+template <typename I, typename K, typename C>
+void conv2_valid_multi_multi(const I& input, const K& kernels, C&& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
+    for (size_t k = 0; k < etl::dim<0>(kernels); ++k) {
+        for (size_t i = 0; i < etl::dim<0>(input); ++i) {
+            conv2_valid(input(i), kernels(k), conv(k)(i), s1, s2, p1, p2);
+        }
+    }
+}
+
+/*!
+ * \brief Standard implementation of a 2D 'valid' convolution C = I * K, with multiple images and multiple flipped kernels
+ * \param input The input matrix
+ * \param kernels The kernel matrix
+ * \param conv The output matrix
+ */
+template <typename I, typename K, typename C>
+void conv2_valid_multi_multi_flipped(const I& input, const K& kernels, C&& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
+    for (size_t k = 0; k < etl::dim<0>(kernels); ++k) {
+        for (size_t i = 0; i < etl::dim<0>(input); ++i) {
+            conv2_valid_flipped(input(i), kernels(k), conv(k)(i), s1, s2, p1, p2);
+        }
+    }
+}
+
+/*!
  * \brief Standard implementation of a 2D 'full' convolution C = I * K, with multiple kernels
  * \param input The input matrix
  * \param kernels The kernel matrix
