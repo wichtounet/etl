@@ -193,14 +193,12 @@ struct conv2_valid_multi_multi_impl {
      */
     template <typename I, typename K, typename C>
     static void apply(const I& input, const K& kernel, C&& conv) {
-        auto impl = select_conv_valid_multi_impl<I, K, C>();
+        auto impl = select_conv_valid_multi_multi_impl<I, K, C>();
 
         if (impl == etl::conv_multi_impl::BLAS) {
             impl::reduc::blas_conv2_valid_multi_multi(input, kernel, conv, S1, S2, P1, P2);
         } else if (impl == etl::conv_multi_impl::FFT) {
             impl::reduc::fft_conv2_valid_multi_multi(input, kernel, conv, S1, S2, P1, P2);
-        //} else if (impl == etl::conv_multi_impl::CUDNN) {
-            //impl::cudnn::conv2_valid_multi(input.direct(), kernel.direct(), conv.direct(), S1, S2, P1, P2);
         } else if (impl == etl::conv_multi_impl::AVX) {
             impl::avx::conv2_valid_multi_multi(input.direct(), kernel.direct(), conv.direct(), S1, S2, P1, P2);
         } else if (impl == etl::conv_multi_impl::SSE) {
@@ -208,8 +206,7 @@ struct conv2_valid_multi_multi_impl {
         } else if (impl == etl::conv_multi_impl::STD){
             impl::standard::conv2_valid_multi_multi(input, kernel, conv, S1, S2, P1, P2);
         } else {
-            impl::standard::conv2_valid_multi_multi(input, kernel, conv, S1, S2, P1, P2);
-            //cpp_unreachable("Invalid conv implementation selection");
+            cpp_unreachable("Invalid conv implementation selection");
         }
     }
 
@@ -303,14 +300,12 @@ struct conv2_valid_multi_multi_flipped_impl : conv2_valid_multi_multi_impl<S1, S
      */
     template <typename I, typename K, typename C>
     static void apply(const I& input, const K& kernel, C&& conv) {
-        auto impl = select_conv_valid_multi_impl<I, K, C>();
+        auto impl = select_conv_valid_multi_multi_impl<I, K, C>();
 
         if (impl == etl::conv_multi_impl::BLAS) {
             impl::reduc::blas_conv2_valid_multi_multi_flipped(input, kernel, conv, S1, S2, P1, P2);
         } else if (impl == etl::conv_multi_impl::FFT) {
             impl::reduc::fft_conv2_valid_multi_multi_flipped(input, kernel, conv, S1, S2, P1, P2);
-        //} else if (impl == etl::conv_multi_impl::CUDNN) {
-            //impl::cudnn::conv2_valid_multi_flipped(input.direct(), kernel.direct(), conv.direct(), S1, S2, P1, P2);
         } else if (impl == etl::conv_multi_impl::AVX) {
             impl::avx::conv2_valid_multi_multi_flipped(input.direct(), kernel.direct(), conv.direct(), S1, S2, P1, P2);
         } else if (impl == etl::conv_multi_impl::SSE) {
@@ -318,8 +313,7 @@ struct conv2_valid_multi_multi_flipped_impl : conv2_valid_multi_multi_impl<S1, S
         } else if (impl == etl::conv_multi_impl::STD){
             impl::standard::conv2_valid_multi_multi_flipped(input, kernel, conv, S1, S2, P1, P2);
         } else {
-            impl::standard::conv2_valid_multi_multi_flipped(input, kernel, conv, S1, S2, P1, P2);
-            //cpp_unreachable("Invalid conv implementation selection");
+            cpp_unreachable("Invalid conv implementation selection");
         }
     }
 

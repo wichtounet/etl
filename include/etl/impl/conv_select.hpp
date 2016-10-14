@@ -282,6 +282,48 @@ inline etl::conv_multi_impl select_default_conv_valid_multi() {
 }
 
 /*!
+ * \brief Select the implementation of the conv multi of I and K in C
+ *
+ * This does not take the local context into account.
+ *
+ * \tparam I The input type
+ * \tparam K The kernel type
+ * \tparam C The conv type
+ * \return the implementation to be used
+ */
+template <typename I, typename K, typename C>
+inline etl::conv_multi_impl select_default_conv_valid_multi_multi_impl() {
+    //Note: since the constexpr values will be known at compile time, the
+    //conditions will be a lot simplified
+
+    static constexpr const order input_order  = decay_traits<I>::storage_order;
+    static constexpr const order kernel_order = decay_traits<K>::storage_order;
+    static constexpr const order output_order = decay_traits<C>::storage_order;
+
+    //Only the standard implementation is able to handle column major
+    if (input_order == order::ColumnMajor || kernel_order == order::ColumnMajor || output_order == order::ColumnMajor) {
+        return etl::conv_multi_impl::STD;
+    }
+
+    static constexpr const bool sse = vectorize_impl && vector_mode == vector_mode_t::SSE3;
+    static constexpr const bool avx = vectorize_impl && vector_mode == vector_mode_t::AVX;
+
+    if (avx) {
+        return etl::conv_multi_impl::AVX;
+    } else if (sse) {
+        return etl::conv_multi_impl::SSE;
+    }
+
+    if (is_cblas_enabled || is_cublas_enabled) {
+        return etl::conv_multi_impl::BLAS;
+    } else if (is_mkl_enabled && conv_valid_fft) {
+        return etl::conv_multi_impl::FFT;
+    }
+
+    return etl::conv_multi_impl::STD;
+}
+
+/*!
  * \brief Select the implementation of the conv of I and K in C
  * \tparam I The input type
  * \tparam K The kernel type
@@ -329,6 +371,47 @@ inline etl::conv_multi_impl select_conv_valid_multi_impl() {
     }
 
     return select_default_conv_valid_multi<I, K, C>();
+}
+
+/*!
+ * \brief Select the implementation of the conv of I and K in C
+ * \tparam I The input type
+ * \tparam K The kernel type
+ * \tparam C The conv type
+ * \return the implementation to be used
+ */
+template <typename I, typename K, typename C>
+inline etl::conv_multi_impl select_conv_valid_multi_multi_impl() {
+    if (local_context().conv_multi_selector.forced) {
+        auto forced = local_context().conv_multi_selector.impl;
+
+        switch (forced) {
+            //AVX cannot always be used
+            case conv_multi_impl::AVX:
+                if (!avx_enabled) {
+                    std::cerr << "Forced selection to AVX conv implementation, but not possible for this expression" << std::endl;
+                    return select_default_conv_valid_multi_multi_impl<I, K, C>();                                                                   // COVERAGE_EXCLUDE_LINE
+                }
+
+                return forced;
+
+            //SSE cannot always be used
+            case conv_multi_impl::SSE:
+                if (!sse3_enabled) {
+                    std::cerr << "Forced selection to SSE conv implementation, but not possible for this expression" << std::endl;
+                    return select_default_conv_valid_multi_multi_impl<I, K, C>();                                                                   // COVERAGE_EXCLUDE_LINE
+                }
+
+                return forced;
+
+                // Although it may be suboptimal the forced selection can
+                // always be achieved
+            default:
+                return forced;
+        }
+    }
+
+    return select_default_conv_valid_multi_multi_impl<I, K, C>();
 }
 
 /*!
