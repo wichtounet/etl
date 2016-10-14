@@ -36,13 +36,13 @@ inline bool select_parallel_2d(std::size_t n1, std::size_t t1, std::size_t n2, s
  * \param pool The pool to use
  * \param p Boolean tag to indicate if parallel dispatching must be done
  * \param functor The functor to execute
+ * \param T The number of threads to use
  * \param first The beginning of the range
  * \param last The end of the range
  */
 template <typename Functor>
-inline void dispatch_1d(cpp::default_thread_pool<>& pool, bool p, Functor&& functor, std::size_t first, std::size_t last) {
+inline void dispatch_1d(cpp::default_thread_pool<>& pool, bool p, Functor&& functor, size_t T, std::size_t first, std::size_t last) {
     if (p) {
-        const auto T     = pool.size();
         const auto n     = last - first;
         const auto batch = n / T;
 
@@ -53,6 +53,23 @@ inline void dispatch_1d(cpp::default_thread_pool<>& pool, bool p, Functor&& func
         functor(first + (T - 1) * batch, last);
 
         pool.wait();
+    } else {
+        functor(first, last);
+    }
+}
+
+/*!
+ * \brief Dispatch the elements of a range to a functor in a parallel manner
+ * \param pool The pool to use
+ * \param p Boolean tag to indicate if parallel dispatching must be done
+ * \param functor The functor to execute
+ * \param first The beginning of the range
+ * \param last The end of the range
+ */
+template <typename Functor>
+inline void dispatch_1d(cpp::default_thread_pool<>& pool, bool p, Functor&& functor, std::size_t first, std::size_t last) {
+    if (p) {
+        dispatch_1d(pool, p, std::forward<Functor>(functor), pool.size(), first, last);
     } else {
         functor(first, last);
     }
@@ -87,8 +104,8 @@ inline void dispatch_1d_any(bool p, Functor&& functor, std::size_t first, std::s
     if (p) {
         auto n = last - first;
         size_t T = std::min(n, threads);
-        cpp::default_thread_pool<> pool(T - 1);
-        dispatch_1d(pool, p, std::forward<Functor>(functor), first, last);
+        thread_local cpp::default_thread_pool<> pool(threads);
+        dispatch_1d(pool, p, std::forward<Functor>(functor), T, first, last);
     } else {
         functor(first, last);
     }
