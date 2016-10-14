@@ -680,11 +680,17 @@ void conv2_valid_multi_multi_flipped(const I& input, const K_T& kernels, C&& con
  * \param kernels The kernel matrix
  * \param conv The output matrix
  */
-template <typename I, typename K, typename C>
-void conv2_full_multi(const I& input, const K& kernels, C&& conv) {
-    for (size_t k = 0; k < etl::dim<0>(kernels); ++k) {
-        conv2_full(input, kernels(k), conv(k));
-    }
+template <typename I, typename K_T, typename C>
+void conv2_full_multi(const I& input, const K_T& kernels, C&& conv) {
+    const auto K = etl::dim<0>(kernels);
+
+    auto fun_k = [&](const size_t first, const size_t last) {
+        for (std::size_t k = first; k < last; ++k) {
+            conv2_full(input, kernels(k), conv(k));
+        }
+    };
+
+    dispatch_1d_any(select_parallel(K, 2), fun_k, 0, K);
 }
 
 /*!
@@ -693,11 +699,17 @@ void conv2_full_multi(const I& input, const K& kernels, C&& conv) {
  * \param kernels The kernel matrix
  * \param conv The output matrix
  */
-template <typename I, typename K, typename C>
-void conv2_full_multi_flipped(const I& input, const K& kernels, C&& conv) {
-    for (size_t k = 0; k < etl::dim<0>(kernels); ++k) {
-        conv2_full_flipped(input, kernels(k), conv(k));
-    }
+template <typename I, typename K_T, typename C>
+void conv2_full_multi_flipped(const I& input, const K_T& kernels, C&& conv) {
+    const auto K = etl::dim<0>(kernels);
+
+    auto fun_k = [&](const size_t first, const size_t last) {
+        for (std::size_t k = first; k < last; ++k) {
+            conv2_full_flipped(input, kernels(k), conv(k));
+        }
+    };
+
+    dispatch_1d_any(select_parallel(K, 2), fun_k, 0, K);
 }
 
 /*!
@@ -706,11 +718,17 @@ void conv2_full_multi_flipped(const I& input, const K& kernels, C&& conv) {
  * \param kernels The kernel matrix
  * \param conv The output matrix
  */
-template <typename I, typename K, typename C>
-void conv2_same_multi(const I& input, const K& kernels, C&& conv) {
-    for (size_t k = 0; k < etl::dim<0>(kernels); ++k) {
-        conv2_same(input, kernels(k), conv(k));
-    }
+template <typename I, typename K_T, typename C>
+void conv2_same_multi(const I& input, const K_T& kernels, C&& conv) {
+    const auto K = etl::dim<0>(kernels);
+
+    auto fun_k = [&](const size_t first, const size_t last) {
+        for (std::size_t k = first; k < last; ++k) {
+            conv2_same(input, kernels(k), conv(k));
+        }
+    };
+
+    dispatch_1d_any(select_parallel(K, 2), fun_k, 0, K);
 }
 
 /*!
@@ -719,11 +737,17 @@ void conv2_same_multi(const I& input, const K& kernels, C&& conv) {
  * \param kernels The kernel matrix
  * \param conv The output matrix
  */
-template <typename I, typename K, typename C>
-void conv2_same_multi_flipped(const I& input, const K& kernels, C&& conv) {
-    for (size_t k = 0; k < etl::dim<0>(kernels); ++k) {
-        conv2_same_flipped(input, kernels(k), conv(k));
-    }
+template <typename I, typename K_T, typename C>
+void conv2_same_multi_flipped(const I& input, const K_T& kernels, C&& conv) {
+    const auto K = etl::dim<0>(kernels);
+
+    auto fun_k = [&](const size_t first, const size_t last) {
+        for (std::size_t k = first; k < last; ++k) {
+            conv2_same_flipped(input, kernels(k), conv(k));
+        }
+    };
+
+    dispatch_1d_any(select_parallel(K, 2), fun_k, 0, K);
 }
 
 } //end of namespace standard
