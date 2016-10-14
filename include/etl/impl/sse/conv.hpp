@@ -1297,71 +1297,41 @@ void conv4_valid(const opaque_memory<T, 4>& input, const opaque_memory<T, 4>& ke
 
         std::fill(conv.memory_start(), conv.memory_end(), 0);
 
-        if(etl::is_parallel){
+        if(select_parallel(K * N, 4)){
+            auto fun_nk = [&](const size_t first, const size_t last) {
+                for (std::size_t nk = first; nk < last; ++nk) {
+                    auto i = nk / K;
+                    auto k = nk % K;
+
+                    for (size_t c = 0; c < C; ++c) {
+                        auto m_kernel = kernel.memory_start() + k * kernel_k_inc + c * kernel_c_inc;
+                        auto m_in     = input.memory_start() + i * input_i_inc + c * input_c_inc;
+                        auto m_out    = conv.memory_start() + i * conv_i_inc + k * conv_k_inc;
+
+                        conv2_valid_micro_kernel(m_in, n1, n2, m_kernel, m1, m2, m_out, 1.0, s1, s2, p1, p2);
+                    }
+                }
+            };
+
+            dispatch_1d_any(true, fun_nk, 0, K * N);
+        } else {
             const auto* input_mem  = input.memory_start();
             const auto* kernel_mem = kernel.memory_start();
             auto* conv_mem         = conv.memory_start();
 
-            if(K > N){
-                auto batch_fun_k = [=](const size_t first, const size_t last) {
-                    if (last - first) {
-                        auto kernel_reverse      = aligned_allocate_auto<T>(m1 * m2);
-                        auto* kernel_reverse_mem = kernel_reverse.get();
+            auto kernel_reverse      = aligned_allocate_auto<T>(m1 * m2);
+            auto* kernel_reverse_mem = kernel_reverse.get();
 
-                        for (size_t c = 0; c < C; ++c) {
-                            for (size_t k = first; k < last; ++k) {
-                                const auto* m_kernel = kernel_mem + k * kernel_k_inc + c * kernel_c_inc;
-                                std::reverse_copy(m_kernel, m_kernel + m1 * m2, kernel_reverse_mem);
+            for (size_t c = 0; c < C; ++c) {
+                for (size_t k = 0; k < K; ++k) {
+                    const auto* m_kernel = kernel_mem + k * kernel_k_inc + c * kernel_c_inc;
+                    std::reverse_copy(m_kernel, m_kernel + m1 * m2, kernel_reverse_mem);
 
-                                for (size_t i = 0; i < N; ++i) {
-                                    const auto* m_in = input_mem + i * input_i_inc + c * input_c_inc;
-                                    auto* m_out      = conv_mem + i * conv_i_inc + k * conv_k_inc;
+                    for (size_t i = 0; i < N; ++i) {
+                        const auto* m_in = input_mem + i * input_i_inc + c * input_c_inc;
+                        auto* m_out      = conv_mem + i * conv_i_inc + k * conv_k_inc;
 
-                                    conv2_valid_flipped_micro_kernel(m_in, n1, n2, kernel_reverse_mem, m1, m2, m_out, 1.0, s1, s2, p1, p2);
-                                }
-                            }
-                        }
-                    }
-                };
-
-                etl::dispatch_1d_any(select_parallel(K, 2), batch_fun_k, 0, K);
-            } else {
-                auto batch_fun_n = [=](const size_t first, const size_t last) {
-                    if (last - first) {
-                        auto kernel_reverse      = aligned_allocate_auto<T>(m1 * m2);
-                        auto* kernel_reverse_mem = kernel_reverse.get();
-
-                        for (size_t c = 0; c < C; ++c) {
-                            for (size_t k = 0; k < K; ++k) {
-                                const auto* m_kernel = kernel_mem + k * kernel_k_inc + c * kernel_c_inc;
-                                std::reverse_copy(m_kernel, m_kernel + m1 * m2, kernel_reverse_mem);
-
-                                for (size_t i = first; i < last; ++i) {
-                                    const auto* m_in = input_mem + i * input_i_inc + c * input_c_inc;
-                                    auto* m_out      = conv_mem + i * conv_i_inc + k * conv_k_inc;
-
-                                    conv2_valid_flipped_micro_kernel(m_in, n1, n2, kernel_reverse_mem, m1, m2, m_out, 1.0, s1, s2, p1, p2);
-                                }
-                            }
-                        }
-                    }
-                };
-
-                etl::dispatch_1d_any(select_parallel(N, 2), batch_fun_n, 0, N);
-            }
-        } else {
-            auto kernel_reverse = aligned_allocate_auto<T>(kernel.dim(2) * kernel.dim(3));
-
-            for(size_t c = 0; c < C; ++c){
-                for(size_t k = 0; k < K; ++k){
-                    auto m_kernel = kernel.memory_start() + k * kernel_k_inc + c * kernel_c_inc;
-                    std::reverse_copy(m_kernel, m_kernel + m1 * m2, kernel_reverse.get());
-
-                    for(size_t i = 0; i < N; ++i){
-                        auto m_in = input.memory_start() + i * input_i_inc + c * input_c_inc;
-                        auto m_out = conv.memory_start() + i * conv_i_inc + k * conv_k_inc;
-
-                        conv2_valid_flipped_micro_kernel(m_in, n1, n2, kernel_reverse.get(), m1, m2, m_out, 1.0, s1, s2, p1, p2);
+                        conv2_valid_flipped_micro_kernel(m_in, n1, n2, kernel_reverse_mem, m1, m2, m_out, 1.0, s1, s2, p1, p2);
                     }
                 }
             }
@@ -1391,79 +1361,34 @@ void conv4_valid_flipped(const opaque_memory<T, 4>& input, const opaque_memory<T
         const auto n1 = input.dim(2);
         const auto n2 = input.dim(3);
 
-        if(etl::is_parallel){
-            const auto* input_mem  = input.memory_start();
-            const auto* kernel_mem = kernel.memory_start();
-            auto* conv_mem         = conv.memory_start();
+        const auto* input_mem  = input.memory_start();
+        const auto* kernel_mem = kernel.memory_start();
+        auto* conv_mem         = conv.memory_start();
 
-            if(K > N){
-                auto batch_fun_k = [=](const size_t first, const size_t last) {
-                    if (last - first) {
-                        for (std::size_t i = 0; i < N; ++i) {
-                            for (std::size_t k = first; k < last; ++k) {
-                                //c = 0
-                                conv2_valid_flipped_micro_kernel(
-                                    input_mem + i * input_i_inc, n1, n2,
-                                    kernel_mem + k * kernel_k_inc, m1, m2,
-                                    conv_mem + i * conv_i_inc + k * conv_k_inc, 0.0, s1, s2, p1, p2);
+        auto fun_nk = [&](const size_t first, const size_t last) {
+            for (std::size_t nk = first; nk < last; ++nk) {
+                auto i = nk / K;
+                auto k = nk % K;
 
-                                // c = [1, C]
-                                for (std::size_t c = 1; c < C; ++c) {
-                                    conv2_valid_flipped_micro_kernel(
-                                        input_mem + i * input_i_inc + c * input_c_inc, n1, n2,
-                                        kernel_mem + k * kernel_k_inc + c * kernel_c_inc, m1, m2,
-                                        conv_mem + i * conv_i_inc + k * conv_k_inc, 1.0, s1, s2, p1, p2);
-                                }
-                            }
-                        }
-                    }
-                };
-
-                etl::dispatch_1d_any(select_parallel(K, 2), batch_fun_k, 0, K);
-            } else {
-                auto batch_fun_n = [=](const size_t first, const size_t last) {
-                    if (last - first) {
-                        for (std::size_t i = first; i < last; ++i) {
-                            for (std::size_t k = 0; k < K; ++k) {
-                                //c = 0
-                                conv2_valid_flipped_micro_kernel(
-                                    input_mem + i * input_i_inc, n1, n2,
-                                    kernel_mem + k * kernel_k_inc, m1, m2,
-                                    conv_mem + i * conv_i_inc + k * conv_k_inc, 0.0, s1, s2, p1, p2);
-
-                                // c = [1, C]
-                                for (std::size_t c = 1; c < C; ++c) {
-                                    conv2_valid_flipped_micro_kernel(
-                                        input_mem + i * input_i_inc + c * input_c_inc, n1, n2,
-                                        kernel_mem + k * kernel_k_inc + c * kernel_c_inc, m1, m2,
-                                        conv_mem + i * conv_i_inc + k * conv_k_inc, 1.0, s1, s2, p1, p2);
-                                }
-                            }
-                        }
-                    }
-                };
-
-                etl::dispatch_1d_any(select_parallel(N, 2), batch_fun_n, 0, N);
-            }
-        } else {
-            for(std::size_t i = 0; i < N; ++i){
-                for(std::size_t k = 0; k < K; ++k){
+                for (size_t c = 0; c < C; ++c) {
                     //c = 0
                     conv2_valid_flipped_micro_kernel(
-                        input.memory_start() + i * input_i_inc, n1, n2,
-                        kernel.memory_start() + k * kernel_k_inc, m1, m2,
-                        conv.memory_start() + i * conv_i_inc + k * conv_k_inc, 0.0, s1, s2, p1, p2);
+                        input_mem + i * input_i_inc, n1, n2,
+                        kernel_mem + k * kernel_k_inc, m1, m2,
+                        conv_mem + i * conv_i_inc + k * conv_k_inc, 0.0, s1, s2, p1, p2);
 
                     // c = [1, C]
-                    for(std::size_t c = 1; c < C; ++c){
+                    for (std::size_t c = 1; c < C; ++c) {
                         conv2_valid_flipped_micro_kernel(
-                            input.memory_start() + i * input_i_inc + c * input_c_inc, n1, n2,
-                            kernel.memory_start() + k * kernel_k_inc + c * kernel_c_inc, m1, m2,
-                            conv.memory_start() + i * conv_i_inc + k * conv_k_inc, 1.0, s1, s2, p1, p2);
+                            input_mem + i * input_i_inc + c * input_c_inc, n1, n2,
+                            kernel_mem + k * kernel_k_inc + c * kernel_c_inc, m1, m2,
+                            conv_mem + i * conv_i_inc + k * conv_k_inc, 1.0, s1, s2, p1, p2);
                     }
                 }
             }
-        }
+        };
+
+        dispatch_1d_any(select_parallel(K * N, 4), fun_nk, 0, K * N);
     }
 }
 
