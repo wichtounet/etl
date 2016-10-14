@@ -632,13 +632,22 @@ void conv2_valid_multi_flipped(const I& input, const K_T& kernels, C&& conv, siz
  * \param kernels The kernel matrix
  * \param conv The output matrix
  */
-template <typename I, typename K, typename C>
-void conv2_valid_multi_multi(const I& input, const K& kernels, C&& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
-    for (size_t k = 0; k < etl::dim<0>(kernels); ++k) {
-        for (size_t i = 0; i < etl::dim<0>(input); ++i) {
-            conv2_valid(input(i), kernels(k), conv(k)(i), s1, s2, p1, p2);
+template <typename I, typename K_T, typename C>
+void conv2_valid_multi_multi(const I& input, const K_T& kernels, C&& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
+    const auto K  = etl::dim<0>(kernels);
+    const auto N  = etl::dim<0>(input);
+    const auto KN = K * N;
+
+    auto fun_kn = [&](const size_t first, const size_t last) {
+        for (std::size_t kn = first; kn < last; ++kn) {
+            auto k = kn / N;
+            auto n = kn % N;
+
+            conv2_valid(input(n), kernels(k), conv(k)(n), s1, s2, p1, p2);
         }
-    }
+    };
+
+    dispatch_1d_any(select_parallel(KN, 2), fun_kn, 0, KN);
 }
 
 /*!
@@ -647,13 +656,22 @@ void conv2_valid_multi_multi(const I& input, const K& kernels, C&& conv, size_t 
  * \param kernels The kernel matrix
  * \param conv The output matrix
  */
-template <typename I, typename K, typename C>
-void conv2_valid_multi_multi_flipped(const I& input, const K& kernels, C&& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
-    for (size_t k = 0; k < etl::dim<0>(kernels); ++k) {
-        for (size_t i = 0; i < etl::dim<0>(input); ++i) {
-            conv2_valid_flipped(input(i), kernels(k), conv(k)(i), s1, s2, p1, p2);
+template <typename I, typename K_T, typename C>
+void conv2_valid_multi_multi_flipped(const I& input, const K_T& kernels, C&& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
+    const auto K  = etl::dim<0>(kernels);
+    const auto N  = etl::dim<0>(input);
+    const auto KN = K * N;
+
+    auto fun_kn = [&](const size_t first, const size_t last) {
+        for (std::size_t kn = first; kn < last; ++kn) {
+            auto k = kn / N;
+            auto n = kn % N;
+
+            conv2_valid_flipped(input(n), kernels(k), conv(k)(n), s1, s2, p1, p2);
         }
-    }
+    };
+
+    dispatch_1d_any(select_parallel(KN, 2), fun_kn, 0, KN);
 }
 
 /*!

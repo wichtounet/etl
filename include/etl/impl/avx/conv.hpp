@@ -1382,8 +1382,15 @@ void conv2_valid_multi_flipped(const opaque_memory<T, 2>& input, const opaque_me
 
 template <typename T>
 void conv2_valid_multi_multi(const opaque_memory<T, 3>& input, const opaque_memory<T, 3>& kernel, const opaque_memory<T, 4>& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
-    for (std::size_t k = 0; k < kernel.template dim<0>(); ++k) {
-        for (std::size_t i = 0; i < input.template dim<0>(); ++i) {
+    const auto K  = kernel.template dim<0>();
+    const auto N  = input.template dim<0>();
+    const auto KN = K * N;
+
+    auto fun_kn = [&](const size_t first, const size_t last) {
+        for (std::size_t kn = first; kn < last; ++kn) {
+            auto k = kn / N;
+            auto n = kn % N;
+
             const auto ii = input.template dim<1>() * input.template dim<2>();
             const auto kk = kernel.template dim<1>() * kernel.template dim<2>();
 
@@ -1391,17 +1398,26 @@ void conv2_valid_multi_multi(const opaque_memory<T, 3>& input, const opaque_memo
             const auto c_i = conv.template dim<2>() * conv.template dim<3>();
 
             conv2_valid_micro_kernel(
-                input.memory_start() + i * ii, input.template dim<1>(), input.template dim<2>(),
+                input.memory_start() + n * ii, input.template dim<1>(), input.template dim<2>(),
                 kernel.memory_start() + k * kk, kernel.template dim<1>(), kernel.template dim<2>(),
-                conv.memory_start() + k * c_k + i * c_i, 0.0, s1, s2, p1, p2);
+                conv.memory_start() + k * c_k + n * c_i, 0.0, s1, s2, p1, p2);
         }
-    }
+    };
+
+    dispatch_1d_any(select_parallel(KN, 2), fun_kn, 0, KN);
 }
 
 template <typename T>
 void conv2_valid_multi_multi_flipped(const opaque_memory<T, 3>& input, const opaque_memory<T, 3>& kernel, const opaque_memory<T, 4>& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
-    for (std::size_t k = 0; k < kernel.template dim<0>(); ++k) {
-        for (std::size_t i = 0; i < input.template dim<0>(); ++i) {
+    const auto K  = kernel.template dim<0>();
+    const auto N  = input.template dim<0>();
+    const auto KN = K * N;
+
+    auto fun_kn = [&](const size_t first, const size_t last) {
+        for (std::size_t kn = first; kn < last; ++kn) {
+            auto k = kn / N;
+            auto n = kn % N;
+
             const auto ii = input.template dim<1>() * input.template dim<2>();
             const auto kk = kernel.template dim<1>() * kernel.template dim<2>();
 
@@ -1409,13 +1425,14 @@ void conv2_valid_multi_multi_flipped(const opaque_memory<T, 3>& input, const opa
             const auto c_i = conv.template dim<2>() * conv.template dim<3>();
 
             conv2_valid_flipped_micro_kernel(
-                input.memory_start() + i * ii, input.template dim<1>(), input.template dim<2>(),
+                input.memory_start() + n * ii, input.template dim<1>(), input.template dim<2>(),
                 kernel.memory_start() + k * kk, kernel.template dim<1>(), kernel.template dim<2>(),
-                conv.memory_start() + k * c_k + i * c_i, 0.0, s1, s2, p1, p2);
+                conv.memory_start() + k * c_k + n * c_i, 0.0, s1, s2, p1, p2);
         }
-    }
-}
+    };
 
+    dispatch_1d_any(select_parallel(KN, 2), fun_kn, 0, KN);
+}
 
 template <typename T>
 void conv4_valid(const opaque_memory<T, 4>& input, const opaque_memory<T, 4>& kernel, const opaque_memory<T, 4>& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
