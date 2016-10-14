@@ -14,6 +14,11 @@ else
 BLAS_PKG = mkl
 endif
 
+# Try to detect parallel mkl
+ifeq ("mkl-threads",$(ETL_BLAS_PKG))
+CXX_FLAGS += -DETL_BLAS_THREADS
+endif
+
 # Build with libc++ if configured
 ifneq (,$(CLANG_LIBCXX))
 $(eval $(call use_libcxx))
