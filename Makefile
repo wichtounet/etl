@@ -4,10 +4,15 @@ default: release
 .PHONY: valgrind_test benchmark cppcheck coverage coverage_view format modernize tidy tidy_all doc
 .PHONY: full_bench
 
-BLAS_PKG = mkl
-
 include make-utils/flags.mk
 include make-utils/cpp-utils.mk
+
+# Configure the BLAS package to use
+ifneq (,$(ETL_BLAS_PKG))
+BLAS_PKG = $(ETL_BLAS_PKG)
+else
+BLAS_PKG = mkl
+endif
 
 # Build with libc++ if configured
 ifneq (,$(CLANG_LIBCXX))
