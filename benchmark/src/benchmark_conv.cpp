@@ -347,6 +347,7 @@ CPM_DIRECT_SECTION_TWO_PASS_NS_PF("sconv2_valid_multi_multi [conv][conv2]", conv
     SSE_SECTION_FUNCTOR("sse", [](smat3& a, smat3& b, smat4& r){ r = selected_helper(etl::conv_multi_impl::SSE, etl::conv_2d_valid_multi_multi(a, b)); })
     AVX_SECTION_FUNCTOR("avx", [](smat3& a, smat3& b, smat4& r){ r = selected_helper(etl::conv_multi_impl::AVX, etl::conv_2d_valid_multi_multi(a, b)); })
     ,CPM_SECTION_FUNCTOR("blas", [](smat3& a, smat3& b, smat4& r){ r = selected_helper(etl::conv_multi_impl::BLAS, etl::conv_2d_valid_multi_multi(a, b)); })
+    ,CPM_SECTION_FUNCTOR("fft", [](smat3& a, smat3& b, smat4& r){ r = selected_helper(etl::conv_multi_impl::FFT, etl::conv_2d_valid_multi_multi(a, b)); })
 )
 
 CPM_DIRECT_SECTION_TWO_PASS_NS_PF("sconv2_full_multi [conv][conv2]", conv_2d_multi_policy,
