@@ -1874,11 +1874,7 @@ void conv4_full(const opaque_memory<T, 4>& input, const opaque_memory<T, 4>& ker
                 }
             };
 
-            if (etl::is_parallel) {
-                dispatch_1d_any(select_parallel(N, 2), batch_fun_n, 0, N);
-            } else {
-                batch_fun_n(0, N);
-            }
+            dispatch_1d_any(select_parallel(N, 2), batch_fun_n, 0, N);
         } else {
             auto batch_fun_c = [=](const std::size_t first, const std::size_t last) {
                 if (last - first) {
@@ -1903,11 +1899,7 @@ void conv4_full(const opaque_memory<T, 4>& input, const opaque_memory<T, 4>& ker
                 }
             };
 
-            if (etl::is_parallel) {
-                dispatch_1d_any(select_parallel(C, 2), batch_fun_c, 0, C);
-            } else {
-                batch_fun_c(0, C);
-            }
+            dispatch_1d_any(select_parallel(C, 2), batch_fun_c, 0, C);
         }
     }
 }
@@ -1952,11 +1944,7 @@ void conv4_full_flipped(const opaque_memory<T, 4>& input, const opaque_memory<T,
                 }
             };
 
-            if (etl::is_parallel) {
-                dispatch_1d_any(select_parallel(N, 2), batch_fun_n, 0, N);
-            } else {
-                batch_fun_n(0, N);
-            }
+            dispatch_1d_any(select_parallel(N, 2), batch_fun_n, 0, N);
         } else {
             auto batch_fun_c = [=](const std::size_t first, const std::size_t last) {
                 if (last - first) {
@@ -1981,11 +1969,7 @@ void conv4_full_flipped(const opaque_memory<T, 4>& input, const opaque_memory<T,
                 }
             };
 
-            if (etl::is_parallel) {
-                dispatch_1d_any(select_parallel(C, 2), batch_fun_c, 0, C);
-            } else {
-                batch_fun_c(0, C);
-            }
+            dispatch_1d_any(select_parallel(C, 2), batch_fun_c, 0, C);
         }
     }
 }
@@ -2064,11 +2048,7 @@ void conv2_full_multi(const opaque_memory<T, 2>& input, const opaque_memory<T, 3
         }
     };
 
-    if (etl::is_parallel) {
-        dispatch_1d_any(select_parallel(K, 2), batch_fun_k, 0, K);
-    } else {
-        batch_fun_k(0, K);
-    }
+    dispatch_1d_any(select_parallel(K, 2), batch_fun_k, 0, K);
 }
 
 template <typename T>
@@ -2087,11 +2067,7 @@ void conv2_full_multi_flipped(const opaque_memory<T, 2>& input, const opaque_mem
         }
     };
 
-    if (etl::is_parallel) {
-        dispatch_1d_any(select_parallel(K, 2), batch_fun_k, 0, K);
-    } else {
-        batch_fun_k(0, K);
-    }
+    dispatch_1d_any(select_parallel(K, 2), batch_fun_k, 0, K);
 }
 
 #else
