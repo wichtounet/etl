@@ -529,13 +529,7 @@ struct fft2_many_impl {
         static cpp::default_thread_pool<> pool(threads - 1);
 
         if (impl == fft_impl::STD) {
-            if (parallel_dispatch) {
-                dispatch_1d(pool, parallel_dispatch, [&](std::size_t first, std::size_t last) {
-                    etl::impl::standard::fft2_many(a.slice(first, last), c.slice(first, last));
-                }, 0, transforms);
-            } else {
-                etl::impl::standard::fft2_many(a, c);
-            }
+            etl::impl::standard::fft2_many(a, c);
         } else if (impl == fft_impl::MKL) {
             if (parallel_dispatch) {
                 dispatch_1d(pool, parallel_dispatch, [&](std::size_t first, std::size_t last) {

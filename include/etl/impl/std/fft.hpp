@@ -568,9 +568,13 @@ void fft_n_many(const In* r_in, etl::complex<T>* r_out, const std::size_t batch,
 
     //2. Perform all the FFT itself
 
-    for (std::size_t b = 0; b < batch; ++b) {
-        fft_perform(r_in + b * distance, r_out + b * distance, n, factors, n_factors, twiddle);
-    }
+    auto batch_fun_b = [&](const size_t first, const size_t last) {
+        for (std::size_t b = first; b < last; ++b) {
+            fft_perform(r_in + b * distance, r_out + b * distance, n, factors, n_factors, twiddle);
+        }
+    };
+
+    dispatch_1d_any(select_parallel(batch, 8), batch_fun_b, 0, batch);
 }
 
 template <typename T>
@@ -855,9 +859,13 @@ void fft1_many(const opaque_memory<A, N>& a, const opaque_memory<C, N>& c) {
 
         auto* m = c.memory_start();
 
-        for (std::size_t i = 0; i < batch; ++i) {
-            detail::inplace_radix2_fft1(reinterpret_cast<etl::complex<typename C::value_type>*>(m + i * distance), n);
-        }
+        auto batch_fun_b = [&](const size_t first, const size_t last) {
+            for (std::size_t i = first; i < last; ++i) {
+                detail::inplace_radix2_fft1(reinterpret_cast<etl::complex<typename C::value_type>*>(m + i * distance), n);
+            }
+        };
+
+        dispatch_1d_any(select_parallel(batch, 8), batch_fun_b, 0, batch);
     } else {
         detail::fft_n_many(a.memory_start(), reinterpret_cast<etl::complex<typename C::value_type>*>(c.memory_start()), batch, n);
     }
