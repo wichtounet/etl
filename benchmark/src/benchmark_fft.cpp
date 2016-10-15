@@ -124,4 +124,14 @@ CPM_DIRECT_SECTION_TWO_PASS_NS_PF("zfft_2d_many (512) [fft]", fft_2d_many_policy
     MKL_SECTION_FUNCTOR("mkl", [](zmat3& a, zmat3& b){ b = selected_helper(etl::fft_impl::MKL, etl::fft_2d_many(a)); })
     CUFFT_SECTION_FUNCTOR("cufft", [](zmat3& a, zmat3& b){ b = selected_helper(etl::fft_impl::CUFFT, etl::fft_2d_many(a)); })
 )
+
+CPM_DIRECT_SECTION_TWO_PASS_NS_PF("cifft_2d_many (512) [fft]", fft_2d_many_policy,
+    FLOPS([](std::size_t d1, std::size_t d2){ return 2 * 512 * d1 * d2 * std::log2(d1 * d2); }),
+    CPM_SECTION_INIT([](std::size_t d1, std::size_t d2){ return std::make_tuple(cmat3(512UL, d1,d2), cmat3(512UL, d1,d2)); }),
+    CPM_SECTION_FUNCTOR("default", [](cmat3& a, cmat3& b){ b = etl::ifft_2d_many(a); }),
+    CPM_SECTION_FUNCTOR("std", [](cmat3& a, cmat3& b){ b = selected_helper(etl::fft_impl::STD, etl::ifft_2d_many(a)); })
+    MKL_SECTION_FUNCTOR("mkl", [](cmat3& a, cmat3& b){ b = selected_helper(etl::fft_impl::MKL, etl::ifft_2d_many(a)); })
+    CUFFT_SECTION_FUNCTOR("cufft", [](cmat3& a, cmat3& b){ b = selected_helper(etl::fft_impl::CUFFT, etl::ifft_2d_many(a)); })
+)
+
 #endif
