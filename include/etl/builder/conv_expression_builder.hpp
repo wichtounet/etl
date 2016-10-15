@@ -158,7 +158,7 @@ auto conv_2d_valid(A&& a, B&& b, size_t s1, size_t s2, size_t p1 = 0, size_t p2 
  * \return an expression representing the valid 2D convolution of a and b
  */
 template <typename A, typename B, typename C>
-auto conv_2d_valid(A&& a, B&& b, C&& c, size_t s1 = 1, size_t s2 = 1, size_t p1 = 0, size_t p2 = 0){
+auto conv_2d_valid(A&& a, B&& b, C&& c, size_t s1, size_t s2, size_t p1 = 0, size_t p2 = 0){
     static_assert(is_etl_expr<A>::value && is_etl_expr<B>::value && is_etl_expr<C>::value, "Convolution only supported for ETL expressions");
 
     c = conv_2d_valid(a, b, s1, s2, p1, p2);
@@ -223,7 +223,7 @@ auto conv_2d_valid_flipped(A&& a, B&& b, size_t s1, size_t s2, size_t p1 = 0, si
  * \return an expression representing the valid 2D convolution of a and b
  */
 template <typename A, typename B, typename C>
-auto conv_2d_valid_flipped(A&& a, B&& b, C&& c, size_t s1 = 1, size_t s2 = 1, size_t p1 = 0, size_t p2 = 0){
+auto conv_2d_valid_flipped(A&& a, B&& b, C&& c, size_t s1, size_t s2, size_t p1 = 0, size_t p2 = 0){
     static_assert(is_etl_expr<A>::value && is_etl_expr<B>::value && is_etl_expr<C>::value, "Convolution only supported for ETL expressions");
 
     c = conv_2d_valid_flipped(a, b, s1, s2, p1, p2);
@@ -353,7 +353,7 @@ auto conv_2d_valid_multi_flipped(A&& a, B&& b, size_t s1, size_t s2, size_t p1 =
  * \return an expression representing the valid 2D convolution of a and b
  */
 template <typename A, typename B, typename C>
-auto conv_2d_valid_multi_flipped(A&& a, B&& b, C&& c, size_t s1 = 1, size_t s2 = 1, size_t p1 = 0, size_t p2 = 0){
+auto conv_2d_valid_multi_flipped(A&& a, B&& b, C&& c, size_t s1, size_t s2, size_t p1 = 0, size_t p2 = 0){
     static_assert(is_etl_expr<A>::value && is_etl_expr<B>::value && is_etl_expr<C>::value, "Convolution only supported for ETL expressions");
 
     c = conv_2d_valid_multi_flipped(a, b, s1, s2, p1, p2);
@@ -481,7 +481,7 @@ auto conv_2d_valid_multi_multi_flipped(A&& a, B&& b, size_t s1, size_t s2, size_
  * \return an expression representing the valid 2D convolution of a and b
  */
 template <typename A, typename B, typename C>
-auto conv_2d_valid_multi_multi_flipped(A&& a, B&& b, C&& c, size_t s1 = 1, size_t s2 = 1, size_t p1 = 0, size_t p2 = 0){
+auto conv_2d_valid_multi_multi_flipped(A&& a, B&& b, C&& c, size_t s1, size_t s2, size_t p1 = 0, size_t p2 = 0){
     static_assert(is_etl_expr<A>::value && is_etl_expr<B>::value && is_etl_expr<C>::value, "Convolution only supported for ETL expressions");
 
     c = conv_2d_valid_multi_multi_flipped(a, b, s1, s2, p1, p2);
