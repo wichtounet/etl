@@ -754,9 +754,7 @@ void conv2_full_kernel(const T* a, std::size_t m1, std::size_t m2, const T* b, s
     // 3. Inverse FFT of a
 
     // a = conj(a)
-    for (std::size_t i = 0; i < n; ++i) {
-        a_padded[i] = etl::conj(a_padded[i]);
-    }
+    a_padded = conj(a_padded);
 
     // a = fft2(a)
     detail::fft_n_many(a_padded.memory_start(), a_padded.memory_start(), s1, s2);
@@ -831,8 +829,8 @@ void ifft1_real(A&& a, C&& c) {
 
     detail::ifft1_kernel(a.memory_start(), n, cc);
 
-    for (std::size_t i = 0; i < n; ++i) {
-        c[i] = cc[i].real();
+    for(size_t i = 0; i < n; ++i){
+        c[i] = real(cc[i]);
     }
 }
 
@@ -895,24 +893,18 @@ void fft2(A&& a, C&& c) {
  */
 template <typename A, typename C>
 void ifft2(A&& a, C&& c) {
+    using T = value_t<value_t<C>>;
+
     std::size_t n = etl::size(a);
 
     //Conjugate the complex numbers
-    for (std::size_t i = 0; i < n; ++i) {
-        c[i] = std::conj(a[i]);
-    }
+    c = conj(a);
 
     fft2(c, c);
 
     //Conjugate the complex numbers again
-    for (std::size_t i = 0; i < n; ++i) {
-        c[i] = std::conj(c[i]);
-    }
-
-    //Scale the numbers
-    for (std::size_t i = 0; i < n; ++i) {
-        c[i] /= double(n);
-    }
+    // and scale the numbers
+    c = conj(c) / T(n);
 }
 
 /*!
@@ -934,27 +926,20 @@ void fft2_many(A&& a, C&& c);
  */
 template <typename A, typename C>
 void ifft2_many(A&& a, C&& c) {
+    using T = value_t<value_t<C>>;
+
     constexpr std::size_t D = etl::dimensions(a);
 
-    std::size_t N = etl::size(a);
     std::size_t n = etl::dim<D - 2>(a) * etl::dim<D -1>(a);
 
     //Conjugate the complex numbers
-    for (std::size_t i = 0; i < N; ++i) {
-        c[i] = std::conj(a[i]);
-    }
+    c = conj(a);
 
     fft2_many(c, c);
 
     //Conjugate the complex numbers again
-    for (std::size_t i = 0; i < N; ++i) {
-        c[i] = std::conj(c[i]);
-    }
-
-    //Scale the numbers
-    for (std::size_t i = 0; i < N; ++i) {
-        c[i] /= double(n);
-    }
+    // and scale the numbers
+    c = conj(c) / T(n);
 }
 
 /*!
@@ -968,9 +953,7 @@ void ifft2_real(A&& a, C&& c) {
 
     ifft2(a, w);
 
-    for (std::size_t i = 0; i < etl::size(a); ++i) {
-        c[i] = w[i].real();
-    }
+    c = real(w);
 }
 
 /*!
@@ -1098,9 +1081,7 @@ void conv2_full_multi_fft(const opaque_memory<T, 2>& input, const opaque_memory<
                     // 3. Inverse FFT of a
 
                     // a = conj(a)
-                    for (std::size_t i = 0; i < n; ++i) {
-                        b_padded[i] = etl::conj(b_padded[i]);
-                    }
+                    b_padded = conj(b_padded);
 
                     // a = fft2(a)
                     detail::fft_n_many(b_padded.memory_start(), b_padded.memory_start(), s1, s2);
@@ -1113,7 +1094,7 @@ void conv2_full_multi_fft(const opaque_memory<T, 2>& input, const opaque_memory<
                     // c = real(conj(a) / n)
                     // Note: Since the conjugate does not change the real part, it is not necessary
 
-                    for (std::size_t i = 0; i < n; ++i) {
+                    for (std::size_t i = 0; i < etl::size(b_padded); ++i){
                         c[i] = b_padded[i].real / T(n);
                     }
                 }
