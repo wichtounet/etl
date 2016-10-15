@@ -18,7 +18,7 @@ namespace etl {
 constexpr const std::size_t gemm_std_max    = 75 * 75;   ///< The maximum number of elements to be handled by std algorithm
 constexpr const std::size_t gemm_cublas_min = 180 * 180; ///< The minimum number or elements before considering cublas
 
-constexpr const std::size_t parallel_threshold = 1024; ///< The minimum number of elements before considering parallel implementation
+constexpr const std::size_t parallel_threshold = 128 * 1024; ///< The minimum number of elements before considering parallel implementation
 
 constexpr const std::size_t sum_parallel_threshold = 1024 * 32; ///< The minimum number of elements before considering parallel acc implementation
 
