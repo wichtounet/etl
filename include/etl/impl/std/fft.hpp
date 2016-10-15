@@ -934,23 +934,26 @@ void fft2_many(A&& a, C&& c);
  */
 template <typename A, typename C>
 void ifft2_many(A&& a, C&& c) {
-    std::size_t n = etl::size(a);
+    constexpr std::size_t D = etl::dimensions(a);
+
+    std::size_t N = etl::size(a);
+    std::size_t n = etl::dim<D - 2>(a) * etl::dim<D -1>(a);
 
     //Conjugate the complex numbers
-    for (std::size_t i = 0; i < n; ++i) {
+    for (std::size_t i = 0; i < N; ++i) {
         c[i] = std::conj(a[i]);
     }
 
     fft2_many(c, c);
 
     //Conjugate the complex numbers again
-    for (std::size_t i = 0; i < n; ++i) {
+    for (std::size_t i = 0; i < N; ++i) {
         c[i] = std::conj(c[i]);
     }
 
     //Scale the numbers
-    for (std::size_t i = 0; i < n; ++i) {
-        c[i] /= double(n / etl::dim<0>(a));
+    for (std::size_t i = 0; i < N; ++i) {
+        c[i] /= double(n);
     }
 }
 
