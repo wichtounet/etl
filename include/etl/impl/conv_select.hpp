@@ -157,7 +157,7 @@ inline etl::conv_impl select_conv_impl() {
  * \return the implementation to be used
  */
 template <typename I, typename K, typename C>
-inline etl::conv4_impl select_default_conv4_impl() {
+inline etl::conv4_impl select_default_conv4_valid_impl() {
     //Note: since the constexpr values will be known at compile time, the
     //conditions will be a lot simplified
 
@@ -178,11 +178,13 @@ inline etl::conv4_impl select_default_conv4_impl() {
         return etl::conv4_impl::CUDNN;
     } else if(avx){
         return etl::conv4_impl::AVX;
+    } else if(is_cublas_enabled || is_mkl_enabled){
+        return etl::conv4_impl::BLAS;
     } else if(sse){
         return etl::conv4_impl::SSE;
+    } else {
+        return etl::conv4_impl::BLAS;
     }
-
-    return etl::conv4_impl::STD;
 }
 
 /*!
@@ -193,7 +195,7 @@ inline etl::conv4_impl select_default_conv4_impl() {
  * \return the implementation to be used
  */
 template <typename I, typename K, typename C>
-inline etl::conv4_impl select_conv4_impl() {
+inline etl::conv4_impl select_conv4_valid_impl() {
     if (local_context().conv4_selector.forced) {
         auto forced = local_context().conv4_selector.impl;
 
@@ -202,7 +204,7 @@ inline etl::conv4_impl select_conv4_impl() {
             case conv4_impl::SSE:
                 if (!sse3_enabled) {                                                                                               // COVERAGE_EXCLUDE_LINE
                     std::cerr << "Forced selection to SSE conv implementation, but not possible for this expression" << std::endl; // COVERAGE_EXCLUDE_LINE
-                    return select_default_conv4_impl<I, K, C>();                                                                   // COVERAGE_EXCLUDE_LINE
+                    return select_default_conv4_valid_impl<I, K, C>();                                                                   // COVERAGE_EXCLUDE_LINE
                 }                                                                                                                 // COVERAGE_EXCLUDE_LINE
 
                 return forced;
@@ -211,7 +213,7 @@ inline etl::conv4_impl select_conv4_impl() {
             case conv4_impl::AVX:
                 if (!avx_enabled) {                                                                                               // COVERAGE_EXCLUDE_LINE
                     std::cerr << "Forced selection to AVX conv implementation, but not possible for this expression" << std::endl; // COVERAGE_EXCLUDE_LINE
-                    return select_default_conv4_impl<I, K, C>();                                                                   // COVERAGE_EXCLUDE_LINE
+                    return select_default_conv4_valid_impl<I, K, C>();                                                                   // COVERAGE_EXCLUDE_LINE
                 }                                                                                                                 // COVERAGE_EXCLUDE_LINE
 
                 return forced;
@@ -220,7 +222,7 @@ inline etl::conv4_impl select_conv4_impl() {
             case conv4_impl::CUDNN:
                 if (!is_cudnn_enabled) {                                                                                               // COVERAGE_EXCLUDE_LINE
                     std::cerr << "Forced selection to CUDNN conv implementation, but not possible for this expression" << std::endl; // COVERAGE_EXCLUDE_LINE
-                    return select_default_conv4_impl<I, K, C>();                                                                   // COVERAGE_EXCLUDE_LINE
+                    return select_default_conv4_valid_impl<I, K, C>();                                                                   // COVERAGE_EXCLUDE_LINE
                 }                                                                                                                 // COVERAGE_EXCLUDE_LINE
 
                 return forced;
@@ -230,7 +232,116 @@ inline etl::conv4_impl select_conv4_impl() {
         }
     }
 
-    return select_default_conv4_impl<I, K, C>();
+    return select_default_conv4_valid_impl<I, K, C>();
+}
+
+/*!
+ * \brief Select the implementation of the 4D conv of I and K in C
+ *
+ * This does not take the local context into account.
+ *
+ * \tparam I The input type
+ * \tparam K The kernel type
+ * \tparam C The conv type
+ * \return the implementation to be used
+ */
+template <typename I, typename K, typename C>
+inline etl::conv4_impl select_default_conv4_full_impl() {
+    //Note: since the constexpr values will be known at compile time, the
+    //conditions will be a lot simplified
+
+    static constexpr const order input_order  = decay_traits<I>::storage_order;
+    static constexpr const order kernel_order = decay_traits<K>::storage_order;
+    static constexpr const order output_order = decay_traits<C>::storage_order;
+
+    //Only the standard implementation is able to handle column major
+    if (input_order == order::ColumnMajor || kernel_order == order::ColumnMajor || output_order == order::ColumnMajor) {
+        return etl::conv4_impl::STD;
+    }
+
+    static constexpr const bool cudnn = is_cudnn_enabled;
+    static constexpr const bool avx = vectorize_impl && vector_mode == vector_mode_t::AVX;
+    static constexpr const bool sse = vectorize_impl && vector_mode == vector_mode_t::SSE3;
+
+    if(cudnn){
+        return etl::conv4_impl::CUDNN;
+    } else if(is_cufft_enabled){
+        return etl::conv4_impl::FFT_CUFFT;
+    } else if(is_mkl_enabled){
+        return etl::conv4_impl::FFT_MKL;
+    } else if(avx){
+        return etl::conv4_impl::AVX;
+    } else if(sse){
+        return etl::conv4_impl::SSE;
+    } else {
+        return etl::conv4_impl::FFT_STD;
+    }
+}
+
+/*!
+ * \brief Select the implementation of the conv of I and K in C
+ * \tparam I The input type
+ * \tparam K The kernel type
+ * \tparam C The conv type
+ * \return the implementation to be used
+ */
+template <typename I, typename K, typename C>
+inline etl::conv4_impl select_conv4_full_impl() {
+    if (local_context().conv4_selector.forced) {
+        auto forced = local_context().conv4_selector.impl;
+
+        switch (forced) {
+            //SSE cannot always be used
+            case conv4_impl::SSE:
+                if (!sse3_enabled) {                                                                                               // COVERAGE_EXCLUDE_LINE
+                    std::cerr << "Forced selection to SSE conv implementation, but not possible for this expression" << std::endl; // COVERAGE_EXCLUDE_LINE
+                    return select_default_conv4_full_impl<I, K, C>();                                                                   // COVERAGE_EXCLUDE_LINE
+                }                                                                                                                 // COVERAGE_EXCLUDE_LINE
+
+                return forced;
+
+            //AVX cannot always be used
+            case conv4_impl::AVX:
+                if (!avx_enabled) {                                                                                               // COVERAGE_EXCLUDE_LINE
+                    std::cerr << "Forced selection to AVX conv implementation, but not possible for this expression" << std::endl; // COVERAGE_EXCLUDE_LINE
+                    return select_default_conv4_full_impl<I, K, C>();                                                                   // COVERAGE_EXCLUDE_LINE
+                }                                                                                                                 // COVERAGE_EXCLUDE_LINE
+
+                return forced;
+
+            //CUDNN cannot always be used
+            case conv4_impl::CUDNN:
+                if (!is_cudnn_enabled) {                                                                                               // COVERAGE_EXCLUDE_LINE
+                    std::cerr << "Forced selection to CUDNN conv implementation, but not possible for this expression" << std::endl; // COVERAGE_EXCLUDE_LINE
+                    return select_default_conv4_full_impl<I, K, C>();                                                                   // COVERAGE_EXCLUDE_LINE
+                }                                                                                                                 // COVERAGE_EXCLUDE_LINE
+
+                return forced;
+
+            //CUFFT cannot always be used
+            case conv4_impl::FFT_CUFFT:
+                if (!is_mkl_enabled) {                                                                                               // COVERAGE_EXCLUDE_LINE
+                    std::cerr << "Forced selection to FFT_CUFFT conv implementation, but not possible for this expression" << std::endl; // COVERAGE_EXCLUDE_LINE
+                    return select_default_conv4_full_impl<I, K, C>();                                                                   // COVERAGE_EXCLUDE_LINE
+                }                                                                                                                 // COVERAGE_EXCLUDE_LINE
+
+                return forced;
+
+            //MKL cannot always be used
+            case conv4_impl::FFT_MKL:
+                if (!is_mkl_enabled) {                                                                                               // COVERAGE_EXCLUDE_LINE
+                    std::cerr << "Forced selection to FFT_MKL conv implementation, but not possible for this expression" << std::endl; // COVERAGE_EXCLUDE_LINE
+                    return select_default_conv4_full_impl<I, K, C>();                                                                   // COVERAGE_EXCLUDE_LINE
+                }                                                                                                                 // COVERAGE_EXCLUDE_LINE
+
+                return forced;
+
+            default:
+                return forced;
+        }
+    }
+
+    return select_default_conv4_full_impl<I, K, C>();
 }
 
 /*!

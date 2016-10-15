@@ -27,7 +27,7 @@ struct conv4_valid_impl {
      */
     template <typename I, typename K, typename C>
     static void apply(const I& input, const K& kernel, C&& conv) {
-        auto impl = select_conv4_impl<I, K, C>();
+        auto impl = select_conv4_valid_impl<I, K, C>();
 
         if (impl == etl::conv4_impl::CUDNN) {
             impl::cudnn::conv4_valid(input.direct(), kernel.direct(), conv.direct(), S1, S2, P1, P2);
@@ -138,7 +138,7 @@ struct conv4_valid_flipped_impl : conv4_valid_impl<S1, S2, P1, P2> {
      */
     template <typename I, typename K, typename C>
     static void apply(const I& input, const K& kernel, C&& conv) {
-        auto impl = select_conv4_impl<I, K, C>();
+        auto impl = select_conv4_valid_impl<I, K, C>();
 
         if (impl == etl::conv4_impl::CUDNN) {
             impl::cudnn::conv4_valid_flipped(input.direct(), kernel.direct(), conv.direct(), S1, S2, P1, P2);
@@ -176,7 +176,7 @@ struct conv4_valid_filter_impl {
      */
     template <typename I, typename K, typename C>
     static void apply(const I& input, const K& kernel, C&& conv) {
-        auto impl = select_conv4_impl<I, K, C>();
+        auto impl = select_conv4_valid_impl<I, K, C>();
 
         if (impl == etl::conv4_impl::CUDNN) {
             impl::cudnn::conv4_valid_filter(input.direct(), kernel.direct(), conv.direct(), S1, S2, P1, P2);
@@ -287,7 +287,7 @@ struct conv4_valid_filter_flipped_impl : conv4_valid_filter_impl<S1, S2, P1, P2>
      */
     template <typename I, typename K, typename C>
     static void apply(const I& input, const K& kernel, C&& conv) {
-        auto impl = select_conv4_impl<I, K, C>();
+        auto impl = select_conv4_valid_impl<I, K, C>();
 
         if (impl == etl::conv4_impl::CUDNN) {
             if(S1 > 1 || S2 > 1 || P1 || P2){
@@ -337,7 +337,7 @@ struct conv4_full_impl {
      */
     template <typename I, typename K, typename C>
     static void apply(const I& input, const K& kernel, C&& conv) {
-        auto impl = select_conv4_impl<I, K, C>();
+        auto impl = select_conv4_full_impl<I, K, C>();
 
         if (impl == etl::conv4_impl::CUDNN) {
             impl::cudnn::conv4_full(input.direct(), kernel.direct(), conv.direct());
@@ -448,7 +448,7 @@ struct conv4_full_flipped_impl {
      */
     template <typename I, typename K, typename C>
     static void apply(const I& input, const K& kernel, C&& conv) {
-        auto impl = select_conv4_impl<I, K, C>();
+        auto impl = select_conv4_full_impl<I, K, C>();
 
         if (impl == etl::conv4_impl::CUDNN) {
             impl::cudnn::conv4_full_flipped(input.direct(), kernel.direct(), conv.direct());
