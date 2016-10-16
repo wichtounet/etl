@@ -855,26 +855,14 @@ auto reshape(E&& value) -> detail::identity_helper<E, fast_matrix_view<detail::b
  * \param columns The columns of the reshaped expression
  * \return a view expression representing the same expression with a different shape
  */
-template <typename E>
-auto reshape(E&& value, std::size_t rows, std::size_t columns) -> detail::identity_helper<E, dyn_matrix_view<detail::build_identity_type<E>>> {
+template <typename E, typename... S>
+auto reshape(E&& value, S... sizes) -> detail::identity_helper<E, dyn_matrix_view<detail::build_identity_type<E>, sizeof...(sizes)>> {
+    using ret_type = detail::identity_helper<E, dyn_matrix_view<detail::build_identity_type<E>, sizeof...(sizes)>>;
+
     static_assert(is_etl_expr<E>::value, "etl::reshape can only be used on ETL expressions");
-    cpp_assert(decay_traits<E>::is_generator || size(value) == rows * columns, "Invalid size for reshape");
+    cpp_assert(decay_traits<E>::is_generator || size(value) == size(ret_type{{value, size_t(sizes)...}}), "Invalid size for reshape");
 
-    return detail::identity_helper<E, dyn_matrix_view<detail::build_identity_type<E>>>{{value, rows, columns}};
-}
-
-/*!
- * \brief Returns view representing the reshape of another expression
- * \param value The ETL expression
- * \param rows The rows of the reshaped expression
- * \return a view expression representing the same expression with a different shape
- */
-template <typename E>
-auto reshape(E&& value, std::size_t rows) -> detail::identity_helper<E, dyn_vector_view<detail::build_identity_type<E>>> {
-    static_assert(is_etl_expr<E>::value, "etl::reshape can only be used on ETL expressions");
-    cpp_assert(size(value) == rows, "Invalid size for reshape");
-
-    return detail::identity_helper<E, dyn_vector_view<detail::build_identity_type<E>>>{{value, rows}};
+    return ret_type{{value, size_t(sizes)...}};
 }
 
 // Virtual Views that returns rvalues

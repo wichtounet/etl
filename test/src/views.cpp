@@ -258,7 +258,7 @@ TEMPLATE_TEST_CASE_2("reshape/dyn_traits", "traits<reshape<2,3>>", Z, float, dou
     etl::dyn_vector<Z> a({1, 2, 3, 4, 5, 6});
 
     using expr_type = decltype(etl::reshape(a, 2, 3));
-    expr_type expr((etl::dyn_matrix_view<etl::dyn_vector<Z>&>(a, 2, 3)));
+    expr_type expr((etl::dyn_matrix_view<etl::dyn_vector<Z>&, 2>(a, 2UL, 3UL)));
 
     REQUIRE_EQUALS(etl::etl_traits<expr_type>::size(expr), 6UL);
     REQUIRE_EQUALS(etl::size(expr), 6UL);
