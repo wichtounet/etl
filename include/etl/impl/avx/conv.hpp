@@ -1578,17 +1578,22 @@ void conv4_valid_filter(const opaque_memory<T, 4>& input, const opaque_memory<T,
         auto* conv_mem         = conv.memory_start();
 
         auto fun_kc = [&](const size_t first, const size_t last) {
+            //i = 0
             for (std::size_t kc = first; kc < last; ++kc) {
                 auto k = kc / C;
                 auto c = kc % C;
 
-                //i = 0
                 conv2_valid_micro_kernel(
                     input_mem + 0 * input_i_inc + c * input_c_inc, n1, n2,
                     kernel_mem + 0 * kernel_i_inc + k * kernel_k_inc, m1, m2,
                     conv_mem + k * conv_k_inc + c * conv_c_inc, 0.0, s1, s2, p1, p2);
+            }
 
-                for (std::size_t i = 1; i < N; ++i) {
+            for (std::size_t i = 1; i < N; ++i) {
+                for (std::size_t kc = first; kc < last; ++kc) {
+                    auto k = kc / C;
+                    auto c = kc % C;
+
                     conv2_valid_micro_kernel(
                         input_mem + i * input_i_inc + c * input_c_inc, n1, n2,
                         kernel_mem + i * kernel_i_inc + k * kernel_k_inc, m1, m2,
