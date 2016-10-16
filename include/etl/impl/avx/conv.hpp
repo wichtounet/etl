@@ -1531,20 +1531,18 @@ void conv4_valid_flipped(const opaque_memory<T, 4>& input, const opaque_memory<T
                 auto i = nk / K;
                 auto k = nk % K;
 
-                for (size_t c = 0; c < C; ++c) {
-                    //c = 0
-                    conv2_valid_flipped_micro_kernel(
-                        input_mem + i * input_i_inc, n1, n2,
-                        kernel_mem + k * kernel_k_inc, m1, m2,
-                        conv_mem + i * conv_i_inc + k * conv_k_inc, 0.0, s1, s2, p1, p2);
+                //c = 0
+                conv2_valid_flipped_micro_kernel(
+                    input_mem + i * input_i_inc, n1, n2,
+                    kernel_mem + k * kernel_k_inc, m1, m2,
+                    conv_mem + i * conv_i_inc + k * conv_k_inc, 0.0, s1, s2, p1, p2);
 
-                    // c = [1, C]
-                    for (std::size_t c = 1; c < C; ++c) {
-                        conv2_valid_flipped_micro_kernel(
-                            input_mem + i * input_i_inc + c * input_c_inc, n1, n2,
-                            kernel_mem + k * kernel_k_inc + c * kernel_c_inc, m1, m2,
-                            conv_mem + i * conv_i_inc + k * conv_k_inc, 1.0, s1, s2, p1, p2);
-                    }
+                // c = [1, C]
+                for (std::size_t c = 1; c < C; ++c) {
+                    conv2_valid_flipped_micro_kernel(
+                        input_mem + i * input_i_inc + c * input_c_inc, n1, n2,
+                        kernel_mem + k * kernel_k_inc + c * kernel_c_inc, m1, m2,
+                        conv_mem + i * conv_i_inc + k * conv_k_inc, 1.0, s1, s2, p1, p2);
                 }
             }
         };
