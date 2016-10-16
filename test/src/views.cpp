@@ -254,6 +254,47 @@ TEMPLATE_TEST_CASE_2("reshape/dyn_vector_3", "reshape(6)", Z, float, double) {
     REQUIRE_EQUALS(c[0], a[0]);
 }
 
+TEMPLATE_TEST_CASE_2("reshape/dyn/1", "", Z, float, double) {
+    etl::dyn_matrix<Z> a(4, 4, etl::values<Z>(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16));
+    etl::dyn_matrix<Z, 4> b(etl::reshape(a, 2, 2, 2, 2));
+
+    REQUIRE_EQUALS(b(0, 0, 0, 0), 1);
+    REQUIRE_EQUALS(b(0, 0, 0, 1), 2);
+    REQUIRE_EQUALS(b(0, 0, 1, 0), 3);
+    REQUIRE_EQUALS(b(0, 0, 1, 1), 4);
+    REQUIRE_EQUALS(b(0, 1, 0, 0), 5);
+    REQUIRE_EQUALS(b(0, 1, 0, 1), 6);
+    REQUIRE_EQUALS(b(0, 1, 1, 0), 7);
+    REQUIRE_EQUALS(b(0, 1, 1, 1), 8);
+
+    REQUIRE_EQUALS(b(1, 0, 0, 0), 9);
+    REQUIRE_EQUALS(b(1, 0, 0, 1), 10);
+    REQUIRE_EQUALS(b(1, 0, 1, 0), 11);
+    REQUIRE_EQUALS(b(1, 0, 1, 1), 12);
+    REQUIRE_EQUALS(b(1, 1, 0, 0), 13);
+    REQUIRE_EQUALS(b(1, 1, 0, 1), 14);
+    REQUIRE_EQUALS(b(1, 1, 1, 0), 15);
+    REQUIRE_EQUALS(b(1, 1, 1, 1), 16);
+
+    REQUIRE_EQUALS(etl::reshape(a, 2, 2, 2, 2)(0, 0, 0, 0), 1);
+    REQUIRE_EQUALS(etl::reshape(a, 2, 2, 2, 2)(0, 0, 0, 1), 2);
+    REQUIRE_EQUALS(etl::reshape(a, 2, 2, 2, 2)(0, 0, 1, 0), 3);
+    REQUIRE_EQUALS(etl::reshape(a, 2, 2, 2, 2)(0, 0, 1, 1), 4);
+    REQUIRE_EQUALS(etl::reshape(a, 2, 2, 2, 2)(0, 1, 0, 0), 5);
+    REQUIRE_EQUALS(etl::reshape(a, 2, 2, 2, 2)(0, 1, 0, 1), 6);
+    REQUIRE_EQUALS(etl::reshape(a, 2, 2, 2, 2)(0, 1, 1, 0), 7);
+    REQUIRE_EQUALS(etl::reshape(a, 2, 2, 2, 2)(0, 1, 1, 1), 8);
+
+    REQUIRE_EQUALS(etl::reshape(a, 2, 2, 2, 2)(1, 0, 0, 0), 9);
+    REQUIRE_EQUALS(etl::reshape(a, 2, 2, 2, 2)(1, 0, 0, 1), 10);
+    REQUIRE_EQUALS(etl::reshape(a, 2, 2, 2, 2)(1, 0, 1, 0), 11);
+    REQUIRE_EQUALS(etl::reshape(a, 2, 2, 2, 2)(1, 0, 1, 1), 12);
+    REQUIRE_EQUALS(etl::reshape(a, 2, 2, 2, 2)(1, 1, 0, 0), 13);
+    REQUIRE_EQUALS(etl::reshape(a, 2, 2, 2, 2)(1, 1, 0, 1), 14);
+    REQUIRE_EQUALS(etl::reshape(a, 2, 2, 2, 2)(1, 1, 1, 0), 15);
+    REQUIRE_EQUALS(etl::reshape(a, 2, 2, 2, 2)(1, 1, 1, 1), 16);
+}
+
 TEMPLATE_TEST_CASE_2("reshape/dyn_traits", "traits<reshape<2,3>>", Z, float, double) {
     etl::dyn_vector<Z> a({1, 2, 3, 4, 5, 6});
 
