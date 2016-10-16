@@ -104,11 +104,11 @@ using conv_2d_multi_multi_policy = NARY_POLICY(
     );
 
 using conv_4d_valid_policy = NARY_POLICY(
-    /* N */ VALUES_POLICY(2, 4, 6, 8, 10, 12, 14, 16, 18),
-    /* K */ VALUES_POLICY(6, 8, 10, 12, 14, 16, 18, 20, 22),
-    /* C */ VALUES_POLICY(3, 5, 7, 9, 11, 13, 15, 17, 19),
-    /* I */ VALUES_POLICY(28, 28, 28, 28, 28, 28, 28, 28, 28),
-    /* W */ VALUES_POLICY(16, 16, 16, 16, 16, 16, 16, 16, 16)
+    /* N */ VALUES_POLICY(2, 4, 6, 8, 10, 12, 14, 16, 18, 64),
+    /* K */ VALUES_POLICY(6, 8, 10, 12, 14, 16, 18, 20, 22, 40),
+    /* C */ VALUES_POLICY(3, 5, 7, 9, 11, 13, 15, 17, 19, 2),
+    /* I */ VALUES_POLICY(28, 28, 28, 28, 28, 28, 28, 28, 28, 28),
+    /* W */ VALUES_POLICY(16, 16, 16, 16, 16, 16, 16, 16, 16, 12)
     );
 
 using conv_4d_full_policy = NARY_POLICY(
