@@ -1039,8 +1039,8 @@ struct dyn_matrix_view {
 
     using sub_type          = T;                                               ///< The sub type
     using value_type        = value_t<sub_type>;                               ///< The value contained in the expression
-    using memory_type       = value_type*;                                     ///< The memory acess type
-    using const_memory_type = const value_type*;                               ///< The const memory access type
+    using memory_type       = memory_t<sub_type>;                              ///< The memory acess type
+    using const_memory_type = const_memory_t<sub_type>;                        ///< The const memory access type
     using return_type       = return_helper<sub_type, decltype(sub[0])>;       ///< The type returned by the view
     using const_return_type = const_return_helper<sub_type, decltype(sub[0])>; ///< The const type return by the view
 
