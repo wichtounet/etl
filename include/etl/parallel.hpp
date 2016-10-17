@@ -85,7 +85,7 @@ inline void dispatch_1d(cpp::default_thread_pool<>& pool, bool p, Functor&& func
 template <typename Functor>
 inline void dispatch_1d(bool p, Functor&& functor, std::size_t first, std::size_t last) {
     if (p) {
-        cpp::default_thread_pool<> pool(threads - 1);
+        thread_local cpp::default_thread_pool<> pool(threads - 1);
         dispatch_1d(pool, p, std::forward<Functor>(functor), first, last);
     } else {
         functor(first, last);
@@ -123,7 +123,7 @@ template <typename T, typename Functor, typename AccFunctor>
 inline void dispatch_1d_acc(bool p, Functor&& functor, AccFunctor&& acc_functor, std::size_t first, std::size_t last) {
     if (p) {
         std::vector<T> futures(threads - 1);
-        cpp::default_thread_pool<> pool(threads - 1);
+        thread_local cpp::default_thread_pool<> pool(threads - 1);
 
         auto n     = last - first;
         auto batch = n / threads;
