@@ -189,33 +189,6 @@ namespace standard_evaluator {
         }
     }
 
-    //Parallel vectorized assign
-
-    /*!
-     * \brief Assign the result of the expression expression to the result, in parallel.and vectorized
-     * \param expr The right hand side expression
-     * \param result The left hand side
-     */
-    template <typename E, typename R>
-    void par_vec_assign_evaluate_impl(E&& expr, R&& result) {
-        static cpp::default_thread_pool<> pool(threads - 1);
-
-        const std::size_t size = etl::size(result);
-
-        auto batch = size / threads;
-
-        //Schedule threads - 1 tasks
-        for(std::size_t t = 0; t < threads - 1; ++t){
-            pool.do_task(detail::VectorizedAssign<detail::select_vector_mode<E, R>(), R, E>(result, expr, t * batch, (t+1) * batch));
-        }
-
-        //Perform the last task on the current threads
-        detail::VectorizedAssign<detail::select_vector_mode<E, R>(), R, E>(result, expr, (threads - 1) * batch, size)();
-
-        //Wait for the other threads
-        pool.wait();
-    }
-
     /*!
      * \copydoc assign_evaluate_impl
      */
