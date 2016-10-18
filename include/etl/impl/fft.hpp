@@ -484,7 +484,7 @@ struct fft1_many_impl {
 
         fft_impl impl = select_fft1_many_impl(transforms, etl::dim<1>(c));
 
-        static cpp::default_thread_pool<> pool(threads - 1);
+        thread_local cpp::default_thread_pool<> pool(threads - 1);
 
         if (impl == fft_impl::STD) {
             if (parallel_dispatch) {
@@ -526,7 +526,7 @@ struct fft2_many_impl {
 
         fft_impl impl = select_fft2_many_impl(etl::dim<0>(c), etl::dim<1>(c), etl::dim<2>(c));
 
-        static cpp::default_thread_pool<> pool(threads - 1);
+        thread_local cpp::default_thread_pool<> pool(threads - 1);
 
         if (impl == fft_impl::STD) {
             etl::impl::standard::fft2_many(a, c);

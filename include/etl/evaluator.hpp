@@ -140,7 +140,7 @@ namespace standard_evaluator {
         using RS = decltype(memory_slice(result, 0, n));
         using ES = decltype(memory_slice(expr, 0, n));
 
-        static cpp::default_thread_pool<> pool(threads - 1);
+        thread_local cpp::default_thread_pool<> pool(threads - 1);
 
         //Distribute evenly the batches
 
@@ -162,7 +162,7 @@ namespace standard_evaluator {
         using RS = decltype(memory_slice(result, 0, n));
         using ES = decltype(memory_slice(expr, 0, n));
 
-        static cpp::default_thread_pool<> pool(threads - 1);
+        thread_local cpp::default_thread_pool<> pool(threads - 1);
 
         //Distribute evenly the batches
 
