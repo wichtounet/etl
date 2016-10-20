@@ -19,7 +19,9 @@ namespace etl {
  */
 enum class dot_impl {
     STD,  ///< Standard implementation
-    BLAS, ///< BLAS implementation
+    SSE, ///< SSE implementation
+    AVX, ///< AVX implementation
+    BLAS ///< BLAS implementation
 };
 
 } //end of namespace etl

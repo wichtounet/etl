@@ -14,6 +14,8 @@
 
 //Include the implementations
 #include "etl/impl/std/dot.hpp"
+#include "etl/impl/sse/dot.hpp"
+#include "etl/impl/avx/dot.hpp"
 #include "etl/impl/blas/dot.hpp"
 
 namespace etl {
@@ -34,6 +36,10 @@ cpp14_constexpr etl::dot_impl select_default_dot_impl() {
     if (all_dma<A, B>::value) {
         if (is_cblas_enabled) {
             return etl::dot_impl::BLAS;
+        } else if (avx_enabled) {
+            return etl::dot_impl::AVX;
+        } else if (sse3_enabled) {
+            return etl::dot_impl::SSE;
         } else {
             return etl::dot_impl::STD;
         }
@@ -54,10 +60,28 @@ etl::dot_impl select_dot_impl() {
         auto forced = local_context().dot_selector.impl;
 
         switch (forced) {
-            //AVX cannot always be used
+            //BLAS cannot always be used
             case dot_impl::BLAS:
                 if (!is_cblas_enabled || !all_dma<A, B>::value) {
                     std::cerr << "Forced selection to BLAS dot implementation, but not possible for this expression" << std::endl;
+                    return select_default_dot_impl<A, B>();
+                }
+
+                return forced;
+
+            //AVX cannot always be used
+            case dot_impl::AVX:
+                if (!sse3_enabled || !all_dma<A, B>::value) {
+                    std::cerr << "Forced selection to AVX dot implementation, but not possible for this expression" << std::endl;
+                    return select_default_dot_impl<A, B>();
+                }
+
+                return forced;
+
+            //SSE cannot always be used
+            case dot_impl::SSE:
+                if (!sse3_enabled || !all_dma<A, B>::value) {
+                    std::cerr << "Forced selection to SSE dot implementation, but not possible for this expression" << std::endl;
                     return select_default_dot_impl<A, B>();
                 }
 
@@ -88,6 +112,10 @@ struct dot_impl {
 
         if (impl == etl::dot_impl::BLAS) {
             return etl::impl::blas::dot(a, b);
+        } else if (impl == etl::dot_impl::AVX) {
+            return etl::impl::avx::dot(a.direct(), b.direct());
+        } else if (impl == etl::dot_impl::SSE) {
+            return etl::impl::sse::dot(a.direct(), b.direct());
         } else {
             return etl::impl::standard::dot(a, b);
         }

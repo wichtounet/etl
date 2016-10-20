@@ -19,8 +19,8 @@
  */
 
 #if defined(ETL_VECTORIZE_IMPL) && defined(__SSE3__)
-#include <immintrin.h>
 
+#include "common.hpp"
 #include "etl/impl/common/conv.hpp"
 
 #endif
@@ -36,21 +36,6 @@ namespace sse {
 #ifdef __clang__
 #define _mm_undefined_ps _mm_setzero_ps
 #endif
-
-ETL_INLINE(double) mm_hadd_sd(__m128d in) {
-    __m128 undef   = _mm_undefined_ps();
-    __m128 shuftmp = _mm_movehl_ps(undef, _mm_castpd_ps(in));
-    __m128d shuf = _mm_castps_pd(shuftmp);
-    return _mm_cvtsd_f64(_mm_add_sd(in, shuf));
-}
-
-ETL_INLINE(float) mm_hadd_ss(__m128 in) {
-    __m128 shuf = _mm_movehdup_ps(in);
-    __m128 sums = _mm_add_ps(in, shuf);
-    shuf        = _mm_movehl_ps(shuf, sums);
-    sums = _mm_add_ss(sums, shuf);
-    return _mm_cvtss_f32(sums);
-}
 
 inline void conv1_valid_micro_kernel(const double* in, const std::size_t n, const double* kernel, std::size_t m, double* out, std::size_t first, std::size_t last) {
     auto kernel_reverse = aligned_allocate_auto<__m128d>(m);
@@ -305,10 +290,10 @@ inline void conv2_valid_flipped_micro_kernel(const double* in, std::size_t n1, s
                     }
                 }
 
-                out[i * c2 + j + 0] = mm_hadd_sd(r1);
-                out[i * c2 + j + 1] = mm_hadd_sd(r2);
-                out[i * c2 + j + 2] = mm_hadd_sd(r3);
-                out[i * c2 + j + 3] = mm_hadd_sd(r4);
+                out[i * c2 + j + 0] = detail::mm_hadd_sd(r1);
+                out[i * c2 + j + 1] = detail::mm_hadd_sd(r2);
+                out[i * c2 + j + 2] = detail::mm_hadd_sd(r3);
+                out[i * c2 + j + 3] = detail::mm_hadd_sd(r4);
             }
 
             for (std::size_t j = (c2 - p2) - (c2 - 2 * p2) % 4; j < c2 - p2; ++j) {
@@ -326,7 +311,7 @@ inline void conv2_valid_flipped_micro_kernel(const double* in, std::size_t n1, s
                     }
                 }
 
-                out[i * c2 + j] = mm_hadd_sd(r1);
+                out[i * c2 + j] = detail::mm_hadd_sd(r1);
             }
         }
     } else {
@@ -361,10 +346,10 @@ inline void conv2_valid_flipped_micro_kernel(const double* in, std::size_t n1, s
                     }
                 }
 
-                out[i * c2 + j + 0] = beta * out[i * c2 + j + 0] + mm_hadd_sd(r1);
-                out[i * c2 + j + 1] = beta * out[i * c2 + j + 1] + mm_hadd_sd(r2);
-                out[i * c2 + j + 2] = beta * out[i * c2 + j + 2] + mm_hadd_sd(r3);
-                out[i * c2 + j + 3] = beta * out[i * c2 + j + 3] + mm_hadd_sd(r4);
+                out[i * c2 + j + 0] = beta * out[i * c2 + j + 0] + detail::mm_hadd_sd(r1);
+                out[i * c2 + j + 1] = beta * out[i * c2 + j + 1] + detail::mm_hadd_sd(r2);
+                out[i * c2 + j + 2] = beta * out[i * c2 + j + 2] + detail::mm_hadd_sd(r3);
+                out[i * c2 + j + 3] = beta * out[i * c2 + j + 3] + detail::mm_hadd_sd(r4);
             }
 
             for (std::size_t j = (c2 - p2) - (c2 - 2 * p2) % 4; j < c2 - p2; ++j) {
@@ -382,7 +367,7 @@ inline void conv2_valid_flipped_micro_kernel(const double* in, std::size_t n1, s
                     }
                 }
 
-                out[i * c2 + j] = beta * out[i * c2 + j] + mm_hadd_sd(r1);
+                out[i * c2 + j] = beta * out[i * c2 + j] + detail::mm_hadd_sd(r1);
             }
         }
     }
@@ -440,7 +425,7 @@ inline void conv2_same_micro_kernel(const double* in, std::size_t n1, std::size_
                 }
             }
 
-            out[i * c2 + j] = mm_hadd_sd(r1);
+            out[i * c2 + j] = detail::mm_hadd_sd(r1);
 
             double temp = 0.0;
 
@@ -490,7 +475,7 @@ inline void conv2_full_micro_kernel(const double* in, std::size_t n1, std::size_
                     }
                 }
 
-                out[i * c2 + j] = mm_hadd_sd(r1);
+                out[i * c2 + j] = detail::mm_hadd_sd(r1);
 
                 double temp = 0.0;
 
@@ -524,7 +509,7 @@ inline void conv2_full_micro_kernel(const double* in, std::size_t n1, std::size_
                     }
                 }
 
-                out[i * c2 + j] = beta * out[i * c2 + j] + mm_hadd_sd(r1);
+                out[i * c2 + j] = beta * out[i * c2 + j] + detail::mm_hadd_sd(r1);
 
                 double temp = 0.0;
 
@@ -564,7 +549,7 @@ inline void conv2_full_flipped_micro_kernel(const double* in, std::size_t n1, st
                     }
                 }
 
-                out[i * c2 + j] = mm_hadd_sd(r1);
+                out[i * c2 + j] = detail::mm_hadd_sd(r1);
 
                 double temp = 0.0;
 
@@ -597,7 +582,7 @@ inline void conv2_full_flipped_micro_kernel(const double* in, std::size_t n1, st
                     }
                 }
 
-                out[i * c2 + j] = beta * out[i * c2 + j] + mm_hadd_sd(r1);
+                out[i * c2 + j] = beta * out[i * c2 + j] + detail::mm_hadd_sd(r1);
 
                 double temp = 0.0;
 
@@ -701,10 +686,10 @@ inline void conv2_valid_flipped_micro_kernel(const float* in, std::size_t n1, st
                     }
                 }
 
-                out[i * c2 + j + 0] = mm_hadd_ss(r1);
-                out[i * c2 + j + 1] = mm_hadd_ss(r2);
-                out[i * c2 + j + 2] = mm_hadd_ss(r3);
-                out[i * c2 + j + 3] = mm_hadd_ss(r4);
+                out[i * c2 + j + 0] = detail::mm_hadd_ss(r1);
+                out[i * c2 + j + 1] = detail::mm_hadd_ss(r2);
+                out[i * c2 + j + 2] = detail::mm_hadd_ss(r3);
+                out[i * c2 + j + 3] = detail::mm_hadd_ss(r4);
             }
 
             for (std::size_t j = (c2 - p2) - (c2 - 2 * p2) % 4; j < c2 - p2; ++j) {
@@ -725,7 +710,7 @@ inline void conv2_valid_flipped_micro_kernel(const float* in, std::size_t n1, st
                     }
                 }
 
-                out[i * c2 + j] = mm_hadd_ss(r1);
+                out[i * c2 + j] = detail::mm_hadd_ss(r1);
             }
         }
     } else {
@@ -760,10 +745,10 @@ inline void conv2_valid_flipped_micro_kernel(const float* in, std::size_t n1, st
                     }
                 }
 
-                out[i * c2 + j + 0] = beta * out[i * c2 + j + 0] + mm_hadd_ss(r1);
-                out[i * c2 + j + 1] = beta * out[i * c2 + j + 1] + mm_hadd_ss(r2);
-                out[i * c2 + j + 2] = beta * out[i * c2 + j + 2] + mm_hadd_ss(r3);
-                out[i * c2 + j + 3] = beta * out[i * c2 + j + 3] + mm_hadd_ss(r4);
+                out[i * c2 + j + 0] = beta * out[i * c2 + j + 0] + detail::mm_hadd_ss(r1);
+                out[i * c2 + j + 1] = beta * out[i * c2 + j + 1] + detail::mm_hadd_ss(r2);
+                out[i * c2 + j + 2] = beta * out[i * c2 + j + 2] + detail::mm_hadd_ss(r3);
+                out[i * c2 + j + 3] = beta * out[i * c2 + j + 3] + detail::mm_hadd_ss(r4);
             }
 
             for (std::size_t j = (c2 - p2) - (c2 - 2 * p2) % 4; j < c2 - p2; ++j) {
@@ -784,7 +769,7 @@ inline void conv2_valid_flipped_micro_kernel(const float* in, std::size_t n1, st
                     }
                 }
 
-                out[i * c2 + j] = beta * out[i * c2 + j] + mm_hadd_ss(r1);
+                out[i * c2 + j] = beta * out[i * c2 + j] + detail::mm_hadd_ss(r1);
             }
         }
     }
@@ -842,7 +827,7 @@ inline void conv2_same_micro_kernel(const float* in, std::size_t n1, std::size_t
                 }
             }
 
-            out[i * c2 + j] = mm_hadd_ss(r1);
+            out[i * c2 + j] = detail::mm_hadd_ss(r1);
 
             float temp = 0.0;
 
@@ -893,7 +878,7 @@ inline void conv2_full_micro_kernel(const float* in, std::size_t n1, std::size_t
                     }
                 }
 
-                out[i * c2 + j] = mm_hadd_ss(r1);
+                out[i * c2 + j] = detail::mm_hadd_ss(r1);
 
                 double temp = 0.0;
 
@@ -930,7 +915,7 @@ inline void conv2_full_micro_kernel(const float* in, std::size_t n1, std::size_t
                     }
                 }
 
-                out[i * c2 + j] = beta * out[i * c2 + j] + mm_hadd_ss(r1);
+                out[i * c2 + j] = beta * out[i * c2 + j] + detail::mm_hadd_ss(r1);
 
                 double temp = 0.0;
 
@@ -973,7 +958,7 @@ inline void conv2_full_flipped_micro_kernel(const float* in, std::size_t n1, std
                     }
                 }
 
-                out[i * c2 + j] = mm_hadd_ss(r1);
+                out[i * c2 + j] = detail::mm_hadd_ss(r1);
 
                 double temp = 0.0;
 
@@ -1009,7 +994,7 @@ inline void conv2_full_flipped_micro_kernel(const float* in, std::size_t n1, std
                     }
                 }
 
-                out[i * c2 + j] = beta * out[i * c2 + j] + mm_hadd_ss(r1);
+                out[i * c2 + j] = beta * out[i * c2 + j] + detail::mm_hadd_ss(r1);
 
                 double temp = 0.0;
 

@@ -513,24 +513,6 @@ TEMPLATE_TEST_CASE_2("dyn_vector/sum_3", "sum", Z, double, float) {
     REQUIRE_EQUALS(d, 23.0);
 }
 
-TEMPLATE_TEST_CASE_2("dyn_vector/dot_1", "sum", Z, double, float) {
-    etl::dyn_vector<Z> a({-1.0, 2.0, 8.5});
-    etl::dyn_vector<Z> b({2.0, 3.0, 2.0});
-
-    auto d = dot(a, b);
-
-    REQUIRE_EQUALS(d, 21.0);
-}
-
-TEMPLATE_TEST_CASE_2("dyn_vector/dot_2", "sum", Z, double, float) {
-    etl::dyn_vector<Z> a({-1.0, 2.0, 8.5});
-    etl::dyn_vector<Z> b({2.0, 3.0, 2.0});
-
-    auto d = dot(a, -1 * b);
-
-    REQUIRE_EQUALS(d, -21.0);
-}
-
 TEMPLATE_TEST_CASE_2("dyn_vector/norm_1", "[dyn][reduc][norm]", Z, double, float) {
     etl::dyn_vector<Z> a{-1.0, 2.0, 8.0};
 

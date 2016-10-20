@@ -17,8 +17,8 @@
  */
 
 #if defined(ETL_VECTORIZE_IMPL) && defined(__AVX__)
-#include <immintrin.h>
 
+#include "common.hpp"
 #include "etl/impl/common/conv.hpp"
 
 #endif
@@ -65,19 +65,6 @@ ETL_INLINE(__m256) mm256_reverse_ps(__m256 m1) {
     __m256 tmp;
     tmp = _mm256_permute2f128_ps(m1, m1, 33);
     return _mm256_permute_ps(tmp, 27);
-}
-
-ETL_INLINE(float) mm256_hadd_ss(__m256 in) {
-    const __m128 x128 = _mm_add_ps(_mm256_extractf128_ps(in, 1), _mm256_castps256_ps128(in));
-    const __m128 x64  = _mm_add_ps(x128, _mm_movehl_ps(x128, x128));
-    const __m128 x32  = _mm_add_ss(x64, _mm_shuffle_ps(x64, x64, 0x55));
-    return _mm_cvtss_f32(x32);
-}
-
-ETL_INLINE(double) mm256_hadd_sd(__m256d in) {
-    const __m256d t1 = _mm256_hadd_pd(in, _mm256_permute2f128_pd(in, in, 1));
-    const __m256d t2 = _mm256_hadd_pd(t1, t1);
-    return _mm_cvtsd_f64(_mm256_castpd256_pd128(t2));
 }
 
 inline void conv1_valid_micro_kernel(const double* in, const std::size_t n, const double* kernel, std::size_t m, double* out, std::size_t first, std::size_t last) {

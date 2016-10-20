@@ -782,23 +782,3 @@ TEMPLATE_TEST_CASE_2("fast_vector/swap_1", "fast_vector::swap", Z, float, double
     REQUIRE_EQUALS(b[1], 2.0);
     REQUIRE_EQUALS(b[2], 5.0);
 }
-
-// dot
-
-TEMPLATE_TEST_CASE_2("fast_vector/dot_1", "sum", Z, float, double) {
-    etl::fast_vector<Z, 3> a = {-1.0, 2.0, 8.5};
-    etl::fast_vector<Z, 3> b = {2.0, 3.0, 2.0};
-
-    auto d = dot(a, b);
-
-    REQUIRE_EQUALS(d, 21.0);
-}
-
-TEMPLATE_TEST_CASE_2("fast_vector/dot_2", "sum", Z, float, double) {
-    etl::fast_vector<Z, 3> a = {-1.0, 2.0, 8.5};
-    etl::fast_vector<Z, 3> b = {2.0, 3.0, 2.0};
-
-    auto d = dot(a, -1 * b);
-
-    REQUIRE_EQUALS(d, -21.0);
-}
