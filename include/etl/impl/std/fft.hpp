@@ -936,7 +936,7 @@ template <typename A, typename C>
 void ifft2_many(A&& a, C&& c) {
     using T = value_t<value_t<C>>;
 
-    constexpr std::size_t D = etl::dimensions(a);
+    constexpr std::size_t D = etl::decay_traits<A>::dimensions();
 
     std::size_t n = etl::dim<D - 2>(a) * etl::dim<D -1>(a);
 
