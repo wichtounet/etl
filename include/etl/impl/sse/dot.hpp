@@ -12,13 +12,19 @@
 
 #pragma once
 
+#if defined(ETL_VECTORIZE_IMPL) && defined(__SSE3__)
+
 #include "common.hpp"
+
+#endif
 
 namespace etl {
 
 namespace impl {
 
 namespace sse {
+
+#if defined(ETL_VECTORIZE_IMPL) && defined(__SSE3__)
 
 namespace detail {
 
@@ -78,6 +84,23 @@ T dot(const opaque_memory<T, 1>& a, const opaque_memory<T, 1>& b) {
 
     return detail::dot_kernel(a_mem, b_mem, a.size());
 }
+
+#else
+
+/*!
+ * \brief Compute the dot product of a and b
+ * \param a The lhs expression
+ * \param b The rhs expression
+ * \return the sum
+ */
+template <typename T>
+T dot(const opaque_memory<T, 1>& a, const opaque_memory<T, 1>& b) {
+    cpp_unused(a);
+    cpp_unused(b);
+    cpp_unreachable("SSE not available/enabled");
+}
+
+#endif
 
 } //end of namespace standard
 } //end of namespace impl
