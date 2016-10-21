@@ -35,9 +35,6 @@ namespace detail {
 inline float aligned_dot_kernel(float* a, float* b, size_t n){
     static constexpr size_t vec_size = 8;
 
-    //TODO We should make sure it is aligned and do aligned loads
-    //It will only be unaligned with custom vectors
-
     size_t i = 0;
 
     __m256 r1 = _mm256_setzero_ps();
@@ -89,9 +86,6 @@ inline float aligned_dot_kernel(float* a, float* b, size_t n){
 
 inline float dot_kernel(float* a, float* b, size_t n){
     static constexpr size_t vec_size = 8;
-
-    //TODO We should make sure it is aligned and do aligned loads
-    //It will only be unaligned with custom vectors
 
     size_t i = 0;
 
