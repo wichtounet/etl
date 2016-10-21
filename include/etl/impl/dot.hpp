@@ -110,10 +110,12 @@ struct dot_impl {
     static value_t<A> apply(const A& a, const B& b) {
         auto impl = select_dot_impl<A, B>();
 
+        static constexpr const bool Align = decay_traits<A>::is_aligned && decay_traits<B>::is_aligned;
+
         if (impl == etl::dot_impl::BLAS) {
             return etl::impl::blas::dot(a, b);
         } else if (impl == etl::dot_impl::AVX) {
-            return etl::impl::avx::dot(a.direct(), b.direct());
+            return etl::impl::avx::dot<Align>(a.direct(), b.direct());
         } else if (impl == etl::dot_impl::SSE) {
             return etl::impl::sse::dot(a.direct(), b.direct());
         } else {
