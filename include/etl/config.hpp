@@ -25,37 +25,37 @@ namespace etl {
 
 //Flag to enable auto-vectorization of expressions
 #ifdef ETL_VECTORIZE_EXPR
-constexpr const bool vectorize_expr = true;
+constexpr bool vectorize_expr = true;
 #else
-constexpr const bool vectorize_expr   = false;                               ///< Boolean flag indicating if the expression are automatically vectorized
+constexpr bool vectorize_expr   = false;                               ///< Boolean flag indicating if the expression are automatically vectorized
 #endif
 
 //Flag to enable vectorized implementation of algorithms
 #ifdef ETL_VECTORIZE_IMPL
-constexpr const bool vectorize_impl = true;
+constexpr bool vectorize_impl = true;
 #else
-constexpr const bool vectorize_impl   = false;                               ///< Boolean flag indicating if the implementations are automatically vectorized
+constexpr bool vectorize_impl   = false;                               ///< Boolean flag indicating if the implementations are automatically vectorized
 #endif
 
 //Flag to allow conv_valid_multi to use FFT
 #ifdef ETL_CONV_VALID_FFT
-constexpr const bool conv_valid_fft = true;
+constexpr bool conv_valid_fft = true;
 #else
-constexpr const bool conv_valid_fft   = false;                               ///< Boolean flag indicating if temporaries are created
+constexpr bool conv_valid_fft   = false;                               ///< Boolean flag indicating if temporaries are created
 #endif
 
 //Select the number of threads
 #ifdef ETL_PARALLEL_THREADS
-constexpr const std::size_t threads = ETL_PARALLEL_THREADS;
+constexpr std::size_t threads = ETL_PARALLEL_THREADS;
 #else
 const std::size_t threads             = std::thread::hardware_concurrency(); ///< Number of threads
 #endif
 
 //Indicate that ETL should run in parallel
 #ifdef ETL_PARALLEL
-constexpr const bool is_parallel = true;
+constexpr bool is_parallel = true;
 #else
-constexpr const bool is_parallel = false;                               ///< Boolean flag indicating if expressions and implementations are parallelized (alpha)
+constexpr bool is_parallel = false;                               ///< Boolean flag indicating if expressions and implementations are parallelized (alpha)
 #endif
 
 #ifdef ETL_MKL_MODE
@@ -65,28 +65,28 @@ constexpr const bool is_parallel = false;                               ///< Boo
 #define ETL_BLAS_MODE
 #endif
 
-constexpr const bool is_mkl_enabled = true;
-constexpr const bool has_fast_fft   = true;
+constexpr bool is_mkl_enabled = true;
+constexpr bool has_fast_fft   = true;
 
 #else
 
-constexpr const bool is_mkl_enabled              = false; ///< Boolean flag indicating if MKL is enabled
-constexpr const bool has_fast_fft                = false; ///< Boolean flag indicating if a fast FFT implementation is available
+constexpr bool is_mkl_enabled              = false; ///< Boolean flag indicating if MKL is enabled
+constexpr bool has_fast_fft                = false; ///< Boolean flag indicating if a fast FFT implementation is available
 
 #endif
 
 //Flag to enable the use of CBLAS library
 #ifdef ETL_BLAS_MODE
-constexpr const bool is_cblas_enabled = true;
+constexpr bool is_cblas_enabled = true;
 #else
-constexpr const bool is_cblas_enabled            = false; ///< Boolean flag indicating if CBLAS is available
+constexpr bool is_cblas_enabled            = false; ///< Boolean flag indicating if CBLAS is available
 #endif
 
 //Flag to indicate that blas is multithreaded
 #ifdef ETL_BLAS_THREADS
-constexpr const bool is_blas_parallel = true;
+constexpr bool is_blas_parallel = true;
 #else
-constexpr const bool is_blas_parallel            = false; ///< Boolean flag indicating if CBLAS is running parallel
+constexpr bool is_blas_parallel            = false; ///< Boolean flag indicating if CBLAS is running parallel
 #endif
 
 #ifdef ETL_CUDA
@@ -94,81 +94,81 @@ static_assert(false, "ETL_CUDA should never be set directly");
 #endif
 
 #ifdef ETL_CUBLAS_MODE
-constexpr const bool is_cublas_enabled = true;
+constexpr bool is_cublas_enabled = true;
 #define ETL_CUDA
 #else
-constexpr const bool is_cublas_enabled           = false; ///< Boolean flag indicating if CUBLAS is available
+constexpr bool is_cublas_enabled           = false; ///< Boolean flag indicating if CUBLAS is available
 #endif
 
 #ifdef ETL_CUFFT_MODE
 #define ETL_CUDA
-constexpr const bool is_cufft_enabled = true;
+constexpr bool is_cufft_enabled = true;
 #else
-constexpr const bool is_cufft_enabled            = false; ///< Boolean flag indicating if CUFFT is available
+constexpr bool is_cufft_enabled            = false; ///< Boolean flag indicating if CUFFT is available
 #endif
 
 #ifdef ETL_CUDNN_MODE
-constexpr const bool is_cudnn_enabled = true;
+constexpr bool is_cudnn_enabled = true;
 #define ETL_CUDA
 #else
-constexpr const bool is_cudnn_enabled            = false; ///< Boolean flag indicating if CUDNN is available
+constexpr bool is_cudnn_enabled            = false; ///< Boolean flag indicating if CUDNN is available
 #endif
 
 //Flag to perform elementwise multiplication by default (operator*)
 //instead of matrix(vector) multiplication
 #ifdef ETL_ELEMENT_WISE_MULTIPLICATION
-constexpr const bool is_element_wise_mul_default = true;
+constexpr bool is_element_wise_mul_default = true;
 #else
-constexpr const bool is_element_wise_mul_default = false; ///< Boolean flag indicating if multiplication of two expression means matrix multiplication (false) or element-wise multiplication (true)
+constexpr bool is_element_wise_mul_default = false; ///< Boolean flag indicating if multiplication of two expression means matrix multiplication (false) or element-wise multiplication (true)
 #endif
 
 //Flag to prevent division to be done by multiplication
 #ifdef ETL_STRICT_DIV
-constexpr const bool is_div_strict = true;
+constexpr bool is_div_strict = true;
 #else
-constexpr const bool is_div_strict               = false; ///< Boolean flag indicating if division can be done by multiplication (false) or not (true)
+constexpr bool is_div_strict               = false; ///< Boolean flag indicating if division can be done by multiplication (false) or not (true)
 #endif
 
 // Flag to disable streaming operations
 #ifdef ETL_NO_STREAMING
-constexpr const bool streaming = false;
+constexpr bool streaming = false;
 #else
-constexpr const bool streaming = true;
+constexpr bool streaming = true;
 #endif
 
 // Flag to disable streaming operations
 #ifdef ETL_NO_PADDING
-constexpr const bool padding = false;
+constexpr bool padding = false;
 #else
-constexpr const bool padding = true;
+constexpr bool padding = true;
 #endif
 
 // Flag to set the cache size
 #ifdef ETL_CACHE_SIZE
-constexpr const size_t cache_size = ETL_CACHE_SIZE;
+constexpr size_t cache_size = ETL_CACHE_SIZE;
 #else
-constexpr const size_t cache_size = 3 * 1024 * 1024;
+constexpr size_t cache_size = 3 * 1024 * 1024;
 #endif
 
 //Flag to disable unrolling of non-vectorized loops
 #ifdef ETL_NO_UNROLL_NON_VECT
-constexpr const bool unroll_normal_loops = false;
+constexpr bool unroll_normal_loops = false;
 #else
-constexpr const bool unroll_normal_loops         = true;  ///< Boolean flag indicating if normal loops are getting unrolled
+constexpr bool unroll_normal_loops         = true;  ///< Boolean flag indicating if normal loops are getting unrolled
 #endif
 
 //Flag to configure the maximum workspace size for ETL
 #ifdef ETL_MAX_WORKSPACE
-constexpr const std::size_t max_workspace = ETL_MAX_WORKSPACE;
+constexpr std::size_t max_workspace = ETL_MAX_WORKSPACE;
 #else
-constexpr const std::size_t max_workspace = 2UL * 1024 * 1024 * 1024; ///< The max workspace we allocate for ETL (2GiB by default)
+constexpr std::size_t max_workspace = 2UL * 1024 * 1024 * 1024; ///< The max workspace we allocate for ETL (2GiB by default)
 #endif
 
 //Flag to configure the maximum workspace size for CUDA
 #ifdef ETL_CUDNN_MAX_WORKSPACE
-constexpr const std::size_t cudnn_max_workspace = ETL_CUDNN_MAX_WORKSPACE;
+constexpr std::size_t cudnn_max_workspace = ETL_CUDNN_MAX_WORKSPACE;
 #else
-constexpr const std::size_t cudnn_max_workspace = 2UL * 1024 * 1024 * 1024; ///< The max workspace we allocate for CUDNN (2GiB by default)
+constexpr std::size_t cudnn_max_workspace = 2UL * 1024 * 1024 * 1024; ///< The max workspace we allocate for CUDNN (2GiB by default)
 #endif
 
 /*!
@@ -182,37 +182,37 @@ enum class vector_mode_t {
 };
 
 #ifdef __AVX512F__
-constexpr const vector_mode_t vector_mode = vector_mode_t::AVX512;
+constexpr vector_mode_t vector_mode = vector_mode_t::AVX512;
 #elif defined(__AVX__)
-constexpr const vector_mode_t vector_mode        = vector_mode_t::AVX;
+constexpr vector_mode_t vector_mode        = vector_mode_t::AVX;
 #elif defined(__SSE3__)
-constexpr const vector_mode_t vector_mode = vector_mode_t::SSE3;
+constexpr vector_mode_t vector_mode = vector_mode_t::SSE3;
 #else
-constexpr const vector_mode_t vector_mode = vector_mode_t::NONE; ///< The vector mode in use
+constexpr vector_mode_t vector_mode = vector_mode_t::NONE; ///< The vector mode in use
 #endif
 
 #ifdef __AVX512F__
-constexpr const bool avx512_enabled = true;
+constexpr bool avx512_enabled = true;
 #else
-constexpr const bool avx512_enabled              = false; ///< Indicates if AVX512F is available
+constexpr bool avx512_enabled              = false; ///< Indicates if AVX512F is available
 #endif
 
 #ifdef __AVX__
-constexpr const bool avx_enabled = true;
+constexpr bool avx_enabled = true;
 #else
-constexpr const bool avx_enabled                 = false; ///< Indicates if AVX is available
+constexpr bool avx_enabled                 = false; ///< Indicates if AVX is available
 #endif
 
 #ifdef __SSE3__
-constexpr const bool sse3_enabled = true;
+constexpr bool sse3_enabled = true;
 #else
-constexpr const bool sse3_enabled                = false; ///< Indicates if sse3 is available
+constexpr bool sse3_enabled                = false; ///< Indicates if sse3 is available
 #endif
 
 #ifdef __INTEL_COMPILER
-constexpr const bool intel_compiler = true;
+constexpr bool intel_compiler = true;
 #else
-constexpr const bool intel_compiler              = false; ///< Indicates if the project is compiled with intel
+constexpr bool intel_compiler              = false; ///< Indicates if the project is compiled with intel
 #endif
 
 } //end of namespace etl

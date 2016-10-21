@@ -30,7 +30,7 @@ struct basic_pool_2d_expr : impl_expr<basic_pool_2d_expr<T, C1, C2, S1, S2, P1, 
     using value_type = T;                                           ///< Type of values of the expression
     using this_type  = basic_pool_2d_expr<T, C1, C2, S1, S2, P1, P2, Impl>; ///< The type of this expression
 
-    static constexpr const bool is_gpu = false; ///< no GPU implementation
+    static constexpr bool is_gpu = false; ///< no GPU implementation
 
     /*!
      * \brief Apply the expression on a and store the result in c
@@ -145,7 +145,7 @@ struct basic_deep_pool_2d_expr : impl_expr<basic_deep_pool_2d_expr<T, C1, C2, S1
     using value_type = T;                                           ///< Type of values of the expression
     using this_type  = basic_deep_pool_2d_expr<T, C1, C2, S1, S2, P1, P2, D, Impl>; ///< The type of this expression
 
-    static constexpr const bool is_gpu = false; ///< no GPU implementation
+    static constexpr bool is_gpu = false; ///< no GPU implementation
 
     /*!
      * \brief Apply the expression on a and store the result in c
@@ -298,7 +298,7 @@ struct basic_pool_3d_expr : impl_expr<basic_pool_3d_expr<T, C1, C2, C3, S1, S2, 
     using value_type = T;                                                   ///< The type of values of the expression
     using this_type  = basic_pool_3d_expr<T, C1, C2, C3, S1, S2, S3, P1, P2, P3, Impl>; ///< The type of this expression
 
-    static constexpr const bool is_gpu = false; ///< no GPU implementation
+    static constexpr bool is_gpu = false; ///< no GPU implementation
 
     /*!
      * \brief Apply the expression on a and store the result in c
@@ -418,7 +418,7 @@ struct basic_pool_deep_3d_expr : impl_expr<basic_pool_deep_3d_expr<T, C1, C2, C3
     using value_type = T;                                                   ///< The type of values of the expression
     using this_type  = basic_pool_deep_3d_expr<T, C1, C2, C3, S1, S2, S3, P1, P2, P3, D, Impl>; ///< The type of this expression
 
-    static constexpr const bool is_gpu = false; ///< no GPU implementation
+    static constexpr bool is_gpu = false; ///< no GPU implementation
 
     /*!
      * \brief Apply the expression on a and store the result in c
@@ -577,7 +577,7 @@ struct basic_dyn_pool_2d_expr : dyn_impl_expr<basic_dyn_pool_2d_expr<T, Impl>> {
     template <typename A>
     using result_type = dyn_matrix<value_t<A>, 2>;
 
-    static constexpr const bool is_gpu = false; ///< no GPU implementation
+    static constexpr bool is_gpu = false; ///< no GPU implementation
 
     const size_t c1; ///< First dimension pooling ratio
     const size_t c2; ///< Second dimension pooling ratio
@@ -682,7 +682,7 @@ struct basic_dyn_deep_pool_2d_expr : dyn_impl_expr<basic_dyn_deep_pool_2d_expr<T
     using value_type = T;                                       ///< Type of values of the expression
     using this_type  = basic_dyn_deep_pool_2d_expr<T, D, Impl>; ///< The type of this expression
 
-    static constexpr const bool is_gpu = false; ///< no GPU implementation
+    static constexpr bool is_gpu = false; ///< no GPU implementation
 
     const size_t c1; ///< First dimension pooling ratio
     const size_t c2; ///< Second dimension pooling ratio
@@ -816,7 +816,7 @@ struct basic_dyn_pool_3d_expr : dyn_impl_expr<basic_dyn_pool_3d_expr<T, Impl>> {
     using value_type = T;                                       ///< The type of values of the expression
     using this_type  = basic_dyn_pool_3d_expr<T, Impl>; ///< The type of this expression
 
-    static constexpr const bool is_gpu = false; ///< no GPU implementation
+    static constexpr bool is_gpu = false; ///< no GPU implementation
 
     const size_t c1; ///< First dimension pooling ratio
     const size_t c2; ///< Second dimension pooling ratio
@@ -927,7 +927,7 @@ struct basic_dyn_deep_pool_3d_expr : dyn_impl_expr<basic_dyn_deep_pool_3d_expr<T
     using value_type = T;                                       ///< The type of values of the expression
     using this_type  = basic_dyn_deep_pool_3d_expr<T, D, Impl>; ///< The type of this expression
 
-    static constexpr const bool is_gpu = false; ///< no GPU implementation
+    static constexpr bool is_gpu = false; ///< no GPU implementation
 
     const size_t c1; ///< First dimension pooling ratio
     const size_t c2; ///< Second dimension pooling ratio

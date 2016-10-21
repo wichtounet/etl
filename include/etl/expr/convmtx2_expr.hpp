@@ -23,7 +23,7 @@ struct basic_convmtx2_expr : impl_expr<basic_convmtx2_expr<T, K1, K2, Impl>> {
     using this_type  = basic_convmtx2_expr<T, K1, K2, Impl>; ///< The type of this expression
     using value_type = T;                                    ///< The value type
 
-    static constexpr const bool is_gpu = false; ///< Indicates if the expression runs on GPU
+    static constexpr bool is_gpu = false; ///< Indicates if the expression runs on GPU
 
     /*!
      * \brief The result type for given sub types

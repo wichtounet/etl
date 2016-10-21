@@ -22,8 +22,8 @@ namespace etl {
  * Such an unary expr does not apply the operator but delegates to its sub expression.
  */
 struct identity_op {
-    static constexpr const bool linear      = true; ///< Indicates if the operator is linear
-    static constexpr const bool thread_safe = true; ///< Indicates if the operator is thread safe
+    static constexpr bool linear      = true; ///< Indicates if the operator is linear
+    static constexpr bool thread_safe = true; ///< Indicates if the operator is thread safe
 
     /*!
      * \brief Indicates if the expression is vectorizable using the
@@ -40,8 +40,8 @@ struct identity_op {
  * Such an unary expr does not apply the operator but delegates to its sub expression.
  */
 struct transform_op {
-    static constexpr const bool linear = false; ///< Indicates if the operator is linear
-    static constexpr const bool thread_safe = true; ///< Indicates if the operator is thread safe
+    static constexpr bool linear = false; ///< Indicates if the operator is linear
+    static constexpr bool thread_safe = true; ///< Indicates if the operator is thread safe
 
     /*!
      * \brief Indicates if the expression is vectorizable using the
@@ -61,8 +61,8 @@ struct transform_op {
  */
 template <typename Sub>
 struct stateful_op {
-    static constexpr const bool linear      = Sub::linear;      ///< Indicates if the operator is linear
-    static constexpr const bool thread_safe = Sub::thread_safe; ///< Indicates if the operator is thread safe
+    static constexpr bool linear      = Sub::linear;      ///< Indicates if the operator is linear
+    static constexpr bool thread_safe = Sub::thread_safe; ///< Indicates if the operator is thread safe
 
     using op = Sub; ///< The sub operator type
 
@@ -234,7 +234,7 @@ private:
     /*!
      * \brief Indicates if the non-const functions returns a reference
      */
-    static constexpr const bool non_const_return_ref =
+    static constexpr bool non_const_return_ref =
         cpp::and_c<
             std::is_lvalue_reference<decltype(_value[0])>,
             cpp::not_c<std::is_const<std::remove_reference_t<decltype(_value[0])>>>>::value;
@@ -242,7 +242,7 @@ private:
     /*!
      * \brief Indicates if the const functions returns a reference
      */
-    static constexpr const bool const_return_ref =
+    static constexpr bool const_return_ref =
         std::is_lvalue_reference<decltype(_value[0])>::value; ///< Indicates if the const functions returns a reference
 
 public:
@@ -1027,21 +1027,21 @@ struct etl_traits<etl::unary_expr<T, Expr, UnaryOp>> {
     using expr_t     = etl::unary_expr<T, Expr, UnaryOp>; ///< The expression type
     using sub_expr_t = std::decay_t<Expr>;                ///< The sub expression type
 
-    static constexpr const bool is_etl                  = true;                                                 ///< Indicates if the type is an ETL expression
-    static constexpr const bool is_transformer          = false;                                                ///< Indicates if the type is a transformer
-    static constexpr const bool is_view                 = false;                                                ///< Indicates if the type is a view
-    static constexpr const bool is_magic_view           = false;                                                ///< Indicates if the type is a magic view
-    static constexpr const bool is_fast                 = etl_traits<sub_expr_t>::is_fast;                      ///< Indicates if the expression is fast
-    static constexpr const bool is_value                = false;                                                ///< Indicates if the expression is of value type
-    static constexpr const bool is_direct                = std::is_same<UnaryOp, identity_op>::value && etl_traits<sub_expr_t>::is_direct;                                                ///< Indicates if the expression has direct memory access
-    static constexpr const bool is_linear               = etl_traits<sub_expr_t>::is_linear && UnaryOp::linear; ///< Indicates if the expression is linear
-    static constexpr const bool is_thread_safe          = etl_traits<sub_expr_t>::is_thread_safe && UnaryOp::thread_safe;                                                                ///< Indicates if the expression is linear
-    static constexpr const bool is_generator            = etl_traits<sub_expr_t>::is_generator;                 ///< Indicates if the expression is a generator expression
-    static constexpr const bool needs_temporary_visitor = etl_traits<sub_expr_t>::needs_temporary_visitor;      ///< Indicates if the expression needs a temporary visitor
-    static constexpr const bool needs_evaluator_visitor = etl_traits<sub_expr_t>::needs_evaluator_visitor;      ///< Indicaes if the expression needs an evaluator visitor
-    static constexpr const bool is_padded                = is_linear && etl_traits<sub_expr_t>::is_padded;                                                                                ///< Indicates if the expression is padded
-    static constexpr const bool is_aligned                = is_linear && etl_traits<sub_expr_t>::is_aligned;                                                                                ///< Indicates if the expression is padded
-    static constexpr const order storage_order          = etl_traits<sub_expr_t>::storage_order;                ///< The expression storage order
+    static constexpr bool is_etl                  = true;                                                 ///< Indicates if the type is an ETL expression
+    static constexpr bool is_transformer          = false;                                                ///< Indicates if the type is a transformer
+    static constexpr bool is_view                 = false;                                                ///< Indicates if the type is a view
+    static constexpr bool is_magic_view           = false;                                                ///< Indicates if the type is a magic view
+    static constexpr bool is_fast                 = etl_traits<sub_expr_t>::is_fast;                      ///< Indicates if the expression is fast
+    static constexpr bool is_value                = false;                                                ///< Indicates if the expression is of value type
+    static constexpr bool is_direct                = std::is_same<UnaryOp, identity_op>::value && etl_traits<sub_expr_t>::is_direct;                                                ///< Indicates if the expression has direct memory access
+    static constexpr bool is_linear               = etl_traits<sub_expr_t>::is_linear && UnaryOp::linear; ///< Indicates if the expression is linear
+    static constexpr bool is_thread_safe          = etl_traits<sub_expr_t>::is_thread_safe && UnaryOp::thread_safe;                                                                ///< Indicates if the expression is linear
+    static constexpr bool is_generator            = etl_traits<sub_expr_t>::is_generator;                 ///< Indicates if the expression is a generator expression
+    static constexpr bool needs_temporary_visitor = etl_traits<sub_expr_t>::needs_temporary_visitor;      ///< Indicates if the expression needs a temporary visitor
+    static constexpr bool needs_evaluator_visitor = etl_traits<sub_expr_t>::needs_evaluator_visitor;      ///< Indicaes if the expression needs an evaluator visitor
+    static constexpr bool is_padded                = is_linear && etl_traits<sub_expr_t>::is_padded;                                                                                ///< Indicates if the expression is padded
+    static constexpr bool is_aligned                = is_linear && etl_traits<sub_expr_t>::is_aligned;                                                                                ///< Indicates if the expression is padded
+    static constexpr order storage_order          = etl_traits<sub_expr_t>::storage_order;                ///< The expression storage order
 
     /*!
      * \brief Indicates if the expression is vectorizable using the

@@ -30,7 +30,7 @@ struct basic_upsample_2d_expr : impl_expr<basic_upsample_2d_expr<T, C1, C2, Impl
     template <typename A>
     using result_type = detail::expr_result_t<this_type, A>;
 
-    static constexpr const bool is_gpu = false; ///< no GPU implementation
+    static constexpr bool is_gpu = false; ///< no GPU implementation
 
     /*!
      * \brief Apply the expression
@@ -146,7 +146,7 @@ struct basic_upsample_3d_expr : impl_expr<basic_upsample_3d_expr<T, C1, C2, C3, 
     template <typename A>
     using result_type = detail::expr_result_t<this_type, A>;
 
-    static constexpr const bool is_gpu = false; ///< no GPU implementation
+    static constexpr bool is_gpu = false; ///< no GPU implementation
 
     /*!
      * \brief Apply the expression
@@ -259,7 +259,7 @@ struct basic_dyn_upsample_2d_expr : dyn_impl_expr<basic_dyn_upsample_2d_expr<T, 
     template <typename A>
     using result_type = detail::expr_result_t<this_type, A>;
 
-    static constexpr const bool is_gpu = false; ///< no GPU implementation
+    static constexpr bool is_gpu = false; ///< no GPU implementation
 
     std::size_t c1; ///< The first dimension upsampling factor
     std::size_t c2; ///< The second dimension upsampling factor
@@ -361,7 +361,7 @@ struct basic_dyn_upsample_3d_expr : dyn_impl_expr<basic_dyn_upsample_3d_expr<T, 
     template <typename A>
     using result_type = detail::expr_result_t<this_type, A>;
 
-    static constexpr const bool is_gpu = false; ///< no GPU implementation
+    static constexpr bool is_gpu = false; ///< no GPU implementation
 
     std::size_t c1; ///< The first dimension upsampling factor
     std::size_t c2; ///< The second dimension upsampling factor

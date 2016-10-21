@@ -29,12 +29,12 @@
 namespace etl {
 
 #ifdef NDEBUG
-constexpr const bool assert_nothrow = true;
+constexpr bool assert_nothrow = true;
 #else
 #ifdef CPP_UTILS_ASSERT_EXCEPTION
-constexpr const bool assert_nothrow = false;
+constexpr bool assert_nothrow = false;
 #else
-constexpr const bool assert_nothrow = true;
+constexpr bool assert_nothrow = true;
 #endif
 #endif
 

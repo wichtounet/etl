@@ -58,7 +58,7 @@ struct conv_deep_valid_impl {
      */
     template <typename I, typename K, typename C>
     static void check(const I& input, const K& kernel, const C& conv){
-        constexpr const size_t n = etl::dimensions<I>();
+        constexpr size_t n = etl::dimensions<I>();
 
         static_assert(etl::dimensions<I>() == n, "Invalid number of dimensions for input of conv_deep_valid");
         static_assert(etl::dimensions<K>() == n, "Invalid number of dimensions for kernel of conv_deep_valid");
@@ -79,7 +79,7 @@ struct conv_deep_valid_impl {
      */
     template <typename I, typename K, typename C>
     static void check(){
-        constexpr const size_t n = etl::dimensions<I>();
+        constexpr size_t n = etl::dimensions<I>();
 
         static_assert(etl::dimensions<I>() == n, "Invalid number of dimensions for input of conv_deep_valid");
         static_assert(etl::dimensions<K>() == n, "Invalid number of dimensions for kernel of conv_deep_valid");
@@ -155,7 +155,7 @@ struct conv_deep_same_impl {
      */
     template <typename I, typename K, typename C>
     static void check(const I& input, const K& kernel, const C& conv){
-        constexpr const size_t n = etl::dimensions<I>();
+        constexpr size_t n = etl::dimensions<I>();
 
         static_assert(etl::dimensions<I>() == n, "Invalid number of dimensions for input of conv_deep_same");
         static_assert(etl::dimensions<K>() == n, "Invalid number of dimensions for kernel of conv_deep_same");
@@ -176,7 +176,7 @@ struct conv_deep_same_impl {
      */
     template <typename I, typename K, typename C>
     static void check(){
-        constexpr const size_t n = etl::dimensions<I>();
+        constexpr size_t n = etl::dimensions<I>();
 
         static_assert(etl::dimensions<I>() == n, "Invalid number of dimensions for input of conv_deep_valid");
         static_assert(etl::dimensions<K>() == n, "Invalid number of dimensions for kernel of conv_deep_valid");
@@ -248,7 +248,7 @@ struct conv_deep_full_impl {
      */
     template <typename I, typename K, typename C>
     static void check(const I& input, const K& kernel, const C& conv){
-        constexpr const size_t n = etl::dimensions<I>();
+        constexpr size_t n = etl::dimensions<I>();
 
         static_assert(etl::dimensions<I>() == n, "Invalid number of dimensions for input of conv_deep_full");
         static_assert(etl::dimensions<K>() == n, "Invalid number of dimensions for kernel of conv_deep_full");
@@ -269,7 +269,7 @@ struct conv_deep_full_impl {
      */
     template <typename I, typename K, typename C>
     static void check(){
-        constexpr const size_t n = etl::dimensions<I>();
+        constexpr size_t n = etl::dimensions<I>();
 
         static_assert(etl::dimensions<I>() == n, "Invalid number of dimensions for input of conv_deep_valid");
         static_assert(etl::dimensions<K>() == n, "Invalid number of dimensions for kernel of conv_deep_valid");

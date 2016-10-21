@@ -25,7 +25,7 @@ struct basic_conv_expr : impl_expr<basic_conv_expr<T, D, Impl>> {
     using value_type = T;                           ///< The type of value of the expression
     using this_type  = basic_conv_expr<T, D, Impl>; ///< The type of this expression
 
-    static constexpr const bool is_gpu = is_cufft_enabled || is_cudnn_enabled; ///< Indicates if the expression runs on GPU
+    static constexpr bool is_gpu = is_cufft_enabled || is_cudnn_enabled; ///< Indicates if the expression runs on GPU
 
     /*!
      * \brief The result type for given sub types
@@ -172,7 +172,7 @@ struct dyn_basic_conv_expr : dyn_impl_expr<dyn_basic_conv_expr<T, D, Impl>> {
     using value_type = T;                               ///< The type of value of the expression
     using this_type  = dyn_basic_conv_expr<T, D, Impl>; ///< The type of this expression
 
-    static constexpr const bool is_gpu = is_cufft_enabled || is_cudnn_enabled; ///< Indicates if the expression runs on GPU
+    static constexpr bool is_gpu = is_cufft_enabled || is_cudnn_enabled; ///< Indicates if the expression runs on GPU
 
     Impl impl; ///< The implementation operator
 

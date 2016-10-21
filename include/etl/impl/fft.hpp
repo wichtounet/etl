@@ -37,8 +37,8 @@ enum class precision {
 template <typename Functor, typename... Args>
 inline fft_impl select_forced_fft_impl(Functor func, Args&&... args) {
     //Note since these boolean will be known at compile time, the conditions will be a lot simplified
-    constexpr const bool mkl   = is_mkl_enabled;
-    constexpr const bool cufft = is_cufft_enabled;
+    constexpr bool mkl   = is_mkl_enabled;
+    constexpr bool cufft = is_cufft_enabled;
 
     auto forced = local_context().fft_selector.impl;
 
@@ -77,8 +77,8 @@ inline fft_impl select_forced_fft_impl(Functor func, Args&&... args) {
  */
 inline cpp14_constexpr fft_impl select_default_fft1_impl(const std::size_t n) {
     //Note since these boolean will be known at compile time, the conditions will be a lot simplified
-    constexpr const bool mkl   = is_mkl_enabled;
-    constexpr const bool cufft = is_cufft_enabled;
+    constexpr bool mkl   = is_mkl_enabled;
+    constexpr bool cufft = is_cufft_enabled;
 
     if (cufft) {
         if (math::is_power_of_two(n)) {
@@ -139,8 +139,8 @@ inline cpp14_constexpr fft_impl select_default_fft1_many_impl(const std::size_t 
     cpp_unused(batch);
 
     //Note since these boolean will be known at compile time, the conditions will be a lot simplified
-    constexpr const bool mkl   = is_mkl_enabled;
-    constexpr const bool cufft = is_cufft_enabled;
+    constexpr bool mkl   = is_mkl_enabled;
+    constexpr bool cufft = is_cufft_enabled;
 
     //Note: more testing would probably improve this selection
 
@@ -181,8 +181,8 @@ inline fft_impl select_fft1_many_impl(const std::size_t batch, const std::size_t
  */
 inline cpp14_constexpr fft_impl select_default_ifft1_impl(const std::size_t n) {
     //Note since these boolean will be known at compile time, the conditions will be a lot simplified
-    constexpr const bool mkl   = is_mkl_enabled;
-    constexpr const bool cufft = is_cufft_enabled;
+    constexpr bool mkl   = is_mkl_enabled;
+    constexpr bool cufft = is_cufft_enabled;
 
     if (cufft) {
         if (math::is_power_of_two(n)) {
@@ -235,8 +235,8 @@ inline fft_impl select_ifft1_impl(const std::size_t n) {
  */
 inline cpp14_constexpr fft_impl select_default_fft2_impl(const std::size_t n1, std::size_t n2) {
     //Note since these boolean will be known at compile time, the conditions will be a lot simplified
-    constexpr const bool mkl   = is_mkl_enabled;
-    constexpr const bool cufft = is_cufft_enabled;
+    constexpr bool mkl   = is_mkl_enabled;
+    constexpr bool cufft = is_cufft_enabled;
 
     if (cufft) {
         if (math::is_power_of_two(n1) && math::is_power_of_two(n2)) {
@@ -293,8 +293,8 @@ inline cpp14_constexpr fft_impl select_default_fft2_many_impl(const std::size_t 
     cpp_unused(batch);
 
     //Note since these boolean will be known at compile time, the conditions will be a lot simplified
-    constexpr const bool mkl   = is_mkl_enabled;
-    constexpr const bool cufft = is_cufft_enabled;
+    constexpr bool mkl   = is_mkl_enabled;
+    constexpr bool cufft = is_cufft_enabled;
 
     //Note: more testing would probably improve this selection
 

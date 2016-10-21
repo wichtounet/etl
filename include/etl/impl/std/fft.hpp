@@ -22,7 +22,7 @@ namespace detail {
  * \brief Limit on the number of factors of the prime factorization
  * of the FFT size
  */
-constexpr const std::size_t MAX_FACTORS = 32;
+constexpr std::size_t MAX_FACTORS = 32;
 
 /*!
  * \brief Transform module for a FFT with 2 points
@@ -34,7 +34,7 @@ constexpr const std::size_t MAX_FACTORS = 32;
  */
 template <typename T>
 void fft_2_point(const etl::complex<T>* in, etl::complex<T>* out, const std::size_t product, const std::size_t n, const etl::complex<T>* twiddle) {
-    static constexpr const std::size_t factor = 2;
+    static constexpr std::size_t factor = 2;
 
     const std::size_t m      = n / factor;
     const std::size_t offset = product / factor;
@@ -68,7 +68,7 @@ void fft_2_point(const etl::complex<T>* in, etl::complex<T>* out, const std::siz
  */
 template <typename T>
 void fft_3_point(const etl::complex<T>* in, etl::complex<T>* out, const std::size_t product, const std::size_t n, const etl::complex<T>* twiddle1, const etl::complex<T>* twiddle2) {
-    static constexpr const std::size_t factor = 3;
+    static constexpr std::size_t factor = 3;
 
     const std::size_t m      = n / factor;
     const std::size_t offset = product / factor;
@@ -113,7 +113,7 @@ void fft_3_point(const etl::complex<T>* in, etl::complex<T>* out, const std::siz
  */
 template <typename T>
 void fft_4_point(const etl::complex<T>* in, etl::complex<T>* out, const std::size_t product, const std::size_t n, const etl::complex<T>* twiddle1, const etl::complex<T>* twiddle2, const etl::complex<T>* twiddle3) {
-    static constexpr const std::size_t factor = 4;
+    static constexpr std::size_t factor = 4;
 
     const std::size_t m      = n / factor;
     const std::size_t offset = product / factor;
@@ -162,7 +162,7 @@ void fft_4_point(const etl::complex<T>* in, etl::complex<T>* out, const std::siz
  */
 template <typename T>
 void fft_5_point(const etl::complex<T>* in, etl::complex<T>* out, const std::size_t product, const std::size_t n, const etl::complex<T>* twiddle1, const etl::complex<T>* twiddle2, const etl::complex<T>* twiddle3, const etl::complex<T>* twiddle4) {
-    static constexpr const std::size_t factor = 5;
+    static constexpr std::size_t factor = 5;
 
     const std::size_t m      = n / factor;
     const std::size_t offset = product / factor;
@@ -227,13 +227,13 @@ void fft_5_point(const etl::complex<T>* in, etl::complex<T>* out, const std::siz
  */
 template <typename T>
 void fft_7_point(const etl::complex<T>* in, etl::complex<T>* out, const std::size_t product, const std::size_t n, const etl::complex<T>* twiddle1, const etl::complex<T>* twiddle2, const etl::complex<T>* twiddle3, const etl::complex<T>* twiddle4, const etl::complex<T>* twiddle5, const etl::complex<T>* twiddle6) {
-    static constexpr const std::size_t factor = 7;
+    static constexpr std::size_t factor = 7;
 
     const std::size_t m      = n / factor;
     const std::size_t offset = product / factor;
     const std::size_t inc    = (factor - 1) * offset;
 
-    static constexpr const T theta_0 = 2.0 * M_PI / 7.0;
+    static constexpr T theta_0 = 2.0 * M_PI / 7.0;
 
     static const T theta_1 = (std::cos(theta_0) + std::cos(2.0 * theta_0) + std::cos(3.0 * theta_0)) / 3.0 - 1.0;
     static const T theta_2 = (2.0 * std::cos(theta_0) - std::cos(2.0 * theta_0) - std::cos(3.0 * theta_0)) / 3.0;
@@ -594,7 +594,7 @@ void inplace_radix2_fft1(etl::complex<T>* x, std::size_t N) {
         } while ((b & bit) == 0 && bit != 1);
     }
 
-    constexpr const T pi = M_PIl;
+    constexpr T pi = M_PIl;
 
     const std::size_t NN = 1 << std::size_t(std::log2(N));
 

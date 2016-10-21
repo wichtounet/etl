@@ -25,7 +25,7 @@ struct basic_inv_expr : impl_expr<basic_inv_expr<T, Impl>> {
     using this_type  = basic_inv_expr<T, Impl>; ///< The type of the expression
     using value_type = T;                       ///< The type of the values
 
-    static constexpr const bool is_gpu = false; ///< Indicate if the expression can be computed on GPU
+    static constexpr bool is_gpu = false; ///< Indicate if the expression can be computed on GPU
 
     /*!
      * \brief The result type for a given sub expression type

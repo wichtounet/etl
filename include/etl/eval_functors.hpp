@@ -167,7 +167,7 @@ struct VectorizedAssign : vectorized_base<V, L_Expr, R_Expr, VectorizedAssign<V,
      * \brief Compute the vectorized iterations of the loop using aligned store operations
      */
     void operator()(){
-        constexpr const bool remainder = !padding || !all_padded<L_Expr, R_Expr>::value;
+        constexpr bool remainder = !padding || !all_padded<L_Expr, R_Expr>::value;
 
         const size_t last = remainder ? (_size & size_t(-IT::size)) : _size;
 
@@ -272,7 +272,7 @@ struct VectorizedAssignAdd : vectorized_base<V, L_Expr, R_Expr, VectorizedAssign
      * \brief Compute the vectorized iterations of the loop using aligned store operations
      */
     void operator()(){
-        constexpr const bool remainder = !padding || !all_padded<L_Expr, R_Expr>::value;
+        constexpr bool remainder = !padding || !all_padded<L_Expr, R_Expr>::value;
 
         const size_t last = remainder ? (_size & size_t(-IT::size)) : _size;
 
@@ -367,7 +367,7 @@ struct VectorizedAssignSub : vectorized_base<V, L_Expr, R_Expr, VectorizedAssign
      * \brief Compute the vectorized iterations of the loop using aligned store operations
      */
     void operator()() {
-        constexpr const bool remainder = !padding || !all_padded<L_Expr, R_Expr>::value;
+        constexpr bool remainder = !padding || !all_padded<L_Expr, R_Expr>::value;
 
         const size_t last = remainder ? (_size & size_t(-IT::size)) : _size;
 
@@ -438,7 +438,7 @@ struct AssignMul {
  */
 template <vector_mode_t V, typename L_Expr, typename R_Expr>
 struct VectorizedAssignMul : vectorized_base<V, L_Expr, R_Expr, VectorizedAssignMul<V, L_Expr, R_Expr>> {
-    static constexpr const bool Cx = is_complex_t<value_t<L_Expr>>::value; ///< Indicates it is a complex multiplication
+    static constexpr bool Cx = is_complex_t<value_t<L_Expr>>::value; ///< Indicates it is a complex multiplication
 
     using base_t    = vectorized_base<V, L_Expr, R_Expr, VectorizedAssignMul<V, L_Expr, R_Expr>>; ///< The base type
     using IT        = typename base_t::IT;                                                        ///< The intrisic type
@@ -464,7 +464,7 @@ struct VectorizedAssignMul : vectorized_base<V, L_Expr, R_Expr, VectorizedAssign
      * \brief Compute the vectorized iterations of the loop using aligned store operations
      */
     void operator()(){
-        constexpr const bool remainder = !padding || !all_padded<L_Expr, R_Expr>::value;
+        constexpr bool remainder = !padding || !all_padded<L_Expr, R_Expr>::value;
 
         const size_t last = remainder ? (_size & size_t(-IT::size)) : _size;
 
@@ -535,7 +535,7 @@ struct AssignDiv {
  */
 template <vector_mode_t V, typename L_Expr, typename R_Expr>
 struct VectorizedAssignDiv : vectorized_base<V, L_Expr, R_Expr, VectorizedAssignDiv<V, L_Expr, R_Expr>> {
-    static constexpr const bool Cx = is_complex_t<value_t<L_Expr>>::value; ///< Indicates if it is a complex division
+    static constexpr bool Cx = is_complex_t<value_t<L_Expr>>::value; ///< Indicates if it is a complex division
 
     using base_t    = vectorized_base<V, L_Expr, R_Expr, VectorizedAssignDiv<V, L_Expr, R_Expr>>; ///< The base type
     using IT        = typename base_t::IT;                                                        ///< The intrisic type
@@ -561,7 +561,7 @@ struct VectorizedAssignDiv : vectorized_base<V, L_Expr, R_Expr, VectorizedAssign
      * \brief Compute the vectorized iterations of the loop using aligned store operations
      */
     void operator()(){
-        constexpr const bool remainder = !padding || !all_padded<L_Expr, R_Expr>::value;
+        constexpr bool remainder = !padding || !all_padded<L_Expr, R_Expr>::value;
 
         const size_t last = remainder ? (_size & size_t(-IT::size)) : _size;
 

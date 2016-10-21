@@ -484,7 +484,7 @@ void fft1_many(const opaque_memory<std::complex<T>, N>& a, const opaque_memory<s
 
 template <typename A, typename C>
 void ifft1_many(A&& a, C&& c) {
-    static constexpr const std::size_t N = decay_traits<A>::dimensions();
+    static constexpr std::size_t N = decay_traits<A>::dimensions();
 
     std::size_t n     = etl::dim<N - 1>(a); //Size of the transform
     std::size_t batch = etl::size(a) / n;   //Number of batch
@@ -544,7 +544,7 @@ void fft2(A&& a, C&& c) {
 
 template <typename A, typename C, cpp_enable_if(all_single_precision<A>::value)>
 void fft2_many(A&& a, C&& c) {
-    static constexpr const std::size_t N = decay_traits<A>::dimensions();
+    static constexpr std::size_t N = decay_traits<A>::dimensions();
 
     std::size_t n1    = etl::dim<N - 2>(a);       //Size of the transform
     std::size_t n2    = etl::dim<N - 1>(a);       //Size of the transform
@@ -559,7 +559,7 @@ void fft2_many(A&& a, C&& c) {
 
 template <typename A, typename C, cpp_enable_if(all_double_precision<A>::value)>
 void fft2_many(A&& a, C&& c) {
-    static constexpr const std::size_t N = decay_traits<A>::dimensions();
+    static constexpr std::size_t N = decay_traits<A>::dimensions();
 
     std::size_t n1    = etl::dim<N - 2>(a);       //Size of the transform
     std::size_t n2    = etl::dim<N - 1>(a);       //Size of the transform
@@ -574,7 +574,7 @@ void fft2_many(A&& a, C&& c) {
 
 template <typename A, typename C, cpp_enable_if(all_complex<A>::value)>
 void fft2_many(A&& a, C&& c) {
-    static constexpr const std::size_t N = decay_traits<A>::dimensions();
+    static constexpr std::size_t N = decay_traits<A>::dimensions();
 
     std::size_t n1    = etl::dim<N - 2>(a);       //Size of the transform
     std::size_t n2    = etl::dim<N - 1>(a);       //Size of the transform
@@ -585,7 +585,7 @@ void fft2_many(A&& a, C&& c) {
 
 template <typename A, typename C>
 void ifft2_many(A&& a, C&& c) {
-    static constexpr const std::size_t N = decay_traits<A>::dimensions();
+    static constexpr std::size_t N = decay_traits<A>::dimensions();
 
     std::size_t n1    = etl::dim<N - 2>(a);       //Size of the transform
     std::size_t n2    = etl::dim<N - 1>(a);       //Size of the transform

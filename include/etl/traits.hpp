@@ -58,12 +58,12 @@ struct is_selected_expr_impl<selected_expr<Selector, V, Expr>> : std::true_type 
  */
 template <typename T, typename Enable = void>
 struct etl_traits {
-    static constexpr const bool is_etl         = false; ///< Indicates if T is an ETL type
-    static constexpr const bool is_transformer = false; ///< Indicates if T is a transformer
-    static constexpr const bool is_view        = false; ///< Indicates if T is a view
-    static constexpr const bool is_magic_view  = false; ///< Indicates if T is a magic view
-    static constexpr const bool is_fast        = false; ///< Indicates if T is a fast structure
-    static constexpr const bool is_generator   = false; ///< Indicates if T is a generator expression
+    static constexpr bool is_etl         = false; ///< Indicates if T is an ETL type
+    static constexpr bool is_transformer = false; ///< Indicates if T is a transformer
+    static constexpr bool is_view        = false; ///< Indicates if T is a view
+    static constexpr bool is_magic_view  = false; ///< Indicates if T is a magic view
+    static constexpr bool is_fast        = false; ///< Indicates if T is a fast structure
+    static constexpr bool is_generator   = false; ///< Indicates if T is a generator expression
 };
 
 /*!
@@ -485,7 +485,7 @@ struct inplace_transpose_able<T, std::enable_if_t<all_fast<T>::value && is_2d<T>
     /*!
      * \brief Indicates if T is inplace transpose-able
      */
-    static constexpr const bool value = decay_traits<T>::template dim<0>() == decay_traits<T>::template dim<1>();
+    static constexpr bool value = decay_traits<T>::template dim<0>() == decay_traits<T>::template dim<1>();
 };
 
 /*!
@@ -496,7 +496,7 @@ struct inplace_transpose_able<T, std::enable_if_t<!all_fast<T>::value && is_2d<T
     /*!
      * \brief Indicates if T is inplace transpose-able
      */
-    static constexpr const bool value = true;
+    static constexpr bool value = true;
 };
 
 /*!
@@ -507,7 +507,7 @@ struct inplace_transpose_able<T, std::enable_if_t<!is_2d<T>::value>> {
     /*!
      * \brief Indicates if T is inplace transpose-able
      */
-    static constexpr const bool value = false;
+    static constexpr bool value = false;
 };
 
 /*!
@@ -528,7 +528,7 @@ struct inplace_sub_transpose_able<T, std::enable_if_t<all_fast<T>::value && is_3
     /*!
      * \brief Indicates if T is inplace sub-transpose-able
      */
-    static constexpr const bool value = decay_traits<T>::template dim<1>() == decay_traits<T>::template dim<2>();
+    static constexpr bool value = decay_traits<T>::template dim<1>() == decay_traits<T>::template dim<2>();
 };
 
 /*!
@@ -539,7 +539,7 @@ struct inplace_sub_transpose_able<T, std::enable_if_t<!all_fast<T>::value && is_
     /*!
      * \brief Indicates if T is inplace sub-transpose-able
      */
-    static constexpr const bool value = true;
+    static constexpr bool value = true;
 };
 
 /*!
@@ -550,7 +550,7 @@ struct inplace_sub_transpose_able<T, std::enable_if_t<!is_3d<T>::value>> {
     /*!
      * \brief Indicates if T is inplace sub-transpose-able
      */
-    static constexpr const bool value = false;
+    static constexpr bool value = false;
 };
 
 /*!
@@ -558,21 +558,21 @@ struct inplace_sub_transpose_able<T, std::enable_if_t<!is_3d<T>::value>> {
  */
 template <typename T>
 struct etl_traits<T, std::enable_if_t<is_etl_value_class<T>::value>> {
-    static constexpr const bool is_etl                  = true;                        ///< Indicates if the type is an ETL expression
-    static constexpr const bool is_transformer          = false;                       ///< Indicates if the type is a transformer
-    static constexpr const bool is_view                 = false;                       ///< Indicates if the type is a view
-    static constexpr const bool is_magic_view           = false;                       ///< Indicates if the type is a magic view
-    static constexpr const bool is_fast                 = is_fast_matrix<T>::value;    ///< Indicates if the expression is fast
-    static constexpr const bool is_value                = true;                        ///< Indicates if the expression is of value type
-    static constexpr const bool is_direct               = !is_sparse_matrix<T>::value; ///< Indicates if the expression has direct memory access
-    static constexpr const bool is_thread_safe          = true;                        ///< Indicates if the expression is thread safe
-    static constexpr const bool is_linear               = true;                        ///< Indicates if the expression is linear
-    static constexpr const bool is_generator            = false;                       ///< Indicates if the expression is a generator expression
-    static constexpr const bool needs_temporary_visitor = false;                       ///< Indicates if the expression needs a temporary visitor
-    static constexpr const bool needs_evaluator_visitor = false;                       ///< Indicates if the expression needs an evaluator visitor
-    static constexpr const bool is_padded               = is_padded_value<T>::value;   ///< Indicates if the expression is padded
-    static constexpr const bool is_aligned              = is_aligned_value<T>::value;  ///< Indicates if the expression is aligned
-    static constexpr const order storage_order          = T::storage_order;            ///< The expression storage order
+    static constexpr bool is_etl                  = true;                        ///< Indicates if the type is an ETL expression
+    static constexpr bool is_transformer          = false;                       ///< Indicates if the type is a transformer
+    static constexpr bool is_view                 = false;                       ///< Indicates if the type is a view
+    static constexpr bool is_magic_view           = false;                       ///< Indicates if the type is a magic view
+    static constexpr bool is_fast                 = is_fast_matrix<T>::value;    ///< Indicates if the expression is fast
+    static constexpr bool is_value                = true;                        ///< Indicates if the expression is of value type
+    static constexpr bool is_direct               = !is_sparse_matrix<T>::value; ///< Indicates if the expression has direct memory access
+    static constexpr bool is_thread_safe          = true;                        ///< Indicates if the expression is thread safe
+    static constexpr bool is_linear               = true;                        ///< Indicates if the expression is linear
+    static constexpr bool is_generator            = false;                       ///< Indicates if the expression is a generator expression
+    static constexpr bool needs_temporary_visitor = false;                       ///< Indicates if the expression needs a temporary visitor
+    static constexpr bool needs_evaluator_visitor = false;                       ///< Indicates if the expression needs an evaluator visitor
+    static constexpr bool is_padded               = is_padded_value<T>::value;   ///< Indicates if the expression is padded
+    static constexpr bool is_aligned              = is_aligned_value<T>::value;  ///< Indicates if the expression is aligned
+    static constexpr order storage_order          = T::storage_order;            ///< The expression storage order
 
     /*!
      * \brief Indicates if the expression is vectorizable using the

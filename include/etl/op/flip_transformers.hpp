@@ -27,7 +27,7 @@ struct hflip_transformer {
     explicit hflip_transformer(sub_type expr)
             : sub(expr) {}
 
-    static constexpr const bool matrix = etl_traits<std::decay_t<sub_type>>::dimensions() == 2; ///< INdicates if the sub type is a matrix or not
+    static constexpr bool matrix = etl_traits<std::decay_t<sub_type>>::dimensions() == 2; ///< INdicates if the sub type is a matrix or not
 
     /*!
      * \brief Returns the value at the given index
@@ -139,7 +139,7 @@ struct vflip_transformer {
     explicit vflip_transformer(sub_type expr)
             : sub(expr) {}
 
-    static constexpr const bool matrix = etl_traits<std::decay_t<sub_type>>::dimensions() == 2; ///< Indicates if the sub type is a 2D matrix or not
+    static constexpr bool matrix = etl_traits<std::decay_t<sub_type>>::dimensions() == 2; ///< Indicates if the sub type is a 2D matrix or not
 
     /*!
      * \brief Returns the value at the given index

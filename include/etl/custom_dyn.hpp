@@ -28,9 +28,9 @@ struct custom_dyn_matrix_impl final : dense_dyn_base<custom_dyn_matrix_impl<T, S
                                       expression_able<custom_dyn_matrix_impl<T, SO, D>>,
                                       value_testable<custom_dyn_matrix_impl<T, SO, D>>,
                                       dim_testable<custom_dyn_matrix_impl<T, SO, D>> {
-    static constexpr const std::size_t n_dimensions = D;                              ///< The number of dimensions
-    static constexpr const order storage_order      = SO;                             ///< The storage order
-    static constexpr const std::size_t alignment    = intrinsic_traits<T>::alignment; ///< The memory alignment
+    static constexpr std::size_t n_dimensions = D;                              ///< The number of dimensions
+    static constexpr order storage_order      = SO;                             ///< The storage order
+    static constexpr std::size_t alignment    = intrinsic_traits<T>::alignment; ///< The memory alignment
 
     using base_type              = dense_dyn_base<custom_dyn_matrix_impl<T, SO, D>, T, SO, D>; ///< The base type
     using value_type             = T;                                                          ///< The value type

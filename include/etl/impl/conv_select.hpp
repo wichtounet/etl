@@ -52,17 +52,17 @@ inline etl::conv_impl select_default_conv_impl() {
     //Note: since the constexpr values will be known at compile time, the
     //conditions will be a lot simplified
 
-    static constexpr const order input_order  = decay_traits<I>::storage_order;
-    static constexpr const order kernel_order = decay_traits<K>::storage_order;
-    static constexpr const order output_order = decay_traits<C>::storage_order;
+    static constexpr order input_order  = decay_traits<I>::storage_order;
+    static constexpr order kernel_order = decay_traits<K>::storage_order;
+    static constexpr order output_order = decay_traits<C>::storage_order;
 
     //Only the standard implementation is able to handle column major
     if (input_order == order::ColumnMajor || kernel_order == order::ColumnMajor || output_order == order::ColumnMajor) {
         return etl::conv_impl::STD;
     }
 
-    static constexpr const bool sse = vectorize_impl && vector_mode == vector_mode_t::SSE3;
-    static constexpr const bool avx = vectorize_impl && vector_mode == vector_mode_t::AVX;
+    static constexpr bool sse = vectorize_impl && vector_mode == vector_mode_t::SSE3;
+    static constexpr bool avx = vectorize_impl && vector_mode == vector_mode_t::AVX;
 
     if (avx) {
         return etl::conv_impl::AVX;
@@ -161,18 +161,18 @@ inline etl::conv4_impl select_default_conv4_valid_impl() {
     //Note: since the constexpr values will be known at compile time, the
     //conditions will be a lot simplified
 
-    static constexpr const order input_order  = decay_traits<I>::storage_order;
-    static constexpr const order kernel_order = decay_traits<K>::storage_order;
-    static constexpr const order output_order = decay_traits<C>::storage_order;
+    static constexpr order input_order  = decay_traits<I>::storage_order;
+    static constexpr order kernel_order = decay_traits<K>::storage_order;
+    static constexpr order output_order = decay_traits<C>::storage_order;
 
     //Only the standard implementation is able to handle column major
     if (input_order == order::ColumnMajor || kernel_order == order::ColumnMajor || output_order == order::ColumnMajor) {
         return etl::conv4_impl::STD;
     }
 
-    static constexpr const bool cudnn = is_cudnn_enabled;
-    static constexpr const bool avx = vectorize_impl && vector_mode == vector_mode_t::AVX;
-    static constexpr const bool sse = vectorize_impl && vector_mode == vector_mode_t::SSE3;
+    static constexpr bool cudnn = is_cudnn_enabled;
+    static constexpr bool avx = vectorize_impl && vector_mode == vector_mode_t::AVX;
+    static constexpr bool sse = vectorize_impl && vector_mode == vector_mode_t::SSE3;
 
     if(cudnn){
         return etl::conv4_impl::CUDNN;
@@ -250,18 +250,18 @@ inline etl::conv4_impl select_default_conv4_full_impl() {
     //Note: since the constexpr values will be known at compile time, the
     //conditions will be a lot simplified
 
-    static constexpr const order input_order  = decay_traits<I>::storage_order;
-    static constexpr const order kernel_order = decay_traits<K>::storage_order;
-    static constexpr const order output_order = decay_traits<C>::storage_order;
+    static constexpr order input_order  = decay_traits<I>::storage_order;
+    static constexpr order kernel_order = decay_traits<K>::storage_order;
+    static constexpr order output_order = decay_traits<C>::storage_order;
 
     //Only the standard implementation is able to handle column major
     if (input_order == order::ColumnMajor || kernel_order == order::ColumnMajor || output_order == order::ColumnMajor) {
         return etl::conv4_impl::STD;
     }
 
-    static constexpr const bool cudnn = is_cudnn_enabled;
-    static constexpr const bool avx = vectorize_impl && vector_mode == vector_mode_t::AVX;
-    static constexpr const bool sse = vectorize_impl && vector_mode == vector_mode_t::SSE3;
+    static constexpr bool cudnn = is_cudnn_enabled;
+    static constexpr bool avx = vectorize_impl && vector_mode == vector_mode_t::AVX;
+    static constexpr bool sse = vectorize_impl && vector_mode == vector_mode_t::SSE3;
 
     if(cudnn){
         return etl::conv4_impl::CUDNN;
@@ -359,18 +359,18 @@ inline etl::conv_multi_impl select_default_conv_valid_multi() {
     //Note: since the constexpr values will be known at compile time, the
     //conditions will be a lot simplified
 
-    static constexpr const order input_order  = decay_traits<I>::storage_order;
-    static constexpr const order kernel_order = decay_traits<K>::storage_order;
-    static constexpr const order output_order = decay_traits<C>::storage_order;
+    static constexpr order input_order  = decay_traits<I>::storage_order;
+    static constexpr order kernel_order = decay_traits<K>::storage_order;
+    static constexpr order output_order = decay_traits<C>::storage_order;
 
     //Only the standard implementation is able to handle column major
     if (input_order == order::ColumnMajor || kernel_order == order::ColumnMajor || output_order == order::ColumnMajor) {
         return etl::conv_multi_impl::STD;
     }
 
-    static constexpr const bool cudnn = is_cudnn_enabled;
-    static constexpr const bool sse = vectorize_impl && vector_mode == vector_mode_t::SSE3;
-    static constexpr const bool avx = vectorize_impl && vector_mode == vector_mode_t::AVX;
+    static constexpr bool cudnn = is_cudnn_enabled;
+    static constexpr bool sse = vectorize_impl && vector_mode == vector_mode_t::SSE3;
+    static constexpr bool avx = vectorize_impl && vector_mode == vector_mode_t::AVX;
 
     if(cudnn && decay_traits<I>::dimensions() == 2){
         //TODO Should only be used with (very?) large sizes
@@ -407,17 +407,17 @@ inline etl::conv_multi_impl select_default_conv_valid_multi_multi_impl() {
     //Note: since the constexpr values will be known at compile time, the
     //conditions will be a lot simplified
 
-    static constexpr const order input_order  = decay_traits<I>::storage_order;
-    static constexpr const order kernel_order = decay_traits<K>::storage_order;
-    static constexpr const order output_order = decay_traits<C>::storage_order;
+    static constexpr order input_order  = decay_traits<I>::storage_order;
+    static constexpr order kernel_order = decay_traits<K>::storage_order;
+    static constexpr order output_order = decay_traits<C>::storage_order;
 
     //Only the standard implementation is able to handle column major
     if (input_order == order::ColumnMajor || kernel_order == order::ColumnMajor || output_order == order::ColumnMajor) {
         return etl::conv_multi_impl::STD;
     }
 
-    static constexpr const bool sse = vectorize_impl && vector_mode == vector_mode_t::SSE3;
-    static constexpr const bool avx = vectorize_impl && vector_mode == vector_mode_t::AVX;
+    static constexpr bool sse = vectorize_impl && vector_mode == vector_mode_t::SSE3;
+    static constexpr bool avx = vectorize_impl && vector_mode == vector_mode_t::AVX;
 
     if (avx) {
         return etl::conv_multi_impl::AVX;
@@ -540,18 +540,18 @@ inline etl::conv_multi_impl select_default_conv_full_multi_impl() {
     //Note: since the constexpr values will be known at compile time, the
     //conditions will be a lot simplified
 
-    static constexpr const order input_order  = decay_traits<I>::storage_order;
-    static constexpr const order kernel_order = decay_traits<K>::storage_order;
-    static constexpr const order output_order = decay_traits<C>::storage_order;
+    static constexpr order input_order  = decay_traits<I>::storage_order;
+    static constexpr order kernel_order = decay_traits<K>::storage_order;
+    static constexpr order output_order = decay_traits<C>::storage_order;
 
     //Only the standard implementation is able to handle column major
     if (input_order == order::ColumnMajor || kernel_order == order::ColumnMajor || output_order == order::ColumnMajor) {
         return etl::conv_multi_impl::STD;
     }
 
-    static constexpr const bool cudnn = is_cudnn_enabled;
-    static constexpr const bool sse = vectorize_impl && vector_mode == vector_mode_t::SSE3;
-    static constexpr const bool avx = vectorize_impl && vector_mode == vector_mode_t::AVX;
+    static constexpr bool cudnn = is_cudnn_enabled;
+    static constexpr bool sse = vectorize_impl && vector_mode == vector_mode_t::SSE3;
+    static constexpr bool avx = vectorize_impl && vector_mode == vector_mode_t::AVX;
 
     if(cudnn && decay_traits<I>::dimensions() == 2){
         //TODO Should only be used with (very?) large sizes
@@ -632,17 +632,17 @@ inline etl::conv_multi_impl select_default_conv_same_multi_impl() {
     //Note: since the constexpr values will be known at compile time, the
     //conditions will be a lot simplified
 
-    static constexpr const order input_order  = decay_traits<I>::storage_order;
-    static constexpr const order kernel_order = decay_traits<K>::storage_order;
-    static constexpr const order output_order = decay_traits<C>::storage_order;
+    static constexpr order input_order  = decay_traits<I>::storage_order;
+    static constexpr order kernel_order = decay_traits<K>::storage_order;
+    static constexpr order output_order = decay_traits<C>::storage_order;
 
     //Only the standard implementation is able to handle column major
     if (input_order == order::ColumnMajor || kernel_order == order::ColumnMajor || output_order == order::ColumnMajor) {
         return etl::conv_multi_impl::STD;
     }
 
-    static constexpr const bool sse = vectorize_impl && vector_mode == vector_mode_t::SSE3;
-    static constexpr const bool avx = vectorize_impl && vector_mode == vector_mode_t::AVX;
+    static constexpr bool sse = vectorize_impl && vector_mode == vector_mode_t::SSE3;
+    static constexpr bool avx = vectorize_impl && vector_mode == vector_mode_t::AVX;
 
     if (avx) {
         return etl::conv_multi_impl::AVX;

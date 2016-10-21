@@ -35,63 +35,63 @@ namespace etl {
  */
 template <typename T>
 struct sse_intrinsic_traits {
-    static constexpr const bool vectorizable     = false;      ///< Boolean flag indicating if the type is vectorizable or not
-    static constexpr const std::size_t size      = 1;          ///< Numbers of elements done at once
-    static constexpr const std::size_t alignment = alignof(T); ///< Necessary number of bytes of alignment for this type
+    static constexpr bool vectorizable     = false;      ///< Boolean flag indicating if the type is vectorizable or not
+    static constexpr std::size_t size      = 1;          ///< Numbers of elements done at once
+    static constexpr std::size_t alignment = alignof(T); ///< Necessary number of bytes of alignment for this type
 
     using intrinsic_type = T;
 };
 
 template <>
 struct sse_intrinsic_traits<float> {
-    static constexpr const bool vectorizable     = true;
-    static constexpr const std::size_t size      = 4;
-    static constexpr const std::size_t alignment = 16;
+    static constexpr bool vectorizable     = true;
+    static constexpr std::size_t size      = 4;
+    static constexpr std::size_t alignment = 16;
 
     using intrinsic_type = __m128;
 };
 
 template <>
 struct sse_intrinsic_traits<double> {
-    static constexpr const bool vectorizable     = true;
-    static constexpr const std::size_t size      = 2;
-    static constexpr const std::size_t alignment = 16;
+    static constexpr bool vectorizable     = true;
+    static constexpr std::size_t size      = 2;
+    static constexpr std::size_t alignment = 16;
 
     using intrinsic_type = __m128d;
 };
 
 template <>
 struct sse_intrinsic_traits<std::complex<float>> {
-    static constexpr const bool vectorizable     = true;
-    static constexpr const std::size_t size      = 2;
-    static constexpr const std::size_t alignment = 16;
+    static constexpr bool vectorizable     = true;
+    static constexpr std::size_t size      = 2;
+    static constexpr std::size_t alignment = 16;
 
     using intrinsic_type = __m128;
 };
 
 template <>
 struct sse_intrinsic_traits<std::complex<double>> {
-    static constexpr const bool vectorizable     = true;
-    static constexpr const std::size_t size      = 1;
-    static constexpr const std::size_t alignment = 16;
+    static constexpr bool vectorizable     = true;
+    static constexpr std::size_t size      = 1;
+    static constexpr std::size_t alignment = 16;
 
     using intrinsic_type = __m128d;
 };
 
 template <>
 struct sse_intrinsic_traits<etl::complex<float>> {
-    static constexpr const bool vectorizable     = true;
-    static constexpr const std::size_t size      = 2;
-    static constexpr const std::size_t alignment = 16;
+    static constexpr bool vectorizable     = true;
+    static constexpr std::size_t size      = 2;
+    static constexpr std::size_t alignment = 16;
 
     using intrinsic_type = __m128;
 };
 
 template <>
 struct sse_intrinsic_traits<etl::complex<double>> {
-    static constexpr const bool vectorizable     = true;
-    static constexpr const std::size_t size      = 1;
-    static constexpr const std::size_t alignment = 16;
+    static constexpr bool vectorizable     = true;
+    static constexpr std::size_t size      = 1;
+    static constexpr std::size_t alignment = 16;
 
     using intrinsic_type = __m128d;
 };

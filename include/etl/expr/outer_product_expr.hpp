@@ -28,7 +28,7 @@ struct outer_product_expr : impl_expr<outer_product_expr<T>> {
     template <typename A, typename B>
     using result_type = detail::expr_result_t<this_type, A, B>;
 
-    static constexpr const bool is_gpu = false; ///< outer product has no GPU implementation
+    static constexpr bool is_gpu = false; ///< outer product has no GPU implementation
 
     /*!
      * \brief Apply the outer product to a and b and store the result in c
