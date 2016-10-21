@@ -22,6 +22,10 @@ namespace avx {
 
 namespace detail {
 
+// TODO Unify AVX/SSE dot with a vectorized algorithm
+// This would have the advantage of much less + automatic alignment selection
+// + this would allow deep vectorization (a dot (a + b))
+
 inline float aligned_dot_kernel(float* a, float* b, size_t n){
     static constexpr size_t vec_size = 8;
 
