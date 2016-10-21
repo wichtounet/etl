@@ -251,6 +251,7 @@ struct etl_traits<etl::binary_expr<T, LeftExpr, BinaryOp, RightExpr>> {
     static constexpr const bool needs_temporary_visitor = etl_traits<left_expr_t>::needs_temporary_visitor || etl_traits<right_expr_t>::needs_temporary_visitor;                    ///< Indicates if the expression needs a temporary visitor
     static constexpr const bool needs_evaluator_visitor = etl_traits<left_expr_t>::needs_evaluator_visitor || etl_traits<right_expr_t>::needs_evaluator_visitor;                    ///< Indicaes if the expression needs an evaluator visitor
     static constexpr const bool is_padded               = is_linear && etl_traits<left_expr_t>::is_padded && etl_traits<right_expr_t>::is_padded;                          ///< Indicates if the expression is padded
+    static constexpr const bool is_aligned               = is_linear && etl_traits<left_expr_t>::is_aligned && etl_traits<right_expr_t>::is_aligned;                          ///< Indicates if the expression is padded
     static constexpr const order storage_order          = etl_traits<left_expr_t>::is_generator ? etl_traits<right_expr_t>::storage_order : etl_traits<left_expr_t>::storage_order; ///< The expression storage order
 
     /*!

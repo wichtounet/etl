@@ -13,6 +13,8 @@
 
 namespace etl {
 
+// TODO Make sure (+ testing) that temporary expressions allocates aligned temporaries
+
 /*!
  * \brief Simple utility wrapper for shared_ptr that is mutable.
  *
@@ -678,6 +680,7 @@ struct etl_traits<etl::temporary_unary_expr<T, A, Op>> {
     static constexpr const bool needs_temporary_visitor = true;                           ///< Indicates if the expression needs a temporary visitor
     static constexpr const bool needs_evaluator_visitor = true;                           ///< Indicaes if the expression needs an evaluator visitor
     static constexpr const bool is_padded               = false;                          ///< Indicates if the expression is padded
+    static constexpr const bool is_aligned               = true;                          ///< Indicates if the expression is padded
     static constexpr const order storage_order          = etl_traits<a_t>::storage_order; ///< The expression storage order
     static constexpr const bool is_gpu                  = Op::is_gpu; ///< Indicate if the expression is computed on GPU
 
@@ -757,6 +760,7 @@ struct etl_traits<etl::temporary_binary_expr<T, A, B, Op>> {
     static constexpr const bool needs_temporary_visitor = true;                                                                                            ///< Indicates if the expression needs a temporary visitor
     static constexpr const bool needs_evaluator_visitor = true;                                                                                            ///< Indicaes if the expression needs an evaluator visitor
     static constexpr const bool is_padded               = false;                          ///< Indicates if the expression is padded
+    static constexpr const bool is_aligned               = true;                          ///< Indicates if the expression is padded
     static constexpr const order storage_order          = etl_traits<a_t>::is_generator ? etl_traits<b_t>::storage_order : etl_traits<a_t>::storage_order; ///< The expression storage order
     static constexpr const bool is_gpu                  = Op::is_gpu; ///< Indicate if the expression is computed on GPU
 
@@ -835,6 +839,7 @@ struct etl_traits<etl::temporary_unary_expr_state<T, A, Op>> {
     static constexpr const bool needs_temporary_visitor = true;                           ///< Indicates if the expression needs a temporary visitor
     static constexpr const bool needs_evaluator_visitor = true;                           ///< Indicaes if the expression needs an evaluator visitor
     static constexpr const bool is_padded               = false;                          ///< Indicates if the expression is padded
+    static constexpr const bool is_aligned               = true;                          ///< Indicates if the expression is padded
     static constexpr const order storage_order          = etl_traits<a_t>::storage_order; ///< The expression storage order
     static constexpr const bool is_gpu                  = Op::is_gpu; ///< Indicate if the expression is computed on GPU
 
@@ -896,6 +901,7 @@ struct etl_traits<etl::temporary_binary_expr_state<T, A, B, Op>> {
     static constexpr const bool needs_temporary_visitor = true;                                                                                            ///< Indicates if the expression needs a temporary visitor
     static constexpr const bool needs_evaluator_visitor = true;                                                                                            ///< Indicaes if the expression needs an evaluator visitor
     static constexpr const bool is_padded               = false;                          ///< Indicates if the expression is padded
+    static constexpr const bool is_aligned               = true;                          ///< Indicates if the expression is padded
     static constexpr const order storage_order          = etl_traits<a_t>::is_generator ? etl_traits<b_t>::storage_order : etl_traits<a_t>::storage_order; ///< The expression storage order
     static constexpr const bool is_gpu                  = Op::is_gpu; ///< Indicate if the expression is computed on GPU
 

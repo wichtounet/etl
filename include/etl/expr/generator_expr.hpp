@@ -114,6 +114,7 @@ struct etl_traits<etl::generator_expr<Generator>> {
     static constexpr const bool needs_temporary_visitor = false;           ///< Indicates if the expression needs a temporary visitor
     static constexpr const bool needs_evaluator_visitor = false;           ///< Indicates if the exxpression needs a evaluator visitor
     static constexpr const bool is_padded               = false;                          ///< Indicates if the expression is padded
+    static constexpr const bool is_aligned               = false;                          ///< Indicates if the expression is padded
     static constexpr const order storage_order          = order::RowMajor; ///< The expression's storage order
 
     /*!

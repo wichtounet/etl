@@ -117,6 +117,7 @@ struct etl_traits<etl::scalar<T>, void> {
     static constexpr const bool needs_temporary_visitor = false;           ///< Indicates if the expression needs a temporary visitor
     static constexpr const bool needs_evaluator_visitor = false;           ///< Indicaes if the expression needs an evaluator visitor
     static constexpr const bool is_padded               = true;                          ///< Indicates if the expression is padded
+    static constexpr const bool is_aligned              = true;                          ///< Indicates if the expression is padded
     static constexpr const order storage_order          = order::RowMajor; ///< The expression storage order
 
     /*!
