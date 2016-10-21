@@ -11,7 +11,10 @@
 namespace {
 
 float float_ref = 0.0;
+
+#ifdef ETL_EXTENDED_BENCH
 double double_ref = 0.0;
+#endif
 
 } //end of anonymous namespace
 
