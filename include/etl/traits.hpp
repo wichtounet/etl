@@ -451,14 +451,14 @@ using all_thread_safe = cpp::and_u<decay_traits<E>::is_thread_safe...>;
 
 /*!
  * \brief Traits to test if the givn ETL expression is a padded value class.
- * \tparam E The ETL expression type.
+ * \tparam T The ETL expression type.
  */
 template <typename T>
 using is_padded_value = cpp::or_u<is_dyn_matrix<T>::value, is_fast_matrix<T>::value>;
 
 /*!
  * \brief Traits to test if the givn ETL expression is an aligned value class.
- * \tparam E The ETL expression type.
+ * \tparam T The ETL expression type.
  */
 template <typename T>
 using is_aligned_value = cpp::or_u<is_dyn_matrix<T>::value, is_fast_matrix<T>::value>;

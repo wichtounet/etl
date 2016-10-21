@@ -297,9 +297,8 @@ struct sub_view {
     /*!
      * \brief Store several elements in the matrix at once
      * \param in The several elements to store
-     * \param i The position at which to start. This will be aligned from the beginning (multiple of the vector size).
+     * \param x The position at which to start. This will be aligned from the beginning (multiple of the vector size).
      * \tparam V The vectorization mode to use
-     * \return a vector containing several elements of the matrix
      */
     template <typename V = default_vec>
     void store(vec_type<V> in, std::size_t x) noexcept {
@@ -309,9 +308,8 @@ struct sub_view {
     /*!
      * \brief Store several elements in the matrix at once
      * \param in The several elements to store
-     * \param i The position at which to start. This will be aligned from the beginning (multiple of the vector size).
+     * \param x The position at which to start. This will be aligned from the beginning (multiple of the vector size).
      * \tparam V The vectorization mode to use
-     * \return a vector containing several elements of the matrix
      */
     template <typename V = default_vec>
     void storeu(vec_type<V> in, std::size_t x) noexcept {
@@ -321,9 +319,8 @@ struct sub_view {
     /*!
      * \brief Store several elements in the matrix at once, using non-temporal store
      * \param in The several elements to store
-     * \param i The position at which to start. This will be aligned from the beginning (multiple of the vector size).
+     * \param x The position at which to start. This will be aligned from the beginning (multiple of the vector size).
      * \tparam V The vectorization mode to use
-     * \return a vector containing several elements of the matrix
      */
     template <typename V = default_vec>
     void stream(vec_type<V> in, std::size_t x) noexcept {
@@ -692,7 +689,6 @@ struct memory_slice_view {
      * \param in The several elements to store
      * \param i The position at which to start. This will be aligned from the beginning (multiple of the vector size).
      * \tparam V The vectorization mode to use
-     * \return a vector containing several elements of the matrix
      */
     template <typename V = default_vec>
     void store(vec_type<V> in, std::size_t i) noexcept {
@@ -704,7 +700,6 @@ struct memory_slice_view {
      * \param in The several elements to store
      * \param i The position at which to start. This will be aligned from the beginning (multiple of the vector size).
      * \tparam V The vectorization mode to use
-     * \return a vector containing several elements of the matrix
      */
     template <typename V = default_vec>
     void storeu(vec_type<V> in, std::size_t i) noexcept {
@@ -716,7 +711,6 @@ struct memory_slice_view {
      * \param in The several elements to store
      * \param i The position at which to start. This will be aligned from the beginning (multiple of the vector size).
      * \tparam V The vectorization mode to use
-     * \return a vector containing several elements of the matrix
      */
     template <typename V = default_vec>
     void stream(vec_type<V> in, std::size_t i) noexcept {
@@ -949,7 +943,6 @@ struct fast_matrix_view {
      * \param in The several elements to store
      * \param i The position at which to start. This will be aligned from the beginning (multiple of the vector size).
      * \tparam V The vectorization mode to use
-     * \return a vector containing several elements of the matrix
      */
     template <typename V = default_vec>
     void store(vec_type<V> in, std::size_t i) noexcept {
@@ -961,7 +954,6 @@ struct fast_matrix_view {
      * \param in The several elements to store
      * \param i The position at which to start. This will be aligned from the beginning (multiple of the vector size).
      * \tparam V The vectorization mode to use
-     * \return a vector containing several elements of the matrix
      */
     template <typename V = default_vec>
     void storeu(vec_type<V> in, std::size_t i) noexcept {
@@ -973,7 +965,6 @@ struct fast_matrix_view {
      * \param in The several elements to store
      * \param i The position at which to start. This will be aligned from the beginning (multiple of the vector size).
      * \tparam V The vectorization mode to use
-     * \return a vector containing several elements of the matrix
      */
     template <typename V = default_vec>
     void stream(vec_type<V> in, std::size_t i) noexcept {
@@ -1052,12 +1043,11 @@ struct dyn_matrix_view {
 
     /*!
      * \brief Construct a new dyn_matrix_view over the given sub expression
-     * \param rows The number of rows
-     * \param columns The number of columns
+     * \param dims The dimensions
      */
     template<typename... S>
     dyn_matrix_view(sub_type sub, S... dims)
-            : sub(sub), dimensions{dims...}, _size(etl::size(sub)) {}
+            : sub(sub), dimensions{{dims...}}, _size(etl::size(sub)) {}
 
     /*!
      * \brief Returns the element at the given index
@@ -1088,8 +1078,9 @@ struct dyn_matrix_view {
 
     /*!
      * \brief Access to the element at the given position
-     * \param i The first index
-     * \param j The second index
+     * \param f1 The first index
+     * \param f2 The second index
+     * \param sizes The following indices
      * \return a reference to the element at the given position.
      */
     template<typename... S>
@@ -1118,8 +1109,9 @@ struct dyn_matrix_view {
 
     /*!
      * \brief Access to the element at the given (i,j) position
-     * \param i The first index
-     * \param j The second index
+     * \param f1 The first index
+     * \param f2 The second index
+     * \param sizes The following indices
      * \return a reference to the element at the given position.
      */
     template<typename... S>
@@ -1170,7 +1162,6 @@ struct dyn_matrix_view {
      * \param in The several elements to store
      * \param i The position at which to start. This will be aligned from the beginning (multiple of the vector size).
      * \tparam V The vectorization mode to use
-     * \return a vector containing several elements of the matrix
      */
     template <typename V = default_vec>
     void stream(vec_type<V> in, std::size_t i) noexcept {
@@ -1182,7 +1173,6 @@ struct dyn_matrix_view {
      * \param in The several elements to store
      * \param i The position at which to start. This will be aligned from the beginning (multiple of the vector size).
      * \tparam V The vectorization mode to use
-     * \return a vector containing several elements of the matrix
      */
     template <typename V = default_vec>
     void store(vec_type<V> in, std::size_t i) noexcept {
@@ -1194,7 +1184,6 @@ struct dyn_matrix_view {
      * \param in The several elements to store
      * \param i The position at which to start. This will be aligned from the beginning (multiple of the vector size).
      * \tparam V The vectorization mode to use
-     * \return a vector containing several elements of the matrix
      */
     template <typename V = default_vec>
     void storeu(vec_type<V> in, std::size_t i) noexcept {
@@ -1565,7 +1554,8 @@ struct etl_traits<etl::memory_slice_view<T>> {
      * \param d The dimension to get
      * \return The dth dimension of the given expression
      */
-    static std::size_t dim(const expr_t& v, std::size_t /*d*/) {
+    static std::size_t dim(const expr_t& v, std::size_t d) {
+        cpp_unused(d);
         return v.last - v.first;
     }
 

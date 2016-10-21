@@ -38,8 +38,6 @@ struct Assign {
      * \brief Constuct a new Assign
      * \param lhs The lhs memory
      * \param rhs The rhs memory
-     * \param first Index to the first element to assign
-     * \param last Index to the last element to assign
      */
     Assign(L_Expr lhs, R_Expr rhs) : lhs(lhs.memory_start()), rhs(rhs), _size(etl::size(lhs)) {
         //Nothing else
@@ -105,8 +103,6 @@ struct vectorized_base {
      * \brief Constuct a new vectorized_base
      * \param lhs The lhs expression
      * \param rhs The rhs expression
-     * \param first Index to the first element to assign
-     * \param last Index to the last element to assign
      */
     vectorized_base(L_Expr lhs, R_Expr rhs) : lhs(lhs), lhs_m(lhs.memory_start()), rhs(rhs), _size(etl::size(lhs)) {
         //Nothing else
@@ -162,8 +158,6 @@ struct VectorizedAssign : vectorized_base<V, L_Expr, R_Expr, VectorizedAssign<V,
      * \brief Constuct a new VectorizedAssign
      * \param lhs The lhs expression
      * \param rhs The rhs expression
-     * \param first Index to the first element to assign
-     * \param last Index to the last element to assign
      */
     VectorizedAssign(L_Expr lhs, R_Expr rhs) : base_t(lhs, rhs) {
         //Nothing else
@@ -171,7 +165,6 @@ struct VectorizedAssign : vectorized_base<V, L_Expr, R_Expr, VectorizedAssign<V,
 
     /*!
      * \brief Compute the vectorized iterations of the loop using aligned store operations
-     * \param first The index when to start
      */
     void operator()(){
         constexpr const bool remainder = !padding || !all_padded<L_Expr, R_Expr>::value;
@@ -222,8 +215,6 @@ struct AssignAdd {
      * \brief Constuct a new AssignAdd
      * \param lhs The lhs memory
      * \param rhs The rhs expression
-     * \param first Index to the first element to assign
-     * \param last Index to the last element to assign
      */
     AssignAdd(L_Expr lhs, R_Expr rhs) : lhs(lhs.memory_start()), rhs(rhs), _size(etl::size(lhs)) {
         //Nothing else
@@ -279,7 +270,6 @@ struct VectorizedAssignAdd : vectorized_base<V, L_Expr, R_Expr, VectorizedAssign
 
     /*!
      * \brief Compute the vectorized iterations of the loop using aligned store operations
-     * \param first The index when to start
      */
     void operator()(){
         constexpr const bool remainder = !padding || !all_padded<L_Expr, R_Expr>::value;
@@ -368,8 +358,6 @@ struct VectorizedAssignSub : vectorized_base<V, L_Expr, R_Expr, VectorizedAssign
      * \brief Constuct a new VectorizedAssignSub
      * \param lhs The lhs expression
      * \param rhs The rhs expression
-     * \param first Index to the first element to assign
-     * \param last Index to the last element to assign
      */
     VectorizedAssignSub(L_Expr lhs, R_Expr rhs) : base_t(lhs, rhs) {
         //Nothing else
@@ -377,7 +365,6 @@ struct VectorizedAssignSub : vectorized_base<V, L_Expr, R_Expr, VectorizedAssign
 
     /*!
      * \brief Compute the vectorized iterations of the loop using aligned store operations
-     * \param first The index when to start
      */
     void operator()() {
         constexpr const bool remainder = !padding || !all_padded<L_Expr, R_Expr>::value;
@@ -468,8 +455,6 @@ struct VectorizedAssignMul : vectorized_base<V, L_Expr, R_Expr, VectorizedAssign
      * \brief Constuct a new VectorizedAssignMul
      * \param lhs The lhs expression
      * \param rhs The rhs expression
-     * \param first Index to the first element to assign
-     * \param last Index to the last element to assign
      */
     VectorizedAssignMul(L_Expr lhs, R_Expr rhs) : base_t(lhs, rhs) {
         //Nothing else
@@ -477,7 +462,6 @@ struct VectorizedAssignMul : vectorized_base<V, L_Expr, R_Expr, VectorizedAssign
 
     /*!
      * \brief Compute the vectorized iterations of the loop using aligned store operations
-     * \param first The index when to start
      */
     void operator()(){
         constexpr const bool remainder = !padding || !all_padded<L_Expr, R_Expr>::value;
@@ -518,8 +502,6 @@ struct AssignDiv {
      * \brief Constuct a new AssignDiv
      * \param lhs The lhs memory
      * \param rhs The rhs expression
-     * \param first Index to the first element to assign
-     * \param last Index to the last element to assign
      */
     AssignDiv(L_Expr lhs, R_Expr rhs) : lhs(lhs.memory_start()), rhs(rhs), _size(etl::size(lhs)) {
         //Nothing else
@@ -570,8 +552,6 @@ struct VectorizedAssignDiv : vectorized_base<V, L_Expr, R_Expr, VectorizedAssign
      * \brief Constuct a new VectorizedAssignDiv
      * \param lhs The lhs expression
      * \param rhs The rhs expression
-     * \param first Index to the first element to assign
-     * \param last Index to the last element to assign
      */
     VectorizedAssignDiv(L_Expr lhs, R_Expr rhs) : base_t(lhs, rhs) {
         //Nothing else
@@ -579,7 +559,6 @@ struct VectorizedAssignDiv : vectorized_base<V, L_Expr, R_Expr, VectorizedAssign
 
     /*!
      * \brief Compute the vectorized iterations of the loop using aligned store operations
-     * \param first The index when to start
      */
     void operator()(){
         constexpr const bool remainder = !padding || !all_padded<L_Expr, R_Expr>::value;

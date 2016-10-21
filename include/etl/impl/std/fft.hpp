@@ -1026,9 +1026,9 @@ void conv2_full_fft_flipped(const opaque_memory<T, 2>& a, const opaque_memory<T,
 
 /*!
  * \brief Perform the 2D full convolution of a with multiple kernels of b and store the result in c
- * \param a The input matrix
- * \param b The kernel matrix
- * \param c The output matrix
+ * \param input The input matrix
+ * \param kernel The kernel matrix
+ * \param conv The output matrix
  */
 template <typename T>
 void conv2_full_multi_fft(const opaque_memory<T, 2>& input, const opaque_memory<T, 3>& kernel, const opaque_memory<T, 3>& conv) {
@@ -1119,9 +1119,9 @@ void conv2_full_multi_fft(const opaque_memory<T, 2>& input, const opaque_memory<
 
 /*!
  * \brief Perform the 2D full convolution of a with multiple kernels of b and store the result in c
- * \param a The input matrix
- * \param b The kernel matrix
- * \param c The output matrix
+ * \param input The input matrix
+ * \param kernel The kernel matrix
+ * \param conv The output matrix
  */
 template <typename T>
 void conv2_full_multi_flipped_fft(const opaque_memory<T, 2>& input, const opaque_memory<T, 3>& kernel, const opaque_memory<T, 3>& conv) {

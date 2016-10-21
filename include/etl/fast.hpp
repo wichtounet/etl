@@ -271,7 +271,6 @@ public:
      * \param in The several elements to store
      * \param i The position at which to start. This will be aligned from the beginning (multiple of the vector size).
      * \tparam V The vectorization mode to use
-     * \return a vector containing several elements of the matrix
      */
     template <typename V = default_vec>
     void store(vec_type<V> in, std::size_t i) noexcept {
@@ -283,7 +282,6 @@ public:
      * \param in The several elements to store
      * \param i The position at which to start. This will be aligned from the beginning (multiple of the vector size).
      * \tparam V The vectorization mode to use
-     * \return a vector containing several elements of the matrix
      */
     template <typename V = default_vec>
     void storeu(vec_type<V> in, std::size_t i) noexcept {
@@ -295,7 +293,6 @@ public:
      * \param in The several elements to store
      * \param i The position at which to start. This will be aligned from the beginning (multiple of the vector size).
      * \tparam V The vectorization mode to use
-     * \return a vector containing several elements of the matrix
      */
     template <typename V = default_vec>
     void stream(vec_type<V> in, std::size_t i) noexcept {
