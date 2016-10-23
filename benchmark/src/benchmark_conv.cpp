@@ -401,27 +401,35 @@ CPM_DIRECT_SECTION_TWO_PASS_NS_PF("sconv2_valid_multi_multi_flipped [conv][conv2
 
 // Note: STD is way too slow to benchmark
 
-CPM_DIRECT_SECTION_TWO_PASS_NS_PF("sconv4_valid [conv][conv4]", conv_4d_valid_policy,
-    FLOPS([](std::size_t n, std::size_t k, std::size_t c, std::size_t i, std::size_t w){ return 2 * n * k * c * i * i * w * w; }),
-    CPM_SECTION_INIT([](std::size_t n, std::size_t k, std::size_t c, std::size_t i, std::size_t w){
-        return std::make_tuple(smat4(n, c, i, i), smat4(k, c, w, w), smat4(n, k, i - w + 1, i - w + 1)); }),
-    CPM_SECTION_FUNCTOR("default", [](smat4& a, smat4& b, smat4& r){ r = etl::conv_4d_valid(a, b); })
-    SSE_SECTION_FUNCTOR("sse", [](smat4& a, smat4& b, smat4& r){ r = selected_helper(etl::conv4_impl::SSE, etl::conv_4d_valid(a, b)); })
-    AVX_SECTION_FUNCTOR("avx", [](smat4& a, smat4& b, smat4& r){ r = selected_helper(etl::conv4_impl::AVX, etl::conv_4d_valid(a, b)); }),
-    CPM_SECTION_FUNCTOR("blas", [](smat4& a, smat4& b, smat4& r){ r = selected_helper(etl::conv4_impl::BLAS, etl::conv_4d_valid(a, b)); })
-    CUDNN_SECTION_FUNCTOR("cudnn", [](smat4& a, smat4& b, smat4& r){ r = selected_helper(etl::conv4_impl::CUDNN, etl::conv_4d_valid(a, b)); })
+#define CONV4_BENCH(Name, Policy, Function) \
+CPM_DIRECT_SECTION_TWO_PASS_NS_PF(Name, Policy, \
+    FLOPS([](std::size_t n, std::size_t k, std::size_t c, std::size_t i, std::size_t w){ return 2 * n * k * c * i * i * w * w; }), \
+    CPM_SECTION_INIT([](std::size_t n, std::size_t k, std::size_t c, std::size_t i, std::size_t w){ \
+        return std::make_tuple(smat4(n, c, i, i), smat4(k, c, w, w), smat4(n, k, i - w + 1, i - w + 1)); }), \
+    CPM_SECTION_FUNCTOR("default", [](smat4& a, smat4& b, smat4& r){ r = Function(a, b); }) \
+    SSE_SECTION_FUNCTOR("sse", [](smat4& a, smat4& b, smat4& r){ r = selected_helper(etl::conv4_impl::SSE, Function(a, b)); }) \
+    AVX_SECTION_FUNCTOR("avx", [](smat4& a, smat4& b, smat4& r){ r = selected_helper(etl::conv4_impl::AVX, Function(a, b)); }), \
+    CPM_SECTION_FUNCTOR("blas", [](smat4& a, smat4& b, smat4& r){ r = selected_helper(etl::conv4_impl::BLAS, Function(a, b)); }) \
+    CUDNN_SECTION_FUNCTOR("cudnn", [](smat4& a, smat4& b, smat4& r){ r = selected_helper(etl::conv4_impl::CUDNN, Function(a, b)); }) \
 )
 
-CPM_DIRECT_SECTION_TWO_PASS_NS_PF("sconv4_valid_flipped [conv][conv4]", conv_4d_valid_policy,
-    FLOPS([](std::size_t n, std::size_t k, std::size_t c, std::size_t i, std::size_t w){ return 2 * n * k * c * i * i * w * w; }),
-    CPM_SECTION_INIT([](std::size_t n, std::size_t k, std::size_t c, std::size_t i, std::size_t w){
-        return std::make_tuple(smat4(n, c, i, i), smat4(k, c, w, w), smat4(n, k, i - w + 1, i - w + 1)); }),
-    CPM_SECTION_FUNCTOR("default", [](smat4& a, smat4& b, smat4& r){ r = etl::conv_4d_valid_flipped(a, b); })
-    SSE_SECTION_FUNCTOR("sse", [](smat4& a, smat4& b, smat4& r){ r = selected_helper(etl::conv4_impl::SSE, etl::conv_4d_valid_flipped(a, b)); })
-    AVX_SECTION_FUNCTOR("avx", [](smat4& a, smat4& b, smat4& r){ r = selected_helper(etl::conv4_impl::AVX, etl::conv_4d_valid_flipped(a, b)); }),
-    CPM_SECTION_FUNCTOR("blas", [](smat4& a, smat4& b, smat4& r){ r = selected_helper(etl::conv4_impl::BLAS, etl::conv_4d_valid(a, b)); })
-    CUDNN_SECTION_FUNCTOR("cudnn", [](smat4& a, smat4& b, smat4& r){ r = selected_helper(etl::conv4_impl::CUDNN, etl::conv_4d_valid_flipped(a, b)); })
-)
+CONV4_BENCH("sconv4_valid [conv][conv4]", conv_4d_valid_policy, conv_4d_valid)
+CONV4_BENCH("sconv4_valid_flipped [conv][conv4]", conv_4d_valid_policy, conv_4d_valid_flipped)
+
+CONV4_BENCH("sconv4_valid_1 [conv][conv4][conv4_chain]", conv_4d_valid_policy_1, conv_4d_valid)
+CONV4_BENCH("sconv4_valid_2 [conv][conv4][conv4_chain]", conv_4d_valid_policy_2, conv_4d_valid)
+CONV4_BENCH("sconv4_valid_3 [conv][conv4][conv4_chain]", conv_4d_valid_policy_3, conv_4d_valid)
+CONV4_BENCH("sconv4_valid_4 [conv][conv4][conv4_chain]", conv_4d_valid_policy_4, conv_4d_valid)
+CONV4_BENCH("sconv4_valid_5 [conv][conv4][conv4_chain]", conv_4d_valid_policy_5, conv_4d_valid)
+CONV4_BENCH("sconv4_valid_6 [conv][conv4][conv4_chain]", conv_4d_valid_policy_6, conv_4d_valid)
+CONV4_BENCH("sconv4_valid_7 [conv][conv4][conv4_chain]", conv_4d_valid_policy_7, conv_4d_valid)
+CONV4_BENCH("sconv4_valid_8 [conv][conv4][conv4_chain]", conv_4d_valid_policy_8, conv_4d_valid)
+CONV4_BENCH("sconv4_valid_9 [conv][conv4][conv4_chain]", conv_4d_valid_policy_9, conv_4d_valid)
+CONV4_BENCH("sconv4_valid_10 [conv][conv4][conv4_chain]", conv_4d_valid_policy_10, conv_4d_valid)
+CONV4_BENCH("sconv4_valid_11 [conv][conv4][conv4_chain]", conv_4d_valid_policy_11, conv_4d_valid)
+CONV4_BENCH("sconv4_valid_12 [conv][conv4][conv4_chain]", conv_4d_valid_policy_12, conv_4d_valid)
+CONV4_BENCH("sconv4_valid_13 [conv][conv4][conv4_chain]", conv_4d_valid_policy_13, conv_4d_valid)
+CONV4_BENCH("sconv4_valid_14 [conv][conv4][conv4_chain]", conv_4d_valid_policy_14, conv_4d_valid)
 
 CPM_DIRECT_SECTION_TWO_PASS_NS_PF("sconv4_valid_filter [conv][conv4]", conv_4d_valid_policy,
     FLOPS([](std::size_t n, std::size_t k, std::size_t c, std::size_t i, std::size_t w){ return 2 * n * k * c * i * i * w * w; }),

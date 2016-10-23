@@ -128,6 +128,132 @@ using conv_4d_full_policy = NARY_POLICY(
     /* W */ VALUES_POLICY(16, 16, 16, 16, 16, 16, 16, 16, 16)
     );
 
+// Policy fairer to AVX
+using conv_4d_valid_policy_1 = NARY_POLICY(
+    /* N */ VALUES_POLICY(2, 8, 12, 16, 20, 24, 30, 40, 50, 64),
+    /* K */ VALUES_POLICY(6, 10, 12, 20, 20, 30, 30, 30, 40, 40),
+    /* C */ VALUES_POLICY(2, 3, 8, 10, 20, 20, 30, 40, 50, 50),
+    /* I */ VALUES_POLICY(28, 28, 28, 28, 28, 28, 28, 28, 28, 28),
+    /* W */ VALUES_POLICY(16, 16, 16, 16, 16, 16, 16, 16, 16, 16)
+    );
+
+// Policy fairer to SSE
+using conv_4d_valid_policy_2 = NARY_POLICY(
+    /* N */ VALUES_POLICY(2, 8, 12, 16, 20, 24, 30, 40, 50, 64),
+    /* K */ VALUES_POLICY(6, 10, 12, 20, 20, 30, 30, 30, 40, 40),
+    /* C */ VALUES_POLICY(2, 3, 8, 10, 20, 20, 30, 40, 50, 50),
+    /* I */ VALUES_POLICY(28, 28, 28, 28, 28, 28, 28, 28, 28, 28),
+    /* W */ VALUES_POLICY(12, 12, 12, 12, 12, 12, 12, 12, 12, 12)
+    );
+
+// Policy with very small kernels
+using conv_4d_valid_policy_3 = NARY_POLICY(
+    /* N */ VALUES_POLICY(2, 8, 12, 16, 20, 24, 30, 40, 50, 64),
+    /* K */ VALUES_POLICY(6, 10, 12, 20, 20, 30, 30, 30, 40, 40),
+    /* C */ VALUES_POLICY(2, 3, 8, 10, 20, 20, 30, 40, 50, 50),
+    /* I */ VALUES_POLICY(28, 28, 28, 28, 28, 28, 28, 28, 28, 28),
+    /* W */ VALUES_POLICY(3, 3, 3, 3, 3, 3, 3, 3, 3, 3)
+    );
+
+// Policy with very small kernels
+using conv_4d_valid_policy_4 = NARY_POLICY(
+    /* N */ VALUES_POLICY(2, 8, 12, 16, 20, 24, 30, 40, 50, 64),
+    /* K */ VALUES_POLICY(6, 10, 12, 20, 20, 30, 30, 30, 40, 40),
+    /* C */ VALUES_POLICY(2, 3, 8, 10, 20, 20, 30, 40, 50, 50),
+    /* I */ VALUES_POLICY(28, 28, 28, 28, 28, 28, 28, 28, 28, 28),
+    /* W */ VALUES_POLICY(5, 5, 5, 5, 5, 5, 5, 5, 5, 5)
+    );
+
+// Policy with very small kernels
+using conv_4d_valid_policy_5 = NARY_POLICY(
+    /* N */ VALUES_POLICY(2, 8, 12, 16, 20, 24, 30, 40, 50, 64),
+    /* K */ VALUES_POLICY(6, 10, 12, 20, 20, 30, 30, 30, 40, 40),
+    /* C */ VALUES_POLICY(2, 3, 8, 10, 20, 20, 30, 40, 50, 50),
+    /* I */ VALUES_POLICY(28, 28, 28, 28, 28, 28, 28, 28, 28, 28),
+    /* W */ VALUES_POLICY(7, 7, 7, 7, 7, 7, 7, 7, 7, 7)
+    );
+
+// Policy with small kernels
+using conv_4d_valid_policy_6 = NARY_POLICY(
+    /* N */ VALUES_POLICY(2, 8, 12, 16, 20, 24, 30, 40, 50, 64),
+    /* K */ VALUES_POLICY(6, 10, 12, 20, 20, 30, 30, 30, 40, 40),
+    /* C */ VALUES_POLICY(2, 3, 8, 10, 20, 20, 30, 40, 50, 50),
+    /* I */ VALUES_POLICY(28, 28, 28, 28, 28, 28, 28, 28, 28, 28),
+    /* W */ VALUES_POLICY(15, 15, 15, 15, 15, 15, 15, 15, 15, 15)
+    );
+
+// Policy with larger images
+using conv_4d_valid_policy_7 = NARY_POLICY(
+    /* N */ VALUES_POLICY(2, 8, 12, 16, 20, 24, 30, 40, 50, 64),
+    /* K */ VALUES_POLICY(6, 10, 12, 20, 20, 30, 30, 30, 40, 40),
+    /* C */ VALUES_POLICY(2, 3, 8, 10, 20, 20, 30, 40, 50, 50),
+    /* I */ VALUES_POLICY(128, 128, 128, 128, 128, 128, 128, 128, 128, 128),
+    /* W */ VALUES_POLICY(5, 5, 5, 5, 5, 5, 5, 5, 5, 5)
+    );
+
+// Policy with larger images
+using conv_4d_valid_policy_8 = NARY_POLICY(
+    /* N */ VALUES_POLICY(2, 8, 12, 16, 20, 24, 30, 40, 50, 64),
+    /* K */ VALUES_POLICY(6, 10, 12, 20, 20, 30, 30, 30, 40, 40),
+    /* C */ VALUES_POLICY(2, 3, 8, 10, 20, 20, 30, 40, 50, 50),
+    /* I */ VALUES_POLICY(128, 128, 128, 128, 128, 128, 128, 128, 128, 128),
+    /* W */ VALUES_POLICY(8, 8, 8, 8, 8, 8, 8, 8, 8, 8)
+    );
+
+// Policy with larger images and larger kernels
+using conv_4d_valid_policy_9 = NARY_POLICY(
+    /* N */ VALUES_POLICY(2, 8, 12, 16, 20, 24, 30),
+    /* K */ VALUES_POLICY(6, 10, 12, 20, 20, 30, 30),
+    /* C */ VALUES_POLICY(2, 3, 8, 10, 20, 20, 30),
+    /* I */ VALUES_POLICY(128, 128, 128, 128, 128, 128, 128),
+    /* W */ VALUES_POLICY(12, 12, 12, 12, 12, 12, 12)
+    );
+
+// Policy with larger images and larger kernels
+using conv_4d_valid_policy_10 = NARY_POLICY(
+    /* N */ VALUES_POLICY(2, 8, 12, 16, 20, 24, 30),
+    /* K */ VALUES_POLICY(6, 10, 12, 20, 20, 30, 30),
+    /* C */ VALUES_POLICY(2, 3, 8, 10, 20, 20, 30),
+    /* I */ VALUES_POLICY(128, 128, 128, 128, 128, 128, 128),
+    /* W */ VALUES_POLICY(16, 16, 16, 16, 16, 16, 16)
+    );
+
+// Policy with larger images and larger kernels
+using conv_4d_valid_policy_11 = NARY_POLICY(
+    /* N */ VALUES_POLICY(2, 8, 12, 16, 20, 24, 30),
+    /* K */ VALUES_POLICY(6, 10, 12, 20, 20, 30, 30),
+    /* C */ VALUES_POLICY(2, 3, 8, 10, 20, 20, 30, 40),
+    /* I */ VALUES_POLICY(128, 128, 128, 128, 128, 128, 128),
+    /* W */ VALUES_POLICY(32, 32, 32, 32, 32, 32, 32, 32)
+    );
+
+// Policy with larger images and larger kernels
+using conv_4d_valid_policy_12 = NARY_POLICY(
+    /* N */ VALUES_POLICY(2, 8, 12, 16, 20, 24, 30),
+    /* K */ VALUES_POLICY(6, 10, 12, 20, 20, 30, 30),
+    /* C */ VALUES_POLICY(2, 3, 8, 10, 20, 20, 30),
+    /* I */ VALUES_POLICY(128, 128, 128, 128, 128, 128, 128),
+    /* W */ VALUES_POLICY(33, 33, 33, 33, 33, 33, 33)
+    );
+
+// Policy with larger images and larger kernels
+using conv_4d_valid_policy_13 = NARY_POLICY(
+    /* N */ VALUES_POLICY(2, 8, 12, 16, 20, 24, 30),
+    /* K */ VALUES_POLICY(6, 10, 12, 20, 20, 30, 30),
+    /* C */ VALUES_POLICY(2, 3, 8, 10, 20, 20, 30),
+    /* I */ VALUES_POLICY(128, 128, 128, 128, 128, 128, 128),
+    /* W */ VALUES_POLICY(64, 64, 64, 64, 64, 64, 64)
+    );
+
+// Policy with very large images
+using conv_4d_valid_policy_14 = NARY_POLICY(
+    /* N */ VALUES_POLICY(2, 8, 12, 16, 20, 24, 30),
+    /* K */ VALUES_POLICY(6, 10, 12, 20, 20, 30, 30),
+    /* C */ VALUES_POLICY(2, 3, 8, 10, 20, 20, 30),
+    /* I */ VALUES_POLICY(256, 256, 256, 256, 256, 256, 256),
+    /* W */ VALUES_POLICY(5, 5, 5, 5, 5, 5, 5)
+    );
+
 using pmp_policy = VALUES_POLICY(100, 120, 140, 160, 180, 200);
 
 using fast_policy = VALUES_POLICY(1);
