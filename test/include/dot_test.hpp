@@ -14,6 +14,12 @@
 #endif
 #endif
 
+#ifdef TEST_AVX
+#define TEST_VEC
+#elif defined(TEST_SSE)
+#define TEST_VEC
+#endif
+
 #define DOT_FUNCTOR(name, ...)                        \
     struct name {                                     \
         template <typename A, typename B, typename C> \
@@ -27,6 +33,14 @@ DOT_FUNCTOR(std_dot, SELECTED_SECTION(etl::dot_impl::STD) { c = etl::dot(a, b); 
 
 #define DOT_TEST_CASE_SECTION_DEFAULT DOT_TEST_CASE_SECTIONS(default_dot)
 #define DOT_TEST_CASE_SECTION_STD DOT_TEST_CASE_SECTIONS(std_dot)
+
+#ifdef TEST_SSE
+DOT_FUNCTOR(vec_dot, SELECTED_SECTION(etl::dot_impl::VEC) { c = etl::dot(a, b); })
+
+#define DOT_TEST_CASE_SECTION_VEC DOT_TEST_CASE_SECTIONS(vec_dot)
+#else
+#define DOT_TEST_CASE_SECTION_VEC
+#endif
 
 #ifdef TEST_SSE
 DOT_FUNCTOR(sse_dot, SELECTED_SECTION(etl::dot_impl::SSE) { c = etl::dot(a, b); })
@@ -74,6 +88,7 @@ DOT_FUNCTOR(blas_dot, SELECTED_SECTION(etl::dot_impl::BLAS) { c = etl::dot(a, b)
     DOT_TEST_CASE_DECL(name, description) { \
         DOT_TEST_CASE_SECTION_DEFAULT        \
         DOT_TEST_CASE_SECTION_STD            \
+        DOT_TEST_CASE_SECTION_VEC            \
         DOT_TEST_CASE_SECTION_SSE            \
         DOT_TEST_CASE_SECTION_AVX            \
         DOT_TEST_CASE_SECTION_BLAS           \
