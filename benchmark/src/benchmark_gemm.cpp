@@ -236,7 +236,8 @@ CPM_DIRECT_SECTION_TWO_PASS_NS_PF("r = a dot b (s)", dot_policy,
     FLOPS([](std::size_t d1){ return 2 * d1; }),
     CPM_SECTION_INIT([](std::size_t d1){ return std::make_tuple(svec(d1), svec(d1)); }),
     CPM_SECTION_FUNCTOR("default", [](svec& a, svec& b){ float_ref += etl::dot(a, b); }),
-    CPM_SECTION_FUNCTOR("std", [](svec& a, svec& b){ SELECTED_SECTION(etl::dot_impl::STD) { float_ref += etl::dot(a, b); } })
+    CPM_SECTION_FUNCTOR("std", [](svec& a, svec& b){ SELECTED_SECTION(etl::dot_impl::STD) { float_ref += etl::dot(a, b); } }),
+    CPM_SECTION_FUNCTOR("vec", [](svec& a, svec& b){ SELECTED_SECTION(etl::dot_impl::VEC) { float_ref += etl::dot(a, b); } })
     SSE_SECTION_FUNCTOR("sse", [](svec& a, svec& b){ SELECTED_SECTION(etl::dot_impl::SSE) { float_ref += etl::dot(a, b); } })
     AVX_SECTION_FUNCTOR("avx", [](svec& a, svec& b){ SELECTED_SECTION(etl::dot_impl::AVX) { float_ref += etl::dot(a, b); } })
     BLAS_SECTION_FUNCTOR("blas", [](svec& a, svec& b){ SELECTED_SECTION(etl::dot_impl::BLAS) { float_ref += etl::dot(a, b); } })
