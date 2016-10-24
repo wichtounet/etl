@@ -17,6 +17,7 @@
 #include "etl/impl/sse/dot.hpp"
 #include "etl/impl/avx/dot.hpp"
 #include "etl/impl/blas/dot.hpp"
+#include "etl/impl/vec/dot.hpp"
 
 namespace etl {
 
@@ -118,6 +119,8 @@ struct dot_impl {
             return etl::impl::avx::dot<Align>(a.direct(), b.direct());
         } else if (impl == etl::dot_impl::SSE) {
             return etl::impl::sse::dot(a.direct(), b.direct());
+        } else if (impl == etl::dot_impl::VEC) {
+            return etl::impl::vec::dot(a, b);
         } else {
             return etl::impl::standard::dot(a, b);
         }

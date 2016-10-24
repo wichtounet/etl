@@ -220,6 +220,9 @@ struct avx_vec {
         _mm256_store_pd(reinterpret_cast<double*>(memory), value);
     }
 
+    template<typename T>
+    ETL_TMP_INLINE(typename avx_intrinsic_traits<T>::intrinsic_type) zero();
+
     ETL_INLINE_VEC_256 load(const float* memory) {
         return _mm256_load_ps(memory);
     }
@@ -391,6 +394,19 @@ struct avx_vec {
     }
 
 #endif //__INTEL_COMPILER
+
+    ETL_STATIC_INLINE(float) hadd(__m256 in) {
+        const __m128 x128 = _mm_add_ps(_mm256_extractf128_ps(in, 1), _mm256_castps256_ps128(in));
+        const __m128 x64  = _mm_add_ps(x128, _mm_movehl_ps(x128, x128));
+        const __m128 x32  = _mm_add_ss(x64, _mm_shuffle_ps(x64, x64, 0x55));
+        return _mm_cvtss_f32(x32);
+    }
+
+    ETL_STATIC_INLINE(double) hadd(__m256d in) {
+        const __m256d t1 = _mm256_hadd_pd(in, _mm256_permute2f128_pd(in, in, 1));
+        const __m256d t2 = _mm256_hadd_pd(t1, t1);
+        return _mm_cvtsd_f64(_mm256_castpd256_pd128(t2));
+    }
 };
 
 template <>
@@ -535,6 +551,16 @@ ETL_OUT_VEC_256D avx_vec::div<true>(__m256d lhs, __m256d rhs) {
 
     //result = ymm5 / ymm0
     return _mm256_div_pd(ymm5, ymm0);
+}
+
+template<>
+ETL_OUT_VEC_256 avx_vec::zero<float>() {
+    return _mm256_setzero_ps();
+}
+
+template<>
+ETL_OUT_VEC_256D avx_vec::zero<double>() {
+    return _mm256_setzero_pd();
 }
 
 } //end of namespace etl
