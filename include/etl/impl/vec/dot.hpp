@@ -50,9 +50,9 @@ value_t<L> selected_dot(const L& lhs, const R& rhs) {
 
 /*!
  * \brief Compute the dot product of a and b
- * \param a The lhs expression
- * \param b The rhs expression
- * \return the sum
+ * \param lhs The lhs expression
+ * \param rhs The rhs expression
+ * \return the dot product
  */
 template <typename L, typename R>
 value_t<L> dot(const L& lhs, const R& rhs) {
