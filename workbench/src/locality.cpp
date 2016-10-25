@@ -59,7 +59,7 @@ void locality(const I& input, const K& kernel, C& conv){
 
         for(size_t m = 0; m < M; ++m){
             for(size_t j = 0; j < c2;  ++j){
-                const auto c_i = (c1 - 1) - (m + (i - (k1 - 1)));
+                const auto c_i = n1 - 1 - m - i;
                 const auto c_j = j;
 
                 for(size_t k = 0; k < k2; ++k){
@@ -84,11 +84,11 @@ void locality(const I& input, const K& kernel, C& conv){
 
         for(size_t m = 0; m < M; ++m){
             for(size_t j = 0; j < c2;  ++j){
-                const auto c_i = m + (i - (k1 - 1));
+                const auto c_i = m + i - k1 + 1;
                 const auto c_j = j;
 
                 for(size_t k = 0; k < k2; ++k){
-                    const auto k_i = M - m - (c1 - i);
+                    const auto k_i = M - m - c1 + i;
                     const auto k_j = k;
 
                     const auto i_i = i;
