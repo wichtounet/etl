@@ -37,8 +37,8 @@ template<typename T>
 constexpr bool prefer_sse(const size_t n){
     return
           std::is_same<T, float>::value
-        ? (n < 8 || (n % 4 == 0 && n % 8 != 0) || (n % 4 < n % 8))
-        : (n < 4 || (n % 2 == 0 && n % 4 != 0) || (n % 2 < n % 4));
+        ? (n % 4 < n % 8)
+        : (n % 2 < n % 4);
 }
 
 template <typename T>
