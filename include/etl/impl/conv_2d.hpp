@@ -443,6 +443,8 @@ struct conv2_valid_flipped_impl : conv2_valid_impl<S1, S2, P1, P2> {
             impl::avx::conv2_valid_flipped(i, k, c, S1, S2, P1, P2);
         } else if (impl == etl::conv_impl::SSE) {
             impl::sse::conv2_valid_flipped(i, k, c, S1, S2, P1, P2);
+        } else if (impl == etl::conv_impl::VEC) {
+            impl::vec::conv2_valid_flipped(input, kernel, conv, S1, S2, P1, P2);
         } else if (impl == etl::conv_impl::CUDNN) {
             impl::cudnn::conv2_valid_flipped(i, k, c, S1, S2, P1, P2);
         } else if (impl == etl::conv_impl::STD) {

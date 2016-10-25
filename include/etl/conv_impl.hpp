@@ -21,6 +21,7 @@ enum class conv_impl {
     STD,      ///< Standard implementation
     SSE,      ///< Vectorized SSE implementation
     AVX,      ///< Vectorized AVX implementation
+    VEC,      ///< Uniform Vectorized Implementation with locality
     CUDNN,    ///< CUDNN implementation
     FFT_STD,  ///< FFT reduction (with STD impl)
     FFT_MKL,  ///< FFT reduction (with MKL impl)
