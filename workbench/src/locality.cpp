@@ -114,7 +114,10 @@ int main(){
     const size_t k2 = 2;
 
     const size_t c1 = i1 - k1 + 1;
-    const size_t c2 = i1 - k1 + 1;
+    const size_t c2 = i2 - k2 + 1;
+
+    std::cout << "Input: [" << i1 << "x" << i2 << "]" << std::endl;
+    std::cout << "Kernel: [" << k1 << "x" << k2 << "]" << std::endl;
 
     using Z = float;
 
