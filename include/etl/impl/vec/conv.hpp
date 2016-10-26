@@ -64,7 +64,7 @@ void conv2_valid_flipped(const I& input, const K& kernel, C&& conv, size_t s1, s
                 T value = 0;
 
                 for(size_t k = 0; k < k2; ++k){
-                    value += input(i, j + k) * kernel(k_i, k);
+                    value += input(i * s1, j * s1 + k) * kernel(k_i, k);
                 }
 
                 conv(m,j) += value;
@@ -83,7 +83,7 @@ void conv2_valid_flipped(const I& input, const K& kernel, C&& conv, size_t s1, s
                 T value = 0;
 
                 for(size_t k = 0; k < k2; ++k){
-                    value += input(i, j + k) * kernel(m, k);
+                    value += input(i * s1, j * s1 + k) * kernel(m, k);
                 }
 
                 conv(c_i, j) += value;
@@ -103,7 +103,7 @@ void conv2_valid_flipped(const I& input, const K& kernel, C&& conv, size_t s1, s
                 T value = 0;
 
                 for(size_t k = 0; k < k2; ++k){
-                    value += input(i, j + k) * kernel(k_i, k);
+                    value += input(i * s1, j * s1 + k) * kernel(k_i, k);
                 }
 
                 conv(c_i, j) += value;
