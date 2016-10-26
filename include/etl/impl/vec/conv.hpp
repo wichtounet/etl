@@ -23,16 +23,25 @@ template <typename I, typename K, typename C>
 void conv2_valid_flipped(const I& input, const K& kernel, C&& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
     using T = value_t<I>;
 
-    cpp_unused(s1);
-    cpp_unused(s2);
-    cpp_unused(p1);
-    cpp_unused(p2);
-
-    cpp_unused(input);
-    cpp_unused(kernel);
-    cpp_unused(conv);
-
     const auto n1 = etl::dim<0>(input);
+    const auto n2 = etl::dim<1>(input);
+
+    if(p1 || p2){
+        const auto o1 = n1 + 2 * p1;
+        const auto o2 = n2 + 2 * p2;
+
+        etl::dyn_matrix<T> padded_matrix(o1, o2);
+
+        for (size_t i = 0; i < n1; ++i) {
+            for(size_t j = 0; j < n2; ++j){
+                padded_matrix[(i + p1) * o2 + p2 + j] = input[i * n2 + j];
+            }
+        }
+
+        conv2_valid_flipped(padded_matrix, kernel, conv, s1, s2, 0, 0);
+
+        return;
+    }
 
     const auto k1 = etl::dim<0>(kernel);
     const auto k2 = etl::dim<1>(kernel);
@@ -48,10 +57,10 @@ void conv2_valid_flipped(const I& input, const K& kernel, C&& conv, size_t s1, s
     for(size_t i = 0; i < k1 - 1; ++i){
         const auto M = std::min(i + 1, R);
 
-        for(size_t m = 0; m < M; ++m){
-            const auto k_i = i - m;
+        for(size_t j = 0; j < c2;  ++j){
+            for(size_t m = 0; m < M; ++m){
+                const auto k_i = i - m;
 
-            for(size_t j = 0; j < c2;  ++j){
                 T value = 0;
 
                 for(size_t k = 0; k < k2; ++k){
@@ -67,10 +76,10 @@ void conv2_valid_flipped(const I& input, const K& kernel, C&& conv, size_t s1, s
     for(size_t i = k1 - 1; i < c1; ++i){
         const auto M = R;
 
-        for(size_t m = 0; m < M; ++m){
-            const auto c_i = n1 - 1 - m - i;
+        for(size_t j = 0; j < c2;  ++j){
+            for(size_t m = 0; m < M; ++m){
+                const auto c_i = n1 - 1 - m - i;
 
-            for(size_t j = 0; j < c2;  ++j){
                 T value = 0;
 
                 for(size_t k = 0; k < k2; ++k){
@@ -86,11 +95,11 @@ void conv2_valid_flipped(const I& input, const K& kernel, C&& conv, size_t s1, s
     for(size_t i = c1; i < n1; ++i){
         auto M = std::min(n1 - i, R);
 
-        for(size_t m = 0; m < M; ++m){
-            const auto c_i = m + i - k1 + 1;
-            const auto k_i = M - m - c1 + i;
+        for(size_t j = 0; j < c2;  ++j){
+            for(size_t m = 0; m < M; ++m){
+                const auto c_i = m + i - k1 + 1;
+                const auto k_i = M - m - c1 + i;
 
-            for(size_t j = 0; j < c2;  ++j){
                 T value = 0;
 
                 for(size_t k = 0; k < k2; ++k){
