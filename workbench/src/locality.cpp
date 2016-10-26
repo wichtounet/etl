@@ -107,11 +107,11 @@ void locality(const I& input, const K& kernel, C& conv){
 }
 
 int main(){
-    const size_t i1 = 28;
-    const size_t i2 = 28;
+    const size_t i1 = 7;
+    const size_t i2 = 7;
 
-    const size_t k1 = 5;
-    const size_t k2 = 5;
+    const size_t k1 = 3;
+    const size_t k2 = 3;
 
     const size_t c1 = i1 - k1 + 1;
     const size_t c2 = i2 - k2 + 1;
@@ -133,12 +133,15 @@ int main(){
     CA = etl::conv_2d_valid_flipped(input, kernel);
     locality(input, kernel, CB);
 
+    std::cout << CA(0,0) << std::endl;
+    std::cout << CB(0,0) << std::endl;
+
     if(i1 * i2 < 100){
         std::cout << etl::to_string(CA) << std::endl;
         std::cout << etl::to_string(CB) << std::endl;
     }
 
-    std::cout << etl::sum(CA - CB) << std::endl;
+    std::cout << etl::sum(etl::abs(CA - CB)) << std::endl;
 
     return 0;
 }
