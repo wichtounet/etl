@@ -37,10 +37,11 @@ void conv2_valid_flipped(const I& input, const K& kernel, C&& conv, size_t s1, s
         const auto o2 = n2 + 2 * p2;
 
         etl::dyn_matrix<T> padded_matrix(o1, o2);
+        padded_matrix = T(0);
 
         for (size_t i = 0; i < n1; ++i) {
             for(size_t j = 0; j < n2; ++j){
-                padded_matrix[(i + p1) * o2 + p2 + j] = input[i * n2 + j];
+                padded_matrix[(i + p1) * o2 + p2 + j] = input(i, j);
             }
         }
 
@@ -93,7 +94,7 @@ void conv2_valid_flipped(const I& input, const K& kernel, C&& conv, size_t s1, s
 
         for(size_t j = 0; j < c2;  ++j){
             for(size_t m = 0; m < M; ++m){
-                const auto c_i = n1 - 1 - m - i;
+                const auto c_i = i - m;
 
                 T value = 0;
 
