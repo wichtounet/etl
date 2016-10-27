@@ -13,6 +13,122 @@ namespace impl {
 
 namespace vec {
 
+namespace detail {
+
+template <typename V, typename I, typename K, typename C>
+void conv2_valid_flipped(const I& input, const K& kernel, C&& conv) {
+    using T = value_t<I>;
+    using vec_type = V;
+
+    static constexpr size_t vec_size = vec_type::template traits<T>::size;
+
+    const auto n1 = etl::dim<0>(input);
+    const auto n2 = etl::dim<1>(input);
+
+    const auto k1 = etl::dim<0>(kernel);
+    const auto k2 = etl::dim<1>(kernel);
+
+    const auto c1 = etl::dim<0>(conv);
+    const auto c2 = etl::dim<1>(conv);
+
+    const auto R = std::min(k1, c1); // Max number of kernels per line of input
+
+    conv = T(0);
+
+    // Primary steps
+    for(size_t i = 0; i < k1 - 1; ++i){
+        const auto M = std::min(i + 1, R);
+
+        for(size_t j = 0; j < c2;  ++j){
+            for(size_t m = 0; m < M; ++m){
+                const auto k_i = i - m;
+
+                auto r1 = vec_type::template zero<T>();
+
+                size_t k = 0;
+                for(; k + vec_size - 1 < k2; k += vec_size){
+                    auto a1 = input.loadu(i * n2 + j + k);
+                    auto b1 = kernel.loadu(k_i * k2 + k);
+
+                    auto t1 = vec_type::template mul<false>(a1, b1);
+                    r1 = vec_type::add(r1, t1);
+                }
+
+                T value = vec_type::hadd(r1);
+
+                for(; k < k2; ++k){
+                    value += input(i, j + k) * kernel(k_i, k);
+                }
+
+                conv(m,j) += value;
+            }
+        }
+    }
+
+    // Main steps
+    for(size_t i = k1 - 1; i < c1; ++i){
+        const auto M = R;
+
+        for(size_t j = 0; j < c2;  ++j){
+            for(size_t m = 0; m < M; ++m){
+                const auto c_i = i - m;
+
+                auto r1 = vec_type::template zero<T>();
+
+                size_t k = 0;
+                for(; k + vec_size - 1 < k2; k += vec_size){
+                    auto a1 = input.loadu(i * n2 + j + k);
+                    auto b1 = kernel.loadu(m * k2 + k);
+
+                    auto t1 = vec_type::template mul<false>(a1, b1);
+                    r1 = vec_type::add(r1, t1);
+                }
+
+                T value = vec_type::hadd(r1);
+
+                for(; k < k2; ++k){
+                    value += input(i, j + k) * kernel(m, k);
+                }
+
+                conv(c_i, j) += value;
+            }
+        }
+    }
+
+    // Secondary steps
+    for(size_t i = c1; i < n1; ++i){
+        auto M = std::min(n1 - i, R);
+
+        for(size_t j = 0; j < c2;  ++j){
+            for(size_t m = 0; m < M; ++m){
+                const auto c_i = m + i - k1 + 1;
+                const auto k_i = M - m - c1 + i;
+
+                auto r1 = vec_type::template zero<T>();
+
+                size_t k = 0;
+                for(; k + vec_size - 1 < k2; k += vec_size){
+                    auto a1 = input.loadu(i * n2 + j + k);
+                    auto b1 = kernel.loadu(k_i * k2 + k);
+
+                    auto t1 = vec_type::template mul<false>(a1, b1);
+                    r1 = vec_type::add(r1, t1);
+                }
+
+                T value = vec_type::hadd(r1);
+
+                for(; k < k2; ++k){
+                    value += input(i, j + k) * kernel(k_i, k);
+                }
+
+                conv(c_i, j) += value;
+            }
+        }
+    }
+}
+
+} // end of namespace detail
+
 /*!
  * \brief Standard implementation of a 2D 'valid' convolution C = I * K
  * \param input The input matrix
@@ -65,67 +181,7 @@ void conv2_valid_flipped(const I& input, const K& kernel, C&& conv, size_t s1, s
         return;
     }
 
-    const auto R = std::min(k1, c1); // Max number of kernels per line of input
-
-    conv = T(0);
-
-    // Primary steps
-    for(size_t i = 0; i < k1 - 1; ++i){
-        const auto M = std::min(i + 1, R);
-
-        for(size_t j = 0; j < c2;  ++j){
-            for(size_t m = 0; m < M; ++m){
-                const auto k_i = i - m;
-
-                T value = 0;
-
-                for(size_t k = 0; k < k2; ++k){
-                    value += input(i, j + k) * kernel(k_i, k);
-                }
-
-                conv(m,j) += value;
-            }
-        }
-    }
-
-    // Main steps
-    for(size_t i = k1 - 1; i < c1; ++i){
-        const auto M = R;
-
-        for(size_t j = 0; j < c2;  ++j){
-            for(size_t m = 0; m < M; ++m){
-                const auto c_i = i - m;
-
-                T value = 0;
-
-                for(size_t k = 0; k < k2; ++k){
-                    value += input(i, j + k) * kernel(m, k);
-                }
-
-                conv(c_i, j) += value;
-            }
-        }
-    }
-
-    // Secondary steps
-    for(size_t i = c1; i < n1; ++i){
-        auto M = std::min(n1 - i, R);
-
-        for(size_t j = 0; j < c2;  ++j){
-            for(size_t m = 0; m < M; ++m){
-                const auto c_i = m + i - k1 + 1;
-                const auto k_i = M - m - c1 + i;
-
-                T value = 0;
-
-                for(size_t k = 0; k < k2; ++k){
-                    value += input(i, j + k) * kernel(k_i, k);
-                }
-
-                conv(c_i, j) += value;
-            }
-        }
-    }
+    detail::conv2_valid_flipped<default_vec>(input, kernel, conv);
 }
 
 } //end of namespace vec
