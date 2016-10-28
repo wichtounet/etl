@@ -39,10 +39,10 @@ void conv2_valid_flipped(const I& input, const K& kernel, C&& conv) {
     for(size_t i = 0; i < k1 - 1; ++i){
         const auto M = std::min(i + 1, R);
 
-        for(size_t j = 0; j < c2;  ++j){
-            for(size_t m = 0; m < M; ++m){
-                const auto k_i = i - m;
+        for(size_t m = 0; m < M; ++m){
+            const auto k_i = i - m;
 
+            for(size_t j = 0; j < c2;  ++j){
                 auto r1 = vec_type::template zero<T>();
 
                 size_t k = 0;
@@ -173,11 +173,11 @@ void conv2_valid_flipped(const I& input, const K& kernel, C&& conv) {
     for(size_t i = c1; i < n1; ++i){
         auto M = std::min(n1 - i, R);
 
-        for(size_t j = 0; j < c2;  ++j){
-            for(size_t m = 0; m < M; ++m){
-                const auto c_i = m + i - k1 + 1;
-                const auto k_i = M - m - c1 + i;
+        for(size_t m = 0; m < M; ++m){
+            const auto c_i = m + i - k1 + 1;
+            const auto k_i = M - m - c1 + i;
 
+            for(size_t j = 0; j < c2;  ++j){
                 auto r1 = vec_type::template zero<T>();
 
                 size_t k = 0;
