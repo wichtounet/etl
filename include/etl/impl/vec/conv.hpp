@@ -47,8 +47,8 @@ void conv2_valid_flipped(const I& input, const K& kernel, C&& conv) {
 
                 size_t k = 0;
                 for(; k + vec_size - 1 < k2; k += vec_size){
-                    auto a1 = input.loadu(i * n2 + j + k);
-                    auto b1 = kernel.loadu(k_i * k2 + k);
+                    auto a1 = input.template loadu<vec_type>(i * n2 + j + k);
+                    auto b1 = kernel.template loadu<vec_type>(k_i * k2 + k);
 
                     auto t1 = vec_type::template mul<false>(a1, b1);
                     r1 = vec_type::add(r1, t1);
@@ -69,16 +69,90 @@ void conv2_valid_flipped(const I& input, const K& kernel, C&& conv) {
     for(size_t i = k1 - 1; i < c1; ++i){
         const auto M = R;
 
-        for(size_t j = 0; j < c2;  ++j){
-            for(size_t m = 0; m < M; ++m){
-                const auto c_i = i - m;
+        for(size_t m = 0; m < M; ++m){
+            const auto c_i = i - m;
 
+            size_t j = 0;
+
+            for(; j + 7 < c2; j += 8){
+                auto r1 = vec_type::template zero<T>();
+                auto r2 = vec_type::template zero<T>();
+                auto r3 = vec_type::template zero<T>();
+                auto r4 = vec_type::template zero<T>();
+                auto r5 = vec_type::template zero<T>();
+                auto r6 = vec_type::template zero<T>();
+                auto r7 = vec_type::template zero<T>();
+                auto r8 = vec_type::template zero<T>();
+
+                size_t k = 0;
+                for(; k + vec_size - 1 < k2; k += vec_size){
+                    auto b1 = kernel.template loadu<vec_type>(m * k2 + k);
+
+                    auto a1 = input.template loadu<vec_type>(i * n2 + (j + 0) + k);
+                    auto a2 = input.template loadu<vec_type>(i * n2 + (j + 1) + k);
+                    auto a3 = input.template loadu<vec_type>(i * n2 + (j + 2) + k);
+                    auto a4 = input.template loadu<vec_type>(i * n2 + (j + 3) + k);
+                    auto a5 = input.template loadu<vec_type>(i * n2 + (j + 4) + k);
+                    auto a6 = input.template loadu<vec_type>(i * n2 + (j + 5) + k);
+                    auto a7 = input.template loadu<vec_type>(i * n2 + (j + 6) + k);
+                    auto a8 = input.template loadu<vec_type>(i * n2 + (j + 7) + k);
+
+                    auto t1 = vec_type::template mul<false>(a1, b1);
+                    auto t2 = vec_type::template mul<false>(a2, b1);
+                    auto t3 = vec_type::template mul<false>(a3, b1);
+                    auto t4 = vec_type::template mul<false>(a4, b1);
+                    auto t5 = vec_type::template mul<false>(a5, b1);
+                    auto t6 = vec_type::template mul<false>(a6, b1);
+                    auto t7 = vec_type::template mul<false>(a7, b1);
+                    auto t8 = vec_type::template mul<false>(a8, b1);
+
+                    r1 = vec_type::add(r1, t1);
+                    r2 = vec_type::add(r2, t2);
+                    r3 = vec_type::add(r3, t3);
+                    r4 = vec_type::add(r4, t4);
+                    r5 = vec_type::add(r5, t5);
+                    r6 = vec_type::add(r6, t6);
+                    r7 = vec_type::add(r7, t7);
+                    r8 = vec_type::add(r8, t8);
+                }
+
+                T v1 = vec_type::hadd(r1);
+                T v2 = vec_type::hadd(r2);
+                T v3 = vec_type::hadd(r3);
+                T v4 = vec_type::hadd(r4);
+                T v5 = vec_type::hadd(r5);
+                T v6 = vec_type::hadd(r6);
+                T v7 = vec_type::hadd(r7);
+                T v8 = vec_type::hadd(r8);
+
+                for(; k < k2; ++k){
+                    v1 += input(i, (j + 0) + k) * kernel(m, k);
+                    v2 += input(i, (j + 1) + k) * kernel(m, k);
+                    v3 += input(i, (j + 2) + k) * kernel(m, k);
+                    v4 += input(i, (j + 3) + k) * kernel(m, k);
+                    v5 += input(i, (j + 4) + k) * kernel(m, k);
+                    v6 += input(i, (j + 5) + k) * kernel(m, k);
+                    v7 += input(i, (j + 6) + k) * kernel(m, k);
+                    v8 += input(i, (j + 7) + k) * kernel(m, k);
+                }
+
+                conv(c_i, j+0) += v1;
+                conv(c_i, j+1) += v2;
+                conv(c_i, j+2) += v3;
+                conv(c_i, j+3) += v4;
+                conv(c_i, j+4) += v5;
+                conv(c_i, j+5) += v6;
+                conv(c_i, j+6) += v7;
+                conv(c_i, j+7) += v8;
+            }
+
+            for(; j < c2; ++j){
                 auto r1 = vec_type::template zero<T>();
 
                 size_t k = 0;
                 for(; k + vec_size - 1 < k2; k += vec_size){
-                    auto a1 = input.loadu(i * n2 + j + k);
-                    auto b1 = kernel.loadu(m * k2 + k);
+                    auto a1 = input.template loadu<vec_type>(i * n2 + j + k);
+                    auto b1 = kernel.template loadu<vec_type>(m * k2 + k);
 
                     auto t1 = vec_type::template mul<false>(a1, b1);
                     r1 = vec_type::add(r1, t1);
@@ -108,8 +182,8 @@ void conv2_valid_flipped(const I& input, const K& kernel, C&& conv) {
 
                 size_t k = 0;
                 for(; k + vec_size - 1 < k2; k += vec_size){
-                    auto a1 = input.loadu(i * n2 + j + k);
-                    auto b1 = kernel.loadu(k_i * k2 + k);
+                    auto a1 = input.template loadu<vec_type>(i * n2 + j + k);
+                    auto b1 = kernel.template loadu<vec_type>(k_i * k2 + k);
 
                     auto t1 = vec_type::template mul<false>(a1, b1);
                     r1 = vec_type::add(r1, t1);
@@ -125,6 +199,14 @@ void conv2_valid_flipped(const I& input, const K& kernel, C&& conv) {
             }
         }
     }
+}
+
+template<typename T>
+constexpr bool prefer_sse(const size_t n){
+    return
+          std::is_same<T, float>::value
+        ? (n % 4 < n % 8)
+        : (n % 2 < n % 4);
 }
 
 } // end of namespace detail
@@ -181,7 +263,11 @@ void conv2_valid_flipped(const I& input, const K& kernel, C&& conv, size_t s1, s
         return;
     }
 
-    detail::conv2_valid_flipped<default_vec>(input, kernel, conv);
+    if(detail::prefer_sse<T>(k2)){
+        detail::conv2_valid_flipped<sse_vec>(input, kernel, conv);
+    } else {
+        detail::conv2_valid_flipped<avx_vec>(input, kernel, conv);
+    }
 }
 
 } //end of namespace vec
