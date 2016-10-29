@@ -96,7 +96,7 @@ void conv2_valid_flipped(const I& input, const K& kernel, C&& conv) {
                 T v7 = vec_type::hadd(r7);
                 T v8 = vec_type::hadd(r8);
 
-                for(; k < k2; ++k){
+                for(; padding_impl && k < k2; ++k){
                     v1 += input(i, (j + 0) + k) * kernel(k_i, k);
                     v2 += input(i, (j + 1) + k) * kernel(k_i, k);
                     v3 += input(i, (j + 2) + k) * kernel(k_i, k);
@@ -131,7 +131,7 @@ void conv2_valid_flipped(const I& input, const K& kernel, C&& conv) {
 
                 T value = vec_type::hadd(r1);
 
-                for(; k < k2; ++k){
+                for(; padding_impl && k < k2; ++k){
                     value += input(i, j + k) * kernel(k_i, k);
                 }
 
@@ -200,7 +200,7 @@ void conv2_valid_flipped(const I& input, const K& kernel, C&& conv) {
                 T v7 = vec_type::hadd(r7);
                 T v8 = vec_type::hadd(r8);
 
-                for(; k < k2; ++k){
+                for(; padding_impl && k < k2; ++k){
                     v1 += input(i, (j + 0) + k) * kernel(m, k);
                     v2 += input(i, (j + 1) + k) * kernel(m, k);
                     v3 += input(i, (j + 2) + k) * kernel(m, k);
@@ -235,7 +235,7 @@ void conv2_valid_flipped(const I& input, const K& kernel, C&& conv) {
 
                 T value = vec_type::hadd(r1);
 
-                for(; k < k2; ++k){
+                for(; padding_impl && k < k2; ++k){
                     value += input(i, j + k) * kernel(m, k);
                 }
 
@@ -305,7 +305,7 @@ void conv2_valid_flipped(const I& input, const K& kernel, C&& conv) {
                 T v7 = vec_type::hadd(r7);
                 T v8 = vec_type::hadd(r8);
 
-                for(; k < k2; ++k){
+                for(; padding_impl && k < k2; ++k){
                     v1 += input(i, (j + 0) + k) * kernel(k_i, k);
                     v2 += input(i, (j + 1) + k) * kernel(k_i, k);
                     v3 += input(i, (j + 2) + k) * kernel(k_i, k);
@@ -340,7 +340,7 @@ void conv2_valid_flipped(const I& input, const K& kernel, C&& conv) {
 
                 T value = vec_type::hadd(r1);
 
-                for(; k < k2; ++k){
+                for(; padding_impl && k < k2; ++k){
                     value += input(i, j + k) * kernel(k_i, k);
                 }
 
@@ -407,6 +407,31 @@ void conv2_valid_flipped(const I& input, const K& kernel, C&& conv, size_t s1, s
             for (std::size_t j = 0; j < c2; ++j) {
                 conv(i, j) = tmp_result(i * s1, j * s2);
             }
+        }
+
+        return;
+    }
+
+    if(padding_impl && kernel.dim(1) % 4 > 0){
+        const auto pad = 4 - kernel.dim(1) % 4;
+        etl::dyn_matrix<T, 2> padded_kernel(kernel.dim(0), kernel.dim(1) + pad);
+        etl::dyn_matrix<T, 2> padded_input(input.dim(0), input.dim(1) + pad);
+
+        padded_kernel = 0;
+        padded_input = 0;
+
+        for(size_t i = 0; i < kernel.dim(0); ++i){
+            direct_copy_n(kernel.memory_start() + i * kernel.dim(1), padded_kernel.memory_start() + i * padded_kernel.dim(1), kernel.dim(1));
+        }
+
+        for(size_t i = 0; i < input.dim(0); ++i){
+            direct_copy_n(input.memory_start() + i * input.dim(1), padded_input.memory_start() + i * padded_input.dim(1), input.dim(1));
+        }
+
+        if(detail::prefer_sse<T>(k2)){
+            detail::conv2_valid_flipped<sse_vec>(padded_input, padded_kernel, conv);
+        } else {
+            detail::conv2_valid_flipped<avx_vec>(padded_input, padded_kernel, conv);
         }
 
         return;
