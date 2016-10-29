@@ -96,7 +96,7 @@ void conv2_valid_flipped(const I& input, const K& kernel, C&& conv) {
                 T v7 = vec_type::hadd(r7);
                 T v8 = vec_type::hadd(r8);
 
-                for(; padding_impl && k < k2; ++k){
+                for(; !padding_impl && k < k2; ++k){
                     v1 += input(i, (j + 0) + k) * kernel(k_i, k);
                     v2 += input(i, (j + 1) + k) * kernel(k_i, k);
                     v3 += input(i, (j + 2) + k) * kernel(k_i, k);
@@ -131,7 +131,7 @@ void conv2_valid_flipped(const I& input, const K& kernel, C&& conv) {
 
                 T value = vec_type::hadd(r1);
 
-                for(; padding_impl && k < k2; ++k){
+                for(; !padding_impl && k < k2; ++k){
                     value += input(i, j + k) * kernel(k_i, k);
                 }
 
@@ -200,7 +200,7 @@ void conv2_valid_flipped(const I& input, const K& kernel, C&& conv) {
                 T v7 = vec_type::hadd(r7);
                 T v8 = vec_type::hadd(r8);
 
-                for(; padding_impl && k < k2; ++k){
+                for(; !padding_impl && k < k2; ++k){
                     v1 += input(i, (j + 0) + k) * kernel(m, k);
                     v2 += input(i, (j + 1) + k) * kernel(m, k);
                     v3 += input(i, (j + 2) + k) * kernel(m, k);
@@ -235,7 +235,7 @@ void conv2_valid_flipped(const I& input, const K& kernel, C&& conv) {
 
                 T value = vec_type::hadd(r1);
 
-                for(; padding_impl && k < k2; ++k){
+                for(; !padding_impl && k < k2; ++k){
                     value += input(i, j + k) * kernel(m, k);
                 }
 
@@ -305,7 +305,7 @@ void conv2_valid_flipped(const I& input, const K& kernel, C&& conv) {
                 T v7 = vec_type::hadd(r7);
                 T v8 = vec_type::hadd(r8);
 
-                for(; padding_impl && k < k2; ++k){
+                for(; !padding_impl && k < k2; ++k){
                     v1 += input(i, (j + 0) + k) * kernel(k_i, k);
                     v2 += input(i, (j + 1) + k) * kernel(k_i, k);
                     v3 += input(i, (j + 2) + k) * kernel(k_i, k);
@@ -340,7 +340,7 @@ void conv2_valid_flipped(const I& input, const K& kernel, C&& conv) {
 
                 T value = vec_type::hadd(r1);
 
-                for(; padding_impl && k < k2; ++k){
+                for(; !padding_impl && k < k2; ++k){
                     value += input(i, j + k) * kernel(k_i, k);
                 }
 
