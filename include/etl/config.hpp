@@ -136,11 +136,18 @@ constexpr bool streaming = false;
 constexpr bool streaming = true;
 #endif
 
-// Flag to disable streaming operations
+// Flag to disable padding operations
 #ifdef ETL_NO_PADDING
 constexpr bool padding = false;
 #else
 constexpr bool padding = true;
+#endif
+
+// Flag to disable padding implementations
+#ifdef ETL_NO_PADDING_IMPL
+constexpr bool padding_impl = false;
+#else
+constexpr bool padding_impl = true;
 #endif
 
 // Flag to set the cache size
