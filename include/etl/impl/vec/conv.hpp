@@ -412,23 +412,27 @@ void conv2_valid_flipped(const I& input, const K& kernel, C&& conv, size_t s1, s
         return;
     }
 
-    if(padding_impl && kernel.dim(1) % 4 > 0){
-        const auto pad = 4 - kernel.dim(1) % 4;
-        etl::dyn_matrix<T, 2> padded_kernel(kernel.dim(0), kernel.dim(1) + pad);
-        etl::dyn_matrix<T, 2> padded_input(input.dim(0), input.dim(1) + pad);
+    constexpr size_t AS = std::is_same<T, float>::value ? 8 : 4;
+    constexpr size_t SS = AS / 2;
+
+    if(padding_impl && k2 % SS > 0){
+        const auto pad = k2 < SS ? SS - k2 % SS : AS - k2 % AS;
+
+        etl::dyn_matrix<T, 2> padded_kernel(k1, k2 + pad);
+        etl::dyn_matrix<T, 2> padded_input(n1, n2 + pad);
 
         padded_kernel = 0;
         padded_input = 0;
 
-        for(size_t i = 0; i < kernel.dim(0); ++i){
-            direct_copy_n(kernel.memory_start() + i * kernel.dim(1), padded_kernel.memory_start() + i * padded_kernel.dim(1), kernel.dim(1));
+        for(size_t i = 0; i < k1; ++i){
+            direct_copy_n(kernel.memory_start() + i * k2, padded_kernel.memory_start() + i * padded_kernel.dim(1), k2);
         }
 
-        for(size_t i = 0; i < input.dim(0); ++i){
-            direct_copy_n(input.memory_start() + i * input.dim(1), padded_input.memory_start() + i * padded_input.dim(1), input.dim(1));
+        for(size_t i = 0; i < n1; ++i){
+            direct_copy_n(input.memory_start() + i * n2, padded_input.memory_start() + i * padded_input.dim(1), n2);
         }
 
-        if(detail::prefer_sse<T>(k2)){
+        if(detail::prefer_sse<T>(k2 + pad)){
             detail::conv2_valid_flipped<sse_vec>(padded_input, padded_kernel, conv);
         } else {
             detail::conv2_valid_flipped<avx_vec>(padded_input, padded_kernel, conv);
