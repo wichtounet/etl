@@ -1025,7 +1025,7 @@ void pad_2d_input(const opaque_memory<T, 2>& in, opaque_memory<T, 2>& out, size_
 
 template <typename T>
 void conv2_valid(const opaque_memory<T, 2>& input, const opaque_memory<T, 2>& kernel, const opaque_memory<T, 2>& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
-    if(p1 || p2){
+    if(cpp_unlikely(p1 || p2)){
         const auto ws_h = input.template dim<0>() + 2 * p1;
         const auto ws_w = input.template dim<1>() + 2 * p2;
 
@@ -1035,10 +1035,27 @@ void conv2_valid(const opaque_memory<T, 2>& input, const opaque_memory<T, 2>& ke
 
             pad_2d_input(input, ws_direct, p1, p2);
 
-            conv2_valid_micro_kernel(
-                workspace.memory_start(), ws_h, ws_w,
-                kernel.memory_start(), kernel.template dim<0>(), kernel.template dim<1>(),
-                conv.memory_start(), 0.0, s1, s2, 0, 0);
+            conv2_valid(workspace.direct(), kernel, conv, s1, s2, 0, 0);
+
+            return;
+        }
+    }
+
+    const auto k2 = kernel.dim(1);
+
+    if(padding_impl){
+        constexpr size_t SS = std::is_same<T, float>::value ? 4 : 2;
+
+        if(k2 % SS > 0){
+            const auto pad = SS - k2 % SS;
+
+            auto padded_input = common::pad_right(input, pad);
+            auto padded_kernel = common::pad_right_flip(kernel, pad);
+
+            conv2_valid_flipped_micro_kernel(
+                padded_input.memory_start(), padded_input.template dim<0>(), padded_input.template dim<1>(),
+                padded_kernel.memory_start(), padded_kernel.template dim<0>(), padded_kernel.template dim<1>(),
+                conv.memory_start(), 0.0, s1, s2, p1, p2);
 
             return;
         }
@@ -1052,6 +1069,26 @@ void conv2_valid(const opaque_memory<T, 2>& input, const opaque_memory<T, 2>& ke
 
 template <typename T>
 void conv2_valid_flipped(const opaque_memory<T, 2>& input, const opaque_memory<T, 2>& kernel, const opaque_memory<T, 2>& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
+    const auto k2 = kernel.dim(1);
+
+    if(padding_impl){
+        constexpr size_t SS = std::is_same<T, float>::value ? 4 : 2;
+
+        if(k2 % SS > 0){
+            const auto pad = SS - k2 % SS;
+
+            auto padded_input = common::pad_right(input, pad);
+            auto padded_kernel = common::pad_right(kernel, pad);
+
+            conv2_valid_flipped_micro_kernel(
+                padded_input.memory_start(), padded_input.template dim<0>(), padded_input.template dim<1>(),
+                padded_kernel.memory_start(), padded_kernel.template dim<0>(), padded_kernel.template dim<1>(),
+                conv.memory_start(), 0.0, s1, s2, p1, p2);
+
+            return;
+        }
+    }
+
     conv2_valid_flipped_micro_kernel(
         input.memory_start(), input.template dim<0>(), input.template dim<1>(),
         kernel.memory_start(), kernel.template dim<0>(), kernel.template dim<1>(),

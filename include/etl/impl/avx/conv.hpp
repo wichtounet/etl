@@ -1259,12 +1259,7 @@ void conv1_valid(const I& input, const K& kernel, C&& conv, std::size_t first, s
 
 template <typename T>
 void conv2_valid(const opaque_memory<T, 2>& input, const opaque_memory<T, 2>& kernel, const opaque_memory<T, 2>& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
-    if(detail::prefer_sse<T>(kernel.dim(1))){
-        etl::impl::sse::conv2_valid(input, kernel, conv, s1, s2, p1, p2);
-        return;
-    }
-
-    if(p1 || p2){
+    if(cpp_unlikely(p1 || p2)){
         const auto ws_h = input.template dim<0>() + 2 * p1;
         const auto ws_w = input.template dim<1>() + 2 * p2;
 
@@ -1274,32 +1269,94 @@ void conv2_valid(const opaque_memory<T, 2>& input, const opaque_memory<T, 2>& ke
 
             detail::pad_2d_input(input, ws_direct, p1, p2);
 
-            detail::conv2_valid_micro_kernel(
-                workspace.memory_start(), ws_h, ws_w,
-                kernel.memory_start(), kernel.template dim<0>(), kernel.template dim<1>(),
-                conv.memory_start(), 0.0, s1, s2, 0, 0);
+            conv2_valid(workspace.direct(), kernel, conv, s1, s2, 0, 0);
 
             return;
         }
     }
 
-    detail::conv2_valid_micro_kernel(
-        input.memory_start(), input.template dim<0>(), input.template dim<1>(),
-        kernel.memory_start(), kernel.template dim<0>(), kernel.template dim<1>(),
-        conv.memory_start(), 0.0, s1, s2, p1, p2);
+    const auto k2 = kernel.dim(1);
+
+    if(padding_impl){
+        constexpr size_t AS = std::is_same<T, float>::value ? 8 : 4;
+        constexpr size_t SS = AS / 2;
+
+        if(k2 < SS || k2 % AS > 0){
+            const auto pad = k2 < SS ? SS - k2 % SS : AS - k2 % AS;
+
+            auto padded_input = common::pad_right(input, pad);
+            auto padded_kernel = common::pad_right_flip(kernel, pad);
+
+            if(detail::prefer_sse<T>(k2 + pad)){
+                etl::impl::sse::conv2_valid_flipped_micro_kernel(
+                    padded_input.memory_start(), padded_input.template dim<0>(), padded_input.template dim<1>(),
+                    padded_kernel.memory_start(), padded_kernel.template dim<0>(), padded_kernel.template dim<1>(),
+                    conv.memory_start(), 0.0, s1, s2, p1, p2);
+            } else {
+                detail::conv2_valid_flipped_micro_kernel(
+                    padded_input.memory_start(), padded_input.template dim<0>(), padded_input.template dim<1>(),
+                    padded_kernel.memory_start(), padded_kernel.template dim<0>(), padded_kernel.template dim<1>(),
+                    conv.memory_start(), 0.0, s1, s2, p1, p2);
+            }
+
+            return;
+        }
+    }
+
+    if(detail::prefer_sse<T>(k2)){
+        etl::impl::sse::conv2_valid_micro_kernel(
+            input.memory_start(), input.template dim<0>(), input.template dim<1>(),
+            kernel.memory_start(), kernel.template dim<0>(), kernel.template dim<1>(),
+            conv.memory_start(), 0.0, s1, s2, p1, p2);
+    } else {
+        detail::conv2_valid_micro_kernel(
+            input.memory_start(), input.template dim<0>(), input.template dim<1>(),
+            kernel.memory_start(), kernel.template dim<0>(), kernel.template dim<1>(),
+            conv.memory_start(), 0.0, s1, s2, p1, p2);
+    }
 }
 
 template <typename T>
 void conv2_valid_flipped(const opaque_memory<T, 2>& input, const opaque_memory<T, 2>& kernel, const opaque_memory<T, 2>& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
-    if(detail::prefer_sse<T>(kernel.dim(1))){
-        etl::impl::sse::conv2_valid_flipped(input, kernel, conv, s1, s2, p1, p2);
-        return;
+    const auto k2 = kernel.dim(1);
+
+    if(padding_impl){
+        constexpr size_t AS = std::is_same<T, float>::value ? 8 : 4;
+        constexpr size_t SS = AS / 2;
+
+        if(k2 < SS || k2 % AS > 0){
+            const auto pad = k2 < SS ? SS - k2 % SS : AS - k2 % AS;
+
+            auto padded_input = common::pad_right(input, pad);
+            auto padded_kernel = common::pad_right(kernel, pad);
+
+            if(detail::prefer_sse<T>(k2 + pad)){
+                etl::impl::sse::conv2_valid_flipped_micro_kernel(
+                    padded_input.memory_start(), padded_input.template dim<0>(), padded_input.template dim<1>(),
+                    padded_kernel.memory_start(), padded_kernel.template dim<0>(), padded_kernel.template dim<1>(),
+                    conv.memory_start(), 0.0, s1, s2, p1, p2);
+            } else {
+                detail::conv2_valid_flipped_micro_kernel(
+                    padded_input.memory_start(), padded_input.template dim<0>(), padded_input.template dim<1>(),
+                    padded_kernel.memory_start(), padded_kernel.template dim<0>(), padded_kernel.template dim<1>(),
+                    conv.memory_start(), 0.0, s1, s2, p1, p2);
+            }
+
+            return;
+        }
     }
 
-    detail::conv2_valid_flipped_micro_kernel(
-        input.memory_start(), input.template dim<0>(), input.template dim<1>(),
-        kernel.memory_start(), kernel.template dim<0>(), kernel.template dim<1>(),
-        conv.memory_start(), 0.0, s1, s2, p1, p2);
+    if(detail::prefer_sse<T>(k2)){
+        etl::impl::sse::conv2_valid_flipped_micro_kernel(
+            input.memory_start(), input.template dim<0>(), input.template dim<1>(),
+            kernel.memory_start(), kernel.template dim<0>(), kernel.template dim<1>(),
+            conv.memory_start(), 0.0, s1, s2, p1, p2);
+    } else {
+        detail::conv2_valid_flipped_micro_kernel(
+            input.memory_start(), input.template dim<0>(), input.template dim<1>(),
+            kernel.memory_start(), kernel.template dim<0>(), kernel.template dim<1>(),
+            conv.memory_start(), 0.0, s1, s2, p1, p2);
+    }
 }
 
 template <typename T>
