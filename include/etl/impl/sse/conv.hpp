@@ -1098,6 +1098,36 @@ void conv2_valid_flipped(const opaque_memory<T, 2>& input, const opaque_memory<T
 template <typename T>
 void conv2_valid_multi(const opaque_memory<T, 2>& input, const opaque_memory<T, 3>& kernel, const opaque_memory<T, 3>& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
     const auto K = kernel.template dim<0>();
+    const auto k2 = kernel.dim(2);
+
+    if(padding_impl){
+        static constexpr size_t SS = std::is_same<T, float>::value ? 4 : 2;
+
+        if(k2 % SS > 0){
+            const auto pad = SS - k2 % SS;
+
+            auto padded_input = common::pad_right(input, pad);
+            auto padded_kernel = common::pad_right_flip_multi(kernel, pad);
+
+            // TODO Test if it is better to do the padding of the kernel inside each thread
+
+            auto fun_k = [&](const size_t first, const size_t last) {
+                for (std::size_t k = first; k < last; ++k) {
+                    auto kk = padded_kernel.template dim<1>() * padded_kernel.template dim<2>();
+                    auto cc = conv.template dim<1>() * conv.template dim<2>();
+
+                    conv2_valid_flipped_micro_kernel(
+                        padded_input.memory_start(), padded_input.template dim<0>(), padded_input.template dim<1>(),
+                        padded_kernel.memory_start() + k * kk, padded_kernel.template dim<1>(), padded_kernel.template dim<2>(),
+                        conv.memory_start() + k * cc, 0.0, s1, s2, p1, p2);
+                }
+            };
+
+            dispatch_1d_any(select_parallel(K, 2), fun_k, 0, K);
+
+            return;
+        }
+    }
 
     auto fun_k = [&](const size_t first, const size_t last) {
         for (std::size_t k = first; k < last; ++k) {
@@ -1117,6 +1147,36 @@ void conv2_valid_multi(const opaque_memory<T, 2>& input, const opaque_memory<T, 
 template <typename T>
 void conv2_valid_multi_flipped(const opaque_memory<T, 2>& input, const opaque_memory<T, 3>& kernel, const opaque_memory<T, 3>& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
     const auto K = kernel.template dim<0>();
+    const auto k2 = kernel.dim(2);
+
+    if(padding_impl){
+        constexpr size_t SS = std::is_same<T, float>::value ? 4 : 2;
+
+        if(k2 % SS > 0){
+            const auto pad = SS - k2 % SS;
+
+            auto padded_input = common::pad_right(input, pad);
+            auto padded_kernel = common::pad_right_multi(kernel, pad);
+
+            // TODO Test if it is better to do the padding of the kernel inside each thread
+
+            auto fun_k = [&](const size_t first, const size_t last) {
+                for (std::size_t k = first; k < last; ++k) {
+                    auto kk = padded_kernel.template dim<1>() * padded_kernel.template dim<2>();
+                    auto cc = conv.template dim<1>() * conv.template dim<2>();
+
+                    conv2_valid_flipped_micro_kernel(
+                        padded_input.memory_start(), padded_input.template dim<0>(), padded_input.template dim<1>(),
+                        padded_kernel.memory_start() + k * kk, padded_kernel.template dim<1>(), padded_kernel.template dim<2>(),
+                        conv.memory_start() + k * cc, 0.0, s1, s2, p1, p2);
+                }
+            };
+
+            dispatch_1d_any(select_parallel(K, 2), fun_k, 0, K);
+
+            return;
+        }
+    }
 
     auto fun_k = [&](const size_t first, const size_t last) {
         for (std::size_t k = first; k < last; ++k) {
