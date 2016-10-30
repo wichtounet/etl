@@ -759,7 +759,7 @@ inline void conv2_valid_flipped_micro_kernel(const float* in, std::size_t n1, st
     const std::size_t c1 = (n1 - m1 + 2 * p1) / s1 + 1;
     const std::size_t c2 = (n2 - m2 + 2 * p2) / s2 + 1;
 
-    if(p1 || p2){
+    if(cpp_unlikely(p1 || p2)){
         for (std::size_t i = 0; i < p1; ++i) {
             for (std::size_t j = 0; j < c2; ++j) {
                 conv2_valid_flipped_border(in, n1, n2, kernel, m1, m2, out, beta, i, j, s1, s2, p1, p2);
@@ -789,7 +789,8 @@ inline void conv2_valid_flipped_micro_kernel(const float* in, std::size_t n1, st
 
     if(beta == 0.0f){
         for (std::size_t i = p1; i < c1 - p1; ++i) {
-            for (std::size_t j = p2; j + 7 < c2 - p2; j += 8) {
+            std::size_t j = p2;
+            for (; j + 7 < c2 - p2; j += 8) {
                 __m256 r1 = _mm256_setzero_ps();
                 __m256 r2 = _mm256_setzero_ps();
                 __m256 r3 = _mm256_setzero_ps();
@@ -862,7 +863,7 @@ inline void conv2_valid_flipped_micro_kernel(const float* in, std::size_t n1, st
                 out[i * c2 + j + 7] = mm256_hadd_ss(r8);
             }
 
-            for (std::size_t j = (c2 - p2) - (c2 - 2 * p2) % 8; j < c2 - p2; ++j) {
+            for (; j < c2 - p2; ++j) {
                 __m256 r1 = _mm256_setzero_ps();
 
                 const auto i_i = i * s1 - p1;
@@ -882,7 +883,9 @@ inline void conv2_valid_flipped_micro_kernel(const float* in, std::size_t n1, st
         }
     } else {
         for (std::size_t i = p1; i < c1 - p1; ++i) {
-            for (std::size_t j = p2; j + 7 < c2 - p2; j += 8) {
+            std::size_t j = p2;
+
+            for (; j + 7 < c2 - p2; j += 8) {
                 __m256 r1 = _mm256_setzero_ps();
                 __m256 r2 = _mm256_setzero_ps();
                 __m256 r3 = _mm256_setzero_ps();
@@ -955,7 +958,7 @@ inline void conv2_valid_flipped_micro_kernel(const float* in, std::size_t n1, st
                 out[i * c2 + j + 7] = beta * out[i * c2 + j + 7] + mm256_hadd_ss(r8);
             }
 
-            for (std::size_t j = (c2 - p2) - (c2 - 2 * p2) % 8; j < c2 - p2; ++j) {
+            for (; j < c2 - p2; ++j) {
                 __m256 r1 = _mm256_setzero_ps();
 
                 const auto i_i = i * s1 - p1;
