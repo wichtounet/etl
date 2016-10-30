@@ -1361,7 +1361,6 @@ void conv2_valid_flipped(const opaque_memory<T, 2>& input, const opaque_memory<T
 
 template <typename T>
 void conv2_valid_multi(const opaque_memory<T, 2>& input, const opaque_memory<T, 3>& kernel, const opaque_memory<T, 3>& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
-
     const auto K = kernel.template dim<0>();
     const auto k2 = kernel.dim(2);
 
@@ -1526,66 +1525,216 @@ void conv2_valid_multi_flipped(const opaque_memory<T, 2>& input, const opaque_me
 
 template <typename T>
 void conv2_valid_multi_multi(const opaque_memory<T, 3>& input, const opaque_memory<T, 3>& kernel, const opaque_memory<T, 4>& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
-    if(detail::prefer_sse<T>(kernel.dim(2))){
-        etl::impl::sse::conv2_valid_multi_multi(input, kernel, conv, s1, s2, p1, p2);
-        return;
-    }
-
+    const auto k2 = kernel.dim(2);
     const auto K  = kernel.template dim<0>();
     const auto N  = input.template dim<0>();
     const auto KN = K * N;
 
-    auto fun_kn = [&](const size_t first, const size_t last) {
-        for (std::size_t kn = first; kn < last; ++kn) {
-            auto k = kn / N;
-            auto n = kn % N;
+    if(padding_impl){
+        static constexpr size_t AS = std::is_same<T, float>::value ? 8 : 4;
+        static constexpr size_t SS = AS / 2;
 
-            const auto ii = input.template dim<1>() * input.template dim<2>();
-            const auto kk = kernel.template dim<1>() * kernel.template dim<2>();
+        if(k2 < SS || k2 % AS > 0){
+            const auto pad = k2 < SS ? SS - k2 % SS : AS - k2 % AS;
 
-            const auto c_k = conv.template dim<1>() * conv.template dim<2>() * conv.template dim<3>();
-            const auto c_i = conv.template dim<2>() * conv.template dim<3>();
+            auto padded_input = common::pad_right_multi(input, pad);
+            auto padded_kernel = common::pad_right_flip_multi(kernel, pad);
 
-            detail::conv2_valid_micro_kernel(
-                input.memory_start() + n * ii, input.template dim<1>(), input.template dim<2>(),
-                kernel.memory_start() + k * kk, kernel.template dim<1>(), kernel.template dim<2>(),
-                conv.memory_start() + k * c_k + n * c_i, 0.0, s1, s2, p1, p2);
+            if(detail::prefer_sse<T>(k2 + pad)){
+                auto fun_kn = [&](const size_t first, const size_t last) {
+                    for (std::size_t kn = first; kn < last; ++kn) {
+                        auto k = kn / N;
+                        auto n = kn % N;
+
+                        const auto ii = padded_input.template dim<1>() * padded_input.template dim<2>();
+                        const auto kk = padded_kernel.template dim<1>() * padded_kernel.template dim<2>();
+
+                        const auto c_k = conv.template dim<1>() * conv.template dim<2>() * conv.template dim<3>();
+                        const auto c_i = conv.template dim<2>() * conv.template dim<3>();
+
+                        impl::sse::conv2_valid_flipped_micro_kernel(
+                            padded_input.memory_start() + n * ii, padded_input.template dim<1>(), padded_input.template dim<2>(),
+                            padded_kernel.memory_start() + k * kk, padded_kernel.template dim<1>(), padded_kernel.template dim<2>(),
+                            conv.memory_start() + k * c_k + n * c_i, 0.0, s1, s2, p1, p2);
+                    }
+                };
+
+                dispatch_1d_any(select_parallel(KN, 2), fun_kn, 0, KN);
+            } else {
+                auto fun_kn = [&](const size_t first, const size_t last) {
+                    for (std::size_t kn = first; kn < last; ++kn) {
+                        auto k = kn / N;
+                        auto n = kn % N;
+
+                        const auto ii = padded_input.template dim<1>() * padded_input.template dim<2>();
+                        const auto kk = padded_kernel.template dim<1>() * padded_kernel.template dim<2>();
+
+                        const auto c_k = conv.template dim<1>() * conv.template dim<2>() * conv.template dim<3>();
+                        const auto c_i = conv.template dim<2>() * conv.template dim<3>();
+
+                        detail::conv2_valid_flipped_micro_kernel(
+                            padded_input.memory_start() + n * ii, padded_input.template dim<1>(), padded_input.template dim<2>(),
+                            padded_kernel.memory_start() + k * kk, padded_kernel.template dim<1>(), padded_kernel.template dim<2>(),
+                            conv.memory_start() + k * c_k + n * c_i, 0.0, s1, s2, p1, p2);
+                    }
+                };
+
+                dispatch_1d_any(select_parallel(KN, 2), fun_kn, 0, KN);
+            }
+
+            return;
         }
-    };
+    }
 
-    dispatch_1d_any(select_parallel(KN, 2), fun_kn, 0, KN);
+    if(detail::prefer_sse<T>(kernel.dim(2))){
+        auto fun_kn = [&](const size_t first, const size_t last) {
+            for (std::size_t kn = first; kn < last; ++kn) {
+                auto k = kn / N;
+                auto n = kn % N;
+
+                const auto ii = input.template dim<1>() * input.template dim<2>();
+                const auto kk = kernel.template dim<1>() * kernel.template dim<2>();
+
+                const auto c_k = conv.template dim<1>() * conv.template dim<2>() * conv.template dim<3>();
+                const auto c_i = conv.template dim<2>() * conv.template dim<3>();
+
+                impl::sse::conv2_valid_micro_kernel(
+                    input.memory_start() + n * ii, input.template dim<1>(), input.template dim<2>(),
+                    kernel.memory_start() + k * kk, kernel.template dim<1>(), kernel.template dim<2>(),
+                    conv.memory_start() + k * c_k + n * c_i, 0.0, s1, s2, p1, p2);
+            }
+        };
+
+        dispatch_1d_any(select_parallel(KN, 2), fun_kn, 0, KN);
+    } else {
+        auto fun_kn = [&](const size_t first, const size_t last) {
+            for (std::size_t kn = first; kn < last; ++kn) {
+                auto k = kn / N;
+                auto n = kn % N;
+
+                const auto ii = input.template dim<1>() * input.template dim<2>();
+                const auto kk = kernel.template dim<1>() * kernel.template dim<2>();
+
+                const auto c_k = conv.template dim<1>() * conv.template dim<2>() * conv.template dim<3>();
+                const auto c_i = conv.template dim<2>() * conv.template dim<3>();
+
+                detail::conv2_valid_micro_kernel(
+                    input.memory_start() + n * ii, input.template dim<1>(), input.template dim<2>(),
+                    kernel.memory_start() + k * kk, kernel.template dim<1>(), kernel.template dim<2>(),
+                    conv.memory_start() + k * c_k + n * c_i, 0.0, s1, s2, p1, p2);
+            }
+        };
+
+        dispatch_1d_any(select_parallel(KN, 2), fun_kn, 0, KN);
+    }
 }
 
 template <typename T>
 void conv2_valid_multi_multi_flipped(const opaque_memory<T, 3>& input, const opaque_memory<T, 3>& kernel, const opaque_memory<T, 4>& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
-    if(detail::prefer_sse<T>(kernel.dim(2))){
-        etl::impl::sse::conv2_valid_multi_multi_flipped(input, kernel, conv, s1, s2, p1, p2);
-        return;
-    }
-
+    const auto k2 = kernel.dim(2);
     const auto K  = kernel.template dim<0>();
     const auto N  = input.template dim<0>();
     const auto KN = K * N;
 
-    auto fun_kn = [&](const size_t first, const size_t last) {
-        for (std::size_t kn = first; kn < last; ++kn) {
-            auto k = kn / N;
-            auto n = kn % N;
+    if(padding_impl){
+        constexpr size_t AS = std::is_same<T, float>::value ? 8 : 4;
+        constexpr size_t SS = AS / 2;
 
-            const auto ii = input.template dim<1>() * input.template dim<2>();
-            const auto kk = kernel.template dim<1>() * kernel.template dim<2>();
+        if(k2 < SS || k2 % AS > 0){
+            const auto pad = k2 < SS ? SS - k2 % SS : AS - k2 % AS;
 
-            const auto c_k = conv.template dim<1>() * conv.template dim<2>() * conv.template dim<3>();
-            const auto c_i = conv.template dim<2>() * conv.template dim<3>();
+            auto padded_input = common::pad_right_multi(input, pad);
+            auto padded_kernel = common::pad_right_multi(kernel, pad);
 
-            detail::conv2_valid_flipped_micro_kernel(
-                input.memory_start() + n * ii, input.template dim<1>(), input.template dim<2>(),
-                kernel.memory_start() + k * kk, kernel.template dim<1>(), kernel.template dim<2>(),
-                conv.memory_start() + k * c_k + n * c_i, 0.0, s1, s2, p1, p2);
+            // TODO Test if it is better to do the padding of the kernel inside each thread
+
+            if(detail::prefer_sse<T>(k2 + pad)){
+                auto fun_kn = [&](const size_t first, const size_t last) {
+                    for (std::size_t kn = first; kn < last; ++kn) {
+                        auto k = kn / N;
+                        auto n = kn % N;
+
+                        const auto ii = padded_input.template dim<1>() * padded_input.template dim<2>();
+                        const auto kk = padded_kernel.template dim<1>() * padded_kernel.template dim<2>();
+
+                        const auto c_k = conv.template dim<1>() * conv.template dim<2>() * conv.template dim<3>();
+                        const auto c_i = conv.template dim<2>() * conv.template dim<3>();
+
+                        impl::sse::conv2_valid_flipped_micro_kernel(
+                            padded_input.memory_start() + n * ii, padded_input.template dim<1>(), padded_input.template dim<2>(),
+                            padded_kernel.memory_start() + k * kk, padded_kernel.template dim<1>(), padded_kernel.template dim<2>(),
+                            conv.memory_start() + k * c_k + n * c_i, 0.0, s1, s2, p1, p2);
+                    }
+                };
+
+                dispatch_1d_any(select_parallel(KN, 2), fun_kn, 0, KN);
+            } else {
+                auto fun_kn = [&](const size_t first, const size_t last) {
+                    for (std::size_t kn = first; kn < last; ++kn) {
+                        auto k = kn / N;
+                        auto n = kn % N;
+
+                        const auto ii = padded_input.template dim<1>() * padded_input.template dim<2>();
+                        const auto kk = padded_kernel.template dim<1>() * padded_kernel.template dim<2>();
+
+                        const auto c_k = conv.template dim<1>() * conv.template dim<2>() * conv.template dim<3>();
+                        const auto c_i = conv.template dim<2>() * conv.template dim<3>();
+
+                        detail::conv2_valid_flipped_micro_kernel(
+                            padded_input.memory_start() + n * ii, padded_input.template dim<1>(), padded_input.template dim<2>(),
+                            padded_kernel.memory_start() + k * kk, padded_kernel.template dim<1>(), padded_kernel.template dim<2>(),
+                            conv.memory_start() + k * c_k + n * c_i, 0.0, s1, s2, p1, p2);
+                    }
+                };
+
+                dispatch_1d_any(select_parallel(KN, 2), fun_kn, 0, KN);
+            }
+
+            return;
         }
-    };
+    }
 
-    dispatch_1d_any(select_parallel(KN, 2), fun_kn, 0, KN);
+    if(detail::prefer_sse<T>(kernel.dim(2))){
+        auto fun_kn = [&](const size_t first, const size_t last) {
+            for (std::size_t kn = first; kn < last; ++kn) {
+                auto k = kn / N;
+                auto n = kn % N;
+
+                const auto ii = input.template dim<1>() * input.template dim<2>();
+                const auto kk = kernel.template dim<1>() * kernel.template dim<2>();
+
+                const auto c_k = conv.template dim<1>() * conv.template dim<2>() * conv.template dim<3>();
+                const auto c_i = conv.template dim<2>() * conv.template dim<3>();
+
+                impl::sse::conv2_valid_flipped_micro_kernel(
+                    input.memory_start() + n * ii, input.template dim<1>(), input.template dim<2>(),
+                    kernel.memory_start() + k * kk, kernel.template dim<1>(), kernel.template dim<2>(),
+                    conv.memory_start() + k * c_k + n * c_i, 0.0, s1, s2, p1, p2);
+            }
+        };
+
+        dispatch_1d_any(select_parallel(KN, 2), fun_kn, 0, KN);
+    } else {
+        auto fun_kn = [&](const size_t first, const size_t last) {
+            for (std::size_t kn = first; kn < last; ++kn) {
+                auto k = kn / N;
+                auto n = kn % N;
+
+                const auto ii = input.template dim<1>() * input.template dim<2>();
+                const auto kk = kernel.template dim<1>() * kernel.template dim<2>();
+
+                const auto c_k = conv.template dim<1>() * conv.template dim<2>() * conv.template dim<3>();
+                const auto c_i = conv.template dim<2>() * conv.template dim<3>();
+
+                detail::conv2_valid_flipped_micro_kernel(
+                    input.memory_start() + n * ii, input.template dim<1>(), input.template dim<2>(),
+                    kernel.memory_start() + k * kk, kernel.template dim<1>(), kernel.template dim<2>(),
+                    conv.memory_start() + k * c_k + n * c_i, 0.0, s1, s2, p1, p2);
+            }
+        };
+
+        dispatch_1d_any(select_parallel(KN, 2), fun_kn, 0, KN);
+    }
 }
 
 template <typename T>
