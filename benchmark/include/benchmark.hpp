@@ -259,6 +259,24 @@ using conv_4d_valid_policy_14 = NARY_POLICY(
     /* W */ VALUES_POLICY(5, 5, 5, 5, 5, 5, 5)
     );
 
+// Real life config
+using conv_4d_valid_policy_15 = NARY_POLICY(
+    /* N */ VALUES_POLICY(2, 8, 12, 16, 20, 24, 30),
+    /* K */ VALUES_POLICY(6, 10, 12, 20, 20, 30, 30),
+    /* C */ VALUES_POLICY(2, 3, 8, 10, 20, 20, 30),
+    /* I */ VALUES_POLICY(227, 227, 227, 227, 227, 227, 227),
+    /* W */ VALUES_POLICY(15, 15, 15, 15, 15, 15, 15)
+    );
+
+// Real life config
+using conv_4d_valid_policy_16 = NARY_POLICY(
+    /* N */ VALUES_POLICY(2, 8, 12, 16, 20, 24, 30),
+    /* K */ VALUES_POLICY(6, 10, 12, 20, 20, 30, 30),
+    /* C */ VALUES_POLICY(2, 3, 8, 10, 20, 20, 30),
+    /* I */ VALUES_POLICY(227, 227, 227, 227, 227, 227, 227),
+    /* W */ VALUES_POLICY(9, 9, 9, 9, 9, 9, 9)
+    );
+
 using pmp_policy = VALUES_POLICY(100, 120, 140, 160, 180, 200);
 
 using fast_policy = VALUES_POLICY(1);
