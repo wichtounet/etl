@@ -1610,8 +1610,68 @@ void conv4_valid_flipped(const opaque_memory<T, 4>& input, const opaque_memory<T
 template <typename T>
 void conv4_valid_filter(const opaque_memory<T, 4>& input, const opaque_memory<T, 4>& kernel, const opaque_memory<T, 4>& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
     if (input.dim(0) > 0) {
+        const auto N = input.dim(0);  // The number of images
+        const auto C = input.dim(1);  // The number of channels
+        const auto K = kernel.dim(1); // The number of kernels
+
+        const auto k1 = kernel.dim(2);
+        const auto k2 = kernel.dim(3);
+
         const auto conv_k_inc = conv.dim(1) * conv.dim(2) * conv.dim(3);
         const auto conv_c_inc = conv.dim(2) * conv.dim(3);
+
+        if(padding_impl){
+            static constexpr size_t SS = std::is_same<T, float>::value ? 4 : 2;
+
+            if(k2 % SS > 0){
+                const auto pad = SS - k2 % SS;
+
+                auto padded_input = common::pad_right_multi(input, pad);
+                auto padded_kernel = common::pad_right_flip_multi(kernel, pad);
+
+                const auto kernel_i_inc = padded_kernel.dim(1) * padded_kernel.dim(2) * padded_kernel.dim(3);
+                const auto kernel_k_inc = padded_kernel.dim(2) * padded_kernel.dim(3);
+
+                const auto input_i_inc = padded_input.dim(1) * padded_input.dim(2) * padded_input.dim(3);
+                const auto input_c_inc = padded_input.dim(2) * padded_input.dim(3);
+
+                const auto n1 = padded_input.dim(2);
+                const auto n2 = padded_input.dim(3);
+
+                const auto* input_mem  = padded_input.memory_start();
+                const auto* kernel_mem = padded_kernel.memory_start();
+                auto* conv_mem         = conv.memory_start();
+
+                auto fun_kc = [&](const size_t first, const size_t last) {
+                    //i = 0
+                    for (std::size_t kc = first; kc < last; ++kc) {
+                        auto k = kc / C;
+                        auto c = kc % C;
+
+                        impl::sse::conv2_valid_flipped_micro_kernel(
+                            input_mem + 0 * input_i_inc + c * input_c_inc, n1, n2,
+                            kernel_mem + 0 * kernel_i_inc + k * kernel_k_inc, k1, k2 + pad,
+                            conv_mem + k * conv_k_inc + c * conv_c_inc, 0.0, s1, s2, p1, p2);
+                    }
+
+                    for (std::size_t i = 1; i < N; ++i) {
+                        for (std::size_t kc = first; kc < last; ++kc) {
+                            auto k = kc / C;
+                            auto c = kc % C;
+
+                            impl::sse::conv2_valid_flipped_micro_kernel(
+                                input_mem + i * input_i_inc + c * input_c_inc, n1, n2,
+                                kernel_mem + i * kernel_i_inc + k * kernel_k_inc, k1, k2 + pad,
+                                conv_mem + k * conv_k_inc + c * conv_c_inc, 1.0, s1, s2, p1, p2);
+                        }
+                    }
+                };
+
+                dispatch_1d_any(select_parallel(K * C, 4), fun_kc, 0, K * C);
+
+                return;
+            }
+        }
 
         const auto kernel_i_inc = kernel.dim(1) * kernel.dim(2) * kernel.dim(3);
         const auto kernel_k_inc = kernel.dim(2) * kernel.dim(3);
@@ -1621,13 +1681,6 @@ void conv4_valid_filter(const opaque_memory<T, 4>& input, const opaque_memory<T,
 
         const auto n1 = input.dim(2);
         const auto n2 = input.dim(3);
-
-        const auto m1 = kernel.dim(2);
-        const auto m2 = kernel.dim(3);
-
-        const auto N = input.dim(0);  // The number of images
-        const auto C = input.dim(1);  // The number of channels
-        const auto K = kernel.dim(1); // The number of kernels
 
         const auto* input_mem  = input.memory_start();
         const auto* kernel_mem = kernel.memory_start();
@@ -1639,9 +1692,9 @@ void conv4_valid_filter(const opaque_memory<T, 4>& input, const opaque_memory<T,
                 auto k = kc / C;
                 auto c = kc % C;
 
-                conv2_valid_micro_kernel(
+                impl::sse::conv2_valid_micro_kernel(
                     input_mem + 0 * input_i_inc + c * input_c_inc, n1, n2,
-                    kernel_mem + 0 * kernel_i_inc + k * kernel_k_inc, m1, m2,
+                    kernel_mem + 0 * kernel_i_inc + k * kernel_k_inc, k1, k2,
                     conv_mem + k * conv_k_inc + c * conv_c_inc, 0.0, s1, s2, p1, p2);
             }
 
@@ -1650,9 +1703,9 @@ void conv4_valid_filter(const opaque_memory<T, 4>& input, const opaque_memory<T,
                     auto k = kc / C;
                     auto c = kc % C;
 
-                    conv2_valid_micro_kernel(
+                    impl::sse::conv2_valid_micro_kernel(
                         input_mem + i * input_i_inc + c * input_c_inc, n1, n2,
-                        kernel_mem + i * kernel_i_inc + k * kernel_k_inc, m1, m2,
+                        kernel_mem + i * kernel_i_inc + k * kernel_k_inc, k1, k2,
                         conv_mem + k * conv_k_inc + c * conv_c_inc, 1.0, s1, s2, p1, p2);
                 }
             }
@@ -1665,8 +1718,68 @@ void conv4_valid_filter(const opaque_memory<T, 4>& input, const opaque_memory<T,
 template <typename T>
 void conv4_valid_filter_flipped(const opaque_memory<T, 4>& input, const opaque_memory<T, 4>& kernel, const opaque_memory<T, 4>& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
     if (input.dim(0) > 0) {
+        const auto N = input.dim(0);  // The number of images
+        const auto C = input.dim(1);  // The number of channels
+        const auto K = kernel.dim(1); // The number of kernels
+
+        const auto k1 = kernel.dim(2);
+        const auto k2 = kernel.dim(3);
+
         const auto conv_k_inc = conv.dim(1) * conv.dim(2) * conv.dim(3);
         const auto conv_c_inc = conv.dim(2) * conv.dim(3);
+
+        if(padding_impl){
+            constexpr size_t SS = std::is_same<T, float>::value ? 4 : 2;
+
+            if(k2 % SS > 0){
+                const auto pad = SS - k2 % SS;
+
+                auto padded_input = common::pad_right_multi(input, pad);
+                auto padded_kernel = common::pad_right_multi(kernel, pad);
+
+                const auto kernel_i_inc = padded_kernel.dim(1) * padded_kernel.dim(2) * padded_kernel.dim(3);
+                const auto kernel_k_inc = padded_kernel.dim(2) * padded_kernel.dim(3);
+
+                const auto input_i_inc = padded_input.dim(1) * padded_input.dim(2) * padded_input.dim(3);
+                const auto input_c_inc = padded_input.dim(2) * padded_input.dim(3);
+
+                const auto n1 = padded_input.dim(2);
+                const auto n2 = padded_input.dim(3);
+
+                const auto* input_mem  = padded_input.memory_start();
+                const auto* kernel_mem = padded_kernel.memory_start();
+                auto* conv_mem         = conv.memory_start();
+
+                auto fun_kc = [&](const size_t first, const size_t last) {
+                    //i = 0
+                    for (std::size_t kc = first; kc < last; ++kc) {
+                        auto k = kc / C;
+                        auto c = kc % C;
+
+                        impl::sse::conv2_valid_flipped_micro_kernel(
+                            input_mem + 0 * input_i_inc + c * input_c_inc, n1, n2,
+                            kernel_mem + 0 * kernel_i_inc + k * kernel_k_inc, k1, k2 + pad,
+                            conv_mem + k * conv_k_inc + c * conv_c_inc, 0.0, s1, s2, p1, p2);
+                    }
+
+                    for (std::size_t i = 1; i < N; ++i) {
+                        for (std::size_t kc = first; kc < last; ++kc) {
+                            auto k = kc / C;
+                            auto c = kc % C;
+
+                            impl::sse::conv2_valid_flipped_micro_kernel(
+                                input_mem + i * input_i_inc + c * input_c_inc, n1, n2,
+                                kernel_mem + i * kernel_i_inc + k * kernel_k_inc, k1, k2 + pad,
+                                conv_mem + k * conv_k_inc + c * conv_c_inc, 1.0, s1, s2, p1, p2);
+                        }
+                    }
+                };
+
+                dispatch_1d_any(select_parallel(K * C, 4), fun_kc, 0, K * C);
+
+                return;
+            }
+        }
 
         const auto kernel_i_inc = kernel.dim(1) * kernel.dim(2) * kernel.dim(3);
         const auto kernel_k_inc = kernel.dim(2) * kernel.dim(3);
@@ -1676,13 +1789,6 @@ void conv4_valid_filter_flipped(const opaque_memory<T, 4>& input, const opaque_m
 
         const auto n1 = input.dim(2);
         const auto n2 = input.dim(3);
-
-        const auto m1 = kernel.dim(2);
-        const auto m2 = kernel.dim(3);
-
-        const auto N = input.dim(0);  // The number of images
-        const auto C = input.dim(1);  // The number of channels
-        const auto K = kernel.dim(1); // The number of kernels
 
         const auto* input_mem  = input.memory_start();
         const auto* kernel_mem = kernel.memory_start();
@@ -1694,9 +1800,9 @@ void conv4_valid_filter_flipped(const opaque_memory<T, 4>& input, const opaque_m
                 auto k = kc / C;
                 auto c = kc % C;
 
-                conv2_valid_flipped_micro_kernel(
+                impl::sse::conv2_valid_flipped_micro_kernel(
                     input_mem + 0 * input_i_inc + c * input_c_inc, n1, n2,
-                    kernel_mem + 0 * kernel_i_inc + k * kernel_k_inc, m1, m2,
+                    kernel_mem + 0 * kernel_i_inc + k * kernel_k_inc, k1, k2,
                     conv_mem + k * conv_k_inc + c * conv_c_inc, 0.0, s1, s2, p1, p2);
             }
 
@@ -1705,9 +1811,9 @@ void conv4_valid_filter_flipped(const opaque_memory<T, 4>& input, const opaque_m
                     auto k = kc / C;
                     auto c = kc % C;
 
-                    conv2_valid_flipped_micro_kernel(
+                    impl::sse::conv2_valid_flipped_micro_kernel(
                         input_mem + i * input_i_inc + c * input_c_inc, n1, n2,
-                        kernel_mem + i * kernel_i_inc + k * kernel_k_inc, m1, m2,
+                        kernel_mem + i * kernel_i_inc + k * kernel_k_inc, k1, k2,
                         conv_mem + k * conv_k_inc + c * conv_c_inc, 1.0, s1, s2, p1, p2);
                 }
             }
