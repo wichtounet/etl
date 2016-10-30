@@ -372,7 +372,7 @@ inline void conv2_valid_flipped_micro_kernel(const double* in, std::size_t n1, s
         }
     }
 
-    if (m2 % 2 != 0) {
+    if (!padding_impl && m2 % 2 != 0) {
         for (std::size_t i = p1; i < c1 - p1; ++i) {
             for (std::size_t j = p2; j < c2 - p2; ++j) {
                 double temp = 0.0;
@@ -774,7 +774,7 @@ inline void conv2_valid_flipped_micro_kernel(const float* in, std::size_t n1, st
         }
     }
 
-    if (m2 % 4 != 0) {
+    if (!padding_impl && m2 % 4 != 0) {
         for (std::size_t i = p1; i < c1 - p1; ++i) {
             for (std::size_t j = p2; j < c2 - p2; ++j) {
                 float temp = 0.0;
