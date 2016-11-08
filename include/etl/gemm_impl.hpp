@@ -21,6 +21,7 @@ namespace etl {
 enum class gemm_impl {
     STD,   ///< Standard implmentation
     FAST,  ///< Pseudo-blas implementation
+    VEC,   ///< Vectorized BLAS implementation
     BLAS,  ///< BLAS implementation
     CUBLAS ///< CUBLAS (GPU) implementation
 };

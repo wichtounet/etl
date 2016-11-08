@@ -11,6 +11,7 @@
 #include "etl/impl/std/mmul.hpp"
 #include "etl/impl/std/strassen_mmul.hpp"
 #include "etl/impl/blas/gemm.hpp"
+#include "etl/impl/vec/gemm.hpp"
 #include "etl/impl/eblas/gemm.hpp"
 #include "etl/impl/cublas/gemm.hpp"
 
@@ -137,6 +138,8 @@ inline cpp14_constexpr gemm_impl select_default_gemv_impl(const std::size_t n1, 
             return gemm_impl::CUBLAS;
         }
     }
+
+    //TODO Add selection for VEC
 
     return gemm_impl::STD;
 }
@@ -327,6 +330,8 @@ struct mv_mul_impl {
             etl::impl::standard::mv_mul(a, b, c);
         } else if (impl == gemm_impl::BLAS) {
             etl::impl::blas::gemv(a, b, c);
+        } else if (impl == gemm_impl::VEC) {
+            etl::impl::vec::gemv(a, b, c);
         } else if (impl == gemm_impl::CUBLAS) {
             etl::impl::cublas::gemv(a, b, c);
         }
