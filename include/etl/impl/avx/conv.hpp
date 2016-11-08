@@ -1160,19 +1160,29 @@ inline void conv2_full_flipped_micro_kernel(const float* in, std::size_t n1, std
                 }
 
                 out[i * c2 + j] = mm256_hadd_ss(r1);
+            }
+        }
 
-                double temp = 0.0;
+        for (std::size_t i = 0; i < c1; ++i) {
+            auto k_lo = std::max<int>(0, i - m1 + 1);
+            auto k_hi = std::min(n1 - 1, i) + 1;
+
+            for (std::size_t j = 0; j < c2; ++j) {
+                auto l_lo = std::max<int>(0, j - m2 + 1);
+                auto l_hi = std::min(n2 - 1, j) + 1;
 
                 if ((l_hi - l_lo) % 8 != 0) {
+                    float temp = 0.0;
+
                     auto rem = (l_hi - l_lo) % 8;
                     for (std::size_t k = k_lo; k < k_hi; ++k) {
                         for (std::size_t l = l_hi - rem; l < l_hi; ++l) {
                             temp += in[k * n2 + l] * kernel[(m1 - 1 - (i - k)) * m2 + (m2 - 1 - (j - l))];
                         }
                     }
-                }
 
-                out[i * c2 + j] += temp;
+                    out[i * c2 + j] += temp;
+                }
             }
         }
     } else {
@@ -1195,9 +1205,7 @@ inline void conv2_full_flipped_micro_kernel(const float* in, std::size_t n1, std
                     }
                 }
 
-                out[i * c2 + j] = beta * out[i * c2 + j] + mm256_hadd_ss(r1);
-
-                double temp = 0.0;
+                double temp = mm256_hadd_ss(r1);
 
                 if ((l_hi - l_lo) % 8 != 0) {
                     auto rem = (l_hi - l_lo) % 8;
@@ -1208,7 +1216,7 @@ inline void conv2_full_flipped_micro_kernel(const float* in, std::size_t n1, std
                     }
                 }
 
-                out[i * c2 + j] += temp;
+                out[i * c2 + j] = beta * out[i * c2 + j] + temp;
             }
         }
     }
