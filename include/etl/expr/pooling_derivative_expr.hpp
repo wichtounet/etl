@@ -31,7 +31,7 @@ struct basic_pool_derivative_2d_expr : impl_expr<basic_pool_derivative_2d_expr<T
     template <typename A, typename B>
     using result_type = detail::expr_result_t<this_type, A, B>;
 
-    static constexpr const bool is_gpu = false; ///< no GPU implementation
+    static constexpr bool is_gpu = false; ///< no GPU implementation
 
     /*!
      * \brief Apply the expression on a and b and store the result in c
@@ -149,7 +149,7 @@ struct basic_pool_derivative_3d_expr : impl_expr<basic_pool_derivative_3d_expr<T
     template <typename A, typename B>
     using result_type = detail::expr_result_t<this_type, A, B>;
 
-    static constexpr const bool is_gpu = false; ///< no GPU implementation
+    static constexpr bool is_gpu = false; ///< no GPU implementation
 
     /*!
      * \brief Apply the expression on a and b and store the result in c
@@ -264,7 +264,7 @@ struct basic_dyn_pool_derivative_2d_expr : dyn_impl_expr<basic_dyn_pool_derivati
     template <typename A, typename B>
     using result_type = detail::expr_result_t<this_type, A, B>;
 
-    static constexpr const bool is_gpu = false; ///< no GPU implementation
+    static constexpr bool is_gpu = false; ///< no GPU implementation
 
     const std::size_t c1; ///< First dimension pooling ratio
     const std::size_t c2; ///< Second dimension pooling ratio
@@ -368,7 +368,7 @@ struct basic_dyn_pool_derivative_3d_expr : dyn_impl_expr<basic_dyn_pool_derivati
     template <typename A, typename B>
     using result_type = detail::expr_result_t<this_type, A, B>;
 
-    static constexpr const bool is_gpu = false; ///< no GPU implementation
+    static constexpr bool is_gpu = false; ///< no GPU implementation
 
     const std::size_t c1; ///< First dimension pooling ratio
     const std::size_t c2; ///< Second dimension pooling ratio

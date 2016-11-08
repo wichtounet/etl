@@ -28,9 +28,9 @@ struct custom_dyn_matrix_impl final : dense_dyn_base<custom_dyn_matrix_impl<T, S
                                       expression_able<custom_dyn_matrix_impl<T, SO, D>>,
                                       value_testable<custom_dyn_matrix_impl<T, SO, D>>,
                                       dim_testable<custom_dyn_matrix_impl<T, SO, D>> {
-    static constexpr const std::size_t n_dimensions = D;                              ///< The number of dimensions
-    static constexpr const order storage_order      = SO;                             ///< The storage order
-    static constexpr const std::size_t alignment    = intrinsic_traits<T>::alignment; ///< The memory alignment
+    static constexpr std::size_t n_dimensions = D;                              ///< The number of dimensions
+    static constexpr order storage_order      = SO;                             ///< The storage order
+    static constexpr std::size_t alignment    = intrinsic_traits<T>::alignment; ///< The memory alignment
 
     using base_type              = dense_dyn_base<custom_dyn_matrix_impl<T, SO, D>, T, SO, D>; ///< The base type
     using value_type             = T;                                                          ///< The value type
@@ -209,7 +209,6 @@ public:
      * \param in The several elements to store
      * \param i The position at which to start. This will be aligned from the beginning (multiple of the vector size).
      * \tparam V The vectorization mode to use
-     * \return a vector containing several elements of the matrix
      */
     template <typename V = default_vec>
     void store(vec_type<V> in, std::size_t i) noexcept {
@@ -221,7 +220,6 @@ public:
      * \param in The several elements to store
      * \param i The position at which to start. This will be aligned from the beginning (multiple of the vector size).
      * \tparam V The vectorization mode to use
-     * \return a vector containing several elements of the matrix
      */
     template <typename V = default_vec>
     void storeu(vec_type<V> in, std::size_t i) noexcept {
@@ -233,7 +231,6 @@ public:
      * \param in The several elements to store
      * \param i The position at which to start. This will be aligned from the beginning (multiple of the vector size).
      * \tparam V The vectorization mode to use
-     * \return a vector containing several elements of the matrix
      */
     template <typename V = default_vec>
     void stream(vec_type<V> in, std::size_t i) noexcept {

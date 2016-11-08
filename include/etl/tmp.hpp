@@ -115,7 +115,7 @@ struct nth_size final {
     template <std::size_t S2, std::size_t I2>
     struct nth_size_int<S2, I2, std::enable_if_t<S2 == I2>> : std::integral_constant<std::size_t, F> {};
 
-    static constexpr const std::size_t value = nth_size_int<S, I>::value; ///< The result value
+    static constexpr std::size_t value = nth_size_int<S, I>::value; ///< The result value
 };
 
 /*!

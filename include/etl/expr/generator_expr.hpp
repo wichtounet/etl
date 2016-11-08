@@ -101,20 +101,21 @@ public:
  */
 template <typename Generator>
 struct etl_traits<etl::generator_expr<Generator>> {
-    static constexpr const bool is_etl                  = true;            ///< Indicates if the type is an ETL expression
-    static constexpr const bool is_transformer          = false;           ///< Indicates if the type is a transformer
-    static constexpr const bool is_view                 = false;           ///< Indicates if the type is a view
-    static constexpr const bool is_magic_view           = false;           ///< Indicates if the type is a magic view
-    static constexpr const bool is_linear               = true;            ///< Indicates if the expression is linear
-    static constexpr const bool is_thread_safe          = false;           ///< Indicates if the expression is thread safe
-    static constexpr const bool is_fast                 = true;            ///< Indicates if the expression is fast
-    static constexpr const bool is_value                = false;           ///< Indicates if the expression is of value type
-    static constexpr const bool is_direct               = false;           ///< Indicates if the expression has direct memory access
-    static constexpr const bool is_generator            = true;            ///< Indicates if the expression is a generator
-    static constexpr const bool needs_temporary_visitor = false;           ///< Indicates if the expression needs a temporary visitor
-    static constexpr const bool needs_evaluator_visitor = false;           ///< Indicates if the exxpression needs a evaluator visitor
-    static constexpr const bool is_padded               = false;                          ///< Indicates if the expression is padded
-    static constexpr const order storage_order          = order::RowMajor; ///< The expression's storage order
+    static constexpr bool is_etl                  = true;            ///< Indicates if the type is an ETL expression
+    static constexpr bool is_transformer          = false;           ///< Indicates if the type is a transformer
+    static constexpr bool is_view                 = false;           ///< Indicates if the type is a view
+    static constexpr bool is_magic_view           = false;           ///< Indicates if the type is a magic view
+    static constexpr bool is_linear               = true;            ///< Indicates if the expression is linear
+    static constexpr bool is_thread_safe          = false;           ///< Indicates if the expression is thread safe
+    static constexpr bool is_fast                 = true;            ///< Indicates if the expression is fast
+    static constexpr bool is_value                = false;           ///< Indicates if the expression is of value type
+    static constexpr bool is_direct               = false;           ///< Indicates if the expression has direct memory access
+    static constexpr bool is_generator            = true;            ///< Indicates if the expression is a generator
+    static constexpr bool needs_temporary_visitor = false;           ///< Indicates if the expression needs a temporary visitor
+    static constexpr bool needs_evaluator_visitor = false;           ///< Indicates if the exxpression needs a evaluator visitor
+    static constexpr bool is_padded               = false;                          ///< Indicates if the expression is padded
+    static constexpr bool is_aligned               = false;                          ///< Indicates if the expression is padded
+    static constexpr order storage_order          = order::RowMajor; ///< The expression's storage order
 
     /*!
      * \brief Indicates if the expression is vectorizable using the

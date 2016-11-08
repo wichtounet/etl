@@ -311,7 +311,7 @@ void fft1(A&& a, C&& c) {
 
 template <typename A, typename C, cpp_enable_if(all_single_precision<A>::value)>
 void fft1_many(A&& a, C&& c) {
-    static constexpr const std::size_t N = decay_traits<A>::dimensions();
+    static constexpr std::size_t N = decay_traits<A>::dimensions();
 
     auto c_gpu = c.direct();
 
@@ -327,7 +327,7 @@ void fft1_many(A&& a, C&& c) {
 
 template <typename A, typename C, cpp_enable_if(all_double_precision<A>::value)>
 void fft1_many(A&& a, C&& c) {
-    static constexpr const std::size_t N = decay_traits<A>::dimensions();
+    static constexpr std::size_t N = decay_traits<A>::dimensions();
 
     auto c_gpu = c.direct();
 
@@ -343,7 +343,7 @@ void fft1_many(A&& a, C&& c) {
 
 template <typename A, typename C, cpp_enable_if(all_complex_single_precision<A>::value)>
 void fft1_many(A&& a, C&& c) {
-    static constexpr const std::size_t N = decay_traits<A>::dimensions();
+    static constexpr std::size_t N = decay_traits<A>::dimensions();
 
     auto a_gpu = a.direct();
     auto c_gpu = c.direct();
@@ -360,7 +360,7 @@ void fft1_many(A&& a, C&& c) {
 
 template <typename A, typename C, cpp_enable_if(all_complex_double_precision<A>::value)>
 void fft1_many(A&& a, C&& c) {
-    static constexpr const std::size_t N = decay_traits<A>::dimensions();
+    static constexpr std::size_t N = decay_traits<A>::dimensions();
 
     auto a_gpu = a.direct();
     auto c_gpu = c.direct();
@@ -526,7 +526,7 @@ void ifft1_real(A&& a, C&& c) {
 
 template <typename A, typename C, cpp_enable_if(all_complex_single_precision<A>::value)>
 void ifft1_many(A&& a, C&& c) {
-    static constexpr const std::size_t N = decay_traits<A>::dimensions();
+    static constexpr std::size_t N = decay_traits<A>::dimensions();
 
     auto a_gpu = a.direct();
     auto c_gpu = c.direct();
@@ -545,7 +545,7 @@ void ifft1_many(A&& a, C&& c) {
 
 template <typename A, typename C, cpp_enable_if(all_complex_double_precision<A>::value)>
 void ifft1_many(A&& a, C&& c) {
-    static constexpr const std::size_t N = decay_traits<A>::dimensions();
+    static constexpr std::size_t N = decay_traits<A>::dimensions();
 
     auto a_gpu = a.direct();
     auto c_gpu = c.direct();
@@ -752,7 +752,7 @@ void ifft2_real(A&& a, C&& c) {
 
 template <typename A, typename C, cpp_enable_if(all_single_precision<A>::value)>
 void fft2_many(A&& a, C&& c) {
-    static constexpr const std::size_t N = decay_traits<A>::dimensions();
+    static constexpr std::size_t N = decay_traits<A>::dimensions();
 
     auto c_gpu = c.direct();
 
@@ -769,7 +769,7 @@ void fft2_many(A&& a, C&& c) {
 
 template <typename A, typename C, cpp_enable_if(all_double_precision<A>::value)>
 void fft2_many(A&& a, C&& c) {
-    static constexpr const std::size_t N = decay_traits<A>::dimensions();
+    static constexpr std::size_t N = decay_traits<A>::dimensions();
 
     auto c_gpu = c.direct();
 
@@ -786,7 +786,7 @@ void fft2_many(A&& a, C&& c) {
 
 template <typename A, typename C, cpp_enable_if(all_complex_single_precision<A>::value)>
 void fft2_many(A&& a, C&& c) {
-    static constexpr const std::size_t N = decay_traits<A>::dimensions();
+    static constexpr std::size_t N = decay_traits<A>::dimensions();
 
     auto a_gpu = a.direct();
     auto c_gpu = c.direct();
@@ -804,7 +804,7 @@ void fft2_many(A&& a, C&& c) {
 
 template <typename A, typename C, cpp_enable_if(all_complex_double_precision<A>::value)>
 void fft2_many(A&& a, C&& c) {
-    static constexpr const std::size_t N = decay_traits<A>::dimensions();
+    static constexpr std::size_t N = decay_traits<A>::dimensions();
 
     auto a_gpu = a.direct();
     auto c_gpu = c.direct();
@@ -822,7 +822,7 @@ void fft2_many(A&& a, C&& c) {
 
 template <typename A, typename C, cpp_enable_if(all_complex_single_precision<A>::value)>
 void ifft2_many(A&& a, C&& c) {
-    static constexpr const std::size_t N = decay_traits<A>::dimensions();
+    static constexpr std::size_t N = decay_traits<A>::dimensions();
 
     auto a_gpu = a.direct();
     auto c_gpu = c.direct();
@@ -842,7 +842,7 @@ void ifft2_many(A&& a, C&& c) {
 
 template <typename A, typename C, cpp_enable_if(all_complex_double_precision<A>::value)>
 void ifft2_many(A&& a, C&& c) {
-    static constexpr const std::size_t N = decay_traits<A>::dimensions();
+    static constexpr std::size_t N = decay_traits<A>::dimensions();
 
     auto a_gpu = a.direct();
     auto c_gpu = c.direct();

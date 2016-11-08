@@ -214,6 +214,15 @@ void validate_pmax_pooling_impl(const E& e) {
 /*!
  * \copydoc validate_pmax_pooling_impl
  */
+template <std::size_t C1, std::size_t C2, typename E, cpp_enable_if(etl_traits<E>::dimensions() == 4, !etl_traits<E>::is_fast)>
+void validate_pmax_pooling_impl(const E& e) {
+    cpp_assert(etl::template dim<2>(e) % C1 == 0 && etl::template dim<3>(e) % C2 == 0, "Dimensions not divisible by the pooling ratio");
+    cpp_unused(e);
+}
+
+/*!
+ * \copydoc validate_pmax_pooling_impl
+ */
 template <std::size_t C1, std::size_t C2, typename E, cpp_enable_if(etl_traits<E>::dimensions() == 2, etl_traits<E>::is_fast)>
 void validate_pmax_pooling_impl(const E& /*unused*/) {
     static_assert(etl_traits<E>::template dim<0>() % C1 == 0 && etl_traits<E>::template dim<1>() % C2 == 0, "Dimensions not divisible by the pooling ratio");
@@ -225,6 +234,14 @@ void validate_pmax_pooling_impl(const E& /*unused*/) {
 template <std::size_t C1, std::size_t C2, typename E, cpp_enable_if(etl_traits<E>::dimensions() == 3, etl_traits<E>::is_fast)>
 void validate_pmax_pooling_impl(const E& /*unused*/) {
     static_assert(etl_traits<E>::template dim<1>() % C1 == 0 && etl_traits<E>::template dim<2>() % C2 == 0, "Dimensions not divisible by the pooling ratio");
+}
+
+/*!
+ * \copydoc validate_pmax_pooling_impl
+ */
+template <std::size_t C1, std::size_t C2, typename E, cpp_enable_if(etl_traits<E>::dimensions() == 4, etl_traits<E>::is_fast)>
+void validate_pmax_pooling_impl(const E& /*unused*/) {
+    static_assert(etl_traits<E>::template dim<2>() % C1 == 0 && etl_traits<E>::template dim<3>() % C2 == 0, "Dimensions not divisible by the pooling ratio");
 }
 
 /*!
@@ -256,6 +273,17 @@ void validate_pmax_pooling_impl(const E& e, std::size_t c1, std::size_t c2) {
     cpp_unused(c2);
 }
 
+/*!
+ * \copydoc validate_pmax_pooling_impl
+ */
+template <typename E, cpp_enable_if(etl_traits<E>::dimensions() == 4)>
+void validate_pmax_pooling_impl(const E& e, std::size_t c1, std::size_t c2) {
+    cpp_assert(etl::template dim<2>(e) % c1 == 0 && etl::template dim<3>(e) % c2 == 0, "Dimensions not divisible by the pooling ratio");
+    cpp_unused(e);
+    cpp_unused(c1);
+    cpp_unused(c2);
+}
+
 } //end of namespace detail
 
 /*!
@@ -271,7 +299,7 @@ void validate_pmax_pooling_impl(const E& e, std::size_t c1, std::size_t c2) {
 template <std::size_t C1, std::size_t C2, typename E>
 void validate_pmax_pooling(const E& expr) {
     static_assert(is_etl_expr<E>::value, "Prob. Max Pooling only defined for ETL expressions");
-    static_assert(etl_traits<E>::dimensions() == 2 || etl_traits<E>::dimensions() == 3, "Prob. Max Pooling only defined for 2D and 3D");
+    static_assert(etl_traits<E>::dimensions() >= 2 && etl_traits<E>::dimensions() <= 4, "Prob. Max Pooling only defined for 2D and 3D");
 
     detail::validate_pmax_pooling_impl<C1, C2>(expr);
 }
@@ -289,7 +317,7 @@ void validate_pmax_pooling(const E& expr) {
 template <typename E>
 void validate_pmax_pooling(const E& expr, std::size_t c1, std::size_t c2) {
     static_assert(is_etl_expr<E>::value, "Prob. Max Pooling only defined for ETL expressions");
-    static_assert(etl_traits<E>::dimensions() == 2 || etl_traits<E>::dimensions() == 3, "Prob. Max Pooling only defined for 2D and 3D");
+    static_assert(etl_traits<E>::dimensions() >= 2 && etl_traits<E>::dimensions() <= 4, "Prob. Max Pooling only defined for 2D and 3D");
 
     detail::validate_pmax_pooling_impl(expr, c1, c2);
 }

@@ -45,8 +45,8 @@ cpp14_constexpr etl::sum_impl select_default_sum_impl() {
     //conditions will be a lot simplified
 
     if (decay_traits<E>::template vectorizable<vector_mode>::value) {
-        constexpr const bool sse = vectorize_impl && vector_mode == vector_mode_t::SSE3;
-        constexpr const bool avx = vectorize_impl && vector_mode == vector_mode_t::AVX;
+        constexpr bool sse = vectorize_impl && vector_mode == vector_mode_t::SSE3;
+        constexpr bool avx = vectorize_impl && vector_mode == vector_mode_t::AVX;
 
         if (avx) {
             return etl::sum_impl::AVX;

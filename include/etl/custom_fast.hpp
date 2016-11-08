@@ -32,10 +32,10 @@ struct custom_fast_matrix_impl final :
     static_assert(sizeof...(Dims) > 0, "At least one dimension must be specified");
 
 public:
-    static constexpr const std::size_t n_dimensions = sizeof...(Dims);                      ///< The number of dimensions
-    static constexpr const std::size_t etl_size     = mul_all<Dims...>::value;              ///< The size of the matrix
-    static constexpr const order storage_order      = SO;                                   ///< The storage order
-    static constexpr const bool array_impl          = !matrix_detail::is_vector<ST>::value; ///< true if the storage is an std::arraw, false otherwise
+    static constexpr std::size_t n_dimensions = sizeof...(Dims);                      ///< The number of dimensions
+    static constexpr std::size_t etl_size     = mul_all<Dims...>::value;              ///< The size of the matrix
+    static constexpr order storage_order      = SO;                                   ///< The storage order
+    static constexpr bool array_impl          = !matrix_detail::is_vector<ST>::value; ///< true if the storage is an std::arraw, false otherwise
 
     using this_type         = custom_fast_matrix_impl<T, ST, SO, Dims...>;          ///< this type
     using base_type         = fast_matrix_base<this_type, T, ST, SO, Dims...>;
@@ -183,7 +183,6 @@ public:
      * \param in The several elements to store
      * \param i The position at which to start. This will be aligned from the beginning (multiple of the vector size).
      * \tparam V The vectorization mode to use
-     * \return a vector containing several elements of the matrix
      */
     template <typename V = default_vec>
     void store(vec_type<V> in, std::size_t i) noexcept {
@@ -195,7 +194,6 @@ public:
      * \param in The several elements to store
      * \param i The position at which to start. This will be aligned from the beginning (multiple of the vector size).
      * \tparam V The vectorization mode to use
-     * \return a vector containing several elements of the matrix
      */
     template <typename V = default_vec>
     void storeu(vec_type<V> in, std::size_t i) noexcept {
@@ -207,7 +205,6 @@ public:
      * \param in The several elements to store
      * \param i The position at which to start. This will be aligned from the beginning (multiple of the vector size).
      * \tparam V The vectorization mode to use
-     * \return a vector containing several elements of the matrix
      */
     template <typename V = default_vec>
     void stream(vec_type<V> in, std::size_t i) noexcept {

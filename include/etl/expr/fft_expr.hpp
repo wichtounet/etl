@@ -28,7 +28,7 @@ struct basic_fft_expr : impl_expr<basic_fft_expr<T, D, Impl>> {
     using this_type  = basic_fft_expr<T, D, Impl>; ///< The type of this expression
     using value_type = T;                          ///< The value type
 
-    static constexpr const bool is_gpu = is_cufft_enabled; ///< Indicate if the expression is executed on GPU
+    static constexpr bool is_gpu = is_cufft_enabled; ///< Indicate if the expression is executed on GPU
 
     /*!
      * \brief The result type for a given sub expression type

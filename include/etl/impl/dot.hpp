@@ -17,6 +17,7 @@
 #include "etl/impl/sse/dot.hpp"
 #include "etl/impl/avx/dot.hpp"
 #include "etl/impl/blas/dot.hpp"
+#include "etl/impl/vec/dot.hpp"
 
 namespace etl {
 
@@ -110,12 +111,16 @@ struct dot_impl {
     static value_t<A> apply(const A& a, const B& b) {
         auto impl = select_dot_impl<A, B>();
 
+        static constexpr bool Align = decay_traits<A>::is_aligned && decay_traits<B>::is_aligned;
+
         if (impl == etl::dot_impl::BLAS) {
             return etl::impl::blas::dot(a, b);
         } else if (impl == etl::dot_impl::AVX) {
-            return etl::impl::avx::dot(a.direct(), b.direct());
+            return etl::impl::avx::dot<Align>(a.direct(), b.direct());
         } else if (impl == etl::dot_impl::SSE) {
             return etl::impl::sse::dot(a.direct(), b.direct());
+        } else if (impl == etl::dot_impl::VEC) {
+            return etl::impl::vec::dot(a, b);
         } else {
             return etl::impl::standard::dot(a, b);
         }

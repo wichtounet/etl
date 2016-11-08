@@ -62,7 +62,7 @@ struct scalar {
      * \return a vector containing several elements of the matrix
      */
     template <typename V = default_vec>
-    constexpr const vec_type<V> load(std::size_t d) const noexcept {
+    constexpr vec_type<V> load(std::size_t d) const noexcept {
         return (void)d, V::set(value);
     }
 
@@ -73,7 +73,7 @@ struct scalar {
      * \return a vector containing several elements of the matrix
      */
     template <typename V = default_vec>
-    constexpr const vec_type<V> loadu(std::size_t d) const noexcept {
+    constexpr vec_type<V> loadu(std::size_t d) const noexcept {
         return (void)d, V::set(value);
     }
 
@@ -104,20 +104,21 @@ struct scalar {
  */
 template <typename T>
 struct etl_traits<etl::scalar<T>, void> {
-    static constexpr const bool is_etl                  = true;            ///< Indicates if the type is an ETL expression
-    static constexpr const bool is_transformer          = false;           ///< Indicates if the type is a transformer
-    static constexpr const bool is_view                 = false;           ///< Indicates if the type is a view
-    static constexpr const bool is_magic_view           = false;           ///< Indicates if the type is a magic view
-    static constexpr const bool is_fast                 = true;            ///< Indicates if the expression is fast
-    static constexpr const bool is_value                = false;           ///< Indicates if the expression is of value type
-    static constexpr const bool is_direct               = false;           ///< Indicates if the expression has direct memory access
-    static constexpr const bool is_linear               = true;            ///< Indicates if the expression is linear
-    static constexpr const bool is_thread_safe          = true;            ///< Indicates if the expression is thread safe
-    static constexpr const bool is_generator            = true;            ///< Indicates if the expression is a generator expression
-    static constexpr const bool needs_temporary_visitor = false;           ///< Indicates if the expression needs a temporary visitor
-    static constexpr const bool needs_evaluator_visitor = false;           ///< Indicaes if the expression needs an evaluator visitor
-    static constexpr const bool is_padded               = true;                          ///< Indicates if the expression is padded
-    static constexpr const order storage_order          = order::RowMajor; ///< The expression storage order
+    static constexpr bool is_etl                  = true;            ///< Indicates if the type is an ETL expression
+    static constexpr bool is_transformer          = false;           ///< Indicates if the type is a transformer
+    static constexpr bool is_view                 = false;           ///< Indicates if the type is a view
+    static constexpr bool is_magic_view           = false;           ///< Indicates if the type is a magic view
+    static constexpr bool is_fast                 = true;            ///< Indicates if the expression is fast
+    static constexpr bool is_value                = false;           ///< Indicates if the expression is of value type
+    static constexpr bool is_direct               = false;           ///< Indicates if the expression has direct memory access
+    static constexpr bool is_linear               = true;            ///< Indicates if the expression is linear
+    static constexpr bool is_thread_safe          = true;            ///< Indicates if the expression is thread safe
+    static constexpr bool is_generator            = true;            ///< Indicates if the expression is a generator expression
+    static constexpr bool needs_temporary_visitor = false;           ///< Indicates if the expression needs a temporary visitor
+    static constexpr bool needs_evaluator_visitor = false;           ///< Indicaes if the expression needs an evaluator visitor
+    static constexpr bool is_padded               = true;                          ///< Indicates if the expression is padded
+    static constexpr bool is_aligned              = true;                          ///< Indicates if the expression is padded
+    static constexpr order storage_order          = order::RowMajor; ///< The expression storage order
 
     /*!
      * \brief Indicates if the expression is vectorizable using the

@@ -28,10 +28,10 @@ namespace detail {
  * \tparam A The type of expression
  * \return The implementation to use
  */
-template <typename A>
+template <typename A, bool Simple>
 cpp14_constexpr scalar_impl select_default_scalar_impl() {
     if (all_floating<A>::value) {
-        if (is_cblas_enabled) {
+        if (is_cblas_enabled && !Simple) {
             return scalar_impl::BLAS;
         } else {
             return scalar_impl::STD;
@@ -46,7 +46,7 @@ cpp14_constexpr scalar_impl select_default_scalar_impl() {
  * \tparam A The type of expression
  * \return The implementation to use
  */
-template <typename A>
+template <typename A, bool Simple>
 scalar_impl select_scalar_impl() {
     if (local_context().scalar_selector.forced) {
         auto forced = local_context().scalar_selector.impl;
@@ -56,7 +56,7 @@ scalar_impl select_scalar_impl() {
             case scalar_impl::BLAS:
                 if (!is_cblas_enabled || !all_floating<A>::value) {
                     std::cerr << "Forced selection to BLAS scalar implementation, but not possible for this expression" << std::endl;
-                    return select_default_scalar_impl<A>();
+                    return select_default_scalar_impl<A, Simple>();
                 }
 
                 return forced;
@@ -67,7 +67,7 @@ scalar_impl select_scalar_impl() {
         }
     }
 
-    return select_default_scalar_impl<A>();
+    return select_default_scalar_impl<A, Simple>();
 }
 
 /*!
@@ -81,7 +81,7 @@ struct scalar_add {
      */
     template <typename T>
     static void apply(T&& lhs, value_t<T> rhs) {
-        auto impl = select_scalar_impl<T>();
+        auto impl = select_scalar_impl<T, true>();
 
         if (impl == scalar_impl::BLAS) {
             return etl::impl::blas::scalar_add(lhs, rhs);
@@ -102,7 +102,7 @@ struct scalar_sub {
      */
     template <typename T>
     static void apply(T&& lhs, value_t<T> rhs) {
-        auto impl = select_scalar_impl<T>();
+        auto impl = select_scalar_impl<T, true>();
 
         if (impl == scalar_impl::BLAS) {
             return etl::impl::blas::scalar_sub(lhs, rhs);
@@ -123,7 +123,7 @@ struct scalar_mul {
      */
     template <typename T>
     static void apply(T&& lhs, value_t<T> rhs) {
-        auto impl = select_scalar_impl<T>();
+        auto impl = select_scalar_impl<T, false>();
 
         if (impl == scalar_impl::BLAS) {
             return etl::impl::blas::scalar_mul(lhs, rhs);
@@ -144,7 +144,7 @@ struct scalar_div {
      */
     template <typename T>
     static void apply(T&& lhs, value_t<T> rhs) {
-        auto impl = select_scalar_impl<T>();
+        auto impl = select_scalar_impl<T, false>();
 
         if (impl == scalar_impl::BLAS) {
             return etl::impl::blas::scalar_div(lhs, rhs);

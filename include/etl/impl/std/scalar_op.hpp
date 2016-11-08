@@ -25,11 +25,7 @@ namespace standard {
  */
 template <typename TT>
 void scalar_add(TT&& lhs, value_t<TT> rhs) {
-    auto m = lhs.memory_start();
-
-    for (std::size_t i = 0; i < size(lhs); ++i) {
-        m[i] += rhs;
-    }
+    lhs = lhs + rhs;
 }
 
 /*!
@@ -39,11 +35,7 @@ void scalar_add(TT&& lhs, value_t<TT> rhs) {
  */
 template <typename TT>
 void scalar_sub(TT&& lhs, value_t<TT> rhs) {
-    auto m = lhs.memory_start();
-
-    for (std::size_t i = 0; i < size(lhs); ++i) {
-        m[i] -= rhs;
-    }
+    lhs = lhs - rhs;
 }
 
 /*!
@@ -53,11 +45,7 @@ void scalar_sub(TT&& lhs, value_t<TT> rhs) {
  */
 template <typename TT>
 void scalar_mul(TT&& lhs, value_t<TT> rhs) {
-    auto m = lhs.memory_start();
-
-    for (std::size_t i = 0; i < size(lhs); ++i) {
-        m[i] *= rhs;
-    }
+    lhs = lhs >> rhs;
 }
 
 /*!
@@ -67,11 +55,7 @@ void scalar_mul(TT&& lhs, value_t<TT> rhs) {
  */
 template <typename TT>
 void scalar_div(TT&& lhs, value_t<TT> rhs) {
-    auto m = lhs.memory_start();
-
-    for (std::size_t i = 0; i < size(lhs); ++i) {
-        m[i] /= rhs;
-    }
+    lhs = lhs / rhs;
 }
 
 /*!
@@ -81,11 +65,7 @@ void scalar_div(TT&& lhs, value_t<TT> rhs) {
  */
 template <typename TT>
 void scalar_mod(TT&& lhs, value_t<TT> rhs) {
-    auto m = lhs.memory_start();
-
-    for (std::size_t i = 0; i < size(lhs); ++i) {
-        m[i] %= rhs;
-    }
+    lhs = lhs % rhs;
 }
 
 } //end of namespace standard

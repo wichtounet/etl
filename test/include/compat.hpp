@@ -26,7 +26,7 @@
 #include "catch.hpp"
 #endif
 
-constexpr const auto base_eps = std::numeric_limits<float>::epsilon() * 100;
+constexpr auto base_eps = std::numeric_limits<float>::epsilon() * 100;
 
 #ifndef ETL_DOCTEST
 #include "fast_catch.hpp"

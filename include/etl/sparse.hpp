@@ -212,10 +212,10 @@ struct sparse_matrix_impl;
  */
 template <typename T, std::size_t D>
 struct sparse_matrix_impl<T, sparse_storage::COO, D> final : dyn_base<T, D> {
-    static constexpr const std::size_t n_dimensions      = D;                              ///< The number of dimensions
-    static constexpr const sparse_storage storage_format = sparse_storage::COO;            ///< The sparse storage scheme
-    static constexpr const order storage_order           = order::RowMajor;                ///< The storage order
-    static constexpr const std::size_t alignment         = intrinsic_traits<T>::alignment; ///< The alignment
+    static constexpr std::size_t n_dimensions      = D;                              ///< The number of dimensions
+    static constexpr sparse_storage storage_format = sparse_storage::COO;            ///< The sparse storage scheme
+    static constexpr order storage_order           = order::RowMajor;                ///< The storage order
+    static constexpr std::size_t alignment         = intrinsic_traits<T>::alignment; ///< The alignment
 
     using base_type              = dyn_base<T, D>;                                   ///< The base type
     using this_type              = sparse_matrix_impl<T, sparse_storage::COO, D>;    ///< this type

@@ -28,7 +28,7 @@ using gpu_handler = int;
  */
 template <typename T, std::size_t D>
 struct opaque_memory {
-    static constexpr const std::size_t n_dimensions = D; ///< The number of dimensions
+    static constexpr std::size_t n_dimensions = D; ///< The number of dimensions
 
     using value_type        = T;                    ///< The type of value
     using memory_type       = T*;                   ///< The type of memory

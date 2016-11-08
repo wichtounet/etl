@@ -194,7 +194,7 @@ namespace standard_evaluator {
      */
     template <typename E, typename R, cpp_enable_if(detail::vectorized_assign<E, R>::value)>
     void assign_evaluate_impl(E&& expr, R&& result) {
-        constexpr const auto V = detail::select_vector_mode<E, R>();
+        constexpr auto V = detail::select_vector_mode<E, R>();
 
         if(all_thread_safe<E>::value && select_parallel(etl::size(result))){
             par_vec<detail::VectorizedAssign, V>(expr, result);
@@ -244,7 +244,7 @@ namespace standard_evaluator {
      */
     template <typename E, typename R, cpp_enable_if(detail::vectorized_compound<E, R>::value)>
     void add_evaluate(E&& expr, R&& result) {
-        constexpr const auto V = detail::select_vector_mode<E, R>();
+        constexpr auto V = detail::select_vector_mode<E, R>();
 
         pre_assign(expr);
         post_assign_compound(expr);
@@ -297,7 +297,7 @@ namespace standard_evaluator {
      */
     template <typename E, typename R, cpp_enable_if(detail::vectorized_compound<E, R>::value)>
     void sub_evaluate(E&& expr, R&& result) {
-        constexpr const auto V = detail::select_vector_mode<E, R>();
+        constexpr auto V = detail::select_vector_mode<E, R>();
 
         pre_assign(expr);
         post_assign_compound(expr);
@@ -350,7 +350,7 @@ namespace standard_evaluator {
      */
     template <typename E, typename R, cpp_enable_if(detail::vectorized_compound<E, R>::value)>
     void mul_evaluate(E&& expr, R&& result) {
-        constexpr const auto V = detail::select_vector_mode<E, R>();
+        constexpr auto V = detail::select_vector_mode<E, R>();
 
         pre_assign(expr);
         post_assign_compound(expr);
@@ -403,7 +403,7 @@ namespace standard_evaluator {
      */
     template <typename E, typename R, cpp_enable_if(detail::vectorized_compound<E, R>::value)>
     void div_evaluate(E&& expr, R&& result) {
-        constexpr const auto V = detail::select_vector_mode<E, R>();
+        constexpr auto V = detail::select_vector_mode<E, R>();
 
         pre_assign(expr);
         post_assign_compound(expr);

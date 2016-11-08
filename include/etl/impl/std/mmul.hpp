@@ -21,7 +21,7 @@ namespace standard {
  */
 template <typename A, typename B, typename C>
 static void mm_mul(A&& a, B&& b, C&& c) {
-    bool row_major = decay_traits<A>::storage_order == order::RowMajor;
+    static constexpr bool row_major = decay_traits<A>::storage_order == order::RowMajor;
 
     c = 0;
 
@@ -80,7 +80,7 @@ inline void add_mul(std::complex<T>& c, std::complex<T> a, std::complex<T> b) {
  */
 template <typename A, typename B, typename C>
 static void vm_mul(A&& a, B&& b, C&& c) {
-    bool row_major = decay_traits<B>::storage_order == order::RowMajor;
+    static constexpr bool row_major = decay_traits<B>::storage_order == order::RowMajor;
 
     c = 0;
 
@@ -109,7 +109,7 @@ static void vm_mul(A&& a, B&& b, C&& c) {
  */
 template <typename A, typename B, typename C>
 static void mv_mul(A&& a, B&& b, C&& c) {
-    bool row_major = decay_traits<A>::storage_order == order::RowMajor;
+    static constexpr bool row_major = decay_traits<A>::storage_order == order::RowMajor;
 
     c = 0;
 

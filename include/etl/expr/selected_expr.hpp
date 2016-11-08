@@ -30,7 +30,7 @@ public:
 
     using selector_t = Selector; ///< The enum selector type
 
-    static constexpr const selector_t selector_value = V; ///< The enum selector value
+    static constexpr selector_t selector_value = V; ///< The enum selector value
 
     //Cannot be constructed with no args
     selected_expr() = delete;

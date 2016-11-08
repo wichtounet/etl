@@ -174,9 +174,9 @@ struct sym_matrix final : comparable<sym_matrix<Matrix>> {
 
     using scs = sym_detail::static_check_square<matrix_t>; ///< static_check trick
 
-    static constexpr const std::size_t n_dimensions = etl_traits<matrix_t>::dimensions();    ///< The number of dimensions
-    static constexpr const order storage_order      = etl_traits<matrix_t>::storage_order;   ///< The storage order
-    static constexpr const std::size_t alignment    = intrinsic_traits<matrix_t>::alignment; ///< The memory alignment
+    static constexpr std::size_t n_dimensions = etl_traits<matrix_t>::dimensions();    ///< The number of dimensions
+    static constexpr order storage_order      = etl_traits<matrix_t>::storage_order;   ///< The storage order
+    static constexpr std::size_t alignment    = intrinsic_traits<matrix_t>::alignment; ///< The memory alignment
 
     using value_type        = value_t<matrix_t>;                 ///< The value type
     using memory_type       = value_type*;                       ///< The memory type
@@ -591,7 +591,6 @@ public:
      * \param in The several elements to store
      * \param i The position at which to start. This will be aligned from the beginning (multiple of the vector size).
      * \tparam V The vectorization mode to use
-     * \return a vector containing several elements of the matrix
      */
     template <typename V = default_vec>
     void stream(vec_type<V> in, std::size_t i) noexcept {
@@ -603,7 +602,6 @@ public:
      * \param in The several elements to store
      * \param i The position at which to start. This will be aligned from the beginning (multiple of the vector size).
      * \tparam V The vectorization mode to use
-     * \return a vector containing several elements of the matrix
      */
     template <typename V = default_vec>
     void store(vec_type<V> in, std::size_t i) noexcept {
@@ -615,7 +613,6 @@ public:
      * \param in The several elements to store
      * \param i The position at which to start. This will be aligned from the beginning (multiple of the vector size).
      * \tparam V The vectorization mode to use
-     * \return a vector containing several elements of the matrix
      */
     template <typename V = default_vec>
     void storeu(vec_type<V> in, std::size_t i) noexcept {

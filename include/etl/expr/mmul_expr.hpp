@@ -139,7 +139,7 @@ struct basic_mm_mul_expr : impl_expr<basic_mm_mul_expr<T, Impl>> {
     template <typename A, typename B>
     using result_type = detail::expr_result_t<this_type, A, B>;
 
-    static constexpr const bool is_gpu = is_cublas_enabled; ///< Indicate if this expressions may run on GPU
+    static constexpr bool is_gpu = is_cublas_enabled; ///< Indicate if this expressions may run on GPU
 
     /*!
      * \brief Apply the expression
@@ -250,7 +250,7 @@ struct basic_vm_mul_expr : impl_expr<basic_vm_mul_expr<T, Impl>> {
     using value_type = T; ///< The value type
     using this_type  = basic_vm_mul_expr<T, Impl>; ///< This expression type
 
-    static constexpr const bool is_gpu = is_cublas_enabled; ///< Indicate if this expressions may run on GPU
+    static constexpr bool is_gpu = is_cublas_enabled; ///< Indicate if this expressions may run on GPU
 
     /*!
      * \brief The result type for given sub types
@@ -364,7 +364,7 @@ struct basic_mv_mul_expr : impl_expr<basic_mv_mul_expr<T, Impl>> {
     using value_type = T;                          ///< The value type
     using this_type  = basic_mv_mul_expr<T, Impl>; ///< This expression type
 
-    static constexpr const bool is_gpu = is_cublas_enabled; ///< Indicate if this expressions may run on GPU
+    static constexpr bool is_gpu = is_cublas_enabled; ///< Indicate if this expressions may run on GPU
 
     /*!
      * \brief The result type for given sub types

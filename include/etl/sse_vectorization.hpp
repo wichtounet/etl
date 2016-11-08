@@ -35,63 +35,63 @@ namespace etl {
  */
 template <typename T>
 struct sse_intrinsic_traits {
-    static constexpr const bool vectorizable     = false;      ///< Boolean flag indicating if the type is vectorizable or not
-    static constexpr const std::size_t size      = 1;          ///< Numbers of elements done at once
-    static constexpr const std::size_t alignment = alignof(T); ///< Necessary number of bytes of alignment for this type
+    static constexpr bool vectorizable     = false;      ///< Boolean flag indicating if the type is vectorizable or not
+    static constexpr std::size_t size      = 1;          ///< Numbers of elements done at once
+    static constexpr std::size_t alignment = alignof(T); ///< Necessary number of bytes of alignment for this type
 
     using intrinsic_type = T;
 };
 
 template <>
 struct sse_intrinsic_traits<float> {
-    static constexpr const bool vectorizable     = true;
-    static constexpr const std::size_t size      = 4;
-    static constexpr const std::size_t alignment = 16;
+    static constexpr bool vectorizable     = true;
+    static constexpr std::size_t size      = 4;
+    static constexpr std::size_t alignment = 16;
 
     using intrinsic_type = __m128;
 };
 
 template <>
 struct sse_intrinsic_traits<double> {
-    static constexpr const bool vectorizable     = true;
-    static constexpr const std::size_t size      = 2;
-    static constexpr const std::size_t alignment = 16;
+    static constexpr bool vectorizable     = true;
+    static constexpr std::size_t size      = 2;
+    static constexpr std::size_t alignment = 16;
 
     using intrinsic_type = __m128d;
 };
 
 template <>
 struct sse_intrinsic_traits<std::complex<float>> {
-    static constexpr const bool vectorizable     = true;
-    static constexpr const std::size_t size      = 2;
-    static constexpr const std::size_t alignment = 16;
+    static constexpr bool vectorizable     = true;
+    static constexpr std::size_t size      = 2;
+    static constexpr std::size_t alignment = 16;
 
     using intrinsic_type = __m128;
 };
 
 template <>
 struct sse_intrinsic_traits<std::complex<double>> {
-    static constexpr const bool vectorizable     = true;
-    static constexpr const std::size_t size      = 1;
-    static constexpr const std::size_t alignment = 16;
+    static constexpr bool vectorizable     = true;
+    static constexpr std::size_t size      = 1;
+    static constexpr std::size_t alignment = 16;
 
     using intrinsic_type = __m128d;
 };
 
 template <>
 struct sse_intrinsic_traits<etl::complex<float>> {
-    static constexpr const bool vectorizable     = true;
-    static constexpr const std::size_t size      = 2;
-    static constexpr const std::size_t alignment = 16;
+    static constexpr bool vectorizable     = true;
+    static constexpr std::size_t size      = 2;
+    static constexpr std::size_t alignment = 16;
 
     using intrinsic_type = __m128;
 };
 
 template <>
 struct sse_intrinsic_traits<etl::complex<double>> {
-    static constexpr const bool vectorizable     = true;
-    static constexpr const std::size_t size      = 1;
-    static constexpr const std::size_t alignment = 16;
+    static constexpr bool vectorizable     = true;
+    static constexpr std::size_t size      = 1;
+    static constexpr std::size_t alignment = 16;
 
     using intrinsic_type = __m128d;
 };
@@ -216,6 +216,9 @@ struct sse_vec {
     ETL_INLINE_VEC_VOID stream(etl::complex<double>* memory, __m128d value) {
         _mm_stream_pd(reinterpret_cast<double*>(memory), value);
     }
+
+    template<typename T>
+    ETL_TMP_INLINE(typename sse_intrinsic_traits<T>::intrinsic_type) zero();
 
     ETL_INLINE_VEC_128 load(const float* memory) {
         return _mm_load_ps(memory);
@@ -389,6 +392,21 @@ struct sse_vec {
     }
 
 #endif //__INTEL_COMPILER
+
+    ETL_STATIC_INLINE(double) hadd(__m128d in) {
+        __m128 undef   = _mm_undefined_ps();
+        __m128 shuftmp = _mm_movehl_ps(undef, _mm_castpd_ps(in));
+        __m128d shuf = _mm_castps_pd(shuftmp);
+        return _mm_cvtsd_f64(_mm_add_sd(in, shuf));
+    }
+
+    ETL_STATIC_INLINE(float) hadd(__m128 in) {
+        __m128 shuf = _mm_movehdup_ps(in);
+        __m128 sums = _mm_add_ps(in, shuf);
+        shuf        = _mm_movehl_ps(shuf, sums);
+        sums = _mm_add_ss(sums, shuf);
+        return _mm_cvtss_f32(sums);
+    }
 };
 
 template <>
@@ -511,6 +529,16 @@ ETL_OUT_VEC_128D sse_vec::div<true>(__m128d lhs, __m128d rhs) {
 
     //result = ymm4 / ymm0
     return _mm_div_pd(ymm4, ymm0);
+}
+
+template<>
+ETL_OUT_VEC_128 sse_vec::zero<float>() {
+    return _mm_setzero_ps();
+}
+
+template<>
+ETL_OUT_VEC_128D sse_vec::zero<double>() {
+    return _mm_setzero_pd();
 }
 
 } //end of namespace etl

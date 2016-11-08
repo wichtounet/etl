@@ -24,7 +24,7 @@ enum class init_flag_t {
 /*!
  * \brief A simple value to use as init flag to constructor
  */
-constexpr const init_flag_t init_flag = init_flag_t::DUMMY;
+constexpr init_flag_t init_flag = init_flag_t::DUMMY;
 
 /*!
  * \brief Simple collection of values to initialize a dyn matrix
@@ -135,8 +135,8 @@ struct dyn_base {
     static_assert(D > 0, "A matrix must have a least 1 dimension");
 
 protected:
-    static constexpr const std::size_t n_dimensions = D;                              ///< The number of dimensions
-    static constexpr const std::size_t alignment    = intrinsic_traits<T>::alignment; ///< The memory alignment
+    static constexpr std::size_t n_dimensions = D;                              ///< The number of dimensions
+    static constexpr std::size_t alignment    = intrinsic_traits<T>::alignment; ///< The memory alignment
 
     using value_type             = T;                                     ///< The value type
     using dimension_storage_impl = std::array<std::size_t, n_dimensions>; ///< The type used to store the dimensions
@@ -316,8 +316,8 @@ struct dense_dyn_base : dyn_base<T, D> {
 
     using dimension_storage_impl = typename base_type::dimension_storage_impl;
 
-    static constexpr const std::size_t n_dimensions = D;  ///< The number of dimensions
-    static constexpr const order storage_order      = SO; ///< The storage order
+    static constexpr std::size_t n_dimensions = D;  ///< The number of dimensions
+    static constexpr order storage_order      = SO; ///< The storage order
 
     using base_type::_size;
     using base_type::dim;

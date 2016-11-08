@@ -98,7 +98,7 @@ struct inplace_assignable {
             mat(i).direct_deep_transpose_inplace();
         }
 
-        static constexpr const std::size_t d = etl_traits<S>::dimensions();
+        static constexpr std::size_t d = etl_traits<S>::dimensions();
 
         using std::swap;
         swap(mat.unsafe_dimension_access(d - 1), mat.unsafe_dimension_access(d - 2));
@@ -117,7 +117,7 @@ struct inplace_assignable {
             mat(i).direct_transpose_inplace();
         }
 
-        static constexpr const std::size_t d = etl_traits<S>::dimensions();
+        static constexpr std::size_t d = etl_traits<S>::dimensions();
 
         using std::swap;
         swap(mat.unsafe_dimension_access(d - 1), mat.unsafe_dimension_access(d - 2));

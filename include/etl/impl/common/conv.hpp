@@ -129,6 +129,147 @@ void right_full_kernel(const T* in, const std::size_t n, const T* kernel, std::s
     }
 }
 
+template <typename T>
+etl::dyn_matrix<T, 2> pad_right(const opaque_memory<T, 2>& input, size_t pad){
+    etl::dyn_matrix<T, 2> padded_input(input.dim(0), input.dim(1) + pad);
+
+    padded_input = 0;
+
+    for(size_t i = 0; i < input.dim(0); ++i){
+        direct_copy_n(input.memory_start() + i * input.dim(1), padded_input.memory_start() + i * padded_input.dim(1), input.dim(1));
+    }
+
+    return padded_input;
+}
+
+template <typename T>
+etl::dyn_matrix<T, 3> pad_right_multi(const opaque_memory<T, 3>& input, size_t pad){
+    etl::dyn_matrix<T, 3> padded_input(input.dim(0), input.dim(1), input.dim(2) + pad);
+
+    padded_input = 0;
+
+    for(size_t i = 0; i < input.dim(0); ++i){
+        for(size_t j = 0; j < input.dim(1); ++j){
+            direct_copy_n(
+                input.memory_start() + i * input.dim(1) * input.dim(2) + j * input.dim(2),
+                padded_input.memory_start() + i * padded_input.dim(1) * padded_input.dim(2) + j * padded_input.dim(2),
+                input.dim(2));
+        }
+    }
+
+    return padded_input;
+}
+
+template <typename T>
+etl::dyn_matrix<T, 4> pad_right_multi(const opaque_memory<T, 4>& input, size_t pad){
+    etl::dyn_matrix<T, 4> padded_input(input.dim(0), input.dim(1), input.dim(2), input.dim(3) + pad);
+
+    padded_input = 0;
+
+    const auto C1 = input.dim(1) * input.dim(2) * input.dim(3);
+    const auto C2 = input.dim(2) * input.dim(3);
+    const auto C3 = input.dim(3);
+
+    const auto PC1 = input.dim(1) * input.dim(2) * (input.dim(3) + pad);
+    const auto PC2 = input.dim(2) * (input.dim(3) + pad);
+    const auto PC3 = (input.dim(3) + pad);
+
+    for(size_t i = 0; i < input.dim(0); ++i){
+        for(size_t j = 0; j < input.dim(1); ++j){
+            for(size_t k = 0; k < input.dim(2); ++k){
+                direct_copy_n(
+                    input.memory_start() + i * C1 + j * C2 + k * C3,
+                    padded_input.memory_start() + i * PC1 + j * PC2 + k * PC3,
+                    input.dim(3));
+            }
+        }
+    }
+
+    return padded_input;
+}
+
+template <typename T>
+etl::dyn_matrix<T, 2> pad_right_flip(const opaque_memory<T, 2>& input, size_t pad){
+    etl::dyn_matrix<T, 2> flipped(input.dim(0), input.dim(1));
+    std::reverse_copy(input.memory_start(), input.memory_end(), flipped.memory_start());
+
+    etl::dyn_matrix<T, 2> padded_input(input.dim(0), input.dim(1) + pad);
+
+    padded_input = 0;
+
+    for(size_t i = 0; i < input.dim(0); ++i){
+        direct_copy_n(flipped.memory_start() + i * flipped.dim(1), padded_input.memory_start() + i * padded_input.dim(1), flipped.dim(1));
+    }
+
+    return padded_input;
+}
+
+template <typename T>
+etl::dyn_matrix<T, 3> pad_right_flip_multi(const opaque_memory<T, 3>& input, size_t pad){
+    etl::dyn_matrix<T, 3> flipped(input.dim(0), input.dim(1), input.dim(2));
+
+    for(size_t i = 0; i < input.dim(0); ++i){
+        std::reverse_copy(
+            input.memory_start() + i * input.dim(1) * input.dim(2),
+            input.memory_start() + (i+1) * input.dim(1) * input.dim(2),
+            flipped.memory_start() + i * input.dim(1) * input.dim(2));
+    }
+
+    etl::dyn_matrix<T, 3> padded_input(input.dim(0), input.dim(1), input.dim(2) + pad);
+
+    padded_input = 0;
+
+    for(size_t i = 0; i < input.dim(0); ++i){
+        for(size_t j = 0; j < input.dim(1); ++j){
+            direct_copy_n(
+                flipped.memory_start() + i * flipped.dim(1) * flipped.dim(2) + j * flipped.dim(2),
+                padded_input.memory_start() + i * padded_input.dim(1) * padded_input.dim(2) + j * padded_input.dim(2),
+                input.dim(2));
+        }
+    }
+
+    return padded_input;
+}
+
+template <typename T>
+etl::dyn_matrix<T, 4> pad_right_flip_multi(const opaque_memory<T, 4>& input, size_t pad){
+    etl::dyn_matrix<T, 4> flipped(input.dim(0), input.dim(1), input.dim(2), input.dim(3));
+
+    const auto C1 = input.dim(1) * input.dim(2) * input.dim(3);
+    const auto C2 = input.dim(2) * input.dim(3);
+    const auto C3 = input.dim(3);
+
+    const auto PC1 = input.dim(1) * input.dim(2) * (input.dim(3) + pad);
+    const auto PC2 = input.dim(2) * (input.dim(3) + pad);
+    const auto PC3 = (input.dim(3) + pad);
+
+    for(size_t i = 0; i < input.dim(0); ++i){
+        for(size_t j = 0; j < input.dim(1); ++j){
+            std::reverse_copy(
+                input.memory_start() + i * C1 + j * C2,
+                input.memory_start() + i * C1 + (j+1) * C2,
+                flipped.memory_start() + i * C1 + j * C2);
+        }
+    }
+
+    etl::dyn_matrix<T, 4> padded_input(input.dim(0), input.dim(1), input.dim(2), input.dim(3) + pad);
+
+    padded_input = 0;
+
+    for(size_t i = 0; i < input.dim(0); ++i){
+        for(size_t j = 0; j < input.dim(1); ++j){
+            for(size_t k = 0; k < input.dim(2); ++k){
+                direct_copy_n(
+                    flipped.memory_start() + i * C1 + j * C2 + k * C3,
+                    padded_input.memory_start() + i * PC1 + j * PC2 + k * PC3,
+                    input.dim(3));
+            }
+        }
+    }
+
+    return padded_input;
+}
+
 } //end of namespace common
 } //end of namespace impl
 } //end of namespace etl
