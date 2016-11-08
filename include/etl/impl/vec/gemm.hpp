@@ -13,7 +13,7 @@ namespace impl {
 
 namespace vec {
 
-template <typename A, typename B, typename C, cpp_enable_if(all_row_major<A, B, C>::value && all_vectorizable<A, B, C>::value)>
+template <typename A, typename B, typename C, cpp_enable_if((all_row_major<A, B, C>::value))>
 void gemv(A&& a, B&& b, C&& c) {
     const auto m = rows(a);
     const auto n = columns(a);
@@ -28,7 +28,7 @@ void gemv(A&& a, B&& b, C&& c) {
 }
 
 // Default, unoptimized should not be called unless in tests
-template <typename A, typename B, typename C, cpp_disable_if(all_row_major<A, B, C>::value && all_vectorizable<A, B, C>::value)>
+template <typename A, typename B, typename C, cpp_disable_if((all_row_major<A, B, C>::value))>
 void gemv(A&& a, B&& b, C&& c) {
     const auto m = rows(a);
     const auto n = columns(a);
