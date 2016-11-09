@@ -393,21 +393,53 @@ struct sse_vec {
 
 #endif //__INTEL_COMPILER
 
-    ETL_STATIC_INLINE(double) hadd(__m128d in) {
-        __m128 undef   = _mm_undefined_ps();
-        __m128 shuftmp = _mm_movehl_ps(undef, _mm_castpd_ps(in));
-        __m128d shuf = _mm_castps_pd(shuftmp);
-        return _mm_cvtsd_f64(_mm_add_sd(in, shuf));
-    }
-
-    ETL_STATIC_INLINE(float) hadd(__m128 in) {
+    template <typename T = float>
+    static inline T ETL_INLINE_ATTR_VEC hadd(__m128 in) {
         __m128 shuf = _mm_movehdup_ps(in);
         __m128 sums = _mm_add_ps(in, shuf);
         shuf        = _mm_movehl_ps(shuf, sums);
         sums = _mm_add_ss(sums, shuf);
         return _mm_cvtss_f32(sums);
     }
+
+    template <typename T = double>
+    static inline T ETL_INLINE_ATTR_VEC hadd(__m128d in) {
+        __m128 undef   = _mm_undefined_ps();
+        __m128 shuftmp = _mm_movehl_ps(undef, _mm_castpd_ps(in));
+        __m128d shuf = _mm_castps_pd(shuftmp);
+        return _mm_cvtsd_f64(_mm_add_sd(in, shuf));
+    }
 };
+
+//TODO Vectorize the two following functions
+
+template <>
+inline std::complex<float> ETL_INLINE_ATTR_VEC sse_vec::hadd<std::complex<float>>(__m128 in) {
+    std::complex<float> tmp_result[2];
+    sse_vec::storeu(tmp_result, in);
+    return tmp_result[0] + tmp_result[1];
+}
+
+template <>
+inline std::complex<double> ETL_INLINE_ATTR_VEC sse_vec::hadd<std::complex<double>>(__m128d in) {
+    std::complex<double> tmp_result[1];
+    sse_vec::storeu(tmp_result, in);
+    return tmp_result[0];
+}
+
+template <>
+inline etl::complex<float> ETL_INLINE_ATTR_VEC sse_vec::hadd<etl::complex<float>>(__m128 in) {
+    etl::complex<float> tmp_result[2];
+    sse_vec::storeu(tmp_result, in);
+    return tmp_result[0] + tmp_result[1];
+}
+
+template <>
+inline etl::complex<double> ETL_INLINE_ATTR_VEC sse_vec::hadd<etl::complex<double>>(__m128d in) {
+    etl::complex<double> tmp_result[1];
+    sse_vec::storeu(tmp_result, in);
+    return tmp_result[0];
+}
 
 template <>
 ETL_OUT_VEC_128 sse_vec::mul<true>(__m128 lhs, __m128 rhs) {
@@ -538,6 +570,26 @@ ETL_OUT_VEC_128 sse_vec::zero<float>() {
 
 template<>
 ETL_OUT_VEC_128D sse_vec::zero<double>() {
+    return _mm_setzero_pd();
+}
+
+template<>
+ETL_OUT_VEC_128 sse_vec::zero<etl::complex<float>>() {
+    return _mm_setzero_ps();
+}
+
+template<>
+ETL_OUT_VEC_128D sse_vec::zero<etl::complex<double>>() {
+    return _mm_setzero_pd();
+}
+
+template<>
+ETL_OUT_VEC_128 sse_vec::zero<std::complex<float>>() {
+    return _mm_setzero_ps();
+}
+
+template<>
+ETL_OUT_VEC_128D sse_vec::zero<std::complex<double>>() {
     return _mm_setzero_pd();
 }
 

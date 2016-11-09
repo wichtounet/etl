@@ -395,19 +395,51 @@ struct avx_vec {
 
 #endif //__INTEL_COMPILER
 
-    ETL_STATIC_INLINE(float) hadd(__m256 in) {
+    template <typename T = float>
+    static inline T ETL_INLINE_ATTR_VEC hadd(__m256 in) {
         const __m128 x128 = _mm_add_ps(_mm256_extractf128_ps(in, 1), _mm256_castps256_ps128(in));
         const __m128 x64  = _mm_add_ps(x128, _mm_movehl_ps(x128, x128));
         const __m128 x32  = _mm_add_ss(x64, _mm_shuffle_ps(x64, x64, 0x55));
         return _mm_cvtss_f32(x32);
     }
 
-    ETL_STATIC_INLINE(double) hadd(__m256d in) {
+    template <typename T = double>
+    static inline T ETL_INLINE_ATTR_VEC hadd(__m256d in) {
         const __m256d t1 = _mm256_hadd_pd(in, _mm256_permute2f128_pd(in, in, 1));
         const __m256d t2 = _mm256_hadd_pd(t1, t1);
         return _mm_cvtsd_f64(_mm256_castpd256_pd128(t2));
     }
 };
+
+//TODO Vectorize the two following functions
+
+template <>
+inline std::complex<float> ETL_INLINE_ATTR_VEC avx_vec::hadd<std::complex<float>>(__m256 in) {
+    std::complex<float> tmp_result[4];
+    avx_vec::storeu(tmp_result, in);
+    return tmp_result[0] + tmp_result[1] + tmp_result[2] + tmp_result[3];
+}
+
+template <>
+inline std::complex<double> ETL_INLINE_ATTR_VEC avx_vec::hadd<std::complex<double>>(__m256d in) {
+    std::complex<double> tmp_result[2];
+    avx_vec::storeu(tmp_result, in);
+    return tmp_result[0] + tmp_result[1];
+}
+
+template <>
+inline etl::complex<float> ETL_INLINE_ATTR_VEC avx_vec::hadd<etl::complex<float>>(__m256 in) {
+    etl::complex<float> tmp_result[4];
+    avx_vec::storeu(tmp_result, in);
+    return tmp_result[0] + tmp_result[1] + tmp_result[2] + tmp_result[3];
+}
+
+template <>
+inline etl::complex<double> ETL_INLINE_ATTR_VEC avx_vec::hadd<etl::complex<double>>(__m256d in) {
+    etl::complex<double> tmp_result[2];
+    avx_vec::storeu(tmp_result, in);
+    return tmp_result[0] + tmp_result[1];
+}
 
 template <>
 ETL_OUT_VEC_256 avx_vec::mul<true>(__m256 lhs, __m256 rhs) {
@@ -560,6 +592,26 @@ ETL_OUT_VEC_256 avx_vec::zero<float>() {
 
 template<>
 ETL_OUT_VEC_256D avx_vec::zero<double>() {
+    return _mm256_setzero_pd();
+}
+
+template<>
+ETL_OUT_VEC_256 avx_vec::zero<etl::complex<float>>() {
+    return _mm256_setzero_ps();
+}
+
+template<>
+ETL_OUT_VEC_256D avx_vec::zero<etl::complex<double>>() {
+    return _mm256_setzero_pd();
+}
+
+template<>
+ETL_OUT_VEC_256 avx_vec::zero<std::complex<float>>() {
+    return _mm256_setzero_ps();
+}
+
+template<>
+ETL_OUT_VEC_256D avx_vec::zero<std::complex<double>>() {
     return _mm256_setzero_pd();
 }
 
