@@ -3,9 +3,7 @@
 // Distributed under the terms of the MIT License.
 // (See accompanying file LICENSE or copy at
 //  http://opensource.org/licenses/MIT)
-//=======================================================================
-
-#pragma once
+//======================================================================= #pragma once
 
 namespace etl {
 
@@ -103,7 +101,87 @@ void gemv(A&& a, B&& b, C&& c) {
 }
 
 template <typename V, typename A, typename B, typename C, cpp_enable_if((all_row_major<A, B, C>::value))>
-void gevm(const A& a, const B& b, C& c) {
+void gevm_small_kernel(const A& a, const B& b, C& c) {
+    using vec_type = V;
+    using T        = value_t<A>;
+
+    static constexpr size_t vec_size = vec_type::template traits<T>::size;
+    static constexpr bool Cx         = is_complex_t<T>::value;
+
+    const auto m = rows(b);
+    const auto n = columns(b);
+
+    size_t j = 0;
+
+    for (; j + vec_size * 8 - 1 < n; j += vec_size * 8) {
+        auto r1 = vec_type::template zero<T>();
+        auto r2 = vec_type::template zero<T>();
+        auto r3 = vec_type::template zero<T>();
+        auto r4 = vec_type::template zero<T>();
+        auto r5 = vec_type::template zero<T>();
+        auto r6 = vec_type::template zero<T>();
+        auto r7 = vec_type::template zero<T>();
+        auto r8 = vec_type::template zero<T>();
+
+        for (size_t k = 0; k < m; k++) {
+            auto a1 = vec_type::set(a[k]);
+
+            auto b1 = a.template loadu<vec_type>(k * n + j + 0 * vec_size);
+            auto b2 = a.template loadu<vec_type>(k * n + j + 1 * vec_size);
+            auto b3 = a.template loadu<vec_type>(k * n + j + 2 * vec_size);
+            auto b4 = a.template loadu<vec_type>(k * n + j + 3 * vec_size);
+            auto b5 = a.template loadu<vec_type>(k * n + j + 4 * vec_size);
+            auto b6 = a.template loadu<vec_type>(k * n + j + 5 * vec_size);
+            auto b7 = a.template loadu<vec_type>(k * n + j + 6 * vec_size);
+            auto b8 = a.template loadu<vec_type>(k * n + j + 7 * vec_size);
+
+            r1 = r1 + vec_type::template mul<Cx>(a1, b1);
+            r2 = r2 + vec_type::template mul<Cx>(a1, b2);
+            r3 = r3 + vec_type::template mul<Cx>(a1, b3);
+            r4 = r4 + vec_type::template mul<Cx>(a1, b4);
+            r5 = r5 + vec_type::template mul<Cx>(a1, b5);
+            r6 = r6 + vec_type::template mul<Cx>(a1, b6);
+            r7 = r7 + vec_type::template mul<Cx>(a1, b7);
+            r8 = r8 + vec_type::template mul<Cx>(a1, b8);
+        }
+
+        c.template storeu<vec_type>(r1, j + 0 * vec_size);
+        c.template storeu<vec_type>(r2, j + 1 * vec_size);
+        c.template storeu<vec_type>(r3, j + 2 * vec_size);
+        c.template storeu<vec_type>(r4, j + 3 * vec_size);
+        c.template storeu<vec_type>(r5, j + 4 * vec_size);
+        c.template storeu<vec_type>(r6, j + 5 * vec_size);
+        c.template storeu<vec_type>(r7, j + 6 * vec_size);
+        c.template storeu<vec_type>(r8, j + 7 * vec_size);
+    }
+
+    for (; j + vec_size - 1 < n; j += vec_size) {
+        auto r1 = vec_type::template zero<T>();
+
+        for (size_t k = 0; k < m; k++) {
+            auto a1 = vec_type::set(a[k]);
+
+            auto b1 = a.template loadu<vec_type>(k * n + j);
+
+            r1 = r1 + a1 * b1;
+        }
+
+        c.template storeu<vec_type>(r1, j);
+    }
+
+    for (; j < n; j++) {
+        auto value = T();
+
+        for (size_t k = 0; k < m; k++) {
+            value += a(k) * b(k, j);
+        }
+
+        c[j] = 0;
+    }
+}
+
+template <typename V, typename A, typename B, typename C, cpp_enable_if((all_row_major<A, B, C>::value))>
+void gevm_large_kernel(const A& a, const B& b, C& c) {
     using vec_type = V;
     using T        = value_t<A>;
 
@@ -155,14 +233,18 @@ void gevm(const A& a, const B& b, C& c) {
         }
 
         for (; j < n; j++) {
-            c[i] += factor * b(k, j);
+            c[j] += factor * b(k, j);
         }
     }
 }
 
 template <typename A, typename B, typename C, cpp_enable_if((all_row_major<A, B, C>::value))>
 void gevm(A&& a, B&& b, C&& c) {
-    gevm<default_vec>(a, b, c);
+    if(etl::size(b) <= 625000){
+        gevm_small_kernel<default_vec>(a, b, c);
+    } else {
+        gevm_large_kernel<default_vec>(a, b, c);
+    }
 }
 
 // Default, unoptimized should not be called unless in tests
