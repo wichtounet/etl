@@ -276,6 +276,26 @@ struct sse_vec {
         return _mm_set1_ps(value);
     }
 
+    ETL_INLINE_VEC_128 set(std::complex<float> value) {
+        std::complex<float> tmp[]{value, value};
+        return loadu(tmp);
+    }
+
+    ETL_INLINE_VEC_128D set(std::complex<double> value) {
+        std::complex<double> tmp[]{value};
+        return loadu(tmp);
+    }
+
+    ETL_INLINE_VEC_128 set(etl::complex<float> value) {
+        etl::complex<float> tmp[]{value, value};
+        return loadu(tmp);
+    }
+
+    ETL_INLINE_VEC_128D set(etl::complex<double> value) {
+        etl::complex<double> tmp[]{value};
+        return loadu(tmp);
+    }
+
     ETL_INLINE_VEC_128D add(__m128d lhs, __m128d rhs) {
         return _mm_add_pd(lhs, rhs);
     }

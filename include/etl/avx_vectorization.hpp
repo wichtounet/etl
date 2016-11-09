@@ -279,6 +279,26 @@ struct avx_vec {
         return _mm256_set1_ps(value);
     }
 
+    ETL_INLINE_VEC_256 set(std::complex<float> value) {
+        std::complex<float> tmp[]{value, value, value, value};
+        return loadu(tmp);
+    }
+
+    ETL_INLINE_VEC_256D set(std::complex<double> value) {
+        std::complex<double> tmp[]{value, value};
+        return loadu(tmp);
+    }
+
+    ETL_INLINE_VEC_256 set(etl::complex<float> value) {
+        etl::complex<float> tmp[]{value, value, value, value};
+        return loadu(tmp);
+    }
+
+    ETL_INLINE_VEC_256D set(etl::complex<double> value) {
+        etl::complex<double> tmp[]{value, value};
+        return loadu(tmp);
+    }
+
     ETL_INLINE_VEC_256D add(__m256d lhs, __m256d rhs) {
         return _mm256_add_pd(lhs, rhs);
     }
