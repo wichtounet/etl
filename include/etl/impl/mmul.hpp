@@ -306,6 +306,8 @@ struct vm_mul_impl {
             etl::impl::standard::vm_mul(a, b, c);
         } else if (impl == gemm_impl::BLAS) {
             etl::impl::blas::gevm(a, b, c);
+        } else if (impl == gemm_impl::VEC) {
+            etl::impl::vec::gevm(a, b, c);
         } else if (impl == gemm_impl::CUBLAS) {
             etl::impl::cublas::gevm(a, b, c);
         }

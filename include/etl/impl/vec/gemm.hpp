@@ -102,6 +102,43 @@ void gemv(A&& a, B&& b, C&& c) {
     }
 }
 
+template <typename V, typename A, typename B, typename C, cpp_enable_if((all_row_major<A, B, C>::value))>
+void gevm(const A& a, const B& b, C& c) {
+    //using vec_type = V;
+    //using T        = value_t<A>;
+
+    //static constexpr size_t vec_size = vec_type::template traits<T>::size;
+    //static constexpr bool Cx         = is_complex_t<T>::value;
+
+    const auto m = rows(b);
+    const auto n = columns(b);
+
+    c = 0;
+
+    for (size_t k = 0; k < m; k++) {
+        for (size_t j = 0; j < n; j++) {
+            c(j) += a(k) * b(k, j);
+        }
+    }
+}
+
+template <typename A, typename B, typename C, cpp_enable_if((all_row_major<A, B, C>::value))>
+void gevm(A&& a, B&& b, C&& c) {
+    gevm<default_vec>(a, b, c);
+}
+
+// Default, unoptimized should not be called unless in tests
+template <typename A, typename B, typename C, cpp_disable_if((all_row_major<A, B, C>::value))>
+void gevm(A&& a, B&& b, C&& c) {
+    c = 0;
+
+    for (std::size_t k = 0; k < etl::dim<0>(a); k++) {
+        for (std::size_t j = 0; j < columns(b); j++) {
+            c(j) += a(k) * b(k, j);
+        }
+    }
+}
+
 } //end of namespace vec
 
 } //end of namespace impl
