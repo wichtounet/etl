@@ -122,7 +122,8 @@ CPM_DIRECT_SECTION_TWO_PASS_NS_PF("x * A (d) [gemm]", gemv_policy,
     FLOPS([](std::size_t d1, std::size_t d2){ return 2 * d1 * d2; }),
     CPM_SECTION_INIT([](std::size_t d1, std::size_t d2){ return std::make_tuple(dvec(d1), dmat(d1,d2), dvec(d2)); }),
     CPM_SECTION_FUNCTOR("default", [](dvec& a, dmat& b, dvec& c){ c = a * b; }),
-    CPM_SECTION_FUNCTOR("std", [](dvec& a, dmat& b, dvec& c){ c = selected_helper(etl::gemm_impl::STD, a * b); })
+    CPM_SECTION_FUNCTOR("std", [](dvec& a, dmat& b, dvec& c){ c = selected_helper(etl::gemm_impl::STD, a * b); }),
+    CPM_SECTION_FUNCTOR("vec", [](dvec& a, dmat& b, dvec& c){ c = selected_helper(etl::gemm_impl::VEC, a * b); })
     BLAS_SECTION_FUNCTOR("blas", [](dvec& a, dmat& b, dvec& c){ c = selected_helper(etl::gemm_impl::BLAS, a * b); })
     CUBLAS_SECTION_FUNCTOR("cublas", [](dvec& a, dmat& b, dvec& c){ c = selected_helper(etl::gemm_impl::CUBLAS, a * b); })
 )
@@ -132,7 +133,8 @@ CPM_DIRECT_SECTION_TWO_PASS_NS_PF("x * A (c) [gemm]", gemv_policy,
     FLOPS([](std::size_t d1, std::size_t d2){ return 6 * 2 * d1 * d2; }),
     CPM_SECTION_INIT([](std::size_t d1, std::size_t d2){ return std::make_tuple(cvec(d1), cmat(d1,d2), cvec(d2)); }),
     CPM_SECTION_FUNCTOR("default", [](cvec& a, cmat& b, cvec& c){ c = a * b; }),
-    CPM_SECTION_FUNCTOR("std", [](cvec& a, cmat& b, cvec& c){ c = selected_helper(etl::gemm_impl::STD, a * b); })
+    CPM_SECTION_FUNCTOR("std", [](cvec& a, cmat& b, cvec& c){ c = selected_helper(etl::gemm_impl::STD, a * b); }),
+    CPM_SECTION_FUNCTOR("vec", [](cvec& a, cmat& b, cvec& c){ c = selected_helper(etl::gemm_impl::VEC, a * b); })
     BLAS_SECTION_FUNCTOR("blas", [](cvec& a, cmat& b, cvec& c){ c = selected_helper(etl::gemm_impl::BLAS, a * b); })
     CUBLAS_SECTION_FUNCTOR("cublas", [](cvec& a, cmat& b, cvec& c){ c = selected_helper(etl::gemm_impl::CUBLAS, a * b); })
 )
@@ -141,7 +143,8 @@ CPM_DIRECT_SECTION_TWO_PASS_NS_PF("x * A (z) [gemm]", gemv_policy,
     FLOPS([](std::size_t d1, std::size_t d2){ return 6 * 2 * d1 * d2; }),
     CPM_SECTION_INIT([](std::size_t d1, std::size_t d2){ return std::make_tuple(zvec(d1), zmat(d1,d2), zvec(d2)); }),
     CPM_SECTION_FUNCTOR("default", [](zvec& a, zmat& b, zvec& c){ c = a * b; }),
-    CPM_SECTION_FUNCTOR("std", [](zvec& a, zmat& b, zvec& c){ c = selected_helper(etl::gemm_impl::STD, a * b); })
+    CPM_SECTION_FUNCTOR("std", [](zvec& a, zmat& b, zvec& c){ c = selected_helper(etl::gemm_impl::STD, a * b); }),
+    CPM_SECTION_FUNCTOR("vec", [](zvec& a, zmat& b, zvec& c){ c = selected_helper(etl::gemm_impl::VEC, a * b); })
     BLAS_SECTION_FUNCTOR("blas", [](zvec& a, zmat& b, zvec& c){ c = selected_helper(etl::gemm_impl::BLAS, a * b); })
     CUBLAS_SECTION_FUNCTOR("cublas", [](zvec& a, zmat& b, zvec& c){ c = selected_helper(etl::gemm_impl::CUBLAS, a * b); })
 )
