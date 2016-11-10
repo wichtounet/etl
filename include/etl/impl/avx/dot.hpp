@@ -214,7 +214,7 @@ T dot(const opaque_memory<T, 1>& a, const opaque_memory<T, 1>& b) {
  * \param b The rhs expression
  * \return the sum
  */
-template <typename T>
+template <bool A, typename T>
 T dot(const opaque_memory<T, 1>& a, const opaque_memory<T, 1>& b) {
     cpp_unused(a);
     cpp_unused(b);
