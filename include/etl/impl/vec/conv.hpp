@@ -353,9 +353,13 @@ void conv2_valid_flipped(const I& input, const K& kernel, C&& conv) {
 template<typename T>
 constexpr bool prefer_sse(const size_t n){
     return
-          std::is_same<T, float>::value
-        ? (n % 4 < n % 8)
-        : (n % 2 < n % 4);
+           !avx_enabled
+        || (
+                sse3_enabled
+            &&  (std::is_same<T, float>::value
+                    ? (n % 4 < n % 8)
+                    : (n % 2 < n % 4))
+           );
 }
 
 #ifdef __AVX__
