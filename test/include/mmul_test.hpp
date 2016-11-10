@@ -5,6 +5,12 @@
 //  http://opensource.org/licenses/MIT)
 //=======================================================================
 
+#ifdef __AVX__
+#define TEST_VEC
+#elif defined(__SSE3__)
+#define TEST_VEC
+#endif
+
 #define MUL_FUNCTOR(name, ...)                        \
     struct name {                                     \
         template <typename A, typename B, typename C> \
@@ -21,11 +27,9 @@ MUL_FUNCTOR(eblas_gemm, c = selected_helper(etl::gemm_impl::FAST, a* b))
 
 MUL_FUNCTOR(default_gemv, c = etl::mul(a, b))
 MUL_FUNCTOR(std_gemv, c = selected_helper(etl::gemm_impl::STD, a * b))
-MUL_FUNCTOR(vec_gemv, c = selected_helper(etl::gemm_impl::VEC, a * b))
 
 MUL_FUNCTOR(default_gevm, c = etl::mul(a, b))
 MUL_FUNCTOR(std_gevm, c = selected_helper(etl::gemm_impl::STD, a* b))
-MUL_FUNCTOR(vec_gevm, c = selected_helper(etl::gemm_impl::STD, a* b))
 
 #define GEMM_TEST_CASE_SECTION_DEFAULT MUL_TEST_CASE_SECTIONS(default_gemm, default_gemm)
 #define GEMM_TEST_CASE_SECTION_LAZY MUL_TEST_CASE_SECTIONS(lazy_gemm, lazy_gemm)
@@ -35,11 +39,19 @@ MUL_FUNCTOR(vec_gevm, c = selected_helper(etl::gemm_impl::STD, a* b))
 
 #define GEMV_TEST_CASE_SECTION_DEFAULT MUL_TEST_CASE_SECTIONS(default_gemv, default_gemv)
 #define GEMV_TEST_CASE_SECTION_STD MUL_TEST_CASE_SECTIONS(std_gemv, std_gemv)
-#define GEMV_TEST_CASE_SECTION_VEC MUL_TEST_CASE_SECTIONS(vec_gemv, vec_gemv)
 
 #define GEVM_TEST_CASE_SECTION_DEFAULT MUL_TEST_CASE_SECTIONS(default_gevm, default_gevm)
 #define GEVM_TEST_CASE_SECTION_STD MUL_TEST_CASE_SECTIONS(std_gevm, std_gevm)
+
+#ifdef TEST_VEC
+MUL_FUNCTOR(vec_gemv, c = selected_helper(etl::gemm_impl::VEC, a * b))
+MUL_FUNCTOR(vec_gevm, c = selected_helper(etl::gemm_impl::STD, a* b))
+#define GEMV_TEST_CASE_SECTION_VEC MUL_TEST_CASE_SECTIONS(vec_gemv, vec_gemv)
 #define GEVM_TEST_CASE_SECTION_VEC MUL_TEST_CASE_SECTIONS(vec_gevm, vec_gevm)
+#else
+#define GEMV_TEST_CASE_SECTION_VEC
+#define GEVM_TEST_CASE_SECTION_VEC
+#endif
 
 #ifdef ETL_BLAS_MODE
 MUL_FUNCTOR(blas_gemm, c = selected_helper(etl::gemm_impl::BLAS, a* b))
