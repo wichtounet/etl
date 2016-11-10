@@ -69,6 +69,7 @@ struct no_vec {
     template <typename F>
     static F load(const F* memory) {
         cpp_unused(memory);
+        return F();
     }
 
     /*!
@@ -79,6 +80,7 @@ struct no_vec {
     template <typename F>
     static F loadu(const F* memory) {
         cpp_unused(memory);
+        return F();
     }
 
     /*!
@@ -89,6 +91,7 @@ struct no_vec {
     template <typename F>
     static F set(F value) {
         cpp_unused(value);
+        return F();
     }
 
     /*!
@@ -101,6 +104,7 @@ struct no_vec {
     static M add(M lhs, M rhs) {
         cpp_unused(lhs);
         cpp_unused(rhs);
+        return M();
     }
 
     /*!
@@ -113,6 +117,7 @@ struct no_vec {
     static M sub(M lhs, M rhs) {
         cpp_unused(lhs);
         cpp_unused(rhs);
+        return M();
     }
 
     /*!
@@ -121,10 +126,11 @@ struct no_vec {
      * \param rhs The right hand side of the operation
      * \return Vector of the results
      */
-    template <typename M>
+    template <bool Complex = false, typename M>
     static M mul(M lhs, M rhs) {
         cpp_unused(lhs);
         cpp_unused(rhs);
+        return M();
     }
 
     /*!
@@ -137,6 +143,7 @@ struct no_vec {
     static M div(M lhs, M rhs) {
         cpp_unused(lhs);
         cpp_unused(rhs);
+        return M();
     }
 
     /*!
@@ -147,6 +154,7 @@ struct no_vec {
     template <typename M>
     static M sqrt(M value) {
         cpp_unused(value);
+        return M();
     }
 
     /*!
@@ -157,6 +165,18 @@ struct no_vec {
     template <typename M>
     static M minus(M value) {
         cpp_unused(value);
+        return M();
+    }
+
+    template <typename T = float, typename M>
+    static T hadd(M value) {
+        cpp_unused(value);
+        return T();
+    }
+
+    template<typename T>
+    static T zero(){
+        return T();
     }
 };
 
