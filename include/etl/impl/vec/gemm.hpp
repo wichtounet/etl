@@ -155,6 +155,32 @@ void gevm_small_kernel(const A& a, const B& b, C& c) {
         c.template storeu<vec_type>(r8, j + 7 * vec_size);
     }
 
+    for (; j + vec_size * 4 - 1 < n; j += vec_size * 4) {
+        auto r1 = vec_type::template zero<T>();
+        auto r2 = vec_type::template zero<T>();
+        auto r3 = vec_type::template zero<T>();
+        auto r4 = vec_type::template zero<T>();
+
+        for (size_t k = 0; k < m; k++) {
+            auto a1 = vec_type::set(a[k]);
+
+            auto b1 = a.template loadu<vec_type>(k * n + j + 0 * vec_size);
+            auto b2 = a.template loadu<vec_type>(k * n + j + 1 * vec_size);
+            auto b3 = a.template loadu<vec_type>(k * n + j + 2 * vec_size);
+            auto b4 = a.template loadu<vec_type>(k * n + j + 3 * vec_size);
+
+            r1 = r1 + vec_type::template mul<Cx>(a1, b1);
+            r2 = r2 + vec_type::template mul<Cx>(a1, b2);
+            r3 = r3 + vec_type::template mul<Cx>(a1, b3);
+            r4 = r4 + vec_type::template mul<Cx>(a1, b4);
+        }
+
+        c.template storeu<vec_type>(r1, j + 0 * vec_size);
+        c.template storeu<vec_type>(r2, j + 1 * vec_size);
+        c.template storeu<vec_type>(r3, j + 2 * vec_size);
+        c.template storeu<vec_type>(r4, j + 3 * vec_size);
+    }
+
     for (; j + vec_size - 1 < n; j += vec_size) {
         auto r1 = vec_type::template zero<T>();
 
@@ -240,7 +266,7 @@ void gevm_large_kernel(const A& a, const B& b, C& c) {
 
 template <typename A, typename B, typename C, cpp_enable_if((all_row_major<A, B, C>::value))>
 void gevm(A&& a, B&& b, C&& c) {
-    if(etl::size(b) <= 625000){
+    if(etl::size(b) < gevm_small_threshold){
         gevm_small_kernel<default_vec>(a, b, c);
     } else {
         gevm_large_kernel<default_vec>(a, b, c);
