@@ -15,11 +15,18 @@
 #ifdef __SSE3__
 
 #include <immintrin.h>
+#include <emmintrin.h>
+#include <xmmintrin.h>
 
 #include "etl/sse_exp.hpp"
 
 #ifdef VECT_DEBUG
 #include <iostream>
+#endif
+
+#ifdef __clang__
+#define _mm_undefined_ps _mm_setzero_ps
+#define _mm_undefined_pd _mm_setzero_pd
 #endif
 
 #define ETL_INLINE_VEC_VOID ETL_STATIC_INLINE(void)
