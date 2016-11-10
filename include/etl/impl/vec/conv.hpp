@@ -358,6 +358,18 @@ constexpr bool prefer_sse(const size_t n){
         : (n % 2 < n % 4);
 }
 
+#ifdef __AVX__
+using safe_avx_vec = avx_vec;
+#else
+using safe_avx_vec = no_vec;
+#endif
+
+#ifdef __SSE3__
+using safe_sse_vec = sse_vec;
+#else
+using safe_sse_vec = no_vec;
+#endif
+
 } // end of namespace detail
 
 /*!
@@ -433,18 +445,18 @@ void conv2_valid_flipped(const I& input, const K& kernel, C&& conv, size_t s1, s
         }
 
         if(detail::prefer_sse<T>(k2 + pad)){
-            detail::conv2_valid_flipped<sse_vec>(padded_input, padded_kernel, conv);
+            detail::conv2_valid_flipped<detail::safe_sse_vec>(padded_input, padded_kernel, conv);
         } else {
-            detail::conv2_valid_flipped<avx_vec>(padded_input, padded_kernel, conv);
+            detail::conv2_valid_flipped<detail::safe_avx_vec>(padded_input, padded_kernel, conv);
         }
 
         return;
     }
 
     if(detail::prefer_sse<T>(k2)){
-        detail::conv2_valid_flipped<sse_vec>(input, kernel, conv);
+        detail::conv2_valid_flipped<detail::safe_sse_vec>(input, kernel, conv);
     } else {
-        detail::conv2_valid_flipped<avx_vec>(input, kernel, conv);
+        detail::conv2_valid_flipped<detail::safe_avx_vec>(input, kernel, conv);
     }
 }
 
