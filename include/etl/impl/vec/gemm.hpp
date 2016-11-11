@@ -126,14 +126,14 @@ void gevm_small_kernel(const A& a, const B& b, C& c) {
         for (size_t k = 0; k < m; k++) {
             auto a1 = vec_type::set(a[k]);
 
-            auto b1 = a.template loadu<vec_type>(k * n + j + 0 * vec_size);
-            auto b2 = a.template loadu<vec_type>(k * n + j + 1 * vec_size);
-            auto b3 = a.template loadu<vec_type>(k * n + j + 2 * vec_size);
-            auto b4 = a.template loadu<vec_type>(k * n + j + 3 * vec_size);
-            auto b5 = a.template loadu<vec_type>(k * n + j + 4 * vec_size);
-            auto b6 = a.template loadu<vec_type>(k * n + j + 5 * vec_size);
-            auto b7 = a.template loadu<vec_type>(k * n + j + 6 * vec_size);
-            auto b8 = a.template loadu<vec_type>(k * n + j + 7 * vec_size);
+            auto b1 = b.template loadu<vec_type>(k * n + j + 0 * vec_size);
+            auto b2 = b.template loadu<vec_type>(k * n + j + 1 * vec_size);
+            auto b3 = b.template loadu<vec_type>(k * n + j + 2 * vec_size);
+            auto b4 = b.template loadu<vec_type>(k * n + j + 3 * vec_size);
+            auto b5 = b.template loadu<vec_type>(k * n + j + 4 * vec_size);
+            auto b6 = b.template loadu<vec_type>(k * n + j + 5 * vec_size);
+            auto b7 = b.template loadu<vec_type>(k * n + j + 6 * vec_size);
+            auto b8 = b.template loadu<vec_type>(k * n + j + 7 * vec_size);
 
             r1 = r1 + vec_type::template mul<Cx>(a1, b1);
             r2 = r2 + vec_type::template mul<Cx>(a1, b2);
@@ -164,10 +164,10 @@ void gevm_small_kernel(const A& a, const B& b, C& c) {
         for (size_t k = 0; k < m; k++) {
             auto a1 = vec_type::set(a[k]);
 
-            auto b1 = a.template loadu<vec_type>(k * n + j + 0 * vec_size);
-            auto b2 = a.template loadu<vec_type>(k * n + j + 1 * vec_size);
-            auto b3 = a.template loadu<vec_type>(k * n + j + 2 * vec_size);
-            auto b4 = a.template loadu<vec_type>(k * n + j + 3 * vec_size);
+            auto b1 = b.template loadu<vec_type>(k * n + j + 0 * vec_size);
+            auto b2 = b.template loadu<vec_type>(k * n + j + 1 * vec_size);
+            auto b3 = b.template loadu<vec_type>(k * n + j + 2 * vec_size);
+            auto b4 = b.template loadu<vec_type>(k * n + j + 3 * vec_size);
 
             r1 = r1 + vec_type::template mul<Cx>(a1, b1);
             r2 = r2 + vec_type::template mul<Cx>(a1, b2);
@@ -187,7 +187,7 @@ void gevm_small_kernel(const A& a, const B& b, C& c) {
         for (size_t k = 0; k < m; k++) {
             auto a1 = vec_type::set(a[k]);
 
-            auto b1 = a.template loadu<vec_type>(k * n + j);
+            auto b1 = b.template loadu<vec_type>(k * n + j);
 
             r1 = r1 + a1 * b1;
         }
@@ -217,49 +217,111 @@ void gevm_large_kernel(const A& a, const B& b, C& c) {
     const auto m = rows(b);
     const auto n = columns(b);
 
+    const size_t n_block = (32 * 1024) / sizeof(T);
+    const size_t m_block = n < n_block ? 8UL : 4UL;
+
     c = 0;
 
-    for (size_t k = 0; k < m; k++) {
-        auto factor = a(k);
+    for (size_t block_j = 0; block_j < n; block_j += n_block) {
+        for (size_t block_k = 0; block_k < m; block_k += m_block) {
+            const size_t m_end = std::min(block_k + m_block, m);
+            const size_t n_end = std::min(block_j + n_block, n) & size_t(-vec_size);
 
-        size_t j = 0;
+            size_t j = block_j;
 
-        auto f = vec_type::set(factor);
+            // 8-Unrolled Vectorized loop
+            for (; j + vec_size * 8 - 1 < n_end; j += vec_size * 8) {
+                auto r1 = vec_type::template zero<T>();
+                auto r2 = vec_type::template zero<T>();
+                auto r3 = vec_type::template zero<T>();
+                auto r4 = vec_type::template zero<T>();
+                auto r5 = vec_type::template zero<T>();
+                auto r6 = vec_type::template zero<T>();
+                auto r7 = vec_type::template zero<T>();
+                auto r8 = vec_type::template zero<T>();
 
-        for (; j + (4 * vec_size) - 1 < n; j += 4 * vec_size) {
-            auto b1 = b.template loadu<vec_type>(k * n + j + 0 * vec_size);
-            auto b2 = b.template loadu<vec_type>(k * n + j + 1 * vec_size);
-            auto b3 = b.template loadu<vec_type>(k * n + j + 2 * vec_size);
-            auto b4 = b.template loadu<vec_type>(k * n + j + 3 * vec_size);
+                for (size_t k = block_k; k < m_end; ++k) {
+                    auto a1 = vec_type::set(a[k]);
 
-            auto c1 = c.template loadu<vec_type>(j + 0 * vec_size);
-            auto c2 = c.template loadu<vec_type>(j + 1 * vec_size);
-            auto c3 = c.template loadu<vec_type>(j + 2 * vec_size);
-            auto c4 = c.template loadu<vec_type>(j + 3 * vec_size);
+                    auto b1 = b.template loadu<vec_type>(k * n + j + 0 * vec_size);
+                    auto b2 = b.template loadu<vec_type>(k * n + j + 1 * vec_size);
+                    auto b3 = b.template loadu<vec_type>(k * n + j + 2 * vec_size);
+                    auto b4 = b.template loadu<vec_type>(k * n + j + 3 * vec_size);
+                    auto b5 = b.template loadu<vec_type>(k * n + j + 4 * vec_size);
+                    auto b6 = b.template loadu<vec_type>(k * n + j + 5 * vec_size);
+                    auto b7 = b.template loadu<vec_type>(k * n + j + 6 * vec_size);
+                    auto b8 = b.template loadu<vec_type>(k * n + j + 7 * vec_size);
 
-            auto t1 = vec_type::template mul<Cx>(f, b1);
-            auto t2 = vec_type::template mul<Cx>(f, b2);
-            auto t3 = vec_type::template mul<Cx>(f, b3);
-            auto t4 = vec_type::template mul<Cx>(f, b4);
+                    r1 = r1 + vec_type::template mul<Cx>(a1, b1);
+                    r2 = r2 + vec_type::template mul<Cx>(a1, b2);
+                    r3 = r3 + vec_type::template mul<Cx>(a1, b3);
+                    r4 = r4 + vec_type::template mul<Cx>(a1, b4);
+                    r5 = r5 + vec_type::template mul<Cx>(a1, b5);
+                    r6 = r6 + vec_type::template mul<Cx>(a1, b6);
+                    r7 = r7 + vec_type::template mul<Cx>(a1, b7);
+                    r8 = r8 + vec_type::template mul<Cx>(a1, b8);
+                }
 
-            c.template storeu<vec_type>(vec_type::add(c1, t1), j + 0 * vec_size);
-            c.template storeu<vec_type>(vec_type::add(c2, t2), j + 1 * vec_size);
-            c.template storeu<vec_type>(vec_type::add(c3, t3), j + 2 * vec_size);
-            c.template storeu<vec_type>(vec_type::add(c4, t4), j + 3 * vec_size);
-        }
+                c.template storeu<vec_type>(vec_type::add(c.template loadu<vec_type>(j + 0 * vec_size), r1), j + 0 * vec_size);
+                c.template storeu<vec_type>(vec_type::add(c.template loadu<vec_type>(j + 1 * vec_size), r2), j + 1 * vec_size);
+                c.template storeu<vec_type>(vec_type::add(c.template loadu<vec_type>(j + 2 * vec_size), r3), j + 2 * vec_size);
+                c.template storeu<vec_type>(vec_type::add(c.template loadu<vec_type>(j + 3 * vec_size), r4), j + 3 * vec_size);
+                c.template storeu<vec_type>(vec_type::add(c.template loadu<vec_type>(j + 4 * vec_size), r5), j + 4 * vec_size);
+                c.template storeu<vec_type>(vec_type::add(c.template loadu<vec_type>(j + 5 * vec_size), r6), j + 5 * vec_size);
+                c.template storeu<vec_type>(vec_type::add(c.template loadu<vec_type>(j + 6 * vec_size), r7), j + 6 * vec_size);
+                c.template storeu<vec_type>(vec_type::add(c.template loadu<vec_type>(j + 7 * vec_size), r8), j + 7 * vec_size);
+            }
 
-        for (; j + vec_size - 1 < n; j += vec_size) {
-            auto b1 = b.template loadu<vec_type>(k * n + j);
-            auto c1 = c.template loadu<vec_type>(j);
+            // 4-Unrolled vectorized loop
+            for (; j + vec_size * 4 - 1 < n_end; j += vec_size * 4) {
+                auto r1 = vec_type::template zero<T>();
+                auto r2 = vec_type::template zero<T>();
+                auto r3 = vec_type::template zero<T>();
+                auto r4 = vec_type::template zero<T>();
 
-            auto t1 = vec_type::template mul<Cx>(f, b1);
-            c1 = vec_type::add(c1, t1);
+                for (size_t k = block_k; k < m_end; ++k) {
+                    auto a1 = vec_type::set(a[k]);
 
-            c.template storeu<vec_type>(c1, j);
-        }
+                    auto b1 = b.template loadu<vec_type>(k * n + j + 0 * vec_size);
+                    auto b2 = b.template loadu<vec_type>(k * n + j + 1 * vec_size);
+                    auto b3 = b.template loadu<vec_type>(k * n + j + 2 * vec_size);
+                    auto b4 = b.template loadu<vec_type>(k * n + j + 3 * vec_size);
 
-        for (; j < n; j++) {
-            c[j] += factor * b(k, j);
+                    r1 = r1 + vec_type::template mul<Cx>(a1, b1);
+                    r2 = r2 + vec_type::template mul<Cx>(a1, b2);
+                    r3 = r3 + vec_type::template mul<Cx>(a1, b3);
+                    r4 = r4 + vec_type::template mul<Cx>(a1, b4);
+                }
+
+                c.template storeu<vec_type>(vec_type::add(c.template loadu<vec_type>(j + 0 * vec_size), r1), j + 0 * vec_size);
+                c.template storeu<vec_type>(vec_type::add(c.template loadu<vec_type>(j + 1 * vec_size), r2), j + 1 * vec_size);
+                c.template storeu<vec_type>(vec_type::add(c.template loadu<vec_type>(j + 2 * vec_size), r3), j + 2 * vec_size);
+                c.template storeu<vec_type>(vec_type::add(c.template loadu<vec_type>(j + 3 * vec_size), r4), j + 3 * vec_size);
+            }
+
+            // Base vectorized loop
+            for (; j + vec_size - 1 < n_end; j += vec_size) {
+                auto r1 = vec_type::template zero<T>();
+
+                for (size_t k = block_k; k < m_end; ++k) {
+                    auto a1 = vec_type::set(a[k]);
+                    auto b1 = b.template loadu<vec_type>(k * n + j + 0 * vec_size);
+                    r1 = r1 + vec_type::template mul<Cx>(a1, b1);
+                }
+
+                c.template storeu<vec_type>(vec_type::add(c.template loadu<vec_type>(j + 0 * vec_size), r1), j + 0 * vec_size);
+            }
+
+            // Remainder non-vectorized loop
+            for (; j < n_end; ++j) {
+                auto r1 = T();
+
+                for (size_t k = block_k; k < m_end; ++k) {
+                    r1 += a[k] * b(k, j);
+                }
+
+                c[j] += r1;
+            }
         }
     }
 }
