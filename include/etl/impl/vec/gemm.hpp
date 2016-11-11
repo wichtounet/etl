@@ -5,6 +5,9 @@
 //  http://opensource.org/licenses/MIT)
 //======================================================================= #pragma once
 
+// The idea of the kernel is largely inspired by the kernels in Blaze
+// by Klaus Igleberg
+
 namespace etl {
 
 namespace impl {
