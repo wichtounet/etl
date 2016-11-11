@@ -47,15 +47,13 @@ value_t<L> selected_dot(const L& lhs, const R& rhs) {
             auto b4 = rhs.load(i + 3 * vec_size);
 
             auto t1 = vec_type::template mul<false>(a1, b1);
-            r1 = vec_type::add(r1, t1);
-
             auto t2 = vec_type::template mul<false>(a2, b2);
-            r2 = vec_type::add(r2, t2);
-
             auto t3 = vec_type::template mul<false>(a3, b3);
-            r3 = vec_type::add(r3, t3);
-
             auto t4 = vec_type::template mul<false>(a4, b4);
+
+            r1 = vec_type::add(r1, t1);
+            r2 = vec_type::add(r2, t2);
+            r3 = vec_type::add(r3, t3);
             r4 = vec_type::add(r4, t4);
         }
     }
