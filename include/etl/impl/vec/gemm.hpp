@@ -139,14 +139,14 @@ void gevm_small_kernel(const A& a, const B& b, C& c) {
             auto b7 = b.template loadu<vec_type>(k * n + j + 6 * vec_size);
             auto b8 = b.template loadu<vec_type>(k * n + j + 7 * vec_size);
 
-            r1 = r1 + vec_type::template mul<Cx>(a1, b1);
-            r2 = r2 + vec_type::template mul<Cx>(a1, b2);
-            r3 = r3 + vec_type::template mul<Cx>(a1, b3);
-            r4 = r4 + vec_type::template mul<Cx>(a1, b4);
-            r5 = r5 + vec_type::template mul<Cx>(a1, b5);
-            r6 = r6 + vec_type::template mul<Cx>(a1, b6);
-            r7 = r7 + vec_type::template mul<Cx>(a1, b7);
-            r8 = r8 + vec_type::template mul<Cx>(a1, b8);
+            r1 = vec_type::add(r1, vec_type::template mul<Cx>(a1, b1));
+            r2 = vec_type::add(r2, vec_type::template mul<Cx>(a1, b2));
+            r3 = vec_type::add(r3, vec_type::template mul<Cx>(a1, b3));
+            r4 = vec_type::add(r4, vec_type::template mul<Cx>(a1, b4));
+            r5 = vec_type::add(r5, vec_type::template mul<Cx>(a1, b5));
+            r6 = vec_type::add(r6, vec_type::template mul<Cx>(a1, b6));
+            r7 = vec_type::add(r7, vec_type::template mul<Cx>(a1, b7));
+            r8 = vec_type::add(r8, vec_type::template mul<Cx>(a1, b8));
         }
 
         c.template storeu<vec_type>(r1, j + 0 * vec_size);
@@ -173,10 +173,10 @@ void gevm_small_kernel(const A& a, const B& b, C& c) {
             auto b3 = b.template loadu<vec_type>(k * n + j + 2 * vec_size);
             auto b4 = b.template loadu<vec_type>(k * n + j + 3 * vec_size);
 
-            r1 = r1 + vec_type::template mul<Cx>(a1, b1);
-            r2 = r2 + vec_type::template mul<Cx>(a1, b2);
-            r3 = r3 + vec_type::template mul<Cx>(a1, b3);
-            r4 = r4 + vec_type::template mul<Cx>(a1, b4);
+            r1 = vec_type::add(r1, vec_type::template mul<Cx>(a1, b1));
+            r2 = vec_type::add(r2, vec_type::template mul<Cx>(a1, b2));
+            r3 = vec_type::add(r3, vec_type::template mul<Cx>(a1, b3));
+            r4 = vec_type::add(r4, vec_type::template mul<Cx>(a1, b4));
         }
 
         c.template storeu<vec_type>(r1, j + 0 * vec_size);
@@ -193,7 +193,7 @@ void gevm_small_kernel(const A& a, const B& b, C& c) {
 
             auto b1 = b.template loadu<vec_type>(k * n + j);
 
-            r1 = r1 + a1 * b1;
+            r1 = vec_type::add(r1, vec_type::template mul<Cx>(a1, b1));
         }
 
         c.template storeu<vec_type>(r1, j);
@@ -256,14 +256,14 @@ void gevm_large_kernel(const A& a, const B& b, C& c) {
                     auto b7 = b.template loadu<vec_type>(k * n + j + 6 * vec_size);
                     auto b8 = b.template loadu<vec_type>(k * n + j + 7 * vec_size);
 
-                    r1 = r1 + vec_type::template mul<Cx>(a1, b1);
-                    r2 = r2 + vec_type::template mul<Cx>(a1, b2);
-                    r3 = r3 + vec_type::template mul<Cx>(a1, b3);
-                    r4 = r4 + vec_type::template mul<Cx>(a1, b4);
-                    r5 = r5 + vec_type::template mul<Cx>(a1, b5);
-                    r6 = r6 + vec_type::template mul<Cx>(a1, b6);
-                    r7 = r7 + vec_type::template mul<Cx>(a1, b7);
-                    r8 = r8 + vec_type::template mul<Cx>(a1, b8);
+                    r1 = vec_type::add(r1, vec_type::template mul<Cx>(a1, b1));
+                    r2 = vec_type::add(r2, vec_type::template mul<Cx>(a1, b2));
+                    r3 = vec_type::add(r3, vec_type::template mul<Cx>(a1, b3));
+                    r4 = vec_type::add(r4, vec_type::template mul<Cx>(a1, b4));
+                    r5 = vec_type::add(r5, vec_type::template mul<Cx>(a1, b5));
+                    r6 = vec_type::add(r6, vec_type::template mul<Cx>(a1, b6));
+                    r7 = vec_type::add(r7, vec_type::template mul<Cx>(a1, b7));
+                    r8 = vec_type::add(r8, vec_type::template mul<Cx>(a1, b8));
                 }
 
                 c.template storeu<vec_type>(vec_type::add(c.template loadu<vec_type>(j + 0 * vec_size), r1), j + 0 * vec_size);
@@ -291,10 +291,10 @@ void gevm_large_kernel(const A& a, const B& b, C& c) {
                     auto b3 = b.template loadu<vec_type>(k * n + j + 2 * vec_size);
                     auto b4 = b.template loadu<vec_type>(k * n + j + 3 * vec_size);
 
-                    r1 = r1 + vec_type::template mul<Cx>(a1, b1);
-                    r2 = r2 + vec_type::template mul<Cx>(a1, b2);
-                    r3 = r3 + vec_type::template mul<Cx>(a1, b3);
-                    r4 = r4 + vec_type::template mul<Cx>(a1, b4);
+                    r1 = vec_type::add(r1, vec_type::template mul<Cx>(a1, b1));
+                    r2 = vec_type::add(r2, vec_type::template mul<Cx>(a1, b2));
+                    r3 = vec_type::add(r3, vec_type::template mul<Cx>(a1, b3));
+                    r4 = vec_type::add(r4, vec_type::template mul<Cx>(a1, b4));
                 }
 
                 c.template storeu<vec_type>(vec_type::add(c.template loadu<vec_type>(j + 0 * vec_size), r1), j + 0 * vec_size);
@@ -310,7 +310,7 @@ void gevm_large_kernel(const A& a, const B& b, C& c) {
                 for (size_t k = block_k; k < m_end; ++k) {
                     auto a1 = vec_type::set(a[k]);
                     auto b1 = b.template loadu<vec_type>(k * n + j + 0 * vec_size);
-                    r1 = r1 + vec_type::template mul<Cx>(a1, b1);
+                    r1 = vec_type::add(r1, vec_type::template mul<Cx>(a1, b1));
                 }
 
                 c.template storeu<vec_type>(vec_type::add(c.template loadu<vec_type>(j + 0 * vec_size), r1), j + 0 * vec_size);
