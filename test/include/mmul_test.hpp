@@ -5,10 +5,12 @@
 //  http://opensource.org/licenses/MIT)
 //=======================================================================
 
+#ifdef ETL_VECTORIZE_IMPL
 #ifdef __AVX__
 #define TEST_VEC
 #elif defined(__SSE3__)
 #define TEST_VEC
+#endif
 #endif
 
 #define MUL_FUNCTOR(name, ...)                        \

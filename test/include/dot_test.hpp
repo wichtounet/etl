@@ -14,10 +14,12 @@
 #endif
 #endif
 
+#ifdef ETL_VECTORIZE_IMPL
 #ifdef TEST_AVX
 #define TEST_VEC
 #elif defined(TEST_SSE)
 #define TEST_VEC
+#endif
 #endif
 
 #define DOT_FUNCTOR(name, ...)                        \
