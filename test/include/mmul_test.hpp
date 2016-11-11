@@ -47,12 +47,15 @@ MUL_FUNCTOR(std_gevm, c = selected_helper(etl::gemm_impl::STD, a* b))
 
 #ifdef TEST_VEC
 MUL_FUNCTOR(vec_gemv, c = selected_helper(etl::gemm_impl::VEC, a * b))
-MUL_FUNCTOR(vec_gevm, c = selected_helper(etl::gemm_impl::STD, a* b))
+MUL_FUNCTOR(vec_gevm, c = selected_helper(etl::gemm_impl::STD, a * b))
+MUL_FUNCTOR(vec_gemm, c = selected_helper(etl::gemm_impl::STD, a * b))
 #define GEMV_TEST_CASE_SECTION_VEC MUL_TEST_CASE_SECTIONS(vec_gemv, vec_gemv)
 #define GEVM_TEST_CASE_SECTION_VEC MUL_TEST_CASE_SECTIONS(vec_gevm, vec_gevm)
+#define GEMM_TEST_CASE_SECTION_VEC MUL_TEST_CASE_SECTIONS(vec_gemm, vec_gemm)
 #else
 #define GEMV_TEST_CASE_SECTION_VEC
 #define GEVM_TEST_CASE_SECTION_VEC
+#define GEMM_TEST_CASE_SECTION_VEC
 #endif
 
 #ifdef ETL_BLAS_MODE
@@ -106,6 +109,19 @@ MUL_FUNCTOR(cublas_gevm, c = selected_helper(etl::gemm_impl::CUBLAS, a* b))
         GEMM_TEST_CASE_SECTION_LAZY         \
         GEMM_TEST_CASE_SECTION_STRASSEN     \
         GEMM_TEST_CASE_SECTION_BLAS         \
+        GEMM_TEST_CASE_SECTION_VEC         \
+        GEMM_TEST_CASE_SECTION_CUBLAS       \
+        GEMM_TEST_CASE_SECTION_EBLAS        \
+    }                                       \
+    MUL_TEST_CASE_DEFN
+
+#define GEMM_TEST_CASE_PRE(name, description)   \
+    MUL_TEST_CASE_DECL(name, description) { \
+        GEMM_TEST_CASE_SECTION_DEFAULT      \
+        GEMM_TEST_CASE_SECTION_STD          \
+        GEMM_TEST_CASE_SECTION_LAZY         \
+        GEMM_TEST_CASE_SECTION_BLAS         \
+        GEMM_TEST_CASE_SECTION_VEC         \
         GEMM_TEST_CASE_SECTION_CUBLAS       \
         GEMM_TEST_CASE_SECTION_EBLAS        \
     }                                       \
@@ -137,6 +153,7 @@ MUL_FUNCTOR(cublas_gevm, c = selected_helper(etl::gemm_impl::CUBLAS, a* b))
         GEMM_TEST_CASE_SECTION_STD          \
         GEMM_TEST_CASE_SECTION_LAZY         \
         GEMM_TEST_CASE_SECTION_BLAS         \
+        GEMM_TEST_CASE_SECTION_VEC         \
         GEMM_TEST_CASE_SECTION_CUBLAS       \
     }                                       \
     MUL_TEST_CASE_DEFN

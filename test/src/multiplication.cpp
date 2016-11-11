@@ -118,6 +118,33 @@ TEMPLATE_TEST_CASE_2("multiplication/mm_mul_7", "mmul", Z, double, float) {
     REQUIRE_EQUALS(c(0, 1, 1), 154);
 }
 
+GEMM_TEST_CASE_PRE("multiplication/mm_mul_8", "mmul") {
+    etl::fast_matrix<T, 128, 128> a;
+    etl::fast_matrix<T, 128, 128> b;
+
+    etl::fast_matrix<T, 128, 128> c;
+    etl::fast_matrix<T, 128, 128> c_ref;
+
+    a = 0.01 * etl::sequence_generator(1.0);
+    b = -0.032 * etl::sequence_generator(1.0);
+
+    Impl::apply(a, b, c);
+
+    c_ref = 0;
+
+    for (std::size_t i = 0; i < 128; i++) {
+        for (std::size_t k = 0; k < 128; k++) {
+            for (std::size_t j = 0; j < 128; j++) {
+                c_ref(i, j) += a(i, k) * b(k, j);
+            }
+        }
+    }
+
+    for(size_t i = 0; i < etl::size(c); ++i){
+        REQUIRE_EQUALS_APPROX_E(c[i], c_ref[i], base_eps);
+    }
+}
+
 // Matrix-Vector Multiplication
 
 GEMV_TEST_CASE("multiplication/gemv/0", "[mul]") {

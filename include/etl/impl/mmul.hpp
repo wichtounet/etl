@@ -280,6 +280,8 @@ struct mm_mul_impl {
             etl::impl::standard::mm_mul(a, b, c);
         } else if (impl == gemm_impl::FAST) {
             etl::impl::eblas::gemm(a, b, c);
+        } else if (impl == gemm_impl::VEC) {
+            etl::impl::vec::gemm(a, b, c);
         } else if (impl == gemm_impl::BLAS) {
             etl::impl::blas::gemm(a, b, c);
         } else if (impl == gemm_impl::CUBLAS) {
