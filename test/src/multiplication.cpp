@@ -164,6 +164,81 @@ GEMV_TEST_CASE("multiplication/gemv/3", "[mul]") {
     REQUIRE_EQUALS(c(1), 370);
 }
 
+GEMV_TEST_CASE("multiplication/gemv/4", "[mul]") {
+    etl::dyn_matrix<T> a(512, 512);
+    etl::dyn_vector<T> b(512);
+
+    etl::dyn_vector<T> c(512);
+    etl::dyn_vector<T> c_ref(512);
+
+    a = 0.01 * etl::sequence_generator(1.0);
+    b = -0.032 * etl::sequence_generator(1.0);
+
+    Impl::apply(a, b, c);
+
+    c_ref = 0;
+
+    for (size_t i = 0; i < 512; i++) {
+        for (size_t k = 0; k < 512; k++) {
+            c_ref(i) += a(i, k) * b(k);
+        }
+    }
+
+    for(size_t i = 0; i < etl::size(c); ++i){
+        REQUIRE_EQUALS_APPROX(c[i], c_ref[i]);
+    }
+}
+
+GEMV_TEST_CASE("multiplication/gemv/5", "[mul]") {
+    etl::dyn_matrix<T> a(512, 368);
+    etl::dyn_vector<T> b(368);
+
+    etl::dyn_vector<T> c(512);
+    etl::dyn_vector<T> c_ref(512);
+
+    a = 0.01 * etl::sequence_generator(1.0);
+    b = -0.032 * etl::sequence_generator(1.0);
+
+    Impl::apply(a, b, c);
+
+    c_ref = 0;
+
+    for (size_t i = 0; i < 512; i++) {
+        for (size_t k = 0; k < 368; k++) {
+            c_ref(i) += a(i, k) * b(k);
+        }
+    }
+
+    for(size_t i = 0; i < etl::size(c); ++i){
+        REQUIRE_EQUALS_APPROX(c[i], c_ref[i]);
+    }
+}
+
+GEMV_TEST_CASE("multiplication/gemv/6", "[mul]") {
+    etl::dyn_matrix<T> a(368, 512);
+    etl::dyn_vector<T> b(512);
+
+    etl::dyn_vector<T> c(368);
+    etl::dyn_vector<T> c_ref(368);
+
+    a = 0.01 * etl::sequence_generator(1.0);
+    b = -0.032 * etl::sequence_generator(1.0);
+
+    Impl::apply(a, b, c);
+
+    c_ref = 0;
+
+    for (size_t i = 0; i < 368; i++) {
+        for (size_t k = 0; k < 512; k++) {
+            c_ref(i) += a(i, k) * b(k);
+        }
+    }
+
+    for(size_t i = 0; i < etl::size(c); ++i){
+        REQUIRE_EQUALS_APPROX(c[i], c_ref[i]);
+    }
+}
+
 // Vector-Matrix Multiplication
 
 GEVM_TEST_CASE("multiplication/gevm/0", "[mul]") {
@@ -186,6 +261,81 @@ GEVM_TEST_CASE("multiplication/gevm/1", "[mul]") {
 
     REQUIRE_EQUALS(c(0), 76);
     REQUIRE_EQUALS(c(1), 100);
+}
+
+GEVM_TEST_CASE("multiplication/gevm/2", "[mul]") {
+    etl::dyn_matrix<T> a(512, 512);
+    etl::dyn_vector<T> b(512);
+
+    etl::dyn_vector<T> c(512);
+    etl::dyn_vector<T> c_ref(512);
+
+    a = 0.01 * etl::sequence_generator(1.0);
+    b = -0.032 * etl::sequence_generator(1.0);
+
+    Impl::apply(b, a, c);
+
+    c_ref = 0;
+
+    for (size_t k = 0; k < 512; k++) {
+        for (size_t j = 0; j < 512; j++) {
+            c_ref(j) += b(k) * a(k, j);
+        }
+    }
+
+    for(size_t i = 0; i < etl::size(c); ++i){
+        REQUIRE_EQUALS_APPROX(c[i], c_ref[i]);
+    }
+}
+
+GEVM_TEST_CASE("multiplication/gevm/3", "[mul]") {
+    etl::dyn_matrix<T> a(512, 368);
+    etl::dyn_vector<T> b(512);
+
+    etl::dyn_vector<T> c(368);
+    etl::dyn_vector<T> c_ref(368);
+
+    a = 0.01 * etl::sequence_generator(1.0);
+    b = -0.032 * etl::sequence_generator(1.0);
+
+    Impl::apply(b, a, c);
+
+    c_ref = 0;
+
+    for (size_t k = 0; k < 512; k++) {
+        for (size_t j = 0; j < 368; j++) {
+            c_ref(j) += b(k) * a(k, j);
+        }
+    }
+
+    for(size_t i = 0; i < etl::size(c); ++i){
+        REQUIRE_EQUALS_APPROX(c[i], c_ref[i]);
+    }
+}
+
+GEVM_TEST_CASE("multiplication/gevm/4", "[mul]") {
+    etl::dyn_matrix<T> a(368, 512);
+    etl::dyn_vector<T> b(368);
+
+    etl::dyn_vector<T> c(512);
+    etl::dyn_vector<T> c_ref(512);
+
+    a = 0.01 * etl::sequence_generator(1.0);
+    b = -0.032 * etl::sequence_generator(1.0);
+
+    Impl::apply(b, a, c);
+
+    c_ref = 0;
+
+    for (size_t k = 0; k < 368; k++) {
+        for (size_t j = 0; j < 512; j++) {
+            c_ref(j) += b(k) * a(k, j);
+        }
+    }
+
+    for(size_t i = 0; i < etl::size(c); ++i){
+        REQUIRE_EQUALS_APPROX(c[i], c_ref[i]);
+    }
 }
 
 //Test using expressions directly
