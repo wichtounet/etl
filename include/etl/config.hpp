@@ -216,6 +216,8 @@ constexpr bool sse3_enabled = true;
 constexpr bool sse3_enabled                = false; ///< Indicates if sse3 is available
 #endif
 
+constexpr bool vec_enabled = avx512_enabled || avx_enabled || sse3_enabled; ///< Indicates if any vectorization is available
+
 #ifdef __INTEL_COMPILER
 constexpr bool intel_compiler = true;
 #else
