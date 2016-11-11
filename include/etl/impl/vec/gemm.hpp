@@ -82,12 +82,16 @@ void gemv(const A& a, const B& b, C& c) {
 
 template <typename A, typename B, typename C, cpp_enable_if((all_row_major<A, B, C>::value))>
 void gemv(A&& a, B&& b, C&& c) {
+    cpp_assert(vec_enabled, "At least one vector mode must be enabled for impl::VEC");
+
     gemv<default_vec>(a, b, c);
 }
 
 // Default, unoptimized should not be called unless in tests
 template <typename A, typename B, typename C, cpp_disable_if((all_row_major<A, B, C>::value))>
 void gemv(A&& a, B&& b, C&& c) {
+    cpp_assert(vec_enabled, "At least one vector mode must be enabled for impl::VEC");
+
     const auto m = rows(a);
     const auto n = columns(a);
 
@@ -328,6 +332,8 @@ void gevm_large_kernel(const A& a, const B& b, C& c) {
 
 template <typename A, typename B, typename C, cpp_enable_if((all_row_major<A, B, C>::value))>
 void gevm(A&& a, B&& b, C&& c) {
+    cpp_assert(vec_enabled, "At least one vector mode must be enabled for impl::VEC");
+
     if(etl::size(b) < gevm_small_threshold){
         gevm_small_kernel<default_vec>(a, b, c);
     } else {
@@ -338,6 +344,8 @@ void gevm(A&& a, B&& b, C&& c) {
 // Default, unoptimized should not be called unless in tests
 template <typename A, typename B, typename C, cpp_disable_if((all_row_major<A, B, C>::value))>
 void gevm(A&& a, B&& b, C&& c) {
+    cpp_assert(vec_enabled, "At least one vector mode must be enabled for impl::VEC");
+
     c = 0;
 
     for (std::size_t k = 0; k < etl::dim<0>(a); k++) {
