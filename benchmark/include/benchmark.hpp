@@ -20,6 +20,13 @@
 
 #include "cpm/cpm.hpp"
 
+// Check if VEC can be benchmarked
+#ifdef __AVX__
+#define TEST_VEC
+#elif defined(__SSE3__)
+#define TEST_VEC
+#endif
+
 #ifdef ETL_VECTORIZE_IMPL
 #ifdef __SSE3__
 #define TEST_SSE
@@ -324,6 +331,12 @@ using large_kernel_policy_2d = NARY_POLICY(
 using small_kernel_policy_2d = NARY_POLICY(
     VALUES_POLICY(100, 150, 200, 250, 300, 350, 400),
     VALUES_POLICY(10, 15, 20, 25, 30, 35, 40));
+
+#ifdef TEST_VEC
+#define VEC_SECTION_FUNCTOR(name, ...) , CPM_SECTION_FUNCTOR(name, __VA_ARGS__)
+#else
+#define VEC_SECTION_FUNCTOR(name, ...)
+#endif
 
 #ifdef TEST_SSE
 #define SSE_SECTION_FUNCTOR(name, ...) , CPM_SECTION_FUNCTOR(name, __VA_ARGS__)
