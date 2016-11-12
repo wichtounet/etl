@@ -223,6 +223,6 @@ T dot(const opaque_memory<T, 1>& a, const opaque_memory<T, 1>& b) {
 
 #endif
 
-} //end of namespace standard
+} //end of namespace avx
 } //end of namespace impl
 } //end of namespace etl
