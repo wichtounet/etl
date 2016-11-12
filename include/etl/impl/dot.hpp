@@ -37,9 +37,9 @@ cpp14_constexpr etl::dot_impl select_default_dot_impl() {
     if (all_dma<A, B>::value) {
         if (is_cblas_enabled) {
             return etl::dot_impl::BLAS;
-        } else if (avx_enabled) {
+        } else if (vectorize_impl && avx_enabled) {
             return etl::dot_impl::AVX;
-        } else if (sse3_enabled) {
+        } else if (vectorize_impl && sse3_enabled) {
             return etl::dot_impl::SSE;
         } else {
             return etl::dot_impl::STD;
@@ -59,6 +59,8 @@ template <typename A, typename B>
 etl::dot_impl select_dot_impl() {
     if (local_context().dot_selector.forced) {
         auto forced = local_context().dot_selector.impl;
+
+        std::cout << "forced:" << static_cast<size_t>(forced) << std::endl;
 
         switch (forced) {
             //BLAS cannot always be used
