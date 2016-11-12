@@ -342,6 +342,12 @@ struct avx_vec {
     }
 
     template <bool Complex = false>
+    ETL_TMP_INLINE(__m256) fmadd(__m256 a, __m256 b, __m256 c);
+
+    template <bool Complex = false>
+    ETL_TMP_INLINE(__m256d) fmadd(__m256d a, __m256d b, __m256d c);
+
+    template <bool Complex = false>
     ETL_TMP_INLINE(__m256) div(__m256 lhs, __m256 rhs) {
         return _mm256_div_ps(lhs, rhs);
     }
@@ -517,6 +523,34 @@ ETL_OUT_VEC_256D avx_vec::mul<true>(__m256d lhs, __m256d rhs) {
     __m256d tmp = _mm256_mul_pd(lhs, ymm1);
     return _mm256_addsub_pd(tmp, ymm4);
 #endif
+}
+
+template <>
+ETL_OUT_VEC_256 avx_vec::fmadd<false>(__m256 a, __m256 b, __m256 c) {
+#ifdef __FMA__
+    return _mm256_fmadd_ps(a, b, c);
+#else
+    return add(mul<false>(a, b), c);
+#endif
+}
+
+template <>
+ETL_OUT_VEC_256D avx_vec::fmadd<false>(__m256d a, __m256d b, __m256d c) {
+#ifdef __FMA__
+    return _mm256_fmadd_pd(a, b, c);
+#else
+    return add(mul<false>(a, b), c);
+#endif
+}
+
+template <>
+ETL_OUT_VEC_256 avx_vec::fmadd<true>(__m256 a, __m256 b, __m256 c) {
+    return add(mul<true>(a, b), c);
+}
+
+template <>
+ETL_OUT_VEC_256D avx_vec::fmadd<true>(__m256d a, __m256d b, __m256d c) {
+    return add(mul<true>(a, b), c);
 }
 
 template <>

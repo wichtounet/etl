@@ -121,6 +121,20 @@ struct no_vec {
     }
 
     /*!
+     * \brief Vector multiplication of a and b and add the result to c
+     * \param lhs The left hand side of the operation
+     * \param rhs The right hand side of the operation
+     * \return Vector of the results
+     */
+    template <bool Complex = false, typename M>
+    static M fmadd(M a, M b, M c) {
+        cpp_unused(a);
+        cpp_unused(b);
+        cpp_unused(c);
+        return M();
+    }
+
+    /*!
      * \brief Vector multiplication or lhs and rhs
      * \param lhs The left hand side of the operation
      * \param rhs The right hand side of the operation

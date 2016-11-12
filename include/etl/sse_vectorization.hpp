@@ -346,6 +346,12 @@ struct sse_vec {
     }
 
     template <bool Complex = false>
+    ETL_TMP_INLINE(__m128) fmadd(__m128 a, __m128 b, __m128 c);
+
+    template <bool Complex = false>
+    ETL_TMP_INLINE(__m128d) fmadd(__m128d a, __m128d b, __m128d c);
+
+    template <bool Complex = false>
     ETL_TMP_INLINE(__m128) div(__m128 lhs, __m128 rhs) {
         return _mm_div_ps(lhs, rhs);
     }
@@ -514,6 +520,34 @@ ETL_OUT_VEC_128D sse_vec::mul<true>(__m128d lhs, __m128d rhs) {
 
     //result = [x.real * y.real - x.img * y.img, x.img * y.real - x.real * y.img]
     return _mm_addsub_pd(ymm2, ymm4);
+}
+
+template <>
+ETL_OUT_VEC_128 sse_vec::fmadd<false>(__m128 a, __m128 b, __m128 c) {
+#ifdef __FMA__
+    return _mm_fmadd_ps(a, b, c);
+#else
+    return add(mul<false>(a, b), c);
+#endif
+}
+
+template <>
+ETL_OUT_VEC_128D sse_vec::fmadd<false>(__m128d a, __m128d b, __m128d c) {
+#ifdef __FMA__
+    return _mm_fmadd_pd(a, b, c);
+#else
+    return add(mul<false>(a, b), c);
+#endif
+}
+
+template <>
+ETL_OUT_VEC_128 sse_vec::fmadd<true>(__m128 a, __m128 b, __m128 c) {
+    return add(mul<true>(a, b), c);
+}
+
+template <>
+ETL_OUT_VEC_128D sse_vec::fmadd<true>(__m128d a, __m128d b, __m128d c) {
+    return add(mul<true>(a, b), c);
 }
 
 template <>
