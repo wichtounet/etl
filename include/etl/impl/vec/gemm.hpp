@@ -155,8 +155,7 @@ void gemv_large_kernel(const A& a, const B& b, C& c) {
     //TODO Add FMA (fmadd) support to vectorization
 
     size_t i = 0;
-
-    // 8-Unrolled outer loop
+// 8-Unrolled outer loop
     for (; i + 7 < m; i += 8) {
         auto r1 = vec_type::template zero<T>();
         auto r2 = vec_type::template zero<T>();
@@ -700,14 +699,14 @@ void gemm_small_kernel(const A& a, const B& b, C& c) {
                 auto b7 = b.template loadu(k * N + j + vec_size * 6);
                 auto b8 = b.template loadu(k * N + j + vec_size * 7);
 
-                r1 = vec_type::add(r1, vec_type::template mul<Cx>(a1, b1));
-                r2 = vec_type::add(r2, vec_type::template mul<Cx>(a1, b2));
-                r3 = vec_type::add(r3, vec_type::template mul<Cx>(a1, b3));
-                r4 = vec_type::add(r4, vec_type::template mul<Cx>(a1, b4));
-                r5 = vec_type::add(r5, vec_type::template mul<Cx>(a1, b5));
-                r6 = vec_type::add(r6, vec_type::template mul<Cx>(a1, b6));
-                r7 = vec_type::add(r7, vec_type::template mul<Cx>(a1, b7));
-                r8 = vec_type::add(r8, vec_type::template mul<Cx>(a1, b8));
+                r1 = vec_type::template fmadd<Cx>(a1, b1, r1);
+                r2 = vec_type::template fmadd<Cx>(a1, b2, r2);
+                r3 = vec_type::template fmadd<Cx>(a1, b3, r3);
+                r4 = vec_type::template fmadd<Cx>(a1, b4, r4);
+                r5 = vec_type::template fmadd<Cx>(a1, b5, r5);
+                r6 = vec_type::template fmadd<Cx>(a1, b6, r6);
+                r7 = vec_type::template fmadd<Cx>(a1, b7, r7);
+                r8 = vec_type::template fmadd<Cx>(a1, b8, r8);
             }
 
             c.template storeu<vec_type>(r1, i * N + j + 0 * vec_size);
@@ -746,17 +745,17 @@ void gemm_small_kernel(const A& a, const B& b, C& c) {
                 auto a1 = vec_type::set(a(i, k));
                 auto a2 = vec_type::set(a(i + 1, k));
 
-                r11 = vec_type::add(r11, vec_type::template mul<Cx>(a1, b1));
-                r12 = vec_type::add(r12, vec_type::template mul<Cx>(a2, b1));
+                r11 = vec_type::template fmadd<Cx>(a1, b1, r11);
+                r12 = vec_type::template fmadd<Cx>(a2, b1, r12);
 
-                r21 = vec_type::add(r21, vec_type::template mul<Cx>(a1, b2));
-                r22 = vec_type::add(r22, vec_type::template mul<Cx>(a2, b2));
+                r21 = vec_type::template fmadd<Cx>(a1, b2, r11);
+                r22 = vec_type::template fmadd<Cx>(a2, b2, r12);
 
-                r31 = vec_type::add(r31, vec_type::template mul<Cx>(a1, b3));
-                r32 = vec_type::add(r32, vec_type::template mul<Cx>(a2, b3));
+                r31 = vec_type::template fmadd<Cx>(a1, b3, r11);
+                r32 = vec_type::template fmadd<Cx>(a2, b3, r12);
 
-                r41 = vec_type::add(r41, vec_type::template mul<Cx>(a1, b4));
-                r42 = vec_type::add(r42, vec_type::template mul<Cx>(a2, b4));
+                r41 = vec_type::template fmadd<Cx>(a1, b4, r11);
+                r42 = vec_type::template fmadd<Cx>(a2, b4, r12);
             }
 
             c.template storeu<vec_type>(r11, (i+0) * N + j + 0 * vec_size);
@@ -786,10 +785,10 @@ void gemm_small_kernel(const A& a, const B& b, C& c) {
 
                 auto a1 = vec_type::set(a(i, k));
 
-                r11 = vec_type::add(r11, vec_type::template mul<Cx>(a1, b1));
-                r21 = vec_type::add(r21, vec_type::template mul<Cx>(a1, b2));
-                r31 = vec_type::add(r21, vec_type::template mul<Cx>(a1, b3));
-                r41 = vec_type::add(r21, vec_type::template mul<Cx>(a1, b4));
+                r11 = vec_type::template fmadd<Cx>(a1, b1, r11);
+                r21 = vec_type::template fmadd<Cx>(a1, b2, r11);
+                r31 = vec_type::template fmadd<Cx>(a1, b3, r11);
+                r41 = vec_type::template fmadd<Cx>(a1, b4, r11);
             }
 
             c.template storeu<vec_type>(r11, i * N + j + 0 * vec_size);
@@ -816,11 +815,11 @@ void gemm_small_kernel(const A& a, const B& b, C& c) {
                 auto a1 = vec_type::set(a(i, k));
                 auto a2 = vec_type::set(a(i + 1, k));
 
-                r11 = vec_type::add(r11, vec_type::template mul<Cx>(a1, b1));
-                r12 = vec_type::add(r12, vec_type::template mul<Cx>(a2, b1));
+                r11 = vec_type::template fmadd<Cx>(a1, b1, r11);
+                r12 = vec_type::template fmadd<Cx>(a2, b1, r12);
 
-                r21 = vec_type::add(r21, vec_type::template mul<Cx>(a1, b2));
-                r22 = vec_type::add(r22, vec_type::template mul<Cx>(a2, b2));
+                r21 = vec_type::template fmadd<Cx>(a1, b2, r11);
+                r22 = vec_type::template fmadd<Cx>(a2, b2, r12);
             }
 
             c.template storeu<vec_type>(r11, (i+0) * N + j + 0 * vec_size);
@@ -840,8 +839,8 @@ void gemm_small_kernel(const A& a, const B& b, C& c) {
 
                 auto a1 = vec_type::set(a(i, k));
 
-                r11 = vec_type::add(r11, vec_type::template mul<Cx>(a1, b1));
-                r21 = vec_type::add(r21, vec_type::template mul<Cx>(a1, b2));
+                r11 = vec_type::template fmadd<Cx>(a1, b1, r11);
+                r21 = vec_type::template fmadd<Cx>(a1, b2, r11);
             }
 
             c.template storeu<vec_type>(r11, i * N + j + 0 * vec_size);
@@ -862,8 +861,8 @@ void gemm_small_kernel(const A& a, const B& b, C& c) {
                 auto a1 = vec_type::set(a(i, k));
                 auto a2 = vec_type::set(a(i + 1, k));
 
-                r1 = vec_type::add(r1, vec_type::template mul<Cx>(a1, b1));
-                r2 = vec_type::add(r2, vec_type::template mul<Cx>(a2, b1));
+                r1 = vec_type::template fmadd<Cx>(a1, b1, r1);
+                r2 = vec_type::template fmadd<Cx>(a2, b1, r1);
             }
 
             c.template storeu<vec_type>(r1, (i+0) * N + j);
@@ -878,7 +877,7 @@ void gemm_small_kernel(const A& a, const B& b, C& c) {
 
                 auto a1 = vec_type::set(a(i, k));
 
-                r1 = vec_type::add(r1, vec_type::template mul<Cx>(a1, b1));
+                r1 = vec_type::template fmadd<Cx>(a1, b1, r1);
             }
 
             c.template storeu<vec_type>(r1, i * N + j);
@@ -973,15 +972,15 @@ void gemm_large_kernel(const A& a, const B& b, C& c) {
                             auto b3 = b.template loadu(k * N + j2);
                             auto b4 = b.template loadu(k * N + j3);
 
-                            r11 = vec_type::add(r11, vec_type::template mul<Cx>(a1, b1));
-                            r12 = vec_type::add(r12, vec_type::template mul<Cx>(a1, b2));
-                            r13 = vec_type::add(r13, vec_type::template mul<Cx>(a1, b3));
-                            r14 = vec_type::add(r14, vec_type::template mul<Cx>(a1, b4));
+                            r11 = vec_type::template fmadd<Cx>(a1, b1, r11);
+                            r12 = vec_type::template fmadd<Cx>(a1, b2, r11);
+                            r13 = vec_type::template fmadd<Cx>(a1, b3, r11);
+                            r14 = vec_type::template fmadd<Cx>(a1, b4, r11);
 
-                            r21 = vec_type::add(r21, vec_type::template mul<Cx>(a2, b1));
-                            r22 = vec_type::add(r22, vec_type::template mul<Cx>(a2, b2));
-                            r23 = vec_type::add(r23, vec_type::template mul<Cx>(a2, b3));
-                            r24 = vec_type::add(r24, vec_type::template mul<Cx>(a2, b4));
+                            r21 = vec_type::template fmadd<Cx>(a2, b1, r21);
+                            r22 = vec_type::template fmadd<Cx>(a2, b2, r21);
+                            r23 = vec_type::template fmadd<Cx>(a2, b3, r21);
+                            r24 = vec_type::template fmadd<Cx>(a2, b4, r21);
                         }
 
                         c.template storeu<vec_type>(r11, (i + 0) * N + j);
@@ -1008,10 +1007,10 @@ void gemm_large_kernel(const A& a, const B& b, C& c) {
                             auto b3 = b.template loadu(k * N + j2);
                             auto b4 = b.template loadu(k * N + j3);
 
-                            r1 = vec_type::add(r1, vec_type::template mul<Cx>(a1, b1));
-                            r2 = vec_type::add(r2, vec_type::template mul<Cx>(a1, b2));
-                            r3 = vec_type::add(r3, vec_type::template mul<Cx>(a1, b3));
-                            r4 = vec_type::add(r4, vec_type::template mul<Cx>(a1, b4));
+                            r1 = vec_type::template fmadd<Cx>(a1, b1, r1);
+                            r2 = vec_type::template fmadd<Cx>(a1, b2, r1);
+                            r3 = vec_type::template fmadd<Cx>(a1, b3, r1);
+                            r4 = vec_type::template fmadd<Cx>(a1, b4, r1);
                         }
 
                         c.template storeu<vec_type>(r1, i * N + j);
@@ -1048,17 +1047,17 @@ void gemm_large_kernel(const A& a, const B& b, C& c) {
                             auto b1 = b.template loadu(k * N + j);
                             auto b2 = b.template loadu(k * N + j1);
 
-                            r11 = vec_type::add(r11, vec_type::template mul<Cx>(a1, b1));
-                            r12 = vec_type::add(r12, vec_type::template mul<Cx>(a1, b2));
+                            r11 = vec_type::template fmadd<Cx>(a1, b1, r11);
+                            r12 = vec_type::template fmadd<Cx>(a1, b2, r11);
 
-                            r21 = vec_type::add(r21, vec_type::template mul<Cx>(a2, b1));
-                            r22 = vec_type::add(r22, vec_type::template mul<Cx>(a2, b2));
+                            r21 = vec_type::template fmadd<Cx>(a2, b1, r21);
+                            r22 = vec_type::template fmadd<Cx>(a2, b2, r21);
 
-                            r31 = vec_type::add(r31, vec_type::template mul<Cx>(a3, b1));
-                            r32 = vec_type::add(r32, vec_type::template mul<Cx>(a3, b2));
+                            r31 = vec_type::template fmadd<Cx>(a3, b1, r31);
+                            r32 = vec_type::template fmadd<Cx>(a3, b2, r31);
 
-                            r41 = vec_type::add(r41, vec_type::template mul<Cx>(a4, b1));
-                            r42 = vec_type::add(r42, vec_type::template mul<Cx>(a4, b2));
+                            r41 = vec_type::template fmadd<Cx>(a4, b1, r41);
+                            r42 = vec_type::template fmadd<Cx>(a4, b2, r41);
                         }
 
                         c.template storeu<vec_type>(r11, (i + 0) * N + j);
@@ -1085,11 +1084,11 @@ void gemm_large_kernel(const A& a, const B& b, C& c) {
                             auto b1 = b.template loadu(k * N + j);
                             auto b2 = b.template loadu(k * N + j1);
 
-                            r11 = vec_type::add(r11, vec_type::template mul<Cx>(a1, b1));
-                            r12 = vec_type::add(r12, vec_type::template mul<Cx>(a1, b2));
+                            r11 = vec_type::template fmadd<Cx>(a1, b1, r11);
+                            r12 = vec_type::template fmadd<Cx>(a1, b2, r11);
 
-                            r21 = vec_type::add(r21, vec_type::template mul<Cx>(a2, b1));
-                            r22 = vec_type::add(r22, vec_type::template mul<Cx>(a2, b2));
+                            r21 = vec_type::template fmadd<Cx>(a2, b1, r21);
+                            r22 = vec_type::template fmadd<Cx>(a2, b2, r21);
                         }
 
                         c.template storeu<vec_type>(r11, (i + 0) * N + j);
@@ -1108,8 +1107,8 @@ void gemm_large_kernel(const A& a, const B& b, C& c) {
                             auto b1 = b.template loadu(k * N + j);
                             auto b2 = b.template loadu(k * N + j1);
 
-                            r1 = vec_type::add(r1, vec_type::template mul<Cx>(a1, b1));
-                            r2 = vec_type::add(r2, vec_type::template mul<Cx>(a1, b2));
+                            r1 = vec_type::template fmadd<Cx>(a1, b1, r1);
+                            r2 = vec_type::template fmadd<Cx>(a1, b2, r2);
                         }
 
                         c.template storeu<vec_type>(r1, i * N + j);
@@ -1124,7 +1123,7 @@ void gemm_large_kernel(const A& a, const B& b, C& c) {
                         for (size_t k = block_k; k < k_end; ++k) {
                             auto a1 = vec_type::set(a(i, k));
                             auto b1 = b.template loadu(k * N + j);
-                            r1      = vec_type::add(r1, vec_type::template mul<Cx>(a1, b1));
+                            r1 = vec_type::template fmadd<Cx>(a1, b1, r1);
                         }
 
                         c.template storeu<vec_type>(r1, i * N + j);
