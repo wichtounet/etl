@@ -60,8 +60,6 @@ etl::dot_impl select_dot_impl() {
     if (local_context().dot_selector.forced) {
         auto forced = local_context().dot_selector.impl;
 
-        std::cout << "forced:" << static_cast<size_t>(forced) << std::endl;
-
         switch (forced) {
             //BLAS cannot always be used
             case dot_impl::BLAS:
