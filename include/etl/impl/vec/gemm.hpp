@@ -25,8 +25,6 @@ void gemv_small_kernel(const A& a, const B& b, C& c) {
     const auto m = rows(a);
     const auto n = columns(a);
 
-    //TODO Add FMA (fmadd) support to vectorization
-
     size_t i = 0;
 
     // 8-Unrolled outer loop
@@ -55,14 +53,14 @@ void gemv_small_kernel(const A& a, const B& b, C& c) {
             auto a7 = a.template loadu<vec_type>((i + 6) * n + k);
             auto a8 = a.template loadu<vec_type>((i + 7) * n + k);
 
-            r1 = vec_type::add(r1, vec_type::template mul<Cx>(a1, b1));
-            r2 = vec_type::add(r2, vec_type::template mul<Cx>(a2, b1));
-            r3 = vec_type::add(r3, vec_type::template mul<Cx>(a3, b1));
-            r4 = vec_type::add(r4, vec_type::template mul<Cx>(a4, b1));
-            r5 = vec_type::add(r5, vec_type::template mul<Cx>(a5, b1));
-            r6 = vec_type::add(r6, vec_type::template mul<Cx>(a6, b1));
-            r7 = vec_type::add(r7, vec_type::template mul<Cx>(a7, b1));
-            r8 = vec_type::add(r8, vec_type::template mul<Cx>(a8, b1));
+            r1 = vec_type::template fmadd<Cx>(a1, b1, r1);
+            r2 = vec_type::template fmadd<Cx>(a2, b1, r2);
+            r3 = vec_type::template fmadd<Cx>(a3, b1, r3);
+            r4 = vec_type::template fmadd<Cx>(a4, b1, r4);
+            r5 = vec_type::template fmadd<Cx>(a5, b1, r5);
+            r6 = vec_type::template fmadd<Cx>(a6, b1, r6);
+            r7 = vec_type::template fmadd<Cx>(a7, b1, r7);
+            r8 = vec_type::template fmadd<Cx>(a8, b1, r8);
         }
 
         c[i + 0] = vec_type::template hadd<T>(r1);
@@ -101,8 +99,8 @@ void gemv_small_kernel(const A& a, const B& b, C& c) {
             auto a1 = a.template loadu<vec_type>((i + 0) * n + k);
             auto a2 = a.template loadu<vec_type>((i + 1) * n + k);
 
-            r1 = vec_type::add(r1, vec_type::template mul<Cx>(a1, b1));
-            r2 = vec_type::add(r2, vec_type::template mul<Cx>(a2, b1));
+            r1 = vec_type::template fmadd<Cx>(a1, b1, r1);
+            r2 = vec_type::template fmadd<Cx>(a2, b1, r2);
         }
 
         c[i + 0] = vec_type::template hadd<T>(r1);
@@ -116,7 +114,7 @@ void gemv_small_kernel(const A& a, const B& b, C& c) {
     }
 
     // Remainder loop
-    for (; i < m; ++i) {
+    if (i < m) {
         auto r1 = vec_type::template zero<T>();
 
         size_t k = 0;
@@ -125,9 +123,7 @@ void gemv_small_kernel(const A& a, const B& b, C& c) {
         for (; k + vec_size - 1 < n; k += vec_size) {
             auto a1 = a.template loadu<vec_type>(i * n + k);
             auto b1 = b.template loadu<vec_type>(k);
-
-            auto t1 = vec_type::template mul<Cx>(a1, b1);
-            r1 = vec_type::add(r1, t1);
+            r1 = vec_type::template fmadd<Cx>(a1, b1, r1);
         }
 
         auto result = vec_type::template hadd<T>(r1);
@@ -152,10 +148,9 @@ void gemv_large_kernel(const A& a, const B& b, C& c) {
     const auto m = rows(a);
     const auto n = columns(a);
 
-    //TODO Add FMA (fmadd) support to vectorization
-
     size_t i = 0;
-// 8-Unrolled outer loop
+
+    // 8-Unrolled outer loop
     for (; i + 7 < m; i += 8) {
         auto r1 = vec_type::template zero<T>();
         auto r2 = vec_type::template zero<T>();
@@ -180,41 +175,41 @@ void gemv_large_kernel(const A& a, const B& b, C& c) {
             auto b3 = b.template loadu<vec_type>(k3);
             auto b4 = b.template loadu<vec_type>(k4);
 
-            r1 = vec_type::add(r1, vec_type::template mul<Cx>(a.template loadu<vec_type>((i + 0) * n + k1), b1));
-            r2 = vec_type::add(r2, vec_type::template mul<Cx>(a.template loadu<vec_type>((i + 1) * n + k1), b1));
-            r3 = vec_type::add(r3, vec_type::template mul<Cx>(a.template loadu<vec_type>((i + 2) * n + k1), b1));
-            r4 = vec_type::add(r4, vec_type::template mul<Cx>(a.template loadu<vec_type>((i + 3) * n + k1), b1));
-            r5 = vec_type::add(r5, vec_type::template mul<Cx>(a.template loadu<vec_type>((i + 4) * n + k1), b1));
-            r6 = vec_type::add(r6, vec_type::template mul<Cx>(a.template loadu<vec_type>((i + 5) * n + k1), b1));
-            r7 = vec_type::add(r7, vec_type::template mul<Cx>(a.template loadu<vec_type>((i + 6) * n + k1), b1));
-            r8 = vec_type::add(r8, vec_type::template mul<Cx>(a.template loadu<vec_type>((i + 7) * n + k1), b1));
+            r1 = vec_type::template fmadd<Cx>(a.template loadu<vec_type>((i + 0) * n + k1), b1, r1);
+            r2 = vec_type::template fmadd<Cx>(a.template loadu<vec_type>((i + 1) * n + k1), b1, r2);
+            r3 = vec_type::template fmadd<Cx>(a.template loadu<vec_type>((i + 2) * n + k1), b1, r3);
+            r4 = vec_type::template fmadd<Cx>(a.template loadu<vec_type>((i + 3) * n + k1), b1, r4);
+            r5 = vec_type::template fmadd<Cx>(a.template loadu<vec_type>((i + 4) * n + k1), b1, r5);
+            r6 = vec_type::template fmadd<Cx>(a.template loadu<vec_type>((i + 5) * n + k1), b1, r6);
+            r7 = vec_type::template fmadd<Cx>(a.template loadu<vec_type>((i + 6) * n + k1), b1, r7);
+            r8 = vec_type::template fmadd<Cx>(a.template loadu<vec_type>((i + 7) * n + k1), b1, r8);
 
-            r1 = vec_type::add(r1, vec_type::template mul<Cx>(a.template loadu<vec_type>((i + 0) * n + k2), b2));
-            r2 = vec_type::add(r2, vec_type::template mul<Cx>(a.template loadu<vec_type>((i + 1) * n + k2), b2));
-            r3 = vec_type::add(r3, vec_type::template mul<Cx>(a.template loadu<vec_type>((i + 2) * n + k2), b2));
-            r4 = vec_type::add(r4, vec_type::template mul<Cx>(a.template loadu<vec_type>((i + 3) * n + k2), b2));
-            r5 = vec_type::add(r5, vec_type::template mul<Cx>(a.template loadu<vec_type>((i + 4) * n + k2), b2));
-            r6 = vec_type::add(r6, vec_type::template mul<Cx>(a.template loadu<vec_type>((i + 5) * n + k2), b2));
-            r7 = vec_type::add(r7, vec_type::template mul<Cx>(a.template loadu<vec_type>((i + 6) * n + k2), b2));
-            r8 = vec_type::add(r8, vec_type::template mul<Cx>(a.template loadu<vec_type>((i + 7) * n + k2), b2));
+            r1 = vec_type::template fmadd<Cx>(a.template loadu<vec_type>((i + 0) * n + k2), b2, r1);
+            r2 = vec_type::template fmadd<Cx>(a.template loadu<vec_type>((i + 1) * n + k2), b2, r2);
+            r3 = vec_type::template fmadd<Cx>(a.template loadu<vec_type>((i + 2) * n + k2), b2, r3);
+            r4 = vec_type::template fmadd<Cx>(a.template loadu<vec_type>((i + 3) * n + k2), b2, r4);
+            r5 = vec_type::template fmadd<Cx>(a.template loadu<vec_type>((i + 4) * n + k2), b2, r5);
+            r6 = vec_type::template fmadd<Cx>(a.template loadu<vec_type>((i + 5) * n + k2), b2, r6);
+            r7 = vec_type::template fmadd<Cx>(a.template loadu<vec_type>((i + 6) * n + k2), b2, r7);
+            r8 = vec_type::template fmadd<Cx>(a.template loadu<vec_type>((i + 7) * n + k2), b2, r8);
 
-            r1 = vec_type::add(r1, vec_type::template mul<Cx>(a.template loadu<vec_type>((i + 0) * n + k3), b3));
-            r2 = vec_type::add(r2, vec_type::template mul<Cx>(a.template loadu<vec_type>((i + 1) * n + k3), b3));
-            r3 = vec_type::add(r3, vec_type::template mul<Cx>(a.template loadu<vec_type>((i + 2) * n + k3), b3));
-            r4 = vec_type::add(r4, vec_type::template mul<Cx>(a.template loadu<vec_type>((i + 3) * n + k3), b3));
-            r5 = vec_type::add(r5, vec_type::template mul<Cx>(a.template loadu<vec_type>((i + 4) * n + k3), b3));
-            r6 = vec_type::add(r6, vec_type::template mul<Cx>(a.template loadu<vec_type>((i + 5) * n + k3), b3));
-            r7 = vec_type::add(r7, vec_type::template mul<Cx>(a.template loadu<vec_type>((i + 6) * n + k3), b3));
-            r8 = vec_type::add(r8, vec_type::template mul<Cx>(a.template loadu<vec_type>((i + 7) * n + k3), b3));
+            r1 = vec_type::template fmadd<Cx>(a.template loadu<vec_type>((i + 0) * n + k3), b3, r1);
+            r2 = vec_type::template fmadd<Cx>(a.template loadu<vec_type>((i + 1) * n + k3), b3, r2);
+            r3 = vec_type::template fmadd<Cx>(a.template loadu<vec_type>((i + 2) * n + k3), b3, r3);
+            r4 = vec_type::template fmadd<Cx>(a.template loadu<vec_type>((i + 3) * n + k3), b3, r4);
+            r5 = vec_type::template fmadd<Cx>(a.template loadu<vec_type>((i + 4) * n + k3), b3, r5);
+            r6 = vec_type::template fmadd<Cx>(a.template loadu<vec_type>((i + 5) * n + k3), b3, r6);
+            r7 = vec_type::template fmadd<Cx>(a.template loadu<vec_type>((i + 6) * n + k3), b3, r7);
+            r8 = vec_type::template fmadd<Cx>(a.template loadu<vec_type>((i + 7) * n + k3), b3, r8);
 
-            r1 = vec_type::add(r1, vec_type::template mul<Cx>(a.template loadu<vec_type>((i + 0) * n + k4), b4));
-            r2 = vec_type::add(r2, vec_type::template mul<Cx>(a.template loadu<vec_type>((i + 1) * n + k4), b4));
-            r3 = vec_type::add(r3, vec_type::template mul<Cx>(a.template loadu<vec_type>((i + 2) * n + k4), b4));
-            r4 = vec_type::add(r4, vec_type::template mul<Cx>(a.template loadu<vec_type>((i + 3) * n + k4), b4));
-            r5 = vec_type::add(r5, vec_type::template mul<Cx>(a.template loadu<vec_type>((i + 4) * n + k4), b4));
-            r6 = vec_type::add(r6, vec_type::template mul<Cx>(a.template loadu<vec_type>((i + 5) * n + k4), b4));
-            r7 = vec_type::add(r7, vec_type::template mul<Cx>(a.template loadu<vec_type>((i + 6) * n + k4), b4));
-            r8 = vec_type::add(r8, vec_type::template mul<Cx>(a.template loadu<vec_type>((i + 7) * n + k4), b4));
+            r1 = vec_type::template fmadd<Cx>(a.template loadu<vec_type>((i + 0) * n + k4), b4, r1);
+            r2 = vec_type::template fmadd<Cx>(a.template loadu<vec_type>((i + 1) * n + k4), b4, r2);
+            r3 = vec_type::template fmadd<Cx>(a.template loadu<vec_type>((i + 2) * n + k4), b4, r3);
+            r4 = vec_type::template fmadd<Cx>(a.template loadu<vec_type>((i + 3) * n + k4), b4, r4);
+            r5 = vec_type::template fmadd<Cx>(a.template loadu<vec_type>((i + 4) * n + k4), b4, r5);
+            r6 = vec_type::template fmadd<Cx>(a.template loadu<vec_type>((i + 5) * n + k4), b4, r6);
+            r7 = vec_type::template fmadd<Cx>(a.template loadu<vec_type>((i + 6) * n + k4), b4, r7);
+            r8 = vec_type::template fmadd<Cx>(a.template loadu<vec_type>((i + 7) * n + k4), b4, r8);
         }
 
         // 2-Unrolled Vectorized inner loop
@@ -225,46 +220,37 @@ void gemv_large_kernel(const A& a, const B& b, C& c) {
             auto b1 = b.template loadu<vec_type>(k1);
             auto b2 = b.template loadu<vec_type>(k2);
 
-            r1 = vec_type::add(r1, vec_type::template mul<Cx>(a.template loadu<vec_type>((i + 0) * n + k1), b1));
-            r2 = vec_type::add(r2, vec_type::template mul<Cx>(a.template loadu<vec_type>((i + 1) * n + k1), b1));
-            r3 = vec_type::add(r3, vec_type::template mul<Cx>(a.template loadu<vec_type>((i + 2) * n + k1), b1));
-            r4 = vec_type::add(r4, vec_type::template mul<Cx>(a.template loadu<vec_type>((i + 3) * n + k1), b1));
-            r5 = vec_type::add(r5, vec_type::template mul<Cx>(a.template loadu<vec_type>((i + 4) * n + k1), b1));
-            r6 = vec_type::add(r6, vec_type::template mul<Cx>(a.template loadu<vec_type>((i + 5) * n + k1), b1));
-            r7 = vec_type::add(r7, vec_type::template mul<Cx>(a.template loadu<vec_type>((i + 6) * n + k1), b1));
-            r8 = vec_type::add(r8, vec_type::template mul<Cx>(a.template loadu<vec_type>((i + 7) * n + k1), b1));
+            r1 = vec_type::template fmadd<Cx>(a.template loadu<vec_type>((i + 0) * n + k1), b1, r1);
+            r2 = vec_type::template fmadd<Cx>(a.template loadu<vec_type>((i + 1) * n + k1), b1, r2);
+            r3 = vec_type::template fmadd<Cx>(a.template loadu<vec_type>((i + 2) * n + k1), b1, r3);
+            r4 = vec_type::template fmadd<Cx>(a.template loadu<vec_type>((i + 3) * n + k1), b1, r4);
+            r5 = vec_type::template fmadd<Cx>(a.template loadu<vec_type>((i + 4) * n + k1), b1, r5);
+            r6 = vec_type::template fmadd<Cx>(a.template loadu<vec_type>((i + 5) * n + k1), b1, r6);
+            r7 = vec_type::template fmadd<Cx>(a.template loadu<vec_type>((i + 6) * n + k1), b1, r7);
+            r8 = vec_type::template fmadd<Cx>(a.template loadu<vec_type>((i + 7) * n + k1), b1, r8);
 
-            r1 = vec_type::add(r1, vec_type::template mul<Cx>(a.template loadu<vec_type>((i + 0) * n + k2), b2));
-            r2 = vec_type::add(r2, vec_type::template mul<Cx>(a.template loadu<vec_type>((i + 1) * n + k2), b2));
-            r3 = vec_type::add(r3, vec_type::template mul<Cx>(a.template loadu<vec_type>((i + 2) * n + k2), b2));
-            r4 = vec_type::add(r4, vec_type::template mul<Cx>(a.template loadu<vec_type>((i + 3) * n + k2), b2));
-            r5 = vec_type::add(r5, vec_type::template mul<Cx>(a.template loadu<vec_type>((i + 4) * n + k2), b2));
-            r6 = vec_type::add(r6, vec_type::template mul<Cx>(a.template loadu<vec_type>((i + 5) * n + k2), b2));
-            r7 = vec_type::add(r7, vec_type::template mul<Cx>(a.template loadu<vec_type>((i + 6) * n + k2), b2));
-            r8 = vec_type::add(r8, vec_type::template mul<Cx>(a.template loadu<vec_type>((i + 7) * n + k2), b2));
+            r1 = vec_type::template fmadd<Cx>(a.template loadu<vec_type>((i + 0) * n + k2), b2, r1);
+            r2 = vec_type::template fmadd<Cx>(a.template loadu<vec_type>((i + 1) * n + k2), b2, r2);
+            r3 = vec_type::template fmadd<Cx>(a.template loadu<vec_type>((i + 2) * n + k2), b2, r3);
+            r4 = vec_type::template fmadd<Cx>(a.template loadu<vec_type>((i + 3) * n + k2), b2, r4);
+            r5 = vec_type::template fmadd<Cx>(a.template loadu<vec_type>((i + 4) * n + k2), b2, r5);
+            r6 = vec_type::template fmadd<Cx>(a.template loadu<vec_type>((i + 5) * n + k2), b2, r6);
+            r7 = vec_type::template fmadd<Cx>(a.template loadu<vec_type>((i + 6) * n + k2), b2, r7);
+            r8 = vec_type::template fmadd<Cx>(a.template loadu<vec_type>((i + 7) * n + k2), b2, r8);
         }
 
         // Vectorized inner loop
         for (; k + vec_size - 1 < n; k += vec_size) {
             auto b1 = b.template loadu<vec_type>(k);
 
-            auto a1 = a.template loadu<vec_type>((i + 0) * n + k);
-            auto a2 = a.template loadu<vec_type>((i + 1) * n + k);
-            auto a3 = a.template loadu<vec_type>((i + 2) * n + k);
-            auto a4 = a.template loadu<vec_type>((i + 3) * n + k);
-            auto a5 = a.template loadu<vec_type>((i + 4) * n + k);
-            auto a6 = a.template loadu<vec_type>((i + 5) * n + k);
-            auto a7 = a.template loadu<vec_type>((i + 6) * n + k);
-            auto a8 = a.template loadu<vec_type>((i + 7) * n + k);
-
-            r1 = vec_type::add(r1, vec_type::template mul<Cx>(a1, b1));
-            r2 = vec_type::add(r2, vec_type::template mul<Cx>(a2, b1));
-            r3 = vec_type::add(r3, vec_type::template mul<Cx>(a3, b1));
-            r4 = vec_type::add(r4, vec_type::template mul<Cx>(a4, b1));
-            r5 = vec_type::add(r5, vec_type::template mul<Cx>(a5, b1));
-            r6 = vec_type::add(r6, vec_type::template mul<Cx>(a6, b1));
-            r7 = vec_type::add(r7, vec_type::template mul<Cx>(a7, b1));
-            r8 = vec_type::add(r8, vec_type::template mul<Cx>(a8, b1));
+            r1 = vec_type::template fmadd<Cx>(a.template loadu<vec_type>((i + 0) * n + k), b1, r1);
+            r2 = vec_type::template fmadd<Cx>(a.template loadu<vec_type>((i + 1) * n + k), b1, r2);
+            r3 = vec_type::template fmadd<Cx>(a.template loadu<vec_type>((i + 2) * n + k), b1, r3);
+            r4 = vec_type::template fmadd<Cx>(a.template loadu<vec_type>((i + 3) * n + k), b1, r4);
+            r5 = vec_type::template fmadd<Cx>(a.template loadu<vec_type>((i + 4) * n + k), b1, r5);
+            r6 = vec_type::template fmadd<Cx>(a.template loadu<vec_type>((i + 5) * n + k), b1, r6);
+            r7 = vec_type::template fmadd<Cx>(a.template loadu<vec_type>((i + 6) * n + k), b1, r7);
+            r8 = vec_type::template fmadd<Cx>(a.template loadu<vec_type>((i + 7) * n + k), b1, r8);
         }
 
         c[i + 0] = vec_type::template hadd<T>(r1);
@@ -308,17 +294,17 @@ void gemv_large_kernel(const A& a, const B& b, C& c) {
             auto b3 = b.template loadu<vec_type>(k3);
             auto b4 = b.template loadu<vec_type>(k4);
 
-            r1 = vec_type::add(r1, vec_type::template mul<Cx>(a.template loadu<vec_type>((i + 0) * n + k1), b1));
-            r2 = vec_type::add(r2, vec_type::template mul<Cx>(a.template loadu<vec_type>((i + 1) * n + k1), b1));
+            r1 = vec_type::template fmadd<Cx>(a.template loadu<vec_type>((i + 0) * n + k1), b1, r1);
+            r2 = vec_type::template fmadd<Cx>(a.template loadu<vec_type>((i + 1) * n + k1), b1, r2);
 
-            r1 = vec_type::add(r1, vec_type::template mul<Cx>(a.template loadu<vec_type>((i + 0) * n + k2), b2));
-            r2 = vec_type::add(r2, vec_type::template mul<Cx>(a.template loadu<vec_type>((i + 1) * n + k2), b2));
+            r1 = vec_type::template fmadd<Cx>(a.template loadu<vec_type>((i + 0) * n + k2), b2, r1);
+            r2 = vec_type::template fmadd<Cx>(a.template loadu<vec_type>((i + 1) * n + k2), b2, r2);
 
-            r1 = vec_type::add(r1, vec_type::template mul<Cx>(a.template loadu<vec_type>((i + 0) * n + k3), b3));
-            r2 = vec_type::add(r2, vec_type::template mul<Cx>(a.template loadu<vec_type>((i + 1) * n + k3), b3));
+            r1 = vec_type::template fmadd<Cx>(a.template loadu<vec_type>((i + 0) * n + k3), b3, r1);
+            r2 = vec_type::template fmadd<Cx>(a.template loadu<vec_type>((i + 1) * n + k3), b3, r2);
 
-            r1 = vec_type::add(r1, vec_type::template mul<Cx>(a.template loadu<vec_type>((i + 0) * n + k4), b4));
-            r2 = vec_type::add(r2, vec_type::template mul<Cx>(a.template loadu<vec_type>((i + 1) * n + k4), b4));
+            r1 = vec_type::template fmadd<Cx>(a.template loadu<vec_type>((i + 0) * n + k4), b4, r1);
+            r2 = vec_type::template fmadd<Cx>(a.template loadu<vec_type>((i + 1) * n + k4), b4, r2);
         }
 
         // 2-Unrolled Vectorized inner loop
@@ -329,22 +315,19 @@ void gemv_large_kernel(const A& a, const B& b, C& c) {
             auto b1 = b.template loadu<vec_type>(k1);
             auto b2 = b.template loadu<vec_type>(k2);
 
-            r1 = vec_type::add(r1, vec_type::template mul<Cx>(a.template loadu<vec_type>((i + 0) * n + k1), b1));
-            r2 = vec_type::add(r2, vec_type::template mul<Cx>(a.template loadu<vec_type>((i + 1) * n + k1), b1));
+            r1 = vec_type::template fmadd<Cx>(a.template loadu<vec_type>((i + 0) * n + k1), b1, r1);
+            r2 = vec_type::template fmadd<Cx>(a.template loadu<vec_type>((i + 1) * n + k1), b1, r2);
 
-            r1 = vec_type::add(r1, vec_type::template mul<Cx>(a.template loadu<vec_type>((i + 0) * n + k2), b2));
-            r2 = vec_type::add(r2, vec_type::template mul<Cx>(a.template loadu<vec_type>((i + 1) * n + k2), b2));
+            r1 = vec_type::template fmadd<Cx>(a.template loadu<vec_type>((i + 0) * n + k2), b2, r1);
+            r2 = vec_type::template fmadd<Cx>(a.template loadu<vec_type>((i + 1) * n + k2), b2, r2);
         }
 
         // Vectorized inner loop
         for (; k + vec_size - 1 < n; k += vec_size) {
             auto b1 = b.template loadu<vec_type>(k);
 
-            auto a1 = a.template loadu<vec_type>((i + 0) * n + k);
-            auto a2 = a.template loadu<vec_type>((i + 1) * n + k);
-
-            r1 = vec_type::add(r1, vec_type::template mul<Cx>(a1, b1));
-            r2 = vec_type::add(r2, vec_type::template mul<Cx>(a2, b1));
+            r1 = vec_type::template fmadd<Cx>(a.template loadu<vec_type>((i + 0) * n + k), b1, r1);
+            r2 = vec_type::template fmadd<Cx>(a.template loadu<vec_type>((i + 1) * n + k), b1, r2);
         }
 
         c[i + 0] = vec_type::template hadd<T>(r1);
@@ -358,18 +341,15 @@ void gemv_large_kernel(const A& a, const B& b, C& c) {
     }
 
     // Remainder loop
-    for (; i < m; ++i) {
+    if (i < m) {
         auto r1 = vec_type::template zero<T>();
 
         size_t k = 0;
 
         // Vectorized inner loop
         for (; k + vec_size - 1 < n; k += vec_size) {
-            auto a1 = a.template loadu<vec_type>(i * n + k);
             auto b1 = b.template loadu<vec_type>(k);
-
-            auto t1 = vec_type::template mul<Cx>(a1, b1);
-            r1 = vec_type::add(r1, t1);
+            r1 = vec_type::template fmadd<Cx>(a.template loadu<vec_type>((i + 0) * n + k), b1, r1);
         }
 
         auto result = vec_type::template hadd<T>(r1);
@@ -446,14 +426,14 @@ void gevm_small_kernel(const A& a, const B& b, C& c) {
             auto b7 = b.template loadu<vec_type>(k * n + j + 6 * vec_size);
             auto b8 = b.template loadu<vec_type>(k * n + j + 7 * vec_size);
 
-            r1 = vec_type::add(r1, vec_type::template mul<Cx>(a1, b1));
-            r2 = vec_type::add(r2, vec_type::template mul<Cx>(a1, b2));
-            r3 = vec_type::add(r3, vec_type::template mul<Cx>(a1, b3));
-            r4 = vec_type::add(r4, vec_type::template mul<Cx>(a1, b4));
-            r5 = vec_type::add(r5, vec_type::template mul<Cx>(a1, b5));
-            r6 = vec_type::add(r6, vec_type::template mul<Cx>(a1, b6));
-            r7 = vec_type::add(r7, vec_type::template mul<Cx>(a1, b7));
-            r8 = vec_type::add(r8, vec_type::template mul<Cx>(a1, b8));
+            r1 = vec_type::template fmadd<Cx>(a1, b1, r1);
+            r2 = vec_type::template fmadd<Cx>(a1, b2, r2);
+            r3 = vec_type::template fmadd<Cx>(a1, b3, r3);
+            r4 = vec_type::template fmadd<Cx>(a1, b4, r4);
+            r5 = vec_type::template fmadd<Cx>(a1, b5, r5);
+            r6 = vec_type::template fmadd<Cx>(a1, b6, r6);
+            r7 = vec_type::template fmadd<Cx>(a1, b7, r7);
+            r8 = vec_type::template fmadd<Cx>(a1, b8, r8);
         }
 
         c.template storeu<vec_type>(r1, j + 0 * vec_size);
@@ -480,10 +460,10 @@ void gevm_small_kernel(const A& a, const B& b, C& c) {
             auto b3 = b.template loadu<vec_type>(k * n + j + 2 * vec_size);
             auto b4 = b.template loadu<vec_type>(k * n + j + 3 * vec_size);
 
-            r1 = vec_type::add(r1, vec_type::template mul<Cx>(a1, b1));
-            r2 = vec_type::add(r2, vec_type::template mul<Cx>(a1, b2));
-            r3 = vec_type::add(r3, vec_type::template mul<Cx>(a1, b3));
-            r4 = vec_type::add(r4, vec_type::template mul<Cx>(a1, b4));
+            r1 = vec_type::template fmadd<Cx>(a1, b1, r1);
+            r2 = vec_type::template fmadd<Cx>(a1, b2, r2);
+            r3 = vec_type::template fmadd<Cx>(a1, b3, r3);
+            r4 = vec_type::template fmadd<Cx>(a1, b4, r4);
         }
 
         c.template storeu<vec_type>(r1, j + 0 * vec_size);
@@ -500,7 +480,7 @@ void gevm_small_kernel(const A& a, const B& b, C& c) {
 
             auto b1 = b.template loadu<vec_type>(k * n + j);
 
-            r1 = vec_type::add(r1, vec_type::template mul<Cx>(a1, b1));
+            r1 = vec_type::template fmadd<Cx>(a1, b1, r1);
         }
 
         c.template storeu<vec_type>(r1, j);
@@ -563,14 +543,14 @@ void gevm_large_kernel(const A& a, const B& b, C& c) {
                     auto b7 = b.template loadu<vec_type>(k * n + j + 6 * vec_size);
                     auto b8 = b.template loadu<vec_type>(k * n + j + 7 * vec_size);
 
-                    r1 = vec_type::add(r1, vec_type::template mul<Cx>(a1, b1));
-                    r2 = vec_type::add(r2, vec_type::template mul<Cx>(a1, b2));
-                    r3 = vec_type::add(r3, vec_type::template mul<Cx>(a1, b3));
-                    r4 = vec_type::add(r4, vec_type::template mul<Cx>(a1, b4));
-                    r5 = vec_type::add(r5, vec_type::template mul<Cx>(a1, b5));
-                    r6 = vec_type::add(r6, vec_type::template mul<Cx>(a1, b6));
-                    r7 = vec_type::add(r7, vec_type::template mul<Cx>(a1, b7));
-                    r8 = vec_type::add(r8, vec_type::template mul<Cx>(a1, b8));
+                    r1 = vec_type::template fmadd<Cx>(a1, b1, r1);
+                    r2 = vec_type::template fmadd<Cx>(a1, b2, r2);
+                    r3 = vec_type::template fmadd<Cx>(a1, b3, r3);
+                    r4 = vec_type::template fmadd<Cx>(a1, b4, r4);
+                    r5 = vec_type::template fmadd<Cx>(a1, b5, r5);
+                    r6 = vec_type::template fmadd<Cx>(a1, b6, r6);
+                    r7 = vec_type::template fmadd<Cx>(a1, b7, r7);
+                    r8 = vec_type::template fmadd<Cx>(a1, b8, r8);
                 }
 
                 c.template storeu<vec_type>(vec_type::add(c.template loadu<vec_type>(j + 0 * vec_size), r1), j + 0 * vec_size);
@@ -598,10 +578,10 @@ void gevm_large_kernel(const A& a, const B& b, C& c) {
                     auto b3 = b.template loadu<vec_type>(k * n + j + 2 * vec_size);
                     auto b4 = b.template loadu<vec_type>(k * n + j + 3 * vec_size);
 
-                    r1 = vec_type::add(r1, vec_type::template mul<Cx>(a1, b1));
-                    r2 = vec_type::add(r2, vec_type::template mul<Cx>(a1, b2));
-                    r3 = vec_type::add(r3, vec_type::template mul<Cx>(a1, b3));
-                    r4 = vec_type::add(r4, vec_type::template mul<Cx>(a1, b4));
+                    r1 = vec_type::template fmadd<Cx>(a1, b1, r1);
+                    r2 = vec_type::template fmadd<Cx>(a1, b2, r2);
+                    r3 = vec_type::template fmadd<Cx>(a1, b3, r3);
+                    r4 = vec_type::template fmadd<Cx>(a1, b4, r4);
                 }
 
                 c.template storeu<vec_type>(vec_type::add(c.template loadu<vec_type>(j + 0 * vec_size), r1), j + 0 * vec_size);
@@ -617,7 +597,7 @@ void gevm_large_kernel(const A& a, const B& b, C& c) {
                 for (size_t k = block_k; k < m_end; ++k) {
                     auto a1 = vec_type::set(a[k]);
                     auto b1 = b.template loadu<vec_type>(k * n + j + 0 * vec_size);
-                    r1 = vec_type::add(r1, vec_type::template mul<Cx>(a1, b1));
+                    r1 = vec_type::template fmadd<Cx>(a1, b1, r1);
                 }
 
                 c.template storeu<vec_type>(vec_type::add(c.template loadu<vec_type>(j + 0 * vec_size), r1), j + 0 * vec_size);
