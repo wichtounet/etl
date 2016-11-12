@@ -33,46 +33,90 @@ value_t<L> selected_dot(const L& lhs, const R& rhs) {
     auto r2 = vec_type::template zero<T>();
     auto r3 = vec_type::template zero<T>();
     auto r4 = vec_type::template zero<T>();
+    auto r5 = vec_type::template zero<T>();
+    auto r6 = vec_type::template zero<T>();
+    auto r7 = vec_type::template zero<T>();
+    auto r8 = vec_type::template zero<T>();
 
     if (n < 1000000) {
-        for(; i + (vec_size * 4) - 1 < n; i += 4 * vec_size){
+        for (; i + (vec_size * 8) - 1 < n; i += 8 * vec_size) {
             auto a1 = lhs.load(i + 0 * vec_size);
             auto a2 = lhs.load(i + 1 * vec_size);
             auto a3 = lhs.load(i + 2 * vec_size);
             auto a4 = lhs.load(i + 3 * vec_size);
+            auto a5 = lhs.load(i + 4 * vec_size);
+            auto a6 = lhs.load(i + 5 * vec_size);
+            auto a7 = lhs.load(i + 6 * vec_size);
+            auto a8 = lhs.load(i + 7 * vec_size);
 
             auto b1 = rhs.load(i + 0 * vec_size);
             auto b2 = rhs.load(i + 1 * vec_size);
             auto b3 = rhs.load(i + 2 * vec_size);
             auto b4 = rhs.load(i + 3 * vec_size);
+            auto b5 = rhs.load(i + 4 * vec_size);
+            auto b6 = rhs.load(i + 5 * vec_size);
+            auto b7 = rhs.load(i + 6 * vec_size);
+            auto b8 = rhs.load(i + 7 * vec_size);
 
-            auto t1 = vec_type::template mul<false>(a1, b1);
-            auto t2 = vec_type::template mul<false>(a2, b2);
-            auto t3 = vec_type::template mul<false>(a3, b3);
-            auto t4 = vec_type::template mul<false>(a4, b4);
-
-            r1 = vec_type::add(r1, t1);
-            r2 = vec_type::add(r2, t2);
-            r3 = vec_type::add(r3, t3);
-            r4 = vec_type::add(r4, t4);
+            r1 = vec_type::template fmadd<false>(a1, b1, r1);
+            r2 = vec_type::template fmadd<false>(a2, b2, r2);
+            r3 = vec_type::template fmadd<false>(a3, b3, r3);
+            r4 = vec_type::template fmadd<false>(a4, b4, r4);
+            r5 = vec_type::template fmadd<false>(a5, b5, r5);
+            r6 = vec_type::template fmadd<false>(a6, b6, r6);
+            r7 = vec_type::template fmadd<false>(a7, b7, r7);
+            r8 = vec_type::template fmadd<false>(a8, b8, r8);
         }
+    }
+
+    for (; i + (vec_size * 4) - 1 < n; i += 4 * vec_size) {
+        auto a1 = lhs.load(i + 0 * vec_size);
+        auto a2 = lhs.load(i + 1 * vec_size);
+        auto a3 = lhs.load(i + 2 * vec_size);
+        auto a4 = lhs.load(i + 3 * vec_size);
+
+        auto b1 = rhs.load(i + 0 * vec_size);
+        auto b2 = rhs.load(i + 1 * vec_size);
+        auto b3 = rhs.load(i + 2 * vec_size);
+        auto b4 = rhs.load(i + 3 * vec_size);
+
+        r1 = vec_type::template fmadd<false>(a1, b1, r1);
+        r2 = vec_type::template fmadd<false>(a2, b2, r2);
+        r3 = vec_type::template fmadd<false>(a3, b3, r3);
+        r4 = vec_type::template fmadd<false>(a4, b4, r4);
+    }
+
+    for(; i + (vec_size * 2) - 1 < n; i += 2 * vec_size){
+        auto a1 = lhs.load(i + 0 * vec_size);
+        auto a2 = lhs.load(i + 1 * vec_size);
+
+        auto b1 = rhs.load(i + 0 * vec_size);
+        auto b2 = rhs.load(i + 1 * vec_size);
+
+        r1 = vec_type::template fmadd<false>(a1, b1, r1);
+        r2 = vec_type::template fmadd<false>(a2, b2, r2);
     }
 
     for(; i + vec_size - 1 < n; i += vec_size){
         auto a1 = lhs.load(i);
         auto b1 = rhs.load(i);
 
-        auto t1 = vec_type::template mul<false>(a1, b1);
-        r1 = vec_type::add(r1, t1);
+        r1 = vec_type::template fmadd<false>(a1, b1, r1);
     }
 
-    auto product = vec_type::hadd(r1) + vec_type::hadd(r2) + vec_type::hadd(r3) + vec_type::hadd(r4);
+    auto p1 = vec_type::hadd(r1) + vec_type::hadd(r2) + vec_type::hadd(r3) + vec_type::hadd(r4);
+    auto p2 = vec_type::hadd(r5) + vec_type::hadd(r6) + vec_type::hadd(r7) + vec_type::hadd(r8);
 
-    for(; i < n; ++i){
-        product += lhs[i] * rhs[i];
+    for(; i + 1 < n; i += 2){
+        p1 += lhs[i] * rhs[i];
+        p2 += lhs[i + 1] * rhs[i + 1];
     }
 
-    return product;
+    if(i < n){
+        p1 += lhs[i] * rhs[i];
+    }
+
+    return p1 + p2;
 }
 
 /*!
