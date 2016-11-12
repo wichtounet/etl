@@ -122,8 +122,9 @@ struct no_vec {
 
     /*!
      * \brief Vector multiplication of a and b and add the result to c
-     * \param lhs The left hand side of the operation
-     * \param rhs The right hand side of the operation
+     * \param a The left hand side of the multiplication
+     * \param b The right hand side of the multiplication
+     * \param c The right hand side of the addition
      * \return Vector of the results
      */
     template <bool Complex = false, typename M>
