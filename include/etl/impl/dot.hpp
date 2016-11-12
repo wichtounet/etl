@@ -72,7 +72,7 @@ etl::dot_impl select_dot_impl() {
 
             //AVX cannot always be used
             case dot_impl::AVX:
-                if (!sse3_enabled || !all_dma<A, B>::value) {
+                if (!avx_enabled || !all_dma<A, B>::value) {
                     std::cerr << "Forced selection to AVX dot implementation, but not possible for this expression" << std::endl;
                     return select_default_dot_impl<A, B>();
                 }
