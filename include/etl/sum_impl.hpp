@@ -19,6 +19,7 @@ namespace etl {
  */
 enum class sum_impl {
     STD, ///< Standard implementation
+    VEC, ///< Vectorized implementation
     SSE, ///< SSE implementation
     AVX  ///< AVX implementation
 };

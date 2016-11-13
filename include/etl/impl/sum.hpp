@@ -24,6 +24,7 @@
 
 //Include the implementations
 #include "etl/impl/std/sum.hpp"
+#include "etl/impl/vec/sum.hpp"
 #include "etl/impl/sse/sum.hpp"
 #include "etl/impl/avx/sum.hpp"
 
@@ -132,6 +133,10 @@ struct sum_impl {
         if (impl == etl::sum_impl::AVX) {
             dispatch_1d_acc<value_t<E>>(parallel_dispatch, [&e](std::size_t first, std::size_t last) -> value_t<E> {
                 return impl::avx::sum(e, first, last);
+            }, acc_functor, 0, size(e));
+        } else if (impl == etl::sum_impl::VEC) {
+            dispatch_1d_acc<value_t<E>>(parallel_dispatch, [&e](std::size_t first, std::size_t last) -> value_t<E> {
+                return impl::vec::sum(e, first, last);
             }, acc_functor, 0, size(e));
         } else if (impl == etl::sum_impl::SSE) {
             dispatch_1d_acc<value_t<E>>(parallel_dispatch, [&e](std::size_t first, std::size_t last) -> value_t<E> {
