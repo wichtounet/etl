@@ -46,13 +46,8 @@ cpp14_constexpr etl::sum_impl select_default_sum_impl() {
     //conditions will be a lot simplified
 
     if (decay_traits<E>::template vectorizable<vector_mode>::value) {
-        constexpr bool sse = vectorize_impl && vector_mode == vector_mode_t::SSE3;
-        constexpr bool avx = vectorize_impl && vector_mode == vector_mode_t::AVX;
-
-        if (avx) {
-            return etl::sum_impl::AVX;
-        } else if (sse) {
-            return etl::sum_impl::SSE;
+        if(vec_enabled){
+            return etl::sum_impl::VEC;
         }
     }
 
@@ -83,6 +78,15 @@ etl::sum_impl select_sum_impl() {
             case sum_impl::SSE:
                 if (!sse3_enabled || !decay_traits<E>::template vectorizable<vector_mode_t::SSE3>::value) {                       //COVERAGE_EXCLUDE_LINE
                     std::cerr << "Forced selection to SSE sum implementation, but not possible for this expression" << std::endl; //COVERAGE_EXCLUDE_LINE
+                    return select_default_sum_impl<E>();                                                                          //COVERAGE_EXCLUDE_LINE
+                }                                                                                                                 //COVERAGE_EXCLUDE_LINE
+
+                return forced;
+
+            //VEC cannot always be used
+            case sum_impl::VEC:
+                if (!vec_enabled || !decay_traits<E>::template vectorizable<vector_mode>::value) {                                //COVERAGE_EXCLUDE_LINE
+                    std::cerr << "Forced selection to VEC sum implementation, but not possible for this expression" << std::endl; //COVERAGE_EXCLUDE_LINE
                     return select_default_sum_impl<E>();                                                                          //COVERAGE_EXCLUDE_LINE
                 }                                                                                                                 //COVERAGE_EXCLUDE_LINE
 
