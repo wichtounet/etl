@@ -26,20 +26,17 @@ namespace detail {
  * \param n3 The right dimension of the  multiplication
  * \return The implementation to use
  */
-template <bool DMA, typename T>
+template <typename A, typename B, typename C>
 inline cpp14_constexpr gemm_impl select_default_gemm_impl(const std::size_t n1, const std::size_t n2, const std::size_t n3) {
     cpp_unused(n2);
 
-    //Only std implementation is able to handle non-dma expressions
-    if (!DMA) {
-        return gemm_impl::STD;
-    }
+    static constexpr bool DMA = all_dma<A, B, C>::value;
 
     //Note since these boolean will be known at compile time, the conditions will be a lot simplified
     constexpr bool blas   = is_cblas_enabled;
     constexpr bool cublas = is_cublas_enabled;
 
-    if (cublas) {
+    if (cublas && DMA) {
         if (n1 * n3 < gemm_cublas_min) {
             if (blas) {
                 return gemm_impl::BLAS;
@@ -51,16 +48,15 @@ inline cpp14_constexpr gemm_impl select_default_gemm_impl(const std::size_t n1, 
         }
 
         return gemm_impl::CUBLAS;
-    } else if (blas) {
+    } else if (blas && DMA) {
         return gemm_impl::BLAS;
     }
 
-    //EBLAS has too much overhead for small matrices and does not handle complex numbers
-    if (n1 * n3 < gemm_std_max || is_complex_t<T>::value) {
-        return gemm_impl::STD;
-    } else {
-        return gemm_impl::FAST;
+    if(vec_enabled && all_vectorizable<vector_mode, A, B, C>::value){
+        return gemm_impl::VEC;
     }
+
+    return gemm_impl::STD;
 }
 
 /*!
@@ -70,8 +66,11 @@ inline cpp14_constexpr gemm_impl select_default_gemm_impl(const std::size_t n1, 
  * \param n3 The right dimension of the  multiplication
  * \return The implementation to use
  */
-template <bool DMA, typename T>
+template <typename A, typename B, typename C>
 inline gemm_impl select_gemm_impl(const std::size_t n1, const std::size_t n2, const std::size_t n3) {
+    static constexpr bool DMA = all_dma<A, B, C>::value;
+    using T = value_t<A>;
+
     if (local_context().gemm_selector.forced) {
         auto forced = local_context().gemm_selector.impl;
 
@@ -80,7 +79,7 @@ inline gemm_impl select_gemm_impl(const std::size_t n1, const std::size_t n2, co
             case gemm_impl::CUBLAS:
                 if (!is_cublas_enabled || !DMA) {                                                                                     //COVERAGE_EXCLUDE_LINE
                     std::cerr << "Forced selection to CUBLAS gemm implementation, but not possible for this expression" << std::endl; //COVERAGE_EXCLUDE_LINE
-                    return select_default_gemm_impl<DMA, T>(n1, n2, n3);                                                              //COVERAGE_EXCLUDE_LINE
+                    return select_default_gemm_impl<A, B, C>(n1, n2, n3);                                                              //COVERAGE_EXCLUDE_LINE
                 }                                                                                                                     //COVERAGE_EXCLUDE_LINE
 
                 return forced;
@@ -89,7 +88,16 @@ inline gemm_impl select_gemm_impl(const std::size_t n1, const std::size_t n2, co
             case gemm_impl::BLAS:
                 if (!is_cblas_enabled || !DMA) {                                                                                    //COVERAGE_EXCLUDE_LINE
                     std::cerr << "Forced selection to BLAS gemm implementation, but not possible for this expression" << std::endl; //COVERAGE_EXCLUDE_LINE
-                    return select_default_gemm_impl<DMA, T>(n1, n2, n3);                                                            //COVERAGE_EXCLUDE_LINE
+                    return select_default_gemm_impl<A, B, C>(n1, n2, n3);                                                            //COVERAGE_EXCLUDE_LINE
+                }                                                                                                                   //COVERAGE_EXCLUDE_LINE
+
+                return forced;
+
+            //VEC cannot always be used
+            case gemm_impl::VEC:
+                if (!vec_enabled || !all_vectorizable<vector_mode, A, B, C>::value) {                                               //COVERAGE_EXCLUDE_LINE
+                    std::cerr << "Forced selection to VEC gemv implementation, but not possible for this expression" << std::endl; //COVERAGE_EXCLUDE_LINE
+                    return select_default_gemm_impl<A, B, C>(n1, n2, 3);                                                            //COVERAGE_EXCLUDE_LINE
                 }                                                                                                                   //COVERAGE_EXCLUDE_LINE
 
                 return forced;
@@ -98,7 +106,7 @@ inline gemm_impl select_gemm_impl(const std::size_t n1, const std::size_t n2, co
             case gemm_impl::FAST:
                 if (!DMA || is_complex_t<T>::value) {                                                                                //COVERAGE_EXCLUDE_LINE
                     std::cerr << "Forced selection to EBLAS gemm implementation, but not possible for this expression" << std::endl; //COVERAGE_EXCLUDE_LINE
-                    return select_default_gemm_impl<DMA, T>(n1, n2, n3);                                                             //COVERAGE_EXCLUDE_LINE
+                    return select_default_gemm_impl<A, B, C>(n1, n2, n3);                                                             //COVERAGE_EXCLUDE_LINE
                 }                                                                                                                    //COVERAGE_EXCLUDE_LINE
 
                 return forced;
@@ -109,7 +117,7 @@ inline gemm_impl select_gemm_impl(const std::size_t n1, const std::size_t n2, co
         }
     }
 
-    return select_default_gemm_impl<DMA, T>(n1, n2, n3);
+    return select_default_gemm_impl<A, B, C>(n1, n2, n3);
 }
 
 /*!
@@ -290,7 +298,7 @@ struct mm_mul_impl {
      */
     template <typename A, typename B, typename C>
     static void apply(A&& a, B&& b, C&& c) {
-        gemm_impl impl = select_gemm_impl<all_dma<A, B, C>::value, value_t<A>>(etl::dim<0>(a), etl::dim<1>(a), etl::dim<1>(c));
+        gemm_impl impl = select_gemm_impl<A, B, C>(etl::dim<0>(a), etl::dim<1>(a), etl::dim<1>(c));
 
         if (impl == gemm_impl::STD) {
             etl::impl::standard::mm_mul(a, b, c);
