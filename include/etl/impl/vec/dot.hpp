@@ -29,6 +29,8 @@ value_t<L> selected_dot(const L& lhs, const R& rhs) {
 
     size_t i = 0;
 
+    //TODO THe results are not very good for large vectors
+
     auto r1 = vec_type::template zero<T>();
     auto r2 = vec_type::template zero<T>();
     auto r3 = vec_type::template zero<T>();

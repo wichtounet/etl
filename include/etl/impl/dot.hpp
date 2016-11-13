@@ -34,16 +34,12 @@ namespace detail {
  */
 template <typename A, typename B>
 cpp14_constexpr etl::dot_impl select_default_dot_impl() {
-    if (all_dma<A, B>::value) {
-        if (is_cblas_enabled) {
-            return etl::dot_impl::BLAS;
-        } else if (vectorize_impl && avx_enabled) {
-            return etl::dot_impl::AVX;
-        } else if (vectorize_impl && sse3_enabled) {
-            return etl::dot_impl::SSE;
-        } else {
-            return etl::dot_impl::STD;
-        }
+    if (all_dma<A, B>::value && is_cblas_enabled) {
+        return etl::dot_impl::BLAS;
+    }
+
+    if (decay_traits<A>::template vectorizable<vector_mode>::value && decay_traits<B>::template vectorizable<vector_mode>::value && vec_enabled) {
+        return etl::dot_impl::VEC;
     }
 
     return etl::dot_impl::STD;
@@ -83,6 +79,15 @@ etl::dot_impl select_dot_impl() {
             case dot_impl::SSE:
                 if (!sse3_enabled || !all_dma<A, B>::value) {
                     std::cerr << "Forced selection to SSE dot implementation, but not possible for this expression" << std::endl;
+                    return select_default_dot_impl<A, B>();
+                }
+
+                return forced;
+
+            //VEC cannot always be used
+            case dot_impl::VEC:
+                if (!vec_enabled || !decay_traits<A>::template vectorizable<vector_mode>::value || !decay_traits<B>::template vectorizable<vector_mode>::value) {
+                    std::cerr << "Forced selection to VEC dot implementation, but not possible for this expression" << std::endl;
                     return select_default_dot_impl<A, B>();
                 }
 
