@@ -438,8 +438,8 @@ using is_3d = cpp::bool_constant<decay_traits<T>::dimensions() == 3>;
  * \brief Traits to test if all the given ETL expresion types are vectorizable.
  * \tparam E The ETL expression types.
  */
-template <typename... E>
-using all_vectorizable = cpp::and_u<decay_traits<E>::vectorizable...>;
+template <vector_mode_t V, typename... E>
+using all_vectorizable = cpp::and_u<decay_traits<E>::template vectorizable<V>::value...>;
 
 /*!
  * \brief Traits to test if all the given ETL expresion types are
