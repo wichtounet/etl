@@ -30,7 +30,7 @@ template <typename A, typename B, typename C>
 inline cpp14_constexpr gemm_impl select_default_gemm_impl(const std::size_t n1, const std::size_t n2, const std::size_t n3) {
     cpp_unused(n2);
 
-    static constexpr bool DMA = all_dma<A, B, C>::value;
+    constexpr bool DMA = all_dma<A, B, C>::value;
 
     //Note since these boolean will be known at compile time, the conditions will be a lot simplified
     constexpr bool blas   = is_cblas_enabled;
@@ -68,7 +68,7 @@ inline cpp14_constexpr gemm_impl select_default_gemm_impl(const std::size_t n1, 
  */
 template <typename A, typename B, typename C>
 inline gemm_impl select_gemm_impl(const std::size_t n1, const std::size_t n2, const std::size_t n3) {
-    static constexpr bool DMA = all_dma<A, B, C>::value;
+    constexpr bool DMA = all_dma<A, B, C>::value;
     using T = value_t<A>;
 
     if (local_context().gemm_selector.forced) {
@@ -128,7 +128,7 @@ inline gemm_impl select_gemm_impl(const std::size_t n1, const std::size_t n2, co
  */
 template <typename A, typename B, typename C>
 inline cpp14_constexpr gemm_impl select_default_gemv_impl(const std::size_t n1, const std::size_t n2) {
-    static constexpr bool DMA = all_dma<A, B, C>::value;
+    constexpr bool DMA = all_dma<A, B, C>::value;
     using T = value_t<A>;
 
     if(DMA && is_cblas_enabled){
@@ -211,7 +211,7 @@ inline gemm_impl select_gemv_impl(const std::size_t n1, const std::size_t n2) {
  */
 template <typename A, typename B, typename C>
 inline cpp14_constexpr gemm_impl select_default_gevm_impl(const std::size_t n1, const std::size_t n2) {
-    static constexpr bool DMA = all_dma<A, B, C>::value;
+    constexpr bool DMA = all_dma<A, B, C>::value;
     using T = value_t<A>;
 
     if(DMA && is_cblas_enabled){

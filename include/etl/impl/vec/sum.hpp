@@ -83,10 +83,9 @@ value_t<L> selected_sum(const L& lhs, size_t first, size_t last) {
 }
 
 /*!
- * \brief Compute the dot product of a and b
+ * \brief Compute the sum of lhs
  * \param lhs The lhs expression
- * \param rhs The rhs expression
- * \return the dot product
+ * \return the sum of the elements of lhs
  */
 template <typename L>
 value_t<L> sum(const L& lhs, size_t first, size_t last) {
