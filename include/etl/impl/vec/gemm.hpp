@@ -864,7 +864,46 @@ void gemm_small_kernel(const A& a, const B& b, C& c) {
         }
     }
 
-    for (; j < N; ++j) {
+    for (; j + 1 < N; j += 2) {
+        size_t j1 = j + 0;
+        size_t j2 = j + 0;
+
+        size_t i = 0;
+
+        for (; i + 1 < M; i += 2) {
+            auto r11 = T();
+            auto r12 = T();
+            auto r21 = T();
+            auto r22 = T();
+
+            for (size_t k = 0; k < K; ++k) {
+                r11 += a(i, k) * b(k, j1);
+                r21 += a(i, k) * b(k, j2);
+                r12 += a(i + 1, k) * b(k, j1);
+                r22 += a(i + 1, k) * b(k, j2);
+            }
+
+            c(i + 0, j1) = r11;
+            c(i + 0, j2) = r21;
+            c(i + 1, j1) = r12;
+            c(i + 1, j2) = r22;
+        }
+
+        if (i < M) {
+            auto r1 = T();
+            auto r2 = T();
+
+            for (size_t k = 0; k < K; ++k) {
+                r1 += a(i, k) * b(k, j1);
+                r2 += a(i, k) * b(k, j2);
+            }
+
+            c(i, j1) = r1;
+            c(i, j2) = r2;
+        }
+    }
+
+    if (j < N) {
         size_t i = 0;
 
         for (; i + 1 < M; i += 2) {
