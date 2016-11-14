@@ -877,8 +877,8 @@ void gemm_small_kernel(const A& a, const B& b, C& c) {
             auto r22 = T();
 
             for (size_t k = 0; k < K; ++k) {
-                r11 += a(i, k) * b(k, j1);
-                r21 += a(i, k) * b(k, j2);
+                r11 += a(i + 0, k) * b(k, j1);
+                r21 += a(i + 0, k) * b(k, j2);
                 r12 += a(i + 1, k) * b(k, j1);
                 r22 += a(i + 1, k) * b(k, j2);
             }
