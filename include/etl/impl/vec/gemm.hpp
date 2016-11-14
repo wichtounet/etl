@@ -493,7 +493,7 @@ void gevm_small_kernel(const A& a, const B& b, C& c) {
             value += a(k) * b(k, j);
         }
 
-        c[j] = 0;
+        c[j] = value;
     }
 }
 
