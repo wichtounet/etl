@@ -407,8 +407,6 @@ struct sub_view {
     }
 };
 
-//TODO Make slice view works with vector!
-
 /*!
  * \brief View that shows a slice of an expression
  * \tparam T The type of expression on which the view is made
