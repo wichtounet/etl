@@ -87,12 +87,25 @@ value_t<L> selected_sum(const L& lhs, size_t first, size_t last) {
  * \param lhs The lhs expression
  * \return the sum of the elements of lhs
  */
-template <typename L>
+template <typename L, cpp_enable_if((vec_enabled && all_vectorizable<vector_mode, L>::value))>
 value_t<L> sum(const L& lhs, size_t first, size_t last) {
     cpp_assert(vec_enabled, "At least one vector mode must be enabled for impl::VEC");
 
     // The default vectorization scheme should be sufficient
     return selected_sum<default_vec>(lhs, first, last);
+}
+
+/*!
+ * \brief Compute the sum of lhs
+ * \param lhs The lhs expression
+ * \return the sum of the elements of lhs
+ */
+template <typename L, cpp_disable_if((vec_enabled && all_vectorizable<vector_mode, L>::value))>
+value_t<L> sum(const L& lhs, size_t first, size_t last) {
+    cpp_unused(lhs);
+    cpp_unused(first);
+    cpp_unused(last);
+    cpp_unreachable("vec::sum called with invalid parameters");
 }
 
 } //end of namespace standard
