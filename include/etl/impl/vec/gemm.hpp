@@ -728,14 +728,14 @@ void gemm_small_kernel(const A& a, const B& b, C& c) {
                 r11 = vec_type::template fmadd<Cx>(a1, b1, r11);
                 r12 = vec_type::template fmadd<Cx>(a2, b1, r12);
 
-                r21 = vec_type::template fmadd<Cx>(a1, b2, r11);
-                r22 = vec_type::template fmadd<Cx>(a2, b2, r12);
+                r21 = vec_type::template fmadd<Cx>(a1, b2, r21);
+                r22 = vec_type::template fmadd<Cx>(a2, b2, r22);
 
-                r31 = vec_type::template fmadd<Cx>(a1, b3, r11);
-                r32 = vec_type::template fmadd<Cx>(a2, b3, r12);
+                r31 = vec_type::template fmadd<Cx>(a1, b3, r31);
+                r32 = vec_type::template fmadd<Cx>(a2, b3, r32);
 
-                r41 = vec_type::template fmadd<Cx>(a1, b4, r11);
-                r42 = vec_type::template fmadd<Cx>(a2, b4, r12);
+                r41 = vec_type::template fmadd<Cx>(a1, b4, r41);
+                r42 = vec_type::template fmadd<Cx>(a2, b4, r42);
             }
 
             c.template storeu<vec_type>(r11, (i+0) * N + j + 0 * vec_size);
@@ -766,9 +766,9 @@ void gemm_small_kernel(const A& a, const B& b, C& c) {
                 auto a1 = vec_type::set(a(i, k));
 
                 r11 = vec_type::template fmadd<Cx>(a1, b1, r11);
-                r21 = vec_type::template fmadd<Cx>(a1, b2, r11);
-                r31 = vec_type::template fmadd<Cx>(a1, b3, r11);
-                r41 = vec_type::template fmadd<Cx>(a1, b4, r11);
+                r21 = vec_type::template fmadd<Cx>(a1, b2, r21);
+                r31 = vec_type::template fmadd<Cx>(a1, b3, r31);
+                r41 = vec_type::template fmadd<Cx>(a1, b4, r41);
             }
 
             c.template storeu<vec_type>(r11, i * N + j + 0 * vec_size);
@@ -798,8 +798,8 @@ void gemm_small_kernel(const A& a, const B& b, C& c) {
                 r11 = vec_type::template fmadd<Cx>(a1, b1, r11);
                 r12 = vec_type::template fmadd<Cx>(a2, b1, r12);
 
-                r21 = vec_type::template fmadd<Cx>(a1, b2, r11);
-                r22 = vec_type::template fmadd<Cx>(a2, b2, r12);
+                r21 = vec_type::template fmadd<Cx>(a1, b2, r21);
+                r22 = vec_type::template fmadd<Cx>(a2, b2, r22);
             }
 
             c.template storeu<vec_type>(r11, (i+0) * N + j + 0 * vec_size);
@@ -820,7 +820,7 @@ void gemm_small_kernel(const A& a, const B& b, C& c) {
                 auto a1 = vec_type::set(a(i, k));
 
                 r11 = vec_type::template fmadd<Cx>(a1, b1, r11);
-                r21 = vec_type::template fmadd<Cx>(a1, b2, r11);
+                r21 = vec_type::template fmadd<Cx>(a1, b2, r21);
             }
 
             c.template storeu<vec_type>(r11, i * N + j + 0 * vec_size);
@@ -842,7 +842,7 @@ void gemm_small_kernel(const A& a, const B& b, C& c) {
                 auto a2 = vec_type::set(a(i + 1, k));
 
                 r1 = vec_type::template fmadd<Cx>(a1, b1, r1);
-                r2 = vec_type::template fmadd<Cx>(a2, b1, r1);
+                r2 = vec_type::template fmadd<Cx>(a2, b1, r2);
             }
 
             c.template storeu<vec_type>(r1, (i+0) * N + j);
