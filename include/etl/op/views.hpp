@@ -525,7 +525,7 @@ struct slice_view {
      */
     template <typename V = default_vec>
     auto load(std::size_t x) const noexcept {
-        return sub.template loadu<V>(x + first * subsize(sub));
+        return sub.template loadu<V>(x + first * (etl::size(sub) / etl::dim<0>(sub)));
     }
 
     /*!
@@ -536,7 +536,7 @@ struct slice_view {
      */
     template <typename V = default_vec>
     auto loadu(std::size_t x) const noexcept {
-        return sub.template loadu<V>(x + first * subsize(sub));
+        return sub.template loadu<V>(x + first * (etl::size(sub) / etl::dim<0>(sub)));
     }
 
     /*!
@@ -555,7 +555,7 @@ struct slice_view {
      */
     memory_type memory_start() noexcept {
         static_assert(has_direct_access<T>::value && decay_traits<sub_type>::storage_order == order::RowMajor, "This expression does not have direct memory access");
-        return sub.memory_start() + first * subsize(sub);
+        return sub.memory_start() + first * (etl::size(sub) / etl::dim<0>(sub));
     }
 
     /*!
@@ -564,7 +564,7 @@ struct slice_view {
      */
     const_memory_type memory_start() const noexcept {
         static_assert(has_direct_access<T>::value && decay_traits<sub_type>::storage_order == order::RowMajor, "This expression does not have direct memory access");
-        return sub.memory_start() + first * subsize(sub);
+        return sub.memory_start() + first * (etl::size(sub) / etl::dim<0>(sub));
     }
 
     /*!
@@ -573,7 +573,7 @@ struct slice_view {
      */
     memory_type memory_end() noexcept {
         static_assert(has_direct_access<T>::value && decay_traits<sub_type>::storage_order == order::RowMajor, "This expression does not have direct memory access");
-        return sub.memory_start() + last * subsize(sub);
+        return sub.memory_start() + last * (etl::size(sub) / etl::dim<0>(sub));
     }
 
     /*!
@@ -582,7 +582,7 @@ struct slice_view {
      */
     const_memory_type memory_end() const noexcept {
         static_assert(has_direct_access<T>::value && decay_traits<sub_type>::storage_order == order::RowMajor, "This expression does not have direct memory access");
-        return sub.memory_start() + last * subsize(sub);
+        return sub.memory_start() + last * (etl::size(sub) / etl::dim<0>(sub));
     }
 };
 

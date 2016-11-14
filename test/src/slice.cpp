@@ -152,6 +152,25 @@ TEMPLATE_TEST_CASE_2("slice/6", "[slice]", Z, float, double) {
     REQUIRE_EQUALS(a(1, 0, 2), 3.0);
 }
 
+TEMPLATE_TEST_CASE_2("slice/7", "[slice]", Z, float, double) {
+    etl::fast_matrix<Z, 4> a;
+
+    a.slice(0, 2) = 1.0;
+    a.slice(2, 4) = 2.0;
+
+    REQUIRE_EQUALS(a(0), 1.0);
+    REQUIRE_EQUALS(a(1), 1.0);
+    REQUIRE_EQUALS(a(2), 2.0);
+    REQUIRE_EQUALS(a(3), 2.0);
+
+    a.slice(0, 3) = 3.0;
+
+    REQUIRE_EQUALS(a(0), 3.0);
+    REQUIRE_EQUALS(a(1), 3.0);
+    REQUIRE_EQUALS(a(2), 3.0);
+    REQUIRE_EQUALS(a(3), 2.0);
+}
+
 TEMPLATE_TEST_CASE_2("slice/cm/1", "[slice]", Z, float, double) {
     etl::fast_matrix<Z, 2, 3> a_rm = {1.0, 2.0, 3.0, 4.0, 5.0, 6.0};
     etl::fast_matrix_cm<Z, 2, 3> a(a_rm);

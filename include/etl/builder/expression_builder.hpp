@@ -817,7 +817,6 @@ auto sub(E&& value, std::size_t i) -> detail::identity_helper<E, sub_view<detail
 template <typename E>
 auto slice(E&& value, std::size_t first, std::size_t last) -> detail::identity_helper<E, slice_view<detail::build_identity_type<E>>> {
     static_assert(is_etl_expr<E>::value, "etl::slice can only be used on ETL expressions");
-    static_assert(etl_traits<std::decay_t<E>>::dimensions() > 1, "Cannot use slice on vector");
     return detail::identity_helper<E, slice_view<detail::build_identity_type<E>>>{{value, first, last}};
 }
 
