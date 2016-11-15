@@ -443,7 +443,7 @@ TEMPLATE_TEST_CASE_2("dyn_vector/softplus", "dyn_vector::softplus", Z, double, f
     REQUIRE_EQUALS_APPROX(d[2], etl::math::softplus(Z(0.0)));
 }
 
-TEMPLATE_TEST_CASE_2("dyn_vector/exp", "dyn_vector::exp", Z, double, float) {
+TEMPLATE_TEST_CASE_2("dyn_vector/exp/1", "dyn_vector::exp", Z, double, float) {
     etl::dyn_vector<Z> a = {-1.0, 2.0, 0.0};
 
     etl::dyn_vector<Z> d(etl::exp(a));
@@ -451,6 +451,15 @@ TEMPLATE_TEST_CASE_2("dyn_vector/exp", "dyn_vector::exp", Z, double, float) {
     REQUIRE_EQUALS_APPROX(d[0], std::exp(Z(-1.0)));
     REQUIRE_EQUALS_APPROX(d[1], std::exp(Z(2.0)));
     REQUIRE_EQUALS_APPROX(d[2], std::exp(Z(0.0)));
+}
+
+TEMPLATE_TEST_CASE_2("dyn_vector/exp/2", "dyn_vector::exp", Z, double, float) {
+    etl::dyn_vector<Z> a(1033);
+    etl::dyn_vector<Z> c(etl::exp(a));
+
+    for(size_t i = 0; i < etl::size(a); ++i){
+        REQUIRE_EQUALS_APPROX(c[i], std::exp(a[i]));
+    }
 }
 
 TEMPLATE_TEST_CASE_2("dyn_vector/max", "dyn_vector::max", Z, double, float) {
