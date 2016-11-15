@@ -455,6 +455,7 @@ TEMPLATE_TEST_CASE_2("dyn_vector/exp/1", "dyn_vector::exp", Z, double, float) {
 
 TEMPLATE_TEST_CASE_2("dyn_vector/exp/2", "dyn_vector::exp", Z, double, float) {
     etl::dyn_vector<Z> a(1033);
+    a = 0.01 * etl::sequence_generator(1.0);
     etl::dyn_vector<Z> c(etl::exp(a));
 
     for(size_t i = 0; i < etl::size(a); ++i){
