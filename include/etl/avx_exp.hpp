@@ -253,14 +253,29 @@ ETL_INLINE_VEC_256 exp256_ps(__m256 x) {
     mask        = _mm256_and_ps(mask, one);
     fx          = _mm256_sub_ps(tmp, mask);
 
+#ifdef __FMA__
+    x        = _mm256_fnmadd_ps(fx, *(__m256*)_ps256_cephes_exp_C1, x);
+    x        = _mm256_fnmadd_ps(fx, *(__m256*)_ps256_cephes_exp_C2, x);
+    __m256 z;
+#else
     tmp      = _mm256_mul_ps(fx, *(__m256*)_ps256_cephes_exp_C1);
-    __m256 z = _mm256_mul_ps(fx, *(__m256*)_ps256_cephes_exp_C2);
     x        = _mm256_sub_ps(x, tmp);
+    __m256 z = _mm256_mul_ps(fx, *(__m256*)_ps256_cephes_exp_C2);
     x        = _mm256_sub_ps(x, z);
+#endif
 
     z = _mm256_mul_ps(x, x);
 
     __m256 y = *(__m256*)_ps256_cephes_exp_p0;
+
+#ifdef __FMA__
+    y        = _mm256_fmadd_ps(y, x, *(__m256*)_ps256_cephes_exp_p1);
+    y        = _mm256_fmadd_ps(y, x, *(__m256*)_ps256_cephes_exp_p2);
+    y        = _mm256_fmadd_ps(y, x, *(__m256*)_ps256_cephes_exp_p3);
+    y        = _mm256_fmadd_ps(y, x, *(__m256*)_ps256_cephes_exp_p4);
+    y        = _mm256_fmadd_ps(y, x, *(__m256*)_ps256_cephes_exp_p5);
+    y        = _mm256_fmadd_ps(y, z, x);
+#else
     y        = _mm256_mul_ps(y, x);
     y        = _mm256_add_ps(y, *(__m256*)_ps256_cephes_exp_p1);
     y        = _mm256_mul_ps(y, x);
@@ -273,6 +288,8 @@ ETL_INLINE_VEC_256 exp256_ps(__m256 x) {
     y        = _mm256_add_ps(y, *(__m256*)_ps256_cephes_exp_p5);
     y        = _mm256_mul_ps(y, z);
     y        = _mm256_add_ps(y, x);
+#endif
+
     y        = _mm256_add_ps(y, one);
 
     /* build 2^n */
