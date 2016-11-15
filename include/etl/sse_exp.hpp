@@ -193,30 +193,53 @@ ETL_INLINE_VEC_128D exp_pd(__m128d x) {
     /* x -= p * log2; */
     xmm0 = _mm_set1_pd(6.93145751953125E-1);
     xmm1 = _mm_set1_pd(1.42860682030941723212E-6);
+
+#ifdef __FMA__
+    x1 = _mm_fmsub_pd(p1, xmm0, a1);
+    x1 = _mm_fmsub_pd(p1, xmm1, a1);
+#else
     a1 = _mm_mul_pd(p1, xmm0);
     x1 = _mm_sub_pd(x1, a1);
     a1 = _mm_mul_pd(p1, xmm1);
     x1 = _mm_sub_pd(x1, a1);
+#endif
 
     /* Compute e^x using a polynomial approximation. */
     xmm0 = _mm_set1_pd(1.185268231308989403584147407056378360798378534739e-2);
     xmm1 = _mm_set1_pd(3.87412011356070379615759057344100690905653320886699e-2);
+
+#ifdef __FMA__
+    a1 = _mm_fmadd_pd(x1, xmm0, xmm1);
+#else
     a1 = _mm_mul_pd(x1, xmm0);
     a1 = _mm_add_pd(a1, xmm1);
+#endif
 
     xmm0 = _mm_set1_pd(0.16775408658617866431779970932853611481292418818223);
     xmm1 = _mm_set1_pd(0.49981934577169208735732248650232562589934399402426);
+
+#ifdef __FMA__
+    a1 = _mm_fmadd_pd(a1, x1, xmm0);
+    a1 = _mm_fmadd_pd(a1, x1, xmm1);
+#else
     a1 = _mm_mul_pd(a1, x1);
     a1 = _mm_add_pd(a1, xmm0);
     a1 = _mm_mul_pd(a1, x1);
     a1 = _mm_add_pd(a1, xmm1);
+#endif
 
     xmm0 = _mm_set1_pd(1.00001092396453942157124178508842412412025643386873);
     xmm1 = _mm_set1_pd(0.99999989311082729779536722205742989232069120354073);
+
+#ifdef __FMA__
+    a1 = _mm_fmadd_pd(a1, x1, xmm0);
+    a1 = _mm_fmadd_pd(a1, x1, xmm1);
+#else
     a1 = _mm_mul_pd(a1, x1);
     a1 = _mm_add_pd(a1, xmm0);
     a1 = _mm_mul_pd(a1, x1);
     a1 = _mm_add_pd(a1, xmm1);
+#endif
 
     /* p = 2^k; */
     k1 = _mm_add_epi32(k1, offset);
