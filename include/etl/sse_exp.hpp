@@ -60,6 +60,7 @@ namespace etl {
 
 PS_CONST(1, 1.0f);
 PS_CONST(0p5, 0.5f);
+
 /* the smallest non denormalized float number */
 PS_CONST_TYPE(min_norm_pos, int, 0x00800000);
 PS_CONST_TYPE(mant_mask, int, 0x7f800000);
@@ -161,6 +162,85 @@ PS_CONST(cephes_exp_p2, 8.3334519073E-3);
 PS_CONST(cephes_exp_p3, 4.1665795894E-2);
 PS_CONST(cephes_exp_p4, 1.6666665459E-1);
 PS_CONST(cephes_exp_p5, 5.0000001201E-1);
+
+#define CONST_128D(var, val) \
+    __attribute__((aligned(16))) static const double var[2] = {(val), (val)}
+
+ETL_INLINE_VEC_128D exp_pd(__m128d x) {
+    CONST_128D(w5, 1.185268231308989403584147407056378360798378534739e-2);
+    CONST_128D(w4, 3.87412011356070379615759057344100690905653320886699e-2);
+    CONST_128D(w3, 0.16775408658617866431779970932853611481292418818223);
+    CONST_128D(w2, 0.49981934577169208735732248650232562589934399402426);
+    CONST_128D(w1, 1.00001092396453942157124178508842412412025643386873);
+    CONST_128D(w0, 0.99999989311082729779536722205742989232069120354073);
+
+    const __m128i offset = _mm_setr_epi32(1023, 1023, 0, 0);
+
+    __m128i k1;
+    __m128d p1;
+    __m128d a1;
+    __m128d xmm0, xmm1;
+    __m128d x1;
+
+    /* Load four double values. */
+    xmm0 = _mm_set1_pd(7.09782712893383996843e2);
+    xmm1 = _mm_set1_pd(-7.08396418532264106224e2);
+    //x1 = x;
+    x1 = _mm_min_pd(x, xmm0);
+    x1 = _mm_max_pd(x1, xmm1);
+
+    /* a = x / log2; */
+    xmm0 = _mm_set1_pd(1.4426950408889634073599);
+    xmm1 = _mm_setzero_pd();
+    a1 = _mm_mul_pd(x1, xmm0);
+
+    /* k = (int)floor(a); p = (float)k; */
+    p1 = _mm_cmplt_pd(a1, xmm1);
+    xmm0 = _mm_set1_pd(1.0);
+    p1 = _mm_and_pd(p1, xmm0);
+    a1 = _mm_sub_pd(a1, p1);
+    k1 = _mm_cvttpd_epi32(a1);
+    p1 = _mm_cvtepi32_pd(k1);
+
+    /* x -= p * log2; */
+    xmm0 = _mm_set1_pd(6.93145751953125E-1);
+    xmm1 = _mm_set1_pd(1.42860682030941723212E-6);
+    a1 = _mm_mul_pd(p1, xmm0);
+    x1 = _mm_sub_pd(x1, a1);
+    a1 = _mm_mul_pd(p1, xmm1);
+    x1 = _mm_sub_pd(x1, a1);
+
+    /* Compute e^x using a polynomial approximation. */
+    xmm0 = _mm_load_pd(w5);
+    xmm1 = _mm_load_pd(w4);
+    a1 = _mm_mul_pd(x1, xmm0);
+    a1 = _mm_add_pd(a1, xmm1);
+
+    xmm0 = _mm_load_pd(w3);
+    xmm1 = _mm_load_pd(w2);
+    a1 = _mm_mul_pd(a1, x1);
+    a1 = _mm_add_pd(a1, xmm0);
+    a1 = _mm_mul_pd(a1, x1);
+    a1 = _mm_add_pd(a1, xmm1);
+
+    xmm0 = _mm_load_pd(w1);
+    xmm1 = _mm_load_pd(w0);
+    a1 = _mm_mul_pd(a1, x1);
+    a1 = _mm_add_pd(a1, xmm0);
+    a1 = _mm_mul_pd(a1, x1);
+    a1 = _mm_add_pd(a1, xmm1);
+
+    /* p = 2^k; */
+    k1 = _mm_add_epi32(k1, offset);
+    k1 = _mm_slli_epi32(k1, 20);
+    k1 = _mm_shuffle_epi32(k1, _MM_SHUFFLE(1,3,0,2));
+    p1 = _mm_castsi128_pd(k1);
+
+    /* a *= 2^k. */
+    a1 = _mm_mul_pd(a1, p1);
+
+    return a1;
+}
 
 ETL_INLINE_VEC_128 exp_ps(__m128 x) {
     __m128 tmp, fx;

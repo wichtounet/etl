@@ -378,6 +378,10 @@ struct sse_vec {
         return etl::exp_ps(x);
     }
 
+    ETL_INLINE_VEC_128D exp(__m128d x) {
+        return etl::exp_pd(x);
+    }
+
     ETL_INLINE_VEC_128 log(__m128 x) {
         return etl::log_ps(x);
     }
