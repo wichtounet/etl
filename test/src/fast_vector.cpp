@@ -437,9 +437,9 @@ TEMPLATE_TEST_CASE_2("fast_vector/sigmoid", "fast_vector::sigmoid", Z, float, do
 
     etl::fast_vector<Z, 3> d(etl::sigmoid(a));
 
-    REQUIRE_EQUALS(d[0], etl::math::logistic_sigmoid(Z(-1.0)));
-    REQUIRE_EQUALS(d[1], etl::math::logistic_sigmoid(Z(2.0)));
-    REQUIRE_EQUALS(d[2], etl::math::logistic_sigmoid(Z(0.0)));
+    REQUIRE_EQUALS_APPROX(d[0], etl::math::logistic_sigmoid(Z(-1.0)));
+    REQUIRE_EQUALS_APPROX(d[1], etl::math::logistic_sigmoid(Z(2.0)));
+    REQUIRE_EQUALS_APPROX(d[2], etl::math::logistic_sigmoid(Z(0.0)));
 }
 
 TEMPLATE_TEST_CASE_2("fast_sigmoid/1", "[sigmoid]", Z, float, double) {
