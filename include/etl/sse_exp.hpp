@@ -195,8 +195,8 @@ ETL_INLINE_VEC_128D exp_pd(__m128d x) {
     xmm1 = _mm_set1_pd(1.42860682030941723212E-6);
 
 #ifdef __FMA__
-    x1 = _mm_fmsub_pd(p1, xmm0, a1);
-    x1 = _mm_fmsub_pd(p1, xmm1, a1);
+    x1 = _mm_fnmadd_pd(p1, xmm0, x1);
+    x1 = _mm_fnmadd_pd(p1, xmm1, x1);
 #else
     a1 = _mm_mul_pd(p1, xmm0);
     x1 = _mm_sub_pd(x1, a1);
