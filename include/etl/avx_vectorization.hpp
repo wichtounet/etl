@@ -369,6 +369,10 @@ struct avx_vec {
 
     //Exponential
 
+    ETL_INLINE_VEC_256D exp(__m256d x) {
+        return etl::exp256_pd(x);
+    }
+
     ETL_INLINE_VEC_256 exp(__m256 x) {
         return etl::exp256_ps(x);
     }

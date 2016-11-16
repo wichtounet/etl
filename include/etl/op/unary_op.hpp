@@ -189,7 +189,7 @@ struct exp_unary_op {
     template <vector_mode_t V>
     using vectorizable = cpp::bool_constant<
             (V == vector_mode_t::SSE3 && !is_complex_t<T>::value)
-        ||  (V == vector_mode_t::AVX && is_single_precision_t<T>::value)
+        ||  (V == vector_mode_t::AVX && !is_complex_t<T>::value)
         ||  (intel_compiler && !is_complex_t<T>::value)>;
 
     /*!

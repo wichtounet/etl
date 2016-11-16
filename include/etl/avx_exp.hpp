@@ -234,6 +234,84 @@ ETL_PS_256_CONST(cephes_exp_p3, 4.1665795894E-2);
 ETL_PS_256_CONST(cephes_exp_p4, 1.6666665459E-1);
 ETL_PS_256_CONST(cephes_exp_p5, 5.0000001201E-1);
 
+ETL_INLINE_VEC_256D exp256_pd(__m256d x) {
+    auto t1 = _mm256_mul_pd(x, _mm256_set1_pd(1.44269504088896340736));
+    auto r = _mm256_round_pd(t1, 8);
+
+#ifdef __FMA__
+    x = _mm256_fnmadd_pd(r, _mm256_set1_pd(0.693145751953125), x);
+    x = _mm256_fnmadd_pd(r, _mm256_set1_pd(1.42860682030941723212E-6), x);
+#else
+    auto t3 = _mm256_mul_pd(r, _mm256_set1_pd(0.693145751953125));
+    x = _mm256_sub_pd(x, t3);
+    auto t4 = _mm256_mul_pd(r, _mm256_set1_pd(1.42860682030941723212E-6));
+    x = _mm256_sub_pd(x, t4);
+#endif
+
+    auto x2 = _mm256_mul_pd(x, x);
+    auto x4 = _mm256_mul_pd(x2, x2);
+    auto x8 = _mm256_mul_pd(x4, x4);
+
+#ifdef __FMA__
+    auto pt1 = _mm256_fmadd_pd(_mm256_set1_pd(1.0/6227020800.0), x, _mm256_set1_pd(1.0/479001600.0));
+    auto pt2 = _mm256_fmadd_pd(_mm256_set1_pd(1.0/39916800.0), x, _mm256_set1_pd(1.0/3628800.0));
+    auto pt3 = _mm256_fmadd_pd(_mm256_set1_pd(1.0/362880.0), x, _mm256_set1_pd(1.0/40320.0));
+    auto pt4 = _mm256_fmadd_pd(_mm256_set1_pd(1.0/5040.0), x, _mm256_set1_pd(1.0/720.0));
+    auto pt5 = _mm256_fmadd_pd(_mm256_set1_pd(1.0/120.0), x, _mm256_set1_pd(1.0/24.0));
+    auto pt6 = _mm256_fmadd_pd(_mm256_set1_pd(1.0/6.0), x, _mm256_set1_pd(1.0/2.0));
+
+    auto pt7 = _mm256_fmadd_pd(pt2, x2, pt3);
+    auto pt8 = _mm256_fmadd_pd(pt4, x2, pt5);
+    auto pt9 = _mm256_fmadd_pd(pt6, x2, x);
+    auto pt10 = _mm256_fmadd_pd(pt1, x4, pt7);
+    auto pt11 = _mm256_fmadd_pd(pt8, x4, pt9);
+
+    auto z = _mm256_fmadd_pd(pt10, x8, pt11);
+#else
+    auto pt1 = _mm256_add_pd(_mm256_mul_pd(_mm256_set1_pd(1.0/6227020800.0), x), _mm256_set1_pd(1.0/479001600.0));
+    auto pt2 = _mm256_add_pd(_mm256_mul_pd(_mm256_set1_pd(1.0/39916800.0), x), _mm256_set1_pd(1.0/3628800.0));
+    auto pt3 = _mm256_add_pd(_mm256_mul_pd(_mm256_set1_pd(1.0/362880.0), x), _mm256_set1_pd(1.0/40320.0));
+    auto pt4 = _mm256_add_pd(_mm256_mul_pd(_mm256_set1_pd(1.0/5040.0), x), _mm256_set1_pd(1.0/720.0));
+    auto pt5 = _mm256_add_pd(_mm256_mul_pd(_mm256_set1_pd(1.0/120.0), x), _mm256_set1_pd(1.0/24.0);
+    auto pt6 = _mm256_add_pd(_mm256_mul_pd(_mm256_set1_pd(1.0/6.0), x), _mm256_set1_pd(1.0/2.0));
+
+    auto pt7 = _mm256_add_pd(_mm256_mul_pd(pt2, x2), pt3);
+    auto pt8 = _mm256_add_pd(_mm256_mul_pd(pt4, x2), pt5);
+    auto pt9 = _mm256_add_pd(_mm256_mul_pd(pt6, x2), x);
+    auto pt10 = _mm256_add_pd(_mm256_mul_pd(pt1, x4), pt7);
+    auto pt11 = _mm256_add_pd(_mm256_mul_pd(pt8, x4), pt9);
+
+    auto z = _mm256_add_pd(_mm256_mul_pd(pt10, x8), pt11);
+#endif
+
+    __m256d a = r + _mm256_set1_pd(1023.0 + 4503599627370496.0);
+    __m256i b = _mm256_castpd_si256(a);
+
+#ifdef __AVX2__
+    __m256i c = _mm256_slli_epi64(b, 52);
+#else
+    // This sucks ass, so much...
+
+    auto a1 = _mm256_castsi256_si128(b);
+    auto a2 = _mm256_extractf128_si256(b, 1);
+
+    auto s = _mm_set_epi32(0, 52, 0, 52);
+    auto b1 = _mm_sll_epi64( a1, s);
+    auto b2 = _mm_sll_epi64( a2, s);
+
+    __m256i c  =  _mm256_castsi128_si256 ( b1 );
+    c =  _mm256_insertf128_si256 (  c, b2, 1 );
+#endif
+
+    __m256d n2 = _mm256_castsi256_pd(c);
+
+    auto t5 = _mm256_add_pd(z, _mm256_set1_pd(1.0));
+    z = _mm256_mul_pd(t5, n2);
+
+    return z;
+}
+
+
 ETL_INLINE_VEC_256 exp256_ps(__m256 x) {
     __m256 tmp, fx;
     __m256i imm0;
