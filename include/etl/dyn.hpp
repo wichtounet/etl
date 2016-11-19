@@ -82,7 +82,7 @@ public:
      * \param rhs The matrix to copy
      */
     dyn_matrix_impl(const dyn_matrix_impl& rhs) noexcept : base_type(rhs) {
-        _memory = allocate(alloc_size<T>(_size));
+        _memory = allocate(alloc_size_mat<T>(_size, dim(n_dimensions - 1)));
 
         direct_copy(rhs.memory_start(), rhs.memory_end(), memory_start());
     }
@@ -102,7 +102,7 @@ public:
      */
     template <typename T2, order SO2, std::size_t D2, cpp_enable_if(SO2 == SO)>
     dyn_matrix_impl(const dyn_matrix_impl<T2, SO2, D2>& rhs) noexcept : base_type(rhs){
-        _memory = allocate(alloc_size<T>(_size));
+        _memory = allocate(alloc_size_mat<T>(_size, dim(n_dimensions - 1)));
 
         direct_copy(rhs.memory_start(), rhs.memory_end(), memory_start());
     }
@@ -113,7 +113,7 @@ public:
      */
     template <typename T2, order SO2, std::size_t D2, cpp_disable_if(SO2 == SO)>
     dyn_matrix_impl(const dyn_matrix_impl<T2, SO2, D2>& rhs) noexcept : base_type(rhs){
-        _memory = allocate(alloc_size<T>(_size));
+        _memory = allocate(alloc_size_mat<T>(_size, dim(n_dimensions - 1)));
 
         //The type is different, so we must use assign
         assign_evaluate(rhs, *this);
@@ -129,7 +129,7 @@ public:
                               !is_dyn_matrix<E>::value)>
     explicit dyn_matrix_impl(E&& e) noexcept
             : base_type(e){
-        _memory = allocate(alloc_size<T>(_size));
+        _memory = allocate(alloc_size_mat<T>(_size, dim(n_dimensions - 1)));
 
         assign_evaluate(e, *this);
     }
@@ -139,7 +139,7 @@ public:
      * \param list Initializer list containing all the values of the vector
      */
     dyn_matrix_impl(std::initializer_list<value_type> list) noexcept : base_type(list.size(), {{list.size()}}) {
-        _memory = allocate(alloc_size<T>(_size));
+        _memory = allocate(alloc_size_mat<T>(_size, dim(n_dimensions - 1)));
 
         static_assert(n_dimensions == 1, "This constructor can only be used for 1D matrix");
 
@@ -158,7 +158,7 @@ public:
                                  cpp::all_convertible_to<std::size_t, S...>::value,
                                  cpp::is_homogeneous<typename cpp::first_type<S...>::type, S...>::value)>
     explicit dyn_matrix_impl(S... sizes) noexcept : base_type(dyn_detail::size(sizes...), {{static_cast<std::size_t>(sizes)...}}) {
-        _memory = allocate(alloc_size<T>(_size));
+        _memory = allocate(alloc_size_mat<T>(_size, dim(n_dimensions - 1)));
     }
 
     /*!
@@ -168,7 +168,7 @@ public:
     template <typename... S, cpp_enable_if(dyn_detail::is_initializer_list_constructor<S...>::value)>
     explicit dyn_matrix_impl(S... sizes) noexcept : base_type(dyn_detail::size(std::make_index_sequence<(sizeof...(S)-1)>(), sizes...),
                                                               dyn_detail::sizes(std::make_index_sequence<(sizeof...(S)-1)>(), sizes...)) {
-        _memory = allocate(alloc_size<T>(_size));
+        _memory = allocate(alloc_size_mat<T>(_size, dim(n_dimensions - 1)));
 
         static_assert(sizeof...(S) == D + 1, "Invalid number of dimensions");
 
@@ -185,7 +185,7 @@ public:
                                  cpp::is_specialization_of<values_t, typename cpp::last_type<std::size_t, S...>::type>::value)>
     explicit dyn_matrix_impl(std::size_t s1, S... sizes) noexcept : base_type(dyn_detail::size(std::make_index_sequence<(sizeof...(S))>(), s1, sizes...),
                                                                               dyn_detail::sizes(std::make_index_sequence<(sizeof...(S))>(), s1, sizes...)) {
-        _memory = allocate(alloc_size<T>(_size));
+        _memory = allocate(alloc_size_mat<T>(_size, dim(n_dimensions - 1)));
 
         auto list = cpp::last_value(sizes...).template list<value_type>();
         std::copy(list.begin(), list.end(), begin());
@@ -209,7 +209,7 @@ public:
                                                                dyn_detail::size(std::make_index_sequence<(sizeof...(S))>(), s1, sizes...),
                                                                dyn_detail::sizes(std::make_index_sequence<(sizeof...(S))>(), s1, sizes...)
                                                             ){
-        _memory = allocate(alloc_size<T>(_size));
+        _memory = allocate(alloc_size_mat<T>(_size, dim(n_dimensions - 1)));
 
         intel_decltype_auto value = cpp::last_value(s1, sizes...);
         std::fill(begin(), end(), value);
@@ -230,7 +230,7 @@ public:
                                               )>
     explicit dyn_matrix_impl(S1 s1, S... sizes) noexcept : base_type(dyn_detail::size(std::make_index_sequence<(sizeof...(S))>(), s1, sizes...),
                                                                      dyn_detail::sizes(std::make_index_sequence<(sizeof...(S))>(), s1, sizes...)) {
-        _memory = allocate(alloc_size<T>(_size));
+        _memory = allocate(alloc_size_mat<T>(_size, dim(n_dimensions - 1)));
 
         intel_decltype_auto e = cpp::last_value(sizes...);
 
@@ -249,7 +249,7 @@ public:
     template <typename... S, cpp_enable_if(dyn_detail::is_init_constructor<S...>::value)>
     explicit dyn_matrix_impl(S... sizes) noexcept : base_type(dyn_detail::size(std::make_index_sequence<(sizeof...(S)-2)>(), sizes...),
                                                               dyn_detail::sizes(std::make_index_sequence<(sizeof...(S)-2)>(), sizes...)) {
-        _memory = allocate(alloc_size<T>(_size));
+        _memory = allocate(alloc_size_mat<T>(_size, dim(n_dimensions - 1)));
 
         static_assert(sizeof...(S) == D + 2, "Invalid number of dimensions");
 
@@ -267,7 +267,7 @@ public:
                                       std::is_convertible<typename Container::value_type, value_type>::value)>
     explicit dyn_matrix_impl(const Container& container)
             : base_type(container.size(), {{container.size()}}){
-        _memory = allocate(alloc_size<T>(_size));
+        _memory = allocate(alloc_size_mat<T>(_size, dim(n_dimensions - 1)));
 
         static_assert(D == 1, "Only 1D matrix can be constructed from containers");
 
@@ -288,7 +288,7 @@ public:
             if (!_size) {
                 _size       = rhs._size;
                 _dimensions = rhs._dimensions;
-                _memory     = allocate(alloc_size<T>(_size));
+                _memory     = allocate(alloc_size_mat<T>(_size, dim(n_dimensions - 1)));
             } else {
                 validate_assign(*this, rhs);
             }
@@ -336,7 +336,7 @@ public:
         auto new_size = std::accumulate(dimensions.begin(), dimensions.end(), std::size_t(1), std::multiplies<std::size_t>());
 
         if(_memory){
-            auto new_memory = allocate(alloc_size<T>(new_size));
+            auto new_memory = allocate(alloc_size_mat<T>(new_size, (dimensions.back())));
 
             for (std::size_t i = 0; i < std::min(_size, new_size); ++i) {
                 new_memory[i] = _memory[i];
@@ -346,7 +346,7 @@ public:
 
             _memory = new_memory;
         } else {
-            _memory     = allocate(alloc_size<T>(new_size));
+            _memory     = allocate(alloc_size_mat<T>(new_size, (dimensions.back())));
         }
 
         _size       = new_size;
@@ -364,7 +364,7 @@ public:
         auto new_size = dyn_detail::size(sizes...);
 
         if(_memory){
-            auto new_memory = allocate(alloc_size<T>(new_size));
+            auto new_memory = allocate(alloc_size_mat<T>(new_size, cpp::last_value(sizes...)));
 
             for (std::size_t i = 0; i < std::min(_size, new_size); ++i) {
                 new_memory[i] = _memory[i];
@@ -374,7 +374,7 @@ public:
 
             _memory = new_memory;
         } else {
-            _memory     = allocate(alloc_size<T>(new_size));
+            _memory     = allocate(alloc_size_mat<T>(new_size, cpp::last_value(sizes...)));
         }
 
         _size       = new_size;
@@ -576,7 +576,7 @@ private:
         }
 
         // Allocate the new memory
-        _memory = allocate(alloc_size<T>(_size));
+        _memory = allocate(alloc_size_mat<T>(_size, dim(n_dimensions - 1)));
     }
 };
 

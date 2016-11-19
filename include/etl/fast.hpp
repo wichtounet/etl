@@ -67,7 +67,7 @@ private:
      */
     template <typename S = ST, cpp_enable_if(matrix_detail::is_vector<S>::value)>
     void init() {
-        _data.resize(alloc_size<value_type>(etl_size));
+        _data.resize(alloc_size_mat<value_type>(size(), this_type::template dim<n_dimensions - 1>()));
     }
 
     /*!
