@@ -20,6 +20,8 @@ namespace vec {
 
 template <typename V, typename L, typename R>
 value_t<L> selected_dot(const L& lhs, const R& rhs) {
+    //Note: Padding cannot be taken into account since the padded elements are not guranteed to be zero
+
     using vec_type = V;
     using T        = value_t<L>;
 
@@ -28,8 +30,6 @@ value_t<L> selected_dot(const L& lhs, const R& rhs) {
     auto n = etl::size(lhs);
 
     size_t i = 0;
-
-    //TODO THe results are not very good for large vectors
 
     auto r1 = vec_type::template zero<T>();
     auto r2 = vec_type::template zero<T>();

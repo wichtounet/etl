@@ -20,6 +20,8 @@ namespace vec {
 
 template <typename V, typename L>
 value_t<L> selected_sum(const L& lhs, size_t first, size_t last) {
+    //Note: Padding cannot be taken into account since the padded elements are not guranteed to be zero
+
     using vec_type = V;
     using T        = value_t<L>;
 
