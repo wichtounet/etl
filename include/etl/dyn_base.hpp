@@ -178,6 +178,10 @@ protected:
             new (memory) M[n]();
         }
 
+        if(padding){
+            std::fill_n(memory, n, M());
+        }
+
         return memory;
     }
 
