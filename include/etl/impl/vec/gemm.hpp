@@ -25,6 +25,9 @@ void gemv_small_kernel(const A& a, const B& b, C& c) {
     const auto m = rows(a);
     const auto n = columns(a);
 
+    static constexpr bool remainder = !padding || !all_padded<A, B>::value;
+    const size_t last = remainder ? (n & size_t(-vec_size)) : n;
+
     size_t i = 0;
 
     // 8-Unrolled outer loop
@@ -41,7 +44,7 @@ void gemv_small_kernel(const A& a, const B& b, C& c) {
         size_t k = 0;
 
         // Vectorized inner loop
-        for (; k + vec_size - 1 < n; k += vec_size) {
+        for (; k < last; k += vec_size) {
             auto b1 = b.template loadu<vec_type>(k);
 
             auto a1 = a.template loadu<vec_type>((i + 0) * n + k);
@@ -73,7 +76,7 @@ void gemv_small_kernel(const A& a, const B& b, C& c) {
         c[i + 7] = vec_type::template hadd<T>(r8);
 
         // Remainder inner loop
-        for (; k < n; ++k) {
+        for (; remainder && k < n; ++k) {
             c[i + 0] += a(i + 0, k) * b(k);
             c[i + 1] += a(i + 1, k) * b(k);
             c[i + 2] += a(i + 2, k) * b(k);
@@ -93,7 +96,7 @@ void gemv_small_kernel(const A& a, const B& b, C& c) {
         size_t k = 0;
 
         // Vectorized inner loop
-        for (; k + vec_size - 1 < n; k += vec_size) {
+        for (; k < last; k += vec_size) {
             auto b1 = b.template loadu<vec_type>(k);
 
             auto a1 = a.template loadu<vec_type>((i + 0) * n + k);
@@ -107,7 +110,7 @@ void gemv_small_kernel(const A& a, const B& b, C& c) {
         c[i + 1] = vec_type::template hadd<T>(r2);
 
         // Remainder inner loop
-        for (; k < n; ++k) {
+        for (; remainder && k < n; ++k) {
             c[i + 0] += a(i + 0, k) * b(k);
             c[i + 1] += a(i + 1, k) * b(k);
         }
@@ -120,7 +123,7 @@ void gemv_small_kernel(const A& a, const B& b, C& c) {
         size_t k = 0;
 
         // Vectorized inner loop
-        for (; k + vec_size - 1 < n; k += vec_size) {
+        for (; k < last; k += vec_size) {
             auto a1 = a.template loadu<vec_type>(i * n + k);
             auto b1 = b.template loadu<vec_type>(k);
             r1 = vec_type::template fmadd<Cx>(a1, b1, r1);
@@ -129,7 +132,7 @@ void gemv_small_kernel(const A& a, const B& b, C& c) {
         auto result = vec_type::template hadd<T>(r1);
 
         // Remainder inner loop
-        for (; k < n; ++k) {
+        for (; remainder && k < n; ++k) {
             result += a(i, k) * b(k);
         }
 
@@ -148,6 +151,9 @@ void gemv_large_kernel(const A& a, const B& b, C& c) {
     const auto m = rows(a);
     const auto n = columns(a);
 
+    static constexpr bool remainder = !padding || !all_padded<A, B>::value;
+    const size_t last = remainder ? (n & size_t(-vec_size)) : n;
+
     size_t i = 0;
 
     // 8-Unrolled outer loop
@@ -164,7 +170,7 @@ void gemv_large_kernel(const A& a, const B& b, C& c) {
         size_t k = 0;
 
         // 4-Unrolled Vectorized inner loop
-        for (; k + (vec_size * 4) - 1 < n; k += vec_size * 4) {
+        for (; k + (vec_size * 3) < last; k += vec_size * 4) {
             const auto k1 = k + 0 * vec_size;
             const auto k2 = k + 1 * vec_size;
             const auto k3 = k + 2 * vec_size;
@@ -213,7 +219,7 @@ void gemv_large_kernel(const A& a, const B& b, C& c) {
         }
 
         // 2-Unrolled Vectorized inner loop
-        for (; k + (vec_size * 2) - 1 < n; k += vec_size * 2) {
+        for (; k + (vec_size) < last; k += vec_size * 2) {
             const auto k1 = k + 0 * vec_size;
             const auto k2 = k + 1 * vec_size;
 
@@ -240,7 +246,7 @@ void gemv_large_kernel(const A& a, const B& b, C& c) {
         }
 
         // Vectorized inner loop
-        for (; k + vec_size - 1 < n; k += vec_size) {
+        if (k < last) {
             auto b1 = b.template loadu<vec_type>(k);
 
             r1 = vec_type::template fmadd<Cx>(a.template loadu<vec_type>((i + 0) * n + k), b1, r1);
@@ -251,6 +257,8 @@ void gemv_large_kernel(const A& a, const B& b, C& c) {
             r6 = vec_type::template fmadd<Cx>(a.template loadu<vec_type>((i + 5) * n + k), b1, r6);
             r7 = vec_type::template fmadd<Cx>(a.template loadu<vec_type>((i + 6) * n + k), b1, r7);
             r8 = vec_type::template fmadd<Cx>(a.template loadu<vec_type>((i + 7) * n + k), b1, r8);
+
+            k += vec_size;
         }
 
         c[i + 0] = vec_type::template hadd<T>(r1);
@@ -263,7 +271,7 @@ void gemv_large_kernel(const A& a, const B& b, C& c) {
         c[i + 7] = vec_type::template hadd<T>(r8);
 
         // Remainder inner loop
-        for (; k < n; ++k) {
+        for (; remainder && k < n; ++k) {
             c[i + 0] += a(i + 0, k) * b(k);
             c[i + 1] += a(i + 1, k) * b(k);
             c[i + 2] += a(i + 2, k) * b(k);
@@ -283,7 +291,7 @@ void gemv_large_kernel(const A& a, const B& b, C& c) {
         size_t k = 0;
 
         // 4-Unrolled Vectorized inner loop
-        for (; k + (vec_size * 4) - 1 < n; k += vec_size * 4) {
+        for (; k + (vec_size * 3) < last; k += vec_size * 4) {
             const auto k1 = k + 0 * vec_size;
             const auto k2 = k + 1 * vec_size;
             const auto k3 = k + 2 * vec_size;
@@ -308,7 +316,7 @@ void gemv_large_kernel(const A& a, const B& b, C& c) {
         }
 
         // 2-Unrolled Vectorized inner loop
-        for (; k + (vec_size * 2) - 1 < n; k += vec_size * 2) {
+        for (; k + vec_size < last; k += vec_size * 2) {
             const auto k1 = k + 0 * vec_size;
             const auto k2 = k + 1 * vec_size;
 
@@ -323,18 +331,20 @@ void gemv_large_kernel(const A& a, const B& b, C& c) {
         }
 
         // Vectorized inner loop
-        for (; k + vec_size - 1 < n; k += vec_size) {
+        if (k < last) {
             auto b1 = b.template loadu<vec_type>(k);
 
             r1 = vec_type::template fmadd<Cx>(a.template loadu<vec_type>((i + 0) * n + k), b1, r1);
             r2 = vec_type::template fmadd<Cx>(a.template loadu<vec_type>((i + 1) * n + k), b1, r2);
+
+            k += vec_size;
         }
 
         c[i + 0] = vec_type::template hadd<T>(r1);
         c[i + 1] = vec_type::template hadd<T>(r2);
 
         // Remainder inner loop
-        for (; k < n; ++k) {
+        for (; remainder && k < n; ++k) {
             c[i + 0] += a(i + 0, k) * b(k);
             c[i + 1] += a(i + 1, k) * b(k);
         }
@@ -347,7 +357,7 @@ void gemv_large_kernel(const A& a, const B& b, C& c) {
         size_t k = 0;
 
         // Vectorized inner loop
-        for (; k + vec_size - 1 < n; k += vec_size) {
+        for (; k < last; k += vec_size) {
             auto b1 = b.template loadu<vec_type>(k);
             r1 = vec_type::template fmadd<Cx>(a.template loadu<vec_type>((i + 0) * n + k), b1, r1);
         }
@@ -355,7 +365,7 @@ void gemv_large_kernel(const A& a, const B& b, C& c) {
         auto result = vec_type::template hadd<T>(r1);
 
         // Remainder inner loop
-        for (; k < n; ++k) {
+        for (; remainder && k < n; ++k) {
             result += a(i, k) * b(k);
         }
 
