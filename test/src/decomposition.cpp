@@ -59,6 +59,7 @@ TEMPLATE_TEST_CASE_2("globals/lu/2", "[globals][LU]", Z, float, double) {
 
     etl::lu(A, L, U, P);
 
+    //TODO Review this test
     REQUIRE_EQUALS((P * A == L * U), true);
 
     REQUIRE_EQUALS_APPROX(L(0, 0), Z(1.0));
