@@ -7,17 +7,8 @@
 
 #ifdef ETL_VECTORIZE_IMPL
 #ifdef __AVX__
-#define TEST_AVX
-#endif
-#ifdef __SSE3__
-#define TEST_SSE
-#endif
-#endif
-
-#ifdef ETL_VECTORIZE_IMPL
-#ifdef TEST_AVX
 #define TEST_VEC
-#elif defined(TEST_SSE)
+#elif defined(__SSE3__)
 #define TEST_VEC
 #endif
 #endif
@@ -42,22 +33,6 @@ DOT_FUNCTOR(vec_dot, SELECTED_SECTION(etl::dot_impl::VEC) { c = etl::dot(a, b); 
 #define DOT_TEST_CASE_SECTION_VEC DOT_TEST_CASE_SECTIONS(vec_dot)
 #else
 #define DOT_TEST_CASE_SECTION_VEC
-#endif
-
-#ifdef TEST_SSE
-DOT_FUNCTOR(sse_dot, SELECTED_SECTION(etl::dot_impl::SSE) { c = etl::dot(a, b); })
-
-#define DOT_TEST_CASE_SECTION_SSE DOT_TEST_CASE_SECTIONS(sse_dot)
-#else
-#define DOT_TEST_CASE_SECTION_SSE
-#endif
-
-#ifdef TEST_AVX
-DOT_FUNCTOR(avx_dot, SELECTED_SECTION(etl::dot_impl::AVX) { c = etl::dot(a, b); })
-
-#define DOT_TEST_CASE_SECTION_AVX DOT_TEST_CASE_SECTIONS(avx_dot)
-#else
-#define DOT_TEST_CASE_SECTION_AVX
 #endif
 
 #ifdef ETL_BLAS_MODE
@@ -91,8 +66,6 @@ DOT_FUNCTOR(blas_dot, SELECTED_SECTION(etl::dot_impl::BLAS) { c = etl::dot(a, b)
         DOT_TEST_CASE_SECTION_DEFAULT        \
         DOT_TEST_CASE_SECTION_STD            \
         DOT_TEST_CASE_SECTION_VEC            \
-        DOT_TEST_CASE_SECTION_SSE            \
-        DOT_TEST_CASE_SECTION_AVX            \
         DOT_TEST_CASE_SECTION_BLAS           \
     }                                        \
     DOT_TEST_CASE_DEFN

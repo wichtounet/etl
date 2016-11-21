@@ -14,8 +14,6 @@
 
 //Include the implementations
 #include "etl/impl/std/dot.hpp"
-#include "etl/impl/sse/dot.hpp"
-#include "etl/impl/avx/dot.hpp"
 #include "etl/impl/blas/dot.hpp"
 #include "etl/impl/vec/dot.hpp"
 
@@ -38,7 +36,7 @@ cpp14_constexpr etl::dot_impl select_default_dot_impl() {
         return etl::dot_impl::BLAS;
     }
 
-    if (decay_traits<A>::template vectorizable<vector_mode>::value && decay_traits<B>::template vectorizable<vector_mode>::value && vec_enabled) {
+    if (vec_enabled && all_vectorizable<vector_mode, A, B>::value && std::is_same<intrinsic_type<value_t<A>>, intrinsic_type<value_t<B>>>::value) {
         return etl::dot_impl::VEC;
     }
 
@@ -61,24 +59,6 @@ etl::dot_impl select_dot_impl() {
             case dot_impl::BLAS:
                 if (!is_cblas_enabled || !all_dma<A, B>::value) {
                     std::cerr << "Forced selection to BLAS dot implementation, but not possible for this expression" << std::endl;
-                    return select_default_dot_impl<A, B>();
-                }
-
-                return forced;
-
-            //AVX cannot always be used
-            case dot_impl::AVX:
-                if (!avx_enabled || !all_dma<A, B>::value) {
-                    std::cerr << "Forced selection to AVX dot implementation, but not possible for this expression" << std::endl;
-                    return select_default_dot_impl<A, B>();
-                }
-
-                return forced;
-
-            //SSE cannot always be used
-            case dot_impl::SSE:
-                if (!sse3_enabled || !all_dma<A, B>::value) {
-                    std::cerr << "Forced selection to SSE dot implementation, but not possible for this expression" << std::endl;
                     return select_default_dot_impl<A, B>();
                 }
 
@@ -116,14 +96,8 @@ struct dot_impl {
     static value_t<A> apply(const A& a, const B& b) {
         auto impl = select_dot_impl<A, B>();
 
-        static constexpr bool Align = decay_traits<A>::is_aligned && decay_traits<B>::is_aligned;
-
         if (impl == etl::dot_impl::BLAS) {
             return etl::impl::blas::dot(a, b);
-        } else if (impl == etl::dot_impl::AVX) {
-            return etl::impl::avx::dot<Align>(a.direct(), b.direct());
-        } else if (impl == etl::dot_impl::SSE) {
-            return etl::impl::sse::dot(a.direct(), b.direct());
         } else if (impl == etl::dot_impl::VEC) {
             return etl::impl::vec::dot(a, b);
         } else {
