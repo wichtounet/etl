@@ -27,6 +27,8 @@ static constexpr size_t alloc_size_vec(size_t size) {
         : size;
 }
 
+#ifdef ETL_ADVANCED_PADDING
+
 template <typename T>
 static constexpr size_t alloc_size_mat(size_t size, size_t last) {
     return size == 0 ? 0 :
@@ -34,6 +36,15 @@ static constexpr size_t alloc_size_mat(size_t size, size_t last) {
         ? (size / last) * (last + (last % intrinsic_traits<T>::size == 0 ? 0 : (intrinsic_traits<T>::size - last % intrinsic_traits<T>::size)))
         : size);
 }
+
+#else
+
+template <typename T>
+static constexpr size_t alloc_size_mat(size_t size, size_t /*last*/) {
+    return size == 0 ? 0 : alloc_size_vec<T>(size);
+}
+
+#endif
 
 template <typename T, size_t... Dims>
 static constexpr size_t alloc_size_mat() {

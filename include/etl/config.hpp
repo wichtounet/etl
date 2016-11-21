@@ -143,6 +143,13 @@ constexpr bool padding = false;
 constexpr bool padding = true;
 #endif
 
+// Flag to enabled padding operations
+#ifdef ETL_ADVANCED_PADDING
+constexpr bool advanced_padding = true;
+#else
+constexpr bool advanced_padding = false;
+#endif
+
 // Flag to disable padding implementations
 #ifdef ETL_NO_PADDING_IMPL
 constexpr bool padding_impl = false;

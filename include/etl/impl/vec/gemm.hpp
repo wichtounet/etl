@@ -25,7 +25,7 @@ void gemv_small_kernel(const A& a, const B& b, C& c) {
     const auto m = rows(a);
     const auto n = columns(a);
 
-    static constexpr bool remainder = !padding || !all_padded<A, B>::value;
+    static constexpr bool remainder = !advanced_padding || !all_padded<A, B>::value;
     const size_t last = remainder ? (n & size_t(-vec_size)) : n;
 
     size_t i = 0;
@@ -151,7 +151,7 @@ void gemv_large_kernel(const A& a, const B& b, C& c) {
     const auto m = rows(a);
     const auto n = columns(a);
 
-    static constexpr bool remainder = !padding || !all_padded<A, B>::value;
+    static constexpr bool remainder = !advanced_padding || !all_padded<A, B>::value;
     const size_t last = remainder ? (n & size_t(-vec_size)) : n;
 
     size_t i = 0;
