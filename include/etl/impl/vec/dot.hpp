@@ -29,6 +29,9 @@ value_t<L> selected_dot(const L& lhs, const R& rhs) {
 
     auto n = etl::size(lhs);
 
+    static constexpr bool remainder = !padding || !all_padded<L, R>::value;
+    const size_t last = remainder ? (n & size_t(-vec_size)) : n;
+
     size_t i = 0;
 
     auto r1 = vec_type::template zero<T>();
@@ -40,8 +43,8 @@ value_t<L> selected_dot(const L& lhs, const R& rhs) {
     auto r7 = vec_type::template zero<T>();
     auto r8 = vec_type::template zero<T>();
 
-    if (n < 1000000) {
-        for (; i + (vec_size * 8) - 1 < n; i += 8 * vec_size) {
+    if (n <= 4 * cache_size / sizeof(T) ) {
+        for (; i + (vec_size * 7) < last; i += 8 * vec_size) {
             auto a1 = lhs.load(i + 0 * vec_size);
             auto a2 = lhs.load(i + 1 * vec_size);
             auto a3 = lhs.load(i + 2 * vec_size);
@@ -69,37 +72,37 @@ value_t<L> selected_dot(const L& lhs, const R& rhs) {
             r7 = vec_type::template fmadd<false>(a7, b7, r7);
             r8 = vec_type::template fmadd<false>(a8, b8, r8);
         }
+
+        for (; i + (vec_size * 3) < last; i += 4 * vec_size) {
+            auto a1 = lhs.load(i + 0 * vec_size);
+            auto a2 = lhs.load(i + 1 * vec_size);
+            auto a3 = lhs.load(i + 2 * vec_size);
+            auto a4 = lhs.load(i + 3 * vec_size);
+
+            auto b1 = rhs.load(i + 0 * vec_size);
+            auto b2 = rhs.load(i + 1 * vec_size);
+            auto b3 = rhs.load(i + 2 * vec_size);
+            auto b4 = rhs.load(i + 3 * vec_size);
+
+            r1 = vec_type::template fmadd<false>(a1, b1, r1);
+            r2 = vec_type::template fmadd<false>(a2, b2, r2);
+            r3 = vec_type::template fmadd<false>(a3, b3, r3);
+            r4 = vec_type::template fmadd<false>(a4, b4, r4);
+        }
     }
 
-    for (; i + (vec_size * 4) - 1 < n; i += 4 * vec_size) {
+    for(; i + (vec_size * 1) < last; i += 2 * vec_size){
         auto a1 = lhs.load(i + 0 * vec_size);
         auto a2 = lhs.load(i + 1 * vec_size);
-        auto a3 = lhs.load(i + 2 * vec_size);
-        auto a4 = lhs.load(i + 3 * vec_size);
 
         auto b1 = rhs.load(i + 0 * vec_size);
         auto b2 = rhs.load(i + 1 * vec_size);
-        auto b3 = rhs.load(i + 2 * vec_size);
-        auto b4 = rhs.load(i + 3 * vec_size);
-
-        r1 = vec_type::template fmadd<false>(a1, b1, r1);
-        r2 = vec_type::template fmadd<false>(a2, b2, r2);
-        r3 = vec_type::template fmadd<false>(a3, b3, r3);
-        r4 = vec_type::template fmadd<false>(a4, b4, r4);
-    }
-
-    for(; i + (vec_size * 2) - 1 < n; i += 2 * vec_size){
-        auto a1 = lhs.load(i + 0 * vec_size);
-        auto a2 = lhs.load(i + 1 * vec_size);
-
-        auto b1 = rhs.load(i + 0 * vec_size);
-        auto b2 = rhs.load(i + 1 * vec_size);
 
         r1 = vec_type::template fmadd<false>(a1, b1, r1);
         r2 = vec_type::template fmadd<false>(a2, b2, r2);
     }
 
-    for(; i + vec_size - 1 < n; i += vec_size){
+    for(; i < last; i += vec_size){
         auto a1 = lhs.load(i);
         auto b1 = rhs.load(i);
 
@@ -109,12 +112,12 @@ value_t<L> selected_dot(const L& lhs, const R& rhs) {
     auto p1 = vec_type::hadd(r1) + vec_type::hadd(r2) + vec_type::hadd(r3) + vec_type::hadd(r4);
     auto p2 = vec_type::hadd(r5) + vec_type::hadd(r6) + vec_type::hadd(r7) + vec_type::hadd(r8);
 
-    for(; i + 1 < n; i += 2){
+    for(; remainder && i + 1 < n; i += 2){
         p1 += lhs[i] * rhs[i];
         p2 += lhs[i + 1] * rhs[i + 1];
     }
 
-    if(i < n){
+    if(remainder && i < n){
         p1 += lhs[i] * rhs[i];
     }
 
