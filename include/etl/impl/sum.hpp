@@ -25,8 +25,6 @@
 //Include the implementations
 #include "etl/impl/std/sum.hpp"
 #include "etl/impl/vec/sum.hpp"
-#include "etl/impl/sse/sum.hpp"
-#include "etl/impl/avx/sum.hpp"
 
 namespace etl {
 
@@ -63,24 +61,6 @@ etl::sum_impl select_sum_impl() {
         auto forced = local_context().sum_selector.impl;
 
         switch (forced) {
-            //AVX cannot always be used
-            case sum_impl::AVX:
-                if (!avx_enabled || !decay_traits<E>::template vectorizable<vector_mode_t::AVX>::value) {                         //COVERAGE_EXCLUDE_LINE
-                    std::cerr << "Forced selection to AVX sum implementation, but not possible for this expression" << std::endl; //COVERAGE_EXCLUDE_LINE
-                    return select_default_sum_impl<E>();                                                                          //COVERAGE_EXCLUDE_LINE
-                }                                                                                                                 //COVERAGE_EXCLUDE_LINE
-
-                return forced;
-
-            //SSE cannot always be used
-            case sum_impl::SSE:
-                if (!sse3_enabled || !decay_traits<E>::template vectorizable<vector_mode_t::SSE3>::value) {                       //COVERAGE_EXCLUDE_LINE
-                    std::cerr << "Forced selection to SSE sum implementation, but not possible for this expression" << std::endl; //COVERAGE_EXCLUDE_LINE
-                    return select_default_sum_impl<E>();                                                                          //COVERAGE_EXCLUDE_LINE
-                }                                                                                                                 //COVERAGE_EXCLUDE_LINE
-
-                return forced;
-
             //VEC cannot always be used
             case sum_impl::VEC:
                 if (!vec_enabled || !decay_traits<E>::template vectorizable<vector_mode>::value) {                                //COVERAGE_EXCLUDE_LINE
@@ -132,17 +112,9 @@ struct sum_impl {
             acc += value;
         };
 
-        if (impl == etl::sum_impl::AVX) {
-            dispatch_1d_acc<value_t<E>>(parallel_dispatch, [&e](std::size_t first, std::size_t last) -> value_t<E> {
-                return impl::avx::sum(e, first, last);
-            }, acc_functor, 0, size(e));
-        } else if (impl == etl::sum_impl::VEC) {
+        if (impl == etl::sum_impl::VEC) {
             dispatch_1d_acc<value_t<E>>(parallel_dispatch, [&e](std::size_t first, std::size_t last) -> value_t<E> {
                 return impl::vec::sum(e, first, last);
-            }, acc_functor, 0, size(e));
-        } else if (impl == etl::sum_impl::SSE) {
-            dispatch_1d_acc<value_t<E>>(parallel_dispatch, [&e](std::size_t first, std::size_t last) -> value_t<E> {
-                return impl::sse::sum(e, first, last);
             }, acc_functor, 0, size(e));
         } else {
             dispatch_1d_acc<value_t<E>>(parallel_dispatch, [&e](std::size_t first, std::size_t last) -> value_t<E> {
