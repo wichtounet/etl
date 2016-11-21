@@ -234,7 +234,7 @@ CPM_BENCH() {
         );
 }
 
-CPM_DIRECT_SECTION_TWO_PASS_NS("ssum [std][sum][s]",
+CPM_DIRECT_SECTION_TWO_PASS_NS_P("ssum [std][sum][s]", dot_policy,
     CPM_SECTION_INIT([](std::size_t d1){ return std::make_tuple(svec(d1)); }),
     CPM_SECTION_FUNCTOR("default", [](svec& a){ float_ref += etl::sum(a); }),
     CPM_SECTION_FUNCTOR("std", [](svec& a){ SELECTED_SECTION(etl::sum_impl::STD){ float_ref += etl::sum(a); } })
@@ -243,7 +243,7 @@ CPM_DIRECT_SECTION_TWO_PASS_NS("ssum [std][sum][s]",
     AVX_SECTION_FUNCTOR("avx", [](svec& a){ SELECTED_SECTION(etl::sum_impl::AVX){ float_ref += etl::sum(a); } })
 )
 
-CPM_DIRECT_SECTION_TWO_PASS_NS("dsum [std][sum][d]",
+CPM_DIRECT_SECTION_TWO_PASS_NS_P("dsum [std][sum][d]", dot_policy,
     CPM_SECTION_INIT([](std::size_t d1){ return std::make_tuple(dvec(d1)); }),
     CPM_SECTION_FUNCTOR("default", [](dvec& a){ double_ref += etl::sum(a); }),
     CPM_SECTION_FUNCTOR("std", [](dvec& a){ SELECTED_SECTION(etl::sum_impl::STD){ double_ref += etl::sum(a); } })
