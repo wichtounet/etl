@@ -36,7 +36,7 @@ DOT_FUNCTOR(std_dot, SELECTED_SECTION(etl::dot_impl::STD) { c = etl::dot(a, b); 
 #define DOT_TEST_CASE_SECTION_DEFAULT DOT_TEST_CASE_SECTIONS(default_dot)
 #define DOT_TEST_CASE_SECTION_STD DOT_TEST_CASE_SECTIONS(std_dot)
 
-#ifdef TEST_SSE
+#ifdef TEST_VEC
 DOT_FUNCTOR(vec_dot, SELECTED_SECTION(etl::dot_impl::VEC) { c = etl::dot(a, b); })
 
 #define DOT_TEST_CASE_SECTION_VEC DOT_TEST_CASE_SECTIONS(vec_dot)

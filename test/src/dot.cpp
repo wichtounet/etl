@@ -52,8 +52,8 @@ DOT_TEST_CASE("dot/5", "[dot]") {
     etl::dyn_vector<T> a(15);
     etl::dyn_vector<T> b(15);
 
-    a = etl::sequence_generator(1);
-    b = etl::sequence_generator(2);
+    a = etl::sequence_generator<T>(1);
+    b = etl::sequence_generator<T>(2);
 
     T value = 0;
     Impl::apply(a, b, value);
@@ -65,8 +65,8 @@ DOT_TEST_CASE("dot/6", "[dot]") {
     etl::dyn_vector<T> a(33);
     etl::dyn_vector<T> b(33);
 
-    a = etl::sequence_generator(1);
-    b = etl::sequence_generator(2);
+    a = etl::sequence_generator<T>(1);
+    b = etl::sequence_generator<T>(2);
 
     T value = 0;
     Impl::apply(a, b, value);
@@ -78,11 +78,24 @@ DOT_TEST_CASE("dot/7", "[dot]") {
     etl::dyn_vector<T> a(57);
     etl::dyn_vector<T> b(57);
 
-    a = etl::sequence_generator(1);
-    b = etl::sequence_generator(2);
+    a = etl::sequence_generator<T>(1);
+    b = etl::sequence_generator<T>(2);
 
     T value = 0;
     Impl::apply(a, b, value);
 
     REQUIRE_EQUALS(value, 65018.0);
+}
+
+DOT_TEST_CASE("dot/8", "[dot]") {
+    etl::dyn_vector<T> a(1024 - 7);
+    etl::dyn_vector<T> b(1024 - 7);
+
+    a = T(0.01) * etl::sequence_generator<T>(1);
+    b = T(0.02) * etl::sequence_generator<T>(2);
+
+    T value = 0;
+    Impl::apply(a, b, value);
+
+    REQUIRE_EQUALS_APPROX(value, 70331.7876);
 }
