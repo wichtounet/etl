@@ -215,7 +215,7 @@ tidy_filter:
 
 # clang-tidy with all the checks
 tidy_all:
-	clang-tidy -checks='*' -p ${PWD} test/*.cpp -header-filter='include/etl/*' | tee tidy_report_all
+	clang-tidy -checks='*' -p ${PWD} ${CPP_FILES} -header-filter='include/etl/*' | tee tidy_report_all
 	echo "The full report from clang-tidy is availabe in tidy_report_all"
 
 tidy_all_filter:
