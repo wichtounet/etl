@@ -45,10 +45,8 @@ cpp14_constexpr etl::sum_impl select_default_sum_impl() {
     //Note: since the constexpr values will be known at compile time, the
     //conditions will be a lot simplified
 
-    if (decay_traits<E>::template vectorizable<vector_mode>::value) {
-        if(vec_enabled){
-            return etl::sum_impl::VEC;
-        }
+    if (vec_enabled && all_vectorizable<vector_mode, E>::value) {
+        return etl::sum_impl::VEC;
     }
 
     return etl::sum_impl::STD;
