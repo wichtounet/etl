@@ -24,12 +24,12 @@ value_t<L> selected_dot(const L& lhs, const R& rhs) {
     using T        = value_t<L>;
 
     static constexpr size_t vec_size = vec_type::template traits<T>::size;
-    static constexpr bool Cx = is_complex_t<T>::value;
+    static constexpr bool Cx         = is_complex_t<T>::value;
 
     auto n = etl::size(lhs);
 
     static constexpr bool remainder = !padding || !all_padded<L, R>::value;
-    const size_t last = remainder ? (n & size_t(-vec_size)) : n;
+    const size_t last               = remainder ? (n & size_t(-vec_size)) : n;
 
     size_t i = 0;
 
@@ -42,7 +42,7 @@ value_t<L> selected_dot(const L& lhs, const R& rhs) {
     auto r7 = vec_type::template zero<T>();
     auto r8 = vec_type::template zero<T>();
 
-    if (n <= 4 * cache_size / sizeof(T) ) {
+    if (n <= 4 * cache_size / sizeof(T)) {
         for (; i + (vec_size * 7) < last; i += 8 * vec_size) {
             auto a1 = lhs.template load<vec_type>(i + 0 * vec_size);
             auto a2 = lhs.template load<vec_type>(i + 1 * vec_size);
@@ -90,7 +90,7 @@ value_t<L> selected_dot(const L& lhs, const R& rhs) {
         }
     }
 
-    for(; i + (vec_size * 1) < last; i += 2 * vec_size){
+    for (; i + (vec_size * 1) < last; i += 2 * vec_size) {
         auto a1 = lhs.template load<vec_type>(i + 0 * vec_size);
         auto a2 = lhs.template load<vec_type>(i + 1 * vec_size);
 
@@ -101,7 +101,7 @@ value_t<L> selected_dot(const L& lhs, const R& rhs) {
         r2 = vec_type::template fmadd<Cx>(a2, b2, r2);
     }
 
-    for(; i < last; i += vec_size){
+    for (; i < last; i += vec_size) {
         auto a1 = lhs.template load<vec_type>(i);
         auto b1 = rhs.template load<vec_type>(i);
 
@@ -111,12 +111,12 @@ value_t<L> selected_dot(const L& lhs, const R& rhs) {
     auto p1 = vec_type::hadd(r1) + vec_type::hadd(r2) + vec_type::hadd(r3) + vec_type::hadd(r4);
     auto p2 = vec_type::hadd(r5) + vec_type::hadd(r6) + vec_type::hadd(r7) + vec_type::hadd(r8);
 
-    for(; remainder && i + 1 < n; i += 2){
+    for (; remainder && i + 1 < n; i += 2) {
         p1 += lhs[i] * rhs[i];
         p2 += lhs[i + 1] * rhs[i + 1];
     }
 
-    if(remainder && i < n){
+    if (remainder && i < n) {
         p1 += lhs[i] * rhs[i];
     }
 

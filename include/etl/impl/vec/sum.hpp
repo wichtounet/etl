@@ -41,24 +41,24 @@ value_t<L> selected_sum(const L& lhs, size_t first, size_t last) {
         r4 = vec_type::add(lhs.template load<vec_type>(i + 3 * vec_size), r4);
     }
 
-    for(; i + (vec_size * 2) - 1 < last; i += 2 * vec_size){
+    for (; i + (vec_size * 2) - 1 < last; i += 2 * vec_size) {
         r1 = vec_type::add(lhs.template load<vec_type>(i + 0 * vec_size), r1);
         r2 = vec_type::add(lhs.template load<vec_type>(i + 1 * vec_size), r2);
     }
 
-    for(; i + vec_size - 1 < last; i += vec_size){
+    for (; i + vec_size - 1 < last; i += vec_size) {
         r1 = vec_type::add(lhs.template load<vec_type>(i + 0 * vec_size), r1);
     }
 
     auto p1 = vec_type::hadd(r1) + vec_type::hadd(r2) + vec_type::hadd(r3) + vec_type::hadd(r4);
-    auto p2 = T(0);//vec_type::hadd(r5) + vec_type::hadd(r6) + vec_type::hadd(r7) + vec_type::hadd(r8);
+    auto p2 = T();
 
-    for(; i + 1 < last; i += 2){
+    for (; i + 1 < last; i += 2) {
         p1 += lhs[i];
         p2 += lhs[i + 1];
     }
 
-    if(i < last){
+    if (i < last) {
         p1 += lhs[i];
     }
 
