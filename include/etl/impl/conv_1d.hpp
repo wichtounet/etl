@@ -219,11 +219,11 @@ struct conv1_valid_impl {
         bool parallel_dispatch = select_parallel(input, kernel, conv);
 
         if (impl == etl::conv_impl::VEC) {
-            dispatch_1d(parallel_dispatch, [&](std::size_t first, std::size_t last) {
+            dispatch_1d_any(parallel_dispatch, [&](std::size_t first, std::size_t last) {
                 impl::vec::conv1_valid(input, kernel, conv, first, last);
             }, 0, size(conv));
         } else if (impl == etl::conv_impl::STD) {
-            dispatch_1d(parallel_dispatch, [&](std::size_t first, std::size_t last) {
+            dispatch_1d_any(parallel_dispatch, [&](std::size_t first, std::size_t last) {
                 impl::standard::conv1_valid(input, kernel, conv, first, last);
             }, 0, size(conv));
         } else {
