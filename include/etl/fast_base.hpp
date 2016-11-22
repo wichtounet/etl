@@ -209,7 +209,7 @@ public:
 
     // Default copy and move constructors
     fast_matrix_base(const fast_matrix_base& data) = default;
-    fast_matrix_base(fast_matrix_base&& data) = default;
+    fast_matrix_base(fast_matrix_base&& data) noexcept = default;
 
     /*!
      * \brief Multiply each element by the right hand side scalar

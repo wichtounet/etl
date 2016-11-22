@@ -596,10 +596,10 @@ void inplace_radix2_fft1(etl::complex<T>* x, std::size_t N) {
 
     constexpr T pi = M_PIl;
 
-    const std::size_t NN = 1 << std::size_t(std::log2(N));
+    const auto NN = size_t(1) << size_t(std::log2(N));
 
     for (std::size_t s = 1; s <= std::log2(N); ++s) {
-        std::size_t m = 1 << s;
+        auto m = size_t(1) << s;
         complex_t w(1.0, 0.0);
         complex_t wm(cos(2 * -pi / m), sin(2 * -pi / m));
         for (std::size_t j = 0; j < m / 2; ++j) {

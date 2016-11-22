@@ -91,6 +91,6 @@ value_t<L> sum(const L& lhs, size_t first, size_t last) {
     cpp_unreachable("vec::sum called with invalid parameters");
 }
 
-} //end of namespace standard
+} //end of namespace vec
 } //end of namespace impl
 } //end of namespace etl

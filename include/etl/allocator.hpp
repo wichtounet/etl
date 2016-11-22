@@ -50,7 +50,7 @@ struct aligned_allocator {
      * \return A pointer to the allocated memory
      */
     template <typename T, std::size_t S = sizeof(T)>
-    static T* allocate(std::size_t size, mangling_faker<S> = mangling_faker<S>()) {
+    static T* allocate(std::size_t size, mangling_faker<S> /*unused*/ = mangling_faker<S>()) {
         auto required_bytes = sizeof(T) * size;
         auto offset         = (A - 1) + sizeof(uintptr_t);
         auto orig           = malloc(required_bytes + offset);
@@ -69,7 +69,7 @@ struct aligned_allocator {
      * \param ptr The pointer to the memory to be released
      */
     template <typename T, std::size_t S = sizeof(T)>
-    static void release(T* ptr, mangling_faker<S> = mangling_faker<S>()) {
+    static void release(T* ptr, mangling_faker<S> /*unused*/ = mangling_faker<S>()) {
         //Note the const_cast is only to allow compilation
         free((reinterpret_cast<void**>(const_cast<std::remove_const_t<T>*>(ptr)))[-1]);
     }
@@ -81,7 +81,7 @@ struct aligned_allocator {
  * \return An unique pointer to the memory
  */
 template <typename T, std::size_t S = sizeof(T)>
-auto allocate(std::size_t size, mangling_faker<S> = mangling_faker<S>()) {
+auto allocate(std::size_t size, mangling_faker<S> /*unused*/ = mangling_faker<S>()) {
     static_assert(is_mangle_able<T>::value, "allocate does not work with vector types");
     return std::make_unique<T[]>(size);
 }
@@ -92,7 +92,7 @@ auto allocate(std::size_t size, mangling_faker<S> = mangling_faker<S>()) {
  * \return A pointer to the aligned memory
  */
 template <typename T, std::size_t S = sizeof(T)>
-T* aligned_allocate(std::size_t size, mangling_faker<S> = mangling_faker<S>()) {
+T* aligned_allocate(std::size_t size, mangling_faker<S> /*unused*/ = mangling_faker<S>()) {
     return aligned_allocator<32>::allocate<T>(size);
 }
 
@@ -101,7 +101,7 @@ T* aligned_allocate(std::size_t size, mangling_faker<S> = mangling_faker<S>()) {
  * \param ptr The ptr to the aligned memory
  */
 template <typename T, std::size_t S = sizeof(T)>
-void aligned_release(T* ptr, mangling_faker<S> = mangling_faker<S>()) {
+void aligned_release(T* ptr, mangling_faker<S> /*unused*/ = mangling_faker<S>()) {
     return aligned_allocator<32>::release<T>(ptr);
 }
 
@@ -180,7 +180,7 @@ struct aligned_ptr {
  * \return A pointer to the aligned memory
  */
 template <typename T, std::size_t S = sizeof(T)>
-aligned_ptr<T> aligned_allocate_auto(std::size_t size, mangling_faker<S> = mangling_faker<S>()) {
+aligned_ptr<T> aligned_allocate_auto(std::size_t size, mangling_faker<S> /*unused*/ = mangling_faker<S>()) {
     return aligned_ptr<T>{aligned_allocate<T>(size)};
 }
 

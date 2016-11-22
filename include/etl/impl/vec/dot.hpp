@@ -135,6 +135,6 @@ value_t<L> dot(const L& lhs, const R& rhs) {
     return selected_dot<default_vec>(lhs, rhs);
 }
 
-} //end of namespace standard
+} //end of namespace vec
 } //end of namespace impl
 } //end of namespace etl
