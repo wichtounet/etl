@@ -207,7 +207,7 @@ modernize:
 
 # clang-tidy with some false positive checks removed
 tidy:
-	clang-tidy -checks='*,-llvm-include-order,-clang-analyzer-alpha.core.*,-google-readability-todo,-cppcoreguidelines-pro-bounds-pointer-arithmetic,-cppcoreguidelines-pro-type-reinterpret-cast,-google-runtime-references,readability-else-after-return' -p ${PWD} test/src/*.cpp -header-filter='include/etl/*' | tee tidy_report_light
+	clang-tidy -checks='*,-llvm-include-order,-clang-analyzer-alpha.core.*,-google-readability-todo,-cppcoreguidelines-pro-bounds-pointer-arithmetic,-cppcoreguidelines-pro-type-reinterpret-cast,-google-runtime-references,-readability-else-after-return' -p ${PWD} test/src/*.cpp -header-filter='include/etl/*' | tee tidy_report_light
 	echo "The full report from clang-tidy is availabe in tidy_report_light"
 
 tidy_filter:
