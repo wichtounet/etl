@@ -1259,15 +1259,6 @@ void conv1_same(const I& input, const K& kernel, C&& conv, std::size_t first, st
     detail::conv1_valid_micro_kernel(in, size(input), k, size(kernel), out + left, first, last);
 }
 
-template <typename I, typename K, typename C>
-void conv1_valid(const I& input, const K& kernel, C&& conv, std::size_t first, std::size_t last) {
-    auto* out      = conv.memory_start();
-    const auto* in = input.memory_start();
-    const auto* k  = kernel.memory_start();
-
-    detail::conv1_valid_micro_kernel(in, size(input), k, size(kernel), out, first, last);
-}
-
 template <typename T>
 void conv2_valid(const opaque_memory<T, 2>& input, const opaque_memory<T, 2>& kernel, const opaque_memory<T, 2>& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
     if(cpp_unlikely(p1 || p2)){
@@ -2655,24 +2646,6 @@ void conv1_full(const I& input, const K& kernel, C&& conv, std::size_t first, st
  */
 template <typename I, typename K, typename C>
 void conv1_same(const I& input, const K& kernel, C&& conv, std::size_t first, std::size_t last) {
-    cpp_unused(input);
-    cpp_unused(kernel);
-    cpp_unused(conv);
-    cpp_unused(first);
-    cpp_unused(last);
-    cpp_unreachable("AVX not available/enabled");
-}
-
-/*!
- * \brief AVX implementation of a 1D 'valid' convolution C = I * K
- * \param input The input matrix
- * \param kernel The kernel matrix
- * \param conv The output matrix
- * \param first The index where to start in the output matrix
- * \param last The index where to stop in the output matrix
- */
-template <typename I, typename K, typename C>
-void conv1_valid(const I& input, const K& kernel, C&& conv, std::size_t first, std::size_t last) {
     cpp_unused(input);
     cpp_unused(kernel);
     cpp_unused(conv);

@@ -142,8 +142,7 @@ CPM_DIRECT_SECTION_TWO_PASS_NS_PF("sconv1_valid [conv][conv1]", conv_1d_large_po
     CPM_SECTION_INIT([](std::size_t d1, std::size_t d2){ return std::make_tuple(svec(d1), svec(d2), svec(d1 - d2 + 1)); }),
     CPM_SECTION_FUNCTOR("default", [](svec& a, svec& b, svec& r){ r = etl::conv_1d_valid(a, b); }),
     CPM_SECTION_FUNCTOR("std", [](svec& a, svec& b, svec& r){ r = selected_helper(etl::conv_impl::STD, etl::conv_1d_valid(a, b)); })
-    SSE_SECTION_FUNCTOR("sse", [](svec& a, svec& b, svec& r){ r = selected_helper(etl::conv_impl::SSE, etl::conv_1d_valid(a, b)); })
-    AVX_SECTION_FUNCTOR("avx", [](svec& a, svec& b, svec& r){ r = selected_helper(etl::conv_impl::AVX, etl::conv_1d_valid(a, b)); })
+    VEC_SECTION_FUNCTOR("vec", [](svec& a, svec& b, svec& r){ r = selected_helper(etl::conv_impl::VEC, etl::conv_1d_valid(a, b)); })
 )
 
 #ifdef ETL_EXTENDED_BENCH
@@ -175,8 +174,7 @@ CPM_DIRECT_SECTION_TWO_PASS_NS_PF("dconv1_valid [conv][conv1]", conv_1d_large_po
     CPM_SECTION_INIT([](std::size_t d1, std::size_t d2){ return std::make_tuple(dvec(d1), dvec(d2), dvec(d1 - d2 + 1)); }),
     CPM_SECTION_FUNCTOR("default", [](dvec& a, dvec& b, dvec& r){ r = etl::conv_1d_valid(a, b); }),
     CPM_SECTION_FUNCTOR("std", [](dvec& a, dvec& b, dvec& r){ r = selected_helper(etl::conv_impl::STD, etl::conv_1d_valid(a, b)); })
-    SSE_SECTION_FUNCTOR("sse", [](dvec& a, dvec& b, dvec& r){ r = selected_helper(etl::conv_impl::SSE, etl::conv_1d_valid(a, b)); })
-    AVX_SECTION_FUNCTOR("avx", [](dvec& a, dvec& b, dvec& r){ r = selected_helper(etl::conv_impl::AVX, etl::conv_1d_valid(a, b)); })
+    VEC_SECTION_FUNCTOR("vec", [](dvec& a, dvec& b, dvec& r){ r = selected_helper(etl::conv_impl::VEC, etl::conv_1d_valid(a, b)); })
 )
 
 #ifdef ETL_EXTENDED_BENCH
