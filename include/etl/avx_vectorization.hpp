@@ -148,74 +148,146 @@ struct avx_vec {
 
 #endif
 
+    /*
+     * \brief Unaligned store of the given packed vector at the
+     * given memory position
+     */
     ETL_INLINE_VEC_VOID storeu(float* memory, __m256 value) {
         _mm256_storeu_ps(memory, value);
     }
 
+    /*
+     * \brief Unaligned store of the given packed vector at the
+     * given memory position
+     */
     ETL_INLINE_VEC_VOID storeu(double* memory, __m256d value) {
         _mm256_storeu_pd(memory, value);
     }
 
+    /*
+     * \brief Unaligned store of the given packed vector at the
+     * given memory position
+     */
     ETL_INLINE_VEC_VOID storeu(std::complex<float>* memory, __m256 value) {
         _mm256_storeu_ps(reinterpret_cast<float*>(memory), value);
     }
 
+    /*
+     * \brief Unaligned store of the given packed vector at the
+     * given memory position
+     */
     ETL_INLINE_VEC_VOID storeu(std::complex<double>* memory, __m256d value) {
         _mm256_storeu_pd(reinterpret_cast<double*>(memory), value);
     }
 
+    /*
+     * \brief Unaligned store of the given packed vector at the
+     * given memory position
+     */
     ETL_INLINE_VEC_VOID storeu(etl::complex<float>* memory, __m256 value) {
         _mm256_storeu_ps(reinterpret_cast<float*>(memory), value);
     }
 
+    /*
+     * \brief Unaligned store of the given packed vector at the
+     * given memory position
+     */
     ETL_INLINE_VEC_VOID storeu(etl::complex<double>* memory, __m256d value) {
         _mm256_storeu_pd(reinterpret_cast<double*>(memory), value);
     }
 
+    /*
+     * \brief Non-temporal, aligned, store of the given packed vector at the
+     * given memory position
+     */
     ETL_INLINE_VEC_VOID stream(float* memory, __m256 value) {
         _mm256_stream_ps(memory, value);
     }
 
+    /*
+     * \brief Non-temporal, aligned, store of the given packed vector at the
+     * given memory position
+     */
     ETL_INLINE_VEC_VOID stream(double* memory, __m256d value) {
         _mm256_stream_pd(memory, value);
     }
 
+    /*
+     * \brief Non-temporal, aligned, store of the given packed vector at the
+     * given memory position
+     */
     ETL_INLINE_VEC_VOID stream(std::complex<float>* memory, __m256 value) {
         _mm256_stream_ps(reinterpret_cast<float*>(memory), value);
     }
 
+    /*
+     * \brief Non-temporal, aligned, store of the given packed vector at the
+     * given memory position
+     */
     ETL_INLINE_VEC_VOID stream(std::complex<double>* memory, __m256d value) {
         _mm256_stream_pd(reinterpret_cast<double*>(memory), value);
     }
 
+    /*
+     * \brief Non-temporal, aligned, store of the given packed vector at the
+     * given memory position
+     */
     ETL_INLINE_VEC_VOID stream(etl::complex<float>* memory, __m256 value) {
         _mm256_stream_ps(reinterpret_cast<float*>(memory), value);
     }
 
+    /*
+     * \brief Non-temporal, aligned, store of the given packed vector at the
+     * given memory position
+     */
     ETL_INLINE_VEC_VOID stream(etl::complex<double>* memory, __m256d value) {
         _mm256_stream_pd(reinterpret_cast<double*>(memory), value);
     }
 
+    /*
+     * \brief Aligned store of the given packed vector at the
+     * given memory position
+     */
     ETL_INLINE_VEC_VOID store(float* memory, __m256 value) {
         _mm256_store_ps(memory, value);
     }
 
+    /*
+     * \brief Aligned store of the given packed vector at the
+     * given memory position
+     */
     ETL_INLINE_VEC_VOID store(double* memory, __m256d value) {
         _mm256_store_pd(memory, value);
     }
 
+    /*
+     * \brief Aligned store of the given packed vector at the
+     * given memory position
+     */
     ETL_INLINE_VEC_VOID store(std::complex<float>* memory, __m256 value) {
         _mm256_store_ps(reinterpret_cast<float*>(memory), value);
     }
 
+    /*
+     * \brief Aligned store of the given packed vector at the
+     * given memory position
+     */
     ETL_INLINE_VEC_VOID store(std::complex<double>* memory, __m256d value) {
         _mm256_store_pd(reinterpret_cast<double*>(memory), value);
     }
 
+    /*
+     * \brief Aligned store of the given packed vector at the
+     * given memory position
+     */
     ETL_INLINE_VEC_VOID store(etl::complex<float>* memory, __m256 value) {
         _mm256_store_ps(reinterpret_cast<float*>(memory), value);
     }
 
+    /*
+     * \brief Aligned store of the given packed vector at the
+     * given memory position
+     */
     ETL_INLINE_VEC_VOID store(etl::complex<double>* memory, __m256d value) {
         _mm256_store_pd(reinterpret_cast<double*>(memory), value);
     }
@@ -223,86 +295,146 @@ struct avx_vec {
     template<typename T>
     ETL_TMP_INLINE(typename avx_intrinsic_traits<T>::intrinsic_type) zero();
 
+    /*!
+     * \brief Load a packed vector from the given aligned memory location
+     */
     ETL_INLINE_VEC_256 load(const float* memory) {
         return _mm256_load_ps(memory);
     }
 
+    /*!
+     * \brief Load a packed vector from the given aligned memory location
+     */
     ETL_INLINE_VEC_256D load(const double* memory) {
         return _mm256_load_pd(memory);
     }
 
+    /*!
+     * \brief Load a packed vector from the given aligned memory location
+     */
     ETL_INLINE_VEC_256 load(const std::complex<float>* memory) {
         return _mm256_load_ps(reinterpret_cast<const float*>(memory));
     }
 
+    /*!
+     * \brief Load a packed vector from the given aligned memory location
+     */
     ETL_INLINE_VEC_256D load(const std::complex<double>* memory) {
         return _mm256_load_pd(reinterpret_cast<const double*>(memory));
     }
 
+    /*!
+     * \brief Load a packed vector from the given aligned memory location
+     */
     ETL_INLINE_VEC_256 load(const etl::complex<float>* memory) {
         return _mm256_load_ps(reinterpret_cast<const float*>(memory));
     }
 
+    /*!
+     * \brief Load a packed vector from the given aligned memory location
+     */
     ETL_INLINE_VEC_256D load(const etl::complex<double>* memory) {
         return _mm256_load_pd(reinterpret_cast<const double*>(memory));
     }
 
+    /*!
+     * \brief Load a packed vector from the given unaligned memory location
+     */
     ETL_INLINE_VEC_256 loadu(const float* memory) {
         return _mm256_loadu_ps(memory);
     }
 
+    /*!
+     * \brief Load a packed vector from the given unaligned memory location
+     */
     ETL_INLINE_VEC_256D loadu(const double* memory) {
         return _mm256_loadu_pd(memory);
     }
 
+    /*!
+     * \brief Load a packed vector from the given unaligned memory location
+     */
     ETL_INLINE_VEC_256 loadu(const std::complex<float>* memory) {
         return _mm256_loadu_ps(reinterpret_cast<const float*>(memory));
     }
 
+    /*!
+     * \brief Load a packed vector from the given unaligned memory location
+     */
     ETL_INLINE_VEC_256D loadu(const std::complex<double>* memory) {
         return _mm256_loadu_pd(reinterpret_cast<const double*>(memory));
     }
 
+    /*!
+     * \brief Load a packed vector from the given unaligned memory location
+     */
     ETL_INLINE_VEC_256 loadu(const etl::complex<float>* memory) {
         return _mm256_loadu_ps(reinterpret_cast<const float*>(memory));
     }
 
+    /*!
+     * \brief Load a packed vector from the given unaligned memory location
+     */
     ETL_INLINE_VEC_256D loadu(const etl::complex<double>* memory) {
         return _mm256_loadu_pd(reinterpret_cast<const double*>(memory));
     }
 
+    /*!
+     * \brief Fill a packed vector  by replicating a value
+     */
     ETL_INLINE_VEC_256D set(double value) {
         return _mm256_set1_pd(value);
     }
 
+    /*!
+     * \brief Fill a packed vector  by replicating a value
+     */
     ETL_INLINE_VEC_256 set(float value) {
         return _mm256_set1_ps(value);
     }
 
+    /*!
+     * \brief Fill a packed vector  by replicating a value
+     */
     ETL_INLINE_VEC_256 set(std::complex<float> value) {
         std::complex<float> tmp[]{value, value, value, value};
         return loadu(tmp);
     }
 
+    /*!
+     * \brief Fill a packed vector  by replicating a value
+     */
     ETL_INLINE_VEC_256D set(std::complex<double> value) {
         std::complex<double> tmp[]{value, value};
         return loadu(tmp);
     }
 
+    /*!
+     * \brief Fill a packed vector  by replicating a value
+     */
     ETL_INLINE_VEC_256 set(etl::complex<float> value) {
         etl::complex<float> tmp[]{value, value, value, value};
         return loadu(tmp);
     }
 
+    /*!
+     * \brief Fill a packed vector  by replicating a value
+     */
     ETL_INLINE_VEC_256D set(etl::complex<double> value) {
         etl::complex<double> tmp[]{value, value};
         return loadu(tmp);
     }
 
+    /*!
+     * \brief Add the two given values and return the result.
+     */
     ETL_INLINE_VEC_256D add(__m256d lhs, __m256d rhs) {
         return _mm256_add_pd(lhs, rhs);
     }
 
+    /*!
+     * \brief Subtract the two given values and return the result.
+     */
     ETL_INLINE_VEC_256D sub(__m256d lhs, __m256d rhs) {
         return _mm256_sub_pd(lhs, rhs);
     }
@@ -315,10 +447,16 @@ struct avx_vec {
         return _mm256_xor_pd(x, _mm256_set1_pd(-0.f));
     }
 
+    /*!
+     * \brief Add the two given values and return the result.
+     */
     ETL_INLINE_VEC_256 add(__m256 lhs, __m256 rhs) {
         return _mm256_add_ps(lhs, rhs);
     }
 
+    /*!
+     * \brief Subtract the two given values and return the result.
+     */
     ETL_INLINE_VEC_256 sub(__m256 lhs, __m256 rhs) {
         return _mm256_sub_ps(lhs, rhs);
     }

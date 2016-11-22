@@ -153,138 +153,258 @@ struct avx512_vec {
 
 #endif
 
+    /*
+     * \brief Unaligned store of the given packed vector at the
+     * given memory position
+     */
     ETL_INLINE_VEC_VOID storeu(float* memory, __m512 value) {
         _mm512_storeu_ps(memory, value);
     }
 
+    /*
+     * \brief Unaligned store of the given packed vector at the
+     * given memory position
+     */
     ETL_INLINE_VEC_VOID storeu(double* memory, __m512d value) {
         _mm512_storeu_pd(memory, value);
     }
 
+    /*
+     * \brief Unaligned store of the given packed vector at the
+     * given memory position
+     */
     ETL_INLINE_VEC_VOID storeu(std::complex<float>* memory, __m512 value) {
         _mm512_storeu_ps(reinterpret_cast<float*>(memory), value);
     }
 
+    /*
+     * \brief Unaligned store of the given packed vector at the
+     * given memory position
+     */
     ETL_INLINE_VEC_VOID storeu(std::complex<double>* memory, __m512d value) {
         _mm512_storeu_pd(reinterpret_cast<double*>(memory), value);
     }
 
+    /*
+     * \brief Unaligned store of the given packed vector at the
+     * given memory position
+     */
     ETL_INLINE_VEC_VOID storeu(etl::complex<float>* memory, __m512 value) {
         _mm512_storeu_ps(reinterpret_cast<float*>(memory), value);
     }
 
+    /*
+     * \brief Unaligned store of the given packed vector at the
+     * given memory position
+     */
     ETL_INLINE_VEC_VOID storeu(etl::complex<double>* memory, __m512d value) {
         _mm512_storeu_pd(reinterpret_cast<double*>(memory), value);
     }
 
+    /*
+     * \brief Aligned store of the given packed vector at the
+     * given memory position
+     */
     ETL_INLINE_VEC_VOID store(float* memory, __m512 value) {
         _mm512_store_ps(memory, value);
     }
 
+    /*
+     * \brief Aligned store of the given packed vector at the
+     * given memory position
+     */
     ETL_INLINE_VEC_VOID store(double* memory, __m512d value) {
         _mm512_store_pd(memory, value);
     }
 
+    /*
+     * \brief Aligned store of the given packed vector at the
+     * given memory position
+     */
     ETL_INLINE_VEC_VOID store(std::complex<float>* memory, __m512 value) {
         _mm512_store_ps(reinterpret_cast<float*>(memory), value);
     }
 
+    /*
+     * \brief Aligned store of the given packed vector at the
+     * given memory position
+     */
     ETL_INLINE_VEC_VOID store(std::complex<double>* memory, __m512d value) {
         _mm512_store_pd(reinterpret_cast<double*>(memory), value);
     }
 
+    /*
+     * \brief Aligned store of the given packed vector at the
+     * given memory position
+     */
     ETL_INLINE_VEC_VOID store(etl::complex<float>* memory, __m512 value) {
         _mm512_store_ps(reinterpret_cast<float*>(memory), value);
     }
 
+    /*
+     * \brief Aligned store of the given packed vector at the
+     * given memory position
+     */
     ETL_INLINE_VEC_VOID store(etl::complex<double>* memory, __m512d value) {
         _mm512_store_pd(reinterpret_cast<double*>(memory), value);
     }
 
+    /*
+     * \brief Non-temporal, aligned, store of the given packed vector at the
+     * given memory position
+     */
     ETL_INLINE_VEC_VOID stream(float* memory, __m512 value) {
         _mm512_stream_ps(memory, value);
     }
 
+    /*
+     * \brief Non-temporal, aligned, store of the given packed vector at the
+     * given memory position
+     */
     ETL_INLINE_VEC_VOID stream(double* memory, __m512d value) {
         _mm512_stream_pd(memory, value);
     }
 
+    /*
+     * \brief Non-temporal, aligned, store of the given packed vector at the
+     * given memory position
+     */
     ETL_INLINE_VEC_VOID stream(std::complex<float>* memory, __m512 value) {
         _mm512_stream_ps(reinterpret_cast<float*>(memory), value);
     }
 
+    /*
+     * \brief Non-temporal, aligned, store of the given packed vector at the
+     * given memory position
+     */
     ETL_INLINE_VEC_VOID stream(std::complex<double>* memory, __m512d value) {
         _mm512_stream_pd(reinterpret_cast<double*>(memory), value);
     }
 
+    /*
+     * \brief Non-temporal, aligned, store of the given packed vector at the
+     * given memory position
+     */
     ETL_INLINE_VEC_VOID stream(etl::complex<float>* memory, __m512 value) {
         _mm512_stream_ps(reinterpret_cast<float*>(memory), value);
     }
 
+    /*
+     * \brief Non-temporal, aligned, store of the given packed vector at the
+     * given memory position
+     */
     ETL_INLINE_VEC_VOID stream(etl::complex<double>* memory, __m512d value) {
         _mm512_stream_pd(reinterpret_cast<double*>(memory), value);
     }
 
+    /*!
+     * \brief Load a packed vector from the given aligned memory location
+     */
     ETL_INLINE_VEC_512 load(const float* memory) {
         return _mm512_load_ps(memory);
     }
 
+    /*!
+     * \brief Load a packed vector from the given aligned memory location
+     */
     ETL_INLINE_VEC_512D load(const double* memory) {
         return _mm512_load_pd(memory);
     }
 
+    /*!
+     * \brief Load a packed vector from the given aligned memory location
+     */
     ETL_INLINE_VEC_512 load(const std::complex<float>* memory) {
         return _mm512_load_ps(reinterpret_cast<const float*>(memory));
     }
 
+    /*!
+     * \brief Load a packed vector from the given aligned memory location
+     */
     ETL_INLINE_VEC_512D load(const std::complex<double>* memory) {
         return _mm512_load_pd(reinterpret_cast<const double*>(memory));
     }
 
+    /*!
+     * \brief Load a packed vector from the given aligned memory location
+     */
     ETL_INLINE_VEC_512 load(const etl::complex<float>* memory) {
         return _mm512_load_ps(reinterpret_cast<const float*>(memory));
     }
 
+    /*!
+     * \brief Load a packed vector from the given aligned memory location
+     */
     ETL_INLINE_VEC_512D load(const etl::complex<double>* memory) {
         return _mm512_load_pd(reinterpret_cast<const double*>(memory));
     }
 
+    /*!
+     * \brief Load a packed vector from the given unaligned memory location
+     */
     ETL_INLINE_VEC_512 loadu(const float* memory) {
         return _mm512_loadu_ps(memory);
     }
 
+    /*!
+     * \brief Load a packed vector from the given unaligned memory location
+     */
     ETL_INLINE_VEC_512D loadu(const double* memory) {
         return _mm512_loadu_pd(memory);
     }
 
+    /*!
+     * \brief Load a packed vector from the given unaligned memory location
+     */
     ETL_INLINE_VEC_512 loadu(const std::complex<float>* memory) {
         return _mm512_loadu_ps(reinterpret_cast<const float*>(memory));
     }
 
+    /*!
+     * \brief Load a packed vector from the given unaligned memory location
+     */
     ETL_INLINE_VEC_512D loadu(const std::complex<double>* memory) {
         return _mm512_loadu_pd(reinterpret_cast<const double*>(memory));
     }
 
+    /*!
+     * \brief Load a packed vector from the given unaligned memory location
+     */
     ETL_INLINE_VEC_512 loadu(const etl::complex<float>* memory) {
         return _mm512_loadu_ps(reinterpret_cast<const float*>(memory));
     }
 
+    /*!
+     * \brief Load a packed vector from the given unaligned memory location
+     */
     ETL_INLINE_VEC_512D loadu(const etl::complex<double>* memory) {
         return _mm512_loadu_pd(reinterpret_cast<const double*>(memory));
     }
 
+    /*!
+     * \brief Fill a packed vector  by replicating a value
+     */
     ETL_INLINE_VEC_512D set(double value) {
         return _mm512_set1_pd(value);
     }
 
+    /*!
+     * \brief Fill a packed vector  by replicating a value
+     */
     ETL_INLINE_VEC_512 set(float value) {
         return _mm512_set1_ps(value);
     }
 
+    /*!
+     * \brief Add the two given values and return the result.
+     */
     ETL_INLINE_VEC_512D add(__m512d lhs, __m512d rhs) {
         return _mm512_add_pd(lhs, rhs);
     }
 
+    /*!
+     * \brief Subtract the two given values and return the result.
+     */
     ETL_INLINE_VEC_512D sub(__m512d lhs, __m512d rhs) {
         return _mm512_sub_pd(lhs, rhs);
     }
@@ -297,10 +417,16 @@ struct avx512_vec {
         return _mm512_xor_pd(x, _mm512_set1_pd(-0.f));
     }
 
+    /*!
+     * \brief Add the two given values and return the result.
+     */
     ETL_INLINE_VEC_512 add(__m512 lhs, __m512 rhs) {
         return _mm512_add_ps(lhs, rhs);
     }
 
+    /*!
+     * \brief Subtract the two given values and return the result.
+     */
     ETL_INLINE_VEC_512 sub(__m512 lhs, __m512 rhs) {
         return _mm512_sub_ps(lhs, rhs);
     }
