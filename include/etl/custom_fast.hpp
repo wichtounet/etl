@@ -69,7 +69,7 @@ public:
      * \brief Construct a fast matrix directly from storage memory
      * \param memory The unmanaged memory
      */
-    custom_fast_matrix_impl(memory_type memory) : base_type(storage_impl{memory, etl_size}) {
+    explicit custom_fast_matrix_impl(memory_type memory) : base_type(storage_impl{memory, etl_size}) {
         //Nothing else to init
     }
 
