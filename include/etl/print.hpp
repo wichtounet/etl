@@ -85,7 +85,7 @@ std::string to_octave(T&& m) {
         v = "[";
     }
 
-    std::string comma = "";
+    std::string comma;
     for (std::size_t j = 0; j < etl::dim<0>(m); ++j) {
         v += comma + std::to_string(m(j));
         comma = ",";
