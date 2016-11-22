@@ -68,7 +68,6 @@ inline cpp14_constexpr gemm_impl select_default_gemm_impl(const std::size_t n1, 
 template <typename A, typename B, typename C>
 inline gemm_impl select_gemm_impl(const std::size_t n1, const std::size_t n2, const std::size_t n3) {
     constexpr bool DMA = all_dma<A, B, C>::value;
-    using T = value_t<A>;
 
     if (local_context().gemm_selector.forced) {
         auto forced = local_context().gemm_selector.impl;
