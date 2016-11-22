@@ -490,7 +490,7 @@ struct one_if_binary_op {
      * \return The result of applying the binary operator on lhs and rhs
      */
     static constexpr T apply(const T& x, E value) noexcept {
-        return 1.0 ? x == value : 0.0;
+        return x == value ? 1.0 : 0.0;
     }
 
     /*!
