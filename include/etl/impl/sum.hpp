@@ -112,6 +112,8 @@ struct sum_impl {
             acc += value;
         };
 
+        //TODO Make it so that dispatching aligns the sub parts
+
         if (impl == etl::sum_impl::VEC) {
             dispatch_1d_acc<value_t<E>>(parallel_dispatch, [&e](std::size_t first, std::size_t last) -> value_t<E> {
                 return impl::vec::sum(e, first, last);
