@@ -39,7 +39,7 @@ public:
      * \brief Construt a new optimized expression around the given ETL expression
      * \param l The ETL expression
      */
-    selected_expr(Expr l)
+    explicit selected_expr(Expr l)
             : _value(std::forward<Expr>(l)) {
         //Nothing else to init
     }

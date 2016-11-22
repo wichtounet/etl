@@ -179,7 +179,7 @@ struct dyn_basic_conv_expr : dyn_impl_expr<dyn_basic_conv_expr<T, D, Impl>> {
     // Necessary to avoid ambiguity with the forwarding constructor
     dyn_basic_conv_expr(const dyn_basic_conv_expr& rhs) = default;
     dyn_basic_conv_expr(dyn_basic_conv_expr& rhs) = default;
-    dyn_basic_conv_expr(dyn_basic_conv_expr&& rhs) = default;
+    dyn_basic_conv_expr(dyn_basic_conv_expr&& rhs) noexcept = default;
 
     /*!
      * \brief Construct a new dyn_basic_conv_expr and forward all

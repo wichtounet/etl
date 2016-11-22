@@ -35,7 +35,7 @@ public:
      * \brief Construt a new optimized expression around the given ETL expression
      * \param l The ETL expression
      */
-    serial_expr(Expr l)
+    explicit serial_expr(Expr l)
             : _value(std::forward<Expr>(l)) {
         //Nothing else to init
     }

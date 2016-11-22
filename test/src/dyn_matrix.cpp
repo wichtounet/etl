@@ -776,9 +776,6 @@ ETL_TEST_CASE("dyn_matrix/assign_two_types", "") {
     a = b;
     b = a;
 
-    etl::dyn_matrix<double> aa = b;
-    etl::dyn_matrix<float> bb  = a;
-
     etl::dyn_matrix<double> aaa(b);
     etl::dyn_matrix<float> bbb(a);
 }

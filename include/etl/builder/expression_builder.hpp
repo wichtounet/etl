@@ -1276,7 +1276,7 @@ auto sequence_generator(T current = 0) -> generator_expr<sequence_generator_op<T
  */
 template <typename Expr>
 auto opt(Expr&& expr) -> optimized_expr<detail::build_type<Expr>> {
-    return {expr};
+    return optimized_expr<detail::build_type<Expr>>{expr};
 }
 
 /*!
@@ -1289,7 +1289,7 @@ auto opt(Expr&& expr) -> optimized_expr<detail::build_type<Expr>> {
  */
 template <typename Expr>
 auto timed(Expr&& expr) -> timed_expr<detail::build_type<Expr>> {
-    return {expr};
+    return timed_expr<detail::build_type<Expr>>{expr};
 }
 
 /*!
@@ -1303,7 +1303,7 @@ auto timed(Expr&& expr) -> timed_expr<detail::build_type<Expr>> {
  */
 template <typename R, typename Expr>
 auto timed_res(Expr&& expr) -> timed_expr<detail::build_type<Expr>, R> {
-    return {expr};
+    return timed_expr<detail::build_type<Expr>, R>{expr};
 }
 
 /*!
@@ -1316,7 +1316,7 @@ auto timed_res(Expr&& expr) -> timed_expr<detail::build_type<Expr>, R> {
  */
 template <typename Expr>
 auto serial(Expr&& expr) -> serial_expr<detail::build_type<Expr>> {
-    return {expr};
+    return serial_expr<detail::build_type<Expr>>{expr};
 }
 
 /*!
@@ -1329,7 +1329,7 @@ auto serial(Expr&& expr) -> serial_expr<detail::build_type<Expr>> {
  */
 template <typename Expr>
 auto parallel(Expr&& expr) -> parallel_expr<detail::build_type<Expr>> {
-    return {expr};
+    return parallel_expr<detail::build_type<Expr>>{expr};
 }
 
 /*!
@@ -1339,7 +1339,7 @@ auto parallel(Expr&& expr) -> parallel_expr<detail::build_type<Expr>> {
  */
 template <typename Selector, Selector V, typename Expr>
 auto selected(Expr&& expr) -> selected_expr<Selector, V, detail::build_type<Expr>> {
-    return {expr};
+    return selected_expr<Selector, V, detail::build_type<Expr>>{expr};
 }
 
 #define selected_helper(v, expr) etl::selected<decltype(v), v>(expr)

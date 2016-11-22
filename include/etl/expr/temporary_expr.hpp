@@ -29,9 +29,9 @@ private:
 public:
     mutable_shared_ptr() = default;
     mutable_shared_ptr(const mutable_shared_ptr& rhs) = default;
-    mutable_shared_ptr(mutable_shared_ptr&& rhs) = default;
+    mutable_shared_ptr(mutable_shared_ptr&& rhs) noexcept = default;
     mutable_shared_ptr& operator=(const mutable_shared_ptr& rhs) = default;
-    mutable_shared_ptr& operator=(mutable_shared_ptr&& rhs) = default;
+    mutable_shared_ptr& operator=(mutable_shared_ptr&& rhs) noexcept = default;
 
     /*!
      * \brief Constructs a new mutable_shared_ptr from a shared_ptr.

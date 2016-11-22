@@ -365,7 +365,7 @@ struct dense_dyn_base : dyn_base<T, D> {
      * \param rhs The dense_dyn_base to move from
      */
     template <typename E>
-    dense_dyn_base(E&& rhs) : base_type(std::move(rhs)) {
+    explicit dense_dyn_base(E&& rhs) : base_type(std::move(rhs)) {
         //Nothing else to init
     }
 
