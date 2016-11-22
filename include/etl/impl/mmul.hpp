@@ -12,7 +12,6 @@
 #include "etl/impl/std/strassen_mmul.hpp"
 #include "etl/impl/blas/gemm.hpp"
 #include "etl/impl/vec/gemm.hpp"
-#include "etl/impl/eblas/gemm.hpp"
 #include "etl/impl/cublas/gemm.hpp"
 
 namespace etl {
@@ -102,15 +101,6 @@ inline gemm_impl select_gemm_impl(const std::size_t n1, const std::size_t n2, co
 
                 return forced;
 
-            //EBLAS cannot always be used
-            case gemm_impl::FAST:
-                if (!DMA || is_complex_t<T>::value) {                                                                                //COVERAGE_EXCLUDE_LINE
-                    std::cerr << "Forced selection to EBLAS gemm implementation, but not possible for this expression" << std::endl; //COVERAGE_EXCLUDE_LINE
-                    return select_default_gemm_impl<A, B, C>(n1, n2, n3);                                                             //COVERAGE_EXCLUDE_LINE
-                }                                                                                                                    //COVERAGE_EXCLUDE_LINE
-
-                return forced;
-
             //In other cases, simply use the forced impl
             default:
                 return forced;
@@ -188,11 +178,6 @@ inline gemm_impl select_gemv_impl(const std::size_t n1, const std::size_t n2) {
                 }                                                                                                                   //COVERAGE_EXCLUDE_LINE
 
                 return forced;
-
-            //EBLAS cannot always be used
-            case gemm_impl::FAST:
-                std::cerr << "Forced selection to EBLAS gemv implementation, but there is no such implementation" << std::endl; //COVERAGE_EXCLUDE_LINE
-                return select_default_gemv_impl<A, B, C>(n1, n2);                                                                //COVERAGE_EXCLUDE_LINE
 
             //In other cases, simply use the forced impl
             default:
@@ -272,11 +257,6 @@ inline gemm_impl select_gevm_impl(const std::size_t n1, const std::size_t n2) {
 
                 return forced;
 
-            //EBLAS cannot always be used
-            case gemm_impl::FAST:
-                std::cerr << "Forced selection to EBLAS gevm implementation, but there is no such implementation" << std::endl; //COVERAGE_EXCLUDE_LINE
-                return select_default_gevm_impl<A, B, C>(n1, n2);                                                                //COVERAGE_EXCLUDE_LINE
-
             //In other cases, simply use the forced impl
             default:
                 return forced;
@@ -302,8 +282,6 @@ struct mm_mul_impl {
 
         if (impl == gemm_impl::STD) {
             etl::impl::standard::mm_mul(a, b, c);
-        } else if (impl == gemm_impl::FAST) {
-            etl::impl::eblas::gemm(a, b, c);
         } else if (impl == gemm_impl::VEC) {
             etl::impl::vec::gemm(a, b, c);
         } else if (impl == gemm_impl::BLAS) {
