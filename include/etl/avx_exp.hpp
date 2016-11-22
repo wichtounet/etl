@@ -272,7 +272,7 @@ ETL_INLINE_VEC_256D exp256_pd(__m256d x) {
     auto pt2 = _mm256_add_pd(_mm256_mul_pd(_mm256_set1_pd(1.0/39916800.0), x), _mm256_set1_pd(1.0/3628800.0));
     auto pt3 = _mm256_add_pd(_mm256_mul_pd(_mm256_set1_pd(1.0/362880.0), x), _mm256_set1_pd(1.0/40320.0));
     auto pt4 = _mm256_add_pd(_mm256_mul_pd(_mm256_set1_pd(1.0/5040.0), x), _mm256_set1_pd(1.0/720.0));
-    auto pt5 = _mm256_add_pd(_mm256_mul_pd(_mm256_set1_pd(1.0/120.0), x), _mm256_set1_pd(1.0/24.0);
+    auto pt5 = _mm256_add_pd(_mm256_mul_pd(_mm256_set1_pd(1.0/120.0), x), _mm256_set1_pd(1.0/24.0));
     auto pt6 = _mm256_add_pd(_mm256_mul_pd(_mm256_set1_pd(1.0/6.0), x), _mm256_set1_pd(1.0/2.0));
 
     auto pt7 = _mm256_add_pd(_mm256_mul_pd(pt2, x2), pt3);
