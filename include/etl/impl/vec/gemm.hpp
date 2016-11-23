@@ -1182,7 +1182,7 @@ void gemm(A&& a, B&& b, C&& c) {
     if(etl::size(b) < 10000){
         gemm_small_kernel<default_vec>(a, b, c);
     } else {
-        //gemm_large_kernel<default_vec>(a, b, c);
+        gemm_large_kernel<default_vec>(a, b, c);
     }
 }
 
