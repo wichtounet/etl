@@ -281,11 +281,6 @@ struct mm_mul_impl {
     static void apply(A&& a, B&& b, C&& c) {
         gemm_impl impl = select_gemm_impl<A, B, C>(etl::dim<0>(a), etl::dim<1>(a), etl::dim<1>(c));
 
-        cpp_unused(impl);
-        cpp_unused(a);
-        cpp_unused(b);
-        cpp_unused(c);
-
         if (impl == gemm_impl::STD) {
             etl::impl::standard::mm_mul(a, b, c);
         } else if (impl == gemm_impl::VEC) {
