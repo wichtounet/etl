@@ -854,7 +854,7 @@ struct p_max_pool_h_transformer : p_max_pool_transformer<T, C1, C2> {
      * \return The value at the position (i, j)
      */
     value_type operator()(std::size_t i, std::size_t j) const {
-        return std::exp(sub(i, j)) / (1.0 + base_type::pool(i, j));
+        return base_type::exp_sub(i, j) / (1.0 + base_type::pool(i, j));
     }
 
     /*!
@@ -865,7 +865,7 @@ struct p_max_pool_h_transformer : p_max_pool_transformer<T, C1, C2> {
      * \return The value at the position (k, i, j)
      */
     value_type operator()(std::size_t k, std::size_t i, std::size_t j) const {
-        return std::exp(sub(k, i, j)) / (1.0 + base_type::pool(k, i, j));
+        return base_type::exp_sub(k, i, j) / (1.0 + base_type::pool(k, i, j));
     }
 
     /*!
@@ -877,7 +877,7 @@ struct p_max_pool_h_transformer : p_max_pool_transformer<T, C1, C2> {
      * \return The value at the position (k, i, j)
      */
     value_type operator()(size_t b, std::size_t k, std::size_t i, std::size_t j) const {
-        return std::exp(sub(b, k, i, j)) / (1.0 + base_type::pool(b, k, i, j));
+        return base_type::exp_sub(b, k, i, j) / (1.0 + base_type::pool(b, k, i, j));
     }
 
     /*!
