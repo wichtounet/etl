@@ -44,23 +44,34 @@ struct comparable {
      */
     template <typename E>
     bool operator==(const E& rhs) const {
+        auto& lhs = as_derived();
+
         // Both expressions must have the same number of dimensions
-        if (etl::dimensions(as_derived()) != etl::dimensions(rhs)) {
+        if (etl::dimensions(lhs) != etl::dimensions(rhs)) {
             return false;
         }
 
         // The dimensions must be the same
         for(std::size_t i = 0; i < etl::dimensions(rhs); ++i){
-            if(etl::dim(as_derived(), i) != etl::dim(rhs, i)){
+            if(etl::dim(lhs, i) != etl::dim(rhs, i)){
                 return false;
             }
         }
 
         // At this point, the values are necessary for the comparison
-        etl::force(as_derived());
+        etl::force(lhs);
         etl::force(rhs);
 
-        return std::equal(as_derived().begin(), as_derived().end(), rhs.begin());
+        // Note: Ideally, we should use std::equal, but this is significantly
+        // faster to compile
+
+        for(size_t i = 0; i < etl::size(lhs); ++i){
+            if(lhs[i] != rhs[i]){
+                return false;
+            }
+        }
+
+        return true;
     }
 
     /*!
