@@ -1268,6 +1268,7 @@ struct dyn_p_max_pool_transformer {
     using value_type = value_t<T>; ///< The type of valuie
 
     sub_type sub; ///< The subexpression
+    decltype(force_temporary(sub)) exp_sub; ///< The exponentials of the sub expression
 
     std::size_t c1; ///< The first dimension pooling ratio
     std::size_t c2; ///< The second dimension pooling ratio
@@ -1276,8 +1277,9 @@ struct dyn_p_max_pool_transformer {
      * \brief Construct a new transformer around the given expression
      * \param expr The sub expression
      */
-    explicit dyn_p_max_pool_transformer(sub_type expr, std::size_t c1, std::size_t c2)
-            : sub(expr), c1(c1), c2(c2) {}
+    explicit dyn_p_max_pool_transformer(sub_type expr, std::size_t c1, std::size_t c2) : sub(expr), c1(c1), c2(c2) {
+        exp_sub = exp(sub);
+    }
 
     value_type pool(std::size_t i, std::size_t j) const {
         value_type p = 0;
@@ -1287,7 +1289,7 @@ struct dyn_p_max_pool_transformer {
 
         for (std::size_t ii = start_ii; ii < start_ii + c1; ++ii) {
             for (std::size_t jj = start_jj; jj < start_jj + c2; ++jj) {
-                p += std::exp(sub(ii, jj));
+                p += exp_sub(ii, jj);
             }
         }
 
@@ -1302,7 +1304,7 @@ struct dyn_p_max_pool_transformer {
 
         for (std::size_t ii = start_ii; ii < start_ii + c1; ++ii) {
             for (std::size_t jj = start_jj; jj < start_jj + c2; ++jj) {
-                p += std::exp(sub(k, ii, jj));
+                p += exp_sub(k, ii, jj);
             }
         }
 
@@ -1420,7 +1422,7 @@ struct dyn_p_max_pool_h_transformer : dyn_p_max_pool_transformer<T> {
      * \return The value at the position (i, j)
      */
     value_type operator()(std::size_t i, std::size_t j) const {
-        return std::exp(sub(i, j)) / (1.0 + base_type::pool(i, j));
+        return base_type::exp_sub(i, j) / (1.0 + base_type::pool(i, j));
     }
 
     /*!
@@ -1431,7 +1433,7 @@ struct dyn_p_max_pool_h_transformer : dyn_p_max_pool_transformer<T> {
      * \return The value at the position (k, i, j)
      */
     value_type operator()(std::size_t k, std::size_t i, std::size_t j) const {
-        return std::exp(sub(k, i, j)) / (1.0 + base_type::pool(k, i, j));
+        return base_type::exp_sub(k, i, j) / (1.0 + base_type::pool(k, i, j));
     }
 
     /*!
