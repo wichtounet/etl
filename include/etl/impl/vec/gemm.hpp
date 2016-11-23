@@ -680,14 +680,14 @@ void gemm_small_kernel(const A& a, const B& b, C& c) {
             for (size_t k = 0; k < K; ++k) {
                 auto a1 = vec_type::set(a(i, k));
 
-                auto b1 = b.template loadu(k * N + j + vec_size * 0);
-                auto b2 = b.template loadu(k * N + j + vec_size * 1);
-                auto b3 = b.template loadu(k * N + j + vec_size * 2);
-                auto b4 = b.template loadu(k * N + j + vec_size * 3);
-                auto b5 = b.template loadu(k * N + j + vec_size * 4);
-                auto b6 = b.template loadu(k * N + j + vec_size * 5);
-                auto b7 = b.template loadu(k * N + j + vec_size * 6);
-                auto b8 = b.template loadu(k * N + j + vec_size * 7);
+                auto b1 = b.template loadu<vec_type>(k * N + j + vec_size * 0);
+                auto b2 = b.template loadu<vec_type>(k * N + j + vec_size * 1);
+                auto b3 = b.template loadu<vec_type>(k * N + j + vec_size * 2);
+                auto b4 = b.template loadu<vec_type>(k * N + j + vec_size * 3);
+                auto b5 = b.template loadu<vec_type>(k * N + j + vec_size * 4);
+                auto b6 = b.template loadu<vec_type>(k * N + j + vec_size * 5);
+                auto b7 = b.template loadu<vec_type>(k * N + j + vec_size * 6);
+                auto b8 = b.template loadu<vec_type>(k * N + j + vec_size * 7);
 
                 r1 = vec_type::template fmadd<Cx>(a1, b1, r1);
                 r2 = vec_type::template fmadd<Cx>(a1, b2, r2);
@@ -996,10 +996,10 @@ void gemm_large_kernel(const A& a, const B& b, C& c) {
                             auto a1 = vec_type::set(a(i + 0, k));
                             auto a2 = vec_type::set(a(i + 1, k));
 
-                            auto b1 = b.template loadu(k * N + j);
-                            auto b2 = b.template loadu(k * N + j1);
-                            auto b3 = b.template loadu(k * N + j2);
-                            auto b4 = b.template loadu(k * N + j3);
+                            auto b1 = b.template loadu<vec_type>(k * N + j);
+                            auto b2 = b.template loadu<vec_type>(k * N + j1);
+                            auto b3 = b.template loadu<vec_type>(k * N + j2);
+                            auto b4 = b.template loadu<vec_type>(k * N + j3);
 
                             r11 = vec_type::template fmadd<Cx>(a1, b1, r11);
                             r12 = vec_type::template fmadd<Cx>(a1, b2, r12);
@@ -1031,10 +1031,10 @@ void gemm_large_kernel(const A& a, const B& b, C& c) {
                         for (size_t k = block_k; k < k_end; ++k) {
                             auto a1 = vec_type::set(a(i, k));
 
-                            auto b1 = b.template loadu(k * N + j);
-                            auto b2 = b.template loadu(k * N + j1);
-                            auto b3 = b.template loadu(k * N + j2);
-                            auto b4 = b.template loadu(k * N + j3);
+                            auto b1 = b.template loadu<vec_type>(k * N + j);
+                            auto b2 = b.template loadu<vec_type>(k * N + j1);
+                            auto b3 = b.template loadu<vec_type>(k * N + j2);
+                            auto b4 = b.template loadu<vec_type>(k * N + j3);
 
                             r1 = vec_type::template fmadd<Cx>(a1, b1, r1);
                             r2 = vec_type::template fmadd<Cx>(a1, b2, r2);
@@ -1073,8 +1073,8 @@ void gemm_large_kernel(const A& a, const B& b, C& c) {
                             auto a3 = vec_type::set(a(i + 2, k));
                             auto a4 = vec_type::set(a(i + 3, k));
 
-                            auto b1 = b.template loadu(k * N + j);
-                            auto b2 = b.template loadu(k * N + j1);
+                            auto b1 = b.template loadu<vec_type>(k * N + j);
+                            auto b2 = b.template loadu<vec_type>(k * N + j1);
 
                             r11 = vec_type::template fmadd<Cx>(a1, b1, r11);
                             r12 = vec_type::template fmadd<Cx>(a1, b2, r12);
@@ -1110,8 +1110,8 @@ void gemm_large_kernel(const A& a, const B& b, C& c) {
                             auto a1 = vec_type::set(a(i + 0, k));
                             auto a2 = vec_type::set(a(i + 1, k));
 
-                            auto b1 = b.template loadu(k * N + j);
-                            auto b2 = b.template loadu(k * N + j1);
+                            auto b1 = b.template loadu<vec_type>(k * N + j);
+                            auto b2 = b.template loadu<vec_type>(k * N + j1);
 
                             r11 = vec_type::template fmadd<Cx>(a1, b1, r11);
                             r12 = vec_type::template fmadd<Cx>(a1, b2, r12);
@@ -1133,8 +1133,8 @@ void gemm_large_kernel(const A& a, const B& b, C& c) {
                         for (size_t k = block_k; k < k_end; ++k) {
                             auto a1 = vec_type::set(a(i, k));
 
-                            auto b1 = b.template loadu(k * N + j);
-                            auto b2 = b.template loadu(k * N + j1);
+                            auto b1 = b.template loadu<vec_type>(k * N + j);
+                            auto b2 = b.template loadu<vec_type>(k * N + j1);
 
                             r1 = vec_type::template fmadd<Cx>(a1, b1, r1);
                             r2 = vec_type::template fmadd<Cx>(a1, b2, r2);
@@ -1151,7 +1151,7 @@ void gemm_large_kernel(const A& a, const B& b, C& c) {
 
                         for (size_t k = block_k; k < k_end; ++k) {
                             auto a1 = vec_type::set(a(i, k));
-                            auto b1 = b.template loadu(k * N + j);
+                            auto b1 = b.template loadu<vec_type>(k * N + j);
                             r1 = vec_type::template fmadd<Cx>(a1, b1, r1);
                         }
 
@@ -1182,7 +1182,7 @@ void gemm(A&& a, B&& b, C&& c) {
     if(etl::size(b) < 10000){
         gemm_small_kernel<default_vec>(a, b, c);
     } else {
-        gemm_large_kernel<default_vec>(a, b, c);
+        //gemm_large_kernel<default_vec>(a, b, c);
     }
 }
 
