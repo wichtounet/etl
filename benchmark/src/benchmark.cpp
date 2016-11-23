@@ -347,6 +347,14 @@ CPM_BENCH() {
 
     CPM_TWO_PASS_NS_P(
         pmp_policy,
+        "dyn_pmp_h(c=2) (s) [pmp][s]",
+        [](std::size_t d){ return std::make_tuple(smat(d, d), smat(d, d)); },
+        [](smat& a, smat& r){ r = etl::p_max_pool_h(a, 2, 2); },
+        [](std::size_t d){ return 2 * d * d * 2 * 2; }
+        );
+
+    CPM_TWO_PASS_NS_P(
+        pmp_policy,
         "pmp_p(c=2) (s) [pmp][s]",
         [](std::size_t d){ return std::make_tuple(smat(d, d), smat(d/2,d/2)); },
         [](smat& a, smat& r){ r = etl::p_max_pool_p<2,2>(a); },
