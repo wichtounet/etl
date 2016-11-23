@@ -69,6 +69,8 @@ template <typename A, typename B, typename C>
 inline gemm_impl select_gemm_impl(const std::size_t n1, const std::size_t n2, const std::size_t n3) {
     constexpr bool DMA = all_dma<A, B, C>::value;
 
+    auto def = select_default_gemm_impl<A, B, C>(n1, n2, n3);
+
     if (local_context().gemm_selector.forced) {
         auto forced = local_context().gemm_selector.impl;
 
@@ -77,7 +79,7 @@ inline gemm_impl select_gemm_impl(const std::size_t n1, const std::size_t n2, co
             case gemm_impl::CUBLAS:
                 if (!is_cublas_enabled || !DMA) {                                                                                     //COVERAGE_EXCLUDE_LINE
                     std::cerr << "Forced selection to CUBLAS gemm implementation, but not possible for this expression" << std::endl; //COVERAGE_EXCLUDE_LINE
-                    return select_default_gemm_impl<A, B, C>(n1, n2, n3);                                                              //COVERAGE_EXCLUDE_LINE
+                    return def;                                                              //COVERAGE_EXCLUDE_LINE
                 }                                                                                                                     //COVERAGE_EXCLUDE_LINE
 
                 return forced;
@@ -86,7 +88,7 @@ inline gemm_impl select_gemm_impl(const std::size_t n1, const std::size_t n2, co
             case gemm_impl::BLAS:
                 if (!is_cblas_enabled || !DMA) {                                                                                    //COVERAGE_EXCLUDE_LINE
                     std::cerr << "Forced selection to BLAS gemm implementation, but not possible for this expression" << std::endl; //COVERAGE_EXCLUDE_LINE
-                    return select_default_gemm_impl<A, B, C>(n1, n2, n3);                                                            //COVERAGE_EXCLUDE_LINE
+                    return def;                                                            //COVERAGE_EXCLUDE_LINE
                 }                                                                                                                   //COVERAGE_EXCLUDE_LINE
 
                 return forced;
@@ -95,7 +97,7 @@ inline gemm_impl select_gemm_impl(const std::size_t n1, const std::size_t n2, co
             case gemm_impl::VEC:
                 if (!vec_enabled || !all_vectorizable<vector_mode, A, B, C>::value) {                                               //COVERAGE_EXCLUDE_LINE
                     std::cerr << "Forced selection to VEC gemv implementation, but not possible for this expression" << std::endl; //COVERAGE_EXCLUDE_LINE
-                    return select_default_gemm_impl<A, B, C>(n1, n2, 3);                                                            //COVERAGE_EXCLUDE_LINE
+                    return def;                                                            //COVERAGE_EXCLUDE_LINE
                 }                                                                                                                   //COVERAGE_EXCLUDE_LINE
 
                 return forced;
@@ -106,7 +108,7 @@ inline gemm_impl select_gemm_impl(const std::size_t n1, const std::size_t n2, co
         }
     }
 
-    return select_default_gemm_impl<A, B, C>(n1, n2, n3);
+    return def;
 }
 
 /*!
@@ -278,6 +280,11 @@ struct mm_mul_impl {
     template <typename A, typename B, typename C>
     static void apply(A&& a, B&& b, C&& c) {
         gemm_impl impl = select_gemm_impl<A, B, C>(etl::dim<0>(a), etl::dim<1>(a), etl::dim<1>(c));
+
+        cpp_unused(impl);
+        cpp_unused(a);
+        cpp_unused(b);
+        cpp_unused(c);
 
         if (impl == gemm_impl::STD) {
             etl::impl::standard::mm_mul(a, b, c);
