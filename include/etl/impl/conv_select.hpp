@@ -273,15 +273,27 @@ inline etl::conv4_impl select_default_conv4_valid_impl() {
 
     if(cudnn){
         return etl::conv4_impl::CUDNN;
-    } else if(avx){
-        return etl::conv4_impl::AVX;
-    } else if(is_cublas_enabled || is_mkl_enabled){
-        return etl::conv4_impl::BLAS;
-    } else if(sse){
-        return etl::conv4_impl::SSE;
-    } else {
-        return etl::conv4_impl::BLAS;
     }
+
+    if (conv4_prefer_blas) {
+        if (is_cublas_enabled || is_mkl_enabled) {
+            return etl::conv4_impl::BLAS;
+        } else if (avx) {
+            return etl::conv4_impl::AVX;
+        } else if (sse) {
+            return etl::conv4_impl::SSE;
+        }
+    } else {
+        if (avx) {
+            return etl::conv4_impl::AVX;
+        } else if (is_cublas_enabled || is_mkl_enabled) {
+            return etl::conv4_impl::BLAS;
+        } else if (sse) {
+            return etl::conv4_impl::SSE;
+        }
+    }
+
+    return etl::conv4_impl::BLAS;
 }
 
 /*!

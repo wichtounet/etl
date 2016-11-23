@@ -231,4 +231,10 @@ constexpr bool intel_compiler = true;
 constexpr bool intel_compiler              = false; ///< Indicates if the project is compiled with intel
 #endif
 
+#ifdef ETL_CONV4_PREFER_BLAS
+constexpr bool conv4_prefer_blas = true;
+#else
+constexpr bool conv4_prefer_blas           = false;
+#endif
+
 } //end of namespace etl
