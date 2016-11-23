@@ -286,7 +286,8 @@ using conv_4d_valid_policy_16 = NARY_POLICY(
     /* W */ VALUES_POLICY(9, 9, 9, 9, 9, 9, 9)
     );
 
-using pmp_policy = VALUES_POLICY(100, 120, 140, 160, 180, 200);
+using pmp_policy = VALUES_POLICY(100, 120, 140, 160, 180, 200, 400, 600, 800, 1000);
+using pmp_policy_3 = VALUES_POLICY(10, 20, 30, 40, 50, 60, 80, 90, 100);
 
 using fast_policy = VALUES_POLICY(1);
 

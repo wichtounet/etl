@@ -346,6 +346,22 @@ CPM_BENCH() {
         );
 
     CPM_TWO_PASS_NS_P(
+        pmp_policy_3,
+        "pmp_h_3(c=2) (s) [pmp][s]",
+        [](std::size_t d){ return std::make_tuple(smat3(50UL, d, d), smat3(50UL, d,d)); },
+        [](smat3& a, smat3& r){ r = etl::p_max_pool_h<2,2>(a); },
+        [](std::size_t d){ return 50 * 2 * d * d * 2 * 2; }
+        );
+
+    CPM_TWO_PASS_NS_P(
+        pmp_policy_3,
+        "pmp_h_4(c=2) (s) [pmp][s]",
+        [](std::size_t d){ return std::make_tuple(smat4(50UL, 50UL, d, d), smat4(50UL, 50UL, d,d)); },
+        [](smat4& a, smat4& r){ r = etl::p_max_pool_h<2,2>(a); },
+        [](std::size_t d){ return 50 * 50 * 2 * d * d * 2 * 2; }
+        );
+
+    CPM_TWO_PASS_NS_P(
         pmp_policy,
         "dyn_pmp_h(c=2) (s) [pmp][s]",
         [](std::size_t d){ return std::make_tuple(smat(d, d), smat(d, d)); },
