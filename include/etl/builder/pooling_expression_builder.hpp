@@ -492,7 +492,7 @@ auto upsample_3d(E&& value, size_t c1, size_t c2, size_t c3) {
 template <size_t C1, size_t C2, typename E, cpp_enable_if(is_etl_expr<E>::value)>
 auto p_max_pool_h(E&& value) {
     validate_pmax_pooling<C1, C2>(value);
-    return unary_expr<value_t<E>, p_max_pool_h_transformer<detail::build_type<E>, C1, C2>, transform_op>{p_max_pool_h_transformer<detail::build_type<E>, C1, C2>(value)};
+    return temporary_unary_expr<value_t<E>, detail::build_type<E>, pmp_h_2d_expr<value_t<E>, decay_traits<E>::dimensions(), C1, C2>>{value};
 }
 
 /*!
@@ -505,7 +505,7 @@ auto p_max_pool_h(E&& value) {
 template <typename E, cpp_enable_if(is_etl_expr<E>::value)>
 auto p_max_pool_h(E&& value, size_t c1, size_t c2) {
     validate_pmax_pooling(value, c1, c2);
-    return unary_expr<value_t<E>, dyn_p_max_pool_h_transformer<detail::build_type<E>>, transform_op>{dyn_p_max_pool_h_transformer<detail::build_type<E>>(value, c1, c2)};
+    return temporary_unary_expr_state<value_t<E>, detail::build_type<E>, dyn_pmp_h_2d_expr<value_t<E>, decay_traits<E>::dimensions()>>{{c1, c2}, value};
 }
 
 /*!

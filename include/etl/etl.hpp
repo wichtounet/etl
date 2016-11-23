@@ -84,6 +84,7 @@
 #include "etl/expr/mmul_expr.hpp"
 #include "etl/expr/outer_product_expr.hpp"
 #include "etl/expr/fft_expr.hpp"
+#include "etl/expr/prob_pooling_expr.hpp"
 #include "etl/expr/inv_expr.hpp"
 #include "etl/expr/conv_expr.hpp"
 #include "etl/expr/convmtx2_expr.hpp"
