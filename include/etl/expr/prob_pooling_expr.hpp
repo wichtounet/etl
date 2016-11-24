@@ -129,6 +129,12 @@ template <typename T, size_t D, size_t C1, size_t C2>
 using pmp_h_expr = basic_pmp_h_expr<T, D, 1, 1, detail::pmp_h_impl<D, C1, C2>>;
 
 /*!
+ * \brief Expression for 2D PMP (hidden)
+ */
+template <typename T, size_t D, size_t C1, size_t C2>
+using pmp_p_expr = basic_pmp_h_expr<T, D, C1, C2, detail::pmp_p_impl<D, C1, C2>>;
+
+/*!
  * \brief A configurable expression for FFT
  * \tparam T The value type
  * \tparam D The number of dimensions of the FFT
