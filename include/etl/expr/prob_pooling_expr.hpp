@@ -126,7 +126,7 @@ struct basic_pmp_h_expr : impl_expr<basic_pmp_h_expr<T, D, C1, C2, Impl>> {
  * \brief Expression for 2D FFT
  */
 template <typename T, size_t D, size_t C1, size_t C2>
-using pmp_h_2d_expr = basic_pmp_h_expr<T, D, 1, 1, detail::pmp_2d_impl<D, C1, C2>>;
+using pmp_h_2d_expr = basic_pmp_h_expr<T, D, 1, 1, detail::pmp_h_impl<D, C1, C2>>;
 
 /*!
  * \brief A configurable expression for FFT
@@ -244,6 +244,6 @@ struct dyn_basic_pmp_h_expr : impl_expr<dyn_basic_pmp_h_expr<T, D, Impl>> {
  * \brief Expression for 2D FFT
  */
 template <typename T, size_t D>
-using dyn_pmp_h_2d_expr = dyn_basic_pmp_h_expr<T, D, detail::dyn_pmp_2d_impl<D>>;
+using dyn_pmp_h_2d_expr = dyn_basic_pmp_h_expr<T, D, detail::dyn_pmp_h_impl<D>>;
 
 } //end of namespace etl

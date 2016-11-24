@@ -12,10 +12,10 @@ namespace etl {
 namespace detail {
 
 template<size_t D, size_t C1, size_t C2>
-struct pmp_2d_impl ;
+struct pmp_h_impl ;
 
 template<size_t C1, size_t C2>
-struct pmp_2d_impl <2, C1, C2> {
+struct pmp_h_impl <2, C1, C2> {
     /*!
      * \brief Apply the functor
      * \param a The input sub expression
@@ -74,7 +74,7 @@ struct pmp_2d_impl <2, C1, C2> {
 };
 
 template<size_t C1, size_t C2>
-struct pmp_2d_impl <3, C1, C2> {
+struct pmp_h_impl <3, C1, C2> {
     /*!
      * \brief Apply the functor
      * \param a The input sub expression
@@ -138,7 +138,7 @@ struct pmp_2d_impl <3, C1, C2> {
 };
 
 template<size_t C1, size_t C2>
-struct pmp_2d_impl <4, C1, C2> {
+struct pmp_h_impl <4, C1, C2> {
     /*!
      * \brief Apply the functor
      * \param a The input sub expression
@@ -208,14 +208,14 @@ struct pmp_2d_impl <4, C1, C2> {
 };
 
 template<size_t D>
-struct dyn_pmp_2d_impl ;
+struct dyn_pmp_h_impl ;
 
 template<>
-struct dyn_pmp_2d_impl <2> {
+struct dyn_pmp_h_impl <2> {
     const size_t c1;
     const size_t c2;
 
-    dyn_pmp_2d_impl(size_t c1, size_t c2) : c1(c1), c2(c2) {}
+    dyn_pmp_h_impl(size_t c1, size_t c2) : c1(c1), c2(c2) {}
 
     /*!
      * \brief Apply the functor
@@ -274,11 +274,11 @@ struct dyn_pmp_2d_impl <2> {
 };
 
 template<>
-struct dyn_pmp_2d_impl <3> {
+struct dyn_pmp_h_impl <3> {
     const size_t c1;
     const size_t c2;
 
-    dyn_pmp_2d_impl(size_t c1, size_t c2) : c1(c1), c2(c2) {}
+    dyn_pmp_h_impl(size_t c1, size_t c2) : c1(c1), c2(c2) {}
 
     /*!
      * \brief Apply the functor
@@ -344,11 +344,11 @@ struct dyn_pmp_2d_impl <3> {
 };
 
 template<>
-struct dyn_pmp_2d_impl <4> {
+struct dyn_pmp_h_impl <4> {
     const size_t c1;
     const size_t c2;
 
-    dyn_pmp_2d_impl(size_t c1, size_t c2) : c1(c1), c2(c2) {}
+    dyn_pmp_h_impl(size_t c1, size_t c2) : c1(c1), c2(c2) {}
 
     /*!
      * \brief Apply the functor
