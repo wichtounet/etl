@@ -345,6 +345,7 @@ CPM_BENCH() {
         [](std::size_t d){ return 2 * d * d * 2 * 2; }
         );
 
+#ifdef ETL_EXTENDED_BENCH
     CPM_TWO_PASS_NS_P(
         pmp_policy_3,
         "pmp_h_3(c=2) (s) [pmp][s]",
@@ -368,6 +369,7 @@ CPM_BENCH() {
         [](smat& a, smat& r){ r = etl::p_max_pool_h(a, 2, 2); },
         [](std::size_t d){ return 2 * d * d * 2 * 2; }
         );
+#endif
 
     CPM_TWO_PASS_NS_P(
         pmp_policy,
