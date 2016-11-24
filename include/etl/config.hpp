@@ -231,6 +231,7 @@ constexpr bool intel_compiler = true;
 constexpr bool intel_compiler              = false; ///< Indicates if the project is compiled with intel
 #endif
 
+//TODO: Once there is a good selection for conv4_valid, this should be removed
 #ifdef ETL_CONV4_PREFER_BLAS
 constexpr bool conv4_prefer_blas = true;
 #else
