@@ -23,9 +23,9 @@ namespace etl {
  * \tparam D The number of dimensions of the FFT
  * \tparam Impl The implementation to use
  */
-template <typename T, std::size_t D, typename Impl>
-struct basic_pmp_h_expr : impl_expr<basic_pmp_h_expr<T, D, Impl>> {
-    using this_type  = basic_pmp_h_expr<T, D, Impl>; ///< The type of this expression
+template <typename T, size_t D, size_t C1, size_t C2, typename Impl>
+struct basic_pmp_h_expr : impl_expr<basic_pmp_h_expr<T, D, C1, C2, Impl>> {
+    using this_type  = basic_pmp_h_expr<T, D, C1, C2, Impl>; ///< The type of this expression
     using value_type = T;                          ///< The value type
 
     static constexpr bool is_gpu = false; ///< Indicate if the expression is executed on GPU
@@ -67,7 +67,9 @@ struct basic_pmp_h_expr : impl_expr<basic_pmp_h_expr<T, D, Impl>> {
      */
     template <typename A, std::size_t DD>
     static constexpr std::size_t dim() {
-        return decay_traits<A>::template dim<DD>();
+        return
+            DD == 0 ? decay_traits<A>::template dim<0>() / C1
+                    : decay_traits<A>::template dim<1>() / C2;
     }
 
     /*!
@@ -78,7 +80,9 @@ struct basic_pmp_h_expr : impl_expr<basic_pmp_h_expr<T, D, Impl>> {
      */
     template <typename A>
     static std::size_t dim(const A& a, std::size_t d) {
-        return etl_traits<A>::dim(a, d);
+        return
+            d == 0 ? decay_traits<A>::dim(a, 0) / C1
+                    : decay_traits<A>::dim(a, 1) / C2;
     }
 
     /*!
@@ -88,7 +92,7 @@ struct basic_pmp_h_expr : impl_expr<basic_pmp_h_expr<T, D, Impl>> {
      */
     template <typename A>
     static std::size_t size(const A& a) {
-        return etl::size(a);
+        return etl::size(a) / (C1 * C2);
     }
 
     /*!
@@ -97,7 +101,7 @@ struct basic_pmp_h_expr : impl_expr<basic_pmp_h_expr<T, D, Impl>> {
      */
     template <typename A>
     static constexpr std::size_t size() {
-        return etl::decay_traits<A>::size();
+        return etl::decay_traits<A>::size() / (C1 * C2);
     }
 
     /*!
@@ -122,7 +126,7 @@ struct basic_pmp_h_expr : impl_expr<basic_pmp_h_expr<T, D, Impl>> {
  * \brief Expression for 2D FFT
  */
 template <typename T, size_t D, size_t C1, size_t C2>
-using pmp_h_2d_expr = basic_pmp_h_expr<T, D, detail::pmp_2d_impl<D, C1, C2>>;
+using pmp_h_2d_expr = basic_pmp_h_expr<T, D, 1, 1, detail::pmp_2d_impl<D, C1, C2>>;
 
 /*!
  * \brief A configurable expression for FFT
@@ -131,7 +135,7 @@ using pmp_h_2d_expr = basic_pmp_h_expr<T, D, detail::pmp_2d_impl<D, C1, C2>>;
  * \tparam Impl The implementation to use
  */
 template <typename T, std::size_t D, typename Impl>
-struct dyn_basic_pmp_h_expr : impl_expr<basic_pmp_h_expr<T, D, Impl>> {
+struct dyn_basic_pmp_h_expr : impl_expr<dyn_basic_pmp_h_expr<T, D, Impl>> {
     using this_type  = dyn_basic_pmp_h_expr<T, D, Impl>; ///< The type of this expression
     using value_type = T;                          ///< The value type
 
