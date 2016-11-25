@@ -1022,9 +1022,9 @@ struct fast_matrix_view {
  */
 template <typename T, size_t D>
 struct dyn_matrix_view {
-    T sub;               ///< The sub expression
-    std::array<std::size_t, D> dimensions;
-    size_t _size;
+    T sub;                                 ///< The sub expression
+    std::array<std::size_t, D> dimensions; ///< The dimensions of the view
+    size_t _size;                          ///< The size of the view
 
     using sub_type          = T;                                               ///< The sub type
     using value_type        = value_t<sub_type>;                               ///< The value contained in the expression
