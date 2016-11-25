@@ -563,6 +563,11 @@ struct avx_vec {
 
 #endif //__INTEL_COMPILER
 
+    /*!
+     * \brief Perform an horizontal sum of the given vector.
+     * \param in The input vector type
+     * \return the horizontal sum of the vector
+     */
     template <typename T = float>
     static inline T ETL_INLINE_ATTR_VEC hadd(__m256 in) {
         const __m128 x128 = _mm_add_ps(_mm256_extractf128_ps(in, 1), _mm256_castps256_ps128(in));
@@ -571,6 +576,11 @@ struct avx_vec {
         return _mm_cvtss_f32(x32);
     }
 
+    /*!
+     * \brief Perform an horizontal sum of the given vector.
+     * \param in The input vector type
+     * \return the horizontal sum of the vector
+     */
     template <typename T = double>
     static inline T ETL_INLINE_ATTR_VEC hadd(__m256d in) {
         const __m256d t1 = _mm256_hadd_pd(in, _mm256_permute2f128_pd(in, in, 1));
@@ -581,6 +591,11 @@ struct avx_vec {
 
 //TODO Vectorize the two following functions
 
+/*!
+ * \brief Perform an horizontal sum of the given vector.
+ * \param in The input vector type
+ * \return the horizontal sum of the vector
+ */
 template <>
 inline std::complex<float> ETL_INLINE_ATTR_VEC avx_vec::hadd<std::complex<float>>(__m256 in) {
     std::complex<float> tmp_result[4];
@@ -588,6 +603,11 @@ inline std::complex<float> ETL_INLINE_ATTR_VEC avx_vec::hadd<std::complex<float>
     return tmp_result[0] + tmp_result[1] + tmp_result[2] + tmp_result[3];
 }
 
+/*!
+ * \brief Perform an horizontal sum of the given vector.
+ * \param in The input vector type
+ * \return the horizontal sum of the vector
+ */
 template <>
 inline std::complex<double> ETL_INLINE_ATTR_VEC avx_vec::hadd<std::complex<double>>(__m256d in) {
     std::complex<double> tmp_result[2];
@@ -595,6 +615,11 @@ inline std::complex<double> ETL_INLINE_ATTR_VEC avx_vec::hadd<std::complex<doubl
     return tmp_result[0] + tmp_result[1];
 }
 
+/*!
+ * \brief Perform an horizontal sum of the given vector.
+ * \param in The input vector type
+ * \return the horizontal sum of the vector
+ */
 template <>
 inline etl::complex<float> ETL_INLINE_ATTR_VEC avx_vec::hadd<etl::complex<float>>(__m256 in) {
     etl::complex<float> tmp_result[4];
@@ -602,6 +627,11 @@ inline etl::complex<float> ETL_INLINE_ATTR_VEC avx_vec::hadd<etl::complex<float>
     return tmp_result[0] + tmp_result[1] + tmp_result[2] + tmp_result[3];
 }
 
+/*!
+ * \brief Perform an horizontal sum of the given vector.
+ * \param in The input vector type
+ * \return the horizontal sum of the vector
+ */
 template <>
 inline etl::complex<double> ETL_INLINE_ATTR_VEC avx_vec::hadd<etl::complex<double>>(__m256d in) {
     etl::complex<double> tmp_result[2];
