@@ -68,8 +68,9 @@ struct basic_pmp_h_expr : impl_expr<basic_pmp_h_expr<T, D, C1, C2, Impl>> {
     template <typename A, std::size_t DD>
     static constexpr std::size_t dim() {
         return
-            DD == 0 ? decay_traits<A>::template dim<0>() / C1
-                    : decay_traits<A>::template dim<1>() / C2;
+              DD == 0 ? decay_traits<A>::template dim<0>() / C1
+            : DD == 1 ? decay_traits<A>::template dim<1>() / C2
+                      : decay_traits<A>::template dim<DD>();
     }
 
     /*!
@@ -81,8 +82,9 @@ struct basic_pmp_h_expr : impl_expr<basic_pmp_h_expr<T, D, C1, C2, Impl>> {
     template <typename A>
     static std::size_t dim(const A& a, std::size_t d) {
         return
-            d == 0 ? decay_traits<A>::dim(a, 0) / C1
-                    : decay_traits<A>::dim(a, 1) / C2;
+              d == 0 ? decay_traits<A>::dim(a, 0) / C1
+            : d == 1 ? decay_traits<A>::dim(a, 1) / C2
+                     : decay_traits<A>::dim(a, d);
     }
 
     /*!
@@ -147,6 +149,8 @@ struct dyn_basic_pmp_h_expr : impl_expr<dyn_basic_pmp_h_expr<T, D, Impl>> {
 
     static constexpr bool is_gpu = false; ///< Indicate if the expression is executed on GPU
 
+    size_t d1;
+    size_t d2;
     Impl impl; ///< The implementation operator
 
     /*!
@@ -154,7 +158,7 @@ struct dyn_basic_pmp_h_expr : impl_expr<dyn_basic_pmp_h_expr<T, D, Impl>> {
      * the arguments to the implementation
      * \param args The arguments to forward
      */
-    dyn_basic_pmp_h_expr(size_t c1, size_t c2) : impl(c1, c2){
+    dyn_basic_pmp_h_expr(size_t d1, size_t d2, size_t c1, size_t c2) : d1(d1), d2(d2), impl(c1, c2){
         //Nothing else to init
     }
 
@@ -188,25 +192,17 @@ struct dyn_basic_pmp_h_expr : impl_expr<dyn_basic_pmp_h_expr<T, D, Impl>> {
     }
 
     /*!
-     * \brief Returns the DDth dimension of the expression
-     * \tparam A The sub expression type
-     * \tparam DD The dimension to get
-     * \return the DDth dimension of the expression
-     */
-    template <typename A, std::size_t DD>
-    static constexpr std::size_t dim() {
-        return decay_traits<A>::template dim<DD>();
-    }
-
-    /*!
      * \brief Returns the dth dimension of the expression
      * \param a The sub expression
      * \param d The dimension to get
      * \return the dth dimension of the expression
      */
     template <typename A>
-    static std::size_t dim(const A& a, std::size_t d) {
-        return etl_traits<A>::dim(a, d);
+    std::size_t dim(const A& a, std::size_t d) const {
+        return
+              d == 0 ? etl_traits<A>::dim(a, 0) / d1
+            : d == 1 ? etl_traits<A>::dim(a, 1) / d2
+                     : etl_traits<A>::dim(a, d);
     }
 
     /*!
@@ -215,17 +211,8 @@ struct dyn_basic_pmp_h_expr : impl_expr<dyn_basic_pmp_h_expr<T, D, Impl>> {
      * \return the size of the expression
      */
     template <typename A>
-    static std::size_t size(const A& a) {
-        return etl::size(a);
-    }
-
-    /*!
-     * \brief Returns the size of the expression
-     * \return the size of the expression
-     */
-    template <typename A>
-    static constexpr std::size_t size() {
-        return etl::decay_traits<A>::size();
+    std::size_t size(const A& a) const {
+        return etl::size(a) / (d1 * d2);
     }
 
     /*!
@@ -247,9 +234,15 @@ struct dyn_basic_pmp_h_expr : impl_expr<dyn_basic_pmp_h_expr<T, D, Impl>> {
 };
 
 /*!
- * \brief Expression for 2D FFT
+ * \brief Expression dyn probabilistc max pooling (hidden)
  */
 template <typename T, size_t D>
 using dyn_pmp_h_expr = dyn_basic_pmp_h_expr<T, D, detail::dyn_pmp_h_impl<D>>;
+
+/*!
+ * \brief Expression dyn probabilistc max pooling (pooling)
+ */
+template <typename T, size_t D>
+using dyn_pmp_p_expr = dyn_basic_pmp_h_expr<T, D, detail::dyn_pmp_p_impl<D>>;
 
 } //end of namespace etl
