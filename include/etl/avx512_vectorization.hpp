@@ -153,7 +153,7 @@ struct avx512_vec {
 
 #endif
 
-    /*
+    /*!
      * \brief Unaligned store of the given packed vector at the
      * given memory position
      */
@@ -161,7 +161,7 @@ struct avx512_vec {
         _mm512_storeu_ps(memory, value);
     }
 
-    /*
+    /*!
      * \brief Unaligned store of the given packed vector at the
      * given memory position
      */
@@ -169,7 +169,7 @@ struct avx512_vec {
         _mm512_storeu_pd(memory, value);
     }
 
-    /*
+    /*!
      * \brief Unaligned store of the given packed vector at the
      * given memory position
      */
@@ -177,7 +177,7 @@ struct avx512_vec {
         _mm512_storeu_ps(reinterpret_cast<float*>(memory), value);
     }
 
-    /*
+    /*!
      * \brief Unaligned store of the given packed vector at the
      * given memory position
      */
@@ -185,7 +185,7 @@ struct avx512_vec {
         _mm512_storeu_pd(reinterpret_cast<double*>(memory), value);
     }
 
-    /*
+    /*!
      * \brief Unaligned store of the given packed vector at the
      * given memory position
      */
@@ -193,7 +193,7 @@ struct avx512_vec {
         _mm512_storeu_ps(reinterpret_cast<float*>(memory), value);
     }
 
-    /*
+    /*!
      * \brief Unaligned store of the given packed vector at the
      * given memory position
      */
@@ -201,7 +201,7 @@ struct avx512_vec {
         _mm512_storeu_pd(reinterpret_cast<double*>(memory), value);
     }
 
-    /*
+    /*!
      * \brief Aligned store of the given packed vector at the
      * given memory position
      */
@@ -209,7 +209,7 @@ struct avx512_vec {
         _mm512_store_ps(memory, value);
     }
 
-    /*
+    /*!
      * \brief Aligned store of the given packed vector at the
      * given memory position
      */
@@ -217,7 +217,7 @@ struct avx512_vec {
         _mm512_store_pd(memory, value);
     }
 
-    /*
+    /*!
      * \brief Aligned store of the given packed vector at the
      * given memory position
      */
@@ -225,7 +225,7 @@ struct avx512_vec {
         _mm512_store_ps(reinterpret_cast<float*>(memory), value);
     }
 
-    /*
+    /*!
      * \brief Aligned store of the given packed vector at the
      * given memory position
      */
@@ -233,7 +233,7 @@ struct avx512_vec {
         _mm512_store_pd(reinterpret_cast<double*>(memory), value);
     }
 
-    /*
+    /*!
      * \brief Aligned store of the given packed vector at the
      * given memory position
      */
@@ -241,7 +241,7 @@ struct avx512_vec {
         _mm512_store_ps(reinterpret_cast<float*>(memory), value);
     }
 
-    /*
+    /*!
      * \brief Aligned store of the given packed vector at the
      * given memory position
      */
@@ -249,7 +249,7 @@ struct avx512_vec {
         _mm512_store_pd(reinterpret_cast<double*>(memory), value);
     }
 
-    /*
+    /*!
      * \brief Non-temporal, aligned, store of the given packed vector at the
      * given memory position
      */
@@ -257,7 +257,7 @@ struct avx512_vec {
         _mm512_stream_ps(memory, value);
     }
 
-    /*
+    /*!
      * \brief Non-temporal, aligned, store of the given packed vector at the
      * given memory position
      */
@@ -265,7 +265,7 @@ struct avx512_vec {
         _mm512_stream_pd(memory, value);
     }
 
-    /*
+    /*!
      * \brief Non-temporal, aligned, store of the given packed vector at the
      * given memory position
      */
@@ -273,7 +273,7 @@ struct avx512_vec {
         _mm512_stream_ps(reinterpret_cast<float*>(memory), value);
     }
 
-    /*
+    /*!
      * \brief Non-temporal, aligned, store of the given packed vector at the
      * given memory position
      */
@@ -281,7 +281,7 @@ struct avx512_vec {
         _mm512_stream_pd(reinterpret_cast<double*>(memory), value);
     }
 
-    /*
+    /*!
      * \brief Non-temporal, aligned, store of the given packed vector at the
      * given memory position
      */
@@ -289,7 +289,7 @@ struct avx512_vec {
         _mm512_stream_ps(reinterpret_cast<float*>(memory), value);
     }
 
-    /*
+    /*!
      * \brief Non-temporal, aligned, store of the given packed vector at the
      * given memory position
      */
