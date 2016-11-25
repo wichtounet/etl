@@ -212,8 +212,8 @@ struct dyn_pmp_h_impl ;
 
 template<>
 struct dyn_pmp_h_impl <2> {
-    const size_t c1;
-    const size_t c2;
+    const size_t c1; ///< Pooling factor for the first dimension
+    const size_t c2; ///< Pooling factor for the second dimension
 
     dyn_pmp_h_impl(size_t c1, size_t c2) : c1(c1), c2(c2) {}
 
@@ -275,8 +275,8 @@ struct dyn_pmp_h_impl <2> {
 
 template<>
 struct dyn_pmp_h_impl <3> {
-    const size_t c1;
-    const size_t c2;
+    const size_t c1; ///< Pooling factor for the first dimension
+    const size_t c2; ///< Pooling factor for the second dimension
 
     dyn_pmp_h_impl(size_t c1, size_t c2) : c1(c1), c2(c2) {}
 
@@ -345,8 +345,8 @@ struct dyn_pmp_h_impl <3> {
 
 template<>
 struct dyn_pmp_h_impl <4> {
-    const size_t c1;
-    const size_t c2;
+    const size_t c1; ///< Pooling factor for the first dimension
+    const size_t c2; ///< Pooling factor for the second dimension
 
     dyn_pmp_h_impl(size_t c1, size_t c2) : c1(c1), c2(c2) {}
 
@@ -620,8 +620,8 @@ struct dyn_pmp_p_impl ;
 
 template<>
 struct dyn_pmp_p_impl <2> {
-    const size_t c1;
-    const size_t c2;
+    const size_t c1; ///< Pooling factor for the first dimension
+    const size_t c2; ///< Pooling factor for the second dimension
 
     dyn_pmp_p_impl(size_t c1, size_t c2) : c1(c1), c2(c2) {}
 
@@ -684,8 +684,8 @@ struct dyn_pmp_p_impl <2> {
 
 template<>
 struct dyn_pmp_p_impl <3> {
-    const size_t c1;
-    const size_t c2;
+    const size_t c1; ///< Pooling factor for the first dimension
+    const size_t c2; ///< Pooling factor for the second dimension
 
     dyn_pmp_p_impl(size_t c1, size_t c2) : c1(c1), c2(c2) {}
 
@@ -754,8 +754,8 @@ struct dyn_pmp_p_impl <3> {
 
 template<>
 struct dyn_pmp_p_impl <4> {
-    const size_t c1;
-    const size_t c2;
+    const size_t c1; ///< Pooling factor for the first dimension
+    const size_t c2; ///< Pooling factor for the second dimension
 
     dyn_pmp_p_impl(size_t c1, size_t c2) : c1(c1), c2(c2) {}
 

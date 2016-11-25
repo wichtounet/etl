@@ -149,8 +149,8 @@ struct dyn_basic_pmp_h_expr : impl_expr<dyn_basic_pmp_h_expr<T, D, Impl>> {
 
     static constexpr bool is_gpu = false; ///< Indicate if the expression is executed on GPU
 
-    size_t d1;
-    size_t d2;
+    size_t d1; ///< The divisor for the first dimension
+    size_t d2; ///< The divisor for the second dimension
     Impl impl; ///< The implementation operator
 
     /*!
