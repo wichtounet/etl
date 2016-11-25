@@ -169,7 +169,13 @@ inline void conv1_valid_micro_kernel(const double* in, const std::size_t n, cons
     }
 }
 
-inline void conv1_valid_micro_kernel(const float* __restrict__ in, const std::size_t n, const float* __restrict__ kernel, std::size_t m, float* __restrict__ out, std::size_t first, std::size_t last) {
+#ifdef SONAR_ANALYSIS
+#define ETL_RESTRICT
+#else
+#define ETL_RESTRICT __restrict__
+#endif
+
+inline void conv1_valid_micro_kernel(const float* ETL_RESTRICT in, const std::size_t n, const float* ETL_RESTRICT kernel, std::size_t m, float* ETL_RESTRICT out, std::size_t first, std::size_t last) {
     auto llast = std::min(n - m + 1, last);
 
     auto kernel_reverse = aligned_allocate_auto<float>(m);
