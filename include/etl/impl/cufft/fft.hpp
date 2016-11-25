@@ -650,7 +650,7 @@ void ifft1_many(A&& a, C&& c) {
  * \param b The kernel matrix
  * \param c The output matrix
  */
-template <typename A, typename B, typename C, cpp_enable_if(all_single_precision<A>::value)>
+template <typename A, typename B, typename C>
 void conv1_full(A&& a, B&& b, C&& c) {
     using type = value_t<A>;
 
@@ -672,10 +672,10 @@ void conv1_full(A&& a, B&& b, C&& c) {
     gpu_b.gpu_allocate_copy();
 
     auto cufft_type = is_single_precision_t<type>::value ? CUFFT_C2C : CUFFT_Z2Z;
-    cufftPlan1d(&handle.get(), size, CUFFT_C2C, 1);
+    cufftPlan1d(&handle.get(), size, cufft_type, 1);
 
-    cufftExecC2C(handle.get(), complex_cast(gpu_a.gpu_memory()), complex_cast(gpu_a.gpu_memory()), CUFFT_FORWARD);
-    cufftExecC2C(handle.get(), complex_cast(gpu_b.gpu_memory()), complex_cast(gpu_b.gpu_memory()), CUFFT_FORWARD);
+    detail::cufft_exec_c2c(handle.get(), complex_cast(gpu_a.gpu_memory()), complex_cast(gpu_a.gpu_memory()), CUFFT_FORWARD);
+    detail::cufft_exec_c2c(handle.get(), complex_cast(gpu_b.gpu_memory()), complex_cast(gpu_b.gpu_memory()), CUFFT_FORWARD);
 
     gpu_a.gpu_copy_from();
     gpu_b.gpu_copy_from();
@@ -684,7 +684,7 @@ void conv1_full(A&& a, B&& b, C&& c) {
 
     gpu_a.gpu_copy_to(); //Refresh the GPU memory
 
-    cufftExecC2C(handle.get(), complex_cast(gpu_a.gpu_memory()), complex_cast(gpu_a.gpu_memory()), CUFFT_INVERSE);
+    detail::cufft_exec_c2c(handle.get(), complex_cast(gpu_a.gpu_memory()), complex_cast(gpu_a.gpu_memory()), CUFFT_INVERSE);
 
     gpu_a.gpu_copy_from();
 
