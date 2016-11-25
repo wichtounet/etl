@@ -41,69 +41,90 @@ struct avx_intrinsic_traits {
     static constexpr std::size_t size      = 1;          ///< Numbers of elements done at once
     static constexpr std::size_t alignment = alignof(T); ///< Necessary number of bytes of alignment for this type
 
-    using intrinsic_type = T;
+    using intrinsic_type = T; ///< The vector type
 };
 
+/*!
+ * \copydoc avx_intrinsic_traits
+ */
 template <>
 struct avx_intrinsic_traits<float> {
-    static constexpr bool vectorizable     = true;
-    static constexpr std::size_t size      = 8;
-    static constexpr std::size_t alignment = 32;
+    static constexpr bool vectorizable     = true; ///< Boolean flag indicating is vectorizable or not
+    static constexpr std::size_t size      = 8; ///< Numbers of elements in a vector
+    static constexpr std::size_t alignment = 32; ///< Necessary alignment, in bytes, for this type
 
-    using intrinsic_type = __m256;
+    using intrinsic_type = __m256; ///< The vector type
 };
 
+/*!
+ * \copydoc avx_intrinsic_traits
+ */
 template <>
 struct avx_intrinsic_traits<double> {
-    static constexpr bool vectorizable     = true;
-    static constexpr std::size_t size      = 4;
-    static constexpr std::size_t alignment = 32;
+    static constexpr bool vectorizable     = true; ///< Boolean flag indicating is vectorizable or not
+    static constexpr std::size_t size      = 4; ///< Numbers of elements in a vector
+    static constexpr std::size_t alignment = 32; ///< Necessary alignment, in bytes, for this type
 
-    using intrinsic_type = __m256d;
+    using intrinsic_type = __m256d; ///< The vector type
 };
 
+/*!
+ * \copydoc avx_intrinsic_traits
+ */
 template <>
 struct avx_intrinsic_traits<std::complex<float>> {
-    static constexpr bool vectorizable     = true;
-    static constexpr std::size_t size      = 4;
-    static constexpr std::size_t alignment = 32;
+    static constexpr bool vectorizable     = true; ///< Boolean flag indicating is vectorizable or not
+    static constexpr std::size_t size      = 4; ///< Numbers of elements in a vector
+    static constexpr std::size_t alignment = 32; ///< Necessary alignment, in bytes, for this type
 
-    using intrinsic_type = __m256;
+    using intrinsic_type = __m256; ///< The vector type
 };
 
+/*!
+ * \copydoc avx_intrinsic_traits
+ */
 template <>
 struct avx_intrinsic_traits<std::complex<double>> {
-    static constexpr bool vectorizable     = true;
-    static constexpr std::size_t size      = 2;
-    static constexpr std::size_t alignment = 32;
+    static constexpr bool vectorizable     = true; ///< Boolean flag indicating is vectorizable or not
+    static constexpr std::size_t size      = 2; ///< Numbers of elements in a vector
+    static constexpr std::size_t alignment = 32; ///< Necessary alignment, in bytes, for this type
 
-    using intrinsic_type = __m256d;
+    using intrinsic_type = __m256d; ///< The vector type
 };
 
+/*!
+ * \copydoc avx_intrinsic_traits
+ */
 template <>
 struct avx_intrinsic_traits<etl::complex<float>> {
-    static constexpr bool vectorizable     = true;
-    static constexpr std::size_t size      = 4;
-    static constexpr std::size_t alignment = 32;
+    static constexpr bool vectorizable     = true; ///< Boolean flag indicating is vectorizable or not
+    static constexpr std::size_t size      = 4; ///< Numbers of elements in a vector
+    static constexpr std::size_t alignment = 32; ///< Necessary alignment, in bytes, for this type
 
-    using intrinsic_type = __m256;
+    using intrinsic_type = __m256; ///< The vector type
 };
 
+/*!
+ * \copydoc avx_intrinsic_traits
+ */
 template <>
 struct avx_intrinsic_traits<etl::complex<double>> {
-    static constexpr bool vectorizable     = true;
-    static constexpr std::size_t size      = 2;
-    static constexpr std::size_t alignment = 32;
+    static constexpr bool vectorizable     = true; ///< Boolean flag indicating is vectorizable or not
+    static constexpr std::size_t size      = 2; ///< Numbers of elements in a vector
+    static constexpr std::size_t alignment = 32; ///< Necessary alignment, in bytes, for this type
 
-    using intrinsic_type = __m256d;
+    using intrinsic_type = __m256d; ///< The vector type
 };
 
+/*!
+ * \brief Advanced Vector eXtensions (AVX) operations implementation.
+ */
 struct avx_vec {
     template <typename T>
-    using traits = avx_intrinsic_traits<T>;
+    using traits = avx_intrinsic_traits<T>; ///< The traits for this vector implementation
 
     template <typename T>
-    using vec_type = typename traits<T>::intrinsic_type;
+    using vec_type = typename traits<T>::intrinsic_type; ///< The vector type for the given vector type for this vector implementation
 
 #ifdef VEC_DEBUG
 
@@ -439,6 +460,10 @@ struct avx_vec {
         return _mm256_sub_pd(lhs, rhs);
     }
 
+    /*!
+     * \brief Compute the square root of each element in the given vector
+     * \return a vector containing the square root of each input element
+     */
     ETL_INLINE_VEC_256D sqrt(__m256d x) {
         return _mm256_sqrt_pd(x);
     }
@@ -461,6 +486,10 @@ struct avx_vec {
         return _mm256_sub_ps(lhs, rhs);
     }
 
+    /*!
+     * \brief Compute the square root of each element in the given vector
+     * \return a vector containing the square root of each input element
+     */
     ETL_INLINE_VEC_256 sqrt(__m256 lhs) {
         return _mm256_sqrt_ps(lhs);
     }

@@ -46,7 +46,7 @@ struct sse_intrinsic_traits {
     static constexpr std::size_t size      = 1;          ///< Numbers of elements done at once
     static constexpr std::size_t alignment = alignof(T); ///< Necessary number of bytes of alignment for this type
 
-    using intrinsic_type = T;
+    using intrinsic_type = T; ///< The vector type
 };
 
 /*!
@@ -54,11 +54,11 @@ struct sse_intrinsic_traits {
  */
 template <>
 struct sse_intrinsic_traits<float> {
-    static constexpr bool vectorizable     = true;
-    static constexpr std::size_t size      = 4;
-    static constexpr std::size_t alignment = 16;
+    static constexpr bool vectorizable     = true; ///< Boolean flag indicating is vectorizable or not
+    static constexpr std::size_t size      = 4; ///< Numbers of elements in a vector
+    static constexpr std::size_t alignment = 16; ///< Necessary alignment, in bytes, for this type
 
-    using intrinsic_type = __m128;
+    using intrinsic_type = __m128; ///< The vector type
 };
 
 /*!
@@ -66,11 +66,11 @@ struct sse_intrinsic_traits<float> {
  */
 template <>
 struct sse_intrinsic_traits<double> {
-    static constexpr bool vectorizable     = true;
-    static constexpr std::size_t size      = 2;
-    static constexpr std::size_t alignment = 16;
+    static constexpr bool vectorizable     = true; ///< Boolean flag indicating is vectorizable or not
+    static constexpr std::size_t size      = 2; ///< Numbers of elements in a vector
+    static constexpr std::size_t alignment = 16; ///< Necessary alignment, in bytes, for this type
 
-    using intrinsic_type = __m128d;
+    using intrinsic_type = __m128d; ///< The vector type
 };
 
 /*!
@@ -78,11 +78,11 @@ struct sse_intrinsic_traits<double> {
  */
 template <>
 struct sse_intrinsic_traits<std::complex<float>> {
-    static constexpr bool vectorizable     = true;
-    static constexpr std::size_t size      = 2;
-    static constexpr std::size_t alignment = 16;
+    static constexpr bool vectorizable     = true; ///< Boolean flag indicating is vectorizable or not
+    static constexpr std::size_t size      = 2; ///< Numbers of elements in a vector
+    static constexpr std::size_t alignment = 16;///< Necessary alignment, in bytes, for this type
 
-    using intrinsic_type = __m128;
+    using intrinsic_type = __m128; ///< The vector type
 };
 
 /*!
@@ -90,11 +90,11 @@ struct sse_intrinsic_traits<std::complex<float>> {
  */
 template <>
 struct sse_intrinsic_traits<std::complex<double>> {
-    static constexpr bool vectorizable     = true;
-    static constexpr std::size_t size      = 1;
-    static constexpr std::size_t alignment = 16;
+    static constexpr bool vectorizable     = true; ///< Boolean flag indicating is vectorizable or not
+    static constexpr std::size_t size      = 1; ///< Numbers of elements in a vector
+    static constexpr std::size_t alignment = 16;///< Necessary alignment, in bytes, for this type
 
-    using intrinsic_type = __m128d;
+    using intrinsic_type = __m128d; ///< The vector type
 };
 
 /*!
@@ -102,11 +102,11 @@ struct sse_intrinsic_traits<std::complex<double>> {
  */
 template <>
 struct sse_intrinsic_traits<etl::complex<float>> {
-    static constexpr bool vectorizable     = true;
-    static constexpr std::size_t size      = 2;
-    static constexpr std::size_t alignment = 16;
+    static constexpr bool vectorizable     = true; ///< Boolean flag indicating is vectorizable or not
+    static constexpr std::size_t size      = 2; ///< Numbers of elements in a vector
+    static constexpr std::size_t alignment = 16;///< Necessary alignment, in bytes, for this type
 
-    using intrinsic_type = __m128;
+    using intrinsic_type = __m128; ///< The vector type
 };
 
 /*!
@@ -114,19 +114,22 @@ struct sse_intrinsic_traits<etl::complex<float>> {
  */
 template <>
 struct sse_intrinsic_traits<etl::complex<double>> {
-    static constexpr bool vectorizable     = true;
-    static constexpr std::size_t size      = 1;
-    static constexpr std::size_t alignment = 16;
+    static constexpr bool vectorizable     = true; ///< Boolean flag indicating is vectorizable or not
+    static constexpr std::size_t size      = 1; ///< Numbers of elements in a vector
+    static constexpr std::size_t alignment = 16;///< Necessary alignment, in bytes, for this type
 
-    using intrinsic_type = __m128d;
+    using intrinsic_type = __m128d; ///< The vector type
 };
 
+/*!
+ * \brief Streaming SIMD (SSE) operations implementation.
+ */
 struct sse_vec {
     template <typename T>
-    using traits = sse_intrinsic_traits<T>;
+    using traits = sse_intrinsic_traits<T>; ///< The traits for this vector implementation
 
     template <typename T>
-    using vec_type = typename traits<T>::intrinsic_type;
+    using vec_type = typename traits<T>::intrinsic_type; ///< The vector type for the given vector type for this vector implementation
 
 #ifdef VEC_DEBUG
 
@@ -461,6 +464,10 @@ struct sse_vec {
         return _mm_sub_pd(lhs, rhs);
     }
 
+    /*!
+     * \brief Compute the square root of each element in the given vector
+     * \return a vector containing the square root of each input element
+     */
     ETL_INLINE_VEC_128D sqrt(__m128d x) {
         return _mm_sqrt_pd(x);
     }
@@ -483,6 +490,10 @@ struct sse_vec {
         return _mm_sub_ps(lhs, rhs);
     }
 
+    /*!
+     * \brief Compute the square root of each element in the given vector
+     * \return a vector containing the square root of each input element
+     */
     ETL_INLINE_VEC_128 sqrt(__m128 x) {
         return _mm_sqrt_ps(x);
     }
