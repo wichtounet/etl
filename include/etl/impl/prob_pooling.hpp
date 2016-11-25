@@ -11,6 +11,74 @@ namespace etl {
 
 namespace detail {
 
+template<typename T>
+inline void pmp_h_kernel_2x2(etl::dyn_matrix<T, 2>& exp_sub, etl::dyn_matrix<T, 2>& base){
+    const size_t M = etl::dim<0>(exp_sub);
+    const size_t N = etl::dim<1>(exp_sub);
+
+    for (size_t m = 0; m < M; ++m) {
+        const auto start_mm = (m >> 1) << 1;
+
+        for (size_t n = 0; n < N; ++n) {
+            const auto start_nn = (n >> 1) << 1;
+
+            base(m, n) =
+                exp_sub(start_mm + 0, start_nn + 0)
+                + exp_sub(start_mm + 0, start_nn + 1)
+                + exp_sub(start_mm + 1, start_nn + 0)
+                + exp_sub(start_mm + 1, start_nn + 1);
+        }
+    }
+}
+
+template<size_t C1, size_t C2, typename T>
+inline void pmp_h_kernel(etl::dyn_matrix<T, 2>& exp_sub, etl::dyn_matrix<T, 2>& base){
+    const size_t M = etl::dim<0>(exp_sub);
+    const size_t N = etl::dim<1>(exp_sub);
+
+    for (size_t m = 0; m < M; ++m) {
+        const auto start_mm = (m / C1) * C1;
+
+        for (size_t n = 0; n < N; ++n) {
+            const auto start_nn = (n / C2) * C2;
+
+            auto p = T(0);
+
+            for (std::size_t mm = start_mm; mm < start_mm + C1; ++mm) {
+                for (std::size_t nn = start_nn; nn < start_nn + C2; ++nn) {
+                    p += exp_sub(mm, nn);
+                }
+            }
+
+            base(m, n) = p;
+        }
+    }
+}
+
+template<typename T>
+inline void pmp_h_kernel(etl::dyn_matrix<T, 2>& exp_sub, etl::dyn_matrix<T, 2>& base, size_t c1, size_t c2){
+    const size_t M = etl::dim<0>(exp_sub);
+    const size_t N = etl::dim<1>(exp_sub);
+
+    for (size_t m = 0; m < M; ++m) {
+        const auto start_mm = (m / c1) * c1;
+
+        for (size_t n = 0; n < N; ++n) {
+            const auto start_nn = (n / c2) * c2;
+
+            auto p = T(0);
+
+            for (std::size_t mm = start_mm; mm < start_mm + c1; ++mm) {
+                for (std::size_t nn = start_nn; nn < start_nn + c2; ++nn) {
+                    p += exp_sub(mm, nn);
+                }
+            }
+
+            base(m, n) = p;
+        }
+    }
+}
+
 /*!
  * \brief Implemenetation of Probabilistic Max Pooling for hidden units
  */
@@ -40,42 +108,12 @@ struct pmp_h_impl <2, C1, C2> {
         exp_sub = exp(a);
 
         if (C1 == 2 && C2 == 2) {
-            for (size_t m = 0; m < M; ++m) {
-                const auto start_mm = (m >> 1) << 1;
-
-                for (size_t n = 0; n < N; ++n) {
-                    const auto start_nn = (n >> 1) << 1;
-
-                    base(m, n) =
-                        exp_sub(start_mm + 0, start_nn + 0)
-                      + exp_sub(start_mm + 0, start_nn + 1)
-                      + exp_sub(start_mm + 1, start_nn + 0)
-                      + exp_sub(start_mm + 1, start_nn + 1);
-                }
-            }
-
-            c = exp_sub / (1.0 + base);
+            pmp_h_kernel_2x2(exp_sub, base);
         } else {
-            for (size_t m = 0; m < M; ++m) {
-                const auto start_mm = (m / C1) * C1;
-
-                for (size_t n = 0; n < N; ++n) {
-                    const auto start_nn = (n / C2) * C2;
-
-                    auto p = T(0);
-
-                    for (std::size_t mm = start_mm; mm < start_mm + C1; ++mm) {
-                        for (std::size_t nn = start_nn; nn < start_nn + C2; ++nn) {
-                            p += exp_sub(mm, nn);
-                        }
-                    }
-
-                    base(m, n) = p;
-                }
-            }
-
-            c = exp_sub / (1.0 + base);
+            pmp_h_kernel<C1, C2>(exp_sub, base);
         }
+
+        c = exp_sub / (1.0 + base);
     }
 };
 
@@ -104,18 +142,7 @@ struct pmp_h_impl <3, C1, C2> {
             for (size_t l = 0; l < L; ++l) {
                 exp_sub = exp(a(l));
 
-                for (size_t m = 0; m < M; ++m) {
-                    const auto start_mm = (m / 2) * 2;
-
-                    for (size_t n = 0; n < N; ++n) {
-                        const auto start_nn = (n / 2) * 2;
-
-                        base(m, n) = exp_sub(start_mm + 0, start_nn + 0)
-                            + exp_sub(start_mm + 0, start_nn + 1)
-                            + exp_sub(start_mm + 1, start_nn + 0)
-                            + exp_sub(start_mm + 1, start_nn + 1);
-                    }
-                }
+                pmp_h_kernel_2x2(exp_sub, base);
 
                 c(l) = exp_sub / (1.0 + base);
             }
@@ -123,22 +150,7 @@ struct pmp_h_impl <3, C1, C2> {
             for (size_t l = 0; l < L; ++l) {
                 exp_sub = exp(a(l));
 
-                for (size_t m = 0; m < M; ++m) {
-                    for (size_t n = 0; n < N; ++n) {
-                        auto start_mm = (m / C1) * C1;
-                        auto start_nn = (n / C2) * C2;
-
-                        auto p = T(0);
-
-                        for (std::size_t mm = start_mm; mm < start_mm + C1; ++mm) {
-                            for (std::size_t nn = start_nn; nn < start_nn + C2; ++nn) {
-                                p += exp_sub(mm, nn);
-                            }
-                        }
-
-                        base(m, n) = p;
-                    }
-                }
+                pmp_h_kernel<C1, C2>(exp_sub, base);
 
                 c(l) = exp_sub / (1.0 + base);
             }
@@ -173,18 +185,7 @@ struct pmp_h_impl <4, C1, C2> {
                 for (size_t l = 0; l < L; ++l) {
                     exp_sub = exp(a(k)(l));
 
-                    for (size_t m = 0; m < M; ++m) {
-                        const auto start_mm = (m / 2) * 2;
-
-                        for (size_t n = 0; n < N; ++n) {
-                            const auto start_nn = (n / 2) * 2;
-
-                            base(m, n) = exp_sub(start_mm + 0, start_nn + 0)
-                                + exp_sub(start_mm + 0, start_nn + 1)
-                                + exp_sub(start_mm + 1, start_nn + 0)
-                                + exp_sub(start_mm + 1, start_nn + 1);
-                        }
-                    }
+                    pmp_h_kernel_2x2(exp_sub, base);
 
                     c(k)(l) = exp_sub / (1.0 + base);
                 }
@@ -194,23 +195,7 @@ struct pmp_h_impl <4, C1, C2> {
                 for (size_t l = 0; l < L; ++l) {
                     exp_sub = exp(a(k)(l));
 
-                    for (size_t m = 0; m < M; ++m) {
-                        const auto start_mm = (m / C1) * C1;
-
-                        for (size_t n = 0; n < N; ++n) {
-                            const auto start_nn = (n / C2) * C2;
-
-                            auto p = T(0);
-
-                            for (std::size_t mm = start_mm; mm < start_mm + C1; ++mm) {
-                                for (std::size_t nn = start_nn; nn < start_nn + C2; ++nn) {
-                                    p += exp_sub(mm, nn);
-                                }
-                            }
-
-                            base(m, n) = p;
-                        }
-                    }
+                    pmp_h_kernel<C1, C2>(exp_sub, base);
 
                     c(k)(l) = exp_sub / (1.0 + base);
                 }
@@ -256,41 +241,12 @@ struct dyn_pmp_h_impl <2> {
         exp_sub = exp(a);
 
         if(c1 == 2 && c2 == 2){
-            for (size_t m = 0; m < M; ++m) {
-                const auto start_mm = (m >> 1) << 1;
-
-                for (size_t n = 0; n < N; ++n) {
-                    const auto start_nn = (n >> 1) << 1;
-
-                    base(m, n) = exp_sub(start_mm + 0, start_nn + 0)
-                        + exp_sub(start_mm + 0, start_nn + 1)
-                        + exp_sub(start_mm + 1, start_nn + 0)
-                        + exp_sub(start_mm + 1, start_nn + 1);
-                }
-            }
-
-            c = exp_sub / (1.0 + base);
+            pmp_h_kernel_2x2(exp_sub, base);
         } else {
-            for (size_t m = 0; m < M; ++m) {
-                const auto start_mm = (m / c1) * c1;
-
-                for (size_t n = 0; n < N; ++n) {
-                    const auto start_nn = (n / c2) * c2;
-
-                    auto p = T(0);
-
-                    for (std::size_t mm = start_mm; mm < start_mm + c1; ++mm) {
-                        for (std::size_t nn = start_nn; nn < start_nn + c2; ++nn) {
-                            p += exp_sub(mm, nn);
-                        }
-                    }
-
-                    base(m, n) = p;
-                }
-            }
-
-            c = exp_sub / (1.0 + base);
+            pmp_h_kernel(exp_sub, base, c1, c2);
         }
+
+        c = exp_sub / (1.0 + base);
     }
 };
 
@@ -327,18 +283,7 @@ struct dyn_pmp_h_impl <3> {
             for (size_t l = 0; l < L; ++l) {
                 exp_sub = exp(a(l));
 
-                for (size_t m = 0; m < M; ++m) {
-                    const auto start_mm = (m / 2) * 2;
-
-                    for (size_t n = 0; n < N; ++n) {
-                        const auto start_nn = (n / 2) * 2;
-
-                        base(m, n) = exp_sub(start_mm + 0, start_nn + 0)
-                            + exp_sub(start_mm + 0, start_nn + 1)
-                            + exp_sub(start_mm + 1, start_nn + 0)
-                            + exp_sub(start_mm + 1, start_nn + 1);
-                    }
-                }
+                pmp_h_kernel_2x2(exp_sub, base);
 
                 c(l) = exp_sub / (1.0 + base);
             }
@@ -346,23 +291,7 @@ struct dyn_pmp_h_impl <3> {
             for (size_t l = 0; l < L; ++l) {
                 exp_sub = exp(a(l));
 
-                for (size_t m = 0; m < M; ++m) {
-                    const auto start_mm = (m / c1) * c1;
-
-                    for (size_t n = 0; n < N; ++n) {
-                        const auto start_nn = (n / c2) * c2;
-
-                        auto p = T(0);
-
-                        for (std::size_t mm = start_mm; mm < start_mm + c1; ++mm) {
-                            for (std::size_t nn = start_nn; nn < start_nn + c2; ++nn) {
-                                p += exp_sub(mm, nn);
-                            }
-                        }
-
-                        base(m, n) = p;
-                    }
-                }
+                pmp_h_kernel(exp_sub, base, c1, c2);
 
                 c(l) = exp_sub / (1.0 + base);
             }
@@ -405,18 +334,7 @@ struct dyn_pmp_h_impl <4> {
                 for (size_t l = 0; l < L; ++l) {
                     exp_sub = exp(a(k)(l));
 
-                    for (size_t m = 0; m < M; ++m) {
-                        const auto start_mm = (m / 2) * 2;
-
-                        for (size_t n = 0; n < N; ++n) {
-                            const auto start_nn = (n / 2) * 2;
-
-                            base(m, n) = exp_sub(start_mm + 0, start_nn + 0)
-                                + exp_sub(start_mm + 0, start_nn + 1)
-                                + exp_sub(start_mm + 1, start_nn + 0)
-                                + exp_sub(start_mm + 1, start_nn + 1);
-                        }
-                    }
+                    pmp_h_kernel_2x2(exp_sub, base);
 
                     c(k)(l) = exp_sub / (1.0 + base);
                 }
@@ -426,23 +344,7 @@ struct dyn_pmp_h_impl <4> {
                 for (size_t l = 0; l < L; ++l) {
                     exp_sub = exp(a(k)(l));
 
-                    for (size_t m = 0; m < M; ++m) {
-                        const auto start_mm = (m / c1) * c1;
-
-                        for (size_t n = 0; n < N; ++n) {
-                            const auto start_nn = (n / c2) * c2;
-
-                            auto p = T(0);
-
-                            for (std::size_t mm = start_mm; mm < start_mm + c1; ++mm) {
-                                for (std::size_t nn = start_nn; nn < start_nn + c2; ++nn) {
-                                    p += exp_sub(mm, nn);
-                                }
-                            }
-
-                            base(m, n) = p;
-                        }
-                    }
+                    pmp_h_kernel(exp_sub, base, c1, c2);
 
                     c(k)(l) = exp_sub / (1.0 + base);
                 }
@@ -450,6 +352,74 @@ struct dyn_pmp_h_impl <4> {
         }
     }
 };
+
+template<typename T>
+inline void pmp_p_kernel_2x2(etl::dyn_matrix<T, 2>& exp_sub, etl::dyn_matrix<T, 2>& base){
+    const size_t M = etl::dim<0>(exp_sub);
+    const size_t N = etl::dim<1>(exp_sub);
+
+    for (size_t m = 0; m < M / 2; ++m) {
+        const auto start_mm = m * 2;
+
+        for (size_t n = 0; n < N / 2; ++n) {
+            const auto start_nn = n * 2;
+
+            base(m, n) =
+                    exp_sub(start_mm + 0, start_nn + 0)
+                +   exp_sub(start_mm + 0, start_nn + 1)
+                +   exp_sub(start_mm + 1, start_nn + 0)
+                +   exp_sub(start_mm + 1, start_nn + 1);
+        }
+    }
+}
+
+template<size_t C1, size_t C2, typename T>
+inline void pmp_p_kernel(etl::dyn_matrix<T, 2>& exp_sub, etl::dyn_matrix<T, 2>& base){
+    const size_t M = etl::dim<0>(exp_sub);
+    const size_t N = etl::dim<1>(exp_sub);
+
+    for (size_t m = 0; m < M / C1; ++m) {
+        const auto start_mm = m * C1;
+
+        for (size_t n = 0; n < N / C2; ++n) {
+            const auto start_nn = n * C2;
+
+            auto p = T(0);
+
+            for (std::size_t mm = start_mm; mm < start_mm + C1; ++mm) {
+                for (std::size_t nn = start_nn; nn < start_nn + C2; ++nn) {
+                    p += exp_sub(mm, nn);
+                }
+            }
+
+            base(m, n) = p;
+        }
+    }
+}
+
+template<typename T>
+inline void pmp_p_kernel(etl::dyn_matrix<T, 2>& exp_sub, etl::dyn_matrix<T, 2>& base, size_t c1, size_t c2){
+    const size_t M = etl::dim<0>(exp_sub);
+    const size_t N = etl::dim<1>(exp_sub);
+
+    for (size_t m = 0; m < M / c1; ++m) {
+        const auto start_mm = m * c1;
+
+        for (size_t n = 0; n < N / c2; ++n) {
+            const auto start_nn = n * c2;
+
+            auto p = T(0);
+
+            for (std::size_t mm = start_mm; mm < start_mm + c1; ++mm) {
+                for (std::size_t nn = start_nn; nn < start_nn + c2; ++nn) {
+                    p += exp_sub(mm, nn);
+                }
+            }
+
+            base(m, n) = p;
+        }
+    }
+}
 
 /*!
  * \brief Implemenetation of Probabilistic Max Pooling for pooling units
@@ -480,42 +450,12 @@ struct pmp_p_impl <2, C1, C2> {
         exp_sub = exp(a);
 
         if (C1 == 2 && C2 == 2) {
-            for (size_t m = 0; m < M / 2; ++m) {
-                const auto start_mm = m * 2;
-
-                for (size_t n = 0; n < N / 2; ++n) {
-                    const auto start_nn = n * 2;
-
-                    base(m, n) =
-                            exp_sub(start_mm + 0, start_nn + 0)
-                        +   exp_sub(start_mm + 0, start_nn + 1)
-                        +   exp_sub(start_mm + 1, start_nn + 0)
-                        +   exp_sub(start_mm + 1, start_nn + 1);
-                }
-            }
-
-            c = 1.0 / (1.0 + base);
+            pmp_p_kernel_2x2(exp_sub, base);
         } else {
-            for (size_t m = 0; m < M / C1; ++m) {
-                const auto start_mm = m * C1;
-
-                for (size_t n = 0; n < N / C2; ++n) {
-                    const auto start_nn = n * C2;
-
-                    auto p = T(0);
-
-                    for (std::size_t mm = start_mm; mm < start_mm + C1; ++mm) {
-                        for (std::size_t nn = start_nn; nn < start_nn + C2; ++nn) {
-                            p += exp_sub(mm, nn);
-                        }
-                    }
-
-                    base(m, n) = p;
-                }
-            }
-
-            c = 1.0 / (1.0 + base);
+            pmp_p_kernel<C1, C2>(exp_sub, base);
         }
+
+        c = 1.0 / (1.0 + base);
     }
 };
 
@@ -544,18 +484,7 @@ struct pmp_p_impl <3, C1, C2> {
             for (size_t l = 0; l < L; ++l) {
                 exp_sub = exp(a(l));
 
-                for (size_t m = 0; m < M / C1; ++m) {
-                    const auto start_mm = m * C1;
-
-                    for (size_t n = 0; n < N / C2; ++n) {
-                        const auto start_nn = n * C2;
-
-                        base(m, n) = exp_sub(start_mm + 0, start_nn + 0)
-                            + exp_sub(start_mm + 0, start_nn + 1)
-                            + exp_sub(start_mm + 1, start_nn + 0)
-                            + exp_sub(start_mm + 1, start_nn + 1);
-                    }
-                }
+                pmp_p_kernel_2x2(exp_sub, base);
 
                 c(l) = 1.0 / (1.0 + base);
             }
@@ -563,23 +492,7 @@ struct pmp_p_impl <3, C1, C2> {
             for (size_t l = 0; l < L; ++l) {
                 exp_sub = exp(a(l));
 
-                for (size_t m = 0; m < M / C1; ++m) {
-                    const auto start_mm = m * C1;
-
-                    for (size_t n = 0; n < N / C2; ++n) {
-                        const auto start_nn = n * C2;
-
-                        auto p = T(0);
-
-                        for (std::size_t mm = start_mm; mm < start_mm + C1; ++mm) {
-                            for (std::size_t nn = start_nn; nn < start_nn + C2; ++nn) {
-                                p += exp_sub(mm, nn);
-                            }
-                        }
-
-                        base(m, n) = p;
-                    }
-                }
+                pmp_p_kernel<C1, C2>(exp_sub, base);
 
                 c(l) = 1.0 / (1.0 + base);
             }
@@ -614,18 +527,7 @@ struct pmp_p_impl <4, C1, C2> {
                 for (size_t l = 0; l < L; ++l) {
                     exp_sub = exp(a(k)(l));
 
-                    for (size_t m = 0; m < M / C1; ++m) {
-                        const auto start_mm = m * C1;
-
-                        for (size_t n = 0; n < N / C2; ++n) {
-                            const auto start_nn = n * C2;
-
-                            base(m, n) = exp_sub(start_mm + 0, start_nn + 0)
-                                + exp_sub(start_mm + 0, start_nn + 1)
-                                + exp_sub(start_mm + 1, start_nn + 0)
-                                + exp_sub(start_mm + 1, start_nn + 1);
-                        }
-                    }
+                    pmp_p_kernel_2x2(exp_sub, base);
 
                     c(k)(l) = 1.0 / (1.0 + base);
                 }
@@ -635,23 +537,7 @@ struct pmp_p_impl <4, C1, C2> {
                 for (size_t l = 0; l < L; ++l) {
                     exp_sub = exp(a(k)(l));
 
-                    for (size_t m = 0; m < M / C1; ++m) {
-                        const auto start_mm = m * C1;
-
-                        for (size_t n = 0; n < N / C2; ++n) {
-                            const auto start_nn = n * C2;
-
-                            auto p = T(0);
-
-                            for (std::size_t mm = start_mm; mm < start_mm + C1; ++mm) {
-                                for (std::size_t nn = start_nn; nn < start_nn + C2; ++nn) {
-                                    p += exp_sub(mm, nn);
-                                }
-                            }
-
-                            base(m, n) = p;
-                        }
-                    }
+                    pmp_p_kernel<C1, C2>(exp_sub, base);
 
                     c(k)(l) = 1.0 / (1.0 + base);
                 }
@@ -697,42 +583,12 @@ struct dyn_pmp_p_impl <2> {
         exp_sub = exp(a);
 
         if (c1 == 2 && c2 == 2) {
-            for (size_t m = 0; m < M / 2; ++m) {
-                const auto start_mm = m * 2;
-
-                for (size_t n = 0; n < N / 2; ++n) {
-                    const auto start_nn = n * 2;
-
-                    base(m, n) =
-                            exp_sub(start_mm + 0, start_nn + 0)
-                        +   exp_sub(start_mm + 0, start_nn + 1)
-                        +   exp_sub(start_mm + 1, start_nn + 0)
-                        +   exp_sub(start_mm + 1, start_nn + 1);
-                }
-            }
-
-            c = 1.0 / (1.0 + base);
+            pmp_p_kernel_2x2(exp_sub, base);
         } else {
-            for (size_t m = 0; m < M / c1; ++m) {
-                const auto start_mm = m * c1;
-
-                for (size_t n = 0; n < N / c2; ++n) {
-                    const auto start_nn = n * c2;
-
-                    auto p = T(0);
-
-                    for (std::size_t mm = start_mm; mm < start_mm + c1; ++mm) {
-                        for (std::size_t nn = start_nn; nn < start_nn + c2; ++nn) {
-                            p += exp_sub(mm, nn);
-                        }
-                    }
-
-                    base(m, n) = p;
-                }
-            }
-
-            c = 1.0 / (1.0 + base);
+            pmp_p_kernel(exp_sub, base, c1, c2);
         }
+
+        c = 1.0 / (1.0 + base);
     }
 };
 
@@ -769,18 +625,7 @@ struct dyn_pmp_p_impl <3> {
             for (size_t l = 0; l < L; ++l) {
                 exp_sub = exp(a(l));
 
-                for (size_t m = 0; m < M / c1; ++m) {
-                    const auto start_mm = m * c1;
-
-                    for (size_t n = 0; n < N / c2; ++n) {
-                        const auto start_nn = n * c2;
-
-                        base(m, n) = exp_sub(start_mm + 0, start_nn + 0)
-                            + exp_sub(start_mm + 0, start_nn + 1)
-                            + exp_sub(start_mm + 1, start_nn + 0)
-                            + exp_sub(start_mm + 1, start_nn + 1);
-                    }
-                }
+                pmp_p_kernel_2x2(exp_sub, base);
 
                 c(l) = 1.0 / (1.0 + base);
             }
@@ -788,23 +633,7 @@ struct dyn_pmp_p_impl <3> {
             for (size_t l = 0; l < L; ++l) {
                 exp_sub = exp(a(l));
 
-                for (size_t m = 0; m < M / c1; ++m) {
-                    const auto start_mm = m * c1;
-
-                    for (size_t n = 0; n < N / c2; ++n) {
-                        const auto start_nn = n * c2;
-
-                        auto p = T(0);
-
-                        for (std::size_t mm = start_mm; mm < start_mm + c1; ++mm) {
-                            for (std::size_t nn = start_nn; nn < start_nn + c2; ++nn) {
-                                p += exp_sub(mm, nn);
-                            }
-                        }
-
-                        base(m, n) = p;
-                    }
-                }
+                pmp_p_kernel(exp_sub, base, c1, c2);
 
                 c(l) = 1.0 / (1.0 + base);
             }
@@ -847,18 +676,7 @@ struct dyn_pmp_p_impl <4> {
                 for (size_t l = 0; l < L; ++l) {
                     exp_sub = exp(a(k)(l));
 
-                    for (size_t m = 0; m < M / c1; ++m) {
-                        const auto start_mm = m * c1;
-
-                        for (size_t n = 0; n < N / c2; ++n) {
-                            const auto start_nn = n * c2;
-
-                            base(m, n) = exp_sub(start_mm + 0, start_nn + 0)
-                                + exp_sub(start_mm + 0, start_nn + 1)
-                                + exp_sub(start_mm + 1, start_nn + 0)
-                                + exp_sub(start_mm + 1, start_nn + 1);
-                        }
-                    }
+                    pmp_p_kernel_2x2(exp_sub, base);
 
                     c(k)(l) = 1.0 / (1.0 + base);
                 }
@@ -868,23 +686,7 @@ struct dyn_pmp_p_impl <4> {
                 for (size_t l = 0; l < L; ++l) {
                     exp_sub = exp(a(k)(l));
 
-                    for (size_t m = 0; m < M / c1; ++m) {
-                        const auto start_mm = m * c1;
-
-                        for (size_t n = 0; n < N / c2; ++n) {
-                            const auto start_nn = n * c2;
-
-                            auto p = T(0);
-
-                            for (std::size_t mm = start_mm; mm < start_mm + c1; ++mm) {
-                                for (std::size_t nn = start_nn; nn < start_nn + c2; ++nn) {
-                                    p += exp_sub(mm, nn);
-                                }
-                            }
-
-                            base(m, n) = p;
-                        }
-                    }
+                    pmp_p_kernel(exp_sub, base, c1, c2);
 
                     c(k)(l) = 1.0 / (1.0 + base);
                 }
