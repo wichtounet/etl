@@ -11,9 +11,15 @@ namespace etl {
 
 namespace detail {
 
+/*!
+ * \brief Implemenetation of Probabilistic Max Pooling for hidden units
+ */
 template<size_t D, size_t C1, size_t C2>
 struct pmp_h_impl ;
 
+/*!
+ * \brief 2D Implemenetation of Probabilistic Max Pooling for hidden units
+ */
 template<size_t C1, size_t C2>
 struct pmp_h_impl <2, C1, C2> {
     /*!
@@ -73,6 +79,9 @@ struct pmp_h_impl <2, C1, C2> {
     }
 };
 
+/*!
+ * \brief 3D Implemenetation of Probabilistic Max Pooling for hidden units
+ */
 template<size_t C1, size_t C2>
 struct pmp_h_impl <3, C1, C2> {
     /*!
@@ -137,6 +146,9 @@ struct pmp_h_impl <3, C1, C2> {
     }
 };
 
+/*!
+ * \brief 4D Implemenetation of Probabilistic Max Pooling for hidden units
+ */
 template<size_t C1, size_t C2>
 struct pmp_h_impl <4, C1, C2> {
     /*!
@@ -207,14 +219,23 @@ struct pmp_h_impl <4, C1, C2> {
     }
 };
 
+/*!
+ * \brief Dynamic Implemenetation of Probabilistic Max Pooling for hidden units
+ */
 template<size_t D>
 struct dyn_pmp_h_impl ;
 
+/*!
+ * \brief Dynamic 2D Implemenetation of Probabilistic Max Pooling for hidden units
+ */
 template<>
 struct dyn_pmp_h_impl <2> {
     const size_t c1; ///< Pooling factor for the first dimension
     const size_t c2; ///< Pooling factor for the second dimension
 
+    /*!
+     * \brief Construct a new functor with the given pooling ratios
+     */
     dyn_pmp_h_impl(size_t c1, size_t c2) : c1(c1), c2(c2) {}
 
     /*!
@@ -273,11 +294,17 @@ struct dyn_pmp_h_impl <2> {
     }
 };
 
+/*!
+ * \brief Dynamic 3D Implemenetation of Probabilistic Max Pooling for hidden units
+ */
 template<>
 struct dyn_pmp_h_impl <3> {
     const size_t c1; ///< Pooling factor for the first dimension
     const size_t c2; ///< Pooling factor for the second dimension
 
+    /*!
+     * \brief Construct a new functor with the given pooling ratios
+     */
     dyn_pmp_h_impl(size_t c1, size_t c2) : c1(c1), c2(c2) {}
 
     /*!
@@ -343,11 +370,17 @@ struct dyn_pmp_h_impl <3> {
     }
 };
 
+/*!
+ * \brief Dynamic 4D Implemenetation of Probabilistic Max Pooling for hidden units
+ */
 template<>
 struct dyn_pmp_h_impl <4> {
     const size_t c1; ///< Pooling factor for the first dimension
     const size_t c2; ///< Pooling factor for the second dimension
 
+    /*!
+     * \brief Construct a new functor with the given pooling ratios
+     */
     dyn_pmp_h_impl(size_t c1, size_t c2) : c1(c1), c2(c2) {}
 
     /*!
@@ -418,9 +451,15 @@ struct dyn_pmp_h_impl <4> {
     }
 };
 
+/*!
+ * \brief Implemenetation of Probabilistic Max Pooling for pooling units
+ */
 template<size_t D, size_t C1, size_t C2>
 struct pmp_p_impl ;
 
+/*!
+ * \brief 2D Implemenetation of Probabilistic Max Pooling for pooling units
+ */
 template<size_t C1, size_t C2>
 struct pmp_p_impl <2, C1, C2> {
     /*!
@@ -480,6 +519,9 @@ struct pmp_p_impl <2, C1, C2> {
     }
 };
 
+/*!
+ * \brief 3D Implemenetation of Probabilistic Max Pooling for pooling units
+ */
 template<size_t C1, size_t C2>
 struct pmp_p_impl <3, C1, C2> {
     /*!
@@ -545,6 +587,9 @@ struct pmp_p_impl <3, C1, C2> {
     }
 };
 
+/*!
+ * \brief 4D Implemenetation of Probabilistic Max Pooling for pooling units
+ */
 template<size_t C1, size_t C2>
 struct pmp_p_impl <4, C1, C2> {
     /*!
@@ -615,14 +660,23 @@ struct pmp_p_impl <4, C1, C2> {
     }
 };
 
+/*!
+ * \brief Dynamic Implemenetation of Probabilistic Max Pooling for pooling units
+ */
 template<size_t D>
 struct dyn_pmp_p_impl ;
 
+/*!
+ * \brief Dynamic 2D Implemenetation of Probabilistic Max Pooling for pooling units
+ */
 template<>
 struct dyn_pmp_p_impl <2> {
     const size_t c1; ///< Pooling factor for the first dimension
     const size_t c2; ///< Pooling factor for the second dimension
 
+    /*!
+     * \brief Construct a new functor with the given pooling ratios
+     */
     dyn_pmp_p_impl(size_t c1, size_t c2) : c1(c1), c2(c2) {}
 
     /*!
@@ -682,11 +736,17 @@ struct dyn_pmp_p_impl <2> {
     }
 };
 
+/*!
+ * \brief Dynamic 3D Implemenetation of Probabilistic Max Pooling for pooling units
+ */
 template<>
 struct dyn_pmp_p_impl <3> {
     const size_t c1; ///< Pooling factor for the first dimension
     const size_t c2; ///< Pooling factor for the second dimension
 
+    /*!
+     * \brief Construct a new functor with the given pooling ratios
+     */
     dyn_pmp_p_impl(size_t c1, size_t c2) : c1(c1), c2(c2) {}
 
     /*!
@@ -752,11 +812,17 @@ struct dyn_pmp_p_impl <3> {
     }
 };
 
+/*!
+ * \brief Dynamic 4D Implemenetation of Probabilistic Max Pooling for pooling units
+ */
 template<>
 struct dyn_pmp_p_impl <4> {
     const size_t c1; ///< Pooling factor for the first dimension
     const size_t c2; ///< Pooling factor for the second dimension
 
+    /*!
+     * \brief Construct a new functor with the given pooling ratios
+     */
     dyn_pmp_p_impl(size_t c1, size_t c2) : c1(c1), c2(c2) {}
 
     /*!
