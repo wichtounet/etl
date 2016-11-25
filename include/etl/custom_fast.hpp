@@ -85,7 +85,7 @@ public:
      * \brief Move construct a fast matrix
      * \param rhs The fast matrix to move from
      */
-    custom_fast_matrix_impl(custom_fast_matrix_impl&& rhs) noexcept : base_type(std::move(rhs)) {
+    custom_fast_matrix_impl(custom_fast_matrix_impl&& rhs) noexcept : base_type(std::move(rhs)), _gpu_memory_handler(std::move(rhs._gpu_memory_handler)) {
         // Nothing else to init
     }
 
@@ -123,7 +123,8 @@ public:
      */
     custom_fast_matrix_impl& operator=(custom_fast_matrix_impl&& rhs) noexcept {
         if (this != &rhs) {
-            _data = std::move(rhs._data);
+            _data               = std::move(rhs._data);
+            _gpu_memory_handler = std::move(rhs._gpu_memory_handler);
         }
 
         return *this;
