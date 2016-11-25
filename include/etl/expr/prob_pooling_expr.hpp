@@ -154,9 +154,7 @@ struct dyn_basic_pmp_h_expr : impl_expr<dyn_basic_pmp_h_expr<T, D, Impl>> {
     Impl impl; ///< The implementation operator
 
     /*!
-     * \brief Construct a new dyn_basic_pmp_h_expr and forward all
-     * the arguments to the implementation
-     * \param args The arguments to forward
+     * \brief Construct a new dyn_basic_pmp_h_expr and forward the arguments to the implementation
      */
     dyn_basic_pmp_h_expr(size_t d1, size_t d2, size_t c1, size_t c2) : d1(d1), d2(d2), impl(c1, c2){
         //Nothing else to init
