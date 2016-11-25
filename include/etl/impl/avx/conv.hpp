@@ -1233,6 +1233,14 @@ inline void conv2_full_flipped_micro_kernel(const float* in, std::size_t n1, std
 
 } // end of namespace detail
 
+/*!
+ * \brief AVX implementation of a 1D 'full' convolution C = I * K
+ * \param input The input matrix
+ * \param kernel The kernel matrix
+ * \param conv The output matrix
+ * \param first The index where to start in the output matrix
+ * \param last The index where to stop in the output matrix
+ */
 template <typename I, typename K, typename C>
 void conv1_full(const I& input, const K& kernel, C&& conv, std::size_t first, std::size_t last) {
     std::size_t left = size(kernel) - 1;
@@ -1249,6 +1257,14 @@ void conv1_full(const I& input, const K& kernel, C&& conv, std::size_t first, st
     detail::conv1_valid_micro_kernel(in, size(input), k, size(kernel), out + left, first, last);
 }
 
+/*!
+ * \brief AVX implementation of a 1D 'same' convolution C = I * K
+ * \param input The input matrix
+ * \param kernel The kernel matrix
+ * \param conv The output matrix
+ * \param first The index where to start in the output matrix
+ * \param last The index where to stop in the output matrix
+ */
 template <typename I, typename K, typename C>
 void conv1_same(const I& input, const K& kernel, C&& conv, std::size_t first, std::size_t last) {
     std::size_t left = (size(kernel) - 1) / 2;
@@ -1265,6 +1281,16 @@ void conv1_same(const I& input, const K& kernel, C&& conv, std::size_t first, st
     detail::conv1_valid_micro_kernel(in, size(input), k, size(kernel), out + left, first, last);
 }
 
+/*!
+ * \brief SSE implementation of a 2D 'valid' convolution C = I * K
+ * \param input The input matrix
+ * \param kernel The kernel matrix
+ * \param conv The output matrix
+ * \param s1 The first dimension stride
+ * \param s2 The second dimension stride
+ * \param p1 The first dimension padding (left and right)
+ * \param p2 The second dimension padding (top and bottom)
+ */
 template <typename T>
 void conv2_valid(const opaque_memory<T, 2>& input, const opaque_memory<T, 2>& kernel, const opaque_memory<T, 2>& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
     if(cpp_unlikely(p1 || p2)){
@@ -1324,6 +1350,16 @@ void conv2_valid(const opaque_memory<T, 2>& input, const opaque_memory<T, 2>& ke
     }
 }
 
+/*!
+ * \brief SSE implementation of a 2D 'valid' convolution C = I * K
+ * \param input The input matrix
+ * \param kernel The kernel matrix
+ * \param conv The output matrix
+ * \param s1 The first dimension stride
+ * \param s2 The second dimension stride
+ * \param p1 The first dimension padding (left and right)
+ * \param p2 The second dimension padding (top and bottom)
+ */
 template <typename T>
 void conv2_valid_flipped(const opaque_memory<T, 2>& input, const opaque_memory<T, 2>& kernel, const opaque_memory<T, 2>& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
     const auto k2 = kernel.dim(1);
@@ -1367,6 +1403,16 @@ void conv2_valid_flipped(const opaque_memory<T, 2>& input, const opaque_memory<T
     }
 }
 
+/*!
+ * \brief SSE implementation of a 2D 'valid' convolution C = I * K
+ * \param input The input matrix
+ * \param kernel The kernel matrix
+ * \param conv The output matrix
+ * \param s1 The first dimension stride
+ * \param s2 The second dimension stride
+ * \param p1 The first dimension padding (left and right)
+ * \param p2 The second dimension padding (top and bottom)
+ */
 template <typename T>
 void conv2_valid_multi(const opaque_memory<T, 2>& input, const opaque_memory<T, 3>& kernel, const opaque_memory<T, 3>& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
     const auto K = kernel.template dim<0>();
@@ -1449,6 +1495,16 @@ void conv2_valid_multi(const opaque_memory<T, 2>& input, const opaque_memory<T, 
     }
 }
 
+/*!
+ * \brief SSE implementation of a 2D 'valid' convolution C = I * K
+ * \param input The input matrix
+ * \param kernel The kernel matrix
+ * \param conv The output matrix
+ * \param s1 The first dimension stride
+ * \param s2 The second dimension stride
+ * \param p1 The first dimension padding (left and right)
+ * \param p2 The second dimension padding (top and bottom)
+ */
 template <typename T>
 void conv2_valid_multi_flipped(const opaque_memory<T, 2>& input, const opaque_memory<T, 3>& kernel, const opaque_memory<T, 3>& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
     const auto K = kernel.template dim<0>();
@@ -1531,6 +1587,16 @@ void conv2_valid_multi_flipped(const opaque_memory<T, 2>& input, const opaque_me
     }
 }
 
+/*!
+ * \brief SSE implementation of a 2D 'valid' convolution C = I * K
+ * \param input The input matrix
+ * \param kernel The kernel matrix
+ * \param conv The output matrix
+ * \param s1 The first dimension stride
+ * \param s2 The second dimension stride
+ * \param p1 The first dimension padding (left and right)
+ * \param p2 The second dimension padding (top and bottom)
+ */
 template <typename T>
 void conv2_valid_multi_multi(const opaque_memory<T, 3>& input, const opaque_memory<T, 3>& kernel, const opaque_memory<T, 4>& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
     const auto k2 = kernel.dim(2);
@@ -1637,6 +1703,16 @@ void conv2_valid_multi_multi(const opaque_memory<T, 3>& input, const opaque_memo
     }
 }
 
+/*!
+ * \brief SSE implementation of a 2D 'valid' convolution C = I * K
+ * \param input The input matrix
+ * \param kernel The kernel matrix
+ * \param conv The output matrix
+ * \param s1 The first dimension stride
+ * \param s2 The second dimension stride
+ * \param p1 The first dimension padding (left and right)
+ * \param p2 The second dimension padding (top and bottom)
+ */
 template <typename T>
 void conv2_valid_multi_multi_flipped(const opaque_memory<T, 3>& input, const opaque_memory<T, 3>& kernel, const opaque_memory<T, 4>& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
     const auto k2 = kernel.dim(2);
@@ -1745,6 +1821,12 @@ void conv2_valid_multi_multi_flipped(const opaque_memory<T, 3>& input, const opa
     }
 }
 
+/*!
+ * \brief SSE implementation of a 4D 'valid' convolution C = I * K
+ * \param input The input matrix
+ * \param kernel The kernel matrix
+ * \param conv The output matrix
+ */
 template <typename T>
 void conv4_valid(const opaque_memory<T, 4>& input, const opaque_memory<T, 4>& kernel, const opaque_memory<T, 4>& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
     if(kernel.dim(1) > 0){
@@ -1866,6 +1948,12 @@ void conv4_valid(const opaque_memory<T, 4>& input, const opaque_memory<T, 4>& ke
     }
 }
 
+/*!
+ * \brief AVX implementation of a 4D 'valid' convolution C = I * K, with flipped weights
+ * \param input The input matrix
+ * \param kernel The kernel matrix
+ * \param conv The output matrix
+ */
 template <typename T>
 void conv4_valid_flipped(const opaque_memory<T, 4>& input, const opaque_memory<T, 4>& kernel, const opaque_memory<T, 4>& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
     if(kernel.dim(1) > 0){
@@ -2017,6 +2105,13 @@ void conv4_valid_flipped(const opaque_memory<T, 4>& input, const opaque_memory<T
     }
 }
 
+/*!
+ * \brief AVX implementation of a 4D 'valid' convolution C = I * K, where the output are considered to be kernels
+ *
+ * \param input The input matrix
+ * \param kernel The kernel matrix
+ * \param conv The output matrix
+ */
 template <typename T>
 void conv4_valid_filter(const opaque_memory<T, 4>& input, const opaque_memory<T, 4>& kernel, const opaque_memory<T, 4>& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
     if (input.dim(0) > 0) {
@@ -2184,6 +2279,14 @@ void conv4_valid_filter(const opaque_memory<T, 4>& input, const opaque_memory<T,
     }
 }
 
+/*!
+ * \brief SSE implementation of a 4D 'valid' convolution C = I * K, where the output
+ * are considered to be kernels, with flipped weights
+ *
+ * \param input The input matrix
+ * \param kernel The kernel matrix
+ * \param conv The output matrix
+ */
 template <typename T>
 void conv4_valid_filter_flipped(const opaque_memory<T, 4>& input, const opaque_memory<T, 4>& kernel, const opaque_memory<T, 4>& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
     if (input.dim(0) > 0) {
@@ -2351,6 +2454,12 @@ void conv4_valid_filter_flipped(const opaque_memory<T, 4>& input, const opaque_m
     }
 }
 
+/*!
+ * \brief SSE implementation of a 4D 'full' convolution C = I * K
+ * \param input The input matrix
+ * \param kernel The kernel matrix
+ * \param conv The output matrix
+ */
 template <typename T>
 void conv4_full(const opaque_memory<T, 4>& input, const opaque_memory<T, 4>& kernel, const opaque_memory<T, 4>& conv) {
     const auto N = input.dim(0);
@@ -2435,6 +2544,14 @@ void conv4_full(const opaque_memory<T, 4>& input, const opaque_memory<T, 4>& ker
     }
 }
 
+/*!
+ * \brief SSE implementation of a 4D 'full' convolution C = I * K,
+ * with flipped weights
+ *
+ * \param input The input matrix
+ * \param kernel The kernel matrix
+ * \param conv The output matrix
+ */
 template <typename T>
 void conv4_full_flipped(const opaque_memory<T, 4>& input, const opaque_memory<T, 4>& kernel, const opaque_memory<T, 4>& conv) {
     const auto N = input.dim(0);
@@ -2512,6 +2629,12 @@ void conv4_full_flipped(const opaque_memory<T, 4>& input, const opaque_memory<T,
     }
 }
 
+/*!
+ * \brief SSE implementation of a 2D 'same' convolution C = I * K
+ * \param input The input matrix
+ * \param kernel The kernel matrix
+ * \param conv The output matrix
+ */
 template <typename T>
 void conv2_same(const opaque_memory<T, 2>& input, const opaque_memory<T, 2>& kernel, const opaque_memory<T, 2>& conv) {
     detail::conv2_same_micro_kernel(
@@ -2520,6 +2643,12 @@ void conv2_same(const opaque_memory<T, 2>& input, const opaque_memory<T, 2>& ker
         conv.memory_start());
 }
 
+/*!
+ * \brief AVX implementation of a 2D 'same' convolution C = I * K
+ * \param input The input matrix
+ * \param kernel The kernel matrix
+ * \param conv The output matrix
+ */
 template <typename T>
 void conv2_same_flipped(const opaque_memory<T, 2>& input, const opaque_memory<T, 2>& kernel, const opaque_memory<T, 2>& conv) {
     detail::conv2_same_flipped_micro_kernel(
@@ -2528,6 +2657,12 @@ void conv2_same_flipped(const opaque_memory<T, 2>& input, const opaque_memory<T,
         conv.memory_start());
 }
 
+/*!
+ * \brief SSE implementation of a 2D 'same' convolution C = I * K
+ * \param input The input matrix
+ * \param kernel The kernel matrix
+ * \param conv The output matrix
+ */
 template <typename T>
 void conv2_same_multi(const opaque_memory<T, 2>& input, const opaque_memory<T, 3>& kernel, const opaque_memory<T, 3>& conv) {
     const auto K = kernel.dim(0);
@@ -2547,6 +2682,12 @@ void conv2_same_multi(const opaque_memory<T, 2>& input, const opaque_memory<T, 3
     dispatch_1d_any(select_parallel(K, 2), batch_fun_k, 0, K);
 }
 
+/*!
+ * \brief AVX implementation of a 2D 'same' convolution C = I * K
+ * \param input The input matrix
+ * \param kernel The kernel matrix
+ * \param conv The output matrix
+ */
 template <typename T>
 void conv2_same_multi_flipped(const opaque_memory<T, 2>& input, const opaque_memory<T, 3>& kernel, const opaque_memory<T, 3>& conv) {
     const auto K = kernel.dim(0);
@@ -2566,6 +2707,12 @@ void conv2_same_multi_flipped(const opaque_memory<T, 2>& input, const opaque_mem
     dispatch_1d_any(select_parallel(K, 2), batch_fun_k, 0, K);
 }
 
+/*!
+ * \brief SSE implementation of a 2D 'full' convolution C = I * K
+ * \param input The input matrix
+ * \param kernel The kernel matrix
+ * \param conv The output matrix
+ */
 template <typename T>
 void conv2_full(const opaque_memory<T, 2>& input, const opaque_memory<T, 2>& kernel, const opaque_memory<T, 2>& conv) {
     detail::conv2_full_micro_kernel(
@@ -2574,6 +2721,12 @@ void conv2_full(const opaque_memory<T, 2>& input, const opaque_memory<T, 2>& ker
         conv.memory_start(), 0.0);
 }
 
+/*!
+ * \brief AVX implementation of a 2D 'full' convolution C = I * K
+ * \param input The input matrix
+ * \param kernel The kernel matrix
+ * \param conv The output matrix
+ */
 template <typename T>
 void conv2_full_flipped(const opaque_memory<T, 2>& input, const opaque_memory<T, 2>& kernel, const opaque_memory<T, 2>& conv) {
     detail::conv2_full_flipped_micro_kernel(
@@ -2582,6 +2735,13 @@ void conv2_full_flipped(const opaque_memory<T, 2>& input, const opaque_memory<T,
         conv.memory_start(), 0.0);
 }
 
+/*!
+ * \brief SSE implementation of a 2D 'full' convolution C = I * K, with multiple
+ * kernels
+ * \param input The input matrix
+ * \param kernel The kernel matrix
+ * \param conv The output matrix
+ */
 template <typename T>
 void conv2_full_multi(const opaque_memory<T, 2>& input, const opaque_memory<T, 3>& kernel, const opaque_memory<T, 3>& conv) {
     const auto K = kernel.dim(0);
@@ -2601,6 +2761,12 @@ void conv2_full_multi(const opaque_memory<T, 2>& input, const opaque_memory<T, 3
     dispatch_1d_any(select_parallel(K, 2), batch_fun_k, 0, K);
 }
 
+/*!
+ * \brief AVX implementation of a 2D 'full' convolution C = I * K, with multiple flipped kernels
+ * \param input The input matrix
+ * \param kernel The kernel matrix
+ * \param conv The output matrix
+ */
 template <typename T>
 void conv2_full_multi_flipped(const opaque_memory<T, 2>& input, const opaque_memory<T, 3>& kernel, const opaque_memory<T, 3>& conv) {
     const auto K = kernel.dim(0);
@@ -2705,10 +2871,14 @@ void conv2_valid_flipped(const I& input, const K& kernel, C&& conv, size_t s1, s
 }
 
 /*!
- * \brief AVX implementation of a 2D 'valid' convolution C = I * K
+ * \brief SSE implementation of a 2D 'valid' convolution C = I * K
  * \param input The input matrix
  * \param kernel The kernel matrix
  * \param conv The output matrix
+ * \param s1 The first dimension stride
+ * \param s2 The second dimension stride
+ * \param p1 The first dimension padding (left and right)
+ * \param p2 The second dimension padding (top and bottom)
  */
 template <typename I, typename K, typename C>
 void conv2_valid_multi(const I& input, const K& kernel, C&& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
@@ -2723,10 +2893,14 @@ void conv2_valid_multi(const I& input, const K& kernel, C&& conv, size_t s1, siz
 }
 
 /*!
- * \brief AVX implementation of a 2D 'valid' convolution C = I * K
+ * \brief SSE implementation of a 2D 'valid' convolution C = I * K
  * \param input The input matrix
  * \param kernel The kernel matrix
  * \param conv The output matrix
+ * \param s1 The first dimension stride
+ * \param s2 The second dimension stride
+ * \param p1 The first dimension padding (left and right)
+ * \param p2 The second dimension padding (top and bottom)
  */
 template <typename I, typename K, typename C>
 void conv2_valid_multi_flipped(const I& input, const K& kernel, C&& conv, size_t s1, size_t s2, size_t p1, size_t p2) {

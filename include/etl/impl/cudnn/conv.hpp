@@ -112,6 +112,16 @@ cudnn_wrapper<cudnnFilterDescriptor_t> create_filter(const opaque_memory<T, 4>& 
     return cudnn_wrapper<cudnnFilterDescriptor_t>{filter};
 }
 
+/*!
+ * \brief CUDNN implementation of a 2D 'valid' convolution C = I * K
+ * \param input The input matrix
+ * \param kernel The kernel matrix
+ * \param conv The output matrix
+ * \param s1 The first dimension stride
+ * \param s2 The second dimension stride
+ * \param p1 The first dimension padding (left and right)
+ * \param p2 The second dimension padding (top and bottom)
+ */
 template <typename T>
 void conv2_valid(const opaque_memory<T,2>& input, const opaque_memory<T,2>& kernel, const opaque_memory<T,2>& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
     using type = std::remove_const_t<T>;
@@ -164,6 +174,16 @@ void conv2_valid(const opaque_memory<T,2>& input, const opaque_memory<T,2>& kern
     cudnn_check(cudnnDestroyConvolutionDescriptor(convolution));
 }
 
+/*!
+ * \brief CUDNN implementation of a 2D 'valid' convolution C = I * K
+ * \param input The input matrix
+ * \param kernel The kernel matrix
+ * \param conv The output matrix
+ * \param s1 The first dimension stride
+ * \param s2 The second dimension stride
+ * \param p1 The first dimension padding (left and right)
+ * \param p2 The second dimension padding (top and bottom)
+ */
 template <typename T>
 void conv2_valid_flipped(const opaque_memory<T,2>& input, const opaque_memory<T,2>& kernel, const opaque_memory<T,2>& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
     using type = std::remove_const_t<T>;
@@ -216,6 +236,12 @@ void conv2_valid_flipped(const opaque_memory<T,2>& input, const opaque_memory<T,
     cudnn_check(cudnnDestroyConvolutionDescriptor(convolution));
 }
 
+/*!
+ * \brief cudnn implementation of a 4D 'valid' convolution C = I * K
+ * \param input The input matrix
+ * \param kernel The kernel matrix
+ * \param conv The output matrix
+ */
 template <typename T>
 void conv4_valid(const opaque_memory<T,4>& input, const opaque_memory<T,4>& kernel, const opaque_memory<T,4>& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
     using type = T;
@@ -268,6 +294,12 @@ void conv4_valid(const opaque_memory<T,4>& input, const opaque_memory<T,4>& kern
     cudnn_check(cudnnDestroyConvolutionDescriptor(convolution));
 }
 
+/*!
+ * \brief cudnn implementation of a 4D 'valid' convolution C = I * K, with flipped weights
+ * \param input The input matrix
+ * \param kernel The kernel matrix
+ * \param conv The output matrix
+ */
 template <typename T>
 void conv4_valid_flipped(const opaque_memory<T,4>& input, const opaque_memory<T,4>& kernel, const opaque_memory<T,4>& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
     using type = T;
@@ -320,6 +352,14 @@ void conv4_valid_flipped(const opaque_memory<T,4>& input, const opaque_memory<T,
     cudnn_check(cudnnDestroyConvolutionDescriptor(convolution));
 }
 
+/*!
+ * \brief AVX implementation of a 4D 'valid' convolution C = I * K, where the output
+ * are considered to be kernels
+ *
+ * \param input The input matrix
+ * \param kernel The kernel matrix
+ * \param conv The output matrix
+ */
 template <typename T>
 void conv4_valid_filter(const opaque_memory<T,4>& input, const opaque_memory<T,4>& kernel, const opaque_memory<T,4>& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
     using type = T;
@@ -372,6 +412,14 @@ void conv4_valid_filter(const opaque_memory<T,4>& input, const opaque_memory<T,4
     cudnn_check(cudnnDestroyConvolutionDescriptor(convolution));
 }
 
+/*!
+ * \brief AVX implementation of a 4D 'valid' convolution C = I * K, where the output
+ * are considered to be kernels, with flipped weights
+ *
+ * \param input The input matrix
+ * \param kernel The kernel matrix
+ * \param conv The output matrix
+ */
 template <typename T>
 void conv4_valid_filter_flipped(const opaque_memory<T,4>& input, const opaque_memory<T,4>& kernel, const opaque_memory<T,4>& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
     using type = T;
@@ -424,6 +472,12 @@ void conv4_valid_filter_flipped(const opaque_memory<T,4>& input, const opaque_me
     cudnn_check(cudnnDestroyConvolutionDescriptor(convolution));
 }
 
+/*!
+ * \brief cudnn implementation of a 2D 'full' convolution C = I * K
+ * \param input The input matrix
+ * \param kernel The kernel matrix
+ * \param conv The output matrix
+ */
 template <typename T>
 void conv2_full(const opaque_memory<T,2>& input, const opaque_memory<T,2>& kernel, const opaque_memory<T,2>& conv) {
     using type = std::remove_const_t<T>;
@@ -476,6 +530,12 @@ void conv2_full(const opaque_memory<T,2>& input, const opaque_memory<T,2>& kerne
     cudnn_check(cudnnDestroyConvolutionDescriptor(convolution));
 }
 
+/*!
+ * \brief cudnn implementation of a 2D 'full' convolution C = I * K
+ * \param input The input matrix
+ * \param kernel The kernel matrix
+ * \param conv The output matrix
+ */
 template <typename T>
 void conv2_full_flipped(const opaque_memory<T,2>& input, const opaque_memory<T,2>& kernel, const opaque_memory<T,2>& conv) {
     using type = std::remove_const_t<T>;
@@ -528,6 +588,12 @@ void conv2_full_flipped(const opaque_memory<T,2>& input, const opaque_memory<T,2
     cudnn_check(cudnnDestroyConvolutionDescriptor(convolution));
 }
 
+/*!
+ * \brief cudnn implementation of a 4D 'full' convolution C = I * K
+ * \param input The input matrix
+ * \param kernel The kernel matrix
+ * \param conv The output matrix
+ */
 template <typename T>
 void conv4_full(const opaque_memory<T,4>& input, const opaque_memory<T,4>& kernel, const opaque_memory<T,4>& conv) {
     using type = T;
@@ -580,6 +646,12 @@ void conv4_full(const opaque_memory<T,4>& input, const opaque_memory<T,4>& kerne
     cudnn_check(cudnnDestroyConvolutionDescriptor(convolution));
 }
 
+/*!
+ * \brief cudnn implementation of a 2D 'valid' convolution C = I * K, with multiple kernels
+ * \param input The input matrix
+ * \param kernel The kernel matrix
+ * \param conv The output matrix
+ */
 template <typename T>
 void conv4_full_flipped(const opaque_memory<T,4>& input, const opaque_memory<T,4>& kernel, const opaque_memory<T,4>& conv) {
     using type = T;
@@ -632,6 +704,12 @@ void conv4_full_flipped(const opaque_memory<T,4>& input, const opaque_memory<T,4
     cudnn_check(cudnnDestroyConvolutionDescriptor(convolution));
 }
 
+/*!
+ * \brief CUDNN implementation of a 2D 'valid' convolution C = I * K
+ * \param input The input matrix
+ * \param kernel The kernel matrix
+ * \param conv The output matrix
+ */
 template <typename T>
 void conv2_valid_multi(const opaque_memory<T,2>& input, const opaque_memory<T,3>& kernel, const opaque_memory<T,3>& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
     using type = std::remove_const_t<T>;
@@ -699,6 +777,12 @@ void conv2_valid_multi(const opaque_memory<T,2>& input, const opaque_memory<T,3>
     cudnn_check(cudnnDestroyTensorDescriptor(input_tensor));
 }
 
+/*!
+ * \brief Standard implementation of a 2D 'valid' convolution C = I * K, with multiple flipped kernels
+ * \param input The input matrix
+ * \param kernel The kernel matrix
+ * \param conv The output matrix
+ */
 template <typename T>
 void conv2_valid_multi_flipped(const opaque_memory<T,2>& input, const opaque_memory<T,3>& kernel, const opaque_memory<T,3>& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
     using type = std::remove_const_t<T>;
@@ -771,6 +855,12 @@ void conv2_valid_multi_flipped(const opaque_memory<T,2>& input, const opaque_mem
 //number of feature maps, therefore, it is necessary to make many calls to sub
 //routines, which is highly inefficient and will result in many GPU allocations
 
+/*!
+ * \brief Standard implementation of a 2D 'full' convolution C = I * K, with multiple kernels
+ * \param input The input matrix
+ * \param kernel The kernel matrix
+ * \param conv The output matrix
+ */
 template <typename I, typename K, typename C>
 void conv2_full_multi(const I& input, const K& kernel, C&& conv) {
     auto input_gpu = input.direct();
@@ -785,6 +875,12 @@ void conv2_full_multi(const I& input, const K& kernel, C&& conv) {
     }
 }
 
+/*!
+ * \brief Standard implementation of a 2D 'full' convolution C = I * K, with multiple kernels
+ * \param input The input matrix
+ * \param kernel The kernel matrix
+ * \param conv The output matrix
+ */
 template <typename I, typename K, typename C>
 void conv2_full_multi_flipped(const I& input, const K& kernel, C&& conv) {
     auto input_gpu = input.direct();
