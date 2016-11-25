@@ -130,10 +130,8 @@ inline cpp14_constexpr gemm_impl select_default_gemv_impl(const std::size_t n1, 
         return gemm_impl::VEC;
     }
 
-    if (is_cublas_enabled) {
-        if (is_complex_single_t<T>::value && n1 * n2 > 1000 * 1000) {
-            return gemm_impl::CUBLAS;
-        }
+    if (is_cublas_enabled && is_complex_single_t<T>::value && n1 * n2 > 1000 * 1000) {
+        return gemm_impl::CUBLAS;
     }
 
     return gemm_impl::STD;
@@ -208,10 +206,8 @@ inline cpp14_constexpr gemm_impl select_default_gevm_impl(const std::size_t n1, 
         return gemm_impl::VEC;
     }
 
-    if (is_cublas_enabled) {
-        if (is_complex_single_t<T>::value && n1 * n2 > 1000 * 1000) {
-            return gemm_impl::CUBLAS;
-        }
+    if (is_cublas_enabled && is_complex_single_t<T>::value && n1 * n2 > 1000 * 1000) {
+        return gemm_impl::CUBLAS;
     }
 
     return gemm_impl::STD;

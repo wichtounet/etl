@@ -67,6 +67,9 @@ struct get_vector_impl {
 
 #ifdef __AVX512F__
 
+/*!
+ * \brief get_intrinsic_traits for AVX-512
+ */
 template <>
 struct get_intrinsic_traits<vector_mode_t::AVX512> {
     template <typename T>
@@ -82,6 +85,9 @@ struct get_vector_impl<vector_mode_t::AVX512> {
 
 #ifdef __AVX__
 
+/*!
+ * \brief get_intrinsic_traits for AVX
+ */
 template <>
 struct get_intrinsic_traits<vector_mode_t::AVX> {
     template <typename T>
@@ -97,6 +103,9 @@ struct get_vector_impl<vector_mode_t::AVX> {
 
 #ifdef __SSE3__
 
+/*!
+ * \brief get_intrinsic_traits for SSE
+ */
 template <>
 struct get_intrinsic_traits<vector_mode_t::SSE3> {
     template <typename T>

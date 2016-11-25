@@ -505,7 +505,7 @@ auto p_max_pool_h(E&& value) {
 template <typename E, cpp_enable_if(is_etl_expr<E>::value)>
 auto p_max_pool_h(E&& value, size_t c1, size_t c2) {
     validate_pmax_pooling(value, c1, c2);
-    return temporary_unary_expr_state<value_t<E>, detail::build_type<E>, dyn_pmp_h_expr<value_t<E>, decay_traits<E>::dimensions()>>{{c1, c2}, value};
+    return temporary_unary_expr_state<value_t<E>, detail::build_type<E>, dyn_pmp_h_expr<value_t<E>, decay_traits<E>::dimensions()>>{{1, 1, c1, c2}, value};
 }
 
 /*!
@@ -531,7 +531,7 @@ auto p_max_pool_p(E&& value) {
 template <typename E, cpp_enable_if(is_etl_expr<E>::value)>
 auto p_max_pool_p(E&& value, size_t c1, size_t c2) {
     validate_pmax_pooling(value, c1, c2);
-    return unary_expr<value_t<E>, dyn_p_max_pool_p_transformer<detail::build_type<E>>, transform_op>{dyn_p_max_pool_p_transformer<detail::build_type<E>>(value, c1, c2)};
+    return temporary_unary_expr_state<value_t<E>, detail::build_type<E>, dyn_pmp_p_expr<value_t<E>, decay_traits<E>::dimensions()>>{{c1, c2, c1, c2}, value};
 }
 
 } //end of namespace etl

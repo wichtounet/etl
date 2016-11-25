@@ -183,12 +183,18 @@ struct no_vec {
         return M();
     }
 
+    /*!
+     * \brief Perform an horizontal sum of the given vector
+     */
     template <typename T = float, typename M>
     static T hadd(M value) {
         cpp_unused(value);
         return T();
     }
 
+    /*!
+     * \brief Return a vector type filled with zeroes of the correct type
+     */
     template<typename T>
     static T zero(){
         return T();

@@ -41,69 +41,90 @@ struct avx_intrinsic_traits {
     static constexpr std::size_t size      = 1;          ///< Numbers of elements done at once
     static constexpr std::size_t alignment = alignof(T); ///< Necessary number of bytes of alignment for this type
 
-    using intrinsic_type = T;
+    using intrinsic_type = T; ///< The vector type
 };
 
+/*!
+ * \copydoc avx_intrinsic_traits
+ */
 template <>
 struct avx_intrinsic_traits<float> {
-    static constexpr bool vectorizable     = true;
-    static constexpr std::size_t size      = 8;
-    static constexpr std::size_t alignment = 32;
+    static constexpr bool vectorizable     = true; ///< Boolean flag indicating is vectorizable or not
+    static constexpr std::size_t size      = 8; ///< Numbers of elements in a vector
+    static constexpr std::size_t alignment = 32; ///< Necessary alignment, in bytes, for this type
 
-    using intrinsic_type = __m256;
+    using intrinsic_type = __m256; ///< The vector type
 };
 
+/*!
+ * \copydoc avx_intrinsic_traits
+ */
 template <>
 struct avx_intrinsic_traits<double> {
-    static constexpr bool vectorizable     = true;
-    static constexpr std::size_t size      = 4;
-    static constexpr std::size_t alignment = 32;
+    static constexpr bool vectorizable     = true; ///< Boolean flag indicating is vectorizable or not
+    static constexpr std::size_t size      = 4; ///< Numbers of elements in a vector
+    static constexpr std::size_t alignment = 32; ///< Necessary alignment, in bytes, for this type
 
-    using intrinsic_type = __m256d;
+    using intrinsic_type = __m256d; ///< The vector type
 };
 
+/*!
+ * \copydoc avx_intrinsic_traits
+ */
 template <>
 struct avx_intrinsic_traits<std::complex<float>> {
-    static constexpr bool vectorizable     = true;
-    static constexpr std::size_t size      = 4;
-    static constexpr std::size_t alignment = 32;
+    static constexpr bool vectorizable     = true; ///< Boolean flag indicating is vectorizable or not
+    static constexpr std::size_t size      = 4; ///< Numbers of elements in a vector
+    static constexpr std::size_t alignment = 32; ///< Necessary alignment, in bytes, for this type
 
-    using intrinsic_type = __m256;
+    using intrinsic_type = __m256; ///< The vector type
 };
 
+/*!
+ * \copydoc avx_intrinsic_traits
+ */
 template <>
 struct avx_intrinsic_traits<std::complex<double>> {
-    static constexpr bool vectorizable     = true;
-    static constexpr std::size_t size      = 2;
-    static constexpr std::size_t alignment = 32;
+    static constexpr bool vectorizable     = true; ///< Boolean flag indicating is vectorizable or not
+    static constexpr std::size_t size      = 2; ///< Numbers of elements in a vector
+    static constexpr std::size_t alignment = 32; ///< Necessary alignment, in bytes, for this type
 
-    using intrinsic_type = __m256d;
+    using intrinsic_type = __m256d; ///< The vector type
 };
 
+/*!
+ * \copydoc avx_intrinsic_traits
+ */
 template <>
 struct avx_intrinsic_traits<etl::complex<float>> {
-    static constexpr bool vectorizable     = true;
-    static constexpr std::size_t size      = 4;
-    static constexpr std::size_t alignment = 32;
+    static constexpr bool vectorizable     = true; ///< Boolean flag indicating is vectorizable or not
+    static constexpr std::size_t size      = 4; ///< Numbers of elements in a vector
+    static constexpr std::size_t alignment = 32; ///< Necessary alignment, in bytes, for this type
 
-    using intrinsic_type = __m256;
+    using intrinsic_type = __m256; ///< The vector type
 };
 
+/*!
+ * \copydoc avx_intrinsic_traits
+ */
 template <>
 struct avx_intrinsic_traits<etl::complex<double>> {
-    static constexpr bool vectorizable     = true;
-    static constexpr std::size_t size      = 2;
-    static constexpr std::size_t alignment = 32;
+    static constexpr bool vectorizable     = true; ///< Boolean flag indicating is vectorizable or not
+    static constexpr std::size_t size      = 2; ///< Numbers of elements in a vector
+    static constexpr std::size_t alignment = 32; ///< Necessary alignment, in bytes, for this type
 
-    using intrinsic_type = __m256d;
+    using intrinsic_type = __m256d; ///< The vector type
 };
 
+/*!
+ * \brief Advanced Vector eXtensions (AVX) operations implementation.
+ */
 struct avx_vec {
     template <typename T>
-    using traits = avx_intrinsic_traits<T>;
+    using traits = avx_intrinsic_traits<T>; ///< The traits for this vector implementation
 
     template <typename T>
-    using vec_type = typename traits<T>::intrinsic_type;
+    using vec_type = typename traits<T>::intrinsic_type; ///< The vector type for the given vector type for this vector implementation
 
 #ifdef VEC_DEBUG
 
@@ -148,7 +169,7 @@ struct avx_vec {
 
 #endif
 
-    /*
+    /*!
      * \brief Unaligned store of the given packed vector at the
      * given memory position
      */
@@ -156,7 +177,7 @@ struct avx_vec {
         _mm256_storeu_ps(memory, value);
     }
 
-    /*
+    /*!
      * \brief Unaligned store of the given packed vector at the
      * given memory position
      */
@@ -164,7 +185,7 @@ struct avx_vec {
         _mm256_storeu_pd(memory, value);
     }
 
-    /*
+    /*!
      * \brief Unaligned store of the given packed vector at the
      * given memory position
      */
@@ -172,7 +193,7 @@ struct avx_vec {
         _mm256_storeu_ps(reinterpret_cast<float*>(memory), value);
     }
 
-    /*
+    /*!
      * \brief Unaligned store of the given packed vector at the
      * given memory position
      */
@@ -180,7 +201,7 @@ struct avx_vec {
         _mm256_storeu_pd(reinterpret_cast<double*>(memory), value);
     }
 
-    /*
+    /*!
      * \brief Unaligned store of the given packed vector at the
      * given memory position
      */
@@ -188,7 +209,7 @@ struct avx_vec {
         _mm256_storeu_ps(reinterpret_cast<float*>(memory), value);
     }
 
-    /*
+    /*!
      * \brief Unaligned store of the given packed vector at the
      * given memory position
      */
@@ -196,7 +217,7 @@ struct avx_vec {
         _mm256_storeu_pd(reinterpret_cast<double*>(memory), value);
     }
 
-    /*
+    /*!
      * \brief Non-temporal, aligned, store of the given packed vector at the
      * given memory position
      */
@@ -204,7 +225,7 @@ struct avx_vec {
         _mm256_stream_ps(memory, value);
     }
 
-    /*
+    /*!
      * \brief Non-temporal, aligned, store of the given packed vector at the
      * given memory position
      */
@@ -212,7 +233,7 @@ struct avx_vec {
         _mm256_stream_pd(memory, value);
     }
 
-    /*
+    /*!
      * \brief Non-temporal, aligned, store of the given packed vector at the
      * given memory position
      */
@@ -220,7 +241,7 @@ struct avx_vec {
         _mm256_stream_ps(reinterpret_cast<float*>(memory), value);
     }
 
-    /*
+    /*!
      * \brief Non-temporal, aligned, store of the given packed vector at the
      * given memory position
      */
@@ -228,7 +249,7 @@ struct avx_vec {
         _mm256_stream_pd(reinterpret_cast<double*>(memory), value);
     }
 
-    /*
+    /*!
      * \brief Non-temporal, aligned, store of the given packed vector at the
      * given memory position
      */
@@ -236,7 +257,7 @@ struct avx_vec {
         _mm256_stream_ps(reinterpret_cast<float*>(memory), value);
     }
 
-    /*
+    /*!
      * \brief Non-temporal, aligned, store of the given packed vector at the
      * given memory position
      */
@@ -244,7 +265,7 @@ struct avx_vec {
         _mm256_stream_pd(reinterpret_cast<double*>(memory), value);
     }
 
-    /*
+    /*!
      * \brief Aligned store of the given packed vector at the
      * given memory position
      */
@@ -252,7 +273,7 @@ struct avx_vec {
         _mm256_store_ps(memory, value);
     }
 
-    /*
+    /*!
      * \brief Aligned store of the given packed vector at the
      * given memory position
      */
@@ -260,7 +281,7 @@ struct avx_vec {
         _mm256_store_pd(memory, value);
     }
 
-    /*
+    /*!
      * \brief Aligned store of the given packed vector at the
      * given memory position
      */
@@ -268,7 +289,7 @@ struct avx_vec {
         _mm256_store_ps(reinterpret_cast<float*>(memory), value);
     }
 
-    /*
+    /*!
      * \brief Aligned store of the given packed vector at the
      * given memory position
      */
@@ -276,7 +297,7 @@ struct avx_vec {
         _mm256_store_pd(reinterpret_cast<double*>(memory), value);
     }
 
-    /*
+    /*!
      * \brief Aligned store of the given packed vector at the
      * given memory position
      */
@@ -284,7 +305,7 @@ struct avx_vec {
         _mm256_store_ps(reinterpret_cast<float*>(memory), value);
     }
 
-    /*
+    /*!
      * \brief Aligned store of the given packed vector at the
      * given memory position
      */
@@ -439,6 +460,10 @@ struct avx_vec {
         return _mm256_sub_pd(lhs, rhs);
     }
 
+    /*!
+     * \brief Compute the square root of each element in the given vector
+     * \return a vector containing the square root of each input element
+     */
     ETL_INLINE_VEC_256D sqrt(__m256d x) {
         return _mm256_sqrt_pd(x);
     }
@@ -461,6 +486,10 @@ struct avx_vec {
         return _mm256_sub_ps(lhs, rhs);
     }
 
+    /*!
+     * \brief Compute the square root of each element in the given vector
+     * \return a vector containing the square root of each input element
+     */
     ETL_INLINE_VEC_256 sqrt(__m256 lhs) {
         return _mm256_sqrt_ps(lhs);
     }
@@ -563,6 +592,11 @@ struct avx_vec {
 
 #endif //__INTEL_COMPILER
 
+    /*!
+     * \brief Perform an horizontal sum of the given vector.
+     * \param in The input vector type
+     * \return the horizontal sum of the vector
+     */
     template <typename T = float>
     static inline T ETL_INLINE_ATTR_VEC hadd(__m256 in) {
         const __m128 x128 = _mm_add_ps(_mm256_extractf128_ps(in, 1), _mm256_castps256_ps128(in));
@@ -571,6 +605,11 @@ struct avx_vec {
         return _mm_cvtss_f32(x32);
     }
 
+    /*!
+     * \brief Perform an horizontal sum of the given vector.
+     * \param in The input vector type
+     * \return the horizontal sum of the vector
+     */
     template <typename T = double>
     static inline T ETL_INLINE_ATTR_VEC hadd(__m256d in) {
         const __m256d t1 = _mm256_hadd_pd(in, _mm256_permute2f128_pd(in, in, 1));
@@ -581,6 +620,11 @@ struct avx_vec {
 
 //TODO Vectorize the two following functions
 
+/*!
+ * \brief Perform an horizontal sum of the given vector.
+ * \param in The input vector type
+ * \return the horizontal sum of the vector
+ */
 template <>
 inline std::complex<float> ETL_INLINE_ATTR_VEC avx_vec::hadd<std::complex<float>>(__m256 in) {
     std::complex<float> tmp_result[4];
@@ -588,6 +632,11 @@ inline std::complex<float> ETL_INLINE_ATTR_VEC avx_vec::hadd<std::complex<float>
     return tmp_result[0] + tmp_result[1] + tmp_result[2] + tmp_result[3];
 }
 
+/*!
+ * \brief Perform an horizontal sum of the given vector.
+ * \param in The input vector type
+ * \return the horizontal sum of the vector
+ */
 template <>
 inline std::complex<double> ETL_INLINE_ATTR_VEC avx_vec::hadd<std::complex<double>>(__m256d in) {
     std::complex<double> tmp_result[2];
@@ -595,6 +644,11 @@ inline std::complex<double> ETL_INLINE_ATTR_VEC avx_vec::hadd<std::complex<doubl
     return tmp_result[0] + tmp_result[1];
 }
 
+/*!
+ * \brief Perform an horizontal sum of the given vector.
+ * \param in The input vector type
+ * \return the horizontal sum of the vector
+ */
 template <>
 inline etl::complex<float> ETL_INLINE_ATTR_VEC avx_vec::hadd<etl::complex<float>>(__m256 in) {
     etl::complex<float> tmp_result[4];
@@ -602,6 +656,11 @@ inline etl::complex<float> ETL_INLINE_ATTR_VEC avx_vec::hadd<etl::complex<float>
     return tmp_result[0] + tmp_result[1] + tmp_result[2] + tmp_result[3];
 }
 
+/*!
+ * \brief Perform an horizontal sum of the given vector.
+ * \param in The input vector type
+ * \return the horizontal sum of the vector
+ */
 template <>
 inline etl::complex<double> ETL_INLINE_ATTR_VEC avx_vec::hadd<etl::complex<double>>(__m256d in) {
     etl::complex<double> tmp_result[2];

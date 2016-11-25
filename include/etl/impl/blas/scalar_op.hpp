@@ -24,59 +24,119 @@ namespace blas {
 
 #ifdef ETL_BLAS_MODE
 
+/*!
+ * \brief Add the rhs scalar value to each element of lhs
+ * \param lhs The matrix
+ * \param rhs The scalar
+ */
 template <typename T, cpp_enable_if(is_single_precision<T>::value)>
 void scalar_add(T&& lhs, value_t<T> rhs) {
     float fake_array = 1.0;
     cblas_saxpy(size(lhs), rhs, &fake_array, 0, lhs.memory_start(), 1);
 }
 
+/*!
+ * \brief Add the rhs scalar value to each element of lhs
+ * \param lhs The matrix
+ * \param rhs The scalar
+ */
 template <typename T, cpp_enable_if(is_double_precision<T>::value)>
 void scalar_add(T&& lhs, value_t<T> rhs) {
     double fake_array = 1.0;
     cblas_daxpy(size(lhs), rhs, &fake_array, 0, lhs.memory_start(), 1);
 }
 
+/*!
+ * \brief Add the rhs scalar value to each element of lhs
+ * \param lhs The matrix
+ * \param rhs The scalar
+ */
 template <typename T, cpp_enable_if(!all_floating<T>::value)>
 void scalar_add(T&& /*lhs*/, value_t<T> /*rhs*/) {}
 
+/*!
+ * \brief Subtract the rhs scalar value from each element of lhs
+ * \param lhs The matrix
+ * \param rhs The scalar
+ */
 template <typename T, cpp_enable_if(is_single_precision<T>::value)>
 void scalar_sub(T&& lhs, value_t<T> rhs) {
     float fake_array = -1.0;
     cblas_saxpy(size(lhs), rhs, &fake_array, 0, lhs.memory_start(), 1);
 }
 
+/*!
+ * \brief Subtract the rhs scalar value from each element of lhs
+ * \param lhs The matrix
+ * \param rhs The scalar
+ */
 template <typename T, cpp_enable_if(is_double_precision<T>::value)>
 void scalar_sub(T&& lhs, value_t<T> rhs) {
     double fake_array = -1.0;
     cblas_daxpy(size(lhs), rhs, &fake_array, 0, lhs.memory_start(), 1);
 }
 
+/*!
+ * \brief Subtract the rhs scalar value from each element of lhs
+ * \param lhs The matrix
+ * \param rhs The scalar
+ */
 template <typename T, cpp_enable_if(!all_floating<T>::value)>
 void scalar_sub(T&& /*lhs*/, value_t<T> /*rhs*/) {}
 
+/*!
+ * \brief Multiply each element of lhs by the rhs scalar value
+ * \param lhs The matrix
+ * \param rhs The scalar
+ */
 template <typename T, cpp_enable_if(is_single_precision<T>::value)>
 void scalar_mul(T&& lhs, value_t<T> rhs) {
     cblas_sscal(size(lhs), rhs, lhs.memory_start(), 1);
 }
 
+/*!
+ * \brief Multiply each element of lhs by the rhs scalar value
+ * \param lhs The matrix
+ * \param rhs The scalar
+ */
 template <typename T, cpp_enable_if(is_double_precision<T>::value)>
 void scalar_mul(T&& lhs, value_t<T> rhs) {
     cblas_dscal(size(lhs), rhs, lhs.memory_start(), 1);
 }
 
+/*!
+ * \brief Multiply each element of lhs by the rhs scalar value
+ * \param lhs The matrix
+ * \param rhs The scalar
+ */
 template <typename T, cpp_enable_if(!all_floating<T>::value)>
 void scalar_mul(T&& /*lhs*/, value_t<T> /*rhs*/) {}
 
+/*!
+ * \brief Divide each element of lhs by the rhs scalar value
+ * \param lhs The matrix
+ * \param rhs The scalar
+ */
 template <typename T, cpp_enable_if(is_single_precision<T>::value)>
 void scalar_div(T&& lhs, value_t<T> rhs) {
     cblas_sscal(size(lhs), 1.0f / rhs, lhs.memory_start(), 1);
 }
 
+/*!
+ * \brief Divide each element of lhs by the rhs scalar value
+ * \param lhs The matrix
+ * \param rhs The scalar
+ */
 template <typename T, cpp_enable_if(is_double_precision<T>::value)>
 void scalar_div(T&& lhs, value_t<T> rhs) {
     cblas_dscal(size(lhs), 1.0 / rhs, lhs.memory_start(), 1);
 }
 
+/*!
+ * \brief Divide each element of lhs by the rhs scalar value
+ * \param lhs The matrix
+ * \param rhs The scalar
+ */
 template <typename T, cpp_enable_if(!all_floating<T>::value)>
 void scalar_div(T&& /*lhs*/, value_t<T> /*rhs*/) {}
 

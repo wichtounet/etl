@@ -414,6 +414,11 @@ void conv2_full_kernel(const T* a, std::size_t m1, std::size_t m2, const T* b, s
 
 } //End of namespace mkl_detail
 
+/*!
+ * \brief Perform the 1D FFT on a and store the result in c
+ * \param a The input expression
+ * \param c The output expression
+ */
 inline void fft1(const opaque_memory<float,1>& a, const opaque_memory<std::complex<float>,1>& c) {
     auto a_complex = allocate<std::complex<float>>(a.size());
 
@@ -422,6 +427,11 @@ inline void fft1(const opaque_memory<float,1>& a, const opaque_memory<std::compl
     mkl_detail::fft_kernel(a_complex.get(), a.size(), c.memory_start());
 }
 
+/*!
+ * \brief Perform the 1D FFT on a and store the result in c
+ * \param a The input expression
+ * \param c The output expression
+ */
 inline void fft1(const opaque_memory<double,1>& a, const opaque_memory<std::complex<double>,1>& c) {
     auto a_complex = allocate<std::complex<double>>(a.size());
 
@@ -430,16 +440,31 @@ inline void fft1(const opaque_memory<double,1>& a, const opaque_memory<std::comp
     mkl_detail::fft_kernel(a_complex.get(), a.size(), c.memory_start());
 }
 
+/*!
+ * \brief Perform the 1D FFT on a and store the result in c
+ * \param a The input expression
+ * \param c The output expression
+ */
 template <typename T>
 void fft1(const opaque_memory<std::complex<T>,1>& a, const opaque_memory<std::complex<T>,1>& c) {
     mkl_detail::fft_kernel(a.memory_start(), a.size(), c.memory_start());
 }
 
+/*!
+ * \brief Perform the 1D Inverse FFT on a and store the result in c
+ * \param a The input expression
+ * \param c The output expression
+ */
 template <typename A, typename C>
 void ifft1(A&& a, C&& c) {
     mkl_detail::ifft_kernel(a.memory_start(), etl::size(a), c.memory_start());
 }
 
+/*!
+ * \brief Perform the 1D Inverse FFT on a and store the real part of the result in c
+ * \param a The input expression
+ * \param c The output expression
+ */
 template <typename A, typename C, cpp_enable_if(all_complex_single_precision<A>::value)>
 void ifft1_real(A&& a, C&& c) {
     auto c_complex = allocate<std::complex<float>>(etl::size(a));
@@ -451,6 +476,11 @@ void ifft1_real(A&& a, C&& c) {
     }
 }
 
+/*!
+ * \brief Perform the 1D Inverse FFT on a and store the real part of the result in c
+ * \param a The input expression
+ * \param c The output expression
+ */
 template <typename A, typename C, cpp_enable_if(all_complex_double_precision<A>::value)>
 void ifft1_real(A&& a, C&& c) {
     auto c_complex = allocate<std::complex<double>>(etl::size(a));
@@ -462,6 +492,13 @@ void ifft1_real(A&& a, C&& c) {
     }
 }
 
+/*!
+ * \brief Perform many 1D FFT on a and store the result in c
+ * \param a The input expression
+ * \param c The output expression
+ *
+ * The first dimension of a and c are considered batch dimensions
+ */
 template<std::size_t N, typename T>
 void fft1_many(const opaque_memory<T, N>& a, const opaque_memory<std::complex<T>, N>& c) {
     std::size_t n     = a.template dim<N - 1>(); //Size of the transform
@@ -474,6 +511,13 @@ void fft1_many(const opaque_memory<T, N>& a, const opaque_memory<std::complex<T>
     mkl_detail::fft_many_kernel(a_complex.get(), batch, n, c.memory_start());
 }
 
+/*!
+ * \brief Perform many 1D FFT on a and store the result in c
+ * \param a The input expression
+ * \param c The output expression
+ *
+ * The first dimension of a and c are considered batch dimensions
+ */
 template<std::size_t N, typename T>
 void fft1_many(const opaque_memory<std::complex<T>, N>& a, const opaque_memory<std::complex<T>, N>& c) {
     std::size_t n     = a.template dim<N - 1>(); //Size of the transform
@@ -482,6 +526,13 @@ void fft1_many(const opaque_memory<std::complex<T>, N>& a, const opaque_memory<s
     mkl_detail::fft_many_kernel(a.memory_start(), batch, n, c.memory_start());
 }
 
+/*!
+ * \brief Perform many 1D Inverse FFT on a and store the result in c
+ * \param a The input expression
+ * \param c The output expression
+ *
+ * The first dimension of a and c are considered batch dimensions
+ */
 template <typename A, typename C>
 void ifft1_many(A&& a, C&& c) {
     static constexpr std::size_t N = decay_traits<A>::dimensions();
@@ -492,6 +543,12 @@ void ifft1_many(A&& a, C&& c) {
     mkl_detail::ifft_many_kernel(a.memory_start(), batch, n, c.memory_start());
 }
 
+/*!
+ * \brief Perform the 1D full convolution of a with b and store the result in c
+ * \param a The input matrix
+ * \param b The kernel matrix
+ * \param c The output matrix
+ */
 template <typename A, typename B, typename C>
 void conv1_full(A&& a, B&& b, C&& c) {
     using type = value_t<A>;
@@ -519,6 +576,11 @@ void conv1_full(A&& a, B&& b, C&& c) {
     }
 }
 
+/*!
+ * \brief Perform the 2D FFT on a and store the result in c
+ * \param a The input expression
+ * \param c The output expression
+ */
 template <typename A, typename C, cpp_enable_if(all_single_precision<A>::value)>
 void fft2(A&& a, C&& c) {
     auto a_complex = allocate<std::complex<float>>(etl::size(a));
@@ -528,6 +590,11 @@ void fft2(A&& a, C&& c) {
     mkl_detail::fft2_kernel(a_complex.get(), etl::dim<0>(a), etl::dim<1>(a), c.memory_start());
 }
 
+/*!
+ * \brief Perform the 2D FFT on a and store the result in c
+ * \param a The input expression
+ * \param c The output expression
+ */
 template <typename A, typename C, cpp_enable_if(all_double_precision<A>::value)>
 void fft2(A&& a, C&& c) {
     auto a_complex = allocate<std::complex<double>>(etl::size(a));
@@ -537,11 +604,23 @@ void fft2(A&& a, C&& c) {
     mkl_detail::fft2_kernel(a_complex.get(), etl::dim<0>(a), etl::dim<1>(a), c.memory_start());
 }
 
+/*!
+ * \brief Perform the 2D FFT on a and store the result in c
+ * \param a The input expression
+ * \param c The output expression
+ */
 template <typename A, typename C, cpp_enable_if(all_complex<A>::value)>
 void fft2(A&& a, C&& c) {
     mkl_detail::fft2_kernel(a.memory_start(), etl::dim<0>(a), etl::dim<1>(a), c.memory_start());
 }
 
+/*!
+ * \brief Perform many 2D FFT on a and store the result in c
+ * \param a The input expression
+ * \param c The output expression
+ *
+ * The first dimension of a and c are considered batch dimensions
+ */
 template <typename A, typename C, cpp_enable_if(all_single_precision<A>::value)>
 void fft2_many(A&& a, C&& c) {
     static constexpr std::size_t N = decay_traits<A>::dimensions();
@@ -557,6 +636,13 @@ void fft2_many(A&& a, C&& c) {
     mkl_detail::fft2_many_kernel(a_complex.get(), batch, n1, n2, c.memory_start());
 }
 
+/*!
+ * \brief Perform many 2D FFT on a and store the result in c
+ * \param a The input expression
+ * \param c The output expression
+ *
+ * The first dimension of a and c are considered batch dimensions
+ */
 template <typename A, typename C, cpp_enable_if(all_double_precision<A>::value)>
 void fft2_many(A&& a, C&& c) {
     static constexpr std::size_t N = decay_traits<A>::dimensions();
@@ -572,6 +658,13 @@ void fft2_many(A&& a, C&& c) {
     mkl_detail::fft2_many_kernel(a_complex.get(), batch, n1, n2, c.memory_start());
 }
 
+/*!
+ * \brief Perform many 2D FFT on a and store the result in c
+ * \param a The input expression
+ * \param c The output expression
+ *
+ * The first dimension of a and c are considered batch dimensions
+ */
 template <typename A, typename C, cpp_enable_if(all_complex<A>::value)>
 void fft2_many(A&& a, C&& c) {
     static constexpr std::size_t N = decay_traits<A>::dimensions();
@@ -583,6 +676,13 @@ void fft2_many(A&& a, C&& c) {
     mkl_detail::fft2_many_kernel(a.memory_start(), batch, n1, n2, c.memory_start());
 }
 
+/*!
+ * \brief Perform many 2D Inverse FFT on a and store the result in c
+ * \param a The input expression
+ * \param c The output expression
+ *
+ * The first dimension of a and c are considered batch dimensions
+ */
 template <typename A, typename C>
 void ifft2_many(A&& a, C&& c) {
     static constexpr std::size_t N = decay_traits<A>::dimensions();
@@ -594,11 +694,21 @@ void ifft2_many(A&& a, C&& c) {
     mkl_detail::ifft2_many_kernel(a.memory_start(), batch, n1, n2, c.memory_start());
 }
 
+/*!
+ * \brief Perform the 2D Inverse FFT on a and store the result in c
+ * \param a The input expression
+ * \param c The output expression
+ */
 template <typename A, typename C, cpp_enable_if(all_complex<A>::value)>
 void ifft2(A&& a, C&& c) {
     mkl_detail::ifft2_kernel(a.memory_start(), etl::dim<0>(a), etl::dim<1>(a), c.memory_start());
 }
 
+/*!
+ * \brief Perform the 2D Inverse FFT on a and store the real part of the result in c
+ * \param a The input expression
+ * \param c The output expression
+ */
 template <typename A, typename C>
 void ifft2_real(A&& a, C&& c) {
     auto c_complex = allocate<std::complex<value_t<C>>>(etl::size(a));
@@ -610,11 +720,25 @@ void ifft2_real(A&& a, C&& c) {
     }
 }
 
+/*!
+ * \brief Perform the 2D full convolution of a with b and store the result in c
+ * \param a The input matrix
+ * \param b The kernel matrix
+ * \param c The output matrix
+ */
 template <typename T>
 void conv2_full(const opaque_memory<T, 2>& a, const opaque_memory<T, 2>& b, const opaque_memory<T, 2>& c) {
     mkl_detail::conv2_full_kernel(a.memory_start(), a.dim(0), a.dim(1), b.memory_start(), b.dim(0), b.dim(1), c.memory_start(), T(0.0));
 }
 
+/*!
+ * \brief Perform the 2D full convolution of a with b and store the result in c,
+ * with the flipped kernels of b.
+ *
+ * \param a The input matrix
+ * \param b The kernel matrix
+ * \param c The output matrix
+ */
 template <typename T>
 void conv2_full_flipped(const opaque_memory<T, 2>& a, const opaque_memory<T, 2>& b, const opaque_memory<T, 2>& c) {
     etl::dyn_matrix<T, 2> prepared_b(b.dim(0), b.dim(1));
@@ -691,6 +815,12 @@ void conv2_full_multi(const opaque_memory<T, 2>& input, const opaque_memory<T, 3
     }
 }
 
+/*!
+ * \brief Perform the 2D full convolution of a with multiple kernels of b and store the result in c
+ * \param a The input matrix
+ * \param b The kernel matrix
+ * \param c The output matrix
+ */
 template <typename T>
 void conv2_full_multi_flipped(const opaque_memory<T, 2>& input, const opaque_memory<T, 3>& kernel, const opaque_memory<T, 3>& conv) {
     etl::dyn_matrix<T, 3> prepared_k(kernel.dim(0), kernel.dim(1), kernel.dim(2));
@@ -702,6 +832,12 @@ void conv2_full_multi_flipped(const opaque_memory<T, 2>& input, const opaque_mem
     conv2_full_multi(input, prepared_k.direct(), conv);
 }
 
+/*!
+ * \brief Perform the 4D full convolution of a with b and store the result in c
+ * \param a The input matrix
+ * \param b The kernel matrix
+ * \param c The output matrix
+ */
 template <typename T>
 void conv4_full(const opaque_memory<T, 4>& input, const opaque_memory<T, 4>& kernel, const opaque_memory<T, 4>& conv) {
     if (kernel.dim(1) > 0) {
@@ -793,6 +929,12 @@ void conv4_full(const opaque_memory<T, 4>& input, const opaque_memory<T, 4>& ker
     }
 }
 
+/*!
+ * \brief Perform the 4D full convolution of a with b and store the result in c
+ * \param a The input matrix
+ * \param b The kernel matrix
+ * \param c The output matrix
+ */
 template <typename T>
 void conv4_full_flipped(const opaque_memory<T, 4>& input, const opaque_memory<T, 4>& kernel, const opaque_memory<T, 4>& conv) {
     if (kernel.dim(1) > 0) {

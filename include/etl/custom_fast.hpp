@@ -37,12 +37,12 @@ public:
     static constexpr order storage_order      = SO;                                   ///< The storage order
     static constexpr bool array_impl          = !matrix_detail::is_vector<ST>::value; ///< true if the storage is an std::arraw, false otherwise
 
-    using this_type         = custom_fast_matrix_impl<T, ST, SO, Dims...>;          ///< this type
-    using base_type         = fast_matrix_base<this_type, T, ST, SO, Dims...>;
-    using value_type        = T;                                             ///< The value type
-    using storage_impl      = ST;                                            ///< The storage implementation
-    using memory_type       = value_type*;                                   ///< The memory type
-    using const_memory_type = const value_type*;                             ///< The const memory type
+    using this_type         = custom_fast_matrix_impl<T, ST, SO, Dims...>;     ///< this type
+    using base_type         = fast_matrix_base<this_type, T, ST, SO, Dims...>; ///< The base type
+    using value_type        = T;                                               ///< The value type
+    using storage_impl      = ST;                                              ///< The storage implementation
+    using memory_type       = value_type*;                                     ///< The memory type
+    using const_memory_type = const value_type*;                               ///< The const memory type
 
     using base_type::dim;
     using base_type::size;
@@ -85,7 +85,7 @@ public:
      * \brief Move construct a fast matrix
      * \param rhs The fast matrix to move from
      */
-    custom_fast_matrix_impl(custom_fast_matrix_impl&& rhs) noexcept : base_type(std::move(rhs)) {
+    custom_fast_matrix_impl(custom_fast_matrix_impl&& rhs) noexcept : base_type(std::move(rhs)), _gpu_memory_handler(std::move(rhs._gpu_memory_handler)) {
         // Nothing else to init
     }
 
@@ -123,7 +123,8 @@ public:
      */
     custom_fast_matrix_impl& operator=(custom_fast_matrix_impl&& rhs) noexcept {
         if (this != &rhs) {
-            _data = std::move(rhs._data);
+            _data               = std::move(rhs._data);
+            _gpu_memory_handler = std::move(rhs._gpu_memory_handler);
         }
 
         return *this;

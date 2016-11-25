@@ -13,8 +13,6 @@
 
 namespace etl {
 
-// TODO Make sure (+ testing) that temporary expressions allocates aligned temporaries
-
 /*!
  * \brief Simple utility wrapper for shared_ptr that is mutable.
  *
@@ -80,12 +78,12 @@ public:
  */
 template <typename D, typename V, typename R>
 struct temporary_expr : comparable<D>, value_testable<D>, dim_testable<D> {
-    using derived_t         = D;                 ///< The derived type
-    using value_type        = V;                 ///< The value type
-    using result_type       = R;                 ///< The result type
-    using memory_type       = value_type*;       ///< The memory type
-    using const_memory_type = const value_type*; ///< The const memory type
-    using data_type   = mutable_shared_ptr<result_type>;                    ///< The data type
+    using derived_t         = D;                               ///< The derived type
+    using value_type        = V;                               ///< The value type
+    using result_type       = R;                               ///< The result type
+    using memory_type       = value_type*;                     ///< The memory type
+    using const_memory_type = const value_type*;               ///< The const memory type
+    using data_type         = mutable_shared_ptr<result_type>; ///< The data type
 
 protected:
     mutable bool allocated = false; ///< Indicates if the temporary has been allocated

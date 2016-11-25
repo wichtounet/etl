@@ -48,7 +48,7 @@ constexpr bool conv_valid_fft   = false;                               ///< Bool
 #ifdef ETL_PARALLEL_THREADS
 constexpr std::size_t threads = ETL_PARALLEL_THREADS;
 #else
-const std::size_t threads             = std::thread::hardware_concurrency(); ///< Number of threads
+const std::size_t threads     = std::thread::hardware_concurrency(); ///< Number of threads
 #endif
 
 //Indicate that ETL should run in parallel
@@ -133,35 +133,35 @@ constexpr bool is_div_strict               = false; ///< Boolean flag indicating
 #ifdef ETL_NO_STREAMING
 constexpr bool streaming = false;
 #else
-constexpr bool streaming = true;
+constexpr bool streaming = true; ///< Booling indicating if streaming can be used
 #endif
 
 // Flag to disable padding operations
 #ifdef ETL_NO_PADDING
 constexpr bool padding = false;
 #else
-constexpr bool padding = true;
+constexpr bool padding = true; ///< Booling indicating if padding can be used
 #endif
 
 // Flag to enabled padding operations
 #ifdef ETL_ADVANCED_PADDING
 constexpr bool advanced_padding = true;
 #else
-constexpr bool advanced_padding = false;
+constexpr bool advanced_padding = false; ///< Booling indicating if advanced padding can be used
 #endif
 
 // Flag to disable padding implementations
 #ifdef ETL_NO_PADDING_IMPL
 constexpr bool padding_impl = false;
 #else
-constexpr bool padding_impl = true;
+constexpr bool padding_impl = true; ///< Booling indicating if padding implementations can be used
 #endif
 
 // Flag to set the cache size
 #ifdef ETL_CACHE_SIZE
 constexpr size_t cache_size = ETL_CACHE_SIZE;
 #else
-constexpr size_t cache_size = 3 * 1024 * 1024;
+constexpr size_t cache_size = 3 * 1024 * 1024; ///< Cache size on the machine
 #endif
 
 //Flag to disable unrolling of non-vectorized loops

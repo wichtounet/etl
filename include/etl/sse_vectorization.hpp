@@ -46,7 +46,7 @@ struct sse_intrinsic_traits {
     static constexpr std::size_t size      = 1;          ///< Numbers of elements done at once
     static constexpr std::size_t alignment = alignof(T); ///< Necessary number of bytes of alignment for this type
 
-    using intrinsic_type = T;
+    using intrinsic_type = T; ///< The vector type
 };
 
 /*!
@@ -54,11 +54,11 @@ struct sse_intrinsic_traits {
  */
 template <>
 struct sse_intrinsic_traits<float> {
-    static constexpr bool vectorizable     = true;
-    static constexpr std::size_t size      = 4;
-    static constexpr std::size_t alignment = 16;
+    static constexpr bool vectorizable     = true; ///< Boolean flag indicating is vectorizable or not
+    static constexpr std::size_t size      = 4; ///< Numbers of elements in a vector
+    static constexpr std::size_t alignment = 16; ///< Necessary alignment, in bytes, for this type
 
-    using intrinsic_type = __m128;
+    using intrinsic_type = __m128; ///< The vector type
 };
 
 /*!
@@ -66,11 +66,11 @@ struct sse_intrinsic_traits<float> {
  */
 template <>
 struct sse_intrinsic_traits<double> {
-    static constexpr bool vectorizable     = true;
-    static constexpr std::size_t size      = 2;
-    static constexpr std::size_t alignment = 16;
+    static constexpr bool vectorizable     = true; ///< Boolean flag indicating is vectorizable or not
+    static constexpr std::size_t size      = 2; ///< Numbers of elements in a vector
+    static constexpr std::size_t alignment = 16; ///< Necessary alignment, in bytes, for this type
 
-    using intrinsic_type = __m128d;
+    using intrinsic_type = __m128d; ///< The vector type
 };
 
 /*!
@@ -78,11 +78,11 @@ struct sse_intrinsic_traits<double> {
  */
 template <>
 struct sse_intrinsic_traits<std::complex<float>> {
-    static constexpr bool vectorizable     = true;
-    static constexpr std::size_t size      = 2;
-    static constexpr std::size_t alignment = 16;
+    static constexpr bool vectorizable     = true; ///< Boolean flag indicating is vectorizable or not
+    static constexpr std::size_t size      = 2; ///< Numbers of elements in a vector
+    static constexpr std::size_t alignment = 16;///< Necessary alignment, in bytes, for this type
 
-    using intrinsic_type = __m128;
+    using intrinsic_type = __m128; ///< The vector type
 };
 
 /*!
@@ -90,11 +90,11 @@ struct sse_intrinsic_traits<std::complex<float>> {
  */
 template <>
 struct sse_intrinsic_traits<std::complex<double>> {
-    static constexpr bool vectorizable     = true;
-    static constexpr std::size_t size      = 1;
-    static constexpr std::size_t alignment = 16;
+    static constexpr bool vectorizable     = true; ///< Boolean flag indicating is vectorizable or not
+    static constexpr std::size_t size      = 1; ///< Numbers of elements in a vector
+    static constexpr std::size_t alignment = 16;///< Necessary alignment, in bytes, for this type
 
-    using intrinsic_type = __m128d;
+    using intrinsic_type = __m128d; ///< The vector type
 };
 
 /*!
@@ -102,11 +102,11 @@ struct sse_intrinsic_traits<std::complex<double>> {
  */
 template <>
 struct sse_intrinsic_traits<etl::complex<float>> {
-    static constexpr bool vectorizable     = true;
-    static constexpr std::size_t size      = 2;
-    static constexpr std::size_t alignment = 16;
+    static constexpr bool vectorizable     = true; ///< Boolean flag indicating is vectorizable or not
+    static constexpr std::size_t size      = 2; ///< Numbers of elements in a vector
+    static constexpr std::size_t alignment = 16;///< Necessary alignment, in bytes, for this type
 
-    using intrinsic_type = __m128;
+    using intrinsic_type = __m128; ///< The vector type
 };
 
 /*!
@@ -114,19 +114,22 @@ struct sse_intrinsic_traits<etl::complex<float>> {
  */
 template <>
 struct sse_intrinsic_traits<etl::complex<double>> {
-    static constexpr bool vectorizable     = true;
-    static constexpr std::size_t size      = 1;
-    static constexpr std::size_t alignment = 16;
+    static constexpr bool vectorizable     = true; ///< Boolean flag indicating is vectorizable or not
+    static constexpr std::size_t size      = 1; ///< Numbers of elements in a vector
+    static constexpr std::size_t alignment = 16;///< Necessary alignment, in bytes, for this type
 
-    using intrinsic_type = __m128d;
+    using intrinsic_type = __m128d; ///< The vector type
 };
 
+/*!
+ * \brief Streaming SIMD (SSE) operations implementation.
+ */
 struct sse_vec {
     template <typename T>
-    using traits = sse_intrinsic_traits<T>;
+    using traits = sse_intrinsic_traits<T>; ///< The traits for this vector implementation
 
     template <typename T>
-    using vec_type = typename traits<T>::intrinsic_type;
+    using vec_type = typename traits<T>::intrinsic_type; ///< The vector type for the given vector type for this vector implementation
 
 #ifdef VEC_DEBUG
 
@@ -170,7 +173,7 @@ struct sse_vec {
 
 #endif
 
-    /*
+    /*!
      * \brief Unaligned store of the given packed vector at the
      * given memory position
      */
@@ -178,7 +181,7 @@ struct sse_vec {
         _mm_storeu_ps(memory, value);
     }
 
-    /*
+    /*!
      * \brief Unaligned store of the given packed vector at the
      * given memory position
      */
@@ -186,7 +189,7 @@ struct sse_vec {
         _mm_storeu_pd(memory, value);
     }
 
-    /*
+    /*!
      * \brief Unaligned store of the given packed vector at the
      * given memory position
      */
@@ -194,7 +197,7 @@ struct sse_vec {
         _mm_storeu_ps(reinterpret_cast<float*>(memory), value);
     }
 
-    /*
+    /*!
      * \brief Unaligned store of the given packed vector at the
      * given memory position
      */
@@ -202,7 +205,7 @@ struct sse_vec {
         _mm_storeu_pd(reinterpret_cast<double*>(memory), value);
     }
 
-    /*
+    /*!
      * \brief Unaligned store of the given packed vector at the
      * given memory position
      */
@@ -210,7 +213,7 @@ struct sse_vec {
         _mm_storeu_ps(reinterpret_cast<float*>(memory), value);
     }
 
-    /*
+    /*!
      * \brief Unaligned store of the given packed vector at the
      * given memory position
      */
@@ -218,7 +221,7 @@ struct sse_vec {
         _mm_storeu_pd(reinterpret_cast<double*>(memory), value);
     }
 
-    /*
+    /*!
      * \brief Aligned store of the given packed vector at the
      * given memory position
      */
@@ -226,7 +229,7 @@ struct sse_vec {
         _mm_store_ps(memory, value);
     }
 
-    /*
+    /*!
      * \brief Aligned store of the given packed vector at the
      * given memory position
      */
@@ -234,7 +237,7 @@ struct sse_vec {
         _mm_store_pd(memory, value);
     }
 
-    /*
+    /*!
      * \brief Aligned store of the given packed vector at the
      * given memory position
      */
@@ -242,7 +245,7 @@ struct sse_vec {
         _mm_store_ps(reinterpret_cast<float*>(memory), value);
     }
 
-    /*
+    /*!
      * \brief Aligned store of the given packed vector at the
      * given memory position
      */
@@ -250,7 +253,7 @@ struct sse_vec {
         _mm_store_pd(reinterpret_cast<double*>(memory), value);
     }
 
-    /*
+    /*!
      * \brief Aligned store of the given packed vector at the
      * given memory position
      */
@@ -258,7 +261,7 @@ struct sse_vec {
         _mm_store_ps(reinterpret_cast<float*>(memory), value);
     }
 
-    /*
+    /*!
      * \brief Aligned store of the given packed vector at the
      * given memory position
      */
@@ -266,7 +269,7 @@ struct sse_vec {
         _mm_store_pd(reinterpret_cast<double*>(memory), value);
     }
 
-    /*
+    /*!
      * \brief Non-temporal, aligned, store of the given packed vector at the
      * given memory position
      */
@@ -274,7 +277,7 @@ struct sse_vec {
         _mm_stream_ps(memory, value);
     }
 
-    /*
+    /*!
      * \brief Non-temporal, aligned, store of the given packed vector at the
      * given memory position
      */
@@ -282,7 +285,7 @@ struct sse_vec {
         _mm_stream_pd(memory, value);
     }
 
-    /*
+    /*!
      * \brief Non-temporal, aligned, store of the given packed vector at the
      * given memory position
      */
@@ -290,7 +293,7 @@ struct sse_vec {
         _mm_stream_ps(reinterpret_cast<float*>(memory), value);
     }
 
-    /*
+    /*!
      * \brief Non-temporal, aligned, store of the given packed vector at the
      * given memory position
      */
@@ -298,7 +301,7 @@ struct sse_vec {
         _mm_stream_pd(reinterpret_cast<double*>(memory), value);
     }
 
-    /*
+    /*!
      * \brief Non-temporal, aligned, store of the given packed vector at the
      * given memory position
      */
@@ -306,7 +309,7 @@ struct sse_vec {
         _mm_stream_ps(reinterpret_cast<float*>(memory), value);
     }
 
-    /*
+    /*!
      * \brief Non-temporal, aligned, store of the given packed vector at the
      * given memory position
      */
@@ -461,6 +464,10 @@ struct sse_vec {
         return _mm_sub_pd(lhs, rhs);
     }
 
+    /*!
+     * \brief Compute the square root of each element in the given vector
+     * \return a vector containing the square root of each input element
+     */
     ETL_INLINE_VEC_128D sqrt(__m128d x) {
         return _mm_sqrt_pd(x);
     }
@@ -483,6 +490,10 @@ struct sse_vec {
         return _mm_sub_ps(lhs, rhs);
     }
 
+    /*!
+     * \brief Compute the square root of each element in the given vector
+     * \return a vector containing the square root of each input element
+     */
     ETL_INLINE_VEC_128 sqrt(__m128 x) {
         return _mm_sqrt_ps(x);
     }
@@ -586,6 +597,11 @@ struct sse_vec {
 
 #endif //__INTEL_COMPILER
 
+    /*!
+     * \brief Perform an horizontal sum of the given vector.
+     * \param in The input vector type
+     * \return the horizontal sum of the vector
+     */
     template <typename T = float>
     static inline T ETL_INLINE_ATTR_VEC hadd(__m128 in) {
         __m128 shuf = _mm_movehdup_ps(in);
@@ -595,6 +611,11 @@ struct sse_vec {
         return _mm_cvtss_f32(sums);
     }
 
+    /*!
+     * \brief Perform an horizontal sum of the given vector.
+     * \param in The input vector type
+     * \return the horizontal sum of the vector
+     */
     template <typename T = double>
     static inline T ETL_INLINE_ATTR_VEC hadd(__m128d in) {
         __m128 undef   = _mm_undefined_ps();
@@ -606,6 +627,11 @@ struct sse_vec {
 
 //TODO Vectorize the two following functions
 
+/*!
+ * \brief Perform an horizontal sum of the given vector.
+ * \param in The input vector type
+ * \return the horizontal sum of the vector
+ */
 template <>
 inline std::complex<float> ETL_INLINE_ATTR_VEC sse_vec::hadd<std::complex<float>>(__m128 in) {
     std::complex<float> tmp_result[2];
@@ -613,6 +639,11 @@ inline std::complex<float> ETL_INLINE_ATTR_VEC sse_vec::hadd<std::complex<float>
     return tmp_result[0] + tmp_result[1];
 }
 
+/*!
+ * \brief Perform an horizontal sum of the given vector.
+ * \param in The input vector type
+ * \return the horizontal sum of the vector
+ */
 template <>
 inline std::complex<double> ETL_INLINE_ATTR_VEC sse_vec::hadd<std::complex<double>>(__m128d in) {
     std::complex<double> tmp_result[1];
@@ -620,6 +651,11 @@ inline std::complex<double> ETL_INLINE_ATTR_VEC sse_vec::hadd<std::complex<doubl
     return tmp_result[0];
 }
 
+/*!
+ * \brief Perform an horizontal sum of the given vector.
+ * \param in The input vector type
+ * \return the horizontal sum of the vector
+ */
 template <>
 inline etl::complex<float> ETL_INLINE_ATTR_VEC sse_vec::hadd<etl::complex<float>>(__m128 in) {
     etl::complex<float> tmp_result[2];
@@ -627,6 +663,11 @@ inline etl::complex<float> ETL_INLINE_ATTR_VEC sse_vec::hadd<etl::complex<float>
     return tmp_result[0] + tmp_result[1];
 }
 
+/*!
+ * \brief Perform an horizontal sum of the given vector.
+ * \param in The input vector type
+ * \return the horizontal sum of the vector
+ */
 template <>
 inline etl::complex<double> ETL_INLINE_ATTR_VEC sse_vec::hadd<etl::complex<double>>(__m128d in) {
     etl::complex<double> tmp_result[1];

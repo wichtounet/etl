@@ -14,6 +14,12 @@ namespace impl {
 
 namespace vec {
 
+/*!
+ * \brief Optimized version of small GEMV for row major version
+ * \param a The lhs matrix
+ * \param b The rhs vector
+ * \param c The result vector
+ */
 template <typename V, typename A, typename B, typename C, cpp_enable_if((all_row_major<A, B, C>::value))>
 void gemv_small_kernel(const A& a, const B& b, C& c) {
     using vec_type = V;
@@ -140,6 +146,12 @@ void gemv_small_kernel(const A& a, const B& b, C& c) {
     }
 }
 
+/*!
+ * \brief Optimized version of large GEMV for row major version
+ * \param a The lhs matrix
+ * \param b The rhs vector
+ * \param c The result vector
+ */
 template <typename V, typename A, typename B, typename C, cpp_enable_if((all_row_major<A, B, C>::value))>
 void gemv_large_kernel(const A& a, const B& b, C& c) {
     using vec_type = V;
@@ -373,6 +385,12 @@ void gemv_large_kernel(const A& a, const B& b, C& c) {
     }
 }
 
+/*!
+ * \brief Optimized version of GEMV for row major version
+ * \param a The lhs matrix
+ * \param b The rhs vector
+ * \param c The result vector
+ */
 template <typename A, typename B, typename C, cpp_enable_if((all_row_major<A, B, C>::value))>
 void gemv(A&& a, B&& b, C&& c) {
     cpp_assert(vec_enabled, "At least one vector mode must be enabled for impl::VEC");
@@ -384,7 +402,12 @@ void gemv(A&& a, B&& b, C&& c) {
     }
 }
 
-// Default, unoptimized should not be called unless in tests
+/*!
+ * \brief Unoptimized version of GEMV for column major version
+ * \param a The lhs matrix
+ * \param b The rhs vector
+ * \param c The result vector
+ */
 template <typename A, typename B, typename C, cpp_disable_if((all_row_major<A, B, C>::value))>
 void gemv(A&& a, B&& b, C&& c) {
     cpp_assert(vec_enabled, "At least one vector mode must be enabled for impl::VEC");
@@ -401,6 +424,12 @@ void gemv(A&& a, B&& b, C&& c) {
     }
 }
 
+/*!
+ * \brief Optimized version of small GEVM for row major version
+ * \param a The lhs vector
+ * \param b The rhs matrix
+ * \param c The result vector
+ */
 template <typename V, typename A, typename B, typename C, cpp_enable_if((all_row_major<A, B, C>::value))>
 void gevm_small_kernel(const A& a, const B& b, C& c) {
     using vec_type = V;
@@ -507,6 +536,12 @@ void gevm_small_kernel(const A& a, const B& b, C& c) {
     }
 }
 
+/*!
+ * \brief Optimized version of large GEVM for row major version
+ * \param a The lhs vector
+ * \param b The rhs matrix
+ * \param c The result vector
+ */
 template <typename V, typename A, typename B, typename C, cpp_enable_if((all_row_major<A, B, C>::value))>
 void gevm_large_kernel(const A& a, const B& b, C& c) {
     using vec_type = V;
@@ -627,6 +662,12 @@ void gevm_large_kernel(const A& a, const B& b, C& c) {
     }
 }
 
+/*!
+ * \brief Optimized version of GEVM for row major version
+ * \param a The lhs vector
+ * \param b The rhs matrix
+ * \param c The result vector
+ */
 template <typename A, typename B, typename C, cpp_enable_if((all_row_major<A, B, C>::value))>
 void gevm(A&& a, B&& b, C&& c) {
     cpp_assert(vec_enabled, "At least one vector mode must be enabled for impl::VEC");
@@ -638,7 +679,12 @@ void gevm(A&& a, B&& b, C&& c) {
     }
 }
 
-// Default, unoptimized should not be called unless in tests
+/*!
+ * \brief Unoptimized version of GEVM for column major version
+ * \param a The lhs vector
+ * \param b The rhs matrix
+ * \param c The result vector
+ */
 template <typename A, typename B, typename C, cpp_disable_if((all_row_major<A, B, C>::value))>
 void gevm(A&& a, B&& b, C&& c) {
     cpp_assert(vec_enabled, "At least one vector mode must be enabled for impl::VEC");
@@ -652,6 +698,12 @@ void gevm(A&& a, B&& b, C&& c) {
     }
 }
 
+/*!
+ * \brief Optimized version of small GEMM for row major version
+ * \param a The lhs matrix
+ * \param b The rhs matrix
+ * \param c The result matrix
+ */
 template <typename V, typename A, typename B, typename C>
 void gemm_small_kernel(const A& a, const B& b, C& c) {
     using vec_type = V;
@@ -941,6 +993,12 @@ void gemm_small_kernel(const A& a, const B& b, C& c) {
     }
 }
 
+/*!
+ * \brief Optimized version of large GEMM for row major version
+ * \param a The lhs matrix
+ * \param b The rhs matrix
+ * \param c The result matrix
+ */
 template <typename V, typename A, typename B, typename C>
 void gemm_large_kernel(const A& a, const B& b, C& c) {
     using vec_type = V;
@@ -1175,6 +1233,12 @@ void gemm_large_kernel(const A& a, const B& b, C& c) {
     }
 }
 
+/*!
+ * \brief Optimized version of GEMM for row major version
+ * \param a The lhs matrix
+ * \param b The rhs matrix
+ * \param c The result matrix
+ */
 template <typename A, typename B, typename C, cpp_enable_if((all_row_major<A, B, C>::value))>
 void gemm(A&& a, B&& b, C&& c) {
     cpp_assert(vec_enabled, "At least one vector mode must be enabled for impl::VEC");
@@ -1186,7 +1250,12 @@ void gemm(A&& a, B&& b, C&& c) {
     }
 }
 
-// Default, unoptimized should not be called unless in tests
+/*!
+ * \brief Unoptimized version of GEMM for column major version
+ * \param a The lhs matrix
+ * \param b The rhs matrix
+ * \param c The result matrix
+ */
 template <typename A, typename B, typename C, cpp_disable_if((all_row_major<A, B, C>::value))>
 void gemm(A&& a, B&& b, C&& c) {
     cpp_assert(vec_enabled, "At least one vector mode must be enabled for impl::VEC");
