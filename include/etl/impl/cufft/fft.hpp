@@ -263,6 +263,11 @@ void conv2_full_kernel(const T* a, std::size_t m1, std::size_t m2, const T* b, s
 
 } //End of namespace detail
 
+/*!
+ * \brief Perform the 1D FFT on a and store the result in c
+ * \param a The input expression
+ * \param c The output expression
+ */
 template <typename A, typename C, cpp_enable_if(all_single_precision<A>::value)>
 void fft1(A&& a, C&& c) {
     direct_copy(a.memory_start(), a.memory_end(), c.memory_start());
@@ -274,6 +279,11 @@ void fft1(A&& a, C&& c) {
     detail::inplace_cfft1_kernel(c_gpu, etl::size(a));
 }
 
+/*!
+ * \brief Perform the 1D FFT on a and store the result in c
+ * \param a The input expression
+ * \param c The output expression
+ */
 template <typename A, typename C, cpp_enable_if(all_double_precision<A>::value)>
 void fft1(A&& a, C&& c) {
     direct_copy(a.memory_start(), a.memory_end(), c.memory_start());
@@ -285,6 +295,11 @@ void fft1(A&& a, C&& c) {
     detail::inplace_zfft1_kernel(c_gpu, etl::size(a));
 }
 
+/*!
+ * \brief Perform the 1D FFT on a and store the result in c
+ * \param a The input expression
+ * \param c The output expression
+ */
 template <typename A, typename C, cpp_enable_if(all_complex_single_precision<A>::value)>
 void fft1(A&& a, C&& c) {
     auto a_gpu = a.direct();
@@ -297,6 +312,11 @@ void fft1(A&& a, C&& c) {
     c_gpu.gpu_reallocate(a_gpu.gpu_release());
 }
 
+/*!
+ * \brief Perform the 1D FFT on a and store the result in c
+ * \param a The input expression
+ * \param c The output expression
+ */
 template <typename A, typename C, cpp_enable_if(all_complex_double_precision<A>::value)>
 void fft1(A&& a, C&& c) {
     auto a_gpu = a.direct();
@@ -309,6 +329,13 @@ void fft1(A&& a, C&& c) {
     c_gpu.gpu_reallocate(a_gpu.gpu_release());
 }
 
+/*!
+ * \brief Perform many 1D FFT on a and store the result in c
+ * \param a The input expression
+ * \param c The output expression
+ *
+ * The first dimension of a and c are considered batch dimensions
+ */
 template <typename A, typename C, cpp_enable_if(all_single_precision<A>::value)>
 void fft1_many(A&& a, C&& c) {
     static constexpr std::size_t N = decay_traits<A>::dimensions();
@@ -325,6 +352,13 @@ void fft1_many(A&& a, C&& c) {
     detail::inplace_cfft1_many_kernel(c_gpu, batch, n);
 }
 
+/*!
+ * \brief Perform many 1D FFT on a and store the result in c
+ * \param a The input expression
+ * \param c The output expression
+ *
+ * The first dimension of a and c are considered batch dimensions
+ */
 template <typename A, typename C, cpp_enable_if(all_double_precision<A>::value)>
 void fft1_many(A&& a, C&& c) {
     static constexpr std::size_t N = decay_traits<A>::dimensions();
@@ -341,6 +375,13 @@ void fft1_many(A&& a, C&& c) {
     detail::inplace_zfft1_many_kernel(c_gpu, batch, n);
 }
 
+/*!
+ * \brief Perform many 1D FFT on a and store the result in c
+ * \param a The input expression
+ * \param c The output expression
+ *
+ * The first dimension of a and c are considered batch dimensions
+ */
 template <typename A, typename C, cpp_enable_if(all_complex_single_precision<A>::value)>
 void fft1_many(A&& a, C&& c) {
     static constexpr std::size_t N = decay_traits<A>::dimensions();
@@ -358,6 +399,13 @@ void fft1_many(A&& a, C&& c) {
     c_gpu.gpu_reallocate(a_gpu.gpu_release());
 }
 
+/*!
+ * \brief Perform many 1D FFT on a and store the result in c
+ * \param a The input expression
+ * \param c The output expression
+ *
+ * The first dimension of a and c are considered batch dimensions
+ */
 template <typename A, typename C, cpp_enable_if(all_complex_double_precision<A>::value)>
 void fft1_many(A&& a, C&& c) {
     static constexpr std::size_t N = decay_traits<A>::dimensions();
@@ -474,6 +522,11 @@ void scale_back_real(A&& a, C&& c) {
 #endif
 }
 
+/*!
+ * \brief Perform the 1D Inverse FFT on a and store the result in c
+ * \param a The input expression
+ * \param c The output expression
+ */
 template <typename A, typename C, cpp_enable_if(all_complex_single_precision<A>::value)>
 void ifft1(A&& a, C&& c) {
     auto a_gpu = a.direct();
@@ -488,6 +541,11 @@ void ifft1(A&& a, C&& c) {
     scale_back(c);
 }
 
+/*!
+ * \brief Perform the 1D Inverse FFT on a and store the result in c
+ * \param a The input expression
+ * \param c The output expression
+ */
 template <typename A, typename C, cpp_enable_if(all_complex_double_precision<A>::value)>
 void ifft1(A&& a, C&& c) {
     auto a_gpu = a.direct();
@@ -502,6 +560,11 @@ void ifft1(A&& a, C&& c) {
     scale_back(c);
 }
 
+/*!
+ * \brief Perform the 1D Inverse FFT on a and store the real part of the result in c
+ * \param a The input expression
+ * \param c The output expression
+ */
 template <typename A, typename C, cpp_enable_if(all_complex_single_precision<A>::value)>
 void ifft1_real(A&& a, C&& c) {
     auto a_gpu = a.direct();
@@ -513,6 +576,11 @@ void ifft1_real(A&& a, C&& c) {
     scale_back_real(a, c);
 }
 
+/*!
+ * \brief Perform the 1D Inverse FFT on a and store the real part of the result in c
+ * \param a The input expression
+ * \param c The output expression
+ */
 template <typename A, typename C, cpp_enable_if(all_complex_double_precision<A>::value)>
 void ifft1_real(A&& a, C&& c) {
     auto a_gpu = a.direct();
@@ -524,6 +592,13 @@ void ifft1_real(A&& a, C&& c) {
     scale_back_real(a, c);
 }
 
+/*!
+ * \brief Perform many 1D Inverse FFT on a and store the result in c
+ * \param a The input expression
+ * \param c The output expression
+ *
+ * The first dimension of a and c are considered batch dimensions
+ */
 template <typename A, typename C, cpp_enable_if(all_complex_single_precision<A>::value)>
 void ifft1_many(A&& a, C&& c) {
     static constexpr std::size_t N = decay_traits<A>::dimensions();
@@ -543,6 +618,13 @@ void ifft1_many(A&& a, C&& c) {
     scale_back(c, 1.0 / double(n));
 }
 
+/*!
+ * \brief Perform many 1D Inverse FFT on a and store the result in c
+ * \param a The input expression
+ * \param c The output expression
+ *
+ * The first dimension of a and c are considered batch dimensions
+ */
 template <typename A, typename C, cpp_enable_if(all_complex_double_precision<A>::value)>
 void ifft1_many(A&& a, C&& c) {
     static constexpr std::size_t N = decay_traits<A>::dimensions();
@@ -562,6 +644,12 @@ void ifft1_many(A&& a, C&& c) {
     scale_back(c, 1.0 / double(n));
 }
 
+/*!
+ * \brief Perform the 1D full convolution of a with b and store the result in c
+ * \param a The input matrix
+ * \param b The kernel matrix
+ * \param c The output matrix
+ */
 template <typename A, typename B, typename C, cpp_enable_if(all_single_precision<A>::value)>
 void conv1_full(A&& a, B&& b, C&& c) {
     using type = value_t<A>;
@@ -608,6 +696,12 @@ void conv1_full(A&& a, B&& b, C&& c) {
     gpu_b.gpu_evict();
 }
 
+/*!
+ * \brief Perform the 1D full convolution of a with b and store the result in c
+ * \param a The input matrix
+ * \param b The kernel matrix
+ * \param c The output matrix
+ */
 template <typename A, typename B, typename C, cpp_enable_if(all_double_precision<A>::value)>
 void conv1_full(A&& a, B&& b, C&& c) {
     using type = value_t<A>;
@@ -654,6 +748,11 @@ void conv1_full(A&& a, B&& b, C&& c) {
     gpu_b.gpu_evict();
 }
 
+/*!
+ * \brief Perform the 2D FFT on a and store the result in c
+ * \param a The input expression
+ * \param c The output expression
+ */
 template <typename A, typename C, cpp_enable_if(all_single_precision<A>::value)>
 void fft2(A&& a, C&& c) {
     direct_copy(a.memory_start(), a.memory_end(), c.memory_start());
@@ -665,6 +764,11 @@ void fft2(A&& a, C&& c) {
     detail::inplace_cfft2_kernel(c_gpu, etl::dim<0>(a), etl::dim<1>(a));
 }
 
+/*!
+ * \brief Perform the 2D FFT on a and store the result in c
+ * \param a The input expression
+ * \param c The output expression
+ */
 template <typename A, typename C, cpp_enable_if(all_double_precision<A>::value)>
 void fft2(A&& a, C&& c) {
     direct_copy(a.memory_start(), a.memory_end(), c.memory_start());
@@ -676,6 +780,11 @@ void fft2(A&& a, C&& c) {
     detail::inplace_zfft2_kernel(c_gpu, etl::dim<0>(a), etl::dim<1>(a));
 }
 
+/*!
+ * \brief Perform the 2D FFT on a and store the result in c
+ * \param a The input expression
+ * \param c The output expression
+ */
 template <typename A, typename C, cpp_enable_if(all_complex_single_precision<A>::value)>
 void fft2(A&& a, C&& c) {
     auto a_gpu = a.direct();
@@ -688,6 +797,11 @@ void fft2(A&& a, C&& c) {
     c_gpu.gpu_reallocate(a_gpu.gpu_release());
 }
 
+/*!
+ * \brief Perform the 2D FFT on a and store the result in c
+ * \param a The input expression
+ * \param c The output expression
+ */
 template <typename A, typename C, cpp_enable_if(all_complex_double_precision<A>::value)>
 void fft2(A&& a, C&& c) {
     auto a_gpu = a.direct();
@@ -700,6 +814,11 @@ void fft2(A&& a, C&& c) {
     c_gpu.gpu_reallocate(a_gpu.gpu_release());
 }
 
+/*!
+ * \brief Perform the 2D Inverse FFT on a and store the result in c
+ * \param a The input expression
+ * \param c The output expression
+ */
 template <typename A, typename C, cpp_enable_if(all_complex_single_precision<A>::value)>
 void ifft2(A&& a, C&& c) {
     auto a_gpu = a.direct();
@@ -714,6 +833,11 @@ void ifft2(A&& a, C&& c) {
     scale_back(c);
 }
 
+/*!
+ * \brief Perform the 2D Inverse FFT on a and store the result in c
+ * \param a The input expression
+ * \param c The output expression
+ */
 template <typename A, typename C, cpp_enable_if(all_complex_double_precision<A>::value)>
 void ifft2(A&& a, C&& c) {
     auto a_gpu = a.direct();
@@ -728,6 +852,11 @@ void ifft2(A&& a, C&& c) {
     scale_back(c);
 }
 
+/*!
+ * \brief Perform the 2D Inverse FFT on a and store the real part of the result in c
+ * \param a The input expression
+ * \param c The output expression
+ */
 template <typename A, typename C, cpp_enable_if(all_complex_single_precision<A>::value)>
 void ifft2_real(A&& a, C&& c) {
     auto a_gpu = a.direct();
@@ -739,6 +868,11 @@ void ifft2_real(A&& a, C&& c) {
     scale_back_real(a, c);
 }
 
+/*!
+ * \brief Perform the 2D Inverse FFT on a and store the real part of the result in c
+ * \param a The input expression
+ * \param c The output expression
+ */
 template <typename A, typename C, cpp_enable_if(all_complex_double_precision<A>::value)>
 void ifft2_real(A&& a, C&& c) {
     auto a_gpu = a.direct();
@@ -750,6 +884,13 @@ void ifft2_real(A&& a, C&& c) {
     scale_back_real(a, c);
 }
 
+/*!
+ * \brief Perform many 2D FFT on a and store the result in c
+ * \param a The input expression
+ * \param c The output expression
+ *
+ * The first dimension of a and c are considered batch dimensions
+ */
 template <typename A, typename C, cpp_enable_if(all_single_precision<A>::value)>
 void fft2_many(A&& a, C&& c) {
     static constexpr std::size_t N = decay_traits<A>::dimensions();
@@ -767,6 +908,13 @@ void fft2_many(A&& a, C&& c) {
     detail::inplace_cfft2_many_kernel(c_gpu, batch, n1, n2);
 }
 
+/*!
+ * \brief Perform many 2D FFT on a and store the result in c
+ * \param a The input expression
+ * \param c The output expression
+ *
+ * The first dimension of a and c are considered batch dimensions
+ */
 template <typename A, typename C, cpp_enable_if(all_double_precision<A>::value)>
 void fft2_many(A&& a, C&& c) {
     static constexpr std::size_t N = decay_traits<A>::dimensions();
@@ -784,6 +932,13 @@ void fft2_many(A&& a, C&& c) {
     detail::inplace_zfft2_many_kernel(c_gpu, batch, n1, n2);
 }
 
+/*!
+ * \brief Perform many 2D FFT on a and store the result in c
+ * \param a The input expression
+ * \param c The output expression
+ *
+ * The first dimension of a and c are considered batch dimensions
+ */
 template <typename A, typename C, cpp_enable_if(all_complex_single_precision<A>::value)>
 void fft2_many(A&& a, C&& c) {
     static constexpr std::size_t N = decay_traits<A>::dimensions();
@@ -802,6 +957,13 @@ void fft2_many(A&& a, C&& c) {
     c_gpu.gpu_reallocate(a_gpu.gpu_release());
 }
 
+/*!
+ * \brief Perform many 2D FFT on a and store the result in c
+ * \param a The input expression
+ * \param c The output expression
+ *
+ * The first dimension of a and c are considered batch dimensions
+ */
 template <typename A, typename C, cpp_enable_if(all_complex_double_precision<A>::value)>
 void fft2_many(A&& a, C&& c) {
     static constexpr std::size_t N = decay_traits<A>::dimensions();
@@ -820,6 +982,13 @@ void fft2_many(A&& a, C&& c) {
     c_gpu.gpu_reallocate(a_gpu.gpu_release());
 }
 
+/*!
+ * \brief Perform many 2D Inverse FFT on a and store the result in c
+ * \param a The input expression
+ * \param c The output expression
+ *
+ * The first dimension of a and c are considered batch dimensions
+ */
 template <typename A, typename C, cpp_enable_if(all_complex_single_precision<A>::value)>
 void ifft2_many(A&& a, C&& c) {
     static constexpr std::size_t N = decay_traits<A>::dimensions();
@@ -840,6 +1009,13 @@ void ifft2_many(A&& a, C&& c) {
     scale_back(c, 1.0 / double(n1 * n2));
 }
 
+/*!
+ * \brief Perform many 2D Inverse FFT on a and store the result in c
+ * \param a The input expression
+ * \param c The output expression
+ *
+ * The first dimension of a and c are considered batch dimensions
+ */
 template <typename A, typename C, cpp_enable_if(all_complex_double_precision<A>::value)>
 void ifft2_many(A&& a, C&& c) {
     static constexpr std::size_t N = decay_traits<A>::dimensions();
@@ -860,11 +1036,25 @@ void ifft2_many(A&& a, C&& c) {
     scale_back(c, 1.0 / double(n1 * n2));
 }
 
+/*!
+ * \brief Perform the 2D full convolution of a with b and store the result in c
+ * \param a The input matrix
+ * \param b The kernel matrix
+ * \param c The output matrix
+ */
 template <typename T>
 void conv2_full(const opaque_memory<T, 2>& a, const opaque_memory<T, 2>& b, const opaque_memory<T, 2>& c) {
     detail::conv2_full_kernel(a.memory_start(), a.dim(0), a.dim(1), b.memory_start(), b.dim(0), b.dim(1), c.memory_start(), T(0.0));
 }
 
+/*!
+ * \brief Perform the 2D full convolution of a with b and store the result in c,
+ * with the flipped kernels of b.
+ *
+ * \param a The input matrix
+ * \param b The kernel matrix
+ * \param c The output matrix
+ */
 template <typename T>
 void conv2_full_flipped(const opaque_memory<T, 2>& a, const opaque_memory<T, 2>& b, const opaque_memory<T, 2>& c) {
     etl::dyn_matrix<T, 2> prepared_b(b.dim(0), b.dim(1));
@@ -876,6 +1066,12 @@ void conv2_full_flipped(const opaque_memory<T, 2>& a, const opaque_memory<T, 2>&
     detail::conv2_full_kernel(a.memory_start(), a.dim(0), a.dim(1), prepared_b.memory_start(), b.dim(0), b.dim(1), c.memory_start(), T(0.0));
 }
 
+/*!
+ * \brief Perform the 2D full convolution of a with multiple kernels of b and store the result in c
+ * \param a The input matrix
+ * \param b The kernel matrix
+ * \param c The output matrix
+ */
 template <typename T>
 void conv2_full_multi(const opaque_memory<T, 2>& input, const opaque_memory<T, 3>& kernel, const opaque_memory<T, 3>& conv) {
     const auto K = kernel.dim(0);
@@ -897,6 +1093,12 @@ void conv2_full_multi(const opaque_memory<T, 2>& input, const opaque_memory<T, 3
     }
 }
 
+/*!
+ * \brief Perform the 2D full convolution of a with multiple kernels of b and store the result in c
+ * \param a The input matrix
+ * \param b The kernel matrix
+ * \param c The output matrix
+ */
 template <typename T>
 void conv2_full_multi_flipped(const opaque_memory<T, 2>& input, const opaque_memory<T, 3>& kernel, const opaque_memory<T, 3>& conv) {
     const auto K = kernel.dim(0);
@@ -924,6 +1126,12 @@ void conv2_full_multi_flipped(const opaque_memory<T, 2>& input, const opaque_mem
     }
 }
 
+/*!
+ * \brief Perform the 4D full convolution of a with b and store the result in c
+ * \param a The input matrix
+ * \param b The kernel matrix
+ * \param c The output matrix
+ */
 template <typename T>
 void conv4_full(const opaque_memory<T, 4>& input, const opaque_memory<T, 4>& kernel, const opaque_memory<T, 4>& conv) {
     using detail::cufft_exec_c2c;
@@ -1056,6 +1264,12 @@ void conv4_full(const opaque_memory<T, 4>& input, const opaque_memory<T, 4>& ker
     }
 }
 
+/*!
+ * \brief Perform the 4D full convolution of a with b and store the result in c
+ * \param a The input matrix
+ * \param b The kernel matrix
+ * \param c The output matrix
+ */
 template <typename T>
 void conv4_full_flipped(const opaque_memory<T, 4>& input, const opaque_memory<T, 4>& kernel, const opaque_memory<T, 4>& conv) {
     if (kernel.dim(1) > 0) {
