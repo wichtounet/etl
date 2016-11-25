@@ -562,7 +562,7 @@ void ifft1_many(A&& a, C&& c) {
     scale_back(c, 1.0 / double(n));
 }
 
-template <typename A, typename B, typename C, cpp_enable_if(all_single_precision<A>::value)>
+template <typename A, typename B, typename C>
 void conv1_full(A&& a, B&& b, C&& c) {
     using type = value_t<A>;
 
@@ -583,56 +583,12 @@ void conv1_full(A&& a, B&& b, C&& c) {
     gpu_a.gpu_allocate_copy();
     gpu_b.gpu_allocate_copy();
 
-    cufftPlan1d(&handle.get(), size, CUFFT_C2C, 1);
+    auto cufft_type = is_single_precision_t<type>::value ? CUFFT_C2C : CUFFT_Z2Z;
 
-    cufftExecC2C(handle.get(), complex_cast(gpu_a.gpu_memory()), complex_cast(gpu_a.gpu_memory()), CUFFT_FORWARD);
-    cufftExecC2C(handle.get(), complex_cast(gpu_b.gpu_memory()), complex_cast(gpu_b.gpu_memory()), CUFFT_FORWARD);
+    cufftPlan1d(&handle.get(), size, cufft_type, 1);
 
-    gpu_a.gpu_copy_from();
-    gpu_b.gpu_copy_from();
-
-    a_padded *= b_padded;
-
-    gpu_a.gpu_copy_to(); //Refresh the GPU memory
-
-    cufftExecC2C(handle.get(), complex_cast(gpu_a.gpu_memory()), complex_cast(gpu_a.gpu_memory()), CUFFT_INVERSE);
-
-    gpu_a.gpu_copy_from();
-
-    for (std::size_t i = 0; i < size; ++i) {
-        c[i] = a_padded[i].real * (1.0 / size);
-    }
-
-    //Get rid of the GPU memory
-    gpu_a.gpu_evict();
-    gpu_b.gpu_evict();
-}
-
-template <typename A, typename B, typename C, cpp_enable_if(all_double_precision<A>::value)>
-void conv1_full(A&& a, B&& b, C&& c) {
-    using type = value_t<A>;
-
-    auto handle = start_cufft();
-
-    const std::size_t size     = etl::size(c);
-
-    //Note: use of value_t to make the type dependent!
-    dyn_vector<etl::complex<type>> a_padded(size);
-    dyn_vector<etl::complex<type>> b_padded(size);
-
-    direct_copy(a.memory_start(), a.memory_end(), a_padded.memory_start());
-    direct_copy(b.memory_start(), b.memory_end(), b_padded.memory_start());
-
-    auto gpu_a = a_padded.direct();
-    auto gpu_b = b_padded.direct();
-
-    gpu_a.gpu_allocate_copy();
-    gpu_b.gpu_allocate_copy();
-
-    cufftPlan1d(&handle.get(), size, CUFFT_Z2Z, 1);
-
-    cufftExecZ2Z(handle.get(), complex_cast(gpu_a.gpu_memory()), complex_cast(gpu_a.gpu_memory()), CUFFT_FORWARD);
-    cufftExecZ2Z(handle.get(), complex_cast(gpu_b.gpu_memory()), complex_cast(gpu_b.gpu_memory()), CUFFT_FORWARD);
+    detail::cufft_exec_c2c(handle.get(), complex_cast(gpu_a.gpu_memory()), complex_cast(gpu_a.gpu_memory()), CUFFT_FORWARD);
+    detail::cufft_exec_c2c(handle.get(), complex_cast(gpu_b.gpu_memory()), complex_cast(gpu_b.gpu_memory()), CUFFT_FORWARD);
 
     gpu_a.gpu_copy_from();
     gpu_b.gpu_copy_from();
@@ -641,7 +597,7 @@ void conv1_full(A&& a, B&& b, C&& c) {
 
     gpu_a.gpu_copy_to(); //Refresh the GPU memory
 
-    cufftExecZ2Z(handle.get(), complex_cast(gpu_a.gpu_memory()), complex_cast(gpu_a.gpu_memory()), CUFFT_INVERSE);
+    detail::cufft_exec_c2c(handle.get(), complex_cast(gpu_a.gpu_memory()), complex_cast(gpu_a.gpu_memory()), CUFFT_INVERSE);
 
     gpu_a.gpu_copy_from();
 
@@ -1082,7 +1038,7 @@ template <typename A, typename C>
 void fft1(A&& a, C&& c) {
     cpp_unused(a);
     cpp_unused(c);
-    cpp_unreachable("Unsupported feature called: mkl fft");
+    cpp_unreachable("Unsupported feature called: cufft fft");
 }
 
 /*!
@@ -1094,7 +1050,7 @@ template <typename A, typename C>
 void ifft1(A&& a, C&& c) {
     cpp_unused(a);
     cpp_unused(c);
-    cpp_unreachable("Unsupported feature called: mkl fft");
+    cpp_unreachable("Unsupported feature called: cufft fft");
 }
 
 /*!
@@ -1106,7 +1062,7 @@ template <typename A, typename C>
 void ifft1_real(A&& a, C&& c) {
     cpp_unused(a);
     cpp_unused(c);
-    cpp_unreachable("Unsupported feature called: mkl fft");
+    cpp_unreachable("Unsupported feature called: cufft fft");
 }
 
 /*!
@@ -1120,7 +1076,7 @@ template <typename A, typename C>
 void fft1_many(A&& a, C&& c) {
     cpp_unused(a);
     cpp_unused(c);
-    cpp_unreachable("Unsupported feature called: mkl fft");
+    cpp_unreachable("Unsupported feature called: cufft fft");
 }
 
 /*!
@@ -1134,7 +1090,7 @@ template <typename A, typename C>
 void ifft1_many(A&& a, C&& c) {
     cpp_unused(a);
     cpp_unused(c);
-    cpp_unreachable("Unsupported feature called: mkl fft");
+    cpp_unreachable("Unsupported feature called: cufft fft");
 }
 
 /*!
@@ -1146,7 +1102,7 @@ template <typename A, typename C>
 void fft2(A&& a, C&& c) {
     cpp_unused(a);
     cpp_unused(c);
-    cpp_unreachable("Unsupported feature called: mkl fft");
+    cpp_unreachable("Unsupported feature called: cufft fft");
 }
 
 /*!
@@ -1158,7 +1114,7 @@ template <typename A, typename C>
 void ifft2(A&& a, C&& c) {
     cpp_unused(a);
     cpp_unused(c);
-    cpp_unreachable("Unsupported feature called: mkl fft");
+    cpp_unreachable("Unsupported feature called: cufft fft");
 }
 
 /*!
@@ -1170,7 +1126,7 @@ template <typename A, typename C>
 void ifft2_real(A&& a, C&& c) {
     cpp_unused(a);
     cpp_unused(c);
-    cpp_unreachable("Unsupported feature called: mkl fft");
+    cpp_unreachable("Unsupported feature called: cufft fft");
 }
 
 /*!
@@ -1184,7 +1140,7 @@ template <typename A, typename C>
 void fft2_many(A&& a, C&& c) {
     cpp_unused(a);
     cpp_unused(c);
-    cpp_unreachable("Unsupported feature called: mkl fft");
+    cpp_unreachable("Unsupported feature called: cufft fft");
 }
 
 /*!
@@ -1198,7 +1154,7 @@ template <typename A, typename C>
 void ifft2_many(A&& a, C&& c) {
     cpp_unused(a);
     cpp_unused(c);
-    cpp_unreachable("Unsupported feature called: mkl fft");
+    cpp_unreachable("Unsupported feature called: cufft fft");
 }
 
 /*!
@@ -1212,7 +1168,7 @@ void conv1_full(A&& a, B&& b, C&& c) {
     cpp_unused(a);
     cpp_unused(b);
     cpp_unused(c);
-    cpp_unreachable("Unsupported feature called: mkl fft");
+    cpp_unreachable("Unsupported feature called: cufft fft");
 }
 
 /*!
@@ -1226,7 +1182,7 @@ void conv2_full(A&& a, B&& b, C&& c) {
     cpp_unused(a);
     cpp_unused(b);
     cpp_unused(c);
-    cpp_unreachable("Unsupported feature called: mkl fft");
+    cpp_unreachable("Unsupported feature called: cufft fft");
 }
 
 /*!
@@ -1242,7 +1198,7 @@ void conv2_full_flipped(A&& a, B&& b, C&& c) {
     cpp_unused(a);
     cpp_unused(b);
     cpp_unused(c);
-    cpp_unreachable("Unsupported feature called: mkl fft");
+    cpp_unreachable("Unsupported feature called: cufft fft");
 }
 
 /*!
@@ -1256,7 +1212,7 @@ void conv2_full_multi(A&& a, B&& b, C&& c) {
     cpp_unused(a);
     cpp_unused(b);
     cpp_unused(c);
-    cpp_unreachable("Unsupported feature called: mkl fft");
+    cpp_unreachable("Unsupported feature called: cufft fft");
 }
 
 /*!
@@ -1270,7 +1226,7 @@ void conv2_full_multi_flipped(A&& a, B&& b, C&& c) {
     cpp_unused(a);
     cpp_unused(b);
     cpp_unused(c);
-    cpp_unreachable("Unsupported feature called: mkl fft");
+    cpp_unreachable("Unsupported feature called: cufft fft");
 }
 
 /*!
@@ -1284,7 +1240,7 @@ void conv4_full(A&& a, B&& b, C&& c) {
     cpp_unused(a);
     cpp_unused(b);
     cpp_unused(c);
-    cpp_unreachable("Unsupported feature called: mkl fft");
+    cpp_unreachable("Unsupported feature called: cufft fft");
 }
 
 /*!
@@ -1298,7 +1254,7 @@ void conv4_full_flipped(A&& a, B&& b, C&& c) {
     cpp_unused(a);
     cpp_unused(b);
     cpp_unused(c);
-    cpp_unreachable("Unsupported feature called: mkl fft");
+    cpp_unreachable("Unsupported feature called: cufft fft");
 }
 
 //COVERAGE_EXCLUDE_END
