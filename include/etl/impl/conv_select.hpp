@@ -48,7 +48,7 @@ namespace detail {
  * \return the implementation to be used
  */
 template <conv_type TT, typename I, typename K, typename C>
-inline etl::conv_impl select_default_conv_impl_new() {
+inline etl::conv_impl select_default_conv1_impl_new() {
     //Note: since the constexpr values will be known at compile time, the
     //conditions will be a lot simplified
 
@@ -62,8 +62,16 @@ inline etl::conv_impl select_default_conv_impl_new() {
     }
 
     static constexpr bool vec = vec_enabled;
+    static constexpr bool mkl = is_mkl_enabled;
+    static constexpr bool cufft = is_cufft_enabled;
 
-    if (vec) {
+    if(cufft && TT == conv_type::FULL){
+        //TODO This should only be done for some sizes
+        return etl::conv_impl::FFT_CUFFT;
+    } else if(mkl && TT == conv_type::FULL){
+        //TODO This should only be done for some sizes
+        return etl::conv_impl::FFT_MKL;
+    } else if (vec) {
         return etl::conv_impl::VEC;
     } else {
         return etl::conv_impl::STD;
@@ -78,8 +86,8 @@ inline etl::conv_impl select_default_conv_impl_new() {
  * \return the implementation to be used
  */
 template <conv_type TT, typename I, typename K, typename C>
-inline etl::conv_impl select_conv_impl_new() {
-    auto default_impl = select_default_conv_impl_new<TT, I, K, C>();
+inline etl::conv_impl select_conv1_impl_new() {
+    auto default_impl = select_default_conv1_impl_new<TT, I, K, C>();
 
     //COVERAGE_EXCLUDE_BEGIN
     if (local_context().conv_selector.forced) {
@@ -99,15 +107,6 @@ inline etl::conv_impl select_conv_impl_new() {
             case conv_impl::FFT_CUFFT:
                 if (!is_cufft_enabled) {
                     std::cerr << "Forced selection to CUFFT fft_conv implementation, but not possible for this expression" << std::endl;
-                    return default_impl;
-                }
-
-                return forced;
-
-            //CUDNN cannot always be used
-            case conv_impl::CUDNN:
-                if (!is_cudnn_enabled) {
-                    std::cerr << "Forced selection to CUDNN conv implementation, but not possible for this expression" << std::endl;
                     return default_impl;
                 }
 

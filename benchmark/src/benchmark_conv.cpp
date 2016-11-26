@@ -154,8 +154,6 @@ CPM_DIRECT_SECTION_TWO_PASS_NS_PF("sconv1_valid_dyn_1 [conv][conv1]", fast_polic
     CPM_SECTION_INIT([](std::size_t){ return std::make_tuple(sdm_t1<float>(10000), sdm_t1<float>(5000), sdm_t1<float>(5001)); }),
     CPM_SECTION_FUNCTOR("default", [](auto& a, auto& b, auto& r){ r = etl::conv_1d_valid(a, b); }),
     CPM_SECTION_FUNCTOR("std", [](auto& a, auto& b, auto& r){ r = selected_helper(etl::conv_impl::STD, etl::conv_1d_valid(a, b)); })
-    SSE_SECTION_FUNCTOR("sse", [](auto& a, auto& b, auto& r){ r = selected_helper(etl::conv_impl::SSE, etl::conv_1d_valid(a, b)); })
-    AVX_SECTION_FUNCTOR("avx", [](auto& a, auto& b, auto& r){ r = selected_helper(etl::conv_impl::AVX, etl::conv_1d_valid(a, b)); })
 )
 
 CPM_DIRECT_SECTION_TWO_PASS_NS_PF("sconv1_valid_fast_1 [conv][conv1]", fast_policy,
@@ -163,8 +161,6 @@ CPM_DIRECT_SECTION_TWO_PASS_NS_PF("sconv1_valid_fast_1 [conv][conv1]", fast_poli
     CPM_SECTION_INIT([](std::size_t){ return std::make_tuple(fdm_t1<float,10000>(), fdm_t1<float,5000>(), fdm_t1<float,5001>()); }),
     CPM_SECTION_FUNCTOR("default", [](auto& a, auto& b, auto& r){ r = etl::conv_1d_valid(a, b); }),
     CPM_SECTION_FUNCTOR("std", [](auto& a, auto& b, auto& r){ r = selected_helper(etl::conv_impl::STD, etl::conv_1d_valid(a, b)); })
-    SSE_SECTION_FUNCTOR("sse", [](auto& a, auto& b, auto& r){ r = selected_helper(etl::conv_impl::SSE, etl::conv_1d_valid(a, b)); })
-    AVX_SECTION_FUNCTOR("avx", [](auto& a, auto& b, auto& r){ r = selected_helper(etl::conv_impl::AVX, etl::conv_1d_valid(a, b)); })
 )
 
 #endif
@@ -183,8 +179,7 @@ CPM_DIRECT_SECTION_TWO_PASS_NS_PF("sconv1_same [conv][conv1]", conv_1d_large_pol
     CPM_SECTION_INIT([](std::size_t d1, std::size_t d2){ return std::make_tuple(svec(d1), svec(d2), svec(d1)); }),
     CPM_SECTION_FUNCTOR("default", [](svec& a, svec& b, svec& r){ r = etl::conv_1d_same(a, b); }),
     CPM_SECTION_FUNCTOR("std", [](svec& a, svec& b, svec& r){ r = selected_helper(etl::conv_impl::STD, etl::conv_1d_same(a, b)); })
-    SSE_SECTION_FUNCTOR("sse", [](svec& a, svec& b, svec& r){ r = selected_helper(etl::conv_impl::SSE, etl::conv_1d_same(a, b)); })
-    AVX_SECTION_FUNCTOR("avx", [](svec& a, svec& b, svec& r){ r = selected_helper(etl::conv_impl::AVX, etl::conv_1d_same(a, b)); })
+    VEC_SECTION_FUNCTOR("vec", [](svec& a, svec& b, svec& r){ r = selected_helper(etl::conv_impl::VEC, etl::conv_1d_same(a, b)); })
 )
 
 CPM_DIRECT_SECTION_TWO_PASS_NS_PF("dconv1_same [conv][conv1]", conv_1d_large_policy,
@@ -192,8 +187,7 @@ CPM_DIRECT_SECTION_TWO_PASS_NS_PF("dconv1_same [conv][conv1]", conv_1d_large_pol
     CPM_SECTION_INIT([](std::size_t d1, std::size_t d2){ return std::make_tuple(dvec(d1), dvec(d2), dvec(d1)); }),
     CPM_SECTION_FUNCTOR("default", [](dvec& a, dvec& b, dvec& r){ r = etl::conv_1d_same(a, b); }),
     CPM_SECTION_FUNCTOR("std", [](dvec& a, dvec& b, dvec& r){ r = selected_helper(etl::conv_impl::STD, etl::conv_1d_same(a, b)); })
-    SSE_SECTION_FUNCTOR("sse", [](dvec& a, dvec& b, dvec& r){ r = selected_helper(etl::conv_impl::SSE, etl::conv_1d_same(a, b)); })
-    AVX_SECTION_FUNCTOR("avx", [](dvec& a, dvec& b, dvec& r){ r = selected_helper(etl::conv_impl::AVX, etl::conv_1d_same(a, b)); })
+    VEC_SECTION_FUNCTOR("vec", [](dvec& a, dvec& b, dvec& r){ r = selected_helper(etl::conv_impl::VEC, etl::conv_1d_same(a, b)); })
 )
 #endif
 
@@ -202,8 +196,7 @@ CPM_DIRECT_SECTION_TWO_PASS_NS_PF("sconv1_full [conv][conv1]", conv_1d_large_pol
     CPM_SECTION_INIT([](std::size_t d1, std::size_t d2){ return std::make_tuple(svec(d1), svec(d2), svec(d1 + d2 - 1)); }),
     CPM_SECTION_FUNCTOR("default", [](svec& a, svec& b, svec& r){ r = etl::conv_1d_full(a, b); }),
     CPM_SECTION_FUNCTOR("std", [](svec& a, svec& b, svec& r){ r = selected_helper(etl::conv_impl::STD, etl::conv_1d_full(a, b)); })
-    SSE_SECTION_FUNCTOR("sse", [](svec& a, svec& b, svec& r){ r = selected_helper(etl::conv_impl::SSE, etl::conv_1d_full(a, b)); })
-    AVX_SECTION_FUNCTOR("avx", [](svec& a, svec& b, svec& r){ r = selected_helper(etl::conv_impl::AVX, etl::conv_1d_full(a, b)); })
+    VEC_SECTION_FUNCTOR("vec", [](svec& a, svec& b, svec& r){ r = selected_helper(etl::conv_impl::VEC, etl::conv_1d_full(a, b)); })
     ,CPM_SECTION_FUNCTOR("fft_std", [](svec& a, svec& b, svec& r){ r = selected_helper(etl::conv_impl::FFT_STD, etl::conv_1d_full(a, b)); })
     MKL_SECTION_FUNCTOR("fft_mkl", [](svec& a, svec& b, svec& r){ r = selected_helper(etl::conv_impl::FFT_MKL, etl::conv_1d_full(a, b)); })
     CUFFT_SECTION_FUNCTOR("fft_cufft", [](svec& a, svec& b, svec& r){ r = selected_helper(etl::conv_impl::FFT_CUFFT, etl::conv_1d_full(a, b)); })
@@ -214,8 +207,6 @@ CPM_DIRECT_SECTION_TWO_PASS_NS_PF("dconv1_full [conv][conv1]", conv_1d_large_pol
     CPM_SECTION_INIT([](std::size_t d1, std::size_t d2){ return std::make_tuple(dvec(d1), dvec(d2), dvec(d1 + d2 - 1)); }),
     CPM_SECTION_FUNCTOR("default", [](dvec& a, dvec& b, dvec& r){ r = etl::conv_1d_full(a, b); }),
     CPM_SECTION_FUNCTOR("std", [](dvec& a, dvec& b, dvec& r){ r = selected_helper(etl::conv_impl::STD, etl::conv_1d_full(a, b)); })
-    SSE_SECTION_FUNCTOR("sse", [](dvec& a, dvec& b, dvec& r){ r = selected_helper(etl::conv_impl::SSE, etl::conv_1d_full(a, b)); })
-    AVX_SECTION_FUNCTOR("avx", [](dvec& a, dvec& b, dvec& r){ r = selected_helper(etl::conv_impl::AVX, etl::conv_1d_full(a, b)); })
     ,CPM_SECTION_FUNCTOR("fft_std", [](dvec& a, dvec& b, dvec& r){ r = selected_helper(etl::conv_impl::FFT_STD, etl::conv_1d_full(a, b)); })
     MKL_SECTION_FUNCTOR("fft_mkl", [](dvec& a, dvec& b, dvec& r){ r = selected_helper(etl::conv_impl::FFT_MKL, etl::conv_1d_full(a, b)); })
     CUFFT_SECTION_FUNCTOR("fft_cufft", [](dvec& a, dvec& b, dvec& r){ r = selected_helper(etl::conv_impl::FFT_CUFFT, etl::conv_1d_full(a, b)); })

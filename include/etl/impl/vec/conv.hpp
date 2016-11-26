@@ -7,6 +7,8 @@
 
 #pragma once
 
+#include "etl/impl/common/conv.hpp"
+
 namespace etl {
 
 namespace impl {
@@ -472,9 +474,10 @@ void conv1_valid(const I& input, const K& kernel, C&& conv, std::size_t first, s
     static constexpr size_t vec_size = vec_type::template traits<T>::size;
     static constexpr bool Cx         = is_complex_t<T>::value;
 
+    const size_t n = etl::size(input);
     const size_t m = etl::size(kernel);
 
-    auto llast = std::min(etl::size(conv), last);
+    auto llast = std::min(n - m + 1, last);
 
     auto kernel_reverse = aligned_allocate_auto<T>(m);
 
@@ -762,9 +765,63 @@ void conv1_valid(const I& input, const K& kernel, C&& conv, std::size_t first, s
     }
 }
 
+/*!
+ * \brief Vectorized implementation of a 1D 'valid' convolution C = I * K
+ * \param input The input matrix
+ * \param kernel The kernel matrix
+ * \param conv The output matrix
+ * \param first The index where to start in the output matrix
+ * \param last The index where to stop in the output matrix
+ */
 template <typename I, typename K, typename C>
 void conv1_valid(const I& input, const K& kernel, C&& conv, std::size_t first, std::size_t last) {
     conv1_valid<default_vec>(input, kernel, conv, first, last);
+}
+
+/*!
+ * \brief Vectorized implementation of a 1D 'full' convolution C = I * K
+ * \param input The input matrix
+ * \param kernel The kernel matrix
+ * \param conv The output matrix
+ * \param first The index where to start in the output matrix
+ * \param last The index where to stop in the output matrix
+ */
+template <typename I, typename K, typename C>
+void conv1_full(const I& input, const K& kernel, C&& conv, std::size_t first, std::size_t last) {
+    std::size_t left = size(kernel) - 1;
+
+    auto* out      = conv.memory_start();
+    const auto* in = input.memory_start();
+    const auto* k  = kernel.memory_start();
+
+    //Process not-'valid' parts of the convolution (left and right)
+    etl::impl::common::left_full_kernel(in, size(input), k, size(kernel), out, first, last);
+    etl::impl::common::right_full_kernel(in, size(input), k, size(kernel), out, first, last);
+
+    conv1_valid<default_vec>(input, kernel, memory_slice(conv, left, size(conv)), first, last);
+}
+
+/*!
+ * \brief Vectorized implementation of a 1D 'same' convolution C = I * K
+ * \param input The input matrix
+ * \param kernel The kernel matrix
+ * \param conv The output matrix
+ * \param first The index where to start in the output matrix
+ * \param last The index where to stop in the output matrix
+ */
+template <typename I, typename K, typename C>
+void conv1_same(const I& input, const K& kernel, C&& conv, std::size_t first, std::size_t last) {
+    std::size_t left = (size(kernel) - 1) / 2;
+
+    auto* out      = conv.memory_start();
+    const auto* in = input.memory_start();
+    const auto* k  = kernel.memory_start();
+
+    //Process not-'valid' parts of the convolution (left and right)
+    etl::impl::common::left_same_kernel(in, size(input), k, size(kernel), out, first, last);
+    etl::impl::common::right_same_kernel(in, size(input), k, size(kernel), out, first, last);
+
+    conv1_valid<default_vec>(input, kernel, memory_slice(conv, left, size(conv)), first, last);
 }
 
 } //end of namespace vec
