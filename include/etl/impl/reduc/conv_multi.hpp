@@ -444,8 +444,6 @@ void blas_conv2_valid_multi_flipped(const I& input, const K_T& kernels, C&& conv
     const std::size_t f1 = etl::dim<1>(conv);
     const std::size_t f2 = etl::dim<2>(conv);
 
-    //auto prepared_k = force_temporary(kernels);
-
     etl::dyn_matrix<value_t<I>, 2> input_col(k1 * k2, c1 * c2);
 
     if(p1 || p2){
