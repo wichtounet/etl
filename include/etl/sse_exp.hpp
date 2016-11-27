@@ -177,12 +177,12 @@ ETL_INLINE_VEC_128D exp_pd(__m128d x) {
     x1 = _mm_min_pd(x, xmm0);
     x1 = _mm_max_pd(x1, xmm1);
 
-    /* a = x / log2; */
+    /* a = x / log2 */
     xmm0 = _mm_set1_pd(1.4426950408889634073599);
     xmm1 = _mm_setzero_pd();
     a1 = _mm_mul_pd(x1, xmm0);
 
-    /* k = (int)floor(a); p = (float)k; */
+    /* k = (int)floor(a)  p = (float)k */
     p1 = _mm_cmplt_pd(a1, xmm1);
     xmm0 = _mm_set1_pd(1.0);
     p1 = _mm_and_pd(p1, xmm0);
@@ -190,7 +190,7 @@ ETL_INLINE_VEC_128D exp_pd(__m128d x) {
     k1 = _mm_cvttpd_epi32(a1);
     p1 = _mm_cvtepi32_pd(k1);
 
-    /* x -= p * log2; */
+    /* x -= p * log2 */
     xmm0 = _mm_set1_pd(6.93145751953125E-1);
     xmm1 = _mm_set1_pd(1.42860682030941723212E-6);
 
@@ -241,13 +241,13 @@ ETL_INLINE_VEC_128D exp_pd(__m128d x) {
     a1 = _mm_add_pd(a1, xmm1);
 #endif
 
-    /* p = 2^k; */
+    /* p = 2^k */
     k1 = _mm_add_epi32(k1, offset);
     k1 = _mm_slli_epi32(k1, 20);
     k1 = _mm_shuffle_epi32(k1, _MM_SHUFFLE(1,3,0,2));
     p1 = _mm_castsi128_pd(k1);
 
-    /* a *= 2^k. */
+    /* a *= 2^k */
     a1 = _mm_mul_pd(a1, p1);
 
     return a1;
