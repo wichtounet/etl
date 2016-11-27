@@ -478,18 +478,28 @@ CONV_FUNCTOR(vec_conv1_valid, c = selected_helper(etl::conv_impl::VEC, (etl::con
 CONV_FUNCTOR(vec_conv1_same, c = selected_helper(etl::conv_impl::VEC, (etl::conv_1d_same(a, b))))
 CONV_FUNCTOR(vec_conv1_full, c = selected_helper(etl::conv_impl::VEC, (etl::conv_1d_full(a, b))))
 
+CONV_FUNCTOR(vec_conv2_same, c = selected_helper(etl::conv_impl::VEC, (etl::conv_2d_same(a, b))))
+CONV_FUNCTOR(vec_conv2_same_flipped, c = selected_helper(etl::conv_impl::VEC, (etl::conv_2d_same_flipped(a, b))))
+
 CONV_FUNCTOR(vec_conv2_valid_flipped, c = selected_helper(etl::conv_impl::VEC, (etl::conv_2d_valid_flipped<S1, S2, P1, P2>(a, b))))
+
 DYN_CONV_FUNCTOR(vec_dyn_conv2_valid_flipped, c = selected_helper(etl::conv_impl::VEC, (etl::conv_2d_valid_flipped(a, b, s1, s2, p1, p2))))
 
 #define CONV1_VALID_TEST_CASE_SECTION_VEC CONV_TEST_CASE_SECTIONS(vec_conv1_valid)
 #define CONV1_SAME_TEST_CASE_SECTION_VEC CONV_TEST_CASE_SECTIONS(vec_conv1_same)
 #define CONV1_FULL_TEST_CASE_SECTION_VEC CONV_TEST_CASE_SECTIONS(vec_conv1_full)
 
+#define CONV2_SAME_TEST_CASE_SECTION_VEC CONV_TEST_CASE_SECTIONS(vec_conv2_same)
+#define CONV2_SAME_FLIPPED_TEST_CASE_SECTION_VEC CONV_TEST_CASE_SECTIONS(vec_conv2_same_flipped)
+
 #define CONV2_VALID_FLIPPED_TEST_CASE_SECTION_VEC CONV_TEST_CASE_SECTIONS(vec_conv2_valid_flipped)
 #else
 #define CONV1_VALID_TEST_CASE_SECTION_VEC
 #define CONV1_SAME_TEST_CASE_SECTION_VEC
 #define CONV1_FULL_TEST_CASE_SECTION_VEC
+
+#define CONV2_SAME_TEST_CASE_SECTION_VEC
+#define CONV2_SAME_FLIPPED_TEST_CASE_SECTION_VEC
 
 #define CONV2_VALID_FLIPPED_TEST_CASE_SECTION_VEC
 #endif
@@ -632,18 +642,16 @@ CONV_FUNCTOR(cudnn_conv2_valid_multi_flipped, c = selected_helper(etl::conv_mult
     CONV_TEST_CASE_DECL(name, description) {    \
         CONV2_SAME_TEST_CASE_SECTION_DEFAULT    \
         CONV2_SAME_TEST_CASE_SECTION_STD        \
-        CONV2_SAME_TEST_CASE_SECTION_SSE        \
-        CONV2_SAME_TEST_CASE_SECTION_AVX        \
+        CONV2_SAME_TEST_CASE_SECTION_VEC        \
     }                                           \
     CONV_TEST_CASE_DEFN
 
 #define CONV2_SAME_FLIPPED_TEST_CASE(name, description) \
-    CONV_TEST_CASE_DECL(name, description) {    \
+    CONV_TEST_CASE_DECL(name, description) {            \
         CONV2_SAME_FLIPPED_TEST_CASE_SECTION_DEFAULT    \
         CONV2_SAME_FLIPPED_TEST_CASE_SECTION_STD        \
-        CONV2_SAME_FLIPPED_TEST_CASE_SECTION_SSE        \
-        CONV2_SAME_FLIPPED_TEST_CASE_SECTION_AVX        \
-    }                                           \
+        CONV2_SAME_FLIPPED_TEST_CASE_SECTION_VEC        \
+    }                                                   \
     CONV_TEST_CASE_DEFN
 
 #define CONV2_VALID_TEST_CASE(name, description) \

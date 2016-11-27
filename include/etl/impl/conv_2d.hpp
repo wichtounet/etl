@@ -204,16 +204,10 @@ struct conv2_same_impl {
      */
     template <typename I, typename K, typename C>
     static void apply(const I& input, const K& kernel, C& conv) {
-        etl::conv_impl impl = select_conv_impl<conv_type::SAME, I, K, C>();
+        auto impl = select_conv2_impl_new<conv_type::SAME, I, K, C>();
 
-        auto i = input.direct();
-        auto k = kernel.direct();
-        auto c = conv.direct();
-
-        if (impl == etl::conv_impl::AVX) {
-            impl::avx::conv2_same(i, k, c);
-        } else if (impl == etl::conv_impl::SSE) {
-            impl::sse::conv2_same(i, k, c);
+        if (impl == etl::conv_impl::VEC) {
+            impl::vec::conv2_same(input, kernel, conv);
         } else if (impl == etl::conv_impl::STD) {
             impl::standard::conv2_same(input, kernel, conv);
         } else {
@@ -296,16 +290,10 @@ struct conv2_same_flipped_impl : conv2_same_impl {
      */
     template <typename I, typename K, typename C>
     static void apply(const I& input, const K& kernel, C& conv) {
-        etl::conv_impl impl = select_conv_impl<conv_type::SAME, I, K, C>();
+        auto impl = select_conv2_impl_new<conv_type::SAME, I, K, C>();
 
-        auto i = input.direct();
-        auto k = kernel.direct();
-        auto c = conv.direct();
-
-        if (impl == etl::conv_impl::AVX) {
-            impl::avx::conv2_same_flipped(i, k, c);
-        } else if (impl == etl::conv_impl::SSE) {
-            impl::sse::conv2_same_flipped(i, k, c);
+        if (impl == etl::conv_impl::VEC) {
+            impl::vec::conv2_same_flipped(input, kernel, conv);
         } else if (impl == etl::conv_impl::STD) {
             impl::standard::conv2_same_flipped(input, kernel, conv);
         } else {

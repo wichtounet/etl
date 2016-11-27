@@ -131,6 +131,74 @@ inline etl::conv_impl select_conv1_impl_new() {
     return default_impl;
 }
 
+/*!
+ * \brief Select the implementation of the conv of I and K in C
+ *
+ * This does not take the local context into account.
+ *
+ * \tparam I The input type
+ * \tparam K The kernel type
+ * \tparam C The conv type
+ * \return the implementation to be used
+ */
+template <conv_type TT, typename I, typename K, typename C>
+inline etl::conv_impl select_default_conv2_impl_new() {
+    //Note: since the constexpr values will be known at compile time, the
+    //conditions will be a lot simplified
+
+    static constexpr order input_order  = decay_traits<I>::storage_order;
+    static constexpr order kernel_order = decay_traits<K>::storage_order;
+    static constexpr order output_order = decay_traits<C>::storage_order;
+
+    //Only the standard implementation is able to handle column major
+    if (input_order == order::ColumnMajor || kernel_order == order::ColumnMajor || output_order == order::ColumnMajor) {
+        return etl::conv_impl::STD;
+    }
+
+    static constexpr bool vec = vec_enabled;
+
+    if (vec) {
+        return etl::conv_impl::VEC;
+    } else {
+        return etl::conv_impl::STD;
+    }
+}
+
+/*!
+ * \brief Select the implementation of the conv of I and K in C
+ * \tparam I The input type
+ * \tparam K The kernel type
+ * \tparam C The conv type
+ * \return the implementation to be used
+ */
+template <conv_type TT, typename I, typename K, typename C>
+inline etl::conv_impl select_conv2_impl_new() {
+    auto default_impl = select_default_conv2_impl_new<TT, I, K, C>();
+
+    //COVERAGE_EXCLUDE_BEGIN
+    if (local_context().conv_selector.forced) {
+        auto forced = local_context().conv_selector.impl;
+
+        switch (forced) {
+            //VEC cannot always be used
+            case conv_impl::VEC:
+                if (!vec_enabled) {
+                    std::cerr << "Forced selection to VEC conv implementation, but not possible for this expression" << std::endl;
+                    return default_impl;
+                }
+
+                return forced;
+
+            //In other cases, simply use the forced impl
+            default:
+                return forced;
+        }
+    }
+    //COVERAGE_EXCLUDE_END
+
+    return default_impl;
+}
+
 //TODO Remove this once everything is vectorized correctly
 
 /*!

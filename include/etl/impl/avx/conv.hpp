@@ -2378,34 +2378,6 @@ void conv4_full_flipped(const opaque_memory<T, 4>& input, const opaque_memory<T,
  * \param conv The output matrix
  */
 template <typename T>
-void conv2_same(const opaque_memory<T, 2>& input, const opaque_memory<T, 2>& kernel, const opaque_memory<T, 2>& conv) {
-    detail::conv2_same_micro_kernel(
-        input.memory_start(), input.template dim<0>(), input.template dim<1>(),
-        kernel.memory_start(), kernel.template dim<0>(), kernel.template dim<1>(),
-        conv.memory_start());
-}
-
-/*!
- * \brief AVX implementation of a 2D 'same' convolution C = I * K
- * \param input The input matrix
- * \param kernel The kernel matrix
- * \param conv The output matrix
- */
-template <typename T>
-void conv2_same_flipped(const opaque_memory<T, 2>& input, const opaque_memory<T, 2>& kernel, const opaque_memory<T, 2>& conv) {
-    detail::conv2_same_flipped_micro_kernel(
-        input.memory_start(), input.template dim<0>(), input.template dim<1>(),
-        kernel.memory_start(), kernel.template dim<0>(), kernel.template dim<1>(),
-        conv.memory_start());
-}
-
-/*!
- * \brief SSE implementation of a 2D 'same' convolution C = I * K
- * \param input The input matrix
- * \param kernel The kernel matrix
- * \param conv The output matrix
- */
-template <typename T>
 void conv2_same_multi(const opaque_memory<T, 2>& input, const opaque_memory<T, 3>& kernel, const opaque_memory<T, 3>& conv) {
     const auto K = kernel.dim(0);
 
@@ -2661,34 +2633,6 @@ void conv2_valid_multi_multi_flipped(const I& input, const K& kernel, C&& conv, 
     cpp_unused(s2);
     cpp_unused(p1);
     cpp_unused(p2);
-    cpp_unreachable("AVX not available/enabled");
-}
-
-/*!
- * \brief AVX implementation of a 2D 'same' convolution C = I * K
- * \param input The input matrix
- * \param kernel The kernel matrix
- * \param conv The output matrix
- */
-template <typename I, typename K, typename C>
-void conv2_same(const I& input, const K& kernel, C&& conv) {
-    cpp_unused(input);
-    cpp_unused(kernel);
-    cpp_unused(conv);
-    cpp_unreachable("AVX not available/enabled");
-}
-
-/*!
- * \brief AVX implementation of a 2D 'same' convolution C = I * K
- * \param input The input matrix
- * \param kernel The kernel matrix
- * \param conv The output matrix
- */
-template <typename I, typename K, typename C>
-void conv2_same_flipped(const I& input, const K& kernel, C&& conv) {
-    cpp_unused(input);
-    cpp_unused(kernel);
-    cpp_unused(conv);
     cpp_unreachable("AVX not available/enabled");
 }
 
