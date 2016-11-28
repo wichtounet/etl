@@ -234,57 +234,6 @@ inline void conv2_valid_micro_kernel(const double* in, std::size_t n1, std::size
     conv2_valid_flipped_micro_kernel(in, n1, n2, kernel_reverse.get(), m1, m2, out, beta, s1, s2, p1, p2);
 }
 
-inline void conv2_same_micro_kernel(const double* in, std::size_t n1, std::size_t n2, const double* kernel, std::size_t m1, std::size_t m2, double* out) {
-    std::size_t c1 = n1;
-    std::size_t c2 = n2;
-
-    for (std::size_t i = 0; i < c1; ++i) {
-        std::size_t k_lo = std::max<int>(0, i - (m1 - 1) / 2);
-        std::size_t k_hi = std::min<int>(n1 - 1, i + m1 / 2) + 1;
-
-        for (std::size_t j = 0; j < c2; ++j) {
-            std::size_t l_lo = std::max<int>(0, j - (m2 - 1) / 2);
-            std::size_t l_hi = std::min<int>(n2 - 1, j + m2 / 2) + 1;
-
-            __m128d r1 = _mm_setzero_pd();
-
-            for (std::size_t k = k_lo; k < k_hi; ++k) {
-                for (std::size_t l = l_lo; l + 1 < l_hi; l += 2) {
-                    __m128d i1 = _mm_loadu_pd(in + k * n2 + l);
-
-                    __m128d t2 = _mm_loadu_pd(kernel + (i - k + m1 / 2) * m2 + (j - (l + 1) + m2 / 2));
-                    __m128d k1 = _mm_shuffle_pd(t2, t2, _MM_SHUFFLE2(0, 1));
-
-                    __m128d t1 = _mm_mul_pd(k1, i1);
-                    r1  = _mm_add_pd(r1, t1);
-                }
-            }
-
-            out[i * c2 + j] = detail::mm_hadd_sd(r1);
-
-            double temp = 0.0;
-
-            if ((l_hi - l_lo) % 2 != 0) {
-                auto rem = (l_hi - l_lo) % 2;
-                auto l = l_hi - rem;
-                for (std::size_t k = k_lo; k < k_hi; ++k) {
-                    temp += in[k * n2 + l] * kernel[(i - k + m1 / 2) * m2 + (j - l + m2 / 2)];
-                }
-            }
-
-            out[i * c2 + j] += temp;
-        }
-    }
-}
-
-inline void conv2_same_flipped_micro_kernel(const double* in, std::size_t n1, std::size_t n2, const double* kernel, std::size_t m1, std::size_t m2, double* out) {
-    auto kernel_reverse = aligned_allocate_auto<double>(m1 * m2);
-
-    std::reverse_copy(kernel, kernel + m1 * m2, kernel_reverse.get());
-
-    conv2_same_micro_kernel(in, n1, n2, kernel_reverse.get(), m1, m2, out);
-}
-
 inline void conv2_full_micro_kernel(const double* in, std::size_t n1, std::size_t n2, const double* kernel, std::size_t m1, std::size_t m2, double* out, double beta) {
     std::size_t c1 = n1 + m1 - 1;
     std::size_t c2 = n2 + m2 - 1;
@@ -635,57 +584,6 @@ inline void conv2_valid_micro_kernel(const float* in, std::size_t n1, std::size_
     std::reverse_copy(kernel, kernel + m1 * m2, kernel_reverse.get());
 
     conv2_valid_flipped_micro_kernel(in, n1, n2, kernel_reverse.get(), m1, m2, out, beta, s1, s2, p1, p2);
-}
-
-inline void conv2_same_micro_kernel(const float* in, std::size_t n1, std::size_t n2, const float* kernel, std::size_t m1, std::size_t m2, float* out) {
-    std::size_t c1 = n1;
-    std::size_t c2 = n2;
-
-    for (std::size_t i = 0; i < c1; ++i) {
-        auto k_lo = std::max<int>(0, i - (m1 - 1) / 2);
-        auto k_hi = std::min<int>(n1 - 1, i + m1 / 2) + 1;
-
-        for (std::size_t j = 0; j < c2; ++j) {
-            auto l_lo = std::max<int>(0, j - (m2 - 1) / 2);
-            auto l_hi = std::min<int>(n2 - 1, j + m2 / 2) + 1;
-
-            __m128 r1 = _mm_setzero_ps();
-
-            for (int k = k_lo; k < k_hi; ++k) {
-                for (std::size_t l = l_lo; l + 3 < static_cast<std::size_t>(l_hi); l += 4) {
-                    __m128 i1 = _mm_loadu_ps(in + k * n2 + l);
-                    __m128 t2 = _mm_loadu_ps(kernel + (i - k + m1 / 2) * m2 + (j - (l + 3) + m2 / 2));
-                    __m128 k1 = _mm_shuffle_ps(t2, t2, _MM_SHUFFLE(0, 1, 2, 3));
-
-                    __m128 t1 = _mm_mul_ps(k1, i1);
-                    r1  = _mm_add_ps(r1, t1);
-                }
-            }
-
-            out[i * c2 + j] = detail::mm_hadd_ss(r1);
-
-            float temp = 0.0;
-
-            if ((l_hi - l_lo) % 4 != 0) {
-                auto rem = (l_hi - l_lo) % 4;
-                for (int k = k_lo; k < k_hi; ++k) {
-                    for (std::size_t l = l_hi - rem; l < static_cast<std::size_t>(l_hi); ++l) {
-                        temp += in[k * n2 + l] * kernel[(i - k + m1 / 2) * m2 + (j - l + m2 / 2)];
-                    }
-                }
-            }
-
-            out[i * c2 + j] += temp;
-        }
-    }
-}
-
-inline void conv2_same_flipped_micro_kernel(const float* in, std::size_t n1, std::size_t n2, const float* kernel, std::size_t m1, std::size_t m2, float* out) {
-    auto kernel_reverse = aligned_allocate_auto<float>(m1 * m2);
-
-    std::reverse_copy(kernel, kernel + m1 * m2, kernel_reverse.get());
-
-    conv2_same_micro_kernel(in, n1, n2, kernel_reverse.get(), m1, m2, out);
 }
 
 inline void conv2_full_micro_kernel(const float* in, std::size_t n1, std::size_t n2, const float* kernel, std::size_t m1, std::size_t m2, float* out, float beta) {
@@ -1210,56 +1108,6 @@ void conv2_valid_multi_multi_flipped(const opaque_memory<T, 3>& input, const opa
     };
 
     dispatch_1d_any(select_parallel(KN, 2), fun_kn, 0, KN);
-}
-
-/*!
- * \brief SSE implementation of a 2D 'same' convolution C = I * K
- * \param input The input matrix
- * \param kernel The kernel matrix
- * \param conv The output matrix
- */
-template <typename T>
-void conv2_same_multi(const opaque_memory<T, 2>& input, const opaque_memory<T, 3>& kernel, const opaque_memory<T, 3>& conv) {
-    const auto K = kernel.dim(0);
-
-    auto batch_fun_k = [=](const size_t first, const size_t last) {
-        for (std::size_t k = first; k < last; ++k) {
-            auto kk = kernel.template dim<1>() * kernel.template dim<2>();
-            auto cc = conv.template dim<1>() * conv.template dim<2>();
-
-            conv2_same_micro_kernel(
-                input.memory_start(), input.template dim<0>(), input.template dim<1>(),
-                kernel.memory_start() + k * kk, kernel.template dim<1>(), kernel.template dim<2>(),
-                conv.memory_start() + k * cc);
-        }
-    };
-
-    dispatch_1d_any(select_parallel(K, 2), batch_fun_k, 0, K);
-}
-
-/*!
- * \brief AVX implementation of a 2D 'same' convolution C = I * K
- * \param input The input matrix
- * \param kernel The kernel matrix
- * \param conv The output matrix
- */
-template <typename T>
-void conv2_same_multi_flipped(const opaque_memory<T, 2>& input, const opaque_memory<T, 3>& kernel, const opaque_memory<T, 3>& conv) {
-    const auto K = kernel.dim(0);
-
-    auto batch_fun_k = [=](const size_t first, const size_t last) {
-        for (std::size_t k = first; k < last; ++k) {
-            auto kk = kernel.template dim<1>() * kernel.template dim<2>();
-            auto cc = conv.template dim<1>() * conv.template dim<2>();
-
-            conv2_same_flipped_micro_kernel(
-                input.memory_start(), input.template dim<0>(), input.template dim<1>(),
-                kernel.memory_start() + k * kk, kernel.template dim<1>(), kernel.template dim<2>(),
-                conv.memory_start() + k * cc);
-        }
-    };
-
-    dispatch_1d_any(select_parallel(K, 2), batch_fun_k, 0, K);
 }
 
 /*!
@@ -2062,34 +1910,6 @@ void conv2_valid_multi_multi_flipped(const I& input, const K& kernel, C&& conv, 
     cpp_unused(s2);
     cpp_unused(p1);
     cpp_unused(p2);
-    cpp_unreachable("SSE not available/enabled");
-}
-
-/*!
- * \brief SSE implementation of a 2D 'same' convolution C = I * K
- * \param input The input matrix
- * \param kernel The kernel matrix
- * \param conv The output matrix
- */
-template <typename I, typename K, typename C>
-void conv2_same_multi(const I& input, const K& kernel, C&& conv) {
-    cpp_unused(input);
-    cpp_unused(kernel);
-    cpp_unused(conv);
-    cpp_unreachable("SSE not available/enabled");
-}
-
-/*!
- * \brief SSE implementation of a 2D 'same' convolution C = I * K
- * \param input The input matrix
- * \param kernel The kernel matrix
- * \param conv The output matrix
- */
-template <typename I, typename K, typename C>
-void conv2_same_multi_flipped(const I& input, const K& kernel, C&& conv) {
-    cpp_unused(input);
-    cpp_unused(kernel);
-    cpp_unused(conv);
     cpp_unreachable("SSE not available/enabled");
 }
 

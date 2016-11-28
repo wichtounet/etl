@@ -802,10 +802,8 @@ struct conv2_same_multi_impl {
     static void apply(const I& input, const K& kernel, C&& conv) {
         auto impl = select_conv_same_multi_impl<I, K, C>();
 
-        if (impl == etl::conv_multi_impl::AVX){
-            impl::avx::conv2_same_multi(input.direct(), kernel.direct(), conv.direct());
-        } else if (impl == etl::conv_multi_impl::SSE){
-            impl::sse::conv2_same_multi(input.direct(), kernel.direct(), conv.direct());
+        if (impl == etl::conv_multi_impl::VEC){
+            impl::vec::conv2_same_multi(input, kernel, conv);
         } else if (impl == etl::conv_multi_impl::STD){
             impl::standard::conv2_same_multi(input, kernel, conv);
         } else {
@@ -896,10 +894,8 @@ struct conv2_same_multi_flipped_impl : conv2_same_multi_impl {
     static void apply(const I& input, const K& kernel, C&& conv) {
         auto impl = select_conv_same_multi_impl<I, K, C>();
 
-        if (impl == etl::conv_multi_impl::AVX){
-            impl::avx::conv2_same_multi_flipped(input.direct(), kernel.direct(), conv.direct());
-        } else if (impl == etl::conv_multi_impl::SSE){
-            impl::sse::conv2_same_multi_flipped(input.direct(), kernel.direct(), conv.direct());
+        if (impl == etl::conv_multi_impl::VEC){
+            impl::vec::conv2_same_multi_flipped(input, kernel, conv);
         } else if (impl == etl::conv_multi_impl::STD){
             impl::standard::conv2_same_multi_flipped(input, kernel, conv);
         } else {

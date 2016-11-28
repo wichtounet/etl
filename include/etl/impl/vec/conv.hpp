@@ -950,6 +950,46 @@ void conv2_same(const I& input, const K& kernel, C&& conv) {
     conv2_same<default_vec>(input, kernel, conv);
 }
 
+/*!
+ * \brief VEC implementation of a 2D 'same' convolution C = I * K, with multiple kernels
+ *
+ * \param input The input matrix
+ * \param kernel The kernel matrix
+ * \param conv The output matrix
+ */
+template <typename I, typename K, typename C>
+void conv2_same_multi(const I& input, const K& kernel, C&& conv) {
+    const auto Kn = etl::dim<0>(kernel);
+
+    auto batch_fun_k = [&input,&kernel,&conv](const size_t first, const size_t last) {
+        for (std::size_t k = first; k < last; ++k) {
+            conv2_same<default_vec>(input, kernel(k), conv(k));
+        }
+    };
+
+    dispatch_1d_any(select_parallel(Kn, 2), batch_fun_k, 0, Kn);
+}
+
+/*!
+ * \brief VEC implementation of a 2D 'same' convolution C = I * K, with multiple kernels, with kernels flipped.
+ *
+ * \param input The input matrix
+ * \param kernel The kernel matrix
+ * \param conv The output matrix
+ */
+template <typename I, typename K, typename C>
+void conv2_same_multi_flipped(const I& input, const K& kernel, C&& conv) {
+    const auto Kn = etl::dim<0>(kernel);
+
+    auto batch_fun_k = [&input,&kernel,&conv](const size_t first, const size_t last) {
+        for (std::size_t k = first; k < last; ++k) {
+            conv2_same_flipped<default_vec>(input, kernel(k), conv(k));
+        }
+    };
+
+    dispatch_1d_any(select_parallel(Kn, 2), batch_fun_k, 0, Kn);
+}
+
 } //end of namespace vec
 } //end of namespace impl
 } //end of namespace etl

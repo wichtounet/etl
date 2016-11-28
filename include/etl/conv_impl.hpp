@@ -49,6 +49,7 @@ enum class conv_multi_impl {
     STD,       ///< Standard implementation
     SSE,       ///< SSE implementation
     AVX,       ///< AVX implementation
+    VEC,       ///< VEC implementation
     FFT,       ///< Reductiont to FFT (valid)
     FFT_STD,   ///< FFT reduction (with STD impl)
     FFT_MKL,   ///< FFT reduction (with MKL impl)

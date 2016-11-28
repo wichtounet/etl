@@ -817,13 +817,8 @@ inline etl::conv_multi_impl select_default_conv_same_multi_impl() {
         return etl::conv_multi_impl::STD;
     }
 
-    static constexpr bool sse = vectorize_impl && vector_mode == vector_mode_t::SSE3;
-    static constexpr bool avx = vectorize_impl && vector_mode == vector_mode_t::AVX;
-
-    if (avx) {
-        return etl::conv_multi_impl::AVX;
-    } else if (sse) {
-        return etl::conv_multi_impl::SSE;
+    if (vec_enabled) {
+        return etl::conv_multi_impl::VEC;
     }
 
     return etl::conv_multi_impl::STD;
@@ -838,27 +833,21 @@ inline etl::conv_multi_impl select_default_conv_same_multi_impl() {
  */
 template <typename I, typename K, typename C>
 inline etl::conv_multi_impl select_conv_same_multi_impl() {
+    auto default_impl = select_default_conv_same_multi_impl<I, K, C>();
+
     if (local_context().conv_multi_selector.forced) {
         auto forced = local_context().conv_multi_selector.impl;
 
         switch (forced) {
-            //AVX cannot always be used
-            case conv_multi_impl::AVX:
-                if (!avx_enabled) {
-                    std::cerr << "Forced selection to AVX conv implementation, but not possible for this expression" << std::endl;
-                    return select_default_conv_same_multi_impl<I, K, C>();                                                                   // COVERAGE_EXCLUDE_LINE
+            //VEC cannot always be used
+            case conv_multi_impl::VEC:
+                if (!vec_enabled) {
+                    std::cerr << "Forced selection to VEC conv implementation, but not possible for this expression" << std::endl;
+                    return default_impl;
                 }
 
                 return forced;
 
-            //SSE cannot always be used
-            case conv_multi_impl::SSE:
-                if (!sse3_enabled) {
-                    std::cerr << "Forced selection to SSE conv implementation, but not possible for this expression" << std::endl;
-                    return select_default_conv_same_multi_impl<I, K, C>();                                                                   // COVERAGE_EXCLUDE_LINE
-                }
-
-                return forced;
 
                 // Although it may be suboptimal the forced selection can
                 // always be achieved
@@ -867,7 +856,7 @@ inline etl::conv_multi_impl select_conv_same_multi_impl() {
         }
     }
 
-    return select_default_conv_same_multi_impl<I, K, C>();
+    return default_impl;
 }
 
 /*!
