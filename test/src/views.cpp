@@ -450,6 +450,33 @@ TEMPLATE_TEST_CASE_2("fast_matrix/sub_view_6", "fast_matrix::sub", Z, float, dou
     REQUIRE_EQUALS(sub(test_matrix, 1)(2, 1), -1);
 }
 
+TEMPLATE_TEST_CASE_2("fast_matrix/sub_view_7", "[sub]", Z, float, double) {
+    etl::fast_matrix<Z, 2, 3, 2> test_matrix({1.0, -2.0, 3.0, 0.5, 0.0, -1, 1.0, -2.0, 3.0, 0.5, 0.0, -1});
+
+    test_matrix(0)(0, 0) = 2.0;
+    test_matrix(1)(0, 0) = 2.0;
+
+    auto s = test_matrix(1);
+    s(1,1) = Z(0.7);
+
+    auto&& ss = s;
+    ss(2, 0) = Z(7.4);
+
+    REQUIRE_EQUALS(sub(test_matrix, 0)(0, 0), Z(2.0));
+    REQUIRE_EQUALS(sub(test_matrix, 0)(0, 1), Z(-2.0));
+    REQUIRE_EQUALS(sub(test_matrix, 0)(1, 0), Z(3.0));
+    REQUIRE_EQUALS(sub(test_matrix, 0)(1, 1), Z(0.5));
+    REQUIRE_EQUALS(sub(test_matrix, 0)(2, 0), Z(0.0));
+    REQUIRE_EQUALS(sub(test_matrix, 0)(2, 1), Z(-1));
+
+    REQUIRE_EQUALS(sub(test_matrix, 1)(0, 0), Z(2.0));
+    REQUIRE_EQUALS(sub(test_matrix, 1)(0, 1), Z(-2.0));
+    REQUIRE_EQUALS(sub(test_matrix, 1)(1, 0), Z(3.0));
+    REQUIRE_EQUALS(sub(test_matrix, 1)(1, 1), Z(0.7));
+    REQUIRE_EQUALS(sub(test_matrix, 1)(2, 0), Z(7.4));
+    REQUIRE_EQUALS(sub(test_matrix, 1)(2, 1), Z(-1));
+}
+
 TEMPLATE_TEST_CASE_2("dyn_matrix/sub_view_1", "dyn_matrix::sub", Z, float, double) {
     etl::dyn_matrix<Z, 3> a(2, 2, 2, etl::values(1.1, 2.0, 5.0, 1.0, 1.1, 2.0, 5.0, 1.0));
 
