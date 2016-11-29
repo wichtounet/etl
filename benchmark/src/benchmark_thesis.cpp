@@ -116,6 +116,146 @@ CPM_DIRECT_SECTION_TWO_PASS_NS_PF("thesis_zifft [thesis]", thesis_fft_policy,
 
 /* Batch Valid Convolution */
 
+using thesis_sconv4_valid_policy_1 = NARY_POLICY(
+    /* N */ VALUES_POLICY(2, 8, 12, 16, 20, 24, 30, 40, 50, 64),
+    /* K */ VALUES_POLICY(48, 48, 48, 48, 48, 48, 48, 48, 48, 48),
+    /* C */ VALUES_POLICY(3, 3, 3, 3, 3, 3, 3, 3, 3, 3),
+    /* I */ VALUES_POLICY(128, 128, 128, 128, 128, 128, 128, 128, 128, 128),
+    /* W */ VALUES_POLICY(16, 16, 16, 16, 16, 16, 16, 16, 16, 16)
+    );
+
+using thesis_sconv4_valid_policy_2 = NARY_POLICY(
+    /* N */ VALUES_POLICY(2, 8, 12, 16, 20, 24, 30, 40, 50, 64),
+    /* K */ VALUES_POLICY(48, 48, 48, 48, 48, 48, 48, 48, 48, 48),
+    /* C */ VALUES_POLICY(3, 3, 3, 3, 3, 3, 3, 3, 3, 3),
+    /* I */ VALUES_POLICY(128, 128, 128, 128, 128, 128, 128, 128, 128, 128),
+    /* W */ VALUES_POLICY(9, 9, 9, 9, 9, 9, 9, 9, 9, 9)
+    );
+
+using thesis_sconv4_valid_policy_3 = NARY_POLICY(
+    /* N */ VALUES_POLICY(2, 8, 12, 16, 20, 24, 30, 40, 50, 64),
+    /* K */ VALUES_POLICY(48, 48, 48, 48, 48, 48, 48, 48, 48, 48),
+    /* C */ VALUES_POLICY(3, 3, 3, 3, 3, 3, 3, 3, 3, 3),
+    /* I */ VALUES_POLICY(28, 28, 28, 28, 28, 28, 28, 28, 28, 28),
+    /* W */ VALUES_POLICY(9, 9, 9, 9, 9, 9, 9, 9, 9, 9)
+    );
+
+using thesis_sconv4_valid_policy_4 = NARY_POLICY(
+    /* N */ VALUES_POLICY(2, 8, 12, 16, 20, 24, 30, 40, 50, 64),
+    /* K */ VALUES_POLICY(48, 48, 48, 48, 48, 48, 48, 48, 48, 48),
+    /* C */ VALUES_POLICY(3, 3, 3, 3, 3, 3, 3, 3, 3, 3),
+    /* I */ VALUES_POLICY(28, 28, 28, 28, 28, 28, 28, 28, 28, 28),
+    /* W */ VALUES_POLICY(3, 3, 3, 3, 3, 3, 3, 3, 3, 3)
+    );
+
+CPM_DIRECT_SECTION_TWO_PASS_NS_PF("thesis_sconv4_valid_1 [thesis]", thesis_sconv4_valid_policy_1,
+    FLOPS([](std::size_t n, std::size_t k, std::size_t c, std::size_t i, std::size_t w){ return 2 * n * k * c * i * i * w * w; }),
+    CPM_SECTION_INIT([](std::size_t n, std::size_t k, std::size_t c, std::size_t i, std::size_t w){
+        return std::make_tuple(smat4(n, c, i, i), smat4(k, c, w, w), smat4(n, k, i - w + 1, i - w + 1)); })
+    AVX_SECTION_FUNCTOR("avx", [](smat4& a, smat4& b, smat4& r){ r = selected_helper(etl::conv4_impl::AVX, conv_4d_valid(a, b)); }),
+    CPM_SECTION_FUNCTOR("blas", [](smat4& a, smat4& b, smat4& r){ r = selected_helper(etl::conv4_impl::BLAS, conv_4d_valid(a, b)); })
+    CUDNN_SECTION_FUNCTOR("cudnn", [](smat4& a, smat4& b, smat4& r){ r = selected_helper(etl::conv4_impl::CUDNN, conv_4d_valid(a, b)); })
+)
+
+CPM_DIRECT_SECTION_TWO_PASS_NS_PF("thesis_sconv4_valid_2 [thesis]", thesis_sconv4_valid_policy_2,
+    FLOPS([](std::size_t n, std::size_t k, std::size_t c, std::size_t i, std::size_t w){ return 2 * n * k * c * i * i * w * w; }),
+    CPM_SECTION_INIT([](std::size_t n, std::size_t k, std::size_t c, std::size_t i, std::size_t w){
+        return std::make_tuple(smat4(n, c, i, i), smat4(k, c, w, w), smat4(n, k, i - w + 1, i - w + 1)); })
+    AVX_SECTION_FUNCTOR("avx", [](smat4& a, smat4& b, smat4& r){ r = selected_helper(etl::conv4_impl::AVX, conv_4d_valid(a, b)); }),
+    CPM_SECTION_FUNCTOR("blas", [](smat4& a, smat4& b, smat4& r){ r = selected_helper(etl::conv4_impl::BLAS, conv_4d_valid(a, b)); })
+    CUDNN_SECTION_FUNCTOR("cudnn", [](smat4& a, smat4& b, smat4& r){ r = selected_helper(etl::conv4_impl::CUDNN, conv_4d_valid(a, b)); })
+)
+
+CPM_DIRECT_SECTION_TWO_PASS_NS_PF("thesis_sconv4_valid_3 [thesis]", thesis_sconv4_valid_policy_3,
+    FLOPS([](std::size_t n, std::size_t k, std::size_t c, std::size_t i, std::size_t w){ return 2 * n * k * c * i * i * w * w; }),
+    CPM_SECTION_INIT([](std::size_t n, std::size_t k, std::size_t c, std::size_t i, std::size_t w){
+        return std::make_tuple(smat4(n, c, i, i), smat4(k, c, w, w), smat4(n, k, i - w + 1, i - w + 1)); })
+    AVX_SECTION_FUNCTOR("avx", [](smat4& a, smat4& b, smat4& r){ r = selected_helper(etl::conv4_impl::AVX, conv_4d_valid(a, b)); }),
+    CPM_SECTION_FUNCTOR("blas", [](smat4& a, smat4& b, smat4& r){ r = selected_helper(etl::conv4_impl::BLAS, conv_4d_valid(a, b)); })
+    CUDNN_SECTION_FUNCTOR("cudnn", [](smat4& a, smat4& b, smat4& r){ r = selected_helper(etl::conv4_impl::CUDNN, conv_4d_valid(a, b)); })
+)
+
+CPM_DIRECT_SECTION_TWO_PASS_NS_PF("thesis_sconv4_valid_4 [thesis]", thesis_sconv4_valid_policy_4,
+    FLOPS([](std::size_t n, std::size_t k, std::size_t c, std::size_t i, std::size_t w){ return 2 * n * k * c * i * i * w * w; }),
+    CPM_SECTION_INIT([](std::size_t n, std::size_t k, std::size_t c, std::size_t i, std::size_t w){
+        return std::make_tuple(smat4(n, c, i, i), smat4(k, c, w, w), smat4(n, k, i - w + 1, i - w + 1)); })
+    AVX_SECTION_FUNCTOR("avx", [](smat4& a, smat4& b, smat4& r){ r = selected_helper(etl::conv4_impl::AVX, conv_4d_valid(a, b)); }),
+    CPM_SECTION_FUNCTOR("blas", [](smat4& a, smat4& b, smat4& r){ r = selected_helper(etl::conv4_impl::BLAS, conv_4d_valid(a, b)); })
+    CUDNN_SECTION_FUNCTOR("cudnn", [](smat4& a, smat4& b, smat4& r){ r = selected_helper(etl::conv4_impl::CUDNN, conv_4d_valid(a, b)); })
+)
+
 /* Batch Full Convolution */
+
+using thesis_sconv4_full_policy_1 = NARY_POLICY(
+    /* N */ VALUES_POLICY(2, 8, 12, 16, 20, 24, 30, 40, 50, 64),
+    /* K */ VALUES_POLICY(48, 48, 48, 48, 48, 48, 48, 48, 48, 48),
+    /* C */ VALUES_POLICY(10, 10, 10, 10, 10, 10, 10, 10, 10, 10),
+    /* I */ VALUES_POLICY(128, 128, 128, 128, 128, 128, 128, 128, 128, 128),
+    /* W */ VALUES_POLICY(16, 16, 16, 16, 16, 16, 16, 16, 16, 16)
+    );
+
+using thesis_sconv4_full_policy_2 = NARY_POLICY(
+    /* N */ VALUES_POLICY(2, 8, 12, 16, 20, 24, 30, 40, 50, 64),
+    /* K */ VALUES_POLICY(48, 48, 48, 48, 48, 48, 48, 48, 48, 48),
+    /* C */ VALUES_POLICY(10, 10, 10, 10, 10, 10, 10, 10, 10, 10),
+    /* I */ VALUES_POLICY(128, 128, 128, 128, 128, 128, 128, 128, 128, 128),
+    /* W */ VALUES_POLICY(9, 9, 9, 9, 9, 9, 9, 9, 9, 9)
+    );
+
+using thesis_sconv4_full_policy_3 = NARY_POLICY(
+    /* N */ VALUES_POLICY(2, 8, 12, 16, 20, 24, 30, 40, 50, 64),
+    /* K */ VALUES_POLICY(48, 48, 48, 48, 48, 48, 48, 48, 48, 48),
+    /* C */ VALUES_POLICY(10, 10, 10, 10, 10, 10, 10, 10, 10, 10),
+    /* I */ VALUES_POLICY(28, 28, 28, 28, 28, 28, 28, 28, 28, 28),
+    /* W */ VALUES_POLICY(9, 9, 9, 9, 9, 9, 9, 9, 9, 9)
+    );
+
+using thesis_sconv4_full_policy_4 = NARY_POLICY(
+    /* N */ VALUES_POLICY(2, 8, 12, 16, 20, 24, 30, 40, 50, 64),
+    /* K */ VALUES_POLICY(48, 48, 48, 48, 48, 48, 48, 48, 48, 48),
+    /* C */ VALUES_POLICY(10, 10, 10, 10, 10, 10, 10, 10, 10, 10),
+    /* I */ VALUES_POLICY(28, 28, 28, 28, 28, 28, 28, 28, 28, 28),
+    /* W */ VALUES_POLICY(3, 3, 3, 3, 3, 3, 3, 3, 3, 3)
+    );
+
+CPM_DIRECT_SECTION_TWO_PASS_NS_PF("thesis_sconv4_full_1 [thesis]", thesis_sconv4_full_policy_1,
+    FLOPS([](std::size_t n, std::size_t c, std::size_t k, std::size_t i, std::size_t w){ return 2 * n * c * k * i * i * w * w; }),
+    CPM_SECTION_INIT([](std::size_t n, std::size_t c, std::size_t k, std::size_t i, std::size_t w){
+        return std::make_tuple(smat4(n, k, i, i), smat4(k, c, w, w), smat4(n, c, i + w - 1, i + w - 1)); }),
+    CPM_SECTION_FUNCTOR("default", [](smat4& a, smat4& b, smat4& r){ r = etl::conv_4d_full(a, b); })
+    AVX_SECTION_FUNCTOR("vec", [](smat4& a, smat4& b, smat4& r){ r = selected_helper(etl::conv4_impl::AVX, etl::conv_4d_full(a, b)); })
+    MKL_SECTION_FUNCTOR("fft", [](smat4& a, smat4& b, smat4& r){ r = selected_helper(etl::conv4_impl::FFT_MKL, etl::conv_4d_full(a, b)); })
+    CUDNN_SECTION_FUNCTOR("cudnn", [](smat4& a, smat4& b, smat4& r){ r = selected_helper(etl::conv4_impl::CUDNN, etl::conv_4d_full(a, b)); })
+)
+
+CPM_DIRECT_SECTION_TWO_PASS_NS_PF("thesis_sconv4_full_2 [thesis]", thesis_sconv4_full_policy_2,
+    FLOPS([](std::size_t n, std::size_t c, std::size_t k, std::size_t i, std::size_t w){ return 2 * n * c * k * i * i * w * w; }),
+    CPM_SECTION_INIT([](std::size_t n, std::size_t c, std::size_t k, std::size_t i, std::size_t w){
+        return std::make_tuple(smat4(n, k, i, i), smat4(k, c, w, w), smat4(n, c, i + w - 1, i + w - 1)); }),
+    CPM_SECTION_FUNCTOR("default", [](smat4& a, smat4& b, smat4& r){ r = etl::conv_4d_full(a, b); })
+    AVX_SECTION_FUNCTOR("vec", [](smat4& a, smat4& b, smat4& r){ r = selected_helper(etl::conv4_impl::AVX, etl::conv_4d_full(a, b)); })
+    MKL_SECTION_FUNCTOR("fft", [](smat4& a, smat4& b, smat4& r){ r = selected_helper(etl::conv4_impl::FFT_MKL, etl::conv_4d_full(a, b)); })
+    CUDNN_SECTION_FUNCTOR("cudnn", [](smat4& a, smat4& b, smat4& r){ r = selected_helper(etl::conv4_impl::CUDNN, etl::conv_4d_full(a, b)); })
+)
+
+CPM_DIRECT_SECTION_TWO_PASS_NS_PF("thesis_sconv4_full_3 [thesis]", thesis_sconv4_full_policy_3,
+    FLOPS([](std::size_t n, std::size_t c, std::size_t k, std::size_t i, std::size_t w){ return 2 * n * c * k * i * i * w * w; }),
+    CPM_SECTION_INIT([](std::size_t n, std::size_t c, std::size_t k, std::size_t i, std::size_t w){
+        return std::make_tuple(smat4(n, k, i, i), smat4(k, c, w, w), smat4(n, c, i + w - 1, i + w - 1)); }),
+    CPM_SECTION_FUNCTOR("default", [](smat4& a, smat4& b, smat4& r){ r = etl::conv_4d_full(a, b); })
+    AVX_SECTION_FUNCTOR("vec", [](smat4& a, smat4& b, smat4& r){ r = selected_helper(etl::conv4_impl::AVX, etl::conv_4d_full(a, b)); })
+    MKL_SECTION_FUNCTOR("fft", [](smat4& a, smat4& b, smat4& r){ r = selected_helper(etl::conv4_impl::FFT_MKL, etl::conv_4d_full(a, b)); })
+    CUDNN_SECTION_FUNCTOR("cudnn", [](smat4& a, smat4& b, smat4& r){ r = selected_helper(etl::conv4_impl::CUDNN, etl::conv_4d_full(a, b)); })
+)
+
+CPM_DIRECT_SECTION_TWO_PASS_NS_PF("thesis_sconv4_full_4 [thesis]", thesis_sconv4_full_policy_4,
+    FLOPS([](std::size_t n, std::size_t c, std::size_t k, std::size_t i, std::size_t w){ return 2 * n * c * k * i * i * w * w; }),
+    CPM_SECTION_INIT([](std::size_t n, std::size_t c, std::size_t k, std::size_t i, std::size_t w){
+        return std::make_tuple(smat4(n, k, i, i), smat4(k, c, w, w), smat4(n, c, i + w - 1, i + w - 1)); }),
+    CPM_SECTION_FUNCTOR("default", [](smat4& a, smat4& b, smat4& r){ r = etl::conv_4d_full(a, b); })
+    AVX_SECTION_FUNCTOR("vec", [](smat4& a, smat4& b, smat4& r){ r = selected_helper(etl::conv4_impl::AVX, etl::conv_4d_full(a, b)); })
+    MKL_SECTION_FUNCTOR("fft", [](smat4& a, smat4& b, smat4& r){ r = selected_helper(etl::conv4_impl::FFT_MKL, etl::conv_4d_full(a, b)); })
+    CUDNN_SECTION_FUNCTOR("cudnn", [](smat4& a, smat4& b, smat4& r){ r = selected_helper(etl::conv4_impl::CUDNN, etl::conv_4d_full(a, b)); })
+)
 
 #endif
