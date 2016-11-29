@@ -156,6 +156,20 @@ inline etl::conv_impl select_default_conv2_impl_new() {
     }
 
     static constexpr bool vec = vec_enabled;
+    static constexpr bool cufft = is_cufft_enabled;
+    static constexpr bool cudnn = is_cudnn_enabled;
+    static constexpr bool mkl = is_mkl_enabled;
+
+    // Full has more
+    if (TT == conv_type::FULL) {
+        if (cufft) {
+            return etl::conv_impl::FFT_CUFFT;
+        } else if (mkl) {
+            return etl::conv_impl::FFT_MKL;
+        } else if (cudnn) {
+            return etl::conv_impl::CUDNN;
+        }
+    }
 
     if (vec) {
         return etl::conv_impl::VEC;
@@ -184,6 +198,33 @@ inline etl::conv_impl select_conv2_impl_new() {
             case conv_impl::VEC:
                 if (!vec_enabled) {
                     std::cerr << "Forced selection to VEC conv implementation, but not possible for this expression" << std::endl;
+                    return default_impl;
+                }
+
+                return forced;
+
+            //CUDNN cannot always be used
+            case conv_impl::CUDNN:
+                if (!is_cudnn_enabled) {
+                    std::cerr << "Forced selection to CUDNN conv implementation, but not possible for this expression" << std::endl;
+                    return default_impl;
+                }
+
+                return forced;
+
+            //MKL cannot always be used
+            case conv_impl::FFT_MKL:
+                if (!is_mkl_enabled) {
+                    std::cerr << "Forced selection to MKL conv implementation, but not possible for this expression" << std::endl;
+                    return default_impl;
+                }
+
+                return forced;
+
+            //CUFFT cannot always be used
+            case conv_impl::FFT_CUFFT:
+                if (!is_cufft_enabled) {
+                    std::cerr << "Forced selection to CUFFT conv implementation, but not possible for this expression" << std::endl;
                     return default_impl;
                 }
 
