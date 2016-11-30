@@ -200,8 +200,9 @@ struct dim_view {
  */
 template <typename T>
 struct sub_view {
-    T sub;               ///< The Sub expression
-    const std::size_t i; ///< The index
+    T sub;                 ///< The Sub expression
+    const std::size_t i;   ///< The index
+    const size_t sub_size; ///< The sub size
 
     using sub_type          = T;                                               ///< The sub type
     using value_type        = value_t<sub_type>;                               ///< The value contained in the expression
@@ -222,7 +223,7 @@ struct sub_view {
      * \param i The sub index
      */
     sub_view(sub_type sub, std::size_t i)
-            : sub(sub), i(i) {}
+            : sub(sub), i(i), sub_size(subsize(sub)) {}
 
     /*!
      * \brief Returns the element at the given index
@@ -231,7 +232,7 @@ struct sub_view {
      */
     const_return_type operator[](std::size_t j) const {
         return decay_traits<sub_type>::storage_order == order::RowMajor
-                   ? sub[i * subsize(sub) + j]
+                   ? sub[i * sub_size + j]
                    : sub[i + dim<0>(sub) * j];
     }
 
@@ -242,7 +243,7 @@ struct sub_view {
      */
     return_type operator[](std::size_t j) {
         return decay_traits<sub_type>::storage_order == order::RowMajor
-                   ? sub[i * subsize(sub) + j]
+                   ? sub[i * sub_size + j]
                    : sub[i + dim<0>(sub) * j];
     }
 
@@ -254,7 +255,7 @@ struct sub_view {
      */
     value_type read_flat(std::size_t j) const noexcept {
         return decay_traits<sub_type>::storage_order == order::RowMajor
-                   ? sub.read_flat(i * subsize(sub) + j)
+                   ? sub.read_flat(i * sub_size + j)
                    : sub.read_flat(i + dim<0>(sub) * j);
     }
 
@@ -302,7 +303,7 @@ struct sub_view {
      */
     template <typename V = default_vec>
     void store(vec_type<V> in, std::size_t x) noexcept {
-        return value().template storeu<V>(in, x + i * subsize(sub));
+        return value().template storeu<V>(in, x + i * sub_size);
     }
 
     /*!
@@ -313,7 +314,7 @@ struct sub_view {
      */
     template <typename V = default_vec>
     void storeu(vec_type<V> in, std::size_t x) noexcept {
-        return value().template storeu<V>(in, x + i * subsize(sub));
+        return value().template storeu<V>(in, x + i * sub_size);
     }
 
     /*!
@@ -324,7 +325,7 @@ struct sub_view {
      */
     template <typename V = default_vec>
     void stream(vec_type<V> in, std::size_t x) noexcept {
-        return value().template storeu<V>(in, x + i * subsize(sub));
+        return value().template storeu<V>(in, x + i * sub_size);
     }
 
     /*!
@@ -334,8 +335,8 @@ struct sub_view {
      * \return a vector containing several elements of the expression
      */
     template <typename V = default_vec>
-    auto load(std::size_t x) const noexcept {
-        return sub.template loadu<V>(x + i * subsize(sub));
+    ETL_STRONG_INLINE(auto) load(std::size_t x) const noexcept {
+        return sub.template loadu<V>(x + i * sub_size);
     }
 
     /*!
@@ -345,8 +346,8 @@ struct sub_view {
      * \return a vector containing several elements of the expression
      */
     template <typename V = default_vec>
-    auto loadu(std::size_t x) const noexcept {
-        return sub.template loadu<V>(x + i * subsize(sub));
+    ETL_STRONG_INLINE(auto) loadu(std::size_t x) const noexcept {
+        return sub.template loadu<V>(x + i * sub_size);
     }
 
     /*!
@@ -365,7 +366,7 @@ struct sub_view {
      */
     memory_type memory_start() noexcept {
         static_assert(has_direct_access<T>::value && decay_traits<sub_type>::storage_order == order::RowMajor, "This expression does not have direct memory access");
-        return sub.memory_start() + i * subsize(sub);
+        return sub.memory_start() + i * sub_size;
     }
 
     /*!
@@ -374,7 +375,7 @@ struct sub_view {
      */
     const_memory_type memory_start() const noexcept {
         static_assert(has_direct_access<T>::value && decay_traits<sub_type>::storage_order == order::RowMajor, "This expression does not have direct memory access");
-        return sub.memory_start() + i * subsize(sub);
+        return sub.memory_start() + i * sub_size;
     }
 
     /*!
@@ -383,7 +384,7 @@ struct sub_view {
      */
     memory_type memory_end() noexcept {
         static_assert(has_direct_access<T>::value && decay_traits<sub_type>::storage_order == order::RowMajor, "This expression does not have direct memory access");
-        return sub.memory_start() + (i + 1) * subsize(sub);
+        return sub.memory_start() + (i + 1) * sub_size;
     }
 
     /*!
@@ -392,7 +393,7 @@ struct sub_view {
      */
     const_memory_type memory_end() const noexcept {
         static_assert(has_direct_access<T>::value && decay_traits<sub_type>::storage_order == order::RowMajor, "This expression does not have direct memory access");
-        return sub.memory_start() + (i + 1) * subsize(sub);
+        return sub.memory_start() + (i + 1) * sub_size;
     }
 
     /*!
