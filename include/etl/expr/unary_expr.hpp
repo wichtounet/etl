@@ -528,7 +528,7 @@ public:
      */
     template <typename V = default_vec>
     ETL_STRONG_INLINE(vec_type<V>) load(std::size_t i) const noexcept {
-        return value().template load<V>(i);
+        return _value.template load<V>(i);
     }
 
     /*!
@@ -539,7 +539,7 @@ public:
      */
     template <typename V = default_vec>
     ETL_STRONG_INLINE(vec_type<V>) loadu(std::size_t i) const noexcept {
-        return value().template loadu<V>(i);
+        return _value.template loadu<V>(i);
     }
 
     /*!
@@ -599,7 +599,7 @@ public:
      * \return The computed value at the position (args...)
      */
     template <typename... S, cpp_enable_if((sizeof...(S) == sub_size_compare<this_type>::value))>
-    return_type operator()(S... args) noexcept(noexcept(_value(args...))) {
+    ETL_STRONG_INLINE(return_type) operator()(S... args) noexcept(noexcept(_value(args...))) {
         static_assert(cpp::all_convertible_to<std::size_t, S...>::value, "Invalid size types");
 
         return _value(args...);
@@ -611,7 +611,7 @@ public:
      * \return The computed value at the position (args...)
      */
     template <typename... S, cpp_enable_if((sizeof...(S) == sub_size_compare<this_type>::value))>
-    const_return_type operator()(S... args) const noexcept(noexcept(_value(args...))) {
+    ETL_STRONG_INLINE(const_return_type) operator()(S... args) const noexcept(noexcept(_value(args...))) {
         static_assert(cpp::all_convertible_to<std::size_t, S...>::value, "Invalid size types");
 
         return _value(args...);
