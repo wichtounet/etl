@@ -477,12 +477,54 @@ struct dense_dyn_base : dyn_base<T, D> {
     }
 
     /*!
+     * \brief Access the (i, j) element of the 2D matrix
+     * \param i The index of the first dimension
+     * \param j The index of the second dimension
+     * \return a reference to the (i,j) element
+     *
+     * Accessing an element outside the matrix results in Undefined Behaviour.
+     */
+    template <bool B = n_dimensions == 3, cpp_enable_if(B)>
+    value_type& operator()(std::size_t k, std::size_t i, std::size_t j) noexcept {
+        cpp_assert(k < dim(0), "Out of bounds");
+        cpp_assert(i < dim(1), "Out of bounds");
+        cpp_assert(j < dim(2), "Out of bounds");
+
+        if (storage_order == order::RowMajor) {
+            return _memory[k * dim(1) * dim(2) + i * dim(2) + j];
+        } else {
+            return _memory[k + i * dim(0) + j * dim(0) * dim(1)];
+        }
+    }
+
+    /*!
+     * \brief Access the (i, j) element of the 2D matrix
+     * \param i The index of the first dimension
+     * \param j The index of the second dimension
+     * \return a reference to the (i,j) element
+     *
+     * Accessing an element outside the matrix results in Undefined Behaviour.
+     */
+    template <bool B = n_dimensions == 3, cpp_enable_if(B)>
+    const value_type& operator()(std::size_t k, std::size_t i, std::size_t j) const noexcept {
+        cpp_assert(k < dim(0), "Out of bounds");
+        cpp_assert(i < dim(1), "Out of bounds");
+        cpp_assert(j < dim(2), "Out of bounds");
+
+        if (storage_order == order::RowMajor) {
+            return _memory[k * dim(1) * dim(2) + i * dim(2) + j];
+        } else {
+            return _memory[k + i * dim(0) + j * dim(0) * dim(1)];
+        }
+    }
+
+    /*!
      * \brief Returns the value at the position (sizes...)
      * \param sizes The indices
      * \return The value at the position (sizes...)
      */
     template <typename... S, cpp_enable_if(
-                                 (n_dimensions > 2),
+                                 (n_dimensions > 3),
                                  (sizeof...(S) == n_dimensions),
                                  cpp::all_convertible_to<std::size_t, S...>::value)>
     const value_type& operator()(S... sizes) const noexcept(assert_nothrow) {
@@ -497,7 +539,7 @@ struct dense_dyn_base : dyn_base<T, D> {
      * \return The value at the position (sizes...)
      */
     template <typename... S, cpp_enable_if(
-                                 (n_dimensions > 2),
+                                 (n_dimensions > 3),
                                  (sizeof...(S) == n_dimensions),
                                  cpp::all_convertible_to<std::size_t, S...>::value)>
     value_type& operator()(S... sizes) noexcept(assert_nothrow) {
