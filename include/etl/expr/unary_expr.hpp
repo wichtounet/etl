@@ -527,7 +527,7 @@ public:
      * \return a vector containing several elements of the matrix
      */
     template <typename V = default_vec>
-    auto load(std::size_t i) const noexcept {
+    ETL_STRONG_INLINE(vec_type<V>) load(std::size_t i) const noexcept {
         return value().template load<V>(i);
     }
 
@@ -538,7 +538,7 @@ public:
      * \return a vector containing several elements of the matrix
      */
     template <typename V = default_vec>
-    auto loadu(std::size_t i) const noexcept {
+    ETL_STRONG_INLINE(vec_type<V>) loadu(std::size_t i) const noexcept {
         return value().template loadu<V>(i);
     }
 
@@ -598,11 +598,11 @@ public:
      * \param args The indices
      * \return The computed value at the position (args...)
      */
-    template <typename... S>
-    std::enable_if_t<sizeof...(S) == sub_size_compare<this_type>::value, return_type> operator()(S... args) {
+    template <typename... S, cpp_enable_if((sizeof...(S) == sub_size_compare<this_type>::value))>
+    return_type operator()(S... args) noexcept(noexcept(_value(args...))) {
         static_assert(cpp::all_convertible_to<std::size_t, S...>::value, "Invalid size types");
 
-        return value()(args...);
+        return _value(args...);
     }
 
     /*!
@@ -610,11 +610,11 @@ public:
      * \param args The indices
      * \return The computed value at the position (args...)
      */
-    template <typename... S>
-    std::enable_if_t<sizeof...(S) == sub_size_compare<this_type>::value, const_return_type> operator()(S... args) const {
+    template <typename... S, cpp_enable_if((sizeof...(S) == sub_size_compare<this_type>::value))>
+    const_return_type operator()(S... args) const noexcept(noexcept(_value(args...))) {
         static_assert(cpp::all_convertible_to<std::size_t, S...>::value, "Invalid size types");
 
-        return value()(args...);
+        return _value(args...);
     }
 
     /*!
