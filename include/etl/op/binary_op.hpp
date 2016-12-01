@@ -339,7 +339,7 @@ struct max_binary_op {
      * \tparam V The vector mode
      */
     template <vector_mode_t V>
-    using vectorizable = cpp::bool_constant<intel_compiler && !is_complex_t<T>::value>;
+    using vectorizable = cpp::bool_constant<!is_complex_t<T>::value>;
 
     /*!
      * \brief Apply the unary operator on lhs and rhs
@@ -351,7 +351,6 @@ struct max_binary_op {
         return std::max(x, value);
     }
 
-#ifdef __INTEL_COMPILER
     /*!
      * \brief Compute several applications of the operator at a time
      * \param lhs The left hand side vector
@@ -363,7 +362,6 @@ struct max_binary_op {
     static cpp14_constexpr vec_type<V> load(const vec_type<V>& lhs, const vec_type<V>& rhs) noexcept {
         return V::max(lhs, rhs);
     }
-#endif
 
     /*!
      * \brief Returns a textual representation of the operator
@@ -395,7 +393,7 @@ struct min_binary_op {
      * \tparam V The vector mode
      */
     template <vector_mode_t V>
-    using vectorizable = cpp::bool_constant<intel_compiler && !is_complex_t<T>::value>;
+    using vectorizable = cpp::bool_constant<!is_complex_t<T>::value>;
 
     /*!
      * \brief Apply the unary operator on lhs and rhs
@@ -407,7 +405,6 @@ struct min_binary_op {
         return std::min(x, value);
     }
 
-#ifdef __INTEL_COMPILER
     /*!
      * \brief Compute several applications of the operator at a time
      * \param lhs The left hand side vector
@@ -419,7 +416,6 @@ struct min_binary_op {
     static cpp14_constexpr vec_type<V> load(const vec_type<V>& lhs, const vec_type<V>& rhs) noexcept {
         return V::min(lhs, rhs);
     }
-#endif
 
     /*!
      * \brief Returns a textual representation of the operator

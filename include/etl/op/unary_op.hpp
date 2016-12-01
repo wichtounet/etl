@@ -1085,7 +1085,7 @@ struct min_scalar_op {
      * \tparam V The vector mode
      */
     template <vector_mode_t V>
-    using vectorizable = cpp::bool_constant<intel_compiler && !is_complex_t<T>::value>;
+    using vectorizable = cpp::bool_constant<!is_complex_t<T>::value>;
 
     S s; ///< The scalar value
 
@@ -1105,7 +1105,6 @@ struct min_scalar_op {
         return std::min(x, s);
     }
 
-#ifdef __INTEL_COMPILER
     /*!
      * \brief Compute several applications of the operator at a time
      * \param x The vector on which to operate
@@ -1116,7 +1115,6 @@ struct min_scalar_op {
     cpp14_constexpr vec_type<V> load(const vec_type<V>& lhs) const noexcept {
         return V::min(lhs, V::set(s));
     }
-#endif
 
     /*!
      * \brief Returns a textual representation of the operator
@@ -1140,8 +1138,8 @@ struct max_scalar_op {
     template <typename V = default_vec>
     using vec_type       = typename V::template vec_type<T>;
 
-    static constexpr bool linear = true; ///< Indicates if the operator is linear or not
-    static constexpr bool thread_safe = true;  ///< Indicates if the operator is thread safe or not
+    static constexpr bool linear      = true; ///< Indicates if the operator is linear or not
+    static constexpr bool thread_safe = true; ///< Indicates if the operator is thread safe or not
 
     /*!
      * \brief Indicates if the expression is vectorizable using the
@@ -1149,7 +1147,7 @@ struct max_scalar_op {
      * \tparam V The vector mode
      */
     template <vector_mode_t V>
-    using vectorizable = cpp::bool_constant<intel_compiler && !is_complex_t<T>::value>;
+    using vectorizable = cpp::bool_constant<!is_complex_t<T>::value>;
 
     S s; ///< The scalar value
 
@@ -1169,7 +1167,6 @@ struct max_scalar_op {
         return std::max(x, s);
     }
 
-#ifdef __INTEL_COMPILER
     /*!
      * \brief Compute several applications of the operator at a time
      * \param x The vector on which to operate
@@ -1180,7 +1177,6 @@ struct max_scalar_op {
     cpp14_constexpr vec_type<V> load(const vec_type<V>& lhs) const noexcept {
         return V::max(lhs, V::set(s));
     }
-#endif
 
     /*!
      * \brief Returns a textual representation of the operator
