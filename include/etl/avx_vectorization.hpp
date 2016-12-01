@@ -570,6 +570,8 @@ struct avx_vec {
         return _mm256_log_ps(x);
     }
 
+#endif //__INTEL_COMPILER
+
     //Min
 
     ETL_INLINE_VEC_256D min(__m256d lhs, __m256d rhs) {
@@ -589,8 +591,6 @@ struct avx_vec {
     ETL_INLINE_VEC_256 max(__m256 lhs, __m256 rhs) {
         return _mm256_max_ps(lhs, rhs);
     }
-
-#endif //__INTEL_COMPILER
 
     /*!
      * \brief Perform an horizontal sum of the given vector.

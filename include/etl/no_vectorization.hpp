@@ -162,6 +162,32 @@ struct no_vec {
     }
 
     /*!
+     * \brief Vector maximum or lhs and rhs
+     * \param lhs The left hand side of the operation
+     * \param rhs The right hand side of the operation
+     * \return Vector of the results
+     */
+    template <typename M>
+    static M max(M lhs, M rhs) {
+        cpp_unused(lhs);
+        cpp_unused(rhs);
+        return M();
+    }
+
+    /*!
+     * \brief Vector minimum or lhs and rhs
+     * \param lhs The left hand side of the operation
+     * \param rhs The right hand side of the operation
+     * \return Vector of the results
+     */
+    template <typename M>
+    static M min(M lhs, M rhs) {
+        cpp_unused(lhs);
+        cpp_unused(rhs);
+        return M();
+    }
+
+    /*!
      * \brief Vector square root
      * \param value The input values
      * \return The square root of the input values

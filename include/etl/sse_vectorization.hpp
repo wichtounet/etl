@@ -575,6 +575,8 @@ struct sse_vec {
         return _mm_log_ps(x);
     }
 
+#endif //__INTEL_COMPILER
+
     //Min
 
     ETL_INLINE_VEC_128D min(__m128d lhs, __m128d rhs) {
@@ -594,8 +596,6 @@ struct sse_vec {
     ETL_INLINE_VEC_128 max(__m128 lhs, __m128 rhs) {
         return _mm_max_ps(lhs, rhs);
     }
-
-#endif //__INTEL_COMPILER
 
     /*!
      * \brief Perform an horizontal sum of the given vector.
