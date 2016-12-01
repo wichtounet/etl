@@ -360,8 +360,7 @@ CPM_DIRECT_SECTION_TWO_PASS_NS_PF("sconv2_full_multi [conv][conv2]", conv_2d_mul
     CPM_SECTION_INIT([](std::size_t d1, std::size_t d2, std::size_t d3){ return std::make_tuple(smat(d1,d1), smat3(d3,d2,d2), smat3(d3, d1 + d2 - 1, d1 + d2 - 1)); }),
     CPM_SECTION_FUNCTOR("default", [](smat& a, smat3& b, smat3& r){ r = etl::conv_2d_full_multi(a, b); }),
     CPM_SECTION_FUNCTOR("std", [](smat& a, smat3& b, smat3& r){ r = selected_helper(etl::conv_multi_impl::STD, etl::conv_2d_full_multi(a, b)); })
-    SSE_SECTION_FUNCTOR("sse", [](smat& a, smat3& b, smat3& r){ r = selected_helper(etl::conv_multi_impl::SSE, etl::conv_2d_full_multi(a, b)); })
-    AVX_SECTION_FUNCTOR("avx", [](smat& a, smat3& b, smat3& r){ r = selected_helper(etl::conv_multi_impl::AVX, etl::conv_2d_full_multi(a, b)); })
+    VEC_SECTION_FUNCTOR("vec", [](smat& a, smat3& b, smat3& r){ r = selected_helper(etl::conv_multi_impl::VEC, etl::conv_2d_full_multi(a, b)); })
     ,CPM_SECTION_FUNCTOR("fft_std", [](smat& a, smat3& b, smat3& r){ r = selected_helper(etl::conv_multi_impl::FFT_STD, etl::conv_2d_full_multi(a, b)); })
     MKL_SECTION_FUNCTOR("fft_mkl", [](smat& a, smat3& b, smat3& r){ r = selected_helper(etl::conv_multi_impl::FFT_MKL, etl::conv_2d_full_multi(a, b)); })
     CUFFT_SECTION_FUNCTOR("fft_cufft", [](smat& a, smat3& b, smat3& r){ r = selected_helper(etl::conv_multi_impl::FFT_CUFFT, etl::conv_2d_full_multi(a, b)); })
@@ -373,8 +372,7 @@ CPM_DIRECT_SECTION_TWO_PASS_NS_PF("sconv2_full_multi_flipped [conv][conv2]", con
     CPM_SECTION_INIT([](std::size_t d1, std::size_t d2, std::size_t d3){ return std::make_tuple(smat(d1,d1), smat3(d3,d2,d2), smat3(d3, d1 + d2 - 1, d1 + d2 - 1)); }),
     CPM_SECTION_FUNCTOR("default", [](smat& a, smat3& b, smat3& r){ r = etl::conv_2d_full_multi_flipped(a, b); }),
     CPM_SECTION_FUNCTOR("std", [](smat& a, smat3& b, smat3& r){ r = selected_helper(etl::conv_multi_impl::STD, etl::conv_2d_full_multi_flipped(a, b)); })
-    SSE_SECTION_FUNCTOR("sse", [](smat& a, smat3& b, smat3& r){ r = selected_helper(etl::conv_multi_impl::SSE, etl::conv_2d_full_multi_flipped(a, b)); })
-    AVX_SECTION_FUNCTOR("avx", [](smat& a, smat3& b, smat3& r){ r = selected_helper(etl::conv_multi_impl::AVX, etl::conv_2d_full_multi_flipped(a, b)); })
+    VEC_SECTION_FUNCTOR("vec", [](smat& a, smat3& b, smat3& r){ r = selected_helper(etl::conv_multi_impl::VEC, etl::conv_2d_full_multi_flipped(a, b)); })
     ,CPM_SECTION_FUNCTOR("fft_std", [](smat& a, smat3& b, smat3& r){ r = selected_helper(etl::conv_multi_impl::FFT_STD, etl::conv_2d_full_multi_flipped(a, b)); })
     MKL_SECTION_FUNCTOR("fft_mkl", [](smat& a, smat3& b, smat3& r){ r = selected_helper(etl::conv_multi_impl::FFT_MKL, etl::conv_2d_full_multi_flipped(a, b)); })
     CUFFT_SECTION_FUNCTOR("fft_cufft", [](smat& a, smat3& b, smat3& r){ r = selected_helper(etl::conv_multi_impl::FFT_CUFFT, etl::conv_2d_full_multi_flipped(a, b)); })
@@ -442,7 +440,8 @@ CPM_DIRECT_SECTION_TWO_PASS_NS_PF("sconv4_valid_filter [conv][conv4]", conv_4d_v
     FLOPS([](std::size_t n, std::size_t k, std::size_t c, std::size_t i, std::size_t w){ return 2 * n * k * c * i * i * w * w; }),
     CPM_SECTION_INIT([](std::size_t n, std::size_t k, std::size_t c, std::size_t i, std::size_t w){
         return std::make_tuple(smat4(n, c, i, i), smat4(n, k, w, w), smat4(k, c, i - w + 1, i - w + 1)); }),
-    CPM_SECTION_FUNCTOR("default", [](smat4& a, smat4& b, smat4& r){ r = etl::conv_4d_valid_filter(a, b); })
+    CPM_SECTION_FUNCTOR("default", [](smat4& a, smat4& b, smat4& r){ r = etl::conv_4d_valid_filter(a, b); }),
+    CPM_SECTION_FUNCTOR("std", [](smat4& a, smat4& b, smat4& r){ r = selected_helper(etl::conv4_impl::STD, etl::conv_4d_valid_filter(a, b)); })
     SSE_SECTION_FUNCTOR("sse", [](smat4& a, smat4& b, smat4& r){ r = selected_helper(etl::conv4_impl::SSE, etl::conv_4d_valid_filter(a, b)); })
     AVX_SECTION_FUNCTOR("avx", [](smat4& a, smat4& b, smat4& r){ r = selected_helper(etl::conv4_impl::AVX, etl::conv_4d_valid_filter(a, b)); }),
     CPM_SECTION_FUNCTOR("blas", [](smat4& a, smat4& b, smat4& r){ r = selected_helper(etl::conv4_impl::BLAS, etl::conv_4d_valid_filter(a, b)); })

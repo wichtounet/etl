@@ -1111,57 +1111,6 @@ void conv2_valid_multi_multi_flipped(const opaque_memory<T, 3>& input, const opa
 }
 
 /*!
- * \brief SSE implementation of a 2D 'full' convolution C = I * K, with multiple
- * kernels
- * \param input The input matrix
- * \param kernel The kernel matrix
- * \param conv The output matrix
- */
-template <typename T>
-void conv2_full_multi(const opaque_memory<T, 2>& input, const opaque_memory<T, 3>& kernel, const opaque_memory<T, 3>& conv) {
-    const auto K = kernel.dim(0);
-
-    auto batch_fun_k = [=](const size_t first, const size_t last) {
-        for (std::size_t k = first; k < last; ++k) {
-            auto kk = kernel.template dim<1>() * kernel.template dim<2>();
-            auto cc = conv.template dim<1>() * conv.template dim<2>();
-
-            conv2_full_micro_kernel(
-                input.memory_start(), input.template dim<0>(), input.template dim<1>(),
-                kernel.memory_start() + k * kk, kernel.template dim<1>(), kernel.template dim<2>(),
-                conv.memory_start() + k * cc, 0.0);
-        }
-    };
-
-    dispatch_1d_any(select_parallel(K, 2), batch_fun_k, 0, K);
-}
-
-/*!
- * \brief AVX implementation of a 2D 'full' convolution C = I * K, with multiple flipped kernels
- * \param input The input matrix
- * \param kernel The kernel matrix
- * \param conv The output matrix
- */
-template <typename T>
-void conv2_full_multi_flipped(const opaque_memory<T, 2>& input, const opaque_memory<T, 3>& kernel, const opaque_memory<T, 3>& conv) {
-    const auto K = kernel.dim(0);
-
-    auto batch_fun_k = [=](const size_t first, const size_t last) {
-        for (std::size_t k = first; k < last; ++k) {
-            auto kk = kernel.template dim<1>() * kernel.template dim<2>();
-            auto cc = conv.template dim<1>() * conv.template dim<2>();
-
-            conv2_full_flipped_micro_kernel(
-                input.memory_start(), input.template dim<0>(), input.template dim<1>(),
-                kernel.memory_start() + k * kk, kernel.template dim<1>(), kernel.template dim<2>(),
-                conv.memory_start() + k * cc, 0.0);
-        }
-    };
-
-    dispatch_1d_any(select_parallel(K, 2), batch_fun_k, 0, K);
-}
-
-/*!
  * \brief SSE implementation of a 4D 'valid' convolution C = I * K
  * \param input The input matrix
  * \param kernel The kernel matrix
@@ -1882,36 +1831,6 @@ void conv2_valid_multi_multi_flipped(const I& input, const K& kernel, C&& conv, 
     cpp_unused(s2);
     cpp_unused(p1);
     cpp_unused(p2);
-    cpp_unreachable("SSE not available/enabled");
-}
-
-/*!
- * \brief SSE implementation of a 2D 'full' convolution C = I * K, with multiple
- * kernels
- * \param input The input matrix
- * \param kernel The kernel matrix
- * \param conv The output matrix
- */
-template <typename I, typename K, typename C>
-void conv2_full_multi(const I& input, const K& kernel, C&& conv) {
-    cpp_unused(input);
-    cpp_unused(kernel);
-    cpp_unused(conv);
-    cpp_unreachable("SSE not available/enabled");
-}
-
-/*!
- * \brief SSE implementation of a 2D 'full' convolution C = I * K, with multiple
- * flipped kernels
- * \param input The input matrix
- * \param kernel The kernel matrix
- * \param conv The output matrix
- */
-template <typename I, typename K, typename C>
-void conv2_full_multi_flipped(const I& input, const K& kernel, C&& conv) {
-    cpp_unused(input);
-    cpp_unused(kernel);
-    cpp_unused(conv);
     cpp_unreachable("SSE not available/enabled");
 }
 

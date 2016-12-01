@@ -992,7 +992,7 @@ void conv2_same_multi_flipped(const I& input, const K& kernel, C&& conv) {
 
 // TODO This need to be make much faster
 template <typename V, typename I, typename K, typename C>
-void conv2_full_flipped(const I& input, const K& kernel, C&& conv, value_t<I> beta) {
+ETL_STRONG_INLINE(void) conv2_full_flipped(const I& input, const K& kernel, C&& conv, value_t<I> beta) {
     using T = value_t<I>;
     using vec_type = V;
 
@@ -1021,12 +1021,12 @@ void conv2_full_flipped(const I& input, const K& kernel, C&& conv, value_t<I> be
                 auto temp1 = T(0);
 
                 for (size_t k = k_lo; k < k_hi; ++k) {
-                    auto idx1 = m1 - 1 - i + k;
+                    const auto idx1 = m1 - 1 - i + k;
 
                     size_t l = l_lo;
 
                     for (; l + vec_size - 1 < l_hi; l += vec_size) {
-                        auto idx2 = m2 - 1 - j + l;
+                        const auto idx2 = m2 - 1 - j + l;
 
                         auto i1  = input.template loadu<vec_type>(k * n2 + l);
                         auto sk1 = kernel.template loadu<vec_type>(idx1 * m2 + idx2 + vec_size * 0);
@@ -1034,7 +1034,7 @@ void conv2_full_flipped(const I& input, const K& kernel, C&& conv, value_t<I> be
                     }
 
                     for (; l < l_hi; ++l) {
-                        auto idx2 = m2 - 1 - j + l;
+                        const auto idx2 = m2 - 1 - j + l;
                         temp1 += input(k, l) * kernel(idx1, idx2);
                     }
                 }
@@ -1055,12 +1055,12 @@ void conv2_full_flipped(const I& input, const K& kernel, C&& conv, value_t<I> be
                 auto temp1 = T(0);
 
                 for (size_t k = k_lo; k < k_hi; ++k) {
-                    auto idx1 = m1 - 1 - i + k;
+                    const auto idx1 = m1 - 1 - i + k;
 
                     size_t l = l_lo;
 
                     for (; l + vec_size - 1 < l_hi; l += vec_size) {
-                        auto idx2 = m2 - 1 - j + l;
+                        const auto idx2 = m2 - 1 - j + l;
 
                         auto i1  = input.template loadu<vec_type>(k * n2 + l);
                         auto sk1 = kernel.template loadu<vec_type>(idx1 * m2 + idx2 + vec_size * 0);
@@ -1068,7 +1068,7 @@ void conv2_full_flipped(const I& input, const K& kernel, C&& conv, value_t<I> be
                     }
 
                     for (; l < l_hi; ++l) {
-                        auto idx2 = m2 - 1 - j + l;
+                        const auto idx2 = m2 - 1 - j + l;
                         temp1 += input(k, l) * kernel(idx1, idx2);
                     }
                 }
@@ -1086,7 +1086,7 @@ void conv2_full_flipped(const I& input, const K& kernel, C&& conv, value_t<I> be
  * \param conv The output matrix
  */
 template <typename V, typename I, typename K, typename C>
-void conv2_full(const I& input, const K& kernel, C&& conv) {
+void conv2_full(const I& input, const K& kernel, C&& conv, value_t<I> beta) {
     using T = value_t<I>;
 
     const auto k1 = etl::dim<0>(kernel);
@@ -1096,7 +1096,7 @@ void conv2_full(const I& input, const K& kernel, C&& conv) {
 
     std::reverse_copy(kernel.memory_start(), kernel.memory_start() + k1 * k2, kernel_reverse.memory_start());
 
-    conv2_full_flipped<V>(input, kernel_reverse, conv, T(0));
+    conv2_full_flipped<V>(input, kernel_reverse, conv, beta);
 }
 
 /*!
@@ -1107,7 +1107,8 @@ void conv2_full(const I& input, const K& kernel, C&& conv) {
  */
 template <typename I, typename K, typename C>
 void conv2_full(const I& input, const K& kernel, C&& conv) {
-    conv2_full<default_vec>(input, kernel, conv);
+    using T = value_t<I>;
+    conv2_full<default_vec>(input, kernel, conv, T(0.0));
 }
 
 /*!
@@ -1120,6 +1121,49 @@ template <typename I, typename K, typename C>
 void conv2_full_flipped(const I& input, const K& kernel, C&& conv) {
     using T = value_t<I>;
     conv2_full_flipped<default_vec>(input, kernel, conv, T(0));
+}
+
+/*!
+ * \brief SSE implementation of a 2D 'full' convolution C = I * K, with multiple
+ * kernels
+ * \param input The input matrix
+ * \param kernel The kernel matrix
+ * \param conv The output matrix
+ */
+template <typename I, typename K, typename C>
+void conv2_full_multi(const I& input, const K& kernel, C&& conv) {
+    using T = value_t<I>;
+
+    const auto KK = etl::dim<0>(kernel);
+
+    auto batch_fun_k = [&input,&kernel,&conv](const size_t first, const size_t last) {
+        for (std::size_t k = first; k < last; ++k) {
+            conv2_full<default_vec>(input, kernel(k), conv(k), T(0));
+        }
+    };
+
+    dispatch_1d_any(select_parallel(KK, 2), batch_fun_k, 0, KK);
+}
+
+/*!
+ * \brief AVX implementation of a 2D 'full' convolution C = I * K, with multiple flipped kernels
+ * \param input The input matrix
+ * \param kernel The kernel matrix
+ * \param conv The output matrix
+ */
+template <typename I, typename K, typename C>
+void conv2_full_multi_flipped(const I& input, const K& kernel, C&& conv) {
+    using T = value_t<I>;
+
+    const auto KK = etl::dim<0>(kernel);
+
+    auto batch_fun_k = [&input,&kernel,&conv](const size_t first, const size_t last) {
+        for (std::size_t k = first; k < last; ++k) {
+            conv2_full_flipped<default_vec>(input, kernel(k), conv(k), T(0));
+        }
+    };
+
+    dispatch_1d_any(select_parallel(KK, 2), batch_fun_k, 0, KK);
 }
 
 } //end of namespace vec
