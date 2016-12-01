@@ -1166,6 +1166,180 @@ void conv2_full_multi_flipped(const I& input, const K& kernel, C&& conv) {
     dispatch_1d_any(select_parallel(KK, 2), batch_fun_k, 0, KK);
 }
 
+/*!
+ * \brief SSE implementation of a 4D 'full' convolution C = I * K
+ * \param input The input matrix
+ * \param kernel The kernel matrix
+ * \param conv The output matrix
+ */
+template <typename V, typename I, typename KK, typename CC>
+void conv4_full(const I& input, const KK& kernel, CC&& conv) {
+    using T = value_t<I>;
+
+    const auto N = etl::dim<0>(input);
+    const auto K = etl::dim<0>(kernel);
+    const auto C = etl::dim<1>(kernel);
+
+    const auto k1 = etl::dim<2>(kernel);
+    const auto k2 = etl::dim<3>(kernel);
+
+    if (C > 0) {
+        etl::dyn_matrix<T, 4> prepared_k(K, C, k1, k2);
+
+        std::copy(kernel.memory_start(), kernel.memory_end(), prepared_k.memory_start());
+
+        prepared_k.deep_fflip_inplace();
+
+        if(N > C){
+            auto batch_fun_n = [&](const std::size_t first, const std::size_t last){
+                if(last - first){
+                    for (std::size_t i = first; i < last; ++i) {
+                        // k = 0
+                        for (std::size_t c = 0; c < C; ++c) {
+                            conv2_full<V>(input(i)(0), prepared_k(0)(c), conv(i)(c), T(0));
+                        }
+
+                        for (std::size_t k = 1; k < K; ++k) {
+                            for (std::size_t c = 0; c < C; ++c) {
+                                conv2_full<V>(input(i)(k), prepared_k(k)(c), conv(i)(c), T(1));
+                            }
+                        }
+                    }
+                }
+            };
+
+            dispatch_1d_any(select_parallel(N, 2), batch_fun_n, 0, N);
+        } else {
+            auto batch_fun_c = [&](const std::size_t first, const std::size_t last) {
+                if (last - first) {
+                    for (std::size_t i = 0; i < N; ++i) {
+                        // k = 0
+                        for (std::size_t c = first; c < last; ++c) {
+                            conv2_full<V>(input(i)(0), prepared_k(0)(c), conv(i)(c), T(0));
+                        }
+
+                        for (std::size_t k = 1; k < K; ++k) {
+                            for (std::size_t c = first; c < last; ++c) {
+                                conv2_full<V>(input(i)(k), prepared_k(k)(c), conv(i)(c), T(1));
+                            }
+                        }
+                    }
+                }
+            };
+
+            dispatch_1d_any(select_parallel(C, 2), batch_fun_c, 0, C);
+        }
+    }
+}
+
+/*!
+ * \brief SSE implementation of a 4D 'full' convolution C = I * K
+ * \param input The input matrix
+ * \param kernel The kernel matrix
+ * \param conv The output matrix
+ */
+template <typename I, typename K, typename C>
+void conv4_full(const I& input, const K& kernel, C&& conv) {
+    if(avx_enabled && sse3_enabled){
+        const auto k2 = etl::dim<3>(kernel);
+
+        if (detail::prefer_sse<value_t<I>>(k2)) {
+            return conv4_full<avx_vec>(input, kernel, conv);
+        } else {
+            return conv4_full<sse_vec>(input, kernel, conv);
+        }
+    } else {
+        return conv4_full<default_vec>(input, kernel, conv);
+    }
+}
+
+/*!
+ * \brief SSE implementation of a 4D 'full' convolution C = I * K
+ * \param input The input matrix
+ * \param kernel The kernel matrix
+ * \param conv The output matrix
+ */
+template <typename V, typename I, typename KK, typename CC>
+void conv4_full_flipped(const I& input, const KK& kernel, CC&& conv) {
+    using T = value_t<I>;
+
+    const auto N = etl::dim<0>(input);
+    const auto K = etl::dim<0>(kernel);
+    const auto C = etl::dim<1>(kernel);
+
+    const auto k1 = etl::dim<2>(kernel);
+    const auto k2 = etl::dim<3>(kernel);
+
+    if (C > 0) {
+        etl::dyn_matrix<T, 4> prepared_k(K, C, k1, k2);
+
+        std::copy(kernel.memory_start(), kernel.memory_end(), prepared_k.memory_start());
+
+        prepared_k.deep_fflip_inplace();
+
+        if(N > C){
+            auto batch_fun_n = [&](const std::size_t first, const std::size_t last){
+                if(last - first){
+                    for (std::size_t i = first; i < last; ++i) {
+                        // k = 0
+                        for (std::size_t c = 0; c < C; ++c) {
+                            conv2_full_flipped<V>(input(i)(0), prepared_k(0)(c), conv(i)(c), T(0));
+                        }
+
+                        for (std::size_t k = 1; k < K; ++k) {
+                            for (std::size_t c = 0; c < C; ++c) {
+                                conv2_full_flipped<V>(input(i)(k), prepared_k(k)(c), conv(i)(c), T(1));
+                            }
+                        }
+                    }
+                }
+            };
+
+            dispatch_1d_any(select_parallel(N, 2), batch_fun_n, 0, N);
+        } else {
+            auto batch_fun_c = [&](const std::size_t first, const std::size_t last) {
+                if (last - first) {
+                    for (std::size_t i = 0; i < N; ++i) {
+                        // k = 0
+                        for (std::size_t c = first; c < last; ++c) {
+                            conv2_full_flipped<V>(input(i)(0), prepared_k(0)(c), conv(i)(c), T(0));
+                        }
+
+                        for (std::size_t k = 1; k < K; ++k) {
+                            for (std::size_t c = first; c < last; ++c) {
+                                conv2_full_flipped<V>(input(i)(k), prepared_k(k)(c), conv(i)(c), T(1));
+                            }
+                        }
+                    }
+                }
+            };
+
+            dispatch_1d_any(select_parallel(C, 2), batch_fun_c, 0, C);
+        }
+    }
+}
+
+/*!
+ * \brief SSE implementation of a 4D 'full' convolution C = I * K
+ * \param input The input matrix
+ * \param kernel The kernel matrix
+ * \param conv The output matrix
+ */
+template <typename I, typename K, typename C>
+void conv4_full_flipped(const I& input, const K& kernel, C&& conv) {
+    if(avx_enabled && sse3_enabled){
+        const auto k2 = etl::dim<3>(kernel);
+
+        if (detail::prefer_sse<value_t<I>>(k2)) {
+            return conv4_full_flipped<avx_vec>(input, kernel, conv);
+        } else {
+            return conv4_full_flipped<sse_vec>(input, kernel, conv);
+        }
+    } else {
+        return conv4_full_flipped<default_vec>(input, kernel, conv);
+    }
+}
+
 } //end of namespace vec
 } //end of namespace impl
 } //end of namespace etl

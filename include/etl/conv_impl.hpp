@@ -33,6 +33,7 @@ enum class conv_impl {
  */
 enum class conv4_impl {
     STD,       ///< Standard implementation
+    VEC,       ///< VEC implementation
     SSE,       ///< SSE implementation
     AVX,       ///< AVX implementation
     CUDNN,     ///< CUDNN implementation

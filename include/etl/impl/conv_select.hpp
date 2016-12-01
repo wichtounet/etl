@@ -477,8 +477,6 @@ inline etl::conv4_impl select_default_conv4_full_impl() {
     }
 
     static constexpr bool cudnn = is_cudnn_enabled;
-    static constexpr bool avx = vectorize_impl && vector_mode == vector_mode_t::AVX;
-    static constexpr bool sse = vectorize_impl && vector_mode == vector_mode_t::SSE3;
 
     if(cudnn){
         return etl::conv4_impl::CUDNN;
@@ -486,10 +484,8 @@ inline etl::conv4_impl select_default_conv4_full_impl() {
         return etl::conv4_impl::FFT_CUFFT;
     } else if(is_mkl_enabled){
         return etl::conv4_impl::FFT_MKL;
-    } else if(avx){
-        return etl::conv4_impl::AVX;
-    } else if(sse){
-        return etl::conv4_impl::SSE;
+    } else if(vectorize_impl && vec_enabled){
+        return etl::conv4_impl::VEC;
     } else {
         return etl::conv4_impl::FFT_STD;
     }
@@ -508,19 +504,10 @@ inline etl::conv4_impl select_conv4_full_impl() {
         auto forced = local_context().conv4_selector.impl;
 
         switch (forced) {
-            //SSE cannot always be used
-            case conv4_impl::SSE:
+            //VEC cannot always be used
+            case conv4_impl::VEC:
                 if (!sse3_enabled) {                                                                                               // COVERAGE_EXCLUDE_LINE
-                    std::cerr << "Forced selection to SSE conv implementation, but not possible for this expression" << std::endl; // COVERAGE_EXCLUDE_LINE
-                    return select_default_conv4_full_impl<I, K, C>();                                                                   // COVERAGE_EXCLUDE_LINE
-                }                                                                                                                 // COVERAGE_EXCLUDE_LINE
-
-                return forced;
-
-            //AVX cannot always be used
-            case conv4_impl::AVX:
-                if (!avx_enabled) {                                                                                               // COVERAGE_EXCLUDE_LINE
-                    std::cerr << "Forced selection to AVX conv implementation, but not possible for this expression" << std::endl; // COVERAGE_EXCLUDE_LINE
+                    std::cerr << "Forced selection to VEC conv implementation, but not possible for this expression" << std::endl; // COVERAGE_EXCLUDE_LINE
                     return select_default_conv4_full_impl<I, K, C>();                                                                   // COVERAGE_EXCLUDE_LINE
                 }                                                                                                                 // COVERAGE_EXCLUDE_LINE
 

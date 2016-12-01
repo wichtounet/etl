@@ -341,10 +341,8 @@ struct conv4_full_impl {
 
         if (impl == etl::conv4_impl::CUDNN) {
             impl::cudnn::conv4_full(input.direct(), kernel.direct(), conv.direct());
-        } else if (impl == etl::conv4_impl::AVX) {
-            impl::avx::conv4_full(input.direct(), kernel.direct(), conv.direct());
-        } else if (impl == etl::conv4_impl::SSE) {
-            impl::sse::conv4_full(input.direct(), kernel.direct(), conv.direct());
+        } else if (impl == etl::conv4_impl::VEC) {
+            impl::vec::conv4_full(input, kernel, conv);
         } else if (impl == etl::conv4_impl::FFT_STD) {
             impl::standard::conv4_full_fft(input.direct(), kernel.direct(), conv.direct());
         } else if (impl == etl::conv4_impl::FFT_MKL) {
@@ -448,10 +446,8 @@ struct conv4_full_flipped_impl {
 
         if (impl == etl::conv4_impl::CUDNN) {
             impl::cudnn::conv4_full_flipped(input.direct(), kernel.direct(), conv.direct());
-        } else if (impl == etl::conv4_impl::AVX) {
-            impl::avx::conv4_full_flipped(input.direct(), kernel.direct(), conv.direct());
-        } else if (impl == etl::conv4_impl::SSE) {
-            impl::sse::conv4_full_flipped(input.direct(), kernel.direct(), conv.direct());
+        } else if (impl == etl::conv4_impl::VEC) {
+            impl::vec::conv4_full_flipped(input, kernel, conv);
         } else if (impl == etl::conv4_impl::FFT_STD) {
             impl::standard::conv4_full_fft_flipped(input.direct(), kernel.direct(), conv.direct());
         } else if (impl == etl::conv4_impl::FFT_MKL) {
