@@ -488,3 +488,13 @@ CPM_DIRECT_SECTION_TWO_PASS_NS_PF("r /= 1.25 (s) [std][scalar][s]", large_vector
     CPM_SECTION_FUNCTOR("std", [](svec& a){ SELECTED_SECTION(etl::scalar_impl::STD) { a /= 1.25f; } })
     BLAS_SECTION_FUNCTOR("blas", [](svec& a){ SELECTED_SECTION(etl::scalar_impl::BLAS) { a /= 1.25f; } })
 )
+
+
+//Bench activation functions
+CPM_BENCH() {
+    CPM_TWO_PASS_NS("nn_relu",
+        [](std::size_t d){ return std::make_tuple(svec(d), svec(d)); },
+        [](svec& a, svec& r){ r = relu(a); },
+        [](std::size_t d){ return d; }
+    );
+}
