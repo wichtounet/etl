@@ -142,6 +142,21 @@ etl::dyn_matrix<T, 2> pad_right(const opaque_memory<T, 2>& input, size_t pad){
     return padded_input;
 }
 
+template <typename I>
+etl::dyn_matrix<value_t<I>, 2> pad_right_general(const I& input, size_t pad){
+    using T = value_t<I>;
+
+    etl::dyn_matrix<T, 2> padded_input(etl::dim<0>(input), etl::dim<1>(input) + pad);
+
+    padded_input = 0;
+
+    for(size_t i = 0; i < etl::dim<0>(input); ++i){
+        direct_copy_n(input.memory_start() + i * etl::dim<1>(input), padded_input.memory_start() + i * etl::dim<1>(padded_input), etl::dim<1>(input));
+    }
+
+    return padded_input;
+}
+
 template <typename T>
 etl::dyn_matrix<T, 3> pad_right_multi(const opaque_memory<T, 3>& input, size_t pad){
     etl::dyn_matrix<T, 3> padded_input(input.dim(0), input.dim(1), input.dim(2) + pad);
