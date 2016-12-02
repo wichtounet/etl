@@ -72,7 +72,7 @@ inline void conv2_valid_flipped_border(const I& input, const K& kernel, C&& conv
 }
 
 template <typename V, typename I, typename K, typename C>
-void conv2_valid_flipped_kernel(const I& input, const K& kernel, C&& conv, size_t s1, size_t s2, size_t p1, size_t p2, value_t<I> beta) {
+void conv2_valid_flipped_micro_kernel(const I& input, const K& kernel, C&& conv, size_t s1, size_t s2, size_t p1, size_t p2, value_t<I> beta) {
     using T = value_t<I>;
     using vec_type = V;
 
@@ -323,6 +323,15 @@ void conv2_valid_flipped_kernel(const I& input, const K& kernel, C&& conv, size_
     }
 }
 
+template <typename V, typename I, typename K, typename C>
+void conv2_valid_micro_kernel(const I& input, const K& kernel, C&& conv, size_t s1, size_t s2, size_t p1, size_t p2, value_t<I> beta) {
+    etl::dyn_matrix<value_t<I>, 2> kernel_reverse(etl::dim<0>(kernel), etl::dim<1>(kernel));
+
+    std::reverse_copy(kernel.begin(), kernel.end(), kernel_reverse.begin());
+
+    conv2_valid_flipped_micro_kernel<V>(input, kernel_reverse, conv, s1, s2, p1, p2, beta);
+}
+
 #ifdef __AVX__
 using safe_avx_vec = avx_vec;
 #else
@@ -344,7 +353,7 @@ using safe_sse_vec = no_vec;
  * \param conv The output matrix
  */
 template <typename I, typename K, typename C>
-void conv2_valid_flipped(const I& input, const K& kernel, C&& conv, size_t s1, size_t s2, size_t p1, size_t p2, value_t<I> beta) {
+void conv2_valid_flipped(const I& input, const K& kernel, C&& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
     using T = value_t<I>;
 
     const auto k2 = etl::dim<1>(kernel);
@@ -361,7 +370,7 @@ void conv2_valid_flipped(const I& input, const K& kernel, C&& conv, size_t s1, s
 
             detail::pad_2d_input(input, padded_matrix, p1, p2);
 
-            conv2_valid_flipped(padded_matrix, kernel, conv, s1, s2, 0, 0, beta);
+            conv2_valid_flipped(padded_matrix, kernel, conv, s1, s2, 0, 0);
 
             return;
         }
@@ -378,7 +387,7 @@ void conv2_valid_flipped(const I& input, const K& kernel, C&& conv, size_t s1, s
 
         etl::dyn_matrix<T> tmp_result(n1 - k1 + 1, n2 - k2 + 1);
 
-        conv2_valid_flipped(input, kernel, tmp_result, 1, 1, 0, 0, beta);
+        conv2_valid_flipped(input, kernel, tmp_result, 1, 1, 0, 0);
 
         // Strided copy of the large result into the small result
         for (std::size_t i = 0; i < c1; ++i) {
@@ -400,24 +409,166 @@ void conv2_valid_flipped(const I& input, const K& kernel, C&& conv, size_t s1, s
         auto padded_kernel = common::pad_right_general(kernel, pad);
 
         if(detail::prefer_sse<T>(k2 + pad)){
-            detail::conv2_valid_flipped_kernel<detail::safe_sse_vec>(padded_input, padded_kernel, conv, s1, s2, p1, p1, beta);
+            detail::conv2_valid_flipped_micro_kernel<detail::safe_sse_vec>(padded_input, padded_kernel, conv, s1, s2, p1, p1, T(0));
         } else {
-            detail::conv2_valid_flipped_kernel<detail::safe_avx_vec>(padded_input, padded_kernel, conv, s1, s2, p1, p1, beta);
+            detail::conv2_valid_flipped_micro_kernel<detail::safe_avx_vec>(padded_input, padded_kernel, conv, s1, s2, p1, p1, T(0));
         }
 
         return;
     }
 
     if(detail::prefer_sse<T>(k2)){
-        detail::conv2_valid_flipped_kernel<detail::safe_sse_vec>(input, kernel, conv, s1, s2, p1, p2, beta);
+        detail::conv2_valid_flipped_micro_kernel<detail::safe_sse_vec>(input, kernel, conv, s1, s2, p1, p2, T(0));
     } else {
-        detail::conv2_valid_flipped_kernel<detail::safe_avx_vec>(input, kernel, conv, s1, s2, p1, p2, beta);
+        detail::conv2_valid_flipped_micro_kernel<detail::safe_avx_vec>(input, kernel, conv, s1, s2, p1, p2, T(0));
     }
 }
 
+/*!
+ * \brief Standard implementation of a 2D 'valid' convolution C = I * K
+ * \param input The input matrix
+ * \param kernel The kernel matrix
+ * \param conv The output matrix
+ */
 template <typename I, typename K, typename C>
-void conv2_valid_flipped(const I& input, const K& kernel, C&& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
-    conv2_valid_flipped(input, kernel, conv, s1, s2, p1, p2, value_t<I>(0));
+void conv2_valid(const I& input, const K& kernel, C&& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
+    using T = value_t<I>;
+
+    const auto k2 = etl::dim<1>(kernel);
+
+    if(cpp_unlikely(p1 || p2)){
+        const auto n1 = etl::dim<0>(input);
+        const auto n2 = etl::dim<1>(input);
+
+        const auto o1 = n1 + 2 * p1;
+        const auto o2 = n2 + 2 * p2;
+
+        if(o1 * o2 * sizeof(T) < max_workspace){
+            etl::dyn_matrix<T, 2> padded_matrix(o1, o2, T(0));
+
+            detail::pad_2d_input(input, padded_matrix, p1, p2);
+
+            conv2_valid(padded_matrix, kernel, conv, s1, s2, 0, 0);
+
+            return;
+        }
+    }
+
+    if(cpp_unlikely(s1 > 1 || s2 > 1)){
+        const auto n1 = etl::dim<0>(input);
+        const auto n2 = etl::dim<1>(input);
+
+        const auto c1 = etl::dim<0>(conv);
+        const auto c2 = etl::dim<1>(conv);
+
+        const auto k1 = etl::dim<0>(kernel);
+
+        etl::dyn_matrix<T> tmp_result(n1 - k1 + 1, n2 - k2 + 1);
+
+        conv2_valid(input, kernel, tmp_result, 1, 1, 0, 0);
+
+        // Strided copy of the large result into the small result
+        for (std::size_t i = 0; i < c1; ++i) {
+            for (std::size_t j = 0; j < c2; ++j) {
+                conv(i, j) = tmp_result(i * s1, j * s2);
+            }
+        }
+
+        return;
+    }
+
+    constexpr size_t AS = std::is_same<T, float>::value ? 8 : 4;
+    constexpr size_t SS = AS / 2;
+
+    if(padding_impl && k2 % SS > 0){
+        const auto pad = k2 < SS ? SS - k2 % SS : AS - k2 % AS;
+
+        auto padded_input = common::pad_right_general(input, pad);
+        auto padded_kernel = common::pad_right_flip_general(kernel, pad);
+
+        if(detail::prefer_sse<T>(k2 + pad)){
+            detail::conv2_valid_flipped_micro_kernel<detail::safe_sse_vec>(padded_input, padded_kernel, conv, s1, s2, p1, p1, T(0));
+        } else {
+            detail::conv2_valid_flipped_micro_kernel<detail::safe_avx_vec>(padded_input, padded_kernel, conv, s1, s2, p1, p1, T(0));
+        }
+
+        return;
+    }
+
+    if(detail::prefer_sse<T>(k2)){
+        detail::conv2_valid_micro_kernel<detail::safe_sse_vec>(input, kernel, conv, s1, s2, p1, p2, T(0));
+    } else {
+        detail::conv2_valid_micro_kernel<detail::safe_avx_vec>(input, kernel, conv, s1, s2, p1, p2, T(0));
+    }
+}
+
+/*!
+ * \brief SSE implementation of a 2D 'valid' convolution C = I * K
+ * \param input The input matrix
+ * \param kernel The kernel matrix
+ * \param conv The output matrix
+ * \param s1 The first dimension stride
+ * \param s2 The second dimension stride
+ * \param p1 The first dimension padding (left and right)
+ * \param p2 The second dimension padding (top and bottom)
+ */
+template <typename T>
+void conv2_valid(const opaque_memory<T, 2>& input, const opaque_memory<T, 2>& kernel, const opaque_memory<T, 2>& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
+    if(cpp_unlikely(p1 || p2)){
+        const auto ws_h = input.template dim<0>() + 2 * p1;
+        const auto ws_w = input.template dim<1>() + 2 * p2;
+
+        if(ws_h * ws_w * sizeof(T) < max_workspace){
+            etl::dyn_matrix<T, 2> workspace(ws_h, ws_w, T(0));
+            auto ws_direct = workspace.direct();
+
+            detail::pad_2d_input(input, ws_direct, p1, p2);
+
+            conv2_valid(workspace.direct(), kernel, conv, s1, s2, 0, 0);
+
+            return;
+        }
+    }
+
+    const auto k2 = kernel.dim(1);
+
+    if(padding_impl){
+        constexpr size_t AS = std::is_same<T, float>::value ? 8 : 4;
+        constexpr size_t SS = AS / 2;
+
+        if(k2 < SS || k2 % AS > 0){
+            const auto pad = k2 < SS ? SS - k2 % SS : AS - k2 % AS;
+
+            auto padded_input = common::pad_right(input, pad);
+            auto padded_kernel = common::pad_right_flip(kernel, pad);
+
+            if(detail::prefer_sse<T>(k2 + pad)){
+                etl::impl::sse::conv2_valid_flipped_micro_kernel(
+                    padded_input.memory_start(), padded_input.template dim<0>(), padded_input.template dim<1>(),
+                    padded_kernel.memory_start(), padded_kernel.template dim<0>(), padded_kernel.template dim<1>(),
+                    conv.memory_start(), 0.0, s1, s2, p1, p2);
+            } else {
+                detail::conv2_valid_flipped_micro_kernel(
+                    padded_input.memory_start(), padded_input.template dim<0>(), padded_input.template dim<1>(),
+                    padded_kernel.memory_start(), padded_kernel.template dim<0>(), padded_kernel.template dim<1>(),
+                    conv.memory_start(), 0.0, s1, s2, p1, p2);
+            }
+
+            return;
+        }
+    }
+
+    if(detail::prefer_sse<T>(k2)){
+        etl::impl::sse::conv2_valid_micro_kernel(
+            input.memory_start(), input.template dim<0>(), input.template dim<1>(),
+            kernel.memory_start(), kernel.template dim<0>(), kernel.template dim<1>(),
+            conv.memory_start(), 0.0, s1, s2, p1, p2);
+    } else {
+        detail::conv2_valid_micro_kernel(
+            input.memory_start(), input.template dim<0>(), input.template dim<1>(),
+            kernel.memory_start(), kernel.template dim<0>(), kernel.template dim<1>(),
+            conv.memory_start(), 0.0, s1, s2, p1, p2);
+    }
 }
 
 template <typename V, typename I, typename K, typename C>

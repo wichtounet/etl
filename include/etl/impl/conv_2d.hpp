@@ -326,6 +326,8 @@ struct conv2_valid_impl {
 
         if (impl == etl::conv_impl::AVX) {
             impl::avx::conv2_valid(i, k, c, S1, S2, P1, P2);
+        } else if (impl == etl::conv_impl::VEC) {
+            impl::vec::conv2_valid(input, kernel, conv, S1, S2, P1, P2);
         } else if (impl == etl::conv_impl::SSE) {
             impl::sse::conv2_valid(i, k, c, S1, S2, P1, P2);
         } else if (impl == etl::conv_impl::CUDNN) {
