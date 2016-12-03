@@ -657,6 +657,22 @@ public:
      * \brief Return an iterator to the first element of the matrix
      * \return an const iterator pointing to the first element of the matrix
      */
+    iterator<const this_type, true> cbegin() const noexcept {
+        return {*this, 0};
+    }
+
+    /*!
+     * \brief Return an iterator to the past-the-end element of the matrix
+     * \return a const iterator pointing to the past-the-end element of the matrix
+     */
+    iterator<const this_type, true> cend() const noexcept {
+        return {*this, size(*this)};
+    }
+
+    /*!
+     * \brief Return an iterator to the first element of the matrix
+     * \return an const iterator pointing to the first element of the matrix
+     */
     iterator<const this_type, true> begin() const noexcept {
         return {*this, 0};
     }
