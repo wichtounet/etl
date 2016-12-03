@@ -29,7 +29,6 @@ constexpr bool prefer_sse(const size_t n){
            );
 }
 
-
 template <typename I, typename C>
 void pad_2d_input(const I& in, C& out, size_t p1, size_t p2) {
     auto in_m = in.memory_start();
@@ -384,6 +383,7 @@ void conv2_valid_flipped(const I& input, const K& kernel, C&& conv, size_t s1, s
         const auto c2 = etl::dim<1>(conv);
 
         const auto k1 = etl::dim<0>(kernel);
+        const auto k2 = etl::dim<1>(kernel);
 
         etl::dyn_matrix<T> tmp_result(n1 - k1 + 1, n2 - k2 + 1);
 
@@ -399,22 +399,24 @@ void conv2_valid_flipped(const I& input, const K& kernel, C&& conv, size_t s1, s
         return;
     }
 
-    constexpr size_t AS = std::is_same<T, float>::value ? 8 : 4;
-    constexpr size_t SS = AS / 2;
+    if(padding_impl){
+        constexpr size_t AS = std::is_same<T, float>::value ? 8 : 4;
+        constexpr size_t SS = AS / 2;
 
-    if(padding_impl && k2 % SS > 0){
-        const auto pad = k2 < SS ? SS - k2 % SS : AS - k2 % AS;
+        if (k2 < SS || k2 % AS > 0) {
+            const auto pad = k2 < SS ? SS - k2 % SS : AS - k2 % AS;
 
-        auto padded_input = common::pad_right_general(input, pad);
-        auto padded_kernel = common::pad_right_general(kernel, pad);
+            auto padded_input  = common::pad_right_general(input, pad);
+            auto padded_kernel = common::pad_right_general(kernel, pad);
 
-        if(detail::prefer_sse<T>(k2 + pad)){
-            detail::conv2_valid_flipped_micro_kernel<detail::safe_sse_vec>(padded_input, padded_kernel, conv, s1, s2, p1, p1, T(0));
-        } else {
-            detail::conv2_valid_flipped_micro_kernel<detail::safe_avx_vec>(padded_input, padded_kernel, conv, s1, s2, p1, p1, T(0));
+            if (detail::prefer_sse<T>(k2 + pad)) {
+                detail::conv2_valid_flipped_micro_kernel<detail::safe_sse_vec>(padded_input, padded_kernel, conv, s1, s2, p1, p1, T(0));
+            } else {
+                detail::conv2_valid_flipped_micro_kernel<detail::safe_avx_vec>(padded_input, padded_kernel, conv, s1, s2, p1, p1, T(0));
+            }
+
+            return;
         }
-
-        return;
     }
 
     if(detail::prefer_sse<T>(k2)){
@@ -477,22 +479,24 @@ void conv2_valid(const I& input, const K& kernel, C&& conv, size_t s1, size_t s2
         return;
     }
 
-    constexpr size_t AS = std::is_same<T, float>::value ? 8 : 4;
-    constexpr size_t SS = AS / 2;
+    if (padding_impl) {
+        constexpr size_t AS = std::is_same<T, float>::value ? 8 : 4;
+        constexpr size_t SS = AS / 2;
 
-    if(padding_impl && k2 % SS > 0){
-        const auto pad = k2 < SS ? SS - k2 % SS : AS - k2 % AS;
+        if (k2 < SS || k2 % AS > 0) {
+            const auto pad = k2 < SS ? SS - k2 % SS : AS - k2 % AS;
 
-        auto padded_input = common::pad_right_general(input, pad);
-        auto padded_kernel = common::pad_right_flip_general(kernel, pad);
+            auto padded_input  = common::pad_right_general(input, pad);
+            auto padded_kernel = common::pad_right_flip_general(kernel, pad);
 
-        if(detail::prefer_sse<T>(k2 + pad)){
-            detail::conv2_valid_flipped_micro_kernel<detail::safe_sse_vec>(padded_input, padded_kernel, conv, s1, s2, p1, p1, T(0));
-        } else {
-            detail::conv2_valid_flipped_micro_kernel<detail::safe_avx_vec>(padded_input, padded_kernel, conv, s1, s2, p1, p1, T(0));
+            if (detail::prefer_sse<T>(k2 + pad)) {
+                detail::conv2_valid_flipped_micro_kernel<detail::safe_sse_vec>(padded_input, padded_kernel, conv, s1, s2, p1, p1, T(0));
+            } else {
+                detail::conv2_valid_flipped_micro_kernel<detail::safe_avx_vec>(padded_input, padded_kernel, conv, s1, s2, p1, p1, T(0));
+            }
+
+            return;
         }
-
-        return;
     }
 
     if(detail::prefer_sse<T>(k2)){
