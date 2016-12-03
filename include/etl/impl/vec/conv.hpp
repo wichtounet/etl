@@ -1445,6 +1445,146 @@ void conv4_full_flipped(const I& input, const K& kernel, C&& conv) {
     }
 }
 
+/*!
+ * \brief SSE implementation of a 2D 'valid' convolution C = I * K
+ * \param input The input matrix
+ * \param kernel The kernel matrix
+ * \param conv The output matrix
+ * \param s1 The first dimension stride
+ * \param s2 The second dimension stride
+ * \param p1 The first dimension padding (left and right)
+ * \param p2 The second dimension padding (top and bottom)
+ */
+template <typename I, typename KK, typename C>
+void conv2_valid_multi(const I& input, const KK& kernel, C&& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
+    using T = value_t<I>;
+
+    const auto K = etl::dim<0>(kernel);
+    const auto k2 = etl::dim<2>(kernel);
+
+    if(padding_impl){
+        static constexpr size_t AS = std::is_same<T, float>::value ? 8 : 4;
+        static constexpr size_t SS = AS / 2;
+
+        if(k2 < SS || k2 % AS > 0){
+            const auto pad = k2 < SS ? SS - k2 % SS : AS - k2 % AS;
+
+            auto padded_input = common::pad_right_general(input, pad);
+            auto padded_kernel = common::pad_right_flip_multi_general(kernel, pad);
+
+            // TODO Test if it is better to do the padding of the kernel inside each thread
+
+            if(detail::prefer_sse<T>(k2 + pad)){
+                auto fun_k = [&](const size_t first, const size_t last) {
+                    for (std::size_t k = first; k < last; ++k) {
+                        detail::conv2_valid_flipped_micro_kernel<detail::safe_sse_vec>(padded_input, padded_kernel(k), conv(k), s1, s2, p1, p2, 0.0);
+                    }
+                };
+
+                dispatch_1d_any(select_parallel(K, 2), fun_k, 0, K);
+            } else {
+                auto fun_k = [&](const size_t first, const size_t last) {
+                    for (std::size_t k = first; k < last; ++k) {
+                        detail::conv2_valid_flipped_micro_kernel<detail::safe_avx_vec>(padded_input, padded_kernel(k), conv(k), s1, s2, p1, p2, 0.0);
+                    }
+                };
+
+                dispatch_1d_any(select_parallel(K, 2), fun_k, 0, K);
+            }
+
+            return;
+        }
+    }
+
+    if(detail::prefer_sse<T>(kernel.dim(2))){
+        auto fun_k = [&](const size_t first, const size_t last) {
+            for (std::size_t k = first; k < last; ++k) {
+                detail::conv2_valid_micro_kernel<detail::safe_sse_vec>(input, kernel(k), conv(k), s1, s2, p1, p2, 0.0);
+            }
+        };
+
+        dispatch_1d_any(select_parallel(K, 2), fun_k, 0, K);
+    } else {
+        auto fun_k = [&](const size_t first, const size_t last) {
+            for (std::size_t k = first; k < last; ++k) {
+                detail::conv2_valid_micro_kernel<detail::safe_avx_vec>(input, kernel(k), conv(k), s1, s2, p1, p2, 0.0);
+            }
+        };
+
+        dispatch_1d_any(select_parallel(K, 2), fun_k, 0, K);
+    }
+}
+
+/*!
+ * \brief SSE implementation of a 2D 'valid' convolution C = I * K
+ * \param input The input matrix
+ * \param kernel The kernel matrix
+ * \param conv The output matrix
+ * \param s1 The first dimension stride
+ * \param s2 The second dimension stride
+ * \param p1 The first dimension padding (left and right)
+ * \param p2 The second dimension padding (top and bottom)
+ */
+template <typename I, typename KK, typename C>
+void conv2_valid_multi_flipped(const I& input, const KK& kernel, C&& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
+    using T = value_t<I>;
+
+    const auto K = etl::dim<0>(kernel);
+    const auto k2 = etl::dim<2>(kernel);
+
+    if(padding_impl){
+        constexpr size_t AS = std::is_same<T, float>::value ? 8 : 4;
+        constexpr size_t SS = AS / 2;
+
+        if(k2 < SS || k2 % AS > 0){
+            const auto pad = k2 < SS ? SS - k2 % SS : AS - k2 % AS;
+
+            auto padded_input = common::pad_right_general(input, pad);
+            auto padded_kernel = common::pad_right_multi_general(kernel, pad);
+
+            // TODO Test if it is better to do the padding of the kernel inside each thread
+
+            if(detail::prefer_sse<T>(k2 + pad)){
+                auto fun_k = [&](const size_t first, const size_t last) {
+                    for (std::size_t k = first; k < last; ++k) {
+                        detail::conv2_valid_flipped_micro_kernel<detail::safe_sse_vec>(padded_input, padded_kernel(k), conv(k), s1, s2, p1, p2, 0.0);
+                    }
+                };
+
+                dispatch_1d_any(select_parallel(K, 2), fun_k, 0, K);
+            } else {
+                auto fun_k = [&](const size_t first, const size_t last) {
+                    for (std::size_t k = first; k < last; ++k) {
+                        detail::conv2_valid_flipped_micro_kernel<detail::safe_avx_vec>(padded_input, padded_kernel(k), conv(k), s1, s2, p1, p2, 0.0);
+                    }
+                };
+
+                dispatch_1d_any(select_parallel(K, 2), fun_k, 0, K);
+            }
+
+            return;
+        }
+    }
+
+    if(detail::prefer_sse<T>(k2)){
+        auto fun_k = [&](const size_t first, const size_t last) {
+            for (std::size_t k = first; k < last; ++k) {
+                detail::conv2_valid_flipped_micro_kernel<detail::safe_sse_vec>(input, kernel(k), conv(k), s1, s2, p1, p2, 0.0);
+            }
+        };
+
+        dispatch_1d_any(select_parallel(K, 2), fun_k, 0, K);
+    } else {
+        auto fun_k = [&](const size_t first, const size_t last) {
+            for (std::size_t k = first; k < last; ++k) {
+                detail::conv2_valid_flipped_micro_kernel<detail::safe_avx_vec>(input, kernel(k), conv(k), s1, s2, p1, p2, 0.0);
+            }
+        };
+
+        dispatch_1d_any(select_parallel(K, 2), fun_k, 0, K);
+    }
+}
+
 } //end of namespace vec
 } //end of namespace impl
 } //end of namespace etl
