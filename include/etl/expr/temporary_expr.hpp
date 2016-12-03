@@ -272,6 +272,22 @@ public:
         return {as_derived(), size(as_derived())};
     }
 
+    /*!
+     * \brief Return an iterator to the first element of the matrix
+     * \return an const iterator pointing to the first element of the matrix
+     */
+    iterator<const derived_t> cbegin() const noexcept {
+        return {as_derived(), 0};
+    }
+
+    /*!
+     * \brief Return an iterator to the past-the-end element of the matrix
+     * \return a const iterator pointing to the past-the-end element of the matrix
+     */
+    iterator<const derived_t> cend() const noexcept {
+        return {as_derived(), size(as_derived())};
+    }
+
     // Direct memory access
 
     /*!
