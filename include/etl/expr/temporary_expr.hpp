@@ -260,32 +260,32 @@ public:
      * \brief Return an iterator to the first element of the matrix
      * \return an const iterator pointing to the first element of the matrix
      */
-    iterator<const derived_t> begin() const noexcept {
-        return {as_derived(), 0};
+    const_memory_type begin() const noexcept {
+        return result().memory_start();
     }
 
     /*!
      * \brief Return an iterator to the past-the-end element of the matrix
      * \return a const iterator pointing to the past-the-end element of the matrix
      */
-    iterator<const derived_t> end() const noexcept {
-        return {as_derived(), size(as_derived())};
+    const_memory_type end() const noexcept {
+        return result().memory_end();
     }
 
     /*!
      * \brief Return an iterator to the first element of the matrix
      * \return an const iterator pointing to the first element of the matrix
      */
-    iterator<const derived_t> cbegin() const noexcept {
-        return {as_derived(), 0};
+    const_memory_type cbegin() const noexcept {
+        return result().memory_start();
     }
 
     /*!
      * \brief Return an iterator to the past-the-end element of the matrix
      * \return a const iterator pointing to the past-the-end element of the matrix
      */
-    iterator<const derived_t> cend() const noexcept {
-        return {as_derived(), size(as_derived())};
+    const_memory_type cend() const noexcept {
+        return result().memory_end();
     }
 
     // Direct memory access
