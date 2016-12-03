@@ -641,6 +641,61 @@ public:
      * \brief Return an iterator to the first element of the matrix
      * \return a iterator pointing to the first element of the matrix
      */
+    template<cpp_enable_if_cst(has_direct_access<Expr>::value)>
+    memory_type begin() noexcept {
+        return memory_start();
+    }
+
+    /*!
+     * \brief Return an iterator to the past-the-end element of the matrix
+     * \return an iterator pointing to the past-the-end element of the matrix
+     */
+    template<cpp_enable_if_cst(has_direct_access<Expr>::value)>
+    memory_type end() noexcept {
+        return memory_end();
+    }
+
+    /*!
+     * \brief Return an iterator to the first element of the matrix
+     * \return an const iterator pointing to the first element of the matrix
+     */
+    template<cpp_enable_if_cst(has_direct_access<Expr>::value)>
+    const_memory_type cbegin() const noexcept {
+        return memory_start();
+    }
+
+    /*!
+     * \brief Return an iterator to the past-the-end element of the matrix
+     * \return a const iterator pointing to the past-the-end element of the matrix
+     */
+    template<cpp_enable_if_cst(has_direct_access<Expr>::value)>
+    const_memory_type cend() const noexcept {
+        return memory_end();
+    }
+
+    /*!
+     * \brief Return an iterator to the first element of the matrix
+     * \return an const iterator pointing to the first element of the matrix
+     */
+    template<cpp_enable_if_cst(has_direct_access<Expr>::value)>
+    const_memory_type begin() const noexcept {
+        return memory_start();
+    }
+
+    /*!
+     * \brief Return an iterator to the past-the-end element of the matrix
+     * \return a const iterator pointing to the past-the-end element of the matrix
+     */
+    template<cpp_enable_if_cst(has_direct_access<Expr>::value)>
+    const_memory_type end() const noexcept {
+        return memory_end();
+    }
+
+    /*!
+     * \brief Return an iterator to the first element of the matrix
+     * \return a iterator pointing to the first element of the matrix
+     */
+    template<cpp_disable_if_cst(has_direct_access<Expr>::value)>
     iterator<this_type, non_const_return_ref, false> begin() noexcept {
         return {*this, 0};
     }
@@ -649,6 +704,7 @@ public:
      * \brief Return an iterator to the past-the-end element of the matrix
      * \return an iterator pointing to the past-the-end element of the matrix
      */
+    template<cpp_disable_if_cst(has_direct_access<Expr>::value)>
     iterator<this_type, non_const_return_ref, false> end() noexcept {
         return {*this, size(*this)};
     }
@@ -657,6 +713,7 @@ public:
      * \brief Return an iterator to the first element of the matrix
      * \return an const iterator pointing to the first element of the matrix
      */
+    template<cpp_disable_if_cst(has_direct_access<Expr>::value)>
     iterator<const this_type, true> cbegin() const noexcept {
         return {*this, 0};
     }
@@ -665,6 +722,7 @@ public:
      * \brief Return an iterator to the past-the-end element of the matrix
      * \return a const iterator pointing to the past-the-end element of the matrix
      */
+    template<cpp_disable_if_cst(has_direct_access<Expr>::value)>
     iterator<const this_type, true> cend() const noexcept {
         return {*this, size(*this)};
     }
@@ -673,6 +731,7 @@ public:
      * \brief Return an iterator to the first element of the matrix
      * \return an const iterator pointing to the first element of the matrix
      */
+    template<cpp_disable_if_cst(has_direct_access<Expr>::value)>
     iterator<const this_type, true> begin() const noexcept {
         return {*this, 0};
     }
@@ -681,6 +740,7 @@ public:
      * \brief Return an iterator to the past-the-end element of the matrix
      * \return a const iterator pointing to the past-the-end element of the matrix
      */
+    template<cpp_disable_if_cst(has_direct_access<Expr>::value)>
     iterator<const this_type, true> end() const noexcept {
         return {*this, size(*this)};
     }
