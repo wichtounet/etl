@@ -21,6 +21,7 @@ namespace etl {
 enum class outer_impl {
     STD,  ///< Standard implementation
     BLAS, ///< BLAS implementation
+    VEC   ///< VEC implementation
 };
 
 } //end of namespace etl

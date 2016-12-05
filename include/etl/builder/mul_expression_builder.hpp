@@ -198,4 +198,28 @@ auto outer(A&& a, B&& b, C&& c){
     return std::forward<C>(c);
 }
 
+/*!
+ * \brief Batch Outer product multiplication of two matrices
+ * \param a The left hand side matrix
+ * \param b The right hand side matrix
+ * \return An expression representing the outer product multiplication of a and b
+ */
+template <typename A, typename B>
+auto batch_outer(A&& a, B&& b) -> detail::temporary_binary_helper<A, B, batch_outer_product_expr> {
+    return {std::forward<A>(a), std::forward<B>(b)};
+}
+
+/*!
+ * \brief Batch Outer product multiplication of two matrices and store the result in c
+ * \param a The left hand side matrix
+ * \param b The right hand side matrix
+ * \param c The expression used to store the result
+ * \return An expression representing the outer product multiplication of a and b
+ */
+template <typename A, typename B, typename C>
+auto batch_outer(A&& a, B&& b, C&& c){
+    c = batch_outer(std::forward<A>(a), std::forward<B>(b));
+    return std::forward<C>(c);
+}
+
 } //end of namespace etl

@@ -589,6 +589,61 @@ TEMPLATE_TEST_CASE_2("lvalue/mmul2", "[gemm]", Z, float, double) {
     REQUIRE_EQUALS(c(1, 1, 1), 154);
 }
 
+// batch outer product
+
+TEMPLATE_TEST_CASE_2("batch_outer/1", "[outer]", Z, float, double) {
+    etl::fast_matrix<Z, 2, 3> a = {1.0, 2.0, 3.0, 4.0, 5.0, 6.0};
+    etl::fast_matrix<Z, 2, 3> b = {4.0, 5.0, 6.0, 7.0, 8.0, 9.0};
+
+    etl::fast_matrix<Z, 3, 3> c;
+    etl::fast_matrix<Z, 3, 3> c_ref;
+
+    c = batch_outer(a, b);
+
+    c_ref = 0;
+
+    for (std::size_t bb = 0; bb < 2; ++bb) {
+        for (std::size_t i = 0; i < 3; ++i) {
+            for (std::size_t j = 0; j < 3; ++j) {
+
+                c_ref(i, j) += a(bb, i) * b(bb, j);
+            }
+        }
+    }
+
+    for(size_t i = 0; i < c_ref.size(); ++i){
+        REQUIRE_EQUALS_APPROX(c[i], c_ref[i]);
+    }
+}
+
+TEMPLATE_TEST_CASE_2("batch_outer/2", "[outer]", Z, float, double) {
+    etl::dyn_matrix<Z, 2> a(32, 31);
+    etl::dyn_matrix<Z, 2> b(32, 23);
+
+    a = 0.01 * etl::sequence_generator(1.0);
+    b = -0.032 * etl::sequence_generator(1.0);
+
+    etl::dyn_matrix<Z, 2> c(31, 23);
+    etl::dyn_matrix<Z, 2> c_ref(31, 23);
+
+    c = batch_outer(a, b);
+
+    c_ref = 0;
+
+    for (std::size_t bb = 0; bb < 32; ++bb) {
+        for (std::size_t i = 0; i < 31; ++i) {
+            for (std::size_t j = 0; j < 23; ++j) {
+
+                c_ref(i, j) += a(bb, i) * b(bb, j);
+            }
+        }
+    }
+
+    for(size_t i = 0; i < c_ref.size(); ++i){
+        REQUIRE_EQUALS_APPROX(c[i], c_ref[i]);
+    }
+}
+
 #ifdef ETL_CUDA
 
 TEMPLATE_TEST_CASE_2("gpu/mmul_1", "[gemm]", Z, float, double) {
