@@ -1236,12 +1236,12 @@ void conv4_full(const I& input, const KK& kernel, CC&& conv) {
                     for (std::size_t i = first; i < last; ++i) {
                         // k = 0
                         for (std::size_t c = 0; c < C; ++c) {
-                            conv2_full<V>(input(i)(0), prepared_k(0)(c), conv(i)(c), T(0));
+                            conv2_full_flipped<V>(input(i)(0), prepared_k(0)(c), conv(i)(c), T(0));
                         }
 
                         for (std::size_t k = 1; k < K; ++k) {
                             for (std::size_t c = 0; c < C; ++c) {
-                                conv2_full<V>(input(i)(k), prepared_k(k)(c), conv(i)(c), T(1));
+                                conv2_full_flipped<V>(input(i)(k), prepared_k(k)(c), conv(i)(c), T(1));
                             }
                         }
                     }
@@ -1255,12 +1255,12 @@ void conv4_full(const I& input, const KK& kernel, CC&& conv) {
                     for (std::size_t i = 0; i < N; ++i) {
                         // k = 0
                         for (std::size_t c = first; c < last; ++c) {
-                            conv2_full<V>(input(i)(0), prepared_k(0)(c), conv(i)(c), T(0));
+                            conv2_full_flipped<V>(input(i)(0), prepared_k(0)(c), conv(i)(c), T(0));
                         }
 
                         for (std::size_t k = 1; k < K; ++k) {
                             for (std::size_t c = first; c < last; ++c) {
-                                conv2_full<V>(input(i)(k), prepared_k(k)(c), conv(i)(c), T(1));
+                                conv2_full_flipped<V>(input(i)(k), prepared_k(k)(c), conv(i)(c), T(1));
                             }
                         }
                     }
@@ -1307,28 +1307,19 @@ void conv4_full_flipped(const I& input, const KK& kernel, CC&& conv) {
     const auto K = etl::dim<0>(kernel);
     const auto C = etl::dim<1>(kernel);
 
-    const auto k1 = etl::dim<2>(kernel);
-    const auto k2 = etl::dim<3>(kernel);
-
     if (C > 0) {
-        etl::dyn_matrix<T, 4> prepared_k(K, C, k1, k2);
-
-        std::copy(kernel.memory_start(), kernel.memory_end(), prepared_k.memory_start());
-
-        prepared_k.deep_fflip_inplace();
-
         if(N > C){
             auto batch_fun_n = [&](const std::size_t first, const std::size_t last){
                 if(last - first){
                     for (std::size_t i = first; i < last; ++i) {
                         // k = 0
                         for (std::size_t c = 0; c < C; ++c) {
-                            conv2_full_flipped<V>(input(i)(0), prepared_k(0)(c), conv(i)(c), T(0));
+                            conv2_full_flipped<V>(input(i)(0), kernel(0)(c), conv(i)(c), T(0));
                         }
 
                         for (std::size_t k = 1; k < K; ++k) {
                             for (std::size_t c = 0; c < C; ++c) {
-                                conv2_full_flipped<V>(input(i)(k), prepared_k(k)(c), conv(i)(c), T(1));
+                                conv2_full_flipped<V>(input(i)(k), kernel(k)(c), conv(i)(c), T(1));
                             }
                         }
                     }
@@ -1342,12 +1333,12 @@ void conv4_full_flipped(const I& input, const KK& kernel, CC&& conv) {
                     for (std::size_t i = 0; i < N; ++i) {
                         // k = 0
                         for (std::size_t c = first; c < last; ++c) {
-                            conv2_full_flipped<V>(input(i)(0), prepared_k(0)(c), conv(i)(c), T(0));
+                            conv2_full_flipped<V>(input(i)(0), kernel(0)(c), conv(i)(c), T(0));
                         }
 
                         for (std::size_t k = 1; k < K; ++k) {
                             for (std::size_t c = first; c < last; ++c) {
-                                conv2_full_flipped<V>(input(i)(k), prepared_k(k)(c), conv(i)(c), T(1));
+                                conv2_full_flipped<V>(input(i)(k), kernel(k)(c), conv(i)(c), T(1));
                             }
                         }
                     }
