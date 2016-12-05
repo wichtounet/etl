@@ -506,75 +506,6 @@ void conv2_valid(const I& input, const K& kernel, C&& conv, size_t s1, size_t s2
     }
 }
 
-/*!
- * \brief SSE implementation of a 2D 'valid' convolution C = I * K
- * \param input The input matrix
- * \param kernel The kernel matrix
- * \param conv The output matrix
- * \param s1 The first dimension stride
- * \param s2 The second dimension stride
- * \param p1 The first dimension padding (left and right)
- * \param p2 The second dimension padding (top and bottom)
- */
-template <typename T>
-void conv2_valid(const opaque_memory<T, 2>& input, const opaque_memory<T, 2>& kernel, const opaque_memory<T, 2>& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
-    if(cpp_unlikely(p1 || p2)){
-        const auto ws_h = input.template dim<0>() + 2 * p1;
-        const auto ws_w = input.template dim<1>() + 2 * p2;
-
-        if(ws_h * ws_w * sizeof(T) < max_workspace){
-            etl::dyn_matrix<T, 2> workspace(ws_h, ws_w, T(0));
-            auto ws_direct = workspace.direct();
-
-            detail::pad_2d_input(input, ws_direct, p1, p2);
-
-            conv2_valid(workspace.direct(), kernel, conv, s1, s2, 0, 0);
-
-            return;
-        }
-    }
-
-    const auto k2 = kernel.dim(1);
-
-    if(padding_impl){
-        constexpr size_t AS = std::is_same<T, float>::value ? 8 : 4;
-        constexpr size_t SS = AS / 2;
-
-        if(k2 < SS || k2 % AS > 0){
-            const auto pad = k2 < SS ? SS - k2 % SS : AS - k2 % AS;
-
-            auto padded_input = common::pad_right(input, pad);
-            auto padded_kernel = common::pad_right_flip(kernel, pad);
-
-            if(detail::prefer_sse<T>(k2 + pad)){
-                etl::impl::sse::conv2_valid_flipped_micro_kernel(
-                    padded_input.memory_start(), padded_input.template dim<0>(), padded_input.template dim<1>(),
-                    padded_kernel.memory_start(), padded_kernel.template dim<0>(), padded_kernel.template dim<1>(),
-                    conv.memory_start(), 0.0, s1, s2, p1, p2);
-            } else {
-                detail::conv2_valid_flipped_micro_kernel(
-                    padded_input.memory_start(), padded_input.template dim<0>(), padded_input.template dim<1>(),
-                    padded_kernel.memory_start(), padded_kernel.template dim<0>(), padded_kernel.template dim<1>(),
-                    conv.memory_start(), 0.0, s1, s2, p1, p2);
-            }
-
-            return;
-        }
-    }
-
-    if(detail::prefer_sse<T>(k2)){
-        etl::impl::sse::conv2_valid_micro_kernel(
-            input.memory_start(), input.template dim<0>(), input.template dim<1>(),
-            kernel.memory_start(), kernel.template dim<0>(), kernel.template dim<1>(),
-            conv.memory_start(), 0.0, s1, s2, p1, p2);
-    } else {
-        detail::conv2_valid_micro_kernel(
-            input.memory_start(), input.template dim<0>(), input.template dim<1>(),
-            kernel.memory_start(), kernel.template dim<0>(), kernel.template dim<1>(),
-            conv.memory_start(), 0.0, s1, s2, p1, p2);
-    }
-}
-
 template <typename V, typename I, typename K, typename C>
 void conv1_valid(const I& input, const K& kernel, C&& conv, std::size_t first, std::size_t last) {
     using vec_type = V;
@@ -1353,9 +1284,9 @@ void conv4_full(const I& input, const K& kernel, C&& conv) {
         const auto k2 = etl::dim<3>(kernel);
 
         if (detail::prefer_sse<value_t<I>>(k2)) {
-            return conv4_full<avx_vec>(input, kernel, conv);
+            return conv4_full<detail::safe_avx_vec>(input, kernel, conv);
         } else {
-            return conv4_full<sse_vec>(input, kernel, conv);
+            return conv4_full<detail::safe_sse_vec>(input, kernel, conv);
         }
     } else {
         return conv4_full<default_vec>(input, kernel, conv);
@@ -1440,9 +1371,9 @@ void conv4_full_flipped(const I& input, const K& kernel, C&& conv) {
         const auto k2 = etl::dim<3>(kernel);
 
         if (detail::prefer_sse<value_t<I>>(k2)) {
-            return conv4_full_flipped<avx_vec>(input, kernel, conv);
+            return conv4_full_flipped<detail::safe_avx_vec>(input, kernel, conv);
         } else {
-            return conv4_full_flipped<sse_vec>(input, kernel, conv);
+            return conv4_full_flipped<detail::safe_sse_vec>(input, kernel, conv);
         }
     } else {
         return conv4_full_flipped<default_vec>(input, kernel, conv);
