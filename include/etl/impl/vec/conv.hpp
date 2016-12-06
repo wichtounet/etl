@@ -1473,7 +1473,7 @@ void conv2_valid_multi_flipped(const I& input, const KK& kernel, C&& conv, size_
             if(detail::prefer_sse<T>(k2 + pad)){
                 auto fun_k = [&](const size_t first, const size_t last) {
                     for (std::size_t k = first; k < last; ++k) {
-                        detail::conv2_valid_flipped_micro_kernel<detail::safe_sse_vec>(padded_input, padded_kernel(k), conv(k), s1, s2, p1, p2, 0.0);
+                        detail::conv2_valid_flipped_micro_kernel<detail::safe_sse_vec>(padded_input, padded_kernel(k), conv(k), s1, s2, p1, p2, T(0));
                     }
                 };
 
@@ -1481,7 +1481,7 @@ void conv2_valid_multi_flipped(const I& input, const KK& kernel, C&& conv, size_
             } else {
                 auto fun_k = [&](const size_t first, const size_t last) {
                     for (std::size_t k = first; k < last; ++k) {
-                        detail::conv2_valid_flipped_micro_kernel<detail::safe_avx_vec>(padded_input, padded_kernel(k), conv(k), s1, s2, p1, p2, 0.0);
+                        detail::conv2_valid_flipped_micro_kernel<detail::safe_avx_vec>(padded_input, padded_kernel(k), conv(k), s1, s2, p1, p2, T(0));
                     }
                 };
 
@@ -1492,18 +1492,19 @@ void conv2_valid_multi_flipped(const I& input, const KK& kernel, C&& conv, size_
         }
     }
 
-    if(detail::prefer_sse<T>(k2)){
+    if (detail::prefer_sse<T>(k2)) {
         auto fun_k = [&](const size_t first, const size_t last) {
             for (std::size_t k = first; k < last; ++k) {
-                detail::conv2_valid_flipped_micro_kernel<detail::safe_sse_vec>(input, kernel(k), conv(k), s1, s2, p1, p2, 0.0);
+                detail::conv2_valid_flipped_micro_kernel<detail::safe_sse_vec>(input, kernel(k), conv(k), s1, s2, p1, p2, T(0));
             }
         };
 
         dispatch_1d_any(select_parallel(K, 2), fun_k, 0, K);
     } else {
+
         auto fun_k = [&](const size_t first, const size_t last) {
             for (std::size_t k = first; k < last; ++k) {
-                detail::conv2_valid_flipped_micro_kernel<detail::safe_avx_vec>(input, kernel(k), conv(k), s1, s2, p1, p2, 0.0);
+                detail::conv2_valid_flipped_micro_kernel<detail::safe_avx_vec>(input, kernel(k), conv(k), s1, s2, p1, p2, T(0));
             }
         };
 
