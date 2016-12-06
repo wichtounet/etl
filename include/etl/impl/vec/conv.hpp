@@ -1787,7 +1787,7 @@ template <typename I, typename KK, typename CC>
 void conv4_valid_flipped(const I& input, const KK& kernel, CC&& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
     using T = value_t<I>;
 
-    if(kernel.dim(1) > 0){
+    if(etl::dim<0>(kernel) > 0){
         const auto N = etl::dim<0>(input);  // The number of images
         const auto K = etl::dim<0>(kernel); // The number of kernels
         const auto C = etl::dim<1>(input);  // The number of channels
