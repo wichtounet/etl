@@ -29,7 +29,8 @@ namespace detail {
  * \tparam B The type of b expression
  * \tparam C The type of c expression
  * \return The implementation to use
- */ template <typename A, typename B, typename C>
+ */
+template <typename A, typename B, typename C>
 cpp14_constexpr etl::outer_impl select_default_outer_impl() {
     if (is_cblas_enabled) {
         return etl::outer_impl::BLAS;
@@ -100,9 +101,13 @@ struct outer_product_impl {
  * \tparam B The type of b expression
  * \tparam C The type of c expression
  * \return The implementation to use
- */ template <typename A, typename B, typename C>
+ */
+template <typename A, typename B, typename C>
 cpp14_constexpr etl::outer_impl select_default_batch_outer_impl() {
-    //TODO BLAS
+    if(is_cblas_enabled){
+        return etl::outer_impl::BLAS;
+    }
+
     //TODO VEC
 
     return etl::outer_impl::STD;
@@ -164,6 +169,8 @@ struct batch_outer_product_impl {
 
         if (impl == etl::outer_impl::STD) {
             etl::impl::standard::batch_outer(a, b, c);
+        } else if (impl == etl::outer_impl::BLAS) {
+            etl::impl::blas::batch_outer(a, b, c);
         } else {
             cpp_unreachable("Invalid batch_outer selection");
         }

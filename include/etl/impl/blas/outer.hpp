@@ -59,6 +59,45 @@ void outer(const A& a, const B& b, C&& c) {
         c.memory_start(), etl::dim<0>(b));
 }
 
+/*!
+ * \brief Compute the batch_outer product of a and b and store the result in c
+ * \param a The lhs expression
+ * \param b The rhs expression
+ * \param c The output expression
+ */
+template <typename A, typename B, typename C, cpp_enable_if(all_single_precision<A, B, C>::value)>
+void batch_outer(const A& a, const B& b, C&& c) {
+    c = 0;
+
+    for(std::size_t i = 0; i < etl::dim<0>(b); ++i){
+        cblas_sger(
+            CblasRowMajor,
+            etl::dim<1>(a), etl::dim<1>(b),
+            1.0,
+            a(i).memory_start(), 1,
+            b(i).memory_start(), 1,
+            c.memory_start(), etl::dim<1>(b));
+    }
+}
+
+/*!
+ * \copydoc batch_outer
+ */
+template <typename A, typename B, typename C, cpp_enable_if(all_double_precision<A, B, C>::value)>
+void batch_outer(const A& a, const B& b, C&& c) {
+    c = 0;
+
+    for(std::size_t i = 0; i < etl::dim<0>(b); ++i){
+        cblas_dger(
+            CblasRowMajor,
+            etl::dim<1>(a), etl::dim<1>(b),
+            1.0,
+            a(i).memory_start(), 1,
+            b(i).memory_start(), 1,
+            c.memory_start(), etl::dim<1>(b));
+    }
+}
+
 #else
 
 /*!
@@ -66,6 +105,14 @@ void outer(const A& a, const B& b, C&& c) {
  */
 template <typename A, typename B, typename C>
 void outer(const A& /*a*/, const B& /*b*/, C&& /*c*/) {
+    cpp_unreachable("BLAS not enabled/available");
+}
+
+/*!
+ * \copydoc batch_outer
+ */
+template <typename A, typename B, typename C>
+void batch_outer(const A& /*a*/, const B& /*b*/, C&& /*c*/) {
     cpp_unreachable("BLAS not enabled/available");
 }
 
