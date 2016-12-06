@@ -176,7 +176,7 @@ etl::dyn_matrix<value_t<I>, 2> pad_right_flip_general(const I& input, size_t pad
     return padded_input;
 }
 
-template <typename I>
+template <typename I, cpp_enable_if((decay_traits<I>::dimensions() == 3))>
 etl::dyn_matrix<value_t<I>, 3> pad_right_multi_general(const I& input, size_t pad){
     using T = value_t<I>;
 
@@ -196,7 +196,26 @@ etl::dyn_matrix<value_t<I>, 3> pad_right_multi_general(const I& input, size_t pa
     return padded_input;
 }
 
-template <typename I>
+template <typename I, cpp_enable_if((decay_traits<I>::dimensions() == 4))>
+etl::dyn_matrix<value_t<I>, 4> pad_right_multi_general(const I& input, size_t pad){
+    using T = value_t<I>;
+
+    etl::dyn_matrix<T, 4> padded_input(etl::dim<0>(input), etl::dim<1>(input), etl::dim<2>(input), etl::dim<3>(input) + pad);
+
+    padded_input = 0;
+
+    for(size_t i = 0; i < etl::dim<0>(input); ++i){
+        for(size_t j = 0; j < etl::dim<1>(input); ++j){
+            for(size_t k = 0; k < etl::dim<2>(input); ++k){
+                direct_copy_n(input(i)(j).memory_start(), padded_input(i)(j).memory_start(), etl::dim<3>(input));
+            }
+        }
+    }
+
+    return padded_input;
+}
+
+template <typename I, cpp_enable_if((decay_traits<I>::dimensions() == 3))>
 etl::dyn_matrix<value_t<I>, 3> pad_right_flip_multi_general(const I& input, size_t pad){
     using T = value_t<I>;
 
@@ -219,6 +238,33 @@ etl::dyn_matrix<value_t<I>, 3> pad_right_flip_multi_general(const I& input, size
                 flipped.memory_start() + i * flipped.dim(1) * flipped.dim(2) + j * flipped.dim(2),
                 padded_input.memory_start() + i * padded_input.dim(1) * padded_input.dim(2) + j * padded_input.dim(2),
                 etl::dim<2>(input));
+        }
+    }
+
+    return padded_input;
+}
+
+template <typename I, cpp_enable_if((decay_traits<I>::dimensions() == 4))>
+etl::dyn_matrix<value_t<I>, 4> pad_right_flip_multi_general(const I& input, size_t pad){
+    using T = value_t<I>;
+
+    etl::dyn_matrix<T, 4> flipped(etl::dim<0>(input), etl::dim<1>(input), etl::dim<2>(input), etl::dim<3>(input));
+
+    for(size_t i = 0; i < etl::dim<0>(input); ++i){
+        for(size_t j = 0; j < etl::dim<1>(input); ++j){
+            std::reverse_copy(input(i)(j).memory_start(), input(i)(j).memory_end(), flipped(i)(j).memory_start());
+        }
+    }
+
+    etl::dyn_matrix<T, 4> padded_input(etl::dim<0>(input), etl::dim<1>(input), etl::dim<2>(input), etl::dim<3>(input) + pad);
+
+    padded_input = 0;
+
+    for(size_t i = 0; i < etl::dim<0>(input); ++i){
+        for(size_t j = 0; j < etl::dim<1>(input); ++j){
+            for(size_t k = 0; k < etl::dim<2>(input); ++k){
+                direct_copy_n(flipped(i)(j).memory_start(), padded_input(i)(j).memory_start(), etl::dim<3>(input));
+            }
         }
     }
 
