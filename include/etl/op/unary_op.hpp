@@ -1169,7 +1169,7 @@ struct max_scalar_op {
 
     /*!
      * \brief Compute several applications of the operator at a time
-     * \param x The vector on which to operate
+     * \param lhs The vector on which to operate
      * \tparam V The vectorization mode
      * \return a vector containing several results of the operator
      */
