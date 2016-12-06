@@ -1689,9 +1689,9 @@ void conv4_valid(const I& input, const KK& kernel, CC&& conv, size_t s1, size_t 
     using T = value_t<I>;
 
     if(kernel.dim(1) > 0){
-        const auto N = input.dim(0);  // The number of images
-        const auto K = kernel.dim(0); // The number of kernels
-        const auto C = input.dim(1);  // The number of channels
+        const auto N = etl::dim<0>(input);  // The number of images
+        const auto K = etl::dim<0>(kernel); // The number of kernels
+        const auto C = etl::dim<1>(input);  // The number of channels
 
         const auto k2 = kernel.dim(3);
 
@@ -1788,9 +1788,9 @@ void conv4_valid_flipped(const I& input, const KK& kernel, CC&& conv, size_t s1,
     using T = value_t<I>;
 
     if(kernel.dim(1) > 0){
-        const auto N = input.dim(0);  // The number of images
-        const auto K = kernel.dim(0); // The number of kernels
-        const auto C = input.dim(1);  // The number of channels
+        const auto N = etl::dim<0>(input);  // The number of images
+        const auto K = etl::dim<0>(kernel); // The number of kernels
+        const auto C = etl::dim<1>(input);  // The number of channels
 
         const auto k2 = kernel.dim(3);
 
