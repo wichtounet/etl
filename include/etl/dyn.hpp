@@ -540,7 +540,7 @@ public:
      */
     template <typename E>
     void inherit_if_null(const E& e){
-        static_assert(n_dimensions == etl::dimensions(e), "Cannot inherit from an expression with different number of dimensions");
+        static_assert(n_dimensions == etl::decay_traits<E>::dimensions(), "Cannot inherit from an expression with different number of dimensions");
         static_assert(!etl::decay_traits<E>::is_generator, "Cannot inherit dimensions from a generator expression");
 
         if(!_memory){
