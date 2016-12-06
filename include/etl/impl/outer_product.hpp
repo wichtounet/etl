@@ -15,6 +15,7 @@
 //Include the implementations
 #include "etl/impl/std/outer.hpp"
 #include "etl/impl/blas/outer.hpp"
+#include "etl/impl/vec/outer.hpp"
 
 namespace etl {
 
@@ -104,11 +105,13 @@ struct outer_product_impl {
  */
 template <typename A, typename B, typename C>
 cpp14_constexpr etl::outer_impl select_default_batch_outer_impl() {
+    if(vec_enabled){
+        return etl::outer_impl::VEC;
+    }
+
     if(is_cblas_enabled){
         return etl::outer_impl::BLAS;
     }
-
-    //TODO VEC
 
     return etl::outer_impl::STD;
 }
@@ -171,6 +174,8 @@ struct batch_outer_product_impl {
             etl::impl::standard::batch_outer(a, b, c);
         } else if (impl == etl::outer_impl::BLAS) {
             etl::impl::blas::batch_outer(a, b, c);
+        } else if (impl == etl::outer_impl::VEC) {
+            etl::impl::vec::batch_outer(a, b, c);
         } else {
             cpp_unreachable("Invalid batch_outer selection");
         }
