@@ -817,9 +817,9 @@ void conv2_full_multi(const opaque_memory<T, 2>& input, const opaque_memory<T, 3
 
 /*!
  * \brief Perform the 2D full convolution of a with multiple kernels of b and store the result in c
- * \param a The input matrix
- * \param b The kernel matrix
- * \param c The output matrix
+ * \param input The input matrix
+ * \param kernel The kernel matrix
+ * \param conv The output matrix
  */
 template <typename T>
 void conv2_full_multi_flipped(const opaque_memory<T, 2>& input, const opaque_memory<T, 3>& kernel, const opaque_memory<T, 3>& conv) {
@@ -834,9 +834,9 @@ void conv2_full_multi_flipped(const opaque_memory<T, 2>& input, const opaque_mem
 
 /*!
  * \brief Perform the 4D full convolution of a with b and store the result in c
- * \param a The input matrix
- * \param b The kernel matrix
- * \param c The output matrix
+ * \param input The input matrix
+ * \param kernel The kernel matrix
+ * \param conv The output matrix
  */
 template <typename T>
 void conv4_full(const opaque_memory<T, 4>& input, const opaque_memory<T, 4>& kernel, const opaque_memory<T, 4>& conv) {
@@ -931,9 +931,9 @@ void conv4_full(const opaque_memory<T, 4>& input, const opaque_memory<T, 4>& ker
 
 /*!
  * \brief Perform the 4D full convolution of a with b and store the result in c
- * \param a The input matrix
- * \param b The kernel matrix
- * \param c The output matrix
+ * \param input The input matrix
+ * \param kernel The kernel matrix
+ * \param conv The output matrix
  */
 template <typename T>
 void conv4_full_flipped(const opaque_memory<T, 4>& input, const opaque_memory<T, 4>& kernel, const opaque_memory<T, 4>& conv) {
