@@ -35,8 +35,8 @@ void outer(const A& a, const B& b, C&& c) {
 
 /*!
  * \brief Compute the batch outer product of a and b and store the result in c
- * \param a The a expression
- * \param b The b expression
+ * \param lhs The a expression
+ * \param rhs The b expression
  * \param c The c expression
  */
 template <typename A, typename B, typename C>
