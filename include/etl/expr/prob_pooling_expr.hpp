@@ -165,7 +165,7 @@ struct dyn_basic_pmp_h_expr : impl_expr<dyn_basic_pmp_h_expr<T, D, Impl>> {
      * \tparam A The sub epxpression type
      */
     template <typename A>
-    using result_type = detail::expr_result_t<this_type, A>;
+    using result_type = detail::dyn_expr_result_t<this_type, A>;
 
     /*!
      * \brief Apply the expression
