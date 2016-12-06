@@ -52,7 +52,10 @@ void scalar_add(T&& lhs, value_t<T> rhs) {
  * \param rhs The scalar
  */
 template <typename T, cpp_enable_if(!all_floating<T>::value)>
-void scalar_add(T&& /*lhs*/, value_t<T> /*rhs*/) {}
+void scalar_add(T&& lhs, value_t<T> rhs) {
+    cpp_unused(lhs);
+    cpp_unused(rhs);
+}
 
 /*!
  * \brief Subtract the rhs scalar value from each element of lhs
@@ -82,7 +85,10 @@ void scalar_sub(T&& lhs, value_t<T> rhs) {
  * \param rhs The scalar
  */
 template <typename T, cpp_enable_if(!all_floating<T>::value)>
-void scalar_sub(T&& /*lhs*/, value_t<T> /*rhs*/) {}
+void scalar_sub(T&& lhs, value_t<T> rhs) {
+    cpp_unused(lhs);
+    cpp_unused(rhs);
+}
 
 /*!
  * \brief Multiply each element of lhs by the rhs scalar value
@@ -110,7 +116,10 @@ void scalar_mul(T&& lhs, value_t<T> rhs) {
  * \param rhs The scalar
  */
 template <typename T, cpp_enable_if(!all_floating<T>::value)>
-void scalar_mul(T&& /*lhs*/, value_t<T> /*rhs*/) {}
+void scalar_mul(T&& lhs, value_t<T> rhs) {
+    cpp_unused(lhs);
+    cpp_unused(rhs);
+}
 
 /*!
  * \brief Divide each element of lhs by the rhs scalar value
@@ -138,7 +147,10 @@ void scalar_div(T&& lhs, value_t<T> rhs) {
  * \param rhs The scalar
  */
 template <typename T, cpp_enable_if(!all_floating<T>::value)>
-void scalar_div(T&& /*lhs*/, value_t<T> /*rhs*/) {}
+void scalar_div(T&& lhs, value_t<T> rhs) {
+    cpp_unused(lhs);
+    cpp_unused(rhs);
+}
 
 #else
 
