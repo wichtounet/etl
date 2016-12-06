@@ -36,6 +36,8 @@ void batch_outer(const L& lhs, const R& rhs, C&& result) {
     const auto M = etl::dim<0>(result);
     const auto N = etl::dim<1>(result);
 
+    // TODO Ideally, we would need a kernel for very small matrices
+
     result = 0;
 
     auto batch_fun_m = [&](const size_t first, const size_t last) {
@@ -71,6 +73,50 @@ void batch_outer(const L& lhs, const R& rhs, C&& result) {
                 auto f8 = vec_type::set(factor8);
 
                 size_t j = 0;
+
+                for (; j + 2 * vec_size - 1 < N; j += 2 * vec_size) {
+                    auto r11 = result.template loadu<vec_type>(i * N + j + 0 * vec_size);
+                    auto r21 = result.template loadu<vec_type>(i * N + j + 1 * vec_size);
+
+                    auto a11 = rhs.template loadu<vec_type>(b1 * N + j + 0 * vec_size);
+                    auto a12 = rhs.template loadu<vec_type>(b2 * N + j + 0 * vec_size);
+                    auto a13 = rhs.template loadu<vec_type>(b3 * N + j + 0 * vec_size);
+                    auto a14 = rhs.template loadu<vec_type>(b4 * N + j + 0 * vec_size);
+                    auto a15 = rhs.template loadu<vec_type>(b5 * N + j + 0 * vec_size);
+                    auto a16 = rhs.template loadu<vec_type>(b6 * N + j + 0 * vec_size);
+                    auto a17 = rhs.template loadu<vec_type>(b7 * N + j + 0 * vec_size);
+                    auto a18 = rhs.template loadu<vec_type>(b8 * N + j + 0 * vec_size);
+
+                    auto a21 = rhs.template loadu<vec_type>(b1 * N + j + 1 * vec_size);
+                    auto a22 = rhs.template loadu<vec_type>(b2 * N + j + 1 * vec_size);
+                    auto a23 = rhs.template loadu<vec_type>(b3 * N + j + 1 * vec_size);
+                    auto a24 = rhs.template loadu<vec_type>(b4 * N + j + 1 * vec_size);
+                    auto a25 = rhs.template loadu<vec_type>(b5 * N + j + 1 * vec_size);
+                    auto a26 = rhs.template loadu<vec_type>(b6 * N + j + 1 * vec_size);
+                    auto a27 = rhs.template loadu<vec_type>(b7 * N + j + 1 * vec_size);
+                    auto a28 = rhs.template loadu<vec_type>(b8 * N + j + 1 * vec_size);
+
+                    r11 = vec_type::template fmadd<Cx>(f1, a11, r11);
+                    r11 = vec_type::template fmadd<Cx>(f2, a12, r11);
+                    r11 = vec_type::template fmadd<Cx>(f3, a13, r11);
+                    r11 = vec_type::template fmadd<Cx>(f4, a14, r11);
+                    r11 = vec_type::template fmadd<Cx>(f5, a15, r11);
+                    r11 = vec_type::template fmadd<Cx>(f6, a16, r11);
+                    r11 = vec_type::template fmadd<Cx>(f7, a17, r11);
+                    r11 = vec_type::template fmadd<Cx>(f8, a18, r11);
+
+                    r21 = vec_type::template fmadd<Cx>(f1, a21, r21);
+                    r21 = vec_type::template fmadd<Cx>(f2, a22, r21);
+                    r21 = vec_type::template fmadd<Cx>(f3, a23, r21);
+                    r21 = vec_type::template fmadd<Cx>(f4, a24, r21);
+                    r21 = vec_type::template fmadd<Cx>(f5, a25, r21);
+                    r21 = vec_type::template fmadd<Cx>(f6, a26, r21);
+                    r21 = vec_type::template fmadd<Cx>(f7, a27, r21);
+                    r21 = vec_type::template fmadd<Cx>(f8, a28, r21);
+
+                    result.template storeu<vec_type>(r11, i * N + j + 0 * vec_size);
+                    result.template storeu<vec_type>(r21, i * N + j + 1 * vec_size);
+                }
 
                 for (; j + vec_size - 1 < N; j += vec_size) {
                     auto r1 = result.template loadu<vec_type>(i * N + j);
@@ -211,7 +257,7 @@ void batch_outer(const L& lhs, const R& rhs, C&& result) {
         }
     };
 
-    dispatch_1d_any(select_parallel(M, 2) && N < 25, batch_fun_m, 0, M);
+    dispatch_1d_any(select_parallel(M, 2) && N > 25, batch_fun_m, 0, M);
 }
 
 template <typename A, typename B, typename C>
