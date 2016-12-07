@@ -246,6 +246,7 @@ CPM_DIRECT_SECTION_TWO_PASS_NS_PF("r = batch_outer(a,b) (s)", outer_policy,
     CPM_SECTION_FUNCTOR("std", [](smat& a, smat& b, smat& c){ c = selected_helper(etl::outer_impl::STD, etl::batch_outer(a, b)); })
     VEC_SECTION_FUNCTOR("vec", [](smat& a, smat& b, smat& c){ c = selected_helper(etl::outer_impl::VEC, etl::batch_outer(a, b)); })
     BLAS_SECTION_FUNCTOR("blas", [](smat& a, smat& b, smat& c){ c = selected_helper(etl::outer_impl::BLAS, etl::batch_outer(a, b)); })
+    CUBLAS_SECTION_FUNCTOR("cublas", [](smat& a, smat& b, smat& c){ c = selected_helper(etl::outer_impl::CUBLAS, etl::batch_outer(a, b)); })
 )
 
 CPM_DIRECT_SECTION_TWO_PASS_NS_PF("r = a dot b (s)", dot_policy,

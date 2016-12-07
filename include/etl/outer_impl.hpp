@@ -19,9 +19,10 @@ namespace etl {
  * outer product
  */
 enum class outer_impl {
-    STD,  ///< Standard implementation
-    BLAS, ///< BLAS implementation
-    VEC   ///< VEC implementation
+    STD,    ///< Standard implementation
+    BLAS,   ///< BLAS implementation
+    CUBLAS, ///< CUBLAS implementation
+    VEC     ///< VEC implementation
 };
 
 } //end of namespace etl

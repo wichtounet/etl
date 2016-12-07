@@ -15,6 +15,7 @@
 //Include the implementations
 #include "etl/impl/std/outer.hpp"
 #include "etl/impl/blas/outer.hpp"
+#include "etl/impl/cublas/outer.hpp"
 #include "etl/impl/vec/outer.hpp"
 
 namespace etl {
@@ -105,12 +106,17 @@ struct outer_product_impl {
  */
 template <typename A, typename B, typename C>
 cpp14_constexpr etl::outer_impl select_default_batch_outer_impl() {
-    if(vec_enabled){
-        return etl::outer_impl::VEC;
-    }
-
     if(is_cblas_enabled){
         return etl::outer_impl::BLAS;
+    }
+
+    // TODO This should only be done with large matrices or if the data is already in memory
+    if(is_cublas_enabled){
+        return etl::outer_impl::CUBLAS;
+    }
+
+    if(vec_enabled){
+        return etl::outer_impl::VEC;
     }
 
     return etl::outer_impl::STD;
@@ -133,6 +139,15 @@ etl::outer_impl select_batch_outer_impl() {
             case outer_impl::BLAS:
                 if (!is_cblas_enabled) {
                     std::cerr << "Forced selection to BLAS outer implementation, but not possible for this expression" << std::endl;
+                    return select_default_batch_outer_impl<A, B, C>();
+                }
+
+                return forced;
+
+            //CUBLAS cannot always be used
+            case outer_impl::CUBLAS:
+                if (!is_cublas_enabled) {
+                    std::cerr << "Forced selection to CUBLAS outer implementation, but not possible for this expression" << std::endl;
                     return select_default_batch_outer_impl<A, B, C>();
                 }
 
@@ -174,6 +189,8 @@ struct batch_outer_product_impl {
             etl::impl::standard::batch_outer(a, b, c);
         } else if (impl == etl::outer_impl::BLAS) {
             etl::impl::blas::batch_outer(a, b, c);
+        } else if (impl == etl::outer_impl::CUBLAS) {
+            etl::impl::cublas::batch_outer(a, b, c);
         } else if (impl == etl::outer_impl::VEC) {
             etl::impl::vec::batch_outer(a, b, c);
         } else {
