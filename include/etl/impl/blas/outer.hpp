@@ -67,17 +67,19 @@ void outer(const A& a, const B& b, C&& c) {
  */
 template <typename A, typename B, typename C, cpp_enable_if(all_single_precision<A, B, C>::value)>
 void batch_outer(const A& a, const B& b, C&& c) {
-    c = 0;
+    const size_t m = etl::rows(c);
+    const size_t n = etl::columns(c);
+    const size_t k = etl::rows(a);
 
-    for(std::size_t i = 0; i < etl::dim<0>(b); ++i){
-        cblas_sger(
-            CblasRowMajor,
-            etl::dim<1>(a), etl::dim<1>(b),
-            1.0,
-            a(i).memory_start(), 1,
-            b(i).memory_start(), 1,
-            c.memory_start(), etl::dim<1>(b));
-    }
+    cblas_sgemm(
+        CblasRowMajor,
+        CblasTrans, CblasNoTrans,
+        m, n, k,
+        1.0f,
+        a.memory_start(), m,
+        b.memory_start(), n,
+        0.0f,
+        c.memory_start(), n);
 }
 
 /*!
@@ -85,17 +87,19 @@ void batch_outer(const A& a, const B& b, C&& c) {
  */
 template <typename A, typename B, typename C, cpp_enable_if(all_double_precision<A, B, C>::value)>
 void batch_outer(const A& a, const B& b, C&& c) {
-    c = 0;
+    const size_t m = etl::rows(c);
+    const size_t n = etl::columns(c);
+    const size_t k = etl::rows(a);
 
-    for(std::size_t i = 0; i < etl::dim<0>(b); ++i){
-        cblas_dger(
-            CblasRowMajor,
-            etl::dim<1>(a), etl::dim<1>(b),
-            1.0,
-            a(i).memory_start(), 1,
-            b(i).memory_start(), 1,
-            c.memory_start(), etl::dim<1>(b));
-    }
+    cblas_dgemm(
+        CblasRowMajor,
+        CblasTrans, CblasNoTrans,
+        m, n, k,
+        1.0,
+        a.memory_start(), m,
+        b.memory_start(), n,
+        0.0,
+        c.memory_start(), n);
 }
 
 #else
