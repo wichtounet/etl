@@ -21,6 +21,16 @@ namespace cufft {
 struct cufft_handle {
     cufftHandle handle; ///< The CUFFT context handle
 
+    cufft_handle(){
+        cufftCreate(&handle);
+    }
+
+    cufft_handle(const cufft_handle& rhs) = delete;
+    cufft_handle& operator=(const cufft_handle& rhs) = delete;
+
+    cufft_handle(cufft_handle&& rhs) = default;
+    cufft_handle& operator=(cufft_handle&& rhs) = default;
+
     /*!
      * \brief Returns the CUFFT context
      * \return the CUFFT context
@@ -42,7 +52,7 @@ struct cufft_handle {
  * \return An handle to the CUFFT context
  */
 inline cufft_handle start_cufft() {
-    return cufft_handle();
+    return {};
 }
 
 /*!

@@ -35,7 +35,7 @@ namespace detail {
 
 template <typename T>
 void inplace_cfft1_kernel(opaque_memory<T,1>& a_gpu, std::size_t n) {
-    cufft_handle handle = start_cufft();
+    decltype(auto) handle = start_cufft();
 
     cufftPlan1d(&handle.get(), n, CUFFT_C2C, 1);
     cufftExecC2C(handle.get(), complex_cast(a_gpu.gpu_memory()), complex_cast(a_gpu.gpu_memory()), CUFFT_FORWARD);
@@ -43,7 +43,7 @@ void inplace_cfft1_kernel(opaque_memory<T,1>& a_gpu, std::size_t n) {
 
 template <typename T>
 void inplace_zfft1_kernel(opaque_memory<T,1>& a_gpu, std::size_t n) {
-    cufft_handle handle = start_cufft();
+    decltype(auto) handle = start_cufft();
 
     cufftPlan1d(&handle.get(), n, CUFFT_Z2Z, 1);
     cufftExecZ2Z(handle.get(), complex_cast(a_gpu.gpu_memory()), complex_cast(a_gpu.gpu_memory()), CUFFT_FORWARD);
@@ -51,7 +51,7 @@ void inplace_zfft1_kernel(opaque_memory<T,1>& a_gpu, std::size_t n) {
 
 template <typename T, std::size_t D>
 void inplace_cfft1_many_kernel(opaque_memory<T,D>& a_gpu, std::size_t batch, std::size_t n) {
-    cufft_handle handle = start_cufft();
+    decltype(auto) handle = start_cufft();
 
     int dims[] = {int(n)};
 
@@ -65,7 +65,7 @@ void inplace_cfft1_many_kernel(opaque_memory<T,D>& a_gpu, std::size_t batch, std
 
 template <typename T, std::size_t D>
 void inplace_zfft1_many_kernel(opaque_memory<T,D>& a_gpu, std::size_t batch, std::size_t n) {
-    cufft_handle handle = start_cufft();
+    decltype(auto) handle = start_cufft();
 
     int dims[] = {int(n)};
 
@@ -79,7 +79,7 @@ void inplace_zfft1_many_kernel(opaque_memory<T,D>& a_gpu, std::size_t batch, std
 
 template <typename T, std::size_t D>
 void inplace_cifft1_many_kernel(opaque_memory<T,D>& a_gpu, std::size_t batch, std::size_t n) {
-    cufft_handle handle = start_cufft();
+    decltype(auto) handle = start_cufft();
 
     int dims[] = {int(n)};
 
@@ -93,7 +93,7 @@ void inplace_cifft1_many_kernel(opaque_memory<T,D>& a_gpu, std::size_t batch, st
 
 template <typename T, std::size_t D>
 void inplace_zifft1_many_kernel(opaque_memory<T,D>& a_gpu, std::size_t batch, std::size_t n) {
-    cufft_handle handle = start_cufft();
+    decltype(auto) handle = start_cufft();
 
     int dims[] = {int(n)};
 
@@ -107,7 +107,7 @@ void inplace_zifft1_many_kernel(opaque_memory<T,D>& a_gpu, std::size_t batch, st
 
 template <typename T>
 void inplace_cifft1_kernel(opaque_memory<T,1>& a_gpu, std::size_t n) {
-    cufft_handle handle = start_cufft();
+    decltype(auto) handle = start_cufft();
 
     cufftPlan1d(&handle.get(), n, CUFFT_C2C, 1);
     cufftExecC2C(handle.get(), complex_cast(a_gpu.gpu_memory()), complex_cast(a_gpu.gpu_memory()), CUFFT_INVERSE);
@@ -115,7 +115,7 @@ void inplace_cifft1_kernel(opaque_memory<T,1>& a_gpu, std::size_t n) {
 
 template <typename T>
 void inplace_zifft1_kernel(opaque_memory<T,1>& a_gpu, std::size_t n) {
-    cufft_handle handle = start_cufft();
+    decltype(auto) handle = start_cufft();
 
     cufftPlan1d(&handle.get(), n, CUFFT_Z2Z, 1);
     cufftExecZ2Z(handle.get(), complex_cast(a_gpu.gpu_memory()), complex_cast(a_gpu.gpu_memory()), CUFFT_INVERSE);
@@ -123,7 +123,7 @@ void inplace_zifft1_kernel(opaque_memory<T,1>& a_gpu, std::size_t n) {
 
 template <typename T>
 inline void inplace_cfft2_kernel(opaque_memory<T,2>& a_gpu, std::size_t d1, std::size_t d2) {
-    cufft_handle handle = start_cufft();
+    decltype(auto) handle = start_cufft();
 
     cufftPlan2d(&handle.get(), d1, d2, CUFFT_C2C);
     cufftExecC2C(handle.get(), complex_cast(a_gpu.gpu_memory()), complex_cast(a_gpu.gpu_memory()), CUFFT_FORWARD);
@@ -131,7 +131,7 @@ inline void inplace_cfft2_kernel(opaque_memory<T,2>& a_gpu, std::size_t d1, std:
 
 template <typename T>
 inline void inplace_zfft2_kernel(opaque_memory<T,2>& a_gpu, std::size_t d1, std::size_t d2) {
-    cufft_handle handle = start_cufft();
+    decltype(auto) handle = start_cufft();
 
     cufftPlan2d(&handle.get(), d1, d2, CUFFT_Z2Z);
     cufftExecZ2Z(handle.get(), complex_cast(a_gpu.gpu_memory()), complex_cast(a_gpu.gpu_memory()), CUFFT_FORWARD);
@@ -139,7 +139,7 @@ inline void inplace_zfft2_kernel(opaque_memory<T,2>& a_gpu, std::size_t d1, std:
 
 template <typename T, std::size_t D>
 void inplace_cfft2_many_kernel(opaque_memory<T,D>& a_gpu, std::size_t batch, std::size_t d1, std::size_t d2) {
-    cufft_handle handle = start_cufft();
+    decltype(auto) handle = start_cufft();
 
     int dims[] = {int(d1), int(d2)};
 
@@ -149,7 +149,7 @@ void inplace_cfft2_many_kernel(opaque_memory<T,D>& a_gpu, std::size_t batch, std
 
 template <typename T, std::size_t D>
 void inplace_zfft2_many_kernel(opaque_memory<T,D>& a_gpu, std::size_t batch, std::size_t d1, std::size_t d2) {
-    cufft_handle handle = start_cufft();
+    decltype(auto) handle = start_cufft();
 
     int dims[] = {int(d1), int(d2)};
 
@@ -163,7 +163,7 @@ void inplace_zfft2_many_kernel(opaque_memory<T,D>& a_gpu, std::size_t batch, std
 
 template <typename T, std::size_t D>
 void inplace_cifft2_many_kernel(opaque_memory<T,D>& a_gpu, std::size_t batch, std::size_t d1, std::size_t d2) {
-    cufft_handle handle = start_cufft();
+    decltype(auto) handle = start_cufft();
 
     int dims[] = {int(d1), int(d2)};
 
@@ -173,7 +173,7 @@ void inplace_cifft2_many_kernel(opaque_memory<T,D>& a_gpu, std::size_t batch, st
 
 template <typename T, std::size_t D>
 void inplace_zifft2_many_kernel(opaque_memory<T,D>& a_gpu, std::size_t batch, std::size_t d1, std::size_t d2) {
-    cufft_handle handle = start_cufft();
+    decltype(auto) handle = start_cufft();
 
     int dims[] = {int(d1), int(d2)};
 
@@ -187,7 +187,7 @@ void inplace_zifft2_many_kernel(opaque_memory<T,D>& a_gpu, std::size_t batch, st
 
 template <typename T>
 void inplace_cifft2_kernel(opaque_memory<T,2>& a_gpu, std::size_t d1, std::size_t d2) {
-    cufft_handle handle = start_cufft();
+    decltype(auto) handle = start_cufft();
 
     cufftPlan2d(&handle.get(), d1, d2, CUFFT_C2C);
     cufftExecC2C(handle.get(), complex_cast(a_gpu.gpu_memory()), complex_cast(a_gpu.gpu_memory()), CUFFT_INVERSE);
@@ -195,7 +195,7 @@ void inplace_cifft2_kernel(opaque_memory<T,2>& a_gpu, std::size_t d1, std::size_
 
 template <typename T>
 void inplace_zifft2_kernel(opaque_memory<T,2>& a_gpu, std::size_t d1, std::size_t d2) {
-    cufft_handle handle = start_cufft();
+    decltype(auto) handle = start_cufft();
 
     cufftPlan2d(&handle.get(), d1, d2, CUFFT_Z2Z);
     cufftExecZ2Z(handle.get(), complex_cast(a_gpu.gpu_memory()), complex_cast(a_gpu.gpu_memory()), CUFFT_INVERSE);
@@ -215,7 +215,7 @@ void conv2_full_kernel(const T* a, std::size_t m1, std::size_t m2, const T* b, s
     const std::size_t s2 = m2 + n2 - 1;
     const std::size_t size = s1 * s2;
 
-    auto handle = start_cufft();
+    decltype(auto) handle = start_cufft();
 
     dyn_vector<etl::complex<T>> a_padded(size);
     dyn_vector<etl::complex<T>> b_padded(size);
@@ -428,7 +428,7 @@ void scale_back(C&& c, float factor) {
     auto c_gpu = c.direct();
 
 #ifdef ETL_CUBLAS_MODE
-    impl::cublas::cublas_handle handle = impl::cublas::start_cublas();
+    decltype(auto) handle = impl::cublas::start_cublas();
 
     cuComplex alpha = make_cuComplex(factor, 0.0);
     cublasCscal(handle.get(), etl::size(c), &alpha, reinterpret_cast<cuComplex*>(c_gpu.gpu_memory()), 1);
@@ -447,7 +447,7 @@ void scale_back(C&& c, double factor) {
     auto c_gpu = c.direct();
 
 #ifdef ETL_CUBLAS_MODE
-    impl::cublas::cublas_handle handle = impl::cublas::start_cublas();
+    decltype(auto) handle = impl::cublas::start_cublas();
 
     cuDoubleComplex alpha = make_cuDoubleComplex(factor, 0.0);
     cublasZscal(handle.get(), etl::size(c), &alpha, reinterpret_cast<cuDoubleComplex*>(c_gpu.gpu_memory()), 1);
@@ -475,7 +475,7 @@ void scale_back_real(A&& a, C&& c) {
 
     c_gpu.gpu_allocate_if_necessary();
 
-    impl::cublas::cublas_handle handle = impl::cublas::start_cublas();
+    decltype(auto) handle = impl::cublas::start_cublas();
 
     //Copy the real part of a to c
     cublasScopy(handle.get(), etl::size(c), reinterpret_cast<float*>(a_gpu.gpu_memory()), 2, reinterpret_cast<float*>(c_gpu.gpu_memory()), 1);
@@ -503,7 +503,7 @@ void scale_back_real(A&& a, C&& c) {
 
     c_gpu.gpu_allocate_if_necessary();
 
-    impl::cublas::cublas_handle handle = impl::cublas::start_cublas();
+    decltype(auto) handle = impl::cublas::start_cublas();
 
     //Copy the real part of a to c
     cublasDcopy(handle.get(), etl::size(c), reinterpret_cast<double*>(a_gpu.gpu_memory()), 2, reinterpret_cast<double*>(c_gpu.gpu_memory()), 1);
@@ -654,7 +654,7 @@ template <typename A, typename B, typename C>
 void conv1_full(A&& a, B&& b, C&& c) {
     using type = value_t<A>;
 
-    auto handle = start_cufft();
+    decltype(auto) handle = start_cufft();
 
     const std::size_t size     = etl::size(c);
 
@@ -1111,7 +1111,7 @@ void conv4_full(const opaque_memory<T, 4>& input, const opaque_memory<T, 4>& ker
 
         std::fill(conv.memory_start(), conv.memory_end(), 0);
 
-        auto handle = start_cufft();
+        decltype(auto) handle = start_cufft();
 
         dyn_matrix<etl::complex<T>, 3> b_padded(K, C, size);
         std::fill(b_padded.memory_start(), b_padded.memory_end(), 0);

@@ -27,11 +27,24 @@ struct cublas_handle {
     cublasHandle_t handle; ///< The raw cublas handle
 
     /*!
+     * \brief Construct the helper and create the handle directly
+     */
+    cublas_handle(){
+        cublasCreate(&handle);
+    }
+
+    /*!
      * \brief Construct the helper from the raw handle
      * \param handle The raw cublas handle
      */
     cublas_handle(cublasHandle_t handle)
             : handle(handle) {}
+
+    cublas_handle(const cublas_handle& rhs) = delete;
+    cublas_handle& operator=(const cublas_handle& rhs) = delete;
+
+    cublas_handle(cublas_handle&& rhs) = default;
+    cublas_handle& operator=(cublas_handle&& rhs) = default;
 
     /*!
      * \brief Get the cublas handle
@@ -49,15 +62,28 @@ struct cublas_handle {
     }
 };
 
+#ifndef ETL_CUBLAS_LOCAL_HANDLE
+
+/*!
+ * \brief Start cublas and return a RTTI helper over a raw cublas handle
+ * \return RTTI helper over a raw cublas handle
+ */
+inline cublas_handle& start_cublas() {
+    static cublas_handle handle;
+    return handle;
+}
+
+#else
+
 /*!
  * \brief Start cublas and return a RTTI helper over a raw cublas handle
  * \return RTTI helper over a raw cublas handle
  */
 inline cublas_handle start_cublas() {
-    cublasHandle_t handle;
-    cublasCreate(&handle);
-    return {handle};
+    return {};
 }
+
+#endif
 
 } //end of namespace cublas
 

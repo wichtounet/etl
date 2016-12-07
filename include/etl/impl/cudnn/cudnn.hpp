@@ -70,7 +70,7 @@ struct cudnn_handle {
     }
 };
 
-#ifdef ETL_CUDNN_GLOBAL_HANDLE
+#ifndef ETL_CUDNN_LOCAL_HANDLE
 
 /*!
  * \brief Start cudnn and return a RTTI helper over a raw cudnn handle
