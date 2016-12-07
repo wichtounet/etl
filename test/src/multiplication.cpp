@@ -620,8 +620,8 @@ TEMPLATE_TEST_CASE_2("batch_outer/2", "[outer]", Z, float, double) {
     etl::dyn_matrix<Z, 2> a(32, 31);
     etl::dyn_matrix<Z, 2> b(32, 23);
 
-    a = 0.01 * etl::sequence_generator(1.0);
-    b = -0.032 * etl::sequence_generator(1.0);
+    a = Z(0.01) * etl::sequence_generator<Z>(1.0);
+    b = Z(-0.032) * etl::sequence_generator<Z>(1.0);
 
     etl::dyn_matrix<Z, 2> c(31, 23);
     etl::dyn_matrix<Z, 2> c_ref(31, 23);
