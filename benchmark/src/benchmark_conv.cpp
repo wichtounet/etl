@@ -385,8 +385,8 @@ CPM_DIRECT_SECTION_TWO_PASS_NS_PF("sconv2_valid_multi_flipped [conv][conv2]", co
     CPM_SECTION_INIT([](std::size_t d1, std::size_t d2, std::size_t d3){ return std::make_tuple(smat(d1,d1), smat3(d3,d2,d2), smat3(d3,d1 - d2 + 1, d1 - d2 + 1)); }),
     CPM_SECTION_FUNCTOR("default", [](smat& a, smat3& b, smat3& r){ r = etl::conv_2d_valid_multi_flipped(a, b); }),
     CPM_SECTION_FUNCTOR("std", [](smat& a, smat3& b, smat3& r){ r = selected_helper(etl::conv_multi_impl::STD, etl::conv_2d_valid_multi_flipped(a, b)); })
-    VEC_SECTION_FUNCTOR("vec", [](smat& a, smat3& b, smat3& r){ r = selected_helper(etl::conv_multi_impl::VEC, etl::conv_2d_valid_multi_flipped(a, b)); })
-    AVX_SECTION_FUNCTOR("avx", [](smat& a, smat3& b, smat3& r){ r = selected_helper(etl::conv_multi_impl::AVX, etl::conv_2d_valid_multi_flipped(a, b)); }),
+    AVX_SECTION_FUNCTOR("avx", [](smat& a, smat3& b, smat3& r){ r = selected_helper(etl::conv_multi_impl::AVX, etl::conv_2d_valid_multi_flipped(a, b)); })
+    VEC_SECTION_FUNCTOR("vec", [](smat& a, smat3& b, smat3& r){ r = selected_helper(etl::conv_multi_impl::VEC, etl::conv_2d_valid_multi_flipped(a, b)); }),
     CPM_SECTION_FUNCTOR("fft", [](smat& a, smat3& b, smat3& r){ r = selected_helper(etl::conv_multi_impl::FFT, etl::conv_2d_valid_multi_flipped(a, b)); }),
     CPM_SECTION_FUNCTOR("blas", [](smat& a, smat3& b, smat3& r){ r = selected_helper(etl::conv_multi_impl::BLAS, etl::conv_2d_valid_multi_flipped(a, b)); })
     CUDNN_SECTION_FUNCTOR("cudnn", [](smat& a, smat3& b, smat3& r){ r = selected_helper(etl::conv_multi_impl::CUDNN, etl::conv_2d_valid_multi_flipped(a, b)); })
