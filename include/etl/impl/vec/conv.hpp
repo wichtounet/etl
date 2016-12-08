@@ -41,13 +41,15 @@ void pad_2d_input(const I& in, C& out, size_t p1, size_t p2) {
 
 template <typename I, typename K, typename C>
 inline void conv2_valid_flipped_border(const I& input, const K& kernel, C&& conv, std::size_t i, std::size_t j, size_t s1, size_t s2, size_t p1, size_t p2, value_t<I> beta) {
-    const auto n1 = etl::dim<1>(input);
+    using T = value_t<I>;
+
+    const auto n1 = etl::dim<0>(input);
     const auto n2 = etl::dim<1>(input);
 
     const auto m1 = etl::dim<0>(kernel);
     const auto m2 = etl::dim<1>(kernel);
 
-    double temp = 0.0;
+    T temp = T(0);
 
     const auto s_i = i * s1;
     const auto s_j = j * s2;
@@ -63,7 +65,7 @@ inline void conv2_valid_flipped_border(const I& input, const K& kernel, C&& conv
         }
     }
 
-    if(beta == 0.0){
+    if(beta == T(0)){
         conv(i, j) = temp;
     } else {
         conv(i, j) = beta * conv(i, j) + temp;
@@ -1688,12 +1690,12 @@ template <typename I, typename KK, typename CC>
 void conv4_valid(const I& input, const KK& kernel, CC&& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
     using T = value_t<I>;
 
-    if(kernel.dim(1) > 0){
+    if(etl::dim<1>(kernel) > 0){
         const auto N = etl::dim<0>(input);  // The number of images
         const auto K = etl::dim<0>(kernel); // The number of kernels
         const auto C = etl::dim<1>(input);  // The number of channels
 
-        const auto k2 = kernel.dim(3);
+        const auto k2 = etl::dim<3>(kernel);
 
         conv = 0;
 
@@ -1792,7 +1794,7 @@ void conv4_valid_flipped(const I& input, const KK& kernel, CC&& conv, size_t s1,
         const auto K = etl::dim<0>(kernel); // The number of kernels
         const auto C = etl::dim<1>(input);  // The number of channels
 
-        const auto k2 = kernel.dim(3);
+        const auto k2 = etl::dim<3>(kernel);
 
         if(padding_impl){
             static constexpr size_t AS = std::is_same<T, float>::value ? 8 : 4;
