@@ -73,7 +73,7 @@ inline void conv2_valid_flipped_border(const I& input, const K& kernel, C&& conv
 }
 
 template <typename V, typename I, typename K, typename C>
-void conv2_valid_flipped_micro_kernel(const I& input, const K& kernel, C&& conv, size_t s1, size_t s2, size_t p1, size_t p2, value_t<I> beta) {
+void conv2_valid_flipped_micro_kernel(const I& input, const K& kernel, C&& conv, size_t s1, size_t s2, size_t p1, size_t p2, value_t<I> beta){
     using T = value_t<I>;
     using vec_type = V;
 
@@ -86,8 +86,220 @@ void conv2_valid_flipped_micro_kernel(const I& input, const K& kernel, C&& conv,
     const auto m1 = etl::dim<0>(kernel);
     const auto m2 = etl::dim<1>(kernel);
 
-    const std::size_t c1 = (n1 - m1 + 2 * p1) / s1 + 1;
-    const std::size_t c2 = (n2 - m2 + 2 * p2) / s2 + 1;
+    const size_t c1 = (n1 - m1 + 2 * p1) / s1 + 1;
+    const size_t c2 = (n2 - m2 + 2 * p2) / s2 + 1;
+
+    // Unfortunately, the compilers are not smart enough to handle SIMD from the
+    // ETL sub views, therefore, we need to use the memory pointers to perform
+    // SIMD directly :(
+
+    auto* kkk = kernel.memory_start();
+    auto* in  = input.memory_start();
+    auto* out = conv.memory_start();
+
+    if(beta == T(0)){
+        for (size_t i = p1; i < c1 - p1; ++i) {
+            size_t j = p2;
+
+            for (; j + 7 < c2 - p2; j += 8) {
+                auto r1 = vec_type::template zero<T>();
+                auto r2 = vec_type::template zero<T>();
+                auto r3 = vec_type::template zero<T>();
+                auto r4 = vec_type::template zero<T>();
+                auto r5 = vec_type::template zero<T>();
+                auto r6 = vec_type::template zero<T>();
+                auto r7 = vec_type::template zero<T>();
+                auto r8 = vec_type::template zero<T>();
+
+                const size_t i_i = i * s1 - p1;
+                const size_t i_j = j * s2 - p2;
+
+                for (size_t k = 0; k < m1; ++k) {
+                    for (size_t l = 0; l + vec_size - 1 < m2; l += vec_size) {
+                        auto k1 = vec_type::loadu(kkk + k * m2 + l);
+
+                        auto i1 = vec_type::loadu(in + (i_i + k) * n2 + i_j + 0 + l);
+                        auto i2 = vec_type::loadu(in + (i_i + k) * n2 + i_j + 1 + l);
+                        auto i3 = vec_type::loadu(in + (i_i + k) * n2 + i_j + 2 + l);
+                        auto i4 = vec_type::loadu(in + (i_i + k) * n2 + i_j + 3 + l);
+                        auto i5 = vec_type::loadu(in + (i_i + k) * n2 + i_j + 4 + l);
+                        auto i6 = vec_type::loadu(in + (i_i + k) * n2 + i_j + 5 + l);
+                        auto i7 = vec_type::loadu(in + (i_i + k) * n2 + i_j + 6 + l);
+                        auto i8 = vec_type::loadu(in + (i_i + k) * n2 + i_j + 7 + l);
+
+                        r1 = vec_type::template fmadd<Cx>(i1, k1, r1);
+                        r2 = vec_type::template fmadd<Cx>(i2, k1, r2);
+                        r3 = vec_type::template fmadd<Cx>(i3, k1, r3);
+                        r4 = vec_type::template fmadd<Cx>(i4, k1, r4);
+                        r5 = vec_type::template fmadd<Cx>(i5, k1, r5);
+                        r6 = vec_type::template fmadd<Cx>(i6, k1, r6);
+                        r7 = vec_type::template fmadd<Cx>(i7, k1, r7);
+                        r8 = vec_type::template fmadd<Cx>(i8, k1, r8);
+                    }
+                }
+
+                out[i * c2 + j + 0] = vec_type::hadd(r1);
+                out[i * c2 + j + 1] = vec_type::hadd(r2);
+                out[i * c2 + j + 2] = vec_type::hadd(r3);
+                out[i * c2 + j + 3] = vec_type::hadd(r4);
+                out[i * c2 + j + 4] = vec_type::hadd(r5);
+                out[i * c2 + j + 5] = vec_type::hadd(r6);
+                out[i * c2 + j + 6] = vec_type::hadd(r7);
+                out[i * c2 + j + 7] = vec_type::hadd(r8);
+            }
+
+            for (; j + 1 < c2 - p2; j += 2) {
+                auto r1 = vec_type::template zero<T>();
+                auto r2 = vec_type::template zero<T>();
+
+                const size_t i_i = i * s1 - p1;
+                const size_t i_j = j * s2 - p2;
+
+                for (size_t k = 0; k < m1; ++k) {
+                    for (size_t l = 0; l + vec_size - 1 < m2; l += vec_size) {
+                        auto k1 = vec_type::loadu(kkk + k * m2 + l);
+
+                        auto i1 = vec_type::loadu(in + (i_i + k) * n2 + i_j + 0 + l);
+                        auto i2 = vec_type::loadu(in + (i_i + k) * n2 + i_j + 1 + l);
+
+                        r1 = vec_type::template fmadd<Cx>(i1, k1, r1);
+                        r2 = vec_type::template fmadd<Cx>(i2, k1, r2);
+                    }
+                }
+
+                out[i * c2 + j + 0] = vec_type::hadd(r1);
+                out[i * c2 + j + 1] = vec_type::hadd(r2);
+            }
+
+            if (j < c2 - p2) {
+                auto r1 = vec_type::template zero<T>();
+
+                const size_t i_i = i * s1 - p1;
+                const size_t i_j = j * s2 - p2;
+
+                for (std::size_t k = 0; k < m1; ++k) {
+                    for (std::size_t l = 0; l + vec_size - 1 < m2; l += vec_size) {
+                        auto k1 = vec_type::loadu(kkk + k * m2 + l);
+                        auto i1 = vec_type::loadu(in + (i_i + k) * n2 + i_j + 0 + l);
+                        r1 = vec_type::template fmadd<Cx>(i1, k1, r1);
+                    }
+                }
+
+                out[i * c2 + j + 0] = vec_type::hadd(r1);
+            }
+        }
+    } else {
+        for (size_t i = p1; i < c1 - p1; ++i) {
+            size_t j = p2;
+
+            for (; j + 7 < c2 - p2; j += 8) {
+                auto r1 = vec_type::template zero<T>();
+                auto r2 = vec_type::template zero<T>();
+                auto r3 = vec_type::template zero<T>();
+                auto r4 = vec_type::template zero<T>();
+                auto r5 = vec_type::template zero<T>();
+                auto r6 = vec_type::template zero<T>();
+                auto r7 = vec_type::template zero<T>();
+                auto r8 = vec_type::template zero<T>();
+
+                const size_t i_i = i * s1 - p1;
+                const size_t i_j = j * s2 - p2;
+
+                for (size_t k = 0; k < m1; ++k) {
+                    for (size_t l = 0; l + vec_size - 1 < m2; l += vec_size) {
+                        auto k1 = vec_type::loadu(kkk + k * m2 + l);
+
+                        auto i1 = vec_type::loadu(in + (i_i + k) * n2 + i_j + 0 + l);
+                        auto i2 = vec_type::loadu(in + (i_i + k) * n2 + i_j + 1 + l);
+                        auto i3 = vec_type::loadu(in + (i_i + k) * n2 + i_j + 2 + l);
+                        auto i4 = vec_type::loadu(in + (i_i + k) * n2 + i_j + 3 + l);
+                        auto i5 = vec_type::loadu(in + (i_i + k) * n2 + i_j + 4 + l);
+                        auto i6 = vec_type::loadu(in + (i_i + k) * n2 + i_j + 5 + l);
+                        auto i7 = vec_type::loadu(in + (i_i + k) * n2 + i_j + 6 + l);
+                        auto i8 = vec_type::loadu(in + (i_i + k) * n2 + i_j + 7 + l);
+
+                        r1 = vec_type::template fmadd<Cx>(i1, k1, r1);
+                        r2 = vec_type::template fmadd<Cx>(i2, k1, r2);
+                        r3 = vec_type::template fmadd<Cx>(i3, k1, r3);
+                        r4 = vec_type::template fmadd<Cx>(i4, k1, r4);
+                        r5 = vec_type::template fmadd<Cx>(i5, k1, r5);
+                        r6 = vec_type::template fmadd<Cx>(i6, k1, r6);
+                        r7 = vec_type::template fmadd<Cx>(i7, k1, r7);
+                        r8 = vec_type::template fmadd<Cx>(i8, k1, r8);
+                    }
+                }
+
+                out[i * c2 + j + 0] = beta * out[i * c2 + j + 0] + vec_type::hadd(r1);
+                out[i * c2 + j + 1] = beta * out[i * c2 + j + 1] + vec_type::hadd(r2);
+                out[i * c2 + j + 2] = beta * out[i * c2 + j + 2] + vec_type::hadd(r3);
+                out[i * c2 + j + 3] = beta * out[i * c2 + j + 3] + vec_type::hadd(r4);
+                out[i * c2 + j + 4] = beta * out[i * c2 + j + 4] + vec_type::hadd(r5);
+                out[i * c2 + j + 5] = beta * out[i * c2 + j + 5] + vec_type::hadd(r6);
+                out[i * c2 + j + 6] = beta * out[i * c2 + j + 6] + vec_type::hadd(r7);
+                out[i * c2 + j + 7] = beta * out[i * c2 + j + 7] + vec_type::hadd(r8);
+            }
+
+            for (; j + 1 < c2 - p2; j += 2) {
+                auto r1 = vec_type::template zero<T>();
+                auto r2 = vec_type::template zero<T>();
+
+                const size_t i_i = i * s1 - p1;
+                const size_t i_j = j * s2 - p2;
+
+                for (size_t k = 0; k < m1; ++k) {
+                    for (size_t l = 0; l + vec_size - 1 < m2; l += vec_size) {
+                        auto k1 = vec_type::loadu(kkk + k * m2 + l);
+
+                        auto i1 = vec_type::loadu(in + (i_i + k) * n2 + i_j + 0 + l);
+                        auto i2 = vec_type::loadu(in + (i_i + k) * n2 + i_j + 1 + l);
+
+                        r1 = vec_type::template fmadd<Cx>(i1, k1, r1);
+                        r2 = vec_type::template fmadd<Cx>(i2, k1, r2);
+                    }
+                }
+
+                out[i * c2 + j + 0] = beta * out[i * c2 + j + 0] + vec_type::hadd(r1);
+                out[i * c2 + j + 1] = beta * out[i * c2 + j + 1] + vec_type::hadd(r2);
+            }
+
+            if (j < c2 - p2) {
+                auto r1 = vec_type::template zero<T>();
+
+                const size_t i_i = i * s1 - p1;
+                const size_t i_j = j * s2 - p2;
+
+                for (std::size_t k = 0; k < m1; ++k) {
+                    for (std::size_t l = 0; l + vec_size - 1 < m2; l += vec_size) {
+                        auto k1 = vec_type::loadu(kkk + k * m2 + l);
+                        auto i1 = vec_type::loadu(in + (i_i + k) * n2 + i_j + 0 + l);
+                        r1 = vec_type::template fmadd<Cx>(i1, k1, r1);
+                    }
+                }
+
+                out[i * c2 + j + 0] = beta * out[i * c2 + j + 0] + vec_type::hadd(r1);
+            }
+        }
+    }
+
+    if (!padding_impl && m2 % vec_size != 0) {
+        auto rem = m2 % vec_size;
+        for (std::size_t i = p1; i < c1 - p1; ++i) {
+            for (std::size_t j = p2; j < c2 - p2; ++j) {
+                T temp = 0.0;
+
+                const auto i_i = i * s1 - p1;
+                const auto i_j = j * s2 - p2;
+
+                for (std::size_t k = 0; k < m1; ++k) {
+                    for (std::size_t l = m2 - rem; l < m2; ++l) {
+                        temp += input(i_i + k, i_j + l) * kernel(k, l);
+                    }
+                }
+
+                conv(i, j) += temp;
+            }
+        }
+    }
 
     if(cpp_unlikely(p1 || p2)){
         for (std::size_t i = 0; i < p1; ++i) {
@@ -111,214 +323,6 @@ void conv2_valid_flipped_micro_kernel(const I& input, const K& kernel, C&& conv,
         for (std::size_t j = c2 - p2; j < c2; ++j) {
             for (std::size_t i = p1; i < c1 - p1; ++i) {
                 conv2_valid_flipped_border(input, kernel, conv, i, j, s1, s2, p1, p2, beta);
-            }
-        }
-    }
-
-    if(beta == T(0)){
-        for (std::size_t i = p1; i < c1 - p1; ++i) {
-            std::size_t j = p2;
-
-            for (; j + 7 < c2 - p2; j += 8) {
-                auto r1 = vec_type::template zero<T>();
-                auto r2 = vec_type::template zero<T>();
-                auto r3 = vec_type::template zero<T>();
-                auto r4 = vec_type::template zero<T>();
-                auto r5 = vec_type::template zero<T>();
-                auto r6 = vec_type::template zero<T>();
-                auto r7 = vec_type::template zero<T>();
-                auto r8 = vec_type::template zero<T>();
-
-                const auto i_i = i * s1 - p1;
-                const auto i_j = j * s2 - p2;
-
-                for (std::size_t k = 0; k < m1; ++k) {
-                    for (std::size_t l = 0; l + vec_size - 1 < m2; l += vec_size) {
-                        auto k1 = kernel.template loadu<vec_type>(k * m2 + l);
-
-                        auto i1 = input.template loadu<vec_type>((i_i + k) * n2 + i_j + 0 + l);
-                        auto i2 = input.template loadu<vec_type>((i_i + k) * n2 + i_j + 1 + l);
-                        auto i3 = input.template loadu<vec_type>((i_i + k) * n2 + i_j + 2 + l);
-                        auto i4 = input.template loadu<vec_type>((i_i + k) * n2 + i_j + 3 + l);
-
-                        r1 = vec_type::template fmadd<Cx>(i1, k1, r1);
-                        r2 = vec_type::template fmadd<Cx>(i2, k1, r2);
-                        r3 = vec_type::template fmadd<Cx>(i3, k1, r3);
-                        r4 = vec_type::template fmadd<Cx>(i4, k1, r4);
-
-                        auto i5 = input.template loadu<vec_type>((i_i + k) * n2 + i_j + 4 + l);
-                        auto i6 = input.template loadu<vec_type>((i_i + k) * n2 + i_j + 5 + l);
-                        auto i7 = input.template loadu<vec_type>((i_i + k) * n2 + i_j + 6 + l);
-                        auto i8 = input.template loadu<vec_type>((i_i + k) * n2 + i_j + 7 + l);
-
-                        r5 = vec_type::template fmadd<Cx>(i5, k1, r5);
-                        r6 = vec_type::template fmadd<Cx>(i6, k1, r6);
-                        r7 = vec_type::template fmadd<Cx>(i7, k1, r7);
-                        r8 = vec_type::template fmadd<Cx>(i8, k1, r8);
-                    }
-                }
-
-                conv(i, j + 0) = vec_type::hadd(r1);
-                conv(i, j + 1) = vec_type::hadd(r2);
-                conv(i, j + 2) = vec_type::hadd(r3);
-                conv(i, j + 3) = vec_type::hadd(r4);
-                conv(i, j + 4) = vec_type::hadd(r5);
-                conv(i, j + 5) = vec_type::hadd(r6);
-                conv(i, j + 6) = vec_type::hadd(r7);
-                conv(i, j + 7) = vec_type::hadd(r8);
-            }
-
-            for (; j + 1 < c2 - p2; j += 2) {
-                auto r1 = vec_type::template zero<T>();
-                auto r2 = vec_type::template zero<T>();
-
-                const auto i_i = i * s1 - p1;
-                const auto i_j = j * s2 - p2;
-
-                for (std::size_t k = 0; k < m1; ++k) {
-                    for (std::size_t l = 0; l + vec_size - 1 < m2; l += vec_size) {
-                        auto k1 = kernel.template loadu<vec_type>(k * m2 + l);
-
-                        auto i1 = input.template loadu<vec_type>((i_i + k) * n2 + i_j + 0 + l);
-                        auto i2 = input.template loadu<vec_type>((i_i + k) * n2 + i_j + 1 + l);
-
-                        r1 = vec_type::template fmadd<Cx>(i1, k1, r1);
-                        r2 = vec_type::template fmadd<Cx>(i2, k1, r2);
-                    }
-                }
-
-                conv(i, j + 0) = vec_type::hadd(r1);
-                conv(i, j + 1) = vec_type::hadd(r2);
-            }
-
-            if (j < c2 - p2) {
-                auto r1 = vec_type::template zero<T>();
-
-                const auto i_i = i * s1 - p1;
-                const auto i_j = j * s2 - p2;
-
-                for (std::size_t k = 0; k < m1; ++k) {
-                    for (std::size_t l = 0; l + vec_size - 1 < m2; l += vec_size) {
-                        auto k1 = kernel.template loadu<vec_type>(k * m2 + l);
-                        auto i1 = input.template loadu<vec_type>((i_i + k) * n2 + i_j + 0 + l);
-                        r1 = vec_type::template fmadd<Cx>(i1, k1, r1);
-                    }
-                }
-
-                conv(i, j + 0) = vec_type::hadd(r1);
-            }
-        }
-    } else {
-        for (std::size_t i = p1; i < c1 - p1; ++i) {
-            std::size_t j = p2;
-
-            for (; j + 7 < c2 - p2; j += 8) {
-                auto r1 = vec_type::template zero<T>();
-                auto r2 = vec_type::template zero<T>();
-                auto r3 = vec_type::template zero<T>();
-                auto r4 = vec_type::template zero<T>();
-                auto r5 = vec_type::template zero<T>();
-                auto r6 = vec_type::template zero<T>();
-                auto r7 = vec_type::template zero<T>();
-                auto r8 = vec_type::template zero<T>();
-
-                const auto i_i = i * s1 - p1;
-                const auto i_j = j * s2 - p2;
-
-                for (std::size_t k = 0; k < m1; ++k) {
-                    for (std::size_t l = 0; l + vec_size - 1 < m2; l += vec_size) {
-                        auto k1 = kernel.template loadu<vec_type>(k * m2 + l);
-
-                        auto i1 = input.template loadu<vec_type>((i_i + k) * n2 + i_j + 0 + l);
-                        auto i2 = input.template loadu<vec_type>((i_i + k) * n2 + i_j + 1 + l);
-                        auto i3 = input.template loadu<vec_type>((i_i + k) * n2 + i_j + 2 + l);
-                        auto i4 = input.template loadu<vec_type>((i_i + k) * n2 + i_j + 3 + l);
-
-                        r1 = vec_type::template fmadd<Cx>(i1, k1, r1);
-                        r2 = vec_type::template fmadd<Cx>(i2, k1, r2);
-                        r3 = vec_type::template fmadd<Cx>(i3, k1, r3);
-                        r4 = vec_type::template fmadd<Cx>(i4, k1, r4);
-
-                        auto i5 = input.template loadu<vec_type>((i_i + k) * n2 + i_j + 4 + l);
-                        auto i6 = input.template loadu<vec_type>((i_i + k) * n2 + i_j + 5 + l);
-                        auto i7 = input.template loadu<vec_type>((i_i + k) * n2 + i_j + 6 + l);
-                        auto i8 = input.template loadu<vec_type>((i_i + k) * n2 + i_j + 7 + l);
-
-                        r5 = vec_type::template fmadd<Cx>(i5, k1, r5);
-                        r6 = vec_type::template fmadd<Cx>(i6, k1, r6);
-                        r7 = vec_type::template fmadd<Cx>(i7, k1, r7);
-                        r8 = vec_type::template fmadd<Cx>(i8, k1, r8);
-                    }
-                }
-
-                conv(i, j + 0) = beta * conv(i, j + 0) + vec_type::hadd(r1);
-                conv(i, j + 1) = beta * conv(i, j + 1) + vec_type::hadd(r2);
-                conv(i, j + 2) = beta * conv(i, j + 2) + vec_type::hadd(r3);
-                conv(i, j + 3) = beta * conv(i, j + 3) + vec_type::hadd(r4);
-                conv(i, j + 4) = beta * conv(i, j + 4) + vec_type::hadd(r5);
-                conv(i, j + 5) = beta * conv(i, j + 5) + vec_type::hadd(r6);
-                conv(i, j + 6) = beta * conv(i, j + 6) + vec_type::hadd(r7);
-                conv(i, j + 7) = beta * conv(i, j + 7) + vec_type::hadd(r8);
-            }
-
-            for (; j + 1 < c2 - p2; j += 2) {
-                auto r1 = vec_type::template zero<T>();
-                auto r2 = vec_type::template zero<T>();
-
-                const auto i_i = i * s1 - p1;
-                const auto i_j = j * s2 - p2;
-
-                for (std::size_t k = 0; k < m1; ++k) {
-                    for (std::size_t l = 0; l + vec_size - 1 < m2; l += vec_size) {
-                        auto k1 = kernel.template loadu<vec_type>(k * m2 + l);
-
-                        auto i1 = input.template loadu<vec_type>((i_i + k) * n2 + i_j + 0 + l);
-                        auto i2 = input.template loadu<vec_type>((i_i + k) * n2 + i_j + 1 + l);
-
-                        r1 = vec_type::template fmadd<Cx>(i1, k1, r1);
-                        r2 = vec_type::template fmadd<Cx>(i2, k1, r2);
-                    }
-                }
-
-                conv(i, j + 0) = beta * conv(i, j + 0) + vec_type::hadd(r1);
-                conv(i, j + 1) = beta * conv(i, j + 1) + vec_type::hadd(r2);
-            }
-
-            if (j < c2 - p2) {
-                auto r1 = vec_type::template zero<T>();
-
-                const auto i_i = i * s1 - p1;
-                const auto i_j = j * s2 - p2;
-
-                for (std::size_t k = 0; k < m1; ++k) {
-                    for (std::size_t l = 0; l + vec_size - 1 < m2; l += vec_size) {
-                        auto k1 = kernel.template loadu<vec_type>(k * m2 + l);
-                        auto i1 = input.template loadu<vec_type>((i_i + k) * n2 + i_j + 0 + l);
-                        r1 = vec_type::template fmadd<Cx>(i1, k1, r1);
-                    }
-                }
-
-                conv(i, j + 0) = beta * conv(i, j + 0) + vec_type::hadd(r1);
-            }
-        }
-    }
-
-    if (!padding_impl && m2 % vec_size != 0) {
-        auto rem = m2 % vec_size;
-        for (std::size_t i = p1; i < c1 - p1; ++i) {
-            for (std::size_t j = p2; j < c2 - p2; ++j) {
-                T temp = 0.0;
-
-                const auto i_i = i * s1 - p1;
-                const auto i_j = j * s2 - p2;
-
-                for (std::size_t k = 0; k < m1; ++k) {
-                    for (std::size_t l = m2 - rem; l < m2; ++l) {
-                        temp += input(i_i + k, i_j + l) * kernel(k, l);
-                    }
-                }
-
-                conv(i, j) += temp;
             }
         }
     }
