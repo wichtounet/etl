@@ -201,7 +201,7 @@ struct dim_view {
 template <typename T>
 struct sub_view {
     T sub;                 ///< The Sub expression
-    const std::size_t i;   ///< The index
+    const size_t i;          ///< The index
     const size_t sub_offset; ///< The sub size
 
     using sub_type          = T;                                               ///< The sub type
