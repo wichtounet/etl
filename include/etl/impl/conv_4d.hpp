@@ -186,6 +186,8 @@ struct conv4_valid_filter_impl {
             impl::cudnn::conv4_valid_filter(input.direct(), kernel.direct(), conv.direct(), S1, S2, P1, P2);
         } else if (impl == etl::conv4_impl::BLAS) {
             impl::reduc::blas_conv4_valid_filter(input, kernel, conv, S1, S2, P1, P2);
+        } else if (impl == etl::conv4_impl::VEC) {
+            impl::vec::conv4_valid_filter(input, kernel, conv, S1, S2, P1, P2);
         } else if (impl == etl::conv4_impl::AVX) {
             impl::avx::conv4_valid_filter(input.direct(), kernel.direct(), conv.direct(), S1, S2, P1, P2);
         } else if (impl == etl::conv4_impl::SSE) {
@@ -310,6 +312,8 @@ struct conv4_valid_filter_flipped_impl : conv4_valid_filter_impl<S1, S2, P1, P2>
             }
         } else if (impl == etl::conv4_impl::BLAS) {
             impl::reduc::blas_conv4_valid_filter_flipped(input, kernel, conv, S1, S2, P1, P2);
+        } else if (impl == etl::conv4_impl::VEC) {
+            impl::vec::conv4_valid_filter_flipped(input, kernel, conv, S1, S2, P1, P2);
         } else if (impl == etl::conv4_impl::AVX) {
             impl::avx::conv4_valid_filter_flipped(input.direct(), kernel.direct(), conv.direct(), S1, S2, P1, P2);
         } else if (impl == etl::conv4_impl::SSE) {
