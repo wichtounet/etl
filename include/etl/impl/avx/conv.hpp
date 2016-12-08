@@ -51,22 +51,6 @@ void pad_2d_input(const opaque_memory<T, 2>& in, opaque_memory<T, 2>& out, size_
     }
 }
 
-ETL_INLINE(__m256d) mm256_reverse_pd(__m256d m1) {
-#ifdef __AVX2__
-    return _mm256_permute4x64_pd(m1, 0b00011011);
-#else
-    __m256d tmp;
-    tmp = _mm256_permute2f128_pd(m1, m1, 1);
-    return _mm256_permute_pd(tmp, 5);
-#endif
-}
-
-ETL_INLINE(__m256) mm256_reverse_ps(__m256 m1) {
-    __m256 tmp;
-    tmp = _mm256_permute2f128_ps(m1, m1, 33);
-    return _mm256_permute_ps(tmp, 27);
-}
-
 inline void conv2_valid_flipped_border(const double* in, std::size_t n1, std::size_t n2, const double* kernel, std::size_t m1, std::size_t m2, double* out, double beta, std::size_t i, std::size_t j, size_t s1, size_t s2, size_t p1, size_t p2) {
     const std::size_t c2 = (n2 - m2 + 2 * p2) / s2 + 1;
 
