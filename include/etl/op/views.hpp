@@ -364,7 +364,7 @@ struct sub_view {
      * \brief Returns a pointer to the first element in memory.
      * \return a pointer tot the first element in memory.
      */
-    memory_type memory_start() noexcept {
+    ETL_STRONG_INLINE(memory_type) memory_start() noexcept {
         static_assert(has_direct_access<T>::value && decay_traits<sub_type>::storage_order == order::RowMajor, "This expression does not have direct memory access");
         return sub.memory_start() + sub_offset;
     }
@@ -373,7 +373,7 @@ struct sub_view {
      * \brief Returns a pointer to the first element in memory.
      * \return a pointer tot the first element in memory.
      */
-    const_memory_type memory_start() const noexcept {
+    ETL_STRONG_INLINE(const_memory_type) memory_start() const noexcept {
         static_assert(has_direct_access<T>::value && decay_traits<sub_type>::storage_order == order::RowMajor, "This expression does not have direct memory access");
         return sub.memory_start() + sub_offset;
     }
@@ -382,7 +382,7 @@ struct sub_view {
      * \brief Returns a pointer to the past-the-end element in memory.
      * \return a pointer tot the past-the-end element in memory.
      */
-    memory_type memory_end() noexcept {
+    ETL_STRONG_INLINE(memory_type) memory_end() noexcept {
         static_assert(has_direct_access<T>::value && decay_traits<sub_type>::storage_order == order::RowMajor, "This expression does not have direct memory access");
         return sub.memory_start() + (i + 1) * subsize(sub);
     }
@@ -391,7 +391,7 @@ struct sub_view {
      * \brief Returns a pointer to the past-the-end element in memory.
      * \return a pointer tot the past-the-end element in memory.
      */
-    const_memory_type memory_end() const noexcept {
+    ETL_STRONG_INLINE(const_memory_type) memory_end() const noexcept {
         static_assert(has_direct_access<T>::value && decay_traits<sub_type>::storage_order == order::RowMajor, "This expression does not have direct memory access");
         return sub.memory_start() + (i + 1) * subsize(sub);
     }
