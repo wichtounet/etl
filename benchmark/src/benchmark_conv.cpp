@@ -248,7 +248,7 @@ CPM_DIRECT_SECTION_TWO_PASS_NS_PF("sconv2_valid_pad [conv][conv2]", conv_2d_larg
     CPM_SECTION_INIT([](std::size_t d1, std::size_t d2){ return std::make_tuple(smat(d1,d1), smat(d2,d2), smat((d1 - d2 + 2 * 3) + 1, (d1 - d2 + 2 * 3) + 1)); }),
     CPM_SECTION_FUNCTOR("default", [](smat& a, smat& b, smat& r){ r = (etl::conv_2d_valid<1, 1, 3, 3>(a, b)); }),
     CPM_SECTION_FUNCTOR("std", [](smat& a, smat& b, smat& r){ r = selected_helper(etl::conv_impl::STD, (etl::conv_2d_valid<1, 1, 3, 3>(a, b))); })
-    SSE_SECTION_FUNCTOR("sse", [](smat& a, smat& b, smat& r){ r = selected_helper(etl::conv_impl::SSE, (etl::conv_2d_valid<1, 1, 3, 3>(a, b))); })
+    VEC_SECTION_FUNCTOR("vec", [](smat& a, smat& b, smat& r){ r = selected_helper(etl::conv_impl::VEC, (etl::conv_2d_valid<1, 1, 3, 3>(a, b))); })
     AVX_SECTION_FUNCTOR("avx", [](smat& a, smat& b, smat& r){ r = selected_helper(etl::conv_impl::AVX, (etl::conv_2d_valid<1, 1, 3, 3>(a, b))); })
     CUDNN_SECTION_FUNCTOR("cudnn", [](smat& a, smat& b, smat& r){ r = selected_helper(etl::conv_impl::CUDNN, (etl::conv_2d_valid<1, 1, 3, 3>(a, b))); })
 )
@@ -258,7 +258,7 @@ CPM_DIRECT_SECTION_TWO_PASS_NS_PF("dconv2_valid [conv][conv2]", conv_2d_large_po
     CPM_SECTION_INIT([](std::size_t d1, std::size_t d2){ return std::make_tuple(dmat(d1,d1), dmat(d2,d2), dmat(d1 - d2 + 1, d1 - d2 + 1)); }),
     CPM_SECTION_FUNCTOR("default", [](dmat& a, dmat& b, dmat& r){ r = etl::conv_2d_valid(a, b); }),
     CPM_SECTION_FUNCTOR("std", [](dmat& a, dmat& b, dmat& r){ r = selected_helper(etl::conv_impl::STD, etl::conv_2d_valid(a, b)); })
-    SSE_SECTION_FUNCTOR("sse", [](dmat& a, dmat& b, dmat& r){ r = selected_helper(etl::conv_impl::SSE, etl::conv_2d_valid(a, b)); })
+    VEC_SECTION_FUNCTOR("vec", [](dmat& a, dmat& b, dmat& r){ r = selected_helper(etl::conv_impl::VEC, etl::conv_2d_valid(a, b)); })
     AVX_SECTION_FUNCTOR("avx", [](dmat& a, dmat& b, dmat& r){ r = selected_helper(etl::conv_impl::AVX, etl::conv_2d_valid(a, b)); })
     CUDNN_SECTION_FUNCTOR("cudnn", [](dmat& a, dmat& b, dmat& r){ r = selected_helper(etl::conv_impl::CUDNN, etl::conv_2d_valid(a, b)); })
 )
@@ -397,7 +397,7 @@ CPM_DIRECT_SECTION_TWO_PASS_NS_PF("sconv2_valid_multi_multi_flipped [conv][conv2
     CPM_SECTION_INIT([](std::size_t d1, std::size_t d2, std::size_t d3, std::size_t d4){
         return std::make_tuple(smat3(d3, d1, d1), smat3(d4, d2, d2), smat4(d4, d3, d1 - d2 + 1, d1 - d2 + 1)); }),
     CPM_SECTION_FUNCTOR("default", [](smat3& a, smat3& b, smat4& r){ r = etl::conv_2d_valid_multi_multi_flipped(a, b); })
-    SSE_SECTION_FUNCTOR("sse", [](smat3& a, smat3& b, smat4& r){ r = selected_helper(etl::conv_multi_impl::SSE, etl::conv_2d_valid_multi_multi_flipped(a, b)); })
+    VEC_SECTION_FUNCTOR("vec", [](smat3& a, smat3& b, smat4& r){ r = selected_helper(etl::conv_multi_impl::VEC, etl::conv_2d_valid_multi_multi_flipped(a, b)); })
     AVX_SECTION_FUNCTOR("avx", [](smat3& a, smat3& b, smat4& r){ r = selected_helper(etl::conv_multi_impl::AVX, etl::conv_2d_valid_multi_multi_flipped(a, b)); })
     ,CPM_SECTION_FUNCTOR("blas", [](smat3& a, smat3& b, smat4& r){ r = selected_helper(etl::conv_multi_impl::BLAS, etl::conv_2d_valid_multi_multi_flipped(a, b)); })
     ,CPM_SECTION_FUNCTOR("fft", [](smat3& a, smat3& b, smat4& r){ r = selected_helper(etl::conv_multi_impl::FFT, etl::conv_2d_valid_multi_multi_flipped(a, b)); })
