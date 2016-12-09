@@ -1911,16 +1911,16 @@ void conv4_valid_filter(const I& input, const KK& kernel, CC&& conv, size_t s1, 
                     auto fun_kc = [&](const size_t first, const size_t last) {
                         //i = 0
                         for (std::size_t kc = first; kc < last; ++kc) {
-                            auto k = kc / C;
-                            auto c = kc % C;
+                            const auto k = kc / C;
+                            const auto c = kc % C;
 
                             detail::conv2_valid_flipped_micro_kernel<detail::safe_sse_vec>(padded_input(0)(c), padded_kernel(0)(k), conv(k)(c), s1, s2, p1, p2, T(0));
                         }
 
                         for (std::size_t i = 1; i < N; ++i) {
                             for (std::size_t kc = first; kc < last; ++kc) {
-                                auto k = kc / C;
-                                auto c = kc % C;
+                                const auto k = kc / C;
+                                const auto c = kc % C;
 
                                 detail::conv2_valid_flipped_micro_kernel<detail::safe_sse_vec>(padded_input(i)(c), padded_kernel(i)(k), conv(k)(c), s1, s2, p1, p2, T(1));
                             }
@@ -1932,16 +1932,16 @@ void conv4_valid_filter(const I& input, const KK& kernel, CC&& conv, size_t s1, 
                     auto fun_kc = [&](const size_t first, const size_t last) {
                         //i = 0
                         for (std::size_t kc = first; kc < last; ++kc) {
-                            auto k = kc / C;
-                            auto c = kc % C;
+                            const auto k = kc / C;
+                            const auto c = kc % C;
 
                             detail::conv2_valid_flipped_micro_kernel<detail::safe_avx_vec>(padded_input(0)(c), padded_kernel(0)(k), conv(k)(c), s1, s2, p1, p2, T(0));
                         }
 
                         for (std::size_t i = 1; i < N; ++i) {
                             for (std::size_t kc = first; kc < last; ++kc) {
-                                auto k = kc / C;
-                                auto c = kc % C;
+                                const auto k = kc / C;
+                                const auto c = kc % C;
 
                                 detail::conv2_valid_flipped_micro_kernel<detail::safe_avx_vec>(padded_input(i)(c), padded_kernel(i)(k), conv(k)(c), s1, s2, p1, p2, T(1));
                             }
@@ -1959,16 +1959,16 @@ void conv4_valid_filter(const I& input, const KK& kernel, CC&& conv, size_t s1, 
             auto fun_kc = [&](const size_t first, const size_t last) {
                 //i = 0
                 for (std::size_t kc = first; kc < last; ++kc) {
-                    auto k = kc / C;
-                    auto c = kc % C;
+                    const auto k = kc / C;
+                    const auto c = kc % C;
 
                     detail::conv2_valid_micro_kernel<detail::safe_sse_vec>(input(0)(c), kernel(0)(k), conv(k)(c), s1, s2, p1, p2, T(0));
                 }
 
                 for (std::size_t i = 1; i < N; ++i) {
                     for (std::size_t kc = first; kc < last; ++kc) {
-                        auto k = kc / C;
-                        auto c = kc % C;
+                        const auto k = kc / C;
+                        const auto c = kc % C;
 
                         detail::conv2_valid_micro_kernel<detail::safe_sse_vec>(input(i)(c), kernel(i)(k), conv(k)(c), s1, s2, p1, p2, T(1));
                     }
@@ -1980,16 +1980,16 @@ void conv4_valid_filter(const I& input, const KK& kernel, CC&& conv, size_t s1, 
             auto fun_kc = [&](const size_t first, const size_t last) {
                 //i = 0
                 for (std::size_t kc = first; kc < last; ++kc) {
-                    auto k = kc / C;
-                    auto c = kc % C;
+                    const auto k = kc / C;
+                    const auto c = kc % C;
 
                     detail::conv2_valid_micro_kernel<detail::safe_avx_vec>(input(0)(c), kernel(0)(k), conv(k)(c), s1, s2, p1, p2, T(0));
                 }
 
                 for (std::size_t i = 1; i < N; ++i) {
                     for (std::size_t kc = first; kc < last; ++kc) {
-                        auto k = kc / C;
-                        auto c = kc % C;
+                        const auto k = kc / C;
+                        const auto c = kc % C;
 
                         detail::conv2_valid_micro_kernel<detail::safe_avx_vec>(input(i)(c), kernel(i)(k), conv(k)(c), s1, s2, p1, p2, T(1));
                     }
@@ -2034,16 +2034,16 @@ void conv4_valid_filter_flipped(const I& input, const KK& kernel, CC&& conv, siz
                     auto fun_kc = [&](const size_t first, const size_t last) {
                         //i = 0
                         for (std::size_t kc = first; kc < last; ++kc) {
-                            auto k = kc / C;
-                            auto c = kc % C;
+                            const auto k = kc / C;
+                            const auto c = kc % C;
 
                             detail::conv2_valid_flipped_micro_kernel<detail::safe_sse_vec>(padded_input(0)(c), padded_kernel(0)(k), conv(k)(c), s1, s2, p1, p2, T(0));
                         }
 
                         for (std::size_t i = 1; i < N; ++i) {
                             for (std::size_t kc = first; kc < last; ++kc) {
-                                auto k = kc / C;
-                                auto c = kc % C;
+                                const auto k = kc / C;
+                                const auto c = kc % C;
 
                                 detail::conv2_valid_flipped_micro_kernel<detail::safe_sse_vec>(padded_input(i)(c), padded_kernel(i)(k), conv(k)(c), s1, s2, p1, p2, T(1));
                             }
@@ -2055,16 +2055,16 @@ void conv4_valid_filter_flipped(const I& input, const KK& kernel, CC&& conv, siz
                     auto fun_kc = [&](const size_t first, const size_t last) {
                         //i = 0
                         for (std::size_t kc = first; kc < last; ++kc) {
-                            auto k = kc / C;
-                            auto c = kc % C;
+                            const auto k = kc / C;
+                            const auto c = kc % C;
 
                             detail::conv2_valid_flipped_micro_kernel<detail::safe_avx_vec>(padded_input(0)(c), padded_kernel(0)(k), conv(k)(c), s1, s2, p1, p2, T(0));
                         }
 
                         for (std::size_t i = 1; i < N; ++i) {
                             for (std::size_t kc = first; kc < last; ++kc) {
-                                auto k = kc / C;
-                                auto c = kc % C;
+                                const auto k = kc / C;
+                                const auto c = kc % C;
 
                                 detail::conv2_valid_flipped_micro_kernel<detail::safe_avx_vec>(padded_input(i)(c), padded_kernel(i)(k), conv(k)(c), s1, s2, p1, p2, T(1));
                             }
@@ -2082,16 +2082,16 @@ void conv4_valid_filter_flipped(const I& input, const KK& kernel, CC&& conv, siz
             auto fun_kc = [&](const size_t first, const size_t last) {
                 //i = 0
                 for (std::size_t kc = first; kc < last; ++kc) {
-                    auto k = kc / C;
-                    auto c = kc % C;
+                    const auto k = kc / C;
+                    const auto c = kc % C;
 
                     detail::conv2_valid_flipped_micro_kernel<detail::safe_sse_vec>(input(0)(c), kernel(0)(k), conv(k)(c), s1, s2, p1, p2, T(0));
                 }
 
                 for (std::size_t i = 1; i < N; ++i) {
                     for (std::size_t kc = first; kc < last; ++kc) {
-                        auto k = kc / C;
-                        auto c = kc % C;
+                        const auto k = kc / C;
+                        const auto c = kc % C;
 
                         detail::conv2_valid_flipped_micro_kernel<detail::safe_sse_vec>(input(i)(c), kernel(i)(k), conv(k)(c), s1, s2, p1, p2, T(1));
                     }
@@ -2103,16 +2103,16 @@ void conv4_valid_filter_flipped(const I& input, const KK& kernel, CC&& conv, siz
             auto fun_kc = [&](const size_t first, const size_t last) {
                 //i = 0
                 for (std::size_t kc = first; kc < last; ++kc) {
-                    auto k = kc / C;
-                    auto c = kc % C;
+                    const auto k = kc / C;
+                    const auto c = kc % C;
 
                     detail::conv2_valid_flipped_micro_kernel<detail::safe_avx_vec>(input(0)(c), kernel(0)(k), conv(k)(c), s1, s2, p1, p2, T(0));
                 }
 
                 for (std::size_t i = 1; i < N; ++i) {
                     for (std::size_t kc = first; kc < last; ++kc) {
-                        auto k = kc / C;
-                        auto c = kc % C;
+                        const auto k = kc / C;
+                        const auto c = kc % C;
 
                         detail::conv2_valid_flipped_micro_kernel<detail::safe_avx_vec>(input(i)(c), kernel(i)(k), conv(k)(c), s1, s2, p1, p2, T(1));
                     }
