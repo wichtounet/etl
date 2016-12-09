@@ -9,6 +9,18 @@
 
 #include "etl/impl/common/conv.hpp"
 
+/*
+ * Performance notes:
+ *
+ * Several things are suboptimal in this implementation
+ * a) Ideally, the valid_micro_kernel should directly use input.loadu instead of
+ * going through the memory and vec_type::loadu(mem), but compilers do not seem
+ * to be able to go through layers of sub view for memory_start
+ * b) Ideally, one should use the _general versions of the padding functions,
+ * but again, compilers do not like multiple layers of sub_view and
+ * memory_start, so we need to use direct()
+ */
+
 namespace etl {
 
 namespace impl {
@@ -412,8 +424,8 @@ void conv2_valid_flipped(const I& input, const K& kernel, C&& conv, size_t s1, s
         if (k2 < SS || k2 % AS > 0) {
             const auto pad = k2 < SS ? SS - k2 % SS : AS - k2 % AS;
 
-            auto padded_input  = common::pad_right_general(input, pad);
-            auto padded_kernel = common::pad_right_general(kernel, pad);
+            auto padded_input  = common::pad_right(input.direct(), pad);
+            auto padded_kernel = common::pad_right(kernel.direct(), pad);
 
             if (detail::prefer_sse<T>(k2 + pad)) {
                 detail::conv2_valid_flipped_micro_kernel<detail::safe_sse_vec>(padded_input, padded_kernel, conv, s1, s2, p1, p1, T(0));
@@ -492,8 +504,8 @@ void conv2_valid(const I& input, const K& kernel, C&& conv, size_t s1, size_t s2
         if (k2 < SS || k2 % AS > 0) {
             const auto pad = k2 < SS ? SS - k2 % SS : AS - k2 % AS;
 
-            auto padded_input  = common::pad_right_general(input, pad);
-            auto padded_kernel = common::pad_right_flip_general(kernel, pad);
+            auto padded_input  = common::pad_right(input.direct(), pad);
+            auto padded_kernel = common::pad_right_flip(kernel.direct(), pad);
 
             if (detail::prefer_sse<T>(k2 + pad)) {
                 detail::conv2_valid_flipped_micro_kernel<detail::safe_sse_vec>(padded_input, padded_kernel, conv, s1, s2, p1, p1, T(0));
@@ -1401,8 +1413,8 @@ void conv2_valid_multi(const I& input, const KK& kernel, C&& conv, size_t s1, si
         if(k2 < SS || k2 % AS > 0){
             const auto pad = k2 < SS ? SS - k2 % SS : AS - k2 % AS;
 
-            auto padded_input = common::pad_right_general(input, pad);
-            auto padded_kernel = common::pad_right_flip_multi_general(kernel, pad);
+            auto padded_input = common::pad_right(input.direct(), pad);
+            auto padded_kernel = common::pad_right_flip_multi(kernel.direct(), pad);
 
             // TODO Test if it is better to do the padding of the kernel inside each thread
 
@@ -1471,8 +1483,8 @@ void conv2_valid_multi_flipped(const I& input, const KK& kernel, C&& conv, size_
         if(k2 < SS || k2 % AS > 0){
             const auto pad = k2 < SS ? SS - k2 % SS : AS - k2 % AS;
 
-            auto padded_input = common::pad_right_general(input, pad);
-            auto padded_kernel = common::pad_right_multi_general(kernel, pad);
+            auto padded_input = common::pad_right(input.direct(), pad);
+            auto padded_kernel = common::pad_right_multi(kernel.direct(), pad);
 
             // TODO Test if it is better to do the padding of the kernel inside each thread
 
@@ -1543,8 +1555,8 @@ void conv2_valid_multi_multi(const I& input, const KK& kernel, C&& conv, size_t 
         if(k2 < SS || k2 % AS > 0){
             const auto pad = k2 < SS ? SS - k2 % SS : AS - k2 % AS;
 
-            auto padded_input = common::pad_right_multi_general(input, pad);
-            auto padded_kernel = common::pad_right_flip_multi_general(kernel, pad);
+            auto padded_input = common::pad_right_multi(input.direct(), pad);
+            auto padded_kernel = common::pad_right_flip_multi(kernel.direct(), pad);
 
             if(detail::prefer_sse<T>(k2 + pad)){
                 auto fun_kn = [&](const size_t first, const size_t last) {
@@ -1625,8 +1637,8 @@ void conv2_valid_multi_multi_flipped(const I& input, const KK& kernel, C&& conv,
         if(k2 < SS || k2 % AS > 0){
             const auto pad = k2 < SS ? SS - k2 % SS : AS - k2 % AS;
 
-            auto padded_input = common::pad_right_multi_general(input, pad);
-            auto padded_kernel = common::pad_right_multi_general(kernel, pad);
+            auto padded_input = common::pad_right_multi(input.direct(), pad);
+            auto padded_kernel = common::pad_right_multi(kernel.direct(), pad);
 
             // TODO Test if it is better to do the padding of the kernel inside each thread
 
@@ -1709,8 +1721,8 @@ void conv4_valid(const I& input, const KK& kernel, CC&& conv, size_t s1, size_t 
             if(k2 < SS || k2 % AS > 0){
                 const auto pad = k2 < SS ? SS - k2 % SS : AS - k2 % AS;
 
-                auto padded_input = common::pad_right_multi_general(input, pad);
-                auto padded_kernel = common::pad_right_flip_multi_general(kernel, pad);
+                auto padded_input = common::pad_right_multi(input.direct(), pad);
+                auto padded_kernel = common::pad_right_flip_multi(kernel.direct(), pad);
 
                 if(detail::prefer_sse<T>(k2 + pad)){
                     auto fun_nk = [&](const size_t first, const size_t last) {
@@ -1806,8 +1818,8 @@ void conv4_valid_flipped(const I& input, const KK& kernel, CC&& conv, size_t s1,
             if(k2 < SS || k2 % AS > 0){
                 const auto pad = k2 < SS ? SS - k2 % SS : AS - k2 % AS;
 
-                auto padded_input = common::pad_right_multi_general(input, pad);
-                auto padded_kernel = common::pad_right_multi_general(kernel, pad);
+                auto padded_input = common::pad_right_multi(input.direct(), pad);
+                auto padded_kernel = common::pad_right_multi(kernel.direct(), pad);
 
                 if(detail::prefer_sse<T>(k2 + pad)){
                     auto fun_nk = [&](const size_t first, const size_t last) {
@@ -1904,8 +1916,8 @@ void conv4_valid_filter(const I& input, const KK& kernel, CC&& conv, size_t s1, 
             if(k2 < SS || k2 % AS > 0){
                 const auto pad = k2 < SS ? SS - k2 % SS : AS - k2 % AS;
 
-                auto padded_input = common::pad_right_multi_general(input, pad);
-                auto padded_kernel = common::pad_right_flip_multi_general(kernel, pad);
+                auto padded_input = common::pad_right_multi(input.direct(), pad);
+                auto padded_kernel = common::pad_right_flip_multi(kernel.direct(), pad);
 
                 if(detail::prefer_sse<T>(k2 + pad)){
                     auto fun_kc = [&](const size_t first, const size_t last) {
@@ -2027,8 +2039,8 @@ void conv4_valid_filter_flipped(const I& input, const KK& kernel, CC&& conv, siz
             if(k2 < SS || k2 % AS > 0){
                 const auto pad = k2 < SS ? SS - k2 % SS : AS - k2 % AS;
 
-                auto padded_input = common::pad_right_multi_general(input, pad);
-                auto padded_kernel = common::pad_right_multi_general(kernel, pad);
+                auto padded_input = common::pad_right_multi(input.direct(), pad);
+                auto padded_kernel = common::pad_right_multi(kernel.direct(), pad);
 
                 if(detail::prefer_sse<T>(k2 + pad)){
                     auto fun_kc = [&](const size_t first, const size_t last) {
