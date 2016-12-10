@@ -35,10 +35,6 @@ struct conv4_valid_impl {
             impl::reduc::blas_conv4_valid(input, kernel, conv, S1, S2, P1, P2);
         } else if (impl == etl::conv4_impl::VEC) {
             impl::vec::conv4_valid(input, kernel, conv, S1, S2, P1, P2);
-        } else if (impl == etl::conv4_impl::AVX) {
-            impl::avx::conv4_valid(input.direct(), kernel.direct(), conv.direct(), S1, S2, P1, P2);
-        } else if (impl == etl::conv4_impl::SSE) {
-            impl::sse::conv4_valid(input.direct(), kernel.direct(), conv.direct(), S1, S2, P1, P2);
         } else if (impl == etl::conv4_impl::STD) {
             impl::standard::conv4_valid(input, kernel, conv, S1, S2, P1, P2);
         } else {
@@ -148,10 +144,6 @@ struct conv4_valid_flipped_impl : conv4_valid_impl<S1, S2, P1, P2> {
             impl::reduc::blas_conv4_valid_flipped(input, kernel, conv, S1, S2, P1, P2);
         } else if (impl == etl::conv4_impl::VEC) {
             impl::vec::conv4_valid_flipped(input, kernel, conv, S1, S2, P1, P2);
-        } else if (impl == etl::conv4_impl::AVX) {
-            impl::avx::conv4_valid_flipped(input.direct(), kernel.direct(), conv.direct(), S1, S2, P1, P2);
-        } else if (impl == etl::conv4_impl::SSE) {
-            impl::sse::conv4_valid_flipped(input.direct(), kernel.direct(), conv.direct(), S1, S2, P1, P2);
         } else if (impl == etl::conv4_impl::STD) {
             impl::standard::conv4_valid_flipped(input, kernel, conv, S1, S2, P1, P2);
         } else {
@@ -188,10 +180,6 @@ struct conv4_valid_filter_impl {
             impl::reduc::blas_conv4_valid_filter(input, kernel, conv, S1, S2, P1, P2);
         } else if (impl == etl::conv4_impl::VEC) {
             impl::vec::conv4_valid_filter(input, kernel, conv, S1, S2, P1, P2);
-        } else if (impl == etl::conv4_impl::AVX) {
-            impl::avx::conv4_valid_filter(input.direct(), kernel.direct(), conv.direct(), S1, S2, P1, P2);
-        } else if (impl == etl::conv4_impl::SSE) {
-            impl::sse::conv4_valid_filter(input.direct(), kernel.direct(), conv.direct(), S1, S2, P1, P2);
         } else if (impl == etl::conv4_impl::STD) {
             impl::standard::conv4_valid_filter(input, kernel, conv, S1, S2, P1, P2);
         } else {
@@ -300,10 +288,8 @@ struct conv4_valid_filter_flipped_impl : conv4_valid_filter_impl<S1, S2, P1, P2>
                 // For some reasons, CUDNN backward filter cross correlation does
                 // not work correclty (or does not work the way I expect it to work)
                 // The padding may not be done as I thought
-                if(etl::avx_enabled){
-                    impl::avx::conv4_valid_filter_flipped(input.direct(), kernel.direct(), conv.direct(), S1, S2, P1, P2);
-                } else if(etl::sse3_enabled){
-                    impl::sse::conv4_valid_filter_flipped(input.direct(), kernel.direct(), conv.direct(), S1, S2, P1, P2);
+                if(vec_enabled){
+                    impl::vec::conv4_valid_filter_flipped(input, kernel, conv, S1, S2, P1, P2);
                 } else {
                     impl::standard::conv4_valid_filter_flipped(input, kernel, conv, S1, S2, P1, P2);
                 }
@@ -314,10 +300,6 @@ struct conv4_valid_filter_flipped_impl : conv4_valid_filter_impl<S1, S2, P1, P2>
             impl::reduc::blas_conv4_valid_filter_flipped(input, kernel, conv, S1, S2, P1, P2);
         } else if (impl == etl::conv4_impl::VEC) {
             impl::vec::conv4_valid_filter_flipped(input, kernel, conv, S1, S2, P1, P2);
-        } else if (impl == etl::conv4_impl::AVX) {
-            impl::avx::conv4_valid_filter_flipped(input.direct(), kernel.direct(), conv.direct(), S1, S2, P1, P2);
-        } else if (impl == etl::conv4_impl::SSE) {
-            impl::sse::conv4_valid_filter_flipped(input.direct(), kernel.direct(), conv.direct(), S1, S2, P1, P2);
         } else if (impl == etl::conv4_impl::STD) {
             impl::standard::conv4_valid_filter_flipped(input, kernel, conv, S1, S2, P1, P2);
         } else {
