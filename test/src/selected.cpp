@@ -46,7 +46,7 @@ TEMPLATE_TEST_CASE_2("selected/3", "[selected]", Z, float, double) {
     etl::fast_vector<Z, 3> a({1.0, -2.0, 3.0});
     etl::fast_vector<Z, 3> b;
 
-    b = selected_helper(etl::conv_impl::SSE, a + a);
+    b = selected_helper(etl::conv_impl::VEC, a + a);
 
     REQUIRE_EQUALS(b[0], 2.0);
     REQUIRE_EQUALS(b[1], -4.0);

@@ -19,8 +19,6 @@ namespace etl {
  */
 enum class conv_impl {
     STD,      ///< Standard implementation
-    SSE,      ///< Vectorized SSE implementation
-    AVX,      ///< Vectorized AVX implementation
     VEC,      ///< Uniform Vectorized Implementation with locality
     CUDNN,    ///< CUDNN implementation
     FFT_STD,  ///< FFT reduction (with STD impl)
@@ -34,8 +32,6 @@ enum class conv_impl {
 enum class conv4_impl {
     STD,       ///< Standard implementation
     VEC,       ///< VEC implementation
-    SSE,       ///< SSE implementation
-    AVX,       ///< AVX implementation
     CUDNN,     ///< CUDNN implementation
     FFT_STD,   ///< FFT reduction (with STD impl)
     FFT_MKL,   ///< FFT reduction (with MKL impl)
@@ -48,8 +44,6 @@ enum class conv4_impl {
  */
 enum class conv_multi_impl {
     STD,       ///< Standard implementation
-    SSE,       ///< SSE implementation
-    AVX,       ///< AVX implementation
     VEC,       ///< VEC implementation
     FFT,       ///< Reductiont to FFT (valid)
     FFT_STD,   ///< FFT reduction (with STD impl)

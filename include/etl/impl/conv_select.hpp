@@ -266,13 +266,8 @@ inline etl::conv_impl select_default_conv_impl() {
         return etl::conv_impl::STD;
     }
 
-    static constexpr bool sse = vectorize_impl && vector_mode == vector_mode_t::SSE3;
-    static constexpr bool avx = vectorize_impl && vector_mode == vector_mode_t::AVX;
-
-    if (avx) {
-        return etl::conv_impl::AVX;
-    } else if (sse) {
-        return etl::conv_impl::SSE;
+    if (vec_enabled) {
+        return etl::conv_impl::VEC;
     } else if(is_cudnn_enabled && (TT == conv_type::VALID || TT == conv_type::FULL) && decay_traits<I>::dimensions() == 2){
         return etl::conv_impl::CUDNN;
     } else {
@@ -323,19 +318,10 @@ inline etl::conv_impl select_conv_impl() {
 
                 return forced;
 
-            //AVX cannot always be used
-            case conv_impl::AVX:
-                if (!avx_enabled) {
-                    std::cerr << "Forced selection to AVX sum implementation, but not possible for this expression" << std::endl;
-                    return default_impl;
-                }
-
-                return forced;
-
-            //SSE cannot always be used
-            case conv_impl::SSE:
-                if (!sse3_enabled) {
-                    std::cerr << "Forced selection to SSE sum implementation, but not possible for this expression" << std::endl;
+            //VEC cannot always be used
+            case conv_impl::VEC:
+                if (!vec_enabled) {
+                    std::cerr << "Forced selection to VEC conv implementation, but not possible for this expression" << std::endl;
                     return default_impl;
                 }
 
