@@ -605,13 +605,8 @@ inline etl::conv_multi_impl select_default_conv_valid_multi_multi_impl() {
         return etl::conv_multi_impl::STD;
     }
 
-    static constexpr bool sse = vectorize_impl && vector_mode == vector_mode_t::SSE3;
-    static constexpr bool avx = vectorize_impl && vector_mode == vector_mode_t::AVX;
-
-    if (avx) {
-        return etl::conv_multi_impl::AVX;
-    } else if (sse) {
-        return etl::conv_multi_impl::SSE;
+    if (vec_enabled) {
+        return etl::conv_multi_impl::VEC;
     }
 
     if (is_cblas_enabled || is_cublas_enabled) {
@@ -686,19 +681,10 @@ inline etl::conv_multi_impl select_conv_valid_multi_multi_impl() {
         auto forced = local_context().conv_multi_selector.impl;
 
         switch (forced) {
-            //AVX cannot always be used
-            case conv_multi_impl::AVX:
-                if (!avx_enabled) {
-                    std::cerr << "Forced selection to AVX conv implementation, but not possible for this expression" << std::endl;
-                    return select_default_conv_valid_multi_multi_impl<I, K, C>();                                                                   // COVERAGE_EXCLUDE_LINE
-                }
-
-                return forced;
-
-            //SSE cannot always be used
-            case conv_multi_impl::SSE:
-                if (!sse3_enabled) {
-                    std::cerr << "Forced selection to SSE conv implementation, but not possible for this expression" << std::endl;
+            //VEC cannot always be used
+            case conv_multi_impl::VEC:
+                if (!vec_enabled) {
+                    std::cerr << "Forced selection to VEC conv implementation, but not possible for this expression" << std::endl;
                     return select_default_conv_valid_multi_multi_impl<I, K, C>();                                                                   // COVERAGE_EXCLUDE_LINE
                 }
 
