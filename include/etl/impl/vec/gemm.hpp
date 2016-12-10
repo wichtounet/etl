@@ -3,7 +3,9 @@
 // Distributed under the terms of the MIT License.
 // (See accompanying file LICENSE or copy at
 //  http://opensource.org/licenses/MIT)
-//======================================================================= #pragma once
+//=======================================================================
+
+#pragma once
 
 // The idea of the kernel is largely inspired by the kernels in Blaze
 // by Klaus Igleberg
