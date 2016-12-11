@@ -416,7 +416,7 @@ struct dense_dyn_base : dyn_base<T, D> {
      * Accessing an element outside the matrix results in Undefined Behaviour.
      */
     template <bool B = n_dimensions == 1, cpp_enable_if(B)>
-    value_type& operator()(std::size_t i) noexcept {
+    value_type& operator()(std::size_t i) noexcept(assert_nothrow) {
         cpp_assert(i < dim(0), "Out of bounds");
 
         return _memory[i];
@@ -430,7 +430,7 @@ struct dense_dyn_base : dyn_base<T, D> {
      * Accessing an element outside the matrix results in Undefined Behaviour.
      */
     template <bool B = n_dimensions == 1, cpp_enable_if(B)>
-    const value_type& operator()(std::size_t i) const noexcept {
+    const value_type& operator()(std::size_t i) const noexcept(assert_nothrow) {
         cpp_assert(i < dim(0), "Out of bounds");
 
         return _memory[i];
@@ -445,7 +445,7 @@ struct dense_dyn_base : dyn_base<T, D> {
      * Accessing an element outside the matrix results in Undefined Behaviour.
      */
     template <bool B = n_dimensions == 2, cpp_enable_if(B)>
-    value_type& operator()(std::size_t i, std::size_t j) noexcept {
+    value_type& operator()(std::size_t i, std::size_t j) noexcept(assert_nothrow) {
         cpp_assert(i < dim(0), "Out of bounds");
         cpp_assert(j < dim(1), "Out of bounds");
 
@@ -465,7 +465,7 @@ struct dense_dyn_base : dyn_base<T, D> {
      * Accessing an element outside the matrix results in Undefined Behaviour.
      */
     template <bool B = n_dimensions == 2, cpp_enable_if(B)>
-    const value_type& operator()(std::size_t i, std::size_t j) const noexcept {
+    const value_type& operator()(std::size_t i, std::size_t j) const noexcept(assert_nothrow) {
         cpp_assert(i < dim(0), "Out of bounds");
         cpp_assert(j < dim(1), "Out of bounds");
 
@@ -485,7 +485,7 @@ struct dense_dyn_base : dyn_base<T, D> {
      * Accessing an element outside the matrix results in Undefined Behaviour.
      */
     template <bool B = n_dimensions == 3, cpp_enable_if(B)>
-    value_type& operator()(std::size_t k, std::size_t i, std::size_t j) noexcept {
+    value_type& operator()(std::size_t k, std::size_t i, std::size_t j) noexcept(assert_nothrow) {
         cpp_assert(k < dim(0), "Out of bounds");
         cpp_assert(i < dim(1), "Out of bounds");
         cpp_assert(j < dim(2), "Out of bounds");
@@ -506,7 +506,7 @@ struct dense_dyn_base : dyn_base<T, D> {
      * Accessing an element outside the matrix results in Undefined Behaviour.
      */
     template <bool B = n_dimensions == 3, cpp_enable_if(B)>
-    const value_type& operator()(std::size_t k, std::size_t i, std::size_t j) const noexcept {
+    const value_type& operator()(std::size_t k, std::size_t i, std::size_t j) const noexcept(assert_nothrow) {
         cpp_assert(k < dim(0), "Out of bounds");
         cpp_assert(i < dim(1), "Out of bounds");
         cpp_assert(j < dim(2), "Out of bounds");
@@ -527,7 +527,7 @@ struct dense_dyn_base : dyn_base<T, D> {
      * Accessing an element outside the matrix results in Undefined Behaviour.
      */
     template <bool B = n_dimensions == 4, cpp_enable_if(B)>
-    value_type& operator()(std::size_t n, std::size_t k, std::size_t i, std::size_t j) noexcept {
+    value_type& operator()(std::size_t n, std::size_t k, std::size_t i, std::size_t j) noexcept(assert_nothrow) {
         cpp_assert(n < dim(0), "Out of bounds");
         cpp_assert(k < dim(1), "Out of bounds");
         cpp_assert(i < dim(2), "Out of bounds");
@@ -549,7 +549,7 @@ struct dense_dyn_base : dyn_base<T, D> {
      * Accessing an element outside the matrix results in Undefined Behaviour.
      */
     template <bool B = n_dimensions == 4, cpp_enable_if(B)>
-    const value_type& operator()(std::size_t n, std::size_t k, std::size_t i, std::size_t j) const noexcept {
+    const value_type& operator()(std::size_t n, std::size_t k, std::size_t i, std::size_t j) const noexcept(assert_nothrow) {
         cpp_assert(n < dim(0), "Out of bounds");
         cpp_assert(k < dim(1), "Out of bounds");
         cpp_assert(i < dim(2), "Out of bounds");
