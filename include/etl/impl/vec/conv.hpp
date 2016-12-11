@@ -87,6 +87,316 @@ inline void conv2_valid_flipped_border(const I& input, const K& kernel, C&& conv
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Waggressive-loop-optimizations"
 
+// Computation of a 3x3 kernel
+template <typename V, typename I, typename K, typename C>
+void conv2_valid_flipped_micro_kernel_3x4(const I& input, const K& kernel, C&& conv, value_t<I> beta){
+    using T = value_t<I>;
+    using vec_type = V;
+
+    static constexpr bool Cx         = is_complex_t<T>::value;
+
+    const auto n1 = etl::dim<0>(input);
+    const auto n2 = etl::dim<1>(input);
+
+    const auto m1 = 3;
+    const auto m2 = 4;
+
+    const size_t c1 = n1 - m1 + 1;
+    const size_t c2 = n2 - m2 + 1;
+
+    auto* kkk = kernel.memory_start();
+    auto* in  = input.memory_start();
+    auto* out = conv.memory_start();
+
+    auto k1 = vec_type::loadu(kkk + 0 * m2 + 0);
+    auto k2 = vec_type::loadu(kkk + 1 * m2 + 0);
+    auto k3 = vec_type::loadu(kkk + 2 * m2 + 0);
+
+    if(beta == T(0)){
+        for (size_t i = 0; i < c1; ++i) {
+            size_t j = 0;
+
+            for (; j + 7 < c2; j += 8) {
+                auto i1 = vec_type::loadu(in + (i + 0) * n2 + j + 0 + 0);
+                auto i2 = vec_type::loadu(in + (i + 0) * n2 + j + 1 + 0);
+                auto i3 = vec_type::loadu(in + (i + 0) * n2 + j + 2 + 0);
+                auto i4 = vec_type::loadu(in + (i + 0) * n2 + j + 3 + 0);
+                auto i5 = vec_type::loadu(in + (i + 0) * n2 + j + 4 + 0);
+                auto i6 = vec_type::loadu(in + (i + 0) * n2 + j + 5 + 0);
+                auto i7 = vec_type::loadu(in + (i + 0) * n2 + j + 6 + 0);
+                auto i8 = vec_type::loadu(in + (i + 0) * n2 + j + 7 + 0);
+
+                auto r1 = vec_type::template mul<Cx>(i1, k1);
+                auto r2 = vec_type::template mul<Cx>(i2, k1);
+                auto r3 = vec_type::template mul<Cx>(i3, k1);
+                auto r4 = vec_type::template mul<Cx>(i4, k1);
+                auto r5 = vec_type::template mul<Cx>(i5, k1);
+                auto r6 = vec_type::template mul<Cx>(i6, k1);
+                auto r7 = vec_type::template mul<Cx>(i7, k1);
+                auto r8 = vec_type::template mul<Cx>(i8, k1);
+
+                auto i21 = vec_type::loadu(in + (i + 1) * n2 + j + 0 + 0);
+                auto i22 = vec_type::loadu(in + (i + 1) * n2 + j + 1 + 0);
+                auto i23 = vec_type::loadu(in + (i + 1) * n2 + j + 2 + 0);
+                auto i24 = vec_type::loadu(in + (i + 1) * n2 + j + 3 + 0);
+                auto i25 = vec_type::loadu(in + (i + 1) * n2 + j + 4 + 0);
+                auto i26 = vec_type::loadu(in + (i + 1) * n2 + j + 5 + 0);
+                auto i27 = vec_type::loadu(in + (i + 1) * n2 + j + 6 + 0);
+                auto i28 = vec_type::loadu(in + (i + 1) * n2 + j + 7 + 0);
+
+                r1 = vec_type::template fmadd<Cx>(i21, k2, r1);
+                r2 = vec_type::template fmadd<Cx>(i22, k2, r2);
+                r3 = vec_type::template fmadd<Cx>(i23, k2, r3);
+                r4 = vec_type::template fmadd<Cx>(i24, k2, r4);
+                r5 = vec_type::template fmadd<Cx>(i25, k2, r5);
+                r6 = vec_type::template fmadd<Cx>(i26, k2, r6);
+                r7 = vec_type::template fmadd<Cx>(i27, k2, r7);
+                r8 = vec_type::template fmadd<Cx>(i28, k2, r8);
+
+                auto i31 = vec_type::loadu(in + (i + 2) * n2 + j + 0 + 0);
+                auto i32 = vec_type::loadu(in + (i + 2) * n2 + j + 1 + 0);
+                auto i33 = vec_type::loadu(in + (i + 2) * n2 + j + 2 + 0);
+                auto i34 = vec_type::loadu(in + (i + 2) * n2 + j + 3 + 0);
+                auto i35 = vec_type::loadu(in + (i + 2) * n2 + j + 4 + 0);
+                auto i36 = vec_type::loadu(in + (i + 2) * n2 + j + 5 + 0);
+                auto i37 = vec_type::loadu(in + (i + 2) * n2 + j + 6 + 0);
+                auto i38 = vec_type::loadu(in + (i + 2) * n2 + j + 7 + 0);
+
+                r1 = vec_type::template fmadd<Cx>(i31, k3, r1);
+                r2 = vec_type::template fmadd<Cx>(i32, k3, r2);
+                r3 = vec_type::template fmadd<Cx>(i33, k3, r3);
+                r4 = vec_type::template fmadd<Cx>(i34, k3, r4);
+                r5 = vec_type::template fmadd<Cx>(i35, k3, r5);
+                r6 = vec_type::template fmadd<Cx>(i36, k3, r6);
+                r7 = vec_type::template fmadd<Cx>(i37, k3, r7);
+                r8 = vec_type::template fmadd<Cx>(i38, k3, r8);
+
+                out[i * c2 + j + 0] = vec_type::hadd(r1);
+                out[i * c2 + j + 1] = vec_type::hadd(r2);
+                out[i * c2 + j + 2] = vec_type::hadd(r3);
+                out[i * c2 + j + 3] = vec_type::hadd(r4);
+                out[i * c2 + j + 4] = vec_type::hadd(r5);
+                out[i * c2 + j + 5] = vec_type::hadd(r6);
+                out[i * c2 + j + 6] = vec_type::hadd(r7);
+                out[i * c2 + j + 7] = vec_type::hadd(r8);
+            }
+
+            for (; j + 3 < c2; j += 4) {
+                auto i11 = vec_type::loadu(in + (i + 0) * n2 + j + 0 + 0);
+                auto i12 = vec_type::loadu(in + (i + 0) * n2 + j + 1 + 0);
+                auto i13 = vec_type::loadu(in + (i + 0) * n2 + j + 2 + 0);
+                auto i14 = vec_type::loadu(in + (i + 0) * n2 + j + 3 + 0);
+
+                auto r1 = vec_type::template mul<Cx>(i11, k1);
+                auto r2 = vec_type::template mul<Cx>(i12, k1);
+                auto r3 = vec_type::template mul<Cx>(i13, k1);
+                auto r4 = vec_type::template mul<Cx>(i14, k1);
+
+                auto i21 = vec_type::loadu(in + (i + 1) * n2 + j + 0 + 0);
+                auto i22 = vec_type::loadu(in + (i + 1) * n2 + j + 1 + 0);
+                auto i23 = vec_type::loadu(in + (i + 1) * n2 + j + 2 + 0);
+                auto i24 = vec_type::loadu(in + (i + 1) * n2 + j + 3 + 0);
+
+                r1 = vec_type::template fmadd<Cx>(i21, k2, r1);
+                r2 = vec_type::template fmadd<Cx>(i22, k2, r2);
+                r3 = vec_type::template fmadd<Cx>(i23, k2, r3);
+                r4 = vec_type::template fmadd<Cx>(i24, k2, r4);
+
+                auto i31 = vec_type::loadu(in + (i + 2) * n2 + j + 0 + 0);
+                auto i32 = vec_type::loadu(in + (i + 2) * n2 + j + 1 + 0);
+                auto i33 = vec_type::loadu(in + (i + 2) * n2 + j + 2 + 0);
+                auto i34 = vec_type::loadu(in + (i + 2) * n2 + j + 3 + 0);
+
+                r1 = vec_type::template fmadd<Cx>(i31, k3, r1);
+                r2 = vec_type::template fmadd<Cx>(i32, k3, r2);
+                r3 = vec_type::template fmadd<Cx>(i33, k3, r3);
+                r4 = vec_type::template fmadd<Cx>(i34, k3, r4);
+
+                out[i * c2 + j + 0] = vec_type::hadd(r1);
+                out[i * c2 + j + 1] = vec_type::hadd(r2);
+                out[i * c2 + j + 2] = vec_type::hadd(r3);
+                out[i * c2 + j + 3] = vec_type::hadd(r4);
+            }
+
+            for (; j + 1 < c2; j += 2) {
+                auto i1 = vec_type::loadu(in + (i + 0) * n2 + j + 0 + 0);
+                auto i2 = vec_type::loadu(in + (i + 0) * n2 + j + 1 + 0);
+
+                auto r1 = vec_type::template mul<Cx>(i1, k1);
+                auto r2 = vec_type::template mul<Cx>(i2, k1);
+
+                auto i21 = vec_type::loadu(in + (i + 1) * n2 + j + 0 + 0);
+                auto i22 = vec_type::loadu(in + (i + 1) * n2 + j + 1 + 0);
+
+                r1 = vec_type::template fmadd<Cx>(i21, k2, r1);
+                r2 = vec_type::template fmadd<Cx>(i22, k2, r2);
+
+                auto i31 = vec_type::loadu(in + (i + 2) * n2 + j + 0 + 0);
+                auto i32 = vec_type::loadu(in + (i + 2) * n2 + j + 1 + 0);
+
+                r1 = vec_type::template fmadd<Cx>(i31, k3, r1);
+                r2 = vec_type::template fmadd<Cx>(i32, k3, r2);
+
+                out[i * c2 + j + 0] = vec_type::hadd(r1);
+                out[i * c2 + j + 1] = vec_type::hadd(r2);
+            }
+
+            if (j < c2) {
+                auto i1 = vec_type::loadu(in + (i + 0) * n2 + j + 0 + 0);
+                auto i2 = vec_type::loadu(in + (i + 1) * n2 + j + 0 + 0);
+                auto i3 = vec_type::loadu(in + (i + 2) * n2 + j + 0 + 0);
+
+                auto r1 = vec_type::template mul<Cx>(i1, k1);
+                r1      = vec_type::template fmadd<Cx>(i2, k2, r1);
+                r1      = vec_type::template fmadd<Cx>(i3, k3, r1);
+
+                out[i * c2 + j + 0] = vec_type::hadd(r1);
+            }
+        }
+    } else {
+        for (size_t i = 0; i < c1; ++i) {
+            size_t j = 0;
+
+            for (; j + 7 < c2; j += 8) {
+                auto i1 = vec_type::loadu(in + (i + 0) * n2 + j + 0 + 0);
+                auto i2 = vec_type::loadu(in + (i + 0) * n2 + j + 1 + 0);
+                auto i3 = vec_type::loadu(in + (i + 0) * n2 + j + 2 + 0);
+                auto i4 = vec_type::loadu(in + (i + 0) * n2 + j + 3 + 0);
+                auto i5 = vec_type::loadu(in + (i + 0) * n2 + j + 4 + 0);
+                auto i6 = vec_type::loadu(in + (i + 0) * n2 + j + 5 + 0);
+                auto i7 = vec_type::loadu(in + (i + 0) * n2 + j + 6 + 0);
+                auto i8 = vec_type::loadu(in + (i + 0) * n2 + j + 7 + 0);
+
+                auto r1 = vec_type::template mul<Cx>(i1, k1);
+                auto r2 = vec_type::template mul<Cx>(i2, k1);
+                auto r3 = vec_type::template mul<Cx>(i3, k1);
+                auto r4 = vec_type::template mul<Cx>(i4, k1);
+                auto r5 = vec_type::template mul<Cx>(i5, k1);
+                auto r6 = vec_type::template mul<Cx>(i6, k1);
+                auto r7 = vec_type::template mul<Cx>(i7, k1);
+                auto r8 = vec_type::template mul<Cx>(i8, k1);
+
+                auto i21 = vec_type::loadu(in + (i + 1) * n2 + j + 0 + 0);
+                auto i22 = vec_type::loadu(in + (i + 1) * n2 + j + 1 + 0);
+                auto i23 = vec_type::loadu(in + (i + 1) * n2 + j + 2 + 0);
+                auto i24 = vec_type::loadu(in + (i + 1) * n2 + j + 3 + 0);
+                auto i25 = vec_type::loadu(in + (i + 1) * n2 + j + 4 + 0);
+                auto i26 = vec_type::loadu(in + (i + 1) * n2 + j + 5 + 0);
+                auto i27 = vec_type::loadu(in + (i + 1) * n2 + j + 6 + 0);
+                auto i28 = vec_type::loadu(in + (i + 1) * n2 + j + 7 + 0);
+
+                r1 = vec_type::template fmadd<Cx>(i21, k2, r1);
+                r2 = vec_type::template fmadd<Cx>(i22, k2, r2);
+                r3 = vec_type::template fmadd<Cx>(i23, k2, r3);
+                r4 = vec_type::template fmadd<Cx>(i24, k2, r4);
+                r5 = vec_type::template fmadd<Cx>(i25, k2, r5);
+                r6 = vec_type::template fmadd<Cx>(i26, k2, r6);
+                r7 = vec_type::template fmadd<Cx>(i27, k2, r7);
+                r8 = vec_type::template fmadd<Cx>(i28, k2, r8);
+
+                auto i31 = vec_type::loadu(in + (i + 2) * n2 + j + 0 + 0);
+                auto i32 = vec_type::loadu(in + (i + 2) * n2 + j + 1 + 0);
+                auto i33 = vec_type::loadu(in + (i + 2) * n2 + j + 2 + 0);
+                auto i34 = vec_type::loadu(in + (i + 2) * n2 + j + 3 + 0);
+                auto i35 = vec_type::loadu(in + (i + 2) * n2 + j + 4 + 0);
+                auto i36 = vec_type::loadu(in + (i + 2) * n2 + j + 5 + 0);
+                auto i37 = vec_type::loadu(in + (i + 2) * n2 + j + 6 + 0);
+                auto i38 = vec_type::loadu(in + (i + 2) * n2 + j + 7 + 0);
+
+                r1 = vec_type::template fmadd<Cx>(i31, k3, r1);
+                r2 = vec_type::template fmadd<Cx>(i32, k3, r2);
+                r3 = vec_type::template fmadd<Cx>(i33, k3, r3);
+                r4 = vec_type::template fmadd<Cx>(i34, k3, r4);
+                r5 = vec_type::template fmadd<Cx>(i35, k3, r5);
+                r6 = vec_type::template fmadd<Cx>(i36, k3, r6);
+                r7 = vec_type::template fmadd<Cx>(i37, k3, r7);
+                r8 = vec_type::template fmadd<Cx>(i38, k3, r8);
+
+                out[i * c2 + j + 0] = beta * out[i * c2 + j + 0] + vec_type::hadd(r1);
+                out[i * c2 + j + 1] = beta * out[i * c2 + j + 1] + vec_type::hadd(r2);
+                out[i * c2 + j + 2] = beta * out[i * c2 + j + 2] + vec_type::hadd(r3);
+                out[i * c2 + j + 3] = beta * out[i * c2 + j + 3] + vec_type::hadd(r4);
+                out[i * c2 + j + 4] = beta * out[i * c2 + j + 4] + vec_type::hadd(r5);
+                out[i * c2 + j + 5] = beta * out[i * c2 + j + 5] + vec_type::hadd(r6);
+                out[i * c2 + j + 6] = beta * out[i * c2 + j + 6] + vec_type::hadd(r7);
+                out[i * c2 + j + 7] = beta * out[i * c2 + j + 7] + vec_type::hadd(r8);
+            }
+
+            for (; j + 3 < c2; j += 4) {
+                auto i11 = vec_type::loadu(in + (i + 0) * n2 + j + 0 + 0);
+                auto i12 = vec_type::loadu(in + (i + 0) * n2 + j + 1 + 0);
+                auto i13 = vec_type::loadu(in + (i + 0) * n2 + j + 2 + 0);
+                auto i14 = vec_type::loadu(in + (i + 0) * n2 + j + 3 + 0);
+
+                auto r1 = vec_type::template mul<Cx>(i11, k1);
+                auto r2 = vec_type::template mul<Cx>(i12, k1);
+                auto r3 = vec_type::template mul<Cx>(i13, k1);
+                auto r4 = vec_type::template mul<Cx>(i14, k1);
+
+                auto i21 = vec_type::loadu(in + (i + 1) * n2 + j + 0 + 0);
+                auto i22 = vec_type::loadu(in + (i + 1) * n2 + j + 1 + 0);
+                auto i23 = vec_type::loadu(in + (i + 1) * n2 + j + 2 + 0);
+                auto i24 = vec_type::loadu(in + (i + 1) * n2 + j + 3 + 0);
+
+                r1 = vec_type::template fmadd<Cx>(i21, k2, r1);
+                r2 = vec_type::template fmadd<Cx>(i22, k2, r2);
+                r3 = vec_type::template fmadd<Cx>(i23, k2, r3);
+                r4 = vec_type::template fmadd<Cx>(i24, k2, r4);
+
+                auto i31 = vec_type::loadu(in + (i + 2) * n2 + j + 0 + 0);
+                auto i32 = vec_type::loadu(in + (i + 2) * n2 + j + 1 + 0);
+                auto i33 = vec_type::loadu(in + (i + 2) * n2 + j + 2 + 0);
+                auto i34 = vec_type::loadu(in + (i + 2) * n2 + j + 3 + 0);
+
+                r1 = vec_type::template fmadd<Cx>(i31, k3, r1);
+                r2 = vec_type::template fmadd<Cx>(i32, k3, r2);
+                r3 = vec_type::template fmadd<Cx>(i33, k3, r3);
+                r4 = vec_type::template fmadd<Cx>(i34, k3, r4);
+
+                out[i * c2 + j + 0] = beta * out[i * c2 + j + 0] + vec_type::hadd(r1);
+                out[i * c2 + j + 1] = beta * out[i * c2 + j + 1] + vec_type::hadd(r2);
+                out[i * c2 + j + 2] = beta * out[i * c2 + j + 2] + vec_type::hadd(r3);
+                out[i * c2 + j + 3] = beta * out[i * c2 + j + 3] + vec_type::hadd(r4);
+            }
+
+            for (; j + 1 < c2; j += 2) {
+                auto i1 = vec_type::loadu(in + (i + 0) * n2 + j + 0 + 0);
+                auto i2 = vec_type::loadu(in + (i + 0) * n2 + j + 1 + 0);
+
+                auto r1 = vec_type::template mul<Cx>(i1, k1);
+                auto r2 = vec_type::template mul<Cx>(i2, k1);
+
+                auto i21 = vec_type::loadu(in + (i + 1) * n2 + j + 0 + 0);
+                auto i22 = vec_type::loadu(in + (i + 1) * n2 + j + 1 + 0);
+
+                r1 = vec_type::template fmadd<Cx>(i21, k2, r1);
+                r2 = vec_type::template fmadd<Cx>(i22, k2, r2);
+
+                auto i31 = vec_type::loadu(in + (i + 2) * n2 + j + 0 + 0);
+                auto i32 = vec_type::loadu(in + (i + 2) * n2 + j + 1 + 0);
+
+                r1 = vec_type::template fmadd<Cx>(i31, k3, r1);
+                r2 = vec_type::template fmadd<Cx>(i32, k3, r2);
+
+                out[i * c2 + j + 0] = beta * out[i * c2 + j + 0] + vec_type::hadd(r1);
+                out[i * c2 + j + 1] = beta * out[i * c2 + j + 1] + vec_type::hadd(r2);
+            }
+
+            if (j < c2) {
+                auto i1 = vec_type::loadu(in + (i + 0) * n2 + j + 0 + 0);
+                auto i2 = vec_type::loadu(in + (i + 1) * n2 + j + 0 + 0);
+                auto i3 = vec_type::loadu(in + (i + 2) * n2 + j + 0 + 0);
+
+                auto r1 = vec_type::template mul<Cx>(i1, k1);
+                r1      = vec_type::template fmadd<Cx>(i2, k2, r1);
+                r1      = vec_type::template fmadd<Cx>(i3, k3, r1);
+
+                out[i * c2 + j + 0] = beta * out[i * c2 + j + 0] + vec_type::hadd(r1);
+            }
+        }
+    }
+}
+
 template <typename V, typename I, typename K, typename C>
 void conv2_valid_flipped_micro_kernel_8x8(const I& input, const K& kernel, C&& conv, value_t<I> beta){
     using T = value_t<I>;
@@ -287,7 +597,182 @@ void conv2_valid_flipped_micro_kernel_8x8(const I& input, const K& kernel, C&& c
 }
 
 template <typename V, typename I, typename K, typename C>
-void conv2_valid_flipped_micro_kernel_16x16(const I& input, const K& kernel, C&& conv, value_t<I> beta){
+void conv2_valid_flipped_micro_kernel_nx8(const I& input, const K& kernel, C&& conv, value_t<I> beta){
+    using T        = value_t<I>;
+    using vec_type = V;
+
+    static constexpr bool Cx = is_complex_t<T>::value;
+
+    const auto n1 = etl::dim<0>(input);
+    const auto n2 = etl::dim<1>(input);
+
+    const auto m1 = etl::dim<0>(kernel);
+    const auto m2 = 8;
+
+    const size_t c1 = n1 - m1 + 1;
+    const size_t c2 = n2 - m2 + 1;
+
+    auto* kkk = kernel.memory_start();
+    auto* in  = input.memory_start();
+    auto* out = conv.memory_start();
+
+    if (beta == T(0)) {
+        for (size_t i = 0; i < c1 - 0; ++i) {
+            size_t j = 0;
+
+            for (; j + 7 < c2 - 0; j += 8) {
+                auto r1 = vec_type::template zero<T>();
+                auto r2 = vec_type::template zero<T>();
+                auto r3 = vec_type::template zero<T>();
+                auto r4 = vec_type::template zero<T>();
+                auto r5 = vec_type::template zero<T>();
+                auto r6 = vec_type::template zero<T>();
+                auto r7 = vec_type::template zero<T>();
+                auto r8 = vec_type::template zero<T>();
+
+                for (size_t k = 0; k < m1; ++k) {
+                    auto k1 = vec_type::loadu(kkk + k * m2 + 0);
+
+                    auto i1 = vec_type::loadu(in + (i + k) * n2 + j + 0 + 0);
+                    auto i2 = vec_type::loadu(in + (i + k) * n2 + j + 1 + 0);
+                    auto i3 = vec_type::loadu(in + (i + k) * n2 + j + 2 + 0);
+                    auto i4 = vec_type::loadu(in + (i + k) * n2 + j + 3 + 0);
+                    auto i5 = vec_type::loadu(in + (i + k) * n2 + j + 4 + 0);
+                    auto i6 = vec_type::loadu(in + (i + k) * n2 + j + 5 + 0);
+                    auto i7 = vec_type::loadu(in + (i + k) * n2 + j + 6 + 0);
+                    auto i8 = vec_type::loadu(in + (i + k) * n2 + j + 7 + 0);
+
+                    r1 = vec_type::template fmadd<Cx>(i1, k1, r1);
+                    r2 = vec_type::template fmadd<Cx>(i2, k1, r2);
+                    r3 = vec_type::template fmadd<Cx>(i3, k1, r3);
+                    r4 = vec_type::template fmadd<Cx>(i4, k1, r4);
+                    r5 = vec_type::template fmadd<Cx>(i5, k1, r5);
+                    r6 = vec_type::template fmadd<Cx>(i6, k1, r6);
+                    r7 = vec_type::template fmadd<Cx>(i7, k1, r7);
+                    r8 = vec_type::template fmadd<Cx>(i8, k1, r8);
+                }
+
+                out[i * c2 + j + 0] = vec_type::hadd(r1);
+                out[i * c2 + j + 1] = vec_type::hadd(r2);
+                out[i * c2 + j + 2] = vec_type::hadd(r3);
+                out[i * c2 + j + 3] = vec_type::hadd(r4);
+                out[i * c2 + j + 4] = vec_type::hadd(r5);
+                out[i * c2 + j + 5] = vec_type::hadd(r6);
+                out[i * c2 + j + 6] = vec_type::hadd(r7);
+                out[i * c2 + j + 7] = vec_type::hadd(r8);
+            }
+
+            for (; j + 1 < c2 - 0; j += 2) {
+                auto r1 = vec_type::template zero<T>();
+                auto r2 = vec_type::template zero<T>();
+
+                for (size_t k = 0; k < m1; ++k) {
+                    auto k1 = vec_type::loadu(kkk + k * m2 + 0);
+
+                    auto i1 = vec_type::loadu(in + (i + k) * n2 + j + 0 + 0);
+                    auto i2 = vec_type::loadu(in + (i + k) * n2 + j + 1 + 0);
+
+                    r1 = vec_type::template fmadd<Cx>(i1, k1, r1);
+                    r2 = vec_type::template fmadd<Cx>(i2, k1, r2);
+                }
+
+                out[i * c2 + j + 0] = vec_type::hadd(r1);
+                out[i * c2 + j + 1] = vec_type::hadd(r2);
+            }
+
+            if (j < c2 - 0) {
+                auto r1 = vec_type::template zero<T>();
+
+                for (std::size_t k = 0; k < m1; ++k) {
+                    auto k1 = vec_type::loadu(kkk + k * m2 + 0);
+                    auto i1 = vec_type::loadu(in + (i + k) * n2 + j + 0 + 0);
+                    r1      = vec_type::template fmadd<Cx>(i1, k1, r1);
+                }
+
+                out[i * c2 + j + 0] = vec_type::hadd(r1);
+            }
+        }
+    } else {
+        for (size_t i = 0; i < c1 - 0; ++i) {
+            size_t j = 0;
+
+            for (; j + 7 < c2 - 0; j += 8) {
+                auto r1 = vec_type::template zero<T>();
+                auto r2 = vec_type::template zero<T>();
+                auto r3 = vec_type::template zero<T>();
+                auto r4 = vec_type::template zero<T>();
+                auto r5 = vec_type::template zero<T>();
+                auto r6 = vec_type::template zero<T>();
+                auto r7 = vec_type::template zero<T>();
+                auto r8 = vec_type::template zero<T>();
+
+                for (size_t k = 0; k < m1; ++k) {
+                    auto k1 = vec_type::loadu(kkk + k * m2 + 0);
+
+                    auto i1 = vec_type::loadu(in + (i + k) * n2 + j + 0 + 0);
+                    auto i2 = vec_type::loadu(in + (i + k) * n2 + j + 1 + 0);
+                    auto i3 = vec_type::loadu(in + (i + k) * n2 + j + 2 + 0);
+                    auto i4 = vec_type::loadu(in + (i + k) * n2 + j + 3 + 0);
+                    auto i5 = vec_type::loadu(in + (i + k) * n2 + j + 4 + 0);
+                    auto i6 = vec_type::loadu(in + (i + k) * n2 + j + 5 + 0);
+                    auto i7 = vec_type::loadu(in + (i + k) * n2 + j + 6 + 0);
+                    auto i8 = vec_type::loadu(in + (i + k) * n2 + j + 7 + 0);
+
+                    r1 = vec_type::template fmadd<Cx>(i1, k1, r1);
+                    r2 = vec_type::template fmadd<Cx>(i2, k1, r2);
+                    r3 = vec_type::template fmadd<Cx>(i3, k1, r3);
+                    r4 = vec_type::template fmadd<Cx>(i4, k1, r4);
+                    r5 = vec_type::template fmadd<Cx>(i5, k1, r5);
+                    r6 = vec_type::template fmadd<Cx>(i6, k1, r6);
+                    r7 = vec_type::template fmadd<Cx>(i7, k1, r7);
+                    r8 = vec_type::template fmadd<Cx>(i8, k1, r8);
+                }
+
+                out[i * c2 + j + 0] = beta * out[i * c2 + j + 0] + vec_type::hadd(r1);
+                out[i * c2 + j + 1] = beta * out[i * c2 + j + 1] + vec_type::hadd(r2);
+                out[i * c2 + j + 2] = beta * out[i * c2 + j + 2] + vec_type::hadd(r3);
+                out[i * c2 + j + 3] = beta * out[i * c2 + j + 3] + vec_type::hadd(r4);
+                out[i * c2 + j + 4] = beta * out[i * c2 + j + 4] + vec_type::hadd(r5);
+                out[i * c2 + j + 5] = beta * out[i * c2 + j + 5] + vec_type::hadd(r6);
+                out[i * c2 + j + 6] = beta * out[i * c2 + j + 6] + vec_type::hadd(r7);
+                out[i * c2 + j + 7] = beta * out[i * c2 + j + 7] + vec_type::hadd(r8);
+            }
+
+            for (; j + 1 < c2 - 0; j += 2) {
+                auto r1 = vec_type::template zero<T>();
+                auto r2 = vec_type::template zero<T>();
+
+                for (size_t k = 0; k < m1; ++k) {
+                    auto k1 = vec_type::loadu(kkk + k * m2 + 0);
+
+                    auto i1 = vec_type::loadu(in + (i + k) * n2 + j + 0 + 0);
+                    auto i2 = vec_type::loadu(in + (i + k) * n2 + j + 1 + 0);
+
+                    r1 = vec_type::template fmadd<Cx>(i1, k1, r1);
+                    r2 = vec_type::template fmadd<Cx>(i2, k1, r2);
+                }
+
+                out[i * c2 + j + 0] = beta * out[i * c2 + j + 0] + vec_type::hadd(r1);
+                out[i * c2 + j + 1] = beta * out[i * c2 + j + 1] + vec_type::hadd(r2);
+            }
+
+            if (j < c2 - 0) {
+                auto r1 = vec_type::template zero<T>();
+
+                for (std::size_t k = 0; k < m1; ++k) {
+                    auto k1 = vec_type::loadu(kkk + k * m2 + 0);
+                    auto i1 = vec_type::loadu(in + (i + k) * n2 + j + 0 + 0);
+                    r1      = vec_type::template fmadd<Cx>(i1, k1, r1);
+                }
+
+                out[i * c2 + j + 0] = beta * out[i * c2 + j + 0] + vec_type::hadd(r1);
+            }
+        }
+    }
+}
+
+template <typename V, typename I, typename K, typename C>
+void conv2_valid_flipped_micro_kernel_nx16(const I& input, const K& kernel, C&& conv, value_t<I> beta){
     using T = value_t<I>;
     using vec_type = V;
 
@@ -297,7 +782,7 @@ void conv2_valid_flipped_micro_kernel_16x16(const I& input, const K& kernel, C&&
     const auto n1 = etl::dim<0>(input);
     const auto n2 = etl::dim<1>(input);
 
-    const auto m1 = 16;
+    const auto m1 = etl::dim<0>(kernel);
     const auto m2 = 16;
 
     const size_t c1 = n1 - m1 + 1;
@@ -718,11 +1203,17 @@ void conv2_valid_flipped_micro_kernel(const I& input, const K& kernel, C&& conv,
     const size_t c2 = (n2 - m2 + 2 * p2) / s2 + 1;
 
     if(cpp_likely(!p1 && !p2 && s1 == 1 && s2 == 1)){
-        if(vec_size == 8 && m1 == 8 && m2 == 8){
+        if(vec_size == 4 && m1 == 3 && m2 == 4){
+            conv2_valid_flipped_micro_kernel_3x4<V>(input, kernel, conv, beta);
+            return;
+        } else if(vec_size == 8 && m1 == 8 && m2 == 8){
             conv2_valid_flipped_micro_kernel_8x8<V>(input, kernel, conv, beta);
             return;
-        } else if(vec_size == 8 && m1 == 16 && m2 == 16){
-            conv2_valid_flipped_micro_kernel_16x16<V>(input, kernel, conv, beta);
+        } else if(vec_size == 8 && m2 == 8){
+            conv2_valid_flipped_micro_kernel_nx8<V>(input, kernel, conv, beta);
+            return;
+        } else if(vec_size == 8 && m2 == 16){
+            conv2_valid_flipped_micro_kernel_nx16<V>(input, kernel, conv, beta);
             return;
         }
     }
