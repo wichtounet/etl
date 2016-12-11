@@ -84,8 +84,10 @@ inline void conv2_valid_flipped_border(const I& input, const K& kernel, C&& conv
     }
 }
 
+#ifndef __clang__
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Waggressive-loop-optimizations"
+#endif
 
 // Computation of a 3x3 kernel
 template <typename V, typename I, typename K, typename C>
@@ -1400,7 +1402,9 @@ void conv2_valid_flipped_micro_kernel_5x8(const I& input, const K& kernel, C&& c
     }
 }
 
+#ifndef __clang__
 #pragma GCC diagnostic pop
+#endif
 
 template <typename V, typename I, typename K, typename C>
 void conv2_valid_flipped_micro_kernel(const I& input, const K& kernel, C&& conv, size_t s1, size_t s2, size_t p1, size_t p2, value_t<I> beta){
