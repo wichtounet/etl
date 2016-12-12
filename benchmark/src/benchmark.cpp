@@ -267,36 +267,19 @@ CPM_BENCH() {
 #endif
 }
 
-//Bench transposition
-CPM_BENCH() {
-    CPM_TWO_PASS_NS_P(
-        trans_policy,
-        "r = transpose(a) (s) [transpose][s]",
-        [](std::size_t d1, std::size_t d2){ return std::make_tuple(smat(d1, d2), smat(d2, d1)); },
-        [](smat& a, smat& r){ r = a.transpose(); }
-        );
+CPM_DIRECT_SECTION_TWO_PASS_NS_P("strans [transpose][s]", trans_policy,
+    CPM_SECTION_INIT([](std::size_t d1, std::size_t d2){ return std::make_tuple(smat(d1,d2), smat(d2,d1)); }),
+    CPM_SECTION_FUNCTOR("default", [](smat& a, smat& r){ r = transpose(a); }),
+    CPM_SECTION_FUNCTOR("std", [](smat& a, smat& r){ r = selected_helper(etl::transpose_impl::STD, transpose(a)); })
+    BLAS_SECTION_FUNCTOR("blas", [](smat& a, smat& r){ r = selected_helper(etl::transpose_impl::MKL, transpose(a)); })
+)
 
-    CPM_TWO_PASS_NS_P(
-        trans_policy,
-        "r = transpose(a) (d) [transpose][d]",
-        [](std::size_t d1, std::size_t d2){ return std::make_tuple(dmat(d1, d2), dmat(d2, d1)); },
-        [](dmat& a, dmat& r){ r = a.transpose(); }
-        );
-
-    CPM_TWO_PASS_NS_P(
-        trans_policy,
-        "a = transpose(a) (s) [transpose][inplace][s]",
-        [](std::size_t d1, std::size_t d2){ return std::make_tuple(smat(d1, d2)); },
-        [](smat& a){ a.transpose_inplace(); }
-        );
-
-    CPM_TWO_PASS_NS_P(
-        trans_policy,
-        "a = transpose(a) (d) [transpose][inplace][d]",
-        [](std::size_t d1, std::size_t d2){ return std::make_tuple(dmat(d1, d2)); },
-        [](dmat& a){ a.transpose_inplace(); }
-        );
-}
+CPM_DIRECT_SECTION_TWO_PASS_NS_P("inplace_strans [transpose][s]", trans_policy,
+    CPM_SECTION_INIT([](std::size_t d1, std::size_t d2){ return std::make_tuple(smat(d1,d2)); }),
+    CPM_SECTION_FUNCTOR("default", [](smat& r){ r.transpose_inplace(); }),
+    CPM_SECTION_FUNCTOR("std", [](smat& r){ SELECTED_SECTION(etl::transpose_impl::STD){ r.transpose_inplace(); } })
+    BLAS_SECTION_FUNCTOR("blas", [](smat& r){ SELECTED_SECTION(etl::transpose_impl::MKL){ r.transpose_inplace(); } })
+)
 
 //Sigmoid benchmark
 CPM_DIRECT_SECTION_TWO_PASS_NS_F("a = sigmoid(b) (s) [std][sigmoid][d]",
@@ -418,8 +401,7 @@ CPM_BENCH() {
         [](dmat& a, dmat& r){ r = etl::p_max_pool_h<4,4>(a); },
         [](std::size_t d){ return 2 * d * d * 4 * 4; }
         );
-
-    CPM_TWO_PASS_NS_P(
+CPM_TWO_PASS_NS_P(
         pmp_policy,
         "pmp_p(c=4) (d) [pmp][s]",
         [](std::size_t d){ return std::make_tuple(dmat(d, d), dmat(d/4,d/4)); },
