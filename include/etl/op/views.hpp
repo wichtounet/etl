@@ -1401,7 +1401,7 @@ struct etl_traits<etl::sub_view<T>> {
      * \returns the size of the given expression
      */
     static std::size_t size(const expr_t& v) {
-        return etl_traits<sub_expr_t>::size(v.sub) / etl_traits<sub_expr_t>::dim(v.sub, 0);
+        return etl_traits<sub_expr_t>::size(v.sub_expr) / etl_traits<sub_expr_t>::dim(v.sub_expr, 0);
     }
 
     /*!
@@ -1411,7 +1411,7 @@ struct etl_traits<etl::sub_view<T>> {
      * \return The dth dimension of the given expression
      */
     static std::size_t dim(const expr_t& v, std::size_t d) {
-        return etl_traits<sub_expr_t>::dim(v.sub, d + 1);
+        return etl_traits<sub_expr_t>::dim(v.sub_expr, d + 1);
     }
 
     /*!
@@ -1726,7 +1726,7 @@ std::ostream& operator<<(std::ostream& os, const dim_view<T, D>& v) {
  */
 template <typename T>
 std::ostream& operator<<(std::ostream& os, const sub_view<T>& v) {
-    return os << "sub(" << v.sub << ", " << v.i << ")";
+    return os << "sub(" << v.sub_expr << ", " << v.i << ")";
 }
 
 /*!
