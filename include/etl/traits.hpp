@@ -253,6 +253,14 @@ template <typename T>
 using is_lhs = cpp::or_c<is_etl_value<T>, is_unary_expr<T>>;
 
 /*!
+ * \brief Traits indicating if the given ETL type is a simple left hand side type.
+ * Adapter types are not taken from this because they do more operations.
+ * \tparam T The type to test
+ */
+template <typename T>
+using is_simple_lhs = cpp::or_c<is_etl_value_class<T>, is_unary_expr<T>>;
+
+/*!
  * \brief Traits indicating if the given ETL type has direct memory access.
  * \tparam T The type to test
  */
