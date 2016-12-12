@@ -240,8 +240,6 @@ inline etl::conv_impl select_conv2_impl_new() {
     return default_impl;
 }
 
-//TODO Remove this once everything is vectorized correctly
-
 /*!
  * \brief Select the implementation of the conv of I and K in C
  *
