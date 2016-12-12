@@ -271,28 +271,28 @@ CPM_BENCH() {
 CPM_BENCH() {
     CPM_TWO_PASS_NS_P(
         trans_policy,
-        "r = tranpose(a) (s) [transpose][s]",
+        "r = transpose(a) (s) [transpose][s]",
         [](std::size_t d1, std::size_t d2){ return std::make_tuple(smat(d1, d2), smat(d2, d1)); },
         [](smat& a, smat& r){ r = a.transpose(); }
         );
 
     CPM_TWO_PASS_NS_P(
         trans_policy,
-        "r = tranpose(a) (d) [transpose][d]",
+        "r = transpose(a) (d) [transpose][d]",
         [](std::size_t d1, std::size_t d2){ return std::make_tuple(dmat(d1, d2), dmat(d2, d1)); },
         [](dmat& a, dmat& r){ r = a.transpose(); }
         );
 
     CPM_TWO_PASS_NS_P(
         trans_policy,
-        "a = tranpose(a) (s) [transpose][inplace][s]",
+        "a = transpose(a) (s) [transpose][inplace][s]",
         [](std::size_t d1, std::size_t d2){ return std::make_tuple(smat(d1, d2)); },
         [](smat& a){ a.transpose_inplace(); }
         );
 
     CPM_TWO_PASS_NS_P(
         trans_policy,
-        "a = tranpose(a) (d) [transpose][inplace][d]",
+        "a = transpose(a) (d) [transpose][inplace][d]",
         [](std::size_t d1, std::size_t d2){ return std::make_tuple(dmat(d1, d2)); },
         [](dmat& a){ a.transpose_inplace(); }
         );
