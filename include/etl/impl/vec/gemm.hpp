@@ -845,6 +845,48 @@ void gemm_small_kernel(const A& a, const B& b, C& c) {
     for (; j + (2 * vec_size) - 1 < N; j += 2 * vec_size) {
         size_t i = 0;
 
+        for (; i + 3 < M; i += 4) {
+            auto r11 = vec_type::template zero<T>();
+            auto r12 = vec_type::template zero<T>();
+            auto r13 = vec_type::template zero<T>();
+            auto r14 = vec_type::template zero<T>();
+
+            auto r21 = vec_type::template zero<T>();
+            auto r22 = vec_type::template zero<T>();
+            auto r23 = vec_type::template zero<T>();
+            auto r24 = vec_type::template zero<T>();
+
+            for (size_t k = 0; k < K; ++k) {
+                auto b1 = b.template loadu<vec_type>(k * N + j + 0 * vec_size);
+                auto b2 = b.template loadu<vec_type>(k * N + j + 1 * vec_size);
+
+                auto a1 = vec_type::set(a(i, k));
+                auto a2 = vec_type::set(a(i + 1, k));
+                auto a3 = vec_type::set(a(i + 2, k));
+                auto a4 = vec_type::set(a(i + 3, k));
+
+                r11 = vec_type::template fmadd<Cx>(a1, b1, r11);
+                r12 = vec_type::template fmadd<Cx>(a2, b1, r12);
+                r13 = vec_type::template fmadd<Cx>(a3, b1, r13);
+                r14 = vec_type::template fmadd<Cx>(a4, b1, r14);
+
+                r21 = vec_type::template fmadd<Cx>(a1, b2, r21);
+                r22 = vec_type::template fmadd<Cx>(a2, b2, r22);
+                r23 = vec_type::template fmadd<Cx>(a3, b2, r23);
+                r24 = vec_type::template fmadd<Cx>(a4, b2, r24);
+            }
+
+            c.template storeu<vec_type>(r11, (i+0) * N + j + 0 * vec_size);
+            c.template storeu<vec_type>(r12, (i+1) * N + j + 0 * vec_size);
+            c.template storeu<vec_type>(r13, (i+2) * N + j + 0 * vec_size);
+            c.template storeu<vec_type>(r14, (i+3) * N + j + 0 * vec_size);
+
+            c.template storeu<vec_type>(r21, (i+0) * N + j + 1 * vec_size);
+            c.template storeu<vec_type>(r22, (i+1) * N + j + 1 * vec_size);
+            c.template storeu<vec_type>(r23, (i+2) * N + j + 1 * vec_size);
+            c.template storeu<vec_type>(r24, (i+3) * N + j + 1 * vec_size);
+        }
+
         for (; i + 1 < M; i += 2) {
             auto r11 = vec_type::template zero<T>();
             auto r12 = vec_type::template zero<T>();
@@ -1245,7 +1287,7 @@ template <typename A, typename B, typename C, cpp_enable_if((all_row_major<A, B,
 void gemm(A&& a, B&& b, C&& c) {
     cpp_assert(vec_enabled, "At least one vector mode must be enabled for impl::VEC");
 
-    if(etl::size(b) < 10000){
+    if(etl::size(b) <= 10000){
         gemm_small_kernel<default_vec>(a, b, c);
     } else {
         gemm_large_kernel<default_vec>(a, b, c);
