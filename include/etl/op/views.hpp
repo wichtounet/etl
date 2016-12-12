@@ -264,7 +264,7 @@ struct sub_view {
      * \param args The indices
      * \return a reference to the element at the given position.
      */
-    template <typename... S, cpp_enable_if((sizeof...(S) == decay_traits<sub_type>::dimensions() + 1))>
+    template <typename... S, cpp_enable_if((sizeof...(S) + 1 == decay_traits<sub_type>::dimensions()))>
     ETL_STRONG_INLINE(const_return_type) operator()(S... args) const {
         return sub_expr(i, static_cast<std::size_t>(args)...);
     }
@@ -274,7 +274,7 @@ struct sub_view {
      * \param args The indices
      * \return a reference to the element at the given position.
      */
-    template <typename... S, cpp_enable_if((sizeof...(S) == decay_traits<sub_type>::dimensions() + 1))>
+    template <typename... S, cpp_enable_if((sizeof...(S) + 1 == decay_traits<sub_type>::dimensions()))>
     ETL_STRONG_INLINE(return_type) operator()(S... args) {
         return sub_expr(i, static_cast<std::size_t>(args)...);
     }
