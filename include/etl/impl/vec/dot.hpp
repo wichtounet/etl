@@ -108,8 +108,12 @@ value_t<L> selected_dot(const L& lhs, const R& rhs) {
         r1 = vec_type::template fmadd<Cx>(a1, b1, r1);
     }
 
-    auto p1 = vec_type::hadd(r1) + vec_type::hadd(r2) + vec_type::hadd(r3) + vec_type::hadd(r4);
-    auto p2 = vec_type::hadd(r5) + vec_type::hadd(r6) + vec_type::hadd(r7) + vec_type::hadd(r8);
+    auto rsum = vec_type::add(
+        vec_type::add(vec_type::add(r1, r2), vec_type::add(r3, r4)),
+        vec_type::add(vec_type::add(r5, r6), vec_type::add(r7, r8)));
+
+    auto p1 = vec_type::hadd(rsum);
+    auto p2 = T();
 
     for (; remainder && i + 1 < n; i += 2) {
         p1 += lhs[i] * rhs[i];
