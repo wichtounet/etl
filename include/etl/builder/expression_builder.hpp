@@ -258,6 +258,158 @@ auto operator%(LE lhs, RE&& rhs) -> detail::right_binary_helper<scalar<value_t<R
     return {scalar<value_t<RE>>(lhs), rhs};
 }
 
+// Compound operators
+
+/*!
+ * \brief Compound addition of the right hand side to the left hand side
+ * \param lhs The left hand side, will be changed
+ * \param rhs The right hand side
+ * \return the left hand side
+ */
+template <typename LE, typename RE, cpp_enable_if(std::is_arithmetic<RE>::value, is_simple_lhs<LE>::value)>
+LE& operator+=(LE&& lhs, RE rhs) {
+    detail::scalar_add::apply(std::forward<LE>(lhs), rhs);
+    return lhs;
+}
+
+/*!
+ * \brief Compound addition of the right hand side to the left hand side
+ * \param lhs The left hand side, will be changed
+ * \param rhs The right hand side
+ * \return the left hand side
+ */
+template <typename LE, typename RE, cpp_enable_if(is_etl_expr<RE>::value, is_simple_lhs<LE>::value)>
+LE& operator+=(LE&& lhs, RE&& rhs) {
+    validate_expression(lhs, rhs);
+    add_evaluate(std::forward<RE>(rhs), std::forward<LE>(lhs));
+    return lhs;
+}
+
+/*!
+ * \brief Compound subtraction of the right hand side to the left hand side
+ * \param lhs The left hand side, will be changed
+ * \param rhs The right hand side
+ * \return the left hand side
+ */
+template <typename LE, typename RE, cpp_enable_if(std::is_arithmetic<RE>::value, is_simple_lhs<LE>::value)>
+LE& operator-=(LE&& lhs, RE rhs) {
+    detail::scalar_sub::apply(std::forward<LE>(lhs), rhs);
+    return lhs;
+}
+
+/*!
+ * \brief Compound subtraction of the right hand side to the left hand side
+ * \param lhs The left hand side, will be changed
+ * \param rhs The right hand side
+ * \return the left hand side
+ */
+template <typename LE, typename RE, cpp_enable_if(is_etl_expr<RE>::value, is_simple_lhs<LE>::value)>
+LE& operator-=(LE&& lhs, RE&& rhs) {
+    validate_expression(lhs, rhs);
+    sub_evaluate(std::forward<RE>(rhs), std::forward<LE>(lhs));
+    return lhs;
+}
+
+/*!
+ * \brief Compound multiplication of the right hand side to the left hand side
+ * \param lhs The left hand side, will be changed
+ * \param rhs The right hand side
+ * \return the left hand side
+ */
+template <typename LE, typename RE, cpp_enable_if(std::is_arithmetic<RE>::value, is_simple_lhs<LE>::value)>
+LE& operator*=(LE&& lhs, RE rhs) {
+    detail::scalar_mul::apply(std::forward<LE>(lhs), rhs);
+    return lhs;
+}
+
+/*!
+ * \brief Compound multiplication of the right hand side to the left hand side
+ * \param lhs The left hand side, will be changed
+ * \param rhs The right hand side
+ * \return the left hand side
+ */
+template <typename LE, typename RE, cpp_enable_if(is_etl_expr<RE>::value, is_simple_lhs<LE>::value)>
+LE& operator*=(LE&& lhs, RE&& rhs) {
+    validate_expression(lhs, rhs);
+    mul_evaluate(std::forward<RE>(rhs), std::forward<LE>(lhs));
+    return lhs;
+}
+
+/*!
+ * \brief Compound multiplication of the right hand side to the left hand side
+ * \param lhs The left hand side, will be changed
+ * \param rhs The right hand side
+ * \return the left hand side
+ */
+template <typename LE, typename RE, cpp_enable_if(std::is_arithmetic<RE>::value, is_simple_lhs<LE>::value)>
+LE& operator>>=(LE&& lhs, RE rhs) {
+    detail::scalar_mul::apply(std::forward<LE>(lhs), rhs);
+    return lhs;
+}
+
+/*!
+ * \brief Compound multiplication of the right hand side to the left hand side
+ * \param lhs The left hand side, will be changed
+ * \param rhs The right hand side
+ * \return the left hand side
+ */
+template <typename LE, typename RE, cpp_enable_if(is_etl_expr<RE>::value, is_simple_lhs<LE>::value)>
+LE& operator>>=(LE&& lhs, RE&& rhs) {
+    validate_expression(lhs, rhs);
+    mul_evaluate(std::forward<RE>(rhs), std::forward<LE>(lhs));
+    return lhs;
+}
+
+/*!
+ * \brief Compound division of the right hand side to the left hand side
+ * \param lhs The left hand side, will be changed
+ * \param rhs The right hand side
+ * \return the left hand side
+ */
+template <typename LE, typename RE, cpp_enable_if(std::is_arithmetic<RE>::value, is_simple_lhs<LE>::value)>
+LE& operator/=(LE&& lhs, RE rhs) {
+    detail::scalar_div::apply(std::forward<LE>(lhs), rhs);
+    return lhs;
+}
+
+/*!
+ * \brief Compound division of the right hand side to the left hand side
+ * \param lhs The left hand side, will be changed
+ * \param rhs The right hand side
+ * \return the left hand side
+ */
+template <typename LE, typename RE, cpp_enable_if(is_etl_expr<RE>::value, is_simple_lhs<LE>::value)>
+LE& operator/=(LE&& lhs, RE&& rhs) {
+    validate_expression(lhs, rhs);
+    div_evaluate(std::forward<RE>(rhs), std::forward<LE>(lhs));
+    return lhs;
+}
+
+/*!
+ * \brief Compound modulo of the right hand side to the left hand side
+ * \param lhs The left hand side, will be changed
+ * \param rhs The right hand side
+ * \return the left hand side
+ */
+template <typename LE, typename RE, cpp_enable_if(std::is_arithmetic<RE>::value, is_simple_lhs<LE>::value)>
+LE& operator%=(LE&& lhs, RE rhs) {
+    detail::scalar_mod::apply(std::forward<LE>(lhs), rhs);
+    return lhs;
+}
+
+/*!
+ * \brief Compound modulo of the right hand side to the left hand side
+ * \param lhs The left hand side, will be changed
+ * \param rhs The right hand side
+ * \return the left hand side
+ */
+template <typename LE, typename RE, cpp_enable_if(is_etl_expr<RE>::value, is_simple_lhs<LE>::value)>
+LE& operator%=(LE&& lhs, RE&& rhs) {
+    validate_expression(lhs, rhs);
+    mod_evaluate(std::forward<RE>(rhs), std::forward<LE>(lhs));
+    return lhs;
+}
+
 // Apply an unary expression on an ETL expression (vector,matrix,binary,unary)
 
 /*!
