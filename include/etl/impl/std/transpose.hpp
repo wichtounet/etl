@@ -28,10 +28,10 @@ template <typename C>
 void inplace_square_transpose(C&& c) {
     using std::swap;
 
-    const std::size_t N = etl::dim<0>(c);
+    const size_t N = etl::dim<0>(c);
 
-    for (std::size_t i = 0; i < N - 1; ++i) {
-        for (std::size_t j = i + 1; j < N; ++j) {
+    for (size_t i = 0; i < N - 1; ++i) {
+        for (size_t j = i + 1; j < N; ++j) {
             swap(c(i, j), c(j, i));
         }
     }
@@ -48,11 +48,11 @@ void inplace_rectangular_transpose(C&& mat) {
     auto data = mat.memory_start();
 
     //Dimensions prior to transposition
-    const std::size_t N = etl::dim<0>(mat);
-    const std::size_t M = etl::dim<1>(mat);
+    const size_t N = etl::dim<0>(mat);
+    const size_t M = etl::dim<1>(mat);
 
-    for (std::size_t i = 0; i < N; ++i) {
-        for (std::size_t j = 0; j < M; ++j) {
+    for (size_t i = 0; i < N; ++i) {
+        for (size_t j = 0; j < M; ++j) {
             data[j * N + i] = copy(i, j);
         }
     }
@@ -70,12 +70,12 @@ template <typename C>
 void real_inplace(C&& mat) {
     using std::swap;
 
-    const std::size_t N = etl::dim<0>(mat);
-    const std::size_t M = etl::dim<1>(mat);
+    const size_t N = etl::dim<0>(mat);
+    const size_t M = etl::dim<1>(mat);
 
     auto data = mat.memory_start();
 
-    for (std::size_t k = 0; k < N * M; k++) {
+    for (size_t k = 0; k < N * M; k++) {
         auto idx = k;
         do {
             idx = (idx % N) * M + (idx / N);
@@ -102,15 +102,18 @@ void transpose(A&& a, C&& c) {
             inplace_rectangular_transpose(c);
         }
     } else {
+        const auto m = etl::dim<0>(a);
+        const auto n = etl::dim<1>(a);
+
         if (decay_traits<A>::storage_order == order::RowMajor) {
-            for (std::size_t i = 0; i < etl::dim<0>(a); ++i) {
-                for (std::size_t j = 0; j < etl::dim<1>(a); ++j) {
+            for (size_t i = 0; i < m; ++i) {
+                for (size_t j = 0; j < n; ++j) {
                     mem_c[j * etl::dim<1>(c) + i] = mem_a[i * etl::dim<1>(a) + j];
                 }
             }
         } else {
-            for (std::size_t j = 0; j < etl::dim<1>(a); ++j) {
-                for (std::size_t i = 0; i < etl::dim<0>(a); ++i) {
+            for (size_t j = 0; j < n; ++j) {
+                for (size_t i = 0; i < m; ++i) {
                     mem_c[i * etl::dim<0>(c) + j] = mem_a[j * etl::dim<0>(a) + i];
                 }
             }
