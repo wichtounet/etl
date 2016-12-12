@@ -971,8 +971,8 @@ void gemm_small_kernel(const A& a, const B& b, C& c) {
     }
 
     for (; j + 1 < N; j += 2) {
-        size_t j1 = j + 0;
-        size_t j2 = j + 1;
+        const size_t j1 = j + 0;
+        const size_t j2 = j + 1;
 
         size_t i = 0;
 
