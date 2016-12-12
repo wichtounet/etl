@@ -22,28 +22,6 @@ namespace detail {
 
 /*!
  * \brief Select the transpose implementation for an expression of type A and C
- *
- * This does not take the local context into account.
- *
- * \tparam A The type of rhs expression
- * \tparam C The type of lhs expression
- * \return The implementation to use
- */
-template <typename A, typename C>
-cpp14_constexpr transpose_impl select_default_transpose_impl() {
-    if (all_dma<A, C>::value && all_floating<A, C>::value) {
-        if (is_mkl_enabled) {
-            return transpose_impl::MKL;
-        } else {
-            return transpose_impl::STD;
-        }
-    }
-
-    return transpose_impl::STD;
-}
-
-/*!
- * \brief Select the transpose implementation for an expression of type A and C
  * \tparam A The type of rhs expression
  * \tparam C The type of lhs expression
  * \return The implementation to use
