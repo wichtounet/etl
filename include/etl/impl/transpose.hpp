@@ -49,7 +49,7 @@ cpp14_constexpr transpose_impl select_default_transpose_impl() {
  * \return The implementation to use
  */
 template <typename A, typename C>
-transpose_impl select_transpose_impl() {
+transpose_impl select_transpose_impl_smart() {
     if (local_context().transpose_selector.forced) {
         auto forced = local_context().transpose_selector.impl;
 
@@ -58,7 +58,7 @@ transpose_impl select_transpose_impl() {
             case transpose_impl::MKL:
                 if (!is_mkl_enabled || !all_dma<A, C>::value || !all_floating<A, C>::value) {
                     std::cerr << "Forced selection to MKL transpose implementation, but not possible for this expression" << std::endl;
-                    return select_default_transpose_impl<A, C>();
+                    return transpose_impl::SELECT;
                 }
 
                 return forced;
@@ -69,7 +69,7 @@ transpose_impl select_transpose_impl() {
         }
     }
 
-    return select_default_transpose_impl<A, C>();
+    return transpose_impl::SELECT;
 }
 
 /*!
@@ -82,12 +82,23 @@ struct inplace_square_transpose {
      */
     template <typename C>
     static void apply(C&& c) {
-        const auto impl = select_transpose_impl<C, C>();
+        static constexpr bool mkl_possible = all_dma<C>::value && all_floating<C>::value;
 
-        if (impl == transpose_impl::MKL) {
+        const auto impl = select_transpose_impl_smart<C, C>();
+
+        if(cpp_likely(impl == transpose_impl::SELECT)){
+            // The MKL is always faster than std on square transpositions
+            if(mkl_possible){
+                etl::impl::blas::inplace_square_transpose(c);
+            } else {
+                etl::impl::standard::inplace_square_transpose(c);
+            }
+        } else if (impl == transpose_impl::MKL) {
             etl::impl::blas::inplace_square_transpose(c);
-        } else {
+        } else if(impl == transpose_impl::STD){
             etl::impl::standard::inplace_square_transpose(c);
+        } else {
+            cpp_unreachable("Invalid transpose_impl selection");
         }
     }
 };
@@ -102,12 +113,17 @@ struct inplace_rectangular_transpose {
      */
     template <typename C>
     static void apply(C&& c) {
-        const auto impl = select_transpose_impl<C, C>();
+        const auto impl = select_transpose_impl_smart<C, C>();
 
-        if (impl == transpose_impl::MKL) {
-            etl::impl::blas::inplace_rectangular_transpose(c);
-        } else {
+        if(cpp_likely(impl == transpose_impl::SELECT)){
+            // The standard is always faster than MKL for rectangular transpositions
             etl::impl::standard::inplace_rectangular_transpose(c);
+        } else if (impl == transpose_impl::MKL) {
+            etl::impl::blas::inplace_rectangular_transpose(c);
+        } else if(impl == transpose_impl::STD){
+            etl::impl::standard::inplace_rectangular_transpose(c);
+        } else {
+            cpp_unreachable("Invalid transpose_impl selection");
         }
     }
 };
@@ -123,12 +139,17 @@ struct transpose {
      */
     template <typename A, typename C>
     static void apply(A&& a, C&& c) {
-        const auto impl = select_transpose_impl<A, C>();
+        const auto impl = select_transpose_impl_smart<A, C>();
 
-        if (impl == transpose_impl::MKL) {
-            etl::impl::blas::transpose(a, c);
-        } else {
+        if(cpp_likely(impl == transpose_impl::SELECT)){
+            // The standard is always faster than MKL
             etl::impl::standard::transpose(a, c);
+        } else if (impl == transpose_impl::MKL) {
+            etl::impl::blas::transpose(a, c);
+        } else if(impl == transpose_impl::STD){
+            etl::impl::standard::transpose(a, c);
+        } else {
+            cpp_unreachable("Invalid transpose_impl selection");
         }
     }
 };
