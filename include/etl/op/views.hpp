@@ -200,7 +200,7 @@ struct dim_view {
  */
 template <typename T>
 struct sub_view {
-    T sub;                 ///< The Sub expression
+    T sub_expr;                 ///< The Sub expression
     const size_t i;          ///< The index
     const size_t sub_offset; ///< The sub size
 
@@ -208,8 +208,8 @@ struct sub_view {
     using value_type        = value_t<sub_type>;                               ///< The value contained in the expression
     using memory_type       = memory_t<sub_type>;                              ///< The memory acess type
     using const_memory_type = const_memory_t<sub_type>;                        ///< The const memory access type
-    using return_type       = return_helper<sub_type, decltype(sub[0])>;       ///< The type returned by the view
-    using const_return_type = const_return_helper<sub_type, decltype(sub[0])>; ///< The const type return by the view
+    using return_type       = return_helper<sub_type, decltype(sub_expr[0])>;       ///< The type returned by the view
+    using const_return_type = const_return_helper<sub_type, decltype(sub_expr[0])>; ///< The const type return by the view
 
     /*!
      * \brief The vectorization type for V
@@ -219,11 +219,11 @@ struct sub_view {
 
     /*!
      * \brief Construct a new sub_view over the given sub expression
-     * \param sub The sub expression
+     * \param sub_expr The sub expression
      * \param i The sub index
      */
-    sub_view(sub_type sub, std::size_t i)
-            : sub(sub), i(i), sub_offset(i * subsize(sub)) {}
+    sub_view(sub_type sub_expr, std::size_t i)
+            : sub_expr(sub_expr), i(i), sub_offset(i * subsize(sub_expr)) {}
 
     /*!
      * \brief Returns the element at the given index
@@ -232,8 +232,8 @@ struct sub_view {
      */
     const_return_type operator[](std::size_t j) const {
         return decay_traits<sub_type>::storage_order == order::RowMajor
-                   ? sub[sub_offset + j]
-                   : sub[i + dim<0>(sub) * j];
+                   ? sub_expr[sub_offset + j]
+                   : sub_expr[i + dim<0>(sub_expr) * j];
     }
 
     /*!
@@ -243,8 +243,8 @@ struct sub_view {
      */
     return_type operator[](std::size_t j) {
         return decay_traits<sub_type>::storage_order == order::RowMajor
-                   ? sub[sub_offset + j]
-                   : sub[i + dim<0>(sub) * j];
+                   ? sub_expr[sub_offset + j]
+                   : sub_expr[i + dim<0>(sub_expr) * j];
     }
 
     /*!
@@ -255,8 +255,8 @@ struct sub_view {
      */
     value_type read_flat(std::size_t j) const noexcept {
         return decay_traits<sub_type>::storage_order == order::RowMajor
-                   ? sub.read_flat(sub_offset + j)
-                   : sub.read_flat(i + dim<0>(sub) * j);
+                   ? sub_expr.read_flat(sub_offset + j)
+                   : sub_expr.read_flat(i + dim<0>(sub_expr) * j);
     }
 
     /*!
@@ -264,9 +264,9 @@ struct sub_view {
      * \param args The indices
      * \return a reference to the element at the given position.
      */
-    template <typename... S>
+    template <typename... S, cpp_enable_if((sizeof...(S) == decay_traits<sub_type>::dimensions() + 1))>
     ETL_STRONG_INLINE(const_return_type) operator()(S... args) const {
-        return sub(i, static_cast<std::size_t>(args)...);
+        return sub_expr(i, static_cast<std::size_t>(args)...);
     }
 
     /*!
@@ -274,9 +274,9 @@ struct sub_view {
      * \param args The indices
      * \return a reference to the element at the given position.
      */
-    template <typename... S>
+    template <typename... S, cpp_enable_if((sizeof...(S) == decay_traits<sub_type>::dimensions() + 1))>
     ETL_STRONG_INLINE(return_type) operator()(S... args) {
-        return sub(i, static_cast<std::size_t>(args)...);
+        return sub_expr(i, static_cast<std::size_t>(args)...);
     }
 
     /*!
@@ -284,7 +284,7 @@ struct sub_view {
      * \return A reference  to the value on which the transformer is working.
      */
     sub_type& value() {
-        return sub;
+        return sub_expr;
     }
 
     /*!
@@ -292,7 +292,7 @@ struct sub_view {
      * \return A reference  to the value on which the transformer is working.
      */
     const sub_type& value() const {
-        return sub;
+        return sub_expr;
     }
 
     /*!
@@ -336,7 +336,7 @@ struct sub_view {
      */
     template <typename V = default_vec>
     ETL_STRONG_INLINE(vec_type<V>) load(std::size_t x) const noexcept {
-        return sub.template loadu<V>(x + sub_offset);
+        return sub_expr.template loadu<V>(x + sub_offset);
     }
 
     /*!
@@ -347,7 +347,7 @@ struct sub_view {
      */
     template <typename V = default_vec>
     ETL_STRONG_INLINE(vec_type<V>) loadu(std::size_t x) const noexcept {
-        return sub.template loadu<V>(x + sub_offset);
+        return sub_expr.template loadu<V>(x + sub_offset);
     }
 
     /*!
@@ -357,7 +357,7 @@ struct sub_view {
      */
     template <typename E>
     bool alias(const E& rhs) const noexcept {
-        return sub.alias(rhs);
+        return sub_expr.alias(rhs);
     }
 
     /*!
@@ -366,7 +366,7 @@ struct sub_view {
      */
     ETL_STRONG_INLINE(memory_type) memory_start() noexcept {
         static_assert(has_direct_access<T>::value && decay_traits<sub_type>::storage_order == order::RowMajor, "This expression does not have direct memory access");
-        return sub.memory_start() + sub_offset;
+        return sub_expr.memory_start() + sub_offset;
     }
 
     /*!
@@ -375,7 +375,7 @@ struct sub_view {
      */
     ETL_STRONG_INLINE(const_memory_type) memory_start() const noexcept {
         static_assert(has_direct_access<T>::value && decay_traits<sub_type>::storage_order == order::RowMajor, "This expression does not have direct memory access");
-        return sub.memory_start() + sub_offset;
+        return sub_expr.memory_start() + sub_offset;
     }
 
     /*!
@@ -384,7 +384,7 @@ struct sub_view {
      */
     ETL_STRONG_INLINE(memory_type) memory_end() noexcept {
         static_assert(has_direct_access<T>::value && decay_traits<sub_type>::storage_order == order::RowMajor, "This expression does not have direct memory access");
-        return sub.memory_start() + (i + 1) * subsize(sub);
+        return sub_expr.memory_start() + (i + 1) * subsize(sub_expr);
     }
 
     /*!
@@ -393,7 +393,7 @@ struct sub_view {
      */
     ETL_STRONG_INLINE(const_memory_type) memory_end() const noexcept {
         static_assert(has_direct_access<T>::value && decay_traits<sub_type>::storage_order == order::RowMajor, "This expression does not have direct memory access");
-        return sub.memory_start() + (i + 1) * subsize(sub);
+        return sub_expr.memory_start() + (i + 1) * subsize(sub_expr);
     }
 
     /*!
@@ -404,7 +404,7 @@ struct sub_view {
      * \return a refernece to the ith dimension value.
      */
     std::size_t& unsafe_dimension_access(std::size_t i) {
-        return sub.unsafe_dimension_access(i + 1);
+        return sub_expr.unsafe_dimension_access(i + 1);
     }
 };
 
