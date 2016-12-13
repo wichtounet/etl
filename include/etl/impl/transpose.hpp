@@ -20,6 +20,8 @@ namespace etl {
 
 namespace detail {
 
+//TODO We should take into account parallel blas when selecting MKL transpose
+
 /*!
  * \brief Select the transpose implementation for an expression of type A and C
  * \tparam A The type of rhs expression
