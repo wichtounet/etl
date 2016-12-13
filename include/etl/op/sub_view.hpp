@@ -93,10 +93,6 @@ struct sub_view :
 
         std::copy(vec.begin(), vec.end(), begin());
 
-        //for (std::size_t i = 0; i < size(*this); ++i) {
-            //(*this)[i] = vec[i];
-        //}
-
         return *this;
     }
 
