@@ -7,8 +7,6 @@
 
 #pragma once
 
-#include "etl/iterator.hpp"
-
 namespace etl {
 
 /*!
@@ -17,7 +15,12 @@ namespace etl {
  * A binary expression has a left hand side expression and a right hand side expression and for each element applies a binary opeartor to both expressions.
  */
 template <typename T, typename LeftExpr, typename BinaryOp, typename RightExpr>
-struct binary_expr final : comparable<binary_expr<T, LeftExpr, BinaryOp, RightExpr>>, dim_testable<binary_expr<T, LeftExpr, BinaryOp, RightExpr>>, value_testable<binary_expr<T, LeftExpr, BinaryOp, RightExpr>> {
+struct binary_expr final :
+        comparable<binary_expr<T, LeftExpr, BinaryOp, RightExpr>>,
+        dim_testable<binary_expr<T, LeftExpr, BinaryOp, RightExpr>>,
+        value_testable<binary_expr<T, LeftExpr, BinaryOp, RightExpr>>,
+        iterable<binary_expr<T, LeftExpr, BinaryOp, RightExpr>>
+{
 private:
     static_assert(cpp::or_c<
                       cpp::and_c<std::is_same<LeftExpr, scalar<T>>, std::is_same<RightExpr, scalar<T>>>,
@@ -35,6 +38,8 @@ public:
     using value_type        = T;    ///< The Value type
     using memory_type       = void; ///< The memory type
     using const_memory_type = void; ///< The const memory type
+    using iterator          = etl::iterator<const this_type>;
+    using const_iterator    = etl::iterator<const this_type>;
 
     /*!
      * \brief The vectorization type for V
@@ -206,22 +211,6 @@ public:
      */
     auto slice(std::size_t first, std::size_t last) const noexcept {
         return etl::slice(*this, first, last);
-    }
-
-    /*!
-     * \brief Return an iterator to the first element of the matrix
-     * \return an const iterator pointing to the first element of the matrix
-     */
-    iterator<const this_type> begin() const noexcept {
-        return {*this, 0};
-    }
-
-    /*!
-     * \brief Return an iterator to the past-the-end element of the matrix
-     * \return a const iterator pointing to the past-the-end element of the matrix
-     */
-    iterator<const this_type> end() const noexcept {
-        return {*this, size(*this)};
     }
 };
 

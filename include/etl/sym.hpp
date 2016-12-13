@@ -39,6 +39,7 @@ struct symmetric_reference {
     using raw_pointer_type         = value_type*;                      ///< A raw pointer type
     using raw_reference_type       = value_type&;                      ///< A raw reference type
     using const_raw_reference_type = std::add_const_t<value_type>&;    ///< A raw reference type
+    using expr_t = M;
 
     matrix_type& matrix;   ///< Reference to the matrix
     std::size_t i;         ///< The first index
@@ -165,7 +166,7 @@ struct symmetric_exception : std::exception {
  * This is only a prototype.
  */
 template <typename Matrix>
-struct sym_matrix final : comparable<sym_matrix<Matrix>> {
+struct sym_matrix final : comparable<sym_matrix<Matrix>>, iterable<const sym_matrix<Matrix>> {
     using matrix_t = Matrix;   ///< The adapted matrix type
     using expr_t   = matrix_t; ///< The wrapped expression type
 
@@ -181,7 +182,9 @@ struct sym_matrix final : comparable<sym_matrix<Matrix>> {
     using value_type        = value_t<matrix_t>;                 ///< The value type
     using memory_type       = value_type*;                       ///< The memory type
     using const_memory_type = const value_type*;                 ///< The const memory type
-    using const_iterator    = typename matrix_t::const_iterator; ///< The type of const iterator
+
+    using iterator       = typename matrix_t::const_iterator; ///< The type of const iterator
+    using const_iterator = typename matrix_t::const_iterator; ///< The type of const iterator
 
     /*!
      * \brief The vectorization type for V
@@ -486,38 +489,6 @@ public:
      */
     const expr_t& value() const noexcept {
         return matrix;
-    }
-
-    /*!
-     * \brief Return an iterator to the first element of the matrix
-     * \return a const iterator pointing to the first element of the matrix
-     */
-    const_iterator begin() const noexcept(noexcept(matrix.cbegin())) {
-        return matrix.cbegin();
-    }
-
-    /*!
-     * \brief Return an iterator to the past-the-end element of the matrix
-     * \return a const iterator pointing to the past-the-end element of the matrix
-     */
-    const_iterator end() const noexcept(noexcept(matrix.end())) {
-        return matrix.cend();
-    }
-
-    /*!
-     * \brief Return a const iterator to the first element of the matrix
-     * \return an const iterator pointing to the first element of the matrix
-     */
-    const_iterator cbegin() const noexcept(noexcept(matrix.cbegin())) {
-        return matrix.cbegin();
-    }
-
-    /*!
-     * \brief Return a const iterator to the past-the-end element of the matrix
-     * \return a const iterator pointing to the past-the-end element of the matrix
-     */
-    const_iterator cend() const noexcept(noexcept(matrix.end())) {
-        return matrix.cend();
     }
 
     /*!

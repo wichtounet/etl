@@ -27,18 +27,22 @@ struct dyn_matrix_impl final : dense_dyn_base<dyn_matrix_impl<T, SO, D>, T, SO, 
                                comparable<dyn_matrix_impl<T, SO, D>>,
                                expression_able<dyn_matrix_impl<T, SO, D>>,
                                value_testable<dyn_matrix_impl<T, SO, D>>,
+                               iterable<dyn_matrix_impl<T, SO, D>, SO == order::RowMajor>,
                                dim_testable<dyn_matrix_impl<T, SO, D>> {
     static constexpr std::size_t n_dimensions = D;                              ///< The number of dimensions
     static constexpr order storage_order      = SO;                             ///< The storage order
     static constexpr std::size_t alignment    = intrinsic_traits<T>::alignment; ///< The memory alignment
 
-    using base_type              = dense_dyn_base<dyn_matrix_impl<T, SO, D>, T, SO, D>; ///< The base type
+    using this_type              = dyn_matrix_impl<T, SO, D>;
+    using base_type              = dense_dyn_base<this_type, T, SO, D>; ///< The base type
+    using iterable_base_type     = iterable<this_type, SO == order::RowMajor>;
     using value_type             = T;                                               ///< The value type
     using dimension_storage_impl = std::array<std::size_t, n_dimensions>;           ///< The type used to store the dimensions
     using memory_type            = value_type*;                                     ///< The memory type
     using const_memory_type      = const value_type*;                               ///< The const memory type
-    using iterator               = memory_type;                                     ///< The type of iterator
-    using const_iterator         = const_memory_type;                               ///< The type of const iterator
+
+    using iterator       = std::conditional_t<SO == order::RowMajor, value_type*, etl::iterator<this_type>>;             ///< The iterator type
+    using const_iterator = std::conditional_t<SO == order::RowMajor, const value_type*, etl::iterator<const this_type>>; ///< The const iterator type
 
     /*!
      * \brief The vectorization type for V
@@ -62,8 +66,8 @@ public:
     using base_type::dim;
     using base_type::memory_start;
     using base_type::memory_end;
-    using base_type::begin;
-    using base_type::end;
+    using iterable_base_type::begin;
+    using iterable_base_type::end;
 
     // Construction
 

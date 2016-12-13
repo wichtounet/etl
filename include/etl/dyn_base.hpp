@@ -647,54 +647,6 @@ struct dense_dyn_base : dyn_base<T, D> {
     }
 
     /*!
-     * \brief Return an iterator to the first element of the matrix
-     * \return an iterator pointing to the first element of the matrix
-     */
-    iterator begin() noexcept {
-        return _memory;
-    }
-
-    /*!
-     * \brief Return an iterator to the past-the-end element of the matrix
-     * \return an iterator pointing to the past-the-end element of the matrix
-     */
-    iterator end() noexcept {
-        return _memory + _size;
-    }
-
-    /*!
-     * \brief Return an iterator to the first element of the matrix
-     * \return an iterator pointing to the first element of the matrix
-     */
-    const_iterator begin() const noexcept {
-        return _memory;
-    }
-
-    /*!
-     * \brief Return an iterator to the past-the-end element of the matrix
-     * \return an iterator pointing to the past-the-end element of the matrix
-     */
-    const_iterator end() const noexcept {
-        return _memory + _size;
-    }
-
-    /*!
-     * \brief Return a const iterator to the first element of the matrix
-     * \return an const iterator pointing to the first element of the matrix
-     */
-    const_iterator cbegin() const noexcept {
-        return _memory;
-    }
-
-    /*!
-     * \brief Return a const iterator to the past-the-end element of the matrix
-     * \return a const iterator pointing to the past-the-end element of the matrix
-     */
-    const_iterator cend() const noexcept {
-        return _memory + _size;
-    }
-
-    /*!
      * \brief Returns a pointer to the first element in memory.
      * \return a pointer tot the first element in memory.
      */

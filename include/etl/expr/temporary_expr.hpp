@@ -77,7 +77,7 @@ public:
  * A temporary expression computes the expression directly and stores it into a temporary.
  */
 template <typename D, typename V, typename R>
-struct temporary_expr : comparable<D>, value_testable<D>, dim_testable<D> {
+struct temporary_expr : comparable<D>, value_testable<D>, dim_testable<D>, iterable<const D, true> {
     using derived_t         = D;                               ///< The derived type
     using value_type        = V;                               ///< The value type
     using result_type       = R;                               ///< The result type
@@ -252,40 +252,6 @@ public:
     template <typename VV = default_vec>
     vec_type<VV> loadu(std::size_t i) const noexcept {
         return VV::loadu(memory_start() + i);
-    }
-
-    // Iterator
-
-    /*!
-     * \brief Return an iterator to the first element of the matrix
-     * \return an const iterator pointing to the first element of the matrix
-     */
-    const_memory_type begin() const noexcept {
-        return result().memory_start();
-    }
-
-    /*!
-     * \brief Return an iterator to the past-the-end element of the matrix
-     * \return a const iterator pointing to the past-the-end element of the matrix
-     */
-    const_memory_type end() const noexcept {
-        return result().memory_end();
-    }
-
-    /*!
-     * \brief Return an iterator to the first element of the matrix
-     * \return an const iterator pointing to the first element of the matrix
-     */
-    const_memory_type cbegin() const noexcept {
-        return result().memory_start();
-    }
-
-    /*!
-     * \brief Return an iterator to the past-the-end element of the matrix
-     * \return a const iterator pointing to the past-the-end element of the matrix
-     */
-    const_memory_type cend() const noexcept {
-        return result().memory_end();
     }
 
     // Direct memory access
