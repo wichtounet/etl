@@ -596,7 +596,7 @@ void conv4_full_flipped(const I& input, const K& kernel, C&& conv) {
  */
 template <typename I, typename K_T, typename C>
 void conv2_valid_multi(const I& input, const K_T& kernels, C&& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
-    const auto K = kernels.template dim<0>();
+    const auto K = etl::dim<0>(kernels);
 
     auto fun_k = [&](const size_t first, const size_t last) {
         for (std::size_t k = first; k < last; ++k) {
@@ -615,7 +615,7 @@ void conv2_valid_multi(const I& input, const K_T& kernels, C&& conv, size_t s1, 
  */
 template <typename I, typename K_T, typename C>
 void conv2_valid_multi_flipped(const I& input, const K_T& kernels, C&& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
-    const auto K = kernels.template dim<0>();
+    const auto K = etl::dim<0>(kernels);
 
     auto fun_k = [&](const size_t first, const size_t last) {
         for (std::size_t k = first; k < last; ++k) {
