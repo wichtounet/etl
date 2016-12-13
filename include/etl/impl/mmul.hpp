@@ -32,8 +32,8 @@ inline cpp14_constexpr gemm_impl select_default_gemm_impl(const std::size_t n1, 
     constexpr bool DMA = all_dma<A, B, C>::value;
 
     //Note since these boolean will be known at compile time, the conditions will be a lot simplified
-    constexpr bool blas   = is_cblas_enabled;
-    constexpr bool cublas = is_cublas_enabled;
+    constexpr bool blas   = cblas_enabled;
+    constexpr bool cublas = cublas_enabled;
 
     if (cublas && DMA) {
         if (n1 * n3 < gemm_cublas_min) {
@@ -77,7 +77,7 @@ inline gemm_impl select_gemm_impl(const std::size_t n1, const std::size_t n2, co
         switch (forced) {
             //CUBLAS cannot always be used
             case gemm_impl::CUBLAS:
-                if (!is_cublas_enabled || !DMA) {                                                                                     //COVERAGE_EXCLUDE_LINE
+                if (!cublas_enabled || !DMA) {                                                                                     //COVERAGE_EXCLUDE_LINE
                     std::cerr << "Forced selection to CUBLAS gemm implementation, but not possible for this expression" << std::endl; //COVERAGE_EXCLUDE_LINE
                     return def;                                                              //COVERAGE_EXCLUDE_LINE
                 }                                                                                                                     //COVERAGE_EXCLUDE_LINE
@@ -86,7 +86,7 @@ inline gemm_impl select_gemm_impl(const std::size_t n1, const std::size_t n2, co
 
             //BLAS cannot always be used
             case gemm_impl::BLAS:
-                if (!is_cblas_enabled || !DMA) {                                                                                    //COVERAGE_EXCLUDE_LINE
+                if (!cblas_enabled || !DMA) {                                                                                    //COVERAGE_EXCLUDE_LINE
                     std::cerr << "Forced selection to BLAS gemm implementation, but not possible for this expression" << std::endl; //COVERAGE_EXCLUDE_LINE
                     return def;                                                            //COVERAGE_EXCLUDE_LINE
                 }                                                                                                                   //COVERAGE_EXCLUDE_LINE
@@ -122,7 +122,7 @@ inline cpp14_constexpr gemm_impl select_default_gemv_impl(const std::size_t n1, 
     constexpr bool DMA = all_dma<A, B, C>::value;
     using T = value_t<A>;
 
-    if(DMA && is_cblas_enabled){
+    if(DMA && cblas_enabled){
         return gemm_impl::BLAS;
     }
 
@@ -130,7 +130,7 @@ inline cpp14_constexpr gemm_impl select_default_gemv_impl(const std::size_t n1, 
         return gemm_impl::VEC;
     }
 
-    if (is_cublas_enabled && is_complex_single_t<T>::value && n1 * n2 > 1000 * 1000) {
+    if (cublas_enabled && is_complex_single_t<T>::value && n1 * n2 > 1000 * 1000) {
         return gemm_impl::CUBLAS;
     }
 
@@ -153,7 +153,7 @@ inline gemm_impl select_gemv_impl(const std::size_t n1, const std::size_t n2) {
         switch (forced) {
             //CUBLAS cannot always be used
             case gemm_impl::CUBLAS:
-                if (!is_cublas_enabled || !DMA) {                                                                                     //COVERAGE_EXCLUDE_LINE
+                if (!cublas_enabled || !DMA) {                                                                                     //COVERAGE_EXCLUDE_LINE
                     std::cerr << "Forced selection to CUBLAS gemv implementation, but not possible for this expression" << std::endl; //COVERAGE_EXCLUDE_LINE
                     return select_default_gemv_impl<A, B, C>(n1, n2);                                                                  //COVERAGE_EXCLUDE_LINE
                 }                                                                                                                     //COVERAGE_EXCLUDE_LINE
@@ -162,7 +162,7 @@ inline gemm_impl select_gemv_impl(const std::size_t n1, const std::size_t n2) {
 
             //BLAS cannot always be used
             case gemm_impl::BLAS:
-                if (!is_cblas_enabled || !DMA) {                                                                                    //COVERAGE_EXCLUDE_LINE
+                if (!cblas_enabled || !DMA) {                                                                                    //COVERAGE_EXCLUDE_LINE
                     std::cerr << "Forced selection to BLAS gemv implementation, but not possible for this expression" << std::endl; //COVERAGE_EXCLUDE_LINE
                     return select_default_gemv_impl<A, B, C>(n1, n2);                                                                //COVERAGE_EXCLUDE_LINE
                 }                                                                                                                   //COVERAGE_EXCLUDE_LINE
@@ -198,7 +198,7 @@ inline cpp14_constexpr gemm_impl select_default_gevm_impl(const std::size_t n1, 
     constexpr bool DMA = all_dma<A, B, C>::value;
     using T = value_t<A>;
 
-    if(DMA && is_cblas_enabled){
+    if(DMA && cblas_enabled){
         return gemm_impl::BLAS;
     }
 
@@ -206,7 +206,7 @@ inline cpp14_constexpr gemm_impl select_default_gevm_impl(const std::size_t n1, 
         return gemm_impl::VEC;
     }
 
-    if (is_cublas_enabled && is_complex_single_t<T>::value && n1 * n2 > 1000 * 1000) {
+    if (cublas_enabled && is_complex_single_t<T>::value && n1 * n2 > 1000 * 1000) {
         return gemm_impl::CUBLAS;
     }
 
@@ -229,7 +229,7 @@ inline gemm_impl select_gevm_impl(const std::size_t n1, const std::size_t n2) {
         switch (forced) {
             //CUBLAS cannot always be used
             case gemm_impl::CUBLAS:
-                if (!is_cublas_enabled || !DMA) {                                                                                     //COVERAGE_EXCLUDE_LINE
+                if (!cublas_enabled || !DMA) {                                                                                     //COVERAGE_EXCLUDE_LINE
                     std::cerr << "Forced selection to CUBLAS gevm implementation, but not possible for this expression" << std::endl; //COVERAGE_EXCLUDE_LINE
                     return select_default_gevm_impl<A, B, C>(n1, n2);                                                                  //COVERAGE_EXCLUDE_LINE
                 }                                                                                                                     //COVERAGE_EXCLUDE_LINE
@@ -238,7 +238,7 @@ inline gemm_impl select_gevm_impl(const std::size_t n1, const std::size_t n2) {
 
             //BLAS cannot always be used
             case gemm_impl::BLAS:
-                if (!is_cblas_enabled || !DMA) {                                                                                    //COVERAGE_EXCLUDE_LINE
+                if (!cblas_enabled || !DMA) {                                                                                    //COVERAGE_EXCLUDE_LINE
                     std::cerr << "Forced selection to BLAS gevm implementation, but not possible for this expression" << std::endl; //COVERAGE_EXCLUDE_LINE
                     return select_default_gevm_impl<A, B, C>(n1, n2);                                                                //COVERAGE_EXCLUDE_LINE
                 }                                                                                                                   //COVERAGE_EXCLUDE_LINE

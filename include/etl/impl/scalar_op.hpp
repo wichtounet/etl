@@ -31,7 +31,7 @@ namespace detail {
 template <typename A, bool Simple>
 cpp14_constexpr scalar_impl select_default_scalar_impl() {
     if (all_floating<A>::value) {
-        if (is_cblas_enabled && !Simple) {
+        if (cblas_enabled && !Simple) {
             return scalar_impl::BLAS;
         } else {
             return scalar_impl::STD;
@@ -54,7 +54,7 @@ scalar_impl select_scalar_impl() {
         switch (forced) {
             //BLAS cannot always be used
             case scalar_impl::BLAS:
-                if (!is_cblas_enabled || !all_floating<A>::value) {
+                if (!cblas_enabled || !all_floating<A>::value) {
                     std::cerr << "Forced selection to BLAS scalar implementation, but not possible for this expression" << std::endl;
                     return select_default_scalar_impl<A, Simple>();
                 }

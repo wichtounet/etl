@@ -34,7 +34,7 @@ namespace detail {
  */
 template <typename A, typename B, typename C>
 cpp14_constexpr etl::outer_impl select_default_outer_impl() {
-    if (is_cblas_enabled) {
+    if (cblas_enabled) {
         return etl::outer_impl::BLAS;
     } else {
         return etl::outer_impl::STD;
@@ -56,7 +56,7 @@ etl::outer_impl select_outer_impl() {
         switch (forced) {
             //AVX cannot always be used
             case outer_impl::BLAS:
-                if (!is_cblas_enabled) {
+                if (!cblas_enabled) {
                     std::cerr << "Forced selection to BLAS outer implementation, but not possible for this expression" << std::endl;
                     return select_default_outer_impl<A, B, C>();
                 }
@@ -106,12 +106,12 @@ struct outer_product_impl {
  */
 template <typename A, typename B, typename C>
 cpp14_constexpr etl::outer_impl select_default_batch_outer_impl() {
-    if(is_cblas_enabled){
+    if(cblas_enabled){
         return etl::outer_impl::BLAS;
     }
 
     // TODO This should only be done with large matrices or if the data is already in memory
-    if(is_cublas_enabled){
+    if(cublas_enabled){
         return etl::outer_impl::CUBLAS;
     }
 
@@ -137,7 +137,7 @@ etl::outer_impl select_batch_outer_impl() {
         switch (forced) {
             //BLAS cannot always be used
             case outer_impl::BLAS:
-                if (!is_cblas_enabled) {
+                if (!cblas_enabled) {
                     std::cerr << "Forced selection to BLAS outer implementation, but not possible for this expression" << std::endl;
                     return select_default_batch_outer_impl<A, B, C>();
                 }
@@ -146,7 +146,7 @@ etl::outer_impl select_batch_outer_impl() {
 
             //CUBLAS cannot always be used
             case outer_impl::CUBLAS:
-                if (!is_cublas_enabled) {
+                if (!cublas_enabled) {
                     std::cerr << "Forced selection to CUBLAS outer implementation, but not possible for this expression" << std::endl;
                     return select_default_batch_outer_impl<A, B, C>();
                 }

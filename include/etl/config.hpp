@@ -65,21 +65,21 @@ constexpr bool is_parallel = false;                               ///< Boolean f
 #define ETL_BLAS_MODE
 #endif
 
-constexpr bool is_mkl_enabled = true;
+constexpr bool mkl_enabled = true;
 constexpr bool has_fast_fft   = true;
 
 #else
 
-constexpr bool is_mkl_enabled              = false; ///< Boolean flag indicating if MKL is enabled
+constexpr bool mkl_enabled              = false; ///< Boolean flag indicating if MKL is enabled
 constexpr bool has_fast_fft                = false; ///< Boolean flag indicating if a fast FFT implementation is available
 
 #endif
 
 //Flag to enable the use of CBLAS library
 #ifdef ETL_BLAS_MODE
-constexpr bool is_cblas_enabled = true;
+constexpr bool cblas_enabled = true;
 #else
-constexpr bool is_cblas_enabled            = false; ///< Boolean flag indicating if CBLAS is available
+constexpr bool cblas_enabled            = false; ///< Boolean flag indicating if CBLAS is available
 #endif
 
 //Flag to indicate that blas is multithreaded
@@ -94,24 +94,24 @@ static_assert(false, "ETL_CUDA should never be set directly");
 #endif
 
 #ifdef ETL_CUBLAS_MODE
-constexpr bool is_cublas_enabled = true;
+constexpr bool cublas_enabled = true;
 #define ETL_CUDA
 #else
-constexpr bool is_cublas_enabled           = false; ///< Boolean flag indicating if CUBLAS is available
+constexpr bool cublas_enabled           = false; ///< Boolean flag indicating if CUBLAS is available
 #endif
 
 #ifdef ETL_CUFFT_MODE
 #define ETL_CUDA
-constexpr bool is_cufft_enabled = true;
+constexpr bool cufft_enabled = true;
 #else
-constexpr bool is_cufft_enabled            = false; ///< Boolean flag indicating if CUFFT is available
+constexpr bool cufft_enabled            = false; ///< Boolean flag indicating if CUFFT is available
 #endif
 
 #ifdef ETL_CUDNN_MODE
-constexpr bool is_cudnn_enabled = true;
+constexpr bool cudnn_enabled = true;
 #define ETL_CUDA
 #else
-constexpr bool is_cudnn_enabled            = false; ///< Boolean flag indicating if CUDNN is available
+constexpr bool cudnn_enabled            = false; ///< Boolean flag indicating if CUDNN is available
 #endif
 
 //Flag to perform elementwise multiplication by default (operator*)

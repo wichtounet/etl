@@ -114,7 +114,7 @@ struct batch_outer_product_expr : impl_expr<batch_outer_product_expr<T>> {
     template <typename A, typename B>
     using result_type = detail::expr_result_t<this_type, A, B>;
 
-    static constexpr bool is_gpu = is_cublas_enabled; ///< outer product has a GPU implementation
+    static constexpr bool is_gpu = cublas_enabled; ///< outer product has a GPU implementation
 
     /*!
      * \brief Apply the outer product to a and b and store the result in c

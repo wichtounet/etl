@@ -34,7 +34,7 @@ transpose_impl select_transpose_impl_smart() {
         switch (forced) {
             //MKL cannot always be used
             case transpose_impl::MKL:
-                if (!is_mkl_enabled || !all_dma<A, C>::value || !all_floating<A, C>::value) {
+                if (!mkl_enabled || !all_dma<A, C>::value || !all_floating<A, C>::value) {
                     std::cerr << "Forced selection to MKL transpose implementation, but not possible for this expression" << std::endl;
                     return transpose_impl::SELECT;
                 }
@@ -61,7 +61,7 @@ struct inplace_square_transpose {
     template <typename C>
     static void apply(C&& c) {
         // Condition to use MKL
-        static constexpr bool mkl_possible = is_mkl_enabled && all_dma<C>::value && all_floating<C>::value;
+        static constexpr bool mkl_possible = mkl_enabled && all_dma<C>::value && all_floating<C>::value;
 
         const auto impl = select_transpose_impl_smart<C, C>();
 
