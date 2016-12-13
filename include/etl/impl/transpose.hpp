@@ -68,7 +68,7 @@ struct inplace_square_transpose {
         const auto impl = select_transpose_impl_smart<C, C>();
 
         if(cpp_likely(impl == transpose_impl::SELECT)){
-            // The MKL is always faster than std on square transpositions
+            // MKL is always faster than STD on inplace square transpositions
             if(mkl_possible){
                 etl::impl::blas::inplace_square_transpose(c);
             } else {
@@ -97,7 +97,7 @@ struct inplace_rectangular_transpose {
         const auto impl = select_transpose_impl_smart<C, C>();
 
         if(cpp_likely(impl == transpose_impl::SELECT)){
-            // The standard is always faster than MKL for rectangular transpositions
+            // STD is always faster than MKL for inplace rectangular transpositions
             etl::impl::standard::inplace_rectangular_transpose(c);
         } else if (impl == transpose_impl::MKL) {
             etl::impl::blas::inplace_rectangular_transpose(c);
@@ -123,7 +123,7 @@ struct transpose {
         const auto impl = select_transpose_impl_smart<A, C>();
 
         if(cpp_likely(impl == transpose_impl::SELECT)){
-            // The standard is always faster than MKL
+            // STD is always faster than MKL for out-of-place transpose
             etl::impl::standard::transpose(a, c);
         } else if (impl == transpose_impl::MKL) {
             etl::impl::blas::transpose(a, c);

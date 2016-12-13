@@ -102,19 +102,19 @@ void transpose(A&& a, C&& c) {
             inplace_rectangular_transpose(c);
         }
     } else {
-        const auto m = etl::dim<0>(a);
-        const auto n = etl::dim<1>(a);
+        const size_t m = etl::dim<0>(a);
+        const size_t n = etl::dim<1>(a);
 
         if (decay_traits<A>::storage_order == order::RowMajor) {
             for (size_t i = 0; i < m; ++i) {
                 for (size_t j = 0; j < n; ++j) {
-                    mem_c[j * etl::dim<1>(c) + i] = mem_a[i * etl::dim<1>(a) + j];
+                    mem_c[j * m + i] = mem_a[i * n + j];
                 }
             }
         } else {
             for (size_t j = 0; j < n; ++j) {
                 for (size_t i = 0; i < m; ++i) {
-                    mem_c[i * etl::dim<0>(c) + j] = mem_a[j * etl::dim<0>(a) + i];
+                    mem_c[i * n + j] = mem_a[j * m + i];
                 }
             }
         }
