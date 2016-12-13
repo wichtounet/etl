@@ -25,7 +25,7 @@ void complex_pad_4d(const F1& in, F2& out) {
             auto* direct = out(outer1)(outer2).memory_start();
             for (std::size_t i = 0; i < etl::dim<2>(in); ++i) {
                 for (std::size_t j = 0; j < etl::dim<3>(in); ++j) {
-                    direct[i * out.template dim<3>() + j] = in(outer1, outer2, i, j);
+                    direct[i * etl::dim<3>(out) + j] = in(outer1, outer2, i, j);
                 }
             }
         }
@@ -43,7 +43,7 @@ void complex_pad_3d(const F1& in, F2& out) {
         auto* direct = out(outer).memory_start();
         for (std::size_t i = 0; i < etl::dim<1>(in); ++i) {
             for (std::size_t j = 0; j < etl::dim<2>(in); ++j) {
-                direct[i * out.template dim<2>() + j] = in(outer, i, j);
+                direct[i * etl::dim<2>(out) + j] = in(outer, i, j);
             }
         }
     }
@@ -62,7 +62,7 @@ void pad_2d_input(const F1& in, F2&& out, size_t p1, size_t p2) {
 
     for (std::size_t i = 0; i < etl::dim<0>(in); ++i) {
         for (std::size_t j = 0; j < etl::dim<1>(in); ++j) {
-            direct[(i + p1) * out.template dim<1>() + (j + p2)] = in(i, j);
+            direct[(i + p1) * etl::dim<1>(out) + (j + p2)] = in(i, j);
         }
     }
 }
@@ -81,7 +81,7 @@ void pad_3d_input(const F1& in, F2&& out, size_t p1, size_t p2) {
 
         for (std::size_t i = 0; i < etl::dim<1>(in); ++i) {
             for (std::size_t j = 0; j < etl::dim<2>(in); ++j) {
-                direct[(i + p1) * out.template dim<2>() + (j + p2)] = in(n, i, j);
+                direct[(i + p1) * etl::dim<2>(out) + (j + p2)] = in(n, i, j);
             }
         }
     }
