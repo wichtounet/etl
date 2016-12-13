@@ -291,22 +291,18 @@ TEMPLATE_TEST_CASE_2("etl_traits/has_direct_access", "has_direct_access", Z, flo
     REQUIRE_DIRECT(etl::has_direct_access<decltype(b)>::value);
 
     //Sub have direct access
-    REQUIRE_DIRECT(etl::is_unary_expr<decltype(a(0)(1)(3))>::value);
     REQUIRE_DIRECT(etl::has_direct_access<decltype(a(1))>::value);
     REQUIRE_DIRECT(etl::has_direct_access<decltype(b(2))>::value);
 
     //Sub have direct access
-    REQUIRE_DIRECT(etl::is_unary_expr<decltype(a(0)(1)(3))>::value);
     REQUIRE_DIRECT(etl::has_direct_access<decltype(a(0)(1))>::value);
     REQUIRE_DIRECT(etl::has_direct_access<decltype(b(1)(2))>::value);
 
     //Sub have direct access
-    REQUIRE_DIRECT(etl::is_unary_expr<decltype(a(0)(1)(3))>::value);
     REQUIRE_DIRECT(etl::has_direct_access<decltype(a(0)(1)(3))>::value);
     REQUIRE_DIRECT(etl::has_direct_access<decltype(b(1)(2)(0))>::value);
 
     //View have direct access
-    REQUIRE_DIRECT(etl::is_unary_expr<decltype(etl::reshape<4, 30>(a))>::value);
     REQUIRE_DIRECT(etl::has_direct_access<decltype(etl::reshape<4, 30>(a))>::value);
     REQUIRE_DIRECT(etl::has_direct_access<decltype(etl::reshape(b, 3, 40))>::value);
 

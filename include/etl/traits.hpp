@@ -178,6 +178,9 @@ using is_timed_expr = cpp::is_specialization_of<etl::timed_expr, std::decay_t<T>
 template <typename T>
 using is_wrapper_expr = cpp::or_c<is_optimized_expr<T>, is_selected_expr<T>, is_serial_expr<T>, is_parallel_expr<T>, is_timed_expr<T>>;
 
+template <typename T>
+using is_sub_view = cpp::is_specialization_of<etl::sub_view, std::decay_t<T>>;
+
 /*!
  * \brief Traits indicating if the given ETL type is a temporary unary expression.
  * \tparam T The type to test
@@ -258,7 +261,7 @@ using is_lhs = cpp::or_c<is_etl_value<T>, is_unary_expr<T>>;
  * \tparam T The type to test
  */
 template <typename T>
-using is_simple_lhs = cpp::or_c<is_etl_value_class<T>, is_unary_expr<T>>;
+using is_simple_lhs = cpp::or_c<is_etl_value_class<T>, is_unary_expr<T>, is_sub_view<T>>;
 
 /*!
  * \brief Traits indicating if the given ETL type has direct memory access.

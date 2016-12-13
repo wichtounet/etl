@@ -953,10 +953,10 @@ auto col(E&& value, std::size_t i) -> detail::identity_helper<E, dim_view<detail
  * \return a view expression representing a sub dimensional view of the given expression
  */
 template <typename E>
-auto sub(E&& value, std::size_t i) -> detail::identity_helper<E, sub_view<detail::build_identity_type<E>>> {
+auto sub(E&& value, std::size_t i) -> sub_view<detail::build_identity_type<E>> {
     static_assert(is_etl_expr<E>::value, "etl::sub can only be used on ETL expressions");
     static_assert(etl_traits<std::decay_t<E>>::dimensions() > 1, "Cannot use sub on vector");
-    return detail::identity_helper<E, sub_view<detail::build_identity_type<E>>>{{value, i}};
+    return {value, i};
 }
 
 /*!
