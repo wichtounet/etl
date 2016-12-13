@@ -1465,20 +1465,19 @@ void conv2_valid_flipped_micro_kernel(const I& input, const K& kernel, C&& conv,
                 auto r8 = vec_type::template zero<T>();
 
                 const size_t i_i = i * s1 - p1;
-                const size_t i_j = j * s2 - p2;
 
                 for (size_t k = 0; k < m1; ++k) {
                     for (size_t l = 0; l + vec_size - 1 < m2; l += vec_size) {
                         auto k1 = vec_type::loadu(kkk + k * m2 + l);
 
-                        auto i1 = vec_type::loadu(in + (i_i + k) * n2 + i_j + 0 + l);
-                        auto i2 = vec_type::loadu(in + (i_i + k) * n2 + i_j + 1 + l);
-                        auto i3 = vec_type::loadu(in + (i_i + k) * n2 + i_j + 2 + l);
-                        auto i4 = vec_type::loadu(in + (i_i + k) * n2 + i_j + 3 + l);
-                        auto i5 = vec_type::loadu(in + (i_i + k) * n2 + i_j + 4 + l);
-                        auto i6 = vec_type::loadu(in + (i_i + k) * n2 + i_j + 5 + l);
-                        auto i7 = vec_type::loadu(in + (i_i + k) * n2 + i_j + 6 + l);
-                        auto i8 = vec_type::loadu(in + (i_i + k) * n2 + i_j + 7 + l);
+                        auto i1 = vec_type::loadu(in + (i_i + k) * n2 + ((j + 0) * s2 - p2) + l);
+                        auto i2 = vec_type::loadu(in + (i_i + k) * n2 + ((j + 1) * s2 - p2) + l);
+                        auto i3 = vec_type::loadu(in + (i_i + k) * n2 + ((j + 2) * s2 - p2) + l);
+                        auto i4 = vec_type::loadu(in + (i_i + k) * n2 + ((j + 3) * s2 - p2) + l);
+                        auto i5 = vec_type::loadu(in + (i_i + k) * n2 + ((j + 4) * s2 - p2) + l);
+                        auto i6 = vec_type::loadu(in + (i_i + k) * n2 + ((j + 5) * s2 - p2) + l);
+                        auto i7 = vec_type::loadu(in + (i_i + k) * n2 + ((j + 6) * s2 - p2) + l);
+                        auto i8 = vec_type::loadu(in + (i_i + k) * n2 + ((j + 7) * s2 - p2) + l);
 
                         r1 = vec_type::template fmadd<Cx>(i1, k1, r1);
                         r2 = vec_type::template fmadd<Cx>(i2, k1, r2);
@@ -1506,14 +1505,13 @@ void conv2_valid_flipped_micro_kernel(const I& input, const K& kernel, C&& conv,
                 auto r2 = vec_type::template zero<T>();
 
                 const size_t i_i = i * s1 - p1;
-                const size_t i_j = j * s2 - p2;
 
                 for (size_t k = 0; k < m1; ++k) {
                     for (size_t l = 0; l + vec_size - 1 < m2; l += vec_size) {
                         auto k1 = vec_type::loadu(kkk + k * m2 + l);
 
-                        auto i1 = vec_type::loadu(in + (i_i + k) * n2 + i_j + 0 + l);
-                        auto i2 = vec_type::loadu(in + (i_i + k) * n2 + i_j + 1 + l);
+                        auto i1 = vec_type::loadu(in + (i_i + k) * n2 + ((j + 0) * s2 - p2) + l);
+                        auto i2 = vec_type::loadu(in + (i_i + k) * n2 + ((j + 1) * s2 - p2) + l);
 
                         r1 = vec_type::template fmadd<Cx>(i1, k1, r1);
                         r2 = vec_type::template fmadd<Cx>(i2, k1, r2);
@@ -1528,12 +1526,11 @@ void conv2_valid_flipped_micro_kernel(const I& input, const K& kernel, C&& conv,
                 auto r1 = vec_type::template zero<T>();
 
                 const size_t i_i = i * s1 - p1;
-                const size_t i_j = j * s2 - p2;
 
                 for (std::size_t k = 0; k < m1; ++k) {
                     for (std::size_t l = 0; l + vec_size - 1 < m2; l += vec_size) {
                         auto k1 = vec_type::loadu(kkk + k * m2 + l);
-                        auto i1 = vec_type::loadu(in + (i_i + k) * n2 + i_j + 0 + l);
+                        auto i1 = vec_type::loadu(in + (i_i + k) * n2 + ((j + 0) * s2 - p2) + l);
                         r1 = vec_type::template fmadd<Cx>(i1, k1, r1);
                     }
                 }
@@ -1556,20 +1553,19 @@ void conv2_valid_flipped_micro_kernel(const I& input, const K& kernel, C&& conv,
                 auto r8 = vec_type::template zero<T>();
 
                 const size_t i_i = i * s1 - p1;
-                const size_t i_j = j * s2 - p2;
 
                 for (size_t k = 0; k < m1; ++k) {
                     for (size_t l = 0; l + vec_size - 1 < m2; l += vec_size) {
                         auto k1 = vec_type::loadu(kkk + k * m2 + l);
 
-                        auto i1 = vec_type::loadu(in + (i_i + k) * n2 + i_j + 0 + l);
-                        auto i2 = vec_type::loadu(in + (i_i + k) * n2 + i_j + 1 + l);
-                        auto i3 = vec_type::loadu(in + (i_i + k) * n2 + i_j + 2 + l);
-                        auto i4 = vec_type::loadu(in + (i_i + k) * n2 + i_j + 3 + l);
-                        auto i5 = vec_type::loadu(in + (i_i + k) * n2 + i_j + 4 + l);
-                        auto i6 = vec_type::loadu(in + (i_i + k) * n2 + i_j + 5 + l);
-                        auto i7 = vec_type::loadu(in + (i_i + k) * n2 + i_j + 6 + l);
-                        auto i8 = vec_type::loadu(in + (i_i + k) * n2 + i_j + 7 + l);
+                        auto i1 = vec_type::loadu(in + (i_i + k) * n2 + ((j + 0) * s2 - p2) + l);
+                        auto i2 = vec_type::loadu(in + (i_i + k) * n2 + ((j + 1) * s2 - p2) + l);
+                        auto i3 = vec_type::loadu(in + (i_i + k) * n2 + ((j + 2) * s2 - p2) + l);
+                        auto i4 = vec_type::loadu(in + (i_i + k) * n2 + ((j + 3) * s2 - p2) + l);
+                        auto i5 = vec_type::loadu(in + (i_i + k) * n2 + ((j + 4) * s2 - p2) + l);
+                        auto i6 = vec_type::loadu(in + (i_i + k) * n2 + ((j + 5) * s2 - p2) + l);
+                        auto i7 = vec_type::loadu(in + (i_i + k) * n2 + ((j + 6) * s2 - p2) + l);
+                        auto i8 = vec_type::loadu(in + (i_i + k) * n2 + ((j + 7) * s2 - p2) + l);
 
                         r1 = vec_type::template fmadd<Cx>(i1, k1, r1);
                         r2 = vec_type::template fmadd<Cx>(i2, k1, r2);
@@ -1597,14 +1593,13 @@ void conv2_valid_flipped_micro_kernel(const I& input, const K& kernel, C&& conv,
                 auto r2 = vec_type::template zero<T>();
 
                 const size_t i_i = i * s1 - p1;
-                const size_t i_j = j * s2 - p2;
 
                 for (size_t k = 0; k < m1; ++k) {
                     for (size_t l = 0; l + vec_size - 1 < m2; l += vec_size) {
                         auto k1 = vec_type::loadu(kkk + k * m2 + l);
 
-                        auto i1 = vec_type::loadu(in + (i_i + k) * n2 + i_j + 0 + l);
-                        auto i2 = vec_type::loadu(in + (i_i + k) * n2 + i_j + 1 + l);
+                        auto i1 = vec_type::loadu(in + (i_i + k) * n2 + ((j + 0) * s2 - p2) + l);
+                        auto i2 = vec_type::loadu(in + (i_i + k) * n2 + ((j + 1) * s2 - p2) + l);
 
                         r1 = vec_type::template fmadd<Cx>(i1, k1, r1);
                         r2 = vec_type::template fmadd<Cx>(i2, k1, r2);
@@ -1619,12 +1614,11 @@ void conv2_valid_flipped_micro_kernel(const I& input, const K& kernel, C&& conv,
                 auto r1 = vec_type::template zero<T>();
 
                 const size_t i_i = i * s1 - p1;
-                const size_t i_j = j * s2 - p2;
 
                 for (std::size_t k = 0; k < m1; ++k) {
                     for (std::size_t l = 0; l + vec_size - 1 < m2; l += vec_size) {
                         auto k1 = vec_type::loadu(kkk + k * m2 + l);
-                        auto i1 = vec_type::loadu(in + (i_i + k) * n2 + i_j + 0 + l);
+                        auto i1 = vec_type::loadu(in + (i_i + k) * n2 + ((j + 0) * s2 - p2) + l);
                         r1 = vec_type::template fmadd<Cx>(i1, k1, r1);
                     }
                 }
