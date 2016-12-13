@@ -1769,9 +1769,9 @@ void conv2_valid_flipped(const I& input, const K& kernel, C&& conv, size_t s1, s
             auto padded_kernel = common::pad_right(kernel.direct(), pad);
 
             if (detail::prefer_sse<T>(k2 + pad)) {
-                detail::conv2_valid_flipped_micro_kernel<detail::safe_sse_vec>(padded_input, padded_kernel, conv, s1, s2, p1, p1, T(0));
+                detail::conv2_valid_flipped_micro_kernel<detail::safe_sse_vec>(padded_input, padded_kernel, conv, s1, s2, p1, p2, T(0));
             } else {
-                detail::conv2_valid_flipped_micro_kernel<detail::safe_avx_vec>(padded_input, padded_kernel, conv, s1, s2, p1, p1, T(0));
+                detail::conv2_valid_flipped_micro_kernel<detail::safe_avx_vec>(padded_input, padded_kernel, conv, s1, s2, p1, p2, T(0));
             }
 
             return;
@@ -1849,9 +1849,9 @@ void conv2_valid(const I& input, const K& kernel, C&& conv, size_t s1, size_t s2
             auto padded_kernel = common::pad_right_flip(kernel.direct(), pad);
 
             if (detail::prefer_sse<T>(k2 + pad)) {
-                detail::conv2_valid_flipped_micro_kernel<detail::safe_sse_vec>(padded_input, padded_kernel, conv, s1, s2, p1, p1, T(0));
+                detail::conv2_valid_flipped_micro_kernel<detail::safe_sse_vec>(padded_input, padded_kernel, conv, s1, s2, p1, p2, T(0));
             } else {
-                detail::conv2_valid_flipped_micro_kernel<detail::safe_avx_vec>(padded_input, padded_kernel, conv, s1, s2, p1, p1, T(0));
+                detail::conv2_valid_flipped_micro_kernel<detail::safe_avx_vec>(padded_input, padded_kernel, conv, s1, s2, p1, p2, T(0));
             }
 
             return;
