@@ -12,8 +12,6 @@
 
 #pragma once
 
-#include "etl/iterator.hpp"
-
 namespace etl {
 
 /*!
@@ -81,7 +79,12 @@ struct stateful_op {
  * This expression applies an unary operator on each element of a sub expression
  */
 template <typename T, typename Expr, typename UnaryOp>
-struct unary_expr final : comparable<unary_expr<T, Expr, UnaryOp>>, value_testable<unary_expr<T, Expr, UnaryOp>>, dim_testable<unary_expr<T, Expr, UnaryOp>> {
+struct unary_expr final :
+        comparable<unary_expr<T, Expr, UnaryOp>>,
+        value_testable<unary_expr<T, Expr, UnaryOp>>,
+        dim_testable<unary_expr<T, Expr, UnaryOp>>,
+        iterable<unary_expr<T, Expr, UnaryOp>>
+{
 private:
     static_assert(
         is_etl_expr<Expr>::value || std::is_same<Expr, etl::scalar<T>>::value,
@@ -96,6 +99,8 @@ public:
     using memory_type       = void; ///< The memory type
     using const_memory_type = void; ///< The const memory type
     using expr_t            = Expr; ///< The sub expression type
+    using iterator          = etl::iterator<this_type>;
+    using const_iterator    = etl::iterator<const this_type>;
 
     /*!
      * The vectorization type for V
@@ -197,22 +202,6 @@ public:
     bool alias(const E& rhs) const noexcept {
         return _value.alias(rhs);
     }
-
-    /*!
-     * \brief Return an iterator to the first element of the matrix
-     * \return an const iterator pointing to the first element of the matrix
-     */
-    iterator<const this_type> begin() const noexcept {
-        return {*this, 0};
-    }
-
-    /*!
-     * \brief Return an iterator to the past-the-end element of the matrix
-     * \return a const iterator pointing to the past-the-end element of the matrix
-     */
-    iterator<const this_type> end() const noexcept {
-        return {*this, size(*this)};
-    }
 };
 
 /*!
@@ -221,7 +210,13 @@ public:
  * This unary expression keeps access to data (can be edited)
  */
 template <typename T, typename Expr>
-struct unary_expr<T, Expr, identity_op> : inplace_assignable<unary_expr<T, Expr, identity_op>>, comparable<unary_expr<T, Expr, identity_op>>, value_testable<unary_expr<T, Expr, identity_op>>, dim_testable<unary_expr<T, Expr, identity_op>> {
+struct unary_expr<T, Expr, identity_op> :
+        inplace_assignable<unary_expr<T, Expr, identity_op>>,
+        comparable<unary_expr<T, Expr, identity_op>>,
+        value_testable<unary_expr<T, Expr, identity_op>>,
+        dim_testable<unary_expr<T, Expr, identity_op>>,
+        iterable<unary_expr<T, Expr, identity_op>, has_direct_access<Expr>::value>
+{
 private:
     static_assert(is_etl_expr<Expr>::value, "Only ETL expressions can be used in unary_expr");
 
@@ -230,6 +225,8 @@ private:
     Expr _value; ///< The sub expression
 
     mutable gpu_handler<T> _gpu_memory_handler; ///< The GPU memory handler
+
+    static constexpr bool dma = has_direct_access<Expr>::value;
 
     /*!
      * \brief Indicates if the non-const functions returns a reference
@@ -252,6 +249,9 @@ public:
     using return_type       = std::conditional_t<non_const_return_ref, value_type&, value_type>;   ///< The type returned by the functions
     using const_return_type = std::conditional_t<const_return_ref, const value_type&, value_type>; ///< The const type returned by the const functions
     using expr_t            = Expr;                                                                ///< The sub expression type
+
+    using iterator       = std::conditional_t<dma, value_type*, etl::iterator<this_type>>;
+    using const_iterator = std::conditional_t<dma, const value_type*, etl::iterator<const this_type>>;
 
     /*!
      * The vectorization type for V
@@ -506,114 +506,6 @@ public:
     }
 
     /*!
-     * \brief Return an iterator to the first element of the matrix
-     * \return a iterator pointing to the first element of the matrix
-     */
-    template<cpp_enable_if_cst(has_direct_access<Expr>::value)>
-    memory_type begin() noexcept {
-        return memory_start();
-    }
-
-    /*!
-     * \brief Return an iterator to the past-the-end element of the matrix
-     * \return an iterator pointing to the past-the-end element of the matrix
-     */
-    template<cpp_enable_if_cst(has_direct_access<Expr>::value)>
-    memory_type end() noexcept {
-        return memory_end();
-    }
-
-    /*!
-     * \brief Return an iterator to the first element of the matrix
-     * \return an const iterator pointing to the first element of the matrix
-     */
-    template<cpp_enable_if_cst(has_direct_access<Expr>::value)>
-    const_memory_type cbegin() const noexcept {
-        return memory_start();
-    }
-
-    /*!
-     * \brief Return an iterator to the past-the-end element of the matrix
-     * \return a const iterator pointing to the past-the-end element of the matrix
-     */
-    template<cpp_enable_if_cst(has_direct_access<Expr>::value)>
-    const_memory_type cend() const noexcept {
-        return memory_end();
-    }
-
-    /*!
-     * \brief Return an iterator to the first element of the matrix
-     * \return an const iterator pointing to the first element of the matrix
-     */
-    template<cpp_enable_if_cst(has_direct_access<Expr>::value)>
-    const_memory_type begin() const noexcept {
-        return memory_start();
-    }
-
-    /*!
-     * \brief Return an iterator to the past-the-end element of the matrix
-     * \return a const iterator pointing to the past-the-end element of the matrix
-     */
-    template<cpp_enable_if_cst(has_direct_access<Expr>::value)>
-    const_memory_type end() const noexcept {
-        return memory_end();
-    }
-
-    /*!
-     * \brief Return an iterator to the first element of the matrix
-     * \return a iterator pointing to the first element of the matrix
-     */
-    template<cpp_disable_if_cst(has_direct_access<Expr>::value)>
-    iterator<this_type, non_const_return_ref, false> begin() noexcept {
-        return {*this, 0};
-    }
-
-    /*!
-     * \brief Return an iterator to the past-the-end element of the matrix
-     * \return an iterator pointing to the past-the-end element of the matrix
-     */
-    template<cpp_disable_if_cst(has_direct_access<Expr>::value)>
-    iterator<this_type, non_const_return_ref, false> end() noexcept {
-        return {*this, size(*this)};
-    }
-
-    /*!
-     * \brief Return an iterator to the first element of the matrix
-     * \return an const iterator pointing to the first element of the matrix
-     */
-    template<cpp_disable_if_cst(has_direct_access<Expr>::value)>
-    iterator<const this_type, true> cbegin() const noexcept {
-        return {*this, 0};
-    }
-
-    /*!
-     * \brief Return an iterator to the past-the-end element of the matrix
-     * \return a const iterator pointing to the past-the-end element of the matrix
-     */
-    template<cpp_disable_if_cst(has_direct_access<Expr>::value)>
-    iterator<const this_type, true> cend() const noexcept {
-        return {*this, size(*this)};
-    }
-
-    /*!
-     * \brief Return an iterator to the first element of the matrix
-     * \return an const iterator pointing to the first element of the matrix
-     */
-    template<cpp_disable_if_cst(has_direct_access<Expr>::value)>
-    iterator<const this_type, true> begin() const noexcept {
-        return {*this, 0};
-    }
-
-    /*!
-     * \brief Return an iterator to the past-the-end element of the matrix
-     * \return a const iterator pointing to the past-the-end element of the matrix
-     */
-    template<cpp_disable_if_cst(has_direct_access<Expr>::value)>
-    iterator<const this_type, true> end() const noexcept {
-        return {*this, size(*this)};
-    }
-
-    /*!
      * \brief Returns a pointer to the first element in memory.
      * \return a pointer tot the first element in memory.
      */
@@ -712,17 +604,24 @@ private:
  * \brief Specialization of unary expression for transform op.
  */
 template <typename T, typename Expr>
-struct unary_expr<T, Expr, transform_op> : comparable<unary_expr<T, Expr, transform_op>>, value_testable<unary_expr<T, Expr, transform_op>>, dim_testable<unary_expr<T, Expr, transform_op>> {
+struct unary_expr<T, Expr, transform_op> :
+        comparable<unary_expr<T, Expr, transform_op>>,
+        value_testable<unary_expr<T, Expr, transform_op>>,
+        dim_testable<unary_expr<T, Expr, transform_op>>,
+        iterable<unary_expr<T, Expr, transform_op>>
+{
 private:
     using this_type = unary_expr<T, Expr, transform_op>; ///< The type of this expression
 
     Expr _value; ///< The sub expression
 
 public:
-    using value_type        = T;    ///< The value type of the expression
-    using memory_type       = void; ///< The memory type of the expression
-    using const_memory_type = void; ///< The const memory type of the expression
-    using expr_t            = Expr; ///< The sub expression type
+    using value_type          = T;    ///< The value type of the expression
+    using memory_type         = void; ///< The memory type of the expression
+    using const_memory_type   = void; ///< The const memory type of the expression
+    using expr_t              = Expr; ///< The sub expression type
+    using iterator            = etl::iterator<this_type>;
+    using const_iterator      = etl::iterator<const this_type>;
 
     /*!
      * \brief Construct a new unary_expr from the given sub-expression
@@ -806,22 +705,6 @@ public:
     bool alias(const E& rhs) const noexcept {
         return _value.alias(rhs);
     }
-
-    /*!
-     * \brief Return an iterator to the first element of the matrix
-     * \return a const iterator pointing to the first element of the matrix
-     */
-    iterator<const this_type, false, false> begin() const noexcept {
-        return {*this, 0};
-    }
-
-    /*!
-     * \brief Return an iterator to the past-the-end element of the matrix
-     * \return a const iterator pointing to the past-the-end element of the matrix
-     */
-    iterator<const this_type, false, false> end() const noexcept {
-        return {*this, size(*this)};
-    }
 };
 
 /*!
@@ -830,7 +713,12 @@ public:
  * This operator has some state and is constructed directly inside the expression
  */
 template <typename T, typename Expr, typename Op>
-struct unary_expr<T, Expr, stateful_op<Op>> : comparable<unary_expr<T, Expr, stateful_op<Op>>>, value_testable<unary_expr<T, Expr, stateful_op<Op>>>, dim_testable<unary_expr<T, Expr, stateful_op<Op>>> {
+struct unary_expr<T, Expr, stateful_op<Op>> :
+        comparable<unary_expr<T, Expr, stateful_op<Op>>>,
+        value_testable<unary_expr<T, Expr, stateful_op<Op>>>,
+        dim_testable<unary_expr<T, Expr, stateful_op<Op>>>,
+        iterable<unary_expr<T, Expr, stateful_op<Op>>>
+{
 private:
     using this_type = unary_expr<T, Expr, stateful_op<Op>>; ///< The type of this expression
 
@@ -838,10 +726,12 @@ private:
     Op op;       ///< The operator state
 
 public:
-    using value_type        = T;    ///< The value type
-    using memory_type       = void; ///< The memory type
-    using const_memory_type = void; ///< The const memory type
-    using expr_t            = Expr; ///< The sub expression type
+    using value_type          = T;    ///< The value type
+    using memory_type         = void; ///< The memory type
+    using const_memory_type   = void; ///< The const memory type
+    using expr_t              = Expr; ///< The sub expression type
+    using iterator            = etl::iterator<this_type>;
+    using const_iterator      = etl::iterator<const this_type>;
 
     /*!
      * The vectorization type for V
@@ -944,22 +834,6 @@ public:
     template <typename E>
     bool alias(const E& rhs) const noexcept {
         return _value.alias(rhs);
-    }
-
-    /*!
-     * \brief Return an iterator to the first element of the matrix
-     * \return a const iterator pointing to the first element of the matrix
-     */
-    iterator<const this_type, false, false> begin() const noexcept {
-        return {*this, 0};
-    }
-
-    /*!
-     * \brief Return an iterator to the past-the-end element of the matrix
-     * \return a const iterator pointing to the past-the-end element of the matrix
-     */
-    iterator<const this_type, false, false> end() const noexcept {
-        return {*this, size(*this)};
     }
 };
 

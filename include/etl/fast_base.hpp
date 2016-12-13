@@ -159,10 +159,11 @@ struct fast_matrix_base {
     using value_type        = T;
     using derived_t         = D;
     using storage_impl      = ST;                ///< The storage implementation
-    using iterator          = value_type*;       ///< The iterator type
-    using const_iterator    = const value_type*; ///< The const iterator type
     using memory_type       = value_type*;       ///< The memory type
     using const_memory_type = const value_type*; ///< The const memory type
+
+    using iterator = std::conditional_t<SO == order::RowMajor, value_type*, etl::iterator<derived_t>>;             ///< The iterator type
+    using const_iterator = std::conditional_t<SO == order::RowMajor, const value_type*, etl::iterator<const derived_t>>; ///< The iterator type
 
 protected:
     storage_impl _data; ///< The storage container
@@ -210,54 +211,6 @@ public:
     // Default copy and move constructors
     fast_matrix_base(const fast_matrix_base& data) = default;
     fast_matrix_base(fast_matrix_base&& data) noexcept = default;
-
-    /*!
-     * \brief Return an iterator to the first element of the matrix
-     * \return an iterator pointing to the first element of the matrix
-     */
-    iterator begin() noexcept {
-        return memory_start();
-    }
-
-    /*!
-     * \brief Return an iterator to the past-the-end element of the matrix
-     * \return an iterator pointing to the past-the-end element of the matrix
-     */
-    iterator end() noexcept {
-        return memory_end();
-    }
-
-    /*!
-     * \brief Return an iterator to the first element of the matrix
-     * \return a const iterator pointing to the first element of the matrix
-     */
-    const_iterator begin() const noexcept {
-        return memory_start();
-    }
-
-    /*!
-     * \brief Return an iterator to the past-the-end element of the matrix
-     * \return a const iterator pointing to the past-the-end element of the matrix
-     */
-    const_iterator end() const noexcept {
-        return memory_end();
-    }
-
-    /*!
-     * \brief Return a const iterator to the first element of the matrix
-     * \return an const iterator pointing to the first element of the matrix
-     */
-    const_iterator cbegin() const noexcept {
-        return memory_start();
-    }
-
-    /*!
-     * \brief Return a const iterator to the past-the-end element of the matrix
-     * \return a const iterator pointing to the past-the-end element of the matrix
-     */
-    const_iterator cend() const noexcept {
-        return memory_end();
-    }
 
     /*!
      * \brief Returns a pointer to the first element in memory.

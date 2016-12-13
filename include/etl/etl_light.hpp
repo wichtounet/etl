@@ -32,6 +32,7 @@
 #include "etl/parallel.hpp"
 #include "etl/memory.hpp"
 #include "etl/allocator.hpp"
+#include "etl/iterator.hpp"
 
 //Forward declarations
 #include "etl/value_fwd.hpp"
@@ -63,6 +64,7 @@
 #include "etl/crtp/comparable.hpp"
 #include "etl/crtp/value_testable.hpp"
 #include "etl/crtp/dim_testable.hpp"
+#include "etl/crtp/iterable.hpp"
 
 // The expressions building
 #include "etl/checks.hpp"

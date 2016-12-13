@@ -28,6 +28,7 @@ struct custom_fast_matrix_impl final :
         comparable<custom_fast_matrix_impl<T, ST, SO, Dims...>>,
         expression_able<custom_fast_matrix_impl<T, ST, SO, Dims...>>,
         value_testable<custom_fast_matrix_impl<T, ST, SO, Dims...>>,
+        iterable<custom_fast_matrix_impl<T, ST, SO, Dims...>, SO == order::RowMajor>,
         dim_testable<custom_fast_matrix_impl<T, ST, SO, Dims...>> {
     static_assert(sizeof...(Dims) > 0, "At least one dimension must be specified");
 
@@ -37,17 +38,18 @@ public:
     static constexpr order storage_order      = SO;                                   ///< The storage order
     static constexpr bool array_impl          = !matrix_detail::is_vector<ST>::value; ///< true if the storage is an std::arraw, false otherwise
 
-    using this_type         = custom_fast_matrix_impl<T, ST, SO, Dims...>;     ///< this type
-    using base_type         = fast_matrix_base<this_type, T, ST, SO, Dims...>; ///< The base type
-    using value_type        = T;                                               ///< The value type
-    using storage_impl      = ST;                                              ///< The storage implementation
-    using memory_type       = value_type*;                                     ///< The memory type
-    using const_memory_type = const value_type*;                               ///< The const memory type
+    using this_type          = custom_fast_matrix_impl<T, ST, SO, Dims...>;     ///< this type
+    using base_type          = fast_matrix_base<this_type, T, ST, SO, Dims...>; ///< The base type
+    using iterable_base_type = iterable<this_type, SO == order::RowMajor>;      ///< The iterable base type
+    using value_type         = T;                                               ///< The value type
+    using storage_impl       = ST;                                              ///< The storage implementation
+    using memory_type        = value_type*;                                     ///< The memory type
+    using const_memory_type  = const value_type*;                               ///< The const memory type
 
     using base_type::dim;
     using base_type::size;
-    using base_type::begin;
-    using base_type::end;
+    using iterable_base_type::begin;
+    using iterable_base_type::end;
     using base_type::memory_start;
     using base_type::memory_end;
 

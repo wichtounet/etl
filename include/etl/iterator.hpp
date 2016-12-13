@@ -19,21 +19,19 @@ namespace etl {
 /*!
  * \brief Configurable iterator for ETL expressions
  * \tparam Expr The type of expr for which the iterator is working
- * \tparam Ref Indicates if the iterator returns reference.
- * \tparam Const Indicates if the iterator returns const reference only.
  */
-template <typename Expr, bool Ref = false, bool Const = true>
+template <typename Expr>
 struct iterator : public std::iterator<std::random_access_iterator_tag, value_t<Expr>> {
 private:
     Expr* expr;    ///< Pointer to the expression
     std::size_t i; ///< Current index
 
 public:
-    using base_iterator_t = std::iterator<std::random_access_iterator_tag, value_t<Expr>>;                                  ///< The base iterator type
-    using value_type      = value_t<Expr>;                                                                                  ///< The value type
-    using reference_t     = std::conditional_t<Ref, std::conditional_t<Const, const value_type&, value_type&>, value_type>; ///< The type of reference
-    using pointer_t       = std::conditional_t<Const, const value_type*, value_type*>;                                      ///< The type of pointer
-    using difference_t    = typename base_iterator_t::difference_type;                                                      ///< The type used for subtracting two iterators
+    using base_iterator_t = std::iterator<std::random_access_iterator_tag, value_t<Expr>>; ///< The base iterator type
+    using value_type      = value_t<Expr>;                                                 ///< The value type
+    using reference_t     = decltype(std::declval<Expr>()[i]);                             ///< The type of reference
+    using pointer_t       = std::add_pointer_t<decltype(std::declval<Expr>()[i])>;         ///< The type of pointer
+    using difference_t    = typename base_iterator_t::difference_type;                     ///< The type used for subtracting two iterators
 
     /*!
      * \brief Construct a new iterator
@@ -64,7 +62,7 @@ public:
      * \brief Dereference the iterator to get the current value
      * \return a pointer to the current element
      */
-    pointer_t operator->() {
+    auto operator->() {
         return &(*expr)[i];
     }
 
