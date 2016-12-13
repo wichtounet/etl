@@ -60,7 +60,8 @@ struct inplace_square_transpose {
      */
     template <typename C>
     static void apply(C&& c) {
-        static constexpr bool mkl_possible = all_dma<C>::value && all_floating<C>::value;
+        // Condition to use MKL
+        static constexpr bool mkl_possible = is_mkl_enabled && all_dma<C>::value && all_floating<C>::value;
 
         const auto impl = select_transpose_impl_smart<C, C>();
 
