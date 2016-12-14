@@ -377,6 +377,8 @@ struct sub_view <T, std::enable_if_t<fast_sub_view_able<T>::value>> :
         return memory[j];
     }
 
+    //TODO These two following operators should also be handled in lighter weight way!
+
     /*!
      * \brief Access to the element at the given (args...) position
      * \param args The indices
