@@ -134,6 +134,23 @@ struct evaluator_static_visitor {
         need_value = old_need_value;
     }
 
+    template <typename T, cpp_enable_if(fast_sub_view_able<T>::value)>
+    void operator()(const etl::sub_view<T>& v) const {
+        bool old_need_value = need_value;
+        need_value = true;
+        (*this)(v.value());
+        v.late_init();
+        need_value = old_need_value;
+    }
+
+    template <typename T, cpp_disable_if(fast_sub_view_able<T>::value)>
+    void operator()(const etl::sub_view<T>& v) const {
+        bool old_need_value = need_value;
+        need_value = true;
+        (*this)(v.value());
+        need_value = old_need_value;
+    }
+
     /*!
      * \brief Visit the given view
      * \param view The view
