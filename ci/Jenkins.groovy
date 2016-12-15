@@ -27,8 +27,10 @@ node {
 
        stage 'bench'
        build job: 'etl - benchmark', wait: false
-   } catch (error) {
-       throw error;
+       currentBuild.result = 'SUCCESS'
+    } catch (any) {
+       currentBuild.result = 'FAILURE'
+       throw any
    } finally {
        step([$class: 'Mailer',
            notifyEveryUnstableBuild: true,
