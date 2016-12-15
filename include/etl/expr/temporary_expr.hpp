@@ -118,6 +118,7 @@ public:
     template <typename VV = default_vec>
     using vec_type        = typename VV::template vec_type<value_type>;
 
+private:
     /*!
      * \brief Returns a reference to the derived object, i.e. the object using the CRTP injector.
      * \return a reference to the derived object.
@@ -134,6 +135,7 @@ public:
         return *static_cast<const derived_t*>(this);
     }
 
+protected:
     /*!
      * \brief Evaluate the expression, if not evaluated
      *
@@ -158,7 +160,7 @@ public:
         allocated = true;
     }
 
-
+public:
     /*!
      * \brief Evaluate the expression directly into the given result
      *
