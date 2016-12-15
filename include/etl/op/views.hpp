@@ -192,6 +192,13 @@ struct dim_view {
         static_assert(has_direct_access<T>::value && D == 1, "This expression does not have direct memory access");
         return sub.memory_start() + (i + 1) * subsize(sub);
     }
+
+    // Internals
+
+    template<typename V>
+    void visit(V&& visitor){
+        value().visit(std::forward<V>(visitor));
+    }
 };
 
 /*!
@@ -369,6 +376,13 @@ struct slice_view {
         static_assert(has_direct_access<T>::value && decay_traits<sub_type>::storage_order == order::RowMajor, "This expression does not have direct memory access");
         return sub.memory_start() + last * (etl::size(sub) / etl::dim<0>(sub));
     }
+
+    // Internals
+
+    template<typename V>
+    void visit(V&& visitor){
+        value().visit(std::forward<V>(visitor));
+    }
 };
 
 /*!
@@ -542,6 +556,13 @@ struct memory_slice_view {
      */
     const_memory_type memory_end() const noexcept {
         return sub.memory_start() + last;
+    }
+
+    // Internals
+
+    template<typename V>
+    void visit(V&& visitor){
+        value().visit(std::forward<V>(visitor));
     }
 };
 
@@ -801,6 +822,13 @@ struct fast_matrix_view {
         static_assert(has_direct_access<T>::value, "This expression does not have direct memory access");
         return sub.memory_end();
     }
+
+    // Internals
+
+    template<typename V>
+    void visit(V&& visitor){
+        value().visit(std::forward<V>(visitor));
+    }
 };
 
 /*!
@@ -1019,6 +1047,13 @@ struct dyn_matrix_view {
     const_memory_type memory_end() const noexcept {
         static_assert(has_direct_access<T>::value, "This expression does not have direct memory access");
         return sub.memory_end();
+    }
+
+    // Internals
+
+    template<typename V>
+    void visit(V&& visitor){
+        value().visit(std::forward<V>(visitor));
     }
 
 private:

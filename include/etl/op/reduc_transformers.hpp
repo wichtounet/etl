@@ -71,6 +71,13 @@ struct sum_r_transformer {
     bool alias(const E& rhs) const noexcept {
         return sub.alias(rhs);
     }
+
+    // Internals
+
+    template<typename V>
+    void visit(V&& visitor){
+        value().visit(std::forward<V>(visitor));
+    }
 };
 
 /*!
@@ -134,6 +141,13 @@ struct mean_r_transformer {
     template <typename E>
     bool alias(const E& rhs) const noexcept {
         return sub.alias(rhs);
+    }
+
+    // Internals
+
+    template<typename V>
+    void visit(V&& visitor){
+        value().visit(std::forward<V>(visitor));
     }
 };
 
@@ -220,6 +234,13 @@ struct sum_l_transformer {
     bool alias(const E& rhs) const noexcept {
         return sub.alias(rhs);
     }
+
+    // Internals
+
+    template<typename V>
+    void visit(V&& visitor){
+        value().visit(std::forward<V>(visitor));
+    }
 };
 
 /*!
@@ -304,6 +325,13 @@ struct mean_l_transformer {
     template <typename E>
     bool alias(const E& rhs) const noexcept {
         return sub.alias(rhs);
+    }
+
+    // Internals
+
+    template<typename V>
+    void visit(V&& visitor){
+        value().visit(std::forward<V>(visitor));
     }
 };
 

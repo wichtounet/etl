@@ -139,7 +139,7 @@ public:
      *
      * Will fail if not previously allocated
      */
-    void evaluate() const {
+    void evaluate(){
         if (!evaluated) {
             cpp_assert(allocated, "The result has not been allocated");
             as_derived().apply(*_c);
@@ -165,7 +165,7 @@ public:
      * Will fail if not previously allocated
      */
     template <typename Result>
-    void direct_evaluate(Result&& result) const {
+    void direct_evaluate(Result&& result){
         as_derived().apply(std::forward<Result>(result));
     }
 
@@ -388,6 +388,14 @@ struct temporary_expr_un : temporary_expr<D, T, R> {
     bool alias(const E& rhs) const {
         return a().alias(rhs);
     }
+
+    // Internals
+
+    void visit(const detail::temporary_allocator_static_visitor& visitor){
+        this->allocate_temporary();
+
+        _a.visit(visitor);
+    }
 };
 
 /*!
@@ -477,6 +485,15 @@ struct temporary_expr_bin : temporary_expr<D, T, R> {
     bool alias(const E& rhs) const {
         return _a.alias(rhs) || _b.alias(rhs);
     }
+
+    // Internals
+
+    void visit(const detail::temporary_allocator_static_visitor& visitor){
+        this->allocate_temporary();
+
+        _a.visit(visitor);
+        _b.visit(visitor);
+    }
 };
 
 /*!
@@ -506,7 +523,7 @@ struct temporary_unary_expr final : temporary_expr_un<temporary_unary_expr<T, AE
      * \param result The expressio where to store the result
      */
     template <typename Result>
-    void apply(Result&& result) const {
+    void apply(Result&& result){
         Op::apply(this->a(), std::forward<Result>(result));
     }
 
@@ -549,7 +566,7 @@ struct temporary_unary_expr_state final : temporary_expr_un<temporary_unary_expr
      * \param result The expressio where to store the result
      */
     template <typename Result>
-    void apply(Result&& result) const {
+    void apply(Result&& result){
         op.apply(this->a(), std::forward<Result>(result));
     }
 
@@ -586,7 +603,7 @@ struct temporary_binary_expr final : temporary_expr_bin<temporary_binary_expr<T,
      * \param result The expressio where to store the result
      */
     template <typename Result>
-    void apply(Result&& result) const {
+    void apply(Result&& result){
         Op::apply(this->a(), this->b(), std::forward<Result>(result));
     }
 

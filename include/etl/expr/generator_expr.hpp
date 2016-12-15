@@ -94,6 +94,13 @@ public:
     const Generator& get_generator() const {
         return generator;
     }
+
+    // Internals
+
+    template<typename V>
+    void visit(V&& visitor){
+        cpp_unused(visitor);
+    }
 };
 
 /*!

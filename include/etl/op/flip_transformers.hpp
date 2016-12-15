@@ -119,6 +119,13 @@ struct hflip_transformer {
     bool alias(const E& rhs) const noexcept {
         return sub.alias(rhs);
     }
+
+    // Internals
+
+    template<typename V>
+    void visit(V&& visitor){
+        value().visit(std::forward<V>(visitor));
+    }
 };
 
 /*!
@@ -231,6 +238,13 @@ struct vflip_transformer {
     bool alias(const E& rhs) const noexcept {
         return sub.alias(rhs);
     }
+
+    // Internals
+
+    template<typename V>
+    void visit(V&& visitor){
+        value().visit(std::forward<V>(visitor));
+    }
 };
 
 /*!
@@ -321,6 +335,13 @@ struct fflip_transformer {
     template <typename E>
     bool alias(const E& rhs) const noexcept {
         return sub.alias(rhs);
+    }
+
+    // Internals
+
+    template<typename V>
+    void visit(V&& visitor){
+        value().visit(std::forward<V>(visitor));
     }
 };
 

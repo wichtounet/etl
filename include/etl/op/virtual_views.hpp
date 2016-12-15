@@ -101,6 +101,13 @@ struct magic_view {
     constexpr bool alias(const E& rhs) const noexcept {
         return (void)rhs, false;
     }
+
+    // Internals
+
+    template<typename Visitor>
+    void visit(Visitor&& visitor) const {
+        cpp_unused(visitor);
+    }
 };
 
 /*!
@@ -166,6 +173,13 @@ struct fast_magic_view {
     template <typename E>
     constexpr bool alias(const E& rhs) const noexcept {
         return (void)rhs, false;
+    }
+
+    // Internals
+
+    template<typename Visitor>
+    void visit(Visitor&& visitor) const {
+        cpp_unused(visitor);
     }
 };
 

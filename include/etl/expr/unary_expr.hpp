@@ -202,6 +202,13 @@ public:
     bool alias(const E& rhs) const noexcept {
         return _value.alias(rhs);
     }
+
+    // Internals
+
+    template<typename V>
+    void visit(V&& visitor){
+        _value.visit(std::forward<V>(visitor));
+    }
 };
 
 /*!
@@ -578,6 +585,13 @@ public:
             _gpu_memory_handler, decay_traits<this_type>::storage_order};
     }
 
+    // Internals
+
+    template<typename V>
+    void visit(V&& visitor){
+        _value.visit(std::forward<V>(visitor));
+    }
+
 private:
     /*!
      * \brief Assign the given value to each eleemnt of the unary expression
@@ -704,6 +718,13 @@ public:
     template <typename E>
     bool alias(const E& rhs) const noexcept {
         return _value.alias(rhs);
+    }
+
+    // Internals
+
+    template<typename V>
+    void visit(V&& visitor){
+        _value.visit(std::forward<V>(visitor));
     }
 };
 
@@ -834,6 +855,13 @@ public:
     template <typename E>
     bool alias(const E& rhs) const noexcept {
         return _value.alias(rhs);
+    }
+
+    // Internals
+
+    template<typename V>
+    void visit(V&& visitor){
+        _value.visit(std::forward<V>(visitor));
     }
 };
 

@@ -64,6 +64,13 @@ struct rep_transformer {
         return sub.alias(rhs);
     }
 
+    // Internals
+
+    template<typename V>
+    void visit(V&& visitor){
+        value().visit(std::forward<V>(visitor));
+    }
+
 private:
     /*!
      * \brief Returns a const reference to the derived object, i.e. the object using the CRTP injector.

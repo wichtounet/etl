@@ -46,14 +46,14 @@ namespace etl {
  * The implementation is chosen by SFINAE.
  */
 namespace standard_evaluator {
-
     /*!
      * \brief Allocate temporaries and evaluate sub expressions
      * \param expr The expr to be visited
      */
     template <typename E>
     void pre_assign(E&& expr) {
-        apply_visitor<detail::temporary_allocator_static_visitor>(expr);
+        expr.visit(detail::temporary_allocator_static_visitor{});
+
         apply_visitor<detail::evaluator_static_visitor>(expr);
     }
 
@@ -483,9 +483,9 @@ namespace standard_evaluator {
     void assign_evaluate(E&& expr, R&& result) {
         pre_assign(expr.a());
 
-        expr.direct_evaluate(result);
+        expr.direct_evaluate(std::forward<R>(result));
 
-        post_assign(expr, result);
+        post_assign(expr, std::forward<R>(result));
     }
 
     /*!

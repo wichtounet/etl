@@ -33,6 +33,8 @@ CXX_FLAGS += -Ilib/include -Idoctest -ICatch/include -Itest/include
 # Support for extra flags
 CXX_FLAGS += $(EXTRA_CXX_FLAGS)
 
+CXX_FLAGS += -ftemplate-backtrace-limit=0
+
 ifneq (,$(findstring clang,$(CXX)))
 CXX_FLAGS += -Wno-error=documentation
 endif

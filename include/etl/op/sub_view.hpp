@@ -256,6 +256,13 @@ struct sub_view <T, std::enable_if_t<!fast_sub_view_able<T>::value>> :
     std::size_t& unsafe_dimension_access(std::size_t i) {
         return sub_expr.unsafe_dimension_access(i + 1);
     }
+
+    // Internals
+
+    template<typename V>
+    void visit(V&& visitor){
+        sub_expr.visit(std::forward<V>(visitor));
+    }
 };
 
 /*!
@@ -560,6 +567,13 @@ struct sub_view <T, std::enable_if_t<fast_sub_view_able<T>::value>> :
     template<std::size_t... I>
     std::array<std::size_t, decay_traits<this_type>::dimensions()> dim_array(std::index_sequence<I...>) const {
         return {{decay_traits<this_type>::dim(*this, I)...}};
+    }
+
+    // Internals
+
+    template<typename V>
+    void visit(V&& visitor){
+        sub_expr.visit(std::forward<V>(visitor));
     }
 };
 

@@ -212,6 +212,14 @@ public:
     auto slice(std::size_t first, std::size_t last) const noexcept {
         return etl::slice(*this, first, last);
     }
+
+    // Internals
+
+    template<typename V>
+    void visit(V&& visitor){
+        lhs().visit(std::forward<V>(visitor));
+        rhs().visit(std::forward<V>(visitor));
+    }
 };
 
 /*!

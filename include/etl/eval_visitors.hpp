@@ -22,35 +22,8 @@ namespace detail {
 /*!
  * \brief Visitor to allocate temporary when needed
  */
-struct temporary_allocator_static_visitor : etl_visitor<temporary_allocator_static_visitor, false, true> {
-    /*!
-     * \brief Indicates if the visitor is necessary for the given expression
-     */
-    template <typename E>
-    using enabled = cpp::bool_constant<decay_traits<E>::needs_temporary_visitor>;
-
-    using etl_visitor<temporary_allocator_static_visitor, false, true>::operator();
-
-    /*!
-     * \brief Visit the given temporary unary expression and allocate the necessary temporary.
-     */
-    template <typename D, typename T, typename A, typename R>
-    void operator()(etl::temporary_expr_un<D, T, A, R>& v) const {
-        v.allocate_temporary();
-
-        (*this)(v.a());
-    }
-
-    /*!
-     * \brief Visit the given temporary binary expression and allocate the necessary temporary.
-     */
-    template <typename D, typename T, typename A, typename B, typename R>
-    void operator()(etl::temporary_expr_bin<D, T, A, B, R>& v) const {
-        v.allocate_temporary();
-
-        (*this)(v.a());
-        (*this)(v.b());
-    }
+struct temporary_allocator_static_visitor {
+    // Simple tag
 };
 
 /*!

@@ -48,7 +48,7 @@ struct conv2_valid_multi_impl {
      * \param conv The output expression
      */
     template <typename I, typename K, typename C>
-    static void apply(const I& input, const K& kernel, C&& conv) {
+    static void apply(I&& input, K&& kernel, C&& conv) {
         auto impl = select_conv_valid_multi_impl<I, K, C>();
 
         if (impl == etl::conv_multi_impl::BLAS) {
@@ -77,7 +77,7 @@ struct conv2_valid_multi_impl {
      * \brief Assert that the convolution is done on correct dimensions
      */
     template <typename I, typename K, typename C>
-    static void check(const I& input, const K& kernel, const C& conv){
+    static void check(I&& input, K&& kernel, const C& conv){
         static_assert(etl::dimensions<I>() == 2, "Invalid number of dimensions for input of conv2_valid_multi");
         static_assert(etl::dimensions<K>() == 3, "Invalid number of dimensions for kernel of conv2_valid_multi");
         static_assert(etl::dimensions<C>() == 3, "Invalid number of dimensions for conv of conv2_valid_multi");
@@ -113,7 +113,7 @@ struct conv2_valid_multi_impl {
      * \brief Returns the dth dimension of the result of the convolution
      */
     template <typename I, typename K>
-    static size_t dim(size_t d, const I& input, const K& kernel){
+    static size_t dim(size_t d, I&& input, K&& kernel){
         cpp_assert(d < 3, "Invalid dimensions access");
 
         if(d == 0){
@@ -150,7 +150,7 @@ struct conv2_valid_multi_flipped_impl : conv2_valid_multi_impl<S1, S2, P1, P2> {
      * \param conv The output expression
      */
     template <typename I, typename K, typename C>
-    static void apply(const I& input, const K& kernel, C&& conv) {
+    static void apply(I&& input, K&& kernel, C&& conv) {
         auto impl = select_conv_valid_multi_impl<I, K, C>();
 
         if (impl == etl::conv_multi_impl::BLAS) {
@@ -188,7 +188,7 @@ struct conv2_valid_multi_multi_impl {
      * \param conv The output expression
      */
     template <typename I, typename K, typename C>
-    static void apply(const I& input, const K& kernel, C&& conv) {
+    static void apply(I&& input, K&& kernel, C&& conv) {
         auto impl = select_conv_valid_multi_multi_impl<I, K, C>();
 
         if (impl == etl::conv_multi_impl::BLAS) {
@@ -215,7 +215,7 @@ struct conv2_valid_multi_multi_impl {
      * \brief Assert that the convolution is done on correct dimensions
      */
     template <typename I, typename K, typename C>
-    static void check(const I& input, const K& kernel, const C& conv){
+    static void check(I&& input, K&& kernel, const C& conv){
         static_assert(etl::dimensions<I>() == 3, "Invalid number of dimensions for input of conv2_valid_multi_multi");
         static_assert(etl::dimensions<K>() == 3, "Invalid number of dimensions for kernel of conv2_valid_multi_multi");
         static_assert(etl::dimensions<C>() == 4, "Invalid number of dimensions for conv of conv2_valid_multi_multi");
@@ -253,7 +253,7 @@ struct conv2_valid_multi_multi_impl {
      * \brief Returns the dth dimension of the result of the convolution
      */
     template <typename I, typename K>
-    static size_t dim(size_t d, const I& input, const K& kernel){
+    static size_t dim(size_t d, I&& input, K&& kernel){
         cpp_assert(d < 4, "Invalid dimensions access");
 
         if(d == 0){
@@ -293,7 +293,7 @@ struct conv2_valid_multi_multi_flipped_impl : conv2_valid_multi_multi_impl<S1, S
      * \param conv The output expression
      */
     template <typename I, typename K, typename C>
-    static void apply(const I& input, const K& kernel, C&& conv) {
+    static void apply(I&& input, K&& kernel, C&& conv) {
         auto impl = select_conv_valid_multi_multi_impl<I, K, C>();
 
         if (impl == etl::conv_multi_impl::BLAS) {
@@ -344,7 +344,7 @@ struct dyn_conv2_valid_multi_impl {
      * \param conv The output expression
      */
     template <typename I, typename K, typename C>
-    void apply(const I& input, const K& kernel, C&& conv) const {
+    void apply(I&& input, K&& kernel, C&& conv) const {
         auto impl = select_conv_valid_multi_impl<I, K, C>();
 
         if (impl == etl::conv_multi_impl::BLAS) {
@@ -373,7 +373,7 @@ struct dyn_conv2_valid_multi_impl {
      * \brief Assert that the convolution is done on correct dimensions
      */
     template <typename I, typename K, typename C>
-    void check(const I& input, const K& kernel, const C& conv) const {
+    void check(I&& input, K&& kernel, const C& conv) const {
         static_assert(etl::dimensions<I>() == 2, "Invalid number of dimensions for input of conv2_valid_multi");
         static_assert(etl::dimensions<K>() == 3, "Invalid number of dimensions for kernel of conv2_valid_multi");
         static_assert(etl::dimensions<C>() == 3, "Invalid number of dimensions for conv of conv2_valid_multi");
@@ -393,7 +393,7 @@ struct dyn_conv2_valid_multi_impl {
      * \brief Returns the dth dimension of the result of the convolution
      */
     template <typename I, typename K>
-    size_t dim(size_t d, const I& input, const K& kernel) const {
+    size_t dim(size_t d, I&& input, K&& kernel) const {
         cpp_assert(d < 3, "Invalid dimensions access");
 
         if(d == 0){
@@ -428,7 +428,7 @@ struct dyn_conv2_valid_multi_flipped_impl : dyn_conv2_valid_multi_impl {
      * \param conv The output expression
      */
     template <typename I, typename K, typename C>
-    void apply(const I& input, const K& kernel, C&& conv) const {
+    void apply(I&& input, K&& kernel, C&& conv) const {
         auto impl = select_conv_valid_multi_impl<I, K, C>();
 
         if (impl == etl::conv_multi_impl::BLAS) {
@@ -481,7 +481,7 @@ struct dyn_conv2_valid_multi_multi_impl {
      * \param conv The output expression
      */
     template <typename I, typename K, typename C>
-    void apply(const I& input, const K& kernel, C&& conv) const {
+    void apply(I&& input, K&& kernel, C&& conv) const {
         auto impl = select_conv_valid_multi_impl<I, K, C>();
 
         if (impl == etl::conv_multi_impl::BLAS) {
@@ -508,7 +508,7 @@ struct dyn_conv2_valid_multi_multi_impl {
      * \brief Assert that the convolution is done on correct dimensions
      */
     template <typename I, typename K, typename C>
-    void check(const I& input, const K& kernel, const C& conv) const {
+    void check(I&& input, K&& kernel, const C& conv) const {
         static_assert(etl::dimensions<I>() == 3, "Invalid number of dimensions for input of conv2_valid_multi_multi");
         static_assert(etl::dimensions<K>() == 3, "Invalid number of dimensions for kernel of conv2_valid_multi_multi");
         static_assert(etl::dimensions<C>() == 4, "Invalid number of dimensions for conv of conv2_valid_multi_multi");
@@ -529,7 +529,7 @@ struct dyn_conv2_valid_multi_multi_impl {
      * \brief Returns the dth dimension of the result of the convolution
      */
     template <typename I, typename K>
-    size_t dim(size_t d, const I& input, const K& kernel) const {
+    size_t dim(size_t d, I&& input, K&& kernel) const {
         cpp_assert(d < 3, "Invalid dimensions access");
 
         if(d == 0){
@@ -564,7 +564,7 @@ struct dyn_conv2_valid_multi_multi_flipped_impl : dyn_conv2_valid_multi_multi_im
      * \param conv The output expression
      */
     template <typename I, typename K, typename C>
-    void apply(const I& input, const K& kernel, C&& conv) const {
+    void apply(I&& input, K&& kernel, C&& conv) const {
         auto impl = select_conv_valid_multi_impl<I, K, C>();
 
         if (impl == etl::conv_multi_impl::BLAS) {
@@ -599,7 +599,7 @@ struct conv2_full_multi_impl {
      * \param conv The output expression
      */
     template <typename I, typename K, typename C>
-    static void apply(const I& input, const K& kernel, C&& conv) {
+    static void apply(I&& input, K&& kernel, C&& conv) {
         auto impl = select_conv_full_multi_impl<I, K, C>();
 
         if (impl == etl::conv_multi_impl::CUDNN) {
@@ -630,7 +630,7 @@ struct conv2_full_multi_impl {
      * \brief Assert that the convolution is done on correct dimensions
      */
     template <typename I, typename K, typename C>
-    static void check(const I& input, const K& kernel, const C& conv){
+    static void check(I&& input, K&& kernel, const C& conv){
         static_assert(etl::dimensions<I>() == 2, "Invalid number of dimensions for input of conv2_full_multi");
         static_assert(etl::dimensions<K>() == 3, "Invalid number of dimensions for kernel of conv2_full_multi");
         static_assert(etl::dimensions<C>() == 3, "Invalid number of dimensions for conv of conv2_full_multi");
@@ -666,7 +666,7 @@ struct conv2_full_multi_impl {
      * \brief Returns the dth dimension of the result of the convolution
      */
     template <typename I, typename K>
-    static size_t dim(size_t d, const I& input, const K& kernel){
+    static size_t dim(size_t d, I&& input, K&& kernel){
         cpp_assert(d < 3, "Invalid dimensions access");
 
         if(d == 0){
@@ -699,7 +699,7 @@ struct conv2_full_multi_flipped_impl {
      * \param conv The output expression
      */
     template <typename I, typename K, typename C>
-    static void apply(const I& input, const K& kernel, C&& conv) {
+    static void apply(I&& input, K&& kernel, C&& conv) {
         auto impl = select_conv_full_multi_impl<I, K, C>();
 
         if (impl == etl::conv_multi_impl::CUDNN) {
@@ -730,7 +730,7 @@ struct conv2_full_multi_flipped_impl {
      * \brief Assert that the convolution is done on correct dimensions
      */
     template <typename I, typename K, typename C>
-    static void check(const I& input, const K& kernel, const C& conv){
+    static void check(I&& input, K&& kernel, const C& conv){
         conv2_full_multi_impl::check(input, kernel, conv);
     }
 
@@ -746,7 +746,7 @@ struct conv2_full_multi_flipped_impl {
      * \brief Returns the dth dimension of the result of the convolution
      */
     template <typename I, typename K>
-    static size_t dim(size_t d, const I& input, const K& kernel){
+    static size_t dim(size_t d, I&& input, K&& kernel){
         cpp_assert(d < 3, "Invalid dimensions access");
 
         if(d == 0){
@@ -779,7 +779,7 @@ struct conv2_same_multi_impl {
      * \param conv The output expression
      */
     template <typename I, typename K, typename C>
-    static void apply(const I& input, const K& kernel, C&& conv) {
+    static void apply(I&& input, K&& kernel, C&& conv) {
         auto impl = select_conv_same_multi_impl<I, K, C>();
 
         if (impl == etl::conv_multi_impl::VEC){
@@ -802,7 +802,7 @@ struct conv2_same_multi_impl {
      * \brief Assert that the convolution is done on correct dimensions
      */
     template <typename I, typename K, typename C>
-    static void check(const I& input, const K& kernel, const C& conv){
+    static void check(I&& input, K&& kernel, const C& conv){
         static_assert(etl::dimensions<I>() == 2, "Invalid number of dimensions for input of conv2_same_multi");
         static_assert(etl::dimensions<K>() == 3, "Invalid number of dimensions for kernel of conv2_same_multi");
         static_assert(etl::dimensions<C>() == 3, "Invalid number of dimensions for conv of conv2_same_multi");
@@ -838,7 +838,7 @@ struct conv2_same_multi_impl {
      * \brief Returns the dth dimension of the result of the convolution
      */
     template <typename I, typename K>
-    static size_t dim(size_t d, const I& input, const K& kernel){
+    static size_t dim(size_t d, I&& input, K&& kernel){
         cpp_assert(d < 3, "Invalid dimensions access");
 
         if(d == 0){
@@ -871,7 +871,7 @@ struct conv2_same_multi_flipped_impl : conv2_same_multi_impl {
      * \param conv The output expression
      */
     template <typename I, typename K, typename C>
-    static void apply(const I& input, const K& kernel, C&& conv) {
+    static void apply(I&& input, K&& kernel, C&& conv) {
         auto impl = select_conv_same_multi_impl<I, K, C>();
 
         if (impl == etl::conv_multi_impl::VEC){

@@ -607,6 +607,13 @@ public:
     bool alias(const E& rhs) const noexcept {
         return matrix.alias(rhs);
     }
+
+    // Internals
+
+    template<typename V>
+    void visit(V&& visitor) const {
+        cpp_unused(visitor);
+    }
 };
 
 template <typename Matrix>

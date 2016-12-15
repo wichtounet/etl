@@ -117,6 +117,13 @@ struct transpose_transformer {
     bool alias(const E& rhs) const noexcept {
         return sub.alias(rhs);
     }
+
+    // Internals
+
+    template<typename V>
+    void visit(V&& visitor){
+        value().visit(std::forward<V>(visitor));
+    }
 };
 
 /*!
@@ -222,6 +229,14 @@ struct mm_mul_transformer {
     template <typename E>
     bool alias(const E& rhs) const noexcept {
         return left.alias(rhs) || right.alias(rhs);
+    }
+
+    // Internals
+
+    template<typename V>
+    void visit(V&& visitor){
+        lhs().visit(std::forward<V>(visitor));
+        rhs().visit(std::forward<V>(visitor));
     }
 
 private:
@@ -334,6 +349,13 @@ struct dyn_convmtx_transformer {
     bool alias(const E& rhs) const noexcept {
         return sub.alias(rhs);
     }
+
+    // Internals
+
+    template<typename V>
+    void visit(V&& visitor){
+        value().visit(std::forward<V>(visitor));
+    }
 };
 
 /*!
@@ -439,6 +461,13 @@ struct dyn_convmtx2_transformer {
     template <typename E>
     bool alias(const E& rhs) const noexcept {
         return sub.alias(rhs);
+    }
+
+    // Internals
+
+    template<typename V>
+    void visit(V&& visitor){
+        value().visit(std::forward<V>(visitor));
     }
 };
 

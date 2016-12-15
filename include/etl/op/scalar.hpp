@@ -97,6 +97,13 @@ struct scalar {
     constexpr bool alias(const E& /*rhs*/) const noexcept {
         return false;
     }
+
+    // Internals
+
+    template<typename V>
+    void visit(V&& visitor) const {
+        cpp_unused(visitor);
+    }
 };
 
 /*!
