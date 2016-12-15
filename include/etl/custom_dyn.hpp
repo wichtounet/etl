@@ -278,7 +278,7 @@ public:
         cpp_unused(visitor);
     }
 
-    void visit(const detail::gpu_clean_static_visitor& visitor) const {
+    void visit(const detail::gpu_clean_visitor& visitor) const {
         cpp_unused(visitor);
         direct().gpu_evict();
     }

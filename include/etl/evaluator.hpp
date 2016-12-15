@@ -54,7 +54,7 @@ namespace standard_evaluator {
     void pre_assign(E&& expr) {
         expr.visit(detail::temporary_allocator_visitor{});
 
-        apply_visitor<detail::evaluator_static_visitor>(expr);
+        apply_visitor<detail::evaluator_visitor>(expr);
     }
 
     /*!
@@ -73,8 +73,8 @@ namespace standard_evaluator {
         });
 #endif
 
-        expr.visit(detail::gpu_clean_static_visitor{});
-        result.visit(detail::gpu_clean_static_visitor{});
+        expr.visit(detail::gpu_clean_visitor{});
+        result.visit(detail::gpu_clean_visitor{});
     }
 
     /*!
@@ -93,7 +93,7 @@ namespace standard_evaluator {
         });
 #endif
 
-        expr.visit(detail::gpu_clean_static_visitor{});
+        expr.visit(detail::gpu_clean_visitor{});
     }
 
     /*!
@@ -433,7 +433,7 @@ namespace standard_evaluator {
     }
 
     //Note: In case of direct evaluation, the temporary_expr itself must
-    //not beevaluated by the static_visitor, otherwise, the result would
+    //not beevaluated by the visitor, otherwise, the result would
     //be evaluated twice and a temporary would be allocated for nothing
 
     /*!
