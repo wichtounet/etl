@@ -301,13 +301,6 @@ public:
 
         return _dimensions[D2];
     }
-
-    // Internals
-
-    template<typename V>
-    void visit(V&& visitor) const {
-        cpp_unused(visitor);
-    }
 };
 
 /*!

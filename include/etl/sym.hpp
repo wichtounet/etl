@@ -610,9 +610,13 @@ public:
 
     // Internals
 
-    template<typename V>
-    void visit(V&& visitor) const {
+    void visit(const detail::temporary_allocator_visitor& visitor) const {
         cpp_unused(visitor);
+    }
+
+    void visit(const detail::gpu_clean_static_visitor& visitor) const {
+        cpp_unused(visitor);
+        direct().gpu_evict();
     }
 };
 

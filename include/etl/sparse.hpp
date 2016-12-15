@@ -701,6 +701,13 @@ public:
         return rhs.alias(*this);
     }
 
+    // Internals
+
+    template<typename V>
+    void visit(V&& visitor) const {
+        cpp_unused(visitor);
+    }
+
     /*!
      * \brief Destructs the matrix and releases all its memory
      */

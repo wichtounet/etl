@@ -414,13 +414,6 @@ public:
         return rhs.alias(as_derived());
     }
 
-    // Internals
-
-    template<typename V>
-    void visit(V&& visitor) const {
-        cpp_unused(visitor);
-    }
-
 private:
     /*!
      * \brief Returns a reference to the derived object, i.e. the object using the CRTP injector.

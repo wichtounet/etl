@@ -396,6 +396,12 @@ struct temporary_expr_un : temporary_expr<D, T, R> {
 
         _a.visit(visitor);
     }
+
+    void visit(const detail::gpu_clean_static_visitor& visitor){
+        _a.visit(visitor);
+
+        this->direct().gpu_evict();
+    }
 };
 
 /*!
@@ -493,6 +499,13 @@ struct temporary_expr_bin : temporary_expr<D, T, R> {
 
         _a.visit(visitor);
         _b.visit(visitor);
+    }
+
+    void visit(const detail::gpu_clean_static_visitor& visitor){
+        _a.visit(visitor);
+        _b.visit(visitor);
+
+        this->direct().gpu_evict();
     }
 };
 

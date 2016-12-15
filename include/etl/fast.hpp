@@ -331,6 +331,17 @@ public:
     opaque_memory<T, n_dimensions> direct() const {
         return opaque_memory<T, n_dimensions>(memory_start(), etl_size, {{Dims...}}, _gpu_memory_handler, SO);
     }
+
+    // Internals
+
+    void visit(const detail::temporary_allocator_visitor& visitor) const {
+        cpp_unused(visitor);
+    }
+
+    void visit(const detail::gpu_clean_static_visitor& visitor) const {
+        cpp_unused(visitor);
+        direct().gpu_evict();
+    }
 };
 
 static_assert(std::is_nothrow_default_constructible<fast_vector<double, 2>>::value, "fast_vector should be nothrow default constructible");

@@ -73,8 +73,8 @@ namespace standard_evaluator {
         });
 #endif
 
-        apply_visitor<detail::gpu_clean_static_visitor>(expr);
-        apply_visitor<detail::gpu_clean_static_visitor>(result);
+        expr.visit(detail::gpu_clean_static_visitor{});
+        result.visit(detail::gpu_clean_static_visitor{});
     }
 
     /*!
@@ -93,7 +93,7 @@ namespace standard_evaluator {
         });
 #endif
 
-        apply_visitor<detail::gpu_clean_static_visitor>(expr);
+        expr.visit(detail::gpu_clean_static_visitor{});
     }
 
     /*!

@@ -27,6 +27,13 @@ struct temporary_allocator_visitor {
 };
 
 /*!
+ * \brief Visitor to evict GPU temporaries from the Expression tree
+ */
+struct gpu_clean_static_visitor {
+    // Simple tag
+};
+
+/*!
  * \brief Visitor to perform lcoal evaluation when necessary
  */
 struct evaluator_static_visitor {
@@ -202,64 +209,6 @@ struct evaluator_static_visitor {
     void operator()(const etl::scalar<T>& s) const {
         cpp_unused(s);
         //Leaf
-    }
-};
-
-/*!
- * \brief Visitor to evict GPU temporaries from the Expression tree
- */
-struct gpu_clean_static_visitor : etl_visitor<gpu_clean_static_visitor, false, false> {
-#ifdef ETL_CUDA
-    /*!
-     * \brief Indicates if the visitor is necessary for the given expression
-     */
-    template <typename E>
-    using enabled = cpp::bool_constant<true>;
-#else
-    /*!
-     * \brief Indicates if the visitor is necessary for the given expression
-     */
-    template <typename E>
-    using enabled = cpp::bool_constant<false>;
-#endif
-
-    using etl_visitor<gpu_clean_static_visitor, false, false>::operator();
-
-    /*!
-     * \brief Visit the given ETL value class and evicts its GPU temporaries
-     */
-    template <typename T, cpp_enable_if(etl::is_etl_value<T>::value && !etl::is_sparse_matrix<T>::value)>
-    void operator()(T& value) const {
-        value.direct().gpu_evict();
-    }
-
-    /*!
-     * \brief Visit the given sparse matrix
-     */
-    template <typename T, cpp_enable_if(etl::is_sparse_matrix<T>::value)>
-    void operator()(const T& /*value*/) const {
-        //Nothing to do: no GPU support for sparse matrix
-    }
-
-    /*!
-     * \brief Visit the given temporary unary expressions and evicts its GPU temporaries.
-     */
-    template <typename D, typename T, typename A, typename R>
-    void operator()(etl::temporary_expr_un<D, T, A, R>& v) const {
-        (*this)(v.a());
-
-        v.direct().gpu_evict();
-    }
-
-    /*!
-     * \brief Visit the given temporary binary expressions and evicts its GPU temporaries.
-     */
-    template <typename D, typename T, typename A, typename B, typename R>
-    void operator()(etl::temporary_expr_bin<D, T, A, B, R>& v) const {
-        (*this)(v.a());
-        (*this)(v.b());
-
-        v.direct().gpu_evict();
     }
 };
 
