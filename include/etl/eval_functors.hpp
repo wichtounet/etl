@@ -13,9 +13,6 @@
 
 #pragma once
 
-#include "etl/visitor.hpp"        //visitor of the expressions
-#include "etl/eval_selectors.hpp" //method selectors
-
 namespace etl {
 
 namespace detail {

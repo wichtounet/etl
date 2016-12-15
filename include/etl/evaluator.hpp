@@ -30,7 +30,6 @@
 
 #include "cpp_utils/static_if.hpp"
 
-//#include "etl/visitor.hpp"        //visitor of the expressions
 #include "etl/eval_selectors.hpp" //method selectors
 #include "etl/eval_functors.hpp"  //Implementation functors
 
