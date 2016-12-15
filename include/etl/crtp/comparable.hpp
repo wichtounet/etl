@@ -43,7 +43,7 @@ struct comparable {
      * \return true if the expressions contains the same sequence of values, false othwerise.
      */
     template <typename E>
-    bool operator==(const E& rhs) const {
+    bool operator==(E&& rhs){
         auto& lhs = as_derived();
 
         // Both expressions must have the same number of dimensions
@@ -60,7 +60,7 @@ struct comparable {
 
         // At this point, the values are necessary for the comparison
         etl::force(lhs);
-        etl::force(rhs);
+        etl::force(std::forward<E>(rhs));
 
         // Note: Ideally, we should use std::equal, but this is significantly
         // faster to compile
@@ -80,8 +80,8 @@ struct comparable {
      * \return false if the expressions contains the same sequence of values, true othwerise.
      */
     template <typename E>
-    bool operator!=(const E& rhs) const {
-        return !(as_derived() == rhs);
+    bool operator!=(E&& rhs){
+        return !(as_derived() == std::forward<E>(rhs));
     }
 };
 
