@@ -391,7 +391,7 @@ struct temporary_expr_un : temporary_expr<D, T, R> {
 
     // Internals
 
-    void visit(const detail::temporary_allocator_static_visitor& visitor){
+    void visit(const detail::temporary_allocator_visitor& visitor){
         this->allocate_temporary();
 
         _a.visit(visitor);
@@ -488,7 +488,7 @@ struct temporary_expr_bin : temporary_expr<D, T, R> {
 
     // Internals
 
-    void visit(const detail::temporary_allocator_static_visitor& visitor){
+    void visit(const detail::temporary_allocator_visitor& visitor){
         this->allocate_temporary();
 
         _a.visit(visitor);

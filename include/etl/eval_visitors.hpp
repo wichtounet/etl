@@ -22,7 +22,7 @@ namespace detail {
 /*!
  * \brief Visitor to allocate temporary when needed
  */
-struct temporary_allocator_static_visitor {
+struct temporary_allocator_visitor {
     // Simple tag
 };
 

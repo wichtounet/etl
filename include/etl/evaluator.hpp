@@ -52,7 +52,7 @@ namespace standard_evaluator {
      */
     template <typename E>
     void pre_assign(E&& expr) {
-        expr.visit(detail::temporary_allocator_static_visitor{});
+        expr.visit(detail::temporary_allocator_visitor{});
 
         apply_visitor<detail::evaluator_static_visitor>(expr);
     }
