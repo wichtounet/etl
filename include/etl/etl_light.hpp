@@ -45,6 +45,7 @@
 #include "etl/opaque_memory.hpp"
 
 // The operators
+#include "etl/eval_visitors.hpp"  //Evaluation visitors
 #include "etl/op/scalar.hpp"
 #include "etl/op/generators.hpp"
 #include "etl/op/transformers.hpp"

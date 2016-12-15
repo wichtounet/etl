@@ -199,6 +199,13 @@ struct dim_view {
     void visit(V&& visitor){
         value().visit(std::forward<V>(visitor));
     }
+
+    void visit(detail::evaluator_visitor& visitor){
+        bool old_need_value = visitor.need_value;
+        visitor.need_value = true;
+        value().visit(visitor);
+        visitor.need_value = old_need_value;
+    }
 };
 
 /*!
@@ -383,6 +390,13 @@ struct slice_view {
     void visit(V&& visitor){
         value().visit(std::forward<V>(visitor));
     }
+
+    void visit(detail::evaluator_visitor& visitor){
+        bool old_need_value = visitor.need_value;
+        visitor.need_value = true;
+        value().visit(visitor);
+        visitor.need_value = old_need_value;
+    }
 };
 
 /*!
@@ -563,6 +577,13 @@ struct memory_slice_view {
     template<typename V>
     void visit(V&& visitor){
         value().visit(std::forward<V>(visitor));
+    }
+
+    void visit(detail::evaluator_visitor& visitor){
+        bool old_need_value = visitor.need_value;
+        visitor.need_value = true;
+        value().visit(visitor);
+        visitor.need_value = old_need_value;
     }
 };
 
@@ -829,6 +850,13 @@ struct fast_matrix_view {
     void visit(V&& visitor){
         value().visit(std::forward<V>(visitor));
     }
+
+    void visit(detail::evaluator_visitor& visitor){
+        bool old_need_value = visitor.need_value;
+        visitor.need_value = true;
+        value().visit(visitor);
+        visitor.need_value = old_need_value;
+    }
 };
 
 /*!
@@ -1054,6 +1082,13 @@ struct dyn_matrix_view {
     template<typename V>
     void visit(V&& visitor){
         value().visit(std::forward<V>(visitor));
+    }
+
+    void visit(detail::evaluator_visitor& visitor){
+        bool old_need_value = visitor.need_value;
+        visitor.need_value = true;
+        value().visit(visitor);
+        visitor.need_value = old_need_value;
     }
 
 private:

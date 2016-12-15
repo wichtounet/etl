@@ -30,10 +30,9 @@
 
 #include "cpp_utils/static_if.hpp"
 
-#include "etl/visitor.hpp"        //visitor of the expressions
+//#include "etl/visitor.hpp"        //visitor of the expressions
 #include "etl/eval_selectors.hpp" //method selectors
 #include "etl/eval_functors.hpp"  //Implementation functors
-#include "etl/eval_visitors.hpp"  //Evaluation visitors
 
 // Optimized evaluations
 #include "etl/impl/transpose.hpp"
@@ -54,7 +53,8 @@ namespace standard_evaluator {
     void pre_assign(E&& expr) {
         expr.visit(detail::temporary_allocator_visitor{});
 
-        apply_visitor<detail::evaluator_visitor>(expr);
+        detail::evaluator_visitor eval_visitor;
+        expr.visit(eval_visitor);
     }
 
     /*!

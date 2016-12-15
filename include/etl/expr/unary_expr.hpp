@@ -209,6 +209,13 @@ public:
     void visit(V&& visitor){
         _value.visit(std::forward<V>(visitor));
     }
+
+    void visit(detail::evaluator_visitor& visitor){
+        bool old_need_value = visitor.need_value;
+        visitor.need_value = true;
+        _value.visit(visitor);
+        visitor.need_value = old_need_value;
+    }
 };
 
 /*!
@@ -592,6 +599,13 @@ public:
         _value.visit(std::forward<V>(visitor));
     }
 
+    void visit(detail::evaluator_visitor& visitor){
+        bool old_need_value = visitor.need_value;
+        visitor.need_value = true;
+        _value.visit(visitor);
+        visitor.need_value = old_need_value;
+    }
+
 private:
     /*!
      * \brief Assign the given value to each eleemnt of the unary expression
@@ -725,6 +739,13 @@ public:
     template<typename V>
     void visit(V&& visitor){
         _value.visit(std::forward<V>(visitor));
+    }
+
+    void visit(detail::evaluator_visitor& visitor){
+        bool old_need_value = visitor.need_value;
+        visitor.need_value = true;
+        _value.visit(visitor);
+        visitor.need_value = old_need_value;
     }
 };
 
@@ -862,6 +883,13 @@ public:
     template<typename V>
     void visit(V&& visitor){
         _value.visit(std::forward<V>(visitor));
+    }
+
+    void visit(detail::evaluator_visitor& visitor){
+        bool old_need_value = visitor.need_value;
+        visitor.need_value = true;
+        _value.visit(visitor);
+        visitor.need_value = old_need_value;
     }
 };
 

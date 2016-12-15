@@ -124,6 +124,13 @@ struct transpose_transformer {
     void visit(V&& visitor){
         value().visit(std::forward<V>(visitor));
     }
+
+    void visit(detail::evaluator_visitor& visitor){
+        bool old_need_value = visitor.need_value;
+        visitor.need_value = true;
+        value().visit(visitor);
+        visitor.need_value = old_need_value;
+    }
 };
 
 /*!
@@ -237,6 +244,15 @@ struct mm_mul_transformer {
     void visit(V&& visitor){
         lhs().visit(std::forward<V>(visitor));
         rhs().visit(std::forward<V>(visitor));
+    }
+
+    void visit(detail::evaluator_visitor& visitor){
+        bool old_need_value = visitor.need_value;
+        visitor.need_value = true;
+        lhs().visit(visitor);
+        visitor.need_value = true;
+        rhs().visit(visitor);
+        visitor.need_value = old_need_value;
     }
 
 private:
@@ -356,6 +372,13 @@ struct dyn_convmtx_transformer {
     void visit(V&& visitor){
         value().visit(std::forward<V>(visitor));
     }
+
+    void visit(detail::evaluator_visitor& visitor){
+        bool old_need_value = visitor.need_value;
+        visitor.need_value = true;
+        value().visit(visitor);
+        visitor.need_value = old_need_value;
+    }
 };
 
 /*!
@@ -468,6 +491,13 @@ struct dyn_convmtx2_transformer {
     template<typename V>
     void visit(V&& visitor){
         value().visit(std::forward<V>(visitor));
+    }
+
+    void visit(detail::evaluator_visitor& visitor){
+        bool old_need_value = visitor.need_value;
+        visitor.need_value = true;
+        value().visit(visitor);
+        visitor.need_value = old_need_value;
     }
 };
 

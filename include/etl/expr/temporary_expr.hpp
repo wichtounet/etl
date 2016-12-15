@@ -402,6 +402,21 @@ struct temporary_expr_un : temporary_expr<D, T, R> {
 
         this->direct().gpu_evict();
     }
+
+    void visit(detail::evaluator_visitor& visitor){
+        bool old_need_value = visitor.need_value;
+
+        visitor.need_value = decay_traits<D>::is_gpu;
+        _a.visit(visitor);
+
+        this->evaluate();
+
+        if (old_need_value) {
+            this->direct().gpu_copy_from_if_necessary();
+        }
+
+        visitor.need_value = old_need_value;
+    }
 };
 
 /*!
@@ -506,6 +521,24 @@ struct temporary_expr_bin : temporary_expr<D, T, R> {
         _b.visit(visitor);
 
         this->direct().gpu_evict();
+    }
+
+    void visit(detail::evaluator_visitor& visitor){
+        bool old_need_value = visitor.need_value;
+
+        visitor.need_value = decay_traits<D>::is_gpu;
+        _a.visit(visitor);
+
+        visitor.need_value = decay_traits<D>::is_gpu;
+        _b.visit(visitor);
+
+        this->evaluate();
+
+        if (old_need_value) {
+            this->direct().gpu_copy_from_if_necessary();
+        }
+
+        visitor.need_value = old_need_value;
     }
 };
 

@@ -263,6 +263,13 @@ struct sub_view <T, std::enable_if_t<!fast_sub_view_able<T>::value>> :
     void visit(V&& visitor){
         sub_expr.visit(std::forward<V>(visitor));
     }
+
+    void visit(detail::evaluator_visitor& visitor){
+        bool old_need_value = visitor.need_value;
+        visitor.need_value = true;
+        sub_expr.visit(visitor);
+        visitor.need_value = old_need_value;
+    }
 };
 
 /*!
@@ -574,6 +581,14 @@ struct sub_view <T, std::enable_if_t<fast_sub_view_able<T>::value>> :
     template<typename V>
     void visit(V&& visitor){
         sub_expr.visit(std::forward<V>(visitor));
+    }
+
+    void visit(detail::evaluator_visitor& visitor){
+        bool old_need_value = visitor.need_value;
+        visitor.need_value = true;
+        sub_expr.visit(visitor);
+        late_init();
+        visitor.need_value = old_need_value;
     }
 };
 
