@@ -16,6 +16,10 @@
 #include "etl/impl/std/transpose.hpp"
 #include "etl/impl/blas/transpose.hpp"
 
+#if __INTEL_MKL__ == 11 && __INTEL_MKL_MINOR__ == 2
+#define SLOW_MKL
+#endif
+
 namespace etl {
 
 namespace detail {
@@ -97,8 +101,19 @@ struct inplace_rectangular_transpose {
         const auto impl = select_transpose_impl_smart<C, C>();
 
         if(cpp_likely(impl == transpose_impl::SELECT)){
+#ifdef SLOW_MKL
             // STD is always faster than MKL for inplace rectangular transpositions
             etl::impl::standard::inplace_rectangular_transpose(c);
+#else
+            // Condition to use MKL
+            static constexpr bool mkl_possible = mkl_enabled && all_dma<C>::value && all_floating<C>::value;
+
+            if(mkl_possible){
+                etl::impl::blas::inplace_rectangular_transpose(c);
+            } else {
+                etl::impl::standard::inplace_rectangular_transpose(c);
+            }
+#endif
         } else if (impl == transpose_impl::MKL) {
             etl::impl::blas::inplace_rectangular_transpose(c);
         } else if(impl == transpose_impl::STD){
@@ -123,8 +138,19 @@ struct transpose {
         const auto impl = select_transpose_impl_smart<A, C>();
 
         if(cpp_likely(impl == transpose_impl::SELECT)){
+#ifdef SLOW_MKL
             // STD is always faster than MKL for out-of-place transpose
             etl::impl::standard::transpose(a, c);
+#else
+            // Condition to use MKL
+            static constexpr bool mkl_possible = mkl_enabled && all_dma<C>::value && all_floating<C>::value;
+
+            if(mkl_possible){
+                etl::impl::blas::transpose(a, c);
+            } else {
+                etl::impl::standard::transpose(a, c);
+            }
+#endif
         } else if (impl == transpose_impl::MKL) {
             etl::impl::blas::transpose(a, c);
         } else if(impl == transpose_impl::STD){

@@ -13,6 +13,7 @@
 #pragma once
 
 #ifdef ETL_MKL_MODE
+#include "mkl.h"
 #include "mkl_trans.h"
 #endif
 
