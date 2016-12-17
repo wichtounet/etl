@@ -31,7 +31,14 @@ void inplace_square_transpose(C&& c) {
     const size_t N = etl::dim<0>(c);
 
     for (size_t i = 0; i < N - 1; ++i) {
-        for (size_t j = i + 1; j < N; ++j) {
+        size_t j = i + 1;
+
+        for (; j + 1 < N; j += 2) {
+            swap(c(i, j + 0), c(j + 0, i));
+            swap(c(i, j + 1), c(j + 1, i));
+        }
+
+        if (j < N) {
             swap(c(i, j), c(j, i));
         }
     }
@@ -52,7 +59,14 @@ void inplace_rectangular_transpose(C&& mat) {
     const size_t M = etl::dim<1>(mat);
 
     for (size_t i = 0; i < N; ++i) {
-        for (size_t j = 0; j < M; ++j) {
+        size_t j = 0;
+
+        for (; j + 1 < M; j += 2) {
+            data[(j + 0) * N + i] = copy(i, (j + 0));
+            data[(j + 1) * N + i] = copy(i, (j + 1));
+        }
+
+        if (j < M) {
             data[j * N + i] = copy(i, j);
         }
     }
@@ -107,7 +121,21 @@ void transpose(A&& a, C&& c) {
 
         if (decay_traits<A>::storage_order == order::RowMajor) {
             for (size_t i = 0; i < m; ++i) {
-                for (size_t j = 0; j < n; ++j) {
+                size_t j = 0;
+
+                for (; j + 3 < n; j += 4) {
+                    mem_c[(j + 0) * m + i] = mem_a[i * n + (j + 0)];
+                    mem_c[(j + 1) * m + i] = mem_a[i * n + (j + 1)];
+                    mem_c[(j + 2) * m + i] = mem_a[i * n + (j + 2)];
+                    mem_c[(j + 3) * m + i] = mem_a[i * n + (j + 3)];
+                }
+
+                for (; j + 1 < n; j += 2) {
+                    mem_c[(j + 0) * m + i] = mem_a[i * n + (j + 0)];
+                    mem_c[(j + 1) * m + i] = mem_a[i * n + (j + 1)];
+                }
+
+                if (j < n) {
                     mem_c[j * m + i] = mem_a[i * n + j];
                 }
             }
