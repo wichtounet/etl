@@ -120,11 +120,19 @@ struct transpose_transformer {
 
     // Internals
 
+    /*!
+     * \brief Apply the given visitor to this expression and its descendants.
+     * \param visitor The visitor to apply
+     */
     template<typename V>
     void visit(V&& visitor){
         value().visit(std::forward<V>(visitor));
     }
 
+    /*!
+     * \brief Apply the given visitor to this expression and its descendants.
+     * \param visitor The visitor to apply
+     */
     void visit(detail::evaluator_visitor& visitor){
         bool old_need_value = visitor.need_value;
         visitor.need_value = true;
@@ -240,12 +248,20 @@ struct mm_mul_transformer {
 
     // Internals
 
+    /*!
+     * \brief Apply the given visitor to this expression and its descendants.
+     * \param visitor The visitor to apply
+     */
     template<typename V>
     void visit(V&& visitor){
         lhs().visit(std::forward<V>(visitor));
         rhs().visit(std::forward<V>(visitor));
     }
 
+    /*!
+     * \brief Apply the given visitor to this expression and its descendants.
+     * \param visitor The visitor to apply
+     */
     void visit(detail::evaluator_visitor& visitor){
         bool old_need_value = visitor.need_value;
         visitor.need_value = true;
@@ -368,11 +384,19 @@ struct dyn_convmtx_transformer {
 
     // Internals
 
+    /*!
+     * \brief Apply the given visitor to this expression and its descendants.
+     * \param visitor The visitor to apply
+     */
     template<typename V>
     void visit(V&& visitor){
         value().visit(std::forward<V>(visitor));
     }
 
+    /*!
+     * \brief Apply the given visitor to this expression and its descendants.
+     * \param visitor The visitor to apply
+     */
     void visit(detail::evaluator_visitor& visitor){
         bool old_need_value = visitor.need_value;
         visitor.need_value = true;
@@ -488,11 +512,19 @@ struct dyn_convmtx2_transformer {
 
     // Internals
 
+    /*!
+     * \brief Apply the given visitor to this expression and its descendants.
+     * \param visitor The visitor to apply
+     */
     template<typename V>
     void visit(V&& visitor){
         value().visit(std::forward<V>(visitor));
     }
 
+    /*!
+     * \brief Apply the given visitor to this expression and its descendants.
+     * \param visitor The visitor to apply
+     */
     void visit(detail::evaluator_visitor& visitor){
         bool old_need_value = visitor.need_value;
         visitor.need_value = true;

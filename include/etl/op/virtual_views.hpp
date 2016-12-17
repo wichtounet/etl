@@ -104,6 +104,10 @@ struct magic_view {
 
     // Internals
 
+    /*!
+     * \brief Apply the given visitor to this expression and its descendants.
+     * \param visitor The visitor to apply
+     */
     template<typename Visitor>
     void visit(Visitor&& visitor) const {
         cpp_unused(visitor);
@@ -177,6 +181,10 @@ struct fast_magic_view {
 
     // Internals
 
+    /*!
+     * \brief Apply the given visitor to this expression and its descendants.
+     * \param visitor The visitor to apply
+     */
     template<typename Visitor>
     void visit(Visitor&& visitor) const {
         cpp_unused(visitor);

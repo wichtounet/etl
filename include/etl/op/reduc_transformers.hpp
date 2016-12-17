@@ -74,6 +74,10 @@ struct sum_r_transformer {
 
     // Internals
 
+    /*!
+     * \brief Apply the given visitor to this expression and its descendants.
+     * \param visitor The visitor to apply
+     */
     template<typename V>
     void visit(V&& visitor){
         value().visit(std::forward<V>(visitor));
@@ -145,6 +149,10 @@ struct mean_r_transformer {
 
     // Internals
 
+    /*!
+     * \brief Apply the given visitor to this expression and its descendants.
+     * \param visitor The visitor to apply
+     */
     template<typename V>
     void visit(V&& visitor){
         value().visit(std::forward<V>(visitor));
@@ -237,6 +245,10 @@ struct sum_l_transformer {
 
     // Internals
 
+    /*!
+     * \brief Apply the given visitor to this expression and its descendants.
+     * \param visitor The visitor to apply
+     */
     template<typename V>
     void visit(V&& visitor){
         value().visit(std::forward<V>(visitor));
@@ -329,6 +341,10 @@ struct mean_l_transformer {
 
     // Internals
 
+    /*!
+     * \brief Apply the given visitor to this expression and its descendants.
+     * \param visitor The visitor to apply
+     */
     template<typename V>
     void visit(V&& visitor){
         value().visit(std::forward<V>(visitor));

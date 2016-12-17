@@ -259,11 +259,19 @@ struct sub_view <T, std::enable_if_t<!fast_sub_view_able<T>::value>> :
 
     // Internals
 
+    /*!
+     * \brief Apply the given visitor to this expression and its descendants.
+     * \param visitor The visitor to apply
+     */
     template<typename V>
     void visit(V&& visitor){
         sub_expr.visit(std::forward<V>(visitor));
     }
 
+    /*!
+     * \brief Apply the given visitor to this expression and its descendants.
+     * \param visitor The visitor to apply
+     */
     void visit(detail::evaluator_visitor& visitor){
         bool old_need_value = visitor.need_value;
         visitor.need_value = true;
@@ -578,11 +586,19 @@ struct sub_view <T, std::enable_if_t<fast_sub_view_able<T>::value>> :
 
     // Internals
 
+    /*!
+     * \brief Apply the given visitor to this expression and its descendants.
+     * \param visitor The visitor to apply
+     */
     template<typename V>
     void visit(V&& visitor){
         sub_expr.visit(std::forward<V>(visitor));
     }
 
+    /*!
+     * \brief Apply the given visitor to this expression and its descendants.
+     * \param visitor The visitor to apply
+     */
     void visit(detail::evaluator_visitor& visitor){
         bool old_need_value = visitor.need_value;
         visitor.need_value = true;

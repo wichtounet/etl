@@ -195,11 +195,19 @@ struct dim_view {
 
     // Internals
 
+    /*!
+     * \brief Apply the given visitor to this expression and its descendants.
+     * \param visitor The visitor to apply
+     */
     template<typename V>
     void visit(V&& visitor){
         value().visit(std::forward<V>(visitor));
     }
 
+    /*!
+     * \brief Apply the given visitor to this expression and its descendants.
+     * \param visitor The visitor to apply
+     */
     void visit(detail::evaluator_visitor& visitor){
         bool old_need_value = visitor.need_value;
         visitor.need_value = true;
@@ -386,11 +394,19 @@ struct slice_view {
 
     // Internals
 
+    /*!
+     * \brief Apply the given visitor to this expression and its descendants.
+     * \param visitor The visitor to apply
+     */
     template<typename V>
     void visit(V&& visitor){
         value().visit(std::forward<V>(visitor));
     }
 
+    /*!
+     * \brief Apply the given visitor to this expression and its descendants.
+     * \param visitor The visitor to apply
+     */
     void visit(detail::evaluator_visitor& visitor){
         bool old_need_value = visitor.need_value;
         visitor.need_value = true;
@@ -574,11 +590,19 @@ struct memory_slice_view {
 
     // Internals
 
+    /*!
+     * \brief Apply the given visitor to this expression and its descendants.
+     * \param visitor The visitor to apply
+     */
     template<typename V>
     void visit(V&& visitor){
         value().visit(std::forward<V>(visitor));
     }
 
+    /*!
+     * \brief Apply the given visitor to this expression and its descendants.
+     * \param visitor The visitor to apply
+     */
     void visit(detail::evaluator_visitor& visitor){
         bool old_need_value = visitor.need_value;
         visitor.need_value = true;
@@ -846,11 +870,19 @@ struct fast_matrix_view {
 
     // Internals
 
+    /*!
+     * \brief Apply the given visitor to this expression and its descendants.
+     * \param visitor The visitor to apply
+     */
     template<typename V>
     void visit(V&& visitor){
         value().visit(std::forward<V>(visitor));
     }
 
+    /*!
+     * \brief Apply the given visitor to this expression and its descendants.
+     * \param visitor The visitor to apply
+     */
     void visit(detail::evaluator_visitor& visitor){
         bool old_need_value = visitor.need_value;
         visitor.need_value = true;
@@ -1079,11 +1111,19 @@ struct dyn_matrix_view {
 
     // Internals
 
+    /*!
+     * \brief Apply the given visitor to this expression and its descendants.
+     * \param visitor The visitor to apply
+     */
     template<typename V>
     void visit(V&& visitor){
         value().visit(std::forward<V>(visitor));
     }
 
+    /*!
+     * \brief Apply the given visitor to this expression and its descendants.
+     * \param visitor The visitor to apply
+     */
     void visit(detail::evaluator_visitor& visitor){
         bool old_need_value = visitor.need_value;
         visitor.need_value = true;

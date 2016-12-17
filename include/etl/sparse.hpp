@@ -703,6 +703,10 @@ public:
 
     // Internals
 
+    /*!
+     * \brief Apply the given visitor to this expression and its descendants.
+     * \param visitor The visitor to apply
+     */
     template<typename V>
     void visit(V&& visitor) const {
         cpp_unused(visitor);

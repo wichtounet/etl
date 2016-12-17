@@ -205,11 +205,19 @@ public:
 
     // Internals
 
+    /*!
+     * \brief Apply the given visitor to this expression and its descendants.
+     * \param visitor The visitor to apply
+     */
     template<typename V>
     void visit(V&& visitor){
         _value.visit(std::forward<V>(visitor));
     }
 
+    /*!
+     * \brief Apply the given visitor to this expression and its descendants.
+     * \param visitor The visitor to apply
+     */
     void visit(detail::evaluator_visitor& visitor){
         bool old_need_value = visitor.need_value;
         visitor.need_value = true;
@@ -594,11 +602,19 @@ public:
 
     // Internals
 
+    /*!
+     * \brief Apply the given visitor to this expression and its descendants.
+     * \param visitor The visitor to apply
+     */
     template<typename V>
     void visit(V&& visitor){
         _value.visit(std::forward<V>(visitor));
     }
 
+    /*!
+     * \brief Apply the given visitor to this expression and its descendants.
+     * \param visitor The visitor to apply
+     */
     void visit(detail::evaluator_visitor& visitor){
         bool old_need_value = visitor.need_value;
         visitor.need_value = true;
@@ -736,11 +752,19 @@ public:
 
     // Internals
 
+    /*!
+     * \brief Apply the given visitor to this expression and its descendants.
+     * \param visitor The visitor to apply
+     */
     template<typename V>
     void visit(V&& visitor){
         _value.visit(std::forward<V>(visitor));
     }
 
+    /*!
+     * \brief Apply the given visitor to this expression and its descendants.
+     * \param visitor The visitor to apply
+     */
     void visit(detail::evaluator_visitor& visitor){
         bool old_need_value = visitor.need_value;
         visitor.need_value = true;
@@ -880,11 +904,19 @@ public:
 
     // Internals
 
+    /*!
+     * \brief Apply the given visitor to this expression and its descendants.
+     * \param visitor The visitor to apply
+     */
     template<typename V>
     void visit(V&& visitor){
         _value.visit(std::forward<V>(visitor));
     }
 
+    /*!
+     * \brief Apply the given visitor to this expression and its descendants.
+     * \param visitor The visitor to apply
+     */
     void visit(detail::evaluator_visitor& visitor){
         bool old_need_value = visitor.need_value;
         visitor.need_value = true;
