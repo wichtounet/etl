@@ -122,8 +122,6 @@ struct etl_traits<etl::generator_expr<Generator>> {
     static constexpr bool is_value                = false;           ///< Indicates if the expression is of value type
     static constexpr bool is_direct               = false;           ///< Indicates if the expression has direct memory access
     static constexpr bool is_generator            = true;            ///< Indicates if the expression is a generator
-    static constexpr bool needs_temporary_visitor = false;           ///< Indicates if the expression needs a temporary visitor
-    static constexpr bool needs_evaluator_visitor = false;           ///< Indicates if the exxpression needs a evaluator visitor
     static constexpr bool is_padded               = false;                          ///< Indicates if the expression is padded
     static constexpr bool is_aligned               = false;                          ///< Indicates if the expression is padded
     static constexpr order storage_order          = order::RowMajor; ///< The expression's storage order

@@ -731,8 +731,6 @@ struct etl_traits<transpose_transformer<T>> {
     static constexpr bool is_generator            = false;                                           ///< Indicates if the expression is a generated
     static constexpr bool is_padded               = false;                          ///< Indicates if the expression is padded
     static constexpr bool is_aligned               = false;                          ///< Indicates if the expression is padded
-    static constexpr bool needs_temporary_visitor = etl_traits<sub_expr_t>::needs_temporary_visitor; ///< Indicates if the expression needs a temporary visitor
-    static constexpr bool needs_evaluator_visitor = etl_traits<sub_expr_t>::needs_evaluator_visitor; ///< Indicaes if the expression needs an evaluator visitor
     static constexpr order storage_order          = etl_traits<sub_expr_t>::storage_order;           ///< The expression storage order
 
     /*!
@@ -810,10 +808,6 @@ struct etl_traits<mm_mul_transformer<LE, RE>> {
     static constexpr bool is_generator = false;                                                                   ///< Indicates if the expression is a generated
     static constexpr bool is_padded               = false;                          ///< Indicates if the expression is padded
     static constexpr bool is_aligned               = false;                          ///< Indicates if the expression is padded
-    static constexpr bool needs_temporary_visitor =
-        etl_traits<left_expr_t>::needs_temporary_visitor || etl_traits<right_expr_t>::needs_temporary_visitor; ///< Indicates if the expression needs a temporary visitor
-    static constexpr bool needs_evaluator_visitor =
-        etl_traits<left_expr_t>::needs_evaluator_visitor || etl_traits<right_expr_t>::needs_evaluator_visitor; ///< Indicates if the expression needs an evaluator visitor
     static constexpr order storage_order = etl_traits<left_expr_t>::is_generator ? etl_traits<right_expr_t>::storage_order : etl_traits<left_expr_t>::storage_order;
 
     /*!
@@ -898,8 +892,6 @@ struct etl_traits<dyn_convmtx_transformer<E>> {
     static constexpr bool is_generator            = false;                                           ///< Indicates if the expression is a generated
     static constexpr bool is_padded               = false;                          ///< Indicates if the expression is padded
     static constexpr bool is_aligned               = false;                          ///< Indicates if the expression is padded
-    static constexpr bool needs_temporary_visitor = etl_traits<sub_expr_t>::needs_temporary_visitor; ///< Indicates if the expression needs a temporary visitor
-    static constexpr bool needs_evaluator_visitor = etl_traits<sub_expr_t>::needs_evaluator_visitor; ///< Indicaes if the expression needs an evaluator visitor
     static constexpr order storage_order          = etl_traits<sub_expr_t>::storage_order;           ///< The expression storage order
 
     /*!
@@ -962,8 +954,6 @@ struct etl_traits<dyn_convmtx2_transformer<E>> {
     static constexpr bool is_generator            = false;                                           ///< Indicates if the expression is a generated
     static constexpr bool is_padded               = false;                          ///< Indicates if the expression is padded
     static constexpr bool is_aligned               = false;                          ///< Indicates if the expression is padded
-    static constexpr bool needs_temporary_visitor = etl_traits<sub_expr_t>::needs_temporary_visitor; ///< Indicates if the expression needs a temporary visitor
-    static constexpr bool needs_evaluator_visitor = etl_traits<sub_expr_t>::needs_evaluator_visitor; ///< Indicaes if the expression needs an evaluator visitor
     static constexpr order storage_order          = etl_traits<sub_expr_t>::storage_order;           ///< The expression storage order
 
     /*!
@@ -1032,8 +1022,6 @@ struct etl_traits<T, std::enable_if_t<cpp::or_c<
     static constexpr bool is_generator            = false;                                           ///< Indicates if the expression is a generated
     static constexpr bool is_padded               = false;                          ///< Indicates if the expression is padded
     static constexpr bool is_aligned               = false;                          ///< Indicates if the expression is padded
-    static constexpr bool needs_temporary_visitor = etl_traits<sub_expr_t>::needs_temporary_visitor; ///< Indicates if the expression needs a temporary visitor
-    static constexpr bool needs_evaluator_visitor = etl_traits<sub_expr_t>::needs_evaluator_visitor; ///< Indicaes if the expression needs an evaluator visitor
     static constexpr order storage_order          = etl_traits<sub_expr_t>::storage_order;           ///< The expression storage order
 
     /*!

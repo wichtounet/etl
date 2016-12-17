@@ -746,8 +746,6 @@ struct etl_traits<etl::temporary_unary_expr<T, A, Op>> {
     static constexpr bool is_value                = false;                          ///< Indicates if the expression is of value type
     static constexpr bool is_direct               = true;                           ///< Indicates if the expression has direct memory access
     static constexpr bool is_generator            = false;                          ///< Indicates if the expression is a generated
-    static constexpr bool needs_temporary_visitor = true;                           ///< Indicates if the expression needs a temporary visitor
-    static constexpr bool needs_evaluator_visitor = true;                           ///< Indicaes if the expression needs an evaluator visitor
     static constexpr bool is_padded               = false;                          ///< Indicates if the expression is padded
     static constexpr bool is_aligned               = true;                          ///< Indicates if the expression is padded
     static constexpr order storage_order          = etl_traits<a_t>::storage_order; ///< The expression storage order
@@ -826,8 +824,6 @@ struct etl_traits<etl::temporary_binary_expr<T, A, B, Op>> {
     static constexpr bool is_thread_safe          = true;                           ///< Indicates if the expression is thread safe
     static constexpr bool is_value                = false;                                                                                           ///< Indicates if the expression is of value type
     static constexpr bool is_generator            = false;                                                                                           ///< Indicates if the expression is a generated
-    static constexpr bool needs_temporary_visitor = true;                                                                                            ///< Indicates if the expression needs a temporary visitor
-    static constexpr bool needs_evaluator_visitor = true;                                                                                            ///< Indicaes if the expression needs an evaluator visitor
     static constexpr bool is_padded               = false;                          ///< Indicates if the expression is padded
     static constexpr bool is_aligned               = true;                          ///< Indicates if the expression is padded
     static constexpr order storage_order          = etl_traits<a_t>::is_generator ? etl_traits<b_t>::storage_order : etl_traits<a_t>::storage_order; ///< The expression storage order
@@ -905,8 +901,6 @@ struct etl_traits<etl::temporary_unary_expr_state<T, A, Op>> {
     static constexpr bool is_value                = false;                          ///< Indicates if the expression is of value type
     static constexpr bool is_direct               = true;                           ///< Indicates if the expression has direct memory access
     static constexpr bool is_generator            = false;                          ///< Indicates if the expression is a generated
-    static constexpr bool needs_temporary_visitor = true;                           ///< Indicates if the expression needs a temporary visitor
-    static constexpr bool needs_evaluator_visitor = true;                           ///< Indicaes if the expression needs an evaluator visitor
     static constexpr bool is_padded               = false;                          ///< Indicates if the expression is padded
     static constexpr bool is_aligned               = true;                          ///< Indicates if the expression is padded
     static constexpr order storage_order          = etl_traits<a_t>::storage_order; ///< The expression storage order
@@ -967,8 +961,6 @@ struct etl_traits<etl::temporary_binary_expr_state<T, A, B, Op>> {
     static constexpr bool is_thread_safe          = true;                           ///< Indicates if the expression is thread safe
     static constexpr bool is_value                = false;                                                                                           ///< Indicates if the expression is of value type
     static constexpr bool is_generator            = false;                                                                                           ///< Indicates if the expression is a generated
-    static constexpr bool needs_temporary_visitor = true;                                                                                            ///< Indicates if the expression needs a temporary visitor
-    static constexpr bool needs_evaluator_visitor = true;                                                                                            ///< Indicaes if the expression needs an evaluator visitor
     static constexpr bool is_padded               = false;                          ///< Indicates if the expression is padded
     static constexpr bool is_aligned               = true;                          ///< Indicates if the expression is padded
     static constexpr order storage_order          = etl_traits<a_t>::is_generator ? etl_traits<b_t>::storage_order : etl_traits<a_t>::storage_order; ///< The expression storage order

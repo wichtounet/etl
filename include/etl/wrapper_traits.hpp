@@ -35,8 +35,6 @@ struct wrapper_traits {
     static constexpr bool is_generator            = sub_traits::is_generator;            ///< Indicates if the expression is a generator expression
     static constexpr bool is_padded               = sub_traits::is_padded;               ///< Indicates if the expression is a padded
     static constexpr bool is_aligned               = sub_traits::is_aligned;               ///< Indicates if the expression is a padded
-    static constexpr bool needs_temporary_visitor = sub_traits::needs_temporary_visitor; ///< Indicates if the expression needs a temporary visitor
-    static constexpr bool needs_evaluator_visitor = sub_traits::needs_evaluator_visitor; ///< Indicaes if the expression needs an evaluator visitor
     static constexpr order storage_order          = sub_traits::storage_order;           ///< The expression storage order
 
     /*!

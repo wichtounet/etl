@@ -1192,8 +1192,6 @@ struct etl_traits<etl::dim_view<T, D>> {
     static constexpr bool is_generator            = false;                                           ///< Indicates if the expression is a generator
     static constexpr bool is_padded               = false;                          ///< Indicates if the expression is padded
     static constexpr bool is_aligned               = false;                          ///< Indicates if the expression is padded
-    static constexpr bool needs_temporary_visitor = etl_traits<sub_expr_t>::needs_temporary_visitor; ///< Indicates if the expression needs a temporary visitor
-    static constexpr bool needs_evaluator_visitor = etl_traits<sub_expr_t>::needs_evaluator_visitor; ///< Indicates if the exxpression needs a evaluator visitor
     static constexpr order storage_order          = etl_traits<sub_expr_t>::storage_order;           ///< The expression's storage order
 
     /*!
@@ -1280,8 +1278,6 @@ struct etl_traits<etl::slice_view<T>> {
     static constexpr bool is_generator            = false;                                           ///< Indicates if the expression is a generator
     static constexpr bool is_padded               = false;                          ///< Indicates if the expression is padded
     static constexpr bool is_aligned               = false;                          ///< Indicates if the expression is padded
-    static constexpr bool needs_temporary_visitor = sub_traits::needs_temporary_visitor; ///< Indicates if the expression needs a temporary visitor
-    static constexpr bool needs_evaluator_visitor = sub_traits::needs_evaluator_visitor; ///< Indicates if the exxpression needs a evaluator visitor
     static constexpr order storage_order          = sub_traits::storage_order;           ///< The expression's storage order
 
     /*!
@@ -1344,8 +1340,6 @@ struct etl_traits<etl::memory_slice_view<T>> {
     static constexpr bool is_generator            = false;                                           ///< Indicates if the expression is a generator
     static constexpr bool is_padded               = false;                          ///< Indicates if the expression is padded
     static constexpr bool is_aligned               = false;                          ///< Indicates if the expression is padded
-    static constexpr bool needs_temporary_visitor = etl_traits<sub_expr_t>::needs_temporary_visitor; ///< Indicates if the expression needs a temporary visitor
-    static constexpr bool needs_evaluator_visitor = etl_traits<sub_expr_t>::needs_evaluator_visitor; ///< Indicates if the exxpression needs a evaluator visitor
     static constexpr order storage_order          = etl_traits<sub_expr_t>::storage_order;           ///< The expression's storage order
 
     /*!
@@ -1405,8 +1399,6 @@ struct etl_traits<etl::fast_matrix_view<T, Dims...>> {
     static constexpr bool is_generator            = false;                                           ///< Indicates if the expression is a generator
     static constexpr bool is_padded               = false;                          ///< Indicates if the expression is padded
     static constexpr bool is_aligned               = false;                          ///< Indicates if the expression is padded
-    static constexpr bool needs_temporary_visitor = etl_traits<sub_expr_t>::needs_temporary_visitor; ///< Indicates if the expression needs a temporary visitor
-    static constexpr bool needs_evaluator_visitor = etl_traits<sub_expr_t>::needs_evaluator_visitor; ///< Indicates if the exxpression needs a evaluator visitor
     static constexpr order storage_order          = etl_traits<sub_expr_t>::storage_order;           ///< The expression's storage order
 
     /*!
@@ -1485,8 +1477,6 @@ struct etl_traits<etl::dyn_matrix_view<T, D>> {
     static constexpr bool is_generator            = false;                                           ///< Indicates if the expression is a generator
     static constexpr bool is_padded               = false;                          ///< Indicates if the expression is padded
     static constexpr bool is_aligned               = false;                          ///< Indicates if the expression is padded
-    static constexpr bool needs_temporary_visitor = etl_traits<sub_expr_t>::needs_temporary_visitor; ///< Indicates if the expression needs a temporary visitor
-    static constexpr bool needs_evaluator_visitor = etl_traits<sub_expr_t>::needs_evaluator_visitor; ///< Indicates if the exxpression needs a evaluator visitor
     static constexpr order storage_order          = etl_traits<sub_expr_t>::storage_order;           ///< The expression's storage order
 
     /*!

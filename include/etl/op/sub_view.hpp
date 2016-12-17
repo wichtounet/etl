@@ -324,9 +324,7 @@ struct sub_view <T, std::enable_if_t<fast_sub_view_able<T>::value>> :
      * \param i The sub index
      */
     sub_view(sub_type sub_expr, std::size_t i) : sub_expr(sub_expr), i(i), sub_size(subsize(sub_expr)) {
-        if(!decay_traits<sub_type>::needs_evaluator_visitor){
-            this->memory = sub_expr.memory_start() + i * sub_size;
-        }
+        // Nothing else to init
     }
 
     void late_init() const {
@@ -626,8 +624,6 @@ struct etl_traits<etl::sub_view<T>> {
     static constexpr bool is_generator            = false;                                           ///< Indicates if the expression is a generator
     static constexpr bool is_padded               = false;                          ///< Indicates if the expression is padded
     static constexpr bool is_aligned               = false;                          ///< Indicates if the expression is padded
-    static constexpr bool needs_temporary_visitor = etl_traits<sub_expr_t>::needs_temporary_visitor; ///< Indicates if the expression needs a temporary visitor
-    static constexpr bool needs_evaluator_visitor = etl_traits<sub_expr_t>::needs_evaluator_visitor; ///< Indicates if the exxpression needs a evaluator visitor
     static constexpr order storage_order          = etl_traits<sub_expr_t>::storage_order;           ///< The expression's storage order
 
     /*!
