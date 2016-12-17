@@ -39,7 +39,7 @@ struct symmetric_reference {
     using raw_pointer_type         = value_type*;                      ///< A raw pointer type
     using raw_reference_type       = value_type&;                      ///< A raw reference type
     using const_raw_reference_type = std::add_const_t<value_type>&;    ///< A raw reference type
-    using expr_t = M;
+    using expr_t                   = M;                                ///< The symmetric matrix
 
     matrix_type& matrix;   ///< Reference to the matrix
     std::size_t i;         ///< The first index
