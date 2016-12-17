@@ -33,9 +33,9 @@ struct dyn_matrix_impl final : dense_dyn_base<dyn_matrix_impl<T, SO, D>, T, SO, 
     static constexpr order storage_order      = SO;                             ///< The storage order
     static constexpr std::size_t alignment    = intrinsic_traits<T>::alignment; ///< The memory alignment
 
-    using this_type              = dyn_matrix_impl<T, SO, D>;
-    using base_type              = dense_dyn_base<this_type, T, SO, D>; ///< The base type
-    using iterable_base_type     = iterable<this_type, SO == order::RowMajor>;
+    using this_type              = dyn_matrix_impl<T, SO, D>;                       ///< The type of this expression
+    using base_type              = dense_dyn_base<this_type, T, SO, D>;             ///< The base type
+    using iterable_base_type     = iterable<this_type, SO == order::RowMajor>;      ///< The iterable base type
     using value_type             = T;                                               ///< The value type
     using dimension_storage_impl = std::array<std::size_t, n_dimensions>;           ///< The type used to store the dimensions
     using memory_type            = value_type*;                                     ///< The memory type

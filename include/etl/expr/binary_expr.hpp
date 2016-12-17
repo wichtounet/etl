@@ -35,11 +35,11 @@ private:
     RightExpr _rhs; ///< The right hand side expression
 
 public:
-    using value_type        = T;    ///< The Value type
-    using memory_type       = void; ///< The memory type
-    using const_memory_type = void; ///< The const memory type
-    using iterator          = etl::iterator<const this_type>;
-    using const_iterator    = etl::iterator<const this_type>;
+    using value_type        = T;                              ///< The Value type
+    using memory_type       = void;                           ///< The memory type
+    using const_memory_type = void;                           ///< The const memory type
+    using iterator          = etl::iterator<const this_type>; ///< The iterator type
+    using const_iterator    = etl::iterator<const this_type>; ///< The const iterator type
 
     /*!
      * \brief The vectorization type for V

@@ -95,12 +95,12 @@ private:
     Expr _value; ///< The sub expression
 
 public:
-    using value_type        = T;    ///< The value type
-    using memory_type       = void; ///< The memory type
-    using const_memory_type = void; ///< The const memory type
-    using expr_t            = Expr; ///< The sub expression type
-    using iterator          = etl::iterator<this_type>;
-    using const_iterator    = etl::iterator<const this_type>;
+    using value_type        = T;                              ///< The value type
+    using memory_type       = void;                           ///< The memory type
+    using const_memory_type = void;                           ///< The const memory type
+    using expr_t            = Expr;                           ///< The sub expression type
+    using iterator          = etl::iterator<this_type>;       ///< The iterator type
+    using const_iterator    = etl::iterator<const this_type>; ///< The const iterator type
 
     /*!
      * The vectorization type for V
@@ -265,15 +265,14 @@ private:
         std::is_lvalue_reference<decltype(_value[0])>::value; ///< Indicates if the const functions returns a reference
 
 public:
-    using value_type        = T;                                                                   ///< The value type
-    using memory_type       = memory_t<Expr>;                                                      ///< The memory type
-    using const_memory_type = const_memory_t<Expr>;                                                ///< The const memory type
-    using return_type       = std::conditional_t<non_const_return_ref, value_type&, value_type>;   ///< The type returned by the functions
-    using const_return_type = std::conditional_t<const_return_ref, const value_type&, value_type>; ///< The const type returned by the const functions
-    using expr_t            = Expr;                                                                ///< The sub expression type
-
-    using iterator       = std::conditional_t<dma, value_type*, etl::iterator<this_type>>;
-    using const_iterator = std::conditional_t<dma, const value_type*, etl::iterator<const this_type>>;
+    using value_type        = T;                                                                          ///< The value type
+    using memory_type       = memory_t<Expr>;                                                             ///< The memory type
+    using const_memory_type = const_memory_t<Expr>;                                                       ///< The const memory type
+    using return_type       = std::conditional_t<non_const_return_ref, value_type&, value_type>;          ///< The type returned by the functions
+    using const_return_type = std::conditional_t<const_return_ref, const value_type&, value_type>;        ///< The const type returned by the const functions
+    using expr_t            = Expr;                                                                       ///< The sub expression type
+    using iterator          = std::conditional_t<dma, value_type*, etl::iterator<this_type>>;             ///< The iterator type
+    using const_iterator    = std::conditional_t<dma, const value_type*, etl::iterator<const this_type>>; ///< The const iterator type
 
     /*!
      * The vectorization type for V
@@ -660,12 +659,12 @@ private:
     Expr _value; ///< The sub expression
 
 public:
-    using value_type          = T;    ///< The value type of the expression
-    using memory_type         = void; ///< The memory type of the expression
-    using const_memory_type   = void; ///< The const memory type of the expression
-    using expr_t              = Expr; ///< The sub expression type
-    using iterator            = etl::iterator<this_type>;
-    using const_iterator      = etl::iterator<const this_type>;
+    using value_type        = T;                              ///< The value type of the expression
+    using memory_type       = void;                           ///< The memory type of the expression
+    using const_memory_type = void;                           ///< The const memory type of the expression
+    using expr_t            = Expr;                           ///< The sub expression type
+    using iterator          = etl::iterator<this_type>;       ///< The iterator type
+    using const_iterator    = etl::iterator<const this_type>; ///< The const iterator type
 
     /*!
      * \brief Construct a new unary_expr from the given sub-expression
@@ -792,12 +791,12 @@ private:
     Op op;       ///< The operator state
 
 public:
-    using value_type          = T;    ///< The value type
-    using memory_type         = void; ///< The memory type
-    using const_memory_type   = void; ///< The const memory type
-    using expr_t              = Expr; ///< The sub expression type
-    using iterator            = etl::iterator<this_type>;
-    using const_iterator      = etl::iterator<const this_type>;
+    using value_type        = T;                              ///< The value type
+    using memory_type       = void;                           ///< The memory type
+    using const_memory_type = void;                           ///< The const memory type
+    using expr_t            = Expr;                           ///< The sub expression type
+    using iterator          = etl::iterator<this_type>;       ///< The iterator type
+    using const_iterator    = etl::iterator<const this_type>; ///< The const iterator type
 
     /*!
      * The vectorization type for V
