@@ -18,6 +18,7 @@
 #include <emmintrin.h>
 #include <xmmintrin.h>
 
+#include "etl/inline.hpp"
 #include "etl/sse_exp.hpp"
 
 #ifdef VECT_DEBUG

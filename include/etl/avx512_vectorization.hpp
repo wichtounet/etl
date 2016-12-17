@@ -18,6 +18,8 @@
 
 #include <immintrin.h>
 
+#include "etl/inline.hpp"
+
 #ifdef VECT_DEBUG
 #include <iostream>
 #endif
