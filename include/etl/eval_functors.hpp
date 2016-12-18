@@ -25,9 +25,9 @@ namespace detail {
  */
 template <typename L_Expr, typename R_Expr>
 struct Assign {
-    using value_type = value_t<L_Expr>;
+    using value_type = value_t<L_Expr>; ///< The type of value
 
-    value_type* lhs; ///< The left hand side
+    value_type* lhs;         ///< The left hand side
     R_Expr rhs;              ///< The right hand side
     const std::size_t _size; ///< The size to assign
 
@@ -66,15 +66,14 @@ struct Assign {
 /*!
  * \brief Common base for vectorized functors
  */
-template <vector_mode_t V, typename L_Expr, typename R_Expr, typename Base>
+template <vector_mode_t V, typename L_Expr, typename R_Expr>
 struct vectorized_base {
-    using derived_t   = Base;             ///< The derived type
     using memory_type = value_t<L_Expr>*; ///< The memory type
 
     L_Expr lhs;              ///< The left hand side
-    memory_type lhs_m;        ///< The left hand side memory
+    memory_type lhs_m;       ///< The left hand side memory
     R_Expr rhs;              ///< The right hand side
-    const std::size_t _size;  ///< The size to assign
+    const std::size_t _size; ///< The size to assign
 
     /*!
      * \brief The RHS value type
@@ -122,15 +121,6 @@ struct vectorized_base {
     inline auto rhs_load(std::size_t i) const {
         return rhs.template load<vect_impl>(i);
     }
-
-private:
-    /*!
-     * \brief Returns a reference to the derived object, i.e. the object using the CRTP injector.
-     * \return a reference to the derived object.
-     */
-    const derived_t& as_derived() const noexcept {
-        return *static_cast<const derived_t*>(this);
-    }
 };
 
 /*!
@@ -140,10 +130,10 @@ private:
  * operations per cycle and written directly to the memory of lhs.
  */
 template <vector_mode_t V, typename L_Expr, typename R_Expr>
-struct VectorizedAssign : vectorized_base<V, L_Expr, R_Expr, VectorizedAssign<V, L_Expr, R_Expr>> {
-    using base_t    = vectorized_base<V, L_Expr, R_Expr, VectorizedAssign<V, L_Expr, R_Expr>>; ///< The base type
-    using IT        = typename base_t::IT;                                                     ///< The intrisic type
-    using vect_impl = typename base_t::vect_impl;                                              ///< The vector implementation
+struct VectorizedAssign : vectorized_base<V, L_Expr, R_Expr> {
+    using base_t    = vectorized_base<V, L_Expr, R_Expr>; ///< The base type
+    using IT        = typename base_t::IT;                ///< The intrisic type
+    using vect_impl = typename base_t::vect_impl;         ///< The vector implementation
 
     using base_t::lhs_m;
     using base_t::lhs;
@@ -202,7 +192,7 @@ struct VectorizedAssign : vectorized_base<V, L_Expr, R_Expr, VectorizedAssign<V,
  */
 template <typename L_Expr, typename R_Expr>
 struct AssignAdd {
-    using value_type = value_t<L_Expr>;
+    using value_type = value_t<L_Expr>; ///< The type of value
 
     value_type* lhs;         ///< The left hand side
     R_Expr rhs;              ///< The right hand side
@@ -244,10 +234,10 @@ struct AssignAdd {
  * \brief Functor for vectorized compound assign add
  */
 template <vector_mode_t V, typename L_Expr, typename R_Expr>
-struct VectorizedAssignAdd : vectorized_base<V, L_Expr, R_Expr, VectorizedAssignAdd<V, L_Expr, R_Expr>> {
-    using base_t    = vectorized_base<V, L_Expr, R_Expr, VectorizedAssignAdd<V, L_Expr, R_Expr>>; ///< The base type
-    using IT        = typename base_t::IT;                                                        ///< The intrisic type
-    using vect_impl = typename base_t::vect_impl;                                                 ///< The vector implementation
+struct VectorizedAssignAdd : vectorized_base<V, L_Expr, R_Expr> {
+    using base_t    = vectorized_base<V, L_Expr, R_Expr>; ///< The base type
+    using IT        = typename base_t::IT;                ///< The intrisic type
+    using vect_impl = typename base_t::vect_impl;         ///< The vector implementation
 
     using base_t::lhs;
     using base_t::lhs_m;
@@ -297,7 +287,7 @@ struct VectorizedAssignAdd : vectorized_base<V, L_Expr, R_Expr, VectorizedAssign
  */
 template <typename L_Expr, typename R_Expr>
 struct AssignSub {
-    using value_type = value_t<L_Expr>;
+    using value_type = value_t<L_Expr>; ///< The type of value
 
     value_type* lhs;         ///< The left hand side
     R_Expr rhs;              ///< The right hand side
@@ -339,10 +329,10 @@ struct AssignSub {
  * \brief Functor for vectorized compound assign sub
  */
 template <vector_mode_t V, typename L_Expr, typename R_Expr>
-struct VectorizedAssignSub : vectorized_base<V, L_Expr, R_Expr, VectorizedAssignSub<V, L_Expr, R_Expr>> {
-    using base_t    = vectorized_base<V, L_Expr, R_Expr, VectorizedAssignSub<V, L_Expr, R_Expr>>; ///< The base type
-    using IT        = typename base_t::IT;                                                        ///< The intrisic type
-    using vect_impl = typename base_t::vect_impl;                                                 ///< The vector implementation
+struct VectorizedAssignSub : vectorized_base<V, L_Expr, R_Expr> {
+    using base_t    = vectorized_base<V, L_Expr, R_Expr>; ///< The base type
+    using IT        = typename base_t::IT;                ///< The intrisic type
+    using vect_impl = typename base_t::vect_impl;         ///< The vector implementation
 
     using base_t::lhs;
     using base_t::lhs_m;
@@ -392,7 +382,7 @@ struct VectorizedAssignSub : vectorized_base<V, L_Expr, R_Expr, VectorizedAssign
  */
 template <typename L_Expr, typename R_Expr>
 struct AssignMul {
-    using value_type = value_t<L_Expr>;
+    using value_type = value_t<L_Expr>; ///< The type of value
 
     value_type* lhs;         ///< The left hand side
     R_Expr rhs;              ///< The right hand side
@@ -434,12 +424,12 @@ struct AssignMul {
  * \brief Functor for vectorized compound assign mul
  */
 template <vector_mode_t V, typename L_Expr, typename R_Expr>
-struct VectorizedAssignMul : vectorized_base<V, L_Expr, R_Expr, VectorizedAssignMul<V, L_Expr, R_Expr>> {
+struct VectorizedAssignMul : vectorized_base<V, L_Expr, R_Expr> {
     static constexpr bool Cx = is_complex_t<value_t<L_Expr>>::value; ///< Indicates it is a complex multiplication
 
-    using base_t    = vectorized_base<V, L_Expr, R_Expr, VectorizedAssignMul<V, L_Expr, R_Expr>>; ///< The base type
-    using IT        = typename base_t::IT;                                                        ///< The intrisic type
-    using vect_impl = typename base_t::vect_impl;                                                 ///< The vector implementation
+    using base_t    = vectorized_base<V, L_Expr, R_Expr>; ///< The base type
+    using IT        = typename base_t::IT;                ///< The intrisic type
+    using vect_impl = typename base_t::vect_impl;         ///< The vector implementation
 
     using base_t::lhs;
     using base_t::lhs_m;
@@ -489,7 +479,7 @@ struct VectorizedAssignMul : vectorized_base<V, L_Expr, R_Expr, VectorizedAssign
  */
 template <typename L_Expr, typename R_Expr>
 struct AssignDiv {
-    using value_type = value_t<L_Expr>;
+    using value_type = value_t<L_Expr>; ///< The type of value
 
     value_type* lhs;         ///< The left hand side
     R_Expr rhs;              ///< The right hand side
@@ -531,12 +521,12 @@ struct AssignDiv {
  * \brief Functor for vectorized compound assign div
  */
 template <vector_mode_t V, typename L_Expr, typename R_Expr>
-struct VectorizedAssignDiv : vectorized_base<V, L_Expr, R_Expr, VectorizedAssignDiv<V, L_Expr, R_Expr>> {
+struct VectorizedAssignDiv : vectorized_base<V, L_Expr, R_Expr> {
     static constexpr bool Cx = is_complex_t<value_t<L_Expr>>::value; ///< Indicates if it is a complex division
 
-    using base_t    = vectorized_base<V, L_Expr, R_Expr, VectorizedAssignDiv<V, L_Expr, R_Expr>>; ///< The base type
-    using IT        = typename base_t::IT;                                                        ///< The intrisic type
-    using vect_impl = typename base_t::vect_impl;                                                 ///< The vector implementation
+    using base_t    = vectorized_base<V, L_Expr, R_Expr>; ///< The base type
+    using IT        = typename base_t::IT;                ///< The intrisic type
+    using vect_impl = typename base_t::vect_impl;         ///< The vector implementation
 
     using base_t::lhs;
     using base_t::lhs_m;
