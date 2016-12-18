@@ -124,21 +124,24 @@ template <typename C, cpp_enable_if(all_dma<C>::value&& all_floating<C>::value)>
 void inplace_square_transpose(C&& c) {
     decltype(auto) handle = start_cublas();
 
+    using T = value_t<C>;
+
     static constexpr bool row_major = decay_traits<C>::storage_order == order::RowMajor;
 
-    auto alpha = value_t<C>(1.0);
-    auto beta  = value_t<C>(0.0);
+    auto alpha = T(1);
+    auto beta  = T(0);
+
+    auto a_gpu = cuda::cuda_allocate_only<T>(etl::size(c));
 
     auto c_gpu = c.direct();
+    c_gpu.gpu_allocate_copy_if_necessary();
 
-    c_gpu.gpu_allocate_if_necessary();
-//inline void cublas_geam(cublasHandle_t handle, cublasOperation_t transa, cublasOperation_t transb, int m, int n,
-                        //const float* alpha, const float* A, int lda, const float* beta, const float* B, int ldb, float* C, int ldc) {
+    cuda_check(cudaMemcpy(a_gpu.get(), c_gpu.gpu_memory(), etl::size(c) * sizeof(T), cudaMemcpyDeviceToDevice));
 
     if(row_major){
-        cublas_geam(handle.get(), CUBLAS_OP_T, CUBLAS_OP_T, etl::dim<0>(c), etl::dim<1>(c), &alpha, c_gpu.gpu_memory(), etl::dim<1>(c), &beta, c_gpu.gpu_memory(), etl::dim<1>(c), c_gpu.gpu_memory(), etl::dim<1>(c));
+        cublas_geam(handle.get(), CUBLAS_OP_T, CUBLAS_OP_T, etl::dim<0>(c), etl::dim<1>(c), &alpha, a_gpu.get(), etl::dim<1>(c), &beta, a_gpu.get(), etl::dim<1>(c), c_gpu.gpu_memory(), etl::dim<0>(c));
     } else {
-        cublas_geam(handle.get(), CUBLAS_OP_T, CUBLAS_OP_T, etl::dim<0>(c), etl::dim<1>(c), &alpha, c_gpu.gpu_memory(), etl::dim<0>(c), &beta, c_gpu.gpu_memory(), etl::dim<0>(c), c_gpu.gpu_memory(), etl::dim<0>(c));
+        cublas_geam(handle.get(), CUBLAS_OP_T, CUBLAS_OP_T, etl::dim<0>(c), etl::dim<1>(c), &alpha, a_gpu.get(), etl::dim<0>(c), &beta, a_gpu.get(), etl::dim<0>(c), c_gpu.gpu_memory(), etl::dim<1>(c));
     }
 }
 
@@ -148,22 +151,7 @@ void inplace_square_transpose(C&& c) {
  */
 template <typename C, cpp_enable_if(all_dma<C>::value&& all_floating<C>::value)>
 void inplace_rectangular_transpose(C&& c) {
-    decltype(auto) handle = start_cublas();
-
-    static constexpr bool row_major = decay_traits<C>::storage_order == order::RowMajor;
-
-    auto alpha = value_t<C>(1.0);
-    auto beta  = value_t<C>(0.0);
-
-    auto c_gpu = c.direct();
-
-    c_gpu.gpu_allocate_if_necessary();
-
-    if(row_major){
-        cublas_geam(handle.get(), CUBLAS_OP_T, CUBLAS_OP_T, etl::dim<0>(c), etl::dim<1>(c), &alpha, c_gpu.gpu_memory(), etl::dim<1>(c), &beta, c_gpu.gpu_memory(), etl::dim<1>(c), c_gpu.gpu_memory(), etl::dim<1>(c));
-    } else {
-        cublas_geam(handle.get(), CUBLAS_OP_T, CUBLAS_OP_T, etl::dim<0>(c), etl::dim<1>(c), &alpha, c_gpu.gpu_memory(), etl::dim<0>(c), &beta, c_gpu.gpu_memory(), etl::dim<0>(c), c_gpu.gpu_memory(), etl::dim<0>(c));
-    }
+    inplace_square_transpose(c);
 }
 
 /*!
