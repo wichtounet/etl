@@ -25,6 +25,11 @@ namespace blas {
 
 #ifdef ETL_MKL_MODE
 
+/*!
+ * \brief MKL out-of-place transposition wrapper
+ * \param a The right hand side
+ * \param c The left hand side
+ */
 template <typename A, typename C, cpp_enable_if(all_single_precision<A, C>::value)>
 void mkl_otrans(A&& a, C&& c) {
     auto mem_c = c.memory_start();
@@ -37,6 +42,11 @@ void mkl_otrans(A&& a, C&& c) {
     }
 }
 
+/*!
+ * \brief MKL out-of-place transposition wrapper
+ * \param a The right hand side
+ * \param c The left hand side
+ */
 template <typename A, typename C, cpp_enable_if(all_double_precision<A, C>::value)>
 void mkl_otrans(A&& a, C&& c) {
     auto mem_c = c.memory_start();
@@ -49,6 +59,10 @@ void mkl_otrans(A&& a, C&& c) {
     }
 }
 
+/*!
+ * \brief MKL inplace transposition wrapper
+ * \param c The left hand side
+ */
 template <typename C, cpp_enable_if(all_single_precision<C>::value)>
 void mkl_itrans(C&& c) {
     if (decay_traits<C>::storage_order == order::RowMajor) {
@@ -58,6 +72,10 @@ void mkl_itrans(C&& c) {
     }
 }
 
+/*!
+ * \brief MKL inplace transposition wrapper
+ * \param c The left hand side
+ */
 template <typename C, cpp_enable_if(all_double_precision<C>::value)>
 void mkl_itrans(C&& c) {
     if (decay_traits<C>::storage_order == order::RowMajor) {
@@ -67,16 +85,29 @@ void mkl_itrans(C&& c) {
     }
 }
 
+/*!
+ * \brief Inplace transposition of the square matrix c
+ * \param c The matrix to transpose
+ */
 template <typename C, cpp_enable_if(all_dma<C>::value&& all_floating<C>::value)>
 void inplace_square_transpose(C&& c) {
     mkl_itrans(c);
 }
 
+/*!
+ * \brief Inplace transposition of the rectangular matrix c
+ * \param c The matrix to transpose
+ */
 template <typename C, cpp_enable_if(all_dma<C>::value&& all_floating<C>::value)>
 void inplace_rectangular_transpose(C&& c) {
     mkl_otrans(force_temporary(c), c);
 }
 
+/*!
+ * \brief Transpose the matrix a and the store the result in c
+ * \param a The matrix to transpose
+ * \param c The target matrix
+ */
 template <typename A, typename C, cpp_enable_if(all_dma<A, C>::value&& all_floating<A, C>::value)>
 void transpose(A&& a, C&& c) {
     auto mem_c = c.memory_start();
@@ -94,12 +125,24 @@ void transpose(A&& a, C&& c) {
     }
 }
 
+/*!
+ * \brief Inplace transposition of the square matrix c
+ * \param c The matrix to transpose
+ */
 template <typename C, cpp_disable_if(all_dma<C>::value&& all_floating<C>::value)>
 void inplace_square_transpose(C&& /*c*/) {}
 
-template <typename C, cpp_disable_if(all_dma<C>::value&& all_floating<C>::value)>
+/*!
+ * \brief Inplace transposition of the rectangular matrix c
+ * \param c The matrix to transpose
+ */ template <typename C, cpp_disable_if(all_dma<C>::value&& all_floating<C>::value)>
 void inplace_rectangular_transpose(C&& /*c*/) {}
 
+/*!
+ * \brief Transpose the matrix a and the store the result in c
+ * \param a The matrix to transpose
+ * \param c The target matrix
+ */
 template <typename A, typename C, cpp_disable_if(all_dma<A, C>::value&& all_floating<A, C>::value)>
 void transpose(A&& /*a*/, C&& /*c*/) {}
 

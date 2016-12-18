@@ -12,8 +12,7 @@
 #include "etl/impl/cufft/cufft.hpp"
 
 #ifdef ETL_CUBLAS_MODE
-#include "etl/impl/cublas/cublas.hpp"
-#endif
+#include "etl/impl/cublas/cublas.hpp" #endif
 
 #ifndef ETL_CUBLAS_MODE
 #ifndef ETL_NO_WARNINGS

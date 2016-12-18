@@ -1861,6 +1861,14 @@ void conv2_valid(const I& input, const K& kernel, C&& conv, size_t s1, size_t s2
     }
 }
 
+/*!
+ * \brief Vectorized implementation of a 1D 'valid' convolution C = I * K
+ * \param input The input matrix
+ * \param kernel The kernel matrix
+ * \param conv The output matrix
+ * \param first The index where to start in the output matrix
+ * \param last The index where to stop in the output matrix
+ */
 template <typename V, typename I, typename K, typename C>
 void conv1_valid(const I& input, const K& kernel, C&& conv, std::size_t first, std::size_t last) {
     using vec_type = V;
@@ -2386,6 +2394,13 @@ void conv2_same_multi_flipped(const I& input, const K& kernel, C&& conv) {
 }
 
 // TODO This need to be make much faster
+
+/*!
+ * \brief SSE implementation of a 2D 'full' convolution C = I * K
+ * \param input The input matrix
+ * \param kernel The kernel matrix
+ * \param conv The output matrix
+ */
 template <typename V, typename I, typename K, typename C>
 ETL_STRONG_INLINE(void) conv2_full_flipped(const I& input, const K& kernel, C&& conv, value_t<I> beta) {
     using T = value_t<I>;
