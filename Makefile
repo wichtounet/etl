@@ -66,6 +66,23 @@ ifneq (,$(ETL_THESIS))
 CXX_FLAGS += -DETL_THESIS_BENCH
 endif
 
+# On demand activation of full GPU support
+ifneq (,$(ETL_GPU))
+CXX_FLAGS += -DETL_GPU $(shell pkg-config --cflags cublas)
+
+CXX_FLAGS += $(shell pkg-config --cflags cublas)
+CXX_FLAGS += $(shell pkg-config --cflags cufft)
+CXX_FLAGS += $(shell pkg-config --cflags cudnn)
+
+LD_FLAGS += $(shell pkg-config --libs cublas)
+LD_FLAGS += $(shell pkg-config --libs cufft)
+LD_FLAGS += $(shell pkg-config --libs cudnn)
+
+ifneq (,$(findstring clang,$(CXX)))
+CXX_FLAGS += -Wno-documentation
+endif
+else
+
 # On demand activation of cublas support
 ifneq (,$(ETL_CUBLAS))
 CXX_FLAGS += -DETL_CUBLAS_MODE $(shell pkg-config --cflags cublas)
@@ -94,6 +111,8 @@ LD_FLAGS += $(shell pkg-config --libs cudnn)
 ifneq (,$(findstring clang,$(CXX)))
 CXX_FLAGS += -Wno-documentation
 endif
+endif
+
 endif
 
 LD_FLAGS += -pthread

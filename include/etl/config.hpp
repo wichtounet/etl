@@ -93,6 +93,22 @@ constexpr bool is_blas_parallel            = false; ///< Boolean flag indicating
 static_assert(false, "ETL_CUDA should never be set directly");
 #endif
 
+#ifdef ETL_GPU
+
+#ifndef ETL_CUBLAS_MODE
+#define ETL_CUBLAS_MODE
+#endif
+
+#ifndef ETL_CUFFT_MODE
+#define ETL_CUFFT_MODE
+#endif
+
+#ifndef ETL_CUDNN_MODE
+#define ETL_CUDNN_MODE
+#endif
+
+#endif
+
 #ifdef ETL_CUBLAS_MODE
 constexpr bool cublas_enabled = true;
 #define ETL_CUDA
