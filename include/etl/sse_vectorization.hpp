@@ -741,6 +741,9 @@ inline etl::complex<double> ETL_INLINE_ATTR_VEC sse_vec::hadd<etl::complex<doubl
     return tmp_result[0];
 }
 
+/*!
+ * \copydoc sse_vec::mul
+ */
 template <>
 ETL_OUT_VEC_128 sse_vec::mul<true>(__m128 lhs, __m128 rhs) {
     //lhs = [x1.real, x1.img, x2.real, x2.img]
@@ -765,6 +768,9 @@ ETL_OUT_VEC_128 sse_vec::mul<true>(__m128 lhs, __m128 rhs) {
     return _mm_addsub_ps(ymm2, ymm4);
 }
 
+/*!
+ * \copydoc sse_vec::mul
+ */
 template <>
 ETL_OUT_VEC_128D sse_vec::mul<true>(__m128d lhs, __m128d rhs) {
     //lhs = [x.real, x.img]
@@ -789,6 +795,9 @@ ETL_OUT_VEC_128D sse_vec::mul<true>(__m128d lhs, __m128d rhs) {
     return _mm_addsub_pd(ymm2, ymm4);
 }
 
+/*!
+ * \copydoc sse_vec::fmadd
+ */
 template <>
 ETL_OUT_VEC_128 sse_vec::fmadd<false>(__m128 a, __m128 b, __m128 c) {
 #ifdef __FMA__
@@ -798,6 +807,9 @@ ETL_OUT_VEC_128 sse_vec::fmadd<false>(__m128 a, __m128 b, __m128 c) {
 #endif
 }
 
+/*!
+ * \copydoc sse_vec::fmadd
+ */
 template <>
 ETL_OUT_VEC_128D sse_vec::fmadd<false>(__m128d a, __m128d b, __m128d c) {
 #ifdef __FMA__
@@ -807,16 +819,25 @@ ETL_OUT_VEC_128D sse_vec::fmadd<false>(__m128d a, __m128d b, __m128d c) {
 #endif
 }
 
+/*!
+ * \copydoc sse_vec::fmadd
+ */
 template <>
 ETL_OUT_VEC_128 sse_vec::fmadd<true>(__m128 a, __m128 b, __m128 c) {
     return add(mul<true>(a, b), c);
 }
 
+/*!
+ * \copydoc sse_vec::fmadd
+ */
 template <>
 ETL_OUT_VEC_128D sse_vec::fmadd<true>(__m128d a, __m128d b, __m128d c) {
     return add(mul<true>(a, b), c);
 }
 
+/*!
+ * \copydoc sse_vec::div
+ */
 template <>
 ETL_OUT_VEC_128 sse_vec::div<true>(__m128 lhs, __m128 rhs) {
     //lhs = [x1.real, x1.img, x2.real, x2.img]
@@ -854,6 +875,9 @@ ETL_OUT_VEC_128 sse_vec::div<true>(__m128 lhs, __m128 rhs) {
     return _mm_div_ps(ymm4, ymm0);
 }
 
+/*!
+ * \copydoc sse_vec::div
+ */
 template <>
 ETL_OUT_VEC_128D sse_vec::div<true>(__m128d lhs, __m128d rhs) {
     //lhs = [x.real, x.img]
@@ -891,31 +915,49 @@ ETL_OUT_VEC_128D sse_vec::div<true>(__m128d lhs, __m128d rhs) {
     return _mm_div_pd(ymm4, ymm0);
 }
 
+/*!
+ * \copydoc sse_vec::zero
+ */
 template<>
 ETL_OUT_VEC_128 sse_vec::zero<float>() {
     return _mm_setzero_ps();
 }
 
+/*!
+ * \copydoc sse_vec::zero
+ */
 template<>
 ETL_OUT_VEC_128D sse_vec::zero<double>() {
     return _mm_setzero_pd();
 }
 
+/*!
+ * \copydoc sse_vec::zero
+ */
 template<>
 ETL_OUT_VEC_128 sse_vec::zero<etl::complex<float>>() {
     return _mm_setzero_ps();
 }
 
+/*!
+ * \copydoc sse_vec::zero
+ */
 template<>
 ETL_OUT_VEC_128D sse_vec::zero<etl::complex<double>>() {
     return _mm_setzero_pd();
 }
 
+/*!
+ * \copydoc sse_vec::zero
+ */
 template<>
 ETL_OUT_VEC_128 sse_vec::zero<std::complex<float>>() {
     return _mm_setzero_ps();
 }
 
+/*!
+ * \copydoc sse_vec::zero
+ */
 template<>
 ETL_OUT_VEC_128D sse_vec::zero<std::complex<double>>() {
     return _mm_setzero_pd();

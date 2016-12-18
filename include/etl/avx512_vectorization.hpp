@@ -609,24 +609,36 @@ struct avx512_vec {
 #endif //__INTEL_COMPILER
 };
 
+/*!
+ * \copydoc sse_vec::mul
+ */
 template <>
 ETL_OUT_VEC_512 avx512_vec::mul<true>(__m512 lhs, __m512 rhs) {
     cpp_unreachable("Not yet implemented");
     return lhs;
 }
 
+/*!
+ * \copydoc sse_vec::mul
+ */
 template <>
 ETL_OUT_VEC_512D avx512_vec::mul<true>(__m512d lhs, __m512d rhs) {
     cpp_unreachable("Not yet implemented");
     return lhs;
 }
 
+/*!
+ * \copydoc sse_vec::div
+ */
 template <>
 ETL_OUT_VEC_512 avx512_vec::div<true>(__m512 lhs, __m512 rhs) {
     cpp_unreachable("Not yet implemented");
     return lhs;
 }
 
+/*!
+ * \copydoc sse_vec::div
+ */
 template <>
 ETL_OUT_VEC_512D avx512_vec::div<true>(__m512d lhs, __m512d rhs) {
     cpp_unreachable("Not yet implemented");

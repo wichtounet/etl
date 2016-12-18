@@ -734,6 +734,9 @@ inline etl::complex<double> ETL_INLINE_ATTR_VEC avx_vec::hadd<etl::complex<doubl
     return tmp_result[0] + tmp_result[1];
 }
 
+/*!
+ * \copydoc sse_vec::mul
+ */
 template <>
 ETL_OUT_VEC_256 avx_vec::mul<true>(__m256 lhs, __m256 rhs) {
     //lhs = [x1.real, x1.img, x2.real, x2.img, ...]
@@ -763,6 +766,9 @@ ETL_OUT_VEC_256 avx_vec::mul<true>(__m256 lhs, __m256 rhs) {
 #endif
 }
 
+/*!
+ * \copydoc sse_vec::mul
+ */
 template <>
 ETL_OUT_VEC_256D avx_vec::mul<true>(__m256d lhs, __m256d rhs) {
     //lhs = [x1.real, x1.img, x2.real, x2.img]
@@ -792,6 +798,9 @@ ETL_OUT_VEC_256D avx_vec::mul<true>(__m256d lhs, __m256d rhs) {
 #endif
 }
 
+/*!
+ * \copydoc sse_vec::fmadd
+ */
 template <>
 ETL_OUT_VEC_256 avx_vec::fmadd<false>(__m256 a, __m256 b, __m256 c) {
 #ifdef __FMA__
@@ -801,6 +810,9 @@ ETL_OUT_VEC_256 avx_vec::fmadd<false>(__m256 a, __m256 b, __m256 c) {
 #endif
 }
 
+/*!
+ * \copydoc sse_vec::fmadd
+ */
 template <>
 ETL_OUT_VEC_256D avx_vec::fmadd<false>(__m256d a, __m256d b, __m256d c) {
 #ifdef __FMA__
@@ -810,16 +822,25 @@ ETL_OUT_VEC_256D avx_vec::fmadd<false>(__m256d a, __m256d b, __m256d c) {
 #endif
 }
 
+/*!
+ * \copydoc sse_vec::fmadd
+ */
 template <>
 ETL_OUT_VEC_256 avx_vec::fmadd<true>(__m256 a, __m256 b, __m256 c) {
     return add(mul<true>(a, b), c);
 }
 
+/*!
+ * \copydoc sse_vec::fmadd
+ */
 template <>
 ETL_OUT_VEC_256D avx_vec::fmadd<true>(__m256d a, __m256d b, __m256d c) {
     return add(mul<true>(a, b), c);
 }
 
+/*!
+ * \copydoc sse_vec::div
+ */
 template <>
 ETL_OUT_VEC_256 avx_vec::div<true>(__m256 lhs, __m256 rhs) {
     //lhs = [x1.real, x1.img, x2.real, x2.img ...]
@@ -863,6 +884,9 @@ ETL_OUT_VEC_256 avx_vec::div<true>(__m256 lhs, __m256 rhs) {
     return _mm256_div_ps(ymm5, ymm0);
 }
 
+/*!
+ * \copydoc sse_vec::div
+ */
 template <>
 ETL_OUT_VEC_256D avx_vec::div<true>(__m256d lhs, __m256d rhs) {
     //lhs = [x1.real, x1.img, x2.real, x2.img]
@@ -906,31 +930,49 @@ ETL_OUT_VEC_256D avx_vec::div<true>(__m256d lhs, __m256d rhs) {
     return _mm256_div_pd(ymm5, ymm0);
 }
 
+/*!
+ * \copydoc sse_vec::zero
+ */
 template<>
 ETL_OUT_VEC_256 avx_vec::zero<float>() {
     return _mm256_setzero_ps();
 }
 
+/*!
+ * \copydoc sse_vec::zero
+ */
 template<>
 ETL_OUT_VEC_256D avx_vec::zero<double>() {
     return _mm256_setzero_pd();
 }
 
+/*!
+ * \copydoc sse_vec::zero
+ */
 template<>
 ETL_OUT_VEC_256 avx_vec::zero<etl::complex<float>>() {
     return _mm256_setzero_ps();
 }
 
+/*!
+ * \copydoc sse_vec::zero
+ */
 template<>
 ETL_OUT_VEC_256D avx_vec::zero<etl::complex<double>>() {
     return _mm256_setzero_pd();
 }
 
+/*!
+ * \copydoc sse_vec::zero
+ */
 template<>
 ETL_OUT_VEC_256 avx_vec::zero<std::complex<float>>() {
     return _mm256_setzero_ps();
 }
 
+/*!
+ * \copydoc sse_vec::zero
+ */
 template<>
 ETL_OUT_VEC_256D avx_vec::zero<std::complex<double>>() {
     return _mm256_setzero_pd();
