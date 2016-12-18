@@ -19,6 +19,8 @@
  * b) Ideally, one should use the _general versions of the padding functions,
  * but again, compilers do not like multiple layers of sub_view and
  * memory_start, so we need to use direct()
+ * c) Ideally the micro kernel should use conv(i, j) directly instead of using
+ * the pointer. But there is a small overhead when using this technique :s
  */
 
 namespace etl {
