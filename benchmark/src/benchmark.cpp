@@ -272,6 +272,7 @@ CPM_DIRECT_SECTION_TWO_PASS_NS_P("strans [transpose][s]", trans_policy,
     CPM_SECTION_FUNCTOR("default", [](smat& a, smat& r){ r = transpose(a); }),
     CPM_SECTION_FUNCTOR("std", [](smat& a, smat& r){ r = selected_helper(etl::transpose_impl::STD, transpose(a)); })
     BLAS_SECTION_FUNCTOR("blas", [](smat& a, smat& r){ r = selected_helper(etl::transpose_impl::MKL, transpose(a)); })
+    CUBLAS_SECTION_FUNCTOR("cublas", [](smat& a, smat& r){ r = selected_helper(etl::transpose_impl::CUBLAS, transpose(a)); })
 )
 
 CPM_DIRECT_SECTION_TWO_PASS_NS_P("inplace_strans [transpose][s]", trans_policy,
@@ -279,6 +280,7 @@ CPM_DIRECT_SECTION_TWO_PASS_NS_P("inplace_strans [transpose][s]", trans_policy,
     CPM_SECTION_FUNCTOR("default", [](smat& r){ r.transpose_inplace(); }),
     CPM_SECTION_FUNCTOR("std", [](smat& r){ SELECTED_SECTION(etl::transpose_impl::STD){ r.transpose_inplace(); } })
     BLAS_SECTION_FUNCTOR("blas", [](smat& r){ SELECTED_SECTION(etl::transpose_impl::MKL){ r.transpose_inplace(); } })
+    BLAS_SECTION_FUNCTOR("cublas", [](smat& r){ SELECTED_SECTION(etl::transpose_impl::CUBLAS){ r.transpose_inplace(); } })
 )
 
 //Sigmoid benchmark
