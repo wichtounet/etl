@@ -26,7 +26,7 @@ struct sub_view;
  * \tparam T The type of expression on which the view is made
  */
 template <typename T>
-struct sub_view <T, std::enable_if_t<!fast_sub_view_able<T>::value>> :
+struct sub_view <T, std::enable_if_t<!fast_sub_view_able<T>::value>> final :
     iterable<sub_view<T>, false>,
     inplace_assignable<sub_view<T>>
 {
