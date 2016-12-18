@@ -285,8 +285,8 @@ CONV2_FULL_TEST_CASE_CM("column_major/conv2/full_1", "[cm][conv2]") {
 }
 
 CONV2_FULL_TEST_CASE_CM("column_major/conv2/full_2", "[cm][conv2]") {
-    etl::fast_matrix_cm<T, 3, 3> a(etl::magic(3));
-    etl::fast_matrix_cm<T, 2, 2> b(etl::magic(2));
+    etl::fast_matrix_cm<T, 3, 3> a(etl::magic<T>(3));
+    etl::fast_matrix_cm<T, 2, 2> b(etl::magic<T>(2));
     etl::fast_matrix_cm<T, 4, 4> c;
 
     Impl::apply(a, b, c);
