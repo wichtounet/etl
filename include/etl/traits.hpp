@@ -586,6 +586,7 @@ struct etl_traits<T, std::enable_if_t<is_etl_value_class<T>::value>> {
     static constexpr bool is_thread_safe          = true;                        ///< Indicates if the expression is thread safe
     static constexpr bool is_linear               = true;                        ///< Indicates if the expression is linear
     static constexpr bool is_generator            = false;                       ///< Indicates if the expression is a generator expression
+    static constexpr bool needs_evaluator_visitor = false;                       ///< Indicates if the expression needs an evaluator visitor
     static constexpr bool is_padded               = is_padded_value<T>::value;   ///< Indicates if the expression is padded
     static constexpr bool is_aligned              = is_aligned_value<T>::value;  ///< Indicates if the expression is aligned
     static constexpr order storage_order          = T::storage_order;            ///< The expression storage order

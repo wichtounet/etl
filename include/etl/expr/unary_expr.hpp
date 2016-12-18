@@ -1002,6 +1002,7 @@ struct etl_traits<etl::unary_expr<T, Expr, UnaryOp>> {
     static constexpr bool is_linear               = etl_traits<sub_expr_t>::is_linear && UnaryOp::linear; ///< Indicates if the expression is linear
     static constexpr bool is_thread_safe          = etl_traits<sub_expr_t>::is_thread_safe && UnaryOp::thread_safe;                                                                ///< Indicates if the expression is linear
     static constexpr bool is_generator            = etl_traits<sub_expr_t>::is_generator;                 ///< Indicates if the expression is a generator expression
+    static constexpr bool needs_evaluator_visitor = etl_traits<sub_expr_t>::needs_evaluator_visitor;      ///< Indicaes if the expression needs an evaluator visitor
     static constexpr bool is_padded                = is_linear && etl_traits<sub_expr_t>::is_padded;                                                                                ///< Indicates if the expression is padded
     static constexpr bool is_aligned                = is_linear && etl_traits<sub_expr_t>::is_aligned;                                                                                ///< Indicates if the expression is padded
     static constexpr order storage_order          = etl_traits<sub_expr_t>::storage_order;                ///< The expression storage order
