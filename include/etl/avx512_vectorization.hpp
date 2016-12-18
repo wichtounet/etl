@@ -440,6 +440,10 @@ struct avx512_vec {
         return _mm512_sqrt_pd(x);
     }
 
+    /*!
+     * \brief Compute the negative of each element in the given vector
+     * \return a vector containing the negative of each input element
+     */
     ETL_INLINE_VEC_512D minus(__m512d x) {
         return _mm512_xor_pd(x, _mm512_set1_pd(-0.f));
     }
@@ -466,15 +470,25 @@ struct avx512_vec {
         return _mm512_sqrt_ps(lhs);
     }
 
+    /*!
+     * \brief Compute the negative of each element in the given vector
+     * \return a vector containing the negative of each input element
+     */
     ETL_INLINE_VEC_512 minus(__m512 x) {
         return _mm512_xor_ps(x, _mm512_set1_ps(-0.f));
     }
 
+    /*!
+     * \brief Multiply the two given vectors
+     */
     template <bool Complex = false>
     ETL_INLINE_VEC_512 mul(__m512 lhs, __m512 rhs) {
         return _mm512_mul_ps(lhs, rhs);
     }
 
+    /*!
+     * \brief Multiply the two given vectors
+     */
     template <>
     ETL_INLINE_VEC_512 mul<true>(__m512 lhs, __m512 rhs) {
         cpp_unreachable("Not yet implemented");
@@ -492,22 +506,34 @@ struct avx512_vec {
         return lhs;
     }
 
+    /*!
+     * \brief Divide the two given vectors
+     */
     template <bool Complex = false>
     ETL_INLINE_VEC_512 div(__m512 lhs, __m512 rhs) {
         return _mm512_div_ps(lhs, rhs);
     }
 
+    /*!
+     * \brief Divide the two given vectors
+     */
     template <>
     ETL_INLINE_VEC_512 div<true>(__m512 lhs, __m512 rhs) {
         cpp_unreachable("Not yet implemented");
         return lhs;
     }
 
+    /*!
+     * \brief Divide the two given vectors
+     */
     template <bool Complex = false>
     ETL_INLINE_VEC_512D div(__m512d lhs, __m512d rhs) {
         return _mm512_div_pd(lhs, rhs);
     }
 
+    /*!
+     * \brief Divide the two given vectors
+     */
     template <>
     ETL_INLINE_VEC_512D div<true>(__m512d lhs, __m512d rhs) {
         cpp_unreachable("Not yet implemented");
@@ -518,40 +544,64 @@ struct avx512_vec {
 
     //Exponential
 
+    /*!
+     * \brief Compute the exponentials of each element of the given vector
+     */
     ETL_INLINE_VEC_512D exp(__m512d x) {
         return _mm512_exp_pd(x);
     }
 
+    /*!
+     * \brief Compute the exponentials of each element of the given vector
+     */
     ETL_INLINE_VEC_512 exp(__m512 x) {
         return _mm512_exp_ps(x);
     }
 
     //Logarithm
 
+    /*!
+     * \brief Compute the logarithm of each element of the given vector
+     */
     ETL_INLINE_VEC_512D log(__m512d x) {
         return _mm512_log_pd(x);
     }
 
+    /*!
+     * \brief Compute the logarithm of each element of the given vector
+     */
     ETL_INLINE_VEC_512 log(__m512 x) {
         return _mm512_log_ps(x);
     }
 
     //Min
 
+    /*!
+     * \brief Compute the minimum between each pair element of the given vectors
+     */
     ETL_INLINE_VEC_512D min(__m512d lhs, __m512d rhs) {
         return _mm512_min_pd(lhs, rhs);
     }
 
+    /*!
+     * \brief Compute the minimum between each pair element of the given vectors
+     */
     ETL_INLINE_VEC_512 min(__m512 lhs, __m512 rhs) {
         return _mm512_min_ps(lhs, rhs);
     }
 
     //Max
 
+    /*!
+     * \brief Compute the maximum between each pair element of the given vectors
+     */
     ETL_INLINE_VEC_512D max(__m512d lhs, __m512d rhs) {
         return _mm512_max_pd(lhs, rhs);
     }
 
+    /*!
+     * \brief Compute the maximum between each pair element of the given vectors
+     */
     ETL_INLINE_VEC_512 max(__m512 lhs, __m512 rhs) {
         return _mm512_max_ps(lhs, rhs);
     }

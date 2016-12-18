@@ -469,6 +469,10 @@ struct avx_vec {
         return _mm256_sqrt_pd(x);
     }
 
+    /*!
+     * \brief Compute the negative of each element in the given vector
+     * \return a vector containing the negative of each input element
+     */
     ETL_INLINE_VEC_256D minus(__m256d x) {
         return _mm256_xor_pd(x, _mm256_set1_pd(-0.f));
     }
@@ -495,40 +499,68 @@ struct avx_vec {
         return _mm256_sqrt_ps(lhs);
     }
 
+    /*!
+     * \brief Compute the negative of each element in the given vector
+     * \return a vector containing the negative of each input element
+     */
     ETL_INLINE_VEC_256 minus(__m256 x) {
         return _mm256_xor_ps(x, _mm256_set1_ps(-0.f));
     }
 
+    /*!
+     * \brief Multiply the two given vectors
+     */
     template <bool Complex = false>
     ETL_TMP_INLINE(__m256) mul(__m256 lhs, __m256 rhs) {
         return _mm256_mul_ps(lhs, rhs);
     }
 
+    /*!
+     * \brief Multiply the two given vectors
+     */
     template <bool Complex = false>
     ETL_TMP_INLINE(__m256d) mul(__m256d lhs, __m256d rhs) {
         return _mm256_mul_pd(lhs, rhs);
     }
 
+    /*!
+     * \brief Fused-Multiply-Add of a b and c (r = (a * b) + c)
+     */
     template <bool Complex = false>
     ETL_TMP_INLINE(__m256) fmadd(__m256 a, __m256 b, __m256 c);
 
+    /*!
+     * \brief Fused-Multiply-Add of a b and c (r = (a * b) + c)
+     */
     template <bool Complex = false>
     ETL_TMP_INLINE(__m256d) fmadd(__m256d a, __m256d b, __m256d c);
 
+    /*!
+     * \brief Divide the two given vectors
+     */
     template <bool Complex = false>
     ETL_TMP_INLINE(__m256) div(__m256 lhs, __m256 rhs) {
         return _mm256_div_ps(lhs, rhs);
     }
 
+    /*!
+     * \brief Divide the two given vectors
+     */
     template <bool Complex = false>
     ETL_TMP_INLINE(__m256d) div(__m256d lhs, __m256d rhs) {
         return _mm256_div_pd(lhs, rhs);
     }
 
+    /*!
+     * \brief Compute the cosinus of each element of the given vector
+     */
     ETL_INLINE_VEC_256 cos(__m256 x) {
         return etl::cos256_ps(x);
     }
 
+    /*!
+     * \brief Compute the sinus of each element of the given vector
+     */
     ETL_INLINE_VEC_256 sin(__m256 x) {
         return etl::sin256_ps(x);
     }
@@ -537,14 +569,23 @@ struct avx_vec {
 
     //Exponential
 
+    /*!
+     * \brief Compute the exponentials of each element of the given vector
+     */
     ETL_INLINE_VEC_256D exp(__m256d x) {
         return etl::exp256_pd(x);
     }
 
+    /*!
+     * \brief Compute the exponentials of each element of the given vector
+     */
     ETL_INLINE_VEC_256 exp(__m256 x) {
         return etl::exp256_ps(x);
     }
 
+    /*!
+     * \brief Compute the logarithm of each element of the given vector
+     */
     ETL_INLINE_VEC_256 log(__m256 x) {
         return etl::log256_ps(x);
     }
@@ -553,20 +594,32 @@ struct avx_vec {
 
     //Exponential
 
+    /*!
+     * \brief Compute the exponentials of each element of the given vector
+     */
     ETL_INLINE_VEC_256D exp(__m256d x) {
         return _mm256_exp_pd(x);
     }
 
+    /*!
+     * \brief Compute the exponentials of each element of the given vector
+     */
     ETL_INLINE_VEC_256 exp(__m256 x) {
         return _mm256_exp_ps(x);
     }
 
     //Logarithm
 
+    /*!
+     * \brief Compute the logarithm of each element of the given vector
+     */
     ETL_INLINE_VEC_256D log(__m256d x) {
         return _mm256_log_pd(x);
     }
 
+    /*!
+     * \brief Compute the logarithm of each element of the given vector
+     */
     ETL_INLINE_VEC_256 log(__m256 x) {
         return _mm256_log_ps(x);
     }
@@ -575,20 +628,32 @@ struct avx_vec {
 
     //Min
 
+    /*!
+     * \brief Compute the minimum between each pair element of the given vectors
+     */
     ETL_INLINE_VEC_256D min(__m256d lhs, __m256d rhs) {
         return _mm256_min_pd(lhs, rhs);
     }
 
+    /*!
+     * \brief Compute the minimum between each pair element of the given vectors
+     */
     ETL_INLINE_VEC_256 min(__m256 lhs, __m256 rhs) {
         return _mm256_min_ps(lhs, rhs);
     }
 
     //Max
 
+    /*!
+     * \brief Compute the maximum between each pair element of the given vectors
+     */
     ETL_INLINE_VEC_256D max(__m256d lhs, __m256d rhs) {
         return _mm256_max_pd(lhs, rhs);
     }
 
+    /*!
+     * \brief Compute the maximum between each pair element of the given vectors
+     */
     ETL_INLINE_VEC_256 max(__m256 lhs, __m256 rhs) {
         return _mm256_max_ps(lhs, rhs);
     }
