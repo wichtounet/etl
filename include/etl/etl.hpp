@@ -68,12 +68,15 @@
 #include "etl/crtp/dim_testable.hpp"
 #include "etl/crtp/iterable.hpp"
 
+// The complex expressions
+#include "etl/expr/detail.hpp"
+#include "etl/expr/transpose_expr.hpp"
+
 // The expressions building
 #include "etl/checks.hpp"
 #include "etl/builder/expression_builder.hpp"
 
 // The expressions
-#include "etl/expr/detail.hpp"
 #include "etl/op/sub_view.hpp"
 #include "etl/op/dyn_matrix_view.hpp"
 #include "etl/expr/binary_expr.hpp"
