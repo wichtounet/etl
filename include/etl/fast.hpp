@@ -38,13 +38,13 @@ public:
     static constexpr order storage_order      = SO;                                   ///< The storage order
     static constexpr bool array_impl          = !matrix_detail::is_vector<ST>::value; ///< true if the storage is an std::arraw, false otherwise
 
-    using this_type          = fast_matrix_impl<T, ST, SO, Dims...>; ///< this type
-    using base_type          = fast_matrix_base<this_type, T, ST, SO, Dims...>;
-    using iterable_base_type = iterable<this_type, SO == order::RowMajor>;
-    using value_type         = T;                 ///< The value type
-    using storage_impl       = ST;                ///< The storage implementation
-    using memory_type        = value_type*;       ///< The memory type
-    using const_memory_type  = const value_type*; ///< The const memory type
+    using this_type          = fast_matrix_impl<T, ST, SO, Dims...>;            ///< this type
+    using base_type          = fast_matrix_base<this_type, T, ST, SO, Dims...>; ///< The base type
+    using iterable_base_type = iterable<this_type, SO == order::RowMajor>;      ///< The iterable base type
+    using value_type         = T;                                               ///< The value type
+    using storage_impl       = ST;                                              ///< The storage implementation
+    using memory_type        = value_type*;                                     ///< The memory type
+    using const_memory_type  = const value_type*;                               ///< The const memory type
 
     using base_type::dim;
     using base_type::size;
