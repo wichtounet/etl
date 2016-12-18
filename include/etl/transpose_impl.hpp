@@ -21,6 +21,7 @@ enum class transpose_impl {
     SELECT, ///< Select the best implementation
     STD,    ///< Standard implementation
     MKL,    ///< MKL implementation
+    CUBLAS, ///< CUBLAS implementation
 };
 
 } //end of namespace etl

@@ -15,6 +15,7 @@
 //Include the implementations
 #include "etl/impl/std/transpose.hpp"
 #include "etl/impl/blas/transpose.hpp"
+#include "etl/impl/cublas/transpose.hpp"
 
 #if __INTEL_MKL__ == 11 && __INTEL_MKL_MINOR__ == 2
 #define SLOW_MKL
@@ -80,6 +81,8 @@ struct inplace_square_transpose {
             }
         } else if (impl == transpose_impl::MKL) {
             etl::impl::blas::inplace_square_transpose(c);
+        } else if (impl == transpose_impl::CUBLAS) {
+            etl::impl::cublas::inplace_square_transpose(c);
         } else if(impl == transpose_impl::STD){
             etl::impl::standard::inplace_square_transpose(c);
         } else {
@@ -116,6 +119,8 @@ struct inplace_rectangular_transpose {
 #endif
         } else if (impl == transpose_impl::MKL) {
             etl::impl::blas::inplace_rectangular_transpose(c);
+        } else if (impl == transpose_impl::CUBLAS) {
+            etl::impl::cublas::inplace_rectangular_transpose(c);
         } else if(impl == transpose_impl::STD){
             etl::impl::standard::inplace_rectangular_transpose(c);
         } else {
@@ -153,6 +158,8 @@ struct transpose {
 #endif
         } else if (impl == transpose_impl::MKL) {
             etl::impl::blas::transpose(a, c);
+        } else if (impl == transpose_impl::CUBLAS) {
+            etl::impl::cublas::transpose(a, c);
         } else if(impl == transpose_impl::STD){
             etl::impl::standard::transpose(a, c);
         } else {
