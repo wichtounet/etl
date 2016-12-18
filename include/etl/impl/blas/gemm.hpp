@@ -23,6 +23,12 @@ namespace blas {
 
 #ifdef ETL_BLAS_MODE
 
+/*!
+ * \brief Compute the matrix mutplication of a and b and store the result in c
+ * param a The lhs of the multiplication
+ * param b The rhs of the multiplication
+ * param c The result
+ */
 template <typename A, typename B, typename C, cpp_enable_if(all_single_precision<A, B, C>::value)>
 void gemm(A&& a, B&& b, C&& c) {
     bool row_major = decay_traits<A>::storage_order == order::RowMajor;
@@ -38,6 +44,12 @@ void gemm(A&& a, B&& b, C&& c) {
         c.memory_start(), major_stride(c));
 }
 
+/*!
+ * \brief Compute the matrix mutplication of a and b and store the result in c
+ * param a The lhs of the multiplication
+ * param b The rhs of the multiplication
+ * param c The result
+ */
 template <typename A, typename B, typename C, cpp_enable_if(all_double_precision<A, B, C>::value)>
 void gemm(A&& a, B&& b, C&& c) {
     bool row_major = decay_traits<A>::storage_order == order::RowMajor;
@@ -53,6 +65,12 @@ void gemm(A&& a, B&& b, C&& c) {
         c.memory_start(), major_stride(c));
 }
 
+/*!
+ * \brief Compute the matrix mutplication of a and b and store the result in c
+ * param a The lhs of the multiplication
+ * param b The rhs of the multiplication
+ * param c The result
+ */
 template <typename A, typename B, typename C, cpp_enable_if(all_complex_single_precision<A, B, C>::value)>
 void gemm(A&& a, B&& b, C&& c) {
     bool row_major = decay_traits<A>::storage_order == order::RowMajor;
@@ -71,6 +89,12 @@ void gemm(A&& a, B&& b, C&& c) {
         c.memory_start(), major_stride(c));
 }
 
+/*!
+ * \brief Compute the matrix mutplication of a and b and store the result in c
+ * param a The lhs of the multiplication
+ * param b The rhs of the multiplication
+ * param c The result
+ */
 template <typename A, typename B, typename C, cpp_enable_if(all_complex_double_precision<A, B, C>::value)>
 void gemm(A&& a, B&& b, C&& c) {
     bool row_major = decay_traits<A>::storage_order == order::RowMajor;
@@ -89,6 +113,12 @@ void gemm(A&& a, B&& b, C&& c) {
         c.memory_start(), major_stride(c));
 }
 
+/*!
+ * \brief Compute the matrix-vector mutplication of a and b and store the result in c
+ * param a The lhs of the multiplication
+ * param b The rhs of the multiplication
+ * param c The result
+ */
 template <typename A, typename B, typename C, cpp_enable_if(all_double_precision<A, B, C>::value)>
 void gemv(A&& a, B&& b, C&& c) {
     bool row_major = decay_traits<A>::storage_order == order::RowMajor;
@@ -104,6 +134,12 @@ void gemv(A&& a, B&& b, C&& c) {
         c.memory_start(), 1);
 }
 
+/*!
+ * \brief Compute the matrix-vector mutplication of a and b and store the result in c
+ * param a The lhs of the multiplication
+ * param b The rhs of the multiplication
+ * param c The result
+ */
 template <typename A, typename B, typename C, cpp_enable_if(all_single_precision<A, B, C>::value)>
 void gemv(A&& a, B&& b, C&& c) {
     bool row_major = decay_traits<A>::storage_order == order::RowMajor;
@@ -119,6 +155,12 @@ void gemv(A&& a, B&& b, C&& c) {
         c.memory_start(), 1);
 }
 
+/*!
+ * \brief Compute the matrix-vector mutplication of a and b and store the result in c
+ * param a The lhs of the multiplication
+ * param b The rhs of the multiplication
+ * param c The result
+ */
 template <typename A, typename B, typename C, cpp_enable_if(all_complex_single_precision<A, B, C>::value)>
 void gemv(A&& a, B&& b, C&& c) {
     bool row_major = decay_traits<A>::storage_order == order::RowMajor;
@@ -137,6 +179,12 @@ void gemv(A&& a, B&& b, C&& c) {
         c.memory_start(), 1);
 }
 
+/*!
+ * \brief Compute the matrix-vector mutplication of a and b and store the result in c
+ * param a The lhs of the multiplication
+ * param b The rhs of the multiplication
+ * param c The result
+ */
 template <typename A, typename B, typename C, cpp_enable_if(all_complex_double_precision<A, B, C>::value)>
 void gemv(A&& a, B&& b, C&& c) {
     bool row_major = decay_traits<A>::storage_order == order::RowMajor;
@@ -155,6 +203,12 @@ void gemv(A&& a, B&& b, C&& c) {
         c.memory_start(), 1);
 }
 
+/*!
+ * \brief Compute the vector-matrix mutplication of a and b and store the result in c
+ * param a The lhs of the multiplication
+ * param b The rhs of the multiplication
+ * param c The result
+ */
 template <typename A, typename B, typename C, cpp_enable_if(all_double_precision<A, B, C>::value)>
 void gevm(A&& a, B&& b, C&& c) {
     bool row_major = decay_traits<B>::storage_order == order::RowMajor;
@@ -170,6 +224,12 @@ void gevm(A&& a, B&& b, C&& c) {
         c.memory_start(), 1);
 }
 
+/*!
+ * \brief Compute the vector-matrix mutplication of a and b and store the result in c
+ * param a The lhs of the multiplication
+ * param b The rhs of the multiplication
+ * param c The result
+ */
 template <typename A, typename B, typename C, cpp_enable_if(all_single_precision<A, B, C>::value)>
 void gevm(A&& a, B&& b, C&& c) {
     bool row_major = decay_traits<B>::storage_order == order::RowMajor;
@@ -185,6 +245,12 @@ void gevm(A&& a, B&& b, C&& c) {
         c.memory_start(), 1);
 }
 
+/*!
+ * \brief Compute the vector-matrix mutplication of a and b and store the result in c
+ * param a The lhs of the multiplication
+ * param b The rhs of the multiplication
+ * param c The result
+ */
 template <typename A, typename B, typename C, cpp_enable_if(all_complex_single_precision<A, B, C>::value)>
 void gevm(A&& a, B&& b, C&& c) {
     bool row_major = decay_traits<B>::storage_order == order::RowMajor;
@@ -203,6 +269,12 @@ void gevm(A&& a, B&& b, C&& c) {
         c.memory_start(), 1);
 }
 
+/*!
+ * \brief Compute the vector-matrix mutplication of a and b and store the result in c
+ * param a The lhs of the multiplication
+ * param b The rhs of the multiplication
+ * param c The result
+ */
 template <typename A, typename B, typename C, cpp_enable_if(all_complex_double_precision<A, B, C>::value)>
 void gevm(A&& a, B&& b, C&& c) {
     bool row_major = decay_traits<B>::storage_order == order::RowMajor;

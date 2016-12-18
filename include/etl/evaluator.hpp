@@ -143,6 +143,11 @@ namespace standard_evaluator {
 
     //Parallel assign version
 
+    /*!
+     * \brief Assign the result of the expression expression to the result with the given Functor, using parallel non-vectorized implementation
+     * \param expr The right hand side expression
+     * \param result The left hand side
+     */
     template <template <typename, typename> class Fun, typename E, typename R>
     void par_linear(E&& expr, R&& result) {
         const auto n = etl::size(result);
@@ -165,6 +170,11 @@ namespace standard_evaluator {
         pool.wait();
     }
 
+    /*!
+     * \brief Assign the result of the expression expression to the result with the given Functor, using parallel vectorized implementation
+     * \param expr The right hand side expression
+     * \param result The left hand side
+     */
     template <template <vector_mode_t, typename, typename> class Fun, vector_mode_t V, typename E, typename R>
     void par_vec(E&& expr, R&& result) {
         const auto n = etl::size(result);
