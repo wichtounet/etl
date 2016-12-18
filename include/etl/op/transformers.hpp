@@ -124,9 +124,24 @@ struct transpose_transformer {
      * \brief Apply the given visitor to this expression and its descendants.
      * \param visitor The visitor to apply
      */
-    template<typename V>
-    void visit(V&& visitor){
-        value().visit(std::forward<V>(visitor));
+    void visit(const detail::temporary_allocator_visitor& visitor){
+        value().visit(visitor);
+    }
+
+    /*!
+     * \brief Apply the given visitor to this expression and its descendants.
+     * \param visitor The visitor to apply
+     */
+    void visit(const detail::back_propagate_visitor& visitor){
+        value().visit(visitor);
+    }
+
+    /*!
+     * \brief Apply the given visitor to this expression and its descendants.
+     * \param visitor The visitor to apply
+     */
+    void visit(const detail::gpu_clean_visitor& visitor){
+        value().visit(visitor);
     }
 
     /*!
@@ -252,10 +267,27 @@ struct mm_mul_transformer {
      * \brief Apply the given visitor to this expression and its descendants.
      * \param visitor The visitor to apply
      */
-    template<typename V>
-    void visit(V&& visitor){
-        lhs().visit(std::forward<V>(visitor));
-        rhs().visit(std::forward<V>(visitor));
+    void visit(const detail::temporary_allocator_visitor& visitor){
+        lhs().visit(visitor);
+        rhs().visit(visitor);
+    }
+
+    /*!
+     * \brief Apply the given visitor to this expression and its descendants.
+     * \param visitor The visitor to apply
+     */
+    void visit(const detail::gpu_clean_visitor& visitor){
+        lhs().visit(visitor);
+        rhs().visit(visitor);
+    }
+
+    /*!
+     * \brief Apply the given visitor to this expression and its descendants.
+     * \param visitor The visitor to apply
+     */
+    void visit(const detail::back_propagate_visitor& visitor){
+        lhs().visit(visitor);
+        rhs().visit(visitor);
     }
 
     /*!
@@ -388,9 +420,24 @@ struct dyn_convmtx_transformer {
      * \brief Apply the given visitor to this expression and its descendants.
      * \param visitor The visitor to apply
      */
-    template<typename V>
-    void visit(V&& visitor){
-        value().visit(std::forward<V>(visitor));
+    void visit(const detail::temporary_allocator_visitor& visitor){
+        value().visit(visitor);
+    }
+
+    /*!
+     * \brief Apply the given visitor to this expression and its descendants.
+     * \param visitor The visitor to apply
+     */
+    void visit(const detail::back_propagate_visitor& visitor){
+        value().visit(visitor);
+    }
+
+    /*!
+     * \brief Apply the given visitor to this expression and its descendants.
+     * \param visitor The visitor to apply
+     */
+    void visit(const detail::gpu_clean_visitor& visitor){
+        value().visit(visitor);
     }
 
     /*!
@@ -516,9 +563,24 @@ struct dyn_convmtx2_transformer {
      * \brief Apply the given visitor to this expression and its descendants.
      * \param visitor The visitor to apply
      */
-    template<typename V>
-    void visit(V&& visitor){
-        value().visit(std::forward<V>(visitor));
+    void visit(const detail::temporary_allocator_visitor& visitor){
+        value().visit(visitor);
+    }
+
+    /*!
+     * \brief Apply the given visitor to this expression and its descendants.
+     * \param visitor The visitor to apply
+     */
+    void visit(const detail::back_propagate_visitor& visitor){
+        value().visit(visitor);
+    }
+
+    /*!
+     * \brief Apply the given visitor to this expression and its descendants.
+     * \param visitor The visitor to apply
+     */
+    void visit(const detail::gpu_clean_visitor& visitor){
+        value().visit(visitor);
     }
 
     /*!

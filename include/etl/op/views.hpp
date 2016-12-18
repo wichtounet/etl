@@ -199,9 +199,24 @@ struct dim_view {
      * \brief Apply the given visitor to this expression and its descendants.
      * \param visitor The visitor to apply
      */
-    template<typename V>
-    void visit(V&& visitor){
-        value().visit(std::forward<V>(visitor));
+    void visit(const detail::back_propagate_visitor& visitor){
+        value().visit(visitor);
+    }
+
+    /*!
+     * \brief Apply the given visitor to this expression and its descendants.
+     * \param visitor The visitor to apply
+     */
+    void visit(const detail::temporary_allocator_visitor& visitor){
+        value().visit(visitor);
+    }
+
+    /*!
+     * \brief Apply the given visitor to this expression and its descendants.
+     * \param visitor The visitor to apply
+     */
+    void visit(const detail::gpu_clean_visitor& visitor){
+        value().visit(visitor);
     }
 
     /*!
@@ -398,9 +413,24 @@ struct slice_view {
      * \brief Apply the given visitor to this expression and its descendants.
      * \param visitor The visitor to apply
      */
-    template<typename V>
-    void visit(V&& visitor){
-        value().visit(std::forward<V>(visitor));
+    void visit(const detail::back_propagate_visitor& visitor){
+        value().visit(visitor);
+    }
+
+    /*!
+     * \brief Apply the given visitor to this expression and its descendants.
+     * \param visitor The visitor to apply
+     */
+    void visit(const detail::temporary_allocator_visitor& visitor){
+        value().visit(visitor);
+    }
+
+    /*!
+     * \brief Apply the given visitor to this expression and its descendants.
+     * \param visitor The visitor to apply
+     */
+    void visit(const detail::gpu_clean_visitor& visitor){
+        value().visit(visitor);
     }
 
     /*!
@@ -594,9 +624,24 @@ struct memory_slice_view {
      * \brief Apply the given visitor to this expression and its descendants.
      * \param visitor The visitor to apply
      */
-    template<typename V>
-    void visit(V&& visitor){
-        value().visit(std::forward<V>(visitor));
+    void visit(const detail::back_propagate_visitor& visitor){
+        value().visit(visitor);
+    }
+
+    /*!
+     * \brief Apply the given visitor to this expression and its descendants.
+     * \param visitor The visitor to apply
+     */
+    void visit(const detail::temporary_allocator_visitor& visitor){
+        value().visit(visitor);
+    }
+
+    /*!
+     * \brief Apply the given visitor to this expression and its descendants.
+     * \param visitor The visitor to apply
+     */
+    void visit(const detail::gpu_clean_visitor& visitor){
+        value().visit(visitor);
     }
 
     /*!
@@ -874,9 +919,24 @@ struct fast_matrix_view {
      * \brief Apply the given visitor to this expression and its descendants.
      * \param visitor The visitor to apply
      */
-    template<typename V>
-    void visit(V&& visitor){
-        value().visit(std::forward<V>(visitor));
+    void visit(const detail::back_propagate_visitor& visitor){
+        value().visit(visitor);
+    }
+
+    /*!
+     * \brief Apply the given visitor to this expression and its descendants.
+     * \param visitor The visitor to apply
+     */
+    void visit(const detail::temporary_allocator_visitor& visitor){
+        value().visit(visitor);
+    }
+
+    /*!
+     * \brief Apply the given visitor to this expression and its descendants.
+     * \param visitor The visitor to apply
+     */
+    void visit(const detail::gpu_clean_visitor& visitor){
+        value().visit(visitor);
     }
 
     /*!
@@ -1115,9 +1175,24 @@ struct dyn_matrix_view {
      * \brief Apply the given visitor to this expression and its descendants.
      * \param visitor The visitor to apply
      */
-    template<typename V>
-    void visit(V&& visitor){
-        value().visit(std::forward<V>(visitor));
+    void visit(const detail::temporary_allocator_visitor& visitor){
+        value().visit(visitor);
+    }
+
+    /*!
+     * \brief Apply the given visitor to this expression and its descendants.
+     * \param visitor The visitor to apply
+     */
+    void visit(const detail::gpu_clean_visitor& visitor){
+        value().visit(visitor);
+    }
+
+    /*!
+     * \brief Apply the given visitor to this expression and its descendants.
+     * \param visitor The visitor to apply
+     */
+    void visit(const detail::back_propagate_visitor& visitor){
+        value().visit(visitor);
     }
 
     /*!

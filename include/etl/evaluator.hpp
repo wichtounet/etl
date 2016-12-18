@@ -45,15 +45,26 @@ namespace etl {
  */
 namespace standard_evaluator {
     /*!
-     * \brief Allocate temporaries and evaluate sub expressions
+     * \brief Allocate temporaries and evaluate sub expressions in RHS
      * \param expr The expr to be visited
      */
     template <typename E>
-    void pre_assign(E&& expr) {
+    void pre_assign_rhs(E&& expr) {
         expr.visit(detail::temporary_allocator_visitor{});
 
         detail::evaluator_visitor eval_visitor;
         expr.visit(eval_visitor);
+
+        expr.visit(detail::back_propagate_visitor{});
+    }
+
+    /*!
+     * \brief Allocate temporaries and evaluate sub expressions in LHS
+     * \param expr The expr to be visited
+     */
+    template <typename E>
+    void pre_assign_lhs(E&& expr) {
+        expr.visit(detail::back_propagate_visitor{});
     }
 
     /*!
@@ -211,7 +222,8 @@ namespace standard_evaluator {
      */
     template <typename E, typename R, cpp_enable_if(detail::standard_compound<E, R>::value)>
     void add_evaluate(E&& expr, R&& result) {
-        pre_assign(expr);
+        pre_assign_rhs(expr);
+        pre_assign_lhs(result);
         post_assign_compound(expr);
 
         for (std::size_t i = 0; i < etl::size(result); ++i) {
@@ -226,7 +238,8 @@ namespace standard_evaluator {
      */
     template <typename E, typename R, cpp_enable_if(detail::direct_compound<E, R>::value)>
     void add_evaluate(E&& expr, R&& result) {
-        pre_assign(expr);
+        pre_assign_rhs(expr);
+        pre_assign_lhs(result);
         post_assign_compound(expr);
 
         if(all_thread_safe<E>::value && select_parallel(etl::size(result))){
@@ -245,7 +258,8 @@ namespace standard_evaluator {
     void add_evaluate(E&& expr, R&& result) {
         constexpr auto V = detail::select_vector_mode<E, R>();
 
-        pre_assign(expr);
+        pre_assign_rhs(expr);
+        pre_assign_lhs(result);
         post_assign_compound(expr);
 
         if(all_thread_safe<E>::value && select_parallel(etl::size(result))){
@@ -264,7 +278,8 @@ namespace standard_evaluator {
      */
     template <typename E, typename R, cpp_enable_if(detail::standard_compound<E, R>::value)>
     void sub_evaluate(E&& expr, R&& result) {
-        pre_assign(expr);
+        pre_assign_rhs(expr);
+        pre_assign_lhs(result);
         post_assign_compound(expr);
 
         for (std::size_t i = 0; i < etl::size(result); ++i) {
@@ -279,7 +294,8 @@ namespace standard_evaluator {
      */
     template <typename E, typename R, cpp_enable_if(detail::direct_compound<E, R>::value)>
     void sub_evaluate(E&& expr, R&& result) {
-        pre_assign(expr);
+        pre_assign_rhs(expr);
+        pre_assign_lhs(result);
         post_assign_compound(expr);
 
         if(all_thread_safe<E>::value && select_parallel(etl::size(result))){
@@ -298,7 +314,8 @@ namespace standard_evaluator {
     void sub_evaluate(E&& expr, R&& result) {
         constexpr auto V = detail::select_vector_mode<E, R>();
 
-        pre_assign(expr);
+        pre_assign_rhs(expr);
+        pre_assign_lhs(result);
         post_assign_compound(expr);
 
         if(all_thread_safe<E>::value && select_parallel(etl::size(result))){
@@ -317,7 +334,8 @@ namespace standard_evaluator {
      */
     template <typename E, typename R, cpp_enable_if(detail::standard_compound<E, R>::value)>
     void mul_evaluate(E&& expr, R&& result) {
-        pre_assign(expr);
+        pre_assign_rhs(expr);
+        pre_assign_lhs(result);
         post_assign_compound(expr);
 
         for (std::size_t i = 0; i < etl::size(result); ++i) {
@@ -332,7 +350,8 @@ namespace standard_evaluator {
      */
     template <typename E, typename R, cpp_enable_if(detail::direct_compound<E, R>::value)>
     void mul_evaluate(E&& expr, R&& result) {
-        pre_assign(expr);
+        pre_assign_rhs(expr);
+        pre_assign_lhs(result);
         post_assign_compound(expr);
 
         if(all_thread_safe<E>::value && select_parallel(etl::size(result))){
@@ -351,7 +370,8 @@ namespace standard_evaluator {
     void mul_evaluate(E&& expr, R&& result) {
         constexpr auto V = detail::select_vector_mode<E, R>();
 
-        pre_assign(expr);
+        pre_assign_rhs(expr);
+        pre_assign_lhs(result);
         post_assign_compound(expr);
 
         if(all_thread_safe<E>::value && select_parallel(etl::size(result))){
@@ -370,7 +390,8 @@ namespace standard_evaluator {
      */
     template <typename E, typename R, cpp_enable_if(detail::standard_compound<E, R>::value)>
     void div_evaluate(E&& expr, R&& result) {
-        pre_assign(expr);
+        pre_assign_rhs(expr);
+        pre_assign_lhs(result);
         post_assign_compound(expr);
 
         for (std::size_t i = 0; i < etl::size(result); ++i) {
@@ -385,7 +406,8 @@ namespace standard_evaluator {
      */
     template <typename E, typename R, cpp_enable_if(detail::direct_compound<E, R>::value)>
     void div_evaluate(E&& expr, R&& result) {
-        pre_assign(expr);
+        pre_assign_rhs(expr);
+        pre_assign_lhs(result);
         post_assign_compound(expr);
 
         if(all_thread_safe<E>::value && select_parallel(etl::size(result))){
@@ -404,7 +426,8 @@ namespace standard_evaluator {
     void div_evaluate(E&& expr, R&& result) {
         constexpr auto V = detail::select_vector_mode<E, R>();
 
-        pre_assign(expr);
+        pre_assign_rhs(expr);
+        pre_assign_lhs(result);
         post_assign_compound(expr);
 
         if(all_thread_safe<E>::value && select_parallel(etl::size(result))){
@@ -423,7 +446,8 @@ namespace standard_evaluator {
      */
     template <typename E, typename R>
     void mod_evaluate(E&& expr, R&& result) {
-        pre_assign(expr);
+        pre_assign_rhs(expr);
+        pre_assign_lhs(result);
         post_assign_compound(expr);
 
         for (std::size_t i = 0; i < etl::size(result); ++i) {
@@ -443,7 +467,8 @@ namespace standard_evaluator {
     template <typename E, typename R, cpp_enable_if(!is_temporary_expr<E>::value && decay_traits<E>::is_linear)>
     void assign_evaluate(E&& expr, R&& result) {
         //Evaluate sub parts, if any
-        pre_assign(expr);
+        pre_assign_rhs(expr);
+        pre_assign_lhs(result);
 
         //Perform the real evaluation, selected by TMP
         assign_evaluate_impl(expr, result);
@@ -457,7 +482,8 @@ namespace standard_evaluator {
     template <typename E, typename R, cpp_enable_if(!is_temporary_expr<E>::value && !decay_traits<E>::is_linear)>
     void assign_evaluate(E&& expr, R&& result) {
         //Evaluate sub parts, if any
-        pre_assign(expr);
+        pre_assign_rhs(expr);
+        pre_assign_lhs(result);
 
         if(result.alias(expr)){
             auto tmp_result = force_temporary(result);
@@ -480,7 +506,8 @@ namespace standard_evaluator {
      */
     template <typename E, typename R, cpp_enable_if(is_temporary_unary_expr<E>::value)>
     void assign_evaluate(E&& expr, R&& result) {
-        pre_assign(expr.a());
+        pre_assign_rhs(expr.a());
+        pre_assign_lhs(result);
 
         expr.direct_evaluate(std::forward<R>(result));
 
@@ -492,8 +519,9 @@ namespace standard_evaluator {
      */
     template <typename E, typename R, cpp_enable_if(is_temporary_binary_expr<E>::value)>
     void assign_evaluate(E&& expr, R&& result) {
-        pre_assign(expr.a());
-        pre_assign(expr.b());
+        pre_assign_rhs(expr.a());
+        pre_assign_rhs(expr.b());
+        pre_assign_lhs(result);
 
         expr.direct_evaluate(result);
 
@@ -543,7 +571,7 @@ void assign_evaluate(Expr&& expr, Result&& result) {
 template <typename Expr, typename Result, cpp_enable_if(detail::is_direct_transpose<Expr, Result>::value)>
 void assign_evaluate(Expr&& expr, Result&& result) {
     // Make sure we have the data in CPU
-    standard_evaluator::pre_assign(expr);
+    standard_evaluator::pre_assign_rhs(expr);
     standard_evaluator::post_assign_force(expr);
 
     // Perform transpose in memory
@@ -1157,7 +1185,7 @@ void mod_evaluate(Expr&& expr, Result&& result) {
  */
 template <typename Expr>
 void force(Expr&& expr) {
-    standard_evaluator::pre_assign(expr);
+    standard_evaluator::pre_assign_rhs(expr);
     standard_evaluator::post_assign_force(expr);
 }
 

@@ -407,6 +407,14 @@ struct temporary_expr_un : temporary_expr<D, T, R> {
      * \brief Apply the given visitor to this expression and its descendants.
      * \param visitor The visitor to apply
      */
+    void visit(const detail::back_propagate_visitor& visitor){
+        _a.visit(visitor);
+    }
+
+    /*!
+     * \brief Apply the given visitor to this expression and its descendants.
+     * \param visitor The visitor to apply
+     */
     void visit(const detail::gpu_clean_visitor& visitor){
         _a.visit(visitor);
 
@@ -530,6 +538,15 @@ struct temporary_expr_bin : temporary_expr<D, T, R> {
     void visit(const detail::temporary_allocator_visitor& visitor){
         this->allocate_temporary();
 
+        _a.visit(visitor);
+        _b.visit(visitor);
+    }
+
+    /*!
+     * \brief Apply the given visitor to this expression and its descendants.
+     * \param visitor The visitor to apply
+     */
+    void visit(const detail::back_propagate_visitor& visitor){
         _a.visit(visitor);
         _b.visit(visitor);
     }

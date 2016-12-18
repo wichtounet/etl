@@ -346,6 +346,14 @@ public:
      * \brief Apply the given visitor to this expression and its descendants.
      * \param visitor The visitor to apply
      */
+    void visit(const detail::back_propagate_visitor& visitor) const {
+        cpp_unused(visitor);
+    }
+
+    /*!
+     * \brief Apply the given visitor to this expression and its descendants.
+     * \param visitor The visitor to apply
+     */
     void visit(const detail::evaluator_visitor& visitor) const {
         cpp_unused(visitor);
     }

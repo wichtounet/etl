@@ -262,9 +262,24 @@ struct sub_view <T, std::enable_if_t<!fast_sub_view_able<T>::value>> :
      * \brief Apply the given visitor to this expression and its descendants.
      * \param visitor The visitor to apply
      */
-    template<typename V>
-    void visit(V&& visitor){
-        sub_expr.visit(std::forward<V>(visitor));
+    void visit(const detail::gpu_clean_visitor& visitor){
+        sub_expr.visit(visitor);
+    }
+
+    /*!
+     * \brief Apply the given visitor to this expression and its descendants.
+     * \param visitor The visitor to apply
+     */
+    void visit(const detail::back_propagate_visitor& visitor){
+        sub_expr.visit(visitor);
+    }
+
+    /*!
+     * \brief Apply the given visitor to this expression and its descendants.
+     * \param visitor The visitor to apply
+     */
+    void visit(const detail::temporary_allocator_visitor& visitor){
+        sub_expr.visit(visitor);
     }
 
     /*!
@@ -586,9 +601,25 @@ struct sub_view <T, std::enable_if_t<fast_sub_view_able<T>::value>> :
      * \brief Apply the given visitor to this expression and its descendants.
      * \param visitor The visitor to apply
      */
-    template<typename V>
-    void visit(V&& visitor){
-        sub_expr.visit(std::forward<V>(visitor));
+    void visit(const detail::temporary_allocator_visitor& visitor){
+        sub_expr.visit(visitor);
+    }
+
+    /*!
+     * \brief Apply the given visitor to this expression and its descendants.
+     * \param visitor The visitor to apply
+     */
+    void visit(const detail::gpu_clean_visitor& visitor){
+        sub_expr.visit(visitor);
+    }
+
+    /*!
+     * \brief Apply the given visitor to this expression and its descendants.
+     * \param visitor The visitor to apply
+     */
+    void visit(const detail::back_propagate_visitor& visitor){
+        sub_expr.visit(visitor);
+        late_init();
     }
 
     /*!
@@ -599,7 +630,6 @@ struct sub_view <T, std::enable_if_t<fast_sub_view_able<T>::value>> :
         bool old_need_value = visitor.need_value;
         visitor.need_value = true;
         sub_expr.visit(visitor);
-        late_init();
         visitor.need_value = old_need_value;
     }
 };
