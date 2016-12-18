@@ -52,8 +52,6 @@ template <typename C>
 void inplace_rectangular_transpose(C&& mat) {
     auto copy = force_temporary(mat);
 
-    auto data = mat.memory_start();
-
     //Dimensions prior to transposition
     const size_t N = etl::dim<0>(mat);
     const size_t M = etl::dim<1>(mat);
@@ -62,12 +60,12 @@ void inplace_rectangular_transpose(C&& mat) {
         size_t j = 0;
 
         for (; j + 1 < M; j += 2) {
-            data[(j + 0) * N + i] = copy(i, (j + 0));
-            data[(j + 1) * N + i] = copy(i, (j + 1));
+            mat(j + 0, i) = copy(i, (j + 0));
+            mat(j + 1, i) = copy(i, (j + 1));
         }
 
         if (j < M) {
-            data[j * N + i] = copy(i, j);
+            mat(j, i) = copy(i, j);
         }
     }
 }
@@ -105,11 +103,8 @@ void real_inplace(C&& mat) {
  */
 template <typename A, typename C>
 void transpose(A&& a, C&& c) {
-    auto mem_c = c.memory_start();
-    auto mem_a = a.memory_start();
-
     // Delegate aliasing transpose to inplace algorithm
-    if (mem_c == mem_a) {
+    if (a.alias(c)) {
         if (etl::dim<0>(a) == etl::dim<1>(a)) {
             inplace_square_transpose(c);
         } else {
@@ -124,25 +119,25 @@ void transpose(A&& a, C&& c) {
                 size_t j = 0;
 
                 for (; j + 3 < n; j += 4) {
-                    mem_c[(j + 0) * m + i] = mem_a[i * n + (j + 0)];
-                    mem_c[(j + 1) * m + i] = mem_a[i * n + (j + 1)];
-                    mem_c[(j + 2) * m + i] = mem_a[i * n + (j + 2)];
-                    mem_c[(j + 3) * m + i] = mem_a[i * n + (j + 3)];
+                    c(j + 0, i) = a(i, j + 0);
+                    c(j + 1, i) = a(i, j + 1);
+                    c(j + 2, i) = a(i, j + 2);
+                    c(j + 3, i) = a(i, j + 3);
                 }
 
                 for (; j + 1 < n; j += 2) {
-                    mem_c[(j + 0) * m + i] = mem_a[i * n + (j + 0)];
-                    mem_c[(j + 1) * m + i] = mem_a[i * n + (j + 1)];
+                    c(j + 0, i) = a(i, j + 0);
+                    c(j + 1, i) = a(i, j + 1);
                 }
 
                 if (j < n) {
-                    mem_c[j * m + i] = mem_a[i * n + j];
+                    c(j, i) = a(i, j);
                 }
             }
         } else {
             for (size_t j = 0; j < n; ++j) {
                 for (size_t i = 0; i < m; ++i) {
-                    mem_c[i * n + j] = mem_a[j * m + i];
+                    c(i, j) = a(j, i);
                 }
             }
         }
