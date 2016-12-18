@@ -443,7 +443,7 @@ struct sub_view <T, std::enable_if_t<fast_sub_view_able<T>::value>> :
      * \return A reference to the element at position i
      */
     template <cpp_enable_if_cst((n_dimensions == 1))>
-    value_type& operator()(size_t i){
+    value_type& operator()(size_t i) noexcept {
         return memory[i];
     }
 
@@ -453,7 +453,7 @@ struct sub_view <T, std::enable_if_t<fast_sub_view_able<T>::value>> :
      * \return A const reference to the element at position i
      */
     template <cpp_enable_if_cst((n_dimensions == 1))>
-    const value_type& operator()(size_t i) const {
+    const value_type& operator()(size_t i) const noexcept {
         return memory[i];
     }
 
@@ -463,7 +463,7 @@ struct sub_view <T, std::enable_if_t<fast_sub_view_able<T>::value>> :
      * \return A reference to the element at position i
      */
     template <cpp_enable_if_cst((n_dimensions == 2))>
-    value_type& operator()(size_t i, size_t j){
+    value_type& operator()(size_t i, size_t j) noexcept {
         return memory[i * etl::dim<2>(sub_expr) + j];
     }
 
@@ -473,7 +473,7 @@ struct sub_view <T, std::enable_if_t<fast_sub_view_able<T>::value>> :
      * \return A const reference to the element at position i
      */
     template <cpp_enable_if_cst((n_dimensions == 2))>
-    const value_type& operator()(size_t i, size_t j) const {
+    const value_type& operator()(size_t i, size_t j) const noexcept {
         return memory[i * etl::dim<2>(sub_expr) + j];
     }
 
@@ -715,7 +715,7 @@ struct etl_traits<etl::sub_view<T>> {
      * \param v The expression to get the size for
      * \returns the size of the given expression
      */
-    static std::size_t size(const expr_t& v) {
+    static std::size_t size(const expr_t& v) noexcept {
         return etl_traits<sub_expr_t>::size(v.value()) / etl_traits<sub_expr_t>::dim(v.value(), 0);
     }
 
@@ -725,7 +725,7 @@ struct etl_traits<etl::sub_view<T>> {
      * \param d The dimension to get
      * \return The dth dimension of the given expression
      */
-    static std::size_t dim(const expr_t& v, std::size_t d) {
+    static std::size_t dim(const expr_t& v, std::size_t d) noexcept {
         return etl_traits<sub_expr_t>::dim(v.value(), d + 1);
     }
 
@@ -733,7 +733,7 @@ struct etl_traits<etl::sub_view<T>> {
      * \brief Returns the size of an expression of this fast type.
      * \returns the size of an expression of this fast type.
      */
-    static constexpr std::size_t size() {
+    static constexpr std::size_t size() noexcept {
         return etl_traits<sub_expr_t>::size() / etl_traits<sub_expr_t>::template dim<0>();
     }
 
@@ -743,7 +743,7 @@ struct etl_traits<etl::sub_view<T>> {
      * \return the Dth dimension of an expression of this type
      */
     template <std::size_t D>
-    static constexpr std::size_t dim() {
+    static constexpr std::size_t dim() noexcept {
         return etl_traits<sub_expr_t>::template dim<D + 1>();
     }
 
@@ -751,7 +751,7 @@ struct etl_traits<etl::sub_view<T>> {
      * \brief Returns the number of expressions for this type
      * \return the number of dimensions of this type
      */
-    static constexpr std::size_t dimensions() {
+    static constexpr std::size_t dimensions() noexcept {
         return etl_traits<sub_expr_t>::dimensions() - 1;
     }
 };

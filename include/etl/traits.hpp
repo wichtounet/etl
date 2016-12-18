@@ -760,7 +760,7 @@ constexpr std::size_t subsize(const E& expr) noexcept {
  * \return the Dth dimension of e
  */
 template <std::size_t D, typename E, cpp_disable_if(decay_traits<E>::is_fast)>
-std::size_t dim(const E& e) {
+std::size_t dim(const E& e) noexcept {
     return etl_traits<E>::dim(e, D);
 }
 
@@ -771,7 +771,7 @@ std::size_t dim(const E& e) {
  * \return the dth dimension of e
  */
 template <typename E>
-std::size_t dim(const E& e, std::size_t d) {
+std::size_t dim(const E& e, std::size_t d) noexcept {
     return etl_traits<E>::dim(e, d);
 }
 
