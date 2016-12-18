@@ -52,6 +52,12 @@ inline void cublas_geam(cublasHandle_t handle, cublasOperation_t transa, cublasO
                 reinterpret_cast<cuDoubleComplex*>(C), ldc);
 }
 
+/*!
+ * \brief Compute the matrix mutplication of a and b and store the result in c
+ * param a The lhs of the multiplication
+ * param b The rhs of the multiplication
+ * param c The result
+ */
 template <typename A, typename B, typename C, cpp_enable_if(all_single_precision<A, B, C>::value)>
 void gemm(A&& a, B&& b, C&& c) {
     decltype(auto) handle = start_cublas();
@@ -96,6 +102,12 @@ void gemm(A&& a, B&& b, C&& c) {
     }
 }
 
+/*!
+ * \brief Compute the matrix mutplication of a and b and store the result in c
+ * param a The lhs of the multiplication
+ * param b The rhs of the multiplication
+ * param c The result
+ */
 template <typename A, typename B, typename C, cpp_enable_if(all_double_precision<A, B, C>::value)>
 void gemm(A&& a, B&& b, C&& c) {
     decltype(auto) handle = start_cublas();
@@ -140,6 +152,12 @@ void gemm(A&& a, B&& b, C&& c) {
     }
 }
 
+/*!
+ * \brief Compute the matrix mutplication of a and b and store the result in c
+ * param a The lhs of the multiplication
+ * param b The rhs of the multiplication
+ * param c The result
+ */
 template <typename A, typename B, typename C, cpp_enable_if(all_complex_single_precision<A, B, C>::value)>
 void gemm(A&& a, B&& b, C&& c) {
     decltype(auto) handle = start_cublas();
@@ -184,6 +202,12 @@ void gemm(A&& a, B&& b, C&& c) {
     }
 }
 
+/*!
+ * \brief Compute the matrix mutplication of a and b and store the result in c
+ * param a The lhs of the multiplication
+ * param b The rhs of the multiplication
+ * param c The result
+ */
 template <typename A, typename B, typename C, cpp_enable_if(all_complex_double_precision<A, B, C>::value)>
 void gemm(A&& a, B&& b, C&& c) {
     decltype(auto) handle = start_cublas();
@@ -228,6 +252,12 @@ void gemm(A&& a, B&& b, C&& c) {
     }
 }
 
+/*!
+ * \brief Compute the matrix-vector mutplication of a and b and store the result in c
+ * param a The lhs of the multiplication
+ * param b The rhs of the multiplication
+ * param c The result
+ */
 template <typename A, typename B, typename C, cpp_enable_if(all_single_precision<A, B, C>::value)>
 void gemv(A&& a, B&& b, C&& c) {
     decltype(auto) handle = start_cublas();
@@ -274,6 +304,12 @@ void gemv(A&& a, B&& b, C&& c) {
     c_gpu.gpu_copy_from();
 }
 
+/*!
+ * \brief Compute the matrix-vector mutplication of a and b and store the result in c
+ * param a The lhs of the multiplication
+ * param b The rhs of the multiplication
+ * param c The result
+ */
 template <typename A, typename B, typename C, cpp_enable_if(all_double_precision<A, B, C>::value)>
 void gemv(A&& a, B&& b, C&& c) {
     decltype(auto) handle = start_cublas();
@@ -320,6 +356,12 @@ void gemv(A&& a, B&& b, C&& c) {
     c_gpu.gpu_copy_from();
 }
 
+/*!
+ * \brief Compute the matrix-vector mutplication of a and b and store the result in c
+ * param a The lhs of the multiplication
+ * param b The rhs of the multiplication
+ * param c The result
+ */
 template <typename A, typename B, typename C, cpp_enable_if(all_complex_single_precision<A, B, C>::value)>
 void gemv(A&& a, B&& b, C&& c) {
     decltype(auto) handle = start_cublas();
@@ -366,6 +408,12 @@ void gemv(A&& a, B&& b, C&& c) {
     c_gpu.gpu_copy_from();
 }
 
+/*!
+ * \brief Compute the matrix-vector mutplication of a and b and store the result in c
+ * param a The lhs of the multiplication
+ * param b The rhs of the multiplication
+ * param c The result
+ */
 template <typename A, typename B, typename C, cpp_enable_if(all_complex_double_precision<A, B, C>::value)>
 void gemv(A&& a, B&& b, C&& c) {
     decltype(auto) handle = start_cublas();
@@ -412,6 +460,12 @@ void gemv(A&& a, B&& b, C&& c) {
     c_gpu.gpu_copy_from();
 }
 
+/*!
+ * \brief Compute the vector-matrix mutplication of a and b and store the result in c
+ * param a The lhs of the multiplication
+ * param b The rhs of the multiplication
+ * param c The result
+ */
 template <typename A, typename B, typename C, cpp_enable_if(all_single_precision<A, B, C>::value)>
 void gevm(A&& a, B&& b, C&& c) {
     decltype(auto) handle = start_cublas();
@@ -458,6 +512,12 @@ void gevm(A&& a, B&& b, C&& c) {
     c_gpu.gpu_copy_from();
 }
 
+/*!
+ * \brief Compute the vector-matrix mutplication of a and b and store the result in c
+ * param a The lhs of the multiplication
+ * param b The rhs of the multiplication
+ * param c The result
+ */
 template <typename A, typename B, typename C, cpp_enable_if(all_double_precision<A, B, C>::value)>
 void gevm(A&& a, B&& b, C&& c) {
     decltype(auto) handle = start_cublas();
@@ -504,6 +564,12 @@ void gevm(A&& a, B&& b, C&& c) {
     c_gpu.gpu_copy_from();
 }
 
+/*!
+ * \brief Compute the vector-matrix mutplication of a and b and store the result in c
+ * param a The lhs of the multiplication
+ * param b The rhs of the multiplication
+ * param c The result
+ */
 template <typename A, typename B, typename C, cpp_enable_if(all_complex_single_precision<A, B, C>::value)>
 void gevm(A&& a, B&& b, C&& c) {
     decltype(auto) handle = start_cublas();
@@ -550,6 +616,12 @@ void gevm(A&& a, B&& b, C&& c) {
     c_gpu.gpu_copy_from();
 }
 
+/*!
+ * \brief Compute the vector-matrix mutplication of a and b and store the result in c
+ * param a The lhs of the multiplication
+ * param b The rhs of the multiplication
+ * param c The result
+ */
 template <typename A, typename B, typename C, cpp_enable_if(all_complex_double_precision<A, B, C>::value)>
 void gevm(A&& a, B&& b, C&& c) {
     decltype(auto) handle = start_cublas();

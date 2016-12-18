@@ -263,6 +263,12 @@ void conv4_valid(const opaque_memory<T,4>& input, const opaque_memory<T,4>& kern
     conv4_valid_set(input, kernel, conv, s1, s2, p1, p2, CUDNN_CONVOLUTION);
 }
 
+/*!
+ * \brief cudnn implementation of a 4D 'valid' convolution C = I * K, with flipped weights
+ * \param input The input matrix
+ * \param kernel The kernel matrix
+ * \param conv The output matrix
+ */
 template <typename T>
 void conv4_valid_flipped(const opaque_memory<T,4>& input, const opaque_memory<T,4>& kernel, const opaque_memory<T,4>& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
     conv4_valid_set(input, kernel, conv, s1, s2, p1, p2, CUDNN_CROSS_CORRELATION);
@@ -341,6 +347,14 @@ void conv4_valid_filter(const opaque_memory<T,4>& input, const opaque_memory<T,4
     conv4_valid_filter_set(input, kernel, conv, s1, s2, p1, p2, CUDNN_CONVOLUTION);
 }
 
+/*!
+ * \brief AVX implementation of a 4D 'valid' convolution C = I * K, where the output
+ * are considered to be kernels, with flipped weights
+ *
+ * \param input The input matrix
+ * \param kernel The kernel matrix
+ * \param conv The output matrix
+ */
 template <typename T>
 void conv4_valid_filter_flipped(const opaque_memory<T,4>& input, const opaque_memory<T,4>& kernel, const opaque_memory<T,4>& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
     conv4_valid_filter_set(input, kernel, conv, s1, s2, p1, p2, CUDNN_CROSS_CORRELATION);
@@ -415,6 +429,12 @@ void conv2_full(const opaque_memory<T,2>& input, const opaque_memory<T,2>& kerne
     conv2_full_set(input, kernel, conv, CUDNN_CROSS_CORRELATION);
 }
 
+/*!
+ * \brief cudnn implementation of a 2D 'full' convolution C = I * K
+ * \param input The input matrix
+ * \param kernel The kernel matrix
+ * \param conv The output matrix
+ */
 template <typename T>
 void conv2_full_flipped(const opaque_memory<T,2>& input, const opaque_memory<T,2>& kernel, const opaque_memory<T,2>& conv) {
     conv2_full_set(input, kernel, conv, CUDNN_CONVOLUTION);
@@ -489,6 +509,12 @@ void conv4_full(const opaque_memory<T,4>& input, const opaque_memory<T,4>& kerne
     conv4_full_set(input, kernel, conv, CUDNN_CROSS_CORRELATION);
 }
 
+/*!
+ * \brief cudnn implementation of a 2D 'valid' convolution C = I * K, with multiple kernels
+ * \param input The input matrix
+ * \param kernel The kernel matrix
+ * \param conv The output matrix
+ */
 template <typename T>
 void conv4_full_flipped(const opaque_memory<T,4>& input, const opaque_memory<T,4>& kernel, const opaque_memory<T,4>& conv) {
     conv4_full_set(input, kernel, conv, CUDNN_CONVOLUTION);
@@ -578,6 +604,12 @@ void conv2_valid_multi(const opaque_memory<T,2>& input, const opaque_memory<T,3>
     conv2_valid_multi_set(input, kernel, conv, s1, s2, p1, p2, CUDNN_CONVOLUTION);
 }
 
+/*!
+ * \brief Standard implementation of a 2D 'valid' convolution C = I * K, with multiple flipped kernels
+ * \param input The input matrix
+ * \param kernel The kernel matrix
+ * \param conv The output matrix
+ */
 template <typename T>
 void conv2_valid_multi_flipped(const opaque_memory<T,2>& input, const opaque_memory<T,3>& kernel, const opaque_memory<T,3>& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
     conv2_valid_multi_set(input, kernel, conv, s1, s2, p1, p2, CUDNN_CROSS_CORRELATION);
