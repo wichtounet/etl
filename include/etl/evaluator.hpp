@@ -586,6 +586,9 @@ void assign_evaluate(Expr&& expr, Result&& result) {
 
     // Perform transpose in memory
     detail::transpose::apply(expr.value().value(), result);
+
+    // Make sure the data is on CPU after the expression
+    standard_evaluator::post_assign(expr, result);
 }
 
 /*!
