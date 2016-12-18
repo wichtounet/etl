@@ -22,19 +22,67 @@ namespace cublas {
 
 #ifdef ETL_CUBLAS_MODE
 
-using cfloat  = std::complex<float>;
-using cdouble = std::complex<double>;
+using cfloat  = std::complex<float>;  ///< Complex float type
+using cdouble = std::complex<double>; ///< Complex double type
 
+/*!
+ * \brief GPU Transpose (single-precision)
+ * \param handle The cublas handle
+ * \param transa The operation on a
+ * \param transb The operation on b
+ * \param m The first dimension of a
+ * \param n The second dimension of a
+ * \param alpha The multiplicator of a
+ * \param A A pointer to a's memory
+ * \param lda The leading dimension of a
+ * \param beta The multiplicator of b
+ * \param B A pointer to b's memory
+ * \param ldb The leading dimension of b
+ * \param C A pointer to c's memory
+ * \param ldc The leading dimension of c
+ */
 inline void cublas_geam(cublasHandle_t handle, cublasOperation_t transa, cublasOperation_t transb, int m, int n,
                         const float* alpha, const float* A, int lda, const float* beta, const float* B, int ldb, float* C, int ldc) {
     cublasSgeam(handle, transa, transb, m, n, alpha, A, lda, beta, B, ldb, C, ldc);
 }
 
+/*!
+ * \brief GPU Transpose (double-precision)
+ * \param handle The cublas handle
+ * \param transa The operation on a
+ * \param transb The operation on b
+ * \param m The first dimension of a
+ * \param n The second dimension of a
+ * \param alpha The multiplicator of a
+ * \param A A pointer to a's memory
+ * \param lda The leading dimension of a
+ * \param beta The multiplicator of b
+ * \param B A pointer to b's memory
+ * \param ldb The leading dimension of b
+ * \param C A pointer to c's memory
+ * \param ldc The leading dimension of c
+ */
 inline void cublas_geam(cublasHandle_t handle, cublasOperation_t transa, cublasOperation_t transb, int m, int n,
                         const double* alpha, const double* A, int lda, const double* beta, const double* B, int ldb, double* C, int ldc) {
     cublasDgeam(handle, transa, transb, m, n, alpha, A, lda, beta, B, ldb, C, ldc);
 }
 
+/*!
+ * \brief GPU Transpose (complex-single-precision)
+ * \param handle The cublas handle
+ * \param transa The operation on a
+ * \param transb The operation on b
+ * \param m The first dimension of a
+ * \param n The second dimension of a
+ * \param alpha The multiplicator of a
+ * \param A A pointer to a's memory
+ * \param lda The leading dimension of a
+ * \param beta The multiplicator of b
+ * \param B A pointer to b's memory
+ * \param ldb The leading dimension of b
+ * \param C A pointer to c's memory
+ * \param ldc The leading dimension of c
+ */
 inline void cublas_geam(cublasHandle_t handle, cublasOperation_t transa, cublasOperation_t transb, int m, int n,
                         const cfloat* alpha, const cfloat* A, int lda, const cfloat* beta, const cfloat* B, int ldb, cfloat* C, int ldc) {
     cublasCgeam(handle, transa, transb, m, n, reinterpret_cast<const cuComplex*>(alpha),
@@ -43,6 +91,22 @@ inline void cublas_geam(cublasHandle_t handle, cublasOperation_t transa, cublasO
                 reinterpret_cast<cuComplex*>(C), ldc);
 }
 
+/*!
+ * \brief GPU Transpose (complex-double-precision)
+ * \param handle The cublas handle
+ * \param transa The operation on a
+ * \param transb The operation on b
+ * \param m The first dimension of a
+ * \param n The second dimension of a
+ * \param alpha The multiplicator of a
+ * \param A A pointer to a's memory
+ * \param lda The leading dimension of a
+ * \param beta The multiplicator of b
+ * \param B A pointer to b's memory
+ * \param ldb The leading dimension of b
+ * \param C A pointer to c's memory
+ * \param ldc The leading dimension of c
+ */
 inline void cublas_geam(cublasHandle_t handle, cublasOperation_t transa, cublasOperation_t transb, int m, int n,
                         const cdouble* alpha, const cdouble* A, int lda, const cdouble* beta,
                         const cdouble* B, int ldb, cdouble* C, int ldc) {
