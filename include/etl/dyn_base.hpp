@@ -310,15 +310,15 @@ public:
  */
 template <typename Derived, typename T, order SO, std::size_t D>
 struct dense_dyn_base : dyn_base<T, D> {
-    using value_type        = T;
-    using base_type         = dyn_base<T, D>;
-    using derived_t         = Derived;
+    using value_type        = T;                 ///< The type of the contained values
+    using base_type         = dyn_base<T, D>;    ///< The base type
+    using derived_t         = Derived;           ///< The derived type
     using memory_type       = value_type*;       ///< The memory type
     using const_memory_type = const value_type*; ///< The const memory type
     using iterator          = memory_type;       ///< The type of iterator
     using const_iterator    = const_memory_type; ///< The type of const iterator
 
-    using dimension_storage_impl = typename base_type::dimension_storage_impl;
+    using dimension_storage_impl = typename base_type::dimension_storage_impl; ///< The storage type used to store the dimensions
 
     static constexpr std::size_t n_dimensions = D;  ///< The number of dimensions
     static constexpr order storage_order      = SO; ///< The storage order
