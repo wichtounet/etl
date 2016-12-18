@@ -167,8 +167,6 @@ void transpose(A&& a, C&& c) {
 
     static constexpr bool row_major = decay_traits<A>::storage_order == order::RowMajor;
 
-    static_assert(decay_traits<A>::storage_order == decay_traits<C>::storage_order, "transpose only for same A/B storage order");
-
     auto alpha = value_t<A>(1.0);
     auto beta  = value_t<A>(0.0);
 
