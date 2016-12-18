@@ -327,7 +327,10 @@ struct sub_view <T, std::enable_if_t<fast_sub_view_able<T>::value>> :
     using iterable_base_type::begin;
     using iterable_base_type::end;
 
+    static_assert(decay_traits<sub_type>::dimensions() > 1, "sub_view<T, true> should only be done with Matrices >1D");
     static_assert(decay_traits<sub_type>::storage_order == order::RowMajor, "sub_view<T, true> should only be done with RowMajor");
+
+    static constexpr size_t n_dimensions = decay_traits<sub_type>::dimensions() - 1;
 
     mutable decltype(sub_expr.memory_start()) memory;
 
@@ -419,7 +422,7 @@ struct sub_view <T, std::enable_if_t<fast_sub_view_able<T>::value>> :
      * \param args The indices
      * \return a reference to the element at the given position.
      */
-    template <typename... S, cpp_enable_if((sizeof...(S) + 1 == decay_traits<sub_type>::dimensions()))>
+    template <typename... S, cpp_enable_if((sizeof...(S) == n_dimensions && sizeof...(S) > 2))>
     ETL_STRONG_INLINE(const_return_type) operator()(S... args) const {
         return sub_expr(i, static_cast<std::size_t>(args)...);
     }
@@ -429,9 +432,49 @@ struct sub_view <T, std::enable_if_t<fast_sub_view_able<T>::value>> :
      * \param args The indices
      * \return a reference to the element at the given position.
      */
-    template <typename... S, cpp_enable_if((sizeof...(S) + 1 == decay_traits<sub_type>::dimensions()))>
+    template <typename... S, cpp_enable_if((sizeof...(S) == n_dimensions && sizeof...(S) > 2))>
     ETL_STRONG_INLINE(return_type) operator()(S... args) {
         return sub_expr(i, static_cast<std::size_t>(args)...);
+    }
+
+    /*!
+     * \brief Access to the element at position (i)
+     * \param i The index of the first dimension
+     * \return A reference to the element at position i
+     */
+    template <cpp_enable_if_cst((n_dimensions == 1))>
+    value_type& operator()(size_t i){
+        return memory[i];
+    }
+
+    /*!
+     * \brief Access to the element at position (i)
+     * \param i The index of the first dimension
+     * \return A const reference to the element at position i
+     */
+    template <cpp_enable_if_cst((n_dimensions == 1))>
+    const value_type& operator()(size_t i) const {
+        return memory[i];
+    }
+
+    /*!
+     * \brief Access to the element at position (i)
+     * \param i The index of the first dimension
+     * \return A reference to the element at position i
+     */
+    template <cpp_enable_if_cst((n_dimensions == 2))>
+    value_type& operator()(size_t i, size_t j){
+        return memory[i * etl::dim<2>(sub_expr) + j];
+    }
+
+    /*!
+     * \brief Access to the element at position (i)
+     * \param i The index of the first dimension
+     * \return A const reference to the element at position i
+     */
+    template <cpp_enable_if_cst((n_dimensions == 2))>
+    const value_type& operator()(size_t i, size_t j) const {
+        return memory[i * etl::dim<2>(sub_expr) + j];
     }
 
     /*!
@@ -439,7 +482,7 @@ struct sub_view <T, std::enable_if_t<fast_sub_view_able<T>::value>> :
      * \param i The index to use
      * \return a sub view of the matrix at position i.
      */
-    template <typename TT = sub_type, cpp_enable_if((decay_traits<TT>::dimensions() > 2))>
+    template <cpp_enable_if_cst((n_dimensions > 1))>
     auto operator()(std::size_t i) const {
         return sub(*this, i);
     }
