@@ -315,8 +315,8 @@ struct sub_view <T, std::enable_if_t<fast_sub_view_able<T>::value>> :
     using const_memory_type  = const_memory_t<sub_type>;                             ///< The const memory access type
     using return_type        = return_helper<sub_type, decltype(sub_expr[0])>;       ///< The type returned by the view
     using const_return_type  = const_return_helper<sub_type, decltype(sub_expr[0])>; ///< The const type return by the view
-    using iterator           = value_type*;                                          /// The iterator type
-    using const_iterator     = const value_type*;                                    /// The const iterator type
+    using iterator           = value_type*;                                          ///< The iterator type
+    using const_iterator     = const value_type*;                                    ///< The const iterator type
 
     /*!
      * \brief The vectorization type for V
