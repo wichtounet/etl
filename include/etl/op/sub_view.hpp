@@ -34,8 +34,6 @@ struct sub_view <T, std::enable_if_t<!fast_sub_view_able<T>::value>> final :
     const size_t i;          ///< The index
     const size_t sub_offset; ///< The sub size
 
-    mutable gpu_handler<value_t<T>> _gpu_memory_handler; ///< The GPU memory handler
-
     using this_type          = sub_view<T>;                                          ///< The type of this expression
     using iterable_base_type = iterable<this_type, false>;                           ///< The iterable base type
     using sub_type           = T;                                                    ///< The sub type
