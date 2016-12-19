@@ -70,7 +70,7 @@ struct slice_view;
 template <typename T, std::size_t... Dims>
 struct fast_matrix_view;
 
-template <typename T, size_t D>
+template <typename T, size_t D, typename Enable = void>
 struct dyn_matrix_view;
 
 } //end of namespace etl

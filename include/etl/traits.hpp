@@ -44,8 +44,8 @@ struct is_sparse_matrix_impl<sparse_matrix_impl<V1, V2, V3>> : std::true_type {}
 template <typename T>
 struct is_dyn_matrix_view : std::false_type {};
 
-template <typename E, std::size_t... R>
-struct is_dyn_matrix_view<dyn_matrix_view<E, R...>> : std::true_type {};
+template <typename E, std::size_t D, typename Enable>
+struct is_dyn_matrix_view<dyn_matrix_view<E, D, Enable>> : std::true_type {};
 
 template <typename T>
 struct is_selected_expr_impl : std::false_type {};
