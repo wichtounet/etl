@@ -42,6 +42,12 @@ template <typename V1, sparse_storage V2, std::size_t V3>
 struct is_sparse_matrix_impl<sparse_matrix_impl<V1, V2, V3>> : std::true_type {};
 
 template <typename T>
+struct is_dyn_matrix_view : std::false_type {};
+
+template <typename E, std::size_t... R>
+struct is_dyn_matrix_view<dyn_matrix_view<E, R...>> : std::true_type {};
+
+template <typename T>
 struct is_selected_expr_impl : std::false_type {};
 
 template <typename Selector, Selector V, typename Expr>
@@ -178,8 +184,17 @@ using is_timed_expr = cpp::is_specialization_of<etl::timed_expr, std::decay_t<T>
 template <typename T>
 using is_wrapper_expr = cpp::or_c<is_optimized_expr<T>, is_selected_expr<T>, is_serial_expr<T>, is_parallel_expr<T>, is_timed_expr<T>>;
 
+/*!
+ * \brief Traits to test if the given expression is a dyn_matrix_view
+ */
 template <typename T>
 using is_sub_view = cpp::is_specialization_of<etl::sub_view, std::decay_t<T>>;
+
+/*!
+ * \brief Traits to test if the given expression is a dyn_matrix_view
+ */
+template <typename T>
+using is_dyn_matrix_view = traits_detail::is_dyn_matrix_view<T>;
 
 /*!
  * \brief Traits indicating if the given ETL type is a temporary unary expression.
@@ -261,7 +276,7 @@ using is_lhs = cpp::or_c<is_etl_value<T>, is_unary_expr<T>>;
  * \tparam T The type to test
  */
 template <typename T>
-using is_simple_lhs = cpp::or_c<is_etl_value_class<T>, is_unary_expr<T>, is_sub_view<T>>;
+using is_simple_lhs = cpp::or_c<is_etl_value_class<T>, is_unary_expr<T>, is_sub_view<T>, is_dyn_matrix_view<T>>;
 
 /*!
  * \brief Traits indicating if the given ETL type has direct memory access.

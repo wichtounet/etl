@@ -19,23 +19,31 @@ namespace etl {
  * \tparam T The type of expression on which the view is made
  */
 template <typename T, size_t D>
-struct dyn_matrix_view {
+struct dyn_matrix_view : iterable<dyn_matrix_view<T, D>, all_dma<T>::value> {
     T sub;                                 ///< The sub expression
     std::array<std::size_t, D> dimensions; ///< The dimensions of the view
     size_t _size;                          ///< The size of the view
 
-    using sub_type          = T;                                               ///< The sub type
-    using value_type        = value_t<sub_type>;                               ///< The value contained in the expression
-    using memory_type       = memory_t<sub_type>;                              ///< The memory acess type
-    using const_memory_type = const_memory_t<sub_type>;                        ///< The const memory access type
-    using return_type       = return_helper<sub_type, decltype(sub[0])>;       ///< The type returned by the view
-    using const_return_type = const_return_helper<sub_type, decltype(sub[0])>; ///< The const type return by the view
+    //TODO Should be shared with the sub expression
+    mutable gpu_handler<value_t<T>> _gpu_memory_handler; ///< The GPU memory handler
+
+    using this_type          = dyn_matrix_view<T, D>;                           ///< The type of this expression
+    using iterable_base_type = iterable<this_type, all_dma<T>::value>;           ///< The iterable base type
+    using sub_type           = T;                                               ///< The sub type
+    using value_type         = value_t<sub_type>;                               ///< The value contained in the expression
+    using memory_type        = memory_t<sub_type>;                              ///< The memory acess type
+    using const_memory_type  = const_memory_t<sub_type>;                        ///< The const memory access type
+    using return_type        = return_helper<sub_type, decltype(sub[0])>;       ///< The type returned by the view
+    using const_return_type  = const_return_helper<sub_type, decltype(sub[0])>; ///< The const type return by the view
 
     /*!
      * \brief The vectorization type for V
      */
     template<typename V = default_vec>
     using vec_type               = typename V::template vec_type<value_type>;
+
+    using iterable_base_type::begin;
+    using iterable_base_type::end;
 
     /*!
      * \brief Construct a new dyn_matrix_view over the given sub expression
@@ -44,6 +52,42 @@ struct dyn_matrix_view {
     template<typename... S>
     dyn_matrix_view(sub_type sub, S... dims)
             : sub(sub), dimensions{{dims...}}, _size(etl::size(sub)) {}
+
+    /*!
+     * \brief Assign the given expression to the unary expression
+     * \param e The expression to get the values from
+     * \return the unary expression
+     */
+    template <typename E, cpp_enable_if(is_etl_expr<E>::value)>
+    dyn_matrix_view& operator=(E&& e) {
+        validate_assign(*this, e);
+        assign_evaluate(std::forward<E>(e), *this);
+        return *this;
+    }
+
+    /*!
+     * \brief Assign the given expression to the unary expression
+     * \param v The expression to get the values from
+     * \return the unary expression
+     */
+    dyn_matrix_view& operator=(const value_type& v) {
+        std::fill(begin(), end(), v);
+        return *this;
+    }
+
+    /*!
+     * \brief Assign the given container to the unary expression
+     * \param vec The container to get the values from
+     * \return the unary expression
+     */
+    template <typename Container, cpp_enable_if(!is_etl_expr<Container>::value, std::is_convertible<typename Container::value_type, value_type>::value)>
+    dyn_matrix_view& operator=(const Container& vec) {
+        validate_assign(*this, vec);
+
+        std::copy(vec.begin(), vec.end(), begin());
+
+        return *this;
+    }
 
     /*!
      * \brief Returns the element at the given index
@@ -267,6 +311,23 @@ struct dyn_matrix_view {
         visitor.need_value = true;
         value().visit(visitor);
         visitor.need_value = old_need_value;
+    }
+
+    /*!
+     * \brief Return an opaque (type-erased) access to the memory of the matrix
+     * \return a structure containing the dimensions, the storage order and the memory pointers of the matrix
+     */
+    opaque_memory<value_type, decay_traits<this_type>::dimensions()> direct() const {
+        return {memory_start(), _size, dimensions, _gpu_memory_handler, decay_traits<this_type>::storage_order};
+    }
+
+    /*!
+     * \brief Returns all the Ith... dimensions in array
+     * \return an array containing the Ith... dimensions of the expression.
+     */
+    template<std::size_t... I>
+    std::array<std::size_t, decay_traits<this_type>::dimensions()> dim_array(std::index_sequence<I...>) const {
+        return dimensions;
     }
 
 private:
