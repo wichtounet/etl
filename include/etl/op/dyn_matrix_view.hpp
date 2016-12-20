@@ -438,7 +438,7 @@ public:
      */
     template<typename... S>
     const_return_type operator()(size_t f1, size_t f2, S... sizes) const {
-        return sub[detail::index<storage_order>(dimensions, f1, f2, sizes...)];
+        return sub[detail::index<storage_order>(dimensions, _size, f1, f2, sizes...)];
     }
 
     /*!
@@ -469,7 +469,7 @@ public:
      */
     template<typename... S>
     return_type operator()(size_t f1, size_t f2, S... sizes) {
-        return sub[detail::index<storage_order>(dimensions, f1, f2, sizes...)];
+        return sub[detail::index<storage_order>(dimensions, _size, f1, f2, sizes...)];
     }
 
     /*!
