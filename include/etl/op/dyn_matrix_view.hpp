@@ -80,6 +80,8 @@ struct dyn_matrix_view <T, D, std::enable_if_t<!all_dma<T>::value>> final : iter
     using const_memory_type  = const_memory_t<sub_type>;                                             ///< The const memory access type
     using return_type        = return_helper<sub_type, decltype(std::declval<sub_type>()[0])>;       ///< The type returned by the view
     using const_return_type  = const_return_helper<sub_type, decltype(std::declval<sub_type>()[0])>; ///< The const type return by the view
+    using iterator           = etl::iterator<this_type>;                                             ///< The iterator type
+    using const_iterator     = etl::iterator<const this_type>;                                       ///< The const iterator type
 
     /*!
      * \brief The vectorization type for V
@@ -343,6 +345,8 @@ struct dyn_matrix_view <T, D, std::enable_if_t<all_dma<T>::value>> final : itera
     using const_memory_type  = const_memory_t<sub_type>;                                             ///< The const memory access type
     using return_type        = return_helper<sub_type, decltype(std::declval<sub_type>()[0])>;       ///< The type returned by the view
     using const_return_type  = const_return_helper<sub_type, decltype(std::declval<sub_type>()[0])>; ///< The const type return by the view
+    using iterator           = value_type*;                                                          ///< The iterator type
+    using const_iterator     = const value_type*;                                                    ///< The const iterator type
 
     /*!
      * \brief The vectorization type for V
@@ -358,6 +362,8 @@ private:
     std::array<std::size_t, D> dimensions; ///< The dimensions of the view
     size_t _size;                          ///< The size of the view
 
+    mutable memory_type memory;
+
     //TODO Should be shared with the sub expression
     mutable gpu_handler<value_t<T>> _gpu_memory_handler; ///< The GPU memory handler
 
@@ -371,8 +377,11 @@ public:
      * \param dims The dimensions
      */
     template<typename... S>
-    dyn_matrix_view(sub_type sub, S... dims)
-            : sub(sub), dimensions{{dims...}}, _size(etl::size(sub)) {}
+    dyn_matrix_view(sub_type sub, S... dims) : sub(sub), dimensions{{dims...}}, _size(etl::size(sub)) {
+        if(!decay_traits<sub_type>::needs_evaluator_visitor){
+            this->memory = sub.memory_start();
+        }
+    }
 
     /*!
      * \brief Assign the given expression to the unary expression
@@ -416,7 +425,7 @@ public:
      * \return a reference to the element at the given index.
      */
     const_return_type operator[](std::size_t j) const {
-        return sub[j];
+        return memory[j];
     }
 
     /*!
@@ -425,7 +434,7 @@ public:
      * \return a reference to the element at the given index.
      */
     return_type operator[](std::size_t j) {
-        return sub[j];
+        return memory[j];
     }
 
     /*!
@@ -434,7 +443,7 @@ public:
      * \return a reference to the element at the given position.
      */
     const_return_type operator()(std::size_t j) const {
-        return sub[j];
+        return memory[j];
     }
 
     /*!
@@ -446,7 +455,7 @@ public:
      */
     template<typename... S>
     const_return_type operator()(size_t f1, size_t f2, S... sizes) const {
-        return sub[detail::index<storage_order>(dimensions, _size, f1, f2, sizes...)];
+        return memory[detail::index<storage_order>(dimensions, _size, f1, f2, sizes...)];
     }
 
     /*!
@@ -456,7 +465,7 @@ public:
      * \return the value at the given index.
      */
     value_type read_flat(std::size_t j) const noexcept {
-        return sub.read_flat(j);
+        return memory[j];
     }
 
     /*!
@@ -465,7 +474,7 @@ public:
      * \return a reference to the element at the given position.
      */
     return_type operator()(std::size_t j) {
-        return sub[j];
+        return memory[j];
     }
 
     /*!
@@ -477,7 +486,7 @@ public:
      */
     template<typename... S>
     return_type operator()(size_t f1, size_t f2, S... sizes) {
-        return sub[detail::index<storage_order>(dimensions, _size, f1, f2, sizes...)];
+        return memory[detail::index<storage_order>(dimensions, _size, f1, f2, sizes...)];
     }
 
     /*!
@@ -499,7 +508,7 @@ public:
      */
     template <typename V = default_vec>
     auto loadu(std::size_t x) const noexcept {
-        return sub.template loadu<V>(x);
+        return V::loadu(memory + x);
     }
 
     /*!
@@ -510,7 +519,7 @@ public:
      */
     template <typename V = default_vec>
     void stream(vec_type<V> in, std::size_t i) noexcept {
-        sub.template stream<V>(in, i);
+        return V::stream(memory + i, in);
     }
 
     /*!
@@ -532,7 +541,7 @@ public:
      */
     template <typename V = default_vec>
     void storeu(vec_type<V> in, std::size_t i) noexcept {
-        sub.template storeu<V>(in, i);
+        return V::storeu(memory + i, in);
     }
 
     /*!
@@ -550,7 +559,7 @@ public:
      * \return a pointer tot the first element in memory.
      */
     memory_type memory_start() noexcept {
-        return sub.memory_start();
+        return memory;
     }
 
     /*!
@@ -558,7 +567,7 @@ public:
      * \return a pointer tot the first element in memory.
      */
     const_memory_type memory_start() const noexcept {
-        return sub.memory_start();
+        return memory;
     }
 
     /*!
@@ -566,7 +575,7 @@ public:
      * \return a pointer tot the past-the-end element in memory.
      */
     memory_type memory_end() noexcept {
-        return sub.memory_end();
+        return memory + _size;
     }
 
     /*!
@@ -574,7 +583,7 @@ public:
      * \return a pointer tot the past-the-end element in memory.
      */
     const_memory_type memory_end() const noexcept {
-        return sub.memory_end();
+        return memory + _size;
     }
 
     // Internals
@@ -601,6 +610,11 @@ public:
      */
     void visit(const detail::back_propagate_visitor& visitor){
         sub.visit(visitor);
+
+        // It's only interesting if the sub expression is not direct
+        if(decay_traits<sub_type>::needs_evaluator_visitor){
+            this->memory = sub.memory_start();
+        }
     }
 
     /*!
@@ -619,7 +633,7 @@ public:
      * \return a structure containing the dimensions, the storage order and the memory pointers of the matrix
      */
     opaque_memory<value_type, decay_traits<this_type>::dimensions()> direct() const {
-        return {memory_start(), _size, dimensions, _gpu_memory_handler, decay_traits<this_type>::storage_order};
+        return {memory, _size, dimensions, _gpu_memory_handler, decay_traits<this_type>::storage_order};
     }
 
     /*!
