@@ -43,7 +43,7 @@ TEMPLATE_TEST_CASE_2("timed/2", "[dyn][serial]", Z, float, double) {
     a = 1.0;
     b = 0.0;
 
-    b = timed(a + a);
+    b = timed(a + b);
 
     auto text = buffer.str();
     std::cout.rdbuf(old);
