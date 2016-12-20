@@ -14,6 +14,49 @@
 
 namespace etl {
 
+namespace detail {
+
+/*!
+ * \brief Return the flat index for the element at the given position
+ * \param sizes The indices
+ * \return The flat index
+ */
+template <order O, typename Dim, typename... S>
+std::size_t index(const Dim& dimensions, size_t size, S... sizes) noexcept(assert_nothrow) {
+    //Note: Version with sizes moved to a std::array and accessed with
+    //standard loop may be faster, but need some stack space (relevant ?)
+
+    std::size_t index = 0;
+
+    if (O == order::RowMajor) {
+        std::size_t subsize = size;
+        std::size_t i       = 0;
+
+        cpp::for_each_in(
+            [&subsize, &index, &i, &dimensions](std::size_t s) {
+                cpp_assert(s < dimensions[i], "Out of bounds");
+                subsize /= dimensions[i++];
+                index += subsize * s;
+            },
+            sizes...);
+    } else {
+        std::size_t subsize = 1;
+        std::size_t i       = 0;
+
+        cpp::for_each_in(
+            [&subsize, &index, &i, &dimensions](std::size_t s) {
+                cpp_assert(s < dimensions[i], "Out of bounds");
+                index += subsize * s;
+                subsize *= dimensions[i++];
+            },
+            sizes...);
+    }
+
+    return index;
+}
+
+} // end of namespace detail
+
 /*!
  * \brief View to represent a dyn matrix in top of an expression
  * \tparam T The type of expression on which the view is made
@@ -39,13 +82,15 @@ private:
 
 public:
     using this_type          = dyn_matrix_view<T, D>;                           ///< The type of this expression
-    using iterable_base_type = iterable<this_type, false>;           ///< The iterable base type
+    using iterable_base_type = iterable<this_type, false>;                      ///< The iterable base type
     using sub_type           = T;                                               ///< The sub type
     using value_type         = value_t<sub_type>;                               ///< The value contained in the expression
     using memory_type        = memory_t<sub_type>;                              ///< The memory acess type
     using const_memory_type  = const_memory_t<sub_type>;                        ///< The const memory access type
     using return_type        = return_helper<sub_type, decltype(sub[0])>;       ///< The type returned by the view
     using const_return_type  = const_return_helper<sub_type, decltype(sub[0])>; ///< The const type return by the view
+
+    static constexpr order storage_order = decay_traits<sub_type>::storage_order; ///< The matrix storage order
 
     /*!
      * \brief The vectorization type for V
@@ -136,7 +181,7 @@ public:
      */
     template<typename... S>
     const_return_type operator()(size_t f1, size_t f2, S... sizes) const {
-        return sub[index(f1, f2, sizes...)];
+        return sub[detail::index<storage_order>(dimensions, _size, f1, f2, sizes...)];
     }
 
     /*!
@@ -167,7 +212,7 @@ public:
      */
     template<typename... S>
     return_type operator()(size_t f1, size_t f2, S... sizes) {
-        return sub[index(f1, f2, sizes...)];
+        return sub[detail::index<storage_order>(dimensions, _size, f1, f2, sizes...)];
     }
 
     /*!
@@ -271,46 +316,6 @@ public:
         sub.visit(visitor);
         visitor.need_value = old_need_value;
     }
-
-private:
-    /*!
-     * \brief Return the flat index for the element at the given position
-     * \param sizes The indices
-     * \return The flat index
-     */
-    template <typename... S>
-    std::size_t index(S... sizes) const noexcept(assert_nothrow) {
-        //Note: Version with sizes moved to a std::array and accessed with
-        //standard loop may be faster, but need some stack space (relevant ?)
-
-        std::size_t index = 0;
-
-        if (decay_traits<sub_type>::storage_order == order::RowMajor) {
-            std::size_t subsize = _size;
-            std::size_t i       = 0;
-
-            cpp::for_each_in(
-                [&subsize, &index, &i, this](std::size_t s) {
-                    cpp_assert(s < dimensions[i], "Out of bounds");
-                    subsize /= dimensions[i++];
-                    index += subsize * s;
-                },
-                sizes...);
-        } else {
-            std::size_t subsize = 1;
-            std::size_t i       = 0;
-
-            cpp::for_each_in(
-                [&subsize, &index, &i, this](std::size_t s) {
-                    cpp_assert(s < dimensions[i], "Out of bounds");
-                    index += subsize * s;
-                    subsize *= dimensions[i++];
-                },
-                sizes...);
-        }
-
-        return index;
-    }
 };
 
 /*!
@@ -341,6 +346,8 @@ public:
     using const_memory_type  = const_memory_t<sub_type>;                        ///< The const memory access type
     using return_type        = return_helper<sub_type, decltype(sub[0])>;       ///< The type returned by the view
     using const_return_type  = const_return_helper<sub_type, decltype(sub[0])>; ///< The const type return by the view
+
+    static constexpr order storage_order = decay_traits<sub_type>::storage_order; ///< The matrix storage order
 
     /*!
      * \brief The vectorization type for V
@@ -431,7 +438,7 @@ public:
      */
     template<typename... S>
     const_return_type operator()(size_t f1, size_t f2, S... sizes) const {
-        return sub[index(f1, f2, sizes...)];
+        return sub[detail::index<storage_order>(dimensions, f1, f2, sizes...)];
     }
 
     /*!
@@ -462,7 +469,7 @@ public:
      */
     template<typename... S>
     return_type operator()(size_t f1, size_t f2, S... sizes) {
-        return sub[index(f1, f2, sizes...)];
+        return sub[detail::index<storage_order>(dimensions, f1, f2, sizes...)];
     }
 
     /*!
@@ -617,44 +624,6 @@ public:
     }
 
 private:
-    /*!
-     * \brief Return the flat index for the element at the given position
-     * \param sizes The indices
-     * \return The flat index
-     */
-    template <typename... S>
-    std::size_t index(S... sizes) const noexcept(assert_nothrow) {
-        //Note: Version with sizes moved to a std::array and accessed with
-        //standard loop may be faster, but need some stack space (relevant ?)
-
-        std::size_t index = 0;
-
-        if (decay_traits<sub_type>::storage_order == order::RowMajor) {
-            std::size_t subsize = _size;
-            std::size_t i       = 0;
-
-            cpp::for_each_in(
-                [&subsize, &index, &i, this](std::size_t s) {
-                    cpp_assert(s < dimensions[i], "Out of bounds");
-                    subsize /= dimensions[i++];
-                    index += subsize * s;
-                },
-                sizes...);
-        } else {
-            std::size_t subsize = 1;
-            std::size_t i       = 0;
-
-            cpp::for_each_in(
-                [&subsize, &index, &i, this](std::size_t s) {
-                    cpp_assert(s < dimensions[i], "Out of bounds");
-                    index += subsize * s;
-                    subsize *= dimensions[i++];
-                },
-                sizes...);
-        }
-
-        return index;
-    }
 };
 
 /*!
