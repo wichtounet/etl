@@ -56,16 +56,19 @@ void inplace_rectangular_transpose(C&& mat) {
     const size_t N = etl::dim<0>(mat);
     const size_t M = etl::dim<1>(mat);
 
+    // Note: cannot use operator(i,j) for lhs because it is indexed by its
+    // previous scheme (N instead of M)
+
     for (size_t i = 0; i < N; ++i) {
         size_t j = 0;
 
         for (; j + 1 < M; j += 2) {
-            mat(j + 0, i) = copy(i, (j + 0));
-            mat(j + 1, i) = copy(i, (j + 1));
+            mat[(j + 0) * N + i] = copy(i, (j + 0));
+            mat[(j + 1) * N + i] = copy(i, (j + 1));
         }
 
         if (j < M) {
-            mat(j, i) = copy(i, j);
+            mat[j * N + i] = copy(i, j);
         }
     }
 }
@@ -114,30 +117,34 @@ void transpose(A&& a, C&& c) {
         const size_t m = etl::dim<0>(a);
         const size_t n = etl::dim<1>(a);
 
+        // Note: cannot use operator(i,j) for rhs because it is indexed by its
+        // previous scheme (M instead of N)
+
         if (decay_traits<A>::storage_order == order::RowMajor) {
+
             for (size_t i = 0; i < m; ++i) {
                 size_t j = 0;
 
                 for (; j + 3 < n; j += 4) {
-                    c(j + 0, i) = a(i, j + 0);
-                    c(j + 1, i) = a(i, j + 1);
-                    c(j + 2, i) = a(i, j + 2);
-                    c(j + 3, i) = a(i, j + 3);
+                    c[(j + 0) * m + i] = a[i * n + j + 0];
+                    c[(j + 1) * m + i] = a[i * n + j + 1];
+                    c[(j + 2) * m + i] = a[i * n + j + 2];
+                    c[(j + 3) * m + i] = a[i * n + j + 3];
                 }
 
                 for (; j + 1 < n; j += 2) {
-                    c(j + 0, i) = a(i, j + 0);
-                    c(j + 1, i) = a(i, j + 1);
+                    c[(j + 0) * m + i] = a[i * n + j + 0];
+                    c[(j + 1) * m + i] = a[i * n + j + 1];
                 }
 
                 if (j < n) {
-                    c(j, i) = a(i, j);
+                    c[(j + 0) * m + i] = a[i * n + j];
                 }
             }
         } else {
             for (size_t j = 0; j < n; ++j) {
                 for (size_t i = 0; i < m; ++i) {
-                    c(i, j) = a(j, i);
+                    c[i * n + j] = a[j * m + i];
                 }
             }
         }
