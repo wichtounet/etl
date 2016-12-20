@@ -653,7 +653,7 @@ public:
 
         // It's only interesting if the sub expression is not direct
         if(decay_traits<sub_type>::needs_evaluator_visitor){
-            this->memory = (const_cast<this_type*>(this))->sub_expr.memory_start() + i * sub_size;
+            this->memory = sub_expr.memory_start() + i * sub_size;
         }
     }
 
