@@ -28,20 +28,22 @@ struct sub_view;
 template <typename T>
 struct sub_view <T, std::enable_if_t<!fast_sub_view_able<T>::value>> final :
     iterable<sub_view<T>, false>,
+    assignable<sub_view<T>, value_t<T>>,
     inplace_assignable<sub_view<T>>
 {
     static_assert(is_etl_expr<T>::value, "sub_view<T> only works with ETL expressions");
 
-    using this_type          = sub_view<T>;                                                          ///< The type of this expression
-    using iterable_base_type = iterable<this_type, false>;                                           ///< The iterable base type
-    using sub_type           = T;                                                                    ///< The sub type
-    using value_type         = value_t<sub_type>;                                                    ///< The value contained in the expression
-    using memory_type        = memory_t<sub_type>;                                                   ///< The memory acess type
-    using const_memory_type  = const_memory_t<sub_type>;                                             ///< The const memory access type
-    using return_type        = return_helper<sub_type, decltype(std::declval<sub_type>()[0])>;       ///< The type returned by the view
-    using const_return_type  = const_return_helper<sub_type, decltype(std::declval<sub_type>()[0])>; ///< The const type return by the view
-    using iterator           = etl::iterator<this_type>;                                             ///< The iterator type
-    using const_iterator     = etl::iterator<const this_type>;                                       ///< The const iterator type
+    using this_type            = sub_view<T>;                                                          ///< The type of this expression
+    using iterable_base_type   = iterable<this_type, false>;                                           ///< The iterable base type
+    using assignable_base_type = assignable<this_type, value_t<T>>;                                    ///< The iterable base type
+    using sub_type             = T;                                                                    ///< The sub type
+    using value_type           = value_t<sub_type>;                                                    ///< The value contained in the expression
+    using memory_type          = memory_t<sub_type>;                                                   ///< The memory acess type
+    using const_memory_type    = const_memory_t<sub_type>;                                             ///< The const memory access type
+    using return_type          = return_helper<sub_type, decltype(std::declval<sub_type>()[0])>;       ///< The type returned by the view
+    using const_return_type    = const_return_helper<sub_type, decltype(std::declval<sub_type>()[0])>; ///< The const type return by the view
+    using iterator             = etl::iterator<this_type>;                                             ///< The iterator type
+    using const_iterator       = etl::iterator<const this_type>;                                       ///< The const iterator type
 
     /*!
      * \brief The vectorization type for V
@@ -49,6 +51,7 @@ struct sub_view <T, std::enable_if_t<!fast_sub_view_able<T>::value>> final :
     template<typename V = default_vec>
     using vec_type               = typename V::template vec_type<value_type>;
 
+    using assignable_base_type::operator=;
     using iterable_base_type::begin;
     using iterable_base_type::end;
 
@@ -69,42 +72,6 @@ public:
      */
     sub_view(sub_type sub_expr, std::size_t i)
             : sub_expr(sub_expr), i(i), sub_offset(i * subsize(sub_expr)) {}
-
-    /*!
-     * \brief Assign the given expression to the unary expression
-     * \param e The expression to get the values from
-     * \return the unary expression
-     */
-    template <typename E, cpp_enable_if(is_etl_expr<E>::value)>
-    sub_view& operator=(E&& e) {
-        validate_assign(*this, e);
-        assign_evaluate(std::forward<E>(e), *this);
-        return *this;
-    }
-
-    /*!
-     * \brief Assign the given expression to the unary expression
-     * \param v The expression to get the values from
-     * \return the unary expression
-     */
-    sub_view& operator=(const value_type& v) {
-        std::fill(begin(), end(), v);
-        return *this;
-    }
-
-    /*!
-     * \brief Assign the given container to the unary expression
-     * \param vec The container to get the values from
-     * \return the unary expression
-     */
-    template <typename Container, cpp_enable_if(!is_etl_expr<Container>::value, std::is_convertible<typename Container::value_type, value_type>::value)>
-    sub_view& operator=(const Container& vec) {
-        validate_assign(*this, vec);
-
-        std::copy(vec.begin(), vec.end(), begin());
-
-        return *this;
-    }
 
     /*!
      * \brief Returns the element at the given index
@@ -308,17 +275,17 @@ struct sub_view <T, std::enable_if_t<fast_sub_view_able<T>::value>> :
     static_assert(decay_traits<T>::dimensions() > 1, "sub_view<T, true> should only be done with Matrices >1D");
     static_assert(decay_traits<T>::storage_order == order::RowMajor, "sub_view<T, true> should only be done with RowMajor");
 
-    using this_type          = sub_view<T>;                                                          ///< The type of this expression
+    using this_type            = sub_view<T>;                                                          ///< The type of this expression
     using iterable_base_type   = iterable<this_type, true>;                                            ///< The iterable base type
     using assignable_base_type = assignable<this_type, value_t<T>>;                                    ///< The iterable base type
-    using sub_type           = T;                                                                    ///< The sub type
-    using value_type         = value_t<sub_type>;                                                    ///< The value contained in the expression
-    using memory_type        = memory_t<sub_type>;                                                   ///< The memory acess type
-    using const_memory_type  = const_memory_t<sub_type>;                                             ///< The const memory access type
-    using return_type        = return_helper<sub_type, decltype(std::declval<sub_type>()[0])>;       ///< The type returned by the view
-    using const_return_type  = const_return_helper<sub_type, decltype(std::declval<sub_type>()[0])>; ///< The const type return by the view
-    using iterator           = value_type*;                                                          ///< The iterator type
-    using const_iterator     = const value_type*;                                                    ///< The const iterator type
+    using sub_type             = T;                                                                    ///< The sub type
+    using value_type           = value_t<sub_type>;                                                    ///< The value contained in the expression
+    using memory_type          = memory_t<sub_type>;                                                   ///< The memory acess type
+    using const_memory_type    = const_memory_t<sub_type>;                                             ///< The const memory access type
+    using return_type          = return_helper<sub_type, decltype(std::declval<sub_type>()[0])>;       ///< The type returned by the view
+    using const_return_type    = const_return_helper<sub_type, decltype(std::declval<sub_type>()[0])>; ///< The const type return by the view
+    using iterator             = value_type*;                                                          ///< The iterator type
+    using const_iterator       = const value_type*;                                                    ///< The const iterator type
 
     /*!
      * \brief The vectorization type for V

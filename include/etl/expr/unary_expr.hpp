@@ -249,6 +249,7 @@ public:
 template <typename T, typename Expr>
 struct unary_expr<T, Expr, identity_op> :
         inplace_assignable<unary_expr<T, Expr, identity_op>>,
+        assignable<unary_expr<T, Expr, identity_op>, T>,
         comparable<unary_expr<T, Expr, identity_op>>,
         value_testable<unary_expr<T, Expr, identity_op>>,
         dim_testable<unary_expr<T, Expr, identity_op>>,
@@ -256,8 +257,6 @@ struct unary_expr<T, Expr, identity_op> :
 {
 private:
     static_assert(is_etl_expr<Expr>::value, "Only ETL expressions can be used in unary_expr");
-
-    using this_type = unary_expr<T, Expr, identity_op>; ///< The type of this expression
 
     Expr _value; ///< The sub expression
 
@@ -280,20 +279,24 @@ private:
         std::is_lvalue_reference<decltype(_value[0])>::value; ///< Indicates if the const functions returns a reference
 
 public:
-    using value_type        = T;                                                                          ///< The value type
-    using memory_type       = memory_t<Expr>;                                                             ///< The memory type
-    using const_memory_type = const_memory_t<Expr>;                                                       ///< The const memory type
-    using return_type       = std::conditional_t<non_const_return_ref, value_type&, value_type>;          ///< The type returned by the functions
-    using const_return_type = std::conditional_t<const_return_ref, const value_type&, value_type>;        ///< The const type returned by the const functions
-    using expr_t            = Expr;                                                                       ///< The sub expression type
-    using iterator          = std::conditional_t<dma, value_type*, etl::iterator<this_type>>;             ///< The iterator type
-    using const_iterator    = std::conditional_t<dma, const value_type*, etl::iterator<const this_type>>; ///< The const iterator type
+    using this_type            = unary_expr<T, Expr, identity_op>;                                           ///< The type of this expression
+    using value_type           = T;                                                                          ///< The value type
+    using assignable_base_type = assignable<this_type, value_type>;                                          ///< The assignable base type
+    using memory_type          = memory_t<Expr>;                                                             ///< The memory type
+    using const_memory_type    = const_memory_t<Expr>;                                                       ///< The const memory type
+    using return_type          = std::conditional_t<non_const_return_ref, value_type&, value_type>;          ///< The type returned by the functions
+    using const_return_type    = std::conditional_t<const_return_ref, const value_type&, value_type>;        ///< The const type returned by the const functions
+    using expr_t               = Expr;                                                                       ///< The sub expression type
+    using iterator             = std::conditional_t<dma, value_type*, etl::iterator<this_type>>;             ///< The iterator type
+    using const_iterator       = std::conditional_t<dma, const value_type*, etl::iterator<const this_type>>; ///< The const iterator type
 
     /*!
      * The vectorization type for V
      */
     template <typename V = default_vec>
     using vec_type       = typename V::template vec_type<value_type>;
+
+    using assignable_base_type::operator=;
 
     /*!
      * \brief Construct a new unary expression
@@ -305,47 +308,6 @@ public:
 
     unary_expr(const unary_expr& rhs) = default;
     unary_expr(unary_expr&& rhs) = default;
-
-    /*!
-     * \brief Assign the given expression to the unary expression
-     * \param e The expression to get the values from
-     * \return the unary expression
-     */
-    template <typename E, cpp_enable_if(non_const_return_ref, is_etl_expr<E>::value)>
-    unary_expr& operator=(E&& e) {
-        validate_assign(*this, e);
-        assign_evaluate(std::forward<E>(e), *this);
-        return *this;
-    }
-
-    /*!
-     * \brief Assign the given value to each eleemnt of the unary expression
-     * \param e The value
-     * \return the unary expression
-     */
-    unary_expr& operator=(const value_type& e) {
-        static_assert(non_const_return_ref, "Impossible to modify read-only unary_expr");
-
-        memory_set(e);
-
-        return *this;
-    }
-
-    /*!
-     * \brief Assign the given container to the unary expression
-     * \param vec The container to get the values from
-     * \return the unary expression
-     */
-    template <typename Container, cpp_enable_if(!is_etl_expr<Container>::value, std::is_convertible<typename Container::value_type, value_type>::value)>
-    unary_expr& operator=(const Container& vec) {
-        validate_assign(*this, vec);
-
-        for (std::size_t i = 0; i < size(*this); ++i) {
-            (*this)[i] = vec[i];
-        }
-
-        return *this;
-    }
 
     /*!
      * \brief Return the value on which this expression operates

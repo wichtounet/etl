@@ -69,11 +69,15 @@ struct dyn_matrix_view;
  * \tparam T The type of expression on which the view is made
  */
 template <typename T, size_t D>
-struct dyn_matrix_view <T, D, std::enable_if_t<!all_dma<T>::value>> final : iterable<dyn_matrix_view<T, D>, false> {
+struct dyn_matrix_view <T, D, std::enable_if_t<!all_dma<T>::value>> final :
+    iterable<dyn_matrix_view<T, D>, false>,
+    assignable<dyn_matrix_view<T, D>, value_t<T>>
+{
     static_assert(is_etl_expr<T>::value, "dyn_matrix_view only works with ETL expressions");
 
     using this_type          = dyn_matrix_view<T, D>;                                                ///< The type of this expression
     using iterable_base_type = iterable<this_type, false>;                                           ///< The iterable base type
+    using assignable_base_type = assignable<this_type, value_t<T>>;                                    ///< The assignable base type
     using sub_type           = T;                                                                    ///< The sub type
     using value_type         = value_t<sub_type>;                                                    ///< The value contained in the expression
     using memory_type        = memory_t<sub_type>;                                                   ///< The memory acess type
@@ -89,6 +93,7 @@ struct dyn_matrix_view <T, D, std::enable_if_t<!all_dma<T>::value>> final : iter
     template<typename V = default_vec>
     using vec_type               = typename V::template vec_type<value_type>;
 
+    using assignable_base_type::operator=;
     using iterable_base_type::begin;
     using iterable_base_type::end;
 
@@ -109,42 +114,6 @@ public:
     template<typename... S>
     dyn_matrix_view(sub_type sub, S... dims)
             : sub(sub), dimensions{{dims...}}, _size(etl::size(sub)) {}
-
-    /*!
-     * \brief Assign the given expression to the unary expression
-     * \param e The expression to get the values from
-     * \return the unary expression
-     */
-    template <typename E, cpp_enable_if(is_etl_expr<E>::value)>
-    dyn_matrix_view& operator=(E&& e) {
-        validate_assign(*this, e);
-        assign_evaluate(std::forward<E>(e), *this);
-        return *this;
-    }
-
-    /*!
-     * \brief Assign the given expression to the unary expression
-     * \param v The expression to get the values from
-     * \return the unary expression
-     */
-    dyn_matrix_view& operator=(const value_type& v) {
-        std::fill(begin(), end(), v);
-        return *this;
-    }
-
-    /*!
-     * \brief Assign the given container to the unary expression
-     * \param vec The container to get the values from
-     * \return the unary expression
-     */
-    template <typename Container, cpp_enable_if(!is_etl_expr<Container>::value, std::is_convertible<typename Container::value_type, value_type>::value)>
-    dyn_matrix_view& operator=(const Container& vec) {
-        validate_assign(*this, vec);
-
-        std::copy(vec.begin(), vec.end(), begin());
-
-        return *this;
-    }
 
     /*!
      * \brief Returns the element at the given index
@@ -334,19 +303,23 @@ public:
  * \tparam T The type of expression on which the view is made
  */
 template <typename T, size_t D>
-struct dyn_matrix_view <T, D, std::enable_if_t<all_dma<T>::value>> final : iterable<dyn_matrix_view<T, D>, true> {
+struct dyn_matrix_view <T, D, std::enable_if_t<all_dma<T>::value>> final :
+    iterable<dyn_matrix_view<T, D>, true>,
+    assignable<dyn_matrix_view<T, D>, value_t<T>>
+{
     static_assert(is_etl_expr<T>::value, "dyn_matrix_view only works with ETL expressions");
 
-    using this_type          = dyn_matrix_view<T, D>;                                                ///< The type of this expression
-    using iterable_base_type = iterable<this_type, true>;                                            ///< The iterable base type
-    using sub_type           = T;                                                                    ///< The sub type
-    using value_type         = value_t<sub_type>;                                                    ///< The value contained in the expression
-    using memory_type        = memory_t<sub_type>;                                                   ///< The memory acess type
-    using const_memory_type  = const_memory_t<sub_type>;                                             ///< The const memory access type
-    using return_type        = return_helper<sub_type, decltype(std::declval<sub_type>()[0])>;       ///< The type returned by the view
-    using const_return_type  = const_return_helper<sub_type, decltype(std::declval<sub_type>()[0])>; ///< The const type return by the view
-    using iterator           = value_type*;                                                          ///< The iterator type
-    using const_iterator     = const value_type*;                                                    ///< The const iterator type
+    using this_type            = dyn_matrix_view<T, D>;                                                ///< The type of this expression
+    using iterable_base_type   = iterable<this_type, true>;                                            ///< The iterable base type
+    using assignable_base_type = assignable<this_type, value_t<T>>;                                    ///< The assignable base type
+    using sub_type             = T;                                                                    ///< The sub type
+    using value_type           = value_t<sub_type>;                                                    ///< The value contained in the expression
+    using memory_type          = memory_t<sub_type>;                                                   ///< The memory acess type
+    using const_memory_type    = const_memory_t<sub_type>;                                             ///< The const memory access type
+    using return_type          = return_helper<sub_type, decltype(std::declval<sub_type>()[0])>;       ///< The type returned by the view
+    using const_return_type    = const_return_helper<sub_type, decltype(std::declval<sub_type>()[0])>; ///< The const type return by the view
+    using iterator             = value_type*;                                                          ///< The iterator type
+    using const_iterator       = const value_type*;                                                    ///< The const iterator type
 
     /*!
      * \brief The vectorization type for V
@@ -354,6 +327,7 @@ struct dyn_matrix_view <T, D, std::enable_if_t<all_dma<T>::value>> final : itera
     template<typename V = default_vec>
     using vec_type               = typename V::template vec_type<value_type>;
 
+    using assignable_base_type::operator=;
     using iterable_base_type::begin;
     using iterable_base_type::end;
 
@@ -381,42 +355,6 @@ public:
         if(!decay_traits<sub_type>::needs_evaluator_visitor){
             this->memory = sub.memory_start();
         }
-    }
-
-    /*!
-     * \brief Assign the given expression to the unary expression
-     * \param e The expression to get the values from
-     * \return the unary expression
-     */
-    template <typename E, cpp_enable_if(is_etl_expr<E>::value)>
-    dyn_matrix_view& operator=(E&& e) {
-        validate_assign(*this, e);
-        assign_evaluate(std::forward<E>(e), *this);
-        return *this;
-    }
-
-    /*!
-     * \brief Assign the given expression to the unary expression
-     * \param v The expression to get the values from
-     * \return the unary expression
-     */
-    dyn_matrix_view& operator=(const value_type& v) {
-        std::fill(begin(), end(), v);
-        return *this;
-    }
-
-    /*!
-     * \brief Assign the given container to the unary expression
-     * \param vec The container to get the values from
-     * \return the unary expression
-     */
-    template <typename Container, cpp_enable_if(!is_etl_expr<Container>::value, std::is_convertible<typename Container::value_type, value_type>::value)>
-    dyn_matrix_view& operator=(const Container& vec) {
-        validate_assign(*this, vec);
-
-        std::copy(vec.begin(), vec.end(), begin());
-
-        return *this;
     }
 
     /*!
