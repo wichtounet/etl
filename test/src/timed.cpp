@@ -41,7 +41,7 @@ TEMPLATE_TEST_CASE_2("timed/2", "[dyn][serial]", Z, float, double) {
     etl::dyn_vector<Z> b(10000);
 
     a = 1.0;
-    b = 0.0;
+    b = 2.0;
 
     b = timed(a + b);
 
@@ -51,7 +51,7 @@ TEMPLATE_TEST_CASE_2("timed/2", "[dyn][serial]", Z, float, double) {
     REQUIRE_DIRECT(starts_with(text, "timed(=): (V[10000] + V[10000]) took "));
     REQUIRE_EQUALS(std::string(text.end() - 3, text.end() - 1), "ns");
 
-    REQUIRE_EQUALS(b[0], 2.0);
+    REQUIRE_EQUALS(b[0], 3.0);
 }
 
 TEMPLATE_TEST_CASE_2("timed/3", "[dyn][serial]", Z, float, double) {
