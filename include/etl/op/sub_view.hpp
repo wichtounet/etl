@@ -37,9 +37,6 @@ private:
 
     friend struct etl_traits<etl::sub_view<T>>;
 
-    template <typename F_T>
-    friend std::ostream& operator<<(std::ostream& os, const sub_view<F_T>& v);
-
 public:
 
     using this_type          = sub_view<T>;                                          ///< The type of this expression
@@ -282,6 +279,16 @@ public:
         sub_expr.visit(visitor);
         visitor.need_value = old_need_value;
     }
+
+    /*!
+     * \brief Print a representation of the view on the given stream
+     * \param os The output stream
+     * \param v The view to print
+     * \return the output stream
+     */
+    friend std::ostream& operator<<(std::ostream& os, const sub_view& v) {
+        return os << "sub(" << v.sub_expr << ", " << v.i << ")";
+    }
 };
 
 /*!
@@ -299,9 +306,6 @@ private:
     const size_t sub_size; ///< The sub size
 
     friend struct etl_traits<etl::sub_view<T>>;
-
-    template <typename F_T>
-    friend std::ostream& operator<<(std::ostream& os, const sub_view<F_T>& v);
 
 public:
     using this_type          = sub_view<T>;                                          ///< The type of this expression
@@ -658,6 +662,16 @@ public:
         sub_expr.visit(visitor);
         visitor.need_value = old_need_value;
     }
+
+    /*!
+     * \brief Print a representation of the view on the given stream
+     * \param os The output stream
+     * \param v The view to print
+     * \return the output stream
+     */
+    friend std::ostream& operator<<(std::ostream& os, const sub_view& v) {
+        return os << "sub(" << v.sub_expr << ", " << v.i << ")";
+    }
 };
 
 /*!
@@ -736,16 +750,5 @@ struct etl_traits<etl::sub_view<T>> {
         return etl_traits<sub_expr_t>::dimensions() - 1;
     }
 };
-
-/*!
- * \brief Print a representation of the view on the given stream
- * \param os The output stream
- * \param v The view to print
- * \return the output stream
- */
-template <typename T>
-std::ostream& operator<<(std::ostream& os, const sub_view<T>& v) {
-    return os << "sub(" << v.sub_expr << ", " << v.i << ")";
-}
 
 } //end of namespace etl

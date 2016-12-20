@@ -77,9 +77,6 @@ private:
 
     friend struct etl_traits<etl::dyn_matrix_view<T, D>>;
 
-    template <typename F_T, size_t F_D>
-    friend std::ostream& operator<<(std::ostream& os, const dyn_matrix_view<F_T, F_D>& v);
-
 public:
     using this_type          = dyn_matrix_view<T, D>;                           ///< The type of this expression
     using iterable_base_type = iterable<this_type, false>;                      ///< The iterable base type
@@ -316,6 +313,16 @@ public:
         sub.visit(visitor);
         visitor.need_value = old_need_value;
     }
+
+    /*!
+     * \brief Print a representation of the view on the given stream
+     * \param os The output stream
+     * \param v The view to print
+     * \return the output stream
+     */
+    friend std::ostream& operator<<(std::ostream& os, const dyn_matrix_view& v) {
+        return os << "reshape[" << D << "D](" << v.sub << ")";
+    }
 };
 
 /*!
@@ -333,9 +340,6 @@ private:
     mutable gpu_handler<value_t<T>> _gpu_memory_handler; ///< The GPU memory handler
 
     friend struct etl_traits<etl::dyn_matrix_view<T, D>>;
-
-    template <typename F_T, size_t F_D>
-    friend std::ostream& operator<<(std::ostream& os, const dyn_matrix_view<F_T, F_D>& v);
 
 public:
     using this_type          = dyn_matrix_view<T, D>;                           ///< The type of this expression
@@ -623,7 +627,15 @@ public:
         return dimensions;
     }
 
-private:
+    /*!
+     * \brief Print a representation of the view on the given stream
+     * \param os The output stream
+     * \param v The view to print
+     * \return the output stream
+     */
+    friend std::ostream& operator<<(std::ostream& os, const dyn_matrix_view& v) {
+        return os << "reshape[" << D << "D](" << v.sub << ")";
+    }
 };
 
 /*!
@@ -684,16 +696,5 @@ struct etl_traits<etl::dyn_matrix_view<T, D>> {
         return D;
     }
 };
-
-/*!
- * \brief Print a representation of the view on the given stream
- * \param os The output stream
- * \param v The view to print
- * \return the output stream
- */
-template <typename T, size_t D>
-std::ostream& operator<<(std::ostream& os, const dyn_matrix_view<T, D>& v) {
-    return os << "reshape[" << D << "D](" << v.sub << ")";
-}
 
 } //end of namespace etl
