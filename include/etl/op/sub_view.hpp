@@ -30,7 +30,7 @@ struct sub_view <T, std::enable_if_t<!fast_sub_view_able<T>::value>> final :
     iterable<sub_view<T>, false>,
     inplace_assignable<sub_view<T>>
 {
-    T sub_expr;                 ///< The Sub expression
+    T sub_expr;              ///< The Sub expression
     const size_t i;          ///< The index
     const size_t sub_offset; ///< The sub size
 
