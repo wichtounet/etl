@@ -637,15 +637,6 @@ public:
     }
 
     /*!
-     * \brief Returns all the Ith... dimensions in array
-     * \return an array containing the Ith... dimensions of the expression.
-     */
-    template<std::size_t... I>
-    std::array<std::size_t, decay_traits<this_type>::dimensions()> dim_array(std::index_sequence<I...>) const {
-        return dimensions;
-    }
-
-    /*!
      * \brief Print a representation of the view on the given stream
      * \param os The output stream
      * \param v The view to print
