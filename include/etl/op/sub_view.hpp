@@ -154,12 +154,12 @@ struct sub_view <T, std::enable_if_t<!fast_sub_view_able<T>::value>> final :
 
     /*!
      * \brief Creates a sub view of the matrix, effectively removing the first dimension and fixing it to the given index.
-     * \param i The index to use
-     * \return a sub view of the matrix at position i.
+     * \param x The index to use
+     * \return a sub view of the matrix at position x.
      */
     template <typename TT = sub_type, cpp_enable_if((decay_traits<TT>::dimensions() > 2))>
-    auto operator()(std::size_t i) const {
-        return sub(*this, i);
+    auto operator()(std::size_t x) const {
+        return sub(*this, x);
     }
 
     /*!
@@ -250,8 +250,8 @@ struct sub_view <T, std::enable_if_t<!fast_sub_view_able<T>::value>> final :
      *
      * \return a refernece to the ith dimension value.
      */
-    std::size_t& unsafe_dimension_access(std::size_t i) {
-        return sub_expr.unsafe_dimension_access(i + 1);
+    std::size_t& unsafe_dimension_access(std::size_t x) {
+        return sub_expr.unsafe_dimension_access(x + 1);
     }
 
     // Internals
@@ -436,53 +436,53 @@ struct sub_view <T, std::enable_if_t<fast_sub_view_able<T>::value>> :
     }
 
     /*!
-     * \brief Access to the element at position (i)
-     * \param i The index of the first dimension
-     * \return A reference to the element at position i
+     * \brief Access to the element at position (x)
+     * \param x The index of the first dimension
+     * \return A reference to the element at position x
      */
     template <cpp_enable_if_cst((n_dimensions == 1))>
-    value_type& operator()(size_t i) noexcept {
-        return memory[i];
+    value_type& operator()(size_t x) noexcept {
+        return memory[x];
     }
 
     /*!
-     * \brief Access to the element at position (i)
-     * \param i The index of the first dimension
-     * \return A const reference to the element at position i
+     * \brief Access to the element at position (x)
+     * \param x The index of the first dimension
+     * \return A const reference to the element at position x
      */
     template <cpp_enable_if_cst((n_dimensions == 1))>
-    const value_type& operator()(size_t i) const noexcept {
-        return memory[i];
+    const value_type& operator()(size_t x) const noexcept {
+        return memory[x];
     }
 
     /*!
-     * \brief Access to the element at position (i)
-     * \param i The index of the first dimension
-     * \return A reference to the element at position i
+     * \brief Access to the element at position (x)
+     * \param x The index of the first dimension
+     * \return A reference to the element at position x
      */
     template <cpp_enable_if_cst((n_dimensions == 2))>
-    value_type& operator()(size_t i, size_t j) noexcept {
-        return memory[i * etl::dim<2>(sub_expr) + j];
+    value_type& operator()(size_t x, size_t j) noexcept {
+        return memory[x * etl::dim<2>(sub_expr) + j];
     }
 
     /*!
-     * \brief Access to the element at position (i)
-     * \param i The index of the first dimension
-     * \return A const reference to the element at position i
+     * \brief Access to the element at position (x)
+     * \param x The index of the first dimension
+     * \return A const reference to the element at position x
      */
     template <cpp_enable_if_cst((n_dimensions == 2))>
-    const value_type& operator()(size_t i, size_t j) const noexcept {
-        return memory[i * etl::dim<2>(sub_expr) + j];
+    const value_type& operator()(size_t x, size_t j) const noexcept {
+        return memory[x * etl::dim<2>(sub_expr) + j];
     }
 
     /*!
      * \brief Creates a sub view of the matrix, effectively removing the first dimension and fixing it to the given index.
-     * \param i The index to use
-     * \return a sub view of the matrix at position i.
+     * \param x The index to use
+     * \return a sub view of the matrix at position x.
      */
     template <cpp_enable_if_cst((n_dimensions > 1))>
-    auto operator()(std::size_t i) const {
-        return sub(*this, i);
+    auto operator()(std::size_t x) const {
+        return sub(*this, x);
     }
 
     /*!
@@ -625,8 +625,8 @@ struct sub_view <T, std::enable_if_t<fast_sub_view_able<T>::value>> :
      *
      * \return a refernece to the ith dimension value.
      */
-    std::size_t& unsafe_dimension_access(std::size_t i) {
-        return sub_expr.unsafe_dimension_access(i + 1);
+    std::size_t& unsafe_dimension_access(std::size_t x) {
+        return sub_expr.unsafe_dimension_access(x + 1);
     }
 
     /*!
