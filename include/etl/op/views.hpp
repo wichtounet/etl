@@ -768,7 +768,7 @@ struct fast_matrix_view {
      * \return a reference to the element at the given position.
      */
     template <typename... S>
-    return_type& operator()(S... args) noexcept {
+    return_type operator()(S... args) noexcept {
         static_assert(cpp::all_convertible_to<std::size_t, S...>::value, "Invalid size types");
 
         return sub[index(static_cast<std::size_t>(args)...)];
@@ -780,7 +780,7 @@ struct fast_matrix_view {
      * \return a reference to the element at the given position.
      */
     template <typename... S>
-    const_return_type& operator()(S... args) const noexcept {
+    const_return_type operator()(S... args) const noexcept {
         static_assert(cpp::all_convertible_to<std::size_t, S...>::value, "Invalid size types");
 
         return sub[index(static_cast<std::size_t>(args)...)];
