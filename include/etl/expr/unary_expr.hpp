@@ -306,7 +306,14 @@ public:
         //Nothing to init
     }
 
+    /*!
+     * \brief Copy construct an unary expression
+     */
     unary_expr(const unary_expr& rhs) = default;
+
+    /*!
+     * \brief Move construct an unary expression
+     */
     unary_expr(unary_expr&& rhs) = default;
 
     /*!
