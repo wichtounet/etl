@@ -30,9 +30,17 @@ struct sub_view <T, std::enable_if_t<!fast_sub_view_able<T>::value>> final :
     iterable<sub_view<T>, false>,
     inplace_assignable<sub_view<T>>
 {
+private:
     T sub_expr;              ///< The Sub expression
     const size_t i;          ///< The index
     const size_t sub_offset; ///< The sub size
+
+    friend struct etl_traits<etl::sub_view<T>>;
+
+    template <typename F_T>
+    friend std::ostream& operator<<(std::ostream& os, const sub_view<F_T>& v);
+
+public:
 
     using this_type          = sub_view<T>;                                          ///< The type of this expression
     using iterable_base_type = iterable<this_type, false>;                           ///< The iterable base type
@@ -163,22 +171,6 @@ struct sub_view <T, std::enable_if_t<!fast_sub_view_able<T>::value>> final :
     }
 
     /*!
-     * \brief Returns the value on which the transformer is working.
-     * \return A reference  to the value on which the transformer is working.
-     */
-    sub_type& value() {
-        return sub_expr;
-    }
-
-    /*!
-     * \brief Returns the value on which the transformer is working.
-     * \return A reference  to the value on which the transformer is working.
-     */
-    const sub_type& value() const {
-        return sub_expr;
-    }
-
-    /*!
      * \brief Store several elements in the matrix at once
      * \param in The several elements to store
      * \param x The position at which to start. This will be aligned from the beginning (multiple of the vector size).
@@ -186,7 +178,7 @@ struct sub_view <T, std::enable_if_t<!fast_sub_view_able<T>::value>> final :
      */
     template <typename V = default_vec>
     void store(vec_type<V> in, std::size_t x) noexcept {
-        return value().template storeu<V>(in, x + sub_offset);
+        return sub_expr.template storeu<V>(in, x + sub_offset);
     }
 
     /*!
@@ -197,7 +189,7 @@ struct sub_view <T, std::enable_if_t<!fast_sub_view_able<T>::value>> final :
      */
     template <typename V = default_vec>
     void storeu(vec_type<V> in, std::size_t x) noexcept {
-        return value().template storeu<V>(in, x + sub_offset);
+        return sub_expr.template storeu<V>(in, x + sub_offset);
     }
 
     /*!
@@ -208,7 +200,7 @@ struct sub_view <T, std::enable_if_t<!fast_sub_view_able<T>::value>> final :
      */
     template <typename V = default_vec>
     void stream(vec_type<V> in, std::size_t x) noexcept {
-        return value().template storeu<V>(in, x + sub_offset);
+        return sub_expr.template storeu<V>(in, x + sub_offset);
     }
 
     /*!
@@ -301,10 +293,17 @@ struct sub_view <T, std::enable_if_t<fast_sub_view_able<T>::value>> :
     iterable<sub_view<T>, true>,
     inplace_assignable<sub_view<T>>
 {
-    T sub_expr;              ///< The Sub expression
-    const size_t i;          ///< The indbex
+private:
+    T sub_expr;            ///< The Sub expression
+    const size_t i;        ///< The indbex
     const size_t sub_size; ///< The sub size
 
+    friend struct etl_traits<etl::sub_view<T>>;
+
+    template <typename F_T>
+    friend std::ostream& operator<<(std::ostream& os, const sub_view<F_T>& v);
+
+public:
     using this_type          = sub_view<T>;                                          ///< The type of this expression
     using iterable_base_type = iterable<this_type, true>;                            ///< The iterable base type
     using sub_type           = T;                                                    ///< The sub type
@@ -343,10 +342,6 @@ struct sub_view <T, std::enable_if_t<fast_sub_view_able<T>::value>> :
         if(!decay_traits<sub_type>::needs_evaluator_visitor){
             this->memory = sub_expr.memory_start() + i * sub_size;
         }
-    }
-
-    void late_init() const {
-        this->memory = (const_cast<this_type*>(this))->sub_expr.memory_start() + i * sub_size;
     }
 
     /*!
@@ -483,22 +478,6 @@ struct sub_view <T, std::enable_if_t<fast_sub_view_able<T>::value>> :
     template <cpp_enable_if_cst((n_dimensions > 1))>
     auto operator()(std::size_t x) const {
         return sub(*this, x);
-    }
-
-    /*!
-     * \brief Returns the value on which the transformer is working.
-     * \return A reference  to the value on which the transformer is working.
-     */
-    sub_type& value() {
-        return sub_expr;
-    }
-
-    /*!
-     * \brief Returns the value on which the transformer is working.
-     * \return A reference  to the value on which the transformer is working.
-     */
-    const sub_type& value() const {
-        return sub_expr;
     }
 
     /*!
@@ -665,7 +644,7 @@ struct sub_view <T, std::enable_if_t<fast_sub_view_able<T>::value>> :
 
         // It's only interesting if the sub expression is not direct
         if(decay_traits<sub_type>::needs_evaluator_visitor){
-            late_init();
+            this->memory = (const_cast<this_type*>(this))->sub_expr.memory_start() + i * sub_size;
         }
     }
 
@@ -718,7 +697,7 @@ struct etl_traits<etl::sub_view<T>> {
      * \returns the size of the given expression
      */
     static std::size_t size(const expr_t& v) noexcept {
-        return etl_traits<sub_expr_t>::size(v.value()) / etl_traits<sub_expr_t>::dim(v.value(), 0);
+        return etl_traits<sub_expr_t>::size(v.sub_expr) / etl_traits<sub_expr_t>::dim(v.sub_expr, 0);
     }
 
     /*!
@@ -728,7 +707,7 @@ struct etl_traits<etl::sub_view<T>> {
      * \return The dth dimension of the given expression
      */
     static std::size_t dim(const expr_t& v, std::size_t d) noexcept {
-        return etl_traits<sub_expr_t>::dim(v.value(), d + 1);
+        return etl_traits<sub_expr_t>::dim(v.sub_expr, d + 1);
     }
 
     /*!
