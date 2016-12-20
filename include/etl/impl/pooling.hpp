@@ -393,7 +393,7 @@ struct max_pool_3d {
         const size_t o2 = (etl::dim<1>(sub) - C2 + 2 * P2) / S2 + 1;
         const size_t o3 = (etl::dim<2>(sub) - C3 + 2 * P3) / S3 + 1;
 
-        if(P1 || P2 || P1){
+        if(P1 || P2 || P3){
             for (size_t i = 0; i < P1; ++i) {
                 for (size_t j = 0; j < o2; ++j) {
                     for (size_t k = 0; k < o3; ++k) {
@@ -491,7 +491,7 @@ struct max_pool_3d {
         const size_t o2 = (etl::dim<1>(sub) - c2 + 2 * p2) / s2 + 1;
         const size_t o3 = (etl::dim<2>(sub) - c3 + 2 * p3) / s3 + 1;
 
-        if(p1 || p2 || p1){
+        if(p1 || p2 || p3){
             for (size_t i = 0; i < p1; ++i) {
                 for (size_t j = 0; j < o2; ++j) {
                     for (size_t k = 0; k < o3; ++k) {
@@ -615,7 +615,7 @@ struct avg_pool_3d {
         const size_t o2 = (etl::dim<1>(sub) - C2 + 2 * P2) / S2 + 1;
         const size_t o3 = (etl::dim<2>(sub) - C3 + 2 * P3) / S3 + 1;
 
-        if(P1 || P2 || P1){
+        if(P1 || P2 || P3){
             for (size_t i = 0; i < P1; ++i) {
                 for (size_t j = 0; j < o2; ++j) {
                     for (size_t k = 0; k < o3; ++k) {
@@ -713,7 +713,7 @@ struct avg_pool_3d {
         const size_t o2 = (etl::dim<1>(sub) - c2 + 2 * p2) / s2 + 1;
         const size_t o3 = (etl::dim<2>(sub) - c3 + 2 * p3) / s3 + 1;
 
-        if(p1 || p2 || p1){
+        if(p1 || p2 || p3){
             for (size_t i = 0; i < p1; ++i) {
                 for (size_t j = 0; j < o2; ++j) {
                     for (size_t k = 0; k < o3; ++k) {
