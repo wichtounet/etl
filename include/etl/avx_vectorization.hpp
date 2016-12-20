@@ -314,6 +314,9 @@ struct avx_vec {
         _mm256_store_pd(reinterpret_cast<double*>(memory), value);
     }
 
+    /*!
+     * \brief Return a packed vector of zeroes of the given type
+     */
     template<typename T>
     ETL_TMP_INLINE(typename avx_intrinsic_traits<T>::intrinsic_type) zero();
 
