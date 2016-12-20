@@ -61,6 +61,7 @@
 #include "etl/evaluator.hpp"
 
 // CRTP classes
+#include "etl/crtp/assignable.hpp"
 #include "etl/crtp/inplace_assignable.hpp"
 #include "etl/crtp/comparable.hpp"
 #include "etl/crtp/value_testable.hpp"

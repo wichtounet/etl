@@ -301,6 +301,7 @@ public:
 template <typename T>
 struct sub_view <T, std::enable_if_t<fast_sub_view_able<T>::value>> :
     iterable<sub_view<T>, true>,
+    assignable<sub_view<T>, value_t<T>>,
     inplace_assignable<sub_view<T>>
 {
     static_assert(is_etl_expr<T>::value, "sub_view<T> only works with ETL expressions");
@@ -308,7 +309,8 @@ struct sub_view <T, std::enable_if_t<fast_sub_view_able<T>::value>> :
     static_assert(decay_traits<T>::storage_order == order::RowMajor, "sub_view<T, true> should only be done with RowMajor");
 
     using this_type          = sub_view<T>;                                                          ///< The type of this expression
-    using iterable_base_type = iterable<this_type, true>;                                            ///< The iterable base type
+    using iterable_base_type   = iterable<this_type, true>;                                            ///< The iterable base type
+    using assignable_base_type = assignable<this_type, value_t<T>>;                                    ///< The iterable base type
     using sub_type           = T;                                                                    ///< The sub type
     using value_type         = value_t<sub_type>;                                                    ///< The value contained in the expression
     using memory_type        = memory_t<sub_type>;                                                   ///< The memory acess type
@@ -326,6 +328,7 @@ struct sub_view <T, std::enable_if_t<fast_sub_view_able<T>::value>> :
 
     using iterable_base_type::begin;
     using iterable_base_type::end;
+    using assignable_base_type::operator=;
 
 private:
     T sub_expr;            ///< The Sub expression
@@ -351,42 +354,6 @@ public:
         if(!decay_traits<sub_type>::needs_evaluator_visitor){
             this->memory = sub_expr.memory_start() + i * sub_size;
         }
-    }
-
-    /*!
-     * \brief Assign the given expression to the unary expression
-     * \param e The expression to get the values from
-     * \return the unary expression
-     */
-    template <typename E, cpp_enable_if(is_etl_expr<E>::value)>
-    sub_view& operator=(E&& e) {
-        validate_assign(*this, e);
-        assign_evaluate(std::forward<E>(e), *this);
-        return *this;
-    }
-
-    /*!
-     * \brief Assign the given expression to the unary expression
-     * \param v The expression to get the values from
-     * \return the unary expression
-     */
-    sub_view& operator=(const value_type& v) {
-        std::fill(begin(), end(), v);
-        return *this;
-    }
-
-    /*!
-     * \brief Assign the given container to the unary expression
-     * \param vec The container to get the values from
-     * \return the unary expression
-     */
-    template <typename Container, cpp_enable_if(!is_etl_expr<Container>::value, std::is_convertible<typename Container::value_type, value_type>::value)>
-    sub_view& operator=(const Container& vec) {
-        validate_assign(*this, vec);
-
-        std::copy(vec.begin(), vec.end(), begin());
-
-        return *this;
     }
 
     /*!
