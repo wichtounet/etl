@@ -168,10 +168,10 @@ public:
 
     /*!
      * \brief Reallocate the GPU memory.
-     * \param memory The new GPU memory (will be moved)
+     * \param new_memory The new GPU memory (will be moved)
      */
-    void gpu_reallocate(impl::cuda::cuda_memory<T>&& memory) {
-        _gpu_memory_handler = std::move(memory);
+    void gpu_reallocate(impl::cuda::cuda_memory<T>&& new_memory) {
+        _gpu_memory_handler = std::move(new_memory);
     }
 
     /*!
