@@ -70,24 +70,16 @@ struct dyn_matrix_view;
  */
 template <typename T, size_t D>
 struct dyn_matrix_view <T, D, std::enable_if_t<!all_dma<T>::value>> final : iterable<dyn_matrix_view<T, D>, false> {
-private:
-    T sub;                                 ///< The sub expression
-    std::array<std::size_t, D> dimensions; ///< The dimensions of the view
-    size_t _size;                          ///< The size of the view
+    static_assert(is_etl_expr<T>::value, "dyn_matrix_view only works with ETL expressions");
 
-    friend struct etl_traits<etl::dyn_matrix_view<T, D>>;
-
-public:
-    using this_type          = dyn_matrix_view<T, D>;                           ///< The type of this expression
-    using iterable_base_type = iterable<this_type, false>;                      ///< The iterable base type
-    using sub_type           = T;                                               ///< The sub type
-    using value_type         = value_t<sub_type>;                               ///< The value contained in the expression
-    using memory_type        = memory_t<sub_type>;                              ///< The memory acess type
-    using const_memory_type  = const_memory_t<sub_type>;                        ///< The const memory access type
-    using return_type        = return_helper<sub_type, decltype(sub[0])>;       ///< The type returned by the view
-    using const_return_type  = const_return_helper<sub_type, decltype(sub[0])>; ///< The const type return by the view
-
-    static constexpr order storage_order = decay_traits<sub_type>::storage_order; ///< The matrix storage order
+    using this_type          = dyn_matrix_view<T, D>;                                                ///< The type of this expression
+    using iterable_base_type = iterable<this_type, false>;                                           ///< The iterable base type
+    using sub_type           = T;                                                                    ///< The sub type
+    using value_type         = value_t<sub_type>;                                                    ///< The value contained in the expression
+    using memory_type        = memory_t<sub_type>;                                                   ///< The memory acess type
+    using const_memory_type  = const_memory_t<sub_type>;                                             ///< The const memory access type
+    using return_type        = return_helper<sub_type, decltype(std::declval<sub_type>()[0])>;       ///< The type returned by the view
+    using const_return_type  = const_return_helper<sub_type, decltype(std::declval<sub_type>()[0])>; ///< The const type return by the view
 
     /*!
      * \brief The vectorization type for V
@@ -98,6 +90,16 @@ public:
     using iterable_base_type::begin;
     using iterable_base_type::end;
 
+private:
+    T sub;                                 ///< The sub expression
+    std::array<std::size_t, D> dimensions; ///< The dimensions of the view
+    size_t _size;                          ///< The size of the view
+
+    static constexpr order storage_order = decay_traits<sub_type>::storage_order; ///< The matrix storage order
+
+    friend struct etl_traits<etl::dyn_matrix_view<T, D>>;
+
+public:
     /*!
      * \brief Construct a new dyn_matrix_view over the given sub expression
      * \param dims The dimensions
@@ -331,27 +333,16 @@ public:
  */
 template <typename T, size_t D>
 struct dyn_matrix_view <T, D, std::enable_if_t<all_dma<T>::value>> final : iterable<dyn_matrix_view<T, D>, true> {
-private:
-    T sub;                                 ///< The sub expression
-    std::array<std::size_t, D> dimensions; ///< The dimensions of the view
-    size_t _size;                          ///< The size of the view
+    static_assert(is_etl_expr<T>::value, "dyn_matrix_view only works with ETL expressions");
 
-    //TODO Should be shared with the sub expression
-    mutable gpu_handler<value_t<T>> _gpu_memory_handler; ///< The GPU memory handler
-
-    friend struct etl_traits<etl::dyn_matrix_view<T, D>>;
-
-public:
-    using this_type          = dyn_matrix_view<T, D>;                           ///< The type of this expression
-    using iterable_base_type = iterable<this_type, true>;                       ///< The iterable base type
-    using sub_type           = T;                                               ///< The sub type
-    using value_type         = value_t<sub_type>;                               ///< The value contained in the expression
-    using memory_type        = memory_t<sub_type>;                              ///< The memory acess type
-    using const_memory_type  = const_memory_t<sub_type>;                        ///< The const memory access type
-    using return_type        = return_helper<sub_type, decltype(sub[0])>;       ///< The type returned by the view
-    using const_return_type  = const_return_helper<sub_type, decltype(sub[0])>; ///< The const type return by the view
-
-    static constexpr order storage_order = decay_traits<sub_type>::storage_order; ///< The matrix storage order
+    using this_type          = dyn_matrix_view<T, D>;                                                ///< The type of this expression
+    using iterable_base_type = iterable<this_type, true>;                                            ///< The iterable base type
+    using sub_type           = T;                                                                    ///< The sub type
+    using value_type         = value_t<sub_type>;                                                    ///< The value contained in the expression
+    using memory_type        = memory_t<sub_type>;                                                   ///< The memory acess type
+    using const_memory_type  = const_memory_t<sub_type>;                                             ///< The const memory access type
+    using return_type        = return_helper<sub_type, decltype(std::declval<sub_type>()[0])>;       ///< The type returned by the view
+    using const_return_type  = const_return_helper<sub_type, decltype(std::declval<sub_type>()[0])>; ///< The const type return by the view
 
     /*!
      * \brief The vectorization type for V
@@ -362,6 +353,19 @@ public:
     using iterable_base_type::begin;
     using iterable_base_type::end;
 
+private:
+    T sub;                                 ///< The sub expression
+    std::array<std::size_t, D> dimensions; ///< The dimensions of the view
+    size_t _size;                          ///< The size of the view
+
+    //TODO Should be shared with the sub expression
+    mutable gpu_handler<value_t<T>> _gpu_memory_handler; ///< The GPU memory handler
+
+    static constexpr order storage_order = decay_traits<sub_type>::storage_order; ///< The matrix storage order
+
+    friend struct etl_traits<etl::dyn_matrix_view<T, D>>;
+
+public:
     /*!
      * \brief Construct a new dyn_matrix_view over the given sub expression
      * \param dims The dimensions
@@ -644,22 +648,23 @@ public:
 template <typename T, size_t D>
 struct etl_traits<etl::dyn_matrix_view<T, D>> {
     using expr_t     = etl::dyn_matrix_view<T, D>; ///< The expression type
-    using sub_expr_t = std::decay_t<T>;         ///< The sub expression type
+    using sub_expr_t = std::decay_t<T>;            ///< The sub expression type
+    using sub_traits = etl_traits<sub_expr_t>;     ///< The sub traits
 
-    static constexpr bool is_etl                  = true;                                            ///< Indicates if the type is an ETL expression
-    static constexpr bool is_transformer          = false;                                           ///< Indicates if the type is a transformer
-    static constexpr bool is_view                 = true;                                            ///< Indicates if the type is a view
-    static constexpr bool is_magic_view           = false;                                           ///< Indicates if the type is a magic view
-    static constexpr bool is_linear               = etl_traits<sub_expr_t>::is_linear;               ///< Indicates if the expression is linear
-    static constexpr bool is_thread_safe          = etl_traits<sub_expr_t>::is_thread_safe;          ///< Indicates if the expression is thread safe
-    static constexpr bool is_fast                 = false;                                           ///< Indicates if the expression is fast
-    static constexpr bool is_value                = false;                                           ///< Indicates if the expression is of value type
-    static constexpr bool is_direct               = etl_traits<sub_expr_t>::is_direct;               ///< Indicates if the expression has direct memory access
-    static constexpr bool is_generator            = false;                                           ///< Indicates if the expression is a generator
-    static constexpr bool is_padded               = false;                          ///< Indicates if the expression is padded
-    static constexpr bool is_aligned               = false;                          ///< Indicates if the expression is padded
-    static constexpr bool needs_evaluator_visitor = etl_traits<sub_expr_t>::needs_evaluator_visitor; ///< Indicates if the exxpression needs a evaluator visitor
-    static constexpr order storage_order          = etl_traits<sub_expr_t>::storage_order;           ///< The expression's storage order
+    static constexpr bool is_etl                  = true;                                ///< Indicates if the type is an ETL expression
+    static constexpr bool is_transformer          = false;                               ///< Indicates if the type is a transformer
+    static constexpr bool is_view                 = true;                                ///< Indicates if the type is a view
+    static constexpr bool is_magic_view           = false;                               ///< Indicates if the type is a magic view
+    static constexpr bool is_linear               = sub_traits::is_linear;               ///< Indicates if the expression is linear
+    static constexpr bool is_thread_safe          = sub_traits::is_thread_safe;          ///< Indicates if the expression is thread safe
+    static constexpr bool is_fast                 = false;                               ///< Indicates if the expression is fast
+    static constexpr bool is_value                = false;                               ///< Indicates if the expression is of value type
+    static constexpr bool is_direct               = sub_traits::is_direct;               ///< Indicates if the expression has direct memory access
+    static constexpr bool is_generator            = false;                               ///< Indicates if the expression is a generator
+    static constexpr bool is_padded               = false;                               ///< Indicates if the expression is padded
+    static constexpr bool is_aligned              = false;                               ///< Indicates if the expression is padded
+    static constexpr bool needs_evaluator_visitor = sub_traits::needs_evaluator_visitor; ///< Indicates if the exxpression needs a evaluator visitor
+    static constexpr order storage_order          = sub_traits::storage_order;           ///< The expression's storage order
 
     /*!
      * \brief Indicates if the expression is vectorizable using the
@@ -667,7 +672,7 @@ struct etl_traits<etl::dyn_matrix_view<T, D>> {
      * \tparam V The vector mode
      */
     template <vector_mode_t V>
-    using vectorizable = cpp::bool_constant<etl_traits<sub_expr_t>::template vectorizable<V>::value && storage_order == order::RowMajor>;
+    using vectorizable = cpp::bool_constant<sub_traits::template vectorizable<V>::value && storage_order == order::RowMajor>;
 
     /*!
      * \brief Returns the size of the given expression

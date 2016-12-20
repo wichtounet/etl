@@ -30,25 +30,18 @@ struct sub_view <T, std::enable_if_t<!fast_sub_view_able<T>::value>> final :
     iterable<sub_view<T>, false>,
     inplace_assignable<sub_view<T>>
 {
-private:
-    T sub_expr;              ///< The Sub expression
-    const size_t i;          ///< The index
-    const size_t sub_offset; ///< The sub size
+    static_assert(is_etl_expr<T>::value, "sub_view<T> only works with ETL expressions");
 
-    friend struct etl_traits<etl::sub_view<T>>;
-
-public:
-
-    using this_type          = sub_view<T>;                                          ///< The type of this expression
-    using iterable_base_type = iterable<this_type, false>;                           ///< The iterable base type
-    using sub_type           = T;                                                    ///< The sub type
-    using value_type         = value_t<sub_type>;                                    ///< The value contained in the expression
-    using memory_type        = memory_t<sub_type>;                                   ///< The memory acess type
-    using const_memory_type  = const_memory_t<sub_type>;                             ///< The const memory access type
-    using return_type        = return_helper<sub_type, decltype(sub_expr[0])>;       ///< The type returned by the view
-    using const_return_type  = const_return_helper<sub_type, decltype(sub_expr[0])>; ///< The const type return by the view
-    using iterator           = etl::iterator<this_type>;                             ///< The iterator type
-    using const_iterator     = etl::iterator<const this_type>;                       ///< The const iterator type
+    using this_type          = sub_view<T>;                                                          ///< The type of this expression
+    using iterable_base_type = iterable<this_type, false>;                                           ///< The iterable base type
+    using sub_type           = T;                                                                    ///< The sub type
+    using value_type         = value_t<sub_type>;                                                    ///< The value contained in the expression
+    using memory_type        = memory_t<sub_type>;                                                   ///< The memory acess type
+    using const_memory_type  = const_memory_t<sub_type>;                                             ///< The const memory access type
+    using return_type        = return_helper<sub_type, decltype(std::declval<sub_type>()[0])>;       ///< The type returned by the view
+    using const_return_type  = const_return_helper<sub_type, decltype(std::declval<sub_type>()[0])>; ///< The const type return by the view
+    using iterator           = etl::iterator<this_type>;                                             ///< The iterator type
+    using const_iterator     = etl::iterator<const this_type>;                                       ///< The const iterator type
 
     /*!
      * \brief The vectorization type for V
@@ -59,6 +52,16 @@ public:
     using iterable_base_type::begin;
     using iterable_base_type::end;
 
+private:
+    sub_type sub_expr;              ///< The Sub expression
+    const size_t i;          ///< The index
+    const size_t sub_offset; ///< The sub size
+
+    friend struct etl_traits<this_type>;
+
+    static constexpr order storage_order = decay_traits<sub_type>::storage_order; /// < The storage order
+
+public:
     /*!
      * \brief Construct a new sub_view over the given sub expression
      * \param sub_expr The sub expression
@@ -109,7 +112,7 @@ public:
      * \return a reference to the element at the given index.
      */
     const_return_type operator[](std::size_t j) const {
-        return decay_traits<sub_type>::storage_order == order::RowMajor
+        return storage_order == order::RowMajor
                    ? sub_expr[sub_offset + j]
                    : sub_expr[i + dim<0>(sub_expr) * j];
     }
@@ -120,7 +123,7 @@ public:
      * \return a reference to the element at the given index.
      */
     return_type operator[](std::size_t j) {
-        return decay_traits<sub_type>::storage_order == order::RowMajor
+        return storage_order == order::RowMajor
                    ? sub_expr[sub_offset + j]
                    : sub_expr[i + dim<0>(sub_expr) * j];
     }
@@ -132,7 +135,7 @@ public:
      * \return the value at the given index.
      */
     value_type read_flat(std::size_t j) const noexcept {
-        return decay_traits<sub_type>::storage_order == order::RowMajor
+        return storage_order == order::RowMajor
                    ? sub_expr.read_flat(sub_offset + j)
                    : sub_expr.read_flat(i + dim<0>(sub_expr) * j);
     }
@@ -300,24 +303,20 @@ struct sub_view <T, std::enable_if_t<fast_sub_view_able<T>::value>> :
     iterable<sub_view<T>, true>,
     inplace_assignable<sub_view<T>>
 {
-private:
-    T sub_expr;            ///< The Sub expression
-    const size_t i;        ///< The indbex
-    const size_t sub_size; ///< The sub size
+    static_assert(is_etl_expr<T>::value, "sub_view<T> only works with ETL expressions");
+    static_assert(decay_traits<T>::dimensions() > 1, "sub_view<T, true> should only be done with Matrices >1D");
+    static_assert(decay_traits<T>::storage_order == order::RowMajor, "sub_view<T, true> should only be done with RowMajor");
 
-    friend struct etl_traits<etl::sub_view<T>>;
-
-public:
-    using this_type          = sub_view<T>;                                          ///< The type of this expression
-    using iterable_base_type = iterable<this_type, true>;                            ///< The iterable base type
-    using sub_type           = T;                                                    ///< The sub type
-    using value_type         = value_t<sub_type>;                                    ///< The value contained in the expression
-    using memory_type        = memory_t<sub_type>;                                   ///< The memory acess type
-    using const_memory_type  = const_memory_t<sub_type>;                             ///< The const memory access type
-    using return_type        = return_helper<sub_type, decltype(sub_expr[0])>;       ///< The type returned by the view
-    using const_return_type  = const_return_helper<sub_type, decltype(sub_expr[0])>; ///< The const type return by the view
-    using iterator           = value_type*;                                          ///< The iterator type
-    using const_iterator     = const value_type*;                                    ///< The const iterator type
+    using this_type          = sub_view<T>;                                                          ///< The type of this expression
+    using iterable_base_type = iterable<this_type, true>;                                            ///< The iterable base type
+    using sub_type           = T;                                                                    ///< The sub type
+    using value_type         = value_t<sub_type>;                                                    ///< The value contained in the expression
+    using memory_type        = memory_t<sub_type>;                                                   ///< The memory acess type
+    using const_memory_type  = const_memory_t<sub_type>;                                             ///< The const memory access type
+    using return_type        = return_helper<sub_type, decltype(std::declval<sub_type>()[0])>;       ///< The type returned by the view
+    using const_return_type  = const_return_helper<sub_type, decltype(std::declval<sub_type>()[0])>; ///< The const type return by the view
+    using iterator           = value_type*;                                                          ///< The iterator type
+    using const_iterator     = const value_type*;                                                    ///< The const iterator type
 
     /*!
      * \brief The vectorization type for V
@@ -328,15 +327,21 @@ public:
     using iterable_base_type::begin;
     using iterable_base_type::end;
 
-    static_assert(decay_traits<sub_type>::dimensions() > 1, "sub_view<T, true> should only be done with Matrices >1D");
-    static_assert(decay_traits<sub_type>::storage_order == order::RowMajor, "sub_view<T, true> should only be done with RowMajor");
+private:
+    T sub_expr;            ///< The Sub expression
+    const size_t i;        ///< The indbex
+    const size_t sub_size; ///< The sub size
 
-    static constexpr size_t n_dimensions = decay_traits<sub_type>::dimensions() - 1;
+    static constexpr size_t n_dimensions = decay_traits<sub_type>::dimensions() - 1;     ///< The Number of dimensions
+    static constexpr order storage_order = decay_traits<sub_type>::storage_order; ///< The storage order
 
-    mutable decltype(sub_expr.memory_start()) memory;
+    mutable memory_type memory;
 
     mutable gpu_handler<value_type> _gpu_memory_handler; ///< The GPU memory handler
 
+    friend struct etl_traits<this_type>;
+
+public:
     /*!
      * \brief Construct a new sub_view over the given sub expression
      * \param sub_expr The sub expression
@@ -598,7 +603,7 @@ public:
     opaque_memory<value_type, decay_traits<this_type>::dimensions()> direct() const {
         return {memory_start(), sub_size,
             dim_array(std::make_index_sequence<decay_traits<this_type>::dimensions()>()),
-            _gpu_memory_handler, decay_traits<this_type>::storage_order};
+            _gpu_memory_handler, storage_order};
     }
 
     /*!
@@ -679,23 +684,24 @@ public:
  */
 template <typename T>
 struct etl_traits<etl::sub_view<T>> {
-    using expr_t     = etl::sub_view<T>; ///< The expression type
-    using sub_expr_t = std::decay_t<T>;  ///< The sub expression type
+    using expr_t     = etl::sub_view<T>;       ///< The expression type
+    using sub_expr_t = std::decay_t<T>;        ///< The sub expression type
+    using sub_traits = etl_traits<sub_expr_t>; ///< The sub traits
 
-    static constexpr bool is_etl                  = true;                                            ///< Indicates if the type is an ETL expression
-    static constexpr bool is_transformer          = false;                                           ///< Indicates if the type is a transformer
-    static constexpr bool is_view                 = true;                                            ///< Indicates if the type is a view
-    static constexpr bool is_magic_view           = false;                                           ///< Indicates if the type is a magic view
-    static constexpr bool is_fast                 = etl_traits<sub_expr_t>::is_fast;                 ///< Indicates if the expression is fast
-    static constexpr bool is_linear               = etl_traits<sub_expr_t>::is_linear;               ///< Indicates if the expression is linear
-    static constexpr bool is_thread_safe          = etl_traits<sub_expr_t>::is_thread_safe;          ///< Indicates if the expression is thread safe
-    static constexpr bool is_value                = false;                                           ///< Indicates if the expression is of value type
-    static constexpr bool is_direct               = etl_traits<sub_expr_t>::is_direct && etl_traits<sub_expr_t>::storage_order == order::RowMajor;               ///< Indicates if the expression has direct memory access
-    static constexpr bool is_generator            = false;                                           ///< Indicates if the expression is a generator
-    static constexpr bool is_padded               = false;                          ///< Indicates if the expression is padded
-    static constexpr bool is_aligned               = false;                          ///< Indicates if the expression is padded
-    static constexpr bool needs_evaluator_visitor = etl_traits<sub_expr_t>::needs_evaluator_visitor; ///< Indicates if the exxpression needs a evaluator visitor
-    static constexpr order storage_order          = etl_traits<sub_expr_t>::storage_order;           ///< The expression's storage order
+    static constexpr bool is_etl                  = true;                                                                  ///< Indicates if the type is an ETL expression
+    static constexpr bool is_transformer          = false;                                                                 ///< Indicates if the type is a transformer
+    static constexpr bool is_view                 = true;                                                                  ///< Indicates if the type is a view
+    static constexpr bool is_magic_view           = false;                                                                 ///< Indicates if the type is a magic view
+    static constexpr bool is_fast                 = sub_traits::is_fast;                                                   ///< Indicates if the expression is fast
+    static constexpr bool is_linear               = sub_traits::is_linear;                                                 ///< Indicates if the expression is linear
+    static constexpr bool is_thread_safe          = sub_traits::is_thread_safe;                                            ///< Indicates if the expression is thread safe
+    static constexpr bool is_value                = false;                                                                 ///< Indicates if the expression is of value type
+    static constexpr bool is_direct               = sub_traits::is_direct && sub_traits::storage_order == order::RowMajor; ///< Indicates if the expression has direct memory access
+    static constexpr bool is_generator            = false;                                                                 ///< Indicates if the expression is a generator
+    static constexpr bool is_padded               = false;                                                                 ///< Indicates if the expression is padded
+    static constexpr bool is_aligned              = false;                                                                 ///< Indicates if the expression is padded
+    static constexpr bool needs_evaluator_visitor = sub_traits::needs_evaluator_visitor;                                   ///< Indicates if the exxpression needs a evaluator visitor
+    static constexpr order storage_order          = sub_traits::storage_order;                                             ///< The expression's storage order
 
     /*!
      * \brief Indicates if the expression is vectorizable using the
@@ -703,7 +709,7 @@ struct etl_traits<etl::sub_view<T>> {
      * \tparam V The vector mode
      */
     template <vector_mode_t V>
-    using vectorizable = cpp::bool_constant<decay_traits<sub_expr_t>::template vectorizable<V>::value && storage_order == order::RowMajor>;
+    using vectorizable = cpp::bool_constant<sub_traits::template vectorizable<V>::value && storage_order == order::RowMajor>;
 
     /*!
      * \brief Returns the size of the given expression
@@ -711,7 +717,7 @@ struct etl_traits<etl::sub_view<T>> {
      * \returns the size of the given expression
      */
     static std::size_t size(const expr_t& v) noexcept {
-        return etl_traits<sub_expr_t>::size(v.sub_expr) / etl_traits<sub_expr_t>::dim(v.sub_expr, 0);
+        return sub_traits::size(v.sub_expr) / sub_traits::dim(v.sub_expr, 0);
     }
 
     /*!
@@ -721,7 +727,7 @@ struct etl_traits<etl::sub_view<T>> {
      * \return The dth dimension of the given expression
      */
     static std::size_t dim(const expr_t& v, std::size_t d) noexcept {
-        return etl_traits<sub_expr_t>::dim(v.sub_expr, d + 1);
+        return sub_traits::dim(v.sub_expr, d + 1);
     }
 
     /*!
@@ -729,7 +735,7 @@ struct etl_traits<etl::sub_view<T>> {
      * \returns the size of an expression of this fast type.
      */
     static constexpr std::size_t size() noexcept {
-        return etl_traits<sub_expr_t>::size() / etl_traits<sub_expr_t>::template dim<0>();
+        return sub_traits::size() / sub_traits::template dim<0>();
     }
 
     /*!
@@ -739,7 +745,7 @@ struct etl_traits<etl::sub_view<T>> {
      */
     template <std::size_t D>
     static constexpr std::size_t dim() noexcept {
-        return etl_traits<sub_expr_t>::template dim<D + 1>();
+        return sub_traits::template dim<D + 1>();
     }
 
     /*!
@@ -747,7 +753,7 @@ struct etl_traits<etl::sub_view<T>> {
      * \return the number of dimensions of this type
      */
     static constexpr std::size_t dimensions() noexcept {
-        return etl_traits<sub_expr_t>::dimensions() - 1;
+        return sub_traits::dimensions() - 1;
     }
 };
 
