@@ -14,64 +14,6 @@
 namespace etl {
 
 /*!
- * \brief Simple utility wrapper for shared_ptr that is mutable.
- *
- * This is necessary because *mutable* references are not possible and therefore
- * cannot simply put mutable DataType inside temporary expression.
- */
-template<typename T>
-struct mutable_shared_ptr {
-private:
-    mutable std::shared_ptr<T> ptr; ///< The pointer
-
-public:
-    mutable_shared_ptr() = default;
-    mutable_shared_ptr(const mutable_shared_ptr& rhs) = default;
-    mutable_shared_ptr(mutable_shared_ptr&& rhs) noexcept = default;
-    mutable_shared_ptr& operator=(const mutable_shared_ptr& rhs) = default;
-    mutable_shared_ptr& operator=(mutable_shared_ptr&& rhs) noexcept = default;
-
-    /*!
-     * \brief Constructs a new mutable_shared_ptr from a shared_ptr.
-     * \param ptr The pointer to copy inside mutable_shared_ptr
-     */
-    mutable_shared_ptr(const std::shared_ptr<T>& ptr) : ptr(ptr) {}
-
-    /*!
-     * \brief Resets the pointer to a new value.
-     * \param new_value The new value of the pointer
-     */
-    void reset(T* new_value) const {
-        ptr.reset(new_value);
-    }
-
-    /*!
-     * \brief Explicit conversion to bool
-     * \return false if the pointer is nullptr, false otherwise
-     */
-    explicit operator bool() const {
-        return static_cast<bool>(ptr);
-    }
-
-    /*!
-     * \brief Returns the underlying object
-     * \return a reference to the underlying object
-     */
-    T& operator*() const {
-        return *ptr;
-    }
-
-    /*!
-     * \brief Returns the underlying pointer
-     * \return a pointer to the underlying object
-     */
-    T* operator->() const {
-        return ptr.get();
-    }
-};
-
-
-/*!
  * \brief A temporary expression base
  *
  * A temporary expression computes the expression directly and stores it into a temporary.
@@ -83,13 +25,12 @@ struct temporary_expr : comparable<D>, value_testable<D>, dim_testable<D>, itera
     using result_type       = R;                               ///< The result type
     using memory_type       = value_type*;                     ///< The memory type
     using const_memory_type = const value_type*;               ///< The const memory type
-    using data_type         = mutable_shared_ptr<result_type>; ///< The data type
 
 protected:
     mutable bool allocated = false; ///< Indicates if the temporary has been allocated
     mutable bool evaluated = false; ///< Indicates if the expression has been evaluated
 
-    data_type _c;           ///< The result reference
+    mutable std::shared_ptr<result_type> _c;           ///< The result reference
 
 private:
     mutable gpu_handler<V> _gpu_memory_handler; ///< The GPU memory handler
