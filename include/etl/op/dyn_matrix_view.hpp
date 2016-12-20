@@ -27,10 +27,17 @@ struct dyn_matrix_view;
  */
 template <typename T, size_t D>
 struct dyn_matrix_view <T, D, std::enable_if_t<!all_dma<T>::value>> final : iterable<dyn_matrix_view<T, D>, false> {
+private:
     T sub;                                 ///< The sub expression
     std::array<std::size_t, D> dimensions; ///< The dimensions of the view
     size_t _size;                          ///< The size of the view
 
+    friend struct etl_traits<etl::dyn_matrix_view<T, D>>;
+
+    template <typename F_T, size_t F_D>
+    friend std::ostream& operator<<(std::ostream& os, const dyn_matrix_view<F_T, F_D>& v);
+
+public:
     using this_type          = dyn_matrix_view<T, D>;                           ///< The type of this expression
     using iterable_base_type = iterable<this_type, false>;           ///< The iterable base type
     using sub_type           = T;                                               ///< The sub type
@@ -164,22 +171,6 @@ struct dyn_matrix_view <T, D, std::enable_if_t<!all_dma<T>::value>> final : iter
     }
 
     /*!
-     * \brief Returns the value on which the transformer is working.
-     * \return A reference  to the value on which the transformer is working.
-     */
-    sub_type& value() {
-        return sub;
-    }
-
-    /*!
-     * \brief Returns the value on which the transformer is working.
-     * \return A reference  to the value on which the transformer is working.
-     */
-    const sub_type& value() const {
-        return sub;
-    }
-
-    /*!
      * \brief Load several elements of the expression at once
      * \param x The position at which to start. This will be aligned from the beginning (multiple of the vector size).
      * \tparam V The vectorization mode to use
@@ -251,7 +242,7 @@ struct dyn_matrix_view <T, D, std::enable_if_t<!all_dma<T>::value>> final : iter
      * \param visitor The visitor to apply
      */
     void visit(const detail::temporary_allocator_visitor& visitor){
-        value().visit(visitor);
+        sub.visit(visitor);
     }
 
     /*!
@@ -259,7 +250,7 @@ struct dyn_matrix_view <T, D, std::enable_if_t<!all_dma<T>::value>> final : iter
      * \param visitor The visitor to apply
      */
     void visit(const detail::gpu_clean_visitor& visitor){
-        value().visit(visitor);
+        sub.visit(visitor);
     }
 
     /*!
@@ -267,7 +258,7 @@ struct dyn_matrix_view <T, D, std::enable_if_t<!all_dma<T>::value>> final : iter
      * \param visitor The visitor to apply
      */
     void visit(const detail::back_propagate_visitor& visitor){
-        value().visit(visitor);
+        sub.visit(visitor);
     }
 
     /*!
@@ -277,7 +268,7 @@ struct dyn_matrix_view <T, D, std::enable_if_t<!all_dma<T>::value>> final : iter
     void visit(detail::evaluator_visitor& visitor){
         bool old_need_value = visitor.need_value;
         visitor.need_value = true;
-        value().visit(visitor);
+        sub.visit(visitor);
         visitor.need_value = old_need_value;
     }
 
@@ -328,6 +319,7 @@ private:
  */
 template <typename T, size_t D>
 struct dyn_matrix_view <T, D, std::enable_if_t<all_dma<T>::value>> final : iterable<dyn_matrix_view<T, D>, true> {
+private:
     T sub;                                 ///< The sub expression
     std::array<std::size_t, D> dimensions; ///< The dimensions of the view
     size_t _size;                          ///< The size of the view
@@ -335,6 +327,12 @@ struct dyn_matrix_view <T, D, std::enable_if_t<all_dma<T>::value>> final : itera
     //TODO Should be shared with the sub expression
     mutable gpu_handler<value_t<T>> _gpu_memory_handler; ///< The GPU memory handler
 
+    friend struct etl_traits<etl::dyn_matrix_view<T, D>>;
+
+    template <typename F_T, size_t F_D>
+    friend std::ostream& operator<<(std::ostream& os, const dyn_matrix_view<F_T, F_D>& v);
+
+public:
     using this_type          = dyn_matrix_view<T, D>;                           ///< The type of this expression
     using iterable_base_type = iterable<this_type, true>;                       ///< The iterable base type
     using sub_type           = T;                                               ///< The sub type
@@ -468,22 +466,6 @@ struct dyn_matrix_view <T, D, std::enable_if_t<all_dma<T>::value>> final : itera
     }
 
     /*!
-     * \brief Returns the value on which the transformer is working.
-     * \return A reference  to the value on which the transformer is working.
-     */
-    sub_type& value() {
-        return sub;
-    }
-
-    /*!
-     * \brief Returns the value on which the transformer is working.
-     * \return A reference  to the value on which the transformer is working.
-     */
-    const sub_type& value() const {
-        return sub;
-    }
-
-    /*!
      * \brief Load several elements of the expression at once
      * \param x The position at which to start. This will be aligned from the beginning (multiple of the vector size).
      * \tparam V The vectorization mode to use
@@ -587,7 +569,7 @@ struct dyn_matrix_view <T, D, std::enable_if_t<all_dma<T>::value>> final : itera
      * \param visitor The visitor to apply
      */
     void visit(const detail::temporary_allocator_visitor& visitor){
-        value().visit(visitor);
+        sub.visit(visitor);
     }
 
     /*!
@@ -595,7 +577,7 @@ struct dyn_matrix_view <T, D, std::enable_if_t<all_dma<T>::value>> final : itera
      * \param visitor The visitor to apply
      */
     void visit(const detail::gpu_clean_visitor& visitor){
-        value().visit(visitor);
+        sub.visit(visitor);
     }
 
     /*!
@@ -603,7 +585,7 @@ struct dyn_matrix_view <T, D, std::enable_if_t<all_dma<T>::value>> final : itera
      * \param visitor The visitor to apply
      */
     void visit(const detail::back_propagate_visitor& visitor){
-        value().visit(visitor);
+        sub.visit(visitor);
     }
 
     /*!
@@ -613,7 +595,7 @@ struct dyn_matrix_view <T, D, std::enable_if_t<all_dma<T>::value>> final : itera
     void visit(detail::evaluator_visitor& visitor){
         bool old_need_value = visitor.need_value;
         visitor.need_value = true;
-        value().visit(visitor);
+        sub.visit(visitor);
         visitor.need_value = old_need_value;
     }
 
