@@ -662,7 +662,11 @@ struct sub_view <T, std::enable_if_t<fast_sub_view_able<T>::value>> :
      */
     void visit(const detail::back_propagate_visitor& visitor){
         sub_expr.visit(visitor);
-        late_init();
+
+        // It's only interesting if the sub expression is not direct
+        if(decay_traits<sub_type>::needs_evaluator_visitor){
+            late_init();
+        }
     }
 
     /*!
