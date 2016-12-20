@@ -102,6 +102,11 @@ struct transpose_expr : impl_expr<transpose_expr<T>> {
         cpp_unused(L2);
         cpp_unused(R1);
         cpp_unused(R2);
+
+        cpp_unused(rm_to_rm);
+        cpp_unused(rm_to_cm);
+        cpp_unused(cm_to_rm);
+        cpp_unused(cm_to_cm);
     }
 
     /*!
