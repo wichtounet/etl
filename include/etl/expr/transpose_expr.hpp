@@ -7,35 +7,40 @@
 
 #pragma once
 
+#include "etl/expr/base_temporary_expr.hpp"
+
 //Get the implementations
 #include "etl/impl/transpose.hpp"
 
 namespace etl {
 
+//template <typename D, typename T, typename A>
+//struct base_temporary_expr_un : base_temporary_expr<D, T> {
+
 /*!
  * \brief A transposition expression.
  * \tparam T The value type
  */
-template <typename T>
-struct transpose_expr : impl_expr<transpose_expr<T>> {
-    using value_type = T;                 ///< The type of value of the expression
-    using this_type  = transpose_expr<T>; ///< The type of this expression
-
-    static constexpr bool is_gpu = cublas_enabled; ///< Indicates if the expression runs on GPU
+template <typename T, typename A>
+struct transpose_expr : base_temporary_expr_un<transpose_expr<T, A>, A> {
+    using value_type = T;                                    ///< The type of value of the expression
+    using this_type  = transpose_expr<T, A>;                 ///< The type of this expression
+    using base_type  = base_temporary_expr_un<this_type, A>; ///< The base type
 
     /*!
-     * \brief The result type for given sub types
-     * \tparam A the sub expression type
+     * \brief Construct a new expression
+     * \param a The sub expression
      */
-    template <typename A>
-    using result_type = detail::expr_result_t<this_type, A>;
+    explicit transpose_expr(A a) : base_type(a) {
+        //Nothing else to init
+    }
 
     /*!
      * \brief Validate the transposition dimensions
      * \param a The input matrix
      * \þaram c The output matrix
      */
-    template <typename A, typename C, cpp_enable_if(all_fast<A,C>::value)>
+    template <typename C, cpp_enable_if(all_fast<A,C>::value)>
     static void check(const A& a, const C& c) {
         cpp_unused(a);
         cpp_unused(c);
@@ -71,7 +76,7 @@ struct transpose_expr : impl_expr<transpose_expr<T>> {
      * \param a The input matrix
      * \þaram c The output matrix
      */
-    template <typename A, typename C, cpp_disable_if(all_fast<A,C>::value)>
+    template <typename C, cpp_disable_if(all_fast<A,C>::value)>
     static void check(const A& a, const C& c) {
         static constexpr etl::order order_lhs = decay_traits<A>::storage_order;
         static constexpr etl::order order_rhs = decay_traits<A>::storage_order;
@@ -114,28 +119,52 @@ struct transpose_expr : impl_expr<transpose_expr<T>> {
      * \param a The input
      * \param c The expression where to store the results
      */
-    template <typename A, typename C>
-    static void apply(A&& a, C&& c) {
+    template <typename C> //TODO Make sure there are no copies here!
+    static void apply(A a, C&& c) {
         static_assert(all_etl_expr<A, C>::value, "Transpose only supported for ETL expressions");
 
         check(a, c);
 
         detail::transpose::apply(make_temporary(std::forward<A>(a)), std::forward<C>(c));
     }
+};
+
+template <typename T, typename A>
+struct etl_traits<etl::transpose_expr<T, A>> {
+    using expr_t     = etl::transpose_expr<T, A>; ///< The expression type
+    using sub_expr_t = std::decay_t<A>;           ///< The sub expression type
+    using sub_traits = etl_traits<sub_expr_t>;    ///< The sub traits
+    using value_type = T;                         ///< The value type of the expression
+
+    static constexpr bool is_etl                  = true;                      ///< Indicates if the type is an ETL expression
+    static constexpr bool is_transformer          = false;                     ///< Indicates if the type is a transformer
+    static constexpr bool is_view                 = false;                     ///< Indicates if the type is a view
+    static constexpr bool is_magic_view           = false;                     ///< Indicates if the type is a magic view
+    static constexpr bool is_fast                 = sub_traits::is_fast;       ///< Indicates if the expression is fast
+    static constexpr bool is_linear               = true;                      ///< Indicates if the expression is linear
+    static constexpr bool is_thread_safe          = true;                      ///< Indicates if the expression is thread safe
+    static constexpr bool is_value                = false;                     ///< Indicates if the expression is of value type
+    static constexpr bool is_direct               = true;                      ///< Indicates if the expression has direct memory access
+    static constexpr bool is_generator            = false;                     ///< Indicates if the expression is a generator
+    static constexpr bool is_padded               = false;                     ///< Indicates if the expression is padded
+    static constexpr bool is_aligned              = true;                      ///< Indicates if the expression is padded
+    static constexpr bool is_gpu                  = cublas_enabled;            ///< Indicates if the expression can be done on GPU
+    static constexpr bool needs_evaluator_visitor = true;                      ///< Indicates if the expression needs a evaluator visitor
+    static constexpr order storage_order          = sub_traits::storage_order; ///< The expression's storage order
 
     /*!
-     * \brief Returns a textual representation of the operation
-     * \return a textual representation of the operation
+     * \brief Indicates if the expression is vectorizable using the
+     * given vector mode
+     * \tparam V The vector mode
      */
-    static constexpr const char* desc() noexcept {
-        return "transpose";
-    }
+    template <vector_mode_t V>
+    using vectorizable = std::true_type;
 
     /*!
      * \brief Returns the DDth dimension of the expression
      * \return the DDth dimension of the expression
      */
-    template <typename A, std::size_t DD>
+    template <std::size_t DD>
     static constexpr std::size_t dim() {
         return DD == 0 ? decay_traits<A>::template dim<1>() : decay_traits<A>::template dim<0>();
     }
@@ -146,9 +175,8 @@ struct transpose_expr : impl_expr<transpose_expr<T>> {
      * \param d The dimension to get
      * \return the dth dimension of the expression
      */
-    template <typename A>
-    static std::size_t dim(const A& a, std::size_t d) {
-        return d == 0 ? etl::dim<1>(a) : etl::dim<0>(a);
+    static std::size_t dim(const expr_t& e, std::size_t d) {
+        return d == 0 ? etl::dim<1>(e._a) : etl::dim<0>(e._a);
     }
 
     /*!
@@ -156,27 +184,16 @@ struct transpose_expr : impl_expr<transpose_expr<T>> {
      * \param a The left hand side
      * \return the size of the expression
      */
-    template <typename A>
-    static std::size_t size(const A& a) {
-        return etl::size(a);
+    static std::size_t size(const expr_t& e) {
+        return etl::size(e._a);
     }
 
     /*!
      * \brief Returns the size of the expression
      * \return the size of the expression
      */
-    template <typename A>
     static constexpr std::size_t size() {
         return decay_traits<A>::size();
-    }
-
-    /*!
-     * \brief Returns the storage order of the expression.
-     * \return the storage order of the expression
-     */
-    template <typename A>
-    static constexpr etl::order order() {
-        return etl::order::RowMajor;
     }
 
     /*!
