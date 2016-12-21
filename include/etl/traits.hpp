@@ -62,7 +62,7 @@ struct is_selected_expr_impl<selected_expr<Selector, V, Expr>> : std::true_type 
  *
  * \tparam T the type to introspect
  */
-template <typename T, typename Enable = void>
+template <typename T, typename Enable>
 struct etl_traits {
     static constexpr bool is_etl         = false; ///< Indicates if T is an ETL type
     static constexpr bool is_transformer = false; ///< Indicates if T is a transformer
@@ -71,13 +71,6 @@ struct etl_traits {
     static constexpr bool is_fast        = false; ///< Indicates if T is a fast structure
     static constexpr bool is_generator   = false; ///< Indicates if T is a generator expression
 };
-
-/*!
- * \brief Traits helper to get information about ETL types, the type is first decayed.
- * \tparam E the type to introspect
- */
-template <typename E>
-using decay_traits = etl_traits<std::decay_t<E>>;
 
 /*!
  * \brief Traits indicating if the given ETL type is a fast matrix
@@ -591,6 +584,8 @@ struct inplace_sub_transpose_able<T, std::enable_if_t<!is_3d<T>::value>> {
  */
 template <typename T>
 struct etl_traits<T, std::enable_if_t<is_etl_value_class<T>::value>> {
+    using value_type = typename T::value_type;
+
     static constexpr bool is_etl                  = true;                        ///< Indicates if the type is an ETL expression
     static constexpr bool is_transformer          = false;                       ///< Indicates if the type is a transformer
     static constexpr bool is_view                 = false;                       ///< Indicates if the type is a view

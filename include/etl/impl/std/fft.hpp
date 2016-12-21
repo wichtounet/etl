@@ -861,13 +861,13 @@ void fft1_many(const opaque_memory<A, N>& a, const opaque_memory<C, N>& c) {
 
         auto batch_fun_b = [&](const size_t first, const size_t last) {
             for (std::size_t i = first; i < last; ++i) {
-                detail::inplace_radix2_fft1(reinterpret_cast<etl::complex<value_t<C>>*>(m + i * distance), n);
+                detail::inplace_radix2_fft1(reinterpret_cast<etl::complex<typename C::value_type>*>(m + i * distance), n);
             }
         };
 
         dispatch_1d_any(select_parallel(batch, 8), batch_fun_b, 0, batch);
     } else {
-        detail::fft_n_many(a.memory_start(), reinterpret_cast<etl::complex<value_t<C>>*>(c.memory_start()), batch, n);
+        detail::fft_n_many(a.memory_start(), reinterpret_cast<etl::complex<typename C::value_type>*>(c.memory_start()), batch, n);
     }
 }
 
@@ -901,7 +901,7 @@ void fft2(A&& a, C&& c) {
  */
 template <typename A, typename C>
 void ifft2(A&& a, C&& c) {
-    using T = value_t<value_t<C>>;
+    using T = typename value_t<C>::value_type;
 
     std::size_t n = etl::size(a);
 
@@ -934,7 +934,7 @@ void fft2_many(A&& a, C&& c);
  */
 template <typename A, typename C>
 void ifft2_many(A&& a, C&& c) {
-    using T = value_t<value_t<C>>;
+    using T = typename value_t<C>::value_type;
 
     constexpr std::size_t D = etl::decay_traits<A>::dimensions();
 

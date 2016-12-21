@@ -24,7 +24,7 @@ namespace etl {
  * \tparam Impl The implementation to use
  */
 template <typename T, std::size_t D, typename Impl>
-struct basic_fft_expr : impl_expr<basic_fft_expr<T, D, Impl>> {
+struct basic_fft_expr : impl_expr<basic_fft_expr<T, D, Impl>, T> {
     using this_type  = basic_fft_expr<T, D, Impl>; ///< The type of this expression
     using value_type = T;                          ///< The value type
 
@@ -35,7 +35,7 @@ struct basic_fft_expr : impl_expr<basic_fft_expr<T, D, Impl>> {
      * \tparam A The sub epxpression type
      */
     template <typename A>
-    using result_type = detail::expr_result_t<this_type, A>;
+    using result_type = detail::expr_result_t<this_type, T, A>;
 
     /*!
      * \brief Apply the expression

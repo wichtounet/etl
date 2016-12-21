@@ -17,7 +17,7 @@ namespace etl {
  * \brief Expression of an outer product (temporary binary expression)
  */
 template <typename T>
-struct outer_product_expr : impl_expr<outer_product_expr<T>> {
+struct outer_product_expr : impl_expr<outer_product_expr<T>, T> {
     using value_type = T;                     ///< The value type
     using this_type  = outer_product_expr<T>; ///< The type of this expression
 
@@ -26,7 +26,7 @@ struct outer_product_expr : impl_expr<outer_product_expr<T>> {
      * \tparam A The sub expression type
      */
     template <typename A, typename B>
-    using result_type = detail::expr_result_t<this_type, A, B>;
+    using result_type = detail::expr_result_t<this_type, T, A, B>;
 
     static constexpr bool is_gpu = false; ///< outer product has no GPU implementation
 
@@ -103,7 +103,7 @@ struct outer_product_expr : impl_expr<outer_product_expr<T>> {
  * \brief Expression of an outer product (temporary binary expression)
  */
 template <typename T>
-struct batch_outer_product_expr : impl_expr<batch_outer_product_expr<T>> {
+struct batch_outer_product_expr : impl_expr<batch_outer_product_expr<T>, T> {
     using value_type = T;                           ///< The value type
     using this_type  = batch_outer_product_expr<T>; ///< The type of this expression
 
@@ -112,7 +112,7 @@ struct batch_outer_product_expr : impl_expr<batch_outer_product_expr<T>> {
      * \tparam A The sub expression type
      */
     template <typename A, typename B>
-    using result_type = detail::expr_result_t<this_type, A, B>;
+    using result_type = detail::expr_result_t<this_type, T, A, B>;
 
     static constexpr bool is_gpu = cublas_enabled; ///< outer product has a GPU implementation
 

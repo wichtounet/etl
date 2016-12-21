@@ -16,7 +16,7 @@ namespace etl {
  * \brief Upsample configurable expression, in two dimensions
  */
 template <typename T, std::size_t C1, std::size_t C2, typename Impl>
-struct basic_upsample_2d_expr : impl_expr<basic_upsample_2d_expr<T, C1, C2, Impl>> {
+struct basic_upsample_2d_expr : impl_expr<basic_upsample_2d_expr<T, C1, C2, Impl>, T> {
     static_assert(C1 > 0, "C1 must be greater than 0");
     static_assert(C2 > 0, "C2 must be greater than 0");
 
@@ -28,7 +28,7 @@ struct basic_upsample_2d_expr : impl_expr<basic_upsample_2d_expr<T, C1, C2, Impl
      * \tparam A The sub epxpression type
      */
     template <typename A>
-    using result_type = detail::expr_result_t<this_type, A>;
+    using result_type = detail::expr_result_t<this_type, T, A>;
 
     static constexpr bool is_gpu = false; ///< no GPU implementation
 
@@ -131,7 +131,7 @@ using upsample_2d_expr = basic_upsample_2d_expr<T, C1, C2, impl::upsample_2d>;
  * \brief Upsample configurable expression, in three dimensions
  */
 template <typename T, std::size_t C1, std::size_t C2, std::size_t C3, typename Impl>
-struct basic_upsample_3d_expr : impl_expr<basic_upsample_3d_expr<T, C1, C2, C3, Impl>> {
+struct basic_upsample_3d_expr : impl_expr<basic_upsample_3d_expr<T, C1, C2, C3, Impl>, T> {
     static_assert(C1 > 0, "C1 must be greater than 0");
     static_assert(C2 > 0, "C2 must be greater than 0");
     static_assert(C3 > 0, "C3 must be greater than 0");
@@ -144,7 +144,7 @@ struct basic_upsample_3d_expr : impl_expr<basic_upsample_3d_expr<T, C1, C2, C3, 
      * \tparam A The sub epxpression type
      */
     template <typename A>
-    using result_type = detail::expr_result_t<this_type, A>;
+    using result_type = detail::expr_result_t<this_type, T, A>;
 
     static constexpr bool is_gpu = false; ///< no GPU implementation
 
@@ -248,7 +248,7 @@ using upsample_3d_expr = basic_upsample_3d_expr<T, C1, C2, C3, impl::upsample_3d
  * \brief Upsample configurable expression, in two dimensions
  */
 template <typename T, typename Impl>
-struct basic_dyn_upsample_2d_expr : dyn_impl_expr<basic_dyn_upsample_2d_expr<T, Impl>> {
+struct basic_dyn_upsample_2d_expr : dyn_impl_expr<basic_dyn_upsample_2d_expr<T, Impl>, T> {
     using this_type  = basic_dyn_upsample_2d_expr<T, Impl>; ///< The type of expression
     using value_type = T;                                       ///< The value type
 
@@ -257,7 +257,7 @@ struct basic_dyn_upsample_2d_expr : dyn_impl_expr<basic_dyn_upsample_2d_expr<T, 
      * \tparam A The sub epxpression type
      */
     template <typename A>
-    using result_type = detail::expr_result_t<this_type, A>;
+    using result_type = detail::expr_result_t<this_type, T, A>;
 
     static constexpr bool is_gpu = false; ///< no GPU implementation
 
@@ -350,7 +350,7 @@ using dyn_upsample_2d_expr = basic_dyn_upsample_2d_expr<T, impl::upsample_2d>;
  * \brief Upsample configurable expression, in three dimensions
  */
 template <typename T, typename Impl>
-struct basic_dyn_upsample_3d_expr : dyn_impl_expr<basic_dyn_upsample_3d_expr<T, Impl>> {
+struct basic_dyn_upsample_3d_expr : dyn_impl_expr<basic_dyn_upsample_3d_expr<T, Impl>, T> {
     using this_type  = basic_dyn_upsample_3d_expr<T, Impl>; ///< The type of expression
     using value_type = T;                                           ///< The value type
 
@@ -359,7 +359,7 @@ struct basic_dyn_upsample_3d_expr : dyn_impl_expr<basic_dyn_upsample_3d_expr<T, 
      * \tparam A The sub epxpression type
      */
     template <typename A>
-    using result_type = detail::expr_result_t<this_type, A>;
+    using result_type = detail::expr_result_t<this_type, T, A>;
 
     static constexpr bool is_gpu = false; ///< no GPU implementation
 

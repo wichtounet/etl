@@ -58,10 +58,27 @@ template <template <typename, typename, std::size_t...> class TT, typename V1, t
 struct is_var_2<TT, TT<V1, V2, R...>> : std::true_type {};
 
 /*!
+ * \brief Traits to get information about ETL types
+ *
+ * For non-ETL types, is_etl is false and in that case, no other fields should be used on the traits.
+ *
+ * \tparam T the type to introspect
+ */
+template <typename T, typename Enable = void>
+struct etl_traits;
+
+/*!
+ * \brief Traits helper to get information about ETL types, the type is first decayed.
+ * \tparam E the type to introspect
+ */
+template <typename E>
+using decay_traits = etl_traits<std::decay_t<E>>;
+
+/*!
  * \brief Traits to extract the value type out of an ETL type
  */
 template <typename E>
-using value_t = typename std::decay_t<E>::value_type;
+using value_t = typename decay_traits<E>::value_type;
 
 /*!
  * \brief Traits to extract the direct memory type out of an ETL type

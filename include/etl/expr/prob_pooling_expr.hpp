@@ -24,7 +24,7 @@ namespace etl {
  * \tparam Impl The implementation to use
  */
 template <typename T, size_t D, size_t C1, size_t C2, typename Impl>
-struct basic_pmp_h_expr : impl_expr<basic_pmp_h_expr<T, D, C1, C2, Impl>> {
+struct basic_pmp_h_expr : impl_expr<basic_pmp_h_expr<T, D, C1, C2, Impl>, T> {
     using this_type  = basic_pmp_h_expr<T, D, C1, C2, Impl>; ///< The type of this expression
     using value_type = T;                          ///< The value type
 
@@ -35,7 +35,7 @@ struct basic_pmp_h_expr : impl_expr<basic_pmp_h_expr<T, D, C1, C2, Impl>> {
      * \tparam A The sub epxpression type
      */
     template <typename A>
-    using result_type = detail::expr_result_t<this_type, A>;
+    using result_type = detail::expr_result_t<this_type, T, A>;
 
     /*!
      * \brief Apply the expression
@@ -143,7 +143,7 @@ using pmp_p_expr = basic_pmp_h_expr<T, D, C1, C2, detail::pmp_p_impl<D, C1, C2>>
  * \tparam Impl The implementation to use
  */
 template <typename T, std::size_t D, typename Impl>
-struct dyn_basic_pmp_h_expr : impl_expr<dyn_basic_pmp_h_expr<T, D, Impl>> {
+struct dyn_basic_pmp_h_expr : impl_expr<dyn_basic_pmp_h_expr<T, D, Impl>, T> {
     using this_type  = dyn_basic_pmp_h_expr<T, D, Impl>; ///< The type of this expression
     using value_type = T;                          ///< The value type
 
@@ -165,7 +165,7 @@ struct dyn_basic_pmp_h_expr : impl_expr<dyn_basic_pmp_h_expr<T, D, Impl>> {
      * \tparam A The sub epxpression type
      */
     template <typename A>
-    using result_type = detail::dyn_expr_result_t<this_type, A>;
+    using result_type = detail::dyn_expr_result_t<this_type, T, A>;
 
     /*!
      * \brief Apply the expression

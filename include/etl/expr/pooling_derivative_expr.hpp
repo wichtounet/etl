@@ -16,7 +16,7 @@ namespace etl {
  * \brief Base class for all 2D pooling derivative expressions
  */
 template <typename T, std::size_t C1, std::size_t C2, typename Impl>
-struct basic_pool_derivative_2d_expr : impl_expr<basic_pool_derivative_2d_expr<T, C1, C2, Impl>> {
+struct basic_pool_derivative_2d_expr : impl_expr<basic_pool_derivative_2d_expr<T, C1, C2, Impl>, T> {
     static_assert(C1 > 0, "C1 must be greater than 0");
     static_assert(C2 > 0, "C2 must be greater than 0");
 
@@ -29,7 +29,7 @@ struct basic_pool_derivative_2d_expr : impl_expr<basic_pool_derivative_2d_expr<T
      * \tparam B The out expression type
      */
     template <typename A, typename B>
-    using result_type = detail::expr_result_t<this_type, A, B>;
+    using result_type = detail::expr_result_t<this_type, T, A, B>;
 
     static constexpr bool is_gpu = false; ///< no GPU implementation
 
@@ -134,7 +134,7 @@ using max_pool_derivative_2d_expr = basic_pool_derivative_2d_expr<T, C1, C2, imp
  * \brief Base class for all 3D pooling derivative expressions
  */
 template <typename T, std::size_t C1, std::size_t C2, std::size_t C3, typename Impl>
-struct basic_pool_derivative_3d_expr : impl_expr<basic_pool_derivative_3d_expr<T, C1, C2, C3, Impl>> {
+struct basic_pool_derivative_3d_expr : impl_expr<basic_pool_derivative_3d_expr<T, C1, C2, C3, Impl>, T> {
     static_assert(C1 > 0, "C1 must be greater than 0");
     static_assert(C2 > 0, "C2 must be greater than 0");
     static_assert(C3 > 0, "C3 must be greater than 0");
@@ -147,7 +147,7 @@ struct basic_pool_derivative_3d_expr : impl_expr<basic_pool_derivative_3d_expr<T
      * \tparam A The sub expression type
      */
     template <typename A, typename B>
-    using result_type = detail::expr_result_t<this_type, A, B>;
+    using result_type = detail::expr_result_t<this_type, T, A, B>;
 
     static constexpr bool is_gpu = false; ///< no GPU implementation
 
@@ -252,7 +252,7 @@ using max_pool_derivative_3d_expr = basic_pool_derivative_3d_expr<T, C1, C2, C3,
  * \brief Base class for all 2D pooling derivative expressions
  */
 template <typename T, typename Impl>
-struct basic_dyn_pool_derivative_2d_expr : dyn_impl_expr<basic_dyn_pool_derivative_2d_expr<T, Impl>> {
+struct basic_dyn_pool_derivative_2d_expr : dyn_impl_expr<basic_dyn_pool_derivative_2d_expr<T, Impl>, T> {
     using value_type = T;                                          ///< The type of values of this expression
     using this_type  = basic_dyn_pool_derivative_2d_expr<T, Impl>; ///< The type of this expression
 
@@ -262,7 +262,7 @@ struct basic_dyn_pool_derivative_2d_expr : dyn_impl_expr<basic_dyn_pool_derivati
      * \tparam B The out expression type
      */
     template <typename A, typename B>
-    using result_type = detail::expr_result_t<this_type, A, B>;
+    using result_type = detail::expr_result_t<this_type, T, A, B>;
 
     static constexpr bool is_gpu = false; ///< no GPU implementation
 
@@ -357,7 +357,7 @@ using dyn_max_pool_derivative_2d_expr = basic_dyn_pool_derivative_2d_expr<T, imp
  * \brief Base class for all 3D pooling derivative expressions
  */
 template <typename T, typename Impl>
-struct basic_dyn_pool_derivative_3d_expr : dyn_impl_expr<basic_dyn_pool_derivative_3d_expr<T, Impl>> {
+struct basic_dyn_pool_derivative_3d_expr : dyn_impl_expr<basic_dyn_pool_derivative_3d_expr<T, Impl>, T> {
     using value_type = T;                                                  ///< The type of values of this expression
     using this_type  = basic_dyn_pool_derivative_3d_expr<T, Impl>; ///< The type of this expression
 
@@ -366,7 +366,7 @@ struct basic_dyn_pool_derivative_3d_expr : dyn_impl_expr<basic_dyn_pool_derivati
      * \tparam A The sub expression type
      */
     template <typename A, typename B>
-    using result_type = detail::expr_result_t<this_type, A, B>;
+    using result_type = detail::expr_result_t<this_type, T, A, B>;
 
     static constexpr bool is_gpu = false; ///< no GPU implementation
 

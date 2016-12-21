@@ -960,6 +960,7 @@ template <typename T, typename Expr, typename UnaryOp>
 struct etl_traits<etl::unary_expr<T, Expr, UnaryOp>> {
     using expr_t     = etl::unary_expr<T, Expr, UnaryOp>; ///< The expression type
     using sub_expr_t = std::decay_t<Expr>;                ///< The sub expression type
+    using value_type = T;
 
     static constexpr bool is_etl                  = true;                                                 ///< Indicates if the type is an ETL expression
     static constexpr bool is_transformer          = false;                                                ///< Indicates if the type is a transformer

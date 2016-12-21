@@ -115,6 +115,8 @@ struct scalar {
  */
 template <typename T>
 struct etl_traits<etl::scalar<T>, void> {
+    using value_type = T;
+
     static constexpr bool is_etl                  = true;            ///< Indicates if the type is an ETL expression
     static constexpr bool is_transformer          = false;           ///< Indicates if the type is a transformer
     static constexpr bool is_view                 = false;           ///< Indicates if the type is a view

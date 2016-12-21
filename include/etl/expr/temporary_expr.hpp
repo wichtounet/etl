@@ -752,6 +752,7 @@ template <typename T, typename A, typename Op>
 struct etl_traits<etl::temporary_unary_expr<T, A, Op>> {
     using expr_t = etl::temporary_unary_expr<T, A, Op>; ///< The expression type
     using a_t    = std::decay_t<A>;                     ///< The decayed left expression type
+    using value_type = T;
 
     static constexpr bool is_etl                  = true;                           ///< Indicates if the type is an ETL type
     static constexpr bool is_transformer          = false;                          ///< Indicates if the type is a transformer
@@ -831,6 +832,7 @@ struct etl_traits<etl::temporary_binary_expr<T, A, B, Op>> {
     using expr_t = etl::temporary_binary_expr<T, A, B, Op>; ///< The expression type
     using a_t    = std::decay_t<A>;                         ///< The decayed left expression type
     using b_t    = std::decay_t<B>;                         ///< The decayed right expression type
+    using value_type = T;
 
     static constexpr bool is_etl                  = true;                                                                                            ///< Indicates if the type is an ETL type
     static constexpr bool is_transformer          = false;                                                                                           ///< Indicates if the type is a transformer
@@ -909,6 +911,7 @@ template <typename T, typename A, typename Op>
 struct etl_traits<etl::temporary_unary_expr_state<T, A, Op>> {
     using expr_t = etl::temporary_unary_expr_state<T, A, Op>; ///< The type of expression
     using a_t    = std::decay_t<A>;                           ///< The decayed left expression type
+    using value_type = T;
 
     static constexpr bool is_etl                  = true;                           ///< Indicates if the type is an ETL type
     static constexpr bool is_transformer          = false;                          ///< Indicates if the type is a transformer
@@ -970,6 +973,7 @@ struct etl_traits<etl::temporary_binary_expr_state<T, A, B, Op>> {
     using expr_t = etl::temporary_binary_expr_state<T, A, B, Op>; ///< The type of expression
     using a_t    = std::decay_t<A>;                               ///< The decayed left expression type
     using b_t    = std::decay_t<B>;                               ///< The decayed right expression type
+    using value_type = T;
 
     static constexpr bool is_etl                  = true;                                                                                            ///< Indicates if the type is an ETL type
     static constexpr bool is_transformer          = false;                                                                                           ///< Indicates if the type is a transformer

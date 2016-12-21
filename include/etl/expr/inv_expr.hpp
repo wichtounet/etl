@@ -21,7 +21,7 @@ namespace etl {
  * \brief A basic configurable expression for matrix inversion
  */
 template <typename T, typename Impl>
-struct basic_inv_expr : impl_expr<basic_inv_expr<T, Impl>> {
+struct basic_inv_expr : impl_expr<basic_inv_expr<T, Impl>, T> {
     using this_type  = basic_inv_expr<T, Impl>; ///< The type of the expression
     using value_type = T;                       ///< The type of the values
 
@@ -32,7 +32,7 @@ struct basic_inv_expr : impl_expr<basic_inv_expr<T, Impl>> {
      * \tparam A The sub epxpression type
      */
     template <typename A>
-    using result_type = detail::expr_result_t<this_type, A>;
+    using result_type = detail::expr_result_t<this_type, T, A>;
 
     /*!
      * \brief Apply the expression

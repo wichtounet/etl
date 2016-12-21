@@ -16,7 +16,7 @@ namespace etl {
  * \brief Convmtx configurable expression, in two dimensions
  */
 template <typename T, std::size_t K1, std::size_t K2, typename Impl>
-struct basic_convmtx2_expr : impl_expr<basic_convmtx2_expr<T, K1, K2, Impl>> {
+struct basic_convmtx2_expr : impl_expr<basic_convmtx2_expr<T, K1, K2, Impl>, T> {
     static_assert(K1 > 0, "K1 must be greater than 0");
     static_assert(K2 > 0, "K2 must be greater than 0");
 
@@ -30,7 +30,7 @@ struct basic_convmtx2_expr : impl_expr<basic_convmtx2_expr<T, K1, K2, Impl>> {
      * \tparam A The sub expression type
      */
     template <typename A>
-    using result_type = detail::expr_result_t<this_type, A>;
+    using result_type = detail::expr_result_t<this_type, T, A>;
 
     /*!
      * \brief Apply the expression

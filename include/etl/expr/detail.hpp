@@ -18,6 +18,9 @@ namespace etl {
 
 namespace detail {
 
+//TODO Once all temporary expr are transformed to the new format,
+//remove the typename T for all and use the traits
+
 /*!
  * \brief Traits to build a fast dyn matrix type for the result
  * type of an temporary expression with 1 or more sub types
@@ -25,15 +28,15 @@ namespace detail {
  * \tparam I The indices to use
  * \tparam Subs The sub expressions
  */
-template <typename E, typename I, typename... Subs>
+template <typename E, typename T, typename I, typename... Subs>
 struct fast_result_type_builder;
 
 /*!
  * \copydoc fast_result_type_builder
  */
-template <typename E, std::size_t... I, typename... Subs>
-struct fast_result_type_builder<E, std::index_sequence<I...>, Subs...> {
-    using value_type = value_t<E>; ///< The value type
+template <typename E, typename T, std::size_t... I, typename... Subs>
+struct fast_result_type_builder<E, T, std::index_sequence<I...>, Subs...> {
+    using value_type = T; ///< The value type
 
     /*!
      * \brief The built type for the given Subs
@@ -47,29 +50,29 @@ struct fast_result_type_builder<E, std::index_sequence<I...>, Subs...> {
  * \tparam Fast Indicates if the result is fast or dynamic
  * \tparam Subs The sub expressions
  */
-template <typename E, bool Fast, typename... Subs>
+template <typename E, typename T, bool Fast, typename... Subs>
 struct expr_result;
 
 /*!
  * \copydoc expr_result
  */
-template <typename E, typename... Subs>
-struct expr_result<E, false, Subs...> {
+template <typename E, typename T, typename... Subs>
+struct expr_result<E, T, false, Subs...> {
     /*!
      * \brief The built type for the given Subs
      */
-    using type = dyn_matrix_impl<value_t<E>, E::template order<Subs...>(), E::dimensions()>;
+    using type = dyn_matrix_impl<T, E::template order<Subs...>(), E::dimensions()>;
 };
 
 /*!
  * \copydoc expr_result
  */
-template <typename E, typename... Subs>
-struct expr_result<E, true, Subs...> {
+template <typename E, typename T, typename... Subs>
+struct expr_result<E, T, true, Subs...> {
     /*!
      * \brief The built type for the given Subs
      */
-    using type = typename fast_result_type_builder<E, std::make_index_sequence<E::dimensions()>, Subs...>::type;
+    using type = typename fast_result_type_builder<E, T, std::make_index_sequence<E::dimensions()>, Subs...>::type;
 };
 
 /*!
@@ -77,16 +80,16 @@ struct expr_result<E, true, Subs...> {
  * \tparam E The temporary expression type
  * \tparam Subs The sub expressions
  */
-template <typename E, typename... Subs>
-using expr_result_t = typename expr_result<E, all_fast<Subs...>::value, Subs...>::type;
+template <typename E, typename T, typename... Subs>
+using expr_result_t = typename expr_result<E, T, all_fast<Subs...>::value, Subs...>::type;
 
 /*!
  * \brief Helper traits to directly get the result type for an impl_expr. The result is forced to be dynamic.
  * \tparam E The temporary expression type
  * \tparam Subs The sub expressions
  */
-template <typename E, typename... Subs>
-using dyn_expr_result_t = typename expr_result<E, false, Subs...>::type;
+template <typename E, typename T, typename... Subs>
+using dyn_expr_result_t = typename expr_result<E, T, false, Subs...>::type;
 
 } // end of namespace detail
 
@@ -94,7 +97,7 @@ using dyn_expr_result_t = typename expr_result<E, false, Subs...>::type;
  * \brief Base class for temporary impl expression
  * \tparam D The derived type
  */
-template <typename D>
+template <typename D, typename T>
 struct impl_expr {
     using derived_t = D; ///< The derived type
 
@@ -102,7 +105,7 @@ struct impl_expr {
      * \brief Helper traits to get the result type of this expression
      */
     template <typename... Subs>
-    using result_type = detail::expr_result_t<derived_t, Subs...>;
+    using result_type = detail::expr_result_t<derived_t, T, Subs...>;
 
     /*!
      * \brief Allocate the temporary for the expression
@@ -139,7 +142,7 @@ struct impl_expr {
  * \brief Base class for dynamic temporary impl expression
  * \tparam D The derived type
  */
-template <typename D>
+template <typename D, typename T>
 struct dyn_impl_expr {
     using derived_t = D; ///< The derived type
 
@@ -147,7 +150,7 @@ struct dyn_impl_expr {
      * \brief Helper traits to get the result type of this expression
      */
     template <typename... Subs>
-    using result_type = detail::dyn_expr_result_t<derived_t, Subs...>;
+    using result_type = detail::dyn_expr_result_t<derived_t, T, Subs...>;
 
     /*!
      * \brief Returns a reference to the derived object, i.e. the object using the CRTP injector.

@@ -958,6 +958,7 @@ template <typename T, std::size_t D>
 struct etl_traits<etl::dim_view<T, D>> {
     using expr_t     = etl::dim_view<T, D>; ///< The expression type
     using sub_expr_t = std::decay_t<T>;     ///< The sub expression type
+    using value_type = typename etl_traits<sub_expr_t>::value_type;
 
     static constexpr bool is_etl                  = true;                                            ///< Indicates if the type is an ETL expression
     static constexpr bool is_transformer          = false;                                           ///< Indicates if the type is a transformer
@@ -1045,6 +1046,7 @@ struct etl_traits<etl::slice_view<T>> {
     using expr_t     = etl::slice_view<T>; ///< The expression type
     using sub_expr_t = std::decay_t<T>;    ///< The sub expression type
     using sub_traits = etl_traits<sub_expr_t>; ///< The traits of the sub expression
+    using value_type = typename etl_traits<sub_expr_t>::value_type;
 
     static constexpr bool is_etl                  = true;                                            ///< Indicates if the type is an ETL expression
     static constexpr bool is_transformer          = false;                                           ///< Indicates if the type is a transformer
@@ -1108,6 +1110,7 @@ template <typename T>
 struct etl_traits<etl::memory_slice_view<T>> {
     using expr_t     = etl::memory_slice_view<T>; ///< The expression type
     using sub_expr_t = std::decay_t<T>;    ///< The sub expression type
+    using value_type = typename etl_traits<sub_expr_t>::value_type;
 
     static constexpr bool is_etl                  = true;                                            ///< Indicates if the type is an ETL expression
     static constexpr bool is_transformer          = false;                                           ///< Indicates if the type is a transformer
@@ -1168,6 +1171,7 @@ template <typename T, std::size_t... Dims>
 struct etl_traits<etl::fast_matrix_view<T, Dims...>> {
     using expr_t     = etl::fast_matrix_view<T, Dims...>; ///< The expression type
     using sub_expr_t = std::decay_t<T>;                   ///< The sub expression type
+    using value_type = typename etl_traits<sub_expr_t>::value_type;
 
     static constexpr bool is_etl                  = true;                                            ///< Indicates if the type is an ETL expression
     static constexpr bool is_transformer          = false;                                           ///< Indicates if the type is a transformer

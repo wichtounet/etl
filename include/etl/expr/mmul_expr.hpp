@@ -127,7 +127,7 @@ void check_mv_mul_sizes(const A& a, const B& b, C& c) {
  * \tparam Impl The implementation class
  */
 template <typename T, typename Impl>
-struct basic_mm_mul_expr : impl_expr<basic_mm_mul_expr<T, Impl>> {
+struct basic_mm_mul_expr : impl_expr<basic_mm_mul_expr<T, Impl>, T> {
     using value_type = T; ///< The value type
     using this_type  = basic_mm_mul_expr<T, Impl>; ///< This expression type
 
@@ -137,7 +137,7 @@ struct basic_mm_mul_expr : impl_expr<basic_mm_mul_expr<T, Impl>> {
      * \tparam B The rhs expression type
      */
     template <typename A, typename B>
-    using result_type = detail::expr_result_t<this_type, A, B>;
+    using result_type = detail::expr_result_t<this_type, T, A, B>;
 
     static constexpr bool is_gpu = cublas_enabled; ///< Indicate if this expressions may run on GPU
 
@@ -246,7 +246,7 @@ using strassen_mm_mul_expr = basic_mm_mul_expr<T, detail::strassen_mm_mul_impl>;
  * \tparam Impl The implementation class
  */
 template <typename T, typename Impl>
-struct basic_vm_mul_expr : impl_expr<basic_vm_mul_expr<T, Impl>> {
+struct basic_vm_mul_expr : impl_expr<basic_vm_mul_expr<T, Impl>, T> {
     using value_type = T; ///< The value type
     using this_type  = basic_vm_mul_expr<T, Impl>; ///< This expression type
 
@@ -258,7 +258,7 @@ struct basic_vm_mul_expr : impl_expr<basic_vm_mul_expr<T, Impl>> {
      * \tparam B The rhs expression type
      */
     template <typename A, typename B>
-    using result_type = detail::expr_result_t<this_type, A, B>;
+    using result_type = detail::expr_result_t<this_type, T, A, B>;
 
     /*!
      * \brief Apply the expression
@@ -360,7 +360,7 @@ using vm_mul_expr = basic_vm_mul_expr<T, detail::vm_mul_impl>;
  * \tparam Impl The implementation class
  */
 template <typename T, typename Impl>
-struct basic_mv_mul_expr : impl_expr<basic_mv_mul_expr<T, Impl>> {
+struct basic_mv_mul_expr : impl_expr<basic_mv_mul_expr<T, Impl>, T> {
     using value_type = T;                          ///< The value type
     using this_type  = basic_mv_mul_expr<T, Impl>; ///< This expression type
 
@@ -372,7 +372,7 @@ struct basic_mv_mul_expr : impl_expr<basic_mv_mul_expr<T, Impl>> {
      * \tparam B The rhs expression type
      */
     template <typename A, typename B>
-    using result_type = detail::expr_result_t<this_type, A, B>;
+    using result_type = detail::expr_result_t<this_type, T, A, B>;
 
     /*!
      * \brief Apply the expression

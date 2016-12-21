@@ -112,6 +112,8 @@ public:
  */
 template <typename Generator>
 struct etl_traits<etl::generator_expr<Generator>> {
+    using value_type = typename Generator::value_type;
+
     static constexpr bool is_etl                  = true;            ///< Indicates if the type is an ETL expression
     static constexpr bool is_transformer          = false;           ///< Indicates if the type is a transformer
     static constexpr bool is_view                 = false;           ///< Indicates if the type is a view

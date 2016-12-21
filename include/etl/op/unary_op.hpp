@@ -754,7 +754,7 @@ struct real_unary_op {
      * \param x The value on which to apply the operator
      * \return The result of applying the unary operator on x
      */
-    static constexpr value_t<T> apply(const T& x) noexcept {
+    static constexpr typename T::value_type apply(const T& x) noexcept {
         return get_real(x);
     }
 
@@ -789,7 +789,7 @@ struct imag_unary_op {
      * \param x The value on which to apply the operator
      * \return The result of applying the unary operator on x
      */
-    static constexpr value_t<T> apply(const T& x) noexcept {
+    static constexpr typename T::value_type apply(const T& x) noexcept {
         return get_imag(x);
     }
 

@@ -21,7 +21,7 @@ namespace etl {
  * \brief Base class for all 2D pooling expressions
  */
 template <typename T, size_t C1, size_t C2, size_t S1, size_t S2, size_t P1, size_t P2, typename Impl>
-struct basic_pool_2d_expr : impl_expr<basic_pool_2d_expr<T, C1, C2, S1, S2, P1, P2, Impl>> {
+struct basic_pool_2d_expr : impl_expr<basic_pool_2d_expr<T, C1, C2, S1, S2, P1, P2, Impl>, T> {
     static_assert(C1 > 0, "C1 must be greater than 0");
     static_assert(C2 > 0, "C2 must be greater than 0");
     static_assert(S1 > 0, "S1 must be greater than 0");
@@ -136,7 +136,7 @@ using avg_pool_2d_expr = basic_pool_2d_expr<T, C1, C2, S1, S2, P1, P2, impl::avg
  * \brief Base class for all 2D pooling expressions
  */
 template <typename T, size_t C1, size_t C2, size_t S1, size_t S2, size_t P1, size_t P2, size_t D, typename Impl>
-struct basic_deep_pool_2d_expr : impl_expr<basic_deep_pool_2d_expr<T, C1, C2, S1, S2, P1, P2, D, Impl>> {
+struct basic_deep_pool_2d_expr : impl_expr<basic_deep_pool_2d_expr<T, C1, C2, S1, S2, P1, P2, D, Impl>, T> {
     static_assert(C1 > 0, "C1 must be greater than 0");
     static_assert(C2 > 0, "C2 must be greater than 0");
     static_assert(S1 > 0, "S1 must be greater than 0");
@@ -290,7 +290,7 @@ using deep_avg_pool_2d_expr = basic_deep_pool_2d_expr<T, C1, C2, S1, S2, P1, P2,
  * \brief Base class for all 3D pooling expressions
  */
 template <typename T, size_t C1, size_t C2, size_t C3, size_t S1, size_t S2, size_t S3, size_t P1, size_t P2, size_t P3, typename Impl>
-struct basic_pool_3d_expr : impl_expr<basic_pool_3d_expr<T, C1, C2, C3, S1, S2, S3, P1, P2, P3, Impl>> {
+struct basic_pool_3d_expr : impl_expr<basic_pool_3d_expr<T, C1, C2, C3, S1, S2, S3, P1, P2, P3, Impl>, T> {
     static_assert(C1 > 0, "C1 must be greater than 0");
     static_assert(C2 > 0, "C2 must be greater than 0");
     static_assert(C3 > 0, "C3 must be greater than 0");
@@ -407,7 +407,7 @@ using avg_pool_3d_expr = basic_pool_3d_expr<T, C1, C2, C3, S1, S2, S3, P1, P2, P
  * \brief Base class for all deep 3D pooling expressions
  */
 template <typename T, size_t C1, size_t C2, size_t C3, size_t S1, size_t S2, size_t S3, size_t P1, size_t P2, size_t P3, size_t D, typename Impl>
-struct basic_pool_deep_3d_expr : impl_expr<basic_pool_deep_3d_expr<T, C1, C2, C3, S1, S2, S3, P1, P2, P3, D, Impl>> {
+struct basic_pool_deep_3d_expr : impl_expr<basic_pool_deep_3d_expr<T, C1, C2, C3, S1, S2, S3, P1, P2, P3, D, Impl>, T> {
     static_assert(C1 > 0, "C1 must be greater than 0");
     static_assert(C2 > 0, "C2 must be greater than 0");
     static_assert(C3 > 0, "C3 must be greater than 0");
@@ -566,7 +566,7 @@ using deep_avg_pool_3d_expr = basic_pool_deep_3d_expr<T, C1, C2, C3, S1, S2, S3,
  * \brief Base class for all dynamic 2D pooling expressions
  */
 template <typename T, typename Impl>
-struct basic_dyn_pool_2d_expr : dyn_impl_expr<basic_dyn_pool_2d_expr<T, Impl>> {
+struct basic_dyn_pool_2d_expr : dyn_impl_expr<basic_dyn_pool_2d_expr<T, Impl>, T> {
     using value_type = T;                               ///< Type of values of the expression
     using this_type  = basic_dyn_pool_2d_expr<T, Impl>; ///< The type of this expression
 
@@ -678,7 +678,7 @@ using dyn_avg_pool_2d_expr = basic_dyn_pool_2d_expr<T, impl::avg_pool_2d>;
  * \brief Base class for all dynamic 2D pooling expressions
  */
 template <typename T, size_t D, typename Impl>
-struct basic_dyn_deep_pool_2d_expr : dyn_impl_expr<basic_dyn_deep_pool_2d_expr<T, D, Impl>> {
+struct basic_dyn_deep_pool_2d_expr : dyn_impl_expr<basic_dyn_deep_pool_2d_expr<T, D, Impl>, T> {
     using value_type = T;                                       ///< Type of values of the expression
     using this_type  = basic_dyn_deep_pool_2d_expr<T, D, Impl>; ///< The type of this expression
 
@@ -812,7 +812,7 @@ using dyn_deep_avg_pool_2d_expr = basic_dyn_deep_pool_2d_expr<T, D, impl::avg_po
  * \brief Base class for all dynamic 3D pooling expressions
  */
 template <typename T, typename Impl>
-struct basic_dyn_pool_3d_expr : dyn_impl_expr<basic_dyn_pool_3d_expr<T, Impl>> {
+struct basic_dyn_pool_3d_expr : dyn_impl_expr<basic_dyn_pool_3d_expr<T, Impl>, T> {
     using value_type = T;                                       ///< The type of values of the expression
     using this_type  = basic_dyn_pool_3d_expr<T, Impl>; ///< The type of this expression
 
@@ -923,7 +923,7 @@ using dyn_avg_pool_3d_expr = basic_dyn_pool_3d_expr<T, impl::avg_pool_3d>;
  * \brief Base class for all dynamic 3D pooling expressions
  */
 template <typename T, size_t D, typename Impl>
-struct basic_dyn_deep_pool_3d_expr : dyn_impl_expr<basic_dyn_deep_pool_3d_expr<T, D, Impl>> {
+struct basic_dyn_deep_pool_3d_expr : dyn_impl_expr<basic_dyn_deep_pool_3d_expr<T, D, Impl>, T> {
     using value_type = T;                                       ///< The type of values of the expression
     using this_type  = basic_dyn_deep_pool_3d_expr<T, D, Impl>; ///< The type of this expression
 

@@ -360,6 +360,7 @@ struct etl_traits<T, std::enable_if_t<cpp::or_c<
                          cpp::is_specialization_of<etl::mean_r_transformer, std::decay_t<T>>>::value>> {
     using expr_t     = T;                                                ///< The expression type
     using sub_expr_t = std::decay_t<typename std::decay_t<T>::sub_type>; ///< The sub expression type
+    using value_type = value_t<sub_expr_t>;
 
     static constexpr bool is_etl                  = true;                                            ///< Indicates if the type is an ETL expression
     static constexpr bool is_transformer          = true;                                            ///< Indicates if the type is a transformer
@@ -367,12 +368,12 @@ struct etl_traits<T, std::enable_if_t<cpp::or_c<
     static constexpr bool is_magic_view           = false;                                           ///< Indicates if the type is a magic view
     static constexpr bool is_fast                 = etl_traits<sub_expr_t>::is_fast;                 ///< Indicates if the expression is fast
     static constexpr bool is_linear               = false;                                           ///< Indicates if the expression is linear
-    static constexpr bool is_thread_safe                 = etl_traits<sub_expr_t>::is_thread_safe;                 ///< Indicates if the expression is thread safe
+    static constexpr bool is_thread_safe          = etl_traits<sub_expr_t>::is_thread_safe;          ///< Indicates if the expression is thread safe
     static constexpr bool is_value                = false;                                           ///< Indicates if the expression is of value type
-    static constexpr bool is_direct                = false;                                           ///< Indicates if the expression has direct memory access
+    static constexpr bool is_direct               = false;                                           ///< Indicates if the expression has direct memory access
     static constexpr bool is_generator            = false;                                           ///< Indicates if the expression is a generated
-    static constexpr bool is_padded               = false;                          ///< Indicates if the expression is padded
-    static constexpr bool is_aligned               = false;                          ///< Indicates if the expression is padded
+    static constexpr bool is_padded               = false;                                           ///< Indicates if the expression is padded
+    static constexpr bool is_aligned              = false;                                           ///< Indicates if the expression is padded
     static constexpr bool needs_evaluator_visitor = etl_traits<sub_expr_t>::needs_evaluator_visitor; ///< Indicaes if the expression needs an evaluator visitor
     static constexpr order storage_order          = etl_traits<sub_expr_t>::storage_order;           ///< The expression storage order
 
@@ -440,6 +441,7 @@ struct etl_traits<T, std::enable_if_t<cpp::or_c<
                          cpp::is_specialization_of<etl::mean_l_transformer, std::decay_t<T>>>::value>> {
     using expr_t     = T;                                                ///< The expression type
     using sub_expr_t = std::decay_t<typename std::decay_t<T>::sub_type>; ///< The sub expression type
+    using value_type = value_t<sub_expr_t>;
 
     static constexpr bool is_etl                  = true;                                            ///< Indicates if the type is an ETL expression
     static constexpr bool is_transformer          = true;                                            ///< Indicates if the type is a transformer

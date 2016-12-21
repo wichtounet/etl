@@ -19,7 +19,7 @@ namespace etl {
  * \tparam Impl The implementation class
  */
 template <typename T, std::size_t D, typename Impl>
-struct basic_conv_expr : impl_expr<basic_conv_expr<T, D, Impl>> {
+struct basic_conv_expr : impl_expr<basic_conv_expr<T, D, Impl>, T> {
     static_assert(D > 0, "0D convolution is not valid");
 
     using value_type = T;                           ///< The type of value of the expression
@@ -33,7 +33,7 @@ struct basic_conv_expr : impl_expr<basic_conv_expr<T, D, Impl>> {
      * \tparam B The right hand side epxpression type
      */
     template <typename A, typename B>
-    using result_type = detail::expr_result_t<this_type, A, B>;
+    using result_type = detail::expr_result_t<this_type, T, A, B>;
 
     /*!
      * \brief Validate the convolutiond dimensions
@@ -166,7 +166,7 @@ struct basic_conv_expr : impl_expr<basic_conv_expr<T, D, Impl>> {
  * \tparam Impl The implementation class
  */
 template <typename T, std::size_t D, typename Impl>
-struct dyn_basic_conv_expr : dyn_impl_expr<dyn_basic_conv_expr<T, D, Impl>> {
+struct dyn_basic_conv_expr : dyn_impl_expr<dyn_basic_conv_expr<T, D, Impl>, T> {
     static_assert(D > 0, "0D convolution is not valid");
 
     using value_type = T;                               ///< The type of value of the expression

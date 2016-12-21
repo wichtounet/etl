@@ -263,6 +263,7 @@ struct etl_traits<etl::binary_expr<T, LeftExpr, BinaryOp, RightExpr>> {
     using expr_t       = etl::binary_expr<T, LeftExpr, BinaryOp, RightExpr>; ///< The type of the expression
     using left_expr_t  = std::decay_t<LeftExpr>;                             ///< The type of the left expression
     using right_expr_t = std::decay_t<RightExpr>;                            ///< The type of the right expression
+    using value_type = T;
 
     static constexpr bool left_directed = cpp::not_u<etl_traits<left_expr_t>::is_generator>::value; ///< True if directed by the left expression, false otherwise
 
