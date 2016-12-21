@@ -225,7 +225,7 @@ public:
      * \param e The ETL expression to get the values from
      * \return a reference to the fast matrix
      */
-    template <typename E, cpp_enable_if(std::is_convertible<typename E::value_type, value_type>::value, is_etl_expr<E>::value)>
+    template <typename E, cpp_enable_if(is_etl_expr<E>::value, std::is_convertible<value_t<E>, value_type>::value)>
     fast_matrix_impl& operator=(E&& e) {
         validate_assign(*this, e);
         assign_evaluate(std::forward<E>(e), *this);

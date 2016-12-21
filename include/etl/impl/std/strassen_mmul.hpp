@@ -214,7 +214,7 @@ void strassen_mm_mul(const A& a, const B& b, C& c) {
     if (dim<0>(a) == m && dim<0>(b) == m && dim<1>(a) == m && dim<1>(b) == m) {
         strassen_mm_mul_r(a, b, c);
     } else {
-        using value_type = typename A::value_type;
+        using value_type = value_t<A>;
 
         etl::dyn_matrix<value_type> a_prep(m, m, value_type(0));
         etl::dyn_matrix<value_type> b_prep(m, m, value_type(0));

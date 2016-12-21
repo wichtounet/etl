@@ -17,7 +17,7 @@ namespace etl {
 template <typename T, cpp_enable_if(is_etl_expr<T>::value, !etl_traits<T>::is_value, !etl_traits<T>::is_fast)>
 auto s(T&& value) {
     // Sizes will be directly propagated
-    return dyn_matrix<typename T::value_type, etl_traits<T>::dimensions()>(std::forward<T>(value));
+    return dyn_matrix<value_t<T>, etl_traits<T>::dimensions()>(std::forward<T>(value));
 }
 
 /*!
@@ -31,7 +31,7 @@ struct build_matrix_type;
  */
 template <typename M, std::size_t... I>
 struct build_matrix_type<M, std::index_sequence<I...>> {
-    using type = fast_matrix<typename M::value_type, etl_traits<M>::template dim<I>()...>; ///< The fast matrix type
+    using type = fast_matrix<value_t<M>, etl_traits<M>::template dim<I>()...>; ///< The fast matrix type
 };
 
 /*!

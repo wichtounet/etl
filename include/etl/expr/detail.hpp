@@ -33,7 +33,7 @@ struct fast_result_type_builder;
  */
 template <typename E, std::size_t... I, typename... Subs>
 struct fast_result_type_builder<E, std::index_sequence<I...>, Subs...> {
-    using value_type = typename E::value_type; ///< The value type
+    using value_type = value_t<E>; ///< The value type
 
     /*!
      * \brief The built type for the given Subs
@@ -58,7 +58,7 @@ struct expr_result<E, false, Subs...> {
     /*!
      * \brief The built type for the given Subs
      */
-    using type = dyn_matrix_impl<typename E::value_type, E::template order<Subs...>(), E::dimensions()>;
+    using type = dyn_matrix_impl<value_t<E>, E::template order<Subs...>(), E::dimensions()>;
 };
 
 /*!
