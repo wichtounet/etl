@@ -398,7 +398,7 @@ namespace standard_evaluator {
      * \param expr The right hand side expression
      * \param result The left hand side
      */
-    template <typename E, typename R, cpp_enable_if(detail::standard_compound<E, R>::value)>
+    template <typename E, typename R, cpp_enable_if(detail::standard_compound_div<E, R>::value)>
     void div_evaluate(E&& expr, R&& result) {
         pre_assign_rhs(expr);
         pre_assign_lhs(result);
@@ -414,7 +414,7 @@ namespace standard_evaluator {
     /*!
      * \copydoc div_evaluate
      */
-    template <typename E, typename R, cpp_enable_if(detail::direct_compound<E, R>::value)>
+    template <typename E, typename R, cpp_enable_if(detail::direct_compound_div<E, R>::value)>
     void div_evaluate(E&& expr, R&& result) {
         pre_assign_rhs(expr);
         pre_assign_lhs(result);
@@ -432,7 +432,7 @@ namespace standard_evaluator {
     /*!
      * \copydoc div_evaluate
      */
-    template <typename E, typename R, cpp_enable_if(detail::vectorized_compound<E, R>::value)>
+    template <typename E, typename R, cpp_enable_if(detail::vectorized_compound_div<E, R>::value)>
     void div_evaluate(E&& expr, R&& result) {
         constexpr auto V = detail::select_vector_mode<E, R>();
 

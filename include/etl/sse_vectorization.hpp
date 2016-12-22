@@ -31,8 +31,10 @@
 #endif
 
 #define ETL_INLINE_VEC_VOID ETL_STATIC_INLINE(void)
+#define ETL_INLINE_VEC_128I ETL_STATIC_INLINE(__m128i)
 #define ETL_INLINE_VEC_128 ETL_STATIC_INLINE(__m128)
 #define ETL_INLINE_VEC_128D ETL_STATIC_INLINE(__m128d)
+#define ETL_OUT_VEC_128I ETL_OUT_INLINE(__m128i)
 #define ETL_OUT_VEC_128 ETL_OUT_INLINE(__m128)
 #define ETL_OUT_VEC_128D ETL_OUT_INLINE(__m128d)
 
@@ -123,6 +125,18 @@ struct sse_intrinsic_traits<etl::complex<double>> {
 };
 
 /*!
+ * \brief specialization of sse_intrinsic_traits for float
+ */
+template <>
+struct sse_intrinsic_traits<int> {
+    static constexpr bool vectorizable     = true; ///< Boolean flag indicating is vectorizable or not
+    static constexpr std::size_t size      = 4;    ///< Numbers of elements in a vector
+    static constexpr std::size_t alignment = 16;   ///< Necessary alignment, in bytes, for this type
+
+    using intrinsic_type = __m128i; ///< The vector type
+};
+
+/*!
  * \brief Streaming SIMD (SSE) operations implementation.
  */
 struct sse_vec {
@@ -178,6 +192,14 @@ struct sse_vec {
      * \brief Unaligned store of the given packed vector at the
      * given memory position
      */
+    ETL_INLINE_VEC_VOID storeu(int* memory, __m128i value) {
+        _mm_storeu_si128(reinterpret_cast<__m128i*>(memory), value);
+    }
+
+    /*!
+     * \brief Unaligned store of the given packed vector at the
+     * given memory position
+     */
     ETL_INLINE_VEC_VOID storeu(float* memory, __m128 value) {
         _mm_storeu_ps(memory, value);
     }
@@ -226,6 +248,14 @@ struct sse_vec {
      * \brief Aligned store of the given packed vector at the
      * given memory position
      */
+    ETL_INLINE_VEC_VOID store(int* memory, __m128i value) {
+        _mm_store_si128(reinterpret_cast<__m128i*>(memory), value);
+    }
+
+    /*!
+     * \brief Aligned store of the given packed vector at the
+     * given memory position
+     */
     ETL_INLINE_VEC_VOID store(float* memory, __m128 value) {
         _mm_store_ps(memory, value);
     }
@@ -268,6 +298,14 @@ struct sse_vec {
      */
     ETL_INLINE_VEC_VOID store(etl::complex<double>* memory, __m128d value) {
         _mm_store_pd(reinterpret_cast<double*>(memory), value);
+    }
+
+    /*!
+     * \brief Non-temporal, aligned, store of the given packed vector at the
+     * given memory position
+     */
+    ETL_INLINE_VEC_VOID stream(int* memory, __m128i value) {
+        _mm_stream_si128(reinterpret_cast<__m128i*>(memory), value);
     }
 
     /*!
@@ -324,6 +362,13 @@ struct sse_vec {
     /*!
      * \brief Load a packed vector from the given aligned memory location
      */
+    ETL_INLINE_VEC_128I load(const int* memory) {
+        return _mm_load_si128(reinterpret_cast<const __m128i*>(memory));
+    }
+
+    /*!
+     * \brief Load a packed vector from the given aligned memory location
+     */
     ETL_INLINE_VEC_128 load(const float* memory) {
         return _mm_load_ps(memory);
     }
@@ -366,6 +411,13 @@ struct sse_vec {
     /*!
      * \brief Load a packed vector from the given unaligned memory location
      */
+    ETL_INLINE_VEC_128I loadu(const int* memory) {
+        return _mm_loadu_si128(reinterpret_cast<const __m128i*>(memory));
+    }
+
+    /*!
+     * \brief Load a packed vector from the given unaligned memory location
+     */
     ETL_INLINE_VEC_128 loadu(const float* memory) {
         return _mm_loadu_ps(memory);
     }
@@ -403,6 +455,13 @@ struct sse_vec {
      */
     ETL_INLINE_VEC_128D loadu(const etl::complex<double>* memory) {
         return _mm_loadu_pd(reinterpret_cast<const double*>(memory));
+    }
+
+    /*!
+     * \brief Fill a packed vector  by replicating a value
+     */
+    ETL_INLINE_VEC_128I set(int value) {
+        return _mm_set1_epi32(value);
     }
 
     /*!
@@ -451,34 +510,13 @@ struct sse_vec {
         return loadu(tmp);
     }
 
+    // Addition
+
     /*!
      * \brief Add the two given values and return the result.
      */
-    ETL_INLINE_VEC_128D add(__m128d lhs, __m128d rhs) {
-        return _mm_add_pd(lhs, rhs);
-    }
-
-    /*!
-     * \brief Subtract the two given values and return the result.
-     */
-    ETL_INLINE_VEC_128D sub(__m128d lhs, __m128d rhs) {
-        return _mm_sub_pd(lhs, rhs);
-    }
-
-    /*!
-     * \brief Compute the square root of each element in the given vector
-     * \return a vector containing the square root of each input element
-     */
-    ETL_INLINE_VEC_128D sqrt(__m128d x) {
-        return _mm_sqrt_pd(x);
-    }
-
-    /*!
-     * \brief Compute the negative of each element in the given vector
-     * \return a vector containing the negative of each input element
-     */
-    ETL_INLINE_VEC_128D minus(__m128d x) {
-        return _mm_xor_pd(x, _mm_set1_pd(-0.f));
+    ETL_INLINE_VEC_128I add(__m128i lhs, __m128i rhs) {
+        return _mm_add_epi32(lhs, rhs);
     }
 
     /*!
@@ -489,11 +527,36 @@ struct sse_vec {
     }
 
     /*!
+     * \brief Add the two given values and return the result.
+     */
+    ETL_INLINE_VEC_128D add(__m128d lhs, __m128d rhs) {
+        return _mm_add_pd(lhs, rhs);
+    }
+
+    // Subtraction
+
+    /*!
+     * \brief Subtract the two given values and return the result.
+     */
+    ETL_INLINE_VEC_128I sub(__m128i lhs, __m128i rhs) {
+        return _mm_sub_epi32(lhs, rhs);
+    }
+
+    /*!
+     * \brief Subtract the two given values and return the result.
+     */
+    ETL_INLINE_VEC_128D sub(__m128d lhs, __m128d rhs) {
+        return _mm_sub_pd(lhs, rhs);
+    }
+
+    /*!
      * \brief Subtract the two given values and return the result.
      */
     ETL_INLINE_VEC_128 sub(__m128 lhs, __m128 rhs) {
         return _mm_sub_ps(lhs, rhs);
     }
+
+    // Square Root
 
     /*!
      * \brief Compute the square root of each element in the given vector
@@ -504,11 +567,38 @@ struct sse_vec {
     }
 
     /*!
+     * \brief Compute the square root of each element in the given vector
+     * \return a vector containing the square root of each input element
+     */
+    ETL_INLINE_VEC_128D sqrt(__m128d x) {
+        return _mm_sqrt_pd(x);
+    }
+
+    // Negation
+
+    // TODO negation epi32
+
+    /*!
+     * \brief Compute the negative of each element in the given vector
+     * \return a vector containing the negative of each input element
+     */
+    ETL_INLINE_VEC_128D minus(__m128d x) {
+        return _mm_xor_pd(x, _mm_set1_pd(-0.f));
+    }
+
+    /*!
      * \brief Compute the negative of each element in the given vector
      * \return a vector containing the negative of each input element
      */
     ETL_INLINE_VEC_128 minus(__m128 x) {
         return _mm_xor_ps(x, _mm_set1_ps(-0.f));
+    }
+
+    // Multiplication
+
+    template <bool Complex = false>
+    ETL_INLINE_VEC_128I mul(__m128i lhs, __m128i rhs) {
+        return _mm_mul_epi32(lhs, rhs);
     }
 
     /*!
@@ -527,6 +617,12 @@ struct sse_vec {
         return _mm_mul_pd(lhs, rhs);
     }
 
+    // Fused-Multiply-Add (FMA)
+
+    ETL_INLINE_VEC_128I fmadd(__m128i a, __m128i b, __m128i c){
+        return add(mul(a, b), c);
+    }
+
     /*!
      * \brief Fused-Multiply-Add of a b and c (r = (a * b) + c)
      */
@@ -538,6 +634,8 @@ struct sse_vec {
      */
     template <bool Complex = false>
     ETL_TMP_INLINE(__m128d) fmadd(__m128d a, __m128d b, __m128d c);
+
+    // Division
 
     /*!
      * \brief Divide the two given vectors
@@ -555,12 +653,16 @@ struct sse_vec {
         return _mm_div_pd(lhs, rhs);
     }
 
+    // Cosinus
+
     /*!
      * \brief Compute the cosinus of each element of the given vector
      */
     ETL_INLINE_VEC_128 cos(__m128 x) {
         return etl::cos_ps(x);
     }
+
+    // Sinus
 
     /*!
      * \brief Compute the sinus of each element of the given vector
@@ -913,6 +1015,14 @@ ETL_OUT_VEC_128D sse_vec::div<true>(__m128d lhs, __m128d rhs) {
 
     //result = ymm4 / ymm0
     return _mm_div_pd(ymm4, ymm0);
+}
+
+/*!
+ * \copydoc sse_vec::zero
+ */
+template<>
+ETL_OUT_VEC_128I sse_vec::zero<int>() {
+    return _mm_setzero_si128();
 }
 
 /*!

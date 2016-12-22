@@ -112,6 +112,32 @@ using standard_compound = cpp::and_u<
                              !vectorized_compound<E, R>::value,
                              !direct_compound<E, R>::value>;
 
+//Selectors for compound div operation
+
+/*!
+ * \brief Integral constant indicating if a vectorized compound div assign is possible
+ */
+template <typename E, typename R>
+using vectorized_compound_div = cpp::and_u<
+    (is_floating_t<value_t<E>>::value || is_complex_t<value_t<E>>::value),
+    are_vectorizable<E, R>::value>;
+
+/*!
+ * \brief Integral constant indicating if a direct compound div assign is possible
+ */
+template <typename E, typename R>
+using direct_compound_div = cpp::and_u<
+                           !vectorized_compound_div<E, R>::value,
+                           has_direct_access<R>::value>;
+
+/*!
+ * \brief Integral constant indicating if a standard compound div assign is necessary
+ */
+template <typename E, typename R>
+using standard_compound_div = cpp::and_u<
+                             !vectorized_compound_div<E, R>::value,
+                             !direct_compound_div<E, R>::value>;
+
 // Selectors for optimized evaluation
 
 namespace detail {

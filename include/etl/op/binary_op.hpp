@@ -193,12 +193,13 @@ struct div_binary_op {
     using vec_type       = typename V::template vec_type<T>;
 
     /*!
-     * \brief Indicates if the expression is vectorizable using the
-     * given vector mode
+     * \brief Indicates if the expression is vectorizable using the given vector mode
      * \tparam V The vector mode
+     *
+     * Note: Integer division is not yet supported
      */
     template <vector_mode_t V>
-    using vectorizable = cpp::bool_constant<V == vector_mode_t::AVX512 ? !is_complex_t<T>::value : true>;
+    using vectorizable = cpp::bool_constant<is_floating_t<T>::value || (is_complex_t<T>::value && V != vector_mode_t::AVX512)>;
 
     static constexpr bool linear    = true;  ///< Indicates if the operator is linear or not
     static constexpr bool thread_safe = true;  ///< Indicates if the operator is thread safe or not
