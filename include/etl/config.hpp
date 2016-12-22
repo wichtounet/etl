@@ -7,27 +7,15 @@
 
 #pragma once
 
+#include "etl/config_impl.hpp"
+
 namespace etl {
-
-#ifdef ETL_VECTORIZE_FULL
-
-//VECTORIZE_FULL enables VECTORIZE_EXPR
-#ifndef ETL_VECTORIZE_EXPR
-#define ETL_VECTORIZE_EXPR
-#endif
-
-//VECTORIZE_FULL enables VECTORIZE_IMPL
-#ifndef ETL_VECTORIZE_IMPL
-#define ETL_VECTORIZE_IMPL
-#endif
-
-#endif //ETL_VECTORIZE_FULL
 
 //Flag to enable auto-vectorization of expressions
 #ifdef ETL_VECTORIZE_EXPR
-constexpr bool vectorize_expr = true;
+constexpr bool vectorize_expr = true;      ///< Boolean flag indicating if the expression are automatically vectorized
 #else
-constexpr bool vectorize_expr   = false;                               ///< Boolean flag indicating if the expression are automatically vectorized
+constexpr bool vectorize_expr = false;     ///< Boolean flag indicating if the expression are automatically vectorized
 #endif
 
 //Flag to enable vectorized implementation of algorithms
@@ -59,20 +47,11 @@ constexpr bool is_parallel = false;                               ///< Boolean f
 #endif
 
 #ifdef ETL_MKL_MODE
-
-//MKL mode enables BLAS mode
-#ifndef ETL_BLAS_MODE
-#define ETL_BLAS_MODE
-#endif
-
 constexpr bool mkl_enabled = true;
 constexpr bool has_fast_fft   = true;
-
 #else
-
 constexpr bool mkl_enabled              = false; ///< Boolean flag indicating if MKL is enabled
 constexpr bool has_fast_fft                = false; ///< Boolean flag indicating if a fast FFT implementation is available
-
 #endif
 
 //Flag to enable the use of CBLAS library
@@ -87,26 +66,6 @@ constexpr bool cblas_enabled            = false; ///< Boolean flag indicating if
 constexpr bool is_blas_parallel = true;
 #else
 constexpr bool is_blas_parallel            = false; ///< Boolean flag indicating if CBLAS is running parallel
-#endif
-
-#ifdef ETL_CUDA
-static_assert(false, "ETL_CUDA should never be set directly");
-#endif
-
-#ifdef ETL_GPU
-
-#ifndef ETL_CUBLAS_MODE
-#define ETL_CUBLAS_MODE
-#endif
-
-#ifndef ETL_CUFFT_MODE
-#define ETL_CUFFT_MODE
-#endif
-
-#ifndef ETL_CUDNN_MODE
-#define ETL_CUDNN_MODE
-#endif
-
 #endif
 
 #ifdef ETL_CUBLAS_MODE
