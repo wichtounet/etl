@@ -188,6 +188,12 @@ static_assert(false, "ETL_CUDA should never be set directly");
 #define ETL_AVX512_BOOL false
 #endif
 
+#ifdef __AVX2__
+#define ETL_AVX2_BOOL true
+#else
+#define ETL_AVX2_BOOL false
+#endif
+
 #ifdef __AVX__
 #define ETL_AVX_BOOL true
 #else

@@ -163,6 +163,11 @@ constexpr bool avx512_enabled = ETL_AVX512_BOOL;
 constexpr bool avx_enabled = ETL_AVX_BOOL;
 
 /*!
+ * \brief Indicates if AVX2 is available
+ */
+constexpr bool avx2_enabled = ETL_AVX2_BOOL;
+
+/*!
  * \brief Indicates if SSE3 is available
  */
 constexpr bool sse3_enabled = ETL_SSE3_BOOL;
