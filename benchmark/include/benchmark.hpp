@@ -62,10 +62,12 @@
 #define TEST_STRASSEN
 #endif
 
-using smat_cm = etl::dyn_matrix_cm<float>;
-using dmat_cm = etl::dyn_matrix_cm<double>;
-using cmat_cm = etl::dyn_matrix_cm<std::complex<float>>;
-using zmat_cm = etl::dyn_matrix_cm<std::complex<double>>;
+using ivec = etl::dyn_vector<int>;
+
+using svec = etl::dyn_vector<float>;
+using smat = etl::dyn_matrix<float>;
+using smat3 = etl::dyn_matrix<float, 3>;
+using smat4 = etl::dyn_matrix<float, 4>;
 
 using dvec = etl::dyn_vector<double>;
 using dmat = etl::dyn_matrix<double>;
@@ -73,11 +75,6 @@ using dmat2 = etl::dyn_matrix<double, 2>;
 using dmat3 = etl::dyn_matrix<double, 3>;
 using dmat4 = etl::dyn_matrix<double, 4>;
 using dmat5 = etl::dyn_matrix<double, 5>;
-
-using svec = etl::dyn_vector<float>;
-using smat = etl::dyn_matrix<float>;
-using smat3 = etl::dyn_matrix<float, 3>;
-using smat4 = etl::dyn_matrix<float, 4>;
 
 using cvec = etl::dyn_vector<std::complex<float>>;
 using cmat = etl::dyn_matrix<std::complex<float>>;
@@ -88,6 +85,11 @@ using zvec = etl::dyn_vector<std::complex<double>>;
 using zmat = etl::dyn_matrix<std::complex<double>>;
 using zmat3 = etl::dyn_matrix<std::complex<double>, 3>;
 using ezvec = etl::dyn_vector<etl::complex<double>>;
+
+using smat_cm = etl::dyn_matrix_cm<float>;
+using dmat_cm = etl::dyn_matrix_cm<double>;
+using cmat_cm = etl::dyn_matrix_cm<std::complex<float>>;
+using zmat_cm = etl::dyn_matrix_cm<std::complex<double>>;
 
 using mat_policy = VALUES_POLICY(10, 25, 50, 100, 200, 300, 400, 500, 600, 700, 800, 900, 1000, 2000,3000);
 using mat_policy_2d = NARY_POLICY(mat_policy, mat_policy);

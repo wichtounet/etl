@@ -71,6 +71,12 @@ CPM_BENCH() {
         [](dvec& a, dvec& b, dvec& c, dvec& r){ r = a + b + c; },
         [](std::size_t d){ return 2 * d; }
         );
+
+    CPM_TWO_PASS_NS(
+        "r = a + b (i) [std][add][i]",
+        [](std::size_t d){ return std::make_tuple(ivec(d), ivec(d), ivec(d)); },
+        [](ivec& a, ivec& b, ivec& r){ r = a + b; }
+        );
 #endif
 
     CPM_TWO_PASS_NS_P(
