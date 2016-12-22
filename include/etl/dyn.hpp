@@ -29,9 +29,9 @@ struct dyn_matrix_impl final : dense_dyn_base<dyn_matrix_impl<T, SO, D>, T, SO, 
                                value_testable<dyn_matrix_impl<T, SO, D>>,
                                iterable<dyn_matrix_impl<T, SO, D>, SO == order::RowMajor>,
                                dim_testable<dyn_matrix_impl<T, SO, D>> {
-    static constexpr std::size_t n_dimensions = D;                              ///< The number of dimensions
-    static constexpr order storage_order      = SO;                             ///< The storage order
-    static constexpr std::size_t alignment    = intrinsic_traits<T>::alignment; ///< The memory alignment
+    static constexpr std::size_t n_dimensions = D;                                      ///< The number of dimensions
+    static constexpr order storage_order      = SO;                                     ///< The storage order
+    static constexpr std::size_t alignment    = default_intrinsic_traits<T>::alignment; ///< The memory alignment
 
     using this_type              = dyn_matrix_impl<T, SO, D>;                       ///< The type of this expression
     using base_type              = dense_dyn_base<this_type, T, SO, D>;             ///< The base type

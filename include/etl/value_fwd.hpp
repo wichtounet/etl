@@ -23,7 +23,7 @@ namespace etl {
 template <typename T>
 static constexpr size_t alloc_size_vec(size_t size) {
     return padding
-        ? size + (size % intrinsic_traits<T>::size == 0 ? 0 : (intrinsic_traits<T>::size - (size % intrinsic_traits<T>::size)))
+        ? size + (size % default_intrinsic_traits<T>::size == 0 ? 0 : (default_intrinsic_traits<T>::size - (size % default_intrinsic_traits<T>::size)))
         : size;
 }
 
@@ -33,7 +33,7 @@ template <typename T>
 static constexpr size_t alloc_size_mat(size_t size, size_t last) {
     return size == 0 ? 0 :
         (padding
-        ? (size / last) * (last + (last % intrinsic_traits<T>::size == 0 ? 0 : (intrinsic_traits<T>::size - last % intrinsic_traits<T>::size)))
+        ? (size / last) * (last + (last % default_intrinsic_traits<T>::size == 0 ? 0 : (default_intrinsic_traits<T>::size - last % default_intrinsic_traits<T>::size)))
         : size);
 }
 
@@ -79,37 +79,37 @@ struct sym_matrix;
  * \brief A static matrix with fixed dimensions, in row-major order
  */
 template <typename T, std::size_t... Dims>
-using fast_matrix = fast_matrix_impl<T, cpp::aligned_array<T, alloc_size_mat<T, Dims...>(), intrinsic_traits<T>::alignment>, order::RowMajor, Dims...>;
+using fast_matrix = fast_matrix_impl<T, cpp::aligned_array<T, alloc_size_mat<T, Dims...>(), default_intrinsic_traits<T>::alignment>, order::RowMajor, Dims...>;
 
 /*!
  * \brief A static matrix with fixed dimensions, in column-major order
  */
 template <typename T, std::size_t... Dims>
-using fast_matrix_cm = fast_matrix_impl<T, cpp::aligned_array<T, alloc_size_mat<T, Dims...>(), intrinsic_traits<T>::alignment>, order::ColumnMajor, Dims...>;
+using fast_matrix_cm = fast_matrix_impl<T, cpp::aligned_array<T, alloc_size_mat<T, Dims...>(), default_intrinsic_traits<T>::alignment>, order::ColumnMajor, Dims...>;
 
 /*!
  * \brief A static vector with fixed dimensions, in row-major order
  */
 template <typename T, std::size_t Rows>
-using fast_vector = fast_matrix_impl<T, cpp::aligned_array<T, alloc_size_vec<T>(Rows), intrinsic_traits<T>::alignment>, order::RowMajor, Rows>;
+using fast_vector = fast_matrix_impl<T, cpp::aligned_array<T, alloc_size_vec<T>(Rows), default_intrinsic_traits<T>::alignment>, order::RowMajor, Rows>;
 
 /*!
  * \brief A static vector with fixed dimensions, in column-major order
  */
 template <typename T, std::size_t Rows>
-using fast_vector_cm = fast_matrix_impl<T, cpp::aligned_array<T, alloc_size_vec<T>(Rows), intrinsic_traits<T>::alignment>, order::ColumnMajor, Rows>;
+using fast_vector_cm = fast_matrix_impl<T, cpp::aligned_array<T, alloc_size_vec<T>(Rows), default_intrinsic_traits<T>::alignment>, order::ColumnMajor, Rows>;
 
 /*!
  * \brief A hybrid vector with fixed dimensions, in row-major order
  */
 template <typename T, std::size_t Rows>
-using fast_dyn_vector = fast_matrix_impl<T, cpp::aligned_vector<T, intrinsic_traits<T>::alignment>, order::RowMajor, Rows>;
+using fast_dyn_vector = fast_matrix_impl<T, cpp::aligned_vector<T, default_intrinsic_traits<T>::alignment>, order::RowMajor, Rows>;
 
 /*!
  * \brief A hybrid matrix with fixed dimensions, in row-major order
  */
 template <typename T, std::size_t... Dims>
-using fast_dyn_matrix = fast_matrix_impl<T, cpp::aligned_vector<T, intrinsic_traits<T>::alignment>, order::RowMajor, Dims...>;
+using fast_dyn_matrix = fast_matrix_impl<T, cpp::aligned_vector<T, default_intrinsic_traits<T>::alignment>, order::RowMajor, Dims...>;
 
 /*!
  * \brief A dynamic matrix, in row-major order, of D dimensions

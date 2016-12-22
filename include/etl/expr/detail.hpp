@@ -41,7 +41,7 @@ struct fast_result_type_builder<E, T, std::index_sequence<I...>, Subs...> {
     /*!
      * \brief The built type for the given Subs
      */
-    using type = fast_matrix_impl<value_type, cpp::aligned_vector<value_type, intrinsic_traits<value_type>::alignment>, E::template order<Subs...>(), E::template dim<Subs..., I>()...>;
+    using type = fast_matrix_impl<value_type, cpp::aligned_vector<value_type, default_intrinsic_traits<value_type>::alignment>, E::template order<Subs...>(), E::template dim<Subs..., I>()...>;
 };
 
 /*!

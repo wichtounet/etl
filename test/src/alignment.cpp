@@ -28,9 +28,9 @@ TEMPLATE_TEST_CASE_4("alignment/fast/1", "etl_traits<fast_vector>", ZZZ, double,
     auto b = a;
     auto* c = new type();
 
-    REQUIRE_DIRECT(reinterpret_cast<size_t>(a.memory_start()) % etl::intrinsic_traits<ZZZ>::alignment == 0);
-    REQUIRE_DIRECT(reinterpret_cast<size_t>(b.memory_start()) % etl::intrinsic_traits<ZZZ>::alignment == 0);
-    REQUIRE_DIRECT(reinterpret_cast<size_t>(c->memory_start()) % etl::intrinsic_traits<ZZZ>::alignment == 0);
+    REQUIRE_DIRECT(reinterpret_cast<size_t>(a.memory_start()) % etl::default_intrinsic_traits<ZZZ>::alignment == 0);
+    REQUIRE_DIRECT(reinterpret_cast<size_t>(b.memory_start()) % etl::default_intrinsic_traits<ZZZ>::alignment == 0);
+    REQUIRE_DIRECT(reinterpret_cast<size_t>(c->memory_start()) % etl::default_intrinsic_traits<ZZZ>::alignment == 0);
 }
 
 TEMPLATE_TEST_CASE_4("alignment/fast/2", "etl_traits<fast_vector>", ZZZ, double, float, std::complex<float>, std::complex<double>) {
@@ -40,9 +40,9 @@ TEMPLATE_TEST_CASE_4("alignment/fast/2", "etl_traits<fast_vector>", ZZZ, double,
     auto b = a;
     auto* c = new outer<type>();
 
-    REQUIRE_DIRECT(reinterpret_cast<size_t>(a.inner.memory_start()) % etl::intrinsic_traits<ZZZ>::alignment == 0);
-    REQUIRE_DIRECT(reinterpret_cast<size_t>(b.inner.memory_start()) % etl::intrinsic_traits<ZZZ>::alignment == 0);
-    REQUIRE_DIRECT(reinterpret_cast<size_t>(c->inner.memory_start()) % etl::intrinsic_traits<ZZZ>::alignment == 0);
+    REQUIRE_DIRECT(reinterpret_cast<size_t>(a.inner.memory_start()) % etl::default_intrinsic_traits<ZZZ>::alignment == 0);
+    REQUIRE_DIRECT(reinterpret_cast<size_t>(b.inner.memory_start()) % etl::default_intrinsic_traits<ZZZ>::alignment == 0);
+    REQUIRE_DIRECT(reinterpret_cast<size_t>(c->inner.memory_start()) % etl::default_intrinsic_traits<ZZZ>::alignment == 0);
 }
 
 TEMPLATE_TEST_CASE_4("alignment/fast_dyn/1", "etl_traits<fast_vector>", ZZZ, double, float, std::complex<float>, std::complex<double>) {
@@ -52,9 +52,9 @@ TEMPLATE_TEST_CASE_4("alignment/fast_dyn/1", "etl_traits<fast_vector>", ZZZ, dou
     auto b = a;
     auto* c = new type();
 
-    REQUIRE_DIRECT(reinterpret_cast<size_t>(a.memory_start()) % etl::intrinsic_traits<ZZZ>::alignment == 0);
-    REQUIRE_DIRECT(reinterpret_cast<size_t>(b.memory_start()) % etl::intrinsic_traits<ZZZ>::alignment == 0);
-    REQUIRE_DIRECT(reinterpret_cast<size_t>(c->memory_start()) % etl::intrinsic_traits<ZZZ>::alignment == 0);
+    REQUIRE_DIRECT(reinterpret_cast<size_t>(a.memory_start()) % etl::default_intrinsic_traits<ZZZ>::alignment == 0);
+    REQUIRE_DIRECT(reinterpret_cast<size_t>(b.memory_start()) % etl::default_intrinsic_traits<ZZZ>::alignment == 0);
+    REQUIRE_DIRECT(reinterpret_cast<size_t>(c->memory_start()) % etl::default_intrinsic_traits<ZZZ>::alignment == 0);
 }
 
 TEMPLATE_TEST_CASE_4("alignment/fast_dyn/2", "etl_traits<fast_vector>", ZZZ, double, float, std::complex<float>, std::complex<double>) {
@@ -64,9 +64,9 @@ TEMPLATE_TEST_CASE_4("alignment/fast_dyn/2", "etl_traits<fast_vector>", ZZZ, dou
     auto b = a;
     auto* c = new outer<type>();
 
-    REQUIRE_DIRECT(reinterpret_cast<size_t>(a.inner.memory_start()) % etl::intrinsic_traits<ZZZ>::alignment == 0);
-    REQUIRE_DIRECT(reinterpret_cast<size_t>(b.inner.memory_start()) % etl::intrinsic_traits<ZZZ>::alignment == 0);
-    REQUIRE_DIRECT(reinterpret_cast<size_t>(c->inner.memory_start()) % etl::intrinsic_traits<ZZZ>::alignment == 0);
+    REQUIRE_DIRECT(reinterpret_cast<size_t>(a.inner.memory_start()) % etl::default_intrinsic_traits<ZZZ>::alignment == 0);
+    REQUIRE_DIRECT(reinterpret_cast<size_t>(b.inner.memory_start()) % etl::default_intrinsic_traits<ZZZ>::alignment == 0);
+    REQUIRE_DIRECT(reinterpret_cast<size_t>(c->inner.memory_start()) % etl::default_intrinsic_traits<ZZZ>::alignment == 0);
 }
 
 TEMPLATE_TEST_CASE_4("alignment/dyn/1", "etl_traits<fast_vector>", ZZZ, double, float, std::complex<float>, std::complex<double>) {
@@ -76,9 +76,9 @@ TEMPLATE_TEST_CASE_4("alignment/dyn/1", "etl_traits<fast_vector>", ZZZ, double, 
     auto b = a;
     auto* c = new type(5);
 
-    REQUIRE_DIRECT(reinterpret_cast<size_t>(a.memory_start()) % etl::intrinsic_traits<ZZZ>::alignment == 0);
-    REQUIRE_DIRECT(reinterpret_cast<size_t>(b.memory_start()) % etl::intrinsic_traits<ZZZ>::alignment == 0);
-    REQUIRE_DIRECT(reinterpret_cast<size_t>(c->memory_start()) % etl::intrinsic_traits<ZZZ>::alignment == 0);
+    REQUIRE_DIRECT(reinterpret_cast<size_t>(a.memory_start()) % etl::default_intrinsic_traits<ZZZ>::alignment == 0);
+    REQUIRE_DIRECT(reinterpret_cast<size_t>(b.memory_start()) % etl::default_intrinsic_traits<ZZZ>::alignment == 0);
+    REQUIRE_DIRECT(reinterpret_cast<size_t>(c->memory_start()) % etl::default_intrinsic_traits<ZZZ>::alignment == 0);
 }
 
 TEMPLATE_TEST_CASE_4("alignment/dyn/2", "etl_traits<fast_vector>", ZZZ, double, float, std::complex<float>, std::complex<double>) {
@@ -88,9 +88,9 @@ TEMPLATE_TEST_CASE_4("alignment/dyn/2", "etl_traits<fast_vector>", ZZZ, double, 
     auto b = a;
     auto* c = new outer<type>(5);
 
-    REQUIRE_DIRECT(reinterpret_cast<size_t>(a.inner.memory_start()) % etl::intrinsic_traits<ZZZ>::alignment == 0);
-    REQUIRE_DIRECT(reinterpret_cast<size_t>(b.inner.memory_start()) % etl::intrinsic_traits<ZZZ>::alignment == 0);
-    REQUIRE_DIRECT(reinterpret_cast<size_t>(c->inner.memory_start()) % etl::intrinsic_traits<ZZZ>::alignment == 0);
+    REQUIRE_DIRECT(reinterpret_cast<size_t>(a.inner.memory_start()) % etl::default_intrinsic_traits<ZZZ>::alignment == 0);
+    REQUIRE_DIRECT(reinterpret_cast<size_t>(b.inner.memory_start()) % etl::default_intrinsic_traits<ZZZ>::alignment == 0);
+    REQUIRE_DIRECT(reinterpret_cast<size_t>(c->inner.memory_start()) % etl::default_intrinsic_traits<ZZZ>::alignment == 0);
 }
 
 TEMPLATE_TEST_CASE_4("alignment/temporary/1", "etl_traits<fast_vector>", ZZZ, double, float, std::complex<float>, std::complex<double>) {
@@ -100,7 +100,7 @@ TEMPLATE_TEST_CASE_4("alignment/temporary/1", "etl_traits<fast_vector>", ZZZ, do
     auto c = a * b;
     *c;
 
-    REQUIRE_DIRECT(reinterpret_cast<size_t>(c.memory_start()) % etl::intrinsic_traits<ZZZ>::alignment == 0);
+    REQUIRE_DIRECT(reinterpret_cast<size_t>(c.memory_start()) % etl::default_intrinsic_traits<ZZZ>::alignment == 0);
 }
 
 TEMPLATE_TEST_CASE_4("alignment/temporary/2", "etl_traits<fast_vector>", ZZZ, double, float, std::complex<float>, std::complex<double>) {
@@ -110,7 +110,7 @@ TEMPLATE_TEST_CASE_4("alignment/temporary/2", "etl_traits<fast_vector>", ZZZ, do
     auto c = a * b;
     *c;
 
-    REQUIRE_DIRECT(reinterpret_cast<size_t>(c.memory_start()) % etl::intrinsic_traits<ZZZ>::alignment == 0);
+    REQUIRE_DIRECT(reinterpret_cast<size_t>(c.memory_start()) % etl::default_intrinsic_traits<ZZZ>::alignment == 0);
 }
 
 TEMPLATE_TEST_CASE_4("alignment/temporary/3", "etl_traits<fast_vector>", ZZZ, double, float, std::complex<float>, std::complex<double>) {
@@ -120,5 +120,5 @@ TEMPLATE_TEST_CASE_4("alignment/temporary/3", "etl_traits<fast_vector>", ZZZ, do
     auto c = a * b;
     *c;
 
-    REQUIRE_DIRECT(reinterpret_cast<size_t>(c.memory_start()) % etl::intrinsic_traits<ZZZ>::alignment == 0);
+    REQUIRE_DIRECT(reinterpret_cast<size_t>(c.memory_start()) % etl::default_intrinsic_traits<ZZZ>::alignment == 0);
 }

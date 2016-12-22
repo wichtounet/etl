@@ -135,8 +135,8 @@ struct dyn_base {
     static_assert(D > 0, "A matrix must have a least 1 dimension");
 
 protected:
-    static constexpr std::size_t n_dimensions = D;                              ///< The number of dimensions
-    static constexpr std::size_t alignment    = intrinsic_traits<T>::alignment; ///< The memory alignment
+    static constexpr std::size_t n_dimensions = D;                                      ///< The number of dimensions
+    static constexpr std::size_t alignment    = default_intrinsic_traits<T>::alignment; ///< The memory alignment
 
     using value_type             = T;                                     ///< The value type
     using dimension_storage_impl = std::array<std::size_t, n_dimensions>; ///< The type used to store the dimensions

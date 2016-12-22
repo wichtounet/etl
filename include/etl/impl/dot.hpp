@@ -36,7 +36,7 @@ cpp14_constexpr etl::dot_impl select_default_dot_impl() {
         return etl::dot_impl::BLAS;
     }
 
-    if (vec_enabled && all_vectorizable<vector_mode, A, B>::value && std::is_same<intrinsic_type<value_t<A>>, intrinsic_type<value_t<B>>>::value) {
+    if (vec_enabled && all_vectorizable<vector_mode, A, B>::value && std::is_same<default_intrinsic_type<value_t<A>>, default_intrinsic_type<value_t<B>>>::value) {
         return etl::dot_impl::VEC;
     }
 

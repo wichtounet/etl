@@ -175,9 +175,9 @@ struct sym_matrix final : comparable<sym_matrix<Matrix>>, iterable<const sym_mat
 
     using scs = sym_detail::static_check_square<matrix_t>; ///< static_check trick
 
-    static constexpr std::size_t n_dimensions = etl_traits<matrix_t>::dimensions();    ///< The number of dimensions
-    static constexpr order storage_order      = etl_traits<matrix_t>::storage_order;   ///< The storage order
-    static constexpr std::size_t alignment    = intrinsic_traits<matrix_t>::alignment; ///< The memory alignment
+    static constexpr std::size_t n_dimensions = etl_traits<matrix_t>::dimensions();  ///< The number of dimensions
+    static constexpr order storage_order      = etl_traits<matrix_t>::storage_order; ///< The storage order
+    static constexpr std::size_t alignment    = matrix_t::alignment;                 ///< The memory alignment
 
     using value_type        = value_t<matrix_t>;                 ///< The value type
     using memory_type       = value_type*;                       ///< The memory type

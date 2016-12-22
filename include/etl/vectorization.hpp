@@ -109,28 +109,28 @@ struct get_vector_impl<vector_mode_t::SSE3> {
 using default_vec = avx512_vec;
 
 template <typename T>
-using intrinsic_traits = avx512_intrinsic_traits<T>;
+using default_intrinsic_traits = avx512_intrinsic_traits<T>;
 
 #elif defined(__AVX__)
 
 using default_vec = avx_vec;
 
 template <typename T>
-using intrinsic_traits = avx_intrinsic_traits<T>;
+using default_intrinsic_traits = avx_intrinsic_traits<T>;
 
 #elif defined(__SSE3__)
 
 using default_vec = sse_vec;
 
 template <typename T>
-using intrinsic_traits = sse_intrinsic_traits<T>;
+using default_intrinsic_traits = sse_intrinsic_traits<T>;
 
 #else
 
 using default_vec = no_vec;
 
 template <typename T>
-using intrinsic_traits = no_intrinsic_traits<T>;
+using default_intrinsic_traits = no_intrinsic_traits<T>;
 
 #endif //defined(__SSE__)
 
@@ -145,7 +145,7 @@ using default_vec = no_vec;
  * \brief The default intrinsic traits
  */
 template <typename T>
-using intrinsic_traits = no_intrinsic_traits<T>;
+using default_intrinsic_traits = no_intrinsic_traits<T>;
 
 #endif //ETL_VECTORIZE_EXPR
 
@@ -153,6 +153,6 @@ using intrinsic_traits = no_intrinsic_traits<T>;
  * \brief Helper to get the intrinsic corresponding type of a vectorizable type.
  */
 template <typename T>
-using intrinsic_type = typename intrinsic_traits<T>::intrinsic_type;
+using default_intrinsic_type = typename default_intrinsic_traits<T>::intrinsic_type;
 
 } //end of namespace etl
