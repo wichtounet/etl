@@ -11,8 +11,6 @@ TEMPLATE_TEST_CASE_2("etl_traits/fast_vector_1", "etl_traits<fast_vector>", ZZZ,
     using type = etl::fast_vector<ZZZ, 4>;
     type test_vector(3.3);
 
-    std::cout << static_cast<size_t>(etl::vector_mode) << std::endl;
-
     REQUIRE_EQUALS(etl::etl_traits<type>::size(test_vector), 4UL);
     REQUIRE_EQUALS(etl::etl_traits<type>::dimensions(), 1UL);
     REQUIRE_EQUALS(etl::size(test_vector), 4UL);
@@ -554,13 +552,17 @@ TEST_CASE("etl_traits/vectorizable_bool", "[traits]") {
 
     using expr_type_1 = decltype(a + b);
 
-    REQUIRE_DIRECT(!(etl::decay_traits<mat_type_1>::template vectorizable<etl::vector_mode_t::SSE3>::value));
-    REQUIRE_DIRECT(!(etl::decay_traits<mat_type_2>::template vectorizable<etl::vector_mode_t::SSE3>::value));
-    REQUIRE_DIRECT(!(etl::decay_traits<expr_type_1>::template vectorizable<etl::vector_mode_t::SSE3>::value));
+    if(etl::sse3_enabled){
+        REQUIRE_DIRECT(!(etl::decay_traits<mat_type_1>::template vectorizable<etl::vector_mode_t::SSE3>::value));
+        REQUIRE_DIRECT(!(etl::decay_traits<mat_type_2>::template vectorizable<etl::vector_mode_t::SSE3>::value));
+        REQUIRE_DIRECT(!(etl::decay_traits<expr_type_1>::template vectorizable<etl::vector_mode_t::SSE3>::value));
+    }
 
-    REQUIRE_DIRECT(!(etl::decay_traits<mat_type_1>::template vectorizable<etl::vector_mode_t::AVX>::value));
-    REQUIRE_DIRECT(!(etl::decay_traits<mat_type_2>::template vectorizable<etl::vector_mode_t::AVX>::value));
-    REQUIRE_DIRECT(!(etl::decay_traits<expr_type_1>::template vectorizable<etl::vector_mode_t::AVX>::value));
+    if(etl::avx_enabled){
+        REQUIRE_DIRECT(!(etl::decay_traits<mat_type_1>::template vectorizable<etl::vector_mode_t::AVX>::value));
+        REQUIRE_DIRECT(!(etl::decay_traits<mat_type_2>::template vectorizable<etl::vector_mode_t::AVX>::value));
+        REQUIRE_DIRECT(!(etl::decay_traits<expr_type_1>::template vectorizable<etl::vector_mode_t::AVX>::value));
+    }
 }
 
 TEST_CASE("etl_traits/vectorizable_integer", "[traits]") {
@@ -572,13 +574,17 @@ TEST_CASE("etl_traits/vectorizable_integer", "[traits]") {
 
     using expr_type_1 = decltype(a + b);
 
-    REQUIRE_DIRECT((etl::decay_traits<mat_type_1>::template vectorizable<etl::vector_mode_t::SSE3>::value));
-    REQUIRE_DIRECT((etl::decay_traits<mat_type_2>::template vectorizable<etl::vector_mode_t::SSE3>::value));
-    REQUIRE_DIRECT((etl::decay_traits<expr_type_1>::template vectorizable<etl::vector_mode_t::SSE3>::value));
+    if (etl::sse3_enabled) {
+        REQUIRE_DIRECT((etl::decay_traits<mat_type_1>::template vectorizable<etl::vector_mode_t::SSE3>::value));
+        REQUIRE_DIRECT((etl::decay_traits<mat_type_2>::template vectorizable<etl::vector_mode_t::SSE3>::value));
+        REQUIRE_DIRECT((etl::decay_traits<expr_type_1>::template vectorizable<etl::vector_mode_t::SSE3>::value));
+    }
 
-    REQUIRE_DIRECT(!(etl::decay_traits<mat_type_1>::template vectorizable<etl::vector_mode_t::AVX>::value));
-    REQUIRE_DIRECT(!(etl::decay_traits<mat_type_2>::template vectorizable<etl::vector_mode_t::AVX>::value));
-    REQUIRE_DIRECT(!(etl::decay_traits<expr_type_1>::template vectorizable<etl::vector_mode_t::AVX>::value));
+    if (etl::avx_enabled) {
+        REQUIRE_DIRECT(!(etl::decay_traits<mat_type_1>::template vectorizable<etl::vector_mode_t::AVX>::value));
+        REQUIRE_DIRECT(!(etl::decay_traits<mat_type_2>::template vectorizable<etl::vector_mode_t::AVX>::value));
+        REQUIRE_DIRECT(!(etl::decay_traits<expr_type_1>::template vectorizable<etl::vector_mode_t::AVX>::value));
+    }
 }
 
 TEST_CASE("etl_traits/vectorizable_long", "[traits]") {
@@ -590,11 +596,15 @@ TEST_CASE("etl_traits/vectorizable_long", "[traits]") {
 
     using expr_type_1 = decltype(a + b);
 
-    REQUIRE_DIRECT(!(etl::decay_traits<mat_type_1>::template vectorizable<etl::vector_mode_t::SSE3>::value));
-    REQUIRE_DIRECT(!(etl::decay_traits<mat_type_2>::template vectorizable<etl::vector_mode_t::SSE3>::value));
-    REQUIRE_DIRECT(!(etl::decay_traits<expr_type_1>::template vectorizable<etl::vector_mode_t::SSE3>::value));
+    if (etl::sse3_enabled) {
+        REQUIRE_DIRECT(!(etl::decay_traits<mat_type_1>::template vectorizable<etl::vector_mode_t::SSE3>::value));
+        REQUIRE_DIRECT(!(etl::decay_traits<mat_type_2>::template vectorizable<etl::vector_mode_t::SSE3>::value));
+        REQUIRE_DIRECT(!(etl::decay_traits<expr_type_1>::template vectorizable<etl::vector_mode_t::SSE3>::value));
+    }
 
-    REQUIRE_DIRECT(!(etl::decay_traits<mat_type_1>::template vectorizable<etl::vector_mode_t::AVX>::value));
-    REQUIRE_DIRECT(!(etl::decay_traits<mat_type_2>::template vectorizable<etl::vector_mode_t::AVX>::value));
-    REQUIRE_DIRECT(!(etl::decay_traits<expr_type_1>::template vectorizable<etl::vector_mode_t::AVX>::value));
+    if (etl::avx_enabled) {
+        REQUIRE_DIRECT(!(etl::decay_traits<mat_type_1>::template vectorizable<etl::vector_mode_t::AVX>::value));
+        REQUIRE_DIRECT(!(etl::decay_traits<mat_type_2>::template vectorizable<etl::vector_mode_t::AVX>::value));
+        REQUIRE_DIRECT(!(etl::decay_traits<expr_type_1>::template vectorizable<etl::vector_mode_t::AVX>::value));
+    }
 }
