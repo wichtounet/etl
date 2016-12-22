@@ -510,3 +510,57 @@ TEMPLATE_TEST_CASE_2("etl_traits/selected_expr", "[traits]", Z, float, double) {
     REQUIRE_DIRECT(etl::is_wrapper_expr<const selected_type_2&>::value);
     REQUIRE_DIRECT(etl::is_wrapper_expr<const selected_type_2&>::value);
 }
+
+TEST_CASE("etl_traits/vectorizable_bool", "[traits]") {
+    using mat_type_1 = etl::fast_matrix<bool, 3, 3>;
+    mat_type_1 a;
+
+    using mat_type_2 = etl::dyn_matrix<bool, 2>;
+    mat_type_2 b(3, 3);
+
+    using expr_type_1 = decltype(a + b);
+
+    REQUIRE_DIRECT(!(etl::decay_traits<mat_type_1>::template vectorizable<etl::vector_mode_t::SSE3>::value));
+    REQUIRE_DIRECT(!(etl::decay_traits<mat_type_2>::template vectorizable<etl::vector_mode_t::SSE3>::value));
+    REQUIRE_DIRECT(!(etl::decay_traits<expr_type_1>::template vectorizable<etl::vector_mode_t::SSE3>::value));
+
+    REQUIRE_DIRECT(!(etl::decay_traits<mat_type_1>::template vectorizable<etl::vector_mode_t::AVX>::value));
+    REQUIRE_DIRECT(!(etl::decay_traits<mat_type_2>::template vectorizable<etl::vector_mode_t::AVX>::value));
+    REQUIRE_DIRECT(!(etl::decay_traits<expr_type_1>::template vectorizable<etl::vector_mode_t::AVX>::value));
+}
+
+TEST_CASE("etl_traits/vectorizable_integer", "[traits]") {
+    using mat_type_1 = etl::fast_matrix<bool, 3, 3>;
+    mat_type_1 a;
+
+    using mat_type_2 = etl::dyn_matrix<int, 2>;
+    mat_type_2 b(3, 3);
+
+    using expr_type_1 = decltype(a + b);
+
+    REQUIRE_DIRECT((etl::decay_traits<mat_type_1>::template vectorizable<etl::vector_mode_t::SSE3>::value));
+    REQUIRE_DIRECT((etl::decay_traits<mat_type_2>::template vectorizable<etl::vector_mode_t::SSE3>::value));
+    REQUIRE_DIRECT((etl::decay_traits<expr_type_1>::template vectorizable<etl::vector_mode_t::SSE3>::value));
+
+    REQUIRE_DIRECT(!(etl::decay_traits<mat_type_1>::template vectorizable<etl::vector_mode_t::AVX>::value));
+    REQUIRE_DIRECT(!(etl::decay_traits<mat_type_2>::template vectorizable<etl::vector_mode_t::AVX>::value));
+    REQUIRE_DIRECT(!(etl::decay_traits<expr_type_1>::template vectorizable<etl::vector_mode_t::AVX>::value));
+}
+
+TEST_CASE("etl_traits/vectorizable_long", "[traits]") {
+    using mat_type_1 = etl::fast_matrix<long, 3, 3>;
+    mat_type_1 a;
+
+    using mat_type_2 = etl::dyn_matrix<long, 2>;
+    mat_type_2 b(3, 3);
+
+    using expr_type_1 = decltype(a + b);
+
+    REQUIRE_DIRECT(!(etl::decay_traits<mat_type_1>::template vectorizable<etl::vector_mode_t::SSE3>::value));
+    REQUIRE_DIRECT(!(etl::decay_traits<mat_type_2>::template vectorizable<etl::vector_mode_t::SSE3>::value));
+    REQUIRE_DIRECT(!(etl::decay_traits<expr_type_1>::template vectorizable<etl::vector_mode_t::SSE3>::value));
+
+    REQUIRE_DIRECT(!(etl::decay_traits<mat_type_1>::template vectorizable<etl::vector_mode_t::AVX>::value));
+    REQUIRE_DIRECT(!(etl::decay_traits<mat_type_2>::template vectorizable<etl::vector_mode_t::AVX>::value));
+    REQUIRE_DIRECT(!(etl::decay_traits<expr_type_1>::template vectorizable<etl::vector_mode_t::AVX>::value));
+}
