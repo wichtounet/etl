@@ -31,8 +31,12 @@ using are_vectorizable_select = cpp::and_u<
                                decay_traits<R>::template vectorizable<V>::value,
                                decay_traits<E>::template vectorizable<V>::value,
                                decay_traits<E>::storage_order == decay_traits<R>::storage_order,
-                               intrinsic_traits<value_t<R>>::vectorizable, intrinsic_traits<value_t<E>>::vectorizable,
-                               std::is_same<intrinsic_type<value_t<R>>, intrinsic_type<value_t<E>>>::value>;
+                               get_intrinsic_traits<V>::template type<value_t<R>>::vectorizable,
+                               get_intrinsic_traits<V>::template type<value_t<E>>::vectorizable,
+                               std::is_same<
+                                    typename get_intrinsic_traits<V>::template type<value_t<R>>::intrinsic_type,
+                                    typename get_intrinsic_traits<V>::template type<value_t<E>>::intrinsic_type
+                                >::value>;
 
 /*!
  * \brief Integral constant indicating if vectorization is possible
