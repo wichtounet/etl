@@ -11,13 +11,20 @@ TEMPLATE_TEST_CASE_2("etl_traits/fast_vector_1", "etl_traits<fast_vector>", ZZZ,
     using type = etl::fast_vector<ZZZ, 4>;
     type test_vector(3.3);
 
+    std::cout << static_cast<size_t>(etl::vector_mode) << std::endl;
+
     REQUIRE_EQUALS(etl::etl_traits<type>::size(test_vector), 4UL);
     REQUIRE_EQUALS(etl::etl_traits<type>::dimensions(), 1UL);
     REQUIRE_EQUALS(etl::size(test_vector), 4UL);
     REQUIRE_DIRECT(etl::etl_traits<type>::is_value);
     REQUIRE_DIRECT(etl::etl_traits<type>::is_fast);
     REQUIRE_DIRECT(etl::etl_traits<type>::is_padded);
-    REQUIRE_DIRECT(etl::etl_traits<type>::template vectorizable<etl::vector_mode>::value);
+
+    if(etl::vec_enabled){
+        REQUIRE_DIRECT(etl::etl_traits<type>::template vectorizable<etl::vector_mode>::value);
+    } else {
+        REQUIRE_DIRECT(!etl::etl_traits<type>::template vectorizable<etl::vector_mode>::value);
+    }
 
     constexpr const auto size_1 = etl::etl_traits<type>::size();
     REQUIRE_EQUALS(size_1, 4UL);
@@ -48,7 +55,12 @@ TEMPLATE_TEST_CASE_2("etl_traits/fast_matrix_1", "etl_traits<fast_matrix>", Z, f
     REQUIRE_DIRECT(etl::etl_traits<type>::is_value);
     REQUIRE_DIRECT(etl::etl_traits<type>::is_fast);
     REQUIRE_DIRECT(etl::etl_traits<type>::is_padded);
-    REQUIRE_DIRECT(etl::etl_traits<type>::template vectorizable<etl::vector_mode>::value);
+
+    if(etl::vec_enabled){
+        REQUIRE_DIRECT(etl::etl_traits<type>::template vectorizable<etl::vector_mode>::value);
+    } else {
+        REQUIRE_DIRECT(!etl::etl_traits<type>::template vectorizable<etl::vector_mode>::value);
+    }
 
     constexpr const auto size_1 = etl::etl_traits<type>::size();
     constexpr const auto dim_1  = etl::etl_traits<type>::dimensions();
@@ -86,7 +98,12 @@ TEMPLATE_TEST_CASE_2("etl_traits/fast_matrix_2", "etl_traits<fast_matrix>", Z, f
     REQUIRE_DIRECT(etl::etl_traits<type>::is_value);
     REQUIRE_DIRECT(etl::etl_traits<type>::is_fast);
     REQUIRE_DIRECT(etl::etl_traits<type>::is_padded);
-    REQUIRE_DIRECT(etl::etl_traits<type>::template vectorizable<etl::vector_mode>::value);
+
+    if(etl::vec_enabled){
+        REQUIRE_DIRECT(etl::etl_traits<type>::template vectorizable<etl::vector_mode>::value);
+    } else {
+        REQUIRE_DIRECT(!etl::etl_traits<type>::template vectorizable<etl::vector_mode>::value);
+    }
 
     constexpr const auto size_1 = etl::etl_traits<type>::size();
     constexpr const auto dim_1  = etl::etl_traits<type>::dimensions();
@@ -127,7 +144,12 @@ TEMPLATE_TEST_CASE_2("etl_traits/dyn_vector_1", "etl_traits<dyn_vector>", Z, flo
     REQUIRE_DIRECT(etl::etl_traits<type>::is_value);
     REQUIRE_DIRECT(!etl::etl_traits<type>::is_fast);
     REQUIRE_DIRECT(etl::etl_traits<type>::is_padded);
-    REQUIRE_DIRECT(etl::etl_traits<type>::template vectorizable<etl::vector_mode>::value);
+
+    if(etl::vec_enabled){
+        REQUIRE_DIRECT(etl::etl_traits<type>::template vectorizable<etl::vector_mode>::value);
+    } else {
+        REQUIRE_DIRECT(!etl::etl_traits<type>::template vectorizable<etl::vector_mode>::value);
+    }
 }
 
 TEMPLATE_TEST_CASE_2("etl_traits/dyn_matrix_1", "etl_traits<dyn_matrix>", Z, float, double) {
@@ -145,7 +167,12 @@ TEMPLATE_TEST_CASE_2("etl_traits/dyn_matrix_1", "etl_traits<dyn_matrix>", Z, flo
     REQUIRE_DIRECT(etl::etl_traits<type>::is_value);
     REQUIRE_DIRECT(!etl::etl_traits<type>::is_fast);
     REQUIRE_DIRECT(etl::etl_traits<type>::is_padded);
-    REQUIRE_DIRECT(etl::etl_traits<type>::template vectorizable<etl::vector_mode>::value);
+
+    if(etl::vec_enabled){
+        REQUIRE_DIRECT(etl::etl_traits<type>::template vectorizable<etl::vector_mode>::value);
+    } else {
+        REQUIRE_DIRECT(!etl::etl_traits<type>::template vectorizable<etl::vector_mode>::value);
+    }
 }
 
 TEMPLATE_TEST_CASE_2("etl_traits/unary_dyn_mat", "etl_traits<unary<dyn_mat>>", Z, float, double) {
@@ -186,7 +213,12 @@ TEMPLATE_TEST_CASE_2("etl_traits/binary_dyn_mat", "etl_traits<binary<dyn_mat, dy
     REQUIRE_DIRECT(!etl::etl_traits<expr_type>::is_value);
     REQUIRE_DIRECT(!etl::etl_traits<expr_type>::is_fast);
     REQUIRE_DIRECT(etl::etl_traits<expr_type>::is_padded);
-    REQUIRE_DIRECT(etl::etl_traits<expr_type>::template vectorizable<etl::vector_mode>::value);
+
+    if(etl::vec_enabled){
+        REQUIRE_DIRECT(etl::etl_traits<expr_type>::template vectorizable<etl::vector_mode>::value);
+    } else {
+        REQUIRE_DIRECT(!etl::etl_traits<expr_type>::template vectorizable<etl::vector_mode>::value);
+    }
 }
 
 TEMPLATE_TEST_CASE_2("etl_traits/unary_fast_mat", "etl_traits<unary<fast_mat>>", Z, float, double) {
@@ -336,49 +368,51 @@ TEMPLATE_TEST_CASE_2("etl_traits/vectorizable", "vectorizable", Z, float, double
     using mat_type_2 = etl::dyn_matrix<Z, 4>;
     mat_type_2 b(3, 2, 4, 5);
 
-    //Values have direct access
-    REQUIRE_DIRECT(etl::etl_traits<mat_type_1>::template vectorizable<etl::vector_mode>::value);
-    REQUIRE_DIRECT(etl::etl_traits<mat_type_2>::template vectorizable<etl::vector_mode>::value);
+    if(etl::vec_enabled){
+        //Values have direct access
+        REQUIRE_DIRECT(etl::etl_traits<mat_type_1>::template vectorizable<etl::vector_mode>::value);
+        REQUIRE_DIRECT(etl::etl_traits<mat_type_2>::template vectorizable<etl::vector_mode>::value);
 
-    //Values have direct access
-    REQUIRE_DIRECT(etl::etl_traits<decltype(a)>::template vectorizable<etl::vector_mode>::value);
-    REQUIRE_DIRECT(etl::etl_traits<decltype(b)>::template vectorizable<etl::vector_mode>::value);
+        //Values have direct access
+        REQUIRE_DIRECT(etl::etl_traits<decltype(a)>::template vectorizable<etl::vector_mode>::value);
+        REQUIRE_DIRECT(etl::etl_traits<decltype(b)>::template vectorizable<etl::vector_mode>::value);
 
-    //Sub have direct access
-    REQUIRE_DIRECT(etl::etl_traits<decltype(a(1))>::template vectorizable<etl::vector_mode>::value);
-    REQUIRE_DIRECT(etl::etl_traits<decltype(b(2))>::template vectorizable<etl::vector_mode>::value);
+        //Sub have direct access
+        REQUIRE_DIRECT(etl::etl_traits<decltype(a(1))>::template vectorizable<etl::vector_mode>::value);
+        REQUIRE_DIRECT(etl::etl_traits<decltype(b(2))>::template vectorizable<etl::vector_mode>::value);
 
-    //Sub have direct access
-    REQUIRE_DIRECT(etl::etl_traits<decltype(a(0)(1))>::template vectorizable<etl::vector_mode>::value);
-    REQUIRE_DIRECT(etl::etl_traits<decltype(b(1)(2))>::template vectorizable<etl::vector_mode>::value);
+        //Sub have direct access
+        REQUIRE_DIRECT(etl::etl_traits<decltype(a(0)(1))>::template vectorizable<etl::vector_mode>::value);
+        REQUIRE_DIRECT(etl::etl_traits<decltype(b(1)(2))>::template vectorizable<etl::vector_mode>::value);
 
-    //Sub have direct access
-    REQUIRE_DIRECT(etl::etl_traits<decltype(a(0)(1)(3))>::template vectorizable<etl::vector_mode>::value);
-    REQUIRE_DIRECT(etl::etl_traits<decltype(b(1)(2)(0))>::template vectorizable<etl::vector_mode>::value);
+        //Sub have direct access
+        REQUIRE_DIRECT(etl::etl_traits<decltype(a(0)(1)(3))>::template vectorizable<etl::vector_mode>::value);
+        REQUIRE_DIRECT(etl::etl_traits<decltype(b(1)(2)(0))>::template vectorizable<etl::vector_mode>::value);
 
-    //Sub have direct access
-    REQUIRE_DIRECT(etl::etl_traits<decltype(a(1) + a(0))>::template vectorizable<etl::vector_mode>::value);
-    REQUIRE_DIRECT(etl::etl_traits<decltype(a(0) + a(1))>::template vectorizable<etl::vector_mode>::value);
+        //Sub have direct access
+        REQUIRE_DIRECT(etl::etl_traits<decltype(a(1) + a(0))>::template vectorizable<etl::vector_mode>::value);
+        REQUIRE_DIRECT(etl::etl_traits<decltype(a(0) + a(1))>::template vectorizable<etl::vector_mode>::value);
 
-    //reshape have direct access
-    REQUIRE_DIRECT(etl::etl_traits<decltype(etl::reshape<8, 5>(a(1) + a(0)))>::template vectorizable<etl::vector_mode>::value);
-    REQUIRE_DIRECT(etl::etl_traits<decltype(etl::reshape<5>(a(1)(0) + a(0)(1)))>::template vectorizable<etl::vector_mode>::value);
+        //reshape have direct access
+        REQUIRE_DIRECT(etl::etl_traits<decltype(etl::reshape<8, 5>(a(1) + a(0)))>::template vectorizable<etl::vector_mode>::value);
+        REQUIRE_DIRECT(etl::etl_traits<decltype(etl::reshape<5>(a(1)(0) + a(0)(1)))>::template vectorizable<etl::vector_mode>::value);
 
-    //reshape have direct access
-    REQUIRE_DIRECT(etl::etl_traits<decltype(etl::reshape(a(1) + a(0), 5, 8))>::template vectorizable<etl::vector_mode>::value);
-    REQUIRE_DIRECT(etl::etl_traits<decltype(etl::reshape(a(1)(0) + a(0)(1), 5))>::template vectorizable<etl::vector_mode>::value);
+        //reshape have direct access
+        REQUIRE_DIRECT(etl::etl_traits<decltype(etl::reshape(a(1) + a(0), 5, 8))>::template vectorizable<etl::vector_mode>::value);
+        REQUIRE_DIRECT(etl::etl_traits<decltype(etl::reshape(a(1)(0) + a(0)(1), 5))>::template vectorizable<etl::vector_mode>::value);
 
-    //sub have direct access
-    REQUIRE_DIRECT(etl::etl_traits<decltype(etl::sub(a(1) + a(0), 0))>::template vectorizable<etl::vector_mode>::value);
-    REQUIRE_DIRECT(etl::etl_traits<decltype(etl::sub(a(1)(0) + a(0)(1), 1))>::template vectorizable<etl::vector_mode>::value);
+        //sub have direct access
+        REQUIRE_DIRECT(etl::etl_traits<decltype(etl::sub(a(1) + a(0), 0))>::template vectorizable<etl::vector_mode>::value);
+        REQUIRE_DIRECT(etl::etl_traits<decltype(etl::sub(a(1)(0) + a(0)(1), 1))>::template vectorizable<etl::vector_mode>::value);
 
-    //Temporary binary expressions have direct access
-    REQUIRE_DIRECT(etl::etl_traits<decltype(a(0)(0) * a(0)(0))>::template vectorizable<etl::vector_mode>::value);
-    REQUIRE_DIRECT(etl::etl_traits<decltype(b(0)(0) * b(0)(0))>::template vectorizable<etl::vector_mode>::value);
+        //Temporary binary expressions have direct access
+        REQUIRE_DIRECT(etl::etl_traits<decltype(a(0)(0) * a(0)(0))>::template vectorizable<etl::vector_mode>::value);
+        REQUIRE_DIRECT(etl::etl_traits<decltype(b(0)(0) * b(0)(0))>::template vectorizable<etl::vector_mode>::value);
 
-    //Binary do not have direct access
-    REQUIRE_DIRECT(etl::etl_traits<decltype(a + b)>::template vectorizable<etl::vector_mode>::value);
-    REQUIRE_DIRECT(etl::etl_traits<decltype(b + b)>::template vectorizable<etl::vector_mode>::value);
+        //Binary do not have direct access
+        REQUIRE_DIRECT(etl::etl_traits<decltype(a + b)>::template vectorizable<etl::vector_mode>::value);
+        REQUIRE_DIRECT(etl::etl_traits<decltype(b + b)>::template vectorizable<etl::vector_mode>::value);
+    }
 
     //abs do not have direct access
     REQUIRE_DIRECT(!etl::etl_traits<decltype(abs(a))>::template vectorizable<etl::vector_mode>::value);
@@ -530,7 +564,7 @@ TEST_CASE("etl_traits/vectorizable_bool", "[traits]") {
 }
 
 TEST_CASE("etl_traits/vectorizable_integer", "[traits]") {
-    using mat_type_1 = etl::fast_matrix<bool, 3, 3>;
+    using mat_type_1 = etl::fast_matrix<int, 3, 3>;
     mat_type_1 a;
 
     using mat_type_2 = etl::dyn_matrix<int, 2>;
