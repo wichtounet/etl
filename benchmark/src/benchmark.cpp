@@ -73,9 +73,27 @@ CPM_BENCH() {
         );
 
     CPM_TWO_PASS_NS(
-        "r = a + b (i) [std][add][i]",
-        [](std::size_t d){ return std::make_tuple(ivec(d), ivec(d), ivec(d)); },
-        [](ivec& a, ivec& b, ivec& r){ r = a + b; }
+        "r = a + b (i8) [std][add][i]",
+        [](std::size_t d){ return std::make_tuple(i8vec(d), i8vec(d), i8vec(d)); },
+        [](i8vec& a, i8vec& b, i8vec& r){ r = a + b; }
+        );
+
+    CPM_TWO_PASS_NS(
+        "r = a + b (i16) [std][add][i]",
+        [](std::size_t d){ return std::make_tuple(i16vec(d), i16vec(d), i16vec(d)); },
+        [](i16vec& a, i16vec& b, i16vec& r){ r = a + b; }
+        );
+
+    CPM_TWO_PASS_NS(
+        "r = a + b (i32) [std][add][i]",
+        [](std::size_t d){ return std::make_tuple(i32vec(d), i32vec(d), i32vec(d)); },
+        [](i32vec& a, i32vec& b, i32vec& r){ r = a + b; }
+        );
+
+    CPM_TWO_PASS_NS(
+        "r = a + b (i64) [std][add][i]",
+        [](std::size_t d){ return std::make_tuple(i64vec(d), i64vec(d), i64vec(d)); },
+        [](i64vec& a, i64vec& b, i64vec& r){ r = a + b; }
         );
 #endif
 

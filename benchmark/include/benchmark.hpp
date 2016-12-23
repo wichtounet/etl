@@ -62,7 +62,10 @@
 #define TEST_STRASSEN
 #endif
 
-using ivec = etl::dyn_vector<int>;
+using i8vec = etl::dyn_vector<int8_t>;
+using i16vec = etl::dyn_vector<int16_t>;
+using i32vec = etl::dyn_vector<int32_t>;
+using i64vec = etl::dyn_vector<int64_t>;
 
 using svec = etl::dyn_vector<float>;
 using smat = etl::dyn_matrix<float>;
