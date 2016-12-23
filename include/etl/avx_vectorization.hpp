@@ -42,6 +42,7 @@ using avx_simd_complex_float = simd_pack<vector_mode_t::AVX, T, __m256>;
 template<typename T>
 using avx_simd_complex_double = simd_pack<vector_mode_t::AVX, T, __m256d>;
 
+using avx_simd_byte = simd_pack<vector_mode_t::AVX, int8_t, __m256i>;
 using avx_simd_short = simd_pack<vector_mode_t::AVX, int16_t, __m256i>;
 using avx_simd_int = simd_pack<vector_mode_t::AVX, int32_t, __m256i>;
 using avx_simd_long = simd_pack<vector_mode_t::AVX, int64_t, __m256i>;
@@ -128,6 +129,18 @@ struct avx_intrinsic_traits<etl::complex<double>> {
     static constexpr std::size_t alignment = 32; ///< Necessary alignment, in bytes, for this type
 
     using intrinsic_type = avx_simd_complex_double<etl::complex<double>>; ///< The vector type
+};
+
+/*!
+ * \copydoc avx_intrinsic_traits
+ */
+template <>
+struct avx_intrinsic_traits<int8_t> {
+    static constexpr bool vectorizable     = avx2_enabled; ///< Boolean flag indicating is vectorizable or not
+    static constexpr std::size_t size      = 32;            ///< Numbers of elements in a vector
+    static constexpr std::size_t alignment = 32;           ///< Necessary alignment, in bytes, for this type
+
+    using intrinsic_type = avx_simd_byte; ///< The vector type
 };
 
 /*!

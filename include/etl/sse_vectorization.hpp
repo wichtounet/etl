@@ -41,6 +41,7 @@ using sse_simd_complex_float = simd_pack<vector_mode_t::SSE3, T, __m128>;
 template<typename T>
 using sse_simd_complex_double = simd_pack<vector_mode_t::SSE3, T, __m128d>;
 
+using sse_simd_byte = simd_pack<vector_mode_t::SSE3, int8_t, __m128i>;
 using sse_simd_short = simd_pack<vector_mode_t::SSE3, int16_t, __m128i>;
 using sse_simd_int = simd_pack<vector_mode_t::SSE3, int32_t, __m128i>;
 using sse_simd_long = simd_pack<vector_mode_t::SSE3, int64_t, __m128i>;
@@ -127,6 +128,18 @@ struct sse_intrinsic_traits<etl::complex<double>> {
     static constexpr std::size_t alignment = 16;///< Necessary alignment, in bytes, for this type
 
     using intrinsic_type = sse_simd_complex_double<etl::complex<double>>; ///< The vector type
+};
+
+/*!
+ * \brief specialization of sse_intrinsic_traits for int32_t
+ */
+template <>
+struct sse_intrinsic_traits<int8_t> {
+    static constexpr bool vectorizable     = true; ///< Boolean flag indicating is vectorizable or not
+    static constexpr std::size_t size      = 16;    ///< Numbers of elements in a vector
+    static constexpr std::size_t alignment = 16;   ///< Necessary alignment, in bytes, for this type
+
+    using intrinsic_type = sse_simd_byte; ///< The vector type
 };
 
 /*!
@@ -221,6 +234,14 @@ struct sse_vec {
      * \brief Unaligned store of the given packed vector at the
      * given memory position
      */
+    ETL_STATIC_INLINE(void) storeu(int8_t* memory, sse_simd_byte value) {
+        _mm_storeu_si128(reinterpret_cast<__m128i*>(memory), value.value);
+    }
+
+    /*!
+     * \brief Unaligned store of the given packed vector at the
+     * given memory position
+     */
     ETL_STATIC_INLINE(void) storeu(int16_t* memory, sse_simd_short value) {
         _mm_storeu_si128(reinterpret_cast<__m128i*>(memory), value.value);
     }
@@ -293,6 +314,14 @@ struct sse_vec {
      * \brief Aligned store of the given packed vector at the
      * given memory position
      */
+    ETL_STATIC_INLINE(void) store(int8_t* memory, sse_simd_byte value) {
+        _mm_store_si128(reinterpret_cast<__m128i*>(memory), value.value);
+    }
+
+    /*!
+     * \brief Aligned store of the given packed vector at the
+     * given memory position
+     */
     ETL_STATIC_INLINE(void) store(int16_t* memory, sse_simd_short value) {
         _mm_store_si128(reinterpret_cast<__m128i*>(memory), value.value);
     }
@@ -359,6 +388,14 @@ struct sse_vec {
      */
     ETL_STATIC_INLINE(void) store(etl::complex<double>* memory, sse_simd_complex_double<etl::complex<double>> value) {
         _mm_store_pd(reinterpret_cast<double*>(memory), value.value);
+    }
+
+    /*
+     * \brief Non-temporal, aligned, store of the given packed vector at the
+     * given memory position
+     */
+    ETL_STATIC_INLINE(void) stream(int8_t* memory, sse_simd_byte value) {
+        _mm_stream_si128(reinterpret_cast<__m128i*>(memory), value.value);
     }
 
     /*!
@@ -439,6 +476,13 @@ struct sse_vec {
     /*!
      * \brief Load a packed vector from the given aligned memory location
      */
+    ETL_STATIC_INLINE(sse_simd_byte) load(const int8_t* memory) {
+        return _mm_load_si128(reinterpret_cast<const __m128i*>(memory));
+    }
+
+    /*!
+     * \brief Load a packed vector from the given aligned memory location
+     */
     ETL_STATIC_INLINE(sse_simd_short) load(const int16_t* memory) {
         return _mm_load_si128(reinterpret_cast<const __m128i*>(memory));
     }
@@ -502,6 +546,13 @@ struct sse_vec {
     /*!
      * \brief Load a packed vector from the given unaligned memory location
      */
+    ETL_STATIC_INLINE(sse_simd_byte) loadu(const int8_t* memory) {
+        return _mm_loadu_si128(reinterpret_cast<const __m128i*>(memory));
+    }
+
+    /*!
+     * \brief Load a packed vector from the given unaligned memory location
+     */
     ETL_STATIC_INLINE(sse_simd_short) loadu(const int16_t* memory) {
         return _mm_loadu_si128(reinterpret_cast<const __m128i*>(memory));
     }
@@ -560,6 +611,13 @@ struct sse_vec {
      */
     ETL_STATIC_INLINE(sse_simd_complex_double<etl::complex<double>>) loadu(const etl::complex<double>* memory) {
         return _mm_loadu_pd(reinterpret_cast<const double*>(memory));
+    }
+
+    /*!
+     * \brief Fill a packed vector  by replicating a value
+     */
+    ETL_STATIC_INLINE(sse_simd_byte) set(int8_t value) {
+        return _mm_set1_epi8(value);
     }
 
     /*!
@@ -634,6 +692,13 @@ struct sse_vec {
     /*!
      * \brief Add the two given values and return the result.
      */
+    ETL_STATIC_INLINE(sse_simd_byte) add(sse_simd_byte lhs, sse_simd_byte rhs) {
+        return _mm_add_epi8(lhs.value, rhs.value);
+    }
+
+    /*!
+     * \brief Add the two given values and return the result.
+     */
     ETL_STATIC_INLINE(sse_simd_short) add(sse_simd_short lhs, sse_simd_short rhs) {
         return _mm_add_epi16(lhs.value, rhs.value);
     }
@@ -683,6 +748,13 @@ struct sse_vec {
     }
 
     // Subtraction
+
+    /*!
+     * \brief Subtract the two given values and return the result.
+     */
+    ETL_STATIC_INLINE(sse_simd_byte) sub(sse_simd_byte lhs, sse_simd_byte rhs) {
+        return _mm_sub_epi8(lhs.value, rhs.value);
+    }
 
     /*!
      * \brief Subtract the two given values and return the result.
@@ -775,6 +847,12 @@ struct sse_vec {
 
     // Multiplication
 
+    ETL_STATIC_INLINE(sse_simd_byte) mul(sse_simd_byte lhs, sse_simd_byte rhs) {
+        __m128i even = _mm_mullo_epi16(lhs.value, rhs.value);
+        __m128i odd = _mm_mullo_epi16(_mm_srli_epi16(lhs.value, 8),_mm_srli_epi16(rhs.value, 8));
+        return _mm_or_si128(_mm_slli_epi16(odd, 8), _mm_srli_epi16(_mm_slli_epi16(even,8), 8));
+    }
+
     ETL_STATIC_INLINE(sse_simd_short) mul(sse_simd_short lhs, sse_simd_short rhs) {
         return _mm_mullo_epi16(lhs.value, rhs.value);
     }
@@ -859,6 +937,10 @@ struct sse_vec {
     }
 
     // Fused-Multiply-Add (FMA)
+
+    ETL_STATIC_INLINE(sse_simd_byte) fmadd(sse_simd_byte a, sse_simd_byte b, sse_simd_byte c){
+        return add(mul(a, b), c);
+    }
 
     ETL_STATIC_INLINE(sse_simd_short) fmadd(sse_simd_short a, sse_simd_short b, sse_simd_short c){
         return add(mul(a, b), c);
@@ -1165,6 +1247,14 @@ struct sse_vec {
         return in[0];
     }
 };
+
+/*!
+ * \copydoc sse_vec::zero
+ */
+template<>
+ETL_OUT_INLINE(sse_simd_byte) sse_vec::zero<int8_t>() {
+    return _mm_setzero_si128();
+}
 
 /*!
  * \copydoc sse_vec::zero
