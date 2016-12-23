@@ -43,6 +43,7 @@ template<typename T>
 using avx_simd_complex_double = simd_pack<vector_mode_t::AVX, T, __m256d>;
 
 using avx_simd_int = simd_pack<vector_mode_t::AVX, int32_t, __m256i>;
+using avx_simd_long = simd_pack<vector_mode_t::AVX, int64_t, __m256i>;
 
 /*!
  * \brief Define traits to get vectorization information for types in AVX vector mode.
@@ -134,10 +135,22 @@ struct avx_intrinsic_traits<etl::complex<double>> {
 template <>
 struct avx_intrinsic_traits<int32_t> {
     static constexpr bool vectorizable     = avx2_enabled; ///< Boolean flag indicating is vectorizable or not
-    static constexpr std::size_t size      = 8;     ///< Numbers of elements in a vector
-    static constexpr std::size_t alignment = 32;    ///< Necessary alignment, in bytes, for this type
+    static constexpr std::size_t size      = 8;            ///< Numbers of elements in a vector
+    static constexpr std::size_t alignment = 32;           ///< Necessary alignment, in bytes, for this type
 
     using intrinsic_type = avx_simd_int; ///< The vector type
+};
+
+/*!
+ * \copydoc avx_intrinsic_traits
+ */
+template <>
+struct avx_intrinsic_traits<int64_t> {
+    static constexpr bool vectorizable     = avx2_enabled; ///< Boolean flag indicating is vectorizable or not
+    static constexpr std::size_t size      = 4;            ///< Numbers of elements in a vector
+    static constexpr std::size_t alignment = 32;           ///< Necessary alignment, in bytes, for this type
+
+    using intrinsic_type = avx_simd_long; ///< The vector type
 };
 
 /*!
