@@ -77,7 +77,7 @@ TEMPLATE_TEST_CASE_2("integers/init_6", "[integers][dyn]", Z, int, long) {
 
 // Binary operators test
 
-TEMPLATE_TEST_CASE_2("integers/add_scalar_1", "fast_vector::operator+", Z, int, long) {
+TEMPLATE_TEST_CASE_2("integers/add_scalar_1", "[integers]", Z, int, long) {
     etl::fast_vector<Z, 3> test_vector = {-1, 2, 5};
 
     test_vector = 1 + test_vector;
@@ -87,7 +87,7 @@ TEMPLATE_TEST_CASE_2("integers/add_scalar_1", "fast_vector::operator+", Z, int, 
     REQUIRE_EQUALS(test_vector[2], 6);
 }
 
-TEMPLATE_TEST_CASE_2("integers/add_scalar_2", "fast_vector::operator+", Z, int, long) {
+TEMPLATE_TEST_CASE_2("integers/add_scalar_2", "[integers]", Z, int, long) {
     etl::fast_vector<Z, 3> test_vector = {-1, 2, 5};
 
     test_vector = test_vector + 1;
@@ -97,7 +97,7 @@ TEMPLATE_TEST_CASE_2("integers/add_scalar_2", "fast_vector::operator+", Z, int, 
     REQUIRE_EQUALS(test_vector[2], 6);
 }
 
-TEMPLATE_TEST_CASE_2("integers/add_scalar_3", "fast_vector::operator+=", Z, int, long) {
+TEMPLATE_TEST_CASE_2("integers/add_scalar_3", "[integers]", Z, int, long) {
     etl::fast_vector<Z, 3> test_vector = {-1, 2, 5};
 
     test_vector += 1;
@@ -107,7 +107,7 @@ TEMPLATE_TEST_CASE_2("integers/add_scalar_3", "fast_vector::operator+=", Z, int,
     REQUIRE_EQUALS(test_vector[2], 6);
 }
 
-TEMPLATE_TEST_CASE_2("integers/add_1", "fast_vector::operator+", Z, int, long) {
+TEMPLATE_TEST_CASE_2("integers/add_1", "[integers]", Z, int, long) {
     etl::fast_vector<Z, 3> a = {-1, 2, 5};
     etl::fast_vector<Z, 3> b = {2, 3, 4};
 
@@ -118,7 +118,7 @@ TEMPLATE_TEST_CASE_2("integers/add_1", "fast_vector::operator+", Z, int, long) {
     REQUIRE_EQUALS(c[2], 9);
 }
 
-TEMPLATE_TEST_CASE_2("integers/add_2", "fast_vector::operator+=", Z, int, long) {
+TEMPLATE_TEST_CASE_2("integers/add_2", "[integers]", Z, int, long) {
     etl::fast_vector<Z, 3> a = {-1, 2, 5};
     etl::fast_vector<Z, 3> b = {2, 3, 4};
 
@@ -129,7 +129,7 @@ TEMPLATE_TEST_CASE_2("integers/add_2", "fast_vector::operator+=", Z, int, long) 
     REQUIRE_EQUALS(a[2], 9);
 }
 
-TEMPLATE_TEST_CASE_2("integers/sub_scalar_1", "fast_vector::operator+", Z, int, long) {
+TEMPLATE_TEST_CASE_2("integers/sub_scalar_1", "[integers]", Z, int, long) {
     etl::fast_vector<Z, 3> test_vector = {-1, 2, 5};
 
     test_vector = 1 - test_vector;
@@ -139,7 +139,7 @@ TEMPLATE_TEST_CASE_2("integers/sub_scalar_1", "fast_vector::operator+", Z, int, 
     REQUIRE_EQUALS(test_vector[2], -4);
 }
 
-TEMPLATE_TEST_CASE_2("integers/sub_scalar_2", "fast_vector::operator+", Z, int, long) {
+TEMPLATE_TEST_CASE_2("integers/sub_scalar_2", "[integers]", Z, int, long) {
     etl::fast_vector<Z, 3> test_vector = {-1, 2, 5};
 
     test_vector = test_vector - 1;
@@ -149,7 +149,7 @@ TEMPLATE_TEST_CASE_2("integers/sub_scalar_2", "fast_vector::operator+", Z, int, 
     REQUIRE_EQUALS(test_vector[2], 4);
 }
 
-TEMPLATE_TEST_CASE_2("integers/sub_scalar_3", "fast_vector::operator+=", Z, int, long) {
+TEMPLATE_TEST_CASE_2("integers/sub_scalar_3", "[integers]", Z, int, long) {
     etl::fast_vector<Z, 3> test_vector = {-1, 2, 5};
 
     test_vector -= 1;
@@ -159,7 +159,7 @@ TEMPLATE_TEST_CASE_2("integers/sub_scalar_3", "fast_vector::operator+=", Z, int,
     REQUIRE_EQUALS(test_vector[2], 4);
 }
 
-TEMPLATE_TEST_CASE_2("integers/sub_1", "fast_vector::operator-", Z, int, long) {
+TEMPLATE_TEST_CASE_2("integers/sub_1", "[integers]", Z, int, long) {
     etl::fast_vector<Z, 3> a = {-1, 2, 5};
     etl::fast_vector<Z, 3> b = {2, 3, 4};
 
@@ -170,7 +170,7 @@ TEMPLATE_TEST_CASE_2("integers/sub_1", "fast_vector::operator-", Z, int, long) {
     REQUIRE_EQUALS(c[2], 1);
 }
 
-TEMPLATE_TEST_CASE_2("integers/sub_2", "fast_vector::operator-=", Z, int, long) {
+TEMPLATE_TEST_CASE_2("integers/sub_2", "[integers]", Z, int, long) {
     etl::fast_vector<Z, 3> a = {-1, 2, 5};
     etl::fast_vector<Z, 3> b = {2, 3, 4};
 
@@ -181,7 +181,7 @@ TEMPLATE_TEST_CASE_2("integers/sub_2", "fast_vector::operator-=", Z, int, long) 
     REQUIRE_EQUALS(a[2], 1);
 }
 
-TEMPLATE_TEST_CASE_2("integers/mul_scalar_1", "fast_vector::operator*", Z, int, long) {
+TEMPLATE_TEST_CASE_2("integers/mul_scalar_1", "[integers]", Z, int, long) {
     etl::fast_vector<Z, 3> test_vector = {-1, 2, 5};
 
     test_vector = 2 * test_vector;
@@ -191,7 +191,7 @@ TEMPLATE_TEST_CASE_2("integers/mul_scalar_1", "fast_vector::operator*", Z, int, 
     REQUIRE_EQUALS(test_vector[2], 10);
 }
 
-TEMPLATE_TEST_CASE_2("integers/mul_scalar_2", "fast_vector::operator*", Z, int, long) {
+TEMPLATE_TEST_CASE_2("integers/mul_scalar_2", "[integers]", Z, int, long) {
     etl::fast_vector<Z, 3> test_vector = {-1, 2, 5};
 
     test_vector = test_vector * 2;
@@ -201,7 +201,7 @@ TEMPLATE_TEST_CASE_2("integers/mul_scalar_2", "fast_vector::operator*", Z, int, 
     REQUIRE_EQUALS(test_vector[2], 10);
 }
 
-TEMPLATE_TEST_CASE_2("integers/mul_scalar_3", "fast_vector::operator*=", Z, int, long) {
+TEMPLATE_TEST_CASE_2("integers/mul_scalar_3", "[integers]", Z, int, long) {
     etl::fast_vector<Z, 3> test_vector = {-1, 2, 5};
 
     test_vector *= 2;
@@ -211,7 +211,7 @@ TEMPLATE_TEST_CASE_2("integers/mul_scalar_3", "fast_vector::operator*=", Z, int,
     REQUIRE_EQUALS(test_vector[2], 10);
 }
 
-TEMPLATE_TEST_CASE_2("integers/mul_1", "fast_vector::operator*", Z, int, long) {
+TEMPLATE_TEST_CASE_2("integers/mul_1", "[integers]", Z, int, long) {
     etl::fast_vector<Z, 3> a = {-1, 2, 5};
     etl::fast_vector<Z, 3> b = {2, 3, 4};
 
@@ -222,7 +222,7 @@ TEMPLATE_TEST_CASE_2("integers/mul_1", "fast_vector::operator*", Z, int, long) {
     REQUIRE_EQUALS(c[2], 20);
 }
 
-TEMPLATE_TEST_CASE_2("integers/mul_2", "fast_vector::operator*=", Z, int, long) {
+TEMPLATE_TEST_CASE_2("integers/mul_2", "[integers]", Z, int, long) {
     etl::fast_vector<Z, 3> a = {-1, 2, 5};
     etl::fast_vector<Z, 3> b = {2, 3, 4};
 
@@ -233,7 +233,7 @@ TEMPLATE_TEST_CASE_2("integers/mul_2", "fast_vector::operator*=", Z, int, long) 
     REQUIRE_EQUALS(a[2], 20);
 }
 
-TEMPLATE_TEST_CASE_2("integers/mul_3", "fast_vector::operator*", Z, int, long) {
+TEMPLATE_TEST_CASE_2("integers/mul_3", "[integers]", Z, int, long) {
     etl::fast_vector<Z, 3> a = {-1, 2, 5};
     etl::fast_vector<Z, 3> b = {2, 3, 4};
 
@@ -244,7 +244,7 @@ TEMPLATE_TEST_CASE_2("integers/mul_3", "fast_vector::operator*", Z, int, long) {
     REQUIRE_EQUALS(c[2], 20);
 }
 
-TEMPLATE_TEST_CASE_2("integers/div_scalar_1", "fast_vector::operator/", Z, int, long) {
+TEMPLATE_TEST_CASE_2("integers/div_scalar_1", "[integers]", Z, int, long) {
     etl::fast_vector<Z, 3> test_vector = {-1, 2, 5};
 
     test_vector = test_vector / 2;
@@ -254,7 +254,7 @@ TEMPLATE_TEST_CASE_2("integers/div_scalar_1", "fast_vector::operator/", Z, int, 
     REQUIRE_EQUALS(test_vector[2], 2);
 }
 
-TEMPLATE_TEST_CASE_2("integers/div_scalar_2", "fast_vector::operator/", Z, int, long) {
+TEMPLATE_TEST_CASE_2("integers/div_scalar_2", "[integers]", Z, int, long) {
     etl::fast_vector<Z, 3> test_vector = {-1, 2, 5};
 
     test_vector = 2 / test_vector;
@@ -264,7 +264,7 @@ TEMPLATE_TEST_CASE_2("integers/div_scalar_2", "fast_vector::operator/", Z, int, 
     REQUIRE_EQUALS(test_vector[2], 0);
 }
 
-TEMPLATE_TEST_CASE_2("integers/div_scalar_3", "fast_vector::operator/=", Z, int, long) {
+TEMPLATE_TEST_CASE_2("integers/div_scalar_3", "[integers]", Z, int, long) {
     etl::fast_vector<Z, 3> test_vector = {-1, 2, 5};
 
     test_vector /= 2;
@@ -274,7 +274,7 @@ TEMPLATE_TEST_CASE_2("integers/div_scalar_3", "fast_vector::operator/=", Z, int,
     REQUIRE_EQUALS(test_vector[2], 2);
 }
 
-TEMPLATE_TEST_CASE_2("integers/div_1", "fast_vector::operator/", Z, int, long) {
+TEMPLATE_TEST_CASE_2("integers/div_1", "[integers]", Z, int, long) {
     etl::fast_vector<Z, 3> a = {-1, 2, 5};
     etl::fast_vector<Z, 3> b = {2, 3, 4};
 
@@ -285,7 +285,7 @@ TEMPLATE_TEST_CASE_2("integers/div_1", "fast_vector::operator/", Z, int, long) {
     REQUIRE_EQUALS(c[2], 1);
 }
 
-TEMPLATE_TEST_CASE_2("integers/div_2", "fast_vector::operator/=", Z, int, long) {
+TEMPLATE_TEST_CASE_2("integers/div_2", "[integers]", Z, int, long) {
     etl::fast_vector<Z, 3> a = {-1, 2, 5};
     etl::fast_vector<Z, 3> b = {2, 3, 4};
 
