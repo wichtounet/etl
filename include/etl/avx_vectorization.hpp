@@ -1033,9 +1033,7 @@ struct avx_vec {
      */
     template<typename T>
     ETL_STATIC_INLINE(T) hadd(avx_simd_complex_float<T> in) {
-        T tmp_result[4];
-        avx_vec::storeu(tmp_result, in);
-        return tmp_result[0] + tmp_result[1] + tmp_result[2] + tmp_result[3];
+        return in[0] + in[1] + in[2] + in[3];
     }
 
     /*!
@@ -1045,9 +1043,7 @@ struct avx_vec {
      */
     template<typename T>
     ETL_STATIC_INLINE(T) hadd(avx_simd_complex_double<T> in) {
-        T tmp_result[2];
-        avx_vec::storeu(tmp_result, in);
-        return tmp_result[0] + tmp_result[1];
+        return in[0] + in[1];
     }
 };
 

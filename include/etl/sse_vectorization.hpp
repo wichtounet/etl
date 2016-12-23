@@ -989,9 +989,7 @@ struct sse_vec {
      */
     template<typename T>
     ETL_STATIC_INLINE(T) hadd(sse_simd_complex_float<T> in) {
-        T tmp_result[2];
-        sse_vec::storeu(tmp_result, in);
-        return tmp_result[0] + tmp_result[1];
+        return in[0] + in[1];
     }
 
     /*!
@@ -1001,9 +999,7 @@ struct sse_vec {
      */
     template<typename T>
     ETL_STATIC_INLINE(T) hadd(sse_simd_complex_double<T> in) {
-        T tmp_result[1];
-        sse_vec::storeu(tmp_result, in);
-        return tmp_result[0];
+        return in[0];
     }
 };
 
