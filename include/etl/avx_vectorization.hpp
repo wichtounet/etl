@@ -214,6 +214,14 @@ struct avx_vec {
     ETL_STATIC_INLINE(void) storeu(int32_t* memory, avx_simd_int value) {
         _mm256_storeu_si256(reinterpret_cast<__m256i*>(memory), value.value);
     }
+
+    /*!
+     * \brief Unaligned store of the given packed vector at the
+     * given memory position
+     */
+    ETL_STATIC_INLINE(void) storeu(int64_t* memory, avx_simd_long value) {
+        _mm256_storeu_si256(reinterpret_cast<__m256i*>(memory), value.value);
+    }
 #endif
 
     /*!
@@ -272,6 +280,14 @@ struct avx_vec {
     ETL_STATIC_INLINE(void) stream(int32_t* memory, avx_simd_int value) {
         _mm256_stream_si256(reinterpret_cast<__m256i*>(memory), value.value);
     }
+
+    /*!
+     * \brief Non-temporal, aligned, store of the given packed vector at the
+     * given memory position
+     */
+    ETL_STATIC_INLINE(void) stream(int64_t* memory, avx_simd_long value) {
+        _mm256_stream_si256(reinterpret_cast<__m256i*>(memory), value.value);
+    }
 #endif
 
     /*!
@@ -328,6 +344,14 @@ struct avx_vec {
      * given memory position
      */
     ETL_STATIC_INLINE(void) store(int32_t* memory, avx_simd_int value) {
+        _mm256_store_si256(reinterpret_cast<__m256i*>(memory), value.value);
+    }
+
+    /*!
+     * \brief Aligned store of the given packed vector at the
+     * given memory position
+     */
+    ETL_STATIC_INLINE(void) store(int64_t* memory, avx_simd_long value) {
         _mm256_store_si256(reinterpret_cast<__m256i*>(memory), value.value);
     }
 #endif
@@ -393,6 +417,13 @@ struct avx_vec {
     ETL_STATIC_INLINE(avx_simd_int) load(const int32_t* memory) {
         return _mm256_load_si256(reinterpret_cast<const __m256i*>(memory));
     }
+
+    /*!
+     * \brief Load a packed vector from the given aligned memory location
+     */
+    ETL_STATIC_INLINE(avx_simd_long) load(const int64_t* memory) {
+        return _mm256_load_si256(reinterpret_cast<const __m256i*>(memory));
+    }
 #endif
 
     /*!
@@ -442,6 +473,13 @@ struct avx_vec {
      * \brief Load a packed vector from the given unaligned memory location
      */
     ETL_STATIC_INLINE(avx_simd_int) loadu(const int32_t* memory) {
+        return _mm256_loadu_si256(reinterpret_cast<const __m256i*>(memory));
+    }
+
+    /*!
+     * \brief Load a packed vector from the given unaligned memory location
+     */
+    ETL_STATIC_INLINE(avx_simd_long) loadu(const int64_t* memory) {
         return _mm256_loadu_si256(reinterpret_cast<const __m256i*>(memory));
     }
 #endif
@@ -494,6 +532,13 @@ struct avx_vec {
      */
     ETL_STATIC_INLINE(avx_simd_int) set(int32_t value) {
         return _mm256_set1_epi32(value);
+    }
+
+    /*!
+     * \brief Fill a packed vector  by replicating a value
+     */
+    ETL_STATIC_INLINE(avx_simd_long) set(int64_t value) {
+        return _mm256_set1_epi64x(value);
     }
 #endif
 
@@ -552,6 +597,13 @@ struct avx_vec {
     ETL_STATIC_INLINE(avx_simd_int) add(avx_simd_int lhs, avx_simd_int rhs) {
         return _mm256_add_epi32(lhs.value, rhs.value);
     }
+
+    /*!
+     * \brief Add the two given values and return the result.
+     */
+    ETL_STATIC_INLINE(avx_simd_long) add(avx_simd_long lhs, avx_simd_long rhs) {
+        return _mm256_add_epi64(lhs.value, rhs.value);
+    }
 #endif
 
     /*!
@@ -592,6 +644,13 @@ struct avx_vec {
      */
     ETL_STATIC_INLINE(avx_simd_int) sub(avx_simd_int lhs, avx_simd_int rhs) {
         return _mm256_sub_epi32(lhs.value, rhs.value);
+    }
+
+    /*!
+     * \brief Subtract the two given values and return the result.
+     */
+    ETL_STATIC_INLINE(avx_simd_long) sub(avx_simd_long lhs, avx_simd_long rhs) {
+        return _mm256_sub_epi64(lhs.value, rhs.value);
     }
 #endif
 
@@ -668,6 +727,17 @@ struct avx_vec {
 #ifdef __AVX2__
     ETL_STATIC_INLINE(avx_simd_int) mul(avx_simd_int lhs, avx_simd_int rhs) {
         return _mm256_mullo_epi32(lhs.value, rhs.value);
+    }
+
+    ETL_STATIC_INLINE(avx_simd_long) mul(avx_simd_long lhs, avx_simd_long rhs) {
+        int64_t result[4];
+
+        result[0] = lhs[0] * rhs[0];
+        result[1] = lhs[1] * rhs[1];
+        result[2] = lhs[2] * rhs[2];
+        result[3] = lhs[3] * rhs[3];
+
+        return loadu(&result[0]);
     }
 #endif
 
@@ -753,6 +823,10 @@ struct avx_vec {
 
 #ifdef __AVX2__
     ETL_STATIC_INLINE(avx_simd_int) fmadd(avx_simd_int a, avx_simd_int b, avx_simd_int c){
+        return add(mul(a, b), c);
+    }
+
+    ETL_STATIC_INLINE(avx_simd_long) fmadd(avx_simd_long a, avx_simd_long b, avx_simd_long c){
         return add(mul(a, b), c);
     }
 #endif
@@ -1066,6 +1140,14 @@ struct avx_vec {
  */
 template<>
 ETL_OUT_INLINE(avx_simd_int) avx_vec::zero<int32_t>() {
+    return _mm256_setzero_si256();
+}
+
+/*!
+ * \copydoc avx_vec::zero
+ */
+template<>
+ETL_OUT_INLINE(avx_simd_long) avx_vec::zero<int64_t>() {
     return _mm256_setzero_si256();
 }
 #endif
