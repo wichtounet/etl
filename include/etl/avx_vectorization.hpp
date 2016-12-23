@@ -237,6 +237,22 @@ struct avx_vec {
      * \brief Unaligned store of the given packed vector at the
      * given memory position
      */
+    ETL_STATIC_INLINE(void) storeu(int8_t* memory, avx_simd_byte value) {
+        _mm256_storeu_si256(reinterpret_cast<__m256i*>(memory), value.value);
+    }
+
+    /*!
+     * \brief Unaligned store of the given packed vector at the
+     * given memory position
+     */
+    ETL_STATIC_INLINE(void) storeu(int16_t* memory, avx_simd_short value) {
+        _mm256_storeu_si256(reinterpret_cast<__m256i*>(memory), value.value);
+    }
+
+    /*!
+     * \brief Unaligned store of the given packed vector at the
+     * given memory position
+     */
     ETL_STATIC_INLINE(void) storeu(int32_t* memory, avx_simd_int value) {
         _mm256_storeu_si256(reinterpret_cast<__m256i*>(memory), value.value);
     }
@@ -303,6 +319,22 @@ struct avx_vec {
      * \brief Non-temporal, aligned, store of the given packed vector at the
      * given memory position
      */
+    ETL_STATIC_INLINE(void) stream(int8_t* memory, avx_simd_byte value) {
+        _mm256_stream_si256(reinterpret_cast<__m256i*>(memory), value.value);
+    }
+
+    /*!
+     * \brief Non-temporal, aligned, store of the given packed vector at the
+     * given memory position
+     */
+    ETL_STATIC_INLINE(void) stream(int16_t* memory, avx_simd_short value) {
+        _mm256_stream_si256(reinterpret_cast<__m256i*>(memory), value.value);
+    }
+
+    /*!
+     * \brief Non-temporal, aligned, store of the given packed vector at the
+     * given memory position
+     */
     ETL_STATIC_INLINE(void) stream(int32_t* memory, avx_simd_int value) {
         _mm256_stream_si256(reinterpret_cast<__m256i*>(memory), value.value);
     }
@@ -365,6 +397,22 @@ struct avx_vec {
     }
 
 #ifdef __AVX2__
+    /*!
+     * \brief Aligned store of the given packed vector at the
+     * given memory position
+     */
+    ETL_STATIC_INLINE(void) store(int8_t* memory, avx_simd_byte value) {
+        _mm256_store_si256(reinterpret_cast<__m256i*>(memory), value.value);
+    }
+
+    /*!
+     * \brief Aligned store of the given packed vector at the
+     * given memory position
+     */
+    ETL_STATIC_INLINE(void) store(int16_t* memory, avx_simd_short value) {
+        _mm256_store_si256(reinterpret_cast<__m256i*>(memory), value.value);
+    }
+
     /*!
      * \brief Aligned store of the given packed vector at the
      * given memory position
@@ -440,6 +488,20 @@ struct avx_vec {
     /*!
      * \brief Load a packed vector from the given aligned memory location
      */
+    ETL_STATIC_INLINE(avx_simd_byte) load(const int8_t* memory) {
+        return _mm256_load_si256(reinterpret_cast<const __m256i*>(memory));
+    }
+
+    /*!
+     * \brief Load a packed vector from the given aligned memory location
+     */
+    ETL_STATIC_INLINE(avx_simd_short) load(const int16_t* memory) {
+        return _mm256_load_si256(reinterpret_cast<const __m256i*>(memory));
+    }
+
+    /*!
+     * \brief Load a packed vector from the given aligned memory location
+     */
     ETL_STATIC_INLINE(avx_simd_int) load(const int32_t* memory) {
         return _mm256_load_si256(reinterpret_cast<const __m256i*>(memory));
     }
@@ -498,6 +560,20 @@ struct avx_vec {
     /*!
      * \brief Load a packed vector from the given unaligned memory location
      */
+    ETL_STATIC_INLINE(avx_simd_byte) loadu(const int8_t* memory) {
+        return _mm256_loadu_si256(reinterpret_cast<const __m256i*>(memory));
+    }
+
+    /*!
+     * \brief Load a packed vector from the given unaligned memory location
+     */
+    ETL_STATIC_INLINE(avx_simd_short) loadu(const int16_t* memory) {
+        return _mm256_loadu_si256(reinterpret_cast<const __m256i*>(memory));
+    }
+
+    /*!
+     * \brief Load a packed vector from the given unaligned memory location
+     */
     ETL_STATIC_INLINE(avx_simd_int) loadu(const int32_t* memory) {
         return _mm256_loadu_si256(reinterpret_cast<const __m256i*>(memory));
     }
@@ -553,6 +629,20 @@ struct avx_vec {
     }
 
 #ifdef __AVX2__
+    /*!
+     * \brief Fill a packed vector  by replicating a value
+     */
+    ETL_STATIC_INLINE(avx_simd_byte) set(int8_t value) {
+        return _mm256_set1_epi8(value);
+    }
+
+    /*!
+     * \brief Fill a packed vector  by replicating a value
+     */
+    ETL_STATIC_INLINE(avx_simd_short) set(int16_t value) {
+        return _mm256_set1_epi16(value);
+    }
+
     /*!
      * \brief Fill a packed vector  by replicating a value
      */
@@ -620,6 +710,20 @@ struct avx_vec {
     /*!
      * \brief Add the two given values and return the result.
      */
+    ETL_STATIC_INLINE(avx_simd_byte) add(avx_simd_byte lhs, avx_simd_byte rhs) {
+        return _mm256_add_epi8(lhs.value, rhs.value);
+    }
+
+    /*!
+     * \brief Add the two given values and return the result.
+     */
+    ETL_STATIC_INLINE(avx_simd_short) add(avx_simd_short lhs, avx_simd_short rhs) {
+        return _mm256_add_epi16(lhs.value, rhs.value);
+    }
+
+    /*!
+     * \brief Add the two given values and return the result.
+     */
     ETL_STATIC_INLINE(avx_simd_int) add(avx_simd_int lhs, avx_simd_int rhs) {
         return _mm256_add_epi32(lhs.value, rhs.value);
     }
@@ -665,6 +769,20 @@ struct avx_vec {
     // Subtraction
 
 #ifdef __AVX2__
+    /*!
+     * \brief Subtract the two given values and return the result.
+     */
+    ETL_STATIC_INLINE(avx_simd_byte) sub(avx_simd_byte lhs, avx_simd_byte rhs) {
+        return _mm256_sub_epi8(lhs.value, rhs.value);
+    }
+
+    /*!
+     * \brief Subtract the two given values and return the result.
+     */
+    ETL_STATIC_INLINE(avx_simd_short) sub(avx_simd_short lhs, avx_simd_short rhs) {
+        return _mm256_sub_epi16(lhs.value, rhs.value);
+    }
+
     /*!
      * \brief Subtract the two given values and return the result.
      */
@@ -751,6 +869,18 @@ struct avx_vec {
     // Multiplication
 
 #ifdef __AVX2__
+    ETL_STATIC_INLINE(avx_simd_byte) mul(avx_simd_byte lhs, avx_simd_byte rhs) {
+        auto aodd    = _mm256_srli_epi16(lhs.value, 8);
+        auto bodd    = _mm256_srli_epi16(rhs.value, 8);
+        auto muleven = _mm256_mullo_epi16(lhs.value, rhs.value);
+        auto mulodd  = _mm256_slli_epi16(_mm256_mullo_epi16(aodd, bodd), 8);
+        return _mm256_blendv_epi8(mulodd, muleven, _mm256_set1_epi32(0x00FF00FF));
+    }
+
+    ETL_STATIC_INLINE(avx_simd_short) mul(avx_simd_short lhs, avx_simd_short rhs) {
+        return _mm256_mullo_epi16(lhs.value, rhs.value);
+    }
+
     ETL_STATIC_INLINE(avx_simd_int) mul(avx_simd_int lhs, avx_simd_int rhs) {
         return _mm256_mullo_epi32(lhs.value, rhs.value);
     }
@@ -848,6 +978,14 @@ struct avx_vec {
     // Fused Multiplay Add (FMA)
 
 #ifdef __AVX2__
+    ETL_STATIC_INLINE(avx_simd_byte) fmadd(avx_simd_byte a, avx_simd_byte b, avx_simd_byte c){
+        return add(mul(a, b), c);
+    }
+
+    ETL_STATIC_INLINE(avx_simd_short) fmadd(avx_simd_short a, avx_simd_short b, avx_simd_short c){
+        return add(mul(a, b), c);
+    }
+
     ETL_STATIC_INLINE(avx_simd_int) fmadd(avx_simd_int a, avx_simd_int b, avx_simd_int c){
         return add(mul(a, b), c);
     }
@@ -1161,6 +1299,22 @@ struct avx_vec {
 };
 
 #ifdef __AVX2__
+/*!
+ * \copydoc avx_vec::zero
+ */
+template<>
+ETL_OUT_INLINE(avx_simd_byte) avx_vec::zero<int8_t>() {
+    return _mm256_setzero_si256();
+}
+
+/*!
+ * \copydoc avx_vec::zero
+ */
+template<>
+ETL_OUT_INLINE(avx_simd_short) avx_vec::zero<int16_t>() {
+    return _mm256_setzero_si256();
+}
+
 /*!
  * \copydoc avx_vec::zero
  */
