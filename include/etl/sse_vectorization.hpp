@@ -598,7 +598,7 @@ struct sse_vec {
 
     template <bool Complex = false>
     ETL_INLINE_VEC_128I mul(__m128i lhs, __m128i rhs) {
-        return _mm_mul_epi32(lhs, rhs);
+        return _mm_mullo_epi32(lhs, rhs);
     }
 
     /*!
