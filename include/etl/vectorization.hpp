@@ -16,6 +16,8 @@
 
 #include <immintrin.h>
 
+#include "etl/inline.hpp"
+
 namespace etl {
 
 template <vector_mode_t V, typename T, typename VT>
@@ -30,6 +32,10 @@ struct simd_pack {
     simd_pack(intrinsic_type value) : value(value){
         // Nothing else to init
     }
+
+    ETL_STRONG_INLINE(value_type) operator[](size_t i) const noexcept {
+        return reinterpret_cast<const value_type*>(&value)[i];
+    }
 };
 
 } // end of namespace etl
@@ -39,7 +45,6 @@ struct simd_pack {
 #include "etl/avx_vectorization.hpp"
 #include "etl/sse_vectorization.hpp"
 #include "etl/no_vectorization.hpp"
-#include "etl/inline.hpp"
 
 namespace etl {
 
