@@ -199,7 +199,7 @@ struct avx_vec {
      * given memory position
      */
     ETL_STATIC_INLINE(void) storeu(int* memory, avx_simd_int value) {
-        _mm256_storeu_si128(reinterpret_cast<__m128i*>(memory), value.value);
+        _mm256_storeu_si256(reinterpret_cast<__m256i*>(memory), value.value);
     }
 #endif
 
@@ -257,7 +257,7 @@ struct avx_vec {
      * given memory position
      */
     ETL_STATIC_INLINE(void) stream(int* memory, avx_simd_int value) {
-        _mm256_stream_si128(reinterpret_cast<__m128i*>(memory), value.value);
+        _mm256_stream_si256(reinterpret_cast<__m256i*>(memory), value.value);
     }
 #endif
 
@@ -315,7 +315,7 @@ struct avx_vec {
      * given memory position
      */
     ETL_STATIC_INLINE(void) store(int* memory, avx_simd_int value) {
-        _mm256_store_si128(reinterpret_cast<__m128i*>(memory), value.value);
+        _mm256_store_si256(reinterpret_cast<__m256i*>(memory), value.value);
     }
 #endif
 
@@ -378,7 +378,7 @@ struct avx_vec {
      * \brief Load a packed vector from the given aligned memory location
      */
     ETL_STATIC_INLINE(avx_simd_int) load(const int* memory) {
-        return _mm256_load_si128(reinterpret_cast<const __m128i*>(memory));
+        return _mm256_load_si256(reinterpret_cast<const __m256i*>(memory));
     }
 #endif
 
@@ -429,7 +429,7 @@ struct avx_vec {
      * \brief Load a packed vector from the given unaligned memory location
      */
     ETL_STATIC_INLINE(avx_simd_int) loadu(const int* memory) {
-        return _mm256_loadu_si128(reinterpret_cast<const __m128i*>(memory));
+        return _mm256_loadu_si256(reinterpret_cast<const __m256i*>(memory));
     }
 #endif
 
@@ -1057,7 +1057,7 @@ struct avx_vec {
  */
 template<>
 ETL_OUT_INLINE(avx_simd_int) avx_vec::zero<int>() {
-    return _mm256_setzero_si128();
+    return _mm256_setzero_si256();
 }
 #endif
 
