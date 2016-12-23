@@ -30,15 +30,30 @@
 #define _mm_undefined_pd _mm_setzero_pd
 #endif
 
-#define ETL_INLINE_VEC_VOID ETL_STATIC_INLINE(void)
-#define ETL_INLINE_VEC_128I ETL_STATIC_INLINE(__m128i)
-#define ETL_INLINE_VEC_128 ETL_STATIC_INLINE(__m128)
-#define ETL_INLINE_VEC_128D ETL_STATIC_INLINE(__m128d)
-#define ETL_OUT_VEC_128I ETL_OUT_INLINE(__m128i)
-#define ETL_OUT_VEC_128 ETL_OUT_INLINE(__m128)
-#define ETL_OUT_VEC_128D ETL_OUT_INLINE(__m128d)
-
 namespace etl {
+
+template <typename T, typename VT>
+struct simd_pack {
+    using value_type     = T;
+    using intrinsic_type = VT;
+
+    intrinsic_type value;
+
+    simd_pack(intrinsic_type value) : value(value){
+        // Nothing else to init
+    }
+};
+
+using sse_simd_float = simd_pack<float, __m128>;
+using sse_simd_double = simd_pack<double, __m128d>;
+
+template<typename T>
+using sse_simd_complex_float = simd_pack<T, __m128>;
+
+template<typename T>
+using sse_simd_complex_double = simd_pack<T, __m128d>;
+
+using sse_simd_int = simd_pack<int, __m128i>;
 
 /*!
  * \brief Define traits to get vectorization information for types in SSE vector mode.
@@ -61,7 +76,7 @@ struct sse_intrinsic_traits<float> {
     static constexpr std::size_t size      = 4; ///< Numbers of elements in a vector
     static constexpr std::size_t alignment = 16; ///< Necessary alignment, in bytes, for this type
 
-    using intrinsic_type = __m128; ///< The vector type
+    using intrinsic_type = sse_simd_float; ///< The vector type
 };
 
 /*!
@@ -73,7 +88,7 @@ struct sse_intrinsic_traits<double> {
     static constexpr std::size_t size      = 2; ///< Numbers of elements in a vector
     static constexpr std::size_t alignment = 16; ///< Necessary alignment, in bytes, for this type
 
-    using intrinsic_type = __m128d; ///< The vector type
+    using intrinsic_type = sse_simd_double; ///< The vector type
 };
 
 /*!
@@ -85,7 +100,7 @@ struct sse_intrinsic_traits<std::complex<float>> {
     static constexpr std::size_t size      = 2; ///< Numbers of elements in a vector
     static constexpr std::size_t alignment = 16;///< Necessary alignment, in bytes, for this type
 
-    using intrinsic_type = __m128; ///< The vector type
+    using intrinsic_type = sse_simd_complex_float<std::complex<float>>; ///< The vector type
 };
 
 /*!
@@ -97,7 +112,7 @@ struct sse_intrinsic_traits<std::complex<double>> {
     static constexpr std::size_t size      = 1; ///< Numbers of elements in a vector
     static constexpr std::size_t alignment = 16;///< Necessary alignment, in bytes, for this type
 
-    using intrinsic_type = __m128d; ///< The vector type
+    using intrinsic_type = sse_simd_complex_double<std::complex<double>>; ///< The vector type
 };
 
 /*!
@@ -109,7 +124,7 @@ struct sse_intrinsic_traits<etl::complex<float>> {
     static constexpr std::size_t size      = 2; ///< Numbers of elements in a vector
     static constexpr std::size_t alignment = 16;///< Necessary alignment, in bytes, for this type
 
-    using intrinsic_type = __m128; ///< The vector type
+    using intrinsic_type = sse_simd_complex_float<etl::complex<float>>; ///< The vector type
 };
 
 /*!
@@ -121,11 +136,11 @@ struct sse_intrinsic_traits<etl::complex<double>> {
     static constexpr std::size_t size      = 1; ///< Numbers of elements in a vector
     static constexpr std::size_t alignment = 16;///< Necessary alignment, in bytes, for this type
 
-    using intrinsic_type = __m128d; ///< The vector type
+    using intrinsic_type = sse_simd_complex_double<etl::complex<double>>; ///< The vector type
 };
 
 /*!
- * \brief specialization of sse_intrinsic_traits for float
+ * \brief specialization of sse_intrinsic_traits for int
  */
 template <>
 struct sse_intrinsic_traits<int> {
@@ -133,7 +148,7 @@ struct sse_intrinsic_traits<int> {
     static constexpr std::size_t size      = 4;    ///< Numbers of elements in a vector
     static constexpr std::size_t alignment = 16;   ///< Necessary alignment, in bytes, for this type
 
-    using intrinsic_type = __m128i; ///< The vector type
+    using intrinsic_type = sse_simd_int; ///< The vector type
 };
 
 /*!
@@ -192,168 +207,168 @@ struct sse_vec {
      * \brief Unaligned store of the given packed vector at the
      * given memory position
      */
-    ETL_INLINE_VEC_VOID storeu(int* memory, __m128i value) {
-        _mm_storeu_si128(reinterpret_cast<__m128i*>(memory), value);
+    ETL_STATIC_INLINE(void) storeu(int* memory, sse_simd_int value) {
+        _mm_storeu_si128(reinterpret_cast<__m128i*>(memory), value.value);
     }
 
     /*!
      * \brief Unaligned store of the given packed vector at the
      * given memory position
      */
-    ETL_INLINE_VEC_VOID storeu(float* memory, __m128 value) {
-        _mm_storeu_ps(memory, value);
+    ETL_STATIC_INLINE(void) storeu(float* memory, sse_simd_float value) {
+        _mm_storeu_ps(memory, value.value);
     }
 
     /*!
      * \brief Unaligned store of the given packed vector at the
      * given memory position
      */
-    ETL_INLINE_VEC_VOID storeu(double* memory, __m128d value) {
-        _mm_storeu_pd(memory, value);
+    ETL_STATIC_INLINE(void) storeu(double* memory, sse_simd_double value) {
+        _mm_storeu_pd(memory, value.value);
     }
 
     /*!
      * \brief Unaligned store of the given packed vector at the
      * given memory position
      */
-    ETL_INLINE_VEC_VOID storeu(std::complex<float>* memory, __m128 value) {
-        _mm_storeu_ps(reinterpret_cast<float*>(memory), value);
+    ETL_STATIC_INLINE(void) storeu(std::complex<float>* memory, sse_simd_complex_float<std::complex<float>> value) {
+        _mm_storeu_ps(reinterpret_cast<float*>(memory), value.value);
     }
 
     /*!
      * \brief Unaligned store of the given packed vector at the
      * given memory position
      */
-    ETL_INLINE_VEC_VOID storeu(std::complex<double>* memory, __m128d value) {
-        _mm_storeu_pd(reinterpret_cast<double*>(memory), value);
+    ETL_STATIC_INLINE(void) storeu(std::complex<double>* memory, sse_simd_complex_double<std::complex<double>> value) {
+        _mm_storeu_pd(reinterpret_cast<double*>(memory), value.value);
     }
 
     /*!
      * \brief Unaligned store of the given packed vector at the
      * given memory position
      */
-    ETL_INLINE_VEC_VOID storeu(etl::complex<float>* memory, __m128 value) {
-        _mm_storeu_ps(reinterpret_cast<float*>(memory), value);
+    ETL_STATIC_INLINE(void) storeu(etl::complex<float>* memory, sse_simd_complex_float<etl::complex<float>> value) {
+        _mm_storeu_ps(reinterpret_cast<float*>(memory), value.value);
     }
 
     /*!
      * \brief Unaligned store of the given packed vector at the
      * given memory position
      */
-    ETL_INLINE_VEC_VOID storeu(etl::complex<double>* memory, __m128d value) {
-        _mm_storeu_pd(reinterpret_cast<double*>(memory), value);
+    ETL_STATIC_INLINE(void) storeu(etl::complex<double>* memory, sse_simd_complex_double<etl::complex<double>> value) {
+        _mm_storeu_pd(reinterpret_cast<double*>(memory), value.value);
     }
 
     /*!
      * \brief Aligned store of the given packed vector at the
      * given memory position
      */
-    ETL_INLINE_VEC_VOID store(int* memory, __m128i value) {
-        _mm_store_si128(reinterpret_cast<__m128i*>(memory), value);
+    ETL_STATIC_INLINE(void) store(int* memory, sse_simd_int value) {
+        _mm_store_si128(reinterpret_cast<__m128i*>(memory), value.value);
     }
 
     /*!
      * \brief Aligned store of the given packed vector at the
      * given memory position
      */
-    ETL_INLINE_VEC_VOID store(float* memory, __m128 value) {
-        _mm_store_ps(memory, value);
+    ETL_STATIC_INLINE(void) store(float* memory, sse_simd_float value) {
+        _mm_store_ps(memory, value.value);
     }
 
     /*!
      * \brief Aligned store of the given packed vector at the
      * given memory position
      */
-    ETL_INLINE_VEC_VOID store(double* memory, __m128d value) {
-        _mm_store_pd(memory, value);
+    ETL_STATIC_INLINE(void) store(double* memory, sse_simd_double value) {
+        _mm_store_pd(memory, value.value);
     }
 
     /*!
      * \brief Aligned store of the given packed vector at the
      * given memory position
      */
-    ETL_INLINE_VEC_VOID store(std::complex<float>* memory, __m128 value) {
-        _mm_store_ps(reinterpret_cast<float*>(memory), value);
+    ETL_STATIC_INLINE(void) store(std::complex<float>* memory, sse_simd_complex_float<std::complex<float>> value) {
+        _mm_store_ps(reinterpret_cast<float*>(memory), value.value);
     }
 
     /*!
      * \brief Aligned store of the given packed vector at the
      * given memory position
      */
-    ETL_INLINE_VEC_VOID store(std::complex<double>* memory, __m128d value) {
-        _mm_store_pd(reinterpret_cast<double*>(memory), value);
+    ETL_STATIC_INLINE(void) store(std::complex<double>* memory, sse_simd_complex_double<std::complex<double>> value) {
+        _mm_store_pd(reinterpret_cast<double*>(memory), value.value);
     }
 
     /*!
      * \brief Aligned store of the given packed vector at the
      * given memory position
      */
-    ETL_INLINE_VEC_VOID store(etl::complex<float>* memory, __m128 value) {
-        _mm_store_ps(reinterpret_cast<float*>(memory), value);
+    ETL_STATIC_INLINE(void) store(etl::complex<float>* memory, sse_simd_complex_float<etl::complex<float>> value) {
+        _mm_store_ps(reinterpret_cast<float*>(memory), value.value);
     }
 
     /*!
      * \brief Aligned store of the given packed vector at the
      * given memory position
      */
-    ETL_INLINE_VEC_VOID store(etl::complex<double>* memory, __m128d value) {
-        _mm_store_pd(reinterpret_cast<double*>(memory), value);
+    ETL_STATIC_INLINE(void) store(etl::complex<double>* memory, sse_simd_complex_double<etl::complex<double>> value) {
+        _mm_store_pd(reinterpret_cast<double*>(memory), value.value);
     }
 
     /*!
      * \brief Non-temporal, aligned, store of the given packed vector at the
      * given memory position
      */
-    ETL_INLINE_VEC_VOID stream(int* memory, __m128i value) {
-        _mm_stream_si128(reinterpret_cast<__m128i*>(memory), value);
+    ETL_STATIC_INLINE(void) stream(int* memory, sse_simd_int value) {
+        _mm_stream_si128(reinterpret_cast<__m128i*>(memory), value.value);
     }
 
     /*!
      * \brief Non-temporal, aligned, store of the given packed vector at the
      * given memory position
      */
-    ETL_INLINE_VEC_VOID stream(float* memory, __m128 value) {
-        _mm_stream_ps(memory, value);
+    ETL_STATIC_INLINE(void) stream(float* memory, sse_simd_float value) {
+        _mm_stream_ps(memory, value.value);
     }
 
     /*!
      * \brief Non-temporal, aligned, store of the given packed vector at the
      * given memory position
      */
-    ETL_INLINE_VEC_VOID stream(double* memory, __m128d value) {
-        _mm_stream_pd(memory, value);
+    ETL_STATIC_INLINE(void) stream(double* memory, sse_simd_double value) {
+        _mm_stream_pd(memory, value.value);
     }
 
     /*!
      * \brief Non-temporal, aligned, store of the given packed vector at the
      * given memory position
      */
-    ETL_INLINE_VEC_VOID stream(std::complex<float>* memory, __m128 value) {
-        _mm_stream_ps(reinterpret_cast<float*>(memory), value);
+    ETL_STATIC_INLINE(void) stream(std::complex<float>* memory, sse_simd_complex_float<std::complex<float>> value) {
+        _mm_stream_ps(reinterpret_cast<float*>(memory), value.value);
     }
 
     /*!
      * \brief Non-temporal, aligned, store of the given packed vector at the
      * given memory position
      */
-    ETL_INLINE_VEC_VOID stream(std::complex<double>* memory, __m128d value) {
-        _mm_stream_pd(reinterpret_cast<double*>(memory), value);
+    ETL_STATIC_INLINE(void) stream(std::complex<double>* memory, sse_simd_complex_double<std::complex<double>> value) {
+        _mm_stream_pd(reinterpret_cast<double*>(memory), value.value);
     }
 
     /*!
      * \brief Non-temporal, aligned, store of the given packed vector at the
      * given memory position
      */
-    ETL_INLINE_VEC_VOID stream(etl::complex<float>* memory, __m128 value) {
-        _mm_stream_ps(reinterpret_cast<float*>(memory), value);
+    ETL_STATIC_INLINE(void) stream(etl::complex<float>* memory, sse_simd_complex_float<etl::complex<float>> value) {
+        _mm_stream_ps(reinterpret_cast<float*>(memory), value.value);
     }
 
     /*!
      * \brief Non-temporal, aligned, store of the given packed vector at the
      * given memory position
      */
-    ETL_INLINE_VEC_VOID stream(etl::complex<double>* memory, __m128d value) {
-        _mm_stream_pd(reinterpret_cast<double*>(memory), value);
+    ETL_STATIC_INLINE(void) stream(etl::complex<double>* memory, sse_simd_complex_double<etl::complex<double>> value) {
+        _mm_stream_pd(reinterpret_cast<double*>(memory), value.value);
     }
 
     template<typename T>
@@ -362,126 +377,126 @@ struct sse_vec {
     /*!
      * \brief Load a packed vector from the given aligned memory location
      */
-    ETL_INLINE_VEC_128I load(const int* memory) {
+    ETL_STATIC_INLINE(sse_simd_int) load(const int* memory) {
         return _mm_load_si128(reinterpret_cast<const __m128i*>(memory));
     }
 
     /*!
      * \brief Load a packed vector from the given aligned memory location
      */
-    ETL_INLINE_VEC_128 load(const float* memory) {
+    ETL_STATIC_INLINE(sse_simd_float) load(const float* memory) {
         return _mm_load_ps(memory);
     }
 
     /*!
      * \brief Load a packed vector from the given aligned memory location
      */
-    ETL_INLINE_VEC_128D load(const double* memory) {
+    ETL_STATIC_INLINE(sse_simd_double) load(const double* memory) {
         return _mm_load_pd(memory);
     }
 
     /*!
      * \brief Load a packed vector from the given aligned memory location
      */
-    ETL_INLINE_VEC_128 load(const std::complex<float>* memory) {
+    ETL_STATIC_INLINE(sse_simd_complex_float<std::complex<float>>) load(const std::complex<float>* memory) {
         return _mm_load_ps(reinterpret_cast<const float*>(memory));
     }
 
     /*!
      * \brief Load a packed vector from the given aligned memory location
      */
-    ETL_INLINE_VEC_128D load(const std::complex<double>* memory) {
+    ETL_STATIC_INLINE(sse_simd_complex_double<std::complex<double>>) load(const std::complex<double>* memory) {
         return _mm_load_pd(reinterpret_cast<const double*>(memory));
     }
 
     /*!
      * \brief Load a packed vector from the given aligned memory location
      */
-    ETL_INLINE_VEC_128 load(const etl::complex<float>* memory) {
+    ETL_STATIC_INLINE(sse_simd_complex_float<etl::complex<float>>) load(const etl::complex<float>* memory) {
         return _mm_load_ps(reinterpret_cast<const float*>(memory));
     }
 
     /*!
      * \brief Load a packed vector from the given aligned memory location
      */
-    ETL_INLINE_VEC_128D load(const etl::complex<double>* memory) {
+    ETL_STATIC_INLINE(sse_simd_complex_double<etl::complex<double>>) load(const etl::complex<double>* memory) {
         return _mm_load_pd(reinterpret_cast<const double*>(memory));
     }
 
     /*!
      * \brief Load a packed vector from the given unaligned memory location
      */
-    ETL_INLINE_VEC_128I loadu(const int* memory) {
+    ETL_STATIC_INLINE(sse_simd_int) loadu(const int* memory) {
         return _mm_loadu_si128(reinterpret_cast<const __m128i*>(memory));
     }
 
     /*!
      * \brief Load a packed vector from the given unaligned memory location
      */
-    ETL_INLINE_VEC_128 loadu(const float* memory) {
+    ETL_STATIC_INLINE(sse_simd_float) loadu(const float* memory) {
         return _mm_loadu_ps(memory);
     }
 
     /*!
      * \brief Load a packed vector from the given unaligned memory location
      */
-    ETL_INLINE_VEC_128D loadu(const double* memory) {
+    ETL_STATIC_INLINE(sse_simd_double) loadu(const double* memory) {
         return _mm_loadu_pd(memory);
     }
 
     /*!
      * \brief Load a packed vector from the given unaligned memory location
      */
-    ETL_INLINE_VEC_128 loadu(const std::complex<float>* memory) {
+    ETL_STATIC_INLINE(sse_simd_complex_float<std::complex<float>>) loadu(const std::complex<float>* memory) {
         return _mm_loadu_ps(reinterpret_cast<const float*>(memory));
     }
 
     /*!
      * \brief Load a packed vector from the given unaligned memory location
      */
-    ETL_INLINE_VEC_128D loadu(const std::complex<double>* memory) {
+    ETL_STATIC_INLINE(sse_simd_complex_double<std::complex<double>>) loadu(const std::complex<double>* memory) {
         return _mm_loadu_pd(reinterpret_cast<const double*>(memory));
     }
 
     /*!
      * \brief Load a packed vector from the given unaligned memory location
      */
-    ETL_INLINE_VEC_128 loadu(const etl::complex<float>* memory) {
+    ETL_STATIC_INLINE(sse_simd_complex_float<etl::complex<float>>) loadu(const etl::complex<float>* memory) {
         return _mm_loadu_ps(reinterpret_cast<const float*>(memory));
     }
 
     /*!
      * \brief Load a packed vector from the given unaligned memory location
      */
-    ETL_INLINE_VEC_128D loadu(const etl::complex<double>* memory) {
+    ETL_STATIC_INLINE(sse_simd_complex_double<etl::complex<double>>) loadu(const etl::complex<double>* memory) {
         return _mm_loadu_pd(reinterpret_cast<const double*>(memory));
     }
 
     /*!
      * \brief Fill a packed vector  by replicating a value
      */
-    ETL_INLINE_VEC_128I set(int value) {
+    ETL_STATIC_INLINE(sse_simd_int) set(int value) {
         return _mm_set1_epi32(value);
     }
 
     /*!
      * \brief Fill a packed vector  by replicating a value
      */
-    ETL_INLINE_VEC_128D set(double value) {
+    ETL_STATIC_INLINE(sse_simd_double) set(double value) {
         return _mm_set1_pd(value);
     }
 
     /*!
      * \brief Fill a packed vector  by replicating a value
      */
-    ETL_INLINE_VEC_128 set(float value) {
+    ETL_STATIC_INLINE(sse_simd_float) set(float value) {
         return _mm_set1_ps(value);
     }
 
     /*!
      * \brief Fill a packed vector  by replicating a value
      */
-    ETL_INLINE_VEC_128 set(std::complex<float> value) {
+    ETL_STATIC_INLINE(sse_simd_complex_float<std::complex<float>>) set(std::complex<float> value) {
         std::complex<float> tmp[]{value, value};
         return loadu(tmp);
     }
@@ -489,7 +504,7 @@ struct sse_vec {
     /*!
      * \brief Fill a packed vector  by replicating a value
      */
-    ETL_INLINE_VEC_128D set(std::complex<double> value) {
+    ETL_STATIC_INLINE(sse_simd_complex_double<std::complex<double>>) set(std::complex<double> value) {
         std::complex<double> tmp[]{value};
         return loadu(tmp);
     }
@@ -497,7 +512,7 @@ struct sse_vec {
     /*!
      * \brief Fill a packed vector  by replicating a value
      */
-    ETL_INLINE_VEC_128 set(etl::complex<float> value) {
+    ETL_STATIC_INLINE(sse_simd_complex_float<etl::complex<float>>) set(etl::complex<float> value) {
         etl::complex<float> tmp[]{value, value};
         return loadu(tmp);
     }
@@ -505,7 +520,7 @@ struct sse_vec {
     /*!
      * \brief Fill a packed vector  by replicating a value
      */
-    ETL_INLINE_VEC_128D set(etl::complex<double> value) {
+    ETL_STATIC_INLINE(sse_simd_complex_double<etl::complex<double>>) set(etl::complex<double> value) {
         etl::complex<double> tmp[]{value};
         return loadu(tmp);
     }
@@ -515,22 +530,38 @@ struct sse_vec {
     /*!
      * \brief Add the two given values and return the result.
      */
-    ETL_INLINE_VEC_128I add(__m128i lhs, __m128i rhs) {
-        return _mm_add_epi32(lhs, rhs);
+    ETL_STATIC_INLINE(sse_simd_int) add(sse_simd_int lhs, sse_simd_int rhs) {
+        return _mm_add_epi32(lhs.value, rhs.value);
     }
 
     /*!
      * \brief Add the two given values and return the result.
      */
-    ETL_INLINE_VEC_128 add(__m128 lhs, __m128 rhs) {
-        return _mm_add_ps(lhs, rhs);
+    ETL_STATIC_INLINE(sse_simd_float) add(sse_simd_float lhs, sse_simd_float rhs) {
+        return _mm_add_ps(lhs.value, rhs.value);
     }
 
     /*!
      * \brief Add the two given values and return the result.
      */
-    ETL_INLINE_VEC_128D add(__m128d lhs, __m128d rhs) {
-        return _mm_add_pd(lhs, rhs);
+    ETL_STATIC_INLINE(sse_simd_double) add(sse_simd_double lhs, sse_simd_double rhs) {
+        return _mm_add_pd(lhs.value, rhs.value);
+    }
+
+    /*!
+     * \brief Add the two given values and return the result.
+     */
+    template<typename T>
+    ETL_STATIC_INLINE(sse_simd_complex_float<T>) add(sse_simd_complex_float<T> lhs, sse_simd_complex_float<T> rhs) {
+        return _mm_add_ps(lhs.value, rhs.value);
+    }
+
+    /*!
+     * \brief Add the two given values and return the result.
+     */
+    template<typename T>
+    ETL_STATIC_INLINE(sse_simd_complex_double<T>) add(sse_simd_complex_double<T> lhs, sse_simd_complex_double<T> rhs) {
+        return _mm_add_pd(lhs.value, rhs.value);
     }
 
     // Subtraction
@@ -538,22 +569,38 @@ struct sse_vec {
     /*!
      * \brief Subtract the two given values and return the result.
      */
-    ETL_INLINE_VEC_128I sub(__m128i lhs, __m128i rhs) {
-        return _mm_sub_epi32(lhs, rhs);
+    ETL_STATIC_INLINE(sse_simd_int) sub(sse_simd_int lhs, sse_simd_int rhs) {
+        return _mm_sub_epi32(lhs.value, rhs.value);
     }
 
     /*!
      * \brief Subtract the two given values and return the result.
      */
-    ETL_INLINE_VEC_128D sub(__m128d lhs, __m128d rhs) {
-        return _mm_sub_pd(lhs, rhs);
+    ETL_STATIC_INLINE(sse_simd_float) sub(sse_simd_float lhs, sse_simd_float rhs) {
+        return _mm_sub_ps(lhs.value, rhs.value);
     }
 
     /*!
      * \brief Subtract the two given values and return the result.
      */
-    ETL_INLINE_VEC_128 sub(__m128 lhs, __m128 rhs) {
-        return _mm_sub_ps(lhs, rhs);
+    ETL_STATIC_INLINE(sse_simd_double) sub(sse_simd_double lhs, sse_simd_double rhs) {
+        return _mm_sub_pd(lhs.value, rhs.value);
+    }
+
+    /*!
+     * \brief Subtract the two given values and return the result.
+     */
+    template<typename T>
+    ETL_STATIC_INLINE(sse_simd_complex_float<T>) sub(sse_simd_complex_float<T> lhs, sse_simd_complex_float<T> rhs) {
+        return _mm_sub_ps(lhs.value, rhs.value);
+    }
+
+    /*!
+     * \brief Subtract the two given values and return the result.
+     */
+    template<typename T>
+    ETL_STATIC_INLINE(sse_simd_complex_double<T>) sub(sse_simd_complex_double<T> lhs, sse_simd_complex_double<T> rhs) {
+        return _mm_sub_pd(lhs.value, rhs.value);
     }
 
     // Square Root
@@ -562,16 +609,16 @@ struct sse_vec {
      * \brief Compute the square root of each element in the given vector
      * \return a vector containing the square root of each input element
      */
-    ETL_INLINE_VEC_128 sqrt(__m128 x) {
-        return _mm_sqrt_ps(x);
+    ETL_STATIC_INLINE(sse_simd_float) sqrt(sse_simd_float x) {
+        return _mm_sqrt_ps(x.value);
     }
 
     /*!
      * \brief Compute the square root of each element in the given vector
      * \return a vector containing the square root of each input element
      */
-    ETL_INLINE_VEC_128D sqrt(__m128d x) {
-        return _mm_sqrt_pd(x);
+    ETL_STATIC_INLINE(sse_simd_double) sqrt(sse_simd_double x) {
+        return _mm_sqrt_pd(x.value);
     }
 
     // Negation
@@ -582,75 +629,230 @@ struct sse_vec {
      * \brief Compute the negative of each element in the given vector
      * \return a vector containing the negative of each input element
      */
-    ETL_INLINE_VEC_128D minus(__m128d x) {
-        return _mm_xor_pd(x, _mm_set1_pd(-0.f));
+    ETL_STATIC_INLINE(sse_simd_float) minus(sse_simd_float x) {
+        return _mm_xor_ps(x.value, _mm_set1_ps(-0.f));
     }
 
     /*!
      * \brief Compute the negative of each element in the given vector
      * \return a vector containing the negative of each input element
      */
-    ETL_INLINE_VEC_128 minus(__m128 x) {
-        return _mm_xor_ps(x, _mm_set1_ps(-0.f));
+    ETL_STATIC_INLINE(sse_simd_double) minus(sse_simd_double x) {
+        return _mm_xor_pd(x.value, _mm_set1_pd(-0.));
     }
 
     // Multiplication
 
-    template <bool Complex = false>
-    ETL_INLINE_VEC_128I mul(__m128i lhs, __m128i rhs) {
-        return _mm_mullo_epi32(lhs, rhs);
+    ETL_STATIC_INLINE(sse_simd_int) mul(sse_simd_int lhs, sse_simd_int rhs) {
+        return _mm_mullo_epi32(lhs.value, rhs.value);
     }
 
     /*!
      * \brief Multiply the two given vectors
      */
-    template <bool Complex = false>
-    ETL_TMP_INLINE(__m128) mul(__m128 lhs, __m128 rhs) {
-        return _mm_mul_ps(lhs, rhs);
+    ETL_STATIC_INLINE(sse_simd_float) mul(sse_simd_float lhs, sse_simd_float rhs) {
+        return _mm_mul_ps(lhs.value, rhs.value);
     }
 
     /*!
      * \brief Multiply the two given vectors
      */
-    template <bool Complex = false>
-    ETL_TMP_INLINE(__m128d) mul(__m128d lhs, __m128d rhs) {
-        return _mm_mul_pd(lhs, rhs);
+    ETL_STATIC_INLINE(sse_simd_double) mul(sse_simd_double lhs, sse_simd_double rhs) {
+        return _mm_mul_pd(lhs.value, rhs.value);
+    }
+
+    /*!
+     * \copydoc sse_vec::mul
+     */
+    template<typename T>
+    ETL_STATIC_INLINE(sse_simd_complex_float<T>) mul(sse_simd_complex_float<T> lhs, sse_simd_complex_float<T> rhs) {
+        //lhs = [x1.real, x1.img, x2.real, x2.img]
+        //rhs = [y1.real, y1.img, y2.real, y2.img]
+
+        //ymm1 = [y1.real, y1.real, y2.real, y2.real]
+        __m128 ymm1 = _mm_moveldup_ps(rhs.value);
+
+        //ymm2 = lhs * ymm1
+        __m128 ymm2 = _mm_mul_ps(lhs.value, ymm1);
+
+        //ymm3 = [x1.img, x1.real, x2.img, x2.real]
+        __m128 ymm3 = _mm_shuffle_ps(lhs.value, lhs.value, _MM_SHUFFLE(2, 3, 0, 1));
+
+        //ymm1 = [y1.imag, y1.imag, y2.imag, y2.imag]
+        ymm1 = _mm_movehdup_ps(rhs.value);
+
+        //ymm4 = ymm3 * ymm1
+        __m128 ymm4 = _mm_mul_ps(ymm3, ymm1);
+
+        //result = [ymm2 -+ ymm4];
+        return _mm_addsub_ps(ymm2, ymm4);
+    }
+
+    /*!
+     * \copydoc sse_vec::mul
+     */
+    template<typename T>
+    ETL_STATIC_INLINE(sse_simd_complex_double<T>) mul(sse_simd_complex_double<T> lhs, sse_simd_complex_double<T> rhs) {
+        //lhs = [x.real, x.img]
+        //rhs = [y.real, y.img]
+
+        //ymm1 = [y.real, y.real]
+        __m128d ymm1 = _mm_movedup_pd(rhs.value);
+
+        //ymm2 = [x.real * y.real, x.img * y.real]
+        __m128d ymm2 = _mm_mul_pd(lhs.value, ymm1);
+
+        //ymm1 = [x.img, x.real]
+        ymm1 = _mm_shuffle_pd(lhs.value, lhs.value, _MM_SHUFFLE2(0, 1));
+
+        //ymm3 =  [y.img, y.img]
+        __m128d ymm3 = _mm_shuffle_pd(rhs.value, rhs.value, _MM_SHUFFLE2(1, 1));
+
+        //ymm4 = [x.img * y.img, x.real * y.img]
+        __m128d ymm4 = _mm_mul_pd(ymm1, ymm3);
+
+        //result = [x.real * y.real - x.img * y.img, x.img * y.real - x.real * y.img]
+        return _mm_addsub_pd(ymm2, ymm4);
     }
 
     // Fused-Multiply-Add (FMA)
 
-    ETL_INLINE_VEC_128I fmadd(__m128i a, __m128i b, __m128i c){
+    ETL_STATIC_INLINE(sse_simd_int) fmadd(sse_simd_int a, sse_simd_int b, sse_simd_int c){
         return add(mul(a, b), c);
     }
 
     /*!
-     * \brief Fused-Multiply-Add of a b and c (r = (a * b) + c)
+     * \copydoc sse_vec::fmadd
      */
-    template <bool Complex = false>
-    ETL_TMP_INLINE(__m128) fmadd(__m128 a, __m128 b, __m128 c);
+    ETL_STATIC_INLINE(sse_simd_float) fmadd(sse_simd_float a, sse_simd_float b, sse_simd_float c) {
+#ifdef __FMA__
+        return _mm_fmadd_ps(a.value, b.value, c.value);
+#else
+        return add(mul(a, b), c);
+#endif
+    }
 
     /*!
-     * \brief Fused-Multiply-Add of a b and c (r = (a * b) + c)
+     * \copydoc sse_vec::fmadd
      */
-    template <bool Complex = false>
-    ETL_TMP_INLINE(__m128d) fmadd(__m128d a, __m128d b, __m128d c);
+    ETL_STATIC_INLINE(sse_simd_double) fmadd(sse_simd_double a, sse_simd_double b, sse_simd_double c) {
+#ifdef __FMA__
+        return _mm_fmadd_pd(a.value, b.value, c.value);
+#else
+        return add(mul(a, b), c);
+#endif
+    }
+
+    /*!
+     * \copydoc sse_vec::fmadd
+     */
+    template<typename T>
+    ETL_STATIC_INLINE(sse_simd_complex_float<T>) fmadd(sse_simd_complex_float<T> a, sse_simd_complex_float<T> b, sse_simd_complex_float<T> c) {
+        return add(mul(a, b), c);
+    }
+
+    /*!
+     * \copydoc sse_vec::fmadd
+     */
+    template<typename T>
+    ETL_STATIC_INLINE(sse_simd_complex_double<T>) fmadd(sse_simd_complex_double<T> a, sse_simd_complex_double<T> b, sse_simd_complex_double<T> c) {
+        return add(mul(a, b), c);
+    }
 
     // Division
 
     /*!
      * \brief Divide the two given vectors
      */
-    template <bool Complex = false>
-    ETL_TMP_INLINE(__m128) div(__m128 lhs, __m128 rhs) {
-        return _mm_div_ps(lhs, rhs);
+    ETL_STATIC_INLINE(sse_simd_float) div(sse_simd_float lhs, sse_simd_float rhs) {
+        return _mm_div_ps(lhs.value, rhs.value);
     }
 
     /*!
      * \brief Divide the two given vectors
      */
-    template <bool Complex = false>
-    ETL_TMP_INLINE(__m128d) div(__m128d lhs, __m128d rhs) {
-        return _mm_div_pd(lhs, rhs);
+    ETL_STATIC_INLINE(sse_simd_double) div(sse_simd_double lhs, sse_simd_double rhs) {
+        return _mm_div_pd(lhs.value, rhs.value);
+    }
+
+    /*!
+     * \copydoc sse_vec::div
+     */
+    template<typename T>
+    ETL_STATIC_INLINE(sse_simd_complex_float<T>) div(sse_simd_complex_float<T> lhs, sse_simd_complex_float<T> rhs) {
+        //lhs = [x1.real, x1.img, x2.real, x2.img]
+        //rhs = [y1.real, y1.img, y2.real, y2.img]
+
+        //ymm0 = [y1.real, y1.real, y2.real, y2.real]
+        __m128 ymm0 = _mm_moveldup_ps(rhs.value);
+
+        //ymm1 = [y1.imag, y1.imag, y2.imag, y2.imag]
+        __m128 ymm1 = _mm_movehdup_ps(rhs.value);
+
+        //ymm2 = [x.real * y.real, x.img * y.real, ...]
+        __m128 ymm2 = _mm_mul_ps(lhs.value, ymm0);
+
+        //ymm3 = [x1.img, x1.real, x2.img, x2.real]
+        __m128 ymm3 = _mm_shuffle_ps(lhs.value, lhs.value, _MM_SHUFFLE(2, 3, 0, 1));
+
+        //ymm4 = [x.img * y.img, x.real * y.img, ...]
+        __m128 ymm4 = _mm_mul_ps(ymm3, ymm1);
+
+        //ymm4 = subadd(ymm2, ymm4)
+        ymm3 = _mm_sub_ps(_mm_set1_ps(0.0), ymm4);
+        ymm4 = _mm_addsub_ps(ymm2, ymm3);
+
+        //ymm2 = [y.real^2, y.real^2]
+        ymm2 = _mm_mul_ps(ymm0, ymm0);
+
+        //ymm3 = [y.imag^2, y.imag^2]
+        ymm3 = _mm_mul_ps(ymm1, ymm1);
+
+        //ymm0 = [y.real^2 + y.imag^2, y.real^2 + y.imag^2]
+        ymm0 = _mm_add_ps(ymm2, ymm3);
+
+        //result = ymm4 / ymm0
+        return _mm_div_ps(ymm4, ymm0);
+    }
+
+    /*!
+     * \copydoc sse_vec::div
+     */
+    template<typename T>
+    ETL_STATIC_INLINE(sse_simd_complex_double<T>) div(sse_simd_complex_double<T> lhs, sse_simd_complex_double<T> rhs) {
+        //lhs = [x.real, x.img]
+        //rhs = [y.real, y.img]
+
+        //ymm0 = [y.real, y.real]
+        __m128d ymm0 = _mm_movedup_pd(rhs.value);
+
+        //ymm1 =  [y.img, y.img]
+        __m128d ymm1 = _mm_shuffle_pd(rhs.value, rhs.value, _MM_SHUFFLE2(1, 1));
+
+        //ymm2 = [x.real * y.real, x.img * y.real]
+        __m128d ymm2 = _mm_mul_pd(lhs.value, ymm0);
+
+        //ymm3 = [x.img, x.real]
+        __m128d ymm3 = _mm_shuffle_pd(lhs.value, lhs.value, _MM_SHUFFLE2(0, 1));
+
+        //ymm4 = [x.img * y.img, x.real * y.img]
+        __m128d ymm4 = _mm_mul_pd(ymm3, ymm1);
+
+        //ymm4 = subadd(ymm2, ymm4)
+        ymm3 = _mm_sub_pd(_mm_set1_pd(0.0), ymm4);
+        ymm4 = _mm_addsub_pd(ymm2, ymm3);
+
+        //ymm2 = [y.real^2, y.real^2]
+        ymm2 = _mm_mul_pd(ymm0, ymm0);
+
+        //ymm3 = [y.imag^2, y.imag^2]
+        ymm3 = _mm_mul_pd(ymm1, ymm1);
+
+        //ymm0 = [y.real^2 + y.imag^2, y.real^2 + y.imag^2]
+        ymm0 = _mm_add_pd(ymm2, ymm3);
+
+        //result = ymm4 / ymm0
+        return _mm_div_pd(ymm4, ymm0);
     }
 
     // Cosinus
@@ -658,8 +860,8 @@ struct sse_vec {
     /*!
      * \brief Compute the cosinus of each element of the given vector
      */
-    ETL_INLINE_VEC_128 cos(__m128 x) {
-        return etl::cos_ps(x);
+    ETL_STATIC_INLINE(sse_simd_float) cos(sse_simd_float x) {
+        return etl::cos_ps(x.value);
     }
 
     // Sinus
@@ -667,8 +869,8 @@ struct sse_vec {
     /*!
      * \brief Compute the sinus of each element of the given vector
      */
-    ETL_INLINE_VEC_128 sin(__m128 x) {
-        return etl::sin_ps(x);
+    ETL_STATIC_INLINE(sse_simd_float) sin(sse_simd_float x) {
+        return etl::sin_ps(x.value);
     }
 
 //The Intel C++ Compiler (icc) has more intrinsics.
@@ -679,22 +881,22 @@ struct sse_vec {
     /*!
      * \brief Compute the exponentials of each element of the given vector
      */
-    ETL_INLINE_VEC_128 exp(__m128 x) {
-        return etl::exp_ps(x);
+    ETL_STATIC_INLINE(sse_simd_float) exp(sse_simd_float x) {
+        return etl::exp_ps(x.value);
     }
 
     /*!
      * \brief Compute the exponentials of each element of the given vector
      */
-    ETL_INLINE_VEC_128D exp(__m128d x) {
-        return etl::exp_pd(x);
+    ETL_STATIC_INLINE(sse_simd_double) exp(sse_simd_double x) {
+        return etl::exp_pd(x.value);
     }
 
     /*!
      * \brief Compute the logarithm of each element of the given vector
      */
-    ETL_INLINE_VEC_128 log(__m128 x) {
-        return etl::log_ps(x);
+    ETL_STATIC_INLINE(sse_simd_float) log(sse_simd_float x) {
+        return etl::log_ps(x.value);
     }
 
 #else //__INTEL_COMPILER
@@ -704,15 +906,15 @@ struct sse_vec {
     /*!
      * \brief Compute the exponentials of each element of the given vector
      */
-    ETL_INLINE_VEC_128D exp(__m128d x) {
-        return _mm_exp_pd(x);
+    ETL_STATIC_INLINE(sse_simd_double) exp(sse_simd_double x) {
+        return _mm_exp_pd(x.value);
     }
 
     /*!
      * \brief Compute the exponentials of each element of the given vector
      */
-    ETL_INLINE_VEC_128 exp(__m128 x) {
-        return _mm_exp_ps(x);
+    ETL_STATIC_INLINE(sse_simd_float) exp(sse_simd_float x) {
+        return _mm_exp_ps(x.value);
     }
 
     //Logarithm
@@ -720,15 +922,15 @@ struct sse_vec {
     /*!
      * \brief Compute the logarithm of each element of the given vector
      */
-    ETL_INLINE_VEC_128D log(__m128d x) {
-        return _mm_log_pd(x);
+    ETL_STATIC_INLINE(sse_simd_double) log(sse_simd_double x) {
+        return _mm_log_pd(x.value);
     }
 
     /*!
      * \brief Compute the logarithm of each element of the given vector
      */
-    ETL_INLINE_VEC_128 log(__m128 x) {
-        return _mm_log_ps(x);
+    ETL_STATIC_INLINE(sse_simd_float) log(sse_simd_float x) {
+        return _mm_log_ps(x.value);
     }
 
 #endif //__INTEL_COMPILER
@@ -738,15 +940,15 @@ struct sse_vec {
     /*!
      * \brief Compute the minimum between each pair element of the given vectors
      */
-    ETL_INLINE_VEC_128D min(__m128d lhs, __m128d rhs) {
-        return _mm_min_pd(lhs, rhs);
+    ETL_STATIC_INLINE(sse_simd_double) min(sse_simd_double lhs, sse_simd_double rhs) {
+        return _mm_min_pd(lhs.value, rhs.value);
     }
 
     /*!
      * \brief Compute the minimum between each pair element of the given vectors
      */
-    ETL_INLINE_VEC_128 min(__m128 lhs, __m128 rhs) {
-        return _mm_min_ps(lhs, rhs);
+    ETL_STATIC_INLINE(sse_simd_float) min(sse_simd_float lhs, sse_simd_float rhs) {
+        return _mm_min_ps(lhs.value, rhs.value);
     }
 
     //Max
@@ -754,15 +956,15 @@ struct sse_vec {
     /*!
      * \brief Compute the maximum between each pair element of the given vectors
      */
-    ETL_INLINE_VEC_128D max(__m128d lhs, __m128d rhs) {
-        return _mm_max_pd(lhs, rhs);
+    ETL_STATIC_INLINE(sse_simd_double) max(sse_simd_double lhs, sse_simd_double rhs) {
+        return _mm_max_pd(lhs.value, rhs.value);
     }
 
     /*!
      * \brief Compute the maximum between each pair element of the given vectors
      */
-    ETL_INLINE_VEC_128 max(__m128 lhs, __m128 rhs) {
-        return _mm_max_ps(lhs, rhs);
+    ETL_STATIC_INLINE(sse_simd_float) max(sse_simd_float lhs, sse_simd_float rhs) {
+        return _mm_max_ps(lhs.value, rhs.value);
     }
 
     /*!
@@ -770,10 +972,9 @@ struct sse_vec {
      * \param in The input vector type
      * \return the horizontal sum of the vector
      */
-    template <typename T = float>
-    static inline T ETL_INLINE_ATTR_VEC hadd(__m128 in) {
-        __m128 shuf = _mm_movehdup_ps(in);
-        __m128 sums = _mm_add_ps(in, shuf);
+    ETL_STATIC_INLINE(float) hadd(sse_simd_float in) {
+        __m128 shuf = _mm_movehdup_ps(in.value);
+        __m128 sums = _mm_add_ps(in.value, shuf);
         shuf        = _mm_movehl_ps(shuf, sums);
         sums = _mm_add_ss(sums, shuf);
         return _mm_cvtss_f32(sums);
@@ -784,244 +985,45 @@ struct sse_vec {
      * \param in The input vector type
      * \return the horizontal sum of the vector
      */
-    template <typename T = double>
-    static inline T ETL_INLINE_ATTR_VEC hadd(__m128d in) {
+    ETL_STATIC_INLINE(double) hadd(sse_simd_double in) {
         __m128 undef   = _mm_undefined_ps();
-        __m128 shuftmp = _mm_movehl_ps(undef, _mm_castpd_ps(in));
+        __m128 shuftmp = _mm_movehl_ps(undef, _mm_castpd_ps(in.value));
         __m128d shuf = _mm_castps_pd(shuftmp);
-        return _mm_cvtsd_f64(_mm_add_sd(in, shuf));
+        return _mm_cvtsd_f64(_mm_add_sd(in.value, shuf));
+    }
+
+    //TODO Vectorize the two following functions
+
+    /*!
+     * \brief Perform an horizontal sum of the given vector.
+     * \param in The input vector type
+     * \return the horizontal sum of the vector
+     */
+    template<typename T>
+    ETL_STATIC_INLINE(T) hadd(sse_simd_complex_float<T> in) {
+        T tmp_result[2];
+        sse_vec::storeu(tmp_result, in.value);
+        return tmp_result[0] + tmp_result[1];
+    }
+
+    /*!
+     * \brief Perform an horizontal sum of the given vector.
+     * \param in The input vector type
+     * \return the horizontal sum of the vector
+     */
+    template<typename T>
+    ETL_STATIC_INLINE(T) hadd(sse_simd_complex_double<T> in) {
+        T tmp_result[1];
+        sse_vec::storeu(tmp_result, in.value);
+        return tmp_result[0];
     }
 };
-
-//TODO Vectorize the two following functions
-
-/*!
- * \brief Perform an horizontal sum of the given vector.
- * \param in The input vector type
- * \return the horizontal sum of the vector
- */
-template <>
-inline std::complex<float> ETL_INLINE_ATTR_VEC sse_vec::hadd<std::complex<float>>(__m128 in) {
-    std::complex<float> tmp_result[2];
-    sse_vec::storeu(tmp_result, in);
-    return tmp_result[0] + tmp_result[1];
-}
-
-/*!
- * \brief Perform an horizontal sum of the given vector.
- * \param in The input vector type
- * \return the horizontal sum of the vector
- */
-template <>
-inline std::complex<double> ETL_INLINE_ATTR_VEC sse_vec::hadd<std::complex<double>>(__m128d in) {
-    std::complex<double> tmp_result[1];
-    sse_vec::storeu(tmp_result, in);
-    return tmp_result[0];
-}
-
-/*!
- * \brief Perform an horizontal sum of the given vector.
- * \param in The input vector type
- * \return the horizontal sum of the vector
- */
-template <>
-inline etl::complex<float> ETL_INLINE_ATTR_VEC sse_vec::hadd<etl::complex<float>>(__m128 in) {
-    etl::complex<float> tmp_result[2];
-    sse_vec::storeu(tmp_result, in);
-    return tmp_result[0] + tmp_result[1];
-}
-
-/*!
- * \brief Perform an horizontal sum of the given vector.
- * \param in The input vector type
- * \return the horizontal sum of the vector
- */
-template <>
-inline etl::complex<double> ETL_INLINE_ATTR_VEC sse_vec::hadd<etl::complex<double>>(__m128d in) {
-    etl::complex<double> tmp_result[1];
-    sse_vec::storeu(tmp_result, in);
-    return tmp_result[0];
-}
-
-/*!
- * \copydoc sse_vec::mul
- */
-template <>
-ETL_OUT_VEC_128 sse_vec::mul<true>(__m128 lhs, __m128 rhs) {
-    //lhs = [x1.real, x1.img, x2.real, x2.img]
-    //rhs = [y1.real, y1.img, y2.real, y2.img]
-
-    //ymm1 = [y1.real, y1.real, y2.real, y2.real]
-    __m128 ymm1 = _mm_moveldup_ps(rhs);
-
-    //ymm2 = lhs * ymm1
-    __m128 ymm2 = _mm_mul_ps(lhs, ymm1);
-
-    //ymm3 = [x1.img, x1.real, x2.img, x2.real]
-    __m128 ymm3 = _mm_shuffle_ps(lhs, lhs, _MM_SHUFFLE(2, 3, 0, 1));
-
-    //ymm1 = [y1.imag, y1.imag, y2.imag, y2.imag]
-    ymm1 = _mm_movehdup_ps(rhs);
-
-    //ymm4 = ymm3 * ymm1
-    __m128 ymm4 = _mm_mul_ps(ymm3, ymm1);
-
-    //result = [ymm2 -+ ymm4];
-    return _mm_addsub_ps(ymm2, ymm4);
-}
-
-/*!
- * \copydoc sse_vec::mul
- */
-template <>
-ETL_OUT_VEC_128D sse_vec::mul<true>(__m128d lhs, __m128d rhs) {
-    //lhs = [x.real, x.img]
-    //rhs = [y.real, y.img]
-
-    //ymm1 = [y.real, y.real]
-    __m128d ymm1 = _mm_movedup_pd(rhs);
-
-    //ymm2 = [x.real * y.real, x.img * y.real]
-    __m128d ymm2 = _mm_mul_pd(lhs, ymm1);
-
-    //ymm1 = [x.img, x.real]
-    ymm1 = _mm_shuffle_pd(lhs, lhs, _MM_SHUFFLE2(0, 1));
-
-    //ymm3 =  [y.img, y.img]
-    __m128d ymm3 = _mm_shuffle_pd(rhs, rhs, _MM_SHUFFLE2(1, 1));
-
-    //ymm4 = [x.img * y.img, x.real * y.img]
-    __m128d ymm4 = _mm_mul_pd(ymm1, ymm3);
-
-    //result = [x.real * y.real - x.img * y.img, x.img * y.real - x.real * y.img]
-    return _mm_addsub_pd(ymm2, ymm4);
-}
-
-/*!
- * \copydoc sse_vec::fmadd
- */
-template <>
-ETL_OUT_VEC_128 sse_vec::fmadd<false>(__m128 a, __m128 b, __m128 c) {
-#ifdef __FMA__
-    return _mm_fmadd_ps(a, b, c);
-#else
-    return add(mul<false>(a, b), c);
-#endif
-}
-
-/*!
- * \copydoc sse_vec::fmadd
- */
-template <>
-ETL_OUT_VEC_128D sse_vec::fmadd<false>(__m128d a, __m128d b, __m128d c) {
-#ifdef __FMA__
-    return _mm_fmadd_pd(a, b, c);
-#else
-    return add(mul<false>(a, b), c);
-#endif
-}
-
-/*!
- * \copydoc sse_vec::fmadd
- */
-template <>
-ETL_OUT_VEC_128 sse_vec::fmadd<true>(__m128 a, __m128 b, __m128 c) {
-    return add(mul<true>(a, b), c);
-}
-
-/*!
- * \copydoc sse_vec::fmadd
- */
-template <>
-ETL_OUT_VEC_128D sse_vec::fmadd<true>(__m128d a, __m128d b, __m128d c) {
-    return add(mul<true>(a, b), c);
-}
-
-/*!
- * \copydoc sse_vec::div
- */
-template <>
-ETL_OUT_VEC_128 sse_vec::div<true>(__m128 lhs, __m128 rhs) {
-    //lhs = [x1.real, x1.img, x2.real, x2.img]
-    //rhs = [y1.real, y1.img, y2.real, y2.img]
-
-    //ymm0 = [y1.real, y1.real, y2.real, y2.real]
-    __m128 ymm0 = _mm_moveldup_ps(rhs);
-
-    //ymm1 = [y1.imag, y1.imag, y2.imag, y2.imag]
-    __m128 ymm1 = _mm_movehdup_ps(rhs);
-
-    //ymm2 = [x.real * y.real, x.img * y.real, ...]
-    __m128 ymm2 = _mm_mul_ps(lhs, ymm0);
-
-    //ymm3 = [x1.img, x1.real, x2.img, x2.real]
-    __m128 ymm3 = _mm_shuffle_ps(lhs, lhs, _MM_SHUFFLE(2, 3, 0, 1));
-
-    //ymm4 = [x.img * y.img, x.real * y.img, ...]
-    __m128 ymm4 = _mm_mul_ps(ymm3, ymm1);
-
-    //ymm4 = subadd(ymm2, ymm4)
-    ymm3 = _mm_sub_ps(_mm_set1_ps(0.0), ymm4);
-    ymm4 = _mm_addsub_ps(ymm2, ymm3);
-
-    //ymm2 = [y.real^2, y.real^2]
-    ymm2 = _mm_mul_ps(ymm0, ymm0);
-
-    //ymm3 = [y.imag^2, y.imag^2]
-    ymm3 = _mm_mul_ps(ymm1, ymm1);
-
-    //ymm0 = [y.real^2 + y.imag^2, y.real^2 + y.imag^2]
-    ymm0 = _mm_add_ps(ymm2, ymm3);
-
-    //result = ymm4 / ymm0
-    return _mm_div_ps(ymm4, ymm0);
-}
-
-/*!
- * \copydoc sse_vec::div
- */
-template <>
-ETL_OUT_VEC_128D sse_vec::div<true>(__m128d lhs, __m128d rhs) {
-    //lhs = [x.real, x.img]
-    //rhs = [y.real, y.img]
-
-    //ymm0 = [y.real, y.real]
-    __m128d ymm0 = _mm_movedup_pd(rhs);
-
-    //ymm1 =  [y.img, y.img]
-    __m128d ymm1 = _mm_shuffle_pd(rhs, rhs, _MM_SHUFFLE2(1, 1));
-
-    //ymm2 = [x.real * y.real, x.img * y.real]
-    __m128d ymm2 = _mm_mul_pd(lhs, ymm0);
-
-    //ymm3 = [x.img, x.real]
-    __m128d ymm3 = _mm_shuffle_pd(lhs, lhs, _MM_SHUFFLE2(0, 1));
-
-    //ymm4 = [x.img * y.img, x.real * y.img]
-    __m128d ymm4 = _mm_mul_pd(ymm3, ymm1);
-
-    //ymm4 = subadd(ymm2, ymm4)
-    ymm3 = _mm_sub_pd(_mm_set1_pd(0.0), ymm4);
-    ymm4 = _mm_addsub_pd(ymm2, ymm3);
-
-    //ymm2 = [y.real^2, y.real^2]
-    ymm2 = _mm_mul_pd(ymm0, ymm0);
-
-    //ymm3 = [y.imag^2, y.imag^2]
-    ymm3 = _mm_mul_pd(ymm1, ymm1);
-
-    //ymm0 = [y.real^2 + y.imag^2, y.real^2 + y.imag^2]
-    ymm0 = _mm_add_pd(ymm2, ymm3);
-
-    //result = ymm4 / ymm0
-    return _mm_div_pd(ymm4, ymm0);
-}
 
 /*!
  * \copydoc sse_vec::zero
  */
 template<>
-ETL_OUT_VEC_128I sse_vec::zero<int>() {
+ETL_OUT_INLINE(sse_simd_int) sse_vec::zero<int>() {
     return _mm_setzero_si128();
 }
 
@@ -1029,7 +1031,7 @@ ETL_OUT_VEC_128I sse_vec::zero<int>() {
  * \copydoc sse_vec::zero
  */
 template<>
-ETL_OUT_VEC_128 sse_vec::zero<float>() {
+ETL_OUT_INLINE(sse_simd_float) sse_vec::zero<float>() {
     return _mm_setzero_ps();
 }
 
@@ -1037,7 +1039,7 @@ ETL_OUT_VEC_128 sse_vec::zero<float>() {
  * \copydoc sse_vec::zero
  */
 template<>
-ETL_OUT_VEC_128D sse_vec::zero<double>() {
+ETL_OUT_INLINE(sse_simd_double) sse_vec::zero<double>() {
     return _mm_setzero_pd();
 }
 
@@ -1045,7 +1047,7 @@ ETL_OUT_VEC_128D sse_vec::zero<double>() {
  * \copydoc sse_vec::zero
  */
 template<>
-ETL_OUT_VEC_128 sse_vec::zero<etl::complex<float>>() {
+ETL_OUT_INLINE(sse_simd_complex_float<etl::complex<float>>) sse_vec::zero<etl::complex<float>>() {
     return _mm_setzero_ps();
 }
 
@@ -1053,7 +1055,7 @@ ETL_OUT_VEC_128 sse_vec::zero<etl::complex<float>>() {
  * \copydoc sse_vec::zero
  */
 template<>
-ETL_OUT_VEC_128D sse_vec::zero<etl::complex<double>>() {
+ETL_OUT_INLINE(sse_simd_complex_double<etl::complex<double>>) sse_vec::zero<etl::complex<double>>() {
     return _mm_setzero_pd();
 }
 
@@ -1061,7 +1063,7 @@ ETL_OUT_VEC_128D sse_vec::zero<etl::complex<double>>() {
  * \copydoc sse_vec::zero
  */
 template<>
-ETL_OUT_VEC_128 sse_vec::zero<std::complex<float>>() {
+ETL_OUT_INLINE(sse_simd_complex_float<std::complex<float>>) sse_vec::zero<std::complex<float>>() {
     return _mm_setzero_ps();
 }
 
@@ -1069,7 +1071,7 @@ ETL_OUT_VEC_128 sse_vec::zero<std::complex<float>>() {
  * \copydoc sse_vec::zero
  */
 template<>
-ETL_OUT_VEC_128D sse_vec::zero<std::complex<double>>() {
+ETL_OUT_INLINE(sse_simd_complex_double<std::complex<double>>) sse_vec::zero<std::complex<double>>() {
     return _mm_setzero_pd();
 }
 

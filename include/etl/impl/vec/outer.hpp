@@ -30,7 +30,6 @@ void batch_outer(const L& lhs, const R& rhs, C&& result) {
     using T        = value_t<L>;
 
     static constexpr size_t vec_size = vec_type::template traits<T>::size;
-    static constexpr bool Cx         = is_complex_t<T>::value;
 
     const auto B = etl::dim<0>(lhs);
     const auto M = etl::dim<0>(result);
@@ -96,23 +95,23 @@ void batch_outer(const L& lhs, const R& rhs, C&& result) {
                     auto a27 = rhs.template loadu<vec_type>(b7 * N + j + 1 * vec_size);
                     auto a28 = rhs.template loadu<vec_type>(b8 * N + j + 1 * vec_size);
 
-                    r11 = vec_type::template fmadd<Cx>(f1, a11, r11);
-                    r11 = vec_type::template fmadd<Cx>(f2, a12, r11);
-                    r11 = vec_type::template fmadd<Cx>(f3, a13, r11);
-                    r11 = vec_type::template fmadd<Cx>(f4, a14, r11);
-                    r11 = vec_type::template fmadd<Cx>(f5, a15, r11);
-                    r11 = vec_type::template fmadd<Cx>(f6, a16, r11);
-                    r11 = vec_type::template fmadd<Cx>(f7, a17, r11);
-                    r11 = vec_type::template fmadd<Cx>(f8, a18, r11);
+                    r11 = vec_type::fmadd(f1, a11, r11);
+                    r11 = vec_type::fmadd(f2, a12, r11);
+                    r11 = vec_type::fmadd(f3, a13, r11);
+                    r11 = vec_type::fmadd(f4, a14, r11);
+                    r11 = vec_type::fmadd(f5, a15, r11);
+                    r11 = vec_type::fmadd(f6, a16, r11);
+                    r11 = vec_type::fmadd(f7, a17, r11);
+                    r11 = vec_type::fmadd(f8, a18, r11);
 
-                    r21 = vec_type::template fmadd<Cx>(f1, a21, r21);
-                    r21 = vec_type::template fmadd<Cx>(f2, a22, r21);
-                    r21 = vec_type::template fmadd<Cx>(f3, a23, r21);
-                    r21 = vec_type::template fmadd<Cx>(f4, a24, r21);
-                    r21 = vec_type::template fmadd<Cx>(f5, a25, r21);
-                    r21 = vec_type::template fmadd<Cx>(f6, a26, r21);
-                    r21 = vec_type::template fmadd<Cx>(f7, a27, r21);
-                    r21 = vec_type::template fmadd<Cx>(f8, a28, r21);
+                    r21 = vec_type::fmadd(f1, a21, r21);
+                    r21 = vec_type::fmadd(f2, a22, r21);
+                    r21 = vec_type::fmadd(f3, a23, r21);
+                    r21 = vec_type::fmadd(f4, a24, r21);
+                    r21 = vec_type::fmadd(f5, a25, r21);
+                    r21 = vec_type::fmadd(f6, a26, r21);
+                    r21 = vec_type::fmadd(f7, a27, r21);
+                    r21 = vec_type::fmadd(f8, a28, r21);
 
                     result.template storeu<vec_type>(r11, i * N + j + 0 * vec_size);
                     result.template storeu<vec_type>(r21, i * N + j + 1 * vec_size);
@@ -130,14 +129,14 @@ void batch_outer(const L& lhs, const R& rhs, C&& result) {
                     auto a7 = rhs.template loadu<vec_type>(b7 * N + j);
                     auto a8 = rhs.template loadu<vec_type>(b8 * N + j);
 
-                    r1 = vec_type::template fmadd<Cx>(f1, a1, r1);
-                    r1 = vec_type::template fmadd<Cx>(f2, a2, r1);
-                    r1 = vec_type::template fmadd<Cx>(f3, a3, r1);
-                    r1 = vec_type::template fmadd<Cx>(f4, a4, r1);
-                    r1 = vec_type::template fmadd<Cx>(f5, a5, r1);
-                    r1 = vec_type::template fmadd<Cx>(f6, a6, r1);
-                    r1 = vec_type::template fmadd<Cx>(f7, a7, r1);
-                    r1 = vec_type::template fmadd<Cx>(f8, a8, r1);
+                    r1 = vec_type::fmadd(f1, a1, r1);
+                    r1 = vec_type::fmadd(f2, a2, r1);
+                    r1 = vec_type::fmadd(f3, a3, r1);
+                    r1 = vec_type::fmadd(f4, a4, r1);
+                    r1 = vec_type::fmadd(f5, a5, r1);
+                    r1 = vec_type::fmadd(f6, a6, r1);
+                    r1 = vec_type::fmadd(f7, a7, r1);
+                    r1 = vec_type::fmadd(f8, a8, r1);
 
                     result.template storeu<vec_type>(r1, i * N + j);
                 }
@@ -200,10 +199,10 @@ void batch_outer(const L& lhs, const R& rhs, C&& result) {
                     auto a3 = rhs.template loadu<vec_type>(b3 * N + j);
                     auto a4 = rhs.template loadu<vec_type>(b4 * N + j);
 
-                    r1 = vec_type::template fmadd<Cx>(f1, a1, r1);
-                    r1 = vec_type::template fmadd<Cx>(f2, a2, r1);
-                    r1 = vec_type::template fmadd<Cx>(f3, a3, r1);
-                    r1 = vec_type::template fmadd<Cx>(f4, a4, r1);
+                    r1 = vec_type::fmadd(f1, a1, r1);
+                    r1 = vec_type::fmadd(f2, a2, r1);
+                    r1 = vec_type::fmadd(f3, a3, r1);
+                    r1 = vec_type::fmadd(f4, a4, r1);
 
                     result.template storeu<vec_type>(r1, i * N + j);
                 }
@@ -240,7 +239,7 @@ void batch_outer(const L& lhs, const R& rhs, C&& result) {
 
                     auto a1 = rhs.template loadu<vec_type>(b * N + j);
 
-                    r1 = vec_type::template fmadd<Cx>(f1, a1, r1);
+                    r1 = vec_type::fmadd(f1, a1, r1);
 
                     result.template storeu<vec_type>(r1, i * N + j);
                 }

@@ -24,7 +24,6 @@ value_t<L> selected_dot(const L& lhs, const R& rhs) {
     using T        = value_t<L>;
 
     static constexpr size_t vec_size = vec_type::template traits<T>::size;
-    static constexpr bool Cx         = is_complex_t<T>::value;
 
     auto n = etl::size(lhs);
 
@@ -62,14 +61,14 @@ value_t<L> selected_dot(const L& lhs, const R& rhs) {
             auto b7 = rhs.template load<vec_type>(i + 6 * vec_size);
             auto b8 = rhs.template load<vec_type>(i + 7 * vec_size);
 
-            r1 = vec_type::template fmadd<Cx>(a1, b1, r1);
-            r2 = vec_type::template fmadd<Cx>(a2, b2, r2);
-            r3 = vec_type::template fmadd<Cx>(a3, b3, r3);
-            r4 = vec_type::template fmadd<Cx>(a4, b4, r4);
-            r5 = vec_type::template fmadd<Cx>(a5, b5, r5);
-            r6 = vec_type::template fmadd<Cx>(a6, b6, r6);
-            r7 = vec_type::template fmadd<Cx>(a7, b7, r7);
-            r8 = vec_type::template fmadd<Cx>(a8, b8, r8);
+            r1 = vec_type::fmadd(a1, b1, r1);
+            r2 = vec_type::fmadd(a2, b2, r2);
+            r3 = vec_type::fmadd(a3, b3, r3);
+            r4 = vec_type::fmadd(a4, b4, r4);
+            r5 = vec_type::fmadd(a5, b5, r5);
+            r6 = vec_type::fmadd(a6, b6, r6);
+            r7 = vec_type::fmadd(a7, b7, r7);
+            r8 = vec_type::fmadd(a8, b8, r8);
         }
 
         for (; i + (vec_size * 3) < last; i += 4 * vec_size) {
@@ -83,10 +82,10 @@ value_t<L> selected_dot(const L& lhs, const R& rhs) {
             auto b3 = rhs.template load<vec_type>(i + 2 * vec_size);
             auto b4 = rhs.template load<vec_type>(i + 3 * vec_size);
 
-            r1 = vec_type::template fmadd<Cx>(a1, b1, r1);
-            r2 = vec_type::template fmadd<Cx>(a2, b2, r2);
-            r3 = vec_type::template fmadd<Cx>(a3, b3, r3);
-            r4 = vec_type::template fmadd<Cx>(a4, b4, r4);
+            r1 = vec_type::fmadd(a1, b1, r1);
+            r2 = vec_type::fmadd(a2, b2, r2);
+            r3 = vec_type::fmadd(a3, b3, r3);
+            r4 = vec_type::fmadd(a4, b4, r4);
         }
     }
 
@@ -97,15 +96,15 @@ value_t<L> selected_dot(const L& lhs, const R& rhs) {
         auto b1 = rhs.template load<vec_type>(i + 0 * vec_size);
         auto b2 = rhs.template load<vec_type>(i + 1 * vec_size);
 
-        r1 = vec_type::template fmadd<Cx>(a1, b1, r1);
-        r2 = vec_type::template fmadd<Cx>(a2, b2, r2);
+        r1 = vec_type::fmadd(a1, b1, r1);
+        r2 = vec_type::fmadd(a2, b2, r2);
     }
 
     for (; i < last; i += vec_size) {
         auto a1 = lhs.template load<vec_type>(i);
         auto b1 = rhs.template load<vec_type>(i);
 
-        r1 = vec_type::template fmadd<Cx>(a1, b1, r1);
+        r1 = vec_type::fmadd(a1, b1, r1);
     }
 
     auto rsum = vec_type::add(

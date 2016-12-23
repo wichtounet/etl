@@ -425,8 +425,6 @@ struct AssignMul {
  */
 template <vector_mode_t V, typename L_Expr, typename R_Expr>
 struct VectorizedAssignMul : vectorized_base<V, L_Expr, R_Expr> {
-    static constexpr bool Cx = is_complex_t<value_t<L_Expr>>::value; ///< Indicates it is a complex multiplication
-
     using base_t    = vectorized_base<V, L_Expr, R_Expr>; ///< The base type
     using IT        = typename base_t::IT;                ///< The intrisic type
     using vect_impl = typename base_t::vect_impl;         ///< The vector implementation
@@ -458,14 +456,14 @@ struct VectorizedAssignMul : vectorized_base<V, L_Expr, R_Expr> {
         std::size_t i = 0;
 
         for (; i + (IT::size * 3) < last; i += 4 * IT::size) {
-            lhs.template store<vect_impl>(vect_impl::template mul<Cx>(lhs_load(i + 0 * IT::size), rhs_load(i + 0 * IT::size)), i + 0 * IT::size);
-            lhs.template store<vect_impl>(vect_impl::template mul<Cx>(lhs_load(i + 1 * IT::size), rhs_load(i + 1 * IT::size)), i + 1 * IT::size);
-            lhs.template store<vect_impl>(vect_impl::template mul<Cx>(lhs_load(i + 2 * IT::size), rhs_load(i + 2 * IT::size)), i + 2 * IT::size);
-            lhs.template store<vect_impl>(vect_impl::template mul<Cx>(lhs_load(i + 3 * IT::size), rhs_load(i + 3 * IT::size)), i + 3 * IT::size);
+            lhs.template store<vect_impl>(vect_impl::mul(lhs_load(i + 0 * IT::size), rhs_load(i + 0 * IT::size)), i + 0 * IT::size);
+            lhs.template store<vect_impl>(vect_impl::mul(lhs_load(i + 1 * IT::size), rhs_load(i + 1 * IT::size)), i + 1 * IT::size);
+            lhs.template store<vect_impl>(vect_impl::mul(lhs_load(i + 2 * IT::size), rhs_load(i + 2 * IT::size)), i + 2 * IT::size);
+            lhs.template store<vect_impl>(vect_impl::mul(lhs_load(i + 3 * IT::size), rhs_load(i + 3 * IT::size)), i + 3 * IT::size);
         }
 
         for (; i < last; i += IT::size) {
-            lhs.template store<vect_impl>(vect_impl::template mul<Cx>(lhs_load(i), rhs_load(i)), i);
+            lhs.template store<vect_impl>(vect_impl::mul(lhs_load(i), rhs_load(i)), i);
         }
 
         for (; remainder && i < _size; ++i) {
@@ -522,8 +520,6 @@ struct AssignDiv {
  */
 template <vector_mode_t V, typename L_Expr, typename R_Expr>
 struct VectorizedAssignDiv : vectorized_base<V, L_Expr, R_Expr> {
-    static constexpr bool Cx = is_complex_t<value_t<L_Expr>>::value; ///< Indicates if it is a complex division
-
     using base_t    = vectorized_base<V, L_Expr, R_Expr>; ///< The base type
     using IT        = typename base_t::IT;                ///< The intrisic type
     using vect_impl = typename base_t::vect_impl;         ///< The vector implementation
@@ -555,14 +551,14 @@ struct VectorizedAssignDiv : vectorized_base<V, L_Expr, R_Expr> {
         std::size_t i = 0;
 
         for (; i + (IT::size * 3) < last; i += 4 * IT::size) {
-            lhs.template store<vect_impl>(vect_impl::template div<Cx>(lhs_load(i + 0 * IT::size), rhs_load(i + 0 * IT::size)), i + 0 * IT::size);
-            lhs.template store<vect_impl>(vect_impl::template div<Cx>(lhs_load(i + 1 * IT::size), rhs_load(i + 1 * IT::size)), i + 1 * IT::size);
-            lhs.template store<vect_impl>(vect_impl::template div<Cx>(lhs_load(i + 2 * IT::size), rhs_load(i + 2 * IT::size)), i + 2 * IT::size);
-            lhs.template store<vect_impl>(vect_impl::template div<Cx>(lhs_load(i + 3 * IT::size), rhs_load(i + 3 * IT::size)), i + 3 * IT::size);
+            lhs.template store<vect_impl>(vect_impl::div(lhs_load(i + 0 * IT::size), rhs_load(i + 0 * IT::size)), i + 0 * IT::size);
+            lhs.template store<vect_impl>(vect_impl::div(lhs_load(i + 1 * IT::size), rhs_load(i + 1 * IT::size)), i + 1 * IT::size);
+            lhs.template store<vect_impl>(vect_impl::div(lhs_load(i + 2 * IT::size), rhs_load(i + 2 * IT::size)), i + 2 * IT::size);
+            lhs.template store<vect_impl>(vect_impl::div(lhs_load(i + 3 * IT::size), rhs_load(i + 3 * IT::size)), i + 3 * IT::size);
         }
 
         for (; i < last; i += IT::size) {
-            lhs.template store<vect_impl>(vect_impl::template div<Cx>(lhs_load(i), rhs_load(i)), i);
+            lhs.template store<vect_impl>(vect_impl::div(lhs_load(i), rhs_load(i)), i);
         }
 
         for (; remainder && i < _size; ++i) {

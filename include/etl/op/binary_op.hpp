@@ -169,7 +169,7 @@ struct mul_binary_op {
      */
     template <typename V = default_vec>
     static cpp14_constexpr vec_type<V> load(const vec_type<V>& lhs, const vec_type<V>& rhs) noexcept {
-        return V::template mul<is_complex_t<T>::value>(lhs, rhs);
+        return V::mul(lhs, rhs);
     }
 
     /*!
@@ -224,7 +224,7 @@ struct div_binary_op {
      */
     template <typename V = default_vec>
     static cpp14_constexpr vec_type<V> load(const vec_type<V>& lhs, const vec_type<V>& rhs) noexcept {
-        return V::template div<is_complex_t<T>::value>(lhs, rhs);
+        return V::div(lhs, rhs);
     }
 
     /*!

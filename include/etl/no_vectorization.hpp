@@ -127,7 +127,7 @@ struct no_vec {
      * \param c The right hand side of the addition
      * \return Vector of the results
      */
-    template <bool Complex = false, typename M>
+    template <typename M>
     static M fmadd(M a, M b, M c) {
         cpp_unused(a);
         cpp_unused(b);
@@ -141,7 +141,7 @@ struct no_vec {
      * \param rhs The right hand side of the operation
      * \return Vector of the results
      */
-    template <bool Complex = false, typename M>
+    template <typename M>
     static M mul(M lhs, M rhs) {
         cpp_unused(lhs);
         cpp_unused(rhs);
