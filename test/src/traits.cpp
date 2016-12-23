@@ -580,7 +580,11 @@ TEST_CASE("etl_traits/vectorizable_integer", "[traits]") {
         REQUIRE_DIRECT((etl::decay_traits<expr_type_1>::template vectorizable<etl::vector_mode_t::SSE3>::value));
     }
 
-    if (etl::avx_enabled) {
+    if(etl::avx2_enabled){
+        REQUIRE_DIRECT((etl::decay_traits<mat_type_1>::template vectorizable<etl::vector_mode_t::AVX>::value));
+        REQUIRE_DIRECT((etl::decay_traits<mat_type_2>::template vectorizable<etl::vector_mode_t::AVX>::value));
+        REQUIRE_DIRECT((etl::decay_traits<expr_type_1>::template vectorizable<etl::vector_mode_t::AVX>::value));
+    } else {
         REQUIRE_DIRECT(!(etl::decay_traits<mat_type_1>::template vectorizable<etl::vector_mode_t::AVX>::value));
         REQUIRE_DIRECT(!(etl::decay_traits<mat_type_2>::template vectorizable<etl::vector_mode_t::AVX>::value));
         REQUIRE_DIRECT(!(etl::decay_traits<expr_type_1>::template vectorizable<etl::vector_mode_t::AVX>::value));
