@@ -41,7 +41,7 @@ using sse_simd_complex_float = simd_pack<vector_mode_t::SSE3, T, __m128>;
 template<typename T>
 using sse_simd_complex_double = simd_pack<vector_mode_t::SSE3, T, __m128d>;
 
-using sse_simd_int = simd_pack<vector_mode_t::SSE3, int, __m128i>;
+using sse_simd_int = simd_pack<vector_mode_t::SSE3, int32_t, __m128i>;
 
 /*!
  * \brief Define traits to get vectorization information for types in SSE vector mode.
@@ -128,10 +128,10 @@ struct sse_intrinsic_traits<etl::complex<double>> {
 };
 
 /*!
- * \brief specialization of sse_intrinsic_traits for int
+ * \brief specialization of sse_intrinsic_traits for int32_t
  */
 template <>
-struct sse_intrinsic_traits<int> {
+struct sse_intrinsic_traits<int32_t> {
     static constexpr bool vectorizable     = true; ///< Boolean flag indicating is vectorizable or not
     static constexpr std::size_t size      = 4;    ///< Numbers of elements in a vector
     static constexpr std::size_t alignment = 16;   ///< Necessary alignment, in bytes, for this type
@@ -195,7 +195,7 @@ struct sse_vec {
      * \brief Unaligned store of the given packed vector at the
      * given memory position
      */
-    ETL_STATIC_INLINE(void) storeu(int* memory, sse_simd_int value) {
+    ETL_STATIC_INLINE(void) storeu(int32_t* memory, sse_simd_int value) {
         _mm_storeu_si128(reinterpret_cast<__m128i*>(memory), value.value);
     }
 
@@ -251,7 +251,7 @@ struct sse_vec {
      * \brief Aligned store of the given packed vector at the
      * given memory position
      */
-    ETL_STATIC_INLINE(void) store(int* memory, sse_simd_int value) {
+    ETL_STATIC_INLINE(void) store(int32_t* memory, sse_simd_int value) {
         _mm_store_si128(reinterpret_cast<__m128i*>(memory), value.value);
     }
 
@@ -307,7 +307,7 @@ struct sse_vec {
      * \brief Non-temporal, aligned, store of the given packed vector at the
      * given memory position
      */
-    ETL_STATIC_INLINE(void) stream(int* memory, sse_simd_int value) {
+    ETL_STATIC_INLINE(void) stream(int32_t* memory, sse_simd_int value) {
         _mm_stream_si128(reinterpret_cast<__m128i*>(memory), value.value);
     }
 
@@ -365,7 +365,7 @@ struct sse_vec {
     /*!
      * \brief Load a packed vector from the given aligned memory location
      */
-    ETL_STATIC_INLINE(sse_simd_int) load(const int* memory) {
+    ETL_STATIC_INLINE(sse_simd_int) load(const int32_t* memory) {
         return _mm_load_si128(reinterpret_cast<const __m128i*>(memory));
     }
 
@@ -414,7 +414,7 @@ struct sse_vec {
     /*!
      * \brief Load a packed vector from the given unaligned memory location
      */
-    ETL_STATIC_INLINE(sse_simd_int) loadu(const int* memory) {
+    ETL_STATIC_INLINE(sse_simd_int) loadu(const int32_t* memory) {
         return _mm_loadu_si128(reinterpret_cast<const __m128i*>(memory));
     }
 
@@ -463,7 +463,7 @@ struct sse_vec {
     /*!
      * \brief Fill a packed vector  by replicating a value
      */
-    ETL_STATIC_INLINE(sse_simd_int) set(int value) {
+    ETL_STATIC_INLINE(sse_simd_int) set(int32_t value) {
         return _mm_set1_epi32(value);
     }
 
@@ -1011,7 +1011,7 @@ struct sse_vec {
  * \copydoc sse_vec::zero
  */
 template<>
-ETL_OUT_INLINE(sse_simd_int) sse_vec::zero<int>() {
+ETL_OUT_INLINE(sse_simd_int) sse_vec::zero<int32_t>() {
     return _mm_setzero_si128();
 }
 

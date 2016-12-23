@@ -42,7 +42,7 @@ using avx_simd_complex_float = simd_pack<vector_mode_t::AVX, T, __m256>;
 template<typename T>
 using avx_simd_complex_double = simd_pack<vector_mode_t::AVX, T, __m256d>;
 
-using avx_simd_int = simd_pack<vector_mode_t::AVX, int, __m256i>;
+using avx_simd_int = simd_pack<vector_mode_t::AVX, int32_t, __m256i>;
 
 /*!
  * \brief Define traits to get vectorization information for types in AVX vector mode.
@@ -132,7 +132,7 @@ struct avx_intrinsic_traits<etl::complex<double>> {
  * \copydoc avx_intrinsic_traits
  */
 template <>
-struct avx_intrinsic_traits<int> {
+struct avx_intrinsic_traits<int32_t> {
     static constexpr bool vectorizable     = avx2_enabled; ///< Boolean flag indicating is vectorizable or not
     static constexpr std::size_t size      = 8;     ///< Numbers of elements in a vector
     static constexpr std::size_t alignment = 32;    ///< Necessary alignment, in bytes, for this type
@@ -198,7 +198,7 @@ struct avx_vec {
      * \brief Unaligned store of the given packed vector at the
      * given memory position
      */
-    ETL_STATIC_INLINE(void) storeu(int* memory, avx_simd_int value) {
+    ETL_STATIC_INLINE(void) storeu(int32_t* memory, avx_simd_int value) {
         _mm256_storeu_si256(reinterpret_cast<__m256i*>(memory), value.value);
     }
 #endif
@@ -256,7 +256,7 @@ struct avx_vec {
      * \brief Non-temporal, aligned, store of the given packed vector at the
      * given memory position
      */
-    ETL_STATIC_INLINE(void) stream(int* memory, avx_simd_int value) {
+    ETL_STATIC_INLINE(void) stream(int32_t* memory, avx_simd_int value) {
         _mm256_stream_si256(reinterpret_cast<__m256i*>(memory), value.value);
     }
 #endif
@@ -314,7 +314,7 @@ struct avx_vec {
      * \brief Aligned store of the given packed vector at the
      * given memory position
      */
-    ETL_STATIC_INLINE(void) store(int* memory, avx_simd_int value) {
+    ETL_STATIC_INLINE(void) store(int32_t* memory, avx_simd_int value) {
         _mm256_store_si256(reinterpret_cast<__m256i*>(memory), value.value);
     }
 #endif
@@ -377,7 +377,7 @@ struct avx_vec {
     /*!
      * \brief Load a packed vector from the given aligned memory location
      */
-    ETL_STATIC_INLINE(avx_simd_int) load(const int* memory) {
+    ETL_STATIC_INLINE(avx_simd_int) load(const int32_t* memory) {
         return _mm256_load_si256(reinterpret_cast<const __m256i*>(memory));
     }
 #endif
@@ -428,7 +428,7 @@ struct avx_vec {
     /*!
      * \brief Load a packed vector from the given unaligned memory location
      */
-    ETL_STATIC_INLINE(avx_simd_int) loadu(const int* memory) {
+    ETL_STATIC_INLINE(avx_simd_int) loadu(const int32_t* memory) {
         return _mm256_loadu_si256(reinterpret_cast<const __m256i*>(memory));
     }
 #endif
@@ -479,7 +479,7 @@ struct avx_vec {
     /*!
      * \brief Fill a packed vector  by replicating a value
      */
-    ETL_STATIC_INLINE(avx_simd_int) set(int value) {
+    ETL_STATIC_INLINE(avx_simd_int) set(int32_t value) {
         return _mm256_set1_epi32(value);
     }
 #endif
@@ -1056,7 +1056,7 @@ struct avx_vec {
  * \copydoc avx_vec::zero
  */
 template<>
-ETL_OUT_INLINE(avx_simd_int) avx_vec::zero<int>() {
+ETL_OUT_INLINE(avx_simd_int) avx_vec::zero<int32_t>() {
     return _mm256_setzero_si256();
 }
 #endif
