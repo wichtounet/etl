@@ -16,6 +16,24 @@
 
 #include <immintrin.h>
 
+namespace etl {
+
+template <vector_mode_t V, typename T, typename VT>
+struct simd_pack {
+    using value_type     = T;
+    using intrinsic_type = VT;
+
+    static constexpr vector_mode_t vector_mode = V;
+
+    intrinsic_type value;
+
+    simd_pack(intrinsic_type value) : value(value){
+        // Nothing else to init
+    }
+};
+
+} // end of namespace etl
+
 //Include al the vector implementation
 #include "etl/avx512_vectorization.hpp"
 #include "etl/avx_vectorization.hpp"

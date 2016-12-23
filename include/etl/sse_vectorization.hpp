@@ -32,28 +32,16 @@
 
 namespace etl {
 
-template <typename T, typename VT>
-struct simd_pack {
-    using value_type     = T;
-    using intrinsic_type = VT;
-
-    intrinsic_type value;
-
-    simd_pack(intrinsic_type value) : value(value){
-        // Nothing else to init
-    }
-};
-
-using sse_simd_float = simd_pack<float, __m128>;
-using sse_simd_double = simd_pack<double, __m128d>;
+using sse_simd_float = simd_pack<vector_mode_t::SSE3, float, __m128>;
+using sse_simd_double = simd_pack<vector_mode_t::SSE3, double, __m128d>;
 
 template<typename T>
-using sse_simd_complex_float = simd_pack<T, __m128>;
+using sse_simd_complex_float = simd_pack<vector_mode_t::SSE3, T, __m128>;
 
 template<typename T>
-using sse_simd_complex_double = simd_pack<T, __m128d>;
+using sse_simd_complex_double = simd_pack<vector_mode_t::SSE3, T, __m128d>;
 
-using sse_simd_int = simd_pack<int, __m128i>;
+using sse_simd_int = simd_pack<vector_mode_t::SSE3, int, __m128i>;
 
 /*!
  * \brief Define traits to get vectorization information for types in SSE vector mode.
@@ -1002,7 +990,7 @@ struct sse_vec {
     template<typename T>
     ETL_STATIC_INLINE(T) hadd(sse_simd_complex_float<T> in) {
         T tmp_result[2];
-        sse_vec::storeu(tmp_result, in.value);
+        sse_vec::storeu(tmp_result, in);
         return tmp_result[0] + tmp_result[1];
     }
 
@@ -1014,7 +1002,7 @@ struct sse_vec {
     template<typename T>
     ETL_STATIC_INLINE(T) hadd(sse_simd_complex_double<T> in) {
         T tmp_result[1];
-        sse_vec::storeu(tmp_result, in.value);
+        sse_vec::storeu(tmp_result, in);
         return tmp_result[0];
     }
 };
