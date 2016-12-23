@@ -118,6 +118,18 @@ struct avx_intrinsic_traits<etl::complex<double>> {
 };
 
 /*!
+ * \copydoc avx_intrinsic_traits
+ */
+template <>
+struct avx_intrinsic_traits<int> {
+    static constexpr bool vectorizable     = false; ///< Boolean flag indicating is vectorizable or not
+    static constexpr std::size_t size      = 8;     ///< Numbers of elements in a vector
+    static constexpr std::size_t alignment = 32;    ///< Necessary alignment, in bytes, for this type
+
+    using intrinsic_type = __m256i; ///< The vector type
+};
+
+/*!
  * \brief Advanced Vector eXtensions (AVX) operations implementation.
  */
 struct avx_vec {
