@@ -1,6 +1,7 @@
 In development - ETL 1.1
 ++++++++++++++++++++++++
 
+* *Performance* Vectorization of signed integer operations
 * *Performance* Faster CPU convolutions
 * *Performance* Better parallelization of convolutions
 * *Performance* Better usage of GPU contexts
