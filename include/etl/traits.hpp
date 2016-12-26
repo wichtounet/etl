@@ -250,6 +250,27 @@ template <typename T>
 using is_transpose_expr = cpp::is_specialization_of<etl::transpose_expr, std::decay_t<T>>;
 
 /*!
+ * \brief Traits indicating if the given type is a base temporary unary expr.
+ * \tparam T The type to test
+ */
+template <typename T>
+using is_base_temporary_unary_expr = is_transpose_expr<T>;
+
+/*!
+ * \brief Traits indicating if the given type is a base temporary binary expr.
+ * \tparam T The type to test
+ */
+template <typename T>
+using is_base_temporary_binary_expr = std::false_type;
+
+/*!
+ * \brief Traits indicating if the given type is a base transpose expr.
+ * \tparam T The type to test
+ */
+template <typename T>
+using is_base_temporary_expr = cpp::or_c<is_base_temporary_unary_expr<T>, is_base_temporary_binary_expr<T>>;
+
+/*!
  * \brief Traits indicating if the given ETL type is a value type.
  * \tparam T The type to test
  */
