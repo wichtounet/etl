@@ -558,7 +558,7 @@ struct direct_assign_compatible : cpp::or_u<
  * \param expr The right hand side expression
  * \param result The left hand side
  */
-template <typename Expr, typename Result, cpp_enable_if(!detail::has_optimized_evaluation<Expr, Result>::value, direct_assign_compatible<Expr, Result>::value, !is_wrapper_expr<Expr>::value)>
+template <typename Expr, typename Result, cpp_enable_if(direct_assign_compatible<Expr, Result>::value, !is_wrapper_expr<Expr>::value)>
 void assign_evaluate(Expr&& expr, Result&& result) {
     standard_evaluator::assign_evaluate(expr, result);
 }
@@ -568,27 +568,9 @@ void assign_evaluate(Expr&& expr, Result&& result) {
  * \param expr The right hand side expression
  * \param result The left hand side
  */
-template <typename Expr, typename Result, cpp_enable_if(!detail::has_optimized_evaluation<Expr, Result>::value, !direct_assign_compatible<Expr, Result>::value, !is_wrapper_expr<Expr>::value)>
+template <typename Expr, typename Result, cpp_enable_if(!direct_assign_compatible<Expr, Result>::value, !is_wrapper_expr<Expr>::value)>
 void assign_evaluate(Expr&& expr, Result&& result) {
     standard_evaluator::assign_evaluate(transpose(expr), result);
-}
-
-/*!
- * \brief Evaluation of the expr into result
- * \param expr The right hand side expression
- * \param result The left hand side
- */
-template <typename Expr, typename Result, cpp_enable_if(detail::is_direct_transpose<Expr, Result>::value)>
-void assign_evaluate(Expr&& expr, Result&& result) {
-    // Make sure we have the data in CPU
-    standard_evaluator::pre_assign_rhs(expr);
-    standard_evaluator::post_assign_force(expr);
-
-    // Perform transpose in memory
-    detail::transpose::apply(expr.value().value(), result);
-
-    // Make sure the data is on CPU after the expression
-    standard_evaluator::post_assign(expr, result);
 }
 
 /*!

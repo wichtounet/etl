@@ -159,18 +159,6 @@ struct is_direct_transpose_impl<unary_expr<T, transpose_transformer<E>, transfor
 
 } //end of namespace detail
 
-/*!
- * \brief Integral constant indicating if a direct transpose evaluation is possible.
- */
-template <typename E, typename R>
-using is_direct_transpose = detail::is_direct_transpose_impl<std::decay_t<E>, std::decay_t<R>>;
-
-/*!
- * \brief Integral constant indicating if an optimized evaluation is available
- */
-template <typename E, typename R>
-using has_optimized_evaluation = cpp::or_c<is_direct_transpose<E, R>>;
-
 } //end of namespace detail
 
 } //end of namespace etl
