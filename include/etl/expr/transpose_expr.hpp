@@ -14,9 +14,6 @@
 
 namespace etl {
 
-//template <typename D, typename T, typename A>
-//struct base_temporary_expr_un : base_temporary_expr<D, T> {
-
 /*!
  * \brief A transposition expression.
  * \tparam T The value type
