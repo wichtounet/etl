@@ -1233,7 +1233,7 @@ struct sse_vec {
      * \return the horizontal sum of the vector
      */
     template<typename T>
-    ETL_STATIC_INLINE(T) hadd(sse_simd_complex_float<T> in) {
+    ETL_STATIC_INLINE(sse_simd_complex_float<T>) hadd(sse_simd_complex_float<T> in) {
         return in[0] + in[1];
     }
 
@@ -1243,7 +1243,7 @@ struct sse_vec {
      * \return the horizontal sum of the vector
      */
     template<typename T>
-    ETL_STATIC_INLINE(T) hadd(sse_simd_complex_double<T> in) {
+    ETL_STATIC_INLINE(sse_simd_complex_double<T>) hadd(sse_simd_complex_double<T> in) {
         return in[0];
     }
 };

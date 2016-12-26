@@ -1283,7 +1283,7 @@ struct avx_vec {
      * \return the horizontal sum of the vector
      */
     template<typename T>
-    ETL_STATIC_INLINE(T) hadd(avx_simd_complex_float<T> in) {
+    ETL_STATIC_INLINE(avx_simd_complex_float<T>) hadd(avx_simd_complex_float<T> in) {
         return in[0] + in[1] + in[2] + in[3];
     }
 
@@ -1293,7 +1293,7 @@ struct avx_vec {
      * \return the horizontal sum of the vector
      */
     template<typename T>
-    ETL_STATIC_INLINE(T) hadd(avx_simd_complex_double<T> in) {
+    ETL_STATIC_INLINE(avx_simd_complex_double<T>) hadd(avx_simd_complex_double<T> in) {
         return in[0] + in[1];
     }
 };
