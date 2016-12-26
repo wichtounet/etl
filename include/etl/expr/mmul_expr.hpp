@@ -153,7 +153,7 @@ struct basic_mm_mul_expr : impl_expr<basic_mm_mul_expr<T, Impl>, T> {
         static_assert(decay_traits<A>::dimensions() == 2 && decay_traits<B>::dimensions() == 2 && decay_traits<C>::dimensions() == 2, "Matrix multiplication only works in 2D");
         detail::check_mm_mul_sizes(a, b, c);
 
-        Impl::apply(
+        Impl::apply_raw(
             make_temporary(std::forward<A>(a)),
             make_temporary(std::forward<B>(b)),
             std::forward<C>(c));

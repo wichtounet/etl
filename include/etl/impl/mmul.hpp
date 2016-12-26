@@ -267,6 +267,11 @@ inline gemm_impl select_gevm_impl(const std::size_t n1, const std::size_t n2) {
  * \brief Functor for matrix-matrix multiplication
  */
 struct mm_mul_impl {
+    template <typename A, typename B, typename C>
+    static void apply_raw(A&& a, B&& b, C&& c) {
+        apply(make_temporary(std::forward<A>(a)), make_temporary(std::forward<B>(b)), std::forward<C>(c));
+    }
+
     /*!
      * \brief Apply the function C = A * B
      * \param a The lhs of the multiplication
@@ -352,7 +357,7 @@ struct strassen_mm_mul_impl {
      * \param c The target of the multiplication
      */
     template <typename A, typename B, typename C>
-    static void apply(A&& a, B&& b, C&& c) {
+    static void apply_raw(A&& a, B&& b, C&& c) {
         etl::impl::standard::strassen_mm_mul(a, b, c);
     }
 };
