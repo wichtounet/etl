@@ -46,9 +46,9 @@ void gemm(A&& a, B&& b, C&& c) {
     auto b_gpu = b.direct();
     auto c_gpu = c.direct();
 
-    a_gpu.gpu_allocate_copy_if_necessary();
-    b_gpu.gpu_allocate_copy_if_necessary();
-    c_gpu.gpu_allocate_if_necessary();
+    a_gpu.gpu_allocate_copy();
+    b_gpu.gpu_allocate_copy();
+    c_gpu.gpu_allocate();
 
     // Do the actual multiplication
 

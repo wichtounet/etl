@@ -138,7 +138,9 @@ public:
      * \brief Allocate memory on the GPU for the expression
      */
     void gpu_allocate() const {
-        _gpu_memory_handler = impl::cuda::cuda_allocate_only<T>(etl_size);
+        if (!is_gpu_allocated()) {
+            _gpu_memory_handler = impl::cuda::cuda_allocate_only<T>(etl_size);
+        }
     }
 
     /*!
@@ -154,7 +156,11 @@ public:
      * \brief Allocate memory on the GPU for the expression and copy the values into the GPU.
      */
     void gpu_allocate_copy() const {
-        _gpu_memory_handler = impl::cuda::cuda_allocate_copy(memory, etl_size);
+        if(!is_gpu_allocated()){
+            gpu_allocate();
+        }
+
+        gpu_copy_to();
     }
 
     /*!
