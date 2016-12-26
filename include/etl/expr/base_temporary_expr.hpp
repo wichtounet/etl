@@ -153,12 +153,12 @@ protected:
 
     template <std::size_t... I>
     result_type* dyn_allocate(std::index_sequence<I...> /*seq*/) const {
-        return new result_type(derived_t::dim(as_derived(), I)...);
+        return new result_type(decay_traits<derived_t>::dim(as_derived(), I)...);
     }
 
     template <cpp_disable_if_cst(all_fast<derived_t>::value)>
     result_type* allocate() const {
-        return dyn_allocate(std::make_index_sequence<derived_t::dimensions()>());
+        return dyn_allocate(std::make_index_sequence<decay_traits<derived_t>::dimensions()>());
     }
 
 public:
