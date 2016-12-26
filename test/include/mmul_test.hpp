@@ -45,8 +45,8 @@ MUL_FUNCTOR(std_gevm, c = selected_helper(etl::gemm_impl::STD, a* b))
 
 #ifdef TEST_VEC
 MUL_FUNCTOR(vec_gemv, c = selected_helper(etl::gemm_impl::VEC, a * b))
-MUL_FUNCTOR(vec_gevm, c = selected_helper(etl::gemm_impl::STD, a * b))
-MUL_FUNCTOR(vec_gemm, c = selected_helper(etl::gemm_impl::STD, a * b))
+MUL_FUNCTOR(vec_gevm, c = selected_helper(etl::gemm_impl::VEC, a * b))
+MUL_FUNCTOR(vec_gemm, c = selected_helper(etl::gemm_impl::VEC, a * b))
 #define GEMV_TEST_CASE_SECTION_VEC MUL_TEST_CASE_SECTIONS(vec_gemv, vec_gemv)
 #define GEVM_TEST_CASE_SECTION_VEC MUL_TEST_CASE_SECTIONS(vec_gevm, vec_gevm)
 #define GEMM_TEST_CASE_SECTION_VEC MUL_TEST_CASE_SECTIONS(vec_gemm, vec_gemm)
