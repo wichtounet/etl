@@ -23,25 +23,68 @@ namespace blas {
 
 #ifdef ETL_BLAS_MODE
 
-/*!
- * \brief Compute the matrix mutplication of a and b and store the result in c
- * param a The lhs of the multiplication
- * param b The rhs of the multiplication
- * param c The result
- */
-template <typename A, typename B, typename C, cpp_enable_if(all_single_precision<A, B, C>::value)>
-void gemm(A&& a, B&& b, C&& c) {
-    bool row_major = decay_traits<A>::storage_order == order::RowMajor;
+// GEMM overloads
 
-    cblas_sgemm(
-        row_major ? CblasRowMajor : CblasColMajor,
-        CblasNoTrans, CblasNoTrans,
-        etl::rows(a), etl::columns(b), etl::columns(a),
-        1.0f,
-        a.memory_start(), major_stride(a),
-        b.memory_start(), major_stride(b),
-        0.0f,
-        c.memory_start(), major_stride(c));
+inline void cblas_gemm(CBLAS_LAYOUT Layout, CBLAS_TRANSPOSE TransA, CBLAS_TRANSPOSE TransB, size_t M, size_t N, size_t K,
+        const float alpha, const float* A, size_t lda, const float* B, size_t ldb, const float beta, float* C, size_t ldc) {
+    cblas_sgemm(Layout, TransA, TransB, M, N, K, alpha, A, lda, B, ldb, beta, C, ldc);
+}
+
+inline void cblas_gemm(CBLAS_LAYOUT Layout, CBLAS_TRANSPOSE TransA, CBLAS_TRANSPOSE TransB, size_t M, size_t N, size_t K,
+        const double alpha, const double* A, size_t lda, const double* B, size_t ldb, const double beta, double* C, size_t ldc) {
+    cblas_dgemm(Layout, TransA, TransB, M, N, K, alpha, A, lda, B, ldb, beta, C, ldc);
+}
+
+inline void cblas_gemm(CBLAS_LAYOUT Layout, CBLAS_TRANSPOSE TransA, CBLAS_TRANSPOSE TransB, size_t M, size_t N, size_t K,
+        const etl::complex<float> alpha, const etl::complex<float>* A, size_t lda, const etl::complex<float>* B, size_t ldb, const etl::complex<float> beta, etl::complex<float>* C, size_t ldc) {
+    cblas_cgemm(Layout, TransA, TransB, M, N, K, &alpha, A, lda, B, ldb, &beta, C, ldc);
+}
+
+inline void cblas_gemm(CBLAS_LAYOUT Layout, CBLAS_TRANSPOSE TransA, CBLAS_TRANSPOSE TransB, size_t M, size_t N, size_t K,
+        const etl::complex<double> alpha, const etl::complex<double>* A, size_t lda, const etl::complex<double>* B, size_t ldb, const etl::complex<double> beta, etl::complex<double>* C, size_t ldc) {
+    cblas_zgemm(Layout, TransA, TransB, M, N, K, &alpha, A, lda, B, ldb, &beta, C, ldc);
+}
+
+inline void cblas_gemm(CBLAS_LAYOUT Layout, CBLAS_TRANSPOSE TransA, CBLAS_TRANSPOSE TransB, size_t M, size_t N, size_t K,
+        const std::complex<float> alpha, const std::complex<float>* A, size_t lda, const std::complex<float>* B, size_t ldb, const std::complex<float> beta, std::complex<float>* C, size_t ldc) {
+    cblas_cgemm(Layout, TransA, TransB, M, N, K, &alpha, A, lda, B, ldb, &beta, C, ldc);
+}
+
+inline void cblas_gemm(CBLAS_LAYOUT Layout, CBLAS_TRANSPOSE TransA, CBLAS_TRANSPOSE TransB, size_t M, size_t N, size_t K,
+        const std::complex<double> alpha, const std::complex<double>* A, size_t lda, const std::complex<double>* B, size_t ldb, const std::complex<double> beta, std::complex<double>* C, size_t ldc) {
+    cblas_zgemm(Layout, TransA, TransB, M, N, K, &alpha, A, lda, B, ldb, &beta, C, ldc);
+}
+
+// GEMV overloads
+
+inline void cblas_gemv(const CBLAS_LAYOUT Layout, const CBLAS_TRANSPOSE TransA, size_t M, size_t N, const float alpha, const float *A, size_t lda,
+        const float *X, size_t incX, const float beta, float *Y, size_t incY){
+    cblas_sgemv(Layout, TransA, M, N, alpha, A, lda, X, incX, beta, Y, incY);
+}
+
+inline void cblas_gemv(const CBLAS_LAYOUT Layout, const CBLAS_TRANSPOSE TransA, size_t M, size_t N, const double alpha, const double *A, size_t lda,
+        const double *X, size_t incX, const double beta, double *Y, size_t incY){
+    cblas_dgemv(Layout, TransA, M, N, alpha, A, lda, X, incX, beta, Y, incY);
+}
+
+inline void cblas_gemv(const CBLAS_LAYOUT Layout, const CBLAS_TRANSPOSE TransA, size_t M, size_t N, const std::complex<float> alpha, const std::complex<float> *A, size_t lda,
+        const std::complex<float> *X, size_t incX, const std::complex<float> beta, std::complex<float> *Y, size_t incY){
+    cblas_cgemv(Layout, TransA, M, N, &alpha, A, lda, X, incX, &beta, Y, incY);
+}
+
+inline void cblas_gemv(const CBLAS_LAYOUT Layout, const CBLAS_TRANSPOSE TransA, size_t M, size_t N, const std::complex<double> alpha, const std::complex<double> *A, size_t lda,
+        const std::complex<double> *X, size_t incX, const std::complex<double> beta, std::complex<double> *Y, size_t incY){
+    cblas_zgemv(Layout, TransA, M, N, &alpha, A, lda, X, incX, &beta, Y, incY);
+}
+
+inline void cblas_gemv(const CBLAS_LAYOUT Layout, const CBLAS_TRANSPOSE TransA, size_t M, size_t N, const etl::complex<float> alpha, const etl::complex<float> *A, size_t lda,
+        const etl::complex<float> *X, size_t incX, const etl::complex<float> beta, etl::complex<float> *Y, size_t incY){
+    cblas_cgemv(Layout, TransA, M, N, &alpha, A, lda, X, incX, &beta, Y, incY);
+}
+
+inline void cblas_gemv(const CBLAS_LAYOUT Layout, const CBLAS_TRANSPOSE TransA, size_t M, size_t N, const etl::complex<double> alpha, const etl::complex<double> *A, size_t lda,
+        const etl::complex<double> *X, size_t incX, const etl::complex<double> beta, etl::complex<double> *Y, size_t incY){
+    cblas_zgemv(Layout, TransA, M, N, &alpha, A, lda, X, incX, &beta, Y, incY);
 }
 
 /*!
@@ -50,66 +93,23 @@ void gemm(A&& a, B&& b, C&& c) {
  * param b The rhs of the multiplication
  * param c The result
  */
-template <typename A, typename B, typename C, cpp_enable_if(all_double_precision<A, B, C>::value)>
+template <typename A, typename B, typename C>
 void gemm(A&& a, B&& b, C&& c) {
-    bool row_major = decay_traits<A>::storage_order == order::RowMajor;
+    using T = value_t<A>;
 
-    cblas_dgemm(
+    static constexpr bool row_major = decay_traits<A>::storage_order == order::RowMajor;
+
+    T alpha(1.0);
+    T beta(0.0);
+
+    cblas_gemm(
         row_major ? CblasRowMajor : CblasColMajor,
         CblasNoTrans, CblasNoTrans,
         etl::rows(a), etl::columns(b), etl::columns(a),
-        1.0,
+        alpha,
         a.memory_start(), major_stride(a),
         b.memory_start(), major_stride(b),
-        0.0,
-        c.memory_start(), major_stride(c));
-}
-
-/*!
- * \brief Compute the matrix mutplication of a and b and store the result in c
- * param a The lhs of the multiplication
- * param b The rhs of the multiplication
- * param c The result
- */
-template <typename A, typename B, typename C, cpp_enable_if(all_complex_single_precision<A, B, C>::value)>
-void gemm(A&& a, B&& b, C&& c) {
-    bool row_major = decay_traits<A>::storage_order == order::RowMajor;
-
-    std::complex<float> alpha(1.0, 0.0);
-    std::complex<float> beta(0.0, 0.0);
-
-    cblas_cgemm(
-        row_major ? CblasRowMajor : CblasColMajor,
-        CblasNoTrans, CblasNoTrans,
-        etl::rows(a), etl::columns(b), etl::columns(a),
-        &alpha,
-        a.memory_start(), major_stride(a),
-        b.memory_start(), major_stride(b),
-        &beta,
-        c.memory_start(), major_stride(c));
-}
-
-/*!
- * \brief Compute the matrix mutplication of a and b and store the result in c
- * param a The lhs of the multiplication
- * param b The rhs of the multiplication
- * param c The result
- */
-template <typename A, typename B, typename C, cpp_enable_if(all_complex_double_precision<A, B, C>::value)>
-void gemm(A&& a, B&& b, C&& c) {
-    bool row_major = decay_traits<A>::storage_order == order::RowMajor;
-
-    std::complex<double> alpha(1.0, 0.0);
-    std::complex<double> beta(0.0, 0.0);
-
-    cblas_zgemm(
-        row_major ? CblasRowMajor : CblasColMajor,
-        CblasNoTrans, CblasNoTrans,
-        etl::rows(a), etl::columns(b), etl::columns(a),
-        &alpha,
-        a.memory_start(), major_stride(a),
-        b.memory_start(), major_stride(b),
-        &beta,
+        beta,
         c.memory_start(), major_stride(c));
 }
 
@@ -119,87 +119,23 @@ void gemm(A&& a, B&& b, C&& c) {
  * param b The rhs of the multiplication
  * param c The result
  */
-template <typename A, typename B, typename C, cpp_enable_if(all_double_precision<A, B, C>::value)>
+template <typename A, typename B, typename C>
 void gemv(A&& a, B&& b, C&& c) {
-    bool row_major = decay_traits<A>::storage_order == order::RowMajor;
+    using T = value_t<A>;
 
-    cblas_dgemv(
+    static constexpr bool row_major = decay_traits<A>::storage_order == order::RowMajor;
+
+    T alpha(1.0);
+    T beta(0.0);
+
+    cblas_gemv(
         row_major ? CblasRowMajor : CblasColMajor,
         CblasNoTrans,
         etl::rows(a), etl::columns(a),
-        1.0,
+        alpha,
         a.memory_start(), major_stride(a),
         b.memory_start(), 1,
-        0.0,
-        c.memory_start(), 1);
-}
-
-/*!
- * \brief Compute the matrix-vector mutplication of a and b and store the result in c
- * param a The lhs of the multiplication
- * param b The rhs of the multiplication
- * param c The result
- */
-template <typename A, typename B, typename C, cpp_enable_if(all_single_precision<A, B, C>::value)>
-void gemv(A&& a, B&& b, C&& c) {
-    bool row_major = decay_traits<A>::storage_order == order::RowMajor;
-
-    cblas_sgemv(
-        row_major ? CblasRowMajor : CblasColMajor,
-        CblasNoTrans,
-        etl::rows(a), etl::columns(a),
-        1.0,
-        a.memory_start(), major_stride(a),
-        b.memory_start(), 1,
-        0.0,
-        c.memory_start(), 1);
-}
-
-/*!
- * \brief Compute the matrix-vector mutplication of a and b and store the result in c
- * param a The lhs of the multiplication
- * param b The rhs of the multiplication
- * param c The result
- */
-template <typename A, typename B, typename C, cpp_enable_if(all_complex_single_precision<A, B, C>::value)>
-void gemv(A&& a, B&& b, C&& c) {
-    bool row_major = decay_traits<A>::storage_order == order::RowMajor;
-
-    std::complex<float> alpha(1.0, 0.0);
-    std::complex<float> beta(0.0, 0.0);
-
-    cblas_cgemv(
-        row_major ? CblasRowMajor : CblasColMajor,
-        CblasNoTrans,
-        etl::rows(a), etl::columns(a),
-        &alpha,
-        a.memory_start(), major_stride(a),
-        b.memory_start(), 1,
-        &beta,
-        c.memory_start(), 1);
-}
-
-/*!
- * \brief Compute the matrix-vector mutplication of a and b and store the result in c
- * param a The lhs of the multiplication
- * param b The rhs of the multiplication
- * param c The result
- */
-template <typename A, typename B, typename C, cpp_enable_if(all_complex_double_precision<A, B, C>::value)>
-void gemv(A&& a, B&& b, C&& c) {
-    bool row_major = decay_traits<A>::storage_order == order::RowMajor;
-
-    std::complex<double> alpha(1.0, 0.0);
-    std::complex<double> beta(0.0, 0.0);
-
-    cblas_zgemv(
-        row_major ? CblasRowMajor : CblasColMajor,
-        CblasNoTrans,
-        etl::rows(a), etl::columns(a),
-        &alpha,
-        a.memory_start(), major_stride(a),
-        b.memory_start(), 1,
-        &beta,
+        beta,
         c.memory_start(), 1);
 }
 
@@ -209,87 +145,23 @@ void gemv(A&& a, B&& b, C&& c) {
  * param b The rhs of the multiplication
  * param c The result
  */
-template <typename A, typename B, typename C, cpp_enable_if(all_double_precision<A, B, C>::value)>
+template <typename A, typename B, typename C>
 void gevm(A&& a, B&& b, C&& c) {
-    bool row_major = decay_traits<B>::storage_order == order::RowMajor;
+    using T = value_t<A>;
 
-    cblas_dgemv(
+    static constexpr bool row_major = decay_traits<B>::storage_order == order::RowMajor;
+
+    T alpha(1.0);
+    T beta(0.0);
+
+    cblas_gemv(
         row_major ? CblasRowMajor : CblasColMajor,
         CblasTrans,
         etl::rows(b), etl::columns(b),
-        1.0,
+        alpha,
         b.memory_start(), major_stride(b),
         a.memory_start(), 1,
-        0.0,
-        c.memory_start(), 1);
-}
-
-/*!
- * \brief Compute the vector-matrix mutplication of a and b and store the result in c
- * param a The lhs of the multiplication
- * param b The rhs of the multiplication
- * param c The result
- */
-template <typename A, typename B, typename C, cpp_enable_if(all_single_precision<A, B, C>::value)>
-void gevm(A&& a, B&& b, C&& c) {
-    bool row_major = decay_traits<B>::storage_order == order::RowMajor;
-
-    cblas_sgemv(
-        row_major ? CblasRowMajor : CblasColMajor,
-        CblasTrans,
-        etl::rows(b), etl::columns(b),
-        1.0,
-        b.memory_start(), major_stride(b),
-        a.memory_start(), 1,
-        0.0,
-        c.memory_start(), 1);
-}
-
-/*!
- * \brief Compute the vector-matrix mutplication of a and b and store the result in c
- * param a The lhs of the multiplication
- * param b The rhs of the multiplication
- * param c The result
- */
-template <typename A, typename B, typename C, cpp_enable_if(all_complex_single_precision<A, B, C>::value)>
-void gevm(A&& a, B&& b, C&& c) {
-    bool row_major = decay_traits<B>::storage_order == order::RowMajor;
-
-    std::complex<float> alpha(1.0, 0.0);
-    std::complex<float> beta(0.0, 0.0);
-
-    cblas_cgemv(
-        row_major ? CblasRowMajor : CblasColMajor,
-        CblasTrans,
-        etl::rows(b), etl::columns(b),
-        &alpha,
-        b.memory_start(), major_stride(b),
-        a.memory_start(), 1,
-        &beta,
-        c.memory_start(), 1);
-}
-
-/*!
- * \brief Compute the vector-matrix mutplication of a and b and store the result in c
- * param a The lhs of the multiplication
- * param b The rhs of the multiplication
- * param c The result
- */
-template <typename A, typename B, typename C, cpp_enable_if(all_complex_double_precision<A, B, C>::value)>
-void gevm(A&& a, B&& b, C&& c) {
-    bool row_major = decay_traits<B>::storage_order == order::RowMajor;
-
-    std::complex<double> alpha(1.0, 0.0);
-    std::complex<double> beta(0.0, 0.0);
-
-    cblas_zgemv(
-        row_major ? CblasRowMajor : CblasColMajor,
-        CblasTrans,
-        etl::rows(b), etl::columns(b),
-        &alpha,
-        b.memory_start(), major_stride(b),
-        a.memory_start(), 1,
-        &beta,
+        beta,
         c.memory_start(), 1);
 }
 
