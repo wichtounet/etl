@@ -169,7 +169,7 @@ public:
      */
     template <typename Result>
     void direct_evaluate(Result&& result){
-        as_derived().apply(std::forward<Result>(result));
+        as_derived().apply_base(std::forward<Result>(result));
     }
 
     //Apply the expression
@@ -384,6 +384,22 @@ struct base_temporary_expr_un : base_temporary_expr<D> {
         return _a.alias(rhs);
     }
 
+    /*!
+     * \brief Returns the sub expression
+     * \return a reference to the sub expression
+     */
+    std::add_lvalue_reference_t<A> a() {
+        return _a;
+    }
+
+    /*!
+     * \brief Returns the sub expression
+     * \return a reference to the sub expression
+     */
+    cpp::add_const_lvalue_t<A> a() const {
+        return _a;
+    }
+
     // Internals
 
     /*!
@@ -495,6 +511,38 @@ struct base_temporary_expr_bin : base_temporary_expr<D> {
     template <typename E>
     bool alias(const E& rhs) const {
         return _a.alias(rhs) || _b.alias(rhs);
+    }
+
+    /*!
+     * \brief Returns the sub expression
+     * \return a reference to the sub expression
+     */
+    std::add_lvalue_reference_t<A> a() {
+        return _a;
+    }
+
+    /*!
+     * \brief Returns the sub expression
+     * \return a reference to the sub expression
+     */
+    cpp::add_const_lvalue_t<A> a() const {
+        return _a;
+    }
+
+    /*!
+     * \brief Returns the sub expression
+     * \return a reference to the sub expression
+     */
+    std::add_lvalue_reference_t<B> b() {
+        return _b;
+    }
+
+    /*!
+     * \brief Returns the sub expression
+     * \return a reference to the sub expression
+     */
+    cpp::add_const_lvalue_t<B> b() const {
+        return _b;
     }
 
     // Internals
