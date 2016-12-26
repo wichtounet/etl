@@ -243,6 +243,13 @@ template <typename T>
 using is_etl_expr = cpp::bool_constant<decay_traits<T>::is_etl>;
 
 /*!
+ * \brief Traits indicating if the given type is a transpose expr.
+ * \tparam T The type to test
+ */
+template <typename T>
+using is_transpose_expr = cpp::is_specialization_of<etl::transpose_expr, std::decay_t<T>>;
+
+/*!
  * \brief Traits indicating if the given ETL type is a value type.
  * \tparam T The type to test
  */
