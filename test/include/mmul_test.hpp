@@ -21,7 +21,7 @@
         }                                             \
     };
 
-MUL_FUNCTOR(default_gemm, c = etl::mul(a, b))
+MUL_FUNCTOR(default_gemm, c = a * b)
 MUL_FUNCTOR(lazy_gemm, c = etl::lazy_mul(a, b))
 MUL_FUNCTOR(strassen_gemm, c = etl::strassen_mul(a, b))
 MUL_FUNCTOR(std_gemm, c = selected_helper(etl::gemm_impl::STD, a* b))
