@@ -22,8 +22,83 @@ namespace cublas {
 
 #ifdef ETL_CUBLAS_MODE
 
-using cfloat  = std::complex<float>;  ///< Complex float type
-using cdouble = std::complex<double>; ///< Complex double type
+template <typename T>
+using cublas_type = std::conditional_t<
+    is_complex_single_t<T>::value,
+    cuComplex,
+    std::conditional_t<
+        is_complex_double_t<T>::value,
+        cuDoubleComplex,
+        T>>;
+
+template<typename T>
+T make_default(double value);
+
+template<>
+inline float make_default<float>(double value){
+    return value;
+}
+
+template<>
+inline double make_default<double>(double value){
+    return value;
+}
+
+template<>
+inline cuComplex make_default<cuComplex>(double value){
+    return {float(value), 0.0f};
+}
+
+template<>
+inline cuDoubleComplex make_default<cuDoubleComplex>(double value){
+    return {value, 0.0};
+}
+
+inline void cublas_gemm(cublasHandle_t handle, cublasOperation_t transa, cublasOperation_t transb,
+                 size_t m, size_t n, size_t k,
+                 const float* alpha,
+                 const float* A, size_t lda,
+                 const float* B, size_t ldb,
+                 const float* beta,
+                 float* C, size_t ldc){
+    cublas_check(cublasSgemm(handle, transa, transb, m, n, k, alpha, A, lda, B, ldb, beta, C, ldc));
+}
+
+inline void cublas_gemm(cublasHandle_t handle, cublasOperation_t transa, cublasOperation_t transb,
+                 size_t m, size_t n, size_t k,
+                 const double* alpha,
+                 const double* A, size_t lda,
+                 const double* B, size_t ldb,
+                 const double* beta,
+                 double* C, size_t ldc){
+    cublas_check(cublasDgemm(handle, transa, transb, m, n, k, alpha, A, lda, B, ldb, beta, C, ldc));
+}
+
+inline void cublas_gemm(cublasHandle_t handle, cublasOperation_t transa, cublasOperation_t transb,
+                 size_t m, size_t n, size_t k,
+                 const cuComplex* alpha,
+                 const std::complex<float>* A, size_t lda,
+                 const std::complex<float>* B, size_t ldb,
+                 cuComplex* beta,
+                 std::complex<float>* C, size_t ldc){
+    cublas_check(cublasCgemm(handle, transa, transb, m, n, k, alpha,
+        reinterpret_cast<const cuComplex*>(A), lda,
+        reinterpret_cast<const cuComplex*>(B), ldb, beta,
+        reinterpret_cast<cuComplex*>(C), ldc));
+}
+
+inline void cublas_gemm(cublasHandle_t handle, cublasOperation_t transa, cublasOperation_t transb,
+                 size_t m, size_t n, size_t k,
+                 const cuDoubleComplex* alpha,
+                 const std::complex<double>* A, size_t lda,
+                 const std::complex<double>* B, size_t ldb,
+                 cuDoubleComplex* beta,
+                 std::complex<double>* C, size_t ldc){
+    cublas_check(cublasZgemm(handle, transa, transb, m, n, k, alpha,
+        reinterpret_cast<const cuDoubleComplex*>(A), lda,
+        reinterpret_cast<const cuDoubleComplex*>(B), ldb, beta,
+        reinterpret_cast<cuDoubleComplex*>(C), ldc));
+}
 
 /*!
  * \brief Compute the matrix mutplication of a and b and store the result in c
@@ -31,7 +106,7 @@ using cdouble = std::complex<double>; ///< Complex double type
  * param b The rhs of the multiplication
  * param c The result
  */
-template <typename A, typename B, typename C, cpp_enable_if(all_single_precision<A, B, C>::value)>
+template <typename A, typename B, typename C>
 void gemm(A&& a, B&& b, C&& c) {
     decltype(auto) handle = start_cublas();
 
@@ -39,8 +114,11 @@ void gemm(A&& a, B&& b, C&& c) {
 
     static_assert(decay_traits<A>::storage_order == decay_traits<B>::storage_order, "gemm only for same A/B storage order");
 
-    float alpha = 1.0;
-    float beta  = 0.0;
+    using VT = value_t<A>;
+    using T = cublas_type<VT>;
+
+    auto alpha = make_default<T>(1.0);
+    auto beta  = make_default<T>(1.0);
 
     auto a_gpu = a.direct();
     auto b_gpu = b.direct();
@@ -53,7 +131,7 @@ void gemm(A&& a, B&& b, C&& c) {
     // Do the actual multiplication
 
     if (row_major) {
-        cublasSgemm(
+        cublas_gemm(
             handle.get(),
             CUBLAS_OP_N, CUBLAS_OP_N,
             etl::columns(b), etl::rows(a), etl::columns(a),
@@ -63,7 +141,7 @@ void gemm(A&& a, B&& b, C&& c) {
             &beta,
             c_gpu.gpu_memory(), etl::columns(b));
     } else {
-        cublasSgemm(
+        cublas_gemm(
             handle.get(),
             CUBLAS_OP_N, CUBLAS_OP_N,
             etl::rows(c), etl::columns(c), etl::columns(a),
@@ -72,156 +150,6 @@ void gemm(A&& a, B&& b, C&& c) {
             b_gpu.gpu_memory(), etl::rows(b),
             &beta,
             c_gpu.gpu_memory(), etl::rows(c));
-    }
-}
-
-/*!
- * \brief Compute the matrix mutplication of a and b and store the result in c
- * param a The lhs of the multiplication
- * param b The rhs of the multiplication
- * param c The result
- */
-template <typename A, typename B, typename C, cpp_enable_if(all_double_precision<A, B, C>::value)>
-void gemm(A&& a, B&& b, C&& c) {
-    decltype(auto) handle = start_cublas();
-
-    bool row_major = decay_traits<A>::storage_order == order::RowMajor;
-
-    static_assert(decay_traits<A>::storage_order == decay_traits<B>::storage_order, "gemm only for same A/B storage order");
-
-    double alpha = 1.0;
-    double beta  = 0.0;
-
-    auto a_gpu = a.direct();
-    auto b_gpu = b.direct();
-    auto c_gpu = c.direct();
-
-    a_gpu.gpu_allocate_copy_if_necessary();
-    b_gpu.gpu_allocate_copy_if_necessary();
-    c_gpu.gpu_allocate_if_necessary();
-
-    // Do the actual multiplication
-
-    if (row_major) {
-        cublasDgemm(
-            handle.get(),
-            CUBLAS_OP_N, CUBLAS_OP_N,
-            etl::columns(b), etl::rows(a), etl::columns(a),
-            &alpha,
-            b_gpu.gpu_memory(), etl::columns(b),
-            a_gpu.gpu_memory(), etl::columns(a),
-            &beta,
-            c_gpu.gpu_memory(), etl::columns(b));
-    } else {
-        cublasDgemm(
-            handle.get(),
-            CUBLAS_OP_N, CUBLAS_OP_N,
-            etl::rows(c), etl::columns(c), etl::columns(a),
-            &alpha,
-            a_gpu.gpu_memory(), etl::rows(a),
-            b_gpu.gpu_memory(), etl::rows(b),
-            &beta,
-            c_gpu.gpu_memory(), etl::rows(c));
-    }
-}
-
-/*!
- * \brief Compute the matrix mutplication of a and b and store the result in c
- * param a The lhs of the multiplication
- * param b The rhs of the multiplication
- * param c The result
- */
-template <typename A, typename B, typename C, cpp_enable_if(all_complex_single_precision<A, B, C>::value)>
-void gemm(A&& a, B&& b, C&& c) {
-    decltype(auto) handle = start_cublas();
-
-    bool row_major = decay_traits<A>::storage_order == order::RowMajor;
-
-    static_assert(decay_traits<A>::storage_order == decay_traits<B>::storage_order, "gemm only for same A/B storage order");
-
-    auto a_gpu = a.direct();
-    auto b_gpu = b.direct();
-    auto c_gpu = c.direct();
-
-    a_gpu.gpu_allocate_copy_if_necessary();
-    b_gpu.gpu_allocate_copy_if_necessary();
-    c_gpu.gpu_allocate_if_necessary();
-
-    cuComplex alpha = make_cuComplex(1.0, 0.0);
-    cuComplex beta  = make_cuComplex(0.0, 0.0);
-
-    // Do the actual multiplication
-
-    if (row_major) {
-        cublasCgemm(
-            handle.get(),
-            CUBLAS_OP_N, CUBLAS_OP_N,
-            etl::columns(b), etl::rows(a), etl::columns(a),
-            &alpha,
-            reinterpret_cast<cuComplex*>(b_gpu.gpu_memory()), etl::columns(b),
-            reinterpret_cast<cuComplex*>(a_gpu.gpu_memory()), etl::columns(a),
-            &beta,
-            reinterpret_cast<cuComplex*>(c_gpu.gpu_memory()), etl::columns(b));
-    } else {
-        cublasCgemm(
-            handle.get(),
-            CUBLAS_OP_N, CUBLAS_OP_N,
-            etl::rows(c), etl::columns(c), etl::columns(a),
-            &alpha,
-            reinterpret_cast<cuComplex*>(a_gpu.gpu_memory()), etl::rows(a),
-            reinterpret_cast<cuComplex*>(b_gpu.gpu_memory()), etl::rows(b),
-            &beta,
-            reinterpret_cast<cuComplex*>(c_gpu.gpu_memory()), etl::rows(c));
-    }
-}
-
-/*!
- * \brief Compute the matrix mutplication of a and b and store the result in c
- * param a The lhs of the multiplication
- * param b The rhs of the multiplication
- * param c The result
- */
-template <typename A, typename B, typename C, cpp_enable_if(all_complex_double_precision<A, B, C>::value)>
-void gemm(A&& a, B&& b, C&& c) {
-    decltype(auto) handle = start_cublas();
-
-    bool row_major = decay_traits<A>::storage_order == order::RowMajor;
-
-    static_assert(decay_traits<A>::storage_order == decay_traits<B>::storage_order, "gemm only for same A/B storage order");
-
-    auto a_gpu = a.direct();
-    auto b_gpu = b.direct();
-    auto c_gpu = c.direct();
-
-    a_gpu.gpu_allocate_copy_if_necessary();
-    b_gpu.gpu_allocate_copy_if_necessary();
-    c_gpu.gpu_allocate_if_necessary();
-
-    cuDoubleComplex alpha = make_cuDoubleComplex(1.0, 0.0);
-    cuDoubleComplex beta  = make_cuDoubleComplex(0.0, 0.0);
-
-    // Do the actual multiplication
-
-    if (row_major) {
-        cublasZgemm(
-            handle.get(),
-            CUBLAS_OP_N, CUBLAS_OP_N,
-            etl::columns(b), etl::rows(a), etl::columns(a),
-            &alpha,
-            reinterpret_cast<cuDoubleComplex*>(b_gpu.gpu_memory()), etl::columns(b),
-            reinterpret_cast<cuDoubleComplex*>(a_gpu.gpu_memory()), etl::columns(a),
-            &beta,
-            reinterpret_cast<cuDoubleComplex*>(c_gpu.gpu_memory()), etl::columns(b));
-    } else {
-        cublasZgemm(
-            handle.get(),
-            CUBLAS_OP_N, CUBLAS_OP_N,
-            etl::rows(c), etl::columns(c), etl::columns(a),
-            &alpha,
-            reinterpret_cast<cuDoubleComplex*>(a_gpu.gpu_memory()), etl::rows(a),
-            reinterpret_cast<cuDoubleComplex*>(b_gpu.gpu_memory()), etl::rows(b),
-            &beta,
-            reinterpret_cast<cuDoubleComplex*>(c_gpu.gpu_memory()), etl::rows(c));
     }
 }
 
