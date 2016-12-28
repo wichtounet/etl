@@ -8,7 +8,7 @@
 #pragma once
 
 //The implementations
-#include "etl/impl/std/mmul.hpp"
+#include "etl/impl/std/gemm.hpp"
 #include "etl/impl/std/strassen_mmul.hpp"
 #include "etl/impl/blas/gemm.hpp"
 #include "etl/impl/vec/gemm.hpp"
@@ -292,7 +292,17 @@ struct mm_mul_impl {
     //C = A' * B'
     template <typename A, typename B, typename C, cpp_enable_if((is_transpose_expr<A>::value && is_transpose_expr<B>::value))>
     static void apply_raw(A&& a, B&& b, C&& c) {
-        apply(make_temporary(std::forward<A>(a)), make_temporary(std::forward<B>(b)), std::forward<C>(c));
+        gemm_impl impl = select_gemm_impl<A, B, C>(etl::dim<0>(a), etl::dim<1>(a), etl::dim<1>(c));
+
+        if (impl == gemm_impl::STD) {
+            etl::impl::standard::mm_mul(make_temporary(std::forward<A>(a)), make_temporary(std::forward<B>(b)), std::forward<C>(c));
+        } else if (impl == gemm_impl::VEC) {
+            etl::impl::vec::gemm(make_temporary(std::forward<A>(a)), make_temporary(std::forward<B>(b)), std::forward<C>(c));
+        } else if (impl == gemm_impl::BLAS) {
+            etl::impl::blas::gemm_tn(make_temporary(a.a()), make_temporary(std::forward<B>(b)), std::forward<C>(c));
+        } else if (impl == gemm_impl::CUBLAS) {
+            etl::impl::cublas::gemm_tn(make_temporary(a.a()), make_temporary(std::forward<B>(b)), std::forward<C>(c));
+        }
     }
 
     // C = A * B
