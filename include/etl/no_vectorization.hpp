@@ -212,10 +212,10 @@ struct no_vec {
     /*!
      * \brief Perform an horizontal sum of the given vector
      */
-    template <typename T = float, typename M>
-    static T hadd(M value) {
+    template <typename M>
+    static M hadd(M value) {
         cpp_unused(value);
-        return T();
+        return M();
     }
 
     /*!
