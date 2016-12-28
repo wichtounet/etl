@@ -267,7 +267,36 @@ inline gemm_impl select_gevm_impl(const std::size_t n1, const std::size_t n2) {
  * \brief Functor for matrix-matrix multiplication
  */
 struct mm_mul_impl {
-    template <typename A, typename B, typename C>
+    //C = A' * B
+    template <typename A, typename B, typename C, cpp_enable_if((is_transpose_expr<A>::value && !is_transpose_expr<B>::value))>
+    static void apply_raw(A&& a, B&& b, C&& c) {
+        apply(make_temporary(std::forward<A>(a)), make_temporary(std::forward<B>(b)), std::forward<C>(c));
+    }
+
+    //C = A * B'
+    template <typename A, typename B, typename C, cpp_enable_if((!is_transpose_expr<A>::value && is_transpose_expr<B>::value))>
+    static void apply_raw(A&& a, B&& b, C&& c) {
+        gemm_impl impl = select_gemm_impl<A, B, C>(etl::dim<0>(a), etl::dim<1>(a), etl::dim<1>(c));
+
+        if (impl == gemm_impl::STD) {
+            etl::impl::standard::mm_mul(make_temporary(std::forward<A>(a)), make_temporary(std::forward<B>(b)), std::forward<C>(c));
+        } else if (impl == gemm_impl::VEC) {
+            etl::impl::vec::gemm(make_temporary(std::forward<A>(a)), make_temporary(std::forward<B>(b)), std::forward<C>(c));
+        } else if (impl == gemm_impl::BLAS) {
+            etl::impl::blas::gemm_nt(make_temporary(std::forward<A>(a)), make_temporary(b.a()), std::forward<C>(c));
+        } else if (impl == gemm_impl::CUBLAS) {
+            etl::impl::cublas::gemm_nt(make_temporary(std::forward<A>(a)), make_temporary(b.a()), std::forward<C>(c));
+        }
+    }
+
+    //C = A' * B'
+    template <typename A, typename B, typename C, cpp_enable_if((is_transpose_expr<A>::value && is_transpose_expr<B>::value))>
+    static void apply_raw(A&& a, B&& b, C&& c) {
+        apply(make_temporary(std::forward<A>(a)), make_temporary(std::forward<B>(b)), std::forward<C>(c));
+    }
+
+    // C = A * B
+    template <typename A, typename B, typename C, cpp_enable_if((!is_transpose_expr<A>::value && !is_transpose_expr<B>::value))>
     static void apply_raw(A&& a, B&& b, C&& c) {
         apply(make_temporary(std::forward<A>(a)), make_temporary(std::forward<B>(b)), std::forward<C>(c));
     }

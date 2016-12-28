@@ -114,6 +114,32 @@ void gemm(A&& a, B&& b, C&& c) {
 }
 
 /*!
+ * \brief Compute the matrix mutplication of a and b and store the result in c
+ * param a The lhs of the multiplication
+ * param b The rhs of the multiplication
+ * param c The result
+ */
+template <typename A, typename B, typename C>
+void gemm_nt(A&& a, B&& b, C&& c) {
+    using T = value_t<A>;
+
+    static constexpr bool row_major = decay_traits<A>::storage_order == order::RowMajor;
+
+    T alpha(1.0);
+    T beta(0.0);
+
+    cblas_gemm(
+        row_major ? CblasRowMajor : CblasColMajor,
+        CblasNoTrans, CblasTrans,
+        etl::rows(a), etl::rows(b), etl::columns(a),
+        alpha,
+        a.memory_start(), major_stride(a),
+        b.memory_start(), major_stride(b),
+        beta,
+        c.memory_start(), major_stride(c));
+}
+
+/*!
  * \brief Compute the matrix-vector mutplication of a and b and store the result in c
  * param a The lhs of the multiplication
  * param b The rhs of the multiplication

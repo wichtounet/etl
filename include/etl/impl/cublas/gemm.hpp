@@ -118,7 +118,7 @@ void gemm(A&& a, B&& b, C&& c) {
     using T = cublas_type<VT>;
 
     auto alpha = make_default<T>(1.0);
-    auto beta  = make_default<T>(1.0);
+    auto beta  = make_default<T>(0.0);
 
     auto a_gpu = a.direct();
     auto b_gpu = b.direct();
@@ -134,22 +134,75 @@ void gemm(A&& a, B&& b, C&& c) {
         cublas_gemm(
             handle.get(),
             CUBLAS_OP_N, CUBLAS_OP_N,
-            etl::columns(b), etl::rows(a), etl::columns(a),
+            etl::columns(c), etl::rows(c), etl::columns(a),
             &alpha,
-            b_gpu.gpu_memory(), etl::columns(b),
-            a_gpu.gpu_memory(), etl::columns(a),
+            b_gpu.gpu_memory(), etl::major_stride(b),
+            a_gpu.gpu_memory(), etl::major_stride(a),
             &beta,
-            c_gpu.gpu_memory(), etl::columns(b));
+            c_gpu.gpu_memory(), etl::major_stride(c));
     } else {
         cublas_gemm(
             handle.get(),
             CUBLAS_OP_N, CUBLAS_OP_N,
             etl::rows(c), etl::columns(c), etl::columns(a),
             &alpha,
-            a_gpu.gpu_memory(), etl::rows(a),
-            b_gpu.gpu_memory(), etl::rows(b),
+            a_gpu.gpu_memory(), etl::major_stride(a),
+            b_gpu.gpu_memory(), etl::major_stride(b),
             &beta,
-            c_gpu.gpu_memory(), etl::rows(c));
+            c_gpu.gpu_memory(), etl::major_stride(c));
+    }
+}
+
+/*!
+ * \brief Compute the matrix mutplication of a and b and store the result in c
+ * param a The lhs of the multiplication
+ * param b The rhs of the multiplication
+ * param c The result
+ */
+template <typename A, typename B, typename C>
+void gemm_nt(A&& a, B&& b, C&& c) {
+    decltype(auto) handle = start_cublas();
+
+    bool row_major = decay_traits<A>::storage_order == order::RowMajor;
+
+    static_assert(decay_traits<A>::storage_order == decay_traits<B>::storage_order, "gemm only for same A/B storage order");
+
+    using VT = value_t<A>;
+    using T = cublas_type<VT>;
+
+    auto alpha = make_default<T>(1.0);
+    auto beta  = make_default<T>(0.0);
+
+    auto a_gpu = a.direct();
+    auto b_gpu = b.direct();
+    auto c_gpu = c.direct();
+
+    a_gpu.gpu_allocate_copy();
+    b_gpu.gpu_allocate_copy();
+    c_gpu.gpu_allocate();
+
+    // Do the actual multiplication
+
+    if (row_major) {
+        cublas_gemm(
+            handle.get(),
+            CUBLAS_OP_T, CUBLAS_OP_N,
+            etl::columns(c), etl::rows(c), etl::columns(a),
+            &alpha,
+            b_gpu.gpu_memory(), etl::major_stride(b),
+            a_gpu.gpu_memory(), etl::major_stride(a),
+            &beta,
+            c_gpu.gpu_memory(), etl::major_stride(c));
+    } else {
+        cublas_gemm(
+            handle.get(),
+            CUBLAS_OP_N, CUBLAS_OP_T,
+            etl::rows(c), etl::columns(c), etl::columns(a),
+            &alpha,
+            a_gpu.gpu_memory(), etl::major_stride(a),
+            b_gpu.gpu_memory(), etl::major_stride(b),
+            &beta,
+            c_gpu.gpu_memory(), etl::major_stride(c));
     }
 }
 
@@ -581,6 +634,20 @@ void gevm(A&& a, B&& b, C&& c) {
  */
 template <typename A, typename B, typename C>
 void gemm(A&& a, B&& b, C&& c) {
+    cpp_unused(a);
+    cpp_unused(b);
+    cpp_unused(c);
+    cpp_unreachable("Unsupported feature called: cublas gemm");
+}
+
+/*!
+ * \brief Compute the matrix mutplication of a and b and store the result in c
+ * param a The lhs of the multiplication
+ * param b The rhs of the multiplication
+ * param c The result
+ */
+template <typename A, typename B, typename C>
+void gemm_nt(A&& a, B&& b, C&& c) {
     cpp_unused(a);
     cpp_unused(b);
     cpp_unused(c);
