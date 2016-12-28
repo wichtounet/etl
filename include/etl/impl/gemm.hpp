@@ -272,8 +272,6 @@ struct mm_mul_impl {
     static void apply_raw(A&& a, B&& b, C&& c) {
         gemm_impl impl = select_gemm_impl<A, B, C>(etl::dim<0>(a), etl::dim<1>(a), etl::dim<1>(c));
 
-        std::cout << "TT" << std::endl;
-
         if (impl == gemm_impl::STD) {
             etl::impl::standard::mm_mul(make_temporary(std::forward<A>(a)), make_temporary(std::forward<B>(b)), std::forward<C>(c));;
         } else if (impl == gemm_impl::VEC) {
