@@ -12,7 +12,7 @@
 
 // Matrix Matrix multiplication tests
 
-GEMM_TEST_CASE("multiplication/mm_mul_1", "[gemm]") {
+GEMM_TEST_CASE("gemm/1", "[gemm]") {
     etl::fast_matrix<T, 2, 3> a = {1, 2, 3, 4, 5, 6};
     etl::fast_matrix<T, 3, 2> b = {7, 8, 9, 10, 11, 12};
     etl::fast_matrix<T, 2, 2> c;
@@ -25,7 +25,7 @@ GEMM_TEST_CASE("multiplication/mm_mul_1", "[gemm]") {
     REQUIRE_EQUALS(c(1, 1), 154);
 }
 
-GEMM_TEST_CASE("multiplication/mm_mul_2", "[gemm]") {
+GEMM_TEST_CASE("gemm/2", "[gemm]") {
     etl::fast_matrix<T, 3, 3> a = {1, 2, 3, 4, 5, 6, 7, 8, 9};
     etl::fast_matrix<T, 3, 3> b = {7, 8, 9, 9, 10, 11, 11, 12, 13};
     etl::fast_matrix<T, 3, 3> c;
@@ -43,7 +43,7 @@ GEMM_TEST_CASE("multiplication/mm_mul_2", "[gemm]") {
     REQUIRE_EQUALS(c(2, 2), 268);
 }
 
-GEMM_TEST_CASE("multiplication/mm_mul_3", "[gemm]") {
+GEMM_TEST_CASE("gemm/3", "[gemm]") {
     etl::dyn_matrix<T> a(4, 4, etl::values(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16));
     etl::dyn_matrix<T> b(4, 4, etl::values(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16));
     etl::dyn_matrix<T> c(4, 4);
@@ -60,7 +60,7 @@ GEMM_TEST_CASE("multiplication/mm_mul_3", "[gemm]") {
     REQUIRE_EQUALS(c(3, 1), 484);
 }
 
-GEMM_TEST_CASE("multiplication/mm_mul_4", "[gemm]") {
+GEMM_TEST_CASE("gemm/4", "[gemm]") {
     etl::dyn_matrix<T> a(2, 2, etl::values(1, 2, 3, 4));
     etl::dyn_matrix<T> b(2, 2, etl::values(1, 2, 3, 4));
     etl::dyn_matrix<T> c(2, 2);
@@ -73,7 +73,7 @@ GEMM_TEST_CASE("multiplication/mm_mul_4", "[gemm]") {
     REQUIRE_EQUALS(c(1, 1), 22);
 }
 
-GEMM_TEST_CASE("multiplication/mm_mul_5", "[gemm]") {
+GEMM_TEST_CASE("gemm/5", "[gemm]") {
     etl::dyn_matrix<T> a(3, 3, std::initializer_list<T>({1, 2, 3, 4, 5, 6, 7, 8, 9}));
     etl::dyn_matrix<T> b(3, 3, std::initializer_list<T>({7, 8, 9, 9, 10, 11, 11, 12, 13}));
     etl::dyn_matrix<T> c(3, 3);
@@ -91,7 +91,7 @@ GEMM_TEST_CASE("multiplication/mm_mul_5", "[gemm]") {
     REQUIRE_EQUALS(c(2, 2), 268);
 }
 
-GEMM_TEST_CASE("multiplication/mm_mul_6", "[gemm]") {
+GEMM_TEST_CASE("gemm/6", "[gemm]") {
     etl::fast_matrix<T, 19, 19> a(etl::magic(19));
     etl::fast_matrix<T, 19, 19> b(etl::magic(19));
     etl::fast_matrix<T, 19, 19> c;
@@ -105,7 +105,7 @@ GEMM_TEST_CASE("multiplication/mm_mul_6", "[gemm]") {
     REQUIRE_EQUALS(c(18, 18), 828343);
 }
 
-TEMPLATE_TEST_CASE_2("multiplication/mm_mul_7", "[gemm]", Z, double, float) {
+TEMPLATE_TEST_CASE_2("gemm/7", "[gemm]", Z, double, float) {
     etl::fast_matrix<Z, 1, 2, 3> a = {1, 2, 3, 4, 5, 6};
     etl::fast_matrix<Z, 1, 3, 2> b = {7, 8, 9, 10, 11, 12};
     etl::fast_matrix<Z, 1, 2, 2> c;
@@ -118,7 +118,7 @@ TEMPLATE_TEST_CASE_2("multiplication/mm_mul_7", "[gemm]", Z, double, float) {
     REQUIRE_EQUALS(c(0, 1, 1), 154);
 }
 
-GEMM_TEST_CASE_PRE("multiplication/mm_mul_8", "[gemm]") {
+GEMM_TEST_CASE_PRE("gemm/8", "[gemm]") {
     etl::fast_matrix<T, 128, 128> a;
     etl::fast_matrix<T, 128, 128> b;
 
@@ -147,7 +147,7 @@ GEMM_TEST_CASE_PRE("multiplication/mm_mul_8", "[gemm]") {
 
 // Matrix-Vector Multiplication
 
-GEMV_TEST_CASE("multiplication/gemv/0", "[gemv]") {
+GEMV_TEST_CASE("gemv/0", "[gemv]") {
     etl::fast_matrix<T, 2, 3> a = {1, 2, 3, 4, 5, 6};
     etl::fast_vector<T, 3> b    = {7, 8, 9};
     etl::fast_matrix<T, 2> c;
@@ -158,7 +158,7 @@ GEMV_TEST_CASE("multiplication/gemv/0", "[gemv]") {
     REQUIRE_EQUALS(c(1), 122);
 }
 
-GEMV_TEST_CASE("multiplication/gemv/1", "[gemv]") {
+GEMV_TEST_CASE("gemv/1", "[gemv]") {
     etl::fast_matrix<T, 2, 5> a = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
     etl::fast_vector<T, 5> b    = {7, 8, 9, 10, 11};
     etl::fast_matrix<T, 2> c;
@@ -169,7 +169,7 @@ GEMV_TEST_CASE("multiplication/gemv/1", "[gemv]") {
     REQUIRE_EQUALS(c(1), 370);
 }
 
-GEMV_TEST_CASE("multiplication/gemv/2", "[gemv]") {
+GEMV_TEST_CASE("gemv/2", "[gemv]") {
     etl::dyn_matrix<T> a(2, 3, etl::values(1, 2, 3, 4, 5, 6));
     etl::dyn_vector<T> b(3, etl::values(7, 8, 9));
     etl::dyn_vector<T> c(2);
@@ -180,7 +180,7 @@ GEMV_TEST_CASE("multiplication/gemv/2", "[gemv]") {
     REQUIRE_EQUALS(c(1), 122);
 }
 
-GEMV_TEST_CASE("multiplication/gemv/3", "[gemv]") {
+GEMV_TEST_CASE("gemv/3", "[gemv]") {
     etl::dyn_matrix<T> a(2, 5, etl::values(1, 2, 3, 4, 5, 6, 7, 8, 9, 10));
     etl::dyn_vector<T> b(5, etl::values(7, 8, 9, 10, 11));
     etl::dyn_vector<T> c(2);
@@ -191,7 +191,7 @@ GEMV_TEST_CASE("multiplication/gemv/3", "[gemv]") {
     REQUIRE_EQUALS(c(1), 370);
 }
 
-GEMV_TEST_CASE("multiplication/gemv/4", "[gemv]") {
+GEMV_TEST_CASE("gemv/4", "[gemv]") {
     etl::dyn_matrix<T> a(512, 512);
     etl::dyn_vector<T> b(512);
 
@@ -216,7 +216,7 @@ GEMV_TEST_CASE("multiplication/gemv/4", "[gemv]") {
     }
 }
 
-GEMV_TEST_CASE("multiplication/gemv/5", "[gemv]") {
+GEMV_TEST_CASE("gemv/5", "[gemv]") {
     etl::dyn_matrix<T> a(512, 368);
     etl::dyn_vector<T> b(368);
 
@@ -241,7 +241,7 @@ GEMV_TEST_CASE("multiplication/gemv/5", "[gemv]") {
     }
 }
 
-GEMV_TEST_CASE("multiplication/gemv/6", "[gemv]") {
+GEMV_TEST_CASE("gemv/6", "[gemv]") {
     etl::dyn_matrix<T> a(368, 512);
     etl::dyn_vector<T> b(512);
 
@@ -268,7 +268,7 @@ GEMV_TEST_CASE("multiplication/gemv/6", "[gemv]") {
 
 // Vector-Matrix Multiplication
 
-GEVM_TEST_CASE("multiplication/gevm/0", "[gevm]") {
+GEVM_TEST_CASE("gevm/0", "[gevm]") {
     etl::fast_matrix<T, 3, 2> a = {1, 2, 3, 4, 5, 6};
     etl::fast_vector<T, 3> b    = {7, 8, 9};
     etl::fast_matrix<T, 2> c;
@@ -279,7 +279,7 @@ GEVM_TEST_CASE("multiplication/gevm/0", "[gevm]") {
     REQUIRE_EQUALS(c(1), 100);
 }
 
-GEVM_TEST_CASE("multiplication/gevm/1", "[gevm]") {
+GEVM_TEST_CASE("gevm/1", "[gevm]") {
     etl::dyn_matrix<T> a(3, 2, etl::values(1, 2, 3, 4, 5, 6));
     etl::dyn_vector<T> b(3, etl::values(7, 8, 9));
     etl::dyn_vector<T> c(2);
@@ -290,7 +290,7 @@ GEVM_TEST_CASE("multiplication/gevm/1", "[gevm]") {
     REQUIRE_EQUALS(c(1), 100);
 }
 
-GEVM_TEST_CASE("multiplication/gevm/2", "[gevm]") {
+GEVM_TEST_CASE("gevm/2", "[gevm]") {
     etl::dyn_matrix<T> a(512, 512);
     etl::dyn_vector<T> b(512);
 
@@ -315,7 +315,7 @@ GEVM_TEST_CASE("multiplication/gevm/2", "[gevm]") {
     }
 }
 
-GEVM_TEST_CASE("multiplication/gevm/3", "[gevm]") {
+GEVM_TEST_CASE("gevm/3", "[gevm]") {
     etl::dyn_matrix<T> a(512, 368);
     etl::dyn_vector<T> b(512);
 
@@ -340,7 +340,7 @@ GEVM_TEST_CASE("multiplication/gevm/3", "[gevm]") {
     }
 }
 
-GEVM_TEST_CASE("multiplication/gevm/4", "[gevm]") {
+GEVM_TEST_CASE("gevm/4", "[gevm]") {
     etl::dyn_matrix<T> a(368, 512);
     etl::dyn_vector<T> b(368);
 
@@ -487,64 +487,6 @@ TEMPLATE_TEST_CASE_2("multiplication/expression_3", "expression", Z, double, flo
     REQUIRE_EQUALS(c(1, 1), 2 * 154);
 }
 
-// outer product
-
-TEMPLATE_TEST_CASE_2("fast_vector/outer_1", "sum", Z, float, double) {
-    etl::fast_vector<Z, 3> a = {1.0, 2.0, 3.0};
-    etl::fast_vector<Z, 3> b = {4.0, 5.0, 6.0};
-    etl::fast_matrix<Z, 3, 3> c;
-
-    c = outer(a, b);
-
-    REQUIRE_EQUALS(c(0, 0), 4.0);
-    REQUIRE_EQUALS(c(0, 1), 5.0);
-    REQUIRE_EQUALS(c(0, 2), 6.0);
-
-    REQUIRE_EQUALS(c(1, 0), 8.0);
-    REQUIRE_EQUALS(c(1, 1), 10.0);
-    REQUIRE_EQUALS(c(1, 2), 12.0);
-
-    REQUIRE_EQUALS(c(2, 0), 12.0);
-    REQUIRE_EQUALS(c(2, 1), 15.0);
-    REQUIRE_EQUALS(c(2, 2), 18.0);
-}
-
-TEMPLATE_TEST_CASE_2("fast_vector/outer_2", "sum", Z, float, double) {
-    etl::fast_vector<Z, 2> a = {1.0, 2.0};
-    etl::fast_vector<Z, 4> b = {2.0, 3.0, 4.0, 5.0};
-    etl::fast_matrix<Z, 2, 4> c;
-
-    c = outer(a, b);
-
-    REQUIRE_EQUALS(c(0, 0), 2);
-    REQUIRE_EQUALS(c(0, 1), 3);
-    REQUIRE_EQUALS(c(0, 2), 4);
-    REQUIRE_EQUALS(c(0, 3), 5);
-
-    REQUIRE_EQUALS(c(1, 0), 4);
-    REQUIRE_EQUALS(c(1, 1), 6);
-    REQUIRE_EQUALS(c(1, 2), 8);
-    REQUIRE_EQUALS(c(1, 3), 10);
-}
-
-TEMPLATE_TEST_CASE_2("fast_vector/outer_3", "sum", Z, float, double) {
-    etl::fast_vector<Z, 2> a = {1.0, 2.0};
-    etl::dyn_vector<Z> b(4, etl::values(2.0, 3.0, 4.0, 5.0));
-    etl::fast_matrix<Z, 2, 4> c;
-
-    c = outer(a, b);
-
-    REQUIRE_EQUALS(c(0, 0), 2);
-    REQUIRE_EQUALS(c(0, 1), 3);
-    REQUIRE_EQUALS(c(0, 2), 4);
-    REQUIRE_EQUALS(c(0, 3), 5);
-
-    REQUIRE_EQUALS(c(1, 0), 4);
-    REQUIRE_EQUALS(c(1, 1), 6);
-    REQUIRE_EQUALS(c(1, 2), 8);
-    REQUIRE_EQUALS(c(1, 3), 10);
-}
-
 TEMPLATE_TEST_CASE_2("lvalue/mmul1", "[gemm]", Z, float, double) {
     etl::fast_matrix<Z, 2, 2, 3> a = {1, 2, 3, 4, 5, 6, 1, 2, 3, 4, 5, 6};
     etl::fast_matrix<Z, 2, 3, 2> b = {7, 8, 9, 10, 11, 12, 7, 8, 9, 10, 11, 12};
@@ -587,89 +529,6 @@ TEMPLATE_TEST_CASE_2("lvalue/mmul2", "[gemm]", Z, float, double) {
     REQUIRE_EQUALS(c(1, 0, 1), 64);
     REQUIRE_EQUALS(c(1, 1, 0), 139);
     REQUIRE_EQUALS(c(1, 1, 1), 154);
-}
-
-// batch outer product
-
-TEMPLATE_TEST_CASE_2("batch_outer/1", "[outer]", Z, float, double) {
-    etl::fast_matrix<Z, 2, 3> a = {1.0, 2.0, 3.0, 4.0, 5.0, 6.0};
-    etl::fast_matrix<Z, 2, 3> b = {4.0, 5.0, 6.0, 7.0, 8.0, 9.0};
-
-    etl::fast_matrix<Z, 3, 3> c;
-    etl::fast_matrix<Z, 3, 3> c_ref;
-
-    c = batch_outer(a, b);
-
-    c_ref = 0;
-
-    for (std::size_t bb = 0; bb < 2; ++bb) {
-        for (std::size_t i = 0; i < 3; ++i) {
-            for (std::size_t j = 0; j < 3; ++j) {
-
-                c_ref(i, j) += a(bb, i) * b(bb, j);
-            }
-        }
-    }
-
-    for(size_t i = 0; i < c_ref.size(); ++i){
-        REQUIRE_EQUALS_APPROX(c[i], c_ref[i]);
-    }
-}
-
-TEMPLATE_TEST_CASE_2("batch_outer/2", "[outer]", Z, float, double) {
-    etl::dyn_matrix<Z, 2> a(32, 31);
-    etl::dyn_matrix<Z, 2> b(32, 23);
-
-    a = Z(0.01) * etl::sequence_generator<Z>(1.0);
-    b = Z(-0.032) * etl::sequence_generator<Z>(1.0);
-
-    etl::dyn_matrix<Z, 2> c(31, 23);
-    etl::dyn_matrix<Z, 2> c_ref(31, 23);
-
-    c = batch_outer(a, b);
-
-    c_ref = 0;
-
-    for (std::size_t bb = 0; bb < 32; ++bb) {
-        for (std::size_t i = 0; i < 31; ++i) {
-            for (std::size_t j = 0; j < 23; ++j) {
-
-                c_ref(i, j) += a(bb, i) * b(bb, j);
-            }
-        }
-    }
-
-    for(size_t i = 0; i < c_ref.size(); ++i){
-        REQUIRE_EQUALS_APPROX(c[i], c_ref[i]);
-    }
-}
-
-TEMPLATE_TEST_CASE_2("batch_outer/3", "[outer]", Z, float, double) {
-    etl::dyn_matrix<Z, 2> a(32, 24);
-    etl::dyn_matrix<Z, 2> b(32, 33);
-
-    a = Z(0.01) * etl::sequence_generator<Z>(1.0);
-    b = Z(-0.032) * etl::sequence_generator<Z>(1.0);
-
-    etl::dyn_matrix<Z, 2> c(24, 33);
-    etl::dyn_matrix<Z, 2> c_ref(24, 33);
-
-    c = batch_outer(a, b);
-
-    c_ref = 0;
-
-    for (std::size_t bb = 0; bb < 32; ++bb) {
-        for (std::size_t i = 0; i < 24; ++i) {
-            for (std::size_t j = 0; j < 33; ++j) {
-
-                c_ref(i, j) += a(bb, i) * b(bb, j);
-            }
-        }
-    }
-
-    for(size_t i = 0; i < c_ref.size(); ++i){
-        REQUIRE_EQUALS_APPROX(c[i], c_ref[i]);
-    }
 }
 
 #ifdef ETL_CUDA
