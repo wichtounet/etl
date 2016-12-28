@@ -7,7 +7,7 @@
 
 #pragma once
 
-#include "etl/impl/mmul.hpp"
+#include "etl/impl/gemm.hpp"
 
 namespace etl {
 
