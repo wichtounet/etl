@@ -886,6 +886,19 @@ std::size_t col_stride(E&& expr) {
 }
 
 /*!
+ * \brief Returns the minor stride of the given ETL matrix expression
+ * \param expr The ETL expression.
+ * \return the minor stride of the given ETL matrix expression
+ */
+template <typename E>
+std::size_t minor_stride(E&& expr) {
+    static_assert(decay_traits<E>::dimensions() == 2, "minor_stride() only makes sense on 2D matrices");
+    return decay_traits<E>::storage_order == order::RowMajor
+               ? etl::dim<0>(expr)
+               : etl::dim<1>(expr);
+}
+
+/*!
  * \brief Returns the major stride of the given ETL matrix expression
  * \param expr The ETL expression.
  * \return the major stride of the given ETL matrix expression
