@@ -124,9 +124,9 @@ void gemm(A&& a, B&& b, C&& c) {
     auto b_gpu = b.direct();
     auto c_gpu = c.direct();
 
-    a_gpu.gpu_allocate_copy();
-    b_gpu.gpu_allocate_copy();
-    c_gpu.gpu_allocate_if_necessary();
+    a_gpu.ensure_gpu_up_to_date();
+    b_gpu.ensure_gpu_up_to_date();
+    c_gpu.ensures_gpu_allocated();
 
     // Do the actual multiplication
 
@@ -177,9 +177,9 @@ void gemm_nt(A&& a, B&& b, C&& c) {
     auto b_gpu = b.direct();
     auto c_gpu = c.direct();
 
-    a_gpu.gpu_allocate_copy();
-    b_gpu.gpu_allocate_copy();
-    c_gpu.gpu_allocate_if_necessary();
+    a_gpu.ensure_gpu_up_to_date();
+    b_gpu.ensure_gpu_up_to_date();
+    c_gpu.ensures_gpu_allocated();
 
     // Do the actual multiplication
 
@@ -230,9 +230,9 @@ void gemm_tn(A&& a, B&& b, C&& c) {
     auto b_gpu = b.direct();
     auto c_gpu = c.direct();
 
-    a_gpu.gpu_allocate_copy();
-    b_gpu.gpu_allocate_copy();
-    c_gpu.gpu_allocate_if_necessary();
+    a_gpu.ensure_gpu_up_to_date();
+    b_gpu.ensure_gpu_up_to_date();
+    c_gpu.ensures_gpu_allocated();
 
     // Do the actual multiplication
 
@@ -283,9 +283,9 @@ void gemm_tt(A&& a, B&& b, C&& c) {
     auto b_gpu = b.direct();
     auto c_gpu = c.direct();
 
-    a_gpu.gpu_allocate_copy();
-    b_gpu.gpu_allocate_copy();
-    c_gpu.gpu_allocate_if_necessary();
+    a_gpu.ensure_gpu_up_to_date();
+    b_gpu.ensure_gpu_up_to_date();
+    c_gpu.ensures_gpu_allocated();
 
     // Do the actual multiplication
 
@@ -328,9 +328,9 @@ void gemv(A&& a, B&& b, C&& c) {
     auto b_gpu = b.direct();
     auto c_gpu = c.direct();
 
-    a_gpu.gpu_allocate_copy_if_necessary();
-    b_gpu.gpu_allocate_copy_if_necessary();
-    c_gpu.gpu_allocate_if_necessary();
+    a_gpu.ensure_gpu_up_to_date();
+    b_gpu.ensure_gpu_up_to_date();
+    c_gpu.ensures_gpu_allocated();
 
     float alpha = 1.0;
     float beta  = 0.0;
@@ -361,7 +361,7 @@ void gemv(A&& a, B&& b, C&& c) {
 
     //Copy the result from GPU to CPU
 
-    c_gpu.gpu_copy_from();
+    c_gpu.invalidate_cpu();
 }
 
 /*!
@@ -380,9 +380,9 @@ void gemv(A&& a, B&& b, C&& c) {
     auto b_gpu = b.direct();
     auto c_gpu = c.direct();
 
-    a_gpu.gpu_allocate_copy_if_necessary();
-    b_gpu.gpu_allocate_copy_if_necessary();
-    c_gpu.gpu_allocate_if_necessary();
+    a_gpu.ensure_gpu_up_to_date();
+    b_gpu.ensure_gpu_up_to_date();
+    c_gpu.ensures_gpu_allocated();
 
     double alpha = 1.0;
     double beta  = 0.0;
@@ -413,7 +413,7 @@ void gemv(A&& a, B&& b, C&& c) {
 
     //Copy the result from GPU to CPU
 
-    c_gpu.gpu_copy_from();
+    c_gpu.invalidate_cpu();
 }
 
 /*!
@@ -432,9 +432,9 @@ void gemv(A&& a, B&& b, C&& c) {
     auto b_gpu = b.direct();
     auto c_gpu = c.direct();
 
-    a_gpu.gpu_allocate_copy_if_necessary();
-    b_gpu.gpu_allocate_copy_if_necessary();
-    c_gpu.gpu_allocate_if_necessary();
+    a_gpu.ensure_gpu_up_to_date();
+    b_gpu.ensure_gpu_up_to_date();
+    c_gpu.ensures_gpu_allocated();
 
     cuComplex alpha = make_cuComplex(1.0, 0.0);
     cuComplex beta  = make_cuComplex(0.0, 0.0);
@@ -465,7 +465,7 @@ void gemv(A&& a, B&& b, C&& c) {
 
     //Copy the result from GPU to CPU
 
-    c_gpu.gpu_copy_from();
+    c_gpu.invalidate_cpu();
 }
 
 /*!
@@ -484,9 +484,9 @@ void gemv(A&& a, B&& b, C&& c) {
     auto b_gpu = b.direct();
     auto c_gpu = c.direct();
 
-    a_gpu.gpu_allocate_copy_if_necessary();
-    b_gpu.gpu_allocate_copy_if_necessary();
-    c_gpu.gpu_allocate_if_necessary();
+    a_gpu.ensure_gpu_up_to_date();
+    b_gpu.ensure_gpu_up_to_date();
+    c_gpu.ensures_gpu_allocated();
 
     cuDoubleComplex alpha = make_cuDoubleComplex(1.0, 0.0);
     cuDoubleComplex beta  = make_cuDoubleComplex(0.0, 0.0);
@@ -517,7 +517,7 @@ void gemv(A&& a, B&& b, C&& c) {
 
     //Copy the result from GPU to CPU
 
-    c_gpu.gpu_copy_from();
+    c_gpu.invalidate_cpu();
 }
 
 /*!
@@ -536,9 +536,9 @@ void gevm(A&& a, B&& b, C&& c) {
     auto b_gpu = b.direct();
     auto c_gpu = c.direct();
 
-    a_gpu.gpu_allocate_copy_if_necessary();
-    b_gpu.gpu_allocate_copy_if_necessary();
-    c_gpu.gpu_allocate_if_necessary();
+    a_gpu.ensure_gpu_up_to_date();
+    b_gpu.ensure_gpu_up_to_date();
+    c_gpu.ensures_gpu_allocated();
 
     float alpha = 1.0;
     float beta  = 0.0;
@@ -569,7 +569,7 @@ void gevm(A&& a, B&& b, C&& c) {
 
     //Copy the result from GPU to CPU
 
-    c_gpu.gpu_copy_from();
+    c_gpu.invalidate_cpu();
 }
 
 /*!
@@ -588,9 +588,9 @@ void gevm(A&& a, B&& b, C&& c) {
     auto b_gpu = b.direct();
     auto c_gpu = c.direct();
 
-    a_gpu.gpu_allocate_copy_if_necessary();
-    b_gpu.gpu_allocate_copy_if_necessary();
-    c_gpu.gpu_allocate_if_necessary();
+    a_gpu.ensure_gpu_up_to_date();
+    b_gpu.ensure_gpu_up_to_date();
+    c_gpu.ensures_gpu_allocated();
 
     double alpha = 1.0;
     double beta  = 0.0;
@@ -621,7 +621,7 @@ void gevm(A&& a, B&& b, C&& c) {
 
     //Copy the result from GPU to CPU
 
-    c_gpu.gpu_copy_from();
+    c_gpu.invalidate_cpu();
 }
 
 /*!
@@ -640,9 +640,9 @@ void gevm(A&& a, B&& b, C&& c) {
     auto b_gpu = b.direct();
     auto c_gpu = c.direct();
 
-    a_gpu.gpu_allocate_copy_if_necessary();
-    b_gpu.gpu_allocate_copy_if_necessary();
-    c_gpu.gpu_allocate_if_necessary();
+    a_gpu.ensure_gpu_up_to_date();
+    b_gpu.ensure_gpu_up_to_date();
+    c_gpu.ensures_gpu_allocated();
 
     cuComplex alpha = make_cuComplex(1.0, 0.0);
     cuComplex beta  = make_cuComplex(0.0, 0.0);
@@ -673,7 +673,7 @@ void gevm(A&& a, B&& b, C&& c) {
 
     //Copy the result from GPU to CPU
 
-    c_gpu.gpu_copy_from();
+    c_gpu.invalidate_cpu();
 }
 
 /*!
@@ -692,9 +692,9 @@ void gevm(A&& a, B&& b, C&& c) {
     auto b_gpu = b.direct();
     auto c_gpu = c.direct();
 
-    a_gpu.gpu_allocate_copy_if_necessary();
-    b_gpu.gpu_allocate_copy_if_necessary();
-    c_gpu.gpu_allocate_if_necessary();
+    a_gpu.ensure_gpu_up_to_date();
+    b_gpu.ensure_gpu_up_to_date();
+    c_gpu.ensures_gpu_allocated();
 
     cuDoubleComplex alpha = make_cuDoubleComplex(1.0, 0.0);
     cuDoubleComplex beta  = make_cuDoubleComplex(0.0, 0.0);
@@ -725,7 +725,7 @@ void gevm(A&& a, B&& b, C&& c) {
 
     //Copy the result from GPU to CPU
 
-    c_gpu.gpu_copy_from();
+    c_gpu.invalidate_cpu();
 }
 
 #else

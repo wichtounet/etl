@@ -375,7 +375,7 @@ struct temporary_expr_un : temporary_expr<D, T, R> {
         this->evaluate();
 
         if (old_need_value) {
-            this->direct().gpu_copy_from_if_necessary();
+            this->direct().ensure_cpu_up_to_date();
         }
 
         visitor.need_value = old_need_value;
@@ -519,7 +519,7 @@ struct temporary_expr_bin : temporary_expr<D, T, R> {
         this->evaluate();
 
         if (old_need_value) {
-            this->direct().gpu_copy_from_if_necessary();
+            this->direct().ensure_cpu_up_to_date();
         }
 
         visitor.need_value = old_need_value;

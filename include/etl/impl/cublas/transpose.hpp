@@ -134,7 +134,7 @@ void inplace_square_transpose(C&& c) {
     auto a_gpu = cuda::cuda_allocate_only<T>(etl::size(c));
 
     auto c_gpu = c.direct();
-    c_gpu.gpu_allocate_copy_if_necessary();
+    c_gpu.ensure_gpu_up_to_date();
 
     cuda_check(cudaMemcpy(a_gpu.get(), c_gpu.gpu_memory(), etl::size(c) * sizeof(T), cudaMemcpyDeviceToDevice));
 
@@ -171,8 +171,8 @@ void transpose(A&& a, C&& c) {
     auto a_gpu = a.direct();
     auto c_gpu = c.direct();
 
-    a_gpu.gpu_allocate_copy_if_necessary();
-    c_gpu.gpu_allocate_if_necessary();
+    a_gpu.ensure_gpu_up_to_date();
+    c_gpu.ensures_gpu_allocated();
 
     if(row_major){
         cublas_geam(handle.get(), CUBLAS_OP_T, CUBLAS_OP_T, etl::dim<0>(a), etl::dim<1>(a), &alpha, a_gpu.gpu_memory(), etl::dim<1>(a), &beta, a_gpu.gpu_memory(), etl::dim<1>(a), c_gpu.gpu_memory(), etl::dim<1>(c));

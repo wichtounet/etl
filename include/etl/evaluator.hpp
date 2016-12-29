@@ -75,13 +75,10 @@ namespace standard_evaluator {
      */
     template <typename E, typename R>
     void post_assign(E&& expr, R&& result) {
-        //TODO This is probably a bit overcomplicated
-#ifdef ETL_CUDA
         //If necessary copy the GPU result back to CPU
         cpp::static_if<all_dma<R>::value && !etl::is_sparse_matrix<R>::value>([&](auto f){
-            f(result).direct().gpu_copy_from_if_necessary();
+            f(result).direct().ensure_cpu_up_to_date();
         });
-#endif
 
         expr.visit(detail::gpu_clean_visitor{});
         result.visit(detail::gpu_clean_visitor{});
@@ -95,11 +92,10 @@ namespace standard_evaluator {
      */
     template <typename E>
     void post_assign_compound(E&& expr) {
-        //TODO This is probably a bit overcomplicated
 #ifdef ETL_CUDA
         //If necessary copy the GPU result back to CPU
         cpp::static_if<all_dma<E>::value && !etl::is_sparse_matrix<E>::value>([&](auto f){
-            f(expr).direct().gpu_copy_from_if_necessary();
+            f(expr).direct().ensure_cpu_up_to_date();
         });
 #endif
 

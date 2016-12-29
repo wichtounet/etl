@@ -49,9 +49,9 @@ void batch_outer(const A& a, const B& b, C&& c) {
     auto b_gpu = b.direct();
     auto c_gpu = c.direct();
 
-    a_gpu.gpu_allocate_copy_if_necessary();
-    b_gpu.gpu_allocate_copy_if_necessary();
-    c_gpu.gpu_allocate_if_necessary();
+    a_gpu.ensure_gpu_up_to_date();
+    b_gpu.ensure_gpu_up_to_date();
+    c_gpu.ensures_gpu_allocated();
 
     cublasSgemm(
         handle.get(),
@@ -78,9 +78,9 @@ void batch_outer(const A& a, const B& b, C&& c) {
     auto b_gpu = b.direct();
     auto c_gpu = c.direct();
 
-    a_gpu.gpu_allocate_copy_if_necessary();
-    b_gpu.gpu_allocate_copy_if_necessary();
-    c_gpu.gpu_allocate_if_necessary();
+    a_gpu.ensure_gpu_up_to_date();
+    b_gpu.ensure_gpu_up_to_date();
+    c_gpu.ensures_gpu_allocated();
 
     cublasDgemm(
         handle.get(),

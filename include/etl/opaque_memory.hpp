@@ -41,6 +41,11 @@ private:
     gpu_handler<T>& _gpu_memory_handler;   ///< The GPU memory handler
     const order storage_order;             ///< The storage order
 
+#ifdef ETL_CUDA
+    mutable bool cpu_up_to_date = true;
+    mutable bool gpu_up_to_date = false;
+#endif
+
 public:
     /*!
      * \brief Create a new opaque memory
@@ -109,6 +114,59 @@ public:
     }
 
 #ifdef ETL_CUDA
+private:
+    /*!
+     * \brief Allocate memory on the GPU for the expression
+     */
+    void gpu_allocate_impl() const {
+        cpp_assert(!is_gpu_allocated(), "Trying to allocate already allocated GPU memory");
+
+        _gpu_memory_handler = impl::cuda::cuda_allocate_only<T>(etl_size);
+    }
+
+    /*!
+     * \brief Copy back from the CPU to the GPU
+     */
+    void cpu_to_gpu() const {
+        cpp_assert(is_gpu_allocated(), "Cannot copy to unallocated GPU memory");
+        cpp_assert(!gpu_up_to_date, "Copy must only be done if necessary");
+        cpp_assert(cpu_up_to_date, "Copy from invalid memory!");
+
+        auto* gpu_ptr = gpu_memory();
+        auto* cpu_ptr = memory;
+
+        cuda_check(cudaMemcpy(
+            const_cast<std::remove_const_t<value_type>*>(gpu_ptr),
+            const_cast<std::remove_const_t<value_type>*>(cpu_ptr),
+            etl_size * sizeof(T), cudaMemcpyHostToDevice));
+
+        gpu_up_to_date = true;
+    }
+
+    /*!
+     * \brief Copy back from the GPU to the expression memory.
+     */
+    void gpu_to_cpu() const {
+        cpp_assert(is_gpu_allocated(), "Cannot copy from unallocated GPU memory()");
+        cpp_assert(gpu_up_to_date, "Cannot copy from invalid memory");
+        cpp_assert(!cpu_up_to_date, "Copy done without reason");
+
+        auto* gpu_ptr = gpu_memory();
+        auto* cpu_ptr = memory;
+
+        cpp_assert(!std::is_const<std::remove_pointer_t<decltype(gpu_ptr)>>::value, "copy_from should not be used on const memory");
+        cpp_assert(!std::is_const<value_type>::value, "copy_from should not be used on const memory");
+
+        cuda_check(cudaMemcpy(
+            const_cast<std::remove_const_t<value_type>*>(cpu_ptr),
+            const_cast<std::remove_const_t<value_type>*>(gpu_ptr),
+            etl_size * sizeof(T), cudaMemcpyDeviceToHost));
+
+        cpu_up_to_date = true;
+    }
+
+public:
+
     /*!
      * \brief Indicates if the expression is allocated in GPU.
      * \return true if the expression is allocated in GPU, false otherwise
@@ -132,24 +190,28 @@ public:
         if (is_gpu_allocated()) {
             _gpu_memory_handler.reset();
         }
+
+        invalidate_gpu();
     }
 
-private:
     /*!
-     * \brief Allocate memory on the GPU for the expression
+     * \brief Invalidates the CPU memory
      */
-    void gpu_allocate_impl() const {
-        cpp_assert(!is_gpu_allocated(), "Trying to allocate already allocated GPU memory");
-
-        _gpu_memory_handler = impl::cuda::cuda_allocate_only<T>(etl_size);
+    void invalidate_cpu() const noexcept {
+        cpu_up_to_date = false;
     }
 
-public:
+    /*!
+     * \brief Invalidates the GPU memory
+     */
+    void invalidate_gpu() const noexcept {
+        gpu_up_to_date = false;
+    }
 
     /*!
-     * \brief Allocate memory on the GPU for the expression, only if not already allocated
+     * \brief Ensures that the GPU memory is allocated.
      */
-    void gpu_allocate_if_necessary() const {
+    void ensures_gpu_allocated() const {
         if (!is_gpu_allocated()) {
             gpu_allocate_impl();
         }
@@ -158,20 +220,21 @@ public:
     /*!
      * \brief Allocate memory on the GPU for the expression and copy the values into the GPU.
      */
-    void gpu_allocate_copy() const {
-        if(!is_gpu_allocated()){
-            gpu_allocate_impl();
-        }
+    void ensure_gpu_up_to_date() const {
+        ensures_gpu_allocated();
 
-        gpu_copy_to();
+        if(!gpu_up_to_date){
+            cpu_to_gpu();
+        }
     }
 
     /*!
-     * \brief Allocate memory on the GPU for the expression and copy the values into the GPU, only if not already allocated.
+     * \brief Copy back from the GPU to the expression memory if
+     * necessary.
      */
-    void gpu_allocate_copy_if_necessary() const {
-        if (!is_gpu_allocated()) {
-            gpu_allocate_copy();
+    void ensure_cpu_up_to_date() const {
+        if(!cpu_up_to_date){
+            gpu_to_cpu();
         }
     }
 
@@ -189,49 +252,6 @@ public:
      */
     impl::cuda::cuda_memory<T>&& gpu_release() const {
         return std::move(_gpu_memory_handler);
-    }
-
-    /*!
-     * \brief Copy back from the GPU to the expression memory if
-     * necessary.
-     */
-    void gpu_copy_from_if_necessary() const {
-        if (is_gpu_allocated()) {
-            gpu_copy_from();
-        }
-    }
-
-    /*!
-     * \brief Copy back from the GPU to the expression memory.
-     */
-    void gpu_copy_from() const {
-        cpp_assert(is_gpu_allocated(), "Cannot copy from unallocated GPU memory()");
-
-        auto* gpu_ptr = gpu_memory();
-        auto* cpu_ptr = memory;
-
-        cpp_assert(!std::is_const<std::remove_pointer_t<decltype(gpu_ptr)>>::value, "copy_from should not be used on const memory");
-        cpp_assert(!std::is_const<value_type>::value, "copy_from should not be used on const memory");
-
-        cuda_check(cudaMemcpy(
-            const_cast<std::remove_const_t<value_type>*>(cpu_ptr),
-            const_cast<std::remove_const_t<value_type>*>(gpu_ptr),
-            etl_size * sizeof(T), cudaMemcpyDeviceToHost));
-    }
-
-    /*!
-     * \brief Copy back from the CPU to the GPU
-     */
-    void gpu_copy_to() const {
-        cpp_assert(is_gpu_allocated(), "Cannot copy to unallocated GPU memory()");
-
-        auto* gpu_ptr = gpu_memory();
-        auto* cpu_ptr = memory;
-
-        cuda_check(cudaMemcpy(
-            const_cast<std::remove_const_t<value_type>*>(gpu_ptr),
-            const_cast<std::remove_const_t<value_type>*>(cpu_ptr),
-            etl_size * sizeof(T), cudaMemcpyHostToDevice));
     }
 #else
     /*!
@@ -256,24 +276,23 @@ public:
     }
 
     /*!
-     * \brief Allocate memory on the GPU for the expression
-     */
-    void gpu_allocate() const {}
-
-    /*!
      * \brief Allocate memory on the GPU for the expression, only if not already allocated
      */
-    void gpu_allocate_if_necessary() const {}
+    void ensure_gpu_allocated() const {}
 
     /*!
-     * \brief Allocate memory on the GPU for the expression and copy the values into the GPU.
+     * \brief Copy back from the GPU to the expression memory if
+     * necessary.
      */
-    void gpu_allocate_copy() const {}
+    void ensure_gpu_up_to_date() const {}
 
     /*!
-     * \brief Allocate memory on the GPU for the expression and copy the values into the GPU, only if not already allocated.
+     * \brief Copy back from the GPU to the expression memory.
      */
-    void gpu_allocate_copy_if_necessary() const {}
+    void ensure_cpu_up_to_date() const {}
+
+    void invalidate_gpu() const {}
+    void invalidate_cpu() const {}
 
     /*!
      * \brief Reallocate the GPU memory.
@@ -288,17 +307,6 @@ public:
      * \return A rvalue reference to the gpu_memory_handler.
      */
     impl::cuda::cuda_memory<T>&& gpu_release() const {}
-
-    /*!
-     * \brief Copy back from the GPU to the expression memory if
-     * necessary.
-     */
-    void gpu_copy_from_if_necessary() const {}
-
-    /*!
-     * \brief Copy back from the GPU to the expression memory.
-     */
-    void gpu_copy_from() const {}
 #endif
 };
 

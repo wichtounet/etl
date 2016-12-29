@@ -231,24 +231,25 @@ void conv2_full_kernel(const T* a, std::size_t m1, std::size_t m2, const T* b, s
     auto gpu_a = a_padded.direct();
     auto gpu_b = b_padded.direct();
 
-    gpu_a.gpu_allocate_copy();
-    gpu_b.gpu_allocate_copy();
+    gpu_a.ensure_gpu_up_to_date();
+    gpu_b.ensure_gpu_up_to_date();
 
     cufftPlan2d(&handle.get(), s1, s2, is_single_precision_t<T>::value ? CUFFT_C2C : CUFFT_Z2Z);
 
     cufft_exec_c2c(handle.get(), complex_cast(gpu_a.gpu_memory()), complex_cast(gpu_a.gpu_memory()), CUFFT_FORWARD);
     cufft_exec_c2c(handle.get(), complex_cast(gpu_b.gpu_memory()), complex_cast(gpu_b.gpu_memory()), CUFFT_FORWARD);
 
-    gpu_a.gpu_copy_from();
-    gpu_b.gpu_copy_from();
+    gpu_a.ensure_cpu_up_to_date();
+    gpu_b.ensure_cpu_up_to_date();
 
     a_padded *= b_padded;
 
-    gpu_a.gpu_copy_to(); //Refresh the GPU memory
+    gpu_a.invalidate_gpu();
+    gpu_a.ensures_gpu_allocated();
 
     cufft_exec_c2c(handle.get(), complex_cast(gpu_a.gpu_memory()), complex_cast(gpu_a.gpu_memory()), CUFFT_INVERSE);
 
-    gpu_a.gpu_copy_from();
+    gpu_a.ensure_cpu_up_to_date();
 
     if(beta == T(0.0)){
         for (std::size_t i = 0; i < size; ++i) {
@@ -274,7 +275,7 @@ void fft1(A&& a, C&& c) {
 
     auto c_gpu = c.direct();
 
-    c_gpu.gpu_allocate_copy_if_necessary();
+    c_gpu.ensure_gpu_up_to_date();
 
     detail::inplace_cfft1_kernel(c_gpu, etl::size(a));
 }
@@ -290,7 +291,7 @@ void fft1(A&& a, C&& c) {
 
     auto c_gpu = c.direct();
 
-    c_gpu.gpu_allocate_copy_if_necessary();
+    c_gpu.ensure_gpu_up_to_date();
 
     detail::inplace_zfft1_kernel(c_gpu, etl::size(a));
 }
@@ -305,7 +306,7 @@ void fft1(A&& a, C&& c) {
     auto a_gpu = a.direct();
     auto c_gpu = c.direct();
 
-    a_gpu.gpu_allocate_copy_if_necessary();
+    a_gpu.ensure_gpu_up_to_date();
 
     detail::inplace_cfft1_kernel(a_gpu, etl::size(a));
 
@@ -322,7 +323,7 @@ void fft1(A&& a, C&& c) {
     auto a_gpu = a.direct();
     auto c_gpu = c.direct();
 
-    a_gpu.gpu_allocate_copy_if_necessary();
+    a_gpu.ensure_gpu_up_to_date();
 
     detail::inplace_zfft1_kernel(a_gpu, etl::size(a));
 
@@ -347,7 +348,7 @@ void fft1_many(A&& a, C&& c) {
 
     direct_copy(a.memory_start(), a.memory_end(), c.memory_start());
 
-    c_gpu.gpu_allocate_copy_if_necessary();
+    c_gpu.ensure_gpu_up_to_date();
 
     detail::inplace_cfft1_many_kernel(c_gpu, batch, n);
 }
@@ -370,7 +371,7 @@ void fft1_many(A&& a, C&& c) {
 
     direct_copy(a.memory_start(), a.memory_end(), c.memory_start());
 
-    c_gpu.gpu_allocate_copy_if_necessary();
+    c_gpu.ensure_gpu_up_to_date();
 
     detail::inplace_zfft1_many_kernel(c_gpu, batch, n);
 }
@@ -392,7 +393,7 @@ void fft1_many(A&& a, C&& c) {
     std::size_t n     = etl::dim<N - 1>(a); //Size of the transform
     std::size_t batch = etl::size(a) / n;   //Number of batch
 
-    a_gpu.gpu_allocate_copy_if_necessary();
+    a_gpu.ensure_gpu_up_to_date();
 
     detail::inplace_cfft1_many_kernel(a_gpu, batch, n);
 
@@ -416,7 +417,7 @@ void fft1_many(A&& a, C&& c) {
     std::size_t n     = etl::dim<N - 1>(a); //Size of the transform
     std::size_t batch = etl::size(a) / n;   //Number of batch
 
-    a_gpu.gpu_allocate_copy_if_necessary();
+    a_gpu.ensure_gpu_up_to_date();
 
     detail::inplace_zfft1_many_kernel(a_gpu, batch, n);
 
@@ -434,7 +435,7 @@ void scale_back(C&& c, float factor) {
     cublasCscal(handle.get(), etl::size(c), &alpha, reinterpret_cast<cuComplex*>(c_gpu.gpu_memory()), 1);
 #else
     //Copy from GPU and scale on CPU
-    c_gpu.gpu_copy_from();
+    c_gpu.ensure_cpu_up_to_date();
     c *= factor;
 
     //The GPU memory is not up-to-date => throw it away
@@ -453,7 +454,7 @@ void scale_back(C&& c, double factor) {
     cublasZscal(handle.get(), etl::size(c), &alpha, reinterpret_cast<cuDoubleComplex*>(c_gpu.gpu_memory()), 1);
 #else
     //Copy from GPU and scale on CPU
-    c_gpu.gpu_copy_from();
+    c_gpu.ensure_cpu_up_to_date();
     c *= factor;
 
     //The GPU memory is not up-to-date => throw it away
@@ -473,7 +474,7 @@ void scale_back_real(A&& a, C&& c) {
 #ifdef ETL_CUBLAS_MODE
     auto c_gpu = c.direct();
 
-    c_gpu.gpu_allocate_if_necessary();
+    c_gpu.ensures_gpu_allocated();
 
     decltype(auto) handle = impl::cublas::start_cublas();
 
@@ -501,7 +502,7 @@ void scale_back_real(A&& a, C&& c) {
 #ifdef ETL_CUBLAS_MODE
     auto c_gpu = c.direct();
 
-    c_gpu.gpu_allocate_if_necessary();
+    c_gpu.ensures_gpu_allocated();
 
     decltype(auto) handle = impl::cublas::start_cublas();
 
@@ -532,7 +533,7 @@ void ifft1(A&& a, C&& c) {
     auto a_gpu = a.direct();
     auto c_gpu = c.direct();
 
-    a_gpu.gpu_allocate_copy_if_necessary();
+    a_gpu.ensure_gpu_up_to_date();
 
     detail::inplace_cifft1_kernel(a_gpu, etl::size(a));
 
@@ -551,7 +552,7 @@ void ifft1(A&& a, C&& c) {
     auto a_gpu = a.direct();
     auto c_gpu = c.direct();
 
-    a_gpu.gpu_allocate_copy_if_necessary();
+    a_gpu.ensure_gpu_up_to_date();
 
     detail::inplace_zifft1_kernel(a_gpu, etl::size(a));
 
@@ -569,7 +570,7 @@ template <typename A, typename C, cpp_enable_if(all_complex_single_precision<A>:
 void ifft1_real(A&& a, C&& c) {
     auto a_gpu = a.direct();
 
-    a_gpu.gpu_allocate_copy_if_necessary();
+    a_gpu.ensure_gpu_up_to_date();
 
     detail::inplace_cifft1_kernel(a_gpu, etl::size(a));
 
@@ -585,7 +586,7 @@ template <typename A, typename C, cpp_enable_if(all_complex_double_precision<A>:
 void ifft1_real(A&& a, C&& c) {
     auto a_gpu = a.direct();
 
-    a_gpu.gpu_allocate_copy_if_necessary();
+    a_gpu.ensure_gpu_up_to_date();
 
     detail::inplace_zifft1_kernel(a_gpu, etl::size(a));
 
@@ -609,7 +610,7 @@ void ifft1_many(A&& a, C&& c) {
     std::size_t n     = etl::dim<N - 1>(a); //Size of the transform
     std::size_t batch = etl::size(a) / n;   //Number of batch
 
-    a_gpu.gpu_allocate_copy_if_necessary();
+    a_gpu.ensure_gpu_up_to_date();
 
     detail::inplace_cifft1_many_kernel(a_gpu, batch, n);
 
@@ -635,7 +636,7 @@ void ifft1_many(A&& a, C&& c) {
     std::size_t n     = etl::dim<N - 1>(a); //Size of the transform
     std::size_t batch = etl::size(a) / n;   //Number of batch
 
-    a_gpu.gpu_allocate_copy_if_necessary();
+    a_gpu.ensure_gpu_up_to_date();
 
     detail::inplace_zifft1_many_kernel(a_gpu, batch, n);
 
@@ -668,8 +669,8 @@ void conv1_full(A&& a, B&& b, C&& c) {
     auto gpu_a = a_padded.direct();
     auto gpu_b = b_padded.direct();
 
-    gpu_a.gpu_allocate_copy();
-    gpu_b.gpu_allocate_copy();
+    gpu_a.ensure_gpu_up_to_date();
+    gpu_b.ensure_gpu_up_to_date();
 
     auto cufft_type = is_single_precision_t<type>::value ? CUFFT_C2C : CUFFT_Z2Z;
     cufftPlan1d(&handle.get(), size, cufft_type, 1);
@@ -677,16 +678,17 @@ void conv1_full(A&& a, B&& b, C&& c) {
     detail::cufft_exec_c2c(handle.get(), complex_cast(gpu_a.gpu_memory()), complex_cast(gpu_a.gpu_memory()), CUFFT_FORWARD);
     detail::cufft_exec_c2c(handle.get(), complex_cast(gpu_b.gpu_memory()), complex_cast(gpu_b.gpu_memory()), CUFFT_FORWARD);
 
-    gpu_a.gpu_copy_from();
-    gpu_b.gpu_copy_from();
+    gpu_a.ensure_cpu_up_to_date();
+    gpu_b.ensure_cpu_up_to_date();
 
     a_padded *= b_padded;
 
-    gpu_a.gpu_copy_to(); //Refresh the GPU memory
+    gpu_a.invalidate_gpu();
+    gpu_a.ensure_gpu_up_to_date(); //Refresh the GPU memory
 
     detail::cufft_exec_c2c(handle.get(), complex_cast(gpu_a.gpu_memory()), complex_cast(gpu_a.gpu_memory()), CUFFT_INVERSE);
 
-    gpu_a.gpu_copy_from();
+    gpu_a.ensure_cpu_up_to_date();
 
     for (std::size_t i = 0; i < size; ++i) {
         c[i] = a_padded[i].real * (1.0 / size);
@@ -708,7 +710,7 @@ void fft2(A&& a, C&& c) {
 
     auto c_gpu = c.direct();
 
-    c_gpu.gpu_allocate_copy_if_necessary();
+    c_gpu.ensure_gpu_up_to_date();
 
     detail::inplace_cfft2_kernel(c_gpu, etl::dim<0>(a), etl::dim<1>(a));
 }
@@ -724,7 +726,7 @@ void fft2(A&& a, C&& c) {
 
     auto c_gpu = c.direct();
 
-    c_gpu.gpu_allocate_copy_if_necessary();
+    c_gpu.ensure_gpu_up_to_date();
 
     detail::inplace_zfft2_kernel(c_gpu, etl::dim<0>(a), etl::dim<1>(a));
 }
@@ -739,7 +741,7 @@ void fft2(A&& a, C&& c) {
     auto a_gpu = a.direct();
     auto c_gpu = c.direct();
 
-    a_gpu.gpu_allocate_copy_if_necessary();
+    a_gpu.ensure_gpu_up_to_date();
 
     detail::inplace_cfft2_kernel(a_gpu, etl::dim<0>(a), etl::dim<1>(a));
 
@@ -756,7 +758,7 @@ void fft2(A&& a, C&& c) {
     auto a_gpu = a.direct();
     auto c_gpu = c.direct();
 
-    a_gpu.gpu_allocate_copy_if_necessary();
+    a_gpu.ensure_gpu_up_to_date();
 
     detail::inplace_zfft2_kernel(a_gpu, etl::dim<0>(a), etl::dim<1>(a));
 
@@ -773,7 +775,7 @@ void ifft2(A&& a, C&& c) {
     auto a_gpu = a.direct();
     auto c_gpu = c.direct();
 
-    a_gpu.gpu_allocate_copy_if_necessary();
+    a_gpu.ensure_gpu_up_to_date();
 
     detail::inplace_cifft2_kernel(a_gpu, etl::dim<0>(a), etl::dim<1>(a));
 
@@ -792,7 +794,7 @@ void ifft2(A&& a, C&& c) {
     auto a_gpu = a.direct();
     auto c_gpu = c.direct();
 
-    a_gpu.gpu_allocate_copy_if_necessary();
+    a_gpu.ensure_gpu_up_to_date();
 
     detail::inplace_zifft2_kernel(a_gpu, etl::dim<0>(a), etl::dim<1>(a));
 
@@ -810,7 +812,7 @@ template <typename A, typename C, cpp_enable_if(all_complex_single_precision<A>:
 void ifft2_real(A&& a, C&& c) {
     auto a_gpu = a.direct();
 
-    a_gpu.gpu_allocate_copy_if_necessary();
+    a_gpu.ensure_gpu_up_to_date();
 
     detail::inplace_cifft2_kernel(a_gpu, etl::dim<0>(a), etl::dim<1>(a));
 
@@ -826,7 +828,7 @@ template <typename A, typename C, cpp_enable_if(all_complex_double_precision<A>:
 void ifft2_real(A&& a, C&& c) {
     auto a_gpu = a.direct();
 
-    a_gpu.gpu_allocate_copy_if_necessary();
+    a_gpu.ensure_gpu_up_to_date();
 
     detail::inplace_zifft2_kernel(a_gpu, etl::dim<0>(a), etl::dim<1>(a));
 
@@ -852,7 +854,7 @@ void fft2_many(A&& a, C&& c) {
 
     direct_copy(a.memory_start(), a.memory_end(), c.memory_start());
 
-    c_gpu.gpu_allocate_copy_if_necessary();
+    c_gpu.ensure_gpu_up_to_date();
 
     detail::inplace_cfft2_many_kernel(c_gpu, batch, n1, n2);
 }
@@ -876,7 +878,7 @@ void fft2_many(A&& a, C&& c) {
 
     direct_copy(a.memory_start(), a.memory_end(), c.memory_start());
 
-    c_gpu.gpu_allocate_copy_if_necessary();
+    c_gpu.ensure_gpu_up_to_date();
 
     detail::inplace_zfft2_many_kernel(c_gpu, batch, n1, n2);
 }
@@ -899,7 +901,7 @@ void fft2_many(A&& a, C&& c) {
     std::size_t n2    = etl::dim<N - 1>(a);       //Size of the transform
     std::size_t batch = etl::size(a) / (n1 * n2); //Number of batch
 
-    a_gpu.gpu_allocate_copy_if_necessary();
+    a_gpu.ensure_gpu_up_to_date();
 
     detail::inplace_cfft2_many_kernel(a_gpu, batch, n1, n2);
 
@@ -924,7 +926,7 @@ void fft2_many(A&& a, C&& c) {
     std::size_t n2    = etl::dim<N - 1>(a);       //Size of the transform
     std::size_t batch = etl::size(a) / (n1 * n2); //Number of batch
 
-    a_gpu.gpu_allocate_copy_if_necessary();
+    a_gpu.ensure_gpu_up_to_date();
 
     detail::inplace_zfft2_many_kernel(a_gpu, batch, n1, n2);
 
@@ -949,7 +951,7 @@ void ifft2_many(A&& a, C&& c) {
     std::size_t n2    = etl::dim<N - 1>(a);       //Size of the transform
     std::size_t batch = etl::size(a) / (n1 * n2); //Number of batch
 
-    a_gpu.gpu_allocate_copy_if_necessary();
+    a_gpu.ensure_gpu_up_to_date();
 
     detail::inplace_cifft2_many_kernel(a_gpu, batch, n1, n2);
 
@@ -976,7 +978,7 @@ void ifft2_many(A&& a, C&& c) {
     std::size_t n2    = etl::dim<N - 1>(a);       //Size of the transform
     std::size_t batch = etl::size(a) / (n1 * n2); //Number of batch
 
-    a_gpu.gpu_allocate_copy_if_necessary();
+    a_gpu.ensure_gpu_up_to_date();
 
     detail::inplace_zifft2_many_kernel(a_gpu, batch, n1, n2);
 
@@ -1151,14 +1153,14 @@ void conv4_full(const opaque_memory<T, 4>& input, const opaque_memory<T, 4>& ker
         {
             auto a_gpu = a_padded.direct();
 
-            a_gpu.gpu_allocate_copy();
+            a_gpu.ensure_gpu_up_to_date();
 
             int dims[] = {int(s1), int(s2)};
 
             cufftPlanMany(&handle.get(), 2, dims, nullptr, 1, s1 * s2, nullptr, 1, s1 * s2, cufft_type, N * K);
             cufft_exec_c2c(handle.get(), complex_cast(a_gpu.gpu_memory()), complex_cast(a_gpu.gpu_memory()), CUFFT_FORWARD);
 
-            a_gpu.gpu_copy_from();
+            a_gpu.ensure_cpu_up_to_date();
         }
 
         // Compute all the FFT of the kernels at once
@@ -1166,14 +1168,14 @@ void conv4_full(const opaque_memory<T, 4>& input, const opaque_memory<T, 4>& ker
         {
             auto b_gpu = b_padded.direct();
 
-            b_gpu.gpu_allocate_copy();
+            b_gpu.ensure_gpu_up_to_date();
 
             int dims[] = {int(s1), int(s2)};
 
             cufftPlanMany(&handle.get(), 2, dims, nullptr, 1, s1 * s2, nullptr, 1, s1 * s2, cufft_type, K * C);
             cufft_exec_c2c(handle.get(), complex_cast(b_gpu.gpu_memory()), complex_cast(b_gpu.gpu_memory()), CUFFT_FORWARD);
 
-            b_gpu.gpu_copy_from();
+            b_gpu.ensure_cpu_up_to_date();
         }
 
         // TODO For maximum performance
@@ -1191,14 +1193,14 @@ void conv4_full(const opaque_memory<T, 4>& input, const opaque_memory<T, 4>& ker
             }
 
             auto gpu_tmp = tmp.direct();
-            gpu_tmp.gpu_allocate_copy();
+            gpu_tmp.ensure_gpu_up_to_date();
 
             int dims[] = {int(s1), int(s2)};
 
             cufftPlanMany(&handle.get(), 2, dims, nullptr, 1, s1 * s2, nullptr, 1, s1 * s2, cufft_type, C * K);
             cufft_exec_c2c(handle.get(), complex_cast(gpu_tmp.gpu_memory()), complex_cast(gpu_tmp.gpu_memory()), CUFFT_INVERSE);
 
-            gpu_tmp.gpu_copy_from();
+            gpu_tmp.ensure_cpu_up_to_date();
 
             for (std::size_t c = 0; c < C; ++c) {
                 for (std::size_t k = 0; k < K; ++k) {

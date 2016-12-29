@@ -158,9 +158,9 @@ void conv2_valid_set(const opaque_memory<T,2>& input, const opaque_memory<T,2>& 
 
     // Allocate GPU memory, if necessary
 
-    input.gpu_allocate_copy_if_necessary();
-    kernel.gpu_allocate_copy_if_necessary();
-    conv.gpu_allocate_if_necessary();
+    input.ensure_gpu_up_to_date();
+    kernel.ensure_gpu_up_to_date();
+    conv.ensures_gpu_allocated();
 
     // Perform the convolution
 
@@ -236,9 +236,9 @@ void conv4_valid_set(const opaque_memory<T,4>& input, const opaque_memory<T,4>& 
 
     // Allocate GPU memory, if necessary
 
-    input.gpu_allocate_copy_if_necessary();
-    kernel.gpu_allocate_copy_if_necessary();
-    conv.gpu_allocate_if_necessary();
+    input.ensure_gpu_up_to_date();
+    kernel.ensure_gpu_up_to_date();
+    conv.ensures_gpu_allocated();
 
     // Perform the convolution
 
@@ -318,9 +318,9 @@ void conv4_valid_filter_set(const opaque_memory<T,4>& input, const opaque_memory
 
     // Allocate GPU memory, if necessary
 
-    input.gpu_allocate_copy_if_necessary();
-    kernel.gpu_allocate_copy_if_necessary();
-    conv.gpu_allocate_if_necessary();
+    input.ensure_gpu_up_to_date();
+    kernel.ensure_gpu_up_to_date();
+    conv.ensures_gpu_allocated();
 
     // Perform the convolution
 
@@ -402,9 +402,9 @@ void conv2_full_set(const opaque_memory<T,2>& input, const opaque_memory<T,2>& k
 
     // Allocate GPU memory, if necessary
 
-    input.gpu_allocate_copy_if_necessary();
-    kernel.gpu_allocate_copy_if_necessary();
-    conv.gpu_allocate_if_necessary();
+    input.ensure_gpu_up_to_date();
+    kernel.ensure_gpu_up_to_date();
+    conv.ensures_gpu_allocated();
 
     // Perform the convolution
 
@@ -482,9 +482,9 @@ void conv4_full_set(const opaque_memory<T,4>& input, const opaque_memory<T,4>& k
 
     // Allocate GPU memory, if necessary
 
-    input.gpu_allocate_copy_if_necessary();
-    kernel.gpu_allocate_copy_if_necessary();
-    conv.gpu_allocate_if_necessary();
+    input.ensure_gpu_up_to_date();
+    kernel.ensure_gpu_up_to_date();
+    conv.ensures_gpu_allocated();
 
     // Perform the convolution
 
@@ -574,9 +574,9 @@ void conv2_valid_multi_set(const opaque_memory<T,2>& input, const opaque_memory<
 
     // Allocate GPU memory, if necessary
 
-    input.gpu_allocate_copy_if_necessary();
-    kernel.gpu_allocate_copy_if_necessary();
-    conv.gpu_allocate_if_necessary();
+    input.ensure_gpu_up_to_date();
+    kernel.ensure_gpu_up_to_date();
+    conv.ensures_gpu_allocated();
 
     // Perform the convolution
 
@@ -635,7 +635,7 @@ void conv2_full_multi(const I& input, const K& kernel, C&& conv) {
         auto result_gpu = result.direct();
 
         conv2_full(input_gpu, kernel(i).direct(), result_gpu);
-        result_gpu.gpu_copy_from();
+        result_gpu.ensure_cpu_up_to_date();
         result_gpu.gpu_evict();
     }
 }
@@ -655,7 +655,7 @@ void conv2_full_multi_flipped(const I& input, const K& kernel, C&& conv) {
         auto result_gpu = result.direct();
 
         conv2_full_flipped(input_gpu, kernel(i).direct(), result_gpu);
-        result_gpu.gpu_copy_from();
+        result_gpu.ensure_cpu_up_to_date();
         result_gpu.gpu_evict();
     }
 }
@@ -712,9 +712,9 @@ void conv2_full_multi_real_set(const I& input, const K& kernel, C&& conv, cudnnC
     auto kernel_gpu = kernel.direct();
     auto conv_gpu = conv.direct();
 
-    input_gpu.gpu_allocate_copy_if_necessary();
-    kernel_gpu.gpu_allocate_copy_if_necessary();
-    conv_gpu.gpu_allocate_if_necessary();
+    input_gpu.ensure_gpu_up_to_date();
+    kernel_gpu.ensure_gpu_up_to_date();
+    conv_gpu.ensures_gpu_allocated();
 
     // Perform the convolution
 
