@@ -41,11 +41,6 @@ private:
     gpu_handler<T>& _gpu_memory_handler;   ///< The GPU memory handler
     const order storage_order;             ///< The storage order
 
-#ifdef ETL_CUDA
-    mutable bool cpu_up_to_date = true;
-    mutable bool gpu_up_to_date = false;
-#endif
-
 public:
     /*!
      * \brief Create a new opaque memory
@@ -129,8 +124,8 @@ private:
      */
     void cpu_to_gpu() const {
         cpp_assert(is_gpu_allocated(), "Cannot copy to unallocated GPU memory");
-        cpp_assert(!gpu_up_to_date, "Copy must only be done if necessary");
-        cpp_assert(cpu_up_to_date, "Copy from invalid memory!");
+        cpp_assert(!_gpu_memory_handler.gpu_up_to_date, "Copy must only be done if necessary");
+        cpp_assert(_gpu_memory_handler.cpu_up_to_date, "Copy from invalid memory!");
 
         auto* gpu_ptr = gpu_memory();
         auto* cpu_ptr = memory;
@@ -140,7 +135,7 @@ private:
             const_cast<std::remove_const_t<value_type>*>(cpu_ptr),
             etl_size * sizeof(T), cudaMemcpyHostToDevice));
 
-        gpu_up_to_date = true;
+        _gpu_memory_handler.gpu_up_to_date = true;
     }
 
     /*!
@@ -148,8 +143,8 @@ private:
      */
     void gpu_to_cpu() const {
         cpp_assert(is_gpu_allocated(), "Cannot copy from unallocated GPU memory()");
-        cpp_assert(gpu_up_to_date, "Cannot copy from invalid memory");
-        cpp_assert(!cpu_up_to_date, "Copy done without reason");
+        cpp_assert(_gpu_memory_handler.gpu_up_to_date, "Cannot copy from invalid memory");
+        cpp_assert(!_gpu_memory_handler.cpu_up_to_date, "Copy done without reason");
 
         auto* gpu_ptr = gpu_memory();
         auto* cpu_ptr = memory;
@@ -162,7 +157,7 @@ private:
             const_cast<std::remove_const_t<value_type>*>(gpu_ptr),
             etl_size * sizeof(T), cudaMemcpyDeviceToHost));
 
-        cpu_up_to_date = true;
+        _gpu_memory_handler.cpu_up_to_date = true;
     }
 
 public:
@@ -198,32 +193,38 @@ public:
      * \brief Invalidates the CPU memory
      */
     void invalidate_cpu() const noexcept {
-        cpu_up_to_date = false;
+        _gpu_memory_handler.cpu_up_to_date = false;
     }
 
     /*!
      * \brief Invalidates the GPU memory
      */
     void invalidate_gpu() const noexcept {
-        gpu_up_to_date = false;
+        _gpu_memory_handler.gpu_up_to_date = false;
     }
 
     /*!
-     * \brief Ensures that the GPU memory is allocated.
+     * \brief Ensures that the GPU memory is allocated and that the GPU memory
+     * is up to date (to undefined value).
      */
-    void ensures_gpu_allocated() const {
+    void ensure_gpu_allocated() const {
         if (!is_gpu_allocated()) {
             gpu_allocate_impl();
         }
+
+        _gpu_memory_handler.gpu_up_to_date = true;
     }
 
     /*!
      * \brief Allocate memory on the GPU for the expression and copy the values into the GPU.
      */
     void ensure_gpu_up_to_date() const {
-        ensures_gpu_allocated();
+        // Make sure there is some memory allocate
+        if (!is_gpu_allocated()) {
+            gpu_allocate_impl();
+        }
 
-        if(!gpu_up_to_date){
+        if(!_gpu_memory_handler.gpu_up_to_date){
             cpu_to_gpu();
         }
     }
@@ -233,25 +234,20 @@ public:
      * necessary.
      */
     void ensure_cpu_up_to_date() const {
-        if(!cpu_up_to_date){
+        if(!_gpu_memory_handler.cpu_up_to_date){
             gpu_to_cpu();
         }
     }
 
-    /*!
-     * \brief Reallocate the GPU memory.
-     * \param new_memory The new GPU memory (will be moved)
-     */
-    void gpu_reallocate(impl::cuda::cuda_memory<T>&& new_memory) {
-        _gpu_memory_handler = std::move(new_memory);
-    }
+    void transfer_to(opaque_memory& rhs){
+        rhs._gpu_memory_handler = std::move(_gpu_memory_handler);
 
-    /*!
-     * \brief Release the GPU memory for another expression to use
-     * \return A rvalue reference to the _gpu_memory_handler.
-     */
-    impl::cuda::cuda_memory<T>&& gpu_release() const {
-        return std::move(_gpu_memory_handler);
+        // The memory was transferred, not up to date anymore
+        _gpu_memory_handler.gpu_up_to_date = false;
+
+        // The target is up to date on GPU but CPU is not to date anymore
+        rhs._gpu_memory_handler.gpu_up_to_date = true;
+        rhs._gpu_memory_handler.cpu_up_to_date = false;
     }
 #else
     /*!

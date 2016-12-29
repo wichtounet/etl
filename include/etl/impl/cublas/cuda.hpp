@@ -36,6 +36,9 @@ template <typename T>
 struct cuda_memory {
     T* memory;
 
+    mutable bool cpu_up_to_date = true;
+    mutable bool gpu_up_to_date = false;
+
     cuda_memory() noexcept : memory(nullptr) {}
     cuda_memory(T* memory) noexcept : memory(memory) {}
 

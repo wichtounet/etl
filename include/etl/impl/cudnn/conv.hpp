@@ -160,7 +160,7 @@ void conv2_valid_set(const opaque_memory<T,2>& input, const opaque_memory<T,2>& 
 
     input.ensure_gpu_up_to_date();
     kernel.ensure_gpu_up_to_date();
-    conv.ensures_gpu_allocated();
+    conv.ensure_gpu_allocated();
 
     // Perform the convolution
 
@@ -169,6 +169,8 @@ void conv2_valid_set(const opaque_memory<T,2>& input, const opaque_memory<T,2>& 
         *filter, kernel.gpu_memory(),
         convolution, conv_algo, workspace.get(), workspace_size,
         beta, *output_tensor, conv.gpu_memory()));
+
+    conv.invalidate_cpu();
 
     // Release the resources
     cudnn_check(cudnnDestroyConvolutionDescriptor(convolution));
@@ -238,7 +240,7 @@ void conv4_valid_set(const opaque_memory<T,4>& input, const opaque_memory<T,4>& 
 
     input.ensure_gpu_up_to_date();
     kernel.ensure_gpu_up_to_date();
-    conv.ensures_gpu_allocated();
+    conv.ensure_gpu_allocated();
 
     // Perform the convolution
 
@@ -247,6 +249,8 @@ void conv4_valid_set(const opaque_memory<T,4>& input, const opaque_memory<T,4>& 
         *filter, kernel.gpu_memory(),
         convolution, conv_algo, workspace.get(), workspace_size,
         beta, *output_tensor, conv.gpu_memory()));
+
+    conv.invalidate_cpu();
 
     // Release the resources
     cudnn_check(cudnnDestroyConvolutionDescriptor(convolution));
@@ -320,7 +324,7 @@ void conv4_valid_filter_set(const opaque_memory<T,4>& input, const opaque_memory
 
     input.ensure_gpu_up_to_date();
     kernel.ensure_gpu_up_to_date();
-    conv.ensures_gpu_allocated();
+    conv.ensure_gpu_allocated();
 
     // Perform the convolution
 
@@ -329,6 +333,8 @@ void conv4_valid_filter_set(const opaque_memory<T,4>& input, const opaque_memory
         *output_tensor, kernel.gpu_memory(),
         convolution, conv_algo, workspace.get(), workspace_size,
         beta, *filter, conv.gpu_memory()));
+
+    conv.invalidate_cpu();
 
     // Release the resources
     cudnn_check(cudnnDestroyConvolutionDescriptor(convolution));
@@ -404,7 +410,7 @@ void conv2_full_set(const opaque_memory<T,2>& input, const opaque_memory<T,2>& k
 
     input.ensure_gpu_up_to_date();
     kernel.ensure_gpu_up_to_date();
-    conv.ensures_gpu_allocated();
+    conv.ensure_gpu_allocated();
 
     // Perform the convolution
 
@@ -413,6 +419,8 @@ void conv2_full_set(const opaque_memory<T,2>& input, const opaque_memory<T,2>& k
         *input_tensor, input.gpu_memory(),
         convolution, conv_algo, workspace.get(), workspace_size,
         beta, *output_tensor, conv.gpu_memory()));
+
+    conv.invalidate_cpu();
 
     // Release the resources
     cudnn_check(cudnnDestroyConvolutionDescriptor(convolution));
@@ -484,7 +492,7 @@ void conv4_full_set(const opaque_memory<T,4>& input, const opaque_memory<T,4>& k
 
     input.ensure_gpu_up_to_date();
     kernel.ensure_gpu_up_to_date();
-    conv.ensures_gpu_allocated();
+    conv.ensure_gpu_allocated();
 
     // Perform the convolution
 
@@ -493,6 +501,8 @@ void conv4_full_set(const opaque_memory<T,4>& input, const opaque_memory<T,4>& k
         *input_tensor, input.gpu_memory(),
         convolution, conv_algo, workspace.get(), workspace_size,
         beta, *output_tensor, conv.gpu_memory()));
+
+    conv.invalidate_cpu();
 
     // Release the resources
     cudnn_check(cudnnDestroyConvolutionDescriptor(convolution));
@@ -576,7 +586,7 @@ void conv2_valid_multi_set(const opaque_memory<T,2>& input, const opaque_memory<
 
     input.ensure_gpu_up_to_date();
     kernel.ensure_gpu_up_to_date();
-    conv.ensures_gpu_allocated();
+    conv.ensure_gpu_allocated();
 
     // Perform the convolution
 
@@ -585,6 +595,8 @@ void conv2_valid_multi_set(const opaque_memory<T,2>& input, const opaque_memory<
         filter, kernel.gpu_memory(),
         convolution, conv_algo, workspace.get(), workspace_size,
         beta, output_tensor, conv.gpu_memory()));
+
+    conv.invalidate_cpu();
 
     // Release the resources
     cudnn_check(cudnnDestroyConvolutionDescriptor(convolution));
@@ -714,7 +726,7 @@ void conv2_full_multi_real_set(const I& input, const K& kernel, C&& conv, cudnnC
 
     input_gpu.ensure_gpu_up_to_date();
     kernel_gpu.ensure_gpu_up_to_date();
-    conv_gpu.ensures_gpu_allocated();
+    conv_gpu.ensure_gpu_allocated();
 
     // Perform the convolution
 
@@ -723,6 +735,8 @@ void conv2_full_multi_real_set(const I& input, const K& kernel, C&& conv, cudnnC
         input_tensor, input_gpu.gpu_memory(),
         convolution, conv_algo, workspace.get(), workspace_size,
         beta, output_tensor, conv_gpu.gpu_memory()));
+
+    conv_gpu.invalidate_cpu();
 
     // Release the resources
     cudnn_check(cudnnDestroyConvolutionDescriptor(convolution));

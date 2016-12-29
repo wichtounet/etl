@@ -51,7 +51,7 @@ void batch_outer(const A& a, const B& b, C&& c) {
 
     a_gpu.ensure_gpu_up_to_date();
     b_gpu.ensure_gpu_up_to_date();
-    c_gpu.ensures_gpu_allocated();
+    c_gpu.ensure_gpu_allocated();
 
     cublasSgemm(
         handle.get(),
@@ -62,6 +62,8 @@ void batch_outer(const A& a, const B& b, C&& c) {
         a_gpu.gpu_memory(), etl::columns(a),
         &beta,
         c_gpu.gpu_memory(), etl::columns(b));
+
+    c_gpu.invalidate_cpu();
 }
 
 /*!
@@ -80,7 +82,7 @@ void batch_outer(const A& a, const B& b, C&& c) {
 
     a_gpu.ensure_gpu_up_to_date();
     b_gpu.ensure_gpu_up_to_date();
-    c_gpu.ensures_gpu_allocated();
+    c_gpu.ensure_gpu_allocated();
 
     cublasDgemm(
         handle.get(),
@@ -91,6 +93,8 @@ void batch_outer(const A& a, const B& b, C&& c) {
         a_gpu.gpu_memory(), etl::columns(a),
         &beta,
         c_gpu.gpu_memory(), etl::columns(b));
+
+    c_gpu.invalidate_cpu();
 }
 
 #else

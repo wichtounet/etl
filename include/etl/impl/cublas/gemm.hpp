@@ -126,7 +126,7 @@ void gemm(A&& a, B&& b, C&& c) {
 
     a_gpu.ensure_gpu_up_to_date();
     b_gpu.ensure_gpu_up_to_date();
-    c_gpu.ensures_gpu_allocated();
+    c_gpu.ensure_gpu_allocated();
 
     // Do the actual multiplication
 
@@ -151,6 +151,8 @@ void gemm(A&& a, B&& b, C&& c) {
             &beta,
             c_gpu.gpu_memory(), etl::major_stride(c));
     }
+
+    c_gpu.invalidate_cpu();
 }
 
 /*!
@@ -179,7 +181,7 @@ void gemm_nt(A&& a, B&& b, C&& c) {
 
     a_gpu.ensure_gpu_up_to_date();
     b_gpu.ensure_gpu_up_to_date();
-    c_gpu.ensures_gpu_allocated();
+    c_gpu.ensure_gpu_allocated();
 
     // Do the actual multiplication
 
@@ -204,6 +206,8 @@ void gemm_nt(A&& a, B&& b, C&& c) {
             &beta,
             c_gpu.gpu_memory(), etl::major_stride(c));
     }
+
+    c_gpu.invalidate_cpu();
 }
 
 /*!
@@ -232,7 +236,7 @@ void gemm_tn(A&& a, B&& b, C&& c) {
 
     a_gpu.ensure_gpu_up_to_date();
     b_gpu.ensure_gpu_up_to_date();
-    c_gpu.ensures_gpu_allocated();
+    c_gpu.ensure_gpu_allocated();
 
     // Do the actual multiplication
 
@@ -257,6 +261,8 @@ void gemm_tn(A&& a, B&& b, C&& c) {
             &beta,
             c_gpu.gpu_memory(), etl::major_stride(c));
     }
+
+    c_gpu.invalidate_cpu();
 }
 
 /*!
@@ -285,7 +291,7 @@ void gemm_tt(A&& a, B&& b, C&& c) {
 
     a_gpu.ensure_gpu_up_to_date();
     b_gpu.ensure_gpu_up_to_date();
-    c_gpu.ensures_gpu_allocated();
+    c_gpu.ensure_gpu_allocated();
 
     // Do the actual multiplication
 
@@ -310,6 +316,8 @@ void gemm_tt(A&& a, B&& b, C&& c) {
             &beta,
             c_gpu.gpu_memory(), etl::major_stride(c));
     }
+
+    c_gpu.invalidate_cpu();
 }
 
 /*!
@@ -330,7 +338,7 @@ void gemv(A&& a, B&& b, C&& c) {
 
     a_gpu.ensure_gpu_up_to_date();
     b_gpu.ensure_gpu_up_to_date();
-    c_gpu.ensures_gpu_allocated();
+    c_gpu.ensure_gpu_allocated();
 
     float alpha = 1.0;
     float beta  = 0.0;
@@ -382,7 +390,7 @@ void gemv(A&& a, B&& b, C&& c) {
 
     a_gpu.ensure_gpu_up_to_date();
     b_gpu.ensure_gpu_up_to_date();
-    c_gpu.ensures_gpu_allocated();
+    c_gpu.ensure_gpu_allocated();
 
     double alpha = 1.0;
     double beta  = 0.0;
@@ -434,7 +442,7 @@ void gemv(A&& a, B&& b, C&& c) {
 
     a_gpu.ensure_gpu_up_to_date();
     b_gpu.ensure_gpu_up_to_date();
-    c_gpu.ensures_gpu_allocated();
+    c_gpu.ensure_gpu_allocated();
 
     cuComplex alpha = make_cuComplex(1.0, 0.0);
     cuComplex beta  = make_cuComplex(0.0, 0.0);
@@ -486,7 +494,7 @@ void gemv(A&& a, B&& b, C&& c) {
 
     a_gpu.ensure_gpu_up_to_date();
     b_gpu.ensure_gpu_up_to_date();
-    c_gpu.ensures_gpu_allocated();
+    c_gpu.ensure_gpu_allocated();
 
     cuDoubleComplex alpha = make_cuDoubleComplex(1.0, 0.0);
     cuDoubleComplex beta  = make_cuDoubleComplex(0.0, 0.0);
@@ -538,7 +546,7 @@ void gevm(A&& a, B&& b, C&& c) {
 
     a_gpu.ensure_gpu_up_to_date();
     b_gpu.ensure_gpu_up_to_date();
-    c_gpu.ensures_gpu_allocated();
+    c_gpu.ensure_gpu_allocated();
 
     float alpha = 1.0;
     float beta  = 0.0;
@@ -590,7 +598,7 @@ void gevm(A&& a, B&& b, C&& c) {
 
     a_gpu.ensure_gpu_up_to_date();
     b_gpu.ensure_gpu_up_to_date();
-    c_gpu.ensures_gpu_allocated();
+    c_gpu.ensure_gpu_allocated();
 
     double alpha = 1.0;
     double beta  = 0.0;
@@ -642,7 +650,7 @@ void gevm(A&& a, B&& b, C&& c) {
 
     a_gpu.ensure_gpu_up_to_date();
     b_gpu.ensure_gpu_up_to_date();
-    c_gpu.ensures_gpu_allocated();
+    c_gpu.ensure_gpu_allocated();
 
     cuComplex alpha = make_cuComplex(1.0, 0.0);
     cuComplex beta  = make_cuComplex(0.0, 0.0);
@@ -694,7 +702,7 @@ void gevm(A&& a, B&& b, C&& c) {
 
     a_gpu.ensure_gpu_up_to_date();
     b_gpu.ensure_gpu_up_to_date();
-    c_gpu.ensures_gpu_allocated();
+    c_gpu.ensure_gpu_allocated();
 
     cuDoubleComplex alpha = make_cuDoubleComplex(1.0, 0.0);
     cuDoubleComplex beta  = make_cuDoubleComplex(0.0, 0.0);

@@ -143,6 +143,8 @@ void inplace_square_transpose(C&& c) {
     } else {
         cublas_geam(handle.get(), CUBLAS_OP_T, CUBLAS_OP_T, etl::dim<0>(c), etl::dim<1>(c), &alpha, a_gpu.get(), etl::dim<0>(c), &beta, a_gpu.get(), etl::dim<0>(c), c_gpu.gpu_memory(), etl::dim<1>(c));
     }
+
+    c_gpu.invalidate_cpu();
 }
 
 /*!
@@ -172,13 +174,15 @@ void transpose(A&& a, C&& c) {
     auto c_gpu = c.direct();
 
     a_gpu.ensure_gpu_up_to_date();
-    c_gpu.ensures_gpu_allocated();
+    c_gpu.ensure_gpu_allocated();
 
     if(row_major){
         cublas_geam(handle.get(), CUBLAS_OP_T, CUBLAS_OP_T, etl::dim<0>(a), etl::dim<1>(a), &alpha, a_gpu.gpu_memory(), etl::dim<1>(a), &beta, a_gpu.gpu_memory(), etl::dim<1>(a), c_gpu.gpu_memory(), etl::dim<1>(c));
     } else {
         cublas_geam(handle.get(), CUBLAS_OP_T, CUBLAS_OP_T, etl::dim<0>(a), etl::dim<1>(a), &alpha, a_gpu.gpu_memory(), etl::dim<0>(a), &beta, a_gpu.gpu_memory(), etl::dim<0>(a), c_gpu.gpu_memory(), etl::dim<0>(c));
     }
+
+    c_gpu.invalidate_cpu();
 }
 
 /*!
