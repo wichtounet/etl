@@ -118,15 +118,6 @@ public:
     }
 
     /*!
-     * \brief Evict the expression from GPU.
-     */
-    void gpu_evict() const noexcept {
-        if (is_gpu_allocated()) {
-            _gpu_memory_handler.reset();
-        }
-    }
-
-    /*!
      * \brief Return GPU memory of this expression, if any.
      * \return a pointer to the GPU memory or nullptr if not allocated in GPU.
      */
@@ -135,20 +126,32 @@ public:
     }
 
     /*!
-     * \brief Allocate memory on the GPU for the expression
+     * \brief Evict the expression from GPU.
      */
-    void gpu_allocate() const {
-        if (!is_gpu_allocated()) {
-            _gpu_memory_handler = impl::cuda::cuda_allocate_only<T>(etl_size);
+    void gpu_evict() const noexcept {
+        if (is_gpu_allocated()) {
+            _gpu_memory_handler.reset();
         }
     }
+
+private:
+    /*!
+     * \brief Allocate memory on the GPU for the expression
+     */
+    void gpu_allocate_impl() const {
+        cpp_assert(!is_gpu_allocated(), "Trying to allocate already allocated GPU memory");
+
+        _gpu_memory_handler = impl::cuda::cuda_allocate_only<T>(etl_size);
+    }
+
+public:
 
     /*!
      * \brief Allocate memory on the GPU for the expression, only if not already allocated
      */
     void gpu_allocate_if_necessary() const {
         if (!is_gpu_allocated()) {
-            gpu_allocate();
+            gpu_allocate_impl();
         }
     }
 
@@ -157,7 +160,7 @@ public:
      */
     void gpu_allocate_copy() const {
         if(!is_gpu_allocated()){
-            gpu_allocate();
+            gpu_allocate_impl();
         }
 
         gpu_copy_to();
@@ -217,7 +220,7 @@ public:
     }
 
     /*!
-     * \brief Copy back from the GPU to the expression memory.
+     * \brief Copy back from the CPU to the GPU
      */
     void gpu_copy_to() const {
         cpp_assert(is_gpu_allocated(), "Cannot copy to unallocated GPU memory()");
