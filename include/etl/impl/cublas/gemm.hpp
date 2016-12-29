@@ -126,7 +126,7 @@ void gemm(A&& a, B&& b, C&& c) {
 
     a_gpu.gpu_allocate_copy();
     b_gpu.gpu_allocate_copy();
-    c_gpu.gpu_allocate();
+    c_gpu.gpu_allocate_if_necessary();
 
     // Do the actual multiplication
 
@@ -179,7 +179,7 @@ void gemm_nt(A&& a, B&& b, C&& c) {
 
     a_gpu.gpu_allocate_copy();
     b_gpu.gpu_allocate_copy();
-    c_gpu.gpu_allocate();
+    c_gpu.gpu_allocate_if_necessary();
 
     // Do the actual multiplication
 
@@ -232,7 +232,7 @@ void gemm_tn(A&& a, B&& b, C&& c) {
 
     a_gpu.gpu_allocate_copy();
     b_gpu.gpu_allocate_copy();
-    c_gpu.gpu_allocate();
+    c_gpu.gpu_allocate_if_necessary();
 
     // Do the actual multiplication
 
@@ -285,7 +285,7 @@ void gemm_tt(A&& a, B&& b, C&& c) {
 
     a_gpu.gpu_allocate_copy();
     b_gpu.gpu_allocate_copy();
-    c_gpu.gpu_allocate();
+    c_gpu.gpu_allocate_if_necessary();
 
     // Do the actual multiplication
 
