@@ -1219,7 +1219,6 @@ template <typename E>
 auto transpose(const E& value) -> transpose_expr<value_t<E>, E> {
     static_assert(is_etl_expr<E>::value, "etl::transpose can only be used on ETL expressions");
     static_assert(decay_traits<E>::dimensions() <= 2, "Transpose not defined for matrix > 2D");
-    //return detail::temporary_unary_helper_type<value_t<E>, E, transpose_expr>(value);
     return transpose_expr<value_t<E>, E>{value};
 }
 
