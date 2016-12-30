@@ -81,8 +81,9 @@ value_t<A> dot(const A& /*a*/, const B& /*b*/) {
  * \copydoc batch_outer
  */
 template <typename A, typename B>
-void dot(const A& /*a*/, const B& /*b*/) {
+value_t<A> dot(const A& /*a*/, const B& /*b*/) {
     cpp_unreachable("CUBLAS not enabled/available");
+    return 0.0;
 }
 
 #endif
