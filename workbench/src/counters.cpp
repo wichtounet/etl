@@ -25,9 +25,28 @@ float fake = 0;
  * Basic: 40 / 20 / 10
  */
 
-int main(){
-    auto start_time = timer_clock::now();
+void simple(){
+    etl::dyn_matrix<float, 2> A(4096, 4096);
+    etl::dyn_matrix<float, 2> B(4096, 4096);
+    etl::dyn_matrix<float, 2> C(4096, 4096);
 
+    A = etl::normal_generator<float>(1.0, 0.0);
+    B = etl::normal_generator<float>(1.0, 0.0);
+    C = etl::normal_generator<float>(1.0, 0.0);
+
+    etl::reset_counters();
+
+    std::cout << "Simple" << std::endl;
+
+    for (size_t i = 0; i < 10; ++i) {
+        C = A * B;
+        fake += etl::sum(C);
+    }
+
+    etl::dump_counters();
+}
+
+void basic(){
     etl::dyn_matrix<float, 2> A(4096, 4096);
     etl::dyn_matrix<float, 2> B(4096, 4096);
     etl::dyn_matrix<float, 2> C(4096, 4096);
@@ -38,27 +57,24 @@ int main(){
     C = etl::normal_generator<float>(1.0, 0.0);
     D = etl::normal_generator<float>(1.0, 0.0);
 
-    std::cout << "Simple" << std::endl;
-
-    for(size_t i = 0; i < 10; ++i){
-        C = A * B;
-        fake += etl::sum(C);
-    }
-
-    etl::dump_counters();
     etl::reset_counters();
 
     std::cout << "Basic" << std::endl;
 
-    for(size_t i = 0; i < 10; ++i){
+    for (size_t i = 0; i < 10; ++i) {
         C = A * B * B;
         D += C;
         D *= 1.1;
         fake += etl::mean(D);
     }
-
     etl::dump_counters();
-    etl::reset_counters();
+}
+
+int main(){
+    auto start_time = timer_clock::now();
+
+    simple();
+    basic();
 
     auto end_time = timer_clock::now();
     auto duration = std::chrono::duration_cast<milliseconds>(end_time - start_time);
