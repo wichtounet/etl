@@ -33,6 +33,7 @@
 #include "etl/memory.hpp"
 #include "etl/allocator.hpp"
 #include "etl/iterator.hpp"
+#include "etl/util/counters.hpp"
 
 //Forward declarations
 #include "etl/value_fwd.hpp"
