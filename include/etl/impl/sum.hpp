@@ -25,6 +25,7 @@
 //Include the implementations
 #include "etl/impl/std/sum.hpp"
 #include "etl/impl/vec/sum.hpp"
+#include "etl/impl/blas/sum.hpp"
 
 namespace etl {
 
@@ -65,6 +66,14 @@ etl::sum_impl select_sum_impl() {
             case sum_impl::VEC:
                 if (!vec_enabled || !decay_traits<E>::template vectorizable<vector_mode>::value) {                                //COVERAGE_EXCLUDE_LINE
                     std::cerr << "Forced selection to VEC sum implementation, but not possible for this expression" << std::endl; //COVERAGE_EXCLUDE_LINE
+                    return select_default_sum_impl<E>();                                                                          //COVERAGE_EXCLUDE_LINE
+                }                                                                                                                 //COVERAGE_EXCLUDE_LINE
+
+                return forced;
+
+            case sum_impl::BLAS:
+                if (!cblas_enabled || !all_dma<E>::value) {                                //COVERAGE_EXCLUDE_LINE
+                    std::cerr << "Forced selection to BLAS sum implementation, but not possible for this expression" << std::endl; //COVERAGE_EXCLUDE_LINE
                     return select_default_sum_impl<E>();                                                                          //COVERAGE_EXCLUDE_LINE
                 }                                                                                                                 //COVERAGE_EXCLUDE_LINE
 
@@ -118,6 +127,8 @@ struct sum_impl {
             dispatch_1d_acc<value_t<E>>(parallel_dispatch, [&e](std::size_t first, std::size_t last) -> value_t<E> {
                 return impl::vec::sum(e, first, last);
             }, acc_functor, 0, size(e));
+        } else if(impl == etl::sum_impl::BLAS){
+            return impl::blas::sum(e);
         } else {
             dispatch_1d_acc<value_t<E>>(parallel_dispatch, [&e](std::size_t first, std::size_t last) -> value_t<E> {
                 return impl::standard::sum(e, first, last);

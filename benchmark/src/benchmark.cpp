@@ -263,6 +263,7 @@ CPM_DIRECT_SECTION_TWO_PASS_NS_P("ssum [std][sum][s]", dot_policy,
     CPM_SECTION_FUNCTOR("default", [](svec& a){ float_ref += etl::sum(a); }),
     CPM_SECTION_FUNCTOR("std", [](svec& a){ SELECTED_SECTION(etl::sum_impl::STD){ float_ref += etl::sum(a); } })
     VEC_SECTION_FUNCTOR("vec", [](svec& a){ SELECTED_SECTION(etl::sum_impl::VEC){ float_ref += etl::sum(a); } })
+    BLAS_SECTION_FUNCTOR("blas", [](svec& a){ SELECTED_SECTION(etl::sum_impl::BLAS){ float_ref += etl::sum(a); } })
 )
 
 CPM_DIRECT_SECTION_TWO_PASS_NS_P("dsum [std][sum][d]", dot_policy,
@@ -270,6 +271,7 @@ CPM_DIRECT_SECTION_TWO_PASS_NS_P("dsum [std][sum][d]", dot_policy,
     CPM_SECTION_FUNCTOR("default", [](dvec& a){ double_ref += etl::sum(a); }),
     CPM_SECTION_FUNCTOR("std", [](dvec& a){ SELECTED_SECTION(etl::sum_impl::STD){ double_ref += etl::sum(a); } })
     VEC_SECTION_FUNCTOR("vec", [](dvec& a){ SELECTED_SECTION(etl::sum_impl::VEC){ double_ref += etl::sum(a); } })
+    BLAS_SECTION_FUNCTOR("blas", [](dvec& a){ SELECTED_SECTION(etl::sum_impl::BLAS){ float_ref += etl::sum(a); } })
 )
 
 // Bench complex sums
