@@ -43,6 +43,14 @@ DOT_FUNCTOR(blas_dot, SELECTED_SECTION(etl::dot_impl::BLAS) { c = etl::dot(a, b)
 #define DOT_TEST_CASE_SECTION_BLAS
 #endif
 
+#ifdef ETL_CUBLAS_MODE
+DOT_FUNCTOR(cublas_dot, SELECTED_SECTION(etl::dot_impl::CUBLAS) { c = etl::dot(a, b); })
+
+#define DOT_TEST_CASE_SECTION_CUBLAS DOT_TEST_CASE_SECTIONS(cublas_dot)
+#else
+#define DOT_TEST_CASE_SECTION_CUBLAS
+#endif
+
 #define DOT_TEST_CASE_DECL(name, description)                                 \
     template <typename T, typename Impl>                                       \
     static void UNIQUE_NAME(____C_A_T_C_H____T_E_M_P_L_A_TE____T_E_S_T____)(); \
@@ -67,5 +75,6 @@ DOT_FUNCTOR(blas_dot, SELECTED_SECTION(etl::dot_impl::BLAS) { c = etl::dot(a, b)
         DOT_TEST_CASE_SECTION_STD            \
         DOT_TEST_CASE_SECTION_VEC            \
         DOT_TEST_CASE_SECTION_BLAS           \
+        DOT_TEST_CASE_SECTION_CUBLAS           \
     }                                        \
     DOT_TEST_CASE_DEFN
