@@ -15,7 +15,7 @@ inline void dump_counters() {
     //No counters
 }
 
-void inc_counter(const char* name){
+inline void inc_counter(const char* name){
     cpp_unused(name);
 }
 
@@ -111,7 +111,7 @@ inline void dump_counters() {
     }
 }
 
-void inc_counter(const char* name) {
+inline void inc_counter(const char* name) {
     decltype(auto) counters = get_counters();
 
     for (decltype(auto) counter : counters.counters) {
