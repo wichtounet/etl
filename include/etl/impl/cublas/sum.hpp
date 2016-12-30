@@ -98,8 +98,9 @@ value_t<A> sum(const A& /*a*/) {
  * \copydoc sum
  */
 template <typename A>
-void sum(const A& /*a*/) {
+value_t<A> sum(const A& /*a*/) {
     cpp_unreachable("CUBLAS not enabled/available");
+    return 0.0;
 }
 
 #endif
