@@ -13,6 +13,13 @@
 
 #include "etl/etl.hpp"
 
+/*
+ *
+ * Current values are:
+ * Simple: 30 / 20 / 10
+ * Basic: 30 / 20 / 10
+ */
+
 int main(){
     etl::dyn_matrix<float, 2> A(1000, 1000);
     etl::dyn_matrix<float, 2> B(1000, 1000);
