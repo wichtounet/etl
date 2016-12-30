@@ -17,7 +17,7 @@
  *
  * Current values are:
  * Simple: 30 / 20 / 10
- * Basic: 30 / 20 / 10
+ * Basic: 40 / 20 / 10
  */
 
 int main(){
@@ -44,7 +44,7 @@ int main(){
     std::cout << "Basic" << std::endl;
 
     for(size_t i = 0; i < 10; ++i){
-        C = A * B;
+        C = A * B * B;
         D += C;
         D *= 1.1;
         std::cout << "sum:" << etl::mean(D) << std::endl;
