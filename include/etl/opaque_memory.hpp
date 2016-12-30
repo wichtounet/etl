@@ -136,6 +136,8 @@ private:
             etl_size * sizeof(T), cudaMemcpyHostToDevice));
 
         _gpu_memory_handler.gpu_up_to_date = true;
+
+        inc_counter("copy:cpu_to_gpu");
     }
 
     /*!
@@ -158,6 +160,8 @@ private:
             etl_size * sizeof(T), cudaMemcpyDeviceToHost));
 
         _gpu_memory_handler.cpu_up_to_date = true;
+
+        inc_counter("copy:gpu_to_cpu");
     }
 
 public:
