@@ -266,6 +266,7 @@ CPM_DIRECT_SECTION_TWO_PASS_NS_PF("r = a dot b (s)", dot_policy,
     CPM_SECTION_FUNCTOR("std", [](svec& a, svec& b){ SELECTED_SECTION(etl::dot_impl::STD) { float_ref += etl::dot(a, b); } })
     VEC_SECTION_FUNCTOR("vec", [](svec& a, svec& b){ SELECTED_SECTION(etl::dot_impl::VEC) { float_ref += etl::dot(a, b); } })
     BLAS_SECTION_FUNCTOR("blas", [](svec& a, svec& b){ SELECTED_SECTION(etl::dot_impl::BLAS) { float_ref += etl::dot(a, b); } })
+    CUBLAS_SECTION_FUNCTOR("cublas", [](svec& a, svec& b){ SELECTED_SECTION(etl::dot_impl::CUBLAS) { float_ref += etl::dot(a, b); } })
 )
 
 #ifdef ETL_EXTENDED_BENCH
