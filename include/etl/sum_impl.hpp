@@ -18,9 +18,10 @@ namespace etl {
  * \brief Enumeration describing the different implementations of sum
  */
 enum class sum_impl {
-    STD, ///< Standard implementation
-    VEC, ///< Vectorized implementation
-    BLAS ///< BLAS implementation
+    STD,   ///< Standard implementation
+    VEC,   ///< Vectorized implementation
+    BLAS,  ///< BLAS implementation
+    CUBLAS ///< BLAS implementation
 };
 
 } //end of namespace etl
