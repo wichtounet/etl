@@ -15,6 +15,7 @@
 //Include the implementations
 #include "etl/impl/std/dot.hpp"
 #include "etl/impl/blas/dot.hpp"
+#include "etl/impl/cublas/dot.hpp"
 #include "etl/impl/vec/dot.hpp"
 
 namespace etl {
@@ -55,6 +56,15 @@ etl::dot_impl select_dot_impl() {
         auto forced = local_context().dot_selector.impl;
 
         switch (forced) {
+            //CUBLAS cannot always be used
+            case dot_impl::CUBLAS:
+                if (!cublas_enabled || !all_dma<A, B>::value) {
+                    std::cerr << "Forced selection to CUBLAS dot implementation, but not possible for this expression" << std::endl;
+                    return select_default_dot_impl<A, B>();
+                }
+
+                return forced;
+
             //BLAS cannot always be used
             case dot_impl::BLAS:
                 if (!cblas_enabled || !all_dma<A, B>::value) {
@@ -98,6 +108,8 @@ struct dot_impl {
 
         if (impl == etl::dot_impl::BLAS) {
             return etl::impl::blas::dot(a, b);
+        } else if (impl == etl::dot_impl::CUBLAS) {
+            return etl::impl::cublas::dot(a, b);
         } else if (impl == etl::dot_impl::VEC) {
             return etl::impl::vec::dot(a, b);
         } else {

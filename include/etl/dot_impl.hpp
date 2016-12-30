@@ -18,11 +18,12 @@ namespace etl {
  * \brief Enumeration describing the different implementations of dot
  */
 enum class dot_impl {
-    STD,  ///< Standard implementation
-    VEC, ///< Uniform Vectorized implementation
-    SSE, ///< SSE implementation
-    AVX, ///< AVX implementation
-    BLAS ///< BLAS implementation
+    STD,   ///< Standard implementation
+    VEC,   ///< Uniform Vectorized implementation
+    SSE,   ///< SSE implementation
+    AVX,   ///< AVX implementation
+    BLAS,  ///< BLAS implementation
+    CUBLAS ///< BLAS implementation
 };
 
 } //end of namespace etl
