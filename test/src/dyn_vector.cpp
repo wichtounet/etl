@@ -7,6 +7,8 @@
 
 #include "test_light.hpp"
 
+#include "sum_test.hpp"
+
 #include <vector>
 #include <list>
 #include <deque>
@@ -499,12 +501,15 @@ TEMPLATE_TEST_CASE_2("dyn_vector/bernoulli", "dyn_vector::bernoulli", Z, double,
 
 // Reductions
 
-TEMPLATE_TEST_CASE_2("dyn_vector/sum", "sum", Z, double, float) {
-    etl::dyn_vector<Z> a = {-1.0, 2.0, 8.5};
+// TODO Need more sum tests
 
-    auto d = sum(a);
+SUM_TEST_CASE("dyn_vector/sum", "sum") {
+    etl::dyn_vector<T> a = {-1.0, 2.0, 8.5};
 
-    REQUIRE_EQUALS(d, 9.5);
+    T value = 0;
+    Impl::apply(a, value);
+
+    REQUIRE_EQUALS(value, 9.5);
 }
 
 TEMPLATE_TEST_CASE_2("dyn_vector/sum_2", "sum", Z, double, float) {
