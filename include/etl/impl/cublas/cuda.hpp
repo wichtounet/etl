@@ -8,7 +8,9 @@
 #pragma once
 
 #ifdef ETL_CUDA
+#include "cuda.h"
 #include "cuda_runtime.h"
+#include "cuda_runtime_api.h"
 
 #define cuda_check(call)                                                                                \
     {                                                                                                   \
