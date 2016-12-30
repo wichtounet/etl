@@ -117,6 +117,8 @@ private:
         cpp_assert(!is_gpu_allocated(), "Trying to allocate already allocated GPU memory");
 
         _gpu_memory_handler = impl::cuda::cuda_allocate_only<T>(etl_size);
+
+        inc_counter("gpu:allocate");
     }
 
     /*!
@@ -137,7 +139,7 @@ private:
 
         _gpu_memory_handler.gpu_up_to_date = true;
 
-        inc_counter("copy:cpu_to_gpu");
+        inc_counter("gpu:cpu_to_gpu");
     }
 
     /*!
@@ -161,7 +163,7 @@ private:
 
         _gpu_memory_handler.cpu_up_to_date = true;
 
-        inc_counter("copy:gpu_to_cpu");
+        inc_counter("gpu:gpu_to_cpu");
     }
 
 public:
