@@ -13,6 +13,11 @@
 
 #include "etl/etl.hpp"
 
+typedef std::chrono::high_resolution_clock timer_clock;
+typedef std::chrono::milliseconds milliseconds;
+
+float fake = 0;
+
 /*
  *
  * Current values are:
@@ -21,10 +26,12 @@
  */
 
 int main(){
-    etl::dyn_matrix<float, 2> A(1000, 1000);
-    etl::dyn_matrix<float, 2> B(1000, 1000);
-    etl::dyn_matrix<float, 2> C(1000, 1000);
-    etl::dyn_matrix<float, 2> D(1000, 1000);
+    auto start_time = timer_clock::now();
+
+    etl::dyn_matrix<float, 2> A(4096, 4096);
+    etl::dyn_matrix<float, 2> B(4096, 4096);
+    etl::dyn_matrix<float, 2> C(4096, 4096);
+    etl::dyn_matrix<float, 2> D(4096, 4096);
 
     A = etl::normal_generator<float>(1.0, 0.0);
     B = etl::normal_generator<float>(1.0, 0.0);
@@ -35,7 +42,7 @@ int main(){
 
     for(size_t i = 0; i < 10; ++i){
         C = A * B;
-        std::cout << "sum:" << etl::sum(C) << std::endl;
+        fake += etl::sum(C);
     }
 
     etl::dump_counters();
@@ -47,11 +54,16 @@ int main(){
         C = A * B * B;
         D += C;
         D *= 1.1;
-        std::cout << "sum:" << etl::mean(D) << std::endl;
+        fake += etl::mean(D);
     }
 
     etl::dump_counters();
     etl::reset_counters();
 
-    return 0;
+    auto end_time = timer_clock::now();
+    auto duration = std::chrono::duration_cast<milliseconds>(end_time - start_time);
+
+    std::cout << "duration: " << duration.count() << "ms" << std::endl;
+
+    return (int) fake;
 }
