@@ -188,7 +188,7 @@ TEMPLATE_TEST_CASE_2("reshape/traits", "traits<reshape<2,3>>", Z, float, double)
     etl::fast_vector<Z, 6> a({1, 2, 3, 4, 5, 6});
 
     using expr_type = decltype(etl::reshape<2, 3>(a));
-    expr_type expr((etl::fast_matrix_view<etl::fast_vector<Z, 6>&, 2, 3>(a)));
+    expr_type expr((etl::fast_matrix_view<etl::fast_vector<Z, 6>&, true, 2, 3>(a)));
 
     REQUIRE_EQUALS(etl::etl_traits<expr_type>::size(expr), 6UL);
     REQUIRE_EQUALS(etl::size(expr), 6UL);

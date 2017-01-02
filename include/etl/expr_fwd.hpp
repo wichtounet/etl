@@ -67,7 +67,7 @@ struct sub_view;
 template <typename T>
 struct slice_view;
 
-template <typename T, std::size_t... Dims>
+template <typename T, bool DMA, std::size_t... Dims>
 struct fast_matrix_view;
 
 template <typename T, size_t D, typename Enable = void>

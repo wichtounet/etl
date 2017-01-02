@@ -80,6 +80,7 @@
 // The expressions
 #include "etl/op/sub_view.hpp"
 #include "etl/op/dyn_matrix_view.hpp"
+#include "etl/op/fast_matrix_view.hpp"
 #include "etl/expr/binary_expr.hpp"
 #include "etl/expr/unary_expr.hpp"
 #include "etl/expr/generator_expr.hpp"

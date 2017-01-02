@@ -992,11 +992,11 @@ auto memory_slice(E&& value, std::size_t first, std::size_t last) -> detail::ide
  * \return a view expression representing the same expression with a different shape
  */
 template <std::size_t... Dims, typename E>
-auto reshape(E&& value) -> detail::identity_helper<E, fast_matrix_view<detail::build_identity_type<E>, Dims...>> {
+auto reshape(E&& value) -> fast_matrix_view<detail::build_identity_type<E>, all_dma<E>::value, Dims...> {
     static_assert(is_etl_expr<E>::value, "etl::reshape can only be used on ETL expressions");
     cpp_assert(decay_traits<E>::is_generator || size(value) == mul_all<Dims...>::value, "Invalid size for reshape");
 
-    return detail::identity_helper<E, fast_matrix_view<detail::build_identity_type<E>, Dims...>>{fast_matrix_view<detail::build_identity_type<E>, Dims...>(value)};
+    return fast_matrix_view<detail::build_identity_type<E>, all_dma<E>::value, Dims...>{value};
 }
 
 /*!
