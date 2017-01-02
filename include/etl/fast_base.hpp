@@ -119,6 +119,7 @@ protected:
      */
     template <typename... S>
     const value_type& access(S... args) const {
+        need_cpu();
         return _data[index(args...)];
     }
 
