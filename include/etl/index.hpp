@@ -86,7 +86,7 @@ inline cpp14_constexpr std::size_t cm_compute_index(std::size_t first, std::size
     return matrix_leadingsize<M, I>::value * first + cm_compute_index<M, I + 1>(second, args...);
 }
 
-}
+} // end of namespace detail
 
 //Note: Version with sizes moved to a std::array and accessed with
 //standard loop may be faster, but need some stack space (relevant ?)
@@ -149,7 +149,7 @@ template <typename T, cpp_enable_if(decay_traits<T>::storage_order == order::Row
 size_t dyn_index(const T& expression, size_t i) noexcept(assert_nothrow) {
     static_assert(decay_traits<T>::dimensions() == 1, "Invalid number of dimensions for dyn_index");
 
-    cpp_assert(i < etl::dim<0>(expression), "Out of bounds");
+    cpp_assert(i < decay_traits<T>::dim(expression, 0), "Out of bounds");
 
     return i;
 }
@@ -158,33 +158,33 @@ template <typename T, cpp_enable_if(decay_traits<T>::storage_order == order::Row
 size_t dyn_index(const T& expression, size_t i, size_t j) noexcept(assert_nothrow) {
     static_assert(decay_traits<T>::dimensions() == 2, "Invalid number of dimensions for dyn_index");
 
-    cpp_assert(i < etl::dim<0>(expression), "Out of bounds");
-    cpp_assert(j < etl::dim<1>(expression), "Out of bounds");
+    cpp_assert(i < decay_traits<T>::dim(expression, 0), "Out of bounds");
+    cpp_assert(j < decay_traits<T>::dim(expression, 1), "Out of bounds");
 
-    return i * etl::dim<1>(expression) + j;
+    return i * decay_traits<T>::dim(expression, 1) + j;
 }
 
 template <typename T, cpp_enable_if(decay_traits<T>::storage_order == order::RowMajor)>
 size_t dyn_index(const T& expression, size_t i, size_t j, size_t k) noexcept(assert_nothrow) {
     static_assert(decay_traits<T>::dimensions() == 3, "Invalid number of dimensions for dyn_index");
 
-    cpp_assert(i < etl::dim<0>(expression), "Out of bounds");
-    cpp_assert(j < etl::dim<1>(expression), "Out of bounds");
-    cpp_assert(k < etl::dim<2>(expression), "Out of bounds");
+    cpp_assert(i < decay_traits<T>::dim(expression, 0), "Out of bounds");
+    cpp_assert(j < decay_traits<T>::dim(expression, 1), "Out of bounds");
+    cpp_assert(k < decay_traits<T>::dim(expression, 2), "Out of bounds");
 
-    return i * etl::dim<1>(expression) * etl::dim<2>(expression) + j * etl::dim<2>(expression) + k;
+    return i * decay_traits<T>::dim(expression, 1) * decay_traits<T>::dim(expression, 2) + j * decay_traits<T>::dim(expression, 2) + k;
 }
 
 template <typename T, cpp_enable_if(decay_traits<T>::storage_order == order::RowMajor)>
 size_t dyn_index(const T& expression, size_t i, size_t j, size_t k, size_t l) noexcept(assert_nothrow) {
     static_assert(decay_traits<T>::dimensions() == 4, "Invalid number of dimensions for dyn_index");
 
-    cpp_assert(i < etl::dim<0>(expression), "Out of bounds");
-    cpp_assert(j < etl::dim<1>(expression), "Out of bounds");
-    cpp_assert(k < etl::dim<2>(expression), "Out of bounds");
-    cpp_assert(l < etl::dim<3>(expression), "Out of bounds");
+    cpp_assert(i < decay_traits<T>::dim(expression, 0), "Out of bounds");
+    cpp_assert(j < decay_traits<T>::dim(expression, 1), "Out of bounds");
+    cpp_assert(k < decay_traits<T>::dim(expression, 2), "Out of bounds");
+    cpp_assert(l < decay_traits<T>::dim(expression, 3), "Out of bounds");
 
-    return i * etl::dim<1>(expression) * etl::dim<2>(expression) * etl::dim<3>(expression) + j * etl::dim<2>(expression) * etl::dim<3>(expression) + k * etl::dim<3>(expression) + l;
+    return i * decay_traits<T>::dim(expression, 1) * decay_traits<T>::dim(expression, 2) * decay_traits<T>::dim(expression, 3) + j * decay_traits<T>::dim(expression, 2) * decay_traits<T>::dim(expression, 3) + k * decay_traits<T>::dim(expression, 3) + l;
 }
 
 template <typename T, typename... S, cpp_enable_if((sizeof...(S) > 4 && decay_traits<T>::storage_order == order::RowMajor))>
@@ -192,7 +192,7 @@ size_t dyn_index(const T& expression, S... sizes) noexcept(assert_nothrow) {
     static_assert(decay_traits<T>::dimensions() == sizeof...(S), "Invalid number of dimensions for dyn_index");
 
     size_t index   = 0;
-    size_t subsize = etl::size(expression);
+    size_t subsize = decay_traits<T>::size(expression);
     size_t i       = 0;
 
     cpp::for_each_in(
@@ -264,7 +264,7 @@ template <typename T, cpp_enable_if(decay_traits<T>::storage_order == order::Col
 size_t dyn_index(const T& expression, size_t i) noexcept(assert_nothrow) {
     static_assert(decay_traits<T>::dimensions() == 1, "Invalid number of dimensions for dyn_index");
 
-    cpp_assert(i < etl::dim<0>(expression), "Out of bounds");
+    cpp_assert(i < decay_traits<T>::dim(expression, 0), "Out of bounds");
 
     return i;
 }
@@ -273,33 +273,33 @@ template <typename T, cpp_enable_if(decay_traits<T>::storage_order == order::Col
 size_t dyn_index(const T& expression, size_t i, size_t j) noexcept(assert_nothrow) {
     static_assert(decay_traits<T>::dimensions() == 2, "Invalid number of dimensions for dyn_index");
 
-    cpp_assert(i < etl::dim<0>(expression), "Out of bounds");
-    cpp_assert(j < etl::dim<1>(expression), "Out of bounds");
+    cpp_assert(i < decay_traits<T>::dim(expression, 0), "Out of bounds");
+    cpp_assert(j < decay_traits<T>::dim(expression, 1), "Out of bounds");
 
-    return i + j * etl::dim<0>(expression);
+    return i + j * decay_traits<T>::dim(expression, 0);
 }
 
 template <typename T, cpp_enable_if(decay_traits<T>::storage_order == order::ColumnMajor)>
 size_t dyn_index(const T& expression, size_t i, size_t j, size_t k) noexcept(assert_nothrow) {
     static_assert(decay_traits<T>::dimensions() == 3, "Invalid number of dimensions for dyn_index");
 
-    cpp_assert(i < etl::dim<0>(expression), "Out of bounds");
-    cpp_assert(j < etl::dim<1>(expression), "Out of bounds");
-    cpp_assert(k < etl::dim<2>(expression), "Out of bounds");
+    cpp_assert(i < decay_traits<T>::dim(expression, 0), "Out of bounds");
+    cpp_assert(j < decay_traits<T>::dim(expression, 1), "Out of bounds");
+    cpp_assert(k < decay_traits<T>::dim(expression, 2), "Out of bounds");
 
-    return i + j * etl::dim<0>(expression) + k * etl::dim<0>(expression) * etl::dim<1>(expression);
+    return i + j * decay_traits<T>::dim(expression, 0) + k * decay_traits<T>::dim(expression, 0) * decay_traits<T>::dim(expression, 1);
 }
 
 template <typename T, cpp_enable_if(decay_traits<T>::storage_order == order::ColumnMajor)>
 size_t dyn_index(const T& expression, size_t i, size_t j, size_t k, size_t l) noexcept(assert_nothrow) {
     static_assert(decay_traits<T>::dimensions() == 4, "Invalid number of dimensions for dyn_index");
 
-    cpp_assert(i < etl::dim<0>(expression), "Out of bounds");
-    cpp_assert(j < etl::dim<1>(expression), "Out of bounds");
-    cpp_assert(k < etl::dim<2>(expression), "Out of bounds");
-    cpp_assert(l < etl::dim<3>(expression), "Out of bounds");
+    cpp_assert(i < decay_traits<T>::dim(expression, 0), "Out of bounds");
+    cpp_assert(j < decay_traits<T>::dim(expression, 1), "Out of bounds");
+    cpp_assert(k < decay_traits<T>::dim(expression, 2), "Out of bounds");
+    cpp_assert(l < decay_traits<T>::dim(expression, 3), "Out of bounds");
 
-    return i + j * etl::dim<0>(expression) + k * etl::dim<0>(expression) * etl::dim<1>(expression) + l * etl::dim<0>(expression) * etl::dim<1>(expression) * etl::dim<2>(expression);
+    return i + j * decay_traits<T>::dim(expression, 0) + k * decay_traits<T>::dim(expression, 0) * decay_traits<T>::dim(expression, 1) + l * decay_traits<T>::dim(expression, 0) * decay_traits<T>::dim(expression, 1) * decay_traits<T>::dim(expression, 2);
 }
 
 template <typename T, typename... S, cpp_enable_if((sizeof...(S) > 4 && decay_traits<T>::storage_order == order::ColumnMajor))>

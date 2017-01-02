@@ -12,50 +12,9 @@
 
 #pragma once
 
+#include "etl/index.hpp"
+
 namespace etl {
-
-namespace detail {
-
-/*!
- * \brief Return the flat index for the element at the given position
- * \param sizes The indices
- * \return The flat index
- */
-template <order O, typename Dim, typename... S>
-std::size_t index(const Dim& dimensions, size_t size, S... sizes) noexcept(assert_nothrow) {
-    //Note: Version with sizes moved to a std::array and accessed with
-    //standard loop may be faster, but need some stack space (relevant ?)
-
-    std::size_t index = 0;
-
-    if (O == order::RowMajor) {
-        std::size_t subsize = size;
-        std::size_t i       = 0;
-
-        cpp::for_each_in(
-            [&subsize, &index, &i, &dimensions](std::size_t s) {
-                cpp_assert(s < dimensions[i], "Out of bounds");
-                subsize /= dimensions[i++];
-                index += subsize * s;
-            },
-            sizes...);
-    } else {
-        std::size_t subsize = 1;
-        std::size_t i       = 0;
-
-        cpp::for_each_in(
-            [&subsize, &index, &i, &dimensions](std::size_t s) {
-                cpp_assert(s < dimensions[i], "Out of bounds");
-                index += subsize * s;
-                subsize *= dimensions[i++];
-            },
-            sizes...);
-    }
-
-    return index;
-}
-
-} // end of namespace detail
 
 /*!
  * \brief View to represent a dyn matrix in top of an expression
@@ -151,7 +110,7 @@ public:
      */
     template<typename... S>
     const_return_type operator()(size_t f1, size_t f2, S... sizes) const {
-        return sub[detail::index<storage_order>(dimensions, _size, f1, f2, sizes...)];
+        return sub[etl::dyn_index(*this, f1, f2, sizes...)];
     }
 
     /*!
@@ -182,7 +141,7 @@ public:
      */
     template<typename... S>
     return_type operator()(size_t f1, size_t f2, S... sizes) {
-        return sub[detail::index<storage_order>(dimensions, _size, f1, f2, sizes...)];
+        return sub[etl::dyn_index(*this, f1, f2, sizes...)];
     }
 
     /*!
@@ -414,7 +373,7 @@ public:
      */
     template<typename... S>
     const_return_type operator()(size_t f1, size_t f2, S... sizes) const {
-        return memory[detail::index<storage_order>(dimensions, _size, f1, f2, sizes...)];
+        return memory[etl::dyn_index(*this, f1, f2, sizes...)];
     }
 
     /*!
@@ -426,7 +385,7 @@ public:
      */
     template<typename... S>
     return_type operator()(size_t f1, size_t f2, S... sizes) {
-        return memory[detail::index<storage_order>(dimensions, _size, f1, f2, sizes...)];
+        return memory[etl::dyn_index(*this, f1, f2, sizes...)];
     }
 
     /*!
