@@ -60,7 +60,6 @@ private:
     using base_type::release;
     using base_type::allocate;
     using base_type::check_invariants;
-    using base_type::index;
 
 public:
     using base_type::dim;

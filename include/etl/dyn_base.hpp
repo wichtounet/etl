@@ -12,6 +12,8 @@
 
 #pragma once
 
+#include "etl/index.hpp"
+
 namespace etl {
 
 /*!
@@ -370,45 +372,6 @@ struct dense_dyn_base : dyn_base<T, D> {
     }
 
     /*!
-     * \brief Return the flat index for the element at the given position
-     * \param sizes The indices
-     * \return The flat index
-     */
-    template <typename... S>
-    std::size_t index(S... sizes) const noexcept(assert_nothrow) {
-        //Note: Version with sizes moved to a std::array and accessed with
-        //standard loop may be faster, but need some stack space (relevant ?)
-
-        std::size_t index = 0;
-
-        if (storage_order == order::RowMajor) {
-            std::size_t subsize = _size;
-            std::size_t i       = 0;
-
-            cpp::for_each_in(
-                [&subsize, &index, &i, this](std::size_t s) {
-                    cpp_assert(s < this->dim(i), "Out of bounds");
-                    subsize /= this->dim(i++);
-                    index += subsize * s;
-                },
-                sizes...);
-        } else {
-            std::size_t subsize = 1;
-            std::size_t i       = 0;
-
-            cpp::for_each_in(
-                [&subsize, &index, &i, this](std::size_t s) {
-                    cpp_assert(s < this->dim(i), "Out of bounds");
-                    index += subsize * s;
-                    subsize *= this->dim(i++);
-                },
-                sizes...);
-        }
-
-        return index;
-    }
-
-    /*!
      * \brief Access the ith element of the matrix
      * \param i The index of the element to search
      * \return a reference to the ith element
@@ -437,144 +400,16 @@ struct dense_dyn_base : dyn_base<T, D> {
     }
 
     /*!
-     * \brief Access the (i, j) element of the 2D matrix
-     * \param i The index of the first dimension
-     * \param j The index of the second dimension
-     * \return a reference to the (i,j) element
-     *
-     * Accessing an element outside the matrix results in Undefined Behaviour.
-     */
-    template <bool B = n_dimensions == 2, cpp_enable_if(B)>
-    value_type& operator()(std::size_t i, std::size_t j) noexcept(assert_nothrow) {
-        cpp_assert(i < dim(0), "Out of bounds");
-        cpp_assert(j < dim(1), "Out of bounds");
-
-        if (storage_order == order::RowMajor) {
-            return _memory[i * dim(1) + j];
-        } else {
-            return _memory[j * dim(0) + i];
-        }
-    }
-
-    /*!
-     * \brief Access the (i, j) element of the 2D matrix
-     * \param i The index of the first dimension
-     * \param j The index of the second dimension
-     * \return a reference to the (i,j) element
-     *
-     * Accessing an element outside the matrix results in Undefined Behaviour.
-     */
-    template <bool B = n_dimensions == 2, cpp_enable_if(B)>
-    const value_type& operator()(std::size_t i, std::size_t j) const noexcept(assert_nothrow) {
-        cpp_assert(i < dim(0), "Out of bounds");
-        cpp_assert(j < dim(1), "Out of bounds");
-
-        if (storage_order == order::RowMajor) {
-            return _memory[i * dim(1) + j];
-        } else {
-            return _memory[j * dim(0) + i];
-        }
-    }
-
-    /*!
-     * \brief Access the (i, j) element of the 2D matrix
-     * \param i The index of the first dimension
-     * \param j The index of the second dimension
-     * \return a reference to the (i,j) element
-     *
-     * Accessing an element outside the matrix results in Undefined Behaviour.
-     */
-    template <bool B = n_dimensions == 3, cpp_enable_if(B)>
-    value_type& operator()(std::size_t k, std::size_t i, std::size_t j) noexcept(assert_nothrow) {
-        cpp_assert(k < dim(0), "Out of bounds");
-        cpp_assert(i < dim(1), "Out of bounds");
-        cpp_assert(j < dim(2), "Out of bounds");
-
-        if (storage_order == order::RowMajor) {
-            return _memory[k * dim(1) * dim(2) + i * dim(2) + j];
-        } else {
-            return _memory[k + i * dim(0) + j * dim(0) * dim(1)];
-        }
-    }
-
-    /*!
-     * \brief Access the (i, j) element of the 2D matrix
-     * \param i The index of the first dimension
-     * \param j The index of the second dimension
-     * \return a reference to the (i,j) element
-     *
-     * Accessing an element outside the matrix results in Undefined Behaviour.
-     */
-    template <bool B = n_dimensions == 3, cpp_enable_if(B)>
-    const value_type& operator()(std::size_t k, std::size_t i, std::size_t j) const noexcept(assert_nothrow) {
-        cpp_assert(k < dim(0), "Out of bounds");
-        cpp_assert(i < dim(1), "Out of bounds");
-        cpp_assert(j < dim(2), "Out of bounds");
-
-        if (storage_order == order::RowMajor) {
-            return _memory[k * dim(1) * dim(2) + i * dim(2) + j];
-        } else {
-            return _memory[k + i * dim(0) + j * dim(0) * dim(1)];
-        }
-    }
-
-    /*!
-     * \brief Access the (i, j) element of the 2D matrix
-     * \param i The index of the first dimension
-     * \param j The index of the second dimension
-     * \return a reference to the (i,j) element
-     *
-     * Accessing an element outside the matrix results in Undefined Behaviour.
-     */
-    template <bool B = n_dimensions == 4, cpp_enable_if(B)>
-    value_type& operator()(std::size_t n, std::size_t k, std::size_t i, std::size_t j) noexcept(assert_nothrow) {
-        cpp_assert(n < dim(0), "Out of bounds");
-        cpp_assert(k < dim(1), "Out of bounds");
-        cpp_assert(i < dim(2), "Out of bounds");
-        cpp_assert(j < dim(3), "Out of bounds");
-
-        if (storage_order == order::RowMajor) {
-            return _memory[n * dim(1) * dim(2) * dim(3) + k * dim(2) * dim(3) + i * dim(3) + j];
-        } else {
-            return _memory[n + k * dim(0) + i * dim(0) * dim(1) + j * dim(0) * dim(1) * dim(2)];
-        }
-    }
-
-    /*!
-     * \brief Access the (i, j) element of the 2D matrix
-     * \param i The index of the first dimension
-     * \param j The index of the second dimension
-     * \return a reference to the (i,j) element
-     *
-     * Accessing an element outside the matrix results in Undefined Behaviour.
-     */
-    template <bool B = n_dimensions == 4, cpp_enable_if(B)>
-    const value_type& operator()(std::size_t n, std::size_t k, std::size_t i, std::size_t j) const noexcept(assert_nothrow) {
-        cpp_assert(n < dim(0), "Out of bounds");
-        cpp_assert(k < dim(1), "Out of bounds");
-        cpp_assert(i < dim(2), "Out of bounds");
-        cpp_assert(j < dim(3), "Out of bounds");
-
-        if (storage_order == order::RowMajor) {
-            return _memory[n * dim(1) * dim(2) * dim(3) + k * dim(2) * dim(3) + i * dim(3) + j];
-        } else {
-            return _memory[n + k * dim(0) + i * dim(0) * dim(1) + j * dim(0) * dim(1) * dim(2)];
-        }
-    }
-
-    /*!
      * \brief Returns the value at the position (sizes...)
      * \param sizes The indices
      * \return The value at the position (sizes...)
      */
     template <typename... S, cpp_enable_if(
-                                 (n_dimensions > 4),
+                                 (n_dimensions > 1),
                                  (sizeof...(S) == n_dimensions),
                                  cpp::all_convertible_to<std::size_t, S...>::value)>
     const value_type& operator()(S... sizes) const noexcept(assert_nothrow) {
-        static_assert(sizeof...(S) == n_dimensions, "Invalid number of parameters");
-
-        return _memory[index(sizes...)];
+        return _memory[etl::dyn_index(as_derived(), sizes...)];
     }
 
     /*!
@@ -583,13 +418,11 @@ struct dense_dyn_base : dyn_base<T, D> {
      * \return The value at the position (sizes...)
      */
     template <typename... S, cpp_enable_if(
-                                 (n_dimensions > 4),
+                                 (n_dimensions > 1),
                                  (sizeof...(S) == n_dimensions),
                                  cpp::all_convertible_to<std::size_t, S...>::value)>
     value_type& operator()(S... sizes) noexcept(assert_nothrow) {
-        static_assert(sizeof...(S) == n_dimensions, "Invalid number of parameters");
-
-        return _memory[index(sizes...)];
+        return _memory[etl::dyn_index(as_derived(), sizes...)];
     }
 
     /*!
