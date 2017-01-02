@@ -383,6 +383,8 @@ struct dense_dyn_base : dyn_base<T, D> {
     value_type& operator()(std::size_t i) noexcept(assert_nothrow) {
         cpp_assert(i < dim(0), "Out of bounds");
 
+        need_cpu();
+
         return _memory[i];
     }
 
@@ -397,6 +399,8 @@ struct dense_dyn_base : dyn_base<T, D> {
     const value_type& operator()(std::size_t i) const noexcept(assert_nothrow) {
         cpp_assert(i < dim(0), "Out of bounds");
 
+        need_cpu();
+
         return _memory[i];
     }
 
@@ -410,6 +414,7 @@ struct dense_dyn_base : dyn_base<T, D> {
                                  (sizeof...(S) == n_dimensions),
                                  cpp::all_convertible_to<std::size_t, S...>::value)>
     const value_type& operator()(S... sizes) const noexcept(assert_nothrow) {
+        need_cpu();
         return _memory[etl::dyn_index(as_derived(), sizes...)];
     }
 
@@ -423,6 +428,7 @@ struct dense_dyn_base : dyn_base<T, D> {
                                  (sizeof...(S) == n_dimensions),
                                  cpp::all_convertible_to<std::size_t, S...>::value)>
     value_type& operator()(S... sizes) noexcept(assert_nothrow) {
+        need_cpu();
         return _memory[etl::dyn_index(as_derived(), sizes...)];
     }
 
@@ -433,6 +439,8 @@ struct dense_dyn_base : dyn_base<T, D> {
      */
     const value_type& operator[](std::size_t i) const noexcept {
         cpp_assert(i < _size, "Out of bounds");
+
+        need_cpu();
 
         return _memory[i];
     }
@@ -445,6 +453,8 @@ struct dense_dyn_base : dyn_base<T, D> {
     value_type& operator[](std::size_t i) noexcept {
         cpp_assert(i < _size, "Out of bounds");
 
+        need_cpu();
+
         return _memory[i];
     }
 
@@ -456,6 +466,8 @@ struct dense_dyn_base : dyn_base<T, D> {
      */
     value_type read_flat(std::size_t i) const noexcept {
         cpp_assert(i < _size, "Out of bounds");
+
+        need_cpu();
 
         return _memory[i];
     }
@@ -618,6 +630,16 @@ struct dense_dyn_base : dyn_base<T, D> {
     gpu_memory_handler<T>& get_gpu_handler(){
         return _gpu;
     }
+
+protected:
+    /*!
+     * \brief Ensures that the CPU is up to date
+     */
+    void need_cpu() const {
+        // TODO Should not go though all this
+        ensure_cpu_up_to_date();
+    }
+
 private:
     /*!
      * \brief Returns a reference to the derived object, i.e. the object using the CRTP injector.
