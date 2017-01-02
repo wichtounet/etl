@@ -12,91 +12,11 @@
 
 #pragma once
 
+#include "etl/index.hpp"
+
 namespace etl {
 
 namespace matrix_detail {
-
-/*!
- * \brief Traits to compute the subsize from index I for a matrix.
- *
- * The subsize is used  for row-major index computation.
- *
- * \tparam M The matrix to get sub size from
- * \tparam I The index we need subsize for
- */
-template <typename M, std::size_t I, typename Enable = void>
-struct matrix_subsize : std::integral_constant<std::size_t, M::template dim<I + 1>() * matrix_subsize<M, I + 1>::value> {};
-
-/*!
- * \copydoc matrix_subsize
- */
-template <typename M, std::size_t I>
-struct matrix_subsize<M, I, std::enable_if_t<I == M::n_dimensions - 1>> : std::integral_constant<std::size_t, 1> {};
-
-/*!
- * \brief Traits to compute the leading sze from index I for a matrix.
- *
- * The leading sze is used  for column-major index computation.
- *
- * \tparam M The matrix to get sub size from
- * \tparam I The index we need subsize for
- */
-template <typename M, std::size_t I, typename Enable = void>
-struct matrix_leadingsize : std::integral_constant<std::size_t, M::template dim<I - 1>() * matrix_leadingsize<M, I - 1>::value> {};
-
-/*!
- * \copydoc matrix_leadingsize
- */
-template <typename M>
-struct matrix_leadingsize<M, 0> : std::integral_constant<std::size_t, 1> {};
-
-/*!
- * \brief Compute the index inside the row major matrix
- */
-template <typename M, std::size_t I>
-inline cpp14_constexpr std::size_t rm_compute_index(std::size_t first) noexcept(assert_nothrow) {
-    cpp_assert(first < M::template dim<I>(), "Out of bounds");
-    return first;
-}
-
-/*!
- * \brief Compute the index inside the row major matrix
- */
-template <typename M, std::size_t I, typename... S>
-inline cpp14_constexpr std::size_t rm_compute_index(std::size_t first, std::size_t second, S... args) noexcept(assert_nothrow) {
-    cpp_assert(first < M::template dim<I>(), "Out of bounds");
-    return matrix_subsize<M, I>::value * first + rm_compute_index<M, I + 1>(second, args...);
-}
-
-/*!
- * \brief Compute the index inside the column major matrix
- */
-template <typename M, std::size_t I>
-inline cpp14_constexpr std::size_t cm_compute_index(std::size_t first) noexcept(assert_nothrow) {
-    cpp_assert(first < M::template dim<I>(), "Out of bounds");
-    return matrix_leadingsize<M, I>::value * first;
-}
-
-/*!
- * \brief Compute the index inside the column major matrix
- */
-template <typename M, std::size_t I, typename... S>
-inline cpp14_constexpr std::size_t cm_compute_index(std::size_t first, std::size_t second, S... args) noexcept(assert_nothrow) {
-    cpp_assert(first < M::template dim<I>(), "Out of bounds");
-    return matrix_leadingsize<M, I>::value * first + cm_compute_index<M, I + 1>(second, args...);
-}
-
-/*!
- * \brief Compute the index inside the matrix. The storage order is
- * automatically selected.
- * \param args The indices
- */
-template <typename M, std::size_t I, typename... S>
-inline constexpr std::size_t compute_index(S... args) noexcept(assert_nothrow) {
-    return M::storage_order == order::ColumnMajor
-               ? cm_compute_index<M, I>(args...)
-               : rm_compute_index<M, I>(args...);
-}
 
 /*!
  * \brief Traits to test if a type is a std::vector
@@ -175,7 +95,7 @@ protected:
      */
     template <typename... S>
     static constexpr std::size_t index(S... args) {
-        return matrix_detail::compute_index<derived_t, 0>(args...);
+        return etl::fast_index<derived_t>(args...);
     }
 
     /*!
