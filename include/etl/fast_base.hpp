@@ -125,7 +125,7 @@ protected:
     /*!
      * \brief Ensures that the CPU is up to date
      */
-    void need_cpu(){
+    void need_cpu() const {
         // TODO Should not go though all this
         as_derived().direct().ensure_cpu_up_to_date();
     }
