@@ -448,6 +448,9 @@ TEMPLATE_TEST_CASE_2("etl_traits/precision", "is_X_precision", Z, float, double)
     REQUIRE_DIRECT(correct_type<Z>(a(0)(0) * a(0)(0)));
     REQUIRE_DIRECT(correct_type<Z>(b(0)(0) * b(0)(0)));
 
+    REQUIRE_DIRECT(correct_type<Z>(etl::reshape(etl::reshape(a(0)(0) * a(0)(0), 2, 10)(1), 5, 2)(0)));
+    REQUIRE_DIRECT(correct_type<Z>(etl::reshape(etl::reshape(b(0)(0) * b(0)(0), 2, 10)(1), 5, 2)(0)));
+
     REQUIRE_DIRECT(correct_type<Z>(etl::reshape<5, 2>(etl::reshape<2, 10>(a(0)(0) * a(0)(0))(1))(0)));
     REQUIRE_DIRECT(correct_type<Z>(etl::reshape<5, 2>(etl::reshape<2, 10>(b(0)(0) * b(0)(0))(1))(0)));
 
