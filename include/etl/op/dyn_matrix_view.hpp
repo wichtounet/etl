@@ -380,7 +380,28 @@ public:
      * \param j The index
      * \return a reference to the element at the given position.
      */
+    template<cpp_enable_if_cst((D == 1))>
     const_return_type operator()(std::size_t j) const {
+        return memory[j];
+    }
+
+    /*!
+     * \brief Access to the element at the given position
+     * \param j The index
+     * \return a reference to the element at the given position.
+     */
+    template<cpp_enable_if_cst((D == 1))>
+    return_type operator()(std::size_t j) {
+        return memory[j];
+    }
+
+    /*!
+     * \brief Returns the value at the given index
+     * This function never has side effects.
+     * \param j The index
+     * \return the value at the given index.
+     */
+    value_type read_flat(std::size_t j) const noexcept {
         return memory[j];
     }
 
@@ -397,25 +418,6 @@ public:
     }
 
     /*!
-     * \brief Returns the value at the given index
-     * This function never has side effects.
-     * \param j The index
-     * \return the value at the given index.
-     */
-    value_type read_flat(std::size_t j) const noexcept {
-        return memory[j];
-    }
-
-    /*!
-     * \brief Access to the element at the given position
-     * \param j The index
-     * \return a reference to the element at the given position.
-     */
-    return_type operator()(std::size_t j) {
-        return memory[j];
-    }
-
-    /*!
      * \brief Access to the element at the given (i,j) position
      * \param f1 The first index
      * \param f2 The second index
@@ -425,6 +427,26 @@ public:
     template<typename... S>
     return_type operator()(size_t f1, size_t f2, S... sizes) {
         return memory[detail::index<storage_order>(dimensions, _size, f1, f2, sizes...)];
+    }
+
+    /*!
+     * \brief Creates a sub view of the matrix, effectively removing the first dimension and fixing it to the given index.
+     * \param i The index to use
+     * \return a sub view of the matrix at position i.
+     */
+    template <bool B = (D > 1), cpp_enable_if(B)>
+    auto operator()(size_t i) noexcept {
+        return etl::sub(*this, i);
+    }
+
+    /*!
+     * \brief Creates a sub view of the matrix, effectively removing the first dimension and fixing it to the given index.
+     * \param i The index to use
+     * \return a sub view of the matrix at position i.
+     */
+    template <bool B = (D > 1), cpp_enable_if(B)>
+    auto operator()(size_t i) const noexcept {
+        return etl::sub(*this, i);
     }
 
     /*!
