@@ -67,50 +67,6 @@ namespace standard_evaluator {
         expr.visit(detail::back_propagate_visitor{});
     }
 
-    /*!
-     * \Perform task after assign on the expression and the result
-     *
-     * For GPU, this means copying the memory back to GPU and
-     * released the GPU memory
-     */
-    template <typename E, typename R>
-    void post_assign(E&& expr, R&& result) {
-        //If necessary copy the GPU result back to CPU
-        cpp::static_if<all_dma<R>::value && !etl::is_sparse_matrix<R>::value>([&](auto f){
-            f(result).ensure_cpu_up_to_date();
-        });
-
-        expr.visit(detail::gpu_clean_visitor{});
-        result.visit(detail::gpu_clean_visitor{});
-    }
-
-    /*!
-     * \Perform task after compound assign on the expression and the result
-     *
-     * For GPU, this means copying the memory back to GPU and
-     * released the GPU memory
-     */
-    template <typename E>
-    void post_assign_compound(E&& expr) {
-        //If necessary copy the GPU result back to CPU
-        cpp::static_if<all_dma<E>::value && !etl::is_sparse_matrix<E>::value>([&](auto f){
-            f(expr).ensure_cpu_up_to_date();
-        });
-
-        expr.visit(detail::gpu_clean_visitor{});
-    }
-
-    /*!
-     * \Perform task after assign on the expression and the result
-     *
-     * For GPU, this means copying the memory back to GPU and
-     * released the GPU memory
-     */
-    template <typename E>
-    void post_assign_force(E&& expr) {
-        post_assign_compound(expr);
-    }
-
     //Standard assign version
 
     /*!
@@ -228,7 +184,6 @@ namespace standard_evaluator {
     void add_evaluate(E&& expr, R&& result) {
         pre_assign_rhs(expr);
         pre_assign_lhs(result);
-        post_assign_compound(expr);
 
         for (std::size_t i = 0; i < etl::size(result); ++i) {
             result[i] += expr[i];
@@ -244,7 +199,6 @@ namespace standard_evaluator {
     void add_evaluate(E&& expr, R&& result) {
         pre_assign_rhs(expr);
         pre_assign_lhs(result);
-        post_assign_compound(expr);
 
         if(all_thread_safe<E>::value && select_parallel(etl::size(result))){
             par_linear<detail::AssignAdd>(expr, result);
@@ -264,7 +218,6 @@ namespace standard_evaluator {
 
         pre_assign_rhs(expr);
         pre_assign_lhs(result);
-        post_assign_compound(expr);
 
         if(all_thread_safe<E>::value && select_parallel(etl::size(result))){
             par_vec<detail::VectorizedAssignAdd, V>(expr, result);
@@ -284,7 +237,6 @@ namespace standard_evaluator {
     void sub_evaluate(E&& expr, R&& result) {
         pre_assign_rhs(expr);
         pre_assign_lhs(result);
-        post_assign_compound(expr);
 
         for (std::size_t i = 0; i < etl::size(result); ++i) {
             result[i] -= expr[i];
@@ -300,7 +252,6 @@ namespace standard_evaluator {
     void sub_evaluate(E&& expr, R&& result) {
         pre_assign_rhs(expr);
         pre_assign_lhs(result);
-        post_assign_compound(expr);
 
         if(all_thread_safe<E>::value && select_parallel(etl::size(result))){
             par_linear<detail::AssignSub>(expr, result);
@@ -320,7 +271,6 @@ namespace standard_evaluator {
 
         pre_assign_rhs(expr);
         pre_assign_lhs(result);
-        post_assign_compound(expr);
 
         if(all_thread_safe<E>::value && select_parallel(etl::size(result))){
             par_vec<detail::VectorizedAssignSub, V>(expr, result);
@@ -340,7 +290,6 @@ namespace standard_evaluator {
     void mul_evaluate(E&& expr, R&& result) {
         pre_assign_rhs(expr);
         pre_assign_lhs(result);
-        post_assign_compound(expr);
 
         for (std::size_t i = 0; i < etl::size(result); ++i) {
             result[i] *= expr[i];
@@ -356,7 +305,6 @@ namespace standard_evaluator {
     void mul_evaluate(E&& expr, R&& result) {
         pre_assign_rhs(expr);
         pre_assign_lhs(result);
-        post_assign_compound(expr);
 
         if(all_thread_safe<E>::value && select_parallel(etl::size(result))){
             par_linear<detail::AssignMul>(expr, result);
@@ -376,7 +324,6 @@ namespace standard_evaluator {
 
         pre_assign_rhs(expr);
         pre_assign_lhs(result);
-        post_assign_compound(expr);
 
         if(all_thread_safe<E>::value && select_parallel(etl::size(result))){
             par_vec<detail::VectorizedAssignMul, V>(expr, result);
@@ -396,7 +343,6 @@ namespace standard_evaluator {
     void div_evaluate(E&& expr, R&& result) {
         pre_assign_rhs(expr);
         pre_assign_lhs(result);
-        post_assign_compound(expr);
 
         for (std::size_t i = 0; i < etl::size(result); ++i) {
             result[i] /= expr[i];
@@ -412,7 +358,6 @@ namespace standard_evaluator {
     void div_evaluate(E&& expr, R&& result) {
         pre_assign_rhs(expr);
         pre_assign_lhs(result);
-        post_assign_compound(expr);
 
         if(all_thread_safe<E>::value && select_parallel(etl::size(result))){
             par_linear<detail::AssignDiv>(expr, result);
@@ -432,7 +377,6 @@ namespace standard_evaluator {
 
         pre_assign_rhs(expr);
         pre_assign_lhs(result);
-        post_assign_compound(expr);
 
         if(all_thread_safe<E>::value && select_parallel(etl::size(result))){
             par_vec<detail::VectorizedAssignDiv, V>(expr, result);
@@ -452,7 +396,6 @@ namespace standard_evaluator {
     void mod_evaluate(E&& expr, R&& result) {
         pre_assign_rhs(expr);
         pre_assign_lhs(result);
-        post_assign_compound(expr);
 
         for (std::size_t i = 0; i < etl::size(result); ++i) {
             result[i] %= expr[i];
@@ -476,8 +419,6 @@ namespace standard_evaluator {
 
         //Perform the real evaluation, selected by TMP
         assign_evaluate_impl(expr, result);
-
-        post_assign(expr, result);
     }
 
     /*!
@@ -501,8 +442,6 @@ namespace standard_evaluator {
             //Perform the real evaluation, selected by TMP
             assign_evaluate_impl(expr, result);
         }
-
-        post_assign(expr, result);
     }
 
     /*!
@@ -514,8 +453,6 @@ namespace standard_evaluator {
         pre_assign_lhs(result);
 
         expr.direct_evaluate(std::forward<R>(result));
-
-        post_assign(expr, std::forward<R>(result));
     }
 
     /*!
@@ -528,8 +465,6 @@ namespace standard_evaluator {
         pre_assign_lhs(result);
 
         expr.direct_evaluate(result);
-
-        post_assign(expr, result);
     }
 
 } // end of namespace standard_evaluator
@@ -1175,7 +1110,6 @@ void mod_evaluate(Expr&& expr, Result&& result) {
 template <typename Expr>
 void force(Expr&& expr) {
     standard_evaluator::pre_assign_rhs(expr);
-    standard_evaluator::post_assign_force(expr);
 }
 
 } //end of namespace etl
