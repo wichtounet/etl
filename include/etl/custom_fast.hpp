@@ -61,8 +61,7 @@ public:
 
 private:
     using base_type::_data;
-
-    mutable gpu_handler<T> _gpu_memory_handler; ///< The GPU memory handler
+    using base_type::_gpu_memory_handler;
 
 public:
     /// Construction
@@ -87,7 +86,7 @@ public:
      * \brief Move construct a fast matrix
      * \param rhs The fast matrix to move from
      */
-    custom_fast_matrix_impl(custom_fast_matrix_impl&& rhs) noexcept : base_type(std::move(rhs)), _gpu_memory_handler(std::move(rhs._gpu_memory_handler)) {
+    custom_fast_matrix_impl(custom_fast_matrix_impl&& rhs) noexcept : base_type(std::move(rhs)) {
         // Nothing else to init
     }
 

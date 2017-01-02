@@ -89,6 +89,8 @@ protected:
     storage_impl _data;         ///< The storage container
     gpu_memory_handler<T> _gpu; ///< The GPU memory handler
 
+    mutable gpu_handler<T> _gpu_memory_handler; ///< The GPU memory handler
+
     /*!
      * \brief Compute the 1D index from the given indices
      * \param args The access indices
@@ -106,6 +108,7 @@ protected:
      */
     template <typename... S>
     value_type& access(S... args) {
+        need_cpu();
         return _data[index(args...)];
     }
 
@@ -119,6 +122,13 @@ protected:
         return _data[index(args...)];
     }
 
+    /*!
+     * \brief Ensures that the CPU is up to date
+     */
+    void need_cpu(){
+        // TODO Should not go though all this
+        as_derived().direct().ensure_cpu_up_to_date();
+    }
 
 public:
     fast_matrix_base() : _data() {
