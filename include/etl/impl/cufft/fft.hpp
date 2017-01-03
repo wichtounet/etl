@@ -1056,9 +1056,11 @@ void ifft2_many(A&& a, C&& c) {
  * \param b The kernel matrix
  * \param c The output matrix
  */
-template <typename T>
-void conv2_full(const opaque_memory<T, 2>& a, const opaque_memory<T, 2>& b, const opaque_memory<T, 2>& c) {
-    detail::conv2_full_kernel(a.memory_start(), a.dim(0), a.dim(1), b.memory_start(), b.dim(0), b.dim(1), c.memory_start(), T(0.0));
+template <typename I, typename K, typename C>
+void conv2_full(I&& a, K&& b, C&& c) {
+    using T = value_t<I>;
+
+    detail::conv2_full_kernel(a.memory_start(), etl::dim<0>(a), etl::dim<1>(a), b.memory_start(), etl::dim<0>(b), etl::dim<1>(b), c.memory_start(), T(0.0));
 }
 
 /*!
@@ -1069,15 +1071,17 @@ void conv2_full(const opaque_memory<T, 2>& a, const opaque_memory<T, 2>& b, cons
  * \param b The kernel matrix
  * \param c The output matrix
  */
-template <typename T>
-void conv2_full_flipped(const opaque_memory<T, 2>& a, const opaque_memory<T, 2>& b, const opaque_memory<T, 2>& c) {
-    etl::dyn_matrix<T, 2> prepared_b(b.dim(0), b.dim(1));
+template <typename I, typename K, typename C>
+void conv2_full_flipped(I&& a, K&& b, C&& c) {
+    using T = value_t<I>;
+
+    etl::dyn_matrix<T, 2> prepared_b(etl::dim<0>(b), etl::dim<1>(b));
 
     std::copy(b.memory_start(), b.memory_end(), prepared_b.memory_start());
 
     prepared_b.fflip_inplace();
 
-    detail::conv2_full_kernel(a.memory_start(), a.dim(0), a.dim(1), prepared_b.memory_start(), b.dim(0), b.dim(1), c.memory_start(), T(0.0));
+    detail::conv2_full_kernel(a.memory_start(), etl::dim<0>(a), etl::dim<1>(a), prepared_b.memory_start(), etl::dim<0>(b), etl::dim<1>(b), c.memory_start(), T(0.0));
 }
 
 /*!
@@ -1086,15 +1090,17 @@ void conv2_full_flipped(const opaque_memory<T, 2>& a, const opaque_memory<T, 2>&
  * \param b The kernel matrix
  * \param c The output matrix
  */
-template <typename T>
-void conv2_full_multi(const opaque_memory<T, 2>& input, const opaque_memory<T, 3>& kernel, const opaque_memory<T, 3>& conv) {
-    const auto K = kernel.dim(0);
+template <typename I, typename KK, typename C>
+void conv2_full_multi(I&& input, KK&& kernel, C&& conv) {
+    using T = value_t<I>;
 
-    const auto k1 = kernel.dim(1);
-    const auto k2 = kernel.dim(2);
+    const auto K = etl::dim<0>(kernel);
 
-    const auto c1 = conv.dim(1);
-    const auto c2 = conv.dim(2);
+    const auto k1 = etl::dim<1>(kernel);
+    const auto k2 = etl::dim<2>(kernel);
+
+    const auto c1 = etl::dim<1>(conv);
+    const auto c2 = etl::dim<2>(conv);
 
     for(size_t k = 0; k < K; ++k){
         const auto k_s = k1 * k2;
@@ -1103,7 +1109,7 @@ void conv2_full_multi(const opaque_memory<T, 2>& input, const opaque_memory<T, 3
         const T* b = kernel.memory_start() + k * k_s;
         T* c       = conv.memory_start() + k * c_s;
 
-        detail::conv2_full_kernel(input.memory_start(), input.dim(0), input.dim(1), b, k1, k2, c, T(0.0));
+        detail::conv2_full_kernel(input.memory_start(), etl::dim<0>(input), etl::dim<1>(input), b, k1, k2, c, T(0.0));
     }
 }
 
@@ -1113,15 +1119,17 @@ void conv2_full_multi(const opaque_memory<T, 2>& input, const opaque_memory<T, 3
  * \param b The kernel matrix
  * \param c The output matrix
  */
-template <typename T>
-void conv2_full_multi_flipped(const opaque_memory<T, 2>& input, const opaque_memory<T, 3>& kernel, const opaque_memory<T, 3>& conv) {
-    const auto K = kernel.dim(0);
+template <typename I, typename KK, typename C>
+void conv2_full_multi_flipped(I&& input, KK&& kernel, C&& conv) {
+    using T = value_t<I>;
 
-    const auto k1 = kernel.dim(1);
-    const auto k2 = kernel.dim(2);
+    const auto K = etl::dim<0>(kernel);
 
-    const auto c1 = conv.dim(1);
-    const auto c2 = conv.dim(2);
+    const auto k1 = etl::dim<1>(kernel);
+    const auto k2 = etl::dim<2>(kernel);
+
+    const auto c1 = etl::dim<1>(conv);
+    const auto c2 = etl::dim<2>(conv);
 
     for(size_t k = 0; k < K; ++k){
         const auto k_s = k1 * k2;
@@ -1136,7 +1144,7 @@ void conv2_full_multi_flipped(const opaque_memory<T, 2>& input, const opaque_mem
 
         prepared_b.fflip_inplace();
 
-        detail::conv2_full_kernel(input.memory_start(), input.dim(0), input.dim(1), prepared_b.memory_start(), k1, k2, c, T(0.0));
+        detail::conv2_full_kernel(input.memory_start(), etl::dim<0>(input), etl::dim<1>(input), prepared_b.memory_start(), k1, k2, c, T(0.0));
     }
 }
 
@@ -1146,29 +1154,31 @@ void conv2_full_multi_flipped(const opaque_memory<T, 2>& input, const opaque_mem
  * \param b The kernel matrix
  * \param c The output matrix
  */
-template <typename T>
-void conv4_full(const opaque_memory<T, 4>& input, const opaque_memory<T, 4>& kernel, const opaque_memory<T, 4>& conv) {
+template <typename I, typename KK, typename CC>
+void conv4_full(I&& input, KK&& kernel, CC&& conv) {
     using detail::cufft_exec_c2c;
 
-    if (kernel.dim(1) > 0) {
-        auto conv_i_inc = conv.dim(1) * conv.dim(2) * conv.dim(3);
-        auto conv_c_inc = conv.dim(2) * conv.dim(3);
+    using T = value_t<I>;
 
-        auto kernel_k_inc = kernel.dim(1) * kernel.dim(2) * kernel.dim(3);
-        auto kernel_c_inc = kernel.dim(2) * kernel.dim(3);
+    if (etl::dim<1>(kernel) > 0) {
+        auto conv_i_inc = etl::dim<1>(conv) * etl::dim<2>(conv) * etl::dim<3>(conv);
+        auto conv_c_inc = etl::dim<2>(conv) * etl::dim<3>(conv);
 
-        auto input_i_inc = input.dim(1) * input.dim(2) * input.dim(3);
-        auto input_k_inc = input.dim(2) * input.dim(3);
+        auto kernel_k_inc = etl::dim<1>(kernel) * etl::dim<2>(kernel) * etl::dim<3>(kernel);
+        auto kernel_c_inc = etl::dim<2>(kernel) * etl::dim<3>(kernel);
 
-        const auto N = input.dim(0);
-        const auto K = kernel.dim(0);
-        const auto C = kernel.dim(1);
+        auto input_i_inc = etl::dim<1>(input) * etl::dim<2>(input) * etl::dim<3>(input);
+        auto input_k_inc = etl::dim<2>(input) * etl::dim<3>(input);
 
-        const auto m1 = input.dim(2);
-        const auto m2 = input.dim(3);
+        const auto N = etl::dim<0>(input);
+        const auto K = etl::dim<0>(kernel);
+        const auto C = etl::dim<1>(kernel);
 
-        const auto n1 = kernel.dim(2);
-        const auto n2 = kernel.dim(3);
+        const auto m1 = etl::dim<2>(input);
+        const auto m2 = etl::dim<3>(input);
+
+        const auto n1 = etl::dim<2>(kernel);
+        const auto n2 = etl::dim<3>(kernel);
 
         const std::size_t s1   = m1 + n1 - 1;
         const std::size_t s2   = m2 + n2 - 1;
@@ -1198,8 +1208,8 @@ void conv4_full(const opaque_memory<T, 4>& input, const opaque_memory<T, 4>& ker
 
         // Fully pad the kernels
 
-        for (std::size_t k = 0; k < kernel.dim(0); ++k) {
-            for (std::size_t c = 0; c < kernel.dim(1); ++c) {
+        for (std::size_t k = 0; k < etl::dim<0>(kernel); ++k) {
+            for (std::size_t c = 0; c < etl::dim<1>(kernel); ++c) {
                 const T* b = kernel.memory_start() + k * kernel_k_inc + c * kernel_c_inc; // kernel(k)(c)
 
                 for (std::size_t i = 0; i < n1; ++i) {
@@ -1284,16 +1294,18 @@ void conv4_full(const opaque_memory<T, 4>& input, const opaque_memory<T, 4>& ker
  * \param b The kernel matrix
  * \param c The output matrix
  */
-template <typename T>
-void conv4_full_flipped(const opaque_memory<T, 4>& input, const opaque_memory<T, 4>& kernel, const opaque_memory<T, 4>& conv) {
-    if (kernel.dim(1) > 0) {
-        etl::dyn_matrix<T, 4> prepared_k(kernel.dim(0), kernel.dim(1), kernel.dim(2), kernel.dim(3));
+template <typename I, typename K, typename C>
+void conv4_full_flipped(I&& input, K&& kernel, C&& conv) {
+    using T = value_t<I>;
+
+    if (etl::dim<1>(kernel) > 0) {
+        etl::dyn_matrix<T, 4> prepared_k(etl::dim<0>(kernel), etl::dim<1>(kernel), etl::dim<2>(kernel), etl::dim<3>(kernel));
 
         std::copy(kernel.memory_start(), kernel.memory_end(), prepared_k.memory_start());
 
         prepared_k.deep_fflip_inplace();
 
-        conv4_full(input, prepared_k.direct(), conv);
+        conv4_full(input, prepared_k, conv);
     }
 }
 

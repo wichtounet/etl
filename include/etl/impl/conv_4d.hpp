@@ -338,7 +338,7 @@ struct conv4_full_impl {
         } else if (impl == etl::conv4_impl::FFT_MKL) {
             impl::blas::conv4_full(input, kernel, conv);
         } else if (impl == etl::conv4_impl::FFT_CUFFT) {
-            impl::cufft::conv4_full(input.direct(), kernel.direct(), conv.direct());
+            impl::cufft::conv4_full(input, kernel, conv);
         } else if (impl == etl::conv4_impl::STD) {
             impl::standard::conv4_full(input, kernel, conv);
         } else {
@@ -443,7 +443,7 @@ struct conv4_full_flipped_impl {
         } else if (impl == etl::conv4_impl::FFT_MKL) {
             impl::blas::conv4_full_flipped(input, kernel, conv);
         } else if (impl == etl::conv4_impl::FFT_CUFFT) {
-            impl::cufft::conv4_full_flipped(input.direct(), kernel.direct(), conv.direct());
+            impl::cufft::conv4_full_flipped(input, kernel, conv);
         } else if (impl == etl::conv4_impl::STD) {
             impl::standard::conv4_full_flipped(input, kernel, conv);
         } else {

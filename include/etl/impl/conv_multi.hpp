@@ -613,7 +613,7 @@ struct conv2_full_multi_impl {
         } else if (impl == etl::conv_multi_impl::FFT_MKL) {
             impl::blas::conv2_full_multi(input, kernel, conv);
         } else if (impl == etl::conv_multi_impl::FFT_CUFFT) {
-            impl::cufft::conv2_full_multi(input.direct(), kernel.direct(), conv.direct());
+            impl::cufft::conv2_full_multi(input, kernel, conv);
         } else {
             cpp_unreachable("Invalid conv implementation selection");
         }
@@ -713,7 +713,7 @@ struct conv2_full_multi_flipped_impl {
         } else if (impl == etl::conv_multi_impl::FFT_MKL) {
             impl::blas::conv2_full_multi_flipped(input, kernel, conv);
         } else if (impl == etl::conv_multi_impl::FFT_CUFFT) {
-            impl::cufft::conv2_full_multi_flipped(input.direct(), kernel.direct(), conv.direct());
+            impl::cufft::conv2_full_multi_flipped(input, kernel, conv);
         } else {
             cpp_unreachable("Invalid conv implementation selection");
         }
