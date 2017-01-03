@@ -36,32 +36,26 @@ struct fast_matrix_view <T, false, Dims...> final :
     using return_type       = return_helper<sub_type, decltype(std::declval<sub_type>()[0])>;       ///< The type returned by the view
     using const_return_type = const_return_helper<sub_type, decltype(std::declval<sub_type>()[0])>; ///< The const type return by the view
 
-    sub_type sub; ///< The Sub expression
-
-    static constexpr std::size_t n_dimensions = sizeof...(Dims); ///< The number of dimensions of the view
-
     /*!
      * \brief The vectorization type for V
      */
     template<typename V = default_vec>
     using vec_type               = typename V::template vec_type<value_type>;
 
+private:
+    sub_type sub; ///< The Sub expression
+
+    static constexpr std::size_t n_dimensions = sizeof...(Dims); ///< The number of dimensions of the view
+
+    friend struct etl_traits<etl::fast_matrix_view<T, false, Dims...>>;
+
+public:
     /*!
      * \brief Construct a new fast_matrix_view over the given sub expression
      * \param sub The sub expression
      */
     explicit fast_matrix_view(sub_type sub)
             : sub(sub) {}
-
-    /*!
-     * \brief Compute the flat index for the given position.
-     * \param args The indices
-     * \return the index inside the matrix
-     */
-    template <typename... S>
-    static constexpr std::size_t index(S... args) {
-        return etl::fast_index<this_type>(args...);
-    }
 
     /*!
      * \brief Returns the element at the given index
@@ -100,7 +94,7 @@ struct fast_matrix_view <T, false, Dims...> final :
     return_type operator()(S... args) noexcept {
         static_assert(cpp::all_convertible_to<std::size_t, S...>::value, "Invalid size types");
 
-        return sub[index(static_cast<std::size_t>(args)...)];
+        return sub[etl::fast_index<this_type>(static_cast<std::size_t>(args)...)];
     }
 
     /*!
@@ -112,7 +106,7 @@ struct fast_matrix_view <T, false, Dims...> final :
     const_return_type operator()(S... args) const noexcept {
         static_assert(cpp::all_convertible_to<std::size_t, S...>::value, "Invalid size types");
 
-        return sub[index(static_cast<std::size_t>(args)...)];
+        return sub[etl::fast_index<this_type>(static_cast<std::size_t>(args)...)];
     }
 
     /*!
@@ -133,32 +127,6 @@ struct fast_matrix_view <T, false, Dims...> final :
     template <bool B = (n_dimensions > 1), cpp_enable_if(B)>
     auto operator()(size_t i) const noexcept {
         return etl::sub(*this, i);
-    }
-
-    /*!
-     * \brief Returns the value on which the transformer is working.
-     * \return A reference  to the value on which the transformer is working.
-     */
-    sub_type& value() {
-        return sub;
-    }
-
-    /*!
-     * \brief Returns the value on which the transformer is working.
-     * \return A reference  to the value on which the transformer is working.
-     */
-    const sub_type& value() const {
-        return sub;
-    }
-
-    /*!
-     * \brief Returns the Dth dimension of an expression of this type
-     * \tparam D The dimension to get
-     * \return the Dth dimension of an expression of this type
-     */
-    template <std::size_t D>
-    static constexpr std::size_t dim() noexcept {
-        return nth_size<D, 0, Dims...>::value;
     }
 
     /*!
@@ -233,7 +201,7 @@ struct fast_matrix_view <T, false, Dims...> final :
      * \param visitor The visitor to apply
      */
     void visit(const detail::back_propagate_visitor& visitor){
-        value().visit(visitor);
+        sub.visit(visitor);
     }
 
     /*!
@@ -241,7 +209,7 @@ struct fast_matrix_view <T, false, Dims...> final :
      * \param visitor The visitor to apply
      */
     void visit(const detail::temporary_allocator_visitor& visitor){
-        value().visit(visitor);
+        sub.visit(visitor);
     }
 
     /*!
@@ -249,7 +217,7 @@ struct fast_matrix_view <T, false, Dims...> final :
      * \param visitor The visitor to apply
      */
     void visit(const detail::gpu_clean_visitor& visitor){
-        value().visit(visitor);
+        sub.visit(visitor);
     }
 
     /*!
@@ -259,8 +227,18 @@ struct fast_matrix_view <T, false, Dims...> final :
     void visit(detail::evaluator_visitor& visitor){
         bool old_need_value = visitor.need_value;
         visitor.need_value = true;
-        value().visit(visitor);
+        sub.visit(visitor);
         visitor.need_value = old_need_value;
+    }
+
+    /*!
+     * \brief Print a representation of the view on the given stream
+     * \param os The output stream
+     * \param v The view to print
+     * \return the output stream
+     */
+    friend std::ostream& operator<<(std::ostream& os, const fast_matrix_view& v) {
+        return os << "reshape(" << v.sub << ")";
     }
 };
 
@@ -281,6 +259,13 @@ struct fast_matrix_view <T, true, Dims...> final :
     using return_type       = return_helper<sub_type, decltype(std::declval<sub_type>()[0])>;       ///< The type returned by the view
     using const_return_type = const_return_helper<sub_type, decltype(std::declval<sub_type>()[0])>; ///< The const type return by the view
 
+    /*!
+     * \brief The vectorization type for V
+     */
+    template<typename V = default_vec>
+    using vec_type               = typename V::template vec_type<value_type>;
+
+private:
     sub_type sub; ///< The Sub expression
 
     mutable memory_type memory;
@@ -290,11 +275,9 @@ struct fast_matrix_view <T, true, Dims...> final :
 
     static constexpr std::size_t n_dimensions = sizeof...(Dims); ///< The number of dimensions of the view
 
-    /*!
-     * \brief The vectorization type for V
-     */
-    template<typename V = default_vec>
-    using vec_type               = typename V::template vec_type<value_type>;
+    friend struct etl_traits<etl::fast_matrix_view<T, false, Dims...>>;
+
+public:
 
     /*!
      * \brief Construct a new fast_matrix_view over the given sub expression
@@ -304,16 +287,6 @@ struct fast_matrix_view <T, true, Dims...> final :
         if(!decay_traits<sub_type>::needs_evaluator_visitor){
             this->memory = sub.memory_start();
         }
-    }
-
-    /*!
-     * \brief Compute the flat index for the given position.
-     * \param args The indices
-     * \return the index inside the matrix
-     */
-    template <typename... S>
-    static constexpr std::size_t index(S... args) {
-        return etl::fast_index<this_type>(args...);
     }
 
     /*!
@@ -353,7 +326,7 @@ struct fast_matrix_view <T, true, Dims...> final :
     return_type operator()(S... args) noexcept {
         static_assert(cpp::all_convertible_to<std::size_t, S...>::value, "Invalid size types");
 
-        return memory[index(static_cast<std::size_t>(args)...)];
+        return memory[etl::fast_index<this_type>(static_cast<std::size_t>(args)...)];
     }
 
     /*!
@@ -365,7 +338,7 @@ struct fast_matrix_view <T, true, Dims...> final :
     const_return_type operator()(S... args) const noexcept {
         static_assert(cpp::all_convertible_to<std::size_t, S...>::value, "Invalid size types");
 
-        return memory[index(static_cast<std::size_t>(args)...)];
+        return memory[etl::fast_index<this_type>(static_cast<std::size_t>(args)...)];
     }
 
     /*!
@@ -389,32 +362,6 @@ struct fast_matrix_view <T, true, Dims...> final :
     }
 
     /*!
-     * \brief Returns the value on which the transformer is working.
-     * \return A reference  to the value on which the transformer is working.
-     */
-    sub_type& value() {
-        return sub;
-    }
-
-    /*!
-     * \brief Returns the value on which the transformer is working.
-     * \return A reference  to the value on which the transformer is working.
-     */
-    const sub_type& value() const {
-        return sub;
-    }
-
-    /*!
-     * \brief Returns the Dth dimension of an expression of this type
-     * \tparam D The dimension to get
-     * \return the Dth dimension of an expression of this type
-     */
-    template <std::size_t D>
-    static constexpr std::size_t dim() noexcept {
-        return nth_size<D, 0, Dims...>::value;
-    }
-
-    /*!
      * \brief Load several elements of the expression at once
      * \param x The position at which to start. This will be aligned from the beginning (multiple of the vector size).
      * \tparam V The vectorization mode to use
@@ -422,7 +369,7 @@ struct fast_matrix_view <T, true, Dims...> final :
      */
     template <typename V = default_vec>
     auto load(std::size_t x) const noexcept {
-        return sub.template load<V>(x);
+        return V::loadu(memory + x);
     }
 
     /*!
@@ -433,7 +380,18 @@ struct fast_matrix_view <T, true, Dims...> final :
      */
     template <typename V = default_vec>
     auto loadu(std::size_t x) const noexcept {
-        return sub.template loadu<V>(x);
+        return V::loadu(memory + x);
+    }
+
+    /*!
+     * \brief Store several elements in the matrix at once, using non-temporal store
+     * \param in The several elements to store
+     * \param i The position at which to start. This will be aligned from the beginning (multiple of the vector size).
+     * \tparam V The vectorization mode to use
+     */
+    template <typename V = default_vec>
+    void stream(vec_type<V> in, std::size_t i) noexcept {
+        return V::stream(memory + i, in);
     }
 
     /*!
@@ -455,18 +413,7 @@ struct fast_matrix_view <T, true, Dims...> final :
      */
     template <typename V = default_vec>
     void storeu(vec_type<V> in, std::size_t i) noexcept {
-        sub.template storeu<V>(in, i);
-    }
-
-    /*!
-     * \brief Store several elements in the matrix at once, using non-temporal store
-     * \param in The several elements to store
-     * \param i The position at which to start. This will be aligned from the beginning (multiple of the vector size).
-     * \tparam V The vectorization mode to use
-     */
-    template <typename V = default_vec>
-    void stream(vec_type<V> in, std::size_t i) noexcept {
-        sub.template stream<V>(in, i);
+        return V::storeu(memory + i, in);
     }
 
     /*!
@@ -526,7 +473,7 @@ struct fast_matrix_view <T, true, Dims...> final :
      * \param visitor The visitor to apply
      */
     void visit(const detail::back_propagate_visitor& visitor){
-        value().visit(visitor);
+        sub.visit(visitor);
     }
 
     /*!
@@ -534,7 +481,7 @@ struct fast_matrix_view <T, true, Dims...> final :
      * \param visitor The visitor to apply
      */
     void visit(const detail::temporary_allocator_visitor& visitor){
-        value().visit(visitor);
+        sub.visit(visitor);
     }
 
     /*!
@@ -542,7 +489,7 @@ struct fast_matrix_view <T, true, Dims...> final :
      * \param visitor The visitor to apply
      */
     void visit(const detail::gpu_clean_visitor& visitor){
-        value().visit(visitor);
+        sub.visit(visitor);
     }
 
     /*!
@@ -552,8 +499,18 @@ struct fast_matrix_view <T, true, Dims...> final :
     void visit(detail::evaluator_visitor& visitor){
         bool old_need_value = visitor.need_value;
         visitor.need_value = true;
-        value().visit(visitor);
+        sub.visit(visitor);
         visitor.need_value = old_need_value;
+    }
+
+    /*!
+     * \brief Print a representation of the view on the given stream
+     * \param os The output stream
+     * \param v The view to print
+     * \return the output stream
+     */
+    friend std::ostream& operator<<(std::ostream& os, const fast_matrix_view& v) {
+        return os << "reshape(" << v.sub << ")";
     }
 };
 
@@ -637,16 +594,5 @@ struct etl_traits<etl::fast_matrix_view<T, DMA, Dims...>> {
         return sizeof...(Dims);
     }
 };
-
-/*!
- * \brief Print a representation of the view on the given stream
- * \param os The output stream
- * \param v The view to print
- * \return the output stream
- */
-template <typename T, bool DMA, std::size_t Rows, std::size_t Columns>
-std::ostream& operator<<(std::ostream& os, const fast_matrix_view<T, DMA, Rows, Columns>& v) {
-    return os << "reshape[" << Rows << "," << Columns << "](" << v.sub << ")";
-}
 
 } //end of namespace etl

@@ -416,7 +416,7 @@ public:
      */
     template <typename V = default_vec>
     auto load(std::size_t x) const noexcept {
-        return sub.template load<V>(x);
+        return V::loadu(memory + x);
     }
 
     /*!
