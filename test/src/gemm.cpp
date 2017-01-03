@@ -104,3 +104,31 @@ GEMM_TEST_CASE("gemm/6", "[gemm]") {
     REQUIRE_EQUALS(c(3, 3), 824524);
     REQUIRE_EQUALS(c(18, 18), 828343);
 }
+
+GEMM_TEST_CASE("gemm/7", "[gemm]") {
+    etl::fast_matrix<T, 19, 19> a(etl::magic(19));
+    etl::fast_matrix<T, 19, 19> b(etl::magic(19));
+    etl::fast_matrix<T, 19, 19> c;
+
+    Impl::apply(reshape(a, 19, 19), reshape(b, 19, 19), c);
+
+    REQUIRE_EQUALS(c(0, 0), 828343);
+    REQUIRE_EQUALS(c(1, 1), 825360);
+    REQUIRE_EQUALS(c(2, 2), 826253);
+    REQUIRE_EQUALS(c(3, 3), 824524);
+    REQUIRE_EQUALS(c(18, 18), 828343);
+}
+
+GEMM_TEST_CASE("gemm/8", "[gemm]") {
+    etl::fast_matrix<T, 19, 19> a(etl::magic(19));
+    etl::fast_matrix<T, 19, 19> b(etl::magic(19));
+    etl::fast_matrix<T, 19, 19> c;
+
+    Impl::apply(etl::reshape<19, 19>(a), etl::reshape<19, 19>(b), c);
+
+    REQUIRE_EQUALS(c(0, 0), 828343);
+    REQUIRE_EQUALS(c(1, 1), 825360);
+    REQUIRE_EQUALS(c(2, 2), 826253);
+    REQUIRE_EQUALS(c(3, 3), 824524);
+    REQUIRE_EQUALS(c(18, 18), 828343);
+}
