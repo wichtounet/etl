@@ -297,9 +297,6 @@ private:
 
     mutable memory_type memory;
 
-    //TODO Should be shared with the sub expression
-    mutable gpu_handler<value_t<T>> _gpu_memory_handler; ///< The GPU memory handler
-
     static constexpr order storage_order = decay_traits<sub_type>::storage_order; ///< The matrix storage order
 
     friend struct etl_traits<etl::dyn_matrix_view<T, D>>;
@@ -552,7 +549,7 @@ public:
      * \return a structure containing the dimensions, the storage order and the memory pointers of the matrix
      */
     opaque_memory<value_type, decay_traits<this_type>::dimensions()> direct() const {
-        return {memory, _size, dimensions, _gpu_memory_handler, decay_traits<this_type>::storage_order};
+        return {memory, _size, dimensions, sub.direct().get_gpu_handler(), decay_traits<this_type>::storage_order};
     }
 
     /*!

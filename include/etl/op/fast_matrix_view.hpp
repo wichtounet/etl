@@ -270,9 +270,6 @@ private:
 
     mutable memory_type memory;
 
-    //TODO Should be shared with the sub expression
-    mutable gpu_handler<value_type> _gpu_memory_handler; ///< The GPU memory handler
-
     static constexpr std::size_t n_dimensions = sizeof...(Dims); ///< The number of dimensions of the view
 
     friend struct etl_traits<etl::fast_matrix_view<T, false, Dims...>>;
@@ -463,7 +460,7 @@ public:
      * \return a structure containing the dimensions, the storage order and the memory pointers of the matrix
      */
     opaque_memory<value_type, sizeof...(Dims)> direct() const {
-        return {memory, mul_all<Dims...>::value, {{Dims...}}, _gpu_memory_handler, decay_traits<this_type>::storage_order};
+        return {memory, mul_all<Dims...>::value, {{Dims...}}, sub.direct().get_gpu_handler(), decay_traits<this_type>::storage_order};
     }
 
     // Internals
