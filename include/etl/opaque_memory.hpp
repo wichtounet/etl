@@ -108,6 +108,14 @@ public:
         return &memory[etl_size];
     }
 
+    /*!
+     * \brief Returns the handler for GPU memory
+     * \return a reference to the GPU memory handler
+     */
+    gpu_handler<T>& get_gpu_handler() noexcept {
+        return _gpu_memory_handler;
+    }
+
 #ifdef ETL_CUDA
 private:
     /*!
