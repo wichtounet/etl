@@ -419,7 +419,7 @@ void conv2_full_kernel(const T* a, std::size_t m1, std::size_t m2, const T* b, s
  * \param a The input expression
  * \param c The output expression
  */
-template<typename A, typename C, cpp_enable_if(all_single_precision<A,C>::value)>
+template<typename A, typename C, cpp_enable_if(all_single_precision<A>::value && all_complex_single_precision<C>::value)>
 void fft1(A&& a, C&& c) {
     auto a_complex = allocate<std::complex<float>>(etl::size(a));
 
@@ -433,7 +433,7 @@ void fft1(A&& a, C&& c) {
  * \param a The input expression
  * \param c The output expression
  */
-template<typename A, typename C, cpp_enable_if(all_double_precision<A,C>::value)>
+template<typename A, typename C, cpp_enable_if(all_double_precision<A>::value && all_complex_double_precision<C>::value)>
 void fft1(A&& a, C&& c) {
     auto a_complex = allocate<std::complex<double>>(a.size());
 
@@ -508,7 +508,7 @@ void fft1_many(A&& a, C&& c) {
     std::size_t n     = a.template dim<N - 1>(); //Size of the transform
     std::size_t batch = etl::size(a) / n;            //Number of batch
 
-    auto a_complex = allocate<value_t<C>>(a.size());
+    auto a_complex = allocate<value_t<C>>(etl::size(a));
 
     direct_copy(a.memory_start(), a.memory_end(), a_complex.get());
 
@@ -527,7 +527,7 @@ void fft1_many(A&& a, C&& c) {
     static constexpr std::size_t N = etl::dimensions(c);
 
     std::size_t n     = a.template dim<N - 1>(); //Size of the transform
-    std::size_t batch = a.size() / n;            //Number of batch
+    std::size_t batch = etl::size(a) / n;        //Number of batch
 
     mkl_detail::fft_many_kernel(a.memory_start(), batch, n, c.memory_start());
 }
