@@ -838,6 +838,28 @@ void ifft1_real(A&& a, C&& c) {
     }
 }
 
+template<typename A, typename C>
+void fft1_many_kernel(const A* a, C* c, size_t batch, size_t n) {
+    std::size_t distance = n; //Distance between samples
+
+    if (n <= 65536 && math::is_power_of_two(n)) {
+        //Copy a -> c (if not aliasing)
+        if (reinterpret_cast<const void*>(a) != reinterpret_cast<const void*>(c)) {
+            direct_copy(a, a + batch * n, c);
+        }
+
+        auto batch_fun_b = [&](const size_t first, const size_t last) {
+            for (std::size_t i = first; i < last; ++i) {
+                detail::inplace_radix2_fft1(reinterpret_cast<etl::complex<typename C::value_type>*>(c + i * distance), n);
+            }
+        };
+
+        dispatch_1d_any(select_parallel(batch, 8), batch_fun_b, 0, batch);
+    } else {
+        detail::fft_n_many(a, reinterpret_cast<etl::complex<typename C::value_type>*>(c), batch, n);
+    }
+}
+
 /*!
  * \brief Perform many 1D FFT on a and store the result in c
  * \param a The input expression
@@ -845,30 +867,14 @@ void ifft1_real(A&& a, C&& c) {
  *
  * The first dimension of a and c are considered batch dimensions
  */
-template <std::size_t N, typename A, typename C>
-void fft1_many(const opaque_memory<A, N>& a, const opaque_memory<C, N>& c) {
-    std::size_t n        = a.template dim<N - 1>(); //Size of the transform
-    std::size_t batch    = a.size() / n;            //Number of batch
-    std::size_t distance = n;                       //Distance between samples
+template <typename A, typename C>
+void fft1_many(A&& a, C&& c) {
+    static constexpr size_t N = etl::dimensions(a);
 
-    if (n <= 65536 && math::is_power_of_two(n)) {
-        //Copy a -> c (if not aliasing)
-        if (reinterpret_cast<const void*>(a.memory_start()) != reinterpret_cast<const void*>(c.memory_start())) {
-            direct_copy(a.memory_start(), a.memory_end(), c.memory_start());
-        }
+    std::size_t n        = etl::dim<N - 1>(a); //Size of the transform
+    std::size_t batch    = etl::size(a) / n;   //Number of batch
 
-        auto* m = c.memory_start();
-
-        auto batch_fun_b = [&](const size_t first, const size_t last) {
-            for (std::size_t i = first; i < last; ++i) {
-                detail::inplace_radix2_fft1(reinterpret_cast<etl::complex<typename C::value_type>*>(m + i * distance), n);
-            }
-        };
-
-        dispatch_1d_any(select_parallel(batch, 8), batch_fun_b, 0, batch);
-    } else {
-        detail::fft_n_many(a.memory_start(), reinterpret_cast<etl::complex<typename C::value_type>*>(c.memory_start()), batch, n);
-    }
+    fft1_many_kernel(a.memory_start(), c.memory_start(), batch, n);
 }
 
 /*!
@@ -882,12 +888,12 @@ void fft2(A&& a, C&& c) {
     auto w = etl::force_temporary_dyn(c);
 
     //Perform FFT on each rows
-    fft1_many(a.direct(), w.direct());
+    fft1_many(a, w);
 
     w.transpose_inplace();
 
     //Perform FFT on each columns
-    fft1_many(w.direct(), w.direct());
+    fft1_many(w, w);
 
     w.transpose_inplace();
 
@@ -972,11 +978,11 @@ void fft2_many(A&& a, C&& c) {
     //Note: we need dyn matrix for inplace rectangular transpose
     auto w = etl::force_temporary_dyn(c);
 
-    fft1_many(a.direct(), w.direct());
+    fft1_many(a, w);
 
     w.deep_transpose_inplace();
 
-    fft1_many(w.direct(), w.direct());
+    fft1_many(w, w);
 
     w.deep_transpose_inplace();
 

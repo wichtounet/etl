@@ -344,7 +344,7 @@ struct fft1_impl {
         if (impl == fft_impl::STD) {
             etl::impl::standard::fft1(a, c);
         } else if (impl == fft_impl::MKL) {
-            etl::impl::blas::fft1(a.direct(), c.direct());
+            etl::impl::blas::fft1(a, c);
         } else if (impl == fft_impl::CUFFT) {
             etl::impl::cufft::fft1(a, c);
         }
@@ -489,18 +489,18 @@ struct fft1_many_impl {
         if (impl == fft_impl::STD) {
             if (parallel_dispatch) {
                 dispatch_1d(pool, parallel_dispatch, [&](std::size_t first, std::size_t last) {
-                    etl::impl::standard::fft1_many(a.slice(first, last).direct(), c.slice(first, last).direct());
+                    etl::impl::standard::fft1_many(a.slice(first, last), c.slice(first, last));
                 }, 0, transforms);
             } else {
-                etl::impl::standard::fft1_many(a.direct(), c.direct());
+                etl::impl::standard::fft1_many(a, c);
             }
         } else if (impl == fft_impl::MKL) {
             if (parallel_dispatch) {
                 dispatch_1d(pool, parallel_dispatch, [&](std::size_t first, std::size_t last) {
-                    etl::impl::blas::fft1_many(a.slice(first, last).direct(), c.slice(first, last).direct());
+                    etl::impl::blas::fft1_many(a.slice(first, last), c.slice(first, last));
                 }, 0, transforms);
             } else {
-                etl::impl::blas::fft1_many(a.direct(), c.direct());
+                etl::impl::blas::fft1_many(a, c);
             }
         } else if (impl == fft_impl::CUFFT) {
             etl::impl::cufft::fft1_many(a, c);

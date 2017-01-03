@@ -419,8 +419,9 @@ void conv2_full_kernel(const T* a, std::size_t m1, std::size_t m2, const T* b, s
  * \param a The input expression
  * \param c The output expression
  */
-inline void fft1(const opaque_memory<float,1>& a, const opaque_memory<std::complex<float>,1>& c) {
-    auto a_complex = allocate<std::complex<float>>(a.size());
+template<typename A, typename C, cpp_enable_if(all_single_precision<A,C>::value)>
+void fft1(A&& a, C&& c) {
+    auto a_complex = allocate<std::complex<float>>(etl::size(a));
 
     direct_copy(a.memory_start(), a.memory_end(), a_complex.get());
 
@@ -432,7 +433,8 @@ inline void fft1(const opaque_memory<float,1>& a, const opaque_memory<std::compl
  * \param a The input expression
  * \param c The output expression
  */
-inline void fft1(const opaque_memory<double,1>& a, const opaque_memory<std::complex<double>,1>& c) {
+template<typename A, typename C, cpp_enable_if(all_double_precision<A,C>::value)>
+void fft1(A&& a, C&& c) {
     auto a_complex = allocate<std::complex<double>>(a.size());
 
     direct_copy(a.memory_start(), a.memory_end(), a_complex.get());
@@ -445,9 +447,9 @@ inline void fft1(const opaque_memory<double,1>& a, const opaque_memory<std::comp
  * \param a The input expression
  * \param c The output expression
  */
-template <typename T>
-void fft1(const opaque_memory<std::complex<T>,1>& a, const opaque_memory<std::complex<T>,1>& c) {
-    mkl_detail::fft_kernel(a.memory_start(), a.size(), c.memory_start());
+template<typename A, typename C, cpp_enable_if(all_complex<A,C>::value)>
+void fft1(A&& a, C&& c) {
+    mkl_detail::fft_kernel(a.memory_start(), etl::size(a), c.memory_start());
 }
 
 /*!
@@ -499,12 +501,14 @@ void ifft1_real(A&& a, C&& c) {
  *
  * The first dimension of a and c are considered batch dimensions
  */
-template<std::size_t N, typename T>
-void fft1_many(const opaque_memory<T, N>& a, const opaque_memory<std::complex<T>, N>& c) {
-    std::size_t n     = a.template dim<N - 1>(); //Size of the transform
-    std::size_t batch = a.size() / n;            //Number of batch
+template<typename A, typename C, cpp_enable_if(!all_complex<A>::value && all_complex<C>::value)>
+void fft1_many(A&& a, C&& c) {
+    static constexpr std::size_t N = etl::dimensions(c);
 
-    auto a_complex = allocate<std::complex<T>>(a.size());
+    std::size_t n     = a.template dim<N - 1>(); //Size of the transform
+    std::size_t batch = etl::size(a) / n;            //Number of batch
+
+    auto a_complex = allocate<value_t<C>>(a.size());
 
     direct_copy(a.memory_start(), a.memory_end(), a_complex.get());
 
@@ -518,8 +522,10 @@ void fft1_many(const opaque_memory<T, N>& a, const opaque_memory<std::complex<T>
  *
  * The first dimension of a and c are considered batch dimensions
  */
-template<std::size_t N, typename T>
-void fft1_many(const opaque_memory<std::complex<T>, N>& a, const opaque_memory<std::complex<T>, N>& c) {
+template<typename A, typename C, cpp_enable_if(all_complex<A, C>::value)>
+void fft1_many(A&& a, C&& c) {
+    static constexpr std::size_t N = etl::dimensions(c);
+
     std::size_t n     = a.template dim<N - 1>(); //Size of the transform
     std::size_t batch = a.size() / n;            //Number of batch
 
