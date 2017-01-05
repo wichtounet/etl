@@ -320,6 +320,8 @@ public:
     sub_view(sub_type sub_expr, std::size_t i) : sub_expr(sub_expr), i(i), sub_size(subsize(sub_expr)) {
         if(!decay_traits<sub_type>::needs_evaluator_visitor){
             this->memory = sub_expr.memory_start() + i * sub_size;
+        } else {
+            this->memory = nullptr;
         }
     }
 

@@ -283,6 +283,8 @@ public:
     explicit fast_matrix_view(sub_type sub): sub(sub) {
         if(!decay_traits<sub_type>::needs_evaluator_visitor){
             this->memory = sub.memory_start();
+        } else {
+            this->memory = nullptr;
         }
     }
 
