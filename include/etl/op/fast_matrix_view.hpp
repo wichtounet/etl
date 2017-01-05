@@ -283,6 +283,7 @@ public:
     explicit fast_matrix_view(sub_type sub): sub(sub) {
         if(!decay_traits<sub_type>::needs_evaluator_visitor){
             this->memory = sub.memory_start();
+            cpp_assert(memory, "Memory from sub has not been initialized");
         } else {
             this->memory = nullptr;
         }
@@ -294,6 +295,7 @@ public:
      * \return a reference to the element at the given index.
      */
     const_return_type operator[](std::size_t j) const {
+        cpp_assert(memory, "Memory has not been initialized");
         return memory[j];
     }
 
@@ -303,6 +305,7 @@ public:
      * \return a reference to the element at the given index.
      */
     return_type operator[](std::size_t j) {
+        cpp_assert(memory, "Memory has not been initialized");
         return memory[j];
     }
 
@@ -313,6 +316,7 @@ public:
      * \return the value at the given index.
      */
     value_type read_flat(std::size_t j) const noexcept {
+        cpp_assert(memory, "Memory has not been initialized");
         return memory[j];
     }
 
@@ -324,7 +328,7 @@ public:
     template <typename... S, cpp_enable_if((sizeof...(S) == sizeof...(Dims)))>
     return_type operator()(S... args) noexcept {
         static_assert(cpp::all_convertible_to<std::size_t, S...>::value, "Invalid size types");
-
+        cpp_assert(memory, "Memory has not been initialized");
         return memory[etl::fast_index<this_type>(static_cast<std::size_t>(args)...)];
     }
 
@@ -336,7 +340,7 @@ public:
     template <typename... S, cpp_enable_if((sizeof...(S) == sizeof...(Dims)))>
     const_return_type operator()(S... args) const noexcept {
         static_assert(cpp::all_convertible_to<std::size_t, S...>::value, "Invalid size types");
-
+        cpp_assert(memory, "Memory has not been initialized");
         return memory[etl::fast_index<this_type>(static_cast<std::size_t>(args)...)];
     }
 
@@ -473,6 +477,12 @@ public:
      */
     void visit(const detail::back_propagate_visitor& visitor){
         sub.visit(visitor);
+
+        // It's only interesting if the sub expression is not direct
+        if(decay_traits<sub_type>::needs_evaluator_visitor){
+            this->memory = sub.memory_start();
+            cpp_assert(this->memory, "Memory from sub has not been initialized");
+        }
     }
 
     /*!
