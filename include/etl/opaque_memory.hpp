@@ -196,7 +196,7 @@ public:
         }
     }
 
-    void transfer_to(opaque_memory& rhs){
+    void gpu_transfer_to(opaque_memory& rhs){
         rhs._gpu_memory_handler = std::move(_gpu_memory_handler);
 
         // The memory was transferred, not up to date anymore
