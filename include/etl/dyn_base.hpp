@@ -329,6 +329,7 @@ struct dense_dyn_base : dyn_base<T, D> {
     using base_type::dim;
 
     value_type* _memory = nullptr; ///< Pointer to the allocated memory
+    gpu_memory_handler<T> _gpu;    ///< The GPU memory handler
 
     /*!
      * \brief Initialize the dense_dyn_base with a size of 0
@@ -549,6 +550,73 @@ struct dense_dyn_base : dyn_base<T, D> {
      */
     auto slice(std::size_t first, std::size_t last) const noexcept {
         return etl::slice(as_derived(), first, last);
+    }
+
+    /*!
+     * \brief Return GPU memory of this expression, if any.
+     * \return a pointer to the GPU memory or nullptr if not allocated in GPU.
+     */
+    T* gpu_memory() const noexcept {
+        return _gpu.gpu_memory();
+    }
+
+    /*!
+     * \brief Evict the expression from GPU.
+     */
+    void gpu_evict() const noexcept {
+        _gpu.gpu_evict();
+    }
+
+    /*!
+     * \brief Invalidates the CPU memory
+     */
+    void invalidate_cpu() const noexcept {
+        _gpu.invalidate_cpu();
+    }
+
+    /*!
+     * \brief Invalidates the GPU memory
+     */
+    void invalidate_gpu() const noexcept {
+        _gpu.invalidate_gpu();
+    }
+
+    /*!
+     * \brief Ensures that the GPU memory is allocated and that the GPU memory
+     * is up to date (to undefined value).
+     */
+    void ensure_gpu_allocated() const {
+        _gpu.ensure_gpu_allocated(_size);
+    }
+
+    /*!
+     * \brief Allocate memory on the GPU for the expression and copy the values into the GPU.
+     */
+    void ensure_gpu_up_to_date() const {
+        _gpu.ensure_gpu_up_to_date(memory_start(), _size);
+    }
+
+    /*!
+     * \brief Copy back from the GPU to the expression memory if
+     * necessary.
+     */
+    void ensure_cpu_up_to_date() const {
+        _gpu.ensure_cpu_up_to_date(memory_start(), _size);
+    }
+
+    /*!
+     * \brief Transfer the GPU memory to another handler
+     * \param rhs The handler to transfer memory to
+     */
+    void gpu_transfer_to(gpu_memory_handler<T>& rhs){
+        _gpu.gpu_transfer_to(rhs);
+    }
+
+    /*!
+     * \brief Return the GPU memory
+     */
+    gpu_memory_handler<T>& get_gpu_handler(){
+        return _gpu;
     }
 private:
     /*!
