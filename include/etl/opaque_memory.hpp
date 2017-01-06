@@ -60,39 +60,6 @@ public:
     }
 
     /*!
-     * \brief Returns the number of dimensions of the matrix
-     * \return the number of dimensions of the matrix
-     */
-    static constexpr std::size_t dimensions() noexcept {
-        return n_dimensions;
-    }
-
-    /*!
-     * \brief Returns the size of the matrix, in O(1)
-     * \return The size of the matrix
-     */
-    std::size_t size() const noexcept {
-        return etl_size;
-    }
-
-    /*!
-     * \brief Returns the Dth dimension of the matrix
-     * \return The Dth dimension of the matrix
-     */
-    template <std::size_t DD>
-    std::size_t dim() const noexcept {
-        return dims[DD];
-    }
-
-    /*!
-     * \brief Returns the DDth dimension of the matrix
-     * \return The DDth dimension of the matrix
-     */
-    std::size_t dim(std::size_t DD) const noexcept {
-        return dims[DD];
-    }
-
-    /*!
      * \brief Returns a pointer to the first element in memory.
      * \return a pointer tot the first element in memory.
      */
