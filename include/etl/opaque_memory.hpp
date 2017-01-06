@@ -60,22 +60,6 @@ public:
     }
 
     /*!
-     * \brief Returns a pointer to the first element in memory.
-     * \return a pointer tot the first element in memory.
-     */
-    memory_type memory_start() const noexcept {
-        return &memory[0];
-    }
-
-    /*!
-     * \brief Returns a pointer to the past-the-end element in memory.
-     * \return a pointer tot the past-the-end element in memory.
-     */
-    memory_type memory_end() const noexcept {
-        return &memory[etl_size];
-    }
-
-    /*!
      * \brief Returns the handler for GPU memory
      * \return a reference to the GPU memory handler
      */
