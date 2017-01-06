@@ -558,17 +558,17 @@ void conv2_valid_multi_set(I& input, K&& kernel, C&& conv, size_t s1, size_t s2,
     // Prepare the input tensor
     cudnnTensorDescriptor_t input_tensor;
     cudnn_check(cudnnCreateTensorDescriptor(&input_tensor));
-    cudnn_check(cudnnSetTensor4dDescriptor(input_tensor, CUDNN_TENSOR_NCHW, data_type, 1, 1, input.template dim<0>(), input.template dim<1>()));
+    cudnn_check(cudnnSetTensor4dDescriptor(input_tensor, CUDNN_TENSOR_NCHW, data_type, 1, 1, etl::dim<0>(input), etl::dim<1>(input)));
 
     // Prepare the output tensor
     cudnnTensorDescriptor_t output_tensor;
     cudnn_check(cudnnCreateTensorDescriptor(&output_tensor));
-    cudnn_check(cudnnSetTensor4dDescriptor(output_tensor, CUDNN_TENSOR_NCHW, data_type, 1, conv.template dim<0>(), conv.template dim<1>(), conv.template dim<2>()));
+    cudnn_check(cudnnSetTensor4dDescriptor(output_tensor, CUDNN_TENSOR_NCHW, data_type, 1, etl::dim<0>(conv), etl::dim<1>(conv), etl::dim<2>(conv)));
 
     // Prepare the filter
     cudnnFilterDescriptor_t filter;
     cudnn_check(cudnnCreateFilterDescriptor(&filter));
-    cudnn_check(cudnnSetFilter4dDescriptor(filter, data_type, CUDNN_TENSOR_NCHW, kernel.template dim<0>(), 1, kernel.template dim<1>(), kernel.template dim<2>()));
+    cudnn_check(cudnnSetFilter4dDescriptor(filter, data_type, CUDNN_TENSOR_NCHW, etl::dim<0>(kernel), 1, etl::dim<1>(kernel), etl::dim<2>(kernel)));
 
     // Prepare the convolution
     cudnnConvolutionDescriptor_t convolution;
@@ -648,7 +648,7 @@ void conv2_valid_multi_flipped(I&& input, K&& kernel, C&& conv, size_t s1, size_
  */
 template <typename I, typename K, typename C>
 void conv2_full_multi(const I& input, const K& kernel, C&& conv) {
-    for(std::size_t i = 0; i < kernel.template dim<0>(); ++i){
+    for(std::size_t i = 0; i < etl::dim<0>(kernel); ++i){
         decltype(auto) result = conv(i);
 
         conv2_full(input, kernel(i), result);
@@ -667,7 +667,7 @@ void conv2_full_multi(const I& input, const K& kernel, C&& conv) {
  */
 template <typename I, typename K, typename C>
 void conv2_full_multi_flipped(const I& input, const K& kernel, C&& conv) {
-    for(std::size_t i = 0; i < kernel.template dim<0>(); ++i){
+    for(std::size_t i = 0; i < etl::dim<0>(kernel); ++i){
         decltype(auto) result = conv(i);
 
         conv2_full_flipped(input, kernel(i), result);
@@ -692,17 +692,17 @@ void conv2_full_multi_real_set(const I& input, const K& kernel, C&& conv, cudnnC
     // Prepare the input tensor
     cudnnTensorDescriptor_t input_tensor;
     cudnn_check(cudnnCreateTensorDescriptor(&input_tensor));
-    cudnn_check(cudnnSetTensor4dDescriptor(input_tensor, CUDNN_TENSOR_NCHW, data_type, 1, 1, input.template dim<0>(), input.template dim<1>()));
+    cudnn_check(cudnnSetTensor4dDescriptor(input_tensor, CUDNN_TENSOR_NCHW, data_type, 1, 1, etl::dim<0>(input), etl::dim<1>(input)));
 
     // Prepare the output tensor
     cudnnTensorDescriptor_t output_tensor;
     cudnn_check(cudnnCreateTensorDescriptor(&output_tensor));
-    cudnn_check(cudnnSetTensor4dDescriptor(output_tensor, CUDNN_TENSOR_NCHW, data_type, 1, conv.template dim<0>(), conv.template dim<1>(), conv.template dim<2>()));
+    cudnn_check(cudnnSetTensor4dDescriptor(output_tensor, CUDNN_TENSOR_NCHW, data_type, 1, etl::dim<0>(conv), etl::dim<1>(conv), etl::dim<2>(conv)));
 
     // Prepare the filter
     cudnnFilterDescriptor_t filter;
     cudnn_check(cudnnCreateFilterDescriptor(&filter));
-    cudnn_check(cudnnSetFilter4dDescriptor(filter, data_type, CUDNN_TENSOR_NCHW, kernel.template dim<0>(), 1, kernel.template dim<1>(), kernel.template dim<2>()));
+    cudnn_check(cudnnSetFilter4dDescriptor(filter, data_type, CUDNN_TENSOR_NCHW, etl::dim<0>(kernel), 1, etl::dim<1>(kernel), etl::dim<2>(kernel)));
 
     // Prepare the convolution
     cudnnConvolutionDescriptor_t convolution;
