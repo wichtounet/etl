@@ -513,6 +513,73 @@ public:
     }
 
     /*!
+     * \brief Return GPU memory of this expression, if any.
+     * \return a pointer to the GPU memory or nullptr if not allocated in GPU.
+     */
+    value_type* gpu_memory() const noexcept {
+        return sub.gpu_memory();
+    }
+
+    /*!
+     * \brief Evict the expression from GPU.
+     */
+    void gpu_evict() const noexcept {
+        sub.gpu_evict();
+    }
+
+    /*!
+     * \brief Invalidates the CPU memory
+     */
+    void invalidate_cpu() const noexcept {
+        sub.invalidate_cpu();
+    }
+
+    /*!
+     * \brief Invalidates the GPU memory
+     */
+    void invalidate_gpu() const noexcept {
+        sub.invalidate_gpu();
+    }
+
+    /*!
+     * \brief Ensures that the GPU memory is allocated and that the GPU memory
+     * is up to date (to undefined value).
+     */
+    void ensure_gpu_allocated() const {
+        sub.ensure_gpu_allocated();
+    }
+
+    /*!
+     * \brief Allocate memory on the GPU for the expression and copy the values into the GPU.
+     */
+    void ensure_gpu_up_to_date() const {
+        sub.ensure_gpu_up_to_date();
+    }
+
+    /*!
+     * \brief Copy back from the GPU to the expression memory if
+     * necessary.
+     */
+    void ensure_cpu_up_to_date() const {
+        sub.ensure_cpu_up_to_date();
+    }
+
+    /*!
+     * \brief Transfer the GPU memory to another handler
+     * \param rhs The handler to transfer memory to
+     */
+    void gpu_transfer_to(gpu_memory_handler<value_type>& rhs){
+        sub.gpu_transfer_to(rhs);
+    }
+
+    /*!
+     * \brief Return the GPU memory
+     */
+    gpu_memory_handler<value_type>& get_gpu_handler(){
+        return sub.get_gpu_handler();
+    }
+
+    /*!
      * \brief Print a representation of the view on the given stream
      * \param os The output stream
      * \param v The view to print
