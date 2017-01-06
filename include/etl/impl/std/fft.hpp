@@ -1145,7 +1145,7 @@ void conv2_full_multi_flipped_fft(II&& input, KK&& kernel, CC&& conv) {
 
     prepared_k.deep_fflip_inplace();
 
-    conv2_full_multi_fft(input, prepared_k.direct(), conv);
+    conv2_full_multi_fft(input, prepared_k, conv);
 }
 
 /*!
@@ -1278,7 +1278,7 @@ void conv4_full_fft_flipped(II&& input, KK&& kernel, CC&& conv) {
 
         prepared_k.deep_fflip_inplace();
 
-        conv4_full_fft(input, prepared_k.direct(), conv);
+        conv4_full_fft(input, prepared_k, conv);
     }
 }
 
