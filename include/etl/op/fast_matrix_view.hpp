@@ -466,7 +466,7 @@ public:
      * \return a structure containing the dimensions, the storage order and the memory pointers of the matrix
      */
     opaque_memory<value_type, sizeof...(Dims)> direct() const {
-        return {memory, mul_all<Dims...>::value, {{Dims...}}, sub.direct().get_gpu_handler(), decay_traits<this_type>::storage_order};
+        return sub.direct();
     }
 
     // Internals
