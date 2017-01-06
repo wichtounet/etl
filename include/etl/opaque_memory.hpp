@@ -246,20 +246,6 @@ public:
 
     void invalidate_gpu() const {}
     void invalidate_cpu() const {}
-
-    /*!
-     * \brief Reallocate the GPU memory.
-     * \param memory The new GPU memory (will be moved)
-     */
-    void gpu_reallocate(impl::cuda::cuda_memory<T>&& memory) {
-        cpp_unused(memory);
-    }
-
-    /*!
-     * \brief Release the GPU memory for another expression to use
-     * \return A rvalue reference to the gpu_memory_handler.
-     */
-    impl::cuda::cuda_memory<T>&& gpu_release() const {}
 #endif
 };
 
