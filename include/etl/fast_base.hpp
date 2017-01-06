@@ -86,7 +86,8 @@ struct fast_matrix_base {
     using const_iterator = std::conditional_t<SO == order::RowMajor, const value_type*, etl::iterator<const derived_t>>; ///< The iterator type
 
 protected:
-    storage_impl _data; ///< The storage container
+    storage_impl _data;         ///< The storage container
+    gpu_memory_handler<T> _gpu; ///< The GPU memory handler
 
     /*!
      * \brief Compute the 1D index from the given indices
@@ -332,6 +333,77 @@ public:
     template <typename E, cpp_disable_if(all_dma<E>::value)>
     bool alias(const E& rhs) const noexcept {
         return rhs.alias(as_derived());
+    }
+
+    /*!
+     * \brief Return GPU memory of this expression, if any.
+     * \return a pointer to the GPU memory or nullptr if not allocated in GPU.
+     */
+    T* gpu_memory() const noexcept {
+        return _gpu.gpu_memory();
+    }
+
+    /*!
+     * \brief Evict the expression from GPU.
+     */
+    void gpu_evict() const noexcept {
+        _gpu.gpu_evict();
+    }
+
+    /*!
+     * \brief Invalidates the CPU memory
+     */
+    void invalidate_cpu() const noexcept {
+        _gpu.invalidate_cpu();
+    }
+
+    /*!
+     * \brief Invalidates the GPU memory
+     */
+    void invalidate_gpu() const noexcept {
+        _gpu.invalidate_gpu();
+    }
+
+    /*!
+     * \brief Ensures that the GPU memory is allocated and that the GPU memory
+     * is up to date (to undefined value).
+     */
+    void ensure_gpu_allocated() const {
+        _gpu.ensure_gpu_allocated(etl_size);
+    }
+
+    /*!
+     * \brief Allocate memory on the GPU for the expression and copy the values into the GPU.
+     * \param cpu_memory Pointer to CPU memory
+     * \param etl_size The size of the memory
+     */
+    void ensure_gpu_up_to_date() const {
+        _gpu.ensure_gpu_up_to_date(memory_start(), etl_size);
+    }
+
+    /*!
+     * \brief Copy back from the GPU to the expression memory if
+     * necessary.
+     * \param cpu_memory Pointer to CPU memory
+     * \param etl_size The size of the memory
+     */
+    void ensure_cpu_up_to_date(T* cpu_memory, size_t etl_size) const {
+        _gpu.ensure_cpu_up_to_date(memory_start(), etl_size);
+    }
+
+    /*!
+     * \brief Transfer the GPU memory to another handler
+     * \param rhs The handler to transfer memory to
+     */
+    void gpu_transfer_to(gpu_memory_handler<T>& rhs){
+        _gpu.gpu_transfer_to(rhs);
+    }
+
+    /*!
+     * \brief Return the GPU memory
+     */
+    gpu_memory_handler<T>& get_gpu_handler(){
+        return _gpu;
     }
 
 private:

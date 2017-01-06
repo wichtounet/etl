@@ -44,6 +44,7 @@
 
 // Opaque memory container
 #include "etl/opaque_memory.hpp"
+#include "etl/gpu_handler.hpp"
 
 // The operators
 #include "etl/eval_visitors.hpp"  //Evaluation visitors
