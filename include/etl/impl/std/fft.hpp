@@ -1006,9 +1006,11 @@ void conv1_full_fft(A&& a, B&& b, C&& c) {
  * \param b The kernel matrix
  * \param c The output matrix
  */
-template <typename T>
-void conv2_full_fft(const opaque_memory<T, 2>& a, const opaque_memory<T, 2>& b, const opaque_memory<T, 2>& c) {
-    detail::conv2_full_kernel(a.memory_start(), a.dim(0), a.dim(1), b.memory_start(), b.dim(0), b.dim(1), c.memory_start(), T(0.0));
+template <typename II, typename KK, typename CC>
+void conv2_full_fft(II&& a, KK&& b, CC&& c) {
+    using T = value_t<II>;
+
+    detail::conv2_full_kernel(a.memory_start(), etl::dim<0>(a), etl::dim<1>(a), b.memory_start(), etl::dim<0>(b), etl::dim<1>(b), c.memory_start(), T(0.0));
 }
 
 /*!
@@ -1019,15 +1021,17 @@ void conv2_full_fft(const opaque_memory<T, 2>& a, const opaque_memory<T, 2>& b, 
  * \param b The kernel matrix
  * \param c The output matrix
  */
-template <typename T>
-void conv2_full_fft_flipped(const opaque_memory<T, 2>& a, const opaque_memory<T, 2>& b, const opaque_memory<T, 2>& c) {
-    etl::dyn_matrix<T, 2> prepared_b(b.dim(0), b.dim(1));
+template <typename II, typename KK, typename CC>
+void conv2_full_fft_flipped(II&& a, KK&& b, CC&& c) {
+    using T = value_t<II>;
+
+    etl::dyn_matrix<T, 2> prepared_b(etl::dim<0>(b), etl::dim<1>(b));
 
     std::copy(b.memory_start(), b.memory_end(), prepared_b.memory_start());
 
     prepared_b.fflip_inplace();
 
-    detail::conv2_full_kernel(a.memory_start(), a.dim(0), a.dim(1), prepared_b.memory_start(), b.dim(0), b.dim(1), c.memory_start(), T(0.0));
+    detail::conv2_full_kernel(a.memory_start(), etl::dim<0>(a), etl::dim<1>(a), prepared_b.memory_start(), etl::dim<0>(b), etl::dim<1>(b), c.memory_start(), T(0.0));
 }
 
 /*!
@@ -1036,8 +1040,10 @@ void conv2_full_fft_flipped(const opaque_memory<T, 2>& a, const opaque_memory<T,
  * \param kernel The kernel matrix
  * \param conv The output matrix
  */
-template <typename T>
-void conv2_full_multi_fft(const opaque_memory<T, 2>& input, const opaque_memory<T, 3>& kernel, const opaque_memory<T, 3>& conv) {
+template <typename II, typename KK, typename CC>
+void conv2_full_multi_fft(II&& input, KK&& kernel, CC&& conv) {
+    using T = value_t<II>;
+
     const auto K = kernel.dim(0);
 
     if(K){
@@ -1129,8 +1135,10 @@ void conv2_full_multi_fft(const opaque_memory<T, 2>& input, const opaque_memory<
  * \param kernel The kernel matrix
  * \param conv The output matrix
  */
-template <typename T>
-void conv2_full_multi_flipped_fft(const opaque_memory<T, 2>& input, const opaque_memory<T, 3>& kernel, const opaque_memory<T, 3>& conv) {
+template <typename II, typename KK, typename CC>
+void conv2_full_multi_flipped_fft(II&& input, KK&& kernel, CC&& conv) {
+    using T = value_t<II>;
+
     etl::dyn_matrix<T, 3> prepared_k(kernel.dim(0), kernel.dim(1), kernel.dim(2));
 
     std::copy(kernel.memory_start(), kernel.memory_end(), prepared_k.memory_start());
@@ -1146,8 +1154,10 @@ void conv2_full_multi_flipped_fft(const opaque_memory<T, 2>& input, const opaque
  * \param kernel The kernel matrix
  * \param conv The output matrix
  */
-template <typename T>
-void conv4_full_fft(const opaque_memory<T, 4>& input, const opaque_memory<T, 4>& kernel, const opaque_memory<T, 4>& conv) {
+template <typename II, typename KK, typename CC>
+void conv4_full_fft(II&& input, KK&& kernel, CC&& conv) {
+    using T = value_t<II>;
+
     if (kernel.dim(1) > 0) {
         auto conv_i_inc = conv.dim(1) * conv.dim(2) * conv.dim(3);
         auto conv_c_inc = conv.dim(2) * conv.dim(3);
@@ -1257,8 +1267,10 @@ void conv4_full_fft(const opaque_memory<T, 4>& input, const opaque_memory<T, 4>&
  * \param kernel The kernel matrix
  * \param conv The output matrix
  */
-template <typename T>
-void conv4_full_fft_flipped(const opaque_memory<T, 4>& input, const opaque_memory<T, 4>& kernel, const opaque_memory<T, 4>& conv) {
+template <typename II, typename KK, typename CC>
+void conv4_full_fft_flipped(II&& input, KK&& kernel, CC&& conv) {
+    using T = value_t<II>;
+
     if (kernel.dim(1) > 0) {
         etl::dyn_matrix<T, 4> prepared_k(kernel.dim(0), kernel.dim(1), kernel.dim(2), kernel.dim(3));
 

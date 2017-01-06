@@ -30,10 +30,6 @@ struct conv2_full_impl {
     static void apply(const I& input, const K& kernel, C& conv) {
         auto impl = select_conv2_impl_new<conv_type::FULL, I, K, C>();
 
-        auto i = input.direct();
-        auto k = kernel.direct();
-        auto c = conv.direct();
-
         if (impl == etl::conv_impl::VEC) {
             impl::vec::conv2_full(input, kernel, conv);
         } else if (impl == etl::conv_impl::CUDNN) {
@@ -41,7 +37,7 @@ struct conv2_full_impl {
         } else if (impl == etl::conv_impl::STD) {
             impl::standard::conv2_full(input, kernel, conv);
         } else if (impl == etl::conv_impl::FFT_STD) {
-            impl::standard::conv2_full_fft(i, k, c);
+            impl::standard::conv2_full_fft(input, kernel, conv);
         } else if (impl == etl::conv_impl::FFT_MKL) {
             impl::blas::conv2_full(input, kernel, conv);
         } else if (impl == etl::conv_impl::FFT_CUFFT) {
@@ -123,10 +119,6 @@ struct conv2_full_flipped_impl {
     static void apply(const I& input, const K& kernel, C& conv) {
         auto impl = select_conv2_impl_new<conv_type::FULL, I, K, C>();
 
-        auto i = input.direct();
-        auto k = kernel.direct();
-        auto c = conv.direct();
-
         if (impl == etl::conv_impl::VEC) {
             impl::vec::conv2_full_flipped(input, kernel, conv);
         } else if (impl == etl::conv_impl::CUDNN) {
@@ -134,7 +126,7 @@ struct conv2_full_flipped_impl {
         } else if (impl == etl::conv_impl::STD) {
             impl::standard::conv2_full_flipped(input, kernel, conv);
         } else if (impl == etl::conv_impl::FFT_STD) {
-            impl::standard::conv2_full_fft_flipped(i, k, c);
+            impl::standard::conv2_full_fft_flipped(input, kernel, conv);
         } else if (impl == etl::conv_impl::FFT_MKL) {
             impl::blas::conv2_full_flipped(input, kernel, conv);
         } else if (impl == etl::conv_impl::FFT_CUFFT) {
