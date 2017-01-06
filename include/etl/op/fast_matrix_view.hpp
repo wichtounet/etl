@@ -465,7 +465,7 @@ public:
      * \brief Return an opaque (type-erased) access to the memory of the matrix
      * \return a structure containing the dimensions, the storage order and the memory pointers of the matrix
      */
-    opaque_memory<value_type, sizeof...(Dims)> direct() const {
+    decltype(auto) direct() const {
         return sub.direct();
     }
 
