@@ -125,8 +125,6 @@ private:
         inc_counter("gpu:gpu_to_cpu");
     }
 
-public:
-
     /*!
      * \brief Indicates if the expression is allocated in GPU.
      * \return true if the expression is allocated in GPU, false otherwise
@@ -134,6 +132,8 @@ public:
     bool is_gpu_allocated() const noexcept {
         return _gpu_memory_handler.is_set();
     }
+
+public:
 
     /*!
      * \brief Return GPU memory of this expression, if any.
