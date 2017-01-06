@@ -374,8 +374,6 @@ public:
 
     /*!
      * \brief Allocate memory on the GPU for the expression and copy the values into the GPU.
-     * \param cpu_memory Pointer to CPU memory
-     * \param etl_size The size of the memory
      */
     void ensure_gpu_up_to_date() const {
         _gpu.ensure_gpu_up_to_date(memory_start(), etl_size);
@@ -384,10 +382,8 @@ public:
     /*!
      * \brief Copy back from the GPU to the expression memory if
      * necessary.
-     * \param cpu_memory Pointer to CPU memory
-     * \param etl_size The size of the memory
      */
-    void ensure_cpu_up_to_date(T* cpu_memory, size_t etl_size) const {
+    void ensure_cpu_up_to_date() const {
         _gpu.ensure_cpu_up_to_date(memory_start(), etl_size);
     }
 
