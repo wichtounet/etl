@@ -308,6 +308,7 @@ private:
     mutable memory_type memory;
 
     mutable gpu_handler<value_type> _gpu_memory_handler; ///< The GPU memory handler
+    gpu_memory_handler<value_type> _gpu;                 ///< The GPU memory handler
 
     friend struct etl_traits<this_type>;
 
@@ -602,6 +603,73 @@ public:
         visitor.need_value = true;
         sub_expr.visit(visitor);
         visitor.need_value = old_need_value;
+    }
+
+    /*!
+     * \brief Return GPU memory of this expression, if any.
+     * \return a pointer to the GPU memory or nullptr if not allocated in GPU.
+     */
+    value_type* gpu_memory() const noexcept {
+        return _gpu.gpu_memory();
+    }
+
+    /*!
+     * \brief Evict the expression from GPU.
+     */
+    void gpu_evict() const noexcept {
+        _gpu.gpu_evict();
+    }
+
+    /*!
+     * \brief Invalidates the CPU memory
+     */
+    void invalidate_cpu() const noexcept {
+        _gpu.invalidate_cpu();
+    }
+
+    /*!
+     * \brief Invalidates the GPU memory
+     */
+    void invalidate_gpu() const noexcept {
+        _gpu.invalidate_gpu();
+    }
+
+    /*!
+     * \brief Ensures that the GPU memory is allocated and that the GPU memory
+     * is up to date (to undefined value).
+     */
+    void ensure_gpu_allocated() const {
+        _gpu.ensure_gpu_allocated(sub_size);
+    }
+
+    /*!
+     * \brief Allocate memory on the GPU for the expression and copy the values into the GPU.
+     */
+    void ensure_gpu_up_to_date() const {
+        _gpu.ensure_gpu_up_to_date(memory_start(), sub_size);
+    }
+
+    /*!
+     * \brief Copy back from the GPU to the expression memory if
+     * necessary.
+     */
+    void ensure_cpu_up_to_date() const {
+        _gpu.ensure_cpu_up_to_date(memory_start(), sub_size);
+    }
+
+    /*!
+     * \brief Transfer the GPU memory to another handler
+     * \param rhs The handler to transfer memory to
+     */
+    void gpu_transfer_to(gpu_memory_handler<value_type>& rhs){
+        _gpu.gpu_transfer_to(rhs);
+    }
+
+    /*!
+     * \brief Return the GPU memory
+     */
+    gpu_memory_handler<value_type>& get_gpu_handler(){
+        return _gpu;
     }
 
     /*!

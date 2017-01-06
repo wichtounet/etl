@@ -33,7 +33,8 @@ protected:
     mutable std::shared_ptr<result_type> _c;           ///< The result reference
 
 private:
-    mutable gpu_handler<V> _gpu_memory_handler; ///< The GPU memory handler
+    mutable gpu_handler<value_type> _gpu_memory_handler; ///< The GPU memory handler
+    gpu_memory_handler<value_type> _gpu;                 ///< The GPU memory handler
 
 public:
     temporary_expr() = default;
@@ -261,6 +262,73 @@ public:
         cpp_assert(evaluated, "The result has not been evaluated");
         cpp_assert(allocated, "The result has not been allocated");
         return *_c;
+    }
+
+    /*!
+     * \brief Return GPU memory of this expression, if any.
+     * \return a pointer to the GPU memory or nullptr if not allocated in GPU.
+     */
+    value_type* gpu_memory() const noexcept {
+        return _gpu.gpu_memory();
+    }
+
+    /*!
+     * \brief Evict the expression from GPU.
+     */
+    void gpu_evict() const noexcept {
+        _gpu.gpu_evict();
+    }
+
+    /*!
+     * \brief Invalidates the CPU memory
+     */
+    void invalidate_cpu() const noexcept {
+        _gpu.invalidate_cpu();
+    }
+
+    /*!
+     * \brief Invalidates the GPU memory
+     */
+    void invalidate_gpu() const noexcept {
+        _gpu.invalidate_gpu();
+    }
+
+    /*!
+     * \brief Ensures that the GPU memory is allocated and that the GPU memory
+     * is up to date (to undefined value).
+     */
+    void ensure_gpu_allocated() const {
+        _gpu.ensure_gpu_allocated(etl::size(result()));
+    }
+
+    /*!
+     * \brief Allocate memory on the GPU for the expression and copy the values into the GPU.
+     */
+    void ensure_gpu_up_to_date() const {
+        _gpu.ensure_gpu_up_to_date(memory_start(), etl::size(result()));
+    }
+
+    /*!
+     * \brief Copy back from the GPU to the expression memory if
+     * necessary.
+     */
+    void ensure_cpu_up_to_date() const {
+        _gpu.ensure_cpu_up_to_date(memory_start(), etl::size(result()));
+    }
+
+    /*!
+     * \brief Transfer the GPU memory to another handler
+     * \param rhs The handler to transfer memory to
+     */
+    void gpu_transfer_to(gpu_memory_handler<value_type>& rhs){
+        _gpu.gpu_transfer_to(rhs);
+    }
+
+    /*!
+     * \brief Return the GPU memory
+     */
+    gpu_memory_handler<value_type>& get_gpu_handler(){
+        return _gpu;
     }
 };
 
