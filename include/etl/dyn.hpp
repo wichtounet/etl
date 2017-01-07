@@ -92,7 +92,7 @@ public:
      * \brief Move construct a matrix
      * \param rhs The matrix to move
      */
-    dyn_matrix_impl(dyn_matrix_impl&& rhs) noexcept : base_type(std::move(rhs)), _gpu_memory_handler(std::move(rhs._gpu_memory_handler)) {
+    dyn_matrix_impl(dyn_matrix_impl&& rhs) noexcept : base_type(std::move(rhs)) {
         _memory = rhs._memory;
         rhs._memory = nullptr;
     }
@@ -319,7 +319,6 @@ public:
             _size               = rhs._size;
             _dimensions         = std::move(rhs._dimensions);
             _memory             = rhs._memory;
-            _gpu_memory_handler = std::move(rhs._gpu_memory_handler);
 
             rhs._size = 0;
             rhs._memory = nullptr;
@@ -582,7 +581,7 @@ private:
      */
     void need_cpu(){
         // TODO Should not go though all this
-        direct().ensure_cpu_up_to_date();
+        this->ensure_cpu_up_to_date();
     }
 
     /*!

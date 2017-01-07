@@ -126,7 +126,7 @@ protected:
      */
     void need_cpu() const {
         // TODO Should not go though all this
-        as_derived().direct().ensure_cpu_up_to_date();
+        ensure_cpu_up_to_date();
     }
 
 public:

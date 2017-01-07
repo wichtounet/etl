@@ -62,7 +62,6 @@ public:
 
 private:
     using base_type::_data;
-    using base_type::_gpu_memory_handler;
 
     /*!
      * \brief Init the container if necessary
@@ -252,7 +251,6 @@ public:
     fast_matrix_impl& operator=(fast_matrix_impl&& rhs) noexcept {
         if (this != &rhs) {
             _data               = std::move(rhs._data);
-            _gpu_memory_handler = std::move(rhs._gpu_memory_handler);
         }
 
         return *this;
