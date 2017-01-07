@@ -573,16 +573,6 @@ public:
         return {{this->template dim<I>()...}};
     }
 
-    /*!
-     * \brief Return an opaque (type-erased) access to the memory of the matrix
-     * \return a structure containing the dimensions, the storage order and the memory pointers of the matrix
-     */
-    opaque_memory<T, decay_traits<this_type>::dimensions()> direct() const {
-        return {memory_start(), etl::size(*this),
-            dim_array(std::make_index_sequence<decay_traits<this_type>::dimensions()>()),
-            _gpu_memory_handler, decay_traits<this_type>::storage_order};
-    }
-
     // Internals
 
     /*!

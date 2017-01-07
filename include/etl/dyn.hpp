@@ -529,14 +529,6 @@ public:
     }
 
     /*!
-     * \brief Return an opaque (type-erased) access to the memory of the matrix
-     * \return a structure containing the dimensions, the storage order and the memory pointers of the matrix
-     */
-    opaque_memory<T, n_dimensions> direct() const {
-        return opaque_memory<T, n_dimensions>(memory_start(), _size, _dimensions, _gpu_memory_handler, SO);
-    }
-
-    /*!
      * \brief Inherit the dimensions of an ETL expressions, if the matrix has no
      * dimensions.
      * \param e The expression to get the dimensions from.

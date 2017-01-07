@@ -233,18 +233,6 @@ public:
     }
 
     /*!
-     * \brief Return an opaque direct access to the memory
-     */
-    auto direct() const {
-        if(evaluated && allocated){
-            return result().direct();
-        } else {
-            using result_type = decltype(result().direct());
-            return result_type(nullptr, 0, {{}}, _gpu_memory_handler, decay_traits<R>::storage_order);
-        }
-    }
-
-    /*!
      * \brief Returns the expression containing the result of the expression.
      * \return a reference to the expression containing the result of the expression
      */

@@ -534,16 +534,6 @@ public:
     }
 
     /*!
-     * \brief Return an opaque (type-erased) access to the memory of the matrix
-     * \return a structure containing the dimensions, the storage order and the memory pointers of the matrix
-     */
-    opaque_memory<value_type, decay_traits<this_type>::dimensions()> direct() const {
-        return {memory_start(), sub_size,
-            dim_array(std::make_index_sequence<decay_traits<this_type>::dimensions()>()),
-            _gpu_memory_handler, storage_order};
-    }
-
-    /*!
      * \brief Returns a reference to the ith dimension value.
      *
      * This should only be used internally and with care

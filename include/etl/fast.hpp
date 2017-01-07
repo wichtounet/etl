@@ -325,14 +325,6 @@ public:
         return V::loadu(memory_start() + i);
     }
 
-    /*!
-     * \brief Return an opaque (type-erased) access to the memory of the matrix
-     * \return a structure containing the dimensions, the storage order and the memory pointers of the matrix
-     */
-    opaque_memory<T, n_dimensions> direct() const {
-        return opaque_memory<T, n_dimensions>(memory_start(), etl_size, {{Dims...}}, _gpu_memory_handler, SO);
-    }
-
     // Internals
 
     /*!

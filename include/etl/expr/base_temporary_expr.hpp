@@ -293,18 +293,6 @@ public:
     }
 
     /*!
-     * \brief Return an opaque direct access to the memory
-     */
-    auto direct() const {
-        if(evaluated && allocated){
-            return result().direct();
-        } else {
-            using result_type = decltype(result().direct());
-            return result_type(nullptr, 0, {{}}, _gpu_memory_handler, decay_traits<D>::storage_order);
-        }
-    }
-
-    /*!
      * \brief Return GPU memory of this expression, if any.
      * \return a pointer to the GPU memory or nullptr if not allocated in GPU.
      */
