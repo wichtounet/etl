@@ -22,7 +22,8 @@ float fake = 0;
  *
  * Current values are:
  * Simple: 30 / 20 / 10
- * Basic: 40 / 20 / 10
+ * Basic: 50 / 30 / 10
+ * Sub: 960 / 640 / 160
  */
 
 void simple(){
@@ -70,11 +71,39 @@ void basic(){
     etl::dump_counters();
 }
 
+void sub(){
+    etl::dyn_matrix<float, 3> A(16, 2048, 2048);
+    etl::dyn_matrix<float, 3> B(16, 2048, 2048);
+    etl::dyn_matrix<float, 3> C(16, 2048, 2048);
+    etl::dyn_matrix<float, 3> D(16, 2048, 2048);
+
+    A = etl::normal_generator<float>(1.0, 0.0);
+    B = etl::normal_generator<float>(1.0, 0.0);
+    C = etl::normal_generator<float>(1.0, 0.0);
+    D = etl::normal_generator<float>(1.0, 0.0);
+
+    etl::reset_counters();
+
+    std::cout << "Sub" << std::endl;
+
+    for (size_t i = 0; i < 10; ++i) {
+        for (size_t k = 0; k < 16; ++k) {
+            C(k) = A(k) * B(k) * B(k);
+            D(k) += C(k);
+            D(k) *= 1.1;
+            fake += etl::mean(D(k));
+        }
+    }
+
+    etl::dump_counters();
+}
+
 int main(){
     auto start_time = timer_clock::now();
 
     simple();
     basic();
+    sub();
 
     auto end_time = timer_clock::now();
     auto duration = std::chrono::duration_cast<milliseconds>(end_time - start_time);
