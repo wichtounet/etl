@@ -217,14 +217,6 @@ public:
      * \brief Apply the given visitor to this expression and its descendants.
      * \param visitor The visitor to apply
      */
-    void visit(const detail::gpu_clean_visitor& visitor){
-        _value.visit(visitor);
-    }
-
-    /*!
-     * \brief Apply the given visitor to this expression and its descendants.
-     * \param visitor The visitor to apply
-     */
     void visit(const detail::back_propagate_visitor& visitor){
         _value.visit(visitor);
     }
@@ -585,14 +577,6 @@ public:
      * \brief Apply the given visitor to this expression and its descendants.
      * \param visitor The visitor to apply
      */
-    void visit(const detail::gpu_clean_visitor& visitor){
-        _value.visit(visitor);
-    }
-
-    /*!
-     * \brief Apply the given visitor to this expression and its descendants.
-     * \param visitor The visitor to apply
-     */
     void visit(const detail::back_propagate_visitor& visitor){
         _value.visit(visitor);
     }
@@ -743,14 +727,6 @@ public:
      * \param visitor The visitor to apply
      */
     void visit(const detail::temporary_allocator_visitor& visitor){
-        _value.visit(visitor);
-    }
-
-    /*!
-     * \brief Apply the given visitor to this expression and its descendants.
-     * \param visitor The visitor to apply
-     */
-    void visit(const detail::gpu_clean_visitor& visitor){
         _value.visit(visitor);
     }
 
@@ -910,14 +886,6 @@ public:
      * \param visitor The visitor to apply
      */
     void visit(const detail::temporary_allocator_visitor& visitor){
-        _value.visit(visitor);
-    }
-
-    /*!
-     * \brief Apply the given visitor to this expression and its descendants.
-     * \param visitor The visitor to apply
-     */
-    void visit(const detail::gpu_clean_visitor& visitor){
         _value.visit(visitor);
     }
 

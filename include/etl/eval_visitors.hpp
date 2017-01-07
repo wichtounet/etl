@@ -25,13 +25,6 @@ struct temporary_allocator_visitor {
 };
 
 /*!
- * \brief Visitor to evict GPU temporaries from the Expression tree
- */
-struct gpu_clean_visitor {
-    // Simple tag
-};
-
-/*!
  * \brief Visitor to perform local evaluation when necessary
  */
 struct evaluator_visitor {

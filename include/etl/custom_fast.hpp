@@ -258,16 +258,6 @@ public:
     void visit(const detail::evaluator_visitor& visitor) const {
         cpp_unused(visitor);
     }
-
-    /*!
-     * \brief Apply the given visitor to this expression and its descendants.
-     * \param visitor The visitor to apply
-     */
-    void visit(const detail::gpu_clean_visitor& visitor) const {
-        cpp_unused(visitor);
-
-        this->gpu_evict();
-    }
 };
 
 static_assert(std::is_nothrow_default_constructible<fast_vector<double, 2>>::value, "fast_vector should be nothrow default constructible");

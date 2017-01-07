@@ -479,16 +479,6 @@ struct base_temporary_expr_un : base_temporary_expr<D> {
      * \brief Apply the given visitor to this expression and its descendants.
      * \param visitor The visitor to apply
      */
-    void visit(const detail::gpu_clean_visitor& visitor){
-        _a.visit(visitor);
-
-        this->gpu_evict();
-    }
-
-    /*!
-     * \brief Apply the given visitor to this expression and its descendants.
-     * \param visitor The visitor to apply
-     */
     void visit(detail::evaluator_visitor& visitor){
         bool old_need_value = visitor.need_value;
 
@@ -620,17 +610,6 @@ struct base_temporary_expr_bin : base_temporary_expr<D> {
     void visit(const detail::back_propagate_visitor& visitor){
         _a.visit(visitor);
         _b.visit(visitor);
-    }
-
-    /*!
-     * \brief Apply the given visitor to this expression and its descendants.
-     * \param visitor The visitor to apply
-     */
-    void visit(const detail::gpu_clean_visitor& visitor){
-        _a.visit(visitor);
-        _b.visit(visitor);
-
-        this->gpu_evict();
     }
 
     /*!
