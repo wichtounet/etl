@@ -345,6 +345,14 @@ public:
     }
 
     /*!
+     * \brief Copy from GPU to GPU
+     * \param gpu_memory Pointer to CPU memory
+     */
+    void gpu_copy_from(const value_type* gpu_memory) const {
+        _gpu.copy_from(gpu_memory, etl::size(result));
+    }
+
+    /*!
      * \brief Transfer the GPU memory to another handler
      * \param rhs The handler to transfer memory to
      */

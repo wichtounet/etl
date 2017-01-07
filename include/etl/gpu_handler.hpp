@@ -108,6 +108,18 @@ public:
     }
 
     /*!
+     * \brief Copy from GPU to GPU
+     * \param gpu_memory Pointer to CPU memory
+     * \param etl_size The size of the memory
+     */
+    void gpu_copy_from(const T* gpu_memory, size_t etl_size) const {
+        cuda_check(cudaMemcpy(
+            const_cast<std::remove_const_t<T>*>(gpu_memory),
+            const_cast<std::remove_const_t<T>*>(gpu_memory_),
+            etl_size * sizeof(T), cudaMemcpyDeviceToDevice));
+    }
+
+    /*!
      * \brief Transfer the GPU memory to another handler
      * \param rhs The handler to transfer memory to
      */
@@ -246,6 +258,16 @@ struct gpu_memory_handler {
      */
     void ensure_cpu_up_to_date(const T* cpu_memory, size_t etl_size) const {
         cpp_unused(cpu_memory);
+        cpp_unused(etl_size);
+    }
+
+    /*!
+     * \brief Copy from GPU to GPU
+     * \param gpu_memory Pointer to CPU memory
+     * \param etl_size The size of the memory
+     */
+    void gpu_copy_from(const T* gpu_memory, size_t etl_size) const {
+        cpp_unused(gpu_memory);
         cpp_unused(etl_size);
     }
 
