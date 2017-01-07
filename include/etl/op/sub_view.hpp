@@ -303,8 +303,6 @@ private:
 
     mutable memory_type memory;
 
-    mutable gpu_memory_handler<value_type> _gpu;         ///< The GPU memory handler
-
     mutable bool cpu_up_to_date;
     mutable bool gpu_up_to_date;
 
@@ -673,8 +671,16 @@ public:
      * \brief Copy from GPU to GPU
      * \param gpu_memory Pointer to CPU memory
      */
-    void gpu_copy_from(const value_type* gpu_memory) const {
-        _gpu.gpu_copy_from(gpu_memory, sub_size);
+    void gpu_copy_from(const value_type* new_gpu_memory) const {
+#ifdef ETL_CUDA
+        cuda_check(cudaMemcpy(
+            const_cast<std::remove_const_t<value_type>*>(gpu_memory()),
+            const_cast<std::remove_const_t<value_type>*>(new_gpu_memory),
+            sub_size * sizeof(value_type), cudaMemcpyDeviceToDevice));
+#endif
+
+        gpu_up_to_date = true;
+        cpu_up_to_date = false;
     }
 
     /*!
