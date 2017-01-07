@@ -696,14 +696,6 @@ public:
     }
 
     /*!
-     * \brief Transfer the GPU memory to another handler
-     * \param rhs The handler to transfer memory to
-     */
-    void gpu_transfer_to(gpu_memory_handler<value_type>& rhs){
-        matrix.gpu_transfer_to(rhs);
-    }
-
-    /*!
      * \brief Return the GPU memory
      */
     gpu_memory_handler<value_type>& get_gpu_handler(){

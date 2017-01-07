@@ -613,14 +613,6 @@ struct dense_dyn_base : dyn_base<T, D> {
     }
 
     /*!
-     * \brief Transfer the GPU memory to another handler
-     * \param rhs The handler to transfer memory to
-     */
-    void gpu_transfer_to(gpu_memory_handler<T>& rhs){
-        _gpu.gpu_transfer_to(rhs);
-    }
-
-    /*!
      * \brief Return the GPU memory
      */
     gpu_memory_handler<T>& get_gpu_handler(){

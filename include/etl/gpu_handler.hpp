@@ -122,26 +122,6 @@ public:
         cpu_up_to_date = false;
     }
 
-    /*!
-     * \brief Transfer the GPU memory to another handler
-     * \param rhs The handler to transfer memory to
-     */
-    void gpu_transfer_to(gpu_memory_handler& rhs) const {
-        if(this == &rhs){
-            return;
-        }
-
-        rhs.gpu_memory_ = gpu_memory_;
-        gpu_memory_ = nullptr;
-
-        // The memory was transferred, not up to date anymore
-        gpu_up_to_date = false;
-
-        // The target is up to date on GPU but CPU is not to date anymore
-        rhs.gpu_up_to_date = true;
-        rhs.cpu_up_to_date = false;
-    }
-
 private:
 
     /*!
@@ -272,14 +252,6 @@ struct gpu_memory_handler {
     void gpu_copy_from(const T* gpu_memory, size_t etl_size) const {
         cpp_unused(gpu_memory);
         cpp_unused(etl_size);
-    }
-
-    /*!
-     * \brief Transfer the GPU memory to another handler
-     * \param rhs The handler to transfer memory to
-     */
-    void gpu_transfer_to(gpu_memory_handler& rhs){
-        cpp_unused(rhs);
     }
 };
 #endif
