@@ -336,10 +336,11 @@ void fft1(A&& a, C&& c) {
 template <typename A, typename C, cpp_enable_if(all_complex_single_precision<A>::value)>
 void fft1(A&& a, C&& c) {
     a.ensure_gpu_up_to_date();
+    c.ensure_gpu_allocated();
 
-    detail::inplace_cfft1_kernel(a, etl::size(a));
+    c.gpu_copy_from(a.gpu_memory());
 
-    a.gpu_transfer_to(c.get_gpu_handler());
+    detail::inplace_cfft1_kernel(c, etl::size(c));
 }
 
 /*!
@@ -350,10 +351,11 @@ void fft1(A&& a, C&& c) {
 template <typename A, typename C, cpp_enable_if(all_complex_double_precision<A>::value)>
 void fft1(A&& a, C&& c) {
     a.ensure_gpu_up_to_date();
+    c.ensure_gpu_allocated();
 
-    detail::inplace_zfft1_kernel(a, etl::size(a));
+    c.gpu_copy_from(a.gpu_memory());
 
-    a.gpu_transfer_to(c.get_gpu_handler());
+    detail::inplace_zfft1_kernel(c, etl::size(c));
 }
 
 /*!
@@ -413,10 +415,11 @@ void fft1_many(A&& a, C&& c) {
     std::size_t batch = etl::size(a) / n;   //Number of batch
 
     a.ensure_gpu_up_to_date();
+    c.ensure_gpu_allocated();
 
-    detail::inplace_cfft1_many_kernel(a, batch, n);
+    c.gpu_copy_from(a.gpu_memory());
 
-    a.gpu_transfer_to(c.get_gpu_handler());
+    detail::inplace_cfft1_many_kernel(c, batch, n);
 }
 
 /*!
@@ -434,10 +437,10 @@ void fft1_many(A&& a, C&& c) {
     std::size_t batch = etl::size(a) / n;   //Number of batch
 
     a.ensure_gpu_up_to_date();
+    c.ensure_gpu_allocated();
+    c.gpu_copy_from(a.gpu_memory());
 
-    detail::inplace_zfft1_many_kernel(a, batch, n);
-
-    a.gpu_transfer_to(c.get_gpu_handler());
+    detail::inplace_zfft1_many_kernel(c, batch, n);
 }
 
 template <typename C, cpp_enable_if(all_complex_single_precision<C>::value)>
@@ -553,10 +556,10 @@ void scale_back_real(A&& a, C&& c) {
 template <typename A, typename C, cpp_enable_if(all_complex_single_precision<A>::value)>
 void ifft1(A&& a, C&& c) {
     a.ensure_gpu_up_to_date();
+    c.ensure_gpu_allocated();
+    c.gpu_copy_from(a.gpu_memory());
 
-    detail::inplace_cifft1_kernel(a, etl::size(a));
-
-    a.gpu_transfer_to(c.get_gpu_handler());
+    detail::inplace_cifft1_kernel(c, etl::size(c));
 
     scale_back(c);
 }
@@ -569,10 +572,10 @@ void ifft1(A&& a, C&& c) {
 template <typename A, typename C, cpp_enable_if(all_complex_double_precision<A>::value)>
 void ifft1(A&& a, C&& c) {
     a.ensure_gpu_up_to_date();
+    c.ensure_gpu_allocated();
+    c.gpu_copy_from(a.gpu_memory());
 
-    detail::inplace_zifft1_kernel(a, etl::size(a));
-
-    a.gpu_transfer_to(c.get_gpu_handler());
+    detail::inplace_zifft1_kernel(c, etl::size(c));
 
     scale_back(c);
 }
@@ -620,10 +623,10 @@ void ifft1_many(A&& a, C&& c) {
     std::size_t batch = etl::size(a) / n;   //Number of batch
 
     a.ensure_gpu_up_to_date();
+    c.ensure_gpu_allocated();
+    c.gpu_copy_from(a.gpu_memory());
 
-    detail::inplace_cifft1_many_kernel(a, batch, n);
-
-    a.gpu_transfer_to(c.get_gpu_handler());
+    detail::inplace_cifft1_many_kernel(c, batch, n);
 
     scale_back(c, 1.0 / double(n));
 }
@@ -643,10 +646,10 @@ void ifft1_many(A&& a, C&& c) {
     std::size_t batch = etl::size(a) / n;   //Number of batch
 
     a.ensure_gpu_up_to_date();
+    c.ensure_gpu_allocated();
+    c.gpu_copy_from(a.gpu_memory());
 
-    detail::inplace_zifft1_many_kernel(a, batch, n);
-
-    a.gpu_transfer_to(c.get_gpu_handler());
+    detail::inplace_zifft1_many_kernel(c, batch, n);
 
     scale_back(c, 1.0 / double(n));
 }
@@ -744,10 +747,10 @@ void fft2(A&& a, C&& c) {
 template <typename A, typename C, cpp_enable_if(all_complex_single_precision<A>::value)>
 void fft2(A&& a, C&& c) {
     a.ensure_gpu_up_to_date();
+    c.ensure_gpu_allocated();
+    c.gpu_copy_from(a.gpu_memory());
 
-    detail::inplace_cfft2_kernel(a, etl::dim<0>(a), etl::dim<1>(a));
-
-    a.gpu_transfer_to(c.get_gpu_handler());
+    detail::inplace_cfft2_kernel(c, etl::dim<0>(c), etl::dim<1>(c));
 }
 
 /*!
@@ -758,10 +761,10 @@ void fft2(A&& a, C&& c) {
 template <typename A, typename C, cpp_enable_if(all_complex_double_precision<A>::value)>
 void fft2(A&& a, C&& c) {
     a.ensure_gpu_up_to_date();
+    c.ensure_gpu_allocated();
+    c.gpu_copy_from(a.gpu_memory());
 
-    detail::inplace_zfft2_kernel(a, etl::dim<0>(a), etl::dim<1>(a));
-
-    a.gpu_transfer_to(c.get_gpu_handler());
+    detail::inplace_zfft2_kernel(c, etl::dim<0>(c), etl::dim<1>(c));
 }
 
 /*!
@@ -772,10 +775,10 @@ void fft2(A&& a, C&& c) {
 template <typename A, typename C, cpp_enable_if(all_complex_single_precision<A>::value)>
 void ifft2(A&& a, C&& c) {
     a.ensure_gpu_up_to_date();
+    c.ensure_gpu_allocated();
+    c.gpu_copy_from(a.gpu_memory());
 
-    detail::inplace_cifft2_kernel(a, etl::dim<0>(a), etl::dim<1>(a));
-
-    a.gpu_transfer_to(c.get_gpu_handler());
+    detail::inplace_cifft2_kernel(c, etl::dim<0>(c), etl::dim<1>(c));
 
     scale_back(c);
 }
@@ -788,10 +791,10 @@ void ifft2(A&& a, C&& c) {
 template <typename A, typename C, cpp_enable_if(all_complex_double_precision<A>::value)>
 void ifft2(A&& a, C&& c) {
     a.ensure_gpu_up_to_date();
+    c.ensure_gpu_allocated();
+    c.gpu_copy_from(a.gpu_memory());
 
-    detail::inplace_zifft2_kernel(a, etl::dim<0>(a), etl::dim<1>(a));
-
-    a.gpu_transfer_to(c.get_gpu_handler());
+    detail::inplace_zifft2_kernel(c, etl::dim<0>(c), etl::dim<1>(c));
 
     scale_back(c);
 }
@@ -884,10 +887,10 @@ void fft2_many(A&& a, C&& c) {
     std::size_t batch = etl::size(a) / (n1 * n2); //Number of batch
 
     a.ensure_gpu_up_to_date();
+    c.ensure_gpu_allocated();
+    c.gpu_copy_from(a.gpu_memory());
 
-    detail::inplace_cfft2_many_kernel(a, batch, n1, n2);
-
-    a.gpu_transfer_to(c.get_gpu_handler());
+    detail::inplace_cfft2_many_kernel(c, batch, n1, n2);
 }
 
 /*!
@@ -906,10 +909,10 @@ void fft2_many(A&& a, C&& c) {
     std::size_t batch = etl::size(a) / (n1 * n2); //Number of batch
 
     a.ensure_gpu_up_to_date();
+    c.ensure_gpu_allocated();
+    c.gpu_copy_from(a.gpu_memory());
 
-    detail::inplace_zfft2_many_kernel(a, batch, n1, n2);
-
-    a.gpu_transfer_to(c.get_gpu_handler());
+    detail::inplace_zfft2_many_kernel(c, batch, n1, n2);
 }
 
 /*!
@@ -928,10 +931,10 @@ void ifft2_many(A&& a, C&& c) {
     std::size_t batch = etl::size(a) / (n1 * n2); //Number of batch
 
     a.ensure_gpu_up_to_date();
+    c.ensure_gpu_allocated();
+    c.gpu_copy_from(a.gpu_memory());
 
-    detail::inplace_cifft2_many_kernel(a, batch, n1, n2);
-
-    a.gpu_transfer_to(c.get_gpu_handler());
+    detail::inplace_cifft2_many_kernel(c, batch, n1, n2);
 
     scale_back(c, 1.0 / double(n1 * n2));
 }
@@ -952,10 +955,10 @@ void ifft2_many(A&& a, C&& c) {
     std::size_t batch = etl::size(a) / (n1 * n2); //Number of batch
 
     a.ensure_gpu_up_to_date();
+    c.ensure_gpu_allocated();
+    c.gpu_copy_from(a.gpu_memory());
 
-    detail::inplace_zifft2_many_kernel(a, batch, n1, n2);
-
-    a.gpu_transfer_to(c.get_gpu_handler());
+    detail::inplace_zifft2_many_kernel(c, batch, n1, n2);
 
     scale_back(c, 1.0 / double(n1 * n2));
 }
