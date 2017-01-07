@@ -71,10 +71,10 @@ double sum(const A& a) {
     etl::dyn_vector<value_t<A>> ones(etl::size(a), 1.0);
 
     a.ensure_gpu_up_to_date();
-    b.ensure_gpu_up_to_date();
+    ones.ensure_gpu_up_to_date();
 
     double prod = 0.0;
-    cublas_check(cublasDdot(handle.get(), etl::size(a), a.gpu_memory(), 1, b.gpu_memory(), 1, &prod));
+    cublas_check(cublasDdot(handle.get(), etl::size(a), a.gpu_memory(), 1, ones.gpu_memory(), 1, &prod));
     return prod;
 }
 

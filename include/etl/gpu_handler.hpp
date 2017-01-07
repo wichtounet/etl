@@ -17,12 +17,19 @@ namespace etl {
 template<typename T>
 struct gpu_memory_handler {
 private:
-    T* gpu_memory_;
+    mutable T* gpu_memory_ = nullptr;
 
     mutable bool cpu_up_to_date = true;
     mutable bool gpu_up_to_date = false;
 
 public:
+    ~gpu_memory_handler(){
+        if (gpu_memory_) {
+            //Note: the const_cast is only here to allow compilation
+            cuda_check(cudaFree((reinterpret_cast<void*>(const_cast<std::remove_const_t<T>*>(gpu_memory_)))));
+        }
+    }
+
     /*!
      * \brief Return GPU memory of this expression, if any.
      * \return a pointer to the GPU memory or nullptr if not allocated in GPU.
@@ -38,6 +45,8 @@ public:
         if (gpu_memory_) {
             //Note: the const_cast is only here to allow compilation
             cuda_check(cudaFree((reinterpret_cast<void*>(const_cast<std::remove_const_t<T>*>(gpu_memory_)))));
+
+            gpu_memory_ = nullptr;
         }
 
         invalidate_gpu();
@@ -102,7 +111,11 @@ public:
      * \brief Transfer the GPU memory to another handler
      * \param rhs The handler to transfer memory to
      */
-    void gpu_transfer_to(gpu_memory_handler& rhs){
+    void gpu_transfer_to(gpu_memory_handler& rhs) const {
+        if(this == &rhs){
+            return;
+        }
+
         rhs.gpu_memory_ = gpu_memory_;
         gpu_memory_ = nullptr;
 
@@ -122,7 +135,12 @@ private:
     void gpu_allocate_impl(size_t etl_size) const {
         cpp_assert(!is_gpu_allocated(), "Trying to allocate already allocated GPU gpu_memory_");
 
-        gpu_memory_ = impl::cuda::cuda_allocate_only<T>(etl_size);
+        auto cuda_status = cudaMalloc(&gpu_memory_, etl_size * sizeof(T));
+        if (cuda_status != cudaSuccess) {
+            std::cout << "cuda: Failed to allocate GPU memory: " << cudaGetErrorString(cuda_status) << std::endl;
+            std::cout << "      Tried to allocate " << etl_size * sizeof(T) << "B" << std::endl;
+            exit(EXIT_FAILURE);
+        }
 
         inc_counter("gpu:allocate");
     }
