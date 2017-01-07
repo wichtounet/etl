@@ -129,6 +129,8 @@ public:
      * \param etl_size The size of the memory
      */
     void gpu_copy_from(const T* gpu_memory, size_t etl_size) const {
+        cpp_assert(is_gpu_allocated(), "GPU must be allocated before copy");
+
         cuda_check(cudaMemcpy(
             const_cast<std::remove_const_t<T>*>(gpu_memory_),
             const_cast<std::remove_const_t<T>*>(gpu_memory),

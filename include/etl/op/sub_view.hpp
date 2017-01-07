@@ -672,6 +672,8 @@ public:
      * \param gpu_memory Pointer to CPU memory
      */
     void gpu_copy_from(const value_type* new_gpu_memory) const {
+        cpp_assert(is_gpu_allocated(), "GPU must be allocated before copy");
+
 #ifdef ETL_CUDA
         cuda_check(cudaMemcpy(
             const_cast<std::remove_const_t<value_type>*>(gpu_memory()),
