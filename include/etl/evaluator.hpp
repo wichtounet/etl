@@ -77,7 +77,7 @@ namespace standard_evaluator {
     void post_assign(E&& expr, R&& result) {
         //If necessary copy the GPU result back to CPU
         cpp::static_if<all_dma<R>::value && !etl::is_sparse_matrix<R>::value>([&](auto f){
-            f(result).direct().ensure_cpu_up_to_date();
+            f(result).ensure_cpu_up_to_date();
         });
 
         expr.visit(detail::gpu_clean_visitor{});
@@ -94,7 +94,7 @@ namespace standard_evaluator {
     void post_assign_compound(E&& expr) {
         //If necessary copy the GPU result back to CPU
         cpp::static_if<all_dma<E>::value && !etl::is_sparse_matrix<E>::value>([&](auto f){
-            f(expr).direct().ensure_cpu_up_to_date();
+            f(expr).ensure_cpu_up_to_date();
         });
 
         expr.visit(detail::gpu_clean_visitor{});

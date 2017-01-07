@@ -79,6 +79,7 @@ protected:
 
 private:
     mutable gpu_handler<value_type> _gpu_memory_handler; ///< The GPU memory handler
+    gpu_memory_handler<value_type> _gpu;                 ///< The GPU memory handler
 
 public:
     base_temporary_expr() = default;
@@ -303,6 +304,73 @@ public:
         }
     }
 
+    /*!
+     * \brief Return GPU memory of this expression, if any.
+     * \return a pointer to the GPU memory or nullptr if not allocated in GPU.
+     */
+    value_type* gpu_memory() const noexcept {
+        return _gpu.gpu_memory();
+    }
+
+    /*!
+     * \brief Evict the expression from GPU.
+     */
+    void gpu_evict() const noexcept {
+        _gpu.gpu_evict();
+    }
+
+    /*!
+     * \brief Invalidates the CPU memory
+     */
+    void invalidate_cpu() const noexcept {
+        _gpu.invalidate_cpu();
+    }
+
+    /*!
+     * \brief Invalidates the GPU memory
+     */
+    void invalidate_gpu() const noexcept {
+        _gpu.invalidate_gpu();
+    }
+
+    /*!
+     * \brief Ensures that the GPU memory is allocated and that the GPU memory
+     * is up to date (to undefined value).
+     */
+    void ensure_gpu_allocated() const {
+        _gpu.ensure_gpu_allocated(etl::size(result()));
+    }
+
+    /*!
+     * \brief Allocate memory on the GPU for the expression and copy the values into the GPU.
+     */
+    void ensure_gpu_up_to_date() const {
+        _gpu.ensure_gpu_up_to_date(memory_start(), etl::size(result()));
+    }
+
+    /*!
+     * \brief Copy back from the GPU to the expression memory if
+     * necessary.
+     */
+    void ensure_cpu_up_to_date() {
+        _gpu.ensure_cpu_up_to_date(memory_start(), etl::size(result()));
+    }
+
+    /*!
+     * \brief Transfer the GPU memory to another handler
+     * \param rhs The handler to transfer memory to
+     */
+    void gpu_transfer_to(gpu_memory_handler<value_type>& rhs){
+        _gpu.gpu_transfer_to(rhs);
+    }
+
+    /*!
+     * \brief Return the GPU memory
+     */
+    gpu_memory_handler<value_type>& get_gpu_handler(){
+        return _gpu;
+    }
+
 private:
     /*!
      * \brief Returns the expression containing the result of the expression.
@@ -427,7 +495,7 @@ struct base_temporary_expr_un : base_temporary_expr<D> {
     void visit(const detail::gpu_clean_visitor& visitor){
         _a.visit(visitor);
 
-        this->direct().gpu_evict();
+        this->gpu_evict();
     }
 
     /*!
@@ -443,7 +511,7 @@ struct base_temporary_expr_un : base_temporary_expr<D> {
         this->evaluate();
 
         if (old_need_value) {
-            this->direct().ensure_cpu_up_to_date();
+            this->ensure_cpu_up_to_date();
         }
 
         visitor.need_value = old_need_value;
@@ -575,7 +643,7 @@ struct base_temporary_expr_bin : base_temporary_expr<D> {
         _a.visit(visitor);
         _b.visit(visitor);
 
-        this->direct().gpu_evict();
+        this->gpu_evict();
     }
 
     /*!
@@ -594,7 +662,7 @@ struct base_temporary_expr_bin : base_temporary_expr<D> {
         this->evaluate();
 
         if (old_need_value) {
-            this->direct().ensure_cpu_up_to_date();
+            this->ensure_cpu_up_to_date();
         }
 
         visitor.need_value = old_need_value;

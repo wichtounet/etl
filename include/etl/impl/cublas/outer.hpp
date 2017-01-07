@@ -45,25 +45,21 @@ void batch_outer(const A& a, const B& b, C&& c) {
     // matrices, this is achieved. However, since one of the matrix
     // needs to be transposed, it must be changed again
 
-    auto a_gpu = a.direct();
-    auto b_gpu = b.direct();
-    auto c_gpu = c.direct();
-
-    a_gpu.ensure_gpu_up_to_date();
-    b_gpu.ensure_gpu_up_to_date();
-    c_gpu.ensure_gpu_allocated();
+    a.ensure_gpu_up_to_date();
+    b.ensure_gpu_up_to_date();
+    c.ensure_gpu_allocated();
 
     cublasSgemm(
         handle.get(),
         CUBLAS_OP_N, CUBLAS_OP_T,
         etl::columns(c), etl::rows(c), etl::rows(b),
         &alpha,
-        b_gpu.gpu_memory(), etl::columns(b),
-        a_gpu.gpu_memory(), etl::columns(a),
+        b.gpu_memory(), etl::columns(b),
+        a.gpu_memory(), etl::columns(a),
         &beta,
-        c_gpu.gpu_memory(), etl::columns(b));
+        c.gpu_memory(), etl::columns(b));
 
-    c_gpu.invalidate_cpu();
+    c.invalidate_cpu();
 }
 
 /*!
@@ -76,25 +72,21 @@ void batch_outer(const A& a, const B& b, C&& c) {
     double alpha = 1.0;
     double beta  = 0.0;
 
-    auto a_gpu = a.direct();
-    auto b_gpu = b.direct();
-    auto c_gpu = c.direct();
-
-    a_gpu.ensure_gpu_up_to_date();
-    b_gpu.ensure_gpu_up_to_date();
-    c_gpu.ensure_gpu_allocated();
+    a.ensure_gpu_up_to_date();
+    b.ensure_gpu_up_to_date();
+    c.ensure_gpu_allocated();
 
     cublasDgemm(
         handle.get(),
         CUBLAS_OP_N, CUBLAS_OP_T,
         etl::columns(c), etl::rows(c), etl::rows(b),
         &alpha,
-        b_gpu.gpu_memory(), etl::columns(b),
-        a_gpu.gpu_memory(), etl::columns(a),
+        b.gpu_memory(), etl::columns(b),
+        a.gpu_memory(), etl::columns(a),
         &beta,
-        c_gpu.gpu_memory(), etl::columns(b));
+        c.gpu_memory(), etl::columns(b));
 
-    c_gpu.invalidate_cpu();
+    c.invalidate_cpu();
 }
 
 #else

@@ -52,12 +52,10 @@ float sum(const A& a) {
 
 #pragma GCC diagnostic pop
 
-    auto a_gpu = a.direct();
-
-    a_gpu.ensure_gpu_up_to_date();
+    a.ensure_gpu_up_to_date();
 
     float prod = 0.0;
-    cublas_check(cublasSdot(handle.get(), etl::size(a), a_gpu.gpu_memory(), 1, ones.get(), 1, &prod));
+    cublas_check(cublasSdot(handle.get(), etl::size(a), a.gpu_memory(), 1, ones.get(), 1, &prod));
     return prod;
 }
 
@@ -72,14 +70,11 @@ double sum(const A& a) {
 
     etl::dyn_vector<value_t<A>> ones(etl::size(a), 1.0);
 
-    auto a_gpu = a.direct();
-    auto b_gpu = ones.direct();
-
-    a_gpu.ensure_gpu_up_to_date();
-    b_gpu.ensure_gpu_up_to_date();
+    a.ensure_gpu_up_to_date();
+    b.ensure_gpu_up_to_date();
 
     double prod = 0.0;
-    cublas_check(cublasDdot(handle.get(), etl::size(a), a_gpu.gpu_memory(), 1, b_gpu.gpu_memory(), 1, &prod));
+    cublas_check(cublasDdot(handle.get(), etl::size(a), a.gpu_memory(), 1, b.gpu_memory(), 1, &prod));
     return prod;
 }
 

@@ -312,7 +312,7 @@ public:
      * \brief Copy back from the GPU to the expression memory if
      * necessary.
      */
-    void ensure_cpu_up_to_date() const {
+    void ensure_cpu_up_to_date() {
         _gpu.ensure_cpu_up_to_date(memory_start(), etl::size(result()));
     }
 
@@ -427,7 +427,7 @@ struct temporary_expr_un : temporary_expr<D, T, R> {
     void visit(const detail::gpu_clean_visitor& visitor){
         _a.visit(visitor);
 
-        this->direct().gpu_evict();
+        this->gpu_evict();
     }
 
     /*!
@@ -443,7 +443,7 @@ struct temporary_expr_un : temporary_expr<D, T, R> {
         this->evaluate();
 
         if (old_need_value) {
-            this->direct().ensure_cpu_up_to_date();
+            this->ensure_cpu_up_to_date();
         }
 
         visitor.need_value = old_need_value;
@@ -568,7 +568,7 @@ struct temporary_expr_bin : temporary_expr<D, T, R> {
         _a.visit(visitor);
         _b.visit(visitor);
 
-        this->direct().gpu_evict();
+        this->gpu_evict();
     }
 
     /*!
@@ -587,7 +587,7 @@ struct temporary_expr_bin : temporary_expr<D, T, R> {
         this->evaluate();
 
         if (old_need_value) {
-            this->direct().ensure_cpu_up_to_date();
+            this->ensure_cpu_up_to_date();
         }
 
         visitor.need_value = old_need_value;

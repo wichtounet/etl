@@ -308,7 +308,7 @@ private:
     mutable memory_type memory;
 
     mutable gpu_handler<value_type> _gpu_memory_handler; ///< The GPU memory handler
-    gpu_memory_handler<value_type> _gpu;                 ///< The GPU memory handler
+    mutable gpu_memory_handler<value_type> _gpu;         ///< The GPU memory handler
 
     friend struct etl_traits<this_type>;
 
@@ -661,7 +661,7 @@ public:
      * \brief Transfer the GPU memory to another handler
      * \param rhs The handler to transfer memory to
      */
-    void gpu_transfer_to(gpu_memory_handler<value_type>& rhs){
+    void gpu_transfer_to(gpu_memory_handler<value_type>& rhs) const {
         _gpu.gpu_transfer_to(rhs);
     }
 

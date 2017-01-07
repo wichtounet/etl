@@ -37,14 +37,11 @@ template <typename A, typename B, cpp_enable_if(all_dma<A, B>::value && all_sing
 float dot(const A& a, const B& b) {
     decltype(auto) handle = start_cublas();
 
-    auto a_gpu = a.direct();
-    auto b_gpu = b.direct();
-
-    a_gpu.ensure_gpu_up_to_date();
-    b_gpu.ensure_gpu_up_to_date();
+    a.ensure_gpu_up_to_date();
+    b.ensure_gpu_up_to_date();
 
     float prod = 0.0;
-    cublas_check(cublasSdot(handle.get(), etl::size(a), a_gpu.gpu_memory(), 1, b_gpu.gpu_memory(), 1, &prod));
+    cublas_check(cublasSdot(handle.get(), etl::size(a), a.gpu_memory(), 1, b.gpu_memory(), 1, &prod));
     return prod;
 }
 
@@ -55,14 +52,11 @@ template <typename A, typename B, cpp_enable_if(all_dma<A, B>::value && all_doub
 double dot(const A& a, const B& b) {
     decltype(auto) handle = start_cublas();
 
-    auto a_gpu = a.direct();
-    auto b_gpu = b.direct();
-
-    a_gpu.ensure_gpu_up_to_date();
-    b_gpu.ensure_gpu_up_to_date();
+    a.ensure_gpu_up_to_date();
+    b.ensure_gpu_up_to_date();
 
     double prod = 0.0;
-    cublas_check(cublasDdot(handle.get(), etl::size(a), a_gpu.gpu_memory(), 1, b_gpu.gpu_memory(), 1, &prod));
+    cublas_check(cublasDdot(handle.get(), etl::size(a), a.gpu_memory(), 1, b.gpu_memory(), 1, &prod));
     return prod;
 }
 

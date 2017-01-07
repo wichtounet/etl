@@ -75,7 +75,7 @@ public:
      * \param cpu_memory Pointer to CPU memory
      * \param etl_size The size of the memory
      */
-    void ensure_gpu_up_to_date(T* cpu_memory, size_t etl_size) const {
+    void ensure_gpu_up_to_date(const T* cpu_memory, size_t etl_size) const {
         // Make sure there is some memory allocate
         if (!is_gpu_allocated()) {
             gpu_allocate_impl(etl_size);
@@ -92,7 +92,7 @@ public:
      * \param cpu_memory Pointer to CPU memory
      * \param etl_size The size of the memory
      */
-    void ensure_cpu_up_to_date(T* cpu_memory, size_t etl_size) const {
+    void ensure_cpu_up_to_date(const T* cpu_memory, size_t etl_size) const {
         if(!cpu_up_to_date){
             gpu_to_cpu(cpu_memory, etl_size);
         }
@@ -130,7 +130,7 @@ private:
     /*!
      * \brief Copy back from the CPU to the GPU
      */
-    void cpu_to_gpu(T* cpu_memory, size_t etl_size) const {
+    void cpu_to_gpu(const T* cpu_memory, size_t etl_size) const {
         cpp_assert(is_gpu_allocated(), "Cannot copy to unallocated GPU memory");
         cpp_assert(!gpu_up_to_date, "Copy must only be done if necessary");
         cpp_assert(cpu_up_to_date, "Copy from invalid memory!");
@@ -148,13 +148,13 @@ private:
     /*!
      * \brief Copy back from the GPU to the expression memory.
      */
-    void gpu_to_cpu(T* cpu_memory, size_t etl_size) const {
+    void gpu_to_cpu(const T* cpu_memory, size_t etl_size) const {
         cpp_assert(is_gpu_allocated(), "Cannot copy from unallocated GPU memory()");
         cpp_assert(gpu_up_to_date, "Cannot copy from invalid memory");
         cpp_assert(!cpu_up_to_date, "Copy done without reason");
 
-        cpp_assert(!std::is_const<std::remove_pointer_t<decltype(gpu_memory_)>>::value, "copy_from should not be used on const memory");
-        cpp_assert(!std::is_const<T>::value, "copy_from should not be used on const memory");
+        //cpp_assert(!std::is_const<std::remove_pointer_t<decltype(gpu_memory_)>>::value, "copy_from should not be used on const memory");
+        //cpp_assert(!std::is_const<T>::value, "copy_from should not be used on const memory");
 
         cuda_check(cudaMemcpy(
             const_cast<std::remove_const_t<T>*>(cpu_memory),
@@ -215,7 +215,7 @@ struct gpu_memory_handler {
      * \param cpu_memory Pointer to CPU memory
      * \param etl_size The size of the memory
      */
-    void ensure_gpu_up_to_date(T* cpu_memory, size_t etl_size) const {
+    void ensure_gpu_up_to_date(const T* cpu_memory, size_t etl_size) const {
         cpp_unused(cpu_memory);
         cpp_unused(etl_size);
     }
@@ -226,7 +226,7 @@ struct gpu_memory_handler {
      * \param cpu_memory Pointer to CPU memory
      * \param etl_size The size of the memory
      */
-    void ensure_cpu_up_to_date(T* cpu_memory, size_t etl_size) const {
+    void ensure_cpu_up_to_date(const T* cpu_memory, size_t etl_size) const {
         cpp_unused(cpu_memory);
         cpp_unused(etl_size);
     }

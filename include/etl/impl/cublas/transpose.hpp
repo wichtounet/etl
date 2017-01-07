@@ -133,18 +133,17 @@ void inplace_square_transpose(C&& c) {
 
     auto a_gpu = cuda::cuda_allocate_only<T>(etl::size(c));
 
-    auto c_gpu = c.direct();
-    c_gpu.ensure_gpu_up_to_date();
+    c.ensure_gpu_up_to_date();
 
-    cuda_check(cudaMemcpy(a_gpu.get(), c_gpu.gpu_memory(), etl::size(c) * sizeof(T), cudaMemcpyDeviceToDevice));
+    cuda_check(cudaMemcpy(a_gpu.get(), c.gpu_memory(), etl::size(c) * sizeof(T), cudaMemcpyDeviceToDevice));
 
     if(row_major){
-        cublas_geam(handle.get(), CUBLAS_OP_T, CUBLAS_OP_T, etl::dim<0>(c), etl::dim<1>(c), &alpha, a_gpu.get(), etl::dim<1>(c), &beta, a_gpu.get(), etl::dim<1>(c), c_gpu.gpu_memory(), etl::dim<0>(c));
+        cublas_geam(handle.get(), CUBLAS_OP_T, CUBLAS_OP_T, etl::dim<0>(c), etl::dim<1>(c), &alpha, a_gpu.get(), etl::dim<1>(c), &beta, a_gpu.get(), etl::dim<1>(c), c.gpu_memory(), etl::dim<0>(c));
     } else {
-        cublas_geam(handle.get(), CUBLAS_OP_T, CUBLAS_OP_T, etl::dim<0>(c), etl::dim<1>(c), &alpha, a_gpu.get(), etl::dim<0>(c), &beta, a_gpu.get(), etl::dim<0>(c), c_gpu.gpu_memory(), etl::dim<1>(c));
+        cublas_geam(handle.get(), CUBLAS_OP_T, CUBLAS_OP_T, etl::dim<0>(c), etl::dim<1>(c), &alpha, a_gpu.get(), etl::dim<0>(c), &beta, a_gpu.get(), etl::dim<0>(c), c.gpu_memory(), etl::dim<1>(c));
     }
 
-    c_gpu.invalidate_cpu();
+    c.invalidate_cpu();
 }
 
 /*!
@@ -170,19 +169,16 @@ void transpose(A&& a, C&& c) {
     auto alpha = value_t<A>(1.0);
     auto beta  = value_t<A>(0.0);
 
-    auto a_gpu = a.direct();
-    auto c_gpu = c.direct();
-
-    a_gpu.ensure_gpu_up_to_date();
-    c_gpu.ensure_gpu_allocated();
+    a.ensure_gpu_up_to_date();
+    c.ensure_gpu_allocated();
 
     if(row_major){
-        cublas_geam(handle.get(), CUBLAS_OP_T, CUBLAS_OP_T, etl::dim<0>(a), etl::dim<1>(a), &alpha, a_gpu.gpu_memory(), etl::dim<1>(a), &beta, a_gpu.gpu_memory(), etl::dim<1>(a), c_gpu.gpu_memory(), etl::dim<1>(c));
+        cublas_geam(handle.get(), CUBLAS_OP_T, CUBLAS_OP_T, etl::dim<0>(a), etl::dim<1>(a), &alpha, a.gpu_memory(), etl::dim<1>(a), &beta, a.gpu_memory(), etl::dim<1>(a), c.gpu_memory(), etl::dim<1>(c));
     } else {
-        cublas_geam(handle.get(), CUBLAS_OP_T, CUBLAS_OP_T, etl::dim<0>(a), etl::dim<1>(a), &alpha, a_gpu.gpu_memory(), etl::dim<0>(a), &beta, a_gpu.gpu_memory(), etl::dim<0>(a), c_gpu.gpu_memory(), etl::dim<0>(c));
+        cublas_geam(handle.get(), CUBLAS_OP_T, CUBLAS_OP_T, etl::dim<0>(a), etl::dim<1>(a), &alpha, a.gpu_memory(), etl::dim<0>(a), &beta, a.gpu_memory(), etl::dim<0>(a), c.gpu_memory(), etl::dim<0>(c));
     }
 
-    c_gpu.invalidate_cpu();
+    c.invalidate_cpu();
 }
 
 /*!

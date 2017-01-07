@@ -120,13 +120,9 @@ void gemm(A&& a, B&& b, C&& c) {
     auto alpha = make_default<T>(1.0);
     auto beta  = make_default<T>(0.0);
 
-    auto a_gpu = a.direct();
-    auto b_gpu = b.direct();
-    auto c_gpu = c.direct();
-
-    a_gpu.ensure_gpu_up_to_date();
-    b_gpu.ensure_gpu_up_to_date();
-    c_gpu.ensure_gpu_allocated();
+    a.ensure_gpu_up_to_date();
+    b.ensure_gpu_up_to_date();
+    c.ensure_gpu_allocated();
 
     // Do the actual multiplication
 
@@ -136,23 +132,23 @@ void gemm(A&& a, B&& b, C&& c) {
             CUBLAS_OP_N, CUBLAS_OP_N,
             etl::columns(c), etl::rows(c), etl::columns(a),
             &alpha,
-            b_gpu.gpu_memory(), etl::major_stride(b),
-            a_gpu.gpu_memory(), etl::major_stride(a),
+            b.gpu_memory(), etl::major_stride(b),
+            a.gpu_memory(), etl::major_stride(a),
             &beta,
-            c_gpu.gpu_memory(), etl::major_stride(c));
+            c.gpu_memory(), etl::major_stride(c));
     } else {
         cublas_gemm(
             handle.get(),
             CUBLAS_OP_N, CUBLAS_OP_N,
             etl::rows(c), etl::columns(c), etl::columns(a),
             &alpha,
-            a_gpu.gpu_memory(), etl::major_stride(a),
-            b_gpu.gpu_memory(), etl::major_stride(b),
+            a.gpu_memory(), etl::major_stride(a),
+            b.gpu_memory(), etl::major_stride(b),
             &beta,
-            c_gpu.gpu_memory(), etl::major_stride(c));
+            c.gpu_memory(), etl::major_stride(c));
     }
 
-    c_gpu.invalidate_cpu();
+    c.invalidate_cpu();
 }
 
 /*!
@@ -175,13 +171,9 @@ void gemm_nt(A&& a, B&& b, C&& c) {
     auto alpha = make_default<T>(1.0);
     auto beta  = make_default<T>(0.0);
 
-    auto a_gpu = a.direct();
-    auto b_gpu = b.direct();
-    auto c_gpu = c.direct();
-
-    a_gpu.ensure_gpu_up_to_date();
-    b_gpu.ensure_gpu_up_to_date();
-    c_gpu.ensure_gpu_allocated();
+    a.ensure_gpu_up_to_date();
+    b.ensure_gpu_up_to_date();
+    c.ensure_gpu_allocated();
 
     // Do the actual multiplication
 
@@ -191,23 +183,23 @@ void gemm_nt(A&& a, B&& b, C&& c) {
             CUBLAS_OP_T, CUBLAS_OP_N,
             etl::columns(c), etl::rows(c), etl::columns(a),
             &alpha,
-            b_gpu.gpu_memory(), etl::major_stride(b),
-            a_gpu.gpu_memory(), etl::major_stride(a),
+            b.gpu_memory(), etl::major_stride(b),
+            a.gpu_memory(), etl::major_stride(a),
             &beta,
-            c_gpu.gpu_memory(), etl::major_stride(c));
+            c.gpu_memory(), etl::major_stride(c));
     } else {
         cublas_gemm(
             handle.get(),
             CUBLAS_OP_N, CUBLAS_OP_T,
             etl::rows(c), etl::columns(c), etl::columns(a),
             &alpha,
-            a_gpu.gpu_memory(), etl::major_stride(a),
-            b_gpu.gpu_memory(), etl::major_stride(b),
+            a.gpu_memory(), etl::major_stride(a),
+            b.gpu_memory(), etl::major_stride(b),
             &beta,
-            c_gpu.gpu_memory(), etl::major_stride(c));
+            c.gpu_memory(), etl::major_stride(c));
     }
 
-    c_gpu.invalidate_cpu();
+    c.invalidate_cpu();
 }
 
 /*!
@@ -230,13 +222,9 @@ void gemm_tn(A&& a, B&& b, C&& c) {
     auto alpha = make_default<T>(1.0);
     auto beta  = make_default<T>(0.0);
 
-    auto a_gpu = a.direct();
-    auto b_gpu = b.direct();
-    auto c_gpu = c.direct();
-
-    a_gpu.ensure_gpu_up_to_date();
-    b_gpu.ensure_gpu_up_to_date();
-    c_gpu.ensure_gpu_allocated();
+    a.ensure_gpu_up_to_date();
+    b.ensure_gpu_up_to_date();
+    c.ensure_gpu_allocated();
 
     // Do the actual multiplication
 
@@ -246,23 +234,23 @@ void gemm_tn(A&& a, B&& b, C&& c) {
             CUBLAS_OP_N, CUBLAS_OP_T,
             etl::columns(c), etl::rows(c), etl::rows(a),
             &alpha,
-            b_gpu.gpu_memory(), etl::major_stride(b),
-            a_gpu.gpu_memory(), etl::major_stride(a),
+            b.gpu_memory(), etl::major_stride(b),
+            a.gpu_memory(), etl::major_stride(a),
             &beta,
-            c_gpu.gpu_memory(), etl::major_stride(c));
+            c.gpu_memory(), etl::major_stride(c));
     } else {
         cublas_gemm(
             handle.get(),
             CUBLAS_OP_T, CUBLAS_OP_N,
             etl::rows(c), etl::columns(c), etl::rows(a),
             &alpha,
-            a_gpu.gpu_memory(), etl::major_stride(a),
-            b_gpu.gpu_memory(), etl::major_stride(b),
+            a.gpu_memory(), etl::major_stride(a),
+            b.gpu_memory(), etl::major_stride(b),
             &beta,
-            c_gpu.gpu_memory(), etl::major_stride(c));
+            c.gpu_memory(), etl::major_stride(c));
     }
 
-    c_gpu.invalidate_cpu();
+    c.invalidate_cpu();
 }
 
 /*!
@@ -285,13 +273,9 @@ void gemm_tt(A&& a, B&& b, C&& c) {
     auto alpha = make_default<T>(1.0);
     auto beta  = make_default<T>(0.0);
 
-    auto a_gpu = a.direct();
-    auto b_gpu = b.direct();
-    auto c_gpu = c.direct();
-
-    a_gpu.ensure_gpu_up_to_date();
-    b_gpu.ensure_gpu_up_to_date();
-    c_gpu.ensure_gpu_allocated();
+    a.ensure_gpu_up_to_date();
+    b.ensure_gpu_up_to_date();
+    c.ensure_gpu_allocated();
 
     // Do the actual multiplication
 
@@ -301,23 +285,23 @@ void gemm_tt(A&& a, B&& b, C&& c) {
             CUBLAS_OP_T, CUBLAS_OP_T,
             etl::columns(c), etl::rows(c), etl::rows(a),
             &alpha,
-            b_gpu.gpu_memory(), etl::major_stride(b),
-            a_gpu.gpu_memory(), etl::major_stride(a),
+            b.gpu_memory(), etl::major_stride(b),
+            a.gpu_memory(), etl::major_stride(a),
             &beta,
-            c_gpu.gpu_memory(), etl::major_stride(c));
+            c.gpu_memory(), etl::major_stride(c));
     } else {
         cublas_gemm(
             handle.get(),
             CUBLAS_OP_T, CUBLAS_OP_T,
             etl::rows(c), etl::columns(c), etl::rows(a),
             &alpha,
-            a_gpu.gpu_memory(), etl::major_stride(a),
-            b_gpu.gpu_memory(), etl::major_stride(b),
+            a.gpu_memory(), etl::major_stride(a),
+            b.gpu_memory(), etl::major_stride(b),
             &beta,
-            c_gpu.gpu_memory(), etl::major_stride(c));
+            c.gpu_memory(), etl::major_stride(c));
     }
 
-    c_gpu.invalidate_cpu();
+    c.invalidate_cpu();
 }
 
 /*!
@@ -332,13 +316,9 @@ void gemv(A&& a, B&& b, C&& c) {
 
     bool row_major = decay_traits<A>::storage_order == order::RowMajor;
 
-    auto a_gpu = a.direct();
-    auto b_gpu = b.direct();
-    auto c_gpu = c.direct();
-
-    a_gpu.ensure_gpu_up_to_date();
-    b_gpu.ensure_gpu_up_to_date();
-    c_gpu.ensure_gpu_allocated();
+    a.ensure_gpu_up_to_date();
+    b.ensure_gpu_up_to_date();
+    c.ensure_gpu_allocated();
 
     float alpha = 1.0;
     float beta  = 0.0;
@@ -351,25 +331,25 @@ void gemv(A&& a, B&& b, C&& c) {
             CUBLAS_OP_T,
             etl::columns(a), etl::rows(a),
             &alpha,
-            a_gpu.gpu_memory(), major_stride(a),
-            b_gpu.gpu_memory(), 1,
+            a.gpu_memory(), major_stride(a),
+            b.gpu_memory(), 1,
             &beta,
-            c_gpu.gpu_memory(), 1);
+            c.gpu_memory(), 1);
     } else {
         cublasSgemv(
             handle.get(),
             CUBLAS_OP_N,
             etl::rows(a), etl::columns(a),
             &alpha,
-            a_gpu.gpu_memory(), major_stride(a),
-            b_gpu.gpu_memory(), 1,
+            a.gpu_memory(), major_stride(a),
+            b.gpu_memory(), 1,
             &beta,
-            c_gpu.gpu_memory(), 1);
+            c.gpu_memory(), 1);
     }
 
     //Copy the result from GPU to CPU
 
-    c_gpu.invalidate_cpu();
+    c.invalidate_cpu();
 }
 
 /*!
@@ -384,13 +364,9 @@ void gemv(A&& a, B&& b, C&& c) {
 
     bool row_major = decay_traits<A>::storage_order == order::RowMajor;
 
-    auto a_gpu = a.direct();
-    auto b_gpu = b.direct();
-    auto c_gpu = c.direct();
-
-    a_gpu.ensure_gpu_up_to_date();
-    b_gpu.ensure_gpu_up_to_date();
-    c_gpu.ensure_gpu_allocated();
+    a.ensure_gpu_up_to_date();
+    b.ensure_gpu_up_to_date();
+    c.ensure_gpu_allocated();
 
     double alpha = 1.0;
     double beta  = 0.0;
@@ -403,25 +379,25 @@ void gemv(A&& a, B&& b, C&& c) {
             CUBLAS_OP_T,
             etl::columns(a), etl::rows(a),
             &alpha,
-            a_gpu.gpu_memory(), major_stride(a),
-            b_gpu.gpu_memory(), 1,
+            a.gpu_memory(), major_stride(a),
+            b.gpu_memory(), 1,
             &beta,
-            c_gpu.gpu_memory(), 1);
+            c.gpu_memory(), 1);
     } else {
         cublasDgemv(
             handle.get(),
             CUBLAS_OP_N,
             etl::rows(a), etl::columns(a),
             &alpha,
-            a_gpu.gpu_memory(), major_stride(a),
-            b_gpu.gpu_memory(), 1,
+            a.gpu_memory(), major_stride(a),
+            b.gpu_memory(), 1,
             &beta,
-            c_gpu.gpu_memory(), 1);
+            c.gpu_memory(), 1);
     }
 
     //Copy the result from GPU to CPU
 
-    c_gpu.invalidate_cpu();
+    c.invalidate_cpu();
 }
 
 /*!
@@ -436,13 +412,9 @@ void gemv(A&& a, B&& b, C&& c) {
 
     bool row_major = decay_traits<A>::storage_order == order::RowMajor;
 
-    auto a_gpu = a.direct();
-    auto b_gpu = b.direct();
-    auto c_gpu = c.direct();
-
-    a_gpu.ensure_gpu_up_to_date();
-    b_gpu.ensure_gpu_up_to_date();
-    c_gpu.ensure_gpu_allocated();
+    a.ensure_gpu_up_to_date();
+    b.ensure_gpu_up_to_date();
+    c.ensure_gpu_allocated();
 
     cuComplex alpha = make_cuComplex(1.0, 0.0);
     cuComplex beta  = make_cuComplex(0.0, 0.0);
@@ -455,25 +427,25 @@ void gemv(A&& a, B&& b, C&& c) {
             CUBLAS_OP_T,
             etl::columns(a), etl::rows(a),
             &alpha,
-            reinterpret_cast<cuComplex*>(a_gpu.gpu_memory()), major_stride(a),
-            reinterpret_cast<cuComplex*>(b_gpu.gpu_memory()), 1,
+            reinterpret_cast<cuComplex*>(a.gpu_memory()), major_stride(a),
+            reinterpret_cast<cuComplex*>(b.gpu_memory()), 1,
             &beta,
-            reinterpret_cast<cuComplex*>(c_gpu.gpu_memory()), 1);
+            reinterpret_cast<cuComplex*>(c.gpu_memory()), 1);
     } else {
         cublasCgemv(
             handle.get(),
             CUBLAS_OP_N,
             etl::rows(a), etl::columns(a),
             &alpha,
-            reinterpret_cast<cuComplex*>(a_gpu.gpu_memory()), major_stride(a),
-            reinterpret_cast<cuComplex*>(b_gpu.gpu_memory()), 1,
+            reinterpret_cast<cuComplex*>(a.gpu_memory()), major_stride(a),
+            reinterpret_cast<cuComplex*>(b.gpu_memory()), 1,
             &beta,
-            reinterpret_cast<cuComplex*>(c_gpu.gpu_memory()), 1);
+            reinterpret_cast<cuComplex*>(c.gpu_memory()), 1);
     }
 
     //Copy the result from GPU to CPU
 
-    c_gpu.invalidate_cpu();
+    c.invalidate_cpu();
 }
 
 /*!
@@ -488,13 +460,9 @@ void gemv(A&& a, B&& b, C&& c) {
 
     bool row_major = decay_traits<A>::storage_order == order::RowMajor;
 
-    auto a_gpu = a.direct();
-    auto b_gpu = b.direct();
-    auto c_gpu = c.direct();
-
-    a_gpu.ensure_gpu_up_to_date();
-    b_gpu.ensure_gpu_up_to_date();
-    c_gpu.ensure_gpu_allocated();
+    a.ensure_gpu_up_to_date();
+    b.ensure_gpu_up_to_date();
+    c.ensure_gpu_allocated();
 
     cuDoubleComplex alpha = make_cuDoubleComplex(1.0, 0.0);
     cuDoubleComplex beta  = make_cuDoubleComplex(0.0, 0.0);
@@ -507,25 +475,25 @@ void gemv(A&& a, B&& b, C&& c) {
             CUBLAS_OP_T,
             etl::columns(a), etl::rows(a),
             &alpha,
-            reinterpret_cast<cuDoubleComplex*>(a_gpu.gpu_memory()), major_stride(a),
-            reinterpret_cast<cuDoubleComplex*>(b_gpu.gpu_memory()), 1,
+            reinterpret_cast<cuDoubleComplex*>(a.gpu_memory()), major_stride(a),
+            reinterpret_cast<cuDoubleComplex*>(b.gpu_memory()), 1,
             &beta,
-            reinterpret_cast<cuDoubleComplex*>(c_gpu.gpu_memory()), 1);
+            reinterpret_cast<cuDoubleComplex*>(c.gpu_memory()), 1);
     } else {
         cublasZgemv(
             handle.get(),
             CUBLAS_OP_N,
             etl::rows(a), etl::columns(a),
             &alpha,
-            reinterpret_cast<cuDoubleComplex*>(a_gpu.gpu_memory()), major_stride(a),
-            reinterpret_cast<cuDoubleComplex*>(b_gpu.gpu_memory()), 1,
+            reinterpret_cast<cuDoubleComplex*>(a.gpu_memory()), major_stride(a),
+            reinterpret_cast<cuDoubleComplex*>(b.gpu_memory()), 1,
             &beta,
-            reinterpret_cast<cuDoubleComplex*>(c_gpu.gpu_memory()), 1);
+            reinterpret_cast<cuDoubleComplex*>(c.gpu_memory()), 1);
     }
 
     //Copy the result from GPU to CPU
 
-    c_gpu.invalidate_cpu();
+    c.invalidate_cpu();
 }
 
 /*!
@@ -540,13 +508,9 @@ void gevm(A&& a, B&& b, C&& c) {
 
     bool row_major = decay_traits<B>::storage_order == order::RowMajor;
 
-    auto a_gpu = a.direct();
-    auto b_gpu = b.direct();
-    auto c_gpu = c.direct();
-
-    a_gpu.ensure_gpu_up_to_date();
-    b_gpu.ensure_gpu_up_to_date();
-    c_gpu.ensure_gpu_allocated();
+    a.ensure_gpu_up_to_date();
+    b.ensure_gpu_up_to_date();
+    c.ensure_gpu_allocated();
 
     float alpha = 1.0;
     float beta  = 0.0;
@@ -559,25 +523,25 @@ void gevm(A&& a, B&& b, C&& c) {
             CUBLAS_OP_N,
             etl::columns(b), etl::rows(b),
             &alpha,
-            b_gpu.gpu_memory(), major_stride(b),
-            a_gpu.gpu_memory(), 1,
+            b.gpu_memory(), major_stride(b),
+            a.gpu_memory(), 1,
             &beta,
-            c_gpu.gpu_memory(), 1);
+            c.gpu_memory(), 1);
     } else {
         cublasSgemv(
             handle.get(),
             CUBLAS_OP_T,
             etl::rows(b), etl::columns(b),
             &alpha,
-            b_gpu.gpu_memory(), major_stride(b),
-            a_gpu.gpu_memory(), 1,
+            b.gpu_memory(), major_stride(b),
+            a.gpu_memory(), 1,
             &beta,
-            c_gpu.gpu_memory(), 1);
+            c.gpu_memory(), 1);
     }
 
     //Copy the result from GPU to CPU
 
-    c_gpu.invalidate_cpu();
+    c.invalidate_cpu();
 }
 
 /*!
@@ -592,13 +556,9 @@ void gevm(A&& a, B&& b, C&& c) {
 
     bool row_major = decay_traits<B>::storage_order == order::RowMajor;
 
-    auto a_gpu = a.direct();
-    auto b_gpu = b.direct();
-    auto c_gpu = c.direct();
-
-    a_gpu.ensure_gpu_up_to_date();
-    b_gpu.ensure_gpu_up_to_date();
-    c_gpu.ensure_gpu_allocated();
+    a.ensure_gpu_up_to_date();
+    b.ensure_gpu_up_to_date();
+    c.ensure_gpu_allocated();
 
     double alpha = 1.0;
     double beta  = 0.0;
@@ -611,25 +571,25 @@ void gevm(A&& a, B&& b, C&& c) {
             CUBLAS_OP_N,
             etl::columns(b), etl::rows(b),
             &alpha,
-            b_gpu.gpu_memory(), major_stride(b),
-            a_gpu.gpu_memory(), 1,
+            b.gpu_memory(), major_stride(b),
+            a.gpu_memory(), 1,
             &beta,
-            c_gpu.gpu_memory(), 1);
+            c.gpu_memory(), 1);
     } else {
         cublasDgemv(
             handle.get(),
             CUBLAS_OP_T,
             etl::rows(b), etl::columns(b),
             &alpha,
-            b_gpu.gpu_memory(), major_stride(b),
-            a_gpu.gpu_memory(), 1,
+            b.gpu_memory(), major_stride(b),
+            a.gpu_memory(), 1,
             &beta,
-            c_gpu.gpu_memory(), 1);
+            c.gpu_memory(), 1);
     }
 
     //Copy the result from GPU to CPU
 
-    c_gpu.invalidate_cpu();
+    c.invalidate_cpu();
 }
 
 /*!
@@ -644,13 +604,9 @@ void gevm(A&& a, B&& b, C&& c) {
 
     bool row_major = decay_traits<A>::storage_order == order::RowMajor;
 
-    auto a_gpu = a.direct();
-    auto b_gpu = b.direct();
-    auto c_gpu = c.direct();
-
-    a_gpu.ensure_gpu_up_to_date();
-    b_gpu.ensure_gpu_up_to_date();
-    c_gpu.ensure_gpu_allocated();
+    a.ensure_gpu_up_to_date();
+    b.ensure_gpu_up_to_date();
+    c.ensure_gpu_allocated();
 
     cuComplex alpha = make_cuComplex(1.0, 0.0);
     cuComplex beta  = make_cuComplex(0.0, 0.0);
@@ -663,25 +619,25 @@ void gevm(A&& a, B&& b, C&& c) {
             CUBLAS_OP_N,
             etl::columns(b), etl::rows(b),
             &alpha,
-            reinterpret_cast<cuComplex*>(b_gpu.gpu_memory()), major_stride(b),
-            reinterpret_cast<cuComplex*>(a_gpu.gpu_memory()), 1,
+            reinterpret_cast<cuComplex*>(b.gpu_memory()), major_stride(b),
+            reinterpret_cast<cuComplex*>(a.gpu_memory()), 1,
             &beta,
-            reinterpret_cast<cuComplex*>(c_gpu.gpu_memory()), 1);
+            reinterpret_cast<cuComplex*>(c.gpu_memory()), 1);
     } else {
         cublasCgemv(
             handle.get(),
             CUBLAS_OP_T,
             etl::rows(b), etl::columns(b),
             &alpha,
-            reinterpret_cast<cuComplex*>(b_gpu.gpu_memory()), major_stride(b),
-            reinterpret_cast<cuComplex*>(a_gpu.gpu_memory()), 1,
+            reinterpret_cast<cuComplex*>(b.gpu_memory()), major_stride(b),
+            reinterpret_cast<cuComplex*>(a.gpu_memory()), 1,
             &beta,
-            reinterpret_cast<cuComplex*>(c_gpu.gpu_memory()), 1);
+            reinterpret_cast<cuComplex*>(c.gpu_memory()), 1);
     }
 
     //Copy the result from GPU to CPU
 
-    c_gpu.invalidate_cpu();
+    c.invalidate_cpu();
 }
 
 /*!
@@ -696,13 +652,9 @@ void gevm(A&& a, B&& b, C&& c) {
 
     bool row_major = decay_traits<A>::storage_order == order::RowMajor;
 
-    auto a_gpu = a.direct();
-    auto b_gpu = b.direct();
-    auto c_gpu = c.direct();
-
-    a_gpu.ensure_gpu_up_to_date();
-    b_gpu.ensure_gpu_up_to_date();
-    c_gpu.ensure_gpu_allocated();
+    a.ensure_gpu_up_to_date();
+    b.ensure_gpu_up_to_date();
+    c.ensure_gpu_allocated();
 
     cuDoubleComplex alpha = make_cuDoubleComplex(1.0, 0.0);
     cuDoubleComplex beta  = make_cuDoubleComplex(0.0, 0.0);
@@ -715,25 +667,25 @@ void gevm(A&& a, B&& b, C&& c) {
             CUBLAS_OP_N,
             etl::columns(b), etl::rows(b),
             &alpha,
-            reinterpret_cast<cuDoubleComplex*>(b_gpu.gpu_memory()), major_stride(b),
-            reinterpret_cast<cuDoubleComplex*>(a_gpu.gpu_memory()), 1,
+            reinterpret_cast<cuDoubleComplex*>(b.gpu_memory()), major_stride(b),
+            reinterpret_cast<cuDoubleComplex*>(a.gpu_memory()), 1,
             &beta,
-            reinterpret_cast<cuDoubleComplex*>(c_gpu.gpu_memory()), 1);
+            reinterpret_cast<cuDoubleComplex*>(c.gpu_memory()), 1);
     } else {
         cublasZgemv(
             handle.get(),
             CUBLAS_OP_T,
             etl::rows(b), etl::columns(b),
             &alpha,
-            reinterpret_cast<cuDoubleComplex*>(b_gpu.gpu_memory()), major_stride(b),
-            reinterpret_cast<cuDoubleComplex*>(a_gpu.gpu_memory()), 1,
+            reinterpret_cast<cuDoubleComplex*>(b.gpu_memory()), major_stride(b),
+            reinterpret_cast<cuDoubleComplex*>(a.gpu_memory()), 1,
             &beta,
-            reinterpret_cast<cuDoubleComplex*>(c_gpu.gpu_memory()), 1);
+            reinterpret_cast<cuDoubleComplex*>(c.gpu_memory()), 1);
     }
 
     //Copy the result from GPU to CPU
 
-    c_gpu.invalidate_cpu();
+    c.invalidate_cpu();
 }
 
 #else

@@ -166,19 +166,19 @@ void conv2_valid_set(I&& input, K&& kernel, C&& conv, size_t s1, size_t s2, size
 
     // Allocate GPU memory, if necessary
 
-    input.direct().ensure_gpu_up_to_date();
-    kernel.direct().ensure_gpu_up_to_date();
-    conv.direct().ensure_gpu_allocated();
+    input.ensure_gpu_up_to_date();
+    kernel.ensure_gpu_up_to_date();
+    conv.ensure_gpu_allocated();
 
     // Perform the convolution
 
     cudnn_check(cudnnConvolutionForward(handle.get(),
-        alpha, *input_tensor, input.direct().gpu_memory(),
-        *filter, kernel.direct().gpu_memory(),
+        alpha, *input_tensor, input.gpu_memory(),
+        *filter, kernel.gpu_memory(),
         convolution, conv_algo, workspace.get(), workspace_size,
-        beta, *output_tensor, conv.direct().gpu_memory()));
+        beta, *output_tensor, conv.gpu_memory()));
 
-    conv.direct().invalidate_cpu();
+    conv.invalidate_cpu();
 
     // Release the resources
     cudnn_check(cudnnDestroyConvolutionDescriptor(convolution));
@@ -246,19 +246,19 @@ void conv4_valid_set(I&& input, K&& kernel, C&& conv, size_t s1, size_t s2, size
 
     // Allocate GPU memory, if necessary
 
-    input.direct().ensure_gpu_up_to_date();
-    kernel.direct().ensure_gpu_up_to_date();
-    conv.direct().ensure_gpu_allocated();
+    input.ensure_gpu_up_to_date();
+    kernel.ensure_gpu_up_to_date();
+    conv.ensure_gpu_allocated();
 
     // Perform the convolution
 
     cudnn_check(cudnnConvolutionForward(handle.get(),
-        alpha, *input_tensor, input.direct().gpu_memory(),
-        *filter, kernel.direct().gpu_memory(),
+        alpha, *input_tensor, input.gpu_memory(),
+        *filter, kernel.gpu_memory(),
         convolution, conv_algo, workspace.get(), workspace_size,
-        beta, *output_tensor, conv.direct().gpu_memory()));
+        beta, *output_tensor, conv.gpu_memory()));
 
-    conv.direct().invalidate_cpu();
+    conv.invalidate_cpu();
 
     // Release the resources
     cudnn_check(cudnnDestroyConvolutionDescriptor(convolution));
@@ -330,19 +330,19 @@ void conv4_valid_filter_set(I&& input, K&& kernel, C&& conv, size_t s1, size_t s
 
     // Allocate GPU memory, if necessary
 
-    input.direct().ensure_gpu_up_to_date();
-    kernel.direct().ensure_gpu_up_to_date();
-    conv.direct().ensure_gpu_allocated();
+    input.ensure_gpu_up_to_date();
+    kernel.ensure_gpu_up_to_date();
+    conv.ensure_gpu_allocated();
 
     // Perform the convolution
 
     cudnn_check(cudnnConvolutionBackwardFilter(handle.get(),
-        alpha, *input_tensor, input.direct().gpu_memory(),
-        *output_tensor, kernel.direct().gpu_memory(),
+        alpha, *input_tensor, input.gpu_memory(),
+        *output_tensor, kernel.gpu_memory(),
         convolution, conv_algo, workspace.get(), workspace_size,
-        beta, *filter, conv.direct().gpu_memory()));
+        beta, *filter, conv.gpu_memory()));
 
-    conv.direct().invalidate_cpu();
+    conv.invalidate_cpu();
 
     // Release the resources
     cudnn_check(cudnnDestroyConvolutionDescriptor(convolution));
@@ -416,19 +416,19 @@ void conv2_full_set(I&& input, K&& kernel, C&& conv, cudnnConvolutionMode_t mode
 
     // Allocate GPU memory, if necessary
 
-    input.direct().ensure_gpu_up_to_date();
-    kernel.direct().ensure_gpu_up_to_date();
-    conv.direct().ensure_gpu_allocated();
+    input.ensure_gpu_up_to_date();
+    kernel.ensure_gpu_up_to_date();
+    conv.ensure_gpu_allocated();
 
     // Perform the convolution
 
     cudnn_check(cudnnConvolutionBackwardData(handle.get(),
-        alpha, *filter, kernel.direct().gpu_memory(),
-        *input_tensor, input.direct().gpu_memory(),
+        alpha, *filter, kernel.gpu_memory(),
+        *input_tensor, input.gpu_memory(),
         convolution, conv_algo, workspace.get(), workspace_size,
-        beta, *output_tensor, conv.direct().gpu_memory()));
+        beta, *output_tensor, conv.gpu_memory()));
 
-    conv.direct().invalidate_cpu();
+    conv.invalidate_cpu();
 
     // Release the resources
     cudnn_check(cudnnDestroyConvolutionDescriptor(convolution));
@@ -498,19 +498,19 @@ void conv4_full_set(I&& input, K&& kernel, C&& conv, cudnnConvolutionMode_t mode
 
     // Allocate GPU memory, if necessary
 
-    input.direct().ensure_gpu_up_to_date();
-    kernel.direct().ensure_gpu_up_to_date();
-    conv.direct().ensure_gpu_allocated();
+    input.ensure_gpu_up_to_date();
+    kernel.ensure_gpu_up_to_date();
+    conv.ensure_gpu_allocated();
 
     // Perform the convolution
 
     cudnn_check(cudnnConvolutionBackwardData(handle.get(),
-        alpha, *filter, kernel.direct().gpu_memory(),
-        *input_tensor, input.direct().gpu_memory(),
+        alpha, *filter, kernel.gpu_memory(),
+        *input_tensor, input.gpu_memory(),
         convolution, conv_algo, workspace.get(), workspace_size,
-        beta, *output_tensor, conv.direct().gpu_memory()));
+        beta, *output_tensor, conv.gpu_memory()));
 
-    conv.direct().invalidate_cpu();
+    conv.invalidate_cpu();
 
     // Release the resources
     cudnn_check(cudnnDestroyConvolutionDescriptor(convolution));
@@ -592,19 +592,19 @@ void conv2_valid_multi_set(I& input, K&& kernel, C&& conv, size_t s1, size_t s2,
 
     // Allocate GPU memory, if necessary
 
-    input.direct().ensure_gpu_up_to_date();
-    kernel.direct().ensure_gpu_up_to_date();
-    conv.direct().ensure_gpu_allocated();
+    input.ensure_gpu_up_to_date();
+    kernel.ensure_gpu_up_to_date();
+    conv.ensure_gpu_allocated();
 
     // Perform the convolution
 
     cudnn_check(cudnnConvolutionForward(handle.get(),
-        alpha, input_tensor, input.direct().gpu_memory(),
-        filter, kernel.direct().gpu_memory(),
+        alpha, input_tensor, input.gpu_memory(),
+        filter, kernel.gpu_memory(),
         convolution, conv_algo, workspace.get(), workspace_size,
-        beta, output_tensor, conv.direct().gpu_memory()));
+        beta, output_tensor, conv.gpu_memory()));
 
-    conv.direct().invalidate_cpu();
+    conv.invalidate_cpu();
 
     // Release the resources
     cudnn_check(cudnnDestroyConvolutionDescriptor(convolution));
@@ -653,9 +653,8 @@ void conv2_full_multi(const I& input, const K& kernel, C&& conv) {
 
         conv2_full(input, kernel(i), result);
 
-        auto result_gpu = result.direct();
-        result_gpu.ensure_cpu_up_to_date();
-        result_gpu.gpu_evict();
+        result.ensure_cpu_up_to_date();
+        result.gpu_evict();
     }
 }
 
@@ -672,9 +671,8 @@ void conv2_full_multi_flipped(const I& input, const K& kernel, C&& conv) {
 
         conv2_full_flipped(input, kernel(i), result);
 
-        auto result_gpu = result.direct();
-        result_gpu.ensure_cpu_up_to_date();
-        result_gpu.gpu_evict();
+        result.ensure_cpu_up_to_date();
+        result.gpu_evict();
     }
 }
 
@@ -726,23 +724,19 @@ void conv2_full_multi_real_set(const I& input, const K& kernel, C&& conv, cudnnC
 
     // Allocate GPU memory, if necessary
 
-    auto input_gpu = input.direct();
-    auto kernel_gpu = kernel.direct();
-    auto conv_gpu = conv.direct();
-
-    input_gpu.direct().ensure_gpu_up_to_date();
-    kernel_gpu.direct().ensure_gpu_up_to_date();
-    conv_gpu.direct().ensure_gpu_allocated();
+    input.ensure_gpu_up_to_date();
+    kernel.ensure_gpu_up_to_date();
+    conv.ensure_gpu_allocated();
 
     // Perform the convolution
 
     cudnn_check(cudnnConvolutionBackwardData(handle.get(),
-        alpha, filter, kernel_gpu.direct().gpu_memory(),
-        input_tensor, input_gpu.direct().gpu_memory(),
+        alpha, filter, kernel.gpu_memory(),
+        input_tensor, input.gpu_memory(),
         convolution, conv_algo, workspace.get(), workspace_size,
-        beta, output_tensor, conv_gpu.direct().gpu_memory()));
+        beta, output_tensor, conv.gpu_memory()));
 
-    conv_gpu.invalidate_cpu();
+    conv.invalidate_cpu();
 
     // Release the resources
     cudnn_check(cudnnDestroyConvolutionDescriptor(convolution));
