@@ -307,7 +307,6 @@ private:
 
     mutable memory_type memory;
 
-    mutable gpu_handler<value_type> _gpu_memory_handler; ///< The GPU memory handler
     mutable gpu_memory_handler<value_type> _gpu;         ///< The GPU memory handler
 
     friend struct etl_traits<this_type>;

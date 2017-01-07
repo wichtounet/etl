@@ -32,6 +32,12 @@ protected:
 
     mutable std::shared_ptr<result_type> _c;           ///< The result reference
 
+<<<<<<< HEAD
+=======
+private:
+    gpu_memory_handler<value_type> _gpu;                 ///< The GPU memory handler
+
+>>>>>>> Remove the old handler
 public:
     temporary_expr() = default;
 

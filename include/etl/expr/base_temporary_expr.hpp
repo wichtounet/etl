@@ -78,7 +78,6 @@ protected:
     mutable std::shared_ptr<result_type> _c;           ///< The result reference
 
 private:
-    mutable gpu_handler<value_type> _gpu_memory_handler; ///< The GPU memory handler
     gpu_memory_handler<value_type> _gpu;                 ///< The GPU memory handler
 
 public:

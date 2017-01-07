@@ -260,8 +260,6 @@ private:
 
     Expr _value; ///< The sub expression
 
-    mutable gpu_handler<T> _gpu_memory_handler; ///< The GPU memory handler
-
     static constexpr bool dma = has_direct_access<Expr>::value;
 
     /*!

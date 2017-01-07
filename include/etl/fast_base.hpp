@@ -89,8 +89,6 @@ protected:
     storage_impl _data;         ///< The storage container
     gpu_memory_handler<T> _gpu; ///< The GPU memory handler
 
-    mutable gpu_handler<T> _gpu_memory_handler; ///< The GPU memory handler
-
     /*!
      * \brief Compute the 1D index from the given indices
      * \param args The access indices

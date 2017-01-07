@@ -55,8 +55,6 @@ private:
     using base_type::_dimensions;
     using base_type::_memory;
 
-    mutable gpu_handler<T> _gpu_memory_handler; ///< The GPU memory handler
-
     using base_type::release;
     using base_type::allocate;
     using base_type::check_invariants;
