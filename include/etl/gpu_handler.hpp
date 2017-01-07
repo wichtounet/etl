@@ -31,6 +31,22 @@ public:
     }
 
     /*!
+     * \brief Indicates if the CPU memory is up to date.
+     * \return true if the CPU memory is up to date, false otherwise.
+     */
+    bool is_cpu_up_to_date() const noexcept {
+        return cpu_up_to_date;
+    }
+
+    /*!
+     * \brief Indicates if the GPU memory is up to date.
+     * \return true if the GPU memory is up to date, false otherwise.
+     */
+    bool is_gpu_up_to_date() const noexcept {
+        return gpu_up_to_date;
+    }
+
+    /*!
      * \brief Return GPU memory of this expression, if any.
      * \return a pointer to the GPU memory or nullptr if not allocated in GPU.
      */
