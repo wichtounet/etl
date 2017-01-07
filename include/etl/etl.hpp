@@ -43,7 +43,6 @@
 #include "etl/traits.hpp"
 
 // Opaque memory container
-#include "etl/opaque_memory.hpp"
 #include "etl/gpu_handler.hpp"
 
 // The operators
