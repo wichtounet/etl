@@ -692,7 +692,7 @@ public:
      * \param gpu_memory Pointer to CPU memory
      */
     void gpu_copy_from(const value_type* gpu_memory) const {
-        matrix.copy_from(gpu_memory);
+        matrix.gpu_copy_from(gpu_memory);
     }
 
     /*!

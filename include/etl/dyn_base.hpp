@@ -609,7 +609,7 @@ struct dense_dyn_base : dyn_base<T, D> {
      * \param gpu_memory Pointer to CPU memory
      */
     void gpu_copy_from(const T* gpu_memory) const {
-        _gpu.copy_from(gpu_memory, _size);
+        _gpu.gpu_copy_from(gpu_memory, _size);
     }
 
     /*!

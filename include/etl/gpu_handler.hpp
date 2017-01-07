@@ -114,9 +114,12 @@ public:
      */
     void gpu_copy_from(const T* gpu_memory, size_t etl_size) const {
         cuda_check(cudaMemcpy(
-            const_cast<std::remove_const_t<T>*>(gpu_memory),
             const_cast<std::remove_const_t<T>*>(gpu_memory_),
+            const_cast<std::remove_const_t<T>*>(gpu_memory),
             etl_size * sizeof(T), cudaMemcpyDeviceToDevice));
+
+        gpu_up_to_date = true;
+        cpu_up_to_date = false;
     }
 
     /*!
