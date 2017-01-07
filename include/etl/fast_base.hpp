@@ -106,7 +106,7 @@ protected:
      */
     template <typename... S>
     value_type& access(S... args) {
-        need_cpu();
+        ensure_cpu_up_to_date();
         return _data[index(args...)];
     }
 
@@ -117,16 +117,8 @@ protected:
      */
     template <typename... S>
     const value_type& access(S... args) const {
-        need_cpu();
-        return _data[index(args...)];
-    }
-
-    /*!
-     * \brief Ensures that the CPU is up to date
-     */
-    void need_cpu() const {
-        // TODO Should not go though all this
         ensure_cpu_up_to_date();
+        return _data[index(args...)];
     }
 
 public:

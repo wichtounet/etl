@@ -568,14 +568,6 @@ public:
 
 private:
     /*!
-     * \brief Ensures that the CPU is up to date
-     */
-    void need_cpu(){
-        // TODO Should not go though all this
-        this->ensure_cpu_up_to_date();
-    }
-
-    /*!
      * \brief Inherit the dimensions of an ETL expressions.
      * This must only be called when the matrix has no dimensions
      * \param e The expression to get the dimensions from.
