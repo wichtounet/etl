@@ -12,6 +12,10 @@
 
 #pragma once
 
+#ifdef ETL_CUDA
+#include "etl/impl/cublas/cuda.hpp"
+#endif
+
 namespace etl {
 
 /*!
@@ -294,12 +298,15 @@ private:
     const size_t i;        ///< The indbex
     const size_t sub_size; ///< The sub size
 
-    static constexpr size_t n_dimensions = decay_traits<sub_type>::dimensions() - 1;     ///< The Number of dimensions
-    static constexpr order storage_order = decay_traits<sub_type>::storage_order; ///< The storage order
+    static constexpr size_t n_dimensions = decay_traits<sub_type>::dimensions() - 1; ///< The Number of dimensions
+    static constexpr order storage_order = decay_traits<sub_type>::storage_order;    ///< The storage order
 
     mutable memory_type memory;
 
     mutable gpu_memory_handler<value_type> _gpu;         ///< The GPU memory handler
+
+    mutable bool cpu_up_to_date;
+    mutable bool gpu_up_to_date;
 
     friend struct etl_traits<this_type>;
 
@@ -315,6 +322,14 @@ public:
         } else {
             this->memory = nullptr;
         }
+
+        // A sub view inherits the CPU/GPU from parent
+        this->cpu_up_to_date = sub_expr.is_cpu_up_to_date();
+        this->gpu_up_to_date = sub_expr.is_gpu_up_to_date();
+    }
+
+    ~sub_view(){
+        //TODO Reflect the status of up to date
     }
 
     /*!
@@ -578,33 +593,35 @@ public:
         visitor.need_value = old_need_value;
     }
 
+    // GPU functions
+
     /*!
      * \brief Return GPU memory of this expression, if any.
      * \return a pointer to the GPU memory or nullptr if not allocated in GPU.
      */
     value_type* gpu_memory() const noexcept {
-        return _gpu.gpu_memory();
+        return sub_expr.gpu_memory() + i * sub_size;
     }
 
     /*!
      * \brief Evict the expression from GPU.
      */
     void gpu_evict() const noexcept {
-        _gpu.gpu_evict();
+        sub_expr.gpu_evict();
     }
 
     /*!
      * \brief Invalidates the CPU memory
      */
     void invalidate_cpu() const noexcept {
-        _gpu.invalidate_cpu();
+        this->cpu_up_to_date = false;
     }
 
     /*!
      * \brief Invalidates the GPU memory
      */
     void invalidate_gpu() const noexcept {
-        _gpu.invalidate_gpu();
+        this->gpu_up_to_date = false;
     }
 
     /*!
@@ -612,14 +629,27 @@ public:
      * is up to date (to undefined value).
      */
     void ensure_gpu_allocated() const {
-        _gpu.ensure_gpu_allocated(sub_size);
+        // Allocate is done by the sub
+        sub_expr.ensure_gpu_allocated();
+        // TODO This may be dangerous because it sets gpu_up_to_date of the parent
+
+        this->gpu_up_to_date = true;
     }
 
     /*!
      * \brief Allocate memory on the GPU for the expression and copy the values into the GPU.
      */
     void ensure_gpu_up_to_date() const {
-        _gpu.ensure_gpu_up_to_date(memory_start(), sub_size);
+#ifdef ETL_CUDA
+        if(!this->gpu_up_to_date){
+            cuda_check(cudaMemcpy(
+                const_cast<std::remove_const_t<value_type>*>(gpu_memory()),
+                const_cast<std::remove_const_t<value_type>*>(memory_start()),
+                sub_size * sizeof(value_type), cudaMemcpyHostToDevice));
+        }
+#endif
+
+        gpu_up_to_date = true;
     }
 
     /*!
@@ -627,7 +657,16 @@ public:
      * necessary.
      */
     void ensure_cpu_up_to_date() const {
-        _gpu.ensure_cpu_up_to_date(memory_start(), sub_size);
+#ifdef ETL_CUDA
+        if (!this->cpu_up_to_date) {
+            cuda_check(cudaMemcpy(
+                const_cast<std::remove_const_t<value_type>*>(memory_start()),
+                const_cast<std::remove_const_t<value_type>*>(gpu_memory()),
+                sub_size * sizeof(value_type), cudaMemcpyDeviceToHost));
+        }
+#endif
+
+        cpu_up_to_date = true;
     }
 
     /*!
@@ -639,10 +678,19 @@ public:
     }
 
     /*!
-     * \brief Return the GPU memory
+     * \brief Indicates if the CPU memory is up to date.
+     * \return true if the CPU memory is up to date, false otherwise.
      */
-    gpu_memory_handler<value_type>& get_gpu_handler(){
-        return _gpu;
+    bool is_cpu_up_to_date() const noexcept {
+        return cpu_up_to_date;
+    }
+
+    /*!
+     * \brief Indicates if the GPU memory is up to date.
+     * \return true if the GPU memory is up to date, false otherwise.
+     */
+    bool is_gpu_up_to_date() const noexcept {
+        return gpu_up_to_date;
     }
 
     /*!
