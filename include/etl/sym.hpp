@@ -687,10 +687,19 @@ public:
     }
 
     /*!
-     * \brief Return the GPU memory
+     * \brief Indicates if the CPU memory is up to date.
+     * \return true if the CPU memory is up to date, false otherwise.
      */
-    gpu_memory_handler<value_type>& get_gpu_handler(){
-        return matrix.get_gpu_handler();
+    bool is_cpu_up_to_date() const noexcept {
+        return matrix.is_cpu_up_to_date();
+    }
+
+    /*!
+     * \brief Indicates if the GPU memory is up to date.
+     * \return true if the GPU memory is up to date, false otherwise.
+     */
+    bool is_gpu_up_to_date() const noexcept {
+        return matrix.is_gpu_up_to_date();
     }
 };
 

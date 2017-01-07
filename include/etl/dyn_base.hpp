@@ -625,10 +625,19 @@ struct dense_dyn_base : dyn_base<T, D> {
     }
 
     /*!
-     * \brief Return the GPU memory
+     * \brief Indicates if the CPU memory is up to date.
+     * \return true if the CPU memory is up to date, false otherwise.
      */
-    gpu_memory_handler<T>& get_gpu_handler(){
-        return _gpu;
+    bool is_cpu_up_to_date() const noexcept {
+        return _gpu.is_cpu_up_to_date();
+    }
+
+    /*!
+     * \brief Indicates if the GPU memory is up to date.
+     * \return true if the GPU memory is up to date, false otherwise.
+     */
+    bool is_gpu_up_to_date() const noexcept {
+        return _gpu.is_gpu_up_to_date();
     }
 
 private:
