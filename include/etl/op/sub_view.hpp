@@ -657,7 +657,7 @@ public:
                 const_cast<std::remove_const_t<value_type>*>(memory_start()),
                 sub_size * sizeof(value_type), cudaMemcpyHostToDevice));
 
-            gpu_up_to_date = true;
+            this->gpu_up_to_date = true;
         }
 #endif
     }
@@ -676,7 +676,7 @@ public:
         }
 #endif
 
-        cpu_up_to_date = true;
+        this->cpu_up_to_date = true;
     }
 
     /*!
