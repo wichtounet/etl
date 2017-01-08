@@ -973,7 +973,11 @@ template <typename I, typename K, typename C>
 void conv2_full(I&& a, K&& b, C&& c) {
     using T = value_t<I>;
 
+    a.ensure_cpu_up_to_date();
+    b.ensure_cpu_up_to_date();
+
     detail::conv2_full_kernel(a.memory_start(), etl::dim<0>(a), etl::dim<1>(a), b.memory_start(), etl::dim<0>(b), etl::dim<1>(b), c.memory_start(), T(0.0));
+    c.invalidate_gpu();
 }
 
 /*!
@@ -988,6 +992,9 @@ template <typename I, typename K, typename C>
 void conv2_full_flipped(I&& a, K&& b, C&& c) {
     using T = value_t<I>;
 
+    a.ensure_cpu_up_to_date();
+    b.ensure_cpu_up_to_date();
+
     etl::dyn_matrix<T, 2> prepared_b(etl::dim<0>(b), etl::dim<1>(b));
 
     std::copy(b.memory_start(), b.memory_end(), prepared_b.memory_start());
@@ -995,6 +1002,7 @@ void conv2_full_flipped(I&& a, K&& b, C&& c) {
     prepared_b.fflip_inplace();
 
     detail::conv2_full_kernel(a.memory_start(), etl::dim<0>(a), etl::dim<1>(a), prepared_b.memory_start(), etl::dim<0>(b), etl::dim<1>(b), c.memory_start(), T(0.0));
+    c.invalidate_gpu();
 }
 
 /*!
@@ -1015,6 +1023,9 @@ void conv2_full_multi(I&& input, KK&& kernel, C&& conv) {
     const auto c1 = etl::dim<1>(conv);
     const auto c2 = etl::dim<2>(conv);
 
+    input.ensure_cpu_up_to_date();
+    kernel.ensure_cpu_up_to_date();
+
     for(size_t k = 0; k < K; ++k){
         const auto k_s = k1 * k2;
         const auto c_s = c1 * c2;
@@ -1024,6 +1035,8 @@ void conv2_full_multi(I&& input, KK&& kernel, C&& conv) {
 
         detail::conv2_full_kernel(input.memory_start(), etl::dim<0>(input), etl::dim<1>(input), b, k1, k2, c, T(0.0));
     }
+
+    conv.invalidate_gpu();
 }
 
 /*!
@@ -1044,6 +1057,9 @@ void conv2_full_multi_flipped(I&& input, KK&& kernel, C&& conv) {
     const auto c1 = etl::dim<1>(conv);
     const auto c2 = etl::dim<2>(conv);
 
+    input.ensure_cpu_up_to_date();
+    kernel.ensure_cpu_up_to_date();
+
     for(size_t k = 0; k < K; ++k){
         const auto k_s = k1 * k2;
         const auto c_s = c1 * c2;
@@ -1059,6 +1075,8 @@ void conv2_full_multi_flipped(I&& input, KK&& kernel, C&& conv) {
 
         detail::conv2_full_kernel(input.memory_start(), etl::dim<0>(input), etl::dim<1>(input), prepared_b.memory_start(), k1, k2, c, T(0.0));
     }
+
+    conv.invalidate_gpu();
 }
 
 /*!
@@ -1074,6 +1092,9 @@ void conv4_full(I&& input, KK&& kernel, CC&& conv) {
     using T = value_t<I>;
 
     if (etl::dim<1>(kernel) > 0) {
+        input.ensure_cpu_up_to_date();
+        kernel.ensure_cpu_up_to_date();
+
         auto conv_i_inc = etl::dim<1>(conv) * etl::dim<2>(conv) * etl::dim<3>(conv);
         auto conv_c_inc = etl::dim<2>(conv) * etl::dim<3>(conv);
 
@@ -1193,6 +1214,8 @@ void conv4_full(I&& input, KK&& kernel, CC&& conv) {
                 }
             }
         }
+
+        conv.invalidate_gpu();
     }
 }
 
@@ -1207,6 +1230,9 @@ void conv4_full_flipped(I&& input, K&& kernel, C&& conv) {
     using T = value_t<I>;
 
     if (etl::dim<1>(kernel) > 0) {
+        input.ensure_cpu_up_to_date();
+        kernel.ensure_cpu_up_to_date();
+
         etl::dyn_matrix<T, 4> prepared_k(etl::dim<0>(kernel), etl::dim<1>(kernel), etl::dim<2>(kernel), etl::dim<3>(kernel));
 
         std::copy(kernel.memory_start(), kernel.memory_end(), prepared_k.memory_start());
