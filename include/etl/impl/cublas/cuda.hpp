@@ -21,6 +21,16 @@
         }                                                                                               \
     }
 
+#define cuda_check_assert(call)                                                                         \
+    {                                                                                                   \
+        auto status = call;                                                                             \
+        if (status != cudaSuccess) {                                                                    \
+            std::cerr << "CUDA error: " << cudaGetErrorString(status) << " from " << #call << std::endl \
+                      << "from " << __FILE__ << ":" << __LINE__ << std::endl;                           \
+            std::abort();                                                                               \
+        }                                                                                               \
+    }
+
 #endif
 
 namespace etl {

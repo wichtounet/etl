@@ -628,8 +628,8 @@ public:
      */
     void ensure_gpu_allocated() const {
         // Allocate is done by the sub
+        // Note: This may be dangerous because it sets gpu_up_to_date of the parent
         sub_expr.ensure_gpu_allocated();
-        // TODO This may be dangerous because it sets gpu_up_to_date of the parent
 
         this->gpu_up_to_date = true;
     }
@@ -638,16 +638,21 @@ public:
      * \brief Allocate memory on the GPU for the expression and copy the values into the GPU.
      */
     void ensure_gpu_up_to_date() const {
+        if(!sub_expr.gpu_memory()){
+            // Note: This may be dangerous because it sets gpu_up_to_date of the parent
+            sub_expr.ensure_gpu_allocated();
+        }
+
 #ifdef ETL_CUDA
         if(!this->gpu_up_to_date){
-            cuda_check(cudaMemcpy(
+            cuda_check_assert(cudaMemcpy(
                 const_cast<std::remove_const_t<value_type>*>(gpu_memory()),
                 const_cast<std::remove_const_t<value_type>*>(memory_start()),
                 sub_size * sizeof(value_type), cudaMemcpyHostToDevice));
+
+            gpu_up_to_date = true;
         }
 #endif
-
-        gpu_up_to_date = true;
     }
 
     /*!
@@ -657,7 +662,7 @@ public:
     void ensure_cpu_up_to_date() const {
 #ifdef ETL_CUDA
         if (!this->cpu_up_to_date) {
-            cuda_check(cudaMemcpy(
+            cuda_check_assert(cudaMemcpy(
                 const_cast<std::remove_const_t<value_type>*>(memory_start()),
                 const_cast<std::remove_const_t<value_type>*>(gpu_memory()),
                 sub_size * sizeof(value_type), cudaMemcpyDeviceToHost));
@@ -672,10 +677,10 @@ public:
      * \param gpu_memory Pointer to CPU memory
      */
     void gpu_copy_from(const value_type* new_gpu_memory) const {
-        cpp_assert(is_gpu_allocated(), "GPU must be allocated before copy");
+        cpp_assert(sub_expr.gpu_memory(), "GPU must be allocated before copy");
 
 #ifdef ETL_CUDA
-        cuda_check(cudaMemcpy(
+        cuda_check_assert(cudaMemcpy(
             const_cast<std::remove_const_t<value_type>*>(gpu_memory()),
             const_cast<std::remove_const_t<value_type>*>(new_gpu_memory),
             sub_size * sizeof(value_type), cudaMemcpyDeviceToDevice));
