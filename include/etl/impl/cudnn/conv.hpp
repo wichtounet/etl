@@ -649,12 +649,7 @@ void conv2_valid_multi_flipped(I&& input, K&& kernel, C&& conv, size_t s1, size_
 template <typename I, typename K, typename C>
 void conv2_full_multi(const I& input, const K& kernel, C&& conv) {
     for(std::size_t i = 0; i < etl::dim<0>(kernel); ++i){
-        decltype(auto) result = conv(i);
-
-        conv2_full(input, kernel(i), result);
-
-        result.ensure_cpu_up_to_date();
-        result.gpu_evict();
+        conv2_full(input, kernel(i), conv(i));
     }
 }
 
@@ -667,12 +662,7 @@ void conv2_full_multi(const I& input, const K& kernel, C&& conv) {
 template <typename I, typename K, typename C>
 void conv2_full_multi_flipped(const I& input, const K& kernel, C&& conv) {
     for(std::size_t i = 0; i < etl::dim<0>(kernel); ++i){
-        decltype(auto) result = conv(i);
-
-        conv2_full_flipped(input, kernel(i), result);
-
-        result.ensure_cpu_up_to_date();
-        result.gpu_evict();
+        conv2_full_flipped(input, kernel(i), conv(i));
     }
 }
 
