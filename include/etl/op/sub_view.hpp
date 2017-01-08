@@ -327,7 +327,14 @@ public:
     }
 
     ~sub_view(){
-        //TODO Reflect the status of up to date
+        // Propage the status on the parent
+        if(!this->cpu_up_to_date){
+            sub_expr.invalidate_cpu();
+        }
+
+        if(!this->gpu_up_to_date){
+            sub_expr.invalidate_gpu();
+        }
     }
 
     /*!
