@@ -294,8 +294,6 @@ void conv2_full_kernel(const T* a, std::size_t m1, std::size_t m2, const T* b, s
             c[i] = beta * c[i] + a_padded[i].real * (T(1.0) / size);
         }
     }
-
-    a_padded.invalidate_gpu();
 }
 
 } //End of namespace detail
@@ -1059,6 +1057,7 @@ void conv2_full_multi_flipped(I&& input, KK&& kernel, C&& conv) {
 
     input.ensure_cpu_up_to_date();
     kernel.ensure_cpu_up_to_date();
+    conv.ensure_cpu_up_to_date();
 
     for(size_t k = 0; k < K; ++k){
         const auto k_s = k1 * k2;
