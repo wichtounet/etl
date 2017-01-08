@@ -290,6 +290,8 @@ public:
     const value_type& operator[](std::size_t i) const noexcept(assert_nothrow) {
         cpp_assert(i < size(), "Out of bounds");
 
+        ensure_cpu_up_to_date();
+
         return _data[i];
     }
 
@@ -300,6 +302,8 @@ public:
      */
     value_type& operator[](std::size_t i) noexcept(assert_nothrow) {
         cpp_assert(i < size(), "Out of bounds");
+
+        ensure_cpu_up_to_date();
 
         return _data[i];
     }
@@ -312,6 +316,8 @@ public:
      */
     value_type read_flat(std::size_t i) const noexcept(assert_nothrow) {
         cpp_assert(i < size(), "Out of bounds");
+
+        ensure_cpu_up_to_date();
 
         return _data[i];
     }
