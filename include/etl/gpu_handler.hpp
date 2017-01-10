@@ -83,6 +83,20 @@ public:
     }
 
     /*!
+     * \brief Validates the CPU memory
+     */
+    void validate_cpu() const noexcept {
+        cpu_up_to_date = true;
+    }
+
+    /*!
+     * \brief Validates the GPU memory
+     */
+    void validate_gpu() const noexcept {
+        gpu_up_to_date = true;
+    }
+
+    /*!
      * \brief Ensures that the GPU memory is allocated and that the GPU memory
      * is up to date (to undefined value).
      * \param etl_size The size of the memory
@@ -218,6 +232,22 @@ struct gpu_memory_handler {
     }
 
     /*!
+     * \brief Indicates if the CPU memory is up to date.
+     * \return true if the CPU memory is up to date, false otherwise.
+     */
+    bool is_cpu_up_to_date() const noexcept {
+        return false;
+    }
+
+    /*!
+     * \brief Indicates if the GPU memory is up to date.
+     * \return true if the GPU memory is up to date, false otherwise.
+     */
+    bool is_gpu_up_to_date() const noexcept {
+        return false;
+    }
+
+    /*!
      * \brief Evict the expression from GPU.
      */
     void gpu_evict() const noexcept {}
@@ -231,6 +261,16 @@ struct gpu_memory_handler {
      * \brief Invalidates the GPU memory
      */
     void invalidate_gpu() const noexcept {}
+
+    /*!
+     * \brief Validates the CPU memory
+     */
+    void validate_cpu() const noexcept {}
+
+    /*!
+     * \brief Validates the GPU memory
+     */
+    void validate_gpu() const noexcept {}
 
     /*!
      * \brief Ensures that the GPU memory is allocated and that the GPU memory

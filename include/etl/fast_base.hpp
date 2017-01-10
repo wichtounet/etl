@@ -372,6 +372,20 @@ public:
     }
 
     /*!
+     * \brief Validates the CPU memory
+     */
+    void validate_cpu() const noexcept {
+        _gpu.validate_cpu();
+    }
+
+    /*!
+     * \brief Validates the GPU memory
+     */
+    void validate_gpu() const noexcept {
+        _gpu.validate_gpu();
+    }
+
+    /*!
      * \brief Ensures that the GPU memory is allocated and that the GPU memory
      * is up to date (to undefined value).
      */
