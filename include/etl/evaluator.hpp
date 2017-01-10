@@ -88,6 +88,10 @@ namespace standard_evaluator {
      */
     template <typename E, typename R, cpp_enable_if(detail::fast_assign<E, R>::value)>
     void assign_evaluate_impl(E&& expr, R&& result) {
+        // CPU versions need to be up to date before we use memory_start()
+        expr.ensure_cpu_up_to_date();
+        result.ensure_cpu_up_to_date();
+
         direct_copy(expr.memory_start(), expr.memory_end(), result.memory_start());
     }
 
