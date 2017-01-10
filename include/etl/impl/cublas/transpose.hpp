@@ -178,6 +178,7 @@ void transpose(A&& a, C&& c) {
         cublas_geam(handle.get(), CUBLAS_OP_T, CUBLAS_OP_T, etl::dim<0>(a), etl::dim<1>(a), &alpha, a.gpu_memory(), etl::dim<0>(a), &beta, a.gpu_memory(), etl::dim<0>(a), c.gpu_memory(), etl::dim<0>(c));
     }
 
+    c.validate_gpu();
     c.invalidate_cpu();
 }
 

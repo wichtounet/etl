@@ -105,8 +105,6 @@ public:
         if (!is_gpu_allocated()) {
             gpu_allocate_impl(etl_size);
         }
-
-        gpu_up_to_date = true;
     }
 
     /*!

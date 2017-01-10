@@ -148,6 +148,7 @@ void gemm(A&& a, B&& b, C&& c) {
             c.gpu_memory(), etl::major_stride(c));
     }
 
+    c.validate_gpu();
     c.invalidate_cpu();
 }
 
@@ -199,6 +200,7 @@ void gemm_nt(A&& a, B&& b, C&& c) {
             c.gpu_memory(), etl::major_stride(c));
     }
 
+    c.validate_gpu();
     c.invalidate_cpu();
 }
 
@@ -250,6 +252,7 @@ void gemm_tn(A&& a, B&& b, C&& c) {
             c.gpu_memory(), etl::major_stride(c));
     }
 
+    c.validate_gpu();
     c.invalidate_cpu();
 }
 
@@ -301,6 +304,7 @@ void gemm_tt(A&& a, B&& b, C&& c) {
             c.gpu_memory(), etl::major_stride(c));
     }
 
+    c.validate_gpu();
     c.invalidate_cpu();
 }
 
@@ -349,6 +353,7 @@ void gemv(A&& a, B&& b, C&& c) {
 
     //Copy the result from GPU to CPU
 
+    c.validate_gpu();
     c.invalidate_cpu();
 }
 
@@ -397,6 +402,7 @@ void gemv(A&& a, B&& b, C&& c) {
 
     //Copy the result from GPU to CPU
 
+    c.validate_gpu();
     c.invalidate_cpu();
 }
 
@@ -445,6 +451,7 @@ void gemv(A&& a, B&& b, C&& c) {
 
     //Copy the result from GPU to CPU
 
+    c.validate_gpu();
     c.invalidate_cpu();
 }
 
@@ -493,6 +500,7 @@ void gemv(A&& a, B&& b, C&& c) {
 
     //Copy the result from GPU to CPU
 
+    c.validate_gpu();
     c.invalidate_cpu();
 }
 
@@ -541,6 +549,7 @@ void gevm(A&& a, B&& b, C&& c) {
 
     //Copy the result from GPU to CPU
 
+    c.validate_gpu();
     c.invalidate_cpu();
 }
 
@@ -589,6 +598,7 @@ void gevm(A&& a, B&& b, C&& c) {
 
     //Copy the result from GPU to CPU
 
+    c.validate_gpu();
     c.invalidate_cpu();
 }
 
@@ -637,6 +647,7 @@ void gevm(A&& a, B&& b, C&& c) {
 
     //Copy the result from GPU to CPU
 
+    c.validate_gpu();
     c.invalidate_cpu();
 }
 
@@ -685,6 +696,7 @@ void gevm(A&& a, B&& b, C&& c) {
 
     //Copy the result from GPU to CPU
 
+    c.validate_gpu();
     c.invalidate_cpu();
 }
 

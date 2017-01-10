@@ -327,13 +327,23 @@ public:
     }
 
     ~sub_view(){
-        // Propage the status on the parent
+        // Propagate the status on the parent
         if(!this->cpu_up_to_date){
-            sub_expr.invalidate_cpu();
+            if(sub_expr.is_gpu_up_to_date()){
+                sub_expr.invalidate_cpu();
+            } else {
+                // If the GPU is not up to date, cannot invalidate the CPU too
+                ensure_cpu_up_to_date();
+            }
         }
 
         if(!this->gpu_up_to_date){
-            sub_expr.invalidate_gpu();
+            if(sub_expr.is_cpu_up_to_date()){
+                sub_expr.invalidate_gpu();
+            } else {
+                // If the GPU is not up to date, cannot invalidate the CPU too
+                ensure_gpu_up_to_date();
+            }
         }
     }
 
@@ -649,20 +659,14 @@ public:
      */
     void ensure_gpu_allocated() const {
         // Allocate is done by the sub
-        // Note: This may be dangerous because it sets gpu_up_to_date of the parent
         sub_expr.ensure_gpu_allocated();
-
-        this->gpu_up_to_date = true;
     }
 
     /*!
      * \brief Allocate memory on the GPU for the expression and copy the values into the GPU.
      */
     void ensure_gpu_up_to_date() const {
-        if(!sub_expr.gpu_memory()){
-            // Note: This may be dangerous because it sets gpu_up_to_date of the parent
-            sub_expr.ensure_gpu_allocated();
-        }
+        sub_expr.ensure_gpu_allocated();
 
 #ifdef ETL_CUDA
         if(!this->gpu_up_to_date){

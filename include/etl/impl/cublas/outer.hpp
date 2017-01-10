@@ -59,6 +59,7 @@ void batch_outer(const A& a, const B& b, C&& c) {
         &beta,
         c.gpu_memory(), etl::columns(b));
 
+    c.validate_gpu();
     c.invalidate_cpu();
 }
 
@@ -86,6 +87,7 @@ void batch_outer(const A& a, const B& b, C&& c) {
         &beta,
         c.gpu_memory(), etl::columns(b));
 
+    c.validate_gpu();
     c.invalidate_cpu();
 }
 

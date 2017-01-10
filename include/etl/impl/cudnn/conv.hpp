@@ -178,6 +178,7 @@ void conv2_valid_set(I&& input, K&& kernel, C&& conv, size_t s1, size_t s2, size
         convolution, conv_algo, workspace.get(), workspace_size,
         beta, *output_tensor, conv.gpu_memory()));
 
+    conv.validate_gpu();
     conv.invalidate_cpu();
 
     // Release the resources
@@ -258,6 +259,7 @@ void conv4_valid_set(I&& input, K&& kernel, C&& conv, size_t s1, size_t s2, size
         convolution, conv_algo, workspace.get(), workspace_size,
         beta, *output_tensor, conv.gpu_memory()));
 
+    conv.validate_gpu();
     conv.invalidate_cpu();
 
     // Release the resources
@@ -342,6 +344,7 @@ void conv4_valid_filter_set(I&& input, K&& kernel, C&& conv, size_t s1, size_t s
         convolution, conv_algo, workspace.get(), workspace_size,
         beta, *filter, conv.gpu_memory()));
 
+    conv.validate_gpu();
     conv.invalidate_cpu();
 
     // Release the resources
@@ -428,6 +431,7 @@ void conv2_full_set(I&& input, K&& kernel, C&& conv, cudnnConvolutionMode_t mode
         convolution, conv_algo, workspace.get(), workspace_size,
         beta, *output_tensor, conv.gpu_memory()));
 
+    conv.validate_gpu();
     conv.invalidate_cpu();
 
     // Release the resources
@@ -510,6 +514,7 @@ void conv4_full_set(I&& input, K&& kernel, C&& conv, cudnnConvolutionMode_t mode
         convolution, conv_algo, workspace.get(), workspace_size,
         beta, *output_tensor, conv.gpu_memory()));
 
+    conv.validate_gpu();
     conv.invalidate_cpu();
 
     // Release the resources
@@ -604,6 +609,7 @@ void conv2_valid_multi_set(I& input, K&& kernel, C&& conv, size_t s1, size_t s2,
         convolution, conv_algo, workspace.get(), workspace_size,
         beta, output_tensor, conv.gpu_memory()));
 
+    conv.validate_gpu();
     conv.invalidate_cpu();
 
     // Release the resources
@@ -726,6 +732,7 @@ void conv2_full_multi_real_set(const I& input, const K& kernel, C&& conv, cudnnC
         convolution, conv_algo, workspace.get(), workspace_size,
         beta, output_tensor, conv.gpu_memory()));
 
+    conv.validate_gpu();
     conv.invalidate_cpu();
 
     // Release the resources

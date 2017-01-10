@@ -436,6 +436,7 @@ void fft1_many(A&& a, C&& c) {
 
     a.ensure_gpu_up_to_date();
     c.ensure_gpu_allocated();
+
     c.gpu_copy_from(a.gpu_memory());
 
     detail::inplace_zfft1_many_kernel(c, batch, n);
@@ -501,6 +502,7 @@ void scale_back_real(A&& a, C&& c) {
     cublasSscal(handle.get(), etl::size(c), &alpha, c.gpu_memory(), 1);
 
     //The CPU memory is not up-to-date
+    c.validate_gpu();
     c.invalidate_cpu();
 #else
     auto tmp = allocate<std::complex<float>>(etl::size(a));
@@ -512,6 +514,7 @@ void scale_back_real(A&& a, C&& c) {
     }
 
     //The GPU memory is not up-to-date
+    c.validate_gpu();
     c.invalidate_gpu();
 #endif
 }
@@ -531,6 +534,7 @@ void scale_back_real(A&& a, C&& c) {
     cublasDscal(handle.get(), etl::size(c), &alpha, c.gpu_memory(), 1);
 
     //The CPU memory is not up-to-date
+    c.validate_gpu();
     c.invalidate_cpu();
 #else
     auto tmp = allocate<std::complex<double>>(etl::size(a));
@@ -542,6 +546,7 @@ void scale_back_real(A&& a, C&& c) {
     }
 
     //The GPU memory is not up-to-date
+    c.validate_gpu();
     c.invalidate_gpu();
 #endif
 }
