@@ -44,6 +44,21 @@ namespace etl {
  * The implementation is chosen by SFINAE.
  */
 namespace standard_evaluator {
+
+
+
+    template <typename E, cpp_enable_if(all_dma<E>::value)>
+    void ensure_cpu_up_to_date(E&& expr){
+        expr.ensure_cpu_up_to_date();
+    }
+
+    template <typename E, cpp_disable_if(all_dma<E>::value)>
+    void ensure_cpu_up_to_date(E&& expr){
+        cpp_unused(expr);
+    }
+
+
+
     /*!
      * \brief Allocate temporaries and evaluate sub expressions in RHS
      * \param expr The expr to be visited
@@ -156,6 +171,9 @@ namespace standard_evaluator {
      */
     template <typename E, typename R, cpp_enable_if(detail::direct_assign<E, R>::value)>
     void assign_evaluate_impl(E&& expr, R&& result) {
+        ensure_cpu_up_to_date(expr);
+        ensure_cpu_up_to_date(result);
+
         if(all_thread_safe<E>::value && select_parallel(etl::size(result))){
             par_linear<detail::Assign>(expr, result);
         } else {
@@ -168,6 +186,9 @@ namespace standard_evaluator {
      */
     template <typename E, typename R, cpp_enable_if(detail::vectorized_assign<E, R>::value)>
     void assign_evaluate_impl(E&& expr, R&& result) {
+        ensure_cpu_up_to_date(expr);
+        ensure_cpu_up_to_date(result);
+
         constexpr auto V = detail::select_vector_mode<E, R>();
 
         if(all_thread_safe<E>::value && select_parallel(etl::size(result))){
@@ -204,6 +225,9 @@ namespace standard_evaluator {
         pre_assign_rhs(expr);
         pre_assign_lhs(result);
 
+        ensure_cpu_up_to_date(expr);
+        ensure_cpu_up_to_date(result);
+
         if(all_thread_safe<E>::value && select_parallel(etl::size(result))){
             par_linear<detail::AssignAdd>(expr, result);
         } else {
@@ -222,6 +246,9 @@ namespace standard_evaluator {
 
         pre_assign_rhs(expr);
         pre_assign_lhs(result);
+
+        ensure_cpu_up_to_date(expr);
+        ensure_cpu_up_to_date(result);
 
         if(all_thread_safe<E>::value && select_parallel(etl::size(result))){
             par_vec<detail::VectorizedAssignAdd, V>(expr, result);
@@ -242,6 +269,9 @@ namespace standard_evaluator {
         pre_assign_rhs(expr);
         pre_assign_lhs(result);
 
+        ensure_cpu_up_to_date(expr);
+        ensure_cpu_up_to_date(result);
+
         for (std::size_t i = 0; i < etl::size(result); ++i) {
             result[i] -= expr[i];
         }
@@ -256,6 +286,9 @@ namespace standard_evaluator {
     void sub_evaluate(E&& expr, R&& result) {
         pre_assign_rhs(expr);
         pre_assign_lhs(result);
+
+        ensure_cpu_up_to_date(expr);
+        ensure_cpu_up_to_date(result);
 
         if(all_thread_safe<E>::value && select_parallel(etl::size(result))){
             par_linear<detail::AssignSub>(expr, result);
@@ -276,6 +309,9 @@ namespace standard_evaluator {
         pre_assign_rhs(expr);
         pre_assign_lhs(result);
 
+        ensure_cpu_up_to_date(expr);
+        ensure_cpu_up_to_date(result);
+
         if(all_thread_safe<E>::value && select_parallel(etl::size(result))){
             par_vec<detail::VectorizedAssignSub, V>(expr, result);
         } else {
@@ -295,6 +331,9 @@ namespace standard_evaluator {
         pre_assign_rhs(expr);
         pre_assign_lhs(result);
 
+        ensure_cpu_up_to_date(expr);
+        ensure_cpu_up_to_date(result);
+
         for (std::size_t i = 0; i < etl::size(result); ++i) {
             result[i] *= expr[i];
         }
@@ -309,6 +348,9 @@ namespace standard_evaluator {
     void mul_evaluate(E&& expr, R&& result) {
         pre_assign_rhs(expr);
         pre_assign_lhs(result);
+
+        ensure_cpu_up_to_date(expr);
+        ensure_cpu_up_to_date(result);
 
         if(all_thread_safe<E>::value && select_parallel(etl::size(result))){
             par_linear<detail::AssignMul>(expr, result);
@@ -329,6 +371,9 @@ namespace standard_evaluator {
         pre_assign_rhs(expr);
         pre_assign_lhs(result);
 
+        ensure_cpu_up_to_date(expr);
+        ensure_cpu_up_to_date(result);
+
         if(all_thread_safe<E>::value && select_parallel(etl::size(result))){
             par_vec<detail::VectorizedAssignMul, V>(expr, result);
         } else {
@@ -348,6 +393,9 @@ namespace standard_evaluator {
         pre_assign_rhs(expr);
         pre_assign_lhs(result);
 
+        ensure_cpu_up_to_date(expr);
+        ensure_cpu_up_to_date(result);
+
         for (std::size_t i = 0; i < etl::size(result); ++i) {
             result[i] /= expr[i];
         }
@@ -362,6 +410,9 @@ namespace standard_evaluator {
     void div_evaluate(E&& expr, R&& result) {
         pre_assign_rhs(expr);
         pre_assign_lhs(result);
+
+        ensure_cpu_up_to_date(expr);
+        ensure_cpu_up_to_date(result);
 
         if(all_thread_safe<E>::value && select_parallel(etl::size(result))){
             par_linear<detail::AssignDiv>(expr, result);
@@ -382,6 +433,9 @@ namespace standard_evaluator {
         pre_assign_rhs(expr);
         pre_assign_lhs(result);
 
+        ensure_cpu_up_to_date(expr);
+        ensure_cpu_up_to_date(result);
+
         if(all_thread_safe<E>::value && select_parallel(etl::size(result))){
             par_vec<detail::VectorizedAssignDiv, V>(expr, result);
         } else {
@@ -400,6 +454,9 @@ namespace standard_evaluator {
     void mod_evaluate(E&& expr, R&& result) {
         pre_assign_rhs(expr);
         pre_assign_lhs(result);
+
+        ensure_cpu_up_to_date(expr);
+        ensure_cpu_up_to_date(result);
 
         for (std::size_t i = 0; i < etl::size(result); ++i) {
             result[i] %= expr[i];
