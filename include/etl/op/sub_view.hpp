@@ -676,6 +676,8 @@ public:
                 sub_size * sizeof(value_type), cudaMemcpyHostToDevice));
 
             this->gpu_up_to_date = true;
+
+            inc_counter("gpu:sub:cpu_to_gpu");
         }
 #endif
     }
@@ -691,6 +693,8 @@ public:
                 const_cast<std::remove_const_t<value_type>*>(memory_start()),
                 const_cast<std::remove_const_t<value_type>*>(gpu_memory()),
                 sub_size * sizeof(value_type), cudaMemcpyDeviceToHost));
+
+            inc_counter("gpu:sub:gpu_to_cpu");
         }
 #endif
 
