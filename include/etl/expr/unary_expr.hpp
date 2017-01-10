@@ -250,7 +250,8 @@ struct unary_expr<T, Expr, identity_op> :
 private:
     static_assert(is_etl_expr<Expr>::value, "Only ETL expressions can be used in unary_expr");
 
-    Expr _value; ///< The sub expression
+    Expr _value;                ///< The sub expression
+    gpu_memory_handler<T> _gpu; ///< The GPU memory handler
 
     static constexpr bool dma = has_direct_access<Expr>::value;
 
@@ -590,6 +591,108 @@ public:
         visitor.need_value = true;
         _value.visit(visitor);
         visitor.need_value = old_need_value;
+    }
+
+    /*!
+     * \brief Return GPU memory of this expression, if any.
+     * \return a pointer to the GPU memory or nullptr if not allocated in GPU.
+     */
+    T* gpu_memory() const noexcept {
+        static_assert(has_direct_access<Expr>::value, "This expression does not have direct memory access");
+        return _gpu.gpu_memory();
+    }
+
+    /*!
+     * \brief Evict the expression from GPU.
+     */
+    void gpu_evict() const noexcept {
+        static_assert(has_direct_access<Expr>::value, "This expression does not have direct memory access");
+        _gpu.gpu_evict();
+    }
+
+    /*!
+     * \brief Invalidates the CPU memory
+     */
+    void invalidate_cpu() const noexcept {
+        static_assert(has_direct_access<Expr>::value, "This expression does not have direct memory access");
+        _gpu.invalidate_cpu();
+    }
+
+    /*!
+     * \brief Invalidates the GPU memory
+     */
+    void invalidate_gpu() const noexcept {
+        static_assert(has_direct_access<Expr>::value, "This expression does not have direct memory access");
+        _gpu.invalidate_gpu();
+    }
+
+    /*!
+     * \brief Validates the CPU memory
+     */
+    void validate_cpu() const noexcept {
+        static_assert(has_direct_access<Expr>::value, "This expression does not have direct memory access");
+        _gpu.validate_cpu();
+    }
+
+    /*!
+     * \brief Validates the GPU memory
+     */
+    void validate_gpu() const noexcept {
+        static_assert(has_direct_access<Expr>::value, "This expression does not have direct memory access");
+        _gpu.validate_gpu();
+    }
+
+    /*!
+     * \brief Ensures that the GPU memory is allocated and that the GPU memory
+     * is up to date (to undefined value).
+     */
+    void ensure_gpu_allocated() const {
+        static_assert(has_direct_access<Expr>::value, "This expression does not have direct memory access");
+        _gpu.ensure_gpu_allocated(etl::size(_value));
+    }
+
+    /*!
+     * \brief Allocate memory on the GPU for the expression and copy the values into the GPU.
+     */
+    void ensure_gpu_up_to_date() const {
+        static_assert(has_direct_access<Expr>::value, "This expression does not have direct memory access");
+        _gpu.ensure_gpu_up_to_date(memory_start(), etl::size(_value));
+    }
+
+    /*!
+     * \brief Copy back from the GPU to the expression memory if
+     * necessary.
+     */
+    void ensure_cpu_up_to_date() const {
+        static_assert(has_direct_access<Expr>::value, "This expression does not have direct memory access");
+        _gpu.ensure_cpu_up_to_date(memory_start(), etl::size(_value));
+    }
+
+    /*!
+     * \brief Copy from GPU to GPU
+     * \param gpu_memory Pointer to CPU memory
+     */
+    void gpu_copy_from(const T* gpu_memory) const {
+        static_assert(has_direct_access<Expr>::value, "This expression does not have direct memory access");
+        _gpu.gpu_copy_from(gpu_memory, etl::size(_value));
+    }
+
+    /*!
+     * \brief Indicates if the CPU memory is up to date.
+     * \return true if the CPU memory is up to date, false otherwise.
+     */
+    bool is_cpu_up_to_date() const noexcept {
+        static_assert(has_direct_access<Expr>::value, "This expression does not have direct memory access");
+        return _gpu.is_cpu_up_to_date();
+    }
+
+    /*!
+     * \brief Indicates if the GPU memory is up to date.
+     * \return true if the GPU memory is up to date, false otherwise.
+     */
+    bool is_gpu_up_to_date() const noexcept {
+        static_assert(has_direct_access<Expr>::value, "This expression does not have direct memory access");
+        return _gpu.is_gpu_up_to_date();
     }
 
 private:
