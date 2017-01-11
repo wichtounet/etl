@@ -421,11 +421,15 @@ void conv2_full_kernel(const T* a, std::size_t m1, std::size_t m2, const T* b, s
  */
 template<typename A, typename C, cpp_enable_if(all_single_precision<A>::value && all_complex_single_precision<C>::value)>
 void fft1(A&& a, C&& c) {
+    a.ensure_cpu_up_to_date();
+
     auto a_complex = allocate<std::complex<float>>(etl::size(a));
 
     direct_copy(a.memory_start(), a.memory_end(), a_complex.get());
 
     mkl_detail::fft_kernel(a_complex.get(), a.size(), c.memory_start());
+
+    c.invalidate_gpu();
 }
 
 /*!
@@ -435,11 +439,15 @@ void fft1(A&& a, C&& c) {
  */
 template<typename A, typename C, cpp_enable_if(all_double_precision<A>::value && all_complex_double_precision<C>::value)>
 void fft1(A&& a, C&& c) {
+    a.ensure_cpu_up_to_date();
+
     auto a_complex = allocate<std::complex<double>>(a.size());
 
     direct_copy(a.memory_start(), a.memory_end(), a_complex.get());
 
     mkl_detail::fft_kernel(a_complex.get(), a.size(), c.memory_start());
+
+    c.invalidate_gpu();
 }
 
 /*!
@@ -449,7 +457,11 @@ void fft1(A&& a, C&& c) {
  */
 template<typename A, typename C, cpp_enable_if(all_complex<A,C>::value)>
 void fft1(A&& a, C&& c) {
+    a.ensure_cpu_up_to_date();
+
     mkl_detail::fft_kernel(a.memory_start(), etl::size(a), c.memory_start());
+
+    c.invalidate_gpu();
 }
 
 /*!
@@ -459,7 +471,11 @@ void fft1(A&& a, C&& c) {
  */
 template <typename A, typename C>
 void ifft1(A&& a, C&& c) {
+    a.ensure_cpu_up_to_date();
+
     mkl_detail::ifft_kernel(a.memory_start(), etl::size(a), c.memory_start());
+
+    c.invalidate_gpu();
 }
 
 /*!
@@ -469,6 +485,8 @@ void ifft1(A&& a, C&& c) {
  */
 template <typename A, typename C, cpp_enable_if(all_complex_single_precision<A>::value)>
 void ifft1_real(A&& a, C&& c) {
+    a.ensure_cpu_up_to_date();
+
     auto c_complex = allocate<std::complex<float>>(etl::size(a));
 
     mkl_detail::ifft_kernel(a.memory_start(), etl::size(a), c_complex.get());
@@ -476,6 +494,8 @@ void ifft1_real(A&& a, C&& c) {
     for (std::size_t i = 0; i < etl::size(a); ++i) {
         c[i] = c_complex[i].real();
     }
+
+    c.invalidate_gpu();
 }
 
 /*!
@@ -485,6 +505,8 @@ void ifft1_real(A&& a, C&& c) {
  */
 template <typename A, typename C, cpp_enable_if(all_complex_double_precision<A>::value)>
 void ifft1_real(A&& a, C&& c) {
+    a.ensure_cpu_up_to_date();
+
     auto c_complex = allocate<std::complex<double>>(etl::size(a));
 
     mkl_detail::ifft_kernel(a.memory_start(), etl::size(a), c_complex.get());
@@ -492,6 +514,8 @@ void ifft1_real(A&& a, C&& c) {
     for (std::size_t i = 0; i < etl::size(a); ++i) {
         c[i] = c_complex[i].real();
     }
+
+    c.invalidate_gpu();
 }
 
 /*!
@@ -503,6 +527,8 @@ void ifft1_real(A&& a, C&& c) {
  */
 template<typename A, typename C, cpp_enable_if(!all_complex<A>::value && all_complex<C>::value)>
 void fft1_many(A&& a, C&& c) {
+    a.ensure_cpu_up_to_date();
+
     static constexpr std::size_t N = etl::dimensions(c);
 
     std::size_t n     = a.template dim<N - 1>(); //Size of the transform
@@ -513,6 +539,8 @@ void fft1_many(A&& a, C&& c) {
     direct_copy(a.memory_start(), a.memory_end(), a_complex.get());
 
     mkl_detail::fft_many_kernel(a_complex.get(), batch, n, c.memory_start());
+
+    c.invalidate_gpu();
 }
 
 /*!
@@ -524,12 +552,16 @@ void fft1_many(A&& a, C&& c) {
  */
 template<typename A, typename C, cpp_enable_if(all_complex<A, C>::value)>
 void fft1_many(A&& a, C&& c) {
+    a.ensure_cpu_up_to_date();
+
     static constexpr std::size_t N = etl::dimensions(c);
 
     std::size_t n     = a.template dim<N - 1>(); //Size of the transform
     std::size_t batch = etl::size(a) / n;        //Number of batch
 
     mkl_detail::fft_many_kernel(a.memory_start(), batch, n, c.memory_start());
+
+    c.invalidate_gpu();
 }
 
 /*!
@@ -541,12 +573,16 @@ void fft1_many(A&& a, C&& c) {
  */
 template <typename A, typename C>
 void ifft1_many(A&& a, C&& c) {
+    a.ensure_cpu_up_to_date();
+
     static constexpr std::size_t N = decay_traits<A>::dimensions();
 
     std::size_t n     = etl::dim<N - 1>(a); //Size of the transform
     std::size_t batch = etl::size(a) / n;   //Number of batch
 
     mkl_detail::ifft_many_kernel(a.memory_start(), batch, n, c.memory_start());
+
+    c.invalidate_gpu();
 }
 
 /*!
@@ -557,6 +593,9 @@ void ifft1_many(A&& a, C&& c) {
  */
 template <typename A, typename B, typename C>
 void conv1_full(A&& a, B&& b, C&& c) {
+    a.ensure_cpu_up_to_date();
+    b.ensure_cpu_up_to_date();
+
     using type = value_t<A>;
 
     const std::size_t m    = etl::size(a);
@@ -580,6 +619,8 @@ void conv1_full(A&& a, B&& b, C&& c) {
     for (std::size_t i = 0; i < size; ++i) {
         c[i] = a_padded[i].real;
     }
+
+    c.invalidate_gpu();
 }
 
 /*!
@@ -589,11 +630,15 @@ void conv1_full(A&& a, B&& b, C&& c) {
  */
 template <typename A, typename C, cpp_enable_if(all_single_precision<A>::value)>
 void fft2(A&& a, C&& c) {
+    a.ensure_cpu_up_to_date();
+
     auto a_complex = allocate<std::complex<float>>(etl::size(a));
 
     direct_copy(a.memory_start(), a.memory_end(), a_complex.get());
 
     mkl_detail::fft2_kernel(a_complex.get(), etl::dim<0>(a), etl::dim<1>(a), c.memory_start());
+
+    c.invalidate_gpu();
 }
 
 /*!
@@ -603,11 +648,15 @@ void fft2(A&& a, C&& c) {
  */
 template <typename A, typename C, cpp_enable_if(all_double_precision<A>::value)>
 void fft2(A&& a, C&& c) {
+    a.ensure_cpu_up_to_date();
+
     auto a_complex = allocate<std::complex<double>>(etl::size(a));
 
     direct_copy(a.memory_start(), a.memory_end(), a_complex.get());
 
     mkl_detail::fft2_kernel(a_complex.get(), etl::dim<0>(a), etl::dim<1>(a), c.memory_start());
+
+    c.invalidate_gpu();
 }
 
 /*!
@@ -617,7 +666,11 @@ void fft2(A&& a, C&& c) {
  */
 template <typename A, typename C, cpp_enable_if(all_complex<A>::value)>
 void fft2(A&& a, C&& c) {
+    a.ensure_cpu_up_to_date();
+
     mkl_detail::fft2_kernel(a.memory_start(), etl::dim<0>(a), etl::dim<1>(a), c.memory_start());
+
+    c.invalidate_gpu();
 }
 
 /*!
@@ -629,6 +682,8 @@ void fft2(A&& a, C&& c) {
  */
 template <typename A, typename C, cpp_enable_if(all_single_precision<A>::value)>
 void fft2_many(A&& a, C&& c) {
+    a.ensure_cpu_up_to_date();
+
     static constexpr std::size_t N = decay_traits<A>::dimensions();
 
     std::size_t n1    = etl::dim<N - 2>(a);       //Size of the transform
@@ -640,6 +695,8 @@ void fft2_many(A&& a, C&& c) {
     direct_copy(a.memory_start(), a.memory_end(), a_complex.get());
 
     mkl_detail::fft2_many_kernel(a_complex.get(), batch, n1, n2, c.memory_start());
+
+    c.invalidate_gpu();
 }
 
 /*!
@@ -651,6 +708,8 @@ void fft2_many(A&& a, C&& c) {
  */
 template <typename A, typename C, cpp_enable_if(all_double_precision<A>::value)>
 void fft2_many(A&& a, C&& c) {
+    a.ensure_cpu_up_to_date();
+
     static constexpr std::size_t N = decay_traits<A>::dimensions();
 
     std::size_t n1    = etl::dim<N - 2>(a);       //Size of the transform
@@ -662,6 +721,8 @@ void fft2_many(A&& a, C&& c) {
     direct_copy(a.memory_start(), a.memory_end(), a_complex.get());
 
     mkl_detail::fft2_many_kernel(a_complex.get(), batch, n1, n2, c.memory_start());
+
+    c.invalidate_gpu();
 }
 
 /*!
@@ -673,6 +734,8 @@ void fft2_many(A&& a, C&& c) {
  */
 template <typename A, typename C, cpp_enable_if(all_complex<A>::value)>
 void fft2_many(A&& a, C&& c) {
+    a.ensure_cpu_up_to_date();
+
     static constexpr std::size_t N = decay_traits<A>::dimensions();
 
     std::size_t n1    = etl::dim<N - 2>(a);       //Size of the transform
@@ -680,6 +743,8 @@ void fft2_many(A&& a, C&& c) {
     std::size_t batch = etl::size(a) / (n1 * n2); //Number of batch
 
     mkl_detail::fft2_many_kernel(a.memory_start(), batch, n1, n2, c.memory_start());
+
+    c.invalidate_gpu();
 }
 
 /*!
@@ -691,6 +756,8 @@ void fft2_many(A&& a, C&& c) {
  */
 template <typename A, typename C>
 void ifft2_many(A&& a, C&& c) {
+    a.ensure_cpu_up_to_date();
+
     static constexpr std::size_t N = decay_traits<A>::dimensions();
 
     std::size_t n1    = etl::dim<N - 2>(a);       //Size of the transform
@@ -698,6 +765,8 @@ void ifft2_many(A&& a, C&& c) {
     std::size_t batch = etl::size(a) / (n1 * n2); //Number of batch
 
     mkl_detail::ifft2_many_kernel(a.memory_start(), batch, n1, n2, c.memory_start());
+
+    c.invalidate_gpu();
 }
 
 /*!
@@ -707,7 +776,11 @@ void ifft2_many(A&& a, C&& c) {
  */
 template <typename A, typename C, cpp_enable_if(all_complex<A>::value)>
 void ifft2(A&& a, C&& c) {
+    a.ensure_cpu_up_to_date();
+
     mkl_detail::ifft2_kernel(a.memory_start(), etl::dim<0>(a), etl::dim<1>(a), c.memory_start());
+
+    c.invalidate_gpu();
 }
 
 /*!
@@ -717,6 +790,8 @@ void ifft2(A&& a, C&& c) {
  */
 template <typename A, typename C>
 void ifft2_real(A&& a, C&& c) {
+    a.ensure_cpu_up_to_date();
+
     auto c_complex = allocate<std::complex<value_t<C>>>(etl::size(a));
 
     mkl_detail::ifft2_kernel(a.memory_start(), etl::dim<0>(a), etl::dim<1>(a), c_complex.get());
@@ -724,6 +799,8 @@ void ifft2_real(A&& a, C&& c) {
     for (std::size_t i = 0; i < etl::size(a); ++i) {
         c[i] = c_complex[i].real();
     }
+
+    c.invalidate_gpu();
 }
 
 /*!
@@ -734,7 +811,12 @@ void ifft2_real(A&& a, C&& c) {
  */
 template <typename I, typename K, typename C>
 void conv2_full(I&& a, K&& b, C&& c) {
+    a.ensure_cpu_up_to_date();
+    b.ensure_cpu_up_to_date();
+
     mkl_detail::conv2_full_kernel(a.memory_start(), etl::dim<0>(a), etl::dim<1>(a), b.memory_start(), etl::dim<0>(b), etl::dim<1>(b), c.memory_start(), value_t<I>(0.0));
+
+    c.invalidate_gpu();
 }
 
 /*!
@@ -747,6 +829,9 @@ void conv2_full(I&& a, K&& b, C&& c) {
  */
 template <typename I, typename K, typename C>
 void conv2_full_flipped(I&& a, K&& b, C&& c) {
+    a.ensure_cpu_up_to_date();
+    b.ensure_cpu_up_to_date();
+
     etl::dyn_matrix<value_t<I>, 2> prepared_b(etl::dim<0>(b), etl::dim<1>(b));
 
     std::copy(b.memory_start(), b.memory_end(), prepared_b.memory_start());
@@ -754,6 +839,8 @@ void conv2_full_flipped(I&& a, K&& b, C&& c) {
     prepared_b.fflip_inplace();
 
     mkl_detail::conv2_full_kernel(a.memory_start(), etl::dim<0>(a), etl::dim<1>(a), prepared_b.memory_start(), etl::dim<0>(b), etl::dim<1>(b), c.memory_start(), value_t<I>(0.0));
+
+    c.invalidate_gpu();
 }
 
 /*!
@@ -769,6 +856,9 @@ void conv2_full_multi(I&& input, K&& kernel, C&& conv) {
     const auto KK = etl::dim<0>(kernel);
 
     if (KK) {
+        input.ensure_cpu_up_to_date();
+        kernel.ensure_cpu_up_to_date();
+
         const auto k_s = etl::dim<1>(kernel) * etl::dim<2>(kernel);
         const auto c_s = conv.dim(1) * conv.dim(2);
 
@@ -820,6 +910,8 @@ void conv2_full_multi(I&& input, K&& kernel, C&& conv) {
         } else {
             batch_fun_k(0, KK);
         }
+
+        conv.invalidate_gpu();
     }
 }
 
@@ -832,6 +924,8 @@ void conv2_full_multi(I&& input, K&& kernel, C&& conv) {
 template <typename I, typename K, typename C>
 void conv2_full_multi_flipped(I&& input, K&& kernel, C&& conv) {
     using T = value_t<I>;
+
+    kernel.ensure_cpu_up_to_date();
 
     etl::dyn_matrix<T, 3> prepared_k(etl::dim<0>(kernel), etl::dim<1>(kernel), etl::dim<2>(kernel));
 
@@ -853,6 +947,9 @@ void conv4_full(I&& input, KK&& kernel, CC&& conv) {
     using T = value_t<I>;
 
     if (etl::dim<1>(kernel) > 0) {
+        input.ensure_cpu_up_to_date();
+        kernel.ensure_cpu_up_to_date();
+
         auto conv_i_inc = conv.dim(1) * conv.dim(2) * conv.dim(3);
         auto conv_c_inc = conv.dim(2) * conv.dim(3);
 
@@ -938,6 +1035,8 @@ void conv4_full(I&& input, KK&& kernel, CC&& conv) {
             batch_fun_kc(0, K * C);
             batch_fun_n(0, N);
         }
+
+        conv.invalidate_gpu();
     }
 }
 
@@ -950,6 +1049,8 @@ void conv4_full(I&& input, KK&& kernel, CC&& conv) {
 template <typename I, typename K, typename C>
 void conv4_full_flipped(I&& input, K&& kernel, C&& conv) {
     if (etl::dim<1>(kernel) > 0) {
+        input.ensure_cpu_up_to_date();
+
         etl::dyn_matrix<value_t<I>, 4> prepared_k(etl::dim<0>(kernel), etl::dim<1>(kernel), etl::dim<2>(kernel), etl::dim<3>(kernel));
 
         std::copy(kernel.memory_start(), kernel.memory_end(), prepared_k.memory_start());

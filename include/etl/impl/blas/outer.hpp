@@ -34,6 +34,10 @@ template <typename A, typename B, typename C, cpp_enable_if(all_single_precision
 void outer(const A& a, const B& b, C&& c) {
     c = 0;
 
+    a.ensure_cpu_up_to_date();
+    b.ensure_cpu_up_to_date();
+    c.ensure_cpu_up_to_date();
+
     cblas_sger(
         CblasRowMajor,
         etl::dim<0>(a), etl::dim<0>(b),
@@ -41,6 +45,8 @@ void outer(const A& a, const B& b, C&& c) {
         a.memory_start(), 1,
         b.memory_start(), 1,
         c.memory_start(), etl::dim<0>(b));
+
+    c.invalidate_gpu();
 }
 
 /*!
@@ -50,6 +56,10 @@ template <typename A, typename B, typename C, cpp_enable_if(all_double_precision
 void outer(const A& a, const B& b, C&& c) {
     c = 0;
 
+    a.ensure_cpu_up_to_date();
+    b.ensure_cpu_up_to_date();
+    c.ensure_cpu_up_to_date();
+
     cblas_dger(
         CblasRowMajor,
         etl::dim<0>(a), etl::dim<0>(b),
@@ -57,6 +67,8 @@ void outer(const A& a, const B& b, C&& c) {
         a.memory_start(), 1,
         b.memory_start(), 1,
         c.memory_start(), etl::dim<0>(b));
+
+    c.invalidate_gpu();
 }
 
 /*!
@@ -71,6 +83,9 @@ void batch_outer(const A& a, const B& b, C&& c) {
     const size_t n = etl::columns(c);
     const size_t k = etl::rows(a);
 
+    a.ensure_cpu_up_to_date();
+    b.ensure_cpu_up_to_date();
+
     cblas_sgemm(
         CblasRowMajor,
         CblasTrans, CblasNoTrans,
@@ -80,6 +95,8 @@ void batch_outer(const A& a, const B& b, C&& c) {
         b.memory_start(), n,
         0.0f,
         c.memory_start(), n);
+
+    c.invalidate_gpu();
 }
 
 /*!
@@ -91,6 +108,9 @@ void batch_outer(const A& a, const B& b, C&& c) {
     const size_t n = etl::columns(c);
     const size_t k = etl::rows(a);
 
+    a.ensure_cpu_up_to_date();
+    b.ensure_cpu_up_to_date();
+
     cblas_dgemm(
         CblasRowMajor,
         CblasTrans, CblasNoTrans,
@@ -100,6 +120,8 @@ void batch_outer(const A& a, const B& b, C&& c) {
         b.memory_start(), n,
         0.0,
         c.memory_start(), n);
+
+    c.invalidate_gpu();
 }
 
 #else

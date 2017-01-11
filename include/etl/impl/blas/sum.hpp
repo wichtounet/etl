@@ -40,6 +40,8 @@ value_t<A> sum(const A& a) {
     etl::dyn_vector<value_t<A>> ones(etl::size(a));
     ones = 1.0f;
 
+    a.ensure_cpu_up_to_date();
+
     const float* m_a = a.memory_start();
     const float* m_b = ones.memory_start();
 
@@ -53,6 +55,8 @@ template <typename A, cpp_enable_if(all_dma<A>::value&& all_double_precision<A>:
 value_t<A> sum(const A& a) {
     etl::dyn_vector<value_t<A>> ones(etl::size(a));
     ones = 1.0;
+
+    a.ensure_cpu_up_to_date();
 
     const double* m_a = a.memory_start();
     const double* m_b = ones.memory_start();

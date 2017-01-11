@@ -14,7 +14,6 @@ extern "C" {
 }
 
 #endif
-
 namespace etl {
 
 namespace impl {
@@ -102,6 +101,9 @@ void gemm(A&& a, B&& b, C&& c) {
     T alpha(1.0);
     T beta(0.0);
 
+    a.ensure_cpu_up_to_date();
+    b.ensure_cpu_up_to_date();
+
     cblas_gemm(
         row_major ? CblasRowMajor : CblasColMajor,
         CblasNoTrans, CblasNoTrans,
@@ -111,6 +113,8 @@ void gemm(A&& a, B&& b, C&& c) {
         b.memory_start(), major_stride(b),
         beta,
         c.memory_start(), major_stride(c));
+
+    c.invalidate_gpu();
 }
 
 /*!
@@ -128,6 +132,9 @@ void gemm_nt(A&& a, B&& b, C&& c) {
     T alpha(1.0);
     T beta(0.0);
 
+    a.ensure_cpu_up_to_date();
+    b.ensure_cpu_up_to_date();
+
     cblas_gemm(
         row_major ? CblasRowMajor : CblasColMajor,
         CblasNoTrans, CblasTrans,
@@ -137,6 +144,8 @@ void gemm_nt(A&& a, B&& b, C&& c) {
         b.memory_start(), major_stride(b),
         beta,
         c.memory_start(), major_stride(c));
+
+    c.invalidate_gpu();
 }
 
 /*!
@@ -154,6 +163,9 @@ void gemm_tn(A&& a, B&& b, C&& c) {
     T alpha(1.0);
     T beta(0.0);
 
+    a.ensure_cpu_up_to_date();
+    b.ensure_cpu_up_to_date();
+
     cblas_gemm(
         row_major ? CblasRowMajor : CblasColMajor,
         CblasTrans, CblasNoTrans,
@@ -163,6 +175,8 @@ void gemm_tn(A&& a, B&& b, C&& c) {
         b.memory_start(), major_stride(b),
         beta,
         c.memory_start(), major_stride(c));
+
+    c.invalidate_gpu();
 }
 
 /*!
@@ -180,6 +194,9 @@ void gemm_tt(A&& a, B&& b, C&& c) {
     T alpha(1.0);
     T beta(0.0);
 
+    a.ensure_cpu_up_to_date();
+    b.ensure_cpu_up_to_date();
+
     cblas_gemm(
         row_major ? CblasRowMajor : CblasColMajor,
         CblasTrans, CblasTrans,
@@ -189,6 +206,8 @@ void gemm_tt(A&& a, B&& b, C&& c) {
         b.memory_start(), major_stride(b),
         beta,
         c.memory_start(), major_stride(c));
+
+    c.invalidate_gpu();
 }
 
 /*!
@@ -206,6 +225,9 @@ void gemv(A&& a, B&& b, C&& c) {
     T alpha(1.0);
     T beta(0.0);
 
+    a.ensure_cpu_up_to_date();
+    b.ensure_cpu_up_to_date();
+
     cblas_gemv(
         row_major ? CblasRowMajor : CblasColMajor,
         CblasNoTrans,
@@ -215,6 +237,8 @@ void gemv(A&& a, B&& b, C&& c) {
         b.memory_start(), 1,
         beta,
         c.memory_start(), 1);
+
+    c.invalidate_gpu();
 }
 
 /*!
@@ -232,6 +256,9 @@ void gevm(A&& a, B&& b, C&& c) {
     T alpha(1.0);
     T beta(0.0);
 
+    a.ensure_cpu_up_to_date();
+    b.ensure_cpu_up_to_date();
+
     cblas_gemv(
         row_major ? CblasRowMajor : CblasColMajor,
         CblasTrans,
@@ -241,6 +268,8 @@ void gevm(A&& a, B&& b, C&& c) {
         a.memory_start(), 1,
         beta,
         c.memory_start(), 1);
+
+    c.invalidate_gpu();
 }
 
 #else
