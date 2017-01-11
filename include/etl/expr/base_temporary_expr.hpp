@@ -353,7 +353,7 @@ public:
      * \brief Copy back from the GPU to the expression memory if
      * necessary.
      */
-    void ensure_cpu_up_to_date() {
+    void ensure_cpu_up_to_date() const {
         _gpu.ensure_cpu_up_to_date(memory_start(), etl::size(result()));
     }
 
