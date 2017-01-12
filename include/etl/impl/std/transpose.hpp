@@ -88,6 +88,8 @@ void real_inplace(C&& mat) {
     const size_t N = etl::dim<0>(mat);
     const size_t M = etl::dim<1>(mat);
 
+    mat.ensure_cpu_up_to_date();
+
     auto data = mat.memory_start();
 
     for (size_t k = 0; k < N * M; k++) {
