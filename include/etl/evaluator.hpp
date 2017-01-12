@@ -164,6 +164,8 @@ namespace standard_evaluator {
         } else {
             detail::Assign<R&,E&>(result, expr)();
         }
+
+        result.invalidate_gpu();
     }
 
     /*!
@@ -181,6 +183,8 @@ namespace standard_evaluator {
         } else {
             detail::VectorizedAssign<V, R&, E&>(result, expr)();
         }
+
+        result.invalidate_gpu();
     }
 
     //Standard Add Assign
@@ -198,6 +202,8 @@ namespace standard_evaluator {
         for (std::size_t i = 0; i < etl::size(result); ++i) {
             result[i] += expr[i];
         }
+
+        result.invalidate_gpu();
     }
 
     //Parallel direct add assign
@@ -218,6 +224,8 @@ namespace standard_evaluator {
         } else {
             detail::AssignAdd<R&,E&>(result, expr)();
         }
+
+        result.invalidate_gpu();
     }
 
     //Parallel vectorized add assign
@@ -240,6 +248,8 @@ namespace standard_evaluator {
         } else {
             detail::VectorizedAssignAdd<V, R&, E&>(result, expr)();
         }
+
+        result.invalidate_gpu();
     }
 
     //Standard sub assign
@@ -260,6 +270,8 @@ namespace standard_evaluator {
         for (std::size_t i = 0; i < etl::size(result); ++i) {
             result[i] -= expr[i];
         }
+
+        result.invalidate_gpu();
     }
 
     //Parallel direct sub assign
@@ -280,6 +292,8 @@ namespace standard_evaluator {
         } else {
             detail::AssignSub<R&,E&>(result, expr)();
         }
+
+        result.invalidate_gpu();
     }
 
     //Parallel vectorized sub assign
@@ -302,6 +316,8 @@ namespace standard_evaluator {
         } else {
             detail::VectorizedAssignSub<V, R&, E&>(result, expr)();
         }
+
+        result.invalidate_gpu();
     }
 
     //Standard Mul Assign
@@ -322,6 +338,8 @@ namespace standard_evaluator {
         for (std::size_t i = 0; i < etl::size(result); ++i) {
             result[i] *= expr[i];
         }
+
+        result.invalidate_gpu();
     }
 
     //Parallel direct mul assign
@@ -342,6 +360,8 @@ namespace standard_evaluator {
         } else {
             detail::AssignMul<R&,E&>(result, expr)();
         }
+
+        result.invalidate_gpu();
     }
 
     //Parallel vectorized mul assign
@@ -364,6 +384,8 @@ namespace standard_evaluator {
         } else {
             detail::VectorizedAssignMul<V, R&, E&>(result, expr)();
         }
+
+        result.invalidate_gpu();
     }
 
     //Standard Div Assign
@@ -384,6 +406,8 @@ namespace standard_evaluator {
         for (std::size_t i = 0; i < etl::size(result); ++i) {
             result[i] /= expr[i];
         }
+
+        result.invalidate_gpu();
     }
 
     //Parallel direct Div assign
@@ -404,6 +428,8 @@ namespace standard_evaluator {
         } else {
             detail::AssignDiv<R&,E&>(result, expr)();
         }
+
+        result.invalidate_gpu();
     }
 
     //Parallel vectorized div assign
@@ -426,6 +452,8 @@ namespace standard_evaluator {
         } else {
             detail::VectorizedAssignDiv<V, R&, E&>(result, expr)();
         }
+
+        result.invalidate_gpu();
     }
 
     //Standard Mod Evaluate (no optimized versions for mod)
@@ -446,6 +474,8 @@ namespace standard_evaluator {
         for (std::size_t i = 0; i < etl::size(result); ++i) {
             result[i] %= expr[i];
         }
+
+        result.invalidate_gpu();
     }
 
     //Note: In case of direct evaluation, the temporary_expr itself must
