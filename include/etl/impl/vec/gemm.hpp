@@ -395,11 +395,16 @@ template <typename A, typename B, typename C, cpp_enable_if((all_row_major<A, B,
 void gemv(A&& a, B&& b, C&& c) {
     cpp_assert(vec_enabled, "At least one vector mode must be enabled for impl::VEC");
 
+    a.ensure_cpu_up_to_date();
+    b.ensure_cpu_up_to_date();
+
     if (etl::size(a) < gemv_small_threshold) {
         gemv_small_kernel<default_vec>(a, b, c);
     } else {
         gemv_large_kernel<default_vec>(a, b, c);
     }
+
+    c.invalidate_gpu();
 }
 
 /*!
@@ -670,11 +675,16 @@ template <typename A, typename B, typename C, cpp_enable_if((all_row_major<A, B,
 void gevm(A&& a, B&& b, C&& c) {
     cpp_assert(vec_enabled, "At least one vector mode must be enabled for impl::VEC");
 
+    a.ensure_cpu_up_to_date();
+    b.ensure_cpu_up_to_date();
+
     if(etl::size(b) < gevm_small_threshold){
         gevm_small_kernel<default_vec>(a, b, c);
     } else {
         gevm_large_kernel<default_vec>(a, b, c);
     }
+
+    c.invalidate_gpu();
 }
 
 /*!
@@ -1281,11 +1291,16 @@ template <typename A, typename B, typename C, cpp_enable_if((all_row_major<A, B,
 void gemm(A&& a, B&& b, C&& c) {
     cpp_assert(vec_enabled, "At least one vector mode must be enabled for impl::VEC");
 
+    a.ensure_cpu_up_to_date();
+    b.ensure_cpu_up_to_date();
+
     if(etl::size(b) <= 10000){
         gemm_small_kernel<default_vec>(a, b, c);
     } else {
         gemm_large_kernel<default_vec>(a, b, c);
     }
+
+    c.invalidate_gpu();
 }
 
 /*!

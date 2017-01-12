@@ -35,6 +35,9 @@ void batch_outer(const L& lhs, const R& rhs, C&& result) {
     const auto M = etl::dim<0>(result);
     const auto N = etl::dim<1>(result);
 
+    lhs.ensure_cpu_up_to_date();
+    rhs.ensure_cpu_up_to_date();
+
     // TODO Ideally, we would need a kernel for very small matrices
 
     result = 0;
@@ -257,6 +260,8 @@ void batch_outer(const L& lhs, const R& rhs, C&& result) {
     };
 
     dispatch_1d_any(select_parallel(M, 2) && N > 25, batch_fun_m, 0, M);
+
+    result.invalidate_gpu();
 }
 
 template <typename A, typename B, typename C>

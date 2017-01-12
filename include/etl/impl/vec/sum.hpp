@@ -27,6 +27,8 @@ value_t<L> selected_sum(const L& lhs, size_t first, size_t last) {
 
     static constexpr size_t vec_size = vec_type::template traits<T>::size;
 
+    safe_ensure_cpu_up_to_date(lhs);
+
     size_t i = first;
 
     auto r1 = vec_type::template zero<T>();

@@ -134,6 +134,9 @@ value_t<L> selected_dot(const L& lhs, const R& rhs) {
  */
 template <typename L, typename R>
 value_t<L> dot(const L& lhs, const R& rhs) {
+    lhs.ensure_cpu_up_to_date();
+    rhs.ensure_cpu_up_to_date();
+
     // The default vectorization scheme should be sufficient
     return selected_dot<default_vec>(lhs, rhs);
 }
