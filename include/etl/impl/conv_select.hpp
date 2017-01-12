@@ -61,7 +61,7 @@ inline etl::conv_impl select_default_conv1_impl_new() {
         return etl::conv_impl::STD;
     }
 
-    static constexpr bool vec = vec_enabled;
+    static constexpr bool vec = vectorize_impl && vec_enabled;
     static constexpr bool mkl = mkl_enabled;
     static constexpr bool cufft = cufft_enabled;
 
@@ -114,7 +114,7 @@ inline etl::conv_impl select_conv1_impl_new() {
 
             //VEC cannot always be used
             case conv_impl::VEC:
-                if (!vec_enabled) {
+                if (!vec_enabled || !vectorize_impl) {
                     std::cerr << "Forced selection to VEC conv implementation, but not possible for this expression" << std::endl;
                     return default_impl;
                 }
@@ -155,7 +155,7 @@ inline etl::conv_impl select_default_conv2_impl_new() {
         return etl::conv_impl::STD;
     }
 
-    static constexpr bool vec = vec_enabled;
+    static constexpr bool vec = vectorize_impl && vec_enabled;
     static constexpr bool cufft = cufft_enabled;
     static constexpr bool cudnn = cudnn_enabled;
     static constexpr bool mkl = mkl_enabled;
@@ -196,7 +196,7 @@ inline etl::conv_impl select_conv2_impl_new() {
         switch (forced) {
             //VEC cannot always be used
             case conv_impl::VEC:
-                if (!vec_enabled) {
+                if (!vec_enabled || !vectorize_impl) {
                     std::cerr << "Forced selection to VEC conv implementation, but not possible for this expression" << std::endl;
                     return default_impl;
                 }
@@ -264,7 +264,7 @@ inline etl::conv_impl select_default_conv_impl() {
         return etl::conv_impl::STD;
     }
 
-    if (vec_enabled) {
+    if (vec_enabled && vectorize_impl) {
         return etl::conv_impl::VEC;
     } else if(cudnn_enabled && (TT == conv_type::VALID || TT == conv_type::FULL) && decay_traits<I>::dimensions() == 2){
         return etl::conv_impl::CUDNN;
@@ -318,7 +318,7 @@ inline etl::conv_impl select_conv_impl() {
 
             //VEC cannot always be used
             case conv_impl::VEC:
-                if (!vec_enabled) {
+                if (!vec_enabled || !vectorize_impl) {
                     std::cerr << "Forced selection to VEC conv implementation, but not possible for this expression" << std::endl;
                     return default_impl;
                 }
@@ -368,11 +368,11 @@ inline etl::conv4_impl select_default_conv4_valid_impl() {
     if (conv4_prefer_blas) {
         if (cublas_enabled || mkl_enabled) {
             return etl::conv4_impl::BLAS;
-        } else if (vec_enabled) {
+        } else if (vec_enabled && vectorize_impl) {
             return etl::conv4_impl::VEC;
         }
     } else {
-        if (vec_enabled) {
+        if (vec_enabled && vectorize_impl) {
             return etl::conv4_impl::VEC;
         } else if (cublas_enabled || mkl_enabled) {
             return etl::conv4_impl::BLAS;
@@ -397,7 +397,7 @@ inline etl::conv4_impl select_conv4_valid_impl() {
         switch (forced) {
             //VEC cannot always be used
             case conv4_impl::VEC:
-                if (!vec_enabled) {                                                                                                // COVERAGE_EXCLUDE_LINE
+                if (!vec_enabled || !vectorize_impl) {                                                                             // COVERAGE_EXCLUDE_LINE
                     std::cerr << "Forced selection to VEC conv implementation, but not possible for this expression" << std::endl; // COVERAGE_EXCLUDE_LINE
                     return select_default_conv4_valid_impl<I, K, C>();                                                             // COVERAGE_EXCLUDE_LINE
                 }                                                                                                                  // COVERAGE_EXCLUDE_LINE
@@ -554,7 +554,7 @@ inline etl::conv_multi_impl select_default_conv_valid_multi() {
         return etl::conv_multi_impl::BLAS;
     }
 
-    if (vec_enabled) {
+    if (vectorize_impl && vec_enabled) {
         return etl::conv_multi_impl::VEC;
     }
 
@@ -585,7 +585,7 @@ inline etl::conv_multi_impl select_default_conv_valid_multi_multi_impl() {
         return etl::conv_multi_impl::STD;
     }
 
-    if (vec_enabled) {
+    if (vectorize_impl && vec_enabled) {
         return etl::conv_multi_impl::VEC;
     }
 
@@ -622,7 +622,7 @@ inline etl::conv_multi_impl select_conv_valid_multi_impl() {
 
             //VEC cannot always be used
             case conv_multi_impl::VEC:
-                if (!vec_enabled) {
+                if (!vec_enabled || !vectorize_impl) {
                     std::cerr << "Forced selection to VEC conv implementation, but not possible for this expression" << std::endl;
                     return select_default_conv_valid_multi<I, K, C>();                                                                   // COVERAGE_EXCLUDE_LINE
                 }
@@ -654,7 +654,7 @@ inline etl::conv_multi_impl select_conv_valid_multi_multi_impl() {
         switch (forced) {
             //VEC cannot always be used
             case conv_multi_impl::VEC:
-                if (!vec_enabled) {
+                if (!vec_enabled || !vectorize_impl) {
                     std::cerr << "Forced selection to VEC conv implementation, but not possible for this expression" << std::endl;
                     return select_default_conv_valid_multi_multi_impl<I, K, C>();                                                                   // COVERAGE_EXCLUDE_LINE
                 }
@@ -733,7 +733,7 @@ inline etl::conv_multi_impl select_conv_full_multi_impl() {
 
             //VEC cannot always be used
             case conv_multi_impl::VEC:
-                if (!vec_enabled) {
+                if (!vec_enabled || !vectorize_impl) {
                     std::cerr << "Forced selection to VEC conv implementation, but not possible for this expression" << std::endl;
                     return select_default_conv_full_multi_impl<I, K, C>();                                                                   // COVERAGE_EXCLUDE_LINE
                 }
@@ -774,7 +774,7 @@ inline etl::conv_multi_impl select_default_conv_same_multi_impl() {
         return etl::conv_multi_impl::STD;
     }
 
-    if (vec_enabled) {
+    if (vec_enabled && vectorize_impl) {
         return etl::conv_multi_impl::VEC;
     }
 
@@ -798,7 +798,7 @@ inline etl::conv_multi_impl select_conv_same_multi_impl() {
         switch (forced) {
             //VEC cannot always be used
             case conv_multi_impl::VEC:
-                if (!vec_enabled) {
+                if (!vec_enabled || !vectorize_impl) {
                     std::cerr << "Forced selection to VEC conv implementation, but not possible for this expression" << std::endl;
                     return default_impl;
                 }
