@@ -289,14 +289,18 @@ public:
      * \brief Validates the CPU memory
      */
     void validate_cpu() const noexcept {
-        _gpu.validate_cpu();
+        if(allocated && evaluated){
+            result().validate_cpu();
+        }
     }
 
     /*!
      * \brief Validates the GPU memory
      */
     void validate_gpu() const noexcept {
-        _gpu.validate_gpu();
+        if(allocated && evaluated){
+            result().validate_gpu();
+        }
     }
 
     /*!
@@ -343,7 +347,7 @@ public:
      * \return true if the CPU memory is up to date, false otherwise.
      */
     bool is_cpu_up_to_date() const noexcept {
-        return result.is_cpu_up_to_date();
+        return result().is_cpu_up_to_date();
     }
 
     /*!
@@ -351,7 +355,7 @@ public:
      * \return true if the GPU memory is up to date, false otherwise.
      */
     bool is_gpu_up_to_date() const noexcept {
-        return result.is_gpu_up_to_date();
+        return result().is_gpu_up_to_date();
     }
 };
 
