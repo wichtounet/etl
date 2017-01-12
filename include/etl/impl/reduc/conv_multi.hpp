@@ -20,6 +20,8 @@ namespace reduc {
  */
 template <typename F1, typename F2>
 void complex_pad_4d(const F1& in, F2& out) {
+    out.ensure_cpu_up_to_date();
+
     for (std::size_t outer1 = 0; outer1 < etl::dim<0>(in); ++outer1) {
         for (std::size_t outer2 = 0; outer2 < etl::dim<1>(in); ++outer2) {
             auto* direct = out(outer1)(outer2).memory_start();
@@ -39,6 +41,8 @@ void complex_pad_4d(const F1& in, F2& out) {
  */
 template <typename F1, typename F2>
 void complex_pad_3d(const F1& in, F2& out) {
+    out.ensure_cpu_up_to_date();
+
     for (std::size_t outer = 0; outer < etl::dim<0>(in); ++outer) {
         auto* direct = out(outer).memory_start();
         for (std::size_t i = 0; i < etl::dim<1>(in); ++i) {
@@ -58,6 +62,8 @@ void complex_pad_3d(const F1& in, F2& out) {
  */
 template <typename F1, typename F2>
 void pad_2d_input(const F1& in, F2&& out, size_t p1, size_t p2) {
+    out.ensure_cpu_up_to_date();
+
     auto* direct = out.memory_start();
 
     for (std::size_t i = 0; i < etl::dim<0>(in); ++i) {
@@ -76,6 +82,8 @@ void pad_2d_input(const F1& in, F2&& out, size_t p1, size_t p2) {
  */
 template <typename F1, typename F2>
 void pad_3d_input(const F1& in, F2&& out, size_t p1, size_t p2) {
+    out.ensure_cpu_up_to_date();
+
     for (std::size_t n = 0; n < etl::dim<0>(in); ++n) {
         auto* direct = out(n).memory_start();
 
@@ -121,6 +129,9 @@ void fft_conv2_valid_multi(const I& input, const K_T& kernels, C&& conv, size_t 
     const std::size_t b1 = (t1 - v1) / 2;
     const std::size_t b2 = (t2 - v2) / 2;
 
+    input.ensure_cpu_up_to_date();
+    kernels.ensure_cpu_up_to_date();
+
     etl::dyn_matrix<std::complex<value_t<I>>> input_padded(t1, t2);
     etl::dyn_matrix<std::complex<value_t<I>>, 3> kernels_padded(K, t1, t2);
     etl::dyn_matrix<std::complex<value_t<I>>, 3> tmp_result(K, t1, t2);
@@ -144,6 +155,8 @@ void fft_conv2_valid_multi(const I& input, const K_T& kernels, C&& conv, size_t 
             }
         }
     }
+
+    conv.invalidate_gpu();
 }
 
 /*!
@@ -182,6 +195,9 @@ void fft_conv2_valid_multi_multi(const I& input, const K_T& kernels, C&& conv, s
     const std::size_t b1 = (t1 - v1) / 2;
     const std::size_t b2 = (t2 - v2) / 2;
 
+    input.ensure_cpu_up_to_date();
+    kernels.ensure_cpu_up_to_date();
+
     etl::dyn_matrix<std::complex<value_t<I>>, 3> input_padded(N, t1, t2);
     etl::dyn_matrix<std::complex<value_t<I>>, 3> kernels_padded(K, t1, t2);
     etl::dyn_matrix<std::complex<value_t<I>>, 4> tmp_result(K, N, t1, t2);
@@ -209,6 +225,8 @@ void fft_conv2_valid_multi_multi(const I& input, const K_T& kernels, C&& conv, s
             }
         }
     }
+
+    conv.invalidate_gpu();
 }
 
 /*!
@@ -232,6 +250,9 @@ void blas_conv2_valid_multi(const I& input, const K_T& kernels, C&& conv, size_t
     // real final dimensions
     const std::size_t f1 = etl::dim<1>(conv);
     const std::size_t f2 = etl::dim<2>(conv);
+
+    input.ensure_cpu_up_to_date();
+    kernels.ensure_cpu_up_to_date();
 
     auto prepared_k = force_temporary(kernels);
 
@@ -267,6 +288,8 @@ void blas_conv2_valid_multi(const I& input, const K_T& kernels, C&& conv, size_t
     } else {
         etl::reshape(conv, K, f1 * f2) = mul(etl::reshape(prepared_k, K, k1 * k2), input_col);
     }
+
+    conv.invalidate_gpu();
 }
 
 /*!
@@ -292,6 +315,9 @@ void blas_conv2_valid_multi_multi(const I& input, const K_T& kernels, C&& conv, 
     // real final dimensions
     const std::size_t f1 = etl::dim<2>(conv);
     const std::size_t f2 = etl::dim<3>(conv);
+
+    input.ensure_cpu_up_to_date();
+    kernels.ensure_cpu_up_to_date();
 
     auto prepared_k = force_temporary(kernels);
 
@@ -331,6 +357,8 @@ void blas_conv2_valid_multi_multi(const I& input, const K_T& kernels, C&& conv, 
     } else {
         etl::reshape(conv, K, N * f1 * f2) = mul(etl::reshape(prepared_k, K, k1 * k2), input_col);
     }
+
+    conv.invalidate_gpu();
 }
 
 /*!
@@ -356,6 +384,9 @@ void blas_conv2_valid_multi_multi_flipped(const I& input, const K_T& kernels, C&
     // real final dimensions
     const std::size_t f1 = etl::dim<2>(conv);
     const std::size_t f2 = etl::dim<3>(conv);
+
+    input.ensure_cpu_up_to_date();
+    kernels.ensure_cpu_up_to_date();
 
     etl::dyn_matrix<value_t<I>, 2> input_col(k1 * k2, N * c1 * c2);
 
@@ -390,6 +421,8 @@ void blas_conv2_valid_multi_multi_flipped(const I& input, const K_T& kernels, C&
     } else {
         etl::reshape(conv, K, N * f1 * f2) = mul(etl::reshape(kernels, K, k1 * k2), input_col);
     }
+
+    conv.invalidate_gpu();
 }
 
 /*!
@@ -444,6 +477,9 @@ void blas_conv2_valid_multi_flipped(I&& input, K_T&& kernels, C&& conv, size_t s
     const std::size_t f1 = etl::dim<1>(conv);
     const std::size_t f2 = etl::dim<2>(conv);
 
+    input.ensure_cpu_up_to_date();
+    kernels.ensure_cpu_up_to_date();
+
     etl::dyn_matrix<value_t<I>, 2> input_col(k1 * k2, c1 * c2);
 
     if(p1 || p2){
@@ -473,6 +509,8 @@ void blas_conv2_valid_multi_flipped(I&& input, K_T&& kernels, C&& conv, size_t s
     } else {
         etl::reshape(conv, K, f1 * f2) = mul(etl::reshape(kernels, K, k1 * k2), input_col);
     }
+
+    conv.invalidate_gpu();
 }
 
 template <typename I_T, typename K_T, typename KS_T, typename C_T>
@@ -489,6 +527,9 @@ void blas_conv4_valid_prepared(I_T&& input, K_T&& kernel, KS_T&& kernels, C_T&& 
 
     const auto c1 = etl::dim<2>(conv);
     const auto c2 = etl::dim<3>(conv);
+
+    input.ensure_cpu_up_to_date();
+    kernels.ensure_cpu_up_to_date();
 
     conv = value_t<I_T>(0.0);
 
@@ -547,6 +588,8 @@ void blas_conv4_valid_prepared(I_T&& input, K_T&& kernel, KS_T&& kernels, C_T&& 
     };
 
     dispatch_1d_any(select_parallel(N, 2), batch_fun_n, 0, N);
+
+    conv.invalidate_gpu();
 }
 
 template <typename I_T, typename K_T, typename C_T>
@@ -606,6 +649,9 @@ void blas_conv4_valid_filter_prepared(I_T&& input, K_T&& kernel, C_T&& conv, siz
     const std::size_t c1 = (i1 - k1 + 2 * p1) + 1;
     const std::size_t c2 = (i2 - k2 + 2 * p2) + 1;
 
+    input.ensure_cpu_up_to_date();
+    kernel.ensure_cpu_up_to_date();
+
     etl::dyn_matrix<value_t<I_T>, 4> conv_temp(C, K, f1, f2);
     conv_temp = value_t<I_T>(0);
 
@@ -662,6 +708,8 @@ void blas_conv4_valid_filter_prepared(I_T&& input, K_T&& kernel, C_T&& conv, siz
     };
 
     dispatch_1d_any(select_parallel(C, 2), batch_fun_c, 0, C);
+
+    conv.invalidate_gpu();
 }
 
 template <typename I_T, typename K_T, typename C_T>

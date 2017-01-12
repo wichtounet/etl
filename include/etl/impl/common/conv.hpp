@@ -141,6 +141,8 @@ template <typename I>
 etl::dyn_matrix<value_t<I>, 2> pad_right(const I& input, size_t pad){
     using T = value_t<I>;
 
+    input.ensure_cpu_up_to_date();
+
     etl::dyn_matrix<T, 2> padded_input(etl::dim<0>(input), etl::dim<1>(input) + pad);
 
     padded_input = 0;
@@ -155,6 +157,8 @@ etl::dyn_matrix<value_t<I>, 2> pad_right(const I& input, size_t pad){
 template <typename I>
 etl::dyn_matrix<value_t<I>, 2> pad_right_flip(const I& input, size_t pad){
     using T = value_t<I>;
+
+    input.ensure_cpu_up_to_date();
 
     etl::dyn_matrix<T, 2> flipped(etl::dim<0>(input), etl::dim<1>(input));
 
@@ -175,6 +179,8 @@ template <typename I, cpp_enable_if((decay_traits<I>::dimensions() == 3))>
 etl::dyn_matrix<value_t<I>, 3> pad_right_multi(const I& input, size_t pad){
     using T = value_t<I>;
 
+    input.ensure_cpu_up_to_date();
+
     etl::dyn_matrix<T, 3> padded_input(etl::dim<0>(input), etl::dim<1>(input), etl::dim<2>(input) + pad);
 
     padded_input = 0;
@@ -193,6 +199,8 @@ etl::dyn_matrix<value_t<I>, 3> pad_right_multi(const I& input, size_t pad){
 template <typename I, cpp_enable_if((decay_traits<I>::dimensions() == 4))>
 etl::dyn_matrix<value_t<I>, 4> pad_right_multi(const I& input, size_t pad){
     using T = value_t<I>;
+
+    input.ensure_cpu_up_to_date();
 
     etl::dyn_matrix<T, 4> padded_input(etl::dim<0>(input), etl::dim<1>(input), etl::dim<2>(input), etl::dim<3>(input) + pad);
 
@@ -224,6 +232,8 @@ template <typename I, cpp_enable_if((decay_traits<I>::dimensions() == 3))>
 etl::dyn_matrix<value_t<I>, 3> pad_right_flip_multi(const I& input, size_t pad){
     using T = value_t<I>;
 
+    input.ensure_cpu_up_to_date();
+
     etl::dyn_matrix<T, 3> flipped(etl::dim<0>(input), etl::dim<1>(input), etl::dim<2>(input));
 
     for(size_t i = 0; i < etl::dim<0>(input); ++i){
@@ -252,6 +262,8 @@ etl::dyn_matrix<value_t<I>, 3> pad_right_flip_multi(const I& input, size_t pad){
 template <typename I, cpp_enable_if((decay_traits<I>::dimensions() == 4))>
 etl::dyn_matrix<value_t<I>, 4> pad_right_flip_multi(const I& input, size_t pad){
     using T = value_t<I>;
+
+    input.ensure_cpu_up_to_date();
 
     etl::dyn_matrix<T, 4> flipped(etl::dim<0>(input), etl::dim<1>(input), etl::dim<2>(input), etl::dim<3>(input));
 
