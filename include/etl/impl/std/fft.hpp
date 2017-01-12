@@ -790,7 +790,11 @@ void conv2_full_kernel(const T* a, std::size_t m1, std::size_t m2, const T* b, s
  */
 template <typename A, typename C>
 void fft1(A&& a, C&& c) {
+    a.ensure_cpu_up_to_date();
+
     detail::fft1_kernel(a.memory_start(), etl::size(a), c.memory_start());
+
+    c.invalidate_gpu();
 }
 
 /*!
@@ -800,7 +804,11 @@ void fft1(A&& a, C&& c) {
  */
 template <typename A, typename C>
 void ifft1(A&& a, C&& c) {
+    a.ensure_cpu_up_to_date();
+
     detail::ifft1_kernel(a.memory_start(), etl::size(a), c.memory_start());
+
+    c.invalidate_gpu();
 }
 
 /*!
@@ -812,9 +820,13 @@ void ifft1(A&& a, C&& c) {
  */
 template <typename A, typename C>
 void ifft1_many(A&& a, C&& c) {
+    a.ensure_cpu_up_to_date();
+
     for (std::size_t k = 0; k < etl::dim<0>(a); ++k) {
         detail::ifft1_kernel(a(k).memory_start(), etl::dim<1>(a), c(k).memory_start());
     }
+
+    c.invalidate_gpu();
 }
 
 /*!
@@ -826,6 +838,8 @@ template <typename A, typename C>
 void ifft1_real(A&& a, C&& c) {
     using complex_t = value_t<A>;
 
+    a.ensure_cpu_up_to_date();
+
     std::size_t n = etl::size(a);
 
     auto c_complex = allocate<complex_t>(n);
@@ -836,6 +850,8 @@ void ifft1_real(A&& a, C&& c) {
     for(size_t i = 0; i < n; ++i){
         c[i] = real(cc[i]);
     }
+
+    c.invalidate_gpu();
 }
 
 template<typename A, typename C>
@@ -871,10 +887,14 @@ template <typename A, typename C>
 void fft1_many(A&& a, C&& c) {
     static constexpr size_t N = etl::dimensions(a);
 
+    a.ensure_cpu_up_to_date();
+
     std::size_t n        = etl::dim<N - 1>(a); //Size of the transform
     std::size_t batch    = etl::size(a) / n;   //Number of batch
 
     fft1_many_kernel(a.memory_start(), c.memory_start(), batch, n);
+
+    c.invalidate_gpu();
 }
 
 /*!
@@ -997,7 +1017,12 @@ void fft2_many(A&& a, C&& c) {
  */
 template <typename A, typename B, typename C>
 void conv1_full_fft(A&& a, B&& b, C&& c) {
+    a.ensure_cpu_up_to_date();
+    b.ensure_cpu_up_to_date();
+
     detail::conv1_full_kernel(a.memory_start(), etl::size(a), b.memory_start(), etl::size(b), c.memory_start());
+
+    c.invalidate_gpu();
 }
 
 /*!
@@ -1010,7 +1035,12 @@ template <typename II, typename KK, typename CC>
 void conv2_full_fft(II&& a, KK&& b, CC&& c) {
     using T = value_t<II>;
 
+    a.ensure_cpu_up_to_date();
+    b.ensure_cpu_up_to_date();
+
     detail::conv2_full_kernel(a.memory_start(), etl::dim<0>(a), etl::dim<1>(a), b.memory_start(), etl::dim<0>(b), etl::dim<1>(b), c.memory_start(), T(0.0));
+
+    c.invalidate_gpu();
 }
 
 /*!
@@ -1025,6 +1055,9 @@ template <typename II, typename KK, typename CC>
 void conv2_full_fft_flipped(II&& a, KK&& b, CC&& c) {
     using T = value_t<II>;
 
+    a.ensure_cpu_up_to_date();
+    b.ensure_cpu_up_to_date();
+
     etl::dyn_matrix<T, 2> prepared_b(etl::dim<0>(b), etl::dim<1>(b));
 
     std::copy(b.memory_start(), b.memory_end(), prepared_b.memory_start());
@@ -1032,6 +1065,8 @@ void conv2_full_fft_flipped(II&& a, KK&& b, CC&& c) {
     prepared_b.fflip_inplace();
 
     detail::conv2_full_kernel(a.memory_start(), etl::dim<0>(a), etl::dim<1>(a), prepared_b.memory_start(), etl::dim<0>(b), etl::dim<1>(b), c.memory_start(), T(0.0));
+
+    c.invalidate_gpu();
 }
 
 /*!
@@ -1047,6 +1082,9 @@ void conv2_full_multi_fft(II&& input, KK&& kernel, CC&& conv) {
     const auto K = kernel.dim(0);
 
     if(K){
+        input.ensure_cpu_up_to_date();
+        kernel.ensure_cpu_up_to_date();
+
         const auto k_s = kernel.dim(1) * kernel.dim(2);
         const auto c_s = conv.dim(1) * conv.dim(2);
 
@@ -1126,6 +1164,8 @@ void conv2_full_multi_fft(II&& input, KK&& kernel, CC&& conv) {
         } else {
             batch_fun_k(0, K);
         }
+
+        conv.invalidate_gpu();
     }
 }
 
@@ -1138,6 +1178,8 @@ void conv2_full_multi_fft(II&& input, KK&& kernel, CC&& conv) {
 template <typename II, typename KK, typename CC>
 void conv2_full_multi_flipped_fft(II&& input, KK&& kernel, CC&& conv) {
     using T = value_t<II>;
+
+    kernel.ensure_cpu_up_to_date();
 
     etl::dyn_matrix<T, 3> prepared_k(kernel.dim(0), kernel.dim(1), kernel.dim(2));
 
@@ -1159,6 +1201,9 @@ void conv4_full_fft(II&& input, KK&& kernel, CC&& conv) {
     using T = value_t<II>;
 
     if (kernel.dim(1) > 0) {
+        input.ensure_cpu_up_to_date();
+        kernel.ensure_cpu_up_to_date();
+
         auto conv_i_inc = conv.dim(1) * conv.dim(2) * conv.dim(3);
         auto conv_c_inc = conv.dim(2) * conv.dim(3);
 
@@ -1258,6 +1303,8 @@ void conv4_full_fft(II&& input, KK&& kernel, CC&& conv) {
         } else {
             batch_fun_n(0, N);
         }
+
+        conv.invalidate_gpu();
     }
 }
 
@@ -1272,6 +1319,8 @@ void conv4_full_fft_flipped(II&& input, KK&& kernel, CC&& conv) {
     using T = value_t<II>;
 
     if (kernel.dim(1) > 0) {
+        kernel.ensure_cpu_up_to_date();
+
         etl::dyn_matrix<T, 4> prepared_k(kernel.dim(0), kernel.dim(1), kernel.dim(2), kernel.dim(3));
 
         std::copy(kernel.memory_start(), kernel.memory_end(), prepared_k.memory_start());
