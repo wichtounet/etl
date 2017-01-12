@@ -1695,6 +1695,9 @@ using safe_sse_vec = no_vec;
  */
 template <typename I, typename K, typename C>
 void conv2_valid_flipped(const I& input, const K& kernel, C&& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
+    cpp_assert(vec_enabled, "Cannot use vectorized mode");
+    cpp_assert(vectorize_impl, "Cannot use vectorized implementation");
+
     using T = value_t<I>;
 
     const auto k2 = etl::dim<1>(kernel);
@@ -1776,6 +1779,9 @@ void conv2_valid_flipped(const I& input, const K& kernel, C&& conv, size_t s1, s
  */
 template <typename I, typename K, typename C>
 void conv2_valid(const I& input, const K& kernel, C&& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
+    cpp_assert(vec_enabled, "Cannot use vectorized mode");
+    cpp_assert(vectorize_impl, "Cannot use vectorized implementation");
+
     using T = value_t<I>;
 
     const auto k2 = etl::dim<1>(kernel);
@@ -1858,6 +1864,9 @@ void conv2_valid(const I& input, const K& kernel, C&& conv, size_t s1, size_t s2
  */
 template <typename V, typename I, typename K, typename C>
 void conv1_valid(const I& input, const K& kernel, C&& conv, std::size_t first, std::size_t last) {
+    cpp_assert(vec_enabled, "Cannot use vectorized mode");
+    cpp_assert(vectorize_impl, "Cannot use vectorized implementation");
+
     using vec_type = V;
     using T        = value_t<I>;
 
@@ -2164,6 +2173,9 @@ void conv1_valid(const I& input, const K& kernel, C&& conv, std::size_t first, s
  */
 template <typename I, typename K, typename C>
 void conv1_valid(const I& input, const K& kernel, C&& conv, std::size_t first, std::size_t last) {
+    cpp_assert(vec_enabled, "Cannot use vectorized mode");
+    cpp_assert(vectorize_impl, "Cannot use vectorized implementation");
+
     conv1_valid<default_vec>(input, kernel, conv, first, last);
 }
 
@@ -2177,6 +2189,9 @@ void conv1_valid(const I& input, const K& kernel, C&& conv, std::size_t first, s
  */
 template <typename I, typename K, typename C>
 void conv1_full(const I& input, const K& kernel, C&& conv, std::size_t first, std::size_t last) {
+    cpp_assert(vec_enabled, "Cannot use vectorized mode");
+    cpp_assert(vectorize_impl, "Cannot use vectorized implementation");
+
     std::size_t left = size(kernel) - 1;
 
     auto* out      = conv.memory_start();
@@ -2200,6 +2215,9 @@ void conv1_full(const I& input, const K& kernel, C&& conv, std::size_t first, st
  */
 template <typename I, typename K, typename C>
 void conv1_same(const I& input, const K& kernel, C&& conv, std::size_t first, std::size_t last) {
+    cpp_assert(vec_enabled, "Cannot use vectorized mode");
+    cpp_assert(vectorize_impl, "Cannot use vectorized implementation");
+
     std::size_t left = (size(kernel) - 1) / 2;
 
     auto* out      = conv.memory_start();
@@ -2221,6 +2239,9 @@ void conv1_same(const I& input, const K& kernel, C&& conv, std::size_t first, st
  */
 template <typename V, typename I, typename K, typename C>
 void conv2_same_flipped(const I& input, const K& kernel, C&& conv) {
+    cpp_assert(vec_enabled, "Cannot use vectorized mode");
+    cpp_assert(vectorize_impl, "Cannot use vectorized implementation");
+
     using T = value_t<I>;
     using vec_type = V;
 
@@ -2304,6 +2325,9 @@ void conv2_same_flipped(const I& input, const K& kernel, C&& conv) {
  */
 template <typename I, typename K, typename C>
 void conv2_same_flipped(const I& input, const K& kernel, C&& conv) {
+    cpp_assert(vec_enabled, "Cannot use vectorized mode");
+    cpp_assert(vectorize_impl, "Cannot use vectorized implementation");
+
     conv2_same_flipped<default_vec>(input, kernel, conv);
 }
 
@@ -2315,6 +2339,9 @@ void conv2_same_flipped(const I& input, const K& kernel, C&& conv) {
  */
 template <typename V, typename I, typename K, typename C>
 void conv2_same(const I& input, const K& kernel, C&& conv) {
+    cpp_assert(vec_enabled, "Cannot use vectorized mode");
+    cpp_assert(vectorize_impl, "Cannot use vectorized implementation");
+
     using T = value_t<I>;
 
     const auto k1 = etl::dim<0>(kernel);
@@ -2335,6 +2362,9 @@ void conv2_same(const I& input, const K& kernel, C&& conv) {
  */
 template <typename I, typename K, typename C>
 void conv2_same(const I& input, const K& kernel, C&& conv) {
+    cpp_assert(vec_enabled, "Cannot use vectorized mode");
+    cpp_assert(vectorize_impl, "Cannot use vectorized implementation");
+
     conv2_same<default_vec>(input, kernel, conv);
 }
 
@@ -2347,6 +2377,9 @@ void conv2_same(const I& input, const K& kernel, C&& conv) {
  */
 template <typename I, typename K, typename C>
 void conv2_same_multi(const I& input, const K& kernel, C&& conv) {
+    cpp_assert(vec_enabled, "Cannot use vectorized mode");
+    cpp_assert(vectorize_impl, "Cannot use vectorized implementation");
+
     const auto Kn = etl::dim<0>(kernel);
 
     auto batch_fun_k = [&input,&kernel,&conv](const size_t first, const size_t last) {
@@ -2367,6 +2400,9 @@ void conv2_same_multi(const I& input, const K& kernel, C&& conv) {
  */
 template <typename I, typename K, typename C>
 void conv2_same_multi_flipped(const I& input, const K& kernel, C&& conv) {
+    cpp_assert(vec_enabled, "Cannot use vectorized mode");
+    cpp_assert(vectorize_impl, "Cannot use vectorized implementation");
+
     const auto Kn = etl::dim<0>(kernel);
 
     auto batch_fun_k = [&input,&kernel,&conv](const size_t first, const size_t last) {
@@ -2388,6 +2424,9 @@ void conv2_same_multi_flipped(const I& input, const K& kernel, C&& conv) {
  */
 template <typename V, typename I, typename K, typename C>
 ETL_STRONG_INLINE(void) conv2_full_flipped(const I& input, const K& kernel, C&& conv, value_t<I> beta) {
+    cpp_assert(vec_enabled, "Cannot use vectorized mode");
+    cpp_assert(vectorize_impl, "Cannot use vectorized implementation");
+
     using T = value_t<I>;
     using vec_type = V;
 
@@ -2481,6 +2520,9 @@ ETL_STRONG_INLINE(void) conv2_full_flipped(const I& input, const K& kernel, C&& 
  */
 template <typename V, typename I, typename K, typename C>
 void conv2_full(const I& input, const K& kernel, C&& conv, value_t<I> beta) {
+    cpp_assert(vec_enabled, "Cannot use vectorized mode");
+    cpp_assert(vectorize_impl, "Cannot use vectorized implementation");
+
     using T = value_t<I>;
 
     const auto k1 = etl::dim<0>(kernel);
@@ -2501,6 +2543,9 @@ void conv2_full(const I& input, const K& kernel, C&& conv, value_t<I> beta) {
  */
 template <typename I, typename K, typename C>
 void conv2_full(const I& input, const K& kernel, C&& conv) {
+    cpp_assert(vec_enabled, "Cannot use vectorized mode");
+    cpp_assert(vectorize_impl, "Cannot use vectorized implementation");
+
     using T = value_t<I>;
     conv2_full<default_vec>(input, kernel, conv, T(0.0));
 }
@@ -2513,6 +2558,9 @@ void conv2_full(const I& input, const K& kernel, C&& conv) {
  */
 template <typename I, typename K, typename C>
 void conv2_full_flipped(const I& input, const K& kernel, C&& conv) {
+    cpp_assert(vec_enabled, "Cannot use vectorized mode");
+    cpp_assert(vectorize_impl, "Cannot use vectorized implementation");
+
     using T = value_t<I>;
     conv2_full_flipped<default_vec>(input, kernel, conv, T(0));
 }
@@ -2526,6 +2574,9 @@ void conv2_full_flipped(const I& input, const K& kernel, C&& conv) {
  */
 template <typename I, typename K, typename C>
 void conv2_full_multi(const I& input, const K& kernel, C&& conv) {
+    cpp_assert(vec_enabled, "Cannot use vectorized mode");
+    cpp_assert(vectorize_impl, "Cannot use vectorized implementation");
+
     using T = value_t<I>;
 
     const auto KK = etl::dim<0>(kernel);
@@ -2547,6 +2598,9 @@ void conv2_full_multi(const I& input, const K& kernel, C&& conv) {
  */
 template <typename I, typename K, typename C>
 void conv2_full_multi_flipped(const I& input, const K& kernel, C&& conv) {
+    cpp_assert(vec_enabled, "Cannot use vectorized mode");
+    cpp_assert(vectorize_impl, "Cannot use vectorized implementation");
+
     using T = value_t<I>;
 
     const auto KK = etl::dim<0>(kernel);
@@ -2568,6 +2622,9 @@ void conv2_full_multi_flipped(const I& input, const K& kernel, C&& conv) {
  */
 template <typename V, typename I, typename KK, typename CC>
 void conv4_full(const I& input, const KK& kernel, CC&& conv) {
+    cpp_assert(vec_enabled, "Cannot use vectorized mode");
+    cpp_assert(vectorize_impl, "Cannot use vectorized implementation");
+
     using T = value_t<I>;
 
     const auto N = etl::dim<0>(input);
@@ -2634,6 +2691,9 @@ void conv4_full(const I& input, const KK& kernel, CC&& conv) {
  */
 template <typename I, typename K, typename C>
 void conv4_full(const I& input, const K& kernel, C&& conv) {
+    cpp_assert(vec_enabled, "Cannot use vectorized mode");
+    cpp_assert(vectorize_impl, "Cannot use vectorized implementation");
+
     if(avx_enabled && sse3_enabled){
         const auto k2 = etl::dim<3>(kernel);
 
@@ -2655,6 +2715,9 @@ void conv4_full(const I& input, const K& kernel, C&& conv) {
  */
 template <typename V, typename I, typename KK, typename CC>
 void conv4_full_flipped(const I& input, const KK& kernel, CC&& conv) {
+    cpp_assert(vec_enabled, "Cannot use vectorized mode");
+    cpp_assert(vectorize_impl, "Cannot use vectorized implementation");
+
     using T = value_t<I>;
 
     const auto N = etl::dim<0>(input);
@@ -2712,6 +2775,9 @@ void conv4_full_flipped(const I& input, const KK& kernel, CC&& conv) {
  */
 template <typename I, typename K, typename C>
 void conv4_full_flipped(const I& input, const K& kernel, C&& conv) {
+    cpp_assert(vec_enabled, "Cannot use vectorized mode");
+    cpp_assert(vectorize_impl, "Cannot use vectorized implementation");
+
     if(avx_enabled && sse3_enabled){
         const auto k2 = etl::dim<3>(kernel);
 
@@ -2737,6 +2803,9 @@ void conv4_full_flipped(const I& input, const K& kernel, C&& conv) {
  */
 template <typename I, typename KK, typename C>
 void conv2_valid_multi(const I& input, const KK& kernel, C&& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
+    cpp_assert(vec_enabled, "Cannot use vectorized mode");
+    cpp_assert(vectorize_impl, "Cannot use vectorized implementation");
+
     using T = value_t<I>;
 
     const auto K = etl::dim<0>(kernel);
@@ -2807,6 +2876,9 @@ void conv2_valid_multi(const I& input, const KK& kernel, C&& conv, size_t s1, si
  */
 template <typename I, typename KK, typename C>
 void conv2_valid_multi_flipped(const I& input, const KK& kernel, C&& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
+    cpp_assert(vec_enabled, "Cannot use vectorized mode");
+    cpp_assert(vectorize_impl, "Cannot use vectorized implementation");
+
     using T = value_t<I>;
 
     const auto K = etl::dim<0>(kernel);
@@ -2877,6 +2949,9 @@ void conv2_valid_multi_flipped(const I& input, const KK& kernel, C&& conv, size_
  */
 template <typename I, typename KK, typename C>
 void conv2_valid_multi_multi(const I& input, const KK& kernel, C&& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
+    cpp_assert(vec_enabled, "Cannot use vectorized mode");
+    cpp_assert(vectorize_impl, "Cannot use vectorized implementation");
+
     using T = value_t<I>;
 
     const auto k2 = etl::dim<2>(kernel);
@@ -2959,6 +3034,9 @@ void conv2_valid_multi_multi(const I& input, const KK& kernel, C&& conv, size_t 
  */
 template <typename I, typename KK, typename C>
 void conv2_valid_multi_multi_flipped(const I& input, const KK& kernel, C&& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
+    cpp_assert(vec_enabled, "Cannot use vectorized mode");
+    cpp_assert(vectorize_impl, "Cannot use vectorized implementation");
+
     using T = value_t<I>;
 
     const auto k2 = etl::dim<2>(kernel);
@@ -3039,6 +3117,9 @@ void conv2_valid_multi_multi_flipped(const I& input, const KK& kernel, C&& conv,
  */
 template <typename I, typename KK, typename CC>
 void conv4_valid(const I& input, const KK& kernel, CC&& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
+    cpp_assert(vec_enabled, "Cannot use vectorized mode");
+    cpp_assert(vectorize_impl, "Cannot use vectorized implementation");
+
     using T = value_t<I>;
 
     if(etl::dim<1>(kernel) > 0){
@@ -3138,6 +3219,9 @@ void conv4_valid(const I& input, const KK& kernel, CC&& conv, size_t s1, size_t 
  */
 template <typename I, typename KK, typename CC>
 void conv4_valid_flipped(const I& input, const KK& kernel, CC&& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
+    cpp_assert(vec_enabled, "Cannot use vectorized mode");
+    cpp_assert(vectorize_impl, "Cannot use vectorized implementation");
+
     using T = value_t<I>;
 
     if(etl::dim<0>(kernel) > 0){
@@ -3236,6 +3320,9 @@ void conv4_valid_flipped(const I& input, const KK& kernel, CC&& conv, size_t s1,
  */
 template <typename I, typename KK, typename CC>
 void conv4_valid_filter(const I& input, const KK& kernel, CC&& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
+    cpp_assert(vec_enabled, "Cannot use vectorized mode");
+    cpp_assert(vectorize_impl, "Cannot use vectorized implementation");
+
     using T = value_t<I>;
 
     if (input.dim(0) > 0) {
@@ -3359,6 +3446,9 @@ void conv4_valid_filter(const I& input, const KK& kernel, CC&& conv, size_t s1, 
  */
 template <typename I, typename KK, typename CC>
 void conv4_valid_filter_flipped(const I& input, const KK& kernel, CC&& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
+    cpp_assert(vec_enabled, "Cannot use vectorized mode");
+    cpp_assert(vectorize_impl, "Cannot use vectorized implementation");
+
     using T = value_t<I>;
 
     if (input.dim(0) > 0) {
