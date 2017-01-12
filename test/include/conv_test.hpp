@@ -454,6 +454,8 @@ CONV_FUNCTOR(cudnn_conv2_full_multi_flipped, c = selected_helper(etl::conv_multi
 #define CONV4_VALID_FILTER_FLIPPED_TEST_CASE_SECTION_CUDNN
 #define CONV4_FULL_TEST_CASE_SECTION_CUDNN
 #define CONV4_FULL_FLIPPED_TEST_CASE_SECTION_CUDNN
+#define CONV2_FULL_MULTI_TEST_CASE_SECTION_CUDNN
+#define CONV2_FULL_MULTI_FLIPPED_TEST_CASE_SECTION_CUDNN
 #endif
 
 #define CONV_TEST_CASE_DECL(name, description)                                 \
