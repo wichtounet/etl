@@ -32,10 +32,6 @@ protected:
 
     mutable std::shared_ptr<result_type> _c;           ///< The result reference
 
-private:
-    mutable gpu_handler<value_type> _gpu_memory_handler; ///< The GPU memory handler
-    gpu_memory_handler<value_type> _gpu;                 ///< The GPU memory handler
-
 public:
     temporary_expr() = default;
 
@@ -257,28 +253,36 @@ public:
      * \return a pointer to the GPU memory or nullptr if not allocated in GPU.
      */
     value_type* gpu_memory() const noexcept {
-        return _gpu.gpu_memory();
+        cpp_assert(evaluated, "The result has not been evaluated");
+        cpp_assert(allocated, "The result has not been allocated");
+        return result().gpu_memory();
     }
 
     /*!
      * \brief Evict the expression from GPU.
      */
     void gpu_evict() const noexcept {
-        _gpu.gpu_evict();
+        if(allocated && evaluated){
+            result().gpu_evict();
+        }
     }
 
     /*!
      * \brief Invalidates the CPU memory
      */
     void invalidate_cpu() const noexcept {
-        _gpu.invalidate_cpu();
+        if(allocated && evaluated){
+            result().invalidate_cpu();
+        }
     }
 
     /*!
      * \brief Invalidates the GPU memory
      */
     void invalidate_gpu() const noexcept {
-        _gpu.invalidate_gpu();
+        if(allocated && evaluated){
+            result().invalidate_gpu();
+        }
     }
 
     /*!
@@ -286,14 +290,18 @@ public:
      * is up to date (to undefined value).
      */
     void ensure_gpu_allocated() const {
-        _gpu.ensure_gpu_allocated(etl::size(result()));
+        if(allocated && evaluated){
+            result().ensure_gpu_allocated();
+        }
     }
 
     /*!
      * \brief Allocate memory on the GPU for the expression and copy the values into the GPU.
      */
     void ensure_gpu_up_to_date() const {
-        _gpu.ensure_gpu_up_to_date(memory_start(), etl::size(result()));
+        if(allocated && evaluated){
+            result().ensure_gpu_up_to_date();
+        }
     }
 
     /*!
@@ -301,7 +309,9 @@ public:
      * necessary.
      */
     void ensure_cpu_up_to_date() {
-        _gpu.ensure_cpu_up_to_date(memory_start(), etl::size(result()));
+        if(allocated && evaluated){
+            result().ensure_cpu_up_to_date();
+        }
     }
 
     /*!
@@ -309,14 +319,16 @@ public:
      * \param gpu_memory Pointer to CPU memory
      */
     void gpu_copy_from(const value_type* gpu_memory) const {
-        _gpu.gpu_copy_from(gpu_memory, etl::size(result()));
+        if(allocated && evaluated){
+            result().gpu_copy_from(gpu_memory);
+        }
     }
 
     /*!
      * \brief Return the GPU memory
      */
     gpu_memory_handler<value_type>& get_gpu_handler(){
-        return _gpu;
+        return result().get_gpu_handler();
     }
 };
 
