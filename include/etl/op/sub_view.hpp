@@ -388,9 +388,9 @@ public:
      * \param args The indices
      * \return a reference to the element at the given position.
      */
-    template <typename... S, cpp_enable_if((sizeof...(S) == n_dimensions && sizeof...(S) > 2))>
+    template <typename... S, cpp_enable_if((sizeof...(S) == n_dimensions))>
     ETL_STRONG_INLINE(const_return_type) operator()(S... args) const {
-        return sub_expr(i, static_cast<std::size_t>(args)...);
+        return memory[dyn_index(*this, args...)];
     }
 
     /*!
@@ -398,55 +398,9 @@ public:
      * \param args The indices
      * \return a reference to the element at the given position.
      */
-    template <typename... S, cpp_enable_if((sizeof...(S) == n_dimensions && sizeof...(S) > 2))>
+    template <typename... S, cpp_enable_if((sizeof...(S) == n_dimensions))>
     ETL_STRONG_INLINE(return_type) operator()(S... args) {
-        return sub_expr(i, static_cast<std::size_t>(args)...);
-    }
-
-    /*!
-     * \brief Access to the element at position (x)
-     * \param x The index of the first dimension
-     * \return A reference to the element at position x
-     */
-    template <cpp_enable_if_cst((n_dimensions == 1))>
-    value_type& operator()(size_t x) noexcept {
-        ensure_cpu_up_to_date();
-        invalidate_gpu();
-        return memory[x];
-    }
-
-    /*!
-     * \brief Access to the element at position (x)
-     * \param x The index of the first dimension
-     * \return A const reference to the element at position x
-     */
-    template <cpp_enable_if_cst((n_dimensions == 1))>
-    const value_type& operator()(size_t x) const noexcept {
-        ensure_cpu_up_to_date();
-        return memory[x];
-    }
-
-    /*!
-     * \brief Access to the element at position (x)
-     * \param x The index of the first dimension
-     * \return A reference to the element at position x
-     */
-    template <cpp_enable_if_cst((n_dimensions == 2))>
-    value_type& operator()(size_t x, size_t j) noexcept {
-        ensure_cpu_up_to_date();
-        invalidate_gpu();
-        return memory[x * etl::dim<2>(sub_expr) + j];
-    }
-
-    /*!
-     * \brief Access to the element at position (x)
-     * \param x The index of the first dimension
-     * \return A const reference to the element at position x
-     */
-    template <cpp_enable_if_cst((n_dimensions == 2))>
-    const value_type& operator()(size_t x, size_t j) const noexcept {
-        ensure_cpu_up_to_date();
-        return memory[x * etl::dim<2>(sub_expr) + j];
+        return memory[dyn_index(*this, args...)];
     }
 
     /*!
