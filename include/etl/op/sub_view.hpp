@@ -327,22 +327,24 @@ public:
     }
 
     ~sub_view(){
-        // Propagate the status on the parent
-        if(!this->cpu_up_to_date){
-            if(sub_expr.is_gpu_up_to_date()){
-                sub_expr.invalidate_cpu();
-            } else {
-                // If the GPU is not up to date, cannot invalidate the CPU too
-                ensure_cpu_up_to_date();
+        if (this->memory) {
+            // Propagate the status on the parent
+            if (!this->cpu_up_to_date) {
+                if (sub_expr.is_gpu_up_to_date()) {
+                    sub_expr.invalidate_cpu();
+                } else {
+                    // If the GPU is not up to date, cannot invalidate the CPU too
+                    ensure_cpu_up_to_date();
+                }
             }
-        }
 
-        if(!this->gpu_up_to_date){
-            if(sub_expr.is_cpu_up_to_date()){
-                sub_expr.invalidate_gpu();
-            } else {
-                // If the GPU is not up to date, cannot invalidate the CPU too
-                ensure_gpu_up_to_date();
+            if (!this->gpu_up_to_date) {
+                if (sub_expr.is_cpu_up_to_date()) {
+                    sub_expr.invalidate_gpu();
+                } else {
+                    // If the GPU is not up to date, cannot invalidate the CPU too
+                    ensure_gpu_up_to_date();
+                }
             }
         }
     }
