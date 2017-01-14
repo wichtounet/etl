@@ -288,6 +288,7 @@ public:
      */
     const_return_type operator[](std::size_t j) const {
         cpp_assert(memory, "Memory has not been initialized");
+        ensure_cpu_up_to_date();
         return memory[j];
     }
 
@@ -298,6 +299,8 @@ public:
      */
     return_type operator[](std::size_t j) {
         cpp_assert(memory, "Memory has not been initialized");
+        ensure_cpu_up_to_date();
+        invalidate_gpu();
         return memory[j];
     }
 
@@ -309,6 +312,7 @@ public:
      */
     value_type read_flat(std::size_t j) const noexcept {
         cpp_assert(memory, "Memory has not been initialized");
+        ensure_cpu_up_to_date();
         return memory[j];
     }
 
@@ -321,6 +325,8 @@ public:
     return_type operator()(S... args) noexcept {
         static_assert(cpp::all_convertible_to<std::size_t, S...>::value, "Invalid size types");
         cpp_assert(memory, "Memory has not been initialized");
+        ensure_cpu_up_to_date();
+        invalidate_gpu();
         return memory[etl::fast_index<this_type>(static_cast<std::size_t>(args)...)];
     }
 
@@ -333,6 +339,7 @@ public:
     const_return_type operator()(S... args) const noexcept {
         static_assert(cpp::all_convertible_to<std::size_t, S...>::value, "Invalid size types");
         cpp_assert(memory, "Memory has not been initialized");
+        ensure_cpu_up_to_date();
         return memory[etl::fast_index<this_type>(static_cast<std::size_t>(args)...)];
     }
 

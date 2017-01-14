@@ -313,6 +313,7 @@ public:
      * \return a reference to the element at the given index.
      */
     const_return_type operator[](std::size_t j) const {
+        ensure_cpu_up_to_date();
         return memory[j];
     }
 
@@ -322,6 +323,8 @@ public:
      * \return a reference to the element at the given index.
      */
     return_type operator[](std::size_t j) {
+        ensure_cpu_up_to_date();
+        invalidate_gpu();
         return memory[j];
     }
 
@@ -332,6 +335,7 @@ public:
      */
     template<cpp_enable_if_cst((D == 1))>
     const_return_type operator()(std::size_t j) const {
+        ensure_cpu_up_to_date();
         return memory[j];
     }
 
@@ -342,6 +346,8 @@ public:
      */
     template<cpp_enable_if_cst((D == 1))>
     return_type operator()(std::size_t j) {
+        ensure_cpu_up_to_date();
+        invalidate_gpu();
         return memory[j];
     }
 
@@ -352,6 +358,7 @@ public:
      * \return the value at the given index.
      */
     value_type read_flat(std::size_t j) const noexcept {
+        ensure_cpu_up_to_date();
         return memory[j];
     }
 
@@ -364,6 +371,7 @@ public:
      */
     template<typename... S>
     const_return_type operator()(size_t f1, size_t f2, S... sizes) const {
+        ensure_cpu_up_to_date();
         return memory[etl::dyn_index(*this, f1, f2, sizes...)];
     }
 
@@ -376,6 +384,8 @@ public:
      */
     template<typename... S>
     return_type operator()(size_t f1, size_t f2, S... sizes) {
+        ensure_cpu_up_to_date();
+        invalidate_gpu();
         return memory[etl::dyn_index(*this, f1, f2, sizes...)];
     }
 

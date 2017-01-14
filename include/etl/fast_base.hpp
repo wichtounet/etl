@@ -107,6 +107,7 @@ protected:
     template <typename... S>
     value_type& access(S... args) {
         ensure_cpu_up_to_date();
+        invalidate_gpu();
         return _data[index(args...)];
     }
 
@@ -304,6 +305,7 @@ public:
         cpp_assert(i < size(), "Out of bounds");
 
         ensure_cpu_up_to_date();
+        invalidate_gpu();
 
         return _data[i];
     }

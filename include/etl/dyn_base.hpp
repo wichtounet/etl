@@ -384,6 +384,7 @@ struct dense_dyn_base : dyn_base<T, D> {
         cpp_assert(i < dim(0), "Out of bounds");
 
         ensure_cpu_up_to_date();
+        invalidate_gpu();
 
         return _memory[i];
     }
@@ -429,6 +430,7 @@ struct dense_dyn_base : dyn_base<T, D> {
                                  cpp::all_convertible_to<std::size_t, S...>::value)>
     value_type& operator()(S... sizes) noexcept(assert_nothrow) {
         ensure_cpu_up_to_date();
+        invalidate_gpu();
         return _memory[etl::dyn_index(as_derived(), sizes...)];
     }
 
@@ -454,6 +456,7 @@ struct dense_dyn_base : dyn_base<T, D> {
         cpp_assert(i < _size, "Out of bounds");
 
         ensure_cpu_up_to_date();
+        invalidate_gpu();
 
         return _memory[i];
     }

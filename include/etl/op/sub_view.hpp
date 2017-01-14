@@ -353,6 +353,7 @@ public:
      * \return a reference to the element at the given index.
      */
     const_return_type operator[](std::size_t j) const {
+        ensure_cpu_up_to_date();
         return memory[j];
     }
 
@@ -362,6 +363,8 @@ public:
      * \return a reference to the element at the given index.
      */
     return_type operator[](std::size_t j) {
+        ensure_cpu_up_to_date();
+        invalidate_gpu();
         return memory[j];
     }
 
@@ -372,6 +375,7 @@ public:
      * \return the value at the given index.
      */
     value_type read_flat(std::size_t j) const noexcept {
+        ensure_cpu_up_to_date();
         return memory[j];
     }
 
@@ -404,6 +408,8 @@ public:
      */
     template <cpp_enable_if_cst((n_dimensions == 1))>
     value_type& operator()(size_t x) noexcept {
+        ensure_cpu_up_to_date();
+        invalidate_gpu();
         return memory[x];
     }
 
@@ -414,6 +420,7 @@ public:
      */
     template <cpp_enable_if_cst((n_dimensions == 1))>
     const value_type& operator()(size_t x) const noexcept {
+        ensure_cpu_up_to_date();
         return memory[x];
     }
 
@@ -424,6 +431,8 @@ public:
      */
     template <cpp_enable_if_cst((n_dimensions == 2))>
     value_type& operator()(size_t x, size_t j) noexcept {
+        ensure_cpu_up_to_date();
+        invalidate_gpu();
         return memory[x * etl::dim<2>(sub_expr) + j];
     }
 
@@ -434,6 +443,7 @@ public:
      */
     template <cpp_enable_if_cst((n_dimensions == 2))>
     const value_type& operator()(size_t x, size_t j) const noexcept {
+        ensure_cpu_up_to_date();
         return memory[x * etl::dim<2>(sub_expr) + j];
     }
 
