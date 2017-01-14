@@ -317,13 +317,13 @@ public:
     sub_view(sub_type sub_expr, std::size_t i) : sub_expr(sub_expr), i(i), sub_size(subsize(sub_expr)) {
         if(!decay_traits<sub_type>::needs_evaluator_visitor){
             this->memory = sub_expr.memory_start() + i * sub_size;
+
+            // A sub view inherits the CPU/GPU from parent
+            this->cpu_up_to_date = sub_expr.is_cpu_up_to_date();
+            this->gpu_up_to_date = sub_expr.is_gpu_up_to_date();
         } else {
             this->memory = nullptr;
         }
-
-        // A sub view inherits the CPU/GPU from parent
-        this->cpu_up_to_date = sub_expr.is_cpu_up_to_date();
-        this->gpu_up_to_date = sub_expr.is_gpu_up_to_date();
     }
 
     ~sub_view(){
@@ -604,6 +604,10 @@ public:
         // It's only interesting if the sub expression is not direct
         if(decay_traits<sub_type>::needs_evaluator_visitor){
             this->memory = sub_expr.memory_start() + i * sub_size;
+
+            // A sub view inherits the CPU/GPU from parent
+            this->cpu_up_to_date = sub_expr.is_cpu_up_to_date();
+            this->gpu_up_to_date = sub_expr.is_gpu_up_to_date();
         }
     }
 
