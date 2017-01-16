@@ -150,6 +150,7 @@ size_t dyn_index(const T& expression, size_t i) noexcept(assert_nothrow) {
     static_assert(decay_traits<T>::dimensions() == 1, "Invalid number of dimensions for dyn_index");
 
     cpp_assert(i < decay_traits<T>::dim(expression, 0), "Out of bounds");
+    cpp_unused(expression);
 
     return i;
 }
@@ -265,6 +266,7 @@ size_t dyn_index(const T& expression, size_t i) noexcept(assert_nothrow) {
     static_assert(decay_traits<T>::dimensions() == 1, "Invalid number of dimensions for dyn_index");
 
     cpp_assert(i < decay_traits<T>::dim(expression, 0), "Out of bounds");
+    cpp_unused(expression);
 
     return i;
 }
