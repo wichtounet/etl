@@ -81,8 +81,14 @@ private:
     gpu_memory_handler<value_type> _gpu;                 ///< The GPU memory handler
 
 public:
+    /*!
+     * \brief Construct a new base_temporary_expr
+     */
     base_temporary_expr() = default;
 
+    /*!
+     * \brief Copy construct a new base_temporary_expr
+     */
     base_temporary_expr(const base_temporary_expr& expr) = default;
 
     /*!
@@ -146,16 +152,25 @@ protected:
         allocated = true;
     }
 
+    /*!
+     * \brief Allocate the temporary
+     */
     template <cpp_enable_if_cst(all_fast<derived_t>::value)>
     result_type* allocate() const {
         return new result_type;
     }
 
+    /*!
+     * \brief Allocate the dynamic temporary
+     */
     template <std::size_t... I>
     result_type* dyn_allocate(std::index_sequence<I...> /*seq*/) const {
         return new result_type(decay_traits<derived_t>::dim(as_derived(), I)...);
     }
 
+    /*!
+     * \brief Allocate the temporary
+     */
     template <cpp_disable_if_cst(all_fast<derived_t>::value)>
     result_type* allocate() const {
         return dyn_allocate(std::make_index_sequence<decay_traits<derived_t>::dimensions()>());
