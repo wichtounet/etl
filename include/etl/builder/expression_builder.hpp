@@ -1262,6 +1262,12 @@ value_t<A> norm(const A& a) {
     return detail::norm_impl::apply(a);
 }
 
+// TODO: Ideally we would like to be able to use a.dot(b) and
+// a.cross(b). Unfortunately, this would require one of these options:
+// * A new CRTP class, increasing the compilation time overhead
+// * Adding the dot template function in each expression
+// Note: Need Unified Call Syntax :(
+
 /*!
  * \brief Returns the dot product of the two given expressions.
  * \param a The left expression
