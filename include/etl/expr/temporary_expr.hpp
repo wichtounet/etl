@@ -765,9 +765,9 @@ struct temporary_binary_expr_state final : temporary_expr_bin<temporary_binary_e
  */
 template <typename T, typename A, typename Op>
 struct etl_traits<etl::temporary_unary_expr<T, A, Op>> {
-    using expr_t = etl::temporary_unary_expr<T, A, Op>; ///< The expression type
-    using a_t    = std::decay_t<A>;                     ///< The decayed left expression type
-    using value_type = T;
+    using expr_t     = etl::temporary_unary_expr<T, A, Op>; ///< The expression type
+    using a_t        = std::decay_t<A>;                     ///< The decayed left expression type
+    using value_type = T;                                   ///< The value type
 
     static constexpr bool is_etl                  = true;                           ///< Indicates if the type is an ETL type
     static constexpr bool is_transformer          = false;                          ///< Indicates if the type is a transformer
@@ -781,9 +781,9 @@ struct etl_traits<etl::temporary_unary_expr<T, A, Op>> {
     static constexpr bool is_generator            = false;                          ///< Indicates if the expression is a generated
     static constexpr bool needs_evaluator_visitor = true;                           ///< Indicaes if the expression needs an evaluator visitor
     static constexpr bool is_padded               = false;                          ///< Indicates if the expression is padded
-    static constexpr bool is_aligned               = true;                          ///< Indicates if the expression is padded
+    static constexpr bool is_aligned              = true;                           ///< Indicates if the expression is padded
     static constexpr order storage_order          = etl_traits<a_t>::storage_order; ///< The expression storage order
-    static constexpr bool is_gpu                  = Op::is_gpu; ///< Indicate if the expression is computed on GPU
+    static constexpr bool is_gpu                  = Op::is_gpu;                     ///< Indicate if the expression is computed on GPU
 
     /*!
      * \brief Indicates if the expression is vectorizable using the
@@ -844,10 +844,10 @@ struct etl_traits<etl::temporary_unary_expr<T, A, Op>> {
  */
 template <typename T, typename A, typename B, typename Op>
 struct etl_traits<etl::temporary_binary_expr<T, A, B, Op>> {
-    using expr_t = etl::temporary_binary_expr<T, A, B, Op>; ///< The expression type
-    using a_t    = std::decay_t<A>;                         ///< The decayed left expression type
-    using b_t    = std::decay_t<B>;                         ///< The decayed right expression type
-    using value_type = T;
+    using expr_t     = etl::temporary_binary_expr<T, A, B, Op>; ///< The expression type
+    using a_t        = std::decay_t<A>;                         ///< The decayed left expression type
+    using b_t        = std::decay_t<B>;                         ///< The decayed right expression type
+    using value_type = T;                                       ///< The value type
 
     static constexpr bool is_etl                  = true;                                                                                            ///< Indicates if the type is an ETL type
     static constexpr bool is_transformer          = false;                                                                                           ///< Indicates if the type is a transformer
@@ -856,14 +856,14 @@ struct etl_traits<etl::temporary_binary_expr<T, A, B, Op>> {
     static constexpr bool is_fast                 = etl_traits<a_t>::is_fast && etl_traits<b_t>::is_fast;                                            ///< Indicates if the expression is fast
     static constexpr bool is_direct               = true;                                                                                            ///< Indicates if the expression has direct memory access
     static constexpr bool is_linear               = true;                                                                                            ///< Indicates if the expression is linear
-    static constexpr bool is_thread_safe          = true;                           ///< Indicates if the expression is thread safe
+    static constexpr bool is_thread_safe          = true;                                                                                            ///< Indicates if the expression is thread safe
     static constexpr bool is_value                = false;                                                                                           ///< Indicates if the expression is of value type
     static constexpr bool is_generator            = false;                                                                                           ///< Indicates if the expression is a generated
     static constexpr bool needs_evaluator_visitor = true;                                                                                            ///< Indicaes if the expression needs an evaluator visitor
-    static constexpr bool is_padded               = false;                          ///< Indicates if the expression is padded
-    static constexpr bool is_aligned               = true;                          ///< Indicates if the expression is padded
+    static constexpr bool is_padded               = false;                                                                                           ///< Indicates if the expression is padded
+    static constexpr bool is_aligned              = true;                                                                                            ///< Indicates if the expression is padded
     static constexpr order storage_order          = etl_traits<a_t>::is_generator ? etl_traits<b_t>::storage_order : etl_traits<a_t>::storage_order; ///< The expression storage order
-    static constexpr bool is_gpu                  = Op::is_gpu; ///< Indicate if the expression is computed on GPU
+    static constexpr bool is_gpu                  = Op::is_gpu;                                                                                      ///< Indicate if the expression is computed on GPU
 
     /*!
      * \brief Indicates if the expression is vectorizable using the
@@ -924,15 +924,15 @@ struct etl_traits<etl::temporary_binary_expr<T, A, B, Op>> {
  */
 template <typename T, typename A, typename Op>
 struct etl_traits<etl::temporary_unary_expr_state<T, A, Op>> {
-    using expr_t = etl::temporary_unary_expr_state<T, A, Op>; ///< The type of expression
-    using a_t    = std::decay_t<A>;                           ///< The decayed left expression type
-    using value_type = T;
+    using expr_t     = etl::temporary_unary_expr_state<T, A, Op>; ///< The type of expression
+    using a_t        = std::decay_t<A>;                           ///< The decayed left expression type
+    using value_type = T;                                         ///< The value type
 
     static constexpr bool is_etl                  = true;                           ///< Indicates if the type is an ETL type
     static constexpr bool is_transformer          = false;                          ///< Indicates if the type is a transformer
     static constexpr bool is_view                 = false;                          ///< Indicates if the type is a view
     static constexpr bool is_magic_view           = false;                          ///< Indicates if the type is a magic view
-    static constexpr bool is_fast                 = false;       ///< Indicates if the expression is fast
+    static constexpr bool is_fast                 = false;                          ///< Indicates if the expression is fast
     static constexpr bool is_linear               = true;                           ///< Indicates if the expression is linear
     static constexpr bool is_thread_safe          = true;                           ///< Indicates if the expression is thread safe
     static constexpr bool is_value                = false;                          ///< Indicates if the expression is of value type
@@ -940,9 +940,9 @@ struct etl_traits<etl::temporary_unary_expr_state<T, A, Op>> {
     static constexpr bool is_generator            = false;                          ///< Indicates if the expression is a generated
     static constexpr bool needs_evaluator_visitor = true;                           ///< Indicaes if the expression needs an evaluator visitor
     static constexpr bool is_padded               = false;                          ///< Indicates if the expression is padded
-    static constexpr bool is_aligned               = true;                          ///< Indicates if the expression is padded
+    static constexpr bool is_aligned              = true;                           ///< Indicates if the expression is padded
     static constexpr order storage_order          = etl_traits<a_t>::storage_order; ///< The expression storage order
-    static constexpr bool is_gpu                  = Op::is_gpu; ///< Indicate if the expression is computed on GPU
+    static constexpr bool is_gpu                  = Op::is_gpu;                     ///< Indicate if the expression is computed on GPU
 
     /*!
      * \brief Indicates if the expression is vectorizable using the
@@ -985,26 +985,26 @@ struct etl_traits<etl::temporary_unary_expr_state<T, A, Op>> {
  */
 template <typename T, typename A, typename B, typename Op>
 struct etl_traits<etl::temporary_binary_expr_state<T, A, B, Op>> {
-    using expr_t = etl::temporary_binary_expr_state<T, A, B, Op>; ///< The type of expression
-    using a_t    = std::decay_t<A>;                               ///< The decayed left expression type
-    using b_t    = std::decay_t<B>;                               ///< The decayed right expression type
-    using value_type = T;
+    using expr_t     = etl::temporary_binary_expr_state<T, A, B, Op>; ///< The type of expression
+    using a_t        = std::decay_t<A>;                               ///< The decayed left expression type
+    using b_t        = std::decay_t<B>;                               ///< The decayed right expression type
+    using value_type = T;                                             ///< The value type
 
     static constexpr bool is_etl                  = true;                                                                                            ///< Indicates if the type is an ETL type
     static constexpr bool is_transformer          = false;                                                                                           ///< Indicates if the type is a transformer
     static constexpr bool is_view                 = false;                                                                                           ///< Indicates if the type is a view
     static constexpr bool is_magic_view           = false;                                                                                           ///< Indicates if the type is a magic view
-    static constexpr bool is_fast                 = false;                                            ///< Indicates if the expression is fast
+    static constexpr bool is_fast                 = false;                                                                                           ///< Indicates if the expression is fast
     static constexpr bool is_direct               = true;                                                                                            ///< Indicates if the expression has direct memory access
     static constexpr bool is_linear               = true;                                                                                            ///< Indicates if the expression is linear
-    static constexpr bool is_thread_safe          = true;                           ///< Indicates if the expression is thread safe
+    static constexpr bool is_thread_safe          = true;                                                                                            ///< Indicates if the expression is thread safe
     static constexpr bool is_value                = false;                                                                                           ///< Indicates if the expression is of value type
     static constexpr bool is_generator            = false;                                                                                           ///< Indicates if the expression is a generated
     static constexpr bool needs_evaluator_visitor = true;                                                                                            ///< Indicaes if the expression needs an evaluator visitor
-    static constexpr bool is_padded               = false;                          ///< Indicates if the expression is padded
-    static constexpr bool is_aligned               = true;                          ///< Indicates if the expression is padded
+    static constexpr bool is_padded               = false;                                                                                           ///< Indicates if the expression is padded
+    static constexpr bool is_aligned              = true;                                                                                            ///< Indicates if the expression is padded
     static constexpr order storage_order          = etl_traits<a_t>::is_generator ? etl_traits<b_t>::storage_order : etl_traits<a_t>::storage_order; ///< The expression storage order
-    static constexpr bool is_gpu                  = Op::is_gpu; ///< Indicate if the expression is computed on GPU
+    static constexpr bool is_gpu                  = Op::is_gpu;                                                                                      ///< Indicate if the expression is computed on GPU
 
     /*!
      * \brief Indicates if the expression is vectorizable using the

@@ -46,17 +46,29 @@ namespace cuda {
  */
 template <typename T>
 struct cuda_memory {
-    T* memory;
+    T* memory; ///< Pointer the allocated GPU memory
 
+    /*!
+     * \brief Create a new empty cuda_memory
+     */
     cuda_memory() noexcept : memory(nullptr) {}
+
+    /*!
+     * \brief Create a new cuda_memory over existing memory
+     */
     cuda_memory(T* memory) noexcept : memory(memory) {}
 
-    //Delete copy operations
+    /*!
+     * \brief Copy construct a new cuda_memory
+     */
     cuda_memory(const cuda_memory& rhs) noexcept : memory(nullptr) {
         cpp_unused(rhs);
         cpp_assert(!rhs.is_set(), "copy of cuda_memory is only possible when not allocated");
     }
 
+    /*!
+     * \brief Copy assign from another cuda_memory
+     */
     cuda_memory& operator=(const cuda_memory& rhs) noexcept {
         if (this != &rhs) {
             cpp_assert(!is_set(), "copy of cuda_memory is only possible when not allocated");
@@ -66,10 +78,18 @@ struct cuda_memory {
         return *this;
     }
 
+    /*!
+     * \brief Move construct from another cuda_memory
+     * \param rhs The cuda_memory from which to move
+     */
     cuda_memory(cuda_memory&& rhs) noexcept : memory(rhs.memory) {
         rhs.memory = nullptr;
     }
 
+    /*!
+     * \brief Move assign from another cuda_memory
+     * \param rhs The cuda_memory from which to move
+     */
     cuda_memory& operator=(cuda_memory&& rhs) noexcept {
         if (this != &rhs) {
             free_memory();
@@ -81,6 +101,20 @@ struct cuda_memory {
         return *this;
     }
 
+    /*!
+     * \brief Destruct the cuda_memory.
+     *
+     * This will free any existing memory
+     */
+    ~cuda_memory() {
+        free_memory();
+    }
+
+    /*!
+     * \brief Assign a new GPU pointer.
+     *
+     * This will free any existing GPU memory.
+     */
     cuda_memory& operator=(T* new_memory) {
         free_memory();
 
@@ -89,24 +123,35 @@ struct cuda_memory {
         return *this;
     }
 
+    /*!
+     * \brief Returns a pointer to the allocated GPU memory
+     */
     T* get() const {
         return memory;
     }
 
+    /*!
+     * \brief Indicates if the memory is set.
+     * \return true if the memory is set, false otherwise
+     */
     bool is_set() const {
         return memory;
     }
 
+    /*!
+     * \brief Reset the cuda_memory.
+     *
+     * This will free any existing GPU memory.
+     */
     void reset() {
         free_memory();
         memory = nullptr;
     }
 
-    ~cuda_memory() {
-        free_memory();
-    }
-
 private:
+    /*!
+     * \brief Release any existing allocated memory
+     */
     void free_memory() {
         if (memory) {
             //Note: the const_cast is only here to allow compilation
@@ -115,6 +160,11 @@ private:
     }
 };
 
+/*!
+ * \brief Allocate some GPU memory of the given size and type
+ * \param size The number of elements to allocate
+ * \tparam E The type of the elements
+ */
 template <typename E>
 auto cuda_allocate_only(std::size_t size) -> cuda_memory<E> {
     E* memory;
@@ -130,6 +180,11 @@ auto cuda_allocate_only(std::size_t size) -> cuda_memory<E> {
     return {memory};
 }
 
+/*!
+ * \brief Allocate some GPU memory of the same size and type as the given ETL expression
+ * \param expr The expression from which to allocate
+ * \param copy Boolean indicating if a copy of the CPU memory is performed.
+ */
 template <typename E>
 auto cuda_allocate(const E& expr, bool copy = false) -> cuda_memory<value_t<E>> {
     value_t<E>* memory;
@@ -149,11 +204,22 @@ auto cuda_allocate(const E& expr, bool copy = false) -> cuda_memory<value_t<E>> 
     return {memory};
 }
 
+/*!
+ * \brief Allocate some GPU memory of the same size and type as the given ETL expression and copy from the expression
+ * \param expr The expression from which to allocate and copy
+ */
 template <typename E>
 auto cuda_allocate_copy(const E& expr) -> cuda_memory<value_t<E>> {
     return cuda_allocate(expr, true);
 }
 
+/*!
+ * \brief Allocate some GPU memory of the given size and type, and optionally copy from CPU into the newly allocated GPU memory
+ * \param ptr Pointer to the corresponding CPU memory
+ * \param n The number of elements to allocate
+ * \param copy Boolean indicating if a copy of the CPU memory is performed.
+ * \tparam E The type of the elements
+ */
 template <typename E>
 auto cuda_allocate(E* ptr, std::size_t n, bool copy = false) -> cuda_memory<E> {
     E* memory;
@@ -173,6 +239,12 @@ auto cuda_allocate(E* ptr, std::size_t n, bool copy = false) -> cuda_memory<E> {
     return {memory};
 }
 
+/*!
+ * \brief Allocate some GPU memory of the given size and type, and copy from CPU into the newly allocated GPU memory
+ * \param ptr Pointer to the corresponding CPU memory
+ * \param n The number of elements to allocate
+ * \tparam E The type of the elements
+ */
 template <typename T>
 auto cuda_allocate_copy(T* ptr, std::size_t n) -> cuda_memory<T> {
     return cuda_allocate(ptr, n, true);
