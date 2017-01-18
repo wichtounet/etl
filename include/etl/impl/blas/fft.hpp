@@ -21,6 +21,12 @@ namespace blas {
 
 namespace mkl_detail {
 
+/*!
+ * \brief FFT kernel, single precision
+ * \param in The input vector
+ * \param s The size of the vector
+ * \param out The output vector
+ */
 inline void fft_kernel(const std::complex<float>* in, std::size_t s, std::complex<float>* out) {
     DFTI_DESCRIPTOR_HANDLE descriptor;
 
@@ -33,6 +39,12 @@ inline void fft_kernel(const std::complex<float>* in, std::size_t s, std::comple
     DftiFreeDescriptor(&descriptor);                                    //Free the descriptor
 }
 
+/*!
+ * \brief FFT kernel, double precision
+ * \param in The input vector
+ * \param s The size of the vector
+ * \param out The output vector
+ */
 inline void fft_kernel(const std::complex<double>* in, std::size_t s, std::complex<double>* out) {
     DFTI_DESCRIPTOR_HANDLE descriptor;
 
@@ -45,6 +57,13 @@ inline void fft_kernel(const std::complex<double>* in, std::size_t s, std::compl
     DftiFreeDescriptor(&descriptor);                                    //Free the descriptor
 }
 
+/*!
+ * \brief Many FFT kernel, single precision
+ * \param in The input vectors
+ * \param batch The number of batches
+ * \param n The size of the inner vector
+ * \param out The output vectors
+ */
 inline void fft_many_kernel(const std::complex<float>* in, std::size_t batch, std::size_t n, std::complex<float>* out) {
     DFTI_DESCRIPTOR_HANDLE descriptor;
 
@@ -60,6 +79,13 @@ inline void fft_many_kernel(const std::complex<float>* in, std::size_t batch, st
     DftiFreeDescriptor(&descriptor);                                    //Free the descriptor
 }
 
+/*!
+ * \brief Many FFT kernel, double precision
+ * \param in The input vectors
+ * \param batch The number of batches
+ * \param n The size of the inner vector
+ * \param out The output vectors
+ */
 inline void fft_many_kernel(const std::complex<double>* in, std::size_t batch, std::size_t n, std::complex<double>* out) {
     DFTI_DESCRIPTOR_HANDLE descriptor;
 
@@ -75,6 +101,11 @@ inline void fft_many_kernel(const std::complex<double>* in, std::size_t batch, s
     DftiFreeDescriptor(&descriptor);                                    //Free the descriptor
 }
 
+/*!
+ * \brief Inplace FFT kernel, single precision
+ * \param in The input vector
+ * \param s The size of the vector
+ */
 inline void inplace_fft_kernel(std::complex<float>* in, std::size_t s) {
     DFTI_DESCRIPTOR_HANDLE descriptor;
 
@@ -86,6 +117,11 @@ inline void inplace_fft_kernel(std::complex<float>* in, std::size_t s) {
     DftiFreeDescriptor(&descriptor);                                    //Free the descriptor
 }
 
+/*!
+ * \brief Inplace FFT kernel, double precision
+ * \param in The input vector
+ * \param s The size of the vector
+ */
 inline void inplace_fft_kernel(std::complex<double>* in, std::size_t s) {
     DFTI_DESCRIPTOR_HANDLE descriptor;
 
@@ -97,6 +133,12 @@ inline void inplace_fft_kernel(std::complex<double>* in, std::size_t s) {
     DftiFreeDescriptor(&descriptor);                                    //Free the descriptor
 }
 
+/*!
+ * \brief Inverse FFT kernel, single precision
+ * \param in The input vector
+ * \param s The size of the vector
+ * \param out The output vector
+ */
 inline void ifft_kernel(const std::complex<float>* in, std::size_t s, std::complex<float>* out) {
     DFTI_DESCRIPTOR_HANDLE descriptor;
 
@@ -110,6 +152,12 @@ inline void ifft_kernel(const std::complex<float>* in, std::size_t s, std::compl
     DftiFreeDescriptor(&descriptor);                                    //Free the descriptor
 }
 
+/*!
+ * \brief Inverse FFT kernel, double precision
+ * \param in The input vector
+ * \param s The size of the vector
+ * \param out The output vector
+ */
 inline void ifft_kernel(const std::complex<double>* in, std::size_t s, std::complex<double>* out) {
     DFTI_DESCRIPTOR_HANDLE descriptor;
 
@@ -123,6 +171,13 @@ inline void ifft_kernel(const std::complex<double>* in, std::size_t s, std::comp
     DftiFreeDescriptor(&descriptor);                                    //Free the descriptor
 }
 
+/*!
+ * \brief Many Inverse FFT kernel, single precision
+ * \param in The input vectors
+ * \param batch The number of batches
+ * \param s The size of the vector
+ * \param out The output vectors
+ */
 inline void ifft_many_kernel(const std::complex<float>* in, std::size_t batch, std::size_t s, std::complex<float>* out) {
     DFTI_DESCRIPTOR_HANDLE descriptor;
 
@@ -139,6 +194,13 @@ inline void ifft_many_kernel(const std::complex<float>* in, std::size_t batch, s
     DftiFreeDescriptor(&descriptor);                                    //Free the descriptor
 }
 
+/*!
+ * \brief Many Inverse FFT kernel, double precision
+ * \param in The input vectors
+ * \param batch The number of batches
+ * \param s The size of the vector
+ * \param out The output vectors
+ */
 inline void ifft_many_kernel(const std::complex<double>* in, std::size_t batch, std::size_t s, std::complex<double>* out) {
     DFTI_DESCRIPTOR_HANDLE descriptor;
 
@@ -155,6 +217,11 @@ inline void ifft_many_kernel(const std::complex<double>* in, std::size_t batch, 
     DftiFreeDescriptor(&descriptor);                                    //Free the descriptor
 }
 
+/*!
+ * \brief Inplace Inverse FFT kernel, single precision
+ * \param in The input vector
+ * \param s The size of the vector
+ */
 inline void inplace_ifft_kernel(std::complex<float>* in, std::size_t s) {
     DFTI_DESCRIPTOR_HANDLE descriptor;
 
@@ -167,6 +234,11 @@ inline void inplace_ifft_kernel(std::complex<float>* in, std::size_t s) {
     DftiFreeDescriptor(&descriptor);                                    //Free the descriptor
 }
 
+/*!
+ * \brief Inplace Inverse FFT kernel, double precision
+ * \param in The input vector
+ * \param s The size of the vector
+ */
 inline void inplace_ifft_kernel(std::complex<double>* in, std::size_t s) {
     DFTI_DESCRIPTOR_HANDLE descriptor;
 
@@ -179,6 +251,13 @@ inline void inplace_ifft_kernel(std::complex<double>* in, std::size_t s) {
     DftiFreeDescriptor(&descriptor);                                    //Free the descriptor
 }
 
+/*!
+ * \brief 2D FFT kernel, single precision
+ * \param in The input matrix
+ * \param d1 The first dimension of the matrix
+ * \param d2 The second dimension of the matrix
+ * \param out The output matrix
+ */
 inline void fft2_kernel(const std::complex<float>* in, std::size_t d1, std::size_t d2, std::complex<float>* out) {
     DFTI_DESCRIPTOR_HANDLE descriptor;
 
@@ -193,6 +272,13 @@ inline void fft2_kernel(const std::complex<float>* in, std::size_t d1, std::size
     DftiFreeDescriptor(&descriptor);                                      //Free the descriptor
 }
 
+/*!
+ * \brief 2D FFT kernel, double precision
+ * \param in The input matrix
+ * \param d1 The first dimension of the matrix
+ * \param d2 The second dimension of the matrix
+ * \param out The output matrix
+ */
 inline void fft2_kernel(const std::complex<double>* in, std::size_t d1, std::size_t d2, std::complex<double>* out) {
     DFTI_DESCRIPTOR_HANDLE descriptor;
 
@@ -207,14 +293,36 @@ inline void fft2_kernel(const std::complex<double>* in, std::size_t d1, std::siz
     DftiFreeDescriptor(&descriptor);                                      //Free the descriptor
 }
 
+/*!
+ * \brief 2D FFT kernel, single precision
+ * \param in The input matrix
+ * \param d1 The first dimension of the matrix
+ * \param d2 The second dimension of the matrix
+ * \param out The output matrix
+ */
 inline void fft2_kernel(const etl::complex<float>* in, std::size_t d1, std::size_t d2, etl::complex<float>* out) {
     fft2_kernel(reinterpret_cast<const std::complex<float>*>(in), d1, d2, reinterpret_cast<std::complex<float>*>(out));
 }
 
+/*!
+ * \brief 2D FFT kernel, single precision
+ * \param in The input matrix
+ * \param d1 The first dimension of the matrix
+ * \param d2 The second dimension of the matrix
+ * \param out The output matrix
+ */
 inline void fft2_kernel(const etl::complex<double>* in, std::size_t d1, std::size_t d2, etl::complex<double>* out) {
     fft2_kernel(reinterpret_cast<const std::complex<double>*>(in), d1, d2, reinterpret_cast<std::complex<double>*>(out));
 }
 
+/*!
+ * \brief Many 2D FFT kernel, single precision
+ * \param in The input matrix
+ * \param batch The number of batches
+ * \param d1 The first dimension of the matrix
+ * \param d2 The second dimension of the matrix
+ * \param out The output matrix
+ */
 inline void fft2_many_kernel(const std::complex<float>* in, std::size_t batch, std::size_t d1, std::size_t d2, std::complex<float>* out) {
     DFTI_DESCRIPTOR_HANDLE descriptor;
 
@@ -232,6 +340,14 @@ inline void fft2_many_kernel(const std::complex<float>* in, std::size_t batch, s
     DftiFreeDescriptor(&descriptor);                                      //Free the descriptor
 }
 
+/*!
+ * \brief Many 2D FFT kernel, double precision
+ * \param in The input matrix
+ * \param batch The number of batches
+ * \param d1 The first dimension of the matrix
+ * \param d2 The second dimension of the matrix
+ * \param out The output matrix
+ */
 inline void fft2_many_kernel(const std::complex<double>* in, std::size_t batch, std::size_t d1, std::size_t d2, std::complex<double>* out) {
     DFTI_DESCRIPTOR_HANDLE descriptor;
 
@@ -249,14 +365,36 @@ inline void fft2_many_kernel(const std::complex<double>* in, std::size_t batch, 
     DftiFreeDescriptor(&descriptor);                                      //Free the descriptor
 }
 
+/*!
+ * \brief Many 2D FFT kernel, single precision
+ * \param in The input matrix
+ * \param batch The number of batches
+ * \param d1 The first dimension of the matrix
+ * \param d2 The second dimension of the matrix
+ * \param out The output matrix
+ */
 inline void fft2_many_kernel(const etl::complex<float>* in, std::size_t batch, std::size_t d1, std::size_t d2, etl::complex<float>* out) {
     fft2_many_kernel(reinterpret_cast<const std::complex<float>*>(in), batch, d1, d2, reinterpret_cast<std::complex<float>*>(out));
 }
 
+/*!
+ * \brief Many 2D FFT kernel, double precision
+ * \param in The input matrix
+ * \param batch The number of batches
+ * \param d1 The first dimension of the matrix
+ * \param d2 The second dimension of the matrix
+ * \param out The output matrix
+ */
 inline void fft2_many_kernel(const etl::complex<double>* in, std::size_t batch, std::size_t d1, std::size_t d2, etl::complex<double>* out) {
     fft2_many_kernel(reinterpret_cast<const std::complex<double>*>(in), batch, d1, d2, reinterpret_cast<std::complex<double>*>(out));
 }
 
+/*!
+ * \brief Inplace 2D FFT kernel, single precision
+ * \param in The input matrix
+ * \param d1 The first dimension of the matrix
+ * \param d2 The second dimension of the matrix
+ */
 inline void inplace_fft2_kernel(std::complex<float>* in, std::size_t d1, std::size_t d2) {
     DFTI_DESCRIPTOR_HANDLE descriptor;
 
@@ -270,6 +408,12 @@ inline void inplace_fft2_kernel(std::complex<float>* in, std::size_t d1, std::si
     DftiFreeDescriptor(&descriptor);                                      //Free the descriptor
 }
 
+/*!
+ * \brief Inplace 2D FFT kernel, double precision
+ * \param in The input matrix
+ * \param d1 The first dimension of the matrix
+ * \param d2 The second dimension of the matrix
+ */
 inline void inplace_fft2_kernel(std::complex<double>* in, std::size_t d1, std::size_t d2) {
     DFTI_DESCRIPTOR_HANDLE descriptor;
 
@@ -283,6 +427,12 @@ inline void inplace_fft2_kernel(std::complex<double>* in, std::size_t d1, std::s
     DftiFreeDescriptor(&descriptor);                                      //Free the descriptor
 }
 
+/*!
+ * \brief Inverse 2D FFT kernel, single precision
+ * \param in The input matrix
+ * \param d1 The first dimension of the matrix
+ * \param d2 The second dimension of the matrix
+ */
 inline void ifft2_kernel(const std::complex<float>* in, std::size_t d1, std::size_t d2, std::complex<float>* out) {
     DFTI_DESCRIPTOR_HANDLE descriptor;
 
@@ -298,6 +448,12 @@ inline void ifft2_kernel(const std::complex<float>* in, std::size_t d1, std::siz
     DftiFreeDescriptor(&descriptor);                                      //Free the descriptor
 }
 
+/*!
+ * \brief Inverse 2D FFT kernel, double precision
+ * \param in The input matrix
+ * \param d1 The first dimension of the matrix
+ * \param d2 The second dimension of the matrix
+ */
 inline void ifft2_kernel(const std::complex<double>* in, std::size_t d1, std::size_t d2, std::complex<double>* out) {
     DFTI_DESCRIPTOR_HANDLE descriptor;
 
@@ -313,6 +469,14 @@ inline void ifft2_kernel(const std::complex<double>* in, std::size_t d1, std::si
     DftiFreeDescriptor(&descriptor);                                      //Free the descriptor
 }
 
+/*!
+ * \brief Many Inverse 2D FFT kernel, single precision
+ * \param in The input matrix
+ * \param batch The number of batches
+ * \param d1 The first dimension of the matrix
+ * \param d2 The second dimension of the matrix
+ * \param out The output matrix
+ */
 inline void ifft2_many_kernel(const std::complex<float>* in, std::size_t batch, std::size_t d1, std::size_t d2, std::complex<float>* out) {
     DFTI_DESCRIPTOR_HANDLE descriptor;
 
@@ -331,6 +495,14 @@ inline void ifft2_many_kernel(const std::complex<float>* in, std::size_t batch, 
     DftiFreeDescriptor(&descriptor);                                      //Free the descriptor
 }
 
+/*!
+ * \brief Many Inverse 2D FFT kernel, double precision
+ * \param in The input matrix
+ * \param batch The number of batches
+ * \param d1 The first dimension of the matrix
+ * \param d2 The second dimension of the matrix
+ * \param out The output matrix
+ */
 inline void ifft2_many_kernel(const std::complex<double>* in, std::size_t batch, std::size_t d1, std::size_t d2, std::complex<double>* out) {
     DFTI_DESCRIPTOR_HANDLE descriptor;
 
@@ -349,6 +521,12 @@ inline void ifft2_many_kernel(const std::complex<double>* in, std::size_t batch,
     DftiFreeDescriptor(&descriptor);                                      //Free the descriptor
 }
 
+/*!
+ * \brief Inplace Inverse 2D FFT kernel, single precision
+ * \param in The input matrix
+ * \param d1 The first dimension of the matrix
+ * \param d2 The second dimension of the matrix
+ */
 inline void inplace_ifft2_kernel(std::complex<float>* in, std::size_t d1, std::size_t d2) {
     DFTI_DESCRIPTOR_HANDLE descriptor;
 
@@ -363,6 +541,12 @@ inline void inplace_ifft2_kernel(std::complex<float>* in, std::size_t d1, std::s
     DftiFreeDescriptor(&descriptor);                                      //Free the descriptor
 }
 
+/*!
+ * \brief Inplace Inverse 2D FFT kernel, double precision
+ * \param in The input matrix
+ * \param d1 The first dimension of the matrix
+ * \param d2 The second dimension of the matrix
+ */
 inline void inplace_ifft2_kernel(std::complex<double>* in, std::size_t d1, std::size_t d2) {
     DFTI_DESCRIPTOR_HANDLE descriptor;
 
@@ -377,6 +561,17 @@ inline void inplace_ifft2_kernel(std::complex<double>* in, std::size_t d1, std::
     DftiFreeDescriptor(&descriptor);                                      //Free the descriptor
 }
 
+/*!
+ * \brief 2D full convolution kernel with FFT
+ * \param a The input matrix
+ * \param m1 The first dimension of the input matrix
+ * \param m2 The second dimension of the input matrix
+ * \param b The kernel matrix
+ * \param n1 The first dimension of the kernel matrix
+ * \param n2 The second dimension of the kernel matrix
+ * \param c The output matrix
+ * \param beta The multiplier for the previous value of c
+ */
 template <typename T>
 void conv2_full_kernel(const T* a, std::size_t m1, std::size_t m2, const T* b, std::size_t n1, std::size_t n2, T* c, T beta) {
     const std::size_t s1 = m1 + n1 - 1;
