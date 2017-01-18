@@ -14,13 +14,20 @@
 namespace etl {
 
 #ifdef ETL_CUDA
+
+/*!
+ * \brief GPU memory handler.
+ *
+ * This handler is responsible for allocating the memory and keeping CPU and GPU
+ * memory consistency.
+ */
 template<typename T>
 struct gpu_memory_handler {
 private:
-    mutable T* gpu_memory_ = nullptr;
+    mutable T* gpu_memory_ = nullptr; ///< The GPU memory pointer
 
-    mutable bool cpu_up_to_date = true;
-    mutable bool gpu_up_to_date = false;
+    mutable bool cpu_up_to_date = true;  ///< Is the CPU memory up to date
+    mutable bool gpu_up_to_date = false; ///< Is the GPU memory up to date
 
 public:
     ~gpu_memory_handler(){
@@ -195,9 +202,6 @@ private:
         cpp_assert(is_gpu_allocated(), "Cannot copy from unallocated GPU memory()");
         cpp_assert(gpu_up_to_date, "Cannot copy from invalid memory");
         cpp_assert(!cpu_up_to_date, "Copy done without reason");
-
-        //cpp_assert(!std::is_const<std::remove_pointer_t<decltype(gpu_memory_)>>::value, "copy_from should not be used on const memory");
-        //cpp_assert(!std::is_const<T>::value, "copy_from should not be used on const memory");
 
         cuda_check(cudaMemcpy(
             const_cast<std::remove_const_t<T>*>(cpu_memory),
