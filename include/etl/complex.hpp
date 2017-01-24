@@ -371,4 +371,16 @@ inline etl::complex<T> get_conj(const etl::complex<T>& c) {
     return {c.real, -c.imag};
 }
 
+/*!
+ * \brief Outputs a textual representation of the complex number in the given stream
+ * \param os The stream to output to
+ * \param c The complex number to get representation from
+ * \param return The output stream
+ */
+ *
+template <typename T>
+std::ostream& operator<<(std::ostream& os, const etl::complex<T>& c){
+    return os << "C(" << c.real << "," << c.imag << ")";
+}
+
 } //end of namespace etl
