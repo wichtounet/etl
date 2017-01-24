@@ -237,6 +237,41 @@ struct sqrt_unary_op {
 };
 
 /*!
+ * \brief Unary operation taking the inverse square root value
+ * \tparam T The type of value
+ */
+template <typename T>
+struct invsqrt_unary_op {
+    static constexpr bool linear      = true; ///< Indicates if the operator is linear
+    static constexpr bool thread_safe = true; ///< Indicates if the operator is thread safe or not
+
+    /*!
+     * \brief Indicates if the expression is vectorizable using the
+     * given vector mode
+     * \tparam V The vector mode
+     */
+    template <vector_mode_t V>
+    using vectorizable = std::false_type;
+
+    /*!
+     * \brief Apply the unary operator on x
+     * \param x The value on which to apply the operator
+     * \return The result of applying the unary operator on x
+     */
+    static constexpr T apply(const T& x) {
+        return T(1) / std::sqrt(x);
+    }
+
+    /*!
+     * \brief Returns a textual representation of the operator
+     * \return a string representing the operator
+     */
+    static std::string desc() noexcept {
+        return "invsqrt";
+    }
+};
+
+/*!
  * \brief Unary operation taking the cubic root value
  * \tparam T The type of value
  */
@@ -268,6 +303,41 @@ struct cbrt_unary_op {
      */
     static std::string desc() noexcept {
         return "cbrt";
+    }
+};
+
+/*!
+ * \brief Unary operation taking the inverse cubic root value
+ * \tparam T The type of value
+ */
+template <typename T>
+struct invcbrt_unary_op {
+    static constexpr bool linear      = true; ///< Indicates if the operator is linear
+    static constexpr bool thread_safe = true; ///< Indicates if the operator is thread safe or not
+
+    /*!
+     * \brief Indicates if the expression is vectorizable using the
+     * given vector mode
+     * \tparam V The vector mode
+     */
+    template <vector_mode_t V>
+    using vectorizable = std::false_type;
+
+    /*!
+     * \brief Apply the unary operator on x
+     * \param x The value on which to apply the operator
+     * \return The result of applying the unary operator on x
+     */
+    static constexpr T apply(const T& x) {
+        return T(1) / std::cbrt(x);
+    }
+
+    /*!
+     * \brief Returns a textual representation of the operator
+     * \return a string representing the operator
+     */
+    static std::string desc() noexcept {
+        return "invcbrt";
     }
 };
 

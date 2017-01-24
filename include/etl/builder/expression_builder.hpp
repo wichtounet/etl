@@ -576,6 +576,17 @@ auto sqrt(E&& value) -> detail::unary_helper<E, sqrt_unary_op> {
 }
 
 /*!
+ * \brief Apply inverse square root on each value of the given expression
+ * \param value The ETL expression
+ * \return an expression representing the inverse square root of each value of the given expression
+ */
+template <typename E>
+auto invsqrt(E&& value) -> detail::unary_helper<E, invsqrt_unary_op> {
+    static_assert(is_etl_expr<E>::value, "etl::invsqrt can only be used on ETL expressions");
+    return detail::unary_helper<E, invsqrt_unary_op>{value};
+}
+
+/*!
  * \brief Apply cubic root on each value of the given expression
  * \param value The ETL expression
  * \return an expression representing the cubic root of each value of the given expression
@@ -584,6 +595,17 @@ template <typename E>
 auto cbrt(E&& value) -> detail::unary_helper<E, cbrt_unary_op> {
     static_assert(is_etl_expr<E>::value, "etl::cbrt can only be used on ETL expressions");
     return detail::unary_helper<E, cbrt_unary_op>{value};
+}
+
+/*!
+ * \brief Apply inverse cubic root on each value of the given expression
+ * \param value The ETL expression
+ * \return an expression representing the inverse cubic root of each value of the given expression
+ */
+template <typename E>
+auto invcbrt(E&& value) -> detail::unary_helper<E, invcbrt_unary_op> {
+    static_assert(is_etl_expr<E>::value, "etl::invcbrt can only be used on ETL expressions");
+    return detail::unary_helper<E, invcbrt_unary_op>{value};
 }
 
 /*!
