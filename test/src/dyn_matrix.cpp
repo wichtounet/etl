@@ -1084,3 +1084,27 @@ ETL_TEST_CASE("dyn_matrix/parallel_vector_shuffle", "") {
     REQUIRE_DIRECT(one_of(etl::size(values_2[3]), 250UL, 80UL, 60Ul, 10000UL, 10UL));
     REQUIRE_DIRECT(one_of(etl::size(values_2[4]), 250UL, 80UL, 60Ul, 10000UL, 10UL));
 }
+
+ETL_TEST_CASE("dyn_matrix/floor/1", "") {
+    etl::dyn_matrix<double, 2> a(2, 2, etl::values(1.1, 1.0, 2.9, -1.3));;
+    etl::dyn_matrix<double, 2> b;
+
+    b = floor(a);
+
+    REQUIRE_DIRECT(b[0] == 1.0);
+    REQUIRE_DIRECT(b[1] == 1.0);
+    REQUIRE_DIRECT(b[2] == 2.0);
+    REQUIRE_DIRECT(b[3] == -2.0);
+}
+
+ETL_TEST_CASE("dyn_matrix/ceil/1", "") {
+    etl::dyn_matrix<double, 2> a(2, 2, etl::values(1.1, 1.0, 2.9, -1.3));;
+    etl::dyn_matrix<double, 2> b;
+
+    b = ceil(a);
+
+    REQUIRE_DIRECT(b[0] == 2.0);
+    REQUIRE_DIRECT(b[1] == 1.0);
+    REQUIRE_DIRECT(b[2] == 3.0);
+    REQUIRE_DIRECT(b[3] == -1.0);
+}
