@@ -173,7 +173,7 @@ public:
      * \brief Construct a fast matrix from the given STL container
      * \param container The container to get values from
      */
-    template <typename Container, cpp_enable_if(std::is_convertible<typename Container::value_type, value_type>::value, !is_etl_expr<Container>::value)>
+    template <typename Container, cpp_enable_if(!is_complex_t<Container>::value, std::is_convertible<typename Container::value_type, value_type>::value, !is_etl_expr<Container>::value)>
     explicit fast_matrix_impl(const Container& container): base_type()  {
         init();
         validate_assign(*this, container);
