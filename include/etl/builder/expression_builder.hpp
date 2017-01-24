@@ -576,6 +576,17 @@ auto sqrt(E&& value) -> detail::unary_helper<E, sqrt_unary_op> {
 }
 
 /*!
+ * \brief Apply cubic root on each value of the given expression
+ * \param value The ETL expression
+ * \return an expression representing the cubic root of each value of the given expression
+ */
+template <typename E>
+auto cbrt(E&& value) -> detail::unary_helper<E, cbrt_unary_op> {
+    static_assert(is_etl_expr<E>::value, "etl::cbrt can only be used on ETL expressions");
+    return detail::unary_helper<E, cbrt_unary_op>{value};
+}
+
+/*!
  * \brief Apply logarithm on each value of the given expression
  * \param value The ETL expression
  * \return an expression representing the logarithm of each value of the given expression
