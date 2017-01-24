@@ -75,6 +75,9 @@ struct deserializer;
 template <typename Matrix>
 struct sym_matrix;
 
+template <typename Matrix>
+struct herm_matrix;
+
 /*!
  * \brief A static matrix with fixed dimensions, in row-major order
  */

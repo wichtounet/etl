@@ -119,6 +119,7 @@
 #include "etl/dyn.hpp"
 #include "etl/sparse.hpp"
 #include "etl/sym.hpp"
+#include "etl/herm.hpp"
 #include "etl/custom_dyn.hpp"
 #include "etl/custom_fast.hpp"
 
