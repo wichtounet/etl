@@ -60,6 +60,76 @@ struct abs_unary_op {
 };
 
 /*!
+ * \brief Unary operation rounding down the value
+ * \tparam T The type of value
+ */
+template <typename T>
+struct floor_unary_op {
+    static constexpr bool linear      = true; ///< Indicates if the operator is linear
+    static constexpr bool thread_safe = true; ///< Indicates if the operator is thread safe or not
+
+    /*!
+     * \brief Indicates if the expression is vectorizable using the
+     * given vector mode
+     * \tparam V The vector mode
+     */
+    template <vector_mode_t V>
+    using vectorizable = std::false_type;
+
+    /*!
+     * \brief Apply the unary operator on x
+     * \param x The value on which to apply the operator
+     * \return The result of applying the unary operator on x
+     */
+    static constexpr T apply(const T& x) noexcept {
+        return std::floor(x);
+    }
+
+    /*!
+     * \brief Returns a textual representation of the operator
+     * \return a string representing the operator
+     */
+    static std::string desc() noexcept {
+        return "floor";
+    }
+};
+
+/*!
+ * \brief Unary operation rounding up the value
+ * \tparam T The type of value
+ */
+template <typename T>
+struct ceil_unary_op {
+    static constexpr bool linear      = true; ///< Indicates if the operator is linear
+    static constexpr bool thread_safe = true; ///< Indicates if the operator is thread safe or not
+
+    /*!
+     * \brief Indicates if the expression is vectorizable using the
+     * given vector mode
+     * \tparam V The vector mode
+     */
+    template <vector_mode_t V>
+    using vectorizable = std::false_type;
+
+    /*!
+     * \brief Apply the unary operator on x
+     * \param x The value on which to apply the operator
+     * \return The result of applying the unary operator on x
+     */
+    static constexpr T apply(const T& x) noexcept {
+        return std::ceil(x);
+    }
+
+    /*!
+     * \brief Returns a textual representation of the operator
+     * \return a string representing the operator
+     */
+    static std::string desc() noexcept {
+        return "ceil";
+    }
+};
+
+/*!
  * \brief Unary operation taking the logarithmic value
  * \tparam T The type of value
  */

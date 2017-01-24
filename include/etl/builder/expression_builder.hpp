@@ -492,6 +492,28 @@ auto min(L&& lhs, R&& rhs) -> detail::left_binary_helper_op<L, R, min_binary_op<
 }
 
 /*!
+ * \brief Round down each values of the ETL expression
+ * \param value The ETL expression
+ * \return an expression representing the values of the ETL expression rounded down.
+ */
+template <typename E>
+auto floor(E&& value) {
+    static_assert(is_etl_expr<E>::value, "etl::floor can only be used on ETL expressions");
+    return detail::unary_helper<E, floor_unary_op>{value};
+}
+
+/*!
+ * \brief Round up each values of the ETL expression
+ * \param value The ETL expression
+ * \return an expression representing the values of the ETL expression rounded up.
+ */
+template <typename E>
+auto ceil(E&& value) {
+    static_assert(is_etl_expr<E>::value, "etl::ceil can only be used on ETL expressions");
+    return detail::unary_helper<E, ceil_unary_op>{value};
+}
+
+/*!
  * \brief Clip each values of the ETL expression between min and max
  * \param value The ETL expression
  * \param min The minimum
