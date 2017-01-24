@@ -563,6 +563,39 @@ TEMPLATE_TEST_CASE_2("fast_matrix/sqrt_3", "fast_matrix::sqrt", Z, float, double
     REQUIRE_EQUALS_APPROX(d[3], std::sqrt(Z(1.0)));
 }
 
+TEMPLATE_TEST_CASE_2("fast_matrix/invsqrt_1", "fast_matrix::invsqrt", Z, float, double) {
+    etl::fast_matrix<Z, 2, 2> a = {-1.0, 2.0, 5.0, 1.0};
+
+    etl::fast_matrix<Z, 2, 2> d(invsqrt(a));
+
+    REQUIRE_DIRECT(std::isnan(d[0]));
+    REQUIRE_EQUALS_APPROX(d[1], Z(1) / std::sqrt(Z(2.0)));
+    REQUIRE_EQUALS_APPROX(d[2], Z(1) / std::sqrt(Z(5.0)));
+    REQUIRE_EQUALS_APPROX(d[3], Z(1) / std::sqrt(Z(1.0)));
+}
+
+TEMPLATE_TEST_CASE_2("fast_matrix/invsqrt_2", "fast_matrix::invsqrt", Z, float, double) {
+    etl::fast_matrix<Z, 2, 2, 1> a = {-1.0, 2.0, 5.0, 1.0};
+
+    etl::fast_matrix<Z, 2, 2, 1> d(invsqrt(a));
+
+    REQUIRE_DIRECT(std::isnan(d[0]));
+    REQUIRE_EQUALS_APPROX(d[1], Z(1) / std::sqrt(Z(2.0)));
+    REQUIRE_EQUALS_APPROX(d[2], Z(1) / std::sqrt(Z(5.0)));
+    REQUIRE_EQUALS_APPROX(d[3], Z(1) / std::sqrt(Z(1.0)));
+}
+
+TEMPLATE_TEST_CASE_2("fast_matrix/invsqrt_3", "fast_matrix::invsqrt", Z, float, double) {
+    etl::fast_matrix<Z, 2, 2, 1> a = {-1.0, 2.0, 5.0, 1.0};
+
+    etl::fast_matrix<Z, 2, 2, 1> d(invsqrt(a >> a));
+
+    REQUIRE_EQUALS_APPROX(d[0], Z(1) / std::sqrt(Z(1.0)));
+    REQUIRE_EQUALS_APPROX(d[1], Z(1) / std::sqrt(Z(4.0)));
+    REQUIRE_EQUALS_APPROX(d[2], Z(1) / std::sqrt(Z(25.0)));
+    REQUIRE_EQUALS_APPROX(d[3], Z(1) / std::sqrt(Z(1.0)));
+}
+
 TEMPLATE_TEST_CASE_2("fast_matrix/cbrt_1", "fast_matrix::cbrt", Z, float, double) {
     etl::fast_matrix<Z, 2, 2> a = {-1.0, 2.0, 5.0, 1.0};
 
@@ -594,6 +627,39 @@ TEMPLATE_TEST_CASE_2("fast_matrix/cbrt_3", "fast_matrix::cbrt", Z, float, double
     REQUIRE_EQUALS_APPROX(d[1], std::cbrt(Z(4.0)));
     REQUIRE_EQUALS_APPROX(d[2], std::cbrt(Z(25.0)));
     REQUIRE_EQUALS_APPROX(d[3], std::cbrt(Z(1.0)));
+}
+
+TEMPLATE_TEST_CASE_2("fast_matrix/invcbrt_1", "fast_matrix::invcbrt", Z, float, double) {
+    etl::fast_matrix<Z, 2, 2> a = {-1.0, 2.0, 5.0, 1.0};
+
+    etl::fast_matrix<Z, 2, 2> d(invcbrt(a));
+
+    REQUIRE_EQUALS_APPROX(d[0], Z(1) / std::cbrt(Z(-1.0)));
+    REQUIRE_EQUALS_APPROX(d[1], Z(1) / std::cbrt(Z(2.0)));
+    REQUIRE_EQUALS_APPROX(d[2], Z(1) / std::cbrt(Z(5.0)));
+    REQUIRE_EQUALS_APPROX(d[3], Z(1) / std::cbrt(Z(1.0)));
+}
+
+TEMPLATE_TEST_CASE_2("fast_matrix/invcbrt_2", "fast_matrix::invcbrt", Z, float, double) {
+    etl::fast_matrix<Z, 2, 2, 1> a = {-1.0, 2.0, 5.0, 1.0};
+
+    etl::fast_matrix<Z, 2, 2, 1> d(invcbrt(a));
+
+    REQUIRE_EQUALS_APPROX(d[0], Z(1) / std::cbrt(Z(-1.0)));
+    REQUIRE_EQUALS_APPROX(d[1], Z(1) / std::cbrt(Z(2.0)));
+    REQUIRE_EQUALS_APPROX(d[2], Z(1) / std::cbrt(Z(5.0)));
+    REQUIRE_EQUALS_APPROX(d[3], Z(1) / std::cbrt(Z(1.0)));
+}
+
+TEMPLATE_TEST_CASE_2("fast_matrix/invcbrt_3", "fast_matrix::invcbrt", Z, float, double) {
+    etl::fast_matrix<Z, 2, 2, 1> a = {-1.0, 2.0, 5.0, 1.0};
+
+    etl::fast_matrix<Z, 2, 2, 1> d(invcbrt(a >> a));
+
+    REQUIRE_EQUALS_APPROX(d[0], Z(1) / std::cbrt(Z(1.0)));
+    REQUIRE_EQUALS_APPROX(d[1], Z(1) / std::cbrt(Z(4.0)));
+    REQUIRE_EQUALS_APPROX(d[2], Z(1) / std::cbrt(Z(25.0)));
+    REQUIRE_EQUALS_APPROX(d[3], Z(1) / std::cbrt(Z(1.0)));
 }
 
 TEMPLATE_TEST_CASE_2("fast_matrix/abs", "fast_matrix::abs", Z, float, double) {
