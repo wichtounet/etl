@@ -1091,10 +1091,10 @@ ETL_TEST_CASE("dyn_matrix/floor/1", "") {
 
     b = floor(a);
 
-    REQUIRE_DIRECT(b[0] == 1.0);
-    REQUIRE_DIRECT(b[1] == 1.0);
-    REQUIRE_DIRECT(b[2] == 2.0);
-    REQUIRE_DIRECT(b[3] == -2.0);
+    REQUIRE_EQUALS(b[0], 1.0);
+    REQUIRE_EQUALS(b[1], 1.0);
+    REQUIRE_EQUALS(b[2], 2.0);
+    REQUIRE_EQUALS(b[3], -2.0);
 }
 
 ETL_TEST_CASE("dyn_matrix/ceil/1", "") {
@@ -1103,8 +1103,8 @@ ETL_TEST_CASE("dyn_matrix/ceil/1", "") {
 
     b = ceil(a);
 
-    REQUIRE_DIRECT(b[0] == 2.0);
-    REQUIRE_DIRECT(b[1] == 1.0);
-    REQUIRE_DIRECT(b[2] == 3.0);
-    REQUIRE_DIRECT(b[3] == -1.0);
+    REQUIRE_EQUALS(b[0], 2.0);
+    REQUIRE_EQUALS(b[1], 1.0);
+    REQUIRE_EQUALS(b[2], 3.0);
+    REQUIRE_EQUALS(b[3], -1.0);
 }
