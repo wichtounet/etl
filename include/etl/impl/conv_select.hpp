@@ -160,7 +160,7 @@ inline etl::conv_impl select_default_conv2_impl_new() {
     static constexpr bool cudnn = cudnn_enabled;
     static constexpr bool mkl = mkl_enabled;
 
-    // Full has more
+    // Full has more options
     if (TT == conv_type::FULL) {
         if (cufft) {
             return etl::conv_impl::FFT_CUFFT;
