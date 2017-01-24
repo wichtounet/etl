@@ -82,7 +82,7 @@ CONV4_VALID_FLIPPED_TEST_CASE("conv_4d/valid_3", "[conv][conv4][valid]") {
 // conv_4d_full
 
 CONV4_FULL_TEST_CASE("conv_4d/full_1", "[conv][conv4][valid]") {
-    etl::fast_matrix<T, 10, 12, 5, 5> I(etl::sequence_generator(10.0) * 4.0);
+    etl::fast_matrix<T, 10, 12, 5, 5> I(etl::sequence_generator(3.0) * 0.4);
     etl::fast_matrix<T, 12, 2, 3, 3> K(etl::sequence_generator(2.0) * 0.3);
 
     etl::fast_matrix<T, 10, 2, 7, 7> ref;
@@ -105,8 +105,8 @@ CONV4_FULL_TEST_CASE("conv_4d/full_1", "[conv][conv4][valid]") {
 }
 
 CONV4_FULL_TEST_CASE("conv_4d/full_2", "[conv][conv4][valid]") {
-    etl::fast_matrix<T, 8, 9, 6, 6> I(etl::sequence_generator(15.0) * -3.0);
-    etl::fast_matrix<T, 9, 3, 3, 3> K(etl::sequence_generator(-4.0) * 1.6);
+    etl::fast_matrix<T, 8, 9, 6, 6> I(etl::sequence_generator(2) * -0.3);
+    etl::fast_matrix<T, 9, 3, 3, 3> K(etl::sequence_generator(-2.0) * 0.16);
 
     etl::fast_matrix<T, 8, 3, 8, 8> ref;
     etl::fast_matrix<T, 8, 3, 8, 8> c;
