@@ -100,7 +100,7 @@ CONV4_FULL_TEST_CASE("conv_4d/full_1", "[conv][conv4][valid]") {
     Impl::apply(I, K, c);
 
     for(std::size_t i = 0; i < ref.size(); ++i){
-        REQUIRE_EQUALS_APPROX_E(c[i], ref[i], base_eps * 1000);
+        REQUIRE_EQUALS_APPROX_E(c[i], ref[i], base_eps * 100000);
     }
 }
 
