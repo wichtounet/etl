@@ -302,6 +302,11 @@ bool is_permutation_matrix(E&& expr){
  */
 template <typename E, cpp_enable_if(is_complex<E>::value)>
 bool is_hermitian(E&& expr){
+    // herm_matrix<E> is already enforced to be hermitian
+    if (is_hermitian_matrix<E>::value) {
+        return true;
+    }
+
     if(!is_square(expr)){
         return false;
     }
