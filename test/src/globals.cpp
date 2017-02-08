@@ -297,6 +297,70 @@ ETL_TEST_CASE("globals/is_strictly_upper_triangular/3", "[globals]") {
     REQUIRE_DIRECT(!is_strictly_upper_triangular(b));
 }
 
+ETL_TEST_CASE("globals/is_uni_lower_triangular/1", "[globals]") {
+    etl::fast_matrix<double, 3, 3> a{1.0, 0.0, 0.0, 2.0, 1.0, 0.0, 11.0, 12.0, 1.0};
+    etl::fast_matrix<double, 9, 1> b{1.0, 0.0, 0.0, 2.0, 1.0, 0.0, 11.0, 12.0, 1.0};
+
+    REQUIRE_DIRECT(a.is_uni_lower_triangular());
+    REQUIRE_DIRECT(is_uni_lower_triangular(a));
+
+    REQUIRE_DIRECT(!b.is_strictly_lower_triangular());
+    REQUIRE_DIRECT(!is_strictly_lower_triangular(b));
+
+    decltype(auto) expr = a + a;
+
+    REQUIRE_DIRECT(!expr.is_uni_lower_triangular());
+    REQUIRE_DIRECT(!is_uni_lower_triangular(expr));
+}
+
+ETL_TEST_CASE("globals/is_uni_lower_triangular/2", "[globals]") {
+    etl::fast_matrix<double, 3, 3> a{1.1, 0.0, 0.0, 2.0, 1.0, 0.0, 11.0, 12.0, 1.0};
+    etl::fast_matrix<double, 9, 1> b{1.0, 0.0, 0.0, 2.0, 1.0, 0.0, 11.0, 12.0, 1.0};
+
+    REQUIRE_DIRECT(!a.is_uni_lower_triangular());
+    REQUIRE_DIRECT(!is_uni_lower_triangular(a));
+
+    REQUIRE_DIRECT(!b.is_strictly_lower_triangular());
+    REQUIRE_DIRECT(!is_strictly_lower_triangular(b));
+
+    decltype(auto) expr = a + a;
+
+    REQUIRE_DIRECT(!expr.is_uni_lower_triangular());
+    REQUIRE_DIRECT(!is_uni_lower_triangular(expr));
+}
+
+ETL_TEST_CASE("globals/is_uni_upper_triangular/1", "[globals]") {
+    etl::fast_matrix<double, 3, 3> a{1.0, 2.0, 3.0, 0.0, 1.0, 4.0, 0.0, 0.0, 1.0};
+    etl::fast_matrix<double, 9, 1> b{1.0, 2.0, 3.0, 0.0, 1.0, 4.0, 0.0, 0.0, 1.0};
+
+    REQUIRE_DIRECT(a.is_uni_upper_triangular());
+    REQUIRE_DIRECT(is_uni_upper_triangular(a));
+
+    REQUIRE_DIRECT(!b.is_strictly_upper_triangular());
+    REQUIRE_DIRECT(!is_strictly_upper_triangular(b));
+
+    decltype(auto) expr = a + a;
+
+    REQUIRE_DIRECT(!expr.is_uni_upper_triangular());
+    REQUIRE_DIRECT(!is_uni_upper_triangular(expr));
+}
+
+ETL_TEST_CASE("globals/is_uni_upper_triangular/2", "[globals]") {
+    etl::fast_matrix<double, 3, 3> a{1.0, 2.0, 3.0, 0.0, 1.1, 4.0, 0.0, 0.0, 1.0};
+    etl::fast_matrix<double, 9, 1> b{1.0, 2.0, 3.0, 0.0, 1.0, 4.0, 0.0, 0.0, 1.0};
+
+    REQUIRE_DIRECT(!a.is_uni_upper_triangular());
+    REQUIRE_DIRECT(!is_uni_upper_triangular(a));
+
+    REQUIRE_DIRECT(!b.is_strictly_upper_triangular());
+    REQUIRE_DIRECT(!is_strictly_upper_triangular(b));
+
+    decltype(auto) expr = a + a;
+
+    REQUIRE_DIRECT(!expr.is_uni_upper_triangular());
+    REQUIRE_DIRECT(!is_uni_upper_triangular(expr));
+}
+
 ETL_TEST_CASE("globals/is_uniform/1", "[globals]") {
     etl::fast_matrix<double, 3, 3> a(1.0);
 
