@@ -131,6 +131,32 @@ bool is_lower_triangular(E&& expr) {
 }
 
 /*!
+ * \brief Indicates if the given expression is a uni lower triangular matrix or not.
+ * \param expr The expression to test
+ * \return true if the given expression is a lower triangular matrix, false otherwise.
+ */
+template <typename E>
+bool is_uni_lower_triangular(E&& expr) {
+    if (is_square(expr)) {
+        for (std::size_t i = 0; i < etl::dim<0>(expr); ++i) {
+            if (expr(i, i) != 1.0) {
+                return false;
+            }
+
+            for (std::size_t j = i + 1; j < etl::dim<0>(expr); ++j) {
+                if (expr(i, j) != 0.0) {
+                    return false;
+                }
+            }
+        }
+
+        return true;
+    }
+
+    return false;
+}
+
+/*!
  * \brief Indicates if the given expression is a strictly lower triangular matrix or not.
  * \param expr The expression to test
  * \return true if the given expression is a strictly lower triangular matrix, false otherwise.
@@ -161,6 +187,32 @@ template <typename E>
 bool is_upper_triangular(E&& expr) {
     if (is_square(expr)) {
         for (std::size_t i = 1; i < etl::dim<0>(expr); ++i) {
+            for (std::size_t j = 0; j < i; ++j) {
+                if (expr(i, j) != 0.0) {
+                    return false;
+                }
+            }
+        }
+
+        return true;
+    }
+
+    return false;
+}
+
+/*!
+ * \brief Indicates if the given expression is a strictly upper triangular matrix or not.
+ * \param expr The expression to test
+ * \return true if the given expression is a strictly upper triangular matrix, false otherwise.
+ */
+template <typename E>
+bool is_uni_upper_triangular(E&& expr) {
+    if (is_square(expr)) {
+        for (std::size_t i = 0; i < etl::dim<0>(expr); ++i) {
+            if(expr(i, i) != 1.0){
+                return false;
+            }
+
             for (std::size_t j = 0; j < i; ++j) {
                 if (expr(i, j) != 0.0) {
                     return false;

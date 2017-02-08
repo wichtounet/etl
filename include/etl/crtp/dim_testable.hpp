@@ -86,6 +86,14 @@ struct dim_testable {
     }
 
     /*!
+     * \brief Indicates if the given expression is a uni lower triangular matrix or not.
+     * \return true if the given expression is a uni lower triangular matrix, false otherwise.
+     */
+    bool is_uni_lower_triangular() const noexcept {
+        return etl::is_uni_lower_triangular(as_derived());
+    }
+
+    /*!
      * \brief Indicates if the given expression is a strictly lower triangular matrix or not.
      * \return true if the given expression is a strictly lower triangular matrix, false otherwise.
      */
@@ -99,6 +107,14 @@ struct dim_testable {
      */
     bool is_upper_triangular() const noexcept {
         return etl::is_upper_triangular(as_derived());
+    }
+
+    /*!
+     * \brief Indicates if the given expression is a uni upper triangular matrix or not.
+     * \return true if the given expression is a uni upper triangular matrix, false otherwise.
+     */
+    bool is_uni_upper_triangular() const noexcept {
+        return etl::is_uni_upper_triangular(as_derived());
     }
 
     /*!
