@@ -33,6 +33,11 @@ namespace cufft {
 
 namespace detail {
 
+/*!
+ * \brief Inplace single-precision 1D FFT kernel
+ * \param a The matrix
+ * \param n The size of the transform
+ */
 template <typename T>
 void inplace_cfft1_kernel(T&& a, std::size_t n) {
     decltype(auto) handle = start_cufft();
@@ -43,6 +48,11 @@ void inplace_cfft1_kernel(T&& a, std::size_t n) {
     a.invalidate_cpu();
 }
 
+/*!
+ * \brief Inplace double-precision 1D FFT kernel
+ * \param a The matrix
+ * \param n The size of the transform
+ */
 template <typename T>
 void inplace_zfft1_kernel(T&& a, std::size_t n) {
     decltype(auto) handle = start_cufft();
@@ -53,6 +63,12 @@ void inplace_zfft1_kernel(T&& a, std::size_t n) {
     a.invalidate_cpu();
 }
 
+/*!
+ * \brief Inplace batched single-precision 1D FFT kernel
+ * \param a The matrix
+ * \param batch The number of transform
+ * \param n The size of the transform
+ */
 template <typename T>
 void inplace_cfft1_many_kernel(T&& a, std::size_t batch, std::size_t n) {
     decltype(auto) handle = start_cufft();
@@ -69,6 +85,12 @@ void inplace_cfft1_many_kernel(T&& a, std::size_t batch, std::size_t n) {
     a.invalidate_cpu();
 }
 
+/*!
+ * \brief Inplace batched double-precision 1D FFT kernel
+ * \param a The matrix
+ * \param batch The number of transform
+ * \param n The size of the transform
+ */
 template <typename T>
 void inplace_zfft1_many_kernel(T&& a, std::size_t batch, std::size_t n) {
     decltype(auto) handle = start_cufft();
@@ -85,6 +107,44 @@ void inplace_zfft1_many_kernel(T&& a, std::size_t batch, std::size_t n) {
     a.invalidate_cpu();
 }
 
+/*!
+ * \brief Inplace single-precision 1D Inverse FFT kernel
+ * \param a The matrix
+ * \param batch The number of transform
+ * \param n The size of the transform
+ */
+template <typename T>
+void inplace_cifft1_kernel(T&& a, std::size_t n) {
+    decltype(auto) handle = start_cufft();
+
+    cufftPlan1d(&handle.get(), n, CUFFT_C2C, 1);
+    cufftExecC2C(handle.get(), complex_cast(a.gpu_memory()), complex_cast(a.gpu_memory()), CUFFT_INVERSE);
+
+    a.invalidate_cpu();
+}
+
+/*!
+ * \brief Inplace double-precision 1D Inverse FFT kernel
+ * \param a The matrix
+ * \param batch The number of transform
+ * \param n The size of the transform
+ */
+template <typename T>
+void inplace_zifft1_kernel(T&& a, std::size_t n) {
+    decltype(auto) handle = start_cufft();
+
+    cufftPlan1d(&handle.get(), n, CUFFT_Z2Z, 1);
+    cufftExecZ2Z(handle.get(), complex_cast(a.gpu_memory()), complex_cast(a.gpu_memory()), CUFFT_INVERSE);
+
+    a.invalidate_cpu();
+}
+
+/*!
+ * \brief Inplace batched single-precision 1D Inverse FFT kernel
+ * \param a The matrix
+ * \param batch The number of transform
+ * \param n The size of the transform
+ */
 template <typename T>
 void inplace_cifft1_many_kernel(T&& a, std::size_t batch, std::size_t n) {
     decltype(auto) handle = start_cufft();
@@ -101,6 +161,12 @@ void inplace_cifft1_many_kernel(T&& a, std::size_t batch, std::size_t n) {
     a.invalidate_cpu();
 }
 
+/*!
+ * \brief Inplace batched double-precision 1D Inverse FFT kernel
+ * \param a The matrix
+ * \param batch The number of transform
+ * \param n The size of the transform
+ */
 template <typename T>
 void inplace_zifft1_many_kernel(T&& a, std::size_t batch, std::size_t n) {
     decltype(auto) handle = start_cufft();
@@ -117,26 +183,12 @@ void inplace_zifft1_many_kernel(T&& a, std::size_t batch, std::size_t n) {
     a.invalidate_cpu();
 }
 
-template <typename T>
-void inplace_cifft1_kernel(T&& a, std::size_t n) {
-    decltype(auto) handle = start_cufft();
-
-    cufftPlan1d(&handle.get(), n, CUFFT_C2C, 1);
-    cufftExecC2C(handle.get(), complex_cast(a.gpu_memory()), complex_cast(a.gpu_memory()), CUFFT_INVERSE);
-
-    a.invalidate_cpu();
-}
-
-template <typename T>
-void inplace_zifft1_kernel(T&& a, std::size_t n) {
-    decltype(auto) handle = start_cufft();
-
-    cufftPlan1d(&handle.get(), n, CUFFT_Z2Z, 1);
-    cufftExecZ2Z(handle.get(), complex_cast(a.gpu_memory()), complex_cast(a.gpu_memory()), CUFFT_INVERSE);
-
-    a.invalidate_cpu();
-}
-
+/*!
+ * \brief Inplace single-precision 2D FFT kernel
+ * \param a The matrix
+ * \param d1 The first dimension of the transform
+ * \param d2 The second dimension of the transform
+ */
 template <typename T>
 inline void inplace_cfft2_kernel(T&& a, std::size_t d1, std::size_t d2) {
     decltype(auto) handle = start_cufft();
@@ -147,6 +199,12 @@ inline void inplace_cfft2_kernel(T&& a, std::size_t d1, std::size_t d2) {
     a.invalidate_cpu();
 }
 
+/*!
+ * \brief Inplace double-precision 2D FFT kernel
+ * \param a The matrix
+ * \param d1 The first dimension of the transform
+ * \param d2 The second dimension of the transform
+ */
 template <typename T>
 inline void inplace_zfft2_kernel(T&& a, std::size_t d1, std::size_t d2) {
     decltype(auto) handle = start_cufft();
@@ -157,6 +215,13 @@ inline void inplace_zfft2_kernel(T&& a, std::size_t d1, std::size_t d2) {
     a.invalidate_cpu();
 }
 
+/*!
+ * \brief Inplace batched single-precision 2D FFT kernel
+ * \param a The matrix
+ * \param batch The number of transforms
+ * \param d1 The first dimension of the transform
+ * \param d2 The second dimension of the transform
+ */
 template <typename T>
 void inplace_cfft2_many_kernel(T&& a, std::size_t batch, std::size_t d1, std::size_t d2) {
     decltype(auto) handle = start_cufft();
@@ -169,6 +234,13 @@ void inplace_cfft2_many_kernel(T&& a, std::size_t batch, std::size_t d1, std::si
     a.invalidate_cpu();
 }
 
+/*!
+ * \brief Inplace batched double-precision 2D FFT kernel
+ * \param a The matrix
+ * \param batch The number of transforms
+ * \param d1 The first dimension of the transform
+ * \param d2 The second dimension of the transform
+ */
 template <typename T>
 void inplace_zfft2_many_kernel(T&& a, std::size_t batch, std::size_t d1, std::size_t d2) {
     decltype(auto) handle = start_cufft();
@@ -185,6 +257,45 @@ void inplace_zfft2_many_kernel(T&& a, std::size_t batch, std::size_t d1, std::si
     a.invalidate_cpu();
 }
 
+/*!
+ * \brief Inplace single-precision 2D Inverse FFT kernel
+ * \param a The matrix
+ * \param d1 The first dimension of the transform
+ * \param d2 The second dimension of the transform
+ */
+template <typename T>
+void inplace_cifft2_kernel(T&& a, std::size_t d1, std::size_t d2) {
+    decltype(auto) handle = start_cufft();
+
+    cufftPlan2d(&handle.get(), d1, d2, CUFFT_C2C);
+    cufftExecC2C(handle.get(), complex_cast(a.gpu_memory()), complex_cast(a.gpu_memory()), CUFFT_INVERSE);
+
+    a.invalidate_cpu();
+}
+
+/*!
+ * \brief Inplace double-precision 2D Inverse FFT kernel
+ * \param a The matrix
+ * \param d1 The first dimension of the transform
+ * \param d2 The second dimension of the transform
+ */
+template <typename T>
+void inplace_zifft2_kernel(T&& a, std::size_t d1, std::size_t d2) {
+    decltype(auto) handle = start_cufft();
+
+    cufftPlan2d(&handle.get(), d1, d2, CUFFT_Z2Z);
+    cufftExecZ2Z(handle.get(), complex_cast(a.gpu_memory()), complex_cast(a.gpu_memory()), CUFFT_INVERSE);
+
+    a.invalidate_cpu();
+}
+
+/*!
+ * \brief Inplace batched single-precision 2D Inverse FFT kernel
+ * \param a The matrix
+ * \param batch The number of transforms
+ * \param d1 The first dimension of the transform
+ * \param d2 The second dimension of the transform
+ */
 template <typename T>
 void inplace_cifft2_many_kernel(T&& a, std::size_t batch, std::size_t d1, std::size_t d2) {
     decltype(auto) handle = start_cufft();
@@ -197,6 +308,13 @@ void inplace_cifft2_many_kernel(T&& a, std::size_t batch, std::size_t d1, std::s
     a.invalidate_cpu();
 }
 
+/*!
+ * \brief Inplace batched double-precision 2D Inverse FFT kernel
+ * \param a The matrix
+ * \param batch The number of transforms
+ * \param d1 The first dimension of the transform
+ * \param d2 The second dimension of the transform
+ */
 template <typename T>
 void inplace_zifft2_many_kernel(T&& a, std::size_t batch, std::size_t d1, std::size_t d2) {
     decltype(auto) handle = start_cufft();
@@ -213,30 +331,24 @@ void inplace_zifft2_many_kernel(T&& a, std::size_t batch, std::size_t d1, std::s
     a.invalidate_cpu();
 }
 
-template <typename T>
-void inplace_cifft2_kernel(T&& a, std::size_t d1, std::size_t d2) {
-    decltype(auto) handle = start_cufft();
-
-    cufftPlan2d(&handle.get(), d1, d2, CUFFT_C2C);
-    cufftExecC2C(handle.get(), complex_cast(a.gpu_memory()), complex_cast(a.gpu_memory()), CUFFT_INVERSE);
-
-    a.invalidate_cpu();
-}
-
-template <typename T>
-void inplace_zifft2_kernel(T&& a, std::size_t d1, std::size_t d2) {
-    decltype(auto) handle = start_cufft();
-
-    cufftPlan2d(&handle.get(), d1, d2, CUFFT_Z2Z);
-    cufftExecZ2Z(handle.get(), complex_cast(a.gpu_memory()), complex_cast(a.gpu_memory()), CUFFT_INVERSE);
-
-    a.invalidate_cpu();
-}
-
+/*!
+ * \brief Wrapper for cufftExecC2C, for single precision
+ * \param plan The CUFFT plan
+ * \param idata The input data
+ * \param odata The output data
+ * \param direction The direction of the transform
+ */
 inline cufftResult cufft_exec_c2c(cufftHandle plan, cufftComplex* idata, cufftComplex* odata, int direction){
     return cufftExecC2C(plan, idata, odata, direction);
 }
 
+/*!
+ * \brief Wrapper for cufftExecC2C, for double precision
+ * \param plan The CUFFT plan
+ * \param idata The input data
+ * \param odata The output data
+ * \param direction The direction of the transform
+ */
 inline cufftResult cufft_exec_c2c(cufftHandle plan, cufftDoubleComplex* idata, cufftDoubleComplex* odata, int direction){
     return cufftExecZ2Z(plan, idata, odata, direction);
 }
@@ -442,6 +554,11 @@ void fft1_many(A&& a, C&& c) {
     detail::inplace_zfft1_many_kernel(c, batch, n);
 }
 
+/*!
+ * \brief Scale back the results after the inverse FFT
+ * \param c The result of the inverse FFT
+ * \param factor The scaling factor
+ */
 template <typename C, cpp_enable_if(all_complex_single_precision<C>::value)>
 void scale_back(C&& c, float factor) {
 #ifdef ETL_CUBLAS_MODE
@@ -462,6 +579,11 @@ void scale_back(C&& c, float factor) {
 #endif
 }
 
+/*!
+ * \brief Scale back the results after the inverse FFT
+ * \param c The result of the inverse FFT
+ * \param factor The scaling factor
+ */
 template <typename C, cpp_enable_if(all_complex_double_precision<C>::value)>
 void scale_back(C&& c, double factor) {
 #ifdef ETL_CUBLAS_MODE
@@ -482,11 +604,20 @@ void scale_back(C&& c, double factor) {
 #endif
 }
 
+/*!
+ * \brief Scale back the results after the inverse FFT
+ * \param c The result of the inverse FFT
+ */
 template <typename C>
 void scale_back(C&& c) {
     scale_back(std::forward<C>(c), 1.0 / etl::size(c));
 }
 
+/*!
+ * \brief Scale back the results after the inverse FFT, keeping only the real part of the results
+ * \param a The result of the inverse FFT
+ * \param c The final results
+ */
 template <typename A, typename C, cpp_enable_if(all_complex_single_precision<A>::value)>
 void scale_back_real(A&& a, C&& c) {
 #ifdef ETL_CUBLAS_MODE
@@ -519,6 +650,11 @@ void scale_back_real(A&& a, C&& c) {
 #endif
 }
 
+/*!
+ * \brief Scale back the results after the inverse FFT, keeping only the real part of the results
+ * \param a The result of the inverse FFT
+ * \param c The final results
+ */
 template <typename A, typename C, cpp_enable_if(all_complex_double_precision<A>::value)>
 void scale_back_real(A&& a, C&& c) {
 #ifdef ETL_CUBLAS_MODE
