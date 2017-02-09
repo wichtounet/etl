@@ -621,6 +621,31 @@ struct inplace_sub_transpose_able<T, std::enable_if_t<!is_3d<T>::value>> {
     static constexpr bool value = false;
 };
 
+
+/*!
+ * \brief Traits to test if a matrix is a square matrix, if this can be defined.
+ */
+template <typename Matrix, typename Enable = void>
+struct is_square_matrix {
+    static constexpr bool value = false;
+};
+
+/*!
+ * \copydoc is_square_matrix
+ */
+template <typename Matrix>
+struct is_square_matrix <Matrix, std::enable_if_t<all_fast<Matrix>::value && is_2d<Matrix>::value>> {
+    static constexpr bool value = etl_traits<Matrix>::template dim<0>() == etl_traits<Matrix>::template dim<1>();
+};
+
+/*!
+ * \copydoc is_square_matrix
+ */
+template <typename Matrix>
+struct is_square_matrix <Matrix, std::enable_if_t<!all_fast<Matrix>::value && is_2d<Matrix>::value>> {
+    static constexpr bool value = true;
+};
+
 /*!
  * \brief Specialization for value structures
  */

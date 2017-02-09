@@ -20,18 +20,6 @@
 
 namespace etl {
 
-namespace herm_detail {
-
-template <typename Matrix, typename Enable = void>
-struct static_check_square {};
-
-template <typename Matrix>
-struct static_check_square<Matrix, std::enable_if_t<all_fast<Matrix>::value && is_2d<Matrix>::value>> {
-    static_assert(etl_traits<Matrix>::template dim<0>() == etl_traits<Matrix>::template dim<1>(), "Hermitian matrix must be square");
-};
-
-} //end of namespace herm_detail
-
 /*!
  * \brief Exception that is thrown when an operation is made to
  * a hermitian matrix that would render it non-hermitian.
@@ -57,8 +45,7 @@ struct herm_matrix final : comparable<herm_matrix<Matrix>>, iterable<const herm_
 
     static_assert(etl_traits<matrix_t>::is_value, "Hermitian matrix only works with value classes");
     static_assert(etl_traits<matrix_t>::dimensions() == 2, "Hermitian matrix must be two-dimensional");
-
-    using scs = herm_detail::static_check_square<matrix_t>; ///< static_check trick
+    static_assert(is_square_matrix<matrix_t>::value, "Hermitian matrix must be square");
 
     static constexpr std::size_t n_dimensions = etl_traits<matrix_t>::dimensions();  ///< The number of dimensions
     static constexpr order storage_order      = etl_traits<matrix_t>::storage_order; ///< The storage order
