@@ -273,8 +273,8 @@ CONV_FUNCTOR(fft_cufft_conv2_full, c = selected_helper(etl::conv_impl::FFT_CUFFT
 CONV_FUNCTOR(fft_cufft_conv2_full_flipped, c = selected_helper(etl::conv_impl::FFT_CUFFT, etl::conv_2d_full_flipped(a, b)))
 CONV_FUNCTOR(fft_cufft_conv2_full_multi, c = selected_helper(etl::conv_multi_impl::FFT_CUFFT, etl::conv_2d_full_multi(a, b)))
 CONV_FUNCTOR(fft_cufft_conv2_full_multi_flipped, c = selected_helper(etl::conv_multi_impl::FFT_CUFFT, etl::conv_2d_full_multi_flipped(a, b)))
-CONV_FUNCTOR(fft_cufft_conv4_full, c = selected_helper(etl::conv_impl::FFT_CUFFT, etl::conv_4d_full(a, b)))
-CONV_FUNCTOR(fft_cufft_conv4_full_flipped, c = selected_helper(etl::conv_impl::FFT_CUFFT, etl::conv_4d_full_flipped(a, b)))
+CONV_FUNCTOR(fft_cufft_conv4_full, c = selected_helper(etl::conv4_impl::FFT_CUFFT, etl::conv_4d_full(a, b)))
+CONV_FUNCTOR(fft_cufft_conv4_full_flipped, c = selected_helper(etl::conv4_impl::FFT_CUFFT, etl::conv_4d_full_flipped(a, b)))
 
 #define CONV1_FULL_TEST_CASE_SECTION_FFT_CUFFT CONV_TEST_CASE_SECTIONS(fft_cufft_conv1_full)
 #define CONV2_FULL_TEST_CASE_SECTION_FFT_CUFFT CONV_TEST_CASE_SECTIONS(fft_cufft_conv2_full)
@@ -321,8 +321,8 @@ DYN_CONV_FUNCTOR(vec_dyn_conv2_valid_multi_flipped, c = selected_helper(etl::con
 CONV_FUNCTOR(vec_conv2_valid_multi_multi, c = selected_helper(etl::conv_multi_impl::VEC, (etl::conv_2d_valid_multi_multi<S1, S2, P1, P2>(a, b))))
 CONV_FUNCTOR(vec_conv2_valid_multi_multi_flipped, c = selected_helper(etl::conv_multi_impl::VEC, (etl::conv_2d_valid_multi_multi_flipped<S1, S2, P1, P2>(a, b))))
 
-CONV_FUNCTOR(vec_conv4_full, c = selected_helper(etl::conv_impl::VEC, (etl::conv_4d_full(a, b))))
-CONV_FUNCTOR(vec_conv4_full_flipped, c = selected_helper(etl::conv_impl::VEC, (etl::conv_4d_full_flipped(a, b))))
+CONV_FUNCTOR(vec_conv4_full, c = selected_helper(etl::conv4_impl::VEC, (etl::conv_4d_full(a, b))))
+CONV_FUNCTOR(vec_conv4_full_flipped, c = selected_helper(etl::conv4_impl::VEC, (etl::conv_4d_full_flipped(a, b))))
 CONV_FUNCTOR(vec_conv4_valid, c = selected_helper(etl::conv4_impl::VEC, (etl::conv_4d_valid<S1,S2,P1,P2>(a, b))))
 CONV_FUNCTOR(vec_conv4_valid_flipped, c = selected_helper(etl::conv4_impl::VEC, (etl::conv_4d_valid_flipped<S1,S2,P1,P2>(a, b))))
 CONV_FUNCTOR(vec_conv4_valid_filter, c = selected_helper(etl::conv4_impl::VEC, (etl::conv_4d_valid_filter<S1,S2,P1,P2>(a, b))))
