@@ -493,7 +493,7 @@ inline etl::conv4_impl select_conv4_full_impl() {
 
             //CUFFT cannot always be used
             case conv4_impl::FFT_CUFFT:
-                if (!mkl_enabled) {                                                                                               // COVERAGE_EXCLUDE_LINE
+                if (!cufft_enabled) {                                                                                               // COVERAGE_EXCLUDE_LINE
                     std::cerr << "Forced selection to FFT_CUFFT conv implementation, but not possible for this expression" << std::endl; // COVERAGE_EXCLUDE_LINE
                     return select_default_conv4_full_impl<I, K, C>();                                                                   // COVERAGE_EXCLUDE_LINE
                 }                                                                                                                 // COVERAGE_EXCLUDE_LINE
