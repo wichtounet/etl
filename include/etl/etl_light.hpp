@@ -99,10 +99,12 @@
 #include "etl/fast.hpp"
 #include "etl/dyn.hpp"
 #include "etl/sparse.hpp"
-#include "etl/sym.hpp"
-#include "etl/herm.hpp"
 #include "etl/custom_dyn.hpp"
 #include "etl/custom_fast.hpp"
+
+// The adapters
+#include "etl/adapters/sym.hpp"
+#include "etl/adapters/herm.hpp"
 
 // Serialization support
 #include "etl/serializer.hpp"
