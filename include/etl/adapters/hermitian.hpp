@@ -7,45 +7,45 @@
 
 /*!
  * \file
- * \brief Contains runtime matrix implementation
+ * \brief Contains hermitian matrix view implementation
  */
 
 #pragma once
 
 #include <exception>
 
-#include "etl/dyn_base.hpp"    //The base class and utilities
+#include "etl/dyn_base.hpp" //The base class and utilities
 
-#include "etl/adapters/sym_reference.hpp"    // The reference proxy
+#include "etl/adapters/hermitian_reference.hpp" // The reference proxy
 
 namespace etl {
 
 /*!
  * \brief Exception that is thrown when an operation is made to
- * a symmetric matrix that would render it non-symmetric.
+ * a hermitian matrix that would render it non-hermitian.
  */
-struct symmetric_exception : std::exception {
+struct hermitian_exception : std::exception {
     /*!
      * \brief Returns a description of the exception
      */
     virtual const char* what() const noexcept {
-        return "Invalid assignment to a symmetric matrix";
+        return "Invalid assignment to a hermitian matrix";
     }
 };
 
 /*!
- * \brief A symmetric matrix adapter.
+ * \brief A hermitian matrix adapter.
  *
  * This is only a prototype.
  */
 template <typename Matrix>
-struct sym_matrix final : comparable<sym_matrix<Matrix>>, iterable<const sym_matrix<Matrix>> {
+struct herm_matrix final : comparable<herm_matrix<Matrix>>, iterable<const herm_matrix<Matrix>> {
     using matrix_t = Matrix;   ///< The adapted matrix type
     using expr_t   = matrix_t; ///< The wrapped expression type
 
-    static_assert(etl_traits<matrix_t>::is_value, "Symmetric matrix only works with value classes");
-    static_assert(etl_traits<matrix_t>::dimensions() == 2, "Symmetric matrix must be two-dimensional");
-    static_assert(is_square_matrix<matrix_t>::value, "Symmetric matrix must be square");
+    static_assert(etl_traits<matrix_t>::is_value, "Hermitian matrix only works with value classes");
+    static_assert(etl_traits<matrix_t>::dimensions() == 2, "Hermitian matrix must be two-dimensional");
+    static_assert(is_square_matrix<matrix_t>::value, "Hermitian matrix must be square");
 
     static constexpr std::size_t n_dimensions = etl_traits<matrix_t>::dimensions();  ///< The number of dimensions
     static constexpr order storage_order      = etl_traits<matrix_t>::storage_order; ///< The storage order
@@ -69,59 +69,59 @@ private:
 
 public:
     /*!
-     * \brief Construct a new sym matrix and fill it with zeros
+     * \brief Construct a new hermitian matrix and fill it with zeros
      *
      * This constructor can only be used when the matrix is fast
      */
-    sym_matrix() noexcept : matrix(value_type()) {
+    herm_matrix() noexcept : matrix(value_type()) {
         //Nothing else to init
     }
 
     /*!
-     * \brief Construct a new sym matrix and fill it witht the given value
+     * \brief Construct a new hermitian matrix and fill it witht the given value
      *
      * \param value The value to fill the matrix with
      *
      * This constructor can only be used when the matrix is fast
      */
-    sym_matrix(value_type value) noexcept : matrix(value) {
+    herm_matrix(value_type value) noexcept : matrix(value) {
         //Nothing else to init
     }
 
     /*!
-     * \brief Construct a new sym matrix and fill it with zeros
+     * \brief Construct a new hermitian matrix and fill it with zeros
      * \param dim The dimension of the matrix
      */
-    sym_matrix(std::size_t dim) noexcept : matrix(dim, dim, value_type()) {
+    herm_matrix(std::size_t dim) noexcept : matrix(dim, dim, value_type()) {
         //Nothing else to init
     }
 
     /*!
-     * \brief Construct a new sym matrix and fill it witht the given value
+     * \brief Construct a new hermitian matrix and fill it witht the given value
      *
      * \param value The value to fill the matrix with
      * \param dim The dimension of the matrix
      */
-    sym_matrix(std::size_t dim, value_type value) noexcept : matrix(dim, dim, value) {
+    herm_matrix(std::size_t dim, value_type value) noexcept : matrix(dim, dim, value) {
         //Nothing else to init
     }
 
-    sym_matrix(const sym_matrix& rhs) = default;
-    sym_matrix& operator=(const sym_matrix& rhs) = default;
+    herm_matrix(const herm_matrix& rhs) = default;
+    herm_matrix& operator=(const herm_matrix& rhs) = default;
 
-    sym_matrix(sym_matrix&& rhs) = default;
-    sym_matrix& operator=(sym_matrix&& rhs) = default;
+    herm_matrix(herm_matrix&& rhs) = default;
+    herm_matrix& operator=(herm_matrix&& rhs) = default;
 
     /*!
-     * \brief Assign the values of the ETL expression to the symmetric matrix
+     * \brief Assign the values of the ETL expression to the hermitian matrix
      * \param e The ETL expression to get the values from
      * \return a reference to the fast matrix
      */
     template <typename E, cpp_enable_if(std::is_convertible<value_t<E>, value_type>::value, is_etl_expr<E>::value)>
-    sym_matrix& operator=(E&& e) noexcept(false) {
-        // Make sure the other matrix is symmetric
-        if(!is_symmetric(e)){
-            throw symmetric_exception();
+    herm_matrix& operator=(E&& e) noexcept(false) {
+        // Make sure the other matrix is hermitian
+        if(!is_hermitian(e)){
+            throw hermitian_exception();
         }
 
         // Perform the real assign
@@ -137,7 +137,7 @@ public:
      * \param rhs The right hand side scalar
      * \return a reference to the matrix
      */
-    sym_matrix& operator+=(const value_type& rhs) noexcept {
+    herm_matrix& operator+=(const value_type& rhs) noexcept {
         detail::scalar_add::apply(*this, rhs);
         return *this;
     }
@@ -148,10 +148,10 @@ public:
      * \return a reference to the matrix
      */
     template<typename R, cpp_enable_if(is_etl_expr<R>::value)>
-    sym_matrix& operator+=(const R& rhs){
-        // Make sure the other matrix is symmetric
-        if(!is_symmetric(rhs)){
-            throw symmetric_exception();
+    herm_matrix& operator+=(const R& rhs){
+        // Make sure the other matrix is hermitian
+        if(!is_hermitian(rhs)){
+            throw hermitian_exception();
         }
 
         validate_expression(*this, rhs);
@@ -164,7 +164,7 @@ public:
      * \param rhs The right hand side scalar
      * \return a reference to the matrix
      */
-    sym_matrix& operator-=(const value_type& rhs) noexcept {
+    herm_matrix& operator-=(const value_type& rhs) noexcept {
         detail::scalar_sub::apply(*this, rhs);
         return *this;
     }
@@ -175,10 +175,10 @@ public:
      * \return a reference to the matrix
      */
     template<typename R, cpp_enable_if(is_etl_expr<R>::value)>
-    sym_matrix& operator-=(const R& rhs){
-        // Make sure the other matrix is symmetric
-        if(!is_symmetric(rhs)){
-            throw symmetric_exception();
+    herm_matrix& operator-=(const R& rhs){
+        // Make sure the other matrix is hermitian
+        if(!is_hermitian(rhs)){
+            throw hermitian_exception();
         }
 
         validate_expression(*this, rhs);
@@ -191,7 +191,7 @@ public:
      * \param rhs The right hand side scalar
      * \return a reference to the matrix
      */
-    sym_matrix& operator*=(const value_type& rhs) noexcept {
+    herm_matrix& operator*=(const value_type& rhs) noexcept {
         detail::scalar_mul::apply(*this, rhs);
         return *this;
     }
@@ -202,10 +202,10 @@ public:
      * \return a reference to the matrix
      */
     template<typename R, cpp_enable_if(is_etl_expr<R>::value)>
-    sym_matrix& operator*=(const R& rhs) {
-        // Make sure the other matrix is symmetric
-        if(!is_symmetric(rhs)){
-            throw symmetric_exception();
+    herm_matrix& operator*=(const R& rhs) {
+        // Make sure the other matrix is hermitian
+        if(!is_hermitian(rhs)){
+            throw hermitian_exception();
         }
 
         validate_expression(*this, rhs);
@@ -218,7 +218,7 @@ public:
      * \param rhs The right hand side scalar
      * \return a reference to the matrix
      */
-    sym_matrix& operator>>=(const value_type& rhs) noexcept {
+    herm_matrix& operator>>=(const value_type& rhs) noexcept {
         detail::scalar_mul::apply(*this, rhs);
         return *this;
     }
@@ -229,10 +229,10 @@ public:
      * \return a reference to the matrix
      */
     template<typename R, cpp_enable_if(is_etl_expr<R>::value)>
-    sym_matrix& operator>>=(const R& rhs) {
-        // Make sure the other matrix is symmetric
-        if(!is_symmetric(rhs)){
-            throw symmetric_exception();
+    herm_matrix& operator>>=(const R& rhs) {
+        // Make sure the other matrix is hermitian
+        if(!is_hermitian(rhs)){
+            throw hermitian_exception();
         }
 
         validate_expression(*this, rhs);
@@ -245,7 +245,7 @@ public:
      * \param rhs The right hand side scalar
      * \return a reference to the matrix
      */
-    sym_matrix& operator/=(const value_type& rhs) noexcept {
+    herm_matrix& operator/=(const value_type& rhs) noexcept {
         detail::scalar_div::apply(*this, rhs);
         return *this;
     }
@@ -256,10 +256,10 @@ public:
      * \return a reference to the matrix
      */
     template<typename R, cpp_enable_if(is_etl_expr<R>::value)>
-    sym_matrix& operator/=(const R& rhs) {
-        // Make sure the other matrix is symmetric
-        if(!is_symmetric(rhs)){
-            throw symmetric_exception();
+    herm_matrix& operator/=(const R& rhs) {
+        // Make sure the other matrix is hermitian
+        if(!is_hermitian(rhs)){
+            throw hermitian_exception();
         }
 
         validate_expression(*this, rhs);
@@ -272,7 +272,7 @@ public:
      * \param rhs The right hand side scalar
      * \return a reference to the matrix
      */
-    sym_matrix& operator%=(const value_type& rhs) noexcept {
+    herm_matrix& operator%=(const value_type& rhs) noexcept {
         detail::scalar_mod::apply(*this, rhs);
         return *this;
     }
@@ -283,10 +283,10 @@ public:
      * \return a reference to the matrix
      */
     template<typename R, cpp_enable_if(is_etl_expr<R>::value)>
-    sym_matrix& operator%=(const R& rhs){
-        // Make sure the other matrix is symmetric
-        if(!is_symmetric(rhs)){
-            throw symmetric_exception();
+    herm_matrix& operator%=(const R& rhs){
+        // Make sure the other matrix is hermitian
+        if(!is_hermitian(rhs)){
+            throw hermitian_exception();
         }
 
         validate_expression(*this, rhs);
@@ -310,7 +310,7 @@ public:
      *
      * Accessing an element outside the matrix results in Undefined Behaviour.
      */
-    sym_detail::symmetric_reference<matrix_t> operator()(std::size_t i, std::size_t j) noexcept {
+    herm_detail::hermitian_reference<matrix_t> operator()(std::size_t i, std::size_t j) noexcept {
         return {matrix, i, j};
     }
 
@@ -368,7 +368,7 @@ public:
      * \return a pointer tot the first element in memory.
      *
      * This should only be used by ETL itself in order not to void
-     * the symmetric guarantee.
+     * the hermitian guarantee.
      */
     memory_type memory_start() noexcept {
         return matrix.memory_start();
@@ -379,7 +379,7 @@ public:
      * \return a pointer tot the first element in memory.
      *
      * This should only be used by ETL itself in order not to void
-     * the symmetric guarantee.
+     * the hermitian guarantee.
      */
     const_memory_type memory_start() const noexcept {
         return matrix.memory_start();
@@ -390,7 +390,7 @@ public:
      * \return a pointer tot the past-the-end element in memory.
      *
      * This should only be used by ETL itself in order not to void
-     * the symmetric guarantee.
+     * the hermitian guarantee.
      */
     memory_type memory_end() noexcept {
         return matrix.memory_end();
@@ -401,7 +401,7 @@ public:
      * \return a pointer tot the past-the-end element in memory.
      *
      * This should only be used by ETL itself in order not to void
-     * the symmetric guarantee.
+     * the hermitian guarantee.
      */
     const_memory_type memory_end() const noexcept {
         return matrix.memory_end();
@@ -590,6 +590,6 @@ public:
 };
 
 template <typename Matrix>
-struct etl_traits<sym_matrix<Matrix>> : wrapper_traits<sym_matrix<Matrix>> {};
+struct etl_traits<herm_matrix<Matrix>> : wrapper_traits<herm_matrix<Matrix>> {};
 
 } //end of namespace etl

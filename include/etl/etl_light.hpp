@@ -103,8 +103,8 @@
 #include "etl/custom_fast.hpp"
 
 // The adapters
-#include "etl/adapters/sym.hpp"
-#include "etl/adapters/herm.hpp"
+#include "etl/adapters/symmetric.hpp"
+#include "etl/adapters/hermitian.hpp"
 
 // Serialization support
 #include "etl/serializer.hpp"
