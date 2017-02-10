@@ -835,8 +835,6 @@ void conv2_full_multi_flipped(I&& input, KK&& kernel, C&& conv) {
  */
 template <typename I, typename KK, typename CC>
 void conv4_full(I&& input, KK&& kernel, CC&& conv) {
-    using detail::cufft_exec_c2c;
-
     using T = value_t<I>;
 
     if (etl::dim<1>(kernel) > 0) {
@@ -906,33 +904,14 @@ void conv4_full(I&& input, KK&& kernel, CC&& conv) {
         a_padded.invalidate_gpu();
         b_padded.invalidate_gpu();
 
-        // Compute all the FFT of the inputs at once
+        // Compute all the FFT of the inputs and kernels at once
 
-        auto cufft_type = is_single_precision_t<T>::value ? CUFFT_C2C : CUFFT_Z2Z;
+        detail::inplace_fft2_many_kernel(a_padded, N * K, s1, s2);
+        detail::inplace_fft2_many_kernel(b_padded, N * K, s1, s2);
 
-        {
-            a_padded.ensure_gpu_up_to_date();
-
-            int dims[] = {int(s1), int(s2)};
-
-            cufftPlanMany(&handle.get(), 2, dims, nullptr, 1, s1 * s2, nullptr, 1, s1 * s2, cufft_type, N * K);
-            cufft_exec_c2c(handle.get(), complex_cast(a_padded.gpu_memory()), complex_cast(a_padded.gpu_memory()), CUFFT_FORWARD);
-
-            a_padded.ensure_cpu_up_to_date();
-        }
-
-        // Compute all the FFT of the kernels at once
-
-        {
-            b_padded.ensure_gpu_up_to_date();
-
-            int dims[] = {int(s1), int(s2)};
-
-            cufftPlanMany(&handle.get(), 2, dims, nullptr, 1, s1 * s2, nullptr, 1, s1 * s2, cufft_type, K * C);
-            cufft_exec_c2c(handle.get(), complex_cast(b_padded.gpu_memory()), complex_cast(b_padded.gpu_memory()), CUFFT_FORWARD);
-
-            b_padded.ensure_cpu_up_to_date();
-        }
+        // Need CPU for multiplication
+        a_padded.ensure_cpu_up_to_date();
+        b_padded.ensure_cpu_up_to_date();
 
         // TODO For maximum performance
         // - tmp should have one more dimensions
@@ -948,13 +927,10 @@ void conv4_full(I&& input, KK&& kernel, CC&& conv) {
                 }
             }
 
-            tmp.ensure_gpu_up_to_date();
+            // Perform the inverse FFT
+            detail::inplace_ifft2_many_kernel(tmp, C * K, s1, s2);
 
-            int dims[] = {int(s1), int(s2)};
-
-            cufftPlanMany(&handle.get(), 2, dims, nullptr, 1, s1 * s2, nullptr, 1, s1 * s2, cufft_type, C * K);
-            cufft_exec_c2c(handle.get(), complex_cast(tmp.gpu_memory()), complex_cast(tmp.gpu_memory()), CUFFT_INVERSE);
-
+            //  Need the CPU for scaling back
             tmp.ensure_cpu_up_to_date();
 
             for (std::size_t c = 0; c < C; ++c) {
