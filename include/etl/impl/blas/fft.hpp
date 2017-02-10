@@ -1244,7 +1244,7 @@ void conv4_full(I&& input, KK&& kernel, CC&& conv) {
 template <typename I, typename K, typename C>
 void conv4_full_flipped(I&& input, K&& kernel, C&& conv) {
     if (etl::dim<1>(kernel) > 0) {
-        input.ensure_cpu_up_to_date();
+        kernel.ensure_cpu_up_to_date(); // Need for flipping
 
         etl::dyn_matrix<value_t<I>, 4> prepared_k(etl::dim<0>(kernel), etl::dim<1>(kernel), etl::dim<2>(kernel), etl::dim<3>(kernel));
 
