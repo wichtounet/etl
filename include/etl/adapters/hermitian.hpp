@@ -39,7 +39,7 @@ struct hermitian_exception : std::exception {
  * This is only a prototype.
  */
 template <typename Matrix>
-struct herm_matrix final : comparable<herm_matrix<Matrix>>, iterable<const herm_matrix<Matrix>> {
+struct hermitian_matrix final : comparable<hermitian_matrix<Matrix>>, iterable<const hermitian_matrix<Matrix>> {
     using matrix_t = Matrix;   ///< The adapted matrix type
     using expr_t   = matrix_t; ///< The wrapped expression type
 
@@ -73,7 +73,7 @@ public:
      *
      * This constructor can only be used when the matrix is fast
      */
-    herm_matrix() noexcept : matrix(value_type()) {
+    hermitian_matrix() noexcept : matrix(value_type()) {
         //Nothing else to init
     }
 
@@ -84,7 +84,7 @@ public:
      *
      * This constructor can only be used when the matrix is fast
      */
-    herm_matrix(value_type value) noexcept : matrix(value) {
+    hermitian_matrix(value_type value) noexcept : matrix(value) {
         //Nothing else to init
     }
 
@@ -92,7 +92,7 @@ public:
      * \brief Construct a new hermitian matrix and fill it with zeros
      * \param dim The dimension of the matrix
      */
-    herm_matrix(std::size_t dim) noexcept : matrix(dim, dim, value_type()) {
+    hermitian_matrix(std::size_t dim) noexcept : matrix(dim, dim, value_type()) {
         //Nothing else to init
     }
 
@@ -102,15 +102,15 @@ public:
      * \param value The value to fill the matrix with
      * \param dim The dimension of the matrix
      */
-    herm_matrix(std::size_t dim, value_type value) noexcept : matrix(dim, dim, value) {
+    hermitian_matrix(std::size_t dim, value_type value) noexcept : matrix(dim, dim, value) {
         //Nothing else to init
     }
 
-    herm_matrix(const herm_matrix& rhs) = default;
-    herm_matrix& operator=(const herm_matrix& rhs) = default;
+    hermitian_matrix(const hermitian_matrix& rhs) = default;
+    hermitian_matrix& operator=(const hermitian_matrix& rhs) = default;
 
-    herm_matrix(herm_matrix&& rhs) = default;
-    herm_matrix& operator=(herm_matrix&& rhs) = default;
+    hermitian_matrix(hermitian_matrix&& rhs) = default;
+    hermitian_matrix& operator=(hermitian_matrix&& rhs) = default;
 
     /*!
      * \brief Assign the values of the ETL expression to the hermitian matrix
@@ -118,7 +118,7 @@ public:
      * \return a reference to the fast matrix
      */
     template <typename E, cpp_enable_if(std::is_convertible<value_t<E>, value_type>::value, is_etl_expr<E>::value)>
-    herm_matrix& operator=(E&& e) noexcept(false) {
+    hermitian_matrix& operator=(E&& e) noexcept(false) {
         // Make sure the other matrix is hermitian
         if(!is_hermitian(e)){
             throw hermitian_exception();
@@ -137,7 +137,7 @@ public:
      * \param rhs The right hand side scalar
      * \return a reference to the matrix
      */
-    herm_matrix& operator+=(const value_type& rhs) noexcept {
+    hermitian_matrix& operator+=(const value_type& rhs) noexcept {
         detail::scalar_add::apply(*this, rhs);
         return *this;
     }
@@ -148,7 +148,7 @@ public:
      * \return a reference to the matrix
      */
     template<typename R, cpp_enable_if(is_etl_expr<R>::value)>
-    herm_matrix& operator+=(const R& rhs){
+    hermitian_matrix& operator+=(const R& rhs){
         // Make sure the other matrix is hermitian
         if(!is_hermitian(rhs)){
             throw hermitian_exception();
@@ -164,7 +164,7 @@ public:
      * \param rhs The right hand side scalar
      * \return a reference to the matrix
      */
-    herm_matrix& operator-=(const value_type& rhs) noexcept {
+    hermitian_matrix& operator-=(const value_type& rhs) noexcept {
         detail::scalar_sub::apply(*this, rhs);
         return *this;
     }
@@ -175,7 +175,7 @@ public:
      * \return a reference to the matrix
      */
     template<typename R, cpp_enable_if(is_etl_expr<R>::value)>
-    herm_matrix& operator-=(const R& rhs){
+    hermitian_matrix& operator-=(const R& rhs){
         // Make sure the other matrix is hermitian
         if(!is_hermitian(rhs)){
             throw hermitian_exception();
@@ -191,7 +191,7 @@ public:
      * \param rhs The right hand side scalar
      * \return a reference to the matrix
      */
-    herm_matrix& operator*=(const value_type& rhs) noexcept {
+    hermitian_matrix& operator*=(const value_type& rhs) noexcept {
         detail::scalar_mul::apply(*this, rhs);
         return *this;
     }
@@ -202,7 +202,7 @@ public:
      * \return a reference to the matrix
      */
     template<typename R, cpp_enable_if(is_etl_expr<R>::value)>
-    herm_matrix& operator*=(const R& rhs) {
+    hermitian_matrix& operator*=(const R& rhs) {
         // Make sure the other matrix is hermitian
         if(!is_hermitian(rhs)){
             throw hermitian_exception();
@@ -218,7 +218,7 @@ public:
      * \param rhs The right hand side scalar
      * \return a reference to the matrix
      */
-    herm_matrix& operator>>=(const value_type& rhs) noexcept {
+    hermitian_matrix& operator>>=(const value_type& rhs) noexcept {
         detail::scalar_mul::apply(*this, rhs);
         return *this;
     }
@@ -229,7 +229,7 @@ public:
      * \return a reference to the matrix
      */
     template<typename R, cpp_enable_if(is_etl_expr<R>::value)>
-    herm_matrix& operator>>=(const R& rhs) {
+    hermitian_matrix& operator>>=(const R& rhs) {
         // Make sure the other matrix is hermitian
         if(!is_hermitian(rhs)){
             throw hermitian_exception();
@@ -245,7 +245,7 @@ public:
      * \param rhs The right hand side scalar
      * \return a reference to the matrix
      */
-    herm_matrix& operator/=(const value_type& rhs) noexcept {
+    hermitian_matrix& operator/=(const value_type& rhs) noexcept {
         detail::scalar_div::apply(*this, rhs);
         return *this;
     }
@@ -256,7 +256,7 @@ public:
      * \return a reference to the matrix
      */
     template<typename R, cpp_enable_if(is_etl_expr<R>::value)>
-    herm_matrix& operator/=(const R& rhs) {
+    hermitian_matrix& operator/=(const R& rhs) {
         // Make sure the other matrix is hermitian
         if(!is_hermitian(rhs)){
             throw hermitian_exception();
@@ -272,7 +272,7 @@ public:
      * \param rhs The right hand side scalar
      * \return a reference to the matrix
      */
-    herm_matrix& operator%=(const value_type& rhs) noexcept {
+    hermitian_matrix& operator%=(const value_type& rhs) noexcept {
         detail::scalar_mod::apply(*this, rhs);
         return *this;
     }
@@ -283,7 +283,7 @@ public:
      * \return a reference to the matrix
      */
     template<typename R, cpp_enable_if(is_etl_expr<R>::value)>
-    herm_matrix& operator%=(const R& rhs){
+    hermitian_matrix& operator%=(const R& rhs){
         // Make sure the other matrix is hermitian
         if(!is_hermitian(rhs)){
             throw hermitian_exception();
@@ -590,6 +590,6 @@ public:
 };
 
 template <typename Matrix>
-struct etl_traits<herm_matrix<Matrix>> : wrapper_traits<herm_matrix<Matrix>> {};
+struct etl_traits<hermitian_matrix<Matrix>> : wrapper_traits<hermitian_matrix<Matrix>> {};
 
 } //end of namespace etl

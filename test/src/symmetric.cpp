@@ -8,10 +8,10 @@
 #include "test_light.hpp"
 
 TEMPLATE_TEST_CASE_2("sym/fast_matrix/1", "[sym][fast]", Z, float, double) {
-    etl::sym_matrix<etl::fast_matrix<Z, 2,2>> a;
-    etl::sym_matrix<etl::fast_matrix<Z, 1,1>> b;
-    etl::sym_matrix<etl::fast_dyn_matrix<Z, 1,1>> c(Z(0.0));
-    etl::sym_matrix<etl::dyn_matrix<Z>> d(3, Z(1.0));
+    etl::symmetric_matrix<etl::fast_matrix<Z, 2,2>> a;
+    etl::symmetric_matrix<etl::fast_matrix<Z, 1,1>> b;
+    etl::symmetric_matrix<etl::fast_dyn_matrix<Z, 1,1>> c(Z(0.0));
+    etl::symmetric_matrix<etl::dyn_matrix<Z>> d(3, Z(1.0));
 
     using a_t = decltype(a);
     using b_t = decltype(b);
@@ -35,7 +35,7 @@ TEMPLATE_TEST_CASE_2("sym/fast_matrix/1", "[sym][fast]", Z, float, double) {
 }
 
 TEMPLATE_TEST_CASE_2("sym/fast_matrix/2", "[sym][fast]", Z, float, double) {
-    etl::sym_matrix<etl::fast_matrix<Z, 3, 3>> a;
+    etl::symmetric_matrix<etl::fast_matrix<Z, 3, 3>> a;
 
     REQUIRE_EQUALS(a(0, 0), Z(0.0));
     REQUIRE_EQUALS(a(1, 2), Z(0.0));
@@ -61,7 +61,7 @@ TEMPLATE_TEST_CASE_2("sym/fast_matrix/2", "[sym][fast]", Z, float, double) {
 }
 
 TEMPLATE_TEST_CASE_2("sym/fast_matrix/3", "[sym][fast]", Z, float, double) {
-    etl::sym_matrix<etl::dyn_matrix<Z>> a(3UL);
+    etl::symmetric_matrix<etl::dyn_matrix<Z>> a(3UL);
 
     REQUIRE_EQUALS(a(0, 0), Z(0.0));
     REQUIRE_EQUALS(a(1, 2), Z(0.0));
@@ -88,7 +88,7 @@ TEMPLATE_TEST_CASE_2("sym/fast_matrix/3", "[sym][fast]", Z, float, double) {
 
 TEMPLATE_TEST_CASE_2("sym/fast_matrix/4", "[sym][fast]", Z, float, double) {
     etl::fast_matrix<Z, 3, 3> a = {0.0, 1.0, 2.0, 1.0, 1.0, 3.0, 2.0, 3.0, 2.0};;
-    etl::sym_matrix<etl::fast_matrix<Z, 3, 3>> b;
+    etl::symmetric_matrix<etl::fast_matrix<Z, 3, 3>> b;
     b = a;
 
     REQUIRE_EQUALS(b(0, 0), 0.0);
@@ -110,10 +110,10 @@ TEMPLATE_TEST_CASE_2("sym/fast_matrix/4", "[sym][fast]", Z, float, double) {
 TEMPLATE_TEST_CASE_2("sym/fast_matrix/5", "[sym][fast]", Z, float, double) {
     etl::fast_matrix<Z, 3, 3> a = {0.0, 1.0, 2.0, 1.0, 1.0, 3.0, 2.0, 3.0, 2.0};;
 
-    etl::sym_matrix<etl::dyn_matrix<Z>> b(3UL);
+    etl::symmetric_matrix<etl::dyn_matrix<Z>> b(3UL);
     b = a;
 
-    etl::sym_matrix<etl::dyn_matrix<Z>> c(3UL);
+    etl::symmetric_matrix<etl::dyn_matrix<Z>> c(3UL);
     c = a;
 
     c = b + c;
@@ -134,10 +134,10 @@ TEMPLATE_TEST_CASE_2("sym/fast_matrix/5", "[sym][fast]", Z, float, double) {
 TEMPLATE_TEST_CASE_2("sym/fast_matrix/6", "[sym][fast]", Z, float, double) {
     etl::fast_matrix<Z, 3, 3> a = {0.0, 1.0, 2.0, 1.0, 1.0, 3.0, 2.0, 3.0, 2.0};;
 
-    etl::sym_matrix<etl::dyn_matrix<Z>> b(3UL);
+    etl::symmetric_matrix<etl::dyn_matrix<Z>> b(3UL);
     b = a;
 
-    etl::sym_matrix<etl::dyn_matrix<Z>> c(3UL);
+    etl::symmetric_matrix<etl::dyn_matrix<Z>> c(3UL);
     c = a;
 
     c += b;
@@ -157,7 +157,7 @@ TEMPLATE_TEST_CASE_2("sym/fast_matrix/6", "[sym][fast]", Z, float, double) {
 
 TEMPLATE_TEST_CASE_2("sym/fast_matrix/7", "[sym][fast]", Z, float, double) {
     etl::fast_matrix<Z, 3, 3> a = {0.0, 2.0, 2.0, 1.0, 1.0, 3.0, 2.0, 3.0, 2.0};;
-    etl::sym_matrix<etl::fast_matrix<Z, 3, 3>> b;
+    etl::symmetric_matrix<etl::fast_matrix<Z, 3, 3>> b;
 
     REQUIRE_THROWS(b = a);
 
@@ -177,7 +177,7 @@ TEMPLATE_TEST_CASE_2("sym/fast_matrix/7", "[sym][fast]", Z, float, double) {
 TEMPLATE_TEST_CASE_2("sym/fast_matrix/8", "[sym][fast]", Z, float, double) {
     etl::fast_matrix<Z, 3, 3> a = {0.0, 1.0, 2.0, 1.0, 1.0, 3.0, 2.0, 3.0, 2.0};;
 
-    etl::sym_matrix<etl::dyn_matrix<Z>> c(3UL);
+    etl::symmetric_matrix<etl::dyn_matrix<Z>> c(3UL);
     c = a;
 
     a(0,1) = 2.0;

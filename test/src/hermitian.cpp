@@ -8,10 +8,10 @@
 #include "test_light.hpp"
 
 TEMPLATE_TEST_CASE_4("herm/fast_matrix/1", "[herm][fast]", Z, std::complex<float>, std::complex<double>, etl::complex<float>, etl::complex<double>) {
-    etl::herm_matrix<etl::fast_matrix<Z, 2,2>> a(Z(0.0, 0.0));
-    etl::herm_matrix<etl::fast_matrix<Z, 1,1>> b(Z(0.0, 0.0));
-    etl::herm_matrix<etl::fast_dyn_matrix<Z, 1,1>> c(Z(0.0, 0.0));
-    etl::herm_matrix<etl::dyn_matrix<Z>> d(3, Z(0.0, 0.0));
+    etl::hermitian_matrix<etl::fast_matrix<Z, 2,2>> a(Z(0.0, 0.0));
+    etl::hermitian_matrix<etl::fast_matrix<Z, 1,1>> b(Z(0.0, 0.0));
+    etl::hermitian_matrix<etl::fast_dyn_matrix<Z, 1,1>> c(Z(0.0, 0.0));
+    etl::hermitian_matrix<etl::dyn_matrix<Z>> d(3, Z(0.0, 0.0));
 
     using a_t = decltype(a);
     using b_t = decltype(b);
@@ -42,7 +42,7 @@ TEMPLATE_TEST_CASE_4("herm/fast_matrix/1", "[herm][fast]", Z, std::complex<float
 }
 
 TEMPLATE_TEST_CASE_4("herm/fast_matrix/2", "[herm][fast]", Z, std::complex<float>, std::complex<double>, etl::complex<float>, etl::complex<double>) {
-    etl::herm_matrix<etl::fast_matrix<Z, 3, 3>> a;
+    etl::hermitian_matrix<etl::fast_matrix<Z, 3, 3>> a;
 
     REQUIRE_EQUALS(a(0, 0), Z(0.0, 0.0));
     REQUIRE_EQUALS(a(1, 2), Z(0.0, 0.0));
@@ -63,7 +63,7 @@ TEMPLATE_TEST_CASE_4("herm/fast_matrix/2", "[herm][fast]", Z, std::complex<float
 }
 
 TEMPLATE_TEST_CASE_4("herm/fast_matrix/3", "[herm][fast]", Z, std::complex<float>, std::complex<double>, etl::complex<float>, etl::complex<double>) {
-    etl::herm_matrix<etl::dyn_matrix<Z>> a(3UL);
+    etl::hermitian_matrix<etl::dyn_matrix<Z>> a(3UL);
 
     REQUIRE_EQUALS(a(0, 0), Z(0.0, 0.0));
     REQUIRE_EQUALS(a(1, 2), Z(0.0, 0.0));
@@ -87,7 +87,7 @@ TEMPLATE_TEST_CASE_4("herm/fast_matrix/4", "[herm][fast]", Z, std::complex<float
     etl::fast_matrix<Z, 3, 3> a = {Z(0.0, 1.0),  Z(1.0, 1.0), Z(2.0, 2.0),
                                    Z(1.0, -1.0), Z(2.0, 2.0), Z(3.0, 3.0),
                                    Z(2.0, -2.0),  Z(3.0, -3.0), Z(3.0, 3.0)};;
-    etl::herm_matrix<etl::fast_matrix<Z, 3, 3>> b;
+    etl::hermitian_matrix<etl::fast_matrix<Z, 3, 3>> b;
     b = a;
 
     REQUIRE_EQUALS(b(0, 0), Z(0.0, 1.0));
@@ -111,10 +111,10 @@ TEMPLATE_TEST_CASE_4("herm/fast_matrix/5", "[herm][fast]", Z, std::complex<float
                                    Z(1.0, -1.0), Z(2.0, 2.0), Z(3.0, 3.0),
                                    Z(2.0, -2.0),  Z(3.0, -3.0), Z(3.0, 3.0)};;
 
-    etl::herm_matrix<etl::dyn_matrix<Z>> b(3UL);
+    etl::hermitian_matrix<etl::dyn_matrix<Z>> b(3UL);
     b = a;
 
-    etl::herm_matrix<etl::dyn_matrix<Z>> c(3UL);
+    etl::hermitian_matrix<etl::dyn_matrix<Z>> c(3UL);
     c = a;
 
     c = b + c;
@@ -137,10 +137,10 @@ TEMPLATE_TEST_CASE_4("herm/fast_matrix/6", "[herm][fast]", Z, std::complex<float
                                    Z(1.0, -1.0), Z(2.0, 2.0), Z(3.0, 3.0),
                                    Z(2.0, -2.0),  Z(3.0, -3.0), Z(3.0, 3.0)};;
 
-    etl::herm_matrix<etl::dyn_matrix<Z>> b(3UL);
+    etl::hermitian_matrix<etl::dyn_matrix<Z>> b(3UL);
     b = a;
 
-    etl::herm_matrix<etl::dyn_matrix<Z>> c(3UL);
+    etl::hermitian_matrix<etl::dyn_matrix<Z>> c(3UL);
     c = a;
 
     c += b;
@@ -162,7 +162,7 @@ TEMPLATE_TEST_CASE_4("herm/fast_matrix/7", "[herm][fast]", Z, std::complex<float
     etl::fast_matrix<Z, 3, 3> a = {Z(0.0, 1.0),  Z(1.0, 1.0), Z(2.0, 2.0),
                                    Z(2.0, -1.0), Z(2.0, 2.0), Z(3.0, 3.0),
                                    Z(2.0, -2.0),  Z(3.0, -3.0), Z(3.0, 3.0)};;
-    etl::herm_matrix<etl::fast_matrix<Z, 3, 3>> b;
+    etl::hermitian_matrix<etl::fast_matrix<Z, 3, 3>> b;
 
     REQUIRE_THROWS(b = a);
 
@@ -184,7 +184,7 @@ TEMPLATE_TEST_CASE_4("herm/fast_matrix/8", "[herm][fast]", Z, std::complex<float
                                    Z(1.0, -1.0), Z(2.0, 2.0), Z(3.0, 3.0),
                                    Z(2.0, -2.0),  Z(3.0, -3.0), Z(3.0, 3.0)};;
 
-    etl::herm_matrix<etl::dyn_matrix<Z>> c(3UL);
+    etl::hermitian_matrix<etl::dyn_matrix<Z>> c(3UL);
     c = a;
 
     a(0,1) = Z(0.0, 0.0);

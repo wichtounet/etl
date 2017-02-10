@@ -39,7 +39,7 @@ struct symmetric_exception : std::exception {
  * This is only a prototype.
  */
 template <typename Matrix>
-struct sym_matrix final : comparable<sym_matrix<Matrix>>, iterable<const sym_matrix<Matrix>> {
+struct symmetric_matrix final : comparable<symmetric_matrix<Matrix>>, iterable<const symmetric_matrix<Matrix>> {
     using matrix_t = Matrix;   ///< The adapted matrix type
     using expr_t   = matrix_t; ///< The wrapped expression type
 
@@ -73,7 +73,7 @@ public:
      *
      * This constructor can only be used when the matrix is fast
      */
-    sym_matrix() noexcept : matrix(value_type()) {
+    symmetric_matrix() noexcept : matrix(value_type()) {
         //Nothing else to init
     }
 
@@ -84,7 +84,7 @@ public:
      *
      * This constructor can only be used when the matrix is fast
      */
-    sym_matrix(value_type value) noexcept : matrix(value) {
+    symmetric_matrix(value_type value) noexcept : matrix(value) {
         //Nothing else to init
     }
 
@@ -92,7 +92,7 @@ public:
      * \brief Construct a new sym matrix and fill it with zeros
      * \param dim The dimension of the matrix
      */
-    sym_matrix(std::size_t dim) noexcept : matrix(dim, dim, value_type()) {
+    symmetric_matrix(std::size_t dim) noexcept : matrix(dim, dim, value_type()) {
         //Nothing else to init
     }
 
@@ -102,15 +102,15 @@ public:
      * \param value The value to fill the matrix with
      * \param dim The dimension of the matrix
      */
-    sym_matrix(std::size_t dim, value_type value) noexcept : matrix(dim, dim, value) {
+    symmetric_matrix(std::size_t dim, value_type value) noexcept : matrix(dim, dim, value) {
         //Nothing else to init
     }
 
-    sym_matrix(const sym_matrix& rhs) = default;
-    sym_matrix& operator=(const sym_matrix& rhs) = default;
+    symmetric_matrix(const symmetric_matrix& rhs) = default;
+    symmetric_matrix& operator=(const symmetric_matrix& rhs) = default;
 
-    sym_matrix(sym_matrix&& rhs) = default;
-    sym_matrix& operator=(sym_matrix&& rhs) = default;
+    symmetric_matrix(symmetric_matrix&& rhs) = default;
+    symmetric_matrix& operator=(symmetric_matrix&& rhs) = default;
 
     /*!
      * \brief Assign the values of the ETL expression to the symmetric matrix
@@ -118,7 +118,7 @@ public:
      * \return a reference to the fast matrix
      */
     template <typename E, cpp_enable_if(std::is_convertible<value_t<E>, value_type>::value, is_etl_expr<E>::value)>
-    sym_matrix& operator=(E&& e) noexcept(false) {
+    symmetric_matrix& operator=(E&& e) noexcept(false) {
         // Make sure the other matrix is symmetric
         if(!is_symmetric(e)){
             throw symmetric_exception();
@@ -137,7 +137,7 @@ public:
      * \param rhs The right hand side scalar
      * \return a reference to the matrix
      */
-    sym_matrix& operator+=(const value_type& rhs) noexcept {
+    symmetric_matrix& operator+=(const value_type& rhs) noexcept {
         detail::scalar_add::apply(*this, rhs);
         return *this;
     }
@@ -148,7 +148,7 @@ public:
      * \return a reference to the matrix
      */
     template<typename R, cpp_enable_if(is_etl_expr<R>::value)>
-    sym_matrix& operator+=(const R& rhs){
+    symmetric_matrix& operator+=(const R& rhs){
         // Make sure the other matrix is symmetric
         if(!is_symmetric(rhs)){
             throw symmetric_exception();
@@ -164,7 +164,7 @@ public:
      * \param rhs The right hand side scalar
      * \return a reference to the matrix
      */
-    sym_matrix& operator-=(const value_type& rhs) noexcept {
+    symmetric_matrix& operator-=(const value_type& rhs) noexcept {
         detail::scalar_sub::apply(*this, rhs);
         return *this;
     }
@@ -175,7 +175,7 @@ public:
      * \return a reference to the matrix
      */
     template<typename R, cpp_enable_if(is_etl_expr<R>::value)>
-    sym_matrix& operator-=(const R& rhs){
+    symmetric_matrix& operator-=(const R& rhs){
         // Make sure the other matrix is symmetric
         if(!is_symmetric(rhs)){
             throw symmetric_exception();
@@ -191,7 +191,7 @@ public:
      * \param rhs The right hand side scalar
      * \return a reference to the matrix
      */
-    sym_matrix& operator*=(const value_type& rhs) noexcept {
+    symmetric_matrix& operator*=(const value_type& rhs) noexcept {
         detail::scalar_mul::apply(*this, rhs);
         return *this;
     }
@@ -202,7 +202,7 @@ public:
      * \return a reference to the matrix
      */
     template<typename R, cpp_enable_if(is_etl_expr<R>::value)>
-    sym_matrix& operator*=(const R& rhs) {
+    symmetric_matrix& operator*=(const R& rhs) {
         // Make sure the other matrix is symmetric
         if(!is_symmetric(rhs)){
             throw symmetric_exception();
@@ -218,7 +218,7 @@ public:
      * \param rhs The right hand side scalar
      * \return a reference to the matrix
      */
-    sym_matrix& operator>>=(const value_type& rhs) noexcept {
+    symmetric_matrix& operator>>=(const value_type& rhs) noexcept {
         detail::scalar_mul::apply(*this, rhs);
         return *this;
     }
@@ -229,7 +229,7 @@ public:
      * \return a reference to the matrix
      */
     template<typename R, cpp_enable_if(is_etl_expr<R>::value)>
-    sym_matrix& operator>>=(const R& rhs) {
+    symmetric_matrix& operator>>=(const R& rhs) {
         // Make sure the other matrix is symmetric
         if(!is_symmetric(rhs)){
             throw symmetric_exception();
@@ -245,7 +245,7 @@ public:
      * \param rhs The right hand side scalar
      * \return a reference to the matrix
      */
-    sym_matrix& operator/=(const value_type& rhs) noexcept {
+    symmetric_matrix& operator/=(const value_type& rhs) noexcept {
         detail::scalar_div::apply(*this, rhs);
         return *this;
     }
@@ -256,7 +256,7 @@ public:
      * \return a reference to the matrix
      */
     template<typename R, cpp_enable_if(is_etl_expr<R>::value)>
-    sym_matrix& operator/=(const R& rhs) {
+    symmetric_matrix& operator/=(const R& rhs) {
         // Make sure the other matrix is symmetric
         if(!is_symmetric(rhs)){
             throw symmetric_exception();
@@ -272,7 +272,7 @@ public:
      * \param rhs The right hand side scalar
      * \return a reference to the matrix
      */
-    sym_matrix& operator%=(const value_type& rhs) noexcept {
+    symmetric_matrix& operator%=(const value_type& rhs) noexcept {
         detail::scalar_mod::apply(*this, rhs);
         return *this;
     }
@@ -283,7 +283,7 @@ public:
      * \return a reference to the matrix
      */
     template<typename R, cpp_enable_if(is_etl_expr<R>::value)>
-    sym_matrix& operator%=(const R& rhs){
+    symmetric_matrix& operator%=(const R& rhs){
         // Make sure the other matrix is symmetric
         if(!is_symmetric(rhs)){
             throw symmetric_exception();
@@ -590,6 +590,6 @@ public:
 };
 
 template <typename Matrix>
-struct etl_traits<sym_matrix<Matrix>> : wrapper_traits<sym_matrix<Matrix>> {};
+struct etl_traits<symmetric_matrix<Matrix>> : wrapper_traits<symmetric_matrix<Matrix>> {};
 
 } //end of namespace etl

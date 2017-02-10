@@ -88,7 +88,7 @@ bool is_sub_rectangular(E&& expr) {
  */
 template <typename E>
 bool is_symmetric(E&& expr) {
-    // sym_matrix<E> is already enforced to be symmetric
+    // symmetric_matrix<E> is already enforced to be symmetric
     if (is_symmetric_matrix<E>::value) {
         return true;
     }
@@ -354,7 +354,7 @@ bool is_permutation_matrix(E&& expr){
  */
 template <typename E, cpp_enable_if(is_complex<E>::value)>
 bool is_hermitian(E&& expr){
-    // herm_matrix<E> is already enforced to be hermitian
+    // hermitian_matrix<E> is already enforced to be hermitian
     if (is_hermitian_matrix<E>::value) {
         return true;
     }
