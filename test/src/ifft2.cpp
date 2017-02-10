@@ -103,6 +103,19 @@ IFFT2_REAL_TEST_CASE("ifft_2d_c_real/1", "[fast][ifft]") {
 
     Impl::apply(a, c);
 
+    REQUIRE_EQUALS_APPROX(a[0].real(), T(1.0));
+    REQUIRE_EQUALS_APPROX(a[0].imag(), T(1.0));
+    REQUIRE_EQUALS_APPROX(a[1].real(), T(-2.0));
+    REQUIRE_EQUALS_APPROX(a[1].imag(), T(0.0));
+    REQUIRE_EQUALS_APPROX(a[2].real(), T(3.5));
+    REQUIRE_EQUALS_APPROX(a[2].imag(), T(1.5));
+    REQUIRE_EQUALS_APPROX(a[3].real(), T(-4.0));
+    REQUIRE_EQUALS_APPROX(a[3].imag(), T(-4.0));
+    REQUIRE_EQUALS_APPROX(a[4].real(), T(5.0));
+    REQUIRE_EQUALS_APPROX(a[4].imag(), T(0.5));
+    REQUIRE_EQUALS_APPROX(a[5].real(), T(6.5));
+    REQUIRE_EQUALS_APPROX(a[5].imag(), T(1.25));
+
     REQUIRE_EQUALS_APPROX(c(0, 0), T(1.66667));
     REQUIRE_EQUALS_APPROX(c(0, 1), T(1.5));
     REQUIRE_EQUALS_APPROX(c(1, 0), T(-0.4699));
@@ -121,6 +134,15 @@ IFFT2_REAL_TEST_CASE("ifft_2d_real_c/2", "[fast][ifft]") {
     a[3] = std::complex<T>(-2.0, 0.0);
 
     Impl::apply(a, c);
+
+    REQUIRE_EQUALS_APPROX(a[0].real(), T(1.0));
+    REQUIRE_EQUALS_APPROX(a[0].imag(), T(1.0));
+    REQUIRE_EQUALS_APPROX(a[1].real(), T(2.0));
+    REQUIRE_EQUALS_APPROX(a[1].imag(), T(3.0));
+    REQUIRE_EQUALS_APPROX(a[2].real(), T(-1.0));
+    REQUIRE_EQUALS_APPROX(a[2].imag(), T(0.0));
+    REQUIRE_EQUALS_APPROX(a[3].real(), T(-2.0));
+    REQUIRE_EQUALS_APPROX(a[3].imag(), T(0.0));
 
     REQUIRE_EQUALS_APPROX(c(0, 0), T(0.0));
     REQUIRE_EQUALS_APPROX(c(0, 1), T(0.0));
