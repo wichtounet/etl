@@ -34,304 +34,6 @@ namespace cufft {
 namespace detail {
 
 /*!
- * \brief Inplace single-precision 1D FFT kernel
- * \param a The matrix
- * \param n The size of the transform
- */
-template <typename T>
-void inplace_cfft1_kernel(T&& a, std::size_t n) {
-    decltype(auto) handle = start_cufft();
-
-    cufftPlan1d(&handle.get(), n, CUFFT_C2C, 1);
-    cufftExecC2C(handle.get(), complex_cast(a.gpu_memory()), complex_cast(a.gpu_memory()), CUFFT_FORWARD);
-
-    a.invalidate_cpu();
-}
-
-/*!
- * \brief Inplace double-precision 1D FFT kernel
- * \param a The matrix
- * \param n The size of the transform
- */
-template <typename T>
-void inplace_zfft1_kernel(T&& a, std::size_t n) {
-    decltype(auto) handle = start_cufft();
-
-    cufftPlan1d(&handle.get(), n, CUFFT_Z2Z, 1);
-    cufftExecZ2Z(handle.get(), complex_cast(a.gpu_memory()), complex_cast(a.gpu_memory()), CUFFT_FORWARD);
-
-    a.invalidate_cpu();
-}
-
-/*!
- * \brief Inplace batched single-precision 1D FFT kernel
- * \param a The matrix
- * \param batch The number of transform
- * \param n The size of the transform
- */
-template <typename T>
-void inplace_cfft1_many_kernel(T&& a, std::size_t batch, std::size_t n) {
-    decltype(auto) handle = start_cufft();
-
-    int dims[] = {int(n)};
-
-    cufftPlanMany(&handle.get(), 1, dims,
-                  nullptr, 1, n,
-                  nullptr, 1, n,
-                  CUFFT_C2C, batch);
-
-    cufftExecC2C(handle.get(), complex_cast(a.gpu_memory()), complex_cast(a.gpu_memory()), CUFFT_FORWARD);
-
-    a.invalidate_cpu();
-}
-
-/*!
- * \brief Inplace batched double-precision 1D FFT kernel
- * \param a The matrix
- * \param batch The number of transform
- * \param n The size of the transform
- */
-template <typename T>
-void inplace_zfft1_many_kernel(T&& a, std::size_t batch, std::size_t n) {
-    decltype(auto) handle = start_cufft();
-
-    int dims[] = {int(n)};
-
-    cufftPlanMany(&handle.get(), 1, dims,
-                  nullptr, 1, n,
-                  nullptr, 1, n,
-                  CUFFT_Z2Z, batch);
-
-    cufftExecZ2Z(handle.get(), complex_cast(a.gpu_memory()), complex_cast(a.gpu_memory()), CUFFT_FORWARD);
-
-    a.invalidate_cpu();
-}
-
-/*!
- * \brief Inplace single-precision 1D Inverse FFT kernel
- * \param a The matrix
- * \param batch The number of transform
- * \param n The size of the transform
- */
-template <typename T>
-void inplace_cifft1_kernel(T&& a, std::size_t n) {
-    decltype(auto) handle = start_cufft();
-
-    cufftPlan1d(&handle.get(), n, CUFFT_C2C, 1);
-    cufftExecC2C(handle.get(), complex_cast(a.gpu_memory()), complex_cast(a.gpu_memory()), CUFFT_INVERSE);
-
-    a.invalidate_cpu();
-}
-
-/*!
- * \brief Inplace double-precision 1D Inverse FFT kernel
- * \param a The matrix
- * \param batch The number of transform
- * \param n The size of the transform
- */
-template <typename T>
-void inplace_zifft1_kernel(T&& a, std::size_t n) {
-    decltype(auto) handle = start_cufft();
-
-    cufftPlan1d(&handle.get(), n, CUFFT_Z2Z, 1);
-    cufftExecZ2Z(handle.get(), complex_cast(a.gpu_memory()), complex_cast(a.gpu_memory()), CUFFT_INVERSE);
-
-    a.invalidate_cpu();
-}
-
-/*!
- * \brief Inplace batched single-precision 1D Inverse FFT kernel
- * \param a The matrix
- * \param batch The number of transform
- * \param n The size of the transform
- */
-template <typename T>
-void inplace_cifft1_many_kernel(T&& a, std::size_t batch, std::size_t n) {
-    decltype(auto) handle = start_cufft();
-
-    int dims[] = {int(n)};
-
-    cufftPlanMany(&handle.get(), 1, dims,
-                  nullptr, 1, n,
-                  nullptr, 1, n,
-                  CUFFT_C2C, batch);
-
-    cufftExecC2C(handle.get(), complex_cast(a.gpu_memory()), complex_cast(a.gpu_memory()), CUFFT_INVERSE);
-
-    a.invalidate_cpu();
-}
-
-/*!
- * \brief Inplace batched double-precision 1D Inverse FFT kernel
- * \param a The matrix
- * \param batch The number of transform
- * \param n The size of the transform
- */
-template <typename T>
-void inplace_zifft1_many_kernel(T&& a, std::size_t batch, std::size_t n) {
-    decltype(auto) handle = start_cufft();
-
-    int dims[] = {int(n)};
-
-    cufftPlanMany(&handle.get(), 1, dims,
-                  nullptr, 1, n,
-                  nullptr, 1, n,
-                  CUFFT_Z2Z, batch);
-
-    cufftExecZ2Z(handle.get(), complex_cast(a.gpu_memory()), complex_cast(a.gpu_memory()), CUFFT_INVERSE);
-
-    a.invalidate_cpu();
-}
-
-/*!
- * \brief Inplace single-precision 2D FFT kernel
- * \param a The matrix
- * \param d1 The first dimension of the transform
- * \param d2 The second dimension of the transform
- */
-template <typename T>
-inline void inplace_cfft2_kernel(T&& a, std::size_t d1, std::size_t d2) {
-    decltype(auto) handle = start_cufft();
-
-    cufftPlan2d(&handle.get(), d1, d2, CUFFT_C2C);
-    cufftExecC2C(handle.get(), complex_cast(a.gpu_memory()), complex_cast(a.gpu_memory()), CUFFT_FORWARD);
-
-    a.invalidate_cpu();
-}
-
-/*!
- * \brief Inplace double-precision 2D FFT kernel
- * \param a The matrix
- * \param d1 The first dimension of the transform
- * \param d2 The second dimension of the transform
- */
-template <typename T>
-inline void inplace_zfft2_kernel(T&& a, std::size_t d1, std::size_t d2) {
-    decltype(auto) handle = start_cufft();
-
-    cufftPlan2d(&handle.get(), d1, d2, CUFFT_Z2Z);
-    cufftExecZ2Z(handle.get(), complex_cast(a.gpu_memory()), complex_cast(a.gpu_memory()), CUFFT_FORWARD);
-
-    a.invalidate_cpu();
-}
-
-/*!
- * \brief Inplace batched single-precision 2D FFT kernel
- * \param a The matrix
- * \param batch The number of transforms
- * \param d1 The first dimension of the transform
- * \param d2 The second dimension of the transform
- */
-template <typename T>
-void inplace_cfft2_many_kernel(T&& a, std::size_t batch, std::size_t d1, std::size_t d2) {
-    decltype(auto) handle = start_cufft();
-
-    int dims[] = {int(d1), int(d2)};
-
-    cufftPlanMany(&handle.get(), 2, dims, nullptr, 1, d1 * d2, nullptr, 1, d1 * d2, CUFFT_C2C, batch);
-    cufftExecC2C(handle.get(), complex_cast(a.gpu_memory()), complex_cast(a.gpu_memory()), CUFFT_FORWARD);
-
-    a.invalidate_cpu();
-}
-
-/*!
- * \brief Inplace batched double-precision 2D FFT kernel
- * \param a The matrix
- * \param batch The number of transforms
- * \param d1 The first dimension of the transform
- * \param d2 The second dimension of the transform
- */
-template <typename T>
-void inplace_zfft2_many_kernel(T&& a, std::size_t batch, std::size_t d1, std::size_t d2) {
-    decltype(auto) handle = start_cufft();
-
-    int dims[] = {int(d1), int(d2)};
-
-    cufftPlanMany(&handle.get(), 2, dims,
-                  nullptr, 1, d1 * d2,
-                  nullptr, 1, d1 * d2,
-                  CUFFT_Z2Z, batch);
-
-    cufftExecZ2Z(handle.get(), complex_cast(a.gpu_memory()), complex_cast(a.gpu_memory()), CUFFT_FORWARD);
-
-    a.invalidate_cpu();
-}
-
-/*!
- * \brief Inplace single-precision 2D Inverse FFT kernel
- * \param a The matrix
- * \param d1 The first dimension of the transform
- * \param d2 The second dimension of the transform
- */
-template <typename T>
-void inplace_cifft2_kernel(T&& a, std::size_t d1, std::size_t d2) {
-    decltype(auto) handle = start_cufft();
-
-    cufftPlan2d(&handle.get(), d1, d2, CUFFT_C2C);
-    cufftExecC2C(handle.get(), complex_cast(a.gpu_memory()), complex_cast(a.gpu_memory()), CUFFT_INVERSE);
-
-    a.invalidate_cpu();
-}
-
-/*!
- * \brief Inplace double-precision 2D Inverse FFT kernel
- * \param a The matrix
- * \param d1 The first dimension of the transform
- * \param d2 The second dimension of the transform
- */
-template <typename T>
-void inplace_zifft2_kernel(T&& a, std::size_t d1, std::size_t d2) {
-    decltype(auto) handle = start_cufft();
-
-    cufftPlan2d(&handle.get(), d1, d2, CUFFT_Z2Z);
-    cufftExecZ2Z(handle.get(), complex_cast(a.gpu_memory()), complex_cast(a.gpu_memory()), CUFFT_INVERSE);
-
-    a.invalidate_cpu();
-}
-
-/*!
- * \brief Inplace batched single-precision 2D Inverse FFT kernel
- * \param a The matrix
- * \param batch The number of transforms
- * \param d1 The first dimension of the transform
- * \param d2 The second dimension of the transform
- */
-template <typename T>
-void inplace_cifft2_many_kernel(T&& a, std::size_t batch, std::size_t d1, std::size_t d2) {
-    decltype(auto) handle = start_cufft();
-
-    int dims[] = {int(d1), int(d2)};
-
-    cufftPlanMany(&handle.get(), 2, dims, nullptr, 1, d1 * d2, nullptr, 1, d1 * d2, CUFFT_C2C, batch);
-    cufftExecC2C(handle.get(), complex_cast(a.gpu_memory()), complex_cast(a.gpu_memory()), CUFFT_INVERSE);
-
-    a.invalidate_cpu();
-}
-
-/*!
- * \brief Inplace batched double-precision 2D Inverse FFT kernel
- * \param a The matrix
- * \param batch The number of transforms
- * \param d1 The first dimension of the transform
- * \param d2 The second dimension of the transform
- */
-template <typename T>
-void inplace_zifft2_many_kernel(T&& a, std::size_t batch, std::size_t d1, std::size_t d2) {
-    decltype(auto) handle = start_cufft();
-
-    int dims[] = {int(d1), int(d2)};
-
-    cufftPlanMany(&handle.get(), 2, dims,
-                  nullptr, 1, d1 * d2,
-                  nullptr, 1, d1 * d2,
-                  CUFFT_Z2Z, batch);
-
-    cufftExecZ2Z(handle.get(), complex_cast(a.gpu_memory()), complex_cast(a.gpu_memory()), CUFFT_INVERSE);
-
-    a.invalidate_cpu();
-}
-
-/*!
  * \brief Wrapper for cufftExecC2C, for single precision
  * \param plan The CUFFT plan
  * \param idata The input data
@@ -351,6 +53,175 @@ inline cufftResult cufft_exec_c2c(cufftHandle plan, cufftComplex* idata, cufftCo
  */
 inline cufftResult cufft_exec_c2c(cufftHandle plan, cufftDoubleComplex* idata, cufftDoubleComplex* odata, int direction){
     return cufftExecZ2Z(plan, idata, odata, direction);
+}
+
+/*!
+ * \brief Inplace 1D FFT kernel
+ * \param a The matrix
+ * \param n The size of the transform
+ */
+template <typename T>
+void inplace_fft1_kernel(T&& a, std::size_t n) {
+    decltype(auto) handle = start_cufft();
+
+    a.ensure_gpu_up_to_date();
+
+    cufftPlan1d(&handle.get(), n, is_complex_single_precision<T>::value ? CUFFT_C2C : CUFFT_Z2Z, 1);
+    cufft_exec_c2c(handle.get(), complex_cast(a.gpu_memory()), complex_cast(a.gpu_memory()), CUFFT_FORWARD);
+
+    a.invalidate_cpu();
+}
+
+/*!
+ * \brief Inplace batched single-precision 1D FFT kernel
+ * \param a The matrix
+ * \param batch The number of transform
+ * \param n The size of the transform
+ */
+template <typename T>
+void inplace_fft1_many_kernel(T&& a, std::size_t batch, std::size_t n) {
+    decltype(auto) handle = start_cufft();
+
+    int dims[] = {int(n)};
+
+    a.ensure_gpu_up_to_date();
+
+    cufftPlanMany(&handle.get(), 1, dims,
+                  nullptr, 1, n,
+                  nullptr, 1, n,
+                  is_complex_single_precision<T>::value ? CUFFT_C2C : CUFFT_Z2Z, batch);
+
+    cufft_exec_c2c(handle.get(), complex_cast(a.gpu_memory()), complex_cast(a.gpu_memory()), CUFFT_FORWARD);
+
+    a.invalidate_cpu();
+}
+
+/*!
+ * \brief Inplace single-precision 1D Inverse FFT kernel
+ * \param a The matrix
+ * \param batch The number of transform
+ * \param n The size of the transform
+ */
+template <typename T>
+void inplace_ifft1_kernel(T&& a, std::size_t n) {
+    decltype(auto) handle = start_cufft();
+
+    a.ensure_gpu_up_to_date();
+
+    cufftPlan1d(&handle.get(), n, is_complex_single_precision<T>::value ? CUFFT_C2C : CUFFT_Z2Z, 1);
+    cufft_exec_c2c(handle.get(), complex_cast(a.gpu_memory()), complex_cast(a.gpu_memory()), CUFFT_INVERSE);
+
+    a.invalidate_cpu();
+}
+
+/*!
+ * \brief Inplace batched single-precision 1D Inverse FFT kernel
+ * \param a The matrix
+ * \param batch The number of transform
+ * \param n The size of the transform
+ */
+template <typename T>
+void inplace_ifft1_many_kernel(T&& a, std::size_t batch, std::size_t n) {
+    decltype(auto) handle = start_cufft();
+
+    int dims[] = {int(n)};
+
+    a.ensure_gpu_up_to_date();
+
+    cufftPlanMany(&handle.get(), 1, dims,
+                  nullptr, 1, n,
+                  nullptr, 1, n,
+                  is_complex_single_precision<T>::value ? CUFFT_C2C : CUFFT_Z2Z, batch);
+
+    cufft_exec_c2c(handle.get(), complex_cast(a.gpu_memory()), complex_cast(a.gpu_memory()), CUFFT_INVERSE);
+
+    a.invalidate_cpu();
+}
+
+/*!
+ * \brief Inplace single-precision 2D FFT kernel
+ * \param a The matrix
+ * \param d1 The first dimension of the transform
+ * \param d2 The second dimension of the transform
+ */
+template <typename T>
+inline void inplace_fft2_kernel(T&& a, std::size_t d1, std::size_t d2) {
+    decltype(auto) handle = start_cufft();
+
+    a.ensure_gpu_up_to_date();
+
+    cufftPlan2d(&handle.get(), d1, d2, is_complex_single_precision<T>::value ? CUFFT_C2C : CUFFT_Z2Z);
+    cufft_exec_c2c(handle.get(), complex_cast(a.gpu_memory()), complex_cast(a.gpu_memory()), CUFFT_FORWARD);
+
+    a.invalidate_cpu();
+}
+
+/*!
+ * \brief Inplace batched double-precision 2D FFT kernel
+ * \param a The matrix
+ * \param batch The number of transforms
+ * \param d1 The first dimension of the transform
+ * \param d2 The second dimension of the transform
+ */
+template <typename T>
+void inplace_fft2_many_kernel(T&& a, std::size_t batch, std::size_t d1, std::size_t d2) {
+    decltype(auto) handle = start_cufft();
+
+    int dims[] = {int(d1), int(d2)};
+
+    a.ensure_gpu_up_to_date();
+
+    cufftPlanMany(&handle.get(), 2, dims,
+                  nullptr, 1, d1 * d2,
+                  nullptr, 1, d1 * d2,
+                  is_complex_single_precision<T>::value ? CUFFT_C2C : CUFFT_Z2Z, batch);
+
+    cufft_exec_c2c(handle.get(), complex_cast(a.gpu_memory()), complex_cast(a.gpu_memory()), CUFFT_FORWARD);
+
+    a.invalidate_cpu();
+}
+
+/*!
+ * \brief Inplace single-precision 2D Inverse FFT kernel
+ * \param a The matrix
+ * \param d1 The first dimension of the transform
+ * \param d2 The second dimension of the transform
+ */
+template <typename T>
+void inplace_ifft2_kernel(T&& a, std::size_t d1, std::size_t d2) {
+    decltype(auto) handle = start_cufft();
+
+    a.ensure_gpu_up_to_date();
+
+    cufftPlan2d(&handle.get(), d1, d2, is_complex_single_precision<T>::value ? CUFFT_C2C : CUFFT_Z2Z);
+    cufft_exec_c2c(handle.get(), complex_cast(a.gpu_memory()), complex_cast(a.gpu_memory()), CUFFT_INVERSE);
+
+    a.invalidate_cpu();
+}
+
+/*!
+ * \brief Inplace batched double-precision 2D Inverse FFT kernel
+ * \param a The matrix
+ * \param batch The number of transforms
+ * \param d1 The first dimension of the transform
+ * \param d2 The second dimension of the transform
+ */
+template <typename T>
+void inplace_ifft2_many_kernel(T&& a, std::size_t batch, std::size_t d1, std::size_t d2) {
+    decltype(auto) handle = start_cufft();
+
+    int dims[] = {int(d1), int(d2)};
+
+    a.ensure_gpu_up_to_date();
+
+    cufftPlanMany(&handle.get(), 2, dims,
+                  nullptr, 1, d1 * d2,
+                  nullptr, 1, d1 * d2,
+                  is_complex_single_precision<T>::value ? CUFFT_C2C : CUFFT_Z2Z, batch);
+
+    cufft_exec_c2c(handle.get(), complex_cast(a.gpu_memory()), complex_cast(a.gpu_memory()), CUFFT_INVERSE);
+
+    a.invalidate_cpu();
 }
 
 template <typename T>
@@ -415,13 +286,11 @@ void conv2_full_kernel(const T* a, std::size_t m1, std::size_t m2, const T* b, s
  * \param a The input expression
  * \param c The output expression
  */
-template <typename A, typename C, cpp_enable_if(all_single_precision<A>::value)>
+template <typename A, typename C, cpp_enable_if(!all_complex<A>::value)>
 void fft1(A&& a, C&& c) {
     c = a;
 
-    c.ensure_gpu_up_to_date();
-
-    detail::inplace_cfft1_kernel(c, etl::size(a));
+    detail::inplace_fft1_kernel(c, etl::size(a));
 }
 
 /*!
@@ -429,43 +298,14 @@ void fft1(A&& a, C&& c) {
  * \param a The input expression
  * \param c The output expression
  */
-template <typename A, typename C, cpp_enable_if(all_double_precision<A>::value)>
-void fft1(A&& a, C&& c) {
-    c = a;
-
-    c.ensure_gpu_up_to_date();
-
-    detail::inplace_zfft1_kernel(c, etl::size(a));
-}
-
-/*!
- * \brief Perform the 1D FFT on a and store the result in c
- * \param a The input expression
- * \param c The output expression
- */
-template <typename A, typename C, cpp_enable_if(all_complex_single_precision<A>::value)>
+template <typename A, typename C, cpp_enable_if(all_complex<A>::value)>
 void fft1(A&& a, C&& c) {
     a.ensure_gpu_up_to_date();
     c.ensure_gpu_allocated();
 
     c.gpu_copy_from(a.gpu_memory());
 
-    detail::inplace_cfft1_kernel(c, etl::size(c));
-}
-
-/*!
- * \brief Perform the 1D FFT on a and store the result in c
- * \param a The input expression
- * \param c The output expression
- */
-template <typename A, typename C, cpp_enable_if(all_complex_double_precision<A>::value)>
-void fft1(A&& a, C&& c) {
-    a.ensure_gpu_up_to_date();
-    c.ensure_gpu_allocated();
-
-    c.gpu_copy_from(a.gpu_memory());
-
-    detail::inplace_zfft1_kernel(c, etl::size(c));
+    detail::inplace_fft1_kernel(c, etl::size(c));
 }
 
 /*!
@@ -475,7 +315,7 @@ void fft1(A&& a, C&& c) {
  *
  * The first dimension of a and c are considered batch dimensions
  */
-template <typename A, typename C, cpp_enable_if(all_single_precision<A>::value)>
+template <typename A, typename C, cpp_enable_if(!all_complex<A>::value)>
 void fft1_many(A&& a, C&& c) {
     static constexpr std::size_t N = decay_traits<A>::dimensions();
 
@@ -484,9 +324,7 @@ void fft1_many(A&& a, C&& c) {
 
     c = a;
 
-    c.ensure_gpu_up_to_date();
-
-    detail::inplace_cfft1_many_kernel(c, batch, n);
+    detail::inplace_fft1_many_kernel(c, batch, n);
 }
 
 /*!
@@ -496,28 +334,7 @@ void fft1_many(A&& a, C&& c) {
  *
  * The first dimension of a and c are considered batch dimensions
  */
-template <typename A, typename C, cpp_enable_if(all_double_precision<A>::value)>
-void fft1_many(A&& a, C&& c) {
-    static constexpr std::size_t N = decay_traits<A>::dimensions();
-
-    std::size_t n     = etl::dim<N - 1>(a); //Size of the transform
-    std::size_t batch = etl::size(a) / n;   //Number of batch
-
-    c = a;
-
-    c.ensure_gpu_up_to_date();
-
-    detail::inplace_zfft1_many_kernel(c, batch, n);
-}
-
-/*!
- * \brief Perform many 1D FFT on a and store the result in c
- * \param a The input expression
- * \param c The output expression
- *
- * The first dimension of a and c are considered batch dimensions
- */
-template <typename A, typename C, cpp_enable_if(all_complex_single_precision<A>::value)>
+template <typename A, typename C, cpp_enable_if(all_complex<A>::value)>
 void fft1_many(A&& a, C&& c) {
     static constexpr std::size_t N = decay_traits<A>::dimensions();
 
@@ -529,29 +346,7 @@ void fft1_many(A&& a, C&& c) {
 
     c.gpu_copy_from(a.gpu_memory());
 
-    detail::inplace_cfft1_many_kernel(c, batch, n);
-}
-
-/*!
- * \brief Perform many 1D FFT on a and store the result in c
- * \param a The input expression
- * \param c The output expression
- *
- * The first dimension of a and c are considered batch dimensions
- */
-template <typename A, typename C, cpp_enable_if(all_complex_double_precision<A>::value)>
-void fft1_many(A&& a, C&& c) {
-    static constexpr std::size_t N = decay_traits<A>::dimensions();
-
-    std::size_t n     = etl::dim<N - 1>(a); //Size of the transform
-    std::size_t batch = etl::size(a) / n;   //Number of batch
-
-    a.ensure_gpu_up_to_date();
-    c.ensure_gpu_allocated();
-
-    c.gpu_copy_from(a.gpu_memory());
-
-    detail::inplace_zfft1_many_kernel(c, batch, n);
+    detail::inplace_fft1_many_kernel(c, batch, n);
 }
 
 /*!
@@ -692,29 +487,13 @@ void scale_back_real(A&& a, C&& c) {
  * \param a The input expression
  * \param c The output expression
  */
-template <typename A, typename C, cpp_enable_if(all_complex_single_precision<A>::value)>
+template <typename A, typename C>
 void ifft1(A&& a, C&& c) {
     a.ensure_gpu_up_to_date();
     c.ensure_gpu_allocated();
     c.gpu_copy_from(a.gpu_memory());
 
-    detail::inplace_cifft1_kernel(c, etl::size(c));
-
-    scale_back(c);
-}
-
-/*!
- * \brief Perform the 1D Inverse FFT on a and store the result in c
- * \param a The input expression
- * \param c The output expression
- */
-template <typename A, typename C, cpp_enable_if(all_complex_double_precision<A>::value)>
-void ifft1(A&& a, C&& c) {
-    a.ensure_gpu_up_to_date();
-    c.ensure_gpu_allocated();
-    c.gpu_copy_from(a.gpu_memory());
-
-    detail::inplace_zifft1_kernel(c, etl::size(c));
+    detail::inplace_ifft1_kernel(c, etl::size(c));
 
     scale_back(c);
 }
@@ -724,25 +503,9 @@ void ifft1(A&& a, C&& c) {
  * \param a The input expression
  * \param c The output expression
  */
-template <typename A, typename C, cpp_enable_if(all_complex_single_precision<A>::value)>
+template <typename A, typename C>
 void ifft1_real(A&& a, C&& c) {
-    a.ensure_gpu_up_to_date();
-
-    detail::inplace_cifft1_kernel(a, etl::size(a));
-
-    scale_back_real(a, c);
-}
-
-/*!
- * \brief Perform the 1D Inverse FFT on a and store the real part of the result in c
- * \param a The input expression
- * \param c The output expression
- */
-template <typename A, typename C, cpp_enable_if(all_complex_double_precision<A>::value)>
-void ifft1_real(A&& a, C&& c) {
-    a.ensure_gpu_up_to_date();
-
-    detail::inplace_zifft1_kernel(a, etl::size(a));
+    detail::inplace_ifft1_kernel(a, etl::size(a));
 
     scale_back_real(a, c);
 }
@@ -754,7 +517,7 @@ void ifft1_real(A&& a, C&& c) {
  *
  * The first dimension of a and c are considered batch dimensions
  */
-template <typename A, typename C, cpp_enable_if(all_complex_single_precision<A>::value)>
+template <typename A, typename C>
 void ifft1_many(A&& a, C&& c) {
     static constexpr std::size_t N = decay_traits<A>::dimensions();
 
@@ -765,30 +528,7 @@ void ifft1_many(A&& a, C&& c) {
     c.ensure_gpu_allocated();
     c.gpu_copy_from(a.gpu_memory());
 
-    detail::inplace_cifft1_many_kernel(c, batch, n);
-
-    scale_back(c, 1.0 / double(n));
-}
-
-/*!
- * \brief Perform many 1D Inverse FFT on a and store the result in c
- * \param a The input expression
- * \param c The output expression
- *
- * The first dimension of a and c are considered batch dimensions
- */
-template <typename A, typename C, cpp_enable_if(all_complex_double_precision<A>::value)>
-void ifft1_many(A&& a, C&& c) {
-    static constexpr std::size_t N = decay_traits<A>::dimensions();
-
-    std::size_t n     = etl::dim<N - 1>(a); //Size of the transform
-    std::size_t batch = etl::size(a) / n;   //Number of batch
-
-    a.ensure_gpu_up_to_date();
-    c.ensure_gpu_allocated();
-    c.gpu_copy_from(a.gpu_memory());
-
-    detail::inplace_zifft1_many_kernel(c, batch, n);
+    detail::inplace_ifft1_many_kernel(c, batch, n);
 
     scale_back(c, 1.0 / double(n));
 }
@@ -855,13 +595,11 @@ void conv1_full(A&& a, B&& b, C&& c) {
  * \param a The input expression
  * \param c The output expression
  */
-template <typename A, typename C, cpp_enable_if(all_single_precision<A>::value)>
+template <typename A, typename C, cpp_enable_if(!all_complex<A>::value)>
 void fft2(A&& a, C&& c) {
     c = a;
 
-    c.ensure_gpu_up_to_date();
-
-    detail::inplace_cfft2_kernel(c, etl::dim<0>(a), etl::dim<1>(a));
+    detail::inplace_fft2_kernel(c, etl::dim<0>(a), etl::dim<1>(a));
 }
 
 /*!
@@ -869,41 +607,13 @@ void fft2(A&& a, C&& c) {
  * \param a The input expression
  * \param c The output expression
  */
-template <typename A, typename C, cpp_enable_if(all_double_precision<A>::value)>
-void fft2(A&& a, C&& c) {
-    c = a;
-
-    c.ensure_gpu_up_to_date();
-
-    detail::inplace_zfft2_kernel(c, etl::dim<0>(a), etl::dim<1>(a));
-}
-
-/*!
- * \brief Perform the 2D FFT on a and store the result in c
- * \param a The input expression
- * \param c The output expression
- */
-template <typename A, typename C, cpp_enable_if(all_complex_single_precision<A>::value)>
+template <typename A, typename C, cpp_enable_if(all_complex<A>::value)>
 void fft2(A&& a, C&& c) {
     a.ensure_gpu_up_to_date();
     c.ensure_gpu_allocated();
     c.gpu_copy_from(a.gpu_memory());
 
-    detail::inplace_cfft2_kernel(c, etl::dim<0>(c), etl::dim<1>(c));
-}
-
-/*!
- * \brief Perform the 2D FFT on a and store the result in c
- * \param a The input expression
- * \param c The output expression
- */
-template <typename A, typename C, cpp_enable_if(all_complex_double_precision<A>::value)>
-void fft2(A&& a, C&& c) {
-    a.ensure_gpu_up_to_date();
-    c.ensure_gpu_allocated();
-    c.gpu_copy_from(a.gpu_memory());
-
-    detail::inplace_zfft2_kernel(c, etl::dim<0>(c), etl::dim<1>(c));
+    detail::inplace_fft2_kernel(c, etl::dim<0>(c), etl::dim<1>(c));
 }
 
 /*!
@@ -911,29 +621,13 @@ void fft2(A&& a, C&& c) {
  * \param a The input expression
  * \param c The output expression
  */
-template <typename A, typename C, cpp_enable_if(all_complex_single_precision<A>::value)>
+template <typename A, typename C>
 void ifft2(A&& a, C&& c) {
     a.ensure_gpu_up_to_date();
     c.ensure_gpu_allocated();
     c.gpu_copy_from(a.gpu_memory());
 
-    detail::inplace_cifft2_kernel(c, etl::dim<0>(c), etl::dim<1>(c));
-
-    scale_back(c);
-}
-
-/*!
- * \brief Perform the 2D Inverse FFT on a and store the result in c
- * \param a The input expression
- * \param c The output expression
- */
-template <typename A, typename C, cpp_enable_if(all_complex_double_precision<A>::value)>
-void ifft2(A&& a, C&& c) {
-    a.ensure_gpu_up_to_date();
-    c.ensure_gpu_allocated();
-    c.gpu_copy_from(a.gpu_memory());
-
-    detail::inplace_zifft2_kernel(c, etl::dim<0>(c), etl::dim<1>(c));
+    detail::inplace_ifft2_kernel(c, etl::dim<0>(c), etl::dim<1>(c));
 
     scale_back(c);
 }
@@ -943,25 +637,9 @@ void ifft2(A&& a, C&& c) {
  * \param a The input expression
  * \param c The output expression
  */
-template <typename A, typename C, cpp_enable_if(all_complex_single_precision<A>::value)>
+template <typename A, typename C>
 void ifft2_real(A&& a, C&& c) {
-    a.ensure_gpu_up_to_date();
-
-    detail::inplace_cifft2_kernel(a, etl::dim<0>(a), etl::dim<1>(a));
-
-    scale_back_real(a, c);
-}
-
-/*!
- * \brief Perform the 2D Inverse FFT on a and store the real part of the result in c
- * \param a The input expression
- * \param c The output expression
- */
-template <typename A, typename C, cpp_enable_if(all_complex_double_precision<A>::value)>
-void ifft2_real(A&& a, C&& c) {
-    a.ensure_gpu_up_to_date();
-
-    detail::inplace_zifft2_kernel(a, etl::dim<0>(a), etl::dim<1>(a));
+    detail::inplace_ifft2_kernel(a, etl::dim<0>(a), etl::dim<1>(a));
 
     scale_back_real(a, c);
 }
@@ -973,7 +651,7 @@ void ifft2_real(A&& a, C&& c) {
  *
  * The first dimension of a and c are considered batch dimensions
  */
-template <typename A, typename C, cpp_enable_if(all_single_precision<A>::value)>
+template <typename A, typename C, cpp_enable_if(!all_complex<A>::value)>
 void fft2_many(A&& a, C&& c) {
     static constexpr std::size_t N = decay_traits<A>::dimensions();
 
@@ -983,9 +661,7 @@ void fft2_many(A&& a, C&& c) {
 
     c = a;
 
-    c.ensure_gpu_up_to_date();
-
-    detail::inplace_cfft2_many_kernel(c, batch, n1, n2);
+    detail::inplace_fft2_many_kernel(c, batch, n1, n2);
 }
 
 /*!
@@ -995,29 +671,7 @@ void fft2_many(A&& a, C&& c) {
  *
  * The first dimension of a and c are considered batch dimensions
  */
-template <typename A, typename C, cpp_enable_if(all_double_precision<A>::value)>
-void fft2_many(A&& a, C&& c) {
-    static constexpr std::size_t N = decay_traits<A>::dimensions();
-
-    std::size_t n1    = etl::dim<N - 2>(a);       //Size of the transform
-    std::size_t n2    = etl::dim<N - 1>(a);       //Size of the transform
-    std::size_t batch = etl::size(a) / (n1 * n2); //Number of batch
-
-    c = a;
-
-    c.ensure_gpu_up_to_date();
-
-    detail::inplace_zfft2_many_kernel(c, batch, n1, n2);
-}
-
-/*!
- * \brief Perform many 2D FFT on a and store the result in c
- * \param a The input expression
- * \param c The output expression
- *
- * The first dimension of a and c are considered batch dimensions
- */
-template <typename A, typename C, cpp_enable_if(all_complex_single_precision<A>::value)>
+template <typename A, typename C, cpp_enable_if(all_complex<A>::value)>
 void fft2_many(A&& a, C&& c) {
     static constexpr std::size_t N = decay_traits<A>::dimensions();
 
@@ -1029,29 +683,7 @@ void fft2_many(A&& a, C&& c) {
     c.ensure_gpu_allocated();
     c.gpu_copy_from(a.gpu_memory());
 
-    detail::inplace_cfft2_many_kernel(c, batch, n1, n2);
-}
-
-/*!
- * \brief Perform many 2D FFT on a and store the result in c
- * \param a The input expression
- * \param c The output expression
- *
- * The first dimension of a and c are considered batch dimensions
- */
-template <typename A, typename C, cpp_enable_if(all_complex_double_precision<A>::value)>
-void fft2_many(A&& a, C&& c) {
-    static constexpr std::size_t N = decay_traits<A>::dimensions();
-
-    std::size_t n1    = etl::dim<N - 2>(a);       //Size of the transform
-    std::size_t n2    = etl::dim<N - 1>(a);       //Size of the transform
-    std::size_t batch = etl::size(a) / (n1 * n2); //Number of batch
-
-    a.ensure_gpu_up_to_date();
-    c.ensure_gpu_allocated();
-    c.gpu_copy_from(a.gpu_memory());
-
-    detail::inplace_zfft2_many_kernel(c, batch, n1, n2);
+    detail::inplace_fft2_many_kernel(c, batch, n1, n2);
 }
 
 /*!
@@ -1061,7 +693,7 @@ void fft2_many(A&& a, C&& c) {
  *
  * The first dimension of a and c are considered batch dimensions
  */
-template <typename A, typename C, cpp_enable_if(all_complex_single_precision<A>::value)>
+template <typename A, typename C>
 void ifft2_many(A&& a, C&& c) {
     static constexpr std::size_t N = decay_traits<A>::dimensions();
 
@@ -1073,31 +705,7 @@ void ifft2_many(A&& a, C&& c) {
     c.ensure_gpu_allocated();
     c.gpu_copy_from(a.gpu_memory());
 
-    detail::inplace_cifft2_many_kernel(c, batch, n1, n2);
-
-    scale_back(c, 1.0 / double(n1 * n2));
-}
-
-/*!
- * \brief Perform many 2D Inverse FFT on a and store the result in c
- * \param a The input expression
- * \param c The output expression
- *
- * The first dimension of a and c are considered batch dimensions
- */
-template <typename A, typename C, cpp_enable_if(all_complex_double_precision<A>::value)>
-void ifft2_many(A&& a, C&& c) {
-    static constexpr std::size_t N = decay_traits<A>::dimensions();
-
-    std::size_t n1    = etl::dim<N - 2>(a);       //Size of the transform
-    std::size_t n2    = etl::dim<N - 1>(a);       //Size of the transform
-    std::size_t batch = etl::size(a) / (n1 * n2); //Number of batch
-
-    a.ensure_gpu_up_to_date();
-    c.ensure_gpu_allocated();
-    c.gpu_copy_from(a.gpu_memory());
-
-    detail::inplace_zifft2_many_kernel(c, batch, n1, n2);
+    detail::inplace_ifft2_many_kernel(c, batch, n1, n2);
 
     scale_back(c, 1.0 / double(n1 * n2));
 }
@@ -1232,8 +840,6 @@ void conv4_full(I&& input, KK&& kernel, CC&& conv) {
     using T = value_t<I>;
 
     if (etl::dim<1>(kernel) > 0) {
-        input.ensure_cpu_up_to_date();
-        kernel.ensure_cpu_up_to_date();
 
         auto conv_i_inc = etl::dim<1>(conv) * etl::dim<2>(conv) * etl::dim<3>(conv);
         auto conv_c_inc = etl::dim<2>(conv) * etl::dim<3>(conv);
@@ -1268,6 +874,10 @@ void conv4_full(I&& input, KK&& kernel, CC&& conv) {
         dyn_matrix<etl::complex<T>, 3> a_padded(N, K, size);
         std::fill(a_padded.memory_start(), a_padded.memory_end(), 0);
 
+        // Necessary for padding
+        input.ensure_cpu_up_to_date();
+        kernel.ensure_cpu_up_to_date();
+
         // Fully pad the inputs
 
         for (std::size_t i = 0; i < N; ++i) {
@@ -1292,8 +902,11 @@ void conv4_full(I&& input, KK&& kernel, CC&& conv) {
             }
         }
 
-        // Compute all the FFT of the inputs at once
+        // They have been modified
+        a_padded.invalidate_gpu();
+        b_padded.invalidate_gpu();
 
+        // Compute all the FFT of the inputs at once
 
         auto cufft_type = is_single_precision_t<T>::value ? CUFFT_C2C : CUFFT_Z2Z;
 
@@ -1370,14 +983,14 @@ void conv4_full_flipped(I&& input, K&& kernel, C&& conv) {
     using T = value_t<I>;
 
     if (etl::dim<1>(kernel) > 0) {
-        input.ensure_cpu_up_to_date();
-        kernel.ensure_cpu_up_to_date();
+        kernel.ensure_cpu_up_to_date(); // Need for flipping
 
         etl::dyn_matrix<T, 4> prepared_k(etl::dim<0>(kernel), etl::dim<1>(kernel), etl::dim<2>(kernel), etl::dim<3>(kernel));
 
         std::copy(kernel.memory_start(), kernel.memory_end(), prepared_k.memory_start());
 
         prepared_k.deep_fflip_inplace();
+        prepared_k.invalidate_gpu();
 
         conv4_full(input, prepared_k, conv);
     }
