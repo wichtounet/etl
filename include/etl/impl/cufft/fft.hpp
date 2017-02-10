@@ -505,9 +505,11 @@ void ifft1(A&& a, C&& c) {
  */
 template <typename A, typename C>
 void ifft1_real(A&& a, C&& c) {
-    detail::inplace_ifft1_kernel(a, etl::size(a));
+    auto tmp = force_temporary(a);
 
-    scale_back_real(a, c);
+    detail::inplace_ifft1_kernel(tmp, etl::size(tmp));
+
+    scale_back_real(tmp, c);
 }
 
 /*!
@@ -639,9 +641,11 @@ void ifft2(A&& a, C&& c) {
  */
 template <typename A, typename C>
 void ifft2_real(A&& a, C&& c) {
-    detail::inplace_ifft2_kernel(a, etl::dim<0>(a), etl::dim<1>(a));
+    auto tmp = force_temporary(a);
 
-    scale_back_real(a, c);
+    detail::inplace_ifft2_kernel(tmp, etl::dim<0>(tmp), etl::dim<1>(tmp));
+
+    scale_back_real(tmp, c);
 }
 
 /*!
