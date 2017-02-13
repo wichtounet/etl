@@ -31,7 +31,7 @@ using cublas_type = std::conditional_t<
         cuDoubleComplex,
         T>>;
 
-/*
+/*!
  * \brief Create the default multiplication of the given type
  * \param value The value to get in return
  */
