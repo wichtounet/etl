@@ -168,6 +168,9 @@ struct hermitian_reference {
     }
 };
 
+/*!
+ * \brief Specialization of get_conj for hermitian_reference
+ */
 template <typename M>
 inline typename M::value_type get_conj(const hermitian_reference<M>& ref){
     typename M::value_type c = ref;
@@ -175,6 +178,12 @@ inline typename M::value_type get_conj(const hermitian_reference<M>& ref){
     return get_conj(c);
 }
 
+/*!
+ * \brief Outputs an hermitian reference to the stream
+ * \param os The output stream
+ * \param ref The hermitian reference to output
+ * \return The output stream
+ */
 template <typename M>
 std::ostream& operator<<(std::ostream& os, const hermitian_reference<M>& ref){
     typename M::value_type c = ref;
