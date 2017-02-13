@@ -106,6 +106,7 @@
 #include "etl/adapters/symmetric.hpp"
 #include "etl/adapters/hermitian.hpp"
 #include "etl/adapters/diagonal.hpp"
+#include "etl/adapters/lower.hpp"
 
 // Serialization support
 #include "etl/serializer.hpp"
