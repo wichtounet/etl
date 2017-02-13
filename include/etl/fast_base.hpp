@@ -123,17 +123,32 @@ protected:
     }
 
 public:
+    /*!
+     * \brief Construct a default fast_matrix_base
+     */
     fast_matrix_base() : _data() {
         // Nothing else to init
     }
 
+    /*!
+     * \brief Construct a default fast_matrix_base from storage
+     * \param data The storage data
+     */
     fast_matrix_base(storage_impl data) : _data(data) {
         // Nothing else to init
     }
 
-    // Default copy and move constructors
-    fast_matrix_base(const fast_matrix_base& data) = default;
-    fast_matrix_base(fast_matrix_base&& data) noexcept = default;
+    /*!
+     * \brief Copy Construct a fast_matrix_base
+     * \param rhs The right hand side
+     */
+    fast_matrix_base(const fast_matrix_base& rhs) = default;
+
+    /*!
+     * \brief Move Construct a fast_matrix_base
+     * \param rhs The right hand side
+     */
+    fast_matrix_base(fast_matrix_base&& rhs) noexcept = default;
 
     /*!
      * \brief Returns a pointer to the first element in memory.
