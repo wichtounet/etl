@@ -115,6 +115,13 @@ template <typename T>
 using is_symmetric_matrix = cpp::is_specialization_of<etl::symmetric_matrix, std::decay_t<T>>;
 
 /*!
+ * \brief Traits indicating if the given ETL type is a diagonal matrix
+ * \tparam T The type to test
+ */
+template <typename T>
+using is_diagonal_matrix = cpp::is_specialization_of<etl::diagonal_matrix, std::decay_t<T>>;
+
+/*!
  * \brief Traits indicating if the given ETL type is a hermitian matrix
  * \tparam T The type to test
  */

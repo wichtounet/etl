@@ -78,6 +78,9 @@ struct symmetric_matrix;
 template <typename Matrix>
 struct hermitian_matrix;
 
+template <typename Matrix>
+struct diagonal_matrix;
+
 /*!
  * \brief A static matrix with fixed dimensions, in row-major order
  */
