@@ -82,10 +82,30 @@ public:
         //Nothing else to init
     }
 
+    /*!
+     * \brief Construct a lower_matrix by copy
+     * \param rhs The right-hand-side matrix
+     */
     lower_matrix(const lower_matrix& rhs) = default;
+
+    /*!
+     * \brief Assign to the matrix by copy
+     * \param rhs The right-hand-side matrix
+     * \return a reference to the assigned matrix
+     */
     lower_matrix& operator=(const lower_matrix& rhs) = default;
 
+    /*!
+     * \brief Construct a lower_matrix by move
+     * \param rhs The right-hand-side matrix
+     */
     lower_matrix(lower_matrix&& rhs) = default;
+
+    /*!
+     * \brief Assign to the matrix by move
+     * \param rhs The right-hand-side matrix
+     * \return a reference to the assigned matrix
+     */
     lower_matrix& operator=(lower_matrix&& rhs) = default;
 
     /*!
@@ -565,6 +585,9 @@ public:
     }
 };
 
+/*!
+ * \brief Traits specialization for lower_matrix
+ */
 template <typename Matrix>
 struct etl_traits<lower_matrix<Matrix>> : wrapper_traits<lower_matrix<Matrix>> {};
 

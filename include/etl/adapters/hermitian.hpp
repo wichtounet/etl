@@ -106,10 +106,30 @@ public:
         //Nothing else to init
     }
 
+    /*!
+     * \brief Construct a hermitian_matrix by copy
+     * \param rhs The right-hand-side matrix
+     */
     hermitian_matrix(const hermitian_matrix& rhs) = default;
+
+    /*!
+     * \brief Assign to the matrix by copy
+     * \param rhs The right-hand-side matrix
+     * \return a reference to the assigned matrix
+     */
     hermitian_matrix& operator=(const hermitian_matrix& rhs) = default;
 
+    /*!
+     * \brief Construct a hermitian_matrix by move
+     * \param rhs The right-hand-side matrix
+     */
     hermitian_matrix(hermitian_matrix&& rhs) = default;
+
+    /*!
+     * \brief Assign to the matrix by move
+     * \param rhs The right-hand-side matrix
+     * \return a reference to the assigned matrix
+     */
     hermitian_matrix& operator=(hermitian_matrix&& rhs) = default;
 
     /*!
@@ -589,6 +609,9 @@ public:
     }
 };
 
+/*!
+ * \brief Traits specialization for hermitian_matrix
+ */
 template <typename Matrix>
 struct etl_traits<hermitian_matrix<Matrix>> : wrapper_traits<hermitian_matrix<Matrix>> {};
 

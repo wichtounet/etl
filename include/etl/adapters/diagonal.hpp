@@ -82,10 +82,30 @@ public:
         //Nothing else to init
     }
 
+    /*!
+     * \brief Construct a diagonal_matrix by copy
+     * \param rhs The right-hand-side matrix
+     */
     diagonal_matrix(const diagonal_matrix& rhs) = default;
+
+    /*!
+     * \brief Assign to the matrix by copy
+     * \param rhs The right-hand-side matrix
+     * \return a reference to the assigned matrix
+     */
     diagonal_matrix& operator=(const diagonal_matrix& rhs) = default;
 
+    /*!
+     * \brief Construct a diagonal_matrix by move
+     * \param rhs The right-hand-side matrix
+     */
     diagonal_matrix(diagonal_matrix&& rhs) = default;
+
+    /*!
+     * \brief Assign to the matrix by move
+     * \param rhs The right-hand-side matrix
+     * \return a reference to the assigned matrix
+     */
     diagonal_matrix& operator=(diagonal_matrix&& rhs) = default;
 
     /*!
@@ -565,6 +585,9 @@ public:
     }
 };
 
+/*!
+ * \brief Traits specialization for diagonal_matrix
+ */
 template <typename Matrix>
 struct etl_traits<diagonal_matrix<Matrix>> : wrapper_traits<diagonal_matrix<Matrix>> {};
 

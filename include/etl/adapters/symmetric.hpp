@@ -106,10 +106,30 @@ public:
         //Nothing else to init
     }
 
+    /*!
+     * \brief Construct a symmetric_matrix by copy
+     * \param rhs The right-hand-side matrix
+     */
     symmetric_matrix(const symmetric_matrix& rhs) = default;
+
+    /*!
+     * \brief Assign to the matrix by copy
+     * \param rhs The right-hand-side matrix
+     * \return a reference to the assigned matrix
+     */
     symmetric_matrix& operator=(const symmetric_matrix& rhs) = default;
 
+    /*!
+     * \brief Construct a symmetric_matrix by move
+     * \param rhs The right-hand-side matrix
+     */
     symmetric_matrix(symmetric_matrix&& rhs) = default;
+
+    /*!
+     * \brief Assign to the matrix by move
+     * \param rhs The right-hand-side matrix
+     * \return a reference to the assigned matrix
+     */
     symmetric_matrix& operator=(symmetric_matrix&& rhs) = default;
 
     /*!
@@ -589,6 +609,9 @@ public:
     }
 };
 
+/*!
+ * \brief Traits specialization for symmetric_matrix
+ */
 template <typename Matrix>
 struct etl_traits<symmetric_matrix<Matrix>> : wrapper_traits<symmetric_matrix<Matrix>> {};
 
