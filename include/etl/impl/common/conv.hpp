@@ -137,6 +137,12 @@ void right_full_kernel(const T* in, const std::size_t n, const T* kernel, std::s
     }
 }
 
+/*!
+ * \brief Return a new matrix equivalent to padding the last dimension of the input matrix to the right
+ * \param input The matrix to pad
+ * \param pad The number of padding elements
+ * \return a new matrix containing the result
+ */
 template <typename I>
 etl::dyn_matrix<value_t<I>, 2> pad_right(const I& input, size_t pad){
     using T = value_t<I>;
@@ -154,6 +160,12 @@ etl::dyn_matrix<value_t<I>, 2> pad_right(const I& input, size_t pad){
     return padded_input;
 }
 
+/*!
+ * \brief Return a new matrix equivalent to padding the last dimension of the flipped input matrix to the right
+ * \param input The matrix to pad
+ * \param pad The number of padding elements
+ * \return a new matrix containing the result
+ */
 template <typename I>
 etl::dyn_matrix<value_t<I>, 2> pad_right_flip(const I& input, size_t pad){
     using T = value_t<I>;
@@ -175,6 +187,12 @@ etl::dyn_matrix<value_t<I>, 2> pad_right_flip(const I& input, size_t pad){
     return padded_input;
 }
 
+/*!
+ * \brief Return a new matrix equivalent to padding the last dimension of the input matrix to the right
+ * \param input The matrix to pad
+ * \param pad The number of padding elements
+ * \return a new matrix containing the result
+ */
 template <typename I, cpp_enable_if((decay_traits<I>::dimensions() == 3))>
 etl::dyn_matrix<value_t<I>, 3> pad_right_multi(const I& input, size_t pad){
     using T = value_t<I>;
@@ -196,6 +214,12 @@ etl::dyn_matrix<value_t<I>, 3> pad_right_multi(const I& input, size_t pad){
     return padded_input;
 }
 
+/*!
+ * \brief Return a new matrix equivalent to padding the last dimension of the input matrix to the right
+ * \param input The matrix to pad
+ * \param pad The number of padding elements
+ * \return a new matrix containing the result
+ */
 template <typename I, cpp_enable_if((decay_traits<I>::dimensions() == 4))>
 etl::dyn_matrix<value_t<I>, 4> pad_right_multi(const I& input, size_t pad){
     using T = value_t<I>;
@@ -228,6 +252,12 @@ etl::dyn_matrix<value_t<I>, 4> pad_right_multi(const I& input, size_t pad){
     return padded_input;
 }
 
+/*!
+ * \brief Return a new matrix equivalent to padding the last dimension of the flipped input matrix to the right
+ * \param input The matrix to pad
+ * \param pad The number of padding elements
+ * \return a new matrix containing the result
+ */
 template <typename I, cpp_enable_if((decay_traits<I>::dimensions() == 3))>
 etl::dyn_matrix<value_t<I>, 3> pad_right_flip_multi(const I& input, size_t pad){
     using T = value_t<I>;
@@ -259,6 +289,12 @@ etl::dyn_matrix<value_t<I>, 3> pad_right_flip_multi(const I& input, size_t pad){
     return padded_input;
 }
 
+/*!
+ * \brief Return a new matrix equivalent to padding the last dimension of the flipped input matrix to the right
+ * \param input The matrix to pad
+ * \param pad The number of padding elements
+ * \return a new matrix containing the result
+ */
 template <typename I, cpp_enable_if((decay_traits<I>::dimensions() == 4))>
 etl::dyn_matrix<value_t<I>, 4> pad_right_flip_multi(const I& input, size_t pad){
     using T = value_t<I>;
