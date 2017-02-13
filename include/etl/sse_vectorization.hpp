@@ -32,18 +32,46 @@
 
 namespace etl {
 
+/*!
+ * \brief SSE SIMD float type
+ */
 using sse_simd_float = simd_pack<vector_mode_t::SSE3, float, __m128>;
+
+/*!
+ * \brief SSE SIMD double type
+ */
 using sse_simd_double = simd_pack<vector_mode_t::SSE3, double, __m128d>;
 
+/*!
+ * \brief SSE SIMD complex float type
+ */
 template<typename T>
 using sse_simd_complex_float = simd_pack<vector_mode_t::SSE3, T, __m128>;
 
+/*!
+ * \brief SSE SIMD complex double type
+ */
 template<typename T>
 using sse_simd_complex_double = simd_pack<vector_mode_t::SSE3, T, __m128d>;
 
+/*!
+ * \brief SSE SIMD byte type
+ */
 using sse_simd_byte = simd_pack<vector_mode_t::SSE3, int8_t, __m128i>;
+
+/*!
+ * \brief SSE SIMD short type
+ */
 using sse_simd_short = simd_pack<vector_mode_t::SSE3, int16_t, __m128i>;
+
+/*!
+ * \brief SSE SIMD int type
+ */
 using sse_simd_int = simd_pack<vector_mode_t::SSE3, int32_t, __m128i>;
+
+/*!
+ * \brief SSE SIMD long type
+ */
 using sse_simd_long = simd_pack<vector_mode_t::SSE3, int64_t, __m128i>;
 
 /*!
@@ -847,20 +875,32 @@ struct sse_vec {
 
     // Multiplication
 
+    /*!
+     * \brief Multiply the two given vectors of byte
+     */
     ETL_STATIC_INLINE(sse_simd_byte) mul(sse_simd_byte lhs, sse_simd_byte rhs) {
         __m128i even = _mm_mullo_epi16(lhs.value, rhs.value);
         __m128i odd = _mm_mullo_epi16(_mm_srli_epi16(lhs.value, 8),_mm_srli_epi16(rhs.value, 8));
         return _mm_or_si128(_mm_slli_epi16(odd, 8), _mm_srli_epi16(_mm_slli_epi16(even,8), 8));
     }
 
+    /*!
+     * \brief Multiply the two given vectors of short
+     */
     ETL_STATIC_INLINE(sse_simd_short) mul(sse_simd_short lhs, sse_simd_short rhs) {
         return _mm_mullo_epi16(lhs.value, rhs.value);
     }
 
+    /*!
+     * \brief Multiply the two given vectors of int
+     */
     ETL_STATIC_INLINE(sse_simd_int) mul(sse_simd_int lhs, sse_simd_int rhs) {
         return _mm_mullo_epi32(lhs.value, rhs.value);
     }
 
+    /*!
+     * \brief Multiply the two given vectors of long
+     */
     ETL_STATIC_INLINE(sse_simd_long) mul(sse_simd_long lhs, sse_simd_long rhs) {
         int64_t result[2];
         result[0] = lhs[0] * rhs[0];
@@ -938,18 +978,30 @@ struct sse_vec {
 
     // Fused-Multiply-Add (FMA)
 
+    /*!
+     * \brief Fused-Multiply Add of the three given vector of bytes
+     */
     ETL_STATIC_INLINE(sse_simd_byte) fmadd(sse_simd_byte a, sse_simd_byte b, sse_simd_byte c){
         return add(mul(a, b), c);
     }
 
+    /*!
+     * \brief Fused-Multiply Add of the three given vector of short
+     */
     ETL_STATIC_INLINE(sse_simd_short) fmadd(sse_simd_short a, sse_simd_short b, sse_simd_short c){
         return add(mul(a, b), c);
     }
 
+    /*!
+     * \brief Fused-Multiply Add of the three given vector of int
+     */
     ETL_STATIC_INLINE(sse_simd_int) fmadd(sse_simd_int a, sse_simd_int b, sse_simd_int c){
         return add(mul(a, b), c);
     }
 
+    /*!
+     * \brief Fused-Multiply Add of the three given vector of long
+     */
     ETL_STATIC_INLINE(sse_simd_long) fmadd(sse_simd_long a, sse_simd_long b, sse_simd_long c){
         return add(mul(a, b), c);
     }

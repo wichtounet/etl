@@ -33,18 +33,46 @@
 
 namespace etl {
 
+/*!
+ * \brief AVX SIMD float type
+ */
 using avx_simd_float = simd_pack<vector_mode_t::AVX, float, __m256>;
+
+/*!
+ * \brief AVX SIMD double type
+ */
 using avx_simd_double = simd_pack<vector_mode_t::AVX, double, __m256d>;
 
+/*!
+ * \brief AVX SIMD complex float type
+ */
 template<typename T>
 using avx_simd_complex_float = simd_pack<vector_mode_t::AVX, T, __m256>;
 
+/*!
+ * \brief AVX SIMD complex double type
+ */
 template<typename T>
 using avx_simd_complex_double = simd_pack<vector_mode_t::AVX, T, __m256d>;
 
+/*!
+ * \brief AVX SIMD byte type
+ */
 using avx_simd_byte = simd_pack<vector_mode_t::AVX, int8_t, __m256i>;
+
+/*!
+ * \brief AVX SIMD short type
+ */
 using avx_simd_short = simd_pack<vector_mode_t::AVX, int16_t, __m256i>;
+
+/*!
+ * \brief AVX SIMD int type
+ */
 using avx_simd_int = simd_pack<vector_mode_t::AVX, int32_t, __m256i>;
+
+/*!
+ * \brief AVX SIMD long type
+ */
 using avx_simd_long = simd_pack<vector_mode_t::AVX, int64_t, __m256i>;
 
 /*!
@@ -869,6 +897,9 @@ struct avx_vec {
     // Multiplication
 
 #ifdef __AVX2__
+    /*!
+     * \brief Multiply the two given vectors of byte
+     */
     ETL_STATIC_INLINE(avx_simd_byte) mul(avx_simd_byte lhs, avx_simd_byte rhs) {
         auto aodd    = _mm256_srli_epi16(lhs.value, 8);
         auto bodd    = _mm256_srli_epi16(rhs.value, 8);
@@ -877,14 +908,23 @@ struct avx_vec {
         return _mm256_blendv_epi8(mulodd, muleven, _mm256_set1_epi32(0x00FF00FF));
     }
 
+    /*!
+     * \brief Multiply the two given vectors of short
+     */
     ETL_STATIC_INLINE(avx_simd_short) mul(avx_simd_short lhs, avx_simd_short rhs) {
         return _mm256_mullo_epi16(lhs.value, rhs.value);
     }
 
+    /*!
+     * \brief Multiply the two given vectors of int
+     */
     ETL_STATIC_INLINE(avx_simd_int) mul(avx_simd_int lhs, avx_simd_int rhs) {
         return _mm256_mullo_epi32(lhs.value, rhs.value);
     }
 
+    /*!
+     * \brief Multiply the two given vectors of long
+     */
     ETL_STATIC_INLINE(avx_simd_long) mul(avx_simd_long lhs, avx_simd_long rhs) {
         int64_t result[4];
 
@@ -978,18 +1018,30 @@ struct avx_vec {
     // Fused Multiplay Add (FMA)
 
 #ifdef __AVX2__
+    /*!
+     * \brief Fused-Multiply Add of the three given vector of bytes
+     */
     ETL_STATIC_INLINE(avx_simd_byte) fmadd(avx_simd_byte a, avx_simd_byte b, avx_simd_byte c){
         return add(mul(a, b), c);
     }
 
+    /*!
+     * \brief Fused-Multiply Add of the three given vector of short
+     */
     ETL_STATIC_INLINE(avx_simd_short) fmadd(avx_simd_short a, avx_simd_short b, avx_simd_short c){
         return add(mul(a, b), c);
     }
 
+    /*!
+     * \brief Fused-Multiply Add of the three given vector of int
+     */
     ETL_STATIC_INLINE(avx_simd_int) fmadd(avx_simd_int a, avx_simd_int b, avx_simd_int c){
         return add(mul(a, b), c);
     }
 
+    /*!
+     * \brief Fused-Multiply Add of the three given vector of longs
+     */
     ETL_STATIC_INLINE(avx_simd_long) fmadd(avx_simd_long a, avx_simd_long b, avx_simd_long c){
         return add(mul(a, b), c);
     }
