@@ -243,16 +243,12 @@ void conv2_full_kernel(const T* a, std::size_t m1, std::size_t m2, const T* b, s
         direct_copy_n(b + i * n2, b_padded.memory_start() + i * s2, n2);
     }
 
-    a_padded.ensure_gpu_up_to_date();
-    b_padded.ensure_gpu_up_to_date();
+    // FFT of the two padded matrices
 
-    cufftPlan2d(&handle.get(), s1, s2, is_single_precision_t<T>::value ? CUFFT_C2C : CUFFT_Z2Z);
+    inplace_fft2_kernel(a_padded, s1, s2);
+    inplace_fft2_kernel(b_padded, s1, s2);
 
-    cufft_exec_c2c(handle.get(), complex_cast(a_padded.gpu_memory()), complex_cast(a_padded.gpu_memory()), CUFFT_FORWARD);
-    cufft_exec_c2c(handle.get(), complex_cast(b_padded.gpu_memory()), complex_cast(b_padded.gpu_memory()), CUFFT_FORWARD);
-
-    a_padded.invalidate_cpu();
-    b_padded.invalidate_cpu();
+    // Element-wise matrix multiplication
 
     a_padded.ensure_cpu_up_to_date();
     b_padded.ensure_cpu_up_to_date();
@@ -260,11 +256,12 @@ void conv2_full_kernel(const T* a, std::size_t m1, std::size_t m2, const T* b, s
     a_padded *= b_padded;
 
     a_padded.invalidate_gpu();
-    a_padded.ensure_gpu_up_to_date();
 
-    cufft_exec_c2c(handle.get(), complex_cast(a_padded.gpu_memory()), complex_cast(a_padded.gpu_memory()), CUFFT_INVERSE);
+    // Inverse FFT
 
-    a_padded.invalidate_cpu();
+    inplace_ifft2_kernel(a_padded, s1, s2);
+
+    // Scale back
 
     a_padded.ensure_cpu_up_to_date();
 
@@ -277,6 +274,9 @@ void conv2_full_kernel(const T* a, std::size_t m1, std::size_t m2, const T* b, s
             c[i] = beta * c[i] + a_padded[i].real * (T(1.0) / size);
         }
     }
+
+    a_padded.gpu_evict();
+    b_padded.gpu_evict();
 }
 
 } //End of namespace detail
@@ -556,17 +556,12 @@ void conv1_full(A&& a, B&& b, C&& c) {
     direct_copy(a.memory_start(), a.memory_end(), a_padded.memory_start());
     direct_copy(b.memory_start(), b.memory_end(), b_padded.memory_start());
 
-    a_padded.ensure_gpu_up_to_date();
-    b_padded.ensure_gpu_up_to_date();
+    // FFT of the padded vectors
 
-    auto cufft_type = is_single_precision_t<type>::value ? CUFFT_C2C : CUFFT_Z2Z;
-    cufftPlan1d(&handle.get(), size, cufft_type, 1);
+    detail::inplace_fft1_kernel(a_padded, size);
+    detail::inplace_fft1_kernel(b_padded, size);
 
-    detail::cufft_exec_c2c(handle.get(), complex_cast(a_padded.gpu_memory()), complex_cast(a_padded.gpu_memory()), CUFFT_FORWARD);
-    detail::cufft_exec_c2c(handle.get(), complex_cast(b_padded.gpu_memory()), complex_cast(b_padded.gpu_memory()), CUFFT_FORWARD);
-
-    a_padded.invalidate_cpu();
-    b_padded.invalidate_cpu();
+    // Element wise multiplication of the two vectors
 
     a_padded.ensure_cpu_up_to_date();
     b_padded.ensure_cpu_up_to_date();
@@ -574,11 +569,13 @@ void conv1_full(A&& a, B&& b, C&& c) {
     a_padded *= b_padded;
 
     a_padded.invalidate_gpu();
-    a_padded.ensure_gpu_up_to_date(); //Refresh the GPU memory
 
-    detail::cufft_exec_c2c(handle.get(), complex_cast(a_padded.gpu_memory()), complex_cast(a_padded.gpu_memory()), CUFFT_INVERSE);
+    // Inverse FFT of the result
 
-    a_padded.invalidate_cpu();
+    detail::inplace_ifft1_kernel(a_padded, size);
+
+    // Scale back the real part
+
     a_padded.ensure_cpu_up_to_date();
 
     for (std::size_t i = 0; i < size; ++i) {
