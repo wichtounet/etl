@@ -151,11 +151,11 @@ CONV4_FULL_TEST_CASE("conv/4d/full/3", "[conv][conv4][full]") {
 }
 
 CONV4_FULL_FLIPPED_TEST_CASE("conv/4d/full/flipped/1", "[conv][conv4][full]") {
-    etl::fast_matrix<T, 8, 9, 6, 6> I(etl::sequence_generator(15.0) * -3.0);
-    etl::fast_matrix<T, 9, 3, 3, 3> K(etl::sequence_generator(-4.0) * 1.6);
+    etl::fast_matrix<T, 7, 4, 6, 6> I(etl::sequence_generator(15.0) * -3.0);
+    etl::fast_matrix<T, 4, 2, 3, 3> K(etl::sequence_generator(-4.0) * 1.6);
 
-    etl::fast_matrix<T, 8, 3, 8, 8> ref;
-    etl::fast_matrix<T, 8, 3, 8, 8> c;
+    etl::fast_matrix<T, 7, 2, 8, 8> ref;
+    etl::fast_matrix<T, 7, 2, 8, 8> c;
 
     ref = 0.0;
     for(std::size_t i = 0; i < etl::dim<0>(I); ++i){
