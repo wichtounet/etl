@@ -8,19 +8,19 @@
 #include "test.hpp"
 #include "conv_test.hpp"
 
-//Note: The results of the tests have been validated with one of (octave/matlab/matlab)
-
 // conv_2d_valid_multi
 
 CONV2_VALID_MULTI_TEST_CASE("conv_2d/valid/multi/1", "[conv][conv2][conv_multi]") {
-    etl::fast_matrix<T, 3, 3> I    = {1.0, 2.0, 3.0, 0.0, 1.0, 1.0, 3.0, 2.0, 1.0};
+    etl::fast_matrix<T, 3, 3> I = {1.0, 2.0, 3.0, 0.0, 1.0, 1.0, 3.0, 2.0, 1.0};
     etl::fast_matrix<T, 2, 2, 2> K = {2.0, 0.0, 0.5, 0.5, 2.0, 0.0, 0.5, 0.5};
 
     etl::fast_matrix<T, 2, 2, 2> c_1;
     etl::fast_matrix<T, 2, 2, 2> c_2;
 
-    c_1(0) = conv_2d_valid(I, K(0));
-    c_1(1) = conv_2d_valid(I, K(1));
+    SELECTED_SECTION(etl::conv_impl::STD) {
+        c_1(0) = conv_2d_valid(I, K(0));
+        c_1(1) = conv_2d_valid(I, K(1));
+    }
 
     Impl::apply(I, K, c_2);
 
@@ -30,14 +30,16 @@ CONV2_VALID_MULTI_TEST_CASE("conv_2d/valid/multi/1", "[conv][conv2][conv_multi]"
 }
 
 CONV2_VALID_MULTI_TEST_CASE("conv_2d/valid/multi/2", "[conv][conv2][conv_multi]") {
-    etl::fast_matrix<T, 3, 3> I    = {1.0, 2.0, 3.0, 0.0, 1.0, 1.0, 3.0, 2.0, 1.0};
+    etl::fast_matrix<T, 3, 3> I = {1.0, 2.0, 3.0, 0.0, 1.0, 1.0, 3.0, 2.0, 1.0};
     etl::fast_matrix<T, 2, 2, 2> K = {2.0, 0.0, 0.5, 0.5, 1.0, 0.5, 0.7, 0.1};
 
     etl::fast_matrix<T, 2, 2, 2> c_1;
     etl::fast_matrix<T, 2, 2, 2> c_2;
 
-    c_1(0) = conv_2d_valid(I, K(0));
-    c_1(1) = conv_2d_valid(I, K(1));
+    SELECTED_SECTION(etl::conv_impl::STD) {
+        c_1(0) = conv_2d_valid(I, K(0));
+        c_1(1) = conv_2d_valid(I, K(1));
+    }
 
     Impl::apply(I, K, c_2);
 
@@ -47,15 +49,17 @@ CONV2_VALID_MULTI_TEST_CASE("conv_2d/valid/multi/2", "[conv][conv2][conv_multi]"
 }
 
 CONV2_VALID_MULTI_TEST_CASE("conv_2d/valid/multi/3", "[conv][conv2][conv_multi]") {
-    etl::fast_matrix<T, 3, 3> I    = {1.0, 2.0, 3.0, 0.0, 1.0, 1.0, 3.0, 2.0, 1.0};
+    etl::fast_matrix<T, 3, 3> I = {1.0, 2.0, 3.0, 0.0, 1.0, 1.0, 3.0, 2.0, 1.0};
     etl::fast_matrix<T, 3, 2, 2> K = {2.0, 0.0, 0.5, 0.5, 1.0, 0.5, 0.7, 0.1, 0.0, -1.0, 1.0, 1.0};
 
     etl::fast_matrix<T, 3, 2, 2> c_1;
     etl::fast_matrix<T, 3, 2, 2> c_2;
 
-    c_1(0) = conv_2d_valid(I, K(0));
-    c_1(1) = conv_2d_valid(I, K(1));
-    c_1(2) = conv_2d_valid(I, K(2));
+    SELECTED_SECTION(etl::conv_impl::STD) {
+        c_1(0) = conv_2d_valid(I, K(0));
+        c_1(1) = conv_2d_valid(I, K(1));
+        c_1(2) = conv_2d_valid(I, K(2));
+    }
 
     Impl::apply(I, K, c_2);
 
@@ -72,9 +76,11 @@ CONV2_VALID_MULTI_TEST_CASE("conv_2d/valid/multi/4", "[conv][conv2][conv_multi]"
     etl::fast_matrix<T, 3, 4, 4> c_2;
     etl::fast_matrix<T, 3, 4, 4> c_3;
 
-    c_1(0) = conv_2d_valid(I, K(0));
-    c_1(1) = conv_2d_valid(I, K(1));
-    c_1(2) = conv_2d_valid(I, K(2));
+    SELECTED_SECTION(etl::conv_impl::STD) {
+        c_1(0) = conv_2d_valid(I, K(0));
+        c_1(1) = conv_2d_valid(I, K(1));
+        c_1(2) = conv_2d_valid(I, K(2));
+    }
 
     Impl::apply(I, K, c_2);
 
@@ -94,9 +100,11 @@ CONV2_VALID_MULTI_TEST_CASE("conv_2d/valid/multi/5", "[conv][conv2][conv_multi]"
     etl::fast_matrix<T, 3, 3, 3> c_1;
     etl::fast_matrix<T, 3, 3, 3> c_2;
 
-    c_1(0) = conv_2d_valid(I, K(0));
-    c_1(1) = conv_2d_valid(I, K(1));
-    c_1(2) = conv_2d_valid(I, K(2));
+    SELECTED_SECTION(etl::conv_impl::STD) {
+        c_1(0) = conv_2d_valid(I, K(0));
+        c_1(1) = conv_2d_valid(I, K(1));
+        c_1(2) = conv_2d_valid(I, K(2));
+    }
 
     Impl::apply(I, K, c_2);
 
@@ -116,9 +124,11 @@ CONV2_VALID_MULTI_TEST_CASE("conv_2d/valid/multi/6", "[conv][conv2][conv_multi]"
     etl::fast_matrix<T, 3, 3, 5> c_1;
     etl::fast_matrix<T, 3, 3, 5> c_2;
 
-    c_1(0) = conv_2d_valid(I, K(0));
-    c_1(1) = conv_2d_valid(I, K(1));
-    c_1(2) = conv_2d_valid(I, K(2));
+    SELECTED_SECTION(etl::conv_impl::STD) {
+        c_1(0) = conv_2d_valid(I, K(0));
+        c_1(1) = conv_2d_valid(I, K(1));
+        c_1(2) = conv_2d_valid(I, K(2));
+    }
 
     Impl::apply(I, K, c_2);
 
@@ -138,9 +148,11 @@ CONV2_VALID_MULTI_TEST_CASE("conv_2d/valid/multi/7", "[conv][conv2][conv_multi]"
     etl::fast_matrix<T, 3, 5, 3> c_1;
     etl::fast_matrix<T, 3, 5, 3> c_2;
 
-    c_1(0) = conv_2d_valid(I, K(0));
-    c_1(1) = conv_2d_valid(I, K(1));
-    c_1(2) = conv_2d_valid(I, K(2));
+    SELECTED_SECTION(etl::conv_impl::STD) {
+        c_1(0) = conv_2d_valid(I, K(0));
+        c_1(1) = conv_2d_valid(I, K(1));
+        c_1(2) = conv_2d_valid(I, K(2));
+    }
 
     Impl::apply(I, K, c_2);
 
@@ -161,9 +173,11 @@ CONV2_VALID_MULTI_TEST_CASE("conv_2d/valid/multi/8", "[conv][conv2][conv_multi]"
     etl::fast_matrix<T, 3, 7, 3> c_2;
     etl::fast_matrix<T, 3, 7, 3> c_3;
 
-    c_1(0) = conv_2d_valid(I, K(0));
-    c_1(1) = conv_2d_valid(I, K(1));
-    c_1(2) = conv_2d_valid(I, K(2));
+    SELECTED_SECTION(etl::conv_impl::STD) {
+        c_1(0) = conv_2d_valid(I, K(0));
+        c_1(1) = conv_2d_valid(I, K(1));
+        c_1(2) = conv_2d_valid(I, K(2));
+    }
 
     Impl::apply(I, K, c_2);
 
@@ -183,9 +197,11 @@ CONV2_VALID_MULTI_FLIPPED_TEST_CASE("conv_2d/valid/multi_flipped/1", "[conv][con
     etl::fast_matrix<T, 3, 7, 3> c_1;
     etl::fast_matrix<T, 3, 7, 3> c_2;
 
-    c_1(0) = conv_2d_valid(I, K(0));
-    c_1(1) = conv_2d_valid(I, K(1));
-    c_1(2) = conv_2d_valid(I, K(2));
+    SELECTED_SECTION(etl::conv_impl::STD) {
+        c_1(0) = conv_2d_valid(I, K(0));
+        c_1(1) = conv_2d_valid(I, K(1));
+        c_1(2) = conv_2d_valid(I, K(2));
+    }
 
     K.deep_fflip_inplace();
 
@@ -208,10 +224,12 @@ CONV2_VALID_MULTI_FLIPPED_TEST_CASE("conv_2d/valid/multi_flipped/2", "[conv][con
     etl::fast_matrix<T, 4, 7, 3> c_1;
     etl::fast_matrix<T, 4, 7, 3> c_2;
 
-    c_1(0) = conv_2d_valid(I, K(0));
-    c_1(1) = conv_2d_valid(I, K(1));
-    c_1(2) = conv_2d_valid(I, K(2));
-    c_1(3) = conv_2d_valid(I, K(3));
+    SELECTED_SECTION(etl::conv_impl::STD) {
+        c_1(0) = conv_2d_valid(I, K(0));
+        c_1(1) = conv_2d_valid(I, K(1));
+        c_1(2) = conv_2d_valid(I, K(2));
+        c_1(3) = conv_2d_valid(I, K(3));
+    }
 
     K.deep_fflip_inplace();
 
@@ -235,9 +253,11 @@ CONV2_FULL_MULTI_TEST_CASE("conv_2d/full/multi/1", "[conv][conv2][conv_multi]") 
     etl::fast_matrix<T, 3, 13, 11> c_1;
     etl::fast_matrix<T, 3, 13, 11> c_2;
 
-    c_1(0) = conv_2d_full(I, K(0));
-    c_1(1) = conv_2d_full(I, K(1));
-    c_1(2) = conv_2d_full(I, K(2));
+    SELECTED_SECTION(etl::conv_impl::STD) {
+        c_1(0) = conv_2d_full(I, K(0));
+        c_1(1) = conv_2d_full(I, K(1));
+        c_1(2) = conv_2d_full(I, K(2));
+    }
 
     Impl::apply(I, K, c_2);
 
@@ -257,9 +277,11 @@ CONV2_FULL_MULTI_TEST_CASE("conv_2d/full/multi/2", "[conv][conv2][conv_multi]") 
     etl::fast_matrix<T, 3, 11, 11> c_1;
     etl::fast_matrix<T, 3, 11, 11> c_2;
 
-    c_1(0) = conv_2d_full(I, K(0));
-    c_1(1) = conv_2d_full(I, K(1));
-    c_1(2) = conv_2d_full(I, K(2));
+    SELECTED_SECTION(etl::conv_impl::STD) {
+        c_1(0) = conv_2d_full(I, K(0));
+        c_1(1) = conv_2d_full(I, K(1));
+        c_1(2) = conv_2d_full(I, K(2));
+    }
 
     Impl::apply(I, K, c_2);
 
@@ -279,9 +301,11 @@ CONV2_FULL_MULTI_FLIPPED_TEST_CASE("conv_2d/full/multi_flipped/1", "[conv][conv2
     etl::fast_matrix<T, 3, 11, 11> c_1;
     etl::fast_matrix<T, 3, 11, 11> c_2;
 
-    c_1(0) = conv_2d_full(I, K(0));
-    c_1(1) = conv_2d_full(I, K(1));
-    c_1(2) = conv_2d_full(I, K(2));
+    SELECTED_SECTION(etl::conv_impl::STD) {
+        c_1(0) = conv_2d_full(I, K(0));
+        c_1(1) = conv_2d_full(I, K(1));
+        c_1(2) = conv_2d_full(I, K(2));
+    }
 
     K.deep_fflip_inplace();
 
@@ -304,10 +328,12 @@ CONV2_FULL_MULTI_FLIPPED_TEST_CASE("conv_2d/full/multi_flipped/2", "[conv][conv2
     etl::fast_matrix<T, 4, 11, 11> ref;
     etl::fast_matrix<T, 4, 11, 11> c_2;
 
-    ref(0) = conv_2d_full(I, K(0));
-    ref(1) = conv_2d_full(I, K(1));
-    ref(2) = conv_2d_full(I, K(2));
-    ref(3) = conv_2d_full(I, K(3));
+    SELECTED_SECTION(etl::conv_impl::STD) {
+        ref(0) = conv_2d_full(I, K(0));
+        ref(1) = conv_2d_full(I, K(1));
+        ref(2) = conv_2d_full(I, K(2));
+        ref(3) = conv_2d_full(I, K(3));
+    }
 
     K.deep_fflip_inplace();
 
@@ -321,14 +347,16 @@ CONV2_FULL_MULTI_FLIPPED_TEST_CASE("conv_2d/full/multi_flipped/2", "[conv][conv2
 // conv_2d_same_multi
 
 CONV2_SAME_MULTI_TEST_CASE("conv_2d/same/multi/1", "[conv][conv2][conv_multi]") {
-    etl::fast_matrix<T, 3, 3> I    = {1.0, 2.0, 3.0, 0.0, 1.0, 1.0, 3.0, 2.0, 1.0};
+    etl::fast_matrix<T, 3, 3> I = {1.0, 2.0, 3.0, 0.0, 1.0, 1.0, 3.0, 2.0, 1.0};
     etl::fast_matrix<T, 2, 3, 3> K = {2.0, 0.0, 0.5, 0.5, 2.0, 0.0, 0.5, 0.5, 2.0, 0.0, 0.5, 0.5, 2.0, 0.0, 0.5, 0.5, 1.0, 2.0};
 
     etl::fast_matrix<T, 2, 3, 3> c_1;
     etl::fast_matrix<T, 2, 3, 3> c_2;
 
-    c_1(0) = conv_2d_same(I, K(0));
-    c_1(1) = conv_2d_same(I, K(1));
+    SELECTED_SECTION(etl::conv_impl::STD) {
+        c_1(0) = conv_2d_same(I, K(0));
+        c_1(1) = conv_2d_same(I, K(1));
+    }
 
     Impl::apply(I, K, c_2);
 
@@ -338,14 +366,16 @@ CONV2_SAME_MULTI_TEST_CASE("conv_2d/same/multi/1", "[conv][conv2][conv_multi]") 
 }
 
 CONV2_SAME_MULTI_TEST_CASE("conv_2d/same/multi/2", "[conv][conv2][conv_multi]") {
-    etl::fast_matrix<T, 2, 2> I    = {1.0, 2.0, 3.0, 4.0};
+    etl::fast_matrix<T, 2, 2> I = {1.0, 2.0, 3.0, 4.0};
     etl::fast_matrix<T, 2, 2, 2> K = {2.0, 0.0, 0.5, 0.5, 1.0, 0.5, 0.7, 0.1};
 
     etl::fast_matrix<T, 2, 2, 2> c_1;
     etl::fast_matrix<T, 2, 2, 2> c_2;
 
-    c_1(0) = conv_2d_same(I, K(0));
-    c_1(1) = conv_2d_same(I, K(1));
+    SELECTED_SECTION(etl::conv_impl::STD) {
+        c_1(0) = conv_2d_same(I, K(0));
+        c_1(1) = conv_2d_same(I, K(1));
+    }
 
     Impl::apply(I, K, c_2);
 
@@ -355,15 +385,17 @@ CONV2_SAME_MULTI_TEST_CASE("conv_2d/same/multi/2", "[conv][conv2][conv_multi]") 
 }
 
 CONV2_SAME_MULTI_TEST_CASE("conv_2d/same/multi/3", "[conv][conv2][conv_multi]") {
-    etl::fast_matrix<T, 2, 2> I    = {1.0, 2.0, 3.0, 4.0};
+    etl::fast_matrix<T, 2, 2> I = {1.0, 2.0, 3.0, 4.0};
     etl::fast_matrix<T, 3, 2, 2> K = {2.0, 0.0, 0.5, 0.5, 1.0, 0.5, 0.7, 0.1, 0.0, -1.0, 1.0, 1.0};
 
     etl::fast_matrix<T, 3, 2, 2> c_1;
     etl::fast_matrix<T, 3, 2, 2> c_2;
 
-    c_1(0) = conv_2d_same(I, K(0));
-    c_1(1) = conv_2d_same(I, K(1));
-    c_1(2) = conv_2d_same(I, K(2));
+    SELECTED_SECTION(etl::conv_impl::STD) {
+        c_1(0) = conv_2d_same(I, K(0));
+        c_1(1) = conv_2d_same(I, K(1));
+        c_1(2) = conv_2d_same(I, K(2));
+    }
 
     Impl::apply(I, K, c_2);
 
@@ -383,9 +415,11 @@ CONV2_SAME_MULTI_TEST_CASE("conv_2d/same/multi/4", "[conv][conv2][conv_multi]") 
     etl::fast_matrix<T, 3, 5, 5> c_2;
     etl::fast_matrix<T, 3, 5, 5> c_3;
 
-    c_1(0) = conv_2d_same(I, K(0));
-    c_1(1) = conv_2d_same(I, K(1));
-    c_1(2) = conv_2d_same(I, K(2));
+    SELECTED_SECTION(etl::conv_impl::STD) {
+        c_1(0) = conv_2d_same(I, K(0));
+        c_1(1) = conv_2d_same(I, K(1));
+        c_1(2) = conv_2d_same(I, K(2));
+    }
 
     Impl::apply(I, K, c_2);
 
@@ -405,9 +439,11 @@ CONV2_SAME_MULTI_TEST_CASE("conv_2d/same/multi/5", "[conv][conv2][conv_multi]") 
     etl::fast_matrix<T, 3, 3, 3> c_1;
     etl::fast_matrix<T, 3, 3, 3> c_2;
 
-    c_1(0) = conv_2d_same(I, K(0));
-    c_1(1) = conv_2d_same(I, K(1));
-    c_1(2) = conv_2d_same(I, K(2));
+    SELECTED_SECTION(etl::conv_impl::STD) {
+        c_1(0) = conv_2d_same(I, K(0));
+        c_1(1) = conv_2d_same(I, K(1));
+        c_1(2) = conv_2d_same(I, K(2));
+    }
 
     Impl::apply(I, K, c_2);
 
@@ -427,9 +463,11 @@ CONV2_SAME_MULTI_TEST_CASE("conv_2d/same/multi/6", "[conv][conv2][conv_multi]") 
     etl::fast_matrix<T, 3, 7, 7> c_1;
     etl::fast_matrix<T, 3, 7, 7> c_2;
 
-    c_1(0) = conv_2d_same(I, K(0));
-    c_1(1) = conv_2d_same(I, K(1));
-    c_1(2) = conv_2d_same(I, K(2));
+    SELECTED_SECTION(etl::conv_impl::STD) {
+        c_1(0) = conv_2d_same(I, K(0));
+        c_1(1) = conv_2d_same(I, K(1));
+        c_1(2) = conv_2d_same(I, K(2));
+    }
 
     Impl::apply(I, K, c_2);
 
@@ -449,9 +487,11 @@ CONV2_SAME_MULTI_TEST_CASE("conv_2d/same/multi/7", "[conv][conv2][conv_multi]") 
     etl::fast_matrix<T, 3, 9, 7> c_1;
     etl::fast_matrix<T, 3, 9, 7> c_2;
 
-    c_1(0) = conv_2d_same(I, K(0));
-    c_1(1) = conv_2d_same(I, K(1));
-    c_1(2) = conv_2d_same(I, K(2));
+    SELECTED_SECTION(etl::conv_impl::STD) {
+        c_1(0) = conv_2d_same(I, K(0));
+        c_1(1) = conv_2d_same(I, K(1));
+        c_1(2) = conv_2d_same(I, K(2));
+    }
 
     Impl::apply(I, K, c_2);
 
@@ -472,9 +512,11 @@ CONV2_SAME_MULTI_TEST_CASE("conv_2d/same/multi/8", "[conv][conv2][conv_multi]") 
     etl::fast_matrix<T, 3, 9, 7> c_2;
     etl::fast_matrix<T, 3, 9, 7> c_3;
 
-    c_1(0) = conv_2d_same(I, K(0));
-    c_1(1) = conv_2d_same(I, K(1));
-    c_1(2) = conv_2d_same(I, K(2));
+    SELECTED_SECTION(etl::conv_impl::STD) {
+        c_1(0) = conv_2d_same(I, K(0));
+        c_1(1) = conv_2d_same(I, K(1));
+        c_1(2) = conv_2d_same(I, K(2));
+    }
 
     Impl::apply(I, K, c_2);
 
@@ -494,9 +536,11 @@ CONV2_SAME_MULTI_FLIPPED_TEST_CASE("conv_2d/same/multi_flipped/1", "[conv][conv2
     etl::fast_matrix<T, 3, 9, 7> c_1;
     etl::fast_matrix<T, 3, 9, 7> c_2;
 
-    c_1(0) = conv_2d_same(I, K(0));
-    c_1(1) = conv_2d_same(I, K(1));
-    c_1(2) = conv_2d_same(I, K(2));
+    SELECTED_SECTION(etl::conv_impl::STD) {
+        c_1(0) = conv_2d_same(I, K(0));
+        c_1(1) = conv_2d_same(I, K(1));
+        c_1(2) = conv_2d_same(I, K(2));
+    }
 
     K.deep_fflip_inplace();
 
@@ -519,10 +563,12 @@ CONV2_SAME_MULTI_FLIPPED_TEST_CASE("conv_2d/same/multi_flipped/2", "[conv][conv2
     etl::fast_matrix<T, 4, 9, 7> c_1;
     etl::fast_matrix<T, 4, 9, 7> c_2;
 
-    c_1(0) = conv_2d_same(I, K(0));
-    c_1(1) = conv_2d_same(I, K(1));
-    c_1(2) = conv_2d_same(I, K(2));
-    c_1(3) = conv_2d_same(I, K(3));
+    SELECTED_SECTION(etl::conv_impl::STD) {
+        c_1(0) = conv_2d_same(I, K(0));
+        c_1(1) = conv_2d_same(I, K(1));
+        c_1(2) = conv_2d_same(I, K(2));
+        c_1(3) = conv_2d_same(I, K(3));
+    }
 
     K.deep_fflip_inplace();
 
