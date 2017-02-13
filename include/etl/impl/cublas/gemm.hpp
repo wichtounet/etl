@@ -38,21 +38,33 @@ using cublas_type = std::conditional_t<
 template<typename T>
 T make_default(double value);
 
+/*!
+ * \copydoc make_default
+ */
 template<>
 inline float make_default<float>(double value){
     return value;
 }
 
+/*!
+ * \copydoc make_default
+ */
 template<>
 inline double make_default<double>(double value){
     return value;
 }
 
+/*!
+ * \copydoc make_default
+ */
 template<>
 inline cuComplex make_default<cuComplex>(double value){
     return {float(value), 0.0f};
 }
 
+/*!
+ * \copydoc make_default
+ */
 template<>
 inline cuDoubleComplex make_default<cuDoubleComplex>(double value){
     return {value, 0.0};
