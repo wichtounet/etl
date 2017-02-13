@@ -265,6 +265,11 @@ bool is_triangular(E&& expr) {
  */
 template <typename E>
 bool is_diagonal(E&& expr) {
+    // diagonal_matrix<E> is already enforced to be diagonal
+    if (is_diagonal_matrix<E>::value) {
+        return true;
+    }
+
     if (is_square(expr)) {
         for (std::size_t i = 0; i < etl::dim<0>(expr); ++i) {
             for (std::size_t j = 0; j < etl::dim<0>(expr); ++j) {
