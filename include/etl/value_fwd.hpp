@@ -81,6 +81,12 @@ struct hermitian_matrix;
 template <typename Matrix>
 struct diagonal_matrix;
 
+template <typename Matrix>
+struct upper_matrix;
+
+template <typename Matrix>
+struct lower_matrix;
+
 /*!
  * \brief A static matrix with fixed dimensions, in row-major order
  */

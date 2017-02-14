@@ -115,6 +115,11 @@ bool is_symmetric(E&& expr) {
  */
 template <typename E>
 bool is_lower_triangular(E&& expr) {
+    // lower_matrix<E> is already enforced to be lower triangular
+    if (is_lower_matrix<E>::value) {
+        return true;
+    }
+
     if (is_square(expr)) {
         for (std::size_t i = 0; i < etl::dim<0>(expr) - 1; ++i) {
             for (std::size_t j = i + 1; j < etl::dim<0>(expr); ++j) {
@@ -185,6 +190,11 @@ bool is_strictly_lower_triangular(E&& expr) {
  */
 template <typename E>
 bool is_upper_triangular(E&& expr) {
+    // upper_matrix<E> is already enforced to be upper triangular
+    if (is_upper_matrix<E>::value) {
+        return true;
+    }
+
     if (is_square(expr)) {
         for (std::size_t i = 1; i < etl::dim<0>(expr); ++i) {
             for (std::size_t j = 0; j < i; ++j) {
