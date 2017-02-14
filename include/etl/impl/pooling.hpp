@@ -15,6 +15,18 @@ namespace impl {
  * \brief Functor for 2D Max Pooling
  */
 struct max_pool_2d {
+    /*!
+     * \brief Pool a block of the sub expression around the border (with padding)
+     * \param sub The sub expression
+     * \param j The first index of the block
+     * \param k The second index of the block
+     * \param c1 The first dimension pooling ratio
+     * \param c2 The second dimension pooling ratio
+     * \param s1 The first dimension stride
+     * \param s2 The second dimension stride
+     * \param p1 The first dimension padding
+     * \param p2 The second dimension padding
+     */
     template <typename A>
     static auto pool_block_border(const A& sub, size_t j, size_t k, size_t c1, size_t c2, size_t s1, size_t s2, size_t p1, size_t p2) {
         auto max = value_t<A>(0);
@@ -174,6 +186,18 @@ struct max_pool_2d {
  * \brief Functor for 2D Average Pooling
  */
 struct avg_pool_2d {
+    /*!
+     * \brief Pool a block of the sub expression around the border (with padding)
+     * \param sub The sub expression
+     * \param j The first index of the block
+     * \param k The second index of the block
+     * \param c1 The first dimension pooling ratio
+     * \param c2 The second dimension pooling ratio
+     * \param s1 The first dimension stride
+     * \param s2 The second dimension stride
+     * \param p1 The first dimension padding
+     * \param p2 The second dimension padding
+     */
     template <typename A>
     static auto pool_block_border(const A& sub, size_t j, size_t k, size_t c1, size_t c2, size_t s1, size_t s2, size_t p1, size_t p2) {
         auto avg = value_t<A>(0);
@@ -329,6 +353,22 @@ struct avg_pool_2d {
  * \brief Functor for 3D Max Pooling
  */
 struct max_pool_3d {
+    /*!
+     * \brief Pool a block of the sub expression
+     * \param sub The sub expression
+     * \param i The first index of the block
+     * \param j The second index of the block
+     * \param k The third index of the block
+     * \param c1 The first dimension pooling ratio
+     * \param c2 The second dimension pooling ratio
+     * \param c3 The third dimension pooling ratio
+     * \param s1 The first dimension stride
+     * \param s2 The second dimension stride
+     * \param s3 The third dimension stride
+     * \param p1 The first dimension padding
+     * \param p2 The second dimension padding
+     * \param p3 The third dimension padding
+     */
     template <typename A>
     static auto pool_block_border(const A& sub, size_t i, size_t j, size_t k, size_t c1, size_t c2, size_t c3, size_t s1, size_t s2, size_t s3, size_t p1, size_t p2, size_t p3) {
         auto max = value_t<A>(0);
@@ -555,6 +595,22 @@ struct max_pool_3d {
  * \brief Functor for 3D Average Pooling
  */
 struct avg_pool_3d {
+    /*!
+     * \brief Pool a block of the sub expression
+     * \param sub The sub expression
+     * \param i The first index of the block
+     * \param j The second index of the block
+     * \param k The third index of the block
+     * \param c1 The first dimension pooling ratio
+     * \param c2 The second dimension pooling ratio
+     * \param c3 The third dimension pooling ratio
+     * \param s1 The first dimension stride
+     * \param s2 The second dimension stride
+     * \param s3 The third dimension stride
+     * \param p1 The first dimension padding
+     * \param p2 The second dimension padding
+     * \param p3 The third dimension padding
+     */
     template <typename A>
     static auto pool_block_border(const A& sub, size_t i, size_t j, size_t k, size_t c1, size_t c2, size_t c3, size_t s1, size_t s2, size_t s3, size_t p1, size_t p2, size_t p3) {
         auto avg = value_t<A>(0);

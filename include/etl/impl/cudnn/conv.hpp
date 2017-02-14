@@ -27,29 +27,54 @@ namespace cudnn {
 
 #ifdef ETL_CUDNN_MODE
 
+/*!
+ * \brief Wrapper for CUDNN tensor.
+ *
+ * Needs to be specialized for the destructor.
+ */
 template<typename T>
 struct cudnn_wrapper {
-    T tensor;
+    T tensor; ///< The CUDNN tensor
 
+    /*!
+     * \brief Create a new cudnn_wrapper for the given tensor.
+     */
     cudnn_wrapper(T tensor) : tensor(tensor) {}
 
-    cudnn_wrapper(const cudnn_wrapper& rhs) = delete;
-    cudnn_wrapper& operator=(const cudnn_wrapper& rhs) = delete;
-
+    /*!
+     * \brief Move construct a cudnn_wrapper.
+     *
+     * This will remove the tensor from the RHS.
+     *
+     * \param rhs The right hand side cudnn_wrapper
+     */
     cudnn_wrapper(cudnn_wrapper&& rhs){
         tensor = rhs.tensor;
         rhs.tensor = nullptr;
     }
 
+    cudnn_wrapper(const cudnn_wrapper& rhs) = delete;
+    cudnn_wrapper& operator=(const cudnn_wrapper& rhs) = delete;
+
     cudnn_wrapper& operator=(cudnn_wrapper&& rhs) = delete;
 
+    /*!
+     * \brief Convert back to the CUDNN tensor type.
+     * \return The CUDNN tensor.
+     */
     T operator*(){
         return tensor;
     }
 
+    /*!
+     * \brief Delete the cudnn_wrapper, releasing the tensor.
+     */
     ~cudnn_wrapper();
 };
 
+/*!
+ * \copydoc cudnn_wraper::~cudnn_wrapper()
+ */
 template<>
 inline cudnn_wrapper<cudnnTensorDescriptor_t>::~cudnn_wrapper(){
     if(tensor){
@@ -57,6 +82,9 @@ inline cudnn_wrapper<cudnnTensorDescriptor_t>::~cudnn_wrapper(){
     }
 }
 
+/*!
+ * \copydoc cudnn_wraper::~cudnn_wrapper()
+ */
 template<>
 inline cudnn_wrapper<cudnnFilterDescriptor_t>::~cudnn_wrapper(){
     if(tensor){
@@ -64,6 +92,11 @@ inline cudnn_wrapper<cudnnFilterDescriptor_t>::~cudnn_wrapper(){
     }
 }
 
+/*!
+ * \brief Create a CUDNN tensor for the given input matrix
+ * \param input The input matrix
+ * \return a cudnn_wrapper around a created CUDNN tensor
+ */
 template<typename I, cpp_enable_if(decay_traits<I>::dimensions() == 2)>
 cudnn_wrapper<cudnnTensorDescriptor_t> create_tensor(I&& input){
     using T = value_t<I>;
@@ -78,6 +111,11 @@ cudnn_wrapper<cudnnTensorDescriptor_t> create_tensor(I&& input){
     return cudnn_wrapper<cudnnTensorDescriptor_t>{tensor};
 }
 
+/*!
+ * \brief Create a CUDNN tensor for the given input matrix
+ * \param input The input matrix
+ * \return a cudnn_wrapper around a created CUDNN tensor
+ */
 template<typename I, cpp_enable_if(decay_traits<I>::dimensions() == 4)>
 cudnn_wrapper<cudnnTensorDescriptor_t> create_tensor(I&& input){
     using T = value_t<I>;
@@ -92,6 +130,11 @@ cudnn_wrapper<cudnnTensorDescriptor_t> create_tensor(I&& input){
     return cudnn_wrapper<cudnnTensorDescriptor_t>{tensor};
 }
 
+/*!
+ * \brief Create a CUDNN filter tensor for the given input matrix
+ * \param input The input matrix
+ * \return a cudnn_wrapper around a created CUDNN filter tensor
+ */
 template<typename I, cpp_enable_if(decay_traits<I>::dimensions() == 2)>
 cudnn_wrapper<cudnnFilterDescriptor_t> create_filter(I&& kernel){
     using T = value_t<I>;
@@ -106,6 +149,11 @@ cudnn_wrapper<cudnnFilterDescriptor_t> create_filter(I&& kernel){
     return cudnn_wrapper<cudnnFilterDescriptor_t>{filter};
 }
 
+/*!
+ * \brief Create a CUDNN filter tensor for the given input matrix
+ * \param input The input matrix
+ * \return a cudnn_wrapper around a created CUDNN filter tensor
+ */
 template<typename I, cpp_enable_if(decay_traits<I>::dimensions() == 4)>
 cudnn_wrapper<cudnnFilterDescriptor_t> create_filter(I&& kernel){
     using T = value_t<I>;
@@ -200,6 +248,17 @@ void conv2_valid(I&& input, K&& kernel, C&& conv, size_t s1, size_t s2, size_t p
     conv2_valid_set(input, kernel, conv, s1, s2, p1, p2, CUDNN_CONVOLUTION);
 }
 
+/*!
+ * \brief CUDNN implementation of a 2D 'valid' convolution
+ * C = I * K, with flipped kernels.
+ * \param input The input matrix
+ * \param kernel The kernel matrix
+ * \param conv The output matrix
+ * \param s1 The first dimension stride
+ * \param s2 The second dimension stride
+ * \param p1 The first dimension padding (left and right)
+ * \param p2 The second dimension padding (top and bottom)
+ */
 template <typename I, typename K, typename C>
 void conv2_valid_flipped(I&& input, K&& kernel, C&& conv, size_t s1, size_t s2, size_t p1, size_t p2) {
     conv2_valid_set(input, kernel, conv, s1, s2, p1, p2, CUDNN_CROSS_CORRELATION);
@@ -289,7 +348,7 @@ void conv4_valid_flipped(I&& input, K&& kernel, C&& conv, size_t s1, size_t s2, 
 }
 
 /*!
- * \brief AVX implementation of a 4D 'valid' convolution C = I * K, where the output
+ * \brief CUDNN implementation of a 4D 'valid' convolution C = I * K, where the output
  * are considered to be kernels
  *
  * \param input The input matrix
@@ -352,7 +411,7 @@ void conv4_valid_filter_set(I&& input, K&& kernel, C&& conv, size_t s1, size_t s
 }
 
 /*!
- * \brief AVX implementation of a 4D 'valid' convolution C = I * K, where the output
+ * \brief CUDNN implementation of a 4D 'valid' convolution C = I * K, where the output
  * are considered to be kernels, with flipped weights
  *
  * \param input The input matrix
@@ -365,7 +424,7 @@ void conv4_valid_filter(I&& input, K&& kernel, C&& conv, size_t s1, size_t s2, s
 }
 
 /*!
- * \brief AVX implementation of a 4D 'valid' convolution C = I * K, where the output
+ * \brief CUDNN implementation of a 4D 'valid' convolution C = I * K, where the output
  * are considered to be kernels, with flipped weights
  *
  * \param input The input matrix
@@ -775,7 +834,7 @@ void conv2_valid(I&& input, K&& kernel, C&& conv, size_t s1, size_t s2, size_t p
     cpp_unused(s2);
     cpp_unused(p1);
     cpp_unused(p2);
-    cpp_unreachable("AVX not available/enabled");
+    cpp_unreachable("CUDNN not available/enabled");
 }
 
 /*!
@@ -797,7 +856,7 @@ void conv2_valid_flipped(I&& input, K&& kernel, C&& conv, size_t s1, size_t s2, 
     cpp_unused(s2);
     cpp_unused(p1);
     cpp_unused(p2);
-    cpp_unreachable("AVX not available/enabled");
+    cpp_unreachable("CUDNN not available/enabled");
 }
 
 /*!
@@ -837,7 +896,7 @@ void conv4_valid_flipped(I&& input, K&& kernel, C&& conv, size_t s1, size_t s2, 
 }
 
 /*!
- * \brief AVX implementation of a 4D 'valid' convolution C = I * K, where the output
+ * \brief CUDNN implementation of a 4D 'valid' convolution C = I * K, where the output
  * are considered to be kernels
  *
  * \param input The input matrix
@@ -857,7 +916,7 @@ void conv4_valid_filter(I&& input, K&& kernel, C&& conv, size_t s1, size_t s2, s
 }
 
 /*!
- * \brief AVX implementation of a 4D 'valid' convolution C = I * K, where the output
+ * \brief CUDNN implementation of a 4D 'valid' convolution C = I * K, where the output
  * are considered to be kernels, with flipped weights
  *
  * \param input The input matrix
