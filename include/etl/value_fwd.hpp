@@ -72,20 +72,47 @@ struct serializer;
 template <typename Stream>
 struct deserializer;
 
+/*!
+ * \brief Symmetric matrix adapter
+ * \tparam Matrix The adapted matrix
+ */
 template <typename Matrix>
 struct symmetric_matrix;
 
+/*!
+ * \brief Hermitian matrix adapter
+ * \tparam Matrix The adapted matrix
+ */
 template <typename Matrix>
 struct hermitian_matrix;
 
+/*!
+ * \brief Diagonal matrix adapter
+ * \tparam Matrix The adapted matrix
+ */
 template <typename Matrix>
 struct diagonal_matrix;
 
+/*!
+ * \brief Upper triangular matrix adapter
+ * \tparam Matrix The adapted matrix
+ */
 template <typename Matrix>
 struct upper_matrix;
 
+/*!
+ * \brief Lower triangular matrix adapter
+ * \tparam Matrix The adapted matrix
+ */
 template <typename Matrix>
 struct lower_matrix;
+
+/*!
+ * \brief Strictly lower triangular matrix adapter
+ * \tparam Matrix The adapted matrix
+ */
+template <typename Matrix>
+struct strictly_lower_matrix;
 
 /*!
  * \brief A static matrix with fixed dimensions, in row-major order
