@@ -724,7 +724,7 @@ template<typename A, typename C, cpp_enable_if(!all_complex<A>::value && all_com
 void fft1_many(A&& a, C&& c) {
     a.ensure_cpu_up_to_date();
 
-    static constexpr std::size_t N = etl::dimensions(c);
+    static constexpr std::size_t N = etl::dimensions<C>();
 
     std::size_t n     = a.template dim<N - 1>(); //Size of the transform
     std::size_t batch = etl::size(a) / n;            //Number of batch
@@ -749,7 +749,7 @@ template<typename A, typename C, cpp_enable_if(all_complex<A, C>::value)>
 void fft1_many(A&& a, C&& c) {
     a.ensure_cpu_up_to_date();
 
-    static constexpr std::size_t N = etl::dimensions(c);
+    static constexpr std::size_t N = etl::dimensions<C>();
 
     std::size_t n     = a.template dim<N - 1>(); //Size of the transform
     std::size_t batch = etl::size(a) / n;        //Number of batch
@@ -770,7 +770,7 @@ template <typename A, typename C>
 void ifft1_many(A&& a, C&& c) {
     a.ensure_cpu_up_to_date();
 
-    static constexpr std::size_t N = decay_traits<A>::dimensions();
+    static constexpr std::size_t N = etl::dimensions<A>();
 
     std::size_t n     = etl::dim<N - 1>(a); //Size of the transform
     std::size_t batch = etl::size(a) / n;   //Number of batch

@@ -885,7 +885,7 @@ void fft1_many_kernel(const A* a, C* c, size_t batch, size_t n) {
  */
 template <typename A, typename C>
 void fft1_many(A&& a, C&& c) {
-    static constexpr size_t N = etl::dimensions(a);
+    static constexpr size_t N = etl::dimensions<A>();
 
     a.ensure_cpu_up_to_date();
 
@@ -962,7 +962,7 @@ template <typename A, typename C>
 void ifft2_many(A&& a, C&& c) {
     using T = typename value_t<C>::value_type;
 
-    constexpr std::size_t D = etl::decay_traits<A>::dimensions();
+    static constexpr std::size_t D = etl::dimensions<A>();
 
     std::size_t n = etl::dim<D - 2>(a) * etl::dim<D -1>(a);
 
