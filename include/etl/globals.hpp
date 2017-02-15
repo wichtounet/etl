@@ -120,6 +120,16 @@ bool is_lower_triangular(E&& expr) {
         return true;
     }
 
+    // strictly_lower_matrix<E> is already enforced to be lower triangular
+    if (is_strictly_lower_matrix<E>::value) {
+        return true;
+    }
+
+    // diagonal_matrix<E> is already enforced to be lower triangular
+    if (is_diagonal_matrix<E>::value) {
+        return true;
+    }
+
     if (is_square(expr)) {
         for (std::size_t i = 0; i < etl::dim<0>(expr) - 1; ++i) {
             for (std::size_t j = i + 1; j < etl::dim<0>(expr); ++j) {
@@ -168,6 +178,11 @@ bool is_uni_lower_triangular(E&& expr) {
  */
 template <typename E>
 bool is_strictly_lower_triangular(E&& expr) {
+    // strictly_lower_matrix<E> is already enforced to be strictly lower triangular
+    if (is_strictly_lower_matrix<E>::value) {
+        return true;
+    }
+
     if (is_square(expr)) {
         for (std::size_t i = 0; i < etl::dim<0>(expr); ++i) {
             for (std::size_t j = i; j < etl::dim<0>(expr); ++j) {
@@ -192,6 +207,11 @@ template <typename E>
 bool is_upper_triangular(E&& expr) {
     // upper_matrix<E> is already enforced to be upper triangular
     if (is_upper_matrix<E>::value) {
+        return true;
+    }
+
+    // diagonal_matrix<E> is already enforced to be upper triangular
+    if (is_diagonal_matrix<E>::value) {
         return true;
     }
 
