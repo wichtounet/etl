@@ -377,7 +377,7 @@ public:
      * \param gpu_memory Pointer to CPU memory
      */
     void gpu_copy_from(const value_type* gpu_memory) const {
-        _gpu.gpu_copy_from(gpu_memory, etl::size(result));
+        _gpu.gpu_copy_from(gpu_memory, etl::size(result()));
     }
 
     /*!
