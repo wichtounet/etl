@@ -683,6 +683,8 @@ public:
             const_cast<std::remove_const_t<value_type>*>(gpu_memory()),
             const_cast<std::remove_const_t<value_type>*>(new_gpu_memory),
             sub_size * sizeof(value_type), cudaMemcpyDeviceToDevice));
+#else
+        cpp_unused(new_gpu_memory);
 #endif
 
         gpu_up_to_date = true;
