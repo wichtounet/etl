@@ -20,14 +20,20 @@
 
 namespace etl {
 
+/*!
+ * \brief SIMD pack of some type, using a vector implementation type
+ * \tparam V The vector implementation
+ * \tparam T The real type
+ * \tparam T The vector type
+ */
 template <vector_mode_t V, typename T, typename VT>
 struct simd_pack {
-    using value_type     = T;
-    using intrinsic_type = VT;
+    using value_type     = T;  ///< The real value type
+    using intrinsic_type = VT; ///< The used intrinsic type
 
-    static constexpr vector_mode_t vector_mode = V;
+    static constexpr vector_mode_t vector_mode = V; ///< The vector implementation mode
 
-    intrinsic_type value;
+    intrinsic_type value; ///< The vector of value
 
     simd_pack(intrinsic_type value) : value(value){
         // Nothing else to init
