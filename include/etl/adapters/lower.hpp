@@ -291,14 +291,6 @@ public:
     }
 
     /*!
-     * \brief Returns the number of dimensions of the matrix
-     * \return the number of dimensions of the matrix
-     */
-    static constexpr std::size_t dimensions() noexcept {
-        return 2;
-    }
-
-    /*!
      * \brief Access the (i, j) element of the 2D matrix
      * \param i The index of the first dimension
      * \param j The index of the second dimension

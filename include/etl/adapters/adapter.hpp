@@ -65,6 +65,16 @@ public:
     }
 
     /*!
+     * \brief Construct a new adapter matrix and fill it witht the given value
+     *
+     * \param value The value to fill the matrix with
+     * \param dim The dimension of the matrix
+     */
+    adapter(std::size_t dim, value_type value) noexcept : matrix(dim, dim, value) {
+        //Nothing else to init
+    }
+
+    /*!
      * \brief Construct a adapter by copy
      * \param rhs The right-hand-side matrix
      */
