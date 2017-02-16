@@ -273,13 +273,13 @@ struct mm_mul_impl {
         gemm_impl impl = select_gemm_impl<A, B, C>(etl::dim<0>(a), etl::dim<1>(a), etl::dim<1>(c));
 
         if (impl == gemm_impl::STD) {
-            etl::impl::standard::mm_mul(make_temporary(std::forward<A>(a)), make_temporary(std::forward<B>(b)), std::forward<C>(c));;
+            etl::impl::standard::mm_mul(make_temporary(std::forward<A>(a)), make_temporary(std::forward<B>(b)), std::forward<C>(c));
         } else if (impl == gemm_impl::VEC) {
-            etl::impl::vec::gemm(make_temporary(std::forward<A>(a)), make_temporary(std::forward<B>(b)), std::forward<C>(c));;
+            etl::impl::vec::gemm(make_temporary(std::forward<A>(a)), make_temporary(std::forward<B>(b)), std::forward<C>(c));
         } else if (impl == gemm_impl::BLAS) {
-            etl::impl::blas::gemm_tt(make_temporary(a.a()), make_temporary(b.a()), std::forward<C>(c));;
+            etl::impl::blas::gemm_tt(make_temporary(a.a()), make_temporary(b.a()), std::forward<C>(c));
         } else if (impl == gemm_impl::CUBLAS) {
-            etl::impl::cublas::gemm_tt(make_temporary(a.a()), make_temporary(b.a()), std::forward<C>(c));;
+            etl::impl::cublas::gemm_tt(make_temporary(a.a()), make_temporary(b.a()), std::forward<C>(c));
         }
     }
 
