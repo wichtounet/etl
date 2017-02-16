@@ -21,6 +21,9 @@ namespace cufft {
 struct cufft_handle {
     cufftHandle handle; ///< The CUFFT context handle
 
+    /*!
+     * \brief Create a new cufft_handle.
+     */
     cufft_handle(){
         cufftCreate(&handle);
     }
