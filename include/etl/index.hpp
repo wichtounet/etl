@@ -93,6 +93,11 @@ inline cpp14_constexpr std::size_t cm_compute_index(std::size_t first, std::size
 
 // Static index (row major)
 
+/*!
+ * \brief Compute the index for a 1D fast matrix
+ * \param i The index to access
+ * \return The flat position of (i)
+ */
 template <typename T, cpp_enable_if(decay_traits<T>::storage_order == order::RowMajor)>
 cpp14_constexpr size_t fast_index(size_t i) noexcept(assert_nothrow) {
     static_assert(decay_traits<T>::dimensions() == 1, "Invalid number of dimensions for fast_index");
@@ -102,6 +107,12 @@ cpp14_constexpr size_t fast_index(size_t i) noexcept(assert_nothrow) {
     return i;
 }
 
+/*!
+ * \brief Compute the index for a 2D fast matrix
+ * \param i The index of the first dimension to access
+ * \param j The index of the second dimension to access
+ * \return The flat position of (i,j)
+ */
 template <typename T, cpp_enable_if(decay_traits<T>::storage_order == order::RowMajor)>
 cpp14_constexpr size_t fast_index(size_t i, size_t j) noexcept(assert_nothrow) {
     static_assert(decay_traits<T>::dimensions() == 2, "Invalid number of dimensions for fast_index");
@@ -112,6 +123,13 @@ cpp14_constexpr size_t fast_index(size_t i, size_t j) noexcept(assert_nothrow) {
     return i * decay_traits<T>::template dim<1>() + j;
 }
 
+/*!
+ * \brief Compute the index for a 3D fast matrix
+ * \param i The index of the first dimension to access
+ * \param j The index of the second dimension to access
+ * \param k The index of the third dimension to access
+ * \return The flat position of (i,j,k)
+ */
 template <typename T, cpp_enable_if(decay_traits<T>::storage_order == order::RowMajor)>
 cpp14_constexpr size_t fast_index(size_t i, size_t j, size_t k) noexcept(assert_nothrow) {
     static_assert(decay_traits<T>::dimensions() == 3, "Invalid number of dimensions for fast_index");
@@ -123,6 +141,14 @@ cpp14_constexpr size_t fast_index(size_t i, size_t j, size_t k) noexcept(assert_
     return i * decay_traits<T>::template dim<1>() * decay_traits<T>::template dim<2>() + j * decay_traits<T>::template dim<2>() + k;
 }
 
+/*!
+ * \brief Compute the index for a 4D fast matrix
+ * \param i The index of the first dimension to access
+ * \param j The index of the second dimension to access
+ * \param k The index of the third dimension to access
+ * \param l The index of the fourth dimension to access
+ * \return The flat position of (i,j,k,l)
+ */
 template <typename T, cpp_enable_if(decay_traits<T>::storage_order == order::RowMajor)>
 cpp14_constexpr size_t fast_index(size_t i, size_t j, size_t k, size_t l) noexcept(assert_nothrow) {
     static_assert(decay_traits<T>::dimensions() == 4, "Invalid number of dimensions for fast_index");
@@ -136,6 +162,11 @@ cpp14_constexpr size_t fast_index(size_t i, size_t j, size_t k, size_t l) noexce
         + j * decay_traits<T>::template dim<2>() * decay_traits<T>::template dim<3>() + k * decay_traits<T>::template dim<3>() + l;
 }
 
+/*!
+ * \brief Compute the index for a N-D fast matrix
+ * \param sizes The indices to access
+ * \return The flat position of (sizes...)
+ */
 template <typename T, typename... S, cpp_enable_if((sizeof...(S) > 4 && decay_traits<T>::storage_order == order::RowMajor))>
 cpp14_constexpr size_t fast_index(S... sizes) noexcept(assert_nothrow) {
     static_assert(decay_traits<T>::dimensions() == sizeof...(S), "Invalid number of dimensions for fast_index");
