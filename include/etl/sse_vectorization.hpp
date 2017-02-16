@@ -418,7 +418,7 @@ struct sse_vec {
         _mm_store_pd(reinterpret_cast<double*>(memory), value.value);
     }
 
-    /*
+    /*!
      * \brief Non-temporal, aligned, store of the given packed vector at the
      * given memory position
      */
