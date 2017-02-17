@@ -160,7 +160,7 @@ struct VectorizedAssign : vectorized_base<V, L_Expr, R_Expr> {
 
         std::size_t i = 0;
 
-        if(streaming && _size > cache_size / (sizeof(typename base_t::lhs_value_type) * 3) && !rhs.alias(lhs)){
+        if(streaming && _size > stream_threshold / (sizeof(typename base_t::lhs_value_type) * 3) && !rhs.alias(lhs)){
             for (; i < last; i += IT::size) {
                 lhs.template stream<vect_impl>(rhs_load(i), i);
             }
