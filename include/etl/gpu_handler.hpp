@@ -30,6 +30,8 @@ private:
     mutable bool gpu_up_to_date = false; ///< Is the GPU memory up to date
 
 public:
+    gpu_memory_handler() = default;
+
     ~gpu_memory_handler(){
         if (gpu_memory_) {
             //Note: the const_cast is only here to allow compilation
