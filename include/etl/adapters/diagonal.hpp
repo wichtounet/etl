@@ -43,7 +43,7 @@ struct diagonal_matrix final : adapter<Matrix>, comparable<diagonal_matrix<Matri
     using iterator       = typename matrix_t::const_iterator; ///< The type of const iterator
     using const_iterator = typename matrix_t::const_iterator; ///< The type of const iterator
 
-    using base_type = adapter<Matrix>;
+    using base_type = adapter<Matrix>; ///< The base type
 
     /*!
      * \brief The vectorization type for V
