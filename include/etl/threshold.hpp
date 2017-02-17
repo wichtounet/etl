@@ -15,6 +15,31 @@
 
 namespace etl {
 
+#ifdef ETL_DEBUG_THRESHOLDS
+
+constexpr std::size_t gemm_std_max    = 75 * 75;   ///< The maximum number of elements to be handled by std algorithm
+constexpr std::size_t gemm_cublas_min = 180 * 180; ///< The minimum number or elements before considering cublas
+
+constexpr std::size_t gevm_small_threshold = 1000; ///< The number of elements of b after which we use BLAS-like kernel
+constexpr std::size_t gemv_small_threshold = 1000; ///< The number of elements of A after which we use BLAS-like kernel
+
+constexpr std::size_t parallel_threshold = 12 * 1024; ///< The minimum number of elements before considering parallel implementation
+
+constexpr std::size_t sum_parallel_threshold = 1024 * 2; ///< The minimum number of elements before considering parallel acc implementation
+
+constexpr std::size_t conv1_parallel_threshold_conv   = 100; ///< The mimum output size before considering parallel convolution
+constexpr std::size_t conv1_parallel_threshold_kernel = 16;  ///< The mimum kernel size before considering parallel convolution
+
+constexpr std::size_t fft1_many_threshold_transforms = 16;  ///< The mimum number of transforms to parallelize them
+constexpr std::size_t fft1_many_threshold_n          = 768; ///< The mimum size of the transforms to parallelize them
+
+constexpr std::size_t fft2_many_threshold_transforms = 16;   ///< The mimum number of transforms to parallelize them
+constexpr std::size_t fft2_many_threshold_n          = 1024; ///< The mimum size of the transforms to parallelize them
+
+constexpr std::size_t stream_threshold = cache_size; ///< The threshold at which stream is used
+
+#else
+
 constexpr std::size_t gemm_std_max    = 75 * 75;   ///< The maximum number of elements to be handled by std algorithm
 constexpr std::size_t gemm_cublas_min = 180 * 180; ///< The minimum number or elements before considering cublas
 
@@ -35,5 +60,7 @@ constexpr std::size_t fft2_many_threshold_transforms = 16;   ///< The mimum numb
 constexpr std::size_t fft2_many_threshold_n          = 1024; ///< The mimum size of the transforms to parallelize them
 
 constexpr std::size_t stream_threshold = cache_size; ///< The threshold at which stream is used
+
+#endif
 
 } //end of namespace etl
