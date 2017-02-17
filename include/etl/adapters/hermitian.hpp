@@ -14,7 +14,7 @@
 
 #include <exception>
 
-#include "etl/adapters/adapter.hpp"             // The reference proxy
+#include "etl/adapters/adapter.hpp"             // The adapter base class
 #include "etl/adapters/hermitian_reference.hpp" // The reference proxy
 
 namespace etl {
