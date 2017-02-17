@@ -32,25 +32,25 @@ export LD=$ETL_GPP
 
 echo "Test 1. GCC (debug default)"
 
-export ETL_DEFAULTS="-DCPP_UTILS_ASSERT_EXCEPTION"
+export ETL_DEFAULTS="-DETL_DEBUG_THRESHOLDS -DCPP_UTILS_ASSERT_EXCEPTION"
 
 etl_run 1
 
 echo "Test 2. GCC (debug vectorize avx)"
 
-export ETL_DEFAULTS="-DETL_VECTORIZE_FULL -mavx"
+export ETL_DEFAULTS="-DETL_DEBUG_THRESHOLDS -DETL_VECTORIZE_FULL -mavx"
 
 etl_run 2
 
 echo "Test 3. GCC (debug vectorize sse)"
 
-export ETL_DEFAULTS="-DETL_VECTORIZE_FULL -msse3 -msse4"
+export ETL_DEFAULTS="-DETL_DEBUG_THRESHOLDS -DETL_VECTORIZE_FULL -msse3 -msse4"
 
 etl_run 3
 
 echo "Test 4. GCC (debug mkl)"
 
-unset ETL_DEFAULTS
+export ETL_DEFAULTS="-DETL_DEBUG_THRESHOLDS"
 export ETL_MKL=true
 
 etl_run 4
@@ -58,14 +58,14 @@ etl_run 4
 echo "Test 5. GCC (debug parallel)"
 
 unset ETL_MKL
-export ETL_DEFAULTS="-DETL_PARALLEL"
+export ETL_DEFAULTS="-DETL_DEBUG_THRESHOLDS -DETL_PARALLEL"
 
 etl_run 5
 
 echo "Test 6. GCC (debug vectorize sse avx parallel)"
 
 unset ETL_MKL
-export ETL_DEFAULTS="-DETL_PARALLEL -DETL_VECTORIZE_FULL -msse3 -msse4 -mavx"
+export ETL_DEFAULTS="-DETL_DEBUG_THRESHOLDS -DETL_PARALLEL -DETL_VECTORIZE_FULL -msse3 -msse4 -mavx"
 
 etl_run 6
 
@@ -73,7 +73,7 @@ if [ "$ETL_NO_GPU" == "" ]
 then
     echo "Test 7. GCC (debug cublas cufft)"
 
-    unset ETL_DEFAULTS
+    export ETL_DEFAULTS="-DETL_DEBUG_THRESHOLDS"
     unset ETL_MKL
     export ETL_CUBLAS=true
     export ETL_CUFFT=true
