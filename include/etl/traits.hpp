@@ -990,11 +990,23 @@ bool memory_alias(const P1* a_begin, const P1* a_end, const P2* b_begin, const P
     return reinterpret_cast<uintptr_t>(a_begin) < reinterpret_cast<uintptr_t>(b_end) && reinterpret_cast<uintptr_t>(a_end) > reinterpret_cast<uintptr_t>(b_begin);
 }
 
+/*!
+ * \brief Ensure that the CPU is up to date. If the expression does
+ * not have direct memory access, has no effect.
+ *
+ * \param expr The expression
+ */
 template <typename E, cpp_enable_if(all_dma<E>::value)>
 void safe_ensure_cpu_up_to_date(E&& expr){
     expr.ensure_cpu_up_to_date();
 }
 
+/*!
+ * \brief Ensure that the CPU is up to date. If the expression does
+ * not have direct memory access, has no effect.
+ *
+ * \param expr The expression
+ */
 template <typename E, cpp_disable_if(all_dma<E>::value)>
 void safe_ensure_cpu_up_to_date(E&& expr){
     cpp_unused(expr);

@@ -301,10 +301,10 @@ private:
     static constexpr size_t n_dimensions = decay_traits<sub_type>::dimensions() - 1; ///< The Number of dimensions
     static constexpr order storage_order = decay_traits<sub_type>::storage_order;    ///< The storage order
 
-    mutable memory_type memory;
+    mutable memory_type memory; ///< Pointer to the CPU memory
 
-    mutable bool cpu_up_to_date;
-    mutable bool gpu_up_to_date;
+    mutable bool cpu_up_to_date; ///< Indicates if the CPU is up to date
+    mutable bool gpu_up_to_date; ///< Indicates if the GPU is up to date
 
     friend struct etl_traits<this_type>;
 

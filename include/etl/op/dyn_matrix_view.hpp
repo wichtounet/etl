@@ -34,17 +34,17 @@ struct dyn_matrix_view <T, D, std::enable_if_t<!all_dma<T>::value>> final :
 {
     static_assert(is_etl_expr<T>::value, "dyn_matrix_view only works with ETL expressions");
 
-    using this_type          = dyn_matrix_view<T, D>;                                                ///< The type of this expression
-    using iterable_base_type = iterable<this_type, false>;                                           ///< The iterable base type
+    using this_type            = dyn_matrix_view<T, D>;                                                ///< The type of this expression
+    using iterable_base_type   = iterable<this_type, false>;                                           ///< The iterable base type
     using assignable_base_type = assignable<this_type, value_t<T>>;                                    ///< The assignable base type
-    using sub_type           = T;                                                                    ///< The sub type
-    using value_type         = value_t<sub_type>;                                                    ///< The value contained in the expression
-    using memory_type        = memory_t<sub_type>;                                                   ///< The memory acess type
-    using const_memory_type  = const_memory_t<sub_type>;                                             ///< The const memory access type
-    using return_type        = return_helper<sub_type, decltype(std::declval<sub_type>()[0])>;       ///< The type returned by the view
-    using const_return_type  = const_return_helper<sub_type, decltype(std::declval<sub_type>()[0])>; ///< The const type return by the view
-    using iterator           = etl::iterator<this_type>;                                             ///< The iterator type
-    using const_iterator     = etl::iterator<const this_type>;                                       ///< The const iterator type
+    using sub_type             = T;                                                                    ///< The sub type
+    using value_type           = value_t<sub_type>;                                                    ///< The value contained in the expression
+    using memory_type          = memory_t<sub_type>;                                                   ///< The memory acess type
+    using const_memory_type    = const_memory_t<sub_type>;                                             ///< The const memory access type
+    using return_type          = return_helper<sub_type, decltype(std::declval<sub_type>()[0])>;       ///< The type returned by the view
+    using const_return_type    = const_return_helper<sub_type, decltype(std::declval<sub_type>()[0])>; ///< The const type return by the view
+    using iterator             = etl::iterator<this_type>;                                             ///< The iterator type
+    using const_iterator       = etl::iterator<const this_type>;                                       ///< The const iterator type
 
     /*!
      * \brief The vectorization type for V
@@ -287,7 +287,7 @@ private:
     std::array<std::size_t, D> dimensions; ///< The dimensions of the view
     size_t _size;                          ///< The size of the view
 
-    mutable memory_type memory;
+    mutable memory_type memory; ///< Pointer to the memory of expression
 
     static constexpr order storage_order = decay_traits<sub_type>::storage_order; ///< The matrix storage order
 
@@ -646,10 +646,10 @@ public:
  */
 template <typename T, size_t D>
 struct etl_traits<etl::dyn_matrix_view<T, D>> {
-    using expr_t     = etl::dyn_matrix_view<T, D>; ///< The expression type
-    using sub_expr_t = std::decay_t<T>;            ///< The sub expression type
-    using sub_traits = etl_traits<sub_expr_t>;     ///< The sub traits
-    using value_type = typename sub_traits::value_type;
+    using expr_t     = etl::dyn_matrix_view<T, D>;      ///< The expression type
+    using sub_expr_t = std::decay_t<T>;                 ///< The sub expression type
+    using sub_traits = etl_traits<sub_expr_t>;          ///< The sub traits
+    using value_type = typename sub_traits::value_type; ///< The value type of the expression
 
     static constexpr bool is_etl                  = true;                                ///< Indicates if the type is an ETL expression
     static constexpr bool is_transformer          = false;                               ///< Indicates if the type is a transformer

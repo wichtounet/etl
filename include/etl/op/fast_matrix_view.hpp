@@ -260,7 +260,7 @@ struct fast_matrix_view <T, true, Dims...> final :
 private:
     sub_type sub; ///< The Sub expression
 
-    mutable memory_type memory;
+    mutable memory_type memory; ///< Pointer to the memory of expression
 
     static constexpr std::size_t n_dimensions = sizeof...(Dims); ///< The number of dimensions of the view
 

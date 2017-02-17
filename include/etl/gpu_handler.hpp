@@ -32,6 +32,10 @@ private:
 public:
     gpu_memory_handler() = default;
 
+    /*!
+     * \brief Destroys the GPU memory handler. This effectively
+     * releases any memory allocated.
+     */
     ~gpu_memory_handler(){
         if (gpu_memory_) {
             //Note: the const_cast is only here to allow compilation

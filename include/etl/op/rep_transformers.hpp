@@ -316,9 +316,9 @@ struct dyn_rep_l_transformer : rep_transformer<T, dyn_rep_l_transformer<T, D>> {
  */
 template <typename T, std::size_t... D>
 struct etl_traits<rep_r_transformer<T, D...>> {
-    using expr_t     = etl::rep_r_transformer<T, D...>; ///< The expression type
-    using sub_expr_t = std::decay_t<T>;                 ///< The sub expression type
-    using value_type = typename etl_traits<sub_expr_t>::value_type;
+    using expr_t     = etl::rep_r_transformer<T, D...>;             ///< The expression type
+    using sub_expr_t = std::decay_t<T>;                             ///< The sub expression type
+    using value_type = typename etl_traits<sub_expr_t>::value_type; ///< The value type of this expression
 
     static constexpr bool is_etl                  = true;                                            ///< Indicates if the type is an ETL expression
     static constexpr bool is_transformer          = true;                                            ///< Indicates if the type is a transformer
@@ -406,9 +406,9 @@ struct etl_traits<rep_r_transformer<T, D...>> {
  */
 template <typename T, std::size_t... D>
 struct etl_traits<rep_l_transformer<T, D...>> {
-    using expr_t     = etl::rep_l_transformer<T, D...>; ///< The expression type
-    using sub_expr_t = std::decay_t<T>;                 ///< The sub expression type
-    using value_type = typename etl_traits<sub_expr_t>::value_type;
+    using expr_t     = etl::rep_l_transformer<T, D...>;             ///< The expression type
+    using sub_expr_t = std::decay_t<T>;                             ///< The sub expression type
+    using value_type = typename etl_traits<sub_expr_t>::value_type; ///< The value type of this expression
 
     static constexpr bool is_etl                  = true;                                            ///< Indicates if the type is an ETL expression
     static constexpr bool is_transformer          = true;                                            ///< Indicates if the type is a transformer
@@ -498,9 +498,9 @@ struct etl_traits<rep_l_transformer<T, D...>> {
  */
 template <typename T, std::size_t D>
 struct etl_traits<dyn_rep_r_transformer<T, D>> {
-    using expr_t     = etl::dyn_rep_r_transformer<T, D>; ///< The expression type
-    using sub_expr_t = std::decay_t<T>;                  ///< The sub expression type
-    using value_type = typename etl_traits<sub_expr_t>::value_type;
+    using expr_t     = etl::dyn_rep_r_transformer<T, D>;            ///< The expression type
+    using sub_expr_t = std::decay_t<T>;                             ///< The sub expression type
+    using value_type = typename etl_traits<sub_expr_t>::value_type; ///< The value type of this expression
 
     static constexpr bool is_etl                  = true;                                            ///< Indicates if the type is an ETL expression
     static constexpr bool is_transformer          = true;                                            ///< Indicates if the type is a transformer
@@ -560,9 +560,9 @@ struct etl_traits<dyn_rep_r_transformer<T, D>> {
  */
 template <typename T, std::size_t D>
 struct etl_traits<dyn_rep_l_transformer<T, D>> {
-    using expr_t     = etl::dyn_rep_l_transformer<T, D>; ///< The expression type
-    using sub_expr_t = std::decay_t<T>;                  ///< The sub expression type
-    using value_type = typename etl_traits<sub_expr_t>::value_type;
+    using expr_t     = etl::dyn_rep_l_transformer<T, D>;            ///< The expression type
+    using sub_expr_t = std::decay_t<T>;                             ///< The sub expression type
+    using value_type = typename etl_traits<sub_expr_t>::value_type; ///< The value type of this expression
 
     static constexpr bool is_etl                  = true;                                            ///< Indicates if the type is an ETL expression
     static constexpr bool is_transformer          = true;                                            ///< Indicates if the type is a transformer
