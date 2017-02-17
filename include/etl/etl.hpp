@@ -128,6 +128,7 @@
 #include "etl/adapters/lower.hpp"
 #include "etl/adapters/strictly_lower.hpp"
 #include "etl/adapters/upper.hpp"
+#include "etl/adapters/strictly_upper.hpp"
 
 // Serialization support
 #include "etl/serializer.hpp"
