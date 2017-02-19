@@ -402,7 +402,7 @@ auto avg_pool_derivative_3d(E&& input, F&& output, size_t c1, size_t c2, size_t 
  */
 template <size_t C1, size_t C2, typename E, typename F>
 auto max_pool_derivative_2d(E&& input, F&& output) {
-    return temporary_binary_expr<value_t<E>, detail::build_type<E>, detail::build_type<F>, max_pool_derivative_2d_expr<value_t<E>, C1, C2>>{input, output};
+    return temporary_binary_expr<value_t<E>, detail::build_type<E>, detail::build_type<F>, max_pool_derivative_2d_expr<value_t<E>, decay_traits<E>::dimensions(), C1, C2>>{input, output};
 }
 
 /*!
@@ -415,7 +415,7 @@ auto max_pool_derivative_2d(E&& input, F&& output) {
  */
 template <typename E, typename F>
 auto max_pool_derivative_2d(E&& input, F&& output, size_t c1, size_t c2) {
-    return temporary_binary_expr_state<value_t<E>, detail::build_type<E>, detail::build_type<F>, dyn_max_pool_derivative_2d_expr<value_t<E>>>{{c1, c2}, input, output};
+    return temporary_binary_expr_state<value_t<E>, detail::build_type<E>, detail::build_type<F>, dyn_max_pool_derivative_2d_expr<value_t<E>, decay_traits<E>::dimensions()>>{{c1, c2}, input, output};
 }
 
 /* Max Pool 3D Derivative */
@@ -431,7 +431,7 @@ auto max_pool_derivative_2d(E&& input, F&& output, size_t c1, size_t c2) {
  */
 template <size_t C1, size_t C2, size_t C3, typename E, typename F>
 auto max_pool_derivative_3d(E&& input, F&& output) {
-    return temporary_binary_expr<value_t<E>, detail::build_type<E>, detail::build_type<F>, max_pool_derivative_3d_expr<value_t<E>, C1, C2, C3>>{input, output};
+    return temporary_binary_expr<value_t<E>, detail::build_type<E>, detail::build_type<F>, max_pool_derivative_3d_expr<value_t<E>, decay_traits<E>::dimensions(), C1, C2, C3>>{input, output};
 }
 
 /*!
@@ -445,7 +445,7 @@ auto max_pool_derivative_3d(E&& input, F&& output) {
  */
 template <typename E, typename F>
 auto max_pool_derivative_3d(E&& input, F&& output, size_t c1, size_t c2, size_t c3) {
-    return temporary_binary_expr_state<value_t<E>, detail::build_type<E>, detail::build_type<F>, dyn_max_pool_derivative_3d_expr<value_t<E>>>{{c1, c2, c3}, input, output};
+    return temporary_binary_expr_state<value_t<E>, detail::build_type<E>, detail::build_type<F>, dyn_max_pool_derivative_3d_expr<value_t<E>, decay_traits<E>::dimensions()>>{{c1, c2, c3}, input, output};
 }
 
 /* Upsample 2D */

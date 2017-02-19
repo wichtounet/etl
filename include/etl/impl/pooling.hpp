@@ -994,8 +994,8 @@ struct max_pool_derivative_2d {
      * \tparam C1 The first dimension pooling ratio
      * \tparam C2 The second dimension pooling ratio
      */
-    template <size_t C1, size_t C2, typename A, typename B, typename M>
-    static void apply(A&& in, B&& out, M& m) {
+    template <size_t C1, size_t C2, typename A, typename B, typename M, cpp_enable_if(is_2d<A>::value)>
+    static void apply(A&& in, B&& out, M&& m) {
         for (size_t j = 0; j < etl::dim<0>(out); ++j) {
             for (size_t k = 0; k < etl::dim<1>(out); ++k) {
                 pool_derivative_block<C1, C2>(in, out, m, j, k);
@@ -1036,12 +1036,44 @@ struct max_pool_derivative_2d {
      * \param c1 The first dimension pooling ratio
      * \param c2 The second dimension pooling ratio
      */
-    template <typename A, typename B, typename M>
-    static void apply(A&& in, B&& out, M& m, size_t c1, size_t c2) {
+    template <typename A, typename B, typename M, cpp_enable_if(is_2d<A>::value)>
+    static void apply(A&& in, B&& out, M&& m, size_t c1, size_t c2) {
         for (size_t j = 0; j < etl::dim<0>(out); ++j) {
             for (size_t k = 0; k < etl::dim<1>(out); ++k) {
                 pool_derivative_block(in, out, m, j, k, c1, c2);
             }
+        }
+    }
+
+    // Deep handling
+
+    /*!
+     * \brief Apply the functor on sub and store the result in m
+     * \param in The sub expression
+     * \param out The out matrix
+     * \param m The storage matrix
+     * \tparam C1 The first dimension pooling ratio
+     * \tparam C2 The second dimension pooling ratio
+     */
+    template <size_t C1, size_t C2, typename A, typename B, typename M, cpp_enable_if(!is_2d<A>::value)>
+    static void apply(A&& in, B&& out, M& m) {
+        for(size_t i = 0; i < etl::dim<0>(in); ++i){
+            apply<C1, C2>(in(i), out(i), m(i));
+        }
+    }
+
+    /*!
+     * \brief Apply the functor on sub and store the result in m
+     * \param in The sub expression
+     * \param out The out matrix
+     * \param m The storage matrix
+     * \param c1 The first dimension pooling ratio
+     * \param c2 The second dimension pooling ratio
+     */
+    template <typename A, typename B, typename M, cpp_enable_if(!is_2d<A>::value)>
+    static void apply(A&& in, B&& out, M& m, size_t c1, size_t c2) {
+        for(size_t i = 0; i < etl::dim<0>(in); ++i){
+            apply(in(i), out(i), m(i), c1, c2);
         }
     }
 };
@@ -1087,8 +1119,8 @@ struct max_pool_derivative_3d {
      * \tparam C2 The second dimension pooling ratio
      * \tparam C3 The third dimension pooling ratio
      */
-    template <size_t C1, size_t C2, size_t C3, typename A, typename B, typename M>
-    static void apply(A&& in, B&& out, M& m) {
+    template <size_t C1, size_t C2, size_t C3, typename A, typename B, typename M, cpp_enable_if(is_3d<A>::value)>
+    static void apply(A&& in, B&& out, M&& m) {
         for (size_t i = 0; i < etl::dim<0>(out); ++i) {
             for (size_t j = 0; j < etl::dim<1>(out); ++j) {
                 for (size_t k = 0; k < etl::dim<2>(out); ++k) {
@@ -1135,14 +1167,46 @@ struct max_pool_derivative_3d {
      * \param c2 The second dimension pooling ratio
      * \param c3 The third dimension pooling ratio
      */
-    template <typename A, typename B, typename M>
-    static void apply(A&& in, B&& out, M& m, size_t c1, size_t c2, size_t c3) {
+    template <typename A, typename B, typename M, cpp_enable_if(is_3d<A>::value)>
+    static void apply(A&& in, B&& out, M&& m, size_t c1, size_t c2, size_t c3) {
         for (size_t i = 0; i < etl::dim<0>(out); ++i) {
             for (size_t j = 0; j < etl::dim<1>(out); ++j) {
                 for (size_t k = 0; k < etl::dim<2>(out); ++k) {
                     pool_derivative_block(in, out, m, i, j, k, c1, c2, c3);
                 }
             }
+        }
+    }
+
+    // Deep handling
+
+    /*!
+     * \brief Apply the functor on sub and store the result in m
+     * \param in The sub expression
+     * \param m The storage matrix
+     * \tparam C1 The first dimension pooling ratio
+     * \tparam C2 The second dimension pooling ratio
+     * \tparam C3 The third dimension pooling ratio
+     */
+    template <size_t C1, size_t C2, size_t C3, typename A, typename B, typename M, cpp_enable_if(!is_3d<A>::value)>
+    static void apply(A&& in, B&& out, M& m) {
+        for(size_t i = 0; i < etl::dim<0>(in); ++i){
+            apply<C1, C2, C3>(in(i), out(i), m(i));
+        }
+    }
+
+    /*!
+     * \brief Apply the functor on sub and store the result in m
+     * \param in The sub expression
+     * \param m The storage matrix
+     * \param c1 The first dimension pooling ratio
+     * \param c2 The second dimension pooling ratio
+     * \param c3 The third dimension pooling ratio
+     */
+    template <typename A, typename B, typename M, cpp_enable_if(!is_3d<A>::value)>
+    static void apply(A&& in, B&& out, M& m, size_t c1, size_t c2, size_t c3) {
+        for(size_t i = 0; i < etl::dim<0>(in); ++i){
+            apply(in(i), out(i), m(i), c1, c2, c3);
         }
     }
 };
