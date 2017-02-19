@@ -16,6 +16,8 @@
 
 namespace etl {
 
+/* Max Pool 2D */
+
 /*!
  * \brief 2D Max Pooling of the given matrix expression
  * \param value The matrix expression
@@ -88,6 +90,8 @@ auto max_pool_2d(E&& value, size_t c1, size_t c2, size_t s1, size_t s2, size_t p
     return temporary_unary_expr_state<value_t<E>, detail::build_type<E>, dyn_deep_max_pool_2d_expr<value_t<E>, etl::decay_traits<E>::dimensions()>>{{c1, c2, s1, s2, p1, p2}, value};
 }
 
+/* AVG Pool 2D */
+
 /*!
  * \brief 2D Average Pooling of the given matrix expression
  * \param value The matrix expression
@@ -159,6 +163,8 @@ template <typename E, cpp_enable_if((etl::decay_traits<E>::dimensions() > 2))>
 auto avg_pool_2d(E&& value, size_t c1, size_t c2, size_t s1, size_t s2, size_t p1 = 0, size_t p2 = 0) {
     return temporary_unary_expr_state<value_t<E>, detail::build_type<E>, dyn_deep_avg_pool_2d_expr<value_t<E>, etl::decay_traits<E>::dimensions()>>{{c1, c2, s1, s2, p1, p2}, value};
 }
+
+/* Max Pool 3D */
 
 /*!
  * \brief 3D Max Pooling of the given matrix expression
@@ -238,6 +244,8 @@ auto max_pool_3d(E&& value, size_t c1, size_t c2, size_t c3, size_t s1, size_t s
     return temporary_unary_expr_state<value_t<E>, detail::build_type<E>, dyn_deep_max_pool_3d_expr<value_t<E>, etl::decay_traits<E>::dimensions()>>{{c1, c2, c3, s1, s2, s3, p1, p2, p3}, value};
 }
 
+/* Avg Pool 3D */
+
 /*!
  * \brief 3D Average Pooling of the given matrix expression
  * \param value The matrix expression
@@ -316,6 +324,8 @@ auto avg_pool_3d(E&& value, size_t c1, size_t c2, size_t c3, size_t s1, size_t s
     return temporary_unary_expr_state<value_t<E>, detail::build_type<E>, dyn_deep_avg_pool_3d_expr<value_t<E>, etl::decay_traits<E>::dimensions()>>{{c1, c2, c3, s1, s2, s3, p1, p2, p3}, value};
 }
 
+/* Avg Pool 2D Derivative */
+
 /*!
  * \brief Derivative of the 2D Average Pooling of the given matrix expression
  * \param input The input
@@ -345,6 +355,8 @@ auto avg_pool_derivative_2d(E&& input, F&& output, size_t c1, size_t c2) {
     cpp_unused(output);
     return 1.0 / (c1 * c2);
 }
+
+/* Avg Pool 3D Derivative */
 
 /*!
  * \brief Derivative of the 3D Average Pooling of the given matrix expression
@@ -378,6 +390,8 @@ auto avg_pool_derivative_3d(E&& input, F&& output, size_t c1, size_t c2, size_t 
     return 1.0 / (c1 * c2 * c3);
 }
 
+/* Max Pool 2D Derivative */
+
 /*!
  * \brief Derivative of the 2D Max Pooling of the given matrix expression
  * \param input The input
@@ -403,6 +417,8 @@ template <typename E, typename F>
 auto max_pool_derivative_2d(E&& input, F&& output, size_t c1, size_t c2) {
     return temporary_binary_expr_state<value_t<E>, detail::build_type<E>, detail::build_type<F>, dyn_max_pool_derivative_2d_expr<value_t<E>>>{{c1, c2}, input, output};
 }
+
+/* Max Pool 3D Derivative */
 
 /*!
  * \brief Derivative of the 3D Max Pooling of the given matrix expression
@@ -432,6 +448,8 @@ auto max_pool_derivative_3d(E&& input, F&& output, size_t c1, size_t c2, size_t 
     return temporary_binary_expr_state<value_t<E>, detail::build_type<E>, detail::build_type<F>, dyn_max_pool_derivative_3d_expr<value_t<E>>>{{c1, c2, c3}, input, output};
 }
 
+/* Upsample 2D */
+
 /*!
  * \brief Upsample the given 2D matrix expression
  * \param value The input expression
@@ -455,6 +473,8 @@ template <typename E>
 auto upsample_2d(E&& value, size_t c1, size_t c2) {
     return temporary_unary_expr_state<value_t<E>, detail::build_type<E>, dyn_upsample_2d_expr<value_t<E>>>{{c1, c2}, value};
 }
+
+/* Upsample 3D */
 
 /*!
  * \brief Upsample the given 3D matrix expression
@@ -482,6 +502,8 @@ auto upsample_3d(E&& value, size_t c1, size_t c2, size_t c3) {
     return temporary_unary_expr_state<value_t<E>, detail::build_type<E>, dyn_upsample_3d_expr<value_t<E>>>{{c1, c2, c3}, value};
 }
 
+/* Probabilistic Max Pooling (hidden) */
+
 /*!
  * \brief Probabilistic Max Pooling for hidden units
  * \param value The input expression
@@ -507,6 +529,8 @@ auto p_max_pool_h(E&& value, size_t c1, size_t c2) {
     validate_pmax_pooling(value, c1, c2);
     return temporary_unary_expr_state<value_t<E>, detail::build_type<E>, dyn_pmp_h_expr<value_t<E>, decay_traits<E>::dimensions()>>{{1, 1, c1, c2}, value};
 }
+
+/* Probabilistic Max Pooling (pooling) */
 
 /*!
  * \brief Probabilistic Max Pooling for pooling units
