@@ -36,10 +36,10 @@ TRANSPOSE_TEST_CASE("transpose/fast_matrix_2", "transpose") {
     REQUIRE_EQUALS(b(2, 1), -1);
 }
 
-TEMPLATE_TEST_CASE_2("transpose/fast_matrix_3", "transpose", Z, float, double) {
-    etl::fast_matrix<Z, 3, 3> a({1, 2, 3, 4, 5, 6, 7, 8, 9});
+INPLACE_TRANSPOSE_TEST_CASE("transpose/inplace/1", "[transpose]") {
+    etl::fast_matrix<T, 3, 3> a({1, 2, 3, 4, 5, 6, 7, 8, 9});
 
-    a.transpose_inplace();
+    Impl::apply(a);
 
     REQUIRE_EQUALS(a(0, 0), 1.0);
     REQUIRE_EQUALS(a(0, 1), 4.0);
@@ -80,10 +80,10 @@ TRANSPOSE_TEST_CASE("transpose/dyn_matrix_2", "transpose") {
     REQUIRE_EQUALS(b(2, 1), -1);
 }
 
-TEMPLATE_TEST_CASE_2("transpose/dyn_matrix_3", "transpose", Z, float, double) {
-    etl::dyn_matrix<Z> a(3, 3, std::initializer_list<Z>({1, 2, 3, 4, 5, 6, 7, 8, 9}));
+INPLACE_TRANSPOSE_TEST_CASE("transpose/inplace/2", "[transpose]") {
+    etl::dyn_matrix<T> a(3, 3, std::initializer_list<T>({1, 2, 3, 4, 5, 6, 7, 8, 9}));
 
-    a.transpose_inplace();
+    Impl::apply(a);
 
     REQUIRE_EQUALS(a(0, 0), 1.0);
     REQUIRE_EQUALS(a(0, 1), 4.0);
@@ -96,10 +96,10 @@ TEMPLATE_TEST_CASE_2("transpose/dyn_matrix_3", "transpose", Z, float, double) {
     REQUIRE_EQUALS(a(2, 2), 9.0);
 }
 
-TEMPLATE_TEST_CASE_2("transpose/dyn_matrix_4", "transpose", Z, float, double) {
-    etl::dyn_matrix<Z> a(3, 2, std::initializer_list<Z>({1.0, -2.0, 3.0, 0.5, 0.0, -1}));
+INPLACE_TRANSPOSE_TEST_CASE("transpose/inplace/3", "[transpose]") {
+    etl::dyn_matrix<T> a(3, 2, std::initializer_list<T>({1.0, -2.0, 3.0, 0.5, 0.0, -1}));
 
-    a.transpose_inplace();
+    Impl::apply(a);
 
     REQUIRE_EQUALS(etl::dim<0>(a), 2UL);
     REQUIRE_EQUALS(etl::dim<1>(a), 3UL);
@@ -112,7 +112,7 @@ TEMPLATE_TEST_CASE_2("transpose/dyn_matrix_4", "transpose", Z, float, double) {
     REQUIRE_EQUALS(a(1, 1), 0.5);
     REQUIRE_EQUALS(a(1, 2), -1.0);
 
-    a.transpose_inplace();
+    Impl::apply(a);
 
     REQUIRE_EQUALS(etl::dim<0>(a), 3UL);
     REQUIRE_EQUALS(etl::dim<1>(a), 2UL);
@@ -127,10 +127,10 @@ TEMPLATE_TEST_CASE_2("transpose/dyn_matrix_4", "transpose", Z, float, double) {
     REQUIRE_EQUALS(a(2, 1), -1.0);
 }
 
-TEMPLATE_TEST_CASE_2("transpose/dyn_matrix_5", "transpose", Z, float, double) {
-    etl::dyn_matrix<Z> a(5, 3, std::initializer_list<Z>({1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15}));
+INPLACE_TRANSPOSE_TEST_CASE("transpose/inplace/4", "transpose") {
+    etl::dyn_matrix<T> a(5, 3, std::initializer_list<T>({1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15}));
 
-    a.transpose_inplace();
+    Impl::apply(a);
 
     REQUIRE_EQUALS(etl::dim<0>(a), 3UL);
     REQUIRE_EQUALS(etl::dim<1>(a), 5UL);
@@ -153,7 +153,7 @@ TEMPLATE_TEST_CASE_2("transpose/dyn_matrix_5", "transpose", Z, float, double) {
     REQUIRE_EQUALS(a(2, 3), 12.0);
     REQUIRE_EQUALS(a(2, 4), 15.0);
 
-    a.transpose_inplace();
+    Impl::apply(a);
 
     REQUIRE_EQUALS(etl::dim<0>(a), 5UL);
     REQUIRE_EQUALS(etl::dim<1>(a), 3UL);
