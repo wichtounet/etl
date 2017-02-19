@@ -443,7 +443,8 @@ public:
      */
     template <typename V = default_vec>
     void stream(vec_type<V> in, std::size_t x) noexcept {
-        return V::stream(memory + x, in);
+        //TODO If the sub view is aligned (at compile-time), use stream store here
+        return V::storeu(memory + x, in);
     }
 
     /*!
