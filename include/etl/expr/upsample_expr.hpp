@@ -39,8 +39,8 @@ struct basic_upsample_2d_expr : impl_expr<basic_upsample_2d_expr<T, C1, C2, Impl
      */
     template <typename A, typename C>
     static void apply(A&& a, C&& c) {
-        static_assert(all_etl_expr<A, C>::value, "pool_2d only supported for ETL expressions");
-        static_assert(decay_traits<A>::dimensions() == 2 && decay_traits<C>::dimensions() == 2, "pool_2d needs 2D matrices");
+        static_assert(all_etl_expr<A, C>::value, "upsample_2d only supported for ETL expressions");
+        static_assert(decay_traits<A>::dimensions() == 2 && decay_traits<C>::dimensions() == 2, "upsample_2d needs 2D matrices");
 
         Impl::template apply<C1, C2>(
             make_temporary(std::forward<A>(a)),
@@ -52,7 +52,7 @@ struct basic_upsample_2d_expr : impl_expr<basic_upsample_2d_expr<T, C1, C2, Impl
      * \return a textual representation of the operation
      */
     static std::string desc() noexcept {
-        return "pool_2d";
+        return "upsample_2d";
     }
 
     /*!
@@ -153,8 +153,8 @@ struct basic_upsample_3d_expr : impl_expr<basic_upsample_3d_expr<T, C1, C2, C3, 
      */
     template <typename A, typename C>
     static void apply(A&& a, C&& c) {
-        static_assert(all_etl_expr<A, C>::value, "pool_3d only supported for ETL expressions");
-        static_assert(decay_traits<A>::dimensions() == 3 && decay_traits<C>::dimensions() == 3, "pool_3d needs 3D matrices");
+        static_assert(all_etl_expr<A, C>::value, "upsample_3d only supported for ETL expressions");
+        static_assert(decay_traits<A>::dimensions() == 3 && decay_traits<C>::dimensions() == 3, "upsample_3d needs 3D matrices");
 
         Impl::template apply<C1, C2, C3>(
             make_temporary(std::forward<A>(a)),
@@ -166,7 +166,7 @@ struct basic_upsample_3d_expr : impl_expr<basic_upsample_3d_expr<T, C1, C2, C3, 
      * \return a textual representation of the operation
      */
     static std::string desc() noexcept {
-        return "pool_3d";
+        return "upsample_3d";
     }
 
     /*!
@@ -278,8 +278,8 @@ struct basic_dyn_upsample_2d_expr : dyn_impl_expr<basic_dyn_upsample_2d_expr<T, 
      */
     template <typename A, typename C>
     void apply(A&& a, C&& c) const {
-        static_assert(all_etl_expr<A, C>::value, "pool_2d only supported for ETL expressions");
-        static_assert(decay_traits<A>::dimensions() == 2 && decay_traits<C>::dimensions() == 2, "pool_2d needs 2D matrices");
+        static_assert(all_etl_expr<A, C>::value, "upsample_2d only supported for ETL expressions");
+        static_assert(decay_traits<A>::dimensions() == 2 && decay_traits<C>::dimensions() == 2, "upsample_2d needs 2D matrices");
 
         Impl::template apply(
             make_temporary(std::forward<A>(a)),
@@ -292,7 +292,7 @@ struct basic_dyn_upsample_2d_expr : dyn_impl_expr<basic_dyn_upsample_2d_expr<T, 
      * \return a textual representation of the operation
      */
     static std::string desc() noexcept {
-        return "pool_2d";
+        return "upsample_2d";
     }
 
     /*!
@@ -382,8 +382,8 @@ struct basic_dyn_upsample_3d_expr : dyn_impl_expr<basic_dyn_upsample_3d_expr<T, 
      */
     template <typename A, typename C>
     void apply(A&& a, C&& c) const {
-        static_assert(all_etl_expr<A, C>::value, "pool_3d only supported for ETL expressions");
-        static_assert(decay_traits<A>::dimensions() == 3 && decay_traits<C>::dimensions() == 3, "pool_3d needs 3D matrices");
+        static_assert(all_etl_expr<A, C>::value, "upsample_3d only supported for ETL expressions");
+        static_assert(decay_traits<A>::dimensions() == 3 && decay_traits<C>::dimensions() == 3, "upsample_3d needs 3D matrices");
 
         Impl::template apply(
             make_temporary(std::forward<A>(a)),
@@ -396,7 +396,7 @@ struct basic_dyn_upsample_3d_expr : dyn_impl_expr<basic_dyn_upsample_3d_expr<T, 
      * \return a textual representation of the operation
      */
     static std::string desc() noexcept {
-        return "pool_3d";
+        return "upsample_3d";
     }
 
     /*!
