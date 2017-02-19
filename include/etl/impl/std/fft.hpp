@@ -889,8 +889,8 @@ void fft1_many(A&& a, C&& c) {
 
     a.ensure_cpu_up_to_date();
 
-    std::size_t n        = etl::dim<N - 1>(a); //Size of the transform
-    std::size_t batch    = etl::size(a) / n;   //Number of batch
+    auto n        = etl::dim<N - 1>(a); //Size of the transform
+    auto batch    = etl::size(a) / n;   //Number of batch
 
     fft1_many_kernel(a.memory_start(), c.memory_start(), batch, n);
 
@@ -964,7 +964,7 @@ void ifft2_many(A&& a, C&& c) {
 
     static constexpr std::size_t D = etl::dimensions<A>();
 
-    std::size_t n = etl::dim<D - 2>(a) * etl::dim<D -1>(a);
+    auto n = etl::dim<D - 2>(a) * etl::dim<D -1>(a);
 
     //Conjugate the complex numbers
     c = conj(a);
@@ -1079,20 +1079,20 @@ template <typename II, typename KK, typename CC>
 void conv2_full_multi_fft(II&& input, KK&& kernel, CC&& conv) {
     using T = value_t<II>;
 
-    const auto K = kernel.dim(0);
+    const auto K = etl::dim<0>(kernel);
 
     if(K){
         input.ensure_cpu_up_to_date();
         kernel.ensure_cpu_up_to_date();
 
-        const auto k_s = kernel.dim(1) * kernel.dim(2);
-        const auto c_s = conv.dim(1) * conv.dim(2);
+        const auto k_s = etl::dim<1>(kernel) * etl::dim<2>(kernel);
+        const auto c_s = etl::dim<1>(conv) * etl::dim<2>(conv);
 
-        const auto m1 = input.dim(0);
-        const auto m2 = input.dim(1);
+        const auto m1 = etl::dim<0>(input);
+        const auto m2 = etl::dim<1>(input);
 
-        const auto n1 = kernel.dim(1);
-        const auto n2 = kernel.dim(2);
+        const auto n1 = etl::dim<1>(kernel);
+        const auto n2 = etl::dim<2>(kernel);
 
         const auto s1  = m1 + n1 - 1;
         const auto s2  = m2 + n2 - 1;
@@ -1181,7 +1181,7 @@ void conv2_full_multi_flipped_fft(II&& input, KK&& kernel, CC&& conv) {
 
     kernel.ensure_cpu_up_to_date();
 
-    etl::dyn_matrix<T, 3> prepared_k(kernel.dim(0), kernel.dim(1), kernel.dim(2));
+    etl::dyn_matrix<T, 3> prepared_k(etl::dim<0>(kernel), etl::dim<1>(kernel), etl::dim<2>(kernel));
 
     std::copy(kernel.memory_start(), kernel.memory_end(), prepared_k.memory_start());
 
@@ -1200,30 +1200,30 @@ template <typename II, typename KK, typename CC>
 void conv4_full_fft(II&& input, KK&& kernel, CC&& conv) {
     using T = value_t<II>;
 
-    if (kernel.dim(1) > 0) {
+    if (etl::dim<1>(kernel) > 0) {
         input.ensure_cpu_up_to_date();
         kernel.ensure_cpu_up_to_date();
 
-        auto conv_i_inc = conv.dim(1) * conv.dim(2) * conv.dim(3);
-        auto conv_c_inc = conv.dim(2) * conv.dim(3);
+        const auto conv_i_inc = etl::dim<1>(conv) * etl::dim<2>(conv) * etl::dim<3>(conv);
+        const auto conv_c_inc = etl::dim<2>(conv) * etl::dim<3>(conv);
 
-        auto kernel_k_inc = kernel.dim(1) * kernel.dim(2) * kernel.dim(3);
-        auto kernel_c_inc = kernel.dim(2) * kernel.dim(3);
+        const auto kernel_k_inc = etl::dim<1>(kernel) * etl::dim<2>(kernel) * etl::dim<3>(kernel);
+        const auto kernel_c_inc = etl::dim<2>(kernel) * etl::dim<3>(kernel);
 
-        auto input_i_inc = input.dim(1) * input.dim(2) * input.dim(3);
-        auto input_k_inc = input.dim(2) * input.dim(3);
+        const auto input_i_inc = etl::dim<1>(input) * etl::dim<2>(input) * etl::dim<3>(input);
+        const auto input_k_inc = etl::dim<2>(input) * etl::dim<3>(input);
 
-        std::size_t m1 = input.dim(2);
-        std::size_t m2 = input.dim(3);
+        const auto m1 = etl::dim<2>(input);
+        const auto m2 = etl::dim<3>(input);
 
-        std::size_t n1 = kernel.dim(2);
-        std::size_t n2 = kernel.dim(3);
+        const auto n1 = etl::dim<2>(kernel);
+        const auto n2 = etl::dim<3>(kernel);
 
         const std::size_t s1 = m1 + n1 - 1;
         const std::size_t s2 = m2 + n2 - 1;
         const std::size_t n  = s1 * s2;
 
-        const std::size_t N = input.dim(0);
+        const std::size_t N = etl::dim<0>(input);
 
         std::fill(conv.memory_start(), conv.memory_end(), 0);
 
@@ -1231,7 +1231,7 @@ void conv4_full_fft(II&& input, KK&& kernel, CC&& conv) {
             if (last - first) {
                 SERIAL_SECTION {
                     for (std::size_t i = first; i < last; ++i) {
-                        for (std::size_t k = 0; k < kernel.dim(0); ++k) {
+                        for (std::size_t k = 0; k < etl::dim<0>(kernel); ++k) {
                             const T* a = input.memory_start() + i * input_i_inc + k * input_k_inc; //input(i)(k)
 
                             dyn_matrix<etl::complex<T>, 2> a_padded(s1, s2);
@@ -1250,7 +1250,7 @@ void conv4_full_fft(II&& input, KK&& kernel, CC&& conv) {
                             detail::fft_n_many(a_padded.memory_start(), a_padded.memory_start(), s2, s1);
                             a_padded.transpose_inplace();
 
-                            for (std::size_t c = 0; c < kernel.dim(1); ++c) {
+                            for (std::size_t c = 0; c < etl::dim<1>(kernel); ++c) {
                                 const T* b = kernel.memory_start() + k * kernel_k_inc + c * kernel_c_inc; //kernel(k)(c)
                                 T* cc      = conv.memory_start() + i * conv_i_inc + c * conv_c_inc;       //conv(i)(c)
 
@@ -1318,10 +1318,10 @@ template <typename II, typename KK, typename CC>
 void conv4_full_fft_flipped(II&& input, KK&& kernel, CC&& conv) {
     using T = value_t<II>;
 
-    if (kernel.dim(1) > 0) {
+    if (etl::dim<1>(kernel) > 0) {
         kernel.ensure_cpu_up_to_date();
 
-        etl::dyn_matrix<T, 4> prepared_k(kernel.dim(0), kernel.dim(1), kernel.dim(2), kernel.dim(3));
+        etl::dyn_matrix<T, 4> prepared_k(etl::dim<0>(kernel), etl::dim<1>(kernel), etl::dim<2>(kernel), etl::dim<3>(kernel));
 
         std::copy(kernel.memory_start(), kernel.memory_end(), prepared_k.memory_start());
 
