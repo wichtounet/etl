@@ -524,6 +524,13 @@ template <typename T>
 using is_3d = cpp::bool_constant<decay_traits<T>::dimensions() == 3>;
 
 /*!
+ * \brief Traits to test if the given expression type is 4D
+ * \tparam T The ETL expression type
+ */
+template <typename T>
+using is_4d = cpp::bool_constant<decay_traits<T>::dimensions() == 4>;
+
+/*!
  * \brief Traits to test if all the given ETL expresion types are vectorizable.
  * \tparam E The ETL expression types.
  */
