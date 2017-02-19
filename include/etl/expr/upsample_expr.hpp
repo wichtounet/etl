@@ -119,8 +119,6 @@ struct basic_upsample_2d_expr : impl_expr<basic_upsample_2d_expr<T, C1, C2, Impl
     }
 };
 
-//Max Pool 2D
-
 /*!
  * \brief Default Upsample 2D expression
  */
@@ -447,7 +445,7 @@ struct basic_dyn_upsample_3d_expr : dyn_impl_expr<basic_dyn_upsample_3d_expr<T, 
 };
 
 /*!
- * \brief Default Upsample dD expression
+ * \brief Default Upsample 3D expression
  */
 template <typename T>
 using dyn_upsample_3d_expr = basic_dyn_upsample_3d_expr<T, impl::upsample_3d>;
