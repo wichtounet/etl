@@ -129,6 +129,20 @@ TEMPLATE_TEST_CASE_4("integers/add_2", "[integers]", Z, int8_t, int16_t, int32_t
     REQUIRE_EQUALS(a[2], 9);
 }
 
+TEMPLATE_TEST_CASE_4("integers/add/3", "[integers]", Z, int8_t, int16_t, int32_t, int64_t) {
+    etl::fast_vector<Z, 131> a;
+    etl::fast_vector<Z, 131> b;
+
+    a = 1;
+    b = 2;
+
+    a += b;
+
+    for(size_t i = 0; i < a.size(); ++i){
+        REQUIRE_EQUALS(a[i], Z(3));
+    }
+}
+
 TEMPLATE_TEST_CASE_4("integers/sub_scalar_1", "[integers]", Z, int8_t, int16_t, int32_t, int64_t) {
     etl::fast_vector<Z, 3> test_vector = {-1, 2, 5};
 
@@ -179,6 +193,20 @@ TEMPLATE_TEST_CASE_4("integers/sub_2", "[integers]", Z, int8_t, int16_t, int32_t
     REQUIRE_EQUALS(a[0], -3);
     REQUIRE_EQUALS(a[1], -1);
     REQUIRE_EQUALS(a[2], 1);
+}
+
+TEMPLATE_TEST_CASE_4("integers/sub/3", "[integers]", Z, int8_t, int16_t, int32_t, int64_t) {
+    etl::fast_vector<Z, 131> a;
+    etl::fast_vector<Z, 131> b;
+
+    a = 4;
+    b = 3;
+
+    a -= b;
+
+    for(size_t i = 0; i < a.size(); ++i){
+        REQUIRE_EQUALS(a[i], Z(1));
+    }
 }
 
 TEMPLATE_TEST_CASE_4("integers/mul_scalar_1", "[integers]", Z, int8_t, int16_t, int32_t, int64_t) {
@@ -244,6 +272,20 @@ TEMPLATE_TEST_CASE_4("integers/mul_3", "[integers]", Z, int8_t, int16_t, int32_t
     REQUIRE_EQUALS(c[2], 20);
 }
 
+TEMPLATE_TEST_CASE_4("integers/mul/4", "[integers]", Z, int8_t, int16_t, int32_t, int64_t) {
+    etl::fast_vector<Z, 131> a;
+    etl::fast_vector<Z, 131> b;
+
+    a = 4;
+    b = 3;
+
+    a *= b;
+
+    for(size_t i = 0; i < a.size(); ++i){
+        REQUIRE_EQUALS(a[i], Z(12));
+    }
+}
+
 TEMPLATE_TEST_CASE_4("integers/div_scalar_1", "[integers]", Z, int8_t, int16_t, int32_t, int64_t) {
     etl::fast_vector<Z, 3> test_vector = {-1, 2, 5};
 
@@ -294,4 +336,18 @@ TEMPLATE_TEST_CASE_4("integers/div_2", "[integers]", Z, int8_t, int16_t, int32_t
     REQUIRE_EQUALS(a[0], 0);
     REQUIRE_EQUALS(a[1], 0);
     REQUIRE_EQUALS(a[2], 1);
+}
+
+TEMPLATE_TEST_CASE_4("integers/div/3", "[integers]", Z, int8_t, int16_t, int32_t, int64_t) {
+    etl::fast_vector<Z, 131> a;
+    etl::fast_vector<Z, 131> b;
+
+    a = 12;
+    b = 3;
+
+    a /= b;
+
+    for(size_t i = 0; i < a.size(); ++i){
+        REQUIRE_EQUALS(a[i], Z(4));
+    }
 }
