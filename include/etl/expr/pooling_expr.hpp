@@ -202,8 +202,8 @@ struct basic_deep_pool_2d_expr : impl_expr<basic_deep_pool_2d_expr<T, C1, C2, S1
      */
     template <typename A, size_t DD>
     static constexpr size_t dim() {
-        return DD == 0 ? (decay_traits<A>::template dim<0>() - C1 + 2 * P1) / S1 + 1
-             : DD == 1 ? (decay_traits<A>::template dim<1>() - C2 + 2 * P2) / S2 + 1
+        return DD == D - 2 ? (decay_traits<A>::template dim<DD>() - C1 + 2 * P1) / S1 + 1
+             : DD == D - 1 ? (decay_traits<A>::template dim<DD>() - C2 + 2 * P2) / S2 + 1
                        : decay_traits<A>::template dim<DD>();
     }
 
@@ -215,10 +215,10 @@ struct basic_deep_pool_2d_expr : impl_expr<basic_deep_pool_2d_expr<T, C1, C2, S1
      */
     template <typename A>
     static size_t dim(const A& a, size_t d) {
-        if (d == 0) {
-            return (etl::dim<0>(a) - C1 + 2 * P1) / S1 + 1;
-        } else if (d == 1){
-            return (etl::dim<1>(a) - C2 + 2 * P2) / S2 + 1;
+        if (d == D - 2) {
+            return (etl::dim(a, d) - C1 + 2 * P1) / S1 + 1;
+        } else if (d == D - 1){
+            return (etl::dim<1>(a, d) - C2 + 2 * P2) / S2 + 1;
         } else {
             return etl::dim(a, d);
         }
@@ -475,9 +475,9 @@ struct basic_pool_deep_3d_expr : impl_expr<basic_pool_deep_3d_expr<T, C1, C2, C3
      */
     template <typename A, size_t DD>
     static constexpr size_t dim() {
-        return DD == 0 ? (decay_traits<A>::template dim<0>() - C1 + 2 * P1) / S1 + 1
-             : DD == 1 ? (decay_traits<A>::template dim<1>() - C2 + 2 * P2) / S2 + 1
-             : DD == 2 ? (decay_traits<A>::template dim<2>() - C3 + 2 * P3) / S3 + 1
+        return DD == D - 3 ? (decay_traits<A>::template dim<DD>() - C1 + 2 * P1) / S1 + 1
+             : DD == D - 2 ? (decay_traits<A>::template dim<DD>() - C2 + 2 * P2) / S2 + 1
+             : DD == D - 1 ? (decay_traits<A>::template dim<DD>() - C3 + 2 * P3) / S3 + 1
                        : decay_traits<A>::template dim<DD>();
     }
 
@@ -489,12 +489,12 @@ struct basic_pool_deep_3d_expr : impl_expr<basic_pool_deep_3d_expr<T, C1, C2, C3
      */
     template <typename A>
     static size_t dim(const A& a, size_t d) {
-        if (d == 0) {
-            return (etl::dim<0>(a) - C1 + 2 * P1) / S1 + 1;
-        } else if (d == 1) {
-            return (etl::dim<1>(a) - C2 + 2 * P2) / S2 + 1;
-        } else if(d == 2){
-            return (etl::dim<2>(a) - C3 + 2 * P3) / S3 + 1;
+        if (d == D - 3) {
+            return (etl::dim(a, d) - C1 + 2 * P1) / S1 + 1;
+        } else if (d == D - 2) {
+            return (etl::dim(a, d) - C2 + 2 * P2) / S2 + 1;
+        } else if(d == D - 1){
+            return (etl::dim(a, d) - C3 + 2 * P3) / S3 + 1;
         } else {
             return etl::dim(a, d);
         }
@@ -755,10 +755,10 @@ struct basic_dyn_deep_pool_2d_expr : dyn_impl_expr<basic_dyn_deep_pool_2d_expr<T
      */
     template <typename A>
     size_t dim(const A& a, size_t d) const {
-        if (d == 0) {
-            return (etl::dim<0>(a) - c1 + 2 * p1) / s1 + 1;
-        } else if(d == 1){
-            return (etl::dim<1>(a) - c2 + 2 * p2) / s2 + 1;
+        if (d == D - 2) {
+            return (etl::dim(a, d) - c1 + 2 * p1) / s1 + 1;
+        } else if(d == D - 1){
+            return (etl::dim(a, d) - c2 + 2 * p2) / s2 + 1;
         } else {
             return etl::dim(a, d);
         }
@@ -1004,12 +1004,12 @@ struct basic_dyn_deep_pool_3d_expr : dyn_impl_expr<basic_dyn_deep_pool_3d_expr<T
      */
     template <typename A>
     size_t dim(const A& a, size_t d) const {
-        if (d == 0) {
-            return (etl::dim<0>(a) - c1 + 2 * p1) / s1 + 1;
-        } else if (d == 1) {
-            return (etl::dim<1>(a) - c2 + 2 * p2) / s2 + 1;
-        } else if(d == 2){
-            return (etl::dim<2>(a) - c3 + 2 * p3) / s3 + 1;
+        if (d == D - 3) {
+            return (etl::dim(a, d) - c1 + 2 * p1) / s1 + 1;
+        } else if (d == D - 2) {
+            return (etl::dim(a, d) - c2 + 2 * p2) / s2 + 1;
+        } else if(d == D - 1){
+            return (etl::dim(a, d) - c3 + 2 * p3) / s3 + 1;
         } else {
             return etl::dim(a, d);
         }
