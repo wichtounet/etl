@@ -36,7 +36,7 @@ constexpr std::size_t fft1_many_threshold_n          = 768; ///< The mimum size 
 constexpr std::size_t fft2_many_threshold_transforms = 16;   ///< The mimum number of transforms to parallelize them
 constexpr std::size_t fft2_many_threshold_n          = 1024; ///< The mimum size of the transforms to parallelize them
 
-constexpr std::size_t stream_threshold = cache_size; ///< The threshold at which stream is used
+constexpr std::size_t stream_threshold = 1024; ///< The threshold at which stream is used
 
 #else
 
