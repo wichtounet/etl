@@ -89,7 +89,7 @@ struct basic_upsample_2d_expr : impl_expr<basic_upsample_2d_expr<T, C1, C2, Impl
      */
     template <typename A>
     static std::size_t size(const A& a) {
-        return (etl::dim<0>(a) * C1) * (etl::dim<1>(a) * C2);
+        return etl::size(a) * (C1 * C2);
     }
 
     /*!
@@ -98,7 +98,7 @@ struct basic_upsample_2d_expr : impl_expr<basic_upsample_2d_expr<T, C1, C2, Impl
      */
     template <typename A>
     static constexpr std::size_t size() {
-        return this_type::template dim<A, 0>() * this_type::template dim<A, 1>();
+        return decay_traits<A>::size() * (C1 * C2);
     }
 
     /*!
@@ -206,7 +206,7 @@ struct basic_upsample_3d_expr : impl_expr<basic_upsample_3d_expr<T, C1, C2, C3, 
      */
     template <typename A>
     static std::size_t size(const A& a) {
-        return (etl::dim<0>(a) * C1) * (etl::dim<1>(a) * C2) * (etl::dim<2>(a) * C3);
+        return etl::size(a) * (C1 * C2 * C3);
     }
 
     /*!
@@ -215,7 +215,7 @@ struct basic_upsample_3d_expr : impl_expr<basic_upsample_3d_expr<T, C1, C2, C3, 
      */
     template <typename A>
     static constexpr std::size_t size() {
-        return this_type::template dim<A, 0>() * this_type::template dim<A, 1>() * this_type::template dim<A, 2>();
+        return decay_traits<A>::size() * (C1 * C2 * C3);
     }
 
     /*!
